@@ -115,7 +115,7 @@ theorem retargetInputStarted_computesVirtual_exact_internal (M : TM k)
   · have hfy := computes_eq_nil_of_qstart_eq_qhalt M hcomp heq y
     refine ⟨retargetInputStartedCfg M y realInput, 0, ?_, .zero, ?_, ?_⟩
     · simp [heq]
-    · show (retargetInputStarted M).qstart = (retargetInputStarted M).qhalt
+    · change (retargetInputStarted M).qstart = (retargetInputStarted M).qhalt
       simp [retargetInputStarted, heq]
     · rw [hfy]
       simp [Tape.HasOutput, Tape.init, Tape.move]
@@ -152,9 +152,9 @@ theorem retargetInputStarted_computesVirtual_exact_internal (M : TM k)
           refine ⟨c', t', ?_, hsim', ?_, ?_⟩
           · simp [heq]
             omega
-          · show cM.state = M.qhalt
+          · change cM.state = M.qhalt
             exact hhalt
-          · show cM.output.HasOutput (f y)
+          · change cM.output.HasOutput (f y)
             exact hout
 
 /-- Same-time form of the virtual-input computation seam. -/
@@ -238,11 +238,11 @@ theorem placeWorkTM_retargetInputStarted_computesVirtual_internal (M : TM k)
   refine ⟨c', C', t, ht, ?_, rfl, ?_, ?_⟩
   · apply placeWorkTM_reachesIn_placeWorkCfg_stable_internal _ pre post extras hreach
     intro i hi
-    show (extras i).cells (extras i).head ≠ Γ.start
+    change (extras i).cells (extras i).head ≠ Γ.start
     exact (hinv i hi).2 (extras i).head (hhead i hi)
-  · show c'.state = (retargetInputStarted M).qhalt
+  · change c'.state = (retargetInputStarted M).qhalt
     exact hhalt
-  · show c'.output.HasOutput (f y)
+  · change c'.output.HasOutput (f y)
     exact hout
 
 /-- Placed virtual-input decision with an exact preserved physical frame. -/
@@ -271,13 +271,13 @@ theorem placeWorkTM_retargetInputStarted_decidesVirtual_internal (M : TM k)
   refine ⟨c', C', t, ht, ?_, rfl, ?_, ?_, ?_⟩
   · apply placeWorkTM_reachesIn_placeWorkCfg_stable_internal _ pre post extras hreach
     intro i hi
-    show (extras i).cells (extras i).head ≠ Γ.start
+    change (extras i).cells (extras i).head ≠ Γ.start
     exact (hinv i hi).2 (extras i).head (hhead i hi)
-  · show c'.state = (retargetInputStarted M).qhalt
+  · change c'.state = (retargetInputStarted M).qhalt
     exact hhalt
-  · show y ∈ L → c'.output.cells 1 = Γ.one
+  · change y ∈ L → c'.output.cells 1 = Γ.one
     exact hyes
-  · show y ∉ L → c'.output.cells 1 = Γ.zero
+  · change y ∉ L → c'.output.cells 1 = Γ.zero
     exact hno
 
 end TM

@@ -216,7 +216,7 @@ theorem complementTM_decidesInTime (tm : TM n) {L : Language} {f : ℕ → ℕ}
     complementTM_rewind_and_flip tm c' hhalt hcell0 hnostart
   have htotal := reachesIn_trans tm.complementTM hsim hreach_rw
   refine ⟨c_done, t + t_rw, ?_, htotal, hhalt_done, ?_, ?_⟩
-  · show t + t_rw ≤ 2 * f x.length + 4
+  · change t + t_rw ≤ 2 * f x.length + 4
     have : t_rw ≤ t + 4 := le_trans hle_rw (by omega)
     omega
   · intro hxc; rw [hflip, hno hxc]; simp [flipBit]

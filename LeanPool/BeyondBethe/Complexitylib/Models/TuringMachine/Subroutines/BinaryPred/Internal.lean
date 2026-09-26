@@ -347,7 +347,7 @@ private theorem binaryPredTM_step_start (c : Cfg n (binaryPredTM idx).Q)
     by_cases hi : i = idx
     · subst i
       simp only [↓reduceIte, Function.update_self]
-      show (((c.work idx).write _).move Dir3.right) =
+      change (((c.work idx).write _).move Dir3.right) =
         (c.work idx).move Dir3.right
       rw [Tape.write, ite_eq_left hhead]
     · rw [ite_eq_right hi, Function.update_of_ne hi]
@@ -395,16 +395,16 @@ private theorem binaryPredTM_rewind_run (bits : List Bool)
           output := c.output }
       refine ⟨c₁, .step hstep .zero, rfl, hinput, ?_, ?_, ?_, houtput⟩
       · intro i hi
-        show Function.update c.work idx ((c.work idx).move Dir3.right) i = work₀ i
+        change Function.update c.work idx ((c.work idx).move Dir3.right) i = work₀ i
         rw [Function.update_of_ne hi]
         exact hwork i hi
-      · show (Function.update c.work idx ((c.work idx).move Dir3.right) idx)
+      · change (Function.update c.work idx ((c.work idx).move Dir3.right) idx)
             |>.HasBinaryString bits
         rw [Function.update_self]
         apply Tape.HasBinaryContent.hasBinaryString
         · simpa only [Tape.HasBinaryContent, Tape.move_cells] using hcontent
         · simp [Tape.move, hhead]
-      · show (Function.update c.work idx ((c.work idx).move Dir3.right) idx).cells 0 = _
+      · change (Function.update c.work idx ((c.work idx).move Dir3.right) idx).cells 0 = _
         rw [Function.update_self, Tape.move_cells]
         exact hcell0
   | succ head ih =>
@@ -424,20 +424,20 @@ private theorem binaryPredTM_rewind_run (bits : List Bool)
       obtain ⟨c', hreach, hhalt, hinput', hwork', hstring, hcell0', houtput'⟩ :=
         ih c₁ rfl hinput
           (fun i hi => by
-            show Function.update c.work idx ((c.work idx).move Dir3.left) i = work₀ i
+            change Function.update c.work idx ((c.work idx).move Dir3.left) i = work₀ i
             rw [Function.update_of_ne hi]
             exact hwork i hi)
           (by
-            show (Function.update c.work idx ((c.work idx).move Dir3.left) idx)
+            change (Function.update c.work idx ((c.work idx).move Dir3.left) idx)
               |>.HasBinaryContent bits
             rw [Function.update_self]
             simpa only [Tape.HasBinaryContent, Tape.move_cells] using hcontent)
           (by
-            show (Function.update c.work idx ((c.work idx).move Dir3.left) idx).cells 0 = _
+            change (Function.update c.work idx ((c.work idx).move Dir3.left) idx).cells 0 = _
             rw [Function.update_self, Tape.move_cells]
             exact hcell0)
           (by
-            show (Function.update c.work idx ((c.work idx).move Dir3.left) idx).head =
+            change (Function.update c.work idx ((c.work idx).move Dir3.left) idx).head =
               head
             rw [Function.update_self]
             simp [Tape.move, hhead])
@@ -556,20 +556,20 @@ private theorem binaryPredTM_borrow_terminal_one
       (List.replicate done true) inp₀ work₀ out₀ hinp hother
       hout done c₃ rfl hinput
       (fun i hi => by
-        show Function.update c.work idx target₃ i = work₀ i
+        change Function.update c.work idx target₃ i = work₀ i
         rw [Function.update_of_ne hi]
         exact hwork i hi)
       (by
-        show (Function.update c.work idx target₃ idx)
+        change (Function.update c.work idx target₃ idx)
           |>.HasBinaryContent _
         rw [Function.update_self]
         exact htarget₃Content)
       (by
-        show (Function.update c.work idx target₃ idx).cells 0 = _
+        change (Function.update c.work idx target₃ idx).cells 0 = _
         rw [Function.update_self]
         exact htarget₃Cell0)
       (by
-        show (Function.update c.work idx target₃ idx).head = done
+        change (Function.update c.work idx target₃ idx).head = done
         rw [Function.update_self]
         exact htarget₃Head)
       houtput
@@ -634,19 +634,19 @@ private theorem binaryPredTM_borrow_run
         binaryPredTM_rewind_run (idx := idx) (List.replicate done true)
           inp₀ work₀ out₀ hinp hother hout done c₁ rfl hinput
           (fun i hi => by
-            show Function.update c.work idx target i = work₀ i
+            change Function.update c.work idx target i = work₀ i
             rw [Function.update_of_ne hi]
             exact hwork i hi)
           (by
-            show (Function.update c.work idx target idx).HasBinaryContent _
+            change (Function.update c.work idx target idx).HasBinaryContent _
             rw [Function.update_self]
             exact htargetContent)
           (by
-            show (Function.update c.work idx target idx).cells 0 = _
+            change (Function.update c.work idx target idx).cells 0 = _
             rw [Function.update_self]
             exact htargetCell0)
           (by
-            show (Function.update c.work idx target idx).head = done
+            change (Function.update c.work idx target idx).head = done
             rw [Function.update_self]
             exact htargetHead)
           houtput
@@ -683,19 +683,19 @@ private theorem binaryPredTM_borrow_run
           obtain ⟨c', hreach, hhalt, hinput', hwork', hstring, hcell0', houtput'⟩ :=
             ih (done + 1) c₁ rfl hinput
               (fun i hi => by
-                show Function.update c.work idx target i = work₀ i
+                change Function.update c.work idx target i = work₀ i
                 rw [Function.update_of_ne hi]
                 exact hwork i hi)
               (by
-                show (Function.update c.work idx target idx).HasBinaryContent _
+                change (Function.update c.work idx target idx).HasBinaryContent _
                 rw [Function.update_self]
                 exact htargetContent)
               (by
-                show (Function.update c.work idx target idx).cells 0 = _
+                change (Function.update c.work idx target idx).cells 0 = _
                 rw [Function.update_self]
                 exact htargetCell0)
               (by
-                show (Function.update c.work idx target idx).head =
+                change (Function.update c.work idx target idx).head =
                   (done + 1) + 1
                 rw [Function.update_self]
                 exact htargetHead)
@@ -769,20 +769,20 @@ private theorem binaryPredTM_borrow_run
                   (List.replicate done true ++ false :: next :: rest)
                   inp₀ work₀ out₀ hinp hother hout (done + 1) c₂ rfl hinput
                   (fun i hi => by
-                    show Function.update c.work idx target₂ i = work₀ i
+                    change Function.update c.work idx target₂ i = work₀ i
                     rw [Function.update_of_ne hi]
                     exact hwork i hi)
                   (by
-                    show (Function.update c.work idx target₂ idx)
+                    change (Function.update c.work idx target₂ idx)
                       |>.HasBinaryContent _
                     rw [Function.update_self]
                     exact htarget₂Content)
                   (by
-                    show (Function.update c.work idx target₂ idx).cells 0 = _
+                    change (Function.update c.work idx target₂ idx).cells 0 = _
                     rw [Function.update_self]
                     exact htarget₂Cell0)
                   (by
-                    show (Function.update c.work idx target₂ idx).head = done + 1
+                    change (Function.update c.work idx target₂ idx).head = done + 1
                     rw [Function.update_self]
                     exact htarget₂Head)
                   houtput

@@ -112,7 +112,7 @@ private theorem inputLenRegTM_ne_halt {s : IncPhase} (h : s ≠ .done)
     {c : Cfg n (inputLenRegTM (n := n) q).Q} (hst : c.state = s) :
     ¬ c.state = (inputLenRegTM (n := n) q).qhalt := by
   rw [hst]
-  show ¬ s = IncPhase.done
+  change ¬ s = IncPhase.done
   exact h
 
 /-- `scan` over a bit: mark the register, advance both heads. -/
@@ -196,7 +196,7 @@ private theorem inputLenRegTM_step_back_start (c : Cfg n (inputLenRegTM (n := n)
     by_cases hir : i = q
     · subst hir
       rw [ite_eq_left rfl, Function.update_self]
-      show ((c.work i).write _).move Dir3.right = (c.work i).move .right
+      change ((c.work i).write _).move Dir3.right = (c.work i).move .right
       congr 1
       rw [Tape.write, ite_eq_left h0]
     · rw [ite_eq_right hir, Function.update_of_ne hir]
@@ -252,39 +252,39 @@ private theorem inputLenRegTM_scan_run (x : List Bool) (m : ℕ) :
     have hstep := inputLenRegTM_step_scan_bit c hst hbl hns hwork hout
     have hq₁cells : (((c.work q).write Γw.one).move .right).cells
         = regCells (k + 1) := by
-      show ((c.work q).write Γw.one).cells = _
+      change ((c.work q).write Γw.one).cells = _
       rw [Tape.write, ite_eq_right (by rw [hqh]; omega)]
-      show Function.update (c.work q).cells (c.work q).head Γw.one.toΓ = _
+      change Function.update (c.work q).cells (c.work q).head Γw.one.toΓ = _
       rw [hqh, hqc]
       exact regCells_update_succ k
     have hq₁head : (((c.work q).write Γw.one).move .right).head = (k + 1) + 1 := by
-      show ((c.work q).write Γw.one).head + 1 = _
+      change ((c.work q).write Γw.one).head + 1 = _
       rw [Tape.write_head, hqh]
     obtain ⟨c', hreach, h1, h2, h3, h4, h5, h6, h7⟩ :=
       ih (k + 1) (by omega)
         { state := .scan, input := c.input.move .right,
           work := Function.update c.work q (((c.work q).write Γw.one).move .right),
           output := c.output } rfl
-        (by show (c.input.move .right).cells = _
+        (by change (c.input.move .right).cells = _
             rw [Tape.move_cells]
             exact hic)
-        (by show c.input.head + 1 = (k + 1) + 1
+        (by change c.input.head + 1 = (k + 1) + 1
             rw [hih])
         (fun i hi => by
-          show Parked (Function.update c.work q _ i)
+          change Parked (Function.update c.work q _ i)
           rw [Function.update_of_ne hi]
           exact hwork i hi)
         hout
-        (by show (Function.update c.work q _ q).cells = _
+        (by change (Function.update c.work q _ q).cells = _
             rw [Function.update_self]
             exact hq₁cells)
-        (by show (Function.update c.work q _ q).head = _
+        (by change (Function.update c.work q _ q).head = _
             rw [Function.update_self]
             exact hq₁head)
     refine ⟨c', .step hstep hreach, h1, h2, h3, ?_, h5, h6, h7⟩
     intro i hi
     rw [h4 i hi]
-    show Function.update c.work q _ i = c.work i
+    change Function.update c.work q _ i = c.work i
     rw [Function.update_of_ne hi]
 
 /-- The lockstep rewind: both heads return to cell 1. -/
@@ -309,7 +309,7 @@ private theorem inputLenRegTM_back_run (x : List Bool) (h : ℕ) :
     have hstep₁ := inputLenRegTM_step_back_start c hst hs hcr hwork hout
     have hparkP : Parked (c.input.move .right) := by
       refine ⟨?_, fun j hj => ?_⟩
-      · show c.input.head + 1 ≥ 1
+      · change c.input.head + 1 ≥ 1
         omega
       · show (c.input.move .right).cells j ≠ Γ.start
         rw [Tape.move_cells, hic]
@@ -321,28 +321,28 @@ private theorem inputLenRegTM_back_run (x : List Bool) (h : ℕ) :
       (fun i => by
         by_cases hir : i = q
         · subst hir
-          show Parked (Function.update c.work i ((c.work i).move .right) i)
+          change Parked (Function.update c.work i ((c.work i).move .right) i)
           rw [Function.update_self]
-          exact ⟨by show (c.work i).head + 1 ≥ 1; omega, fun j hj => hcr j hj⟩
-        · show Parked (Function.update c.work q ((c.work q).move .right) i)
+          exact ⟨by change (c.work i).head + 1 ≥ 1; omega, fun j hj => hcr j hj⟩
+        · change Parked (Function.update c.work q ((c.work q).move .right) i)
           rw [Function.update_of_ne hir]
           exact hwork i hir)
       hout
     refine ⟨_, .step hstep₁ (.step hstep₂ .zero), rfl, ?_, ?_, ?_, ?_, ?_, rfl⟩
-    · show (c.input.move .right).cells = _
+    · change (c.input.move .right).cells = _
       rw [Tape.move_cells]
       exact hic
-    · show c.input.head + 1 = 1
+    · change c.input.head + 1 = 1
       rw [hih]
     · intro i hi
-      show Function.update c.work q ((c.work q).move .right) i = c.work i
+      change Function.update c.work q ((c.work q).move .right) i = c.work i
       rw [Function.update_of_ne hi]
-    · show (Function.update c.work q ((c.work q).move .right) q).cells = _
+    · change (Function.update c.work q ((c.work q).move .right) q).cells = _
       rw [Function.update_self]
       rfl
-    · show (Function.update c.work q ((c.work q).move .right) q).head = 1
+    · change (Function.update c.work q ((c.work q).move .right) q).head = 1
       rw [Function.update_self]
-      show (c.work q).head + 1 = 1
+      change (c.work q).head + 1 = 1
       rw [hqh]
   | succ h ih =>
     intro c hst hic hih hwork hout hc0 hcr hqh
@@ -357,36 +357,36 @@ private theorem inputLenRegTM_back_run (x : List Bool) (h : ℕ) :
       ih { state := .back, input := c.input.move .left,
            work := Function.update c.work q ((c.work q).move .left),
            output := c.output } rfl
-        (by show (c.input.move .left).cells = _
+        (by change (c.input.move .left).cells = _
             rw [Tape.move_cells]
             exact hic)
-        (by show c.input.head - 1 = h
+        (by change c.input.head - 1 = h
             rw [hih]
             omega)
         (fun i hi => by
-          show Parked (Function.update c.work q ((c.work q).move .left) i)
+          change Parked (Function.update c.work q ((c.work q).move .left) i)
           rw [Function.update_of_ne hi]
           exact hwork i hi)
         hout
-        (by show (Function.update c.work q _ q).cells 0 = _
+        (by change (Function.update c.work q _ q).cells 0 = _
             rw [Function.update_self]
             exact hc0)
         (fun j hj => by
-          show (Function.update c.work q _ q).cells j ≠ _
+          change (Function.update c.work q _ q).cells j ≠ _
           rw [Function.update_self]
           exact hcr j hj)
-        (by show (Function.update c.work q _ q).head = h
+        (by change (Function.update c.work q _ q).head = h
             rw [Function.update_self]
-            show (c.work q).head - 1 = h
+            change (c.work q).head - 1 = h
             rw [hqh]
             omega)
     refine ⟨c', .step hstep₁ hreach, h1, h2, h3, ?_, ?_, h6, h7⟩
     · intro i hi
       rw [h4 i hi]
-      show Function.update c.work q ((c.work q).move .left) i = c.work i
+      change Function.update c.work q ((c.work q).move .left) i = c.work i
       rw [Function.update_of_ne hi]
     · rw [h5]
-      show (Function.update c.work q ((c.work q).move .left) q).cells = _
+      change (Function.update c.work q ((c.work q).move .left) q).cells = _
       rw [Function.update_self]
       rfl
 
@@ -406,8 +406,8 @@ theorem inputLenRegTM_hoareTime (q : Fin n) (x : List Bool)
       { state := .scan, input := ⟨1, (Tape.init (x.map Γ.ofBool)).cells⟩,
         work := work, output := out } rfl rfl rfl
       hwork₀ hout.parked
-      (by show (work q).cells = regCells 0; rw [hq, regT_cells])
-      (by show (work q).head = 0 + 1; rw [hq, regT_head])
+      (by change (work q).cells = regCells 0; rw [hq, regT_cells])
+      (by change (work q).head = 0 + 1; rw [hq, regT_head])
   have hworkP₁ : ∀ i, i ≠ q → Parked (c₁.work i) := fun i hi => by
     rw [h4 i hi]
     exact hwork₀ i hi
@@ -426,33 +426,33 @@ theorem inputLenRegTM_hoareTime (q : Fin n) (x : List Bool)
       { state := .back, input := c₁.input.move .left,
         work := Function.update c₁.work q ((c₁.work q).move .left),
         output := c₁.output } rfl
-      (by show (c₁.input.move .left).cells = _
+      (by change (c₁.input.move .left).cells = _
           rw [Tape.move_cells]
           exact h2)
-      (by show c₁.input.head - 1 = x.length
+      (by change c₁.input.head - 1 = x.length
           rw [h3]
           omega)
       (fun i hi => by
-        show Parked (Function.update c₁.work q ((c₁.work q).move .left) i)
+        change Parked (Function.update c₁.work q ((c₁.work q).move .left) i)
         rw [Function.update_of_ne hi]
         exact hworkP₁ i hi)
       houtP₁
-      (by show (Function.update c₁.work q _ q).cells 0 = _
+      (by change (Function.update c₁.work q _ q).cells 0 = _
           rw [Function.update_self]
-          show (c₁.work q).cells 0 = _
+          change (c₁.work q).cells 0 = _
           rw [h5]
           rfl)
       (fun j hj => by
-        show (Function.update c₁.work q _ q).cells j ≠ _
+        change (Function.update c₁.work q _ q).cells j ≠ _
         rw [Function.update_self]
-        show (c₁.work q).cells j ≠ _
+        change (c₁.work q).cells j ≠ _
         rw [h5]
         show regCells x.length j ≠ Γ.start
         rw [regCells, ite_eq_right (by omega)]
         split <;> decide)
-      (by show (Function.update c₁.work q _ q).head = x.length
+      (by change (Function.update c₁.work q _ q).head = x.length
           rw [Function.update_self]
-          show (c₁.work q).head - 1 = x.length
+          change (c₁.work q).head - 1 = x.length
           rw [h6]
           omega)
   refine ⟨c₃, x.length + ((x.length + 2) + 1), by omega,
@@ -468,12 +468,12 @@ theorem inputLenRegTM_hoareTime (q : Fin n) (x : List Bool)
       · rw [g6]
         rfl
       · rw [g5]
-        show (Function.update c₁.work i ((c₁.work i).move .left) i).cells = _
+        change (Function.update c₁.work i ((c₁.work i).move .left) i).cells = _
         rw [Function.update_self]
-        show (c₁.work i).cells = _
+        change (c₁.work i).cells = _
         rw [h5, regT_cells]
     · rw [Function.update_of_ne hir, g4 i hir]
-      show Function.update c₁.work q ((c₁.work q).move .left) i = work i
+      change Function.update c₁.work q ((c₁.work q).move .left) i = work i
       rw [Function.update_of_ne hir]
       exact h4 i hir
   · rw [g7, h7]

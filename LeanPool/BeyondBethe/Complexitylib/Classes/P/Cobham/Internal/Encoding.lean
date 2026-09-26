@@ -287,7 +287,7 @@ theorem leftCode_write_stay {t : Tape} {s : Γ} :
   have hhead : ((t.write s).move Dir3.stay).head = t.head := Tape.write_head t s
   refine leftCode_congr hhead fun j hj => ?_
   rw [hhead] at hj
-  show (t.write s).cells j = t.cells j
+  change (t.write s).cells j = t.cells j
   exact write_cells_of_ne (by omega)
 
 /-- **Moving right**: the written symbol crosses over to the left half. This is
@@ -327,7 +327,7 @@ theorem rightCode_write_stay {t : Tape} {s : Γ} {W : ℕ} (h : t.head ≠ 0)
   rw [rightCode, rightCode, hhead, show W + 1 - t.head = (W - t.head) + 1 from by omega,
     cellsCode_succ_left, cellsCode_succ_left]
   congr 1
-  · show symCode ((t.write s).cells t.head) = _
+  · change symCode ((t.write s).cells t.head) = _
     rw [write_cells_self h]
   · rw [List.drop_left' (by simp)]
     exact cellsCode_congr fun j _ => write_cells_of_ne (by omega)
@@ -618,7 +618,7 @@ theorem correctWrite_at_zero {t : Tape} (s : Γ) (h : t.StartInvariant)
     (hh : t.head = 0) : correctWrite t s = t.cells t.head := by
   have hr : t.read = Γ.start := by rw [Tape.read, hh]; exact h.1
   rw [correctWrite, correctWriteSym, ite_eq_left hr]
-  show Γ.start = t.cells t.head
+  change Γ.start = t.cells t.head
   rw [hh]
   exact h.1.symm
 

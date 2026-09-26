@@ -101,7 +101,7 @@ theorem BigO.of_le {f g : ℕ → ℕ} (h : ∀ n, f n ≤ g n) : f =O g := by
 /-- Sum of two big-O functions: `f₁ = O(g) → f₂ = O(g) → (f₁ + f₂) = O(g)`. -/
 theorem BigO.add {f₁ f₂ g : ℕ → ℕ} (h₁ : f₁ =O g) (h₂ : f₂ =O g) :
     (fun n => f₁ n + f₂ n) =O g := by
-  show (fun n => ((f₁ n + f₂ n : ℕ) : ℝ)) =O[atTop] _
+  change (fun n => ((f₁ n + f₂ n : ℕ) : ℝ)) =O[atTop] _
   have key := IsBigO.add h₁ h₂
   convert key using 1
   ext n; push_cast; ring
@@ -109,7 +109,7 @@ theorem BigO.add {f₁ f₂ g : ℕ → ℕ} (h₁ : f₁ =O g) (h₂ : f₂ =O 
 /-- Product of two big-O bounds: `f₁ = O(g₁) → f₂ = O(g₂) → (f₁·f₂) = O(g₁·g₂)`. -/
 theorem BigO.mul {f₁ f₂ g₁ g₂ : ℕ → ℕ} (h₁ : f₁ =O g₁) (h₂ : f₂ =O g₂) :
     (fun n => f₁ n * f₂ n) =O (fun n => g₁ n * g₂ n) := by
-  show (fun n => ((f₁ n * f₂ n : ℕ) : ℝ)) =O[atTop] (fun n => ((g₁ n * g₂ n : ℕ) : ℝ))
+  change (fun n => ((f₁ n * f₂ n : ℕ) : ℝ)) =O[atTop] (fun n => ((g₁ n * g₂ n : ℕ) : ℝ))
   have key := IsBigO.mul h₁ h₂
   convert key using 1
   · ext n; push_cast; ring
@@ -127,7 +127,7 @@ theorem BigO.pow {f g : ℕ → ℕ} (h : f =O g) (k : ℕ) :
 /-- Constant multiple preserves big-O. -/
 theorem BigO.const_mul_left (c : ℕ) {f g : ℕ → ℕ} (h : f =O g) :
     (fun n => c * f n) =O g := by
-  show (fun n => ((c * f n : ℕ) : ℝ)) =O[atTop] _
+  change (fun n => ((c * f n : ℕ) : ℝ)) =O[atTop] _
   have hcf : (fun n => (c : ℝ) * (f n : ℝ)) =O[atTop] (fun n => (f n : ℝ)) :=
     IsBigO.const_mul_left (isBigO_refl _ _) (c : ℝ)
   have key := IsBigO.trans hcf h
@@ -157,7 +157,7 @@ theorem BigO.trans_littleO {f g h : ℕ → ℕ} (h₁ : f =O g) (h₂ : g =o h)
 /-- Sum of two little-o functions: `f₁ = o(g) → f₂ = o(g) → (f₁ + f₂) = o(g)`. -/
 theorem LittleO.add {f₁ f₂ g : ℕ → ℕ} (h₁ : f₁ =o g) (h₂ : f₂ =o g) :
     (fun n => f₁ n + f₂ n) =o g := by
-  show (fun n => ((f₁ n + f₂ n : ℕ) : ℝ)) =o[atTop] _
+  change (fun n => ((f₁ n + f₂ n : ℕ) : ℝ)) =o[atTop] _
   have key := IsLittleO.add h₁ h₂
   convert key using 1
   ext n; push_cast; ring
@@ -165,7 +165,7 @@ theorem LittleO.add {f₁ f₂ g : ℕ → ℕ} (h₁ : f₁ =o g) (h₂ : f₂ 
 /-- Constant multiple preserves little-o. -/
 theorem LittleO.const_mul_left (c : ℕ) {f g : ℕ → ℕ} (h : f =o g) :
     (fun n => c * f n) =o g := by
-  show (fun n => ((c * f n : ℕ) : ℝ)) =o[atTop] _
+  change (fun n => ((c * f n : ℕ) : ℝ)) =o[atTop] _
   have hcf : (fun n => (c : ℝ) * (f n : ℝ)) =O[atTop] (fun n => (f n : ℝ)) :=
     IsBigO.const_mul_left (isBigO_refl _ _) (c : ℝ)
   have key := IsBigO.trans_isLittleO hcf h
@@ -179,7 +179,7 @@ theorem LittleO.const_mul_left (c : ℕ) {f g : ℕ → ℕ} (h : f =o g) :
 /-- `T₁` is big-O of `T₁ + T₂`. -/
 theorem BigO.le_add_left (T₁ T₂ : ℕ → ℕ) :
     T₁ =O (fun n => T₁ n + T₂ n) := by
-  show (fun n => ((T₁ n : ℕ) : ℝ)) =O[atTop] (fun n => ((T₁ n + T₂ n : ℕ) : ℝ))
+  change (fun n => ((T₁ n : ℕ) : ℝ)) =O[atTop] (fun n => ((T₁ n + T₂ n : ℕ) : ℝ))
   apply IsBigO.of_bound 1
   filter_upwards with n
   simp only [Nat.cast_add, one_mul, Real.norm_natCast]
@@ -189,7 +189,7 @@ theorem BigO.le_add_left (T₁ T₂ : ℕ → ℕ) :
 /-- `T₂` is big-O of `T₁ + T₂`. -/
 theorem BigO.le_add_right (T₁ T₂ : ℕ → ℕ) :
     T₂ =O (fun n => T₁ n + T₂ n) := by
-  show (fun n => ((T₂ n : ℕ) : ℝ)) =O[atTop] (fun n => ((T₁ n + T₂ n : ℕ) : ℝ))
+  change (fun n => ((T₂ n : ℕ) : ℝ)) =O[atTop] (fun n => ((T₁ n + T₂ n : ℕ) : ℝ))
   apply IsBigO.of_bound 1
   filter_upwards with n
   simp only [Nat.cast_add, one_mul, Real.norm_natCast]
@@ -200,7 +200,7 @@ theorem BigO.le_add_right (T₁ T₂ : ℕ → ℕ) :
 theorem BigO.const_mul_add (c : ℕ) {f₁ f₂ T₁ T₂ : ℕ → ℕ}
     (ho₁ : f₁ =O T₁) (ho₂ : f₂ =O T₂) :
     (fun n => c * f₁ n + f₂ n) =O (fun n => T₁ n + T₂ n) := by
-  show (fun n => ((c * f₁ n + f₂ n : ℕ) : ℝ)) =O[atTop]
+  change (fun n => ((c * f₁ n + f₂ n : ℕ) : ℝ)) =O[atTop]
        (fun n => ((T₁ n + T₂ n : ℕ) : ℝ))
   have hf₁ : (fun n => ((f₁ n : ℕ) : ℝ)) =O[atTop]
       (fun n => ((T₁ n + T₂ n : ℕ) : ℝ)) := IsBigO.trans ho₁ (le_add_left T₁ T₂)

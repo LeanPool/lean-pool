@@ -145,10 +145,10 @@ theorem iterTail_hoareTime (M : TM k) (H : ℕ) (v : List Bool) (hv : v.length +
     (fun j c hc => (hbnd (Fin.castSucc j)).2.2 c hc) hwf
   have hrfeq : (⟨max (work rfIdx).head 1, (work rfIdx).cells⟩ : Tape) = rfT := by
     rw [hrf]
-    exact Tape.ext (by show max rfT.head 1 = rfT.head; have := hrfP.1; omega) rfl
+    exact Tape.ext (by change max rfT.head 1 = rfT.head; have := hrfP.1; omega) rfl
   have hjunkeq : (⟨max (work junkIdx).head 1, (work junkIdx).cells⟩ : Tape) = junkT := by
     rw [hjunk]
-    exact Tape.ext (by show max junkT.head 1 = junkT.head; have := hjunkP.1; omega) rfl
+    exact Tape.ext (by change max junkT.head 1 = junkT.head; have := hjunkP.1; omega) rfl
   have hfin := iterFinish_hoareTime M H v hv inp hinpP hinpSI
     (⟨1, (work resIdx).cells⟩ : Tape) rfT junkT rfl
     ((Tape.hasOutput_congr rfl v).mp hres)
@@ -205,11 +205,11 @@ theorem transitionTape_of_startInvariant {t : Tape} (h : Tape.StartInvariant t) 
     refine Tape.ext ?_ (transitionTape_cells t (fun j hj => h.2 j hj))
     have h1 := one_le_head_transitionTape t h.1
     have h2 := head_transitionTape_le (p_bound := 0) h.1 (le_of_eq hh0)
-    show (transitionTape t).head = max t.head 1
+    change (transitionTape t).head = max t.head 1
     omega
   · rw [transitionTape_eq_self hh]
     have hh0 : t.head ≠ 0 := fun hc => hh (by rw [Tape.read, hc]; exact h.1)
-    exact Tape.ext (by show t.head = max t.head 1; omega) rfl
+    exact Tape.ext (by change t.head = max t.head 1; omega) rfl
 
 /-- The three bookkeeping tapes, packaged as a placement frame. -/
 def bookTapes (rfT junkT : Tape) (H : ℕ) : Fin (3 + (k + 2) + 0) → Tape :=
@@ -311,7 +311,7 @@ theorem iterBody_hoareTime (M : TM k) {G : List Bool → List Bool} {T : ℕ →
     · exact ⟨(hcells (appIdx j)) ▸ (hbnd j).1.1,
         fun c hc => (hcells (appIdx j)) ▸ (hbnd j).1.2 c hc⟩
     · rw [transitionTape_of_startInvariant (hSIall (appIdx j))]
-      show max (work (appIdx j)).head 1 ≤ H
+      change max (work (appIdx j)).head 1 ≤ H
       have := (hbnd j).2.1
       omega
     · intro c hc
@@ -424,7 +424,7 @@ the reset register, and put `pair [] x` on the result tape. -/
 
 theorem parkedBlank_cells (j : ℕ) :
     parkedBlank.cells j = if j = 0 then Γ.start else Γ.blank := by
-  show ((Tape.init ([] : List Γ)).move Dir3.right).cells j = _
+  change ((Tape.init ([] : List Γ)).move Dir3.right).cells j = _
   rw [Tape.move_cells, initNil_cells]
 
 theorem hasOutput_nil_parkedBlank : parkedBlank.HasOutput [] :=
@@ -476,7 +476,7 @@ theorem placedEmit_hoareTime (x : List Bool) (H : ℕ) (hH : x.length + 4 ≤ H)
     (fun i hi => by rw [emitStart, ite_eq_left hi, parkedBlank_head])
     (fun i hi j hj => by
       rw [emitStart, ite_eq_left hi]
-      show ((Tape.init ([] : List Γ)).move Dir3.right).cells j = Γ.blank
+      change ((Tape.init ([] : List Γ)).move Dir3.right).cells j = Γ.blank
       rw [Tape.move_cells, initNil_cells, ite_eq_right (by omega)])
   refine ((hconf.weaken_pre ?_).strengthen_post ?_).mono_bound
     (by simp only [TM.pairInputWorkTime, List.length_nil]; omega)
@@ -484,17 +484,17 @@ theorem placedEmit_hoareTime (x : List Bool) (H : ℕ) (hH : x.length + 4 ≤ H)
     refine ⟨⟨⟨⟨rfl, ?_, ?_, ?_, ?_⟩, rfl⟩,
       fun i hi => emitStart_extra extras i hi⟩, rfl,
       (startInvariant_initOfBool x).move Dir3.right, hblankSI⟩
-    · show (emitStart extras (appIdx (Fin.castSucc (Fin.last k)))).head = 1
+    · change (emitStart extras (appIdx (Fin.castSucc (Fin.last k)))).head = 1
       rw [emitStart_middle, parkedBlank_head]
-    · show (emitStart extras (appIdx (Fin.castSucc (Fin.last k)))).HasOutput []
+    · change (emitStart extras (appIdx (Fin.castSucc (Fin.last k)))).HasOutput []
       rw [emitStart_middle]
       exact hasOutput_nil_parkedBlank
     · intro i
-      show Tape.StartInvariant (emitStart extras (appIdx (Fin.castSucc i))) ∧
+      change Tape.StartInvariant (emitStart extras (appIdx (Fin.castSucc i))) ∧
         1 ≤ (emitStart extras (appIdx (Fin.castSucc i))).head
       rw [emitStart_middle]
       exact ⟨hblankSI, le_refl 1⟩
-    · show emitStart extras (appIdx (Fin.last (k + 1))) = (Tape.init []).move Dir3.right
+    · change emitStart extras (appIdx (Fin.last (k + 1))) = (Tape.init []).move Dir3.right
       rw [emitStart_middle]
       rfl
   · rintro inp work out ⟨⟨⟨hout, ho⟩, hext⟩, hinpSI, -, hconf'⟩
@@ -557,11 +557,11 @@ theorem iterSetup_hoareTime (p : Polynomial ℕ) (x : List Bool) (H : ℕ)
     rintro inp work out ⟨hi, hw, ho⟩
     refine ⟨hi, funext fun i => (hw i).trans ?_, ?_⟩
     · rw [hW₀]
-      exact Tape.ext (by show max 0 1 = 1; omega) rfl
+      exact Tape.ext (by change max 0 1 = 1; omega) rfl
     · rw [ho]
-      show OutAcc [] (⟨max 0 1, (Tape.init ([] : List Γ)).cells⟩ : Tape)
+      change OutAcc [] (⟨max 0 1, (Tape.init ([] : List Γ)).cells⟩ : Tape)
       have : (⟨max 0 1, (Tape.init ([] : List Γ)).cells⟩ : Tape) = parkedBlank :=
-        Tape.ext (by show max 0 1 = 1; omega) rfl
+        Tape.ext (by change max 0 1 = 1; omega) rfl
       rw [this]
       exact outAcc_nil_of_parkedBlank
   -- phase 2: the loop register
@@ -744,7 +744,7 @@ theorem iterMain_hoareTime (M : TM k) {G : List Bool → List Bool} {T : ℕ →
       rfl (eq_parkedBlank_of_outAcc_nil hout')
     rw [t1, t2, t3]
     refine ⟨⟨funext fun i => ?_, rfl⟩, fun i hi => ?_⟩
-    · show iterFamily M Y inp' (regTape H) v H v (appIdx (Fin.castSucc i)) = _
+    · change iterFamily M Y inp' (regTape H) v H v (appIdx (Fin.castSucc i)) = _
       rw [iterFamily_app]
       exact congrFun (TM.applyPre_spec M (Y v) inp').1 i
     · rcases not_middle_succ_cases i hi with h | h | h | h
@@ -840,7 +840,7 @@ theorem iterTM_computesInTime (M : TM k) {G : List Bool → List Bool} {tp : Pol
       · rw [transitionTape_cells _ (fun c' hc' => (hbnd j).1.2 c' hc')]
         exact (hbnd j).1.2 c hc
     · rw [transitionTape_of_startInvariant (hbnd j).1]
-      show max (work (appIdx j)).head 1 ≤ H
+      change max (work (appIdx j)).head 1 ≤ H
       have := (hbnd j).2.1
       omega
     · intro c hc
@@ -857,7 +857,7 @@ theorem iterTM_computesInTime (M : TM k) {G : List Bool → List Bool} {tp : Pol
     (fun _ => Tape.init []) (Tape.init []) ⟨rfl, rfl, rfl⟩
   have hY0len : (Y 0).length = n + 2 := by
     rw [hY0]
-    show (pair [] x).length = n + 2
+    change (pair [] x).length = n + 2
     rw [pair_length]
     simp
     omega
@@ -867,7 +867,7 @@ theorem iterTM_computesInTime (M : TM k) {G : List Bool → List Bool} {tp : Pol
     simp only [← hn, hH]
     have := hTle n le_rfl
     omega
-  · show c'.output.HasOutput (G^[x.length + 1] (pair [] x))
+  · change c'.output.HasOutput (G^[x.length + 1] (pair [] x))
     rw [Function.iterate_succ_apply']
     exact hpost
 

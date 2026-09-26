@@ -154,9 +154,9 @@ private theorem reverseTM_copy_loop :
         rw [hwmove, rev_idle_eq houtne]
       · have hc : (c.work 0).HasBinaryContent acc := hwork.2
         simpa using hc.move Dir3.left
-      · show ((c.work 0).move Dir3.left).cells 0 = _
+      · change ((c.work 0).move Dir3.left).cells 0 = _
         rw [Tape.move_cells]; exact hw0
-      · show ((c.work 0).move Dir3.left).head = _
+      · change ((c.work 0).move Dir3.left).head = _
         simp only [Tape.move, hwork.1, List.append_nil]
         omega
   | cons b w ih =>
@@ -178,7 +178,7 @@ private theorem reverseTM_copy_loop :
         ih (acc ++ [b]) c1 rfl hsuf.move_right_cons
           (by rw [hc1]; exact Tape.hasBinaryPrefix_write_bit b hwork)
           (by
-            show ((c.work 0).writeAndMove (Γ.ofBool b) Dir3.right).cells 0 = Γ.start
+            change ((c.work 0).writeAndMove (Γ.ofBool b) Dir3.right).cells 0 = Γ.start
             exact Tape.write_move_cell0 _ _ hw0)
           (by rw [hc1]; exact hout)
       refine ⟨c', .step hstep hreach, hst, ?_, hcz, ?_, hinp, hpre⟩
@@ -258,9 +258,9 @@ private theorem reverseTM_emit_loop :
       obtain ⟨c', hreach, hhalt, hfin⟩ :=
         ih bits (acc ++ [bits[j]'hjlt]) c1 rfl
           (by rw [hc1]; exact hcont.move Dir3.left)
-          (by rw [hc1]; show ((c.work 0).move Dir3.left).cells 0 = _
+          (by rw [hc1]; change ((c.work 0).move Dir3.left).cells 0 = _
               rw [Tape.move_cells]; exact hw0)
-          (by rw [hc1]; show ((c.work 0).move Dir3.left).head = _
+          (by rw [hc1]; change ((c.work 0).move Dir3.left).head = _
               simp only [Tape.move, hhead]; omega)
           (by omega)
           (by rw [hc1]; exact hinp)
@@ -291,7 +291,7 @@ theorem reverseTM_computesInTime :
     reverseTM_copy_loop x [] c1 rfl
       (by rw [hc1]; exact Tape.init_move_right_hasBinarySuffix x)
       (by rw [hc1]; exact Tape.init_nil_move_right_hasBinaryPrefix_nil)
-      (by rw [hc1]; show ((Tape.init ([] : List Γ)).move Dir3.right).cells 0 = _
+      (by rw [hc1]; change ((Tape.init ([] : List Γ)).move Dir3.right).cells 0 = _
           rw [Tape.move_cells]; simp)
       (by rw [hc1]; exact Tape.init_nil_move_right_hasBinaryPrefix_nil)
   obtain ⟨c', hreach', hhalt', hfin⟩ :=

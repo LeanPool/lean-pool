@@ -298,7 +298,7 @@ theorem TM.toNTM_decidesInSpace (tm : TM n) {L : Language} {f : ℕ → ℕ}
     Finset.sup (Finset.univ : Finset (Fin m → Bool)) (fun v => t_fn (List.ofFn v))
   have hle_T : ∀ x, t_fn x ≤ T x.length := by
     intro x
-    show t_fn x ≤ Finset.sup Finset.univ (fun v => t_fn (List.ofFn v))
+    change t_fn x ≤ Finset.sup Finset.univ (fun v => t_fn (List.ofFn v))
     conv_lhs => rw [show x = List.ofFn (fun i : Fin x.length => x[↑i]) from
       (List.ofFn_getElem (xs := x)).symm]
     exact Finset.le_sup (f := fun v => t_fn (List.ofFn v))
@@ -488,10 +488,10 @@ theorem Tape.StartInvariant.step {n : ℕ} (tm : TM n)
     subst hstep
     refine ⟨?_, ?_, ?_⟩
     · constructor
-      · show (c.input.move _).cells 0 = _
+      · change (c.input.move _).cells 0 = _
         rw [Tape.move_cells]; exact hinp.1
       · intro j hj
-        show (c.input.move _).cells j ≠ _
+        change (c.input.move _).cells j ≠ _
         rw [Tape.move_cells]; exact hinp.2 j hj
     · intro i
       exact Tape.StartInvariant.writeAndMove (hwork i) _ _

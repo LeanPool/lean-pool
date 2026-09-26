@@ -197,7 +197,7 @@ private theorem binaryRippleSubCoreTM_step_erase_start
     by_cases hi : i = resultIdx
     · subst i
       simp only [↓reduceIte, Function.update_self]
-      show (((c.work resultIdx).write _).move Dir3.right) =
+      change (((c.work resultIdx).write _).move Dir3.right) =
         (c.work resultIdx).move Dir3.right
       rw [Tape.write, ite_eq_left hhead]
     · rw [ite_eq_right hi, Function.update_of_ne hi]
@@ -227,7 +227,7 @@ private theorem binaryRippleSubCoreTM_step_trim_start
     by_cases hi : i = resultIdx
     · subst i
       simp only [↓reduceIte, Function.update_self]
-      show (((c.work resultIdx).write _).move Dir3.right) =
+      change (((c.work resultIdx).write _).move Dir3.right) =
         (c.work resultIdx).move Dir3.right
       rw [Tape.write, ite_eq_left hhead]
     · rw [ite_eq_right hi, Function.update_of_ne hi]
@@ -278,17 +278,17 @@ private theorem binaryRippleSubCoreTM_trim_true_run
           output := c.output }
       refine ⟨c₁, .step hstep .zero, rfl, hinput, ?_, ?_, ?_, houtput⟩
       · intro i hi
-        show Function.update c.work resultIdx
+        change Function.update c.work resultIdx
           ((c.work resultIdx).move Dir3.right) i = work₀ i
         rw [Function.update_of_ne hi]
         exact hwork i hi
-      · show (Function.update c.work resultIdx
+      · change (Function.update c.work resultIdx
             ((c.work resultIdx).move Dir3.right) resultIdx).HasBinaryString bits
         rw [Function.update_self]
         apply Tape.HasBinaryContent.hasBinaryString
         · exact hcontent.move Dir3.right
         · simp [Tape.move, hhead]
-      · show (Function.update c.work resultIdx
+      · change (Function.update c.work resultIdx
             ((c.work resultIdx).move Dir3.right) resultIdx).cells 0 = _
         rw [Function.update_self, Tape.move_cells]
         exact hcell0
@@ -310,22 +310,22 @@ private theorem binaryRippleSubCoreTM_trim_true_run
       obtain ⟨c', hreach, hhalt, hinput', hwork', hstring, hcell0', houtput'⟩ :=
         ih c₁ rfl hinput
           (fun i hi => by
-            show Function.update c.work resultIdx
+            change Function.update c.work resultIdx
               ((c.work resultIdx).move Dir3.left) i = work₀ i
             rw [Function.update_of_ne hi]
             exact hwork i hi)
           (by
-            show (Function.update c.work resultIdx
+            change (Function.update c.work resultIdx
               ((c.work resultIdx).move Dir3.left) resultIdx).HasBinaryContent bits
             rw [Function.update_self]
             exact hcontent.move Dir3.left)
           (by
-            show (Function.update c.work resultIdx
+            change (Function.update c.work resultIdx
               ((c.work resultIdx).move Dir3.left) resultIdx).cells 0 = _
             rw [Function.update_self, Tape.move_cells]
             exact hcell0)
           (by
-            show (Function.update c.work resultIdx
+            change (Function.update c.work resultIdx
               ((c.work resultIdx).move Dir3.left) resultIdx).head = head
             rw [Function.update_self]
             simp [Tape.move, hhead])
@@ -374,15 +374,15 @@ private theorem binaryRippleSubCoreTM_erase_run
           output := c.output }
       refine ⟨c₁, .step hstep .zero, rfl, hinput, ?_, ?_, ?_, houtput⟩
       · intro i hi
-        show Function.update c.work resultIdx
+        change Function.update c.work resultIdx
           ((c.work resultIdx).move Dir3.right) i = work₀ i
         rw [Function.update_of_ne hi]
         exact hwork i hi
-      · show (Function.update c.work resultIdx
+      · change (Function.update c.work resultIdx
             ((c.work resultIdx).move Dir3.right) resultIdx).HasBinaryString []
         rw [Function.update_self]
         exact (hcontent.move Dir3.right).hasBinaryString (by simp [Tape.move, hhead])
-      · show (Function.update c.work resultIdx
+      · change (Function.update c.work resultIdx
             ((c.work resultIdx).move Dir3.right) resultIdx).cells 0 = _
         rw [Function.update_self, Tape.move_cells]
         exact hcell0
@@ -411,20 +411,20 @@ private theorem binaryRippleSubCoreTM_erase_run
       obtain ⟨c', hreach, hhalt, hinput', hwork', hstring, hcell0', houtput'⟩ :=
         ih c₁ rfl hinput
           (fun i hi => by
-            show Function.update c.work resultIdx target₁ i = work₀ i
+            change Function.update c.work resultIdx target₁ i = work₀ i
             rw [Function.update_of_ne hi]
             exact hwork i hi)
           (by
-            show (Function.update c.work resultIdx target₁ resultIdx)
+            change (Function.update c.work resultIdx target₁ resultIdx)
               |>.HasBinaryContent bitsPrefix
             rw [Function.update_self]
             exact hshort.move Dir3.left)
           (by
-            show (Function.update c.work resultIdx target₁ resultIdx).cells 0 = _
+            change (Function.update c.work resultIdx target₁ resultIdx).cells 0 = _
             rw [Function.update_self]
             exact Tape.write_move_cell0 Γ.blank Dir3.left hcell0)
           (by
-            show (Function.update c.work resultIdx target₁ resultIdx).head =
+            change (Function.update c.work resultIdx target₁ resultIdx).head =
               bitsPrefix.length
             rw [Function.update_self]
             simp [target₁, Tape.move, Tape.write_head, hhead])
@@ -474,17 +474,17 @@ private theorem binaryRippleSubCoreTM_trim_false_run
           output := c.output }
       refine ⟨c₁, .step hstep .zero, rfl, hinput, ?_, ?_, ?_, houtput⟩
       · intro i hi
-        show Function.update c.work resultIdx
+        change Function.update c.work resultIdx
           ((c.work resultIdx).move Dir3.right) i = work₀ i
         rw [Function.update_of_ne hi]
         exact hwork i hi
-      · show (Function.update c.work resultIdx
+      · change (Function.update c.work resultIdx
             ((c.work resultIdx).move Dir3.right) resultIdx).HasBinaryString
           (BinaryRippleSub.trimHighZeros [])
         rw [Function.update_self]
         simpa [BinaryRippleSub.trimHighZeros] using
           (hcontent.move Dir3.right).hasBinaryString (by simp [Tape.move, hhead])
-      · show (Function.update c.work resultIdx
+      · change (Function.update c.work resultIdx
             ((c.work resultIdx).move Dir3.right) resultIdx).cells 0 = _
         rw [Function.update_self, Tape.move_cells]
         exact hcell0
@@ -514,20 +514,20 @@ private theorem binaryRippleSubCoreTM_trim_false_run
           obtain ⟨c', hreach, hhalt, hinput', hwork', hstring, hcell0', houtput'⟩ :=
             ih c₁ rfl hinput
               (fun i hi => by
-                show Function.update c.work resultIdx target₁ i = work₀ i
+                change Function.update c.work resultIdx target₁ i = work₀ i
                 rw [Function.update_of_ne hi]
                 exact hwork i hi)
               (by
-                show (Function.update c.work resultIdx target₁ resultIdx)
+                change (Function.update c.work resultIdx target₁ resultIdx)
                   |>.HasBinaryContent bitsPrefix
                 rw [Function.update_self]
                 exact hshort.move Dir3.left)
               (by
-                show (Function.update c.work resultIdx target₁ resultIdx).cells 0 = _
+                change (Function.update c.work resultIdx target₁ resultIdx).cells 0 = _
                 rw [Function.update_self]
                 exact Tape.write_move_cell0 Γ.blank Dir3.left hcell0)
               (by
-                show (Function.update c.work resultIdx target₁ resultIdx).head =
+                change (Function.update c.work resultIdx target₁ resultIdx).head =
                   bitsPrefix.length
                 rw [Function.update_self]
                 simp [target₁, Tape.move, Tape.write_head, hhead])
@@ -554,20 +554,20 @@ private theorem binaryRippleSubCoreTM_trim_false_run
               (rhsIdx := rhsIdx) (resultIdx := resultIdx) (bitsPrefix ++ [true])
               inp₀ work₀ out₀ hinp hother hout bitsPrefix.length c₁ rfl hinput
               (fun i hi => by
-                show Function.update c.work resultIdx target₁ i = work₀ i
+                change Function.update c.work resultIdx target₁ i = work₀ i
                 rw [Function.update_of_ne hi]
                 exact hwork i hi)
               (by
-                show (Function.update c.work resultIdx target₁ resultIdx)
+                change (Function.update c.work resultIdx target₁ resultIdx)
                   |>.HasBinaryContent (bitsPrefix ++ [true])
                 rw [Function.update_self]
                 exact hcontent.move Dir3.left)
               (by
-                show (Function.update c.work resultIdx target₁ resultIdx).cells 0 = _
+                change (Function.update c.work resultIdx target₁ resultIdx).cells 0 = _
                 rw [Function.update_self, Tape.move_cells]
                 exact hcell0)
               (by
-                show (Function.update c.work resultIdx target₁ resultIdx).head =
+                change (Function.update c.work resultIdx target₁ resultIdx).head =
                   bitsPrefix.length
                 rw [Function.update_self]
                 simp [target₁, Tape.move, hhead])

@@ -35,7 +35,7 @@ namespace TM
 private theorem read_ne_start_of_startInvariant {t : Tape}
     (hinv : Tape.StartInvariant t) (hhead : 1 ≤ t.head) :
     t.read ≠ Γ.start := by
-  show t.cells t.head ≠ Γ.start
+  change t.cells t.head ≠ Γ.start
   exact hinv.2 t.head hhead
 
 /-- A start-invariant tape at a positive head is unchanged by a `seqTM`
@@ -614,11 +614,11 @@ private theorem compositionTailTM_hoareTime_of_virtualRun_internal
     apply placeWorkTM_reachesIn_placeWorkCfg_stable_internal
       (retargetInputStarted tmG) secondPre 0 extras hreachSource₄
     intro i hi
-    show (extras i).cells (extras i).head ≠ Γ.start
+    change (extras i).cells (extras i).head ≠ Γ.start
     exact (hextrasInv i hi).2 (extras i).head (hextrasHead i hi)
   have hhalt₄ :
       (placeWorkTM secondPre 0 (retargetInputStarted tmG)).halted C₄ := by
-    show c₄.state = (retargetInputStarted tmG).qhalt
+    change c₄.state = (retargetInputStarted tmG).qhalt
     exact hhaltSource₄
   let gEntry : Cfg (compositionTapeCount nf ng) (compositionSecondTM nf tmG).Q :=
     { state := (compositionSecondTM nf tmG).qstart
@@ -672,7 +672,7 @@ private theorem compositionTailTM_hoareTime_of_virtualRun_internal
     exact (phase2Wrap_halted_iff tm₁ tm₂₃₄ c₂₃₄).mpr
       ((phase2Wrap_halted_iff tm₂ tm₃₄ c₃₄).mpr
         ((phase2Wrap_halted_iff tm₃ (compositionSecondTM nf tmG) C₄).mpr hhalt₄))
-  · show P C₄.output
+  · change P C₄.output
     exact hout₄
 
 /-- The post-first-computation tail correctly runs the second function. -/

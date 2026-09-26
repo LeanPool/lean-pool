@@ -82,7 +82,7 @@ theorem placeWorkTM_hoareTime_frame {n pre post : ℕ} (tm : TM n)
   · rw [hweq]
     exact placeWorkTM_reachesIn_placeWorkCfg_of_startInvariant tm pre post extras hreach
       hinv hhead
-  · show postSmall c'.input (fun i => (placeWorkCfg tm pre post extras c').work
+  · change postSmall c'.input (fun i => (placeWorkCfg tm pre post extras c').work
       (placeWorkIdx pre post i)) c'.output
     simp only [placeWorkCfg_work_middle]
     exact hpost
@@ -207,7 +207,7 @@ theorem reachesIn_input_eq_of_idlesInput {n : ℕ} {tm : TM n} (hidle : IdlesInp
               · simp at hstep
               · simp only [Option.some.injEq] at hstep
                 rw [← hstep]
-                show c.input.move _ = c.input
+                change c.input.move _ = c.input
                 rw [hidle, hp.move_idle]
             rw [ih hrest (by rw [hc'']; exact hp), hc'']
 

@@ -44,7 +44,7 @@ private theorem placeWorkFrameStep_blank (t : Tape)
     rfl
   · have hr : t.read = Γ.blank := by rw [hread, h1]; rfl
     rw [hr]
-    show t.write (readBackWrite Γ.blank) = (Tape.init []).move Dir3.right
+    change t.write (readBackWrite Γ.blank) = (Tape.init []).move Dir3.right
     rw [Tape.write, ite_eq_right (show ¬t.head = 0 by omega), h1, hcells]
     rw [show (readBackWrite Γ.blank).toΓ = (Tape.init []).cells 1 from rfl,
       Function.update_eq_self]
@@ -201,7 +201,7 @@ theorem placeWorkTM_computesInTime_internal (tm : TM n) (pre post : ℕ)
   obtain ⟨C', hreach', hstate, _hinput, houtput, _hshape⟩ :=
     placeWorkTM_reachesIn_init_internal tm pre post x hreach
   refine ⟨C', t, ht, hreach', ?_, ?_⟩
-  · show C'.state = (placeWorkTM pre post tm).qhalt
+  · change C'.state = (placeWorkTM pre post tm).qhalt
     rw [hstate]
     exact hhalt
   · rw [houtput]

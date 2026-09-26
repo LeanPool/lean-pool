@@ -45,7 +45,7 @@ theorem wipedTape_head (t : Tape) (i : ℕ) : (wipedTape t i).head = t.head + i 
   | zero => rfl
   | succ i ih =>
       rw [wipedTape_succ]
-      show (((wipedTape t i).write Γw.blank.toΓ).move Dir3.right).head = t.head + (i + 1)
+      change (((wipedTape t i).write Γw.blank.toΓ).move Dir3.right).head = t.head + (i + 1)
       rw [show (((wipedTape t i).write Γw.blank.toΓ).move Dir3.right).head
             = ((wipedTape t i).write Γw.blank.toΓ).head + 1 from rfl,
         Tape.write_head, ih]
@@ -60,9 +60,9 @@ theorem wipedTape_cells_of_head_one {t : Tape} (hh : t.head = 1) (H j : ℕ) :
   | succ H ih =>
       have hheadH : (wipedTape t H).head = H + 1 := by rw [wipedTape_head, hh]; omega
       rw [wipedTape_succ]
-      show (((wipedTape t H).write Γw.blank.toΓ).move Dir3.right).cells j = _
+      change (((wipedTape t H).write Γw.blank.toΓ).move Dir3.right).cells j = _
       rw [Tape.move_cells, Tape.write, ite_eq_right (by rw [hheadH]; omega)]
-      show Function.update (wipedTape t H).cells (wipedTape t H).head Γw.blank.toΓ j = _
+      change Function.update (wipedTape t H).cells (wipedTape t H).head Γw.blank.toΓ j = _
       rw [hheadH]
       by_cases hj : j = H + 1
       · rw [hj, Function.update_self, ite_eq_left ⟨by omega, by omega⟩]
@@ -89,7 +89,7 @@ assumption is made about *where* inside `1 … H` the nonblank cells sit. -/
 theorem wipedTape_eq_blank {t : Tape} (H : ℕ) (hh : t.head = 1)
     (h0 : t.cells 0 = Γ.start) (hfar : ∀ j, H < j → t.cells j = Γ.blank) :
     wipedTape t H = (⟨H + 1, (Tape.init ([] : List Γ)).cells⟩ : Tape) := by
-  refine Tape.ext (by rw [wipedTape_head, hh]; show 1 + H = H + 1; omega) (funext fun j => ?_)
+  refine Tape.ext (by rw [wipedTape_head, hh]; change 1 + H = H + 1; omega) (funext fun j => ?_)
   rw [wipedTape_cells_of_head_one hh, initNil_cells]
   by_cases hj0 : j = 0
   · rw [hj0, ite_eq_right (by omega : ¬(1 ≤ 0 ∧ 0 ≤ H)), ite_eq_left rfl, h0]
@@ -111,7 +111,7 @@ theorem wipedTape_parked {t : Tape} (h : Parked t) (i : ℕ) : Parked (wipedTape
         have := ih.1; omega
       refine ⟨?_, fun j hj => ?_⟩
       · rw [hheq]
-        show 1 ≤ ((wipedTape t i).write Γw.blank.toΓ).head + 1
+        change 1 ≤ ((wipedTape t i).write Γw.blank.toΓ).head + 1
         omega
       · rw [hheq, Tape.move_cells]
         simp only [Tape.write, ite_eq_right hhead_ne]
@@ -152,7 +152,7 @@ theorem eq_parkedBlank_of_outAcc_nil {t : Tape} (h : OutAcc [] t) :
 /-- The register-shaped tape at iteration `i` is `Parked`. -/
 theorem regIterCells_parked (v i : ℕ) : Parked (⟨i + 2, regCells v⟩ : Tape) := by
   refine ⟨show 1 ≤ i + 2 by omega, fun j _ => ?_⟩
-  show regCells v j ≠ Γ.start
+  change regCells v j ≠ Γ.start
   simp only [regCells]
   split
   · omega

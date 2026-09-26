@@ -317,7 +317,7 @@ theorem ifTM_check_step_then_full (tmTest tmThen tmElse : TM n)
   have hread : c.output.read = Γ.one := by simp [Tape.read, hhead, hcell1]
   simp only [TM.step, ↓reduceIte, hstate, ifTM, hread]
   refine ⟨_, rfl, rfl, ?_, ?_, ?_, ?_⟩
-  · show (c.output.writeAndMove (readBackWrite Γ.one).toΓ (idleDir Γ.one)).cells = c.output.cells
+  · change (c.output.writeAndMove (readBackWrite Γ.one).toΓ (idleDir Γ.one)).cells = c.output.cells
     simp only [readBackWrite, Γw.toΓ, idleDir, Tape.writeAndMove, Tape.move_cells]
     simp only [Tape.write]; split
     · omega
@@ -350,7 +350,7 @@ theorem ifTM_check_step_else_full (tmTest tmThen tmElse : TM n)
   refine ⟨_, rfl, rfl, ?_, ?_, ?_, ?_⟩
   · apply tape_readBackWrite_preserves; right; exact hread_ne_start
   · have hstable := tape_writeAndMove_stable c.output (by omega) hnostart_out
-    show (c.output.writeAndMove (readBackWrite c.output.read).toΓ
+    change (c.output.writeAndMove (readBackWrite c.output.read).toΓ
       (idleDir c.output.read)).head = 1
     rw [hstable, hhead]
   · exact tape_move_idleDir_stable _ h_ih h_ins

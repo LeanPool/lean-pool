@@ -287,7 +287,7 @@ theorem doubleBits_pair_eq (bs : List Bool) (k : Nat) (h : 2 * k + 1 < (doubleBi
       simp only [doubleBits_cons, List.length_cons] at h
       have h2 : 2 * k + 1 < (doubleBits bs).length := by omega
       have ih' := ih k h2
-      show (b :: b :: doubleBits bs)[2 * (k + 1)]? = (b :: b :: doubleBits bs)[2 * (k + 1) + 1]?
+      change (b :: b :: doubleBits bs)[2 * (k + 1)]? = (b :: b :: doubleBits bs)[2 * (k + 1) + 1]?
       have e1 : 2 * (k + 1) = (2 * k) + 2 := by ring
       have e2 : 2 * (k + 1) + 1 = (2 * k + 1) + 2 := by ring
       rw [e2, e1]

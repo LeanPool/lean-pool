@@ -409,7 +409,7 @@ private theorem lookup_write_loop (written : List Bool) :
     have hstep : (lookupTM g S).step c = some c1 := by
       simp [TM.step, lookupTM, hstate, writeState, haltState, hc1]
     refine ⟨c1, .step hstep .zero, ?_, ?_⟩
-    · show c1.state = (lookupTM g S).qhalt
+    · change c1.state = (lookupTM g S).qhalt
       rw [hc1]; rfl
     · rw [List.append_nil, hc1]
       exact hasBinaryPrefix_idle houtput

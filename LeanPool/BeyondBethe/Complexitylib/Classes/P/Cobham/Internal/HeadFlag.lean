@@ -154,7 +154,7 @@ theorem headFlagTM_computesInTime (target : Bool) :
     have hoc : c1.output.read = Γ.blank := by
       simp [c1, Tape.read, Tape.move, Tape.init]
     have hcells : c2.output.cells = c1.output.cells := by
-      show ((c1.output.write ((readBackWrite c1.output.read).toΓ)).move
+      change ((c1.output.write ((readBackWrite c1.output.read).toΓ)).move
         (idleDir c1.output.read)).cells = c1.output.cells
       rw [Tape.move_cells,
         show (readBackWrite c1.output.read).toΓ = c1.output.read from by rw [hoc]; rfl,

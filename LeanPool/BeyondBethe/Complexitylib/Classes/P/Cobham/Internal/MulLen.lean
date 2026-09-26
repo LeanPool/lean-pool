@@ -331,7 +331,7 @@ private theorem mulLenTM_rew_loop :
         funext i
         have hi : i = 0 := Subsingleton.elim i 0
         subst hi
-        show ((c.work 0).write _).move Dir3.right = (c.work 0).move Dir3.right
+        change ((c.work 0).write _).move Dir3.right = (c.work 0).move Dir3.right
         rw [Tape.write, ite_eq_left hhead]
       refine ⟨{ state := MulPhase.outer
                 input := c.input
@@ -619,13 +619,13 @@ private theorem mulLenTM_scan_loop :
             rw [hwmark, idle_eq houtne]
           have hcells2 : (c2.work 0).cells = regCells (k + 1) := by
             rw [hc2]
-            show (((c.work 0).write Γ.one).move Dir3.right).cells = _
+            change (((c.work 0).write Γ.one).move Dir3.right).cells = _
             rw [Tape.move_cells, Tape.write, ite_eq_right (by rw [hhead]; omega)]
-            show Function.update (c.work 0).cells ((c.work 0).head) Γ.one = _
+            change Function.update (c.work 0).cells ((c.work 0).head) Γ.one = _
             rw [hcells, hhead, regCells_update_succ]
           have hhead2 : (c2.work 0).head = k + 1 + 1 := by
             rw [hc2]
-            show (((c.work 0).write Γ.one).move Dir3.right).head = _
+            change (((c.work 0).write Γ.one).move Dir3.right).head = _
             rw [Tape.move, Tape.write_head, hhead]
           obtain ⟨c', t, ht, hreach', hhalt', hout'⟩ :=
             ih z (k + 1) (by simp only [List.length_cons] at hN; omega) c2 rfl hcells2 hhead2
@@ -656,13 +656,13 @@ private theorem mulLenTM_scan_loop :
             rw [hwmark, idle_eq houtne]
           have hcells2 : (c2.work 0).cells = regCells (k + 1) := by
             rw [hc2]
-            show (((c.work 0).write Γ.one).move Dir3.right).cells = _
+            change (((c.work 0).write Γ.one).move Dir3.right).cells = _
             rw [Tape.move_cells, Tape.write, ite_eq_right (by rw [hhead]; omega)]
-            show Function.update (c.work 0).cells ((c.work 0).head) Γ.one = _
+            change Function.update (c.work 0).cells ((c.work 0).head) Γ.one = _
             rw [hcells, hhead, regCells_update_succ]
           have hhead2 : (c2.work 0).head = k + 1 + 1 := by
             rw [hc2]
-            show (((c.work 0).write Γ.one).move Dir3.right).head = _
+            change (((c.work 0).write Γ.one).move Dir3.right).head = _
             rw [Tape.move, Tape.write_head, hhead]
           obtain ⟨c', t, ht, hreach', hhalt', hout'⟩ :=
             ih z (k + 1) (by simp only [List.length_cons] at hN; omega) c2 rfl hcells2 hhead2
@@ -697,9 +697,9 @@ theorem mulUnpair_mem_FP : mulUnpair ∈ FP := by
     have hpre : c1.output.HasBinaryPrefix [] := Tape.init_nil_move_right_hasBinaryPrefix_nil
     obtain ⟨c', t, ht, hreach, hhalt, hout⟩ :=
       mulLenTM_scan_loop z.length z 0 (by omega) c1 rfl
-        (by rw [hc1]; show ((Tape.init []).move Dir3.right).cells = _
+        (by rw [hc1]; change ((Tape.init []).move Dir3.right).cells = _
             rw [Tape.move_cells, init_nil_cells_eq_regCells_zero])
-        (by rw [hc1]; show ((Tape.init []).move Dir3.right).head = _
+        (by rw [hc1]; change ((Tape.init []).move Dir3.right).head = _
             simp [Tape.move])
         hsuf hpre
     exact ⟨c', t + 1, by simpa using by omega, .step hstep1 hreach, hhalt,

@@ -149,7 +149,7 @@ private theorem sndBlockTM_emit_loop :
       have hpre1 : c1.output.HasBinaryPrefix (acc ++ [bit]) := by
         have hco : (readBackWrite c.input.read).toΓ = Γ.ofBool bit := by
           rw [hread]; cases bit <;> rfl
-        show (c.output.writeAndMove ((readBackWrite c.input.read).toΓ) Dir3.right).HasBinaryPrefix
+        change (c.output.writeAndMove ((readBackWrite c.input.read).toΓ) Dir3.right).HasBinaryPrefix
           (acc ++ [bit])
         rw [hco]; exact Tape.hasBinaryPrefix_write_bit bit hpre
       obtain ⟨c', t, ht, hreach, hhalt, hout⟩ :=
@@ -455,7 +455,7 @@ theorem sndBlock_mem_FP : sndBlock ∈ FP := by
     have hpre : c1.output.HasBinaryPrefix [] := Tape.init_nil_move_right_hasBinaryPrefix_nil
     obtain ⟨c', t, ht, hreach, hhalt, hcout⟩ :=
       sndBlockTM_scan_loop z.length z le_rfl c1 rfl hsuf hpre
-    exact ⟨c', t + 1, by show t + 1 ≤ 2 * z.length + 3; omega,
+    exact ⟨c', t + 1, by change t + 1 ≤ 2 * z.length + 3; omega,
       .step hstep1 hreach, hhalt, hcout⟩
   · have hn : (fun m : ℕ => 2 * m) =O ((· ^ 1) : ℕ → ℕ) := by
       simpa [pow_one] using! (BigO.refl (fun m : ℕ => m)).const_mul_left 2

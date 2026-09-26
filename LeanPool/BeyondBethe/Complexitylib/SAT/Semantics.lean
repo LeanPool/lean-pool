@@ -240,7 +240,7 @@ theorem Clause.eval_take (α : Assignment) (c : Clause) (k : Nat) (hk : c.maxVar
     simp only [maxVar_cons] at hk
     have hℓ : ℓ.var < k := by omega
     have hℓs : Clause.maxVar ℓs < k := by omega
-    show ((ℓ :: ℓs).any (Lit.eval (α.take k))) = ((ℓ :: ℓs).any (Lit.eval α))
+    change ((ℓ :: ℓs).any (Lit.eval (α.take k))) = ((ℓ :: ℓs).any (Lit.eval α))
     simp only [List.any_cons, Lit.eval_take _ _ _ hℓ]
     exact congrArg _ (ih hℓs)
 
@@ -253,7 +253,7 @@ theorem CNF.eval_take (α : Assignment) (φ : CNF) (k : Nat) (hk : φ.maxVar < k
     simp only [maxVar_cons] at hk
     have hc : c.maxVar < k := by omega
     have hcs : CNF.maxVar cs < k := by omega
-    show ((c :: cs).all (Clause.eval (α.take k))) = ((c :: cs).all (Clause.eval α))
+    change ((c :: cs).all (Clause.eval (α.take k))) = ((c :: cs).all (Clause.eval α))
     simp only [List.all_cons, Clause.eval_take _ _ _ hc]
     exact congrArg _ (ih hcs)
 
@@ -289,7 +289,7 @@ theorem Clause.eval_eq_of_agree (α β : Assignment) (c : Clause)
   induction c with
   | nil => rfl
   | cons ℓ ℓs ih =>
-    show ((ℓ :: ℓs).any (Lit.eval α)) = ((ℓ :: ℓs).any (Lit.eval β))
+    change ((ℓ :: ℓs).any (Lit.eval α)) = ((ℓ :: ℓs).any (Lit.eval β))
     simp only [List.any_cons, Lit.eval_eq_of_agree α β ℓ (h ℓ.var)]
     exact congrArg _ ih
 
@@ -300,7 +300,7 @@ theorem CNF.eval_eq_of_agree (α β : Assignment) (φ : CNF)
   induction φ with
   | nil => rfl
   | cons c cs ih =>
-    show ((c :: cs).all (Clause.eval α)) = ((c :: cs).all (Clause.eval β))
+    change ((c :: cs).all (Clause.eval α)) = ((c :: cs).all (Clause.eval β))
     simp only [List.all_cons, Clause.eval_eq_of_agree α β c h]
     exact congrArg _ ih
 

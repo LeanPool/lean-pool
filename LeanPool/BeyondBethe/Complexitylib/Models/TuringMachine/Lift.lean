@@ -71,7 +71,7 @@ private theorem dummy_writeAndMove (w : Tape)
   · -- head at cell 1: write `□` over `□` and stay
     have hr : w.read = Γ.blank := by rw [hread, h1]; rfl
     rw [hr]
-    show w.write (readBackWrite Γ.blank).toΓ = (Tape.init []).move Dir3.right
+    change w.write (readBackWrite Γ.blank).toΓ = (Tape.init []).move Dir3.right
     rw [Tape.write, ite_eq_right (show ¬ w.head = 0 by omega), h1, hc]
     rw [show (readBackWrite Γ.blank).toΓ = (Tape.init []).cells 1 from rfl,
       Function.update_eq_self]
@@ -251,7 +251,7 @@ private theorem liftTM_reaches_liftCfg (tm : TM n) (m : ℕ) {c c' : Cfg n tm.Q}
   | refl => exact Relation.ReflTransGen.refl
   | @tail b c₂ _ hbc ih =>
     refine ih.tail ?_
-    show (tm.liftTM m).step (tm.liftCfg m b) = some (tm.liftCfg m c₂)
+    change (tm.liftTM m).step (tm.liftCfg m b) = some (tm.liftCfg m c₂)
     have hb : tm.step b = some c₂ := hbc
     rw [liftTM_step_liftCfg, hb]; rfl
 
@@ -267,7 +267,7 @@ private theorem liftTM_reaches_init (tm : TM n) (m : ℕ) (x : List Bool)
     exact ⟨(tm.liftTM m).initCfg x, Relation.ReflTransGen.refl, rfl, rfl⟩
   · refine ⟨tm.liftCfg m c',
       Relation.ReflTransGen.head ?_ (liftTM_reaches_liftCfg tm m hrest), rfl, rfl⟩
-    show (tm.liftTM m).step ((tm.liftTM m).initCfg x) = some (tm.liftCfg m c₁)
+    change (tm.liftTM m).step ((tm.liftTM m).initCfg x) = some (tm.liftCfg m c₁)
     have h1 : tm.step (tm.initCfg x) = some c₁ := hstep
     rw [liftTM_step_initCfg, h1]; rfl
 
@@ -307,7 +307,7 @@ theorem liftTM_decidesInTime (tm : TM n) (m : ℕ) {L : Language} {T : ℕ → �
   obtain ⟨c', t, ht, hreach, hhalt, hyes, hno⟩ := h x
   obtain ⟨C', hR, hstate, hout⟩ := liftTM_reachesIn_init tm m x hreach
   refine ⟨C', t, ht, hR, ?_, fun hx => ?_, fun hx => ?_⟩
-  · show C'.state = (tm.liftTM m).qhalt
+  · change C'.state = (tm.liftTM m).qhalt
     rw [hstate]; exact hhalt
   · rw [hout]; exact hyes hx
   · rw [hout]; exact hno hx
@@ -320,7 +320,7 @@ theorem liftTM_computesInTime (tm : TM n) (m : ℕ) {f : List Bool → List Bool
   obtain ⟨c', t, ht, hreach, hhalt, hout⟩ := h x
   obtain ⟨C', hR, hstate, houtC⟩ := liftTM_reachesIn_init tm m x hreach
   refine ⟨C', t, ht, hR, ?_, ?_⟩
-  · show C'.state = (tm.liftTM m).qhalt
+  · change C'.state = (tm.liftTM m).qhalt
     rw [hstate]; exact hhalt
   · rw [houtC]; exact hout
 
@@ -353,7 +353,7 @@ theorem liftTM_decidesInSpace (tm : TM n) (m : ℕ) {L : Language} {S : ℕ → 
     obtain ⟨c', hreach, hhalt, hyes, hno⟩ := hdec x
     obtain ⟨C', hR, hstate, hout⟩ := liftTM_reaches_init tm m x hreach
     refine ⟨C', hR, ?_, fun hx => ?_, fun hx => ?_⟩
-    · show C'.state = (tm.liftTM m).qhalt
+    · change C'.state = (tm.liftTM m).qhalt
       rw [hstate]; exact hhalt
     · rw [hout]; exact hyes hx
     · rw [hout]; exact hno hx
@@ -555,7 +555,7 @@ theorem retargetOutput_computesInTime (tm : TM n) {f : List Bool → List Bool}
   obtain ⟨c₀, t, ht, hreach, hhalt, hout⟩ := h x
   obtain ⟨C', hR, hstate, hwork⟩ := retargetOutput_reachesIn_init tm x hreach
   refine ⟨C', t, ht, hR, ?_, ?_⟩
-  · show C'.state = (tm.retargetOutput).qhalt
+  · change C'.state = (tm.retargetOutput).qhalt
     rw [hstate]; exact hhalt
   · rw [hwork]; exact hout
 
@@ -573,7 +573,7 @@ theorem retargetOutput_computesInTime_boundary (tm : TM n)
   obtain ⟨C', hR, hstate, hwork, houtCells, houtHead⟩ :=
     retargetOutput_reachesIn_init_boundary tm x hreach
   refine ⟨C', t, ht, hR, ?_, ?_, houtCells, houtHead⟩
-  · show C'.state = (tm.retargetOutput).qhalt
+  · change C'.state = (tm.retargetOutput).qhalt
     rw [hstate]
     exact hhalt
   · rw [hwork]

@@ -100,7 +100,7 @@ theorem fpn_proj {n : ℕ} (i : Fin n) : FPn (fun v : Fin n → List Bool => v i
       | succ j =>
           obtain ⟨g, hg, hgf⟩ := ih j
           refine ⟨g ∘ fstBlock, mem_FP_comp fstBlock_mem_FP hg, fun v => ?_⟩
-          show g (fstBlock (encodeVec v)) = v j.succ
+          change g (fstBlock (encodeVec v)) = v j.succ
           rw [fstBlock_encodeVec_succ, hgf]
           rfl
 
@@ -111,7 +111,7 @@ theorem fpn_bit (b : Bool) :
     FPn (fun v : Fin 1 → List Bool => b :: v 0) := by
   refine ⟨(fun x => b :: x) ∘ sndBlock,
     mem_FP_comp sndBlock_mem_FP (cons_mem_FP b), fun v => ?_⟩
-  show b :: sndBlock (encodeVec v) = b :: v 0
+  change b :: sndBlock (encodeVec v) = b :: v 0
   rw [sndBlock_encodeVec_succ]
 
 /-- Pairing two `FP` functions of the same input is `FP`.
@@ -223,7 +223,7 @@ theorem fpn_smash :
       simp [Function.comp]
     rw [heq]
     exact h
-  show List.replicate
+  change List.replicate
       ((sndBlock (encodeVec v)).length *
         (sndBlock (fstBlock (encodeVec v))).length) true
     = Complexity.smash (v 0) (v 1)
@@ -264,7 +264,7 @@ theorem fpn_comp {m n : ℕ} {f : (Fin m → List Bool) → List Bool}
   choose G hG hGf using ihgs
   refine ⟨F ∘ fun z => encodeVec fun i => G i z,
     mem_FP_comp (assembleVec_mem_FP G hG) hF, fun v => ?_⟩
-  show F (encodeVec fun i => G i (encodeVec v)) = f fun i => gs i v
+  change F (encodeVec fun i => G i (encodeVec v)) = f fun i => gs i v
   have hinner : (fun i => G i (encodeVec v)) = fun i => gs i v := by
     funext i; exact hGf i v
   rw [hinner, hFf]
@@ -748,7 +748,7 @@ theorem iterStep_iterate (F : List Bool → List Bool) (Krev W v₀ : List Bool)
         rw [nextValue, fstBlock_pair, show fstBlock ([] : List Bool) = [] from rfl,
           selectHead_emptyFlag_nil, sndBlock_pair, sndBlock_pair]]
       rw [takeLen_pair]
-      show pair ((pair ((Krev.take (0 + 1)).reverse) (iterVal F Krev W v₀ 0)).take
+      change pair ((pair ((Krev.take (0 + 1)).reverse) (iterVal F Krev W v₀ 0)).take
         (pair (pair Krev W) v₀).length) (pair (pair Krev W) v₀) = _
       rw [List.take_of_length_le (hfit 0)]
   | succ i ih =>
@@ -980,12 +980,12 @@ theorem recFoldClamp_eq_recFold {A B : List Bool → List Bool} {bound : ℕ}
     recFoldClamp A B bound e W s = recFold A B e W s := by
   induction s with
   | nil =>
-      show e.take bound = e
+      change e.take bound = e
       exact List.take_of_length_le (hle [] (by simp))
   | cons b t ih =>
       have htail : recFoldClamp A B bound e W t = recFold A B e W t :=
         ih fun u hu => hle u (by simp only [List.length_cons]; omega)
-      show ((bif b then B else A)
+      change ((bif b then B else A)
         (pair (pair W (recFoldClamp A B bound e W t)) t)).take bound = _
       rw [htail]
       exact List.take_of_length_le (hle (b :: t) le_rfl)
@@ -1009,7 +1009,7 @@ theorem recFold_eq_recNotation {n : ℕ} {g : (Fin n → List Bool) → List Boo
   induction s with
   | nil => exact hG w
   | cons b t ih =>
-      show (bif b then H₁ else H₀)
+      change (bif b then H₁ else H₀)
         (pair (pair (encodeVec w) (recFold H₀ H₁ (G (encodeVec w)) (encodeVec w) t)) t)
         = _
       rw [ih, henc, recNotation_cons]
@@ -1047,7 +1047,7 @@ theorem fpn_boundedRec {n : ℕ} {g : (Fin n → List Bool) → List Bool}
   have hE : (fun z => G (fstBlock z)) ∈ FP := mem_FP_comp fstBlock_mem_FP hGFP
   refine ⟨fun z => recFoldClamp H₀ H₁ (p.eval z.length) (G (fstBlock z)) (fstBlock z)
       (sndBlock z), recFoldClamp_mem_FP hH0FP hH1FP hE p, fun v => ?_⟩
-  show recFoldClamp H₀ H₁ (p.eval (encodeVec v).length) (G (fstBlock (encodeVec v)))
+  change recFoldClamp H₀ H₁ (p.eval (encodeVec v).length) (G (fstBlock (encodeVec v)))
       (fstBlock (encodeVec v)) (sndBlock (encodeVec v))
     = recNotation g h₀ h₁ (v 0) (Fin.tail v)
   rw [fstBlock_encodeVec_succ, sndBlock_encodeVec_succ]

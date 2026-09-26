@@ -95,7 +95,7 @@ theorem rewindList_hoareTime {n : ℕ} :
     have hread_t : ∀ (work : Fin n → Tape), (work t).cells = (work₀ t).cells →
         (work t).head = 1 → (work t).read ≠ Γ.start := by
       intro work hcells hhead
-      show (work t).cells (work t).head ≠ Γ.start
+      change (work t).cells (work t).head ≠ Γ.start
       rw [hhead, hcells]
       exact (hwork t).2 1 le_rfl
     have h2 : (bigSeqTM ((t :: ts).map rewindWorkTM)).HoareTime

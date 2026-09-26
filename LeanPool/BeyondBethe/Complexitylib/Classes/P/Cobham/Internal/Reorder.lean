@@ -48,14 +48,14 @@ theorem reorder_pair_pair (A B C : List Bool) :
     reorder (pair A (pair B C)) = pair A B := by
   induction A with
   | nil =>
-      show false :: true :: fstBlock (pair B C) = false :: true :: B
+      change false :: true :: fstBlock (pair B C) = false :: true :: B
       rw [fstBlock_pair]
   | cons a A ih =>
       rw [pair_cons_eq]
       cases a
-      · show false :: false :: reorder (pair A (pair B C)) = pair (false :: A) B
+      · change false :: false :: reorder (pair A (pair B C)) = pair (false :: A) B
         rw [ih, pair_cons_eq]
-      · show true :: true :: reorder (pair A (pair B C)) = pair (true :: A) B
+      · change true :: true :: reorder (pair A (pair B C)) = pair (true :: A) B
         rw [ih, pair_cons_eq]
 
 /-- Control states of `reorderTM`: skip the marker; phase 1 (`rcopyA`/`rcopyBf`/
@@ -373,7 +373,7 @@ private theorem reorderTM_dec_loop :
             simp [TM.step, reorderTM, hreadB, Γ.ofBool, c1, c2]
           have hsuf2 : c2.input.HasBinarySuffix z := hsuf1.move_right_cons
           have hpre2 : c2.output.HasBinaryPrefix (acc ++ [false]) := by
-            show (c1.output.writeAndMove ((Γw.ofBool false).toΓ) Dir3.right).HasBinaryPrefix
+            change (c1.output.writeAndMove ((Γw.ofBool false).toΓ) Dir3.right).HasBinaryPrefix
               (acc ++ [false])
             rw [Γw.ofBool_toΓ]; exact Tape.hasBinaryPrefix_write_bit false hpre1
           have hzfuel : z.length ≤ fuel := by
@@ -412,7 +412,7 @@ private theorem reorderTM_dec_loop :
             simp [TM.step, reorderTM, hreadB, Γ.ofBool, c1, c2]
           have hsuf2 : c2.input.HasBinarySuffix z := hsuf1.move_right_cons
           have hpre2 : c2.output.HasBinaryPrefix (acc ++ [true]) := by
-            show (c1.output.writeAndMove ((Γw.ofBool true).toΓ) Dir3.right).HasBinaryPrefix
+            change (c1.output.writeAndMove ((Γw.ofBool true).toΓ) Dir3.right).HasBinaryPrefix
               (acc ++ [true])
             rw [Γw.ofBool_toΓ]; exact Tape.hasBinaryPrefix_write_bit true hpre1
           have hzfuel : z.length ≤ fuel := by
@@ -447,7 +447,7 @@ private theorem reorderTM_copy_single
       have hsuf1 : c1.input.HasBinarySuffix [] := hsuf.move_right_cons
       have hpre1 : c1.output.HasBinaryPrefix (acc ++ [false]) := by
         have hco : (readBackWrite c.input.read).toΓ = Γ.ofBool false := by rw [hread]; rfl
-        show (c.output.writeAndMove ((readBackWrite c.input.read).toΓ)
+        change (c.output.writeAndMove ((readBackWrite c.input.read).toΓ)
             Dir3.right).HasBinaryPrefix
           (acc ++ [false])
         rw [hco]; exact Tape.hasBinaryPrefix_write_bit false hpre
@@ -476,7 +476,7 @@ private theorem reorderTM_copy_single
       have hsuf1 : c1.input.HasBinarySuffix [] := hsuf.move_right_cons
       have hpre1 : c1.output.HasBinaryPrefix (acc ++ [true]) := by
         have hco : (readBackWrite c.input.read).toΓ = Γ.ofBool true := by rw [hread]; rfl
-        show (c.output.writeAndMove ((readBackWrite c.input.read).toΓ)
+        change (c.output.writeAndMove ((readBackWrite c.input.read).toΓ)
             Dir3.right).HasBinaryPrefix
           (acc ++ [true])
         rw [hco]; exact Tape.hasBinaryPrefix_write_bit true hpre
@@ -553,7 +553,7 @@ private theorem reorderTM_copy_loop :
           have hsuf1 : c1.input.HasBinarySuffix (true :: y) := hsuf.move_right_cons
           have hpre1 : c1.output.HasBinaryPrefix (acc ++ [false]) := by
             have hco : (readBackWrite c.input.read).toΓ = Γ.ofBool false := by rw [hreadA]; rfl
-            show (c.output.writeAndMove ((readBackWrite c.input.read).toΓ)
+            change (c.output.writeAndMove ((readBackWrite c.input.read).toΓ)
                 Dir3.right).HasBinaryPrefix
               (acc ++ [false])
             rw [hco]; exact Tape.hasBinaryPrefix_write_bit false hpre
@@ -569,7 +569,7 @@ private theorem reorderTM_copy_loop :
           have hsuf2 : c2.input.HasBinarySuffix y := hsuf1.move_right_cons
           have hpre2 : c2.output.HasBinaryPrefix (acc ++ [false, true]) := by
             have hco : (readBackWrite c1.input.read).toΓ = Γ.ofBool true := by rw [hreadB]; rfl
-            show (c1.output.writeAndMove ((readBackWrite c1.input.read).toΓ)
+            change (c1.output.writeAndMove ((readBackWrite c1.input.read).toΓ)
                 Dir3.right).HasBinaryPrefix
               (acc ++ [false, true])
             rw [hco]
@@ -597,7 +597,7 @@ private theorem reorderTM_copy_loop :
           have hsuf1 : c1.input.HasBinarySuffix (false :: z) := hsuf.move_right_cons
           have hpre1 : c1.output.HasBinaryPrefix (acc ++ [false]) := by
             have hco : (readBackWrite c.input.read).toΓ = Γ.ofBool false := by rw [hreadA]; rfl
-            show (c.output.writeAndMove ((readBackWrite c.input.read).toΓ)
+            change (c.output.writeAndMove ((readBackWrite c.input.read).toΓ)
                 Dir3.right).HasBinaryPrefix
               (acc ++ [false])
             rw [hco]; exact Tape.hasBinaryPrefix_write_bit false hpre
@@ -613,7 +613,7 @@ private theorem reorderTM_copy_loop :
           have hsuf2 : c2.input.HasBinarySuffix z := hsuf1.move_right_cons
           have hpre2 : c2.output.HasBinaryPrefix (acc ++ [false, false]) := by
             have hco : (readBackWrite c1.input.read).toΓ = Γ.ofBool false := by rw [hreadB]; rfl
-            show (c1.output.writeAndMove ((readBackWrite c1.input.read).toΓ)
+            change (c1.output.writeAndMove ((readBackWrite c1.input.read).toΓ)
                 Dir3.right).HasBinaryPrefix
               (acc ++ [false, false])
             rw [hco]
@@ -641,7 +641,7 @@ private theorem reorderTM_copy_loop :
           have hsuf1 : c1.input.HasBinarySuffix (true :: z) := hsuf.move_right_cons
           have hpre1 : c1.output.HasBinaryPrefix (acc ++ [true]) := by
             have hco : (readBackWrite c.input.read).toΓ = Γ.ofBool true := by rw [hreadA]; rfl
-            show (c.output.writeAndMove ((readBackWrite c.input.read).toΓ)
+            change (c.output.writeAndMove ((readBackWrite c.input.read).toΓ)
                 Dir3.right).HasBinaryPrefix
               (acc ++ [true])
             rw [hco]; exact Tape.hasBinaryPrefix_write_bit true hpre
@@ -657,7 +657,7 @@ private theorem reorderTM_copy_loop :
           have hsuf2 : c2.input.HasBinarySuffix z := hsuf1.move_right_cons
           have hpre2 : c2.output.HasBinaryPrefix (acc ++ [true, true]) := by
             have hco : (readBackWrite c1.input.read).toΓ = Γ.ofBool true := by rw [hreadB]; rfl
-            show (c1.output.writeAndMove ((readBackWrite c1.input.read).toΓ)
+            change (c1.output.writeAndMove ((readBackWrite c1.input.read).toΓ)
                 Dir3.right).HasBinaryPrefix
               (acc ++ [true, true])
             rw [hco]
@@ -685,7 +685,7 @@ private theorem reorderTM_copy_loop :
           have hsuf1 : c1.input.HasBinarySuffix (false :: rest) := hsuf.move_right_cons
           have hpre1 : c1.output.HasBinaryPrefix (acc ++ [true]) := by
             have hco : (readBackWrite c.input.read).toΓ = Γ.ofBool true := by rw [hreadA]; rfl
-            show (c.output.writeAndMove ((readBackWrite c.input.read).toΓ)
+            change (c.output.writeAndMove ((readBackWrite c.input.read).toΓ)
                 Dir3.right).HasBinaryPrefix
               (acc ++ [true])
             rw [hco]; exact Tape.hasBinaryPrefix_write_bit true hpre
@@ -721,7 +721,7 @@ theorem reorder_mem_FP : reorder ∈ FP := by
     have hpre : c1.output.HasBinaryPrefix [] := Tape.init_nil_move_right_hasBinaryPrefix_nil
     obtain ⟨c', t, ht, hreach, hhalt, hcout⟩ :=
       reorderTM_copy_loop z.length z [] le_rfl c1 rfl hsuf hpre
-    refine ⟨c', t + 1, by show t + 1 ≤ 3 * z.length + 4; omega,
+    refine ⟨c', t + 1, by change t + 1 ≤ 3 * z.length + 4; omega,
       .step hstep1 hreach, hhalt, ?_⟩
     simpa using hcout.hasOutput
   · have hn : (fun m : ℕ => 3 * m) =O ((· ^ 1) : ℕ → ℕ) := by

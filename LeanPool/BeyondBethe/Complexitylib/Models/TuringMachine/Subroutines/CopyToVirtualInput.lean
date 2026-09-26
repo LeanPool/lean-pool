@@ -114,7 +114,7 @@ theorem copyToVirtualInput_hoareTime {n : ℕ} (src dst : Fin n) (hne : src ≠ 
       (by omega)
     rintro inp work out ⟨hcells, hhead, hout_, hprefix, hcell0, hPinp, hPout, hPrest⟩
     have hread_src : (work src).read ≠ Γ.start := by
-      show (work src).cells (work src).head ≠ Γ.start
+      change (work src).cells (work src).head ≠ Γ.start
       rw [hhead, hcells]
       exact hsrcParked.2 (x.length + 1) (by omega)
     have hread_dst : (work dst).read ≠ Γ.start := by

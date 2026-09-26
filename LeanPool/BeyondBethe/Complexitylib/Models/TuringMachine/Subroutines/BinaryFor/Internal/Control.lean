@@ -219,14 +219,14 @@ theorem binaryForTM_step_rewind_equal_internal (body : TM n)
     by_cases hic : i = counterIdx
     · subst i
       rw [ite_eq_left rfl, Function.update_of_ne hne, Function.update_self]
-      show (((c.work counterIdx).write _).move Dir3.right) =
+      change (((c.work counterIdx).write _).move Dir3.right) =
         (c.work counterIdx).move Dir3.right
       rw [Tape.write, ite_eq_left hcounterHead]
     · rw [ite_eq_right hic]
       by_cases hil : i = limitIdx
       · subst i
         rw [ite_eq_left rfl, Function.update_self]
-        show (((c.work limitIdx).write _).move Dir3.right) =
+        change (((c.work limitIdx).write _).move Dir3.right) =
           (c.work limitIdx).move Dir3.right
         rw [Tape.write, ite_eq_left hlimitHead]
       · rw [ite_eq_right hil, Function.update_of_ne hil, Function.update_of_ne hic]
@@ -265,14 +265,14 @@ theorem binaryForTM_step_rewind_unequal_internal (body : TM n)
     by_cases hic : i = counterIdx
     · subst i
       rw [ite_eq_left rfl, Function.update_of_ne hne, Function.update_self]
-      show (((c.work counterIdx).write _).move Dir3.right) =
+      change (((c.work counterIdx).write _).move Dir3.right) =
         (c.work counterIdx).move Dir3.right
       rw [Tape.write, ite_eq_left hcounterHead]
     · rw [ite_eq_right hic]
       by_cases hil : i = limitIdx
       · subst i
         rw [ite_eq_left rfl, Function.update_self]
-        show (((c.work limitIdx).write _).move Dir3.right) =
+        change (((c.work limitIdx).write _).move Dir3.right) =
           (c.work limitIdx).move Dir3.right
         rw [Tape.write, ite_eq_left hlimitHead]
       · rw [ite_eq_right hil, Function.update_of_ne hil, Function.update_of_ne hic]

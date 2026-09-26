@@ -54,7 +54,7 @@ theorem resetTapes_hoareTime {n : ℕ} (targets : List (Fin n)) (hnodup : target
       (targets.length * (H + 4) + H * 4 + 8) := by
   have hregParked : Parked (regTape H) :=
     ⟨le_refl 1, fun i hi => by
-      show regCells H i ≠ Γ.start
+      change regCells H i ≠ Γ.start
       simp only [regCells]; split
       · omega
       · split <;> decide⟩
@@ -77,14 +77,14 @@ theorem resetTapes_hoareTime {n : ℕ} (targets : List (Fin n)) (hnodup : target
   have hAtarget : ∀ j, j ∈ targets → (workA j).cells 0 = Γ.start ∧ (workA j).head ≤ H + 1 := by
     intro j hj
     refine ⟨(hworkSI' j).1, ?_⟩
-    show max (work₀ j).head 1 ≤ H + 1
+    change max (work₀ j).head 1 ≤ H + 1
     have := htargetHead j hj
     omega
   have hA := parkAll_hoareTime inp₀ work₀ out₀ hinpSI hworkSI' houtSI
   have hinpAeq : (⟨max inp₀.head 1, inp₀.cells⟩ : Tape) = inp₀ :=
-    Tape.ext (by show max inp₀.head 1 = inp₀.head; have := hinpP.1; omega) rfl
+    Tape.ext (by change max inp₀.head 1 = inp₀.head; have := hinpP.1; omega) rfl
   have houtAeq : (⟨max out₀.head 1, out₀.cells⟩ : Tape) = out₀ :=
-    Tape.ext (by show max out₀.head 1 = out₀.head; have := houtP.1; omega) rfl
+    Tape.ext (by change max out₀.head 1 = out₀.head; have := houtP.1; omega) rfl
   have hApost_imp : ∀ inp work out,
       (inp = (⟨max inp₀.head 1, inp₀.cells⟩ : Tape) ∧
         (∀ i, work i = workA i) ∧ out = (⟨max out₀.head 1, out₀.cells⟩ : Tape)) →
@@ -124,16 +124,16 @@ theorem resetTapes_hoareTime {n : ℕ} (targets : List (Fin n)) (hnodup : target
     by_cases hjr : j = r
     · rw [hjr, Function.update_self]
       rw [hnts r hr]
-      show (⟨max (work₀ r).head 1, (work₀ r).cells⟩ : Tape) = regTape H
+      change (⟨max (work₀ r).head 1, (work₀ r).cells⟩ : Tape) = regTape H
       rw [hworkR]
-      exact Tape.ext (by show max 1 1 = 1; omega) (by rw [regT_cells])
+      exact Tape.ext (by change max 1 1 = 1; omega) (by rw [regT_cells])
     · rw [Function.update_of_ne hjr]
       by_cases hjt : j ∈ targets
       · rw [hts j hjt, hworkC]; simp [hjt]
       · rw [hnts j hjt, hworkC]
         simp only [hjt, ite_false]
         exact Tape.ext (by
-          show max (work₀ j).head 1 = (work₀ j).head
+          change max (work₀ j).head 1 = (work₀ j).head
           have := (hother j hjr hjt).1
           omega) rfl
   have hread : ∀ (work : Fin n → Tape),
@@ -213,7 +213,7 @@ theorem resetTapesTM_hoareTime {n : ℕ} (targets : List (Fin n)) (hnodup : targ
   have houtP : Parked out₀ := by rw [hout0]; exact parked_parkedBlank
   have hregParked : Parked (regTape H) :=
     ⟨le_refl 1, fun i hi => by
-      show regCells H i ≠ Γ.start
+      change regCells H i ≠ Γ.start
       simp only [regCells]; split
       · omega
       · split <;> decide⟩

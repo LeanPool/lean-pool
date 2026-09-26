@@ -215,7 +215,7 @@ theorem rewound (t : Tape) {n : ℕ} (h : t.head ≤ n) :
       = { head := 0, cells := t.cells } := by
   obtain ⟨h1, h2⟩ := head_moveLeft t n
   refine Tape.ext ?_ h2
-  show ((fun s : Tape => s.move Dir3.left)^[n] t).head = 0
+  change ((fun s : Tape => s.move Dir3.left)^[n] t).head = 0
   rw [h1]
   omega
 

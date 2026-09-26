@@ -73,7 +73,7 @@ theorem unionTM_decidesInTime {tm₁ : TM n₁} {tm₂ : TM n₂}
     -- Combine Phase 1 + transition
     have hoh := hbounds.2.1  -- c₁.output.head ≤ t₁
     refine ⟨c_final, t₁ + t_tr, ?_, reachesIn_trans _ hphase1 htrans, hhalt_f, ?_, ?_⟩
-    · show t₁ + t_tr ≤ 10 * f₁ x.length + f₂ x.length; omega
+    · change t₁ + t_tr ≤ 10 * f₁ x.length + f₂ x.length; omega
     · exact fun _ => hout_f
     · intro hx; exfalso; exact hx (Or.inl hx₁)
   · -- tm₁ rejected: output cell 1 = Γ.zero
@@ -93,12 +93,12 @@ theorem unionTM_decidesInTime {tm₁ : TM n₁} {tm₂ : TM n₂}
     have hfull := reachesIn_trans _ (reachesIn_trans _ hphase1 htrans) hphase2
     -- The final config is halted
     have hfinal_halted : (unionTM tm₁ tm₂).halted c_end := by
-      show c_end.state = Sum.inr (Sum.inr tm₂.qhalt)
+      change c_end.state = Sum.inr (Sum.inr tm₂.qhalt)
       rw [hend_state, hhalt₂]
     have hih := hbounds.1    -- c₁.input.head ≤ t₁
     have hoh := hbounds.2.1  -- c₁.output.head ≤ t₁
     refine ⟨c_end, t₁ + t_tr + t₂, ?_, hfull, hfinal_halted, ?_, ?_⟩
-    · show t₁ + t_tr + t₂ ≤ 10 * f₁ x.length + f₂ x.length; omega
+    · change t₁ + t_tr + t₂ ≤ 10 * f₁ x.length + f₂ x.length; omega
     · intro hx; rw [hend_output]; cases hx with
       | inl h => exact absurd h hx₁
       | inr h => exact hmem₂ h

@@ -100,7 +100,7 @@ theorem applyPre_startInvariant (M : TM k) (y : List Bool) (realInput : Tape)
     (i : Fin (k + 2)) : Tape.StartInvariant (applyPre M y realInput i) := by
   refine Fin.lastCases ?_ ?_ i
   · rw [applyPre, Fin.snoc_last]
-    show Tape.StartInvariant ((Tape.init ([] : List Γ)).move Dir3.right)
+    change Tape.StartInvariant ((Tape.init ([] : List Γ)).move Dir3.right)
     exact startInvariant_initNil.move Dir3.right
   · intro i'
     rw [applyPre, Fin.snoc_castSucc]
@@ -119,11 +119,11 @@ theorem applyPre_cells_blank (M : TM k) (y : List Bool) (realInput : Tape)
   have hj0 : j = (j - 1) + 1 := by omega
   refine Fin.lastCases ?_ ?_ i
   · rw [applyPre, Fin.snoc_last]
-    show ((Tape.init ([] : List Γ)).move Dir3.right).cells j = Γ.blank
+    change ((Tape.init ([] : List Γ)).move Dir3.right).cells j = Γ.blank
     rw [Tape.move_cells, hj0, Tape.init_cells_ge [] (j - 1) (by simp)]
   · intro i'
     rw [applyPre, Fin.snoc_castSucc]
-    show ((retargetInputStartedCfg M y realInput).work i').cells j = Γ.blank
+    change ((retargetInputStartedCfg M y realInput).work i').cells j = Γ.blank
     rw [retargetInputStartedCfg]
     dsimp only
     split

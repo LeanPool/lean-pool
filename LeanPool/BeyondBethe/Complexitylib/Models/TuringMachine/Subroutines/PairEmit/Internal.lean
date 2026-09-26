@@ -281,7 +281,7 @@ theorem pairInputWorkTM_reachesIn_internal {n : ℕ}
           exact Tape.init_ofBool_move_right_read_ne_start second)
       (by
         intro i hi
-        show (work i).cells (work i).head ≠ Γ.start
+        change (work i).cells (work i).head ≠ Γ.start
         exact (hwork i).1.2 (work i).head (hwork i).2)
       (by rw [show c₀.output = out by rfl, houtput]
           exact Tape.init_nil_move_right_hasBinaryPrefix_nil)
@@ -296,7 +296,7 @@ theorem pairInputWorkTM_reachesIn_internal {n : ℕ}
     · subst i
       exact hsource₁.read_ne_start
     · rw [hother₁ i hi]
-      show (work i).cells (work i).head ≠ Γ.start
+      change (work i).cells (work i).head ≠ Γ.start
       exact (hwork i).1.2 (work i).head (hwork i).2
   obtain ⟨c₂, hreach₂, hhalt₂, hinput₂, hinputCells₂, hwork₂,
       houtput₂⟩ :=

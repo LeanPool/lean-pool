@@ -463,10 +463,10 @@ theorem rewindInputTM_hoareTime_frame {n : ℕ} (B_input : ℕ)
       simp only [TM.step, hst1, rewindInputTM]
       refine ⟨_, rfl, rfl, ?_, ?_, ?_, ?_⟩
       · have := input_idle_preserve c₁.input hread1
-        show (c₁.input.move (idleDir c₁.input.read)).head = 1
+        change (c₁.input.move (idleDir c₁.input.read)).head = 1
         rw [this]; exact hh1
       · have := input_idle_preserve c₁.input hread1
-        show (c₁.input.move (idleDir c₁.input.read)).cells = c₁.input.cells
+        change (c₁.input.move (idleDir c₁.input.read)).cells = c₁.input.cells
         rw [this]
       · funext i; dsimp only []
         rw [hwork1]
@@ -637,12 +637,12 @@ theorem rewindWorkTM_hoareTime_frame {n : ℕ} (idx : Fin n) (B_tape : ℕ)
       refine ⟨_, rfl, rfl, ?_, ?_, ?_, ?_, ?_⟩
       · dsimp only []
         have := tape_idle_preserve (c₁.work idx) hread1 (by omega)
-        show ((c₁.work idx).writeAndMove (readBackWrite (c₁.work idx).read)
+        change ((c₁.work idx).writeAndMove (readBackWrite (c₁.work idx).read)
           (idleDir (c₁.work idx).read)).head = 1
         rw [this]; exact hh1
       · dsimp only []
         have := tape_idle_preserve (c₁.work idx) hread1 (by omega)
-        show ((c₁.work idx).writeAndMove (readBackWrite (c₁.work idx).read)
+        change ((c₁.work idx).writeAndMove (readBackWrite (c₁.work idx).read)
           (idleDir (c₁.work idx).read)).cells = (c₁.work idx).cells
         rw [this]
       · dsimp only []; rw [hinp1]; simp only [idleDir, hinp_ns, ↓reduceIte, Tape.move]

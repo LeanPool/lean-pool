@@ -111,7 +111,7 @@ theorem compositionFirstTM_boundary_internal (tmF : TM nf) (ng : ℕ)
       ((compositionFirstTM tmF ng).initCfg x) C := by
     simpa [compositionFirstTM] using hreachC
   have hhaltFirst : (compositionFirstTM tmF ng).halted C := by
-    show C.state = (compositionFirstTM tmF ng).qhalt
+    change C.state = (compositionFirstTM tmF ng).qhalt
     rw [hstateC]
     exact hhaltR
   have hrawC : (C.work (compositionRawOutputIdx nf ng)).HasOutput (f x) := by

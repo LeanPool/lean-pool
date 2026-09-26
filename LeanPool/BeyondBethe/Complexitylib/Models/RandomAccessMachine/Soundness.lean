@@ -75,7 +75,7 @@ private theorem step_sqStart (k : ℕ) : step (sqProg k) sqStart = sqCfg 0 := by
   rw [hcur]
   ext i
   · rfl
-  · show Function.update sqStart.regs 1 2 i = (sqCfg 0).regs i
+  · change Function.update sqStart.regs 1 2 i = (sqCfg 0).regs i
     by_cases hi : i = 1
     · subst hi; rw [Function.update_self]; rfl
     · rw [Function.update_of_ne hi]
@@ -92,7 +92,7 @@ private theorem step_sqCfg {k j : ℕ} (hj : j < k) :
   rw [hcur]
   ext i
   · rfl
-  · show Function.update (sqCfg j).regs 1 ((sqCfg j).regs 1 * (sqCfg j).regs 1) i
+  · change Function.update (sqCfg j).regs 1 ((sqCfg j).regs 1 * (sqCfg j).regs 1) i
         = (sqCfg (j + 1)).regs i
     by_cases hi : i = 1
     · subst hi; rw [Function.update_self]; exact sq_pow j
@@ -148,7 +148,7 @@ theorem logGap_squaring {k : ℕ} (hk : 1 ≤ k) :
   refine ⟨sqProg (m + 1), sqStart, ?_, ?_, ?_⟩
   · -- Halted after m + 2 steps: program counter reaches the end.
     rw [sqRun (m + 1) (le_refl _)]
-    show curInstr (sqProg (m + 1)) (sqCfg (m + 1)) = Instr.halt
+    change curInstr (sqProg (m + 1)) (sqCfg (m + 1)) = Instr.halt
     unfold curInstr
     have hlen : (sqProg (m + 1)).length ≤ m + 2 := by rw [sqProg_length]
     rw [show (sqCfg (m + 1)).pc = m + 2 from rfl, List.getElem?_eq_none hlen]

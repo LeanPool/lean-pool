@@ -61,7 +61,7 @@ theorem placeWorkTM_step_placeWorkCfg_of_startInvariant (tm : TM n)
       (tm.step c).map (placeWorkCfg tm pre post extras) := by
   apply placeWorkTM_step_placeWorkCfg_stable tm pre post extras c
   intro i hi
-  show (extras i).cells (extras i).head ≠ Γ.start
+  change (extras i).cells (extras i).head ≠ Γ.start
   exact (hinv i hi).2 (extras i).head (hhead i hi)
 
 /-- A stable arbitrary frame is preserved exactly throughout a bounded source
@@ -87,7 +87,7 @@ theorem placeWorkTM_reachesIn_placeWorkCfg_of_startInvariant (tm : TM n)
       (placeWorkCfg tm pre post extras c') := by
   apply placeWorkTM_reachesIn_placeWorkCfg_stable tm pre post extras hreach
   intro i hi
-  show (extras i).cells (extras i).head ≠ Γ.start
+  change (extras i).cells (extras i).head ≠ Γ.start
   exact (hinv i hi).2 (extras i).head (hhead i hi)
 
 /-- The canonical parked embedding commutes with one source step. -/

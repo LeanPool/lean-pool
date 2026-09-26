@@ -35,7 +35,7 @@ currently on it. -/
 theorem writeAndMove_readBack_of_startInvariant (t : Tape) (h : Tape.StartInvariant t)
     (d : Dir3) : t.writeAndMove (readBackWrite t.read) d = t.move d := by
   by_cases hh : t.head = 0
-  · show (t.write _).move d = t.move d
+  · change (t.write _).move d = t.move d
     congr 1
     rw [Tape.write, ite_eq_left hh]
   · exact writeAndMove_readBack t (h.read_ne_start (by omega)) d

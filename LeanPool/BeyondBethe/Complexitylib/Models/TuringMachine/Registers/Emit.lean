@@ -112,7 +112,7 @@ end OutAcc
 /-- The empty accumulator: a blank output tape with the head bumped to cell 1. -/
 theorem outAcc_nil_init : OutAcc [] { head := 1, cells := (Tape.init []).cells } := by
   refine ⟨rfl, by simp [Tape.init], fun i hi => absurd hi (by simp), fun j hj => ?_⟩
-  show (Tape.init []).cells j = Γ.blank
+  change (Tape.init []).cells j = Γ.blank
   simp only [Tape.init]
   rw [ite_eq_right (by omega : ¬ j = 0)]
   simp
@@ -125,14 +125,14 @@ theorem outAcc_append_bit {ys : List Bool} {out : Tape} (h : OutAcc ys out) (b :
   have hne : ¬ out.head = 0 := by omega
   have hcells : (out.writeAndMove (Γ.ofBool b) .right).cells
       = Function.update out.cells (ys.length + 1) (Γ.ofBool b) := by
-    show ((out.write _).move _).cells = _
+    change ((out.write _).move _).cells = _
     rw [Tape.move]
-    show (out.write _).cells = _
+    change (out.write _).cells = _
     rw [Tape.write, ite_eq_right hne, hhead]
   have hhead' : (out.writeAndMove (Γ.ofBool b) .right).head = out.head + 1 := by
-    show ((out.write _).move _).head = _
+    change ((out.write _).move _).head = _
     rw [Tape.move]
-    show (out.write _).head + 1 = _
+    change (out.write _).head + 1 = _
     rw [Tape.write, ite_eq_right hne]
   refine ⟨?_, ?_, ?_, ?_⟩
   · rw [hhead', hhead]; simp
@@ -185,7 +185,7 @@ def bumpTM : TM n where
 theorem parked_init_input (x : List Bool) :
     Parked { head := 1, cells := (Tape.init (x.map Γ.ofBool)).cells } := by
   refine ⟨le_refl 1, fun j hj => ?_⟩
-  show (Tape.init (x.map Γ.ofBool)).cells j ≠ Γ.start
+  change (Tape.init (x.map Γ.ofBool)).cells j ≠ Γ.start
   simp only [Tape.init]
   rw [ite_eq_right (by omega : ¬ j = 0)]
   cases h : (x.map Γ.ofBool)[j - 1]? with
@@ -449,7 +449,7 @@ private theorem emitUnaryTM_ne_halt {s : EmitUnaryPhase} (h : s ≠ .done)
     {c : Cfg n (emitUnaryTM (n := n) r).Q} (hst : c.state = s) :
     ¬ c.state = (emitUnaryTM (n := n) r).qhalt := by
   rw [hst]
-  show ¬ s = EmitUnaryPhase.done
+  change ¬ s = EmitUnaryPhase.done
   exact h
 
 /-- `emitA` over a mark: write one `true`, output right, register stays. -/
@@ -559,7 +559,7 @@ private theorem emitUnaryTM_step_back_start (c : Cfg n (emitUnaryTM (n := n) r).
     by_cases hir : i = r
     · subst hir
       rw [ite_eq_left rfl, Function.update_self]
-      show ((c.work i).write _).move Dir3.right = (c.work i).move .right
+      change ((c.work i).write _).move Dir3.right = (c.work i).move .right
       congr 1
       rw [Tape.write, ite_eq_left h0]
     · rw [ite_eq_right hir, Function.update_of_ne hir]
@@ -621,30 +621,30 @@ private theorem emitUnaryTM_emit_run (v m : ℕ) :
     obtain ⟨c', hreach, hst', hinp', hwork', hcells', hhead', hout'⟩ :=
       ih (k + 1) (by omega) c₂ (ys ++ [true] ++ [true]) rfl hinp
         (fun i hi => by
-          show Parked (Function.update c.work r ((c.work r).move .right) i)
+          change Parked (Function.update c.work r ((c.work r).move .right) i)
           rw [Function.update_of_ne hi]
           exact hwork i hi)
         (fun i hi => by
-          show (Function.update c.work r ((c.work r).move .right) r).cells (i + 1) = Γ.one
+          change (Function.update c.work r ((c.work r).move .right) r).cells (i + 1) = Γ.one
           rw [Function.update_self, hmove_cells]
           exact hones i hi)
         (fun j hj => by
-          show (Function.update c.work r ((c.work r).move .right) r).cells j = Γ.blank
+          change (Function.update c.work r ((c.work r).move .right) r).cells j = Γ.blank
           rw [Function.update_self, hmove_cells]
           exact hblanks j hj)
         (by
-          show (Function.update c.work r ((c.work r).move .right) r).head = (k + 1) + 1
+          change (Function.update c.work r ((c.work r).move .right) r).head = (k + 1) + 1
           rw [Function.update_self]
-          show (c.work r).head + 1 = (k + 1) + 1
+          change (c.work r).head + 1 = (k + 1) + 1
           rw [hhead])
         (outAcc_append_bit (outAcc_append_bit hout true) true)
     refine ⟨c', .step hstepA (.step hstepB hreach), hst', hinp', ?_, ?_, hhead', ?_⟩
     · intro i hi
       rw [hwork' i hi]
-      show Function.update c.work r ((c.work r).move .right) i = c.work i
+      change Function.update c.work r ((c.work r).move .right) i = c.work i
       rw [Function.update_of_ne hi]
     · rw [hcells']
-      show (Function.update c.work r ((c.work r).move .right) r).cells = (c.work r).cells
+      change (Function.update c.work r ((c.work r).move .right) r).cells = (c.work r).cells
       rw [Function.update_self, hmove_cells]
     · have he : ys ++ [true] ++ [true] ++ List.replicate (2 * m) true
           = ys ++ List.replicate (2 * (m + 1)) true := by
@@ -683,23 +683,23 @@ private theorem emitUnaryTM_back_run (h : ℕ) :
       intro i
       by_cases hir : i = r
       · subst hir
-        show Parked (Function.update c.work i ((c.work i).move .right) i)
+        change Parked (Function.update c.work i ((c.work i).move .right) i)
         rw [Function.update_self]
-        exact ⟨by show (c.work i).head + 1 ≥ 1; omega, fun j hj => hcr j hj⟩
-      · show Parked (Function.update c.work r ((c.work r).move .right) i)
+        exact ⟨by change (c.work i).head + 1 ≥ 1; omega, fun j hj => hcr j hj⟩
+      · change Parked (Function.update c.work r ((c.work r).move .right) i)
         rw [Function.update_of_ne hir]
         exact hwork i hir
     have hstep₂ := emitUnaryTM_step_park c₁ rfl hinp hworkP hout.parked
     refine ⟨_, .step hstep₁ (.step hstep₂ .zero), rfl, rfl, ?_, ?_, ?_, rfl⟩
     · intro i hi
-      show Function.update c.work r ((c.work r).move .right) i = c.work i
+      change Function.update c.work r ((c.work r).move .right) i = c.work i
       rw [Function.update_of_ne hi]
-    · show (Function.update c.work r ((c.work r).move .right) r).cells = (c.work r).cells
+    · change (Function.update c.work r ((c.work r).move .right) r).cells = (c.work r).cells
       rw [Function.update_self]
       rfl
-    · show (Function.update c.work r ((c.work r).move .right) r).head = 1
+    · change (Function.update c.work r ((c.work r).move .right) r).head = 1
       rw [Function.update_self]
-      show (c.work r).head + 1 = 1
+      change (c.work r).head + 1 = 1
       rw [hhead]
   | succ h ih =>
     intro c ys hst hinp hwork hc0 hcr hhead hout
@@ -711,28 +711,28 @@ private theorem emitUnaryTM_back_run (h : ℕ) :
         work := Function.update c.work r ((c.work r).move .left),
         output := c.output } with hc₁
     have hupd_cells : (c₁.work r).cells = (c.work r).cells := by
-      show (Function.update c.work r ((c.work r).move .left) r).cells = _
+      change (Function.update c.work r ((c.work r).move .left) r).cells = _
       rw [Function.update_self]
       rfl
     obtain ⟨c', hreach, hst', hinp', hwork', hcells', hhead', hout'⟩ :=
       ih c₁ ys rfl hinp
         (fun i hi => by
-          show Parked (Function.update c.work r ((c.work r).move .left) i)
+          change Parked (Function.update c.work r ((c.work r).move .left) i)
           rw [Function.update_of_ne hi]
           exact hwork i hi)
         (by rw [hupd_cells]; exact hc0)
         (fun j hj => by rw [hupd_cells]; exact hcr j hj)
         (by
-          show (Function.update c.work r ((c.work r).move .left) r).head = h
+          change (Function.update c.work r ((c.work r).move .left) r).head = h
           rw [Function.update_self]
-          show (c.work r).head - 1 = h
+          change (c.work r).head - 1 = h
           rw [hhead]
           omega)
         hout
     refine ⟨c', .step hstep₁ hreach, hst', hinp', ?_, ?_, hhead', hout'⟩
     · intro i hi
       rw [hwork' i hi]
-      show Function.update c.work r ((c.work r).move .left) i = c.work i
+      change Function.update c.work r ((c.work r).move .left) i = c.work i
       rw [Function.update_of_ne hi]
     · rw [hcells', hupd_cells]
 
@@ -753,7 +753,7 @@ theorem emitUnaryTM_hoareTime (r : Fin n) (v : ℕ) (inp₀ : Tape) (work₀ : F
     emitUnaryTM_emit_run v v 0 (by omega)
       { state := .emitA, input := inp, work := work, output := out } ys rfl
       hinp₀ hwork₀ (fun i hi => hreg.cells_one hi) (fun j hj => hreg.cells_blank hj)
-      (by show (work r).head = 0 + 1; rw [hreg.head_eq]) hout
+      (by change (work r).head = 0 + 1; rw [hreg.head_eq]) hout
   have hinpP₁ : Parked c₁.input := by rw [hinp₁]; exact hinp₀
   have hworkP₁ : ∀ i, i ≠ r → Parked (c₁.work i) := fun i hi => by
     rw [hwork₁ i hi]
@@ -767,22 +767,22 @@ theorem emitUnaryTM_hoareTime (r : Fin n) (v : ℕ) (inp₀ : Tape) (work₀ : F
       work := Function.update c₁.work r ((c₁.work r).move .left),
       output := c₁.output } with hc₂
   have hupd_cells₂ : (c₂.work r).cells = (work r).cells := by
-    show (Function.update c₁.work r ((c₁.work r).move .left) r).cells = _
+    change (Function.update c₁.work r ((c₁.work r).move .left) r).cells = _
     rw [Function.update_self]
-    show (c₁.work r).cells = _
+    change (c₁.work r).cells = _
     rw [hcells₁]
   obtain ⟨c₃, hreach₃, hst₃, hinp₃, hwork₃, hcells₃, hhead₃, hout₃⟩ :=
     emitUnaryTM_back_run v c₂ (ys ++ List.replicate (2 * v) true) rfl hinpP₁
       (fun i hi => by
-        show Parked (Function.update c₁.work r ((c₁.work r).move .left) i)
+        change Parked (Function.update c₁.work r ((c₁.work r).move .left) i)
         rw [Function.update_of_ne hi]
         exact hworkP₁ i hi)
       (by rw [hupd_cells₂]; exact hreg.cell0)
       (fun j hj => by rw [hupd_cells₂]; exact hreg.cells_ne_start hj)
       (by
-        show (Function.update c₁.work r ((c₁.work r).move .left) r).head = v
+        change (Function.update c₁.work r ((c₁.work r).move .left) r).head = v
         rw [Function.update_self]
-        show (c₁.work r).head - 1 = v
+        change (c₁.work r).head - 1 = v
         rw [hhead₁]
         omega)
       hout₁
@@ -796,7 +796,7 @@ theorem emitUnaryTM_hoareTime (r : Fin n) (v : ℕ) (inp₀ : Tape) (work₀ : F
       · rw [hhead₃, hreg.head_eq]
       · rw [hcells₃, hupd_cells₂]
     · rw [hwork₃ i hir]
-      show Function.update c₁.work r ((c₁.work r).move .left) i = work i
+      change Function.update c₁.work r ((c₁.work r).move .left) i = work i
       rw [Function.update_of_ne hir]
       exact hwork₁ i hir
   · rw [hout₃]

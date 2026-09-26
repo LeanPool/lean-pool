@@ -128,7 +128,7 @@ theorem retargetWrap_work_last (M : TM k) (realInput : Tape) (c : Cfg k M.Q) :
 private theorem tape_writeBack_eq_move (t : Tape) (d : Dir3)
     (h : t.head = 0 ∨ t.read ≠ Γ.start) :
     t.writeAndMove (readBackWrite t.read).toΓ d = t.move d := by
-  show (t.write (readBackWrite t.read).toΓ).move d = t.move d
+  change (t.write (readBackWrite t.read).toΓ).move d = t.move d
   have hwrite : t.write (readBackWrite t.read).toΓ = t := by
     simp only [Tape.write]
     rcases h with hh | hne
@@ -154,14 +154,14 @@ theorem retargetInput_step_commute (M : TM k) {c c' : Cfg k M.Q}
   -- Key fact 1: wHeads ⟨k, _⟩ = c.input.read.
   have hwHead_last : ((retargetWrap M realInput c).work ⟨k, by omega⟩).read
       = c.input.read := by
-    show (if h : k < k then c.work ⟨k, h⟩ else c.input).read = c.input.read
+    change (if h : k < k then c.work ⟨k, h⟩ else c.input).read = c.input.read
     simp
   -- Key fact 2: fun i : Fin k => wHeads ⟨i.val, _⟩ equals fun i => (c.work i).read.
   have hinner : (fun i : Fin k =>
       ((retargetWrap M realInput c).work ⟨i.val, by omega⟩).read)
         = (fun i => (c.work i).read) := by
     funext i
-    show (if h : i.val < k then c.work ⟨i.val, h⟩ else c.input).read = (c.work i).read
+    change (if h : i.val < k then c.work ⟨i.val, h⟩ else c.input).read = (c.work i).read
     rw [dif_pos i.isLt]
   -- Unfold step on the LHS. `split` reduces the halting ite (the stored
   -- decidability instance blocks `simp`/`ite_eq_right` post-v4.30).
@@ -188,17 +188,17 @@ theorem retargetInput_step_commute (M : TM k) {c c' : Cfg k M.Q}
   · -- i.val = k: virtual input case.
     have hik_eq : i.val = k := by have := i.isLt; omega
     have hwork_k : (retargetWrap M realInput c).work i = c.input := by
-      show (if h : i.val < k then c.work ⟨i.val, h⟩ else c.input) = c.input
+      change (if h : i.val < k then c.work ⟨i.val, h⟩ else c.input) = c.input
       rw [dite_eq_right hik]
     have hcond : c.input.head = 0 ∨ c.input.read ≠ Γ.start := by
       by_cases hh : c.input.head = 0
       · left; exact hh
       · right
-        show c.input.cells c.input.head ≠ Γ.start
+        change c.input.cells c.input.head ≠ Γ.start
         exact hinp.2 c.input.head (by omega)
     -- Rewrite LHS via hwork_k, then use tape_writeBack_eq_move.
     rw [hwork_k]
-    show _ = (if h : i.val < k then _ else _)
+    change _ = (if h : i.val < k then _ else _)
     rw [dite_eq_right hik, dite_eq_right hik, dite_eq_right hik]
     exact tape_writeBack_eq_move c.input _ hcond
 
@@ -276,8 +276,8 @@ theorem retargetInput_reachesIn_halted_of_decidesInTime (M : TM k) {L : Language
     retargetInput_reachesIn_of_reachesIn M hreach hinp hwork hout realInput
   refine ⟨retargetWrap M finalReal c_M, t, ht, ?_, ?_, ?_, ?_⟩
   · rw [retargetInitCfg_eq_retargetWrap]; exact hreachSim
-  · show (retargetWrap M finalReal c_M).state = (retargetInput M).qhalt
-    show c_M.state = M.qhalt
+  · change (retargetWrap M finalReal c_M).state = (retargetInput M).qhalt
+    change c_M.state = M.qhalt
     exact hhalt
   · intro hz
     show (retargetWrap M finalReal c_M).output.cells 1 = Γ.one
@@ -446,8 +446,8 @@ theorem retargetInput_decidesVirtual_started (M : TM k) {L : Language} {T : ℕ 
   obtain ⟨finalReal, hreachSim⟩ :=
     retargetInput_reachesIn_of_reachesIn M hrest hinp hwork hout realInput
   refine ⟨retargetWrap M finalReal c_M, t', by omega, hreachSim, ?_, ?_, ?_⟩
-  · show (retargetWrap M finalReal c_M).state = (retargetInput M).qhalt
-    show c_M.state = M.qhalt
+  · change (retargetWrap M finalReal c_M).state = (retargetInput M).qhalt
+    change c_M.state = M.qhalt
     exact hhalt
   · intro hz
     show (retargetWrap M finalReal c_M).output.cells 1 = Γ.one
@@ -506,7 +506,7 @@ theorem retargetInput_hoareTime (M : TM k)
   refine ⟨retargetWrap M finalReal c', t, ht, ?_, ?_, ?_⟩
   · rw [← hstart]
     exact hreachSim
-  · show (retargetWrap M finalReal c').state = (retargetInput M).qhalt
+  · change (retargetWrap M finalReal c').state = (retargetInput M).qhalt
     simpa [retargetInput, retargetWrap] using hhalt
   · refine ⟨c'.input, c'.work, hpost, ?_, ?_⟩
     · intro i

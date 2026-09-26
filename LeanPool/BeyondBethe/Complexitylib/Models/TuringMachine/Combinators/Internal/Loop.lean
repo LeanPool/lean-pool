@@ -238,7 +238,7 @@ theorem loopTM_check_halt (tmBody tmTest : TM n)
   have hread : c.output.read = Γ.one := by simp [Tape.read, hhead, hcell1]
   simp only [TM.step, ↓reduceIte, hstate, loopTM, hread]
   refine ⟨_, rfl, rfl, ?_⟩
-  show (c.output.writeAndMove (readBackWrite Γ.one).toΓ (idleDir Γ.one)).cells = c.output.cells
+  change (c.output.writeAndMove (readBackWrite Γ.one).toΓ (idleDir Γ.one)).cells = c.output.cells
   simp only [readBackWrite, Γw.toΓ, idleDir, Tape.writeAndMove, Tape.move_cells]
   simp only [Tape.write]; split
   · omega

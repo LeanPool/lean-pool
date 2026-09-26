@@ -94,7 +94,7 @@ theorem lastBitZero_in_DTIME :
     (fun _ b => some b) (fun s => decide (s = some false))
     (L := Language.lastBitZero)
     (fun x => by
-      show (x.getLast? = some false) ↔ (decide (x.foldl _ none = some false) = true)
+      change (x.getLast? = some false) ↔ (decide (x.foldl _ none = some false) = true)
       rw [lastBit_fold_eq_getLast?, decide_eq_true_iff])
 
 /-- **`lastBitOne ∈ DTIME(n + 2)`**. -/
@@ -105,7 +105,7 @@ theorem lastBitOne_in_DTIME :
     (fun _ b => some b) (fun s => decide (s = some true))
     (L := Language.lastBitOne)
     (fun x => by
-      show (x.getLast? = some true) ↔ (decide (x.foldl _ none = some true) = true)
+      change (x.getLast? = some true) ↔ (decide (x.foldl _ none = some true) = true)
       rw [lastBit_fold_eq_getLast?, decide_eq_true_iff])
 
 -- ════════════════════════════════════════════════════════════════════════

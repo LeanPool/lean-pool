@@ -249,7 +249,7 @@ theorem takePrefix :
     | nil => rfl
     | cons b r ih =>
         cases b <;>
-          · show (recNotation _ _ _ r u) ++ caseBit _ _ _ = _
+          · change (recNotation _ _ _ r u) ++ caseBit _ _ _ = _
             rw [ih, hbit]
             exact (take_succ_eq (u 0) r.length).symm
   -- The step: append the next bit of `u 0`, located by dropping `|r|` bits.

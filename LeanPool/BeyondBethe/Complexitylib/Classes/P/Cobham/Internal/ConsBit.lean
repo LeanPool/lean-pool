@@ -157,7 +157,7 @@ private theorem consBitTM_copy_loop (b : Bool) (x : List Bool) :
       have hprefix1 : c1.output.HasBinaryPrefix (b :: x.take (k + 1)) := by
         have hco : (readBackWrite c.input.read).toΓ = Γ.ofBool (x[k]'hk_lt) := by
           rw [hread]; cases x[k]'hk_lt <;> rfl
-        show (c.output.writeAndMove ((readBackWrite c.input.read).toΓ) Dir3.right).HasBinaryPrefix
+        change (c.output.writeAndMove ((readBackWrite c.input.read).toΓ) Dir3.right).HasBinaryPrefix
           (b :: x.take (k + 1))
         rw [hco]; exact hprefix_next
       obtain ⟨c', hreach, hhalt, hprefix'⟩ :=
@@ -195,14 +195,14 @@ theorem consBitTM_computesInTime (b : Bool) :
   have hc2_input_cells : c2.input.cells = (Tape.init (x.map Γ.ofBool)).cells := by
     simp [c2, c1, Tape.move_cells]
   have hc2_input_head : c2.input.head = 0 + 1 := by
-    show (c1.input.move (idleDir c1.input.read)).head = 0 + 1
+    change (c1.input.move (idleDir c1.input.read)).head = 0 + 1
     rw [idleDir, ite_eq_right hne]
     simp [Tape.move, c1, Tape.init]
   have hc2_output : c2.output.HasBinaryPrefix (b :: x.take 0) := by
     have hbase : ((Tape.init []).move Dir3.right).HasBinaryPrefix [] :=
       Tape.init_nil_move_right_hasBinaryPrefix_nil
     have hw := Tape.hasBinaryPrefix_write_bit (t := (Tape.init []).move Dir3.right) b hbase
-    show (c1.output.writeAndMove ((Γw.ofBool b).toΓ) Dir3.right).HasBinaryPrefix (b :: x.take 0)
+    change (c1.output.writeAndMove ((Γw.ofBool b).toΓ) Dir3.right).HasBinaryPrefix (b :: x.take 0)
     rw [Γw.ofBool_toΓ, show c1.output = (Tape.init []).move Dir3.right from rfl]
     simpa using hw
   obtain ⟨c', hreach, hhalt, hprefix⟩ :=

@@ -169,7 +169,7 @@ private theorem catTM_emit_loop :
       have hpre1 : c1.output.HasBinaryPrefix (acc ++ [bit]) := by
         have hco : (readBackWrite c.input.read).toΓ = Γ.ofBool bit := by
           rw [hread]; cases bit <;> rfl
-        show (c.output.writeAndMove ((readBackWrite c.input.read).toΓ) Dir3.right).HasBinaryPrefix
+        change (c.output.writeAndMove ((readBackWrite c.input.read).toΓ) Dir3.right).HasBinaryPrefix
           (acc ++ [bit])
         rw [hco]; exact Tape.hasBinaryPrefix_write_bit bit hpre
       obtain ⟨c', t, ht, hreach, hhalt, hout⟩ :=
@@ -239,7 +239,7 @@ private theorem catTM_scan_loop :
             cases b0 <;> simp [TM.step, hstate, catTM, hread, Γ.ofBool, c1]
           have hsuf1 : c1.input.HasBinarySuffix [] := hsuf.move_right_cons
           have hpre1 : c1.output.HasBinaryPrefix acc := by
-            show (c.output.writeAndMove (readBackWrite c.output.read)
+            change (c.output.writeAndMove (readBackWrite c.output.read)
               (idleDir c.output.read)).HasBinaryPrefix acc
             rw [Tape.writeAndMove_readBack_idle_of_ne_start _ houtne]; exact hpre
           have hread1 : c1.input.read = Γ.blank := hsuf1.read_nil
@@ -261,7 +261,7 @@ private theorem catTM_scan_loop :
             simp [TM.step, hstate, catTM, hreadA, Γ.ofBool, c1]
           have hsuf1 : c1.input.HasBinarySuffix (true :: y) := hsuf.move_right_cons
           have hpre1 : c1.output.HasBinaryPrefix acc := by
-            show (c.output.writeAndMove (readBackWrite c.output.read)
+            change (c.output.writeAndMove (readBackWrite c.output.read)
               (idleDir c.output.read)).HasBinaryPrefix acc
             rw [Tape.writeAndMove_readBack_idle_of_ne_start _ houtne]; exact hpre
           have hreadB : c1.input.read = Γ.ofBool true := hsuf1.read_cons
@@ -277,7 +277,7 @@ private theorem catTM_scan_loop :
             simp [TM.step, catTM, hreadB, Γ.ofBool, c1, c2]
           have hsuf2 : c2.input.HasBinarySuffix y := hsuf1.move_right_cons
           have hpre2 : c2.output.HasBinaryPrefix acc := by
-            show (c1.output.writeAndMove (readBackWrite c1.output.read)
+            change (c1.output.writeAndMove (readBackWrite c1.output.read)
               (idleDir c1.output.read)).HasBinaryPrefix acc
             rw [Tape.writeAndMove_readBack_idle_of_ne_start _ houtne1]; exact hpre1
           obtain ⟨c', t, ht, hreach, hhalt, hout⟩ := catTM_emit_loop y acc c2 rfl hsuf2 hpre2
@@ -297,7 +297,7 @@ private theorem catTM_scan_loop :
             simp [TM.step, hstate, catTM, hreadA, Γ.ofBool, c1]
           have hsuf1 : c1.input.HasBinarySuffix (false :: rest) := hsuf.move_right_cons
           have hpre1 : c1.output.HasBinaryPrefix acc := by
-            show (c.output.writeAndMove (readBackWrite c.output.read)
+            change (c.output.writeAndMove (readBackWrite c.output.read)
               (idleDir c.output.read)).HasBinaryPrefix acc
             rw [Tape.writeAndMove_readBack_idle_of_ne_start _ houtne]; exact hpre
           have hreadB : c1.input.read = Γ.ofBool false := hsuf1.read_cons
@@ -319,7 +319,7 @@ private theorem catTM_scan_loop :
             simp [TM.step, hstate, catTM, hreadA, Γ.ofBool, c1]
           have hsuf1 : c1.input.HasBinarySuffix (false :: rest) := hsuf.move_right_cons
           have hpre1 : c1.output.HasBinaryPrefix acc := by
-            show (c.output.writeAndMove (readBackWrite c.output.read)
+            change (c.output.writeAndMove (readBackWrite c.output.read)
               (idleDir c.output.read)).HasBinaryPrefix acc
             rw [Tape.writeAndMove_readBack_idle_of_ne_start _ houtne]; exact hpre
           have hreadB : c1.input.read = Γ.ofBool false := hsuf1.read_cons
@@ -333,7 +333,7 @@ private theorem catTM_scan_loop :
             simp [TM.step, catTM, hreadB, Γ.ofBool, c1, c2]
           have hsuf2 : c2.input.HasBinarySuffix rest := hsuf1.move_right_cons
           have hpre2 : c2.output.HasBinaryPrefix (acc ++ [false]) := by
-            show (c1.output.writeAndMove ((Γw.ofBool false).toΓ) Dir3.right).HasBinaryPrefix
+            change (c1.output.writeAndMove ((Γw.ofBool false).toΓ) Dir3.right).HasBinaryPrefix
               (acc ++ [false])
             rw [Γw.ofBool_toΓ]; exact Tape.hasBinaryPrefix_write_bit false hpre1
           have hrfuel : rest.length ≤ fuel := by
@@ -358,7 +358,7 @@ private theorem catTM_scan_loop :
             simp [TM.step, hstate, catTM, hreadA, Γ.ofBool, c1]
           have hsuf1 : c1.input.HasBinarySuffix (true :: rest) := hsuf.move_right_cons
           have hpre1 : c1.output.HasBinaryPrefix acc := by
-            show (c.output.writeAndMove (readBackWrite c.output.read)
+            change (c.output.writeAndMove (readBackWrite c.output.read)
               (idleDir c.output.read)).HasBinaryPrefix acc
             rw [Tape.writeAndMove_readBack_idle_of_ne_start _ houtne]; exact hpre
           have hreadB : c1.input.read = Γ.ofBool true := hsuf1.read_cons
@@ -372,7 +372,7 @@ private theorem catTM_scan_loop :
             simp [TM.step, catTM, hreadB, Γ.ofBool, c1, c2]
           have hsuf2 : c2.input.HasBinarySuffix rest := hsuf1.move_right_cons
           have hpre2 : c2.output.HasBinaryPrefix (acc ++ [true]) := by
-            show (c1.output.writeAndMove ((Γw.ofBool true).toΓ) Dir3.right).HasBinaryPrefix
+            change (c1.output.writeAndMove ((Γw.ofBool true).toΓ) Dir3.right).HasBinaryPrefix
               (acc ++ [true])
             rw [Γw.ofBool_toΓ]; exact Tape.hasBinaryPrefix_write_bit true hpre1
           have hrfuel : rest.length ≤ fuel := by
@@ -401,7 +401,7 @@ theorem catBlocks_mem_FP : catBlocks ∈ FP := by
     have hpre : c1.output.HasBinaryPrefix [] := Tape.init_nil_move_right_hasBinaryPrefix_nil
     obtain ⟨c', t, ht, hreach, hhalt, hcout⟩ :=
       catTM_scan_loop z.length z [] le_rfl c1 rfl hsuf hpre
-    refine ⟨c', t + 1, by show t + 1 ≤ 2 * z.length + 3; omega,
+    refine ⟨c', t + 1, by change t + 1 ≤ 2 * z.length + 3; omega,
       .step hstep1 hreach, hhalt, ?_⟩
     simpa using hcout.hasOutput
   · have hn : (fun m : ℕ => 2 * m) =O ((· ^ 1) : ℕ → ℕ) := by

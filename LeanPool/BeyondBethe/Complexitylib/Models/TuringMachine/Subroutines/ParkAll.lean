@@ -39,11 +39,11 @@ theorem move_idleDir_eq_of_startInvariant {t : Tape} (h : Tape.StartInvariant t)
       exact (h.2 t.head (by omega)) hh
     rw [idleDir, ite_eq_left hh]
     refine Tape.ext ?_ (Tape.move_cells t Dir3.right)
-    show t.head + 1 = max t.head 1
+    change t.head + 1 = max t.head 1
     omega
   · have hh0 : t.head ≠ 0 := fun hc => hh (by rw [Tape.read, hc]; exact h.1)
     rw [idleDir, ite_eq_right hh]
-    show t = ⟨max t.head 1, t.cells⟩
+    change t = ⟨max t.head 1, t.cells⟩
     have : max t.head 1 = t.head := by omega
     rw [this]
 

@@ -335,7 +335,7 @@ theorem stepFn_apply {k : ℕ} (tm : TM k) (c : Cfg k tm.Q) {W : ℕ}
     rw [stepFn, keyFn_eq W c hq hW]
     exact hkey
   · refine ⟨_, List.mem_map_of_mem (mem_stepEntries tm (c.state, cfgReads c)), ?_⟩
-    show keyPattern (c.state, cfgReads c) <+: keyCode c
+    change keyPattern (c.state, cfgReads c) <+: keyCode c
     rw [← keyCode_eq]
   · rintro q hq' hpre
     obtain ⟨p, -, rfl⟩ := List.mem_map.mp hq'
@@ -744,7 +744,7 @@ theorem initFn_eq {k : ℕ} (tm : TM k) (W : ℕ) (x : List Bool) (hx : x.length
       = Tape.init (x.map Γ.ofBool) :: List.replicate (k + 1) (Tape.init []) := by
     rw [cfgTapes]
     congr 1
-    show (Tape.init [] : Tape) :: List.ofFn (fun _ : Fin k => (Tape.init [] : Tape))
+    change (Tape.init [] : Tape) :: List.ofFn (fun _ : Fin k => (Tape.init [] : Tape))
       = List.replicate (k + 1) (Tape.init [])
     rw [List.replicate_succ, List.ofFn_const]
   rw [cfgCode, cfgBlocks_eq, List.flatten_cons, flatten_tapesBlocks, hct,

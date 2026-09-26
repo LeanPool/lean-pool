@@ -207,9 +207,9 @@ theorem iterPark_hoareTime (H : ℕ) (inp₀ : Tape) (hinpP : Parked inp₀)
   have houtP : Parked parkedBlank := parked_parkedBlank
   have houtSI : Tape.StartInvariant parkedBlank := startInvariant_initNil.move Dir3.right
   have hinpEq : (⟨max inp₀.head 1, inp₀.cells⟩ : Tape) = inp₀ :=
-    Tape.ext (by show max inp₀.head 1 = inp₀.head; have := hinpP.1; omega) rfl
+    Tape.ext (by change max inp₀.head 1 = inp₀.head; have := hinpP.1; omega) rfl
   have houtEq : (⟨max parkedBlank.head 1, parkedBlank.cells⟩ : Tape) = parkedBlank :=
-    Tape.ext (by show max parkedBlank.head 1 = parkedBlank.head; have := houtP.1; omega) rfl
+    Tape.ext (by change max parkedBlank.head 1 = parkedBlank.head; have := houtP.1; omega) rfl
   have hA' : (skipTM (n := 3 + (k + 2) + 0)).HoareTime
       (fun inp work out => inp = inp₀ ∧ work = W ∧ out = parkedBlank)
       (fun inp work out => inp = inp₀ ∧ work = WA ∧ out = parkedBlank) 1 :=
@@ -248,7 +248,7 @@ theorem iterPark_hoareTime (H : ℕ) (inp₀ : Tape) (hinpP : Parked inp₀)
       by rw [hi]; exact hinpP.read_ne_start, by rw [ho]; exact houtP.read_ne_start,
       by rw [ho]; exact houtP.1,
       fun i _ => ⟨(hWAP i).read_ne_start, (hWAP i).1⟩, rfl, hi, ho, fun i _ => rfl⟩
-    show max (W resIdx).head 1 ≤ H + 1
+    change max (W resIdx).head 1 ≤ H + 1
     omega
   have hC' := hC.weaken_pre hpreC
   refine (seqTM_hoareTime _ _ hA' ?_ hC').strengthen_post ?_
@@ -319,13 +319,13 @@ theorem iterResetScratch_hoareTime (H : ℕ) (hH : 1 ≤ H)
       exact absurd (congrArg Fin.val (appIdx_injective hc)) (by simp; omega)
     rw [hrest _ hne]
     refine ⟨?_, fun c hc => hfar j' c hc⟩
-    show max (W (appIdx (Fin.castSucc j'))).head 1 ≤ H
+    change max (W (appIdx (Fin.castSucc j'))).head 1 ≤ H
     have := hB j'
     omega
   have hwfEq : work wfIdx = regTape H := by
     rw [hrest wfIdx (fun h => resIdx_ne_wfIdx h.symm), hwf]
     refine Tape.ext ?_ rfl
-    show max (regTape H).head 1 = 1
+    change max (regTape H).head 1 = 1
     rw [regT_head]
     omega
   obtain ⟨c', t, ht, hreach, hhalt, hi', ho', hts, hR', hkeep⟩ :=
@@ -415,7 +415,7 @@ theorem iterFinish_hoareTime (M : TM k) (H : ℕ)
         (1 * (H + 4) + H * 4 + 8 + 1 + (1 * (H + 4) + 1))) := by
   have hregP : Parked (regTape H) :=
     ⟨le_refl 1, fun i hi => by
-      show regCells H i ≠ Γ.start
+      change regCells H i ≠ Γ.start
       simp only [regCells]; split
       · omega
       · split <;> decide⟩
@@ -506,7 +506,7 @@ theorem iterFinish_hoareTime (M : TM k) (H : ℕ)
         · rw [hW₁other j hjr hjv]; exact hW₀SI j)
     (fun j hj => by
       rw [List.mem_singleton.mp hj, hW₁res]
-      show x.length + 1 ≤ H
+      change x.length + 1 ≤ H
       omega)
     (fun j hj c hc => by
       rw [List.mem_singleton.mp hj, hW₁res]

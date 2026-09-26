@@ -63,7 +63,7 @@ private theorem idleTape_write_blank : unionIdleTape.write Γ.blank = unionIdleT
 /-- An idle tape stays idle when written with blank and moved by idleDir. -/
 private theorem idleTape_step_idle :
     (unionIdleTape.write Γw.blank.toΓ).move (idleDir unionIdleTape.read) = unionIdleTape := by
-  show (unionIdleTape.write Γ.blank).move (idleDir unionIdleTape.read) = unionIdleTape
+  change (unionIdleTape.write Γ.blank).move (idleDir unionIdleTape.read) = unionIdleTape
   rw [idleTape_read, idleDir, ite_eq_right (by decide)]
   simp [idleTape_write_blank, Tape.move]
 
@@ -494,7 +494,7 @@ private theorem step_phase1_halted (tm₁ : TM n₁) (tm₂ : TM n₂)
       (c'.work fakeOutIdx).cells = c₁.output.cells ∧
       c'.output = (unionIdleTape.write Γw.blank.toΓ).move (idleDir unionIdleTape.read) := by
   have hstate : (unionPhase1Cfg tm₁ tm₂ c₁).state = Sum.inl tm₁.qhalt := by
-    show Sum.inl c₁.state = Sum.inl tm₁.qhalt; rw [hhalt]
+    change Sum.inl c₁.state = Sum.inl tm₁.qhalt; rw [hhalt]
   have hstep := step_inl_qhalt_cfg tm₁ tm₂ hstate
   -- The result config
   set c' : Cfg (n₁ + 1 + n₂) (UnionQ tm₁.Q tm₂.Q) :=
@@ -581,7 +581,7 @@ private theorem rewind_fakeOut_loop (tm₁ : TM n₁) (tm₂ : TM n₂) :
     · -- Input head: chain c → c' → c''
       have hih' : c'.input.head = c.input.head := idle_move_preserves_head _ hih hino
       have hino' : ∀ i, i ≥ 1 → c'.input.cells i ≠ Γ.start := by
-        intro i hi; show (c.input.move _).cells i ≠ _; rw [Tape.move_cells]; exact hino i hi
+        intro i hi; change (c.input.move _).cells i ≠ _; rw [Tape.move_cells]; exact hino i hi
       rw [hinp'' (by omega) hino', hih']
     · -- Work tapes: chain c → c' → c''
       have hidle' : c'.work i = unionIdleTape := by
@@ -609,7 +609,7 @@ theorem unionTM_transition_accept (tm₁ : TM n₁) (tm₂ : TM n₂)
   -- Head bound for the fake output after step 1
   have hfo_head_bound : (c_rw.work fakeOutIdx).head ≤ c₁.output.head + 1 := by
     have hstate : (unionPhase1Cfg tm₁ tm₂ c₁).state = Sum.inl tm₁.qhalt := by
-      show Sum.inl c₁.state = Sum.inl tm₁.qhalt; rw [hhalt]
+      change Sum.inl c₁.state = Sum.inl tm₁.qhalt; rw [hhalt]
     have hexp := (step_inl_qhalt_cfg tm₁ tm₂ hstate).symm.trans hstep1
     rw [Option.some.injEq] at hexp
     rw [← hexp]
@@ -656,7 +656,7 @@ theorem unionTM_transition_accept (tm₁ : TM n₁) (tm₂ : TM n₂)
     rw [Tape.read, hcr_fo_head, hcr_fo_cells, hcells_at0, hcells_rw]; exact haccept
   -- c_cr output = unionIdleTape
   have hout_cr : c_cr.output = unionIdleTape := by
-    show (c_at0.output.write Γw.blank.toΓ).move (idleDir c_at0.output.read) = unionIdleTape
+    change (c_at0.output.write Γw.blank.toΓ).move (idleDir c_at0.output.read) = unionIdleTape
     rw [hout_at0]; exact idleTape_step_idle
   -- Step 4: checkResult with Γ.one → halt (1 step)
   have hst_cr : c_cr.state = Sum.inr (Sum.inl UnionPhase.checkResult) := rfl
@@ -671,7 +671,7 @@ theorem unionTM_transition_accept (tm₁ : TM n₁) (tm₂ : TM n₂)
   have hhalt_final : (unionTM tm₁ tm₂).halted c_final := rfl
   -- c_final output cell 1 = Γ.one
   have hcells_final : c_final.output.cells 1 = Γ.one := by
-    show ((c_cr.output.write Γw.one.toΓ).move (idleDir c_cr.output.read)).cells 1 = Γ.one
+    change ((c_cr.output.write Γw.one.toΓ).move (idleDir c_cr.output.read)).cells 1 = Γ.one
     rw [Tape.move_cells, hout_cr]
     simp [Tape.write, unionIdleTape, Γw.toΓ, Function.update, Tape.init]
   -- Compose all steps: 1 + h_rw + 1 + 1 steps total
@@ -719,13 +719,13 @@ private theorem rewind_input_loop (tm₁ : TM n₁) (tm₂ : TM n₂) :
       with hc'_def
     have hst' : c'.state = Sum.inr (Sum.inl UnionPhase.rewindIn) := rfl
     have hhead' : c'.input.head = n := by
-      show (c.input.move Dir3.left).head = n; simp [Tape.move, hhead]
+      change (c.input.move Dir3.left).head = n; simp [Tape.move, hhead]
     have hcells' : c'.input.cells = c.input.cells := Tape.move_cells _ _
     have hcell0' : c'.input.cells 0 = Γ.start := by rw [hcells']; exact hcell0
     have hnostart' : ∀ i, i ≥ 1 → c'.input.cells i ≠ Γ.start := by
       intro i hi; rw [hcells']; exact hnostart i hi
     have hout' : c'.output = unionIdleTape := by
-      show (c.output.write Γw.blank.toΓ).move (idleDir c.output.read) = unionIdleTape
+      change (c.output.write Γw.blank.toΓ).move (idleDir c.output.read) = unionIdleTape
       rw [hout]; exact idleTape_step_idle
     obtain ⟨c'', hreach, hst'', hhead'', hcells'', hout''⟩ :=
       ih c' hst' hhead' hnostart' hcell0' hout'
@@ -781,9 +781,9 @@ private theorem phase2_work_step_idle (tm₁ : TM n₁) (tm₂ : TM n₂)
     · -- q ≠ qhalt: write/dir have dif/if structure
       congr 1
       · congr 1
-        show (if h : (i : ℕ) < n₁ then _ else if (i : ℕ) = n₁ then _ else Γw.blank) = Γw.blank
+        change (if h : (i : ℕ) < n₁ then _ else if (i : ℕ) = n₁ then _ else Γw.blank) = Γw.blank
         rw [dite_eq_right (show ¬((i : ℕ) < n₁) from by omega), ite_eq_right hine]
-      · show (if h : (i : ℕ) < n₁ then _
+      · change (if h : (i : ℕ) < n₁ then _
           else if (i : ℕ) = n₁ then _ else idleDir (c.work i).read) = _
         rw [dite_eq_right (show ¬((i : ℕ) < n₁) from by omega), ite_eq_right hine]
   · rw [hq]; dsimp only [unionTM]; split
@@ -821,12 +821,12 @@ private theorem rewind_input_work_idle (tm₁ : TM n₁) (tm₂ : TM n₂)
         output := (c.output.write Γw.blank.toΓ).move (idleDir c.output.read) }
       with hc'_def
     have hidle' : c'.work i = unionIdleTape := by
-      show ((c.work i).write _).move _ = _; rw [hidle]; exact idleTape_step_idle
+      change ((c.work i).write _).move _ = _; rw [hidle]; exact idleTape_step_idle
     obtain ⟨c'', hreach, hidle''⟩ := ih c' rfl
-      (by show (c.input.move Dir3.left).head = n; simp [Tape.move, hhead])
-      (by intro j hj; show (c.input.move Dir3.left).cells j ≠ _
+      (by change (c.input.move Dir3.left).head = n; simp [Tape.move, hhead])
+      (by intro j hj; change (c.input.move Dir3.left).cells j ≠ _
           rw [Tape.move_cells]; exact hnostart j hj)
-      (by show (c.input.move Dir3.left).cells 0 = _; rw [Tape.move_cells]; exact hcell0)
+      (by change (c.input.move Dir3.left).cells 0 = _; rw [Tape.move_cells]; exact hcell0)
       hidle'
     exact ⟨c'', .step hstep hreach, hidle''⟩
 
@@ -867,7 +867,7 @@ private theorem unionReject_rewindInput_head_bound
   -- From step_inl_qhalt_cfg, the input direction is idleDir(input.read)
   -- Use step_inl_qhalt_cfg to get the exact form of c_rw.input
   have hstateq : (unionPhase1Cfg tm₁ tm₂ c₁).state = Sum.inl tm₁.qhalt := by
-    show Sum.inl c₁.state = Sum.inl tm₁.qhalt; rw [hhalt]
+    change Sum.inl c₁.state = Sum.inl tm₁.qhalt; rw [hhalt]
   have hstep_eq := step_inl_qhalt_cfg tm₁ tm₂ hstateq
   -- c_rw.input = c₁.input.move (idleDir c₁.input.read) since unionPhase1Cfg.input = c₁.input
   have hcrw_input_eq : c_rw.input = c₁.input.move (idleDir c₁.input.read) := by
@@ -894,13 +894,13 @@ private theorem unionReject_rewindInput_head_bound
     intro i hi; rw [union_input_cells_of_reachesIn tm₁ tm₂ hreach_rw]; exact hcrw_ino i hi
   -- checkInput.head = c_at0.input.head (idleDir step from head ≥ 1)
   have hcr_head : checkInput.head = c_at0.input.head := by
-    show (c_at0.input.move (idleDir c_at0.input.read)).head = _
+    change (c_at0.input.move (idleDir c_at0.input.read)).head = _
     exact idle_move_preserves_head _ (by omega) hat0_ino
   -- rewindInput.head = checkInput.head (idleDir step from head ≥ 1)
   have hcr_ino : ∀ i, i ≥ 1 → checkInput.cells i ≠ Γ.start := by
-    intro i hi; show (c_at0.input.move _).cells i ≠ _; rw [Tape.move_cells]; exact hat0_ino i hi
+    intro i hi; change (c_at0.input.move _).cells i ≠ _; rw [Tape.move_cells]; exact hat0_ino i hi
   have hri_head : rewindInput.head = checkInput.head := by
-    show (checkInput.move (idleDir checkInput.read)).head = _
+    change (checkInput.move (idleDir checkInput.read)).head = _
     exact idle_move_preserves_head _ (by omega) hcr_ino
   exact (hri_head.trans (hcr_head.trans hat0_head)).trans_le hcrw_head
 
@@ -927,7 +927,7 @@ theorem unionTM_transition_reject (tm₁ : TM n₁) (tm₂ : TM n₂) (x : List 
   -- Head bounds
   have hfo_head_bound : (c_rw.work fakeOutIdx).head ≤ c₁.output.head + 1 := by
     have hstate : (unionPhase1Cfg tm₁ tm₂ c₁).state = Sum.inl tm₁.qhalt := by
-      show Sum.inl c₁.state = Sum.inl tm₁.qhalt; rw [hhalt]
+      change Sum.inl c₁.state = Sum.inl tm₁.qhalt; rw [hhalt]
     have hexp := (step_inl_qhalt_cfg tm₁ tm₂ hstate).symm.trans hstep1
     rw [Option.some.injEq] at hexp
     rw [← hexp]
@@ -959,7 +959,7 @@ theorem unionTM_transition_reject (tm₁ : TM n₁) (tm₂ : TM n₂) (x : List 
       output := (c_at0.output.write Γw.blank.toΓ).move (idleDir c_at0.output.read) }
     with hc_cr_def
   have hout_cr : c_cr.output = unionIdleTape := by
-    show (c_at0.output.write Γw.blank.toΓ).move (idleDir c_at0.output.read) = unionIdleTape
+    change (c_at0.output.write Γw.blank.toΓ).move (idleDir c_at0.output.read) = unionIdleTape
     rw [hout_at0]; exact idleTape_step_idle
   -- c_cr fake output reads Γ.zero (not Γ.one)
   have hcr_fo_head : (c_cr.work fakeOutIdx).head = 1 := by
@@ -979,20 +979,20 @@ theorem unionTM_transition_reject (tm₁ : TM n₁) (tm₂ : TM n₂) (x : List 
       output := (c_cr.output.write Γw.blank.toΓ).move (idleDir c_cr.output.read) }
     with hc_ri_def
   have hout_ri : c_ri.output = unionIdleTape := by
-    show (c_cr.output.write Γw.blank.toΓ).move (idleDir c_cr.output.read) = unionIdleTape
+    change (c_cr.output.write Γw.blank.toΓ).move (idleDir c_cr.output.read) = unionIdleTape
     rw [hout_cr]; exact idleTape_step_idle
   -- Input cells chain: input is read-only, so cells are preserved through all steps.
   -- unionPhase1Cfg → c_rw → (rewind) → c_at0 → c_cr → c_ri all preserve input.cells
   have hin_cells_chain : c_ri.input.cells = (Tape.init (x.map Γ.ofBool)).cells := by
     -- c_ri.input.cells = c_cr.input.cells (move)
-    show (c_cr.input.move _).cells = _; rw [Tape.move_cells]
+    change (c_cr.input.move _).cells = _; rw [Tape.move_cells]
     -- c_cr.input.cells = c_at0.input.cells (move)
-    show (c_at0.input.move _).cells = _; rw [Tape.move_cells]
+    change (c_at0.input.move _).cells = _; rw [Tape.move_cells]
     -- c_at0.input.cells = c_rw.input.cells (reachesIn)
     rw [union_input_cells_of_reachesIn tm₁ tm₂ hreach_rw]
     -- c_rw.input.cells = unionPhase1Cfg.input.cells (step)
     have hstate : (unionPhase1Cfg tm₁ tm₂ c₁).state = Sum.inl tm₁.qhalt := by
-      show Sum.inl c₁.state = Sum.inl tm₁.qhalt; rw [hhalt]
+      change Sum.inl c₁.state = Sum.inl tm₁.qhalt; rw [hhalt]
     have hexp := (step_inl_qhalt_cfg tm₁ tm₂ hstate).symm.trans hstep1
     rw [Option.some.injEq] at hexp
     rw [← hexp, Tape.move_cells]; exact hinput_cells
@@ -1070,12 +1070,12 @@ theorem unionTM_transition_reject (tm₁ : TM n₁) (tm₂ : TM n₂) (x : List 
   have hin_mid : c_mid.input = Tape.init (x.map Γ.ofBool) := by
     -- c_mid.input.cells = Tape.init cells
     have h2 : c_mid.input.cells = (Tape.init (x.map Γ.ofBool)).cells := by
-      show (c_s2.input.move _).cells = _
-      rw [Tape.move_cells]; show (c_ri0.input.move Dir3.right).cells = _
+      change (c_s2.input.move _).cells = _
+      rw [Tape.move_cells]; change (c_ri0.input.move Dir3.right).cells = _
       rw [Tape.move_cells]; exact hcells_ri0_eq
     -- c_s2.input = c_ri0.input.move Dir3.right, head = 1
     have hs2_head : c_s2.input.head = 1 := by
-      show (c_ri0.input.move Dir3.right).head = 1
+      change (c_ri0.input.move Dir3.right).head = 1
       simp [Tape.move, hhead_ri0]
     have hs2_cells : c_s2.input.cells = c_ri0.input.cells := Tape.move_cells _ _
     -- c_s2.input.read ≠ Γ.start (cells[1] is from Tape.init, not start)
@@ -1084,7 +1084,7 @@ theorem unionTM_transition_reject (tm₁ : TM n₁) (tm₂ : TM n₂) (x : List 
       exact hin_nostart_ri 1 (by omega)
     -- c_mid.input.head = 0 (moveLeftDir of non-start = left, from head 1 → 0)
     have h1 : c_mid.input.head = 0 := by
-      show (c_s2.input.move (moveLeftDir c_s2.input.read)).head = 0
+      change (c_s2.input.move (moveLeftDir c_s2.input.read)).head = 0
       rw [moveLeftDir, ite_eq_right hs2_read_ne]; simp [Tape.move, hs2_head]
     -- Combine
     have hcfg : ∀ (a b : Tape), a.head = b.head → a.cells = b.cells → a = b := by
@@ -1097,10 +1097,10 @@ theorem unionTM_transition_reject (tm₁ : TM n₁) (tm₂ : TM n₂) (x : List 
   -- c_s2.output = unionIdleTape (write blank + move idle on unionIdleTape)
   -- c_mid.output = (unionIdleTape.write blank).move (moveLeftDir unionIdleTape.read) = Tape.init []
   have hout_s2 : c_s2.output = unionIdleTape := by
-    show (c_ri0.output.write Γw.blank.toΓ).move (idleDir c_ri0.output.read) = unionIdleTape
+    change (c_ri0.output.write Γw.blank.toΓ).move (idleDir c_ri0.output.read) = unionIdleTape
     rw [hout_ri0]; exact idleTape_step_idle
   have hout_mid : c_mid.output = Tape.init [] := by
-    show (c_s2.output.write Γw.blank.toΓ).move (moveLeftDir c_s2.output.read) = Tape.init []
+    change (c_s2.output.write Γw.blank.toΓ).move (moveLeftDir c_s2.output.read) = Tape.init []
     rw [hout_s2]; exact idleTape_moveLeft
   -- Phase 2 work tapes = Tape.init []
   -- Strategy: show work tapes at > n₁ indices stay unionIdleTape through each phase,
@@ -1110,7 +1110,7 @@ theorem unionTM_transition_reject (tm₁ : TM n₁) (tm₂ : TM n₂) (x : List 
       c_rw.work ⟨n₁ + 1 + j.val, by omega⟩ = unionIdleTape := by
     intro j
     have hstateq : (unionPhase1Cfg tm₁ tm₂ c₁).state = Sum.inl tm₁.qhalt := by
-      show Sum.inl c₁.state = Sum.inl tm₁.qhalt; rw [hhalt]
+      change Sum.inl c₁.state = Sum.inl tm₁.qhalt; rw [hhalt]
     have hstep' := phase2_work_step_idle tm₁ tm₂ hstep1
       (Or.inl ⟨tm₁.qhalt, hstateq⟩) (i := ⟨n₁ + 1 + j.val, by omega⟩)
       (by omega : n₁ + 1 + j.val > n₁)
@@ -1128,7 +1128,7 @@ theorem unionTM_transition_reject (tm₁ : TM n₁) (tm₂ : TM n₂) (x : List 
   have hwork_cr_idle : ∀ (j : Fin n₂),
       c_cr.work ⟨n₁ + 1 + j.val, by omega⟩ = unionIdleTape := by
     intro j
-    show ((c_at0.work ⟨n₁ + 1 + j.val, by omega⟩).write _).move
+    change ((c_at0.work ⟨n₁ + 1 + j.val, by omega⟩).write _).move
       (if (n₁ + 1 + j.val) = n₁ then _ else _) = _
     rw [ite_eq_right (show n₁ + 1 + j.val ≠ n₁ from by omega), hwork_at0_idle j]
     exact idleTape_step_idle
@@ -1136,7 +1136,7 @@ theorem unionTM_transition_reject (tm₁ : TM n₁) (tm₂ : TM n₂) (x : List 
   have hwork_ri_idle : ∀ (j : Fin n₂),
       c_ri.work ⟨n₁ + 1 + j.val, by omega⟩ = unionIdleTape := by
     intro j
-    show ((c_cr.work ⟨n₁ + 1 + j.val, by omega⟩).write _).move _ = _
+    change ((c_cr.work ⟨n₁ + 1 + j.val, by omega⟩).write _).move _ = _
     rw [hwork_cr_idle j]; exact idleTape_step_idle
   -- Step 5: Through rewind_input (hreach_ri), work tapes > n₁ stay unionIdleTape
   have hwork_ri0_idle : ∀ (j : Fin n₂),
@@ -1151,13 +1151,13 @@ theorem unionTM_transition_reject (tm₁ : TM n₁) (tm₂ : TM n₂) (x : List 
   have hwork_s2_idle : ∀ (j : Fin n₂),
       c_s2.work ⟨n₁ + 1 + j.val, by omega⟩ = unionIdleTape := by
     intro j
-    show ((c_ri0.work ⟨n₁ + 1 + j.val, by omega⟩).write _).move _ = _
+    change ((c_ri0.work ⟨n₁ + 1 + j.val, by omega⟩).write _).move _ = _
     rw [hwork_ri0_idle j]; exact idleTape_step_idle
   -- Step 7 (setup2→phase2_start): c_mid.work at > n₁ = Tape.init []
   have hwork_mid : ∀ (j : Fin n₂),
       c_mid.work ⟨n₁ + 1 + j.val, by omega⟩ = Tape.init [] := by
     intro j
-    show ((c_s2.work ⟨n₁ + 1 + j.val, by omega⟩).write _).move
+    change ((c_s2.work ⟨n₁ + 1 + j.val, by omega⟩).write _).move
       (if (n₁ + 1 + j.val) ≤ n₁ then _ else _) = _
     rw [ite_eq_right (show ¬(n₁ + 1 + j.val ≤ n₁) from by omega), hwork_s2_idle j]
     exact idleTape_moveLeft
@@ -1229,7 +1229,7 @@ private theorem phase2_step_corr (tm₁ : TM n₁) (tm₂ : TM n₂)
   rw [dite_eq_right hgt]
   have hfin : ∀ (p : n₁ + 1 + j - (n₁ + 1) < n₂),
       (⟨n₁ + 1 + j - (n₁ + 1), p⟩ : Fin n₂) = ⟨j, hj⟩ := by
-    intro p; apply Fin.ext; show n₁ + 1 + j - (n₁ + 1) = j; omega
+    intro p; apply Fin.ext; change n₁ + 1 + j - (n₁ + 1) = j; omega
   simp only [hfin, hcompat.work_eq ⟨j, hj⟩, dite_eq_right hgt]
 
 -- ════════════════════════════════════════════════════════════════════════

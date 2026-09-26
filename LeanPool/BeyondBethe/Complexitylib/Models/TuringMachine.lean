@@ -211,9 +211,9 @@ theorem StartInvariant.write {t : Tape} (h : t.StartInvariant) (s : Γw) :
   · exact h
   · next hne =>
     refine ⟨?_, fun j hj => ?_⟩
-    · show Function.update t.cells t.head s.toΓ 0 = Γ.start
+    · change Function.update t.cells t.head s.toΓ 0 = Γ.start
       rw [Function.update_of_ne (Ne.symm hne)]; exact h.1
-    · show Function.update t.cells t.head s.toΓ j ≠ Γ.start
+    · change Function.update t.cells t.head s.toΓ j ≠ Γ.start
       by_cases hje : j = t.head
       · subst hje
         rw [Function.update_self]

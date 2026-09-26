@@ -157,7 +157,7 @@ private theorem forRegTM_ne_halt {s : ForPhase ⊕ body.Q} (h : s ≠ .inl .done
     {c : Cfg n (forRegTM body r).Q} (hst : c.state = s) :
     ¬ c.state = (forRegTM body r).qhalt := by
   rw [hst]
-  show ¬ s = Sum.inl ForPhase.done
+  change ¬ s = Sum.inl ForPhase.done
   exact h
 
 /-- `test` over a mark: consume it (register head right) and enter the body. -/
@@ -246,7 +246,7 @@ private theorem forRegTM_step_rewind_start (c : Cfg n (forRegTM body r).Q)
     by_cases hir : i = r
     · subst hir
       rw [ite_eq_left rfl, Function.update_self]
-      show ((c.work i).write _).move Dir3.right = (c.work i).move .right
+      change ((c.work i).write _).move Dir3.right = (c.work i).move .right
       congr 1
       rw [Tape.write, ite_eq_left h0]
     · rw [ite_eq_right hir, Function.update_of_ne hir]
@@ -290,14 +290,14 @@ private theorem forRegTM_rewind_run (h : ℕ) :
     have hstep := forRegTM_step_rewind_start c hst hs hcr hinp hwork hout
     refine ⟨_, .step hstep .zero, rfl, rfl, ?_, ?_, ?_, rfl⟩
     · intro i hi
-      show Function.update c.work r ((c.work r).move .right) i = c.work i
+      change Function.update c.work r ((c.work r).move .right) i = c.work i
       rw [Function.update_of_ne hi]
-    · show (Function.update c.work r ((c.work r).move .right) r).cells = _
+    · change (Function.update c.work r ((c.work r).move .right) r).cells = _
       rw [Function.update_self]
       rfl
-    · show (Function.update c.work r ((c.work r).move .right) r).head = 1
+    · change (Function.update c.work r ((c.work r).move .right) r).head = 1
       rw [Function.update_self]
-      show (c.work r).head + 1 = 1
+      change (c.work r).head + 1 = 1
       rw [hhead]
   | succ h ih =>
     intro c hst hinp hwork hout hc0 hcr hhead
@@ -313,22 +313,22 @@ private theorem forRegTM_rewind_run (h : ℕ) :
            work := Function.update c.work r ((c.work r).move .left),
            output := c.output } rfl hinp
         (fun i hi => by
-          show Parked (Function.update c.work r ((c.work r).move .left) i)
+          change Parked (Function.update c.work r ((c.work r).move .left) i)
           rw [Function.update_of_ne hi]
           exact hwork i hi)
         hout
         (by rw [hupd]; exact hc0)
         (fun j hj => by rw [hupd]; exact hcr j hj)
         (by
-          show (Function.update c.work r ((c.work r).move .left) r).head = h
+          change (Function.update c.work r ((c.work r).move .left) r).head = h
           rw [Function.update_self]
-          show (c.work r).head - 1 = h
+          change (c.work r).head - 1 = h
           rw [hhead]
           omega)
     refine ⟨c', .step hstep hreach, hst', hinp', ?_, ?_, hhead', hout'⟩
     · intro i hi
       rw [hwork' i hi]
-      show Function.update c.work r ((c.work r).move .left) i = c.work i
+      change Function.update c.work r ((c.work r).move .left) i = c.work i
       rw [Function.update_of_ne hi]
     · rw [hcells', hupd]
 
@@ -364,7 +364,7 @@ private theorem forRegTM_loop_run (inp₀ : Tape) (w : ℕ → Fin n → Tape)
       rw [hcw, Function.update_self]
     have hblank : (c.work r).read = Γ.blank := by
       rw [hcwr]
-      show regCells v (v + 1) = Γ.blank
+      change regCells v (v + 1) = Γ.blank
       exact regCells_blank (le_refl _)
     have hworkP : ∀ j, j ≠ r → Parked (c.work j) := by
       intro j hj
@@ -382,29 +382,29 @@ private theorem forRegTM_loop_run (inp₀ : Tape) (w : ℕ → Fin n → Tape)
           work := Function.update (w v) r ⟨v, regCells v⟩, output := c.output }
         rfl hinpP
         (fun j hj => by
-          show Parked (Function.update (w v) r (⟨v, regCells v⟩ : Tape) j)
+          change Parked (Function.update (w v) r (⟨v, regCells v⟩ : Tape) j)
           rw [Function.update_of_ne hj]
           exact hwP v j hj)
         hout.parked
         (by
-          show (Function.update (w v) r (⟨v, regCells v⟩ : Tape) r).cells 0 = Γ.start
+          change (Function.update (w v) r (⟨v, regCells v⟩ : Tape) r).cells 0 = Γ.start
           rw [Function.update_self]
           rfl)
         (fun j hj => by
-          show (Function.update (w v) r (⟨v, regCells v⟩ : Tape) r).cells j ≠ Γ.start
+          change (Function.update (w v) r (⟨v, regCells v⟩ : Tape) r).cells j ≠ Γ.start
           rw [Function.update_self]
-          show regCells v j ≠ Γ.start
+          change regCells v j ≠ Γ.start
           rw [regCells, ite_eq_right (by omega)]
           split <;> decide)
         (by
-          show (Function.update (w v) r (⟨v, regCells v⟩ : Tape) r).head = v
+          change (Function.update (w v) r (⟨v, regCells v⟩ : Tape) r).head = v
           rw [Function.update_self])
     have hb0 : (v + 1) + 1 ≤ 0 * (b_iter + 2) + (v + 2) := by omega
     refine ⟨c', (v + 1) + 1, hb0, .step hstep₁ ?_, hst', ?_, ?_, ?_⟩
     · rw [hw₁]
       exact hreach
     · rw [hinp']
-      show c.input = inp₀
+      change c.input = inp₀
       exact hcin
     · funext j
       by_cases hjr : j = r
@@ -414,10 +414,10 @@ private theorem forRegTM_loop_run (inp₀ : Tape) (w : ℕ → Fin n → Tape)
         · rw [hhead']
           rfl
         · rw [hcells']
-          show (Function.update (w v) j (⟨v, regCells v⟩ : Tape) j).cells = _
+          change (Function.update (w v) j (⟨v, regCells v⟩ : Tape) j).cells = _
           rw [Function.update_self, regT_cells]
       · rw [hwork' j hjr, Function.update_of_ne hjr]
-        show Function.update (w v) r (⟨v, regCells v⟩ : Tape) j = w v j
+        change Function.update (w v) r (⟨v, regCells v⟩ : Tape) j = w v j
         rw [Function.update_of_ne hjr]
     · rw [hout']
       exact hout
@@ -427,7 +427,7 @@ private theorem forRegTM_loop_run (inp₀ : Tape) (w : ℕ → Fin n → Tape)
       rw [hcw, Function.update_self]
     have hone : (c.work r).read = Γ.one := by
       rw [hcwr]
-      show regCells v (i + 1) = Γ.one
+      change regCells v (i + 1) = Γ.one
       exact regCells_one (by omega) (by omega)
     have hworkP : ∀ j, j ≠ r → Parked (c.work j) := by
       intro j hj
@@ -450,17 +450,17 @@ private theorem forRegTM_loop_run (inp₀ : Tape) (w : ℕ → Fin n → Tape)
       by_cases hjr : j = r
       · subst hjr
         rw [Function.update_self]
-        refine ⟨by show (1 : ℕ) ≤ i + 2; omega, fun p hp => ?_⟩
-        show regCells v p ≠ Γ.start
+        refine ⟨by change (1 : ℕ) ≤ i + 2; omega, fun p hp => ?_⟩
+        change regCells v p ≠ Γ.start
         rw [regCells, ite_eq_right (by omega)]
         split <;> decide
       · rw [Function.update_of_ne hjr]
         exact hwP (i + 1) j hjr
     have hstep₂ := forRegTM_step_loopback (wrapCfg body r cb)
-      (by show Sum.inr cb.state = Sum.inr body.qhalt; rw [hbhalt])
-      (by show Parked cb.input; rw [hbinp]; exact hinp₀)
+      (by change Sum.inr cb.state = Sum.inr body.qhalt; rw [hbhalt])
+      (by change Parked cb.input; rw [hbinp]; exact hinp₀)
       (fun j => hbworkP j)
-      (by show Parked cb.output; exact hbout.parked)
+      (by change Parked cb.output; exact hbout.parked)
     obtain ⟨c', t', ht', hreach', hst', hinp', hwork', hout'⟩ :=
       ih (i + 1) (by omega)
         { state := .inl .test, input := inp₀,
@@ -508,7 +508,7 @@ theorem forRegTM_hoareTime (body : TM n) (r : Fin n) (v : ℕ) (inp₀ : Tape)
       { state := .inl .test, input := inp, work := w 0, output := out }
       rfl rfl
       (by
-        show w 0 = Function.update (w 0) r ⟨0 + 1, regCells v⟩
+        change w 0 = Function.update (w 0) r ⟨0 + 1, regCells v⟩
         rw [show (⟨0 + 1, regCells v⟩ : Tape) = w 0 r from by rw [hwreg 0]; rfl,
           Function.update_eq_self])
       hout
