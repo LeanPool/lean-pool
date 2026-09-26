@@ -130,6 +130,7 @@ theorem sum_quadraticChar_mul_sq_sub
             -(chi A) * (chi C ^ 2) * (chi (-1) ^ 2) := by ring
         _ = -chi A := by rw [hchiC_sq, hchiNegOne_sq, mul_one, mul_one]
 
+omit [DecidableEq F] in
 /-- A nondegenerate affine conic has a point outside any set of at most three forbidden first
 coordinates once the field has at least eight elements. -/
 theorem exists_quadratic_conic_point_away_from_three

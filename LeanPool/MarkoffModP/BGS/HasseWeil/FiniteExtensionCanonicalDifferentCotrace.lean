@@ -576,6 +576,7 @@ def finiteExtensionFiberConstantAdeleSubmodule :
     change c • a.1 q = c • a.1 r
     rw [ha q r hqr]
 
+omit [Fintype K] [DecidableEq K] in
 /-- A fiber-constant adele has the chosen component at the base place of
 every upstairs place. -/
 theorem fiberConstant_component_eq_section
@@ -710,6 +711,7 @@ theorem ratFunc_infinite_chart_place_eq
   apply congrArg Sum.inr
   rw [← hsource, e.apply_symm_apply]
 
+omit [DecidableEq K] in
 /-- Outside the explicit finite exceptional set, the raw componentwise trace
 is integral at the base chart place. -/
 theorem finiteExtensionFiberTraceRaw_mem_placeValuationSubring_of_not_bad
@@ -718,6 +720,7 @@ theorem finiteExtensionFiberTraceRaw_mem_placeValuationSubring_of_not_bad
     (hp : p ∉ finiteExtensionCotraceBadBaseSet K L a.1) :
     finiteExtensionFiberTraceRaw K L a p ∈
       FunctionField.Chart.placeValuationSubring K (RatFunc K) p := by
+  classical
   rcases p with p | p
   · let e := HeightOneSpectrum.equivOfRingEquiv
       (ratFuncFiniteBaseRingEquivChart K)
@@ -1302,6 +1305,7 @@ theorem finiteExtensionFiberCotrace_ne_zero
   rw [ha] at hz
   exact hz
 
+omit [DecidableEq K] in
 /-- The explicit finite-extension different divisor is a vanishing divisor
 of a nonzero Weil differential.  Consequently it is bounded above by the
 maximal divisor of that differential. -/
@@ -1313,6 +1317,7 @@ theorem finiteExtensionCanonicalDifferent_le_divOmega
           (finiteExtensionCanonicalDifferentDivisor K L
             (finiteExtensionFiniteDifferentIdeal_ne_bot K L)) ≤
         FunctionField.Chart.WeilDifferential.divOmega ωTop hωTop := by
+  classical
   obtain ⟨ωBase, hωBase, hdivBase⟩ :=
     ratFuncCanonicalInfinityDivisor_isCanonical K
   have hmaxBase :

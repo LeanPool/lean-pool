@@ -237,6 +237,7 @@ local instance detectionInfinityClosureIsFractionRing :
     (RatFuncInfinityIntegers K) (RatFunc K) L
       (RatFuncInfinityIntegralClosure K L)
 
+omit [Fintype K] [DecidableEq K] in
 /-- A fiber lift supported over one base place lies in an arbitrary divisor
 filtration once its common nonzero fiber value satisfies the local bounds. -/
 theorem finiteExtensionFiberLift_mem_adeleFilt_of_supported
@@ -673,6 +674,7 @@ theorem finiteExtensionFiberCotrace_detects_not_le
       K L ω hω hdiv Btop P
     simpa only [hQq] using hq
 
+omit [DecidableEq K] in
 /-- The trace-different divisor is exactly the maximal vanishing divisor of
 the Weil functional obtained by gluing cotrace to zero.  This is the direct
 local-maximality conclusion of Stichtenoth, Theorem 3.4.6, Step (b1), and does
@@ -683,6 +685,7 @@ theorem finiteExtensionCanonicalDifferent_isCanonical_of_cotrace
       (finiteExtensionDivisorEquivChart K L
         (finiteExtensionCanonicalDifferentDivisor K L
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L))) := by
+  classical
   obtain ⟨ωBase, hωBase, hdivBase⟩ :=
     ratFuncCanonicalInfinityDivisor_isCanonical K
   have hmaxBase :

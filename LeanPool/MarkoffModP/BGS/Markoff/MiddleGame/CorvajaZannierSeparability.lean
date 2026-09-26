@@ -34,7 +34,7 @@ open Polynomial
 
 section FiniteFieldSubgroupOrders
 
-variable {E : Type*} [Field E] [Fintype E]
+variable {E : Type*} [Field E] [Finite E]
 
 /-- The order of a multiplicative subgroup of a finite field is prime to the field
 characteristic.  This is the hidden separability check in the passage from
@@ -42,6 +42,7 @@ Corvaja--Zannier Theorem 2 to Corollary 2. -/
 theorem characteristic_not_dvd_multiplicativeSubgroup_natCard
     (p : ℕ) [Fact p.Prime] [CharP E p] (H : Subgroup Eˣ) :
     ¬ p ∣ Nat.card H := by
+  let : Fintype E := Fintype.ofFinite E
   have hHdiv : Nat.card H ∣ Nat.card Eˣ := H.card_subgroup_dvd_card
   intro hpH
   have hpUnits : p ∣ Nat.card Eˣ := hpH.trans hHdiv
@@ -103,7 +104,7 @@ theorem derivation_pow_ne_zero
 /-- Actual finite-field subgroup orders satisfy the nonzero-differential condition after
 transport to any function field of the same characteristic. -/
 theorem multiplicativeSubgroup_order_pow_has_nonzeroDifferential
-    {E : Type*} [Field E] [Fintype E]
+    {E : Type*} [Field E] [Finite E]
     (p : ℕ) [Fact p.Prime] [CharP E p] [CharP L p]
     (H : Subgroup Eˣ) (D : Derivation k L M) (x : L)
     (hx : x ≠ 0) (hDx : D x ≠ 0) :
@@ -117,7 +118,7 @@ theorem multiplicativeSubgroup_order_pow_has_nonzeroDifferential
 /-- The two coordinate powers in Corvaja--Zannier Corollary 2 retain nonzero
 differentials for the exact pair of subgroup orders used in the Markoff middle game. -/
 theorem weightedTraceCurveTorsionIntersection_coordinatePowers_haveNonzeroDifferentials
-    {E : Type*} [Field E] [Fintype E]
+    {E : Type*} [Field E] [Finite E]
     (p : ℕ) [Fact p.Prime] [CharP E p] [CharP L p]
     (H₁ H₂ : Subgroup Eˣ) (D : Derivation k L M) (x y : L)
     (hx : x ≠ 0) (hy : y ≠ 0) (hDx : D x ≠ 0) (hDy : D y ≠ 0) :

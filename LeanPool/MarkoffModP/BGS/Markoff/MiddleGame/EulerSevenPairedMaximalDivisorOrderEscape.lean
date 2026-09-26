@@ -21,7 +21,7 @@ This is the diagonalized-fiber wiring for the exact cube condition
 namespace BGS.Markoff
 
 theorem
-    exists_iterate_with_larger_secondRotationOrder_of_diagonalizedFiber_eulerSevenPairedMaximalOrders
+    exists_iterate_larger_secondRotationOrder_of_diagonalizedFiber_eulerSevenPairedMaximalOrders
     (p : ℕ) [Fact p.Prime] [Fintype (quadraticFiniteField p)]
     (hpTwo : p ≠ 2)
     (delta : ℝ) (hdelta : delta ≤ (1 : ℝ) / 2)

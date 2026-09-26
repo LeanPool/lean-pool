@@ -156,6 +156,7 @@ theorem finiteExtensionEffectiveDivisorToDivisor_apply
   simp [finiteExtensionEffectiveDivisorToDivisor]
 
 omit [Fintype K] [DecidableEq K] in
+omit [FiniteDimensional (RatFunc K) L] [Algebra.IsSeparable (RatFunc K) L] in
 /-- The cast divisor is effective. -/
 theorem finiteExtensionEffectiveDivisorToDivisor_effective
     (D : FiniteExtensionEffectiveDivisor K L) (P : FiniteExtensionPlace K L) :

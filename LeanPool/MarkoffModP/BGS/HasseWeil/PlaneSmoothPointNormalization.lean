@@ -837,6 +837,7 @@ theorem squareExtensionClosedPointExhaustiveFinitePlace_placeDegree_le_two_of_pa
     K p hf hpartialSecond m hsmooth]
   exact squareExtensionClosedPoint_residueDegree_le_two K p f m
 
+omit [DecidableEq K] in
 /-- The residue field of the selected normalization place above a
 partial-`Y` smooth quadratic closed point satisfies square Frobenius. -/
 theorem squareExtensionClosedPointExhaustiveFinitePlace_residue_squareFrobenius_of_partialY
@@ -864,6 +865,7 @@ theorem squareExtensionClosedPointExhaustiveFinitePlace_residue_squareFrobenius_
     ∀ z : (squareExtensionClosedPointExhaustiveFinitePlace
         K p hf hpartialSecond m).asIdeal.ResidueField,
       z ^ (Fintype.card K) ^ 2 = z := by
+  classical
   let : IsDomain (PlaneCurveCoordinateRing f) :=
     planeCurveCoordinateRing_isDomain hf
   let hx := firstCoordinate_transcendental hf

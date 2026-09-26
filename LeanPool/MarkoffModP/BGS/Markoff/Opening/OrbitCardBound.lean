@@ -75,8 +75,10 @@ private theorem four_le_normalizedGammaOrbit_ncard_of_firstCoordinate_zero
       have hfirst := congrArg NormalizedPoint.u1 hval
       have hsecond := congrArg NormalizedPoint.u2 hval
       have hthird := congrArg NormalizedPoint.u3 hval
-      simp [f, x₁₂, x₂₃, x₂₃₁₂, normalizedSwap12Surface,
-        normalizedSwap23Surface, normalizedSwap12, normalizedSwap23, hxzero] at hfirst hsecond hthird
+      simp only [normalizedSwap12Surface, normalizedSwap12, hxzero, normalizedSwap23Surface,
+        normalizedSwap23, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, Fin.mk_one,
+        Matrix.cons_val_one, f, x₁₂, x₂₃, x₂₃₁₂, Fin.reduceFinMk,
+        Matrix.cons_val] at hfirst hsecond hthird
       first
       | exact h₂ hfirst
       | exact h₂ hfirst.symm
@@ -284,7 +286,8 @@ theorem prime_le_twenty_pow_normalizedGammaOrbit_ncard_cube
   let x₂ := normalizedSwap12Surface x
   have hx₂ne : x₂.1 ≠ normalizedOrigin := by
     intro hzero
-    simp [x₂, normalizedSwap12Surface, normalizedSwap12, normalizedOrigin] at hzero
+    simp only [normalizedSwap12Surface, normalizedSwap12, normalizedOrigin,
+      NormalizedPoint.mk.injEq, x₂] at hzero
     apply hxne
     ext
     · exact hzero.2.1
@@ -301,8 +304,8 @@ theorem prime_le_twenty_pow_normalizedGammaOrbit_ncard_cube
   let x₃ := normalizedSwap12Surface (normalizedSwap23Surface x)
   have hx₃ne : x₃.1 ≠ normalizedOrigin := by
     intro hzero
-    simp [x₃, normalizedSwap12Surface, normalizedSwap23Surface,
-      normalizedSwap12, normalizedSwap23, normalizedOrigin] at hzero
+    simp only [normalizedSwap12Surface, normalizedSwap12, normalizedSwap23Surface,
+      normalizedSwap23, normalizedOrigin, NormalizedPoint.mk.injEq, x₃] at hzero
     apply hxne
     ext
     · exact hzero.2.1

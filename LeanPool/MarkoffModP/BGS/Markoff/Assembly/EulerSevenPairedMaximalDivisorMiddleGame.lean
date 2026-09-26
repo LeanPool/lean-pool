@@ -115,7 +115,7 @@ theorem
       have hpPos : (0 : ℝ) < p := by positivity
       linarith
   obtain ⟨n, hnIncrease⟩ :=
-    exists_iterate_with_larger_secondRotationOrder_of_nonzero_nonparabolic_eulerSevenPairedMaximalOrders
+    exists_iterate_larger_secondRotationOrder_of_nonzero_nonparabolic_eulerSevenPairedMaximalOrders
       p hpTwo delta hdelta x'.1 x'.property hx'0 hx'Nonparabolic
         hx'Below hx'Cube hx'Linear
   let y := (normalizedRotate1Surface^[n]) x'

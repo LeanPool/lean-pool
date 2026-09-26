@@ -198,11 +198,11 @@ def canonicalCageMiddleWitnessToAxes
     (cageSecondPointCanonicalEquiv (ZMod p) axis other).symm z.1.2
   refine ⟨(firstPoint, secondPoint), ?_⟩
   cases axis <;> cases other <;>
-    simp [firstPoint, secondPoint, cageFirstPointCanonicalEquiv,
-      cageSecondPointCanonicalEquiv, normalizedSwap12Equiv,
-      normalizedSwap23Equiv,
-      normalizedSwap12, normalizedSwap23, normalizedFiberAt,
-      normalizedCoordinateAt, cageBridgeAxis] at z ⊢
+    simp only [normalizedFiberAt, cageFirstPointCanonicalEquiv, normalizedSwap23Equiv,
+      Equiv.symm_mk, cageBridgeAxis, normalizedCoordinateAt, Equiv.coe_fn_mk,
+      normalizedSwap23, cageSecondPointCanonicalEquiv, normalizedSwap12Equiv,
+      Equiv.symm_trans, Equiv.trans_apply, normalizedSwap12, firstPoint, secondPoint,
+      Equiv.refl_symm, Equiv.refl_apply] at z ⊢
   all_goals
     rcases z.2 with ⟨⟨hFirstSurface, hxi⟩,
       ⟨⟨hSecondSurface, heta⟩, hmiddle⟩⟩

@@ -297,7 +297,7 @@ noncomputable def rationalInfinityPlaceEquivGeneratorFixedPlace
 /-- Relative automorphisms over two intermediate fields induce the same
 action on top infinity places when their underlying top-field maps agree. -/
 theorem infinityPlaceGalSmul_eq_of_apply_eq
-    (K M₁ M₂ T : Type*) [Field K] [DecidableEq K]
+    (K M₁ M₂ T : Type*) [Field K]
     [DecidableEq (RatFunc K)]
     [Field M₁] [Algebra (RatFunc K) M₁]
     [FiniteDimensional (RatFunc K) M₁]
@@ -317,6 +317,7 @@ theorem infinityPlaceGalSmul_eq_of_apply_eq
     (Q : FiniteExtensionInfinityPlace K T) :
     infinityPlaceGalSmul K M₁ T g₁ Q =
       infinityPlaceGalSmul K M₂ T g₂ Q := by
+  classical
   let V := RatFuncInfinityIntegers K
   let A := RatFuncInfinityIntegralClosure K T
   let A₁ := RatFuncInfinityIntegralClosure K M₁

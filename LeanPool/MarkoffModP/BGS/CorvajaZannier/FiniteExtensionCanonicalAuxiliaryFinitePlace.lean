@@ -95,6 +95,7 @@ private theorem auxiliaryFamilyDerivativeOrder_sum_int (h k : ℕ) :
   exact_mod_cast auxiliaryFamilyDerivativeOrder_sum h k
 
 omit [DecidableEq K] in
+omit [DecidableEq (RatFunc K)] in
 private theorem finitePlaceOrder_gridMonomial_eq_zero
     (q : FiniteExtensionFinitePlace K L)
     (u v : L) (hu : u ≠ 0) (hv : v ≠ 0)
@@ -102,6 +103,7 @@ private theorem finitePlaceOrder_gridMonomial_eq_zero
     (hvOrder : finitePlaceOrder q v = 0)
     (i j : ℕ) :
     finitePlaceOrder q (u ^ i * v ^ j) = 0 := by
+  classical
   have hmul := congrArg (fun E : FiniteExtensionPlace K L →₀ ℤ => E (.inl q))
     (finiteExtensionPrincipalDivisor_mul K L
       (u ^ i) (v ^ j) (pow_ne_zero _ hu) (pow_ne_zero _ hv))

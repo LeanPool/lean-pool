@@ -83,6 +83,7 @@ theorem finiteExtensionFinitePlace_nonempty :
 
 variable {K}
 
+omit [DecidableEq K] [DecidableEq (RatFunc K)] in
 /-- The function-field genus of an absolutely irreducible plane curve is at
 most its bidegree monomial budget
 
@@ -101,6 +102,7 @@ theorem planeCurve_genus_le_bidegreeGenusBudget
     letI := planeCurveCoordinateRing_isDomain hf
     FunctionField.genus K (PlaneCurveFunctionField f) ≤
       planeCurveBidegreeGenusBudget f := by
+  classical
   let hf : Irreducible f :=
     irreducible_of_irreducible_map_algebraicClosure habsolute
   let : IsDomain (PlaneCurveCoordinateRing f) :=

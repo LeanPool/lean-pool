@@ -158,7 +158,7 @@ def localPoleCumulativeQuotientEquiv
 /-- Over a finite constant field, allowing poles through order `n` creates
 exactly `n` copies of the local residue field. -/
 theorem localPoleCumulativeQuotient_finrank
-    [Fintype K] (π : R) (hπ : π ≠ 0)
+    [Finite K] (π : R) (hπ : π ≠ 0)
     (hπIdeal : IsLocalRing.maximalIdeal R = Ideal.span {π}) (n : ℕ)
     [Finite (IsLocalRing.ResidueField R)] :
     Module.finrank K

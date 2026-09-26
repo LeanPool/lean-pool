@@ -548,6 +548,7 @@ theorem exactConstantExtensionCompatibleBaseFinitePlace_degree_eq
     hRational, Nat.mul_one]
 
 omit [DecidableEq C] [DecidableEq (RatFunc C)] [DecidableEq (RatFunc S)] in
+omit [DecidableEq S] in
 /-- Restricting the compatible `C[X]`-place to the original function field
 recovers the downstairs place obtained by contracting the explicit constant
 extension ideal. -/
@@ -584,6 +585,7 @@ theorem exactConstantExtensionCompatibleBaseFinitePlace_under_original
         (exactConstantExtensionCompatibleBaseFinitePlace
           C S N hExact q) =
       exactConstantExtensionDownstairsFinitePlace C S N hExact q := by
+  classical
   let : Field (ExactConstantExtension C N S) :=
     exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) (ExactConstantExtension C N S) :=
@@ -777,6 +779,7 @@ private theorem exactConstantExtensionCompatibility_ratFuncBaseTower :
   congr 1
   exact IsScalarTower.algebraMap_apply (RatFunc C) L N x
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- For an actual finite place in the constant-extended normalization, a
 rational restriction to `L` and divisibility `[N : L] ∣ [S : C]` imply the
 decomposition-group cardinality identity.  The residue-degree-one, absolute
@@ -815,6 +818,7 @@ theorem exactConstantExtensionFinitePlace_decompositionGroup_card_of_rational_ba
             (finitePlaceDecompositionGroup C L
               (ExactConstantExtension C N S) Q).subtype).ker *
         Nat.card (S ≃ₐ[C] S) := by
+  classical
   let : Field (ExactConstantExtension C N S) :=
     exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) (ExactConstantExtension C N S) :=

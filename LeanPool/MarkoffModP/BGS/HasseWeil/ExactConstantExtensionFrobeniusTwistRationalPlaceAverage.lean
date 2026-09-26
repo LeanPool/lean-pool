@@ -226,6 +226,7 @@ theorem sum_frobeniusTwistFieldRationalInfinityPlaceCount_le
         Module.finrank (RatFunc C) N := by
       simp [Nat.card_eq_fintype_card]
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Exact finite-plus-infinity aggregate identity.  All finite rational
 places contribute exactly `|Gal(N/C(X))| * |C|`; the displayed infinity sum
 is the entire correction to the complete rational-place count. -/
@@ -238,11 +239,13 @@ theorem sum_frobeniusTwistFieldRationalPlaceCount_eq
       Nat.card (N ≃ₐ[RatFunc C] N) * Nat.card C +
         ∑ g : N ≃ₐ[RatFunc C] N,
           frobeniusTwistFieldRationalInfinityPlaceCount C S N hExact g := by
+  classical
   simp_rw [frobeniusTwistFieldRationalPlaceCount]
   rw [Finset.sum_add_distrib,
     sum_frobeniusTwistFieldRationalFinitePlaceCount_eq_card_galois_mul_card
       C S N hExact hdiv]
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Exact centered aggregate-error identity over the reals.  It makes
 explicit that the complete-place error is the infinity contribution minus
 one point for each twist. -/
@@ -257,6 +260,7 @@ theorem sum_frobeniusTwistFieldRationalPlaceError_eq
           (frobeniusTwistFieldRationalInfinityPlaceCount
             C S N hExact g : ℝ)) -
         (Nat.card (N ≃ₐ[RatFunc C] N) : ℝ) := by
+  classical
   have htotal := sum_frobeniusTwistFieldRationalPlaceCount_eq
     C S N hExact hdiv
   have htotalReal :
@@ -273,6 +277,7 @@ theorem sum_frobeniusTwistFieldRationalPlaceError_eq
     mul_one, Nat.card_eq_fintype_card]
   ring
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- The centered aggregate error is bounded uniformly in the auxiliary
 constant extension.  The sharper factor `finrank`, rather than
 `finrank + 1`, follows because the original function-field degree is positive.
@@ -286,6 +291,7 @@ theorem abs_sum_frobeniusTwistFieldRationalPlaceError_le
           (Nat.card C : ℝ) - 1)| ≤
       (Nat.card (N ≃ₐ[RatFunc C] N) : ℝ) *
         Module.finrank (RatFunc C) N := by
+  classical
   rw [sum_frobeniusTwistFieldRationalPlaceError_eq C S N hExact hdiv]
   let infinitySum : ℝ :=
     ∑ g : N ≃ₐ[RatFunc C] N,

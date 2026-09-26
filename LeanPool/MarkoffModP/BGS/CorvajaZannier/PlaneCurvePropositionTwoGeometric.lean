@@ -31,7 +31,7 @@ noncomputable section
 
 
 private theorem exceptionalPlaces_comm
-    (K : Type*) [Field K] [DecidableEq K] [DecidableEq (RatFunc K)]
+    (K : Type*) [Field K] [DecidableEq (RatFunc K)]
     (L : Type*) [Field L] [Algebra (RatFunc K) L]
     [FiniteDimensional (RatFunc K) L] [Algebra.IsSeparable (RatFunc K) L]
     (u v : L) : propositionTwoExceptionalPlaces K L u v =

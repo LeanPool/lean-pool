@@ -339,9 +339,10 @@ theorem finitePlaceOrderTop_derivation_iterate_nonnegative_of_nonnegative
   exact finitePlaceOrderTop_algebraMap_nonnegative (L := L) v s
 
 private theorem dedekindCaseI_coe_sum_int_finset
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (g : ι → ℤ) :
+    {ι : Type*} (s : Finset ι) (g : ι → ℤ) :
     (((∑ i ∈ s, g i : ℤ) : ℤ) : WithTop ℤ) =
       ∑ i ∈ s, ((g i : ℤ) : WithTop ℤ) := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih => simp [ha, ih, WithTop.coe_add]
@@ -577,12 +578,13 @@ omit [IsDiscreteValuationRing R] in
 /-- Pairwise-distinct negative finite-place orders bounded below by a
 nonpositive integer are no more numerous than its pole depth. -/
 theorem card_negativeFinitePlaceOrders_le_neg
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (v : HeightOneSpectrum R) (g : ι → L) (a : ℤ) (ha : a ≤ 0)
     (hgdistinct : NegativeFinitePlaceOrdersPairwiseDistinct v g)
     (hglower : ∀ i, (a : WithTop ℤ) ≤ finitePlaceOrderTop v (g i)) :
     a ≤ -((Finset.univ.filter fun i =>
       finitePlaceOrderTop v (g i) < 0).card : ℤ) := by
+  classical
   let poles : Finset ι :=
     Finset.univ.filter fun i => finitePlaceOrderTop v (g i) < 0
   have hpole : ∀ i ∈ poles, finitePlaceOrderTop v (g i) < 0 := by

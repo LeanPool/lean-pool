@@ -888,6 +888,7 @@ theorem finiteExtensionPrincipalDivisor_auxiliaryGridProduct_eq_zero_outside
   change finiteExtensionPrincipalDivisor K L (f iV) w.1 = 0 at hv0
   simp [hu0, hv0]
 
+omit [DecidableEq K] in
 /-- A family entry equal to the grid product has family order zero away from
 the exceptional set. -/
 theorem finiteExtensionFamilyOrder_gridProduct_eq_zero_outsideExceptionalSet

@@ -541,10 +541,12 @@ section InfinityGlobalOrderHelpers
 
 variable {K L}
 
+omit [DecidableEq K] in
 @[simp] theorem finiteExtensionPrincipalDivisor_inr_eq_infinityPlaceOrder
     (x : L) (P : FiniteExtensionInfinityPlace K L) :
     finiteExtensionPrincipalDivisor K L x (.inr P) =
       finitePlaceOrder (primeOverHeightOne (ratFuncInfinityPlace K) P) x := by
+  classical
   rw [finiteExtensionPrincipalDivisor_inr]
   symm
   simpa [ratFuncInfinityIntegralClosureFractionRingEquiv] using
@@ -553,6 +555,7 @@ variable {K L}
     (primeOverHeightOne (ratFuncInfinityPlace K) P)
     ((ratFuncInfinityIntegralClosureFractionRingEquiv K L).symm x)
 
+omit [DecidableEq K] in
 private theorem finiteExtensionInfinityPlace_gridOrder_sum_eq
     (P : FiniteExtensionInfinityPlace K L)
     (u v : L) (hu : u ≠ 0) (hv : v ≠ 0) (h k : ℕ) :
@@ -561,6 +564,7 @@ private theorem finiteExtensionInfinityPlace_gridOrder_sum_eq
         (u ^ (rs.1 : ℕ) * v ^ (rs.2 : ℕ))) =
       finiteExtensionPrincipalDivisor K L
         (finiteExtensionAuxiliaryGridProduct L u v h k) (.inr P) := by
+  classical
   have hdiv := congrArg
     (fun D : FiniteExtensionPlace K L →₀ ℤ => D (.inr P))
     (finiteExtensionPrincipalDivisor_auxiliaryGridProduct K L u v hu hv h k)
@@ -598,6 +602,7 @@ section InfinityCanonicalAuxiliaryCases
 variable {K L}
 variable {C : Type*} [Field C] [Algebra C L]
 
+omit [DecidableEq K] in
 /-- Infinity source case (iii), expressed with the actual canonical different
 coefficient and exhaustive principal divisors. -/
 theorem finiteExtensionInfinityPlace_canonicalAuxiliary_caseIII_of_scaling
@@ -635,6 +640,7 @@ theorem finiteExtensionInfinityPlace_canonicalAuxiliary_caseIII_of_scaling
           (indexedDedekindLocalWronskian D
             (auxiliaryFamilyDerivativeOrder h k)
             (auxiliaryFamily u v h k)).det (.inr P) := by
+  classical
   have hbound :=
     finiteExtensionInfinityPlace_auxiliaryFamily_caseIII_of_scaled_preserves
       (K := K) (L := L) P h k
@@ -674,6 +680,7 @@ theorem finiteExtensionInfinityPlace_canonicalAuxiliary_caseIII_of_scaling
     finiteExtensionPrincipalDivisor_inr_eq_infinityPlaceOrder] using
     hboundInt
 
+omit [DecidableEq K] in
 /-- Infinity source case (iv), in the same canonical global-divisor form. -/
 theorem finiteExtensionInfinityPlace_canonicalAuxiliary_caseIV_of_scaling
     (P : FiniteExtensionInfinityPlace K L)
@@ -708,6 +715,7 @@ theorem finiteExtensionInfinityPlace_canonicalAuxiliary_caseIV_of_scaling
           (indexedDedekindLocalWronskian D
             (auxiliaryFamilyDerivativeOrder h k)
             (auxiliaryFamily u v h k)).det (.inr P) := by
+  classical
   have hbound :=
     finiteExtensionInfinityPlace_auxiliaryFamily_caseIV_of_scaled_preserves
       (K := K) (L := L) P h k
@@ -849,6 +857,7 @@ theorem finiteExtensionInfinityPlace_auxiliaryFamily_caseII_of_scaled_preserves
   rw [hchange, finitePlaceOrderTop_mul, finitePlaceOrderTop_pow] at hbound
   exact hbound
 
+omit [DecidableEq K] in
 theorem finiteExtensionInfinityPlace_canonicalAuxiliary_caseII_of_scaling
     (P : FiniteExtensionInfinityPlace K L)
     (D : Derivation C L L) (c : L) (hc : c ≠ 0)
@@ -882,6 +891,7 @@ theorem finiteExtensionInfinityPlace_canonicalAuxiliary_caseII_of_scaling
         (indexedDedekindLocalWronskian D
           (auxiliaryFamilyDerivativeOrder h k)
           (auxiliaryFamily u v h k)).det (.inr P) := by
+  classical
   have hrho : (1 - u) / (1 - v) ≠ 0 :=
     div_ne_zero (sub_ne_zero.mpr hu1.symm) (sub_ne_zero.mpr hv1.symm)
   have huTop : (0 : WithTop ℤ) ≤
@@ -923,13 +933,17 @@ section InfinityResiduePerfect
 
 variable {K L}
 
+omit [DecidableEq K] in
 theorem ratFuncInfinityPlace_residueField_finite [Fintype K] :
     Finite (ratFuncInfinityPlace K).asIdeal.ResidueField := by
+  classical
   exact Finite.of_injective (ratFuncInfinityPlaceResidueEquiv K)
     (ratFuncInfinityPlaceResidueEquiv K).injective
 
+omit [DecidableEq K] in
 theorem finiteExtensionInfinityPlace_residueField_finite [Fintype K]
     (P : FiniteExtensionInfinityPlace K L) : Finite P.1.ResidueField := by
+  classical
   let p := (ratFuncInfinityPlace K).asIdeal
   let : Finite p.ResidueField :=
     ratFuncInfinityPlace_residueField_finite (K := K)
@@ -943,6 +957,7 @@ theorem finiteExtensionInfinityPlace_residueField_finite [Fintype K]
   let : Module.Finite p.ResidueField P.1.ResidueField := inferInstance
   exact Module.finite_of_finite p.ResidueField
 
+omit [DecidableEq K] in
 theorem finiteExtensionInfinityPlaceLocal_residueField_perfect [Fintype K]
     (P : FiniteExtensionInfinityPlace K L) :
     letI : IsDiscreteValuationRing
@@ -954,6 +969,7 @@ theorem finiteExtensionInfinityPlaceLocal_residueField_perfect [Fintype K]
     PerfectField
       (IsDiscreteValuationRing.maximalIdeal
         (FiniteExtensionInfinityPlaceLocalRing K L P)).asIdeal.ResidueField := by
+  classical
   let q := (primeOverHeightOne (ratFuncInfinityPlace K) P).asIdeal
   let : Finite q.ResidueField := by
     simpa [q, primeOverHeightOne_asIdeal] using
@@ -994,6 +1010,7 @@ section InfinityCaseI
 variable {K L}
 variable {p : ℕ} [Fact p.Prime] [CharP L p]
 
+omit [DecidableEq K] in
 private theorem infinityPlaceOrder_gridMonomial_eq_zero
     (P : FiniteExtensionInfinityPlace K L)
     (u v : L) (hu : u ≠ 0) (hv : v ≠ 0)
@@ -1004,6 +1021,7 @@ private theorem infinityPlaceOrder_gridMonomial_eq_zero
     (i j : ℕ) :
     finitePlaceOrder (primeOverHeightOne (ratFuncInfinityPlace K) P)
       (u ^ i * v ^ j) = 0 := by
+  classical
   have hmul := congrArg
     (fun E : FiniteExtensionPlace K L →₀ ℤ => E (.inr P))
     (finiteExtensionPrincipalDivisor_mul K L
@@ -1019,6 +1037,7 @@ private theorem infinityPlaceOrder_gridMonomial_eq_zero
   rw [hmul, hupow, hvpow, huOrder, hvOrder]
   simp
 
+omit [DecidableEq K] in
 theorem finiteExtensionInfinityPlace_auxiliaryFamily_caseI_of_scaled_preserves
     [Fintype K]
     (P : FiniteExtensionInfinityPlace K L)
@@ -1057,6 +1076,7 @@ theorem finiteExtensionInfinityPlace_auxiliaryFamily_caseI_of_scaled_preserves
         finiteExtensionInfinityPlaceLocalOrderTop (K := K) (L := L) P
           (indexedDedekindLocalWronskian D epsilonOrder
             (auxiliaryFamily u v h k)).det := by
+  classical
   let _ := finiteExtensionInfinityPlaceLocalAlgebra (K := K) (L := L) P
   let := finiteExtensionInfinityPlaceLocalIsFractionRing
     (K := K) (L := L) P
@@ -1103,6 +1123,7 @@ theorem finiteExtensionInfinityPlace_auxiliaryFamily_caseI_of_scaled_preserves
           (auxiliaryFamily u v h k)).det at hbound
   exact hbound
 
+omit [DecidableEq K] in
 theorem finiteExtensionInfinityPlace_canonicalAuxiliary_caseI_of_scaling
     [Fintype K]
     (P : FiniteExtensionInfinityPlace K L)
@@ -1142,6 +1163,7 @@ theorem finiteExtensionInfinityPlace_canonicalAuxiliary_caseI_of_scaling
           (indexedDedekindLocalWronskian D
             (auxiliaryFamilyDerivativeOrder h k)
             (auxiliaryFamily u v h k)).det (.inr P) := by
+  classical
   let n := h * k + h + k
   have hrho : (1 - u) / (1 - v) ≠ 0 :=
     div_ne_zero (sub_ne_zero.mpr hu1.symm) (sub_ne_zero.mpr hv1.symm)

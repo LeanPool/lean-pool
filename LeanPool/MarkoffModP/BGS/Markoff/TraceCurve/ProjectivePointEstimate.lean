@@ -221,11 +221,12 @@ abbrev splitTraceNormalizationBoundaryLabels (d e : ℕ) :=
 the explicit `4de` boundary bound required by the point-count bridge.  This premise is structural:
 it does not assume the desired cardinal inequality. -/
 theorem projectiveBoundary_card_le_four_mul_de_of_injective_normalizationLabels
-    {P : Type*} [DecidableEq P] (boundary : Finset P)
+    {P : Type*} (boundary : Finset P)
     (d e : ℕ) (hd : 0 < d) (he : 0 < e)
     (labels : ↥boundary → splitTraceNormalizationBoundaryLabels d e)
     (hlabels : Function.Injective labels) :
     boundary.card ≤ 4 * d * e := by
+  classical
   have hgcd : Nat.gcd d e ≤ d := Nat.gcd_le_left e hd
   have hdde : d ≤ d * e := Nat.le_mul_of_pos_right d he
   calc

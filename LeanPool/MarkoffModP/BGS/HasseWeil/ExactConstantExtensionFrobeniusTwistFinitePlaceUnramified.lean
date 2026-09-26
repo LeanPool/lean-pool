@@ -309,8 +309,7 @@ noncomputable def rationalFinitePlaceEquivGeneratorFixedPlace
 /-- Relative automorphisms over two intermediate fields induce the same
 action on top finite places when their underlying top-field maps agree. -/
 theorem finitePlaceGalSmul_eq_of_apply_eq
-    (K M₁ M₂ T : Type*) [Field K] [DecidableEq K]
-    [DecidableEq (RatFunc K)]
+    (K M₁ M₂ T : Type*) [Field K]
     [Field M₁] [Algebra (RatFunc K) M₁]
     [FiniteDimensional (RatFunc K) M₁]
     [Algebra.IsSeparable (RatFunc K) M₁]
@@ -329,6 +328,7 @@ theorem finitePlaceGalSmul_eq_of_apply_eq
     (Q : FiniteExtensionFinitePlace K T) :
     finitePlaceGalSmul K M₁ T g₁ Q =
       finitePlaceGalSmul K M₂ T g₂ Q := by
+  classical
   let A := RatFuncFiniteIntegralClosure K T
   let A₁ := RatFuncFiniteIntegralClosure K M₁
   let A₂ := RatFuncFiniteIntegralClosure K M₂
@@ -805,6 +805,7 @@ theorem exactConstantExtensionFrobeniusTwist_finitePlaceGalSmul_eq_overFixedFiel
   exact exactConstantExtensionFrobeniusTwistOverFixedField_apply
     C N S hExact g x
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Ambient fixedness by the Frobenius twist is therefore the exact
 fixedness condition needed for descent to a rational twist-field place. -/
 theorem frobeniusTwistField_ambientFixed_finitePlace_under_degree_eq_one

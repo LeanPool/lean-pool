@@ -125,7 +125,8 @@ theorem puncturedMarkoffPointsWithSmallFirstTwoRotationOrders_card_le
     (puncturedMarkoffPointsWithSmallFirstTwoRotationOrders p bound).card ≤
       2 * (2 + 2 * bound ^ 2) ^ 2 := by
   rw [puncturedMarkoffPointsWithSmallFirstTwoRotationOrders_card_eq_normalized]
-  exact (normalizedPuncturedMarkoffPointsWithSmallFirstTwoRotationOrders_card_le_ambient bound).trans
+  exact
+    (normalizedPuncturedMarkoffPointsWithSmallFirstTwoRotationOrders_card_le_ambient bound).trans
     (normalizedMarkoffPointsWithSmallFirstTwoRotationOrders_card_le hpTwo bound)
 
 /-- The divisor-sensitive normalized count also bounds the transported punctured set. -/
@@ -136,7 +137,8 @@ theorem puncturedMarkoffPointsWithSmallFirstTwoRotationOrders_card_le_divisor_se
       2 * (2 + (bound - 1) *
         ((p - 1).divisors.card + (p + 1).divisors.card)) ^ 2 := by
   rw [puncturedMarkoffPointsWithSmallFirstTwoRotationOrders_card_eq_normalized]
-  exact (normalizedPuncturedMarkoffPointsWithSmallFirstTwoRotationOrders_card_le_ambient bound).trans
+  exact
+    (normalizedPuncturedMarkoffPointsWithSmallFirstTwoRotationOrders_card_le_ambient bound).trans
     (normalizedMarkoffPointsWithSmallFirstTwoRotationOrders_card_le_divisor_sensitive hpTwo bound)
 
 theorem puncturedMarkoffPointsWithSmallFirstTwoRotationOrders_succ_card_le_divisor_sensitive

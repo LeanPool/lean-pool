@@ -485,12 +485,14 @@ theorem finiteExtensionDivisorDegree_eq_chart
         finiteExtensionPlaceDegree_eq_chart]
 
 omit [Fintype K] in
+omit [DecidableEq K] in
 /-- The valuation of a nonzero function is the exponential of the negative
 coefficient of its exhaustive principal divisor. -/
 theorem finiteExtensionPlaceValuation_eq_exp_neg_principalDivisor
     (x : L) (hx : x ≠ 0) (v : FiniteExtensionPlace K L) :
     finiteExtensionPlaceValuation K L v x =
       WithZero.exp (-(finiteExtensionPrincipalDivisor K L x v)) := by
+  classical
   rcases v with q | P
   · change q.valuation L x = _
     rw [finiteExtensionPrincipalDivisor_inl_eq_finitePlaceOrder,

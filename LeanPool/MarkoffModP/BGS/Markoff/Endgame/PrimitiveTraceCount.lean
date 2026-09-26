@@ -98,6 +98,7 @@ theorem splitTraceCurveSolutions_card_eq_mul_natCard_powerTraceRangeSolutions
       natCard_powerTraceCoverSolutions_of_dvd
         (splitTorusTrace : Kˣ → K) (weightedSplitTorusTrace alpha beta) d e hdvd hedvd
 
+omit [DecidableEq K] in
 /-- Equation (34) for a concrete weighted split trace cover, derived from the explicit Weil
 assumption only after Lean proves the cover's absolute irreducibility. -/
 theorem splitTracePowerRangeSolutions_count_error_le_of_weilBoundAssumption
@@ -109,6 +110,7 @@ theorem splitTracePowerRangeSolutions_count_error_le_of_weilBoundAssumption
     |(Nat.card (splitTracePowerRangeSolutions K alpha beta d e) : ℝ) -
         (Fintype.card K : ℝ) / ((d : ℝ) * (e : ℝ))| ≤
       (coefficient : ℝ) * Real.sqrt (Fintype.card K : ℝ) := by
+  classical
   apply rangeCount_error_le_of_coverCount_error_and_exactMultiplicity
     (splitTraceCurveSolutions K alpha beta d e).card
     (Nat.card (splitTracePowerRangeSolutions K alpha beta d e))
@@ -209,7 +211,7 @@ theorem existingConicSeedNonsplitPowerRangeSolutions_count_error_le_of_weilBound
     (existingConicSeedNonsplitTraceCurveSolutions_card_eq_mul_natCard_powerTraceRangeSolutions
       p t ht ht0 s d e hdvd hedvd)
   exact
-    existingConicSeedNonsplitTraceCurveSolutions_count_error_le_of_weilBoundAssumption_and_positiveExponents
+    existingConicSeedNonsplitTraceCurveSolutions_count_error_le_of_weilBound_and_positiveExponents
       coefficient hWeil p hpTwo t ht ht0 s d e hd he hdChar
 
 end Nonsplit

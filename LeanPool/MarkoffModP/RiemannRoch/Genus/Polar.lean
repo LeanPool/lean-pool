@@ -244,7 +244,7 @@ noncomputable def basisPoleBound {ι : Type*} [Fintype ι] (f : ι → K) : Divi
   (Finset.univ : Finset ι).sum fun i => polarDivisor k K (f i)
 
 omit [Algebra k K] [IsScalarTower k k[X] K] [IsFullConstantField k K] in
-theorem polarDivisor_le_basisPoleBound {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem polarDivisor_le_basisPoleBound {ι : Type*} [Fintype ι]
     (f : ι → K) (i : ι) :
     polarDivisor k K (f i) ≤ basisPoleBound k K f := by
   classical
@@ -261,9 +261,10 @@ theorem basisPoleBound_nonneg {ι : Type*} [Fintype ι] (f : ι → K) :
   exact Finset.sum_nonneg fun i _ => polarDivisor_nonneg k K (f i) v
 
 omit [Algebra k K] [IsScalarTower k k[X] K] [IsFullConstantField k K] in
-theorem memRRspace_basisPoleBound {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem memRRspace_basisPoleBound {ι : Type*} [Fintype ι]
     (f : ι → K) (i : ι) :
     memRRspace k K (basisPoleBound k K f) (f i) := by
+  classical
   by_cases hi : f i = 0
   · rw [hi]
     exact memRRspace.zero_mem (k := k) (K := K) (basisPoleBound k K f)
@@ -271,7 +272,7 @@ theorem memRRspace_basisPoleBound {ι : Type*} [Fintype ι] [DecidableEq ι]
       (memRRspace_polarDivisor_of_ne_zero k K hi)
 
 omit [Algebra k K] [IsScalarTower k k[X] K] [IsFullConstantField k K] in
-theorem memRRspace_basis_smul_x_pow {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem memRRspace_basis_smul_x_pow {ι : Type*} [Fintype ι]
     (f : ι → K) (x : K)
     (hxne : x ≠ 0) (r : ℕ) (i : ι) (j : ℕ) (hj : j ≤ r) :
     memRRspace k K (basisPoleBound k K f + r • polarDivisor k K x) (f i * x ^ j) :=

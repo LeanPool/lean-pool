@@ -255,12 +255,13 @@ private theorem finrank_eq_of_finite_ringEquiv
 
 private theorem actualInfinityPlaceResidueField_finite
     (K L : Type*) [Field K] [Field L]
-    [DecidableEq K] [DecidableEq (RatFunc K)]
+    [DecidableEq (RatFunc K)]
     [Finite K] [Algebra (RatFunc K) L]
     [FiniteDimensional (RatFunc K) L]
     [Algebra.IsSeparable (RatFunc K) L]
     (P : FiniteExtensionInfinityPlace K L) :
     Finite P.1.ResidueField := by
+  classical
   let : Algebra K (RatFuncInfinityIntegers K) :=
     (ratFuncInfinityConstantRingHom K).toAlgebra
   let : IsScalarTower K (RatFuncInfinityIntegers K) (RatFunc K) :=

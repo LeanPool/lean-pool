@@ -43,14 +43,22 @@ noncomputable def finTwoSecondVariableScaleEquiv (c : Kˣ) :
     intro i
     fin_cases i
     · simp [forward, backward]
-    · simp [forward, backward, ← mul_assoc]
+    · simp only [MvPolynomial.aeval_eq_bind₁, Fin.isValue, Units.val_inv_eq_inv_val,
+      Fin.mk_one, AlgHom.coe_comp, Function.comp_apply, MvPolynomial.bind₁_X_right,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, map_mul, MvPolynomial.algHom_C,
+      MvPolynomial.algebraMap_eq, ← mul_assoc, AlgHom.coe_id, id_eq, ne_eq,
+      MvPolynomial.X_ne_zero, not_false_eq_true, mul_eq_right₀, forward, backward]
       rw [← map_mul]
       simp
   · apply MvPolynomial.algHom_ext
     intro i
     fin_cases i
     · simp [forward, backward]
-    · simp [forward, backward, ← mul_assoc]
+    · simp only [MvPolynomial.aeval_eq_bind₁, Fin.isValue, Units.val_inv_eq_inv_val,
+      Fin.mk_one, AlgHom.coe_comp, Function.comp_apply, MvPolynomial.bind₁_X_right,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, map_mul, MvPolynomial.algHom_C,
+      MvPolynomial.algebraMap_eq, ← mul_assoc, AlgHom.coe_id, id_eq, ne_eq,
+      MvPolynomial.X_ne_zero, not_false_eq_true, mul_eq_right₀, backward, forward]
       rw [← map_mul]
       simp
 

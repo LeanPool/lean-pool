@@ -28,7 +28,6 @@ open BGS.CorvajaZannier
 
 private theorem finitePlaceUnder_trans_of_fields
     (C L F T : Type*) [Field C] [Field L] [Field F] [Field T]
-    [DecidableEq C] [DecidableEq (RatFunc C)]
     [Algebra (RatFunc C) L] [Algebra (RatFunc C) F] [Algebra (RatFunc C) T]
     [FiniteDimensional (RatFunc C) L] [FiniteDimensional (RatFunc C) F]
     [FiniteDimensional (RatFunc C) T]
@@ -39,6 +38,7 @@ private theorem finitePlaceUnder_trans_of_fields
     [IsScalarTower (RatFunc C) F T] [IsScalarTower L F T]
     (Q : FiniteExtensionFinitePlace C T) :
     finitePlaceUnder C L F (finitePlaceUnder C F T Q) = finitePlaceUnder C L T Q := by
+  classical
   let R₀ := RatFuncFiniteIntegralClosure C L
   let R₁ := RatFuncFiniteIntegralClosure C F
   let R₂ := RatFuncFiniteIntegralClosure C T
@@ -472,6 +472,8 @@ private theorem intermediateFrobeniusTwist_zpow_includeLeft
     exactConstantExtensionConstantAlgEquivOverBase,
     exactConstantExtensionFunctionAlgEquivOverBase]
 
+omit [DecidableEq C] [DecidableEq S] [DecidableEq (RatFunc C)] [DecidableEq (RatFunc S)]
+  [FiniteDimensional (RatFunc C) L] [Algebra.IsSeparable (RatFunc C) L] [IsGalois L N] in
 /-- Every finite place of the exact constant extension is unramified over an
 intermediate-base Frobenius-twist fixed field. -/
 theorem intermediateFrobeniusTwistField_finitePlace_ramificationIdx_eq_one
@@ -823,6 +825,7 @@ private theorem exists_presentedFinitePlace_of_under_intermediate_rational :
     finitePlaceUnder_intermediate_original C S N hExact L Q]
   exact hBase
 
+omit [FiniteDimensional L N] in
 /-- Every top finite place over a rational finite place of `L` has absolute
 degree `[S : C]` when `[N : L]` divides the constant-extension degree. -/
 theorem exactConstantExtensionFinitePlace_degree_eq_finrank_of_under_intermediate_rational
@@ -1049,6 +1052,7 @@ abbrev IntermediateFrobeniusTwistFinitePlaceFiberFixedBy
     (finitePlaceUnderFiberGalAction C L T P.1)
     (exactConstantExtensionFrobeniusTwist C L N S hExact g)
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Above one rational finite place of `L`, summing fixed top places over all
 intermediate-base Frobenius twists contributes exactly `|Gal(N/L)|`. -/
 theorem sum_card_finitePlaceUnderFiber_fixedBy_intermediateFrobeniusTwist_eq_card_galois
@@ -1057,6 +1061,7 @@ theorem sum_card_finitePlaceUnderFiber_fixedBy_intermediateFrobeniusTwist_eq_car
     (∑ g : N ≃ₐ[L] N,
       Nat.card (IntermediateFrobeniusTwistFinitePlaceFiberFixedBy
         C S N hExact L g P)) = Nat.card (N ≃ₐ[L] N) := by
+  classical
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=
@@ -1250,6 +1255,8 @@ noncomputable def
       right_inv := fun Q ↦ Subtype.ext rfl }
   exact eFixed.trans eCompare
 
+omit [Finite S] [DecidableEq S] [DecidableEq (RatFunc S)] [FiniteDimensional L N]
+  [IsGalois L N] in
 /-- Restriction through an intermediate Frobenius-twist field agrees with
 direct restriction to `L`. -/
 theorem finitePlaceUnder_intermediateFrobeniusTwist_under
@@ -1395,11 +1402,7 @@ noncomputable def
         _ = R.1 := y.1.2
     have hP : P = R := Subtype.ext hBase
     subst R
-    apply Sigma.ext (by rfl)
-    apply heq_of_eq
-    apply Subtype.ext
-    apply Subtype.ext
-    exact hQ
+    exact Sigma.ext rfl (heq_of_eq (Subtype.ext (Subtype.ext hQ)))
   have hSurjective : Function.Surjective toAmbient := by
     intro z
     let Q := z.1
@@ -1462,6 +1465,7 @@ noncomputable def intermediateFrobeniusTwistFieldRationalFinitePlaceCount
       C S N hExact L g
   Nat.card (FiniteExtensionRationalFinitePlace C F)
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- For one twist, rational finite places split as the finite sum of fixed
 restriction fibers above the rational finite places of `L`. -/
 theorem intermediateFrobeniusTwistFieldRationalFinitePlaceCount_eq_sum_fiberFixedBy
@@ -1472,6 +1476,7 @@ theorem intermediateFrobeniusTwistFieldRationalFinitePlaceCount_eq_sum_fiberFixe
       ∑ P : FiniteExtensionRationalFinitePlace C L,
         Nat.card (IntermediateFrobeniusTwistFinitePlaceFiberFixedBy
           C S N hExact L g P) := by
+  classical
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=
@@ -1519,6 +1524,7 @@ theorem intermediateFrobeniusTwistFieldRationalFinitePlaceCount_eq_sum_fiberFixe
     (intermediateFrobeniusTwistField_rationalFinitePlace_equiv_sigma_fiberFixedBy
       C S N hExact L hdiv g), Nat.card_sigma]
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Summed over all intermediate-base Frobenius twists, the rational finite
 place count is exactly `|Gal(N/L)|` times the rational finite-place count of
 `L`. -/
@@ -1529,6 +1535,7 @@ theorem sum_intermediateFrobeniusTwistFieldRationalFinitePlaceCount_eq_card_galo
         C S N hExact L g) =
       Nat.card (N ≃ₐ[L] N) *
         Nat.card (FiniteExtensionRationalFinitePlace C L) := by
+  classical
   have hDegreeDiv : Module.finrank L N ∣ Module.finrank C S := by
     rw [← IsGalois.card_aut_eq_finrank]
     exact hdiv

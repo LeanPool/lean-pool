@@ -74,7 +74,7 @@ theorem mem_propositionTwoExceptionalPlaces_of_v_order_pos
 omit [DecidableEq K] in
 /-- Every auxiliary grid product has order zero away from the direct
 Proposition 2 exceptional set. -/
-theorem finiteExtensionPrincipalDivisor_auxiliaryGridProduct_eq_zero_outside_propositionTwoExceptionalPlaces
+theorem finiteExtensionPrincipalDivisor_gridProduct_eq_zero_off_propositionTwoExceptionalPlaces
     (u v : L) (hu : u ≠ 0) (hv : v ≠ 0)
     (h k : ℕ) (P : FiniteExtensionPlace K L)
     (hP : P ∉ propositionTwoExceptionalPlaces K L u v) :

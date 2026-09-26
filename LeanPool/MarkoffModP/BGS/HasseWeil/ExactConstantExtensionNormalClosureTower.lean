@@ -570,6 +570,7 @@ noncomputable def functionFieldNormalClosureConstantExtensionTowerAlgHom
     exactConstantExtensionTowerCanonicalConstantAlgebra C N
   exact exactConstantExtensionTowerRatFuncAlgebra C M N S
 
+omit [DecidableEq K] [DecidableEq (RatFunc K)] in
 /-- The specialized inclusion and the canonical `S(X)` structures form a
 scalar tower. -/
 theorem functionFieldNormalClosureConstantExtension_ratFuncScalarTower
@@ -634,6 +635,7 @@ theorem functionFieldNormalClosureConstantExtension_ratFuncScalarTower
   exact exactConstantExtensionTower_ratFuncScalarTower C M N S
     (functionFieldNormalClosureConstantField_isExact_for_constantRatFunc K F)
 
+omit [DecidableEq K] [DecidableEq (RatFunc K)] in
 /-- The extended normal closure is finite-dimensional over the extended
 original compositum. -/
 theorem
@@ -695,6 +697,7 @@ theorem
   exact exactConstantExtensionTower_finiteDimensional C M N S
     (functionFieldNormalClosureConstantField_isExact_for_constantRatFunc K F)
 
+omit [DecidableEq K] [DecidableEq (RatFunc K)] in
 /-- The extended normal closure remains Galois over the extended original
 compositum. -/
 theorem functionFieldNormalClosureConstantExtension_isGalois
@@ -889,6 +892,7 @@ theorem functionFieldNormalClosureConstantExtension_card_aut_eq
   exact exactConstantExtensionTower_card_aut_eq C M N S
     (functionFieldNormalClosureConstantField_isExact_for_constantRatFunc K F)
 
+omit [DecidableEq K] [DecidableEq (RatFunc K)] in
 /-- The rational-place count of the extended original compositum is the
 packaged level-one exact constant-extension count of that compositum. -/
 theorem
@@ -960,6 +964,7 @@ theorem
     (exactConstantExtensionClosedPlaceExtensionCount_one_eq_rationalPlaceCount
       C S M hExactM).symm
 
+omit [DecidableEq K] [DecidableEq (RatFunc K)] in
 /-- Combining the exact splitting formula with the canonical
 `C(X)`-equivalence `C ⊗[K] F ≃ CF` identifies the same rational-place count
 with the packaged exact-extension count of the original function field at

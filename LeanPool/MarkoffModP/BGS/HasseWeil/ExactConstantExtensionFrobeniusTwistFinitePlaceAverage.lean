@@ -41,7 +41,6 @@ statement `finitePlaceUnder_under`, both sides live in the normalized
 finite-place model of `K(X)`. -/
 theorem finitePlaceUnder_ratFunc_under
     (K M L : Type*) [Field K] [Field M] [Field L]
-    [DecidableEq K] [DecidableEq (RatFunc K)]
     [Algebra (RatFunc K) M] [FiniteDimensional (RatFunc K) M]
     [Algebra.IsSeparable (RatFunc K) M]
     [Algebra (RatFunc K) L] [FiniteDimensional (RatFunc K) L]
@@ -50,6 +49,7 @@ theorem finitePlaceUnder_ratFunc_under
     (Q : FiniteExtensionFinitePlace K L) :
     finitePlaceUnder K (RatFunc K) M (finitePlaceUnder K M L Q) =
       finitePlaceUnder K (RatFunc K) L Q := by
+  classical
   let : Algebra (RatFuncFiniteIntegralClosure K (RatFunc K))
       (RatFuncFiniteIntegralClosure K M) :=
     (finiteIntegralClosureMap K (RatFunc K) M).toAlgebra
@@ -165,6 +165,7 @@ private theorem finiteExtensionPlaceDegree_inl_eq_finrank_residueField_ratFunc
   rw [ratFuncFinitePlaceDegree_eq_finrank_residueField C P]
   rw [mul_comm, finrank_mul_finrank_of_fields]
 
+omit [Fintype C] in
 /-- The chart-normalization equivalence preserves finite-place degree. -/
 @[simp]
 theorem finiteExtensionPlaceDegree_ratFuncFinitePlaceEquivFiniteExtension
@@ -742,6 +743,7 @@ noncomputable def frobeniusTwistFieldRationalFinitePlaceCount
     isSeparable_frobeniusTwistField_over_ratFunc C N S hExact g
   Nat.card (FiniteExtensionRationalFinitePlace C F)
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- For one twist, rational finite places split as the finite sum of fixed
 restriction fibers above the rational finite places of `C(X)`. -/
 theorem frobeniusTwistFieldRationalFinitePlaceCount_eq_sum_fiberFixedBy
@@ -752,6 +754,7 @@ theorem frobeniusTwistFieldRationalFinitePlaceCount_eq_sum_fiberFixedBy
       ∑ P : RatFuncRationalFinitePlace C,
         Nat.card (FrobeniusTwistFinitePlaceFiberFixedBy
           C S N hExact g P) := by
+  classical
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=
@@ -791,6 +794,7 @@ theorem frobeniusTwistFieldRationalFinitePlaceCount_eq_sum_fiberFixedBy
     (frobeniusTwistField_rationalFinitePlace_equiv_sigma_fiberFixedBy
       C S N hExact hdiv g), Nat.card_sigma]
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Summed over all canonical Frobenius twists, the number of rational
 finite places is exactly the order of the original Galois group times the
 number of constants. -/
@@ -800,6 +804,7 @@ theorem sum_frobeniusTwistFieldRationalFinitePlaceCount_eq_card_galois_mul_card
     (∑ g : N ≃ₐ[RatFunc C] N,
       frobeniusTwistFieldRationalFinitePlaceCount C S N hExact g) =
       Nat.card (N ≃ₐ[RatFunc C] N) * Nat.card C := by
+  classical
   have hDegreeDiv :
       Module.finrank (RatFunc C) N ∣ Module.finrank C S := by
     rw [← IsGalois.card_aut_eq_finrank]

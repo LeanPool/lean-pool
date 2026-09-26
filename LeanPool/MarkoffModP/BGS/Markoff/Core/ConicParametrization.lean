@@ -52,7 +52,9 @@ def splitFiberSecondEigenCoordinate (w : Fˣ) (x : NormalizedPoint F) : F :=
 theorem splitTorusTrace_sq_sub_four (w : Fˣ) :
     splitTorusTrace w ^ 2 - 4 =
       ((w : F) - ((w⁻¹ : Fˣ) : F)) ^ 2 := by
-  simp [splitTorusTrace]
+  simp only [splitTorusTrace, Units.val_inv_eq_inv_val, ne_eq, Units.ne_zero,
+    not_false_eq_true, mul_inv_cancel_right₀, mul_zero, mul_eq_zero, OfNat.ofNat_ne_zero,
+    pow_eq_zero_iff]
   field_simp
   ring
 

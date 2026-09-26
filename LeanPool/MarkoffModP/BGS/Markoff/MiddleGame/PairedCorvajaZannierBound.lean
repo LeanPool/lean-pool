@@ -79,13 +79,14 @@ nonparabolic left-support estimate
 -/
 theorem weightedTraceEquationNonparabolicLeftSupport_card_cast_le_pairedCorvajaZannier
     (p : ℕ) [Fact p.Prime]
-    (E : Type) [Field E] [Fintype E] [DecidableEq E] [CharP E p]
+    (E : Type) [Field E] [Fintype E] [CharP E p]
     (alpha beta : E) (H₁ H₂ : Subgroup Eˣ)
     (hadmissible : WeightedTraceCurveIsCorvajaZannierAdmissible alpha beta) :
     ((weightedTraceEquationNonparabolicLeftSupport
         alpha beta H₁ H₂).card : ℝ) ≤
       pairedCorvajaZannierTraceUpperBound
         p (Nat.card H₁) (Nat.card H₂) := by
+  classical
   obtain ⟨hleftPositive, hrightPositive, hleftPrime, hrightPrime⟩ :=
     multiplicativeSubgroups_satisfy_weightedTraceBoundOrderHypotheses
       p E H₁ H₂

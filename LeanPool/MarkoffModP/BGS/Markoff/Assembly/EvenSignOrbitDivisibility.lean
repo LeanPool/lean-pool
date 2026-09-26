@@ -53,7 +53,9 @@ theorem evenSign_eq_one_of_smul_eq
         eq_zero_of_neg_eq htwo (congrArg Point.x2 fixedPoint)
       have hthird : x.1.1.x3 = 0 := by
         have hmarkoff := x.1.2
-        simp [IsMarkoff, markoffPolynomial, hfirst, hsecond] at hmarkoff
+        simp only [IsMarkoff, markoffPolynomial, ne_eq, hfirst, OfNat.ofNat_ne_zero,
+          not_false_eq_true, zero_pow, hsecond, add_zero, zero_add, mul_zero, zero_mul,
+          sub_zero, pow_eq_zero_iff] at hmarkoff
         exact hmarkoff
       exfalso
       apply x.2
@@ -66,7 +68,9 @@ theorem evenSign_eq_one_of_smul_eq
         eq_zero_of_neg_eq htwo (congrArg Point.x3 fixedPoint)
       have hsecond : x.1.1.x2 = 0 := by
         have hmarkoff := x.1.2
-        simp [IsMarkoff, markoffPolynomial, hfirst, hthird] at hmarkoff
+        simp only [IsMarkoff, markoffPolynomial, ne_eq, hfirst, OfNat.ofNat_ne_zero,
+          not_false_eq_true, zero_pow, zero_add, hthird, add_zero, mul_zero, zero_mul,
+          sub_zero, pow_eq_zero_iff] at hmarkoff
         exact hmarkoff
       exfalso
       apply x.2
@@ -79,7 +83,9 @@ theorem evenSign_eq_one_of_smul_eq
         eq_zero_of_neg_eq htwo (congrArg Point.x3 fixedPoint)
       have hfirst : x.1.1.x1 = 0 := by
         have hmarkoff := x.1.2
-        simp [IsMarkoff, markoffPolynomial, hsecond, hthird] at hmarkoff
+        simp only [IsMarkoff, markoffPolynomial, ne_eq, hsecond, OfNat.ofNat_ne_zero,
+          not_false_eq_true, zero_pow, add_zero, hthird, mul_zero, sub_zero, pow_eq_zero_iff]
+          at hmarkoff
         exact hmarkoff
       exfalso
       apply x.2

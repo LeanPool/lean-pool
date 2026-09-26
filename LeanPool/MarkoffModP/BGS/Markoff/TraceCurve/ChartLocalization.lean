@@ -45,17 +45,22 @@ def weightedSplitTraceAffineCoordinateProduct (alpha beta : K) (d e : ℕ) :
 abbrev WeightedSplitTraceLaurentCoordinateRing (alpha beta : K) (d e : ℕ) :=
   Localization.Away (weightedSplitTraceAffineCoordinateProduct alpha beta d e)
 
-def weightedSplitTraceLaurentX (alpha beta : K) (d e : ℕ) : WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=
+def weightedSplitTraceLaurentX (alpha beta : K) (d e : ℕ) :
+    WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=
   algebraMap _ _ (weightedSplitTraceAffineX alpha beta d e)
 
-def weightedSplitTraceLaurentY (alpha beta : K) (d e : ℕ) : WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=
+def weightedSplitTraceLaurentY (alpha beta : K) (d e : ℕ) :
+    WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=
   algebraMap _ _ (weightedSplitTraceAffineY alpha beta d e)
 
 theorem weightedSplitTraceLaurentCoordinateProduct_isUnit (alpha beta : K) (d e : ℕ) :
-    IsUnit (weightedSplitTraceLaurentX alpha beta d e * weightedSplitTraceLaurentY alpha beta d e) := by
-  simpa only [weightedSplitTraceLaurentX, weightedSplitTraceLaurentY, weightedSplitTraceAffineCoordinateProduct, map_mul] using
+    IsUnit (weightedSplitTraceLaurentX alpha beta d e *
+      weightedSplitTraceLaurentY alpha beta d e) := by
+  simpa only [weightedSplitTraceLaurentX, weightedSplitTraceLaurentY,
+    weightedSplitTraceAffineCoordinateProduct, map_mul] using
     (IsLocalization.Away.algebraMap_isUnit
-      (S := WeightedSplitTraceLaurentCoordinateRing alpha beta d e) (weightedSplitTraceAffineCoordinateProduct alpha beta d e))
+      (S := WeightedSplitTraceLaurentCoordinateRing alpha beta d e)
+      (weightedSplitTraceAffineCoordinateProduct alpha beta d e))
 
 theorem weightedSplitTraceLaurentX_isUnit (alpha beta : K) (d e : ℕ) :
     IsUnit (weightedSplitTraceLaurentX alpha beta d e) :=
@@ -77,13 +82,15 @@ def weightedSplitTraceLaurentYUnit (alpha beta : K) (d e : ℕ) :
 
 @[simp]
 theorem weightedSplitTraceLaurentXUnit_val (alpha beta : K) (d e : ℕ) :
-    (weightedSplitTraceLaurentXUnit alpha beta d e : WeightedSplitTraceLaurentCoordinateRing alpha beta d e) =
+    (weightedSplitTraceLaurentXUnit alpha beta d e :
+      WeightedSplitTraceLaurentCoordinateRing alpha beta d e) =
       weightedSplitTraceLaurentX alpha beta d e :=
   (weightedSplitTraceLaurentX_isUnit alpha beta d e).unit_spec
 
 @[simp]
 theorem weightedSplitTraceLaurentYUnit_val (alpha beta : K) (d e : ℕ) :
-    (weightedSplitTraceLaurentYUnit alpha beta d e : WeightedSplitTraceLaurentCoordinateRing alpha beta d e) =
+    (weightedSplitTraceLaurentYUnit alpha beta d e :
+      WeightedSplitTraceLaurentCoordinateRing alpha beta d e) =
       weightedSplitTraceLaurentY alpha beta d e :=
   (weightedSplitTraceLaurentY_isUnit alpha beta d e).unit_spec
 
@@ -103,10 +110,12 @@ theorem weightedSplitTraceAffineDefiningRelation (alpha beta : K) (d e : ℕ) :
 
 theorem weightedSplitTraceLaurentDefiningRelation (alpha beta : K) (d e : ℕ) :
     algebraMap K (WeightedSplitTraceLaurentCoordinateRing alpha beta d e) alpha *
-          weightedSplitTraceLaurentX alpha beta d e ^ d * weightedSplitTraceLaurentY alpha beta d e ^ (2 * e) +
+          weightedSplitTraceLaurentX alpha beta d e ^ d *
+            weightedSplitTraceLaurentY alpha beta d e ^ (2 * e) +
         algebraMap K (WeightedSplitTraceLaurentCoordinateRing alpha beta d e) beta *
           weightedSplitTraceLaurentX alpha beta d e ^ d -
-        weightedSplitTraceLaurentX alpha beta d e ^ (2 * d) * weightedSplitTraceLaurentY alpha beta d e ^ e -
+        weightedSplitTraceLaurentX alpha beta d e ^ (2 * d) *
+          weightedSplitTraceLaurentY alpha beta d e ^ e -
         weightedSplitTraceLaurentY alpha beta d e ^ e = 0 := by
   let ev : MvPolynomial (Fin 2) K →+* WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=
     MvPolynomial.eval₂Hom (algebraMap K (WeightedSplitTraceLaurentCoordinateRing alpha beta d e))
@@ -121,7 +130,8 @@ theorem weightedSplitTraceLaurentDefiningRelation (alpha beta : K) (d e : ℕ) :
         (WeightedSplitTraceAffineCoordinateRing alpha beta d e)
         (WeightedSplitTraceLaurentCoordinateRing alpha beta d e) a
     · fin_cases a <;>
-        simp [RingHom.comp_apply, ev, weightedSplitTraceLaurentX, weightedSplitTraceLaurentY, weightedSplitTraceAffineX, weightedSplitTraceAffineY]
+        simp [RingHom.comp_apply, ev, weightedSplitTraceLaurentX, weightedSplitTraceLaurentY,
+          weightedSplitTraceAffineX, weightedSplitTraceAffineY]
   have hp : ev (splitTraceCoverPolynomial alpha beta d e) = 0 := by
     rw [hev]
     simpa only [RingHom.comp_apply, map_zero] using congrArg
@@ -187,7 +197,8 @@ def weightedSplitTraceLeftInversionPolynomialMap (alpha beta : K) (d e : ℕ) :
 theorem weightedSplitTraceLeftInversionPolynomialMap_relation (alpha beta : K) (d e : ℕ) :
     weightedSplitTraceLeftInversionPolynomialMap alpha beta d e
       (splitTraceCoverPolynomial alpha beta d e) = 0 := by
-  simpa [weightedSplitTraceLeftInversionPolynomialMap, MvPolynomial.aeval_def, splitTraceCoverPolynomial] using
+  simpa [weightedSplitTraceLeftInversionPolynomialMap, MvPolynomial.aeval_def,
+    splitTraceCoverPolynomial] using
     weightedSplitTraceLeftInverseDefiningRelation alpha beta d e
 
 def weightedSplitTraceLeftInversionAffineMap (alpha beta : K) (d e : ℕ) :
@@ -208,7 +219,8 @@ def weightedSplitTraceLeftInversionAffineMap (alpha beta : K) (d e : ℕ) :
 
 @[simp]
 theorem weightedSplitTraceLeftInversionAffineMap_x (alpha beta : K) (d e : ℕ) :
-    weightedSplitTraceLeftInversionAffineMap alpha beta d e (weightedSplitTraceAffineX alpha beta d e) =
+    weightedSplitTraceLeftInversionAffineMap alpha beta d e
+      (weightedSplitTraceAffineX alpha beta d e) =
       weightedSplitTraceLaurentXInverse alpha beta d e := by
   change MvPolynomial.aeval
     ![weightedSplitTraceLaurentXInverse alpha beta d e,
@@ -217,43 +229,52 @@ theorem weightedSplitTraceLeftInversionAffineMap_x (alpha beta : K) (d e : ℕ) 
 
 @[simp]
 theorem weightedSplitTraceLeftInversionAffineMap_y (alpha beta : K) (d e : ℕ) :
-    weightedSplitTraceLeftInversionAffineMap alpha beta d e (weightedSplitTraceAffineY alpha beta d e) =
+    weightedSplitTraceLeftInversionAffineMap alpha beta d e
+      (weightedSplitTraceAffineY alpha beta d e) =
       weightedSplitTraceLaurentY alpha beta d e := by
   change MvPolynomial.aeval
     ![weightedSplitTraceLaurentXInverse alpha beta d e,
       weightedSplitTraceLaurentY alpha beta d e] (MvPolynomial.X 1) = _
   simp
 
-theorem weightedSplitTraceLeftInversionAffineMap_coordinateProduct_isUnit (alpha beta : K) (d e : ℕ) :
-    IsUnit (weightedSplitTraceLeftInversionAffineMap alpha beta d e (weightedSplitTraceAffineCoordinateProduct alpha beta d e)) := by
+theorem weightedSplitTraceLeftInversionAffineMap_coordinateProduct_isUnit
+    (alpha beta : K) (d e : ℕ) :
+    IsUnit (weightedSplitTraceLeftInversionAffineMap alpha beta d e
+      (weightedSplitTraceAffineCoordinateProduct alpha beta d e)) := by
   simpa [weightedSplitTraceAffineCoordinateProduct, weightedSplitTraceLaurentXInverse] using
     (Units.isUnit (weightedSplitTraceLaurentXUnit alpha beta d e)⁻¹).mul
       (weightedSplitTraceLaurentY_isUnit alpha beta d e)
 
 def weightedSplitTraceLeftInversionLaurentMap (alpha beta : K) (d e : ℕ) :
-    WeightedSplitTraceLaurentCoordinateRing alpha beta d e →ₐ[K] WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=
+    WeightedSplitTraceLaurentCoordinateRing alpha beta d e →ₐ[K]
+      WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=
   IsLocalization.Away.liftAlgHom (weightedSplitTraceAffineCoordinateProduct alpha beta d e)
     (weightedSplitTraceLeftInversionAffineMap_coordinateProduct_isUnit alpha beta d e)
 
 @[simp]
 theorem weightedSplitTraceLeftInversionLaurentMap_x (alpha beta : K) (d e : ℕ) :
-    weightedSplitTraceLeftInversionLaurentMap alpha beta d e (weightedSplitTraceLaurentX alpha beta d e) =
+    weightedSplitTraceLeftInversionLaurentMap alpha beta d e
+      (weightedSplitTraceLaurentX alpha beta d e) =
       weightedSplitTraceLaurentXInverse alpha beta d e := by
-  simp only [weightedSplitTraceLeftInversionLaurentMap, weightedSplitTraceLaurentX, IsLocalization.Away.liftAlgHom_apply]
+  simp only [weightedSplitTraceLeftInversionLaurentMap, weightedSplitTraceLaurentX,
+    IsLocalization.Away.liftAlgHom_apply]
   rw [IsLocalization.Away.lift_eq]
   exact weightedSplitTraceLeftInversionAffineMap_x alpha beta d e
 
 @[simp]
 theorem weightedSplitTraceLeftInversionLaurentMap_y (alpha beta : K) (d e : ℕ) :
-    weightedSplitTraceLeftInversionLaurentMap alpha beta d e (weightedSplitTraceLaurentY alpha beta d e) =
+    weightedSplitTraceLeftInversionLaurentMap alpha beta d e
+      (weightedSplitTraceLaurentY alpha beta d e) =
       weightedSplitTraceLaurentY alpha beta d e := by
-  simp only [weightedSplitTraceLeftInversionLaurentMap, weightedSplitTraceLaurentY, IsLocalization.Away.liftAlgHom_apply]
+  simp only [weightedSplitTraceLeftInversionLaurentMap, weightedSplitTraceLaurentY,
+    IsLocalization.Away.liftAlgHom_apply]
   rw [IsLocalization.Away.lift_eq]
   exact weightedSplitTraceLeftInversionAffineMap_y alpha beta d e
 
 @[simp]
 theorem weightedSplitTraceLeftInversionLaurentMap_xInverse (alpha beta : K) (d e : ℕ) :
-    weightedSplitTraceLeftInversionLaurentMap alpha beta d e (weightedSplitTraceLaurentXInverse alpha beta d e) =
+    weightedSplitTraceLeftInversionLaurentMap alpha beta d e
+      (weightedSplitTraceLaurentXInverse alpha beta d e) =
       weightedSplitTraceLaurentX alpha beta d e := by
   let u := weightedSplitTraceLaurentXUnit alpha beta d e
   let f := weightedSplitTraceLeftInversionLaurentMap alpha beta d e
@@ -301,16 +322,20 @@ theorem weightedSplitTraceLeftInversionLaurentMap_involutive (alpha beta : K) (d
   intro i
   fin_cases i
   · change weightedSplitTraceLeftInversionLaurentMap alpha beta d e
-        (weightedSplitTraceLeftInversionLaurentMap alpha beta d e (weightedSplitTraceLaurentX alpha beta d e)) =
+        (weightedSplitTraceLeftInversionLaurentMap alpha beta d e
+          (weightedSplitTraceLaurentX alpha beta d e)) =
       weightedSplitTraceLaurentX alpha beta d e
-    rw [weightedSplitTraceLeftInversionLaurentMap_x, weightedSplitTraceLeftInversionLaurentMap_xInverse]
+    rw [weightedSplitTraceLeftInversionLaurentMap_x,
+      weightedSplitTraceLeftInversionLaurentMap_xInverse]
   · change weightedSplitTraceLeftInversionLaurentMap alpha beta d e
-        (weightedSplitTraceLeftInversionLaurentMap alpha beta d e (weightedSplitTraceLaurentY alpha beta d e)) =
+        (weightedSplitTraceLeftInversionLaurentMap alpha beta d e
+          (weightedSplitTraceLaurentY alpha beta d e)) =
       weightedSplitTraceLaurentY alpha beta d e
     rw [weightedSplitTraceLeftInversionLaurentMap_y, weightedSplitTraceLeftInversionLaurentMap_y]
 
 def weightedSplitTraceLeftInversionLaurentEquiv (alpha beta : K) (d e : ℕ) :
-    WeightedSplitTraceLaurentCoordinateRing alpha beta d e ≃ₐ[K] WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=
+    WeightedSplitTraceLaurentCoordinateRing alpha beta d e ≃ₐ[K]
+      WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=
   AlgEquiv.ofAlgHom (weightedSplitTraceLeftInversionLaurentMap alpha beta d e)
     (weightedSplitTraceLeftInversionLaurentMap alpha beta d e)
     (weightedSplitTraceLeftInversionLaurentMap_involutive alpha beta d e)
@@ -505,7 +530,8 @@ theorem weightedSplitTraceRightInversionLaurentMap_xInverse
         ↑(Units.map f.toMonoidHom (sourceUnit⁻¹)) :=
           (Units.coe_map f.toMonoidHom (sourceUnit⁻¹)).symm
     _ = ↑((Units.map f.toMonoidHom sourceUnit)⁻¹) := by rw [map_inv]
-    _ = (↑(targetUnit⁻¹) : WeightedSplitTraceLaurentCoordinateRing alpha beta d e) := by rw [hu]
+    _ = (↑(targetUnit⁻¹) :
+        WeightedSplitTraceLaurentCoordinateRing alpha beta d e) := by rw [hu]
 
 theorem weightedSplitTraceRightInversionLaurentMap_inverseComposition
     (alpha beta : K) (d e : ℕ) :

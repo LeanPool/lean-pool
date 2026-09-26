@@ -63,13 +63,14 @@ exact nonparabolic left-support estimate whose root coefficient cubes to
 theorem
     weightedTraceEquationNonparabolicLeftSupport_card_cast_le_pairedEulerSeven
     (p : ℕ) [Fact p.Prime]
-    (E : Type*) [Field E] [Fintype E] [DecidableEq E] [CharP E p]
+    (E : Type*) [Field E] [Fintype E] [CharP E p]
     (alpha beta : E) (Hleft Hright : Subgroup Eˣ)
     (hadmissible : WeightedTraceCurveIsCorvajaZannierAdmissible alpha beta) :
     ((weightedTraceEquationNonparabolicLeftSupport
         alpha beta Hleft Hright).card : ℝ) ≤
       pairedEulerSevenCorvajaZannierTraceUpperBound
         p (Nat.card Hleft) (Nat.card Hright) := by
+  classical
   obtain ⟨hleftPositive, hrightPositive, hleftPrime, hrightPrime⟩ :=
     multiplicativeSubgroups_satisfy_weightedTraceBoundOrderHypotheses
       p E Hleft Hright

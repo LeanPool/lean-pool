@@ -65,7 +65,7 @@ theorem exists_frobeniusSubfield_regular_unit_sub_mul_mem_of_perfect_residue
   let b : R := a ^ p
   have hbMap : algebraMap R κ b = ratio := by
     rw [show algebraMap R κ b = (algebraMap R κ a) ^ p by
-      simp [b]]
+      simp only [Units.inv_mul_cancel_right] [b]]
     rw [ha]
     simpa [frobenius_def] using hz
   have hbCancel : (u : R) - b * (w : R) ∈ v.asIdeal := by

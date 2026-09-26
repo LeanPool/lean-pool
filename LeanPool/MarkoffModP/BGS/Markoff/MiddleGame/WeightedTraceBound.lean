@@ -52,9 +52,10 @@ def WeightedTraceTorsionIntersectionBound
 variable (p : ℕ) [Fact p.Prime]
 variable (E : Type*) [Field E] [Fintype E] [CharP E p]
 
+omit [Fintype E] in
 /-- Multiplicative subgroup orders satisfy every arithmetic side condition in the weighted-trace
 torsion-intersection bound. -/
-theorem multiplicativeSubgroups_satisfy_weightedTraceBoundOrderHypotheses
+theorem multiplicativeSubgroups_satisfy_weightedTraceBoundOrderHypotheses [Finite E]
     (H₁ H₂ : Subgroup Eˣ) :
     0 < Nat.card H₁ ∧ 0 < Nat.card H₂ ∧
       ¬ p ∣ Nat.card H₁ ∧ ¬ p ∣ Nat.card H₂ := by

@@ -178,7 +178,8 @@ theorem existingConicSeedNonsplitTraceCurveSolutions_count_error_le_of_weilBound
 As in the split adapter, the only external input is `hWeil`.  Lean supplies the
 scalar-extended absolute irreducibility theorem from the actual conic seed and the visible
 prime-to-characteristic condition on the norm-one covering exponent. -/
-theorem existingConicSeedNonsplitTraceCurveSolutions_count_error_le_of_weilBoundAssumption_and_positiveExponents
+theorem
+  existingConicSeedNonsplitTraceCurveSolutions_count_error_le_of_weilBound_and_positiveExponents
     (coefficient : ℕ) (hWeil : SeededNonsplitTraceWeilBoundAssumption coefficient)
     (p : ℕ) [Fact p.Prime] (hpTwo : p ≠ 2)
     (t : ZMod p) (ht : t ^ 2 ≠ 4) (ht0 : t ≠ 0)

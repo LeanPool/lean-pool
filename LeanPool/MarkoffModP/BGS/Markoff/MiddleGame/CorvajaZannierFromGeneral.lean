@@ -33,7 +33,14 @@ theorem weightedTraceTorusClosurePolynomial_pderiv_first_ne_zero
   intro hzero
   have heval := congrArg
     (MvPolynomial.eval ![(0 : K), (0 : K)]) hzero
-  simp [splitTraceCoverPolynomial] at heval
+  simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.isValue, splitTraceCoverPolynomial,
+    pow_one, mul_one, map_sub, map_add, Derivation.leibniz, Derivation.leibniz_pow,
+    Nat.add_one_sub_one, MvPolynomial.pderiv_X, ne_eq, one_ne_zero, not_false_eq_true,
+    Pi.single_eq_of_ne, smul_eq_mul, mul_zero, nsmul_zero, Pi.single_eq_same,
+    MvPolynomial.derivation_C, add_zero, zero_add, nsmul_eq_mul, Nat.cast_ofNat, sub_zero,
+    map_mul, map_pow, MvPolynomial.eval_X, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+    OfNat.ofNat_ne_zero, zero_pow, MvPolynomial.eval_C, zero_mul, MvPolynomial.eval_ofNat,
+    Matrix.cons_val_zero, map_zero] at heval
   exact hbeta heval
 
 theorem weightedTraceTorusClosurePolynomial_pderiv_second_ne_zero
@@ -102,8 +109,9 @@ Corvaja--Zannier plane-curve theorem. -/
 theorem corvajaZannierWeightedTraceBound_of_generalTheorem
     (hGeneral : BGS.External.GeneralCorvajaZannierPlaneCurveTheorem)
     (p : ℕ) [Fact p.Prime]
-    (K : Type) [Field K] [Fintype K] [DecidableEq K] [CharP K p] :
+    (K : Type) [Field K] [Fintype K] [CharP K p] :
     WeightedTraceTorsionIntersectionBound p K := by
+  classical
   intro alpha beta leftOrder rightOrder hadmissible
     hleftPositive hrightPositive hleftPrime hrightPrime
   have hsource := hGeneral p K
@@ -127,7 +135,7 @@ theorem corvajaZannierWeightedTraceBound_of_generalTheorem
 the unconditional general plane-curve theorem proved in this repository. -/
 theorem corvajaZannierWeightedTraceBound
     (p : ℕ) [Fact p.Prime]
-    (K : Type) [Field K] [Fintype K] [DecidableEq K] [CharP K p] :
+    (K : Type) [Field K] [Fintype K] [CharP K p] :
     WeightedTraceTorsionIntersectionBound p K :=
   corvajaZannierWeightedTraceBound_of_generalTheorem
     BGS.CorvajaZannier.generalCorvajaZannierPlaneCurveTheorem p K

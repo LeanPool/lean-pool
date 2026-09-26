@@ -44,6 +44,7 @@ local instance boundedErrorBaseConstantTower :
     IsScalarTower C (RatFunc C) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- A common upper bound for all Frobenius-twist point-count errors gives a
 two-sided bound for every twist.  The additive term is uniform in the
 auxiliary constant extension `S`: it depends only on the original Galois

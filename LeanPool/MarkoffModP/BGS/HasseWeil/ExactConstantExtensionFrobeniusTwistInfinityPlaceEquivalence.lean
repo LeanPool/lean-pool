@@ -176,6 +176,7 @@ theorem frobeniusTwistField_fixed_infinityPlace_under_degree_eq_one
 
 omit [DecidableEq C] [DecidableEq (RatFunc C)]
   [DecidableEq S] [DecidableEq (RatFunc S)] in
+omit [Finite S] in
 /-- The canonical twist over its fixed field and the ambient twist over
 `C(X)` induce the same action on infinity places. -/
 theorem exactConstantExtensionFrobeniusTwist_infinityPlaceGalSmul_eq_overFixedField

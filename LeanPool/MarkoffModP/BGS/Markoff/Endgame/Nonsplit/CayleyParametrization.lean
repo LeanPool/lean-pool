@@ -31,15 +31,18 @@ section
 
 variable (p : ℕ) [Fact p.Prime]
 
-noncomputable local instance : Fintype (quadraticFiniteField p) := Fintype.ofFinite (quadraticFiniteField p)
+noncomputable local instance : Fintype (quadraticFiniteField p) :=
+  Fintype.ofFinite (quadraticFiniteField p)
 noncomputable local instance : Fintype {w : quadraticNormOneTorus p // w ≠ 1} :=
   Fintype.ofFinite _
 
-private theorem quadraticExtension_finrank : Module.finrank (ZMod p) (quadraticFiniteField p) = 2 := by
+private theorem quadraticExtension_finrank :
+    Module.finrank (ZMod p) (quadraticFiniteField p) = 2 := by
   simpa using GaloisField.finrank p (n := 2)
 
 private theorem exists_quadraticNonbaseElement :
-    ∃ delta : quadraticFiniteField p, delta ∉ Set.range (algebraMap (ZMod p) (quadraticFiniteField p)) := by
+    ∃ delta : quadraticFiniteField p,
+      delta ∉ Set.range (algebraMap (ZMod p) (quadraticFiniteField p)) := by
   classical
   have hnotSurjective : ¬ Function.Surjective (algebraMap (ZMod p) (quadraticFiniteField p)) := by
     intro hsurjective
@@ -121,7 +124,8 @@ theorem quadraticNonbaseElement_frobenius_frobenius :
 
 theorem quadraticCayleyValue_frobenius (z : ZMod p) :
     quadraticCayleyValue p z ^ p = (quadraticCayleyValue p z)⁻¹ := by
-  rw [quadraticCayleyValue, div_pow, sub_pow_char (R := quadraticFiniteField p), sub_pow_char (R := quadraticFiniteField p),
+  rw [quadraticCayleyValue, div_pow, sub_pow_char (R := quadraticFiniteField p),
+    sub_pow_char (R := quadraticFiniteField p),
     ← map_pow, ZMod.pow_card, quadraticNonbaseElement_frobenius_frobenius p]
   rw [inv_div]
 
@@ -159,7 +163,8 @@ theorem quadraticCayleyFactorProduct_frobenius (z : ZMod p) :
   rw [mul_pow, quadraticCayleyConjugateFactor_frobenius p,
     quadraticCayleyBaseFactor_frobenius p, mul_comm]
 
-private theorem div_pow_add_inv_pow (A B : quadraticFiniteField p) (hA : A ≠ 0) (hB : B ≠ 0) (d : ℕ) :
+private theorem div_pow_add_inv_pow (A B : quadraticFiniteField p)
+    (hA : A ≠ 0) (hB : B ≠ 0) (d : ℕ) :
     (A / B) ^ d + ((A / B) ^ d)⁻¹ =
       (A ^ (2 * d) + B ^ (2 * d)) / ((A * B) ^ d) := by
   rw [Nat.mul_comm 2 d, pow_mul, pow_mul, div_pow, inv_div, mul_pow]
@@ -199,7 +204,8 @@ theorem quadraticCayleyUnit_norm (z : ZMod p) :
 /-- The Cayley coordinate, regarded as a point of the norm-one torus. -/
 noncomputable def quadraticCayleyPoint (z : ZMod p) : quadraticNormOneTorus p :=
   ⟨quadraticCayleyUnit p z, by
-    change Units.map (Algebra.norm (ZMod p) (S := quadraticFiniteField p)) (quadraticCayleyUnit p z) = 1
+    change Units.map (Algebra.norm (ZMod p) (S := quadraticFiniteField p))
+      (quadraticCayleyUnit p z) = 1
     apply Units.ext
     exact quadraticCayleyUnit_norm p z⟩
 
@@ -207,12 +213,14 @@ theorem quadraticCayleyPoint_ne_one (z : ZMod p) : quadraticCayleyPoint p z ≠ 
   intro h
   have hval := congrArg (fun w : quadraticNormOneTorus p =>
     (((w : (quadraticFiniteField p)ˣ) : quadraticFiniteField p))) h
-  exact quadraticCayleyValue_ne_one p z (by simpa [quadraticCayleyPoint, quadraticCayleyUnit] using hval)
+  exact quadraticCayleyValue_ne_one p z
+    (by simpa [quadraticCayleyPoint, quadraticCayleyUnit] using hval)
 
 /-- The base-field trace of a powered Cayley point is the cleared symmetric Cayley fraction. -/
 theorem algebraMap_quadraticNormOneTrace_quadraticCayleyPoint_pow
     (z : ZMod p) (d : ℕ) :
-    algebraMap (ZMod p) (quadraticFiniteField p) (quadraticNormOneTrace p (quadraticCayleyPoint p z ^ d)) =
+    algebraMap (ZMod p) (quadraticFiniteField p)
+      (quadraticNormOneTrace p (quadraticCayleyPoint p z ^ d)) =
       ((algebraMap (ZMod p) (quadraticFiniteField p) z - quadraticNonbaseElement p ^ p) ^ (2 * d) +
         (algebraMap (ZMod p) (quadraticFiniteField p) z - quadraticNonbaseElement p) ^ (2 * d)) /
       (((algebraMap (ZMod p) (quadraticFiniteField p) z - quadraticNonbaseElement p ^ p) *
@@ -241,7 +249,8 @@ private theorem quadraticCayleyPoint_injective :
   intro z r h
   have hvalue : quadraticCayleyValue p z = quadraticCayleyValue p r := by
     have htorus := congrArg Subtype.val h
-    have hunit := congrArg (fun w : quadraticNormOneTorus p => (w : (quadraticFiniteField p)ˣ)) htorus
+    have hunit :=
+      congrArg (fun w : quadraticNormOneTorus p => (w : (quadraticFiniteField p)ˣ)) htorus
     exact congrArg Units.val hunit
   apply (algebraMap (ZMod p) (quadraticFiniteField p)).injective
   rw [← quadraticCayleyInverseFormula_point p z,

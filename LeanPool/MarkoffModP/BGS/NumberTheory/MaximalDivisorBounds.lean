@@ -100,12 +100,14 @@ theorem elementsOfOrderLessThan_subset_maximalDivisorCover
   rw [mem_elementsWithPowOne_iff]
   exact orderOf_dvd_iff_pow_eq_one.mp horderDvd
 
+omit [DecidableEq G] in
 /-- The cyclic low-order count using only maximal divisors. -/
 theorem elementsOfOrderLessThan_card_le_maximalDivisors
     [IsCyclic G] (bound : ℕ) :
     (Finset.univ.filter fun g : G => orderOf g < bound).card ≤
       (bound - 1) *
         (maximalDivisorsBelow (Fintype.card G) bound).card := by
+  classical
   calc
     (Finset.univ.filter fun g : G => orderOf g < bound).card ≤
         ((maximalDivisorsBelow (Fintype.card G) bound).biUnion

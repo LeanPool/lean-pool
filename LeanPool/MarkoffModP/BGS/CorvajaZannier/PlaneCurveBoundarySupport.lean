@@ -247,10 +247,12 @@ private theorem probeFiniteExtensionPlaceValuation_injective :
             rw [hval]
           exact congrArg HeightOneSpectrum.asIdeal hprime
 
+omit [DecidableEq K] in
 private theorem probeFiniteExtensionPlaceValuation_constant_le_one
     [Algebra K L] [IsScalarTower K (RatFunc K) L]
     (w : FiniteExtensionPlace K L) (c : K) :
     probeFiniteExtensionPlaceValuation K L w (algebraMap K L c) ≤ 1 := by
+  classical
   cases w with
   | inl q =>
       have hrepr : algebraMap K L c =
@@ -570,13 +572,14 @@ private theorem probe_placeDegree_eq_of_valuation_eq [Fintype K]
         (primeOverHeightOne (ratFuncInfinityPlace K) P) q hq).symm
 
 private theorem weightedSum_le_of_injective
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*}
     (source : Finset α) (target : Finset β) (map : ↥source → β)
     (sourceWeight : α → ℕ) (targetWeight : β → ℕ)
     (injective : Function.Injective map)
     (weight : ∀ x, targetWeight (map x) = sourceWeight x)
     (membership : ∀ x, map x ∈ target) :
     ∑ x ∈ source, sourceWeight x ≤ ∑ y ∈ target, targetWeight y := by
+  classical
   have imageSubset : source.attach.image map ⊆ target := by
     intro y hy
     obtain ⟨x, _, rfl⟩ := Finset.mem_image.mp hy

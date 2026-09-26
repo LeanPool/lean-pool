@@ -57,7 +57,9 @@ private theorem first_ne_zero_of_second_eq_zero
   intro hx1
   have hx3 : x.1.1.x3 = 0 := by
     have hmark := x.1.2
-    simp [IsMarkoff, markoffPolynomial, hx1, hx2] at hmark
+    simp only [IsMarkoff, markoffPolynomial, ne_eq, hx1, OfNat.ofNat_ne_zero,
+      not_false_eq_true, zero_pow, hx2, add_zero, zero_add, mul_zero, zero_mul, sub_zero,
+      pow_eq_zero_iff] at hmark
     exact hmark
   apply x.2
   apply Subtype.ext
@@ -69,7 +71,9 @@ private theorem first_ne_zero_of_third_eq_zero
   intro hx1
   have hx2 : x.1.1.x2 = 0 := by
     have hmark := x.1.2
-    simp [IsMarkoff, markoffPolynomial, hx1, hx3] at hmark
+    simp only [IsMarkoff, markoffPolynomial, ne_eq, hx1, OfNat.ofNat_ne_zero,
+      not_false_eq_true, zero_pow, zero_add, hx3, add_zero, mul_zero, zero_mul, sub_zero,
+      pow_eq_zero_iff] at hmark
     exact hmark
   apply x.2
   apply Subtype.ext
@@ -81,7 +85,9 @@ private theorem second_ne_zero_of_first_eq_zero
   intro hx2
   have hx3 : x.1.1.x3 = 0 := by
     have hmark := x.1.2
-    simp [IsMarkoff, markoffPolynomial, hx1, hx2] at hmark
+    simp only [IsMarkoff, markoffPolynomial, ne_eq, hx1, OfNat.ofNat_ne_zero,
+      not_false_eq_true, zero_pow, hx2, add_zero, zero_add, mul_zero, zero_mul, sub_zero,
+      pow_eq_zero_iff] at hmark
     exact hmark
   apply x.2
   apply Subtype.ext
@@ -93,7 +99,8 @@ private theorem second_ne_zero_of_third_eq_zero
   intro hx2
   have hx1 : x.1.1.x1 = 0 := by
     have hmark := x.1.2
-    simp [IsMarkoff, markoffPolynomial, hx2, hx3] at hmark
+    simp only [IsMarkoff, markoffPolynomial, ne_eq, hx2, OfNat.ofNat_ne_zero,
+      not_false_eq_true, zero_pow, add_zero, hx3, mul_zero, sub_zero, pow_eq_zero_iff] at hmark
     exact hmark
   apply x.2
   apply Subtype.ext
@@ -105,7 +112,9 @@ private theorem third_ne_zero_of_first_eq_zero
   intro hx3
   have hx2 : x.1.1.x2 = 0 := by
     have hmark := x.1.2
-    simp [IsMarkoff, markoffPolynomial, hx1, hx3] at hmark
+    simp only [IsMarkoff, markoffPolynomial, ne_eq, hx1, OfNat.ofNat_ne_zero,
+      not_false_eq_true, zero_pow, zero_add, hx3, add_zero, mul_zero, zero_mul, sub_zero,
+      pow_eq_zero_iff] at hmark
     exact hmark
   apply x.2
   apply Subtype.ext
@@ -117,7 +126,8 @@ private theorem third_ne_zero_of_second_eq_zero
   intro hx3
   have hx1 : x.1.1.x1 = 0 := by
     have hmark := x.1.2
-    simp [IsMarkoff, markoffPolynomial, hx2, hx3] at hmark
+    simp only [IsMarkoff, markoffPolynomial, ne_eq, hx2, OfNat.ofNat_ne_zero,
+      not_false_eq_true, zero_pow, add_zero, hx3, mul_zero, sub_zero, pow_eq_zero_iff] at hmark
     exact hmark
   apply x.2
   apply Subtype.ext

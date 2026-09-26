@@ -263,9 +263,11 @@ theorem cayleyTransport_splitIteratedPolynomial
   simp only [← C_mul_X_pow_eq_monomial, Polynomial.map_add, Polynomial.map_mul,
     Polynomial.map_neg, Polynomial.map_pow, Polynomial.map_C, Polynomial.map_X]
   rw [hphi]
-  simp [BGS.Algebra.ratFuncLinearFractionalValue, aeval_def,
-    eval₂_add, eval₂_sub, eval₂_mul, eval₂_pow, eval₂_C, eval₂_X,
-    ← C_mul_X_pow_eq_monomial]
+  simp only [map_pow, map_sub, Algebra.ratFuncLinearFractionalValue, map_one, one_mul,
+    map_neg, aeval_def, RatFunc.algebraMap_eq_C, eval₂_neg, eval₂_pow, eval₂_X,
+    neg_mul, RingEquiv.toRingHom_eq_coe, AlgEquiv.toRingEquiv_toRingHom, map_add, map_mul,
+    RatFunc.algebraMap_C, RatFunc.algebraMap_X, RingHom.coe_coe,
+    Algebra.ratFuncLinearFractionalEquiv_apply_X]
   rw [hconst, hconst]
   let A : RatFunc K := RatFunc.X - RatFunc.C r
   let B : RatFunc K := RatFunc.X - RatFunc.C t

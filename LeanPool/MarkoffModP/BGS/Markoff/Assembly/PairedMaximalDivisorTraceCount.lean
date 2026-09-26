@@ -96,12 +96,14 @@ theorem two_mul_maximalDivisorTraceCover_card_le
         (maximalDivisorsBelow (Fintype.card G) bound).card := by
       simp [Nat.mul_comm]
 
+omit [DecidableEq G] in
 theorem two_mul_boundedOrderTraceSet_card_le_maximalDivisors
     (trace : G → T) (bound : ℕ)
     (htraceInv : ∀ x, trace x⁻¹ = trace x) :
     2 * (boundedOrderTraceSet trace bound).card ≤
       (bound + 1) *
         (maximalDivisorsBelow (Fintype.card G) bound).card := by
+  classical
   exact
     (Nat.mul_le_mul_left 2
       (Finset.card_le_card

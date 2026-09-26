@@ -65,11 +65,13 @@ example : probeRatFuncDerivation K RatFunc.X = 1 := by
   rw [probeRatFuncDerivation_algebraMap]
   simp
 
+omit [DecidableEq K] [DecidableEq (RatFunc K)] in
 theorem probeRatFuncDerivation_eq (x : RatFunc K) :
     probeRatFuncDerivation K x =
       (algebraMap K[X] (RatFunc K) x.denom)⁻¹ ^ 2 *
         algebraMap K[X] (RatFunc K)
           (x.denom * x.num.derivative - x.num * x.denom.derivative) := by
+  classical
   conv_lhs => rw [← RatFunc.num_div_denom x]
   rw [Derivation.leibniz_div,
     probeRatFuncDerivation_algebraMap,
@@ -78,11 +80,13 @@ theorem probeRatFuncDerivation_eq (x : RatFunc K) :
   simp only [Algebra.smul_def, Algebra.algebraMap_self_apply]
 
 omit [DecidableEq (RatFunc K)] in
+omit [DecidableEq K] in
 private theorem natDegree_derivativeNumerator_le
     (p q : K[X]) (hp : p ≠ 0) (hq : q ≠ 0)
     (hN : q * p.derivative - p * q.derivative ≠ 0) :
     (q * p.derivative - p * q.derivative).natDegree ≤
       p.natDegree + q.natDegree - 1 := by
+  classical
   have hsum : 0 < p.natDegree + q.natDegree := by
     by_contra h
     have hpdeg : p.natDegree = 0 := by omega
@@ -122,10 +126,12 @@ private theorem natDegree_derivativeNumerator_le
       omega
   exact (Polynomial.natDegree_sub_le _ _).trans (max_le hleft hright)
 
+omit [DecidableEq K] [DecidableEq (RatFunc K)] in
 theorem probeRatFuncDerivation_intDegree_le_sub_one
     (x : RatFunc K) (hx : x ≠ 0)
     (hDx : probeRatFuncDerivation K x ≠ 0) :
     (probeRatFuncDerivation K x).intDegree ≤ x.intDegree - 1 := by
+  classical
   let N := x.denom * x.num.derivative - x.num * x.denom.derivative
   have hden : algebraMap K[X] (RatFunc K) x.denom ≠ 0 :=
     RatFunc.algebraMap_ne_zero x.denom_ne_zero
@@ -179,9 +185,11 @@ noncomputable def probeRatFuncReciprocalDerivation :
   simp only [probeRatFuncReciprocalDerivation, Derivation.smul_apply,
     Algebra.smul_def, Algebra.algebraMap_self_apply]
 
+omit [DecidableEq K] [DecidableEq (RatFunc K)] in
 theorem probeRatFuncReciprocalDerivation_intDegree_nonpositive_of_negative
     (x : RatFunc K) (hxDegree : x.intDegree < 0) :
     (probeRatFuncReciprocalDerivation K x).intDegree ≤ 0 := by
+  classical
   by_cases hEx : probeRatFuncReciprocalDerivation K x = 0
   · simp [hEx]
   have hx : x ≠ 0 := by
@@ -204,10 +212,12 @@ theorem probeRatFuncReciprocalDerivation_intDegree_nonpositive_of_negative
   have hder := probeRatFuncDerivation_intDegree_le_sub_one K x hx hDx
   omega
 
+omit [DecidableEq K] in
 theorem probeRatFuncReciprocalDerivation_mem_infinityIntegers
     (r : RatFuncInfinityIntegers K) :
     probeRatFuncReciprocalDerivation K (r : RatFunc K) ∈
       RatFuncInfinityIntegers K := by
+  classical
   obtain ⟨c, hc⟩ :=
     ratFuncInfinityIntegers_exists_constant_mod_maximalIdeal K r
   let y : RatFuncInfinityIntegers K :=
@@ -383,12 +393,14 @@ local instance probeFrobeniusConstantTower :
   IsScalarTower.of_algebraMap_eq' rfl
 
 omit [FiniteDimensional (RatFunc K) L] [Algebra.IsSeparable (RatFunc K) L] in
+omit [DecidableEq K] [DecidableEq (RatFunc K)] in
 theorem probe_normalizedDerivation_comp_ratFunc
     (D : Derivation (frobeniusSubfield L p) L L)
     (hDX : D (algebraMap (RatFunc K) L RatFunc.X) = 1) :
     (D.restrictScalars K).compAlgebraMap (RatFunc K) =
       (Algebra.linearMap (RatFunc K) L).compDer
         (probeRatFuncDerivation K) := by
+  classical
   let : IsScalarTower K K[X] (RatFunc K) :=
     IsScalarTower.of_algebraMap_eq'
       (R := K) (S := K[X]) (A := RatFunc K) rfl

@@ -135,6 +135,7 @@ theorem finitePlaceGalSmul_eq_self_over_rationalFinitePlace_of_finrank_dvd_degre
 end GenericUniqueFiber
 
 omit [Fintype C] [Finite S] in
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Every finite place of the exact constant extension, viewed over the
 original constants `C`, has degree divisible by `[S : C]`.  This is the
 degree-theoretic expression of the inclusion of `S` in every top residue
@@ -154,6 +155,7 @@ theorem exactConstantExtensionFinitePlace_finrank_constants_dvd_degree
       exactConstantExtensionBaseAlgebra C (RatFunc C) N S
     Module.finrank C S ∣ finiteExtensionPlaceDegree C
       (ExactConstantExtension C N S) (.inl Q) := by
+  classical
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=
@@ -234,6 +236,7 @@ theorem exactConstantExtensionFrobeniusTwistOverFixedField_apply
         C (RatFunc C) N S hExact g x
   rfl
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- A rational finite place of a Frobenius-twist field has exactly one finite
 place above it in the exact constant extension. -/
 theorem frobeniusTwistField_rationalFinitePlace_fiber_card_eq_one
@@ -280,6 +283,7 @@ theorem frobeniusTwistField_rationalFinitePlace_fiber_card_eq_one
     ∀ P : FiniteExtensionRationalFinitePlace C F,
       Fintype.card (FinitePlaceUnderFiber C F
         (ExactConstantExtension C N S) P.1) = 1 := by
+  classical
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=
@@ -320,6 +324,7 @@ theorem frobeniusTwistField_rationalFinitePlace_fiber_card_eq_one
   exact exactConstantExtensionFinitePlace_finrank_constants_dvd_degree
     C N S hExact Q
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Every finite-place lift of a rational Frobenius-twist-field place is
 fixed by the canonical twist generator over its fixed field. -/
 theorem frobeniusTwistField_rationalFinitePlace_lift_fixed
@@ -369,6 +374,7 @@ theorem frobeniusTwistField_rationalFinitePlace_lift_fixed
         finitePlaceGalSmul C F (ExactConstantExtension C N S)
           (exactConstantExtensionFrobeniusTwistOverFixedField
             C N S hExact g) Q = Q := by
+  classical
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=

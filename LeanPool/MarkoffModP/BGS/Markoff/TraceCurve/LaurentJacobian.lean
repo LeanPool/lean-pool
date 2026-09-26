@@ -86,7 +86,8 @@ theorem weightedSplitTraceLaurentPartialX_eq (alpha beta : K) (d e : ℕ) (hd : 
       algebraMap K _ (d : K) * weightedSplitTraceLaurentX alpha beta d e ^ (d - 1) *
         weightedSplitTraceLaurentJacobianXFactor alpha beta d e := by
   have htwoD : 2 * d - 1 = (d - 1) + d := by omega
-  simp [weightedSplitTraceLaurentPartialX, weightedSplitTraceLaurentJacobianXFactor, MvPolynomial.aeval_def,
+  simp [weightedSplitTraceLaurentPartialX, weightedSplitTraceLaurentJacobianXFactor,
+    MvPolynomial.aeval_def,
     splitTraceCoverPolynomial, htwoD, pow_add]
   ring
 
@@ -95,7 +96,8 @@ theorem weightedSplitTraceLaurentPartialY_eq (alpha beta : K) (d e : ℕ) (he : 
       algebraMap K _ (e : K) * weightedSplitTraceLaurentY alpha beta d e ^ (e - 1) *
         weightedSplitTraceLaurentJacobianYFactor alpha beta d e := by
   have htwoE : 2 * e - 1 = (e - 1) + e := by omega
-  simp [weightedSplitTraceLaurentPartialY, weightedSplitTraceLaurentJacobianYFactor, MvPolynomial.aeval_def,
+  simp [weightedSplitTraceLaurentPartialY, weightedSplitTraceLaurentJacobianYFactor,
+    MvPolynomial.aeval_def,
     splitTraceCoverPolynomial, htwoE, pow_add]
   ring
 
@@ -177,7 +179,8 @@ theorem weightedSplitTraceLaurentPartials_span_top
   let L := WeightedSplitTraceLaurentCoordinateRing alpha beta d e
   let J : Ideal L := Ideal.span {weightedSplitTraceLaurentPartialX alpha beta d e,
     weightedSplitTraceLaurentPartialY alpha beta d e}
-  have hFactorTop := weightedSplitTraceLaurentJacobianFactors_span_top alpha beta hnondegenerate htwo d e
+  have hFactorTop :=
+    weightedSplitTraceLaurentJacobianFactors_span_top alpha beta hnondegenerate htwo d e
   apply le_antisymm le_top
   rw [← hFactorTop]
   apply Ideal.span_le.mpr

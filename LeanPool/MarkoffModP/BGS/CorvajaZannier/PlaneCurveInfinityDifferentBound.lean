@@ -165,12 +165,14 @@ theorem ratFuncInfinityOrder_infinityNormalizedPolynomial_discr
 
 /-! ## The normalized equation over the infinity valuation ring -/
 
+omit [DecidableEq K] in
 /-- A polynomial of degree at most `a`, multiplied by `X⁻ᵃ`, is integral at
 infinity. -/
 theorem infinityNormalizedCoefficient_mem
     (a : ℕ) (P : K[X]) (hdegree : P.natDegree ≤ a) :
     RatFunc.inftyValuation K
         ((RatFunc.X⁻¹) ^ a * algebraMap K[X] (RatFunc K) P) ≤ 1 := by
+  classical
   by_cases hP : P = 0
   · simp [hP]
   have hXinv : RatFunc.X⁻¹ ≠ (0 : RatFunc K) := inv_ne_zero RatFunc.X_ne_zero

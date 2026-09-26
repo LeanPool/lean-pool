@@ -47,7 +47,7 @@ theorem
           (puncturedNormalizationEquiv (ZMod p) c)) z) :
     PuncturedMarkoffTransitiveAt p Fact.out := by
   apply
-    puncturedMarkoffTransitiveAt_of_splitCage_nonparabolicComplement_eulerSevenPairedMaximalDivisor_frontier
+    puncturedMarkoffTransitiveAt_of_splitCage_eulerSevenPairedMaximalDivisor_complement_frontier
       p hpSeven c hbase hhalfThreshold
   · intro d _hd hcount
     by_contra hnot

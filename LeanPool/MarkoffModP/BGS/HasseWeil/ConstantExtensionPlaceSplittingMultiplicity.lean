@@ -243,6 +243,7 @@ theorem exactConstantExtensionFinitePlace_ramificationIdx_eq_one
   let := hsubsingleton
   exact Nat.card_unique
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- A downstairs finite place of degree `d` has exactly
 `gcd([S : C], d)` finite places above it in the exact extension of constants.
 
@@ -298,6 +299,7 @@ theorem exactConstantExtensionFinitePlace_fiber_card_eq_gcd
         (finiteExtensionPlaceDegree C N
           (.inl (exactConstantExtensionDownstairsFinitePlace
             C S N hExact q))) := by
+  classical
   let : Field (ExactConstantExtension C N S) :=
     exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) (ExactConstantExtension C N S) :=
@@ -535,6 +537,7 @@ noncomputable def exactConstantExtensionPresentedFinitePlaceFiberEquiv
         apply Subtype.ext
         exact e.apply_symm_apply Q.1 }
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- The presented finite contraction fiber itself has the standard gcd
 cardinality.  This is the presentation-level exhaustiveness form of the
 constant-extension splitting law. -/
@@ -549,6 +552,7 @@ theorem exactConstantExtensionPresentedFinitePlaceFiber_natCard_eq_gcd
         (finiteExtensionPlaceDegree C N
           (.inl (exactConstantExtensionDownstairsFinitePlace
             C S N hExact q))) := by
+  classical
   let : Field (ExactConstantExtension C N S) :=
     exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) (ExactConstantExtension C N S) :=

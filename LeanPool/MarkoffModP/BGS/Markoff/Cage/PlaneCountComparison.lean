@@ -25,9 +25,9 @@ open Polynomial
 
 noncomputable section
 
-/-- A finite-field polynomial has at most its degree many distinct roots. -/
+/-- A nonzero polynomial over a field has at most its degree many distinct roots. -/
 private lemma natCard_eval_eq_zero_le_natDegree
-    {K : Type*} [Field K] [Fintype K] [DecidableEq K]
+    {K : Type*} [Field K]
     (f : K[X]) (hf : f ≠ 0) :
     Nat.card {x : K // f.eval x = 0} <= f.natDegree := by
   classical
@@ -39,11 +39,10 @@ private lemma natCard_eval_eq_zero_le_natDegree
         intro x y h
         apply Subtype.ext
         exact congrArg (fun z : f.roots.toFinset => (z : K)) h }
-  let : Fintype {x : K // f.eval x = 0} := Fintype.ofFinite _
   calc
     Nat.card {x : K // f.eval x = 0} <= f.roots.toFinset.card := by
       simpa only [Nat.card_eq_fintype_card, Fintype.card_coe] using
-        Fintype.card_le_of_injective rootEmbedding rootEmbedding.injective
+        Nat.card_le_card_of_injective rootEmbedding rootEmbedding.injective
     _ <= f.roots.card := Multiset.toFinset_card_le _
     _ <= f.natDegree := Polynomial.card_roots' f
 
@@ -227,8 +226,9 @@ def badDiagonalTaggedPointEmbedding
 
 /-- In a field of odd characteristic, a scalar has at most two square roots. -/
 private lemma natCard_sq_eq_le_two
-    {K : Type*} [Field K] [Fintype K] [DecidableEq K] (a : K) :
+    {K : Type*} [Field K] (a : K) :
     Nat.card {x : K // x ^ 2 = a} <= 2 := by
+  classical
   let f : K[X] := X ^ 2 - C a
   have hf : f ≠ 0 := by
     intro hzero
@@ -452,42 +452,20 @@ def goodOffDiagonalPulledEquivPlane
   Equiv.ofBijective _ (goodOffDiagonalPulledToPlane_bijective p hpTwo xi eta d)
 
 private lemma rootCount_le_natDegree
-    {K : Type*} [Field K] [Fintype K] [DecidableEq K]
+    {K : Type*} [Field K]
     (f : K[X]) (hf : f ≠ 0) :
     Nat.card {x : K // f.eval x = 0} ≤ f.natDegree := by
-  classical
-  let embedding : {x : K // f.eval x = 0} ↪ f.roots.toFinset :=
-    { toFun := fun x => ⟨x, by
-        rw [Multiset.mem_toFinset, Polynomial.mem_roots hf]
-        exact x.2⟩
-      inj' := by
-        intro x y h
-        apply Subtype.ext
-        exact congrArg (fun z : f.roots.toFinset => (z : K)) h }
-  let : Fintype {x : K // f.eval x = 0} := Fintype.ofFinite _
-  calc
-    Nat.card {x : K // f.eval x = 0} ≤ f.roots.toFinset.card := by
-      simpa only [Nat.card_eq_fintype_card, Fintype.card_coe] using
-        Fintype.card_le_of_injective embedding embedding.injective
-    _ ≤ f.roots.card := Multiset.toFinset_card_le _
-    _ ≤ f.natDegree := Polynomial.card_roots' f
+  exact natCard_eval_eq_zero_le_natDegree f hf
 
 private lemma sqRootCount_le_two
-    {K : Type*} [Field K] [Fintype K] [DecidableEq K] (a : K) :
+    {K : Type*} [Field K] (a : K) :
     Nat.card {x : K // x ^ 2 = a} ≤ 2 := by
-  let f : K[X] := X ^ 2 - C a
-  have hf : f ≠ 0 := by
-    intro h
-    have := congrArg (fun q : K[X] => q.coeff 2) h
-    simp [f] at this
-  let e : {x : K // x ^ 2 = a} ≃ {x : K // f.eval x = 0} :=
-    Equiv.subtypeEquiv (Equiv.refl K) (by intro x; simp [f, sub_eq_zero])
-  rw [Nat.card_congr e]
-  exact (rootCount_le_natDegree f hf).trans_eq (by simp [f])
+  exact natCard_sq_eq_le_two a
 
 private lemma powerRootCount_le
-    {K : Type*} [Field K] [Fintype K] [DecidableEq K]
+    {K : Type*} [Field K]
     {n : Nat} (hn : 0 < n) : Nat.card {x : K // x ^ n = 1} ≤ n := by
+  classical
   let f : K[X] := X ^ n - 1
   have hf : f ≠ 0 := by
     simpa [f] using (monic_X_pow_sub_C (1 : K) hn.ne').ne_zero

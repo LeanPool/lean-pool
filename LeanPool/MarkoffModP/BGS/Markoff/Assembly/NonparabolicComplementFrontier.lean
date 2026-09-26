@@ -149,7 +149,8 @@ theorem four_mul_prime_le_puncturedComponentComplementFinset_card
       (prime_dvd_puncturedComponentComplementFinset_card p hpThree c)
   exact Nat.le_of_dvd (Finset.card_pos.mpr hnonempty) hdiv
 
-private def normalizedPuncturedPointNonparabolicComplement
+/-- The normalized surface point used in the punctured-component hypotheses. -/
+def normalizedPuncturedPointNonparabolicComplement
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
   normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)

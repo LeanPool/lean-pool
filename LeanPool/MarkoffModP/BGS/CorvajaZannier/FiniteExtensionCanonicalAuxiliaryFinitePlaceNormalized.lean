@@ -64,6 +64,7 @@ abbrev normalizedFinitePlaceCanonicalDifferent : FiniteExtensionPlace K L →₀
   finiteExtensionCanonicalDifferentDivisor K L
     (finiteExtensionFiniteDifferentIdeal_ne_bot K L)
 
+omit [DecidableEq K] in
 /-- Canonical finite-place case (i), outside the exceptional set with a pole
 of `(1-u)/(1-v)`. -/
 theorem finiteExtensionFinitePlace_canonicalAuxiliary_caseI_of_normalized
@@ -122,6 +123,7 @@ theorem finiteExtensionFinitePlace_canonicalAuxiliary_caseII_of_normalized
       huOrder hvOrder hrhoOrder hW
   simpa only [normalizedFinitePlaceCanonicalDifferent, hcOrder] using hcase
 
+omit [DecidableEq K] in
 /-- Canonical finite-place case (iii), at a positive-order place of `v`. -/
 theorem finiteExtensionFinitePlace_canonicalAuxiliary_caseIII_of_normalized
     (q : FiniteExtensionFinitePlace K L)
@@ -151,6 +153,7 @@ theorem finiteExtensionFinitePlace_canonicalAuxiliary_caseIII_of_normalized
     K L q D c hc hIntegral h k u v hu hv hu1 hv1 hW
   simpa only [normalizedFinitePlaceCanonicalDifferent, hcOrder] using hcase
 
+omit [DecidableEq K] in
 /-- Canonical finite-place case (iv), at a nonpositive-order place of `v`. -/
 theorem finiteExtensionFinitePlace_canonicalAuxiliary_caseIV_of_normalized
     (q : FiniteExtensionFinitePlace K L)

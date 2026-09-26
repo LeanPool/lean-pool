@@ -356,6 +356,7 @@ private theorem exactConstantExtensionClosedPlaceError_le_galoisTowerConstants
 
 end GenericGaloisTowerBound
 
+omit [DecidableEq K] [DecidableEq (RatFunc K)] in
 /-- The normal-closure constant field gives a uniform square-root-scale bound
 for the packaged exact constant extensions of the original function field.
 

@@ -30,7 +30,8 @@ namespace BGS.Markoff
 
 noncomputable section
 
-private def normalizedPuncturedPointMaximalDivisors
+/-- The normalized surface point used in the punctured-component hypotheses. -/
+def normalizedPuncturedPointMaximalDivisors
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
   normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)

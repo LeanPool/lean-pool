@@ -95,6 +95,7 @@ private theorem intermediateHasseRatFuncBaseTower :
   congr 1
   exact IsScalarTower.algebraMap_apply (RatFunc C) L N x
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- The complete point count of an intermediate-base twist agrees with that
 of its rational-base incarnation. -/
 theorem intermediateFrobeniusTwistFieldRationalPlaceCount_eq_rationalBase
@@ -102,6 +103,7 @@ theorem intermediateFrobeniusTwistFieldRationalPlaceCount_eq_rationalBase
     intermediateFrobeniusTwistFieldRationalPlaceCount C S N hExact L g =
       frobeniusTwistFieldRationalPlaceCount C S N hExact
         (g.restrictScalars (RatFunc C)) := by
+  classical
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=
@@ -152,6 +154,7 @@ theorem intermediateFrobeniusTwistFieldRationalPlaceCount_eq_rationalBase
       (frobeniusTwistFieldRationalPlaceCount_eq_finiteExtensionRationalPlaceCount
         C S N hExact (g.restrictScalars (RatFunc C))).symm
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- The complete twist average and the pointwise Stepanov estimate give a
 two-sided rational-place bound for the fixed intermediate field. -/
 theorem abs_intermediateBaseRationalPlaceError_le_squareField_of_genus_exact
@@ -170,6 +173,7 @@ theorem abs_intermediateBaseRationalPlaceError_le_squareField_of_genus_exact
             (Nat.card (N ≃ₐ[RatFunc C] N) - 1 : ℕ) *
               (((2 * FunctionField.genus C N + 1) * Fintype.card K +
                 Module.finrank (RatFunc C) N : ℕ) : ℝ)) := by
+  classical
   let : DecidableEq (N ≃ₐ[L] N) := Classical.decEq _
   let A : ℝ := 2 * (Module.finrank (RatFunc C) N : ℝ) ^ 2
   let B : ℝ :=
@@ -229,6 +233,7 @@ theorem abs_intermediateBaseRationalPlaceError_le_squareField_of_genus_exact
   rw [hcenter] at hbound
   exact hbound
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- A degree-only version of the fixed-tower estimate.  Both Galois-group
 orders in the exact bound are at most the degree of the top field over
 `C(X)`; this deliberately looser polynomial bound is the form used by the
@@ -246,6 +251,7 @@ theorem abs_intermediateBaseRationalPlaceError_le_squareField_of_genus
         2 * (Module.finrank (RatFunc C) N : ℝ) ^ 3 +
         (Module.finrank (RatFunc C) N : ℝ) ^ 2 *
           (((2 * FunctionField.genus C N + 1) * Fintype.card K : ℕ) : ℝ) := by
+  classical
   have hbound :=
     abs_intermediateBaseRationalPlaceError_le_squareField_of_genus_exact
       K C S N L hcard hExact hdivL hdivBase hlarge

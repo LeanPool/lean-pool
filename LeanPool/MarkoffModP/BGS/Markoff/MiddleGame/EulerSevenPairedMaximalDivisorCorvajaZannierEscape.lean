@@ -24,7 +24,7 @@ namespace BGS.Markoff
 /-- Diagonalize a nonzero nonparabolic fiber and apply the exact
 Euler-seven paired maximal-order escape theorem. -/
 theorem
-    exists_iterate_with_larger_secondRotationOrder_of_nonzero_nonparabolic_eulerSevenPairedMaximalOrders
+    exists_iterate_larger_secondRotationOrder_of_nonzero_nonparabolic_eulerSevenPairedMaximalOrders
     (p : ℕ) [Fact p.Prime] [Fintype (quadraticFiniteField p)]
     (hpTwo : p ≠ 2)
     (delta : ℝ) (hdelta : delta ≤ (1 : ℝ) / 2)
@@ -54,7 +54,7 @@ theorem
     diagonalizedFiber_weightedTraceCurve_isCorvajaZannierAdmissible
       p hpTwo x hnonzero w s hw hpoint
   exact
-    exists_iterate_with_larger_secondRotationOrder_of_diagonalizedFiber_eulerSevenPairedMaximalOrders
+    exists_iterate_larger_secondRotationOrder_of_diagonalizedFiber_eulerSevenPairedMaximalOrders
       p hpTwo delta hdelta x w s hw hpoint hadmissible
         hbelowEndgame hcube hlinear
 

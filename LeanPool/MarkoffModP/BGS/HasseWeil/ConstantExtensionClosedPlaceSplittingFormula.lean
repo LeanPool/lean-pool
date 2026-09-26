@@ -117,6 +117,7 @@ theorem exactConstantExtensionPresentedUpstairsFinitePlaceEquiv_apply
   exact exactConstantExtensionCompatibleBaseFinitePlace_baseChange
     C S N hExact q
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Every downstairs finite place has the standard gcd number of presented
 finite places above it.  Unlike the selected-prime form of the splitting
 theorem, this statement is indexed by an arbitrary downstairs place and is
@@ -128,6 +129,7 @@ theorem exactConstantExtensionPresentedFinitePlaceFiber_natCard_eq_gcd_of_downst
       exactConstantExtensionDownstairsFinitePlace C S N hExact q = P} =
       Nat.gcd (Module.finrank C S)
         (finiteExtensionPlaceDegree C N (.inl P)) := by
+  classical
   let E := ExactConstantExtension C N S
   let : Field E := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) E :=
@@ -479,6 +481,7 @@ noncomputable def exactConstantExtensionPresentedUpstairsPlaceEquiv :
     (exactConstantExtensionPresentedUpstairsInfinityPlaceEquiv
       C S N hExact)
 
+omit [DecidableEq C] in
 /-- The global exhaustive equivalence agrees branchwise with the existing
 presented-upstairs-place construction. -/
 @[simp]

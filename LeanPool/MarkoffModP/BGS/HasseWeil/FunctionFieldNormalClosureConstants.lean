@@ -91,6 +91,7 @@ theorem mem_functionFieldNormalClosureConstantRestriction_ker_iff
     exact hg c
 
 omit [DecidableEq (RatFunc K)] in
+omit [DecidableEq K] in
 /-- Every automorphism of the algebraic constant field extends to an
 automorphism of the normal closure over `K(t)`.
 
@@ -103,6 +104,7 @@ fixed field and is the full constant-field Galois group. -/
 theorem functionFieldNormalClosureConstantRestriction_surjective :
     Function.Surjective
       (functionFieldNormalClosureConstantRestriction K L) := by
+  classical
   let N := FunctionFieldNormalClosure K L
   let C := FunctionFieldNormalClosureConstantField K L
   let rho := functionFieldNormalClosureConstantRestriction K L

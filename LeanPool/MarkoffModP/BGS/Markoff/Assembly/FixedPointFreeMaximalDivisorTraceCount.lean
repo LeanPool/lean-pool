@@ -32,6 +32,7 @@ variable {G T : Type*} [Group G] [Fintype G] [DecidableEq G]
   [DecidableEq T] [IsCyclic G]
 
 omit [Fintype G] [IsCyclic G] in
+omit [DecidableEq G] in
 /-- An inversion-invariant map has at most half as many values as inputs when
 inversion has no fixed point on the source. -/
 theorem two_mul_card_image_le_card_of_inv_invariant_of_no_fixed

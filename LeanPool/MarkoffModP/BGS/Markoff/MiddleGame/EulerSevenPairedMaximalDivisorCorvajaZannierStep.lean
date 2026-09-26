@@ -182,7 +182,7 @@ theorem orderCount_mul_pairedEulerSevenEnvelope_lt_currentOrder
 χ≤7 cube coefficient `189`. -/
 theorem exists_left_element_escaping_nonparabolic_maximalOrders_eulerSeven
     (p : ℕ) [Fact p.Prime]
-    (E : Type*) [Field E] [Fintype E] [DecidableEq E] [CharP E p]
+    (E : Type*) [Field E] [Fintype E] [CharP E p]
     (alpha beta : E) (Hleft : Subgroup Eˣ)
     (rightSubgroup : ℕ → Subgroup Eˣ)
     (hrightOrder :

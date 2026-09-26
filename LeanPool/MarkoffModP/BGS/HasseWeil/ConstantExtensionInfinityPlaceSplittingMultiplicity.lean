@@ -757,6 +757,9 @@ noncomputable def
     (exactConstantExtensionCReciprocalHeightOneEquivPrimesOver
       C S N)
 
+omit [DecidableEq C] [DecidableEq S] [DecidableEq (RatFunc C)] [DecidableEq (RatFunc S)]
+  [FiniteDimensional (RatFunc C) N] [Algebra.IsSeparable (RatFunc C) N]
+  [FiniteDimensional C S] in
 /-- Contracting the transported reciprocal affine prime to the old
 normalization recovers the contraction used in the presented downstairs
 place. -/

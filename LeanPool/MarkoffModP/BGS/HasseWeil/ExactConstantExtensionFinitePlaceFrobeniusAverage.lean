@@ -171,6 +171,7 @@ private theorem finiteDimensional_exactConstantExtension_over_intermediate
     Module.Finite.trans N (ExactConstantExtension C N S)
   infer_instance
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Local Frobenius-coset Burnside identity for an actual finite place of an
 exact constant extension.  The assumptions say only that its restriction to
 `L` is rational and that `[N : L]` divides the constant-extension degree.
@@ -232,6 +233,7 @@ theorem exactConstantExtensionFinitePlace_frobeniusFiber_fixedPoint_sum
       Nat.card (MulAction.fixedBy
         (FinitePlaceUnderFiber C L (ExactConstantExtension C N S) P) g.1)) =
       Nat.card (N ≃ₐ[L] N) := by
+  classical
   let : Field (ExactConstantExtension C N S) :=
     exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) (ExactConstantExtension C N S) :=

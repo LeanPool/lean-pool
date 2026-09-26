@@ -24,7 +24,8 @@ open BGS.NumberTheory
 
 noncomputable section
 
-private def normalizedPuncturedPointEulerSevenComplement
+/-- The normalized surface point used in the punctured-component hypotheses. -/
+def normalizedPuncturedPointEulerSevenComplement
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
   normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)

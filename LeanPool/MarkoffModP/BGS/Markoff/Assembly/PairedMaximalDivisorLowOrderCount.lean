@@ -29,6 +29,7 @@ section InvolutionImage
 variable {G T : Type*} [Group G] [Fintype G] [DecidableEq G]
   [DecidableEq T] [IsCyclic G]
 
+omit [DecidableEq G] in
 /-- An inversion-invariant map has at most half as many values as inputs,
 apart from the at most two elements satisfying `x² = 1`. -/
 theorem two_mul_card_image_le_card_add_two_of_inv_invariant

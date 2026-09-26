@@ -69,11 +69,13 @@ theorem normalizedSurfaceRotationCycle_card
   rw [← normalizedSurfaceRotationCycle_image_val x]
   exact (Finset.card_image_of_injective _ Subtype.val_injective).symm
 
+omit [DecidableEq R] in
 /-- A normalized rotation cycle injects into the full Gamma orbit, so its cardinality is an
 honest lower bound for the orbit cardinality. -/
 theorem normalizedRotationCycle_card_le_normalizedGammaOrbit_ncard
     [Fintype R] (x : NormalizedMarkoffSurface R) :
     (normalizedRotationCycle x.1.u1 x.1).card ≤ (normalizedGammaOrbit x).ncard := by
+  classical
   rw [← normalizedSurfaceRotationCycle_card x, ← Set.ncard_coe_finset]
   exact Set.ncard_le_ncard (normalizedSurfaceRotationCycle_subset_normalizedGammaOrbit x)
 

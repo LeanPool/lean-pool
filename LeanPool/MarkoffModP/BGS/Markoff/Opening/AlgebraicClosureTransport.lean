@@ -182,7 +182,8 @@ theorem exists_normalizedGamma_lift_along_fieldHom
     [Invertible (3 : K)] [Invertible (3 : L)] (f : K →+* L) (g : Gamma L) :
     ∃ h : Gamma K, ∀ x : NormalizedMarkoffSurface K,
       normalizedSurfaceMap f (h • x) = g • normalizedSurfaceMap f x := by
-  let motive : ∀ q : Equiv.Perm (MarkoffSurface L), q ∈ Subgroup.closure (gammaGenerators L) → Prop :=
+  let motive : ∀ q : Equiv.Perm (MarkoffSurface L),
+      q ∈ Subgroup.closure (gammaGenerators L) → Prop :=
     fun q hq ↦ ∃ h : Gamma K, ∀ x : NormalizedMarkoffSurface K,
       normalizedSurfaceMap f (h • x) =
         (⟨q, hq⟩ : Gamma L) • normalizedSurfaceMap f x

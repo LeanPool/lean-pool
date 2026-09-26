@@ -288,15 +288,18 @@ private theorem factorization_succ_pow_ten_le
                       · have hpLower : 67 ≤ p := by omega
                         simp only [preliminaryPrimePenalty, ite_eq_right hp3,
                           ite_eq_right hp5, ite_eq_right hp7, ite_eq_right hp11, ite_eq_right hp13,
-                          ite_eq_right hp17, ite_eq_right hp23, ite_eq_right hp31, ite_eq_right hp43,
+                          ite_eq_right hp17, ite_eq_right hp23, ite_eq_right hp31,
+                          ite_eq_right hp43,
                           ite_eq_right hp67, ite_eq_left hp131]
                         exact (pow_ten_le_base_sixtySeven a).trans <|
                           Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hpLower a)
                       · by_cases hp257 : p < 257
                         · have hpLower : 131 ≤ p := by omega
                           simp only [preliminaryPrimePenalty, ite_eq_right hp3,
-                            ite_eq_right hp5, ite_eq_right hp7, ite_eq_right hp11, ite_eq_right hp13,
-                            ite_eq_right hp17, ite_eq_right hp23, ite_eq_right hp31, ite_eq_right hp43,
+                            ite_eq_right hp5, ite_eq_right hp7, ite_eq_right hp11,
+                            ite_eq_right hp13,
+                            ite_eq_right hp17, ite_eq_right hp23, ite_eq_right hp31,
+                            ite_eq_right hp43,
                             ite_eq_right hp67, ite_eq_right hp131, ite_eq_left hp257]
                           exact (pow_ten_le_base_oneHundredThirtyOne a).trans <|
                             Nat.mul_le_mul_left _
@@ -304,8 +307,10 @@ private theorem factorization_succ_pow_ten_le
                         · by_cases hp521 : p < 521
                           · have hpLower : 257 ≤ p := by omega
                             simp only [preliminaryPrimePenalty, ite_eq_right hp3,
-                              ite_eq_right hp5, ite_eq_right hp7, ite_eq_right hp11, ite_eq_right hp13,
-                              ite_eq_right hp17, ite_eq_right hp23, ite_eq_right hp31, ite_eq_right hp43,
+                              ite_eq_right hp5, ite_eq_right hp7, ite_eq_right hp11,
+                              ite_eq_right hp13,
+                              ite_eq_right hp17, ite_eq_right hp23, ite_eq_right hp31,
+                              ite_eq_right hp43,
                               ite_eq_right hp67, ite_eq_right hp131, ite_eq_right hp257,
                               ite_eq_left hp521]
                             exact (pow_ten_le_base_twoHundredFiftySeven a).trans <|
@@ -314,8 +319,10 @@ private theorem factorization_succ_pow_ten_le
                           · by_cases hp1024 : p < 1024
                             · have hpLower : 521 ≤ p := by omega
                               simp only [preliminaryPrimePenalty, ite_eq_right hp3,
-                                ite_eq_right hp5, ite_eq_right hp7, ite_eq_right hp11, ite_eq_right hp13,
-                                ite_eq_right hp17, ite_eq_right hp23, ite_eq_right hp31, ite_eq_right hp43,
+                                ite_eq_right hp5, ite_eq_right hp7, ite_eq_right hp11,
+                                ite_eq_right hp13,
+                                ite_eq_right hp17, ite_eq_right hp23, ite_eq_right hp31,
+                                ite_eq_right hp43,
                                 ite_eq_right hp67, ite_eq_right hp131, ite_eq_right hp257,
                                 ite_eq_right hp521, ite_eq_left hp1024]
                               exact (pow_ten_le_base_fiveHundredTwentyOne a).trans <|
@@ -323,8 +330,10 @@ private theorem factorization_succ_pow_ten_le
                                   (Nat.pow_le_pow_left hpLower a)
                             · have hpLower : 1024 ≤ p := by omega
                               simp only [preliminaryPrimePenalty, ite_eq_right hp3,
-                                ite_eq_right hp5, ite_eq_right hp7, ite_eq_right hp11, ite_eq_right hp13,
-                                ite_eq_right hp17, ite_eq_right hp23, ite_eq_right hp31, ite_eq_right hp43,
+                                ite_eq_right hp5, ite_eq_right hp7, ite_eq_right hp11,
+                                ite_eq_right hp13,
+                                ite_eq_right hp17, ite_eq_right hp23, ite_eq_right hp31,
+                                ite_eq_right hp43,
                                 ite_eq_right hp67, ite_eq_right hp131, ite_eq_right hp257,
                                 ite_eq_right hp521, ite_eq_right hp1024, pow_zero, one_mul]
                               exact

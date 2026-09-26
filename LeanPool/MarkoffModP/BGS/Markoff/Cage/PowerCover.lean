@@ -205,10 +205,9 @@ def canonicalCagePowerCoverEquivPulled
           canonicalCagePulledToPowerCover,
           canonicalCageWitnessToEquations,
           canonicalCageEquationsToWitness] using hxiCoordinate.symm
-      · simp [canonicalCagePowerCoverToPulled,
-          canonicalCagePulledToPowerCover,
-          canonicalCageWitnessToEquations,
-          canonicalCageEquationsToWitness]
+      · simp only [canonicalCagePulledToPowerCover, canonicalCageEquationsToWitness,
+        canonicalCagePowerCoverToPulled, canonicalCageWitnessToEquations, ne_eq,
+        pow_eq_zero_iff', Units.ne_zero, false_and, not_false_eq_true, inv_mul_cancel_left₀]
         rw [← hmiddleFirst]
         field_simp [hTwo]
         ring
@@ -216,10 +215,9 @@ def canonicalCagePowerCoverEquivPulled
           canonicalCagePulledToPowerCover,
           canonicalCageWitnessToEquations,
           canonicalCageEquationsToWitness] using hmiddleFirst.symm
-      · simp [canonicalCagePowerCoverToPulled,
-          canonicalCagePulledToPowerCover,
-          canonicalCageWitnessToEquations,
-          canonicalCageEquationsToWitness]
+      · simp only [canonicalCagePulledToPowerCover, canonicalCageEquationsToWitness,
+        canonicalCagePowerCoverToPulled, canonicalCageWitnessToEquations, ne_eq,
+        pow_eq_zero_iff', Units.ne_zero, false_and, not_false_eq_true, inv_mul_cancel_left₀]
         rw [← hmiddleFirst]
         field_simp [hTwo]
         ring

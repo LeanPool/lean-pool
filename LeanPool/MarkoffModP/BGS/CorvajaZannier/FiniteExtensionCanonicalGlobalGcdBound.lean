@@ -120,7 +120,7 @@ theorem finiteExtensionGcdBound_of_canonicalPlacewiseBounds
       finiteExtensionPrincipalDivisor K L grid P = 0 := by
     intro P hP
     exact
-      finiteExtensionPrincipalDivisor_auxiliaryGridProduct_eq_zero_outside_propositionTwoExceptionalPlaces
+      finiteExtensionPrincipalDivisor_gridProduct_eq_zero_off_propositionTwoExceptionalPlaces
         K L u v hu hv h k P hP
   have hVPositiveSupport : ∀ P,
       0 < finiteExtensionPrincipalDivisor K L v P → P ∈ S := by

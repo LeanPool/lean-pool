@@ -24,6 +24,16 @@ namespace BGS.Markoff
 
 open BGS.NumberTheory
 
+private theorem power_mul_two_pow_lt
+    {a k n b m : ℕ} (hbase : a < 2 ^ k) (hn : n ≠ 0) (hbound : k * n + b ≤ m) :
+    a ^ n * 2 ^ b < 2 ^ m := by
+  calc
+    a ^ n * 2 ^ b < (2 ^ k) ^ n * 2 ^ b :=
+      Nat.mul_lt_mul_of_pos_right
+        (pow_lt_pow_left₀ hbase (Nat.zero_le _) hn) (pow_pos (by decide) b)
+    _ = 2 ^ (k * n + b) := by rw [← pow_mul, ← pow_add]
+    _ ≤ 2 ^ m := Nat.pow_le_pow_right (by decide) hbound
+
 theorem twentyFour_support_margin :
     24 ^ 15 * 2 ^ 687 < 2 ^ 756 := by
   have hbase : 24 ^ 5 < 2 ^ 23 := by norm_num
@@ -37,34 +47,12 @@ theorem twentyFour_support_margin :
       rw [← pow_mul, ← pow_add]
 
 theorem sixtyEight_support_margin :
-    68 ^ 15 * 2 ^ 1374 < 2 ^ 1512 := by
-  have hbase : 68 < 2 ^ 7 := by norm_num
-  calc
-    68 ^ 15 * 2 ^ 1374 < (2 ^ 7) ^ 15 * 2 ^ 1374 :=
-      Nat.mul_lt_mul_of_pos_right
-        (pow_lt_pow_left₀ hbase (Nat.zero_le _) (by norm_num))
-        (pow_pos (by norm_num) 1374)
-    _ = 2 ^ 1479 := by
-      rw [← pow_mul, ← pow_add]
-    _ = 2 ^ 1479 * 1 := by simp
-    _ < 2 ^ 1479 * 2 ^ 33 :=
-      Nat.mul_lt_mul_of_pos_left (by norm_num) (pow_pos (by norm_num) 1479)
-    _ = 2 ^ 1512 := by rw [← pow_add]
+    68 ^ 15 * 2 ^ 1374 < 2 ^ 1512 :=
+  power_mul_two_pow_lt (k := 7) (by norm_num) (by decide) (by decide)
 
 theorem cageCoefficient_support_margin :
-    100522 ^ 10 * 2 ^ 916 < 2 ^ 2268 := by
-  have hbase : 100522 < 2 ^ 17 := by norm_num
-  calc
-    100522 ^ 10 * 2 ^ 916 < (2 ^ 17) ^ 10 * 2 ^ 916 :=
-      Nat.mul_lt_mul_of_pos_right
-        (pow_lt_pow_left₀ hbase (Nat.zero_le _) (by norm_num))
-        (pow_pos (by norm_num) 916)
-    _ = 2 ^ 1086 := by
-      rw [← pow_mul, ← pow_add]
-    _ = 2 ^ 1086 * 1 := by simp
-    _ < 2 ^ 1086 * 2 ^ 1182 :=
-      Nat.mul_lt_mul_of_pos_left (by norm_num) (pow_pos (by norm_num) 1086)
-    _ = 2 ^ 2268 := by rw [← pow_add]
+    100522 ^ 10 * 2 ^ 916 < 2 ^ 2268 :=
+  power_mul_two_pow_lt (k := 17) (by norm_num) (by decide) (by decide)
 
 theorem seven_le_of_twoPow756_lt
     {p : ℕ} (hp : 2 ^ 756 < p) :

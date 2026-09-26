@@ -25,7 +25,7 @@ open BGS.NumberTheory
 /-- Exact Euler-seven nonparabolic complement frontier with the even-sign
 invariance and factor-four hypotheses discharged by a split-cage base. -/
 theorem
-    puncturedMarkoffTransitiveAt_of_splitCage_nonparabolicComplement_eulerSevenPairedMaximalDivisor_frontier
+    puncturedMarkoffTransitiveAt_of_splitCage_eulerSevenPairedMaximalDivisor_complement_frontier
     (p : ℕ) [Fact p.Prime] [Invertible (3 : ZMod p)]
     (hpSeven : 7 ≤ p)
     (c : PuncturedMarkoffSurface (ZMod p))

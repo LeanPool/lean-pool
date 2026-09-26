@@ -54,7 +54,8 @@ theorem fractionRingEquiv_maps_integral
       (K := FractionRing A) (L := FractionRing B) e a).symm
   · exact x.property
 
-/-- An equivalence of domain algebras transports their integral closures in their fraction fields. -/
+/-- An equivalence of domain algebras transports their integral closures in their fraction
+fields. -/
 def integralClosureFractionRingEquiv (e : A ≃ₐ[K] B) :
     integralClosure A (FractionRing A) ≃+*
       integralClosure B (FractionRing B) where
@@ -419,7 +420,8 @@ def weightedSplitTraceLeftInversionLaurentNormalizationSchemeIso :
   BGS.specIsoOfRingEquiv
     (weightedSplitTraceLeftInversionLaurentNormalizationEquiv alpha beta d e)
 
-/-- Contravariant scheme isomorphism on normalized overlaps induced by second-coordinate inversion. -/
+/-- Contravariant scheme isomorphism on normalized overlaps induced by second-coordinate
+inversion. -/
 def weightedSplitTraceRightInversionLaurentNormalizationSchemeIso :
     Spec (CommRingCat.of (WeightedSplitTraceLaurentNormalizationRing alpha beta d e)) ≅
       Spec (CommRingCat.of (WeightedSplitTraceLaurentNormalizationRing beta alpha d e)) :=

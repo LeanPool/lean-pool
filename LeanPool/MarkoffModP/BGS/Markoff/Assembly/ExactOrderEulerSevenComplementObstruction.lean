@@ -23,7 +23,8 @@ namespace BGS.Markoff
 
 noncomputable section
 
-private def normalizedPuncturedPointExactOrderEulerSeven
+/-- The normalized surface point used in the punctured-component hypotheses. -/
+def normalizedPuncturedPointExactOrderEulerSeven
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
   normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)

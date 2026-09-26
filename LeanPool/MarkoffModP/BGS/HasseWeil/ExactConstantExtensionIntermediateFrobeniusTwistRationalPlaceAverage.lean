@@ -131,6 +131,8 @@ noncomputable def intermediateFrobeniusTwistFieldRationalPlaceCount
     intermediateFrobeniusTwistFieldRationalInfinityPlaceCount
       C S N hExact L g
 
+omit [Finite S] [DecidableEq S] [DecidableEq (RatFunc S)] [FiniteDimensional (RatFunc C) L]
+  [Algebra.IsSeparable (RatFunc C) L] [FiniteDimensional L N] [IsGalois L N] in
 /-- The split definition is the actual complete rational-place count. -/
 theorem intermediateFrobeniusTwistFieldRationalPlaceCount_eq_finiteExtensionRationalPlaceCount
     (g : N ≃ₐ[L] N) :
@@ -177,6 +179,8 @@ theorem intermediateFrobeniusTwistFieldRationalPlaceCount_eq_finiteExtensionRati
       FiniteExtensionRationalInfinityPlace C F)
   exact Nat.card_sum.symm
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] [FiniteDimensional (RatFunc C) L]
+  [Algebra.IsSeparable (RatFunc C) L] [IsGalois L N] in
 /-- Each intermediate twist has at most `[N : C(X)]` rational infinity
 places, provided its intermediate Galois order divides the constant degree. -/
 theorem intermediateFrobeniusTwistFieldRationalInfinityPlaceCount_le_original_finrank
@@ -239,6 +243,7 @@ theorem intermediateBaseRationalInfinityPlaceCount_le_original_finrank :
       rw [← finrank_mul_finrank_of_fields (RatFunc C) L N]
       exact dvd_mul_right _ _
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- The total infinity contribution of the twists is bounded by the group
 order times the original degree. -/
 theorem sum_intermediateFrobeniusTwistFieldRationalInfinityPlaceCount_le
@@ -247,6 +252,7 @@ theorem sum_intermediateFrobeniusTwistFieldRationalInfinityPlaceCount_le
       intermediateFrobeniusTwistFieldRationalInfinityPlaceCount
         C S N hExact L g) ≤
       Nat.card (N ≃ₐ[L] N) * Module.finrank (RatFunc C) N := by
+  classical
   calc
     (∑ g : N ≃ₐ[L] N,
         intermediateFrobeniusTwistFieldRationalInfinityPlaceCount
@@ -258,6 +264,7 @@ theorem sum_intermediateFrobeniusTwistFieldRationalInfinityPlaceCount_le
     _ = Nat.card (N ≃ₐ[L] N) * Module.finrank (RatFunc C) N := by
       simp [Nat.card_eq_fintype_card]
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Exact finite-plus-infinity aggregate identity over `Gal(N/L)`. -/
 theorem sum_intermediateFrobeniusTwistFieldRationalPlaceCount_eq
     (hdivL : Nat.card (N ≃ₐ[L] N) ∣ Module.finrank C S) :
@@ -269,11 +276,13 @@ theorem sum_intermediateFrobeniusTwistFieldRationalPlaceCount_eq
         ∑ g : N ≃ₐ[L] N,
           intermediateFrobeniusTwistFieldRationalInfinityPlaceCount
             C S N hExact L g := by
+  classical
   simp_rw [intermediateFrobeniusTwistFieldRationalPlaceCount]
   rw [Finset.sum_add_distrib,
     sum_intermediateFrobeniusTwistFieldRationalFinitePlaceCount_eq_card_galois_mul_card
       C S N hExact L hdivL]
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- The complete rational-place aggregate is uniformly close to the group
 order times the complete rational-place count of `L`. -/
 theorem abs_sum_intermediateFrobeniusTwistFieldRationalPlaceCount_sub_card_mul_base_le
@@ -284,6 +293,7 @@ theorem abs_sum_intermediateFrobeniusTwistFieldRationalPlaceCount_sub_card_mul_b
       (Nat.card (N ≃ₐ[L] N) : ℝ) *
         finiteExtensionRationalPlaceCount C L| ≤
       2 * (Module.finrank (RatFunc C) N : ℝ) ^ 2 := by
+  classical
   let G : ℕ := Nat.card (N ≃ₐ[L] N)
   let D : ℕ := Module.finrank (RatFunc C) N
   let Iₗ : ℕ := ∑ g : N ≃ₐ[L] N,

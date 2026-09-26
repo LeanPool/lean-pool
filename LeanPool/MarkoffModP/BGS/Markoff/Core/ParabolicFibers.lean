@@ -374,7 +374,9 @@ theorem rhoSL_two_pow_eq_one_iff
         (g : Matrix (Fin 2) (Fin 2) (ZMod p))) hpower
     change rho (2 : ZMod p) ^ n = 1 at hmatrix
     have hentry := congrArg (fun m : Matrix (Fin 2) (Fin 2) (ZMod p) => m 0 1) hmatrix
-    simp [rho_two_pow] at hentry
+    simp only [Fin.isValue, rho_two_pow, Matrix.of_apply, Matrix.cons_val',
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.cons_val_zero, ne_eq, zero_ne_one,
+      not_false_eq_true, Matrix.one_apply_ne] at hentry
     exact (ZMod.natCast_eq_zero_iff n p).mp hentry
   · intro hn
     have hnzero : (n : ZMod p) = 0 := (ZMod.natCast_eq_zero_iff n p).2 hn
