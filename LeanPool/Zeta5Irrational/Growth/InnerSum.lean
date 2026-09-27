@@ -22,6 +22,7 @@ import Mathlib.Data.Int.Star
 
 namespace Zeta5Irrational
 
+/-- The 126 rational endpoints of the 125 inner-range linear pieces. -/
 def tInL : List ℚ :=
   [(3), (70 / 23), (120 / 37), (10 / 3), (80 / 23), (7 / 2), (160 / 43), (140 / 37), (90 / 23),
     (4), (160 / 37), (100 / 23), (9 / 2), (200 / 43), (110 / 23), (180 / 37), (5), (120 / 23),
@@ -40,6 +41,7 @@ def tInL : List ℚ :=
     (37 / 2), (800 / 43), (430 / 23), (700 / 37), (19), (440 / 23), (720 / 37), (39 / 2),
     (840 / 43), (450 / 23), (20)]
 
+/-- Integer allocation levels chosen for the 125 inner-range pieces. -/
 def kInL : List ℤ :=
   [2, 3, 3, 4, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 11, 11, 11, 11, 12,
     13, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 17, 17, 17, 17, 18, 18, 19, 19, 19, 19, 20, 20,
@@ -48,6 +50,7 @@ def kInL : List ℤ :=
     37, 37, 38, 39, 39, 39, 40, 40, 40, 41, 41, 41, 42, 42, 42, 43, 43, 43, 43, 44, 44, 44, 45,
     45, 45, 45, 46]
 
+/-- Rational slopes of the 125 inner-range linear pieces. -/
 def aInL : List ℚ :=
   [(18 / 5), (49 / 20), (283 / 40), (277 / 40), (231 / 40), (271 / 40), (71 / 20), (27 / 5),
     (17 / 4), (17 / 5), (321 / 40), (55 / 8), (63 / 8), (93 / 20), (7 / 2), (107 / 20), (9 / 2),
@@ -66,6 +69,7 @@ def aInL : List ℚ :=
     (331 / 20), (847 / 40), (887 / 40), (379 / 20), (89 / 5), (393 / 20), (94 / 5), (353 / 20),
     (891 / 40), (931 / 40), (401 / 20), (189 / 10)]
 
+/-- Rational intercepts of the 125 inner-range linear pieces. -/
 def bInL : List ℚ :=
   [(-6), (-5 / 2), (-35 / 2), (-17), (-13), (-33 / 2), (-9 / 2), (-23 / 2), (-7), (-11), (-31),
     (-26), (-61 / 2), (-31 / 2), (-10), (-19), (-24), (-18), (-43), (-97 / 2), (-61 / 2), (-24),
@@ -80,12 +84,15 @@ def bInL : List ℚ :=
     (-350), (-330), (-695 / 2), (-581 / 2), (-270), (-303), (-321), (-300), (-385), (-807 / 2),
     (-687 / 2), (-322), (-357), (-376), (-354), (-444), (-927 / 2), (-801 / 2), (-378)]
 
+/-- The `i`th inner-range endpoint as a real number; zero outside the table. -/
 noncomputable def tIn (i : ℕ) : ℝ :=
   ((tInL.getD i 0 : ℚ) : ℝ)
 
+/-- The allocation level for inner piece `i`; zero outside the table. -/
 def kIn (i : ℕ) : ℤ :=
   kInL.getD i 0
 
+/-- The affine bound on inner piece `i`, with coefficients from `aInL` and `bInL`. -/
 noncomputable def gIn (i : ℕ) (x : ℝ) : ℝ :=
   ((aInL.getD i 0 : ℚ) : ℝ) * x + ((bInL.getD i 0 : ℚ) : ℝ)
 

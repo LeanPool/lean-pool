@@ -63,9 +63,11 @@ noncomputable def betaI (n p : ℕ) {m : ℕ} (c : Fin (m + 1)) : ℤ :=
 def kloI (n p : ℕ) : ℤ :=
   -2 * ((40 * n / p : ℕ) : ℤ) - 6
 
+/-- Upper admissible allocation level in the inner-prime range. -/
 def ktopI (n p : ℕ) : ℤ :=
   8 * ((40 * n / p : ℕ) : ℤ) + 20
 
+/-- Rows reserved for the zero residue class in the inner allocation. -/
 def L0I (n p : ℕ) : ℕ :=
   3 * (40 * n / p) + 6
 

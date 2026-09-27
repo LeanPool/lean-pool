@@ -41,6 +41,7 @@ namespace Zeta5Irrational
 def ivLo (p v : ℕ) : Fin 3 → ℕ :=
   ![1, 1, p - v]
 
+/-- Upper endpoints of the three discrete intervals used in the class-count expansion. -/
 def ivHi (m v : ℕ) : Fin 3 → ℕ :=
   ![m, v, m]
 
@@ -48,6 +49,7 @@ def ivHi (m v : ℕ) : Fin 3 → ℕ :=
 noncomputable def cvLo (f : ℝ) : Fin 3 → ℝ :=
   ![0, 0, 1 - f]
 
+/-- Upper endpoints of the continuous intervals corresponding to `ivHi`. -/
 noncomputable def cvHi (f : ℝ) : Fin 3 → ℝ :=
   ![1 / 2, f, 1 / 2]
 

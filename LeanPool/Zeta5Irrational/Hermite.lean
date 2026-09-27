@@ -139,15 +139,19 @@ lemma hasDerivAt_qe (y : ℝ) : HasDerivAt qe (2 * Real.pi * qe y) y := by
 noncomputable def F0 (y : ℝ) : ℝ :=
   1 / (qe y - 1)
 
+/-- Expression for the first derivative of `F0` on the positive half-line. -/
 noncomputable def F1 (y : ℝ) : ℝ :=
   -(2 * Real.pi) * qe y / (qe y - 1) ^ 2
 
+/-- Expression for the second derivative of `F0` on the positive half-line. -/
 noncomputable def F2 (y : ℝ) : ℝ :=
   (2 * Real.pi) ^ 2 * qe y * (qe y + 1) / (qe y - 1) ^ 3
 
+/-- Expression for the third derivative of `F0` on the positive half-line. -/
 noncomputable def F3 (y : ℝ) : ℝ :=
   -(2 * Real.pi) ^ 3 * qe y * (qe y ^ 2 + 4 * qe y + 1) / (qe y - 1) ^ 4
 
+/-- Expression for the fourth derivative of `F0` on the positive half-line. -/
 noncomputable def F4 (y : ℝ) : ℝ :=
   (2 * Real.pi) ^ 4 * qe y * (qe y ^ 3 + 11 * qe y ^ 2 + 11 * qe y + 1) / (qe y - 1) ^ 5
 
@@ -236,18 +240,23 @@ lemma w_eq_F4 {y : ℝ} (hy : 0 < y) : w y = y ^ 5 * F4 y / 12 := by
 
 /-! ### `g(y) = y⁵ / (12 (y² + a²))` and its derivatives -/
 
+/-- Rational factor paired with `F4` in the Hermite integral formula. -/
 noncomputable def g0 (a y : ℝ) : ℝ :=
   y ^ 5 / (12 * (y ^ 2 + a ^ 2))
 
+/-- First derivative of the rational factor `g0 a`, for positive `a`. -/
 noncomputable def g1 (a y : ℝ) : ℝ :=
   y ^ 4 * (5 * a ^ 2 + 3 * y ^ 2) / (12 * (y ^ 2 + a ^ 2) ^ 2)
 
+/-- Second derivative of the rational factor `g0 a`, for positive `a`. -/
 noncomputable def g2 (a y : ℝ) : ℝ :=
   y ^ 3 * (10 * a ^ 4 + 9 * a ^ 2 * y ^ 2 + 3 * y ^ 4) / (6 * (y ^ 2 + a ^ 2) ^ 3)
 
+/-- Third derivative of the rational factor `g0 a`, for positive `a`. -/
 noncomputable def g3 (a y : ℝ) : ℝ :=
   y ^ 2 * (10 * a ^ 6 + 5 * a ^ 4 * y ^ 2 + 4 * a ^ 2 * y ^ 4 + y ^ 6) / (2 * (y ^ 2 + a ^ 2) ^ 4)
 
+/-- Fourth derivative of the rational factor `g0 a`, for positive `a`. -/
 noncomputable def g4 (a y : ℝ) : ℝ :=
   2 * a ^ 4 * y * (5 * a ^ 4 - 10 * a ^ 2 * y ^ 2 + y ^ 4) / (y ^ 2 + a ^ 2) ^ 5
 

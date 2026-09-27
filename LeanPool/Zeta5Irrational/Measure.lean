@@ -58,9 +58,11 @@ def table1 : List (ℕ × ℕ × ℕ) :=
 noncomputable def aρ (j : ℕ) : ℝ :=
   ((table1.getD (j - 1) (0, 0, 0)).1 : ℝ) / 10 ^ 12
 
+/-- Right endpoint of the `j`th arcsine component, read from the exact rational table. -/
 noncomputable def bρ (j : ℕ) : ℝ :=
   ((table1.getD (j - 1) (0, 0, 0)).2.1 : ℝ) / 10 ^ 12
 
+/-- Mass of the `j`th arcsine component, read from the exact rational table. -/
 noncomputable def cρ (j : ℕ) : ℝ :=
   ((table1.getD (j - 1) (0, 0, 0)).2.2 : ℝ) / 10 ^ 12
 

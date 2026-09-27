@@ -45,6 +45,7 @@ lemma sum_Icc_eq_sum_range' (m : ℕ) (f : ℕ → ℝ) :
 noncomputable def mρ (j : ℕ) : ℝ :=
   (aρ j + bρ j) / 2
 
+/-- Half-width of the support of the `j`th arcsine component. -/
 noncomputable def rρ (j : ℕ) : ℝ :=
   (bρ j - aρ j) / 2
 

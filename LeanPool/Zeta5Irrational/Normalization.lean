@@ -38,23 +38,30 @@ def ellA (p A a : ℕ) : ℕ :=
 
 /-- The parameters of Section 4.1 for `K = 40 n`, `N = 3 n`, `h = 37 n`, cutoff `M`, prime `p`. -/
 structure InnerData where
+  /-- Scale parameter determining `K = 40n`, `N = 3n`, and `h = 37n`. -/
   n : ℕ
+  /-- Cutoff separating the small-prime and intermediate-prime ranges. -/
   M : ℕ
+  /-- Prime parameter; primality is imposed by results using these data. -/
   p : ℕ
 
 namespace InnerData
 
 variable (D : InnerData)
 
+/-- Pole cutoff `K = 40n`. -/
 def K : ℕ :=
   40 * D.n
 
+/-- Auxiliary zero cutoff `N = 3n`. -/
 def N : ℕ :=
   3 * D.n
 
+/-- Size `h = 37n` of the Hankel determinant. -/
 def h : ℕ :=
   37 * D.n
 
+/-- Reserved row count `4M + 10` for the zero residue class. -/
 def L0 : ℕ :=
   4 * D.M + 10
 
@@ -62,15 +69,19 @@ def L0 : ℕ :=
 def m : ℕ :=
   (D.p - 1) / 2
 
+/-- Integer quotient of the zero cutoff `N` by `p`. -/
 def mN : ℕ :=
   D.N / D.p
 
+/-- Integer quotient of the pole cutoff `K` by `p`. -/
 def mK : ℕ :=
   D.K / D.p
 
+/-- Number of pole indices up to `K` congruent to `a` or `-a` modulo `p`. -/
 def ellK (a : ℕ) : ℕ :=
   ellA D.p D.K a
 
+/-- Number of zero indices up to `N` congruent to `a` or `-a` modulo `p`. -/
 def ellN (a : ℕ) : ℕ :=
   ellA D.p D.N a
 
@@ -130,12 +141,15 @@ def gammaIn : ℤ :=
 def v : ℕ :=
   D.K % D.p
 
+/-- Nonnegative overlap term `max 0 (N + v - p + 1)` in the outer-range bound. -/
 def u : ℤ :=
   max 0 ((D.N : ℤ) + D.v - D.p + 1)
 
+/-- Auxiliary outer-range count `min N v + u`. -/
 def tp : ℤ :=
   min (D.N : ℤ) D.v + D.u
 
+/-- Outer-range rank-loss bound `max 0 (K + 4N - 2p + 2)`. -/
 def rp : ℤ :=
   max 0 ((D.K : ℤ) + 4 * D.N - 2 * D.p + 2)
 

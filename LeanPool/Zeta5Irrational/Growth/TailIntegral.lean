@@ -37,9 +37,11 @@ namespace Zeta5Irrational
 noncomputable def tT (i : ℕ) : ℝ :=
   20 + i / 3
 
+/-- Integer part of the left endpoint `tT i` of a tail interval. -/
 def qT (i : ℕ) : ℕ :=
   (60 + i) / 3
 
+/-- Integer part of `3 / 40 * tT i`, used to fix the second fractional part. -/
 def qT' (i : ℕ) : ℕ :=
   (60 + i) / 40
 
@@ -47,16 +49,20 @@ def qT' (i : ℕ) : ℕ :=
 noncomputable def FT (i : ℕ) (x : ℝ) : ℝ :=
   37 / 10 + 37 / 20 * (x - qT i) - 111 / 10 * (3 / 40 * x - qT' i)
 
+/-- The tail majorant on piece `i`, including the additive error `27 / 16`. -/
 noncomputable def gT (i : ℕ) (x : ℝ) : ℝ :=
   x * FT i x + 27 / 16
 
+/-- The quadratic oscillation contributed by the two fractional parts on tail piece `i`. -/
 noncomputable def PT (i : ℕ) (x : ℝ) : ℝ :=
   74 * ((3 / 40 * x - qT' i) * (1 - (3 / 40 * x - qT' i))) -
     37 / 40 * ((x - qT i) * (1 - (x - qT i)))
 
+/-- Polynomial primitive of the centered quadratic `v * (1 - v) - 1 / 6`. -/
 noncomputable def G0 (v : ℝ) : ℝ :=
   v * (1 - v) * (2 * v - 1) / 6
 
+/-- Primitive for the centered tail oscillation `PT i - Pbar` on piece `i`. -/
 noncomputable def CT (i : ℕ) (x : ℝ) : ℝ :=
   74 * 40 / 3 * G0 (3 / 40 * x - qT' i) - 37 / 40 * G0 (x - qT i)
 

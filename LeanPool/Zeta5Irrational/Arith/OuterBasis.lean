@@ -61,15 +61,19 @@ variable (hm : 2 * m + 1 = p) (n : ℕ)
 def tailO (n : ℕ) : Finset ℕ :=
   Icc (3 * n + 1) (40 * n)
 
+/-- Outer pole indices belonging to the residue class `c`. -/
 def tailC (c : Fin (m + 1)) : Finset ℕ :=
   (tailO n).filter fun j => jc hm j = c
 
+/-- Number of rows allocated to the outer residue class `c`. -/
 def LoC (c : Fin (m + 1)) : ℕ :=
   (tailC hm n c).card
 
+/-- Outer pole indices in class `c` that exceed the prime `p`. -/
 def bigC (c : Fin (m + 1)) : Finset ℕ :=
   (tailC hm n c).filter fun j => p < j
 
+/-- Number of outer poles in class `c` that exceed `p`. -/
 def nbC (c : Fin (m + 1)) : ℕ :=
   (bigC hm n c).card
 

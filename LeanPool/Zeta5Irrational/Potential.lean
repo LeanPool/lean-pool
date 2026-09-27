@@ -320,6 +320,7 @@ lemma Pfun_one_pos : 0 < Pfun 1 :=
 noncomputable abbrev qm : ℝ :=
   59205077 / 10 ^ 10
 
+/-- Upper rational endpoint of the bracket around the minimum of the external field. -/
 noncomputable abbrev qp : ℝ :=
   59205079 / 10 ^ 10
 
