@@ -7,11 +7,10 @@ Authors: Moritz Firsching
 module
 
 public import LeanPool.Zeta5Irrational.Growth.TablePrime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import LeanPool.Zeta5Irrational.Growth.OuterPrime
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # Helpers for the piece tables
 

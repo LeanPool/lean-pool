@@ -8,12 +8,8 @@ module
 
 public import LeanPool.Zeta5Irrational.Arith.Val
 public import Mathlib.Algebra.Polynomial.Div
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Ring.Basic
 
 /-! # `p`-integral polynomials
 

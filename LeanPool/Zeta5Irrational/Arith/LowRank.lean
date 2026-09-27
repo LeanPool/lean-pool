@@ -9,14 +9,14 @@ module
 import Mathlib.LinearAlgebra.Matrix.SchurComplement
 
 public import LeanPool.Zeta5Irrational.Arith.Val
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Data.Rat.Star
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Ring.Basic
 
 /-! # Lemma 4.2 (simplified): determinants with a low-rank `p⁻¹`-correction
 

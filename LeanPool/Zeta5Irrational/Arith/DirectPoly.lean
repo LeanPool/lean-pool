@@ -8,14 +8,19 @@ module
 
 public import LeanPool.Zeta5Irrational.Arith.DirectBound
 import LeanPool.Zeta5Irrational.Arith.IntPoly
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Rat.Star
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Ring.Basic
+import Mathlib.Tactic.Ring.RingNF
+
+import Mathlib.Tactic.NormNum.Prime
 
 /-! # The class-wise bound for the polynomial part
 

@@ -10,16 +10,15 @@ public import Mathlib.Analysis.SpecialFunctions.Complex.CircleMap
 public import Mathlib.Analysis.SpecialFunctions.Log.PosLog
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Analysis.SpecialFunctions.Integrals.PosLogEqCircleAverage
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
+import Mathlib.Tactic.Ring.RingNF
 
 /-! # Circle integrals of `log ‖· - a‖`
 

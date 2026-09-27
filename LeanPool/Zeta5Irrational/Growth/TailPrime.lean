@@ -8,14 +8,15 @@ module
 
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Data.Rat.Star
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Int.Star
 import Mathlib.Tactic.ENatToNat
 public import LeanPool.Zeta5Irrational.Growth.InnerPrime
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
+import Mathlib.Tactic.Ring.RingNF
 
 /-! # The inner tail: `-L_p ≤ p (x F(x) + 27/16) + O(x²)`
 

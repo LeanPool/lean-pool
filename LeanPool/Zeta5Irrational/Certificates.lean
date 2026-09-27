@@ -8,13 +8,12 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.Analysis.SpecialFunctions.Complex.Arctan
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Int.Star
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # Certified rational bounds for `log`, `arctan` and `sqrt`
 

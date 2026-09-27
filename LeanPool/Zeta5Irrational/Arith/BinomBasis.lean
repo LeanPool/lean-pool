@@ -9,15 +9,14 @@ module
 public import Mathlib.Algebra.Group.ForwardDiff
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.RingTheory.Polynomial.Pochhammer
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Rat.Star
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring.Basic
 
 /-! # The Bernoulli functional and the binomial basis
 

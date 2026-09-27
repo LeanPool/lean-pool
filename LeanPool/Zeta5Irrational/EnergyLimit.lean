@@ -8,11 +8,11 @@ module
 
 public import LeanPool.Zeta5Irrational.ZeroMass
 import LeanPool.Zeta5Irrational.Kernel
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity.Basic
+
+import Mathlib.MeasureTheory.Integral.Prod
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-! # Lemma 6.2 for the logarithmic kernel
 

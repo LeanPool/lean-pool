@@ -9,10 +9,6 @@ module
 public import LeanPool.Zeta5Irrational.Arith.TauBound
 public import LeanPool.Zeta5Irrational.Construction
 public import Mathlib.LinearAlgebra.Lagrange
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 

@@ -9,10 +9,7 @@ module
 public import LeanPool.Zeta5Irrational.Arith.Pullback
 public import LeanPool.Zeta5Irrational.Arith.DirectBound
 import LeanPool.Zeta5Irrational.Arith.DirectPoly
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.Ring.Basic
 
 /-! # Entry bounds for numerators `∏ (t + γ²)`
 

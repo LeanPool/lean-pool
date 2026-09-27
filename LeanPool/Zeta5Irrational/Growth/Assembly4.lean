@@ -12,10 +12,13 @@ import LeanPool.Zeta5Irrational.Growth.TableIntegrals
 public import LeanPool.Zeta5Irrational.Growth.OuterTable
 import LeanPool.Zeta5Irrational.Growth.TableGen
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import LeanPool.Zeta5Irrational.Growth.Assembly3
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # Growth: the limits of the three prime sums
 -/

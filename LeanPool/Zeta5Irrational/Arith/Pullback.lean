@@ -10,16 +10,18 @@ public import LeanPool.Zeta5Irrational.Arith.PoleFun
 public import LeanPool.Zeta5Irrational.Degree
 import LeanPool.Zeta5Irrational.PartialFractions
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Int.Star
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Order.Interval.Finset.Box
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Ring.Basic
+import Mathlib.Tactic.Ring.RingNF
 
 /-! # The pullback identity (3.1): `μ_X(R) = τ_X(x⁵ R(-x²))`
 

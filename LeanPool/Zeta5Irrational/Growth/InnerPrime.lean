@@ -8,14 +8,16 @@ module
 
 import LeanPool.Zeta5Irrational.Legendre
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Data.Rat.Star
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Int.Star
 public import LeanPool.Zeta5Irrational.Growth.ClassData
 public import LeanPool.Zeta5Irrational.Norm
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # The inner range: a per-prime upper bound for `-L_p`
 
@@ -50,8 +52,7 @@ lemma neg_vSK_le {n : ℕ} (hn : 1 ≤ n) (_hp3 : 3 ≤ p) (hN : 3 * n < p ^ 2)
       -2 * (37 * n : ℕ) * ((40 * n / p : ℕ) : ℝ) + 12 * (37 * n : ℕ) * ((3 * n / p : ℕ) : ℝ) +
         2 * layer p J (37 * n : ℕ) := by
   have h := vS_eq (by omega : 0 < n) hp.out
-  have e : vSK n p = (InnerData.mk n 200 p).vS := rfl
-  rw [e, h]
+  rw [h]
   have h1 := padicValNat_factorial_ge (p := p) (k := 40 * n)
   have h2 := padicValNat_factorial_small (p := p) (k := 3 * n) hN
   have h3 : ∀ i ∈ Icc 1 (37 * n - 1), padicValNat p (2 * i).factorial = 2 * i / p := fun i hi =>

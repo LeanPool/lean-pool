@@ -10,13 +10,11 @@ public import LeanPool.Zeta5Irrational.Arith.BinomBasis
 public import LeanPool.Zeta5Irrational.Arith.Val
 public import LeanPool.Zeta5Irrational.Construction
 import LeanPool.Zeta5Irrational.Arith.TauBound
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Rat.Star
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring.Basic
 
 /-! # Small primes: generic tools for the bound (3.12)
 

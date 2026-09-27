@@ -11,12 +11,17 @@ import LeanPool.Zeta5Irrational.HermiteIBP
 import LeanPool.Zeta5Irrational.Moments
 import Mathlib.Analysis.Real.Pi.Bounds
 import Mathlib.Analysis.SumIntegralComparisons
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
+import Mathlib.Tactic.Ring.RingNF
 
 /-! # Towards the energy bound (6.14): elementary ingredients
 

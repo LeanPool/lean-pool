@@ -10,11 +10,12 @@ public import LeanPool.Zeta5Irrational.EnergyAtoms
 public import LeanPool.Zeta5Irrational.Potential
 import LeanPool.Zeta5Irrational.ArcsinePotential
 import LeanPool.Zeta5Irrational.CircleAtoms
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
+import Mathlib.Tactic.Ring.RingNF
 
 /-! # The four blocks of the configuration energy
 

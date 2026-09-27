@@ -8,12 +8,16 @@ module
 
 import LeanPool.Zeta5Irrational.RealBound
 import LeanPool.Zeta5Irrational.Growth
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.ENatToNat
 public import LeanPool.Zeta5Irrational.Construction
 public import LeanPool.Zeta5Irrational.Zeta5
 public import LeanPool.Zeta5Irrational.Constants
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # The main estimate (Theorem 2.1 of the paper)
 

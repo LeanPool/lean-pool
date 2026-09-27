@@ -9,15 +9,17 @@ module
 public import LeanPool.Zeta5Irrational.Construction
 public import Mathlib.LinearAlgebra.Vandermonde
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Rat.Star
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # The degree of `Δ_K` and `F_K` — formula (2.9) of the paper
 

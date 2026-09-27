@@ -13,10 +13,10 @@ import LeanPool.Zeta5Irrational.HermiteFormula
 import LeanPool.Zeta5Irrational.Moments
 import LeanPool.Zeta5Irrational.PartialFractions
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # Proposition 2.2: the moment representation, and positivity of `Δ_K(ζ(5))`
 

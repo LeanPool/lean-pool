@@ -10,17 +10,17 @@ public import LeanPool.Zeta5Irrational.Arith.OuterEntryMain
 public import LeanPool.Zeta5Irrational.Arith.InnerAlloc
 import LeanPool.Zeta5Irrational.Arith.SmallPrimeF
 import LeanPool.Zeta5Irrational.Arith.SmallPrimeTau
-import LeanPool.Zeta5Irrational.Legendre
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+public import LeanPool.Zeta5Irrational.Legendre
 import Mathlib.Data.Int.Star
 import Mathlib.Data.Nat.Prime.Factorial
 import Mathlib.Data.Rat.Star
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
 
 /-! # The normalisation actually used
 
@@ -45,10 +45,6 @@ namespace Zeta5Irrational
 /-- The cutoff `M` separating small primes from the inner range. -/
 def Mcut : ℕ :=
   400
-
-/-- `v_p(S_K)`. -/
-noncomputable def vSK (n p : ℕ) : ℤ :=
-  padicValRat p (S n)
 
 /-- The small-prime exponent (3.12). -/
 noncomputable def Lsmall (n p : ℕ) : ℤ :=
@@ -195,8 +191,7 @@ lemma padicValNat_factorial_lt {k : ℕ} (hk : k < p) : padicValNat p k.factoria
 
 lemma vSK_big {n : ℕ} (hn : 1 ≤ n) (hbig : 2 * (37 * n) < p) : vSK n p = 0 := by
   have h := vS_eq (by omega : 0 < n) hp.out
-  have e : vSK n p = (InnerData.mk n 200 p).vS := rfl
-  rw [e, h, padicValNat_factorial_lt (by omega), padicValNat_factorial_lt (by omega)]
+  rw [h, padicValNat_factorial_lt (by omega), padicValNat_factorial_lt (by omega)]
   have h4 : padicValNat p 4 = 0 :=
     padicValNat.eq_zero_of_not_dvd (fun hd => by have := Nat.le_of_dvd (by norm_num) hd; omega)
   rw [h4,

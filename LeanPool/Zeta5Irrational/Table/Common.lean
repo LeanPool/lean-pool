@@ -8,10 +8,11 @@ module
 
 public import LeanPool.Zeta5Irrational.TableCheck
 import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
 
 /-! ### The entries of Table 1 as numerals -/
 

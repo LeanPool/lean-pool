@@ -8,14 +8,13 @@ module
 
 public import LeanPool.Zeta5Irrational.Growth.ClassSum
 public import LeanPool.Zeta5Irrational.Arith.ClassCount
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Int.Star
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # Class data and `v_p(S_K)` in the inner and outer ranges
 

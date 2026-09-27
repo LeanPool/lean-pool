@@ -8,13 +8,11 @@ module
 
 public import LeanPool.Zeta5Irrational.Arith.PoleFun
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Rat.Star
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring.Basic
 
 /-! # The direct valuation bound for `τ_X`
 

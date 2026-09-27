@@ -9,14 +9,18 @@ module
 import LeanPool.Zeta5Irrational.Table.Intervals
 import LeanPool.Zeta5Irrational.Table.Tail
 import LeanPool.Zeta5Irrational.Certificates
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Analysis.Real.Pi.Bounds
 import Mathlib.Data.Int.Star
 import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 public import LeanPool.Zeta5Irrational.EnergyRaw
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # The configuration inequality (6.9)
 

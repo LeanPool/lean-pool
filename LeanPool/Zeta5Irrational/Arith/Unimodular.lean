@@ -8,15 +8,12 @@ module
 
 public import LeanPool.Zeta5Irrational.Arith.BasisChange
 import LeanPool.Zeta5Irrational.Arith.DirectBound
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Ring.Basic
 
 /-! # Unimodularity of the class bases
 

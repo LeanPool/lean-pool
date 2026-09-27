@@ -8091,7 +8091,6 @@ public import LeanPool.Zeta5Irrational.MainEstimate
 public import LeanPool.Zeta5Irrational.Measure
 public import LeanPool.Zeta5Irrational.Moments
 public import LeanPool.Zeta5Irrational.Norm
-public import LeanPool.Zeta5Irrational.Normalization
 public import LeanPool.Zeta5Irrational.PNT
 public import LeanPool.Zeta5Irrational.PartialFractions
 public import LeanPool.Zeta5Irrational.Positivity

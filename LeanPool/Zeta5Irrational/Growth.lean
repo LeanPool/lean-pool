@@ -7,12 +7,15 @@ Authors: Moritz Firsching
 module
 
 import LeanPool.Zeta5Irrational.Growth.Assembly1
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Analysis.Complex.ExponentialBounds
 public import LeanPool.Zeta5Irrational.Growth.Assembly4
 public import LeanPool.Zeta5Irrational.Constants
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # Growth of the normaliser (Proposition 5.2, in the form needed here)
 

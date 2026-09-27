@@ -12,11 +12,15 @@ public import LeanPool.Zeta5Irrational.EnergyLimit
 public import LeanPool.Zeta5Irrational.Measure
 import LeanPool.Zeta5Irrational.CircleAtoms
 import LeanPool.Zeta5Irrational.Potential
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # The atoms of the configuration energy
 

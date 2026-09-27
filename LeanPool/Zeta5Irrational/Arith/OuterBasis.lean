@@ -7,12 +7,9 @@ Authors: Moritz Firsching
 module
 
 public import LeanPool.Zeta5Irrational.Arith.ClassCount
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Ring.Basic
 
 /-! # The outer-range basis
 

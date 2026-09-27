@@ -7,13 +7,15 @@ Authors: Moritz Firsching
 module
 
 public import LeanPool.Zeta5Irrational.Growth.TablePrime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Data.Rat.Star
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Int.Star
 public import LeanPool.Zeta5Irrational.Growth.OuterPrime
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # Uniform bounds for the additive constants of the per-prime bounds
 -/

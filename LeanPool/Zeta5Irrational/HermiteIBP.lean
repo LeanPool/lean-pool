@@ -10,13 +10,19 @@ public import LeanPool.Zeta5Irrational.HermiteIntegrals
 import LeanPool.Zeta5Irrational.Moments
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
+import Mathlib.Tactic.Ring.RingNF
+
+import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 
 /-! # Four integrations by parts: `∫₀^∞ g F₄ = ∫₀^∞ g₄ F₀`
 

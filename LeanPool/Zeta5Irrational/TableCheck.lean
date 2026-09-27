@@ -9,10 +9,13 @@ module
 public import LeanPool.Zeta5Irrational.Potential
 import LeanPool.Zeta5Irrational.Certificates
 import LeanPool.Zeta5Irrational.EnergyConst
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # Reduction of the potential inequality (6.2) to a finite check (Table 2)
 

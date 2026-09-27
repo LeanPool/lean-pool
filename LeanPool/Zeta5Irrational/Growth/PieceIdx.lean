@@ -7,11 +7,7 @@ Authors: Moritz Firsching
 module
 
 public import Mathlib.Basic.Real.Basic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.Linarith
 
 /-! # Locating a point in a partition
 

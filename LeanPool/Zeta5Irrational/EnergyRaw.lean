@@ -6,13 +6,14 @@ Authors: Moritz Firsching
 
 module
 
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 public import LeanPool.Zeta5Irrational.EnergyBlocks
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # The raw configuration inequality
 

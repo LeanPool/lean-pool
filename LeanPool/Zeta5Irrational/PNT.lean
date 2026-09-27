@@ -8,10 +8,6 @@ module
 
 public import Mathlib.NumberTheory.Chebyshev
 import LeanPool.MooreBound.PrimeNumberTheoremAnd.Consequences
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-! # The prime number theorem, imported from `PrimeNumberTheoremAnd`
 

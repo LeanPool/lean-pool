@@ -9,12 +9,15 @@ module
 public import LeanPool.Zeta5Irrational.PrimeSum
 public import LeanPool.Zeta5Irrational.Norm
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # Growth: decomposition of `log m_K` and the small primes
 -/

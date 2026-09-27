@@ -7,10 +7,6 @@ Authors: Moritz Firsching
 module
 
 public import Mathlib.NumberTheory.Bernoulli
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-! # The Hankel determinant construction of the paper "ζ(5) is irrational"
 

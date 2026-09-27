@@ -14,10 +14,12 @@ public import LeanPool.Zeta5Irrational.Growth.InnerSum
 public import LeanPool.Zeta5Irrational.Growth.OuterPrime
 public import LeanPool.Zeta5Irrational.Constants
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Int.Star
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Ring.Basic
 
 /-! # Growth: the per-range sums as prime sums
 -/

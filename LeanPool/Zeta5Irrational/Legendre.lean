@@ -6,12 +6,11 @@ Authors: Moritz Firsching
 
 module
 
-public import LeanPool.Zeta5Irrational.Normalization
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.NumberTheory.Chebyshev
+public import LeanPool.Zeta5Irrational.Construction
+public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
 
 /-! # The `p`-adic valuation of `S_K` (5.3)
 
@@ -24,6 +23,10 @@ where each factorial valuation is given by Legendre's formula (`padicValNat_fact
 open Finset
 
 namespace Zeta5Irrational
+
+/-- `v_p(S_K)`. -/
+noncomputable def vSK (n p : ℕ) : ℤ :=
+  padicValRat p (S n)
 
 lemma padicValNat_finset_prod (p : ℕ) [hp : Fact p.Prime] {ι : Type*} (s : Finset ι) (f : ι → ℕ)
     (hf : ∀ i ∈ s, f i ≠ 0) : padicValNat p (∏ i ∈ s, f i) = ∑ i ∈ s, padicValNat p (f i) := by
@@ -49,13 +52,13 @@ lemma S_eq_div (n : ℕ) :
 
 /-- **(5.3)**: the valuation of `S_K` in terms of factorial valuations. -/
 theorem vS_eq {n : ℕ} (hn : 0 < n) {p : ℕ} (hp : p.Prime) :
-    (InnerData.mk n 200 p).vS =
+    vSK n p =
       2 * (37 * n : ℤ) * padicValNat p (40 * n).factorial -
             12 * (37 * n : ℤ) * padicValNat p (3 * n).factorial -
           2 * ∑ i ∈ Icc 1 (37 * n - 1), (padicValNat p (2 * i).factorial : ℤ) +
         ((37 * n : ℤ) - 1) * padicValNat p 4 := by
   have := Fact.mk hp
-  unfold InnerData.vS
+  unfold vSK
   rw [S_eq_div]
   have hA : (((40 * n).factorial ^ (2 * (37 * n)) * 4 ^ (37 * n - 1) : ℕ) : ℚ) ≠ 0 := by
     norm_cast; positivity

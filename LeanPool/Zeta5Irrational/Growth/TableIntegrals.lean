@@ -8,14 +8,16 @@ module
 
 import LeanPool.Zeta5Irrational.Growth.PieceIdx
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Algebra.Ring.IsFormallyReal
 public import LeanPool.Zeta5Irrational.Growth.InnerSum
 public import LeanPool.Zeta5Irrational.Growth.OuterTable
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring.Basic
 
 /-! # The integrals of the piece tables
 

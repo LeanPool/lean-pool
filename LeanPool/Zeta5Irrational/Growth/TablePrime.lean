@@ -6,11 +6,13 @@ Authors: Moritz Firsching
 
 module
 
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import LeanPool.Zeta5Irrational.Growth.TailPrime
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Ring.Basic
+
+import Mathlib.Algebra.Order.Floor.Semifield
 
 /-! # The inner range in continuous form: `-L_p ≤ p Ê(K/p, k) + C`
 

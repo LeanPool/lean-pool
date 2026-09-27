@@ -9,9 +9,6 @@ module
 import LeanPool.Zeta5Irrational.MainEstimate
 public import LeanPool.Zeta5Irrational.Zeta5
 import LeanPool.Zeta5Irrational.Criterion
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
 public import Mathlib.NumberTheory.Real.Irrational
 
 /-! # Irrationality of ζ(5)

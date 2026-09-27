@@ -10,10 +10,13 @@ public import LeanPool.Zeta5Irrational.Potential
 import LeanPool.Zeta5Irrational.Certificates
 import LeanPool.Zeta5Irrational.TableCheck
 import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Positivity.Basic
 
 /-! # The tail `t ≥ 2` of the potential inequality (6.2): the bound (6.8)
 -/

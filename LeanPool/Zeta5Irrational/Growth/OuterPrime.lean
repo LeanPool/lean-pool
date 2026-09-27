@@ -9,13 +9,17 @@ module
 public import LeanPool.Zeta5Irrational.Growth.TailPrime
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Data.Rat.Star
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Int.Star
 import Std.Tactic.BVDecide.Normalize.Prop
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Ring.Basic
+
+import Mathlib.Algebra.Order.Floor.Semifield
 
 /-! # The outer range: class counts
 

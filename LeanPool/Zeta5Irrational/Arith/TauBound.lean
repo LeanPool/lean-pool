@@ -8,12 +8,13 @@ module
 
 public import LeanPool.Zeta5Irrational.Arith.BinomBasis
 public import LeanPool.Zeta5Irrational.Arith.Val
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Rat.Star
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Tactic.Ring.Basic
 
 /-! # The bound (3.9) for the polynomial functional `τ(P) = L(P''')/24`
 

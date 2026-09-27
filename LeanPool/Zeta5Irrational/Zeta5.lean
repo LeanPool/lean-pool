@@ -7,10 +7,9 @@ Authors: Moritz Firsching
 module
 
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
 
 /-! # `ζ(5)` as a real number
 -/

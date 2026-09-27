@@ -8,12 +8,9 @@ module
 
 public import LeanPool.Zeta5Irrational.Construction
 import LeanPool.Zeta5Irrational.PartialFractions
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Ring.Basic
 
 /-! # Linearity of `μ_X` and change of basis in the Hankel determinant
 

@@ -8,9 +8,7 @@ module
 
 public import LeanPool.Zeta5Irrational.Positivity
 import LeanPool.Zeta5Irrational.Andreief
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.Ring.Basic
 
 /-! # The Hankel determinant as a multiple integral, (6.10)
 

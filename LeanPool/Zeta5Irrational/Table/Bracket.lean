@@ -10,9 +10,10 @@ public import LeanPool.Zeta5Irrational.Potential
 import LeanPool.Zeta5Irrational.Certificates
 import LeanPool.Zeta5Irrational.TableCheck
 import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Ineq
+import Mathlib.Tactic.NormNum.Inv
+import Mathlib.Tactic.NormNum.Pow
 
 /-! # Bracket: certified bounds for the zeta(5) proof -/
 
