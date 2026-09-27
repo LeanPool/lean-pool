@@ -15,8 +15,8 @@ public import LeanPool.KaltonPeck.KaltonPeck.Support.Symplectic
 /-!
 # Canonical symplectic pairing identities
 
-This file extends the finite-coordinate formulas for the canonical Kalton--Swanson form to
-pairings with the canonical Hilbert-space inclusion.
+The unrestricted coordinate formula gives the pairing identities for the canonical
+Hilbert-space inclusion directly.
 -/
 
 @[expose] public section
@@ -31,77 +31,19 @@ open Coordinates
 open Filter
 open scoped lp Topology
 
-private def pairingL2Trunc (m : ℕ) (x : CanonicalL2) : CanonicalL2 :=
-  ∑ k ∈ Finset.range m, lp.single 2 k (x k)
-
-private lemma pairingL2Trunc_apply (m k : ℕ) (x : CanonicalL2) :
-    pairingL2Trunc m x k = if k < m then x k else 0 := by
-  rw [pairingL2Trunc]
-  change
-    (lp.evalCLM ℝ (fun _ : ℕ => ℝ) 2 k)
-        (∑ i ∈ Finset.range m, lp.single 2 i (x i)) =
-      if k < m then x k else 0
-  rw [map_sum]
-  simp [lp.evalCLM, lp.single_apply, Pi.single_apply]
-
-private lemma pairingL2Trunc_tendsto (x : CanonicalL2) :
-    Tendsto (fun m => pairingL2Trunc m x) atTop (𝓝 x) :=
-  (lp.hasSum_single (p := (2 : ENNReal)) (by norm_num) x).tendsto_sum_nat
-
-private lemma pairingL2Trunc_finite (m : ℕ) (x : CanonicalL2) :
-    Set.Finite {k | pairingL2Trunc m x k ≠ 0} := by
-  refine (Finset.finite_toSet (Finset.range m)).subset ?_
-  intro k hk
-  simp only [Set.mem_ofPred_eq, Finset.mem_coe, Finset.mem_range] at hk ⊢
-  by_contra hkm
-  rw [pairingL2Trunc_apply, ite_eq_right hkm] at hk
-  exact hk rfl
-
-private lemma dense_pairingL2_finiteSupport :
-    Dense {x : CanonicalL2 | Set.Finite {n | x n ≠ 0}} := by
-  rw [dense_iff_closure_eq]
-  apply Set.eq_univ_of_forall
-  intro x
-  exact mem_closure_of_tendsto (pairingL2Trunc_tendsto x)
-    (Eventually.of_forall fun m => pairingL2Trunc_finite m x)
-
 /-- The canonical form pairs the first-coordinate inclusion with the quotient by the
 real Hilbert inner product. -/
 theorem canonicalKaltonSwansonForm_inclusion_left
     (x : CanonicalL2) (z : CanonicalRealKaltonPeck) :
     canonicalKaltonSwansonForm.toDual (canonicalL2Inclusion x) z =
       inner ℝ x (canonicalL2Quotient z) := by
-  let DX : Set CanonicalL2 := {u | Set.Finite {n | u n ≠ 0}}
-  let DZ : Set CanonicalRealKaltonPeck :=
-    {w | IsFiniteCoordinatePair (canonicalRealKaltonPeckPresentation.coordinates w)}
-  have hDX : Dense DX := dense_pairingL2_finiteSupport
-  have hDZ : Dense DZ := canonicalKaltonPeckBanach.2.2.2
-  have hfinite : ∀ u ∈ DX, ∀ w ∈ DZ,
-      canonicalKaltonSwansonForm.toDual (canonicalL2Inclusion u) w =
-        inner ℝ u (canonicalL2Quotient w) := by
-    intro u hu w hw
-    have hiu : IsFiniteCoordinatePair
-        (canonicalRealKaltonPeckPresentation.coordinates (canonicalL2Inclusion u)) := by
-      rw [canonicalL2Inclusion_coordinates]
-      exact ⟨hu, by simp⟩
-    rw [canonicalKaltonSwansonForm_finite_coordinates _ _ hiu hw,
-      canonicalL2Inclusion_coordinates, lp.inner_eq_tsum]
-    apply tsum_congr
-    intro n
-    simp only [RCLike.inner_apply, conj_trivial, canonicalL2Quotient_apply,
-      Pi.zero_apply, mul_zero, sub_zero]
-    ring
-  refine eqOn_closure₂' hfinite ?_ ?_ ?_ ?_ x (hDX x) z (hDZ z)
-  · intro u
-    exact (canonicalKaltonSwansonForm.toDual (canonicalL2Inclusion u)).continuous
-  · intro w
-    exact Continuous.clm_apply
-      (canonicalKaltonSwansonForm.toDual.continuous.comp canonicalL2Inclusion.continuous)
-      continuous_const
-  · intro u
-    exact continuous_const.inner canonicalL2Quotient.continuous
-  · intro w
-    exact continuous_id.inner continuous_const
+  rw [canonicalKaltonSwansonForm_coordinates, canonicalL2Inclusion_coordinates,
+    lp.inner_eq_tsum]
+  apply tsum_congr
+  intro n
+  simp only [RCLike.inner_apply, conj_trivial, canonicalL2Quotient_apply,
+    Pi.zero_apply, mul_zero, sub_zero]
+  ring
 
 /-- The same pairing identity in the opposite order; alternation supplies the minus sign. -/
 theorem canonicalKaltonSwansonForm_inclusion_right

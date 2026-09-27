@@ -837,13 +837,11 @@ Blueprint label: `thm:ks-primary`; audit IDs `EXT-KS-PRIMARY` and `INF-KP-L2-PAI
 def canonicalKaltonSwansonForm : StrongSymplecticForm CanonicalRealKaltonPeck := by
   exact strongFormOfData (by exact strongPairingData)
 
-/-- On finite-coordinate vectors, the canonical form is the single combined coordinate sum.
+/-- The canonical form is the single combined coordinate sum.
 Blueprint label: `thm:ks-primary`; audit IDs `EXT-KS-PRIMARY`, `INF-KP-L2-PAIRING`, and
 `BLK-KS-PAIRING`. -/
-theorem canonicalKaltonSwansonForm_finite_coordinates
-    (z w : CanonicalRealKaltonPeck)
-    (_hz : IsFiniteCoordinatePair (canonicalRealKaltonPeckPresentation.coordinates z))
-    (_hw : IsFiniteCoordinatePair (canonicalRealKaltonPeckPresentation.coordinates w)) :
+theorem canonicalKaltonSwansonForm_coordinates
+    (z w : CanonicalRealKaltonPeck) :
     canonicalKaltonSwansonForm.toDual z w =
       ∑' n : ℕ,
         ((canonicalRealKaltonPeckPresentation.coordinates z).1 n *
