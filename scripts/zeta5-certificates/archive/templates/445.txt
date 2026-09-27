@@ -1,0 +1,5 @@
+def tOutL : List ℚ :=
+  [({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}})]
+
+/-- Rational slopes of the {{integer}} outer-range linear pieces. -/
