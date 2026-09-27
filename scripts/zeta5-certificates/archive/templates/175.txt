@@ -1,0 +1,26 @@
+/-
+Copyright (c) {{integer}} Moritz Firsching. All rights reserved.
+Released under Apache {{integer}}.{{integer}} license as described in the file LICENSE.
+Authors: Moritz Firsching
+-/
+
+module
+
+public import LeanPool.Zeta{{integer}}Irrational.Energy
+import LeanPool.Zeta{{integer}}Irrational.Certificates
+import LeanPool.Zeta{{integer}}Irrational.PotentialV
+import LeanPool.Zeta{{integer}}Irrational.TableCheck
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.NumberTheory.Chebyshev
+import Mathlib.Tactic.NormNum.Prime
+import Mathlib.Tactic.NormNum.RealSqrt
+
+/-! # V{{integer}}: certified bounds for the zeta({{integer}}) proof -/
+
+@[expose] public section
+
+open Finset
+
+namespace Zeta{{integer}}Irrational
+
