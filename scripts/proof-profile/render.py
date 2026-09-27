@@ -48,10 +48,12 @@ built_re = re.compile(
     r"\((?P<value>[0-9]+(?:\.[0-9]+)?)(?P<unit>ms|s)\)"
 )
 time_re = re.compile(r"^(real|user|sys)\s+([0-9]+(?:\.[0-9]+)?)$")
+# Root command traces are disjoint. Nested traces must not be counted again.
+# The profiler reports raw allocations, 1000 times the maxHeartbeats units.
 heartbeat_re = re.compile(
-    r"(?:'[^']+'\s+)?[Uu]sed\s+"
-    r"(?:approximately\s+)?(?P<heartbeats>[0-9]+)\s+heartbeats"
+    r"^\[Elab\.command\]\s+\[(?P<heartbeats>[0-9]+(?:\.[0-9]+)?)\]"
 )
+legacy_heartbeat_re = re.compile(r"[Uu]sed\s+(?:approximately\s+)?[0-9]+\s+heartbeats")
 
 
 def format_ms(ms: float) -> str:
@@ -68,10 +70,10 @@ def format_seconds(seconds: float | None) -> str:
     return f"{seconds:.2f}"
 
 
-def format_heartbeats(heartbeats: float) -> str:
+def format_heartbeats(heartbeats: float | None) -> str:
     """Format heartbeats in maxHeartbeats units."""
 
-    return f"{heartbeats:,.0f}"
+    return "—" if heartbeats is None else f"{heartbeats:,.0f}"
 
 
 def format_int(value: int) -> str:
@@ -122,6 +124,7 @@ def parse_heartbeat_sections(log_text: str) -> dict[str, dict[str, float | int |
         heartbeats = 0.0
         declarations = 0
         errors = 0
+        legacy = False
         wall_seconds = None
         for line in body.splitlines():
             if "error:" in line:
@@ -133,13 +136,23 @@ def parse_heartbeat_sections(log_text: str) -> dict[str, dict[str, float | int |
                 continue
             match = heartbeat_re.search(line)
             if match:
-                heartbeats += float(match.group("heartbeats"))
+                heartbeats += float(match.group("heartbeats")) / 1000
                 declarations += 1
+            elif legacy_heartbeat_re.search(line):
+                legacy = True
+        # A source file may itself use #count_heartbeats. Its messages are not
+        # inputs to this measurement; root traces establish the new format.
+        legacy = legacy and not declarations
+        if not declarations:
+            errors += 1
+        if errors:
+            heartbeats = 0.0
         result[fname] = {
             "heartbeats": heartbeats,
             "declarations": declarations,
             "errors": errors,
             "wall_seconds": wall_seconds,
+            "legacy": legacy,
         }
     return result
 
@@ -282,10 +295,21 @@ compared = [
     fname
     for fname in modified_files
     if fname in base_heartbeat_by_file and fname in heartbeat_by_file
+    and not base_heartbeat_by_file[fname]["errors"]
+    and not heartbeat_by_file[fname]["errors"]
 ]
 compared_set = set(compared)
 
 out = ["## Proof profile (new / modified Lean files)\n\n"]
+if any(
+    data["legacy"]
+    for data in [*heartbeat_by_file.values(), *base_heartbeat_by_file.values()]
+):
+    out.append(
+        "> **Legacy heartbeat measurements rejected.** The deprecated linter can "
+        "count failed duplicate declarations instead of proofs. Re-run `/profile` "
+        "to obtain command-profiler measurements.\n\n"
+    )
 if not log_text.strip() and not heartbeat_text.strip():
     out.append("_No proof profile output._\n")
     rendered_path.write_text("".join(out))
@@ -418,6 +442,8 @@ if compared:
     def classify(row) -> int:
         """-1 cheaper, +1 costlier, 0 within noise."""
 
+        if row["base_errors"] or row["head_errors"]:
+            return 0
         delta = row["delta"]
         if abs(delta) < CLASSIFY_MIN_HB:
             return 0
@@ -439,13 +465,14 @@ if compared:
             f"{format_heartbeats(total_head_hb)} "
             f"({format_signed(total_delta)}, "
             f"**{format_delta_pct(total_delta, total_base_hb)}**). "
-            f"**Declarations:** {format_int(total_base_decls)} → "
+            f"**Commands:** {format_int(total_base_decls)} → "
             f"{format_int(total_head_decls)}.\n\n"
         )
         s.append(
             f"**Per-file wall sum:** {total_base_wall:.1f} s → "
             f"{total_head_wall:.1f} s "
-            f"({format_delta_pct(total_head_wall - total_base_wall, total_base_wall)}). "
+            f"({format_delta_pct(total_head_wall - total_base_wall, total_base_wall)})"
+            ". "
             "_Wall clock is measured under parallel load and is noisy; "
             "heartbeats are deterministic and are the regression "
             "signal._\n\n"
@@ -468,8 +495,10 @@ if compared:
             "_Both sides are elaborated against the merge-base build of "
             "the pool — sound when only proofs and definition bodies "
             "change; a file whose statements changed may fail there and "
-            "is flagged ⚠. Heartbeats come from Mathlib's "
-            "`linter.countHeartbeats`, in `maxHeartbeats` units. "
+            "is flagged ⚠. Heartbeats come from disjoint root command traces "
+            "with `trace.profiler.useHeartbeats` and synchronous elaboration, "
+            "converted to `maxHeartbeats` units. Failed measurements are not "
+            "classified as cheaper or costlier. "
             "Δ lines counts added/deleted lines from this PR diff._\n\n"
         )
         s.append(
@@ -616,7 +645,11 @@ elif all_files:
             (
                 fname,
                 loc_by_file.get(fname, 0),
-                float(heartbeat.get("heartbeats", 0.0)),
+                (
+                    heartbeat.get("heartbeats")
+                    if heartbeat and not heartbeat["errors"]
+                    else None
+                ),
                 heartbeat.get("wall_seconds"),
                 float(profile.get("total_ms", 0.0)),
                 float(profile.get("local_ms", 0.0)),
@@ -627,9 +660,13 @@ elif all_files:
                 int(heartbeat.get("declarations", 0)),
             )
         )
-    summary_rows.sort(key=lambda r: (-r[2], r[0]))
+    summary_rows.sort(key=lambda r: (-(r[2] or 0.0), r[0]))
     total_loc = sum(r[1] for r in summary_rows)
-    total_heartbeats = sum(r[2] for r in summary_rows)
+    total_heartbeats = sum(r[2] for r in summary_rows if r[2] is not None)
+    valid_heartbeat_files = sum(r[2] is not None for r in summary_rows)
+    heartbeat_total_label = format_heartbeats(
+        total_heartbeats if valid_heartbeat_files else None
+    )
     total_wall_seconds = sum(r[3] or 0.0 for r in summary_rows)
     total_ms = sum(r[4] for r in summary_rows)
     total_local_ms = sum(r[5] for r in summary_rows)
@@ -639,9 +676,9 @@ elif all_files:
     total_declarations = sum(r[9] for r in summary_rows)
     file_count = len(summary_rows)
     absolute_out.append(
-        f"**Total heartbeats:** {format_heartbeats(total_heartbeats)} "
-        f"maxHeartbeats units across {file_count} file"
-        f"{'' if file_count == 1 else 's'} "
+        f"**Total heartbeats:** {heartbeat_total_label} "
+        f"maxHeartbeats units across {valid_heartbeat_files} valid file"
+        f"{'' if valid_heartbeat_files == 1 else 's'} "
         f"({format_int(total_loc)} added LOC).\n\n"
     )
     absolute_out.append(
@@ -654,8 +691,12 @@ elif all_files:
         f"{format_ms(total_import_ms)}.\n\n"
     )
     absolute_out.append(
-        "_Heartbeat values come from Mathlib's `linter.countHeartbeats` "
-        "and are already in `maxHeartbeats` units. Per-file wall "
+        "_Heartbeat values sum disjoint root command traces with "
+        "`trace.profiler.useHeartbeats` and synchronous elaboration, "
+        "converted from raw allocations to `maxHeartbeats` units by dividing "
+        "by 1000. They include command elaboration and kernel checking, "
+        "exclude imports, and include profiler overhead; they are not "
+        "comparable to the deprecated linter's totals. Per-file wall "
         "clocks are measured under parallel load and are noisier "
         "than heartbeats._\n\n"
     )
@@ -666,7 +707,7 @@ elif all_files:
     absolute_out.append(
         "| File | LOC | Heartbeats (maxHB) | Count wall (s) | "
         "`lean --profile` (s) | Without import (s) | "
-        "Import (s) | Decls | Errors |\n"
+        "Import (s) | Commands | Errors |\n"
     )
     absolute_out.append("|---|---:|---:|---:|---:|---:|---:|---:|---:|\n")
     for (
@@ -692,7 +733,7 @@ elif all_files:
     # time can be compared against the whole at a glance.
     absolute_out.append(
         f"| **Total** | **{format_int(total_loc)}** "
-        f"| **{format_heartbeats(total_heartbeats)}** "
+        f"| **{heartbeat_total_label}** "
         f"| **{total_wall_seconds:.2f}** | **{total_ms / 1000:.2f}** "
         f"| **{total_local_ms / 1000:.2f}** "
         f"| **{total_import_ms / 1000:.2f}** "

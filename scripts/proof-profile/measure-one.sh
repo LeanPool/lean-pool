@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# Measure one file at one git revision with Mathlib's
-# countHeartbeats linter (which reports in `set_option
-# maxHeartbeats` units) plus wall time, into
+# Measure one file at one git revision with Lean's command
+# heartbeat profiler plus wall time, into
 # <outdir>/<slugified-path>.log. The source comes from `git show`
 # and is compiled out-of-tree against whatever environment is
 # currently built (imports resolve by module name, not path), so
@@ -16,8 +15,17 @@ src="$outdir/src-$slug.lean"
 {
   echo "## $file"
   if git show "$ref:$file" > "$src"; then
+    # The deprecated linter retries declarations after they already exist and
+    # can report only the failed retry's cost. Trace the original elaboration.
+    # Keep it synchronous so command totals include theorem bodies and kernel
+    # checking. Enable only command traces; the high threshold suppresses the
+    # nested profiler nodes, which would produce enormous logs and double count.
     /usr/bin/time -p "$HOME/.elan/bin/lake" env lean \
-      -Dlinter.countHeartbeats=true \
+      -DElab.async=false \
+      -Dtrace.Elab.command=true \
+      -Dtrace.profiler=true \
+      -Dtrace.profiler.useHeartbeats=true \
+      -Dtrace.profiler.threshold=1000000000000000000 \
       "$src"
     status=$?
     if [ "$status" -ne 0 ]; then
