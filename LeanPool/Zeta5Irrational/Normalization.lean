@@ -16,8 +16,9 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 We define the local exponents `L_p(K, M)` of (5.1) exactly as in the paper (with the counts
 `ℓ_A(a)`, the allocation `T, E, ε_a, L_a`, the weights (4.6)–(4.7), the inner exponent
-`γ_p^in` (4.8), the outer exponent `γ_p^out` (4.14)) and the normalising factor
-`m_{K,M} = ∏_{p ≤ 2h} p^{-L_p}` of (5.2).
+`γ_p^in` (4.8), the outer exponent `γ_p^out` (4.14)) of Section 5.
+We do not export the paper's separate normalising factor: the
+proved integrality and growth estimates concern `Zeta5Irrational.mN`.
 
 These are the paper's definitions, kept for reference and for `vS` (used by
 `Zeta5Irrational.Legendre`).
@@ -171,16 +172,5 @@ noncomputable def Lp : ℤ :=
   else if 3 * D.p ≤ D.K then D.vS + D.gammaIn else D.vS + D.gammaOut
 
 end InnerData
-
-/-- The normalising factor `m_{K,M} = ∏_{p ≤ 2h} p^{-L_p(K,M)}` of (5.2). -/
-noncomputable def mKM (n M : ℕ) : ℚ :=
-  ∏ p ∈ (range (2 * (37 * n) + 1)).filter Nat.Prime, (p : ℚ) ^ (-(InnerData.mk n M p).Lp)
-
-lemma mKM_pos (n M : ℕ) : 0 < mKM n M := by
-  unfold mKM
-  apply Finset.prod_pos
-  intro p hp
-  have : 0 < p := (Finset.mem_filter.mp hp).2.pos
-  exact zpow_pos (by exact_mod_cast this) _
 
 end Zeta5Irrational
