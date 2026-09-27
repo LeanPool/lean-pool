@@ -10,6 +10,7 @@ public import LeanPool.AsymptoticTrianglePacking.Internal.Basic
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fintype.Card
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Weighted hypergraph incidences
@@ -44,6 +45,17 @@ theorem sum_weightedLoad (H : Finset (Finset V)) (w : Finset V → ℝ) {r : ℕ
   rw [Finset.sum_comm, Finset.mul_sum]
   refine Finset.sum_congr rfl fun e he => ?_
   rw [Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_const, hr e he, nsmul_eq_mul]
+
+/-- A fractional matching on an `r`-uniform hypergraph has total weight at most `|V|/r`. -/
+theorem weightedSum_le_card (H : Finset (Finset V)) (w : Finset V → ℝ) {r : ℕ}
+    (hr : IsUniform H r) (hload : ∀ v : V, weightedLoad H w v ≤ 1) :
+    (r : ℝ) * (∑ e ∈ H, w e) ≤ (Fintype.card V : ℝ) := by
+  rw [← sum_weightedLoad H w hr]
+  calc
+    ∑ v : V, weightedLoad H w v ≤ ∑ _v : V, (1 : ℝ) :=
+      Finset.sum_le_sum (fun v _ => hload v)
+    _ = (Fintype.card V : ℝ) := by
+      rw [Finset.sum_const, nsmul_eq_mul, mul_one, Finset.card_univ]
 
 /-- Exact bounded-edge weighted-rounding target from the Paper III freeze.
 This is a specification, not a proof or a public result. -/
