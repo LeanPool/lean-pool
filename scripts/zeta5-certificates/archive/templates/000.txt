@@ -1,0 +1,18 @@
+/-
+Copyright (c) {{integer}} Moritz Firsching. All rights reserved.
+Released under Apache {{integer}}.{{integer}} license as described in the file LICENSE.
+Authors: Moritz Firsching
+-/
+
+module
+
+public import LeanPool.Zeta{{integer}}Irrational.Table.UpperCertificate
+
+/-! # Certified arcsine potential bounds (U{{integer}}) -/
+
+@[expose] public section
+
+open Finset
+
+namespace Zeta{{integer}}Irrational
+

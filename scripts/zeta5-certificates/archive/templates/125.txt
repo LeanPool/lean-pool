@@ -1,0 +1,82 @@
+lemma U_{{integer}} :
+    Uρ ({{integer}} / {{integer}} : ℝ) ≤
+      (-({{integer}} / {{integer}} : ℝ)) := by
+  rw [Uρ_expand, cρ_{{integer}}, cρ_{{integer}}, cρ_{{integer}}, cρ_{{integer}}, cρ_{{integer}}, cρ_{{integer}}, cρ_{{integer}}, cρ_{{integer}}, cρ_{{integer}}, cρ_{{integer}}, cρ_{{integer}}, cρ_{{integer}}, cρ_{{integer}},
+    cρ_{{integer}}, cρ_{{integer}}, cρ_{{integer}}]
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) * (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) *
+        (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) *
+        (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) *
+        (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) * (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) *
+        (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) *
+        (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) * (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) * (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) *
+        (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) *
+        (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) * (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) *
+        (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) *
+        (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) *
+        (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  have hm{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) * Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) * (-({{integer}} / {{integer}} : ℝ)) :=
+    mul_le_mul_of_nonneg_left U_{{integer}}_{{integer}} (by norm_num)
+  linarith only [hm{{integer}}, hm{{integer}}, hm{{integer}}, hm{{integer}}, hm{{integer}}, hm{{integer}}, hm{{integer}}, hm{{integer}}, hm{{integer}}, hm{{integer}}, hm{{integer}}, hm{{integer}}, hm{{integer}}, hm{{integer}}, hm{{integer}},
+    hm{{integer}}]
+
