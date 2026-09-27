@@ -3,10 +3,10 @@
 This archive reproduces all 118 generated modules in Lean Pool PR #540, including
 114 U/V endpoint tables, the 684-interval assembly, and the inner/outer growth
 tables and inner sum. The manifest pins source commit
-`154983b2d21f27207c078cccf2646715c58e0d3c`, upstream
+`b00b44fc50beb974417bfdff2898aeedd83cfdde`, upstream
 [`mo271/Zeta5`](https://github.com/mo271/Zeta5/tree/f19a1960609f7d38e7b63fd2acb05e6f60a7b741),
-and each output's SHA-256. The later removal of the unused paper normalizer does
-not change any archived file.
+and each output's SHA-256. The archive includes the import cleanup from the
+final review; every mathematical certificate body is preserved.
 
 Use Python 3.13 or later. No third-party packages, network, Lean installation,
 floating-point arithmetic, or execution of archived code is needed for rendering:

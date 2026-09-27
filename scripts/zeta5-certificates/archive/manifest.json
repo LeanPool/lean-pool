@@ -1,5 +1,5 @@
 {
-  "source_commit": "154983b2d21f27207c078cccf2646715c58e0d3c",
+  "source_commit": "b00b44fc50beb974417bfdff2898aeedd83cfdde",
   "upstream_commit": "f19a1960609f7d38e7b63fd2acb05e6f60a7b741",
   "license": "Apache-2.0",
   "files": {
@@ -233,231 +233,231 @@
     },
     "LeanPool/Zeta5Irrational/Table/V00.lean": {
       "records": "Table_V00.json",
-      "sha256": "b4336809612f6ced8228af5f443b52304e26ff6a39a08af374ad883c740d3f6b"
+      "sha256": "4d37f2ddd1a1b932bbaf93e7243f71332ca885c4f9dd2d665ea40af78ea0b4c0"
     },
     "LeanPool/Zeta5Irrational/Table/V01.lean": {
       "records": "Table_V01.json",
-      "sha256": "56d20df920c8f6c03c9e1f0b618bc2e37ac5920dfd7b281949c15f618487bf12"
+      "sha256": "74dbd11f69f7494ea7fd3032310c19e69ace1ce919972b2a89615573895d4161"
     },
     "LeanPool/Zeta5Irrational/Table/V02.lean": {
       "records": "Table_V02.json",
-      "sha256": "e187d031dd20c510a33b5f137bc1930091b21f8eee5fb33122cfb821194a389c"
+      "sha256": "b3fd7317471b077808a43a6291708fa19d984f7fedf311d9056441bc1e4e25fe"
     },
     "LeanPool/Zeta5Irrational/Table/V03.lean": {
       "records": "Table_V03.json",
-      "sha256": "b6a38cadfdeedbfc6213a72197d0d9cc2194ed0408f8c7a27bfba67f2fcba97b"
+      "sha256": "b513e9ba722ccab29550905254ba85167149eab529ce2654d1c0ca4ab427be7c"
     },
     "LeanPool/Zeta5Irrational/Table/V04.lean": {
       "records": "Table_V04.json",
-      "sha256": "06bf879d3615ee3c19fbc9e15262f4073c7482a6205b8857305fe4f75fbb2a64"
+      "sha256": "9aa9ce0637cc0c715cb867687fe4c8346dfc63d54f61ef283c648c77aa180f0a"
     },
     "LeanPool/Zeta5Irrational/Table/V05.lean": {
       "records": "Table_V05.json",
-      "sha256": "22773ccb121841148a1f5d2013089d223c3e3060aa85526e66cde13d6bfccb13"
+      "sha256": "3d93bad1f79b6a87133892dc93efb2be5dfaff062255adc027a60708ac13c33d"
     },
     "LeanPool/Zeta5Irrational/Table/V06.lean": {
       "records": "Table_V06.json",
-      "sha256": "d97e3541fec5672ef37c339a56594f26084ead1a10a0afb810b4b4abe0c23710"
+      "sha256": "faf7b7900d39ded9cfe3b1f26257f090a36153533a245cfa994e33733755ca1e"
     },
     "LeanPool/Zeta5Irrational/Table/V07.lean": {
       "records": "Table_V07.json",
-      "sha256": "d33ef4fcc9b7fcde148cbe6cac68f43458dcc141183acd2245e71869830ac731"
+      "sha256": "e59708d83221d33f4a58f3184c4f213f732b353ede0225b69d6508b63a4e650a"
     },
     "LeanPool/Zeta5Irrational/Table/V08.lean": {
       "records": "Table_V08.json",
-      "sha256": "8d215505ef549cc843689bfed143fde2d6a74655543b312cc99a7b6e28141c8f"
+      "sha256": "b78ae2f655a3cb0eb51fadd5fd0171884d60a709f70086b7326d5ab09c0814ce"
     },
     "LeanPool/Zeta5Irrational/Table/V09.lean": {
       "records": "Table_V09.json",
-      "sha256": "46009e80046f073ee012af6e6cdda1254e826464cde9635903f2055606bc1776"
+      "sha256": "6d89fad7e0f70164aa034ecdac87fc71d3a3955d4afcf7c29c459e32439af3b2"
     },
     "LeanPool/Zeta5Irrational/Table/V10.lean": {
       "records": "Table_V10.json",
-      "sha256": "ee3af09daab562e1457daceeeedeb303650680345c392cd6e0d6299612827eba"
+      "sha256": "6510694a33a24b25fc3ca356df17278a5003741e29b5e4c0804081680c745024"
     },
     "LeanPool/Zeta5Irrational/Table/V11.lean": {
       "records": "Table_V11.json",
-      "sha256": "a2677abcabd0b97eb0bf1bf9f5430abe370b4a6a177f84eabf8c67d5e52d60db"
+      "sha256": "1ca291ab65ded3ac361b502795a44c39a52bbc3b408a0b61335bffbb2192034a"
     },
     "LeanPool/Zeta5Irrational/Table/V12.lean": {
       "records": "Table_V12.json",
-      "sha256": "29478e059b17b3322ff59262383a313c36c19ac4a1a53aaf518342f135627432"
+      "sha256": "b8b795c2e1a5531abeee1316fea2bd17af91f374822efeeabedc7dc44f61239e"
     },
     "LeanPool/Zeta5Irrational/Table/V13.lean": {
       "records": "Table_V13.json",
-      "sha256": "2fa042da093ad33c75d14e5f53466b38ee63321325065ff84120bf6ee70eeac3"
+      "sha256": "82fb554fa176c5dd1315cdd28679113a830a1c8cec7b67430f6ef542ac19cfad"
     },
     "LeanPool/Zeta5Irrational/Table/V14.lean": {
       "records": "Table_V14.json",
-      "sha256": "f8235be1a91f90ec48ecfc799edb46aa1bc40a822cc6649ac821ebc2fb12686a"
+      "sha256": "d7250c2f4a6cff0f28caba7ab94416d6cc5711a6011d41a02afec0612a821af3"
     },
     "LeanPool/Zeta5Irrational/Table/V15.lean": {
       "records": "Table_V15.json",
-      "sha256": "d055e21f77d32a0a81ed671d3aa4f2a96c7ce565f407352433cc8699b63ea178"
+      "sha256": "fab447602e54ae0c015ea2a41522b4a652ab4972a8987e2230663bfb6b1c7446"
     },
     "LeanPool/Zeta5Irrational/Table/V16.lean": {
       "records": "Table_V16.json",
-      "sha256": "3a884859054ecf3e7feb331a6d47774ead0d5083cb4a17c44cea4be95354ed4c"
+      "sha256": "cccfb1f0a009bef79c511037742e310f040da0a79d2a3c23d5039ccf4f988d05"
     },
     "LeanPool/Zeta5Irrational/Table/V17.lean": {
       "records": "Table_V17.json",
-      "sha256": "c678e4b3c543d182e6258a3eecbc51394411e56674000d63b4165587cb2fa02f"
+      "sha256": "3145afdfa6da749f0eb12c970c0aa15686cfae3cc89b2c65ef62ac9190132f6f"
     },
     "LeanPool/Zeta5Irrational/Table/V18.lean": {
       "records": "Table_V18.json",
-      "sha256": "e577ca5a334fc4c6f956b98dbb536dba7df84c71d8be5b339747a4b2f15fd1e9"
+      "sha256": "06d94ff3d7ab793e440e3e6fdac2170d940be759410baf3083307a4c292402d5"
     },
     "LeanPool/Zeta5Irrational/Table/V19.lean": {
       "records": "Table_V19.json",
-      "sha256": "d919572f42204b9b9903dc4e9dd0775a691e2c9fde3270e3859b95fdb29fac74"
+      "sha256": "3a0a05b5d39fa39dee2ce6726855c4c9ebb08bd9fe7bc09a579530ae5f75e55c"
     },
     "LeanPool/Zeta5Irrational/Table/V20.lean": {
       "records": "Table_V20.json",
-      "sha256": "6a0a03f9c34ff72db35f48703c9cc3502c07aed8dea42705563b32c38f5b5009"
+      "sha256": "a018e11e66eac0d9cf6a55543fc849987c3e4753d35a5d4ec11dd0bc5d97121a"
     },
     "LeanPool/Zeta5Irrational/Table/V21.lean": {
       "records": "Table_V21.json",
-      "sha256": "3fc9dc8554bee052f7c9a85687e2c778a76f523cd62c6d2bbb6e0a289fc87a39"
+      "sha256": "b98c338285a58875c145f131c42add3bf949374e268e824fda06ff49f4b2bb79"
     },
     "LeanPool/Zeta5Irrational/Table/V22.lean": {
       "records": "Table_V22.json",
-      "sha256": "a093ac3b4e85ce1d72b37067d73e00fe1800578f87640f9b5c9913c3e5b3ab2b"
+      "sha256": "9edaea11fce5d1bf72af0ba32ffa7c0847f92beb788725c339e7a909fc986e53"
     },
     "LeanPool/Zeta5Irrational/Table/V23.lean": {
       "records": "Table_V23.json",
-      "sha256": "390180ebd90aa39407b520936b2d568e0f7b59d0418bea958b9ad13fa6b83917"
+      "sha256": "cbc06c4aa21ab08afaedf1f82aa39ba9ec1aacc99e4c35e76d027e08955eb47d"
     },
     "LeanPool/Zeta5Irrational/Table/V24.lean": {
       "records": "Table_V24.json",
-      "sha256": "dae285826aa47709d85f354aded35045647bd60c1d6fdd1fa0ae9d006a8476ae"
+      "sha256": "53cc2820596d42f2b055818f82779957ffa46a43d54bbd01fe3dcb79832da8cc"
     },
     "LeanPool/Zeta5Irrational/Table/V25.lean": {
       "records": "Table_V25.json",
-      "sha256": "4fe032525d4b72e030d8570bd5d74834fca2609a5c692a791c7247e21cf25957"
+      "sha256": "1df4dd5b117faeb7edc8e78b309e1c6354d6315103778c9a1cbc2ec46ab942c0"
     },
     "LeanPool/Zeta5Irrational/Table/V26.lean": {
       "records": "Table_V26.json",
-      "sha256": "3b1c992d84c9de19250e5d3f2d4db97cfd369a330bab64f5105c1194a7453ebc"
+      "sha256": "372f8d7bd5b66518d982eaa20bba68420b575e49070ec1019c3102e8a80f5715"
     },
     "LeanPool/Zeta5Irrational/Table/V27.lean": {
       "records": "Table_V27.json",
-      "sha256": "f686406024cf650eaa587be8851c5bd41332e5ba1a0f83c7396567eea640ca0b"
+      "sha256": "cf30c80310f2a2ea774ac79029076e33cb454e8dc3003ef2810d588674c1f76a"
     },
     "LeanPool/Zeta5Irrational/Table/V28.lean": {
       "records": "Table_V28.json",
-      "sha256": "ceb2e1f9c9cc75238c7f9ed8d5b3075a8718605b5e92e1c8dea5b129b7a6ee43"
+      "sha256": "0a2e53ad36a8030146dafab3e53f65d8d4a96fb90d240d2343f7d33dfc5f1f8c"
     },
     "LeanPool/Zeta5Irrational/Table/V29.lean": {
       "records": "Table_V29.json",
-      "sha256": "5ef87137dbd6a50afde2b498e05910d190638dcbc64d0b863aab0c0ba8e52c98"
+      "sha256": "1b2ae075e54d8a2c345019a72b9d4ba82c3b6705863cba4e2a2282e106ae36f1"
     },
     "LeanPool/Zeta5Irrational/Table/V30.lean": {
       "records": "Table_V30.json",
-      "sha256": "d81080a958fd0898d88edb045336a658c763d0be6372c8a6749fc18bd6be36d3"
+      "sha256": "7cfea012f848137f0792787cec96072c0b2be1a2444ca1b6daca196fb1c1d552"
     },
     "LeanPool/Zeta5Irrational/Table/V31.lean": {
       "records": "Table_V31.json",
-      "sha256": "3f418abcf3d6e40b313e6cc9826b4b4999f8239691baaa49a1b908c87480ce33"
+      "sha256": "4bbff7a5c50320dec64d578986b62f7116d572b1a0601e47e40ad7425d18b2e3"
     },
     "LeanPool/Zeta5Irrational/Table/V32.lean": {
       "records": "Table_V32.json",
-      "sha256": "085a90ff88c56e9c6cfea11eff1ea6e653f1443f1c2679b4779c40019e759019"
+      "sha256": "2e0f063c9ce99835be2303563af71ae8b84f7a6e803a86814b72c6c1aeb21996"
     },
     "LeanPool/Zeta5Irrational/Table/V33.lean": {
       "records": "Table_V33.json",
-      "sha256": "b41e2104061c39468d4ed3aa01dadcb713f81e935a4d985c6c708600ac78d10f"
+      "sha256": "43deef3b60e304102ac97326745b52c90434d25377ae96f301922143bb6c2ff9"
     },
     "LeanPool/Zeta5Irrational/Table/V34.lean": {
       "records": "Table_V34.json",
-      "sha256": "a1b36538e556d5778c3f87fabe0d2a00d5a73119bc19ec5a7f97400cdec1c51d"
+      "sha256": "998b6289042c896ee66f5eed11bdaa8cbdc4c4c0553404492ef636ec5b31fe37"
     },
     "LeanPool/Zeta5Irrational/Table/V35.lean": {
       "records": "Table_V35.json",
-      "sha256": "1bdddccb5b37d6ce3f554552d65b4f52cda36ea82b2cbceb63d398a1fe7b9ece"
+      "sha256": "9815b7090d50d9e739961fcb129894dd3a2c92c07fcb2a5bda11fea0987d782c"
     },
     "LeanPool/Zeta5Irrational/Table/V36.lean": {
       "records": "Table_V36.json",
-      "sha256": "4c8ff2d90993f303ae564443dcbea8bb2d3761bc7fb320f305e2f6834ecf5dbd"
+      "sha256": "f037659490c1bcd2a8d67d291d1c1a71cdfb468595ce8a6a69e620fe8c10b4cc"
     },
     "LeanPool/Zeta5Irrational/Table/V37.lean": {
       "records": "Table_V37.json",
-      "sha256": "d8b44104de2daad0fd5f72886a49f01c9f0be1d814337e1e4518f63e6d56ae46"
+      "sha256": "3ff28adfb9c054f4fe4ee03e2cd2dd00104dff5d14177bdadcfbafa8c0be7f3d"
     },
     "LeanPool/Zeta5Irrational/Table/V38.lean": {
       "records": "Table_V38.json",
-      "sha256": "0362df19cae777b19388234d50a58b7ad351dbc3f7709f19161929ecd0ddd0ac"
+      "sha256": "d35e047a397c3758f29f6c1e7680f5d0695b8fd8d7d08dfff6f4aa1cb09d5346"
     },
     "LeanPool/Zeta5Irrational/Table/V39.lean": {
       "records": "Table_V39.json",
-      "sha256": "f8ec0a0b5cbc5e17c98f827b3d2a132370dc74e4755e9dcafbfceb209893e3a9"
+      "sha256": "79cda6168fee177b2c50eaa63f0756206e32cda5d85e5accb2dc1e9cfe3fb398"
     },
     "LeanPool/Zeta5Irrational/Table/V40.lean": {
       "records": "Table_V40.json",
-      "sha256": "340ceb3b3c017605f79d022e1cd5f00ce17d8ede1641000d09502477b6e26838"
+      "sha256": "190344f67cbbef9c588008e9c161be8946f2d251fff6a290369cfc65f83dd2a1"
     },
     "LeanPool/Zeta5Irrational/Table/V41.lean": {
       "records": "Table_V41.json",
-      "sha256": "2608cd1e006bb9dccbbf04748b79260757e73cfa760c8785a8ef7a5e00fd6839"
+      "sha256": "cd3c6323e373ea3cfa12e0ba0fce2f2e97f5e3b33190a55bc9015ad335b2fade"
     },
     "LeanPool/Zeta5Irrational/Table/V42.lean": {
       "records": "Table_V42.json",
-      "sha256": "64da41cd286a3648f852fde51badcf4d2d7bcba587372f381083ddb0a6973e77"
+      "sha256": "431a1320aac556da9bdce6bf116821fda7dffe839181624b2f5a4723edcea4bf"
     },
     "LeanPool/Zeta5Irrational/Table/V43.lean": {
       "records": "Table_V43.json",
-      "sha256": "b02738254d534157a73e4f6f7a353c3a794023529a37f5ecbce8898a17c71a52"
+      "sha256": "2a0e2183e0918bf0cd1e0d02a7a3dd2457cd6f09ff978850c91e66be25d4c00c"
     },
     "LeanPool/Zeta5Irrational/Table/V44.lean": {
       "records": "Table_V44.json",
-      "sha256": "c7304d466cc7c1f567da96af2ffab6930a721be2f1f2ef5615f77231915c8d55"
+      "sha256": "bdb026faa881dd819b5b70e33529f4c937f062ab4f75645b85f9aa356bd526fb"
     },
     "LeanPool/Zeta5Irrational/Table/V45.lean": {
       "records": "Table_V45.json",
-      "sha256": "52a1221877ae68ac80abd42af8f97512bcedd3453b49d649c2bb3222e55b5bb5"
+      "sha256": "03b9b4c6f8418b46dade3247f30023d538a73a312f5cdb7aa485012d0943ff7c"
     },
     "LeanPool/Zeta5Irrational/Table/V46.lean": {
       "records": "Table_V46.json",
-      "sha256": "ce886e49ef79ab1cd8cabf1587bb33f38f6ccf5402015f431a16f0a4a93b5bda"
+      "sha256": "7dd03277fcec4377a74384a09788ae4b48e6d049007b81eef440d150c10d3c81"
     },
     "LeanPool/Zeta5Irrational/Table/V47.lean": {
       "records": "Table_V47.json",
-      "sha256": "d2efce3aad1b425e065d76e812118b93846f8094ef561834b4afff0072de875f"
+      "sha256": "3b1bebe3fe9119747601eb2716efede823a3c39875675a810811e519b62c5d9f"
     },
     "LeanPool/Zeta5Irrational/Table/V48.lean": {
       "records": "Table_V48.json",
-      "sha256": "29ffee334e8d2cc3623fe28a095976a002492362161d2f40b44a3d628b6952e8"
+      "sha256": "89f9792b35effe3b8add39a4ad5195229c8f513a0813ed4ab0e4133249eff9ca"
     },
     "LeanPool/Zeta5Irrational/Table/V49.lean": {
       "records": "Table_V49.json",
-      "sha256": "9b10e53c2c27d3bdb4fc6f2e548cc47095c90347c7ac4b4222998c557c90a32a"
+      "sha256": "0b6a043d88e376270841e5afb368ca4f1c274cc3cf1f1371416f42bf845afb5f"
     },
     "LeanPool/Zeta5Irrational/Table/V50.lean": {
       "records": "Table_V50.json",
-      "sha256": "dc24ed0a569e294c6a5d7058de8a23158e1714237924ff9ebc9c582991f78c53"
+      "sha256": "7eee24f0e2c60fb3e6eb4d05a0117e54956c4839e18e23499487d1f533bdcd6a"
     },
     "LeanPool/Zeta5Irrational/Table/V51.lean": {
       "records": "Table_V51.json",
-      "sha256": "31e3fc2af97b1216662d03a6e1df21137268d3ff3792f774f1e608265bc031d5"
+      "sha256": "78d9956b3add0ee8c88eb569fe50770a3d6db8b9e213b078476c1f221fbed4ca"
     },
     "LeanPool/Zeta5Irrational/Table/V52.lean": {
       "records": "Table_V52.json",
-      "sha256": "673db1cbe7b2b33a007cc7a29cd879d2e96e14a80e278fb33fcf02f335da0cde"
+      "sha256": "b2a05361775d0b43d61b6768e21fbfb692d7f647b1e70e3ca957888e1a2cdff4"
     },
     "LeanPool/Zeta5Irrational/Table/V53.lean": {
       "records": "Table_V53.json",
-      "sha256": "3f34487f0217190614eabd4f2651180e11c1d8c6623d9b32f421775438c32b43"
+      "sha256": "472a3935d9421c33517550b02fafedb7751fe6f2e477754638350434cd277939"
     },
     "LeanPool/Zeta5Irrational/Table/V54.lean": {
       "records": "Table_V54.json",
-      "sha256": "60b8612555afaec1a994adcacb118fecb9c298b795823579eabd211309b88dec"
+      "sha256": "ebf8597d9fd8a7a141d3ce5ae517616d709c2666529908fcd7f517c0015f7dcb"
     },
     "LeanPool/Zeta5Irrational/Table/V55.lean": {
       "records": "Table_V55.json",
-      "sha256": "466f87334b433dafdd0b51a6955f936d45054c37022a82fa8803f72b0459ac9c"
+      "sha256": "d6269c4b49e97f99e7b7a9fd70f5d278543a3f5b83fe43c70e9a1f92b697e96c"
     },
     "LeanPool/Zeta5Irrational/Table/V56.lean": {
       "records": "Table_V56.json",
-      "sha256": "20d7de608f7c81c2dec03ca739fb67ff88dc75a5b37a573b6baf002bc0d22c27"
+      "sha256": "9e38f5e076641cbefe085f4fa158b7037249c65154276bbcadbff3d07f631577"
     },
     "LeanPool/Zeta5Irrational/Table/Intervals.lean": {
       "records": "Table_Intervals.json",
@@ -465,15 +465,15 @@
     },
     "LeanPool/Zeta5Irrational/Growth/InnerTable.lean": {
       "records": "Growth_InnerTable.json",
-      "sha256": "de4e6b8db3f72f6be8462c4727c82608470db28fdb3e80d0c43293a1c76f0c9f"
+      "sha256": "4f9c91f582aed7ae333fd7edddea9a90b48503b5da5186311811a79b550a0e06"
     },
     "LeanPool/Zeta5Irrational/Growth/OuterTable.lean": {
       "records": "Growth_OuterTable.json",
-      "sha256": "a3bf39e4077addd89dbccb0c56257c6afa5d130946863cba58d386538df41b65"
+      "sha256": "ac8c5a46361186067a93d5ba40ef3d31bd2579efc092c269fbac85028163f640"
     },
     "LeanPool/Zeta5Irrational/Growth/InnerSum.lean": {
       "records": "Growth_InnerSum.json",
-      "sha256": "7d194c6a12968caa2d68f9badd137b35b7b744bb2975bbb8140aba15b47aa7d8"
+      "sha256": "aba388f21567c996d963e9539bef53cff17ff317f9d52a08dbb6de86696a62b3"
     }
   }
 }
