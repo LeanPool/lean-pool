@@ -24,8 +24,9 @@ import Mathlib.Tactic.Ring.Basic
 The three inputs of Section 7 of "ζ(5) is irrational" (A. Fauzan, 2026), all proved:
 
 * `degree_F`: `F_K` has degree `h = 37 n`, (2.9) (`Zeta5Irrational.Degree`).
-* `real_bound`: Proposition 6.3, `0 < F_K(ζ(5))` and
-  `log F_K(ζ(5)) ≤ U K² + 27 K log K + 200 K` (`Zeta5Irrational.RealBound`).
+* `real_bound`: a weakening of Proposition 6.3, `0 < F_K(ζ(5))` and
+  `log F_K(ζ(5)) ≤ U K² + 27 K log K + 200 K` (`Zeta5Irrational.RealBound`),
+  using `27` in place of the paper's `24`.
 * `normalization`: positive rationals `m_K` with `m_K F_K ∈ ℤ[X]` (`integral_mN`) and
   `log m_K ≤ (A_eff + ε) K²` eventually (`growth_mN`), with `A_eff = 1.36 < -U`.
 
@@ -43,7 +44,8 @@ namespace Zeta5Irrational
 theorem degree_F (n : ℕ) : (F n).natDegree = 37 * n :=
   natDegree_F n
 
-/-- **Proposition 6.3** (see `Zeta5Irrational.RealBound` for its decomposition). -/
+/-- A weakening of **Proposition 6.3**, with `27 K log K` in place of `24 K log K`
+(see `Zeta5Irrational.RealBound` for its decomposition). -/
 theorem real_bound (n : ℕ) (hn : 0 < n) :
     0 < aeval zeta5 (F n) ∧
       Real.log (aeval zeta5 (F n)) ≤

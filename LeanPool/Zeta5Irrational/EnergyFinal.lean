@@ -130,7 +130,8 @@ lemma potential_ineq_tail' {t c : ℝ} (ht : 2 ≤ t) (_hc0 : 0 ≤ c) (hc : c �
   unfold M0
   linarith
 
-/-- The pointwise inequality (6.7): `2Uρ(t) - V(t) + (2/K)√t ≤ M₀ + 3/K` for `K ≥ 40`. -/
+/-- A variant of (6.7): `2Uρ(t) - V(t) + (2/K)√t ≤ M₀ + 3/K` for `K ≥ 40`.
+The paper instead uses `√t/K` and `√2/K`, and assumes `K ≥ 2`. -/
 lemma pointwise_bound {K t : ℝ} (hK : 40 ≤ K) (ht : 0 < t) :
     2 * Uρ t - Vfield t + 2 / K * Real.sqrt t ≤ M0 + 3 / K := by
   have hK0 : 0 < K := by linarith

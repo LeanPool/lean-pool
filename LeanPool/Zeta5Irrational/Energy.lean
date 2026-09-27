@@ -93,8 +93,9 @@ lemma integral_le_sum_log {t : ℝ} (ht : 0 < t) {K : ℝ} (hK : 0 < K) (m : ℕ
   refine Finset.sum_congr rfl fun j _ => ?_
   push_cast; ring_nf
 
-/-- The reverse comparison (6.12): for `t > 0`, `1 ≤ m ≤ K`,
-`∑_{j=1}^m log(t + (j/K)²) ≤ K ∫₀^{m/K} log(t+u²) du + 2 log(2K) + 2`. -/
+/-- A weakening of the reverse comparison (6.12): for `t > 0`, `1 ≤ m ≤ K`,
+`∑_{j=1}^m log(t + (j/K)²) ≤ K ∫₀^{m/K} log(t+u²) du + 2 log(2K) + 2`.
+The paper has the sharper remainder `2 log K + 2`. -/
 lemma sum_log_le_integral {t : ℝ} (ht : 0 < t) {K : ℝ} (hK : 1 ≤ K) {m : ℕ} (hm : 1 ≤ m)
     (hmK : (m : ℝ) ≤ K) :
     ∑ j ∈ range m, Real.log (t + (((j : ℝ) + 1) / K) ^ 2) ≤

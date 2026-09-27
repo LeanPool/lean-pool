@@ -19,7 +19,8 @@ public import LeanPool.Zeta5Irrational.EnergyBound
 
 /-! # Section 6 of the paper: the real determinant, decomposed
 
-Proposition 6.3 (`real_bound`) is derived from
+A variant of Proposition 6.3 (`real_bound`) with `27 K log K` in place of the paper's
+`24 K log K` is derived from
 * `Δ_pos` : `Δ_K(ζ(5)) > 0` — proved in `Zeta5Irrational.Positivity` from the moment representation
   `moment_rep` (Proposition 2.2);
 * `log_Δ_le` : the bound (6.14) — proved in `Zeta5Irrational.EnergyBound` from Andréief's identity
@@ -108,7 +109,8 @@ theorem log_S_le (n : ℕ) (hn : 0 < n) :
   nlinarith [mul_le_mul_of_nonneg_left hlog4 hA, mul_le_mul_of_nonneg_left hlog37 hB,
     mul_le_mul_of_nonneg_left hlog40 (by positivity : (0 : ℝ) ≤ 37 * n)]
 
-/-- **Proposition 6.3**, from the four statements above. -/
+/-- A weakening of **Proposition 6.3**, from the four statements above:
+we use `27 K log K` in place of the paper's `24 K log K`. -/
 theorem real_bound' (n : ℕ) (hn : 0 < n) :
     0 < aeval zeta5 (F n) ∧
       Real.log (aeval zeta5 (F n)) ≤
