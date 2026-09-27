@@ -8,6 +8,13 @@ module
 
 public import LeanPool.MarkoffModP.BGS.Markoff.Assembly.ReductionSurjectivity
 
+/-!
+# Explicit Markoff reduction endpoint
+
+The natural-number and finite-field Markoff types and their reduction map are
+restated here to expose the explicit large-prime surjectivity theorem.
+-/
+
 @[expose] public section
 
 namespace Challenge
