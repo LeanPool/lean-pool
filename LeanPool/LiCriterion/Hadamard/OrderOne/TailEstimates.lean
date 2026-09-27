@@ -477,26 +477,8 @@ private lemma cofinal_zerosBallFinset
     (h_z_ne_zero : ∀ ρ : Z.Zero, Z.z ρ ≠ 0)
     (h_summable : Summable (fun ρ : Z.Zero => (1 : ℝ) / ‖Z.z ρ‖ ^ 2)) :
     ∀ t : Finset Z.Zero, ∃ n : ℕ, t ⊆ zerosBallFinset Z h_z_ne_zero h_summable n := by
-  classical
-  intro t
-  by_cases ht : t = ∅
-  · subst ht
-    refine ⟨0, by simp⟩
-  · have ht_ne : t.Nonempty := Finset.nonempty_iff_ne_empty.2 ht
-    let t' : Finset ℝ := t.image (fun ρ : Z.Zero => ‖Z.z ρ‖)
-    have ht'_ne : t'.Nonempty := ht_ne.image _
-    let Rmax : ℝ := t'.max' ht'_ne
-    have hRmax : ∀ ρ : Z.Zero, ρ ∈ t → ‖Z.z ρ‖ ≤ Rmax := by
-      intro ρ hρ
-      have : ‖Z.z ρ‖ ∈ t' := Finset.mem_image_of_mem _ hρ
-      exact Finset.le_max' t' (‖Z.z ρ‖) this
-    have hpow : ∃ n : ℕ, Rmax < (2 : ℝ) ^ n := by
-      simpa using (pow_unbounded_of_one_lt Rmax (by norm_num : (1 : ℝ) < 2))
-    refine ⟨Nat.find hpow, ?_⟩
-    intro ρ hρ
-    have hρ_le : ‖Z.z ρ‖ ≤ Rmax := hRmax ρ hρ
-    have hρ_lt : ‖Z.z ρ‖ < (2 : ℝ) ^ (Nat.find hpow) := lt_of_le_of_lt hρ_le (Nat.find_spec hpow)
-    exact (mem_zerosBallFinset_iff Z h_z_ne_zero h_summable _ ρ).2 (le_of_lt hρ_lt)
+  exact dyadic_ball_cofinal Z.z _
+    (fun k ρ => mem_zerosBallFinset_iff Z h_z_ne_zero h_summable k ρ)
 
 theorem tsum_invNorm_sq_tail_le_rpow_of_two_pow
     {f : ℂ → ℂ} (hf_entire : Differentiable ℂ f)
@@ -563,140 +545,45 @@ theorem tsum_invNorm_sq_tail_le_rpow_of_two_pow
       ∀ m : ℕ,
         (∑ ρ ∈ zerosBallFinset Z h_z_ne_zero h_summable m, g ρ) ≤
           C * ((2 : ℝ) ^ n) ^ (ε - 1) := by
-    classical
     intro m
-    by_cases hm : m ≤ n + 1
-    · have hsum0 :
-          (∑ ρ ∈ zerosBallFinset Z h_z_ne_zero h_summable m, g ρ) = 0 := by
-        refine Finset.sum_eq_zero ?_
-        intro ρ hρ
-        have hnorm : ‖Z.z ρ‖ ≤ (2 : ℝ) ^ m :=
-          (mem_zerosBallFinset_iff Z h_z_ne_zero h_summable m ρ).1 hρ
-        have hpow : (2 : ℝ) ^ m ≤ (2 : ℝ) ^ (n + 1) :=
-          pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hm
-        have : ¬ (2 : ℝ) ^ (n + 1) < ‖Z.z ρ‖ := not_lt_of_ge (le_trans hnorm hpow)
-        simp [g, this]
-      have hrhs_nonneg : 0 ≤ C * ((2 : ℝ) ^ n) ^ (ε - 1) := by
-        have : 0 ≤ ((2 : ℝ) ^ n) ^ (ε - 1) :=
-          Real.rpow_nonneg (by positivity : (0 : ℝ) ≤ (2 : ℝ) ^ n) _
-        exact mul_nonneg hC_nonneg this
-      simpa [hsum0] using hrhs_nonneg
-    · have hm_ge : n + 1 < m := lt_of_not_ge hm
-      let ball : ℕ → Finset Z.Zero := fun t => zerosBallFinset Z h_z_ne_zero h_summable t
-      have hsub_ball : ∀ k : ℕ, ball k ⊆ ball (k + 1) := by
-        intro k ρ hρ
-        have hnorm : ‖Z.z ρ‖ ≤ (2 : ℝ) ^ k :=
-          (mem_zerosBallFinset_iff Z h_z_ne_zero h_summable k ρ).1 hρ
-        have hk_le : (2 : ℝ) ^ k ≤ (2 : ℝ) ^ (k + 1) :=
-          pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) (Nat.le_succ k)
-        exact
-          (mem_zerosBallFinset_iff Z h_z_ne_zero h_summable (k + 1) ρ).2
-            (le_trans hnorm hk_le)
-      have hshell :
-          ∀ k : ℕ, n + 1 ≤ k →
-            (∑ ρ ∈ ball (k + 1) \ ball k, g ρ)
-              ≤ (2 : ℝ) ^ ((1 : ℝ) + ε) * Ccount * q ^ k := by
-        intro k hk
-        have hRcount_le : Rcount ≤ (2 : ℝ) ^ (k + 1) := by
-          exact hRcount_le_pow.trans
-            (pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) (by omega))
-        have hcount : (∑ _ρ ∈ ball (k + 1), (1 : ℝ)) ≤
-            Ccount * ((2 : ℝ) ^ (k + 1)) ^ (1 + ε) := by
-          simpa [ball, card_zerosBallFinset] using hN_le ((2 : ℝ) ^ (k + 1)) hRcount_le
-        have h := dyadic_shell_sum_bound Z.z (fun _ => (1 : ℝ)) (fun _ => by norm_num)
-          ball (fun j ρ => mem_zerosBallFinset_iff Z h_z_ne_zero h_summable j ρ)
-          1 n k hk Ccount 1 ε hcount
-        simpa only [g, q, Nat.cast_one, Nat.reduceAdd,
-          show (1 : ℝ) + ε - (1 + 1) = ε - 1 by ring] using h
-      let t : ℕ := m - (n + 1)
-      have hm_eq : n + 1 + t = m := Nat.add_sub_of_le (Nat.le_of_lt hm_ge)
-      have hind :
-          ∀ j : ℕ,
-            (∑ ρ ∈ ball (n + 1 + j), g ρ) ≤
-              (2 : ℝ) ^ ((1 : ℝ) + ε) * Ccount * (∑ i ∈ Finset.range j, q ^ (n + 1 + i)) := by
-        intro j
-        induction j with
-        | zero =>
-            have hsum0 : (∑ ρ ∈ ball (n + 1), g ρ) = 0 := by
-              refine Finset.sum_eq_zero ?_
-              intro ρ hρ
-              have hnorm : ‖Z.z ρ‖ ≤ (2 : ℝ) ^ (n + 1) :=
-                (mem_zerosBallFinset_iff Z h_z_ne_zero h_summable (n := n + 1) ρ).1 hρ
-              have : ¬ (2 : ℝ) ^ (n + 1) < ‖Z.z ρ‖ := not_lt_of_ge hnorm
-              simp [g, this]
-            -- `∑ i ∈ range 0, _ = 0`
-            simp [ball, hsum0]
-        | succ j ih =>
-            set k : ℕ := n + 1 + j
-            have hk : n + 1 ≤ k := Nat.le_add_right _ _
-            have hsub : ball k ⊆ ball (k + 1) := hsub_ball k
-            have hdecomp :=
-              (Finset.sum_sdiff (s₁ := ball k) (s₂ := ball (k + 1)) (f := g) hsub).symm
-            have hshell_le :
-                (∑ ρ ∈ ball (k + 1) \ ball k, g ρ)
-                  ≤ (2 : ℝ) ^ ((1 : ℝ) + ε) * Ccount * q ^ k := hshell k hk
-            have hgeom :
-                (∑ i ∈ Finset.range (j + 1), q ^ (n + 1 + i))
-                  = (∑ i ∈ Finset.range j, q ^ (n + 1 + i)) + q ^ k := by
-              -- `k = n+1+j` is the new last term.
-              simpa [k, Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using
-                (Finset.sum_range_succ (f := fun i => q ^ (n + 1 + i)) j)
-            have ih' : (∑ ρ ∈ ball k, g ρ) ≤
-                (2 : ℝ) ^ ((1 : ℝ) + ε) * Ccount * (∑ i ∈ Finset.range j, q ^ (n + 1 + i)) := by
-              simpa [k, Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using ih
-            calc
-              (∑ ρ ∈ ball (k + 1), g ρ)
-                  = (∑ ρ ∈ ball (k + 1) \ ball k, g ρ) + (∑ ρ ∈ ball k, g ρ) := by
-                        simpa [k, add_assoc, add_comm, add_left_comm] using hdecomp
-              _ ≤ (2 : ℝ) ^ ((1 : ℝ) + ε) * Ccount * q ^ k +
-                    (2 : ℝ) ^ ((1 : ℝ) + ε) * Ccount * (∑ i ∈ Finset.range j, q ^ (n + 1 + i)) := by
-                        gcongr
-              _ = (2 : ℝ) ^ ((1 : ℝ) + ε) * Ccount *
-                    ((∑ i ∈ Finset.range j, q ^ (n + 1 + i)) + q ^ k) := by
-                        -- factor out the common scalar
-                        set a : ℝ := (2 : ℝ) ^ ((1 : ℝ) + ε) * Ccount
-                        have :
-                            a * q ^ k + a * (∑ i ∈ Finset.range j, q ^ (n + 1 + i))
-                              = a * ((∑ i ∈ Finset.range j, q ^ (n + 1 + i)) + q ^ k) := by
-                          calc
-                            a * q ^ k + a * (∑ i ∈ Finset.range j, q ^ (n + 1 + i))
-                                = a * (q ^ k + (∑ i ∈ Finset.range j, q ^ (n + 1 + i))) := by
-                                      simp [mul_add]
-                            _ = a * ((∑ i ∈ Finset.range j, q ^ (n + 1 + i)) + q ^ k) := by
-                                      simp [add_comm, add_left_comm]
-                        -- unfold `a` and reassociate
-                        simpa [a, mul_assoc, mul_left_comm, mul_comm] using this
-              _ = (2 : ℝ) ^ ((1 : ℝ) + ε) * Ccount *
-                    (∑ i ∈ Finset.range (j + 1), q ^ (n + 1 + i)) := by
-                        -- avoid simp-canceling the common factor
-                        rw [hgeom.symm]
-      have hfinite_le :
-          (∑ ρ ∈ ball m, g ρ)
-            ≤ (2 : ℝ) ^ ((1 : ℝ) + ε) * Ccount *
-                (∑ i ∈ Finset.range t, q ^ (n + 1 + i)) := by
-        simpa [hm_eq, ball] using hind t
-      have hgeom_le :
-          (∑ i ∈ Finset.range t, q ^ (n + 1 + i)) ≤ q ^ (n + 1) * (1 - q)⁻¹ :=
-        geometric_sum_from_le q hq_pos hq_lt_one n t
-      have hq_pow_comm : q ^ n = ((2 : ℝ) ^ n) ^ (ε - 1) := by
-        simpa [q] using
-          (Real.rpow_pow_comm (x := (2 : ℝ)) (hx := by positivity) (ε - 1) n)
-      have hgeom_shift : q ^ (n + 1) = q * ((2 : ℝ) ^ n) ^ (ε - 1) := by
-        calc
-          q ^ (n + 1) = q ^ n * q := by simp [pow_succ]
-          _ = ((2 : ℝ) ^ n) ^ (ε - 1) * q := by simp [hq_pow_comm]
-          _ = q * ((2 : ℝ) ^ n) ^ (ε - 1) := by simp [mul_comm]
-      have hconst :
-          (2 : ℝ) ^ ((1 : ℝ) + ε) * Ccount * ((q ^ (n + 1)) * (1 - q)⁻¹)
-            = C * ((2 : ℝ) ^ n) ^ (ε - 1) := by
-        simp [C, hgeom_shift, mul_assoc, mul_left_comm, mul_comm, div_eq_mul_inv]
-      calc
-        (∑ ρ ∈ ball m, g ρ)
-            ≤ (2 : ℝ) ^ ((1 : ℝ) + ε) * Ccount *
-                (∑ i ∈ Finset.range t, q ^ (n + 1 + i)) := hfinite_le
-        _ ≤ (2 : ℝ) ^ ((1 : ℝ) + ε) * Ccount * ((q ^ (n + 1)) * (1 - q)⁻¹) := by
-              gcongr
-        _ = C * ((2 : ℝ) ^ n) ^ (ε - 1) := hconst
+    let ball : ℕ → Finset Z.Zero := fun t => zerosBallFinset Z h_z_ne_zero h_summable t
+    have hsub_ball : ∀ k : ℕ, ball k ⊆ ball (k + 1) := by
+      intro k ρ hρ
+      have hnorm : ‖Z.z ρ‖ ≤ (2 : ℝ) ^ k :=
+        (mem_zerosBallFinset_iff Z h_z_ne_zero h_summable k ρ).1 hρ
+      have hk_le : (2 : ℝ) ^ k ≤ (2 : ℝ) ^ (k + 1) :=
+        pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) (Nat.le_succ k)
+      exact
+        (mem_zerosBallFinset_iff Z h_z_ne_zero h_summable (k + 1) ρ).2
+          (le_trans hnorm hk_le)
+    have hshell :
+        ∀ k : ℕ, n + 1 ≤ k →
+          (∑ ρ ∈ ball (k + 1) \ ball k, g ρ)
+            ≤ (2 : ℝ) ^ ((1 : ℝ) + ε) * Ccount * q ^ k := by
+      intro k hk
+      have hRcount_le : Rcount ≤ (2 : ℝ) ^ (k + 1) := by
+        exact hRcount_le_pow.trans
+          (pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) (by omega))
+      have hcount : (∑ _ρ ∈ ball (k + 1), (1 : ℝ)) ≤
+          Ccount * ((2 : ℝ) ^ (k + 1)) ^ (1 + ε) := by
+        simpa [ball, card_zerosBallFinset] using hN_le ((2 : ℝ) ^ (k + 1)) hRcount_le
+      have h := dyadic_shell_sum_bound Z.z (fun _ => (1 : ℝ)) (fun _ => by norm_num)
+        ball (fun j ρ => mem_zerosBallFinset_iff Z h_z_ne_zero h_summable j ρ)
+        1 n k hk Ccount 1 ε hcount
+      simpa only [g, q, Nat.cast_one, Nat.reduceAdd,
+        show (1 : ℝ) + ε - (1 + 1) = ε - 1 by ring] using h
+    have hzero : ∀ k, k ≤ n + 1 → ∑ ρ ∈ ball k, g ρ = 0 := by
+      intro k hk
+      refine Finset.sum_eq_zero (fun ρ hρ => ?_)
+      have hnorm := (mem_zerosBallFinset_iff Z h_z_ne_zero h_summable k ρ).1 hρ
+      have hpow := pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hk
+      simp only [g, ite_eq_right (not_lt_of_ge (hnorm.trans hpow))]
+    have hbound := sum_le_of_geometric_shells ball g
+      ((2 : ℝ) ^ ((1 : ℝ) + ε) * Ccount) q
+      (by positivity) hq_pos hq_lt_one n m hsub_ball hzero hshell
+    have hqpow : q ^ n = ((2 : ℝ) ^ n) ^ (ε - 1) :=
+      Real.rpow_pow_comm (x := (2 : ℝ)) (hx := by positivity) _ n
+    simpa only [C, hqpow] using hbound
   have htsum_g :
       (∑' ρ : Z.Zero, g ρ) ≤ C * ((2 : ℝ) ^ n) ^ (ε - 1) :=
     tsum_le_of_cofinal_finset_bound (zerosBallFinset Z h_z_ne_zero h_summable) g

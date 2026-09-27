@@ -7,80 +7,24 @@ module
 
 
 /-
-# General-order Hadamard Factorization Theorem
+# General-order Hadamard factorization
 
-This file proves the multiplicity-aware finite-order Hadamard factorization
-theorem (Conway, Functions of One Complex Variable, Chapter XI, Theorem 3.4)
-via the Borel–Carathéodory route, without using Poisson–Jensen.
+This file proves the multiplicity-aware finite-order factorization theorem
+for an entire function that is nonzero at the origin. This is the corresponding
+case of Conway, *Functions of One Complex Variable*, Chapter XI, Theorem 3.4;
+the final declaration documents the exact hypotheses.
 
-**Non-goals here.** Nothing in this file mentions `riemannZeta`, `riemannXi`,
-or the Li criterion. It is a pure complex-analysis theorem about entire
-functions.
+The proof first obtains inverse-power summability from zero counting, builds
+the canonical product, and cancels its zeros against those of the original
+function. The resulting quotient is entire and nowhere zero. An alternative
+zero-avoiding-circles argument bounds the canonical product from below on a
+suitable circle in each large dyadic annulus. The quotient's maximum modulus
+then has the required growth bound at every large radius. Borel–Carathéodory
+and Cauchy's estimate show that its entire logarithm is a polynomial of degree
+at most the floor of the order bound.
 
-## Proof path: Borel–Carathéodory (Ahlfors / Stein–Shakarchi)
-
-\begin{theorem}[Hadamard Factorization]
-Let $f : \mathbb{C} \to \mathbb{C}$ be entire of finite order $\lambda$.
-Let $p := \lfloor \lambda \rfloor$ and let $(a_n)$ be the non-zero zeros
-of $f$ counted with multiplicity. Let $m := \mathrm{ord}_0(f)$ be the
-multiplicity of the zero of $f$ at the origin. Then
-\[
-  f(z) \;=\; z^m \cdot \exp(g(z)) \cdot \prod_n E_p\!\left(\frac{z}{a_n}\right)
-\]
-where $E_p(w) := (1 - w)\exp\!\left(w + \tfrac{w^2}{2} + \cdots + \tfrac{w^p}{p}\right)$
-is the $p$-th Weierstrass elementary factor and $g : \mathbb{C} \to \mathbb{C}$
-is a polynomial of degree $\le p$.
-\end{theorem}
-
-\begin{proof}[Sketch]
-(1) \textbf{Summability.} From the order bound and Jensen's formula applied
-to counting zeros,
-\[
-  \sum_n |a_n|^{-(p+1)} \;<\; \infty.
-\]
-(2) \textbf{Canonical product.} Define $P(z) := \prod_n E_p(z/a_n)$. The
-product converges locally uniformly on $\mathbb{C}$, so $P$ is entire, and
-by design vanishes exactly at the $a_n$ with the correct multiplicities.
-
-(3) \textbf{Quotient.} The ratio $Q(z) := f(z) / (z^m \cdot P(z))$ has
-removable singularities at $0$ and at every $a_n$ (the orders cancel) and
-is entire and nowhere zero.
-
-(4) \textbf{Logarithm.} Since $\mathbb{C}$ is simply connected and $Q$ is
-entire and nowhere zero, there is an entire $g : \mathbb{C} \to \mathbb{C}$
-with $\exp(g(z)) = Q(z)$ for all $z$.
-
-(5) \textbf{Growth bound on $\log|Q|$.} For any $\varepsilon > 0$ and
-$|z| = r$ large enough, $\log|f(z)| \le r^{\lambda + \varepsilon}$ (finite
-order), and $\log|P(z)| \ge -C_\varepsilon \cdot r^{p+1+\varepsilon}$ (uses
-the rank-$p$ Weierstrass lower bound $\log|E_p(w)| \ge -C|w|^{p+1}$ for
-$|w| \le 1/2$, plus a tail estimate for the zeros with $|a_n| < 2r$).
-Combined,
-\[
-  \mathrm{Re}\, g(z) \;=\; \log|Q(z)| \;\le\; C \cdot r^{\lambda + \varepsilon}.
-\]
-
-(6) \textbf{Borel–Carathéodory.}
-The inequality (`BorelCaratheodory.borel_caratheodory_point`)
-applied to $g$ with inner radius $r$ and outer radius $2r$ yields
-\[
-  |g(z)| \;\le\; \frac{2r}{r} \cdot
-    \bigl(\sup_{|w|=2r} \mathrm{Re}\,g(w) - \mathrm{Re}\,g(0)\bigr)
-    + |g(0)|
-       \;\le\; C' \cdot r^{\lambda + \varepsilon} + |g(0)|
-\]
-for all $|z| \le r$.
-
-(7) \textbf{Cauchy coefficient estimate.} Write $g(z) = \sum_{n \ge 0} g_n z^n$.
-Cauchy's inequality on $|z| = r$ gives $|g_n| \cdot r^n \le \sup_{|z|=r} |g(z)|
-\le C' \cdot r^{\lambda + \varepsilon} + |g(0)|$, hence
-\[
-  |g_n| \;\le\; C' \cdot r^{\lambda + \varepsilon - n} + |g(0)| \cdot r^{-n}.
-\]
-For any $n > \lambda$, choose $\varepsilon > 0$ with $\lambda + \varepsilon < n$.
-Letting $r \to \infty$ forces $g_n = 0$. Hence $g$ is a polynomial of degree
-$\le \lfloor \lambda \rfloor = p$. \qed
-\end{proof}
+The general classical formula also permits a zero at the origin and includes
+a factor `z^m`. Dividing out that factor is outside the final declaration here.
 -/
 
 public import LeanPool.LiCriterion.Hadamard.DyadicBounds
@@ -221,28 +165,10 @@ private lemma cofinal_zerosBallFinset_of_entire
       t ⊆ Hadamard.OrderOne.zerosBallFinsetOfEntire
         (hf_entire := hf_entire) (Z := Z.toZeroSet)
         (h_zeros_only := h_zeros_only) (h_inj := h_inj) (h_z_ne_zero := h_z_ne_zero) n := by
-  classical
-  intro t
-  by_cases ht : t = ∅
-  · subst ht
-    refine ⟨0, by simp⟩
-  · have ht_ne : t.Nonempty := Finset.nonempty_iff_ne_empty.2 ht
-    let R : ℝ := t.sup' ht_ne fun ρ : Z.Zero => ‖Z.z ρ‖
-    have hR : ∀ ρ : Z.Zero, ρ ∈ t → ‖Z.z ρ‖ ≤ R := by
-      intro ρ hρ
-      exact Finset.le_sup' (f := fun ρ : Z.Zero => ‖Z.z ρ‖) hρ
-    have hpow : ∃ n : ℕ, max R 1 < (2 : ℝ) ^ n := by
-      simpa using pow_unbounded_of_one_lt (max R 1) (by norm_num : (1 : ℝ) < 2)
-    refine ⟨Nat.find hpow, ?_⟩
-    intro ρ hρt
-    have hρ_leR : ‖Z.z ρ‖ ≤ R := hR ρ hρt
-    have hρ_le : ‖Z.z ρ‖ ≤ max R 1 := le_trans hρ_leR (le_max_left _ _)
-    have hmax_le : max R 1 ≤ (2 : ℝ) ^ Nat.find hpow := le_of_lt (Nat.find_spec hpow)
-    have hρ_ball : ‖Z.z ρ‖ ≤ (2 : ℝ) ^ Nat.find hpow := le_trans hρ_le hmax_le
-    exact
-      (Hadamard.OrderOne.mem_zerosBallFinset_of_entire_iff
-        (hf_entire := hf_entire) (Z := Z.toZeroSet) (h_zeros_only := h_zeros_only)
-        (h_inj := h_inj) (h_z_ne_zero := h_z_ne_zero) _ _).2 hρ_ball
+  exact dyadic_ball_cofinal Z.z _
+    (fun k ρ => Hadamard.OrderOne.mem_zerosBallFinset_of_entire_iff
+      (hf_entire := hf_entire) (Z := Z.toZeroSet) (h_zeros_only := h_zeros_only)
+      (h_inj := h_inj) (h_z_ne_zero := h_z_ne_zero) k ρ)
 
 /-- Convert a `ZeroWithMultiplicity` tsum into a multiplicity-weighted tsum on distinct zeros. -/
 private lemma tsum_zeroWithMultiplicity_eq_weighted_tsum_of_nonneg
@@ -571,115 +497,36 @@ private theorem tsum_mult_div_norm_pow_tail_le_rpow_of_two_pow
       ∀ m : ℕ,
         (∑ ρ ∈ ball m, g ρ) ≤ C * ((2 : ℝ) ^ n) ^ (lam + δ - ((p : ℝ) + 1)) := by
     intro m
-    by_cases hm : m ≤ n + 1
-    · have hsum0 : (∑ ρ ∈ ball m, g ρ) = 0 := by
-        refine Finset.sum_eq_zero ?_
-        intro ρ hρ
-        have hnorm : ‖Z.z ρ‖ ≤ (2 : ℝ) ^ m :=
-          (Hadamard.OrderOne.mem_zerosBallFinset_of_entire_iff
-            (hf_entire := hf_entire) (Z := Z.toZeroSet) (h_zeros_only := h_zeros_only)
-            (h_inj := h_inj) (h_z_ne_zero := h_z_ne_zero) m ρ).1 hρ
-        have hpow : (2 : ℝ) ^ m ≤ (2 : ℝ) ^ (n + 1) :=
-          pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hm
-        have : ¬ (2 : ℝ) ^ (n + 1) < ‖Z.z ρ‖ := not_lt_of_ge (le_trans hnorm hpow)
-        simp [g, this]
-      have hrhs_nonneg : 0 ≤ C * ((2 : ℝ) ^ n) ^ (lam + δ - ((p : ℝ) + 1)) := by
-        have : 0 ≤ ((2 : ℝ) ^ n) ^ (lam + δ - ((p : ℝ) + 1)) :=
-          Real.rpow_nonneg (by positivity : (0 : ℝ) ≤ (2 : ℝ) ^ n) _
-        exact mul_nonneg hC_nonneg this
-      simpa [hsum0] using hrhs_nonneg
-    · have hm_ge : n + 1 < m := lt_of_not_ge hm
-      let t : ℕ := m - (n + 1)
-      have hm_eq : n + 1 + t = m := Nat.add_sub_of_le (Nat.le_of_lt hm_ge)
-      have hshell :
-          ∀ k : ℕ, n + 1 ≤ k →
-            (∑ ρ ∈ ball (k + 1) \ ball k, g ρ) ≤ A * q ^ k := by
-        intro k hk
-        have hRcount_le' : Rcount ≤ (2 : ℝ) ^ (k + 1) := by
-          have hn₀_le_k1 : n₀ ≤ k + 1 := by omega
-          exact hRcount_le.trans
-            (pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hn₀_le_k1)
-        have hsum_ball :
-            (∑ ρ ∈ ball (k + 1), w ρ) ≤ Ccount * ((2 : ℝ) ^ (k + 1)) ^ (lam + δ) := by
-          have hcount_ball := hW_le ((2 : ℝ) ^ (k + 1)) hRcount_le'
-          simpa [hball_finsum, ball] using hcount_ball
-        exact dyadic_shell_sum_bound Z.z w (fun ρ => by positivity [w]) ball
-          (fun j ρ => Hadamard.OrderOne.mem_zerosBallFinset_of_entire_iff
-            (hf_entire := hf_entire) (Z := Z.toZeroSet) (h_zeros_only := h_zeros_only)
-            (h_inj := h_inj) (h_z_ne_zero := h_z_ne_zero) j ρ)
-          p n k hk Ccount lam δ hsum_ball
-      have hind :
-          ∀ j : ℕ,
-            (∑ ρ ∈ ball (n + 1 + j), g ρ) ≤
-              A * (∑ i ∈ Finset.range j, q ^ (n + 1 + i)) := by
-        intro j
-        induction j with
-        | zero =>
-            have hsum0 : (∑ ρ ∈ ball (n + 1), g ρ) = 0 := by
-              refine Finset.sum_eq_zero ?_
-              intro ρ hρ
-              have hnorm : ‖Z.z ρ‖ ≤ (2 : ℝ) ^ (n + 1) :=
-                (Hadamard.OrderOne.mem_zerosBallFinset_of_entire_iff
-                  (hf_entire := hf_entire) (Z := Z.toZeroSet) (h_zeros_only := h_zeros_only)
-                  (h_inj := h_inj) (h_z_ne_zero := h_z_ne_zero) (n + 1) ρ).1 hρ
-              have : ¬ (2 : ℝ) ^ (n + 1) < ‖Z.z ρ‖ := not_lt_of_ge hnorm
-              simp [g, this]
-            simp [ball, hsum0]
-        | succ j ih =>
-            set k : ℕ := n + 1 + j
-            have hk : n + 1 ≤ k := Nat.le_add_right _ _
-            have hdecomp :=
-              (Finset.sum_sdiff (s₁ := ball k) (s₂ := ball (k + 1)) (f := g) (hsub_ball k)).symm
-            have hshell_le :
-                (∑ ρ ∈ ball (k + 1) \ ball k, g ρ) ≤ A * q ^ k := hshell k hk
-            have hgeom :
-                (∑ i ∈ Finset.range (j + 1), q ^ (n + 1 + i))
-                  = (∑ i ∈ Finset.range j, q ^ (n + 1 + i)) + q ^ k := by
-              simpa [k, Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using
-                (Finset.sum_range_succ (f := fun i => q ^ (n + 1 + i)) j)
-            have ih' :
-                (∑ ρ ∈ ball k, g ρ) ≤ A * (∑ i ∈ Finset.range j, q ^ (n + 1 + i)) := by
-              simpa [k, Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using ih
-            calc
-              (∑ ρ ∈ ball (k + 1), g ρ)
-                  = (∑ ρ ∈ ball (k + 1) \ ball k, g ρ) + (∑ ρ ∈ ball k, g ρ) := by
-                        simpa [k, add_assoc, add_comm, add_left_comm] using hdecomp
-              _ ≤ A * q ^ k + A * (∑ i ∈ Finset.range j, q ^ (n + 1 + i)) := by
-                        gcongr
-              _ = A * ((∑ i ∈ Finset.range j, q ^ (n + 1 + i)) + q ^ k) := by
-                        ring
-              _ = A * (∑ i ∈ Finset.range (j + 1), q ^ (n + 1 + i)) := by
-                        rw [hgeom]
-      have hfinite_le :
-          (∑ ρ ∈ ball m, g ρ) ≤ A * (∑ i ∈ Finset.range t, q ^ (n + 1 + i)) := by
-        simpa [hm_eq, ball] using hind t
-      have hgeom_le :
-          (∑ i ∈ Finset.range t, q ^ (n + 1 + i)) ≤ (q ^ (n + 1)) * (1 - q)⁻¹ :=
-        geometric_sum_from_le q hq_pos hq_lt_one n t
-      have hconst :
-          A * (q ^ (n + 1) * (1 - q)⁻¹) =
-            C * ((2 : ℝ) ^ n) ^ (lam + δ - ((p : ℝ) + 1)) := by
-        have hqpow :
-            q ^ n = ((2 : ℝ) ^ n) ^ (lam + δ - ((p : ℝ) + 1)) := by
-          dsimp [q]
-          exact
-            Real.rpow_pow_comm (x := (2 : ℝ)) (hx := by positivity)
-              (lam + δ - ((p : ℝ) + 1)) n
-        have hqsucc : q ^ (n + 1) = q ^ n * q := by
-          simp [pow_succ]
-        calc
-          A * (q ^ (n + 1) * (1 - q)⁻¹) = A * q / (1 - q) * q ^ n := by
-                rw [hqsucc]
-                ring_nf
-          _ = C * q ^ n := by
-                simp [C, div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm]
-          _ = C * ((2 : ℝ) ^ n) ^ (lam + δ - ((p : ℝ) + 1)) := by
-                rw [hqpow]
-      calc
-        (∑ ρ ∈ ball m, g ρ) ≤ A * (∑ i ∈ Finset.range t, q ^ (n + 1 + i)) := hfinite_le
-        _ ≤ A * (q ^ (n + 1) * (1 - q)⁻¹) := by
-              gcongr
-        _ = C * ((2 : ℝ) ^ n) ^ (lam + δ - ((p : ℝ) + 1)) := hconst
+    have hzero : ∀ k, k ≤ n + 1 → ∑ ρ ∈ ball k, g ρ = 0 := by
+      intro k hk
+      refine Finset.sum_eq_zero (fun ρ hρ => ?_)
+      have hnorm := (Hadamard.OrderOne.mem_zerosBallFinset_of_entire_iff
+        (hf_entire := hf_entire) (Z := Z.toZeroSet) (h_zeros_only := h_zeros_only)
+        (h_inj := h_inj) (h_z_ne_zero := h_z_ne_zero) k ρ).1 hρ
+      have hpow := pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hk
+      simp only [g, ite_eq_right (not_lt_of_ge (hnorm.trans hpow))]
+    have hshell :
+        ∀ k : ℕ, n + 1 ≤ k →
+          (∑ ρ ∈ ball (k + 1) \ ball k, g ρ) ≤ A * q ^ k := by
+      intro k hk
+      have hRcount_le' : Rcount ≤ (2 : ℝ) ^ (k + 1) := by
+        have hn₀_le_k1 : n₀ ≤ k + 1 := by omega
+        exact hRcount_le.trans
+          (pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hn₀_le_k1)
+      have hsum_ball :
+          (∑ ρ ∈ ball (k + 1), w ρ) ≤ Ccount * ((2 : ℝ) ^ (k + 1)) ^ (lam + δ) := by
+        have hcount_ball := hW_le ((2 : ℝ) ^ (k + 1)) hRcount_le'
+        simpa [hball_finsum, ball] using hcount_ball
+      exact dyadic_shell_sum_bound Z.z w (fun ρ => by positivity [w]) ball
+        (fun j ρ => Hadamard.OrderOne.mem_zerosBallFinset_of_entire_iff
+          (hf_entire := hf_entire) (Z := Z.toZeroSet) (h_zeros_only := h_zeros_only)
+          (h_inj := h_inj) (h_z_ne_zero := h_z_ne_zero) j ρ)
+        p n k hk Ccount lam δ hsum_ball
+    have hbound := sum_le_of_geometric_shells ball g A q
+      (by positivity [A]) hq_pos hq_lt_one n m hsub_ball hzero hshell
+    have hqpow : q ^ n = ((2 : ℝ) ^ n) ^ (lam + δ - ((p : ℝ) + 1)) :=
+      Real.rpow_pow_comm (x := (2 : ℝ)) (hx := by positivity) _ n
+    simpa only [C, hqpow] using hbound
   have htsum_g :
       (∑' ρ : Z.Zero, g ρ) ≤ C * ((2 : ℝ) ^ n) ^ (lam + δ - ((p : ℝ) + 1)) :=
     tsum_le_of_cofinal_finset_bound ball g (by positivity) hg_nonneg
@@ -712,6 +559,28 @@ a compact disk $|z| \le R$, summing $|E_p(z/a_n)^{m_n} - 1| \le C\,(R/|a_n|)^{p+
 for $|a_n| \ge 2R$ and applying the M-test yields local uniform convergence.
 -/
 
+/-- **Generic helper: summability on the sigma type from weighted summability.**
+
+Reused by both the multipliability and non-vanishing helpers below. -/
+private lemma summable_sigma_inv_norm_pow_generic
+    {ι : Type 0} {z : ι → ℂ} {m : ι → ℕ} {p : ℕ}
+    (hsum : Summable (fun i : ι => (m i : ℝ) / ‖z i‖ ^ (p + 1))) :
+    Summable (fun j : Σ i : ι, Fin (m i) => (1 : ℝ) / ‖z j.1‖ ^ (p + 1)) := by
+  classical
+  have hnonneg : ∀ j : Σ i : ι, Fin (m i),
+      0 ≤ (1 : ℝ) / ‖z j.1‖ ^ (p + 1) := fun j => by positivity
+  refine (summable_sigma_of_nonneg hnonneg).2 ?_
+  refine ⟨fun _ => Summable.of_finite, ?_⟩
+  refine hsum.congr (fun i => ?_)
+  have heq :
+      (fun b : Fin (m i) =>
+          (1 : ℝ) / ‖z (⟨i, b⟩ : Σ i : ι, Fin (m i)).1‖ ^ (p + 1))
+        = (fun _ : Fin (m i) => (1 : ℝ) / ‖z i‖ ^ (p + 1)) := by
+    funext b; rfl
+  rw [tsum_fintype, heq, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+      nsmul_eq_mul, mul_one_div]
+
+
 /-- **Summability of `1/‖zWithMultiplicity i‖^(p+1)` over the sigma index type.**
 
 This is the bridge between the multiplicity-weighted summability hypothesis
@@ -725,27 +594,7 @@ lemma summable_inv_norm_pow_zWithMultiplicity
     Summable
       (fun i : Z.ZeroWithMultiplicity =>
         (1 : ℝ) / ‖Z.zWithMultiplicity i‖ ^ (p + 1)) := by
-  classical
-  -- Sigma-summability from summability of row sums plus nonneg entries.
-  have hnonneg : ∀ i : Z.ZeroWithMultiplicity,
-      0 ≤ (1 : ℝ) / ‖Z.zWithMultiplicity i‖ ^ (p + 1) := by
-    intro i; positivity
-  refine (summable_sigma_of_nonneg hnonneg).2 ?_
-  refine ⟨fun _ => summable_of_hasFiniteSupport (Set.toFinite _), ?_⟩
-  -- Target: `Summable (fun ρ => ∑' k, 1/‖Z.z ρ‖^(p+1))`.
-  -- Each inner tsum is `(mult ρ : ℝ) * (1/‖Z.z ρ‖^(p+1)) = Z.mult ρ / ‖Z.z ρ‖^(p+1)`.
-  refine hsum.congr (fun ρ => ?_)
-  -- The sigma entries at `⟨ρ, k⟩` are by definition just `Z.z ρ`, so the tsum over
-  -- `Fin (Z.mult ρ)` of a constant equals `(mult ρ : ℝ) * constant`.
-  calc
-    (Z.mult ρ : ℝ) / ‖Z.z ρ‖ ^ (p + 1)
-        = (Z.mult ρ : ℝ) * ((1 : ℝ) / ‖Z.z ρ‖ ^ (p + 1)) := by
-          rw [mul_one_div]
-      _ = ∑ _k : Fin (Z.mult ρ), (1 : ℝ) / ‖Z.z ρ‖ ^ (p + 1) := by
-          rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-      _ = ∑' k : Fin (Z.mult ρ), (1 : ℝ) / ‖Z.zWithMultiplicity ⟨ρ, k⟩‖ ^ (p + 1) := by
-          rw [tsum_fintype]
-          rfl
+  exact summable_sigma_inv_norm_pow_generic (z := Z.z) (m := Z.mult) hsum
 
 /-- **Rank-`p` canonical product is entire.** -/
 theorem canonicalProductZeroSetMultiplicityRank_differentiable
@@ -839,21 +688,7 @@ lemma tprod_sigma_weierstrass_E_eq_tprod_pow_generic
   classical
   have hz0_sigma : ∀ j : Σ i : ι, Fin (m i), z j.1 ≠ 0 := fun j => hz0 j.1
   -- Summability on the sigma type: `∑_{(i,k)} 1/‖z i‖^(p+1) = ∑_i (m i)/‖z i‖^(p+1)`.
-  have hsum_sigma :
-      Summable (fun j : Σ i : ι, Fin (m i) =>
-        (1 : ℝ) / ‖z j.1‖ ^ (p + 1)) := by
-    have hnonneg : ∀ j : Σ i : ι, Fin (m i),
-        0 ≤ (1 : ℝ) / ‖z j.1‖ ^ (p + 1) := by
-      intro j; positivity
-    refine (summable_sigma_of_nonneg hnonneg).2 ?_
-    refine ⟨fun _ => Summable.of_finite, ?_⟩
-    refine hsum.congr (fun i => ?_)
-    have heq :
-        (fun b : Fin (m i) => (1 : ℝ) / ‖z (⟨i, b⟩ : Σ i : ι, Fin (m i)).1‖ ^ (p + 1))
-          = (fun _ : Fin (m i) => (1 : ℝ) / ‖z i‖ ^ (p + 1)) := by
-      funext b; rfl
-    rw [tsum_fintype, heq, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-        nsmul_eq_mul, mul_one_div]
+  have hsum_sigma := summable_sigma_inv_norm_pow_generic (z := z) (m := m) hsum
   -- Multipliability on the sigma type via the library lemma.
   have hmul :
       Multipliable (fun j : Σ i : ι, Fin (m i) => weierstrassE p (s / z j.1)) :=
@@ -943,26 +778,6 @@ lemma canonicalProductZeroSetMultiplicityRank_eq_tprod_pow
   exact tprod_sigma_weierstrass_E_eq_tprod_pow_generic
     (z := Z.z) (m := Z.mult) (p := p) h_z_ne_zero hsum s
 
-/-- **Generic helper: summability on the sigma type from weighted summability.**
-
-Reused by both the multipliability and non-vanishing helpers below. -/
-private lemma summable_sigma_inv_norm_pow_generic
-    {ι : Type 0} {z : ι → ℂ} {m : ι → ℕ} {p : ℕ}
-    (hsum : Summable (fun i : ι => (m i : ℝ) / ‖z i‖ ^ (p + 1))) :
-    Summable (fun j : Σ i : ι, Fin (m i) => (1 : ℝ) / ‖z j.1‖ ^ (p + 1)) := by
-  classical
-  have hnonneg : ∀ j : Σ i : ι, Fin (m i),
-      0 ≤ (1 : ℝ) / ‖z j.1‖ ^ (p + 1) := fun j => by positivity
-  refine (summable_sigma_of_nonneg hnonneg).2 ?_
-  refine ⟨fun _ => Summable.of_finite, ?_⟩
-  refine hsum.congr (fun i => ?_)
-  have heq :
-      (fun b : Fin (m i) =>
-          (1 : ℝ) / ‖z (⟨i, b⟩ : Σ i : ι, Fin (m i)).1‖ ^ (p + 1))
-        = (fun _ : Fin (m i) => (1 : ℝ) / ‖z i‖ ^ (p + 1)) := by
-    funext b; rfl
-  rw [tsum_fintype, heq, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-      nsmul_eq_mul, mul_one_div]
 
 /-- **Generic multipliability of the iterated power form.** -/
 lemma multipliable_pow_weierstrass_E_div_generic
