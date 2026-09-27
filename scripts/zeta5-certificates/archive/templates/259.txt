@@ -1,0 +1,104 @@
+lemma V_{{integer}} :
+    (({{integer}} / {{integer}} : ℝ) -
+              {{integer}} * ({{integer}} / {{integer}}) * (-({{integer}} / {{integer}} : ℝ)) -
+            {{integer}} +
+          {{integer}} * ({{integer}} / {{integer}}) +
+        {{integer}} *
+          (({{integer}} / {{integer}} : ℝ) *
+            (Real.pi + (Real.pi / {{integer}} - ({{integer}} / {{integer}} : ℝ)) -
+              {{integer}} * ({{integer}} / {{integer}} : ℝ)))) ≤
+      Vfield ({{integer}} / {{integer}} : ℝ) := by
+  rw [Vfield_eq (by norm_num)]
+  have e{{integer}} :
+    Real.log ({{integer}} + ({{integer}} / {{integer}} : ℝ)) =
+      Real.log ({{integer}} / {{integer}} : ℝ) :=
+    by norm_num
+  have e{{integer}} :
+    Real.log (({{integer}} / {{integer}} : ℝ) + ({{integer}} / {{integer}}) ^ {{integer}}) =
+      Real.log ({{integer}} / {{integer}} : ℝ) :=
+    by norm_num
+  have hL{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) ≤
+      Real.log ({{integer}} / {{integer}} : ℝ) :=
+    log_ge_of_ge_one (by norm_num) {{integer}}
+      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+  have hU{{integer}} :
+    Real.log ({{integer}} / {{integer}} : ℝ) ≤
+      (-({{integer}} / {{integer}} : ℝ)) := by
+    have h :=
+      log_le_of_split_neg {{integer}}
+        (show
+          ({{integer}} / {{integer}} : ℝ) = ({{integer}} / {{integer}} : ℝ) / {{integer}} ^ {{integer}}
+          by norm_num)
+        (by norm_num)
+        (log_le_of_ge_one (by norm_num) {{integer}}
+            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+          Real.log ({{integer}} / {{integer}} : ℝ) ≤
+            ({{integer}} / {{integer}} : ℝ))
+    linarith only [h, Real.log_two_gt_d{{integer}}]
+  have hs_lo :
+    ({{integer}} / {{integer}} : ℝ) ≤
+      Real.sqrt ({{integer}} / {{integer}} : ℝ) :=
+    le_sqrt_of_sq_le (by norm_num) (by norm_num)
+  have hs_hi :
+    Real.sqrt ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) :=
+    sqrt_le_of_sq_le (by norm_num) (by norm_num)
+  have hspos : {{integer}} < Real.sqrt ({{integer}} / {{integer}} : ℝ) :=
+    Real.sqrt_pos.mpr (by norm_num)
+  have hau{{integer}} :
+    Real.arctan ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) :=
+    arctan_le_of_series (by norm_num) (by norm_num) {{integer}}
+      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+  have hat{{integer}} :
+    (Real.pi / {{integer}} - ({{integer}} / {{integer}} : ℝ)) ≤
+      Real.arctan ({{integer}} / {{integer}} : ℝ) :=
+    arctan_ge_inv (by norm_num)
+      (by
+        rw [show
+            ({{integer}} : ℝ) / ({{integer}} / {{integer}} : ℝ) =
+              ({{integer}} / {{integer}} : ℝ)
+            by
+        norm_num];
+        exact hau{{integer}})
+  have hz{{integer}} :
+    ({{integer}} / {{integer}} : ℝ) ≤
+      {{integer}} / Real.sqrt ({{integer}} / {{integer}} : ℝ) := by
+    rw [show
+        ({{integer}} / {{integer}} : ℝ) = {{integer}} / ({{integer}} / {{integer}} : ℝ)
+        by
+    norm_num];
+    exact one_div_le_one_div_of_le hspos hs_hi
+  have hA{{integer}} := arctan_ge_of_le hz{{integer}} hat{{integer}}
+  have hat{{integer}} :
+    Real.arctan ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) :=
+    arctan_le_of_series (by norm_num) (by norm_num) {{integer}}
+      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+  have hz{{integer}} :
+    ({{integer}} / {{integer}}) / Real.sqrt ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) := by
+    rw [show
+        ({{integer}} / {{integer}} : ℝ) =
+          ({{integer}} / {{integer}}) / ({{integer}} / {{integer}} : ℝ)
+        by
+    norm_num];
+    exact div_le_div_of_nonneg_left (by norm_num) (by norm_num) hs_lo
+  have hA{{integer}} := arctan_le_of_ge hz{{integer}} hat{{integer}}
+  have hP :
+    (Real.pi + (Real.pi / {{integer}} - ({{integer}} / {{integer}} : ℝ)) -
+        {{integer}} * ({{integer}} / {{integer}} : ℝ)) ≤
+      (Real.pi + Real.arctan ({{integer}} / Real.sqrt ({{integer}} / {{integer}} : ℝ)) -
+        {{integer}} * Real.arctan (({{integer}} / {{integer}}) / Real.sqrt ({{integer}} / {{integer}} : ℝ))) :=
+    by linarith only [hA{{integer}}, hA{{integer}}]
+  have hprod :
+    (({{integer}} / {{integer}} : ℝ) *
+        (Real.pi + (Real.pi / {{integer}} - ({{integer}} / {{integer}} : ℝ)) -
+          {{integer}} * ({{integer}} / {{integer}} : ℝ))) ≤
+      Real.sqrt ({{integer}} / {{integer}} : ℝ) *
+        (Real.pi + Real.arctan ({{integer}} / Real.sqrt ({{integer}} / {{integer}} : ℝ)) -
+          {{integer}} * Real.arctan (({{integer}} / {{integer}}) / Real.sqrt ({{integer}} / {{integer}} : ℝ))) :=
+    mul_le_mul hs_lo hP (by linarith only [Real.pi_gt_d{{integer}}, Real.pi_lt_d{{integer}}]) (Real.sqrt_nonneg _)
+  linarith only [e{{integer}}, e{{integer}}, hL{{integer}}, hU{{integer}}, hprod]
+
