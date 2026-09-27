@@ -8,7 +8,7 @@ module
 
 public import LeanPool.Nikodym.Nikodym.LowerBound.Algebra.PolynomialDegree
 public import LeanPool.Nikodym.Nikodym.LowerBound.Algebra.CoefficientProjection
-public import LeanPool.Nikodym.Nikodym.LowerBound.Hilbert.Defs
+public import LeanPool.Nikodym.Nikodym.LowerBound.Algebra.GradedLemmas
 public import LeanPool.Nikodym.Nikodym.LowerBound.Jets.Defs
 
 /-!
@@ -259,16 +259,16 @@ theorem restrictionSpace_eq_top_of_pointIdeal_pow_le {J : Ideal (MvPolynomial (F
 
 /-- Blueprint TR6: the jet dimension is the Hilbert function of the jet ideal at `r - 1`,
 `jetDim I x r = hilbert (jetIdeal I x r) (r - 1)`. (The hypothesis `1 ≤ r` is part of the
-blueprint statement; it is not needed for the proof.) -/
-theorem jetDim_eq_hilbert (I : Ideal (MvPolynomial (Fin d) K)) (x : Fin d → K) {r : ℕ}
-    (_hr : 1 ≤ r) : jetDim I x r = hilbert (jetIdeal I x r) (r - 1) := by
+blueprint statement; the identity also holds for `r = 0`.) -/
+theorem jetDim_eq_hilbert (I : Ideal (MvPolynomial (Fin d) K)) (x : Fin d → K) {r : ℕ} :
+    jetDim I x r = hilbert (jetIdeal I x r) (r - 1) := by
   rw [jetDim, hilbert,
     restrictionSpace_eq_top_of_pointIdeal_pow_le (pointIdeal_pow_le_jetIdeal I x r), finrank_top]
 
 /-- Blueprint TR6: the jet dimension is invariant under base change. -/
-theorem jetDim_map (I : Ideal (MvPolynomial (Fin d) K)) (x : Fin d → K) {r : ℕ} (hr : 1 ≤ r) :
+theorem jetDim_map (I : Ideal (MvPolynomial (Fin d) K)) (x : Fin d → K) {r : ℕ} :
     jetDim (I.map ι) (fun i ↦ algebraMap K K' (x i)) r = jetDim I x r := by
-  rw [jetDim_eq_hilbert _ _ hr, jetDim_eq_hilbert _ _ hr, ← map_jetIdeal, hilbert_map]
+  rw [jetDim_eq_hilbert _ _, jetDim_eq_hilbert _ _, ← map_jetIdeal, hilbert_map]
 
 end Jets
 

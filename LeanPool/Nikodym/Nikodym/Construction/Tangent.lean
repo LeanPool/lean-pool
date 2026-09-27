@@ -160,13 +160,13 @@ theorem one_le_M (hn1 : 1 ≤ n) (hq1 : 1 ≤ q) : 1 ≤ Params.M n q :=
 /-- Blueprint T01a: if `x ∈ box T` with `T < M` and `φ x = 0` then `x = 0`, since
 `∏ i, |σ i x| ≤ T ^ n < M ^ n ≤ q`. -/
 theorem eq_zero_of_map_eq_zero_of_lt_M (S : Scaffold b σ φ K₀ K₁) (hn : Fintype.card ι = n)
-    (hn1 : 1 ≤ n) (hqF : Fintype.card F = q) (hq1 : 1 ≤ q) {T : ℝ} (hT : T < Params.M n q)
+    (hn1 : 1 ≤ n) (hqF : Fintype.card F = q) {T : ℝ} (hT : T < Params.M n q)
     {x : R} (hx : ∀ i, |σ i x| ≤ T) (h0 : φ x = 0) : x = 0 := by
   refine S.small_ker x h0 ?_
   have hι : Nonempty ι := Fintype.card_pos_iff.mp (by omega)
   have hT0 : 0 ≤ T := (abs_nonneg _).trans (hx (Classical.arbitrary ι))
   have hMq : ((Params.M n q : ℝ)) ^ n ≤ (q : ℝ) := by
-    exact_mod_cast Params.M_pow_le hn1 hq1
+    exact_mod_cast Params.M_pow_le hn1
   calc ∏ i, |σ i x| ≤ ∏ _i : ι, T := Finset.prod_le_prod₀ (fun _ _ ↦ abs_nonneg _) fun i _ ↦ hx i
     _ = T ^ n := by rw [Finset.prod_const, Finset.card_univ, hn]
     _ < (Params.M n q : ℝ) ^ n := pow_lt_pow_left₀ hT hT0 (by omega)
@@ -175,20 +175,20 @@ theorem eq_zero_of_map_eq_zero_of_lt_M (S : Scaffold b σ φ K₀ K₁) (hn : Fi
 
 /-- Blueprint T01a: `φ` is injective on any box of radius `T` with `2 T < M`. -/
 theorem eq_of_map_eq_of_box (S : Scaffold b σ φ K₀ K₁) (hn : Fintype.card ι = n)
-    (hn1 : 1 ≤ n) (hqF : Fintype.card F = q) (hq1 : 1 ≤ q) {T : ℝ} (hT : 2 * T < Params.M n q)
+    (hn1 : 1 ≤ n) (hqF : Fintype.card F = q) {T : ℝ} (hT : 2 * T < Params.M n q)
     {x y : R} (hx : ∀ i, |σ i x| ≤ T) (hy : ∀ i, |σ i y| ≤ T) (hxy : φ x = φ y) : x = y := by
   have hsub : ∀ i, |σ i (x - y)| ≤ T + T := box_sub hx hy
   have h0 : φ (x - y) = 0 := by rw [map_sub, hxy, sub_self]
-  have := S.eq_zero_of_map_eq_zero_of_lt_M hn hn1 hqF hq1 (by linarith : T + T < Params.M n q)
+  have := S.eq_zero_of_map_eq_zero_of_lt_M hn hn1 hqF (by linarith : T + T < Params.M n q)
     hsub h0
   exact sub_eq_zero.mp this
 
 /-- Blueprint T01a: `φ` is injective on any `Finset` contained in a box of radius `T` with
 `2 T < M`. -/
 theorem injOn_of_box (S : Scaffold b σ φ K₀ K₁) (hn : Fintype.card ι = n)
-    (hn1 : 1 ≤ n) (hqF : Fintype.card F = q) (hq1 : 1 ≤ q) {T : ℝ} (hT : 2 * T < Params.M n q)
+    (hn1 : 1 ≤ n) (hqF : Fintype.card F = q) {T : ℝ} (hT : 2 * T < Params.M n q)
     {A : Finset R} (hA : A ⊆ S.boxFinset T) : Set.InjOn φ ↑A := fun _x hx _y hy hxy ↦
-  S.eq_of_map_eq_of_box hn hn1 hqF hq1 hT (S.mem_boxFinset.mp (hA hx))
+  S.eq_of_map_eq_of_box hn hn1 hqF hT (S.mem_boxFinset.mp (hA hx))
     (S.mem_boxFinset.mp (hA hy)) hxy
 
 end SmallKernel
@@ -266,7 +266,7 @@ variable {n q k : ℕ} {ρ γ : ℝ}
 theorem injOn_A (S : Scaffold b σ φ K₀ K₁) (hn : Fintype.card ι = n) (hn1 : 1 ≤ n)
     (hqF : Fintype.card F = q) (hq1 : 1 ≤ q) (hγ : γ = 1 / 10) {A : Finset R}
     (hA : A ⊆ S.boxFinset (γ * Params.M n q)) : Set.InjOn φ ↑A := by
-  refine S.injOn_of_box hn hn1 hqF hq1 ?_ hA
+  refine S.injOn_of_box hn hn1 hqF ?_ hA
   have hM : (1 : ℝ) ≤ Params.M n q := by exact_mod_cast one_le_M hn1 hq1
   rw [hγ]
   linarith
@@ -278,7 +278,7 @@ theorem eq_of_map_base_eq (S : Scaffold b σ φ K₀ K₁) (hn : Fintype.card ι
     (h : φ (base n q k w) = φ (base n q k w')) : w = w' := by
   have hρ0 : 0 ≤ ρ := (rho_pos hn1 hρ).le
   have hbase : base n q k w = base n q k w' := by
-    refine S.eq_of_map_eq_of_box hn hn1 hqF hq1 (T := ρ * (k + 1) * Params.M n q) ?_
+    refine S.eq_of_map_eq_of_box hn hn1 hqF (T := ρ * (k + 1) * Params.M n q) ?_
       (abs_base_le_M' S hn1 hq1 hρ0 hw) (abs_base_le_M' S hn1 hq1 hρ0 hw') h
     have hM : (1 : ℝ) ≤ Params.M n q := by exact_mod_cast one_le_M hn1 hq1
     have := rho_mul_le hn1 hρ
@@ -328,7 +328,7 @@ theorem eq_zero_of_map_eq_zero_of_small (S : Scaffold b σ φ K₀ K₁) (hn : F
     (hρ : ρ = 1 / (100 * (k + 1) * Real.sqrt n)) (hγ : γ = 1 / 10) {δ : R}
     (hδ : ∀ i, |σ i δ| ≤ 2 * γ * Params.M n q + 2 * ρ ^ 2 * (k + 1) * Params.M n q)
     (h0 : φ δ = 0) : δ = 0 := by
-  refine S.eq_zero_of_map_eq_zero_of_lt_M hn hn1 hqF hq1 ?_ hδ h0
+  refine S.eq_zero_of_map_eq_zero_of_lt_M hn hn1 hqF ?_ hδ h0
   have hM : (1 : ℝ) ≤ Params.M n q := by exact_mod_cast one_le_M hn1 hq1
   have h1 := rho_mul_le hn1 hρ
   have h2 := rho_le hn1 hρ
@@ -425,7 +425,7 @@ theorem abs_mul_sub_prefixSum_le (S : Scaffold b σ φ K₀ K₁) (hn1 : 1 ≤ n
   refine (box_mul_le h1 h2 ε).trans ?_
   have hDQ : (Params.D n q (i.val + 2) : ℝ) * Params.Q n q (i.val + 1) ≤ Params.M n q := by
     have h : Params.D n q (i.val + 2) * Params.Q n q (i.val + 1) ≤ Params.M n q := by
-      have := Params.D_mul_Q_sq_le_M hn1 hq1 (i := i.val + 1) (by omega)
+      have := Params.D_mul_Q_sq_le_M (q := q) hn1 (i := i.val + 1) (by omega)
       rw [← D_radix_mul_radix (n := n) (q := q) (k := k) i, D_radix, radix_apply]
       calc Params.D n q (i.val + 1) * Params.Q n q (i.val + 1) * Params.Q n q (i.val + 1)
           = Params.D n q (i.val + 1) * Params.Q n q (i.val + 1) ^ 2 := by ring

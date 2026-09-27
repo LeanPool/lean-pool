@@ -94,7 +94,7 @@ theorem exists_cut (H : AlgebraInterface K d) (P : PrivateFamily F d E)
   have hc : 0 < c := Nat.choose_pos (by omega)
   have hsum : L * c ≤ ∑ b ∈ P.anchors, jetDim I (liftPt b) r :=
     P.card_mul_choose_le_sum_jetDim H hI hIP hr1
-  have hgap := hilbert_gap H hI hd hk hq hr hrq
+  have hgap := hilbert_gap H hI hd hq hr hrq
   have h4 : 4 * d ^ 2 * M < r * L :=
     lt_of_le_of_lt (Nat.mul_le_mul_right M (Nat.mul_le_mul_right _ (by norm_num))) hL
   have hlt : hilbert I (q * (r - 1) + d * (q - 1)) <

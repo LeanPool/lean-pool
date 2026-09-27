@@ -60,21 +60,21 @@ theorem hilbert_gap_aux (I : Ideal (MvPolynomial (Fin d) K)) (hd : 2 ≤ d) {q r
     _ = (r * hilbert I T + 4 * d ^ 2 * hilbert I T) * (T + d).choose d := by ring
 
 /-- Blueprint C03: the Hilbert gap with all denominators cleared. For a prime `I` of quotient
-dimension `k = quotDim I ≥ 1` and degree `Δ = degree I`, with `2 ≤ d`, `2 ≤ q`, `8 d² ≤ r ≤ q`,
+dimension `k = quotDim I` and degree `Δ = degree I`, with `2 ≤ d`, `2 ≤ q`, `8 d² ≤ r ≤ q`,
 `T = r (q - 1) - 1` and `U = q (r - 1) + d (q - 1)`,
 
   `r * H_I(U) ≤ r * H_I(T) + 4 d² * (Δ q^k) * (r + k - 1).choose k`.
 
 The blueprint hypothesis `k ≤ d` is automatic (`quotDim_le`) and is therefore not assumed. -/
 theorem hilbert_gap (H : AlgebraInterface K d) {I : Ideal (MvPolynomial (Fin d) K)}
-    (hI : I.IsPrime) (hd : 2 ≤ d) (hk : 1 ≤ quotDim I) {q r : ℕ} (hq : 2 ≤ q)
+    (hI : I.IsPrime) (hd : 2 ≤ d) {q r : ℕ} (hq : 2 ≤ q)
     (hr : 8 * d ^ 2 ≤ r) (hrq : r ≤ q) :
     r * hilbert I (q * (r - 1) + d * (q - 1)) ≤
       r * hilbert I (r * (q - 1) - 1) +
         4 * d ^ 2 * (degree I * q ^ quotDim I) * (r + quotDim I - 1).choose (quotDim I) := by
   have h1 := hilbert_gap_aux I hd hq hr hrq
   have hA08 := H.hilbert_le_degree_mul_choose I hI (r * (q - 1) - 1)
-  have hC02 := choose_T_le hd hq hr hrq hk (quotDim_le I)
+  have hC02 := choose_T_le (k := quotDim I) hd hq hr
   set T := r * (q - 1) - 1
   set U := q * (r - 1) + d * (q - 1)
   set k := quotDim I

@@ -46,21 +46,16 @@ theorem natCast_ne_zero_of_lt_card {F : Type*} [Field F] [Fintype F]
   · exact hp.ne_one h1
   · exact (ne_of_lt hlt) heq.symm
 
-/-- Blueprint L01: in a finite field of odd prime cardinality, at least one of `ℓ`, `ℓ'`,
+/-- Blueprint L01: in a finite field of prime cardinality, at least one of `ℓ`, `ℓ'`,
 `ℓℓ'` is a square. -/
 theorem exists_isSquare_of_primes {F : Type*} [Field F] [Fintype F]
-    (hp : (Fintype.card F).Prime) (hodd : Odd (Fintype.card F)) {ℓ ℓ' : ℕ}
+    (hp : (Fintype.card F).Prime) {ℓ ℓ' : ℕ}
     (hℓ : ℓ.Prime) (hℓ' : ℓ'.Prime) (h1 : ℓ < Fintype.card F)
     (h2 : ℓ' < Fintype.card F) :
     IsSquare (ℓ : F) ∨ IsSquare (ℓ' : F) ∨ IsSquare ((ℓ * ℓ' : ℕ) : F) := by
   classical
   have hℓ0 : (ℓ : F) ≠ 0 := natCast_ne_zero_of_lt_card hp hℓ h1
   have hℓ'0 : (ℓ' : F) ≠ 0 := natCast_ne_zero_of_lt_card hp hℓ' h2
-  have _hne2 : ringChar F ≠ 2 := by
-    intro hchar2
-    have : Fintype.card F % 2 = 0 := FiniteField.even_card_of_char_two hchar2
-    rw [Nat.odd_iff] at hodd
-    omega
   have hprod0 : ((ℓ : F) * (ℓ' : F)) ≠ 0 := mul_ne_zero hℓ0 hℓ'0
   rcases quadraticChar_dichotomy hℓ0 with hχ | hχ
   · exact Or.inl ((quadraticChar_one_iff_isSquare hℓ0).mp hχ)

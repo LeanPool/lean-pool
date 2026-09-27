@@ -143,7 +143,7 @@ theorem algebraInterface_of_infinite
       rw [← map_pointIdeal]
       exact Ideal.map_mono hx
     have h := choose_le_jetDim_of_infinite (I.map ι) _ hx' hr
-    rwa [jetDim_map I x hr, quotDim_map] at h
+    rwa [jetDim_map I x, quotDim_map] at h
   · -- B03
     intro I hI hk g T hg hT hne
     have := hI

@@ -109,7 +109,7 @@ theorem algebraInterface : AlgebraInterface K d :=
       exact hilbert_le_degree_mul_choose_of_infinite I t)
     (fun I hI hk g T hg hT hne ↦ by
       have := hI
-      exact proper_cut_of_infinite (degreeFacts (RatFunc K) d) I hk g T hg hT hne)
+      exact proper_cut_of_infinite (degreeFacts (RatFunc K) d) I hk g T hg hT)
 
 end Nikodym.LowerBound
 

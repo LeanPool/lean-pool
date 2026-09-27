@@ -43,13 +43,13 @@ theorem two_rpow_one_sub (k : ℕ) : (2 : ℝ) ^ (1 - ((k + 1 : ℕ) : ℝ)) = (
   rw [show (1 : ℝ) - ((k + 1 : ℕ) : ℝ) = -(k : ℝ) by push_cast; ring, rpow_neg zero_le_two,
     rpow_natCast, inv_pow]
 
-/-- Blueprint M02 (Legendre step, from L01): for `F` of odd prime cardinality and distinct primes
+/-- Blueprint M02 (Legendre step, from L01): for `F` of prime cardinality and distinct primes
 `ℓ, ℓ' < |F|`, there is a squarefree `r > 1` dividing `ℓ ℓ'` which is a square in `F`. -/
 theorem exists_sq_eq_of_primes {F : Type*} [Field F] [Fintype F] (hp : (Fintype.card F).Prime)
-    (hodd : Odd (Fintype.card F)) {ℓ ℓ' : ℕ} (hℓ : ℓ.Prime) (hℓ' : ℓ'.Prime) (hne : ℓ ≠ ℓ')
+    {ℓ ℓ' : ℕ} (hℓ : ℓ.Prime) (hℓ' : ℓ'.Prime) (hne : ℓ ≠ ℓ')
     (h1 : ℓ < Fintype.card F) (h2 : ℓ' < Fintype.card F) :
     ∃ (r : ℕ) (s : F), s ^ 2 = (r : F) ∧ 1 < r ∧ Squarefree r ∧ r ∣ ℓ * ℓ' := by
-  rcases MultiQuad.exists_isSquare_of_primes hp hodd hℓ hℓ' h1 h2 with ⟨s, hs⟩ | ⟨s, hs⟩ | ⟨s, hs⟩
+  rcases MultiQuad.exists_isSquare_of_primes hp hℓ hℓ' h1 h2 with ⟨s, hs⟩ | ⟨s, hs⟩ | ⟨s, hs⟩
   · exact ⟨ℓ, s, by rw [sq, hs], hℓ.one_lt, hℓ.prime.squarefree, dvd_mul_right _ _⟩
   · exact ⟨ℓ', s, by rw [sq, hs], hℓ'.one_lt, hℓ'.prime.squarefree, dvd_mul_left _ _⟩
   · refine ⟨ℓ * ℓ', s, by rw [sq, hs], ?_, ?_, dvd_rfl⟩
@@ -105,7 +105,7 @@ theorem exists_isNikodym_card_le_aux {d : ℕ} (hd : 2 ≤ d) {ε : ℝ} (hε : 
     omega
   -- L01: square roots of `rⱼ ∈ {ℓⱼ, ℓ'ⱼ, ℓⱼ ℓ'ⱼ}` in `F`
   have hsq : ∀ j, ∃ (r : ℕ) (s : F), s ^ 2 = (r : F) ∧ 1 < r ∧ Squarefree r ∧ r ∣ ℓ j * ℓ' j :=
-    fun j ↦ exists_sq_eq_of_primes hp hodd (hℓ j).1 (hℓ' j).1 (hne j)
+    fun j ↦ exists_sq_eq_of_primes hp (hℓ j).1 (hℓ' j).1 (hne j)
       (by have := hℓP j; omega) (by have := hℓ'P j; omega)
   choose r s hs hr1 hrsq hrdvd using hsq
   have hcop : ∀ j j', j ≠ j' → Nat.Coprime (r j) (r j') := by

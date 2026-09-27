@@ -118,13 +118,11 @@ theorem half_le_floor {y : ℝ} (hy : 2 ≤ y) : y / 2 ≤ ⌊y⌋₊ := by
 /-! ### Q01: exact natural-number inequalities -/
 
 /-- Blueprint Q01: `M ^ n ≤ q`. -/
-theorem M_pow_le (hn : 1 ≤ n) (hq : 1 ≤ q) : M n q ^ n ≤ q := by
-  have := hq
+theorem M_pow_le (hn : 1 ≤ n) : M n q ^ n ≤ q := by
   simpa [M, one_div] using floor_root_pow_le (q := q) (ne_zero_of_one_le hn)
 
 /-- Blueprint Q01: `Q i ^ (n * 2 ^ i) ≤ q`. -/
-theorem Q_pow_le (hn : 1 ≤ n) (hq : 1 ≤ q) (i : ℕ) : Q n q i ^ (n * 2 ^ i) ≤ q := by
-  have := hq
+theorem Q_pow_le (hn : 1 ≤ n) (i : ℕ) : Q n q i ^ (n * 2 ^ i) ≤ q := by
   have hk : n * 2 ^ i ≠ 0 :=
     Nat.mul_ne_zero (ne_zero_of_one_le hn) (pow_ne_zero _ two_ne_zero)
   simpa [Q, Q_exp_inv] using floor_root_pow_le (q := q) hk
@@ -169,7 +167,7 @@ theorem Q_pow_mul_exp {i j : ℕ} (hji : j ≤ i) :
     _ = n * 2 ^ j * 2 ^ (i - j) := by ring
 
 /-- Blueprint Q01: raising `(D i * Q i ^ 2) ^ n ≤ q` to the `2^i`-th power. -/
-theorem D_mul_Q_sq_pow_two_pow (hn : 1 ≤ n) (hq : 1 ≤ q) {i : ℕ} (hi : 1 ≤ i) :
+theorem D_mul_Q_sq_pow_two_pow (hn : 1 ≤ n) {i : ℕ} (hi : 1 ≤ i) :
     (D n q i * Q n q i ^ 2) ^ (n * 2 ^ i) ≤ q ^ (2 ^ i) := by
   have hsplit :
       (D n q i * Q n q i ^ 2) ^ (n * 2 ^ i) =
@@ -184,9 +182,9 @@ theorem D_mul_Q_sq_pow_two_pow (hn : 1 ≤ n) (hq : 1 ≤ q) {i : ℕ} (hi : 1 �
   have hprod :
       (∏ j ∈ Ico 1 i, (Q n q j ^ (n * 2 ^ j)) ^ (2 ^ (i - j))) ≤
         ∏ j ∈ Ico 1 i, q ^ (2 ^ (i - j)) :=
-    prod_le_prod fun j _ ↦ pow_le_pow_left' (Q_pow_le hn hq j) _
+    prod_le_prod fun j _ ↦ pow_le_pow_left' (Q_pow_le hn j) _
   have hQi : (Q n q i ^ (n * 2 ^ i)) ^ 2 ≤ q ^ 2 :=
-    pow_le_pow_left' (Q_pow_le hn hq i) _
+    pow_le_pow_left' (Q_pow_le hn i) _
   have hsum : (∏ j ∈ Ico 1 i, q ^ (2 ^ (i - j))) * q ^ 2 = q ^ (2 ^ i) := by
     rw [prod_pow_eq_pow_sum, ← pow_add, sum_two_pow_gap hi, Nat.sub_add_cancel]
     exact Nat.pow_le_pow_right (by decide : 0 < 2) hi
@@ -196,15 +194,15 @@ theorem D_mul_Q_sq_pow_two_pow (hn : 1 ≤ n) (hq : 1 ≤ q) {i : ℕ} (hi : 1 �
     _ = q ^ (2 ^ i) := hsum
 
 /-- Blueprint Q01: `(D i * Q i ^ 2) ^ n ≤ q`. -/
-theorem D_mul_Q_sq_pow_le (hn : 1 ≤ n) (hq : 1 ≤ q) {i : ℕ} (hi : 1 ≤ i) :
+theorem D_mul_Q_sq_pow_le (hn : 1 ≤ n) {i : ℕ} (hi : 1 ≤ i) :
     (D n q i * Q n q i ^ 2) ^ n ≤ q := by
-  have hpow := D_mul_Q_sq_pow_two_pow hn hq hi
+  have hpow := D_mul_Q_sq_pow_two_pow (q := q) hn hi
   have : ((D n q i * Q n q i ^ 2) ^ n) ^ (2 ^ i) ≤ q ^ (2 ^ i) := by
     rwa [← pow_mul]
   exact (Nat.pow_le_pow_iff_left (pow_ne_zero _ two_ne_zero)).1 this
 
 /-- Blueprint Q01: `(D i) ^ (n * 2^{i-1}) ≤ q^{2^{i-1} - 1}`. -/
-theorem D_pow_le (hn : 1 ≤ n) (hq : 1 ≤ q) {i : ℕ} (hi : 1 ≤ i) :
+theorem D_pow_le (hn : 1 ≤ n) {i : ℕ} (hi : 1 ≤ i) :
     D n q i ^ (n * 2 ^ (i - 1)) ≤ q ^ (2 ^ (i - 1) - 1) := by
   have hsplit : D n q i ^ (n * 2 ^ (i - 1)) =
       ∏ j ∈ Ico 1 i, (Q n q j ^ (n * 2 ^ j)) ^ (2 ^ (i - 1 - j)) := by
@@ -220,7 +218,7 @@ theorem D_pow_le (hn : 1 ≤ n) (hq : 1 ≤ q) {i : ℕ} (hi : 1 ≤ i) :
   have hprod :
       (∏ j ∈ Ico 1 i, (Q n q j ^ (n * 2 ^ j)) ^ (2 ^ (i - 1 - j))) ≤
         ∏ j ∈ Ico 1 i, q ^ (2 ^ (i - 1 - j)) :=
-    prod_le_prod fun j _ ↦ pow_le_pow_left' (Q_pow_le hn hq j) _
+    prod_le_prod fun j _ ↦ pow_le_pow_left' (Q_pow_le hn j) _
   calc
     D n q i ^ (n * 2 ^ (i - 1)) = _ := hsplit
     _ ≤ ∏ j ∈ Ico 1 i, q ^ (2 ^ (i - 1 - j)) := hprod
@@ -228,7 +226,7 @@ theorem D_pow_le (hn : 1 ≤ n) (hq : 1 ≤ q) {i : ℕ} (hi : 1 ≤ i) :
 
 /-- Blueprint Q01: `(D i) ^ n ≤ q`. -/
 theorem D_pow_le' (hn : 1 ≤ n) (hq : 1 ≤ q) {i : ℕ} (hi : 1 ≤ i) : D n q i ^ n ≤ q := by
-  have h := D_pow_le hn hq hi
+  have h := D_pow_le (q := q) hn hi
   have hle : q ^ (2 ^ (i - 1) - 1) ≤ q ^ (2 ^ (i - 1)) :=
     Nat.pow_le_pow_right (Nat.succ_le_iff.mp hq) (Nat.sub_le _ _)
   have : (D n q i ^ n) ^ (2 ^ (i - 1)) ≤ q ^ (2 ^ (i - 1)) := by
@@ -237,9 +235,9 @@ theorem D_pow_le' (hn : 1 ≤ n) (hq : 1 ≤ q) {i : ℕ} (hi : 1 ≤ i) : D n q
   exact (Nat.pow_le_pow_iff_left (pow_ne_zero _ two_ne_zero)).1 this
 
 /-- Blueprint Q01: `D i * Q i ^ 2 ≤ M`. -/
-theorem D_mul_Q_sq_le_M (hn : 1 ≤ n) (hq : 1 ≤ q) {i : ℕ} (hi : 1 ≤ i) :
+theorem D_mul_Q_sq_le_M (hn : 1 ≤ n) {i : ℕ} (hi : 1 ≤ i) :
     D n q i * Q n q i ^ 2 ≤ M n q :=
-  le_M_of_pow_le hn (D_mul_Q_sq_pow_le hn hq hi)
+  le_M_of_pow_le hn (D_mul_Q_sq_pow_le hn hi)
 
 /-- Blueprint Q01: `D i ≤ M`. -/
 theorem D_le_M (hn : 1 ≤ n) (hq : 1 ≤ q) {i : ℕ} (hi : 1 ≤ i) : D n q i ≤ M n q :=
@@ -265,11 +263,11 @@ theorem D_sq_exp {i : ℕ} (hn : 1 ≤ n) :
     _ = 2 * (1 - (2 : ℝ)⁻¹ ^ i) / n := by rw [inv_pow]
 
 /-- Blueprint Q01: `(D (i+1) : ℝ) ^ 2 ≤ q^{2(1 - 2^{-i})/n}`. -/
-theorem D_sq_le_rpow (hn : 1 ≤ n) (hq : 1 ≤ q) {i : ℕ} (hi : 1 ≤ i) :
+theorem D_sq_le_rpow (hn : 1 ≤ n) {i : ℕ} (hi : 1 ≤ i) :
     ((D n q (i + 1) : ℝ)) ^ 2 ≤ (q : ℝ) ^ (2 * (1 - (2 : ℝ)⁻¹ ^ i) / n) := by
   have hi1 : 1 ≤ i + 1 := hi.trans (Nat.le_succ i)
   have hnat : D n q (i + 1) ^ (n * 2 ^ i) ≤ q ^ (2 ^ i - 1) := by
-    simpa [Nat.add_sub_cancel] using D_pow_le hn hq hi1
+    simpa [Nat.add_sub_cancel] using D_pow_le hn hi1
   have hx : 0 ≤ (D n q (i + 1) : ℝ) := Nat.cast_nonneg _
   have hq0 : 0 ≤ (q : ℝ) := Nat.cast_nonneg _
   have hn0 : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.2 (ne_zero_of_one_le hn)
@@ -295,7 +293,7 @@ theorem D_sq_le_rpow (hn : 1 ≤ n) (hq : 1 ≤ q) {i : ℕ} (hi : 1 ≤ i) :
 /-- Blueprint Q01: the crude bound `(D (i+1) : ℝ) ^ 2 ≤ q^{2/n}`. -/
 theorem D_sq_le_rpow' (hn : 1 ≤ n) (hq : 1 ≤ q) {i : ℕ} (hi : 1 ≤ i) :
     ((D n q (i + 1) : ℝ)) ^ 2 ≤ (q : ℝ) ^ (2 / (n : ℝ)) := by
-  refine (D_sq_le_rpow hn hq hi).trans ?_
+  refine (D_sq_le_rpow hn hi).trans ?_
   refine rpow_le_rpow_of_exponent_le (Nat.one_le_cast.2 hq) ?_
   have hinv : 0 ≤ ((2 : ℝ)⁻¹) ^ i := by positivity
   have : 1 - ((2 : ℝ)⁻¹) ^ i ≤ 1 := sub_le_self _ hinv
@@ -336,11 +334,9 @@ theorem threshold_exp {h i : ℕ} (hn : 1 ≤ n) (hih : i ≤ h - 1) :
   rw [hfactor, Nat.cast_mul, mul_div_cancel_left₀ _ hnz]
 
 /-- Blueprint Q02: `2 ≤ q^{1/(n 2^i)}` for `1 ≤ i ≤ h-1`. -/
-theorem two_le_rpow_Q {h i : ℕ} (hn : 1 ≤ n) (hh : 2 ≤ h)
-    (hq : 2 ^ (n * 2 ^ (h - 1)) ≤ q) (hi : 1 ≤ i) (hih : i ≤ h - 1) :
+theorem two_le_rpow_Q {h i : ℕ} (hn : 1 ≤ n)
+    (hq : 2 ^ (n * 2 ^ (h - 1)) ≤ q) (hih : i ≤ h - 1) :
     (2 : ℝ) ≤ (q : ℝ) ^ (1 / ((n : ℝ) * 2 ^ i)) := by
-  have := hh
-  have := hi
   have hbase : (2 : ℝ) ^ (n * 2 ^ (h - 1)) ≤ (q : ℝ) := by exact_mod_cast hq
   have hnonneg : 0 ≤ (2 : ℝ) ^ (n * 2 ^ (h - 1)) := by positivity
   have hexp : 0 ≤ 1 / ((n : ℝ) * 2 ^ i) := by positivity
@@ -381,10 +377,10 @@ theorem two_le_rpow_M {h : ℕ} (hn : 1 ≤ n) (hh : 2 ≤ h)
     _ ≤ (q : ℝ) ^ (1 / (n : ℝ)) := rpow_le_rpow hnonneg hbase hexp
 
 /-- Blueprint Q02: `2 ≤ Q i` for `1 ≤ i ≤ h-1`. -/
-theorem two_le_Q {h i : ℕ} (hn : 1 ≤ n) (hh : 2 ≤ h)
-    (hq : 2 ^ (n * 2 ^ (h - 1)) ≤ q) (hi : 1 ≤ i) (hih : i ≤ h - 1) :
+theorem two_le_Q {h i : ℕ} (hn : 1 ≤ n)
+    (hq : 2 ^ (n * 2 ^ (h - 1)) ≤ q) (hih : i ≤ h - 1) :
     2 ≤ Q n q i :=
-  (Nat.le_floor_iff' two_ne_zero).2 (two_le_rpow_Q hn hh hq hi hih)
+  (Nat.le_floor_iff' two_ne_zero).2 (two_le_rpow_Q hn hq hih)
 
 /-- Blueprint Q02: `2 ≤ M`. -/
 theorem two_le_M {h : ℕ} (hn : 1 ≤ n) (hh : 2 ≤ h)
@@ -392,10 +388,10 @@ theorem two_le_M {h : ℕ} (hn : 1 ≤ n) (hh : 2 ≤ h)
   (Nat.le_floor_iff' two_ne_zero).2 (two_le_rpow_M hn hh hq)
 
 /-- Blueprint Q02: `q^{1/(n 2^i)} / 2 ≤ Q i`. -/
-theorem Q_ge_half_rpow {h i : ℕ} (hn : 1 ≤ n) (hh : 2 ≤ h)
-    (hq : 2 ^ (n * 2 ^ (h - 1)) ≤ q) (hi : 1 ≤ i) (hih : i ≤ h - 1) :
+theorem Q_ge_half_rpow {h i : ℕ} (hn : 1 ≤ n)
+    (hq : 2 ^ (n * 2 ^ (h - 1)) ≤ q) (hih : i ≤ h - 1) :
     (q : ℝ) ^ (1 / ((n : ℝ) * 2 ^ i)) / 2 ≤ (Q n q i : ℝ) :=
-  half_le_floor (two_le_rpow_Q hn hh hq hi hih)
+  half_le_floor (two_le_rpow_Q hn hq hih)
 
 /-- Blueprint Q02: `q^{1/n} / 2 ≤ M`. -/
 theorem M_ge_half_rpow {h : ℕ} (hn : 1 ≤ n) (hh : 2 ≤ h)
@@ -419,7 +415,7 @@ theorem prod_Q_pow_ge {h : ℕ} (hn : 1 ≤ n) (hh : 2 ≤ h)
       (q : ℝ) ^ (1 / ((n : ℝ) * 2 ^ i)) / 2 ≤ (Q n q i : ℝ) := by
     intro i hi
     have ⟨hi1, hih⟩ := mem_Ico.1 hi
-    exact Q_ge_half_rpow hn hh hq hi1 (Nat.le_sub_one_of_lt hih)
+    exact Q_ge_half_rpow hn hq (Nat.le_sub_one_of_lt hih)
   have hterm : ∀ i ∈ Ico 1 h,
       ((q : ℝ) ^ (1 / ((n : ℝ) * 2 ^ i)) / 2) ^ n ≤ (Q n q i : ℝ) ^ n := by
     intro i hi

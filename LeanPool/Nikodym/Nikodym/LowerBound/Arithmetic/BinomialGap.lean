@@ -232,7 +232,7 @@ theorem r_mul_choose_le {d q r : ℕ} (hd : 2 ≤ d) (hq : 2 ≤ q) (hr : 8 * d 
 
 /-- Blueprint C02: `Nat.choose (T + k) k ≤ q ^ k * Nat.choose (r + k - 1) k`. -/
 theorem choose_T_le {d q r : ℕ} (hd : 2 ≤ d) (hq : 2 ≤ q) (hr : 8 * d ^ 2 ≤ r)
-    (_hrq : r ≤ q) {k : ℕ} (_hk : 1 ≤ k) (_hkd : k ≤ d) :
+    {k : ℕ} :
     (r * (q - 1) - 1 + k).choose k ≤ q ^ k * (r + k - 1).choose k := by
   set T := r * (q - 1) - 1
   have hr1 := one_le_r hd hr

@@ -155,8 +155,9 @@ theorem homogeneousComponent_sum {ι : Type*} (s : Finset ι) (f : ι → MvPoly
 
 /-- Blueprint A02/B01 (risk 3): the degree-`(m + n)` component of `F * G`, for a form `F` of
 degree `m`, is `F` times the degree-`n` component of `G`. -/
-theorem homogeneousComponent_mul_of_isHomogeneous {F : MvPolynomial σ K} {m : ℕ}
-    (hF : F.IsHomogeneous m) (n : ℕ) (G : MvPolynomial σ K) :
+theorem homogeneousComponent_mul_of_isHomogeneous {R : Type*} [CommSemiring R]
+    {F : MvPolynomial σ R} {m : ℕ}
+    (hF : F.IsHomogeneous m) (n : ℕ) (G : MvPolynomial σ R) :
     homogeneousComponent (m + n) (F * G) = F * homogeneousComponent n G := by
   induction G using MvPolynomial.induction_on' with
   | monomial d c =>
@@ -170,8 +171,9 @@ theorem homogeneousComponent_mul_of_isHomogeneous {F : MvPolynomial σ K} {m : �
 
 /-- Blueprint A02/B01 (risk 3): the degree-`(n + m)` component of `G * F`, for a form `F` of
 degree `m`, is `(G)_n * F`. -/
-theorem homogeneousComponent_mul_of_isHomogeneous' {F : MvPolynomial σ K} {m : ℕ}
-    (hF : F.IsHomogeneous m) (n : ℕ) (G : MvPolynomial σ K) :
+theorem homogeneousComponent_mul_of_isHomogeneous' {R : Type*} [CommSemiring R]
+    {F : MvPolynomial σ R} {m : ℕ}
+    (hF : F.IsHomogeneous m) (n : ℕ) (G : MvPolynomial σ R) :
     homogeneousComponent (n + m) (G * F) = homogeneousComponent n G * F := by
   rw [mul_comm, add_comm, homogeneousComponent_mul_of_isHomogeneous hF, mul_comm]
 

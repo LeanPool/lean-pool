@@ -100,18 +100,14 @@ theorem one_le_totalDegree_of_sup_ne_top {I : Ideal (MvPolynomial (Fin d) K)}
   rw [hgC]
   exact (isUnit_iff_ne_zero.mpr hc).map MvPolynomial.C
 
--- The hypothesis `hne` is part of the blueprint contract (it forces `1 ≤ totalDegree g`, see
--- `one_le_totalDegree_of_sup_ne_top`) but is not needed: B02 does not require `1 ≤ e`.
-
 open scoped Classical in
 /-- Blueprint B03 (**affine proper cut**, over an infinite field, conditional on the A04′ facts
 `hF : DegreeFacts K d`). For a prime `I` of quotient dimension `≥ 2` and `g ∉ I` of total degree
-`≤ T` with `I + (g) ≠ P`, every minimal prime over `I + (g)` has positive degree, and the sum of
+`≤ T`, every minimal prime over `I + (g)` has positive degree, and the sum of
 their degrees is at most `T · degree I`. -/
 theorem proper_cut_of_infinite [Infinite K] (hF : DegreeFacts K d)
     (I : Ideal (MvPolynomial (Fin d) K)) [I.IsPrime] (hk : 2 ≤ quotDim I)
-    (g : MvPolynomial (Fin d) K) (T : ℕ) (hg : g ∉ I) (hT : g.totalDegree ≤ T)
-    (_hne : I ⊔ Ideal.span {g} ≠ ⊤) :
+    (g : MvPolynomial (Fin d) K) (T : ℕ) (hg : g ∉ I) (hT : g.totalDegree ≤ T) :
     (∀ J ∈ (I ⊔ Ideal.span {g}).minimalPrimes, 0 < degree J) ∧
     ∑ J ∈ (finite_minimalPrimes_sup K I g).toFinset, degree J ≤ T * degree I := by
   refine ⟨fun J hJ ↦ hF.degree_pos J hJ.1.1, ?_⟩

@@ -7,6 +7,7 @@ module
 
 
 public import Mathlib.RingTheory.GradedAlgebra.Radical
+public import LeanPool.Nikodym.Nikodym.LowerBound.Algebra.GradedLemmas
 public import Mathlib.Algebra.Module.Submodule.Union
 public import LeanPool.Nikodym.Nikodym.LowerBound.Algebra.DimensionExtra
 
@@ -103,37 +104,11 @@ theorem IsHomogeneous.mem_pow_idealOfVars {F : MvPolynomial σ R} {t : ℕ} (hF 
   exact (hF hx).ge
 
 /-- Blueprint A02.h, auxiliary: the degree-`(m + e)` component of `c * y`, for a form `y` of
-degree `e`, is `(c)_m * y`. (Named with the suffix `_right` to avoid a clash with the
-field-specific `homogeneousComponent_mul_of_isHomogeneous` of `GradedLemmas.lean`, whose primed
-variant has the same content; this version holds over any commutative semiring.) -/
+degree `e`, is `(c)_m * y`. -/
 theorem homogeneousComponent_mul_of_isHomogeneous_right {y : MvPolynomial σ R} {e : ℕ}
     (hy : y.IsHomogeneous e) (c : MvPolynomial σ R) (m : ℕ) :
-    homogeneousComponent (m + e) (c * y) = homogeneousComponent m c * y := by
-  classical
-  ext d
-  rw [coeff_homogeneousComponent, coeff_mul, coeff_mul]
-  have key : ∀ x ∈ Finset.HasAntidiagonal.antidiagonal d, y.coeff x.2 ≠ 0 →
-      (d.degree = m + e ↔ x.1.degree = m) := by
-    intro x hx hb
-    have hx2 : x.2.degree = e := by
-      rw [Finsupp.degree_eq_weight_one]
-      exact hy hb
-    rw [Finset.HasAntidiagonal.mem_antidiagonal] at hx
-    have hsum := congrArg Finsupp.degree hx
-    rw [map_add, hx2] at hsum
-    omega
-  split_ifs with hd
-  · refine Finset.sum_congr rfl fun x hx ↦ ?_
-    rw [coeff_homogeneousComponent]
-    by_cases hb : y.coeff x.2 = 0
-    · simp [hb]
-    · rw [ite_eq_left ((key x hx hb).mp hd)]
-  · symm
-    refine Finset.sum_eq_zero fun x hx ↦ ?_
-    rw [coeff_homogeneousComponent]
-    by_cases hb : y.coeff x.2 = 0
-    · simp [hb]
-    · rw [ite_eq_right (fun h ↦ hd ((key x hx hb).mpr h)), zero_mul]
+    homogeneousComponent (m + e) (c * y) = homogeneousComponent m c * y :=
+  homogeneousComponent_mul_of_isHomogeneous' hy m c
 
 end Components
 
@@ -171,18 +146,8 @@ theorem quotDim_idealOfVars : quotDim (idealOfVars (Fin n) K) = 0 :=
 /-- Blueprint A02.b: **a proper homogeneous ideal is contained in `𝔪ₙ`**: the degree-`0` component
 of any element is a constant lying in the ideal, hence zero. -/
 theorem le_idealOfVars_of_isHomogeneous_of_ne_top {J : Ideal (MvPolynomial (Fin n) K)} (hJ : J ≠ ⊤)
-    (hJh : J.IsHomogeneous (homogeneousSubmodule (Fin n) K)) : J ≤ idealOfVars (Fin n) K := by
-  intro f hf
-  have h0 : homogeneousComponent 0 f ∈ J := homogeneousComponent_mem_of_mem hJh hf 0
-  rw [homogeneousComponent_zero] at h0
-  have hc : f.coeff 0 = 0 := by
-    by_contra hne
-    exact hJ (J.eq_top_of_isUnit_mem h0 ((isUnit_iff_ne_zero.mpr hne).map C))
-  rw [← pow_one (idealOfVars (Fin n) K), mem_pow_idealOfVars_iff']
-  intro x hx
-  rw [Nat.lt_one_iff, Finsupp.degree_eq_zero_iff] at hx
-  subst hx
-  exact hc
+    (hJh : J.IsHomogeneous (homogeneousSubmodule (Fin n) K)) : J ≤ idealOfVars (Fin n) K :=
+  le_idealOfVars_of_isHomogeneous hJh hJ
 
 /-- Blueprint A02.b: a prime `p ≤ 𝔪ₙ` with `quotDim p = 0` equals `𝔪ₙ`. -/
 theorem eq_idealOfVars_of_quotDim_eq_zero {p : Ideal (MvPolynomial (Fin n) K)} [p.IsPrime]

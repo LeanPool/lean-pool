@@ -7,6 +7,7 @@ module
 
 
 public import Mathlib.RingTheory.KrullDimension.Polynomial
+public import Mathlib.RingTheory.KrullDimension.Field
 public import Mathlib.RingTheory.KrullDimension.NonZeroDivisors
 public import LeanPool.Nikodym.Nikodym.LowerBound.Hilbert.Defs
 public import LeanPool.Nikodym.Nikodym.LowerBound.Jets.Defs
@@ -359,9 +360,9 @@ theorem mk' (h1 : ∀ (I : Ideal (MvPolynomial (Fin d) K)), I.IsPrime → ∀ t 
     AlgebraInterface K d :=
   ⟨h1, h2, h3, eq_lineIdeal_of_quotDim_eq_one' K⟩
 
-/-- Blueprint C08: for any `H : AlgebraInterface K d`, a prime of quotient dimension at most one
-containing a line ideal is that line ideal (in fact independent of `H`). -/
-theorem eq_lineIdeal_of_le (_ : AlgebraInterface K d) {I : Ideal (MvPolynomial (Fin d) K)}
+/-- Blueprint C08: a prime of quotient dimension at most one containing a line ideal is
+that line ideal; no algebraic interface assumption is needed. -/
+theorem eq_lineIdeal_of_le {I : Ideal (MvPolynomial (Fin d) K)}
     (hI : I.IsPrime) (hdim : quotDim I ≤ 1) {b v : Fin d → K} (hv : v ≠ 0)
     (hle : I ≤ lineIdeal b v) : I = lineIdeal b v :=
   haveI := hI
