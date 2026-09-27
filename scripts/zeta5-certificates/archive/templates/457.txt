@@ -1,0 +1,8 @@
+private lemma inner_table_{{integer}} (x : ℝ) (hx : x ∈ Set.Ico (tIn {{integer}}) (tIn ({{integer}} + {{integer}}))) :
+    Ein x (kIn {{integer}}) = gIn {{integer}} x := by
+  simp only [tIn, tInL, kIn, kInL, gIn, aInL, bInL, List.getD_cons_succ, List.getD_cons_zero,
+    Set.mem_Ico] at hx ⊢
+  push_cast at hx ⊢
+  have := inPiece_{{integer}} x (by linarith [hx.{{integer}}]) (by linarith [hx.{{integer}}])
+  linarith
+
