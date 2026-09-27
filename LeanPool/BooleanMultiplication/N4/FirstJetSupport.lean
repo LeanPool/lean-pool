@@ -193,6 +193,23 @@ private def tangentSupportCombination
   ∑ k : Fin 4,
     coeff k • outsideSelectedColumn (outsideTangentIndex theta eps) k
 
+/-- Check a fixed rational-place tangent on the sixteen coefficient vectors. -/
+macro (name := solveTangentSupportCertificate) "solve_tangent_support_certificate" : tactic =>
+  `(tactic|
+    (intro coeff
+     rcases f2_eq_zero_or_one (coeff 0) with h0 | h0 <;>
+       rcases f2_eq_zero_or_one (coeff 1) with h1 | h1 <;>
+       rcases f2_eq_zero_or_one (coeff 2) with h2 | h2 <;>
+       rcases f2_eq_zero_or_one (coeff 3) with h3 | h3
+     all_goals
+       have hcoeff : coeff = ![coeff 0, coeff 1, coeff 2, coeff 3] := by
+         funext k
+         fin_cases k <;> rfl
+       rw [hcoeff]
+       simp only [h0, h1, h2, h3]
+       unfold InNormalizedFirstJet tangentSupportCombination
+       decide))
+
 /- Splitting this fixed six-point calculation keeps each kernel reduction
 small.  Each certificate ranges over only the sixteen vectors in `F₂⁴`. -/
 private theorem tangent_support_zero_zero :
@@ -200,114 +217,42 @@ private theorem tangent_support_zero_zero :
       vectorWedgeTwo (tangentSupportCombination 0 0 coeff)
           (rationalTwo (rationalSingleton 0)) ≠ 0 →
       InNormalizedFirstJet 0 (tangentSupportCombination 0 0 coeff) := by
-  intro coeff
-  rcases f2_eq_zero_or_one (coeff 0) with h0 | h0 <;>
-    rcases f2_eq_zero_or_one (coeff 1) with h1 | h1 <;>
-    rcases f2_eq_zero_or_one (coeff 2) with h2 | h2 <;>
-    rcases f2_eq_zero_or_one (coeff 3) with h3 | h3
-  all_goals
-    have hcoeff : coeff = ![coeff 0, coeff 1, coeff 2, coeff 3] := by
-      funext k
-      fin_cases k <;> rfl
-    rw [hcoeff]
-    simp only [h0, h1, h2, h3]
-    unfold InNormalizedFirstJet tangentSupportCombination
-    decide
+  solve_tangent_support_certificate
 
 private theorem tangent_support_zero_one :
     ∀ coeff : Fin 4 → F₂,
       vectorWedgeTwo (tangentSupportCombination 0 1 coeff)
           (rationalTwo (rationalSingleton 0)) ≠ 0 →
       InNormalizedFirstJet 0 (tangentSupportCombination 0 1 coeff) := by
-  intro coeff
-  rcases f2_eq_zero_or_one (coeff 0) with h0 | h0 <;>
-    rcases f2_eq_zero_or_one (coeff 1) with h1 | h1 <;>
-    rcases f2_eq_zero_or_one (coeff 2) with h2 | h2 <;>
-    rcases f2_eq_zero_or_one (coeff 3) with h3 | h3
-  all_goals
-    have hcoeff : coeff = ![coeff 0, coeff 1, coeff 2, coeff 3] := by
-      funext k
-      fin_cases k <;> rfl
-    rw [hcoeff]
-    simp only [h0, h1, h2, h3]
-    unfold InNormalizedFirstJet tangentSupportCombination
-    decide
+  solve_tangent_support_certificate
 
 private theorem tangent_support_one_zero :
     ∀ coeff : Fin 4 → F₂,
       vectorWedgeTwo (tangentSupportCombination 1 0 coeff)
           (rationalTwo (rationalSingleton 1)) ≠ 0 →
       InNormalizedFirstJet 1 (tangentSupportCombination 1 0 coeff) := by
-  intro coeff
-  rcases f2_eq_zero_or_one (coeff 0) with h0 | h0 <;>
-    rcases f2_eq_zero_or_one (coeff 1) with h1 | h1 <;>
-    rcases f2_eq_zero_or_one (coeff 2) with h2 | h2 <;>
-    rcases f2_eq_zero_or_one (coeff 3) with h3 | h3
-  all_goals
-    have hcoeff : coeff = ![coeff 0, coeff 1, coeff 2, coeff 3] := by
-      funext k
-      fin_cases k <;> rfl
-    rw [hcoeff]
-    simp only [h0, h1, h2, h3]
-    unfold InNormalizedFirstJet tangentSupportCombination
-    decide
+  solve_tangent_support_certificate
 
 private theorem tangent_support_one_one :
     ∀ coeff : Fin 4 → F₂,
       vectorWedgeTwo (tangentSupportCombination 1 1 coeff)
           (rationalTwo (rationalSingleton 1)) ≠ 0 →
       InNormalizedFirstJet 1 (tangentSupportCombination 1 1 coeff) := by
-  intro coeff
-  rcases f2_eq_zero_or_one (coeff 0) with h0 | h0 <;>
-    rcases f2_eq_zero_or_one (coeff 1) with h1 | h1 <;>
-    rcases f2_eq_zero_or_one (coeff 2) with h2 | h2 <;>
-    rcases f2_eq_zero_or_one (coeff 3) with h3 | h3
-  all_goals
-    have hcoeff : coeff = ![coeff 0, coeff 1, coeff 2, coeff 3] := by
-      funext k
-      fin_cases k <;> rfl
-    rw [hcoeff]
-    simp only [h0, h1, h2, h3]
-    unfold InNormalizedFirstJet tangentSupportCombination
-    decide
+  solve_tangent_support_certificate
 
 private theorem tangent_support_two_zero :
     ∀ coeff : Fin 4 → F₂,
       vectorWedgeTwo (tangentSupportCombination 2 0 coeff)
           (rationalTwo (rationalSingleton 2)) ≠ 0 →
       InNormalizedFirstJet 2 (tangentSupportCombination 2 0 coeff) := by
-  intro coeff
-  rcases f2_eq_zero_or_one (coeff 0) with h0 | h0 <;>
-    rcases f2_eq_zero_or_one (coeff 1) with h1 | h1 <;>
-    rcases f2_eq_zero_or_one (coeff 2) with h2 | h2 <;>
-    rcases f2_eq_zero_or_one (coeff 3) with h3 | h3
-  all_goals
-    have hcoeff : coeff = ![coeff 0, coeff 1, coeff 2, coeff 3] := by
-      funext k
-      fin_cases k <;> rfl
-    rw [hcoeff]
-    simp only [h0, h1, h2, h3]
-    unfold InNormalizedFirstJet tangentSupportCombination
-    decide
+  solve_tangent_support_certificate
 
 private theorem tangent_support_two_one :
     ∀ coeff : Fin 4 → F₂,
       vectorWedgeTwo (tangentSupportCombination 2 1 coeff)
           (rationalTwo (rationalSingleton 2)) ≠ 0 →
       InNormalizedFirstJet 2 (tangentSupportCombination 2 1 coeff) := by
-  intro coeff
-  rcases f2_eq_zero_or_one (coeff 0) with h0 | h0 <;>
-    rcases f2_eq_zero_or_one (coeff 1) with h1 | h1 <;>
-    rcases f2_eq_zero_or_one (coeff 2) with h2 | h2 <;>
-    rcases f2_eq_zero_or_one (coeff 3) with h3 | h3
-  all_goals
-    have hcoeff : coeff = ![coeff 0, coeff 1, coeff 2, coeff 3] := by
-      funext k
-      fin_cases k <;> rfl
-    rw [hcoeff]
-    simp only [h0, h1, h2, h3]
-    unfold InNormalizedFirstJet tangentSupportCombination
-    decide
+  solve_tangent_support_certificate
 
 /-- The support calculation also recovers the nonzero first-jet component of
 the seed linear form after normalizing its rational place to zero. -/

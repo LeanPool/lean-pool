@@ -145,10 +145,8 @@ theorem mem_rationalTargetSpace_iff (p : ANF 8) :
         (Submodule.subset_span (Set.mem_insert_of_mem _
           (Set.mem_insert_of_mem _ (Set.mem_singleton _))))
 
-/-- Concrete interface exposed by the normalized-eight-gate lemma.  Keeping
-this as a structure makes downstream dependencies explicit and allows the
-contradiction theorem to compile while the normalization construction is
-filled independently. -/
+/-- The state constructed by the eight-gate normalization theorem, recording
+the rational prefix, seed defect, and useful suffix for the contradiction. -/
 structure NormalizedEight (C : Circuit 8 8) : Prop where
   computes : C.Computes (Mul 4)
   gate_zero : C.gate 0 = rZeroANF
@@ -222,19 +220,6 @@ theorem NormalizedEight.gateSix_useful {C : Circuit 8 8}
     (h : NormalizedEight C) : UsefulAt C (mulTarget 4) 5 :=
   h.suffix_useful 5 (by decide)
 
-/-- Hole-free dependency skeleton for the final contradiction.  The four
-structural predicates are parameters here; later files instantiate them with
-the concrete high-part, low-low, and jet conditions. -/
-theorem eight_gate_contradiction_interface {C : Circuit 8 8}
-    (hNorm : NormalizedEight C)
-    (SeedHigh CubicSeed FirstLowLow FirstJet : Prop)
-    (hHigh : SeedHigh)
-    (quartic_exclusion : SeedHigh → CubicSeed)
-    (no_seed_first : CubicSeed → FirstLowLow)
-    (first_jet : FirstLowLow → FirstJet)
-    (jet_saturation : FirstJet → ¬ UsefulAt C (mulTarget 4) 5) : False := by
-  exact jet_saturation (first_jet (no_seed_first (quartic_exclusion hHigh)))
-    hNorm.gateSix_useful
 
 end
 
