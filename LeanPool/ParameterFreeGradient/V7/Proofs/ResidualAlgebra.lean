@@ -520,4 +520,103 @@ lemma primal_abel (n : ℕ) (u dw : ScalarSeq)
   rw [hrhs]
   ring
 
+lemma inverse_map (n : ℕ) (u : ScalarSeq) (hu_pos : ∀ i ≤ n, 0 < u i)
+    (C D : VectorSeq d) :
+    BelowResidualMap n u (inverseA n u C) (fun i => D (n - i)) C D := by
+  refine ⟨?_, ?_, ?_⟩
+  · rw [inverseA, Nat.sub_self, inverseRev_zero]
+    have hun : u n ≠ 0 := ne_of_gt (hu_pos n le_rfl)
+    simp [smul_smul, hun]
+  · intro i hi
+    have hk : n - i - 1 < n := by omega
+    have hgap : n - i = (n - i - 1) + 1 := by omega
+    rw [inverseA, inverseA, show n - (i + 1) = n - i - 1 by omega, hgap,
+      inverseRev_succ n u C (n - i - 1) hk]
+    have hindex : n - (n - i - 1) - 1 = i := by omega
+    rw [hindex]
+    have hui : u i ≠ 0 := ne_of_gt (hu_pos i (by omega))
+    simp [sub_eq_add_neg, smul_add, smul_smul, hui]
+  · intro i hi
+    change D i = D (n - (n - i))
+    rw [show n - (n - i) = i by omega]
+
+lemma map_determined_inverse (n : ℕ)
+    (u : ScalarSeq) (hu_pos : ∀ i ≤ n, 0 < u i)
+    (A B C D : VectorSeq d) (hmap : BelowResidualMap n u A B C D) :
+    SameOnHorizon n A (inverseA n u C) ∧
+      SameOnHorizon n B (fun i => D (n - i)) := by
+  constructor
+  · intro i hi
+    let R := inverseRev n u C
+    have hrev : ∀ k ≤ n, A (n - k) = R k := by
+      intro k hk
+      induction k with
+      | zero =>
+        dsimp [R]
+        rw [inverseRev_zero, hmap.1]
+        have hun : u n ≠ 0 := ne_of_gt (hu_pos n le_rfl)
+        simp [smul_smul, hun]
+      | succ k ih =>
+        have hkn : k < n := by omega
+        have hm := hmap.2.1 (n - k - 1) (by omega)
+        have hleft : n - (n - k - 1) = k + 1 := by omega
+        have hright : n - (n - k - 1) - 1 = k := by omega
+        have hAi : n - k - 1 + 1 = n - k := by omega
+        simp only [hleft, Nat.succ_sub_one, hAi] at hm
+        have htarget : n - (k + 1) = n - k - 1 := by omega
+        rw [htarget]
+        dsimp [R]
+        rw [inverseRev_succ n u C k hkn]
+        have ih' := ih (by omega)
+        change A (n - k) = inverseRev n u C k at ih'
+        rw [← ih']
+        have hui : u (n - k - 1) ≠ 0 :=
+          ne_of_gt (hu_pos (n - k - 1) (by omega))
+        rw [hm]
+        simp [smul_smul, hui]
+    change A i = inverseRev n u C (n - i)
+    have hr := hrev (n - i) (by omega)
+    change A (n - (n - i)) = inverseRev n u C (n - i) at hr
+    rw [← hr, show n - (n - i) = i by omega]
+  · intro i hi
+    change B i = D (n - i)
+    rw [hmap.2.2 (n - i) (by omega), show n - (n - i) = i by omega]
+
+lemma norm_block (p : ℝ) (hp : 1 < p) (n : ℕ)
+    (u : ScalarSeq) (hu_pos : ∀ i ≤ n, 0 < u i)
+    (A B C D : VectorSeq d) (hmap : BelowResidualMap n u A B C D) :
+    (∑ k ∈ Finset.range n,
+      (u k / 2) * (lpNorm (conjugateExponent p) (A k - A (k + 1))) ^ (2 : ℕ)) =
+    ∑ k ∈ Finset.range n,
+      ((1 / u (n - (k + 1))) / 2) *
+        (lpNorm (conjugateExponent p) (C k - C (k + 1))) ^ (2 : ℕ) := by
+  rw [← Finset.sum_range_reflect
+    (fun k => (u k / 2) *
+      (lpNorm (conjugateExponent p) (A k - A (k + 1))) ^ (2 : ℕ)) n]
+  apply Finset.sum_congr rfl
+  intro k hk
+  have hkn : k < n := Finset.mem_range.mp hk
+  let i := n - 1 - k
+  have hi : i < n := by dsimp [i]; omega
+  have hm := hmap.2.1 i hi
+  have hleft : n - i = k + 1 := by dsimp [i]; omega
+  rw [hleft] at hm
+  simp only [Nat.succ_sub_one] at hm
+  have hC : C k - C (k + 1) = -(u i • (A i - A (i + 1))) := by
+    rw [← hm]
+    abel
+  have hui0 : 0 < u i := hu_pos i (by omega)
+  have hq : 1 ≤ conjugateExponent p := (O3.one_lt_conjugateExponent hp).le
+  have hnorm : lpNorm (conjugateExponent p) (C k - C (k + 1)) =
+      u i * lpNorm (conjugateExponent p) (A i - A (i + 1)) := by
+    change O3.lpNorm (conjugateExponent p) (C k - C (k + 1)) =
+      u i * O3.lpNorm (conjugateExponent p) (A i - A (i + 1))
+    rw [hC, O3.lpNorm_neg (conjugateExponent p),
+      O3.Stage2RouteC.lpNorm_smul hq,
+      abs_of_pos hui0]
+  have hindex : n - 1 - k = i := rfl
+  have hden : n - (k + 1) = i := by dsimp [i]; omega
+  rw [hindex, hden, hnorm]
+  field_simp
+
 end V7.ResidualAlgebra

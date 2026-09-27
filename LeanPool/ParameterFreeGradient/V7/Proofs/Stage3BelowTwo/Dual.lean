@@ -16,6 +16,8 @@ The below-two dual phase terminal gradient bound from the residual identity.
 
 open scoped BigOperators
 
+open V7.ResidualAlgebra
+
 namespace V7.Stage3BelowTwo
 
 private lemma weightedSum_eq_sum_smul (m : ℕ) (a : ScalarSeq)
@@ -272,24 +274,6 @@ private lemma pairing_weightedSum_left (m : ℕ) (a : ScalarSeq)
       ∑ i ∈ Finset.range m, a i * O3.pairing (X i) y :=
   V7.ResidualAlgebra.pairing_weightedSum_left m a X y
 
-private lemma sum_pairing_by_parts (n : ℕ) (u : ScalarSeq)
-    (A X : VectorSeq d) :
-    (∑ k ∈ Finset.range (n + 1),
-        u k * O3.pairing (A k - A (k + 1)) (X k)) =
-      u 0 * O3.pairing (A 0) (X 0) +
-        (∑ k ∈ Finset.range n,
-          O3.pairing (A (k + 1))
-            (u (k + 1) • X (k + 1) - u k • X k)) -
-        u n * O3.pairing (A (n + 1)) (X n) := by
-  induction n with
-  | zero =>
-    simp [pairing_sub_left]
-    ring
-  | succ n ih =>
-    rw [Finset.sum_range_succ, ih, Finset.sum_range_succ]
-    rw [pairing_sub_left, pairing_sub_right, pairing_smul_right,
-      pairing_smul_right]
-    ring
 
 private lemma shifted_dw_pairing (n : ℕ) (dw : ScalarSeq)
     (A B : VectorSeq d) (hdwn : dw n = 0) :
@@ -474,13 +458,6 @@ private lemma dual_residual_nonneg (p : ℝ) (hp : 1 < p) (hp2 : p < 2)
   exact free_primal_residual_nonneg p hp n hn u dw alpha c b hcoeff
     A' B (freeX b B) hAn hX
 
-private lemma sum_succ_sub {E : Type*} [AddCommGroup E] (n : ℕ) (f : ℕ → E) :
-    (∑ k ∈ Finset.range n, (f (k + 1) - f k)) = f n - f 0 := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [Finset.sum_range_succ, ih]
-    abel
 
 private lemma shifted_pairing_telescope (q : VectorSeq d) (g : Point d)
     (j m : ℕ) :
