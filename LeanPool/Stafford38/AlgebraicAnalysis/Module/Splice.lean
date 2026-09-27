@@ -59,27 +59,14 @@ theorem isCoatom_of_covBy_sup_eq_top
     simpa [sup_comm, hsup] using hCov
   exact hCov'.isCoatom
 
-/--
-The reusable maximal-submodule splice.  Once a combined submodule contains a
-simple layer and one of the maximal submodules, it is the whole module.
--/
+/-- A submodule containing both terms of a spanning pair is the whole module. -/
 theorem maximal_submodule_splice
-    {N N' U V H : Submodule R M}
-    (hNU : N ≤ U) (hNV : N ≤ V) (hNN' : N ⋖ N')
-    (hsupU : N' ⊔ U = ⊤) (hUtop : U ≠ ⊤)
-    (hsupV : N' ⊔ V = ⊤) (hVtop : V ≠ ⊤)
-    (hVU : V ≤ U) (hUH : U ≤ H) (hN'H : N' ≤ H) :
+    {N' U H : Submodule R M}
+    (hsupU : N' ⊔ U = ⊤) (hUH : U ≤ H) (hN'H : N' ≤ H) :
     H = ⊤ := by
-  have hUcoat : IsCoatom U := isCoatom_of_covBy_sup_eq_top hNU hNN' hsupU hUtop
-  have hVcoat : IsCoatom V := isCoatom_of_covBy_sup_eq_top hNV hNN' hsupV hVtop
-  have hUV : U = V := by
-    exact (hVcoat.le_iff_eq hUtop).mp hVU
-  have hVH : V ≤ H := by
-    rw [← hUV]
-    exact hUH
   apply top_unique
-  rw [← hsupV]
-  exact sup_le hN'H hVH
+  rw [← hsupU]
+  exact sup_le hN'H hUH
 
 /--
 If `v` lies in `P` and some scalar multiple of a vector escapes `P`, then the

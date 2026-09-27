@@ -6,7 +6,7 @@ Authors: Christopher Albert
 
 module
 
-public import Mathlib.RingTheory.Etale.Kaehler
+public import LeanPool.Stafford38.AlgebraicAnalysis.DifferentialOperators.FormallyEtaleDerivations
 public import Mathlib.RingTheory.Kaehler.Polynomial
 public import Mathlib.RingTheory.Derivation.Basic
 
@@ -24,6 +24,7 @@ specialization to the partial derivations of a polynomial ring.
 namespace AlgebraicAnalysis.DifferentialOperators.LocalizedPolynomialDerivations
 
 open TensorProduct
+open AlgebraicAnalysis.DifferentialOperators
 
 noncomputable section
 
@@ -41,13 +42,7 @@ noncomputable def extendDerivation
     (D : Derivation k A B) : Derivation k B B := by
   letI : Algebra.FormallyEtale A B :=
     Algebra.FormallyEtale.of_isLocalization (Rₘ := B) S
-  let base : B ⊗[A] KaehlerDifferential k A →ₗ[B] B :=
-    D.liftKaehlerDifferential.liftBaseChange B
-  let pull : KaehlerDifferential k B →ₗ[B] B :=
-    base.comp
-      (KaehlerDifferential.tensorKaehlerEquivOfFormallyEtale
-        k A B).symm.toLinearMap
-  exact KaehlerDifferential.linearMapEquivDerivation k B pull
+  exact FormallyEtaleDerivations.extendDerivation k A B D
 
 @[simp]
 theorem extendDerivation_compAlgebraMap
@@ -56,11 +51,8 @@ theorem extendDerivation_compAlgebraMap
     (extendDerivation k A B S D).compAlgebraMap A = D := by
   let : Algebra.FormallyEtale A B :=
     Algebra.FormallyEtale.of_isLocalization (Rₘ := B) S
-  apply Derivation.ext
-  intro a
-  simp [extendDerivation,
-    KaehlerDifferential.tensorKaehlerEquivOfFormallyEtale_symm_D_algebraMap,
-    Derivation.liftKaehlerDifferential_comp_D]
+  exact FormallyEtaleDerivations.extendDerivation_compAlgebraMap
+    k A B D
 
 /-- A derivation of a localization is uniquely determined by its restriction
 to the original algebra. -/
@@ -71,40 +63,8 @@ theorem derivation_ext_of_compAlgebraMap_eq
     D₁ = D₂ := by
   let : Algebra.FormallyEtale A B :=
     Algebra.FormallyEtale.of_isLocalization (Rₘ := B) S
-  let e := KaehlerDifferential.tensorKaehlerEquivOfFormallyEtale k A B
-  have hbase :
-      (D₁.liftKaehlerDifferential.restrictScalars A).comp
-          (KaehlerDifferential.map k k A B) =
-        (D₂.liftKaehlerDifferential.restrictScalars A).comp
-          (KaehlerDifferential.map k k A B) := by
-    apply Derivation.liftKaehlerDifferential_unique
-    apply Derivation.ext
-    intro x
-    simpa [KaehlerDifferential.map_D,
-      Derivation.liftKaehlerDifferential_comp_D] using
-      Derivation.congr_fun h x
-  have hpull :
-      D₁.liftKaehlerDifferential.comp e.toLinearMap =
-        D₂.liftKaehlerDifferential.comp e.toLinearMap := by
-    apply LinearMap.ext
-    intro z
-    induction z using TensorProduct.inductionOn with
-    | add x y hx hy => simp only [map_add, hx, hy]
-    | tmul a x =>
-        simp only [e,
-          KaehlerDifferential.tensorKaehlerEquivOfFormallyEtale_apply,
-          KaehlerDifferential.mapBaseChange_tmul,
-          LinearMap.comp_apply, LinearEquiv.coe_coe, LinearMap.map_smul]
-        exact congrArg (a • ·) (LinearMap.congr_fun hbase x)
-  apply Derivation.ext
-  intro x
-  have hmaps : D₁.liftKaehlerDifferential = D₂.liftKaehlerDifferential := by
-    apply LinearMap.ext
-    intro w
-    obtain ⟨z, rfl⟩ := e.surjective w
-    exact LinearMap.congr_fun hpull z
-  simpa [Derivation.liftKaehlerDifferential_comp_D] using
-    LinearMap.congr_fun hmaps (KaehlerDifferential.D k B x)
+  exact FormallyEtaleDerivations.derivation_ext_of_compAlgebraMap_eq
+    k A B h
 
 /-- The commutator is constructed directly because the localization argument only needs
 its derivation rule, not the surrounding Lie-algebra structure. -/

@@ -7,7 +7,7 @@ Authors: Christopher Albert
 module
 
 public import Mathlib.RingTheory.Etale.Field
-public import Mathlib.RingTheory.Etale.Kaehler
+public import LeanPool.Stafford38.AlgebraicAnalysis.DifferentialOperators.FormallyEtaleDerivations
 
 
 /-!
@@ -35,6 +35,7 @@ to power series.  Those remain separate inputs to the completed-chart step.
 namespace Stafford38.Geometry.SeparableResidueDerivationExtension
 
 open TensorProduct
+open AlgebraicAnalysis.DifferentialOperators
 
 noncomputable section
 
@@ -53,13 +54,7 @@ noncomputable def extendDerivation
     (D : Derivation k E K) : Derivation k K K := by
   letI : Algebra.FormallyEtale E K :=
     Algebra.FormallyEtale.of_isSeparable E K
-  let base : K ⊗[E] KaehlerDifferential k E →ₗ[K] K :=
-    D.liftKaehlerDifferential.liftBaseChange K
-  let pull : KaehlerDifferential k K →ₗ[K] K :=
-    base.comp
-      (KaehlerDifferential.tensorKaehlerEquivOfFormallyEtale
-        k E K).symm.toLinearMap
-  exact KaehlerDifferential.linearMapEquivDerivation k K pull
+  exact FormallyEtaleDerivations.extendDerivation k E K D
 
 /-- Restricting the extended derivation to `E` recovers the supplied
 `E -> K` derivation exactly. -/
@@ -69,11 +64,8 @@ theorem extendDerivation_compAlgebraMap
     (extendDerivation k E K D).compAlgebraMap E = D := by
   let : Algebra.FormallyEtale E K :=
     Algebra.FormallyEtale.of_isSeparable E K
-  apply Derivation.ext
-  intro e
-  simp [extendDerivation,
-    KaehlerDifferential.tensorKaehlerEquivOfFormallyEtale_symm_D_algebraMap,
-    Derivation.liftKaehlerDifferential_comp_D]
+  exact FormallyEtaleDerivations.extendDerivation_compAlgebraMap
+    k E K D
 
 /-- A `k`-derivation of `K` is determined by its restriction to `E` when
 `K/E` is separable. -/
@@ -83,40 +75,8 @@ theorem derivation_ext_of_compAlgebraMap_eq
     D₁ = D₂ := by
   let : Algebra.FormallyEtale E K :=
     Algebra.FormallyEtale.of_isSeparable E K
-  let e := KaehlerDifferential.tensorKaehlerEquivOfFormallyEtale k E K
-  have hbase :
-      (D₁.liftKaehlerDifferential.restrictScalars E).comp
-          (KaehlerDifferential.map k k E K) =
-        (D₂.liftKaehlerDifferential.restrictScalars E).comp
-          (KaehlerDifferential.map k k E K) := by
-    apply Derivation.liftKaehlerDifferential_unique
-    apply Derivation.ext
-    intro x
-    simpa [KaehlerDifferential.map_D,
-      Derivation.liftKaehlerDifferential_comp_D] using
-      Derivation.congr_fun h x
-  have hpull :
-      D₁.liftKaehlerDifferential.comp e.toLinearMap =
-        D₂.liftKaehlerDifferential.comp e.toLinearMap := by
-    apply LinearMap.ext
-    intro z
-    induction z using TensorProduct.inductionOn with
-    | add x y hx hy => simp only [map_add, hx, hy]
-    | tmul a x =>
-        simp only [e,
-          KaehlerDifferential.tensorKaehlerEquivOfFormallyEtale_apply,
-          KaehlerDifferential.mapBaseChange_tmul,
-          LinearMap.comp_apply, LinearEquiv.coe_coe, LinearMap.map_smul]
-        exact congrArg (a • ·) (LinearMap.congr_fun hbase x)
-  apply Derivation.ext
-  intro x
-  have hmaps : D₁.liftKaehlerDifferential = D₂.liftKaehlerDifferential := by
-    apply LinearMap.ext
-    intro w
-    obtain ⟨z, rfl⟩ := e.surjective w
-    exact LinearMap.congr_fun hpull z
-  simpa [Derivation.liftKaehlerDifferential_comp_D] using
-    LinearMap.congr_fun hmaps (KaehlerDifferential.D k K x)
+  exact FormallyEtaleDerivations.derivation_ext_of_compAlgebraMap_eq
+    k E K h
 
 /-- Existence and uniqueness in the direct form used by the boundary tower. -/
 theorem existsUnique_derivation_extension

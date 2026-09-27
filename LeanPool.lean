@@ -7750,6 +7750,7 @@ public import LeanPool.Stafford38.AlgebraicAnalysis.Derivation.Central
 public import LeanPool.Stafford38.AlgebraicAnalysis.Derivation.Escape
 public import LeanPool.Stafford38.AlgebraicAnalysis.DifferentialOperators.Basic
 public import LeanPool.Stafford38.AlgebraicAnalysis.DifferentialOperators.CoordinateGeneration
+public import LeanPool.Stafford38.AlgebraicAnalysis.DifferentialOperators.FormallyEtaleDerivations
 public import LeanPool.Stafford38.AlgebraicAnalysis.DifferentialOperators.LocalizedPolynomialCommutant
 public import LeanPool.Stafford38.AlgebraicAnalysis.DifferentialOperators.LocalizedPolynomialDerivations
 public import LeanPool.Stafford38.AlgebraicAnalysis.FieldTheory.FunctionField
