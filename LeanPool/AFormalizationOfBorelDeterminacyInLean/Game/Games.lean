@@ -120,8 +120,7 @@ namespace Player
     · simp_all
     · unfold Player.payoff Player.residual
       rw [ite_eq_right h, Game.residual_payoff_odd G x hodd]
-      simpa only [Game.residual_tree, Player.swap_one] using
-        compl_compl (body.append x ⁻¹' G.payoff)
+      simp only [Game.residual_tree, Player.swap_one, compl_compl]
 end Player
 @[congr] lemma subtype_val_player_payoff {G' p'} (h : G = G') (hp : p = p') :
   Subtype.val '' (p.payoff G) = Subtype.val '' (p'.payoff G') := by congr!

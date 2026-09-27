@@ -21,7 +21,7 @@ with `u = λx`, the coefficients `b_{ij}` of the class function `ψ(k, B + 6a' -
 `1, A, E`, and the continuous interval counts `c_{ij}`.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

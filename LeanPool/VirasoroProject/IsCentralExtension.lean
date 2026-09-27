@@ -107,8 +107,10 @@ def _root_.VirasoroProject.LieTwoCocycle.CentralExtension.emb
   map_lie' := by
     intro A₁ A₂
     apply CentralExtension.ext
-    · simpa only [CentralExtension.lie_fst, zero_lie]
-    · simpa only [CentralExtension.lie_snd, map_zero, trivial_lie_zero]
+    · change 0 = ⁅(0 : 𝓰), 0⁆
+      simp
+    · change ⁅A₁, A₂⁆ = γ 0 0
+      simp [trivial_lie_zero]
 
 /-- If `𝓮` is the (central) extension of `𝓰` by `𝓪` defined by a 2-cocycle `γ ∈ Z²(𝓰,𝓪)`,
 then `LieTwoCocycle.CentralExtension.proj` gives the corresponding projection `𝓮 ⟶ 𝓰`. -/
@@ -116,9 +118,7 @@ def _root_.VirasoroProject.LieTwoCocycle.CentralExtension.proj : γ.CentralExten
   toFun := fun ⟨X, _⟩ ↦ X
   map_add' := by intro ⟨X₁, A₁⟩ ⟨X₂, A₂⟩; rfl
   map_smul' := by intro c ⟨X, A⟩; rfl
-  map_lie' := by
-    intro ⟨X₁, A₁⟩ ⟨X₂, A₂⟩
-    exact CentralExtension.lie_fst (γ := γ) _ _
+  map_lie' := by intro ⟨X₁, A₁⟩ ⟨X₂, A₂⟩; rfl
 
 lemma _root_.VirasoroProject.LieTwoCocycle.CentralExtension.range_proj_eq_top :
     (LieTwoCocycle.CentralExtension.proj γ).range = ⊤ :=
@@ -179,8 +179,10 @@ theorem _root_.VirasoroProject.LieTwoCocycle.CentralExtension.isCentralExtension
   central := by
     intro A Z
     apply CentralExtension.ext
-    · simpa only [CentralExtension.lie_fst, emb, zero_lie]
-    · simpa only [CentralExtension.lie_snd, emb, map_zero]
+    · change ⁅(0 : 𝓰), Z.1⁆ = 0
+      simp
+    · change γ 0 Z.1 = 0
+      simp
 
 /-- A standard section of a Lie algebra central extension associated to a Lie 2-cocycle. -/
 noncomputable def _root_.VirasoroProject.LieTwoCocycle.CentralExtension.stdSection

@@ -16,7 +16,7 @@ The only finite certificate here is the fixed subset identity on three
 indices; it contains no circuit data.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

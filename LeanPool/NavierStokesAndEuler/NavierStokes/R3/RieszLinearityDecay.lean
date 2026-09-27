@@ -71,7 +71,7 @@ theorem rieszTest_smul (i j : Fin 3) (c : ℂ) (ψ : ComplexTest) :
   exact VectorFourier.fourierIntegral_const_smul _ _ _ _ c
 
 /-- The Riesz test operator as a complex linear map into ordinary functions. -/
-def rieszTestLinear (i j : Fin 3) : ComplexTest →ₗ[ℂ] (Space → ℂ) where
+@[expose] def rieszTestLinear (i j : Fin 3) : ComplexTest →ₗ[ℂ] (Space → ℂ) where
   toFun := rieszTest i j
   map_add' := rieszTest_add i j
   map_smul' := rieszTest_smul i j

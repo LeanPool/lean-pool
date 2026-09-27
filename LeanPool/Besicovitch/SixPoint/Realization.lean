@@ -15,7 +15,7 @@ A normalized packing is realized by multiplying its radii by the physical length
 relates its virtual diameter and disjointness constraints to the resulting union of open balls.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

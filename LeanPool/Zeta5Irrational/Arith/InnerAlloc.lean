@@ -26,7 +26,7 @@ remaining rows into the zero class. Then
 * `Φ(kf) ≥ Φ(k) - (k - klo) L0min/2` for every `k ∈ [klo, ktop]`.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

@@ -14,7 +14,7 @@ This file shrinks every radius while retaining the same centers and support. Shr
 strict score gain used when the density parameter is larger than the finite endpoint.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

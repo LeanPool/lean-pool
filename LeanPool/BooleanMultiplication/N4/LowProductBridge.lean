@@ -17,7 +17,7 @@ input coordinate and one of the three rational places; no circuit states are
 enumerated.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

@@ -13,7 +13,7 @@ public import LeanPool.Besicovitch.SixPoint.Configuration
 The three radii are the half-perimeter differences, indexed by the six-point labels.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

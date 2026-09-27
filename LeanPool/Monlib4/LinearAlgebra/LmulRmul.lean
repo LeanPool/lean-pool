@@ -67,7 +67,7 @@ theorem right_module_map_iff {H₂ : Type _} [Semiring H₂] [Algebra R H₂] {x
   · rw [h, ← mul_assoc, ← h]
 
 /-- The linear map sending an element to left multiplication by that element. -/
-def lmul : H₁ →ₗ[R] l(R,H₁) where
+@[expose] def lmul : H₁ →ₗ[R] l(R,H₁) where
   toFun x := LinearMap.mulLeft R x
   map_add' x y := by
     ext1
@@ -92,7 +92,7 @@ theorem lmul_one {H₁ : Type _} [NonAssocSemiring H₁] [Module R H₁] [SMulCo
     simp_rw [lmul_apply, Module.End.one_apply, one_mul]
 
 /-- The linear map sending an element to right multiplication by that element. -/
-def rmul : H₂ →ₗ[R] l(R,H₂) where
+@[expose] def rmul : H₂ →ₗ[R] l(R,H₂) where
   toFun x := LinearMap.mulRight R x
   map_add' x y := by
     ext1
@@ -117,7 +117,7 @@ open scoped TensorProduct
 local notation x " ⊗ₘ " y => TensorProduct.map x y
 
 /-- Tensor right multiplication on the left factor with left multiplication on the right factor. -/
-noncomputable def rmulMapLmul {R H₁ H₂ : Type*} [CommSemiring R]
+@[expose] noncomputable def rmulMapLmul {R H₁ H₂ : Type*} [CommSemiring R]
   [NonUnitalNonAssocSemiring H₁] [Module R H₁] [SMulCommClass R H₁ H₁] [IsScalarTower R H₁ H₁]
   [NonUnitalNonAssocSemiring H₂] [Module R H₂] [SMulCommClass R H₂ H₂] [IsScalarTower R H₂ H₂] :
   H₁ ⊗[R] H₂ →ₗ[R] ((H₁ ⊗[R] H₂) →ₗ[R] (H₁ ⊗[R] H₂)) :=

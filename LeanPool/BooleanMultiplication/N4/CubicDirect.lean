@@ -21,7 +21,7 @@ linearity.  This compact certificate replaces repeated coordinate chases in
 the quartic and annihilator arguments.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

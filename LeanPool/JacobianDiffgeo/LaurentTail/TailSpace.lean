@@ -136,7 +136,7 @@ variable [CompactSpace X]
 /-- The finite skyscraper `Window D D'` embeds in the full tail space `T D` — the bridge that
 lets a future bridge file derive the tail-level six-term sequence from Cech's own (instead of
 re-proving it). -/
-noncomputable def windowToT (D D' : RS.Divisor X) (_h : D ≤ D') :
+@[expose] noncomputable def windowToT (D D' : RS.Divisor X) (_h : D ≤ D') :
     RS.Cech.Window D D' →ₗ[ℂ] T D where
   toFun w := T.mk D (RS.Cech.diffSupp D D')
     (fun q => windowAtToTailAt (q : X) D (D' q) (w q))

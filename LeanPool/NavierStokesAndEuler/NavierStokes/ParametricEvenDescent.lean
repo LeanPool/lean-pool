@@ -40,7 +40,7 @@ abbrev Plane := ℝ × ℝ
 variable {E : Type u} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
 /-- Even radial, given by `∀ p, Function.Even (fun r => F (p, r))`. -/
-noncomputable def EvenRadial (F : Plane → E) : Prop :=
+@[expose] noncomputable def EvenRadial (F : Plane → E) : Prop :=
   ∀ p, Function.Even (fun r => F (p, r))
 
 /-- Parameter partial, given by `deriv (fun p => F (p, q.2)) q.1`. -/

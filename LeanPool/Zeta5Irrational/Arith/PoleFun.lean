@@ -24,7 +24,7 @@ For a numerator `A ∈ ℚ[x]` and a finite set `Pl ⊆ ℤ` of poles, `g = A / 
 `partial_fractions` : `A = P Π + ∑_r res_r ∏_{s ≠ r} (x - s)`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

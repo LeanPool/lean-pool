@@ -21,7 +21,7 @@ Thus the certificate is a small algebraic matrix check, not an enumeration
 of circuits or Boolean functions.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

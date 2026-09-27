@@ -16,7 +16,7 @@ belong to the affine span enlarged by the outputs of gates with index below
 but makes the unrestricted nature of nonlinear feedback explicit.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 

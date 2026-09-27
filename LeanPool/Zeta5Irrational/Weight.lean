@@ -25,7 +25,7 @@ import Mathlib.Tactic.Ring.RingNF
 `w(y) ≤ (32 y + 11) e^{-π y}` for `y > 0` (a crude form of (6.11)), and measurability on `(0, ∞)`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Set Filter Topology
 

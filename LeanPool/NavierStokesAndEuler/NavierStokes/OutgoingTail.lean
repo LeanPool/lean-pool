@@ -367,9 +367,9 @@ theorem releaseSlope_bounds (d : TailData) (t : ℝ) :
   constructor <;> linarith
 
 /-- Release rate, given by `1 + releaseSlope d t`. -/
-def releaseRate (d : TailData) (t : ℝ) : ℝ := 1 + releaseSlope d t
+@[expose] def releaseRate (d : TailData) (t : ℝ) : ℝ := 1 + releaseSlope d t
 /-- Release source, given by `-releaseSlope d t - d.h`. -/
-def releaseSource (d : TailData) (t : ℝ) : ℝ := -releaseSlope d t - d.h
+@[expose] def releaseSource (d : TailData) (t : ℝ) : ℝ := -releaseSlope d t - d.h
 /-- Initial lag, given by `(d.core.lam - d.h) / (1 - d.core.lam)`. -/
 @[expose] def initialLag (d : TailData) : ℝ := (d.core.lam - d.h) / (1 - d.core.lam)
 

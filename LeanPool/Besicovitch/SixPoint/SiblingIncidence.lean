@@ -17,7 +17,7 @@ This file encodes the finite incidence ledger for simultaneous failures of suppo
 are exactly the six, eight, and seven cases left by the fixed diagonal matching.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

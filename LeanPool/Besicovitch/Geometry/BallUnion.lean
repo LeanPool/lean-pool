@@ -14,7 +14,7 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Metric
 This file collects the finite-ball estimates used in the packing-to-measure transfer.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

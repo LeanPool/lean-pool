@@ -28,7 +28,7 @@ import Mathlib.Tactic.Ring.Basic
 Helper lemmas (memberships, root counts, zero-class valuations).
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

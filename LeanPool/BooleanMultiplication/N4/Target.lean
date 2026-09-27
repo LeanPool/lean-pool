@@ -15,7 +15,7 @@ seven target directions.  They make the flag ledger numerically usable while
 keeping all proofs in ordinary linear algebra over `F₂`.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

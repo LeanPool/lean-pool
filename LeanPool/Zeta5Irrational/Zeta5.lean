@@ -14,7 +14,7 @@ import Mathlib.Tactic.NormNum.Pow
 /-! # `ζ(5)` as a real number
 -/
 
-@[expose] public section
+public section
 
 namespace Zeta5Irrational
 

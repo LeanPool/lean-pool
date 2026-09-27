@@ -17,7 +17,7 @@ identity is the reusable form of the manuscript's ledger
 `number of nonredundant gates = target rank + defect rank`.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

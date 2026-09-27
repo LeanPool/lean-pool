@@ -195,6 +195,7 @@ lemma trans_eval_at_half (γ : Dipath x y) (γ' : Dipath y z) :
 /-! ### Mapping dipaths -/
 
 /-- Image of a dipath from `x` to `y` by a directed map -/
+@[expose]
 def map (γ : Dipath x y) {Y : Type*} [DirectedSpace Y] (f : D(X,Y)) : Dipath (f x) (f y) :=
 {
   γ.toPath.map f.continuous_toFun with
@@ -221,7 +222,7 @@ by { ext t; rfl }
 /-! ### Casting dipaths -/
 
 /-- Casting a dipath from `x` to `y` to a dipath from `x'` to `y'` when `x' = x` and `y' = y` -/
-def cast (γ : Dipath x y) {x' y'} (hx : x' = x) (hy : y' = y) : Dipath x' y' :=
+@[expose] def cast (γ : Dipath x y) {x' y'} (hx : x' = x) (hy : y' = y) : Dipath x' y' :=
 { toFun := γ,
   continuous_toFun := γ.continuous,
   dipath_toPath := isDipath_cast γ.toPath hx hy γ.dipath_toPath,
@@ -251,7 +252,7 @@ lemma dipath_of_directed_map_of_to_dimap (γ : Dipath x y) :
 /-! ### Reparametrising a path -/
 
 /-- Reparametrize a dipath by precomposing it with a directed self-map of the unit interval. -/
-def subparam (γ : Dipath x y) (f : D(I,I)) : Dipath (γ (f 0)) (γ (f 1)) :=
+@[expose] def subparam (γ : Dipath x y) (f : D(I,I)) : Dipath (γ (f 0)) (γ (f 1)) :=
 {
   toFun := γ ∘ f
   continuous_toFun := by continuity
@@ -293,7 +294,7 @@ Path.range_reparam γ.toPath f.continuous_toFun hf₀ hf₁
 variable {Y : Type*} [DirectedSpace Y] {x₀ x₁ : X} {y₀ y₁ : Y}
 
 /-- Two dipaths together form a dipath in the product space -/
-def dipathProduct (γ₁ : Dipath x₀ x₁) (γ₂ : Dipath y₀ y₁) : Dipath (x₀, y₀) (x₁, y₁) where
+@[expose] def dipathProduct (γ₁ : Dipath x₀ x₁) (γ₂ : Dipath y₀ y₁) : Dipath (x₀, y₀) (x₁, y₁) where
   toFun := fun t => (γ₁ t, γ₂ t)
   source' := by simp
   target' := by simp
@@ -301,13 +302,13 @@ def dipathProduct (γ₁ : Dipath x₀ x₁) (γ₂ : Dipath y₀ y₁) : Dipath
 
 /-- Given a directed path in a product space, we can project it to its first coordinate to
 obtain a directed path -/
-def ofProductFst (γ : Dipath (x₀, y₀) (x₁, y₁)) : Dipath x₀ x₁ where
+@[expose] def ofProductFst (γ : Dipath (x₀, y₀) (x₁, y₁)) : Dipath x₀ x₁ where
   toPath := γ.toPath.map continuous_fst
   dipath_toPath := γ.dipath_toPath.1
 
 /-- Given a directed path in a product space, we can project it to its second coordinate to
 obtain a directed path -/
-def ofProductSnd (γ : Dipath (x₀, y₀) (x₁, y₁)) : Dipath y₀ y₁ where
+@[expose] def ofProductSnd (γ : Dipath (x₀, y₀) (x₁, y₁)) : Dipath y₀ y₁ where
   toPath := γ.toPath.map continuous_snd
   dipath_toPath := γ.dipath_toPath.2
 

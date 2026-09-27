@@ -19,7 +19,7 @@ where `a` is affine.  The minimum-weight proof is therefore an induction on
 variables, not an enumeration of eight-variable truth tables.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

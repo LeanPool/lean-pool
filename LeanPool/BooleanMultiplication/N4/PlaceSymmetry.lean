@@ -17,7 +17,7 @@ rational place and its first tangent to the zero place.  No circuit states or
 Boolean functions are enumerated.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

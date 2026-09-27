@@ -319,7 +319,7 @@ theorem Module.Dual.isPosMap_of_matrix (φ : Module.Dual 𝕜 (Matrix n n 𝕜))
 /--
 A linear functional $f$ on $M_n$ is said to be faithful if $f(x^*x)=0$ if and only if $x=0$ for any
   $x \in M_n$. -/
-def Module.Dual.IsFaithful {A : Type _} [NonUnitalSemiring A] [StarRing A] [Module 𝕜 A]
+@[expose] def Module.Dual.IsFaithful {A : Type _} [NonUnitalSemiring A] [StarRing A] [Module 𝕜 A]
     (φ : Module.Dual 𝕜 A) : Prop :=
   ∀ a : A, φ (star a * a) = 0 ↔ a = 0
 
@@ -721,7 +721,7 @@ variable {k : Type _} [Fintype k] {s : k → Type _}
     [Π i, Fintype (s i)] [Π i, DecidableEq (s i)]
 
 /-- The finite product inner-product core induced by faithful positive matrix functionals. -/
-@[reducible]
+@[expose, reducible]
 noncomputable def Module.Dual.PiInnerProductCore
   {φ : Π i, Module.Dual ℂ (Matrix (s i) (s i) ℂ)}
   [hφ : Π i, (φ i).IsFaithfulPosMap] :
@@ -763,8 +763,7 @@ noncomputable def Module.Dual.PiInnerProductCore
 /--
 The normed additive group on a finite product induced by faithful positive matrix functionals.
 -/
-@[reducible]
-noncomputable def Module.Dual.PiNormedAddCommGroup
+@[expose, reducible] noncomputable def Module.Dual.PiNormedAddCommGroup
   {φ : Π i, Module.Dual ℂ (Matrix (s i) (s i) ℂ)}
   [_hφ : Π i, (φ i).IsFaithfulPosMap] :
   _root_.NormedAddCommGroup (PiMat ℂ k s) :=

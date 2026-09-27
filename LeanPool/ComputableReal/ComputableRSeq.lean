@@ -223,7 +223,7 @@ theorem ext {x y : ComputableℝSeq} (h₁ : ∀ n, x.lb n = y.lb n) (h₂ : ∀
   mk'.injEq _ _ _ _ _ _ _ _ _ _ ▸ (funext fun n ↦ NonemptyInterval.ext (Prod.ext (h₁ n) (h₂ n)))
 
 /-- All rational numbers `q` have a computable sequence: the constant sequence `q`. -/
-def ofRat (q : ℚ) : ComputableℝSeq :=
+@[expose] def ofRat (q : ℚ) : ComputableℝSeq :=
   mk q
     (fun _ ↦ NonemptyInterval.pure q)
     (IsCauSeq.const q) (IsCauSeq.const q)

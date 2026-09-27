@@ -398,7 +398,7 @@ theorem setIntegral_centered_eq_radiallyContinued_mk0
 
 open Classical in
 /-- A centered continued class theta integral used in the Odlyzko-bound argument. -/
-noncomputable def centeredContinuedClassThetaIntegral
+@[expose] noncomputable def centeredContinuedClassThetaIntegral
     (C : ClassGroup (𝓞 K)) (s : ℂ) : ℂ :=
   (torsionOrder K : ℂ)⁻¹ *
     (2 : ℂ) ^ nrComplexPlaces K *

@@ -31,7 +31,7 @@ import Mathlib.Tactic.Ring.RingNF
   `2 log(2K) + 2` in place of `2 log K + 2` in the upper error bound.
 -/
 
-@[expose] public section
+public section
 
 open Filter Topology Set MeasureTheory Finset
 

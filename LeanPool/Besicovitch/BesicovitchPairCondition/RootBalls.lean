@@ -13,7 +13,7 @@ public import LeanPool.Besicovitch.Statement
 The direct pair-condition transfer charges both child extractions to one union of root balls.
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.Besicovitch
 

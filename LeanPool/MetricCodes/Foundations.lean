@@ -5702,7 +5702,7 @@ theorem terminal_indicator_edge_sum
   simp only [terminalIndicator, ite_eq_left h₁, ite_eq_left h₂, mul_one]
 
 /-- The terminal vector used in the binary-code argument. -/
-def terminalVector (k L m : ℕ) : Space k L :=
+@[expose] def terminalVector (k L m : ℕ) : Space k L :=
   WithLp.toLp 2
     (fun p : Fin (L - k + 1) => terminalIndicator (L - k) m p.val)
 
@@ -8122,7 +8122,7 @@ def johnsonRecurrenceNormalization
   ∑ i : Index p q L, johnsonRecurrenceWeight n w p q L v i
 
 /-- The johnson fibre amplitude used in the Johnson-code argument. -/
-def johnsonFibreAmplitude
+@[expose] def johnsonFibreAmplitude
     (n w p q L : ℕ) (v : Space p q L) (i : Index p q L) : ℝ :=
   Real.sqrt
     (johnsonRecurrenceWeight n w p q L v i /
@@ -8630,7 +8630,7 @@ end AsymptoticParameters
   simp only [shellRate, rankPenalty, zero_div, binaryEntropy_zero, mul_zero, add_zero, sub_zero]
 
 /-- The predicate asserting spectrally feasible. -/
-def IsSpectrallyFeasible (δ α β γ u : ℝ) : Prop :=
+@[expose] def IsSpectrallyFeasible (δ α β γ u : ℝ) : Prop :=
   asymptoticThreshold δ α < spectralLimit α β γ u
 
 /-- The feasible used in the Johnson-code argument. -/
@@ -8639,7 +8639,7 @@ def IsSpectrallyFeasible (δ α β γ u : ℝ) : Prop :=
     IsSpectrallyFeasible δ α β γ u
 
 /-- The rate set used in the Johnson-code argument. -/
-def rateSet (δ : ℝ) : Set ℝ :=
+@[expose] def rateSet (δ : ℝ) : Set ℝ :=
   {r | ∃ α β γ u : ℝ,
     Feasible δ α β γ u ∧ r = shellRate α β γ u}
 
@@ -8650,7 +8650,7 @@ theorem rateSet_bddBelow (δ : ℝ) :
   exact hparameter.shellRate_lower
 
 /-- The variational rate used in the Johnson-code argument. -/
-def variationalRate (δ : ℝ) : ℝ :=
+@[expose] def variationalRate (δ : ℝ) : ℝ :=
   sInf (rateSet δ)
 
 theorem variationalRate_le_of_feasible {δ α β γ u : ℝ}

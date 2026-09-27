@@ -16,7 +16,7 @@ the two linear differences.  Their quadratic wedge shadow therefore lies in
 one of the three support-pair spaces certified in `QuarticAllPairs`.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

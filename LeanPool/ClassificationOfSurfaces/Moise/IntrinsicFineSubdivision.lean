@@ -33,7 +33,7 @@ noncomputable def facePoint (t : K.Face) (v : t.1) : K.realization :=
   K.vertexPoint ⟨v.1, t.1, t.2, v.2⟩
 
 @[simp] theorem facePoint_val (t : K.Face) (v : t.1) :
-    (K.facePoint t v).1 = Pi.single v.1 1 := rfl
+    (K.facePoint t v).1 = Pi.single v.1 1 := by rfl
 
 theorem facePoint_mem_faceCarrier (t : K.Face) (v : t.1) :
     K.facePoint t v ∈ K.faceCarrier t.1 :=
@@ -356,7 +356,8 @@ theorem Subdivision.meshLE_trans_midpoint
     change dist ((R.homeo (R.refined.midpointEval x)).1)
       ((R.homeo (R.refined.midpointEval y)).1) = _
     rw [ha _ hxParent, ha _ hyParent]
-    rfl
+    exact congrArg₂ (fun u v => dist (a u) (a v))
+      (R.refined.midpointEval_val x) (R.refined.midpointEval_val y)
   rw [hxy]
   refine hvw.trans ?_
   have hbv : b (R.refined.midpointComplex.facePoint S v).1 =
@@ -405,12 +406,12 @@ noncomputable def iteratedMidpointSubdivision (K : IntrinsicTwoComplex) :
       R.trans R.refined.midpointSubdivision
 
 @[simp] theorem iteratedMidpointSubdivision_zero (K : IntrinsicTwoComplex) :
-    K.iteratedMidpointSubdivision 0 = Subdivision.refl K := rfl
+    K.iteratedMidpointSubdivision 0 = Subdivision.refl K := by rfl
 
 theorem iteratedMidpointSubdivision_succ (K : IntrinsicTwoComplex) (n : ℕ) :
     K.iteratedMidpointSubdivision (n + 1) =
       (K.iteratedMidpointSubdivision n).trans
-        (K.iteratedMidpointSubdivision n).refined.midpointSubdivision := rfl
+        (K.iteratedMidpointSubdivision n).refined.midpointSubdivision := by rfl
 
 /-- Every iterated midpoint refinement preserves the surface edge-valence bound. -/
 theorem hasSurfaceEdgeValence_iteratedMidpointSubdivision

@@ -138,7 +138,7 @@ section Translation
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
 
 /-- Actual translation by a real covering-space parameter. -/
-def translate (a : LiftTangent) : CylinderL2 period V →ₗᵢ[ℝ] CylinderL2 period V :=
+@[expose] def translate (a : LiftTangent) : CylinderL2 period V →ₗᵢ[ℝ] CylinderL2 period V :=
   Lp.compMeasurePreservingₗᵢ ℝ (fun x : LiftDomain period => x+coveringMap period a)
     (measurePreserving_translation period (coveringMap period a))
 
@@ -180,7 +180,8 @@ theorem translate_continuous (u : CylinderL2 period V) :
 variable {K : Type*} [TopologicalSpace K] [CompactSpace K]
 
 /-- The same mixed translation on actual continuous time paths. -/
-def pathTranslate (a : LiftTangent) : C(K,CylinderL2 period V) →L[ℝ] C(K,CylinderL2 period V) :=
+@[expose] def pathTranslate (a : LiftTangent) :
+    C(K,CylinderL2 period V) →L[ℝ] C(K,CylinderL2 period V) :=
   (translate period a).toContinuousLinearMap.compLeftContinuous ℝ K
 
 omit [CompactSpace K] in

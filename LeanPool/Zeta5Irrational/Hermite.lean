@@ -39,7 +39,7 @@ import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 * `g(y) = y⁵ / (12 (y² + a²))` and its derivatives `g₁, …, g₄`.
 -/
 
-@[expose] public section
+public section
 
 open Filter Topology Finset
 

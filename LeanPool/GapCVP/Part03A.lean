@@ -1569,7 +1569,7 @@ theorem canonicalYesInstance_gapYES : gapYES canonicalYesInstance := by
   norm_num [canonicalYesInstance]
 
 /-- GapCVP reduction support. -/
-def canonicalYesWord : List Bool :=
+@[expose] def canonicalYesWord : List Bool :=
   BinaryEncoding.encodeGapCVPInstance canonicalYesInstance
 
 end SourceMachineRouting

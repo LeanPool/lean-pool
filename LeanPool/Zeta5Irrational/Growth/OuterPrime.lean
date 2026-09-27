@@ -26,7 +26,7 @@ import Mathlib.Algebra.Order.Floor.Semifield
 For a nonzero class `c`, the number of class members in `(X, Y]` is `SX p Y c - SX p X c`.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

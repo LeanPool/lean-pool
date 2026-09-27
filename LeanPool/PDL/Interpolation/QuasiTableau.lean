@@ -89,7 +89,7 @@ by the invariant. Otherwise it has a unique child of type 2, which has a unique 
 type 3, whose children are given by `step` and are again of type 1.
 Note that only nodes of type 1 add their label to the history — this is the "identify
 repeats at the first opportunity" from Definition 9.11. -/
-def QuasiTab.build (inC : Finset Sequent) (step : Sequent → List Sequent)
+@[expose] def QuasiTab.build (inC : Finset Sequent) (step : Sequent → List Sequent)
     (Hist : List Sequent) (Δ : Sequent) : QuasiTab :=
   -- The hypothesis `_h` is only used in the termination proof below.
   if _h : Δ ∈ inC ∧ Δ ∉ Hist then
@@ -214,7 +214,8 @@ lemma LoadedCluster.root_rightOnly_mem_lambdaTwo {X} {tab : Tableau [] X} (C : L
 
 /-- Def 9.8: the quasi-tableau associated with the cluster `C`. Its root has type 1 and is
 labelled with the right component `Λ₂(r)` of the root `r` of the cluster. -/
-noncomputable def LoadedCluster.Q {X} {tab : Tableau [] X} (C : LoadedCluster tab) : QuasiTab :=
+@[expose] noncomputable def LoadedCluster.Q {X} {tab : Tableau [] X}
+    (C : LoadedCluster tab) : QuasiTab :=
   QuasiTab.build C.lambdaTwo (Finset.pdlSeqSort ∘ C.stepOf) [] (nodeAt C.root).rightOnly
 
 @[simp]
@@ -256,15 +257,16 @@ lemma LoadedCluster.Q_leaf_typ {X} {tab : Tableau [] X} (C : LoadedCluster tab)
 /-- Def 9.10: the region `Rₓ ⊆ C⁺` represented by a node `x` of the quasi-tableau.
 For type 1 and 2 these are all nodes of `C⁺` with right component `Δₓ`, and for type 3
 those nodes of `C` with right component `Δₓ` where a right rule is applied. -/
-noncomputable def LoadedCluster.region {X} {tab : Tableau [] X} (C : LoadedCluster tab) :
+@[expose] noncomputable def LoadedCluster.region {X} {tab : Tableau [] X}
+    (C : LoadedCluster tab) :
     Typ → Sequent → Finset (FinePathIn tab)
   | .one, Δ => C.plusNodesWithFine Δ
   | .two, Δ => C.plusNodesWithFine Δ
   | .three, Δ => (C.nodesWithFineRight Δ).toFinset -- FIXME make Finset already in Cluster.lean?
 
 /-- Def 9.10, applied to a node of the quasi-tableau. -/
-noncomputable def LoadedCluster.regionOf {X} {tab : Tableau [] X} (C : LoadedCluster tab) (q :
-  QuasiTab) :
+@[expose] noncomputable def LoadedCluster.regionOf {X} {tab : Tableau [] X}
+    (C : LoadedCluster tab) (q : QuasiTab) :
     Finset (FinePathIn tab) := C.region q.typ q.label
 
 /-! ### Addresses: the nodes of a quasi-tableau (Def 9.11)
@@ -316,7 +318,7 @@ def isNodeAt (q : QuasiTab) (x : List Nat) : Bool := (q.atOpt x).isSome
 @[expose] def leaves (q : QuasiTab) : List (List Nat) := q.addresses.filter q.isLeafAt
 
 /-- `r_Q`, the root. -/
-def rootAddress : List Nat := []
+@[expose] def rootAddress : List Nat := []
 
 /-- `x ≤_Q y`, the reflexive-transitive closure of `⋖Q`, which on addresses is the prefix
 order. -/

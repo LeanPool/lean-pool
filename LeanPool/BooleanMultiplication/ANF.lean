@@ -16,7 +16,7 @@ set union, so the resulting monoid algebra over `ZMod 2` is exactly the Boolean
 ANF quotient in canonical normal form.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 

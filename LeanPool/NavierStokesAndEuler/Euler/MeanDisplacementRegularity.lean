@@ -146,7 +146,7 @@ theorem productDerivative_mem_mean (v : TimeLp T solenoidalSpace) :
   exact (terminalPrimitive T hT v t).property
 
 /-- A genuine bounded map from solenoidal label derivatives to admissible mean tests. -/
-def meanTestMap : TimeLp T solenoidalSpace →L[ℝ] meanDerivatives T hT FInv :=
+@[expose] def meanTestMap : TimeLp T solenoidalSpace →L[ℝ] meanDerivatives T hT FInv :=
   (productDerivative T hT (solenoidalFrame T F) (solenoidalFrame T F')).codRestrict
     (meanDerivatives T hT FInv) (productDerivative_mem_mean T hT FInv F F' hF hInv)
 

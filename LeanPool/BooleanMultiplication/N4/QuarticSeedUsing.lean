@@ -18,7 +18,7 @@ actual target-ambient product `F = (g + a) * c` outside the rational-low
 state.  This is the precise input to the quartic idempotence argument.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

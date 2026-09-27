@@ -295,7 +295,7 @@ of type 1 or 2 is the label of the node of type 3 below it) and it makes the pro
 invariant under passing from a node of type 1 or 2 to its unique child. -/
 
 /-- There is a node of type 3 with a basic label on the path from `x` to `z`. -/
-def QuasiTab.BasicBetween (q : QuasiTab) (x z : List Nat) : Prop :=
+@[expose] def QuasiTab.BasicBetween (q : QuasiTab) (x z : List Nat) : Prop :=
   ∃ y Δ, x <+: y ∧ y <+: z ∧ q.typAt y = some Typ.three ∧ q.labelAt y = some Δ ∧ Δ.basic
 
 /-- `BasicBetween` only grows when we move the left end towards the root. -/

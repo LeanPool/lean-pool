@@ -702,7 +702,7 @@ noncomputable def torusDescent {W : Type} (f : Plane → W) (hf : LatticePeriodi
     (z : Torus) : W := (firstDescent_periodic f hf z.1).lift z.2
 
 theorem torusDescent_coe {W : Type} (f : Plane → W) (hf : LatticePeriodic f) (Y : Plane) :
-    torusDescent f hf (TorusAverages.quotientPoint Y) = f Y := rfl
+    torusDescent f hf (TorusAverages.quotientPoint Y) = f Y := by rfl
 
 theorem torusDescent_continuous {W : Type} [TopologicalSpace W] {f : Plane → W}
     (hf : LatticePeriodic f) (hc : Continuous f) : Continuous (torusDescent f hf) := by
@@ -727,7 +727,7 @@ omit [NormedSpace ℝ P] in
 omit [NormedAddCommGroup P] in
 theorem commonOnTorus_coe (κ : Plane → ℝ) (p : P) (hp : PeriodicAt d.source p) (Y : Plane) :
     d.commonOnTorus g hab κ p hp (TorusAverages.quotientPoint Y) =
-      d.commonSolve g hab κ (p, Y) := rfl
+      d.commonSolve g hab κ (p, Y) := by rfl
 
 /-! Joint regularity is derived from the actual ODE construction. -/
 

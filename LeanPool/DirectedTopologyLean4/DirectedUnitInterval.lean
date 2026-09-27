@@ -31,7 +31,7 @@ instance : DirectedSpace I := DirectedSpace.Preorder I
 
 /-- The identity on I as a path I → I.
 -/
-def IdentityPath : Path (0 : I) (1 : I) :=
+@[expose] def IdentityPath : Path (0 : I) (1 : I) :=
 {
   toFun := fun x => x,
   continuous_toFun := by continuity,

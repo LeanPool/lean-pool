@@ -278,7 +278,7 @@ theorem chart_mem_maximalAtlas (i : Fin PU.n) : PU.chart i ∈ maximalAtlas 𝓘
   IsManifold.chart_mem_maximalAtlas _
 
 /-- The compact planar carrier of the `i`-th partition member. -/
-def K (i : Fin PU.n) : Set ℂ := ⇑(PU.chart i) '' tsupport (PU.ψ i)
+@[expose] def K (i : Fin PU.n) : Set ℂ := ⇑(PU.chart i) '' tsupport (PU.ψ i)
 
 omit [IsManifold 𝓘(ℂ, ℂ) ω X] [T2Space X] in
 theorem isCompact_K (i : Fin PU.n) : IsCompact (PU.K i) := by

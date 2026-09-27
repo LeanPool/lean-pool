@@ -16,7 +16,7 @@ search over circuits.  Subsequent proofs consume the named rational, tangent,
 and degree-two-place families rather than raw bit patterns.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

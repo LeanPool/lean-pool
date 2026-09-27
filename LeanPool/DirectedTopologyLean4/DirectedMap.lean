@@ -57,7 +57,7 @@ section DirectedMapClass
 variable {F α β : Type*} [DirectedSpace α] [DirectedSpace β] [FunLike F α β]
     [hF : DirectedMapClass F α β]
 /-- Coerce a member of a `DirectedMapClass` to the bundled directed map type `D(α, β)`. -/
-@[coe] def toDirectedMap (f : F) : D(α,β) := ⟨f, map_directed f⟩
+@[coe, expose] def toDirectedMap (f : F) : D(α,β) := ⟨f, map_directed f⟩
 instance : CoeTC F D(α,β) := ⟨toDirectedMap⟩
 
 end DirectedMapClass

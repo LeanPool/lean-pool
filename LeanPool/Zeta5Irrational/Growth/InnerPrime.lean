@@ -28,7 +28,7 @@ with `q = ⌊K/p⌋`, `q' = ⌊N/p⌋`, `B = 12q' - 2q - 4`, the class counts `a
 `ClassSum`, and the layer-cake function `T`.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

@@ -16,7 +16,7 @@ in their plane, excludes the zero feedback, and applies the rational
 annihilator classification.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

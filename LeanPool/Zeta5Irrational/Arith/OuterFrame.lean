@@ -32,7 +32,7 @@ an integral product `U V`; with weights `w ≤ 0` for the integral part this giv
 `v_p^G(Δ) ≥ 2 ∑ w - r`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

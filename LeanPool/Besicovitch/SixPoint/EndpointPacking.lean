@@ -18,7 +18,7 @@ This file assembles the finite failure tree.  Its sole analytic input is the wei
 bound for two ordered chords in the unit disk.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

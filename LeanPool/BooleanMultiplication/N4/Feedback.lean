@@ -18,7 +18,7 @@ the manuscript and derive the zero-wedge structure needed by the low--low
 second-feedback exclusion.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

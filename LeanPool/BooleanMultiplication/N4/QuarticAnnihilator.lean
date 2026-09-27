@@ -16,7 +16,7 @@ nonzero rational coefficient vectors and 128 Hankel words.  It is an
 algebraic coordinate check, not a circuit or truth-table enumeration.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

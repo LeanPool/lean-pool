@@ -59,11 +59,11 @@ abbrev MidpointVertex := K.Vertex ⊕ K.Edge
     Sum.inr (K.faceEdge t (i + 2))}
 
 /-- The central triangle of the midpoint subdivision of an old face. -/
-noncomputable def midpointCentralFace (t : K.Face) : Finset K.MidpointVertex :=
+@[expose] noncomputable def midpointCentralFace (t : K.Face) : Finset K.MidpointVertex :=
   Finset.univ.image (fun i : ZMod 3 => Sum.inr (K.faceEdge t i))
 
 /-- The four midpoint triangles belonging to one old face. -/
-noncomputable def midpointFacesOver (t : K.Face) : Finset (Finset K.MidpointVertex) :=
+@[expose] noncomputable def midpointFacesOver (t : K.Face) : Finset (Finset K.MidpointVertex) :=
   (Finset.univ.image (K.midpointCornerFace t)) ∪ {K.midpointCentralFace t}
 
 /-- All maximal faces in the midpoint subdivision. -/
@@ -113,7 +113,7 @@ theorem midpointFacesOver_card (t : K.Face) {s : Finset K.MidpointVertex}
     exact K.midpointCentralFace_card t
 
 /-- The finite abstract complex underlying midpoint subdivision. -/
-noncomputable def midpointComplex : IntrinsicTwoComplex where
+@[expose] noncomputable def midpointComplex : IntrinsicTwoComplex where
   Vertex := K.MidpointVertex
   faces := K.midpointFaces
   faces_card := by
@@ -1340,7 +1340,7 @@ noncomputable def midpointEval (x : K.midpointComplex.realization) : K.realizati
   exact ⟨t.1, t.2, fun v hv => K.midpointEvalAffine_support t hst hxs hv⟩
 
 @[simp] theorem midpointEval_val (x : K.midpointComplex.realization) :
-    (K.midpointEval x).1 = K.midpointEvalAffine x.1 := rfl
+    (K.midpointEval x).1 = K.midpointEvalAffine x.1 := by rfl
 
 theorem continuous_midpointEval : Continuous K.midpointEval := by
   apply Continuous.subtype_mk
@@ -1379,10 +1379,10 @@ noncomputable def midpointHomeomorph :
     K.continuous_midpointEval
 
 @[simp] theorem midpointHomeomorph_apply (x : K.midpointComplex.realization) :
-    K.midpointHomeomorph x = K.midpointEval x := rfl
+    K.midpointHomeomorph x = K.midpointEval x := by rfl
 
 /-- The intrinsic 1-to-4 midpoint subdivision, with its canonical faithful realization map. -/
-noncomputable def midpointSubdivision : K.Subdivision where
+@[expose] noncomputable def midpointSubdivision : K.Subdivision where
   refined := K.midpointComplex
   homeo := K.midpointHomeomorph
   affineOnFace := by
@@ -1397,7 +1397,7 @@ noncomputable def midpointSubdivision : K.Subdivision where
     K.midpointSubdivision.refined = K.midpointComplex := rfl
 
 theorem midpointSubdivision_homeo_apply (x : K.midpointComplex.realization) :
-    K.midpointSubdivision.homeo x = K.midpointEval x := rfl
+    K.midpointSubdivision.homeo x = K.midpointEval x := by rfl
 
 end IntrinsicTwoComplex
 

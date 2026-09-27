@@ -13,7 +13,7 @@ public import LeanPool.Besicovitch.Statement
 This file records exactly the metric assumptions in the finite six-point problem.
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.Besicovitch
 

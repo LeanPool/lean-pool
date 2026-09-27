@@ -16,7 +16,7 @@ certificate are projected.  Their product formula is proved on the
 representation of all 210 coordinates of `Λ⁴(F₂⁸)`.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

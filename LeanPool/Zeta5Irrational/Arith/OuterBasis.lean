@@ -19,7 +19,7 @@ row `(c, i)` (`i < Lo c`) is `tpol (rootsO c i)` with
 where `big c` are the tail poles of class `c` above `p`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

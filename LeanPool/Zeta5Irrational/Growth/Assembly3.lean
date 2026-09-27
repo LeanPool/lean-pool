@@ -24,7 +24,7 @@ import Mathlib.Tactic.Ring.Basic
 /-! # Growth: the per-range sums as prime sums
 -/
 
-@[expose] public section
+public section
 
 open Finset Filter
 

@@ -60,7 +60,7 @@ lemma bodySystem_take' (x : BodySystemObj T) (h : m ≤ k) :
   rw [bodySystem_take_val]
   exact congrArg (fun j ↦ (x.res j).val) (inf_of_le_right h)
 /-- an isomorph of `bodyFunctor` that is more convenient to build levelwise -/
-@[simps obj] def bodySystem : Trees ⥤ Type* where
+@[expose, simps obj] def bodySystem : Trees ⥤ Type* where
   obj T := BodySystemObj T
   map {S T} f := TypeCat.ofHom fun x : BodySystemObj S ↦ ({
     res := fun k ↦ (resEq k).map f (x.res k)
@@ -80,7 +80,7 @@ abbrev ofObj (x : bodySystem.obj T) : BodySystemObj T :=
   (Equiv.cast (by dsimp [bodySystem] : bodySystem.obj T = BodySystemObj T)).injective h
 end BodySystemObj
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps] def bodyEquivSystemApp (T : Trees) : body T.2 ≃ BodySystemObj T where
+@[expose, simps] def bodyEquivSystemApp (T : Trees) : body T.2 ≃ BodySystemObj T where
   toFun x := {
     res := fun k ↦ ⟨x.val.take k, by simp⟩
     con := by simp
@@ -102,7 +102,7 @@ end BodySystemObj
     · exact List.IsPrefix.getElem (xs := (x.res (m + 1)).val) (ys := (x.res n).val)
         ((bodySystem_con' x).mpr (by omega)) (by rw [resEq_len]; omega)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps! -isSimp] def bodyEquivSystem : bodyFunctor ≅ bodySystem := NatIso.ofComponents
+@[expose, simps! -isSimp] def bodyEquivSystem : bodyFunctor ≅ bodySystem := NatIso.ofComponents
   (fun T ↦ eqToIso (by rfl : bodyFunctor.obj T = body T.2) ≪≫
     (bodyEquivSystemApp T).toIso ≪≫
     eqToIso (by dsimp [bodySystem] : BodySystemObj T = bodySystem.obj T)) (by
@@ -159,7 +159,7 @@ end BodySystemObj
   IsPosition (A := no_index _) (Tree.pInv f x h).val p ↔ IsPosition x.val p := by synthIsPosition
 
 /-- a strategy defined only on positions up to length k -/
-def ResStrategy (T : Trees) (p : Player) (k : ℕ) :=
+@[expose] def ResStrategy (T : Trees) (p : Player) (k : ℕ) :=
   ∀ x : T, IsPosition x.val p → x.val.length ≤ k → ExtensionsAt x
 namespace ResStrategy
 @[ext] lemma ext {S S' : ResStrategy T p k} (h : ∀ x hp hl, S x hp hl = S' x hp hl) : S = S' :=
@@ -253,7 +253,7 @@ end ResStrategy
     simp_rw [← ih (by simp), Nat.add_succ, ← (S.str (k + n + 1)).res_trans k
       (k + n) (k + n + 1) (by omega) (by omega), S.con]
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps] def strategyEquivSystem : Strategy T.2 p ≃ StrategySystem T p where
+@[expose, simps] def strategyEquivSystem : Strategy T.2 p ≃ StrategySystem T p where
   toFun S := {
     str := fun _ x h _ ↦ S x h
     con := fun _ ↦ rfl

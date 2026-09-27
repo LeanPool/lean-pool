@@ -18,7 +18,7 @@ For a multiset `M` of integers, `tpol M = ∏_{γ ∈ M} (t + γ²)`. Its pullba
 `μ_X(tpol M / D_K)`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

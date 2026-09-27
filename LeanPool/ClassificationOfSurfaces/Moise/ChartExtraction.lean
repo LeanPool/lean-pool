@@ -63,7 +63,7 @@ noncomputable def recenter (p : Plane) (ε : ℝ) (hε : ε ≠ 0) : Plane ≃�
 variable {p : Plane} {ε : ℝ}
 
 theorem recenter_apply (hε : ε ≠ 0) (v : Plane) :
-    recenter p ε hε v = ε⁻¹ • (v + -p) := rfl
+    recenter p ε hε v = ε⁻¹ • (v + -p) := by rfl
 
 theorem recenter_symm_apply (hε : ε ≠ 0) (w : Plane) :
     (recenter p ε hε).symm w = ε • w + p := by
@@ -170,7 +170,7 @@ def halfDiskModelToHalfSpace :
 
 @[simp] theorem halfDiskModelToHalfSpace_val
     (p : ChartKind.halfDisk.modelRegion) :
-    (halfDiskModelToHalfSpace p).1 = p.1 :=
+    (halfDiskModelToHalfSpace p).1 = p.1 := by
   rfl
 
 /-- The half-disk model is an open subset of the Euclidean half-space. -/

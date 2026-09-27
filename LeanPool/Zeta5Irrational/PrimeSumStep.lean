@@ -19,7 +19,7 @@ of a partition `a = c_0 < ⋯ < c_r = b`, then
 `K² ∑_j v_j (1/c_j² - 1/c_{j+1}²)/2 + o(K²)`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Filter Topology Set
 

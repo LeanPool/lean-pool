@@ -120,7 +120,7 @@ def pressureL2Operator (A : SmoothCoefficient period) (κ : ℝ) (m : Vector3) (
 theorem pressureL2Operator_apply (A : SmoothCoefficient period) (κ : ℝ) (m : Vector3) (c : ℝ) (hc :
     0 < c)
     (hpos : ∀ x v, c * ‖v‖ ^ 2 ≤ ⟪A.coefficient x v, v⟫_ℝ) (f : LiftL2 period) :
-    pressureL2Operator period A κ m c hc hpos f = A.pressure κ m c hc hpos f := rfl
+    pressureL2Operator period A κ m c hc hpos f = A.pressure κ m c hc hpos f := by rfl
 
 /-- The genuine coercive projected pressure inverse is a bounded map on every finite Sobolev space.
 -/

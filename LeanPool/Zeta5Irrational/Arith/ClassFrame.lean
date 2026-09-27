@@ -26,7 +26,7 @@ Classes `a = 0, …, m` (with `p = 2m + 1`), dimensions `L a` with `∑ L = h`, 
 entry inequalities, then `v_p^G(Δ) ≥ 2 ∑ w`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

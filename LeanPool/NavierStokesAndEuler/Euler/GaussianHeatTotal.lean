@@ -62,7 +62,7 @@ def heatListOperator (directions : List LiftTangent) (v : ℝ≥0) : LiftL2 peri
 
 @[simp] theorem heatListOperator_apply (directions : List LiftTangent) (v : ℝ≥0) (f : LiftL2
     period) :
-    heatListOperator period directions v f = heatList period directions v f := rfl
+    heatListOperator period directions v f = heatList period directions v f := by rfl
 
 theorem heatList_translation (directions : List LiftTangent) (v : ℝ≥0) (b : LiftDomain period) (f :
     LiftL2 period) :
@@ -99,9 +99,9 @@ theorem heatList_semigroup (directions : List LiftTangent) (v w : ℝ≥0) (f : 
 /-- A Lipschitz estimate for the Gaussian operator in its input field. -/
 theorem lineHeat_dist_le (a : LiftTangent) (v : ℝ≥0) (f g : LiftL2 period) :
     dist (lineHeat period a v f) (lineHeat period a v g) ≤ dist f g := by
-  change dist (lineHeatOperator period a v f) (lineHeatOperator period a v g) ≤ dist f g
+  rw [← lineHeatOperator_apply, ← lineHeatOperator_apply]
   rw [dist_eq_norm, ← map_sub, dist_eq_norm]
-  exact lineHeat_norm_le period a v (f-g)
+  simpa only [lineHeatOperator_apply] using lineHeat_norm_le period a v (f-g)
 
 /-- Joint continuity follows from contraction in the field and strong continuity in variance. -/
 theorem lineHeat_joint_continuous (a : LiftTangent) :

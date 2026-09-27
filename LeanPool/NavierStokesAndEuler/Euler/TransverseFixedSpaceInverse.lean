@@ -156,6 +156,7 @@ theorem fixedFrameSolver_eq_transverse (m : Icc (0 : ℝ) T → E)
     (transverseForward T hT Q Q₁ hd m hTangent v)
   have hu := congrArg (fun z : transverseDerivatives T hT m => (z : TimeLp T E))
     (transverseForward_backward T hT Q Q₁ c hc hQ hd m hTangent hRange u)
+  simp only [transversePrimitive_apply, transverseForward_coe] at hu h
   change fixedFrameDerivative T hT Q Q₁ (transverseBackward T hT Q Q₁ c hc hQ hd m u) =
     (u : TimeLp T E) at hu
   change ⟪fixedFrameDerivative T hT Q Q₁ (transverseBackward T hT Q Q₁ c hc hQ hd m u),

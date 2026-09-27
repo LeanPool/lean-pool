@@ -16,7 +16,7 @@ vectors dependent, so the cross block is an outer product and every Hankel
 minor vanishes.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

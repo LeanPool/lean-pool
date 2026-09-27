@@ -171,7 +171,7 @@ lemma Spl_ne_nil (ι : QFormula Var) : ι.Spl ≠ [] := by
   | boxes as ι IH => simpa [Spl] using IH
 
 /-- Def 9.16: the normal form `ι^nf` of a Q-formula, the conjunction of `Spl(ι)`. -/
-def nf (ι : QFormula Var) : QFormula Var := conj (ι.Spl.map QSimple.toQ)
+@[expose] def nf (ι : QFormula Var) : QFormula Var := conj (ι.Spl.map QSimple.toQ)
 
 /-- Being *in normal form*: a conjunction of simple Q-formulas. -/
 def IsNormalForm (ι : QFormula Var) : Prop := ∃ L : List (QSimple Var), ι = conj (L.map QSimple.toQ)

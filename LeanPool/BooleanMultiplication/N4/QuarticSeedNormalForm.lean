@@ -16,7 +16,7 @@ remaining seed-using type is recorded together with its two Boolean
 idempotence equations and the rational-annihilator certificate.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

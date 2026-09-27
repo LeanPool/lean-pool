@@ -16,7 +16,7 @@ explicit complementary quadratics; there is no search over circuits or
 Boolean functions.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

@@ -21,7 +21,7 @@ If `top a - 1 ≤ top c` for all `a, c ≠ 0` (P) and `top a - 1 ≤ 2 L 0 + (b 
 (Z), then `v_p^G(Δ) ≥ 2 ∑ w`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

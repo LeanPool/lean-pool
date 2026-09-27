@@ -143,7 +143,7 @@ lemma bracket_leibniz (Z W₁ W₂ : γ.CentralExtension) :
 namespace CentralExtension
 
 /-- The central extension is a Lie ring. -/
-@[expose] instance : LieRing γ.CentralExtension where
+instance : LieRing γ.CentralExtension where
   bracket Z W := γ.bracket Z W
   add_lie Z₁ Z₂ W := by simp
   lie_add Z W₁ W₂ := by simp; rfl
@@ -155,13 +155,13 @@ instance : LieAlgebra 𝕜 γ.CentralExtension where
   lie_smul := γ.bracket_smul
 
 lemma lie_def (Z W : γ.CentralExtension) :
-    ⁅Z, W⁆ = ⟨⁅Z.1, W.1⁆, γ Z.1 W.1⟩ := by rfl
+    ⁅Z, W⁆ = ⟨⁅Z.1, W.1⁆, γ Z.1 W.1⟩ := rfl
 
 @[simp] lemma lie_fst (Z W : γ.CentralExtension) :
-    ⁅Z, W⁆.1 = ⁅Z.1, W.1⁆ := by rfl
+    ⁅Z, W⁆.1 = ⁅Z.1, W.1⁆ := rfl
 
 @[simp] lemma lie_snd (Z W : γ.CentralExtension) :
-    ⁅Z, W⁆.2 = γ Z.1 W.1 := by rfl
+    ⁅Z, W⁆.2 = γ Z.1 W.1 := rfl
 
 end CentralExtension -- namespace
 

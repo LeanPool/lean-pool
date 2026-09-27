@@ -61,7 +61,7 @@ end mkAbelian
 section abelianDerivation
 
 /-- TODO. -/
-def _root_.LieAlgebra.Abelian.DerivationOfLinearMap' {K : Type*} [CommRing K] {L : Type*}
+@[expose] def _root_.LieAlgebra.Abelian.DerivationOfLinearMap' {K : Type*} [CommRing K] {L : Type*}
     [LieRing L] [LieAlgebra K L] [IsLieAbelian L] (f : End K L) :
     LieDerivation K L L := {
   toLinearMap := f,
@@ -71,7 +71,7 @@ def _root_.LieAlgebra.Abelian.DerivationOfLinearMap' {K : Type*} [CommRing K] {L
 }
 
 /-- If `L` is an abelian Lie algebra, any linear endomorphism of L is also a derivation of L. -/
-def _root_.LieAlgebra.Abelian.DerivationOfLinearMap (K L : Type*) [CommRing K] [LieRing L]
+@[expose] def _root_.LieAlgebra.Abelian.DerivationOfLinearMap (K L : Type*) [CommRing K] [LieRing L]
     [LieAlgebra K L] [IsLieAbelian L] :
     End K L ≃ₗ⁅K⁆ LieDerivation K L L := {
   toFun := Abelian.DerivationOfLinearMap',

@@ -35,7 +35,7 @@ noncomputable section
 /-- The single remaining successor step in prepared coordinates.  Unlike the
 comparator theorem, its hypotheses expose the exact prepared polynomial that
 drives generic-fiber elimination. -/
-def PreparedPrimeZeroSetStep (n : ℕ) : Prop :=
+@[expose] def PreparedPrimeZeroSetStep (n : ℕ) : Prop :=
   ∀ {d : ℕ}
     (_hd : 0 < d)
     (a : Fin d → ClassicalComplexWPT.Base n → ℂ)

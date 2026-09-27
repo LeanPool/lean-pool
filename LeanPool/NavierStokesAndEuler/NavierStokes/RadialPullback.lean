@@ -1408,7 +1408,8 @@ theorem pullback_supported {a b d : ℝ} (ha : 0 < a) (hab : a < b) (hd : 0 < d)
     exact (not_lt_of_ge hr.2) (powerChart_gt_right ha hab hd (lt_of_not_ge h))
 
 /-- Physical graph derivative, given by `fderiv ℝ F z (1, (radialJacobian d z.1 * M) • v)`. -/
-noncomputable def physicalGraphDeriv (d M : ℝ) (v : E) (F : ℝ × E → V) (z : ℝ × E) : V :=
+@[expose] noncomputable def physicalGraphDeriv (d M : ℝ) (v : E)
+    (F : ℝ × E → V) (z : ℝ × E) : V :=
   fderiv ℝ F z (1, (radialJacobian d z.1 * M) • v)
 
 /-- The physical radial graph derivative is the transformed transport

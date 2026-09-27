@@ -180,6 +180,7 @@ theorem Dchild.self_of {n : Nat} {f : Nat → Nat → Bool} {D : List (List UInt
 /-- What a returning call guarantees: it never asks to jump above the node it was called at, and
 every leaf below the depth it vouches for is accounted for.  `st0` is the state it started from,
 whose incumbent it never loses. -/
+@[expose]
 def Guar (n : Nat) (f : Nat → Nat → Bool) (D : List (List UInt64) → Prop) (path : Array Nat)
     (st0 st : St) : Prop :=
   (∀ j, st.abortTo = some j → j < path.size) ∧

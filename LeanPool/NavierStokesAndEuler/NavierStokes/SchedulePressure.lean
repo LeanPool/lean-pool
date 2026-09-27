@@ -30,7 +30,7 @@ open OutgoingSchedule OutgoingTail
 open scoped Topology ContDiff
 
 /-- Squared clock amplitude, taken from the actual angular schedule at `η=0`. -/
-noncomputable def clockWeight (d : TailData) (y : ℝ) : ℝ := finalAngular d (y, 0) ^ 2
+@[expose] noncomputable def clockWeight (d : TailData) (y : ℝ) : ℝ := finalAngular d (y, 0) ^ 2
 
 /-- The shape exponent decreases from one to zero during flattening. -/
 noncomputable def shapeExponent (d : TailData) (y : ℝ) : ℝ :=

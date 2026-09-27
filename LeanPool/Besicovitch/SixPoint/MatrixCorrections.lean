@@ -15,7 +15,7 @@ public import LeanPool.Besicovitch.SixPoint.NormEstimates
 Certificate families use these signed corrections to dominate their off-diagonal residuals.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

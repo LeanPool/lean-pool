@@ -57,7 +57,7 @@ structure PartsCertificate where
   nodes : Array (Array PartsTreeNode)
 
 /-- Constant-depth lookup in a tree stored as 64-node chunks. -/
-def partsTreeNodeAt (nodes : Array (Array PartsTreeNode)) (index : Nat) :
+@[expose] def partsTreeNodeAt (nodes : Array (Array PartsTreeNode)) (index : Nat) :
     Option PartsTreeNode :=
   match nodes[index / 64]? with
   | none => none

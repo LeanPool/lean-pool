@@ -41,8 +41,7 @@ def circleToClosedUnitDisk (z : Circle) : ClosedUnitDisk :=
     rw [Circle.norm_coe]⟩
 
 @[simp] theorem circleToClosedUnitDisk_coe (z : Circle) :
-    (circleToClosedUnitDisk z : ℂ) = z :=
-  rfl
+    (circleToClosedUnitDisk z : ℂ) = z := by rfl
 
 theorem continuous_circleToClosedUnitDisk : Continuous circleToClosedUnitDisk := by
   apply Continuous.subtype_mk

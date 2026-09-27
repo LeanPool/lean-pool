@@ -17,7 +17,7 @@ variables.  Thus the factor has the manuscript form
 projection and six explicit exterior coordinates.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

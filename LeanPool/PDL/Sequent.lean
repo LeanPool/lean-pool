@@ -845,7 +845,7 @@ instance Sequent.instTotalLe : Std.Total Sequent.le :=
       X.key Y.key⟩
 
 /-- Sort a finite set of sequents into a list, using `Sequent.le`. -/
-def _root_.Finset.pdlSeqSort : Finset Sequent → List Sequent :=
+@[expose] def _root_.Finset.pdlSeqSort : Finset Sequent → List Sequent :=
   fun A => A.sort Sequent.le
 
 @[simp]

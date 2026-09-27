@@ -453,6 +453,8 @@ theorem ord_smul_mero (h : ℳ X) (Θ : MForm X) (x : X) :
 `Classical.choice`-free function `ℳ X → MForm X` via `holoRepr`). -/
 noncomputable def d (f : ℳ X) : MForm X := mk (MFormData.d f)
 
+theorem d_eq_mk (f : ℳ X) : d f = mk (MFormData.d f) := by rfl
+
 theorem d_const (c : ℂ) : d (algebraMap ℂ (ℳ X) c) = 0 :=
   congrArg mk (MFormData.d_const c)
 

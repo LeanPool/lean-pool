@@ -27,7 +27,7 @@ Hence `∫₀^{2π} log ‖z - y(θ)‖ dθ = 2π (log (r/2) + log⁺ ‖q₁‖
 circle-average identity, which gives the closed form `Uω` of (A.1) for real `z`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Set Real intervalIntegral Filter Topology
 

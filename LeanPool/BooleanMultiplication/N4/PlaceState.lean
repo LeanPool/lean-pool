@@ -19,7 +19,7 @@ in both directions.  The only coordinate certificate is the displayed
 `7 × 7` change of Hankel coefficients.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

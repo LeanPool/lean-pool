@@ -15,7 +15,7 @@ This file connects the exact rational tangent certificates to the endpoint and b
 failure witnesses. The only remaining analytic inputs are the five named lens inequalities.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

@@ -18,7 +18,7 @@ and the new low--low product have a genuinely non-rational quadratic
 collision in `Aff + T`.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

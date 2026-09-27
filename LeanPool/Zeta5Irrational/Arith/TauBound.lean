@@ -22,7 +22,7 @@ If `deg P ≤ d` and `v_p(P(m)) ≥ β` for `m = 0, …, d`, then
 `v_p(τ(P)) ≥ β - 4 ⌊log_p (d+1)⌋ - v_p(24)`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

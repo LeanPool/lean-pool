@@ -390,7 +390,7 @@ def edges (faces : Finset (Finset Vertex)) : Finset (Finset Vertex) :=
   faces.biUnion fun t => t.powersetCard 2
 
 /-- Two listed triangles are dual-adjacent when they share a two-vertex face. -/
-def FaceAdjacent (faces : Finset (Finset Vertex)) (f g : Face faces) : Prop :=
+@[expose] def FaceAdjacent (faces : Finset (Finset Vertex)) (f g : Face faces) : Prop :=
   ∃ e : Finset Vertex, e.card = 2 ∧ e ⊆ f.1 ∧ e ⊆ g.1
 
 /-- Two listed triangles are adjacent at `v` when they share a two-vertex face containing `v`.
@@ -584,7 +584,7 @@ theorem IsVertexStarConnected.isDualConnected
       exact hstar v a b (Finset.mem_inter.mp hv).1
         (Finset.mem_inter.mp hv).2)) f g (hinter f g)
 /-- Regard a face of a subfamily as a face of a larger family. -/
-def faceOfSubset {faces faces' : Finset (Finset Vertex)} (h : faces ⊆ faces') :
+@[expose] def faceOfSubset {faces faces' : Finset (Finset Vertex)} (h : faces ⊆ faces') :
     Face faces → Face faces' :=
   fun f => ⟨f.1, h f.2⟩
 
@@ -650,7 +650,7 @@ theorem isDualConnected_union {left right : Finset (Finset Vertex)}
     simpa [f', g', faceOfSubset] using hpath
 
 /-- A face from each family shares a genuine two-vertex edge in the union family. -/
-def HasCrossEdge (left right : Finset (Finset Vertex)) : Prop :=
+@[expose] def HasCrossEdge (left right : Finset (Finset Vertex)) : Prop :=
   ∃ (fleft : Face left) (fright : Face right),
       FaceAdjacent (left ∪ right)
         (faceOfSubset Finset.subset_union_left fleft)

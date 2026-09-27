@@ -20,7 +20,7 @@ point.  Its intersection with any cell of level `m ≥ n` is order-connected, be
 level-`n` grid point is a level-`m` grid point and hence lies outside the interior of that cell.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

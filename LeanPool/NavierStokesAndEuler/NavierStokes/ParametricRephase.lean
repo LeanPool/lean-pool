@@ -34,7 +34,7 @@ open SmoothLoop
 variable {E : Type*}
 
 /-- Family rate, given by `(d z.1).rate z.2`. -/
-def familyRate (d : E → CircleDensity) (z : E × ℝ) : ℝ := (d z.1).rate z.2
+@[expose] def familyRate (d : E → CircleDensity) (z : E × ℝ) : ℝ := (d z.1).rate z.2
 
 /-- Family phase, given by `phaseMap (d z.1) z.2`. -/
 @[expose] def familyPhase (d : E → CircleDensity) (z : E × ℝ) : ℝ :=
@@ -166,7 +166,7 @@ end InverseSmoothness
 variable {V : Type*}
 
 /-- Rephase family, given by `f (inverseMap d z)`. -/
-def rephaseFamily (d : E → CircleDensity) (f : E × ℝ → V) (z : E × ℝ) : V :=
+@[expose] def rephaseFamily (d : E → CircleDensity) (f : E × ℝ → V) (z : E × ℝ) : V :=
   f (inverseMap d z)
 
 omit [NormedAddCommGroup E] [NormedSpace ℝ E] in

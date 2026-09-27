@@ -564,7 +564,8 @@ theorem fcomp_assoc {A B C D : ZFSet} {f : ZFSet} {g : ZFSet} {h : ZFSet}
 
 open Classical in
 /-- Imported ZFLean declaration. -/
-noncomputable def fapply (f : ZFSet) {A B : ZFSet} (hf : f.IsPFunc A B := by zpfun) :
+@[expose] noncomputable def fapply (f : ZFSet) {A B : ZFSet}
+    (hf : f.IsPFunc A B := by zpfun) :
   {x // x ∈ f.Dom} → {x // x ∈ B} := fun ⟨x, x_dom⟩ ↦
   have : ∃ y ∈ B, pair x y ∈ f := by
     unfold Dom at x_dom
@@ -1143,7 +1144,8 @@ theorem fcomp_bij_fcomp_inv_left {A B C : ZFSet} {f g h : ZFSet} {hf : IsFunc B 
 /--
 The image of a set under a relation.
 -/
-def Image (R : ZFSet) {A B : ZFSet} (X : ZFSet) (_hR : R ⊆ A.prod B := by zrel) : ZFSet :=
+@[expose] def Image (R : ZFSet) {A B : ZFSet} (X : ZFSet)
+    (_hR : R ⊆ A.prod B := by zrel) : ZFSet :=
   let _ := _hR
   B.sep (fun y ↦ ∃ x ∈ X, x.pair y ∈ R)
 

@@ -31,7 +31,7 @@ Nothing is proved about these objects here; see `Zeta5Irrational.MainEstimate` f
 estimate.
 -/
 
-@[expose] public section
+public section
 
 open Polynomial Finset
 

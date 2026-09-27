@@ -15,7 +15,7 @@ the `4 × 4` Hankel matrix in its two cross blocks.  This small coordinate
 layer is shared by the quadratic lower bound and the cubic annihilator.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

@@ -123,7 +123,7 @@ theorem required_variance_nonneg (s : Finset ι) (w t : ι → ℝ) (a m ρ : �
   simpa only [div_mul_cancel₀ _ (ne_of_gt ha)] using hmul
 
 /-- The rephasing density relative to the old averaging parameter. -/
-def phaseDensity (a v t : ℝ) : ℝ := a * (1 + t ^ 2) / v
+@[expose] def phaseDensity (a v t : ℝ) : ℝ := a * (1 + t ^ 2) / v
 
 /-- The positive first component of the loop shear. -/
 @[expose] def loopA (v t : ℝ) : ℝ := v / (1 + t ^ 2)
@@ -819,7 +819,7 @@ theorem integral_rephase (d : CircleDensity) (f : ℝ → ℝ) (hf : Continuous 
 open LoopMoments in
 /-- Density of tilt, bundling `rate`, `smooth`, `positive`, `periodic` and the required
 compatibility proofs. -/
-def densityOfTilt (t : ℝ → ℝ) (a m ρ v : ℝ)
+@[expose] def densityOfTilt (t : ℝ → ℝ) (a m ρ v : ℝ)
     (ha : 0 < a) (hv : 0 < v) (ht : ContDiff ℝ (∞ : WithTop ℕ∞) t)
     (hperiodic : Function.Periodic t (2 * Real.pi))
     (hmean : angularMean t = m)

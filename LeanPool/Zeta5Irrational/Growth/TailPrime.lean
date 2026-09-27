@@ -25,7 +25,7 @@ For an explicit level `k` (the rounded minimiser of the quadratic majorant) the 
 `F(x) = 4λ + 2λ{x} - 12λ{αx}`, `λ = 37/40`, `α = 3/40`, `x = K/p`.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

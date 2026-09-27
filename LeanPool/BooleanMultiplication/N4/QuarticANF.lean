@@ -16,7 +16,7 @@ term, so it cancels before the cubic and quadratic projections are
 evaluated.  This is the circuit-facing version of the exterior theorem.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

@@ -15,7 +15,7 @@ The outer list records increasing powers of `x`; each inner list records increas
 `y`. Transparent list arithmetic lets the kernel normalize small polynomial certificates.
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.Besicovitch
 

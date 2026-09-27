@@ -17,7 +17,7 @@ the affine and linear parts preserves the cubic projection; its quadratic
 projection changes only by an explicitly rational form.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

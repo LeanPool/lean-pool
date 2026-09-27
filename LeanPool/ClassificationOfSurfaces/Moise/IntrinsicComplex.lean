@@ -54,7 +54,7 @@ def ambientFaceCarrier (t : Finset K.Vertex) : Set (K.Vertex → ℝ) :=
   {x | x ∈ stdSimplex ℝ K.Vertex ∧ ∀ v ∉ t, x v = 0}
 
 /-- The carrier of a listed triangle as a subset of the realization. -/
-def faceCarrier (t : Finset K.Vertex) : Set K.realization :=
+@[expose] def faceCarrier (t : Finset K.Vertex) : Set K.realization :=
   {x | ∀ v ∉ t, x.1 v = 0}
 
 theorem mem_realization_iff (x : K.Vertex → ℝ) :
@@ -161,7 +161,7 @@ def edges : Finset (Finset K.Vertex) :=
 
 /-- The abstract two-complex has surface edge valence when every edge is contained in at most
 two maximal triangles. -/
-def HasSurfaceEdgeValence : Prop :=
+@[expose] def HasSurfaceEdgeValence : Prop :=
   ∀ e ∈ K.edges, (K.faces.filter fun t => e ⊆ t).card ≤ 2
 
 theorem card_of_mem_edges {e : Finset K.Vertex} (he : e ∈ K.edges) : e.card = 2 := by
@@ -311,7 +311,7 @@ theorem usedVertex_mem_parent (v : K.UsedVertex) : v.1 ∈ K.usedVertexParent v 
   (Classical.choose_spec v.2).2
 
 /-- The canonical barycentric point of a used vertex. -/
-noncomputable def vertexPoint (v : K.UsedVertex) : K.realization :=
+@[expose] noncomputable def vertexPoint (v : K.UsedVertex) : K.realization :=
   ⟨Pi.single v.1 1, single_mem_stdSimplex ℝ v.1, by
     refine ⟨K.usedVertexParent v, K.usedVertexParent_mem v, ?_⟩
     intro w hw
@@ -763,7 +763,7 @@ structure Subdivision where
 namespace Subdivision
 
 /-- Every intrinsic complex is a subdivision of itself. -/
-noncomputable def refl : K.Subdivision where
+@[expose] noncomputable def refl : K.Subdivision where
   refined := K
   homeo := Homeomorph.refl K.realization
   affineOnFace := by

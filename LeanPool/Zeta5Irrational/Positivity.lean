@@ -30,7 +30,7 @@ parts and the Mittag-Leffler expansion);
 * `Δ_pos` : `Δ_K(ζ(5)) > 0`, since `G_K(ζ(5))` is the Gram matrix of a positive weight.
 -/
 
-@[expose] public section
+public section
 
 open Polynomial MeasureTheory Set Finset
 

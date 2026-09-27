@@ -437,5 +437,6 @@ namespace IsComputable
 noncomputable instance instComputablePi : IsComputable (Real.pi) where
   seq := ComputableℝSeq.Pi
   prop := ComputableℝSeq.mk_val_eq_val
+    (h₃ := ComputableℝSeq.piLb_le_pi) (h₄ := ComputableℝSeq.piUb_ge_pi)
 
 end IsComputable

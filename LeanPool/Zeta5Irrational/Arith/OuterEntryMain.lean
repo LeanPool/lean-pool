@@ -25,7 +25,7 @@ import Mathlib.Tactic.Ring.Basic
 /-! # Outer range: the entry theorem
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

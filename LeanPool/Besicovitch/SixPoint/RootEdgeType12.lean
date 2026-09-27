@@ -20,7 +20,7 @@ separator with weights `1, 1, 2`.  Three scalar norm tangents reduce it to one f
 Gram certificate; radial secants use only the sibling separation and the unit-ball bounds.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

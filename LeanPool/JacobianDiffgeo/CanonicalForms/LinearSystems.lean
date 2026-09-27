@@ -100,7 +100,7 @@ theorem mem_omegaSpace_iff {D : Divisor X} {Θ : MForm X} :
     Θ ∈ OmegaSpace D ↔ ∀ x, ((-(D x) : ℤ) : WithTop ℤ) ≤ Θ.ord x := Iff.rfl
 
 /-- Index of speciality: `dim Ω(D)`. -/
-noncomputable def i (D : Divisor X) : ℕ := Module.finrank ℂ (OmegaSpace D)
+@[expose] noncomputable def i (D : Divisor X) : ℕ := Module.finrank ℂ (OmegaSpace D)
 
 end MForm
 

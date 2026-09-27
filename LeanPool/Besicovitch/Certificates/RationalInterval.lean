@@ -17,7 +17,7 @@ numbers. The operations provide the enclosure primitives used by the radical-exp
 with soundness checked by the kernel.
 -/
 
-@[expose] public section
+public section
 
 open Set
 

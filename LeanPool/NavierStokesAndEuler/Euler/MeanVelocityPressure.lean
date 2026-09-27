@@ -34,14 +34,14 @@ variable {T : ℝ} {hT : 0 ≤ T}
   (s : StrongMeanEvolution T hT FInv F F₁ A L u f)
 
 /-- The actual physical velocity B=F z_t as a Bochner L² field. -/
-def velocityField : TimeLp T L2 :=
+@[expose] def velocityField : TimeLp T L2 :=
   timeMultiplier T hT (solenoidalFrame T F) s.velocityLp
 
 /-- The actual continuous physical-velocity representative. -/
 @[expose] def physicalPath : ℝ → L2 := fun t => extendPath T hT F t (s.velocity t : L2)
 
 /-- The product-rule candidate for B_t, constructed in actual Bochner L². -/
-def velocityDerivative : TimeLp T L2 :=
+@[expose] def velocityDerivative : TimeLp T L2 :=
   fieldProductDerivative T hT (solenoidalFrame T F) (solenoidalFrame T F₁)
     s.velocityLp s.acceleration
 
@@ -65,7 +65,7 @@ theorem inversePhysicalPath_solenoidal
   exact (s.velocity t).property
 
 /-- The pressure residual in the strong equation, before using F_t=MF. -/
-def pressureResidual : TimeLp T L2 :=
+@[expose] def pressureResidual : TimeLp T L2 :=
   f - timeMultiplier T hT (solenoidalFrame T F) s.acceleration -
     (2 : ℝ) • timeMultiplier T hT (solenoidalFrame T F₁) s.velocityLp
 

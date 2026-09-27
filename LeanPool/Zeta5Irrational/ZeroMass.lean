@@ -34,7 +34,7 @@ For the truncated kernel `Ltr a b r = (1/2) ∫_a^b (e^{-s} - e^{-s r²})/s ds` 
 positivity argument of the paper.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Set Real intervalIntegral
 

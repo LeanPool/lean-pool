@@ -21,7 +21,7 @@ of a piece of the graph is at least the Lebesgue measure of its base), and the g
 level-`n` cell has diameter at most twice the cell length.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

@@ -30,7 +30,7 @@ With `PlK K = {±1, …, ±K}` and `pull K P = (-1)^K x⁵ P(-x²)` we have
 `x⁵ P(-x²) / D_K(-x²) = pull K P / ∏_{r ∈ PlK K} (x - r)`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

@@ -20,7 +20,7 @@ is a simple reference algorithm; a union-find implementation can later replace
 it without changing the correctness interface.
 -/
 
-@[expose] public section
+public section
 
 namespace Stallings
 

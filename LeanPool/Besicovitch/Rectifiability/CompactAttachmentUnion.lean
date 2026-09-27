@@ -15,7 +15,7 @@ If the selected holes have finite total diameter, their compact attachments accu
 the compact core.  Consequently the core together with all attachments is compact.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

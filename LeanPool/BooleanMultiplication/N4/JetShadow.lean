@@ -16,7 +16,7 @@ supported in `K₀` disappear on the four outside slices; the two remaining
 wedge directions give a subspace of rank at most two.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

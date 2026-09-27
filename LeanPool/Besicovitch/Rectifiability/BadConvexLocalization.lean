@@ -14,7 +14,7 @@ A selected bad set whose three-diameter enlargement meets a small continuum must
 the doubled ball, provided the centre was chosen outside its seven-diameter enlargement.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

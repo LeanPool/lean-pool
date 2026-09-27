@@ -919,7 +919,7 @@ LinearMap.toMatrix (Module.Dual.pi.IsFaithfulPosMap.basis hψ)
   (Module.Dual.pi.IsFaithfulPosMap.basis hφ)
 
 /-- Matrix representation of endomorphisms for a faithful pi inner product. -/
-noncomputable def toMatrix (hψ : ∀ i, (ψ i).IsFaithfulPosMap) :
+@[expose] noncomputable def toMatrix (hψ : ∀ i, (ψ i).IsFaithfulPosMap) :
     ((PiMat ℂ k s) →ₗ[ℂ] PiMat ℂ k s) ≃ₐ[ℂ]
       Matrix (Σ i, s i × s i) (Σ i, s i × s i) ℂ :=
   LinearMap.toMatrixAlgEquiv (Module.Dual.pi.IsFaithfulPosMap.basis hψ)
@@ -930,8 +930,7 @@ lemma toMatrixLinEquiv_eq_toMatrix (hψ : ∀ i, (ψ i).IsFaithfulPosMap) :
 rfl
 
 /-- Basis for block diagonal matrices induced by the faithful pi basis. -/
-@[simps]
-noncomputable def isBlockDiagonalBasis (hψ : ∀ i, (ψ i).IsFaithfulPosMap) :
+@[simps, expose] noncomputable def isBlockDiagonalBasis (hψ : ∀ i, (ψ i).IsFaithfulPosMap) :
     Basis (Σ i, s i × s i) ℂ { x : Matrix (Σ i, s i) (Σ i, s i) ℂ // x.IsBlockDiagonal }
     where repr :=
     isBlockDiagonalPiAlgEquiv.toLinearEquiv.trans (Module.Dual.pi.IsFaithfulPosMap.basis hψ).repr

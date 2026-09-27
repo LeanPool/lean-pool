@@ -147,7 +147,7 @@ noncomputable def finsetMapSubtypeEquiv
 @[simp] theorem finsetMapSubtypeEquiv_apply_val
     {A B : Type*}
     (e : A ↪ B) (t : Finset A) (a : {a // a ∈ t}) :
-    (finsetMapSubtypeEquiv e t a).1 = e a.1 := rfl
+    (finsetMapSubtypeEquiv e t a).1 = e a.1 := by rfl
 
 /-- Pull simplex coordinates on a relabeled face back to the original face. -/
 noncomputable def relabelFaceSimplex
@@ -428,8 +428,7 @@ def faceOfRelabel (e : A ↪ B) {faces : Finset (Finset A)} :
 
 omit [DecidableEq A] in
 theorem faceOfRelabel_val (e : A ↪ B) {faces : Finset (Finset A)}
-    (f : Face faces) : (faceOfRelabel e f).1 = f.1.map e :=
-  rfl
+    (f : Face faces) : (faceOfRelabel e f).1 = f.1.map e := by rfl
 
 omit [DecidableEq A] in
 /-- Injective vertex relabeling preserves dual adjacency of listed faces. -/
@@ -588,7 +587,7 @@ noncomputable def pullGeometricRealization
     (e : A ↪ B) (F : Finset (Finset A))
     (x : GeometricRealization A F) :
     (pushGeometricRealization e F x).1 =
-      stdSimplex.map e ⟨x.1, x.2.1⟩ := rfl
+      stdSimplex.map e ⟨x.1, x.2.1⟩ := by rfl
 
 @[simp] theorem pushGeometricRealization_apply_embedding
     {A B : Type*} [Fintype A] [Fintype B]
@@ -1029,7 +1028,7 @@ noncomputable def faceEdge (f : K.Face) (i : ZMod 3) : K.Edge := by
     · exact K.faceVertex_mem f (i + 1)
 
 @[simp] theorem faceEdge_val (f : K.Face) (i : ZMod 3) :
-    (K.faceEdge f i).1 = {K.faceVertex f i, K.faceVertex f (i + 1)} := rfl
+    (K.faceEdge f i).1 = {K.faceVertex f i, K.faceVertex f (i + 1)} := by rfl
 
 /-- Consecutive face edges share exactly their common cyclic vertex. -/
 theorem faceEdge_inter_next (f : K.Face) (i : ZMod 3) :
@@ -1542,7 +1541,7 @@ noncomputable def edgePathHomeomorph [T2Space S] (e : K.Edge) :
 
 @[simp] theorem edgePathHomeomorph_apply [T2Space S] (e : K.Edge)
     (r : Set.Icc (0 : ℝ) 1) :
-    (K.edgePathHomeomorph e r).1 = K.edgePath e r := rfl
+    (K.edgePathHomeomorph e r).1 = K.edgePath e r := by rfl
 
 theorem edgePathHomeomorph_symm_val [T2Space S] (e : K.Edge)
     (p : K.edgeCarrier e) :
@@ -1591,7 +1590,7 @@ noncomputable local instance compactVertexFintype [CompactSpace S] : Fintype K.V
   K.vertexFintype
 
 /-- The finite intrinsic complex obtained from a compact locally finite triangle complex. -/
-noncomputable def compactIntrinsic [CompactSpace S] : IntrinsicTwoComplex := by
+@[expose] noncomputable def compactIntrinsic [CompactSpace S] : IntrinsicTwoComplex := by
   letI : Fintype K.Face := K.faceFintype
   letI : Fintype K.Vertex := K.vertexFintype
   exact
@@ -1793,10 +1792,12 @@ noncomputable def toGeometricTriangulation [CompactSpace S] [T2Space S]
 support.  This is the finite gluing bridge used in the Rado induction: once a compatible finite
 family of old and new triangles has been assembled, no separate ambient coverage proof is
 needed. -/
-noncomputable def onSupport [Finite K.Face] :
+@[expose] noncomputable def onSupport [Finite K.Face] :
     LocallyFiniteTriangleComplex K.support where
   Vertex := K.Vertex
+  vertexDecidableEq := K.vertexDecidableEq
   Face := K.Face
+  faceDecidableEq := K.faceDecidableEq
   faceVertices := K.faceVertices
   faceVertices_card := K.faceVertices_card
   vertex_used := K.vertex_used
@@ -1805,10 +1806,8 @@ noncomputable def onSupport [Finite K.Face] :
   faceMap_continuous := fun f => by
     apply Continuous.subtype_mk
     exact K.faceMap_continuous f
-  faceMap_eq_iff := by
-    intro f g x y
-    rw [Subtype.ext_iff]
-    exact K.faceMap_eq_iff
+  faceMap_eq_iff := fun {f g} {x y} =>
+    Subtype.ext_iff.trans (K.faceMap_eq_iff (f := f) (g := g) (x := x) (y := y))
   locallyFinite := locallyFinite_of_finite _
 
 @[simp] theorem onSupport_faceVertices [Finite K.Face] (f : K.Face) :

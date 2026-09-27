@@ -17,7 +17,7 @@ quadratic direction, and the remaining cubic is a single vector wedged with
 that direction.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

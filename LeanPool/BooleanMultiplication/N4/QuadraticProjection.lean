@@ -16,7 +16,7 @@ squarefree quadratic coefficients.  Products of affine ANFs therefore become
 decomposable alternating forms.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

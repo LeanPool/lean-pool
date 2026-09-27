@@ -85,7 +85,7 @@ abbrev LocalHypersurface {n : ℕ}
     ‖lastCoordinateCLM n x‖ < R ∧ F x = 0}
 
 /-- Projection of the local hypersurface to its open base. -/
-def localProjection {n : ℕ}
+@[expose] def localProjection {n : ℕ}
     (F : ComplexEuclidean (n + 1) → ℂ)
     (U : Set (ComplexEuclidean n)) (R : ℝ) :
     LocalHypersurface F U R → U :=

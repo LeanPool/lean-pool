@@ -197,7 +197,7 @@ radial cutoff in the weak radial stationarity identity and pass to a.e. radii. -
 /-- One-dimensional radius form of the weak radial identity.  This is the
 coarea/absolute-continuity form of `WeakRadialStationarityIdentity`: the ball
 integrals have been converted into derivatives of the ball energy functions. -/
-def WeakRadialOneDimensionalIdentity {n m : ℕ}
+@[expose] def WeakRadialOneDimensionalIdentity {n m : ℕ}
     (Du : Domain n → Gradient n m) (R0 : ℝ) : Prop :=
   ∀ phi : ℝ → ℝ,
     Differentiable ℝ phi →
@@ -332,7 +332,7 @@ theorem weak_radial_scalar_cutoff_identity_from_stationarity_of_W12Loc_vectorFie
 
 /-- The true coarea/radius-integral content, separated from vector-field
 regularity and support bookkeeping. -/
-def WeakRadialCoareaIntegralFormula {n m : ℕ}
+@[expose] def WeakRadialCoareaIntegralFormula {n m : ℕ}
     (Du : Domain n → Gradient n m) (R0 : ℝ) : Prop :=
   ∀ phi : ℝ → ℝ,
     Differentiable ℝ phi →
@@ -566,7 +566,7 @@ theorem weakRadialCoareaDerivativeFormula_of_contDiff_and_integral {n m : ℕ}
 
 /-- The coarea and radius-derivative step translating the spatial radial
 identity into its one-dimensional radius form. -/
-def WeakRadialCoareaDerivativeStep {n m : ℕ}
+@[expose] def WeakRadialCoareaDerivativeStep {n m : ℕ}
     (Du : Domain n → Gradient n m) (R0 : ℝ) : Prop :=
   WeakRadialStationarityIdentity Du R0 →
     WeakRadialOneDimensionalIdentity Du R0

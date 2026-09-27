@@ -393,7 +393,7 @@ theorem physicalSpeed_smooth (d M : ℝ) {r : ℝ} (hr : r ≠ 0) :
   (contDiffAt_const.mul (contDiffAt_id.rpow_const_of_ne hr)).mul contDiffAt_const
 
 theorem graphDr_eq_physical (d M : ℝ) (v : E) (f : ℝ × E → ℝ) (p : ℝ × E) :
-    graphDr (physicalSpeed d M) v f p = RadialPullback.physicalGraphDeriv d M v f p := rfl
+    graphDr (physicalSpeed d M) v f p = RadialPullback.physicalGraphDeriv d M v f p := by rfl
 
 end Graph
 

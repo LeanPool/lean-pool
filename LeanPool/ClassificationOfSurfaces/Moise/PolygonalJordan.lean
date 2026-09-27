@@ -93,7 +93,7 @@ theorem isClosed_edgeSegment (i : ZMod J.n) : IsClosed (J.edgeSegment i) :=
 
 /-- Transport a polygon through a function which is injective on its carrier and straight on
 each edge.  No extension to an ambient homeomorphism is needed. -/
-noncomputable def mapEmbedding (f : Plane → Plane)
+@[expose] noncomputable def mapEmbedding (f : Plane → Plane)
     (hinj : Set.InjOn f J.carrier)
     (hedge : ∀ i : ZMod J.n,
       f '' J.edgeSegment i = segment ℝ (f (J.vertex i)) (f (J.vertex (i + 1)))) :
@@ -160,7 +160,7 @@ theorem mapEmbedding_carrier (f : Plane → Plane) (hinj : Set.InjOn f J.carrier
       exact ⟨q, hqi, rfl⟩⟩
 
 /-- Transport a polygon through a homeomorphism which is straight on each polygon edge. -/
-noncomputable def mapHomeomorph (h : Plane ≃ₜ Plane)
+@[expose] noncomputable def mapHomeomorph (h : Plane ≃ₜ Plane)
     (hedge : ∀ i : ZMod J.n,
       h '' J.edgeSegment i = segment ℝ (h (J.vertex i)) (h (J.vertex (i + 1)))) :
     PolygonalCircle where
@@ -541,7 +541,7 @@ noncomputable def complexDirection (z : ℂ) (hz : z ≠ 0) : Circle :=
       abs_of_pos (norm_pos_iff.mpr hz), div_self (norm_ne_zero_iff.mpr hz)]⟩
 
 @[simp] theorem coe_complexDirection (z : ℂ) (hz : z ≠ 0) :
-    (complexDirection z hz : ℂ) = z / ‖z‖ := rfl
+    (complexDirection z hz : ℂ) = z / ‖z‖ := by rfl
 
 /-- Polar reconstruction from norm and unit direction. -/
 theorem norm_mul_complexDirection (z : ℂ) (hz : z ≠ 0) :

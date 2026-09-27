@@ -16,7 +16,7 @@ This file records the two elementary enlargements used in the continuum argument
 set by a multiple of its diameter, and replacing an open set by its open convex hull.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

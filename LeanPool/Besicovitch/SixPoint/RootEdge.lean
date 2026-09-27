@@ -20,7 +20,7 @@ triangle. It also proves the exact rational separator that excludes an internal 
 primitive on the matching branch of the endpoint failure tree.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

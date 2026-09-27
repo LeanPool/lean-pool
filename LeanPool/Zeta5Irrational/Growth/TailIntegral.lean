@@ -35,7 +35,7 @@ continuous across the breakpoints. Two integrations by parts on each piece and t
 `∑_i ∫_{t_i}^{t_{i+1}} (x F + 27/16)/x³ ≤ tailBound`.
 -/
 
-@[expose] public section
+public section
 
 open Finset intervalIntegral
 

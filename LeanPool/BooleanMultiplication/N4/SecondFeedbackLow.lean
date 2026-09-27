@@ -15,7 +15,7 @@ feedback coefficient space.  The independent alternative is confined to the
 four-dimensional first-jet support `K₀` by cubic rows.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

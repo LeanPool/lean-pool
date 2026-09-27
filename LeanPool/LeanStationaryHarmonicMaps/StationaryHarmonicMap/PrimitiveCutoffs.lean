@@ -41,7 +41,7 @@ argument. -/
 
 /-- After the one-dimensional radial identity is integrated by parts, the defect
 pairs to zero against derivatives of compactly supported radial cutoffs. -/
-def WeakOneDimensionalDefectDerivativeIdentity {n m : ℕ}
+@[expose] def WeakOneDimensionalDefectDerivativeIdentity {n m : ℕ}
     (Du : Domain n → Gradient n m) (R0 : ℝ) : Prop :=
   ∀ phi : ℝ → ℝ,
     Differentiable ℝ phi →
@@ -55,7 +55,7 @@ def WeakOneDimensionalDefectDerivativeIdentity {n m : ℕ}
 argument.  It says every smooth compactly supported test function in `(0, R0)`
 can be represented, for pairing with the defect, as `-phi'` for an admissible
 radial cutoff primitive. -/
-def WeakOneDimensionalPrimitiveTestFamily {n m : ℕ}
+@[expose] def WeakOneDimensionalPrimitiveTestFamily {n m : ℕ}
     (Du : Domain n → Gradient n m) (R0 : ℝ) : Prop :=
   ∀ g : ℝ → ℝ,
     ContDiff ℝ (⊤ : ℕ∞) g →

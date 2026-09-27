@@ -426,7 +426,7 @@ lemma memFine_toFine (C : LoadedCluster tab) {p : PathIn tab} (p_in : p ∈ C.CL
     C.memFine p.toFine := ⟨by simpa using p_in, Or.inl (by simp)⟩
 
 /-- All fine nodes in the cluster `C`. -/
-def fineCL (C : LoadedCluster tab) : List (FinePathIn tab) :=
+@[expose] def fineCL (C : LoadedCluster tab) : List (FinePathIn tab) :=
   (allFinePaths tab).filter (fun f => decide (C.memFine f))
 
 lemma mem_fineCL (C : LoadedCluster tab) (f : FinePathIn tab) :

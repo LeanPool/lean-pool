@@ -362,6 +362,7 @@ namespace TriangleMesh
 variable (M : TriangleMesh)
 
 /-- The mesh consisting of one geometric triangle. -/
+@[expose]
 noncomputable def single (p : Fin 3 → Plane) (hp : AffineIndependent ℝ p) : TriangleMesh where
   Vertex := Fin 3
   position := p
@@ -1073,7 +1074,7 @@ end PlaneComplex
 This is the honest PL predicate: a map that is not affine on any neighborhood of a point interior
 to a 2-cell of `K` cannot satisfy it, in contrast to the vacuous `IsPLOnSimplexes` of the
 retiring `PL.lean` layer. -/
-def IsPLOn (K : PlaneComplex) (f : Plane → Plane) : Prop :=
+@[expose] def IsPLOn (K : PlaneComplex) (f : Plane → Plane) : Prop :=
   ∃ K' : PlaneComplex, K'.Subdivides K ∧
     ∀ s' ∈ K'.simplexes, IsAffineOn f (K'.cellCarrier s')
 

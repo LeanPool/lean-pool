@@ -184,6 +184,14 @@ def formOfCoeFn (R : ℂ → ℂ) (hR : MeromorphicOn R Set.univ)
         rw [hval, heq, deriv_id, one_mul]
         rfl
 
+theorem formOfCoeFn_coeffAt_infty (R : ℂ → ℂ) (hR : MeromorphicOn R Set.univ)
+    (hR' : MeromorphicOn (fun w => -(w ^ 2)⁻¹ * R w⁻¹) Set.univ) :
+    (formOfCoeFn R hR hR').coeffAt ∞ = fun w => -(w ^ 2)⁻¹ * R w⁻¹ := by rfl
+
+theorem formOfCoeFn_coeffAt_coe (R : ℂ → ℂ) (hR : MeromorphicOn R Set.univ)
+    (hR' : MeromorphicOn (fun w => -(w ^ 2)⁻¹ * R w⁻¹) Set.univ) (a : ℂ) :
+    (formOfCoeFn R hR hR').coeffAt (a : OnePoint ℂ) = R := by rfl
+
 /-- The `coeChart` reading of an `MFormData (OnePoint ℂ)` is the same function for every finite
 basepoint (`ℙ¹`'s finite points all share the identical `coeChart`, and `compat` with the
 identity transition forces literal equality of the raw functions, not just a germ agreement). -/

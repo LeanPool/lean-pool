@@ -27,7 +27,7 @@ With `P k l = pairInt (atomγ t ε) (log ‖· - ·‖) k l`:
 * (D) `(2π)² log ((bⱼ' - aⱼ')/4) ≤ P (inr j) (inr j')`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Set Real intervalIntegral Filter Topology
 

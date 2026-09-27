@@ -31,7 +31,7 @@ nine interval counts. Each count is within `5/2` of `p` times its continuous ana
 We also prove `SX p X c = 2 ⌊X/p⌋ + a_c(X mod p)`.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

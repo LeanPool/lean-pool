@@ -15,7 +15,7 @@ A square-root node carries rational lower and upper witnesses. The evaluator che
 squares exactly, so every successful enclosure has a kernel-checked real-number semantics.
 -/
 
-@[expose] public section
+public section
 
 open Set
 

@@ -22,7 +22,7 @@ The construction follows Capdevila, *Besicovitch's example in higher dimensions*
 arXiv:2607.05206, §2, which in turn follows Besicovitch (1938) and Dickinson (1939).
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

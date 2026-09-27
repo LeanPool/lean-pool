@@ -55,7 +55,8 @@ abbrev Profile := ProfilePoint → ℝ
   K (profilePoint w.1 w.2) • coordinateVector 2
 
 /-- Velocity, given by `SpatialCurl.spatialCurl (potential H K)`. -/
-def velocity (H K : Profile) : VelocityField := SpatialCurl.spatialCurl (potential H K)
+@[expose] def velocity (H K : Profile) : VelocityField :=
+  SpatialCurl.spatialCurl (potential H K)
 
 theorem radialEnergy_nonneg (x : Space) : 0 ≤ radialEnergy x := by
   exact div_nonneg (add_nonneg (sq_nonneg _) (sq_nonneg _)) (by norm_num)

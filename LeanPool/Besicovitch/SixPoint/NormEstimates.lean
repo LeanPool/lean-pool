@@ -17,7 +17,7 @@ public import Mathlib.Tactic.Ring
 The sibling and row-column certificates use the same norm expansions and tangent bounds.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

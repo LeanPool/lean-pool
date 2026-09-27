@@ -18,7 +18,7 @@ The tangent parameters, separation multipliers and factor entries were found num
 stored as exact rationals with denominator `10000`; every inequality below is recomputed here.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

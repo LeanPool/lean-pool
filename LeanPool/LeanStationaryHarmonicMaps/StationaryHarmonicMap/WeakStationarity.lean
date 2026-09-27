@@ -118,7 +118,7 @@ of its Hilbert-Schmidt energy. -/
 /-- The chosen weak gradient is a.e. strongly measurable on the domain.  This is
 kept separate from local `L²` control: integrability of the scalar energy
 density alone does not imply measurability of the full gradient field. -/
-def GradientAEStronglyMeasurableIn {n m : ℕ}
+@[expose] def GradientAEStronglyMeasurableIn {n m : ℕ}
     (Du : Domain n → Gradient n m) (Ω : Set (Domain n)) : Prop :=
   AEStronglyMeasurable Du (volume.restrict Ω)
 
@@ -171,7 +171,7 @@ supported target-valued test map. -/
           -∫ x in Ω, inner ℝ (Du x i) (ψ x)
 
 /-- A concrete `W^{1,2}_{loc}` interface for maps with a chosen weak gradient. -/
-def W12LocIn {n m : ℕ}
+@[expose] def W12LocIn {n m : ℕ}
     (u : Domain n → Target m) (Du : Domain n → Gradient n m)
     (Ω : Set (Domain n)) : Prop :=
   MapLocallyL2In u Ω ∧
@@ -181,7 +181,7 @@ def W12LocIn {n m : ℕ}
 
 /-- A weak stationary map: `u ∈ W^{1,2}_{loc}` with weak gradient `Du`, and the
 domain-variation stationarity identity holds in terms of `Du`. -/
-def WeakStationaryMapIn {n m : ℕ}
+@[expose] def WeakStationaryMapIn {n m : ℕ}
     (u : Domain n → Target m) (Du : Domain n → Gradient n m)
     (Ω : Set (Domain n)) : Prop :=
   W12LocIn u Du Ω ∧ WeakStationaryIn Du Ω

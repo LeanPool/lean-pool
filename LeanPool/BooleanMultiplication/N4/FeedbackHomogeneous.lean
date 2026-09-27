@@ -16,7 +16,7 @@ bilinear and checks the fixed `7 × 7 × 6` basis matrix; it never enumerates
 circuits or Boolean functions.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

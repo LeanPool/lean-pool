@@ -273,7 +273,7 @@ theorem rmulMapLmul_mem_isBimoduleMaps (x : H₁ ⊗[R] H₂) :
     rmulMapLmul_apply_one]
 
 /-- The tensor product is linearly equivalent to its bimodule endomorphism submodule. -/
-noncomputable def TensorProduct.toIsBimoduleMap
+@[expose] noncomputable def TensorProduct.toIsBimoduleMap
   {R : Type*} {H₁ H₂ : Type*} [CommSemiring R] [Semiring H₁]
   [Semiring H₂] [Algebra R H₁] [Algebra R H₂] :
     (H₁ ⊗[R] H₂) ≃ₗ[R] LinearMap.IsBimoduleMaps R H₁ H₂ where

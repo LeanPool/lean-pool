@@ -28,7 +28,7 @@ import Mathlib.Tactic.Ring.Basic
 * `newton` : `P = ∑_{k ≤ d} Δ^k P(0) · bin k` for `deg P ≤ d`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

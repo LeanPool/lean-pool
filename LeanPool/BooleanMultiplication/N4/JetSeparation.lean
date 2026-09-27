@@ -17,7 +17,7 @@ kills `C`; the four remaining outside slices force `A = B = 0` unless the
 auxiliary two-plane is exactly the anchor plane.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

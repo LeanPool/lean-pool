@@ -17,7 +17,7 @@ an input variable with one of the three rational places (and pairs of those
 places) require coordinate normalization.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

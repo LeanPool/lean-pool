@@ -19,7 +19,7 @@ the small inner ball.  Any hypothetical clopen separation would be crossed by on
 attachment.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

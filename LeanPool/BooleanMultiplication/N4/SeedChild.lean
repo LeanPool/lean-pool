@@ -17,7 +17,7 @@ to one of two forms: a low--low product, or a product with exactly one
 both the quartic and cubic feedback arguments.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

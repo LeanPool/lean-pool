@@ -624,7 +624,7 @@ theorem tendsto_logb_johnsonAmbientDimension
     hterminal hchoose hlower hupper
 
 /-- The window fibre quotient used in the Johnson-code argument. -/
-def windowFibreQuotient (a b g u : ℝ) (n : ℕ) : ℝ :=
+@[expose] def windowFibreQuotient (a b g u : ℝ) (n : ℕ) : ℝ :=
   (MetricCodes.johnsonAmbientDimension n
     (supportDegree b n + complementDegree g n)
     (terminalDegree u n) : ℝ) /
@@ -2010,7 +2010,7 @@ theorem AdmissibleDegrees.window_degree_le_weight
   omega
 
 /-- The global harmonic vector used in the Johnson-code argument. -/
-def globalHarmonicVector {n j : ℕ}
+@[expose] def globalHarmonicVector {n j : ℕ}
     (f : MetricCodes.Boolean.Function n)
     (hf : MetricCodes.Boolean.IsHarmonic j f) :
     MetricCodes.Boolean.harmonicEuclideanLayer n j :=
@@ -2137,7 +2137,7 @@ theorem coupledDegreeCoordinates_pairing {n w p q L : ℕ}
         (h.complementResidual_bound i) a b
 
 /-- The johnson window fibre matrix used in the Johnson-code argument. -/
-def johnsonWindowFibreMatrix {n w p q L : ℕ}
+@[expose] def johnsonWindowFibreMatrix {n w p q L : ℕ}
     (h : AdmissibleDegrees n w p q L)
     (v : Space p q L) (x : JohnsonSphere n w) :
     Matrix (ShellWindowIndex n p q L)
@@ -2191,7 +2191,7 @@ theorem johnsonWindowFibreMatrix_transpose_mul
       · simp only [hab, ↓reduceIte, mul_zero, Finset.sum_const_zero]
 
 /-- The johnson fibre matrix used in the Johnson-code argument. -/
-def johnsonFibreMatrix {n w p q L : ℕ}
+@[expose] def johnsonFibreMatrix {n w p q L : ℕ}
     (h : AdmissibleDegrees n w p q L)
     (v : Space p q L) (x : JohnsonSphere n w) :
     Matrix (Fin (MetricCodes.johnsonAmbientDimension n (p + q) L))
@@ -2252,7 +2252,7 @@ theorem johnsonFibreMatrix_transpose_mul {n w p q L : ℕ}
         hmatrix
 
 /-- The johnson projection family used in the Johnson-code argument. -/
-def johnsonProjectionFamily {n w p q L : ℕ}
+@[expose] def johnsonProjectionFamily {n w p q L : ℕ}
     (h : AdmissibleDegrees n w p q L)
     (v : Space p q L)
     (hv : ∀ i : Index p q L, 0 < v i) :

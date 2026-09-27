@@ -18,7 +18,7 @@ import Mathlib.Tactic.NormNum.Pow
 sums `S_j`, and the energy `I(ρ)` by formula (A.2).
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

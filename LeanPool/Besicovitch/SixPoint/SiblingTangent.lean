@@ -18,7 +18,7 @@ sibling-incidence ledger. Its endpoint checks use only rational arithmetic and t
 isolation interval for `barC`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

@@ -11,7 +11,7 @@ public import LeanPool.BooleanMultiplication.N3Certificate
 # N3 for unrestricted Boolean polynomial multiplication
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 

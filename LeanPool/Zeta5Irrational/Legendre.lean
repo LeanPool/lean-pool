@@ -18,7 +18,7 @@ import Mathlib.Tactic.Ring.Basic
 where each factorial valuation is given by Legendre's formula (`padicValNat_factorial`).
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

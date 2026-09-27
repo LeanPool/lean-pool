@@ -232,37 +232,37 @@ theorem exceptional_row_iff_rows
       F.pair.second.rightMoves))
 
 /-- The first majorant changes rank from `d₃` to `d₂`. -/
-def FirstRank32
+@[expose] def FirstRank32
     {n : ℕ} [NeZero n] {P : Fin n → Point ℝ} {d₁ d₂ d₃ : ℝ}
     (F : ErLVGlobalFiveRowFrame P d₁ d₂ d₃) : Prop :=
   F.firstStartSqDist = d₃ ∧ F.firstTerminalSqDist = d₂
 
 /-- The first majorant changes rank from `d₃` to `d₁`. -/
-def FirstRank31
+@[expose] def FirstRank31
     {n : ℕ} [NeZero n] {P : Fin n → Point ℝ} {d₁ d₂ d₃ : ℝ}
     (F : ErLVGlobalFiveRowFrame P d₁ d₂ d₃) : Prop :=
   F.firstStartSqDist = d₃ ∧ F.firstTerminalSqDist = d₁
 
 /-- The first majorant changes rank from `d₂` to `d₁`. -/
-def FirstRank21
+@[expose] def FirstRank21
     {n : ℕ} [NeZero n] {P : Fin n → Point ℝ} {d₁ d₂ d₃ : ℝ}
     (F : ErLVGlobalFiveRowFrame P d₁ d₂ d₃) : Prop :=
   F.firstStartSqDist = d₂ ∧ F.firstTerminalSqDist = d₁
 
 /-- The second majorant changes rank from `d₃` to `d₂`. -/
-def SecondRank32
+@[expose] def SecondRank32
     {n : ℕ} [NeZero n] {P : Fin n → Point ℝ} {d₁ d₂ d₃ : ℝ}
     (F : ErLVGlobalFiveRowFrame P d₁ d₂ d₃) : Prop :=
   F.secondStartSqDist = d₃ ∧ F.secondTerminalSqDist = d₂
 
 /-- The second majorant changes rank from `d₃` to `d₁`. -/
-def SecondRank31
+@[expose] def SecondRank31
     {n : ℕ} [NeZero n] {P : Fin n → Point ℝ} {d₁ d₂ d₃ : ℝ}
     (F : ErLVGlobalFiveRowFrame P d₁ d₂ d₃) : Prop :=
   F.secondStartSqDist = d₃ ∧ F.secondTerminalSqDist = d₁
 
 /-- The second majorant changes rank from `d₂` to `d₁`. -/
-def SecondRank21
+@[expose] def SecondRank21
     {n : ℕ} [NeZero n] {P : Fin n → Point ℝ} {d₁ d₂ d₃ : ℝ}
     (F : ErLVGlobalFiveRowFrame P d₁ d₂ d₃) : Prop :=
   F.secondStartSqDist = d₂ ∧ F.secondTerminalSqDist = d₁

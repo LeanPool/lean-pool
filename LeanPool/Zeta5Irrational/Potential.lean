@@ -32,7 +32,7 @@ import Mathlib.Tactic.Ring.Basic
 * the derivative of `V`: `V'(t) = P(√t)/√t` with `P(y) = π + arctan(1/y) - 6 arctan(α/y)`.
 -/
 
-@[expose] public section
+public section
 
 open Filter Topology Set Finset
 

@@ -17,7 +17,7 @@ lets the homogeneous projections already used by the exterior argument apply
 without introducing a second ANF type or enumerating Boolean functions.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

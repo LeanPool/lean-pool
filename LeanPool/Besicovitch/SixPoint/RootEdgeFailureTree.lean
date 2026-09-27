@@ -17,7 +17,7 @@ the opposite children. This file connects their geometric packings to the root--
 records the elementary reductions shared by the two color directions.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

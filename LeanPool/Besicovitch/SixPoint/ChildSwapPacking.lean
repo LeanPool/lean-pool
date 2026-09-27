@@ -17,7 +17,7 @@ across the simultaneous swap of both colors, preserving its total radius, virtua
 score.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

@@ -14,7 +14,7 @@ public import LeanPool.Besicovitch.SixPoint.Packing
 This file constructs supports `67` and `76` and proves their one-dimensional routing algebra.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

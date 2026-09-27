@@ -18,7 +18,7 @@ proved from fixed exterior coordinates; no circuits or truth tables are
 enumerated.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

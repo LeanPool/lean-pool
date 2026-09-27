@@ -34,7 +34,7 @@ import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 The antiderivatives (a rational function plus arctan terms) are verified by differentiation.
 -/
 
-@[expose] public section
+public section
 
 open Filter Topology Set MeasureTheory
 

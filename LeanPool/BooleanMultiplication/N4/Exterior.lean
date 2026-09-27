@@ -18,7 +18,7 @@ explicit bilinear maps avoid constructing or deciding equality in a large
 general-purpose exterior algebra.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

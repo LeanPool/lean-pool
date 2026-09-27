@@ -2162,10 +2162,14 @@ lemma harper_base (A : Finset (Cube 0)) (k : ℕ) (hk : A.card = k) :
   have hdefault : (default : Cube 0) = ∅ := by
     ext i
     exact i.elim0
-  fin_cases A <;>
-    simp +decide only [Multiset.coe_nil, Finset.mk_zero, Multiset.coe_singleton,
-      Finset.card_mk, Multiset.card_singleton, ge_iff_le] <;>
-    exact le_refl _
+  fin_cases A
+  · simp +decide [hdefault, simplicialInitSeg, Finset.filter_singleton, rank,
+      simplicialLt, simplicialLe]
+  · apply le_of_eq
+    congr 1
+    simp +decide [hdefault, simplicialInitSeg, Finset.filter_singleton, rank,
+      simplicialLt, simplicialLe]
+    rfl
 
 theorem harper_theorem (n : ℕ) (A : Finset (Cube n)) (k : ℕ) (hk : A.card = k) :
     (neighborhood 1 (simplicialInitSeg n k)).card ≤ (neighborhood 1 A).card := by

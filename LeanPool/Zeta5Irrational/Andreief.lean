@@ -21,7 +21,7 @@ For functions `f i, g j : ℝ → ℝ` with `f i * g j` integrable,
 This is (6.10) of the paper in the form used for the Hankel determinant.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Finset Equiv
 

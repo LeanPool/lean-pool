@@ -165,8 +165,9 @@ theorem translation_hasFDerivAt (A : CompactField P V) (a : LiftTangent) :
 
 theorem translation_fderiv (A : CompactField P V) :
     fderiv ℝ (fun a : LiftTangent => translate P a A.toLp) =
-      fun a => derivativeBundling (liftMeasure P) (translate P a A.derivative.toLp) :=
-  funext (fun a => (A.translation_hasFDerivAt a).fderiv)
+      fun a => derivativeBundling (liftMeasure P) (translate P a A.derivative.toLp) := by
+  funext a
+  simpa only [derivativeBundling_apply] using (A.translation_hasFDerivAt a).fderiv
 
 private theorem translation_contDiff_aux (n : ℕ) :
     ∀ (V : Type u) [NormedAddCommGroup V] [NormedSpace ℝ V] (A : CompactField P V),

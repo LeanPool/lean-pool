@@ -14,7 +14,7 @@ This file states the compactified finite property and removes zero-radius labels
 witnesses.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

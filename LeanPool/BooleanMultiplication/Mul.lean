@@ -12,7 +12,7 @@ public import Lean.Elab.Tactic.Omega
 # Binary polynomial multiplication targets
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 

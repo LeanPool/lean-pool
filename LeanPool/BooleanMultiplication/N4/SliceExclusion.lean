@@ -17,7 +17,7 @@ only exterior products and the two support planes established in
 `SliceGeometry`; it does not enumerate circuits or Boolean functions.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

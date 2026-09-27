@@ -20,7 +20,7 @@ For `p = 2m + 1` every residue `c` mod `p` is `≡ ±a` for a unique `a ∈ {0, 
 We express the per-class counts `classCount` of the framework in terms of these classes.
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

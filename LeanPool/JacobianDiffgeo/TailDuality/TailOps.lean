@@ -99,7 +99,7 @@ theorem truncT_alpha [CompactSpace X] [ConnectedSpace X] {D₁ D₂ : RS.Divisor
 /-! ### `singleT` (the test-vector tails) -/
 
 /-- A single-point test tail: the class of `ψ` at `p`, zero elsewhere. -/
-noncomputable def singleT (p : X) (D : RS.Divisor X)
+@[expose] noncomputable def singleT (p : X) (D : RS.Divisor X)
     (ψ : RS.MeroGermOn X (chartAt ℂ p).source) : T D :=
   DFinsupp.single p (TailAt.mk p D ψ)
 
@@ -174,7 +174,7 @@ theorem mulIntoAt_surjective {f : RS.Mero X} (hf0 : f ≠ 0) [ConnectedSpace X] 
   rw [mulIntoAt_mk, ← mul_assoc, ← map_mul, mul_inv_cancel₀ hf0, map_one, one_mul]
 
 /-- Miranda's `t ∘ μ_f : T D →ₗ T E`, uniform in `f` (linear in `f`, §3 D3). -/
-noncomputable def mulInto (f : RS.Mero X) {D E : RS.Divisor X}
+@[expose] noncomputable def mulInto (f : RS.Mero X) {D E : RS.Divisor X}
     (hf : ∀ p, ((D p - E p : ℤ) : WithTop ℤ) ≤ f.ord p) : T D →ₗ[ℂ] T E where
   toFun τ := DFinsupp.mapRange (fun p => mulIntoAt f p (hf p)) (fun _ => map_zero _) τ
   map_add' τ σ := by

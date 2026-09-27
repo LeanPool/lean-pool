@@ -14,7 +14,7 @@ After translating the red root to the origin, the blue children are pulled back 
 root. The resulting vectors are the `e`, `p`, and `w` variables in the nine-packing proof.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

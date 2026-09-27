@@ -26,7 +26,7 @@ where `e_c` (resp. `ℓ_c`) is the number of zeros (resp. poles) in the class `c
 This replaces the `p`-adic distribution formula of the paper (Lemmas 3.1–3.2).
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

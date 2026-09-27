@@ -36,7 +36,7 @@ variable {a b : ℝ}
 
 /-- Canonical continuous path where the slice is continuous, zero elsewhere.
 Only values in the stated open parameter domain enter any theorem. -/
-noncomputable def pathFamily (F : P × ℝ → E) (p : P) : C(Icc a b, E) := by
+@[expose] noncomputable def pathFamily (F : P × ℝ → E) (p : P) : C(Icc a b, E) := by
   classical
   exact if h : Continuous (fun t : Icc a b => F (p, t)) then ⟨_, h⟩ else 0
 

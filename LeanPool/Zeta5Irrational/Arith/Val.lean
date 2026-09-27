@@ -22,7 +22,7 @@ import Mathlib.Tactic.Ring.Basic
 * `det_GV` : if `M i j` has Gauss valuation `≥ ρ i + κ j`, then `det M` has `≥ ∑ ρ + ∑ κ`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

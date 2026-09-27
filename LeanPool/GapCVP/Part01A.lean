@@ -792,7 +792,7 @@ structure PromiseReduction (A : BitLanguage) (P : PromiseProblem) where
   soundness : ∀ x, ¬ A x → P.no (map x)
 
 /-- GapCVP reduction support. -/
-noncomputable def NPHardPromise (P : PromiseProblem) : Bool :=
+@[expose] noncomputable def NPHardPromise (P : PromiseProblem) : Bool :=
   @decide (
   ∀ A : BitLanguage, IsNP A → Nonempty (PromiseReduction A P)
   ) (Classical.propDecidable _)

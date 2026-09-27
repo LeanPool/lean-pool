@@ -25,7 +25,7 @@ Combining `atom_energy_nonpos` with the four block estimates gives, for every co
 (`energy_raw`), where the diagonal terms are `log 0 = 0`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Set Real intervalIntegral Filter Topology Finset
 

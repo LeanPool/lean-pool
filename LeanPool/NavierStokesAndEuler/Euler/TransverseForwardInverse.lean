@@ -62,11 +62,11 @@ variable (U : Evolution T hT (generator T Q Q₁ c hc hQ))
     forcingOperator T Q c hc hQ f
 
 /-- The physical velocity `A=Qa` is an actual continuous path. -/
-def velocity (f : C(Icc (0 : ℝ) T, E)) (a₀ : V) : C(Icc (0 : ℝ) T,E) :=
+@[expose] def velocity (f : C(Icc (0 : ℝ) T, E)) (a₀ : V) : C(Icc (0 : ℝ) T,E) :=
   multiplier Q (coordinates T hT Q Q₁ c hc hQ U f a₀)
 
 /-- The physical time derivative, with the literal product-rule expression. -/
-def velocityDerivative (f : C(Icc (0 : ℝ) T, E)) (a₀ : V) : C(Icc (0 : ℝ) T,E) :=
+@[expose] def velocityDerivative (f : C(Icc (0 : ℝ) T, E)) (a₀ : V) : C(Icc (0 : ℝ) T,E) :=
   multiplier Q₁ (coordinates T hT Q Q₁ c hc hQ U f a₀) +
     multiplier Q (coordinateDerivative T hT Q Q₁ c hc hQ U f a₀)
 

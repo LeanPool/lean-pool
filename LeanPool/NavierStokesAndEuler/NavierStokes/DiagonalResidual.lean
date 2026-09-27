@@ -48,7 +48,7 @@ variable {D V : Type*} [NormedAddCommGroup D] [NormedSpace ℝ D]
   [NormedAddCommGroup V] [NormedSpace ℝ V]
 
 /-- A single quantitative order for one actual derivative. -/
-def JetRate (l : Filter D) (q : D → ℝ) (f : D → V) (m : ℕ) (r : ℝ) : Prop :=
+@[expose] def JetRate (l : Filter D) (q : D → ℝ) (f : D → V) (m : ℕ) (r : ℝ) : Prop :=
   ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ x in l, ‖iteratedFDeriv ℝ m f x‖ ≤ C * (q x) ^ r
 
 /-- A common constant and neighborhood for a finite list of actual jets. -/

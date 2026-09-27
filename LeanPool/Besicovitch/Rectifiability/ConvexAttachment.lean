@@ -15,7 +15,7 @@ For each selected hole, the continuum construction attaches the closed convex hu
 points in its two-diameter enlargement.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

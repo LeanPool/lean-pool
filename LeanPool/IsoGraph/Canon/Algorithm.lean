@@ -715,7 +715,7 @@ to depth `k`. -/
 
 /-- The automorphisms found so far that fix every vertex of `path`.  Only these may be used to
 prune the children of the node reached by `path`. -/
-def usableAutos (autos : Array (Array Nat)) (path : Array Nat) : Array (Array Nat) :=
+@[expose] def usableAutos (autos : Array (Array Nat)) (path : Array Nat) : Array (Array Nat) :=
   if autos.isEmpty then autos else autos.filter fun g => path.all fun x => g[x]! == x
 
 /-- Cached orbit information for the children of one search-tree node: the orbit of the already

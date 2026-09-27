@@ -17,7 +17,7 @@ import Mathlib.Tactic.NormNum.Pow
 the identity (5.20) at `M = 200` and the margin (7.2), both checked by `norm_num`.
 -/
 
-@[expose] public section
+public section
 
 namespace Zeta5Irrational
 

@@ -489,7 +489,11 @@ theorem QuantumSet.toSubset_onb (r : ℝ) (i : n A) :
   this.onb i =
     toSubsetAlgEquiv r (modAut ((k A / 2) + -(r / 2)) (hA.onb i)) := by
   let := hA.instSubset r
-  simp [onb]
+  have hsingle : hA.onb.repr.symm
+      ((WithLp.linearEquiv 2 ℂ (n A → ℂ)).symm (Pi.single i 1)) = hA.onb i := by
+    change hA.onb.repr.symm (EuclideanSpace.single i (1 : ℂ)) = hA.onb i
+    exact hA.onb.repr_symm_single i
+  simp [onb, hsingle]
 
 lemma QuantumSet.comul_of_subset (r : ℝ) :
   letI := hA.instSubset r;

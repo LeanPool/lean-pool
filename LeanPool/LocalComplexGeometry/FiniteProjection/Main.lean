@@ -40,7 +40,7 @@ def baseInclusion (n : ℕ) :
   lowerDimensionalInclusion n
 
 /-- The principal ideal of a hypersurface germ. -/
-def hypersurfaceIdeal {n : ℕ} (f : HolomorphicGerm (n + 1)) :
+@[expose] def hypersurfaceIdeal {n : ℕ} (f : HolomorphicGerm (n + 1)) :
     Ideal (HolomorphicGerm (n + 1)) :=
   Ideal.span ({f} : Set (HolomorphicGerm (n + 1)))
 

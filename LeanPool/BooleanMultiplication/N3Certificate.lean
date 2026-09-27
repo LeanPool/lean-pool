@@ -11,7 +11,7 @@ public import LeanPool.BooleanMultiplication.SmallCases
 # N3Certificate for unrestricted Boolean polynomial multiplication
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul.N3Certificate
 

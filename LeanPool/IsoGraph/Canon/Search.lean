@@ -143,7 +143,7 @@ refinement.  This is exactly the step `dfsChildren` takes. -/
     ((Array.replicate G.n false).set! (individualize p v).2 true) hashSeed
 
 /-- The node invariant of that child, appended to the path invariant. -/
-def childInv (G : Graph) (invPath : Array UInt64) (p : Part) (v : Nat) : Array UInt64 :=
+@[expose] def childInv (G : Graph) (invPath : Array UInt64) (p : Part) (v : Nat) : Array UInt64 :=
   invPath.push (mix (child G p v).2 ((child G p v).1.shapeHash G.n))
 
 /-- The leaves of the unpruned search tree below `p`, described by their keys. -/
@@ -233,7 +233,7 @@ theorem reach_transfer' {n : Nat} {σ : Nat → Nat} {f : Nat → Nat → Bool} 
   (initialRefine (Graph.ofOracle n f)).1
 
 /-- The invariant path at the root. -/
-def rootInv (n : Nat) (f : Nat → Nat → Bool) : Array UInt64 :=
+@[expose] def rootInv (n : Nat) (f : Nat → Nat → Bool) : Array UInt64 :=
   #[mix (initialRefine (Graph.ofOracle n f)).2 ((rootPart n f).shapeHash n)]
 
 /-- `k` is the key of a leaf of the whole (unpruned) search tree. -/
@@ -241,7 +241,7 @@ def rootInv (n : Nat) (f : Nat → Nat → Bool) : Array UInt64 :=
   Reach n f (rootInv n f) (rootPart n f) k
 
 /-- **The specification of `canonical`**: the largest key of any leaf. -/
-def BestKey (n : Nat) (f : Nat → Nat → Bool) (k : List (List UInt64)) : Prop :=
+@[expose] def BestKey (n : Nat) (f : Nat → Nat → Bool) (k : List (List UInt64)) : Prop :=
   Leafkey n f k ∧ ∀ k', Leafkey n f k' → compare k' k ≠ .gt
 
 theorem bestKey_unique {n : Nat} {f : Nat → Nat → Bool} {k k' : List (List UInt64)}
@@ -505,7 +505,7 @@ theorem compare_leafKey_lt {ip b tail c c' : List UInt64}
 /-! ### Invariant pruning is sound -/
 
 /-- `k` is beaten by the leaf the state currently holds. -/
-def Beaten (st : St) (k : List (List UInt64)) : Prop :=
+@[expose] def Beaten (st : St) (k : List (List UInt64)) : Prop :=
   ∃ l, st.best = some l ∧ compare k (leafKey l.invPath l.cert) = .lt
 
 theorem lexCmpU64_extract {a b : Array UInt64} :

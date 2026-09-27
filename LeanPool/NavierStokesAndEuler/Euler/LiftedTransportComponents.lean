@@ -45,7 +45,8 @@ theorem velocityComponents_direction (κ : ℝ) (m z : Vector3) :
     simpa only [EuclideanSpace.basisFun_repr, EuclideanSpace.basisFun_apply] using
       (EuclideanSpace.basisFun (Fin 3) ℝ).sum_repr z
   apply Prod.ext
-  · change (⟪m,z⟫_ℝ • standardDirection 0 + ∑ i : Fin 3, (κ * z i) • standardDirection i.succ).1 =
+  · simp only [coordinate_apply]
+    change (⟪m,z⟫_ℝ • standardDirection 0 + ∑ i : Fin 3, (κ * z i) • standardDirection i.succ).1 =
       κ • z
     simp only [standardDirection_zero, standardDirection_succ, Prod.fst_add, Prod.fst_sum]
     change ⟪m,z⟫_ℝ • (0 : Vector3) + (∑ i : Fin 3, (κ*z i) • EuclideanSpace.single i 1) = κ • z
@@ -58,7 +59,8 @@ theorem velocityComponents_direction (κ : ℝ) (m z : Vector3) :
         intro i _
         exact mul_smul κ (z i) _
       _ = κ • z := by rw [hz]
-  · change (⟪m,z⟫_ℝ • standardDirection 0 + ∑ i : Fin 3, (κ * z i) • standardDirection i.succ).2 =
+  · simp only [coordinate_apply]
+    change (⟪m,z⟫_ℝ • standardDirection 0 + ∑ i : Fin 3, (κ * z i) • standardDirection i.succ).2 =
       ⟪m,z⟫_ℝ
     rw [Prod.snd_add, Prod.snd_sum]
     simp only [standardDirection_zero, standardDirection_succ, Prod.smul_snd, smul_eq_mul, mul_one,

@@ -16,7 +16,7 @@ quotient API.  This file supplies the high-part predicates used by the seed
 and defect arguments.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

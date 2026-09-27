@@ -22,7 +22,7 @@ The proof is exterior-linear and does not enumerate circuits or Boolean
 functions.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

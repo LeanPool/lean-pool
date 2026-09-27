@@ -15,7 +15,7 @@ The set `uniformDensitySet μ A γ m` consists of the points of `A` where the lo
 bound at level `γ` holds at every positive rational radius below `1 / (m + 1)`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

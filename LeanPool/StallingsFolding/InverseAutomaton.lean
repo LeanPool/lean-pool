@@ -17,7 +17,7 @@ subgroup of the free group, and that membership in this subgroup is exactly a
 finite traversal test on the canonical reduced word.
 -/
 
-@[expose] public section
+public section
 
 namespace Stallings
 
@@ -95,7 +95,7 @@ def run (G : InverseAutomaton V) (v : V) : Word → Option V
   | x :: w => (G.next v x).bind fun u => G.run u w
 
 @[simp]
-theorem run_nil (v : V) : G.run v [] = some v := rfl
+theorem run_nil (v : V) : G.run v [] = some v := by rfl
 
 /-- A labelled path in an inverse automaton. -/
 inductive Walk : V → Word → V → Prop where

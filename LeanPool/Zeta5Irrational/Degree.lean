@@ -28,7 +28,7 @@ determinant of the matrix of `X`-coefficients, which is `Vᵀ diag(w) V` for the
 matrix `V` of the nodes `-j²`, `N < j ≤ K`, with nonzero weights `w`. Hence `deg Δ_K = h`.
 -/
 
-@[expose] public section
+public section
 
 open Polynomial Matrix Finset
 

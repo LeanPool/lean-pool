@@ -20,7 +20,7 @@ most four members.  This replaces a search over quadratic circuits by a small
 linear-algebra certificate.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

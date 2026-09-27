@@ -15,7 +15,7 @@ This file records the exact weighted score and proves that its two second childr
 moved inward until both sibling distances equal the endpoint chord length.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

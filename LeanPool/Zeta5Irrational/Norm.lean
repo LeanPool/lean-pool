@@ -36,7 +36,7 @@ falling back to (3.12) otherwise. The normaliser is `mN n = ∏_{p ≤ 2h} p^{-L
 `integral_mN` proves `mN n · F_K ∈ ℤ[X]` for every `n ≥ 1`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

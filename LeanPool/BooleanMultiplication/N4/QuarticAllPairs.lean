@@ -16,7 +16,7 @@ two.  This lets the low--low proof select a nonzero `2 × 2` coefficient
 minor directly, without formalizing a separate `PGL₂(F₂)` action.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

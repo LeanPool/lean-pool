@@ -7439,6 +7439,7 @@ public import LeanPool.RootSystem.An
 public import LeanPool.RootSystem.BCn
 public import LeanPool.RungeKuttaOrderConditions
 public import LeanPool.RungeKuttaOrderConditions.ButcherOrder
+public import LeanPool.RungeKuttaOrderConditions.CheckerExamples
 public import LeanPool.Rupert
 public import LeanPool.Rupert.Affine
 public import LeanPool.Rupert.Attr

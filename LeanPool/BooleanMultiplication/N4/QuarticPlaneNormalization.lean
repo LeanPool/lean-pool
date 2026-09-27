@@ -17,7 +17,7 @@ Changing factor basis modifies the seed product only by rational-low wires,
 which are absorbed into the existing correction.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

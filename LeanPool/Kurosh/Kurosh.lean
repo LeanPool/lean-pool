@@ -1210,7 +1210,7 @@ theorem rawOrbitAlign_spec {ι : Type v} (G : ι → Type u)
   map e := e.1
 
 /-- Include the quotient spanning tree into the symmetrified quotient graph. -/
-def rawTreeInclusion {ι : Type v} (G : ι → Type u)
+@[expose] def rawTreeInclusion {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G)) :
     rawBassSerreOrbitTree G H ⥤q
       Quiver.Symmetrify (RawBassSerreOrbitVertex G H) where
@@ -1718,25 +1718,25 @@ private theorem freeGroupoid_isConnected_of_rootedConnected
   exact Zigzag.of_inv_hom (freeGroupoidPathHom pa) (freeGroupoidPathHom pb)
 
 /-- Recover the original vertex from an object of the free groupoid. -/
-def freeGroupoidBaseObj {V : Type u} [q : Quiver.{v} V]
+@[expose] def freeGroupoidBaseObj {V : Type u} [q : Quiver.{v} V]
     (a : Quiver.FreeGroupoid V) : V := by
   exact a.as
 
 /-- The quiver underlying the category structure of the free groupoid. -/
-@[instance_reducible] def freeGroupoidCategoryQuiver {V : Type u} [q : Quiver.{v} V] :
+@[expose, instance_reducible] def freeGroupoidCategoryQuiver {V : Type u} [q : Quiver.{v} V] :
     Quiver (Quiver.FreeGroupoid V) := by
   letI : CategoryTheory.Category (Quiver.FreeGroupoid V) :=
     Quiver.FreeGroupoid.instCategory
   infer_instance
 
 /-- Original quiver arrows, lifted to the universe of free groupoid morphisms. -/
-@[instance_reducible] def freeGroupoidGeneratorQuiver {V : Type u} [q : Quiver.{v} V] :
+@[expose, instance_reducible] def freeGroupoidGeneratorQuiver {V : Type u} [q : Quiver.{v} V] :
     Quiver.{max u v} (Quiver.FreeGroupoid V) :=
   { Hom := fun a b => ULift.{u}
       (@Quiver.Hom V q (freeGroupoidBaseObj a) (freeGroupoidBaseObj b)) }
 
 /-- Include a lifted generating arrow into the free groupoid. -/
-def freeGroupoidGeneratorArrow {V : Type u} [q : Quiver.{v} V]
+@[expose] def freeGroupoidGeneratorArrow {V : Type u} [q : Quiver.{v} V]
     {a b : Quiver.FreeGroupoid V}
     (e : ULift.{u}
       (@Quiver.Hom V q (freeGroupoidBaseObj a) (freeGroupoidBaseObj b))) :
@@ -1946,7 +1946,7 @@ def rawBassSerreOrbitTreeRootVertex {ι : Type v} (G : ι → Type u)
   Quiver.root (rawBassSerreOrbitTree G H)
 
 /-- Map a tree path to the symmetrified quotient graph without bundled tree vertices. -/
-def rawTreeInclusionMapPathAsRaw {ι : Type v} (G : ι → Type u)
+@[expose] def rawTreeInclusionMapPathAsRaw {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     {a b : WideSubquiver.toType
       (Quiver.Symmetrify (RawBassSerreOrbitVertex G H))
@@ -2249,7 +2249,7 @@ abbrev KuroshComponentIndex {ι : Type v} (G : ι → Type u)
   KuroshFactorIndex G H ⊕ PUnit
 
 /-- The component group at a Kurosh factor or at the free quotient graph. -/
-def KuroshComponent {ι : Type v} (G : ι → Type u)
+@[expose] def KuroshComponent {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G)) :
     KuroshComponentIndex G H → Type (max (u + 1) (v + 1)) :=
   Sum.elim
@@ -2285,7 +2285,7 @@ abbrev TreeKuroshComponentIndex {ι : Type v} (G : ι → Type u)
   RawBassSerreOrbitVertex G H ⊕ PUnit
 
 /-- The family of vertex stabilizers together with the quotient graph's loop group. -/
-def TreeKuroshComponent {ι : Type v} (G : ι → Type u)
+@[expose] def TreeKuroshComponent {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G)) :
     TreeKuroshComponentIndex G H → Type (max (u + 1) (v + 1)) :=
   Sum.elim
@@ -2311,7 +2311,7 @@ abbrev TreeKuroshProduct {ι : Type v} (G : ι → Type u)
   FreeProduct (TreeKuroshComponent G H)
 
 /-- Map each stabilizer by inclusion and the free part by evaluation in `H`. -/
-noncomputable def treeKuroshComponentHom {ι : Type v} (G : ι → Type u)
+@[expose] noncomputable def treeKuroshComponentHom {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     (q : TreeKuroshComponentIndex G H) :
     TreeKuroshComponent G H q →* H := by

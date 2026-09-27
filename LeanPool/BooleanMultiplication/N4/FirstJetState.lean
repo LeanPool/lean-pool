@@ -16,7 +16,7 @@ state, by its rational tangent.  Thus later gates see the old seed state plus
 one explicit first-Hasse-jet direction.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

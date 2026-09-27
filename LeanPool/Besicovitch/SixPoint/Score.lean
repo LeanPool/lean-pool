@@ -13,7 +13,7 @@ public import LeanPool.Besicovitch.SixPoint.Packing
 This file controls the score when its parameter or the underlying center distances change.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

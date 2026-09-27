@@ -2069,7 +2069,7 @@ theorem integral_edit_window (d : TailData) (f : ℝ → ℝ)
 
 /-- Corrected history, given by `(5 / 8) * d.core.P * shape eta + ∫ t in (0 :
 ℝ)..d.releaseStart, Real.exp (3 * t / 2) * correctedAngular d c (t, eta)`. -/
-def correctedHistory (d : TailData) (c : ℝ → Coeff) (eta : ℝ) : ℝ :=
+@[expose] def correctedHistory (d : TailData) (c : ℝ → Coeff) (eta : ℝ) : ℝ :=
   (5 / 8) * d.core.P * shape eta +
     ∫ t in (0 : ℝ)..d.releaseStart, Real.exp (3 * t / 2) * correctedAngular d c (t, eta)
 

@@ -14,7 +14,7 @@ public import Mathlib.Data.Finset.Lattice.Fold
 A support remembers selected zero-radius labels, so its virtual diameter has no degenerate cases.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

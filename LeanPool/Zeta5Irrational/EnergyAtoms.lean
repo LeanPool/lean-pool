@@ -29,7 +29,7 @@ For a configuration `t : Fin h → ℝ` and a radius `ε > 0`, the atoms are the
 This file verifies the hypotheses of `energy_log_nonpos` for these atoms.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Set Real intervalIntegral Filter Topology
 

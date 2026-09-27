@@ -18,7 +18,7 @@ equal.  Hence there is exactly one zero corner and exactly three active
 slices.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

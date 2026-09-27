@@ -135,6 +135,10 @@ def sobolevTranslation (q : ℕ) (a : LiftDomain period) : SobolevSpace period q
     period q :=
   liftOperator period q (translation period a).toContinuousLinearMap (translations_commute period a)
 
+@[simp] theorem value_sobolevTranslation {q : ℕ} (a : LiftDomain period)
+    (u : SobolevSpace period q) :
+    value period (sobolevTranslation period q a u) = translation period a (value period u) := by rfl
+
 /-- Cylinder translation preserves the complete Sobolev norm exactly. -/
 theorem sobolevTranslation_norm {q : ℕ} (a : LiftDomain period) (u : SobolevSpace period q) :
     ‖sobolevTranslation period q a u‖ = ‖u‖ := by

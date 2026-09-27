@@ -22,7 +22,7 @@ completed by elementary two-vector squares, dominates that form, so the score is
 explicit rational number depending only on the certificate.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

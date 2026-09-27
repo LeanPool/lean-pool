@@ -116,12 +116,12 @@ instance DirectedProduct {α : Type u} {β : Type v} [t₁ : DirectedSpace α] [
       ⟨isDipath_reparam hφ_mono γ₁_dipath, isDipath_reparam hφ_mono γ₂_dipath⟩
 
 /-- The projection map `α × β → α` -/
-def directedFst {α β : Type*} [DirectedSpace α] [DirectedSpace β] : D(α × β, α) where
+@[expose] def directedFst {α β : Type*} [DirectedSpace α] [DirectedSpace β] : D(α × β, α) where
   toFun := fun x => x.1
   directed_toFun := fun _ _ γ ⟨hγ₁, _⟩ => hγ₁
 
 /-- The projection map `α × β → β` -/
-def directedSnd {α β : Type*} [DirectedSpace α] [DirectedSpace β] : D(α × β, β) where
+@[expose] def directedSnd {α β : Type*} [DirectedSpace α] [DirectedSpace β] : D(α × β, β) where
   toFun := fun x => x.2
   directed_toFun := fun _ _ γ ⟨_, hγ₂⟩ => hγ₂
 
@@ -132,7 +132,7 @@ variable {α β γ δ : Type*} [DirectedSpace α] [DirectedSpace β] [DirectedSp
 /-- Two directed maps `f : α → β` and `g : α → γ` can be turned into a directed map `α → β × γ` by
   mapping `a : α` to `(f a, g a)`.
 -/
-protected def DirectedMap.prodMapMk (f : D(α,β)) (g : D(α,γ)) : D(α, β × γ) where
+@[expose] protected def DirectedMap.prodMapMk (f : D(α,β)) (g : D(α,γ)) : D(α, β × γ) where
   toFun := fun x => (f x, g x)
   directed_toFun := fun x y γ hγ => ⟨f.directed_toFun γ hγ, g.directed_toFun γ hγ⟩
 
@@ -147,7 +147,7 @@ protected def DirectedMap.prodMapMk' (f : D(α,γ)) (g : D(β,δ)) : D(α × β,
 /-- For every `t : α`, we can convert a directed map `F : α × β → γ` to a directed map `β → γ` by
   sending `b` to `F(t, b)`
 -/
-def DirectedMap.prodConstFst (F : D(α × β,γ)) (a : α) : D(β,γ) :=
+@[expose] def DirectedMap.prodConstFst (F : D(α × β,γ)) (a : α) : D(β,γ) :=
   F.comp (DirectedMap.prodMapMk (DirectedMap.const β a) (DirectedMap.id β))
 
 @[simp] lemma DirectedMap.prod_const_fst_apply (F : D(α × β,γ)) (a : α) (b : β) :
@@ -156,7 +156,7 @@ def DirectedMap.prodConstFst (F : D(α × β,γ)) (a : α) : D(β,γ) :=
 /-- For every `t : β`, we can convert a directed map `F : α × β → γ` to a directed map `α → γ` by
   sending `a` to `F(a, t)`
 -/
-def DirectedMap.prodConstSnd (F : D(α × β,γ)) (t : β) : D(α,γ) :=
+@[expose] def DirectedMap.prodConstSnd (F : D(α × β,γ)) (t : β) : D(α,γ) :=
   F.comp (DirectedMap.prodMapMk (DirectedMap.id α) (DirectedMap.const α t))
 
 @[simp] lemma DirectedMap.prod_const_snd_apply (F : D(α × β,γ)) (b : β) (a : α) :

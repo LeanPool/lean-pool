@@ -20,7 +20,7 @@ word. Its vertices are indexed by generator and letter position, so the
 construction is finite and the input words remain visible in the definition.
 -/
 
-@[expose] public section
+public section
 
 namespace Stallings
 

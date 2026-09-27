@@ -23,7 +23,7 @@ import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 this gives `∑_{K/d < p ≤ K/c} p log p = K² (1/c² - 1/d²)/2 + o(K²)`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Filter Topology MeasureTheory Set Real Asymptotics
 

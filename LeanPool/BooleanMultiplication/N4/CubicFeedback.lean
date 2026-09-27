@@ -20,7 +20,7 @@ No circuit configurations are enumerated here; the proof is obtained from the
 three algebraic dependency cases in `low_product_quadratic_normal_form`.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

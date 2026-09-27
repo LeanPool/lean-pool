@@ -18,7 +18,7 @@ This module contains the transparent definitions used by the solution.  They are
 `Challenge.lean`, whose statement is checked independently by the comparator.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

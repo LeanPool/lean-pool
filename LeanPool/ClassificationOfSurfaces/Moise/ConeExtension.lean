@@ -904,10 +904,10 @@ noncomputable def realizationHomeomorphAll :
 
 @[simp] theorem realizationHomeomorphAll_apply
     (x : GeometricRealization K.Vertex K.simplexes) :
-    (K.realizationHomeomorphAll x).1 = K.baryEval x.1 := rfl
+    (K.realizationHomeomorphAll x).1 = K.baryEval x.1 := by rfl
 
 /-- Reposition a plane complex while retaining its abstract simplexes. -/
-noncomputable def reposition (position' : K.Vertex → Plane)
+@[expose] noncomputable def reposition (position' : K.Vertex → Plane)
     (hinj : Function.Injective position')
     (haff : ∀ s ∈ K.simplexes, AffineIndependent ℝ fun v : s => position' v)
     (hface : ∀ s ∈ K.simplexes, ∀ t ∈ K.simplexes,
@@ -1075,10 +1075,10 @@ def coneWeights (z : K.Vertex → ℝ) : Option K.Vertex → ℝ
   | none => 0
   | some v => z v
 
-@[simp] theorem coneWeights_none (z : K.Vertex → ℝ) : K.coneWeights z none = 0 := rfl
+@[simp] theorem coneWeights_none (z : K.Vertex → ℝ) : K.coneWeights z none = 0 := by rfl
 
 @[simp] theorem coneWeights_some (z : K.Vertex → ℝ) (v : K.Vertex) :
-    K.coneWeights z (some v) = z v := rfl
+    K.coneWeights z (some v) = z v := by rfl
 
 theorem sum_coneWeights (z : K.Vertex → ℝ) :
     ∑ v, K.coneWeights z v = ∑ v, z v := by
@@ -1207,7 +1207,7 @@ theorem baseCarrier_inter {t u : Finset (Option K.Vertex)}
     (K.baseFace_mem_of_nonempty hu hune)
 
 /-- Cone a finite one-dimensional complex supported on the frontier of a convex set. -/
-noncomputable def cone (S : Set Plane) (hS : Convex ℝ S) (c : Plane)
+@[expose] noncomputable def cone (S : Set Plane) (hS : Convex ℝ S) (c : Plane)
     (hc : c ∈ interior S) (havoid : c ∉ Set.range K.position)
     (hgraph : ∀ s ∈ K.simplexes, s.card ≤ 2)
     (hsupport : K.support = frontier S) : PlaneComplex where

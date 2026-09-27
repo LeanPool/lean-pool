@@ -4754,7 +4754,7 @@ theorem isPermArray_of {n : Nat} {a : Array Nat} (hsize : a.size = n)
 /-! ### The search's output is an honest leaf -/
 
 /-- The `Leaf` view of a `Result`, so that `LeafOk` can be reused for it. -/
-def resultLeaf (r : Result) : Leaf :=
+@[expose] def resultLeaf (r : Result) : Leaf :=
   { path := #[], invPath := #[], cert := r.cert, lab := r.lab }
 
 /-- **The canonical labelling is a permutation and its certificate is the graph read at it.** -/

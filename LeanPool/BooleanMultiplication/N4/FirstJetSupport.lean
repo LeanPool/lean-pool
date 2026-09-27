@@ -20,7 +20,7 @@ The only finite certificates below concern the nine fixed Hankel words and
 their eight columns.  They do not enumerate circuits or Boolean functions.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

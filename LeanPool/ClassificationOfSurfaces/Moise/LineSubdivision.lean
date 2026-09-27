@@ -448,7 +448,7 @@ private theorem affineIndependent_referenceTriangle2 {a b : ℝ} (ha0 : 0 < a)
 
 /-- The three triangles produced when a line meets the two edges issuing from the origin of the
 standard triangle. -/
-noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
+@[expose] noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
     (hb0 : 0 < b) (hb1 : b < 1) : TriangleMesh where
   Vertex := Fin 5
   position := referenceSplitPosition a b
@@ -849,7 +849,7 @@ private theorem affineIndependent_referenceEdgeTriangle1 {c : ℝ} (hc1 : c < 1)
   exact h
 
 /-- The two-triangle reference mesh used when the cutting line passes through vertex `2`. -/
-noncomputable def referenceEdgeSplitMesh (c : ℝ) (hc0 : 0 < c) (hc1 : c < 1) :
+@[expose] noncomputable def referenceEdgeSplitMesh (c : ℝ) (hc0 : 0 < c) (hc1 : c < 1) :
     TriangleMesh where
   Vertex := Fin 4
   position := referenceEdgeSplitPosition c
@@ -1093,7 +1093,7 @@ theorem standardTrianglePosition_affineIndependent :
   norm_num [standardTrianglePosition, planePoint_apply_zero, planePoint_apply_one, PiLp.sub_apply]
 
 /-- The parameter at which a line cuts the edge from the positive vertex to a negative vertex. -/
-noncomputable def triangleCutParameter (f : Plane →ᵃ[ℝ] ℝ) (p q : Plane) : ℝ :=
+@[expose] noncomputable def triangleCutParameter (f : Plane →ᵃ[ℝ] ℝ) (p q : Plane) : ℝ :=
   f p / (f p - f q)
 
 /-- The reference split transported to an arbitrary ordered triangle.  The first vertex is on
@@ -1258,7 +1258,7 @@ theorem refinementPoints_neg : M.refinementPoints (-f) = M.refinementPoints f :=
   exact affineCutPoint.neg f (M.position uv.1) (M.position uv.2)
 
 /-- Identifying the coherent vertex pools for `f` and `-f`; geometrically this is the identity. -/
-noncomputable def refinedVertexNegEquiv : M.RefinedVertex (-f) ≃ M.RefinedVertex f where
+@[expose] noncomputable def refinedVertexNegEquiv : M.RefinedVertex (-f) ≃ M.RefinedVertex f where
   toFun v := ⟨v.1, by rw [← M.refinementPoints_neg f]; exact v.2⟩
   invFun v := ⟨v.1, by rw [M.refinementPoints_neg f]; exact v.2⟩
   left_inv v := Subtype.ext rfl
@@ -1495,7 +1495,7 @@ noncomputable def strictVerticesEmbedding (v : Fin 3 → M.Vertex)
       standardTrianglePosition_affineIndependent hv).injective hpos
 
 /-- The `strictMeshFor` declaration. -/
-noncomputable def strictMeshFor (v : Fin 3 → M.Vertex)
+@[expose] noncomputable def strictMeshFor (v : Fin 3 → M.Vertex)
     (hv : AffineIndependent ℝ (M.position ∘ v))
     (h0 : 0 < f (M.position (v 0))) (h1 : f (M.position (v 1)) < 0)
     (h2 : f (M.position (v 2)) < 0) : TriangleMesh :=
@@ -1556,7 +1556,7 @@ theorem strictMeshFor_support (v : Fin 3 → M.Vertex)
         standardTrianglePosition_affineIndependent hv
 
 /-- The `strictNegativeMeshFor` declaration. -/
-noncomputable def strictNegativeMeshFor (v : Fin 3 → M.Vertex)
+@[expose] noncomputable def strictNegativeMeshFor (v : Fin 3 → M.Vertex)
     (hv : AffineIndependent ℝ (M.position ∘ v))
     (h0 : f (M.position (v 0)) < 0) (h1 : 0 < f (M.position (v 1)))
     (h2 : 0 < f (M.position (v 2))) : TriangleMesh :=
@@ -1647,7 +1647,7 @@ noncomputable def edgeVerticesEmbedding (v : Fin 3 → M.Vertex)
       standardTrianglePosition_affineIndependent hv).injective hpos
 
 /-- The `edgeMeshFor` declaration. -/
-noncomputable def edgeMeshFor (v : Fin 3 → M.Vertex)
+@[expose] noncomputable def edgeMeshFor (v : Fin 3 → M.Vertex)
     (hv : AffineIndependent ℝ (M.position ∘ v))
     (h0 : 0 < f (M.position (v 0))) (h1 : f (M.position (v 1)) < 0) : TriangleMesh :=
   let c := triangleCutParameter f (M.position (v 0)) (M.position (v 1))
@@ -1699,7 +1699,7 @@ theorem edgeMeshFor_support (v : Fin 3 → M.Vertex)
         standardTrianglePosition_affineIndependent hv
 
 /-- The `edgeNegativeMeshFor` declaration. -/
-noncomputable def edgeNegativeMeshFor (v : Fin 3 → M.Vertex)
+@[expose] noncomputable def edgeNegativeMeshFor (v : Fin 3 → M.Vertex)
     (hv : AffineIndependent ℝ (M.position ∘ v))
     (h0 : f (M.position (v 0)) < 0) (h1 : 0 < f (M.position (v 1))) : TriangleMesh :=
   let N := M.edgeMeshFor (-f) v hv (by simpa) (by simpa)
@@ -2066,7 +2066,7 @@ theorem strictMeshFor_triangles (v : Fin 3 → M.Vertex)
   ext s
   simp [strictMeshFor, strictPatternTriangles, referenceSplitMesh,
     referenceSplitTriangles, TriangleMesh.reindex, TriangleMesh.mapAffineEquiv,
-    strictVerticesEmbedding]
+    strictVerticesEmbedding, Function.Embedding.coeFn_mk]
 
 theorem edgeMeshFor_triangles (v : Fin 3 → M.Vertex)
     (hv : AffineIndependent ℝ (M.position ∘ v))
@@ -2075,7 +2075,7 @@ theorem edgeMeshFor_triangles (v : Fin 3 → M.Vertex)
       edgePatternTriangles (M.edgeVertices f v h0 h1) := by
   simp [edgeMeshFor, edgePatternTriangles, referenceEdgeSplitMesh,
     referenceEdgeSplitTriangles, TriangleMesh.reindex, TriangleMesh.mapAffineEquiv,
-    edgeVerticesEmbedding]
+    edgeVerticesEmbedding, Function.Embedding.coeFn_mk]
 
 theorem strictNegativeMeshFor_monochromatic (v : Fin 3 → M.Vertex)
     (hv : AffineIndependent ℝ (M.position ∘ v))

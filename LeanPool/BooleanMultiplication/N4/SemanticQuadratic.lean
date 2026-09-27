@@ -15,7 +15,7 @@ connects that code to canonical Boolean ANFs without enumerating functions.
 Only sparse evaluations and finite sums of monomials are used.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

@@ -16,7 +16,7 @@ vector without changing the state.  This is exactly what later gates see in
 the semantic circuit model.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

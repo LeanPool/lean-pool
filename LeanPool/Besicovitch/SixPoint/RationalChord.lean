@@ -21,7 +21,7 @@ The routing and exclusion modules use a chord only through the two facts below: 
 between one and two, and that it lies in an explicit rational box.  Both are immediate here.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

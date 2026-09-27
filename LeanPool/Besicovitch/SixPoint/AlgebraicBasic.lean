@@ -15,7 +15,7 @@ order-theoretic consequences of defining `cStar` as an infimum. The strict
 lower bound for `sStar` requires uniqueness of the isolated first coordinate.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

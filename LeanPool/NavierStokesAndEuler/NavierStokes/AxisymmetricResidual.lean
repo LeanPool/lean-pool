@@ -211,7 +211,8 @@ theorem contDiff_lift_slice {G : Profile} {t : ℝ} (hG : SliceC2 G t) :
   exact (hG x).comp x (contDiff_profilePoint_slice t).contDiffAt
 
 /-- Partial T, given by `fderiv ℝ G p (1, (0, 0))`. -/
-def partialT (G : Profile) (p : ProfilePoint) : ℝ := fderiv ℝ G p (1, (0, 0))
+@[expose] def partialT (G : Profile) (p : ProfilePoint) : ℝ :=
+  fderiv ℝ G p (1, (0, 0))
 /-- Laplace scalar, given by `2 * p.2.1 * partialS (partialS G) p + 2 * partialS G p + partialZ
 (partialZ G) p`. -/
 @[expose] def laplaceScalar (G : Profile) (p : ProfilePoint) : ℝ :=

@@ -17,7 +17,7 @@ every term containing an affine factor, so no large exterior-power coordinate
 space or circuit enumeration is needed.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

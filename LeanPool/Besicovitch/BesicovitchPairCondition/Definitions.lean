@@ -13,7 +13,7 @@ public import LeanPool.Besicovitch.Statement
 This file defines straight measures and the pair condition in the Euclidean plane.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

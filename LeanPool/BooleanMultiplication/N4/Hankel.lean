@@ -15,7 +15,7 @@ target of four-term multiplication.  All classifications are expressed as
 polynomial identities over `F₂`; no circuit or truth-table enumeration is used.
 -/
 
-@[expose] public section
+public section
 
 namespace UnrestrictedBooleanMul
 namespace N4

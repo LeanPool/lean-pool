@@ -14,7 +14,7 @@ public import Mathlib.Data.Nat.Pairing
 Countable one-rectifiability is inherited by subsets and countable unions.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

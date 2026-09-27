@@ -16,7 +16,7 @@ A bad convex set meets the compact density core but contains disproportionately 
 outside it. These are the holes used in the continuum construction.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

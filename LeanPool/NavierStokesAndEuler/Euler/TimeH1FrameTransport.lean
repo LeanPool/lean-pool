@@ -118,6 +118,10 @@ def transverseForward : zeroTraceDerivatives (U := U) T hT →L[ℝ] transverseD
       EulerTransverseMomentumRegularity.productDerivative_mem_transverse T hT Q Q₁ hd m hTangent
         (v : TimeLp T U) v.property)
 
+@[simp] theorem transverseForward_coe (v : zeroTraceDerivatives (U := U) T hT) :
+    (transverseForward T hT Q Q₁ hd m hTangent v : TimeLp T E) =
+      productDerivative T hT Q Q₁ (v : TimeLp T U) := by rfl
+
 /-- Applying the constructed inverse-frame derivative transports back to the
 same fixed coordinate space. -/
 def transverseBackward : transverseDerivatives T hT m →L[ℝ] zeroTraceDerivatives (U := U) T hT :=
