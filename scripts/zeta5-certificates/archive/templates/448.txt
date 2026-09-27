@@ -1,0 +1,5 @@
+theorem tOut_mono : ∀ i < {{integer}}, tOut i < tOut (i + {{integer}}) := by
+  intro i hi
+  interval_cases i <;> simp only [tOut, tOutL, List.getD_cons_succ, List.getD_cons_zero] <;>
+    norm_num
+
