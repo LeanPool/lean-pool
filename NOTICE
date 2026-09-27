@@ -45,6 +45,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/CenteredMaximal           https://github.com/CoolRmal/centered-maximal-constant
   LeanPool/Champernowne              https://github.com/OldMathematician/ChampernowneNormality
   LeanPool/ChannelCapacity           https://github.com/abenenson/channel-capacity
+  LeanPool/ChipFiring                https://github.com/dhyeymavani2003/chip-firing-with-lean
   LeanPool/Chudnovsky                https://github.com/ldct/lean-eval-chudnovsky
   LeanPool/CircuitComplexity         https://github.com/SamuelSchlesinger/circuit-complexity
   LeanPool/Circuitlib                https://github.com/matthunz/circuitlib
