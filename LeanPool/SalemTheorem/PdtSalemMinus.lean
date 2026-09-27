@@ -417,23 +417,9 @@ theorem salem_root_trichotomy_minus (alpha : ℝ) (roots : Multiset ℂ)
       · rw [Finset.mem_singleton.mp h1]
         exact salem_root_inv_minus alpha roots m htau0 hroot
   have hRne : Rm alpha roots m ≠ 0 := (Rm_monic alpha roots m hm).ne_zero
-  have hle : S.val ≤ (Rm alpha roots m).roots := by
-    rw [Multiset.le_iff_count]
-    intro z
-    by_cases hz : z ∈ S
-    · rw [Multiset.count_eq_one_of_mem S.nodup (Finset.mem_def.mp hz),
-        Polynomial.count_roots]
-      have hpos := (Polynomial.rootMultiplicity_pos hRne).mpr (hSroot z hz)
-      omega
-    · rw [Multiset.count_eq_zero.mpr (fun hv => hz (Finset.mem_def.mpr hv))]
-      exact Nat.zero_le _
-  have hcards : Multiset.card ((Rm alpha roots m).roots) ≤ Multiset.card S.val := by
-    have h1 := Polynomial.card_roots' (Rm alpha roots m)
-    rw [Rm_natDegree alpha roots m hm] at h1
-    have h2 : Multiset.card S.val = S.card := rfl
-    omega
   have heq : S.val = (Rm alpha roots m).roots :=
-    Multiset.eq_of_le_of_card_le hle hcards
+    SalemCircle.finset_val_eq_roots _ hRne S hSroot
+      (by rw [Rm_natDegree alpha roots m hm]; exact hScard)
   intro z hz
   have hzmem : z ∈ (Rm alpha roots m).roots := Polynomial.mem_roots'.mpr ⟨hRne, hz⟩
   rw [← heq] at hzmem

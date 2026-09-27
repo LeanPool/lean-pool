@@ -19,7 +19,7 @@ constructions with their family roots exposed
 The bridge from a Pisot number to the Pisot-pattern data of its minimal
 polynomial; Salem's theorem stated for Pisot numbers (every Pisot number
 is a limit of Salem numbers from both sides); and the two constructions
-of the proof modules re-run with the index `m` and the family
+of the proof modules with the index `m` and the family
 polynomial kept in the conclusion.
 
 A Pisot number is a real algebraic integer `α > 1` all of whose other
@@ -46,7 +46,7 @@ here as `1 < α`, `IsIntegral ℤ α`, and
   `ε > 0` there is a Salem number in `(α − ε, α)` and one in
   `(α, α + ε)` — by transport through `salem_theorem_full`.
 * `salem_construction_two_sided`: the assembly
-  `PdtSalemEndgame.salem_two_sided` re-run keeping the index and the
+  `PdtSalemEndgame.salem_construction_two_sided`, keeping the index and the
   root equation — under the Pisot pattern and `P(1/α) ≠ 0`, with
   `e = ±1` the sign of `P(1/α)`, some `X^m·P + e·P.reverse` (`m ≥ 2`)
   has a Salem root in `(α − ε, α)` and some `X^m·P − e·P.reverse`
@@ -54,7 +54,7 @@ here as `1 < α`, `IsIntegral ℤ α`, and
   and `exists_salem_above_root` are the ladder lemmas of
   `PdtSalemEndgame` with the root kept.
 * `salem_quadratic_unit`: `PdtSalemQuadUnit.salem_two_sided_quad_unit`
-  re-run keeping the index and the root equation, the family spelled
+  with the index and the root equation retained, the family spelled
   as `(X² − rX + 1)(X^{2m} + 1) ± X^{m+1}` (`m ≥ 1`).
 -/
 
@@ -199,291 +199,16 @@ theorem salem_theorem (alpha : ℝ) (halpha : 1 < alpha) (hint : IsIntegral ℤ 
 
 /-! ### The constructions with their family roots exposed
 
-The two module assemblies (`PdtSalemEndgame.salem_two_sided` and
-`PdtSalemQuadUnit.salem_two_sided_quad_unit`) conclude with a Salem
-number in each window and discard the index `m` and the family
-polynomial the number is a root of.  The statements below re-run the
-same assemblies keeping both, so that each construction can be compared
-as a construction. -/
+The lower-level modules retain the family witnesses. Their traditional two-sided
+statements discard those witnesses, and this module re-exports the stronger interfaces. -/
 
 export SalemEndgame (exists_salem_below_root)
 
 export SalemEndgame (exists_salem_above_root)
 
-/-- Evaluation of the mapped signed family `X^m·Pz + e·Pz.reverse`. -/
-lemma eval_signed_family (Pz : Polynomial ℤ) (e : ℤ) (m : ℕ) (tau : ℝ) :
-    ((X ^ m * Pz + C e * Pz.reverse).map (Int.castRingHom ℝ)).eval tau
-      = tau ^ m * (Pz.map (Int.castRingHom ℝ)).eval tau
-        + (e : ℝ) * (Pz.reverse.map (Int.castRingHom ℝ)).eval tau := by
-  simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_pow,
-    Polynomial.map_X, Polynomial.map_C, Polynomial.eval_add, Polynomial.eval_mul,
-    Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_C, Int.coe_castRingHom]
+export SalemEndgame (eval_signed_family eval_signed_family_sub salem_construction_two_sided)
 
-/-- Evaluation of the mapped signed family `X^m·Pz − e·Pz.reverse`. -/
-lemma eval_signed_family_sub (Pz : Polynomial ℤ) (e : ℤ) (m : ℕ) (tau : ℝ) :
-    ((X ^ m * Pz - C e * Pz.reverse).map (Int.castRingHom ℝ)).eval tau
-      = tau ^ m * (Pz.map (Int.castRingHom ℝ)).eval tau
-        - (e : ℝ) * (Pz.reverse.map (Int.castRingHom ℝ)).eval tau := by
-  simp only [Polynomial.map_sub, Polynomial.map_mul, Polynomial.map_pow,
-    Polynomial.map_X, Polynomial.map_C, Polynomial.eval_sub, Polynomial.eval_mul,
-    Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_C, Int.coe_castRingHom]
-
-/-- **The main construction with its family root exposed.**  Under the
-hypotheses of `PdtSalemEndgame.salem_two_sided` — the Pisot pattern and
-`P(1/α) ≠ 0` — there is a sign `e = ±1`, the sign of `P(1/α)`, such that
-for every `ε > 0` some member `X^m·Pz + e·Pz.reverse` (`m ≥ 2`) has a
-Salem root in `(α − ε, α)` and some member `X^m·Pz − e·Pz.reverse`
-(`m ≥ 2`) has a Salem root in `(α, α + ε)`.  The same assembly as
-`salem_two_sided`, keeping the index and the root equation: the sign of
-`Q(α) = α^p·P(1/α)` routes the plus family below and the minus family
-above when `P(1/α) > 0`, and the reverse when `P(1/α) < 0`. -/
-theorem salem_construction_two_sided
-    (Pz : Polynomial ℤ) (hmonic : Pz.Monic)
-    (alpha : ℝ) (halpha : 1 < alpha)
-    (inside : Multiset ℂ) (hin : ∀ r ∈ inside, ‖r‖ < 1)
-    (hconj : inside.map (starRingEnd ℂ) = inside)
-    (hfacC : Pz.map (Int.castRingHom ℂ) = SalemCircle.P alpha inside)
-    (hnondeg : (Pz.map (Int.castRingHom ℝ)).eval alpha⁻¹ ≠ 0)
-    (eps : ℝ) (heps : 0 < eps) :
-    ∃ e : ℤ, (e = 1 ∨ e = -1) ∧
-      0 < (e : ℝ) * (Pz.map (Int.castRingHom ℝ)).eval alpha⁻¹ ∧
-      (∃ m : ℕ, 2 ≤ m ∧ ∃ tau : ℝ, SalemEndgame.IsSalem tau ∧
-        ((X ^ m * Pz + C e * Pz.reverse).map (Int.castRingHom ℝ)).eval tau = 0 ∧
-        alpha - eps < tau ∧ tau < alpha) ∧
-      (∃ m : ℕ, 2 ≤ m ∧ ∃ tau : ℝ, SalemEndgame.IsSalem tau ∧
-        ((X ^ m * Pz - C e * Pz.reverse).map (Int.castRingHom ℝ)).eval tau = 0 ∧
-        alpha < tau ∧ tau < alpha + eps) := by
-  classical
-  have hapos : (0 : ℝ) < alpha := by linarith
-  have ha0 : alpha ≠ 0 := ne_of_gt hapos
-  -- monicity, degree, and the root `α` of the real image
-  have hPrMonic : (Pz.map (Int.castRingHom ℝ)).Monic := hmonic.map _
-  have hPrDeg : (Pz.map (Int.castRingHom ℝ)).natDegree = inside.card + 1 := by
-    rw [hmonic.natDegree_map]
-    exact SalemArith.Pz_natDegree Pz hmonic alpha inside hfacC
-  have hPrAlpha : (Pz.map (Int.castRingHom ℝ)).eval alpha = 0 := by
-    have h1 : ((((Pz.map (Int.castRingHom ℝ)).eval alpha : ℝ)) : ℂ)
-        = (Pz.map (Int.castRingHom ℂ)).eval ((alpha : ℂ)) :=
-      (SalemEndgame.eval_int_transfer Pz alpha).symm
-    rw [hfacC, SalemCircle.eval_P, sub_self, zero_mul] at h1
-    exact_mod_cast h1
-  -- the sign scalar `Q(α) = α^p·P(1/α) ≠ 0`
-  have hQrRev : Pz.reverse.map (Int.castRingHom ℝ)
-      = (Pz.map (Int.castRingHom ℝ)).reflect (inside.card + 1) := by
-    rw [← hPrDeg, Polynomial.reflect_map]
-    congr 1
-    rw [hmonic.natDegree_map]
-    rfl
-  have heId : (Pz.reverse.map (Int.castRingHom ℝ)).eval alpha
-      = alpha ^ (inside.card + 1) * (Pz.map (Int.castRingHom ℝ)).eval alpha⁻¹ := by
-    rw [hQrRev]
-    exact SalemEndgame.reflect_eval_eq (Pz.map (Int.castRingHom ℝ)) ha0 (inside.card + 1)
-      (le_of_eq hPrDeg)
-  have he_ne : (Pz.reverse.map (Int.castRingHom ℝ)).eval alpha ≠ 0 := by
-    rw [heId]
-    exact mul_ne_zero (pow_ne_zero _ ha0) hnondeg
-  have hpowpos : (0 : ℝ) < alpha ^ (inside.card + 1) := pow_pos hapos _
-  -- the quotient `G` and its positivity on `[1, ∞)`
-  obtain ⟨G, hfacR⟩ : ∃ G : Polynomial ℝ,
-      Pz.map (Int.castRingHom ℝ) = (X - Polynomial.C alpha) * G :=
-    ⟨_, (Polynomial.mul_divByMonic_eq_iff_isRoot.mpr hPrAlpha).symm⟩
-  have hGmonic : G.Monic :=
-    (Polynomial.monic_X_sub_C alpha).of_mul_monic_left (hfacR ▸ hPrMonic)
-  have hGmapC : G.map (algebraMap ℝ ℂ) = (inside.map fun r => X - Polynomial.C r).prod := by
-    apply mul_left_cancel₀ (Polynomial.X_sub_C_ne_zero ((alpha : ℂ)))
-    calc (X - Polynomial.C ((alpha : ℂ))) * G.map (algebraMap ℝ ℂ)
-        = ((X - Polynomial.C alpha) * G).map (algebraMap ℝ ℂ) := by
-          rw [Polynomial.map_mul, Polynomial.map_sub, Polynomial.map_X,
-            Polynomial.map_C, Complex.coe_algebraMap]
-      _ = (Pz.map (Int.castRingHom ℝ)).map (algebraMap ℝ ℂ) := by rw [← hfacR]
-      _ = Pz.map (Int.castRingHom ℂ) := SalemEndgame.map_int_real_complex Pz
-      _ = SalemCircle.P alpha inside := hfacC
-      _ = (X - Polynomial.C ((alpha : ℂ)))
-          * (inside.map fun r => X - Polynomial.C r).prod := rfl
-  have hG : ∀ x : ℝ, 1 ≤ x → 0 < G.eval x :=
-    SalemEndgame.G_pos G hGmonic inside hin hGmapC
-  -- the two packaged certificates
-  have certP : ∀ m : ℕ, 2 ≤ m → ∀ tau : ℝ, 1 < tau →
-      (X ^ m * (Pz.map (Int.castRingHom ℝ))
-        + Pz.reverse.map (Int.castRingHom ℝ)).eval tau = 0 →
-      (∀ n : ℤ, tau ≠ (n : ℝ)) → (∀ n : ℤ, tau + tau⁻¹ ≠ (n : ℝ)) →
-      SalemEndgame.IsSalem tau :=
-    fun m hm tau htau hroot hτZ hτtr =>
-      SalemEndgame.isSalem_of_plus_root Pz hmonic alpha halpha inside hin hconj hfacC
-        m hm tau htau hroot hτZ hτtr
-  have certM : ∀ m : ℕ, 2 ≤ m → ∀ tau : ℝ, 1 < tau →
-      (X ^ m * (Pz.map (Int.castRingHom ℝ))
-        + -(Pz.reverse.map (Int.castRingHom ℝ))).eval tau = 0 →
-      (∀ n : ℤ, tau ≠ (n : ℝ)) → (∀ n : ℤ, tau + tau⁻¹ ≠ (n : ℝ)) →
-      SalemEndgame.IsSalem tau := by
-    intro m hm tau htau hroot hτZ hτtr
-    have hroot' : (X ^ m * (Pz.map (Int.castRingHom ℝ))
-        - Pz.reverse.map (Int.castRingHom ℝ)).eval tau = 0 := by
-      rw [sub_eq_add_neg]
-      exact hroot
-    exact SalemEndgame.isSalem_of_minus_root Pz hmonic alpha halpha inside hin hconj hfacC
-      m hm tau htau hroot' hτZ hτtr
-  -- the sign fork: each case produces BOTH sides and records the sign
-  rcases lt_or_lt_iff_ne.mpr he_ne with hneg | hpos
-  · -- `Q(α) < 0`, so `P(1/α) < 0` and `e = −1`: BELOW via the minus
-    -- family, ABOVE via the plus family
-    have hPneg : (Pz.map (Int.castRingHom ℝ)).eval alpha⁻¹ < 0 := by
-      have h := hneg
-      rw [heId] at h
-      rcases mul_neg_iff.mp h with ⟨-, h2⟩ | ⟨h1, -⟩
-      · exact h2
-      · exact absurd h1 (not_lt.mpr hpowpos.le)
-    have hnegneg : 0 < (-(Pz.reverse.map (Int.castRingHom ℝ))).eval alpha := by
-      rw [Polynomial.eval_neg]
-      linarith
-    obtain ⟨m₁, hm₁, τ₁, hS₁, hr₁, hlo₁, hhi₁⟩ :=
-      exists_salem_below_root alpha halpha (Pz.map (Int.castRingHom ℝ)) G
-        (-(Pz.reverse.map (Int.castRingHom ℝ))) hfacR hG hnegneg certM eps heps
-    obtain ⟨m₂, hm₂, τ₂, hS₂, hr₂, hlo₂, hhi₂⟩ :=
-      exists_salem_above_root alpha halpha (Pz.map (Int.castRingHom ℝ)) G
-        (Pz.reverse.map (Int.castRingHom ℝ)) hfacR hG hneg certP eps heps
-    refine ⟨-1, Or.inr rfl, by push_cast; linarith,
-      ⟨m₁, hm₁, τ₁, hS₁, ?_, hlo₁, hhi₁⟩, ⟨m₂, hm₂, τ₂, hS₂, ?_, hlo₂, hhi₂⟩⟩
-    · rw [eval_signed_family]
-      simp only [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_pow,
-        Polynomial.eval_X, Polynomial.eval_neg] at hr₁
-      push_cast
-      linarith
-    · rw [eval_signed_family_sub]
-      simp only [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_pow,
-        Polynomial.eval_X] at hr₂
-      push_cast
-      linarith
-  · -- `Q(α) > 0`, so `P(1/α) > 0` and `e = +1`: BELOW via the plus
-    -- family, ABOVE via the minus family
-    have hPpos : 0 < (Pz.map (Int.castRingHom ℝ)).eval alpha⁻¹ := by
-      have h := hpos
-      rw [heId] at h
-      rcases mul_pos_iff.mp h with ⟨-, h2⟩ | ⟨h1, -⟩
-      · exact h2
-      · exact absurd h1 (not_lt.mpr hpowpos.le)
-    have hnegneg : (-(Pz.reverse.map (Int.castRingHom ℝ))).eval alpha < 0 := by
-      rw [Polynomial.eval_neg]
-      linarith
-    obtain ⟨m₁, hm₁, τ₁, hS₁, hr₁, hlo₁, hhi₁⟩ :=
-      exists_salem_below_root alpha halpha (Pz.map (Int.castRingHom ℝ)) G
-        (Pz.reverse.map (Int.castRingHom ℝ)) hfacR hG hpos certP eps heps
-    obtain ⟨m₂, hm₂, τ₂, hS₂, hr₂, hlo₂, hhi₂⟩ :=
-      exists_salem_above_root alpha halpha (Pz.map (Int.castRingHom ℝ)) G
-        (-(Pz.reverse.map (Int.castRingHom ℝ))) hfacR hG hnegneg certM eps heps
-    refine ⟨1, Or.inl rfl, by push_cast; linarith,
-      ⟨m₁, hm₁, τ₁, hS₁, ?_, hlo₁, hhi₁⟩, ⟨m₂, hm₂, τ₂, hS₂, ?_, hlo₂, hhi₂⟩⟩
-    · rw [eval_signed_family]
-      simp only [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_pow,
-        Polynomial.eval_X] at hr₁
-      push_cast
-      linarith
-    · rw [eval_signed_family_sub]
-      simp only [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_pow,
-        Polynomial.eval_X, Polynomial.eval_neg] at hr₂
-      push_cast
-      linarith
-
-/-- **The reciprocal-quadratic construction with its family root
-exposed.**  `PdtSalemQuadUnit.salem_two_sided_quad_unit` re-run keeping
-the index `m ≥ 1` and the root equation: below `α` a Salem root of
-`(X² − rX + 1)(X^{2m} + 1) + X^{m+1}`, above `α` a Salem root of
-`(X² − rX + 1)(X^{2m} + 1) − X^{m+1}` — the members `eps = +1` and
-`eps = −1` of `PdtSalemQuadUnit.Bfam`, spelled out. -/
-theorem salem_quadratic_unit (r : ℤ) (hr : 3 ≤ r)
-    (alpha : ℝ) (halpha : 1 < alpha) (hmin : alpha ^ 2 = (r : ℝ) * alpha - 1)
-    (eps : ℝ) (heps : 0 < eps) :
-    (∃ m : ℕ, 1 ≤ m ∧ ∃ tau : ℝ, SalemEndgame.IsSalem tau ∧
-      (((X ^ 2 - C r * X + 1) * (X ^ (2 * m) + 1) + X ^ (m + 1) : Polynomial ℤ).map
-        (Int.castRingHom ℝ)).eval tau = 0 ∧
-      alpha - eps < tau ∧ tau < alpha) ∧
-    (∃ m : ℕ, 1 ≤ m ∧ ∃ tau : ℝ, SalemEndgame.IsSalem tau ∧
-      (((X ^ 2 - C r * X + 1) * (X ^ (2 * m) + 1) - X ^ (m + 1) : Polynomial ℤ).map
-        (Int.castRingHom ℝ)).eval tau = 0 ∧
-      alpha < tau ∧ tau < alpha + eps) := by
-  have hB1 : ∀ m : ℕ, SalemQuadUnit.Bfam r 1 m
-      = (X ^ 2 - C r * X + 1) * (X ^ (2 * m) + 1) + X ^ (m + 1) := by
-    intro m
-    rw [SalemQuadUnit.Bfam, Polynomial.C_1, one_mul]
-  have hBm : ∀ m : ℕ, SalemQuadUnit.Bfam r (-1) m
-      = (X ^ 2 - C r * X + 1) * (X ^ (2 * m) + 1) - X ^ (m + 1) := by
-    intro m
-    rw [SalemQuadUnit.Bfam, Polynomial.C_neg, Polynomial.C_1, neg_one_mul, ← sub_eq_add_neg]
-  have halpha2 : 2 < alpha := SalemQuadUnit.alpha_gt_two hr halpha hmin
-  have htr : alpha + alpha⁻¹ = (r : ℝ) := SalemQuadUnit.trace_eq halpha hmin
-  have hainv1 : alpha⁻¹ < 1 := inv_lt_one_of_one_lt₀ halpha
-  have hainv0 : 0 < alpha⁻¹ := inv_pos.mpr (by linarith)
-  have hral : (r : ℝ) - 1 < alpha := SalemQuadUnit.r_sub_one_lt_alpha halpha hmin
-  have haltr : alpha < (r : ℝ) := SalemQuadUnit.alpha_lt_r halpha hmin
-  have h2pow : Filter.Tendsto (fun k : ℕ => (2 : ℝ) ^ k) Filter.atTop Filter.atTop :=
-    tendsto_pow_atTop_atTop_of_one_lt one_lt_two
-  constructor
-  · -- BELOW `alpha`: the `eps = +1` member
-    obtain ⟨δ, hδ0, hδeps, hδa2, hδinv⟩ : ∃ δ : ℝ, 0 < δ ∧ δ ≤ eps ∧
-        δ ≤ alpha - 2 ∧ δ ≤ (1 - alpha⁻¹) / 2 :=
-      ⟨min eps (min (alpha - 2) ((1 - alpha⁻¹) / 2)),
-        lt_min heps (lt_min (by linarith) (by linarith)),
-        min_le_left _ _,
-        le_trans (min_le_right _ _) (min_le_left _ _),
-        le_trans (min_le_right _ _) (min_le_right _ _)⟩
-    have hev : ∀ᶠ k : ℕ in Filter.atTop, alpha / δ < 2 ^ k := h2pow.eventually_gt_atTop _
-    obtain ⟨m, hm1, hm2⟩ := (hev.and (Filter.eventually_ge_atTop 1)).exists
-    have hdm : alpha < δ * 2 ^ m := by
-      rw [div_lt_iff₀ hδ0] at hm1
-      linarith
-    have hsignA : 0 < ((SalemQuadUnit.Bfam r 1 m).map (Int.castRingHom ℝ)).eval alpha := by
-      rw [SalemQuadUnit.eval_at_alpha r 1 hmin m]
-      push_cast
-      have hp : (0 : ℝ) < alpha ^ (m + 1) := pow_pos (by linarith) _
-      linarith
-    have hsignB := SalemQuadUnit.eval_below_neg r halpha2 hmin m hδ0 hδa2 hdm
-    obtain ⟨tau, htau1, htau2, htauroot⟩ := SalemQuadUnit.exists_root_between
-      (fun y => ((SalemQuadUnit.Bfam r 1 m).map (Int.castRingHom ℝ)).eval y)
-      (alpha - δ) alpha (by linarith)
-      (Polynomial.continuous _).continuousOn
-      (mul_neg_of_neg_of_pos hsignB hsignA)
-    have htaugt2 : 2 < tau := by linarith
-    have htauwin1 : (r : ℝ) - 1 < tau := by
-      have hkey : alpha - (1 - alpha⁻¹) = (r : ℝ) - 1 := by linarith
-      linarith
-    have htauwin2 : tau < (r : ℝ) := by linarith
-    refine ⟨m, hm2, tau, SalemQuadUnit.isSalem_of_quad_root r 1 hr (Or.inl rfl) hm2 tau
-      (by linarith) htauroot (SalemQuadUnit.no_int_in_window htauwin1 htauwin2)
-      (SalemQuadUnit.trace_not_int r 1 (Or.inl rfl) hm2 htaugt2 htauroot),
-      ?_, by linarith, htau2⟩
-    rw [← hB1]
-    exact htauroot
-  · -- ABOVE `alpha`: the `eps = −1` member
-    obtain ⟨δ, hδ0, hδeps, hδinv⟩ : ∃ δ : ℝ, 0 < δ ∧ δ ≤ eps ∧ δ ≤ alpha⁻¹ :=
-      ⟨min eps alpha⁻¹, lt_min heps hainv0, min_le_left _ _, min_le_right _ _⟩
-    have hδ1 : δ ≤ 1 := by linarith
-    have hcpos : 0 < δ * (alpha - alpha⁻¹) := mul_pos hδ0 (by linarith)
-    have hev : ∀ᶠ k : ℕ in Filter.atTop, (alpha + 1) / (δ * (alpha - alpha⁻¹)) < 2 ^ k :=
-      h2pow.eventually_gt_atTop _
-    obtain ⟨m, hm1, hm2⟩ := (hev.and (Filter.eventually_ge_atTop 1)).exists
-    have hdm : alpha + 1 < δ * (alpha - alpha⁻¹) * 2 ^ m := by
-      rw [div_lt_iff₀ hcpos] at hm1
-      linarith
-    have hsignA : ((SalemQuadUnit.Bfam r (-1) m).map (Int.castRingHom ℝ)).eval alpha < 0 := by
-      rw [SalemQuadUnit.eval_at_alpha r (-1) hmin m]
-      push_cast
-      have hp : (0 : ℝ) < alpha ^ (m + 1) := pow_pos (by linarith) _
-      linarith
-    have hsignB := SalemQuadUnit.eval_above_pos r halpha2 hmin m hδ0 hδ1 hdm
-    obtain ⟨tau, htau1, htau2, htauroot⟩ := SalemQuadUnit.exists_root_between
-      (fun y => ((SalemQuadUnit.Bfam r (-1) m).map (Int.castRingHom ℝ)).eval y)
-      alpha (alpha + δ) (by linarith)
-      (Polynomial.continuous _).continuousOn
-      (mul_neg_of_neg_of_pos hsignA hsignB)
-    have htaugt2 : 2 < tau := by linarith
-    have htauwin1 : (r : ℝ) - 1 < tau := by linarith
-    have htauwin2 : tau < (r : ℝ) := by linarith
-    refine ⟨m, hm2, tau, SalemQuadUnit.isSalem_of_quad_root r (-1) hr (Or.inr rfl) hm2 tau
-      (by linarith) htauroot (SalemQuadUnit.no_int_in_window htauwin1 htauwin2)
-      (SalemQuadUnit.trace_not_int r (-1) (Or.inr rfl) hm2 htaugt2 htauroot),
-      ?_, htau1, by linarith⟩
-    rw [← hBm]
-    exact htauroot
+export SalemQuadUnit (salem_quadratic_unit)
 
 end
 

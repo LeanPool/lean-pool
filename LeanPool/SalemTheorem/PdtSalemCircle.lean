@@ -820,6 +820,25 @@ lemma E_inj {t s : ℝ} (ht : 0 < t) (ht2 : t < 2 * Real.pi) (hs : 0 < s)
 
 /-! ### The trichotomy -/
 
+/-- A set of distinct roots whose cardinality is the degree exhausts the root multiset. -/
+theorem finset_val_eq_roots {K : Type*} [Field K] (P : Polynomial K) (hP : P ≠ 0)
+    (S : Finset K) (hS : ∀ z ∈ S, P.eval z = 0) (hcard : S.card = P.natDegree) :
+    S.val = P.roots := by
+  classical
+  have hle : S.val ≤ P.roots := by
+    rw [Multiset.le_iff_count]
+    intro z
+    by_cases hz : z ∈ S
+    · rw [Multiset.count_eq_one_of_mem S.nodup (Finset.mem_def.mp hz),
+        Polynomial.count_roots]
+      exact (Polynomial.rootMultiplicity_pos hP).mpr (hS z hz)
+    · rw [Multiset.count_eq_zero.mpr (fun hv => hz (Finset.mem_def.mpr hv))]
+      exact Nat.zero_le _
+  apply Multiset.eq_of_le_of_card_le hle
+  change P.roots.card ≤ S.card
+  rw [hcard]
+  exact Polynomial.card_roots' P
+
 /-- **The trichotomy**: if `τ > 1` is a root of `R_m` (with
 `1 ≤ m` and `3 ≤ m + p`), then EVERY root of `R_m` is unimodular or
 lies in `{τ, 1/τ}` — the `m + p − 2` circle points of the circle count together with
@@ -884,23 +903,9 @@ theorem salem_root_trichotomy (alpha : ℝ) (roots : Multiset ℂ) (halpha : 1 <
       · rw [Finset.mem_singleton.mp h1]
         exact salem_root_inv alpha roots m htau0 hroot
   have hRne : R alpha roots m ≠ 0 := (R_monic alpha roots m hm).ne_zero
-  have hle : S.val ≤ (R alpha roots m).roots := by
-    rw [Multiset.le_iff_count]
-    intro z
-    by_cases hz : z ∈ S
-    · rw [Multiset.count_eq_one_of_mem S.nodup (Finset.mem_def.mp hz),
-        Polynomial.count_roots]
-      have hpos := (Polynomial.rootMultiplicity_pos hRne).mpr (hSroot z hz)
-      omega
-    · rw [Multiset.count_eq_zero.mpr (fun hv => hz (Finset.mem_def.mpr hv))]
-      exact Nat.zero_le _
-  have hcards : Multiset.card ((R alpha roots m).roots) ≤ Multiset.card S.val := by
-    have h1 := Polynomial.card_roots' (R alpha roots m)
-    rw [R_natDegree alpha roots m hm] at h1
-    have h2 : Multiset.card S.val = S.card := rfl
-    omega
   have heq : S.val = (R alpha roots m).roots :=
-    Multiset.eq_of_le_of_card_le hle hcards
+    SalemCircle.finset_val_eq_roots _ hRne S hSroot
+      (by rw [R_natDegree alpha roots m hm]; exact hScard)
   intro z hz
   have hzmem : z ∈ (R alpha roots m).roots := Polynomial.mem_roots'.mpr ⟨hRne, hz⟩
   rw [← heq] at hzmem

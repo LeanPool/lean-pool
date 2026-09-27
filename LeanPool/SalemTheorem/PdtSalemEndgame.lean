@@ -711,6 +711,181 @@ lemma exists_salem_above (alpha : ℝ) (halpha : 1 < alpha)
     exists_salem_above_root alpha halpha Pr G Qc hfacR hG hQca cert eps heps
   exact ⟨tau, htau, hleft, hright⟩
 
+/-- Evaluation of the mapped signed family `X^m·Pz + e·Pz.reverse`. -/
+lemma eval_signed_family (Pz : Polynomial ℤ) (e : ℤ) (m : ℕ) (tau : ℝ) :
+    ((X ^ m * Pz + C e * Pz.reverse).map (Int.castRingHom ℝ)).eval tau
+      = tau ^ m * (Pz.map (Int.castRingHom ℝ)).eval tau
+        + (e : ℝ) * (Pz.reverse.map (Int.castRingHom ℝ)).eval tau := by
+  simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_pow,
+    Polynomial.map_X, Polynomial.map_C, Polynomial.eval_add, Polynomial.eval_mul,
+    Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_C, Int.coe_castRingHom]
+
+/-- Evaluation of the mapped signed family `X^m·Pz − e·Pz.reverse`. -/
+lemma eval_signed_family_sub (Pz : Polynomial ℤ) (e : ℤ) (m : ℕ) (tau : ℝ) :
+    ((X ^ m * Pz - C e * Pz.reverse).map (Int.castRingHom ℝ)).eval tau
+      = tau ^ m * (Pz.map (Int.castRingHom ℝ)).eval tau
+        - (e : ℝ) * (Pz.reverse.map (Int.castRingHom ℝ)).eval tau := by
+  simp only [Polynomial.map_sub, Polynomial.map_mul, Polynomial.map_pow,
+    Polynomial.map_X, Polynomial.map_C, Polynomial.eval_sub, Polynomial.eval_mul,
+    Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_C, Int.coe_castRingHom]
+
+/-- **The main construction with its family root exposed.**  Under the
+hypotheses of `PdtSalemEndgame.salem_two_sided` — the Pisot pattern and
+`P(1/α) ≠ 0` — there is a sign `e = ±1`, the sign of `P(1/α)`, such that
+for every `ε > 0` some member `X^m·Pz + e·Pz.reverse` (`m ≥ 2`) has a
+Salem root in `(α − ε, α)` and some member `X^m·Pz − e·Pz.reverse`
+(`m ≥ 2`) has a Salem root in `(α, α + ε)`.
+The common assembly retains the index and root equation; `salem_two_sided`
+is its projection. The sign of
+`Q(α) = α^p·P(1/α)` routes the plus family below and the minus family
+above when `P(1/α) > 0`, and the reverse when `P(1/α) < 0`. -/
+theorem salem_construction_two_sided
+    (Pz : Polynomial ℤ) (hmonic : Pz.Monic)
+    (alpha : ℝ) (halpha : 1 < alpha)
+    (inside : Multiset ℂ) (hin : ∀ r ∈ inside, ‖r‖ < 1)
+    (hconj : inside.map (starRingEnd ℂ) = inside)
+    (hfacC : Pz.map (Int.castRingHom ℂ) = SalemCircle.P alpha inside)
+    (hnondeg : (Pz.map (Int.castRingHom ℝ)).eval alpha⁻¹ ≠ 0)
+    (eps : ℝ) (heps : 0 < eps) :
+    ∃ e : ℤ, (e = 1 ∨ e = -1) ∧
+      0 < (e : ℝ) * (Pz.map (Int.castRingHom ℝ)).eval alpha⁻¹ ∧
+      (∃ m : ℕ, 2 ≤ m ∧ ∃ tau : ℝ, SalemEndgame.IsSalem tau ∧
+        ((X ^ m * Pz + C e * Pz.reverse).map (Int.castRingHom ℝ)).eval tau = 0 ∧
+        alpha - eps < tau ∧ tau < alpha) ∧
+      (∃ m : ℕ, 2 ≤ m ∧ ∃ tau : ℝ, SalemEndgame.IsSalem tau ∧
+        ((X ^ m * Pz - C e * Pz.reverse).map (Int.castRingHom ℝ)).eval tau = 0 ∧
+        alpha < tau ∧ tau < alpha + eps) := by
+  classical
+  have hapos : (0 : ℝ) < alpha := by linarith
+  have ha0 : alpha ≠ 0 := ne_of_gt hapos
+  -- monicity, degree, and the root `α` of the real image
+  have hPrMonic : (Pz.map (Int.castRingHom ℝ)).Monic := hmonic.map _
+  have hPrDeg : (Pz.map (Int.castRingHom ℝ)).natDegree = inside.card + 1 := by
+    rw [hmonic.natDegree_map]
+    exact SalemArith.Pz_natDegree Pz hmonic alpha inside hfacC
+  have hPrAlpha : (Pz.map (Int.castRingHom ℝ)).eval alpha = 0 := by
+    have h1 : ((((Pz.map (Int.castRingHom ℝ)).eval alpha : ℝ)) : ℂ)
+        = (Pz.map (Int.castRingHom ℂ)).eval ((alpha : ℂ)) :=
+      (SalemEndgame.eval_int_transfer Pz alpha).symm
+    rw [hfacC, SalemCircle.eval_P, sub_self, zero_mul] at h1
+    exact_mod_cast h1
+  -- the sign scalar `Q(α) = α^p·P(1/α) ≠ 0`
+  have hQrRev : Pz.reverse.map (Int.castRingHom ℝ)
+      = (Pz.map (Int.castRingHom ℝ)).reflect (inside.card + 1) := by
+    rw [← hPrDeg, Polynomial.reflect_map]
+    congr 1
+    rw [hmonic.natDegree_map]
+    rfl
+  have heId : (Pz.reverse.map (Int.castRingHom ℝ)).eval alpha
+      = alpha ^ (inside.card + 1) * (Pz.map (Int.castRingHom ℝ)).eval alpha⁻¹ := by
+    rw [hQrRev]
+    exact SalemEndgame.reflect_eval_eq (Pz.map (Int.castRingHom ℝ)) ha0 (inside.card + 1)
+      (le_of_eq hPrDeg)
+  have he_ne : (Pz.reverse.map (Int.castRingHom ℝ)).eval alpha ≠ 0 := by
+    rw [heId]
+    exact mul_ne_zero (pow_ne_zero _ ha0) hnondeg
+  have hpowpos : (0 : ℝ) < alpha ^ (inside.card + 1) := pow_pos hapos _
+  -- the quotient `G` and its positivity on `[1, ∞)`
+  obtain ⟨G, hfacR⟩ : ∃ G : Polynomial ℝ,
+      Pz.map (Int.castRingHom ℝ) = (X - Polynomial.C alpha) * G :=
+    ⟨_, (Polynomial.mul_divByMonic_eq_iff_isRoot.mpr hPrAlpha).symm⟩
+  have hGmonic : G.Monic :=
+    (Polynomial.monic_X_sub_C alpha).of_mul_monic_left (hfacR ▸ hPrMonic)
+  have hGmapC : G.map (algebraMap ℝ ℂ) = (inside.map fun r => X - Polynomial.C r).prod := by
+    apply mul_left_cancel₀ (Polynomial.X_sub_C_ne_zero ((alpha : ℂ)))
+    calc (X - Polynomial.C ((alpha : ℂ))) * G.map (algebraMap ℝ ℂ)
+        = ((X - Polynomial.C alpha) * G).map (algebraMap ℝ ℂ) := by
+          rw [Polynomial.map_mul, Polynomial.map_sub, Polynomial.map_X,
+            Polynomial.map_C, Complex.coe_algebraMap]
+      _ = (Pz.map (Int.castRingHom ℝ)).map (algebraMap ℝ ℂ) := by rw [← hfacR]
+      _ = Pz.map (Int.castRingHom ℂ) := SalemEndgame.map_int_real_complex Pz
+      _ = SalemCircle.P alpha inside := hfacC
+      _ = (X - Polynomial.C ((alpha : ℂ)))
+          * (inside.map fun r => X - Polynomial.C r).prod := rfl
+  have hG : ∀ x : ℝ, 1 ≤ x → 0 < G.eval x :=
+    SalemEndgame.G_pos G hGmonic inside hin hGmapC
+  -- the two packaged certificates
+  have certP : ∀ m : ℕ, 2 ≤ m → ∀ tau : ℝ, 1 < tau →
+      (X ^ m * (Pz.map (Int.castRingHom ℝ))
+        + Pz.reverse.map (Int.castRingHom ℝ)).eval tau = 0 →
+      (∀ n : ℤ, tau ≠ (n : ℝ)) → (∀ n : ℤ, tau + tau⁻¹ ≠ (n : ℝ)) →
+      SalemEndgame.IsSalem tau :=
+    fun m hm tau htau hroot hτZ hτtr =>
+      SalemEndgame.isSalem_of_plus_root Pz hmonic alpha halpha inside hin hconj hfacC
+        m hm tau htau hroot hτZ hτtr
+  have certM : ∀ m : ℕ, 2 ≤ m → ∀ tau : ℝ, 1 < tau →
+      (X ^ m * (Pz.map (Int.castRingHom ℝ))
+        + -(Pz.reverse.map (Int.castRingHom ℝ))).eval tau = 0 →
+      (∀ n : ℤ, tau ≠ (n : ℝ)) → (∀ n : ℤ, tau + tau⁻¹ ≠ (n : ℝ)) →
+      SalemEndgame.IsSalem tau := by
+    intro m hm tau htau hroot hτZ hτtr
+    have hroot' : (X ^ m * (Pz.map (Int.castRingHom ℝ))
+        - Pz.reverse.map (Int.castRingHom ℝ)).eval tau = 0 := by
+      rw [sub_eq_add_neg]
+      exact hroot
+    exact SalemEndgame.isSalem_of_minus_root Pz hmonic alpha halpha inside hin hconj hfacC
+      m hm tau htau hroot' hτZ hτtr
+  -- the sign fork: each case produces BOTH sides and records the sign
+  rcases lt_or_lt_iff_ne.mpr he_ne with hneg | hpos
+  · -- `Q(α) < 0`, so `P(1/α) < 0` and `e = −1`: BELOW via the minus
+    -- family, ABOVE via the plus family
+    have hPneg : (Pz.map (Int.castRingHom ℝ)).eval alpha⁻¹ < 0 := by
+      have h := hneg
+      rw [heId] at h
+      rcases mul_neg_iff.mp h with ⟨-, h2⟩ | ⟨h1, -⟩
+      · exact h2
+      · exact absurd h1 (not_lt.mpr hpowpos.le)
+    have hnegneg : 0 < (-(Pz.reverse.map (Int.castRingHom ℝ))).eval alpha := by
+      rw [Polynomial.eval_neg]
+      linarith
+    obtain ⟨m₁, hm₁, τ₁, hS₁, hr₁, hlo₁, hhi₁⟩ :=
+      exists_salem_below_root alpha halpha (Pz.map (Int.castRingHom ℝ)) G
+        (-(Pz.reverse.map (Int.castRingHom ℝ))) hfacR hG hnegneg certM eps heps
+    obtain ⟨m₂, hm₂, τ₂, hS₂, hr₂, hlo₂, hhi₂⟩ :=
+      exists_salem_above_root alpha halpha (Pz.map (Int.castRingHom ℝ)) G
+        (Pz.reverse.map (Int.castRingHom ℝ)) hfacR hG hneg certP eps heps
+    refine ⟨-1, Or.inr rfl, by push_cast; linarith,
+      ⟨m₁, hm₁, τ₁, hS₁, ?_, hlo₁, hhi₁⟩, ⟨m₂, hm₂, τ₂, hS₂, ?_, hlo₂, hhi₂⟩⟩
+    · rw [eval_signed_family]
+      simp only [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_pow,
+        Polynomial.eval_X, Polynomial.eval_neg] at hr₁
+      push_cast
+      linarith
+    · rw [eval_signed_family_sub]
+      simp only [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_pow,
+        Polynomial.eval_X] at hr₂
+      push_cast
+      linarith
+  · -- `Q(α) > 0`, so `P(1/α) > 0` and `e = +1`: BELOW via the plus
+    -- family, ABOVE via the minus family
+    have hPpos : 0 < (Pz.map (Int.castRingHom ℝ)).eval alpha⁻¹ := by
+      have h := hpos
+      rw [heId] at h
+      rcases mul_pos_iff.mp h with ⟨-, h2⟩ | ⟨h1, -⟩
+      · exact h2
+      · exact absurd h1 (not_lt.mpr hpowpos.le)
+    have hnegneg : (-(Pz.reverse.map (Int.castRingHom ℝ))).eval alpha < 0 := by
+      rw [Polynomial.eval_neg]
+      linarith
+    obtain ⟨m₁, hm₁, τ₁, hS₁, hr₁, hlo₁, hhi₁⟩ :=
+      exists_salem_below_root alpha halpha (Pz.map (Int.castRingHom ℝ)) G
+        (Pz.reverse.map (Int.castRingHom ℝ)) hfacR hG hpos certP eps heps
+    obtain ⟨m₂, hm₂, τ₂, hS₂, hr₂, hlo₂, hhi₂⟩ :=
+      exists_salem_above_root alpha halpha (Pz.map (Int.castRingHom ℝ)) G
+        (-(Pz.reverse.map (Int.castRingHom ℝ))) hfacR hG hnegneg certM eps heps
+    refine ⟨1, Or.inl rfl, by push_cast; linarith,
+      ⟨m₁, hm₁, τ₁, hS₁, ?_, hlo₁, hhi₁⟩, ⟨m₂, hm₂, τ₂, hS₂, ?_, hlo₂, hhi₂⟩⟩
+    · rw [eval_signed_family]
+      simp only [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_pow,
+        Polynomial.eval_X] at hr₁
+      push_cast
+      linarith
+    · rw [eval_signed_family_sub]
+      simp only [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_pow,
+        Polynomial.eval_X, Polynomial.eval_neg] at hr₂
+      push_cast
+      linarith
+
 /-- **The two-sided assembly.**  Every Pisot-pattern polynomial —
 monic over ℤ, complex factorization `(X − C α)·∏ (X − C r)` with
 `α > 1` and the conjugation-closed inside roots strictly inside the
@@ -733,89 +908,10 @@ theorem salem_two_sided
     (eps : ℝ) (heps : 0 < eps) :
     (∃ tau : ℝ, IsSalem tau ∧ alpha - eps < tau ∧ tau < alpha) ∧
     (∃ tau : ℝ, IsSalem tau ∧ alpha < tau ∧ tau < alpha + eps) := by
-  classical
-  have ha0 : alpha ≠ 0 := ne_of_gt (by linarith)
-  -- monicity, degree, and the root `α` of the real image
-  have hPrMonic : (Pz.map (Int.castRingHom ℝ)).Monic := hmonic.map _
-  have hPrDeg : (Pz.map (Int.castRingHom ℝ)).natDegree = inside.card + 1 := by
-    rw [hmonic.natDegree_map]
-    exact SalemArith.Pz_natDegree Pz hmonic alpha inside hfacC
-  have hPrAlpha : (Pz.map (Int.castRingHom ℝ)).eval alpha = 0 := by
-    have h1 : ((((Pz.map (Int.castRingHom ℝ)).eval alpha : ℝ)) : ℂ)
-        = (Pz.map (Int.castRingHom ℂ)).eval ((alpha : ℂ)) :=
-      (eval_int_transfer Pz alpha).symm
-    rw [hfacC, SalemCircle.eval_P, sub_self, zero_mul] at h1
-    exact_mod_cast h1
-  -- the sign scalar `e = Q(α) = α^p·P(1/α) ≠ 0`
-  have hQrRev : Pz.reverse.map (Int.castRingHom ℝ)
-      = (Pz.map (Int.castRingHom ℝ)).reflect (inside.card + 1) := by
-    rw [← hPrDeg, Polynomial.reflect_map]
-    congr 1
-    rw [hmonic.natDegree_map]
-    rfl
-  have heId : (Pz.reverse.map (Int.castRingHom ℝ)).eval alpha
-      = alpha ^ (inside.card + 1) * (Pz.map (Int.castRingHom ℝ)).eval alpha⁻¹ := by
-    rw [hQrRev]
-    exact reflect_eval_eq (Pz.map (Int.castRingHom ℝ)) ha0 (inside.card + 1)
-      (le_of_eq hPrDeg)
-  have he_ne : (Pz.reverse.map (Int.castRingHom ℝ)).eval alpha ≠ 0 := by
-    rw [heId]
-    exact mul_ne_zero (pow_ne_zero _ ha0) hnondeg
-  -- the quotient `G` and its positivity on `[1, ∞)`
-  obtain ⟨G, hfacR⟩ : ∃ G : Polynomial ℝ,
-      Pz.map (Int.castRingHom ℝ) = (X - Polynomial.C alpha) * G :=
-    ⟨_, (Polynomial.mul_divByMonic_eq_iff_isRoot.mpr hPrAlpha).symm⟩
-  have hGmonic : G.Monic :=
-    (Polynomial.monic_X_sub_C alpha).of_mul_monic_left (hfacR ▸ hPrMonic)
-  have hGmapC : G.map (algebraMap ℝ ℂ) = (inside.map fun r => X - Polynomial.C r).prod := by
-    apply mul_left_cancel₀ (Polynomial.X_sub_C_ne_zero ((alpha : ℂ)))
-    calc (X - Polynomial.C ((alpha : ℂ))) * G.map (algebraMap ℝ ℂ)
-        = ((X - Polynomial.C alpha) * G).map (algebraMap ℝ ℂ) := by
-          rw [Polynomial.map_mul, Polynomial.map_sub, Polynomial.map_X,
-            Polynomial.map_C, Complex.coe_algebraMap]
-      _ = (Pz.map (Int.castRingHom ℝ)).map (algebraMap ℝ ℂ) := by rw [← hfacR]
-      _ = Pz.map (Int.castRingHom ℂ) := map_int_real_complex Pz
-      _ = SalemCircle.P alpha inside := hfacC
-      _ = (X - Polynomial.C ((alpha : ℂ)))
-          * (inside.map fun r => X - Polynomial.C r).prod := rfl
-  have hG : ∀ x : ℝ, 1 ≤ x → 0 < G.eval x := G_pos G hGmonic inside hin hGmapC
-  -- the two packaged certificates
-  have certP : ∀ m : ℕ, 2 ≤ m → ∀ tau : ℝ, 1 < tau →
-      (X ^ m * (Pz.map (Int.castRingHom ℝ))
-        + Pz.reverse.map (Int.castRingHom ℝ)).eval tau = 0 →
-      (∀ n : ℤ, tau ≠ (n : ℝ)) → (∀ n : ℤ, tau + tau⁻¹ ≠ (n : ℝ)) → IsSalem tau :=
-    fun m hm tau htau hroot hτZ hτtr =>
-      isSalem_of_plus_root Pz hmonic alpha halpha inside hin hconj hfacC
-        m hm tau htau hroot hτZ hτtr
-  have certM : ∀ m : ℕ, 2 ≤ m → ∀ tau : ℝ, 1 < tau →
-      (X ^ m * (Pz.map (Int.castRingHom ℝ))
-        + -(Pz.reverse.map (Int.castRingHom ℝ))).eval tau = 0 →
-      (∀ n : ℤ, tau ≠ (n : ℝ)) → (∀ n : ℤ, tau + tau⁻¹ ≠ (n : ℝ)) → IsSalem tau := by
-    intro m hm tau htau hroot hτZ hτtr
-    have hroot' : (X ^ m * (Pz.map (Int.castRingHom ℝ))
-        - Pz.reverse.map (Int.castRingHom ℝ)).eval tau = 0 := by
-      rw [sub_eq_add_neg]
-      exact hroot
-    exact isSalem_of_minus_root Pz hmonic alpha halpha inside hin hconj hfacC
-      m hm tau htau hroot' hτZ hτtr
-  -- the sign fork: each case produces BOTH sides
-  rcases lt_or_lt_iff_ne.mpr he_ne with hneg | hpos
-  · -- `Q(α) < 0`: BELOW via the minus family, ABOVE via the plus family
-    have hnegneg : 0 < (-(Pz.reverse.map (Int.castRingHom ℝ))).eval alpha := by
-      rw [Polynomial.eval_neg]
-      linarith
-    exact ⟨exists_salem_below alpha halpha (Pz.map (Int.castRingHom ℝ)) G
-        (-(Pz.reverse.map (Int.castRingHom ℝ))) hfacR hG hnegneg certM eps heps,
-      exists_salem_above alpha halpha (Pz.map (Int.castRingHom ℝ)) G
-        (Pz.reverse.map (Int.castRingHom ℝ)) hfacR hG hneg certP eps heps⟩
-  · -- `Q(α) > 0`: BELOW via the plus family, ABOVE via the minus family
-    have hnegneg : (-(Pz.reverse.map (Int.castRingHom ℝ))).eval alpha < 0 := by
-      rw [Polynomial.eval_neg]
-      linarith
-    exact ⟨exists_salem_below alpha halpha (Pz.map (Int.castRingHom ℝ)) G
-        (Pz.reverse.map (Int.castRingHom ℝ)) hfacR hG hpos certP eps heps,
-      exists_salem_above alpha halpha (Pz.map (Int.castRingHom ℝ)) G
-        (-(Pz.reverse.map (Int.castRingHom ℝ))) hfacR hG hnegneg certM eps heps⟩
+  obtain ⟨e, _, _, ⟨m₁, _, τ₁, hS₁, _, hlo₁, hhi₁⟩,
+    ⟨m₂, _, τ₂, hS₂, _, hlo₂, hhi₂⟩⟩ :=
+    salem_construction_two_sided Pz hmonic alpha halpha inside hin hconj hfacC hnondeg eps heps
+  exact ⟨⟨τ₁, hS₁, hlo₁, hhi₁⟩, ⟨τ₂, hS₂, hlo₂, hhi₂⟩⟩
 
 end
 end SalemEndgame
