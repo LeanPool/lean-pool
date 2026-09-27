@@ -1,0 +1,6 @@
+theorem potential_ineq (t : ℝ) (ht : {{integer}} < t) : {{integer}} * Uρ t - Vfield t ≤ M{{integer}} := by
+  rcases le_or_gt t {{integer}} with h | h
+  · exact cov_{{integer}}_{{integer}} t ht.le h ht
+  · exact potential_ineq_tail h.le
+
+end Zeta{{integer}}Irrational
