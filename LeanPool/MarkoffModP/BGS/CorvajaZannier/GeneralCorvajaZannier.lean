@@ -114,13 +114,13 @@ theorem poweredImageIndexBound_of_isCorvajaZannierPlaneCurve
 theorem generalPlaneCurvePropositionTwoCertificatesAboveElementaryRange :
     GeneralPlaneCurvePropositionTwoCertificatesAboveElementaryRange :=
   generalPlaneCurvePropositionTwoCertificatesAboveElementaryRange_of_poweredImageIndexBound
-    poweredImageIndexBound_of_isCorvajaZannierPlaneCurve
+    (fun p _ K _ _ _ _ => poweredImageIndexBound_of_isCorvajaZannierPlaneCurve p K)
 
 /-- **The general Corvaja--Zannier finite-field plane-curve theorem.** -/
 theorem generalCorvajaZannierPlaneCurveTheorem :
     BGS.External.GeneralCorvajaZannierPlaneCurveTheorem :=
   generalCorvajaZannierPlaneCurveTheorem_of_poweredImageIndexBound
-    poweredImageIndexBound_of_isCorvajaZannierPlaneCurve
+    (fun p _ K _ _ _ _ => poweredImageIndexBound_of_isCorvajaZannierPlaneCurve p K)
 
 end
 
