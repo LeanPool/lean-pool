@@ -683,15 +683,19 @@ theorem ClarkOconeFamily.timeDerivative_apply {𝓕 : Filtration ℝ≥0 ‹Meas
       Malliavin.timeDerivative C.isPreBrownian C.coordinate C.coordinate_apply C.generated U :=
   rfl
 
-/-- A Brownian increment after time `a` is independent of every almost everywhere
-`𝓕_a`-measurable real random variable. -/
-theorem ClarkOconeFamily.indep_increment_of_adapted
+omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
+    [SecondCountableTopology W] [IsGaussian P] in
+/-- Future Brownian increments are independent of every random variable measurable for a
+filtration identified with the natural Brownian filtration. -/
+theorem indep_increment_of_natural_adapted
+    (hB : IsPreBrownianReal B P) (hsm : ∀ t, StronglyMeasurable (B t))
     {𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›}
-    (C : ClarkOconeFamily B P 𝓕) {a b : ℝ≥0} (hab : a ≤ b)
-    {Z : W → ℝ} (hZ : AEStronglyMeasurable[𝓕 a] Z P) :
+    (hnat : 𝓕 = Filtration.natural B hsm)
+    {a b : ℝ≥0} (hab : a ≤ b) {Z : W → ℝ}
+    (hZ : AEStronglyMeasurable[𝓕 a] Z P) :
     IndepFun (fun w ↦ B b w - B a w) Z P := by
   let Zm : W → ℝ := hZ.mk Z
-  have hshift := C.isPreBrownian.indepFun_shift a
+  have hshift := hB.indepFun_shift a
   have heval : Measurable (fun x : ℝ≥0 → ℝ ↦ x (b - a)) := measurable_pi_apply _
   have hfuturePast := hshift.comp heval measurable_id
   have hfuturePast' : IndepFun (fun w ↦ B b w - B a w)
@@ -702,10 +706,10 @@ theorem ClarkOconeFamily.indep_increment_of_adapted
       rw [add_comm, tsub_add_cancel_of_le hab]
     · rfl
   have hind := (IndepFun_iff_Indep _ _ _).mp hfuturePast'
-  have hnat : 𝓕 a =
+  have hnat_a : 𝓕 a =
       MeasurableSpace.comap (fun w (t : Set.Iic a) ↦ B t w) inferInstance := by
-    rw [C.naturalFiltration, Filtration.natural_eq_comap]
-  rw [← hnat] at hind
+    rw [hnat, Filtration.natural_eq_comap]
+  rw [← hnat_a] at hind
   have hZm : @Measurable W ℝ (𝓕 a) inferInstance Zm :=
     hZ.stronglyMeasurable_mk.measurable
   have hindZm := indep_of_indep_of_le_right hind hZm.comap_le
@@ -713,25 +717,19 @@ theorem ClarkOconeFamily.indep_increment_of_adapted
     (IndepFun_iff_Indep _ _ _).mpr hindZm
   exact hfunZm.congr Filter.EventuallyEq.rfl hZ.ae_eq_mk.symm
 
-/-- A Brownian increment after time `a` is independent of every square-integrable
-`𝓕_a`-measurable coefficient. -/
-theorem ClarkOconeFamily.indep_increment_adapted
+omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
+    [SecondCountableTopology W] [IsGaussian P] in
+/-- An adapted `L²` coefficient times a future Brownian increment is again in `L²`. -/
+theorem memLp_natural_adapted_mul_increment
+    (hB : IsPreBrownianReal B P) (hsm : ∀ t, StronglyMeasurable (B t))
     {𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›}
-    (C : ClarkOconeFamily B P 𝓕) {a b : ℝ≥0} (hab : a ≤ b)
-    (Z : lpMeas ℝ ℝ (𝓕 a) 2 P) :
-    IndepFun (fun w ↦ B b w - B a w) (Z : W → ℝ) P :=
-  C.indep_increment_of_adapted hab (lpMeas.aestronglyMeasurable Z)
-
-/-- The product of an adapted `L²` coefficient and its future Brownian increment is again
-square-integrable.  Independence supplies the missing fourth-moment factorization. -/
-theorem ClarkOconeFamily.memLp_adapted_mul_increment
-    {𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›}
-    (C : ClarkOconeFamily B P 𝓕) {a b : ℝ≥0} (hab : a ≤ b)
-    (Z : lpMeas ℝ ℝ (𝓕 a) 2 P) :
+    (hnat : 𝓕 = Filtration.natural B hsm)
+    {a b : ℝ≥0} (hab : a ≤ b) (Z : lpMeas ℝ ℝ (𝓕 a) 2 P) :
     MemLp (fun w ↦ (Z : W → ℝ) w * (B b w - B a w)) 2 P := by
   have hΔ : MemLp (fun w ↦ B b w - B a w) 2 P :=
-    C.isPreBrownian.isGaussianProcess.hasGaussianLaw_sub.memLp_two
-  have hind := C.indep_increment_adapted hab Z
+    hB.isGaussianProcess.hasGaussianLaw_sub.memLp_two
+  have hind := indep_increment_of_natural_adapted hB hsm hnat hab
+    (lpMeas.aestronglyMeasurable Z)
   have hindSq : IndepFun (fun w ↦ (B b w - B a w) ^ 2)
       (fun w ↦ (Z : W → ℝ) w ^ 2) P :=
     hind.comp (measurable_id.pow_const 2) (measurable_id.pow_const 2)
@@ -748,6 +746,35 @@ theorem ClarkOconeFamily.memLp_adapted_mul_increment
   refine hint.congr (Filter.Eventually.of_forall fun w ↦ ?_)
   simp only [Pi.mul_apply]
   ring
+
+/-- A Brownian increment after time `a` is independent of every almost everywhere
+`𝓕_a`-measurable real random variable. -/
+theorem ClarkOconeFamily.indep_increment_of_adapted
+    {𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›}
+    (C : ClarkOconeFamily B P 𝓕) {a b : ℝ≥0} (hab : a ≤ b)
+    {Z : W → ℝ} (hZ : AEStronglyMeasurable[𝓕 a] Z P) :
+    IndepFun (fun w ↦ B b w - B a w) Z P :=
+  indep_increment_of_natural_adapted C.isPreBrownian C.stronglyMeasurable
+    C.naturalFiltration hab hZ
+
+/-- A Brownian increment after time `a` is independent of every square-integrable
+`𝓕_a`-measurable coefficient. -/
+theorem ClarkOconeFamily.indep_increment_adapted
+    {𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›}
+    (C : ClarkOconeFamily B P 𝓕) {a b : ℝ≥0} (hab : a ≤ b)
+    (Z : lpMeas ℝ ℝ (𝓕 a) 2 P) :
+    IndepFun (fun w ↦ B b w - B a w) (Z : W → ℝ) P :=
+  C.indep_increment_of_adapted hab (lpMeas.aestronglyMeasurable Z)
+
+/-- The product of an adapted `L²` coefficient and its future Brownian increment is again
+square-integrable.  Independence supplies the missing fourth-moment factorization. -/
+theorem ClarkOconeFamily.memLp_adapted_mul_increment
+    {𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›}
+    (C : ClarkOconeFamily B P 𝓕) {a b : ℝ≥0} (hab : a ≤ b)
+    (Z : lpMeas ℝ ℝ (𝓕 a) 2 P) :
+    MemLp (fun w ↦ (Z : W → ℝ) w * (B b w - B a w)) 2 P :=
+  memLp_natural_adapted_mul_increment C.isPreBrownian C.stronglyMeasurable
+    C.naturalFiltration hab Z
 
 /-- The terminal `L²(P)` value `Z · (B_b - B_a)` of a one-step adapted integrand. -/
 noncomputable def ClarkOconeFamily.elementaryIntegralValue
