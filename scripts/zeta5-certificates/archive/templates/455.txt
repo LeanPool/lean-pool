@@ -1,0 +1,7 @@
+def kIn (i : ℕ) : ℤ :=
+  kInL.getD i {{integer}}
+
+/-- The affine bound on inner piece `i`, with coefficients from `aInL` and `bInL`. -/
+noncomputable def gIn (i : ℕ) (x : ℝ) : ℝ :=
+  ((aInL.getD i {{integer}} : ℚ) : ℝ) * x + ((bInL.getD i {{integer}} : ℚ) : ℝ)
+
