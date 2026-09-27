@@ -116,7 +116,6 @@ end-segment `Ioo 0 r` and one whose image is an upper end-segment `Ioo p 1`, wit
 theorem two_components_structure [T2Space M] (a b : OpenPartialHomeomorph M NNReal)
     (hat : a.target = Ioo 0 1)
     (hb : IsConnected b.source)
-    (_hab : (a.source \ b.source).Nonempty)
     (hba : (b.source \ a.source).Nonempty)
     (hne : (a.source ∩ b.source).Nonempty)
     (hdisc : ¬ IsConnected (a.source ∩ b.source)) :

@@ -217,8 +217,8 @@ private lemma exists_oriented_overlap_chart {M : Type*} [TopologicalSpace M]
         = (fun y => 1 - y) '' (b.toOpenPartialHomeomorph '' W₁) := by
       rw [← image_comp]
       exact image_congr (fun x hx => hb₁f x (hW₁ hx))
-    rw [h₀, reflect_image_Ioo_lower hs0 (hsq.trans hq1.le)] at himg₀
-    rw [h₁, reflect_image_Ioo_upper hq1] at himg₁
+    rw [h₀, reflect_image_Ioo_lower (hsq.trans hq1.le)] at himg₀
+    rw [h₁, reflect_image_Ioo_upper] at himg₁
     exact ⟨b₁.toOpenPartialHomeomorph, hb₁s, hb₁t, 1 - q, 1 - s,
       tsub_pos_of_lt hq1, tsub_le_tsub_left hsq 1, tsub_lt_self one_pos hs0,
       himg₀, himg₁⟩
@@ -245,7 +245,7 @@ private lemma exists_oriented_charts {M : Type*} [TopologicalSpace M] [T2Space M
   have hbconn : IsConnected b₀.source := b₀.connected_source (hb₀s ▸ hbne)
   obtain ⟨W₀, W₁, r₀, p₁, hunion, hcomp₀, hcomp₁, hdisj, himgA₀, himgA₁, hr₀0, hr₀p, hp₁1⟩ :=
     two_components_structure a₀.toOpenPartialHomeomorph b₀.toOpenPartialHomeomorph
-      ha₀t hbconn hab hba hne hdisc'
+      ha₀t hbconn hba hne hdisc'
   have hW₀S : W₀ ⊆ a₀.source ∩ b₀.source := by rw [hunion]; exact subset_union_left
   have hW₁S : W₁ ⊆ a₀.source ∩ b₀.source := by rw [hunion]; exact subset_union_right
   have hne₀ : W₀.Nonempty := by
@@ -992,7 +992,7 @@ private lemma circle_chart_of_normalized {M : Type*} [TopologicalSpace M] [T2Spa
       {((kα * ((A m₀ : NNReal):ℝ) : ℝ) : AddCircle (1 : ℝ)),
        ((kα * ((ν : NNReal):ℝ) : ℝ) : AddCircle (1 : ℝ))} := by
     rw [htsetdef]
-    exact addCircle_frontier_arc_subset hc₁d₁
+    exact addCircle_frontier_arc_subset
   exact glue_circle_arcs A B W₀ W₁ r p hAt himgA₀ himgA₁ hW₀A hW₀B hW₁A hW₁B ν hpν m₁ hm₁ν μ m₀
       hm₀μ hm₀A hm₀B hm₁A hm₁B hρmem kα kg g0 hkα1 hkg1 hid1 hid2 hcg0 hg0d h1c hc₁0 hd₁kα hc₁1
       hc₁d₁ e e' heval he'val hes he's htargetE htargetE' sset tset hssub H claim1 H' hfrontier

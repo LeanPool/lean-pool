@@ -34,61 +34,25 @@ lemma noncompact_nnreal : NoncompactSpace NNReal := by
   have := not_compactSpace_NNReal
   exact not_compactSpace_iff.mp this
 
-lemma noncompact_ioo' (x y : NNReal) (hxy : x < y) : NoncompactSpace (Set.Ioo x y) := by
-  let s := Set.Ioo x y
-  have h : ¬ CompactSpace s := by
-    by_contra h'
-    have hc : IsCompact s := by exact isCompact_iff_compactSpace.mpr h'
-    have hs : IsClosed s := by exact IsCompact.isClosed hc
-    have ho : IsOpen s := by exact isOpen_Ioo
-    have hn : Nonempty s := by exact Set.nonempty_Ioo_subtype hxy
-    have hc' := clopen_in_r s
-    apply hc'
-    constructor
-    · exact Set.nonempty_iff_ne_empty'.mp hn
-    · by_contra ha
-      rw [ha] at h'
-      have : ¬ IsCompact (Set.univ : Set NNReal) := by
-        have ht : ¬ CompactSpace (NNReal) := by
-          exact not_compactSpace_iff.mpr noncompact_nnreal
-        by_contra ht'
-        apply ht
-        exact { isCompact_univ := ht' }
-      apply this
-      exact isCompact_iff_compactSpace.mpr h'
-    exact ⟨ hs, ho ⟩
-  exact not_compactSpace_iff.mp h
+private lemma noncompact_open_nnreal (s : Set NNReal) (ho : IsOpen s) (hn : s.Nonempty) :
+    NoncompactSpace s := by
+  apply not_compactSpace_iff.mp
+  intro h
+  have hc := isCompact_iff_compactSpace.mpr h
+  rcases isClopen_iff.mp ⟨hc.isClosed, ho⟩ with he | hu
+  · exact hn.ne_empty he
+  · rw [hu] at hc
+    exact not_compactSpace_NNReal ⟨hc⟩
+
+lemma noncompact_ioo' (x y : NNReal) (hxy : x < y) : NoncompactSpace (Set.Ioo x y) :=
+  noncompact_open_nnreal _ isOpen_Ioo (Set.nonempty_Ioo.mpr hxy)
 
 lemma noncompact_ioo (x y : NNReal) (hxy : x < y) : ¬ CompactSpace (Set.Ioo x y) := by
   have h := noncompact_ioo' x y hxy
   exact not_compactSpace_iff.mpr h
 
-lemma noncompact_iio' (x : NNReal) (hx : 0 < x) : NoncompactSpace (Set.Iio x) := by
-  let s := Set.Iio x
-  have h : ¬ CompactSpace s := by
-    by_contra h'
-    have hc : IsCompact s := by exact isCompact_iff_compactSpace.mpr h'
-    have hs : IsClosed s := by exact IsCompact.isClosed hc
-    have ho : IsOpen s := by exact isOpen_Iio
-    have hn : Nonempty s := by
-      apply nonempty_subtype.mpr
-      exact Exists.intro 0 hx
-    have hc' := clopen_in_r s
-    apply hc'
-    constructor
-    · exact Set.nonempty_iff_ne_empty'.mp hn
-    · by_contra ha
-      rw [ha] at h'
-      have : ¬ IsCompact (Set.univ : Set NNReal) := by
-        have ht : ¬ CompactSpace (NNReal) := by
-          exact not_compactSpace_iff.mpr noncompact_nnreal
-        by_contra ht'
-        apply ht
-        exact { isCompact_univ := ht' }
-      apply this
-      exact isCompact_iff_compactSpace.mpr h'
-    exact ⟨ hs, ho ⟩
-  exact not_compactSpace_iff.mp h
+lemma noncompact_iio' (x : NNReal) (hx : 0 < x) : NoncompactSpace (Set.Iio x) :=
+  noncompact_open_nnreal _ isOpen_Iio ⟨0, hx⟩
 
 lemma noncompact_iio (x : NNReal) (hx : 0 < x) : ¬ CompactSpace (Set.Iio x) := by
   have h:= noncompact_iio' x hx

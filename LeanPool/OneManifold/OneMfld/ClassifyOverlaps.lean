@@ -223,7 +223,7 @@ lemma OChart.exists_orient_lower (a : OChart M) (V : OpenPartialHomeomorph M NNR
         = (fun y => 1 - y) '' (a.toOpenPartialHomeomorph '' (a.source ∩ V.source)) := by
       rw [← image_comp]
       exact image_congr (fun x hx => ha'f x hx.1)
-    rw [himg, reflect_image_Ioo_upper hp1] at himg'
+    rw [himg, reflect_image_Ioo_upper] at himg'
     exact ⟨a', 1 - p, ha's, ha't, tsub_pos_of_lt hp1, tsub_lt_self one_pos hp0, himg'⟩
   · -- lower case: already oriented
     have hr1' : r < 1 := by
@@ -270,7 +270,7 @@ lemma OChart.exists_orient_upper (a : OChart M) (V : OpenPartialHomeomorph M NNR
         = (fun y => 1 - y) '' (a.toOpenPartialHomeomorph '' (a.source ∩ V.source)) := by
       rw [← image_comp]
       exact image_congr (fun x hx => ha'f x hx.1)
-    rw [himg, reflect_image_Ioo_lower hw0 hw1] at himg'
+    rw [himg, reflect_image_Ioo_lower hw1] at himg'
     exact ⟨a', 1 - w, ha's, ha't, tsub_pos_of_lt hw1', tsub_lt_self one_pos hw0, himg'⟩
 
 end Orient

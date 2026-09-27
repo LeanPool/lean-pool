@@ -277,7 +277,7 @@ lemma addCircle_arc_isOpen (c d : ℝ) :
   QuotientAddGroup.isOpenMap_coe _ isOpen_Ioo
 
 /-- The frontier of a closed arc is contained in its two endpoints. -/
-lemma addCircle_frontier_arc_subset {c d : ℝ} (hcd : c ≤ d) :
+lemma addCircle_frontier_arc_subset {c d : ℝ} :
     frontier (((↑) : ℝ → AddCircle (1:ℝ)) '' Icc c d) ⊆
       {((c : ℝ) : AddCircle (1:ℝ)), ((d : ℝ) : AddCircle (1:ℝ))} := by
   have hclosed := addCircle_arc_isClosed c d

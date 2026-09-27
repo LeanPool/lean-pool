@@ -323,69 +323,25 @@ noncomputable def homeoNnrealReal : (Set.Ioi 0 : Set NNReal) ≃ₜ (Set.univ : 
     apply Continuous.rexp
     exact continuous_subtype_val
 
-/-- Truncate a real number at zero and regard the result as a nonnegative real. -/
-def relu (x : ℝ) : NNReal :=
-  NNReal.mk (max x 0) (by simp)
+/-- Compatibility name for Mathlib's truncation to the nonnegative reals. -/
+abbrev relu : ℝ → NNReal := Real.toNNReal
 
-lemma relu_zero : (relu 0 = 0) := by
-  have : max (0 : Real) (0 : Real) = (0 : Real) := by exact max_self 0
-  dsimp [relu]
-  simp only [max_self, NNReal.mk_zero]
+lemma relu_zero : relu 0 = 0 := Real.toNNReal_zero
 
-theorem continuous_relu : Continuous relu := by
-  apply Continuous.subtype_mk
-  apply Continuous.max
-  · exact continuous_id'
-  exact continuous_const
+theorem continuous_relu : Continuous relu := continuous_real_toNNReal
 
+lemma proj_relu {x : ℝ} (h : x > 0) : (relu x).toReal = x :=
+  Real.coe_toNNReal x h.le
 
-lemma proj_relu {x : ℝ} (h : x > 0) : (relu x).toReal = x := by
-  have : max x 0 = x := max_eq_left_of_lt h
-  exact this
+lemma proj_relu' {x : ℝ} (h : x ≤ 0) : (relu x).toReal = 0 := by
+  rw [relu, Real.toNNReal_of_nonpos h, NNReal.coe_zero]
 
-lemma proj_relu' {x : ℝ} (h : x <= 0) : (relu x).toReal = 0 := by
-  have : 0 = max x 0 := right_eq_sup.mpr h
-  dsimp [relu]
-  rw [←this]
-
-lemma relu_proj {x : NNReal} : (relu x.toReal) = x := by
-  by_cases h0 : x = 0
-  · rw [h0]
-    simp only [NNReal.coe_zero]
-    rw [relu_zero]
-  · have : x > 0 := by exact pos_iff_ne_zero.mpr h0
-    refine NNReal.eq ?_
-    rw [proj_relu]
-    exact this
+lemma relu_proj {x : NNReal} : relu x.toReal = x := Real.toNNReal_coe
 
 lemma relu_mono : StrictMonoOn relu (Set.Ici 0) := by
   intro x hx y hy h
-  simp only [mem_Ici] at hx
-  simp only [mem_Ici] at hy
-  apply NNReal.coe_lt_coe.mp
-  by_cases hx0 : x = 0
-  · rw [hx0]
-    simp only [NNReal.coe_lt_coe]
-    by_cases hy0 : y = 0
-    · rw [hy0]
-      simp only [lt_self_iff_false]
-      linarith
-    · have hy' : y > 0 := by linarith
-      apply NNReal.coe_lt_coe.mp
-      rw [proj_relu hy']
-      rw [relu_zero]
-      simp only [NNReal.coe_zero]
-      assumption
-  · have hx' : x > 0 := by exact lt_of_le_of_ne hx fun a => hx0 (id (Eq.symm a))
-    rw [proj_relu hx']
-    by_cases hy0 : y = 0
-    · rw [hy0]
-      rw [relu_zero]
-      simp only [NNReal.coe_zero, gt_iff_lt]
-      linarith
-    · have hy' : y > 0 := by linarith
-      rw [proj_relu hy']
-      assumption
+  exact_mod_cast (show ((relu x : NNReal) : ℝ) < ((relu y : NNReal) : ℝ) by
+    simpa only [relu, Real.coe_toNNReal x hx, Real.coe_toNNReal y hy] using h)
 
 lemma relu_interval_ioo {U : Set NNReal} {a b : Real} (h : Ioo a b = relu ⁻¹' U) :
   (relu '' (Set.Ioo a b) = U) := by
@@ -490,7 +446,7 @@ lemma relu_ioo (a b : Real) :
         apply Iff.intro
         · intro ⟨ y, ⟨ hay, hyb ⟩ , hyz ⟩
           rw [←hyz]
-          dsimp [relu]
+          dsimp [relu, Real.toNNReal]
           simp only [gt_iff_lt]
           refine NNReal.coe_lt_coe.mp ?_
           simp only [NNReal.coe_mk, lt_sup_iff, sup_lt_iff, lt_self_iff_false, and_false, or_false]
@@ -548,7 +504,7 @@ lemma relu_iio (b : Real) :
       · intro ⟨ x, ⟨  hxb, hxz ⟩ ⟩
         rw [←hxz]
         simp only [gt_iff_lt]
-        dsimp [relu]
+        dsimp [relu, Real.toNNReal]
         apply NNReal.coe_lt_coe.mp
         simp only [NNReal.coe_mk, lt_sup_iff, sup_lt_iff, lt_self_iff_false, and_false, or_false]
         apply And.intro
@@ -880,16 +836,11 @@ lemma zero_in_open (a b : NNReal) (h : IsOpen ((Ioo a b) ∪ {0})) : a ≤ 0 ∧
     rwa [U0] at openU'
 
 private theorem classify_nnreal_of_real_Ioo (U : Set NNReal) (hu : IsOpen U)
-    (hr : relu ⁻¹' (U ∩ Ioi 0) = Ioi (0 : ℝ) ∩ NNReal.toReal '' U)
-    (h0u0 : 0 ∉ U ∩ Ioi 0) (h0u' : 0 ∉ relu ⁻¹' (U ∩ Ioi 0))
     (c : ∃ a b : ℝ, Ioo a b = relu ⁻¹' (U ∩ Ioi 0)) :
     (∃ x y, Set.Ioo x y = U) ∨ (∃ x : NNReal, Set.Iio x = U) ∨
       (∃ x : NNReal, Set.Ioi x = U) ∨ U = univ := by
   let U0 := U ∩ Ioi 0
   let U' := relu ⁻¹' U0
-  change relu ⁻¹' U0 = Ioi (0 : ℝ) ∩ NNReal.toReal '' U at hr
-  change 0 ∉ U0 at h0u0
-  change 0 ∉ U' at h0u'
   have hu0 : IsOpen U0 := hu.inter isOpen_Ioi
   change ∃ a b : ℝ, Ioo a b = U' at c
   rcases c with ⟨ a, b, c ⟩
@@ -1000,18 +951,16 @@ private theorem classify_nnreal_of_real_Ioo (U : Set NNReal) (hu : IsOpen U)
       rw [c']
       simp only [lt_self_iff_false, not_false_eq_true, Ioo_eq_empty]
 
-private theorem classify_nnreal_of_real_Ioi (U : Set NNReal) (hu : IsOpen U) (hc : IsConnected U)
+private theorem classify_nnreal_of_real_Ioi (U : Set NNReal) (hc : IsConnected U)
     (hr : relu ⁻¹' (U ∩ Ioi 0) = Ioi (0 : ℝ) ∩ NNReal.toReal '' U)
-    (h0u0 : 0 ∉ U ∩ Ioi 0) (h0u' : 0 ∉ relu ⁻¹' (U ∩ Ioi 0))
+    (h0u' : 0 ∉ relu ⁻¹' (U ∩ Ioi 0))
     (c : ∃ a : ℝ, Ioi a = relu ⁻¹' (U ∩ Ioi 0)) :
     (∃ x y, Set.Ioo x y = U) ∨ (∃ x : NNReal, Set.Iio x = U) ∨
       (∃ x : NNReal, Set.Ioi x = U) ∨ U = univ := by
   let U0 := U ∩ Ioi 0
   let U' := relu ⁻¹' U0
   change relu ⁻¹' U0 = Ioi (0 : ℝ) ∩ NNReal.toReal '' U at hr
-  change 0 ∉ U0 at h0u0
   change 0 ∉ U' at h0u'
-  have hu0 : IsOpen U0 := hu.inter isOpen_Ioi
   change ∃ x : ℝ, Ioi x = U' at c
   rcases c with ⟨ x, c ⟩
   by_cases h0 : x = 0
@@ -1304,7 +1253,7 @@ theorem classify_connected_nnreal_interval (U : Set NNReal) (hu : IsOpen U) (hc 
       rw [relu_zero]
       assumption
     rcases c with (c|c|c|c)
-    · exact classify_nnreal_of_real_Ioo U hu hr h0u0 h0u' c
+    · exact classify_nnreal_of_real_Ioo U hu c
     · rcases c with ⟨ x, hx ⟩
       rw [hx] at h0u'
       simp only [mem_Iio, not_lt] at h0u'
@@ -1317,7 +1266,7 @@ theorem classify_connected_nnreal_interval (U : Set NNReal) (hu : IsOpen U) (hc 
       have hc : x - 1 ∈ Set.Ioi 0 := by exact mem_of_mem_inter_left hxi
       simp only [mem_Ioi, sub_pos] at hc
       linarith
-    · exact classify_nnreal_of_real_Ioi U hu hc hr h0u0 h0u' c
+    · exact classify_nnreal_of_real_Ioi U hc hr h0u' c
     · exfalso
       have h0i : 0 ∉ Set.Ioi (0 : NNReal) := self_notMem_Ioi
       have this' : 0 ∈ U0 := by

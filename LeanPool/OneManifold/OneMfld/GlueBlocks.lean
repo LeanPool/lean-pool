@@ -193,7 +193,7 @@ lemma frontier_UIIic {c : ℝ} (h0 : 0 < c) (h1 : c < 1) :
 
 /-- Reflection `y ↦ 1 - y` sends the upper end-segment `Ioo p 1 ⊆ ℝ≥0` to the lower
 end-segment `Ioo 0 (1-p)`. -/
-lemma reflect_image_Ioo_upper {p : NNReal} (_hp : p < 1) :
+lemma reflect_image_Ioo_upper {p : NNReal} :
     (fun y : NNReal => 1 - y) '' Ioo p 1 = Ioo 0 (1 - p) := by
   ext z
   constructor
@@ -206,7 +206,7 @@ lemma reflect_image_Ioo_upper {p : NNReal} (_hp : p < 1) :
 
 /-- Reflection `y ↦ 1 - y` sends the lower end-segment `Ioo 0 q ⊆ ℝ≥0` (for `q ≤ 1`) to
 the upper end-segment `Ioo (1-q) 1`. -/
-lemma reflect_image_Ioo_lower {q : NNReal} (_hq0 : 0 < q) (hq1 : q ≤ 1) :
+lemma reflect_image_Ioo_lower {q : NNReal} (hq1 : q ≤ 1) :
     (fun y : NNReal => 1 - y) '' Ioo 0 q = Ioo (1 - q) 1 := by
   ext z
   constructor
