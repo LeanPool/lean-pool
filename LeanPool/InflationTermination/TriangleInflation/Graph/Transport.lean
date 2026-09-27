@@ -87,68 +87,7 @@ theorem prod_split {ι : Type*} [Fintype ι] (p : ι → Prop) [DecidablePred p]
 
 /-! ## Splitting a sum over a dependent function type along a predicate -/
 
-/-- Reassemble a dependent function from its restrictions to `p` and to `¬ p`. -/
-def piMerge {ι : Type*} (p : ι → Prop) [DecidablePred p] (α : ι → Type*)
-    (a : ∀ i : {x : ι // p x}, α i) (b : ∀ i : {x : ι // ¬ p x}, α i) : ∀ i, α i :=
-  fun i => if h : p i then a ⟨i, h⟩ else b ⟨i, h⟩
-
-/-- The corresponding equivalence. -/
-def piSplitEquiv {ι : Type*} (p : ι → Prop) [DecidablePred p] (α : ι → Type*) :
-    ((∀ i : {x : ι // p x}, α i) × (∀ i : {x : ι // ¬ p x}, α i)) ≃ (∀ i, α i) where
-  toFun q := piMerge p α q.1 q.2
-  invFun z := (fun i => z i.1, fun i => z i.1)
-  left_inv := by
-    rintro ⟨a, b⟩
-    simp only [Prod.mk.injEq]
-    refine ⟨?_, ?_⟩
-    · funext i; simp [piMerge, i.2]
-    · funext i; simp [piMerge, i.2]
-  right_inv := by
-    intro z; funext i; by_cases h : p i <;> simp [piMerge, h]
-
-theorem sum_sum_prod {κ ν : Type*} [Fintype κ] [Fintype ν] (Pa : κ → ℝ) (Pb : ν → ℝ)
-    (ha : ∑ a, Pa a = 1) (hb : ∑ b, Pb b = 1) (f : κ → ℝ) (g : ν → ℝ) :
-    (∑ a, ∑ b, (Pa a * Pb b) * (f a * g b))
-      = (∑ a, ∑ b, (Pa a * Pb b) * f a) * (∑ a, ∑ b, (Pa a * Pb b) * g b) := by
-  have h1 : (∑ a, ∑ b, (Pa a * Pb b) * f a) = ∑ a, Pa a * f a := by
-    refine Finset.sum_congr rfl (fun a _ => ?_)
-    rw [Finset.sum_congr rfl (fun b (_ : b ∈ (Finset.univ : Finset ν)) =>
-      show (Pa a * Pb b) * f a = (Pa a * f a) * Pb b by ring), ← Finset.mul_sum, hb, mul_one]
-  have h2 : (∑ a, ∑ b, (Pa a * Pb b) * g b) = ∑ b, Pb b * g b := by
-    rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl (fun b _ => ?_)
-    rw [Finset.sum_congr rfl (fun a (_ : a ∈ (Finset.univ : Finset κ)) =>
-      show (Pa a * Pb b) * g b = (Pb b * g b) * Pa a by ring), ← Finset.mul_sum, ha, mul_one]
-  have h3 : (∑ a, ∑ b, (Pa a * Pb b) * (f a * g b))
-      = ∑ a, ∑ b, (Pa a * f a) * (Pb b * g b) :=
-    Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => by ring))
-  rw [h1, h2, h3, Finset.sum_mul_sum]
-
-theorem sum_sum_prod' {κ ν : Type*} [Fintype κ] [Fintype ν] (Pa : κ → ℝ) (Pb : ν → ℝ)
-    (ha : ∑ a, Pa a = 1) (hb : ∑ b, Pb b = 1) (A B : κ → ν → ℝ)
-    (hA : ∀ a b b', A a b = A a b') (hB : ∀ a a' b, B a b = B a' b) :
-    (∑ a, ∑ b, (Pa a * Pb b) * (A a b * B a b))
-      = (∑ a, ∑ b, (Pa a * Pb b) * A a b) * (∑ a, ∑ b, (Pa a * Pb b) * B a b) := by
-  have hF : ∀ a b, A a b = ∑ b', Pb b' * A a b' := by
-    intro a b
-    calc A a b = (∑ b', Pb b') * A a b := by rw [hb, one_mul]
-      _ = ∑ b', Pb b' * A a b := by rw [Finset.sum_mul]
-      _ = ∑ b', Pb b' * A a b' := Finset.sum_congr rfl (fun b' _ => by rw [hA a b b'])
-  have hG : ∀ a b, B a b = ∑ a', Pa a' * B a' b := by
-    intro a b
-    calc B a b = (∑ a', Pa a') * B a b := by rw [ha, one_mul]
-      _ = ∑ a', Pa a' * B a b := by rw [Finset.sum_mul]
-      _ = ∑ a', Pa a' * B a' b := Finset.sum_congr rfl (fun a' _ => by rw [hB a a' b])
-  calc (∑ a, ∑ b, (Pa a * Pb b) * (A a b * B a b))
-      = ∑ a, ∑ b, (Pa a * Pb b) * ((∑ b', Pb b' * A a b') * (∑ a', Pa a' * B a' b)) :=
-        Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => by rw [← hF, ← hG]))
-    _ = (∑ a, ∑ b, (Pa a * Pb b) * (∑ b', Pb b' * A a b'))
-          * (∑ a, ∑ b, (Pa a * Pb b) * (∑ a', Pa a' * B a' b)) := sum_sum_prod Pa Pb ha hb _ _
-    _ = (∑ a, ∑ b, (Pa a * Pb b) * A a b) * (∑ a, ∑ b, (Pa a * Pb b) * B a b) := by
-        congr 1
-        · exact Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => by rw [← hF]))
-        · exact Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => by rw [← hG]))
-
+/-- Factor weighted expectations across complementary blocks of coordinates. -/
 theorem sum_pi_two_block {ι : Type*} [Fintype ι] [DecidableEq ι] {α : ι → Type*}
     [∀ i, Fintype (α i)]
     (p : ι → Prop) (w : ∀ i, α i → ℝ) (hw : ∀ i, ∑ a, w i a = 1)
@@ -159,34 +98,14 @@ theorem sum_pi_two_block {ι : Type*} [Fintype ι] [DecidableEq ι] {α : ι →
       = (∑ z : (∀ i, α i), (∏ i, w i (z i)) * A z)
         * (∑ z : (∀ i, α i), (∏ i, w i (z i)) * B z) := by
   classical
-  have hprod : ∀ (a : ∀ i : {x : ι // p x}, α i) (b : ∀ i : {x : ι // ¬ p x}, α i),
-      (∏ i, w i (piMerge p α a b i))
-        = (∏ i : {x : ι // p x}, w i.1 (a i)) * (∏ i : {x : ι // ¬ p x}, w i.1 (b i)) := by
-    intro a b
-    rw [prod_split p (fun i => w i (piMerge p α a b i))]
-    congr 1
-    · exact Finset.prod_congr rfl (fun i _ => by simp [piMerge, i.2])
-    · exact Finset.prod_congr rfl (fun i _ => by simp [piMerge, i.2])
-  have key : ∀ F : (∀ i, α i) → ℝ,
-      (∑ z : (∀ i, α i), (∏ i, w i (z i)) * F z)
-        = ∑ a : (∀ i : {x : ι // p x}, α i), ∑ b : (∀ i : {x : ι // ¬ p x}, α i),
-            ((∏ i : {x : ι // p x}, w i.1 (a i)) * (∏ i : {x : ι // ¬ p x}, w i.1 (b i)))
-              * F (piMerge p α a b) := by
-    intro F
-    rw [← Equiv.sum_comp (piSplitEquiv p α) (fun z => (∏ i, w i (z i)) * F z),
-      Fintype.sum_prod_type]
-    exact Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => by
-      rw [show (piSplitEquiv p α) (a, b) = piMerge p α a b from rfl, hprod]))
-  have hsa : ∑ a : (∀ i : {x : ι // p x}, α i), (∏ i : {x : ι // p x}, w i.1 (a i)) = 1 := by
-    rw [sum_prod_pi (fun i : {x : ι // p x} => w i.1)]
-    exact Finset.prod_eq_one (fun i _ => hw i.1)
-  have hsb : ∑ b : (∀ i : {x : ι // ¬ p x}, α i), (∏ i : {x : ι // ¬ p x}, w i.1 (b i)) = 1 := by
-    rw [sum_prod_pi (fun i : {x : ι // ¬ p x} => w i.1)]
-    exact Finset.prod_eq_one (fun i _ => hw i.1)
-  rw [key (fun z => A z * B z), key A, key B]
-  exact sum_sum_prod' _ _ hsa hsb (fun a b => A (piMerge p α a b)) (fun a b => B (piMerge p α a b))
-    (fun a b b' => hA _ _ (fun i hi => by simp [piMerge, hi]))
-    (fun a a' b => hB _ _ (fun i hi => by simp [piMerge, hi]))
+  apply FiniteWeights.sum_dprod_mul_mul (w := w) hw
+    (I := Finset.univ.filter p) (J := Finset.univ.filter (fun i => ¬ p i))
+  · exact Finset.disjoint_left.mpr (fun i hi hj =>
+      (Finset.mem_filter.mp hj).2 (Finset.mem_filter.mp hi).2)
+  · intro z z' h
+    exact hA z z' (fun i hi => h i (Finset.mem_filter.mpr ⟨Finset.mem_univ i, hi⟩))
+  · intro z z' h
+    exact hB z z' (fun i hi => h i (Finset.mem_filter.mpr ⟨Finset.mem_univ i, hi⟩))
 
 /-- Independence: the expectation of a product of functions of disjoint blocks of coordinates
 factorizes. -/
@@ -956,19 +875,8 @@ theorem mergeVert_out (G H : PairGraph) (φ : H.V → G.V)
 /-- Outcomes of `G` split as an `H`-outcome together with an outcome on the outside
 vertices. -/
 noncomputable def vertEquiv (G H : PairGraph) (φ : H.V → G.V) (hφ : Function.Injective φ) :
-    ((H.V → Bool) × (OutVert G H φ → Bool)) ≃ (G.V → Bool) where
-  toFun := mergeVert G H φ
-  invFun w := (fun u => w (φ u), fun v => w v.1)
-  left_inv q := by
-    refine Prod.ext ?_ ?_
-    · funext u; exact mergeVert_in G H φ hφ q u
-    · funext v; exact mergeVert_out G H φ q v.1 v.2
-  right_inv w := by
-    funext v
-    by_cases h : InRange G H φ v
-    · obtain ⟨u, rfl⟩ := h
-      exact mergeVert_in G H φ hφ _ u
-    · exact mergeVert_out G H φ _ v h
+    ((H.V → Bool) × (OutVert G H φ → Bool)) ≃ (G.V → Bool) :=
+  vtxEquiv G H φ hφ
 
 
 /-! ## The two parts of an injectable set -/
