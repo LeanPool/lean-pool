@@ -1,0 +1,11 @@
+lemma tc_{{integer}} :
+    ∀ t,
+      ({{integer}} / {{integer}} : ℝ) ≤ t →
+        t ≤ ({{integer}} / {{integer}} : ℝ) → {{integer}} < t → {{integer}} * Uρ t - Vfield t ≤ M{{integer}} := by
+  intro t h{{integer}} h{{integer}} h{{integer}}
+  have eq{{integer}} : qm = ({{integer}} / {{integer}} : ℝ) := by norm_num [qm]
+  have eq{{integer}} : qp = ({{integer}} / {{integer}} : ℝ) := by norm_num [qp]
+  exact
+    check_mid Umid_le V_br (by unfold M{{integer}}; linarith only [Real.pi_gt_d{{integer}}, Real.pi_lt_d{{integer}}]) t
+      (by rw [eq{{integer}}]; exact h{{integer}}) (by rw [eq{{integer}}]; exact h{{integer}}) h{{integer}}
+
