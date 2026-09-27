@@ -1,0 +1,5 @@
+lemma U_{{integer}}_{{integer}} :
+    Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      (-({{integer}} / {{integer}} : ℝ)) :=
+  by rw [Uω_of_mem (by norm_num [aρ_{{integer}}]) (by norm_num [bρ_{{integer}}])]; exact Lmid_{{integer}}
+
