@@ -1,0 +1,7 @@
+private lemma inner_table_k_{{integer}} (x : ℝ) (hx : x ∈ Set.Ico (tIn {{integer}}) (tIn ({{integer}} + {{integer}}))) :
+    -{{integer}} * (⌊x⌋₊ : ℤ) - {{integer}} ≤ kIn {{integer}} ∧ kIn {{integer}} ≤ {{integer}} * (⌊x⌋₊ : ℤ) + {{integer}} := by
+  simp only [tIn, tInL, kIn, kInL, List.getD_cons_succ, List.getD_cons_zero, Set.mem_Ico] at hx ⊢
+  push_cast at hx
+  rw [nat_floor_of_bounds (q := {{integer}}) (by norm_num; linarith [hx.{{integer}}]) (by norm_num; linarith [hx.{{integer}}])]
+  norm_num
+

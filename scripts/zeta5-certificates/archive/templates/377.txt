@@ -1,0 +1,135 @@
+/-
+Copyright (c) {{integer}} Moritz Firsching. All rights reserved.
+Released under Apache {{integer}}.{{integer}} license as described in the file LICENSE.
+Authors: Moritz Firsching
+-/
+
+module
+
+import Mathlib.Analysis.Real.Pi.Bounds
+
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.U{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.V{{integer}}
+public import LeanPool.Zeta{{integer}}Irrational.Table.Bracket
+public import LeanPool.Zeta{{integer}}Irrational.Table.Tail
+
+/-! # Intervals: certified bounds for the zeta({{integer}}) proof -/
+
+@[expose] public section
+
+open Finset
+
+namespace Zeta{{integer}}Irrational
+
