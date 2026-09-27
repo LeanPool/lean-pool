@@ -489,7 +489,6 @@ private theorem unit_mem_power_range_of_ideleClassNorm_top
       simpa using congrArg Units.val hbeta
 
 open scoped Classical in
-
 open _root_.KummerTheory
   (chosenSimpleKummerExtension_infiniteTensorNormSubgroup_eq_top_of_mem_nthPowerSubgroup) in
 /-- Equality between the power/local-unit subgroup and the everywhere-local

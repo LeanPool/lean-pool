@@ -278,7 +278,14 @@ theorem
         RelativeIdeleGroup.conjugation_tmul]
       congr 1
   | add x y hx hy =>
-      simp only [map_add, hx, hy]
+      let f := RelativeIdeleGroup.adeleEmbedding (IntermediateField.inclusion h)
+      let g := RelativeIdeleGroup.conjugation ℚ F (AlgEquiv.restrictNormalHom F σ)
+      let k := RelativeIdeleGroup.adeleEmbedding
+        ((AlgEquiv.restrictNormalHom F σ).toAlgHom.comp
+          (IntermediateField.inclusion h))
+      exact
+        ((congrArg g (map_add f x y)).trans (map_add g (f x) (f y))).trans
+          ((congrArg₂ (· + ·) hx hy).trans (map_add k x y).symm)
 
 /-- The equivariant scalar-extension transition map in the
 finite-Galois idele-class system. -/
@@ -367,7 +374,8 @@ theorem rationalRelativeIdeleClassEmbedding_comp
         (IntermediateField.inclusion hFH) (IntermediateField.inclusion hEF) c
     _ = _ := congrArg (fun f => RelativeIdeleGroup.classEmbedding f c) hinc
 
-private noncomputable instance :
+/-- Scalar extension forms the directed system used by the rational idele-class limit. -/
+noncomputable instance rationalRelativeIdeleClassDirectedSystem :
     DirectedSystem
       (fun E : FiniteGaloisIntermediateField ℚ (SeparableClosure ℚ) =>
         RelativeIdeleGroup.ClassGroup ℚ E)

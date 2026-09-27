@@ -188,7 +188,7 @@ theorem
     letI :=
       relativeOutsideSPlaceFactorsAction
         (K := K) (L := L) S
-    ∃ h :
+    ∃ _h :
         HerbrandQuotientDefined
           (L ≃ₐ[K] L)
           (RelativeOutsideSPlaceFactors
@@ -257,7 +257,7 @@ theorem
     letI :=
       relativeIdeleLocalTensorDecompositionSupportedSubgroupAction
         (K := K) (L := L) S
-    ∃ h :
+    ∃ _h :
         HerbrandQuotientDefined
           (L ≃ₐ[K] L)
           (relativeIdeleLocalTensorDecompositionSupportedSubgroup
@@ -1197,7 +1197,7 @@ theorem
             (finitePlacesAbove (K := K) (L := L) S)) σ =
         q / (Fintype.card (L ≃ₐ[K] L) : ℚ)) :
     letI := ideleClassMulDistribMulAction K L
-    ∃ hC :
+    ∃ _hC :
         HerbrandQuotientDefined
           (L ≃ₐ[K] L)
           (RelativeIdeleGroup.ClassGroup K L) σ,
@@ -1431,7 +1431,7 @@ theorem
         ChosenFinitePlaceIsUnramified
           (K := K) (L := L) w) :
     letI := ideleClassMulDistribMulAction K L
-    ∃ hC :
+    ∃ _hC :
         HerbrandQuotientDefined
           (L ≃ₐ[K] L)
           (RelativeIdeleGroup.ClassGroup K L) σ,

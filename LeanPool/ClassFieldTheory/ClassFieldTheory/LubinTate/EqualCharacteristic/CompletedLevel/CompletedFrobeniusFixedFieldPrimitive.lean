@@ -49,10 +49,7 @@ instance equalCharacteristicCompletedFrobeniusIdentificationLevelCharP
     [CharP K F.residueCharacteristic] (n : ℕ) :
     CharP (equalCharacteristicCompletedLevelField F n)
       F.residueCharacteristic :=
-  charP_of_injective_algebraMap
-    (algebraMap (equalCharacteristicCompletedUnramifiedField F.residueField)
-      (equalCharacteristicCompletedLevelField F n)).injective
-    F.residueCharacteristic
+  equalCharacteristicDirectThetaCompletedLevelCharP F n
 
 private theorem equalCharacteristicDirectTargetCompletedPrimitivePolynomial_eq
     (F : LocalField.{u, v} K)

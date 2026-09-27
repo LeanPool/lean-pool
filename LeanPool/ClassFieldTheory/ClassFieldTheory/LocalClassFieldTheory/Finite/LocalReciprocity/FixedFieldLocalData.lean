@@ -1015,8 +1015,12 @@ private theorem residueAbsoluteDegreeIn_eq_normalizedDegree_abstractFixedFieldEq
       (abstractSubgroupEquivGaloisGroup
         K (SeparableClosure K) H.field).apply_symm_apply
           (AlgEquiv.autCongr e sigma)
-    rw [localAbstractFixedResidueAction_apply K H.field sigmaH]
-    rw [hsigmaH]
+    exact
+      (congrArg
+        (fun tau : Gal(SeparableClosure K/F) =>
+          residueAlgActionOfEqTop F A htop tau x)
+        hsigmaH).symm.trans
+          (localAbstractFixedResidueAction_apply K H.field sigmaH x).symm
   let : Algebra k₀ R := R.algebra
   let : FiniteDimensional k₀ R :=
     localAbstractFixedResidueIntermediateField_finiteDimensional K H.field
@@ -1094,10 +1098,9 @@ theorem localResidueDegree_eq_normalizedDegree_abstractFixedFieldEquiv
             (AlgEquiv.autCongr e sigma)) :=
     localResidueDegree_eq_residueAbsoluteDegreeIn_finiteExtensionEquiv
       K F j e sigma
-  rw [hlocal]
-  exact
-    residueAbsoluteDegreeIn_eq_normalizedDegree_abstractFixedFieldEquiv
-      K H e sigma htop tau hTau
+  exact hlocal.trans
+    (residueAbsoluteDegreeIn_eq_normalizedDegree_abstractFixedFieldEquiv
+      K H e sigma htop tau hTau)
 
 /-- A finite field embedded in the separable closure has a fixing subgroup of finite index. -/
 private theorem finite_absoluteFixingQuotient_fieldRange

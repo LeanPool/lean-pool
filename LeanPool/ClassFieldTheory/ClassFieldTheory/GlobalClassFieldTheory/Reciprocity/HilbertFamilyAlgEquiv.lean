@@ -131,9 +131,10 @@ theorem globalHilbertPairingFamilyCongr_hasFiniteSupport
       (fun v : HeightOneSpectrum (𝓞 F) =>
         er (GlobalHilbertPairingFamily.finiteFactor F BF hmuF v
           (eu.symm a) (eu.symm b))) :=
-    (hBF (eu.symm a) (eu.symm b)).fun_comp (map_one er)
-  have hreindex := hsource.fun_comp_of_injective
-    (finitePlaceCongr e).symm.injective
+    Function.HasFiniteMulSupport.fun_comp
+      (hBF (eu.symm a) (eu.symm b)) (map_one er)
+  have hreindex := Function.HasFiniteMulSupport.fun_comp_of_injective
+    (finitePlaceCongr e).symm.injective hsource
   convert hreindex using 1
   funext W
   have hfactor := globalHilbertPairingFamilyCongr_finiteFactor
