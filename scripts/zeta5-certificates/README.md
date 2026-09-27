@@ -18,7 +18,10 @@ python3 scripts/zeta5-certificates/regenerate.py --check /path/to/import-checkou
 ```
 
 `--output` writes only the recorded project modules underneath its argument;
-use an empty scratch directory when inspecting a regeneration. `--check` compares
+the destination must not already exist, even as an empty directory or symlink.
+Generation stages all files in a new sibling directory and publishes the complete
+tree by rename only after every record renders successfully. A failed generation
+removes its staging tree and publishes nothing. `--check` compares
 bytes without writing. The archive hash verification is separate so a deliberate
 template edit can be rendered before its baseline hashes are updated.
 

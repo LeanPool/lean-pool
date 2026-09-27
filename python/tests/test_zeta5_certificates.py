@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import shutil
 from pathlib import Path
 
 import pytest
@@ -46,10 +47,40 @@ def test_complete_archive(tmp_path: Path) -> None:
     """Regenerate every output and independently check its pinned hash."""
     archive = SCRIPT.parent / "archive"
     GENERATOR.verify_archive(archive)
-    assert GENERATOR.regenerate(archive, tmp_path, False) == 118
-    assert GENERATOR.regenerate(archive, tmp_path, True) == 118
+    assert GENERATOR.regenerate(archive, tmp_path / "generated", False) == 118
+    assert GENERATOR.regenerate(archive, tmp_path / "generated", True) == 118
     manifest = json.loads((archive / "manifest.json").read_text())
-    first = tmp_path / next(iter(manifest["files"]))
+    first = tmp_path / "generated" / next(iter(manifest["files"]))
     first.write_text(first.read_text() + "-- damaged\n")
     with pytest.raises(ValueError, match="Certificates differ"):
-        GENERATOR.regenerate(archive, tmp_path, True)
+        GENERATOR.regenerate(archive, tmp_path / "generated", True)
+
+
+def test_reject_reused_or_symlinked_destination(tmp_path: Path) -> None:
+    """Protect pre-existing output trees and symlink targets from writes."""
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    sentinel = outside / "sentinel"
+    sentinel.write_text("preserve me")
+    symlink = tmp_path / "link"
+    symlink.symlink_to(outside, target_is_directory=True)
+    for destination in (outside, symlink):
+        with pytest.raises(FileExistsError):
+            GENERATOR.regenerate(SCRIPT.parent / "archive", destination, False)
+    assert sentinel.read_text() == "preserve me"
+    assert list(outside.iterdir()) == [sentinel]
+
+
+def test_failed_later_record_publishes_nothing(tmp_path: Path) -> None:
+    """Remove staging output when a later template is absent."""
+    archive = tmp_path / "archive"
+    shutil.copytree(SCRIPT.parent / "archive", archive)
+    manifest = json.loads((archive / "manifest.json").read_text())
+    last = list(manifest["files"].values())[-1]
+    records = archive / "records" / last["records"]
+    records.write_text('[["999", []]]')
+    output = tmp_path / "generated"
+    with pytest.raises(FileNotFoundError):
+        GENERATOR.regenerate(archive, output, False)
+    assert not output.exists()
+    assert list(tmp_path.glob(".zeta5-certificates-*")) == []

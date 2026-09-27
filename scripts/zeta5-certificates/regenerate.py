@@ -5,6 +5,7 @@ import argparse
 import hashlib
 import json
 import re
+import tempfile
 from pathlib import Path
 
 PLACEHOLDER = "{{integer}}"
@@ -33,7 +34,7 @@ def certificate_path(name: str) -> Path:
     return path
 
 
-def regenerate(archive: Path, destination: Path, check: bool) -> int:
+def _render_into(archive: Path, destination: Path, check: bool) -> int:
     """Render every module and either write it or compare it with a checkout."""
     manifest = json.loads((archive / "manifest.json").read_text())
     mismatches = []
@@ -59,6 +60,21 @@ def regenerate(archive: Path, destination: Path, check: bool) -> int:
     if mismatches:
         raise ValueError("Certificates differ: " + ", ".join(mismatches))
     return len(manifest["files"])
+
+
+def regenerate(archive: Path, destination: Path, check: bool) -> int:
+    """Check a checkout or publish a complete generation to a new directory."""
+    if check:
+        return _render_into(archive, destination, True)
+    if destination.exists() or destination.is_symlink():
+        raise FileExistsError("Generation requires a new output directory")
+    with tempfile.TemporaryDirectory(
+        prefix=".zeta5-certificates-", dir=destination.parent
+    ) as staging_name:
+        staging = Path(staging_name)
+        count = _render_into(archive, staging, False)
+        staging.rename(destination)
+    return count
 
 
 def verify_archive(archive: Path) -> None:
