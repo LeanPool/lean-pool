@@ -50,48 +50,23 @@ theorem overlap_mono_on' [T2Space M] (a b : OpenPartialHomeomorph M NNReal)
     (hp : p ∈ a.target) (hw : w ∈ b.target)
     (hpS : p ∉ a '' (a.source ∩ b.source)) :
     ∀ x ∈ W, ∀ y ∈ W, a x < a y → b x < b y := by
-  have hWa : W ⊆ a.source := hW.trans inter_subset_left
   have hWb : W ⊆ b.source := hW.trans inter_subset_right
   have hacoord : ∀ x ∈ W, a x ∈ Ioo p r := fun x hx => ha ▸ mem_image_of_mem a hx
   by_cases hpr : p < r
   swap
   · intro x hx y hy hxy
     exact absurd ((hacoord x hx).1.trans (hacoord x hx).2) hpr
-  set τ : NNReal → NNReal := fun t => b (a.symm t) with hτdef
-  have hsymm : ∀ t ∈ Ioo p r, a.symm t ∈ W ∧ a (a.symm t) = t := by
-    intro t ht
-    rw [← ha] at ht
-    obtain ⟨x, hxW, rfl⟩ := ht
-    rw [a.left_inv (hWa hxW)]
-    exact ⟨hxW, rfl⟩
-  have hkey : ∀ x ∈ W, τ (a x) = b x := by
-    intro x hx
-    simp only [hτdef]
-    rw [a.left_inv (hWa hx)]
-  have hτmaps : ∀ t ∈ Ioo p r, τ t ∈ Ioo q w := by
-    intro t ht
-    have hb' : b (a.symm t) ∈ b '' W := mem_image_of_mem b (hsymm t ht).1
-    exact hb ▸ hb'
-  have hIoo_target : Ioo p r ⊆ a.target := by
-    rw [← ha]
-    rintro y ⟨z, hz, rfl⟩
-    exact a.map_source (hWa hz)
+  let τ : NNReal → NNReal := fun t => b (a.symm t)
+  obtain ⟨hsymm, hkey, hIoo_target, himg⟩ :=
+    chartTransition_image_data a b (hW) ha hb
   obtain ⟨hcont, hinj⟩ : ContinuousOn τ (Ioo p r) ∧ InjOn τ (Ioo p r) :=
     chartTransition_continuous_injective a b hIoo_target
       (fun t ht => hWb (hsymm t ht).1)
   rcases strictMonoOn_or_strictAntiOn_of_injOn_Ioo hcont hinj with hmono | hanti
   · intro x hx y hy hxy
     have h := hmono (hacoord x hx) (hacoord y hy) hxy
-    rwa [hkey x hx, hkey y hy] at h
+    simpa only [τ, hkey x hx, hkey y hy] using h
   · exfalso
-    have himg : τ '' Ioo p r = Ioo q w := by
-      apply subset_antisymm
-      · rintro _ ⟨t, ht, rfl⟩
-        exact hτmaps t ht
-      · intro y hy
-        rw [← hb] at hy
-        obtain ⟨x, hxW, rfl⟩ := hy
-        exact ⟨a x, hacoord x hxW, hkey x hxW⟩
     have hτlim : Tendsto τ (𝓝[>] p) (𝓝 w) :=
       tendsto_bot_of_strictAntiOn_image hpr hanti himg
     have hF : 𝓝[Ioo p r] p = 𝓝[>] p := nhdsWithin_Ioo_eq_nhdsGT hpr

@@ -54,6 +54,34 @@ theorem chartTransition_continuous_injective
   · intro x hx y hy hxy
     exact a.symm.injOn (hI hx) (hI hy) (b.injOn (hmap x hx) (hmap y hy) hxy)
 
+/-- On a common source subset, chart transitions preserve coordinates and map the
+first chart image exactly onto the second. -/
+theorem chartTransition_image_data
+    (a b : OpenPartialHomeomorph M NNReal) {W : Set M}
+    (hW : W ⊆ a.source ∩ b.source) {I J : Set NNReal}
+    (ha : a '' W = I) (hb : b '' W = J) :
+    (∀ t ∈ I, a.symm t ∈ W ∧ a (a.symm t) = t) ∧
+    (∀ x ∈ W, b (a.symm (a x)) = b x) ∧
+    I ⊆ a.target ∧ (fun t => b (a.symm t)) '' I = J := by
+  have hsymm : ∀ t ∈ I, a.symm t ∈ W ∧ a (a.symm t) = t := by
+    rintro t ht
+    obtain ⟨x, hx, rfl⟩ := ha.symm ▸ ht
+    rw [a.left_inv (hW hx).1]
+    exact ⟨hx, rfl⟩
+  have hkey : ∀ x ∈ W, b (a.symm (a x)) = b x := by
+    intro x hx
+    rw [a.left_inv (hW hx).1]
+  refine ⟨hsymm, hkey, ?_, ?_⟩
+  · rintro t ht
+    obtain ⟨x, hx, rfl⟩ := ha.symm ▸ ht
+    exact a.map_source (hW hx).1
+  · apply subset_antisymm
+    · rintro _ ⟨t, ht, rfl⟩
+      exact hb ▸ mem_image_of_mem b (hsymm t ht).1
+    · rintro y hy
+      obtain ⟨x, hx, rfl⟩ := hb.symm ▸ hy
+      exact ⟨a x, ha ▸ mem_image_of_mem a hx, hkey x hx⟩
+
 /-- A transition limit at interior chart endpoints identifies their inverse images. -/
 theorem chartTransition_endpoint_eq [T2Space M]
     (a b : OpenPartialHomeomorph M NNReal) {I : Set NNReal} {s t : NNReal}
@@ -123,48 +151,23 @@ theorem overlap_mono_on [T2Space M] (a b : OpenPartialHomeomorph M NNReal)
     (hr : r ∈ a.target) (hq : q ∈ b.target)
     (hrS : r ∉ a '' (a.source ∩ b.source)) :
     ∀ x ∈ W, ∀ y ∈ W, a x < a y → b x < b y := by
-  have hWa : W ⊆ a.source := hW.trans inter_subset_left
   have hWb : W ⊆ b.source := hW.trans inter_subset_right
   have hacoord : ∀ x ∈ W, a x ∈ Ioo p r := fun x hx => ha ▸ mem_image_of_mem a hx
   by_cases hpr : p < r
   swap
   · intro x hx y hy hxy
     exact absurd ((hacoord x hx).1.trans (hacoord x hx).2) hpr
-  set τ : NNReal → NNReal := fun t => b (a.symm t) with hτdef
-  have hsymm : ∀ t ∈ Ioo p r, a.symm t ∈ W ∧ a (a.symm t) = t := by
-    intro t ht
-    rw [← ha] at ht
-    obtain ⟨x, hxW, rfl⟩ := ht
-    rw [a.left_inv (hWa hxW)]
-    exact ⟨hxW, rfl⟩
-  have hkey : ∀ x ∈ W, τ (a x) = b x := by
-    intro x hx
-    simp only [hτdef]
-    rw [a.left_inv (hWa hx)]
-  have hτmaps : ∀ t ∈ Ioo p r, τ t ∈ Ioo q w := by
-    intro t ht
-    have hb' : b (a.symm t) ∈ b '' W := mem_image_of_mem b (hsymm t ht).1
-    exact hb ▸ hb'
-  have hIoo_target : Ioo p r ⊆ a.target := by
-    rw [← ha]
-    rintro y ⟨z, hz, rfl⟩
-    exact a.map_source (hWa hz)
+  let τ : NNReal → NNReal := fun t => b (a.symm t)
+  obtain ⟨hsymm, hkey, hIoo_target, himg⟩ :=
+    chartTransition_image_data a b (hW) ha hb
   obtain ⟨hcont, hinj⟩ : ContinuousOn τ (Ioo p r) ∧ InjOn τ (Ioo p r) :=
     chartTransition_continuous_injective a b hIoo_target
       (fun t ht => hWb (hsymm t ht).1)
   rcases strictMonoOn_or_strictAntiOn_of_injOn_Ioo hcont hinj with hmono | hanti
   · intro x hx y hy hxy
     have h := hmono (hacoord x hx) (hacoord y hy) hxy
-    rwa [hkey x hx, hkey y hy] at h
+    simpa only [τ, hkey x hx, hkey y hy] using h
   · exfalso
-    have himg : τ '' Ioo p r = Ioo q w := by
-      apply subset_antisymm
-      · rintro _ ⟨t, ht, rfl⟩
-        exact hτmaps t ht
-      · intro y hy
-        rw [← hb] at hy
-        obtain ⟨x, hxW, rfl⟩ := hy
-        exact ⟨a x, hacoord x hxW, hkey x hxW⟩
     have hτlim : Tendsto τ (𝓝[<] r) (𝓝 q) :=
       tendsto_top_of_strictAntiOn_image hpr hanti himg
     have hF : 𝓝[Ioo p r] r = 𝓝[<] r := nhdsWithin_Ioo_eq_nhdsLT hpr
@@ -209,45 +212,20 @@ theorem overlap_anti [T2Space M] (a b : OpenPartialHomeomorph M NNReal)
     ∀ x ∈ a.source ∩ b.source, ∀ y ∈ a.source ∩ b.source,
       a x < a y → b y < b x := by
   set S := a.source ∩ b.source with hSdef
-  have hSa : S ⊆ a.source := inter_subset_left
   have hSb : S ⊆ b.source := inter_subset_right
   have hacoord : ∀ x ∈ S, a x ∈ Ioo p r := fun x hx => ha ▸ mem_image_of_mem a hx
   by_cases hpr : p < r
   swap
   · intro x hx y hy hxy
     exact absurd ((hacoord x hx).1.trans (hacoord x hx).2) hpr
-  set τ : NNReal → NNReal := fun t => b (a.symm t) with hτdef
-  have hsymm : ∀ t ∈ Ioo p r, a.symm t ∈ S ∧ a (a.symm t) = t := by
-    intro t ht
-    rw [← ha] at ht
-    obtain ⟨x, hxS, rfl⟩ := ht
-    rw [a.left_inv (hSa hxS)]
-    exact ⟨hxS, rfl⟩
-  have hkey : ∀ x ∈ S, τ (a x) = b x := by
-    intro x hx
-    simp only [hτdef]
-    rw [a.left_inv (hSa hx)]
-  have hτmaps : ∀ t ∈ Ioo p r, τ t ∈ Ioo q w := by
-    intro t ht
-    have hb' : b (a.symm t) ∈ b '' S := mem_image_of_mem b (hsymm t ht).1
-    exact hb ▸ hb'
-  have hIoo_target : Ioo p r ⊆ a.target := by
-    rw [← ha]
-    rintro y ⟨z, hz, rfl⟩
-    exact a.map_source (hSa hz)
+  let τ : NNReal → NNReal := fun t => b (a.symm t)
+  obtain ⟨hsymm, hkey, hIoo_target, himg⟩ :=
+    chartTransition_image_data a b (Subset.refl _) ha hb
   obtain ⟨hcont, hinj⟩ : ContinuousOn τ (Ioo p r) ∧ InjOn τ (Ioo p r) :=
     chartTransition_continuous_injective a b hIoo_target
       (fun t ht => hSb (hsymm t ht).1)
   rcases strictMonoOn_or_strictAntiOn_of_injOn_Ioo hcont hinj with hmono | hanti
   · exfalso
-    have himg : τ '' Ioo p r = Ioo q w := by
-      apply subset_antisymm
-      · rintro _ ⟨t, ht, rfl⟩
-        exact hτmaps t ht
-      · intro y hy
-        rw [← hb] at hy
-        obtain ⟨x, hxS, rfl⟩ := hy
-        exact ⟨a x, hacoord x hxS, hkey x hxS⟩
     have hτlim : Tendsto τ (𝓝[>] p) (𝓝 q) :=
       tendsto_bot_of_strictMonoOn_image hpr hmono himg
     have hF : 𝓝[Ioo p r] p = 𝓝[>] p := nhdsWithin_Ioo_eq_nhdsGT hpr
@@ -268,6 +246,6 @@ theorem overlap_anti [T2Space M] (a b : OpenPartialHomeomorph M NNReal)
     exact lt_irrefl p hp'.1
   · intro x hx y hy hxy
     have h := hanti (hacoord x hx) (hacoord y hy) hxy
-    rwa [hkey x hx, hkey y hy] at h
+    simpa only [τ, hkey x hx, hkey y hy] using h
 
 end OneMfld
