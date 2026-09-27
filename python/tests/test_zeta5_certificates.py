@@ -71,8 +71,8 @@ def test_reject_reused_or_symlinked_destination(tmp_path: Path) -> None:
     assert list(outside.iterdir()) == [sentinel]
 
 
-def test_failed_later_record_publishes_nothing(tmp_path: Path) -> None:
-    """Remove staging output when a later template is absent."""
+def test_failed_later_record_creates_nothing(tmp_path: Path) -> None:
+    """Create no output when a later template is absent."""
     archive = tmp_path / "archive"
     shutil.copytree(SCRIPT.parent / "archive", archive)
     manifest = json.loads((archive / "manifest.json").read_text())
@@ -84,3 +84,40 @@ def test_failed_later_record_publishes_nothing(tmp_path: Path) -> None:
         GENERATOR.regenerate(archive, output, False)
     assert not output.exists()
     assert list(tmp_path.glob(".zeta5-certificates-*")) == []
+
+
+def test_destination_created_during_render_is_preserved(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Do not replace a destination created after the operation starts."""
+    output = tmp_path / "generated"
+
+    def competing_creation(archive: Path) -> dict[Path, bytes]:
+        output.mkdir()
+        return {Path("LeanPool/Zeta5Irrational/A.lean"): b"test"}
+
+    monkeypatch.setattr(GENERATOR, "_render_modules", competing_creation)
+    with pytest.raises(FileExistsError):
+        GENERATOR.regenerate(SCRIPT.parent / "archive", output, False)
+    assert output.is_dir()
+    assert list(output.iterdir()) == []
+
+
+def test_nested_output_and_write_failure_cleanup(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Support new parents and clean up output if writing fails."""
+    relative = Path("LeanPool/Zeta5Irrational/A.lean")
+    monkeypatch.setattr(GENERATOR, "_render_modules", lambda _: {relative: b"test"})
+    output = tmp_path / "new" / "parents" / "generated"
+    assert GENERATOR.regenerate(SCRIPT.parent / "archive", output, False) == 1
+    assert (output / relative).read_bytes() == b"test"
+
+    def fail_write(path: Path, content: bytes) -> None:
+        raise OSError("disk full")
+
+    monkeypatch.setattr(Path, "write_bytes", fail_write)
+    failed_output = tmp_path / "failed"
+    with pytest.raises(OSError, match="disk full"):
+        GENERATOR.regenerate(SCRIPT.parent / "archive", failed_output, False)
+    assert not failed_output.exists()

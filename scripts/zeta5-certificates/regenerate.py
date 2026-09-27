@@ -5,7 +5,7 @@ import argparse
 import hashlib
 import json
 import re
-import tempfile
+import shutil
 from pathlib import Path
 
 PLACEHOLDER = "{{integer}}"
@@ -34,10 +34,10 @@ def certificate_path(name: str) -> Path:
     return path
 
 
-def _render_into(archive: Path, destination: Path, check: bool) -> int:
-    """Render every module and either write it or compare it with a checkout."""
+def _render_modules(archive: Path) -> dict[Path, bytes]:
+    """Validate and render every recorded module before touching output."""
     manifest = json.loads((archive / "manifest.json").read_text())
-    mismatches = []
+    modules = {}
     for name, specification in manifest["files"].items():
         relative = certificate_path(name)
         records = json.loads(
@@ -49,46 +49,44 @@ def _render_into(archive: Path, destination: Path, check: bool) -> int:
                 raise ValueError("Invalid template identifier")
             source = (archive / "templates" / f"{template}.txt").read_text()
             blocks.append(render(source, parameters))
-        content = "".join(blocks).encode()
-        target = destination / relative
-        if check:
-            if not target.is_file() or target.read_bytes() != content:
-                mismatches.append(name)
-        else:
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(content)
-    if mismatches:
-        raise ValueError("Certificates differ: " + ", ".join(mismatches))
-    return len(manifest["files"])
+        modules[relative] = "".join(blocks).encode()
+    return modules
 
 
 def regenerate(archive: Path, destination: Path, check: bool) -> int:
-    """Check a checkout or publish a complete generation to a new directory."""
+    """Check a checkout or write prevalidated modules to an exclusively new tree."""
+    modules = _render_modules(archive)
     if check:
-        return _render_into(archive, destination, True)
-    if destination.exists() or destination.is_symlink():
-        raise FileExistsError("Generation requires a new output directory")
-    with tempfile.TemporaryDirectory(
-        prefix=".zeta5-certificates-", dir=destination.parent
-    ) as staging_name:
-        staging = Path(staging_name)
-        count = _render_into(archive, staging, False)
-        staging.rename(destination)
-    return count
+        mismatches = [
+            str(path)
+            for path, content in modules.items()
+            if not (destination / path).is_file()
+            or (destination / path).read_bytes() != content
+        ]
+        if mismatches:
+            raise ValueError("Certificates differ: " + ", ".join(mismatches))
+        return len(modules)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.mkdir(mode=0o700)
+    try:
+        for path, content in modules.items():
+            target = destination / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(content)
+    except BaseException:
+        shutil.rmtree(destination)
+        raise
+    return len(modules)
 
 
 def verify_archive(archive: Path) -> None:
-    """Check the immutable baseline hashes independently of a target checkout."""
+    """Check baseline hashes independently of a target checkout."""
     manifest = json.loads((archive / "manifest.json").read_text())
-    for specification in manifest["files"].values():
-        records = json.loads(
-            (archive / "records" / specification["records"]).read_text()
-        )
-        content = "".join(
-            render((archive / "templates" / f"{name}.txt").read_text(), parameters)
-            for name, parameters in records
-        ).encode()
-        if hashlib.sha256(content).hexdigest() != specification["sha256"]:
+    for path, content in _render_modules(archive).items():
+        if (
+            hashlib.sha256(content).hexdigest()
+            != manifest["files"][str(path)]["sha256"]
+        ):
             raise ValueError("Archived certificate differs from its pinned source hash")
 
 
