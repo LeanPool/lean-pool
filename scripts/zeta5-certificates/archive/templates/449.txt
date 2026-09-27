@@ -1,0 +1,70 @@
+theorem outer_table : ∀ i < {{integer}}, ∀ x ∈ Set.Ico (tOut i) (tOut (i + {{integer}})), Eout x = gOut i x := by
+  intro i hi x hx
+  interval_cases i
+  · simp only [tOut, tOutL, gOut, aOutL, bOutL, List.getD_cons_succ, List.getD_cons_zero,
+      Set.mem_Ico] at hx ⊢
+    push_cast at hx ⊢
+    have := outPiece_{{integer}} x (by linarith [hx.{{integer}}]) (by linarith [hx.{{integer}}])
+    linarith
+  · simp only [tOut, tOutL, gOut, aOutL, bOutL, List.getD_cons_succ, List.getD_cons_zero,
+      Set.mem_Ico] at hx ⊢
+    push_cast at hx ⊢
+    have := outPiece_{{integer}} x (by linarith [hx.{{integer}}]) (by linarith [hx.{{integer}}])
+    linarith
+  · simp only [tOut, tOutL, gOut, aOutL, bOutL, List.getD_cons_succ, List.getD_cons_zero,
+      Set.mem_Ico] at hx ⊢
+    push_cast at hx ⊢
+    have := outPiece_{{integer}} x (by linarith [hx.{{integer}}]) (by linarith [hx.{{integer}}])
+    linarith
+  · simp only [tOut, tOutL, gOut, aOutL, bOutL, List.getD_cons_succ, List.getD_cons_zero,
+      Set.mem_Ico] at hx ⊢
+    push_cast at hx ⊢
+    have := outPiece_{{integer}} x (by linarith [hx.{{integer}}]) (by linarith [hx.{{integer}}])
+    linarith
+  · simp only [tOut, tOutL, gOut, aOutL, bOutL, List.getD_cons_succ, List.getD_cons_zero,
+      Set.mem_Ico] at hx ⊢
+    push_cast at hx ⊢
+    have := outPiece_{{integer}} x (by linarith [hx.{{integer}}]) (by linarith [hx.{{integer}}])
+    linarith
+  · simp only [tOut, tOutL, gOut, aOutL, bOutL, List.getD_cons_succ, List.getD_cons_zero,
+      Set.mem_Ico] at hx ⊢
+    push_cast at hx ⊢
+    have := outPiece_{{integer}} x (by linarith [hx.{{integer}}]) (by linarith [hx.{{integer}}])
+    linarith
+  · simp only [tOut, tOutL, gOut, aOutL, bOutL, List.getD_cons_succ, List.getD_cons_zero,
+      Set.mem_Ico] at hx ⊢
+    push_cast at hx ⊢
+    have := outPiece_{{integer}} x (by linarith [hx.{{integer}}]) (by linarith [hx.{{integer}}])
+    linarith
+  · simp only [tOut, tOutL, gOut, aOutL, bOutL, List.getD_cons_succ, List.getD_cons_zero,
+      Set.mem_Ico] at hx ⊢
+    push_cast at hx ⊢
+    have := outPiece_{{integer}} x (by linarith [hx.{{integer}}]) (by linarith [hx.{{integer}}])
+    linarith
+  · simp only [tOut, tOutL, gOut, aOutL, bOutL, List.getD_cons_succ, List.getD_cons_zero,
+      Set.mem_Ico] at hx ⊢
+    push_cast at hx ⊢
+    have := outPiece_{{integer}} x (by linarith [hx.{{integer}}]) (by linarith [hx.{{integer}}])
+    linarith
+  · simp only [tOut, tOutL, gOut, aOutL, bOutL, List.getD_cons_succ, List.getD_cons_zero,
+      Set.mem_Ico] at hx ⊢
+    push_cast at hx ⊢
+    have := outPiece_{{integer}} x (by linarith [hx.{{integer}}]) (by linarith [hx.{{integer}}])
+    linarith
+  · simp only [tOut, tOutL, gOut, aOutL, bOutL, List.getD_cons_succ, List.getD_cons_zero,
+      Set.mem_Ico] at hx ⊢
+    push_cast at hx ⊢
+    have := outPiece_{{integer}} x (by linarith [hx.{{integer}}]) (by linarith [hx.{{integer}}])
+    linarith
+  · simp only [tOut, tOutL, gOut, aOutL, bOutL, List.getD_cons_succ, List.getD_cons_zero,
+      Set.mem_Ico] at hx ⊢
+    push_cast at hx ⊢
+    have := outPiece_{{integer}} x (by linarith [hx.{{integer}}]) (by linarith [hx.{{integer}}])
+    linarith
+  · simp only [tOut, tOutL, gOut, aOutL, bOutL, List.getD_cons_succ, List.getD_cons_zero,
+      Set.mem_Ico] at hx ⊢
+    push_cast at hx ⊢
+    have := outPiece_{{integer}} x (by linarith [hx.{{integer}}]) (by linarith [hx.{{integer}}])
+    linarith
+
+end Zeta{{integer}}Irrational
