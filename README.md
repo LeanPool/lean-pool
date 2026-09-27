@@ -40,6 +40,9 @@ make setup    # pull Mathlib oleans, build the whole pool (~1.5h), install Pytho
 To work on a single project you don't need the whole pool built — see the
 [fast per-project build](CONTRIBUTING.md#dev-setup) in `CONTRIBUTING.md`.
 
+To regenerate the preserved Zeta5 numerical certificates, see the
+[certificate reproduction guide](scripts/zeta5-certificates/README.md).
+
 ### Challenge mode
 
 [`Challenge/`](Challenge/) is the other half of the pool: open *statements* rather than finished proofs. A challenge is a theorem written in Mathlib vocabulary and left as `sorry`, registered in [`Challenge/challenges.yml`](Challenge/challenges.yml) alongside the English statement it is supposed to say. It is the only place `sorry` is allowed, and only for the declarations the registry lists — everything else in the file must be closed, and every other gate still applies.
