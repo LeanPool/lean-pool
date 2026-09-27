@@ -55,7 +55,7 @@ theorem pairing_internal_of_not_through {W : Fragment α}
     (F.pairing_mem _ (mem_flags_of_boundaryFlags F hb))).resolve_right hnt
 
 /-- The single-edge trails come in pairs. -/
-theorem isThroughLabel_chordInv [LinearOrder α] {W : Fragment α}
+theorem isThroughLabel_chordInv {W : Fragment α}
     (F : EdgeSubset W)
     (κ : F.RelTransitionSystem) {i : α}
     (hb : W.boundaryFlag i ∈ F.boundaryFlags)

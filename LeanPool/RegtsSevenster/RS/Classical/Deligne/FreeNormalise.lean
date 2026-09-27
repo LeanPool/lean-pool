@@ -42,7 +42,7 @@ theorem freeNormalise
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
     [HasCoequalizers D]
     [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorRight Z)]
-    (A : D) [MonObj A] [IsCommMonObj A] (V : D)
+    (A : D) [MonObj A] (V : D)
     (n : ℕ) :
     (freeCollapse A V (n + 1) ≫ freeInsert A V n) ≫
         modPowπ A (freeMod A V).X (n + 1) =

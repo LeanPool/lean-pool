@@ -213,9 +213,8 @@ end MulBridge
 private theorem projStage_mul_leftLift
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
-    [HasCoequalizers D] [Linear ℂ D] [MonoidalLinear ℂ D]
+    [HasCoequalizers D] [Linear ℂ D]
     [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorLeft Z)]
-    [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorRight Z)]
     (A : D) [MonObj A] [IsCommMonObj A] (M : Mod D A)
     (k : ℕ) : modTensorπ A (modPowMod A M.X k)
     (modPowMod A M.X 0) ≫

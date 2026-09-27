@@ -70,7 +70,7 @@ section Fold
 
 /-- Folding a word of units gives the unit. -/
 theorem unitWord_muFold
-    [Category.{v} D] [MonoidalCategory D] [BraidedCategory D]
+    [Category.{v} D] [MonoidalCategory D]
     (A : D) [MonObj A] (n : ℕ) :
     unitWord A n ≫ muFold A n = η[A] := by
   induction n with
@@ -186,7 +186,7 @@ noncomputable def freeInsert
 /-- **The free insertion is a section of the free collapse.** -/
 theorem freeInsert_freeCollapse
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
-    (A : D) [MonObj A] [IsCommMonObj A]
+    (A : D) [MonObj A]
     (V : D) (n : ℕ) :
     freeInsert A V n ≫ freeCollapse A V (n + 1) =
       𝟙 (A ⊗ tensorPow D V (n + 1)) := by

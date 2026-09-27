@@ -225,7 +225,7 @@ private theorem tail_exits_repair
 /-- **The hit membership**: on a two-chain square, the `X`-flag of
 the matched pair carried by `β`'s chain lies, after the repair, on
 the repaired chain of `β` or of `β`'s far end. -/
-theorem hit_membership [LinearOrder α] {W : Fragment α} {F : EdgeSubset W}
+theorem hit_membership {W : Fragment α} {F : EdgeSubset W}
     {κ : F.RelTransitionSystem} {a : W.Flag} {b : W.Flag} {c : W.Flag}
     {d : W.Flag} {v : W.Vertex}
     (hsq : RepairSquare κ a b c d v)

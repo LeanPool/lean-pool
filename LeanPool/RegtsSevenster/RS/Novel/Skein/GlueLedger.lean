@@ -165,9 +165,7 @@ theorem chordInv_glueOpen_miss
 include hc' hc hni in
 /-- **The used labels are the same** across a glue whose edge the
 subset misses. -/
-noncomputable def usedLabelGlueMissEquiv
-    [LinearOrder α]
-    :
+noncomputable def usedLabelGlueMissEquiv :
     {l : SurvivingLabel α i j //
         (W.gluePairOpen i j hij hopen).boundaryFlag l ∈
           (Fg).boundaryFlags}

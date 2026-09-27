@@ -31,7 +31,7 @@ variable {A : Type u}
 /-- **A nonzero point is a monomorphism**: the unit is simple. -/
 theorem mono_of_point_ne_zero
     [Category.{v} A] [Abelian A] [Linear ℂ A] [MonoidalCategory A]
-    [MonoidalPreadditive A] [MonoidalLinear ℂ A] [RigidCategory A]
+    [MonoidalPreadditive A] [RigidCategory A]
     (hu : HasScalarUnit A) {X : A}
     {u : 𝟙_ A ⟶ X} (h : u ≠ 0) : Mono u := by
   have := simple_unit_of_hasScalarUnit hu

@@ -1013,7 +1013,7 @@ section DisjUnion
 
 /-- The named colour of a left flag is the left half's. -/
 theorem usedColour_inl
-    {α : Type} {β : Type} [LinearOrder (α ⊕ β)] {W₁ : Fragment α}
+    {α : Type} {β : Type} {W₁ : Fragment α}
     {W₂ : Fragment β} (F : EdgeSubset (W₁.disjUnion W₂))
     {k ℓ : ℕ} (st : GenBoundaryState k ℓ (α ⊕ β))
     (hbnd : genBoundarySubsetMatches (W₁.disjUnion W₂) F.flags st)
@@ -1033,7 +1033,7 @@ theorem usedColour_inl
 
 /-- The named colour of a right flag is the right half's. -/
 theorem usedColour_inr
-    {α : Type} {β : Type} [LinearOrder (α ⊕ β)] {W₁ : Fragment α}
+    {α : Type} {β : Type} {W₁ : Fragment α}
     {W₂ : Fragment β} (F : EdgeSubset (W₁.disjUnion W₂))
     {k ℓ : ℕ} (st : GenBoundaryState k ℓ (α ⊕ β))
     (hbnd : genBoundarySubsetMatches (W₁.disjUnion W₂) F.flags st)

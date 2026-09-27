@@ -311,7 +311,6 @@ private theorem chainInsQ_mul_leftInsertion
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
     [HasCoequalizers D] [Linear ℂ D] [MonoidalLinear ℂ D]
     [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorLeft Z)]
-    [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorRight Z)]
     (A : D) [MonObj A] [IsCommMonObj A] (M : Mod D A) (M' : Mod D A)
     (p q r s : ℕ) :
     (M.X ◁ tensorμ (symPow A M'.X (p + 1))
@@ -802,7 +801,6 @@ private theorem chainInsQ_mul_rightInterchange
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
     [HasCoequalizers D] [Linear ℂ D] [MonoidalLinear ℂ D]
     [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorLeft Z)]
-    [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorRight Z)]
     (A : D) [MonObj A] [IsCommMonObj A] (M : Mod D A) (M' : Mod D A)
     (p q r s : ℕ)
     (hp₀ : p + 1 + r = p + 1 + r)
@@ -963,7 +961,6 @@ private theorem chainInsQ_mul_rightInsertion
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
     [HasCoequalizers D] [Linear ℂ D] [MonoidalLinear ℂ D]
     [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorLeft Z)]
-    [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorRight Z)]
     (A : D) [MonObj A] [IsCommMonObj A] (M : Mod D A) (M' : Mod D A)
     (p q r s : ℕ)
     (hp₀ : p + 1 + r = p + 1 + r)

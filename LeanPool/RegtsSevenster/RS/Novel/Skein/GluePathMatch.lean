@@ -269,7 +269,6 @@ open scoped Classical in
 original chain's endpoint avoids both cut flags, the glued chain
 has the same endpoint. -/
 theorem pathMatch_glueOpen_of_ne
-    [LinearOrder α]
     (κ : (Fl).RelTransitionSystem)
     {b' : SurvivingFlag W i j}
     (hbg : b' ∈ (Fg).boundaryFlags)
@@ -368,7 +367,6 @@ original chain from a surviving boundary flag ends at the `i`-cut
 flag, the glued chain continues through the cut and ends at the
 `j`-side chain's endpoint. -/
 theorem pathMatch_glueOpen_hit_i
-    [LinearOrder α]
     (κ : (Fl).RelTransitionSystem)
     {b' : SurvivingFlag W i j}
     (hbg : b' ∈ (Fg).boundaryFlags)
@@ -564,7 +562,6 @@ original chain from a surviving boundary flag ends at the `j`-cut
 flag, the glued chain continues through the cut and ends at the
 `i`-side chain's endpoint. -/
 theorem pathMatch_glueOpen_hit_j
-    [LinearOrder α]
     (κ : (Fl).RelTransitionSystem)
     {b' : SurvivingFlag W i j}
     (hbg : b' ∈ (Fg).boundaryFlags)

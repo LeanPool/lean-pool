@@ -244,7 +244,7 @@ non-periodic in the repaired system.  Stated for a matched pair
 `X ↔ Y` on the chain of `β`, with the other two square flags on the
 genuinely distinct chain of `βo`; `hperm` identifies the four square
 flags with `{X, Y, Z₁, Z₂}`. -/
-theorem chain_side_not_periodic_repair [LinearOrder α]
+theorem chain_side_not_periodic_repair
     (hsq : RepairSquare κ a b c d v)
     {β βo X Y Z₁ Z₂ : W.Flag}
     (hβ : β ∈ F.boundaryFlags) (hβo : βo ∈ F.boundaryFlags)

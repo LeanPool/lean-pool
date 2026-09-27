@@ -354,8 +354,8 @@ theorem finrank_odd_of_free (P : SuperPoint S) (p q : ℕ)
 
 /-! ## The super vector space of a base change -/
 
--- The finite-dimensionality instances pin the intended value, and
--- are the signature the two coordinate equivalences are stated at.
+-- Each coordinate equivalence requires finite dimensionality only
+-- for its own component; the coordinate spaces themselves do not.
 /-- **The base change of a super module along a point, packaged as a
 super vector space.**  The components of a super module live in an
 arbitrary universe, while `RS.SuperVect` asks for types in `Type`,
@@ -372,17 +372,13 @@ noncomputable def toSuperVect (P : SuperPoint S)
   odd := Fin (Module.finrank ℂ (M.tensor (pointMod P)).odd) → ℂ
 
 @[simp] theorem toSuperVect_even (P : SuperPoint S)
-    (M : S.Mod.{u, u, u, u})
-    [FiniteDimensional ℂ (M.tensor (pointMod P)).even]
-    [FiniteDimensional ℂ (M.tensor (pointMod P)).odd] :
+    (M : S.Mod.{u, u, u, u}) :
     (toSuperVect P M).even =
       (Fin (Module.finrank ℂ (M.tensor (pointMod P)).even) → ℂ) :=
   rfl
 
 @[simp] theorem toSuperVect_odd (P : SuperPoint S)
-    (M : S.Mod.{u, u, u, u})
-    [FiniteDimensional ℂ (M.tensor (pointMod P)).even]
-    [FiniteDimensional ℂ (M.tensor (pointMod P)).odd] :
+    (M : S.Mod.{u, u, u, u}) :
     (toSuperVect P M).odd =
       (Fin (Module.finrank ℂ (M.tensor (pointMod P)).odd) → ℂ) :=
   rfl
@@ -391,8 +387,7 @@ noncomputable def toSuperVect (P : SuperPoint S)
 vector space attached to it. -/
 noncomputable def toSuperVectEvenEquiv (P : SuperPoint S)
     (M : S.Mod.{u, u, u, u})
-    [FiniteDimensional ℂ (M.tensor (pointMod P)).even]
-    [FiniteDimensional ℂ (M.tensor (pointMod P)).odd] :
+    [FiniteDimensional ℂ (M.tensor (pointMod P)).even] :
     (M.tensor (pointMod P)).even ≃ₗ[ℂ] (toSuperVect P M).even :=
   (Module.finBasis ℂ (M.tensor (pointMod P)).even).equivFun
 
@@ -400,7 +395,6 @@ noncomputable def toSuperVectEvenEquiv (P : SuperPoint S)
 vector space attached to it. -/
 noncomputable def toSuperVectOddEquiv (P : SuperPoint S)
     (M : S.Mod.{u, u, u, u})
-    [FiniteDimensional ℂ (M.tensor (pointMod P)).even]
     [FiniteDimensional ℂ (M.tensor (pointMod P)).odd] :
     (M.tensor (pointMod P)).odd ≃ₗ[ℂ] (toSuperVect P M).odd :=
   (Module.finBasis ℂ (M.tensor (pointMod P)).odd).equivFun
@@ -439,9 +433,7 @@ theorem finrank_toSuperVect_even_of_free (P : SuperPoint S)
     (p q : ℕ) (M : S.Mod.{u, u, u, u})
     (e : M ≅ ⨁ fun i : Fin p ⊕ Fin q =>
       Sum.elim (fun _ => S.unitMod)
-        (fun _ => shift S.unitMod) i)
-    [FiniteDimensional ℂ (M.tensor (pointMod P)).even]
-    [FiniteDimensional ℂ (M.tensor (pointMod P)).odd] :
+        (fun _ => shift S.unitMod) i) :
     Module.finrank ℂ (toSuperVect P M).even = p := by
   rw [← finrank_even_of_free P p q M e]
   change Module.finrank ℂ
@@ -454,9 +446,7 @@ theorem finrank_toSuperVect_odd_of_free (P : SuperPoint S)
     (p q : ℕ) (M : S.Mod.{u, u, u, u})
     (e : M ≅ ⨁ fun i : Fin p ⊕ Fin q =>
       Sum.elim (fun _ => S.unitMod)
-        (fun _ => shift S.unitMod) i)
-    [FiniteDimensional ℂ (M.tensor (pointMod P)).even]
-    [FiniteDimensional ℂ (M.tensor (pointMod P)).odd] :
+        (fun _ => shift S.unitMod) i) :
     Module.finrank ℂ (toSuperVect P M).odd = q := by
   rw [← finrank_odd_of_free P p q M e]
   change Module.finrank ℂ

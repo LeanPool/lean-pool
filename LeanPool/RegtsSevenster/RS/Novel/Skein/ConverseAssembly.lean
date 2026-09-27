@@ -1343,7 +1343,7 @@ theorem edgeSum_congr_orient {W : Fragment α}
 open Classical in
 /-- **Replacing off the internal flags costs the colouring sum
 nothing.** -/
-theorem edgeSum_orientReplace [LinearOrder α] {W : Fragment α}
+theorem edgeSum_orientReplace {W : Fragment α}
     (F : EdgeSubset W) {k ℓ : ℕ}
     (h : MixedFunctional k ℓ) (st : GenBoundaryState k ℓ α)
     (hbnd : genBoundarySubsetMatches W F.flags st)

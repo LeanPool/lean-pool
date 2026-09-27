@@ -87,7 +87,6 @@ local notation "Fl" =>
 /-- **The glued subset's used labels** are the lifted subset's, less
 the two glued ones. -/
 noncomputable def usedLabelGlueEquiv
-    [LinearOrder α]
     (hbi : W.boundaryFlag i ∈ (Fl).boundaryFlags)
     (hbj : W.boundaryFlag j ∈ (Fl).boundaryFlags) :
     {l : SurvivingLabel α i j //
@@ -537,7 +536,6 @@ include hclosed in
 /-- **The two glued labels are chord partners** when the closed-off
 edge lies in the subset: the chain from one is the edge itself. -/
 theorem chordInv_closed_pair
-    [LinearOrder α]
     (κ : (EdgeSubset.mk (liftSubsetClosed s' true) hcT :
       EdgeSubset W).RelTransitionSystem)
     (hbi : W.boundaryFlag i ∈ (EdgeSubset.mk

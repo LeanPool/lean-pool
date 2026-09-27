@@ -74,7 +74,7 @@ of `β₂`'s chord.  The two anchor ends' entry edges lie on the chain
 by construction; any other participating end's entry edge is on a
 genuinely distinct chain (`onBoundaryChain_disjoint`). -/
 theorem pairing_mem_flipSet_iff
-    [LinearOrder α] {W : Fragment α} {F : EdgeSubset W}
+    {W : Fragment α} {F : EdgeSubset W}
     {κ : F.RelTransitionSystem}
     {S : Finset W.Flag} {p₁ p₂ : W.Flag} {i₁ i₂ : α}
     (_ : PortedFlipSet κ S p₁ p₂ i₁ i₂)

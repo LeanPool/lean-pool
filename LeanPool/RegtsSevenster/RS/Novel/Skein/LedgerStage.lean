@@ -412,7 +412,6 @@ theorem swapPaired_glueClosed
 
 /-- **Pairing across an open glue.** -/
 theorem swapPaired_glueOpen
-    [LinearOrder α]
     (hij : i ≠ j)
     (hopen : W.pairing (W.boundaryFlag i) ≠ W.boundaryFlag j)
     (s' : Finset (SurvivingFlag W i j))

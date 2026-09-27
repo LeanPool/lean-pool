@@ -290,8 +290,7 @@ private theorem chainMul_comm_factors
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
     [HasCoequalizers D] [Linear ℂ D] [MonoidalLinear ℂ D]
     [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorLeft Z)]
-    [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorRight Z)]
-    (A : D) [MonObj A] [IsCommMonObj A] (M : Mod D A) (M' : Mod D A)
+    (A : D) [MonObj A] (M : Mod D A) (M' : Mod D A)
     (m n : ℕ)
     (h₀ : n + 1 + m = m + 1 + n) :
     (((β_ (symPow A M'.X (m + 1))

@@ -116,7 +116,7 @@ isomorphism, the unit being simple; so a simple object receiving a
 nonzero map from the unit *is* the unit up to isomorphism. -/
 theorem nonempty_unitIso_of_hom_ne_zero
     [Category.{v} A] [Abelian A] [Linear ℂ A] [MonoidalCategory A]
-    [MonoidalPreadditive A] [MonoidalLinear ℂ A] [RigidCategory A]
+    [MonoidalPreadditive A] [RigidCategory A]
     (hu : HasScalarUnit A)
     {S : A} [Simple S] {φ : 𝟙_ A ⟶ S} (hφ : φ ≠ 0) :
     Nonempty (𝟙_ A ≅ S) := by
@@ -373,7 +373,7 @@ setting of Deligne's theorem, a length bound of `N` on `Z` makes
 `𝟙 ⟶ Z` a finite dimensional ℂ-module of dimension at most `N`. -/
 theorem finrank_hom_unit_le
     [Category.{v} A] [Abelian A] [Linear ℂ A] [MonoidalCategory A]
-    [MonoidalPreadditive A] [MonoidalLinear ℂ A] [RigidCategory A]
+    [MonoidalPreadditive A] [RigidCategory A]
     (hu : HasScalarUnit A) {Z : A} {N : ℕ}
     (h : LengthLE Z N) :
     Module.Finite ℂ (𝟙_ A ⟶ Z)

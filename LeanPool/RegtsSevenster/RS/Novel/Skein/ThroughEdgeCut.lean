@@ -80,7 +80,6 @@ theorem multiset_map_eq_of_bijT {γ δ X : Type _}
 
 /-- The even colour multiset agrees (participating case). -/
 theorem evenColoursAt_transport_T
-    [LinearOrder α]
     {k : ℕ}
     (ψW : (Fl).EvenColouring k) (ψ' : (Fg).EvenColouring k)
     (hψ : ∀ (g : SurvivingFlag W i j)

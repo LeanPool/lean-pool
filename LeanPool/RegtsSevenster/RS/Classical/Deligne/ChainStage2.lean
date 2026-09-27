@@ -246,8 +246,7 @@ private theorem chainMul2_comm_factors
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
     [HasCoequalizers D] [Linear ℂ D] [MonoidalLinear ℂ D]
     [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorLeft Z)]
-    [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorRight Z)]
-    (A : D) [MonObj A] [IsCommMonObj A] (M : Mod D A) (M' : Mod D A)
+    (A : D) [MonObj A] (M : Mod D A) (M' : Mod D A)
     (p q r s : ℕ)
     (hp₀ : r + 1 + p = p + 1 + r)
     (hq₀ : s + 1 + q = q + 1 + s) :

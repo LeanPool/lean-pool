@@ -179,7 +179,7 @@ noncomputable def tFull [LinearOrder α] [Fintype α] {W : Fragment α}
 
 /-- The used labels are even in number, for any directed matching on
 them. -/
-theorem card_usedLab_eq [LinearOrder α] [Fintype α] {W : Fragment α}
+theorem card_usedLab_eq [Fintype α] {W : Fragment α}
     (F : EdgeSubset W)
     (M : DirMatching (UsedLab F)) :
     Fintype.card (UsedLab F)
@@ -1369,7 +1369,7 @@ hypothesis: it follows from the agreement the colouring forces.
 
 open Classical in
 /-- **At a through label the chord is the edge's other end.** -/
-theorem boundaryFlag_chordInv_through [LinearOrder α] {W : Fragment α}
+theorem boundaryFlag_chordInv_through {W : Fragment α}
     (F : EdgeSubset W)
     (κ : F.RelTransitionSystem) {i : α}
     (hb : W.boundaryFlag i ∈ F.boundaryFlags)

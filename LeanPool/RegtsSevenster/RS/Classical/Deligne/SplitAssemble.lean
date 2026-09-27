@@ -280,9 +280,6 @@ private theorem splitIns_dualStage_absorb
     [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorRight Z)]
     (A : D) [MonObj A] [IsCommMonObj A] (M : Mod D A) (M' : Mod D A)
     [HasColimitsOfShape SmallNat.{v} D] [HasColimitsOfShape (Discrete ℤ) D]
-    [∀ X : D, PreservesColimitsOfShape SmallNat.{v} (tensorRight X)]
-    [∀ X : D, PreservesColimitsOfShape SmallNat.{v} (tensorLeft X)]
-    [∀ X : D, PreservesColimitsOfShape (Discrete ℤ) (tensorLeft X)]
     (d : ModDualityDatum A M M') :
     (chainDelta2 A M M' d ((-(-1 : ℤ)).toNat + 0)
           ((-1 : ℤ).toNat + 0) ≫

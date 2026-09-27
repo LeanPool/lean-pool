@@ -519,7 +519,7 @@ def usedDisjUnionEquiv
 
 /-- **The chord of a left label is the left side's chord.** -/
 theorem chordInv_prodRel_inl
-    [LinearOrder α] [LinearOrder β] {W₁ : Fragment α} {W₂ : Fragment β}
+    {W₁ : Fragment α} {W₂ : Fragment β}
     (F : EdgeSubset (W₁.disjUnion W₂))
     (κ₁ : (leftSub F).RelTransitionSystem)
     (κ₂ : (rightSub F).RelTransitionSystem) {a : α}
@@ -538,7 +538,7 @@ theorem chordInv_prodRel_inl
 
 /-- **The chord of a right label is the right side's chord.** -/
 theorem chordInv_prodRel_inr
-    [LinearOrder α] [LinearOrder β] {W₁ : Fragment α} {W₂ : Fragment β}
+    {W₁ : Fragment α} {W₂ : Fragment β}
     (F : EdgeSubset (W₁.disjUnion W₂))
     (κ₁ : (leftSub F).RelTransitionSystem)
     (κ₂ : (rightSub F).RelTransitionSystem) {b : β}

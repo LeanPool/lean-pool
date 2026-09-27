@@ -271,7 +271,6 @@ private theorem modPowPairing_succ_tensor_rightCover
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
     [HasCoequalizers D]
     [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorLeft Z)]
-    [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorRight Z)]
     (A : D) [MonObj A] [IsCommMonObj A] (M : Mod D A) (M' : Mod D A)
     (d : ModDualityDatum A M M')
     (n : ℕ) :
@@ -340,7 +339,6 @@ private theorem modPowPairing_succ_tensor_braidingRetract
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
     [HasCoequalizers D]
     [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorLeft Z)]
-    [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorRight Z)]
     (A : D) [MonObj A] [IsCommMonObj A] (M : Mod D A) (M' : Mod D A)
     (d : ModDualityDatum A M M')
     (n : ℕ) :
@@ -472,7 +470,6 @@ private theorem modPowPairing_succ_tensor_braidingCancel
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
     [HasCoequalizers D]
     [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorLeft Z)]
-    [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorRight Z)]
     (A : D) [MonObj A] [IsCommMonObj A] (M : Mod D A) (M' : Mod D A)
     (d : ModDualityDatum A M M')
     (n : ℕ) :

@@ -344,7 +344,7 @@ private theorem map_sign_map_val {ℓ : ℕ}
 /-! ### The vertex data transports -/
 
 /-- The even colour multiset agrees across the closed glue. -/
-theorem evenColoursAt_transport_closed [LinearOrder α] {k : ℕ}
+theorem evenColoursAt_transport_closed {k : ℕ}
     (ψW : (Fl).EvenColouring k) (ψ' : (Fg).EvenColouring k)
     (hψ : ∀ (g : SurvivingFlag W i j)
       (h1 : g.val ∉ liftSubsetClosed s' b) (h2 : g ∉ s'),

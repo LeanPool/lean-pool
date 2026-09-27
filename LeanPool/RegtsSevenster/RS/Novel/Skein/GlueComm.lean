@@ -208,7 +208,7 @@ private theorem closedClosed_second_kl
 /-- Configuration (4): commutativity when both `{i, j}` and
 `{k, l}` are edges of `W`.  Both glues are closed in both orders,
 giving circles `W.circles + 2` with the pairing restricted. -/
-def closedClosedEquiv [DecidableEq α]
+def closedClosedEquiv
     (W : Fragment α) {i j k l : α}
     (_hij : i ≠ j) (_hkl : k ≠ l)
     (hik : i ≠ k) (hil : i ≠ l) (hjk : j ≠ k) (hjl : j ≠ l)
@@ -678,7 +678,7 @@ private theorem openOpen_disjoint_equiv_attach_comm
 are open (not edges) and disjoint (no cross-edges between the two
 pairs). Both glues are open in both orders, giving circles `W.circles`
 with a double-rewire that commutes. -/
-def openOpenDisjointEquiv [DecidableEq α]
+def openOpenDisjointEquiv
     (W : Fragment α) {i j k l : α}
     (hij : i ≠ j) (hkl : k ≠ l)
     (hik : i ≠ k) (hil : i ≠ l) (hjk : j ≠ k) (hjl : j ≠ l)
@@ -748,7 +748,7 @@ private theorem closedOpen_second_closed
 /-- Configuration (1): commutativity when `{i, j}` is an edge and
 `{k, l}` is not.  The ij-first order is closed then open; the kl-first
 order is open then closed; both give circles `W.circles + 1`. -/
-def closedOpenEquiv [DecidableEq α]
+def closedOpenEquiv
     (W : Fragment α) {i j k l : α}
     (_hij : i ≠ j) (hkl : k ≠ l)
     (hik : i ≠ k) (hil : i ≠ l) (hjk : j ≠ k) (hjl : j ≠ l)
@@ -880,7 +880,7 @@ private theorem openClosed_second_closed
 /-- Configuration (1'): commutativity when `{k, l}` is an edge and
 `{i, j}` is not.  The ij-first order is open then closed; the kl-first
 order is closed then open; both give circles `W.circles + 1`. -/
-def openClosedEquiv [DecidableEq α]
+def openClosedEquiv
     (W : Fragment α) {i j k l : α}
     (hij : i ≠ j) (_hkl : k ≠ l)
     (hik : i ≠ k) (hil : i ≠ l) (hjk : j ≠ k) (hjl : j ≠ l)
@@ -1266,7 +1266,7 @@ private theorem oneCross_ik_equiv_attach_comm
 
 /-- Configuration (2), variant {ik}: one cross-edge `W.pairing(bFi) = bFk`.
 Both glues are open in both orders; circles = `W.circles`. -/
-def oneCrossIkEquiv [DecidableEq α]
+def oneCrossIkEquiv
     (W : Fragment α) {i j k l : α}
     (hij : i ≠ j) (hkl : k ≠ l)
     (hik : i ≠ k) (hil : i ≠ l) (hjk : j ≠ k) (hjl : j ≠ l)
@@ -1344,7 +1344,7 @@ private theorem oneCross_il_second_open_ij
 
 /-- Configuration (2), variant {il}: one cross-edge `W.pairing(bFi) = bFl`.
 Both glues are open in both orders; circles = `W.circles`. -/
-def oneCrossIlEquiv [DecidableEq α]
+def oneCrossIlEquiv
     (W : Fragment α) {i j k l : α}
     (hij : i ≠ j) (hkl : k ≠ l)
     (hik : i ≠ k) (hil : i ≠ l) (hjk : j ≠ k) (hjl : j ≠ l)
@@ -1581,7 +1581,7 @@ private theorem oneCross_jk_second_open_ij
 
 /-- Configuration (2), variant {jk}: one cross-edge `W.pairing(bFj) = bFk`.
 Both glues are open in both orders; circles = `W.circles`. -/
-def oneCrossJkEquiv [DecidableEq α]
+def oneCrossJkEquiv
     (W : Fragment α) {i j k l : α}
     (hij : i ≠ j) (hkl : k ≠ l)
     (hik : i ≠ k) (hil : i ≠ l) (hjk : j ≠ k) (hjl : j ≠ l)
@@ -2050,7 +2050,7 @@ private theorem oneCross_jl_equiv_attach_comm
 
 /-- Configuration (2), variant {jl}: one cross-edge `W.pairing(bFj) = bFl`.
 Both glues are open in both orders; circles = `W.circles`. -/
-def oneCrossJlEquiv [DecidableEq α]
+def oneCrossJlEquiv
     (W : Fragment α) {i j k l : α}
     (hij : i ≠ j) (hkl : k ≠ l)
     (hik : i ≠ k) (hil : i ≠ l) (hjk : j ≠ k) (hjl : j ≠ l)
@@ -2120,7 +2120,7 @@ private theorem twoCross_ikjl_second_closed_ij
 
 /-- Configuration (3), variant {ik,jl}: two cross-edges.
 First glue is open, second is closed; circles = `W.circles + 1`. -/
-def twoCrossIkjlEquiv [DecidableEq α]
+def twoCrossIkjlEquiv
     (W : Fragment α) {i j k l : α}
     (hij : i ≠ j) (hkl : k ≠ l)
     (hik : i ≠ k) (hil : i ≠ l) (hjk : j ≠ k) (hjl : j ≠ l)
@@ -2221,7 +2221,7 @@ private theorem twoCross_iljk_second_closed_ij
 
 /-- Configuration (3), variant {il,jk}: two cross-edges.
 First glue is open, second is closed; circles = `W.circles + 1`. -/
-def twoCrossIljkEquiv [DecidableEq α]
+def twoCrossIljkEquiv
     (W : Fragment α) {i j k l : α}
     (hij : i ≠ j) (hkl : k ≠ l)
     (hik : i ≠ k) (hil : i ≠ l) (hjk : j ≠ k) (hjl : j ≠ l)
