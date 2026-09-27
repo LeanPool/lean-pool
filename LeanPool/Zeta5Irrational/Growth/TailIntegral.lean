@@ -30,7 +30,7 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 On the grid `t_i = 20 + i/3` (`i ≤ 1140`) the fractional parts `{x}` and `{3x/40}` are affine on
 each piece. With `P = 74 g(1-g) - λ f(1-f)` and `C = (74/α) G₀(g) - λ G₀(f)`,
-`G₀(v) = v(1-v)(2v-1)/6`, we have `P' = F + λ` and `C' = P - P̄` on each piece, and `P`, `C` are
+`G₀(v) = v(1-v)(2v-1)/6`, we have `P' = F + λ` and `C' = P - Pbar` on each piece, and `P`, `C` are
 continuous across the breakpoints. Two integrations by parts on each piece and telescoping give
 `∑_i ∫_{t_i}^{t_{i+1}} (x F + 27/16)/x³ ≤ tailBound`.
 -/
@@ -74,7 +74,7 @@ noncomputable def G0 (v : ℝ) : ℝ :=
 noncomputable def CT (i : ℕ) (x : ℝ) : ℝ :=
   74 * 40 / 3 * G0 (3 / 40 * x - qT' i) - 37 / 40 * G0 (x - qT i)
 
-/-- `P̄ = (74 - λ)/6`. -/
+/-- `Pbar = (74 - λ)/6`. -/
 noncomputable def Pbar : ℝ :=
   2923 / 240
 
@@ -217,7 +217,7 @@ lemma CT_cont (i : ℕ) : CT i (tT (i + 1)) = CT (i + 1) (tT (i + 1)) := by
 
 /-! ### The antiderivative on a piece -/
 
-/-- `Φ_i(x) = P/x² + 2C/x³ - P̄/x² + λ/x - (27/32)/x²`. -/
+/-- `Φ_i(x) = P/x² + 2C/x³ - Pbar/x² + λ/x - (27/32)/x²`. -/
 noncomputable def PhiT (i : ℕ) (x : ℝ) : ℝ :=
   PT i x / x ^ 2 + 2 * CT i x / x ^ 3 - Pbar / x ^ 2 + 37 / 40 / x - 27 / 32 / x ^ 2
 
