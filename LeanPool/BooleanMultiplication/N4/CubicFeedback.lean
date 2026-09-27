@@ -351,7 +351,7 @@ theorem NormalizedEight.seedUsingCubicClassifiedForm_of_child
       hfeedbackNotLow, htargetRep, hfactorRep, htargetNonrational,
       hann, hleft, hright, hsingleton, htangent⟩
 
-/-- Degree five in the left idempotence identity forces a nonzero rational
+/-- Degree five in the left idempotence identity forces a rational
 cubic to share the zero-place anchor of a tangent target. -/
 theorem cubic_anchor_zero_of_left_idempotence
     {g correction target : ANF 8}
@@ -360,8 +360,6 @@ theorem cubic_anchor_zero_of_left_idempotence
     (hg : DegreeLE 3 g)
     (hcubic : anfThreeProjection g =
       vectorWedgeTwo anchorLinear (rationalTwo anchorCoeff))
-    (hcubicNonzero :
-      vectorWedgeTwo anchorLinear (rationalTwo anchorCoeff) ≠ 0)
     (hcorrection : correction ∈ rationalLowSpace)
     (htarget : target =
       affineANF targetConst targetLinear +
@@ -432,7 +430,7 @@ theorem cubic_anchor_zero_of_left_idempotence
     rw [← anfQuinticAnchorProbe_linear_rational_zero_tangent]
     exact hcubicModelProbe
   exact cubicAnchorProbe_zero_tangent_classification
-    anchorLinear anchorCoeff eps hcubicNonzero hann
+    anchorLinear anchorCoeff eps hann
 
 /-- The three place-normalizing changes of variables are involutions on
 linear forms. -/
@@ -633,7 +631,7 @@ theorem seedUsingCubicClassified_normalized_anchor_at
         (map_mul Phi _ _).symm
       _ = Phi target := congrArg Phi hleft
   have hanchor := cubic_anchor_zero_of_left_idempotence
-    hgNormDegree hgNormCubic hgNormCubicNonzero
+    hgNormDegree hgNormCubic
       hfeedbackCorrectionNormLow htargetNorm hleftNorm
   exact ⟨anchorCoeff, anchorLinear, companionLinear,
     Phi seedCorrection, hseedCorrectionNormLow, hseedNorm,

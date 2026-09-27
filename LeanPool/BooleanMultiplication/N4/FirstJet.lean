@@ -34,15 +34,17 @@ def CubicLowLowCollision (g : ANF 8) : Prop :=
     target ∉ rationalLowSpace ∧
     target = (low + g) + child
 
-/-- The first useful low--low child must cancel the seed high part.  The
-alternative coefficient-zero shift would make the child, and hence its
-target, rational-low. -/
-theorem NormalizedEight.cubicLowLowCollision
-    {C : Circuit 8 8} (h : NormalizedEight C) :
-    CubicLowLowCollision (C.gate 3) := by
-  rcases h.firstUsefulChild_isLowLow with
-    ⟨target, child, shift, htarget, htargetOld, _htargetNew, hshift,
-      htargetEq, hchild⟩
+/-- Preserve the particular child and target when extracting the cubic-seed collision. -/
+theorem NormalizedEight.cubicLowLowCollision_of_firstUsefulChild
+    {C : Circuit 8 8} (h : NormalizedEight C)
+    {target child shift : ANF 8}
+    (htarget : target ∈ targetAmbient 8 (mulTarget 4))
+    (htargetOld : target ∉ circuitFlag C 4)
+    (hshift : shift ∈ circuitFlag C 4)
+    (htargetEq : target = shift + child)
+    (hchild : IsLowLowProduct child) :
+    ∃ low : ANF 8, low ∈ rationalLowSpace ∧
+      target ∉ rationalLowSpace ∧ target = (low + C.gate 3) + child := by
   have hlowFour : rationalLowSpace ≤ circuitFlag C 4 := by
     rw [h.wireSpace_four_eq]
     exact le_sup_left
@@ -72,10 +74,21 @@ theorem NormalizedEight.cubicLowLowCollision
     exact (htargetNotLow (by
       rw [htargetEq']
       exact Submodule.add_mem _ hlow hchildLow)).elim
-  · refine ⟨child, low, target, hchild, hlow, htarget,
-      htargetNotLow, ?_⟩
+  · refine ⟨low, hlow, htargetNotLow, ?_⟩
     simpa only [one_smul] using htargetEq.trans
       (congrArg (fun z : ANF 8 => z + child) hshiftEq)
+
+/-- The first useful low-low child must cancel the seed high part. -/
+theorem NormalizedEight.cubicLowLowCollision
+    {C : Circuit 8 8} (h : NormalizedEight C) :
+    CubicLowLowCollision (C.gate 3) := by
+  rcases h.firstUsefulChild_isLowLow with
+    ⟨target, child, shift, htarget, htargetOld, _htargetNew, hshift,
+      htargetEq, hchild⟩
+  rcases h.cubicLowLowCollision_of_firstUsefulChild
+      htarget htargetOld hshift htargetEq hchild with
+    ⟨low, hlow, htargetNotLow, hcollision⟩
+  exact ⟨child, low, target, hchild, hlow, htarget, htargetNotLow, hcollision⟩
 
 /-- Coordinate-ready form of the collision.  The child has zero quartic
 probe, its cubic projection equals the nonzero seed cubic, and the surviving
@@ -107,12 +120,16 @@ def CubicLowLowNormalCollision (g : ANF 8) : Prop :=
   ∃ (target targetAffine : ANF 8) (targetCoeff : TargetCoeff),
     CubicLowLowNormalCollisionAt g target targetAffine targetCoeff
 
-theorem NormalizedEight.cubicLowLowNormalCollision
-    {C : Circuit 8 8} (h : NormalizedEight C) :
-    CubicLowLowNormalCollision (C.gate 3) := by
-  rcases h.cubicLowLowCollision with
-    ⟨child, low, target, hchild, hlow, htarget,
-      htargetNotLow, htargetEq⟩
+/-- Normalize a fixed low-low collision without changing its target witness. -/
+theorem NormalizedEight.cubicLowLowNormalCollisionAt
+    {C : Circuit 8 8} (h : NormalizedEight C)
+    {child low target : ANF 8}
+    (hchild : IsLowLowProduct child) (hlow : low ∈ rationalLowSpace)
+    (htarget : target ∈ targetAmbient 8 (mulTarget 4))
+    (htargetNotLow : target ∉ rationalLowSpace)
+    (htargetEq : target = (low + C.gate 3) + child) :
+    ∃ (targetAffine : ANF 8) (targetCoeff : TargetCoeff),
+      CubicLowLowNormalCollisionAt (C.gate 3) target targetAffine targetCoeff := by
   rcases hchild with ⟨childLeft, childRight,
     hchildLeft, hchildRight, hchildEq⟩
   rcases exists_lowProduct_rep_of_mem_rationalLow hchildLeft with
@@ -159,13 +176,22 @@ theorem NormalizedEight.cubicLowLowNormalCollision
     · apply Submodule.mem_sup_right
       exact (mem_rationalTargetSpace_iff _).mpr ⟨alpha, rfl⟩
   exact
-    ⟨target, targetAffine, targetCoeff,
+    ⟨targetAffine, targetCoeff,
       child, low,
       childLeftConst, childRightConst, childLeftLinear, childRightLinear,
       childLeftCoeff, childRightCoeff,
       h.cubicSeedNormalForm, hlow, htargetAffine, hchildRep,
       htargetEq, htargetRep, hchildProbe, hchildCubic,
       h.seed_cubicProjection_ne_zero, htargetNonrational⟩
+
+theorem NormalizedEight.cubicLowLowNormalCollision
+    {C : Circuit 8 8} (h : NormalizedEight C) :
+    CubicLowLowNormalCollision (C.gate 3) := by
+  rcases h.cubicLowLowCollision with
+    ⟨child, low, target, hchild, hlow, htarget, htargetNotLow, htargetEq⟩
+  rcases h.cubicLowLowNormalCollisionAt hchild hlow htarget htargetNotLow htargetEq with
+    ⟨targetAffine, targetCoeff, hcollision⟩
+  exact ⟨target, targetAffine, targetCoeff, hcollision⟩
 
 /-- Exterior-coordinate data describing a cubic low-low collision at a first jet. -/
 def ExteriorFirstJetCollision : Prop :=
@@ -187,14 +213,39 @@ def ExteriorFirstJetCollision : Prop :=
           vectorWedge childCompanion childLinear +
           booleanContraction childLinear (rationalTwo childCoeff))
 
-/-- All ANF and circuit terms disappear from the first collision after taking
-the cubic and quadratic homogeneous parts. -/
-theorem NormalizedEight.exteriorFirstJetCollision
-    {C : Circuit 8 8} (h : NormalizedEight C) :
-    ExteriorFirstJetCollision := by
-  rcases h.cubicLowLowNormalCollision with
-    ⟨target, targetAffine, targetCoeff,
-      child, low,
+/-- Exterior collision data retaining the seed projections and the particular target. -/
+def ExteriorFirstJetCollisionAt
+    (g target targetAffine : ANF 8) (targetCoeff : TargetCoeff) : Prop :=
+  targetAffine ∈ affine 8 ∧
+  target = targetAffine + targetANF targetCoeff ∧
+  ∃ (seedCoeff childCoeff lowCoeff : Fin 3 → F₂)
+    (seedLinear seedCompanion childLinear childCompanion : LinearForm)
+    (seedRho childRho : F₂),
+    seedCoeff ≠ 0 ∧ childCoeff ≠ 0 ∧
+    anfThreeProjection g = vectorWedgeTwo seedLinear (rationalTwo seedCoeff) ∧
+    anfTwoProjection g = seedRho • rationalTwo seedCoeff +
+      vectorWedge seedCompanion seedLinear +
+      booleanContraction seedLinear (rationalTwo seedCoeff) ∧
+    vectorWedgeTwo seedLinear (rationalTwo seedCoeff) ≠ 0 ∧
+    vectorWedgeTwo seedLinear (rationalTwo seedCoeff) =
+      vectorWedgeTwo childLinear (rationalTwo childCoeff) ∧
+    ¬ IsRationalCoeff targetCoeff ∧
+    targetTwo targetCoeff =
+      (rationalTwo lowCoeff +
+        (seedRho • rationalTwo seedCoeff +
+          vectorWedge seedCompanion seedLinear +
+          booleanContraction seedLinear (rationalTwo seedCoeff))) +
+        (childRho • rationalTwo childCoeff +
+          vectorWedge childCompanion childLinear +
+          booleanContraction childLinear (rationalTwo childCoeff))
+
+/-- Project a fixed collision to exterior coordinates, retaining its correlated witnesses. -/
+theorem cubicLowLowNormalCollisionAt_exterior
+    {g target targetAffine : ANF 8} {targetCoeff : TargetCoeff}
+    (h : CubicLowLowNormalCollisionAt g target targetAffine targetCoeff) :
+    ExteriorFirstJetCollisionAt g target targetAffine targetCoeff := by
+  rcases h with
+    ⟨child, low,
       childLeftConst, childRightConst, childLeftLinear, childRightLinear,
       childLeftCoeff, childRightCoeff,
       hseedNormal, hlow, htargetAffine, hchildRep,
@@ -252,17 +303,47 @@ theorem NormalizedEight.exteriorFirstJetCollision
         vectorWedgeTwo childLinear (rationalTwo childCoeff) := by
     calc
       vectorWedgeTwo seedLinear (rationalTwo seedCoeff) =
-          anfThreeProjection (C.gate 3) := hgCubic.symm
+          anfThreeProjection g := hgCubic.symm
       _ = anfThreeProjection child := hchildCubic.symm
       _ = rationalProductCubic childLeftLinear childRightLinear
           childLeftCoeff childRightCoeff := hchildCubicFormula
       _ = vectorWedgeTwo childLinear (rationalTwo childCoeff) :=
         hchildNormalCubic
   exact
-    ⟨seedCoeff, childCoeff, lowCoeff, seedLinear, seedCompanion,
-      childLinear, childCompanion, seedRho, childRho, targetCoeff,
-      hseedCoeff, hchildCoeff, hgCubicNonzero', hcubicEquality,
-      htargetNonrational, hquadratic⟩
+    ⟨htargetAffine, htargetRep, seedCoeff, childCoeff, lowCoeff,
+      seedLinear, seedCompanion, childLinear, childCompanion, seedRho, childRho,
+      hseedCoeff, hchildCoeff, hgCubic, hgQuadratic, hgCubicNonzero',
+      hcubicEquality, htargetNonrational, hquadratic⟩
+
+/-- Existential exterior collision obtained from the correlated projection theorem. -/
+theorem NormalizedEight.exteriorFirstJetCollision
+    {C : Circuit 8 8} (h : NormalizedEight C) : ExteriorFirstJetCollision := by
+  rcases h.cubicLowLowNormalCollision with ⟨target, targetAffine, targetCoeff, hcollision⟩
+  rcases cubicLowLowNormalCollisionAt_exterior hcollision with
+    ⟨_htargetAffine, _htargetRep, seedCoeff, childCoeff, lowCoeff,
+      seedLinear, seedCompanion, childLinear, childCompanion, seedRho, childRho,
+      hseedCoeff, hchildCoeff, _hgCubic, _hgQuadratic, hcubicNonzero,
+      hcubic, htargetNonrational, hquadratic⟩
+  exact ⟨seedCoeff, childCoeff, lowCoeff, seedLinear, seedCompanion,
+    childLinear, childCompanion, seedRho, childRho, targetCoeff,
+    hseedCoeff, hchildCoeff, hcubicNonzero, hcubic, htargetNonrational, hquadratic⟩
+
+/-- Two equal cubic presentations yield a zero direct sum after addition in characteristic two. -/
+theorem rationalCubicDirectSum_eq_zero_of_cubic_equal
+    (alpha beta : Fin 3 → F₂) (N N' : LinearForm)
+    (hcubic : vectorWedgeTwo N (rationalTwo alpha) =
+      vectorWedgeTwo N' (rationalTwo beta)) :
+    rationalCubicDirectSum (fun theta => alpha theta • N + beta theta • N') = 0 := by
+  have hdirectExpansion : rationalCubicDirectSum (fun theta => alpha theta • N + beta theta • N') =
+      vectorWedgeTwo N (rationalTwo alpha) +
+        vectorWedgeTwo N' (rationalTwo beta) := by
+    funext i j k
+    simp [rationalCubicDirectSum, cubicPlaceLinear, rationalTwo, vectorWedgeTwo,
+      rationalPlaceTwo, Fin.sum_univ_succ]
+    ring
+  rw [hdirectExpansion, hcubic]
+  funext i j k
+  exact CharTwo.add_self_eq_zero (vectorWedgeTwo N' (rationalTwo beta) i j k)
 
 /-- The Boolean degree-lowering contractions attached to two equal rational
 cubic presentations differ only by a rational quadratic form.  This is the
@@ -276,18 +357,8 @@ theorem contraction_sum_mem_rational_of_cubic_equal
       rationalPlaceTwoSpace := by
   let M : Fin 3 → LinearForm := fun theta =>
     alpha theta • N + beta theta • N'
-  have hdirectExpansion : rationalCubicDirectSum M =
-      vectorWedgeTwo N (rationalTwo alpha) +
-        vectorWedgeTwo N' (rationalTwo beta) := by
-    funext i j k
-    simp [rationalCubicDirectSum, cubicPlaceLinear, M, rationalTwo, vectorWedgeTwo,
-      rationalPlaceTwo, Fin.sum_univ_succ]
-    ring
-  have hdirect : rationalCubicDirectSum M = 0 := by
-    rw [hdirectExpansion, hcubic]
-    funext i j k
-    exact CharTwo.add_self_eq_zero
-      (vectorWedgeTwo N' (rationalTwo beta) i j k)
+  have hdirect : rationalCubicDirectSum M = 0 :=
+    rationalCubicDirectSum_eq_zero_of_cubic_equal alpha beta N N' hcubic
   have hkernel := rationalCubicDirectSum_kernel M hdirect
   have hcontraction :
       booleanContraction N (rationalTwo alpha) +
@@ -320,13 +391,24 @@ def ExteriorFirstJetReducedCollision : Prop :=
         vectorWedge seedCompanion seedLinear +
         vectorWedge childCompanion childLinear
 
-theorem exteriorFirstJetCollision_reduced
-    (h : ExteriorFirstJetCollision) : ExteriorFirstJetReducedCollision := by
-  rcases h with
-    ⟨seedCoeff, childCoeff, lowCoeff, seedLinear, seedCompanion,
-      childLinear, childCompanion, seedRho, childRho, targetCoeff,
-      hseedCoeff, hchildCoeff, hcubicNonzero, hcubic,
-      htargetNonrational, hquadratic⟩
+/-- Equal cubic parts make the Boolean contractions rational, preserving all linear witnesses. -/
+theorem exteriorFirstJetCollision_reduce_quadratic
+    {seedCoeff childCoeff lowCoeff : Fin 3 → F₂}
+    {seedLinear seedCompanion childLinear childCompanion : LinearForm}
+    {seedRho childRho : F₂} {targetCoeff : TargetCoeff}
+    (hcubic : vectorWedgeTwo seedLinear (rationalTwo seedCoeff) =
+      vectorWedgeTwo childLinear (rationalTwo childCoeff))
+    (hquadratic : targetTwo targetCoeff =
+      (rationalTwo lowCoeff +
+        (seedRho • rationalTwo seedCoeff +
+          vectorWedge seedCompanion seedLinear +
+          booleanContraction seedLinear (rationalTwo seedCoeff))) +
+        (childRho • rationalTwo childCoeff +
+          vectorWedge childCompanion childLinear +
+          booleanContraction childLinear (rationalTwo childCoeff))) :
+    ∃ rationalCoeff : Fin 3 → F₂,
+      targetTwo targetCoeff = rationalTwo rationalCoeff +
+        vectorWedge seedCompanion seedLinear + vectorWedge childCompanion childLinear := by
   let rationalPart : TwoForm :=
     rationalTwo lowCoeff + seedRho • rationalTwo seedCoeff +
       childRho • rationalTwo childCoeff +
@@ -343,14 +425,24 @@ theorem exteriorFirstJetCollision_reduced
         seedCoeff childCoeff seedLinear childLinear hcubic)
   rcases exists_rationalTwo_of_mem hrationalPart with
     ⟨rationalCoeff, hrationalCoeff⟩
-  refine
-    ⟨seedCoeff, childCoeff, rationalCoeff, seedLinear, seedCompanion,
-      childLinear, childCompanion, targetCoeff,
-      hseedCoeff, hchildCoeff, hcubicNonzero, hcubic,
-      htargetNonrational, ?_⟩
+  refine ⟨rationalCoeff, ?_⟩
   rw [hquadratic, ← hrationalCoeff]
   dsimp [rationalPart]
   module
+
+
+theorem exteriorFirstJetCollision_reduced
+    (h : ExteriorFirstJetCollision) : ExteriorFirstJetReducedCollision := by
+  rcases h with
+    ⟨seedCoeff, childCoeff, lowCoeff, seedLinear, seedCompanion,
+      childLinear, childCompanion, seedRho, childRho, targetCoeff,
+      hseedCoeff, hchildCoeff, hcubicNonzero, hcubic,
+      htargetNonrational, hquadratic⟩
+  rcases exteriorFirstJetCollision_reduce_quadratic hcubic hquadratic with
+    ⟨rationalCoeff, htarget⟩
+  exact ⟨seedCoeff, childCoeff, rationalCoeff, seedLinear, seedCompanion,
+    childLinear, childCompanion, targetCoeff, hseedCoeff, hchildCoeff,
+    hcubicNonzero, hcubic, htargetNonrational, htarget⟩
 
 /-- A linear form lies in the two-input support of a rational place. -/
 def InPlaceSupport (theta : Fin 3) (u : LinearForm) : Prop :=
@@ -364,18 +456,8 @@ theorem cubic_equal_support_relation
       (alpha theta • N + beta theta • N') := by
   let M : Fin 3 → LinearForm := fun theta =>
     alpha theta • N + beta theta • N'
-  have hdirectExpansion : rationalCubicDirectSum M =
-      vectorWedgeTwo N (rationalTwo alpha) +
-        vectorWedgeTwo N' (rationalTwo beta) := by
-    funext i j k
-    simp [rationalCubicDirectSum, cubicPlaceLinear, M, rationalTwo, vectorWedgeTwo,
-      rationalPlaceTwo, Fin.sum_univ_succ]
-    ring
-  have hdirect : rationalCubicDirectSum M = 0 := by
-    rw [hdirectExpansion, hcubic]
-    funext i j k
-    exact CharTwo.add_self_eq_zero
-      (vectorWedgeTwo N' (rationalTwo beta) i j k)
+  have hdirect : rationalCubicDirectSum M = 0 :=
+    rationalCubicDirectSum_eq_zero_of_cubic_equal alpha beta N N' hcubic
   intro theta
   rcases rationalCubicDirectSum_kernel M hdirect theta with ⟨a, b, hab⟩
   exact ⟨a, b, hab⟩

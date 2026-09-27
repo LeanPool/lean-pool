@@ -134,8 +134,70 @@ theorem nonrational_target_vectorWedge_injective
     rw [hinfinity]
     exact ⟨0, 0, 1, by simp⟩
 
-/-- The rational quadratic part of a seed-using feedback factor cannot
-vanish when the seed has nonzero quartic part. -/
+/-- A seed outside the target ambient forces every seed-using factor to have
+a nonzero rational quadratic coefficient. -/
+theorem seedUsing_factorCoeff_ne_zero_of_not_mem_targetAmbient
+    {g correction factor target : ANF 8}
+    {targetConst factorConst : F₂}
+    {targetLinear factorLinear : LinearForm}
+    {targetCoeff : TargetCoeff} {factorCoeff : Fin 3 → F₂}
+    (hseed : g ∉ targetAmbient 8 (mulTarget 4))
+    (hcorrection : correction ∈ rationalLowSpace)
+    (htargetEq : target = (g + correction) * factor)
+    (htargetMem : target ∈ targetAmbient 8 (mulTarget 4))
+    (htargetNotLow : target ∉ rationalLowSpace)
+    (htargetRep : target =
+      affineANF targetConst targetLinear + targetANF targetCoeff)
+    (hfactorRep : factor =
+      affineANF factorConst factorLinear + rationalANF factorCoeff)
+    (htargetNonrational : ¬ IsRationalCoeff targetCoeff)
+    (hright : target * factor = target) : factorCoeff ≠ 0 := by
+  intro hfactorCoeff
+  subst factorCoeff
+  have hfactorAffine : factor = affineANF factorConst factorLinear := by
+    simpa using hfactorRep
+  have hcubic :
+      vectorWedgeTwo factorLinear (targetTwo targetCoeff) = 0 := by
+    have hleft := congrArg anfThreeProjection hright
+    rw [htargetRep, hfactorAffine,
+      anfThreeProjection_targetRep_mul_affine] at hleft
+    have htargetCubic : anfThreeProjection target = 0 :=
+      anfThreeProjection_eq_zero_of_mem_targetAmbient htargetMem
+    have htargetRepCubic :
+        anfThreeProjection
+          (affineANF targetConst targetLinear + targetANF targetCoeff) = 0 := by
+      rw [← htargetRep]
+      exact htargetCubic
+    exact hleft.trans htargetRepCubic
+  have hlinear : factorLinear = 0 :=
+    nonrational_target_vectorWedge_injective htargetNonrational hcubic
+  subst factorLinear
+  have hfactorConst : factorConst = 1 := by
+    rcases f2_eq_zero_or_one factorConst with hzero | hone
+    · exfalso
+      have htargetZero : target = 0 := by
+        have hfactorZero : factor = 0 := by
+          rw [hfactorAffine, hzero]
+          simp [affineANF]
+        rw [hfactorZero, mul_zero] at hright
+        exact hright.symm
+      apply htargetNotLow
+      rw [htargetZero]
+      exact Submodule.zero_mem _
+    · exact hone
+  have hfactorOne : factor = 1 := by
+    rw [hfactorAffine, hfactorConst]
+    simp [affineANF]
+  have htargetSeed : target = g + correction := by
+    rw [htargetEq, hfactorOne, mul_one]
+  have hgAmbient : g ∈ targetAmbient 8 (mulTarget 4) := by
+    have hcorrAmbient := rationalLowSpace_le_targetAmbient hcorrection
+    have hsum := Submodule.add_mem _ htargetMem hcorrAmbient
+    rw [htargetSeed] at hsum
+    simpa [add_assoc] using hsum
+  exact hseed hgAmbient
+
+/-- Quartic specialization of the ambient-space obstruction. -/
 theorem seedUsing_factorCoeff_ne_zero
     {g correction factor target : ANF 8}
     {targetConst factorConst : F₂}
@@ -152,56 +214,13 @@ theorem seedUsing_factorCoeff_ne_zero
       affineANF factorConst factorLinear + rationalANF factorCoeff)
     (htargetNonrational : ¬ IsRationalCoeff targetCoeff)
     (hright : target * factor = target) : factorCoeff ≠ 0 := by
-  intro hfactorCoeff
-  subst factorCoeff
-  have hfactorAffine : factor = affineANF factorConst factorLinear := by
-    simpa using hfactorRep
-  have hcubic :
-      vectorWedgeTwo factorLinear (targetTwo targetCoeff) = 0 := by
-    have hleft := congrArg anfThreeProjection hright
-    rw [htargetRep, hfactorAffine,
-      anfThreeProjection_targetRep_mul_affine] at hleft
-    have htargetCubic : anfThreeProjection target = 0 :=
-      anfThreeProjection_eq_zero_of_mem_targetAmbient htargetMem
-    have htargetRepCubic :
-        anfThreeProjection
-          (affineANF targetConst targetLinear + targetANF targetCoeff) = 0 := by
-      rw [← htargetRep]
-      exact htargetCubic
-    exact hleft.trans htargetRepCubic
-  have hlinear : factorLinear = 0 :=
-    nonrational_target_vectorWedge_injective htargetNonrational hcubic
-  subst factorLinear
-  have hfactorConst : factorConst = 1 := by
-    rcases f2_eq_zero_or_one factorConst with hzero | hone
-    · exfalso
-      have htargetZero : target = 0 := by
-        have hfactorZero : factor = 0 := by
-          rw [hfactorAffine, hzero]
-          simp [affineANF]
-        rw [hfactorZero, mul_zero] at hright
-        exact hright.symm
-      apply htargetNotLow
-      rw [htargetZero]
-      exact Submodule.zero_mem _
-    · exact hone
-  have hfactorOne : factor = 1 := by
-    rw [hfactorAffine, hfactorConst]
-    simp [affineANF]
-  have htargetSeed : target = g + correction := by
-    rw [htargetEq, hfactorOne, mul_one]
-  have hgAmbient : g ∈ targetAmbient 8 (mulTarget 4) := by
-    have hcorrAmbient := rationalLowSpace_le_targetAmbient hcorrection
-    have hsum := Submodule.add_mem _ htargetMem hcorrAmbient
-    rw [htargetSeed] at hsum
-    simpa [add_assoc] using hsum
+  apply seedUsing_factorCoeff_ne_zero_of_not_mem_targetAmbient ?_
+    hcorrection htargetEq htargetMem htargetNotLow htargetRep hfactorRep
+    htargetNonrational hright
+  intro hgAmbient
   exact hquartic (quarticProbeANF_eq_zero_of_mem_targetAmbient hgAmbient)
 
-/-- The rational quadratic part of a seed-using feedback factor cannot
-vanish when the seed has nonzero cubic part.  This is the version used after
-quartic exclusion: if the factor were affine, right idempotence and the
-nonrationality of the target would make it equal to `1`, forcing the cubic
-seed itself into the quadratic target ambient. -/
+/-- Cubic specialization of the ambient-space obstruction. -/
 theorem seedUsing_factorCoeff_ne_zero_of_cubic
     {g correction factor target : ANF 8}
     {targetConst factorConst : F₂}
@@ -218,49 +237,10 @@ theorem seedUsing_factorCoeff_ne_zero_of_cubic
       affineANF factorConst factorLinear + rationalANF factorCoeff)
     (htargetNonrational : ¬ IsRationalCoeff targetCoeff)
     (hright : target * factor = target) : factorCoeff ≠ 0 := by
-  intro hfactorCoeff
-  subst factorCoeff
-  have hfactorAffine : factor = affineANF factorConst factorLinear := by
-    simpa using hfactorRep
-  have hcubic :
-      vectorWedgeTwo factorLinear (targetTwo targetCoeff) = 0 := by
-    have hleft := congrArg anfThreeProjection hright
-    rw [htargetRep, hfactorAffine,
-      anfThreeProjection_targetRep_mul_affine] at hleft
-    have htargetCubic : anfThreeProjection target = 0 :=
-      anfThreeProjection_eq_zero_of_mem_targetAmbient htargetMem
-    have htargetRepCubic :
-        anfThreeProjection
-          (affineANF targetConst targetLinear + targetANF targetCoeff) = 0 := by
-      rw [← htargetRep]
-      exact htargetCubic
-    exact hleft.trans htargetRepCubic
-  have hlinear : factorLinear = 0 :=
-    nonrational_target_vectorWedge_injective htargetNonrational hcubic
-  subst factorLinear
-  have hfactorConst : factorConst = 1 := by
-    rcases f2_eq_zero_or_one factorConst with hzero | hone
-    · exfalso
-      have htargetZero : target = 0 := by
-        have hfactorZero : factor = 0 := by
-          rw [hfactorAffine, hzero]
-          simp [affineANF]
-        rw [hfactorZero, mul_zero] at hright
-        exact hright.symm
-      apply htargetNotLow
-      rw [htargetZero]
-      exact Submodule.zero_mem _
-    · exact hone
-  have hfactorOne : factor = 1 := by
-    rw [hfactorAffine, hfactorConst]
-    simp [affineANF]
-  have htargetSeed : target = g + correction := by
-    rw [htargetEq, hfactorOne, mul_one]
-  have hgAmbient : g ∈ targetAmbient 8 (mulTarget 4) := by
-    have hcorrAmbient := rationalLowSpace_le_targetAmbient hcorrection
-    have hsum := Submodule.add_mem _ htargetMem hcorrAmbient
-    rw [htargetSeed] at hsum
-    simpa [add_assoc] using hsum
+  apply seedUsing_factorCoeff_ne_zero_of_not_mem_targetAmbient ?_
+    hcorrection htargetEq htargetMem htargetNotLow htargetRep hfactorRep
+    htargetNonrational hright
+  intro hgAmbient
   exact hcubicSeed (anfThreeProjection_eq_zero_of_mem_targetAmbient hgAmbient)
 
 end

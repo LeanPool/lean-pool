@@ -752,15 +752,13 @@ private theorem vectorWedgeTwo_rational_infinity_support
 /-- Scalar form of the 16-row annihilator certificate. -/
 private theorem cubicAnchorProbe_zero_tangent_scalar_certificate :
     ∀ (ell : LinearForm) (alpha : Fin 3 → F₂) (eps : F₂),
-      (∃ i j k : Fin 8,
-        vectorWedgeTwo ell (rationalTwo alpha) i j k ≠ 0) →
       (∀ t : Fin 16, cubicAnchorWedgeProbe
         (vectorWedgeTwo ell (rationalTwo alpha))
         (targetTwo (rationalTangentAt 0 eps)) t = 0) →
       ∀ i j k : Fin 8,
         vectorWedgeTwo ell (rationalTwo alpha) i j k =
           vectorWedgeTwo (alpha 0 • ell) (rationalPlaceTwo 0) i j k := by
-  intro ell alpha eps _ hann i j k
+  intro ell alpha eps hann i j k
   let a : F₂ := alpha 0
   rcases f2_eq_zero_or_one (alpha 1) with h1 | h1 <;>
     rcases f2_eq_zero_or_one (alpha 2) with h2 | h2
@@ -800,30 +798,22 @@ private theorem cubicAnchorProbe_zero_tangent_scalar_certificate :
     subst ell
     simp [vectorWedgeTwo]
 
-/-- The 16-row certificate: a nonzero rational cubic annihilating a
+/-- The 16-row certificate: a rational cubic annihilating a
 zero-place tangent is anchored at the zero rational place. -/
 theorem cubicAnchorProbe_zero_tangent_classification
     (ell : LinearForm) (alpha : Fin 3 → F₂) (eps : F₂)
-    (hnonzero : vectorWedgeTwo ell (rationalTwo alpha) ≠ 0)
     (hann : cubicAnchorWedgeProbe
       (vectorWedgeTwo ell (rationalTwo alpha))
       (targetTwo (rationalTangentAt 0 eps)) = 0) :
     vectorWedgeTwo ell (rationalTwo alpha) =
       vectorWedgeTwo (alpha 0 • ell) (rationalPlaceTwo 0) := by
-  have hnonzero' : ∃ i j k : Fin 8,
-      vectorWedgeTwo ell (rationalTwo alpha) i j k ≠ 0 := by
-    by_contra h
-    push Not at h
-    apply hnonzero
-    funext i j k
-    exact h i j k
   have hann' : ∀ t : Fin 16, cubicAnchorWedgeProbe
       (vectorWedgeTwo ell (rationalTwo alpha))
       (targetTwo (rationalTangentAt 0 eps)) t = 0 := by
     exact congrFun hann
   funext i j k
   exact cubicAnchorProbe_zero_tangent_scalar_certificate
-    ell alpha eps hnonzero' hann' i j k
+    ell alpha eps hann' i j k
 
 /-- A degree-at-most-two ANF times a quadratic target contributes no
 degree-five anchor probe. -/

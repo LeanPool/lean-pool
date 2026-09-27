@@ -398,14 +398,23 @@ def ExteriorFirstJetNormalForm : Prop :=
       rationalTangentAt theta eps ∧
     InNormalizedFirstJet theta seedLinear
 
-/-- Circuit-independent endpoint of the first low--low feedback analysis. -/
-theorem exteriorFirstJetReducedCollision_normalForm
-    (h : ExteriorFirstJetReducedCollision) : ExteriorFirstJetNormalForm := by
-  rcases h with
-    ⟨seedCoeff, childCoeff, rationalCoeff,
-      seedLinear, seedCompanion, childLinear, childCompanion, targetCoeff,
-      hseedCoeff, hchildCoeff, hcubicNonzero, hcubic,
-      htargetNonrational, htarget⟩
+/-- Classify a reduced collision without discarding its coefficient and linear witnesses. -/
+theorem exteriorFirstJetReducedCollision_classification
+    {seedCoeff childCoeff rationalCoeff : Fin 3 → F₂}
+    {seedLinear seedCompanion childLinear childCompanion : LinearForm}
+    {targetCoeff : TargetCoeff}
+    (hseedCoeff : seedCoeff ≠ 0) (hchildCoeff : childCoeff ≠ 0)
+    (hcubicNonzero : vectorWedgeTwo seedLinear (rationalTwo seedCoeff) ≠ 0)
+    (hcubic : vectorWedgeTwo seedLinear (rationalTwo seedCoeff) =
+      vectorWedgeTwo childLinear (rationalTwo childCoeff))
+    (htargetNonrational : ¬ IsRationalCoeff targetCoeff)
+    (htarget : targetTwo targetCoeff = rationalTwo rationalCoeff +
+      vectorWedge seedCompanion seedLinear + vectorWedge childCompanion childLinear) :
+    ∃ (theta : Fin 3) (eps : F₂),
+      seedCoeff = rationalSingleton theta ∧ childCoeff = rationalSingleton theta ∧
+      vectorWedgeTwo seedLinear (rationalTwo (rationalSingleton theta)) ≠ 0 ∧
+      targetCoeff + rationalCoeffRep rationalCoeff = rationalTangentAt theta eps ∧
+      InNormalizedFirstJet theta seedLinear := by
   rcases cubic_collision_forces_common_singleton
       seedCoeff childCoeff seedLinear childLinear
       seedCompanion childCompanion rationalCoeff targetCoeff
@@ -422,8 +431,21 @@ theorem exteriorFirstJetReducedCollision_normalForm
       seedLinear childLinear seedCompanion childCompanion
       rationalCoeff targetCoeff hcubicNonzero hsum'
       htargetNonrational htarget with ⟨eps, hdelta, hnormal⟩
+  exact ⟨theta, eps, hseedSingleton, hchildSingleton, hcubicNonzero, hdelta, hnormal⟩
+
+/-- Circuit-independent endpoint of the first low-low feedback analysis. -/
+theorem exteriorFirstJetReducedCollision_normalForm
+    (h : ExteriorFirstJetReducedCollision) : ExteriorFirstJetNormalForm := by
+  rcases h with
+    ⟨seedCoeff, childCoeff, rationalCoeff,
+      seedLinear, seedCompanion, childLinear, childCompanion, targetCoeff,
+      hseedCoeff, hchildCoeff, hcubicNonzero, hcubic,
+      htargetNonrational, htarget⟩
+  rcases exteriorFirstJetReducedCollision_classification
+      hseedCoeff hchildCoeff hcubicNonzero hcubic htargetNonrational htarget with
+    ⟨theta, eps, _hseedSingleton, _hchildSingleton, hnonzero, hdelta, hnormal⟩
   exact ⟨theta, eps, seedLinear, rationalCoeff, targetCoeff,
-    hcubicNonzero, htargetNonrational, hdelta, hnormal⟩
+    hnonzero, htargetNonrational, hdelta, hnormal⟩
 
 theorem NormalizedEight.exteriorFirstJetNormalForm
     {C : Circuit 8 8} (h : NormalizedEight C) :
@@ -458,112 +480,19 @@ theorem cubicLowLowNormalCollisionAt_targetNormalForm
     {g target targetAffine : ANF 8} {targetCoeff : TargetCoeff}
     (h : CubicLowLowNormalCollisionAt g target targetAffine targetCoeff) :
     FirstJetTargetNormalForm g target targetAffine targetCoeff := by
-  rcases h with
-    ⟨child, low,
-      childLeftConst, childRightConst, childLeftLinear, childRightLinear,
-      childLeftCoeff, childRightCoeff,
-      hseedNormal, hlow, htargetAffine, hchildRep,
-      htargetEq, htargetRep, hchildProbe, hchildCubic,
-      hgCubicNonzero, htargetNonrational⟩
-  rcases hseedNormal with
-    ⟨_seedLeftConst, _seedRightConst, _seedLeftLinear, _seedRightLinear,
-      _seedLeftCoeff, _seedRightCoeff, seedCoeff, seedLinear,
-      seedCompanion, seedRho, _hseedRep, _hseedQuartic, hseedCoeff,
-      hgCubic, hgCubicNonzero', hgQuadratic⟩
-  have hchildCubicFormula : anfThreeProjection child =
-      rationalProductCubic childLeftLinear childRightLinear
-        childLeftCoeff childRightCoeff := by
-    rw [hchildRep]
-    exact lowProduct_cubicProjection_of_quartic_zero
-      childLeftConst childRightConst childLeftLinear childRightLinear
-      childLeftCoeff childRightCoeff hchildProbe
-  have hchildProductCubicNonzero :
-      rationalProductCubic childLeftLinear childRightLinear
-        childLeftCoeff childRightCoeff ≠ 0 := by
-    intro hz
-    apply hgCubicNonzero
-    rw [← hchildCubic, hchildCubicFormula, hz]
-  rcases low_product_quadratic_normal_form
-      childLeftConst childRightConst childLeftLinear childRightLinear
-      childLeftCoeff childRightCoeff
-      (rational_wedge_zero_of_probe_zero _ _ hchildProbe)
-      hchildProductCubicNonzero with
-    ⟨childCoeff, childLinear, childCompanion, childRho,
-      hchildCoeff, hchildNormalCubic, hchildNormalQuadratic⟩
-  rcases exists_lowProduct_rep_of_mem_rationalLow hlow with
-    ⟨lowConst, lowLinear, lowCoeff, hlowRep⟩
-  have hlowQuadratic : anfTwoProjection low = rationalTwo lowCoeff := by
-    rw [hlowRep, map_add,
-      anfTwoProjection_kills_affine (affineANF_mem lowConst lowLinear),
-      anfTwoProjection_rationalANF, zero_add]
-  have hchildQuadratic : anfTwoProjection child =
-      childRho • rationalTwo childCoeff +
-        vectorWedge childCompanion childLinear +
-        booleanContraction childLinear (rationalTwo childCoeff) := by
-    rw [hchildRep,
-      lowProduct_quadraticProjection_of_quartic_zero
-        childLeftConst childRightConst childLeftLinear childRightLinear
-        childLeftCoeff childRightCoeff hchildProbe,
-      hchildNormalQuadratic]
-  have htargetQuadratic : anfTwoProjection target =
-      targetTwo targetCoeff := by
-    rw [htargetRep, map_add,
-      anfTwoProjection_kills_affine htargetAffine,
-      anfTwoProjection_targetANF, zero_add]
-  have hquadratic := congrArg anfTwoProjection htargetEq
-  rw [htargetQuadratic, map_add, map_add, hlowQuadratic,
-    hgQuadratic, hchildQuadratic] at hquadratic
-  have hcubic : vectorWedgeTwo seedLinear (rationalTwo seedCoeff) =
-      vectorWedgeTwo childLinear (rationalTwo childCoeff) := by
-    calc
-      vectorWedgeTwo seedLinear (rationalTwo seedCoeff) =
-          anfThreeProjection g := hgCubic.symm
-      _ = anfThreeProjection child := hchildCubic.symm
-      _ = rationalProductCubic childLeftLinear childRightLinear
-          childLeftCoeff childRightCoeff := hchildCubicFormula
-      _ = vectorWedgeTwo childLinear (rationalTwo childCoeff) :=
-        hchildNormalCubic
-  let rationalPart : TwoForm :=
-    rationalTwo lowCoeff + seedRho • rationalTwo seedCoeff +
-      childRho • rationalTwo childCoeff +
-      (booleanContraction seedLinear (rationalTwo seedCoeff) +
-        booleanContraction childLinear (rationalTwo childCoeff))
-  have hrationalPart : rationalPart ∈ rationalPlaceTwoSpace := by
-    dsimp [rationalPart]
-    exact Submodule.add_mem _
-      (Submodule.add_mem _
-        (Submodule.add_mem _ (rationalTwo_mem lowCoeff)
-          (Submodule.smul_mem _ _ (rationalTwo_mem seedCoeff)))
-        (Submodule.smul_mem _ _ (rationalTwo_mem childCoeff)))
-      (contraction_sum_mem_rational_of_cubic_equal
-        seedCoeff childCoeff seedLinear childLinear hcubic)
-  rcases exists_rationalTwo_of_mem hrationalPart with
-    ⟨rationalCoeff, hrationalCoeff⟩
-  have htargetReduced : targetTwo targetCoeff =
-      rationalTwo rationalCoeff + vectorWedge seedCompanion seedLinear +
-        vectorWedge childCompanion childLinear := by
-    rw [hquadratic, ← hrationalCoeff]
-    dsimp [rationalPart]
-    module
-  rcases cubic_collision_forces_common_singleton
-      seedCoeff childCoeff seedLinear childLinear
-      seedCompanion childCompanion rationalCoeff targetCoeff
-      hseedCoeff hchildCoeff hcubic htargetNonrational htargetReduced with
-    ⟨theta, hseedSingleton, hchildSingleton⟩
-  rw [hseedSingleton] at hgCubic hgQuadratic hgCubicNonzero' hcubic
-  rw [hchildSingleton] at hcubic
-  have hsum := cubic_equal_support_relation
-    (rationalSingleton theta) (rationalSingleton theta)
-    seedLinear childLinear hcubic theta
-  have hsum' : InPlaceSupport theta (seedLinear + childLinear) := by
-    simpa using hsum
-  rcases same_singleton_collision_firstJet theta
-      seedLinear childLinear seedCompanion childCompanion
-      rationalCoeff targetCoeff hgCubicNonzero' hsum'
-      htargetNonrational htargetReduced with ⟨eps, hdelta, hnormal⟩
+  rcases cubicLowLowNormalCollisionAt_exterior h with
+    ⟨htargetAffine, htargetRep, seedCoeff, childCoeff, lowCoeff,
+      seedLinear, seedCompanion, childLinear, childCompanion, seedRho, childRho,
+      hseedCoeff, hchildCoeff, hgCubic, hgQuadratic, hgCubicNonzero,
+      hcubic, htargetNonrational, hquadratic⟩
+  rcases exteriorFirstJetCollision_reduce_quadratic hcubic hquadratic with
+    ⟨rationalCoeff, htargetReduced⟩
+  rcases exteriorFirstJetReducedCollision_classification
+      hseedCoeff hchildCoeff hgCubicNonzero hcubic htargetNonrational htargetReduced with
+    ⟨theta, eps, hseedSingleton, _hchildSingleton, hnonzero, hdelta, hnormal⟩
+  rw [hseedSingleton] at hgCubic hgQuadratic
   exact ⟨theta, eps, seedLinear, seedCompanion, seedRho, rationalCoeff,
-    htargetAffine, htargetRep, hgCubic, hgQuadratic,
-    hgCubicNonzero', hdelta, hnormal⟩
+    htargetAffine, htargetRep, hgCubic, hgQuadratic, hnonzero, hdelta, hnormal⟩
 
 theorem cubicLowLowNormalCollision_targetNormalForm
     {g : ANF 8} (h : CubicLowLowNormalCollision g) :
