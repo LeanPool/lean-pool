@@ -8,6 +8,7 @@ module
 
 import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.AlgebraicIndependence.DerivAt
+public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.AlgebraicIndependence.UnboundedTruncations
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.StableInterval
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueFinalSegment
@@ -48,23 +49,6 @@ open Berarducci HahnSeries
 
 variable {K : Type v} [Field K]
 
-/-- A translated truncation at a support point is not in `J`. -/
-private theorem translatedTruncation_not_mem_negativeMonomialIdeal_of_mem_support
-    (u : Series K) {γ : ℝ} (hγ : γ ∈ (u : K⟦ℝ⟧).support) :
-    translatedTruncation (u : K⟦ℝ⟧) γ ∉ HahnSeries.Nonpositive.negativeMonomialIdeal K := by
-  intro hJ
-  rw [HahnSeries.Nonpositive.mem_negativeMonomialIdeal_iff_supportSup_lt_zero] at hJ
-  have hzero : (0 : ℝ) ∈ ((translatedTruncation (u : K⟦ℝ⟧) γ : Series K) : K⟦ℝ⟧).support := by
-    rw [HahnSeries.mem_support, coeff_translatedTruncation]
-    simpa using hγ
-  have hne : translatedTruncation (u : K⟦ℝ⟧) γ ≠ 0 := by
-    intro h
-    rw [h] at hzero
-    simp at hzero
-  rw [HahnSeries.Nonpositive.supportSup_of_ne hne] at hJ
-  exact absurd (le_csSup (HahnSeries.Nonpositive.bddAbove_support _) hzero)
-    (not_le.mpr (WithBot.coe_lt_coe.mp hJ))
-
 /-- If `v_J(u) = ω^(β+1)` and `θ < 0`, there is a cutoff `θ < γ < 0` with
 `v_J(u^{|γ}) = ω^β`. -/
 @[blueprint "lem:successor-truncation-value"
@@ -97,138 +81,7 @@ theorem exists_ordinalValue_translatedTruncation_eq_wpow_of_ordinalValue_eq_wpow
     (beta : NatOrdinal) (u : Series K) (hu : ordinalValue u = ω^ (beta + 1))
     {θ : ℝ} (hθ : θ < 0) :
     ∃ γ : ℝ, θ < γ ∧ γ < 0 ∧ ordinalValue (translatedTruncation (u : K⟦ℝ⟧) γ) = ω^ beta := by
-  have hone : 1 < ordinalValue u := by
-    rw [hu, ← NatOrdinal.wpow_zero]
-    exact NatOrdinal.wpow_lt_wpow.mpr (by simp)
-  -- A tail `B = supp(u) ∩ (η, 0)` that computes the ordinal value, above `θ`.
-  obtain ⟨η₀, hη₀, htailType⟩ :=
-    exists_forall_later_negativeSupportTail_orderType_eq_ordinalValue u hone
-  set η : ℝ := max (η₀ / 2) (θ / 2) with hηdef
-  have hη₀η : η₀ < η := lt_max_of_lt_left (by linarith)
-  have hθη : θ < η := lt_max_of_lt_right (by linarith)
-  have hη : η < 0 := max_lt (by linarith) (by linarith)
-  set B : Set ℝ := negativeSupportTail u η with hBdef
-  have hBsupp : B ⊆ (u : K⟦ℝ⟧).support := negativeSupportTail_subset_support u η
-  have hBpwo : B.IsPWO := (u : K⟦ℝ⟧).isPWO_support.mono hBsupp
-  set ρ : Ordinal := omega0 ^ beta.val with hρdef
-  have hρpos : 0 < ρ := opow_pos _ omega0_pos
-  have hBtype : hBpwo.orderType = ρ * omega0 := by
-    rw [Set.IsPWO.orderType_proof_irrel hBpwo
-      ((u : K⟦ℝ⟧).isPWO_support.mono (negativeSupportTail_subset_support u η)),
-      htailType η hη₀η hη, hu, NatOrdinal.val_wpow, NatOrdinal.val_add_one, hρdef,
-      Ordinal.opow_add_one]
-  -- The point `y` of index `ρ`; the first block is `S = B ∩ (-∞, y)`.
-  have hρlt : ρ < hBpwo.orderType := by
-    rw [hBtype]
-    calc ρ = ρ * 1 := (mul_one ρ).symm
-      _ < ρ * omega0 := mul_lt_mul_of_pos_left one_lt_omega0 hρpos
-  obtain ⟨y, hyB, hyIdx⟩ := hBpwo.exists_orderType_inter_Iio_eq hρlt
-  set S : Set ℝ := B ∩ Set.Iio y with hSdef
-  have hSpwo : S.IsPWO := hBpwo.mono Set.inter_subset_left
-  have hStype : hSpwo.orderType = ρ := hyIdx
-  have hSne : S.Nonempty := by
-    rw [Set.nonempty_iff_ne_empty]
-    intro hempty
-    have := (hSpwo.orderType_eq_zero).mpr hempty
-    rw [hStype] at this
-    exact hρpos.ne' this
-  have hSbdd : BddAbove S := ⟨y, fun x hx ↦ hx.2.le⟩
-  set γ : ℝ := sSup S with hγdef
-  have hSγ : ∀ x ∈ S, x ≤ γ := fun x hx ↦ le_csSup hSbdd hx
-  have hγy : γ ≤ y := csSup_le hSne fun x hx ↦ hx.2.le
-  have hy0 : y < 0 := (mem_negativeSupportTail_iff.mp hyB).2.2
-  have hγ0 : γ < 0 := hγy.trans_lt hy0
-  have hθγ : θ < γ := by
-    obtain ⟨s, hs⟩ := hSne
-    exact (hθη.trans (mem_negativeSupportTail_iff.mp hs.1).2.1).trans_le (hSγ s hs)
-  -- Every point of `B` below `γ` lies in the first block.
-  have hbelow : ∀ x ∈ B, x < γ → x ∈ S := by
-    intro x hxB hxγ
-    obtain ⟨s, hs, hxs⟩ := exists_lt_of_lt_csSup hSne hxγ
-    exact ⟨hxB, hxs.trans hs.2⟩
-  have hsuppBelow : ∀ x ∈ (u : K⟦ℝ⟧).support, η < x → x < γ → x ∈ S := fun x hx hηx hxγ ↦
-    hbelow x (mem_negativeSupportTail_iff.mpr ⟨hx, hηx, hxγ.trans hγ0⟩) hxγ
-  refine ⟨γ, hθγ, hγ0, ?_⟩
-  rcases eq_or_ne beta 0 with rfl | hbeta
-  · -- `β = 0`: the first block is a single support point `γ`.
-    have hρone : ρ = 1 := by simp [hρdef]
-    have hSmin : ∀ x ∈ S, ∀ x' ∈ S, x' ≤ x → x' = x := by
-      intro x hx x' hx' hle
-      by_contra hne
-      have hlt : x' < x := lt_of_le_of_ne hle hne
-      have hbelow := hSpwo.orderType_inter_Iio_lt hx
-      rw [hStype, hρone, Order.lt_one_iff, Set.IsPWO.orderType_eq_zero] at hbelow
-      have : x' ∈ S ∩ Set.Iio x := ⟨hx', hlt⟩
-      rw [hbelow] at this
-      exact this
-    obtain ⟨m, hm⟩ := hSne
-    have hSeq : S = {m} := by
-      ext x
-      constructor
-      · intro hx
-        rcases le_total x m with hxm | hmx
-        · exact hSmin m hm x hx hxm
-        · exact (hSmin x hx m hm hmx).symm
-      · rintro rfl
-        exact hm
-    have hγm : γ = m := by rw [hγdef, hSeq, csSup_singleton]
-    have hγS : γ ∈ S := hγm ▸ hm
-    have hγsupp : γ ∈ (u : K⟦ℝ⟧).support := hBsupp hγS.1
-    have hgap : (u : K⟦ℝ⟧).support ∩ Set.Ioo η γ = ∅ := by
-      rw [Set.eq_empty_iff_forall_notMem]
-      rintro x ⟨hx, hηx, hxγ⟩
-      have hxS := hsuppBelow x hx hηx hxγ
-      rw [hSeq] at hxS
-      exact hxγ.ne (hxS.trans hγm.symm)
-    have hηγ : η < γ := (mem_negativeSupportTail_iff.mp hγS.1).2.1
-    have hle := ordinalValue_translatedTruncation_le_one_of_eq_empty u hηγ hgap
-    have hne : ordinalValue (translatedTruncation (u : K⟦ℝ⟧) γ) ≠ 0 := by
-      rw [Ne, ordinalValue_eq_zero_iff]
-      exact translatedTruncation_not_mem_negativeMonomialIdeal_of_mem_support u hγsupp
-    rw [NatOrdinal.wpow_zero]
-    rcases Order.le_one_iff.mp hle with hzero | hone'
-    · exact absurd hzero hne
-    · exact hone'
-  · -- `β ≥ 1`: `ω^β` is an additively indecomposable limit.
-    have hρprin : IsAdditivelyPrincipal ρ := isAdditivelyPrincipal_omega0_opow _
-    have hρone : 1 < ρ := by
-      have : ω^ (0 : NatOrdinal) < ω^ beta :=
-        NatOrdinal.wpow_lt_wpow.mpr (pos_iff_ne_zero.mpr hbeta)
-      rw [NatOrdinal.wpow_zero] at this
-      have hval : (1 : NatOrdinal).val < (ω^ beta).val := this
-      simpa [hρdef] using hval
-    have hlimit : Order.IsSuccLimit hSpwo.orderType := by
-      rw [hStype]
-      exact hρprin.isSuccLimit_of_one_lt hρone
-    have hprincipal : IsPrincipal (fun a b : Ordinal ↦ a + b) hSpwo.orderType := by
-      rw [hStype]
-      exact (isAdditivelyPrincipal_iff_ne_zero_and_isPrincipal_add.mp hρprin).2
-    -- `S` has no largest element, so every point of `S` lies strictly below `γ`.
-    have hSlt : ∀ x ∈ S, x < γ := by
-      intro x hx
-      obtain ⟨x', hx', hxx'⟩ := hSpwo.exists_gt_of_isSuccLimit_orderType hlimit hx
-      exact hxx'.trans_le (hSγ x' hx')
-    -- Upper bound: `S` is a nonempty final segment of the support strictly below `γ`.
-    have hSupper : IsRelUpperSet S (· ∈ (u : K⟦ℝ⟧).support ∩ Set.Iio γ) := by
-      intro x hx
-      refine ⟨⟨hBsupp hx.1, hSlt x hx⟩, fun y' hxy' hy' ↦ ?_⟩
-      exact hsuppBelow y' hy'.1 ((mem_negativeSupportTail_iff.mp hx.1).2.1.trans_le hxy') hy'.2
-    have hupper := ordinalValue_translatedTruncation_le_orderType_of_isRelUpperSet_supportBelow
-      (u : K⟦ℝ⟧) γ hSupper hSne
-    rw [Set.IsPWO.orderType_proof_irrel _ hSpwo, hStype] at hupper
-    -- Lower bound: every window `(θ', γ)` contains a nonempty final segment of `S`.
-    have hlower : NatOrdinal.of ρ ≤ ordinalValue (translatedTruncation (u : K⟦ℝ⟧) γ) := by
-      apply le_ordinalValue_translatedTruncation_of_forall_le_orderType
-      intro θ' hθ'γ
-      obtain ⟨s, hs, hθ's⟩ := exists_lt_of_lt_csSup hSne hθ'γ
-      have hfinal := hSpwo.orderType_inter_Ioi_eq_of_isPrincipal hprincipal ⟨s, hs, hθ's⟩
-      rw [hStype] at hfinal
-      rw [← hfinal]
-      apply Set.IsPWO.orderType_mono
-      intro x hx
-      exact ⟨hBsupp hx.1.1, hx.2, hSlt x hx.1⟩
-    rw [NatOrdinal.val_eq_iff.mp (le_antisymm hupper (NatOrdinal.of_le_iff.mp hlower)), hρdef,
-      ← NatOrdinal.val_wpow, NatOrdinal.of_val]
+  exact exists_ordinalValue_translatedTruncation_eq_wpow_of_lt (lt_add_one beta) u hu hθ
 
 /-- A nonzero class in `P_α`, for successor `α`, has a representative of ordinal value exactly
 `ω^α`. -/
