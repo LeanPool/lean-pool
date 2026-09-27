@@ -58,7 +58,8 @@ private lemma qReducedConfig_superstable {G : CFGraph}
 /-- Every divisor $D$ is linearly equivalent to $c+kq$ for some superstable configuration
 $c$ and integer $k$.
 
-See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Remark 3.14. -/
+See: [Corry-Perkinson, preliminary version](
+https://people.reed.edu/~davidp/divisors_and_sandpiles/mbk_draft.pdf#page=59), Remark 3.15. -/
 lemma superstable_of_divisor {G : CFGraph} (h_conn : graphConnected G) (q : G.V) (D : CFDiv G) :
   ∃ (c : Config G q) (k : ℤ),
     linearEquiv G D (c.chips + k • (oneChip q)) ∧

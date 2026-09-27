@@ -231,7 +231,8 @@ Attempts to determine winnability with a fuel-bounded reduction.
 
 An already effective divisor returns `some true`, including on disconnected graphs.
 Otherwise this seeks the $q$-reduced representative $D_q$ and returns
-`some (D_q(q) ≥ 0)` (see Corry-Perkinson, Corollary 3.7).
+`some (D_q(q) ≥ 0)` (see [Corry-Perkinson, preliminary version](
+https://people.reed.edu/~davidp/divisors_and_sandpiles/mbk_draft.pdf#page=57), Corollary 3.8).
 If reduction exhausts its fuel, `none` records an inconclusive search, not unwinnability.
 -/
 @[simp]

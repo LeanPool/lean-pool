@@ -1258,7 +1258,8 @@ lemma effective_of_winnable_and_q_reduced (G : CFGraph) (q : G.V) (D : CFDiv G) 
 
 /-- The $q$-reduced representative of a divisor class is unique.
 
-See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Theorem 3.6,
+See: [Corry-Perkinson, preliminary version](
+https://people.reed.edu/~davidp/divisors_and_sandpiles/mbk_draft.pdf#page=57), Theorem 3.7,
 part 2 (uniqueness). -/
 theorem q_reduced_unique (G : CFGraph) (q : G.V) (D₁ D₂ : CFDiv G) :
   qReduced G q D₁ ∧ qReduced G q D₂ ∧ linearEquiv G D₁ D₂ → D₁ = D₂ := by
@@ -1553,7 +1554,8 @@ decreasing_by
 
 /-- Every divisor is linearly equivalent to some $q$-reduced divisor.
 
-See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Theorem 3.6,
+See: [Corry-Perkinson, preliminary version](
+https://people.reed.edu/~davidp/divisors_and_sandpiles/mbk_draft.pdf#page=57), Theorem 3.7,
 part 1 (existence). -/
 theorem exists_q_reduced_representative {G : CFGraph} (h_conn : graphConnected G) (q : G.V) (D :
     CFDiv G) :
@@ -1570,7 +1572,8 @@ by
 
 /-- Every divisor is linearly equivalent to exactly one $q$-reduced divisor.
 
-See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Theorem 3.6
+See: [Corry-Perkinson, preliminary version](
+https://people.reed.edu/~davidp/divisors_and_sandpiles/mbk_draft.pdf#page=57), Theorem 3.7
 (existence and uniqueness combined). -/
 lemma unique_q_reduced {G : CFGraph} (h_conn : graphConnected G) (q : G.V) (D : CFDiv G) :
   ∃! D' : CFDiv G, linearEquiv G D D' ∧ qReduced G q D' := by
@@ -1584,7 +1587,8 @@ lemma unique_q_reduced {G : CFGraph} (h_conn : graphConnected G) (q : G.V) (D : 
 
 /-- A divisor is winnable if and only if its $q$-reduced representative is effective.
 
-See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Corollary 3.7,
+See: [Corry-Perkinson, preliminary version](
+https://people.reed.edu/~davidp/divisors_and_sandpiles/mbk_draft.pdf#page=57), Corollary 3.8,
 rephrased. -/
 theorem winnable_iff_q_reduced_effective {G : CFGraph} (h_conn : graphConnected G) (q : G.V) (D
     : CFDiv G) :

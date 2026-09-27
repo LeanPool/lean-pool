@@ -310,7 +310,8 @@ lemma config_eq_of_le_and_degree {q : G.V} {c1 c2 : Config G q} (h_le : c2 ≤ c
 $S \subseteq V(G) \setminus \{q\}$, some vertex in $S$ has fewer chips than its
 out-degree to $V(G) \setminus S$.
 
-See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 3.12. -/
+See: [Corry-Perkinson, preliminary version](
+https://people.reed.edu/~davidp/divisors_and_sandpiles/mbk_draft.pdf#page=59), Definition 3.13. -/
 def superstable (G : CFGraph) (q : G.V) (c : Config G q) : Prop :=
   ∀ S ⊆  Vtilde q, S.Nonempty →
     ∃ v ∈ S, c.chips v < outdegS G S v
@@ -318,7 +319,8 @@ def superstable (G : CFGraph) (q : G.V) (c : Config G q) : Prop :=
 /-- A configuration $c$ is superstable if and only if `toDiv d c` is $q$-reduced,
 for any prescribed degree $d$.
 
-See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Remark 3.14. -/
+See: [Corry-Perkinson, preliminary version](
+https://people.reed.edu/~davidp/divisors_and_sandpiles/mbk_draft.pdf#page=59), Remark 3.15. -/
 lemma superstable_iff_q_reduced (G : CFGraph) (q : G.V) (d : ℤ) (c : Config G q) :
   superstable G q c ↔ qReduced G q (toDiv d c) := by
   dsimp only [superstable, ne_eq]
