@@ -2312,7 +2312,7 @@ local instance instTorusAverages4 : VAddInvariantMeasure Frequency Plane (volume
     measure_preimage_add (volume : Measure Plane) (latticePoint k) s
 
 /-- Fundamental square, given by `Ico (0 : ℝ) 1 ×ˢ Ico (0 : ℝ) 1`. -/
-noncomputable def fundamentalSquare : Set Plane := Ico (0 : ℝ) 1 ×ˢ Ico (0 : ℝ) 1
+@[expose] noncomputable def fundamentalSquare : Set Plane := Ico (0 : ℝ) 1 ×ˢ Ico (0 : ℝ) 1
 
 /-- The half-open unit square is proved to tile the plane, using integer floors. -/
 theorem fundamentalSquare_isAddFundamentalDomain :

@@ -576,7 +576,7 @@ lemma close_eq_self_of (φ : SyntacticFormula L) (h : φ.freeVariables = ∅) : 
     (∃' φ).toEmpty h = ∃' (φ.toEmpty (by simpa using h)) := rfl
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def close₀ (φ : SyntacticFormula L) : Sentence L := (∀∀φ).toEmpty (by simp)
+@[expose] def close₀ (φ : SyntacticFormula L) : Sentence L := (∀∀φ).toEmpty (by simp)
 
 /-- Imported declaration from the Incompleteness formalization. -/
 scoped [LO.FirstOrder] prefix:max "∀∀₀" => LO.FirstOrder.Semiformula.close₀

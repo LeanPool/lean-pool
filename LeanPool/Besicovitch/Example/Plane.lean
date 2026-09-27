@@ -79,7 +79,7 @@ theorem volume_le_hausdorffMeasure_graphMap_image (A : Set ℝ) :
 /-! ### Cells -/
 
 /-- The level-`n` cell with index `i`. -/
-def cell (n : ℕ) (i : ℤ) : Set ℝ := Ico (i * cellLength n) ((i + 1) * cellLength n)
+@[expose] def cell (n : ℕ) (i : ℤ) : Set ℝ := Ico (i * cellLength n) ((i + 1) * cellLength n)
 
 theorem mem_cell_iff {n : ℕ} {i : ℤ} {x : ℝ} : x ∈ cell n i ↔ cellIndex n x = i := by
   have hpos := cellLength_pos n

@@ -58,7 +58,7 @@ open scoped Topology
 abbrev State := EuclideanSpace ℝ (Fin 2)
 
 /-- The actual two-mode coefficient, including four independent error entries. -/
-noncomputable def modalOperator (lam damping e11 e12 e21 e22 : ℝ) : State →L[ℝ] State :=
+@[expose] noncomputable def modalOperator (lam damping e11 e12 e21 e22 : ℝ) : State →L[ℝ] State :=
   LinearMap.toContinuousLinearMap {
     toFun := fun z => !₂[(lam - damping + e11) * z 0 + e12 * z 1,
       e21 * z 0 + (-lam - damping + e22) * z 1]
@@ -739,7 +739,7 @@ theorem tangentMotion_eq_projectedRhs_iff {β : ℝ} (hβ : β ≠ 0)
     rfl
 
 /-- Pack continuous linear map, constructed using `LinearMap.toContinuousLinearMap`. -/
-noncomputable def packCLM : (ℝ × Plane) →L[ℝ] Space :=
+@[expose] noncomputable def packCLM : (ℝ × Plane) →L[ℝ] Space :=
   LinearMap.toContinuousLinearMap {
     toFun := fun p => pack p.1 p.2
     map_add' := by
@@ -753,7 +753,7 @@ noncomputable def packCLM : (ℝ × Plane) →L[ℝ] Space :=
 
 /-- Tail continuous linear map, given by `LinearMap.toContinuousLinearMap { toFun := tail
 map_add' := tail_add map_smul' := tail_smul }`. -/
-noncomputable def tailCLM : Space →L[ℝ] Plane :=
+@[expose] noncomputable def tailCLM : Space →L[ℝ] Plane :=
   LinearMap.toContinuousLinearMap {
     toFun := tail
     map_add' := tail_add
@@ -1229,7 +1229,7 @@ theorem modal_equations_iff {h : ℝ} (hh : h ≠ 0)
       field_simp; ring
 
 /-- Pair continuous linear map, constructed using `LinearMap.toContinuousLinearMap`. -/
-noncomputable def pairCLM : (ℝ × ℝ) →L[ℝ] Plane :=
+@[expose] noncomputable def pairCLM : (ℝ × ℝ) →L[ℝ] Plane :=
   LinearMap.toContinuousLinearMap {
     toFun := fun z => !₂[z.1, z.2]
     map_add' := by intro u v; ext i; fin_cases i <;> simp

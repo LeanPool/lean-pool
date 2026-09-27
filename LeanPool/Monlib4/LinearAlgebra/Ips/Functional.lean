@@ -480,6 +480,7 @@ theorem Module.Dual.isFaithful_state_iff_of_matrix (φ : Module.Dual ℂ (Matrix
   exact hQ.1.2
 
 /-- A linear functional $f$ is tracial if and only if $f(xy)=f(yx)$ for all $x,y$. -/
+@[expose]
 def Module.Dual.IsTracial {A : Type _} [NonUnitalSemiring A] [Module 𝕜 A] (φ : Module.Dual 𝕜 A) :
     Prop :=
   ∀ x y : A, φ (x * y) = φ (y * x)

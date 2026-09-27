@@ -369,7 +369,8 @@ scoped prefix:arg "⊔𝕀 " => cubeBoundaryJar
         continuous_uliftUp.comp <| continuous_subtype_val.comp continuous_induced_dom }
 
 /-- `cubeBoundaryJarInclToBoundary` -/
-def cubeBoundaryJarInclToBoundary (n : ℕ) : cubeBoundaryJar.{u} n ⟶ cubeBoundary.{u} n :=
+@[expose] def cubeBoundaryJarInclToBoundary (n : ℕ) :
+    cubeBoundaryJar.{u} n ⟶ cubeBoundary.{u} n :=
   ofHom
     { toFun := fun ⟨p⟩ ↦ ⟨Cube.boundaryJarInclToBoundary n p⟩
       continuous_toFun := by fun_prop }

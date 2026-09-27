@@ -926,9 +926,8 @@ theorem initialEnvelope_contDiffOn {a b : ℝ} (hab : a ≤ b)
     rw [ParametricODE.extend, projIcc_of_mem hab hs']
     exact SmoothPathFamily.pathFamily_apply rate p hslice ⟨s, hs'⟩
   change Real.exp (∫ s in (midpoint : ℝ)..a, rate (p, s)) =
-    Real.exp (-(∫ s in a..(midpoint : ℝ),
-      ParametricODE.extend hab (SmoothPathFamily.pathFamily rate p) s))
-  rw [hint, intervalIntegral.integral_symm]
+    Real.exp (-(ParametricODE.integrator hab (SmoothPathFamily.pathFamily rate p) midpoint))
+  rw [ParametricODE.integrator_apply, hint, intervalIntegral.integral_symm]
 
 theorem referenceRate_contDiffOn {U : Set Q} (V : Set ℝ)
     (lam u : Q → ℝ) (ell : ℝ) (hlam : ContDiffOn ℝ ∞ lam U) (hu : ContDiffOn ℝ ∞ u U) :

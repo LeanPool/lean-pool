@@ -81,30 +81,31 @@ end IProd
 
 
 /-- `cubeInclToSk` -/
-noncomputable def cubeInclToSk {n : ℕ} (α : (X.attachCells n).cells) : 𝕀 n ⟶ X.sk (n + 1) :=
+@[expose] noncomputable def cubeInclToSk {n : ℕ} (α : (X.attachCells n).cells) :
+    𝕀 n ⟶ X.sk (n + 1) :=
   (diskPair.homeoCubePairULift n).inv.right ≫
   Limits.Sigma.ι (fun _ ↦ 𝔻 n) α ≫ Limits.pushout.inr .. ≫ (X.attachCells n).isoPushout.inv
 
 /-- `cubeIncl` -/
-noncomputable def cubeIncl {n : ℕ} (α : (X.attachCells n).cells) : 𝕀 n ⟶ X :=
+@[expose] noncomputable def cubeIncl {n : ℕ} (α : (X.attachCells n).cells) : 𝕀 n ⟶ X :=
   X.cubeInclToSk α ≫ X.skIncl (n + 1)
 
 /-- `cubeAtt` -/
-noncomputable def cubeAtt {n : ℕ} (α : (X.attachCells n).cells) : ∂𝕀 n ⟶ X.sk n :=
+@[expose] noncomputable def cubeAtt {n : ℕ} (α : (X.attachCells n).cells) : ∂𝕀 n ⟶ X.sk n :=
   (diskPair.homeoCubePairULift n).inv.left ≫ (X.attachCells n).attachMaps α
 
 
 namespace IProd
 
 /-- `cubeAttBotOrTop` -/
-noncomputable def cubeAttBotOrTop {n : ℕ} (α : (X.attachCells n).cells) (t : zeroOne) :
+@[expose] noncomputable def cubeAttBotOrTop {n : ℕ} (α : (X.attachCells n).cells) (t : zeroOne) :
     𝕀 n ⟶ IProd.sk X (n + 1) :=  -- bottom face of `∂𝕀 (n + 1)`
   X.cubeIncl α ≫
   ofHom ⟨fun x ↦ ⟨t, x⟩, by fun_prop⟩ ≫  -- X ⟶ {0, 1} × X
   Limits.pushout.inl ..
 
 /-- `cubeAttSides` -/
-noncomputable def cubeAttSides {n : ℕ} (α : (X.attachCells n).cells) :
+@[expose] noncomputable def cubeAttSides {n : ℕ} (α : (X.attachCells n).cells) :
     TopCat.of (I × ∂𝕀 n) ⟶ IProd.sk X (n + 1) :=  -- sides of `∂𝕀 (n + 1)`
   ofHom ((ContinuousMap.id I).prodMap (X.cubeAtt α).hom) ≫  -- of (I × ∂𝕀 n) ⟶ of (I × (X.sk n))
   Limits.pushout.inr ..
@@ -175,7 +176,7 @@ noncomputable def sigmaDisksInclToSk (n : ℕ) :
   ≫ Limits.pushout.inr ..
 
 /-- `skInclSucc` -/
-noncomputable def skInclSucc (n : ℕ) : IProd.sk X (n + 1) ⟶ IProd.sk X (n + 1 + 1) :=
+@[expose] noncomputable def skInclSucc (n : ℕ) : IProd.sk X (n + 1) ⟶ IProd.sk X (n + 1 + 1) :=
   let il : TopCat.of (zeroOne × X.toTopCat) ⟶ IProd.sk X (n + 1 + 1) := Limits.pushout.inl ..
   let ir : TopCat.of (I × X.sk n) ⟶ IProd.sk X (n + 1 + 1) :=
     ofHom ((ContinuousMap.id I).prodMap (X.skInclSucc _).hom) ≫ Limits.pushout.inr ..

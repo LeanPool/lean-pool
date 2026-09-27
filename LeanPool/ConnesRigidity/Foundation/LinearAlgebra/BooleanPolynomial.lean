@@ -39,12 +39,14 @@ theorem eq_one_of_ne_zero (a : F) (ha : a ≠ 0) : a = 1 := by
 abbrev PolynomialOn (ι : Type*) := (ι → F) → F
 
 /-- Support of a Boolean function on arbitrary finite coordinates. Paper: §4. -/
+@[expose]
 noncomputable def supportOn {ι : Type*} [Fintype ι] (P : PolynomialOn ι) :
     Finset (ι → F) := by
   classical
   exact Finset.univ.filter (fun x => P x ≠ 0)
 
 /-- Support weight on arbitrary finite coordinates. Paper: §4. -/
+@[expose]
 noncomputable def weightOn {ι : Type*} [Fintype ι] (P : PolynomialOn ι) : ℕ :=
   (supportOn P).card
 
@@ -71,6 +73,7 @@ structure QuadraticData (ι : Type*) [Fintype ι] where
       ∑ i, ∑ j, q.quadratic i j * x i * x j
 
 /-- Degree restriction on arbitrary finite Boolean coordinates. Paper: §4. -/
+@[expose]
 def IsQuadratic {ι : Type*} [Fintype ι] (P : PolynomialOn ι) : Prop :=
   ∃ q : QuadraticData ι, ∀ x, q.eval x = P x
 

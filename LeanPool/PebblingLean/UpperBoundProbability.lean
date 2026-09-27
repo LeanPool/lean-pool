@@ -1571,10 +1571,10 @@ theorem globalFailureProbability_le_sum_targetFailureProbability {n N rIn rOut T
         targetFailureProbability (N := N) rIn rOut T target := by
   classical
   simpa only [globalFailureProbability, targetFailureProbability,
-    sampleFailsSomeTarget, sampleTargetFails, uniformProbability] using
+    sampleFailsSomeTarget] using
     (uniformProbability_exists_le_sum
       (Ω := CenterSample n N) (ι := HypercubeVertex n)
-      (fun target sample => sampleTotalContribution rIn rOut target sample < T))
+      (fun target sample => sampleTargetFails rIn rOut T target sample))
 
 /-- Probabilistic-method extraction: if the probability that some target fails
 is less than one, then a good center sample exists. -/

@@ -43,7 +43,7 @@ variable {P U E : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]
   [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
 
 /-- The literal right side of the projected strong acceleration equation. -/
-def forcing (T : ℝ) (hT : 0 ≤ T)
+@[expose] def forcing (T : ℝ) (hT : 0 ≤ T)
     (Q Q₁ : P → C(Icc (0 : ℝ) T, U →L[ℝ] E))
     (f : P → TimeLp T E) (v : P → TimeLp T U) (x : P) : TimeLp T U :=
   (timeMultiplier T hT (Q x)).adjoint

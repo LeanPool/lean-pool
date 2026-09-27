@@ -26,7 +26,7 @@ namespace ClassificationOfSurfaces
 namespace Moise
 
 /-- Three affinely independent points form an affine basis of the plane. -/
-noncomputable def affineBasisOfTriangle (p : Fin 3 → Plane) (hp : AffineIndependent ℝ p) :
+@[expose] noncomputable def affineBasisOfTriangle (p : Fin 3 → Plane) (hp : AffineIndependent ℝ p) :
     AffineBasis (Fin 3) ℝ Plane where
   toFun := p
   ind' := hp
@@ -362,12 +362,12 @@ theorem referenceSplit_triangle2_affineIndependent {a b : ℝ} (ha0 : 0 < a)
   nlinarith
 
 /-- The first Cartesian coordinate, regarded as an affine functional. -/
-noncomputable def cartesianX : Plane →ᵃ[ℝ] ℝ :=
+@[expose] noncomputable def cartesianX : Plane →ᵃ[ℝ] ℝ :=
   ((LinearMap.proj (R := ℝ) (φ := fun _ : Fin 2 => ℝ) 0).comp
     (WithLp.linearEquiv 2 ℝ (Fin 2 → ℝ)).toLinearMap).toAffineMap
 
 /-- The second Cartesian coordinate, regarded as an affine functional. -/
-noncomputable def cartesianY : Plane →ᵃ[ℝ] ℝ :=
+@[expose] noncomputable def cartesianY : Plane →ᵃ[ℝ] ℝ :=
   ((LinearMap.proj (R := ℝ) (φ := fun _ : Fin 2 => ℝ) 1).comp
     (WithLp.linearEquiv 2 ℝ (Fin 2 → ℝ)).toLinearMap).toAffineMap
 
@@ -1853,7 +1853,7 @@ theorem localRefinementMesh_support (t : M.Triangle) :
     rw [Set.range_comp, M.range_orderedVertex t]
 
 /-- Every maximal triangle lies wholly on one closed side of the cutting line. -/
-def IsMonochromatic (N : TriangleMesh) (f : Plane →ᵃ[ℝ] ℝ) : Prop :=
+@[expose] def IsMonochromatic (N : TriangleMesh) (f : Plane →ᵃ[ℝ] ℝ) : Prop :=
   ∀ s ∈ N.triangles,
     (∀ v ∈ s, 0 ≤ f (N.position v)) ∨ (∀ v ∈ s, f (N.position v) ≤ 0)
 
@@ -2066,7 +2066,8 @@ theorem strictMeshFor_triangles (v : Fin 3 → M.Vertex)
   ext s
   simp [strictMeshFor, strictPatternTriangles, referenceSplitMesh,
     referenceSplitTriangles, TriangleMesh.reindex, TriangleMesh.mapAffineEquiv,
-    strictVerticesEmbedding, Function.Embedding.coeFn_mk]
+    strictVerticesEmbedding]
+  rfl
 
 theorem edgeMeshFor_triangles (v : Fin 3 → M.Vertex)
     (hv : AffineIndependent ℝ (M.position ∘ v))
@@ -2075,7 +2076,8 @@ theorem edgeMeshFor_triangles (v : Fin 3 → M.Vertex)
       edgePatternTriangles (M.edgeVertices f v h0 h1) := by
   simp [edgeMeshFor, edgePatternTriangles, referenceEdgeSplitMesh,
     referenceEdgeSplitTriangles, TriangleMesh.reindex, TriangleMesh.mapAffineEquiv,
-    edgeVerticesEmbedding, Function.Embedding.coeFn_mk]
+    edgeVerticesEmbedding]
+  rfl
 
 theorem strictNegativeMeshFor_monochromatic (v : Fin 3 → M.Vertex)
     (hv : AffineIndependent ℝ (M.position ∘ v))

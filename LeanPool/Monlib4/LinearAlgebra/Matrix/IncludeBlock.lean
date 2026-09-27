@@ -81,7 +81,7 @@ def IsBlockDiagonal {o : Type _} {m' n' : o → Type _} {α : Type _} [Decidable
   blockDiagonal' (blockDiag' x) = x
 
 /-- Include a single matrix block in the corresponding component of a block-indexed family. -/
-def includeBlock {o : Type _} [DecidableEq o] {m' : o → Type _} {α : Type _} [Semiring α]
+@[expose] def includeBlock {o : Type _} [DecidableEq o] {m' : o → Type _} {α : Type _} [Semiring α]
   {i : o} : Matrix (m' i) (m' i) α →ₗ[α] (PiMat α o m') :=
 @LinearMap.single α o _ (fun j => Matrix (m' j) (m' j) α) _ _ _ i
 

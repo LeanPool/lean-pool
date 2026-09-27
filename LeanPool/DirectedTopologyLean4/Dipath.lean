@@ -69,6 +69,7 @@ protected lemma Dipath.ext : ∀ {γ₁ γ₂ : Dipath x y}, (γ₁ : I → X) =
 namespace Dipath
 
 /-- Promote a path with a proof of directedness into a dipath. -/
+@[expose]
 def ofIsDipath {γ : Path x y} (hγ : IsDipath γ) : Dipath x y := {
   toPath := γ,
   dipath_toPath := hγ,

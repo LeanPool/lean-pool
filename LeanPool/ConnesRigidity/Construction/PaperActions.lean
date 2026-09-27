@@ -50,6 +50,7 @@ def sl3AAction : SpecialLinear.SL3 →* (A ≃ₗ[k] A) where
   TensorProduct.map (sl3AAction l).toLinearMap (sl3AAction l).toLinearMap
 
 /-- The diagonal SL₃ action restricted to the fixed tensor module. Paper: §2. -/
+@[expose]
 def sl3CAction (l : SpecialLinear.SL3) : C →ₗ[k] C where
   toFun c :=
     ⟨sl3TensorAction l c, by

@@ -45,7 +45,7 @@ def mapCoefficientPath (L : V →L[ℝ] W) : C(K, Space →ᵇ V) →L[ℝ] C(K,
 
 omit [CompactSpace K] in
 @[simp] theorem mapCoefficientPath_apply (L : V →L[ℝ] W)
-    (A : C(K, Space →ᵇ V)) (t : K) (x : Space) : mapCoefficientPath L A t x = L (A t x) := rfl
+    (A : C(K, Space →ᵇ V)) (t : K) (x : Space) : mapCoefficientPath L A t x = L (A t x) := by rfl
 
 end Mapping
 
@@ -145,8 +145,9 @@ theorem translation_hasFDerivAt (A : SmoothCoefficientPath K V) (a : Space) :
 
 theorem translation_fderiv (A : SmoothCoefficientPath K V) :
     fderiv ℝ (translateCoefficientPath A.field) =
-      fun a => pathDerivativeBundling (translateCoefficientPath A.derivative.field a) :=
-  funext (fun a => (A.translation_hasFDerivAt a).fderiv)
+      fun a => pathDerivativeBundling (translateCoefficientPath A.derivative.field a) := by
+  funext a
+  simpa only [pathDerivativeBundling_apply] using (A.translation_hasFDerivAt a).fderiv
 
 private theorem translation_contDiff_nat_aux (n : ℕ) :
     ∀ (V : Type v) [NormedAddCommGroup V] [NormedSpace ℝ V] (A : SmoothCoefficientPath K V),

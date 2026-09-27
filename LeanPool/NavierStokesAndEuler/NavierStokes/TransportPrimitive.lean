@@ -337,7 +337,7 @@ theorem uniform_local_bound {g : H × ℝ → G} (hg : Continuous g) (x : H) (a 
   exact ⟨ε, hε, C + 1, fun y hy u hu => (hVW ⟨hball hy, hW hu⟩).le⟩
 
 /-- The parameter derivative of a jointly smooth integrand. -/
-noncomputable def parameterDerivative (g : H × ℝ → G) (z : H × ℝ) : H →L[ℝ] G :=
+@[expose] noncomputable def parameterDerivative (g : H × ℝ → G) (z : H × ℝ) : H →L[ℝ] G :=
   (fderiv ℝ g z).comp (ContinuousLinearMap.inl ℝ H ℝ)
 
 theorem parameterDerivative_contDiff {g : H × ℝ → G} (hg : ContDiff ℝ ∞ g) :

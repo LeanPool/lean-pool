@@ -41,7 +41,7 @@ open MeasureTheory Set Real intervalIntegral
 namespace Zeta5Irrational
 
 /-- The truncated logarithmic kernel `L_{a,b}(r)`. -/
-noncomputable def Ltr (a b r : ℝ) : ℝ :=
+@[expose] noncomputable def Ltr (a b r : ℝ) : ℝ :=
   (1 / 2) * ∫ s in a..b, (Real.exp (-s) - Real.exp (-s * r ^ 2)) / s
 
 variable {ι : Type*}

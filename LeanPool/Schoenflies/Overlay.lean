@@ -135,12 +135,12 @@ does not need. -/
 theorem meetOf_comm (P Q : Piece) : meetOf P Q = meetOf Q P := inter_comm _ _
 
 /-- Every end of every source piece is a cut point. -/
-def EndsAreCut (pieces : List Piece) (points : List Plane) : Prop :=
+@[expose] def EndsAreCut (pieces : List Piece) (points : List Plane) : Prop :=
   ∀ P ∈ pieces, ∀ z, (z = P.1 ∨ z = P.2) → z ∈ points
 
 /-- For every pair of distinct source pieces that meet, some pair of ends of the meet is
 cut. -/
-def MeetsAreCut (pieces : List Piece) (points : List Plane) : Prop :=
+@[expose] def MeetsAreCut (pieces : List Piece) (points : List Plane) : Prop :=
   ∀ P ∈ pieces, ∀ Q ∈ pieces, P ≠ Q → (meetOf P Q).Nonempty →
     ∃ u v, meetOf P Q = segment ℝ u v ∧ u ∈ points ∧ v ∈ points
 

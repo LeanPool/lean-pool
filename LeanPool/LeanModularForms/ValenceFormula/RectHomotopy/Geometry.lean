@@ -147,7 +147,7 @@ lemma arc2_in_closed_unit_ball (t : ℝ) (_ : t ∈ Icc 0 1) :
 /-- The straight chord from `ρ'` to `i`. -/
 @[expose] def chord1 : ℝ → ℂ := chordSegment rho' iPoint
 /-- The straight chord from `i` to `ρ`. -/
-def chord2 : ℝ → ℂ := chordSegment iPoint rho
+@[expose] def chord2 : ℝ → ℂ := chordSegment iPoint rho
 
 lemma chord1_in_closed_unit_ball (t : ℝ) (ht : t ∈ Icc 0 1) :
     chord1 t ∈ closedBall (0 : ℂ) 1 :=

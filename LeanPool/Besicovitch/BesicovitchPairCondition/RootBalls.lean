@@ -18,7 +18,7 @@ public section
 namespace LeanPool.Besicovitch
 
 /-- The common open neighborhood formed by two balls of the same radius. -/
-def rootBallUnion (x y : (EuclideanSpace ℝ (Fin 2))) (r : ℝ) :
+@[expose] def rootBallUnion (x y : (EuclideanSpace ℝ (Fin 2))) (r : ℝ) :
     Set (EuclideanSpace ℝ (Fin 2)) :=
   Metric.ball x r ∪ Metric.ball y r
 

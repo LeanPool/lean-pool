@@ -2452,7 +2452,7 @@ of `v` and `w` differ, which the crossing condition guarantees at use sites). -/
 
 /-- The leftward horizontal ray from `P` crosses edge `i`, with the half-open height
 convention. -/
-def EdgeCrossed (i : ZMod J.n) (P : Plane) : Prop :=
+@[expose] def EdgeCrossed (i : ZMod J.n) (P : Plane) : Prop :=
   ((J.vertex i) 1 ≤ P 1 ∧ P 1 < (J.vertex (i + 1)) 1 ∨
     (J.vertex (i + 1)) 1 ≤ P 1 ∧ P 1 < (J.vertex i) 1) ∧
   crossingX (J.vertex i) (J.vertex (i + 1)) (P 1) < P 0
@@ -3446,7 +3446,7 @@ theorem exists_index_eq_one : ∃ P : Plane, P ∉ J.carrier ∧ J.index P = 1 :
 
 /-- The part of the polygon complement having crossing index `k`.  Only `k = 0, 1` are
 nonempty. -/
-def indexRegion (k : ℕ) : Set Plane :=
+@[expose] def indexRegion (k : ℕ) : Set Plane :=
   {P | P ∉ J.carrier ∧ J.index P = k}
 
 /-- Every index region is open, since the carrier is closed and the index is locally constant on

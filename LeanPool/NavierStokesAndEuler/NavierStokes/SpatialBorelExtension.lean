@@ -119,7 +119,7 @@ theorem template_hasCompactSupport (m j : ℕ) (a : X → V) :
 
 /-- Time scale, given by `(b • ContinuousLinearMap.fst ℝ ℝ X).prod (ContinuousLinearMap.snd ℝ ℝ
 X)`. -/
-def timeScale (b : ℝ) : (ℝ × X) →L[ℝ] (ℝ × X) :=
+@[expose] def timeScale (b : ℝ) : (ℝ × X) →L[ℝ] (ℝ × X) :=
   (b • ContinuousLinearMap.fst ℝ ℝ X).prod (ContinuousLinearMap.snd ℝ ℝ X)
 
 omit [FiniteDimensional ℝ X] in

@@ -195,7 +195,7 @@ namespace HeckeLeftCoset
 variable {P : HeckePair G}
 
 /-- The underlying set `gH`, well-defined on the quotient. -/
-noncomputable def toSet (D : HeckeLeftCoset P) : Set G :=
+@[expose] noncomputable def toSet (D : HeckeLeftCoset P) : Set G :=
   Quotient.lift (fun (g : P.Δ) => ({(g : G)} : Set G) * (P.H : Set G))
     (fun _ _ (h : lcRel P _ _) => h) D
 

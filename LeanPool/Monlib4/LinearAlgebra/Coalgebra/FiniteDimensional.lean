@@ -76,7 +76,7 @@ lemma TensorProduct.rid_adjoint {𝕜 E : Type*} [RCLike 𝕜] [NormedAddCommGro
     (fun z w hz hw => by simp only [_root_.map_add, inner_add_right, hz, hw])
 
 
-@[reducible, instance]
+@[reducible, instance, expose]
 noncomputable
 def Coalgebra.ofFiniteDimensionalHilbertAlgebra
   [RCLike R] [NormedAddCommGroupOfRing A] [InnerProductSpace R A]

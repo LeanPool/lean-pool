@@ -2130,7 +2130,7 @@ OutgoingTail.finalAngular d (y, eta) ^ 2 / 2)`. -/
     OutgoingTail.finalAngular d (y, eta) ^ 2 / 2)
 
 /-- Total energy, given by `∫ y, energyIntegrand d A eta y`. -/
-def totalEnergy (d : OutgoingTail.TailData) (A eta : ℝ) : ℝ :=
+@[expose] def totalEnergy (d : OutgoingTail.TailData) (A eta : ℝ) : ℝ :=
   ∫ y, energyIntegrand d A eta y
 
 /-- Tail energy, given by `∫ y in Ioi d.core.endpoint, Real.exp y * OutgoingTail.finalAngular d

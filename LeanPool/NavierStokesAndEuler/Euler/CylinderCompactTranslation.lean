@@ -61,7 +61,7 @@ theorem toLp_ae (A : CompactField P V) : A.toLp =ᵐ[liftMeasure P] A.field :=
   (A.continuous.memLp_of_hasCompactSupport A.compact).coeFn_toLp
 
 /-- Derivative, bundling `field`, `compact`, `smooth`. -/
-def derivative (A : CompactField P V) : CompactField P (LiftTangent →L[ℝ] V) where
+@[expose] def derivative (A : CompactField P V) : CompactField P (LiftTangent →L[ℝ] V) where
   field := fieldFDeriv P A.field
   compact := fieldFDeriv_compact P A.field A.compact
   smooth := fieldFDeriv_smooth P A.field A.smooth

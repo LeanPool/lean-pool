@@ -55,7 +55,7 @@ inductive BuilderPos (H : History) (X : Sequent) : Type where
   deriving DecidableEq
 
 /-- Game position where either Prover (`isLeft`) or Builder (`isRight`) should make a move. -/
-@[implicit_reducible]
+@[implicit_reducible, expose]
 def GamePos := Σ H X, (ProverPos H X ⊕ BuilderPos H X)
   deriving DecidableEq
 

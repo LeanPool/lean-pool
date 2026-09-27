@@ -5526,6 +5526,7 @@ def commonPurificationGenerator
 /--
 The common purification subspace construction used in the quantum parallel-repetition argument.
 -/
+@[expose]
 def commonPurificationSubspace
     {ι d : Type*} [Fintype d] [DecidableEq d]
     (F : ι → Matrix d d ℂ) (M : Matrix d d ℂ)

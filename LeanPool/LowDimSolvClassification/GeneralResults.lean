@@ -571,6 +571,7 @@ lemma binary_predicate_3_choose_2 {P : Fin 3 → Fin 3 → Prop} (h₀₁ : P 0 
 attribute [local instance 100] LieRing.ofAssociativeRing
 
 /-- `LinearMap.smulRight` as a Lie algebra homomorphism. -/
+@[expose]
 def LieHom.smulRight (f : End K L) : K →ₗ⁅K⁆ End K L := {
   LinearMap.smulRight (LinearMap.id : K →ₗ[K] K) f with
   map_lie' := by

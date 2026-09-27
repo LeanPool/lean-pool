@@ -719,6 +719,7 @@ theorem _root_.LieAlgebra.Dim3.Hyperbolic.ad_preserves_commutator (x : Hyperboli
   simp_all
 
 /-- TODO. -/
+@[expose]
 def _root_.LieAlgebra.Dim3.Hyperbolic.adRestr (x : Hyperbolic K) : (commutator K
     (Hyperbolic K)) →ₗ[K] (commutator K (Hyperbolic K)) :=
   LinearMap.restrict (adjoint x) (ad_preserves_commutator x)
@@ -973,6 +974,7 @@ theorem _root_.LieAlgebra.Dim3.Family.commutator_is_span_e₂e₃ (hα : α ≠ 
     · apply subset_span (R:=K) (M:=Family K α β) (s := {x | ∃ y z, ⁅y, z⁆ = x})
 
 /-- TODO. -/
+@[expose]
 def _root_.LieAlgebra.Dim3.Family.B (α β : K) : Fin 2 → Family K α β := ![e₂, e₃]
 
 theorem _root_.LieAlgebra.Dim3.Family.B_is_li_ambient : LinearIndependent K (M
@@ -1018,6 +1020,7 @@ lemma _root_.LieAlgebra.Dim3.Family.e₃_in_comm : e₃ ∈ commutator K (Family
     exact (this ⟨_, _, e₃_bracket⟩)
 
 /-- TODO. -/
+@[expose]
 noncomputable def _root_.LieAlgebra.Dim3.Family.commutatorBasis (α β : K) (hα : α ≠ 0) : Basis
     (Fin 2) K (commutator K (Family K α β)) := by
   -- Basis are ![0,1,0] and ![0,0,1]
@@ -1147,12 +1150,14 @@ theorem _root_.LieAlgebra.Dim3.Family.dim_commutator {hα : α ≠ 0} : finrank 
 theorem _root_.LieAlgebra.Dim3.Family.B_basis_0 {hα : α ≠ 0} : ((commutatorBasis α β hα) 0).val =
     (e₂ : Family K α β) := by
   simp only [commutatorBasis]
-  exact congrArg (fun x : commutator K (Family K α β) => x.val) (Basis.mk_apply _ _ 0)
+  exact congrArg (fun x : commutator K (Family K α β) => x.val)
+    (Basis.mk_apply (R := K) _ _ 0)
 
 theorem _root_.LieAlgebra.Dim3.Family.B_basis_1 {hα : α ≠ 0} : ((commutatorBasis α β hα) 1).val =
     (e₃ : Family K α β) := by
   simp only [commutatorBasis]
-  exact congrArg (fun x : commutator K (Family K α β) => x.val) (Basis.mk_apply _ _ 1)
+  exact congrArg (fun x : commutator K (Family K α β) => x.val)
+    (Basis.mk_apply (R := K) _ _ 1)
 
 theorem _root_.LieAlgebra.Dim3.Family.B_basis_repr {hα : α ≠ 0} {x : commutator K
     (Family K α β)} : (commutatorBasis α β hα).repr x = ![x.val 1, x.val 2] := by
@@ -1228,6 +1233,7 @@ theorem _root_.LieAlgebra.Dim3.Family.ad_pc (x : Family K α β) : ∀ y ∈ (co
   simpa only [ad_apply] using lie_mem_commutator x y
 
 /-- TODO. -/
+@[expose]
 def _root_.LieAlgebra.Dim3.Family.adRestr (x : Family K α β) : (commutator K
     (Family K α β)) →ₗ[K] (commutator K (Family K α β)) :=
   LinearMap.restrict (adjoint x) (ad_pc x)

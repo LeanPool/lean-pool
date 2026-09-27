@@ -56,6 +56,7 @@ abbrev CharacterSpace := PaperDualHaar.PaperCharacterSpace
 /--
 The `complexCharacter` construction used in the Connes rigidity formalization.
 -/
+@[expose]
 def complexCharacter (d : D) : C(CharacterSpace, ℂ) where
   toFun χ := (Additive.toMul χ (Multiplicative.ofAdd d) : ℂ)
   continuous_toFun := by
@@ -93,6 +94,7 @@ theorem complexCharacter_separates
 /--
 The `evaluationCharacter` construction used in the Connes rigidity formalization.
 -/
+@[expose]
 def evaluationCharacter (d : D) :
     PontryaginDual (Multiplicative CharacterSpace) where
   toMonoidHom :=

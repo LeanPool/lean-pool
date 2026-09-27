@@ -297,7 +297,7 @@ def realTest (ψ : Space → ℝ) (hψ : ContDiff ℝ ∞ ψ) (hcψ : HasCompact
     (hcψ.comp_left (g := fun r : ℝ => (r : ℂ)) (by simp))
 
 @[simp] theorem realTest_apply (ψ : Space → ℝ) (hψ : ContDiff ℝ ∞ ψ)
-    (hcψ : HasCompactSupport ψ) (x : Space) : realTest ψ hψ hcψ x = (ψ x : ℂ) := rfl
+    (hcψ : HasCompactSupport ψ) (x : Space) : realTest ψ hψ hcψ x = (ψ x : ℂ) := by rfl
 
 theorem realTest_compact (ψ : Space → ℝ) (hψ : ContDiff ℝ ∞ ψ)
     (hcψ : HasCompactSupport ψ) : HasCompactSupport (realTest ψ hψ hcψ : Space → ℂ) :=
@@ -2666,11 +2666,11 @@ def fluxTest (R : ℝ) (hR : 0 < R) (w : Space → Space) (hw : ContDiff ℝ ∞
 
 @[simp] theorem rTest_apply (R : ℝ) (hR : 0 < R) (w : Space → Space)
     (hw : ContDiff ℝ ∞ w) (x : Space) :
-    rTest R hR w hw x = (PressureFluxTest.cutoffTest R w x : ℂ) := rfl
+    rTest R hR w hw x = (PressureFluxTest.cutoffTest R w x : ℂ) := by rfl
 
 @[simp] theorem fluxTest_apply (R : ℝ) (hR : 0 < R) (w : Space → Space)
     (hw : ContDiff ℝ ∞ w) (x : Space) :
-    fluxTest R hR w hw x = (fderiv ℝ (ComparisonCutoffs.weight R) x (w x) : ℂ) := rfl
+    fluxTest R hR w hw x = (fderiv ℝ (ComparisonCutoffs.weight R) x (w x) : ℂ) := by rfl
 
 theorem fluxTest_eq_multiplier_rTest (R : ℝ) (hR : 0 < R) (w : Space → Space)
     (hw : ContDiff ℝ ∞ w) (x : Space) :
@@ -2702,7 +2702,7 @@ theorem canonicalCutoffFlux_eq_sum (R : ℝ) (hR : 0 < R) (u v : VelocityField) 
     (hu : ContDiff ℝ ∞ (fun x => u (t, x))) (hv : ContDiff ℝ ∞ (fun x => v (t, x))) :
     canonicalCutoffFlux R hR u v t hu hv =
       ∑ i : Fin 3, ∑ j : Fin 3, pressurePair i j (tensorDiff u v t i j)
-        (fluxTest R hR (fun x => (u - v) (t, x)) (hu.sub hv)) := rfl
+        (fluxTest R hR (fun x => (u - v) (t, x)) (hu.sub hv)) := by rfl
 
 theorem norm_canonicalCutoffFlux_le (R : ℝ) (hR : 0 < R) (u v : VelocityField) (t : ℝ)
     (hu : ContDiff ℝ ∞ (fun x => u (t, x))) (hv : ContDiff ℝ ∞ (fun x => v (t, x)))

@@ -414,7 +414,7 @@ theorem piUb_causeq : ∃ (h' : IsCauSeq abs piUb), Real.mk ⟨piUb, h'⟩ = Rea
   · linarith
 
 /-- Definition of `Pi`. -/
-noncomputable def Pi : ComputableℝSeq :=
+@[expose] noncomputable def Pi : ComputableℝSeq :=
   mk Real.pi
   (lub := fun n ↦ ⟨⟨piLb n, piUb n⟩,
     Rat.cast_le.mp <| (piLb_le_pi n).trans (piUb_ge_pi n)⟩)

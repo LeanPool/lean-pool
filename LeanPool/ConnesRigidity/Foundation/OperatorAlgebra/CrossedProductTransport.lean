@@ -39,6 +39,7 @@ variable {Ξ : Type w} [AddCommGroup Ξ] [TopologicalSpace Ξ] [MeasurableSpace 
 /--
 The `crossedHaarHilbertEquiv` construction used in the Connes rigidity formalization.
 -/
+@[expose]
 def crossedHaarHilbertEquiv
     {X : HaarProbabilityAction K Ω}
     {Y : HaarProbabilityAction K Ξ}

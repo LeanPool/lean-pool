@@ -339,7 +339,7 @@ theorem Module.Dual.pi_isTracial_iff {k : Type*} [Fintype k]
     simp [h _ _]
 
 /-- The modular star-algebra structure on matrices induced by a faithful positive functional. -/
-@[reducible]
+@[reducible, expose]
 noncomputable def Matrix.isStarAlgebra [hφ : φ.IsFaithfulPosMap] :
     starAlgebra (Matrix n n ℂ) where
   modAut := sig hφ
@@ -349,7 +349,7 @@ noncomputable def Matrix.isStarAlgebra [hφ : φ.IsFaithfulPosMap] :
       neg_neg, (Matrix.PosDef.rpow.isPosDef _ _).1.eq,
       mul_assoc]
 
-@[reducible, instance]
+@[reducible, instance, expose]
 noncomputable def Module.Dual.IsFaithfulPosMap.innerProductAlgebra [hφ : φ.IsFaithfulPosMap] :
     @InnerProductAlgebra (Matrix n n ℂ) (Matrix.isStarAlgebra (φ := φ)) := by
   letI : starAlgebra (Matrix n n ℂ) := Matrix.isStarAlgebra (φ := φ)
@@ -487,7 +487,7 @@ private theorem piSig_star (hψ : ∀ i, (ψ i).IsFaithfulPosMap)
     mul_assoc]
 
 /-- The modular star-algebra structure on a finite product of matrix blocks. -/
-@[reducible]
+@[reducible, expose]
 noncomputable def PiMat.isStarAlgebra [_hψ : ∀ i, (ψ i).IsFaithfulPosMap] :
     starAlgebra (PiMat ℂ k s) where
   modAut := piSig _hψ
@@ -496,7 +496,7 @@ noncomputable def PiMat.isStarAlgebra [_hψ : ∀ i, (ψ i).IsFaithfulPosMap] :
 
 
 -- attribute [-instance] Pi.module.Dual.isNormedAddCommGroupOfRing
-@[reducible, instance]
+@[reducible, instance, expose]
 noncomputable
 def Module.Dual.pi.IsFaithfulPosMap.innerProductAlgebra
   [∀ i, (ψ i).IsFaithfulPosMap] :

@@ -277,7 +277,7 @@ theorem oppositeCoord_mem_coordinateLines (t : M.Triangle) (k : Fin 3) :
   simp [coordinateLines]
 
 /-- Cut `M` by every coordinate hyperplane of `N`. -/
-noncomputable def refineTo (M N : TriangleMesh) : TriangleMesh :=
+@[expose] noncomputable def refineTo (M N : TriangleMesh) : TriangleMesh :=
   M.refineByLines N.coordinateLines
 
 theorem refineTo_support (N : TriangleMesh) :
@@ -478,7 +478,7 @@ theorem exists_target_triangle_of_refineTo_of_interior_inter_support
 /-- Cut `M` by every face line of `N`, then retain exactly the chambers whose interiors meet
 the support of `N`.  This is the unequal-support version of common refinement used in the local
 Radó weld. -/
-noncomputable def refineToSupport (N : TriangleMesh) : TriangleMesh :=
+@[expose] noncomputable def refineToSupport (N : TriangleMesh) : TriangleMesh :=
   by
     classical
     exact (M.refineTo N).restrictTriangles fun t ↦
@@ -601,7 +601,7 @@ namespace PlaneComplex
 variable (K : PlaneComplex)
 
 /-- Regard the two-dimensional faces of a plane complex as the maximal triangles of a mesh. -/
-noncomputable def toTriangleMesh : TriangleMesh where
+@[expose] noncomputable def toTriangleMesh : TriangleMesh where
   Vertex := K.Vertex
   position := K.position
   position_injective := K.position_injective

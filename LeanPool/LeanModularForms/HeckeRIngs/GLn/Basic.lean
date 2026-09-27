@@ -99,7 +99,7 @@ private lemma intMat_map_mul (A B : Matrix (Fin n) (Fin n) ℤ) :
 
 /-- The submonoid of `GL_n(ℚ)` consisting of invertible matrices with integer entries
     and positive determinant. This is Shimura's `Δ`. -/
-noncomputable def posDetIntSubmonoid : Submonoid (GL (Fin n) ℚ) where
+@[expose] noncomputable def posDetIntSubmonoid : Submonoid (GL (Fin n) ℚ) where
   carrier := {g | HasIntEntries n g ∧ 0 < (↑g : Matrix (Fin n) (Fin n) ℚ).det}
   one_mem' := ⟨hasIntEntries_one n, by simp⟩
   mul_mem' := fun ⟨ha, hda⟩ ⟨hb, hdb⟩ =>
@@ -356,7 +356,7 @@ lemma posDetInt_le_commensurator :
 
 /-- The standard arithmetic group pair for number theory:
     `SL_n(ℤ) ≤ Δ ≤ commensurator(SL_n(ℤ))` in `GL_n(ℚ)`. -/
-noncomputable def GLPair : HeckePair (GL (Fin n) ℚ) where
+@[expose] noncomputable def GLPair : HeckePair (GL (Fin n) ℚ) where
   H := SLnZSubgroup n
   Δ := posDetIntSubmonoid n
   h₀ := SLnZ_le_posDetInt n

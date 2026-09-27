@@ -21,7 +21,7 @@ noncomputable section
 namespace LeanPool.Besicovitch
 
 /-- Every admissible configuration at `s` has a compactified packing of nonnegative score. -/
-def SixPointFiniteProperty (s : ℝ) : Prop :=
+@[expose] def SixPointFiniteProperty (s : ℝ) : Prop :=
   ∀ configuration : SixPointConfiguration, configuration.IsAdmissibleAt s →
     ∃ packing : SixPointPacking configuration, 0 ≤ packing.score s
 

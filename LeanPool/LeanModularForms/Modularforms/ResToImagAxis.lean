@@ -48,14 +48,14 @@ end Function
 Function $F : \mathbb{H} \to \mathbb{C}$ whose restriction to the imaginary axis is real-valued,
 i.e. imaginary part is zero.
 -/
-@[fun_prop]
+@[fun_prop, expose]
 noncomputable def ResToImagAxis.Real (F : ℍ → ℂ) : Prop :=
   ∀ t : ℝ, 0 < t → (F.resToImagAxis t).im = 0
 
 /--
 Function $F : \mathbb{H} \to \mathbb{C}$ is real and positive on the imaginary axis.
 -/
-@[fun_prop]
+@[fun_prop, expose]
 noncomputable def ResToImagAxis.Pos (F : ℍ → ℂ) : Prop :=
   ResToImagAxis.Real F ∧ ∀ t : ℝ, 0 < t → 0 < (F.resToImagAxis t).re
 

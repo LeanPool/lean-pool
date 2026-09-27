@@ -132,8 +132,9 @@ theorem composed_solver_derivWithin_bound {g : Coeff → Coeff} {ε C : ℝ}
 
 theorem correction_parameter_derivWithin (P : Patch) {S : Set ℝ} {c : ℝ → Coeff} {η : ℝ}
     (huniq : UniqueDiffWithinAt ℝ S η) (hc : DifferentiableWithinAt ℝ c S η) (x : ℝ) :
-    derivWithin (fun θ => correction P (c θ) x) S η = correction P (derivWithin c S η) x :=
-  ((correctionCLM P x).hasFDerivAt.comp_hasDerivWithinAt η hc.hasDerivWithinAt).derivWithin huniq
+    derivWithin (fun θ => correction P (c θ) x) S η = correction P (derivWithin c S η) x := by
+  simpa only [Function.comp_def, correctionCLM_apply] using
+    ((correctionCLM P x).hasFDerivAt.comp_hasDerivWithinAt η hc.hasDerivWithinAt).derivWithin huniq
 
 /-- The constructed three-row inverse applies to a genuinely varying debt.
 The derivative estimate includes its actual first parameter derivative. -/
@@ -221,8 +222,9 @@ theorem exists_variable_compensation (P : Patch) (lam : ℝ) (hlam : 0 ≤ lam)
     refine ⟨hmul₀.trans hsize, hmul₁.trans hsize, ?_⟩
     have hadif : DifferentiableWithinAt ℝ a S η := (ha η hη).differentiableWithinAt (by simp)
     have hfd : HasDerivWithinAt (fun θ => correction P (c θ) x)
-        (correction P (derivWithin c S η) x) S η :=
-      (correctionCLM P x).hasFDerivAt.comp_hasDerivWithinAt η hcdif.hasDerivWithinAt
+        (correction P (derivWithin c S η) x) S η := by
+      simpa only [Function.comp_def, correctionCLM_apply] using
+        (correctionCLM P x).hasFDerivAt.comp_hasDerivWithinAt η hcdif.hasDerivWithinAt
     rw [(hadif.hasDerivWithinAt.fun_mul hfd).derivWithin (huniq η hη)]
     calc
       _ ≤ |derivWithin a S η * correction P (c η) x| +

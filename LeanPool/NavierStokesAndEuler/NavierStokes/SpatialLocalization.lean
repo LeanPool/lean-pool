@@ -342,7 +342,7 @@ theorem radialSquare_contDiff : ContDiff ℝ ∞ radialSquare :=
   ((projection 0).contDiff.pow 2).add ((projection 1).contDiff.pow 2)
 
 /-- A globally smooth profile in squared radius and axial position. -/
-noncomputable def cutoffProfile (p : ℝ × ℝ) : ℝ :=
+@[expose] noncomputable def cutoffProfile (p : ℝ × ℝ) : ℝ :=
   SmoothCutoffs.cutoff (16 * p.1) * SmoothCutoffs.cutoff (4 * p.2)
 
 theorem cutoffProfile_contDiff : ContDiff ℝ ∞ cutoffProfile :=
@@ -373,7 +373,7 @@ theorem spatialCutoff_rotation (θ : ℝ) (x : Space) :
   simp only [CylindricalResidual.frame_apply, AxisymmetricResidual.pack_two]
 
 /-- The closed support cylinder has radius `1/4` and height `1/2`. -/
-noncomputable def supportCylinder : Set Space :=
+@[expose] noncomputable def supportCylinder : Set Space :=
   {x | radialSquare x ≤ 1 / 16 ∧ |x 2| ≤ 1 / 4}
 
 theorem isClosed_supportCylinder : IsClosed supportCylinder :=

@@ -377,7 +377,7 @@ theorem productMask_all_jet_bounds (d m : ℕ) :
     rescale_jet_bound (productMask_smooth 1 0) hbound δ⁻¹ (fun j => (k j : ℝ)) x
 
 /-- Log coordinate, given by `-Real.log q / Real.log 2`. -/
-def logCoordinate (q : ℝ) : ℝ := -Real.log q / Real.log 2
+@[expose] def logCoordinate (q : ℝ) : ℝ := -Real.log q / Real.log 2
 
 theorem logCoordinate_window {q : ℝ} (hq : 0 < q) :
     logCoordinate q ∈ Ioo (-1 : ℝ) 1 ↔ q ∈ Ioo (1 / 2 : ℝ) 2 := by

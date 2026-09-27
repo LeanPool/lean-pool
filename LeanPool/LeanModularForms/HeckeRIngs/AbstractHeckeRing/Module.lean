@@ -40,7 +40,7 @@ noncomputable instance (priority := 1100) instSMul𝕋 : SMul (𝕋 P ℤ) (𝕋
   smul x y := y * x
 
 /-- The left coset represented by `β · i · g` in the orbit indexed by `i`. -/
-noncomputable def smulOrbitElement (g β : P.Δ) (i : decompQuot P g) :
+@[expose] noncomputable def smulOrbitElement (g β : P.Δ) (i : decompQuot P g) :
     HeckeLeftCoset P :=
   ⟦⟨(β : G) * (i.out : G) * (g : G),
     delta_mul_mem P.H P.Δ i.out β g P.h₀⟩⟧

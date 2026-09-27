@@ -936,7 +936,7 @@ namespace NumberField.Odlyzko
 variable (K : Type*) [Field K] [NumberField K] [IsTotallyComplex K]
 
 /-- A completed zeta moving circle bound used in the Odlyzko-bound argument. -/
-noncomputable def completedZetaMovingCircleBound (R t : ℝ) : ℝ :=
+@[expose] noncomputable def completedZetaMovingCircleBound (R t : ℝ) : ℝ :=
   max 1 <|
     poleClearedCompletedDedekindZetaVerticalBound K (2 - |R|) (2 + |R|) *
       (1 + |t| + |R|) ^ 2

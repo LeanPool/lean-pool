@@ -58,7 +58,7 @@ def coordinateVelocityPath : C(Icc (0 : ℝ) T, solenoidalSpace) :=
     exact hc.domRestrict⟩
 
 @[simp] theorem coordinateVelocityPath_apply (t : Icc (0 : ℝ) T) :
-    s.coordinateVelocityPath t = s.velocity t := rfl
+    s.coordinateVelocityPath t = s.velocity t := by rfl
 
 /-- This is a continuous representative of the actual L² coordinate velocity. -/
 theorem coordinateVelocityPath_ae :

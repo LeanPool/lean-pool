@@ -148,7 +148,7 @@ lemma curriedArgSwap_curriedArgSwap [LocallyCompactSpace A] [LocallyCompactSpace
   curriedArgSwap ∘ (curriedArgSwap (A := A) (B := B) (Y := Y)) = id := rfl
 
 /-- `curryLeft` -/
-def curryLeft (f : C(A × B, Y)) (b : B) : C(A, Y) where
+@[expose] def curryLeft (f : C(A × B, Y)) (b : B) : C(A, Y) where
   toFun a := f ⟨a, b⟩
   continuous_toFun := f.continuous.curry_left
 

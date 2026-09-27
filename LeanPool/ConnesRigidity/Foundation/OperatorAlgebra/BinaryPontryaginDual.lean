@@ -122,6 +122,7 @@ def characterAdd {M : Type*} [AddCommGroup M] [Module F M]
 
 /-- The linear form underlying a Pontryagin character. Paper: §3.
 -/
+@[expose]
 def characterLinear {M : Type*} [AddCommGroup M] [Module F M]
     [TopologicalSpace M]
     (χ : PontryaginDual (Multiplicative M)) : M →ₗ[F] F :=

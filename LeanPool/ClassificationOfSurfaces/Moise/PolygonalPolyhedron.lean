@@ -186,7 +186,7 @@ theorem closedRegion_subset_enclosingMesh_support :
     (closedBall_subset_enclosingTriangle J.enclosingRadius_pos)
 
 /-- The finite mesh obtained by cutting the enclosing triangle along every polygon edge line. -/
-noncomputable def arrangementMesh : TriangleMesh :=
+@[expose] noncomputable def arrangementMesh : TriangleMesh :=
   J.enclosingMesh.refineByLines J.edgeLines
 
 theorem arrangementMesh_support :
@@ -299,7 +299,7 @@ def IsInteriorArrangementTriangle (t : Finset J.arrangementMesh.Vertex) : Prop :
   interior (J.arrangementTriangleCarrier t) ⊆ J.interiorRegion
 
 /-- The finite mesh formed by all bounded-side arrangement chambers. -/
-noncomputable def closedRegionMesh : TriangleMesh :=
+@[expose] noncomputable def closedRegionMesh : TriangleMesh :=
   by
     classical
     exact J.arrangementMesh.restrictTriangles J.IsInteriorArrangementTriangle

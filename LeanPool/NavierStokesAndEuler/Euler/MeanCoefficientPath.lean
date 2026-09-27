@@ -40,7 +40,7 @@ synthesis. -/
 local instance instMeanCoefficientPath4 : NormedSpace ℝ (Space →ᵇ (Space →L[ℝ] V)) := inferInstance
 
 /-- Translate coefficient path as an element of `C(K, Space →ᵇ V)`. -/
-def translateCoefficientPath (A : C(K, Space →ᵇ V)) (a : Space) : C(K, Space →ᵇ V) :=
+@[expose] def translateCoefficientPath (A : C(K, Space →ᵇ V)) (a : Space) : C(K, Space →ᵇ V) :=
   (BoundedContinuousFunction.compContinuousCLM V ℝ
     ⟨fun x : Space => x+a, continuous_id.add continuous_const⟩).compLeftContinuous ℝ K A
 
@@ -107,6 +107,9 @@ def pathDerivativeBundling : C(K, Space →ᵇ (Space →L[ℝ] V)) →L[ℝ]
     (fun (A : C(K, Space →ᵇ (Space →L[ℝ] V))) => by
     change ‖pathDerivativeMap A‖ ≤ 1 * ‖A‖
     simpa only [one_mul] using pathDerivativeMap_norm_le A)
+
+@[simp] theorem pathDerivativeBundling_apply (A : C(K, Space →ᵇ (Space →L[ℝ] V))) :
+    pathDerivativeBundling A = pathDerivativeMap A := by rfl
 
 theorem translateCoefficientPath_taylor (A : C(K, Space →ᵇ V))
     (DA : C(K, Space →ᵇ (Space →L[ℝ] V)))

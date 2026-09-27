@@ -31,7 +31,7 @@ abbrev Word := List Letter
 abbrev Free := FreeGroup (Fin 2)
 
 /-- Reverse the orientation of a letter. -/
-def letterInv (x : Letter) : Letter := (x.1, !x.2)
+@[expose] def letterInv (x : Letter) : Letter := (x.1, !x.2)
 
 @[simp]
 theorem letterInv_letterInv (x : Letter) : letterInv (letterInv x) = x := by
@@ -42,10 +42,10 @@ theorem letterInv_letterInv (x : Letter) : letterInv (letterInv x) = x := by
 def wordInv (w : Word) : Word := FreeGroup.invRev w
 
 /-- Interpret a signed word as an element of the free group. -/
-def wordEval (w : Word) : Free := FreeGroup.mk w
+@[expose] def wordEval (w : Word) : Free := FreeGroup.mk w
 
 /-- Interpret one signed generator as an element of the free group. -/
-def letterEval (x : Letter) : Free :=
+@[expose] def letterEval (x : Letter) : Free :=
   if x.2 then FreeGroup.of x.1 else (FreeGroup.of x.1)⁻¹
 
 @[simp]
@@ -90,7 +90,7 @@ namespace InverseAutomaton
 variable {V : Type*} (G : InverseAutomaton V)
 
 /-- Execute a word from a starting state, stopping if a required edge is absent. -/
-def run (G : InverseAutomaton V) (v : V) : Word → Option V
+@[expose] def run (G : InverseAutomaton V) (v : V) : Word → Option V
   | [] => some v
   | x :: w => (G.next v x).bind fun u => G.run u w
 
@@ -205,7 +205,7 @@ theorem run_success_of_reduction (v : V) (w : Word) {t : V}
     G.run v (FreeGroup.reduce w) = some t :=
   G.run_success_of_red v (FreeGroup.reduce.red) hRun
 /-- The subgroup represented by all loops at the basepoint. -/
-def loopSubgroup : Subgroup Free where
+@[expose] def loopSubgroup : Subgroup Free where
   carrier := {g | ∃ w : Word, wordEval w = g ∧ G.Walk G.base w G.base}
   one_mem' := by
     exact ⟨[], by simpa [wordEval] using FreeGroup.one_eq_mk.symm, Walk.nil G.base⟩

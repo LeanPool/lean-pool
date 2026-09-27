@@ -38,10 +38,10 @@ def restrictOperator {p q : ℕ} (h : q ≤ p) : SobolevSpace period p →L[ℝ]
 
 @[simp] theorem restrictOperator_apply {p q : ℕ} (h : q ≤ p) (u : SobolevSpace period p) (w :
     SobolevWord q) :
-    (restrictOperator period h u).val w = u.val (restrictIndex h w) := rfl
+    (restrictOperator period h u).val w = u.val (restrictIndex h w) := by rfl
 
 @[simp] theorem value_restrictOperator {p q : ℕ} (h : q ≤ p) (u : SobolevSpace period p) :
-    value period (restrictOperator period h u) = value period u := rfl
+    value period (restrictOperator period h u) = value period u := by rfl
 
 theorem restrictOperator_bound {p q : ℕ} (h : q ≤ p) (u : SobolevSpace period p) :
     ‖restrictOperator period h u‖ ≤ ‖u‖ := by
@@ -66,13 +66,13 @@ theorem restrictOperator_bound {p q : ℕ} (h : q ≤ p) (u : SobolevSpace perio
     restrictOperator period h (truncateOperator period p u) = restrictOperator period (by
         omega : q ≤ p+1) u := by
   apply value_injective period
-  rfl
+  simp only [value_restrictOperator, value_truncateOperator]
 
 @[simp] theorem truncate_restrictOperator {p q : ℕ} (h : q + 1 ≤ p) (u : SobolevSpace period p) :
     truncateOperator period q (restrictOperator period h u) = restrictOperator period (by
         omega : q ≤ p) u := by
   apply value_injective period
-  rfl
+  simp only [value_restrictOperator, value_truncateOperator]
 
 /-- Actual restriction and spatial differentiation commute. -/
 theorem restrictOperator_derivative {p q : ℕ} (h : q ≤ p) (i : Fin 4) (u : SobolevSpace period
@@ -80,6 +80,7 @@ theorem restrictOperator_derivative {p q : ℕ} (h : q ≤ p) (i : Fin 4) (u : S
     restrictOperator period h (derivativeOperator period p i u) =
       derivativeOperator period q i (restrictOperator period (Nat.succ_le_succ h) u) := by
   apply value_injective period
+  simp only [value, restrictOperator_apply, derivativeOperator_apply]
   rfl
 
 /-- Restriction commutes with every genuine cylinder translation. -/
@@ -88,6 +89,6 @@ theorem restrictOperator_translation {p q : ℕ} (h : q ≤ p) (a : LiftDomain p
     restrictOperator period h (sobolevTranslation period p a u) =
       sobolevTranslation period q a (restrictOperator period h u) := by
   apply value_injective period
-  rfl
+  simp only [value_restrictOperator, value_sobolevTranslation]
 
 end EulerCylinderSobolevSpace

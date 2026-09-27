@@ -30,6 +30,7 @@ variable {G : Type u} [Group G]
   {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 
 /-- Vectors fixed by a subgroup under a unitary representation. Paper: §4. -/
+@[expose]
 def normalFixedSubmodule (N : Subgroup G)
     (π : UnitaryRepresentation G K) : Submodule ℂ K where
   carrier := {x : K | ∀ n : N, (π (n : G) : K →L[ℂ] K) x = x}
@@ -197,6 +198,7 @@ theorem normalFixedQuotientRepresentation_apply_mk
 The `normalFixedOrthogonalLinearIsometryEquiv` construction used in the
 Connes rigidity formalization.
 -/
+@[expose]
 def normalFixedOrthogonalLinearIsometryEquiv (g : G) :
     (normalFixedSubmodule N π)ᗮ ≃ₗᵢ[ℂ]
       (normalFixedSubmodule N π)ᗮ where
@@ -223,6 +225,7 @@ def normalFixedOrthogonalLinearIsometryEquiv (g : G) :
   norm_map' x := Unitary.norm_map (π g) (x : K)
 
 /-- The restricted representation on the orthogonal complement. Paper: §4. -/
+@[expose]
 def normalFixedOrthogonalRepresentation :
     UnitaryRepresentation G ((normalFixedSubmodule N π)ᗮ) where
   toFun g := Unitary.linearIsometryEquiv.symm

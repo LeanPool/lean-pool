@@ -54,10 +54,10 @@ noncomputable def upLift (d : ℕ) : LiftPoint →L[ℝ] LiftPoint :=
     (CommonCoverSolve.coverPower d : Plane →L[ℝ] Plane)
 
 @[simp] theorem downLift_apply (d : ℕ) (y : LiftPoint) :
-    downLift d y = (y.1, (CommonCoverSolve.coverPower d).symm y.2) := rfl
+    downLift d y = (y.1, (CommonCoverSolve.coverPower d).symm y.2) := by rfl
 
 @[simp] theorem upLift_apply (d : ℕ) (y : LiftPoint) :
-    upLift d y = (y.1, CommonCoverSolve.coverPower d y.2) := rfl
+    upLift d y = (y.1, CommonCoverSolve.coverPower d y.2) := by rfl
 
 theorem up_down (d : ℕ) (y : LiftPoint) : upLift d (downLift d y) = y := by simp
 theorem down_up (d : ℕ) (y : LiftPoint) : downLift d (upLift d y) = y := by simp
@@ -626,14 +626,14 @@ noncomputable def polarCarrier (c : CarrierData) (k : ℝ) (j : ℤ) (ε : ℝ)
   PhaseCalculus.harmonic k j ε c.angular c.axial c.radial c.F c.G ((rθ.1, zt), (rθ.2, v))
 
 @[simp] theorem withChart_chart (c : CarrierData) (i : PolarCharts.Index) :
-    (c.withChart i).chart = i := rfl
+    (c.withChart i).chart = i := by rfl
 
 @[simp] theorem withChart_center (c : CarrierData) (i : PolarCharts.Index) :
-    (c.withChart i).center = c.center := rfl
+    (c.withChart i).center = c.center := by rfl
 
 @[simp] theorem polarCarrier_withChart (c : CarrierData) (i : PolarCharts.Index)
     (k : ℝ) (j : ℤ) (ε : ℝ) (zt : ℝ × ℝ) (v : ℝ) :
-    polarCarrier (c.withChart i) k j ε zt v = polarCarrier c k j ε zt v := rfl
+    polarCarrier (c.withChart i) k j ε zt v = polarCarrier c k j ε zt v := by rfl
 
 theorem polarCarrier_periodic (c : CarrierData) (k : ℝ) (j : ℤ) (ε : ℝ)
     (zt : ℝ × ℝ) (v : ℝ) (m : ℤ) (hkp : k * c.angular = (m : ℝ)) :
@@ -651,7 +651,8 @@ theorem commonWave_polar (a h : ℝ) (n d : ℕ) (r0 : ℝ) (c : CarrierData)
         (PolarCharts.chart a c.chart (PhysicalGraphBounds.scaledRadial n w)) := by
   unfold commonWave CarrierData.phase PhysicalGraphBounds.liftedPhase
   rw [Function.comp_apply, PhysicalGraphBounds.character_phase_eq_harmonic,
-    PhysicalGraphBounds.slotMap_formula, PhysicalGraphBounds.liftXY_physicalLift]
+    PhysicalGraphBounds.slotMap_formula, PhysicalGraphBounds.liftXY_physicalLift,
+    PhysicalGraphBounds.slotTime_eq_nativeGraph]
   rfl
 
 theorem commonWave_charts_agree {a : ℝ} (ha : 0 < a) (h : ℝ) (n d : ℕ) (r0 : ℝ)
@@ -991,7 +992,7 @@ noncomputable def realCoordinate (i : Fin 3) : ℂ →L[ℝ] Space :=
   Complex.reCLM.smulRight (coordinateVector i)
 
 @[simp] theorem realCoordinate_apply (i : Fin 3) (z : ℂ) :
-    realCoordinate i z = z.re • coordinateVector i := rfl
+    realCoordinate i z = z.re • coordinateVector i := by rfl
 
 theorem norm_realCoordinate_le (i : Fin 3) : ‖realCoordinate i‖ ≤ 1 := by
   refine ContinuousLinearMap.opNorm_le_bound _ zero_le_one ?_

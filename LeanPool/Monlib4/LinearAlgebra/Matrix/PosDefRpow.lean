@@ -34,6 +34,7 @@ theorem _root_.Matrix.IsHermitian.eigenvectorMatrix_conjTranspose_mul {A : Matri
   exact UnitaryGroup.star_mul_self _
 
 /-- Real powers of a Hermitian matrix, defined by spectral calculus. -/
+@[expose]
 noncomputable def _root_.Matrix.IsHermitian.rpow {Q : Matrix n n 𝕜}
     (hQ : IsHermitian Q) (r : ℝ) :
     Matrix n n 𝕜 :=

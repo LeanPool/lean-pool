@@ -43,6 +43,7 @@ noncomputable instance : Countable SL3 := by
   infer_instance
 
 /-- Countable discrete acting-group carrier. Paper: §§4, 5. -/
+@[expose]
 noncomputable def sl3Group : CountableDiscreteGroup where
   Carrier := SL3
   group := inferInstance

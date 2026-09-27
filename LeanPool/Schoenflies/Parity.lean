@@ -472,7 +472,7 @@ theorem add_self_zmod_two (x : ZMod 2) : x + x = 0 := by
 every `ZMod 2`-valued function of the ends sums to zero over the list — which is exactly what
 the parity argument consumes, and which `isClosedChain_edgesOf` supplies for a cyclic vertex
 list. -/
-def IsClosedChain (L : List Piece) : Prop :=
+@[expose] def IsClosedChain (L : List Piece) : Prop :=
   ∀ f : Plane → ZMod 2, (L.map (fun P => f P.1 + f P.2)).sum = 0
 
 theorem isClosedChain_nil : IsClosedChain [] := fun _ => by simp

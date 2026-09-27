@@ -180,7 +180,7 @@ theorem midpointEvalAffine_facePoint
   simpa only [← K.midpointEval_val] using K.midpointEval_facePoint s w
 
 /-- A mesh bound measured after transporting each refined face into the original realization. -/
-def Subdivision.MeshLE {K : IntrinsicTwoComplex} (R : K.Subdivision) (d : ℝ) : Prop :=
+@[expose] def Subdivision.MeshLE {K : IntrinsicTwoComplex} (R : K.Subdivision) (d : ℝ) : Prop :=
   ∀ t ∈ R.refined.faces, ∀ x ∈ R.refined.faceCarrier t,
     ∀ y ∈ R.refined.faceCarrier t, dist (R.homeo x) (R.homeo y) ≤ d
 
@@ -398,7 +398,7 @@ theorem Subdivision.refl_meshLE (K : IntrinsicTwoComplex) :
   constructor <;> linarith
 
 /-- The `n`-fold intrinsic midpoint subdivision. -/
-noncomputable def iteratedMidpointSubdivision (K : IntrinsicTwoComplex) :
+@[expose] noncomputable def iteratedMidpointSubdivision (K : IntrinsicTwoComplex) :
     (n : ℕ) → K.Subdivision
   | 0 => Subdivision.refl K
   | n + 1 =>

@@ -100,6 +100,10 @@ def ofJet {q : ℕ} {f : LiftL2 period} (J : SpatialJet period standardDirection
   intro e
   exact J.word_hasDerivAt e.1.isLt e.2.1 e.2.2
 
+@[simp] theorem ofJet_apply {q : ℕ} {f : LiftL2 period}
+    (J : SpatialJet period standardDirection q f) (w : SobolevWord q) :
+    (ofJet period J).val w = J.word w.2 := by rfl
+
 /-- The underlying field of the array constructed from a jet is unchanged. -/
 @[simp]
 theorem value_ofJet {q : ℕ} {f : LiftL2 period} (J : SpatialJet period standardDirection q f) :

@@ -216,7 +216,7 @@ theorem derivative_neg_of_regular_source {f : ℝ → ℝ} {R L : ℝ}
   linarith
 
 /-- Entrance set, constructed using `Icc`. -/
-def entranceSet : Set (ℝ × ℝ) := Icc (0 : ℝ) (41 / 10) ×ˢ Icc (-1 : ℝ) 1
+@[expose] def entranceSet : Set (ℝ × ℝ) := Icc (0 : ℝ) (41 / 10) ×ˢ Icc (-1 : ℝ) 1
 
 instance : CompactSpace entranceSet :=
   isCompact_iff_compactSpace.mp (isCompact_Icc.prod isCompact_Icc)
@@ -237,7 +237,7 @@ abbrev CoefficientPair (ε : ℝ) :=
 
 /-- The finite jets needed by the angular source, including the genuine
 bounded average operator. -/
-def sourceJets {ε : ℝ} (hε : 0 < ε) (x : CoefficientPair ε) (p : ℝ × ℝ) : Fin 6 → ℝ :=
+@[expose] def sourceJets {ε : ℝ} (hε : 0 < ε) (x : CoefficientPair ε) (p : ℝ × ℝ) : Fin 6 → ℝ :=
   ![AxisEvaluation.mixedSeries window ε x.1 0 0 p,
     AxisEvaluation.mixedSeries window ε x.1 1 0 p,
     AxisEvaluation.mixedSeries window ε x.1 0 1 p,
@@ -601,7 +601,7 @@ theorem sourceJets_eq {ε : ℝ} (hε : 0 < ε) (x : CoefficientPair ε)
 
 /-- Angular field, given by `angularProfile (realAmplitude h j σ Λ C) Λ (AxisEvaluation.profile
 window ε x.1)`. -/
-noncomputable def angularField (h j σ Λ C : ℝ) {ε : ℝ} (x : CoefficientPair ε) :
+@[expose] noncomputable def angularField (h j σ Λ C : ℝ) {ε : ℝ} (x : CoefficientPair ε) :
     ℝ × ℝ → ℝ := angularProfile (realAmplitude h j σ Λ C) Λ
       (AxisEvaluation.profile window ε x.1)
 

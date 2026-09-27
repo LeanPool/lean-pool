@@ -52,7 +52,7 @@ instance [n : Nonempty M] : Nonempty (Structure L M) := by
   exact ⟨{ func := fun _ _ _ => x, rel := fun _ _ _ => True }⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
-@[reducible]
+@[reducible, expose]
 protected def lMap (φ : L₁ →ᵥ L₂) {M : Type w} (S : Structure L₂ M) : Structure L₁ M where
   func := fun _ f => S.func (φ.func f)
   rel := fun _ r => S.rel (φ.rel r)
@@ -68,7 +68,8 @@ variable (φ : L₁ →ᵥ L₂) {M : Type w} (s₂ : Structure L₂ M)
 
 /-- Imported declaration from the Incompleteness formalization. -/
 @[reducible]
-def ofEquiv {M : Type w} [Structure L M] {N : Type w'} (Θ : M ≃ N) : Structure L N where
+@[expose] def ofEquiv {M : Type w} [Structure L M] {N : Type w'}
+    (Θ : M ≃ N) : Structure L N where
   func := fun _ f v => Θ (func f (Θ.symm ∘ v))
   rel  := fun _ r v => rel r (Θ.symm ∘ v)
 
@@ -80,7 +81,7 @@ noncomputable instance [Structure L M] :
     Structure.Decidable L M := fun r v => Classical.dec (rel r v)
 
 /-- Imported declaration from the Incompleteness formalization. -/
-@[reducible] def toStruc [i : Nonempty M] (s : Structure L M) : Struc L := ⟨M, i, s⟩
+@[reducible, expose] def toStruc [i : Nonempty M] (s : Structure L M) : Struc L := ⟨M, i, s⟩
 
 end Structure
 

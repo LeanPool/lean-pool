@@ -73,7 +73,7 @@ noncomputable section
 
 /-- Simple pole decomposition: f(z) = c/(z-z₀) + g(z) near z₀
 with g analytic. -/
-def HasSimplePoleAt (f : ℂ → ℂ) (z₀ : ℂ) : Prop :=
+@[expose] def HasSimplePoleAt (f : ℂ → ℂ) (z₀ : ℂ) : Prop :=
   ∃ c : ℂ, ∃ g : ℂ → ℂ, AnalyticAt ℂ g z₀ ∧
     ∀ᶠ z in 𝓝[≠] z₀, f z = c / (z - z₀) + g z
 

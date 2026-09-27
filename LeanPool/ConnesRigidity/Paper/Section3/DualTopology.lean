@@ -245,6 +245,7 @@ Paper: §3.
 /--
 The `characterFiberShearMul` construction used in the Connes rigidity formalization.
 -/
+@[expose]
 def characterFiberShearMul (χ : CharacterSpace) :
     PontryaginDual (Multiplicative D) :=
   PaperDualHaar.linearCharacter (shearedLinear χ)
@@ -273,6 +274,7 @@ theorem continuous_characterFiberShearMul :
 /--
 The `characterFiberShear` construction used in the Connes rigidity formalization.
 -/
+@[expose]
 def characterFiberShear (χ : CharacterSpace) : CharacterSpace :=
   Additive.ofMul (characterFiberShearMul χ)
 

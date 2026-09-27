@@ -523,6 +523,7 @@ theorem exists_normalized_repair (P : Patch) (b : ℝ) (hb : GoodExponent b) :
 /-- Physical U, given by `G + A * u P c x`. -/
 noncomputable def physicalU (P : Patch) (A G : ℝ) (c : Coeff) (x : ℝ) : ℝ := G + A * u P c x
 /-- Physical E, given by `A * (x ^ b + e P c x)`. -/
+@[expose]
 noncomputable def physicalE (P : Patch) (b A : ℝ) (c : Coeff) (x : ℝ) : ℝ := A * (x ^ b + e P c x)
 
 /-- Physical density as an element of `Debt`. -/
@@ -535,7 +536,7 @@ noncomputable def physicalDensity (P : Patch) (b A G : ℝ) (c : Coeff) (x : ℝ
     (physicalE P b A c x ^ 2 - (A * x ^ b) ^ 2) / (2 * x)]
 
 /-- Physical moments, defined pointwise by `∫ x, physicalDensity P b A G c x i`. -/
-noncomputable def physicalMoments (P : Patch) (b A G : ℝ) (c : Coeff) : Debt :=
+@[expose] noncomputable def physicalMoments (P : Patch) (b A G : ℝ) (c : Coeff) : Debt :=
   fun i => ∫ x, physicalDensity P b A G c x i
 
 /-- Physical debt as an element of `Debt`. -/

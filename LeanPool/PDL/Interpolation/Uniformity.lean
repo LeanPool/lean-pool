@@ -67,11 +67,11 @@ def Sequent.leftOnly (X : Sequent) : Sequent := ⟨X.1, ∅, X.2.2⟩
 is on the right, i.e. in the situation of a `LoadedCluster`, this is the *unloaded*
 component `Λ₁` of the node, and `Sequent.leftFree X |>.basic` says that no local rule is
 applicable to it. -/
-def Sequent.leftFree (X : Sequent) : Sequent := ⟨X.1, ∅, none⟩
+@[expose] def Sequent.leftFree (X : Sequent) : Sequent := ⟨X.1, ∅, none⟩
 
 /-- The right component of a sequent, without any loaded formula. When the loaded formula
 is on the left this is the *unloaded* component `Λ₂` of the node. -/
-def Sequent.rightFree (X : Sequent) : Sequent := ⟨∅, X.2.1, none⟩
+@[expose] def Sequent.rightFree (X : Sequent) : Sequent := ⟨∅, X.2.1, none⟩
 
 /-- Two local rule applications use the same rule with the same principal formulas.
 The fields `Lcond`, `Rcond` and `Ocond` are the principal formulas and `ress` is the list

@@ -160,7 +160,7 @@ be assumed to preserve continuity of the constructed boundary tensors. -/
 noncomputable def nearestIndex (x : Space) : Fin 3 → ℤ := fun i => round (x i)
 
 /-- Representative, given by `x - CompactForceDecay.integerShift (nearestIndex x)`. -/
-noncomputable def representative (x : Space) : Space :=
+@[expose] noncomputable def representative (x : Space) : Space :=
   x - CompactForceDecay.integerShift (nearestIndex x)
 
 theorem representative_mem_innerCube (x : Space) :

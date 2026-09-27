@@ -68,6 +68,7 @@ noncomputable def vStarDualEquiv : Module.Dual k VStar ≃ₗ[k] V :=
 /--
 The `transposeToDual` construction used in the Connes rigidity formalization.
 -/
+@[expose]
 def transposeToDual : (A →ₗ[k] V) →ₗ[k]
     (VStar →ₗ[k] Module.Dual k A) where
   toFun f :=
@@ -136,6 +137,7 @@ theorem transposeFromDual_right_inverse
 /--
 The `transposeEquiv` construction used in the Connes rigidity formalization.
 -/
+@[expose]
 noncomputable def transposeEquiv : (A →ₗ[k] V) ≃ₗ[k]
     (VStar →ₗ[k] Module.Dual k A) :=
   LinearEquiv.ofLinearMap transposeToDual transposeFromDual
@@ -145,6 +147,7 @@ noncomputable def transposeEquiv : (A →ₗ[k] V) ≃ₗ[k]
 /--
 The `dualTensorToPartial` construction used in the Connes rigidity formalization.
 -/
+@[expose]
 def dualTensorToPartial : Module.Dual k AVStar →ₗ[k]
     (VStar →ₗ[k] Module.Dual k A) where
   toFun f :=
@@ -211,6 +214,7 @@ theorem partialToDual_right_inverse
 /--
 The `dualTensorPartialEquiv` construction used in the Connes rigidity formalization.
 -/
+@[expose]
 noncomputable def dualTensorPartialEquiv : Module.Dual k AVStar ≃ₗ[k]
     (VStar →ₗ[k] Module.Dual k A) :=
   LinearEquiv.ofLinearMap dualTensorToPartial partialToDual
@@ -220,6 +224,7 @@ noncomputable def dualTensorPartialEquiv : Module.Dual k AVStar ≃ₗ[k]
 /--
 The `avDualEquiv` construction used in the Connes rigidity formalization.
 -/
+@[expose]
 noncomputable def avDualEquiv : Module.Dual k AVStar ≃ₗ[k] A →ₗ[k] V :=
   dualTensorPartialEquiv.trans transposeEquiv.symm
 

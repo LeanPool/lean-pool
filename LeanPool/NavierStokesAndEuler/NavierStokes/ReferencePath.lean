@@ -32,7 +32,7 @@ open scoped Topology ContDiff
 open ProfileHistories
 
 /-- Full strip, bundling `carrier`, `isOpen`, `scale_mem`. -/
-def fullStrip (J : Set ℝ) (hJ : IsOpen J) : RadialDomain where
+@[expose] def fullStrip (J : Set ℝ) (hJ : IsOpen J) : RadialDomain where
   carrier := univ ×ˢ J
   isOpen := isOpen_univ.prod hJ
   scale_mem := fun _ hp _ _ => ⟨mem_univ _, hp.2⟩
@@ -481,7 +481,7 @@ theorem le_logTime_iff {X t : ℝ} (hX : 0 < X) :
   rw [mul_comm]
 
 /-- The radial domain of the extended profiles has no upper radial endpoint. -/
-def radialDomain : RadialDomain where
+@[expose] def radialDomain : RadialDomain where
   carrier := {p | -20 < N.scale * p.1 ∧ p.2 ∈ parameterInterval}
   isOpen := (isOpen_lt continuous_const (continuous_const.mul continuous_fst)).inter
     (parameterInterval_open.preimage continuous_snd)
@@ -650,7 +650,7 @@ theorem refU_frozen {δ : ℝ} (hδ : 0 < δ) (hδT : 2 * δ < rampLimit)
       (p := (N.logTime p.1, p.2)) hη ((N.le_logTime_iff hp).2 hX)]
 
 /-- Actual pressure, moments, and lag variables are recomputed from REF. -/
-def histories {δ : ℝ} (hδ : 0 < δ) (hδT : 2 * δ < rampLimit)
+@[expose] def histories {δ : ℝ} (hδ : 0 < δ) (hδT : 2 * δ < rampLimit)
     (P0 : ℝ → ℝ) (hP0 : ContDiff ℝ ∞ P0) : ProfileHistories.Profiles N.radialDomain where
   f := N.refF δ
   U := N.refU δ

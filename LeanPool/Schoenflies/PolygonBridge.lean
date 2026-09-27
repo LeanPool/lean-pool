@@ -149,7 +149,7 @@ private theorem det_rot₃ (a b c : Plane) : det (a - c) (b - a) = det (b - a) (
 /-- **A triangle is a simple closed polygon.** Any three points that are not collinear, taken
 in that cyclic order. `edges_meet` holds because two of the three edges always share exactly
 one endpoint, and `corner` because the orientation form is what nonzero says. -/
-def triangle (h : det (b - a) (c - a) ≠ 0) : ClosedPolygon 0 where
+@[expose] def triangle (h : det (b - a) (c - a) ≠ 0) : ClosedPolygon 0 where
   vertex := ![a, b, c]
   vertex_inj := by
     have hab : a ≠ b := by

@@ -1324,6 +1324,7 @@ theorem johnsonWindowBasis_dot_coupled
       (h.complementResidual_bound source) a) b
 
 /-- The adjacent Johnson channel matrix indexed by shell-window harmonic coordinates. -/
+@[expose]
 def johnsonWindowChannelMatrix {n w p q L : ℕ}
     (h : AdmissibleDegrees n w p q L)
     (hstrict : 2 * w < n)
@@ -1515,6 +1516,7 @@ theorem johnsonWindowChannelMatrix_transpose_mul
     ring
 
 /-- The shell-window channel matrix reindexed by the total Johnson ambient dimension. -/
+@[expose]
 def johnsonChannelMatrix {n w p q L : ℕ}
     (h : AdmissibleDegrees n w p q L)
     (hstrict : 2 * w < n)
@@ -4314,7 +4316,7 @@ namespace HigherHierarchy
   Real.sqrt (u * (1 + u)) / (1 + 2 * u)
 
 /-- The interlacing used in the spherical-code argument. -/
-def Interlacing {r : ℕ}
+@[expose] def Interlacing {r : ℕ}
     (a : Fin (r + 1) → ℝ) (b : Fin r → ℝ) : Prop :=
   0 ≤ a (Fin.last r) ∧
     ∀ i : Fin r, a i.castSucc > b i ∧ b i > a i.succ

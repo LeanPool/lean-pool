@@ -25,7 +25,7 @@ open scoped ENNReal Topology
 namespace LeanPool.Besicovitch
 
 /-- The compact core together with all convex pieces attached along selected holes. -/
-def compactAttachmentUnion (F : Set (EuclideanSpace ℝ (Fin 2)))
+@[expose] def compactAttachmentUnion (F : Set (EuclideanSpace ℝ (Fin 2)))
     (chosen : Set (Set (EuclideanSpace ℝ (Fin 2)))) :
     Set (EuclideanSpace ℝ (Fin 2)) :=
   F ∪ ⋃ V : chosen, convexAttachment F (V : Set (EuclideanSpace ℝ (Fin 2)))

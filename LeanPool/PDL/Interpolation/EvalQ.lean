@@ -240,7 +240,7 @@ unloaded formula. For a free sequent we return `([], ⊥)`, which is never used.
 @[expose] def loadedFma (X : Sequent) : Formula := X.loadedSplit.2
 
 /-- The sequent has its loaded formula on the right, as all `Δ ∈ Λ₂[C]` do. -/
-def isRightLoaded (X : Sequent) : Prop := ∃ nlf, X.O = some (Sum.inr nlf)
+@[expose] def isRightLoaded (X : Sequent) : Prop := ∃ nlf, X.O = some (Sum.inr nlf)
 
 end Sequent
 

@@ -228,7 +228,8 @@ structure RootedFrame extends Kripke.Frame where
 section «lp_section_4»
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def _root_.LO.Modal.Kripke.Frame.PointGenerated (F : Kripke.Frame) (r : F.World) :
+@[expose] def _root_.LO.Modal.Kripke.Frame.PointGenerated
+    (F : Kripke.Frame) (r : F.World) :
     Kripke.RootedFrame where
   World := { w | w = r ∨ r ≺ w }
   Rel x y := x.1 ≺ y.1
@@ -279,7 +280,8 @@ add_decl_doc LO.Modal.Kripke.RootedModel.toRootedFrame
 
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def _root_.LO.Modal.Kripke.Model.PointGenerated (M : Kripke.Model) (r : M.World) :
+@[expose] def _root_.LO.Modal.Kripke.Model.PointGenerated
+    (M : Kripke.Model) (r : M.World) :
     Kripke.RootedModel :=
   letI rF := M.toFrame↾r;
   {

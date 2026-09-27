@@ -24,6 +24,7 @@ open Bornology Set
 namespace LeanPool.Besicovitch
 
 /-- The compact convex piece attached to the core near a selected hole. -/
+@[expose]
 def convexAttachment (F V : Set (EuclideanSpace ℝ (Fin 2))) : Set (EuclideanSpace ℝ (Fin 2)) :=
   closure (convexHull ℝ (F ∩ diameterThickening 2 V))
 

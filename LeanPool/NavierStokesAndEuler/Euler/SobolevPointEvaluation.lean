@@ -88,6 +88,9 @@ def pointEvaluation (x : LiftDomain period) : SobolevSpace period 3 →L[ℝ] Ve
     SobolevSpace period 3 →ₗ[ℝ] Vector3).mkContinuous (sobolevEmbeddingConstant period 3)
       (fun u => representative_bound period u x)
 
+@[simp] theorem pointEvaluation_apply (x : LiftDomain period) (u : SobolevSpace period 3) :
+    pointEvaluation period x u = representative period u x := by rfl
+
 /-- The bounded evaluation operator returns the value of every actual continuous representative. -/
 theorem pointEvaluation_eq (x : LiftDomain period) (u : SobolevSpace period 3)
     (g : LiftDomain period → Vector3) (hg : Continuous g)

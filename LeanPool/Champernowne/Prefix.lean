@@ -20,7 +20,7 @@ long block computes the same digit as `champDigit`, and `champPrefix`
 (see `Defs.lean`).
 -/
 
-@[expose] public section
+public section
 
 namespace Champernowne
 

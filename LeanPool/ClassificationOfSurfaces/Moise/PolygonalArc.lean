@@ -112,14 +112,14 @@ theorem segmentFamilyChain_vertex_odd {I : Type*} [Fintype I]
     (segmentFamilyIndex left right i).castSucc =
       ⟨2 * (Fintype.equivFin I i).val, by
         change 2 * (Fintype.equivFin I i).val < 2 * Fintype.card I + 1
-        omega⟩ := rfl
+        omega⟩ := by rfl
 
 @[simp] theorem segmentFamilyIndex_succ {I : Type*} [Fintype I]
     (left right : I → Plane) (i : I) :
     (segmentFamilyIndex left right i).succ =
       ⟨2 * (Fintype.equivFin I i).val + 1, by
         change 2 * (Fintype.equivFin I i).val + 1 < 2 * Fintype.card I + 1
-        omega⟩ := rfl
+        omega⟩ := by rfl
 
 /-- The segment at the distinguished even index is exactly the requested family member. -/
 theorem segmentFamilyChain_segment {I : Type*} [Fintype I]
@@ -283,7 +283,7 @@ noncomputable def enclosingMesh : TriangleMesh :=
     (PolygonalCircle.enclosingTriangleVertices_affineIndependent B.enclosingRadius_pos)
 
 /-- The finite line arrangement resolving every segment crossing and chain vertex. -/
-noncomputable def arrangementMesh : TriangleMesh :=
+@[expose] noncomputable def arrangementMesh : TriangleMesh :=
   B.enclosingMesh.refineByLines B.arrangementLines
 
 theorem arrangementMesh_support :
@@ -581,7 +581,7 @@ theorem position_mem_support_of_mem_walk {u v w : K.Vertex}
 
 /-- The induced subcomplex on the vertices satisfying `p`.  Vertices outside `p` remain in the
 ambient finite type but occur in no face; `PlaneComplex.active` can remove them when desired. -/
-noncomputable def inducedBy (p : K.Vertex → Prop) : PlaneComplex := by
+@[expose] noncomputable def inducedBy (p : K.Vertex → Prop) : PlaneComplex := by
   classical
   exact {
     Vertex := K.Vertex
@@ -1103,7 +1103,7 @@ theorem segmentFamily_arrangementVertex_position_right {I : Type*} [Fintype I]
   exact segmentFamilyChain_vertex_odd left right i
 
 /-- The part of the arrangement mesh lying wholly on one original chain segment. -/
-noncomputable def segmentComplex (i : Fin B.n) : PlaneComplex :=
+@[expose] noncomputable def segmentComplex (i : Fin B.n) : PlaneComplex :=
   B.arrangementMesh.toPlaneComplex.restrictedTo
     (segment ℝ (B.vertex i.castSucc) (B.vertex i.succ))
 
@@ -1354,7 +1354,7 @@ def IsResolvedFace (s : Finset B.arrangementMesh.toPlaneComplex.Vertex) : Prop :
         s ⊆ {B.resolvedWalk.getVert i.val, B.resolvedWalk.getVert (i.val + 1)})
 
 /-- The parent-arrangement subcomplex consisting of the chosen path edges and their vertices. -/
-noncomputable def resolvedComplex : PlaneComplex := by
+@[expose] noncomputable def resolvedComplex : PlaneComplex := by
   classical
   let K := B.arrangementMesh.toPlaneComplex
   exact {
@@ -1933,7 +1933,7 @@ def realAxisLinear : ℝ →ₗ[ℝ] Plane where
 /-- The `realAxisAffine` declaration. -/
 def realAxisAffine : ℝ →ᵃ[ℝ] Plane := realAxisLinear.toAffineMap
 
-@[simp] theorem realAxisAffine_apply (t : ℝ) : realAxisAffine t = planePoint t 0 := rfl
+@[simp] theorem realAxisAffine_apply (t : ℝ) : realAxisAffine t = planePoint t 0 := by rfl
 
 /-- Piecewise-affine straightening of the selected polygonal arc onto the real axis. -/
 noncomputable def resolvedStraighten (x : Plane) : Plane :=

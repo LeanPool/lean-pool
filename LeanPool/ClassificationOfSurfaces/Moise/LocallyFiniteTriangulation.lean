@@ -828,11 +828,11 @@ namespace LocallyFiniteTriangleComplex
 variable {S : Type*} [TopologicalSpace S] (K : LocallyFiniteTriangleComplex S)
 
 /-- The ambient carrier of one maximal face. -/
-def faceCarrier (f : K.Face) : Set S :=
+@[expose] def faceCarrier (f : K.Face) : Set S :=
   Set.range (K.faceMap f)
 
 /-- The ambient support of the locally finite complex. -/
-def support : Set S :=
+@[expose] def support : Set S :=
   ⋃ f, K.faceCarrier f
 
 theorem faceCarrier_nonempty (f : K.Face) : (K.faceCarrier f).Nonempty := by
@@ -1803,9 +1803,7 @@ needed. -/
   vertex_used := K.vertex_used
   faceMap := fun f x => ⟨K.faceMap f x,
     Set.mem_iUnion.mpr ⟨f, Set.mem_range_self x⟩⟩
-  faceMap_continuous := fun f => by
-    apply Continuous.subtype_mk
-    exact K.faceMap_continuous f
+  faceMap_continuous := fun f => (K.faceMap_continuous f).subtype_mk _
   faceMap_eq_iff := fun {f g} {x y} =>
     Subtype.ext_iff.trans (K.faceMap_eq_iff (f := f) (g := g) (x := x) (y := y))
   locallyFinite := locallyFinite_of_finite _

@@ -71,7 +71,7 @@ abbrev Orbit := MulAction.orbitRel.Quotient SL(2, ℤ) ℍ
 theorem ordOrbit_mk (p : ℍ) : ordOrbit f (orb p) = orderOfVanishingAt' (⇑f) p := rfl
 
 /-- The orbit of `i`. -/
-def oi : Orbit := orb ellipticPointI'
+@[expose] def oi : Orbit := orb ellipticPointI'
 
 /-- The orbit of `ρ`. -/
 def orho : Orbit := orb ellipticPointRho'

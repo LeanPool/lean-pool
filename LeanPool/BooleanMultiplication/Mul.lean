@@ -64,7 +64,7 @@ def coefficientProjection {m d : Nat} (anchor : Fin d → Monomial m) :
 
 theorem coefficient_eq_zero_of_mem_affine {m : Nat} {p : ANF m} (hp : p ∈ affine m)
     (s : Monomial m) (hs : s.vars.card = 2) : p.coeff s = 0 := by
-  refine Submodule.span_induction (p := fun p _ => p.coeff s = 0) ?_ ?_ ?_ ?_ hp
+  refine Submodule.span_induction (p := fun (p : ANF m) _ => p.coeff s = 0) ?_ ?_ ?_ ?_ hp
   · intro q hq
     rcases hq with hq | hq
     · have hqone : q = 1 := by simpa only [Set.mem_singleton_iff] using hq

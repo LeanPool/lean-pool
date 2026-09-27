@@ -50,7 +50,8 @@ deriving DecidableEq
   | .cons _ tail => tail.last
 
 /-- The local tableau rooted at the node a local path is pointing at. -/
-def LocalPathIn.ltAt {X} {lt : LocalTableau X} : (lp : LocalPathIn lt) → LocalTableau lp.last
+@[expose] def LocalPathIn.ltAt {X} {lt : LocalTableau X} :
+    (lp : LocalPathIn lt) → LocalTableau lp.last
   | .nil => lt
   | .cons _ tail => tail.ltAt
 

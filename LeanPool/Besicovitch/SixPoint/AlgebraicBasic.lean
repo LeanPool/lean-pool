@@ -40,7 +40,7 @@ def endpointGramResidual (c B : ℝ) : ℝ :=
   (k - x * z) ^ 2 - (1 - x ^ 2) * (b ^ 2 - z ^ 2)
 
 /-- The signed polynomial system used to isolate the exact endpoint pair. -/
-def IsEndpointPolynomialPair (c B : ℝ) : Prop :=
+@[expose] def IsEndpointPolynomialPair (c B : ℝ) : Prop :=
   let D := 4 * c ^ 2 - 2 * c - B
   let b := (2 * B - 3 * c ^ 2 + 2 * c - 1) / (c + 1)
   let A2 := (B ^ 2 - 1) / 2

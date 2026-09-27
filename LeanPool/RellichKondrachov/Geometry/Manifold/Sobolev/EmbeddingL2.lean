@@ -84,7 +84,7 @@ noncomputable def chartToGlobalL2 {F : Type*} [NormedAddCommGroup F] [NormedSpac
 
 /-- The continuous linear inclusion `H¹(d,μ) → L²(M,μ)` defined by summing the chartwise `L²`
 components after pulling them back to `M` and extending by zero. -/
-noncomputable def h1ToL2 (μ : Measure M) [IsFiniteMeasure μ] :
+@[expose] noncomputable def h1ToL2 (μ : Measure M) [IsFiniteMeasure μ] :
     (↥(h1 (d := d) (I := I) (μ := μ))) →L[ℝ] (M →₂[μ] ℝ) := by
   classical
   exact ∑ i : d.ι, (chartToGlobalL2 (d := d) (I := I) (μ := μ) (F := ℝ) i).comp
@@ -92,7 +92,7 @@ noncomputable def h1ToL2 (μ : Measure M) [IsFiniteMeasure μ] :
 
 /-- The continuous linear inclusion `H²(d,μ) → L²(M,μ)` defined by summing the chartwise `L²`
 components after pulling them back to `M` and extending by zero. -/
-noncomputable def h2ToL2 (μ : Measure M) [IsFiniteMeasure μ] :
+@[expose] noncomputable def h2ToL2 (μ : Measure M) [IsFiniteMeasure μ] :
     (↥(h2 (d := d) (I := I) (μ := μ))) →L[ℝ] (M →₂[μ] ℝ) := by
   classical
   exact ∑ i : d.ι, (chartToGlobalL2 (d := d) (I := I) (μ := μ) (F := ℝ) i).comp

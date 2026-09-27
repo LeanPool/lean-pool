@@ -60,7 +60,8 @@ def Circuit.ofAffineProducts {m r : Nat} (left right : Fin r → ANF m)
 theorem Circuit.ofAffineProducts_gate {m r : Nat} (left right : Fin r → ANF m)
     (left_affine : ∀ i, left i ∈ affine m)
     (right_affine : ∀ i, right i ∈ affine m) (i : Fin r) :
-    (Circuit.ofAffineProducts left right left_affine right_affine).gate i = left i * right i := rfl
+    (Circuit.ofAffineProducts left right left_affine right_affine).gate i = left i * right i := by
+  rfl
 
 /-- The circuit with no AND gates. -/
 def Circuit.empty (m : Nat) : Circuit m 0 :=

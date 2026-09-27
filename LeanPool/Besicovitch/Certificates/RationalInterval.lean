@@ -34,6 +34,7 @@ structure RationalInterval where
 namespace RationalInterval
 
 /-- A real number belongs to a rational interval. -/
+@[expose]
 def Contains (I : RationalInterval) (x : ℝ) : Prop :=
   (I.lower : ℝ) ≤ x ∧ x ≤ (I.upper : ℝ)
 

@@ -75,6 +75,7 @@ instance paperCharacterHaar_isAddHaar :
   infer_instance
 
 /-- A binary linear form gives its continuous circle character. Paper: §3. -/
+@[expose]
 def linearCharacter (ℓ : PaperKernel.D →ₗ[ZMod 2] ZMod 2) :
     PontryaginDual (Multiplicative PaperKernel.D) :=
   { toMonoidHom :=
@@ -113,6 +114,7 @@ theorem linearCharacter_characterLinear
     (Multiplicative.toAdd x)) using 1; rfl
 
 /-- Character extraction is additive in the binary character group. Paper: §3. -/
+@[expose]
 def characterToLinear :
     PaperCharacterSpace →+ Module.Dual (ZMod 2) PaperKernel.D where
   toFun χ := BinaryPontryaginDual.characterLinear
@@ -165,6 +167,7 @@ def linearToCharacter :
     rw [AddChar.map_add_eq_mul]
 
 /-- The actual compact dual is algebraically the full binary linear dual. Paper: §3. -/
+@[expose]
 def characterLinearEquiv :
     PaperCharacterSpace ≃+ Module.Dual (ZMod 2) PaperKernel.D :=
   AddEquiv.ofBijective characterToLinear ⟨by

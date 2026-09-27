@@ -659,7 +659,7 @@ def insertZero (J : PolygonalCircle) (p : Plane) (hp : p ∈ J.edgeSegment 0)
 
 @[simp] theorem insertZero_n (J : PolygonalCircle) (p : Plane)
     (hp : p ∈ J.edgeSegment 0) (hp0 : p ≠ J.vertex 0) (hp1 : p ≠ J.vertex 1) :
-    (J.insertZero p hp hp0 hp1).n = J.n + 1 := rfl
+    (J.insertZero p hp hp0 hp1).n = J.n + 1 := by rfl
 
 @[simp] theorem insertZero_vertex_zero (J : PolygonalCircle) (p : Plane)
     (hp : p ∈ J.edgeSegment 0) (hp0 : p ≠ J.vertex 0) (hp1 : p ≠ J.vertex 1) :
@@ -721,7 +721,7 @@ theorem insertZero_carrier (J : PolygonalCircle) (p : Plane) (hp : p ∈ J.edgeS
       rwa [ZMod.natCast_zmod_val i]
 
 /-- Cyclically reindex a polygon so that the old index `a` becomes the new index zero. -/
-def rotate (J : PolygonalCircle) (a : ZMod J.n) : PolygonalCircle where
+@[expose] def rotate (J : PolygonalCircle) (a : ZMod J.n) : PolygonalCircle where
   n := J.n
   three_le := J.three_le
   vertex i := J.vertex (i + a)
@@ -1497,7 +1497,7 @@ theorem forwardCut_nonadjacent_disjoint {k : ℕ} (hk2 : 2 ≤ k) (hk : k + 1 < 
     rw [hv, Nat.cast_add, Nat.cast_one]
 
 /-- Close the forward boundary arc from vertex `0` to vertex `k` by a proper chord. -/
-def forwardCutCircle {k : ℕ} (hk2 : 2 ≤ k) (hk : k + 1 < J.n)
+@[expose] def forwardCutCircle {k : ℕ} (hk2 : 2 ≤ k) (hk : k + 1 < J.n)
     (hP : J.vertex 0 = C.P) (hQ : J.vertex (k : ZMod J.n) = C.Q) :
     PolygonalCircle where
   n := k + 1
@@ -2623,20 +2623,20 @@ theorem triangle_interior_side (C : G.MeshCrosscut M) (T : M.Triangle) :
         G.disjoint_interior13_interior23 hsplit ⟨p, hp, hp23⟩
 
 /-- Select the maximal triangles lying on the `J13` side of the crosscut. -/
-noncomputable def side13Mesh (_ : G.MeshCrosscut M) : TriangleMesh := by
+@[expose] noncomputable def side13Mesh (_ : G.MeshCrosscut M) : TriangleMesh := by
   classical
   exact M.restrictTriangles fun t =>
     (interior (M.triangleCarrier t) ∩ G.J13.interiorRegion).Nonempty
 
 /-- Select the maximal triangles lying on the `J23` side of the crosscut. -/
-noncomputable def side23Mesh (_ : G.MeshCrosscut M) : TriangleMesh := by
+@[expose] noncomputable def side23Mesh (_ : G.MeshCrosscut M) : TriangleMesh := by
   classical
   exact M.restrictTriangles fun t =>
     (interior (M.triangleCarrier t) ∩ G.J23.interiorRegion).Nonempty
 
-@[simp] theorem swap12_side13Mesh : C.swap12.side13Mesh = C.side23Mesh := rfl
+@[simp] theorem swap12_side13Mesh : C.swap12.side13Mesh = C.side23Mesh := by rfl
 
-@[simp] theorem swap12_side23Mesh : C.swap12.side23Mesh = C.side13Mesh := rfl
+@[simp] theorem swap12_side23Mesh : C.swap12.side23Mesh = C.side13Mesh := by rfl
 
 private theorem triangleCarrier_subset_side13 {t : Finset M.Vertex}
     (ht : t ∈ C.side13Mesh.triangles) :

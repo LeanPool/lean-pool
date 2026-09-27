@@ -84,12 +84,18 @@ theorem sobolevPrimitive_eq_integral {q : ℕ} (u : SobolevSpace P q) :
     sobolevPrimitive P q u = P⁻¹ • (∫ s in (0 : ℝ)..P, s • sobolevTranslation P q (angleShift P s)
         u) := by
   apply value_injective P
+  rw [value_sobolevPrimitive]
   change primitive P (value P u) = (valueOperator P q)
     (P⁻¹ • (∫ s in (0 : ℝ)..P, s • sobolevTranslation P q (angleShift P s) u))
   rw [map_smul, ← (valueOperator P q).intervalIntegral_comp_comm
     ((sobolevKernel_continuous P u).intervalIntegrable 0 P)]
-  change P⁻¹ • (∫ s in (0 : ℝ)..P, kernelCurve P (value P u) s) = _
+  rw [primitive_eq_integral]
   congr 1
+  apply intervalIntegral.integral_congr
+  intro s _
+  change s • translation P (angleShift P s) (value P u) =
+    s • value P (sobolevTranslation P q (angleShift P s) u)
+  rw [value_sobolevTranslation]
 
 theorem pointEvaluation_translation (u : SobolevSpace P 3) (a x : LiftDomain P) :
     pointEvaluation P x (sobolevTranslation P 3 a u) = representative P u (x+a) := by
@@ -99,7 +105,7 @@ theorem pointEvaluation_translation (u : SobolevSpace P 3) (a x : LiftDomain P) 
   filter_upwards [translation_ae P a (value P u),
     (measurePreserving_translation P a).quasiMeasurePreserving.ae (representative_ae P u)] with y
         hy hr
-  change translation P a (value P u) y = _
+  rw [value_sobolevTranslation]
   exact hy.trans hr
 
 theorem pointEvaluation_primitive_kernel (u : SobolevSpace P 3) (x : LiftDomain P) :
@@ -148,8 +154,9 @@ theorem primitive_ae_classical (u : SobolevSpace P 3)
       · rfl
       · exact hθ.symm
     rw [hx]
-    exact (pointEvaluation_primitive_classical P u f hf hrep hmean x.1 θ).trans (hq x.1 θ).symm
+    simpa only [pointEvaluation_apply] using
+      (pointEvaluation_primitive_classical P u f hf hrep hmean x.1 θ).trans (hq x.1 θ).symm
   filter_upwards [representative_ae P (sobolevPrimitive P 3 u)] with x hx
-  exact hx.trans (he x)
+  simpa only [value_sobolevPrimitive] using hx.trans (he x)
 
 end EulerCylinderAnglePrimitive

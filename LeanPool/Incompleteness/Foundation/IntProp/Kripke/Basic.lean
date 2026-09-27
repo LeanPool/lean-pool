@@ -92,7 +92,7 @@ namespace Formula
 namespace Kripke
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def Satisfies (M : Kripke.Model) (w : M.World) : Formula ℕ → Prop
+@[expose] def Satisfies (M : Kripke.Model) (w : M.World) : Formula ℕ → Prop
   | atom a => M w a
   | ⊥      => False
   | φ ⋏ ψ  => Satisfies M w φ ∧ Satisfies M w ψ

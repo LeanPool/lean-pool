@@ -31,7 +31,7 @@ theorem angleShift_continuous : Continuous (angleShift P) :=
   continuous_const.prodMk (AddCircle.continuous_mk' P)
 
 /-- Kernel curve, given by `s • translation P (angleShift P s) u`. -/
-def kernelCurve (u : LiftL2 P) (s : ℝ) : LiftL2 P :=
+@[expose] def kernelCurve (u : LiftL2 P) (s : ℝ) : LiftL2 P :=
   s • translation P (angleShift P s) u
 
 theorem kernelCurve_continuous (u : LiftL2 P) : Continuous (kernelCurve P u) :=
@@ -113,6 +113,13 @@ theorem primitive_translation (a : LiftDomain P) (u : LiftL2 P) :
 /-- This same operator acts on every genuine Sobolev derivative coordinate. -/
 def sobolevPrimitive (q : ℕ) : SobolevSpace P q →L[ℝ] SobolevSpace P q :=
   liftOperator P q (primitive P) (primitive_translation P)
+
+@[simp] theorem value_sobolevPrimitive {q : ℕ} (u : SobolevSpace P q) :
+    value P (sobolevPrimitive P q u) = primitive P (value P u) := by
+  exact liftOperator_apply P (primitive P) (primitive_translation P) u (emptyWord q)
+
+theorem primitive_eq_integral (u : LiftL2 P) :
+    primitive P u = P⁻¹ • (∫ s in (0 : ℝ)..P, kernelCurve P u s) := by rfl
 
 theorem sobolevPrimitive_norm (q : ℕ) : ‖sobolevPrimitive P q‖ ≤ P :=
   (norm_liftOperator_le P q (primitive P) (primitive_translation P)).trans (primitive_norm P)

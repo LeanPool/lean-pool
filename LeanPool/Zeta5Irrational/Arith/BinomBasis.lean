@@ -168,7 +168,7 @@ lemma eq_C_of_comp_add_one {Q : ℚ[X]} (h : Q.comp (X + 1) = Q) : Q = C (Q.eval
     push_cast; rw [this, ih]
 
 /-- The coefficients of the derivative in the binomial basis. -/
-noncomputable def dcoef (j : ℕ) : ℚ :=
+@[expose] noncomputable def dcoef (j : ℕ) : ℚ :=
   (-1) ^ (j - 1) / (j : ℚ)
 
 /-- **Derivative of the binomial polynomials**. -/

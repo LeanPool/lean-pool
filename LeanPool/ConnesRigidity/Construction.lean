@@ -60,6 +60,7 @@ noncomputable instance tensorAACountable : Countable TensorAA := by
   infer_instance
 
 /-- Flip on the tensor square. Paper: §2. -/
+@[expose]
 def flip : TensorAA ≃ₗ[k] TensorAA := TensorProduct.comm k A A
 
 /-- Flip-fixed symmetric tensor module. Paper: §2. -/

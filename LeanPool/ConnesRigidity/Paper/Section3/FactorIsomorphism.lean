@@ -55,12 +55,14 @@ abbrev DualCoordinates :=
   (A →ₗ[k] PaperV) × (C →ₗ[k] k)
 
 /-- One finite coordinate of a map `A → V`. Paper: §3. -/
+@[expose]
 def coordinate (z : A →ₗ[k] PaperV) (i : SymplecticIndex) : A →ₗ[k] k where
   toFun a := z a i
   map_add' a b := by simp
   map_smul' r a := by simp
 
 /-- Bilinear evaluation on a pure tensor. Paper: §3. -/
+@[expose]
 def tensorFunctional (f g : A →ₗ[k] k) : TensorAA →ₗ[k] k :=
   TensorProduct.lift
     { toFun := fun a =>

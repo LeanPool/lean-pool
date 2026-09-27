@@ -408,7 +408,7 @@ theorem div_Delta_is_SIF (k : ℤ) (f : CuspForm (CongruenceSubgroup.Gamma 1) k)
   ring
 
 /-- Divides a weight-`k` cusp form by `Δ` to obtain a weight-`(k - 12)` modular form. -/
-def CuspFormDivDiscriminant (k : ℤ) (f : CuspForm (CongruenceSubgroup.Gamma 1) k) :
+@[expose] def CuspFormDivDiscriminant (k : ℤ) (f : CuspForm (CongruenceSubgroup.Gamma 1) k) :
   ModularForm (CongruenceSubgroup.Gamma 1) (k - 12) where
     toFun := f / Delta
     slash_action_eq' := fun γ hγ => div_Delta_is_SIF _ _ γ hγ

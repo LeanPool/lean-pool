@@ -160,10 +160,11 @@ def empty {o : Type v₁} [h : IsEmpty o] {ξ : Type v₂} {n} : Rew L o 0 ξ n 
 @[expose] def toS : Rew L (Fin n) 0 Empty n := Rew.bind ![] (#·)
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def toF : Rew L Empty n (Fin n) 0 := Rew.bind (&·) Empty.elim
+@[expose] def toF : Rew L Empty n (Fin n) 0 := Rew.bind (&·) Empty.elim
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def embSubsts (v : Fin k → Semiterm L ξ n) : Rew L Empty k ξ n := Rew.bind v Empty.elim
+@[expose] def embSubsts (v : Fin k → Semiterm L ξ n) : Rew L Empty k ξ n :=
+  Rew.bind v Empty.elim
 
 /-- Imported declaration from the Incompleteness formalization. -/
 @[expose] protected def q (ω : Rew L ξ₁ n₁ ξ₂ n₂) : Rew L ξ₁ (n₁ + 1) ξ₂ (n₂ + 1) :=
@@ -889,7 +890,7 @@ lemma «fvar?_rew» [DecidableEq ξ₁] [DecidableEq ξ₂]
   induction t <;> simp [Rew.func, *]
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def toEmpty [DecidableEq ξ] {n : ℕ} : (t :
+@[expose] def toEmpty [DecidableEq ξ] {n : ℕ} : (t :
     Semiterm L ξ n) → t.freeVariables = ∅ → Semiterm L Empty n
   | #x,        _ => #x
   | &x,        h => by simp at h

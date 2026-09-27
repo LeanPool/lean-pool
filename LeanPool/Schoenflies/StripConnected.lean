@@ -294,10 +294,10 @@ variable {P : ClosedPolygon m} (D : StripData P) {i j : ZMod (m + 3)} {x : Plane
 
 /-- The left piece at index `i`: the left sector at vertex `i` glued to the left block of the
 edge leaving `i`. -/
-def pieceL (i : ZMod (m + 3)) : Set Plane := D.sectorL i ∪ D.blockL i
+@[expose] def pieceL (i : ZMod (m + 3)) : Set Plane := D.sectorL i ∪ D.blockL i
 
 /-- The right piece at index `i`. -/
-def pieceR (i : ZMod (m + 3)) : Set Plane := D.sectorR i ∪ D.blockR i
+@[expose] def pieceR (i : ZMod (m + 3)) : Set Plane := D.sectorR i ∪ D.blockR i
 
 theorem sideL_eq_iUnion : D.sideL = ⋃ i, D.pieceL i := rfl
 theorem sideR_eq_iUnion : D.sideR = ⋃ i, D.pieceR i := rfl

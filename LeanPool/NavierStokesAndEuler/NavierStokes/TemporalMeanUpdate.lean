@@ -1076,8 +1076,12 @@ theorem meanClass_centered {a b cL cR : ℝ}
     (hfc : ∀ n, ContDiff ℝ ∞ (f n)) (hp : ∀ n, PressureStream.TorusPeriodicLift (f n)) :
     WeightedClasses.MeanClass
       (WeightedRadialPrimitive.logStripData a b cL cR ha hcL hcR ε R hε hεone hR) α
-      (fun n => centered (f n)) :=
-  UniformFourierAlias.meanClass_realCenterSource ha hcL hcR ε R hε hεone hR hf hfc hp
+      (fun n => centered (f n)) := by
+  have heq (n : ℕ) : UniformFourierAlias.realCenterSource (f n) = centered (f n) := by
+    funext z
+    exact UniformFourierAlias.realCenterSource_apply (f n) z
+  simpa only [heq] using
+    UniformFourierAlias.meanClass_realCenterSource ha hcL hcR ε R hε hεone hR hf hfc hp
 
 /-- The complete desired temporal update preserves the original exponent in
 every band, including the initial bands. No inverse estimate is assumed. -/

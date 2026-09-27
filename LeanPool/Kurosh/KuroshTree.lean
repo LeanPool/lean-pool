@@ -342,6 +342,7 @@ theorem Internal.bassHeight_zero_iff {ι : Type v} (G : ι → Type u)
     exact Internal.bassHeight_root G
 
 /-- Include the directed word model into its symmetrification. -/
+@[expose]
 def Internal.bassToSymm {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] :
     BassSerreVertex G ⥤q Quiver.Symmetrify (BassSerreVertex G) where
@@ -545,6 +546,7 @@ noncomputable def Internal.rawCanonicalVertex {ι : Type v} (G : ι → Type u)
       BassSerreVertex.factor i (Internal.rawCanonicalFactor G i c)
 
 /-- Evaluate a word-model vertex in the group-and-coset model. -/
+@[expose]
 def Internal.bassToRawVertex {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] : BassSerreVertex G → RawBassSerreVertex G
   | BassSerreVertex.central w => RawBassSerreVertex.central w.prod
@@ -617,7 +619,7 @@ theorem Internal.rawCanonicalVertex_bassToRawVertex {ι : Type v}
       exact ht.trans hw
 
 /-- The chosen word-model spanning tree on the ambient vertex type. -/
-@[reducible] def Internal.bassTreeQuiver {ι : Type v} (G : ι → Type u)
+@[reducible, expose] def Internal.bassTreeQuiver {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] : Quiver (BassSerreVertex G) :=
   { Hom := fun a b =>
       { e : @Quiver.Hom (Quiver.Symmetrify (BassSerreVertex G))
@@ -625,6 +627,7 @@ theorem Internal.rawCanonicalVertex_bassToRawVertex {ι : Type v}
             (bassSerreQuiver G)) a b //
         e ∈ bassSerreTree G a b } }
 
+@[expose]
 instance Internal.bassTreeQuiverArborescence {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] :
     @Quiver.Arborescence (BassSerreVertex G) (Internal.bassTreeQuiver G) := by
@@ -995,6 +998,7 @@ theorem Internal.rawCanonicalVertex_factorCosetMk {ι : Type v} (G : ι → Type
   exact congrArg (BassSerreVertex.factor i) ht
 
 /-- Evaluate word-model edges as morphisms in the raw model's free groupoid. -/
+@[expose]
 noncomputable def Internal.bassToRawPrefunctor {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] :
     BassSerreVertex G ⥤q Quiver.FreeGroupoid (RawBassSerreVertex G) where
@@ -1022,6 +1026,7 @@ noncomputable def Internal.bassToRawPrefunctor {ι : Type v} (G : ι → Type u)
             (RawBassSerreEdge.centralFactor q.prod i)) rfl hv')
 
 /-- Express group-and-coset edges as paths in the word model's free groupoid. -/
+@[expose]
 noncomputable def Internal.rawToBassPrefunctor {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] :
     RawBassSerreVertex G ⥤q Quiver.FreeGroupoid (BassSerreVertex G) where
@@ -1076,6 +1081,7 @@ noncomputable def Internal.rawToBassPrefunctor {ι : Type v} (G : ι → Type u)
               (BassSerreEdge.centralFactor w i hlast)) rfl ht'
 
 /-- Extend word evaluation to a functor between the two free groupoids. -/
+@[expose]
 noncomputable def Internal.bassToRawFunctor {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] :
     Quiver.FreeGroupoid (BassSerreVertex G) ⥤
@@ -1083,6 +1089,7 @@ noncomputable def Internal.bassToRawFunctor {ι : Type v} (G : ι → Type u)
   Quiver.FreeGroupoid.lift (Internal.bassToRawPrefunctor G)
 
 /-- Extend canonical word representatives to a functor between the two free groupoids. -/
+@[expose]
 noncomputable def Internal.rawToBassFunctor {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] :
     Quiver.FreeGroupoid (RawBassSerreVertex G) ⥤
@@ -1661,7 +1668,7 @@ def Internal.treeDataGenerated {ι : Type v} (G : ι → Type u)
   Subgroup.closure (Internal.treeDataGeneratorSet G H)
 
 /-- The raw model's chosen spanning tree on the ambient vertex type. -/
-@[reducible] def Internal.rawSpanningTreeQuiver {ι : Type v} (G : ι → Type u)
+@[reducible, expose] def Internal.rawSpanningTreeQuiver {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] : Quiver (RawBassSerreVertex G) :=
   { Hom := fun a b =>
       { e : @Quiver.Hom (Quiver.Symmetrify (RawBassSerreVertex G))
@@ -1669,6 +1676,7 @@ def Internal.treeDataGenerated {ι : Type v} (G : ι → Type u)
             (rawBassSerreQuiver G)) a b //
         e ∈ rawBassSerreTree G a b } }
 
+@[expose]
 instance Internal.rawSpanningTreeQuiverArborescence {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] :
     @Quiver.Arborescence (RawBassSerreVertex G) (Internal.rawSpanningTreeQuiver G) := by

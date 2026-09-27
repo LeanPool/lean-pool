@@ -568,7 +568,7 @@ lemma fdBoundary_H_right_deriv_limit (H : ℝ)
   · linarith
 
 /-- The H-parameterized boundary as a `PiecewiseC1Curve`. -/
-noncomputable def fdBoundaryHCurve (H : ℝ) :
+@[expose] noncomputable def fdBoundaryHCurve (H : ℝ) :
     PiecewiseC1Curve where
   toFun := fdBoundaryH H
   a := 0

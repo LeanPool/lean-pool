@@ -199,6 +199,7 @@ theorem matrixIsPosDef (hφ : φ.IsFaithfulPosMap) : PosDef φ.matrix :=
 φ.isFaithfulPosMap_iff_of_matrix.mp hφ
 
 /-- Modular automorphism associated to a faithful positive functional on matrices. -/
+@[expose]
 noncomputable def _root_.sig (hφ : φ.IsFaithfulPosMap) (z : ℝ) :
     Matrix n n ℂ ≃ₐ[ℂ] Matrix n n ℂ where
   toFun a := hφ.matrixIsPosDef.rpow (-z) * a * hφ.matrixIsPosDef.rpow z
@@ -227,7 +228,7 @@ noncomputable def _root_.sig (hφ : φ.IsFaithfulPosMap) (z : ℝ) :
   by rfl
 
 /-- The modular automorphism associated to a faithful positive matrix functional. -/
-@[reducible]
+@[reducible, expose]
 noncomputable def sig (hφ : φ.IsFaithfulPosMap) (z : ℝ) :
     Matrix n n ℂ ≃ₐ[ℂ] Matrix n n ℂ :=
   _root_.sig hφ z
@@ -432,6 +433,7 @@ theorem starAlgEquiv_is_isometry_tFAE [hφ : φ.IsFaithfulPosMap]
   tfae_finish
 
 /-- The matrix-unit basis normalized by the square root of the density matrix. -/
+@[expose]
 protected noncomputable def basis (hφ : φ.IsFaithfulPosMap) : Basis (n × n) ℂ (Matrix n n ℂ) := by
   let hQ := hφ.matrixIsPosDef
   refine Basis.mk
@@ -710,6 +712,7 @@ theorem adjoint_eq [hψ : ∀ i, (ψ i).IsFaithfulPosMap] :
     rfl
 
 /-- The dependent pi basis obtained from the normalized bases of each block. -/
+@[expose]
 protected noncomputable def basis (hψ : ∀ i, (ψ i).IsFaithfulPosMap) :
     Basis (Σ i, s i × s i) ℂ (PiMat ℂ k s) :=
   Pi.basis fun i => (hψ i).basis

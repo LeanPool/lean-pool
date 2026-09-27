@@ -160,6 +160,7 @@ StarAlgEquiv.ofAlgEquiv
     (fun _ _ h1 h2 => by simp only [star_add, map_add, h1, h2]))
 
 /-- Tensor a pair of star algebra equivalences. -/
+@[expose]
 noncomputable def StarAlgEquiv.TensorProduct.map {R A B C D : Type*} [RCLike R]
   [Ring A] [Ring B] [Ring C] [Ring D]
   [Algebra R A] [Algebra R B] [Algebra R C] [Algebra R D]

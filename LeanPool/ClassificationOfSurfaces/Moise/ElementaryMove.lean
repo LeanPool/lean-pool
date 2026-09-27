@@ -146,19 +146,19 @@ noncomputable def diamondUpDiagonalAffine (a : ℝ) : Plane →ᵃ[ℝ] ℝ :=
   cartesianX + cartesianY - AffineMap.const ℝ Plane a
 
 @[simp] theorem diamondVerticalAffine_apply (x y : ℝ) :
-    diamondVerticalAffine (planePoint x y) = x := rfl
+    diamondVerticalAffine (planePoint x y) = x := by rfl
 
 @[simp] theorem diamondLeftAffine_apply (a x y : ℝ) :
-    diamondLeftAffine a (planePoint x y) = a * x - y + a := rfl
+    diamondLeftAffine a (planePoint x y) = a * x - y + a := by rfl
 
 @[simp] theorem diamondRightAffine_apply (a x y : ℝ) :
-    diamondRightAffine a (planePoint x y) = a * x + y - a := rfl
+    diamondRightAffine a (planePoint x y) = a * x + y - a := by rfl
 
 @[simp] theorem diamondDownDiagonalAffine_apply (a x y : ℝ) :
-    diamondDownDiagonalAffine a (planePoint x y) = x - y + a := rfl
+    diamondDownDiagonalAffine a (planePoint x y) = x - y + a := by rfl
 
 @[simp] theorem diamondUpDiagonalAffine_apply (a x y : ℝ) :
-    diamondUpDiagonalAffine a (planePoint x y) = x + y - a := rfl
+    diamondUpDiagonalAffine a (planePoint x y) = x + y - a := by rfl
 
 /-- Splitting one edge of a nondegenerate triangle at an interior parameter covers the original
 triangle by the two resulting triangles. -/
@@ -638,7 +638,7 @@ theorem strictlyInDiamond_subset_interior : StrictlyInDiamond ⊆ interior diamo
   interior_maximal strictlyInDiamond_subset_patch isOpen_strictlyInDiamond
 
 /-- The fixed abstract diamond fan with its center repositioned from height `a` to height `b`. -/
-noncomputable def diamondFanReposition (a b : ℝ)
+@[expose] noncomputable def diamondFanReposition (a b : ℝ)
     (ha0 : -2 < a) (ha1 : a < 2) (hb0 : -2 < b) (hb1 : b < 2) : TriangleMesh :=
   (diamondFanMesh a ha0 ha1).reposition (diamondFanPosition b)
     (diamondFanPosition_injective hb0 hb1)
@@ -671,7 +671,7 @@ theorem diamondFanReposition_baryEval_eq_of_center_zero (a b : ℝ)
   simp [diamondFanPosition, Fin.sum_univ_succ, h4]
 
 /-- Preserve barycentric coordinates while moving the fan point from `(0,a)` to `(0,b)`. -/
-noncomputable def diamondFanSupportHomeomorph (a b : ℝ)
+@[expose] noncomputable def diamondFanSupportHomeomorph (a b : ℝ)
     (ha0 : -2 < a) (ha1 : a < 2) (hb0 : -2 < b) (hb1 : b < 2) :
     (diamondFanMesh a ha0 ha1).toPlaneComplex.support ≃ₜ
       (diamondFanReposition a b ha0 ha1 hb0 hb1).toPlaneComplex.support :=
@@ -722,6 +722,7 @@ theorem diamondFanSupportHomeomorph_center (a b : ℝ)
         simp [InDiamond]
         constructor <;> linarith⟩ := by
     apply Subtype.ext
+    rw [PlaneComplex.realizationHomeomorph_apply]
     exact diamondFanCenterRealization_baryEval a ha0 ha1
   change ((diamondFanMesh a ha0 ha1).repositionHomeomorph (diamondFanPosition b)
       (diamondFanPosition_injective hb0 hb1)
@@ -765,7 +766,7 @@ theorem diamondFanSupportHomeomorph_center (a b : ℝ)
   simp [Pi.single_apply]
 
 /-- The barycentric fan move, viewed as a self-homeomorphism of the original diamond support. -/
-noncomputable def diamondFanPatchHomeomorph (a b : ℝ)
+@[expose] noncomputable def diamondFanPatchHomeomorph (a b : ℝ)
     (ha0 : -2 < a) (ha1 : a < 2) (hb0 : -2 < b) (hb1 : b < 2) :
     (diamondFanMesh a ha0 ha1).toPlaneComplex.support ≃ₜ
       (diamondFanMesh a ha0 ha1).toPlaneComplex.support :=

@@ -70,9 +70,9 @@ section Algebra
 variable {K : Type*} [Field K] [CharZero K]
 
 /-- A, given by `1 / 2 + h`. -/
-noncomputable def a (h : K) : K := 1 / 2 + h
+@[expose] noncomputable def a (h : K) : K := 1 / 2 + h
 /-- D scale, given by `1 / 2 - h`. -/
-noncomputable def dScale (h : K) : K := 1 / 2 - h
+@[expose] noncomputable def dScale (h : K) : K := 1 / 2 - h
 /-- Edge, given by `1 - eta ^ 2`. -/
 @[expose] noncomputable def edge (eta : K) : K := 1 - eta ^ 2
 /-- Ell, given by `1 - 2 * h * eta ^ 2`. -/

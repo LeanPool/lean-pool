@@ -34,6 +34,7 @@ open scoped Matrix Kronecker TensorProduct BigOperators Functional InnerProductS
 open Matrix
 
 /-- Tensor product of two matrix-valued module dual functionals. -/
+@[expose]
 noncomputable def Module.Dual.tensorMul {n p : Type _} (φ₁ : Module.Dual ℂ (Matrix n n ℂ))
     (φ₂ : Module.Dual ℂ (Matrix p p ℂ)) : Module.Dual ℂ (Matrix n n ℂ ⊗[ℂ] Matrix p p ℂ) :=
   (TensorProduct.lid ℂ ℂ : ℂ ⊗[ℂ] ℂ →ₗ[ℂ] ℂ) ∘ₗ TensorProduct.map φ₁ φ₂

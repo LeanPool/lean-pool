@@ -160,7 +160,7 @@ lemma rewind_history_zero (g : coalgebraGame.Pos) : rewindHistory g 0 = g := by
   simp [rewindHistory]
 
 /-- This is the type of the coalgebra we will use to build the proof of `Γ`. -/
-def proof_type (Γ : SplitSequent) (strat : Strategy coalgebraGame Prover) :=
+@[expose] def proof_type (Γ : SplitSequent) (strat : Strategy coalgebraGame Prover) :=
  {g // inMyCone strat (startPos Γ) g ∧ coalgebraGame.turn g = Builder}
 
 attribute [local implicit_reducible] proof_type

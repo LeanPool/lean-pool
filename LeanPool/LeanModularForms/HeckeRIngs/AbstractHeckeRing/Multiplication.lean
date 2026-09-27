@@ -120,7 +120,7 @@ private lemma mul_mem_delta (a : H) (g : Δ)
 
 /-- The map sending a pair of coset representatives `(σ_i, τ_j)` to the double coset
 of their product `H(σ_i τ_j)H`. -/
-noncomputable def mulMap (g₁ g₂ : P.Δ)
+@[expose] noncomputable def mulMap (g₁ g₂ : P.Δ)
     (i : decompQuot P g₁ × decompQuot P g₂) : HeckeCoset P :=
   ⟦⟨i.1.out * g₁ * (i.2.out * g₂),
     Submonoid.mul_mem _ (by exact mul_mem_delta P.H P.Δ i.1.out g₁ P.h₀)

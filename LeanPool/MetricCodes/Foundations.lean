@@ -1893,6 +1893,7 @@ def harmonicOrthonormalBasis
     (finCongr (harmonicEuclideanLayer_finrank n k hk))
 
 /-- The harmonic basis function used in the binary-code argument. -/
+@[expose]
 def harmonicBasisFunction
     (n k : ℕ) (hk : 2 * k ≤ n)
     (p : Fin (MetricCodes.hammingFibreDimension n k)) : Function n :=
@@ -2412,6 +2413,7 @@ theorem matrixHilbertSchmidtFeature_inner
   rfl
 
 /-- The matrix axis lift used in the binary-code argument. -/
+@[expose]
 def matrixAxisLift {κ ι ρ : Type*}
     (z : κ → ℝ) (A : Matrix ι ρ ℝ) :
     Matrix (κ × ι) ρ ℝ :=

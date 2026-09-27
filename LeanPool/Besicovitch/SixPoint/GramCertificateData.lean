@@ -25,7 +25,7 @@ noncomputable section
 namespace LeanPool.Besicovitch
 
 /-- One local Gram certificate for each of the thirty radius rectangles. -/
-def gramCertificates : Fin 30 → GramCertificate := ![
+@[expose] def gramCertificates : Fin 30 → GramCertificate := ![
   -- `I0xI0`
   { pLower := 967/2500, pUpper := 1/2, wLower := 967/2500, wUpper := 1/2,
     alpha₀ := 1880 / 10000, alpha₁ := 3752 / 10000, alpha₂ := 1215 / 10000,

@@ -67,7 +67,7 @@ abbrev MidpointVertex := K.Vertex ⊕ K.Edge
   (Finset.univ.image (K.midpointCornerFace t)) ∪ {K.midpointCentralFace t}
 
 /-- All maximal faces in the midpoint subdivision. -/
-noncomputable def midpointFaces : Finset (Finset K.MidpointVertex) :=
+@[expose] noncomputable def midpointFaces : Finset (Finset K.MidpointVertex) :=
   K.faces.attach.biUnion K.midpointFacesOver
 
 theorem faceEdge_ne_add_two (t : K.Face) (i : ZMod 3) :

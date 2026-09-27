@@ -43,7 +43,7 @@ abbrev Chart := ℝ × Inner
 noncomputable def scaleMap (q : ℝ) : Chart →L[ℝ] Chart :=
   SpatialBorelExtension.timeScale q
 
-@[simp] theorem scaleMap_apply (q : ℝ) (y : Chart) : scaleMap q y = (q * y.1, y.2) := rfl
+@[simp] theorem scaleMap_apply (q : ℝ) (y : Chart) : scaleMap q y = (q * y.1, y.2) := by rfl
 
 /-- Local power, given by `SmoothCutoffs.cutoff (4 * (q - 1)) * q ^ b`. -/
 noncomputable def localPower (b q : ℝ) : ℝ := SmoothCutoffs.cutoff (4 * (q - 1)) * q ^ b

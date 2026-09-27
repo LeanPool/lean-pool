@@ -37,13 +37,16 @@ def cellLength (n : ℕ) : ℝ := (1 / 2) ^ (n ^ 2)
 def jumpHeight (n : ℕ) : ℝ := cellLength n / n
 
 /-- The index of the level-`n` cell `[i * cellLength n, (i + 1) * cellLength n)` containing `x`. -/
+@[expose]
 def cellIndex (n : ℕ) (x : ℝ) : ℤ := ⌊x / cellLength n⌋
 
 /-- The level-`n` square wave: `-jumpHeight n` on even cells, `+jumpHeight n` on odd cells. -/
+@[expose]
 def squareWave (n : ℕ) (x : ℝ) : ℝ :=
   if Even (cellIndex n x) then -jumpHeight n else jumpHeight n
 
 /-- Besicovitch's function, the sum of the square waves of every level `n ≥ 1`. -/
+@[expose]
 def besicovitchFun (x : ℝ) : ℝ := ∑' n : ℕ, squareWave (n + 1) x
 
 /-! ### The cell lengths -/

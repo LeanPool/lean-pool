@@ -28,6 +28,7 @@ noncomputable section
 namespace LeanPool.Besicovitch
 
 /-- Twice the rational threshold: the chord length of the retargeted argument. -/
+@[expose]
 def barC : ℝ := 3467 / 2500
 
 /-- The rational density threshold certified by the retargeted argument. -/

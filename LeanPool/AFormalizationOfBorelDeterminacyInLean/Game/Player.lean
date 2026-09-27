@@ -91,7 +91,7 @@ namespace Player
 @[ext] lemma ext (h : p.toNat = q.toNat) : p = q := by synthIsPosition
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def swap : Player → Player
+@[expose] def swap : Player → Player
   | zero => one
   | one => zero
 /-- Auxiliary declaration for the Borel determinacy formalization. -/

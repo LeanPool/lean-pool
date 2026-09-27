@@ -186,6 +186,7 @@ noncomputable def evalHom {m : Nat} (x : Fin m → F₂) : ANF m →ₐ[F₂] F�
 theorem eval_eq_evalHom {m : Nat} (p : ANF m) (x : Fin m → F₂) :
     eval p x = evalHom x p := by
   simp [eval, evalHom, monomialEval, MonoidAlgebra.lift_apply]
+  rfl
 
 @[simp] theorem eval_zero' {m : Nat} (x : Fin m → F₂) : eval 0 x = 0 := by
   rw [eval_eq_evalHom]

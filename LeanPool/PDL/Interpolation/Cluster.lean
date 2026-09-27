@@ -610,7 +610,7 @@ use of `head?`. -/
 /-- The consequence of uniformity that the quasi-tableau construction needs: any two nodes
 of the cluster with the same right component `Δ` at which a right rule is applied have the
 same right components below them, in the same order. Compare Lemma 9.7 (f). -/
-def HasUniformSteps (C : LoadedCluster tab) : Prop :=
+@[expose] def HasUniformSteps (C : LoadedCluster tab) : Prop :=
   ∀ Δ : Sequent, ∀ f ∈ C.nodesWithFineRight Δ, ∀ g ∈ C.nodesWithFineRight Δ,
     f.children.image (fun h => h.label.rightOnly) = g.children.image (fun h => h.label.rightOnly)
 

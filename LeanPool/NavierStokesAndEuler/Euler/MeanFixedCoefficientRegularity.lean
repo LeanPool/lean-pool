@@ -83,7 +83,7 @@ def framePathRestriction (T : ℝ) :
   frameRestriction.compLeftContinuous ℝ (Icc (0 : ℝ) T)
 
 @[simp] theorem framePathRestriction_apply (T : ℝ) (F : C(Icc (0 : ℝ) T, L2 →L[ℝ] L2)) :
-    framePathRestriction T F = solenoidalFrame T F := rfl
+    framePathRestriction T F = solenoidalFrame T F := by rfl
 
 /-- Solenoidal frame restriction is a norm contraction. -/
 theorem framePathRestriction_norm (T : ℝ) : ‖framePathRestriction T‖ ≤ 1 := by

@@ -20,7 +20,7 @@ public section
 namespace HadwigerNelsonBounds
 
 /-- `Middle` certificate chunk 0. -/
-def partsGadgetMiddleChunk0 : Array PartsGadgetTreeNode := #[
+@[expose] def partsGadgetMiddleChunk0 : Array PartsGadgetTreeNode := #[
   ⟨[], 11, ![0, 0, 2, 11]⟩,
   ⟨[], 12, ![3, 0, 0, 8]⟩,
   ⟨[⟨17, 3⟩, ⟨10, 1⟩, ⟨6, 3⟩], 19, ![0, 0, 4, 5]⟩,

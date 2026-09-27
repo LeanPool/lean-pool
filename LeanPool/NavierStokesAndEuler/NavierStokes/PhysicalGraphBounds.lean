@@ -200,7 +200,7 @@ theorem localChart_contDiffAt (j : Index) {p : Plane} (hp : 0 < (rotate j p).1) 
     ((hc.snd.div hc.fst hp.ne').arctan.add contDiffAt_const)
 
 /-- The original normalized compact annulus uses the product norm. -/
-noncomputable def annulus (a b : ℝ) : Set Plane :=
+@[expose] noncomputable def annulus (a b : ℝ) : Set Plane :=
   Metric.closedBall 0 b ∩ {p | a ≤ ‖p‖}
 
 /-- Compact sectors are strictly inside their chart domains. -/
@@ -615,7 +615,7 @@ theorem radiusPower_smul (d : ℝ) {a : ℝ} (ha : 0 < a) (y : Plane) :
   rw [show ((2 : ℕ) : ℝ) * (d / 2) = d by norm_num; ring]
 
 /-- The universal-cover representative of `Y_i=J_g^i(v_r r^d+v_t t)`. -/
-noncomputable def nativeGraph (h : ℝ) (n : ℕ) (p : SpaceTime) : Plane :=
+@[expose] noncomputable def nativeGraph (h : ℝ) (n : ℕ) (p : SpaceTime) : Plane :=
   (SlotGeometry.cover ^ ChartScales.nativeIndex h n)
     (radialProfile (ChartScales.radialExponent h) (radialProjection p) + p.1 • timeDirection)
 
@@ -665,7 +665,7 @@ theorem nativeGraph_normalized (h : ℝ) (n : ℕ) (p : SpaceTime) :
   simp only [nativeGraph_eq, radialProfile, hr, ChartScales.radialCoefficient, smul_smul, mul_assoc]
 
 /-- A fixed compact transverse annulus in normalized Cartesian coordinates. -/
-noncomputable def annulus (a b : ℝ) : Set Plane :=
+@[expose] noncomputable def annulus (a b : ℝ) : Set Plane :=
   Metric.closedBall 0 b ∩ {y | a ≤ ‖y‖}
 
 theorem isCompact_annulus (a b : ℝ) : IsCompact (annulus a b) :=
@@ -1090,6 +1090,11 @@ theorem etaCoordinate_nativeGraph (h : ℝ) (n : ℕ) (p : SpaceTime) :
 noncomputable def slotTime (h : ℝ) (n : ℕ) (center : Plane) (r0 : ℝ)
     (p : SpaceTime) : ℝ :=
   (etaCoordinate (nativeGraph h n p - center) + r0) / ChartScales.timeCoefficient h n
+
+theorem slotTime_eq_nativeGraph (h : ℝ) (n : ℕ) (center : Plane) (r0 : ℝ)
+    (p : SpaceTime) :
+    slotTime h n center r0 p =
+      (etaCoordinate (nativeGraph h n p - center) + r0) / ChartScales.timeCoefficient h n := by rfl
 
 theorem slotTime_affine (h : ℝ) (n : ℕ) (center : Plane) (r0 : ℝ) (p : SpaceTime) :
     slotTime h n center r0 p =

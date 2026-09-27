@@ -357,7 +357,7 @@ theorem QuantumSet.innerOne_map_one_isReal_ofReal
   rw [hf, QuantumSet.counit_isReal]
   simp
 /-- The star-algebra structure transported to the opposite algebra. -/
-@[reducible]
+@[reducible, expose]
 noncomputable def starAlgebra.mulOpposite {A : Type*} [starAlgebra A] :
     starAlgebra Aᵐᵒᵖ where
   modAut r := (modAut (-r)).op
@@ -1106,6 +1106,7 @@ theorem lTensor_counit_PhiMap_rTensor_algebraLinearMap (x : B →ₗ[ℂ] B) :
   simp only [LinearMap.comp_assoc, LinearMap.rTensor_comp, LinearMap.lTensor_comp]
 
 /-- Linear functional computing the weighted number of edges of a quantum graph. -/
+@[expose]
 noncomputable def QuantumGraph.NumOfEdges {A : Type*} [starAlgebra A] [QuantumSet A] :
     (A →ₗ[ℂ] A) →ₗ[ℂ] ℂ where
   toFun f := ⟪1, f 1⟫_ℂ

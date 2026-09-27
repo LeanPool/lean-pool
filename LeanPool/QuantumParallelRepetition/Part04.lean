@@ -1559,6 +1559,7 @@ theorem exactBobCoordinateFilter_sum
 The exact alice purification family construction used in the quantum parallel-repetition
 argument.
 -/
+@[expose]
 def exactAlicePurificationFamily
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -1573,6 +1574,7 @@ def exactAlicePurificationFamily
 /--
 The exact bob purification family construction used in the quantum parallel-repetition argument.
 -/
+@[expose]
 def exactBobPurificationFamily
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -1810,6 +1812,7 @@ abbrev ExactBobLocalIndex
     G n S D r.seed r.history r.bobAnswer
 
 /-- The exact unnormalized psi construction used in the quantum parallel-repetition argument. -/
+@[expose]
 def exactUnnormalizedPsi
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -1825,6 +1828,7 @@ def exactUnnormalizedPsi
       G n S D r.seed r.history r.bobAnswer (.inl y))
 
 /-- The exact unnormalized phi construction used in the quantum parallel-repetition argument. -/
+@[expose]
 def exactUnnormalizedPhi
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -1840,6 +1844,7 @@ def exactUnnormalizedPhi
       G n S D r.seed r.history r.bobAnswer (.inl y))
 
 /-- The exact unnormalized gamma construction used in the quantum parallel-repetition argument. -/
+@[expose]
 def exactUnnormalizedGamma
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -2095,6 +2100,7 @@ theorem exactPaddedVector_sub
     simp only [exactPaddedVector, PiLp.sub_apply, sub_zero]
 
 /-- The exact padded default construction used in the quantum parallel-repetition argument. -/
+@[expose]
 def exactPaddedDefault
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -2127,6 +2133,7 @@ theorem exactPaddedDefault_norm
       (exactUnnormalizedPsi G n S D r x y))
 
 /-- The exact phi construction used in the quantum parallel-repetition argument. -/
+@[expose]
 def exactPhi
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -2140,6 +2147,7 @@ def exactPhi
       (exactUnnormalizedPhi G n S D r y))
 
 /-- The exact gamma construction used in the quantum parallel-repetition argument. -/
+@[expose]
 def exactGamma
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))

@@ -36,7 +36,7 @@ omit [Fact (0 < period)] in
 theorem word_zero {n : ℕ} (w : Fin n → Fin 4) :
     iteratedFieldDerivative period w (0 : LiftDomain period → F) = 0 := by
   induction n with
-  | zero => rfl
+  | zero => simp only [iteratedFieldDerivative_zero]
   | succ n ih =>
     rw [iteratedFieldDerivative_succ, ih]
     ext x

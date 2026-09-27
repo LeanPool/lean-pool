@@ -156,6 +156,7 @@ construction.
 -/
 
 /-- Invert a reduced word by reversing its letters and inverting each letter. -/
+@[expose]
 def wordInv {G : ι → Type u} [∀ i, Group (G i)]
     (w : Word G) : Word G :=
   { toList := w.toList.reverse.map (fun x : Σ i, G i => ⟨x.1, x.2⁻¹⟩)
@@ -476,6 +477,7 @@ theorem bassSerre_rootedConnected {ι : Type v} (G : ι → Type u)
     (BassSerreVertex.central Word.empty)
     (bassSerre_rootedConnected G)
 
+@[expose]
 noncomputable instance bassSerreTreeArborescence {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] :
     Quiver.Arborescence (bassSerreTree G) :=
@@ -685,6 +687,7 @@ theorem rawBassSerre_rootedConnected {ι : Type v} (G : ι → Type u)
     (Quiver.symmetrifyQuiver (RawBassSerreVertex G))
     (RawBassSerreVertex.central 1) (rawBassSerre_rootedConnected G)
 
+@[expose]
 noncomputable instance rawBassSerreTreeArborescence {ι : Type v}
     (G : ι → Type u) [∀ i, Group (G i)] :
     Quiver.Arborescence (rawBassSerreTree G) :=
@@ -847,16 +850,16 @@ theorem actionOrbitMk_smul (A : Type w) (X : Type w) [Group A] [MulAction A X]
   exact ⟨a⁻¹, by simp⟩
 
 /-- An unbundled Bass-Serre edge is a group element paired with a factor index. -/
-def rawBassSerreEdgeData {ι : Type v} (G : ι → Type u) [∀ i, Group (G i)] :=
+@[expose] def rawBassSerreEdgeData {ι : Type v} (G : ι → Type u) [∀ i, Group (G i)] :=
   FreeProduct G × ι
 
 /-- The central vertex at the source of an unbundled edge. -/
-def rawBassSerreEdgeDataSource {ι : Type v} (G : ι → Type u)
+@[expose] def rawBassSerreEdgeDataSource {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (e : rawBassSerreEdgeData G) : RawBassSerreVertex G :=
   RawBassSerreVertex.central e.1
 
 /-- The factor coset at the target of an unbundled edge. -/
-def rawBassSerreEdgeDataTarget {ι : Type v} (G : ι → Type u)
+@[expose] def rawBassSerreEdgeDataTarget {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (e : rawBassSerreEdgeData G) : RawBassSerreVertex G :=
   RawBassSerreVertex.factor e.2 (factorCosetMk G e.2 e.1)
 
@@ -909,6 +912,7 @@ instance rawBassSerreEdgeDataSubgroupMulAction {ι : Type v} (G : ι → Type u)
   mul_smul a b e := by simp [mul_smul]
 
 /-- Forget the endpoints of a bundled Bass-Serre edge. -/
+@[expose]
 def rawBassSerreEdgeDataOf {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] {a b : RawBassSerreVertex G} (e : a ⟶ b) :
     rawBassSerreEdgeData G := by
@@ -1101,6 +1105,7 @@ theorem rawBassSerreOrbitEdgeTarget_mk {ι : Type v} (G : ι → Type u)
     actionOrbitMk]
 
 /-- Project a Bass-Serre edge to the quotient quiver. -/
+@[expose]
 def rawBassSerreOrbitEdgeMap {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     {a b : RawBassSerreVertex G} (e : a ⟶ b) :

@@ -105,7 +105,8 @@ theorem safeStageSupport_mono (n : ℕ) :
       R.homeo (R.refined.midpointHomeomorph w) ∈ U := by
     intro w hw
     apply htSafe
-    exact R.refined.midpointEval_mem_parentFace T hsOver w hw
+    simpa only [R.refined.midpointHomeomorph_apply] using
+      R.refined.midpointEval_mem_parentFace T hsOver w hw
   have hsMem : s ∈ K.safeFaces U (n + 1) := by
     change s ∈ R.refined.midpointComplex.faces.filter fun t ↦
       ∀ x ∈ R.refined.midpointComplex.faceCarrier t,
@@ -248,11 +249,11 @@ noncomputable def safeExhaustionIndex : ℕ → ℕ
   | 0 => 0
   | n + 1 => K.nextSafeStage U hU (safeExhaustionIndex n)
 
-@[simp] theorem safeExhaustionIndex_zero : K.safeExhaustionIndex U hU 0 = 0 := rfl
+@[simp] theorem safeExhaustionIndex_zero : K.safeExhaustionIndex U hU 0 = 0 := by rfl
 
 @[simp] theorem safeExhaustionIndex_succ (n : ℕ) :
     K.safeExhaustionIndex U hU (n + 1) =
-      K.nextSafeStage U hU (K.safeExhaustionIndex U hU n) := rfl
+      K.nextSafeStage U hU (K.safeExhaustionIndex U hU n) := by rfl
 
 theorem safeExhaustionIndex_lt_succ (n : ℕ) :
     K.safeExhaustionIndex U hU n < K.safeExhaustionIndex U hU (n + 1) := by

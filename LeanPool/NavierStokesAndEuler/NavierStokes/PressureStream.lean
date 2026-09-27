@@ -535,7 +535,7 @@ variable {S : Type} [NormedAddCommGroup S] [NormedSpace ℝ S]
 
 /-- Torus periodic lift, given by `∀ r : ℝ, ∀ s : S, FourierAlias.TorusPeriodic (fun Y => f (r,
 (s, Y)))`. -/
-noncomputable def TorusPeriodicLift (f : Lift S → ℝ) : Prop :=
+@[expose] noncomputable def TorusPeriodicLift (f : Lift S → ℝ) : Prop :=
   ∀ r : ℝ, ∀ s : S, FourierAlias.TorusPeriodic (fun Y => f (r, (s, Y)))
 
 omit [NormedAddCommGroup S] [NormedSpace ℝ S] in

@@ -71,7 +71,7 @@ instance finiteDimensional_linSys [ConnectedSpace X] (D : RS.Divisor X) :
 /-! ### The χ ledger's frozen definitions -/
 
 /-- `h¹(D)`: the dimension of the first Čech cohomology of `𝒪_D`. -/
-noncomputable def h1 (D : RS.Divisor X) : ℕ := Module.finrank ℂ (H1 D)
+@[expose] noncomputable def h1 (D : RS.Divisor X) : ℕ := Module.finrank ℂ (H1 D)
 
 omit [IsManifold 𝓘(ℂ, ℂ) ω X] [T1Space X] [T2Space X] [CompactSpace X] in
 theorem h1_eq_finrank (D : RS.Divisor X) : h1 D = Module.finrank ℂ (H1 D) := by rfl

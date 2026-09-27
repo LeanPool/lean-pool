@@ -120,7 +120,9 @@ namespace Player
     · simp_all
     · unfold Player.payoff Player.residual
       rw [ite_eq_right h, Game.residual_payoff_odd G x hodd]
-      simp only [Game.residual_tree, Player.swap_one, compl_compl]
+      simp only [Game.residual_tree, Player.swap_one]
+      ext y
+      exact not_not
 end Player
 @[congr] lemma subtype_val_player_payoff {G' p'} (h : G = G') (hp : p = p') :
   Subtype.val '' (p.payoff G) = Subtype.val '' (p'.payoff G') := by congr!
@@ -201,7 +203,7 @@ lemma AllWinning.residual (hW : G.AllWinning p) x :
         exact Set.mem_univ a
       · simp_all
 /-- a game is determined if some player has a winning strategy -/
-def IsDetermined (G : Game A) := ∃ p, G.ExistsWinning p
+@[expose] def IsDetermined (G : Game A) := ∃ p, G.ExistsWinning p
 end Game
 
 end GaleStewartGame

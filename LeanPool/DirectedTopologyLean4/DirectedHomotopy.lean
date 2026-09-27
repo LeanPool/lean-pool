@@ -173,6 +173,7 @@ variable {t₀ t₁ : I} (γ : Dipath t₀ t₁) {T : I}
 variable (hT : γ T = halfI)
 
 /-- The first half of a split dipath, stretched to the interval `[2 t₀, 1]`. -/
+@[expose]
 def FirstPartStretch (ht₀ : (t₀ : ℝ) ≤ 2⁻¹) : Dipath (⟨2 * (t₀.1 : ℝ), double_mem_I ht₀⟩ : I)
     (1 : I) where
   toFun := Dipath.stretchUp (FirstPart γ T) (le_of_eq (by rw [hT]))
@@ -181,7 +182,7 @@ def FirstPartStretch (ht₀ : (t₀ : ℝ) ≤ 2⁻¹) : Dipath (⟨2 * (t₀.1 
   dipath_toPath := Dipath.isDipath_stretch_up (FirstPart γ T) (le_of_eq (by rw [hT]))
 
 /-- The second half of a split dipath, stretched to the interval `[0, 2 t₁ - 1]`. -/
-def SecondPartStretch (ht₁ : 2⁻¹ ≤ (t₁ : ℝ)) : Dipath (0 : I) ⟨2 * (t₁.1 : ℝ)
+@[expose] def SecondPartStretch (ht₁ : 2⁻¹ ≤ (t₁ : ℝ)) : Dipath (0 : I) ⟨2 * (t₁.1 : ℝ)
     - 1, double_sub_one_mem_I ht₁⟩ where
   toFun := Dipath.stretchDown (SecondPart γ T) (le_of_eq (by rw [hT]))
   source' := by simp [hT]
@@ -238,7 +239,7 @@ lemma trans_first_case {a₀ a₁ : I × X} {γ : Path a₀ a₁} (γ_dipath : I
   have hpath : γ.map Γ.continuous_toFun = (p'.cast (h t₀ x₀ this) (h t₁ x₁ ht₁)).toPath := by
     ext
     simp only [ContinuousMap.toFun_eq_coe, ContinuousMap.Homotopy.coe_toContinuousMap, Path.map_coe,
-      Function.comp_apply, DirectedMap.coe_coe]
+      Function.comp_apply]
     exact h _ _ (le_trans (directed_path_bounded γ_dipath.1 _).2 ht₁)
   rw [hpath]
   exact (p'.cast (h t₀ x₀ this) (h t₁ x₁ ht₁)).dipath_toPath
@@ -268,7 +269,7 @@ lemma trans_second_case {a₀ a₁ : I × X} {γ : Path a₀ a₁} (γ_dipath : 
   have hpath : γ.map Γ.continuous_toFun = (p'.cast (h t₀ x₀ ht₀) (h t₁ x₁ this)).toPath := by
     ext
     simp only [ContinuousMap.toFun_eq_coe, ContinuousMap.Homotopy.coe_toContinuousMap, Path.map_coe,
-      Function.comp_apply, DirectedMap.coe_coe]
+      Function.comp_apply]
     exact h _ _ (le_trans ht₀ (directed_path_bounded γ_dipath.1 _).1)
   rw [hpath]
   exact (p'.cast (h t₀ x₀ ht₀) (h t₁ x₁ this)).dipath_toPath
@@ -413,7 +414,7 @@ def cast {f₀ f₁ g₀ g₁ : D(X,Y)} (F : Dihomotopy f₀ f₁) (h₀ : f₀ 
 /-- If we have a `Dihomotopy f₀ f₁` and a `Dihomotopy g₀ g₁`, then we can compose them and get a
 `Dihomotopy (g₀.comp f₀) (g₁.comp f₁)`.
 -/
-@[simps! -isSimp]
+@[expose, simps! -isSimp]
 def hcomp {f₀ f₁ : D(X,Y)} {g₀ g₁ : D(Y,Z)} (F : Dihomotopy f₀ f₁) (G : Dihomotopy g₀ g₁) :
   Dihomotopy (g₀.comp f₀) (g₁.comp f₁) :=
   homToDihom (Homotopy.hcomp' (dihomToHom F) (dihomToHom G))

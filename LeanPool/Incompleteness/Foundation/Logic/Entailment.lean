@@ -366,7 +366,7 @@ variable [LogicalConnective F]
 variable (𝓢 : S)
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def Complete : Prop := ∀ f, 𝓢 ⊢! f ∨ 𝓢 ⊢! ∼f
+@[expose] def Complete : Prop := ∀ f, 𝓢 ⊢! f ∨ 𝓢 ⊢! ∼f
 
 /-- Imported declaration from the Incompleteness formalization. -/
 def Undecidable (f : F) : Prop := 𝓢 ⊬ f ∧ 𝓢 ⊬ ∼f

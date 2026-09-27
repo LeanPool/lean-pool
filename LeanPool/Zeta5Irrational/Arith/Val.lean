@@ -150,7 +150,7 @@ lemma inv_nat [hp : Fact p.Prime] {j n : ℕ} (hj : 1 ≤ j) (hjn : j ≤ n) :
 end VG
 
 /-- Gauss valuation bound for polynomials in `X`. -/
-def GV (p : ℕ) (f : ℚ[X]) (r : ℚ) : Prop :=
+@[expose] def GV (p : ℕ) (f : ℚ[X]) (r : ℚ) : Prop :=
   ∀ n, VG p (f.coeff n) r
 
 namespace GV

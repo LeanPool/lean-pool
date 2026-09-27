@@ -613,7 +613,7 @@ theorem physicalMoments_cancel (P : Patch) (lam R a : ℝ) (hR : 0 < R) (ha : 0 
   · exact cancel (R * Real.sqrt (2 * R) * a) (d 2) (by positivity)
 
 /-- Radial normalization, independent of the shaped-wait amplitude. -/
-noncomputable def scaledDebt (R : ℝ) (d : Coeff) : Coeff :=
+@[expose] noncomputable def scaledDebt (R : ℝ) (d : Coeff) : Coeff :=
   ![d 0, d 1 / R, d 2 / (R * Real.sqrt (2 * R))]
 
 /-- Amplitude factors, given by `![(2 * a ^ 2)⁻¹, (2 * a ^ 2)⁻¹, a⁻¹]`. -/
@@ -694,7 +694,7 @@ theorem amplitudeDebt_bounds {U S : Set ℝ} (hU : IsOpen U) (hSU : S ⊆ U)
 
 /-- The value, normalized radial derivative, and parameter derivative of the
 actual additive profile perturbation are all small. -/
-noncomputable def FirstJetBound (P : Patch) (a : ℝ → ℝ) (c : ℝ → Coeff)
+@[expose] noncomputable def FirstJetBound (P : Patch) (a : ℝ → ℝ) (c : ℝ → Coeff)
     (η L : ℝ) : Prop :=
   ∀ x : ℝ, |a η * correction P (c η) x| ≤ L ∧
     |a η * deriv (correction P (c η)) x| ≤ L ∧

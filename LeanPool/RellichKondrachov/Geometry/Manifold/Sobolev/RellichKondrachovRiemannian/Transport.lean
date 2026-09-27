@@ -716,7 +716,8 @@ between the `extendByZero` ranges for `μchart` and Lebesgue `volume`.
 
 /-- The extension-by-zero range equivalence between the chart pushforward measure and Lebesgue
 `volume` on the fixed compact support, for a general value type `F`. -/
-noncomputable def l2ExtendByZeroRangeEquivVolumeOnRhoSupportImage' (i : dR.d.ι) (F : Type*)
+@[expose] noncomputable def l2ExtendByZeroRangeEquivVolumeOnRhoSupportImage'
+    (i : dR.d.ι) (F : Type*)
     [NormedAddCommGroup F] [NormedSpace ℝ F] :
     let μM :=
       RellichKondrachov.Geometry.Manifold.Riemannian.riemannianVolumeMeasure (I := I) (M := M)

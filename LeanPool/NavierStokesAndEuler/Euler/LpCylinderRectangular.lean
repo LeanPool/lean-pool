@@ -124,7 +124,7 @@ def supportedMap : (α →ᵇ E →L[ℝ] F) →L[ℝ]
       supported_norm μ S hS A ‖A‖ (norm_nonneg _) (fun x _ => A.norm_coe_le_norm x))
 
 @[simp] theorem supportedMap_apply (A : α →ᵇ E →L[ℝ] F) : supportedMap μ S hS A = supported μ S hS
-    A := rfl
+    A := by rfl
 
 theorem supportedMap_norm : ‖supportedMap (E := E) (F := F) μ S hS‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
@@ -141,7 +141,7 @@ def supportedPathMap : C(K,α →ᵇ E →L[ℝ] F) →L[ℝ]
 
 omit [CompactSpace K] in
 @[simp] theorem supportedPathMap_apply (A : C(K, α →ᵇ E →L[ℝ] F)) (t : K) :
-    supportedPathMap μ S hS A t = supported μ S hS (A t) := rfl
+    supportedPathMap μ S hS A t = supported μ S hS (A t) := by rfl
 
 theorem supportedPathMap_norm : ‖supportedPathMap (K := K) (E := E) (F := F) μ S hS‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
@@ -323,7 +323,8 @@ def fullOperatorMap : (Space →ᵇ E →L[ℝ] F) →L[ℝ]
 
 @[simp] theorem fullOperatorMap_apply (A : Space →ᵇ E →L[ℝ] F) :
     fullOperatorMap period A = EulerLpOperatorField.full (liftMeasure period) (fieldLift period A)
-        := rfl
+        := by
+  exact EulerLpOperatorField.fullMap_apply (liftMeasure period) (fieldLift period A)
 
 theorem fullOperatorMap_norm : ‖fullOperatorMap (E := E) (F := F) period‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
@@ -341,7 +342,7 @@ def fullPathMap : C(K,Space →ᵇ E →L[ℝ] F) →L[ℝ]
 
 omit [CompactSpace K] in
 @[simp] theorem fullPathMap_apply (A : C(K, Space →ᵇ E →L[ℝ] F)) (t : K) :
-    fullPathMap period A t = fullOperatorMap period (A t) := rfl
+    fullPathMap period A t = fullOperatorMap period (A t) := by rfl
 
 theorem fullPathMap_norm : ‖fullPathMap (K := K) (E := E) (F := F) period‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
@@ -362,7 +363,7 @@ def fullMultiplierMap : C(K,Space →ᵇ E →L[ℝ] F) →L[ℝ]
 
 @[simp] theorem fullMultiplierMap_apply (A : C(K, Space →ᵇ E →L[ℝ] F))
     (u : C(K, CylinderL2 period E)) (t : K) :
-    fullMultiplierMap period A u t = fullOperatorMap period (A t) (u t) := rfl
+    fullMultiplierMap period A u t = fullOperatorMap period (A t) (u t) := by rfl
 
 theorem fullMultiplierMap_norm : ‖fullMultiplierMap (K := K) (E := E) (F := F) period‖ ≤ 1 := by
   calc
@@ -394,10 +395,9 @@ theorem fullOperator_translation (a : LiftTangent) (A : Space →ᵇ E →L[ℝ]
     (measurePreserving_translation period (coveringMap period a)).quasiMeasurePreserving.ae
       (EulerLpOperatorField.full_ae (liftMeasure period) (fieldLift period A) u)]
     with x hl hu hr hA
-  change (EulerLpOperatorField.full (liftMeasure period) (fieldLift period (translated A a.1))
-    (translate period a u)) x = (translate period a (fullOperatorMap period A u)) x
-  rw [hl,hu,hr]
-  exact hA.symm
+  rw [fullOperatorMap_apply, hl, hu, hr]
+  simpa only [fullOperatorMap_apply, fieldLift_apply, translated_apply, coveringMap,
+    Prod.fst_add] using hA.symm
 
 /-- The exact mixed-translation identity holds in the uniform continuous-path space. -/
 theorem fullMultiplier_translation (a : LiftTangent) (A : C(K, Space →ᵇ E →L[ℝ] F))
@@ -407,7 +407,8 @@ theorem fullMultiplier_translation (a : LiftTangent) (A : C(K, Space →ᵇ E �
       pathTranslate period a (fullMultiplierMap (K := K) (E := E) (F := F) period A u) := by
   apply ContinuousMap.ext
   intro t
-  exact fullOperator_translation period a (A t) (u t)
+  simpa only [fullMultiplierMap_apply, translateCoefficientPath_apply, pathTranslate_apply] using
+    fullOperator_translation period a (A t) (u t)
 
 variable (S : Set Space) (hS : MeasurableSet S)
 
@@ -483,7 +484,9 @@ def supportedOperatorMap : (Space →ᵇ E →L[ℝ] F) →L[ℝ]
 
 @[simp] theorem supportedOperatorMap_coe (A : Space →ᵇ E →L[ℝ] F) (u : Supported period E S hS) :
     (supportedOperatorMap period S hS A u : CylinderL2 period F) =
-      fullOperatorMap period A (u : CylinderL2 period E) := rfl
+      fullOperatorMap period A (u : CylinderL2 period E) := by
+  rw [fullOperatorMap_apply]
+  rfl
 
 theorem supportedOperatorMap_norm : ‖supportedOperatorMap (E := E) (F := F) period S hS‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
@@ -491,7 +494,7 @@ theorem supportedOperatorMap_norm : ‖supportedOperatorMap (E := E) (F := F) pe
   rw [one_mul]
   exact (EulerLpOperatorField.supported_norm (liftMeasure period) (spatialSet period S)
     (spatialSet_measurable period S hS) (fieldLift period A) ‖A‖ (norm_nonneg A)
-    (fun x _ => A.norm_coe_le_norm x.1))
+    (fun x _ => by simpa only [fieldLift_apply] using A.norm_coe_le_norm x.1))
 
 /-- Supported path map, given by `(supportedOperatorMap (E := E) (F := F) period S
 hS).compLeftContinuous ℝ K`. -/
@@ -510,13 +513,17 @@ def supportedMultiplierMap : C(K,Space →ᵇ E →L[ℝ] F) →L[ℝ]
 @[simp] theorem supportedMultiplierMap_apply (A : C(K, Space →ᵇ E →L[ℝ] F))
     (u : C(K, Supported period E S hS)) (t : K) :
     supportedMultiplierMap (K := K) (E := E) (F := F) period S hS A u t =
-      supportedOperatorMap period S hS (A t) (u t) := rfl
+      supportedOperatorMap period S hS (A t) (u t) := by rfl
 
 /-- Inclusion identifies the supported product with the actual full-cylinder product. -/
 theorem include_supportedMultiplier (A : C(K, Space →ᵇ E →L[ℝ] F))
     (u : C(K, Supported period E S hS)) :
     includePath period S hS
         (supportedMultiplierMap (K := K) (E := E) (F := F) period S hS A u) =
-      fullMultiplierMap (K := K) (E := E) (F := F) period A (includePath period S hS u) := rfl
+      fullMultiplierMap (K := K) (E := E) (F := F) period A (includePath period S hS u) := by
+  apply ContinuousMap.ext
+  intro t
+  simp only [includePath_apply, supportedMultiplierMap_apply, fullMultiplierMap_apply,
+    supportedOperatorMap_coe]
 
 end EulerLpCylinderRectangular

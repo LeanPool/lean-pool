@@ -36,7 +36,7 @@ namespace PDL
 /-- The leading program `α` of the loaded formula `~⌊α⌋ξ` of a sequent, if there is one.
 For a basic sequent this program is atomic, see
 `Sequent.isAtomic_of_basic_of_negLoad_mem_wForms`. -/
-def Sequent.loadedProgOpt : Sequent → Option Program
+@[expose] def Sequent.loadedProgOpt : Sequent → Option Program
   | ⟨_, _, none⟩ => none
   | ⟨_, _, some (Sum.inl (~'(⌊α⌋_)))⟩ => some α
   | ⟨_, _, some (Sum.inr (~'(⌊α⌋_)))⟩ => some α
@@ -44,7 +44,7 @@ def Sequent.loadedProgOpt : Sequent → Option Program
 /-- The leading program of the loaded formula, or `?'⊥` if the sequent is free.
 Only used in the case `k(x) = 3` with `Δₓ` basic of Definition 9.18, where the sequent
 is loaded. -/
-def Sequent.loadedProg (X : Sequent) : Program := X.loadedProgOpt.getD (?'⊥)
+@[expose] def Sequent.loadedProg (X : Sequent) : Program := X.loadedProgOpt.getD (?'⊥)
 
 /-! ## Definition 9.18 -/
 

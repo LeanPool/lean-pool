@@ -28,6 +28,7 @@ universe u v
 open scoped ENNReal
 
 /-- Countable discrete subgroup wrapper. Paper: §4. -/
+@[expose]
 def CountableDiscreteGroup.subgroup
     (G : CountableDiscreteGroup.{u}) (S : Subgroup G) :
     CountableDiscreteGroup.{u} where

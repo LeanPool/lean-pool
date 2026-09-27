@@ -35,7 +35,7 @@ variable {R : Type*} [Ring R]
 variable {e : R}
 
 /-- The carrier set of the corner ring `eRe`, defined as `{e * x * e | x : R}`. -/
-def CornerRingSet (e : R) : Set R := bothMul e e
+@[expose] def CornerRingSet (e : R) : Set R := bothMul e e
 
 -- an element x of R is in the corner ring if and only if x = e * x * e
 theorem corner_ring_set_mem {x : R} (idem_e : IsIdempotentElem e) :
@@ -52,7 +52,7 @@ theorem x_in_corner_x_eq_e_y_e {x : R} (h : x ∈ CornerRingSet e) :
     ∃ (y : R), x = e * y * e := h
 
 /-- The nonunital corner subring `eRe` as a `NonUnitalSubring`. -/
-@[reducible]
+@[reducible, expose]
 def CornerSubringNonUnital (e : R) : NonUnitalSubring R where
   carrier := bothMul e e
   zero_mem' := ⟨0, by simp⟩
@@ -315,21 +315,18 @@ def idealPush (idem_e : IsIdempotentElem e) (J : Ideal R) : Ideal (CornerSubring
     zero_mem' := ?_,
     add_mem' := ?_,
     smul_mem' := ?_ }
-  ·
-    rintro x y ⟨r, ⟨hr_mem, hr⟩⟩ ⟨s, ⟨hs_mem, hs⟩⟩
+  · rintro x y ⟨r, ⟨hr_mem, hr⟩⟩ ⟨s, ⟨hs_mem, hs⟩⟩
     refine ⟨r + s, (Submodule.add_mem_iff_right J hr_mem).mpr hs_mem, ?_⟩
     apply Subtype.ext
     change e * (r + s) * e = (x + y : CornerSubring idem_e).val
     rw [← hr, ← hs]
     change e * (r + s) * e = e * r * e + e * s * e
     noncomm_ring
-  ·
-    refine ⟨0, Submodule.zero_mem J, ?_⟩
+  · refine ⟨0, Submodule.zero_mem J, ?_⟩
     apply Subtype.ext
     change e * 0 * e = (0 : R)
     noncomm_ring
-  ·
-    rintro ⟨c, ⟨a, hc⟩⟩ x ⟨r, ⟨hr_mem, hr⟩⟩
+  · rintro ⟨c, ⟨a, hc⟩⟩ x ⟨r, ⟨hr_mem, hr⟩⟩
     refine ⟨a * e * e * r, Ideal.mul_mem_left J (a * e * e) hr_mem, ?_⟩
     apply Subtype.ext
     rw [← hr]
@@ -346,7 +343,7 @@ theorem add_el_push_eq_add (x y : R) :
 -- multiplication by scalar keeps pushed element in ideal
 lemma el_push_smul_in_I (a y : R) (I : Ideal (CornerSubring idem_e)) :
     y ∈ (I.carrier : Set R) → elPush idem_e (a • y) ∈ I := by
-  letI : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
+  let : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
   intro hy
   obtain ⟨r, ⟨hr1, hr2⟩⟩ := hy
   obtain ⟨s, hs⟩ := r.2
@@ -374,7 +371,7 @@ lemma el_push_smul_in_I (a y : R) (I : Ideal (CornerSubring idem_e)) :
 -- if x in the lift of I then its push is in I
 theorem ideal_push_pull_inclusion (I : Ideal (CornerSubring idem_e)) (x : R) :
     (x ∈ idealLift idem_e I) → (elPush idem_e x) ∈ I := by
-  letI : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
+  let : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
   intro hx
   induction hx using Submodule.closure_induction with
   | zero =>
@@ -391,7 +388,7 @@ theorem ideal_push_pull_inclusion (I : Ideal (CornerSubring idem_e)) (x : R) :
 -- pushing and pulling an ideal brings us back to the same ideal
 theorem push_pull (idem_e : IsIdempotentElem e) (I : Ideal (CornerSubring idem_e)) :
     idealPush idem_e (idealLift idem_e I) = I := by
-  letI : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
+  let : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
   ext x
   constructor
   · rintro ⟨y, ⟨hy_mem, hy⟩⟩
@@ -414,7 +411,7 @@ theorem push_pull (idem_e : IsIdempotentElem e) (I : Ideal (CornerSubring idem_e
 
 theorem lift_strict_monotonicity (I J : Ideal (CornerSubring idem_e)) :
     I < J → (idealLift idem_e I) < (idealLift idem_e J) := by
-  letI : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
+  let : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
   intro I_leq_J
   have I_neq_J : I ≠ J := ne_of_lt I_leq_J
   have lift_leq : (idealLift idem_e I) ≤ (idealLift idem_e J) :=
@@ -432,7 +429,7 @@ theorem lift_acc_then_ideal_acc (idem_e : IsIdempotentElem e) (J : Ideal R)
     (h_J_is_lift : ∃ I3 : Ideal (CornerSubring idem_e), J = idealLift idem_e I3)
     (h_acc_J : Acc (fun x y => x < y) J) :
     Acc (fun x y => x < y) (idealPush idem_e J) := by
-  letI : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
+  let : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
   induction h_acc_J with
   | intro J2 _ hi =>
     obtain ⟨I, hI⟩ := h_J_is_lift
@@ -449,7 +446,7 @@ theorem lift_acc_then_ideal_acc (idem_e : IsIdempotentElem e) (J : Ideal R)
 -- a) If R is artinian, then the corner ring is artinian
 theorem corner_ring_artinian [h_ar : IsArtinian R R] :
     IsArtinian (CornerSubring idem_e) (CornerSubring idem_e) := by
-  letI : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
+  let : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
   have Iacc : ∀ I : Ideal R, Acc (fun x y => x < y) I := fun I ↦ WellFounded.apply h_ar I
   have allacc : ∀ I : Ideal (CornerSubring idem_e), Acc (fun x y => x < y) I := by
     intro I
@@ -471,7 +468,7 @@ theorem corner_ring_both_mul_mem' (x y : CornerSubring idem_e) (w : R) :
 -- if a and b in eRe, then a (e R e) b = a R b as sets
 theorem both_mul_lift (x y : CornerSubring idem_e) :
     (bothMul (x : CornerSubring idem_e) y) = bothMul (x : R) (y : R) := by
-  letI : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
+  let : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
   ext a
   constructor
   · rintro ⟨r, ⟨s, hs⟩, rfl⟩
@@ -495,7 +492,7 @@ theorem both_mul_lift (x y : CornerSubring idem_e) :
 
 -- b) If R is a prime ring, then the corner ring is prime
 theorem corner_ring_prime (hRP : IsPrimeRing R) : IsPrimeRing (CornerSubring idem_e) := by
-  letI : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
+  let : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
   rw [prime_ring_equiv]
   intro a b h
   have h_lift : ((bothMul a b) : Set R) = {0} := by
@@ -508,7 +505,7 @@ theorem corner_ring_prime (hRP : IsPrimeRing R) : IsPrimeRing (CornerSubring ide
 theorem div_subring_to_div_ring (e : R) (idem_e : IsIdempotentElem e)
     (h : IsDivisionSubring (CornerSubringNonUnital e) e) :
     IsDivisionRing (CornerSubring idem_e) := by
-  letI : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
+  let : Ring (CornerSubring idem_e) := CornerRingIsRing idem_e
   obtain ⟨⟨a, ⟨a_mem, a_nz⟩⟩, h_inv⟩ := h
   have corner_nontrivial : Nontrivial (CornerSubring idem_e) := by
     refine ⟨⟨(⟨a, a_mem⟩ : CornerSubring idem_e),

@@ -353,7 +353,7 @@ lemma followUntilWon_body : body S.followUntilWon.subtree ≤ body S.subtree ∪
   · right; have hx' := body_mono S.followUntilWon.subtree_sub hx; conv => simp [hx']
     let ⟨n, h'⟩ := h'
     conv at h' => simp [WonPosition, AllWinning]
-    have hmem := Set.eq_univ_iff_forall.mp h' (body.drop n ⟨x, hx'⟩)
+    have hmem := h' (Set.mem_range_self (body.drop n ⟨x, hx'⟩))
     simpa [body.append] using hmem
   · left; apply subtree_induction_body hx
     intro n _ _ hmem

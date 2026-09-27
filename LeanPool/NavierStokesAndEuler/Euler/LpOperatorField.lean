@@ -173,7 +173,7 @@ theorem full_mem (A : α →ᵇ (E →L[ℝ] F)) (u : supportedSpace (V := E) μ
   rw [ha,hu hx,map_zero]
 
 /-- The genuine rectangular multiplier between the supported Hilbert spaces. -/
-def supported (A : α →ᵇ (E →L[ℝ] F)) :
+@[expose] def supported (A : α →ᵇ (E →L[ℝ] F)) :
     supportedSpace (V := E) μ S hS →L[ℝ] supportedSpace (V := F) μ S hS :=
   ((full μ A).comp (supportedSpace μ S hS).subtypeL).codRestrict
     (supportedSpace μ S hS) (full_mem μ S hS A)

@@ -61,6 +61,8 @@ theorem ofCurve_inj' (hupgrade : RS.Abel.WeakSolutionUpgrade X) (P : X) (h : 0 <
   have hxy' : (fun i => RS.pathIntegral (PathConnectedSpace.somePath P x) (RS.basis X i))
       - (fun i => RS.pathIntegral (PathConnectedSpace.somePath P y) (RS.basis X i))
       ∈ (RS.periodSubgroup X).topologicalClosure := by
+    rw [ofCurve_eq_of_path P x (PathConnectedSpace.somePath P x),
+      ofCurve_eq_of_path P y (PathConnectedSpace.somePath P y)] at hxy
     have := ULift.up.injEq .. |>.mp hxy
     rwa [QuotientAddGroup.eq_iff_sub_mem] at this
   rw [hclosure_eq] at hxy'

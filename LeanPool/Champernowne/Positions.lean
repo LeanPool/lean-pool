@@ -21,7 +21,7 @@ two-sided comparison between `b^k · countOccurrences w (champPrefix b n)`
 and `n` with error `O(k)·b^(2k)·b^M`.
 -/
 
-@[expose] public section
+public section
 
 namespace Champernowne
 

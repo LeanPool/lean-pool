@@ -42,7 +42,7 @@ def Missing (root : CanonicalCarrier S) : Prop :=
 
 /-- The source's conditional completion: all generated worlds are present,
 while `none` is a legal point exactly when `Missing root` holds. -/
-def CompletedCarrier (root : CanonicalCarrier S) :=
+@[expose] def CompletedCarrier (root : CanonicalCarrier S) :=
   {o : Option (GeneratedCarrier root) // o = none → Missing root}
 
 namespace CompletedCarrier
@@ -113,7 +113,7 @@ theorem completedCarrier_cases {root : CanonicalCarrier S}
 three cases exact: a star input admits no tuple; real outputs are the generated
 interpretation; and star is an additional output exactly when some real input
 is the generated root. -/
-def completedInterp (root : CanonicalCarrier S) (sigma : S.Sym)
+@[expose] def completedInterp (root : CanonicalCarrier S) (sigma : S.Sym)
     (inputs : Fin (S.arity sigma) → CompletedCarrier root) :
     Set (CompletedCarrier root) :=
   {output | ∃ components : Fin (S.arity sigma) → GeneratedCarrier root,

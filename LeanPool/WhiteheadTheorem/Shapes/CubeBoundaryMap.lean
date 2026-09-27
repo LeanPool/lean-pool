@@ -91,7 +91,7 @@ variable (f01 : zeroOne → (cube.{u} n ⟶ Z))  -- bottom or top face of `∂�
 variable (fs : TopCat.of (I × cubeBoundary.{u} n) ⟶ Z)  -- sides of `∂𝕀 (n + 1)`
 
 /-- `mapVecOfBotTopSides` -/
-def mapVecOfBotTopSides : (k : Fin 3) → C(botTopSidesCover n k, Z) :=
+@[expose] def mapVecOfBotTopSides : (k : Fin 3) → C(botTopSidesCover n k, Z) :=
   let g0 : C(botOrTop.{u} n 0, Z) :=
     ⟨fun ⟨⟨y, _⟩, _⟩ ↦ f01 0 ⟨(Cube.splitAtLast y).snd⟩, by
       apply (f01 0).hom.continuous.comp

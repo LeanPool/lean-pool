@@ -678,7 +678,7 @@ instance : Collection (SyntacticFormula L) (Theory L) := inferInstance
 instance : Collection (Sentence L) (ClosedTheory L) := inferInstance
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def _root_.LO.FirstOrder.Theory.lMap (Φ : L₁ →ᵥ L₂) (T : Theory L₁) :
+@[expose] def _root_.LO.FirstOrder.Theory.lMap (Φ : L₁ →ᵥ L₂) (T : Theory L₁) :
     Theory L₂ := Semiformula.lMap Φ '' T
 
 namespace Theory

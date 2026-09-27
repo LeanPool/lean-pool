@@ -50,6 +50,7 @@ namespace IsoGraph
 namespace Canon
 
 /-- Dominated by the incumbent, or already accounted for by whoever called us. -/
+@[expose]
 def DomD (D : List (List UInt64) → Prop) (st : St) (k : List (List UInt64)) : Prop :=
   Dom st k ∨ D k
 

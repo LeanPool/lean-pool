@@ -144,11 +144,11 @@ noncomputable def sourceLinear (P : Type) [NormedAddCommGroup P] [NormedSpace �
     (g.pointLinear.comp ((ContinuousLinearMap.snd ℝ P Plane).comp (nativeLinear P g)))
 
 @[simp] theorem nativeLinear_apply (g : CCS) (w : Joint P) :
-    nativeLinear P g w = (w.1.1, ((g.coordinateLinear w.1.2).1, w.2)) := rfl
+    nativeLinear P g w = (w.1.1, ((g.coordinateLinear w.1.2).1, w.2)) := by rfl
 
 @[simp] theorem sourceLinear_apply (g : CCS) (w : Joint P) :
     sourceLinear P g w =
-      (w.1.1, g.pointLinear ((g.coordinateLinear w.1.2).1, w.2)) := rfl
+      (w.1.1, g.pointLinear ((g.coordinateLinear w.1.2).1, w.2)) := by rfl
 
 theorem nativeArgument_affine (g : CCS) (k : Frequency) (w : Joint P) :
     nativeArgument g k w = nativeArgument g k 0 + nativeLinear P g w := by
@@ -263,11 +263,11 @@ theorem sourceArgument_jet_bound (g : CCS) (k : Frequency) {f : P × Plane → V
 
 omit [NormedAddCommGroup P] [NormedSpace ℝ P] in
 @[simp] theorem sourceArgument_slow (g : CCS) (k : Frequency) (w : Joint P) :
-    (sourceArgument g k w).1 = w.1.1 := rfl
+    (sourceArgument g k w).1 = w.1.1 := by rfl
 
 omit [NormedAddCommGroup P] [NormedSpace ℝ P] in
 @[simp] theorem nativeArgument_slow (g : CCS) (k : Frequency) (w : Joint P) :
-    (nativeArgument g k w).1 = w.1.1 := rfl
+    (nativeArgument g k w).1 = w.1.1 := by rfl
 
 end Arguments
 
@@ -442,7 +442,7 @@ noncomputable def currentLinear (P : Type) [NormedAddCommGroup P] [NormedSpace �
       (g.coordinateLinear.comp (ContinuousLinearMap.snd ℝ P Plane)))
 
 @[simp] theorem currentLinear_apply (g : CCS) (p : P × Plane) :
-    currentLinear P g p = (p, (g.coordinateLinear p.2).2) := rfl
+    currentLinear P g p = (p, (g.coordinateLinear p.2).2) := by rfl
 
 theorem currentArgument_affine (g : CCS) (k : Frequency) (p : P × Plane) :
     currentArgument g k p = currentArgument g k 0 + currentLinear P g p := by
@@ -690,7 +690,7 @@ noncomputable def bandChart (D : ℝ) (n m : ℕ) : SlowPoint →L[ℝ] SlowPoin
 
 @[simp] theorem bandChart_apply (D : ℝ) (n m : ℕ) (x : SlowPoint) :
     bandChart D n m x = (bandRatio (1 / 2) n m * x.1,
-      (bandRatio D n m * x.2.1, bandRatio 1 n m * x.2.2)) := rfl
+      (bandRatio D n m * x.2.1, bandRatio 1 n m * x.2.2)) := by rfl
 
 theorem bandChart_formula (D : ℝ) (n m : ℕ) (x : SlowPoint) :
     bandChart D n m x = ((ChartScales.Q n / ChartScales.Q m) ^ (1 / 2 : ℝ) * x.1,
@@ -961,7 +961,8 @@ noncomputable def bandCommonChart (D : ℝ) (n m : ℕ) (forward : Bool) (gap : 
 
 @[simp] theorem bandCommonChart_apply (D : ℝ) (n m : ℕ) (forward : Bool) (gap : ℕ)
     (x : SlowPoint × Plane) :
-    bandCommonChart D n m forward gap x = (bandChart D n m x.1, coverChange forward gap x.2) := rfl
+    bandCommonChart D n m forward gap x = (bandChart D n m x.1, coverChange forward gap x.2) := by
+  rfl
 
 /-- Common chart cost, given by `chartCost D + CommonCoverSolve.coveringBound gapBound`. -/
 noncomputable def commonChartCost (D : ℝ) (gapBound : ℕ) : ℝ :=
@@ -1241,7 +1242,7 @@ noncomputable def meshTransition (D : ℝ) (L M : SlotColoring.Label)
 
 @[simp] theorem meshLinear_apply (D : ℝ) (L M : SlotColoring.Label)
     (x : SlotColoring.Position) (j : Fin 3) :
-    meshLinear D L M x j = (SlotColoring.width D j L.1 / SlotColoring.width D j M.1) * x j := rfl
+    meshLinear D L M x j = (SlotColoring.width D j L.1 / SlotColoring.width D j M.1) * x j := by rfl
 
 theorem meshTransition_eq_coordinate (D : ℝ) (L M : SlotColoring.Label)
     (x : SlotColoring.Position) : meshTransition D L M x = meshCoordinate D M (meshPoint D L x) :=

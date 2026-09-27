@@ -535,7 +535,7 @@ noncomputable def familyPrimitiveFactor (T : ℝ) (B : FamilyPoint → ℝ)
 
 theorem familyPrimitiveFactor_eq (T : ℝ) (B : FamilyPoint → ℝ) (κ y η : ℝ) :
     familyPrimitiveFactor T B ((κ, y), η) =
-      primitiveFactor T (fun p => B ((κ, p.1), p.2)) (y, η) := rfl
+      primitiveFactor T (fun p => B ((κ, p.1), p.2)) (y, η) := by rfl
 
 theorem familyPrimitiveFactor_smooth {T : ℝ} (hT : 0 < T) {J : Set ℝ} (hJ : IsOpen J)
     {B : FamilyPoint → ℝ}

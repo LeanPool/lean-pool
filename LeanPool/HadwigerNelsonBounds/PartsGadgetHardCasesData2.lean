@@ -20,7 +20,7 @@ public section
 namespace HadwigerNelsonBounds
 
 /-- Independently checked hard-case certificate `partsGadgetHardCertificate9`. -/
-def partsGadgetHardCertificate9 : PartsGadgetCertificate := {
+@[expose] def partsGadgetHardCertificate9 : PartsGadgetCertificate := {
   roots := [
     ⟨5, 0⟩, ⟨31, 3⟩, ⟨18, 0⟩, ⟨25, 1⟩, ⟨19, 2⟩, ⟨12, 3⟩,
     ⟨7, 0⟩, ⟨17, 2⟩, ⟨16, 0⟩, ⟨1, 3⟩, ⟨9, 1⟩, ⟨22, 2⟩
@@ -230,7 +230,7 @@ def partsGadgetHardCertificate9 : PartsGadgetCertificate := {
 }
 
 /-- Independently checked hard-case certificate `partsGadgetHardCertificate10`. -/
-def partsGadgetHardCertificate10 : PartsGadgetCertificate := {
+@[expose] def partsGadgetHardCertificate10 : PartsGadgetCertificate := {
   roots := [
     ⟨5, 0⟩, ⟨31, 3⟩, ⟨18, 0⟩, ⟨25, 1⟩, ⟨19, 2⟩, ⟨12, 3⟩,
     ⟨7, 0⟩, ⟨17, 2⟩, ⟨16, 0⟩, ⟨1, 3⟩, ⟨9, 1⟩, ⟨22, 3⟩

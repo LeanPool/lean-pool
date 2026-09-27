@@ -158,14 +158,14 @@ through the edge `e 0 0`, with a detour path running the other way round. -/
 /-- The index pairs of the six edges of the six-cycle, in the order the cycle is traversed
 starting from `e 0 0`. Kept as index pairs, not as edges, because every question about which
 edges the cycle uses is then decidable. -/
-def hexPairs : List (Fin 3 × Fin 3) := [(0, 0), (0, 2), (2, 2), (2, 1), (1, 1), (1, 0)]
+@[expose] def hexPairs : List (Fin 3 × Fin 3) := [(0, 0), (0, 2), (2, 2), (2, 1), (1, 1), (1, 0)]
 
 /-- The five edges of the detour of the six-cycle: the path
 `x₀ → y₂ → x₂ → y₁ → x₁ → y₀` that returns to the other end of `e 0 0`. -/
-def hexDetour (e : Fin 3 → Fin 3 → β) : List β := [e 0 2, e 2 2, e 2 1, e 1 1, e 1 0]
+@[expose] def hexDetour (e : Fin 3 → Fin 3 → β) : List β := [e 0 2, e 2 2, e 2 1, e 1 1, e 1 0]
 
 /-- The six edges of the six-cycle. -/
-def hexList (e : Fin 3 → Fin 3 → β) : List β := e 0 0 :: hexDetour e
+@[expose] def hexList (e : Fin 3 → Fin 3 → β) : List β := e 0 0 :: hexDetour e
 
 theorem hexList_eq_map (e : Fin 3 → Fin 3 → β) :
     hexList e = hexPairs.map fun p ↦ e p.1 p.2 := rfl

@@ -656,6 +656,7 @@ theorem exists_smooth_localization (W : Window)
     exact ⟨splice_eq_of_eq W (heq N p hp).1, splice_eq_of_eq W (heq N p hp).2⟩
 
 /-- Strip domain, bundling `carrier`, `isOpen`, `scale_mem`. -/
+@[expose]
 noncomputable def stripDomain (Ω : Set ℝ) (hΩ : IsOpen Ω) : ProfileHistories.RadialDomain where
   carrier := univ ×ˢ Ω
   isOpen := isOpen_univ.prod hΩ

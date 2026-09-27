@@ -127,7 +127,7 @@ theorem doubleAverage_const_mul (a : ℝ) (f : Plane → ℝ → ℝ) :
 theorem nativePulse_mul (vr vt center : Plane) (hdet : vr.1 * vt.2 - vr.2 * vt.1 ≠ 0)
     (ci r : ℝ) (f g : Plane → ℝ) :
     (fun Y => nativePulse vr vt center hdet ci r f Y * nativePulse vr vt center hdet ci r g Y) =
-      nativePulse vr vt center hdet ci r (fun z => f z * g z) := rfl
+      nativePulse vr vt center hdet ci r (fun z => f z * g z) := by rfl
 
 theorem Pulse.profile_product (P : Pulse) (r : ℝ) (i : Fin 2) :
     (fun z => P.radialProfile r z * P.tangentProfile r i z) =

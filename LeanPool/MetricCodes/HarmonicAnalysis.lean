@@ -151,7 +151,7 @@ theorem Gamma_pos {a b : ℝ} (hb : 0 ≤ b) (hab : b < a) :
       (Real.sqrt_pos.2 (mul_pos ha (by linarith)))
 
 /-- The harmonic dimension used in the metric-code argument. -/
-def harmonicDimension (n : ℕ) : ℕ → ℕ
+@[expose] def harmonicDimension (n : ℕ) : ℕ → ℕ
   | 0 => 1
   | i + 1 =>
       (n + i - 1).choose (i + 1) + (n + i - 2).choose i
@@ -446,7 +446,7 @@ def backwardCoefficient (n i : ℕ) : ℝ :=
   (i : ℝ) / recurrenceDenominator n i
 
 /-- The normalized used in the spherical-code argument. -/
-def normalized (n : ℕ) : ℕ → Polynomial ℝ
+@[expose] def normalized (n : ℕ) : ℕ → Polynomial ℝ
   | 0 => 1
   | 1 => Polynomial.X
   | i + 2 =>
@@ -528,7 +528,7 @@ theorem normalized_natDegree {n : ℕ} (hn : 2 ≤ n) (i : ℕ) :
       exact hmain
 
 /-- The harmonic dimension used in the spherical-code argument. -/
-def harmonicDimension (n : ℕ) : ℕ → ℕ
+@[expose] def harmonicDimension (n : ℕ) : ℕ → ℕ
   | 0 => 1
   | i + 1 =>
       (n + i - 1).choose (i + 1) + (n + i - 2).choose i
@@ -1273,7 +1273,7 @@ theorem polynomialInner_axis_directional (n : ℕ)
               MvPolynomial.pderiv i q)).symm
 
 /-- The coefficient embedding used in the spherical-code argument. -/
-def coefficientEmbedding (n m : ℕ) :
+@[expose] def coefficientEmbedding (n m : ℕ) :
     Homogeneous n m →ₗ[ℝ] CoefficientSpace n m where
   toFun p :=
     WithLp.toLp 2 fun a : DegreeIndex n m =>
@@ -1333,7 +1333,7 @@ theorem coefficientEmbedding_injective (n m : ℕ) :
       MvPolynomial.IsHomogeneous.coeff_eq_zero q.property ha]
 
 /-- The coefficient embedding restricted to homogeneous harmonic polynomials. -/
-def harmonicCoefficientEmbedding (n m : ℕ) :
+@[expose] def harmonicCoefficientEmbedding (n m : ℕ) :
     SpherePacking.harmonicHomogeneousSubmodule n m →ₗ[ℝ]
       CoefficientSpace n m :=
   (coefficientEmbedding n m).comp
@@ -1786,7 +1786,7 @@ theorem finrank_homogeneousSubmodule (n m : ℕ) :
       homogeneousExponentFinset_card n m
 
 /-- Multiplication by the radial polynomial, from homogeneous degree `m` to degree `m + 2`. -/
-def homogeneousRadialMultiplication (n m : ℕ) :
+@[expose] def homogeneousRadialMultiplication (n m : ℕ) :
     MvPolynomial.homogeneousSubmodule (Fin n) ℝ m →ₗ[ℝ]
       MvPolynomial.homogeneousSubmodule (Fin n) ℝ (m + 2) :=
   (LinearMap.mulLeft ℝ (radialPolynomial n)).restrict
@@ -1846,7 +1846,7 @@ theorem surjective_of_injective_inner_adjoint
     LinearMap.finrank_range_of_inj hinj]
 
 /-- The polynomial Laplacian restricted from homogeneous degree `m + 2` to degree `m`. -/
-def homogeneousLaplacian (n m : ℕ) :
+@[expose] def homogeneousLaplacian (n m : ℕ) :
     MvPolynomial.homogeneousSubmodule (Fin n) ℝ (m + 2) →ₗ[ℝ]
       MvPolynomial.homogeneousSubmodule (Fin n) ℝ m :=
   LinearMap.codRestrict
@@ -2220,7 +2220,7 @@ def harmonicAxisParameter (n k : ℕ) : ℝ :=
   (n : ℝ) + 2 * (k : ℝ)
 
 /-- The solid harmonic axis lift used in the spherical-code argument. -/
-def solidHarmonicAxisLift (n k : ℕ) (x : Euclidean n) :
+@[expose] def solidHarmonicAxisLift (n k : ℕ) (x : Euclidean n) :
     ℕ → (MvPolynomial (Fin n) ℝ →ₗ[ℝ]
       MvPolynomial (Fin n) ℝ)
   | 0 => LinearMap.id
@@ -2499,7 +2499,7 @@ theorem harmonicAxisProjectionOperator_mem_harmonic
     rw [hscalar, sub_self]
 
 /-- The harmonic axis lift used in the spherical-code argument. -/
-def harmonicAxisLift
+@[expose] def harmonicAxisLift
     {n : ℕ} (hn : 0 < n) (k : ℕ) (x : Euclidean n) :
     harmonicHomogeneousSubmodule n (k + 1) →ₗ[ℝ]
       harmonicHomogeneousSubmodule n (k + 2) :=
@@ -6634,7 +6634,7 @@ theorem sourceAdjacentHarmonicRow_inner_axis_fibre
 
 /-- The linear embedding applying a row isometry to each matrix column, with a zero leading
 channel. -/
-def spectralMatrixEmbeddingLinearMap
+@[expose] def spectralMatrixEmbeddingLinearMap
     (n k L : ℕ)
     (row : CertificateAmbient n k L →ₗᵢ[ℝ]
       HarmonicRowChannelSpace n k L) :
@@ -6841,7 +6841,7 @@ def firstFibreVector (n k : ℕ) (hn : 3 ≤ n) :
 
 /-- The rank-one map extracting the first fibre coordinate and multiplying a prescribed channel
 vector. -/
-def rankOneChannelMap
+@[expose] def rankOneChannelMap
     (n k L : ℕ) (hn : 3 ≤ n)
     (v : ProjectionChannelSpace n k L) :
     CertificateFibre n k →ₗ[ℝ] ProjectionChannelSpace n k L where

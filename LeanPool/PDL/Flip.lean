@@ -23,7 +23,7 @@ public section
 namespace PDL
 
 /-- Exchange the side of an optional loaded formula. -/
-def Olf.flip : Olf → Olf := Option.map Sum.swap
+@[expose] def Olf.flip : Olf → Olf := Option.map Sum.swap
 
 @[simp]
 lemma Olf.flip_inj {O1 O2 : Olf} : O1.flip = O2.flip ↔ O1 = O2 := by
@@ -134,7 +134,7 @@ lemma basic_flip {X : Sequent} : X.flip.basic ↔ X.basic := by
     · aesop
 
 /-- Reflect a local rule by exchanging its left and right components. -/
-def LocalRule.flip {Lcond Ocond Rcond ress} (lr : LocalRule (Lcond, Rcond, Ocond) ress) :
+@[expose] def LocalRule.flip {Lcond Ocond Rcond ress} (lr : LocalRule (Lcond, Rcond, Ocond) ress) :
     LocalRule (Rcond, Lcond, Ocond.flip) (ress.image Sequent.flip) := by
   cases lr
   case oneSidedL YS orule YS_def =>
@@ -165,7 +165,7 @@ lemma LocalRule.flip_flip {Lcond Ocond Rcond ress} (lr : LocalRule (Lcond, Rcond
   cases lr <;> simp_all [LocalRule.flip] <;> grind
 
 /-- Note: is it possible and useful to rewrite this in more term and less tactic mode? -/
-def LocalRuleApp.flip : LocalRuleApp → LocalRuleApp := by
+@[expose] def LocalRuleApp.flip : LocalRuleApp → LocalRuleApp := by
   rintro ⟨L, R, O, Lcond, Rcond, Ocond, ress, rule, C, hC, preconditionProof⟩
   refine @LocalRuleApp.mk R L O.flip Rcond Lcond Ocond.flip _ rule.flip
     (C.image Sequent.flip) ?_ ?_
@@ -197,7 +197,7 @@ lemma Sequent.flip_mem_of_mem_image_flip {B : Finset Sequent} {Y : Sequent} :
     Y ∈ B.image Sequent.flip → Y.flip ∈ B := by aesop
 
 /-- Reflect every rule and branch of a local tableau. -/
-def LocalTableau.flip {X} : LocalTableau X → LocalTableau X.flip
+@[expose] def LocalTableau.flip {X} : LocalTableau X → LocalTableau X.flip
   | (@byLocalRule X lra X_def next) => .byLocalRule lra.flip
       (by subst X_def; simp [LocalRuleApp.flip, Sequent.flip])
       (fun Y Y_in =>
@@ -349,7 +349,7 @@ lemma flprep_flip {Hist} :
       exact ⟨this⟩
 
 /-- Exchange the left and right sides throughout a tableau. -/
-def Tableau.flip {Hist X} : Tableau Hist X → Tableau (Hist.map Sequent.flip) X.flip
+@[expose] def Tableau.flip {Hist X} : Tableau Hist X → Tableau (Hist.map Sequent.flip) X.flip
 | .loc nflprep nbas lt next =>  .loc (by simp only [flprep_flip]; exact nflprep)
                                   (by simp only [basic_flip]; exact nbas)
                                   lt.flip

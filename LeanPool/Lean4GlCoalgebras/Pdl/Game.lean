@@ -41,7 +41,7 @@ theorem Player.not_eq_B_iff_eq_A {p} : (¬ p = B) ↔ p = A := by cases p <;> si
 theorem Player.eq_A_or_eq_B {p} : p = A ∨ p = B := by cases p <;> simp
 
 /-- Auxiliary declaration used in the GL coalgebra development. -/
-def other : Player → Player
+@[expose] def other : Player → Player
 | A => B
 | B => A
 

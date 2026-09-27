@@ -101,6 +101,9 @@ Terminal zero is already supplied by the primitive. -/
 def zeroTraceDerivatives (T : ℝ) (hT : 0 ≤ T) : Submodule ℝ (TimeLp T U) :=
   LinearMap.ker (initialTrace T hT).toLinearMap
 
+@[simp] theorem mem_zeroTraceDerivatives (T : ℝ) (hT : 0 ≤ T) (v : TimeLp T U) :
+    v ∈ zeroTraceDerivatives T hT ↔ initialTrace T hT v = 0 := by rfl
+
 /-- The fixed zero-trace coordinate space is complete. -/
 instance zeroTraceDerivatives_complete (T : ℝ) (hT : 0 ≤ T) :
     CompleteSpace (zeroTraceDerivatives (U := U) T hT) :=
@@ -135,6 +138,10 @@ def transverseBackward : transverseDerivatives T hT m →L[ℝ] zeroTraceDerivat
         (frameLeftInverseDerivativePath T Q Q₁ c hc hQ)
         (frameLeftInversePath_hasDerivWithinAt T Q Q₁ c hc hQ hT hd),
         ((mem_transverseDerivatives T hT m (u : TimeLp T E)).mp u.property).1, map_zero])
+
+@[simp] theorem transverseBackward_coe (u : transverseDerivatives T hT m) :
+    (transverseBackward T hT Q Q₁ c hc hQ hd m u : TimeLp T U) =
+      coordinateDerivative T hT Q Q₁ c hc hQ (u : TimeLp T E) := by rfl
 
 /-- The backward transport is the actual inverse on every fixed coordinate derivative. -/
 theorem transverseBackward_forward (v : zeroTraceDerivatives (U := U) T hT) :
