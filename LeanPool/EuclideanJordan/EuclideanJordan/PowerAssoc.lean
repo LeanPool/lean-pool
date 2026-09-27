@@ -41,10 +41,11 @@ says exactly `d j + d 0 + d i = 0` whenever `i + j = N`, and antisymmetry says
 and the wrap-around `d (N+1) = − d 0` then gives `(N+3) · d 0 = 0`. In a real vector space
 that means `d 0 = 0`, so the whole antidiagonal vanishes and the induction advances.
 
-★ **`(N+3)` is where the characteristic hypothesis bites *hardest*.** Albert's theorem needs
-**every** positive integer invertible — it would fail in characteristic `p` for any `p ≤ N+3`
-— whereas the Peirce layer needs only `2`. So `Module ℝ J` is load-bearing everywhere in this
-development, and unboundedly so here.
+This proof cancels the positive integer `N + 3` at each induction step, using the real
+vector-space structure. That cancellation does not extend directly to positive characteristic.
+Albert's power-associativity theorem itself holds over fields of characteristic other than two;
+see Schafer, *An Introduction to Nonassociative Algebras*, Chapter IV, §1, pp. 91–93
+(https://math.mit.edu/~hrm/palestine/schafer-nonassociative-algebras.pdf).
 ## Relation to Mathlib
 
 The Mathlib-facing shape is `instance : PNatPowAssoc J` — the class

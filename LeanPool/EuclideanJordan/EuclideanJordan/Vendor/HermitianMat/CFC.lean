@@ -526,80 +526,13 @@ The functional calculus is continuous on matrices with spectrum in a compact set
 lemma continuousOn_cfc_of_compact {K : Set ℝ} {g : ℝ → ℝ} (hK : IsCompact K) (hg : ContinuousOn
     g K) :
     ContinuousOn (fun (A : HermitianMat d ℂ) ↦ A.cfc g) {A | spectrum ℝ A.mat ⊆ K} := by
-  by_contra! h_contra;
-  -- By Stone-Weierstrass, there exists a sequence of polynomials `p_n` converging uniformly
-  -- to `g` on `K`.
-  obtain ⟨p_n, hp_n⟩ : ∃ p_n : ℕ → Polynomial ℝ, (∀ n, ∀ x ∈ K, |(p_n n).eval x - g x| ≤ 1 / (n
-      + 1)) := by
-    have h_stone_weierstrass : ∀ ε > 0, ∃ p : Polynomial ℝ, ∀ x ∈ K, |p.eval x - g x| < ε := by
-      have := @exists_polynomial_near_of_continuousOn;
-      obtain ⟨a, b, hab⟩ : ∃ a b : ℝ, K ⊆ Set.Icc a b := by
-        exact ⟨ hK.bddBelow.some, hK.bddAbove.some, fun x hx => ⟨ hK.bddBelow.choose_spec hx,
-            hK.bddAbove.choose_spec hx ⟩ ⟩;
-      -- Extend $g$ to a continuous function on $[a, b]$.
-      obtain ⟨f, hf⟩ : ∃ f : ℝ → ℝ, ContinuousOn f (Set.Icc a b) ∧ ∀ x ∈ K, f x = g x := by
-        have := @ContinuousMap.exists_restrict_eq;
-        specialize this ( show IsClosed K from hK.isClosed ) ( ContinuousMap.mk ( fun x => g x )
-            <| by exact continuousOn_iff_continuous_domRestrict.mp hg );
-        refine ⟨_, this.choose.continuous.continuousOn, fun x hx => ?_⟩
-        exact congr_arg (fun f => f ⟨x, hx⟩) this.choose_spec
-      exact fun ε εpos => by rcases this a b f hf.1 ε εpos with ⟨ p, hp ⟩; exact ⟨ p, fun x hx
-          => by simpa only [ hf.2 x hx ] using hp x ( hab hx ) ⟩;
-    exact ⟨ fun n => Classical.choose ( h_stone_weierstrass ( 1 / ( n + 1 ) ) ( by positivity )
-        ), fun n x hx => le_of_lt ( Classical.choose_spec ( h_stone_weierstrass ( 1 / ( n + 1 )
-        ) ( by positivity ) ) x hx ) ⟩;
-  -- The sequence `A ↦ A.cfc (p_n)` converges uniformly to `A ↦ A.cfc g` on `{A | spectrum A ⊆ K}`.
-  have h_uniform : ∀ ε > 0, ∃ N : ℕ, ∀ n ≥ N, ∀ A : HermitianMat d ℂ, spectrum ℝ A.mat ⊆ K →
-      ‖A.cfc (fun x => (p_n n).eval x) - A.cfc g‖ < ε := by
-    -- By the properties of the functional calculus, we have `‖A.cfc p_n - A.cfc g‖ ≤
-    -- sqrt(d) * ‖p_n - g‖_{∞, K}`.
-    have h_uniform_bound : ∀ n, ∀ A : HermitianMat d ℂ, spectrum ℝ A.mat ⊆ K → ‖A.cfc (fun x =>
-        (p_n n).eval x) - A.cfc g‖ ≤ Real.sqrt (Fintype.card d) * (1 / (n + 1)) := by
-      intro n A hA
-      have h_uniform_bound : ‖A.cfc (fun x => (p_n n).eval x) - A.cfc g‖ ≤ Real.sqrt
-          (Fintype.card d) * ⨆ x ∈ spectrum ℝ A.mat, |(p_n n).eval x - g x| := by
-        exact norm_cfc_sub_cfc_le_sqrt_card;
-      refine le_trans h_uniform_bound ( mul_le_mul_of_nonneg_left ?_ ( Real.sqrt_nonneg
-          (Fintype.card d : ℝ) ) );
-      refine ciSup_le fun x => ?_;
-      field_simp;
-      by_cases hx : x ∈ spectrum ℝ A.mat <;> simp_all?
-      exact le_trans ( mul_le_mul_of_nonneg_right ( hp_n n x ( hA hx ) ) ( by positivity ) ) (
-          by nlinarith [ mul_inv_cancel₀ ( by positivity : ( n : ℝ ) + 1 ≠ 0 ) ] );
-    intro ε εpos
-    refine ⟨Nat.ceil (ε⁻¹ * Real.sqrt (Fintype.card d)), fun n hn A hA => ?_⟩
-    apply lt_of_le_of_lt (h_uniform_bound n A hA)
-    rw [mul_one_div, div_lt_iff₀] <;>
-      nlinarith [Nat.ceil_le.mp hn, inv_pos.mpr εpos, mul_inv_cancel₀ εpos.ne',
-        Real.sqrt_nonneg (Fintype.card d),
-        Real.sq_sqrt (Nat.cast_nonneg (Fintype.card d))]
-  -- The uniform limit of continuous functions is continuous.
-  have h_cont : ContinuousOn (fun A : HermitianMat d ℂ => A.cfc g) {A : HermitianMat d ℂ |
-      spectrum ℝ A.mat ⊆ K} := by
-    have h_seq_cont : ∀ n, ContinuousOn (fun A : HermitianMat d ℂ => A.cfc (fun x => (p_n
-        n).eval x)) {A : HermitianMat d ℂ | spectrum ℝ A.mat ⊆ K} := by
-      fun_prop
-    refine Metric.continuousOn_iff.mpr ?_;
-    intro A hA ε εpos
-    obtain ⟨N, hN⟩ := h_uniform (ε / 3) (by linarith)
-    obtain ⟨δ, δpos, hδ⟩ : ∃ δ > 0, ∀ a ∈ {A : HermitianMat d ℂ | spectrum ℝ A.mat ⊆ K}, dist a
-        A < δ → ‖a.cfc (fun x => (p_n N).eval x) - A.cfc (fun x => (p_n N).eval x)‖ < ε / 3 := by
-      have := Metric.continuousOn_iff.mp ( h_seq_cont N ) A hA ( ε / 3 ) ( by linarith );
-      refine ⟨this.choose, this.choose_spec.1, fun a ha ha' => ?_⟩
-      simpa only [dist_eq_norm] using this.choose_spec.2 a ha ha'
-    refine ⟨ δ, δpos, fun a ha ha' => ?_ ⟩;
-    have := hN N le_rfl a ha;
-    have := hN N le_rfl A hA;
-    rw [ dist_eq_norm ];
-    rw [ show a.cfc g - A.cfc g = ( a.cfc g - a.cfc ( fun x => Polynomial.eval x ( p_n N ) ) ) +
-        ( a.cfc ( fun x => Polynomial.eval x ( p_n N ) ) - A.cfc ( fun x => Polynomial.eval x (
-        p_n N ) ) ) + ( A.cfc ( fun x => Polynomial.eval x ( p_n N ) ) - A.cfc g ) by abel1 ];
-    apply lt_of_le_of_lt (norm_add₃_le ..)
-    have hnorma := norm_sub_rev (a.cfc g) (a.cfc fun x => (p_n N).eval x)
-    have hnormA := norm_sub_rev (A.cfc fun x => (p_n N).eval x) (A.cfc g)
-    have hδa := hδ a ha ha'
-    linarith
-  contradiction
+  obtain ⟨f, hf⟩ := ContinuousMap.exists_restrict_eq hK.isClosed
+    ⟨fun x : K => g x, continuousOn_iff_continuous_domRestrict.mp hg⟩
+  refine (HermitianMat.cfc_continuous f.continuous).continuousOn.congr ?_
+  intro A hA
+  apply HermitianMat.cfc_congr
+  intro x hx
+  exact (congrArg (fun h : C(K, ℝ) => h ⟨x, hA hx⟩) hf).symm
 
 end joint_continuity
 
@@ -1419,16 +1352,6 @@ theorem cfc_le_cfc_of_commute (hf : Monotone f) (hAB₁ : Commute A.mat B.mat) (
   simp only [Pi.sub_apply, Function.comp_apply, sub_nonneg]
   apply hf
   simpa using hAB₂ i
-
--- This is the more general version that requires operator concave functions but doesn't require
--- the inputs
--- to commute. Requires the correct statement of operator convexity though, which we don't have
--- right now.
-open ComplexOrder in
-theorem cfc_monoOn_pos_of_monoOn_posDef {d : Type*} [Fintype d] [DecidableEq d]
-  {f : ℝ → ℝ} (hf_is_operator_convex : False) :
-    MonotoneOn (HermitianMat.cfc · f) { A : HermitianMat d ℂ | A.mat.PosDef } := by
-  exact False.elim hf_is_operator_convex
 
 section uncategorized_cleanup
 

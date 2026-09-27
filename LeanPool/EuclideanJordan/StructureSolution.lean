@@ -5,57 +5,20 @@ Authors: Bryan Ehrlich
 -/
 module
 
-public import Mathlib.Algebra.Jordan.Basic
-public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Algebra.DirectSum.Module
-public import Mathlib.Analysis.InnerProductSpace.Basic
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Sym.Sym2
-public import Mathlib.LinearAlgebra.BilinearMap
-public import Mathlib.LinearAlgebra.Dimension.Finrank
-public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
-public import Mathlib.LinearAlgebra.Trace
-public import LeanPool.EuclideanJordan.EuclideanJordan.TraceForm
-public import LeanPool.EuclideanJordan.EuclideanJordan.FramePeirceMul
-
-
+public import LeanPool.EuclideanJordan.TraceFormSolution
+public import LeanPool.EuclideanJordan.FramePeirceSolution
 
 /-!
-# Solution: the trace form and the frame Peirce decomposition
+# Combined trace-form and frame Peirce interface
 
-Repeats the definitions and the six statements of `StructureChallenge.lean` verbatim and
-discharges them from the accompanying `EuclideanJordan` development: Part I from
-`EuclideanJordan/TraceForm.lean`, Part II from `EuclideanJordan/FramePeirce.lean` and
-`EuclideanJordan/FramePeirceMul.lean`.
-
-The two parts are independent.  Part I is stated over
-`[NonUnitalNonAssocCommRing J] [Module ℝ J] [IsScalarTower ℝ J J]`; Part II over
-`[NormedAddCommGroup J] [InnerProductSpace ℝ J]` with its own `EuclideanJordanAlgebra` class.
-Neither part's vocabulary appears in the other's statements, no theorem of one is used in the
-proof of the other, and the binders of all six statements are exactly those of the challenge
-file.  The part-level docstrings below are the originals and describe each bridge in detail.
+The public names in `EuclideanJordan.StructureSolution` reuse the standalone
+`JordanTraceForm` and `JordanFramePeirce` implementations. The algebra, orthogonal-family and
+frame records are retained as compatibility boundaries, including their constructors and
+projections. Named adapters preserve the multiplication, unit and frame data when passing to
+the shared interface; they introduce no ambient library algebra instance into theorem headers.
 -/
 
 @[expose] public section
-
-/-! # Part I: the Jordan trace form -/
-
-/-!
-# Solution: the Jordan trace form
-
-Repeats the definitions and the four statements of Part I of `StructureChallenge.lean` verbatim
-and discharges them from `EuclideanJordan/TraceForm.lean`.
-
-The definitions here are syntactic copies of the library's `EuclideanJordan.mulL`,
-`EuclideanJordan.mulLₗ`, `EuclideanJordan.jtr` and `EuclideanJordan.traceForm`, so they are
-definitionally equal to them (the proof fields differ only up to proof irrelevance) and each
-bridge is the library theorem applied on the nose.
-
-The one piece of real work is formal reality. The challenge states it as a hypothesis over
-`Fin k`, the shape `SpectralChallenge.lean` uses, while the library's
-`EuclideanJordan.IsFormallyReal` is a class quantifying over an arbitrary `Finset`. The two differ
-only by reindexing along `Finset.equivFin`, done inline in each of the two positivity proofs.
--/
 
 namespace EuclideanJordan.StructureSolution
 
@@ -65,45 +28,35 @@ variable {J : Type*} [NonUnitalNonAssocCommRing J] [Module ℝ J] [IsScalarTower
 
 /-- In a *commutative* algebra the scalar-tower rule `(r • a) * b = r • (a * b)` already gives
 the `SMulCommClass` rule on the other side, so only `IsScalarTower ℝ J J` has to be assumed. -/
-theorem mul_smul_comm' (r : ℝ) (a b : J) : a * (r • b) = r • (a * b) := by
-  rw [mul_comm, smul_mul_assoc, mul_comm]
+theorem mul_smul_comm' (r : ℝ) (a b : J) : a * (r • b) = r • (a * b) :=
+  _root_.JordanTraceForm.mul_smul_comm' r a b
 
 /-- **The Jordan multiplication operator** `L_c : y ↦ c * y`, as an `ℝ`-linear map. Its
 `ℝ`-linearity is exactly what the scalar tower buys, and it is what makes `L_c` traceable. -/
-def mulL (c : J) : J →ₗ[ℝ] J where
-  toFun y := c * y
-  map_add' := mul_add c
-  map_smul' r y := mul_smul_comm' r c y
+def mulL (c : J) : J →ₗ[ℝ] J :=
+  _root_.JordanTraceForm.mulL c
 
 @[simp] theorem mulL_apply (c y : J) : mulL c y = c * y := rfl
 
 /-- `L_·` bundled as a linear map in the multiplier, which is what makes `jtr` linear. -/
-def mulLₗ : J →ₗ[ℝ] J →ₗ[ℝ] J where
-  toFun := mulL
-  map_add' a b := by ext y; simp only [mulL_apply, LinearMap.add_apply, add_mul]
-  map_smul' r a := by
-    ext y
-    simp only [mulL_apply, LinearMap.smul_apply, RingHom.id_apply, smul_mul_assoc]
+def mulLₗ : J →ₗ[ℝ] J →ₗ[ℝ] J :=
+  _root_.JordanTraceForm.mulLₗ
 
 @[simp] theorem mulLₗ_apply (a : J) : mulLₗ a = mulL a := rfl
 
 /-- **The Jordan trace functional** `x ↦ tr(L_x)`, as an `ℝ`-linear form. Not normalised: see
 the module docstring. -/
-noncomputable def jtr : J →ₗ[ℝ] ℝ := (LinearMap.trace ℝ J).comp mulLₗ
+noncomputable def jtr : J →ₗ[ℝ] ℝ :=
+  _root_.JordanTraceForm.jtr
 
 @[simp] theorem jtr_apply (x : J) : jtr x = LinearMap.trace ℝ J (mulL x) := rfl
 
 /-- **The Jordan trace form** `τ(x, y) = tr(L_{x * y})`, bundled as an `ℝ`-bilinear form.
 
-Bilinearity is not a theorem below because it is the *type*: the four `mk₂` fields are additivity
-and homogeneity in each argument, and they are immediate from linearity of `jtr` and
-bilinearity of the product. -/
+Bilinearity is part of the type. This compatibility definition reuses the standalone
+trace-form construction with the same multiplication operator. -/
 noncomputable def traceForm : J →ₗ[ℝ] J →ₗ[ℝ] ℝ :=
-  LinearMap.mk₂ ℝ (fun x y => jtr (x * y))
-    (fun x x' y => by rw [add_mul, map_add])
-    (fun r x y => by rw [smul_mul_assoc, map_smul, smul_eq_mul])
-    (fun x y y' => by rw [mul_add, map_add])
-    (fun r x y => by rw [mul_smul_comm' r x y, map_smul, smul_eq_mul])
+  _root_.JordanTraceForm.traceForm
 
 @[simp] theorem traceForm_apply (x y : J) : traceForm x y = jtr (x * y) := rfl
 
@@ -112,7 +65,7 @@ noncomputable def traceForm : J →ₗ[ℝ] J →ₗ[ℝ] ℝ :=
 No Jordan identity, no finite dimension, no formal reality: this is commutativity of the product
 underneath `jtr`, and it is registered at that generality deliberately. -/
 theorem traceForm_comm (x y : J) : traceForm x y = traceForm y x :=
-  EuclideanJordan.traceForm_comm x y
+  _root_.JordanTraceForm.traceForm_comm x y
 
 /-- **The trace form is associative**: `τ(x * y, z) = τ(y, x * z)`.
 
@@ -127,7 +80,7 @@ dimension, no formal reality, no unit, no positivity, no idempotents, no spectra
 basis and every trace in sight is `0`. -/
 theorem traceForm_assoc [IsCommJordan J] (x y z : J) :
     traceForm (x * y) z = traceForm y (x * z) :=
-  EuclideanJordan.traceForm_assoc x y z
+  _root_.JordanTraceForm.traceForm_assoc x y z
 
 /-- **The trace form is positive semidefinite**: `τ(x, x) ≥ 0`.
 
@@ -142,18 +95,8 @@ algebra with `τ(i, i) = -2`. See the module docstring, which is also honest abo
 role `Module.Finite ℝ J` plays in this particular statement. -/
 theorem traceForm_self_nonneg [IsCommJordan J] [Module.Finite ℝ J]
     (hfr : ∀ (k : ℕ) (f : Fin k → J), (∑ i, f i * f i) = 0 → ∀ i, f i = 0) (x : J) :
-    0 ≤ traceForm x x := by
-  have : EuclideanJordan.IsFormallyReal J := by
-    classical
-    refine ⟨fun {ι} s f hsum i hi => ?_⟩
-    have key : (∑ k : Fin s.card, f (s.equivFin.symm k) * f (s.equivFin.symm k)) = 0 := by
-      rw [show (∑ k : Fin s.card, f (s.equivFin.symm k) * f (s.equivFin.symm k))
-          = ∑ a : {y // y ∈ s}, f a * f a from
-        Equiv.sum_comp s.equivFin.symm (fun a : {y // y ∈ s} => f a * f a),
-        Finset.sum_coe_sort s (fun a => f a * f a)]
-      exact hsum
-    simpa using hfr s.card (fun k => f (s.equivFin.symm k)) key (s.equivFin ⟨i, hi⟩)
-  exact EuclideanJordan.traceForm_self_nonneg x
+    0 ≤ traceForm x x :=
+  _root_.JordanTraceForm.traceForm_self_nonneg hfr x
 
 /-- **The trace form is definite**: `τ(x, x) = 0 ↔ x = 0`.
 
@@ -169,142 +112,16 @@ one. So a vanishing `∑ᵢ λᵢ² tr(L_{qᵢ})` kills every `λᵢ` whose idem
 terms with `qᵢ = 0` contribute nothing to `x` anyway. -/
 theorem traceForm_self_eq_zero_iff [IsCommJordan J] [Module.Finite ℝ J]
     (hfr : ∀ (k : ℕ) (f : Fin k → J), (∑ i, f i * f i) = 0 → ∀ i, f i = 0) (x : J) :
-    traceForm x x = 0 ↔ x = 0 := by
-  have : EuclideanJordan.IsFormallyReal J := by
-    classical
-    refine ⟨fun {ι} s f hsum i hi => ?_⟩
-    have key : (∑ k : Fin s.card, f (s.equivFin.symm k) * f (s.equivFin.symm k)) = 0 := by
-      rw [show (∑ k : Fin s.card, f (s.equivFin.symm k) * f (s.equivFin.symm k))
-          = ∑ a : {y // y ∈ s}, f a * f a from
-        Equiv.sum_comp s.equivFin.symm (fun a : {y // y ∈ s} => f a * f a),
-        Finset.sum_coe_sort s (fun a => f a * f a)]
-      exact hsum
-    simpa using hfr s.card (fun k => f (s.equivFin.symm k)) key (s.equivFin ⟨i, hi⟩)
-  exact EuclideanJordan.traceForm_self_eq_zero_iff x
+    traceForm x x = 0 ↔ x = 0 :=
+  _root_.JordanTraceForm.traceForm_self_eq_zero_iff hfr x
 
 end JordanTraceForm
 
-/-! # Part II: the frame Peirce decomposition -/
+/-! ## Frame Peirce compatibility interface
 
-/-!
-# The Peirce decomposition of a Euclidean Jordan algebra relative to a Jordan frame
-
-A **Euclidean Jordan algebra** is a real inner-product space `J` carrying a commutative bilinear
-product `∘` with unit `1`, satisfying the Jordan identity `x ∘ (x² ∘ y) = x² ∘ (x ∘ y)` and the
-associativity of the inner product `⟪x ∘ y, z⟫ = ⟪y, x ∘ z⟫` (Faraut–Korányi, *Analysis on
-Symmetric Cones*, Definition III.1.1).  `EuclideanJordanAlgebra` below is exactly that, written
-as a class.
-
-An idempotent `c` (`c ∘ c = c`) is **primitive** when it is nonzero and cannot be split: the only
-idempotents `d` of the Peirce subalgebra `J₂(c) = {x | c ∘ x = x}` are `0` and `c`.  A **Jordan
-frame** is a family `p₁, …, pₙ` of pairwise-orthogonal (`pᵢ ∘ pⱼ = 0` for `i ≠ j`) primitive
-idempotents that is complete (`∑ᵢ pᵢ = 1`).
-
-Left multiplication `L_c : x ↦ c ∘ x` by an idempotent is diagonalisable with eigenvalues `1`,
-`½` and `0`; that is the Peirce decomposition at a single idempotent.  For a Jordan frame the
-operators `L_{p₁}, …, L_{pₙ}` are simultaneously diagonalisable, and the surviving joint
-eigenspaces — the **blocks** — are indexed by *unordered pairs* of indices:
-
-* `V_{ii} := {x | pᵢ ∘ x = x}`, the `1`-eigenspace of `L_{pᵢ}`;
-* `V_{ij} := {x | pᵢ ∘ x = ½ • x ∧ pⱼ ∘ x = ½ • x}` for `i ≠ j`, the joint `½`-eigenspace of
-  `L_{pᵢ}` and `L_{pⱼ}`.
-
-This file states the two theorems that turn that list of subspaces into a decomposition of `J`:
-
-1. **`frameBlock_isInternal`** — the blocks are an internal direct sum, `J = ⨁_{i ≤ j} V_{ij}`.
-   Equivalently: they are independent and they span.
-2. **`finrank_frameBlock_diag`** — each diagonal block is a line, `dim_ℝ V_{ii} = 1`.  (It is in
-   fact `ℝ ∙ pᵢ`, but the dimension is the form the coordinatization consumes.)
-
-Together these are Faraut–Korányi Theorem IV.2.1.  They are the starting point of the
-Jordan–von Neumann–Wigner classification: once `J = ⨁_{i ≤ j} V_{ij}` with one-dimensional
-diagonal, the off-diagonal blocks `V_{ij}` all carry a common composition algebra structure and
-`J` is recognised as a matrix algebra `H_n(K)`.  The multiplication table of the blocks
-(`V_{ij} ∘ V_{jk} ⊆ V_{ik}`, `V_{ij} ∘ V_{kl} = 0` for disjoint index pairs, and so on) is the
-next step and is *not* stated here.
-
-## Why the blocks are indexed by `Sym2 (Fin n)`
-
-`V_{ij}` and `V_{ji}` are literally the same subspace — the defining conditions are a conjunction
-that is symmetric in `i` and `j`, and the eigenvalue `blockCoef i j` is symmetric too.  So the
-honest index set for the family is the type of *unordered* pairs `Sym2 (Fin n)`, and the direct
-sum runs over it with no double counting.  That is what "`⨁_{i ≤ j}`" means in the informal
-statement, and using `Sym2` rather than `{q : Fin n × Fin n // q.1 ≤ q.2}` avoids having to
-choose a representative.  `frameBlockRaw` is the ordered-pair family, `frameBlockRaw_comm` is its
-symmetry, and `frameBlock` is the descent of the former along the latter; `frameBlock_mk`
-(`frameBlock F s(i, j) = frameBlockRaw F i j`, by `rfl`) is the bridge a reader should use to see
-what the statement says at a concrete pair of indices.
-
-`DirectSum.IsInternal (frameBlock F)` is Mathlib's predicate saying that the canonical map
-`⨁_{s : Sym2 (Fin n)} V_s → J` is bijective — that is, independence *and* spanning, which is the
-full strength of the decomposition and not merely the spanning half.
-
-## What is and is not assumed
-
-Assumed for both theorems: `J` is a real inner-product space (`NormedAddCommGroup` plus
-`InnerProductSpace ℝ`) carrying `EuclideanJordanAlgebra`, and `F : JordanFrame J n` is a Jordan
-frame of some cardinality `n`, carried as **data**.
-
-★ **Finite-dimensionality is assumed only for the second theorem.**  `frameBlock_isInternal`
-holds with no dimension hypothesis at all; `finrank_frameBlock_diag` takes
-`[FiniteDimensional ℝ J]`, because the proof that a primitive idempotent's Peirce subalgebra is a
-line runs the spectral theorem inside that subalgebra, and the spectral theorem is false without
-the dimension hypothesis (`ℝ[X]` satisfies every other hypothesis with no nonconstant
-resolution).
-
-★ **The inner product is an arbitrary associative one, not the trace form.**  Faraut–Korányi fix
-`⟪x, y⟫ = tr(x ∘ y)`; the class below asks only that *some* positive-definite associative inner
-product exist.  That is the weaker hypothesis, so the theorems below are the stronger statements.
-Positive-definiteness is not stated as a field: it is already part of `InnerProductSpace ℝ J`.
-Formal reality is not a hypothesis either — it follows from the associativity of the inner
-product, by pairing a vanishing sum of squares against `1`.
-
-★ **Primitivity is a formal hypothesis of both theorems; only the second one spends it.**
-`JordanFrame` carries primitivity, so `frameBlock_isInternal` assumes it formally even though its
-proof never uses it.  The stronger statement — that the blocks of a merely orthogonal complete
-idempotent family already decompose `J` — is **not formalized here**.  It is
-`dim V_{ii} = 1` that cashes primitivity out, and that is why the two theorems are stated
-together: the decomposition is useless for classification without the one-dimensionality.
-
-★ **No claim is made about the rank of `J`.**  A frame is carried as data of a given cardinality
-`n`; that `n` equals the rank of `J`, or that all frames have the same cardinality
-(Faraut–Korányi IV.2.5, conjugacy of frames), is neither assumed nor concluded here.  Do not read
-`frameBlock_isInternal` as a statement about `rank J`.
-
-Not assumed: no associativity or power-associativity as a hypothesis, no simplicity, no
-classification, no identification of `J` with a matrix algebra, no ordered-space structure, no
-continuity beyond what the norm gives for free, and no `n ≥ 3`.
-
-## The vocabulary used here
-
-Everything the two statements mention is defined below from Mathlib alone: the class
-`EuclideanJordanAlgebra`, the predicates `IsOrthIdemFamily` and `IsPrimitive`, the structure
-`JordanFrame`, the eigenspace `eigSub`, the eigenvalue `blockCoef`, and the block families
-`frameBlockRaw` and `frameBlock`.  Nothing else is imported beyond core Mathlib.
-
-## This file
-
-Repeats the definitions and the two theorem statements of Part II of `StructureChallenge.lean`
-    verbatim,
-imports the reference library, and discharges them from `EuclideanJordan.frameBlock_isInternal`
-(`EuclideanJordan/FramePeirce.lean`) and `EuclideanJordan.finrank_frameBlock_diag`
-(`EuclideanJordan/FramePeirceMul.lean`).
-
-The bridge is short by construction.  The local class `EuclideanJordanAlgebra` carries the same
-fields as `EuclideanJordan.EuclideanJordanAlgebra`, so an instance of the library's class is
-assembled from ours field by field, with `toMul` and `toOne` taken from ours — which is what
-makes the two `*` and the two `1` the *same* operations rather than merely isomorphic ones.  The
-local `IsOrthIdemFamily`, `IsPrimitive`, `JordanFrame`, `eigSub`, `blockCoef`, `frameBlockRaw`
-and `frameBlock` are then definitionally the library's, so each proof is a single `exact` once
-the instance and the frame have been transported.
-
-★ The library instance is introduced *inside* the proof bodies with `let`, never at the top
-level of this file.  That is deliberate.  An ambient `EuclideanJordan.EuclideanJordanAlgebra J`
-brings its derived `NonUnitalNonAssocCommRing J` into scope, and `Submodule ℝ J` would then
-elaborate its `AddCommMonoid J` argument through the ring rather than through the norm; the
-resulting type is definitionally equal to, but not syntactically the same as, the one the
-challenge file states.  The contract here is that the two files' declaration types agree on the
-nose, so the extra instance is kept out of every statement.
+The two endpoints retain the same supplied-frame and dimension hypotheses as the standalone
+solution. In particular, internality does not assume finite dimension, while the diagonal
+finrank theorem does. The record vocabulary below preserves the combined interface's API.
 -/
 
 noncomputable section
@@ -341,20 +158,34 @@ variable {J : Type*} [NormedAddCommGroup J] [InnerProductSpace ℝ J] [Euclidean
 
 namespace EuclideanJordanAlgebra
 
+/-- The standalone frame algebra with exactly the same multiplication and unit. -/
+@[instance_reducible] def toFramePeirce : _root_.JordanFramePeirce.EuclideanJordanAlgebra J where
+  toMul := inferInstance
+  toOne := inferInstance
+  mul_comm := EuclideanJordanAlgebra.mul_comm
+  add_mul := EuclideanJordanAlgebra.add_mul
+  smul_mul := EuclideanJordanAlgebra.smul_mul
+  one_mul := EuclideanJordanAlgebra.one_mul
+  jordan := EuclideanJordanAlgebra.jordan
+  inner_assoc := EuclideanJordanAlgebra.inner_assoc
+
 /-- Left multiplication by `0` is `0` — the one ring axiom the class does not state, obtained
 from additivity at `(0, 0, a)`. -/
 theorem zero_mul' (a : J) : (0 : J) * a = 0 := by
-  have h : (0 : J) * a + (0 : J) * a = (0 : J) * a + 0 := by
-    rw [add_zero, ← add_mul, add_zero]
-  exact add_left_cancel h
+  let := EuclideanJordanAlgebra.toFramePeirce (J := J)
+  exact _root_.JordanFramePeirce.EuclideanJordanAlgebra.zero_mul' a
 
-theorem mul_zero' (a : J) : a * (0 : J) = 0 := by rw [mul_comm, zero_mul']
+theorem mul_zero' (a : J) : a * (0 : J) = 0 := by
+  let := EuclideanJordanAlgebra.toFramePeirce (J := J)
+  exact _root_.JordanFramePeirce.EuclideanJordanAlgebra.mul_zero' a
 
 theorem mul_add' (a x y : J) : a * (x + y) = a * x + a * y := by
-  rw [mul_comm a (x + y), add_mul, mul_comm x a, mul_comm y a]
+  let := EuclideanJordanAlgebra.toFramePeirce (J := J)
+  exact _root_.JordanFramePeirce.EuclideanJordanAlgebra.mul_add' a x y
 
 theorem mul_smul' (r : ℝ) (a x : J) : a * (r • x) = r • (a * x) := by
-  rw [mul_comm a (r • x), smul_mul, mul_comm x a]
+  let := EuclideanJordanAlgebra.toFramePeirce (J := J)
+  exact _root_.JordanFramePeirce.EuclideanJordanAlgebra.mul_smul' r a x
 
 end EuclideanJordanAlgebra
 
@@ -375,7 +206,8 @@ The third clause is stated in the ambient algebra — `d` idempotent with `c ∘
 membership in `J₂(c)` — rather than over a subtype, so that it can be checked without first
 producing the subalgebra. -/
 def IsPrimitive (c : J) : Prop :=
-  c * c = c ∧ c ≠ 0 ∧ ∀ d : J, d * d = d → c * d = d → d = 0 ∨ d = c
+  letI := EuclideanJordanAlgebra.toFramePeirce (J := J)
+  _root_.JordanFramePeirce.IsPrimitive c
 
 /-- A **Jordan frame**: a complete family of pairwise-orthogonal primitive idempotents.
 
@@ -392,60 +224,64 @@ structure JordanFrame (J : Type*) [NormedAddCommGroup J] [InnerProductSpace ℝ 
   /-- They sum to the unit. -/
   complete : ∑ i, p i = 1
 
+/-- The standalone frame with the same indexed idempotents and completeness witness. -/
+def JordanFrame.toFramePeirce {n : ℕ} (F : JordanFrame J n) :
+    letI := EuclideanJordanAlgebra.toFramePeirce (J := J)
+    _root_.JordanFramePeirce.JordanFrame J n :=
+  letI := EuclideanJordanAlgebra.toFramePeirce (J := J)
+  { p := F.p
+    orthIdem := ⟨F.orthIdem.idem, F.orthIdem.orth⟩
+    primitive := F.primitive
+    complete := F.complete }
+
 /-! ## The blocks -/
 
 /-- The `r`-eigenspace of `L_a : x ↦ a ∘ x`, as a submodule. -/
-def eigSub (a : J) (r : ℝ) : Submodule ℝ J where
-  carrier := {x : J | a * x = r • x}
-  add_mem' := fun {u v} hu hv => by
-    change a * (u + v) = r • (u + v)
-    rw [EuclideanJordanAlgebra.mul_add', hu, hv, smul_add]
-  zero_mem' := by
-    change a * 0 = r • (0 : J)
-    rw [EuclideanJordanAlgebra.mul_zero', smul_zero]
-  smul_mem' := fun t x hx => by
-    change a * (t • x) = r • (t • x)
-    rw [EuclideanJordanAlgebra.mul_smul', hx, smul_comm]
+def eigSub (a : J) (r : ℝ) : Submodule ℝ J :=
+  letI := EuclideanJordanAlgebra.toFramePeirce (J := J)
+  _root_.JordanFramePeirce.eigSub a r
 
 @[simp] theorem mem_eigSub {a : J} {r : ℝ} {x : J} : x ∈ eigSub a r ↔ a * x = r • x := Iff.rfl
 
 variable {n : ℕ}
 
 /-- The eigenvalue attached to the pair `(i, j)`: `1` on the diagonal, `½` off it. -/
-def blockCoef (i j : Fin n) : ℝ := if i = j then 1 else (2 : ℝ)⁻¹
+def blockCoef (i j : Fin n) : ℝ :=
+  _root_.JordanFramePeirce.blockCoef i j
 
-theorem blockCoef_comm (i j : Fin n) : blockCoef i j = blockCoef j i := by
-  unfold blockCoef
-  by_cases h : i = j
-  · simp [h]
-  · simp [h, Ne.symm h]
+theorem blockCoef_comm (i j : Fin n) : blockCoef i j = blockCoef j i :=
+  _root_.JordanFramePeirce.blockCoef_comm i j
 
 /-- `V_{ij}` before it is pushed through `Sym2`: the joint `blockCoef i j`-eigenspace of `L_{pᵢ}`
 and `L_{pⱼ}`.  On the diagonal this is `J₂(pᵢ) = {x | pᵢ ∘ x = x}`; off it, the joint
 `½`-eigenspace. -/
 def frameBlockRaw (F : JordanFrame J n) (i j : Fin n) : Submodule ℝ J :=
-  eigSub (F.p i) (blockCoef i j) ⊓ eigSub (F.p j) (blockCoef i j)
+  letI := EuclideanJordanAlgebra.toFramePeirce (J := J)
+  _root_.JordanFramePeirce.frameBlockRaw F.toFramePeirce i j
 
 theorem frameBlockRaw_comm (F : JordanFrame J n) (i j : Fin n) :
     frameBlockRaw F i j = frameBlockRaw F j i := by
-  unfold frameBlockRaw
-  rw [blockCoef_comm i j, inf_comm]
+  let := EuclideanJordanAlgebra.toFramePeirce (J := J)
+  exact _root_.JordanFramePeirce.frameBlockRaw_comm F.toFramePeirce i j
 
 /-- **`V_{ij}`**, indexed by unordered pairs.  For `i ≠ j` the joint `½`-eigenspace of `L_{pᵢ}`
 and `L_{pⱼ}`; on the diagonal, `J₂(pᵢ)`. -/
 def frameBlock (F : JordanFrame J n) : Sym2 (Fin n) → Submodule ℝ J :=
-  Sym2.lift ⟨frameBlockRaw F, frameBlockRaw_comm F⟩
+  letI := EuclideanJordanAlgebra.toFramePeirce (J := J)
+  _root_.JordanFramePeirce.frameBlock F.toFramePeirce
 
 @[simp] theorem frameBlock_mk (F : JordanFrame J n) (i j : Fin n) :
     frameBlock F s(i, j) = frameBlockRaw F i j := rfl
 
 theorem mem_frameBlock_diag {F : JordanFrame J n} {i : Fin n} {x : J} :
     x ∈ frameBlock F s(i, i) ↔ F.p i * x = x := by
-  simp [frameBlockRaw, blockCoef]
+  let := EuclideanJordanAlgebra.toFramePeirce (J := J)
+  exact _root_.JordanFramePeirce.mem_frameBlock_diag (F := F.toFramePeirce)
 
 theorem mem_frameBlock_off {F : JordanFrame J n} {i j : Fin n} (hij : i ≠ j) {x : J} :
     x ∈ frameBlock F s(i, j) ↔ F.p i * x = (2 : ℝ)⁻¹ • x ∧ F.p j * x = (2 : ℝ)⁻¹ • x := by
-  simp [frameBlockRaw, blockCoef, hij]
+  let := EuclideanJordanAlgebra.toFramePeirce (J := J)
+  exact _root_.JordanFramePeirce.mem_frameBlock_off (F := F.toFramePeirce) hij
 
 /-! ## The two theorems -/
 
@@ -461,20 +297,8 @@ Reference: J. Faraut and A. Korányi, *Analysis on Symmetric Cones*, Oxford 1994
 No dimension hypothesis is needed.  Primitivity remains a *formal hypothesis* of this statement —
 it is carried by `JordanFrame` — but the proof does not spend it: see the module docstring. -/
 theorem frameBlock_isInternal (F : JordanFrame J n) : DirectSum.IsInternal (frameBlock F) := by
-  let _lib : EuclideanJordan.EuclideanJordanAlgebra J :=
-    { toMul := inferInstance
-      toOne := inferInstance
-      mul_comm := EuclideanJordanAlgebra.mul_comm
-      add_mul := EuclideanJordanAlgebra.add_mul
-      smul_mul := EuclideanJordanAlgebra.smul_mul
-      one_mul := EuclideanJordanAlgebra.one_mul
-      jordan := EuclideanJordanAlgebra.jordan
-      inner_assoc := EuclideanJordanAlgebra.inner_assoc }
-  exact EuclideanJordan.frameBlock_isInternal
-    { p := F.p
-      orthIdem := ⟨F.orthIdem.idem, F.orthIdem.orth⟩
-      primitive := F.primitive
-      complete := F.complete }
+  let := EuclideanJordanAlgebra.toFramePeirce (J := J)
+  exact _root_.JordanFramePeirce.frameBlock_isInternal F.toFramePeirce
 
 /-- **The diagonal blocks are lines: `dim V_{ii} = 1`.**
 
@@ -490,20 +314,8 @@ Reference: J. Faraut and A. Korányi, *Analysis on Symmetric Cones*, Oxford 1994
 `rank J`, and nothing here converts it into one. -/
 theorem finrank_frameBlock_diag [FiniteDimensional ℝ J] (F : JordanFrame J n) (i : Fin n) :
     Module.finrank ℝ ↥(frameBlock F s(i, i)) = 1 := by
-  let _lib : EuclideanJordan.EuclideanJordanAlgebra J :=
-    { toMul := inferInstance
-      toOne := inferInstance
-      mul_comm := EuclideanJordanAlgebra.mul_comm
-      add_mul := EuclideanJordanAlgebra.add_mul
-      smul_mul := EuclideanJordanAlgebra.smul_mul
-      one_mul := EuclideanJordanAlgebra.one_mul
-      jordan := EuclideanJordanAlgebra.jordan
-      inner_assoc := EuclideanJordanAlgebra.inner_assoc }
-  exact EuclideanJordan.finrank_frameBlock_diag
-    { p := F.p
-      orthIdem := ⟨F.orthIdem.idem, F.orthIdem.orth⟩
-      primitive := F.primitive
-      complete := F.complete } i
+  let := EuclideanJordanAlgebra.toFramePeirce (J := J)
+  exact _root_.JordanFramePeirce.finrank_frameBlock_diag F.toFramePeirce i
 
 end JordanFramePeirce
 
