@@ -22,7 +22,7 @@ variable {α} [DecidableEq α]
 namespace Formula
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def TrivTranslation : Formula α → Formula α
+@[expose] def TrivTranslation : Formula α → Formula α
   | .atom a => atom a
   | □φ => φ.TrivTranslation
   | ⊥ => ⊥
@@ -45,7 +45,7 @@ end TrivTranslation
 
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def VerTranslation : Formula α → Formula α
+@[expose] def VerTranslation : Formula α → Formula α
   | atom a => atom a
   | □_ => ⊤
   | ⊥ => ⊥

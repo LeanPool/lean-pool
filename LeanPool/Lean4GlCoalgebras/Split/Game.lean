@@ -35,7 +35,7 @@ abbrev Prover := Player.B
 
 -- `ruleApps` performs a large exhaustive case split over split formulas.
 /-- The available rule applications for a sequent `Γ`. -/
-def SplitSequent.ruleApps (Γ : SplitSequent) : Finset RuleApp :=
+@[expose] def SplitSequent.ruleApps (Γ : SplitSequent) : Finset RuleApp :=
   let f : SplitFormula → Option RuleApp := fun φ ↦
     if φ_in : φ ∈ Γ then match φ with
     | Sum.inl ⊤ => RuleApp.topₗ Γ φ_in

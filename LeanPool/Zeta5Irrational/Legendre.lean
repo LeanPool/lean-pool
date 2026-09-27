@@ -25,7 +25,7 @@ open Finset
 namespace Zeta5Irrational
 
 /-- `v_p(S_K)`. -/
-noncomputable def vSK (n p : ℕ) : ℤ :=
+@[expose] noncomputable def vSK (n p : ℕ) : ℤ :=
   padicValRat p (S n)
 
 lemma padicValNat_finset_prod (p : ℕ) [hp : Fact p.Prime] {ι : Type*} (s : Finset ι) (f : ι → ℕ)

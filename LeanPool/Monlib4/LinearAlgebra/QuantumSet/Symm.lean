@@ -24,6 +24,7 @@ sets, together with its interaction with modular automorphisms and `Psi`.
 public section
 
 /-- The symmetry map sends a linear map to the adjoint of its real conjugate. -/
+@[expose]
 noncomputable def symmMap (R : Type _) [RCLike R] (M₁ M₂ : Type _) [NormedAddCommGroup M₁]
   [NormedAddCommGroup M₂]
     [InnerProductSpace R M₁] [InnerProductSpace R M₂] [StarAddMonoid M₁]

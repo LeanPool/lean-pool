@@ -79,7 +79,7 @@ noncomputable def atomS (h : ℕ) (K : ℝ) : Idx h → ℝ
   | Sum.inr j => -cρ (j + 1)
 
 /-- The curves. -/
-noncomputable def atomγ {h : ℕ} (t : Fin h → ℝ) (ε : ℝ) : Idx h → ℝ → ℂ
+@[expose] noncomputable def atomγ {h : ℕ} (t : Fin h → ℝ) (ε : ℝ) : Idx h → ℝ → ℂ
   | Sum.inl i => circleMap (t i) ε
   | Sum.inr j => arcCurve (mρ (j + 1)) (rρ (j + 1))
 

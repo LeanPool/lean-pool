@@ -203,7 +203,7 @@ theorem norm_tsum_sub_prefix_jet_le_of_locallyFinite {F : ℕ → E → V} {x : 
 /-- The stage estimates needed by the diagonal argument, stated on actual
 cut potentials and their actual derivatives. Stage zero is exempt; stage `j`
 controls the finite list of derivatives through `j+2`. -/
-def CutStageBounds (a : ℕ → ℝ) (q : E → ℝ) (A : ℕ → E → V)
+@[expose] def CutStageBounds (a : ℕ → ℝ) (q : E → ℝ) (A : ℕ → E → V)
     (g L : ℕ → ℝ) (U : Set E) : Prop :=
   ∀ j, 1 ≤ j → ∀ m, m ≤ j + 2 → ∀ x ∈ U,
     ‖iteratedFDeriv ℝ m (SolenoidalDiagonal.cutStage a q A j) x‖ ≤

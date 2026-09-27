@@ -41,12 +41,12 @@ namespace MapCyl
 /-- `inl` -/
 noncomputable abbrev inl : Y ⟶ MapCyl f := Limits.pushout.inl _ _
 /-- `inr` -/
-@[expose] noncomputable abbrev inr : TopCat.of (X × I) ⟶ MapCyl f := Limits.pushout.inr _ _
+noncomputable abbrev inr : TopCat.of (X × I) ⟶ MapCyl f := Limits.pushout.inr _ _
 /-- `condition` -/
 lemma condition : f ≫ inl f = Cyl.i₀ X ≫ inr f := Limits.pushout.condition
 
 /-- Inclusion map from the domain `X` to the mapping cylinder of `f : X ⟶ Y` -/
-@[expose] noncomputable abbrev domIncl : X ⟶ MapCyl f := Cyl.i₁ X ≫ inr f
+noncomputable abbrev domIncl : X ⟶ MapCyl f := Cyl.i₁ X ≫ inr f
 
 /-- Inclusion map from the codomain `Y` to the mapping cylinder of `f : X ⟶ Y` -/
 noncomputable alias codIncl := inl

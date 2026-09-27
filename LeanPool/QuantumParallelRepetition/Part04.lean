@@ -471,7 +471,7 @@ abbrev ExactRemainingSeed
     (Finset.equivFin (exactRight seed.coordinate seed.partition))
 
 /-- The exact left prefix construction used in the quantum parallel-repetition argument. -/
-def exactLeftPrefix
+@[expose] def exactLeftPrefix
     {M : Type*} [Fintype M] [DecidableEq M]
     (seed : ExactForwardSeed M) : Finset M :=
   (Finset.univ.filter
@@ -481,7 +481,7 @@ def exactLeftPrefix
         Subtype.val
 
 /-- The exact right prefix construction used in the quantum parallel-repetition argument. -/
-def exactRightPrefix
+@[expose] def exactRightPrefix
     {M : Type*} [Fintype M] [DecidableEq M]
     (seed : ExactForwardSeed M) : Finset M :=
   (Finset.univ.filter
@@ -1653,7 +1653,7 @@ abbrev ExactBobLiftIndex
       Matrix.PosSemidef.zero))
 
 /-- The matrix representation of exact alice purification. -/
-def exactAlicePurificationMatrix
+@[expose] def exactAlicePurificationMatrix
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (seed : ExactRemainingSeed D)
@@ -1671,7 +1671,7 @@ def exactAlicePurificationMatrix
     Matrix.PosSemidef.zero q
 
 /-- The matrix representation of exact bob purification. -/
-def exactBobPurificationMatrix
+@[expose] def exactBobPurificationMatrix
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (seed : ExactRemainingSeed D)
@@ -2342,7 +2342,7 @@ theorem exactQuestionWeight_rectangle
   · simp only [hBob]
 
 /-- The probability weight for exact fiber question. -/
-def exactFiberQuestionWeight
+@[expose] def exactFiberQuestionWeight
     (G : Game X Y A B) (n : ℕ)
     (D : Finset (Fin n))
     (seed : ExactRemainingSeed D)
@@ -2408,7 +2408,7 @@ def exactFiberBobMarginal
     exactFiberQuestionWeight G n D seed history x y xs ys
 
 /-- The total probability mass of exact fiber question. -/
-def exactFiberQuestionMass
+@[expose] def exactFiberQuestionMass
     (G : Game X Y A B) (n : ℕ)
     (D : Finset (Fin n))
     (seed : ExactRemainingSeed D)
@@ -5430,7 +5430,7 @@ theorem finitePrefixMask_last
     simp only [finitePrefixMask, Fin.val_last, Fin.is_lt, ↓reduceIte, id_eq]
 
 /-- The entropy quantity for finite prefix relative. -/
-def finitePrefixRelativeEntropy
+@[expose] def finitePrefixRelativeEntropy
     {Ω Y : Type*} [Fintype Ω] [Fintype Y] {h : ℕ}
     (joint prior : Ω × (Fin h → Y) → ℝ)
     (base : Y) (k : Fin (h + 1)) : ℝ :=

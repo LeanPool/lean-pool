@@ -45,7 +45,7 @@ lemma ext_val' {a b : ExtensionsAt x} (h : a.val' = b.val') : a = b := by
 lemma ext_valT' {a b : ExtensionsAt x} (h : a.valT' = b.valT') : a = b :=
   ext_val' <| congr_arg Subtype.val h
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def drop {T : tree A} {n : ℕ} {x : T} :
+@[expose] def drop {T : tree A} {n : ℕ} {x : T} :
   ExtensionsAt x ≃ ExtensionsAt (Tree.drop T n x) where --TODO fix T explicit
   toFun a := ⟨a.val, by simpa [← List.append_assoc] using a.prop⟩
   invFun a := ⟨a.val, by simpa [← List.append_assoc] using a.prop⟩

@@ -31,7 +31,7 @@ open Finset Polynomial
 namespace Zeta5Irrational
 
 /-- `∏_{r ∈ Pl} (x - r)`. -/
-noncomputable def piPl (Pl : Finset ℤ) : ℚ[X] :=
+@[expose] noncomputable def piPl (Pl : Finset ℤ) : ℚ[X] :=
   ∏ r ∈ Pl, (X - C (r : ℚ))
 
 lemma piPl_monic (Pl : Finset ℤ) : (piPl Pl).Monic :=
@@ -44,19 +44,19 @@ lemma natDegree_piPl (Pl : Finset ℤ) : (piPl Pl).natDegree = Pl.card := by
   simp
 
 /-- The polynomial part. -/
-noncomputable def polyPart (A : ℚ[X]) (Pl : Finset ℤ) : ℚ[X] :=
+@[expose] noncomputable def polyPart (A : ℚ[X]) (Pl : Finset ℤ) : ℚ[X] :=
   A /ₘ piPl Pl
 
 /-- The residue at `r`. -/
-noncomputable def resP (A : ℚ[X]) (Pl : Finset ℤ) (r : ℤ) : ℚ :=
+@[expose] noncomputable def resP (A : ℚ[X]) (Pl : Finset ℤ) (r : ℤ) : ℚ :=
   A.eval (r : ℚ) / ∏ s ∈ Pl.erase r, ((r : ℚ) - s)
 
 /-- The harmonic index `d(r)`. -/
-def dd (r : ℤ) : ℕ :=
+@[expose] def dd (r : ℤ) : ℕ :=
   if 0 ≤ r then r.toNat else (-r - 1).toNat
 
 /-- The functional `τ_X`. -/
-noncomputable def tauX (A : ℚ[X]) (Pl : Finset ℤ) : ℚ[X] :=
+@[expose] noncomputable def tauX (A : ℚ[X]) (Pl : Finset ℤ) : ℚ[X] :=
   C (tau (polyPart A Pl)) + ∑ r ∈ Pl, C (resP A Pl r) * (C (H5 (dd r)) - X)
 
 lemma lagrange_basis_eq (Pl : Finset ℤ) (r : ℤ) :

@@ -29,13 +29,13 @@ variable {L : Arith.Language V} {pL : LDef} [Arith.Language.Defined L pL]
 section «lp_section_1»
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def qqBvar (z : V) : V := ⟪0, z⟫ + 1
+@[expose] def qqBvar (z : V) : V := ⟪0, z⟫ + 1
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def qqFvar (x : V) : V := ⟪1, x⟫ + 1
+@[expose] def qqFvar (x : V) : V := ⟪1, x⟫ + 1
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def qqFunc (k f v : V) : V := ⟪2, k, f, v⟫ + 1
+@[expose] def qqFunc (k f v : V) : V := ⟪2, k, f, v⟫ + 1
 
 /-- Imported declaration from the Incompleteness formalization. -/
 scoped prefix:max "^#" => qqBvar

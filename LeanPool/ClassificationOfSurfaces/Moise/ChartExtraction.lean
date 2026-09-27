@@ -142,7 +142,7 @@ deriving DecidableEq, Repr
 
 /-- The model core of a chart kind: the closed disk of radius one half, or its right half.  Cores
 are compact and their union over a chart cover is what the Radó induction absorbs. -/
-def ChartKind.modelCore : ChartKind → Set Plane
+@[expose] def ChartKind.modelCore : ChartKind → Set Plane
   | .disk => Metric.closedBall 0 (1 / 2)
   | .halfDisk => {x ∈ Metric.closedBall 0 (1 / 2) | 0 ≤ x 0}
 

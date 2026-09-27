@@ -391,7 +391,7 @@ abbrev ActiveVertex := {v : K.Vertex // K.position v ∈ K.support}
 noncomputable instance activeVertexFintype : Fintype K.ActiveVertex := Fintype.ofFinite _
 
 /-- The `activeEmbedding` declaration. -/
-def activeEmbedding : K.ActiveVertex ↪ K.Vertex := Function.Embedding.subtype _
+@[expose] def activeEmbedding : K.ActiveVertex ↪ K.Vertex := Function.Embedding.subtype _
 
 /-- The `activeSimplexes` declaration. -/
 noncomputable def activeSimplexes : Finset (Finset K.ActiveVertex) :=
@@ -939,7 +939,7 @@ noncomputable def repositionHomeomorphAll (position' : K.Vertex → Plane)
 
 /-- The ambient function underlying barycentric repositioning, set to zero off the source
 support. -/
-noncomputable def repositionMap (position' : K.Vertex → Plane)
+@[expose] noncomputable def repositionMap (position' : K.Vertex → Plane)
     (hinj : Function.Injective position')
     (haff : ∀ s ∈ K.simplexes, AffineIndependent ℝ fun v : s => position' v)
     (hface : ∀ s ∈ K.simplexes, ∀ t ∈ K.simplexes,

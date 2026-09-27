@@ -54,9 +54,10 @@ theorem scalarProject_norm : ‖scalarProject‖ = 1 := by
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- Embed, given by `EulerCylinderConstantMap.map period scalarEmbed`. -/
-def embed : CylinderL2 period ℝ →L[ℝ] LiftL2 period := EulerCylinderConstantMap.map period
+@[expose] def embed : CylinderL2 period ℝ →L[ℝ] LiftL2 period := EulerCylinderConstantMap.map period
     scalarEmbed
 /-- Project, given by `EulerCylinderConstantMap.map period scalarProject`. -/
+@[expose]
 def project : LiftL2 period →L[ℝ] CylinderL2 period ℝ := EulerCylinderConstantMap.map period
     scalarProject
 
@@ -68,7 +69,7 @@ theorem project_norm : ‖project period‖ ≤ 1 :=
 
 /-- Primitive, given by `(project period).comp ((EulerCylinderAnglePrimitive.primitive
 period).comp (embed period))`. -/
-def primitive : CylinderL2 period ℝ →L[ℝ] CylinderL2 period ℝ :=
+@[expose] def primitive : CylinderL2 period ℝ →L[ℝ] CylinderL2 period ℝ :=
   (project period).comp ((EulerCylinderAnglePrimitive.primitive period).comp (embed period))
 
 theorem primitive_norm : ‖primitive period‖ ≤ period := by

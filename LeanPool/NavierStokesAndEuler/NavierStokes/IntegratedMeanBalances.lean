@@ -738,14 +738,15 @@ theorem integrated_axial_balance {a b : ℝ} (ε : ℝ)
   ring
 
 /-- Pressure total, given by `radialMoment 0 gr`. -/
-noncomputable def pressureTotal (gr : MeanField) : MeanParameter → ℝ := radialMoment 0 gr
+@[expose] noncomputable def pressureTotal (gr : MeanField) : MeanParameter → ℝ :=
+  radialMoment 0 gr
 
 /-- Pressure coefficient, given by `radialMoment 2 ρ p / 2`. -/
-noncomputable def pressureCoefficient (ρ : MeanField) (p : MeanParameter) : ℝ :=
+@[expose] noncomputable def pressureCoefficient (ρ : MeanField) (p : MeanParameter) : ℝ :=
   radialMoment 2 ρ p / 2
 
 /-- Axial defect, given by `radialMoment 1 axialFlux p - (1 / 2 : ℝ) * radialMoment 2 gr p`. -/
-noncomputable def axialDefect (axialFlux gr : MeanField) (p : MeanParameter) : ℝ :=
+@[expose] noncomputable def axialDefect (axialFlux gr : MeanField) (p : MeanParameter) : ℝ :=
   radialMoment 1 axialFlux p - (1 / 2 : ℝ) * radialMoment 2 gr p
 
 theorem flux_pressure_moment {a b : ℝ} {axialFlux pressure gr ρ : MeanField}

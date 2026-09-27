@@ -477,7 +477,6 @@ theorem bassSerre_rootedConnected {ι : Type v} (G : ι → Type u)
     (BassSerreVertex.central Word.empty)
     (bassSerre_rootedConnected G)
 
-@[expose]
 noncomputable instance bassSerreTreeArborescence {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] :
     Quiver.Arborescence (bassSerreTree G) :=
@@ -687,7 +686,6 @@ theorem rawBassSerre_rootedConnected {ι : Type v} (G : ι → Type u)
     (Quiver.symmetrifyQuiver (RawBassSerreVertex G))
     (RawBassSerreVertex.central 1) (rawBassSerre_rootedConnected G)
 
-@[expose]
 noncomputable instance rawBassSerreTreeArborescence {ι : Type v}
     (G : ι → Type u) [∀ i, Group (G i)] :
     Quiver.Arborescence (rawBassSerreTree G) :=
@@ -1034,7 +1032,7 @@ theorem kuroshFactorOrbitVertex_eq_iff {ι : Type v} (G : ι → Type u)
     rfl
 
 /-- The source vertex orbit of an edge orbit. -/
-def rawBassSerreOrbitEdgeSource {ι : Type v} (G : ι → Type u)
+@[expose] def rawBassSerreOrbitEdgeSource {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     (e : RawBassSerreOrbitEdge G H) : RawBassSerreOrbitVertex G H :=
   Quotient.lift (fun x => actionOrbitMk H (RawBassSerreVertex G)

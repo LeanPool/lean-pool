@@ -22,7 +22,7 @@ noncomputable section
 namespace LeanPool.Besicovitch
 
 /-- Swap the two child labels while fixing the root. -/
-def swapChildLabel : SixPointLabel → SixPointLabel
+@[expose] def swapChildLabel : SixPointLabel → SixPointLabel
   | .root => .root
   | .left => .right
   | .right => .left
@@ -32,6 +32,7 @@ def swapConfigurationChildren (configuration : SixPointConfiguration) : SixPoint
   fun color label ↦ configuration color (swapChildLabel label)
 
 /-- Interchange the red and blue colors. -/
+@[expose]
 def transposeConfigurationColors (configuration : SixPointConfiguration) : SixPointConfiguration
   | .red => configuration .blue
   | .blue => configuration .red
@@ -63,6 +64,7 @@ theorem IsAdmissibleAt.transposeColors {configuration : SixPointConfiguration} {
       simpa [transposeConfigurationColors] using h.sibling_distance _
 
 /-- The distance between a chosen red child and a chosen blue child. -/
+@[expose]
 def incidenceCrossDistance (configuration : SixPointConfiguration) (redChild blueChild : Fin 2) :
     ℝ :=
   dist (configuration .red (incidenceChild redChild))
@@ -95,19 +97,19 @@ theorem incidenceCrossDistance_eq_norm (configuration : SixPointConfiguration)
   exact configuration.dist_red_blue_eq_norm _ _
 
 /-- The radial penalty in a reduced balanced incidence slack. -/
-def balancedIncidencePenalty (code : Fin 4) (firstRadius secondRadius : ℝ) : ℝ :=
+@[expose] def balancedIncidencePenalty (code : Fin 4) (firstRadius secondRadius : ℝ) : ℝ :=
   match code with
   | 0 => ((barC - 1) * firstRadius + (barC + 1) * secondRadius) / 2
   | 1 | 2 => barC * (firstRadius + secondRadius) / 2
   | 3 => ((barC + 1) * firstRadius + (barC - 1) * secondRadius) / 2
 
 /-- The reduced matching slack retained from the four-child branch. -/
-def diagonalMatchingReducedSlack (configuration : SixPointConfiguration) : ℝ :=
+@[expose] def diagonalMatchingReducedSlack (configuration : SixPointConfiguration) : ℝ :=
   incidenceCrossDistance configuration 0 0 + incidenceCrossDistance configuration 1 1 -
     2 * barC * (2 * barC - 1)
 
 /-- The selected diagonal matching alternative from the four-child minimax. -/
-def SelectedDiagonalMatchingFails (configuration : SixPointConfiguration) : Prop :=
+@[expose] def SelectedDiagonalMatchingFails (configuration : SixPointConfiguration) : Prop :=
   (2 * barC - 1) *
       (dist (configuration .red .left) (configuration .red .right) +
         dist (configuration .blue .left) (configuration .blue .right)) ≤
@@ -230,7 +232,7 @@ theorem blueBalancedFailure_transposeColors (configuration : SixPointConfigurati
       dist_comm, add_comm]
 
 /-- The reduced upper slack for a red endpoint incidence. -/
-def redEndpointReducedSlack (configuration : SixPointConfiguration) (code : Fin 4) : ℝ :=
+@[expose] def redEndpointReducedSlack (configuration : SixPointConfiguration) (code : Fin 4) : ℝ :=
   let blueChild := incidenceSecond code
   incidenceCrossDistance configuration (incidenceFirst code) blueChild -
     (1 + 3 * barC * (barC - 1) / 2) -
@@ -238,7 +240,7 @@ def redEndpointReducedSlack (configuration : SixPointConfiguration) (code : Fin 
       (barC + 1) * incidenceChildRadius configuration .blue (otherChild blueChild)) / 2
 
 /-- The reduced upper slack for a blue endpoint incidence. -/
-def blueEndpointReducedSlack (configuration : SixPointConfiguration) (code : Fin 4) : ℝ :=
+@[expose] def blueEndpointReducedSlack (configuration : SixPointConfiguration) (code : Fin 4) : ℝ :=
   let redChild := incidenceFirst code
   incidenceCrossDistance configuration redChild (incidenceSecond code) -
     (1 + 3 * barC * (barC - 1) / 2) -
@@ -246,7 +248,7 @@ def blueEndpointReducedSlack (configuration : SixPointConfiguration) (code : Fin
       (barC + 1) * incidenceChildRadius configuration .red (otherChild redChild)) / 2
 
 /-- The reduced upper slack for a red balanced incidence. -/
-def redBalancedReducedSlack (configuration : SixPointConfiguration) (code : Fin 4) : ℝ :=
+@[expose] def redBalancedReducedSlack (configuration : SixPointConfiguration) (code : Fin 4) : ℝ :=
   (incidenceCrossDistance configuration 0 (incidenceFirst code) +
       incidenceCrossDistance configuration 1 (incidenceSecond code)) / 2 +
     barC - 3 * barC ^ 2 / 2 -
@@ -254,7 +256,7 @@ def redBalancedReducedSlack (configuration : SixPointConfiguration) (code : Fin 
       (incidenceChildRadius configuration .blue 1)
 
 /-- The reduced upper slack for a blue balanced incidence. -/
-def blueBalancedReducedSlack (configuration : SixPointConfiguration) (code : Fin 4) : ℝ :=
+@[expose] def blueBalancedReducedSlack (configuration : SixPointConfiguration) (code : Fin 4) : ℝ :=
   (incidenceCrossDistance configuration (incidenceFirst code) 0 +
       incidenceCrossDistance configuration (incidenceSecond code) 1) / 2 +
     barC - 3 * barC ^ 2 / 2 -
@@ -753,13 +755,13 @@ theorem not_redEndpoint_zero_and_blueEndpoint_two
   nlinarith
 
 /-- The exact scalar lens bound for the off-matching coincident endpoint cell. -/
-def OffMatchingCoincidentLensBound (configuration : SixPointConfiguration) : Prop :=
+@[expose] def OffMatchingCoincidentLensBound (configuration : SixPointConfiguration) : Prop :=
   6 * diagonalMatchingReducedSlack configuration +
       7 * redEndpointReducedSlack configuration 1 +
       7 * blueEndpointReducedSlack configuration 1 < 0
 
 /-- The exact scalar lens bound for the `E0/S0` endpoint/balanced cell. -/
-def EndpointBalancedE0S0LensBound (configuration : SixPointConfiguration) : Prop :=
+@[expose] def EndpointBalancedE0S0LensBound (configuration : SixPointConfiguration) : Prop :=
   5 * diagonalMatchingReducedSlack configuration +
       9 * redEndpointReducedSlack configuration 0 +
       6 * blueBalancedReducedSlack configuration 0 < 0

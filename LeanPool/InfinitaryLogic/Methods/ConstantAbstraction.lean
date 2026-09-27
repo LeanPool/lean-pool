@@ -96,7 +96,7 @@ private theorem BoundedFormulaω.realize_congr_instances (S S' : L.Structure M)
 /-! ## The controlled single-layer structure `wc base h` -/
 
 /-- The `L[[ℕ]]`-structure on `M` with base reduct `base` and constants interpreted by `h`. -/
-@[reducible] def wc (base : L.Structure M) (h : ℕ → M) : L[[ℕ]].Structure M :=
+@[expose, reducible] def wc (base : L.Structure M) (h : ℕ → M) : L[[ℕ]].Structure M :=
   @Language.withConstantsStructure L M base ℕ (constantsOn.structure h)
 
 @[simp] theorem wc_funMap_inl (base : L.Structure M) (h : ℕ → M) {l : ℕ}

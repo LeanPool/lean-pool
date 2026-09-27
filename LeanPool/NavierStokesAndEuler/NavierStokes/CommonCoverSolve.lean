@@ -211,7 +211,7 @@ structure LinearData (P V E : Type) [NormedAddCommGroup V] [NormedSpace ℝ V]
 
 /-- Periodic at, given by `∀ Y : Plane, ∀ n : Frequency, f (p, Y + TorusAverages.latticePoint n)
 = f (p, Y)`. -/
-def PeriodicAt {P V : Type} (f : P × Plane → V) (p : P) : Prop :=
+@[expose] def PeriodicAt {P V : Type} (f : P × Plane → V) (p : P) : Prop :=
   ∀ Y : Plane, ∀ n : Frequency,
     f (p, Y + TorusAverages.latticePoint n) = f (p, Y)
 

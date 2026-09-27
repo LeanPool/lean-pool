@@ -78,7 +78,7 @@ def pathReflection : C(K,CylinderL2 P V) →L[ℝ] C(K,CylinderL2 P V) :=
 
 omit [CompactSpace K] in
 @[simp] theorem pathReflection_apply (u : C(K, CylinderL2 P V)) (t : K) :
-    pathReflection P u t = reflection P (u t) := rfl
+    pathReflection P u t = reflection P (u t) := by rfl
 
 end Basic
 
@@ -96,9 +96,10 @@ theorem reflection_fullOperator (A : Space →ᵇ E →L[ℝ] F)
       (EulerLpOperatorField.full_ae (liftMeasure P) (fieldLift P A) u),
     EulerLpOperatorField.full_ae (liftMeasure P) (fieldLift P A) (reflection P u),
     reflection_ae P u] with x hr hn hf hu
-  change fullOperatorMap P A u (-x) = A (-x.1) (u (-x)) at hn
-  change fullOperatorMap P A (reflection P u) x = A x.1 (reflection P u x) at hf
-  rw [hr,hn,hf,hu,hA]
+  simp only [fullOperatorMap_apply, fieldLift_apply] at hr hn hf ⊢
+  rw [hr,hn,hf,hu]
+  change A (-x.1) _ = A x.1 _
+  rw [hA]
 
 end Coefficients
 
@@ -127,7 +128,8 @@ def supportedReflection : Supported P V S hS →L[ℝ] Supported P V S hS :=
     (Supported P V S hS) (reflection_mem P S hS hSym)
 
 @[simp] theorem supportedReflection_coe (u : Supported P V S hS) :
-    (supportedReflection P S hS hSym u : CylinderL2 P V) = reflection P (u : CylinderL2 P V) := rfl
+    (supportedReflection P S hS hSym u : CylinderL2 P V) = reflection P (u : CylinderL2 P V) := by
+  rfl
 
 variable {K : Type*} [TopologicalSpace K] [CompactSpace K]
 
@@ -138,7 +140,7 @@ def supportedPathReflection : C(K,Supported P V S hS) →L[ℝ] C(K,Supported P 
 
 omit [CompactSpace K] in
 @[simp] theorem supportedPathReflection_apply (u : C(K, Supported P V S hS)) (t : K) :
-    supportedPathReflection P S hS hSym u t = supportedReflection P S hS hSym (u t) := rfl
+    supportedPathReflection P S hS hSym u t = supportedReflection P S hS hSym (u t) := by rfl
 
 end Supported
 
@@ -153,7 +155,8 @@ theorem supportedReflection_operator (A : Space →ᵇ E →L[ℝ] F)
     supportedReflection P S hS hSym (supportedOperatorMap P S hS A u) =
       supportedOperatorMap P S hS A (supportedReflection P S hS hSym u) := by
   apply Subtype.ext
-  exact reflection_fullOperator P A hA (u : CylinderL2 P E)
+  simpa only [supportedReflection_coe, supportedOperatorMap_coe] using
+    reflection_fullOperator P A hA (u : CylinderL2 P E)
 
 end SupportedCoefficients
 end EulerCylinderFieldReflection

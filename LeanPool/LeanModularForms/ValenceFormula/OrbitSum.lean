@@ -74,6 +74,7 @@ theorem ordOrbit_mk (p : ℍ) : ordOrbit f (orb p) = orderOfVanishingAt' (⇑f) 
 @[expose] def oi : Orbit := orb ellipticPointI'
 
 /-- The orbit of `ρ`. -/
+@[expose]
 def orho : Orbit := orb ellipticPointRho'
 
 /-- A non-elliptic orbit is one distinct from both `oi` and `orho`. -/

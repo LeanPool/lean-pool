@@ -48,7 +48,7 @@ while `none` is a legal point exactly when `Missing root` holds. -/
 namespace CompletedCarrier
 
 /-- A completed point is the added star precisely when its option is `none`. -/
-def isStar {root : CanonicalCarrier S} (point : CompletedCarrier root) : Prop :=
+@[expose] def isStar {root : CanonicalCarrier S} (point : CompletedCarrier root) : Prop :=
   point.val = none
 
 end CompletedCarrier

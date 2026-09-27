@@ -872,7 +872,7 @@ private theorem proofTransformation_path {𝕏 : Proof} {σ}
         known
 
 /-- Provides the proof transformation from local pre-proofs and its path witnesses. -/
-noncomputable def proofTransformation {𝕏 : Proof} {σ}
+@[expose] noncomputable def proofTransformation {𝕏 : Proof} {σ}
     (partialProof : (x : 𝕏.X) → Ext.PreProof x σ)
     (root_prop : ∀ x, Ext.Proves x (partialProof x) (σ x))
     (box_prop : ∀ x, (r 𝕏.α x).isBox →

@@ -314,6 +314,7 @@ lemma Discriminant_zeroAtImInfty :
   · apply Delta_boundedfactor
 
 /-- The modular discriminant as a weight-12 cusp form on `SL(2, ℤ)`. -/
+@[expose]
 def Delta : CuspForm (CongruenceSubgroup.Gamma 1) 12 where
   toFun := DiscriminantSIF
   slash_action_eq' := DiscriminantSIF.slash_action_eq'

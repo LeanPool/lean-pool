@@ -40,7 +40,7 @@ local instance instSmoothCoefficientPath3 : NormedAddCommGroup (Space →ᵇ W) 
 local instance instSmoothCoefficientPath4 : NormedSpace ℝ (Space →ᵇ W) := inferInstance
 
 /-- Map coefficient path, given by `(L.compLeftContinuousBounded Space).compLeftContinuous ℝ K`. -/
-def mapCoefficientPath (L : V →L[ℝ] W) : C(K, Space →ᵇ V) →L[ℝ] C(K, Space →ᵇ W) :=
+@[expose] def mapCoefficientPath (L : V →L[ℝ] W) : C(K, Space →ᵇ V) →L[ℝ] C(K, Space →ᵇ W) :=
   (L.compLeftContinuousBounded Space).compLeftContinuous ℝ K
 
 omit [CompactSpace K] in

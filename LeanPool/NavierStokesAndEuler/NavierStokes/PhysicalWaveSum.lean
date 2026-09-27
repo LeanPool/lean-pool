@@ -426,12 +426,12 @@ theorem waveRegion_locallyFinite (D : ℝ) (H : ℕ) :
     (fun _ => locallyFinite_of_finite (fun _ : Harmonic H => (univ : Set PositiveParam)))
 
 /-- Preterminal, given by `{w | w.1 < 1}`. -/
-noncomputable def preterminal : Set SpaceTime := {w | w.1 < 1}
+@[expose] noncomputable def preterminal : Set SpaceTime := {w | w.1 < 1}
 
 theorem preterminal_open : IsOpen preterminal := isOpen_lt continuous_fst continuous_const
 
 /-- The actual similarity coordinate at a Cartesian spacetime point. -/
-noncomputable def physicalQ (h : ℝ) (w : SpaceTime) : ℝ :=
+@[expose] noncomputable def physicalQ (h : ℝ) (w : SpaceTime) : ℝ :=
   SimilarityProfile.q h (AxisymmetricFields.profilePoint w.1 w.2)
 
 theorem physicalQ_pos {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)

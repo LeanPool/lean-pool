@@ -40,7 +40,7 @@ theorem champBlocks_getElem (b N i : ℕ) (h : i < (champBlocks b N).length) :
       (le_length_champBlocks b (i + 1)))).symm
 
 /-- The first `n` digits of the base-`b` Champernowne sequence. -/
-def champPrefix (b n : ℕ) : List ℕ := (champBlocks b n).take n
+@[expose] def champPrefix (b n : ℕ) : List ℕ := (champBlocks b n).take n
 
 theorem length_champPrefix (b n : ℕ) : (champPrefix b n).length = n := by
   rw [champPrefix, List.length_take]

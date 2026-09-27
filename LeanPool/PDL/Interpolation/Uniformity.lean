@@ -347,7 +347,7 @@ def LocalTableau.IsUni : {X : Sequent} → LocalTableau X → Prop
       lra.IsUniChoice ∧ ∀ Y, ∀ h : Y ∈ lra.C, (next Y h).IsUni
 
 /-- All local rule applications inside a tableau are uniform choices. -/
-def Tableau.IsUni : {H : History} → {X : Sequent} → Tableau H X → Prop
+@[expose] def Tableau.IsUni : {H : History} → {X : Sequent} → Tableau H X → Prop
   | _, _, .loc _ _ lt next => lt.IsUni ∧ ∀ Y, ∀ h : Y ∈ endNodesOf lt, (next Y h).IsUni
   | _, _, .pdl _ _ _ next => next.IsUni
   | _, _, .lrep _ => True

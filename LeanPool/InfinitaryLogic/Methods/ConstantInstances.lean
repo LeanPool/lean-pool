@@ -27,7 +27,7 @@ variable {L : Language.{0, 0}}
 
 /-- The constant instance `ψ(c)`: open the bound variable of `ψ` and substitute the constant
 `c_c`. -/
-def instConst (c : ℕ) (ψ : L[[ℕ]].BoundedFormulaω Empty 1) : L[[ℕ]].Sentenceω :=
+@[expose] def instConst (c : ℕ) (ψ : L[[ℕ]].BoundedFormulaω Empty 1) : L[[ℕ]].Sentenceω :=
   (ψ.openBounds).subst (fun _ => constTerm c)
 
 /-- The closing substitution of a bounded formula by constants. -/

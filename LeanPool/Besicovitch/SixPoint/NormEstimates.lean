@@ -90,10 +90,10 @@ theorem norm_sub_sub_sq {E : Type*} [NormedAddCommGroup E]
   ring
 
 /-- The nonnegative part of a real coefficient. -/
-def positivePart (x : ℝ) : ℝ := max x 0
+@[expose] def positivePart (x : ℝ) : ℝ := max x 0
 
 /-- The magnitude of the negative part of a real coefficient. -/
-def negativePart (x : ℝ) : ℝ := max (-x) 0
+@[expose] def negativePart (x : ℝ) : ℝ := max (-x) 0
 
 /-- Positive and negative parts recover the coefficient. -/
 theorem positivePart_sub_negativePart (x : ℝ) :

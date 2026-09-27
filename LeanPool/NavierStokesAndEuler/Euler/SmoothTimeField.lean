@@ -123,6 +123,6 @@ def toSmoothTimeField {K V : Type} [TopologicalSpace K] [CompactSpace K]
 
 @[simp] theorem toSmoothTimeField_field {K V : Type} [TopologicalSpace K] [CompactSpace K]
     [NormedAddCommGroup V] [NormedSpace ℝ V] (A : SmoothCoefficientPath K V) :
-    A.toSmoothTimeField.field = A.field := rfl
+    A.toSmoothTimeField.field = A.field := by rfl
 
 end EulerMeanCoefficients.SmoothCoefficientPath

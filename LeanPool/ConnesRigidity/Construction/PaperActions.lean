@@ -119,7 +119,7 @@ def qVStarActionHom : Q →* (VStar ≃ₗ[k] VStar) where
   rfl
 
 /-- Span of square tensors in the tensor square. Paper: §2. -/
-def squareSpan : Submodule k TensorAA :=
+@[expose] def squareSpan : Submodule k TensorAA :=
   Submodule.span k (Set.range fun a : A => a ⊗ₜ[k] a)
 
 /-- The paper's missing spanning statement for the fixed tensor module. Paper: §2. -/

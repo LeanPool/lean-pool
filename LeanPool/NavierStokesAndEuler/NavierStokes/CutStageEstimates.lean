@@ -536,11 +536,11 @@ noncomputable def physicalProjection : SpaceTime →L[ℝ] PhysicalCoordinateBou
         (ContinuousLinearMap.snd ℝ ℝ Space)))
 
 @[simp] theorem physicalProjection_apply (w : SpaceTime) :
-    physicalProjection w = (w.1, (0, w.2 2)) := rfl
+    physicalProjection w = (w.1, (0, w.2 2)) := by rfl
 
 theorem physicalQ_linear_composition (h : ℝ) :
     PhysicalWaveSum.physicalQ h =
-      PhysicalCoordinateBounds.physicalQ (2 * h) ∘ physicalProjection := rfl
+      PhysicalCoordinateBounds.physicalQ (2 * h) ∘ physicalProjection := by rfl
 
 /-- The actual Cartesian implicit similarity coordinate has one power of
 loss per derivative.  No bound on the physical radius is required. -/

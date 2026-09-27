@@ -62,7 +62,7 @@ variable (T : ℝ) (hT : 0 ≤ T) (A A₁ : C(Icc (0 : ℝ) T, E →L[ℝ] F))
 
 /-- Initial product derivative, given by `(timeMultiplier T hT A₁).comp (initialPrimitiveTimeLp
 T hT) + timeMultiplier T hT A`. -/
-def initialProductDerivative : TimeLp T E →L[ℝ] TimeLp T F :=
+@[expose] def initialProductDerivative : TimeLp T E →L[ℝ] TimeLp T F :=
   (timeMultiplier T hT A₁).comp (initialPrimitiveTimeLp T hT) + timeMultiplier T hT A
 
 /-- Initial product primitive, given by `extendPath T hT A t (initialRealPrimitive T u t)`. -/

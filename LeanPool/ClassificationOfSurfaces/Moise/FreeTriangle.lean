@@ -51,7 +51,7 @@ def IsFreeTriangle (t : Finset M.Vertex) : Prop :=
   t ∈ M.triangles ∧ ∃ e, M.IsBoundaryEdge e ∧ e ⊆ t
 
 /-- The three abstract edges of a maximal triangle. -/
-def triangleEdges (t : Finset M.Vertex) : Finset (Finset M.Vertex) :=
+@[expose] def triangleEdges (t : Finset M.Vertex) : Finset (Finset M.Vertex) :=
   t.powersetCard 2
 
 /-- The boundary edges belonging to a maximal triangle. -/
@@ -1531,7 +1531,7 @@ theorem frontier_inter_triangleCarrier_diff_vertices {t : Finset M.Vertex}
     exact convexHull_mono (Set.image_mono heData.1) hpEdge
 
 /-- No mesh vertex contributes an isolated point to this triangle's frontier trace. -/
-def HasNoIsolatedFrontierVertex (t : Finset M.Vertex) : Prop :=
+@[expose] def HasNoIsolatedFrontierVertex (t : Finset M.Vertex) : Prop :=
   ∀ v : M.Vertex, M.position v ∈ frontier M.toPlaneComplex.support →
     M.position v ∈ M.triangleCarrier t →
       ∃ e ∈ M.boundaryEdges t,

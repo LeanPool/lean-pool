@@ -50,7 +50,7 @@ def derivativePart (T : ℝ) (hT : 0 ≤ T) : TimeLp T E →L[ℝ] C(Icc (0 : �
   terminalPrimitive T hT - (valuePart T hT).comp (primitiveTimeLp T hT)
 
 /-- One fixed bounded linear map from the value/derivative pair to its continuous representative. -/
-def reconstruction (T : ℝ) (hT : 0 ≤ T) :
+@[expose] def reconstruction (T : ℝ) (hT : 0 ≤ T) :
     (TimeLp T E × TimeLp T E) →L[ℝ] C(Icc (0 : ℝ) T, E) :=
   (valuePart T hT).comp (fst ℝ (TimeLp T E) (TimeLp T E)) +
     (derivativePart T hT).comp (snd ℝ (TimeLp T E) (TimeLp T E))

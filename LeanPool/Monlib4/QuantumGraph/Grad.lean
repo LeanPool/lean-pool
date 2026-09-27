@@ -28,6 +28,7 @@ local notation "τ" => TensorProduct.lid ℂ
 local notation "τ'" => TensorProduct.rid ℂ
 
 /-- Gradient map associated to a quantum graph adjacency operator. -/
+@[expose]
 noncomputable def QuantumGraph.Grad :
     (B →ₗ[ℂ] B) →+ (B →ₗ[ℂ] B ⊗[ℂ] B) where
   toFun f := (rT _ (LinearMap.adjoint f) - lT _ f) ∘ₗ Coalgebra.comul

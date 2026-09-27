@@ -133,7 +133,7 @@ theorem exists_parentFace_of_mem_midpointFaces
 /-- A chosen parent of a midpoint-subdivision face.  Geometric arguments use only
 `midpointFace_mem_parent`; uniqueness is not needed for the adaptive open-complex
 construction. -/
-noncomputable def midpointParentFace (s : K.midpointComplex.Face) : K.Face :=
+@[expose] noncomputable def midpointParentFace (s : K.midpointComplex.Face) : K.Face :=
   Classical.choose (K.exists_parentFace_of_mem_midpointFaces s.2)
 
 theorem midpointFace_mem_parent (s : K.midpointComplex.Face) :
@@ -168,7 +168,7 @@ theorem sum_midpointPosition (w : K.MidpointVertex) :
   · simp [midpointPosition, K.card_of_mem_edges e.2]
 
 /-- Affine barycentric evaluation from midpoint coordinates to old coordinates. -/
-noncomputable def midpointEvalAffine :
+@[expose] noncomputable def midpointEvalAffine :
     (K.MidpointVertex → ℝ) →ᵃ[ℝ] (K.Vertex → ℝ) :=
   (∑ w, (LinearMap.proj w).smulRight (K.midpointPosition w)).toAffineMap
 
@@ -1332,7 +1332,7 @@ theorem sum_midpointEvalAffine (x : K.midpointComplex.realization) :
     _ = 1 := x.2.1.2
 
 /-- Canonical affine map from the midpoint realization into the old realization. -/
-noncomputable def midpointEval (x : K.midpointComplex.realization) : K.realization := by
+@[expose] noncomputable def midpointEval (x : K.midpointComplex.realization) : K.realization := by
   refine ⟨K.midpointEvalAffine x.1,
     ⟨K.midpointEvalAffine_nonneg x, K.sum_midpointEvalAffine x⟩, ?_⟩
   obtain ⟨s, hs, hxs⟩ := x.2.2
@@ -1371,7 +1371,7 @@ theorem surjective_midpointEval : Function.Surjective K.midpointEval := by
   exact ⟨x, Subtype.ext hx⟩
 
 /-- The canonical midpoint realization map is a homeomorphism. -/
-noncomputable def midpointHomeomorph :
+@[expose] noncomputable def midpointHomeomorph :
     K.midpointComplex.realization ≃ₜ K.realization :=
   Continuous.homeoOfEquivCompactToT2
     (f := Equiv.ofBijective K.midpointEval

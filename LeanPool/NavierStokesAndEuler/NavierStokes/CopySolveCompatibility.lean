@@ -75,14 +75,14 @@ variable {P Q V E : Type}
 
 /-- Input data transported through a slow-parameter map and a refinement of
 the common cover. All native coefficients retain their native arguments. -/
-noncomputable def transformData (d : LinearData P V E) (φ : Q → P) (k : ℕ) :
+@[expose] noncomputable def transformData (d : LinearData P V E) (φ : Q → P) (k : ℕ) :
     LinearData Q V E where
   coefficient z := d.coefficient (φ z.1, z.2)
   forcingMap z := d.forcingMap (φ z.1, z.2)
   source z := d.source (φ z.1, coverPower k z.2)
 
 /-- Pullback data, given by `transformData d id k`. -/
-noncomputable def pullbackData (d : LinearData P V E) (k : ℕ) : LinearData P V E :=
+@[expose] noncomputable def pullbackData (d : LinearData P V E) (k : ℕ) : LinearData P V E :=
   transformData d id k
 
 theorem coefficientAlong_transform (d : LinearData P V E) (φ : Q → P)
@@ -184,8 +184,13 @@ theorem commonOnTorus_refine
     (pullbackData d k).commonOnTorus (refineGeometry g k) hab κ p
         (source_periodic_transform d id k p hp) (TorusAverages.quotientPoint Y) =
       d.commonOnTorus g hab κ p hp (TorusAverages.quotientPoint (coverPower k Y)) := by
-  simp only [LinearData.commonOnTorus_coe]
-  exact commonSolve_refine d g hab k κ p Y
+  calc
+    _ = (pullbackData d k).commonSolve (refineGeometry g k) hab κ (p, Y) :=
+      LinearData.commonOnTorus_coe (pullbackData d k) (refineGeometry g k) hab κ p
+        (source_periodic_transform d id k p hp) Y
+    _ = d.commonSolve g hab κ (p, coverPower k Y) :=
+      commonSolve_refine d g hab k κ p Y
+    _ = _ := (LinearData.commonOnTorus_coe d g hab κ p hp (coverPower k Y)).symm
 
 end Paths
 

@@ -830,7 +830,7 @@ abbrev edgeStrip (U : Set E) : Set (E × ℝ) := U ×ˢ Ioo 0 1
 
 /-- All full derivative tensors satisfy an exponential weight times fixed
 powers of the allowed scale and inverse edge distance. -/
-def WeightedJets (c : ℝ) (U : Set E) (S : E × ℝ → ℝ) (f : E × ℝ → ℝ) : Prop :=
+@[expose] def WeightedJets (c : ℝ) (U : Set E) (S : E × ℝ → ℝ) (f : E × ℝ → ℝ) : Prop :=
   ∀ n : ℕ, PolyBound (edgeStrip U) S (fun p => p.2⁻¹)
     (fun p => ‖iteratedFDeriv ℝ n f p‖ / FlatCutoff.edge c p.2)
 

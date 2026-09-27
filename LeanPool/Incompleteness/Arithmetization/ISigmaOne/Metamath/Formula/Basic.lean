@@ -25,28 +25,28 @@ variable {V : Type*} [ORingStruc V] [V ⊧ₘ* 𝐈Sg1]
 variable {L : Arith.Language V} {pL : LDef} [Arith.Language.Defined L pL]
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def qqRel (k r v : V) : V := ⟪0, k, r, v⟫ + 1
+@[expose] def qqRel (k r v : V) : V := ⟪0, k, r, v⟫ + 1
 
 /-- Imported declaration from the Incompleteness formalization. -/
 def qqNRel (k r v : V) : V := ⟪1, k, r, v⟫ + 1
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def qqVerum : V := ⟪2, 0⟫ + 1
+@[expose] def qqVerum : V := ⟪2, 0⟫ + 1
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def qqFalsum : V := ⟪3, 0⟫ + 1
+@[expose] def qqFalsum : V := ⟪3, 0⟫ + 1
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def qqAnd (p q : V) : V := ⟪4, p, q⟫ + 1
+@[expose] def qqAnd (p q : V) : V := ⟪4, p, q⟫ + 1
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def qqOr (p q : V) : V := ⟪5, p, q⟫ + 1
+@[expose] def qqOr (p q : V) : V := ⟪5, p, q⟫ + 1
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def qqAll (p : V) : V := ⟪6, p⟫ + 1
+@[expose] def qqAll (p : V) : V := ⟪6, p⟫ + 1
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def qqEx (p : V) : V := ⟪7, p⟫ + 1
+@[expose] def qqEx (p : V) : V := ⟪7, p⟫ + 1
 
 /-- Imported declaration from the Incompleteness formalization. -/
 scoped prefix:max "^rel " => qqRel

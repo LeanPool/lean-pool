@@ -54,7 +54,7 @@ namespace LO
 namespace Modal
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def _root_.LO.Modal.Formula.toPropFormula (φ : Formula α) (_ : φ.degree = 0 :=
+@[expose] def _root_.LO.Modal.Formula.toPropFormula (φ : Formula α) (_ : φ.degree = 0 :=
   by simp_all [Formula.degree, Formula.degree_neg, Formula.degree_imp]) :
     IntProp.Formula α :=
   match φ with

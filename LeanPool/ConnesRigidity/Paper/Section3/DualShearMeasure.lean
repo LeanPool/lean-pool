@@ -463,14 +463,14 @@ abbrev Coordinates := PaperFactorIsomorphism.DualCoordinates
 /--
 The `coordinateProductEquiv` construction used in the Connes rigidity formalization.
 -/
-def coordinateProductEquiv : Coordinates ≃+
+@[expose] def coordinateProductEquiv : Coordinates ≃+
     (Additive PChar × Additive QChar) :=
   PaperDualHaar.characterCoordinatesEquiv.symm.trans characterProductEquiv
 
 /--
 The `coordinateProductHomeomorph` construction used in the Connes rigidity formalization.
 -/
-def coordinateProductHomeomorph : Coordinates ≃ₜ
+@[expose] def coordinateProductHomeomorph : Coordinates ≃ₜ
     (Additive PChar × Additive QChar) :=
   PaperDualTopology.characterCoordinatesHomeomorph.symm.trans
     characterProductHomeomorph

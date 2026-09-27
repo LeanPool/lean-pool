@@ -275,7 +275,7 @@ noncomputable def evalLinearEquiv (m : Nat) : ANF m ≃ₗ[F₂] ((Fin m → F�
   LinearEquiv.ofBijective (evalLinearMap m) ⟨eval_injective m, evalLinearMap_surjective m⟩
 
 /-- The subspace of constants and input-linear functions. -/
-noncomputable def affine (m : Nat) : Submodule F₂ (ANF m) :=
+@[expose] noncomputable def affine (m : Nat) : Submodule F₂ (ANF m) :=
   Submodule.span F₂ ({1} ∪ Set.range X)
 
 theorem one_mem_affine (m : Nat) : (1 : ANF m) ∈ affine m := by

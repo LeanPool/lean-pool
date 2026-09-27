@@ -17,7 +17,7 @@ Multidimensional density Hales--Jewett, uniform fibers, and the restricted-alpha
 lemma.  All subspaces below are mathlib's `Combinatorics.Subspace`.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 open Combinatorics

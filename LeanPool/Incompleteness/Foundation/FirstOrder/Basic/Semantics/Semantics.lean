@@ -67,8 +67,7 @@ variable (φ : L₁ →ᵥ L₂) {M : Type w} (s₂ : Structure L₂ M)
     {k} {r : L₁.Rel k} {v : Fin k → M} : (s₂.lMap φ).rel r v ↔ s₂.rel (φ.rel r) v := of_eq rfl
 
 /-- Imported declaration from the Incompleteness formalization. -/
-@[reducible]
-@[expose] def ofEquiv {M : Type w} [Structure L M] {N : Type w'}
+@[reducible, expose] def ofEquiv {M : Type w} [Structure L M] {N : Type w'}
     (Θ : M ≃ N) : Structure L N where
   func := fun _ f v => Θ (func f (Θ.symm ∘ v))
   rel  := fun _ r v => rel r (Θ.symm ∘ v)

@@ -109,7 +109,7 @@ variable (𝕜 : Type*) [Field 𝕜]
 
 /-- A bilinear map version of the Heisenberg cocycle.
 (Defining equation: `γ (jgen k) (jgen l) = k * δ[k+l,0]`.) -/
-noncomputable def _root_.VirasoroProject.AbelianLieAlgebraOn.heisenbergCocycleBilin :
+@[expose] noncomputable def _root_.VirasoroProject.AbelianLieAlgebraOn.heisenbergCocycleBilin :
     (AbelianLieAlgebraOn ℤ 𝕜) →ₗ[𝕜] (AbelianLieAlgebraOn ℤ 𝕜) →ₗ[𝕜] 𝕜 :=
   (jgen 𝕜).constr 𝕜 <| fun k ↦ (jgen 𝕜).constr 𝕜 <| fun l ↦ if k + l = 0 then k else 0
 

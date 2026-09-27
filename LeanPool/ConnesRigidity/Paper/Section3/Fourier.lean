@@ -183,7 +183,7 @@ theorem integral_character_eq_zero
 /--
 The `characterL2` construction used in the Connes rigidity formalization.
 -/
-def characterL2 (d : D) : Lp ℂ 2 paperCharacterHaar :=
+@[expose] def characterL2 (d : D) : Lp ℂ 2 paperCharacterHaar :=
   ContinuousMap.toLp 2 paperCharacterHaar ℂ (complexCharacter d)
 
 /- The compact-dual characters form an orthonormal family. Paper: §3. -/
@@ -314,7 +314,7 @@ def FourierBasis : HilbertBasis D ℂ (Lp ℂ 2 paperCharacterHaar) :=
 /--
 The `FourierTransform` construction used in the Connes rigidity formalization.
 -/
-def FourierTransform :
+@[expose] def FourierTransform :
     lp (fun _ : D => ℂ) 2 ≃ₗᵢ[ℂ] Lp ℂ 2 paperCharacterHaar :=
   FourierBasis.repr.symm
 

@@ -396,7 +396,7 @@ lemma Tableau.flip_flip {Hist X} {tab : Tableau Hist X} :
     grind [Tableau.flip, LoadedPathRepeat.flip_flip]
 
 /-- Map a tableau path to the corresponding path in the reflected tableau. -/
-def PathIn.flip {Hist X} {tab : Tableau Hist X} : PathIn tab → PathIn tab.flip
+@[expose] def PathIn.flip {Hist X} {tab : Tableau Hist X} : PathIn tab → PathIn tab.flip
   | .nil => .nil
   | @PathIn.loc _ _ nflprep Xnbas ltX next Y Y_in tail =>
       @PathIn.loc _ _ _ _ _ _ Y.flip

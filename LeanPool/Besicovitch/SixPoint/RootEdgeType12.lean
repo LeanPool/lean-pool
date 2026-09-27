@@ -29,7 +29,7 @@ open scoped InnerProductSpace
 namespace LeanPool.Besicovitch
 
 /-- Failure slack of the crossed `(1,2)` term for a red root--second-child edge. -/
-def redRootEdgeType12Slack
+@[expose] def redRootEdgeType12Slack
     (c M r₂ b₁ b₂ rootToBlueFirst secondCross : ℝ) : ℝ :=
   r₂ + rootToBlueFirst + secondCross + M -
     2 * c * (r₂ + (b₁ + b₂ + M) / 2)

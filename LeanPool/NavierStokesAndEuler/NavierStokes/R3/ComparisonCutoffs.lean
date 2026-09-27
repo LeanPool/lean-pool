@@ -37,7 +37,7 @@ noncomputable def baseBump : ContDiffBump (0 : Space) :=
   NavierStokesAndEuler.SmoothCutoff.baseBump Space
 
 /-- The unscaled cutoff. -/
-def baseCutoff (x : Space) : ℝ :=
+@[expose] def baseCutoff (x : Space) : ℝ :=
   NavierStokesAndEuler.SmoothCutoff.baseCutoff Space x
 
 /-- The cutoff at spatial radius `R`; its estimates are stated for `0 < R`. -/

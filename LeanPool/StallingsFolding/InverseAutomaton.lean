@@ -222,7 +222,7 @@ theorem run_success_of_reduction (v : V) (w : Word) {t : V}
     rw [wordEval_wordInv, hw]
 
 /-- Membership in the loop subgroup is decided by traversing the canonical reduced word. -/
-def accepts (g : Free) : Prop := G.run G.base (FreeGroup.toWord g) = some G.base
+@[expose] def accepts (g : Free) : Prop := G.run G.base (FreeGroup.toWord g) = some G.base
 
 theorem accepts_iff_mem_loopSubgroup (g : Free) :
     G.accepts g ↔ g ∈ G.loopSubgroup := by

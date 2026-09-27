@@ -28,7 +28,7 @@ namespace SixPointPacking
 variable {normalized physical : SixPointConfiguration}
 
 /-- The physical union of balls obtained from a normalized packing at a given scale. -/
-def ballUnionAt (packing : SixPointPacking normalized) (physical : SixPointConfiguration)
+@[expose] def ballUnionAt (packing : SixPointPacking normalized) (physical : SixPointConfiguration)
     (scale : ℝ) : Set (EuclideanSpace ℝ (Fin 2)) :=
   finiteBallUnion packing.support
     (fun i ↦ physical i.1.1 i.1.2) (fun i ↦ scale * packing.radius i)

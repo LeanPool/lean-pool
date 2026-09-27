@@ -23,7 +23,7 @@ open Bornology Set
 namespace LeanPool.Besicovitch
 
 /-- Selected holes whose `p`-diameter enlargements meet a set. -/
-def touchingBadConvexSets (p : ℝ)
+@[expose] def touchingBadConvexSets (p : ℝ)
     (chosen : Set (Set (EuclideanSpace ℝ (Fin 2))))
     (C : Set (EuclideanSpace ℝ (Fin 2))) :
     Set (Set (EuclideanSpace ℝ (Fin 2))) :=

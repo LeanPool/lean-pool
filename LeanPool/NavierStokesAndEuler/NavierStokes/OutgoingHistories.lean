@@ -553,7 +553,7 @@ theorem U_before_pulse (d : TailData) (Amp : ℝ → ℝ) (eta : ℝ) {y : ℝ} 
     U d Amp (y, eta) = dropCoefficient d.core.m y * eta := axial_before_pulse d.core Amp eta hy
 
 theorem M_eq_massMoment (d : TailData) (Amp : ℝ → ℝ) (y eta : ℝ) :
-    M d Amp (y, eta) = massMoment d.core Amp eta y := rfl
+    M d Amp (y, eta) = massMoment d.core Amp eta y := by rfl
 
 theorem M_div_E_before (w : ResetWitness d K) (Amp : ℝ → ℝ) (eta : ℝ)
     {y : ℝ} (hy : y ≤ d.core.endpoint) :

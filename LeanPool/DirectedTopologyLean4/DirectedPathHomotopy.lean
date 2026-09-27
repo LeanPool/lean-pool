@@ -93,7 +93,7 @@ instance coeDihomToHom : Coe (Dihomotopy p₀ p₁) (Path.Homotopy p₀.toPath p
 
 /-- Evaluating a dipath homotopy at an intermediate point, giving us a `Dipath`.
 -/
-def eval (F : Dihomotopy p₀ p₁) (t : I) : Dipath x y where
+@[expose] def eval (F : Dihomotopy p₀ p₁) (t : I) : Dipath x y where
   toFun := F.toDihomotopy.curry t
   source' := F.source t
   target' := F.target t
@@ -205,7 +205,7 @@ lemma _root_.Dipath.Dihomotopy.hcomp_first_case (F : Dihomotopy p₀ q₀) (G : 
     ext
     simp only [Path.coe_toContinuousMap, ContinuousMap.toFun_eq_coe,
       ContinuousMap.Homotopy.coe_toContinuousMap, ContinuousMap.HomotopyWith.coe_toHomotopy,
-      Path.map_coe, Function.comp_apply, coe_toDirectedMap,
+      Path.map_coe, Function.comp_apply,
       DirectedMap.Dihomotopy.coe_to_directed_map, DirectedMap.DihomotopyWith.coe_to_dihomotopy]
     exact h _ _ (le_trans (directed_path_bounded γ_dipath.2 _).2 ht₁)
   rw [hpath]
@@ -238,7 +238,7 @@ lemma _root_.Dipath.Dihomotopy.hcomp_second_case (F : Dihomotopy p₀ q₀) (G :
     ext x
     simp only [Path.coe_toContinuousMap, ContinuousMap.toFun_eq_coe,
       ContinuousMap.Homotopy.coe_toContinuousMap, ContinuousMap.HomotopyWith.coe_toHomotopy,
-      Path.map_coe, Function.comp_apply, coe_toDirectedMap,
+      Path.map_coe, Function.comp_apply,
       DirectedMap.Dihomotopy.coe_to_directed_map, DirectedMap.DihomotopyWith.coe_to_dihomotopy]
     exact h (γ x).1 (γ x).2 (le_trans ht₀ (directed_path_bounded γ_dipath.2 _).1)
   rw [hpath]
@@ -520,7 +520,7 @@ def _root_.Dipath.Dihomotopy.reflTransToReparamTransRefl (p : Dipath x y) (f : D
 /-- Given `F : Dihomotopy p q`, and `f : D(X,Y)`, there is a dihomotopy from `p.map f` to
 `q.map f` given by `f ∘ F`.
 -/
-@[simps!]
+@[expose, simps!]
 def _root_.Dipath.Dihomotopy.map {p q : Dipath x y} (F : Dihomotopy p q) (f : D(X,Y)) :
     Dihomotopy (p.map f) (q.map f) where
   toFun := f ∘ F
@@ -703,7 +703,7 @@ equivalent if there is a chain of `Dihomotopies` starting in one and ending in t
 
 /-- The quotient on `Dipath x y` by the equivalence relation `Dipath.Dihomotopic`.
 -/
-protected def _root_.Dipath.Dihomotopic.Quotient (x y : X) :=
+@[expose] protected def _root_.Dipath.Dihomotopic.Quotient (x y : X) :=
   Quotient (Dihomotopic.setoid x y)
 
 attribute [local instance] Dihomotopic.setoid

@@ -1435,7 +1435,7 @@ theorem historyEtaPair_actual {T : ℝ} (hT : T ≠ 0) (κ u : ℝ)
 
 theorem historyEtaPair_reference (q : ScaledPoint) (r : HistoryRow) :
     (etaPair hJ (historyPair X0 initial hJ hL hU hi r)).reference q =
-      etaD (logHistory X0 initial (referenceAngular L) U r) (q.1.2 * q.2.1, q.2.2) := rfl
+      etaD (logHistory X0 initial (referenceAngular L) U r) (q.1.2 * q.2.1, q.2.2) := by rfl
 
 theorem activationOnePair_actual {T : ℝ} (hT : T ≠ 0) (κ u : ℝ)
     {η : ℝ} (hη : η ∈ J) :

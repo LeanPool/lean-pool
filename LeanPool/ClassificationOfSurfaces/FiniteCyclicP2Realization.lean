@@ -982,7 +982,7 @@ theorem retainedCellHomeomorph_side
   exact i.isLt
 
 /-- A retained face maps directly to its unchanged target face class. -/
-noncomputable def retainedFaceMap
+@[expose] noncomputable def retainedFaceMap
     (P : FiniteCyclicPresentation) (cut : P2Cut P)
     {f : P.Face} (hface : f ≠ cut.face.face)
     (validP : P.IsSurfaceValid) :

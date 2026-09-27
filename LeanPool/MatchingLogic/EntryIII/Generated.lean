@@ -99,7 +99,7 @@ theorem witnessed {root : CanonicalCarrier S} (world : GeneratedCarrier root) :
 end GeneratedCarrier
 
 /-- The root as a point of its generated carrier. -/
-def generatedRoot (root : CanonicalCarrier S) : GeneratedCarrier root :=
+@[expose] def generatedRoot (root : CanonicalCarrier S) : GeneratedCarrier root :=
   ⟨root, Relation.ReflTransGen.refl⟩
 
 /-- The canonical interpretation restricted to generated inputs and outputs. -/

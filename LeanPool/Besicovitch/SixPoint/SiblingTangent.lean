@@ -69,7 +69,7 @@ def gramPairValue (c u₁ u₂ g₁ g₂ d₁ d₂ off sigma t₁ t₂ : ℝ) : 
     sigma - (off + g₁ * g₂ / sigma) * c ^ 2
 
 /-- The largest radial-vertex value in a two-point Gram estimate. -/
-def gramPairMaximum (c u₁ u₂ g₁ g₂ d₁ d₂ off sigma : ℝ) : ℝ :=
+@[expose] def gramPairMaximum (c u₁ u₂ g₁ g₂ d₁ d₂ off sigma : ℝ) : ℝ :=
   max (gramPairValue c u₁ u₂ g₁ g₂ d₁ d₂ off sigma 1 1)
     (max (gramPairValue c u₁ u₂ g₁ g₂ d₁ d₂ off sigma 1 (c - 1))
       (gramPairValue c u₁ u₂ g₁ g₂ d₁ d₂ off sigma (c - 1) 1))

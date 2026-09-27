@@ -87,7 +87,7 @@ def fₚ : RuleApp → SplitSequent
   | RuleApp.boxᵣ Δ _ _ => Δ
 
 /-- Given a RuleApp, obtain the non-principal formulas. -/
-def fₙ : RuleApp → SplitSequent := fun Γ ↦ f Γ \ fₚ Γ
+@[expose] def fₙ : RuleApp → SplitSequent := fun Γ ↦ f Γ \ fₚ Γ
 
 /-- Relating principal formulas, non-principal formulas, and the sequent. -/
 lemma fₙ_alternate (r : RuleApp) : fₙ r = match r with

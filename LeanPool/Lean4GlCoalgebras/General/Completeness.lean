@@ -664,7 +664,7 @@ theorem prover_win_builds_proof {Γ : Sequent} (strat : Strategy coalgebraGame P
           case pos rep =>
             simp only [rep, ↓reduceDIte, List.cons.injEq, and_true, exists_eq_left']
             simp only [repNext]
-            exact rep_next_cor Γ
+            exact rep_next_cor (Δ := Δ \ {φ1 v φ2} ∪ {φ1, φ2}) Γ
               ⟨⟨Sum.inr (RuleApp.or Δ φ1 φ2 φ_in), Γs, Rs⟩, in_cone, b_move⟩
               (by simp only [rep])
           case neg nrep =>
@@ -680,7 +680,7 @@ theorem prover_win_builds_proof {Γ : Sequent} (strat : Strategy coalgebraGame P
           case pos rep =>
             simp only [rep, ↓reduceDIte, List.cons.injEq, and_true, exists_eq_left']
             simp only [repNext]
-            exact rep_next_cor Γ
+            exact rep_next_cor (Δ := (Δ \ {□φ1}).D ∪ {φ1}) Γ
               ⟨⟨Sum.inr (RuleApp.box Δ φ1 φ_in), Γs, Rs⟩, in_cone, b_move⟩
               (by simp only [rep])
           case neg nrep =>

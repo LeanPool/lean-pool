@@ -44,7 +44,7 @@ structure Hyp (G : Game A) (k : ℕ) where
 variable {G : Game A} {k : ℕ} (hyp : Hyp G k)
 --the second component is the residual tree of valid extensions
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def upA (hyp : Hyp G k) :=
+@[expose] def upA (hyp : Hyp G k) :=
   let _ : IsClosed G.payoff := hyp.closed
   A × tree A
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
@@ -126,15 +126,15 @@ def ValidExt (x : List (upA hyp)) (a : upA hyp) := [a.1] ∈ getTree' hyp x ∧
 
 variable (hyp)
 /-- the tree of the unraveled game of a closed game -/
-def gameTree : tree (upA hyp) where
+@[expose] def gameTree : tree (upA hyp) where
   val := {x | List.reverseRecOn x True (fun x a hx ↦ hx ∧ ValidExt x a)}
   property _ := by simp; tauto
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps] def oldAsTrees (hyp : Hyp G k) : Trees :=
+@[expose, simps] def oldAsTrees (hyp : Hyp G k) : Trees :=
   let _ : IsClosed G.payoff := hyp.closed
   ⟨A, G.tree⟩
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps] def gameAsTrees (hyp : Hyp G k) : Trees := ⟨upA hyp, gameTree hyp⟩
+@[expose, simps] def gameAsTrees (hyp : Hyp G k) : Trees := ⟨upA hyp, gameTree hyp⟩
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 abbrev T {A : Type*} {G : Game A} : tree A := G.tree
@@ -440,7 +440,7 @@ lemma gameTree_isPruned : IsPruned <| gameTree hyp := by
 
 variable (hyp) in
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps] def game : Game (upA hyp) where
+@[expose, simps] def game : Game (upA hyp) where
   tree := gameTree hyp
   payoff := (bodyFunctor.map (treeHom hyp))⁻¹' G.payoff
 /-- Auxiliary declaration for the Borel determinacy formalization. -/

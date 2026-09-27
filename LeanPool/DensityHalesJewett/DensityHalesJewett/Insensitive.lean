@@ -19,7 +19,7 @@ Boolean closure of insensitive families and the subspace-tiling results used in 
 increment argument.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 open Combinatorics
@@ -32,7 +32,7 @@ def InsensitiveEquiv {α ι : Type*} (i j : α) (x y : ι → α) : Prop :=
   ∀ a, a ≠ i → a ≠ j → ∀ c, (x c = a ↔ y c = a)
 
 /-- Membership in an `(i,j)`-insensitive family is constant on insensitive-equivalence classes. -/
-def IsInsensitive {α ι : Type*} (i j : α) (D : Finset (ι → α)) : Prop :=
+@[expose] def IsInsensitive {α ι : Type*} (i j : α) (D : Finset (ι → α)) : Prop :=
   ∀ ⦃x y⦄, InsensitiveEquiv i j x y → (x ∈ D ↔ y ∈ D)
 
 /-- Transport a word family along an equivalence of coordinate types. -/

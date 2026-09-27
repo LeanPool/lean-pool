@@ -283,7 +283,7 @@ def polynomialLaplacian (n : ℕ) :
     Finset.sum_apply, Function.comp_apply]
 
 /-- The harmonic homogeneous submodule used in the spherical-code argument. -/
-def harmonicHomogeneousSubmodule (n k : ℕ) :
+@[expose] def harmonicHomogeneousSubmodule (n k : ℕ) :
     Submodule ℝ (MvPolynomial (Fin n) ℝ) :=
   MvPolynomial.homogeneousSubmodule (Fin n) ℝ k ⊓
     LinearMap.ker (polynomialLaplacian n)
@@ -1461,7 +1461,7 @@ theorem homogeneousInner_eq_polynomialInner (n m : ℕ)
         (p : MvPolynomial (Fin n) ℝ).coeff (a : MultiIndex n) := rfl
 
 /-- The harmonic inner used in the spherical-code argument. -/
-def harmonicInner (n m : ℕ)
+@[expose] def harmonicInner (n m : ℕ)
     (p q : SpherePacking.harmonicHomogeneousSubmodule n m) : ℝ :=
   @inner ℝ (CoefficientSpace n m) _
     (harmonicCoefficientEmbedding n m p)

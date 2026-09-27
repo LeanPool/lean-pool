@@ -684,7 +684,7 @@ noncomputable def ActiveLabel.toClosed {K : Set Slow} (L : ActiveLabel K) :
   ⟨L.val, L.property.1, representative K L, representative_mem K L, representative_mem_tsupport K L⟩
 
 @[simp] theorem ActiveLabel.toClosed_val {K : Set Slow} (L : ActiveLabel K) :
-    L.toClosed.val = L.val := rfl
+    L.toClosed.val = L.val := by rfl
 
 /-- The reference functions on the compact closure are explicit extensions.
 Only their values at the positive representatives are identified with the

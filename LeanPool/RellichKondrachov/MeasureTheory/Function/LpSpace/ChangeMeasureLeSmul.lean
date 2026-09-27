@@ -172,7 +172,7 @@ private lemma norm_changeMeasureFun_le {c : ℝ≥0∞} (hc : c ≠ ∞) (hν : 
 /-- The identity map as a continuous linear map `Lp E p μ →L[ℝ] Lp E p ν` under `ν ≤ c • μ`.
 
 This is stated for `p ≠ ∞` (the only case needed in this repo; in particular we use `p = 2`). -/
-noncomputable def changeMeasureL {c : ℝ≥0∞} (hc : c ≠ ∞) (hν : ν ≤ c • μ) (hp : p ≠ ∞) :
+@[expose] noncomputable def changeMeasureL {c : ℝ≥0∞} (hc : c ≠ ∞) (hν : ν ≤ c • μ) (hp : p ≠ ∞) :
     Lp E p μ →L[ℝ] Lp E p ν :=
   (changeMeasureₗ (μ := μ) (ν := ν) (E := E) (p := p) hc hν).mkContinuous
     (ENNReal.toReal (c ^ (1 / p).toReal))
@@ -211,7 +211,7 @@ map gives a continuous linear equivalence between the two `Lp` spaces.
 /-- If `ν ≤ c₁ • μ` and `μ ≤ c₂ • ν` (with `c₁, c₂ ≠ ∞`) and `p ≠ ∞`,
 then the identity map induces a continuous linear equivalence
 `Lp E p μ ≃L[ℝ] Lp E p ν`. -/
-noncomputable def changeMeasureEquiv {c₁ c₂ : ℝ≥0∞} (hc₁ : c₁ ≠ ∞) (hc₂ : c₂ ≠ ∞)
+@[expose] noncomputable def changeMeasureEquiv {c₁ c₂ : ℝ≥0∞} (hc₁ : c₁ ≠ ∞) (hc₂ : c₂ ≠ ∞)
     (hν : ν ≤ c₁ • μ) (hμ : μ ≤ c₂ • ν) (hp : p ≠ ∞) :
     Lp E p μ ≃L[ℝ] Lp E p ν := by
   classical

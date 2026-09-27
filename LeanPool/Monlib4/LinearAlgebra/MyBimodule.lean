@@ -31,10 +31,12 @@ open scoped TensorProduct
 local notation x " ⊗ₘ " y => TensorProduct.map x y
 
 /-- Left multiplication on the left tensor factor. -/
+@[expose]
 noncomputable def Bimodule.lsmul (x : H₁) (y : H₁ ⊗[R] H₂) : H₁ ⊗[R] H₂ :=
   (LinearMap.mulLeft R x ⊗ₘ 1) y
 
 /-- Right multiplication on the right tensor factor. -/
+@[expose]
 noncomputable def Bimodule.rsmul (x : H₁ ⊗[R] H₂) (y : H₂) : H₁ ⊗[R] H₂ :=
   (1 ⊗ₘ LinearMap.mulRight R y) x
 

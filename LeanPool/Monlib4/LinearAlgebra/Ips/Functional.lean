@@ -295,6 +295,7 @@ lemma Module.Dual.pi_isPosMap_iff {k : Type _} [Fintype k]
   simp_rw [← eq_piOf_pi]
 
 /-- A linear functional $φ$ on $M_n$ is unital if $φ(1) = 1$. -/
+@[expose]
 def Module.Dual.IsUnital {A : Type _} [AddCommMonoid A] [Module R A] [One A] (φ : Module.Dual R A) :
     Prop :=
   φ (1 : A) = 1

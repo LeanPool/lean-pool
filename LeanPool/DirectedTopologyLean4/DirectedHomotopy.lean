@@ -130,7 +130,8 @@ instance coeDihomToHom : Coe (Dihomotopy f₀ f₁) (ContinuousMap.Homotopy (f�
 /-- Evaluating a dipath homotopy at an intermediate point in the left coordinate, giving us a
 `dipath`.
 -/
-def evalAtLeft {f g : D(I,X)} (F : Dihomotopy f g) (t : I) : Dipath (F (t, 0)) (F (t, 1)) where
+@[expose] def evalAtLeft {f g : D(I,X)} (F : Dihomotopy f g) (t : I) :
+    Dipath (F (t, 0)) (F (t, 1)) where
   toFun := F.curry t
   source' := by simp
   target' := by simp
@@ -141,7 +142,7 @@ def evalAtLeft {f g : D(I,X)} (F : Dihomotopy f g) (t : I) : Dipath (F (t, 0)) (
 /-- Given a dihomotopy H: f ∼ g, get the dipath traced by the point `x` as it moves from
 `f x` to `g x`
 -/
-def evalAtRight {X : Type*} {Y : Type*} [DirectedSpace X] [DirectedSpace Y] {f g : D(X,Y)}
+@[expose] def evalAtRight {X : Type*} {Y : Type*} [DirectedSpace X] [DirectedSpace Y] {f g : D(X,Y)}
   (H : DirectedMap.Dihomotopy f g) (x : X) : Dipath (f x) (g x) where
     toFun := fun t => H (t, x)
     source' := H.apply_zero x

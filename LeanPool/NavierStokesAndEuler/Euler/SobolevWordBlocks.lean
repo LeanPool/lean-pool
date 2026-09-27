@@ -53,9 +53,9 @@ theorem wordBlock_value (q n : ℕ) (w : Fin n → Fin 4) (u : SobolevSpace peri
     change value period (wordBlock period q n (Fin.init w)
       (derivativeOperator period (q+n) (w (Fin.last n)) u)) = _
     rw [ih]
+    simp only [word, derivativeOperator_apply]
     change u.val ⟨⟨n+1, _⟩, Fin.snoc (Fin.init w) (w (Fin.last n))⟩ = _
     rw [Fin.snoc_init_self]
-    rfl
 
 /-- Every derivative block commutes with actual cylinder translation. -/
 theorem wordBlock_translation (q n : ℕ) (w : Fin n → Fin 4)
@@ -77,7 +77,7 @@ theorem wordBlock_heat (q n : ℕ) (w : Fin n → Fin 4)
       heatOperator period q v (wordBlock period q n w u) := by
   apply value_injective period
   rw [wordBlock_value, heatOperator_value, wordBlock_value]
-  rfl
+  simp only [word, heatOperator_apply]
 
 /-- Truncating a derivative block agrees with taking the same word after truncating its input. -/
 theorem truncate_wordBlock (q n : ℕ) (w : Fin n → Fin 4)
@@ -86,6 +86,6 @@ theorem truncate_wordBlock (q n : ℕ) (w : Fin n → Fin 4)
       wordBlock period q n w (restrictOperator period (by omega : q+n ≤ q+1+n) u) := by
   apply value_injective period
   rw [value_truncateOperator, wordBlock_value, wordBlock_value]
-  rfl
+  rw [word_restrictOperator]
 
 end EulerSobolevWordBlocks

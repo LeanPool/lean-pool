@@ -27,6 +27,7 @@ open scoped ENNReal NNReal Topology
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- A finite product of commuting directional Gaussian averages. -/
+@[expose]
 def heatList (directions : List LiftTangent) (v : ℝ≥0) (f : LiftL2 period) : LiftL2 period :=
   match directions with
   | [] => f
@@ -157,6 +158,10 @@ theorem heatList_one_derivative (directions : List LiftTangent) (a : LiftTangent
 /-- The actual cylinder heat semigroup, parameterized by Gaussian variance. -/
 def cylinderHeat (v : ℝ≥0) : LiftL2 period →L[ℝ] LiftL2 period :=
   heatListOperator period cylinderDirections v
+
+@[simp] theorem cylinderHeat_apply (v : ℝ≥0) (f : LiftL2 period) :
+    cylinderHeat period v f = heatList period cylinderDirections v f := by
+  exact heatListOperator_apply period cylinderDirections v f
 
 theorem cylinderHeat_norm_le (v : ℝ≥0) (f : LiftL2 period) : ‖cylinderHeat period v f‖ ≤ ‖f‖ :=
   heatList_norm_le period cylinderDirections v f

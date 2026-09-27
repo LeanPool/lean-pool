@@ -34,7 +34,7 @@ The main results are:
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Theorem 4.8.
 -/
 
-@[expose] public section
+public section
 
 namespace ChipFiring
 

@@ -49,13 +49,13 @@ open FirstOrder Structure Cardinal
 
 /-- A sentence has arbitrarily large models if for every cardinal κ, there
 exists a model of size ≥ κ. -/
-def HasArbLargeModels (φ : L.Sentenceω) : Prop :=
+@[expose] def HasArbLargeModels (φ : L.Sentenceω) : Prop :=
   ∀ κ : Cardinal, ∃ (M : Type) (_ : L.Structure M),
     Sentenceω.Realize φ M ∧ Cardinal.mk M ≥ κ
 
 /-- A cardinal κ is a Hanf bound for a sentence φ if the existence of a model
 of size ≥ κ implies that φ has arbitrarily large models. -/
-def IsHanfBound (φ : L.Sentenceω) (κ : Cardinal) : Prop :=
+@[expose] def IsHanfBound (φ : L.Sentenceω) (κ : Cardinal) : Prop :=
   (∃ (M : Type) (_ : L.Structure M),
     Sentenceω.Realize φ M ∧ Cardinal.mk M ≥ κ) →
   HasArbLargeModels φ

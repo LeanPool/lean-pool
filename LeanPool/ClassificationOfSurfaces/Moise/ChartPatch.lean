@@ -50,16 +50,16 @@ noncomputable def chartDiamondAffineEquiv : Plane ≃ᵃ[ℝ] Plane :=
   chartDiamondLinearEquiv.toAffineEquiv
 
 @[simp] theorem chartDiamondAffineEquiv_apply_zero (p : Plane) :
-    chartDiamondAffineEquiv p 0 = (3 / 4 : ℝ) * p 0 := rfl
+    chartDiamondAffineEquiv p 0 = (3 / 4 : ℝ) * p 0 := by rfl
 
 @[simp] theorem chartDiamondAffineEquiv_apply_one (p : Plane) :
-    chartDiamondAffineEquiv p 1 = (3 / 8 : ℝ) * p 1 := rfl
+    chartDiamondAffineEquiv p 1 = (3 / 8 : ℝ) * p 1 := by rfl
 
 @[simp] theorem chartDiamondAffineEquiv_symm_apply_zero (p : Plane) :
-    chartDiamondAffineEquiv.symm p 0 = (4 / 3 : ℝ) * p 0 := rfl
+    chartDiamondAffineEquiv.symm p 0 = (4 / 3 : ℝ) * p 0 := by rfl
 
 @[simp] theorem chartDiamondAffineEquiv_symm_apply_one (p : Plane) :
-    chartDiamondAffineEquiv.symm p 1 = (8 / 3 : ℝ) * p 1 := rfl
+    chartDiamondAffineEquiv.symm p 1 = (8 / 3 : ℝ) * p 1 := by rfl
 
 /-- The fixed four-triangle chart patch. -/
 noncomputable def chartDiamondMesh : TriangleMesh :=

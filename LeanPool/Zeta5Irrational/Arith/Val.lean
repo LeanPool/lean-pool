@@ -31,7 +31,7 @@ namespace Zeta5Irrational
 variable {p : ℕ}
 
 /-- `v_p(q) ≥ r` (vacuous for `q = 0`). -/
-def VG (p : ℕ) (q : ℚ) (r : ℚ) : Prop :=
+@[expose] def VG (p : ℕ) (q : ℚ) (r : ℚ) : Prop :=
   q = 0 ∨ r ≤ (padicValRat p q : ℚ)
 
 namespace VG

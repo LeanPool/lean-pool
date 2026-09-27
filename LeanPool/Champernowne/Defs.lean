@@ -26,7 +26,7 @@ public section
 namespace Champernowne
 
 /-- Big-endian digits of `n` in base `b`. -/
-def bigDigits (b n : ℕ) : List ℕ := (Nat.digits b n).reverse
+@[expose] def bigDigits (b n : ℕ) : List ℕ := (Nat.digits b n).reverse
 
 /-- First `N` blocks of the base-`b` Champernowne sequence: digits of 1..N. -/
 @[expose] def champBlocks (b N : ℕ) : List ℕ :=

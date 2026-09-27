@@ -47,11 +47,11 @@ namespace Zeta5Irrational
 variable {ι : Type*}
 
 /-- Double integral of a kernel against two atoms. -/
-noncomputable def pairInt (γ : ι → ℝ → ℂ) (f : ℂ → ℂ → ℝ) (k l : ι) : ℝ :=
+@[expose] noncomputable def pairInt (γ : ι → ℝ → ℂ) (f : ℂ → ℂ → ℝ) (k l : ι) : ℝ :=
   ∫ θ in (0 : ℝ)..2 * π, ∫ φ in (0 : ℝ)..2 * π, f (γ k θ) (γ l φ)
 
 /-- The energy of the signed combination of atoms. -/
-noncomputable def energy [Fintype ι] (s : ι → ℝ) (γ : ι → ℝ → ℂ) (f : ℂ → ℂ → ℝ) : ℝ :=
+@[expose] noncomputable def energy [Fintype ι] (s : ι → ℝ) (γ : ι → ℝ → ℂ) (f : ℂ → ℂ → ℝ) : ℝ :=
   ∑ k, ∑ l, s k * s l * pairInt γ f k l
 
 /-- Gaussian pair integral. -/

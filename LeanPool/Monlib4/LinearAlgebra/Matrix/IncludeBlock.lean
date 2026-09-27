@@ -34,6 +34,7 @@ theorem Finset.sum_sigma_univ {β α : Type _} [AddCommMonoid β] [Fintype α] {
 namespace Matrix
 
 /-- The algebra homomorphism from block-indexed matrices to their block diagonal matrix. -/
+@[expose]
 def blockDiagonal'AlgHom {o : Type _} {m' : o → Type _} {α : Type _} [Fintype o] [DecidableEq o]
     [∀ i, Fintype (m' i)] [∀ i, DecidableEq (m' i)] [CommSemiring α] :
     PiMat α o m' →ₐ[α] Matrix (Σ i : o, m' i) (Σ i : o, m' i) α

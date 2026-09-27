@@ -80,7 +80,7 @@ def graphRelMap (M : Type) [L.Structure M] :
 
 /-- The **graph expansion** of an `L`-structure to a `graphLanguage L`-structure:
 `G_f(xs, y) ↔ f(xs) = y`, base relations preserved, and no function symbols to interpret. -/
-@[reducible] def graphExpansion (L : Language.{0, 0}) (M : Type) [L.Structure M] :
+@[expose, reducible] def graphExpansion (L : Language.{0, 0}) (M : Type) [L.Structure M] :
     (graphLanguage L).Structure M where
   funMap f _ := nomatch f
   RelMap := graphRelMap M

@@ -595,6 +595,7 @@ lemma fdBoundary_H_right_deriv_limit (H : ℝ)
 
 /-- The H-parameterized boundary as a `PiecewiseC1Immersion`.
 Requires H > √3/2 for nonzero derivative. -/
+@[expose]
 noncomputable def fdBoundaryHImmersion (H : ℝ)
     (hH : Real.sqrt 3 / 2 < H) :
     PiecewiseC1Immersion where

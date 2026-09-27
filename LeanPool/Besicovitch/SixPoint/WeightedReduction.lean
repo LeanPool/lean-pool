@@ -34,7 +34,7 @@ def weightedSecondPenalty (c lambda mu : ℝ) : ℝ :=
   (c + 1) * lambda / 2 + 3 * c * mu
 
 /-- The constant term in the weighted combination of the three failure slacks. -/
-def weightedConstantTerm (c lambda mu : ℝ) : ℝ :=
+@[expose] def weightedConstantTerm (c lambda mu : ℝ) : ℝ :=
   2 * c * (2 * c - 1) + lambda * (3 * c ^ 2 - 3 * c + 2) / 2 +
     mu * (c ^ 2 - c)
 

@@ -107,6 +107,7 @@ variable [NeZero n]
 end HeckeDiagonal
 
 /-- The divisibility chain condition `a₁ | a₂ | ... | aₙ` for positive integer sequences. -/
+@[expose]
 def DivChain (a : Fin n → ℕ) : Prop :=
   ∀ (i : ℕ) (hi : i + 1 < n), a ⟨i, by omega⟩ ∣ a ⟨i + 1, hi⟩
 

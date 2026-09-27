@@ -500,7 +500,7 @@ theorem LoadFormula.split_list_not_empty (lf : LoadFormula) : lf.split.1 ≠ [] 
   simp [LoadFormula.split]
 
 /-- Construct a loaded modal sequence from a list known to be nonempty. -/
-@[simp]
+@[expose, simp]
 def loadMultiNonEmpty : (δ : List Program) → (h : δ ≠ []) → Formula → LoadFormula
 | [ ],           h, _ => by exfalso; simp at *
 | (α :: []),     _, φ => LoadFormula.box α φ

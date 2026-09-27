@@ -378,11 +378,11 @@ noncomputable def levelAncestor (n : ℕ) :
   | k + 1, t => levelAncestor n k (K.levelParentFace (n + k) t)
 
 @[simp] theorem levelAncestor_zero (n : ℕ) (t : K.LevelFace n) :
-    K.levelAncestor n 0 t = t := rfl
+    K.levelAncestor n 0 t = t := by rfl
 
 @[simp] theorem levelAncestor_succ (n k : ℕ) (t : K.LevelFace (n + (k + 1))) :
     K.levelAncestor n (k + 1) t =
-      K.levelAncestor n k (K.levelParentFace (n + k) t) := rfl
+      K.levelAncestor n k (K.levelParentFace (n + k) t) := by rfl
 
 theorem levelFaceCarrier_subset_ancestor (n k : ℕ)
     (t : K.LevelFace (n + k)) :
@@ -735,7 +735,7 @@ theorem isCompact_adaptiveFaceCarrierInOpen (t : K.AdaptiveFace U) :
   exact isCompact_range he
 
 /-- Adaptive tiles touching a fixed tile. -/
-def TouchingFace (t : K.AdaptiveFace U) :=
+@[expose] def TouchingFace (t : K.AdaptiveFace U) :=
   {u : K.AdaptiveFace U //
     (K.adaptiveFaceCarrierInOpen U u ∩ K.adaptiveFaceCarrierInOpen U t).Nonempty}
 
@@ -1361,7 +1361,7 @@ noncomputable def faceCenterSimplex (t : K.Face) :
     norm_num
 
 @[simp] theorem faceCenterSimplex_apply (t : K.Face) (v : {v // v ∈ t.1}) :
-    K.faceCenterSimplex t v = 1 / 3 := rfl
+    K.faceCenterSimplex t v = 1 / 3 := by rfl
 
 /-- The barycentric center of an arbitrary level face, transported to the original
 realization. -/
@@ -1489,7 +1489,7 @@ theorem adaptiveFace_edgeCarrier_subset_of_level_le_of_common_not_boundaryVertex
     exact K.adaptiveVertexPoint_mem_boundaryVertices U hU ⟨n + k, t⟩ v
 
 /-- The barycentric center of one adaptive tile, transported to the original realization. -/
-noncomputable def adaptiveFaceCenter (t : K.AdaptiveFace U) : K.realization :=
+@[expose] noncomputable def adaptiveFaceCenter (t : K.AdaptiveFace U) : K.realization :=
   (K.safeSubdivision t.1).homeo
     ((K.safeSubdivision t.1).refined.faceStandardMap t.2.1
       ((K.safeSubdivision t.1).refined.faceCenterSimplex t.2.1))

@@ -39,7 +39,7 @@ def map (L : V →L[ℝ] W) (A : SmoothCoefficientPath K V) : SmoothCoefficientP
     exact (L.iteratedFDeriv_comp_left ((A.smooth t).contDiffAt (x := x)) (i := n) (by simp)).symm
 
 @[simp] theorem map_apply (L : V →L[ℝ] W) (A : SmoothCoefficientPath K V) (t : K) (x : Space) :
-    (map L A).field t x = L (A.field t x) := rfl
+    (map L A).field t x = L (A.field t x) := by rfl
 
 /-- Contraction of coefficient values preserves every actual spatial derivative bound. -/
 theorem map_derivative_bound (L : V →L[ℝ] W) (hL : ‖L‖ ≤ 1) (A : SmoothCoefficientPath K V)

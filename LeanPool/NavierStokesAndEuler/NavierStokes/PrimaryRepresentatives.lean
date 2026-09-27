@@ -75,7 +75,7 @@ noncomputable def nativeMask (n : ℕ) (k : Grid) (q : Slow) : ℝ :=
 
 /-- Grid box, given by `{q | ∀ j, |position q j - SquaredPartition.nativeSpacing n * (k j : ℝ)|
 ≤ a * SquaredPartition.nativeSpacing n}`. -/
-noncomputable def gridBox (n : ℕ) (k : Grid) (a : ℝ) : Set Slow :=
+@[expose] noncomputable def gridBox (n : ℕ) (k : Grid) (a : ℝ) : Set Slow :=
   {q | ∀ j, |position q j - SquaredPartition.nativeSpacing n * (k j : ℝ)| ≤
     a * SquaredPartition.nativeSpacing n}
 
@@ -442,17 +442,18 @@ theorem representative_parameter_bounds {K : Set Slow} (hK : IsCompact K)
 /-! ## A fixed compact set from the actual normalized similarity range -/
 
 /-- Normalized active points, including the limiting time face `T = 0`. -/
-noncomputable def activeReference (h a b : ℝ) : Set Slow :=
+@[expose] noncomputable def activeReference (h a b : ℝ) : Set Slow :=
   {p | 0 ≤ p.1 ∧ 0 ≤ p.2.2 ∧ ∃ q ∈ Icc (1 / 2 : ℝ) 2,
     SimilarityCoordinates.forwardScalar (2 * h) p.2.1 q = p.2.2 ∧
       p.1 ^ 2 / (2 * q) ∈ Icc a b}
 
 /-- Reference box, given by `Icc (Real.sqrt a) (2 * Real.sqrt b) ×ˢ (Icc (-2 : ℝ) 2 ×ˢ Icc (0 :
 ℝ) 2)`. -/
-noncomputable def referenceBox (a b : ℝ) : Set Slow :=
+@[expose] noncomputable def referenceBox (a b : ℝ) : Set Slow :=
   Icc (Real.sqrt a) (2 * Real.sqrt b) ×ˢ (Icc (-2 : ℝ) 2 ×ˢ Icc (0 : ℝ) 2)
 
 /-- Reference compact, given by `closure (activeReference h a b)`. -/
+@[expose]
 noncomputable def referenceCompact (h a b : ℝ) : Set Slow := closure (activeReference h a b)
 
 theorem activeReference_subset_box {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h < 1 / 2)
@@ -502,7 +503,7 @@ theorem referenceCompact_radius_pos {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h < 1 / 
   (Real.sqrt_pos.mpr ha).trans_le (referenceCompact_subset_box hh hh1 ha hab hq).1.1
 
 /-- One explicit convex chart containing the whole normalized compact set. -/
-noncomputable def baseChart (a b : ℝ) : Set Slow :=
+@[expose] noncomputable def baseChart (a b : ℝ) : Set Slow :=
   Ioo (Real.sqrt a / 2) (2 * Real.sqrt b + 1) ×ˢ
     (Ioo (-3 : ℝ) 3 ×ˢ Ioo (-1 : ℝ) 3)
 

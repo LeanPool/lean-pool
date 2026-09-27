@@ -76,7 +76,7 @@ namespace WittAlgebra
 lemma lgen_eq_single (n : ℤ) : lgen 𝕜 n = Finsupp.single n 1 := rfl
 
 /-- The Lie bracket for the Witt algebra `WittAlgebra` as a bilinear map. -/
-noncomputable def bracket :
+@[expose] noncomputable def bracket :
     (WittAlgebra 𝕜) →ₗ[𝕜] (WittAlgebra 𝕜) →ₗ[𝕜] (WittAlgebra 𝕜) :=
   (lgen 𝕜).constr 𝕜 <| fun n ↦ (lgen 𝕜).constr 𝕜 <| fun m ↦ (n - m : 𝕜) • lgen 𝕜 (n + m)
 

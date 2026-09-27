@@ -29,7 +29,7 @@ namespace IntrinsicTwoComplex
 variable (K : IntrinsicTwoComplex)
 
 /-- The barycentric realization point at a specified vertex of a specified maximal face. -/
-noncomputable def facePoint (t : K.Face) (v : t.1) : K.realization :=
+@[expose] noncomputable def facePoint (t : K.Face) (v : t.1) : K.realization :=
   K.vertexPoint ⟨v.1, t.1, t.2, v.2⟩
 
 @[simp] theorem facePoint_val (t : K.Face) (v : t.1) :

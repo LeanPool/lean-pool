@@ -137,7 +137,7 @@ theorem rotate_target_boundary (e : SignedPresentationIso P Q) (f : P.Face) :
   Classical.choose_spec (e.boundary_rotated f).symm
 
 /-- The target side occupied by a source side after the selected face rotation. -/
-noncomputable def sideIndex (e : SignedPresentationIso P Q)
+@[expose] noncomputable def sideIndex (e : SignedPresentationIso P Q)
     (validQ : Q.IsSurfaceValid) (f : P.Face)
     (i : Fin (P.boundary f).length) :
     Fin (Q.boundary (e.faceEquiv f)).length := by

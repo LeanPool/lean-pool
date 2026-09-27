@@ -303,6 +303,7 @@ def SatisfiesConditionA (γ : PiecewiseC1Immersion) (S0 : Finset ℂ) : Prop :=
 /-- Condition (A) for a specific pole order function. Given a function assigning
 pole orders to singular points, the curve must be flat of the corresponding
 order at each crossing. -/
+@[expose]
 def SatisfiesConditionA' (γ : PiecewiseC1Immersion) (S0 : Finset ℂ)
     (poleOrder : ℂ → ℕ) : Prop :=
   ∀ s ∈ S0, ∀ t₀ ∈ Icc γ.a γ.b, γ.toFun t₀ = s →

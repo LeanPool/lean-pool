@@ -92,7 +92,7 @@ def average : CylinderL2 P V →L[ℝ] CylinderL2 P V :=
 
 omit [CompleteSpace V] in
 @[simp] theorem average_apply (u : CylinderL2 P V) :
-    average P u = averageIntegral P u := rfl
+    average P u = averageIntegral P u := by rfl
 
 omit [CompleteSpace V] in
 theorem average_norm : ‖average (V := V) P‖ ≤ 1 :=
@@ -122,7 +122,7 @@ def pathAverage : C(K,CylinderL2 P V) →L[ℝ] C(K,CylinderL2 P V) :=
 
 omit [CompactSpace K] [CompleteSpace V] in
 @[simp] theorem pathAverage_apply (u : C(K, CylinderL2 P V)) (t : K) :
-    pathAverage P u t = average P (u t) := rfl
+    pathAverage P u t = average P (u t) := by rfl
 
 omit [CompleteSpace V] in
 theorem pathAverage_norm : ‖pathAverage (K := K) (V := V) P‖ ≤ 1 := by
@@ -181,7 +181,8 @@ theorem pathAverage_fullMultiplier (A : C(K, Space →ᵇ E →L[ℝ] F))
     pathAverage P (fullMultiplierMap P A u) = fullMultiplierMap P A (pathAverage P u) := by
   apply ContinuousMap.ext
   intro t
-  exact average_fullOperator P (A t) (u t)
+  simpa only [pathAverage_apply, fullMultiplierMap_apply] using
+    average_fullOperator P (A t) (u t)
 
 end Coefficients
 
@@ -217,7 +218,7 @@ def supportedAverage : Supported P V S hS →L[ℝ] Supported P V S hS :=
     (Supported P V S hS) (average_mem P S hS)
 
 @[simp] theorem supportedAverage_coe (u : Supported P V S hS) :
-    (supportedAverage P S hS u : CylinderL2 P V) = average P (u : CylinderL2 P V) := rfl
+    (supportedAverage P S hS u : CylinderL2 P V) = average P (u : CylinderL2 P V) := by rfl
 
 theorem supportedAverage_norm : ‖supportedAverage (V := V) P S hS‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one

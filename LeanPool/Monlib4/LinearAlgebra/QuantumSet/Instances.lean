@@ -365,7 +365,7 @@ noncomputable def Module.Dual.IsFaithfulPosMap.innerProductAlgebra [hφ : φ.IsF
   add_left := inner_add_left
   smul_left := inner_smul_left }
 
-@[reducible, instance]
+@[reducible, instance, expose]
 noncomputable
 def Module.Dual.IsFaithfulPosMap.quantumSet [hφ : φ.IsFaithfulPosMap] :
     @QuantumSet (Matrix n n ℂ) (Matrix.isStarAlgebra (φ := φ)) := by
@@ -440,6 +440,7 @@ variable {k : Type*} [Fintype k] [DecidableEq k] {s : k → Type*} [Π i, Fintyp
 
 
 /-- Apply the modular automorphism to each matrix block in a family. -/
+@[expose]
 noncomputable def piSig (hψ : ∀ i, (ψ i).IsFaithfulPosMap)
     (z : ℝ) : PiMat ℂ k s ≃ₐ[ℂ] PiMat ℂ k s where
   toFun x i := sig (hψ i) z (x i)

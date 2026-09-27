@@ -41,6 +41,11 @@ variable (T : ℝ) (hT : 0 ≤ T)
 @[expose] def fixedFrameDerivative : zeroTraceDerivatives (U := U) T hT →L[ℝ] TimeLp T E :=
   (productDerivative T hT Q Q₁).comp (zeroTraceDerivatives (U := U) T hT).subtypeL
 
+omit [CompleteSpace U] [CompleteSpace E] in
+@[simp] theorem fixedFrameDerivative_apply (v : zeroTraceDerivatives (U := U) T hT) :
+    fixedFrameDerivative T hT Q Q₁ v = productDerivative T hT Q Q₁ (v : TimeLp T U) := by
+  rfl
+
 /-- The actual physical displacement associated to a fixed coordinate derivative. -/
 @[expose] def fixedFramePrimitive : zeroTraceDerivatives (U := U) T hT →L[ℝ] TimeLp T E :=
   (primitiveTimeLp T hT).comp (fixedFrameDerivative T hT Q Q₁)

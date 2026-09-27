@@ -38,7 +38,7 @@ open Filter Topology Set MeasureTheory Finset
 namespace Zeta5Irrational
 
 /-- The external field of (6.1). -/
-noncomputable def Vfield (t : ℝ) : ℝ :=
+@[expose] noncomputable def Vfield (t : ℝ) : ℝ :=
   2 * Real.pi * Real.sqrt t + (∫ u in (0 : ℝ)..1, Real.log (t + u ^ 2)) -
     6 * ∫ u in (0 : ℝ)..(3 / 40), Real.log (t + u ^ 2)
 

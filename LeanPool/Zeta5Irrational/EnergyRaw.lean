@@ -32,7 +32,7 @@ open MeasureTheory Set Real intervalIntegral Filter Topology Finset
 namespace Zeta5Irrational
 
 /-- The total regularisation error at a point. -/
-noncomputable def Err (ε t : ℝ) : ℝ :=
+@[expose] noncomputable def Err (ε t : ℝ) : ℝ :=
   ∑ j : Fin 16, cρ (j + 1) * errj ε t (mρ (j + 1)) (rρ (j + 1))
 
 /--

@@ -30,7 +30,7 @@ namespace SixPointPacking
 variable {configuration : SixPointConfiguration} (packing : SixPointPacking configuration)
 
 /-- A packing is genuine when every radius on its support is positive. -/
-def HasPositiveRadii : Prop :=
+@[expose] def HasPositiveRadii : Prop :=
   ∀ i : packing.support, 0 < (packing.radius i : ℝ)
 
 /-- The labels carrying positive radius in a compactified packing. -/

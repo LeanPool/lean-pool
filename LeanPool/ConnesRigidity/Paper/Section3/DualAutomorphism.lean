@@ -42,7 +42,7 @@ abbrev CharacterSpace := PaperDualTopology.CharacterSpace
 /--
 The `continuousMulAut` construction used in the Connes rigidity formalization.
 -/
-def continuousMulAut (e : AddAut D) :
+@[expose] def continuousMulAut (e : AddAut D) :
     Multiplicative D →ₜ* Multiplicative D where
   toFun x := Multiplicative.ofAdd (e x.toAdd)
   map_one' := by simp

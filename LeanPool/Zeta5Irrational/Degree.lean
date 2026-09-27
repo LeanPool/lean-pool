@@ -56,7 +56,7 @@ lemma coeff_det_of_natDegree_le_one {R : Type*} [CommRing R] {n : ℕ}
       _ = n := by simp
 
 /-- Residue coefficient at the pole `-j²` of `P / D K`, for `1 ≤ j ≤ K`. -/
-noncomputable def res (K : ℕ) (P : ℚ[X]) (j : ℕ) : ℚ :=
+@[expose] noncomputable def res (K : ℕ) (P : ℚ[X]) (j : ℕ) : ℚ :=
   P.eval (-(j : ℚ) ^ 2) / (derivative (D K)).eval (-(j : ℚ) ^ 2)
 
 lemma poleValue_eq (j : ℕ) :

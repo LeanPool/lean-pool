@@ -37,6 +37,10 @@ theorem sobolevMollifier_apply {q : ℕ} (n : ℕ) (u : SobolevSpace period q) (
     (sobolevMollifier period q n u).val w = mollify period n (u.val w) := by
   simp only [sobolevMollifier, liftOperator_apply, mollifierOperator_apply]
 
+@[simp] theorem sobolevMollifier_value {q : ℕ} (n : ℕ) (u : SobolevSpace period q) :
+    value period (sobolevMollifier period q n u) = mollify period n (value period u) :=
+  sobolevMollifier_apply period n u (emptyWord q)
+
 /-- The smooth convolution is contractive in every complete Sobolev norm. -/
 theorem sobolevMollifier_bound {q : ℕ} (n : ℕ) (u : SobolevSpace period q) :
     ‖sobolevMollifier period q n u‖ ≤ ‖u‖ := by

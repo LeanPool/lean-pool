@@ -847,7 +847,7 @@ variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 
 /-- Alice's question-to-mean entropy increment paired with Bob's question filter. -/
-def exactFairAliceQuestionEntropyIncrement
+@[expose] def exactFairAliceQuestionEntropyIncrement
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (r : ExactHistoryFlag X Y A B D) (y : Y) : ℝ :=
@@ -863,7 +863,7 @@ def exactFairAliceQuestionEntropyIncrement
       G n S D r.seed r.history r.bobAnswer y)
 
 /-- Bob's question-to-mean entropy increment paired with Alice's question filter. -/
-def exactFairBobQuestionEntropyIncrement
+@[expose] def exactFairBobQuestionEntropyIncrement
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (r : ExactHistoryFlag X Y A B D) (x : X) : ℝ :=
@@ -1189,7 +1189,7 @@ argument.
 The exact alice information reference construction used in the quantum parallel-repetition
 argument.
 -/
-def exactAliceInformationReference
+@[expose] def exactAliceInformationReference
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (base : ExactHistoryFlag X Y A B D) :
@@ -1216,7 +1216,7 @@ argument.
 The exact bob information reference construction used in the quantum parallel-repetition
 argument.
 -/
-def exactBobInformationReference
+@[expose] def exactBobInformationReference
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (base : ExactHistoryFlag X Y A B D) :
@@ -2049,7 +2049,7 @@ structure ExactReverseSideContext
 The exact reverse context other prefix construction used in the quantum parallel-repetition
 argument.
 -/
-def exactReverseContextOtherPrefix
+@[expose] def exactReverseContextOtherPrefix
     {M : Type*} [Fintype M] [DecidableEq M]
     {side : Finset M}
     (context : ExactReverseSideContext M side) : Finset M :=

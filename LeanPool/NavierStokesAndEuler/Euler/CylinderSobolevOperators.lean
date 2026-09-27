@@ -34,6 +34,7 @@ variable (period : ℝ) [Fact (0 < period)]
   (ContinuousLinearMap.proj (emptyWord q)).comp (arrayOperator period q)
 
 /-- Continuous evaluation of one actual derivative coordinate. -/
+@[expose]
 def wordOperator {q : ℕ} (w : SobolevWord q) : SobolevSpace period q →L[ℝ] LiftL2 period :=
   (ContinuousLinearMap.proj w).comp (arrayOperator period q)
 

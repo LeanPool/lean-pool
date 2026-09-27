@@ -378,7 +378,7 @@ variable {L'' : Language.{0, 0}} {J : Type} {M : Type} [L''.Structure M]
 
 /-- Evaluation of an expansion term under a skeleton interpretation `σ : J → M` and a
 Henkin interpretation `h : ℕ → M`. -/
-def termValueWith (σ : J → M) (h : ℕ → M) {β : Type}
+@[expose] def termValueWith (σ : J → M) (h : ℕ → M) {β : Type}
     (t : ((L''[[J]])[[ℕ]]).Term β) (v : β → M) : M :=
   letI : (constantsOn J).Structure M := constantsOn.structure σ
   letI : (constantsOn ℕ).Structure M := constantsOn.structure h

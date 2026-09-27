@@ -37,7 +37,7 @@ def _root_.LO.Modal.Kripke.FrameClass.restrictFinite (C : FrameClass) : FiniteFr
     FiniteFrame | F.toFrame ∈ C }
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def _root_.LO.Modal.Kripke.FiniteFrameClass.toFrameClass (C : FiniteFrameClass) :
+@[expose] def _root_.LO.Modal.Kripke.FiniteFrameClass.toFrameClass (C : FiniteFrameClass) :
     FrameClass :=
   C.image (·.toFrame)
 

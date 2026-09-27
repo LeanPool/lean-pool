@@ -245,7 +245,7 @@ theorem cross_apply (u v : Space) :
     cross u v =
       u 1 • (v 2 • coordinateVector 0) - u 2 • (v 1 • coordinateVector 0) +
       u 2 • (v 0 • coordinateVector 1) - u 0 • (v 2 • coordinateVector 1) +
-      u 0 • (v 1 • coordinateVector 2) - u 1 • (v 0 • coordinateVector 2) := rfl
+      u 0 • (v 1 • coordinateVector 2) - u 1 • (v 0 • coordinateVector 2) := by rfl
 
 @[simp] theorem cross_zero (u v : Space) : (cross u v) 0 = u 1 * v 2 - u 2 * v 1 := by
   rw [cross_apply]
@@ -1737,7 +1737,7 @@ theorem normalCross_apply (n : RealVector) (a : ComplexVector) :
       (n 2 : ℂ) • (a 0 • Pi.single 1 (1 : ℂ)) -
       (n 0 : ℂ) • (a 2 • Pi.single 1 (1 : ℂ)) +
       (n 0 : ℂ) • (a 1 • Pi.single 2 (1 : ℂ)) -
-      (n 1 : ℂ) • (a 0 • Pi.single 2 (1 : ℂ)) := rfl
+      (n 1 : ℂ) • (a 0 • Pi.single 2 (1 : ℂ)) := by rfl
 
 @[simp] theorem normalCross_zero (n : RealVector) (a : ComplexVector) :
     normalCross n a 0 = (n 1 : ℂ) * a 2 - (n 2 : ℂ) * a 1 := by

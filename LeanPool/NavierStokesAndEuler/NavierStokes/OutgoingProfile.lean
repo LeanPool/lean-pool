@@ -64,7 +64,7 @@ namespace Profile
 @[expose] def H (F : Profile) (p : ℝ × ℝ) : ℝ := Real.sqrt (2 * p.1) * F.E p
 
 /-- Power E, given by `powerConstant F.data * X ^ (-(1 / 2 + F.data.h))`. -/
-def powerE (F : Profile) (X : ℝ) : ℝ :=
+@[expose] def powerE (F : Profile) (X : ℝ) : ℝ :=
   powerConstant F.data * X ^ (-(1 / 2 + F.data.h))
 
 /-- Power H, given by `Real.sqrt (2 * X) * F.powerE X`. -/

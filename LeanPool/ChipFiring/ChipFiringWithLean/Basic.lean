@@ -27,7 +27,7 @@ Many main theorems in this library require connectivity; see `graphConnected`. I
 proof of connectivity must be provided as an additional argument.
 -/
 
-@[expose] public section
+public section
 
 namespace ChipFiring
 
@@ -71,7 +71,7 @@ def graphConnected (G : CFGraph) : Prop :=
     (∃ v ∈ S, ∃ w ∉ S, numEdges G v w > 0)
 
 /-- The genus of a graph is its cyclomatic number, $|E| - |V| + 1$. -/
-def genus (G : CFGraph) : ℤ :=
+@[expose] def genus (G : CFGraph) : ℤ :=
   Multiset.card G.edges - Fintype.card G.V + 1
 
 /-- The number of edges between two vertices is symmetric (the graph is undirected). -/
@@ -118,7 +118,7 @@ See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 1.3. -/
 abbrev CFDiv (G : CFGraph) := G.V → ℤ
 
 /-- The divisor with one chip at a specified vertex $v_{\mathrm{chip}}$ and zero chips elsewhere. -/
-def oneChip {G : CFGraph} (v_chip : G.V) : CFDiv G :=
+@[expose] def oneChip {G : CFGraph} (v_chip : G.V) : CFDiv G :=
   fun v => if v = v_chip then 1 else 0
 
 -- Canonical simplifications for evaluations of oneChip.
@@ -221,7 +221,7 @@ def principalDivisors (G : CFGraph) : AddSubgroup (CFDiv G) :=
 /-- Two divisors are *linearly equivalent* if their difference is a principal divisor.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 1.8. -/
-def linearEquiv (G : CFGraph) (D D' : CFDiv G) : Prop :=
+@[expose] def linearEquiv (G : CFGraph) (D D' : CFDiv G) : Prop :=
   D' - D ∈ principalDivisors G
 
 /-- Principal divisors contain the firing vector at a vertex. -/
@@ -289,7 +289,7 @@ def prin (G : CFGraph) : firingScript G →+ CFDiv G :=
   }
 
 @[simp] theorem prin_apply (G : CFGraph) (σ : firingScript G) (v : G.V) :
-    prin G σ v = ∑ u : G.V, (σ u - σ v) * (numEdges G v u : ℤ) := rfl
+    prin G σ v = ∑ u : G.V, (σ u - σ v) * (numEdges G v u : ℤ) := by rfl
 
 /-- Constant firing scripts have zero principal divisor. -/
 @[simp] theorem prin_const (G : CFGraph) (c : ℤ) :
@@ -424,7 +424,7 @@ Equivalently, the players can collectively win the dollar game starting from pos
 Equivalently, it is at least $0$.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 1.13. -/
-def effective {G : CFGraph} (D : CFDiv G) : Prop :=
+@[expose] def effective {G : CFGraph} (D : CFDiv G) : Prop :=
   ∀ v : G.V, D v ≥ 0
 
 
@@ -452,7 +452,7 @@ lemma sub_eff_iff_geq {G : CFGraph} (D₁ D₂ : CFDiv G) : effective (D₁ - D�
 /-- A divisor is winnable if it is linearly equivalent to an effective divisor.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 1.14. -/
-def winnable (G : CFGraph) (D : CFDiv G) : Prop :=
+@[expose] def winnable (G : CFGraph) (D : CFDiv G) : Prop :=
   ∃ D' ∈ Eff G, linearEquiv G D D'
 
 
@@ -471,7 +471,7 @@ Applying the Laplacian to a firing script produces the corresponding principal d
 /-- The degree of a divisor is the sum of its values over all vertices.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 1.4. -/
-def deg {G : CFGraph} : CFDiv G →+ ℤ := {
+@[expose] def deg {G : CFGraph} : CFDiv G →+ ℤ := {
   toFun := fun D => ∑ v, D v,
   map_zero' := by
     simp only [Pi.zero_apply, sum_const_zero],
@@ -1025,7 +1025,7 @@ at active vertices — strictly decreases at each reduction step.
 
 /-- A set of vertices is legal for `D` if firing it leaves every vertex in the set
 nonnegative. -/
-def legalSet (G : CFGraph) (D : CFDiv G) (S : Finset G.V) : Prop :=
+@[expose] def legalSet (G : CFGraph) (D : CFDiv G) (S : Finset G.V) : Prop :=
   ∀ v ∈ S, outdegS G S v ≤ D v
 
 instance (G : CFGraph) (D : CFDiv G) (S : Finset G.V) :

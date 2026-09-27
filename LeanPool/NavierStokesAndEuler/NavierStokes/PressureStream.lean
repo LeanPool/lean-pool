@@ -39,7 +39,7 @@ abbrev Plane := ℝ × ℝ
 abbrev Lift (S : Type) := ℝ × (S × Plane)
 
 /-- A concrete bump strictly inside the radial interval. -/
-noncomputable def meanBump (a b : ℝ) (hab : a < b) : ContDiffBump ((a + b) / 2) where
+@[expose] noncomputable def meanBump (a b : ℝ) (hab : a < b) : ContDiffBump ((a + b) / 2) where
   rIn := (b - a) / 8
   rOut := (b - a) / 4
   rIn_pos := by linarith

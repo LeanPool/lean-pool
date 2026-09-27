@@ -63,6 +63,7 @@ noncomputable def Pi.tensorProj {R : Type _} [CommSemiring R] {ι₁ ι₂ : Typ
   @LinearMap.proj R ι₁ _ M₁ _ _ i.fst ⊗ₘ @LinearMap.proj R ι₂ _ M₂ _ _ i.snd
 
 /-- The coordinatewise map from a tensor product of dependent functions to tensor factors. -/
+@[expose]
 noncomputable def directSumTensorToFun {R : Type _} [CommSemiring R] {ι₁ : Type _} {ι₂ : Type _}
     {M₁ : ι₁ → Type _} {M₂ : ι₂ → Type _} [∀ i₁ : ι₁, AddCommGroup (M₁ i₁)]
     [∀ i₂ : ι₂, AddCommGroup (M₂ i₂)] [∀ i₁ : ι₁, Module R (M₁ i₁)] [∀ i₂ : ι₂, Module R (M₂ i₂)] :

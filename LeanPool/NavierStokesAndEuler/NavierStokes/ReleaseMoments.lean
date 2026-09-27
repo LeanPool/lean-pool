@@ -31,7 +31,7 @@ open NavierStokes.AngularMomentReset NavierStokes.UniformAngularReset
 namespace NavierStokes.ReleaseMoments
 
 /-- Corrected weight, given by `Real.exp (3 * y / 2) * correctedAngular d c (y, eta)`. -/
-noncomputable def correctedWeight (d : TailData) (c : ℝ → Coeff) (eta y : ℝ) : ℝ :=
+@[expose] noncomputable def correctedWeight (d : TailData) (c : ℝ → Coeff) (eta y : ℝ) : ℝ :=
   Real.exp (3 * y / 2) * correctedAngular d c (y, eta)
 
 /-- History, given by `(5 / 8) * d.core.P * shape eta + primitive (correctedWeight d c eta) y`. -/
@@ -428,11 +428,11 @@ theorem renormalized_log_integral (eta : ℝ) :
 end ResetWitness
 
 /-- Radial H, given by `Real.sqrt (2 * X) * correctedAngular d c (Real.log X, eta)`. -/
-noncomputable def radialH (d : TailData) (c : ℝ → Coeff) (eta X : ℝ) : ℝ :=
+@[expose] noncomputable def radialH (d : TailData) (c : ℝ → Coeff) (eta X : ℝ) : ℝ :=
   Real.sqrt (2 * X) * correctedAngular d c (Real.log X, eta)
 
 /-- Radial power H, given by `Real.sqrt (2 * X) * (powerConstant d * X ^ (-(1 / 2 + d.h)))`. -/
-noncomputable def radialPowerH (d : TailData) (X : ℝ) : ℝ :=
+@[expose] noncomputable def radialPowerH (d : TailData) (X : ℝ) : ℝ :=
   Real.sqrt (2 * X) * (powerConstant d * X ^ (-(1 / 2 + d.h)))
 
 theorem exponential_radial_weight (y : ℝ) :

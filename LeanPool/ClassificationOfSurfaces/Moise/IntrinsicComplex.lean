@@ -156,7 +156,7 @@ theorem restrictFacesInclusion_range (p : Finset K.Vertex → Prop)
 /-! ## Intrinsic vertices and edges -/
 
 /-- The edges of an intrinsic two-complex. -/
-def edges : Finset (Finset K.Vertex) :=
+@[expose] def edges : Finset (Finset K.Vertex) :=
   K.faces.biUnion fun t => t.powersetCard 2
 
 /-- The abstract two-complex has surface edge valence when every edge is contained in at most
@@ -375,7 +375,7 @@ theorem edgeSecond_mem (e : K.Edge) : K.edgeSecond e ∈ e.1 := by
   simp
 
 /-- The canonical barycentric realization point associated to a vertex of an edge. -/
-noncomputable def edgeVertexPoint (e : K.Edge) (v : K.Vertex) (hv : v ∈ e.1) :
+@[expose] noncomputable def edgeVertexPoint (e : K.Edge) (v : K.Vertex) (hv : v ∈ e.1) :
     K.realization :=
   ⟨Pi.single v 1, single_mem_stdSimplex ℝ v, by
     refine ⟨K.edgeParent e, K.edgeParent_mem e, ?_⟩

@@ -37,7 +37,7 @@ def coordinatePathTranslation (T : ℝ) (a : Space) :
 
 @[simp] theorem coordinatePathTranslation_apply (T : ℝ) (a : Space)
     (p : C(Icc (0 : ℝ) T, solenoidalSpace)) (t : Icc (0 : ℝ) T) :
-    coordinatePathTranslation T a p t = solenoidalTranslation a (p t) := rfl
+    coordinatePathTranslation T a p t = solenoidalTranslation a (p t) := by rfl
 
 theorem reconstruction_translation (T : ℝ) (hT : 0 ≤ T) (a : Space)
     (p q : TimeLp T solenoidalSpace) :
@@ -64,8 +64,9 @@ theorem coordinateVelocityPath_eq_reconstruction (hTpos : 0 < T) :
     s.coordinateVelocityPath = reconstruction T hT (s.velocityLp,s.acceleration) := by
   apply ContinuousMap.ext
   intro t
-  exact (reconstruction_eq_path T hTpos s.velocityLp s.acceleration s.velocity
-    s.velocity_ac s.velocity_ae s.velocity_derivative t).symm
+  simpa only [coordinateVelocityPath_apply] using
+    (reconstruction_eq_path T hTpos s.velocityLp s.acceleration s.velocity
+      s.velocity_ac s.velocity_ae s.velocity_derivative t).symm
 
 theorem coordinateVelocityPath_orbit_eq (hTpos : 0 < T) :
     (fun a : Space => coordinatePathTranslation T a s.coordinateVelocityPath) =

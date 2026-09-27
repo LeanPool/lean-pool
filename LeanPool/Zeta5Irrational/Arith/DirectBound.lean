@@ -35,15 +35,15 @@ namespace Zeta5Irrational
 variable {p : ℕ} [hp : Fact p.Prime]
 
 /-- The numerator `κ ∏_{ζ ∈ Z} (x - ζ)`. -/
-noncomputable def numOf (κ : ℚ) (Z : Multiset ℤ) : ℚ[X] :=
+@[expose] noncomputable def numOf (κ : ℚ) (Z : Multiset ℤ) : ℚ[X] :=
   C κ * (Z.map fun ζ : ℤ => X - C (ζ : ℚ)).prod
 
 /-- Number of zeros in the class `c`. -/
-def cnt (p : ℕ) (Z : Multiset ℤ) (c : ZMod p) : ℕ :=
+@[expose] def cnt (p : ℕ) (Z : Multiset ℤ) (c : ZMod p) : ℕ :=
   (Z.filter fun ζ : ℤ => (ζ : ZMod p) = c).card
 
 /-- Poles in the class `c`. -/
-def plc (p : ℕ) (Pl : Finset ℤ) (c : ZMod p) : Finset ℤ :=
+@[expose] def plc (p : ℕ) (Pl : Finset ℤ) (c : ZMod p) : Finset ℤ :=
   Pl.filter fun r : ℤ => (r : ZMod p) = c
 
 /-! ### Integer valuations -/

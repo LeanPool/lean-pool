@@ -249,7 +249,7 @@ theorem heatOperator_continuous {q : ℕ} (u : SobolevSpace period q) :
   simpa only [heatOperator_apply] using cylinderHeat_continuous period (u.val w)
 
 /-- The explicit parabolic derivative constant of the Gaussian heat operator. -/
-def heatDerivativeConstant (v : ℝ≥0) : ℝ := gaussianAbsMoment 1 / Real.sqrt (v : ℝ)
+@[expose] def heatDerivativeConstant (v : ℝ≥0) : ℝ := gaussianAbsMoment 1 / Real.sqrt (v : ℝ)
 
 /-- The Gaussian derivative constant is nonnegative. -/
 theorem heatDerivativeConstant_nonneg (v : ℝ≥0) : 0 ≤ heatDerivativeConstant v :=

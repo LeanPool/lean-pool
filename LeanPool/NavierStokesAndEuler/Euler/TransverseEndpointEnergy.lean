@@ -193,7 +193,7 @@ variable (T : ℝ) (hT : 0 ≤ T) (m : Icc (0 : ℝ) T → E)
   (H : C(Icc (0 : ℝ) T, E →L[ℝ] E))
 
 /-- The physical kinetic-minus-potential form on all initial-zero H¹ paths. -/
-def energyOperator : TimeLp T E →L[ℝ] TimeLp T E :=
+@[expose] def energyOperator : TimeLp T E →L[ℝ] TimeLp T E :=
   dirichletOperator (initialPrimitiveTimeLp T hT) (timeMultiplier T hT H)
 
 theorem energyOperator_inner (u v : TimeLp T E) :

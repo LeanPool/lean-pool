@@ -32,7 +32,7 @@ noncomputable section «Section1»
 variable {k m n : ℕ} {p : Player}
 namespace Covering
 /-- a tree that is pruned and nonempty as required for determinacy -/
-def PTrees := Σ' (T : Trees), IsPruned T.2 ∧ [] ∈ T.2
+@[expose] def PTrees := Σ' (T : Trees), IsPruned T.2 ∧ [] ∈ T.2
 @[simp] lemma pTrees_isPruned (T : PTrees) : IsPruned T.1.2 := T.2.1
 @[simp] lemma pTrees_ne (T : PTrees) : [] ∈ T.1.2 := T.2.2
 end Covering

@@ -554,7 +554,7 @@ theorem diamondSlackLL_baryEval (a : ℝ) (ha0 : -2 < a) (ha1 : a < 2)
   linarith
 
 /-- Closed four-halfspace description of the diamond. -/
-def InDiamond (p : Plane) : Prop :=
+@[expose] def InDiamond (p : Plane) : Prop :=
   0 ≤ diamondSlackUR p ∧ 0 ≤ diamondSlackUL p ∧
     0 ≤ diamondSlackLR p ∧ 0 ≤ diamondSlackLL p
 
@@ -603,7 +603,7 @@ theorem diamondPatch_eq_inDiamond : diamondPatch = {p | InDiamond p} := by
         all_goals ring
 
 /-- Points satisfying all four diamond inequalities strictly form an open subset of the patch. -/
-def StrictlyInDiamond : Set Plane :=
+@[expose] def StrictlyInDiamond : Set Plane :=
   {p | 0 < diamondSlackUR p ∧ 0 < diamondSlackUL p ∧
     0 < diamondSlackLR p ∧ 0 < diamondSlackLL p}
 

@@ -57,7 +57,8 @@ variable (T : ℝ) (hT : 0 ≤ T)
 include hd in
 theorem fixedFrameDerivative_trace_zero (v : zeroTraceDerivatives (U := U) T hT) :
     initialTrace T hT (fixedFrameDerivative T hT Q Q₁ v) = 0 := by
-  have hv : initialTrace T hT (v : TimeLp T U) = 0 := v.property
+  have hv : initialTrace T hT (v : TimeLp T U) = 0 :=
+    (mem_zeroTraceDerivatives T hT _).1 v.property
   change initialTrace T hT (productDerivative T hT Q Q₁ (v : TimeLp T U)) = 0
   rw [initialTrace_productDerivative T hT Q Q₁ hd, hv, map_zero]
 
@@ -118,8 +119,9 @@ theorem fixedEndpointDerivative_sub_mem (L : V →L[ℝ] TimeLp T E) (Y : V) :
     fixedEndpointDerivative T hT Q Q₁ H c hc hQ hd K hK hH hsmall L Y - L Y ∈
       transverseDerivatives T hT m := by
   let r := fixedEndpointCorrection T hT Q Q₁ H c hc hQ hd K hK hH hsmall L Y
-  have hr : fixedFrameDerivative T hT Q Q₁ r ∈ transverseDerivatives T hT m :=
-    (transverseForward T hT Q Q₁ hd m hm r).property
+  have hr : fixedFrameDerivative T hT Q Q₁ r ∈ transverseDerivatives T hT m := by
+    rw [fixedFrameDerivative_apply]
+    simpa only [transverseForward_coe] using (transverseForward T hT Q Q₁ hd m hm r).property
   have he : fixedEndpointDerivative T hT Q Q₁ H c hc hQ hd K hK hH hsmall L Y - L Y =
       -(fixedFrameDerivative T hT Q Q₁ r) := by
     change (L Y - fixedFrameDerivative T hT Q Q₁ r) - L Y = _
@@ -134,6 +136,7 @@ theorem fixedEndpointDerivative_physical_orthogonal (L : V →L[ℝ] TimeLp T E)
       (v : TimeLp T E)⟫_ℝ = 0 := by
   have hv := congrArg (fun z : transverseDerivatives T hT m => (z : TimeLp T E))
     (transverseForward_backward T hT Q Q₁ c hc hQ hd m hm hRange v)
+  simp only [transverseForward_coe] at hv
   change fixedFrameDerivative T hT Q Q₁ (transverseBackward T hT Q Q₁ c hc hQ hd m v) =
     (v : TimeLp T E) at hv
   rw [← hv]

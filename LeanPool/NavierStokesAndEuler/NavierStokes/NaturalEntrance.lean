@@ -1294,7 +1294,7 @@ theorem axial_flux_integral {g : ℝ → ℝ} (L R : ℝ)
 
 /-- The regular angular primitive of the actual source. This is the
 manuscript's `Q_s`, before multiplication by `X/L`. -/
-noncomputable def regularAngularLag (h : ℝ) (f U V : ℝ × ℝ → ℝ) (p : ℝ × ℝ) : ℝ :=
+@[expose] noncomputable def regularAngularLag (h : ℝ) (f U V : ℝ × ℝ → ℝ) (p : ℝ × ℝ) : ℝ :=
   (∫ x in (0 : ℝ)..p.1, (2 * x * f (x, p.2)) * Sq h f U V (x, p.2)) /
     (p.1 * (2 * p.1 * f p))
 

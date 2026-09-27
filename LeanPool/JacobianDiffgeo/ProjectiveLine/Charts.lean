@@ -149,10 +149,10 @@ theorem mem_chartFamily_source (p : OnePoint ℂ) : p ∈ (chartFamily (chartInd
 noncomputable instance instChartedSpace : ChartedSpace ℂ (OnePoint ℂ) :=
   RS.chartedSpaceOfFamily chartFamily chartIndex mem_chartFamily_source
 
-@[simp] theorem chartAt_coe (z : ℂ) : chartAt ℂ ((z : ℂ) : OnePoint ℂ) = coeChart := by
+theorem chartAt_coe (z : ℂ) : chartAt ℂ ((z : ℂ) : OnePoint ℂ) = coeChart := by
   rw [RS.chartedSpaceOfFamily_chartAt]; simp
 
-@[simp] theorem chartAt_infty : chartAt ℂ (∞ : OnePoint ℂ) = invChart := by
+theorem chartAt_infty : chartAt ℂ (∞ : OnePoint ℂ) = invChart := by
   rw [RS.chartedSpaceOfFamily_chartAt]; simp
 
 theorem atlas_eq : atlas ℂ (OnePoint ℂ) = {coeChart, invChart} := by

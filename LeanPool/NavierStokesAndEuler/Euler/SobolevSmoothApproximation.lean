@@ -66,10 +66,8 @@ theorem restrict_smoothApprox {q : ℕ} (n : ℕ) (u : SobolevSpace period q) :
       sobolevMollifier period q n (heatOperator period q
         (smoothingVariance n+(smoothingVariance n+smoothingVariance n)) u) := by
   apply value_injective period
-  change mollify period n (value period (heatGainThree period q (smoothingVariance n)
-      (smoothingVariance_pos n) u)) = _
-  rw [heatGainThree_value]
-  rfl
+  simp only [value_restrictOperator, smoothApprox, ContinuousLinearMap.comp_apply,
+    sobolevMollifier_value, heatGainThree_value, heatOperator_value]
 
 /-- The approximations are contractive at the original Sobolev order. -/
 theorem smoothApprox_bound {q : ℕ} (n : ℕ) (u : SobolevSpace period q) :

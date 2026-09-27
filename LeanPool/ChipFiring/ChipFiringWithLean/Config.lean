@@ -26,7 +26,7 @@ The quantity `outdegS G S v` counts edges from $v$ to vertices outside $S$, and 
 relevant threshold for the superstability condition.
 -/
 
-@[expose] public section
+public section
 
 namespace ChipFiring
 
@@ -57,7 +57,7 @@ $$
 \deg(c) = \sum_{v \in V(G)\setminus\{q\}} c(v).
 $$
 Since $c(q)=0$, this is implemented as the degree of the underlying divisor. -/
-def configDegree {G : CFGraph} {q : G.V} (c : Config G q) : ℤ :=
+@[expose] def configDegree {G : CFGraph} {q : G.V} (c : Config G q) : ℤ :=
   deg (c.chips)
 
 /-- Converts a configuration $c$ to a divisor of prescribed degree $d$ by placing

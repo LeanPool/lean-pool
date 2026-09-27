@@ -56,7 +56,7 @@ lemma boundaryJar_subset_boundary (n : ℕ) : (⊔I^n) ⊆ (∂I^n) :=
   | _ + 1 => fun _ ⟨hy1, _⟩ ↦ hy1
 
 /-- `boundaryJarInclToBoundary` -/
-def boundaryJarInclToBoundary (n : ℕ) : C(⊔I^n, ∂I^n) where
+@[expose] def boundaryJarInclToBoundary (n : ℕ) : C(⊔I^n, ∂I^n) where
   toFun := fun ⟨y, hy⟩ ↦ ⟨y, boundaryJar_subset_boundary n hy⟩
   continuous_toFun := by fun_prop
 

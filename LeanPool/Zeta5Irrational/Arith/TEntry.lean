@@ -25,7 +25,7 @@ open Finset Polynomial
 namespace Zeta5Irrational
 
 /-- `∏_{γ ∈ M} (t + γ²)`. -/
-noncomputable def tpol (M : Multiset ℤ) : ℚ[X] :=
+@[expose] noncomputable def tpol (M : Multiset ℤ) : ℚ[X] :=
   (M.map fun γ : ℤ => X + C ((γ : ℚ) ^ 2)).prod
 
 lemma tpol_add (M M' : Multiset ℤ) : tpol (M + M') = tpol M * tpol M' := by

@@ -47,11 +47,11 @@ Mathlib's `bernoulli` uses the convention `B₁ = -1/2`, as does the paper. -/
   (-1) ^ e * _root_.bernoulli (2 * e + 2) * ((2 * e + 3) * (2 * e + 4) * (2 * e + 5)) / 24
 
 /-- `μ` on polynomials in `t`, extended `ℚ`-linearly from the monomials. -/
-noncomputable def μpoly (P : ℚ[X]) : ℚ :=
+@[expose] noncomputable def μpoly (P : ℚ[X]) : ℚ :=
   P.sum fun e c => c * μmono e
 
 /-- The generalized harmonic number `H_j^{(5)} = ∑_{v=1}^j v⁻⁵`. -/
-def H5 (j : ℕ) : ℚ :=
+@[expose] def H5 (j : ℕ) : ℚ :=
   ∑ v ∈ Icc 1 j, 1 / (v : ℚ) ^ 5
 
 /-- The pole values (2.3), as polynomials in the indeterminate `X`:

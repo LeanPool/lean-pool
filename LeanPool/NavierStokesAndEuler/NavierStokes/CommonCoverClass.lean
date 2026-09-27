@@ -121,11 +121,11 @@ variable {P V : Type} [NormedAddCommGroup P] [NormedSpace ℝ P]
 abbrev Joint (P : Type) := (P × Plane) × ℝ
 
 /-- Native argument, given by `(w.1.1, ((g.coordinates k w.1.2).1, w.2))`. -/
-noncomputable def nativeArgument (g : CCS) (k : Frequency) (w : Joint P) : P × Plane :=
+@[expose] noncomputable def nativeArgument (g : CCS) (k : Frequency) (w : Joint P) : P × Plane :=
   (w.1.1, ((g.coordinates k w.1.2).1, w.2))
 
 /-- Source argument, given by `(w.1.1, g.path k w.1.2 w.2)`. -/
-noncomputable def sourceArgument (g : CCS) (k : Frequency) (w : Joint P) : P × Plane :=
+@[expose] noncomputable def sourceArgument (g : CCS) (k : Frequency) (w : Joint P) : P × Plane :=
   (w.1.1, g.path k w.1.2 w.2)
 
 /-- Native linear as an element of `Joint P →L[ℝ] P × Plane`. -/
@@ -881,6 +881,7 @@ variable {P V : Type} [NormedAddCommGroup P] [NormedSpace ℝ P]
   [NormedAddCommGroup V] [NormedSpace ℝ V]
 
 /-- Source strip, given by `parameterStrip s (ContinuousLinearMap.fst ℝ P Plane)`. -/
+@[expose]
 noncomputable def sourceStrip (s : WeightedClasses.StripData P) : WeightedClasses.StripData (P ×
     Plane) :=
   parameterStrip s (ContinuousLinearMap.fst ℝ P Plane)

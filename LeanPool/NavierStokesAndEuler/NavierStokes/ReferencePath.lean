@@ -38,7 +38,7 @@ open ProfileHistories
   scale_mem := fun _ hp _ _ => ⟨mem_univ _, hp.2⟩
 
 /-- Early strip, bundling `carrier`, `isOpen`, `scale_mem`. -/
-def earlyStrip (T : ℝ) (hT : 0 < T) (J : Set ℝ) (hJ : IsOpen J) : RadialDomain where
+@[expose] def earlyStrip (T : ℝ) (hT : 0 < T) (J : Set ℝ) (hJ : IsOpen J) : RadialDomain where
   carrier := Iio T ×ˢ J
   isOpen := isOpen_Iio.prod hJ
   scale_mem := by

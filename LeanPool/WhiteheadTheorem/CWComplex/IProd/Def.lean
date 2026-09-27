@@ -116,10 +116,13 @@ lemma cubeAtt_compatible {n : ℕ} (α : (X.attachCells n).cells) (t : zeroOne) 
   let iX : X.toTopCat ⟶ TopCat.of (zeroOne × X.toTopCat) := ofHom ⟨fun x ↦ ⟨t, x⟩, by fun_prop⟩
   let isk : X.sk n ⟶ TopCat.of (zeroOne × (X.sk n)) := ofHom ⟨fun x ↦ ⟨t, x⟩, by fun_prop⟩
   change ((diskPair.homeoCubePairULift n).inv.left ≫ diskBoundaryIncl n ≫
-      Limits.Sigma.ι (fun _ ↦ 𝔻 n) α ≫ Limits.pushout.inr .. ≫
-      (X.attachCells n).isoPushout.inv ≫ X.skIncl _ ≫ iX ≫ Limits.pushout.inl .. ) y =
+      Limits.Sigma.ι (fun _ ↦ 𝔻 n) α ≫
+      Limits.pushout.inr (Limits.Sigma.desc (X.attachCells n).attachMaps)
+        (Limits.Sigma.map fun x ↦ diskBoundaryIncl n) ≫
+      (X.attachCells n).isoPushout.inv ≫ X.skIncl _ ≫ iX ≫
+      Limits.pushout.inl (l X n) (r X n) ) y =
     ((diskPair.homeoCubePairULift n).inv.left ≫ (X.attachCells n).attachMaps α ≫
-      isk ≫ r X n ≫ Limits.pushout.inr .. ) y
+      isk ≫ r X n ≫ Limits.pushout.inr (l X n) (r X n) ) y
   have h := (X.attachCells n).w_cell α
   unfold RelCWComplex.AttachGeneralizedCells.pushoutInr at h
   unfold RelCWComplex.AttachGeneralizedCells.pushoutInl at h
@@ -292,12 +295,12 @@ lemma commSqSkSk (n : ℕ) :
       change (X.cubeAtt α ≫ X.skInclSucc n) _ = _
       unfold CWComplex.cubeAtt CWComplex.cubeInclToSk
       rw [Category.assoc]
+      unfold RelCWComplex.skInclSucc RelCWComplex.AttachCells.incl
       change _ = ((diskPair.homeoCubePairULift n).inv.left ≫ diskBoundaryIncl _ ≫
           Limits.Sigma.ι (fun _ ↦ 𝔻 n) α ≫ Limits.pushout.inr .. ≫
             (X.attachCells n).isoPushout.inv )
           ⟨⟨(Cube.splitAtLast y).2, cubeBoundary.splitAtLast_snd_mem_boundary_of_mem_sides hk⟩⟩
       congr 3
-      unfold RelCWComplex.skInclSucc RelCWComplex.AttachCells.incl
       change (_ ≫ _) ≫ (X.attachCells n).isoPushout.inv =
         (_ ≫ _ ≫ _) ≫ (X.attachCells n).isoPushout.inv
       congr 1

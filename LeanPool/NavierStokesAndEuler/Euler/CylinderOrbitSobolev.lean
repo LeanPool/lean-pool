@@ -75,8 +75,9 @@ theorem spatialJet_word (n q : ℕ) (hn : n ≤ q) (u : LiftL2 period)
 theorem sobolev_coordinate (q : ℕ) (u : LiftL2 period) (hu : SmoothOrbit period u)
     (w : SobolevWord q) :
     (sobolev period q u hu).val w =
-      wordDerivative standardDirection (fun a : LiftTangent => translate period a u) w.2 0 :=
-  spatialJet_word period w.1.val q (Nat.le_of_lt_succ w.1.isLt) u hu w.2
+      wordDerivative standardDirection (fun a : LiftTangent => translate period a u) w.2 0 := by
+  rw [sobolev, ofJet_apply]
+  exact spatialJet_word period w.1.val q (Nat.le_of_lt_succ w.1.isLt) u hu w.2
 
 /-- A complete Sobolev norm is controlled by the genuine fixed-order word sum. -/
 theorem sobolev_norm_le_baseSize (q : ℕ) (u : LiftL2 period) (hu : SmoothOrbit period u) :

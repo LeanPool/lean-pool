@@ -710,7 +710,7 @@ theorem mapAffineEquiv_support (e : Plane ≃ᵃ[ℝ] Plane) :
   K.simplexes.filter fun s => s.card = 3
 
 /-- The edges (one-dimensional faces). -/
-def edges : Finset (Finset K.Vertex) :=
+@[expose] def edges : Finset (Finset K.Vertex) :=
   K.simplexes.filter fun s => s.card = 2
 
 /-- The subcomplex consisting of the vertices and edges of `K`. -/
@@ -1297,6 +1297,7 @@ end PlaneComplex
 
 /-- The canonical barycentric homeomorphism from the abstract realization of a pure plane
 complex to its geometric support. -/
+@[expose]
 noncomputable def PlaneComplex.realizationHomeomorph (K : PlaneComplex) (hpure : K.IsPure2) :
     GeometricRealization K.Vertex K.cells ≃ₜ K.support := by
   classical

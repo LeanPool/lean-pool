@@ -166,7 +166,7 @@ theorem ordinaryLift_hasDerivAt (u : EulerMeanSolenoidal.L2) (hu : SmoothOrbit u
   exact H
 
 /-- Every finite cylinder derivative tree is constructed from genuine ordinary L² derivatives. -/
-def ordinarySpatialJet (s : ℕ) (u : EulerMeanSolenoidal.L2) (hu : SmoothOrbit u) :
+@[expose] def ordinarySpatialJet (s : ℕ) (u : EulerMeanSolenoidal.L2) (hu : SmoothOrbit u) :
     SpatialJet 1 standardDirection s (ordinaryLift u) :=
   match s with
   | 0 => .zero (ordinaryLift u)

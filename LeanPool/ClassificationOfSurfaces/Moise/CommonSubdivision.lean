@@ -712,7 +712,7 @@ variable (K : PlaneComplex)
 Unlike `mapComplex`, this construction does not require an irrelevant global injectivity
 hypothesis.  The additional vertex hypothesis excludes unused vertices, whose images would not
 be controlled by injectivity on the support. -/
-noncomputable def mapComplexOn (f : Plane → Plane)
+@[expose] noncomputable def mapComplexOn (f : Plane → Plane)
     (hvertex : ∀ v : K.Vertex, K.position v ∈ K.support)
     (hinj : Set.InjOn f K.support)
     (haffine : ∀ s ∈ K.simplexes, IsAffineOn f (K.cellCarrier s)) : PlaneComplex where
@@ -822,7 +822,7 @@ theorem IsPure2.mapComplexOn (hpure : K.IsPure2) (f : Plane → Plane)
   exact hpure s hs
 
 /-- Map every face of a finite plane complex through a facewise-affine embedding. -/
-noncomputable def mapComplex (f : Plane → Plane)
+@[expose] noncomputable def mapComplex (f : Plane → Plane)
     (hinj : Function.Injective f)
     (haffine : ∀ s ∈ K.simplexes, IsAffineOn f (K.cellCarrier s)) : PlaneComplex where
   Vertex := K.Vertex

@@ -31,7 +31,7 @@ open Finset
 namespace LeanPool.Besicovitch.Example
 
 /-- The length `2^(-n²)` of a level-`n` cell. -/
-def cellLength (n : ℕ) : ℝ := (1 / 2) ^ (n ^ 2)
+@[expose] def cellLength (n : ℕ) : ℝ := (1 / 2) ^ (n ^ 2)
 
 /-- The amplitude `2^(-n²) / n` of the level-`n` square wave. -/
 def jumpHeight (n : ℕ) : ℝ := cellLength n / n

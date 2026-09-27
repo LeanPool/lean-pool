@@ -65,7 +65,7 @@ def directedInterpolateConst {a b : I} (h : a ≤ b) : D(I,I) where
 variable (f g : C(I, I))
 
 /-- Two-parameter interpolation `(s, t) ↦ (1 - s) * f t + s * g t`. -/
-def interpolate : C(I × I, I) where
+@[expose] def interpolate : C(I × I, I) where
   toFun := fun t => ⟨(σ t.1 : ℝ) * (f t.2) + t.1 * (g t.2), interp_mem_I t.1 (f t.2) (g t.2)⟩
 
 lemma interpolate_left : (interpolate f g).curry 0 = f := by

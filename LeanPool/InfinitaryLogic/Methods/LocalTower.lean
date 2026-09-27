@@ -113,7 +113,7 @@ private theorem allNegBody_countable (p : Σ n, L.BoundedFormulaω Empty n) :
 
 /-- The **Skolem-need family**: `Γ` together with the negated bodies of its universal members.
 This — not `Γ` itself — is the family the successor stage Skolemizes. -/
-def skolemNeed (Γ : Set (Σ n, L.BoundedFormulaω Empty n)) :
+@[expose] def skolemNeed (Γ : Set (Σ n, L.BoundedFormulaω Empty n)) :
     Set (Σ n, L.BoundedFormulaω Empty n) :=
   Γ ∪ ⋃ p ∈ Γ, allNegBody p
 
@@ -265,7 +265,7 @@ the current stage. -/
 @[expose] def Llocal (s₀ : LocalStage) (k : ℕ) : Language.{0, 0} := (localStage s₀ k).Lang
 
 /-- The **stage-`k` local family** `Γ_k`. -/
-def Γlocal (s₀ : LocalStage) (k : ℕ) : Set (Σ n, (Llocal s₀ k).BoundedFormulaω Empty n) :=
+@[expose] def Γlocal (s₀ : LocalStage) (k : ℕ) : Set (Σ n, (Llocal s₀ k).BoundedFormulaω Empty n) :=
   (localStage s₀ k).Gamma
 
 /-- The **stage-`k` → stage-`(k+1)` language inclusion**: the left injection of the Skolemizing sum.

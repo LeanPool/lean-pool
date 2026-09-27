@@ -867,7 +867,7 @@ noncomputable def frameOfUnit (K : Plane) (hK : ‖K‖ = 1) : Frame :=
   simp [frameOfUnit]
 
 /-- Normal scale, given by `‖tail n‖`. -/
-noncomputable def normalScale (n : Space) : ℝ := ‖tail n‖
+@[expose] noncomputable def normalScale (n : Space) : ℝ := ‖tail n‖
 /-- Radial slope, given by `n 0 / normalScale n`. -/
 noncomputable def radialSlope (n : Space) : ℝ := n 0 / normalScale n
 /-- Normal direction, given by `(normalScale n)⁻¹ • tail n`. -/
@@ -2050,7 +2050,7 @@ scaleDerivative n n' • MovingFrameODE.normalDirection n)`. -/
 
 /-- Angular velocity, given by `⟪MovingFrameODE.quarterTurn (MovingFrameODE.normalDirection n),
 directionDerivative n n'⟫_ℝ`. -/
-noncomputable def angularVelocity (n n' : Space) : ℝ :=
+@[expose] noncomputable def angularVelocity (n n' : Space) : ℝ :=
   ⟪MovingFrameODE.quarterTurn (MovingFrameODE.normalDirection n), directionDerivative n n'⟫_ℝ
 
 theorem hasDerivAt_normalScale {n : ℝ → Space} {n' : Space} {v : ℝ}

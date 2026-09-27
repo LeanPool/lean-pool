@@ -377,6 +377,7 @@ lemma circleParamCW_wrapCount :
 noncomputable def refY₀ : ℝ := (1 + HHeight) / 2
 
 /-- The reference point p₀ = I * Y₀ on the imaginary axis. -/
+@[expose]
 noncomputable def refP₀ : ℂ := Complex.I * (refY₀ : ℂ)
 
 lemma ref_Y₀_pos : 0 < refY₀ := by

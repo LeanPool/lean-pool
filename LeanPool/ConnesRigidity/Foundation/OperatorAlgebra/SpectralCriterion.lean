@@ -95,7 +95,7 @@ theorem measurable_dualCharacterAction
 
 /-- Invariant probability measure for the dual action, whose measurability is
 recorded by `measurable_dualCharacterAction`. Paper: §4. -/
-def IsInvariantSpectralMeasure
+@[expose] def IsInvariantSpectralMeasure
     (action : H →* Multiplicative (AddAut A))
     (μ : ProbabilityMeasure (DiscreteCharacterSpace A)) : Prop :=
   ∀ h : H,

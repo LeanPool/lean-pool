@@ -32,7 +32,7 @@ noncomputable abbrev safeSubdivision (n : ℕ) : K.Subdivision :=
   K.iteratedMidpointSubdivision n
 
 /-- Refined triangles whose complete transported carriers lie in the prescribed open set. -/
-noncomputable def safeFaces (n : ℕ) :
+@[expose] noncomputable def safeFaces (n : ℕ) :
     Finset (Finset (K.safeSubdivision n).refined.Vertex) := by
   classical
   exact (K.safeSubdivision n).refined.faces.filter fun t ↦
@@ -62,7 +62,7 @@ theorem isEmbedding_safeStageInclusion (n : ℕ) :
       (fun t ↦ t ∈ K.safeFaces U n))
 
 /-- Carrier of one finite safe stage in the original realization. -/
-noncomputable def safeStageSupport (n : ℕ) : Set K.realization :=
+@[expose] noncomputable def safeStageSupport (n : ℕ) : Set K.realization :=
   Set.range (K.safeStageInclusion U n)
 
 theorem isCompact_safeStageSupport (n : ℕ) :

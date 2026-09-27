@@ -15,7 +15,7 @@ public import Mathlib.LinearAlgebra.Matrix.Symmetric
 Chip firing, graph divisors, and their combinatorial properties.
 -/
 
-@[expose] public section
+public section
 
 namespace ChipFiring
 

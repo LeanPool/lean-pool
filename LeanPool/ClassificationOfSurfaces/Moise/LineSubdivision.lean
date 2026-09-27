@@ -4011,7 +4011,7 @@ theorem lineRefinementMesh_preserves_monochromatic (g : Plane →ᵃ[ℝ] ℝ)
     exact ht w hw
 
 /-- Successively subdivide a mesh by a finite list of affine lines. -/
-noncomputable def refineByLines : TriangleMesh → List (Plane →ᵃ[ℝ] ℝ) → TriangleMesh
+@[expose] noncomputable def refineByLines : TriangleMesh → List (Plane →ᵃ[ℝ] ℝ) → TriangleMesh
   | M, [] => M
   | M, g :: gs => refineByLines (M.lineRefinementMesh g) gs
 

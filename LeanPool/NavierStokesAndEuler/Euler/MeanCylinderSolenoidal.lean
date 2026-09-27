@@ -58,7 +58,7 @@ theorem embedding_representative (u : L2) (f : Space → Space)
   filter_upwards [lift_ae P u,
     (Measure.quasiMeasurePreserving_fst (μ := (volume : Measure Space))
       (ν := (volume : Measure (AddCircle P)))).ae hrep] with z hl hr
-  exact hl.trans hr
+  simpa only [embedding_apply] using hl.trans hr
 
 /-- The conclusion is membership in the actual closed lifted-gradient orthogonal complement. -/
 theorem embedding_mem (κ : ℝ) (m : Space) (u : L2) (hu : u ∈ solenoidalSpace)

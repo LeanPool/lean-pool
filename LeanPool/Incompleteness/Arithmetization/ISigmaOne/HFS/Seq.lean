@@ -166,7 +166,7 @@ lemma _root_.LO.Arith.Seq.lt_lh_of_mem {s : V} (h : Seq s) {i x} (hix : ⟪i, x�
   h.lt_lh_iff.mpr (mem_domain_iff.mpr ⟨x, hix⟩)
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def seqCons (s x : V) : V := insert ⟪lh s, x⟫ s
+@[expose] def seqCons (s x : V) : V := insert ⟪lh s, x⟫ s
 
 section «lp_section_2»
 

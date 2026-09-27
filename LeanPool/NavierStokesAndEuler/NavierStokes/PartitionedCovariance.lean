@@ -1025,7 +1025,7 @@ theorem assembled_covariance {D h : ℝ} {vr vt : Plane} (sys : SlotSystem D h v
   ChartScales.Q (U.1 + N) ^ (-velocityExponent h)
 
 /-- Physical viscosity, given by `ChartScales.epsilon h (U.1 + N)`. -/
-noncomputable def physicalViscosity (h : ℝ) (N : ℕ) (U : UnsignedLabel) : ℝ :=
+@[expose] noncomputable def physicalViscosity (h : ℝ) (N : ℕ) (U : UnsignedLabel) : ℝ :=
   ChartScales.epsilon h (U.1 + N)
 
 /-- Chart target, given by `(ChartScales.Q (U.1 + N) / q) ^ (velocityExponent h + 1 / 2) • T0`. -/

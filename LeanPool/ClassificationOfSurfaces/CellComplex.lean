@@ -254,7 +254,7 @@ theorem signedDartOfOrientedEdge_edge {Edge : Type*} (d : OrientedEdge Edge) :
 
 The nonempty boundary presentation is equivalent to Gallier--Xu's empty-word sphere and is
 directly compatible with the polygonal occurrence adapter. -/
-def sphere : SurfaceCellComplex where
+@[expose] def sphere : SurfaceCellComplex where
   Face := Bool
   Dart := SignedDart PUnit
   Vertex := PUnit

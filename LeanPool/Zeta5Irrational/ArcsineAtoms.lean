@@ -34,7 +34,7 @@ open MeasureTheory Set Real intervalIntegral Filter Topology
 namespace Zeta5Irrational
 
 /-- The arcsine curve `θ ↦ m + r cos θ` (as a complex number). -/
-noncomputable def arcCurve (m r : ℝ) (θ : ℝ) : ℂ :=
+@[expose] noncomputable def arcCurve (m r : ℝ) (θ : ℝ) : ℂ :=
   ((m + r * Real.cos θ : ℝ) : ℂ)
 
 lemma continuous_arcCurve (m r : ℝ) : Continuous (arcCurve m r) := by unfold arcCurve; fun_prop

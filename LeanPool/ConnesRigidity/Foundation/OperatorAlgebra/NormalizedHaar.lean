@@ -111,7 +111,7 @@ theorem skew_add_translation_measurePreserving
     abel
 
 /-- Product probability Haar measure for two compact additive groups. Paper: §3. -/
-def productHaar
+@[expose] def productHaar
     (P : Type u) (Q : Type v)
     [AddGroup P] [AddGroup Q]
     [TopologicalSpace P] [TopologicalSpace Q]

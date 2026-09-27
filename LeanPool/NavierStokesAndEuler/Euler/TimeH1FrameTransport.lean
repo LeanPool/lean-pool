@@ -101,6 +101,7 @@ Terminal zero is already supplied by the primitive. -/
 def zeroTraceDerivatives (T : ℝ) (hT : 0 ≤ T) : Submodule ℝ (TimeLp T U) :=
   LinearMap.ker (initialTrace T hT).toLinearMap
 
+omit [CompleteSpace U] in
 @[simp] theorem mem_zeroTraceDerivatives (T : ℝ) (hT : 0 ≤ T) (v : TimeLp T U) :
     v ∈ zeroTraceDerivatives T hT ↔ initialTrace T hT v = 0 := by rfl
 

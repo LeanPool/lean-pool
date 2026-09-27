@@ -30,7 +30,7 @@ open ProfileHistories
 open scoped Topology ContDiff
 
 /-- Log domain, bundling `carrier`, `isOpen`, `scale_mem`. -/
-noncomputable def logDomain (J : Set ℝ) (hJ : IsOpen J) : RadialDomain where
+@[expose] noncomputable def logDomain (J : Set ℝ) (hJ : IsOpen J) : RadialDomain where
   carrier := univ ×ˢ J
   isOpen := isOpen_univ.prod hJ
   scale_mem := fun _ hp _ _ => ⟨mem_univ _, hp.2⟩
@@ -230,7 +230,7 @@ theorem activation_flat_form {T : ℝ} (hT : 0 < T) (κ y : ℝ) :
   ring
 
 /-- Flat coefficient, given by `B (q.2, q.1) / stepDenominator T q.2`. -/
-noncomputable def flatCoefficient (T : ℝ) (B : Field) (q : ℝ × ℝ) : ℝ :=
+@[expose] noncomputable def flatCoefficient (T : ℝ) (B : Field) (q : ℝ × ℝ) : ℝ :=
   B (q.2, q.1) / stepDenominator T q.2
 
 /-- Division by `y e_a` is implemented by a smooth transformed integral. -/
@@ -579,7 +579,7 @@ inductive HistoryRow
   | .pressure, _, f, _ => f ^ 2
 
 /-- The Jacobian `X` converts the physical radial histories to log time. -/
-noncomputable def logDensity (X0 : ℝ) (f U : Field) (r : HistoryRow) : Field :=
+@[expose] noncomputable def logDensity (X0 : ℝ) (f U : Field) (r : HistoryRow) : Field :=
   fun p => radius X0 p.1 * radialDensity r (radius X0 p.1) (f p) (U p)
 
 /-- The initial row values are shared; every subsequent value is recomputed. -/
@@ -888,7 +888,7 @@ theorem profileHistory_hasDerivAt {D : RadialDomain} (P : Profiles D) (r : Histo
   exact profileHistory_eq_initial_add_primitive P r (x, p.2)
 
 /-- Log pullback, defined pointwise by `F (radius X0 p.1, p.2)`. -/
-noncomputable def logPullback (X0 : ℝ) (F : Field) : Field :=
+@[expose] noncomputable def logPullback (X0 : ℝ) (F : Field) : Field :=
   fun p => F (radius X0 p.1, p.2)
 
 theorem radius_hasDerivAt (X0 y : ℝ) : HasDerivAt (radius X0) (radius X0 y) y :=
@@ -1072,7 +1072,7 @@ theorem f_pos (T κ δ : ℝ) {p : Point} (hp : p ∈ N.radialDomain.carrier) (h
     exact activatedAngular_pos T κ _ _
 
 /-- These are the actual radial pressure and lag inputs, recomputed from ACT. -/
-noncomputable def histories {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ)
+@[expose] noncomputable def histories {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ)
     (hδT : 2 * δ < rampLimit) (κ : ℝ) (P0 : ℝ → ℝ) (hP0 : ContDiff ℝ ∞ P0) :
     Profiles N.radialDomain where
   f := f N T κ δ

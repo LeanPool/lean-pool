@@ -94,7 +94,7 @@ theorem mul_assoc : ∀ (g g' g'' : K × Q), mul c (mul c g g') g'' = mul c g (m
     · apply add_assoc
 
 /-- A group structure on `K × Q` using the above multiplication operation. -/
-@[reducible]
+@[reducible, expose]
 def metabelianGroup : Group (K × Q) :=
     {
       mul := mul c,

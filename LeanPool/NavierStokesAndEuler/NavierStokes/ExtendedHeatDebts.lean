@@ -140,7 +140,7 @@ theorem correctionJet_hasDerivAt {h : ℝ} (hh : 0 < h) (K X : ℝ) (n : ℕ) (�
     (ENat.natCast_lt_of_coe_top_le_withTop le_rfl n) ν
   simpa only [correctionJet, iteratedDeriv_succ] using hd.hasDerivAt
 
-theorem correctionJet_zero (h K ν X : ℝ) : correctionJet h K 0 ν X = correction h K ν X := rfl
+theorem correctionJet_zero (h K ν X : ℝ) : correctionJet h K 0 ν X = correction h K ν X := by rfl
 
 theorem correctionJet_succ {h : ℝ} (hh : 0 < h) (K X ν : ℝ) (n : ℕ) :
     correctionJet h K (n + 1) ν X = switch K X * (2 / X) ^ (n + 1) *

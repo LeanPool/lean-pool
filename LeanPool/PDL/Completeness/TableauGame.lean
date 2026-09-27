@@ -1171,7 +1171,7 @@ lemma matchesFinite : WellFounded (Function.swap move) := by
 /-! ## Actual Game Definition -/
 
 /-- The game defined in Section 6.2. -/
-@[instance_reducible]
+@[instance_reducible, expose]
 def tableauGame : Game where
   Pos := GamePos
   turn | ⟨_, _, .inl _⟩ => Prover

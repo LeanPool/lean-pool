@@ -37,7 +37,7 @@ abbrev Plane := EuclideanSpace ℝ (Fin 2)
 def graphMap (x : ℝ) : Plane := !₂[x, besicovitchFun x]
 
 /-- Besicovitch's set: the graph of `g` over `[0, 1]`. -/
-def besicovitchSet : Set Plane := graphMap '' Icc 0 1
+@[expose] def besicovitchSet : Set Plane := graphMap '' Icc 0 1
 
 @[simp] theorem graphMap_apply_zero (x : ℝ) : graphMap x 0 = x := by simp [graphMap]
 

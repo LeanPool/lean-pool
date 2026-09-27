@@ -319,7 +319,7 @@ section «lp_section_5»
 
 open Classical in
 /-- Imported declaration from the Incompleteness formalization. -/
-noncomputable def bitInsert (i a : V) : V := if i ∈ a then a else a + exp i
+@[expose] noncomputable def bitInsert (i a : V) : V := if i ∈ a then a else a + exp i
 
 open Classical in
 /-- Imported declaration from the Incompleteness formalization. -/

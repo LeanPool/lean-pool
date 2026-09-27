@@ -1020,7 +1020,6 @@ lemma _root_.LieAlgebra.Dim3.Family.e₃_in_comm : e₃ ∈ commutator K (Family
     exact (this ⟨_, _, e₃_bracket⟩)
 
 /-- TODO. -/
-@[expose]
 noncomputable def _root_.LieAlgebra.Dim3.Family.commutatorBasis (α β : K) (hα : α ≠ 0) : Basis
     (Fin 2) K (commutator K (Family K α β)) := by
   -- Basis are ![0,1,0] and ![0,0,1]

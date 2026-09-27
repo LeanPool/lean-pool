@@ -43,6 +43,11 @@ def restrictOperator {p q : ℕ} (h : q ≤ p) : SobolevSpace period p →L[ℝ]
 @[simp] theorem value_restrictOperator {p q : ℕ} (h : q ≤ p) (u : SobolevSpace period p) :
     value period (restrictOperator period h u) = value period u := by rfl
 
+@[simp] theorem word_restrictOperator {p q n : ℕ} (h : q ≤ p) (hn : n ≤ q)
+    (u : SobolevSpace period p) (w : Fin n → Fin 4) :
+    word period (restrictOperator period h u) hn w =
+      word period u (hn.trans h) w := by rfl
+
 theorem restrictOperator_bound {p q : ℕ} (h : q ≤ p) (u : SobolevSpace period p) :
     ‖restrictOperator period h u‖ ≤ ‖u‖ := by
   change ‖(restrictOperator period h u).val‖ ≤ _

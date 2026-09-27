@@ -42,7 +42,7 @@ variable {U E : Type*}
   [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
 
 /-- The genuine Bochner Gram operator, formed from the actual frame multiplier. -/
-def gramOperator (T : ℝ) (hT : 0 ≤ T) (Q : C(Icc (0 : ℝ) T, U →L[ℝ] E)) :
+@[expose] def gramOperator (T : ℝ) (hT : 0 ≤ T) (Q : C(Icc (0 : ℝ) T, U →L[ℝ] E)) :
     TimeLp T U →L[ℝ] TimeLp T U :=
   (timeMultiplier T hT Q).adjoint.comp (timeMultiplier T hT Q)
 

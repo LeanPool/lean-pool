@@ -121,6 +121,7 @@ lemma upperTriMat_injective (a : Fin n → ℕ) (hpos : ∀ i, 0 < a i) (hdiv : 
   exact Fin.ext (by exact_mod_cast mul_left_cancel₀ h_ai_pos h_eq)
 
 /-- The upper-triangular representative as a `GL_n(ℚ)` element. -/
+@[expose]
 noncomputable def upperTriGL (a : Fin n → ℕ) (hpos : ∀ i, 0 < a i)
     (hdiv : DivChain n a) (B : UpperTriRep n a hdiv) :
     GL (Fin n) ℚ :=

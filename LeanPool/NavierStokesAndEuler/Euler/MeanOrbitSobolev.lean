@@ -95,8 +95,9 @@ theorem ordinarySobolev_coordinate (q : ℕ) (u : EulerMeanSolenoidal.L2) (hu : 
     (w : SobolevWord q) :
     (ordinarySobolev q u hu).val w = ordinaryLift
       (iteratedFDeriv ℝ w.1.val (fun a : Space => EulerMeanSolenoidal.translation a u) 0
-        (coordinateTuple w.2)) :=
-  ordinarySpatialJet_word w.1.val q (Nat.le_of_lt_succ w.1.isLt) u hu w.2
+        (coordinateTuple w.2)) := by
+  rw [ordinarySobolev, ofJet_apply]
+  exact ordinarySpatialJet_word w.1.val q (Nat.le_of_lt_succ w.1.isLt) u hu w.2
 
 /-- The finite Sobolev array is bounded directly by actual L² orbit-derivative norms. -/
 theorem ordinarySobolev_norm_le (q : ℕ) (u : EulerMeanSolenoidal.L2) (hu : SmoothOrbit u) :

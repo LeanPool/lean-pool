@@ -33,7 +33,7 @@ namespace PreStrategy
 section «tryAndElse»
 variable {p : Player}
 /-- try following PreStrategy `planA` if possible, else follow `planB` -/
-noncomputable def tryAndElse (planA planB : PreStrategy T p) :
+@[expose] noncomputable def tryAndElse (planA planB : PreStrategy T p) :
   PreStrategy T p := by
   classical
   exact fun x hp ↦

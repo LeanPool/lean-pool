@@ -544,7 +544,7 @@ theorem exists_vertex_pair_segment_of_mem_cellCarrier {s : Finset K.Vertex}
     rwa [himage, convexHull_pair] at hx
 
 /-- The graph formed by the one-dimensional faces of a plane complex. -/
-def vertexGraph : SimpleGraph K.Vertex where
+@[expose] def vertexGraph : SimpleGraph K.Vertex where
   Adj v w := v ≠ w ∧ ({v, w} : Finset K.Vertex) ∈ K.simplexes
   symm := ⟨by
     rintro v w ⟨hvw, hedge⟩
@@ -1244,7 +1244,7 @@ noncomputable def resolvedWalk : B.inSetGraph.Walk
   B.resolvedPath
 
 /-- Ordered geometric vertices of the resolved polygonal arc. -/
-noncomputable def resolvedVertex
+@[expose] noncomputable def resolvedVertex
     (i : Fin (B.resolvedWalk.length + 1)) : Plane :=
   B.arrangementMesh.toPlaneComplex.position
     (B.resolvedWalk.getVert i)
@@ -1936,7 +1936,7 @@ def realAxisAffine : ℝ →ᵃ[ℝ] Plane := realAxisLinear.toAffineMap
 @[simp] theorem realAxisAffine_apply (t : ℝ) : realAxisAffine t = planePoint t 0 := by rfl
 
 /-- Piecewise-affine straightening of the selected polygonal arc onto the real axis. -/
-noncomputable def resolvedStraighten (x : Plane) : Plane :=
+@[expose] noncomputable def resolvedStraighten (x : Plane) : Plane :=
   realAxisAffine (B.resolvedGlobalParameter x)
 
 theorem resolvedStraighten_start :

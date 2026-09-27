@@ -446,7 +446,7 @@ Paper: §3.
 /-- The crossed-product group unitary on the indexed Hilbert space.
 Paper: §3.
 -/
-def crossedGroupUnitary
+@[expose] def crossedGroupUnitary
     {K : Type u} {Ω : Type v} [Group K]
     [AddCommGroup Ω] [TopologicalSpace Ω] [MeasurableSpace Ω]
     (X : HaarProbabilityAction K Ω) (k : K) :

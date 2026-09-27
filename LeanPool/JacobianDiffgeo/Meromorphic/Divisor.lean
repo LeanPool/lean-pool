@@ -208,7 +208,7 @@ end MeroGermOn
 /-- CC3's `div : ℳ X → Divisor X` (renamed `divisor`; total, `divisor 0 = 0` honestly). -/
 noncomputable abbrev divisor [T1Space X] [IsManifold 𝓘(ℂ) ω X] (φ : ℳ X) : Divisor X := φ.divisorOn
 
-@[simp] theorem divisor_apply [T1Space X] [IsManifold 𝓘(ℂ) ω X] (φ : ℳ X) (x : X) :
+theorem divisor_apply [T1Space X] [IsManifold 𝓘(ℂ) ω X] (φ : ℳ X) (x : X) :
     divisor φ x = (φ.ord x).untop₀ := by rfl
 
 @[simp] theorem divisor_zero [T1Space X] [IsManifold 𝓘(ℂ) ω X] :

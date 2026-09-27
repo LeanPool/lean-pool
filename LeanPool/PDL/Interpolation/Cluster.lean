@@ -108,7 +108,7 @@ cluster along the branch leading to `s`.
 Note that this is *vacuously true* for `.nil`, the root of the whole tableau, which has no
 parent at all. This is why we quantify over all parents instead of demanding that a parent
 exists: the root of a tableau may already be loaded. -/
-def PathIn.isClusterRoot (s : PathIn tab) : Prop :=
+@[expose] def PathIn.isClusterRoot (s : PathIn tab) : Prop :=
   ∀ p : PathIn tab, p ⋖_ s → ¬ s ◃* p
 
 lemma PathIn.isClusterRoot_flip {p : PathIn tab}
@@ -149,7 +149,7 @@ lemma PathIn.isClusterRoot_of_edge_from_free {s t : PathIn tab}
 
 /-- Def 8.14: `e` is an *exit* of the cluster of `s`, i.e. `e ∈ C⁺ \ C` where `C` is the
 cluster of `s`: it is not in the cluster of `s`, but it is a child of a node in it. -/
-def isExitOf (s e : PathIn tab) : Prop :=
+@[expose] def isExitOf (s e : PathIn tab) : Prop :=
   ¬ (e ≡ᶜ s)  ∧  ∃ t : PathIn tab, (t ≡ᶜ s) ∧ t ⋖_ e
 
 lemma isExitOf_flip {s e : PathIn tab} :
@@ -264,7 +264,7 @@ namespace LoadedCluster
 
 /-- Make the `LoadedCluster` of a right-loaded node that is the first node of its cluster.
 This is the way `tabToIntAt` now gets hold of a `LoadedCluster`. -/
-def ofClusterRoot (s : PathIn tab)
+@[expose] def ofClusterRoot (s : PathIn tab)
     (s_cr : s.isClusterRoot) (s_proper : s ◃⁺ s)
     (s_loaded_right : (nodeAt s).2.2.isRight) : LoadedCluster tab where
   root := s
@@ -289,7 +289,7 @@ def ofClusterRoot (s : PathIn tab)
     exact u_in.1
 
 /-- The exits of the cluster, i.e. `C⁺ \ C` from Def 8.14. -/
-def exits (C : LoadedCluster tab) : Finset (PathIn tab) :=
+@[expose] def exits (C : LoadedCluster tab) : Finset (PathIn tab) :=
   (C.CL.biUnion (fun t => t.children.image Subtype.val)).filter (fun e => e ∉ C.CL)
 
 /-- C⁺, the cluster plus its exits. -/

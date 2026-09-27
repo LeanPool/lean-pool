@@ -99,7 +99,7 @@ lemma virasoroCocycleBilin_eq_neg_flip :
 variable [CharZero 𝕜]
 
 /-- The Virasoro cocycle. -/
-noncomputable def virasoroCocycle :
+@[expose] noncomputable def virasoroCocycle :
     LieTwoCocycle 𝕜 (WittAlgebra 𝕜) 𝕜 where
   toBilin := virasoroCocycleBilin 𝕜
   self' X := by

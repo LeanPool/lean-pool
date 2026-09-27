@@ -63,7 +63,7 @@ instance ℤFree : AddFreeGroup ℤ Unit where
 
 open EnumDecide in
 /-- Equality of homomorphisms from a free group on an exhaustively searchable basis is decidable. -/
-def decideHomsEqual {F : Type _} [AddCommGroup F] {X : Type _} [DecideForall X]
+@[expose] def decideHomsEqual {F : Type _} [AddCommGroup F] {X : Type _} [DecideForall X]
     [fgp : AddFreeGroup F X]
     {A : Type _} [AddCommGroup A] [DecidableEq A] : DecidableEq (F →+ A) := fun f g =>
   if c : ∀ x : X, f (fgp.ι x) = g (fgp.ι x) then

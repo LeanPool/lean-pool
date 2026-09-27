@@ -484,7 +484,7 @@ theorem groupInclusionHom_injective {F : Type} [Field F] [DecidableEq F]
   simp_all
 
 /-- The ring homomorphism `R → R[G]` given by `a ↦  a ⬝ 1` -/
-def ringInclusionHom (G : Type) [Group G] [DecidableEq G] : R →+* R[G] :=
+@[expose] def ringInclusionHom (G : Type) [Group G] [DecidableEq G] : R →+* R[G] :=
   { toFun := coeffInclusion 1,
     map_one' := rfl,
     map_mul' :=

@@ -143,7 +143,7 @@ def sigma : Dlt-[m].Semiformula ξ n → Sg-[m].Semiformula ξ n
   rfl
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def pi : Dlt-[m].Semiformula ξ n → Pg-[m].Semiformula ξ n
+@[expose] def pi : Dlt-[m].Semiformula ξ n → Pg-[m].Semiformula ξ n
   | mkDelta _ φ => φ
 
 @[simp] lemma pi_mkDelta (φ : Sg-[m].Semiformula ξ n) (ψ : Pg-[m].Semiformula ξ n) :

@@ -26,7 +26,7 @@ open Finset Filter Topology Set
 namespace Zeta5Irrational
 
 /-- `∑_{K/b < p ≤ K/a} p f(K/p) log p`. -/
-noncomputable def psum (f : ℝ → ℝ) (a b K : ℝ) : ℝ :=
+@[expose] noncomputable def psum (f : ℝ → ℝ) (a b K : ℝ) : ℝ :=
   ∑ k ∈ Ioc ⌊K / b⌋₊ ⌊K / a⌋₊, (k : ℝ) * cPrime k * f (K / k)
 
 lemma cPrime_nonneg (k : ℕ) : 0 ≤ cPrime k := by

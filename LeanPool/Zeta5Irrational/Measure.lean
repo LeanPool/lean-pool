@@ -33,7 +33,7 @@ noncomputable abbrev alph : ℝ :=
   3 / 40
 
 /-- The constant `C*` of (6.3). -/
-noncomputable def Cstar : ℝ :=
+@[expose] noncomputable def Cstar : ℝ :=
   -2 * lam + 12 * alph * lam * (1 - Real.log alph) + 3 * lam ^ 2 -
     2 * lam ^ 2 * Real.log (2 * lam)
 
@@ -69,7 +69,7 @@ noncomputable abbrev M0 : ℝ :=
   ∑ i ∈ Icc 1 j, cρ i
 
 /-- The logarithmic energy `I(ρ)` of the measure `ρ`, formula (A.2). -/
-noncomputable def Irho : ℝ :=
+@[expose] noncomputable def Irho : ℝ :=
   ∑ j ∈ Icc 1 16, (Sρ j ^ 2 - Sρ (j - 1) ^ 2) * Real.log ((bρ j - aρ j) / 4)
 
 /-- The total mass of `ρ` is `λ` (Appendix A.1). -/

@@ -31,7 +31,7 @@ def velocityMap (L : Fin 4 → Vector3 →L[ℝ] ℝ) : Vector3 →L[ℝ] Domain
       (ContinuousLinearMap.pi L)
 
 @[simp] theorem velocityMap_apply (L : Fin 4 → Vector3 →L[ℝ] ℝ) (z : Vector3) (i : Fin 4) :
-    velocityMap L z i = L i z := rfl
+    velocityMap L z i = L i z := by rfl
 
 variable (period : ℝ) [Fact (0 < period)]
 
