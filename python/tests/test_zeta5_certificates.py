@@ -1,9 +1,10 @@
 """Check exact and constrained rendering of the Zeta5 certificate archive."""
 
+import hashlib
 import importlib.util
 import json
 import shutil
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 import pytest
 
@@ -49,9 +50,11 @@ def test_complete_archive(tmp_path: Path) -> None:
     GENERATOR.verify_archive(archive)
     assert GENERATOR.regenerate(archive, tmp_path / "generated", False) == 118
     assert GENERATOR.regenerate(archive, tmp_path / "generated", True) == 118
-    manifest = json.loads((archive / "manifest.json").read_text())
+    manifest = json.loads((archive / "manifest.json").read_text(encoding="utf-8"))
     first = tmp_path / "generated" / next(iter(manifest["files"]))
-    first.write_text(first.read_text() + "-- damaged\n")
+    first.write_text(
+        first.read_text(encoding="utf-8") + "-- damaged\n", encoding="utf-8"
+    )
     with pytest.raises(ValueError, match="Certificates differ"):
         GENERATOR.regenerate(archive, tmp_path / "generated", True)
 
@@ -67,7 +70,7 @@ def test_reject_reused_or_symlinked_destination(tmp_path: Path) -> None:
     for destination in (outside, symlink):
         with pytest.raises(FileExistsError):
             GENERATOR.regenerate(SCRIPT.parent / "archive", destination, False)
-    assert sentinel.read_text() == "preserve me"
+    assert sentinel.read_text(encoding="utf-8") == "preserve me"
     assert list(outside.iterdir()) == [sentinel]
 
 
@@ -75,7 +78,7 @@ def test_failed_later_record_creates_nothing(tmp_path: Path) -> None:
     """Create no output when a later template is absent."""
     archive = tmp_path / "archive"
     shutil.copytree(SCRIPT.parent / "archive", archive)
-    manifest = json.loads((archive / "manifest.json").read_text())
+    manifest = json.loads((archive / "manifest.json").read_text(encoding="utf-8"))
     last = list(manifest["files"].values())[-1]
     records = archive / "records" / last["records"]
     records.write_text('[["999", []]]')
@@ -121,3 +124,17 @@ def test_nested_output_and_write_failure_cleanup(
     with pytest.raises(OSError, match="disk full"):
         GENERATOR.regenerate(SCRIPT.parent / "archive", failed_output, False)
     assert not failed_output.exists()
+
+
+def test_archive_manifest_uses_portable_paths(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Look up POSIX manifest keys even when rendering uses Windows paths."""
+    content = b"certificate"
+    path = PureWindowsPath("LeanPool/Zeta5Irrational/Table/U00.lean")
+    manifest = {
+        "files": {path.as_posix(): {"sha256": hashlib.sha256(content).hexdigest()}}
+    }
+    (tmp_path / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    monkeypatch.setattr(GENERATOR, "_render_modules", lambda _: {path: content})
+    GENERATOR.verify_archive(tmp_path)

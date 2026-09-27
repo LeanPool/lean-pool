@@ -36,20 +36,22 @@ def certificate_path(name: str) -> Path:
 
 def _render_modules(archive: Path) -> dict[Path, bytes]:
     """Validate and render every recorded module before touching output."""
-    manifest = json.loads((archive / "manifest.json").read_text())
+    manifest = json.loads((archive / "manifest.json").read_text(encoding="utf-8"))
     modules = {}
     for name, specification in manifest["files"].items():
         relative = certificate_path(name)
         records = json.loads(
-            (archive / "records" / specification["records"]).read_text()
+            (archive / "records" / specification["records"]).read_text(encoding="utf-8")
         )
         blocks = []
         for template, parameters in records:
             if re.fullmatch(r"[0-9]{3}", template) is None:
                 raise ValueError("Invalid template identifier")
-            source = (archive / "templates" / f"{template}.txt").read_text()
+            source = (archive / "templates" / f"{template}.txt").read_text(
+                encoding="utf-8"
+            )
             blocks.append(render(source, parameters))
-        modules[relative] = "".join(blocks).encode()
+        modules[relative] = "".join(blocks).encode("utf-8")
     return modules
 
 
@@ -81,11 +83,11 @@ def regenerate(archive: Path, destination: Path, check: bool) -> int:
 
 def verify_archive(archive: Path) -> None:
     """Check baseline hashes independently of a target checkout."""
-    manifest = json.loads((archive / "manifest.json").read_text())
+    manifest = json.loads((archive / "manifest.json").read_text(encoding="utf-8"))
     for path, content in _render_modules(archive).items():
         if (
             hashlib.sha256(content).hexdigest()
-            != manifest["files"][str(path)]["sha256"]
+            != manifest["files"][path.as_posix()]["sha256"]
         ):
             raise ValueError("Archived certificate differs from its pinned source hash")
 
