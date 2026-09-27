@@ -2611,20 +2611,17 @@ Weierstrass-product lower bound to extract a polynomial growth bound on
 `log|E_p(w)| ≥ -C|w|^{p+1}` applied to all factors). Since `p+1 > lam`,
 this only yields `order Q ≤ p+1`, one higher than needed.
 
-To get the tight bound `order Q ≤ lam`, one must use the **zero-avoiding
-circles** technique (Ahlfors, "Complex Analysis", §5.3): choose the radius
-`r` so that the nearest zero is at distance `≥ r^{-(p+ε)}` from the circle
-`|z| = r`. This is possible for a "good" set of radii of positive density
-(by Borel's lemma on the growth of zeros). On such circles, the lower bound
-improves to `log ‖P(z)‖ ≥ -C r^{lam+ε}`, and then `log ‖Q‖ ≤ r^{lam+ε}`
-follows. The `limsup` definition of `order` allows using a subsequence of
-radii, so the good-radius restriction is harmless.
+The proof below uses an alternative zero-avoiding-circles argument. Zero
+counting and a finite pigeonhole argument choose, for every sufficiently
+large `r`, a radius `R ∈ [r, 2r]` separated from the zero norms. Splitting the
+canonical product into near and far factors gives its lower bound on that
+circle. Monotonicity of the maximum modulus then bounds `Q` at every large
+radius, and the growth characterization of order gives the conclusion.
 
-Alternatively, Conway's log-derivative identity (Lemma 3.1 via
-Poisson–Jensen) shows `g^{(p+1)} ≡ 0` directly without going through the
-order of `Q`. But this requires Poisson–Jensen, which we deferred.
-
-~200–300 lines of careful analysis for either approach; deferred. -/
+For comparison, Ahlfors, *Complex Analysis*, third edition, Chapter 5,
+§3.2, pp. 210–211, proves the polynomial-degree step using differentiated
+Poisson–Jensen. That is a different proof from the circle argument
+formalized here. -/
 theorem order_Q_le_lam_of_factorization
     {f Q : ℂ → ℂ} (hf_entire : Differentiable ℂ f)
     (hf_finite : hasFiniteOrder f)
@@ -2671,7 +2668,7 @@ theorem order_Q_le_lam_of_factorization
     · -- order Q ≤ lam: direct from key
       exact order_le_of_forall_pos_eventually_maxModulus_le_exp_rpow_add
         Q lam hlam hQ_entire key
-  -- Prove the key growth estimate via zero-avoiding circles (Ahlfors §5.3).
+  -- Use the alternative circle argument described above.
   intro ε hε
   set P := canonicalProductZeroSetMultiplicityRank Z p
   have h_zeros_only : ∀ s : ℂ, f s = 0 ↔ ∃ ρ : Z.Zero, s = Z.z ρ := by
