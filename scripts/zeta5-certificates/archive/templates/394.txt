@@ -1,0 +1,7 @@
+lemma cov_{{integer}}_{{integer}} :
+    ∀ t,
+      ({{integer}} / {{integer}} : ℝ) ≤ t → t ≤ ({{integer}} : ℝ) → {{integer}} < t → {{integer}} * Uρ t - Vfield t ≤ M{{integer}} :=
+  fun t h{{integer}} h{{integer}} h{{integer}} =>
+  (le_or_gt t ({{integer}} / {{integer}} : ℝ)).elim (fun h => cov_{{integer}}_{{integer}} t h{{integer}} h h{{integer}})
+    (fun h => cov_{{integer}}_{{integer}} t h.le h{{integer}} h{{integer}})
+
