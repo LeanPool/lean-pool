@@ -22,13 +22,16 @@ import Mathlib.Tactic.NormNum.Pow
 import Mathlib.Tactic.Positivity.Basic
 import Mathlib.Tactic.Ring.Basic
 
-/-! # The configuration inequality (6.9)
+/-! # A variant of the configuration inequality (6.9)
 
 From the raw inequality `energy_raw` with `ε = K⁻⁶`, the potential inequality `potential_ineq`
 (Lemma 6.1), the tail bound (6.8) and the bound for the regularisation error we obtain
 `energy_ineq_final`: for every configuration of `h = 37 n` positive, pairwise distinct points,
 
 `2∑_{i<j} log|tᵢ - tⱼ| - K∑V(tᵢ) + ∑√tᵢ ≤ (λM₀ - I(ρ))K² + 5h + 6h log K`.
+
+The paper uses `(120 + √2)h + 2h log K` for the lower-order terms and `ε = K⁻²`.
+Here the different regularisation estimate and `ε = K⁻⁶` give `5h + 6h log K`.
 -/
 
 @[expose] public section
@@ -182,7 +185,8 @@ lemma sum_pairs_eq {h : ℕ} (t : Fin h → ℝ) :
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [abs_sub_comm]; ring
 
-/-- **(6.9)**, with the constants obtained here. -/
+/-- A variant of **(6.9)** with lower-order terms `5h + 6h log K` instead of
+`(120 + √2)h + 2h log K`, for positive pairwise distinct configurations and `K = 40n`. -/
 theorem energy_ineq_final (n : ℕ) (hn : 0 < n) (t : Fin (37 * n) → ℝ) (ht : ∀ i, 0 < t i)
     (hinj : Function.Injective t) :
     (∑ i, ∑ j ∈ Finset.Ioi i, 2 * Real.log |t j - t i|) - Kr n * ∑ i, Vfield (t i) +

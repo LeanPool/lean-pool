@@ -26,10 +26,13 @@ import Mathlib.Tactic.NormNum.Pow
 import Mathlib.Tactic.Positivity.Basic
 import Mathlib.Tactic.Ring.Basic
 
-/-! # The energy bound (6.14) from the configuration inequality (6.9)
+/-! # Variants of the energy bound (6.14) and configuration inequality (6.9)
 
-* `energy_ineq` : the inequality (6.9) of the paper for every configuration of `h` positive,
-  pairwise distinct points, from `energy_ineq_final` (Lemma 6.1, Lemma 6.2, circle regularisation).
+* `energy_ineq`: a variant of (6.9), with `5h + 6h log K` replacing
+  `(120 + √2)h + 2h log K`, for positive pairwise distinct configurations. It follows from
+  `energy_ineq_final` (Lemma 6.1, Lemma 6.2, circle regularisation).
+* `log_Δ_le'`: a variant of (6.14), with `22 h log K + 50 h` replacing
+  `18 h log K + 160 h`.
 * everything else: the pointwise bound for the integrand of (6.10) and its integration.
 -/
 
@@ -39,8 +42,8 @@ open Filter Topology Set MeasureTheory Finset Polynomial
 
 namespace Zeta5Irrational
 
-/-- **(6.9)**: the logarithmic-energy inequality for configurations, with the constants of
-`energy_ineq_final`. -/
+/-- A variant of **(6.9)** with lower-order terms `5h + 6h log K` instead of
+`(120 + √2)h + 2h log K`, as proved in `energy_ineq_final`. -/
 theorem energy_ineq (n : ℕ) (hn : 0 < n) (t : Fin (37 * n) → ℝ) (ht : ∀ i, 0 < t i)
     (hinj : Function.Injective t) :
     (∑ i, ∑ j ∈ Finset.Ioi i, 2 * Real.log |t j - t i|) - Kr n * ∑ i, Vfield (t i) +
@@ -289,8 +292,8 @@ lemma log_C_le : Real.log ((2 * Real.pi) ^ 5 * 32 * 121) ≤ 18 := by
     _ ≤ (2.7182818283 : ℝ) ^ 18 := by norm_num
     _ ≤ Real.exp 1 ^ 18 := hpow
 
-/-- **(6.14)** (with the linear term `50 h`): the energy bound for `Δ_K(ζ(5))`, from the
-configuration inequality `energy_ineq`. -/
+/-- A variant of **(6.14)** with `22 h log K + 50 h` instead of
+`18 h log K + 160 h`: the energy bound for `Δ_K(ζ(5))` from `energy_ineq`. -/
 theorem log_Δ_le' (n : ℕ) (hn : 0 < n) :
     Real.log (aeval zeta5 (Δ n)) ≤
       2 * (37 * n) * (37 * n + 6 * (3 * n) - 40 * n : ℝ) * Real.log (Kr n) +

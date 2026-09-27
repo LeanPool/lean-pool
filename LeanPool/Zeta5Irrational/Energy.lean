@@ -27,7 +27,8 @@ import Mathlib.Tactic.Ring.RingNF
 
 * the external field `V(t) = 2π√t + ∫₀¹ log(t+u²) du - 6 ∫₀^α log(t+u²) du` of (6.1);
 * the bound `w(y) ≤ (1/π) (1 + 2πy)^5 e^{-2πy}` (a form of (6.11));
-* the sum–integral comparison (6.12) for `u ↦ log (t + u²)`.
+* a variant of the sum–integral comparison (6.12) for `u ↦ log (t + u²)`, using
+  `2 log(2K) + 2` in place of `2 log K + 2` in the upper error bound.
 -/
 
 @[expose] public section

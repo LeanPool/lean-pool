@@ -23,9 +23,9 @@ A variant of Proposition 6.3 (`real_bound`) with `27 K log K` in place of the pa
 `24 K log K` is derived from
 * `Δ_pos` : `Δ_K(ζ(5)) > 0` — proved in `Zeta5Irrational.Positivity` from the moment representation
   `moment_rep` (Proposition 2.2);
-* `log_Δ_le` : the bound (6.14) — proved in `Zeta5Irrational.EnergyBound` from Andréief's identity
-(6.10),
-  the elementary bounds (6.11)–(6.12) and the configuration inequality (6.9) `energy_ineq`
+* `log_Δ_le`: a variant of (6.14) with `22 h log K + 50 h` in place of
+  `18 h log K + 160 h`, proved in `Zeta5Irrational.EnergyBound` from Andréief's identity
+  (6.10), variants of (6.11)–(6.12), and the variant of (6.9) `energy_ineq`
   (proved in `Zeta5Irrational.EnergyFinal` from Lemmas 6.1 and 6.2);
 * `energy_const` : the numerical inequality (6.4), `λ M₀ - I(ρ) + C* ≤ U` — Appendix A.4 —
   proved in `Zeta5Irrational.EnergyConst`;
@@ -39,8 +39,8 @@ open Polynomial Filter Topology Finset
 namespace Zeta5Irrational
 
 /--
-**(6.14)** (proved in `Zeta5Irrational.EnergyBound` from the configuration inequality
-`energy_ineq`). -/
+A variant of **(6.14)** with `22 h log K + 50 h` instead of `18 h log K + 160 h`,
+proved in `Zeta5Irrational.EnergyBound` from the configuration inequality `energy_ineq`. -/
 theorem log_Δ_le (n : ℕ) (hn : 0 < n) :
     Real.log (aeval zeta5 (Δ n)) ≤
       2 * (37 * n) * (37 * n + 6 * (3 * n) - 40 * n : ℝ) * Real.log (Kr n) +
