@@ -32,14 +32,6 @@ namespace HsVirial
 /-- Compatibility name for the standard sum of a list of natural numbers. -/
 def sumNat (xs : List Nat) : Nat := xs.sum
 
-theorem sumNat_replicate_zero (n : Nat) :
-    sumNat (List.replicate n 0) = 0 := by
-  simp [sumNat]
-
-theorem sumNat_append {as bs : List Nat} :
-    sumNat (as ++ bs) = sumNat as + sumNat bs := by
-  exact List.sum_append
-
 theorem sumNat_map_congr {X : Type} {xs : List X} {f g : X -> Nat}
     (h : forall x, f x = g x) :
     sumNat (xs.map f) = sumNat (xs.map g) := by
@@ -49,15 +41,6 @@ theorem list_map_map {X Y Z : Type} (xs : List X) (f : X -> Y)
     (g : Y -> Z) :
     (xs.map f).map g = xs.map (fun x => g (f x)) := by
   exact List.map_map
-
-theorem sumNat_map_add {X : Type} (xs : List X) (f g : X -> Nat) :
-    sumNat (xs.map (fun x => f x + g x)) =
-      sumNat (xs.map f) + sumNat (xs.map g) := by
-  exact List.sum_map_add
-
-theorem sumNat_map_zero {X : Type} (xs : List X) :
-    sumNat (xs.map (fun _ => 0)) = 0 := by
-  simp [sumNat]
 
 theorem mul_sumNat {xs : List Nat} (a : Nat) :
     a * sumNat xs = sumNat (xs.map (fun b => a * b)) := by
@@ -138,17 +121,6 @@ theorem nbc_volume_identity {X T : Type} (points : List X) (trees : List T)
         intro x
         exact indicator_mul_one (region t x) (weight x)
 
-/- The pointwise expression is the finite counterpart of the integral
-   multiplicity.  This name is kept separate so that a later measure-theory
-   layer can state its bridge without changing this checked algebra. -/
-theorem nbc_multiplicity_is_region_sum {X T : Type}
-    (points : List X) (trees : List T) (weight : X -> Nat)
-    (region : T -> X -> Bool) :
-    sumNat (points.map (fun x =>
-      weight x * nbcMultiplicity trees region x)) =
-      sumNat (trees.map (nbcRegionWeight points weight region)) := by
-  exact nbc_volume_identity points trees weight region
-
 /-- Compatibility name for the standard sum of a list of integers. -/
 def sumInt (xs : List Int) : Int := xs.sum
 
@@ -221,11 +193,6 @@ theorem sumInt_append {as bs : List Int} :
     sumInt (as ++ bs) = sumInt as + sumInt bs := by
   exact List.sum_append
 
-theorem sumInt_map_congr {A : Type} {xs : List A} {f g : A -> Int}
-    (h : forall a, f a = g a) :
-    sumInt (xs.map f) = sumInt (xs.map g) := by
-  exact congrArg sumInt (List.map_congr_left fun x _ => h x)
-
 theorem signedList_eq_constant {A : Type} (xs : List A)
     (size : A -> Nat) (rank : Nat)
     (same_sign : forall a, a ∈ xs ->
@@ -233,10 +200,6 @@ theorem signedList_eq_constant {A : Type} (xs : List A)
     signedList xs size =
       sumInt (xs.map (fun _ => paritySign rank)) := by
   exact congrArg sumInt (List.map_congr_left fun a ha => same_sign a ha)
-
-theorem sumInt_perm {as bs : List Int} (h : as.Perm bs) :
-    sumInt as = sumInt bs := by
-  exact h.sum_eq
 
 theorem sumInt_pair_zero {A : Type} (pairs : List (A × A))
     (size : A -> Nat)
@@ -288,36 +251,5 @@ theorem signed_sum_of_nbc_pairing {A : Type} (P : NBCPairing A) :
   rw [hbad_map]
   simp
 
-/-!
-  This is the graph-ledger reading of the preceding certificate.  Once the
-  finite graph construction supplies the pairing decomposition, `m` is the
-  signed connected-subgraph sum and `good` is exactly the unpaired NBC-tree
-  list.  No external combinatorial theorem is used by this composition.
--/
-/-- The alternating signed count of the listed connected subgraphs. -/
-def signedConnectedLedger {A : Type} (connectedSubgraphs : List A)
-    (size : A -> Nat) : Int :=
-  signedList connectedSubgraphs size
-
-/-- The alternating signed count of the listed no-broken-circuit trees. -/
-def nbcTreeLedger {A : Type} (nbcTrees : List A) (size : A -> Nat) : Int :=
-  signedList nbcTrees size
-
-theorem signed_connected_ledger_eq_nbc_tree_ledger {A : Type}
-    (P : NBCPairing A) :
-    signedConnectedLedger P.all P.size =
-      nbcTreeLedger P.good P.size := by
-  exact signed_sum_of_nbc_pairing P
-
-/-- The number of listed surviving trees multiplied by the common rank-parity sign. -/
-def nbcSignedCount {A : Type} (trees : List A) (rank : Nat) : Int :=
-  sumInt (trees.map (fun _ => paritySign rank))
-
-theorem signed_connected_ledger_eq_nbc_signed_count {A : Type}
-    (P : NBCPairing A) :
-    signedConnectedLedger P.all P.size =
-      nbcSignedCount P.good P.rank := by
-  rw [signed_connected_ledger_eq_nbc_tree_ledger P]
-  exact signedList_eq_constant P.good P.size P.rank P.goodParity
 
 end HsVirial
