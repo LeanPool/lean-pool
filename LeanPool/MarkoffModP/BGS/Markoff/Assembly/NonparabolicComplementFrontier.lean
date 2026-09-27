@@ -149,8 +149,7 @@ theorem four_mul_prime_le_puncturedComponentComplementFinset_card
       (prime_dvd_puncturedComponentComplementFinset_card p hpThree c)
   exact Nat.le_of_dvd (Finset.card_pos.mpr hnonempty) hdiv
 
-/-- The normalized surface point used in the punctured-component hypotheses. -/
-def normalizedPuncturedPointNonparabolicComplement
+private def normalizedPuncturedPointNonparabolicComplement
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
   normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)
@@ -192,7 +191,7 @@ theorem
       (p : ℝ) ^ (5 / 6 : ℝ) ≤
           maximalCoordinateRotationOrder z.1 →
       SameNormalizedComponent
-        (normalizedPuncturedPointNonparabolicComplement c) z)
+        (normalizedSurfaceOfPunctured (puncturedNormalizationEquiv (ZMod p) c)) z)
     (hsign : ∀ (s : EvenSign)
         (x : PuncturedMarkoffSurface (ZMod p)),
       s • x ∈ puncturedComponentComplementFinset p c ↔

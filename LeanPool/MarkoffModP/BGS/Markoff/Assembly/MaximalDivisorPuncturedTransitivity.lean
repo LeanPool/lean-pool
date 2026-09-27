@@ -30,8 +30,7 @@ namespace BGS.Markoff
 
 noncomputable section
 
-/-- The normalized surface point used in the punctured-component hypotheses. -/
-def normalizedPuncturedPointMaximalDivisors
+private def normalizedPuncturedPointMaximalDivisors
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
   normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)
@@ -71,7 +70,7 @@ theorem puncturedMarkoffTransitiveAt_of_maximalDivisor_frontier
       (p : ℝ) ^ (5 / 6 : ℝ) ≤
           maximalCoordinateRotationOrder z.1 →
       SameNormalizedComponent
-        (normalizedPuncturedPointMaximalDivisors c) z) :
+        (normalizedSurfaceOfPunctured (puncturedNormalizationEquiv (ZMod p) c)) z) :
     PuncturedMarkoffTransitiveAt p Fact.out := by
   classical
   have hpTwo : p ≠ 2 := by omega

@@ -27,8 +27,7 @@ namespace BGS.Markoff
 
 noncomputable section
 
-/-- The normalized surface point used in the punctured-component hypotheses. -/
-def normalizedPuncturedPointExactOrderComplement
+private def normalizedPuncturedPointExactOrderComplement
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
   normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)
@@ -43,7 +42,7 @@ theorem exists_exactOrderRootSum_obstruction_of_not_samePuncturedComponent
       (p : ℝ) ^ (5 / 6 : ℝ) ≤
           maximalCoordinateRotationOrder z.1 →
       SameNormalizedComponent
-        (normalizedPuncturedPointExactOrderComplement c) z)
+        (normalizedSurfaceOfPunctured (puncturedNormalizationEquiv (ZMod p) c)) z)
     (hfour : 4 ∣ (puncturedComponentComplementFinset p c).card)
     (hcx : ¬ SamePuncturedComponent c x) :
     ∃ d : ℕ,
@@ -172,7 +171,7 @@ theorem exists_exactOrderRootSum_obstruction_of_not_puncturedTransitive
       (p : ℝ) ^ (5 / 6 : ℝ) ≤
           maximalCoordinateRotationOrder z.1 →
       SameNormalizedComponent
-        (normalizedPuncturedPointExactOrderComplement c) z)
+        (normalizedSurfaceOfPunctured (puncturedNormalizationEquiv (ZMod p) c)) z)
     (hfour : 4 ∣ (puncturedComponentComplementFinset p c).card)
     (hnotTransitive : ¬ PuncturedMarkoffTransitiveAt p Fact.out) :
     ∃ d : ℕ,

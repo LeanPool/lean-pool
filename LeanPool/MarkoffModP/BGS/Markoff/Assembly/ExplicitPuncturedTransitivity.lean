@@ -28,7 +28,7 @@ namespace BGS.Markoff
 noncomputable section
 
 /-- The normalized surface point underlying an original punctured point. -/
-def normalizedPuncturedPoint
+private def normalizedPuncturedPoint
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
   normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)
@@ -68,7 +68,8 @@ theorem puncturedMarkoffTransitiveAt_of_maximalOrbit_frontier
         ((p - 1).divisors.card + (p + 1).divisors.card) * d < p)
     (hlarge : ∀ z : NormalizedMarkoffSurface (ZMod p),
       (p : ℝ) ^ (5 / 6 : ℝ) ≤ maximalCoordinateRotationOrder z.1 →
-      SameNormalizedComponent (normalizedPuncturedPoint c) z) :
+      SameNormalizedComponent
+        (normalizedSurfaceOfPunctured (puncturedNormalizationEquiv (ZMod p) c)) z) :
     PuncturedMarkoffTransitiveAt p Fact.out := by
   classical
   have hpTwo : p ≠ 2 := by omega

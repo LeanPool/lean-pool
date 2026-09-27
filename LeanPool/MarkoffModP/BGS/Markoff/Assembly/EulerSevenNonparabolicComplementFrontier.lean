@@ -24,8 +24,7 @@ open BGS.NumberTheory
 
 noncomputable section
 
-/-- The normalized surface point used in the punctured-component hypotheses. -/
-def normalizedPuncturedPointEulerSevenComplement
+private def normalizedPuncturedPointEulerSevenComplement
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
   normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)
@@ -66,7 +65,7 @@ theorem
       (p : ℝ) ^ (5 / 6 : ℝ) ≤
           maximalCoordinateRotationOrder z.1 →
       SameNormalizedComponent
-        (normalizedPuncturedPointEulerSevenComplement c) z)
+        (normalizedSurfaceOfPunctured (puncturedNormalizationEquiv (ZMod p) c)) z)
     (hsign : ∀ (s : EvenSign)
         (x : PuncturedMarkoffSurface (ZMod p)),
       s • x ∈ puncturedComponentComplementFinset p c ↔

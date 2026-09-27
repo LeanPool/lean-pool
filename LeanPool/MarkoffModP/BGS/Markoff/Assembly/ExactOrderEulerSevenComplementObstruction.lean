@@ -23,8 +23,7 @@ namespace BGS.Markoff
 
 noncomputable section
 
-/-- The normalized surface point used in the punctured-component hypotheses. -/
-def normalizedPuncturedPointExactOrderEulerSeven
+private def normalizedPuncturedPointExactOrderEulerSeven
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
   normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)
@@ -58,7 +57,7 @@ theorem
       (p : ℝ) ^ (5 / 6 : ℝ) ≤
           maximalCoordinateRotationOrder z.1 →
       SameNormalizedComponent
-        (normalizedPuncturedPointExactOrderEulerSeven c) z)
+        (normalizedSurfaceOfPunctured (puncturedNormalizationEquiv (ZMod p) c)) z)
     (hlinear : ∀ d : ℕ,
       (d : ℝ) < (p : ℝ) ^ (5 / 6 : ℝ) →
       24 * (middleGameMaximalOrders p d).card * d < p)
@@ -236,7 +235,7 @@ theorem
       (p : ℝ) ^ (5 / 6 : ℝ) ≤
           maximalCoordinateRotationOrder z.1 →
       SameNormalizedComponent
-        (normalizedPuncturedPointExactOrderEulerSeven c) z)
+        (normalizedSurfaceOfPunctured (puncturedNormalizationEquiv (ZMod p) c)) z)
     (hlinear : ∀ d : ℕ,
       (d : ℝ) < (p : ℝ) ^ (5 / 6 : ℝ) →
       24 * (middleGameMaximalOrders p d).card * d < p)

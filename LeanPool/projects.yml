@@ -1,4 +1,65 @@
 projects:
+  - slug: zeta-five-irrational
+    title: Irrationality of the Riemann zeta function at five
+    summary: >-
+      Proves that Mathlib's Riemann zeta function at five is an irrational
+      real number, following Aabir Fauzan's September 2026 preprint.
+      Constructs integer polynomials of degree 37n with positive values
+      at zeta(5) that decay exponentially in n squared. Includes a general
+      integer-polynomial irrationality criterion, Hankel determinant and
+      moment-integral identities, logarithmic-energy estimates, prime-adic
+      integrality bounds, and kernel-checked rational certificates. The
+      formalization uses a different normalizer and a positive decay
+      constant in place of the paper's specific constant 139/5. Reuses the
+      prime number theorem infrastructure already in the MooreBound project.
+    branch: number theory
+    entry_module: LeanPool.Zeta5Irrational
+    authors:
+      - Moritz Firsching
+    source:
+      title: Zeta5 formalization of Aabir Fauzan's zeta(5) is irrational
+      url: https://github.com/mo271/Zeta5/tree/f19a1960609f7d38e7b63fd2acb05e6f60a7b741
+      github_repo: mo271/Zeta5
+      commit: f19a1960609f7d38e7b63fd2acb05e6f60a7b741
+    license: Apache-2.0
+    status: verified
+    provenance: mix
+    main_declarations:
+      - Zeta5Irrational.irrational_five
+    main_results:
+      - declaration: Zeta5Irrational.irrational_five
+        informal: >-
+          There exists an irrational real number x whose complex coercion
+          equals Mathlib's Riemann zeta function evaluated at five.
+        source_ref: >-
+          Fauzan, zeta(5) is irrational, Theorem 1.1, September 17, 2026,
+          https://doi.org/10.5281/zenodo.22826419; upstream Apery/Main.lean.
+          The completed formalization was released on September 23, 2026.
+      - declaration: Zeta5Irrational.main_estimate
+        informal: >-
+          There is a positive real c such that, for all sufficiently large
+          n, an integer polynomial Q of degree 37n is a positive rational
+          multiple of the constructed determinant polynomial and satisfies
+          0 < Q(zeta(5)) < exp(-c*n^2).
+        source_ref: >-
+          Upstream Apery/MainEstimate.lean; variant of the paper's Theorem 2.1
+          with c = -800*(Aeff + U) instead of 139/5.
+      - declaration: Zeta5Irrational.irrational_of_eventually_exists_int_poly
+        informal: >-
+          A real xi is irrational if, eventually, integer polynomials of
+          degree at most d(n) have positive values at xi bounded by epsilon(n),
+          and b^d(n)*epsilon(n) tends to zero for every positive natural b.
+        source_ref: Upstream Apery/Criterion.lean; the paper's Section 1.1.
+    tags:
+      - irrationality
+      - zeta-function
+      - hankel-determinants
+      - potential-theory
+      - certified-computation
+    msc:
+      - 11J72
+      - 11M06
+      - 31A15
   - slug: block-spectral-sensitivity
     title: Block sensitivity can exceed spectral sensitivity squared
     summary: >-
@@ -10307,6 +10368,344 @@ projects:
     msc:
       - '12F05'
       - '13F25'
+
+  - slug: lean-spectral-theory
+    title: lean-spectral-theory
+    summary: The spectral theorem for possibly unbounded self-adjoint operators on complex Hilbert
+      spaces, formalized through the Cayley transform and real projection-valued measures. The
+      selected spectral theorem constructs a PVM whose scalar measures give the exact finite-second-moment
+      domain and first-moment quadratic form, with measurable-set uniqueness, and is proved
+      equivalent to equality with the unbounded coordinate spectral integral. The selected Stone
+      theorem proves both that strongly continuous one-parameter unitary groups have self-adjoint
+      generators and that every self-adjoint operator generates such a group.
+    branch: functional analysis
+    entry_module: LeanPool.SpectralTheory
+    authors:
+    - Ezzeri Esa
+    source:
+      url: https://github.com/savarin/lean-spectral-theory
+      github_repo: savarin/lean-spectral-theory
+      commit: d19e279f0ab244657f02ce678e8d67fa69e2f407
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - PalomarSpectralStone.spectral_theorem_intrinsic
+    main_results:
+    - declaration: PalomarSpectralStone.spectral_theorem_intrinsic
+      informal: Every self-adjoint partial linear operator on a complex Hilbert space has a
+        real projection-valued measure representing its domain and scalar moments, unique on
+        Borel sets.
+    - declaration: PalomarSpectralStone.stone_theorem_intrinsic
+      informal: Every strongly continuous one-parameter unitary group has a self-adjoint
+        generator, and every self-adjoint operator generates such a group.
+    tags:
+    - functional-analysis
+    msc:
+    - 47A10
+    - 47B15
+    provenance: AI
+  - slug: nemytskii-lebesgue
+    title: Nemytskii operators on Lebesgue spaces
+    summary: >-
+      Develops superposition operators induced by Caratheodory functions:
+      measurability, Lp-to-Lq growth bounds and sequential continuity,
+      Lipschitz estimates, monotonicity and coercivity, and Frechet remainder
+      estimates. For Lebesgue measure on the real line and finite-dimensional
+      real fibers, characterizes when every Lp input has an Lq output by the
+      standard integrable-envelope growth condition, for 1 <= p,q < infinity.
+      First-order remainder estimates on arbitrary measure spaces assume a
+      Caratheodory derivative with the stated Holder-compatible growth.
+      The integral-functional result bounds the integrated remainder and
+      proves integrability of the linearized integrand; it does not assert
+      integrability of the original integrand without its separate growth
+      hypotheses. Caratheodory here requires strongly measurable sections
+      and almost-everywhere continuity in the fiber variable.
+    branch: nonlinear functional analysis
+    entry_module: LeanPool.NemytskiiLebesgue
+    authors:
+      - Petr Girg
+      - Petr Nečesal
+      - Martin Dvořák
+      - Jakub Psutka
+    source:
+      title: Nemytskii operators on Lebesgue spaces
+      url: https://github.com/madvorak/nemytskii-lebesgue/tree/d276c27a1e3ebbd9eb09f25243b5e9808ca168d7
+      github_repo: madvorak/nemytskii-lebesgue
+      commit: d276c27a1e3ebbd9eb09f25243b5e9808ca168d7
+      completion_commit: 12e914c8b05694f2ea339a27c4af3d0bdf068922
+      release: https://github.com/madvorak/nemytskii-lebesgue/releases/tag/v4.33.1
+      completion_date: '2026-09-21T13:49:28Z'
+      dependencies:
+        - url: https://github.com/madvorak/utilities-zcu/tree/49f60eacb1401f82358b7d66ee447ea7f2fdebf1
+          license: Apache-2.0
+          scope: UtilitiesZCU/Basic.lean
+      provenance_note: >-
+        Upstream credits the four listed authors. Its README and available
+        commit history contain no AI disclosure; this is evidence under the
+        repository's human-provenance rubric, not proof of tool non-use.
+        The imported version includes substantial AI-assisted Mathlib porting
+        and proof refactoring by OpenAI Codex, so it is recorded as mixed.
+    license: Apache-2.0
+    status: verified
+    provenance: mix
+    main_declarations:
+      - NemytskiiLebesgue.IsCaratheodory.memLp_nemytskii_volume_iff_growth
+    main_results:
+      - declaration: NemytskiiLebesgue.IsCaratheodory.memLp_nemytskii_volume_iff_growth
+        informal: >-
+          For f from R times R^m to R^k with strongly measurable sections and
+          almost-everywhere continuous fibers, and 1 <= p,q < infinity,
+          every Lp input gives an Lq output if and only if there exist an Lq
+          real envelope a and a nonnegative constant C such that almost
+          everywhere, simultaneously for every fiber vector xi,
+          norm(f(x,xi)) <= abs(a(x)) + C * norm(xi)^(p/q).
+        source_ref: Upstream NemytskiiLebesgue/ConverseImplication.lean.
+      - declaration: NemytskiiLebesgue.IsCaratheodory.nemytskii_seqContinuous_of_memLp_of_growth_real
+        informal: >-
+          On any measure space, the same Caratheodory and growth assumptions
+          imply that a sequence of Lp functions converging in Lp to an Lp
+          function has superposition images converging in Lq, for finite
+          exponents p,q at least one and finite-dimensional real fibers.
+        source_ref: Upstream NemytskiiLebesgue/Continuity.lean.
+      - declaration: NemytskiiLebesgue.IsCaratheodory.eLpNorm_frechet_remainder_le_ofReal_mul_eLpNorm
+        informal: >-
+          On a measure space, suppose f and its fiber derivative f'
+          are Caratheodory, f' is the Frechet derivative at every fiber point
+          almost everywhere, p,r >= 1 satisfy 1/q = 1/r + 1/p, and f' is
+          bounded by b + C * norm(xi)^(p/r) with nonnegative b in Lr and C > 0.
+          At each Lp function u, the Lq integral quantity (a quasi-norm when
+          q < 1) of the first-order remainder is at most epsilon times the
+          Lp norm of l whenever l is in Lp and
+          its Lp norm is sufficiently small.
+        source_ref: >-
+          Upstream NemytskiiLebesgue/Frechet.lean; generalized in this port
+          by removing an unused finite-measure assumption.
+      - declaration: NemytskiiLebesgue.IsCaratheodory.integralFunctional_frechet_deriv
+        informal: >-
+          On a measure space with finite-dimensional real inputs,
+          under Caratheodory assumptions on f and its fiber derivative f',
+          conjugate exponents p,q, and derivative growth b + C*norm(xi)^(p-1)
+          with nonnegative b in Lq and C > 0, the linearized integrand is
+          integrable for every Lp perturbation. The norm of the integral of
+          the first-order remainder is at most epsilon times the Lp norm of
+          the perturbation when that norm is sufficiently small.
+        source_ref: >-
+          Upstream NemytskiiLebesgue/IntegralFunctional.lean; generalized in
+          this port by removing an unused finite-measure assumption.
+    tags:
+      - nonlinear-analysis
+      - nemytskii-operators
+      - lebesgue-spaces
+      - differentiation
+    msc:
+      - 47H30
+      - 46E30
+      - 47J05
+
+  - slug: besicovitchs-1-2
+    title: A machine-checked bound of 0.6934 for Besicovitch's 1/2-problem
+    summary: >-
+      Proves the planar Besicovitch threshold is at most 6934/10000, improving the published
+      7/10 record. The development formalizes the finite six-point reduction, thirty rational Gram
+      certificates, the endpoint isolation argument, and Besicovitch's classical lower-bound example.
+    branch: geometric measure theory
+    entry_module: LeanPool.Besicovitch
+    authors:
+      - Yongxi Lin
+    source:
+      title: The bound sigma_1(R^2) <= 6934/10000 for Besicovitch's 1/2-problem
+      authors:
+        - Yongxi Lin
+      url: https://github.com/CoolRmal/Besicovitchs-1-2
+      github_repo: CoolRmal/Besicovitchs-1-2
+      commit: 17c9597b2a901bf386d5bb8382d0a74d2069f25b
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - LeanPool.Besicovitch.sigmaOne_plane_le_barS
+    main_results:
+      - declaration: LeanPool.Besicovitch.sigmaOne_plane_le_barS
+        informal: >-
+          The planar one-dimensional rectifiability threshold is at most 6934/10000, improving the
+          published upper bound 7/10.
+      - declaration: LeanPool.Besicovitch.forcesOneRectifiability_plane_of_barS_lt
+        informal: >-
+          Every threshold strictly above 6934/10000 forces countable one-rectifiability in the plane.
+      - declaration: LeanPool.Besicovitch.Example.one_half_le_sigmaOne_plane
+        informal: >-
+          The planar threshold is at least one half, witnessed by Besicovitch's purely unrectifiable
+          example.
+      - declaration: LeanPool.Besicovitch.weightedPairScore_le_of_separated
+        informal: >-
+          Thirty exact rational Gram certificates prove the weighted six-point score is at most
+          -1/2000 for every separated admissible pair in the unit ball.
+    tags:
+      - besicovitch-problem
+      - measure-theory
+      - rectifiability
+      - finite-certificates
+      - gram-matrices
+    msc:
+      - "28A75"
+      - "28A78"
+      - "49Q15"
+      - "68V20"
+      - "90C05"
+
+  - slug: stallings-folding
+    title: Verified Stallings folding for finitely generated subgroups of F2
+    summary: Constructs a finite inverse automaton recognizing the subgroup generated by any
+      finite list of signed words in the rank-two free group. Proves exact subgroup preservation
+      and correctness of canonical reduced-word membership testing. Reusable infrastructure
+      includes inverse-automaton walks, reduction-compatible traversal, finite fold congruences,
+      coset potentials, flower graphs, and basis roses. Folding uses exhaustive finite search
+      over Boolean relations; no complexity bound, core pruning, subgroup basis, intersection,
+      or index algorithm is claimed.
+    branch: computational group theory
+    entry_module: LeanPool.StallingsFolding
+    authors:
+    - Arthur Freitas Ramos
+    source:
+      title: Verified finite automata for finitely generated subgroups of F2
+      url: https://github.com/Arthur742Ramos/stallings-folding/tree/117dde0a8415d3da1787e15ad22a6223a744432d
+      github_repo: Arthur742Ramos/stallings-folding
+      commit: 117dde0a8415d3da1787e15ad22a6223a744432d
+      completion_commit: 0291588d2737f10d4fb17be947277680cd3c6462
+      completion_date: '2026-09-23T04:05:29Z'
+      announcement: https://palomar-registry.org/entry?id=PALOMAR-2026-09-23-000004&version=1
+      announcement_date: '2026-09-23T05:20:13Z'
+      mathematical_source: John R. Stallings, Topology of Finite Graphs, Inventiones Mathematicae
+        71 (1983), 551-565, doi:10.1007/BF02095993. This is the rank-two finite-recognizer special
+        case, implemented through least congruences rather than a sequence of local folds.
+      background: Ilya Kapovich and Alexei Myasnikov, Stallings Foldings and Subgroups of Free
+        Groups, Journal of Algebra 248 (2002), 608-668, doi:10.1006/jabr.2001.9033.
+      scope: All four Stallings library modules and the proved finite-recognizer endpoint from
+        Solution.lean. The standalone challenge placeholder, statement-audit tooling, and CI
+        files are omitted. Mathlib is the only dependency.
+      port_extensions: >-
+        Flower vertices now contain exactly the internal positions of each word,
+        instead of padding all words to a common maximum length. The new Restriction
+        module proves preservation when folding an edge-closed finite vertex set
+        containing the basepoint; its potential is required only on the selected set.
+        These AI-assisted port extensions are not attributed to the upstream release.
+      provenance_note: Upstream formalization.yaml records human-directed GPT-6 Codex proof
+        development. Lean Pool porting, cleanup, and optimization were also performed by OpenAI
+        Codex. Author attribution follows upstream.
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - Stallings.folded_recognizer_exists
+    main_results:
+    - declaration: Stallings.folded_recognizer_exists
+      informal: For every finite list S of signed words on two generators, there exist a finite
+        type of states, a base state, and a partial transition table with inverse-labelled reverse
+        edges, such that traversing the canonical reduced word of any g in FreeGroup (Fin 2)
+        returns to the base exactly when g lies in the subgroup generated by the word values
+        in S. The witness is the computed flower-graph fold.
+      source_ref: Upstream Solution.lean, completeStatement and folded_recognizer_exists.
+    - declaration: Stallings.foldWords_loopSubgroup_eq_generatorSubgroup
+      informal: For every finite input list of signed words in the rank-two free group, the
+        based-loop subgroup of the computed folded flower graph equals the subgroup generated
+        by the input words.
+      source_ref: Upstream Stallings/Flower.lean.
+    - declaration: Stallings.foldedMembershipTest_eq_true_iff
+      informal: For any finite generating list S and any rank-two free-group element g, the
+        executable folded-automaton test returns true if and only if g belongs to the subgroup
+        generated by S. There is no efficiency guarantee for constructing the automaton.
+      source_ref: Upstream Stallings/Flower.lean.
+    tags:
+    - free-groups
+    - stallings-folding
+    - finite-automata
+    - verified-algorithms
+    msc:
+    - 20E05
+    - 68Q45
+    - 03B35
+
+  - slug: boolean-multiplication
+    title: Exact Boolean multiplicative complexity of four-term polynomial multiplication
+    summary: >-
+      Proves that multiplying two binary polynomials with n coefficients needs
+      exactly 0, 1, 3, 6, and 9 AND gates for n = 0, 1, 2, 3, and 4, with XOR
+      and constants free and arbitrary reuse of earlier nonlinear wires.
+      The main lower bound excludes every eight-gate circuit for n = 4.
+      Develops Boolean algebraic normal forms equivalent to all Boolean
+      functions, a general circuit model, dimension bounds, circuit rewiring,
+      a Reed-Muller minimum-weight theorem, and exterior-algebra and jet
+      arguments controlling nonlinear feedback.
+    branch: computational complexity
+    entry_module: LeanPool.BooleanMultiplication
+    authors:
+      - Gregory Morse
+    source:
+      title: >-
+        Unrestricted Boolean Multiplicative Complexity of Four-Term Binary
+        Polynomial Multiplication: Rational Places, Hasse Jets, and the
+        Failure of Nonlinear Feedback
+      arxiv: '2608.30238v1'
+      url: https://github.com/GregoryMorse/unrestricted-boolean-mul/tree/79a801760668f52bb00a9e1a406e841375c58a6d
+      github_repo: GregoryMorse/unrestricted-boolean-mul
+      commit: 79a801760668f52bb00a9e1a406e841375c58a6d
+      announcement_date: '2026-08-31T04:33:48Z'
+      announcement_url: https://github.com/GregoryMorse/unrestricted-boolean-mul/releases/tag/n4-arxiv-v2
+      notes: >-
+        The complete Lean release predates the arXiv v1 submission of
+        2026-08-31T04:45:12Z. The selected September 22 commit corrects
+        release metadata; eligibility rests on the complete August 31 Lean release at
+        2ebc0cf42039e4b5de84cb7f9d97cad4791c669d. The August 29 release
+        contained computational artifacts, not the Lean formalization.
+        The author discloses GPT-5.6 Sol for original research and proof
+        development, Opus 5 as a critical referee, and Codex for release
+        preparation. Gregory Morse directed and reviewed the work and
+        assumes responsibility. AI provenance records the proof-producing
+        agent workflow; human direction alone is not classified as mixed
+        formalization. The complete upstream MIT notice is retained in
+        LeanPool/BooleanMultiplication.lean. Only the published n <= 4
+        dependency closure is imported; no n = 5 or n = 6 claim is made.
+    license: MIT
+    status: verified
+    provenance: AI
+    main_declarations:
+      - UnrestrictedBooleanMul.N4.mc_mul_four
+    main_results:
+      - declaration: UnrestrictedBooleanMul.mc_mul_zero
+        informal: The empty polynomial multiplication map needs zero AND gates.
+        source_ref: Proposition 2.3; the n = 0 target has no output coordinates.
+      - declaration: UnrestrictedBooleanMul.mc_mul_one
+        informal: Multiplying two one-coefficient binary polynomials needs exactly one AND gate.
+        source_ref: Proposition 2.3.
+      - declaration: UnrestrictedBooleanMul.mc_mul_two
+        informal: Multiplying two two-coefficient binary polynomials needs exactly three AND gates.
+        source_ref: Proposition 2.3.
+      - declaration: UnrestrictedBooleanMul.mc_mul_three
+        informal: Multiplying two three-coefficient binary polynomials needs exactly six AND gates.
+        source_ref: Proposition 2.4; the lower bound is proved internally.
+      - declaration: UnrestrictedBooleanMul.N4.mc_mul_four
+        informal: >-
+          Multiplying two four-coefficient binary polynomials needs exactly
+          nine AND gates, allowing free XOR, constants, and unrestricted
+          nonlinear reuse.
+        source_ref: Theorem 9.1.
+      - declaration: UnrestrictedBooleanMul.N4.no_eight_gate_circuit
+        informal: >-
+          No eight-AND circuit with free XOR, constants, and arbitrary
+          nonlinear reuse computes all seven output coefficients of the
+          product of two four-coefficient binary polynomials.
+        source_ref: Theorem 9.1, lower bound.
+    tags:
+      - computational-complexity
+      - boolean-circuits
+      - polynomial-multiplication
+      - algebraic-normal-form
+    msc:
+      - '68Q06'
+      - '68Q17'
+      - '68W30'
+      - '15A75'
+      - '94D10'
   - slug: markoff-modp
     title: Markoff mod p
     summary: Lean 4 formalization of strong approximation for the Markoff surface modulo
