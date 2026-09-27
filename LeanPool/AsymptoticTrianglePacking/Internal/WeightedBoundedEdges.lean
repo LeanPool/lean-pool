@@ -620,5 +620,9 @@ theorem fracNibble_leUniform (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (hβ : 0 < β) 
 
 -- Axiom check: `[propext, Classical.choice, Quot.sound]`.
 
+/-- The proved theorem meets the independently stated bounded-edge interface. -/
+theorem boundedEdgeWeightedRounding_holds : Hypergraph.BoundedEdgeWeightedRounding := by
+  intro r hr β hβ
+  exact fracNibble_leUniform r hr β hβ
 
 end Nibble
