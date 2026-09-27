@@ -1,0 +1,19 @@
+def aInL : List ℚ :=
+  [({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}}), ({{integer}} / {{integer}}), ({{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}})]
+
+/-- Rational intercepts of the {{integer}} inner-range linear pieces. -/

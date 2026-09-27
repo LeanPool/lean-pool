@@ -1,0 +1,11 @@
+def bOutL : List ℚ :=
+  [(-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}})]
+
+/-- The `i`th outer-range endpoint as a real number; zero outside the table. -/
+noncomputable def tOut (i : ℕ) : ℝ :=
+  ((tOutL.getD i {{integer}} : ℚ) : ℝ)
+
+/-- The affine bound on outer piece `i`, with coefficients from `aOutL` and `bOutL`. -/
+noncomputable def gOut (i : ℕ) (x : ℝ) : ℝ :=
+  ((aOutL.getD i {{integer}} : ℚ) : ℝ) * x + ((bOutL.getD i {{integer}} : ℚ) : ℝ)
+
