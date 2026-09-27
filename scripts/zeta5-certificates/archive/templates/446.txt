@@ -1,0 +1,5 @@
+def aOutL : List ℚ :=
+  [({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}),
+    ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}}), ({{integer}} / {{integer}})]
+
+/-- Rational intercepts of the {{integer}} outer-range linear pieces. -/
