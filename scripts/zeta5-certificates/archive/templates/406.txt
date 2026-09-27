@@ -1,0 +1,63 @@
+theorem inPiece_{{integer}} (x : ℝ) (h{{integer}} : (({{integer}}) / {{integer}} : ℝ) ≤ x) (h{{integer}} : x < (({{integer}}) / {{integer}} : ℝ)) :
+    Ein x ({{integer}}) = (({{integer}}) / {{integer}} : ℝ) * x + ((-{{integer}}) : ℝ) := by
+  rw [Ein_expand ({{integer}}) (q := {{integer}}) (q' := {{integer}}) (μ := {{integer}}) (by norm_num; linarith) (by norm_num; linarith)
+      (by norm_num; linarith) (by norm_num; linarith) (by norm_num; linarith)
+      (by norm_num; linarith) (by linarith)]
+  have hf{{integer}} : ({{integer}} : ℝ) ≤ x - ({{integer}} : ℝ) := by linarith
+  have hf{{integer}} : x - ({{integer}} : ℝ) < {{integer}} := by linarith
+  have hg{{integer}} : ({{integer}} : ℝ) ≤ {{integer}} / {{integer}} * x - ({{integer}} : ℝ) := by linarith
+  have hg{{integer}} : {{integer}} / {{integer}} * x - ({{integer}} : ℝ) < {{integer}} := by linarith
+  have e{{integer}} :
+    ccount (x - ({{integer}} : ℝ)) ({{integer}} / {{integer}} * x - ({{integer}} : ℝ)) {{integer}} {{integer}} = (({{integer}} : ℝ) * x + (({{integer}}) / {{integer}} : ℝ)) := by
+    rw [cc{{integer}}]
+    ring
+  have e{{integer}} :
+    ccount (x - ({{integer}} : ℝ)) ({{integer}} / {{integer}} * x - ({{integer}} : ℝ)) {{integer}} {{integer}} =
+      ((({{integer}}) / {{integer}} : ℝ) * x + ({{integer}} : ℝ)) := by
+    rw [cc{{integer}} hg{{integer}} hg{{integer}}]
+    simp only [min_def]
+    split_ifs <;> linarith
+  have e{{integer}} :
+    ccount (x - ({{integer}} : ℝ)) ({{integer}} / {{integer}} * x - ({{integer}} : ℝ)) {{integer}} {{integer}} = (({{integer}} : ℝ) * x + ({{integer}} : ℝ)) := by
+    rw [cc{{integer}} hg{{integer}}]
+    simp only [max_def]
+    split_ifs <;> linarith
+  have e{{integer}} :
+    ccount (x - ({{integer}} : ℝ)) ({{integer}} / {{integer}} * x - ({{integer}} : ℝ)) {{integer}} {{integer}} = (({{integer}} : ℝ) * x + ((-{{integer}}) : ℝ)) := by
+    rw [cc{{integer}} hf{{integer}} hf{{integer}}]
+    simp only [min_def]
+    split_ifs <;> linarith
+  have e{{integer}} :
+    ccount (x - ({{integer}} : ℝ)) ({{integer}} / {{integer}} * x - ({{integer}} : ℝ)) {{integer}} {{integer}} = (({{integer}} : ℝ) * x + ({{integer}} : ℝ)) := by
+    rw [cc{{integer}} hf{{integer}}]
+    simp only [max_def]
+    split_ifs <;> linarith
+  have e{{integer}} :
+    ccount (x - ({{integer}} : ℝ)) ({{integer}} / {{integer}} * x - ({{integer}} : ℝ)) {{integer}} {{integer}} = (({{integer}} : ℝ) * x + ((-{{integer}}) : ℝ)) := by
+    rw [cc{{integer}} hf{{integer}} hf{{integer}} hg{{integer}}]
+    simp only [min_def]
+    split_ifs <;> linarith
+  have e{{integer}} :
+    ccount (x - ({{integer}} : ℝ)) ({{integer}} / {{integer}} * x - ({{integer}} : ℝ)) {{integer}} {{integer}} = (({{integer}} : ℝ) * x + ({{integer}} : ℝ)) := by
+    rw [cc{{integer}} hg{{integer}}]
+    simp only [min_def, max_def]
+    split_ifs <;> linarith
+  have e{{integer}} :
+    ccount (x - ({{integer}} : ℝ)) ({{integer}} / {{integer}} * x - ({{integer}} : ℝ)) {{integer}} {{integer}} = (({{integer}} : ℝ) * x + ({{integer}} : ℝ)) := by
+    rw [cc{{integer}} hf{{integer}}]
+    simp only [min_def, max_def]
+    split_ifs <;> linarith
+  have e{{integer}} :
+    ccount (x - ({{integer}} : ℝ)) ({{integer}} / {{integer}} * x - ({{integer}} : ℝ)) {{integer}} {{integer}} = (({{integer}} : ℝ) * x + ({{integer}} : ℝ)) := by
+    rw [cc{{integer}} hg{{integer}}]
+    simp only [min_def, max_def]
+    split_ifs <;> linarith
+  push_cast
+  simp only [Fin.sum_univ_three]
+  rw [e{{integer}}, e{{integer}}, e{{integer}}, e{{integer}}, e{{integer}}, e{{integer}}, e{{integer}}, e{{integer}}, e{{integer}}]
+  simp only [bIn, bcoef, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+    Matrix.head_cons, Matrix.tail_cons, psiR_eq, lrow, toNat_cast_q]
+  push_cast
+  norm_num
+  ring
+
