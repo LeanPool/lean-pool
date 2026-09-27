@@ -489,10 +489,10 @@ lemma config_and_divisor_from_O {G : CFGraph} (O : CFOrientation G) {q : G.V}
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Lemma 4.3. -/
 lemma orientation_determined_by_indegrees {G : CFGraph}
   (O O' : CFOrientation G) :
-  isAcyclic G O → isAcyclic G O' →
+  isAcyclic G O →
   (∀ v : G.V, indeg G O v = indeg G O' v) →
   O = O' := by
-  intro h_acyc h_acyc' h_indeg_eq
+  intro h_acyc h_indeg_eq
   let S := { e : G.V × G.V | O.directedEdges.count e > O'.directedEdges.count e }
   have suff_S_empty : S = ∅ → O = O' := by
     intro h_S_empty
@@ -592,7 +592,7 @@ private theorem config_to_orientation_unique (G : CFGraph) (q : G.V)
     (h_eq₁ : orientationToConfig G O₁ q hO₁ = c)
     (h_eq₂ : orientationToConfig G O₂ q hO₂ = c) :
     O₁ = O₂ := by
-  apply orientation_determined_by_indegrees O₁ O₂ hO₁.1 hO₂.1
+  apply orientation_determined_by_indegrees O₁ O₂ hO₁.1
   intro v
   have h_deg₁ := orientation_to_config_indeg G O₁ q hO₁ v
   have h_deg₂ := orientation_to_config_indeg G O₂ q hO₂ v

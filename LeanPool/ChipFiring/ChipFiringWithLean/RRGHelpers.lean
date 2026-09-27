@@ -72,14 +72,13 @@ lemma superstable_of_divisor {G : CFGraph} (h_conn : graphConnected G) (q : G.V)
     exact h
   · simpa only using qReducedConfig_superstable h_conn q D
 
-/-- If $D$ is unwinnable and $D \sim c + k \cdot q$ for a superstable $c$, then $k < 0$. -/
+/-- If $D$ is unwinnable and $D \sim c + k \cdot q$ for a configuration $c$, then $k < 0$. -/
 lemma superstable_of_divisor_negative_k (G : CFGraph) (q : G.V) (D : CFDiv G) :
   ¬(winnable G D) →
   ∀ (c : Config G q) (k : ℤ),
     linearEquiv G D (c.chips + k • (oneChip q)) →
-    superstable G q c →
     k < 0 := by
-  intro h_not_winnable c k h_equiv h_super
+  intro h_not_winnable c k h_equiv
   contrapose! h_not_winnable with k_nonneg
   let D' := c.chips + k • (oneChip q)
   have D'_eff : effective D' := by
@@ -395,7 +394,7 @@ theorem acyclic_orientation_maximal_unwinnable_correspondence_and_degree
         rw [hv, h₁, h₂]
       · simp only [hv, ↓reduceIte, tsub_zero] at this
         exact this
-    exact Subtype.ext (orientation_determined_by_indegrees O₁.val O₂.val O₁.prop.1 O₂.prop.1
+    exact Subtype.ext (orientation_determined_by_indegrees O₁.val O₂.val O₁.prop.1
         h_indeg)
   }
   { -- Part 2: Degree characterization
@@ -447,7 +446,7 @@ lemma moderator_of_unwinnable {G : CFGraph} (h_conn : graphConnected G) (D : CFD
   ∃ (M H : CFDiv G), isModerator M ∧ effective H ∧ linearEquiv G M (D+H) := by
   let q := Classical.arbitrary G.V
   rcases superstable_of_divisor h_conn q D with ⟨c, k, h_equiv, h_super⟩
-  have h_k_neg : k < 0 := superstable_of_divisor_negative_k G q D unwin c k h_equiv h_super
+  have h_k_neg : k < 0 := superstable_of_divisor_negative_k G q D unwin c k h_equiv
   rcases maximal_superstable_exists G q c h_super with ⟨c', h_max', h_ge⟩
   rcases maximal_superstable_orientation G q c' h_max' with ⟨O, hO, h_orient_eq_c'⟩
   let H : CFDiv G := -(k+1) • (oneChip q) + c'.chips - c.chips
