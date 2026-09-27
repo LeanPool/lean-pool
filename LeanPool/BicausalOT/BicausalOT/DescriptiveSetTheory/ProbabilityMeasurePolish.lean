@@ -36,6 +36,39 @@ variable {Ω : Type*} [MetricSpace Ω] [SeparableSpace Ω] [CompleteSpace Ω]
 
 
 
+omit [MetricSpace Ω] [SeparableSpace Ω] [CompleteSpace Ω] [BorelSpace Ω] in
+/-- A probability measure exhausts any countable measurable cover:
+    some finite subfamily captures all but `ε` of the mass. -/
+theorem exists_measure_compl_partial_iUnion_lt
+    (μ : Measure Ω) [IsProbabilityMeasure μ] {s : ℕ → Set Ω}
+    (hs : ∀ n, MeasurableSet (s n)) (hcover : (⋃ n, s n) = univ)
+    {ε : ℝ≥0∞} (hε : 0 < ε) :
+    ∃ N : ℕ, μ ((⋃ j ∈ Finset.range N, s j)ᶜ) < ε := by
+  have hanti : Antitone fun M => (⋃ j ∈ Finset.range M, s j)ᶜ := by
+    intro M M' hMM'
+    apply compl_subset_compl.mpr
+    refine biUnion_subset_biUnion_left ?_
+    intro j hj
+    simp only [Finset.coe_range, mem_Iio] at hj ⊢
+    omega
+  have hinter : (⋂ M, (⋃ j ∈ Finset.range M, s j)ᶜ) = ∅ := by
+    rw [← compl_iUnion,
+      show (⋃ M, ⋃ j ∈ Finset.range M, s j) = ⋃ j, s j by
+        ext x
+        simp only [mem_iUnion, Finset.mem_range]
+        exact ⟨fun ⟨_, j, _, hx⟩ => ⟨j, hx⟩, fun ⟨j, hx⟩ => ⟨j + 1, j, by omega, hx⟩⟩,
+      hcover, compl_univ]
+  have htendsto : Tendsto (fun M => μ ((⋃ j ∈ Finset.range M, s j)ᶜ))
+      atTop (𝓝 0) := by
+    have h := tendsto_measure_iInter_atTop
+      (μ := μ) (s := fun M => (⋃ j ∈ Finset.range M, s j)ᶜ)
+      (fun M => ((MeasurableSet.biUnion (Finset.range M).countable_toSet
+        fun j _ => hs j).compl).nullMeasurableSet)
+      hanti ⟨0, measure_ne_top μ _⟩
+    rwa [hinter, measure_empty] at h
+  exact (htendsto.eventually_lt_const hε).exists
+
+
 omit [SeparableSpace Ω] [CompleteSpace Ω] in
 /-- A1, heads: any single probability measure puts mass `≥ 1 - ε` on a
     finite union of `η`-balls centered in a countable dense sequence. -/
@@ -47,29 +80,9 @@ theorem exists_range_measure_ball_compl_lt
     refine eq_univ_iff_forall.mpr fun x => ?_
     obtain ⟨j, hj⟩ := Metric.denseRange_iff.mp hD x η hη
     exact mem_iUnion.mpr ⟨j, by simpa [Metric.mem_ball, dist_comm] using hj⟩
-  have hanti : Antitone fun M => (⋃ j ∈ Finset.range M, ball (D j) η)ᶜ := by
-    intro M M' hMM'
-    apply compl_subset_compl.mpr
-    refine biUnion_subset_biUnion_left ?_
-    intro j hj
-    simp only [Finset.coe_range, mem_Iio] at hj ⊢
-    omega
-  have hinter : (⋂ M, (⋃ j ∈ Finset.range M, ball (D j) η)ᶜ) = ∅ := by
-    rw [← compl_iUnion,
-      show (⋃ M, ⋃ j ∈ Finset.range M, ball (D j) η) = ⋃ j, ball (D j) η by
-        ext x
-        simp only [mem_iUnion, Finset.mem_range]
-        exact ⟨fun ⟨_, j, _, hx⟩ => ⟨j, hx⟩, fun ⟨j, hx⟩ => ⟨j + 1, j, by omega, hx⟩⟩,
-      hcover, compl_univ]
-  have htendsto : Tendsto (fun M => μ ((⋃ j ∈ Finset.range M, ball (D j) η)ᶜ))
-      atTop (𝓝 0) := by
-    have h := tendsto_measure_iInter_atTop
-      (μ := μ) (s := fun M => (⋃ j ∈ Finset.range M, ball (D j) η)ᶜ)
-      (fun M => ((isOpen_biUnion fun j _ =>
-        isOpen_ball).isClosed_compl.measurableSet).nullMeasurableSet)
-      hanti ⟨0, measure_ne_top μ _⟩
-    rwa [hinter, measure_empty] at h
-  exact (htendsto.eventually_lt_const hε).exists
+  exact exists_measure_compl_partial_iUnion_lt μ
+    (fun _ => isOpen_ball.measurableSet) hcover hε
+
 
 omit [CompleteSpace Ω] in
 open scoped Classical in
@@ -364,37 +377,6 @@ theorem le_diracMix_apply (x₀ : Ω) {N : ℕ} (x : Fin N → Ω) (a : Fin N �
           rw [Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply]
           simp only [Measure.smul_apply, smul_eq_mul]
 
-omit [MetricSpace Ω] [SeparableSpace Ω] [CompleteSpace Ω] [BorelSpace Ω] in
-/-- A probability measure exhausts any countable measurable cover:
-    some finite subfamily captures all but `ε` of the mass. -/
-theorem exists_measure_compl_partial_iUnion_lt
-    (μ : Measure Ω) [IsProbabilityMeasure μ] {s : ℕ → Set Ω}
-    (hs : ∀ n, MeasurableSet (s n)) (hcover : (⋃ n, s n) = univ)
-    {ε : ℝ≥0∞} (hε : 0 < ε) :
-    ∃ N : ℕ, μ ((⋃ j ∈ Finset.range N, s j)ᶜ) < ε := by
-  have hanti : Antitone fun M => (⋃ j ∈ Finset.range M, s j)ᶜ := by
-    intro M M' hMM'
-    apply compl_subset_compl.mpr
-    refine biUnion_subset_biUnion_left ?_
-    intro j hj
-    simp only [Finset.coe_range, mem_Iio] at hj ⊢
-    omega
-  have hinter : (⋂ M, (⋃ j ∈ Finset.range M, s j)ᶜ) = ∅ := by
-    rw [← compl_iUnion,
-      show (⋃ M, ⋃ j ∈ Finset.range M, s j) = ⋃ j, s j by
-        ext x
-        simp only [mem_iUnion, Finset.mem_range]
-        exact ⟨fun ⟨_, j, _, hx⟩ => ⟨j, hx⟩, fun ⟨j, hx⟩ => ⟨j + 1, j, by omega, hx⟩⟩,
-      hcover, compl_univ]
-  have htendsto : Tendsto (fun M => μ ((⋃ j ∈ Finset.range M, s j)ᶜ))
-      atTop (𝓝 0) := by
-    have h := tendsto_measure_iInter_atTop
-      (μ := μ) (s := fun M => (⋃ j ∈ Finset.range M, s j)ᶜ)
-      (fun M => ((MeasurableSet.biUnion (Finset.range M).countable_toSet
-        fun j _ => hs j).compl).nullMeasurableSet)
-      hanti ⟨0, measure_ne_top μ _⟩
-    rwa [hinter, measure_empty] at h
-  exact (htendsto.eventually_lt_const hε).exists
 
 omit [CompleteSpace Ω] in
 omit [MetricSpace Ω] [SeparableSpace Ω] [BorelSpace Ω] [CompleteSpace Ω] in
