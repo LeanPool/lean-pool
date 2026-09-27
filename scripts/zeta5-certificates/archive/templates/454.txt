@@ -1,0 +1,19 @@
+def bInL : List ℚ :=
+  [(-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}),
+    (-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}),
+    (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}),
+    (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}), (-{{integer}}),
+    (-{{integer}}), (-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}),
+    (-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}),
+    (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}),
+    (-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}),
+    (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}),
+    (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}), (-{{integer}}),
+    (-{{integer}}), (-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}} / {{integer}}),
+    (-{{integer}} / {{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}}), (-{{integer}} / {{integer}}), (-{{integer}} / {{integer}}), (-{{integer}})]
+
+/-- The `i`th inner-range endpoint as a real number; zero outside the table. -/
+noncomputable def tIn (i : ℕ) : ℝ :=
+  ((tInL.getD i {{integer}} : ℚ) : ℝ)
+
+/-- The allocation level for inner piece `i`; zero outside the table. -/
