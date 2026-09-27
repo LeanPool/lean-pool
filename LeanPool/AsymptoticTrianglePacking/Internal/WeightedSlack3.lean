@@ -26,7 +26,7 @@ for every real vertex `v` and every pair `(i, j)` of a left and a right dummy ad
 * all weighted codegrees are at most `max γ (1/m)`;
 * the total weight goes up by exactly `S`.
 
-So the padded system is near-perfect and `fracNibbleWeighted_nearPerfect` applies.  A matching of the
+So the padded system is near-perfect and `fracNibble_weightedCodegree` applies. A matching of the
 padded hypergraph uses at most `m` of the added triples (each contains a left dummy, and they are
 disjoint), so the real part of the matching has at least `(1-β)(∑w + S) - m ≥ (1-β)∑w - βS - 1`
 edges.
@@ -35,6 +35,8 @@ The result is `Nibble.fracNibble_withSlack`: no regularity, no near-perfection, 
 codegrees and *enough slack*.  Sorry-free and axiom-clean.
 -/
 public import LeanPool.AsymptoticTrianglePacking.Internal.WeightedSpreadNibble
+
+/-! # Three-uniform weighted rounding with total slack -/
 
 @[expose] public section
 

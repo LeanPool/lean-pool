@@ -31,13 +31,13 @@ public import Mathlib.Data.Int.Star
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Tactic.ContinuousFunctionalCalculus
 
+/-! # Fractional rounding with bounded incidence discrepancy -/
+
 @[expose] public section
 
 open Finset
 
 namespace Nibble.BeckFiala
-
-open scoped Classical
 
 variable {V : Type*} [DecidableEq V]
 
@@ -122,7 +122,8 @@ theorem exists_kernel_vector {F : Finset (Finset V)} {k : ℕ} (hk : ∀ t ∈ F
         intro c u
         funext x
         simp only [Pi.smul_apply, RingHom.id_apply, smul_eq_mul, Finset.mul_sum]
-        exact Finset.sum_congr rfl fun t _ => by by_cases h : (x : V) ∈ (t : Finset V) <;> simp [h] }
+        exact Finset.sum_congr rfl fun t _ => by
+          by_cases h : (x : V) ∈ (t : Finset V) <;> simp [h] }
   have hker : ∃ u : {t // t ∈ F} → ℝ, u ≠ 0 ∧ φ u = 0 := by
     by_contra hc
     push Not at hc
@@ -146,7 +147,7 @@ theorem exists_kernel_vector {F : Finset (Finset V)} {k : ℕ} (hk : ∀ t ∈ F
   · intro x hx
     have hker0 := congrFun huker ⟨x, hx⟩
     simp only [φ, LinearMap.coe_mk, AddHom.coe_mk, Pi.zero_apply] at hker0
-    show ∑ t ∈ F.filter (fun t => x ∈ t), (if h : t ∈ F then u ⟨t, h⟩ else 0) = 0
+    change ∑ t ∈ F.filter (fun t => x ∈ t), (if h : t ∈ F then u ⟨t, h⟩ else 0) = 0
     calc ∑ t ∈ F.filter (fun t => x ∈ t), (if h : t ∈ F then u ⟨t, h⟩ else 0)
         = ∑ t : {t // t ∈ F}, (if (x : V) ∈ (t : Finset V) then u t else 0) := by
           rw [Finset.sum_filter, ← Finset.sum_coe_sort F
@@ -200,10 +201,10 @@ theorem exists_step (k : ℕ) (H : Finset (Finset V)) (hk : ∀ t ∈ H, t.card 
   refine ⟨fun t => y t + lam * U t, ?_, ?_, ?_, ?_, ?_⟩
   · -- nonnegativity
     intro t ht
-    show (0 : ℝ) ≤ y t + lam * U t
+    change (0 : ℝ) ≤ y t + lam * U t
     by_cases htF : t ∈ F
     · by_cases hU : U t = 0
-      · simp [hU]; exact hy0 t ht
+      · simp only [hU, mul_zero, add_zero]; exact hy0 t ht
       · have htP : t ∈ P := Finset.mem_filter.mpr ⟨htF, hU⟩
         rcases lt_trichotomy (U t) 0 with hneg | hzero | hpos
         · have hc : c t = (-(y t)) / U t := by rw [hcdef]; simp [not_lt.mpr hneg.le]
@@ -219,10 +220,10 @@ theorem exists_step (k : ℕ) (H : Finset (Finset V)) (hk : ∀ t ∈ H, t.card 
     · rw [hUoff t htF]; simpa using hy0 t ht
   · -- ≤ 1
     intro t ht
-    show y t + lam * U t ≤ 1
+    change y t + lam * U t ≤ 1
     by_cases htF : t ∈ F
     · by_cases hU : U t = 0
-      · simp [hU]; exact hy1 t ht
+      · simp only [hU, mul_zero, add_zero]; exact hy1 t ht
       · have htP : t ∈ P := Finset.mem_filter.mpr ⟨htF, hU⟩
         rcases lt_trichotomy (U t) 0 with hneg | hzero | hpos
         · have := hy1 t ht
@@ -236,7 +237,7 @@ theorem exists_step (k : ℕ) (H : Finset (Finset V)) (hk : ∀ t ∈ H, t.card 
           linarith only [h1, h2]
     · rw [hUoff t htF]; simpa using hy1 t ht
   · intro t ht
-    show y t + lam * U t = y t
+    change y t + lam * U t = y t
     rw [hUoff t ht]; ring
   · -- fewer floating
     have ht₀F : t₀ ∈ F := (Finset.mem_filter.mp ht₀P).1
@@ -275,7 +276,7 @@ theorem exists_step (k : ℕ) (H : Finset (Finset V)) (hk : ∀ t ∈ H, t.card 
       _ < F.card := Finset.card_erase_lt_of_mem ht₀F
   · -- active degrees preserved
     intro x hx
-    show ∑ t ∈ H.filter (fun t => x ∈ t), (y t + lam * U t) = _
+    change ∑ t ∈ H.filter (fun t => x ∈ t), (y t + lam * U t) = _
     have hxA : x ∈ active F k := mem_active_iff.mpr hx
     have hzero := hUker x hxA
     have hsplit : ∑ t ∈ H.filter (fun t => x ∈ t), (y t + lam * U t)
@@ -370,7 +371,8 @@ theorem exists_rounding (k : ℕ) (H : Finset (Finset V)) (hk : ∀ t ∈ H, t.c
             · simp only [hfl, ite_true]
               have h0 := hy0 t htH
               have h1 := hy1 t htH
-              by_cases hS : t ∈ S <;> simp [hS] <;> rw [abs_le] <;> constructor <;> linarith
+              by_cases hS : t ∈ S <;> simp only [hS, ite_true, ite_false] <;>
+                rw [abs_le] <;> constructor <;> linarith
             · simp only [hfl, ite_false]
               rcases (notMem_floating_iff htH).mp hfl with h | h
               · have hy' : y' t = 0 := by rw [hoff t hfl]; exact h
@@ -395,3 +397,5 @@ theorem exists_rounding (k : ℕ) (H : Finset (Finset V)) (hk : ∀ t ∈ H, t.c
                 · rintro ⟨⟨-, hx⟩, hf⟩; exact ⟨hf, hx⟩
                 · rintro ⟨hf, hx⟩; exact ⟨⟨floating_subset H y hf, hx⟩, hf⟩
             _ ≤ (k : ℝ) := by exact_mod_cast hxa
+
+end Nibble.BeckFiala

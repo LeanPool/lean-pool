@@ -26,6 +26,8 @@ Sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
 public import LeanPool.AsymptoticTrianglePacking.Internal.WeightedBeckFiala
 
+/-! # Simultaneous fractional rounding of degrees and codegrees -/
+
 @[expose] public section
 
 open Finset
@@ -51,7 +53,10 @@ theorem biUnion_pairClosure (T : Finset V) : (pairClosure T).biUnion id = T := b
   · intro hv
     exact ⟨{v}, mem_pairClosure.mpr ⟨Finset.singleton_subset_iff.mpr hv, by simp⟩, by simp⟩
 
-theorem pairClosure_injective : Function.Injective (pairClosure : Finset V → Finset (Finset V)) := by
+omit [DecidableEq V] in
+theorem pairClosure_injective :
+    Function.Injective (pairClosure : Finset V → Finset (Finset V)) := by
+  classical
   intro a b hab
   rw [← biUnion_pairClosure a, hab, biUnion_pairClosure]
 
@@ -74,8 +79,10 @@ theorem pair_mem_pairClosure {T : Finset V} {x z : V} :
       · rw [Finset.mem_singleton] at ha'; subst ha'; exact hz
     · exact le_trans (Finset.card_insert_le _ _) (by simp)
 
+omit [DecidableEq V] in
 /-- The auxiliary vertex set of an edge has at most `1 + |T|²` elements. -/
 theorem card_pairClosure_le (T : Finset V) : (pairClosure T).card ≤ 1 + T.card * T.card := by
+  classical
   have hsub : pairClosure T ⊆ insert (∅ : Finset V)
       ((T ×ˢ T).image (fun p : V × V => ({p.1, p.2} : Finset V))) := by
     intro s hs

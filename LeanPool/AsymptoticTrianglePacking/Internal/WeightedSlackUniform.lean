@@ -33,6 +33,8 @@ Sorry-free and axiom-clean.
 -/
 public import LeanPool.AsymptoticTrianglePacking.Internal.WeightedSlack3
 
+/-! # Uniform weighted rounding with total slack -/
+
 @[expose] public section
 
 open Finset Hypergraph
@@ -172,11 +174,13 @@ lemma mixEdge_toRight_nonempty (hk : 0 < k) (v : X) (i : Fin k → Fin m) :
 
 lemma mixEdge_card (v : X) (i : Fin k → Fin m) : #(mixEdge k m v i) = k + 1 := by
   classical
-  have hinj : Set.InjOn (fun j : Fin k => (Sum.inr (j, i j) : PadR X k m)) ↑(univ : Finset (Fin k)) := by
+  have hinj : Set.InjOn
+      (fun j : Fin k => (Sum.inr (j, i j) : PadR X k m)) ↑(univ : Finset (Fin k)) := by
     intro a _ b _ h
     simp only [Sum.inr.injEq, Prod.ext_iff] at h
     exact h.1
-  have hnot : (Sum.inl v : PadR X k m) ∉ (univ : Finset (Fin k)).image (fun j => Sum.inr (j, i j)) := by
+  have hnot : (Sum.inl v : PadR X k m) ∉
+      (univ : Finset (Fin k)).image (fun j => Sum.inr (j, i j)) := by
     simp
   rw [mixEdge, Finset.card_insert_of_notMem hnot, Finset.card_image_of_injOn hinj]
   simp

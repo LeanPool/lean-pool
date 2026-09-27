@@ -34,6 +34,8 @@ Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
 public import LeanPool.AsymptoticTrianglePacking.Internal.WeightedSlackUniform
 
+/-! # Weighted rounding for nonuniform hypergraphs with bounded edge size -/
+
 @[expose] public section
 
 open Finset Hypergraph

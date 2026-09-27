@@ -276,6 +276,13 @@ public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.TightRoundConcre
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.TwoEdgeMatch
 public import LeanPool.AsymptoticTrianglePacking.Internal.TightAssembly
 public import LeanPool.AsymptoticTrianglePacking.Internal.TightSchedule
+public import LeanPool.AsymptoticTrianglePacking.Internal.WeightedBeckFiala
+public import LeanPool.AsymptoticTrianglePacking.Internal.WeightedBeckFialaPairs
+public import LeanPool.AsymptoticTrianglePacking.Internal.WeightedBoundedEdges
+public import LeanPool.AsymptoticTrianglePacking.Internal.WeightedFractional
+public import LeanPool.AsymptoticTrianglePacking.Internal.WeightedSlack3
+public import LeanPool.AsymptoticTrianglePacking.Internal.WeightedSlackUniform
+public import LeanPool.AsymptoticTrianglePacking.Internal.WeightedSpreadNibble
 public import LeanPool.AsymptoticTrianglePacking.Main
 public import LeanPool.AsymptoticTrianglePacking.NibbleRounding
 public import LeanPool.BannaiBannaiStanton

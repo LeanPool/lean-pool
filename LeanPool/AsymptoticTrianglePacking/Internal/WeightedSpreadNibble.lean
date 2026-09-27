@@ -45,6 +45,8 @@ public import LeanPool.AsymptoticTrianglePacking.Internal.WeightedBeckFialaPairs
 public import LeanPool.AsymptoticTrianglePacking.Internal.WeightedFractional
 public import LeanPool.AsymptoticTrianglePacking.Internal.NearRegularNibble
 
+/-! # Weighted fractional-to-integral nibble bridge -/
+
 @[expose] public section
 
 open Finset Hypergraph LeanPool.AsymptoticTrianglePacking.Internal
@@ -156,7 +158,7 @@ theorem fracNibble_spread_weightedCodegree (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (
 
 /-- **The spread hypothesis is redundant.**  Every edge contains a pair `x ≠ z`, so its weight is at
 most the weighted codegree of that pair. -/
-theorem weight_le_weightedCodegree {W : Type} [Fintype W] [DecidableEq W] {r : ℕ} (hr : 2 ≤ r)
+theorem weight_le_weightedCodegree {W : Type} [DecidableEq W] {r : ℕ} (hr : 2 ≤ r)
     {H : Finset (Finset W)} {w : Finset W → ℝ} {γ : ℝ} (hunif : IsUniform H r)
     (hwnn : ∀ T, 0 ≤ w T)
     (hcod : ∀ x z : W, x ≠ z → ∑ T ∈ H.filter (fun T => x ∈ T ∧ z ∈ T), w T ≤ γ)
