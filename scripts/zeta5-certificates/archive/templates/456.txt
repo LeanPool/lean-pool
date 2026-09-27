@@ -1,0 +1,7 @@
+theorem tIn_mono : ∀ i < {{integer}}, tIn i < tIn (i + {{integer}}) := by
+  have certificate : ∀ i : Fin {{integer}},
+      tInL.getD i.val {{integer}} < tInL.getD (i.val + {{integer}}) {{integer}} := by decide +kernel
+  intro i hi
+  simp only [tIn]
+  exact_mod_cast certificate ⟨i, hi⟩
+

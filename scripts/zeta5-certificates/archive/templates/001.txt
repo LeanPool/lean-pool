@@ -1,0 +1,22 @@
+lemma U_{{integer}}_{{integer}} :
+    Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} : ℝ) ≤ (-({{integer}} / {{integer}} : ℝ)) := by
+  have hlg :
+    Real.log ({{integer}} / {{integer}} : ℝ) ≤
+      (-({{integer}} / {{integer}} : ℝ)) := by
+    have h :=
+      log_le_of_split_neg {{integer}}
+        (show
+          ({{integer}} / {{integer}} : ℝ) =
+            ({{integer}} / {{integer}} : ℝ) / {{integer}} ^ {{integer}}
+          by norm_num)
+        (by norm_num)
+        (log_le_of_ge_one (by norm_num) {{integer}}
+            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+          Real.log ({{integer}} / {{integer}} : ℝ) ≤
+            ({{integer}} / {{integer}} : ℝ))
+    linarith only [h, Real.log_two_gt_d{{integer}}]
+  exact
+    Uω_le_left_certificate (s := ({{integer}} / {{integer}} : ℝ)) (q :=
+      ({{integer}} / {{integer}} : ℝ)) (by norm_num [aρ_{{integer}}, bρ_{{integer}}]) (by norm_num [aρ_{{integer}}])
+      (by norm_num) (by norm_num [aρ_{{integer}}, bρ_{{integer}}]) (by norm_num [aρ_{{integer}}, bρ_{{integer}}]) hlg
+
