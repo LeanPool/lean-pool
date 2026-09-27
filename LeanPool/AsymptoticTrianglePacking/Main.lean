@@ -7,6 +7,7 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 module
 
 public import LeanPool.AsymptoticTrianglePacking.NibbleRounding
+import LeanPool.AsymptoticTrianglePacking.Internal.WeightedBoundedEdges
 
 /-!
 # Finite near-regular hypergraph rounding
