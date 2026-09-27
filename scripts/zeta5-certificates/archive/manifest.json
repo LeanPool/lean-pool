@@ -1,0 +1,479 @@
+{
+  "source_commit": "b00b44fc50beb974417bfdff2898aeedd83cfdde",
+  "upstream_commit": "f19a1960609f7d38e7b63fd2acb05e6f60a7b741",
+  "license": "Apache-2.0",
+  "files": {
+    "LeanPool/Zeta5Irrational/Table/U00.lean": {
+      "records": "Table_U00.json",
+      "sha256": "6082d945dfd872a62dc8d5264d61f381c9224d97bfe9abb5aa52849daf9fb090"
+    },
+    "LeanPool/Zeta5Irrational/Table/U01.lean": {
+      "records": "Table_U01.json",
+      "sha256": "12ad80545461e9f513ed4fb2d195f01d97bdac51806c5cb3e0e80b3f9463c388"
+    },
+    "LeanPool/Zeta5Irrational/Table/U02.lean": {
+      "records": "Table_U02.json",
+      "sha256": "171477f5cf121bbbc8f13196d515753fa5f0939de12b22c0ed18aad1ffbb3658"
+    },
+    "LeanPool/Zeta5Irrational/Table/U03.lean": {
+      "records": "Table_U03.json",
+      "sha256": "4a6934a76d888bdd2d892b779015bcfea7af49a4ef07f785fc37110bed53d845"
+    },
+    "LeanPool/Zeta5Irrational/Table/U04.lean": {
+      "records": "Table_U04.json",
+      "sha256": "f97489984f1d70049405b41a63580c1616d712b0c495b275f24d1ab94a158375"
+    },
+    "LeanPool/Zeta5Irrational/Table/U05.lean": {
+      "records": "Table_U05.json",
+      "sha256": "fe9d74ea6e0db461d8d0f907cbc5059a66cc235b5abb0d6e8b877256cf3d71fa"
+    },
+    "LeanPool/Zeta5Irrational/Table/U06.lean": {
+      "records": "Table_U06.json",
+      "sha256": "e60cf560a793521660061f282a21f413d5d0d076cb67571906ad1da0dffb6606"
+    },
+    "LeanPool/Zeta5Irrational/Table/U07.lean": {
+      "records": "Table_U07.json",
+      "sha256": "17cbe37285bf05a852abceabf4090693ff3cc5ba299315ac2e05de04df2c4769"
+    },
+    "LeanPool/Zeta5Irrational/Table/U08.lean": {
+      "records": "Table_U08.json",
+      "sha256": "497fb88642b13095aff118fdca4a04b3c3e1286d229eb7b52452f7787772018c"
+    },
+    "LeanPool/Zeta5Irrational/Table/U09.lean": {
+      "records": "Table_U09.json",
+      "sha256": "ee8462441cf52eb105e730b567715bbc3ab3b37103dd2afcb6aa8a93d0d52d7a"
+    },
+    "LeanPool/Zeta5Irrational/Table/U10.lean": {
+      "records": "Table_U10.json",
+      "sha256": "5cdeacd922014d72507a88573b05f369106204d41bf9634fb5483d50ef749d31"
+    },
+    "LeanPool/Zeta5Irrational/Table/U11.lean": {
+      "records": "Table_U11.json",
+      "sha256": "4e5ae849caa485e09b44c817d1e8a9b02bb9d0830ea23b6553e7a2ebcb705b47"
+    },
+    "LeanPool/Zeta5Irrational/Table/U12.lean": {
+      "records": "Table_U12.json",
+      "sha256": "46138f6c21ba83cd1c97d34a7fed08801f7d34fc9e6e059b022f7294d67befad"
+    },
+    "LeanPool/Zeta5Irrational/Table/U13.lean": {
+      "records": "Table_U13.json",
+      "sha256": "b7336a552f31629f92157d2367673f65a95f3735d9c31a5291e7518cc45c9078"
+    },
+    "LeanPool/Zeta5Irrational/Table/U14.lean": {
+      "records": "Table_U14.json",
+      "sha256": "39d7837c04d6325f3b71e4f2e68b7a85b295c4c61bda713d090f0e07df052646"
+    },
+    "LeanPool/Zeta5Irrational/Table/U15.lean": {
+      "records": "Table_U15.json",
+      "sha256": "6c12897c983d711227d02e87132b52c32a727b36d5c6dee33001f0fd50e67b81"
+    },
+    "LeanPool/Zeta5Irrational/Table/U16.lean": {
+      "records": "Table_U16.json",
+      "sha256": "19a4324dd05db52210e0847f0be490e78c09906c4bc4142db91eac4520a7208a"
+    },
+    "LeanPool/Zeta5Irrational/Table/U17.lean": {
+      "records": "Table_U17.json",
+      "sha256": "8d0180c83ff156f001b215d71d2df9e47969a687d0a869f1b08afac55c67fae6"
+    },
+    "LeanPool/Zeta5Irrational/Table/U18.lean": {
+      "records": "Table_U18.json",
+      "sha256": "5ca42e98f771fdede654af1522e36b25fff9f5853e630794162084e65f2ff5a1"
+    },
+    "LeanPool/Zeta5Irrational/Table/U19.lean": {
+      "records": "Table_U19.json",
+      "sha256": "16c459048f590a914490c0a2417d3087535119c0d992b0e80448ca7f412fb039"
+    },
+    "LeanPool/Zeta5Irrational/Table/U20.lean": {
+      "records": "Table_U20.json",
+      "sha256": "83beaa53ae186995828da595e187785437119c4b16ca0d8ca2a728db9015466f"
+    },
+    "LeanPool/Zeta5Irrational/Table/U21.lean": {
+      "records": "Table_U21.json",
+      "sha256": "d4cf966cd7ff3c9433a094552226830ab9af2ef7463d6a0ef727ab05839bee2f"
+    },
+    "LeanPool/Zeta5Irrational/Table/U22.lean": {
+      "records": "Table_U22.json",
+      "sha256": "afae4d3b6a2c56088c09dfd6da47f53233adda5be21e0539162009fd054f4f9d"
+    },
+    "LeanPool/Zeta5Irrational/Table/U23.lean": {
+      "records": "Table_U23.json",
+      "sha256": "fa43191602282a77397022627668bd91c4b0938bef9e8b9a7334d808cb29bc31"
+    },
+    "LeanPool/Zeta5Irrational/Table/U24.lean": {
+      "records": "Table_U24.json",
+      "sha256": "1f11ad0b878bb43559c6e211af40ea20ddfa112dc30a82ba5e6f59e00aafd2ea"
+    },
+    "LeanPool/Zeta5Irrational/Table/U25.lean": {
+      "records": "Table_U25.json",
+      "sha256": "a4458ab1dcff4bf31d3f04a9d19cde1939918d0936b5e60f70e63da8fea96aaf"
+    },
+    "LeanPool/Zeta5Irrational/Table/U26.lean": {
+      "records": "Table_U26.json",
+      "sha256": "95e6191c1a31400ae075e5bd6eeead55e45fe3c5997885f20af9d2f1e5d6e5b8"
+    },
+    "LeanPool/Zeta5Irrational/Table/U27.lean": {
+      "records": "Table_U27.json",
+      "sha256": "964945feb12cb02f8350af66ce163740ab42fad36397d6fe2ba26c6bc614d68d"
+    },
+    "LeanPool/Zeta5Irrational/Table/U28.lean": {
+      "records": "Table_U28.json",
+      "sha256": "3484b2e86802590be599f9daf4f868f33e7fd9beae16c7fee01b126a5553e23a"
+    },
+    "LeanPool/Zeta5Irrational/Table/U29.lean": {
+      "records": "Table_U29.json",
+      "sha256": "7047eb04a465b83962a19fe29f73fda3018924d64a94a5e4232eb046e22a81ce"
+    },
+    "LeanPool/Zeta5Irrational/Table/U30.lean": {
+      "records": "Table_U30.json",
+      "sha256": "583bf219563577a33d5fc5de9db8545c0b0b771b013a709beeedbc357cf435f0"
+    },
+    "LeanPool/Zeta5Irrational/Table/U31.lean": {
+      "records": "Table_U31.json",
+      "sha256": "26ab06c13a84fc9eed78716f38e77e5069aafc95af12292c11fe5c316463cb8f"
+    },
+    "LeanPool/Zeta5Irrational/Table/U32.lean": {
+      "records": "Table_U32.json",
+      "sha256": "28c3278ec2609377dd5088792adb8a32d4bd3e51737b6278b5adeab721793c05"
+    },
+    "LeanPool/Zeta5Irrational/Table/U33.lean": {
+      "records": "Table_U33.json",
+      "sha256": "56f60e2c2062e9a29d103d63f7af715a7ec3f18e91ac1f22267c0711d1839ea7"
+    },
+    "LeanPool/Zeta5Irrational/Table/U34.lean": {
+      "records": "Table_U34.json",
+      "sha256": "3bc7f410929146269ba32541698b1d828d93f5312821c2eb4e068e9e0112b11f"
+    },
+    "LeanPool/Zeta5Irrational/Table/U35.lean": {
+      "records": "Table_U35.json",
+      "sha256": "73a16114dbaffc46f4b7a3bef395dc8eaa23864c6e721f965464b5f2abdc9dd0"
+    },
+    "LeanPool/Zeta5Irrational/Table/U36.lean": {
+      "records": "Table_U36.json",
+      "sha256": "66f71f3a7b91ccf4ce41a868a8dfedc71c61f41f3ed62baa2c31d9c2222cfc1e"
+    },
+    "LeanPool/Zeta5Irrational/Table/U37.lean": {
+      "records": "Table_U37.json",
+      "sha256": "3de33535ec64b8bb5008521e1ba6adc9f1f77c369de7d9e7c031b55f8d3a6b7d"
+    },
+    "LeanPool/Zeta5Irrational/Table/U38.lean": {
+      "records": "Table_U38.json",
+      "sha256": "90d6889157e00cbe50c24f28b6de5af24832b6e49447e6930e005ae426d3b009"
+    },
+    "LeanPool/Zeta5Irrational/Table/U39.lean": {
+      "records": "Table_U39.json",
+      "sha256": "bb42ab252dd4d1dab1c225bf6cea8d5adb12b7881a192ea8f505cc322e35ebf8"
+    },
+    "LeanPool/Zeta5Irrational/Table/U40.lean": {
+      "records": "Table_U40.json",
+      "sha256": "7efc3cdd9962635ff9f49c11091434e52690cb3a3833772d9ba085955d1628ae"
+    },
+    "LeanPool/Zeta5Irrational/Table/U41.lean": {
+      "records": "Table_U41.json",
+      "sha256": "ae7a7fc0c608131a551f8fb36a6cb745bae9666d6b4f5c7b71b8988d4fa55d0e"
+    },
+    "LeanPool/Zeta5Irrational/Table/U42.lean": {
+      "records": "Table_U42.json",
+      "sha256": "069d380a97cdbf9ec5b28e442343ceed15dd17bd7c334b0c4591cc1df3a0649f"
+    },
+    "LeanPool/Zeta5Irrational/Table/U43.lean": {
+      "records": "Table_U43.json",
+      "sha256": "7d0f8266116ff010c4a8762a5277615b14674140472f47ab843375216f7d283e"
+    },
+    "LeanPool/Zeta5Irrational/Table/U44.lean": {
+      "records": "Table_U44.json",
+      "sha256": "e6b300aeefde128c332514da17f57d796c7131f3424983fb5bd2ac2aa60033f9"
+    },
+    "LeanPool/Zeta5Irrational/Table/U45.lean": {
+      "records": "Table_U45.json",
+      "sha256": "01f143f8b6493acecdf00345a384e1d27f6b6c2bdc3490e377f1b0b10402f5cd"
+    },
+    "LeanPool/Zeta5Irrational/Table/U46.lean": {
+      "records": "Table_U46.json",
+      "sha256": "701a197dd3d14fe048931a37322c7e3aad927386f0609cd4cfe0ebc1dfc286e3"
+    },
+    "LeanPool/Zeta5Irrational/Table/U47.lean": {
+      "records": "Table_U47.json",
+      "sha256": "302491ce273a823825a207c758b414e0eec8de54b12dde58063d8b1d6ee184b5"
+    },
+    "LeanPool/Zeta5Irrational/Table/U48.lean": {
+      "records": "Table_U48.json",
+      "sha256": "46ac8c9437e27c16f3423f3309e053057feb8896a4a8fe062cdf3205cef39fb7"
+    },
+    "LeanPool/Zeta5Irrational/Table/U49.lean": {
+      "records": "Table_U49.json",
+      "sha256": "2cfae7f2dcf23c619266085198359cb649f9bdf5a4fe3f908788a79298146cb7"
+    },
+    "LeanPool/Zeta5Irrational/Table/U50.lean": {
+      "records": "Table_U50.json",
+      "sha256": "74a031c51dcf95e36f56e6d506268b81ad81b3d957a7cc40c97ab4c74a53b5f8"
+    },
+    "LeanPool/Zeta5Irrational/Table/U51.lean": {
+      "records": "Table_U51.json",
+      "sha256": "be2aec39ec6693d4d36fa319deec32f9a80cbc742369376d815d4385bd9f6510"
+    },
+    "LeanPool/Zeta5Irrational/Table/U52.lean": {
+      "records": "Table_U52.json",
+      "sha256": "c90966590ce24221a6030d36242b6b11c287bb7ddae523a1d8be13f596a102ce"
+    },
+    "LeanPool/Zeta5Irrational/Table/U53.lean": {
+      "records": "Table_U53.json",
+      "sha256": "f3a49c172bb9ebad615bc1271053173aab0d708432b69cc03a6dcebd71b12889"
+    },
+    "LeanPool/Zeta5Irrational/Table/U54.lean": {
+      "records": "Table_U54.json",
+      "sha256": "62625852a4c3ab0a85b58d00bb163b4ceec9fa67717649cb01a37e6c6a6e266d"
+    },
+    "LeanPool/Zeta5Irrational/Table/U55.lean": {
+      "records": "Table_U55.json",
+      "sha256": "4cfb42f2bc058d6d50c06069909008a7705d9e1ff6b4abcd5e19b75966b05adf"
+    },
+    "LeanPool/Zeta5Irrational/Table/U56.lean": {
+      "records": "Table_U56.json",
+      "sha256": "ae0a3e35186cf647908f093c2b07d3036d05812c6f389453cf9ecde7bfb05d4e"
+    },
+    "LeanPool/Zeta5Irrational/Table/V00.lean": {
+      "records": "Table_V00.json",
+      "sha256": "4d37f2ddd1a1b932bbaf93e7243f71332ca885c4f9dd2d665ea40af78ea0b4c0"
+    },
+    "LeanPool/Zeta5Irrational/Table/V01.lean": {
+      "records": "Table_V01.json",
+      "sha256": "74dbd11f69f7494ea7fd3032310c19e69ace1ce919972b2a89615573895d4161"
+    },
+    "LeanPool/Zeta5Irrational/Table/V02.lean": {
+      "records": "Table_V02.json",
+      "sha256": "b3fd7317471b077808a43a6291708fa19d984f7fedf311d9056441bc1e4e25fe"
+    },
+    "LeanPool/Zeta5Irrational/Table/V03.lean": {
+      "records": "Table_V03.json",
+      "sha256": "b513e9ba722ccab29550905254ba85167149eab529ce2654d1c0ca4ab427be7c"
+    },
+    "LeanPool/Zeta5Irrational/Table/V04.lean": {
+      "records": "Table_V04.json",
+      "sha256": "9aa9ce0637cc0c715cb867687fe4c8346dfc63d54f61ef283c648c77aa180f0a"
+    },
+    "LeanPool/Zeta5Irrational/Table/V05.lean": {
+      "records": "Table_V05.json",
+      "sha256": "3d93bad1f79b6a87133892dc93efb2be5dfaff062255adc027a60708ac13c33d"
+    },
+    "LeanPool/Zeta5Irrational/Table/V06.lean": {
+      "records": "Table_V06.json",
+      "sha256": "faf7b7900d39ded9cfe3b1f26257f090a36153533a245cfa994e33733755ca1e"
+    },
+    "LeanPool/Zeta5Irrational/Table/V07.lean": {
+      "records": "Table_V07.json",
+      "sha256": "e59708d83221d33f4a58f3184c4f213f732b353ede0225b69d6508b63a4e650a"
+    },
+    "LeanPool/Zeta5Irrational/Table/V08.lean": {
+      "records": "Table_V08.json",
+      "sha256": "b78ae2f655a3cb0eb51fadd5fd0171884d60a709f70086b7326d5ab09c0814ce"
+    },
+    "LeanPool/Zeta5Irrational/Table/V09.lean": {
+      "records": "Table_V09.json",
+      "sha256": "6d89fad7e0f70164aa034ecdac87fc71d3a3955d4afcf7c29c459e32439af3b2"
+    },
+    "LeanPool/Zeta5Irrational/Table/V10.lean": {
+      "records": "Table_V10.json",
+      "sha256": "6510694a33a24b25fc3ca356df17278a5003741e29b5e4c0804081680c745024"
+    },
+    "LeanPool/Zeta5Irrational/Table/V11.lean": {
+      "records": "Table_V11.json",
+      "sha256": "1ca291ab65ded3ac361b502795a44c39a52bbc3b408a0b61335bffbb2192034a"
+    },
+    "LeanPool/Zeta5Irrational/Table/V12.lean": {
+      "records": "Table_V12.json",
+      "sha256": "b8b795c2e1a5531abeee1316fea2bd17af91f374822efeeabedc7dc44f61239e"
+    },
+    "LeanPool/Zeta5Irrational/Table/V13.lean": {
+      "records": "Table_V13.json",
+      "sha256": "82fb554fa176c5dd1315cdd28679113a830a1c8cec7b67430f6ef542ac19cfad"
+    },
+    "LeanPool/Zeta5Irrational/Table/V14.lean": {
+      "records": "Table_V14.json",
+      "sha256": "d7250c2f4a6cff0f28caba7ab94416d6cc5711a6011d41a02afec0612a821af3"
+    },
+    "LeanPool/Zeta5Irrational/Table/V15.lean": {
+      "records": "Table_V15.json",
+      "sha256": "fab447602e54ae0c015ea2a41522b4a652ab4972a8987e2230663bfb6b1c7446"
+    },
+    "LeanPool/Zeta5Irrational/Table/V16.lean": {
+      "records": "Table_V16.json",
+      "sha256": "cccfb1f0a009bef79c511037742e310f040da0a79d2a3c23d5039ccf4f988d05"
+    },
+    "LeanPool/Zeta5Irrational/Table/V17.lean": {
+      "records": "Table_V17.json",
+      "sha256": "3145afdfa6da749f0eb12c970c0aa15686cfae3cc89b2c65ef62ac9190132f6f"
+    },
+    "LeanPool/Zeta5Irrational/Table/V18.lean": {
+      "records": "Table_V18.json",
+      "sha256": "06d94ff3d7ab793e440e3e6fdac2170d940be759410baf3083307a4c292402d5"
+    },
+    "LeanPool/Zeta5Irrational/Table/V19.lean": {
+      "records": "Table_V19.json",
+      "sha256": "3a0a05b5d39fa39dee2ce6726855c4c9ebb08bd9fe7bc09a579530ae5f75e55c"
+    },
+    "LeanPool/Zeta5Irrational/Table/V20.lean": {
+      "records": "Table_V20.json",
+      "sha256": "a018e11e66eac0d9cf6a55543fc849987c3e4753d35a5d4ec11dd0bc5d97121a"
+    },
+    "LeanPool/Zeta5Irrational/Table/V21.lean": {
+      "records": "Table_V21.json",
+      "sha256": "b98c338285a58875c145f131c42add3bf949374e268e824fda06ff49f4b2bb79"
+    },
+    "LeanPool/Zeta5Irrational/Table/V22.lean": {
+      "records": "Table_V22.json",
+      "sha256": "9edaea11fce5d1bf72af0ba32ffa7c0847f92beb788725c339e7a909fc986e53"
+    },
+    "LeanPool/Zeta5Irrational/Table/V23.lean": {
+      "records": "Table_V23.json",
+      "sha256": "cbc06c4aa21ab08afaedf1f82aa39ba9ec1aacc99e4c35e76d027e08955eb47d"
+    },
+    "LeanPool/Zeta5Irrational/Table/V24.lean": {
+      "records": "Table_V24.json",
+      "sha256": "53cc2820596d42f2b055818f82779957ffa46a43d54bbd01fe3dcb79832da8cc"
+    },
+    "LeanPool/Zeta5Irrational/Table/V25.lean": {
+      "records": "Table_V25.json",
+      "sha256": "1df4dd5b117faeb7edc8e78b309e1c6354d6315103778c9a1cbc2ec46ab942c0"
+    },
+    "LeanPool/Zeta5Irrational/Table/V26.lean": {
+      "records": "Table_V26.json",
+      "sha256": "372f8d7bd5b66518d982eaa20bba68420b575e49070ec1019c3102e8a80f5715"
+    },
+    "LeanPool/Zeta5Irrational/Table/V27.lean": {
+      "records": "Table_V27.json",
+      "sha256": "cf30c80310f2a2ea774ac79029076e33cb454e8dc3003ef2810d588674c1f76a"
+    },
+    "LeanPool/Zeta5Irrational/Table/V28.lean": {
+      "records": "Table_V28.json",
+      "sha256": "0a2e53ad36a8030146dafab3e53f65d8d4a96fb90d240d2343f7d33dfc5f1f8c"
+    },
+    "LeanPool/Zeta5Irrational/Table/V29.lean": {
+      "records": "Table_V29.json",
+      "sha256": "1b2ae075e54d8a2c345019a72b9d4ba82c3b6705863cba4e2a2282e106ae36f1"
+    },
+    "LeanPool/Zeta5Irrational/Table/V30.lean": {
+      "records": "Table_V30.json",
+      "sha256": "7cfea012f848137f0792787cec96072c0b2be1a2444ca1b6daca196fb1c1d552"
+    },
+    "LeanPool/Zeta5Irrational/Table/V31.lean": {
+      "records": "Table_V31.json",
+      "sha256": "4bbff7a5c50320dec64d578986b62f7116d572b1a0601e47e40ad7425d18b2e3"
+    },
+    "LeanPool/Zeta5Irrational/Table/V32.lean": {
+      "records": "Table_V32.json",
+      "sha256": "2e0f063c9ce99835be2303563af71ae8b84f7a6e803a86814b72c6c1aeb21996"
+    },
+    "LeanPool/Zeta5Irrational/Table/V33.lean": {
+      "records": "Table_V33.json",
+      "sha256": "43deef3b60e304102ac97326745b52c90434d25377ae96f301922143bb6c2ff9"
+    },
+    "LeanPool/Zeta5Irrational/Table/V34.lean": {
+      "records": "Table_V34.json",
+      "sha256": "998b6289042c896ee66f5eed11bdaa8cbdc4c4c0553404492ef636ec5b31fe37"
+    },
+    "LeanPool/Zeta5Irrational/Table/V35.lean": {
+      "records": "Table_V35.json",
+      "sha256": "9815b7090d50d9e739961fcb129894dd3a2c92c07fcb2a5bda11fea0987d782c"
+    },
+    "LeanPool/Zeta5Irrational/Table/V36.lean": {
+      "records": "Table_V36.json",
+      "sha256": "f037659490c1bcd2a8d67d291d1c1a71cdfb468595ce8a6a69e620fe8c10b4cc"
+    },
+    "LeanPool/Zeta5Irrational/Table/V37.lean": {
+      "records": "Table_V37.json",
+      "sha256": "3ff28adfb9c054f4fe4ee03e2cd2dd00104dff5d14177bdadcfbafa8c0be7f3d"
+    },
+    "LeanPool/Zeta5Irrational/Table/V38.lean": {
+      "records": "Table_V38.json",
+      "sha256": "d35e047a397c3758f29f6c1e7680f5d0695b8fd8d7d08dfff6f4aa1cb09d5346"
+    },
+    "LeanPool/Zeta5Irrational/Table/V39.lean": {
+      "records": "Table_V39.json",
+      "sha256": "79cda6168fee177b2c50eaa63f0756206e32cda5d85e5accb2dc1e9cfe3fb398"
+    },
+    "LeanPool/Zeta5Irrational/Table/V40.lean": {
+      "records": "Table_V40.json",
+      "sha256": "190344f67cbbef9c588008e9c161be8946f2d251fff6a290369cfc65f83dd2a1"
+    },
+    "LeanPool/Zeta5Irrational/Table/V41.lean": {
+      "records": "Table_V41.json",
+      "sha256": "cd3c6323e373ea3cfa12e0ba0fce2f2e97f5e3b33190a55bc9015ad335b2fade"
+    },
+    "LeanPool/Zeta5Irrational/Table/V42.lean": {
+      "records": "Table_V42.json",
+      "sha256": "431a1320aac556da9bdce6bf116821fda7dffe839181624b2f5a4723edcea4bf"
+    },
+    "LeanPool/Zeta5Irrational/Table/V43.lean": {
+      "records": "Table_V43.json",
+      "sha256": "2a0e2183e0918bf0cd1e0d02a7a3dd2457cd6f09ff978850c91e66be25d4c00c"
+    },
+    "LeanPool/Zeta5Irrational/Table/V44.lean": {
+      "records": "Table_V44.json",
+      "sha256": "bdb026faa881dd819b5b70e33529f4c937f062ab4f75645b85f9aa356bd526fb"
+    },
+    "LeanPool/Zeta5Irrational/Table/V45.lean": {
+      "records": "Table_V45.json",
+      "sha256": "03b9b4c6f8418b46dade3247f30023d538a73a312f5cdb7aa485012d0943ff7c"
+    },
+    "LeanPool/Zeta5Irrational/Table/V46.lean": {
+      "records": "Table_V46.json",
+      "sha256": "7dd03277fcec4377a74384a09788ae4b48e6d049007b81eef440d150c10d3c81"
+    },
+    "LeanPool/Zeta5Irrational/Table/V47.lean": {
+      "records": "Table_V47.json",
+      "sha256": "3b1bebe3fe9119747601eb2716efede823a3c39875675a810811e519b62c5d9f"
+    },
+    "LeanPool/Zeta5Irrational/Table/V48.lean": {
+      "records": "Table_V48.json",
+      "sha256": "89f9792b35effe3b8add39a4ad5195229c8f513a0813ed4ab0e4133249eff9ca"
+    },
+    "LeanPool/Zeta5Irrational/Table/V49.lean": {
+      "records": "Table_V49.json",
+      "sha256": "0b6a043d88e376270841e5afb368ca4f1c274cc3cf1f1371416f42bf845afb5f"
+    },
+    "LeanPool/Zeta5Irrational/Table/V50.lean": {
+      "records": "Table_V50.json",
+      "sha256": "7eee24f0e2c60fb3e6eb4d05a0117e54956c4839e18e23499487d1f533bdcd6a"
+    },
+    "LeanPool/Zeta5Irrational/Table/V51.lean": {
+      "records": "Table_V51.json",
+      "sha256": "78d9956b3add0ee8c88eb569fe50770a3d6db8b9e213b078476c1f221fbed4ca"
+    },
+    "LeanPool/Zeta5Irrational/Table/V52.lean": {
+      "records": "Table_V52.json",
+      "sha256": "b2a05361775d0b43d61b6768e21fbfb692d7f647b1e70e3ca957888e1a2cdff4"
+    },
+    "LeanPool/Zeta5Irrational/Table/V53.lean": {
+      "records": "Table_V53.json",
+      "sha256": "472a3935d9421c33517550b02fafedb7751fe6f2e477754638350434cd277939"
+    },
+    "LeanPool/Zeta5Irrational/Table/V54.lean": {
+      "records": "Table_V54.json",
+      "sha256": "ebf8597d9fd8a7a141d3ce5ae517616d709c2666529908fcd7f517c0015f7dcb"
+    },
+    "LeanPool/Zeta5Irrational/Table/V55.lean": {
+      "records": "Table_V55.json",
+      "sha256": "d6269c4b49e97f99e7b7a9fd70f5d278543a3f5b83fe43c70e9a1f92b697e96c"
+    },
+    "LeanPool/Zeta5Irrational/Table/V56.lean": {
+      "records": "Table_V56.json",
+      "sha256": "9e38f5e076641cbefe085f4fa158b7037249c65154276bbcadbff3d07f631577"
+    },
+    "LeanPool/Zeta5Irrational/Table/Intervals.lean": {
+      "records": "Table_Intervals.json",
+      "sha256": "6ed6ae1dcfa25278e568efaebe99c59e0dbb983e52bac13c967053a308a15bc8"
+    },
+    "LeanPool/Zeta5Irrational/Growth/InnerTable.lean": {
+      "records": "Growth_InnerTable.json",
+      "sha256": "4f9c91f582aed7ae333fd7edddea9a90b48503b5da5186311811a79b550a0e06"
+    },
+    "LeanPool/Zeta5Irrational/Growth/OuterTable.lean": {
+      "records": "Growth_OuterTable.json",
+      "sha256": "ac8c5a46361186067a93d5ba40ef3d31bd2579efc092c269fbac85028163f640"
+    },
+    "LeanPool/Zeta5Irrational/Growth/InnerSum.lean": {
+      "records": "Growth_InnerSum.json",
+      "sha256": "aba388f21567c996d963e9539bef53cff17ff317f9d52a08dbb6de86696a62b3"
+    }
+  }
+}

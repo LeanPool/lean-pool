@@ -1,0 +1,13 @@
+lemma U_{{integer}}_{{integer}} :
+    Uω (aρ {{integer}}) (bρ {{integer}}) ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) := by
+  have hlg :
+    Real.log ({{integer}} / {{integer}} : ℝ) ≤
+      ({{integer}} / {{integer}} : ℝ) :=
+    log_le_of_ge_one (by norm_num) {{integer}}
+      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+  exact
+    Uω_le_right_certificate (s := ({{integer}} / {{integer}} : ℝ)) (q :=
+      ({{integer}} / {{integer}} : ℝ)) (by norm_num [aρ_{{integer}}, bρ_{{integer}}]) (by norm_num [bρ_{{integer}}])
+      (by norm_num) (by norm_num [aρ_{{integer}}, bρ_{{integer}}]) (by norm_num [aρ_{{integer}}, bρ_{{integer}}]) hlg
+

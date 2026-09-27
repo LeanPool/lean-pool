@@ -216,6 +216,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/WhiteheadTheorem          https://github.com/jzxia/WhiteheadTheorem
   LeanPool/ZFLean                    https://github.com/VTrelat/ZFLean
   LeanPool/Zeta3Irrational           https://github.com/ahhwuhu/zeta_3_irrational
+  LeanPool/Zeta5Irrational           https://github.com/mo271/Zeta5
   LeanPool/ZetaZeros                 https://github.com/AxiomMath/ZetaZeros
   LeanPool/ZhangYeungInequality      https://github.com/cboone/zhang-yeung-inequality
 
@@ -235,6 +236,7 @@ MIT permission notice that follows them.
       Copyright (c) 2024 Job Petrovčič
 
   LeanPool/Biswal                    https://github.com/AxiomMath/Biswal
+  LeanPool/BooleanMultiplication     https://github.com/GregoryMorse/unrestricted-boolean-mul
   LeanPool/Brouwer                   https://github.com/math-xmum/Brouwer
       Copyright (c) 2025 Math_XMUM
 
