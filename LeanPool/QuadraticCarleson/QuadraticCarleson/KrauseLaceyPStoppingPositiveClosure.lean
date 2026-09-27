@@ -7,7 +7,7 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.KrauseLaceyPStoppingRecursion
-public import LeanPool.QuadraticCarleson.QuadraticCarleson.KrauseLaceyNativePositiveSuffixClosure
+public import LeanPool.QuadraticCarleson.QuadraticCarleson.KrauseLaceyNativePositiveForestClosure
 
 /-!
 # Positive one-node interface with genuine `p`-monitor stopping
@@ -367,84 +367,6 @@ theorem exists_pStopping_recursive_sparse_bound
           rw [pStopping_sparseForm_insert_biUnion p f g I C R' hRdisj hIB]
           rw [mul_add, Finset.mul_sum]
 
-private def pStoppingRootSubfamily
-    (topScale : ℤ) (shift : Fin 3) (maxDepth : ℕ)
-    (S : Finset RealInterval) (q₀ : ℤ) : Finset RealInterval :=
-  S.filter fun I ↦ I ∈ completeFiniteShiftGridTree topScale shift maxDepth q₀
-
-private theorem pStoppingRootSubfamilies_pairwiseDisjoint
-    (topScale : ℤ) (shift : Fin 3) (maxDepth : ℕ)
-    (Q : Finset ℤ) (S : Finset RealInterval) :
-    Set.PairwiseDisjoint (↑Q : Set ℤ)
-      (pStoppingRootSubfamily topScale shift maxDepth S) := by
-  classical
-  intro q hq r hr hqr
-  apply Finset.disjoint_left.mpr
-  intro I hIq hIr
-  have hIqtree := (Finset.mem_filter.mp hIq).2
-  have hIrtree := (Finset.mem_filter.mp hIr).2
-  have hd := completeFiniteShiftGridTree_disjoint_of_ne_root
-    topScale shift maxDepth hqr hIqtree hIrtree
-  obtain ⟨x, hx⟩ := I.carrier_nonempty
-  exact Set.disjoint_left.mp hd hx hx
-
-private theorem pStopping_biUnion_rootSubfamily_eq
-    (topScale : ℤ) (shift : Fin 3) (maxDepth : ℕ)
-    (F : Finset (ℕ × ℤ)) (S : Finset RealInterval)
-    (hS : S ⊆ completeFiniteShiftGridForest topScale shift maxDepth F) :
-    (finiteShiftGridRootAddresses F).biUnion
-        (pStoppingRootSubfamily topScale shift maxDepth S) = S := by
-  classical
-  ext I
-  constructor
-  · intro hI
-    obtain ⟨q₀, hq₀, hIq₀⟩ := Finset.mem_biUnion.mp hI
-    exact (Finset.mem_filter.mp hIq₀).1
-  · intro hI
-    have hIF := hS hI
-    change I ∈ (finiteShiftGridRootAddresses F).biUnion
-      (fun q₀ ↦ completeFiniteShiftGridTree topScale shift maxDepth q₀) at hIF
-    obtain ⟨q₀, hq₀, hIq₀⟩ := Finset.mem_biUnion.mp hIF
-    exact Finset.mem_biUnion.mpr
-      ⟨q₀, hq₀, Finset.mem_filter.mpr ⟨hI, hIq₀⟩⟩
-
-private theorem pStopping_localizedTailMaximal_le_sum_rootSubfamilies
-    (ell₀ topScale : ℤ) (shift : Fin 3) (maxDepth : ℕ)
-    (Q : Finset ℤ) (S : Finset RealInterval) (f : ℝ → ℂ)
-    (hunion : Q.biUnion (pStoppingRootSubfamily topScale shift maxDepth S) = S)
-    (x : ℝ) :
-    localizedTailMaximal ell₀ (finiteShiftGridScale topScale shift) S f x ≤
-      ∑ q₀ ∈ Q, localizedTailMaximal ell₀
-        (finiteShiftGridScale topScale shift)
-        (pStoppingRootSubfamily topScale shift maxDepth S q₀) f x := by
-  classical
-  let scale := finiteShiftGridScale topScale shift
-  have hdisj := pStoppingRootSubfamilies_pairwiseDisjoint topScale shift maxDepth Q S
-  have haction (ell : ℤ) :
-      localizedTailAction scale S f ell x =
-        ∑ q₀ ∈ Q,
-          localizedTailAction scale
-            (pStoppingRootSubfamily topScale shift maxDepth S q₀) f ell x := by
-    calc
-      localizedTailAction scale S f ell x =
-          localizedTailAction scale
-            (Q.biUnion (pStoppingRootSubfamily topScale shift maxDepth S)) f ell x := by
-        rw [hunion]
-      _ = _ := by
-        unfold localizedTailAction
-        rw [Finset.sum_biUnion hdisj]
-  apply iSup_le
-  intro ell
-  rw [haction ell.1]
-  apply (enorm_sum_le _ _).trans
-  apply Finset.sum_le_sum
-  intro q₀ hq₀
-  exact le_iSup
-    (fun k : {k : ℤ // ell₀ ≤ k} ↦
-      ‖localizedTailAction scale
-        (pStoppingRootSubfamily topScale shift maxDepth S q₀) f k.1 x‖ₑ)
-    ell
-
 /-- The p-stopping tree recursion extends to any finite forest in a single
 shifted grid, with the same sparse density and coefficient. -/
 theorem exists_pStopping_recursive_sparse_bound_forest
@@ -460,106 +382,11 @@ theorem exists_pStopping_recursive_sparse_bound_forest
           (finiteShiftGridScale topScale shift) S f x * ‖g x‖ₑ) ≤
         ENNReal.ofReal (A * holderConjugate p) *
           sparseForm p f g (↑R : Set RealInterval) := by
-  classical
-  let Q := finiteShiftGridRootAddresses F
-  let branch := pStoppingRootSubfamily topScale shift maxDepth S
-  let scale := finiteShiftGridScale topScale shift
-  have hbranchTree : ∀ q₀ ∈ Q,
-      branch q₀ ⊆ completeFiniteShiftGridTree topScale shift maxDepth q₀ := by
-    intro q₀ hq₀ I hI
-    exact (Finset.mem_filter.mp hI).2
-  have hunion : Q.biUnion branch = S :=
-    pStopping_biUnion_rootSubfamily_eq topScale shift maxDepth F S hSforest
-  have hroot (q₀ : ℤ) (hq₀ : q₀ ∈ Q) :=
-    exists_pStopping_recursive_sparse_bound hlocal hp hp2 ell₀ topScale shift
-      maxDepth q₀ (branch q₀) f g hell (hbranchTree q₀ hq₀)
-  choose R hRsparse hRsub hRbound using hroot
-  let R' : ℤ → Finset RealInterval :=
-    fun q₀ ↦ if hq₀ : q₀ ∈ Q then R q₀ hq₀ else ∅
-  have hRsparse' : ∀ q₀ ∈ Q,
-      IsSparse (1 / 4) (↑(R' q₀) : Set RealInterval) := by
-    intro q₀ hq₀
-    simp only [R', dite_eq_left hq₀]
-    exact hRsparse q₀ hq₀
-  have hRsub' : ∀ q₀ ∈ Q, ∀ I ∈ R' q₀,
-      I.carrier ⊆ (finiteShiftGridInterval topScale shift 0 q₀).carrier := by
-    intro q₀ hq₀
-    simp only [R', dite_eq_left hq₀]
-    exact hRsub q₀ hq₀
-  have hRbound' : ∀ q₀ ∈ Q,
-      (∫⁻ x, localizedTailMaximal ell₀ scale (branch q₀) f x * ‖g x‖ₑ) ≤
-        ENNReal.ofReal (A * holderConjugate p) *
-          sparseForm p f g (↑(R' q₀) : Set RealInterval) := by
-    intro q₀ hq₀
-    simp only [R', dite_eq_left hq₀]
-    exact hRbound q₀ hq₀
-  have hRdisjoint : Set.PairwiseDisjoint (↑Q : Set ℤ) R' := by
-    intro q₀ hq₀ q₁ hq₁ hne
-    apply Finset.disjoint_left.mpr
-    intro I hIq₀ hIq₁
-    have hsub₀ := hRsub' q₀ hq₀ I hIq₀
-    have hsub₁ := hRsub' q₁ hq₁ I hIq₁
-    have hd := finiteShiftGridRootIntervals_pairwiseDisjoint topScale shift hne
-    obtain ⟨x, hx⟩ := I.carrier_nonempty
-    exact Set.disjoint_left.mp hd (hsub₀ hx) (hsub₁ hx)
-  let Rall := Q.biUnion R'
-  have hRallSparse : IsSparse (1 / 4) (↑Rall : Set RealInterval) := by
-    by_cases hQ : Q.Nonempty
-    · let ι := {q₀ : ℤ // q₀ ∈ Q}
-      let RF : ι → Set RealInterval := fun q₀ ↦ ↑(R' q₀.1)
-      let U : ι → Set ℝ := fun q₀ ↦
-        (finiteShiftGridInterval topScale shift 0 q₀.1).carrier
-      let _ : Nonempty ι := Set.nonempty_coe_sort.mpr (by simpa using hQ)
-      have hU : (Set.univ : Set ι).PairwiseDisjoint U := by
-        intro q₀ hq₀ q₁ hq₁ hne
-        exact finiteShiftGridRootIntervals_pairwiseDisjoint topScale shift
-          (fun h ↦ hne (Subtype.ext h))
-      have hRFsub : ∀ q₀ : ι, ∀ I ∈ RF q₀, I.carrier ⊆ U q₀ := by
-        intro q₀ I hI
-        exact hRsub' q₀.1 q₀.2 I hI
-      have hRFsparse : ∀ q₀ : ι, IsSparse (1 / 4) (RF q₀) := by
-        intro q₀
-        exact hRsparse' q₀.1 q₀.2
-      have hu := IsSparse.iUnion_of_disjoint_carriers RF U hU hRFsub hRFsparse
-      convert hu using 1
-      ext I
-      constructor
-      · intro hI
-        obtain ⟨q₀, hq₀, hIR⟩ := Finset.mem_biUnion.mp hI
-        exact Set.mem_iUnion_of_mem ⟨q₀, hq₀⟩ hIR
-      · intro hI
-        obtain ⟨q₀, hIR⟩ := Set.mem_iUnion.mp hI
-        exact Finset.mem_biUnion.mpr ⟨q₀.1, q₀.2, hIR⟩
-    · have hQempty : Q = ∅ := Finset.not_nonempty_iff_eq_empty.mp hQ
-      simpa [Rall, hQempty] using HardyLittlewoodSparseReduction.isSparse_empty
-  have hforms : sparseForm p f g (↑Rall : Set RealInterval) =
-      ∑ q₀ ∈ Q, sparseForm p f g (↑(R' q₀) : Set RealInterval) := by
-    dsimp only [Rall]
-    rw [sparseForm_finset_pStoppingAtom, Finset.sum_biUnion hRdisjoint]
-    simp_rw [← sparseForm_finset_pStoppingAtom]
-  refine ⟨Rall, hRallSparse, ?_⟩
-  calc
-    (∫⁻ x, localizedTailMaximal ell₀ scale S f x * ‖g x‖ₑ) ≤
-        ∫⁻ x, (∑ q₀ ∈ Q, localizedTailMaximal ell₀ scale
-          (branch q₀) f x) * ‖g x‖ₑ := by
-      apply lintegral_mono
-      intro x
-      exact mul_le_mul'
-        (pStopping_localizedTailMaximal_le_sum_rootSubfamilies ell₀ topScale shift
-          maxDepth Q S f hunion x) le_rfl
-    _ = ∑ q₀ ∈ Q,
-        ∫⁻ x, localizedTailMaximal ell₀ scale (branch q₀) f x * ‖g x‖ₑ := by
-      simp_rw [Finset.sum_mul]
-      apply lintegral_finsetSum
-      intro q₀ hq₀
-      exact (measurable_localizedTailMaximal ell₀ scale (branch q₀)
-        f.measurable_toFun).mul g.measurable_toFun.enorm
-    _ ≤ ∑ q₀ ∈ Q, ENNReal.ofReal (A * holderConjugate p) *
-        sparseForm p f g (↑(R' q₀) : Set RealInterval) := by
-      exact Finset.sum_le_sum fun q₀ hq₀ ↦ hRbound' q₀ hq₀
-    _ = ENNReal.ofReal (A * holderConjugate p) *
-        sparseForm p f g (↑Rall : Set RealInterval) := by
-      rw [hforms, Finset.mul_sum]
+  apply KrauseLaceyNativePositiveForestClosure.exists_sparse_bound_forest_of_tree_witnesses
+    ell₀ topScale shift maxDepth F S f g hSforest
+  intro q₀ T hT
+  exact exists_pStopping_recursive_sparse_bound hlocal hp hp2 ell₀ topScale shift
+    maxDepth q₀ T f g hell hT
 
 /-- Operator-facing form of the one-tree p-stopping closure. -/
 theorem hasSparseOnePBound_localizedTailMaximalTestOperator_of_pStopping_tree

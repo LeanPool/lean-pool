@@ -116,16 +116,22 @@ private theorem localizedTailMaximal_le_sum_rootSubfamilies
         (rootSubfamily topScale shift maxDepth S q₀) f k.1 x‖ₑ)
     ell
 
-/-- The checked one-tree recursion extends to an arbitrary finite forest in
-one shifted grid. The sparse witness is the disjoint union of the rootwise
-witnesses, so neither its `1 / 4` density nor its coefficient is degraded. -/
-theorem exists_recursive_sparse_bound_forest
-    {A p : ℝ} (hlocal : HasOneNodeGoodPartPairingBound A)
-    (hp : 1 < p) (hp2 : p < 2)
+/-- Assemble a sparse forest witness from tree witnesses, independently of stopping rules. -/
+theorem exists_sparse_bound_forest_of_tree_witnesses
+    {A p : ℝ}
     (ell₀ topScale : ℤ) (shift : Fin 3) (maxDepth : ℕ)
     (F : Finset (ℕ × ℤ)) (S : Finset RealInterval) (f g : L0Infinity)
-    (hell : 3 ≤ ell₀)
-    (hSforest : S ⊆ completeFiniteShiftGridForest topScale shift maxDepth F) :
+    (hSforest : S ⊆ completeFiniteShiftGridForest topScale shift maxDepth F)
+    (htree : ∀ (q₀ : ℤ) (T : Finset RealInterval),
+      T ⊆ completeFiniteShiftGridTree topScale shift maxDepth q₀ →
+      ∃ R : Finset RealInterval,
+        IsSparse (1 / 4) (↑R : Set RealInterval) ∧
+        (∀ J ∈ R, J.carrier ⊆
+          (finiteShiftGridInterval topScale shift 0 q₀).carrier) ∧
+        (∫⁻ x, localizedTailMaximal ell₀
+          (finiteShiftGridScale topScale shift) T f x * ‖g x‖ₑ) ≤
+          ENNReal.ofReal (A * holderConjugate p) *
+            sparseForm p f g (↑R : Set RealInterval)) :
     ∃ R : Finset RealInterval,
       IsSparse (1 / 4) (↑R : Set RealInterval) ∧
       (∫⁻ x, localizedTailMaximal ell₀
@@ -145,8 +151,7 @@ theorem exists_recursive_sparse_bound_forest
   have hbranchDisjoint : Set.PairwiseDisjoint (↑Q : Set ℤ) branch := by
     exact rootSubfamilies_pairwiseDisjoint topScale shift maxDepth Q S
   have hroot (q₀ : ℤ) (hq₀ : q₀ ∈ Q) :=
-    exists_recursive_sparse_bound hlocal hp hp2 ell₀ topScale shift maxDepth q₀
-      (branch q₀) f g hell (hbranchTree q₀ hq₀)
+    htree q₀ (branch q₀) (hbranchTree q₀ hq₀)
   choose R hRsparse hRsub hRbound using hroot
   let R' : ℤ → Finset RealInterval :=
     fun q₀ ↦ if hq₀ : q₀ ∈ Q then R q₀ hq₀ else ∅
@@ -234,6 +239,28 @@ theorem exists_recursive_sparse_bound_forest
     _ = ENNReal.ofReal (A * holderConjugate p) *
         sparseForm p f g (↑Rall : Set RealInterval) := by
       rw [hforms, Finset.mul_sum]
+
+/-- The checked one-tree recursion extends to an arbitrary finite forest in
+one shifted grid. The sparse witness is the disjoint union of the rootwise
+witnesses, so neither its `1 / 4` density nor its coefficient is degraded. -/
+theorem exists_recursive_sparse_bound_forest
+    {A p : ℝ} (hlocal : HasOneNodeGoodPartPairingBound A)
+    (hp : 1 < p) (hp2 : p < 2)
+    (ell₀ topScale : ℤ) (shift : Fin 3) (maxDepth : ℕ)
+    (F : Finset (ℕ × ℤ)) (S : Finset RealInterval) (f g : L0Infinity)
+    (hell : 3 ≤ ell₀)
+    (hSforest : S ⊆ completeFiniteShiftGridForest topScale shift maxDepth F) :
+    ∃ R : Finset RealInterval,
+      IsSparse (1 / 4) (↑R : Set RealInterval) ∧
+      (∫⁻ x, localizedTailMaximal ell₀
+          (finiteShiftGridScale topScale shift) S f x * ‖g x‖ₑ) ≤
+        ENNReal.ofReal (A * holderConjugate p) *
+          sparseForm p f g (↑R : Set RealInterval) := by
+  apply exists_sparse_bound_forest_of_tree_witnesses ell₀ topScale shift maxDepth
+    F S f g hSforest
+  intro q₀ T hT
+  exact exists_recursive_sparse_bound hlocal hp hp2 ell₀ topScale shift maxDepth
+    q₀ T f g hell hT
 
 /-- Operator-facing form of the finite-forest closure. -/
 theorem hasSparseOnePBound_localizedTailMaximalTestOperator_of_forest
