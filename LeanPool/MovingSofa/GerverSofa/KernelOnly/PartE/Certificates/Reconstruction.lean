@@ -176,6 +176,7 @@ This module combines them using the adaptive-cover soundness lemmas.
 * `KernelOnly.PartE.ThetaAbove.Join00666`.
 * `KernelOnly.PartE.ThetaAbove.Join00026`.
 * `KernelOnly.PartE.ThetaAbove.Join00027`.
+* `KernelOnly.PartE.E24KC6ProofBatch9b503cfa8ccc3ab1`.
 -/
 
 @[expose] public section
@@ -9615,6 +9616,118 @@ theorem e24KC2ThetaAboveLeaf0000220020_c1_c1 :
   adaptiveCoverCheck_succ_of_children 6 thetaAboveCell000022002011
     e24KC2ThetaAboveLeaf0000220020_c1_c1_c0 e24KC2ThetaAboveLeaf0000220020_c1_c1_c1
       e24KC2ThetaAboveLeaf0000220020_c1_c1_c2 e24KC2ThetaAboveLeaf0000220020_c1_c1_c3
+
+end PartE
+end GerverSofa
+
+end
+
+end
+
+end
+
+section
+
+/-! E24KC6 explicit proof-producing certificate batch. -/
+
+@[expose] public section
+
+noncomputable section
+
+namespace GerverSofa
+namespace PartE
+
+namespace CertificateCellsb02c7d0e39
+
+-- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
+/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
+abbrev thetaAboveCell0000 : AngleCell :=
+  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
+/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
+abbrev thetaAboveCell00002200 : AngleCell :=
+  childLL (childLL (childHL (childHL thetaAboveCell0000)))
+/-- Subcell `000022002020` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
+abbrev thetaAboveCell000022002020 : AngleCell :=
+  childLL (childHL (childLL (childHL thetaAboveCell00002200)))
+/-- Subcell `000022002021` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
+abbrev thetaAboveCell000022002021 : AngleCell :=
+  childLH (childHL (childLL (childHL thetaAboveCell00002200)))
+/-- Subcell `000022002022` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
+abbrev thetaAboveCell000022002022 : AngleCell :=
+  childHL (childHL (childLL (childHL thetaAboveCell00002200)))
+/-- Subcell `000022002023` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
+abbrev thetaAboveCell000022002023 : AngleCell :=
+  childHH (childHL (childLL (childHL thetaAboveCell00002200)))
+/-- Subcell `000022002030` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
+abbrev thetaAboveCell000022002030 : AngleCell :=
+  childLL (childHH (childLL (childHL thetaAboveCell00002200)))
+/-- Subcell `000022002031` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
+abbrev thetaAboveCell000022002031 : AngleCell :=
+  childLH (childHH (childLL (childHL thetaAboveCell00002200)))
+/-- Subcell `000022002032` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
+abbrev thetaAboveCell000022002032 : AngleCell :=
+  childHL (childHH (childLL (childHL thetaAboveCell00002200)))
+/-- Subcell `000022002033` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
+abbrev thetaAboveCell000022002033 : AngleCell :=
+  childHH (childHH (childLL (childHL thetaAboveCell00002200)))
+
+end CertificateCellsb02c7d0e39
+
+open CertificateCellsb02c7d0e39
+theorem e24KC2ThetaAboveLeaf0000220020 :
+    adaptiveCoverCheck 9 (childLL (childHL thetaAboveCell00002200)) = true := by
+  exact adaptiveCoverCheck_succ_of_children 8 (childLL (childHL thetaAboveCell00002200))
+    (by
+      exact e24KC2ThetaAboveLeaf0000220020_c0)
+    (by
+      exact adaptiveCoverCheck_succ_of_children 7 (childLH (childLL (childHL
+        thetaAboveCell00002200)))
+        (by
+          exact e24KC2ThetaAboveLeaf0000220020_c1_c0)
+        (by
+          exact e24KC2ThetaAboveLeaf0000220020_c1_c1)
+        (by
+          exact e24KC2ThetaAboveLeaf0000220020_c1_c2)
+        (by
+          exact e24KC2ThetaAboveLeaf0000220020_c1_c3))
+    (by
+      exact adaptiveCoverCheck_succ_of_children 7 (childHL (childLL (childHL
+        thetaAboveCell00002200)))
+        (by
+          have h : (thetaAboveCell000022002020).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002020 h)
+        (by
+          have h : (thetaAboveCell000022002021).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002021 h)
+        (by
+          have h : (thetaAboveCell000022002022).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002022 h)
+        (by
+          have h : (thetaAboveCell000022002023).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002023 h))
+    (by
+      exact adaptiveCoverCheck_succ_of_children 7 (childHH (childLL (childHL
+        thetaAboveCell00002200)))
+        (by
+          have h : (thetaAboveCell000022002030).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002030 h)
+        (by
+          have h : (thetaAboveCell000022002031).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002031 h)
+        (by
+          have h : (thetaAboveCell000022002032).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002032 h)
+        (by
+          have h : (thetaAboveCell000022002033).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002033 h))
 
 end PartE
 end GerverSofa
