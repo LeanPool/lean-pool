@@ -20,7 +20,7 @@ This file constructs controlled biorthogonal sequences for strictly singular ope
 proves closure under addition, real scalar multiplication, and negation.
 -/
 
-@[expose] public section
+public section
 
 
 namespace KaltonPeck.Support.StrictlySingular

@@ -20,7 +20,7 @@ This file defines continuous alternating and strong symplectic forms, together w
 Fredholm, finite-rank, complex-structure, and hyperplane notions used throughout the project.
 -/
 
-@[expose] public section
+public section
 
 namespace KaltonPeck.Support
 

@@ -22,7 +22,7 @@ This file develops continuous annihilators, quotient-dual equivalences, reflexiv
 strong symplectic forms, and the basic algebraic API for symplectic adjoints.
 -/
 
-@[expose] public section
+public section
 
 namespace KaltonPeck.Support.Forms
 

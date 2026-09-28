@@ -23,7 +23,7 @@ This file constructs the canonical Kalton--Swanson symplectic form, transports i
 Kalton--Peck presentations, and develops the associated block-operator theory.
 -/
 
-@[expose] public section
+public section
 
 
 namespace KaltonPeck.Support.Symplectic

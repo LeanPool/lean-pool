@@ -21,7 +21,7 @@ This file defines strictly singular bounded operators and proves their basic beh
 composition, together with strict singularity of compact operators.
 -/
 
-@[expose] public section
+public section
 
 
 namespace KaltonPeck.Support.StrictlySingular

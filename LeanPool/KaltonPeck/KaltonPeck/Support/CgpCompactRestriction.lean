@@ -20,7 +20,7 @@ This file develops compact-restriction machinery for failed upper semi-Fredholm 
 the compact-perturbation argument for the canonical Kalton--Peck space.
 -/
 
-@[expose] public section
+public section
 
 
 namespace KaltonPeck.Support.GraphFredholm

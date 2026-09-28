@@ -23,7 +23,7 @@ This file extracts a successive normalized finite-support block family on which 
 that is not upper semi-Fredholm becomes compact.
 -/
 
-@[expose] public section
+public section
 
 
 namespace KaltonPeck.Support.CgpBlockExtraction

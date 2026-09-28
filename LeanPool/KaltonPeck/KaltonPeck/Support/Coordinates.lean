@@ -21,7 +21,7 @@ This file develops coordinate presentations of the real Kalton--Peck space, cons
 canonical model and quotient map, and compares arbitrary complete presented models.
 -/
 
-@[expose] public section
+public section
 
 
 namespace KaltonPeck.Support
