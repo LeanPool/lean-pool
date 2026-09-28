@@ -9,9 +9,11 @@ public import Mathlib.Order.PiLex
 public import LeanPool.Brouwer.Scarf
 public import LeanPool.Brouwer.Simplex
 import Mathlib.Algebra.BigOperators.Field
-import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Analysis.Normed.Group.Real
+import Mathlib.Analysis.Normed.Group.Constructions
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Order.Filter.AtTopBot.Archimedean
+import Mathlib.Topology.Sequences
 import Mathlib.Tactic.Positivity.Finset
 
 /-!
