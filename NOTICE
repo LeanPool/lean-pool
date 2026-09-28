@@ -90,6 +90,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Erdos97ConvexOctagon      https://github.com/lyfar/erdos-97-octagon-lean
   LeanPool/ErdosMoser                https://github.com/lyfar/erdos-moser-distinct-subset-sums-lean
   LeanPool/ErdosTuzaValtr            https://github.com/jcpaik/erdos-tuza-valtr
+  LeanPool/EuclideanJordan           https://github.com/ehrlich-b/euclidean-jordan
   LeanPool/EvenGraphCycles           https://github.com/jtraverso/erdos-81-chordal-clique-partitions
   LeanPool/EventStructures           https://github.com/vikraman/event-structures
   LeanPool/ExpChaotic                https://github.com/LR-UK/exp-chaotic
