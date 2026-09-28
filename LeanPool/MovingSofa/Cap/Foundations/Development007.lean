@@ -5,15 +5,13 @@ Authors: Dean Cureton, The Moving Sofa contributors
 -/
 module
 
-public import LeanPool.MovingSofa.Analysis.Foundations.Development002
+public import LeanPool.MovingSofa.Infrastructure.Analysis.Foundations.Development002
 public import LeanPool.MovingSofa.Bounds.Foundations.Development004
 public import LeanPool.MovingSofa.Cap.Foundations.Development004
 public import LeanPool.MovingSofa.Cap.Foundations.Development003
-public import LeanPool.MovingSofa.ForMathlib.Analysis.Foundations.Development001
+public import LeanPool.MovingSofa.Infrastructure.MathlibExtensions.Foundations.Development001
 
-
-public import LeanPool.MovingSofa.ForMathlib.Topology.Foundations.Development001
-public import LeanPool.MovingSofa.Geometry.Foundations.Development001
+public import LeanPool.MovingSofa.Infrastructure.Geometry.Foundations.Development002
 public import LeanPool.MovingSofa.Gerver.Foundations.Development002
 /-!
 # Moving sofa: related mathematical developments

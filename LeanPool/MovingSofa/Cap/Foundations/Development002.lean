@@ -6,18 +6,12 @@ Authors: Dean Cureton, The Moving Sofa contributors
 module
 
 public import LeanPool.MovingSofa.Analysis.Foundations.Development003
-public import LeanPool.MovingSofa.Cap.Foundations.Development001
+public import LeanPool.MovingSofa.Infrastructure.Geometry.Foundations.Development002
+public import LeanPool.MovingSofa.Infrastructure.Geometry.Foundations.Development001
+public import LeanPool.MovingSofa.Infrastructure.MathlibExtensions.Foundations.Development001
 
-public import LeanPool.MovingSofa.Classical.Foundations.Development001
-public import LeanPool.MovingSofa.ForMathlib.Analysis.Foundations.Development001
-public import LeanPool.MovingSofa.ForMathlib.Convex.Foundations.Development001
 
-public import LeanPool.MovingSofa.Geometry.Foundations.Development001
 public import LeanPool.MovingSofa.Geometry.Foundations.Development003
-
-
-
-
 /-!
 # Moving sofa: related mathematical developments
 

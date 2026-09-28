@@ -6,15 +6,13 @@ Authors: Dean Cureton, The Moving Sofa contributors
 module
 
 public import LeanPool.MovingSofa.Area.Applications.Development003
-public import LeanPool.MovingSofa.Area.Foundations.Development001
+public import LeanPool.MovingSofa.Infrastructure.Analysis.Foundations.Development003
 public import LeanPool.MovingSofa.Area.Foundations.Development004
 public import LeanPool.MovingSofa.Cap.Foundations.Development003
-
 public import LeanPool.MovingSofa.Cap.Foundations.Development002
 public import LeanPool.MovingSofa.Cap.Applications.Development005
 public import LeanPool.MovingSofa.Convex.Foundations.Development004
-
-public import LeanPool.MovingSofa.Convex.Foundations.Development001
+public import LeanPool.MovingSofa.Infrastructure.Geometry.Foundations.Development003
 /-!
 # Moving sofa: related mathematical developments
 

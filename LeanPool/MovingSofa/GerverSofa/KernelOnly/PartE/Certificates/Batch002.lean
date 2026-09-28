@@ -5833,7 +5833,7 @@ theorem checkedRoot : adaptiveCoverCheck 9 coverCell = true := by
 end CoverPhiAbove1101100
 
 theorem e24KC2PhiAboveLeaf1101100 :
-    adaptiveCoverCheck 9 (childLL (childLL (childLH phiAboveCell1101))) = true :=
+    adaptiveCoverCheck 9 CoverPhiAbove1101100.coverCell = true :=
       CoverPhiAbove1101100.checkedRoot
 
 end PartE

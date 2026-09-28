@@ -10,15 +10,12 @@ public import LeanPool.MovingSofa.Area.Applications.Development004
 public import LeanPool.MovingSofa.Bounds.Foundations.Development005
 public import LeanPool.MovingSofa.Bounds.Foundations.Development006
 public import LeanPool.MovingSofa.Cap.Foundations.Development003
+public import LeanPool.MovingSofa.Infrastructure.Geometry.Foundations.Development003
+public import LeanPool.MovingSofa.Infrastructure.Curves.Foundations.Development002
 
-
-public import LeanPool.MovingSofa.Convex.Foundations.Development001
-public import LeanPool.MovingSofa.Curve.Foundations.Development002
-public import LeanPool.MovingSofa.Curve.Foundations.Development003
 public import LeanPool.MovingSofa.Gerver.Applications.Development003
 public import LeanPool.MovingSofa.Gerver.Applications.Development002
 public import LeanPool.MovingSofa.Gerver.Foundations.Development002
-
 /-!
 # Moving sofa: related mathematical developments
 

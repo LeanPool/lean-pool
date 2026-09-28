@@ -7,14 +7,10 @@ module
 
 public import LeanPool.MovingSofa.Analysis.Foundations.Development005
 public import LeanPool.MovingSofa.Cap.Foundations.Development003
-public import LeanPool.MovingSofa.ForMathlib.MeasureTheory.Foundations.Development001
-
+public import LeanPool.MovingSofa.Infrastructure.MathlibExtensions.Foundations.Development001
 public import LeanPool.MovingSofa.Geometry.Foundations.Development005
 public import LeanPool.MovingSofa.Geometry.Foundations.Development003
-
 public import LeanPool.MovingSofa.Gerver.Foundations.Development002
-
-
 /-!
 # Moving sofa: related mathematical developments
 

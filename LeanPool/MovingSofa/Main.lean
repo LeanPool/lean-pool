@@ -7,7 +7,7 @@ module
 
 public import LeanPool.MovingSofa.Optimality
 public import LeanPool.MovingSofa.Motion.Applications.Development002
-public import LeanPool.MovingSofa.External
+public import LeanPool.MovingSofa.Infrastructure.Topology.Foundations.Development001
 /-!
 # The moving sofa problem: proofs
 

@@ -6,9 +6,9 @@ Authors: Dean Cureton, The Moving Sofa contributors
 module
 
 public import LeanPool.MovingSofa.Cap.Foundations.Development002
-public import LeanPool.MovingSofa.Convex.Foundations.Development001
-public import LeanPool.MovingSofa.Curve.Foundations.Development002
-public import LeanPool.MovingSofa.Curve.Foundations.Development001
+public import LeanPool.MovingSofa.Infrastructure.Geometry.Foundations.Development003
+public import LeanPool.MovingSofa.Infrastructure.Curves.Foundations.Development002
+public import LeanPool.MovingSofa.Infrastructure.Curves.Foundations.Development001
 public import LeanPool.MovingSofa.Geometry.Foundations.Development003
 public import Mathlib.LinearAlgebra.AffineSpace.Independent
 /-!

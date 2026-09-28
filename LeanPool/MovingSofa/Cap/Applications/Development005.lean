@@ -9,10 +9,8 @@ public import LeanPool.MovingSofa.Cap.Applications.Development002
 public import LeanPool.MovingSofa.Cap.Applications.Development004
 public import LeanPool.MovingSofa.Cap.Applications.Development003
 public import LeanPool.MovingSofa.Cap.Foundations.Development002
-public import LeanPool.MovingSofa.Convex.Foundations.Development001
+public import LeanPool.MovingSofa.Infrastructure.Geometry.Foundations.Development003
 public import LeanPool.MovingSofa.Convex.Foundations.Development003
-
-
 public import LeanPool.MovingSofa.Gerver.Applications.Development001
 public import LeanPool.MovingSofa.Gerver.Applications.Development003
 public import LeanPool.MovingSofa.Gerver.Applications.Development002

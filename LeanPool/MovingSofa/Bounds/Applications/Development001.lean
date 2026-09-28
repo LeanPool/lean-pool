@@ -7,11 +7,9 @@ module
 
 public import LeanPool.MovingSofa.Analysis.Foundations.Development003
 public import LeanPool.MovingSofa.Analysis.Foundations.Development005
-public import LeanPool.MovingSofa.ForMathlib.MeasureTheory.Foundations.Development001
-public import LeanPool.MovingSofa.ForMathlib.Order.Foundations.Development001
+public import LeanPool.MovingSofa.Infrastructure.MathlibExtensions.Foundations.Development001
+
 public import LeanPool.MovingSofa.Polygon.Applications.Development001
-
-
 public import LeanPool.MovingSofa.Polygon.Foundations.Development002
 /-!
 # Moving sofa: related mathematical developments

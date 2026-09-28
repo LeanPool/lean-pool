@@ -6,7 +6,7 @@ Authors: Dean Cureton, The Moving Sofa contributors
 module
 
 public import LeanPool.MovingSofa.Cap.Foundations.Development002
-public import LeanPool.MovingSofa.ForMathlib.Analysis.Foundations.Development001
+public import LeanPool.MovingSofa.Infrastructure.MathlibExtensions.Foundations.Development001
 public import LeanPool.MovingSofa.Motion.Foundations.Development001
 /-!
 # Moving sofa: related mathematical developments
