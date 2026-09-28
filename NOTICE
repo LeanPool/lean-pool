@@ -142,6 +142,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/LowDimSolvClassification  https://github.com/LieLean/LowDimSolvClassification
   LeanPool/LowWeightPauliDynamics    https://github.com/Jue-Xu/Lean4LPD
   LeanPool/MRiscX                    https://github.com/JulsDE/MRiscX
+  LeanPool/MarkovProcess             https://github.com/scottnarmstrong/markovprocess
   LeanPool/MassFormula               https://github.com/0stellensatz/MassFormula
   LeanPool/MatchingLogic             https://github.com/eveil-labs/matching-logic-lean
   LeanPool/MaxFlowMinCut             https://github.com/jtraverso/erdos-81-chordal-clique-partitions
@@ -316,6 +317,7 @@ MIT permission notice that follows them.
   LeanPool/RlTheoryInLean            https://github.com/ShangtongZhang/rl-theory-in-lean
       Copyright (c) 2025 Shangtong Zhang
 
+  LeanPool/SalemTheorem              https://github.com/stalex444/salem-theorem
   LeanPool/SemicircleLaw             https://github.com/FredRaj3/SemicircleLaw
       Copyright (c) 2025 FredRaj3
 

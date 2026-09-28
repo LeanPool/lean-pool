@@ -10938,35 +10938,39 @@ projects:
     - commutative-algebra
     msc:
     - 13F15
-  - slug: lean-superorthogonality
-    title: Square-function estimates from type IV superorthogonality
-    summary: Proves the type IV superorthogonality square-function estimate for finite and countable index
-      sets, including the pointwise combinatorial estimate and unconditional convergence in L^(2r).
-    branch: harmonic analysis
-    entry_module: LeanPool.Superorthogonality
+  - slug: salem-theorem
+    title: Every Pisot number is a two-sided limit of Salem numbers
+    summary: Proves Salem’s two-sided approximation theorem for Pisot numbers, preserving both the polynomial
+      reciprocal-family construction and the exceptional quadratic-unit construction.
+    branch: algebraic number theory
+    entry_module: LeanPool.SalemTheorem
     authors:
-    - Joris Roos
+    - Stephanie Alexander
     source:
-      url: https://github.com/roos-j/lean-superorthogonality
-      github_repo: roos-j/lean-superorthogonality
-      commit: 6d3a3645c1e6f6a3c50bfdc12c4a51250e63bc31
-    license: Apache-2.0
+      url: https://github.com/stalex444/salem-theorem
+      github_repo: stalex444/salem-theorem
+      commit: 887be765bf24c6a645600dfc7bd0a1055a1761dd
+    license: MIT
     status: verified
     provenance: AI
     main_declarations:
-    - Superorthogonal.sqfct_estimate_of_type_iv_superorthogonal
+    - SalemTheorem.salem_theorem
     main_results:
-    - declaration: Superorthogonal.sqfct_estimate_of_type_iv_superorthogonal
-      informal: For an integer r >= 1, a countable type IV superorthogonal family in L^(2r), with
-        almost-everywhere summable squared norms and square function in L^(2r), converges unconditionally
-        in L^(2r) and satisfies the square-function bound with constant C(r).
+    - declaration: SalemTheorem.salem_theorem
+      informal: Every Pisot number is approached by Salem numbers from both below and above.
+    - declaration: SalemTheorem.salem_construction_two_sided
+      informal: For the nondegenerate Pisot polynomial pattern, reciprocal-family polynomials have Salem
+        roots arbitrarily near the Pisot root from either side.
+    - declaration: SalemTheorem.salem_quadratic_unit
+      informal: The quadratic-unit family supplies Salem roots approaching each reciprocal quadratic Pisot
+        unit from either side.
     tags:
-    - harmonic-analysis
-    - superorthogonality
-    - square-functions
+    - number-theory
+    - pisot-numbers
+    - salem-numbers
     msc:
-    - 42B25
-    - 46E30
+    - 11R06
+    - 11R09
   - slug: rr-equals-nonmeager-paper
     title: The nonmeagre lower bound for the rearrangement number
     summary: Formalizes the inequality non(M) ≤ rr in ZFC via relational systems, category and slalom bounds,
@@ -11146,3 +11150,32 @@ projects:
     msc:
     - 47B06
     - 46B20
+  - slug: lean-superorthogonality
+    title: Square-function estimates from type IV superorthogonality
+    summary: Proves the type IV superorthogonality square-function estimate for finite and countable index
+      sets, including the pointwise combinatorial estimate and unconditional convergence in L^(2r).
+    branch: harmonic analysis
+    entry_module: LeanPool.Superorthogonality
+    authors:
+    - Joris Roos
+    source:
+      url: https://github.com/roos-j/lean-superorthogonality
+      github_repo: roos-j/lean-superorthogonality
+      commit: 6d3a3645c1e6f6a3c50bfdc12c4a51250e63bc31
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - Superorthogonal.sqfct_estimate_of_type_iv_superorthogonal
+    main_results:
+    - declaration: Superorthogonal.sqfct_estimate_of_type_iv_superorthogonal
+      informal: For an integer r >= 1, a countable type IV superorthogonal family in L^(2r), with
+        almost-everywhere summable squared norms and square function in L^(2r), converges unconditionally
+        in L^(2r) and satisfies the square-function bound with constant C(r).
+    tags:
+    - harmonic-analysis
+    - superorthogonality
+    - square-functions
+    msc:
+    - 42B25
+    - 46E30
