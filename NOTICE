@@ -62,6 +62,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/CriticalPortraits         https://github.com/no-way-labs/lean-critical-portraits
   LeanPool/DemazureOperatorsLean     https://github.com/bolito2/DemazureOperatorsLean
   LeanPool/DemazureProduct           https://github.com/npflueger/demazure
+  LeanPool/DensityHalesJewett        https://github.com/gdahia/densityhalesjewett
   LeanPool/Desargues                 https://github.com/oneofvalts/desargues
   LeanPool/Dilatations               https://github.com/rndmx/DilCat
   LeanPool/DistanceGeometry          https://github.com/lyfar/distance-geometry-lean
@@ -152,6 +153,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/MooreBound                https://github.com/woutercvb/wewantmoore
   LeanPool/MoserLatticeColorings     https://github.com/lyfar/moser-lattice-colorings-lean
   LeanPool/MulticolorTriangleRamsey  https://github.com/openai/ten-proofs
+  LeanPool/NagataFactoriality        https://github.com/arthur742ramos/nagatafactoriality
   LeanPool/NashWilliams              https://github.com/yannpequignot/TwoBQO
   LeanPool/NavierStokesAndEuler      https://github.com/openai/NavierStokesAndEuler
   LeanPool/NemytskiiLebesgue         https://github.com/madvorak/nemytskii-lebesgue
