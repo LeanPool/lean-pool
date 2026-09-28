@@ -208,8 +208,9 @@ theorem endpoint_sum_linearEquiv_strand_reflection
       exact Nat.sub_sub_self (Nat.le_of_lt_succ i.isLt)
     rw [hSymm]
     ext x
-    simp [leftEndpoint, rightEndpoint, strandVertex, strandMirror,
-      hTail', hHead, p]
+    simp only [leftEndpoint, rightEndpoint, strandVertex, strandMirror,
+      hTail', hHead, p, Pi.sub_apply, Pi.add_apply, Pi.neg_apply,
+      one_ne_zero, ↓reduceIte]
     have hPath :
         B.pathVertex α
           ⟨B.length α - (B.length α - i.val), by

@@ -377,7 +377,7 @@ private lemma source_of_acyclic_with_unique_source {G : CFGraph} {O : CFOrientat
 /-- The configuration associated to an acyclic orientation with unique source $q$ assigns
 $\mathrm{indeg}(v)-1$ chips to each vertex $v \ne q$, and $0$ at $q$. -/
 def configOfSource {G : CFGraph} {O : CFOrientation G} {q : G.V}
-    (hO : acyclicWithUniqueSource G O q) : Config G q :=
+    (hO : acyclicWithUniqueSource G O q) : ChipFiringConfiguration G q :=
   { chips := fun v => if v = q then 0 else (indeg G O v : ℤ) - 1,
     q_zero := by simp only [↓reduceIte]
     non_negative := by
@@ -440,7 +440,7 @@ def orqed {G : CFGraph} (O : CFOrientation G) {q : G.V}
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 4.7
 (part 2). -/
 def orientationToConfig (G : CFGraph) (O : CFOrientation G) (q : G.V)
-    (hO : acyclicWithUniqueSource G O q) : Config G q :=
+    (hO : acyclicWithUniqueSource G O q) : ChipFiringConfiguration G q :=
   configOfSource hO
 
 /-- The configuration associated to an orientation records the expected in-degree data. -/
@@ -467,7 +467,7 @@ lemma config_and_divisor_from_O {G : CFGraph} (O : CFOrientation G) {q : G.V}
   by_cases h_v: v = q
   · -- Case v = q
     rw [h_v]
-    have (c d : Config G q) : c.chips q = d.chips q := by
+    have (c d : ChipFiringConfiguration G q) : c.chips q = d.chips q := by
       rw [c.q_zero, d.q_zero]
     rw [this]
   · -- Case v ≠ q
@@ -583,7 +583,7 @@ lemma orientation_determined_by_indegrees {G : CFGraph}
 
 /-- Two acyclic orientations with unique source $q$ that give the same configuration are equal. -/
 private theorem config_to_orientation_unique (G : CFGraph) (q : G.V)
-    (c : Config G q)
+    (c : ChipFiringConfiguration G q)
     (O₁ O₂ : CFOrientation G)
     (hO₁ : acyclicWithUniqueSource G O₁ q)
     (hO₂ : acyclicWithUniqueSource G O₂ q)
@@ -1026,13 +1026,15 @@ def orientationFromFlow {G : CFGraph} (f : G.V × G.V → ℕ) (h_count_preservi
 /-- The orientation constructed from a complete burn list $L$ for a superstable configuration,
 via `burnFlow`. This is shown to be acyclic with unique source $q$ by `burn_acyclic` and
 `burn_unique_source`. -/
-def burnOrientation {G : CFGraph} {q : G.V} {c : Config G q} (L : burnList G c) (h_full : ∀ (v
+def burnOrientation {G : CFGraph} {q : G.V}
+    {c : ChipFiringConfiguration G q} (L : burnList G c) (h_full : ∀ (v
   : G.V), v ∈ L.list) : CFOrientation G := orientationFromFlow (burnFlow L) (burn_flow_reverse L
   h_full)
 
 /-- Along any directed path in `burnOrientation L`, the positions of vertices in the burn list
 are strictly decreasing. This is the key lemma for proving acyclicity. -/
-private lemma dp_dec {G : CFGraph} {q : G.V} {c : Config G q} (L : burnList G c) (h_full : ∀ (v
+private lemma dp_dec {G : CFGraph} {q : G.V}
+    {c : ChipFiringConfiguration G q} (L : burnList G c) (h_full : ∀ (v
     : G.V), v ∈ L.list) (p : DirectedPath (burnOrientation L h_full)) :
   List.IsChain (· > ·) (p.vertices.map (fun v => List.idxOf v L.list)) := by
   refine List.isChain_map_of_isChain (f := fun v => List.idxOf v L.list) ?_ p.valid_edges
@@ -1053,14 +1055,16 @@ private lemma dp_dec {G : CFGraph} {q : G.V} {c : Config G q} (L : burnList G c)
   simp only [this, ↓reduceIte, lt_self_iff_false] at h_count
 
 /-- Every directed path in `burnOrientation L` has no repeated vertices. -/
-private lemma burn_nodup {G : CFGraph} {q : G.V} {c : Config G q} (L : burnList G c) (h_full : ∀ (v
+private lemma burn_nodup {G : CFGraph} {q : G.V}
+    {c : ChipFiringConfiguration G q} (L : burnList G c) (h_full : ∀ (v
     : G.V), v ∈ L.list) (p : DirectedPath (burnOrientation L h_full)) : p.vertices.Nodup := by
   let q : List ℕ := p.vertices.map (fun v => List.idxOf v L.list)
   have h_sorted : q.SortedGT := (List.sortedGT_iff_isChain).2 (dp_dec L h_full p)
   exact List.Nodup.of_map (fun v => List.idxOf v L.list) h_sorted.nodup
 
 /-- The orientation constructed from a complete burn list is acyclic. -/
-private lemma burn_acyclic {G : CFGraph} {q : G.V} {c : Config G q} (L : burnList G c) (h_full : ∀
+private lemma burn_acyclic {G : CFGraph} {q : G.V}
+    {c : ChipFiringConfiguration G q} (L : burnList G c) (h_full : ∀
     (v : G.V), v ∈ L.list) :
   isAcyclic G (burnOrientation L h_full) := by
   dsimp only [isAcyclic]
@@ -1069,7 +1073,8 @@ private lemma burn_acyclic {G : CFGraph} {q : G.V} {c : Config G q} (L : burnLis
   exact burn_nodup L h_full p
 
 /-- The orientation constructed from a complete burn list has $q$ as its unique source. -/
-private lemma burn_unique_source {G : CFGraph} {q : G.V} {c : Config G q} (L : burnList G c) (h_full
+private lemma burn_unique_source {G : CFGraph} {q : G.V}
+    {c : ChipFiringConfiguration G q} (L : burnList G c) (h_full
     : ∀ (v : G.V), v ∈ L.list) :
   ∀ w, isSource G (burnOrientation L h_full) w → w = q := by
   intro w h_source
@@ -1091,7 +1096,8 @@ private lemma burn_unique_source {G : CFGraph} {q : G.V} {c : Config G q} (L : b
   simp only [ineq, CharP.cast_eq_zero, sum_const_zero]
 
 /-- The orientation constructed from a complete burn list is acyclic with unique source $q$. -/
-private lemma burn_acyclic_with_unique_source {G : CFGraph} {q : G.V} {c : Config G q}
+private lemma burn_acyclic_with_unique_source {G : CFGraph} {q : G.V}
+    {c : ChipFiringConfiguration G q}
     (L : burnList G c) (h_full : ∀ (v : G.V), v ∈ L.list) :
     acyclicWithUniqueSource G (burnOrientation L h_full) q :=
   ⟨burn_acyclic L h_full, burn_unique_source L h_full⟩
@@ -1117,7 +1123,8 @@ See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Theorem 4.8.
 
 /-- Dhar's burning algorithm produces, from a superstable configuration, an orientation whose
 associated configuration dominates it. -/
-theorem superstable_dhar {G : CFGraph} {q : G.V} {c : Config G q} (h_ss : superstable G q c) :
+theorem superstable_dhar {G : CFGraph} {q : G.V}
+    {c : ChipFiringConfiguration G q} (h_ss : superstable G q c) :
     ∃ (O : CFOrientation G) (hO : acyclicWithUniqueSource G O q),
       c ≤ orientationToConfig G O q hO := by
   rcases superstable_burn_list G c h_ss with ⟨L, h_full⟩
@@ -1171,9 +1178,9 @@ theorem orientation_config_maximal (G : CFGraph) (O : CFOrientation G) (q : G.V)
   exact config_eq_of_le_and_degree h_ge h_deg
 
 /-- Every superstable configuration extends to a maximal superstable configuration. -/
-theorem maximal_superstable_exists (G : CFGraph) (q : G.V) (c : Config G q)
+theorem maximal_superstable_exists (G : CFGraph) (q : G.V) (c : ChipFiringConfiguration G q)
     (h_super : superstable G q c) :
-    ∃ c' : Config G q, maximalSuperstable G c' ∧ c ≤ c' := by
+    ∃ c' : ChipFiringConfiguration G q, maximalSuperstable G c' ∧ c ≤ c' := by
     rcases superstable_dhar h_super with ⟨O, hO, h_ge⟩
     let c' := orientationToConfig G O q hO
     use c'
@@ -1185,7 +1192,7 @@ theorem maximal_superstable_exists (G : CFGraph) (q : G.V) (c : Config G q)
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Theorem 4.8,
 part 2 (surjectivity). -/
-theorem maximal_superstable_orientation (G : CFGraph) (q : G.V) (c : Config G q)
+theorem maximal_superstable_orientation (G : CFGraph) (q : G.V) (c : ChipFiringConfiguration G q)
     (h_max : maximalSuperstable G c) :
     ∃ (O : CFOrientation G) (hO : acyclicWithUniqueSource G O q),
       orientationToConfig G O q hO = c := by
@@ -1202,16 +1209,18 @@ See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Theorem 4.8,
 part 3 (bijection). -/
 theorem orientation_superstable_bijection (G : CFGraph) (q : G.V) :
     let α := {O : CFOrientation G // acyclicWithUniqueSource G O q};
-    let β := {c : Config G q // maximalSuperstable G c};
-    let f_raw : α → Config G q := fun O_sub => orientationToConfig G O_sub.val q O_sub.prop;
+    let β := {c : ChipFiringConfiguration G q // maximalSuperstable G c};
+    let f_raw : α → ChipFiringConfiguration G q :=
+      fun O_sub => orientationToConfig G O_sub.val q O_sub.prop;
     let f : α → β := fun O_sub =>
       ⟨f_raw O_sub, orientation_config_maximal G O_sub.val q O_sub.prop⟩;
     Function.Bijective f := by
   -- Define the domain and codomain types explicitly (can be removed if using let like above)
   let α := {O : CFOrientation G // acyclicWithUniqueSource G O q}
-  let β := {c : Config G q // maximalSuperstable G c}
-  -- Define the function f_raw : α → Config G q
-  let f_raw : α → Config G q := fun O_sub => orientationToConfig G O_sub.val q O_sub.prop
+  let β := {c : ChipFiringConfiguration G q // maximalSuperstable G c}
+  -- Define the function f_raw : α → ChipFiringConfiguration G q
+  let f_raw : α → ChipFiringConfiguration G q :=
+    fun O_sub => orientationToConfig G O_sub.val q O_sub.prop
   -- Define the function f : α → β, showing the result is maximal superstable
   let f : α → β := fun O_sub =>
     ⟨f_raw O_sub, orientation_config_maximal G O_sub.val q O_sub.prop⟩
@@ -1237,7 +1246,7 @@ theorem orientation_superstable_bijection (G : CFGraph) (q : G.V) :
     unfold Function.Surjective
     intro y -- y should now have type β
     -- Access components using .val and .property
-    let c_target : Config G q := y.val -- Explicitly type c_target
+    let c_target : ChipFiringConfiguration G q := y.val -- Explicitly type c_target
     let h_target_max_superstable := y.property
     -- Use the fact that every maximal superstable config comes from an orientation.
     rcases maximal_superstable_orientation G q c_target h_target_max_superstable with

@@ -8,7 +8,7 @@ module
 
 public import LeanPool.BrillNoetherGraphs.ChipFiringWithLean.Basic
 
-/-! # Config -/
+/-! # ChipFiringConfiguration -/
 
 @[expose] public section
 open Multiset Finset
@@ -16,7 +16,8 @@ open Multiset Finset
 /-!
 ## Configurations and superstable configurations
 
-Fix a vertex $q \in V(G)$. A *configuration* (`Config G q`) is a nonnegative integer assignment
+Fix a vertex $q \in V(G)$. A *configuration*
+(`ChipFiringConfiguration G q`) is a nonnegative integer assignment
 to the vertices $V(G) \setminus \{q\}$, extended by zero at $q$. This corresponds to what
 Corry-Perkinson call a *nonnegative configuration*; we use "configuration"
 to mean "nonnegative configuration" throughout this library.
@@ -40,7 +41,7 @@ assignment to all vertices, with the convention that $q$ holds zero chips. This 
 Corry-Perkinson call a *nonnegative configuration*.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 2.9. -/
-structure Config (G : CFGraph) (q : G.V) where
+structure ChipFiringConfiguration (G : CFGraph) (q : G.V) where
   /-- The divisor recording the chip count at each vertex. -/
   (chips : CFDiv G)
   /-- The distinguished vertex $q$ has no chips. -/
@@ -53,16 +54,16 @@ $$
 \deg(c) = \sum_{v \in V(G)\setminus\{q\}} c(v).
 $$
 Since $c(q)=0$, this is implemented as the degree of the underlying divisor. -/
-def configDegree {G : CFGraph} {q : G.V} (c : Config G q) : ℤ :=
+def configDegree {G : CFGraph} {q : G.V} (c : ChipFiringConfiguration G q) : ℤ :=
   CFDiv.degree (c.chips)
 
 /-- Converts a configuration $c$ to a divisor of prescribed degree $d$ by placing
 $d-\deg(c)$ chips at $q$. -/
-def toDiv {G : CFGraph} {q : G.V} (d : ℤ) (c : Config G q) : CFDiv G :=
+def toDiv {G : CFGraph} {q : G.V} (d : ℤ) (c : ChipFiringConfiguration G q) : CFDiv G :=
   c.chips + (d - configDegree c) • (oneChip q)
 
 /-- Two configurations are equal if their chip counts agree at every vertex. -/
-@[ext] lemma Config.ext {q : G.V} {c₁ c₂ : Config G q}
+@[ext] lemma ChipFiringConfiguration.ext {q : G.V} {c₁ c₂ : ChipFiringConfiguration G q}
     (h : ∀ v : G.V, c₁.chips v = c₂.chips v) : c₁ = c₂ := by
   obtain ⟨vd₁, _, _⟩ := c₁
   obtain ⟨vd₂, _, _⟩ := c₂
@@ -70,12 +71,13 @@ def toDiv {G : CFGraph} {q : G.V} (d : ℤ) (c : Config G q) : CFDiv G :=
   exact funext h
 
 /-- Two configurations are equal if and only if their underlying divisors agree. -/
-lemma eq_config_iff_eq_chips {q : G.V} (c₁ c₂ : Config G q) :
+lemma eq_config_iff_eq_chips {q : G.V} (c₁ c₂ : ChipFiringConfiguration G q) :
   c₁ = c₂ ↔ c₁.chips = c₂.chips :=
-  ⟨fun h => by rw [h], fun h => Config.ext (congrFun h)⟩
+  ⟨fun h => by rw [h], fun h => ChipFiringConfiguration.ext (congrFun h)⟩
 
 /-- Two configurations are equal if and only if their images under `toDiv d` agree. -/
-lemma eq_config_iff_eq_div {q : G.V} (d : ℤ) (c₁ c₂ : Config G q) : c₁ = c₂ ↔ toDiv d c₁ = toDiv d
+lemma eq_config_iff_eq_div {q : G.V} (d : ℤ)
+    (c₁ c₂ : ChipFiringConfiguration G q) : c₁ = c₂ ↔ toDiv d c₁ = toDiv d
     c₂ := by
   constructor
   -- Forward direction is clear
@@ -97,7 +99,8 @@ lemma eq_config_iff_eq_div {q : G.V} (d : ℤ) (c₁ c₂ : Config G q) : c₁ =
 
 /-- Converts a configuration $c$ to the $q$-effective divisor `toDiv d c`,
 bundled with its proof of $q$-effectivity. -/
-def toQEffectiveDivisor {q : G.V} (d : ℤ) (c : Config G q) : qEffectiveDivisor G q :=
+def toQEffectiveDivisor {q : G.V} (d : ℤ)
+    (c : ChipFiringConfiguration G q) : qEffectiveDivisor G q :=
   {
     D := toDiv d c,
     h_eff := by
@@ -108,7 +111,7 @@ def toQEffectiveDivisor {q : G.V} (d : ℤ) (c : Config G q) : qEffectiveDivisor
       exact c.non_negative v
   }
 /-- Converts a $q$-effective divisor to a configuration by zeroing out the chip count at $q$. -/
-def toConfig {q : G.V} (D : qEffectiveDivisor G q) : Config G q := {
+def toConfig {q : G.V} (D : qEffectiveDivisor G q) : ChipFiringConfiguration G q := {
   chips := D.D - (D.D q) • (oneChip q)
   q_zero := by
     rw [Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
@@ -133,31 +136,31 @@ lemma config_degree_div_degree {q : G.V} (D : qEffectiveDivisor G q) : CFDiv.deg
   ring
 
 /-- Shifting the prescribed degree by $k$ adds $k$ chips at $q$. -/
-@[simp] lemma toDiv_config_degree_add {q : G.V} (c : Config G q) (k : ℤ) :
+@[simp] lemma toDiv_config_degree_add {q : G.V} (c : ChipFiringConfiguration G q) (k : ℤ) :
   toDiv (configDegree c + k) c = c.chips + k • oneChip q := by
   dsimp only [toDiv]
   rw [show configDegree c + k - configDegree c = k by ring]
 
 /-- Prescribing degree $\deg(c)-1$ gives the divisor $c-q$. -/
-@[simp] private lemma toDiv_config_degree_sub_one {q : G.V} (c : Config G q) :
+@[simp] private lemma toDiv_config_degree_sub_one {q : G.V} (c : ChipFiringConfiguration G q) :
   toDiv (configDegree c - 1) c = c.chips - oneChip q := by
   rw [show configDegree c - 1 = configDegree c + (-1) by ring]
   rw [toDiv_config_degree_add]
   simp only [Int.reduceNeg, neg_smul, one_smul, sub_eq_add_neg]
 
 /-- The divisor $c-q$ has degree $\deg(c)-1$. -/
-@[simp] lemma deg_chips_sub_one_chip {q : G.V} (c : Config G q) :
+@[simp] lemma deg_chips_sub_one_chip {q : G.V} (c : ChipFiringConfiguration G q) :
   CFDiv.degree (c.chips - oneChip q) = configDegree c - 1 := by
   rw [map_sub, configDegree, deg_one_chip]
 
 /-- `toConfig` is a left inverse of `toQEffectiveDivisor`: converting a configuration to a
 $q$-effective
 divisor and back recovers the original configuration. -/
-private lemma config_of_div_of_config (c : Config G q) (d : ℤ) :
+private lemma config_of_div_of_config (c : ChipFiringConfiguration G q) (d : ℤ) :
   toConfig (toQEffectiveDivisor d c) = c := by
   rcases c with ⟨chips, q_zero, non_negative⟩
   dsimp only [toQEffectiveDivisor, toConfig]
-  simp only [zsmul_eq_mul, Config.mk.injEq]
+  simp only [zsmul_eq_mul, ChipFiringConfiguration.mk.injEq]
   apply funext
   intro v
   by_cases h_v : v = q
@@ -204,7 +207,7 @@ lemma div_of_config_of_div (D : qEffectiveDivisor G q) :
 lemma q_reduced_eq_chips_add_q (G : CFGraph) (q : G.V) (D : CFDiv G)
     (h_qred : qReduced G q D) :
     D = (toConfig ⟨D, h_qred.1⟩).chips + D q • oneChip q := by
-  let c : Config G q := toConfig ⟨D, h_qred.1⟩
+  let c : ChipFiringConfiguration G q := toConfig ⟨D, h_qred.1⟩
   have h_deg : CFDiv.degree D = configDegree c + D q := by
     simpa only [add_comm] using (config_degree_div_degree ⟨D, h_qred.1⟩)
   calc
@@ -225,12 +228,13 @@ lemma q_reduced_eq_chips_sub_one_chip (G : CFGraph) (q : G.V) (D : CFDiv G)
     _ = (toConfig ⟨D, h_qred.1⟩).chips - oneChip q := by
       simp only [Int.reduceNeg, neg_smul, one_smul, sub_eq_add_neg]
 
-@[simp] private lemma eval_toDiv_q {q : G.V} (d : ℤ) (c : Config G q) :
+@[simp] private lemma eval_toDiv_q {q : G.V} (d : ℤ) (c : ChipFiringConfiguration G q) :
   toDiv d c q = d - configDegree c := by
   dsimp only [toDiv, Pi.add_apply, Pi.smul_apply, Int.zsmul_eq_mul]
   simp only [c.q_zero, one_chip_apply_v, mul_one, zero_add]
 
-@[simp] private lemma eval_toDiv_ne_q {q v : G.V} (d : ℤ) (c : Config G q) (h_v : v ≠ q) :
+@[simp] private lemma eval_toDiv_ne_q {q v : G.V} (d : ℤ)
+    (c : ChipFiringConfiguration G q) (h_v : v ≠ q) :
   toDiv d c v = c.chips v := by
   dsimp only [toDiv, Pi.add_apply, Pi.smul_apply, Int.zsmul_eq_mul]
   simp only [ne_eq, h_v, not_false_eq_true, one_chip_apply_other', mul_zero, add_zero]
@@ -238,7 +242,8 @@ lemma q_reduced_eq_chips_sub_one_chip (G : CFGraph) (q : G.V) (D : CFDiv G)
 
 /-- The divisor `toDiv d c` is effective if and only if $d \ge \deg(c)$, i.e. there are
 enough chips at $q$ to cover any debt. -/
-lemma config_eff {q : G.V} (d : ℤ) (c : Config G q) : effective (toDiv d c) ↔ d ≥ configDegree c :=
+lemma config_eff {q : G.V} (d : ℤ)
+    (c : ChipFiringConfiguration G q) : effective (toDiv d c) ↔ d ≥ configDegree c :=
     by
   constructor
   -- Effective implies d ≥ configDegree
@@ -255,7 +260,7 @@ lemma config_eff {q : G.V} (d : ℤ) (c : Config G q) : effective (toDiv d c) �
       simp only [ne_eq, h_v, not_false_eq_true, eval_toDiv_ne_q, ge_iff_le]
       exact c.non_negative v
 
-instance : PartialOrder (Config G q) := {
+instance : PartialOrder (ChipFiringConfiguration G q) := {
   le := fun c₁ c₂ => c₁.chips ≤ c₂.chips,
   le_refl := by
     intro _
@@ -271,14 +276,14 @@ instance : PartialOrder (Config G q) := {
 
 /-- The configuration degree is monotone: if $c \le c'$ pointwise, then
 $\deg(c) \le \deg(c')$. -/
-lemma config_degree_mono {q : G.V} {c c' : Config G q} (h_le : c ≤ c') :
+lemma config_degree_mono {q : G.V} {c c' : ChipFiringConfiguration G q} (h_le : c ≤ c') :
   configDegree c ≤ configDegree c' := by
   dsimp only [configDegree, CFDiv.degree, AddMonoidHom.coe_mk, ZeroHom.coe_mk]
   exact Finset.sum_le_sum fun v _ => h_le v
 
 /-- Two configurations are equal if one is pointwise bounded above by the other and they have
 the same degree. -/
-lemma config_eq_of_le_and_degree {q : G.V} {c1 c2 : Config G q} (h_le : c2 ≤ c1)
+lemma config_eq_of_le_and_degree {q : G.V} {c1 c2 : ChipFiringConfiguration G q} (h_le : c2 ≤ c1)
     (h_deg : configDegree c1 = configDegree c2) : c1 = c2 := by
   apply (eq_config_iff_eq_chips c1 c2).mpr
   dsimp only [configDegree, CFDiv.degree, AddMonoidHom.coe_mk, ZeroHom.coe_mk] at h_deg
@@ -309,7 +314,7 @@ $S \subseteq V(G) \setminus \{q\}$, some vertex in $S$ has fewer chips than its
 out-degree to $V(G) \setminus S$.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 3.12. -/
-def superstable (G : CFGraph) (q : G.V) (c : Config G q) : Prop :=
+def superstable (G : CFGraph) (q : G.V) (c : ChipFiringConfiguration G q) : Prop :=
   ∀ S ⊆  Vtilde q, S.Nonempty →
     ∃ v ∈ S, c.chips v < outdegreeSet G S v
 
@@ -317,7 +322,7 @@ def superstable (G : CFGraph) (q : G.V) (c : Config G q) : Prop :=
 for any prescribed degree $d$.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Remark 3.14. -/
-lemma superstable_iff_q_reduced (G : CFGraph) (q : G.V) (d : ℤ) (c : Config G q) :
+lemma superstable_iff_q_reduced (G : CFGraph) (q : G.V) (d : ℤ) (c : ChipFiringConfiguration G q) :
   superstable G q c ↔ qReduced G q (toDiv d c) := by
   dsimp only [superstable, ne_eq]
   constructor
@@ -367,7 +372,7 @@ lemma q_reduced_toConfig_superstable (G : CFGraph) (q : G.V) (D : CFDiv G)
 /-- A divisor is $q$-reduced if and only if it corresponds to a superstable configuration with
   respect to $q$. -/
 lemma q_reduced_superstable_correspondence (G : CFGraph) (q : G.V) (D : CFDiv G) :
-  qReduced G q D ↔ ∃ c : Config G q, superstable G q c ∧
+  qReduced G q D ↔ ∃ c : ChipFiringConfiguration G q, superstable G q c ∧
   D = toDiv (CFDiv.degree D) c := by
   constructor
   · -- Forward direction (qReduced → ∃ c, superstable ∧ D = c - δ_q)
@@ -384,13 +389,13 @@ lemma q_reduced_superstable_correspondence (G : CFGraph) (q : G.V) (D : CFDiv G)
 
 /-- A maximal superstable configuration is not strictly dominated by any other superstable
 configuration. -/
-def maximalSuperstable (G : CFGraph) {q : G.V} (c : Config G q) : Prop :=
-  superstable G q c ∧ ∀ c' : Config G q, superstable G q c' → c ≤ c' → c' = c
+def maximalSuperstable (G : CFGraph) {q : G.V} (c : ChipFiringConfiguration G q) : Prop :=
+  superstable G q c ∧ ∀ c' : ChipFiringConfiguration G q, superstable G q c' → c ≤ c' → c' = c
 
 
 /-- Subtracting a chip at $q$ from a superstable configuration gives an unwinnable
 divisor. -/
-lemma superstable_sub_chip_unwinnable {G : CFGraph} (q : G.V) (c : Config G q) :
+lemma superstable_sub_chip_unwinnable {G : CFGraph} (q : G.V) (c : ChipFiringConfiguration G q) :
   superstable G q c →
   ¬winnable G (c.chips - oneChip q) := by
   intro h_superstable
@@ -440,7 +445,7 @@ $$
 Then $v_i \in S_i$, and the out-degree of $v_i$ with respect to $S_i$, equivalently the
 number of edges from $v_i$ to the later vertices $\{v_{i+1},\ldots,v_n,q\}$, is greater
 than the number of chips at $v_i$. -/
-def isBurnList (G : CFGraph) {q : G.V} (c : Config G q) (L : List G.V) : Prop :=
+def isBurnList (G : CFGraph) {q : G.V} (c : ChipFiringConfiguration G q) (L : List G.V) : Prop :=
   match L with
   | [] => False
   | [x] => (x = q)
@@ -451,7 +456,8 @@ def isBurnList (G : CFGraph) {q : G.V} (c : Config G q) (L : List G.V) : Prop :=
       ∧ isBurnList G c (w :: rest)
 
 /-- Every burn list contains $q$, since the base case of a burn list is $[q]$. -/
-private lemma burn_list_contains_q (G : CFGraph) {q : G.V} (c : Config G q) (L : List G.V) (h_bl :
+private lemma burn_list_contains_q (G : CFGraph) {q : G.V}
+    (c : ChipFiringConfiguration G q) (L : List G.V) (h_bl :
     isBurnList G c L) :
   L.contains q := by
   induction L with
@@ -476,7 +482,8 @@ private lemma burn_list_contains_q (G : CFGraph) {q : G.V} (c : Config G q) (L :
 /-- If $c$ is superstable and a burn list $L$ does not yet contain all vertices, it can be
 extended by prepending a new vertex. This corresponds to the next edge burning in Dhar's
 burning algorithm; superstability implies that the entire graph will burn. -/
-private lemma extend_burn_list (G : CFGraph) {q : G.V} (c : Config G q) (h_ss : superstable G q c)
+private lemma extend_burn_list (G : CFGraph) {q : G.V}
+    (c : ChipFiringConfiguration G q) (h_ss : superstable G q c)
     (L : List G.V) : isBurnList G c L → (∃ v : G.V, ¬ L.contains v) → (∃ w : G.V, w ∉ L.toFinset ∧
     isBurnList G c (w :: L)) := by
   intro h_bl h_exists_v
@@ -533,14 +540,15 @@ private lemma extend_burn_list (G : CFGraph) {q : G.V} (c : Config G q) (h_ss : 
 
 /-- A bundled burn list: a list $L$ of vertices together with a proof that it satisfies the
 `isBurnList` conditions for configuration $c$. -/
-structure burnList (G : CFGraph) {q : G.V} (c : Config G q) where
+structure burnList (G : CFGraph) {q : G.V} (c : ChipFiringConfiguration G q) where
   /-- The ordered vertices satisfying the burning-list conditions for the configuration. -/
   (list : List G.V)
   (h_burn_list : isBurnList G c list)
 
 /-- For each $n < |V(G)|$, there exists a burn list of size $n+1$. This is the inductive step for
 `superstable_burn_list`. -/
-private lemma burn_list_helper (G : CFGraph) {q : G.V} (c : Config G q) (h_ss : superstable G q c)
+private lemma burn_list_helper (G : CFGraph) {q : G.V}
+    (c : ChipFiringConfiguration G q) (h_ss : superstable G q c)
     (n : ℕ) : (n < Finset.card (univ : Finset G.V))→ ∃ (L : List G.V), L.toFinset.card = n+1 ∧
     isBurnList G c L := by
   intro h_n_lt_card_V
@@ -579,7 +587,8 @@ private lemma burn_list_helper (G : CFGraph) {q : G.V} (c : Config G q) (h_ss : 
 /-- A superstable configuration admits a complete burn list containing every vertex of $G$.
 This is the key output of Dhar's burning algorithm: in a superstable configuration, the
 whole graph burns. -/
-lemma superstable_burn_list (G : CFGraph) {q : G.V} (c : Config G q) (h_ss : superstable G q c) : ∃
+lemma superstable_burn_list (G : CFGraph) {q : G.V}
+    (c : ChipFiringConfiguration G q) (h_ss : superstable G q c) : ∃
     L : burnList G c, ∀ v : G.V, v ∈ L.list := by
   have h_card_V : (univ : Finset G.V).card ≥ 1 := by
     have h_nonempty : Nonempty G.V := by infer_instance
@@ -611,13 +620,15 @@ lemma superstable_burn_list (G : CFGraph) {q : G.V} (c : Config G q) (h_ss : sup
 (i.e. assign nonzero flow) if $u$ appears in the list and $v$ appears before $u$. In other
 words, the orientation indicates the direction of the spreading fire in Dhar's burning
 algorithm. -/
-def burnFlow {G : CFGraph} {q : G.V} {c : Config G q} (L : burnList G c) : (G.V × G.V) → ℕ :=
+def burnFlow {G : CFGraph} {q : G.V}
+    {c : ChipFiringConfiguration G q} (L : burnList G c) : (G.V × G.V) → ℕ :=
   fun e => if (e.1 ∈ L.list) ∧ (L.list.idxOf e.2 < L.list.idxOf e.1) then numEdges G e.1 e.2 else 0
 
 /-- The `burnFlow` of a complete burn list is a valid orientation: for every edge
 $\{u,v\}$, exactly `numEdges G u v` units of flow are directed in one of the two
 directions. -/
-lemma burn_flow_reverse {G : CFGraph} {q : G.V} {c : Config G q} (L : burnList G c) (h_full : ∀ v :
+lemma burn_flow_reverse {G : CFGraph} {q : G.V}
+    {c : ChipFiringConfiguration G q} (L : burnList G c) (h_full : ∀ v :
     G.V, v ∈ L.list) : ∀ (u v : G.V), (burnFlow L ⟨u, v⟩) + (burnFlow L ⟨v, u⟩) = numEdges G u v :=
     by
   intro u v
@@ -643,7 +654,8 @@ lemma burn_flow_reverse {G : CFGraph} {q : G.V} {c : Config G q} (L : burnList G
 
 /-- The `burnFlow` of a complete burn list is directed: for every pair $(u,v)$, flow goes
 in at most one direction. -/
-lemma burn_flow_directed {G : CFGraph} {q : G.V} {c : Config G q} (L : burnList G c) (h_full : ∀ v :
+lemma burn_flow_directed {G : CFGraph} {q : G.V}
+    {c : ChipFiringConfiguration G q} (L : burnList G c) (h_full : ∀ v :
     G.V, v ∈ L.list) : ∀ (u v : G.V), burnFlow L ⟨u,v⟩ = 0 ∨ burnFlow L ⟨v,u⟩ = 0 := by
   intro u v
   dsimp only [burnFlow]
@@ -666,7 +678,8 @@ lemma burn_flow_directed {G : CFGraph} {q : G.V} {c : Config G q} (L : burnList 
 /-- For any vertex $v \ne q$ in a burn list, the in-flow into $v$ exceeds the number of
 chips at $v$. This is the key inequality used to construct an acyclic orientation from a
 superstable configuration. -/
-lemma burnin_degree {G : CFGraph} {q : G.V} {c : Config G q} (L : burnList G c) (v : G.V) (h_pres :
+lemma burnin_degree {G : CFGraph} {q : G.V}
+    {c : ChipFiringConfiguration G q} (L : burnList G c) (v : G.V) (h_pres :
     v ∈ L.list) (h_ne : v ≠ q) : ∑ (w : G.V), burnFlow L ⟨w,v⟩ > c.chips v := by
   let h_bl := L.h_burn_list
   cases h: L.list with
