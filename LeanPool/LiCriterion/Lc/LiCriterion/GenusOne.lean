@@ -31,7 +31,7 @@ The core term `2 - (wᵐ + w⁻ᵐ)` and the identity pairing a zero `ρ` with `
 makes the sum over zeros converge at genus 1.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

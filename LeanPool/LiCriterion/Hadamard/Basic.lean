@@ -56,7 +56,7 @@ public import LeanPool.LiCriterion.FunctionsOfOneComplexVariable.BorelCaratheodo
 
 /-! ### Maximum modulus definition -/
 
-@[expose] public section
+public section
 
 open Complex Real Filter Topology MeasureTheory
 open scoped BigOperators ComplexConjugate

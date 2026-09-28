@@ -30,7 +30,7 @@ and [audit guide](https://github.com/nicholasbulka/li-criterion-rh-equivalence-l
 Those upstream audit assets are separate from this Lean Pool import.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

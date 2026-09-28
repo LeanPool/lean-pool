@@ -31,7 +31,7 @@ public import Mathlib.Analysis.Complex.AbsMax
 A bound on `‖g‖` on a disk in terms of the supremum of `re g` on a larger disk.
 -/
 
-@[expose] public section
+public section
 
 open Complex Real Filter Topology
 open scoped BigOperators ComplexConjugate

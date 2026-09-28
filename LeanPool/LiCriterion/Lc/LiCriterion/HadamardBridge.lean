@@ -16,7 +16,7 @@ Specializes the general genus-1 Hadamard factorization to `riemannXi`, with mult
 the zero set of `ξ` as a `Hadamard.ZeroSetMultiplicity`, and the resulting `E₁` product.
 -/
 
-@[expose] public section
+public section
 
 open Complex
 

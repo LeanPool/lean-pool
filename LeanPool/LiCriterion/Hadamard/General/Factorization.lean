@@ -46,7 +46,7 @@ rank-`p` variant. We introduce it here so downstream lemmas can refer to
 it; the genus-1 version is a special case.
 -/
 
-@[expose] public section
+public section
 
 
 open scoped BigOperators

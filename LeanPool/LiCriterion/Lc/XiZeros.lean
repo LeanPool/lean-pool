@@ -46,7 +46,7 @@ Substituting:
        = (1/2) s(s-1) Λ(s)
 -/
 
-@[expose] public section
+public section
 
 open Complex
 open scoped BigOperators

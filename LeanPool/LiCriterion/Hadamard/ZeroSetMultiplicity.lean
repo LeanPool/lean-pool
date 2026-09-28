@@ -23,7 +23,7 @@ public import LeanPool.LiCriterion.Hadamard.ZeroSet
 as a sigma type so that the factorization theorem applies without assuming simple zeros.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

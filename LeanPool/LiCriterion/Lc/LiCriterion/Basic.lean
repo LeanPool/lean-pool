@@ -90,7 +90,7 @@ These geometric facts connect the critical line to the unit circle via the
 Möbius transform z ↦ 1 - 1/z. This is essential in Li's proof.
 -/
 
-@[expose] public section
+public section
 
 open Complex Real Set Function Filter
 open scoped Topology ComplexConjugate
