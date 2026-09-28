@@ -12,6 +12,5 @@ public import LeanPool.ScottishBook155.TransfiniteConstruction
 # Proved solution
 
 The declaration `ScottishBook155.claim14` is proved in the imported production
-module. Comparator checks it against the independent statement in
-`Challenge.lean`.
+module.
 -/
