@@ -69,7 +69,7 @@ It requires the content checkout at the pinned commit, Lean v4.34.0 and Mathlib
 
 ```bash
 # In the content checkout:
-lake build LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle007
+lake build LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 
 # In this tooling checkout's python/ directory:
 uv run python -m lean_pool.sofa_certificates.discover \
