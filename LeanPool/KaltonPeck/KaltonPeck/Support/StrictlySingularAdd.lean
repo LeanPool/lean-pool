@@ -273,16 +273,23 @@ noncomputable def biorthogonalPrefixWith
       let p := biorthogonalPrefixWith U η step n
       p.snocWith (step p)
 
+/-- Strict singularity supplies an extension at every biorthogonal prefix. -/
+theorem strictlySingularExtensionStep
+    [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
+    {U : X →L[ℝ] Y} (hU : IsStrictlySingular.{0, uX, uY, uX} U)
+    {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) :
+    ∀ {n}, (p : BiorthogonalPrefix U η n) → p.Extension := by
+  intro n p
+  exact IsStrictlySingular.exists_biorthogonal_extension
+    hX hU p.v p.φ p.bio (hη n)
+
 /-- Recursively construct finite biorthogonal prefixes for a strictly singular operator. -/
 noncomputable def biorthogonalPrefix
     [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
     {U : X →L[ℝ] Y} (hU : IsStrictlySingular.{0, uX, uY, uX} U)
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) :
     (n : ℕ) → BiorthogonalPrefix U η n :=
-  biorthogonalPrefixWith U η (by
-    intro n p
-    exact IsStrictlySingular.exists_biorthogonal_extension
-      hX hU p.v p.φ p.bio (hη n))
+  biorthogonalPrefixWith U η (strictlySingularExtensionStep hX hU hη)
 
 theorem BiorthogonalPrefix.snocWith_v_castSucc
     {U : X →L[ℝ] Y} {η : ℕ → ℝ} {n : ℕ}
@@ -334,7 +341,8 @@ theorem biorthogonalPrefix_succ_v_castSucc
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) {n : ℕ} (i : Fin n) :
     (biorthogonalPrefix hX hU hη (n + 1)).v i.castSucc =
       (biorthogonalPrefix hX hU hη n).v i := by
-  exact biorthogonalPrefixWith_succ_v_castSucc U η _ i
+  exact biorthogonalPrefixWith_succ_v_castSucc U η
+    (strictlySingularExtensionStep hX hU hη) i
 
 theorem biorthogonalPrefix_succ_φ_castSucc
     [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
@@ -342,7 +350,8 @@ theorem biorthogonalPrefix_succ_φ_castSucc
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) {n : ℕ} (i : Fin n) :
     (biorthogonalPrefix hX hU hη (n + 1)).φ i.castSucc =
       (biorthogonalPrefix hX hU hη n).φ i := by
-  exact biorthogonalPrefixWith_succ_φ_castSucc U η _ i
+  exact biorthogonalPrefixWith_succ_φ_castSucc U η
+    (strictlySingularExtensionStep hX hU hη) i
 
 /-- Read the newest vector from each finite prefix. -/
 noncomputable def prefixVector

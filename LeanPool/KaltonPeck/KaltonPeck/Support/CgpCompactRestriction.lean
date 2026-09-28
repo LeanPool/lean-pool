@@ -271,14 +271,22 @@ noncomputable def snocNotUpper
   exact p.snocWith
     (exists_biorthogonal_extension_of_not_upper T hT p.v p.φ p.bio (hη n))
 
+omit [CompleteSpace Y] in
+/-- Failure of upper semi-Fredholmness supplies every biorthogonal extension. -/
+theorem notUpperExtensionStep
+    (T : X →L[ℝ] Y) (hT : ¬ IsUpperSemiFredholm T)
+    {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) :
+    ∀ {n}, (p : BiorthogonalPrefix T η n) → p.Extension := by
+  intro n p
+  exact exists_biorthogonal_extension_of_not_upper
+    T hT p.v p.φ p.bio (hη n)
+
 /-- Recursively construct biorthogonal prefixes for an operator which is not upper semi-Fredholm. -/
 noncomputable def biorthogonalPrefixNotUpper
     (T : X →L[ℝ] Y) (hT : ¬ IsUpperSemiFredholm T)
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) :
     (n : ℕ) → BiorthogonalPrefix T η n :=
-  biorthogonalPrefixWith T η (by
-    intro n p
-    exact exists_biorthogonal_extension_of_not_upper T hT p.v p.φ p.bio (hη n))
+  biorthogonalPrefixWith T η (notUpperExtensionStep T hT hη)
 
 omit [CompleteSpace Y] in
 theorem snocNotUpper_v_castSucc
@@ -303,7 +311,8 @@ theorem biorthogonalPrefixNotUpper_succ_v_castSucc
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) {n : ℕ} (i : Fin n) :
     (biorthogonalPrefixNotUpper T hT hη (n + 1)).v i.castSucc =
       (biorthogonalPrefixNotUpper T hT hη n).v i := by
-  exact biorthogonalPrefixWith_succ_v_castSucc T η _ i
+  exact biorthogonalPrefixWith_succ_v_castSucc T η
+    (notUpperExtensionStep T hT hη) i
 
 open KaltonPeck.Support.StrictlySingular in
 omit [CompleteSpace Y] in
@@ -312,7 +321,8 @@ theorem biorthogonalPrefixNotUpper_succ_φ_castSucc
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) {n : ℕ} (i : Fin n) :
     (biorthogonalPrefixNotUpper T hT hη (n + 1)).φ i.castSucc =
       (biorthogonalPrefixNotUpper T hT hη n).φ i := by
-  exact biorthogonalPrefixWith_succ_φ_castSucc T η _ i
+  exact biorthogonalPrefixWith_succ_φ_castSucc T η
+    (notUpperExtensionStep T hT hη) i
 
 open KaltonPeck.Support.StrictlySingular in
 /-- The newest vector in the biorthogonal prefix associated to a
