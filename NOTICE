@@ -109,6 +109,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/GranvilleMoore            https://github.com/AxiomMath/GranvilleMoore
   LeanPool/HadwigerNelsonBounds      https://github.com/lyfar/hadwiger-nelson-bounds-lean
   LeanPool/HansonWright              https://github.com/Lean-MoDS/StatsMLlib
+  LeanPool/HardSphereNBC             https://github.com/ukiyois/hs-virial-nbc-identity
   LeanPool/HasseMinkowski            https://github.com/jayyswan/hasse-minkowski
   LeanPool/HopfProblem               https://github.com/plby/HopfProblem
   LeanPool/Incompleteness            https://github.com/FormalizedFormalLogic/Incompleteness
@@ -201,6 +202,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/SemicircleCheck           https://github.com/Wondermonger-daydreaming/semicircle-catalan
   LeanPool/Sensitivity               https://github.com/SamuelSchlesinger/sensitivity-conjecture
   LeanPool/SetTheory                 https://github.com/znssong/SetTheory
+  LeanPool/SeveralComplexVariables   https://github.com/bjbraams/lean-scv
   LeanPool/SingularModuli            https://github.com/ElodinLaarz/lean-thesis
   LeanPool/SpectralPositivity        https://github.com/mrdouglasny/spectral-positivity
   LeanPool/SpectralTheory            https://github.com/savarin/lean-spectral-theory
