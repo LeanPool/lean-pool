@@ -5,7 +5,7 @@ Authors: Dean Cureton, The Moving Sofa contributors
 -/
 module
 
-public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartB.Semantics.Batch003
+public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development001
 /-!
 # Moving sofa: related mathematical developments

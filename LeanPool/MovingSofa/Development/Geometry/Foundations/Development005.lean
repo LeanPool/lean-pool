@@ -6,14 +6,10 @@ Authors: Dean Cureton, The Moving Sofa contributors
 module
 
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development004
-public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartF.Semantics.Batch002
+public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle008
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development002
-
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development003
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development001
-
-
-
 public import Mathlib.Analysis.Convex.Continuous
 public import Mathlib.Analysis.Convex.Segment
 public import Mathlib.Analysis.Normed.Affine.Isometry
