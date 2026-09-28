@@ -235,7 +235,7 @@ consults it on an edge name. -/
   | c => (c, c)
 
 /-- The six 0-cells. -/
-def vertices : Set InitialCell := Set.range InitialCell.vert
+@[expose] def vertices : Set InitialCell := Set.range InitialCell.vert
 
 /-- The seven 1-cells: six outer edges and the crosscut. -/
 @[expose] def edges : Set InitialCell := Set.range InitialCell.edge ∪ {InitialCell.chord}
@@ -244,7 +244,7 @@ def vertices : Set InitialCell := Set.range InitialCell.vert
 @[expose] def outerEdges : Set InitialCell := Set.range InitialCell.edge
 
 /-- The two 2-cells. -/
-def faces : Set InitialCell := Set.range InitialCell.face
+@[expose] def faces : Set InitialCell := Set.range InitialCell.face
 
 theorem outerEdges_subset_edges : outerEdges ⊆ edges := Set.subset_union_left
 
@@ -344,7 +344,7 @@ together with the crosscut. `face false = R₁` is bounded by `B₁ ∪ P`, `fac
 /-- The names that `initialStructure` declares to be cells: the six 0-cells, the seven 1-cells
 and the two 2-cells. This is `initialStructure.cells` unfolded, written out here because
 `initSub` is a field of `initialStructure` and cannot refer to it. -/
-def cellNames : Set InitialCell :=
+@[expose] def cellNames : Set InitialCell :=
   InitialCell.vertices ∪ InitialCell.edges ∪ InitialCell.faces
 
 theorem aux_notMem_cellNames (n : ℕ) : InitialCell.aux n ∉ cellNames := by
@@ -362,7 +362,7 @@ The reflexive clause is restricted to `cellNames`. `≼_abs` must relate cells t
 `CellStructure.CombInvariants.sub_mem_left` and `.sub_mem_right` say so — and `InitialCell`
 carries a spare supply of names beyond the fifteen cells, so unrestricted reflexivity would
 relate a spare name to itself and make both false. -/
-def initSub (c d : InitialCell) : Prop :=
+@[expose] def initSub (c d : InitialCell) : Prop :=
   (c = d ∧ d ∈ cellNames) ∨ (d ∈ InitialCell.edges ∧ (c = d.ends.1 ∨ c = d.ends.2)) ∨
     (∃ k, d = .face k ∧ c ∈ faceCells k)
 
@@ -489,7 +489,7 @@ variable (H : HexData)
 
 /-- The two boundary edge-paths from `pos 1` to `pos 4`, as sets: `arcOf false` is `A₁`, the
 union of the outer edges `1, 2, 3`, and `arcOf true` is `A₂`, the union of `4, 5, 0`. -/
-def arcOf : Bool → Set Plane
+@[expose] def arcOf : Bool → Set Plane
   | false => H.outer 1 '' I ∪ (H.outer 2 '' I ∪ H.outer 3 '' I)
   | true => H.outer 4 '' I ∪ (H.outer 5 '' I ∪ H.outer 0 '' I)
 
@@ -1743,10 +1743,10 @@ nonempty, so the countable dense set of strongly accessible points of
 then supply the polygonal crosscut. -/
 
 /-- The relative interior of the top side of the square. -/
-def openTop : Set Plane := {p : Plane | |p 0| < 1 ∧ 0 < p 1} ∩ modelCurve
+@[expose] def openTop : Set Plane := {p : Plane | |p 0| < 1 ∧ 0 < p 1} ∩ modelCurve
 
 /-- The relative interior of the bottom side — the side *opposite* the top one. -/
-def openBottom : Set Plane := {p : Plane | |p 0| < 1 ∧ p 1 < 0} ∩ modelCurve
+@[expose] def openBottom : Set Plane := {p : Plane | |p 0| < 1 ∧ p 1 < 0} ∩ modelCurve
 
 theorem isOpen_topBand : IsOpen {p : Plane | |p 0| < 1 ∧ 0 < p 1} := by
   have h1 : IsOpen {p : Plane | |p 0| < 1} :=

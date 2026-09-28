@@ -153,7 +153,7 @@ theorem skelHomeo_succ (n : ℕ) :
 /-- **The tower the limit section consumes.** Every field is read off the stages or is one of
 the four facts about the two concrete domains; there is no mathematics here beyond the two
 recorded above. -/
-def limitTower : CellStructure.LimitTower γ where
+@[expose] def limitTower : CellStructure.LimitTower γ where
   str n := (T.stage n).str
   src n := (T.stage n).src
   tgt n := (T.stage n).tgt

@@ -26,6 +26,7 @@ variable {α : Type u}
 
 
 /-- The finite-core points viewed as states in the subgroup's left-coset space. -/
+@[expose]
 def coreStateSet [DecidableEq α] (H : Subgroup (FreeGroup α))
     (S : Finset (FreeGroup α)) (g : FreeGroup α) :
     Set (LeftCosetQuotient H) :=

@@ -230,7 +230,7 @@ lemma firstMove_extQuasi_tree (hs : s.IsQuasi) (hT : IsPruned G.tree) :
       convert hbs using 1
       simp only [firstMove, subtreeIncl, ↓reduceDIte]
       rfl⟩
-@[simp] lemma firstMove_extQuasi_isWinning (hT : IsPruned G.tree) (hs : s.IsQuasi) :
+lemma firstMove_extQuasi_isWinning (hT : IsPruned G.tree) (hs : s.IsQuasi) :
   ((s.firstMove a h).extQuasi hT).1.IsWinning ↔ s.IsWinning := by
   unfold IsWinning
   rw [firstMove_extQuasi_tree a h s hs]

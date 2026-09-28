@@ -183,7 +183,7 @@ theorem exists_finite_freshDense_of_dense {eligible : Set Plane}
 /-- A finite boundary list is a metric net at scale `delta`.  This explicit consequence is
 retained for the boundary-continuity construction; `FreshDense` itself is the order-free
 connected-component estimate needed by the target mesh. -/
-def FreshNet (fresh : List Plane) (delta : ℝ) : Prop :=
+@[expose] def FreshNet (fresh : List Plane) (delta : ℝ) : Prop :=
   ∀ x ∈ modelCurve, ∃ z ∈ fresh, dist x z < delta
 
 theorem FreshDense.mono {fresh fresh' : List Plane} {delta : ℝ}

@@ -79,7 +79,7 @@ lemma LosingCondition.of_concat {x : List (upA hyp)} {a h} (H : LosingCondition 
   ∃ y : subAt (getTree' hyp x) [a.1], a.2
   = pullSub (subAt G.tree (x.map Prod.fst ++ a.1 :: y)) y := (concat.mp H).2
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def WinningCondition (x : List (upA hyp)) (h : x.length = 2 * k + 2) :=
+@[expose] def WinningCondition (x : List (upA hyp)) (h : x.length = 2 * k + 2) :=
   body (pullSub (getTree' hyp x) (x.map Prod.fst)) ⊆ G.payoff ∧
   ∃ S' : QuasiStrategy (subAt (getTree' hyp (x.take (2 * k + 1))) [x[2 * k + 1].1])
     Player.one, getTree' hyp x = S'.1.subtree
@@ -103,7 +103,7 @@ lemma WinningCondition.of_concat {x : List (upA hyp)} {a h} (H : WinningConditio
   = S'.1.subtree := (concat.mp H).2
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def ValidExt (x : List (upA hyp)) (a : upA hyp) := [a.1] ∈ getTree' hyp x ∧
+@[expose] def ValidExt (x : List (upA hyp)) (a : upA hyp) := [a.1] ∈ getTree' hyp x ∧
   if x.length = 2 * k then
     ∃ S : QuasiStrategy (subAt (getTree' hyp x) [a.1]) Player.one, a.2 = S.1.subtree
   else if h : x.length = 2 * k + 1 then
@@ -234,7 +234,7 @@ end «Section2»
 
 variable (hyp)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def treeHom : gameAsTrees hyp ⟶ oldAsTrees hyp where
+@[expose] def treeHom : gameAsTrees hyp ⟶ oldAsTrees hyp where
   toFun x := ⟨x.val.map Prod.fst, by
     have h : [] ∈ subAt _ _ := getTree_sub x (getTree_ne_and_pruned x).1
     change x.val.map Prod.fst ∈ G.tree

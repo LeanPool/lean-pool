@@ -215,7 +215,7 @@ noncomputable def crosscutPieces (J : Piece) (p : Plane) (s epsilon : ℝ) : Lis
 
 /-- The finite straight-line overlay of the old compact source core, an auxiliary crosscut,
 and the local grid.  Old nonboundary vertices and prescribed points are retained. -/
-noncomputable def crosscutOverlay (J : Piece) (p : Plane) (s epsilon : ℝ)
+@[expose] noncomputable def crosscutOverlay (J : Piece) (p : Plane) (s epsilon : ℝ)
     (extra : List Plane) : Graph Plane Piece :=
   attachGraph (Q.crosscutPieces J p s epsilon)
     (extra ++ P.sourceNonboundaryGraph.vertexFinset.toList)

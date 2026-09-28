@@ -349,6 +349,7 @@ $\mathrm{act} \colon M \to^* \mathrm{End}(Q)$ and $c \in M$, the *image state se
 subtype $\{q \in Q \mid \exists x,\ q = \mathrm{act}(c)(x)\}$ — the set of states in the image of
 the transformation induced by $c$. This is the state set on which the local divisor $M_c$ acts
 (DKS Lemma 2.11). -/
+@[expose]
 def cQSet {M Q : Type} [Monoid M] (act : M →* Function.End Q) (c : M) : Type :=
   {q : Q // ∃ x : Q, q = act c x}
 

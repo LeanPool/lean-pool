@@ -214,7 +214,7 @@ instance : Category PTrees where
     rw [CategoryTheory.Functor.map_comp]
     exact (congrArg (fun w ↦ ((bodyFunctor.map g.toHom) w).val) hybody).trans hy'⟩
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def PTreeForget : PTrees ⥤ Trees where
+@[expose] def PTreeForget : PTrees ⥤ Trees where
   obj T := T.1
   map f := f.toHom
 @[simp, simp_lengths] lemma id_covering_toHom (T : PTrees) :
@@ -285,7 +285,7 @@ lemma covering_winning {G' G} (f : Games.GameCovering G' G) {p : Player}
     hxpre, rfl⟩
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def Games.IsUnravelable G := ∀ k, ∃ (G' : Games) (f : Games.GameCovering G' G),
+@[expose] def Games.IsUnravelable G := ∀ k, ∃ (G' : Games) (f : Games.GameCovering G' G),
   Fixing k f.toCovering ∧ IsClopen G'.2.1.payoff
 lemma Games.IsUnravelable.isDetermined {G : Games} (h : G.IsUnravelable) :
   G.2.1.IsDetermined :=

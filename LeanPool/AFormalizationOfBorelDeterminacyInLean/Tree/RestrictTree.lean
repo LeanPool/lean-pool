@@ -68,7 +68,7 @@ variable {S T U : Trees} {k m n : ℕ}
     (resEq k).map f = TypeCat.ofHom (fun x : (resEq k).obj S ↦
       ⟨(f ⟨x.val, x.prop.1⟩).val, by simp [x.prop.2]⟩) := by rfl
 
-@[simp] theorem resEq_map_val (f : S ⟶ T) (x : (resEq k).obj S) :
+theorem resEq_map_val (f : S ⟶ T) (x : (resEq k).obj S) :
     ((resEq k).map f x).val = (f ⟨x.val, x.prop.1⟩).val := by rfl
 @[ext] lemma resEq_ext (x y : (resEq k).obj S) (h : x.val = y.val) : x = y := Subtype.ext h
 lemma resEq_ext_hEq (x : (resEq k).obj T) (y : (resEq m).obj T) (h' : x.val = y.val) :

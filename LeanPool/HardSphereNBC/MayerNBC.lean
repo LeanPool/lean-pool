@@ -414,7 +414,7 @@ lemma nbcBaseSubsets_graphic_eq_graphNBCBaseSubsets
     exact Finset.mem_filter.mpr ⟨hspanSub, hnotbad⟩
 
 /-- The finite collection of spanning trees on the ambient vertex set. -/
-noncomputable def treeUniverse : Finset (Finset (Sym2 V)) := by
+@[expose] noncomputable def treeUniverse : Finset (Finset (Sym2 V)) := by
   classical
   exact (graphEdgeFinset (completeGraph V)).powerset.filter
     (fun T : Finset (Sym2 V) =>

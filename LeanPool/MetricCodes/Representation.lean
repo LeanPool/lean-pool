@@ -495,7 +495,7 @@ def rowWeightSubmodule {r n : ℕ} (lam : Fin (r + 1) → ℕ) :
     rowEuler_apply, LinearMap.smul_apply, LinearMap.id_coe, id_eq, sub_eq_zero]
 
 /-- The trace free submodule used in the spherical-code argument. -/
-def traceFreeSubmodule (r n : ℕ) :
+@[expose] def traceFreeSubmodule (r n : ℕ) :
     Submodule ℝ (PolynomialSpace r n) :=
   ⨅ i : Fin (r + 1), ⨅ j : Fin (r + 1),
     (traceOperator r n i j).ker
@@ -538,7 +538,7 @@ def highestWeightSubmodule (r n : ℕ) :
     mem_highestWeightSubmodule, polarization_apply]
 
 /-- The harmonic young space used in the spherical-code argument. -/
-@[expose] abbrev HarmonicYoungSpace {r n : ℕ} (lam : Fin (r + 1) → ℕ) :=
+abbrev HarmonicYoungSpace {r n : ℕ} (lam : Fin (r + 1) → ℕ) :=
   harmonicYoungSubmodule (n := n) lam
 
 instance harmonicYoungSpace_finiteDimensional
@@ -849,7 +849,7 @@ theorem youngHomogeneousEmbedding_injective {r n : ℕ}
       (z : PolynomialSpace r n)) h
 
 /-- The Fischer coefficient embedding restricted to the harmonic Young space of weight `lam`. -/
-def youngCoefficientEmbedding {r n : ℕ}
+@[expose] def youngCoefficientEmbedding {r n : ℕ}
     (lam : Fin (r + 1) → ℕ) :
     HarmonicYoungSpace (n := n) lam →ₗ[ℝ]
       SpherePacking.Fischer.CoefficientSpace
@@ -943,7 +943,7 @@ section
 open scoped BigOperators InnerProductSpace
 
 /-- The row axis polynomial used in the spherical-code argument. -/
-def rowAxisPolynomial {r n : ℕ} (i : Fin (r + 1))
+@[expose] def rowAxisPolynomial {r n : ℕ} (i : Fin (r + 1))
     (v : SpherePacking.Euclidean n) : PolynomialSpace r n :=
   SpherePacking.axisPolynomial ((r + 1) * n) (rowVector i v)
 
@@ -1188,7 +1188,7 @@ def youngProjection {r n : ℕ}
     (youngCoefficientRange lam).isCompl_orthogonal p
 
 /-- The young homogeneous projection used in the spherical-code argument. -/
-def youngHomogeneousProjection {r n : ℕ}
+@[expose] def youngHomogeneousProjection {r n : ℕ}
     (lam : Fin (r + 1) → ℕ) :
     SpherePacking.Fischer.Homogeneous
         ((r + 1) * n) (∑ i, lam i) →ₗ[ℝ]
@@ -1198,7 +1198,7 @@ def youngHomogeneousProjection {r n : ℕ}
       ((r + 1) * n) (∑ i, lam i))
 
 /-- The row axis homogeneous used in the spherical-code argument. -/
-def rowAxisHomogeneous {r n : ℕ}
+@[expose] def rowAxisHomogeneous {r n : ℕ}
     (mu lam : Fin (r + 1) → ℕ)
     (hdeg : (∑ i, mu i) = (∑ i, lam i) + 1)
     (i : Fin (r + 1)) (v : SpherePacking.Euclidean n) :
@@ -1229,7 +1229,7 @@ def rowAxisHomogeneous {r n : ℕ}
     (rowAxisHomogeneous mu lam hdeg i v)
 
 /-- The row directional homogeneous used in the spherical-code argument. -/
-def rowDirectionalHomogeneous {r n : ℕ}
+@[expose] def rowDirectionalHomogeneous {r n : ℕ}
     (mu lam : Fin (r + 1) → ℕ)
     (hdeg : (∑ i, lam i) = (∑ i, mu i) + 1)
     (i : Fin (r + 1)) (v : SpherePacking.Euclidean n) :
@@ -2163,12 +2163,12 @@ abbrev AmbientWeight (r : ℕ) := Fin (r + 1) → ℕ
 abbrev StabilizerWeight (r : ℕ) := Fin r → ℕ
 
 /-- The interlaces used in the spherical-code argument. -/
-def Interlaces {r : ℕ}
+@[expose] def Interlaces {r : ℕ}
     (lam : AmbientWeight r) (μ : StabilizerWeight r) : Prop :=
   ∀ i : Fin r, μ i ≤ lam i.castSucc ∧ lam i.succ ≤ μ i
 
 /-- The strict interlaces used in the spherical-code argument. -/
-def StrictInterlaces {r : ℕ}
+@[expose] def StrictInterlaces {r : ℕ}
     (lam : AmbientWeight r) (μ : StabilizerWeight r) : Prop :=
   ∀ i : Fin r, μ i < lam i.castSucc ∧ lam i.succ < μ i
 
@@ -2431,7 +2431,7 @@ theorem card_youngMultihomogeneousExponents {r n : ℕ}
   exact card_rowDegreeFamilies lam
 
 /-- The young multihomogeneous submodule used in the spherical-code argument. -/
-def youngMultihomogeneousSubmodule {r : ℕ} (n : ℕ)
+@[expose] def youngMultihomogeneousSubmodule {r : ℕ} (n : ℕ)
     (lam : Fin (r + 1) → ℕ) : Submodule ℝ (PolynomialSpace r n) :=
   MvPolynomial.restrictSupport ℝ
     (youngMultihomogeneousExponents n lam :
@@ -3278,7 +3278,7 @@ private theorem coordinateMatrix_id_metriccodes2_851911c7 {T : Type*}
   exact LinearMap.toMatrix_id (euclideanBasis T).toBasis
 
 /-- The to finite data used in the spherical-code argument. -/
-def toFiniteData (G : RealizedHilbertGraph I X E V F) :
+@[expose] def toFiniteData (G : RealizedHilbertGraph I X E V F) :
     MetricCodes.HigherProjectionGraph.Data I X
       (Module.finrank ℝ V) (Module.finrank ℝ E)
       (Module.finrank ℝ F) where
@@ -3488,7 +3488,7 @@ omit [∀ i, FiniteDimensional ℝ (V i)] in
       vertexInclusion_apply_self, IsEmpty.forall_iff]
 
 /-- The vertex projection used in the spherical-code argument. -/
-def vertexProjection (i : I) : VertexAmbient V →ₗ[ℝ] VertexAmbient V :=
+@[expose] def vertexProjection (i : I) : VertexAmbient V →ₗ[ℝ] VertexAmbient V :=
   (vertexInclusion V i).toLinearMap.comp (vertexInclusion V i).adjoint
 
 @[simp] theorem vertexProjection_apply_self (i : I)
@@ -3562,7 +3562,7 @@ open MetricCodes.Spherical.HigherYoungGraphAssembly
 open MetricCodes.Spherical.HigherProjectionInstantiation
 
 /-- The moving young fibre used in the spherical-code argument. -/
-def movingYoungFibre {r n : ℕ} {E : Type*}
+@[expose] def movingYoungFibre {r n : ℕ} {E : Type*}
     [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     (lam : Fin (r + 1) → ℕ)
     (o : SpherePoint n)
@@ -3579,7 +3579,7 @@ abbrev YoungVertex {I : Type*} {r n : ℕ}
   HarmonicYoungSpace (n := n) (lam i)
 
 /-- The moving young block fibre used in the spherical-code argument. -/
-def movingYoungBlockFibre {I : Type*} [Fintype I] [DecidableEq I]
+@[expose] def movingYoungBlockFibre {I : Type*} [Fintype I] [DecidableEq I]
     {r n : ℕ} {E : Type*}
     [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     (lam : I → Fin (r + 1) → ℕ)
@@ -4195,7 +4195,7 @@ def simultaneousHarmonicCoefficientProjection (r n m : ℕ) :
     (S.projectionOnto Sᗮ S.isCompl_orthogonal)
 
 /-- The simultaneous harmonic projection used in the spherical-code argument. -/
-def simultaneousHarmonicProjection (r n m : ℕ) :
+@[expose] def simultaneousHarmonicProjection (r n m : ℕ) :
     SpherePacking.Fischer.Homogeneous ((r + 1) * n) m →ₗ[ℝ]
       homogeneousTraceFreeSubmodule r n m :=
   (simultaneousHarmonicCoefficientProjection r n m).comp
@@ -4506,7 +4506,7 @@ def homogeneousYoungHighestWeightSubmodule {r n : ℕ}
     mem_highestWeightSubmodule]
 
 /-- The harmonic young highest weight embedding used in the spherical-code argument. -/
-def harmonicYoungHighestWeightEmbedding {r n : ℕ}
+@[expose] def harmonicYoungHighestWeightEmbedding {r n : ℕ}
     (lam : Fin (r + 1) → ℕ) :
     HarmonicYoungSpace (n := n) lam →ₗ[ℝ]
       homogeneousYoungHighestWeightSubmodule (n := n) lam where
@@ -4526,7 +4526,7 @@ def harmonicYoungHighestWeightEmbedding {r n : ℕ}
     exact map_smul (youngHomogeneousEmbedding lam) c p
 
 /-- The young harmonic lift used in the spherical-code argument. -/
-def youngHarmonicLift {r n : ℕ}
+@[expose] def youngHarmonicLift {r n : ℕ}
     (lam : Fin (r + 1) → ℕ) :
     homogeneousYoungHighestWeightSubmodule (n := n) lam →ₗ[ℝ]
       HarmonicYoungSpace (n := n) lam where
@@ -4797,7 +4797,7 @@ noncomputable instance fullBranchWeightDecidableEq {r : ℕ}
   Classical.decEq _
 
 /-- The full branch signature used in the spherical-code argument. -/
-def fullBranchSignature {r : ℕ}
+@[expose] def fullBranchSignature {r : ℕ}
     {lam : Fin (r + 1) → ℕ}
     (mu : FullBranchWeight lam) : Fin (r + 1) → ℕ :=
   fun i => (mu.val i).val
@@ -5332,7 +5332,7 @@ theorem complexTraceOperator_nullSubstitution {r m n : ℕ}
   rw [hnull, zero_mul]
 
 /-- The source polarization used in the spherical-code argument. -/
-def sourcePolarization {r m : ℕ} (i j : Fin (r + 1))
+@[expose] def sourcePolarization {r m : ℕ} (i j : Fin (r + 1))
     (q : MvPolynomial (Fin (r + 1) × Fin m) ℂ) :
     MvPolynomial (Fin (r + 1) × Fin m) ℂ :=
   ∑ a : Fin m, MvPolynomial.X (i, a) * MvPolynomial.pderiv (j, a) q
@@ -5901,7 +5901,7 @@ theorem eval_leadingMinor {r n : ℕ}
   rw [hmatrix, Matrix.det_one]
 
 /-- The highest weight polynomial used in the spherical-code argument. -/
-def highestWeightPolynomial {r n : ℕ} (h : 2 * (r + 1) ≤ n)
+@[expose] def highestWeightPolynomial {r n : ℕ} (h : 2 * (r + 1) ≤ n)
     (e : Fin (r + 1) → ℕ) : MvPolynomial (Fin ((r + 1) * n)) ℂ :=
   ∏ k : Fin (r + 1), leadingMinor h k ^ e k
 
@@ -6112,7 +6112,7 @@ theorem determinantWeight_signatureExponent {r : ℕ}
       exact hdom (Fin.castSucc_lt_succ.le)
 
 /-- The dominant highest weight witness used in the spherical-code argument. -/
-def dominantHighestWeightWitness {r n : ℕ}
+@[expose] def dominantHighestWeightWitness {r n : ℕ}
     (h : 2 * (r + 1) ≤ n)
     (lam : Fin (r + 1) → ℕ) (hdom : Antitone lam) :
     ComplexHighestWeightWitness (n := n) lam where
@@ -6180,7 +6180,7 @@ theorem pderiv_odd_isotropicVariable {r n : ℕ}
     MvPolynomial.derivation_C, add_zero, zero_add]
 
 /-- The ambient positive root used in the spherical-code argument. -/
-def ambientPositiveRoot {r n : ℕ}
+@[expose] def ambientPositiveRoot {r n : ℕ}
     (h : 2 * (r + 1) ≤ n) (p q : Fin (r + 1)) :
     Derivation ℂ (MvPolynomial (Fin ((r + 1) * n)) ℂ)
       (MvPolynomial (Fin ((r + 1) * n)) ℂ) :=
@@ -6498,7 +6498,7 @@ theorem pderiv_outside_isotropicVariable {r n : ℕ}
     MvPolynomial.derivation_C, add_zero]
 
 /-- The ambient short positive root used in the spherical-code argument. -/
-def ambientShortPositiveRoot {r n : ℕ}
+@[expose] def ambientShortPositiveRoot {r n : ℕ}
     (h : 2 * (r + 1) ≤ n)
     (p : Fin (r + 1)) (t : Fin n) :
     Derivation ℂ (MvPolynomial (Fin ((r + 1) * n)) ℂ)
@@ -6715,7 +6715,7 @@ open scoped BigOperators
 namespace HigherChannel
 
 /-- The finite interlacing used in the spherical-code argument. -/
-def FiniteInterlacing {r : ℕ} (n : ℕ)
+@[expose] def FiniteInterlacing {r : ℕ} (n : ℕ)
     (lam : Fin (r + 1) → ℕ) (mu : Fin r → ℕ) : Prop :=
   2 * r + 4 ≤ n ∧
     ∀ m : Fin r, mu m ≤ lam m.castSucc ∧ lam m.succ ≤ mu m
@@ -7322,7 +7322,7 @@ theorem transversePolynomial_mem_harmonicYoung {r n : ℕ}
               hp.2.2.2 i j hij', map_zero]
 
 /-- Embed harmonic Young space by appending a zero weight and adding a transverse coordinate. -/
-def appendZeroYoungEmbedding {r n : ℕ}
+@[expose] def appendZeroYoungEmbedding {r n : ℕ}
     (mu : Fin (r + 1) → ℕ) :
     HarmonicYoungSpace (n := n) mu →ₗ[ℝ]
       HarmonicYoungSpace (n := n + 1) (appendZeroWeight mu) where
@@ -7340,7 +7340,7 @@ def appendZeroYoungEmbedding {r n : ℕ}
       (p : PolynomialSpace r n)
 
 /-- The transverse embedding with an appended zero weight, bundled as a linear isometry. -/
-def appendZeroYoungIsometry {r n : ℕ}
+@[expose] def appendZeroYoungIsometry {r n : ℕ}
     (mu : Fin (r + 1) → ℕ) :
     HarmonicYoungSpace (n := n) mu →ₗᵢ[ℝ]
       HarmonicYoungSpace (n := n + 1) (appendZeroWeight mu) :=
@@ -7390,7 +7390,7 @@ theorem zeroRowVariableIndex_injective {r n : ℕ} :
   · exact congrArg (fun z : Fin (r + 2) × Fin n => z.2) hpair
 
 /-- The zero row polynomial used in the spherical-code argument. -/
-def zeroRowPolynomial {r : ℕ} (n : ℕ) :
+@[expose] def zeroRowPolynomial {r : ℕ} (n : ℕ) :
     PolynomialSpace r n →ₐ[ℝ] PolynomialSpace (r + 1) n :=
   MvPolynomial.rename (zeroRowVariableIndex (r := r) (n := n))
 
@@ -7547,7 +7547,7 @@ theorem zeroRowPolynomial_mem_harmonicYoung_iff {r n : ℕ}
 
 /-- Embed harmonic Young space by appending a zero row weight while retaining the coordinate
 dimension. -/
-def appendZeroRowEmbedding {r n : ℕ}
+@[expose] def appendZeroRowEmbedding {r n : ℕ}
     (mu : Fin (r + 1) → ℕ) :
     HarmonicYoungSpace (n := n) mu →ₗ[ℝ]
       HarmonicYoungSpace (n := n) (appendZeroWeight mu) where
@@ -7616,7 +7616,7 @@ theorem appendZeroRowEmbedding_surjective {r n : ℕ}
   exact hq'
 
 /-- The embedding that appends a zero row weight, bundled as a linear isometry. -/
-def appendZeroRowIsometry {r n : ℕ}
+@[expose] def appendZeroRowIsometry {r n : ℕ}
     (mu : Fin (r + 1) → ℕ) :
     HarmonicYoungSpace (n := n) mu →ₗᵢ[ℝ]
       HarmonicYoungSpace (n := n) (appendZeroWeight mu) :=
@@ -7639,7 +7639,7 @@ def appendZeroRowIsometry {r n : ℕ}
       _ = ⟪p, q⟫_ℝ := (young_inner_eq_polynomialInner mu p q).symm)
 
 /-- The append zero row isometry equiv used in the spherical-code argument. -/
-def appendZeroRowIsometryEquiv {r n : ℕ}
+@[expose] def appendZeroRowIsometryEquiv {r n : ℕ}
     (mu : Fin (r + 1) → ℕ) :
     HarmonicYoungSpace (n := n) mu ≃ₗᵢ[ℝ]
       HarmonicYoungSpace (n := n) (appendZeroWeight mu) :=
@@ -7686,7 +7686,7 @@ theorem fullBranchOfInterlaces_signature_eq_appendZeroWeight
   rw [fullBranchOfInterlaces_signature, appendZeroWeight_eq_snoc]
 
 /-- The terminal zero selected branch isometry used in the spherical-code argument. -/
-def terminalZeroSelectedBranchIsometry {r n : ℕ}
+@[expose] def terminalZeroSelectedBranchIsometry {r n : ℕ}
     (mu : Fin (r + 1) → ℕ) :
     HarmonicYoungSpace (n := n) mu →ₗᵢ[ℝ]
       HarmonicYoungSpace (n := n + 1) (appendZeroWeight mu) :=
@@ -7769,7 +7769,7 @@ theorem projectedCoordinateLower_axis_smul {r n : ℕ}
     smul_smul]
 
 /-- The projected coordinate lower axis used in the spherical-code argument. -/
-def projectedCoordinateLowerAxis {r n : ℕ}
+@[expose] def projectedCoordinateLowerAxis {r n : ℕ}
     (mu lam : Fin (r + 1) → ℕ)
     (hdeg : (∑ i, lam i) = (∑ i, mu i) + 1)
     (row : Fin (r + 1))
@@ -7831,7 +7831,7 @@ theorem projectedCoordinateRaise_axis_smul {r n : ℕ}
       (real_inner_smul_left _ _ _).symm
 
 /-- The projected coordinate raise axis used in the spherical-code argument. -/
-def projectedCoordinateRaiseAxis {r n : ℕ}
+@[expose] def projectedCoordinateRaiseAxis {r n : ℕ}
     (mu lam : Fin (r + 1) → ℕ)
     (hdeg : (∑ i, mu i) = (∑ i, lam i) + 1)
     (row : Fin (r + 1))
@@ -8123,7 +8123,7 @@ section
 open scoped BigOperators
 
 /-- The joint harmonic weight submodule used in the spherical-code argument. -/
-def jointHarmonicWeightSubmodule {r : ℕ}
+@[expose] def jointHarmonicWeightSubmodule {r : ℕ}
     (n : ℕ) (lam : Fin (r + 1) → ℕ) :
     Submodule ℝ (youngMultihomogeneousSubmodule n lam) :=
   (traceFreeSubmodule r n).comap

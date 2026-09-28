@@ -69,7 +69,7 @@ r X n  |             pushout   |
   | n + 1 => Limits.pushout (IProd.l X n) (IProd.r X n)
 
 /-- `skZeroIsoSkOne` -/
-noncomputable def skZeroIsoSkOne : CWComplex.IProd.sk X 0 ≅ CWComplex.IProd.sk X 1 :=
+@[expose] noncomputable def skZeroIsoSkOne : CWComplex.IProd.sk X 0 ≅ CWComplex.IProd.sk X 1 :=
   have : IsIso <| ofHom <| zeroOneIncl.prodMap <| ContinuousMap.id <| X.sk 0 := by
     have := X.isEmpty_sk_zero
     infer_instance  -- TopCat.isIso_of_isEmpty
@@ -377,17 +377,21 @@ lemma w' : xskl X n ≫ l' X n Z = xskr X n ≫ r' X n Z := by
       (cubeBoundary.botTopSidesCover_closed n)) xt_cube
     rw [ContinuousMap.liftCoverClosed_coe' _ _ _ _ _ xt_cube this]
     change _ = (cubeAttSides X α) ⟨_, _⟩
-    simp only [↓cubeSplitAtLast_inv_down_eq, Homeomorph.apply_symm_apply]
+    simp only []
     change _ = (Limits.pushout.inr (l X n) (r X n)) _
     congr 2
-    simp only [cubeAtt, TopCat.hom_comp]
-    change (X.attachCells n).attachMaps α x =
-      (X.attachCells n).attachMaps α
-        (((diskPair.homeoCubePairULift n).hom.left ≫
-          (diskPair.homeoCubePairULift n).inv.left) x)
-    congr 1
-    rw [Arrow.hom_inv_id_left]
-    rfl
+    · change t = (Cube.splitAtLast (Cube.splitAtLast.symm (t, _))).1
+      simp only [Homeomorph.apply_symm_apply]
+    · change (X.attachCells n).attachMaps α x =
+        (X.cubeAtt α) ⟨⟨(Cube.splitAtLast (Cube.splitAtLast.symm (t, _))).2, _⟩⟩
+      simp only [Homeomorph.apply_symm_apply]
+      change (X.attachCells n).attachMaps α x =
+        (X.attachCells n).attachMaps α
+          (((diskPair.homeoCubePairULift n).hom.left ≫
+            (diskPair.homeoCubePairULift n).inv.left) x)
+      congr 1
+      rw [Arrow.hom_inv_id_left]
+      rfl
   change (Hom.hom Z.inl)
     ((Hom.hom (Limits.pushout.inr (l X n) (r X n)))
       (t, (Hom.hom ((X.attachCells n).attachMaps α)) x)) = _
@@ -952,7 +956,7 @@ end IProd
 
 
 /-- `IProd` -/
-noncomputable def IProd : RelCWComplex where
+@[expose] noncomputable def IProd : RelCWComplex where
   sk := IProd.sk X
   attachCells n :=
     match n with

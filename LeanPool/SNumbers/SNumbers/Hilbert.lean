@@ -68,6 +68,7 @@ abbrev L2 (𝕜 : Type*) [RCLike 𝕜] : Type _ := lp (fun _ : ℕ => 𝕜) 2
 
 /-- The set of ratios `a_n (B ∘ S ∘ A) / (‖B‖ ‖A‖)` over nonzero
 `A : ℓ₂ → X`, `B : Y → ℓ₂`, whose supremum is the Hilbert number. -/
+@[expose]
 def hilbertSet (S : X →L[𝕜] Y) (n : ℕ) : Set ℝ :=
   {r | ∃ (A : L2 𝕜 →L[𝕜] X) (B : Y →L[𝕜] L2 𝕜),
       A ≠ 0 ∧ B ≠ 0 ∧

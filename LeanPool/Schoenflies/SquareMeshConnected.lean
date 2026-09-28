@@ -432,6 +432,7 @@ cycle. -/
 @[expose] def gridPt (xc yc : ℕ → ℝ) (i j : ℕ) : Plane := Plane.mk (xc i) (yc j)
 
 /-- The horizontal grid edge from `(i, j)` to `(i+1, j)`. -/
+@[expose]
 def gridHEdge (xc yc : ℕ → ℝ) (i j : ℕ) : Piece := (gridPt xc yc i j, gridPt xc yc (i + 1) j)
 
 /-- The vertical grid edge from `(i, j)` to `(i, j+1)`. -/

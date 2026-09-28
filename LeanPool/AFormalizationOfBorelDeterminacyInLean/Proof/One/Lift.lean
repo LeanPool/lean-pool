@@ -59,7 +59,7 @@ variable (hp : IsPosition H.x.val Player.one)
   (H.extensionMap hp R).val' (A := no_index _).take (α := no_index _) n
   = H.x.val.take n := ExtensionsAt.val'_take_of_le _ h
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps] def extensionLift : Lift hyp where
+@[expose, simps] def extensionLift : Lift hyp where
   x := (H.extensionMap hp R).valT'
   R := H.R
   hlvl := by
@@ -92,7 +92,7 @@ variable (hp : IsPosition H.x.val Player.one)
   conv => simp
 attribute [local implicit_reducible] upA oldAsTrees gameAsTrees in
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps! toLift] def extensionLift' : Lift' hyp where
+@[expose, simps! toLift] def extensionLift' : Lift' hyp where
   toLift := H.extensionLift hp R
   con := by
     let a : upA hyp := (H.extension hp R).val
@@ -198,7 +198,7 @@ lemma S_winning : H.S.1.IsWinning :=
   H.game.gale_stewart_precise' H.game_open (hyp.pruned.sub _) (by
     intro h; apply H.los; use 0; simpa)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps! toPreLift liftTree] def toLift := H.extend H.S
+@[expose, simps! toPreLift liftTree] def toLift := H.extend H.S
 attribute [simp_lengths] toLift_toPreLift
 lemma toLift_mono {H H' : LLift hyp} (h : H.toPreLift ≤ H'.toPreLift) :
   H.toLift.liftTree = H'.toLift.liftTree := by
@@ -301,7 +301,7 @@ lemma concat_mem_tree {y a} (hp : IsPosition y Player.zero)
     ((H.x.val[2 * k], H.S.fst.subtree) : upA hyp)).symm ▸ hz
 end LLift
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def Losable (H : PreLift hyp) := ∃ h : H.Losable', (LLift.mk _ h).toLift.Con
+@[expose] def Losable (H : PreLift hyp) := ∃ h : H.Losable', (LLift.mk _ h).toLift.Con
 lemma Losable.losable_of_le {H H' : PreLift hyp} (hL : H'.Losable) (h : H ≤ H') :
   H.Losable := by
   use hL.1.losable'_of_le h; (conv => rhs; rhs; lhs; rw [← h])
@@ -354,7 +354,7 @@ lemma le_minLength : 2 * k + 1 ≤ H.minLength := by
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 lemma lt_minLength : 2 * k < H.minLength := H.le_minLength
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps!] def takeMin := H.take H.minLength H.lt_minLength
+@[expose, simps!] def takeMin := H.take H.minLength H.lt_minLength
 @[simp] lemma takeMin_wonPos : H.takeMin.WonPos = H.WonPos := by simp [takeMin]
 lemma min_prefix : H.takeMin.Won := by
   classical
@@ -371,11 +371,11 @@ lemma u_nil : H.u.val ≠ [] := H.u.prop.choose_spec.2.1.1
   pullSub (subAt G.tree (H.x.val.take (2 * k + 1) ++ H.u.val)) H.u.val.tail :=
   H.u.prop.choose_spec.2.2
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps! toPreLift liftTree] def toLift := H.extend H.S
+@[expose, simps! toPreLift liftTree] def toLift := H.extend H.S
 lemma u_zero : H.u.val[0]'(by simpa [List.length_pos_iff] using H.u_nil)
   = H.toLift.liftShort.val[2 * k + 1].1 := H.u.prop.choose_spec.2.1.2
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps! toLift] def toLift' : Lift' hyp where
+@[expose, simps! toLift] def toLift' : Lift' hyp where
   toLift := H.toLift
   con := by
     simp_rw [Lift.Con]; erw [WLift.getTree_liftShort]
@@ -472,7 +472,7 @@ lemma toLift_mono {H H' : WLift hyp} (h : H.toPreLift ≤ H'.toPreLift) :
     simp
 end WLift
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps! toLift] def Won.lift' {H : PreLift hyp} (h : H.Won) := (WLift.mk _ h).toLift'
+@[expose, simps! toLift] def Won.lift' {H : PreLift hyp} (h : H.Won) := (WLift.mk _ h).toLift'
 attribute [simp_lengths] Won.lift'_toLift
 
 namespace Winnable
@@ -491,7 +491,7 @@ variable (hp : IsPosition H.x.val Player.one)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 @[expose] def a : ExtensionsAt h.x' := h.strat h.x' (by have := H.hlvl; synthIsPosition)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def extension : ExtensionsAt H.x where
+@[expose] def extension : ExtensionsAt H.x where
   val := (h.a hp).val
   property := by
     have h' := (h.a hp).prop; conv at h' => simp [game]
@@ -500,7 +500,7 @@ def extension : ExtensionsAt H.x where
 end Winnable
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def extension (H : PreLift hyp) (hp : IsPosition H.x.val Player.one)
+@[expose] def extension (H : PreLift hyp) (hp : IsPosition H.x.val Player.one)
   (R : ResStrategy (gameAsTrees hyp) Player.one H.x.val.length) : ExtensionsAt H.x := by
   classical
   exact

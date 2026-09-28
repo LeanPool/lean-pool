@@ -193,7 +193,7 @@ lemma curriedDeformRetrEvalAt_eq_deformRetrEvalAt (t : I) :
     congr
 
 /-- The mapping cylinder of `f : X ⟶ Y` is homotopy equivalent to its base `Y`. -/
-noncomputable def homotopyEquivBase : MapCyl f ≃ₕ Y where
+@[expose] noncomputable def homotopyEquivBase : MapCyl f ≃ₕ Y where
   toFun := (retr f).hom
   invFun := (inl f).hom
   left_inv := Nonempty.intro

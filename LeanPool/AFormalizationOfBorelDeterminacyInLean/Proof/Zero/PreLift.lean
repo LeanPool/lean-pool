@@ -87,7 +87,7 @@ lemma getTree_fair {y} {a} (hy : y ∈ getTree' hyp H.liftShort.val)
   simp_rw [hS] at hy ⊢; rwa [S.1.subtree_fair ⟨y, hy⟩ hp]
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps -isSimp] def game : Game A where
+@[expose, simps -isSimp] def game : Game A where
   tree := getTree' hyp H.liftShort.val
   payoff := Subtype.val ⁻¹' (Subtype.val '' (G.residual (H.x.val.take (2 * k + 1))).payoffᶜ)
 lemma game_tree_sub : H.game.tree ≤ subAt G.tree (H.liftShort.val.map Prod.fst) :=
@@ -103,7 +103,7 @@ lemma game_closed : IsClosed H.game.payoff := by
   simp_all
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps] def take (n : ℕ) (h : 2 * k < n) : PreLift hyp where
+@[expose, simps] def take (n : ℕ) (h : 2 * k < n) : PreLift hyp where
   x := Tree.take n H.x
   hlvl := by simp [h]
   R := H.R
@@ -195,7 +195,7 @@ variable (H : Lift hyp)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 @[expose] def Losable := H.ConLong ∧ WinningPrefix H.game Player.one (H.x.val.drop (2 * k + 1))
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def Winnable := ¬ WinningPrefix H.game Player.one (H.x.val.drop (2 * k + 1))
+@[expose] def Winnable := ¬ WinningPrefix H.game Player.one (H.x.val.drop (2 * k + 1))
 lemma Winnable.conLong (h : H.Winnable) : H.ConLong := Classical.byContradiction fun h' ↦
   h (winningPrefix_of_notMem H.game Player.one h')
 
@@ -222,7 +222,7 @@ lemma liftShort_lift : treeHom hyp H.liftShort = Tree.take (2 * k + 1) H.x :=
 @[expose] def liftNode : A := H.x.val[2 * k + 1]
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps toPreLift] def take (n : ℕ) (h : 2 * k + 2 ≤ n) : Lift hyp where
+@[expose, simps toPreLift] def take (n : ℕ) (h : 2 * k + 2 ≤ n) : Lift hyp where
   toPreLift := H.toPreLift.take n (by omega)
   h'lvl := by simpa
   conShort := by simpa using H.conShort
@@ -327,7 +327,7 @@ structure WLLift' extends WLLift hyp where
 namespace WLLift'
 variable (H : WLLift' hyp)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps coe] def lift : gameTree hyp := ⟨H.liftVal, H.hlift⟩
+@[expose, simps coe] def lift : gameTree hyp := ⟨H.liftVal, H.hlift⟩
 attribute [simp_lengths] lift_coe
 lemma lift_lift : treeHom hyp H.lift = H.x := tree_ext H.liftVal_lift
 
@@ -361,7 +361,7 @@ variable (hp : IsPosition H.x.val Player.zero)
   rw [← H.liftVal_take_medium]
   simpa [gameAsTrees] using htake
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps] def extensionPreLift : PreLift hyp where
+@[expose, simps] def extensionPreLift : PreLift hyp where
   x := (H.extensionMap hp R).valT'
   R := H.R
   hlvl := by
@@ -382,7 +382,7 @@ attribute [simp_lengths] extensionPreLift_x
   rw [← (H.extensionPreLift hp R).game_take (h := by have := H.hlvl; synthIsPosition)]
   rw [extensionPreLift_take]
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps! toPreLift] def extensionLift : Lift hyp where
+@[expose, simps! toPreLift] def extensionLift : Lift hyp where
   toPreLift := H.extensionPreLift hp R
   h'lvl := by
     have hlen := ExtensionsAt.val'_length (H.extensionMap hp R)

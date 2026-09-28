@@ -317,9 +317,24 @@ lemma winAsap_body (x : body (winAsap G p).subtree)
   obtain ⟨N, h⟩ := h; have hN : h.num ≤ N := by simpa using h.num_le_length
   suffices x.val.drop h.num ∈ body h.strat.pre.subtree by
     obtain ⟨w, hW, hw⟩ := h.strat_winning this
-    have hW' : body.append (x.val.take h.num) w ∈ p.payoff G := by
-      simpa [Player.payoff, hN] using hW
-    have heq : body.append (x.val.take h.num) w =
+    have htake : (x.val.take N).take h.num = x.val.take h.num := by
+      simp [hN]
+    let w' : body (subAt G.tree (x.val.take h.num)) :=
+      ⟨w.val, by rw [← htake]; exact w.prop⟩
+    have hW' : body.append (x.val.take h.num) w' ∈ p.payoff G := by
+      have hpay : (p.residual ((x.val.take N).take h.num)).payoff
+          (G.residual ((x.val.take N).take h.num)) =
+            (body.append ((x.val.take N).take h.num))⁻¹' p.payoff G := by simp_all
+      have hWold : body.append ((x.val.take N).take h.num) w ∈ p.payoff G := by
+        rw [hpay] at hW
+        exact hW
+      have happend : body.append ((x.val.take N).take h.num) w =
+          body.append (x.val.take h.num) w' := by
+        apply Subtype.ext
+        change (x.val.take N).take h.num ++ₛ w.val = x.val.take h.num ++ₛ w.val
+        exact congrArg (fun l : List A => l ++ₛ w.val) htake
+      exact happend ▸ hWold
+    have heq : body.append (x.val.take h.num) w' =
         ⟨x.val, body_mono (subtree_sub _) x.prop⟩ := by
       apply Subtype.ext
       change x.val.take h.num ++ₛ (w : Stream' A) = x.val

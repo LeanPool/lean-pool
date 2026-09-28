@@ -40,6 +40,7 @@ def hardSphereForkEventOfTriple {k : Nat} [NeZero k]
   hardSphereForkEvent T f.1 f.2.1 f.2.2
 
 /-- A finite family of pairwise vertex-disjoint, order-compatible forks in a tree. -/
+@[expose]
 def hardSphereForkPacking {k : Nat}
     (T : Finset (Sym2 (Fin k))) (P : Finset (HardSphereForkTriple k)) : Prop :=
   (∀ f ∈ P, hardSphereFork T f.1 f.2.1 f.2.2) ∧

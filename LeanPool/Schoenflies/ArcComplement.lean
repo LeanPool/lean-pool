@@ -200,12 +200,14 @@ variable {pieces : List Piece} {points : List Plane} {c c₁ c₂ : Plane} {r : 
 
 /-- The edges of an overlay whose segment lies on the boundary of the square of `ℓ^∞`-radius
 `r` about `c`. -/
+@[expose]
 def squareEdges (pieces : List Piece) (points : List Plane) (c : Plane) (r : ℝ) : Set Piece :=
   {Q | Q ∈ overlayPieces pieces points ∧ Q.seg ⊆ frontier (Plane.closedSquare c r)}
 
 /-- **The part of one overlay lying on one square boundary.**  A subgraph of that overlay by
 construction (`squareGraph_le`), which is the single-ambient-graph obligation of
 `Graph.IsPlaneChain` discharged at the bottom of the tower. -/
+@[expose]
 def squareGraph (pieces : List Piece) (points : List Plane) (c : Plane) (r : ℝ) :
     Graph Plane Piece :=
   segGraph (squareEdges pieces points c r)
@@ -370,6 +372,7 @@ points, each cut point a vertex — so it is a cycle, and `Graph.IsLongCycle.isT
 finishes.  What a discharging module must build is the cyclic order of the cut points along the
 four sides; `Schoenflies/SegmentOrder.lean` is the tool.  Nothing about the arc, the chain or
 the outer face enters the statement. -/
+@[expose]
 def SquaresTwoConnected : Prop :=
   ∀ (pieces : List Piece) (points : List Plane), (∀ P ∈ pieces, P.Nondeg) →
     EndsAreCut pieces points → MeetsAreCut pieces points →

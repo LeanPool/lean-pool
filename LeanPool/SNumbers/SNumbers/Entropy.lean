@@ -125,6 +125,7 @@ variable [NormedAddCommGroup Z] [NormedSpace 𝕜 Z]
 /-- The set of admissible radii at stage `n`: those `ε > 0` for which the
 image of the closed unit ball of `X` under `S` can be covered by at most
 `2 ^ n` closed balls of radius `ε`, with arbitrary centres in `Y`. -/
+@[expose]
 def entropySet (S : X →L[𝕜] Y) (n : ℕ) : Set ℝ :=
   {ε | 0 < ε ∧ ∃ N : Finset Y, N.card ≤ 2 ^ n ∧
     ⇑S '' Metric.closedBall 0 1 ⊆ ⋃ y ∈ (N : Set Y), Metric.closedBall y ε}

@@ -168,8 +168,7 @@ theorem isOpen_invert_image {S : Set Plane} (hS : IsOpen S) (ha : a ∉ S) :
   exact ha (by simpa using hz)
 
 /-- "`I_a` is an involutive homeomorphism of `ℝ² ∖ {a}`", bundled. Its inverse is itself. -/
-@[simps! -isSimp apply]
-@[expose]
+@[expose, simps! -isSimp apply]
 noncomputable def invertHomeo (a : Plane) : ({a}ᶜ : Set Plane) ≃ₜ ({a}ᶜ : Set Plane) where
   toFun z := ⟨invert a z, fun h =>
     z.2 (mem_singleton_iff.2 (invert_eq_center_iff.1 (mem_singleton_iff.1 h)))⟩
@@ -559,7 +558,7 @@ point to another.
 This is *not* a restatement of `prop:exterior-extension`: it is about the two **interiors**,
 which is the bounded theorem, and it is what the blueprint proves from
 `thm:closed-interior-extension` and `lem:square-point-mover`. -/
-def PointedInteriorExtension : Prop :=
+@[expose] def PointedInteriorExtension : Prop :=
   ∀ (C C' : Set Plane) (f g : Plane → Plane) (a b : Plane),
     IsJordanCurve C → IsJordanCurve C' → IsHomeoOn f g C C' → a ∈ inside C → b ∈ inside C' →
       ∃ F G : Plane → Plane,

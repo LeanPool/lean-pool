@@ -97,7 +97,7 @@ which is why every closure property below is one line of the reachability API.
 
 No `v ∈ V(G)` clause: `Graph.Reaches` already carries it, since the empty walk demands a
 vertex of the graph. For `u ∉ V(G)` the component is empty. -/
-def component (G : Graph α β) (u : α) : Set α := {v | G.Reaches u v}
+@[expose] def component (G : Graph α β) (u : α) : Set α := {v | G.Reaches u v}
 
 theorem mem_component_iff : v ∈ G.component u ↔ G.Reaches u v := Iff.rfl
 

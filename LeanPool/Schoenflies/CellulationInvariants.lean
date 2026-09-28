@@ -107,6 +107,7 @@ namespace CellStructure
 variable {γ : Type*} {S : CellStructure γ}
 
 /-- The subcells of a cell: the index set of its closed cell in assertion (i). -/
+@[expose]
 def subcells (S : CellStructure γ) (τ : γ) : Set γ := {σ | σ ∈ S.cells ∧ S.sub σ τ}
 
 theorem mem_subcells_iff {σ τ : γ} : σ ∈ S.subcells τ ↔ σ ∈ S.cells ∧ S.sub σ τ := Iff.rfl
@@ -418,7 +419,7 @@ variable {d : S.SplitData} {R : S.Realization} {R' : (S.splitFace d).Realization
 
 /-- The cells the ear **creates**: its interior vertices and its edges. The two ends of the ear
 are old vertices, and the blueprint is explicit that the split does not create them. -/
-def earNewCells (d : S.SplitData) : Set γ := (V(d.ear) \ {d.source, d.target}) ∪ E(d.ear)
+@[expose] def earNewCells (d : S.SplitData) : Set γ := (V(d.ear) \ {d.source, d.target}) ∪ E(d.ear)
 
 theorem newCells_eq (d : S.SplitData) : d.newCells = d.earNewCells ∪ {d.face₁, d.face₂} := rfl
 

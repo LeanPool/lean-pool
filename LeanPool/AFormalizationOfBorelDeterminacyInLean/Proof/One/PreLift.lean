@@ -69,7 +69,7 @@ lemma gameTree_eq :
   · simp
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps] def take (n : ℕ) (h : 2 * k < n) : PreLift hyp where
+@[expose, simps] def take (n : ℕ) (h : 2 * k < n) : PreLift hyp where
   x := Tree.take n H.x
   hlvl := by simp [h]
   R := H.R
@@ -247,7 +247,7 @@ attribute [local implicit_reducible] upA oldAsTrees gameAsTrees in
     pullSub (subAt G.tree (H.x.val.take (2 * k + 1) ++ u)) u.tail
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps toPreLift liftTree] def take (n : ℕ) (h : 2 * k + 1 ≤ n) : Lift hyp where
+@[expose, simps toPreLift liftTree] def take (n : ℕ) (h : 2 * k + 1 ≤ n) : Lift hyp where
   toPreLift := H.toPreLift.take n (by omega)
   liftTree := H.liftTree
   htree := by
@@ -386,7 +386,7 @@ attribute [local implicit_reducible] upA oldAsTrees gameAsTrees in
   exact hget'
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps toLift] def take (n : ℕ) (h : 2 * k + 1 ≤ n) : Lift' hyp where
+@[expose, simps toLift] def take (n : ℕ) (h : 2 * k + 1 ≤ n) : Lift' hyp where
   toLift := H.toLift.take n (by omega)
   con := H.con.take _ _
 attribute [simp_lengths] take_toLift
@@ -399,7 +399,7 @@ lemma take_of_length_le {h} (h' : H.x.val.length ≤ n) : H.take n h = H := by
 
 attribute [local implicit_reducible] upA oldAsTrees gameAsTrees in
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps] def lift : gameTree hyp where
+@[expose, simps] def lift : gameTree hyp where
   val := H.liftVal
   property := by
     let ⟨n, hn⟩ := le_iff_exists_add.mp (Nat.add_one_le_iff.mpr H.hlvl)
@@ -451,7 +451,7 @@ end Lift'
 namespace PreLift
 variable (H : PreLift hyp)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps toPreLift liftTree] def extend --weird simps! error message
+@[expose, simps toPreLift liftTree] def extend --weird simps! error message
   (S : QuasiStrategy (subAt G.tree (H.x.val.take (2 * k + 1))) Player.one) : Lift hyp where
   toPreLift := H
   liftTree := S.1.subtree
@@ -460,7 +460,7 @@ attribute [simp_lengths] extend_toPreLift
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 @[expose] def WonPos := {u | ∃ S, (H.extend S).PreWonPos u}
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps -isSimp] def game : Game A where
+@[expose, simps -isSimp] def game : Game A where
   tree := subAt G.tree (H.x.val.take (2 * k + 1))
   payoff := Subtype.val ⁻¹' ⋃ u ∈ H.WonPos, principalOpen u
 lemma game_open : IsOpen H.game.payoff := IsOpen.preimage
@@ -482,7 +482,7 @@ lemma extend_take h S : (H.take n h).extend S =
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 @[expose] def Winnable := WinningPrefix H.game Player.zero (H.x.val.drop (2 * k + 1))
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def Losable' := ¬ WinningPrefix H.game Player.zero (H.x.val.drop (2 * k + 1))
+@[expose] def Losable' := ¬ WinningPrefix H.game Player.zero (H.x.val.drop (2 * k + 1))
 end PreLift
 
 end «Section1»

@@ -36,8 +36,11 @@ lemma inl_l_r_eq_relCWComplex_skInclSucc_zero :
         (Limits.Sigma.desc fun a ↦ isEmptyElim a)
         (Limits.Sigma.map fun _ ↦ diskBoundaryIncl 0) ).inv
   simp only [Nat.reduceAdd, Iso.trans_inv, Iso.symm_inv]
-  change _ = _ ≫ _ ≫ _
-  exact (Iso.hom_inv_id_assoc _ _).symm
+  let i : IProd.sk X 0 ≅ _ := asIso <| Limits.pushout.inl
+    (Limits.Sigma.desc fun a : (X.IProd.attachCells 0).cells ↦ isEmptyElim a)
+    (Limits.Sigma.map fun _ ↦ diskBoundaryIncl 0)
+  change (skZeroIsoSkOne X).hom = i.hom ≫ i.inv ≫ (skZeroIsoSkOne X).hom
+  exact (Iso.hom_inv_id_assoc i (skZeroIsoSkOne X).hom).symm
 
 lemma skInclSucc_eq_relCWComplex_skInclSucc (n : ℕ) :
     IProd.skInclSucc X n = RelCWComplex.skInclSucc X.IProd (n + 1) := by

@@ -241,7 +241,7 @@ variable (S : CellStructure γ)
 @[expose] def cells : Set γ := V(S.skel) ∪ E(S.skel) ∪ S.faces
 
 /-- The cells of the distinguished outer cycle: its vertices and its edges. -/
-def outerCells : Set γ := V(S.outerGraph) ∪ E(S.outerGraph)
+@[expose] def outerCells : Set γ := V(S.outerGraph) ∪ E(S.outerGraph)
 
 /-- The supercells of a cell: the index set of its closed star. -/
 @[expose] def supercells (σ : γ) : Set γ := {τ | S.sub σ τ}

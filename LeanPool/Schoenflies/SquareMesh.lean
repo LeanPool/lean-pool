@@ -201,7 +201,7 @@ theorem smul_segment_eq_image {a b : ℝ} (hab : a ≤ b) (z : Plane) :
 /-! ### Spokes -/
 
 /-- The radial spoke at a boundary point `z`, running from `z` inwards to `N⁻¹ • z`. -/
-noncomputable def spokePiece (N : ℕ) (z : Plane) : Piece := (z, ((N : ℝ)⁻¹) • z)
+@[expose] noncomputable def spokePiece (N : ℕ) (z : Plane) : Piece := (z, ((N : ℝ)⁻¹) • z)
 
 /-- A spoke is the set of multiples `t • z` with `N⁻¹ ≤ t ≤ 1`. -/
 theorem spokePiece_seg {N : ℕ} (hN : 2 ≤ N) (z : Plane) :
@@ -549,7 +549,7 @@ is the point-set half: the edges whose arcs lie on `S` occupy exactly `S`. See t
 docstring. -/
 
 /-- The edges of the mesh that lie on the model curve. -/
-def outerEdges (N : ℕ) (fresh anchors : List Plane) : Set Piece :=
+@[expose] def outerEdges (N : ℕ) (fresh anchors : List Plane) : Set Piece :=
   {P | P ∈ E(meshGraph N fresh anchors) ∧ P.seg ⊆ modelCurve}
 
 /-- **The outer edges occupy exactly the model curve.** -/

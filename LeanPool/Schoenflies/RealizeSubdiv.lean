@@ -447,7 +447,8 @@ noncomputable def realizeCell (d : S.SubdivData) (R : S.Realization) (t : ℝ) :
     else R.cell c
 
 /-- The drawn skeleton after the subdivision. -/
-noncomputable def realizeGraph (d : S.SubdivData) (R : S.Realization) (t : ℝ) : Graph Plane γ :=
+@[expose] noncomputable def realizeGraph (d : S.SubdivData) (R : S.Realization)
+    (t : ℝ) : Graph Plane γ :=
   d.skeleton.map (d.realizePos R t)
 
 variable {d R}
@@ -896,7 +897,7 @@ and every surviving cell is exactly where it was.
 
 There is no geometric side condition: everything the construction needs is already carried by
 `R`, and is extracted by the lemmas above rather than assumed. -/
-noncomputable def realize (d : S.SubdivData) (R : S.Realization) (t : ℝ)
+@[expose] noncomputable def realize (d : S.SubdivData) (R : S.Realization) (t : ℝ)
     (ht : t ∈ Ioo (0 : ℝ) 1) : (S.subdivideEdge d).Realization where
   pos := d.realizePos R t
   drawing := d.realizeDrawing R t

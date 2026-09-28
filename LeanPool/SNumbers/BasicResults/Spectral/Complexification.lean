@@ -203,6 +203,7 @@ omit [InnerProductSpace ℝ H] in
   exact Real.sqrt_sq (norm_nonneg x)
 
 /-- The embedding `ofReal` as a real-linear isometry `H →ₗᵢ[ℝ] Complexification H`. -/
+@[expose]
 def ofRealLi : H →ₗᵢ[ℝ] Complexification H where
   toFun := ofReal
   map_add' x y := by apply Prod.ext <;> simp

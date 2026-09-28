@@ -64,6 +64,7 @@ abbrev HardSphereConfiguration (k d : Nat) :=
   ⟨i.val + 1, by omega⟩
 
 /-- Recover a particle position, assigning zero to the anchored particle. -/
+@[expose]
 def hardSpherePosition {k d : Nat} [NeZero k]
     (r : HardSphereConfiguration k d) (i : Fin k) : HSPosition d :=
   if hi : i = 0 then 0 else r (hardSphereFreeIndex i hi)

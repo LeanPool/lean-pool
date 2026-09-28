@@ -288,7 +288,7 @@ lemma strategy_body (f : Strategy T p) : y ∈ body f.pre.subtree ↔ y ∈ body
     exact ⟨hy, fun x hp hx ↦ ExtensionsAt.ext (h x hp hx)⟩
 end «Section2»
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def consistent (x : bodySystem.obj T) (S : StrategySystem T p) :=
+@[expose] def consistent (x : bodySystem.obj T) (S : StrategySystem T p) :=
   ∀ (y : T), (hp : IsPosition y.val p) → (BodySystemObj.ofObj x).contains y.val
   → (BodySystemObj.ofObj x).contains (S.str y.val.length y hp le_rfl).val'
 lemma mem_principalOpen_iff_bodySystem_contains {T : Trees} (x : List T.1) (y : body T.2) :

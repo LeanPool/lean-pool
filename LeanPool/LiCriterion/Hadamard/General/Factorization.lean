@@ -59,6 +59,7 @@ namespace General
 
 /-- The rank-`p` canonical Weierstrass product over a `ZeroSetMultiplicity`,
 with each zero repeated according to its multiplicity. -/
+@[expose]
 noncomputable def canonicalProductZeroSetMultiplicityRank
     {f : ℂ → ℂ} (Z : ZeroSetMultiplicity f)
     (p : ℕ) (s : ℂ) : ℂ :=

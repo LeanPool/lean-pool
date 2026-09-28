@@ -331,7 +331,7 @@ abbrev SubstWalk : γ → List γ → List γ → Prop :=
   CellStructure.SubstWalk S d.edge d.left d.right d.newEdge₁ d.newEdge₂
 
 /-- The three cells the subdivision creates. -/
-def newCells : Set γ := {d.newVertex, d.newEdge₁, d.newEdge₂}
+@[expose] def newCells : Set γ := {d.newVertex, d.newEdge₁, d.newEdge₂}
 
 variable {d}
 
@@ -418,6 +418,7 @@ update list, in order: the old pairs that involve neither `e` nor a new cell; th
 pairs of the new cells (see the fidelity note in the module docstring); `v ≼ e₁, e₂`; each old
 endpoint below its adjacent new edge; and the new cells below exactly the old *strict*
 supercells of `e`. -/
+@[expose]
 def subRel : γ → γ → Prop := fun σ τ =>
   (σ ∉ d.newCells ∧ τ ∉ d.newCells ∧ σ ≠ d.edge ∧ τ ≠ d.edge ∧ S.sub σ τ) ∨
     (σ = τ ∧ σ ∈ d.newCells) ∨
@@ -625,6 +626,7 @@ theorem paths_disjoint ⦃f : γ⦄ (h₁ : f ∈ d.path₁) (h₂ : f ∈ d.pat
 /-- The cells the split creates: the interior cells of the ear, its edges, and the two new
 2-cells. The ear's two ends are *not* new — they are old vertices, and the blueprint is
 explicit that they are their own parents. -/
+@[expose]
 def newCells : Set γ := (V(d.ear) \ {d.source, d.target}) ∪ E(d.ear) ∪ {d.face₁, d.face₂}
 
 /-- The cells of the first boundary path. -/
@@ -704,6 +706,7 @@ list, in order: the old pairs involving neither `R` nor a new cell; the reflexiv
 new cells (see the fidelity note in the module docstring); the incidences along the ear; and
 the cells of `P` and of `Bᵢ`, together with `Rᵢ` itself, below `Rᵢ`. No 2-cell is below
 another. -/
+@[expose]
 def subRel : γ → γ → Prop := fun σ τ =>
   (σ ∉ d.newCells ∧ τ ∉ d.newCells ∧ σ ≠ d.face ∧ τ ≠ d.face ∧ S.sub σ τ) ∨
     (σ = τ ∧ σ ∈ d.newCells) ∨

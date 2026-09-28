@@ -372,6 +372,7 @@ theorem subcells_face_diff : S.subcells d.face \ {d.face} = d.cells₁ ∪ d.cel
       exacts [d.cells₁_ne_face h, d.cells₂_ne_face h]
 
 /-- The drawn ear: the abstract ear pushed into the plane along the chosen positions. -/
+@[expose]
 def earGraph (d : S.SplitData) (earPos : γ → Plane) : Graph Plane γ := d.ear.map earPos
 
 @[simp] theorem vertexSet_earGraph (earPos : γ → Plane) :
@@ -843,7 +844,7 @@ and assertion (i) at the old stage produce a realization of `S.splitFace d`:
 This is the object the whole split step of `lem:cellulation-invariants` was missing:
 `SplitData.isCrosscutSplit_realize` puts it in the relation `IsCrosscutSplit` to `R`, and
 `IsCrosscutSplit.isCellDecomposition_and_isFaceJordan` then propagates both invariants. -/
-noncomputable def realize (R : S.Realization) (d : S.SplitData) (earPos : γ → Plane)
+@[expose] noncomputable def realize (R : S.Realization) (d : S.SplitData) (earPos : γ → Plane)
     (earDraw : γ → ℝ → Plane) (hE : d.EarCrosscut R earPos earDraw) :
     (S.splitFace d).Realization where
   pos := d.splitPos R earPos

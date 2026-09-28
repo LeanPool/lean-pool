@@ -27,6 +27,7 @@ open scoped BigOperators ENNReal
 noncomputable section
 
 /-- The tree edge selected by the rooted parent of a free vertex. -/
+@[expose]
 def hardSphereTreeParentEdge {k : Nat} [NeZero k]
     {T : Finset (Sym2 (Fin k))}
     (hT : T ∈ treeUniverse (V := Fin k))
@@ -62,6 +63,7 @@ lemma hardSphereTreeParentEdge_injective {k : Nat} [NeZero k]
     omega
 
 /-- The edges joining each free particle to its rooted-tree parent. -/
+@[expose]
 def hardSphereTreeParentEdgeFinset {k : Nat} [NeZero k]
     {T : Finset (Sym2 (Fin k))}
     (hT : T ∈ treeUniverse (V := Fin k)) : Finset (Sym2 (Fin k)) :=

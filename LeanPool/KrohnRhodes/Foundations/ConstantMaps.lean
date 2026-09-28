@@ -51,10 +51,12 @@ variable {Q : Type u}
 
 /-- The constant transformation `_ ↦ q` of `Q`, as an element of the full
 transformation monoid `Function.End Q`. -/
+@[expose]
 def constEnd (q : Q) : Function.End Q := fun _ => q
 
 /-- A transformation of `Q` *is constant* if it equals `constEnd q` for
 some `q` — equivalently, its image has exactly one point. -/
+@[expose]
 def IsConstEnd (t : Function.End Q) : Prop := ∃ q : Q, t = constEnd q
 
 theorem isConstEnd_constEnd (q : Q) : IsConstEnd (constEnd q) := ⟨q, rfl⟩

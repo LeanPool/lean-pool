@@ -190,7 +190,7 @@ theorem simultaneousHarmonicProjection_eq_zero_iff_gramIdeal
     (r := r) (n := n) (m := m) p
 
 /-- The harmonic branch of highest weight seed used in the spherical-code argument. -/
-def harmonicBranchOfHighestWeightSeed
+@[expose] def harmonicBranchOfHighestWeightSeed
     {E : Type*} [AddCommGroup E] [Module ℝ E]
     {r n : ℕ} (lam : Fin (r + 1) → ℕ)
     (seed : E →ₗ[ℝ]
@@ -1052,7 +1052,7 @@ open MetricCodes.Spherical.HigherChannel
 abbrev BoxVertex (r m : ℕ) := Fin (r + 1) → Fin (m + 1)
 
 /-- The next vertex used in the spherical-code argument. -/
-def nextVertex {r m : ℕ} (v : BoxVertex r m)
+@[expose] def nextVertex {r m : ℕ} (v : BoxVertex r m)
     (i : Fin (r + 1)) (h : (v i).val < m) : BoxVertex r m :=
   Function.update v i ⟨(v i).val + 1, by omega⟩
 
@@ -1960,7 +1960,7 @@ open MetricCodes.Spherical.HigherHierarchyBoxSpectral
 abbrev Vertex (r m : ℕ) := BoxVertex r m
 
 /-- The signature used in the spherical-code argument. -/
-def signature {r m : ℕ}
+@[expose] def signature {r m : ℕ}
     (a : Fin (r + 1) → ℝ) (n : ℕ) (v : Vertex r m) :
     Fin (r + 1) → ℕ :=
   fun i => flooredCoordinates a n i + (v i).val
@@ -2019,7 +2019,7 @@ theorem matrix_nonneg {r m : ℕ}
       split_ifs <;> first | exact edgeWeight_nonneg a b n w i | exact le_rfl
 
 /-- The grid used in the spherical-code argument. -/
-def grid (r m : ℕ) : SimpleGraph (Vertex r m) where
+@[expose] def grid (r m : ℕ) : SimpleGraph (Vertex r m) where
   Adj v w :=
     ∃ i : Fin (r + 1),
       (∃ h : (v i).val < m, w = nextVertex v i h) ∨
@@ -2228,20 +2228,20 @@ open MetricCodes.Spherical.HigherHierarchyBoxSpectral
 open MetricCodes.Spherical.HigherHierarchyTrueGridAdjacency
 
 /-- The plus edge used in the spherical-code argument. -/
-def plusEdge {r m : ℕ}
+@[expose] def plusEdge {r m : ℕ}
     (a : Fin (r + 1) → ℝ) (b : Fin r → ℝ) (n : ℕ)
     (v : Vertex r m) (i : Fin (r + 1)) : ℝ :=
   plusProbability n (signature a n v) (flooredCoordinates b n) i
 
 /-- The minus edge used in the spherical-code argument. -/
-def minusEdge {r m : ℕ}
+@[expose] def minusEdge {r m : ℕ}
     (a : Fin (r + 1) → ℝ) (b : Fin r → ℝ) (n : ℕ)
     (v : Vertex r m) (i : Fin (r + 1)) : ℝ :=
   minusProbability n (raiseWeight (signature a n v) i)
     (flooredCoordinates b n) i
 
 /-- The probability used in the spherical-code argument. -/
-def probability {r m : ℕ}
+@[expose] def probability {r m : ℕ}
     (a : Fin (r + 1) → ℝ) (b : Fin r → ℝ) (n : ℕ)
     (v w : Vertex r m) : ℝ :=
   forwardMatrix (plusEdge (m := m) a b n) v w +
@@ -3087,7 +3087,7 @@ abbrev YoungCoordinateAmbient {I : Type*}
   SpherePacking.Euclidean n ⊗[ℝ] YoungAmbient n lam
 
 /-- The tensor-product inclusion of one Young vertex into the full coordinate ambient space. -/
-def coordinateInclusion {I : Type*} [Fintype I] [DecidableEq I]
+@[expose] def coordinateInclusion {I : Type*} [Fintype I] [DecidableEq I]
     {r n : ℕ} (lam : I → Fin (r + 1) → ℕ) (i : I) :
     (SpherePacking.Euclidean n ⊗[ℝ] YoungVertex (n := n) lam i) →ₗᵢ[ℝ]
       YoungCoordinateAmbient n lam :=
@@ -3175,7 +3175,7 @@ theorem coordinateInclusion_orthogonal
 
 /-- The ambient channel obtained by projecting to a source vertex and including the target
 tensor space. -/
-def liftChannel {I : Type*} [Fintype I] [DecidableEq I]
+@[expose] def liftChannel {I : Type*} [Fintype I] [DecidableEq I]
     {r n : ℕ} (lam : I → Fin (r + 1) → ℕ) (target source : I)
     (T : YoungVertex (n := n) lam source →ₗᵢ[ℝ]
       (SpherePacking.Euclidean n ⊗[ℝ] YoungVertex (n := n) lam target)) :
@@ -3372,7 +3372,7 @@ def actualYoungChannel
 
 /-- The realized Hilbert graph assembled from Young vertex fibres and their isometric edge
 channels. -/
-def actualYoungHilbertGraph
+@[expose] def actualYoungHilbertGraph
     {I : Type*} [Fintype I] [DecidableEq I]
     {r n : ℕ} {E : Type*}
     [NormedAddCommGroup E] [InnerProductSpace ℝ E]
@@ -3503,7 +3503,7 @@ def actualYoungHilbertGraph
   eigenvector_equation := heigenvector_equation
 
 /-- The actual young indexed hierarchy graph used in the spherical-code argument. -/
-def actualYoungIndexedHierarchyGraph
+@[expose] def actualYoungIndexedHierarchyGraph
     {k r n : ℕ} {E : Type*}
     [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     [FiniteDimensional ℝ E]
@@ -3622,7 +3622,7 @@ abbrev BoxStabilizer {r : ℕ} (n : ℕ) (b : Fin (r + 1) → ℝ) :=
   HarmonicYoungSpace (n := n - 1) (Weyl.flooredWeight b n)
 
 /-- The box probability used in the spherical-code argument. -/
-def boxProbability {r m : ℕ}
+@[expose] def boxProbability {r m : ℕ}
     (a : Fin (r + 1) → ℝ) (b : Fin r → ℝ) (n : ℕ)
     (target source : BoxIndex r m) : ℝ :=
   HigherHierarchyBoxChannels.probability a b n
@@ -3703,7 +3703,7 @@ theorem BoxRepresentationData.detailed_balance {r m n : ℕ}
       (RectangularVertices.Vertex (r + 1) m)).symm source)
 
 /-- The box eigenvector reindexed by the canonical finite enumeration of rectangular vertices. -/
-def indexedEigenvector {r m : ℕ}
+@[expose] def indexedEigenvector {r m : ℕ}
     (x : RectangularVertices.Vertex r m → ℝ)
     (i : BoxIndex r m) : ℝ :=
   x ((Fintype.equivFin (RectangularVertices.Vertex r m)).symm i)
@@ -3772,7 +3772,7 @@ structure BoxPerronData {r m n : ℕ}
         eigenvector w) = eigenvalue * eigenvector v
 
 /-- The to hilbert graph used in the spherical-code argument. -/
-def BoxRepresentationData.toHilbertGraph {r m n : ℕ}
+@[expose] def BoxRepresentationData.toHilbertGraph {r m n : ℕ}
     {a : Fin (r + 2) → ℝ} {b : Fin (r + 1) → ℝ}
     (A : BoxRepresentationData (m := m) (n := n) a b)
     (hstable : ∀ v : RectangularVertices.Vertex (r + 1) m,
@@ -3933,7 +3933,7 @@ open MetricCodes.Spherical.HigherHarmonicYoung.GelfandTsetlin
 open MetricCodes.Spherical.HigherYoungProjectedRaiseInjectivity
 
 /-- The preceding rows used in the spherical-code argument. -/
-def precedingRows {r : ℕ} (row : Fin (r + 1)) : Finset (Fin (r + 1)) :=
+@[expose] def precedingRows {r : ℕ} (row : Fin (r + 1)) : Finset (Fin (r + 1)) :=
   Finset.univ.filter (fun i => i < row)
 
 @[simp] theorem mem_precedingRows {r : ℕ}
@@ -4301,7 +4301,7 @@ abbrev UpperGramPair (r : ℕ) :=
     (gramPairPolynomial n)
 
 /-- The gram prior ideal used in the spherical-code argument. -/
-def gramPriorIdeal (r n k : ℕ) : Ideal (PolynomialSpace r n) :=
+@[expose] def gramPriorIdeal (r n k : ℕ) : Ideal (PolynomialSpace r n) :=
   Ideal.ofList ((gramQuadraticList r n).take k)
 
 theorem mem_ideal_smul_top_iff {R : Type*} [CommRing R]
@@ -4337,7 +4337,7 @@ theorem gramQuadraticList_weaklyRegular_iff_saturation
     simpa only [gramPriorIdeal, smul_eq_mul, Ideal.mul_top, Fin.getElem_fin] using hp
 
 /-- The gram pivot used in the spherical-code argument. -/
-def gramPivot {r n : ℕ} (hn : 2 * r < n)
+@[expose] def gramPivot {r n : ℕ} (hn : 2 * r < n)
     (z : UpperGramPair r) : Fin n :=
   ⟨z.val.1.val + z.val.2.val, by
     have hi := z.val.1.isLt
@@ -4522,14 +4522,14 @@ open Finsupp
 open scoped MonomialOrder
 
 /-- A copy of exponent vectors carrying the weighted lexicographic ordering. -/
-def YoungWeightedLex {σ : Type*} (_w : σ → ℕ) := σ →₀ ℕ
+@[expose] def YoungWeightedLex {σ : Type*} (_w : σ → ℕ) := σ →₀ ℕ
 
 /-- The identity equivalence from exponent vectors to their weighted-lexicographic copy. -/
-def toYoungWeightedLex {σ : Type*} (w : σ → ℕ) :
+@[expose] def toYoungWeightedLex {σ : Type*} (w : σ → ℕ) :
     (σ →₀ ℕ) ≃ YoungWeightedLex w := Equiv.refl _
 
 /-- The identity equivalence from the weighted-lexicographic copy back to exponent vectors. -/
-def ofYoungWeightedLex {σ : Type*} (w : σ → ℕ) :
+@[expose] def ofYoungWeightedLex {σ : Type*} (w : σ → ℕ) :
     YoungWeightedLex w ≃ (σ →₀ ℕ) := Equiv.refl _
 
 namespace YoungWeightedLex
@@ -5820,7 +5820,7 @@ theorem finsupp_le_add_of_disjoint_support
 
 /-- The leading-degree condition that every nonzero ideal element has degree above some
 generator. -/
-def IsLeadingGroebnerFamily
+@[expose] def IsLeadingGroebnerFamily
     {σ K : Type*} [Field K]
     (m : MonomialOrder σ) (fs : List (MvPolynomial σ K)) : Prop :=
   ∀ p : MvPolynomial σ K, p ∈ Ideal.ofList fs → p ≠ 0 →
@@ -6496,7 +6496,7 @@ theorem arbitraryRowPathWeight_reverseInterlacingRowSchedule {r : ℕ}
   exact foldl_reverseInterlacingRowSchedule_eq_target h
 
 /-- The reverse interlacing polynomial seed used in the spherical-code argument. -/
-def reverseInterlacingPolynomialSeed
+@[expose] def reverseInterlacingPolynomialSeed
     {r n : ℕ} (lam : Fin (r + 2) → ℕ)
     (mu : Fin (r + 1) → ℕ) :
     HarmonicYoungSpace (n := n) mu →ₗ[ℝ]

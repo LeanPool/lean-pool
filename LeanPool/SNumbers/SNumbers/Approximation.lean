@@ -70,6 +70,7 @@ variable [NormedAddCommGroup Z] [NormedSpace 𝕜 Z]
 
 /-- The set of approximation residuals `‖S - L‖` over operators `L` of rank
 at most `n`. -/
+@[expose]
 def approximationSet (S : X →L[𝕜] Y) (n : ℕ) : Set ℝ :=
   {r | ∃ L : X →L[𝕜] Y, L.rank ≤ (n : Cardinal) ∧ r = ‖S - L‖}
 

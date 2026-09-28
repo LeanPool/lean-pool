@@ -246,6 +246,7 @@ lemma measurePreserving_hardSphereCoordinateEquiv (k : Nat) :
   exact h₁.trans h₂
 
 /-- Flattened position arrays with every three-dimensional block in the unit ball. -/
+@[expose]
 def hardSphereFlatProductBallRegion (n : Nat) :
     Set (Fin n × Fin 3 → ℝ) :=
   {x | ∀ i, (MeasurableEquiv.toLp 2 (Fin 3 → ℝ)) (fun a => x (i, a)) ∈
@@ -794,6 +795,7 @@ lemma hardSphereSeparatedBlockProductRegion_volume (m q : Nat) :
 /-! ### Canonical separated-block coordinates -/
 
 /-- Split a position array into paired blocks and remaining single positions. -/
+@[expose]
 def hardSphereBlockCoordinateEquiv (m q : Nat) :
     (Fin (m * 2 + q) → HSPosition 3) ≃ᵐ
       ((Fin m → (HSPosition 3 × HSPosition 3)) ×

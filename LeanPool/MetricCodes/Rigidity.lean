@@ -2194,7 +2194,7 @@ theorem fullRootExteriorUpperPolynomialAction_contraction_commute
   split_ifs <;> simp
 
 /-- The upper polynomial action composed with exterior creation of the same root. -/
-def fullRootExteriorUpperActionAtom (r n : ℕ) (α : PositiveRoot r) :
+@[expose] def fullRootExteriorUpperActionAtom (r n : ℕ) (α : PositiveRoot r) :
     Module.End ℝ (FullRootExteriorPolynomialChain r n) :=
   fullRootExteriorUpperPolynomialAction r n α *
     actualExteriorRootCreation (PolynomialSpace r n) α

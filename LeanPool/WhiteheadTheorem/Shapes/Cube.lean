@@ -443,7 +443,7 @@ lemma cubeInclToBotOrTop_mem_botOrTop
 /-- Given a point on the boundary of the `n`-dimensional cube,
 cast it as a point on the boundary of the `(n + 1)`-dimensional cube
 by specifying the height `t : I`. -/
-def castSucc {n : ℕ} (t : I) (y : ∂𝕀 n) : ∂𝕀 (n + 1) :=
+@[expose] def castSucc {n : ℕ} (t : I) (y : ∂𝕀 n) : ∂𝕀 (n + 1) :=
   ⟨cubeSplitAtLast.inv ⟨t, cubeBoundaryIncl n y⟩ |>.down,
     cubeSplitAtLast_inv_mem_boundary_of_mem_boundary t y⟩
 

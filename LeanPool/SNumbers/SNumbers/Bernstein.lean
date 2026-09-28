@@ -55,6 +55,7 @@ noncomputable def gainOnSubspace (S : X →L[𝕜] Y) (M : Submodule 𝕜 X) : �
 /-- The set of admissible gains at stage `n`: the numbers
 `gainOnSubspace S M` for subspaces `M ⊆ X` of dimension exactly `n + 1`.
 The `n`-th Bernstein number is its supremum. -/
+@[expose]
 def bernsteinSet (S : X →L[𝕜] Y) (n : ℕ) : Set ℝ :=
   {r | ∃ M : Submodule 𝕜 X,
       Module.rank 𝕜 M = (n + 1 : ℕ) ∧ r = gainOnSubspace S M}

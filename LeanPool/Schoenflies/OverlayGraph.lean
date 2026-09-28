@@ -171,6 +171,7 @@ theorem cover_map_orientPiece (l : List Piece) : cover (l.map orientPiece) = cov
 open scoped Classical in
 /-- The edges of the overlay: the pieces of the subdivision, oriented and then deduplicated.
 Orienting is what makes the deduplication a plain list operation. -/
+@[expose]
 noncomputable def overlayPieces (pieces : List Piece) (points : List Plane) : List Piece :=
   ((subdivide pieces points).map orientPiece).dedup
 
