@@ -202,6 +202,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/SemicircleCheck           https://github.com/Wondermonger-daydreaming/semicircle-catalan
   LeanPool/Sensitivity               https://github.com/SamuelSchlesinger/sensitivity-conjecture
   LeanPool/SetTheory                 https://github.com/znssong/SetTheory
+  LeanPool/SeveralComplexVariables   https://github.com/bjbraams/lean-scv
   LeanPool/SingularModuli            https://github.com/ElodinLaarz/lean-thesis
   LeanPool/SpectralPositivity        https://github.com/mrdouglasny/spectral-positivity
   LeanPool/SpectralTheory            https://github.com/savarin/lean-spectral-theory
