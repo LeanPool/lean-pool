@@ -6,7 +6,6 @@ Authors: Dawid Trela
 module
 
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Semantics.Batch001
-public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch042
 
 
 
@@ -16,65 +15,49 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch
 
 * `KernelOnly.PartE.ThetaAbove.Leaf00567`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00568`.
-* `KernelOnly.PartE.ThetaAbove.Join00569`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00572`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00573`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00574`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00575`.
-* `KernelOnly.PartE.ThetaAbove.Join00576`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00577`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00578`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00579`.
-* `KernelOnly.PartE.ThetaAbove.Join00580`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00581`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00582`.
-* `KernelOnly.PartE.ThetaAbove.Join00583`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00586`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00587`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00588`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00589`.
-* `KernelOnly.PartE.ThetaAbove.Join00590`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00592`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00593`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00594`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00595`.
-* `KernelOnly.PartE.ThetaAbove.Join00596`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00597`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00598`.
-* `KernelOnly.PartE.ThetaAbove.Join00599`.
-* `KernelOnly.PartE.ThetaAbove.Join00600`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00601`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00602`.
-* `KernelOnly.PartE.ThetaAbove.Join00603`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00606`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00607`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00610`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00611`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00612`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00613`.
-* `KernelOnly.PartE.ThetaAbove.Join00614`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00616`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00617`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00618`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00619`.
-* `KernelOnly.PartE.ThetaAbove.Join00620`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00621`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00622`.
-* `KernelOnly.PartE.ThetaAbove.Join00623`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00626`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00627`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00628`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00629`.
-* `KernelOnly.PartE.ThetaAbove.Join00630`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00632`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00633`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00634`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00635`.
-* `KernelOnly.PartE.ThetaAbove.Join00636`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00637`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00638`.
-* `KernelOnly.PartE.ThetaAbove.Join00639`.
-* `KernelOnly.PartE.ThetaAbove.Join00640`.
 -/
 
 @[expose] public section
@@ -5363,51 +5346,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c0_c1_c2_c0_5_00569
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCellsb9eba9ae01
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002001` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002001 : AngleCell :=
-  childLH (childLL (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCellsb9eba9ae01
-
-open CertificateCellsb9eba9ae01
-
-theorem e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0 :
-    adaptiveCoverCheck 5 (childLL (childHL thetaAboveCell000022002001)) = true :=
-  adaptiveCoverCheck_succ_of_children 4 (childLL (childHL thetaAboveCell000022002001))
-    e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0_c0 e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0_c1
-      e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0_c2 e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -5966,53 +5904,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c0_c1_c2_c1_c0_4_00576
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells5ae8bbaf2e
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002001` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002001 : AngleCell :=
-  childLH (childLL (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCells5ae8bbaf2e
-
-open CertificateCells5ae8bbaf2e
-
-theorem e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c0 :
-    adaptiveCoverCheck 4 (childLL (childLH (childHL thetaAboveCell000022002001))) = true :=
-  adaptiveCoverCheck_succ_of_children 3 (childLL (childLH (childHL thetaAboveCell000022002001)))
-    e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c0_c0
-      e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c0_c1
-      e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c0_c2
-      e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c0_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -6660,51 +6551,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c0_c1_c2_c1_5_00580
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCellsbec28e0304
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002001` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002001 : AngleCell :=
-  childLH (childLL (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCellsbec28e0304
-
-open CertificateCellsbec28e0304
-
-theorem e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1 :
-    adaptiveCoverCheck 5 (childLH (childHL thetaAboveCell000022002001)) = true :=
-  adaptiveCoverCheck_succ_of_children 4 (childLH (childHL thetaAboveCell000022002001))
-    e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c0 e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c1
-      e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c2 e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -6842,50 +6688,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above Leaf0000220020_c0_c1_c2_6_00583
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells1b578c3d10
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002001` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002001 : AngleCell :=
-  childLH (childLL (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCells1b578c3d10
-
-open CertificateCells1b578c3d10
-
-theorem e24KC2ThetaAboveLeaf0000220020_c0_c1_c2 :
-    adaptiveCoverCheck 6 (childHL thetaAboveCell000022002001) = true :=
-  adaptiveCoverCheck_succ_of_children 5 (childHL thetaAboveCell000022002001)
-    e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0 e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1
-      e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c2 e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -7618,51 +7420,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c0_c1_c3_c0_5_00590
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells2bc65b7190
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002001` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002001 : AngleCell :=
-  childLH (childLL (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCells2bc65b7190
-
-open CertificateCells2bc65b7190
-
-theorem e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c0 :
-    adaptiveCoverCheck 5 (childLL (childHH thetaAboveCell000022002001)) = true :=
-  adaptiveCoverCheck_succ_of_children 4 (childLL (childHH thetaAboveCell000022002001))
-    e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c0_c0 e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c0_c1
-      e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c0_c2 e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c0_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -8344,51 +8101,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c0_c1_c3_c1_5_00596
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCellsc46dbfc77b
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002001` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002001 : AngleCell :=
-  childLH (childLL (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCellsc46dbfc77b
-
-open CertificateCellsc46dbfc77b
-
-theorem e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c1 :
-    adaptiveCoverCheck 5 (childLH (childHH thetaAboveCell000022002001)) = true :=
-  adaptiveCoverCheck_succ_of_children 4 (childLH (childHH thetaAboveCell000022002001))
-    e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c1_c0 e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c1_c1
-      e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c1_c2 e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c1_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -8526,95 +8238,7 @@ end
 
 end
 
-section
 
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above Leaf0000220020_c0_c1_c3_6_00599
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells752b604750
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002001` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002001 : AngleCell :=
-  childLH (childLL (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCells752b604750
-
-open CertificateCells752b604750
-
-theorem e24KC2ThetaAboveLeaf0000220020_c0_c1_c3 :
-    adaptiveCoverCheck 6 (childHH thetaAboveCell000022002001) = true :=
-  adaptiveCoverCheck_succ_of_children 5 (childHH thetaAboveCell000022002001)
-    e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c0 e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c1
-      e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c2 e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
-
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above Leaf0000220020_c0_c1_7_00600
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCellse66f3ce3f5
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002001` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002001 : AngleCell :=
-  childLH (childLL (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCellse66f3ce3f5
-
-open CertificateCellse66f3ce3f5
-
-theorem e24KC2ThetaAboveLeaf0000220020_c0_c1 :
-    adaptiveCoverCheck 7 thetaAboveCell000022002001 = true :=
-  adaptiveCoverCheck_succ_of_children 6 thetaAboveCell000022002001
-    e24KC2ThetaAboveLeaf0000220020_c0_c1_c0 e24KC2ThetaAboveLeaf0000220020_c0_c1_c1
-      e24KC2ThetaAboveLeaf0000220020_c0_c1_c2 e24KC2ThetaAboveLeaf0000220020_c0_c1_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -8818,47 +8442,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above Leaf0000220020_c0_8_00603
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells45a373af38
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-
-end CertificateCells45a373af38
-
-open CertificateCells45a373af38
-
-theorem e24KC2ThetaAboveLeaf0000220020_c0 :
-    adaptiveCoverCheck 8 (childLL (childLL (childHL thetaAboveCell00002200))) = true :=
-  adaptiveCoverCheck_succ_of_children 7 (childLL (childLL (childHL thetaAboveCell00002200)))
-    e24KC2ThetaAboveLeaf0000220020_c0_c0 e24KC2ThetaAboveLeaf0000220020_c0_c1
-      e24KC2ThetaAboveLeaf0000220020_c0_c2 e24KC2ThetaAboveLeaf0000220020_c0_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -9744,51 +9327,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c1_c0_c2_c0_5_00614
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCellsdabf824b24
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002010` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002010 : AngleCell :=
-  childLL (childLH (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCellsdabf824b24
-
-open CertificateCellsdabf824b24
-
-theorem e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c0 :
-    adaptiveCoverCheck 5 (childLL (childHL thetaAboveCell000022002010)) = true :=
-  adaptiveCoverCheck_succ_of_children 4 (childLL (childHL thetaAboveCell000022002010))
-    e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c0_c0 e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c0_c1
-      e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c0_c2 e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c0_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -10521,51 +10059,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c1_c0_c2_c1_5_00620
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells11c2c46ea8
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002010` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002010 : AngleCell :=
-  childLL (childLH (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCells11c2c46ea8
-
-open CertificateCells11c2c46ea8
-
-theorem e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c1 :
-    adaptiveCoverCheck 5 (childLH (childHL thetaAboveCell000022002010)) = true :=
-  adaptiveCoverCheck_succ_of_children 4 (childLH (childHL thetaAboveCell000022002010))
-    e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c1_c0 e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c1_c1
-      e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c1_c2 e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c1_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -10703,50 +10196,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above Leaf0000220020_c1_c0_c2_6_00623
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCellsfc2738963a
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002010` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002010 : AngleCell :=
-  childLL (childLH (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCellsfc2738963a
-
-open CertificateCellsfc2738963a
-
-theorem e24KC2ThetaAboveLeaf0000220020_c1_c0_c2 :
-    adaptiveCoverCheck 6 (childHL thetaAboveCell000022002010) = true :=
-  adaptiveCoverCheck_succ_of_children 5 (childHL thetaAboveCell000022002010)
-    e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c0 e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c1
-      e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c2 e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -11564,51 +11013,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c1_c0_c3_c0_5_00630
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells2c3b2a68a2
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002010` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002010 : AngleCell :=
-  childLL (childLH (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCells2c3b2a68a2
-
-open CertificateCells2c3b2a68a2
-
-theorem e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c0 :
-    adaptiveCoverCheck 5 (childLL (childHH thetaAboveCell000022002010)) = true :=
-  adaptiveCoverCheck_succ_of_children 4 (childLL (childHH thetaAboveCell000022002010))
-    e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c0_c0 e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c0_c1
-      e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c0_c2 e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c0_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -12443,51 +11847,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c1_c0_c3_c1_5_00636
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells024fe9d391
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002010` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002010 : AngleCell :=
-  childLL (childLH (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCells024fe9d391
-
-open CertificateCells024fe9d391
-
-theorem e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c1 :
-    adaptiveCoverCheck 5 (childLH (childHH thetaAboveCell000022002010)) = true :=
-  adaptiveCoverCheck_succ_of_children 4 (childLH (childHH thetaAboveCell000022002010))
-    e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c1_c0 e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c1_c1
-      e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c1_c2 e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c1_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -12615,96 +11974,6 @@ end CoverCertificate3e0a4a2c6f
 theorem e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c3 :
     adaptiveCoverCheck 5 (childHH (childHH thetaAboveCell000022002010)) = true := by
   exact CoverCertificate3e0a4a2c6f.checkedRoot
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
-
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above Leaf0000220020_c1_c0_c3_6_00639
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells95bf7ab700
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002010` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002010 : AngleCell :=
-  childLL (childLH (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCells95bf7ab700
-
-open CertificateCells95bf7ab700
-
-theorem e24KC2ThetaAboveLeaf0000220020_c1_c0_c3 :
-    adaptiveCoverCheck 6 (childHH thetaAboveCell000022002010) = true :=
-  adaptiveCoverCheck_succ_of_children 5 (childHH thetaAboveCell000022002010)
-    e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c0 e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c1
-      e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c2 e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
-
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above Leaf0000220020_c1_c0_7_00640
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCellsb2f77f238f
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002010` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002010 : AngleCell :=
-  childLL (childLH (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCellsb2f77f238f
-
-open CertificateCellsb2f77f238f
-
-theorem e24KC2ThetaAboveLeaf0000220020_c1_c0 :
-    adaptiveCoverCheck 7 thetaAboveCell000022002010 = true :=
-  adaptiveCoverCheck_succ_of_children 6 thetaAboveCell000022002010
-    e24KC2ThetaAboveLeaf0000220020_c1_c0_c0 e24KC2ThetaAboveLeaf0000220020_c1_c0_c1
-      e24KC2ThetaAboveLeaf0000220020_c1_c0_c2 e24KC2ThetaAboveLeaf0000220020_c1_c0_c3
 
 end PartE
 end GerverSofa

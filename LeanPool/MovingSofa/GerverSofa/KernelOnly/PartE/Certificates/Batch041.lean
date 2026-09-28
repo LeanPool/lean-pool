@@ -5,7 +5,6 @@ Authors: Dawid Trela
 -/
 module
 
-public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch001
 
 
 
@@ -162,9 +161,6 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch
 
 
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Semantics.Batch001
-public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch002
-
-public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch003
 
 
 
@@ -179,21 +175,16 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch
 
 
 
-public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch004
 
-public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch005
+
 
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Semantics.Batch002
 
-public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch037
-
-public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch038
-
-public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch039
 
 
 
-public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch040
+
+
 
 
 
@@ -207,35 +198,24 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch
 # Gerver sofa dependency batch
 
 * `KernelOnly.PartE.PhiBelow.Leaf00445`.
-* `KernelOnly.PartE.PhiBelow.Join00446`.
-* `KernelOnly.PartE.PhiBelow.Join00447`.
-* `KernelOnly.PartE.PhiBelow.Join00448`.
 * `KernelOnly.PartE.PhiBelow.Leaf00450`.
 * `KernelOnly.PartE.PhiBelow.Leaf00451`.
 * `KernelOnly.PartE.PhiBelow.Leaf00453`.
 * `KernelOnly.PartE.PhiBelow.Leaf00454`.
 * `KernelOnly.PartE.PhiBelow.Leaf00455`.
 * `KernelOnly.PartE.PhiBelow.Leaf00456`.
-* `KernelOnly.PartE.PhiBelow.Join00457`.
 * `KernelOnly.PartE.PhiBelow.Leaf00458`.
-* `KernelOnly.PartE.PhiBelow.Join00459`.
-* `KernelOnly.PartE.PhiBelow.Join00460`.
 * `KernelOnly.PartE.PhiBelow.Leaf00461`.
-* `KernelOnly.PartE.PhiBelow.Join00462`.
-* `KernelOnly.PartE.E24KC6PhiBelowReconstruct`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00009`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00010`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00012`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00013`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00014`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00015`.
-* `KernelOnly.PartE.ThetaAbove.Join00016`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00018`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00019`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00020`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00021`.
-* `KernelOnly.PartE.ThetaAbove.Join00022`.
-* `KernelOnly.PartE.ThetaAbove.Join00023`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00024`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00025`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00028`.
@@ -246,20 +226,16 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch
 * `KernelOnly.PartE.ThetaAbove.Leaf00481`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00482`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00483`.
-* `KernelOnly.PartE.ThetaAbove.Join00484`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00486`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00487`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00488`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00489`.
-* `KernelOnly.PartE.ThetaAbove.Join00490`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00491`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00492`.
-* `KernelOnly.PartE.ThetaAbove.Join00493`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00496`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00497`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00498`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00499`.
-* `KernelOnly.PartE.ThetaAbove.Join00500`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00502`.
 * `KernelOnly.PartE.ThetaAbove.Leaf00503`.
 -/
@@ -4913,128 +4889,8 @@ end
 
 end
 
-section
 
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Phi Below Leaf33233_c2_c2_c3_c3_5_00446
--/
 
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCellsa21caf16f2
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `3323` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3323 : AngleCell :=
-  childHH (childHL (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `33233223` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell33233223 : AngleCell :=
-  childHH (childHL (childHL (childHH phiBelowCell3323)))
-
-end CertificateCellsa21caf16f2
-
-open CertificateCellsa21caf16f2
-
-theorem e24KC2PhiBelowLeaf33233_c2_c2_c3_c3 :
-    adaptiveCoverCheck 5 (childHH phiBelowCell33233223) = true :=
-  adaptiveCoverCheck_succ_of_children 4 (childHH phiBelowCell33233223)
-    e24KC2PhiBelowLeaf33233_c2_c2_c3_c3_c0 e24KC2PhiBelowLeaf33233_c2_c2_c3_c3_c1
-      e24KC2PhiBelowLeaf33233_c2_c2_c3_c3_c2 e24KC2PhiBelowLeaf33233_c2_c2_c3_c3_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
-
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Phi Below Leaf33233_c2_c2_c3_6_00447
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells21943a9b83
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `3323` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3323 : AngleCell :=
-  childHH (childHL (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `33233223` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell33233223 : AngleCell :=
-  childHH (childHL (childHL (childHH phiBelowCell3323)))
-
-end CertificateCells21943a9b83
-
-open CertificateCells21943a9b83
-
-theorem e24KC2PhiBelowLeaf33233_c2_c2_c3 :
-    adaptiveCoverCheck 6 phiBelowCell33233223 = true :=
-  adaptiveCoverCheck_succ_of_children 5 phiBelowCell33233223
-    e24KC2PhiBelowLeaf33233_c2_c2_c3_c0 e24KC2PhiBelowLeaf33233_c2_c2_c3_c1
-      e24KC2PhiBelowLeaf33233_c2_c2_c3_c2 e24KC2PhiBelowLeaf33233_c2_c2_c3_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
-
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Phi Below Leaf33233_c2_c2_7_00448
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells62ff50a4e8
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `3323` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3323 : AngleCell :=
-  childHH (childHL (childHH (childHH e24PhiBelowRoot)))
-
-end CertificateCells62ff50a4e8
-
-open CertificateCells62ff50a4e8
-
-theorem e24KC2PhiBelowLeaf33233_c2_c2 :
-    adaptiveCoverCheck 7 (childHL (childHL (childHH phiBelowCell3323))) = true :=
-  adaptiveCoverCheck_succ_of_children 6 (childHL (childHL (childHH phiBelowCell3323)))
-    e24KC2PhiBelowLeaf33233_c2_c2_c0 e24KC2PhiBelowLeaf33233_c2_c2_c1
-      e24KC2PhiBelowLeaf33233_c2_c2_c2 e24KC2PhiBelowLeaf33233_c2_c2_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -6032,47 +5888,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Phi Below Leaf33233_c2_c3_c2_6_00457
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells6677fc4b7c
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `3323` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3323 : AngleCell :=
-  childHH (childHL (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `33233232` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell33233232 : AngleCell :=
-  childHL (childHH (childHL (childHH phiBelowCell3323)))
-
-end CertificateCells6677fc4b7c
-
-open CertificateCells6677fc4b7c
-
-theorem e24KC2PhiBelowLeaf33233_c2_c3_c2 :
-    adaptiveCoverCheck 6 phiBelowCell33233232 = true :=
-  adaptiveCoverCheck_succ_of_children 5 phiBelowCell33233232
-    e24KC2PhiBelowLeaf33233_c2_c3_c2_c0 e24KC2PhiBelowLeaf33233_c2_c3_c2_c1
-      e24KC2PhiBelowLeaf33233_c2_c3_c2_c2 e24KC2PhiBelowLeaf33233_c2_c3_c2_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -6257,83 +6072,7 @@ end
 
 end
 
-section
 
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Phi Below Leaf33233_c2_c3_7_00459
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells07875eeb47
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `3323` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3323 : AngleCell :=
-  childHH (childHL (childHH (childHH e24PhiBelowRoot)))
-
-end CertificateCells07875eeb47
-
-open CertificateCells07875eeb47
-
-theorem e24KC2PhiBelowLeaf33233_c2_c3 :
-    adaptiveCoverCheck 7 (childHH (childHL (childHH phiBelowCell3323))) = true :=
-  adaptiveCoverCheck_succ_of_children 6 (childHH (childHL (childHH phiBelowCell3323)))
-    e24KC2PhiBelowLeaf33233_c2_c3_c0 e24KC2PhiBelowLeaf33233_c2_c3_c1
-      e24KC2PhiBelowLeaf33233_c2_c3_c2 e24KC2PhiBelowLeaf33233_c2_c3_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
-
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Phi Below Leaf33233_c2_8_00460
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells5ed2775b48
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `3323` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3323 : AngleCell :=
-  childHH (childHL (childHH (childHH e24PhiBelowRoot)))
-
-end CertificateCells5ed2775b48
-
-open CertificateCells5ed2775b48
-
-theorem e24KC2PhiBelowLeaf33233_c2 :
-    adaptiveCoverCheck 8 (childHL (childHH phiBelowCell3323)) = true :=
-  adaptiveCoverCheck_succ_of_children 7 (childHL (childHH phiBelowCell3323))
-    e24KC2PhiBelowLeaf33233_c2_c0 e24KC2PhiBelowLeaf33233_c2_c1 e24KC2PhiBelowLeaf33233_c2_c2
-      e24KC2PhiBelowLeaf33233_c2_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -6787,676 +6526,7 @@ end
 
 end
 
-section
 
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Phi Below Leaf33233_9_00462
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells83d9ff7319
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `3323` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3323 : AngleCell :=
-  childHH (childHL (childHH (childHH e24PhiBelowRoot)))
-
-end CertificateCells83d9ff7319
-
-open CertificateCells83d9ff7319
-
-theorem e24KC2PhiBelowLeaf33233 :
-    adaptiveCoverCheck 9 (childHH phiBelowCell3323) = true :=
-  adaptiveCoverCheck_succ_of_children 8 (childHH phiBelowCell3323)
-    e24KC2PhiBelowLeaf33233_c0 e24KC2PhiBelowLeaf33233_c1 e24KC2PhiBelowLeaf33233_c2
-      e24KC2PhiBelowLeaf33233_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
-
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC6Phi Below Reconstruct
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells240a9bf558
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `3000` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3000 : AngleCell :=
-  childLL (childLL (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3001` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3001 : AngleCell :=
-  childLH (childLL (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3002` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3002 : AngleCell :=
-  childHL (childLL (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3003` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3003 : AngleCell :=
-  childHH (childLL (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3010` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3010 : AngleCell :=
-  childLL (childLH (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3011` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3011 : AngleCell :=
-  childLH (childLH (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3012` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3012 : AngleCell :=
-  childHL (childLH (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3013` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3013 : AngleCell :=
-  childHH (childLH (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3020` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3020 : AngleCell :=
-  childLL (childHL (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3021` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3021 : AngleCell :=
-  childLH (childHL (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3022` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3022 : AngleCell :=
-  childHL (childHL (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3023` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3023 : AngleCell :=
-  childHH (childHL (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3030` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3030 : AngleCell :=
-  childLL (childHH (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3031` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3031 : AngleCell :=
-  childLH (childHH (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3032` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3032 : AngleCell :=
-  childHL (childHH (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3033` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3033 : AngleCell :=
-  childHH (childHH (childLL (childHH e24PhiBelowRoot)))
-/-- Subcell `3100` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3100 : AngleCell :=
-  childLL (childLL (childLH (childHH e24PhiBelowRoot)))
-/-- Subcell `3101` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3101 : AngleCell :=
-  childLH (childLL (childLH (childHH e24PhiBelowRoot)))
-/-- Subcell `3102` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3102 : AngleCell :=
-  childHL (childLL (childLH (childHH e24PhiBelowRoot)))
-/-- Subcell `3103` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3103 : AngleCell :=
-  childHH (childLL (childLH (childHH e24PhiBelowRoot)))
-/-- Subcell `3112` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3112 : AngleCell :=
-  childHL (childLH (childLH (childHH e24PhiBelowRoot)))
-/-- Subcell `3120` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3120 : AngleCell :=
-  childLL (childHL (childLH (childHH e24PhiBelowRoot)))
-/-- Subcell `3121` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3121 : AngleCell :=
-  childLH (childHL (childLH (childHH e24PhiBelowRoot)))
-/-- Subcell `3122` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3122 : AngleCell :=
-  childHL (childHL (childLH (childHH e24PhiBelowRoot)))
-/-- Subcell `3123` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3123 : AngleCell :=
-  childHH (childHL (childLH (childHH e24PhiBelowRoot)))
-/-- Subcell `3130` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3130 : AngleCell :=
-  childLL (childHH (childLH (childHH e24PhiBelowRoot)))
-/-- Subcell `3131` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3131 : AngleCell :=
-  childLH (childHH (childLH (childHH e24PhiBelowRoot)))
-/-- Subcell `3132` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3132 : AngleCell :=
-  childHL (childHH (childLH (childHH e24PhiBelowRoot)))
-/-- Subcell `3133` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3133 : AngleCell :=
-  childHH (childHH (childLH (childHH e24PhiBelowRoot)))
-/-- Subcell `3200` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3200 : AngleCell :=
-  childLL (childLL (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3201` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3201 : AngleCell :=
-  childLH (childLL (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3202` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3202 : AngleCell :=
-  childHL (childLL (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3203` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3203 : AngleCell :=
-  childHH (childLL (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3210` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3210 : AngleCell :=
-  childLL (childLH (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3211` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3211 : AngleCell :=
-  childLH (childLH (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3212` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3212 : AngleCell :=
-  childHL (childLH (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3213` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3213 : AngleCell :=
-  childHH (childLH (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3220` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3220 : AngleCell :=
-  childLL (childHL (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3221` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3221 : AngleCell :=
-  childLH (childHL (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3222` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3222 : AngleCell :=
-  childHL (childHL (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3223` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3223 : AngleCell :=
-  childHH (childHL (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3230` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3230 : AngleCell :=
-  childLL (childHH (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3231` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3231 : AngleCell :=
-  childLH (childHH (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3232` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3232 : AngleCell :=
-  childHL (childHH (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3233` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3233 : AngleCell :=
-  childHH (childHH (childHL (childHH e24PhiBelowRoot)))
-/-- Subcell `3300` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3300 : AngleCell :=
-  childLL (childLL (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `3301` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3301 : AngleCell :=
-  childLH (childLL (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `3302` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3302 : AngleCell :=
-  childHL (childLL (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `3303` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3303 : AngleCell :=
-  childHH (childLL (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `3310` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3310 : AngleCell :=
-  childLL (childLH (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `3311` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3311 : AngleCell :=
-  childLH (childLH (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `3312` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3312 : AngleCell :=
-  childHL (childLH (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `3313` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3313 : AngleCell :=
-  childHH (childLH (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `3320` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3320 : AngleCell :=
-  childLL (childHL (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `3321` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3321 : AngleCell :=
-  childLH (childHL (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `3322` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3322 : AngleCell :=
-  childHL (childHL (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `3323` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3323 : AngleCell :=
-  childHH (childHL (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `3330` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3330 : AngleCell :=
-  childLL (childHH (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `3331` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3331 : AngleCell :=
-  childLH (childHH (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `3332` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3332 : AngleCell :=
-  childHL (childHH (childHH (childHH e24PhiBelowRoot)))
-/-- Subcell `3333` of the phi-below root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev phiBelowCell3333 : AngleCell :=
-  childHH (childHH (childHH (childHH e24PhiBelowRoot)))
-
-end CertificateCells240a9bf558
-
-open CertificateCells240a9bf558
-
-theorem e24KC2PhiBelowNode3000 :
-    adaptiveCoverCheck 10 phiBelowCell3000 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3000
-    e24KC2PhiBelowLeaf30000 e24KC2PhiBelowLeaf30001 e24KC2PhiBelowLeaf30002 e24KC2PhiBelowLeaf30003
-
-theorem e24KC2PhiBelowNode3001 :
-    adaptiveCoverCheck 10 phiBelowCell3001 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3001
-    e24KC2PhiBelowLeaf30010 e24KC2PhiBelowLeaf30011 e24KC2PhiBelowLeaf30012 e24KC2PhiBelowLeaf30013
-
-theorem e24KC2PhiBelowNode3002 :
-    adaptiveCoverCheck 10 phiBelowCell3002 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3002
-    e24KC2PhiBelowLeaf30020 e24KC2PhiBelowLeaf30021 e24KC2PhiBelowLeaf30022 e24KC2PhiBelowLeaf30023
-
-theorem e24KC2PhiBelowNode3003 :
-    adaptiveCoverCheck 10 phiBelowCell3003 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3003
-    e24KC2PhiBelowLeaf30030 e24KC2PhiBelowLeaf30031 e24KC2PhiBelowLeaf30032 e24KC2PhiBelowLeaf30033
-
-theorem e24KC2PhiBelowNode3010 :
-    adaptiveCoverCheck 10 phiBelowCell3010 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3010
-    e24KC2PhiBelowLeaf30100 e24KC2PhiBelowLeaf30101 e24KC2PhiBelowLeaf30102 e24KC2PhiBelowLeaf30103
-
-theorem e24KC2PhiBelowNode3011 :
-    adaptiveCoverCheck 10 phiBelowCell3011 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3011
-    e24KC2PhiBelowLeaf30110 e24KC2PhiBelowLeaf30111 e24KC2PhiBelowLeaf30112 e24KC2PhiBelowLeaf30113
-
-theorem e24KC2PhiBelowNode3012 :
-    adaptiveCoverCheck 10 phiBelowCell3012 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3012
-    e24KC2PhiBelowLeaf30120 e24KC2PhiBelowLeaf30121 e24KC2PhiBelowLeaf30122 e24KC2PhiBelowLeaf30123
-
-theorem e24KC2PhiBelowNode3013 :
-    adaptiveCoverCheck 10 phiBelowCell3013 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3013
-    e24KC2PhiBelowLeaf30130 e24KC2PhiBelowLeaf30131 e24KC2PhiBelowLeaf30132 e24KC2PhiBelowLeaf30133
-
-theorem e24KC2PhiBelowNode3020 :
-    adaptiveCoverCheck 10 phiBelowCell3020 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3020
-    e24KC2PhiBelowLeaf30200 e24KC2PhiBelowLeaf30201 e24KC2PhiBelowLeaf30202 e24KC2PhiBelowLeaf30203
-
-theorem e24KC2PhiBelowNode3021 :
-    adaptiveCoverCheck 10 phiBelowCell3021 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3021
-    e24KC2PhiBelowLeaf30210 e24KC2PhiBelowLeaf30211 e24KC2PhiBelowLeaf30212 e24KC2PhiBelowLeaf30213
-
-theorem e24KC2PhiBelowNode3022 :
-    adaptiveCoverCheck 10 phiBelowCell3022 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3022
-    e24KC2PhiBelowLeaf30220 e24KC2PhiBelowLeaf30221 e24KC2PhiBelowLeaf30222 e24KC2PhiBelowLeaf30223
-
-theorem e24KC2PhiBelowNode3023 :
-    adaptiveCoverCheck 10 phiBelowCell3023 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3023
-    e24KC2PhiBelowLeaf30230 e24KC2PhiBelowLeaf30231 e24KC2PhiBelowLeaf30232 e24KC2PhiBelowLeaf30233
-
-theorem e24KC2PhiBelowNode3030 :
-    adaptiveCoverCheck 10 phiBelowCell3030 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3030
-    e24KC2PhiBelowLeaf30300 e24KC2PhiBelowLeaf30301 e24KC2PhiBelowLeaf30302 e24KC2PhiBelowLeaf30303
-
-theorem e24KC2PhiBelowNode3031 :
-    adaptiveCoverCheck 10 phiBelowCell3031 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3031
-    e24KC2PhiBelowLeaf30310 e24KC2PhiBelowLeaf30311 e24KC2PhiBelowLeaf30312 e24KC2PhiBelowLeaf30313
-
-theorem e24KC2PhiBelowNode3032 :
-    adaptiveCoverCheck 10 phiBelowCell3032 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3032
-    e24KC2PhiBelowLeaf30320 e24KC2PhiBelowLeaf30321 e24KC2PhiBelowLeaf30322 e24KC2PhiBelowLeaf30323
-
-theorem e24KC2PhiBelowNode3033 :
-    adaptiveCoverCheck 10 phiBelowCell3033 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3033
-    e24KC2PhiBelowLeaf30330 e24KC2PhiBelowLeaf30331 e24KC2PhiBelowLeaf30332 e24KC2PhiBelowLeaf30333
-
-theorem e24KC2PhiBelowNode3100 :
-    adaptiveCoverCheck 10 phiBelowCell3100 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3100
-    e24KC2PhiBelowLeaf31000 e24KC2PhiBelowLeaf31001 e24KC2PhiBelowLeaf31002 e24KC2PhiBelowLeaf31003
-
-theorem e24KC2PhiBelowNode3101 :
-    adaptiveCoverCheck 10 phiBelowCell3101 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3101
-    e24KC2PhiBelowLeaf31010 e24KC2PhiBelowLeaf31011 e24KC2PhiBelowLeaf31012 e24KC2PhiBelowLeaf31013
-
-theorem e24KC2PhiBelowNode3102 :
-    adaptiveCoverCheck 10 phiBelowCell3102 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3102
-    e24KC2PhiBelowLeaf31020 e24KC2PhiBelowLeaf31021 e24KC2PhiBelowLeaf31022 e24KC2PhiBelowLeaf31023
-
-theorem e24KC2PhiBelowNode3103 :
-    adaptiveCoverCheck 10 phiBelowCell3103 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3103
-    e24KC2PhiBelowLeaf31030 e24KC2PhiBelowLeaf31031 e24KC2PhiBelowLeaf31032 e24KC2PhiBelowLeaf31033
-
-theorem e24KC2PhiBelowNode3112 :
-    adaptiveCoverCheck 10 phiBelowCell3112 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3112
-    e24KC2PhiBelowLeaf31120 e24KC2PhiBelowLeaf31121 e24KC2PhiBelowLeaf31122 e24KC2PhiBelowLeaf31123
-
-theorem e24KC2PhiBelowNode3120 :
-    adaptiveCoverCheck 10 phiBelowCell3120 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3120
-    e24KC2PhiBelowLeaf31200 e24KC2PhiBelowLeaf31201 e24KC2PhiBelowLeaf31202 e24KC2PhiBelowLeaf31203
-
-theorem e24KC2PhiBelowNode3121 :
-    adaptiveCoverCheck 10 phiBelowCell3121 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3121
-    e24KC2PhiBelowLeaf31210 e24KC2PhiBelowLeaf31211 e24KC2PhiBelowLeaf31212 e24KC2PhiBelowLeaf31213
-
-theorem e24KC2PhiBelowNode3122 :
-    adaptiveCoverCheck 10 phiBelowCell3122 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3122
-    e24KC2PhiBelowLeaf31220 e24KC2PhiBelowLeaf31221 e24KC2PhiBelowLeaf31222 e24KC2PhiBelowLeaf31223
-
-theorem e24KC2PhiBelowNode3123 :
-    adaptiveCoverCheck 10 phiBelowCell3123 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3123
-    e24KC2PhiBelowLeaf31230 e24KC2PhiBelowLeaf31231 e24KC2PhiBelowLeaf31232 e24KC2PhiBelowLeaf31233
-
-theorem e24KC2PhiBelowNode3130 :
-    adaptiveCoverCheck 10 phiBelowCell3130 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3130
-    e24KC2PhiBelowLeaf31300 e24KC2PhiBelowLeaf31301 e24KC2PhiBelowLeaf31302 e24KC2PhiBelowLeaf31303
-
-theorem e24KC2PhiBelowNode3131 :
-    adaptiveCoverCheck 10 phiBelowCell3131 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3131
-    e24KC2PhiBelowLeaf31310 e24KC2PhiBelowLeaf31311 e24KC2PhiBelowLeaf31312 e24KC2PhiBelowLeaf31313
-
-theorem e24KC2PhiBelowNode3132 :
-    adaptiveCoverCheck 10 phiBelowCell3132 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3132
-    e24KC2PhiBelowLeaf31320 e24KC2PhiBelowLeaf31321 e24KC2PhiBelowLeaf31322 e24KC2PhiBelowLeaf31323
-
-theorem e24KC2PhiBelowNode3133 :
-    adaptiveCoverCheck 10 phiBelowCell3133 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3133
-    e24KC2PhiBelowLeaf31330 e24KC2PhiBelowLeaf31331 e24KC2PhiBelowLeaf31332 e24KC2PhiBelowLeaf31333
-
-theorem e24KC2PhiBelowNode3200 :
-    adaptiveCoverCheck 10 phiBelowCell3200 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3200
-    e24KC2PhiBelowLeaf32000 e24KC2PhiBelowLeaf32001 e24KC2PhiBelowLeaf32002 e24KC2PhiBelowLeaf32003
-
-theorem e24KC2PhiBelowNode3201 :
-    adaptiveCoverCheck 10 phiBelowCell3201 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3201
-    e24KC2PhiBelowLeaf32010 e24KC2PhiBelowLeaf32011 e24KC2PhiBelowLeaf32012 e24KC2PhiBelowLeaf32013
-
-theorem e24KC2PhiBelowNode3202 :
-    adaptiveCoverCheck 10 phiBelowCell3202 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3202
-    e24KC2PhiBelowLeaf32020 e24KC2PhiBelowLeaf32021 e24KC2PhiBelowLeaf32022 e24KC2PhiBelowLeaf32023
-
-theorem e24KC2PhiBelowNode3203 :
-    adaptiveCoverCheck 10 phiBelowCell3203 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3203
-    e24KC2PhiBelowLeaf32030 e24KC2PhiBelowLeaf32031 e24KC2PhiBelowLeaf32032 e24KC2PhiBelowLeaf32033
-
-theorem e24KC2PhiBelowNode3210 :
-    adaptiveCoverCheck 10 phiBelowCell3210 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3210
-    e24KC2PhiBelowLeaf32100 e24KC2PhiBelowLeaf32101 e24KC2PhiBelowLeaf32102 e24KC2PhiBelowLeaf32103
-
-theorem e24KC2PhiBelowNode3211 :
-    adaptiveCoverCheck 10 phiBelowCell3211 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3211
-    e24KC2PhiBelowLeaf32110 e24KC2PhiBelowLeaf32111 e24KC2PhiBelowLeaf32112 e24KC2PhiBelowLeaf32113
-
-theorem e24KC2PhiBelowNode3212 :
-    adaptiveCoverCheck 10 phiBelowCell3212 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3212
-    e24KC2PhiBelowLeaf32120 e24KC2PhiBelowLeaf32121 e24KC2PhiBelowLeaf32122 e24KC2PhiBelowLeaf32123
-
-theorem e24KC2PhiBelowNode3213 :
-    adaptiveCoverCheck 10 phiBelowCell3213 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3213
-    e24KC2PhiBelowLeaf32130 e24KC2PhiBelowLeaf32131 e24KC2PhiBelowLeaf32132 e24KC2PhiBelowLeaf32133
-
-theorem e24KC2PhiBelowNode3220 :
-    adaptiveCoverCheck 10 phiBelowCell3220 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3220
-    e24KC2PhiBelowLeaf32200 e24KC2PhiBelowLeaf32201 e24KC2PhiBelowLeaf32202 e24KC2PhiBelowLeaf32203
-
-theorem e24KC2PhiBelowNode3221 :
-    adaptiveCoverCheck 10 phiBelowCell3221 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3221
-    e24KC2PhiBelowLeaf32210 e24KC2PhiBelowLeaf32211 e24KC2PhiBelowLeaf32212 e24KC2PhiBelowLeaf32213
-
-theorem e24KC2PhiBelowNode3222 :
-    adaptiveCoverCheck 10 phiBelowCell3222 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3222
-    e24KC2PhiBelowLeaf32220 e24KC2PhiBelowLeaf32221 e24KC2PhiBelowLeaf32222 e24KC2PhiBelowLeaf32223
-
-theorem e24KC2PhiBelowNode3223 :
-    adaptiveCoverCheck 10 phiBelowCell3223 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3223
-    e24KC2PhiBelowLeaf32230 e24KC2PhiBelowLeaf32231 e24KC2PhiBelowLeaf32232 e24KC2PhiBelowLeaf32233
-
-theorem e24KC2PhiBelowNode3230 :
-    adaptiveCoverCheck 10 phiBelowCell3230 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3230
-    e24KC2PhiBelowLeaf32300 e24KC2PhiBelowLeaf32301 e24KC2PhiBelowLeaf32302 e24KC2PhiBelowLeaf32303
-
-theorem e24KC2PhiBelowNode3231 :
-    adaptiveCoverCheck 10 phiBelowCell3231 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3231
-    e24KC2PhiBelowLeaf32310 e24KC2PhiBelowLeaf32311 e24KC2PhiBelowLeaf32312 e24KC2PhiBelowLeaf32313
-
-theorem e24KC2PhiBelowNode3232 :
-    adaptiveCoverCheck 10 phiBelowCell3232 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3232
-    e24KC2PhiBelowLeaf32320 e24KC2PhiBelowLeaf32321 e24KC2PhiBelowLeaf32322 e24KC2PhiBelowLeaf32323
-
-theorem e24KC2PhiBelowNode3233 :
-    adaptiveCoverCheck 10 phiBelowCell3233 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3233
-    e24KC2PhiBelowLeaf32330 e24KC2PhiBelowLeaf32331 e24KC2PhiBelowLeaf32332 e24KC2PhiBelowLeaf32333
-
-theorem e24KC2PhiBelowNode3300 :
-    adaptiveCoverCheck 10 phiBelowCell3300 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3300
-    e24KC2PhiBelowLeaf33000 e24KC2PhiBelowLeaf33001 e24KC2PhiBelowLeaf33002 e24KC2PhiBelowLeaf33003
-
-theorem e24KC2PhiBelowNode3301 :
-    adaptiveCoverCheck 10 phiBelowCell3301 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3301
-    e24KC2PhiBelowLeaf33010 e24KC2PhiBelowLeaf33011 e24KC2PhiBelowLeaf33012 e24KC2PhiBelowLeaf33013
-
-theorem e24KC2PhiBelowNode3302 :
-    adaptiveCoverCheck 10 phiBelowCell3302 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3302
-    e24KC2PhiBelowLeaf33020 e24KC2PhiBelowLeaf33021 e24KC2PhiBelowLeaf33022 e24KC2PhiBelowLeaf33023
-
-theorem e24KC2PhiBelowNode3303 :
-    adaptiveCoverCheck 10 phiBelowCell3303 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3303
-    e24KC2PhiBelowLeaf33030 e24KC2PhiBelowLeaf33031 e24KC2PhiBelowLeaf33032 e24KC2PhiBelowLeaf33033
-
-theorem e24KC2PhiBelowNode3310 :
-    adaptiveCoverCheck 10 phiBelowCell3310 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3310
-    e24KC2PhiBelowLeaf33100 e24KC2PhiBelowLeaf33101 e24KC2PhiBelowLeaf33102 e24KC2PhiBelowLeaf33103
-
-theorem e24KC2PhiBelowNode3311 :
-    adaptiveCoverCheck 10 phiBelowCell3311 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3311
-    e24KC2PhiBelowLeaf33110 e24KC2PhiBelowLeaf33111 e24KC2PhiBelowLeaf33112 e24KC2PhiBelowLeaf33113
-
-theorem e24KC2PhiBelowNode3312 :
-    adaptiveCoverCheck 10 phiBelowCell3312 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3312
-    e24KC2PhiBelowLeaf33120 e24KC2PhiBelowLeaf33121 e24KC2PhiBelowLeaf33122 e24KC2PhiBelowLeaf33123
-
-theorem e24KC2PhiBelowNode3313 :
-    adaptiveCoverCheck 10 phiBelowCell3313 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3313
-    e24KC2PhiBelowLeaf33130 e24KC2PhiBelowLeaf33131 e24KC2PhiBelowLeaf33132 e24KC2PhiBelowLeaf33133
-
-theorem e24KC2PhiBelowNode3320 :
-    adaptiveCoverCheck 10 phiBelowCell3320 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3320
-    e24KC2PhiBelowLeaf33200 e24KC2PhiBelowLeaf33201 e24KC2PhiBelowLeaf33202 e24KC2PhiBelowLeaf33203
-
-theorem e24KC2PhiBelowNode3321 :
-    adaptiveCoverCheck 10 phiBelowCell3321 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3321
-    e24KC2PhiBelowLeaf33210 e24KC2PhiBelowLeaf33211 e24KC2PhiBelowLeaf33212 e24KC2PhiBelowLeaf33213
-
-theorem e24KC2PhiBelowNode3322 :
-    adaptiveCoverCheck 10 phiBelowCell3322 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3322
-    e24KC2PhiBelowLeaf33220 e24KC2PhiBelowLeaf33221 e24KC2PhiBelowLeaf33222 e24KC2PhiBelowLeaf33223
-
-theorem e24KC2PhiBelowNode3323 :
-    adaptiveCoverCheck 10 phiBelowCell3323 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3323
-    e24KC2PhiBelowLeaf33230 e24KC2PhiBelowLeaf33231 e24KC2PhiBelowLeaf33232 e24KC2PhiBelowLeaf33233
-
-theorem e24KC2PhiBelowNode3330 :
-    adaptiveCoverCheck 10 phiBelowCell3330 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3330
-    e24KC2PhiBelowLeaf33300 e24KC2PhiBelowLeaf33301 e24KC2PhiBelowLeaf33302 e24KC2PhiBelowLeaf33303
-
-theorem e24KC2PhiBelowNode3331 :
-    adaptiveCoverCheck 10 phiBelowCell3331 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3331
-    e24KC2PhiBelowLeaf33310 e24KC2PhiBelowLeaf33311 e24KC2PhiBelowLeaf33312 e24KC2PhiBelowLeaf33313
-
-theorem e24KC2PhiBelowNode3332 :
-    adaptiveCoverCheck 10 phiBelowCell3332 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3332
-    e24KC2PhiBelowLeaf33320 e24KC2PhiBelowLeaf33321 e24KC2PhiBelowLeaf33322 e24KC2PhiBelowLeaf33323
-
-theorem e24KC2PhiBelowNode3333 :
-    adaptiveCoverCheck 10 phiBelowCell3333 = true :=
-  adaptiveCoverCheck_succ_of_children 9 phiBelowCell3333
-    e24KC2PhiBelowLeaf33330 e24KC2PhiBelowLeaf33331 e24KC2PhiBelowLeaf33332 e24KC2PhiBelowLeaf33333
-
-theorem e24KC2PhiBelowNode300 :
-    adaptiveCoverCheck 11 (childLL (childLL (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childLL (childLL (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowNode3000 e24KC2PhiBelowNode3001 e24KC2PhiBelowNode3002 e24KC2PhiBelowNode3003
-
-theorem e24KC2PhiBelowNode301 :
-    adaptiveCoverCheck 11 (childLH (childLL (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childLH (childLL (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowNode3010 e24KC2PhiBelowNode3011 e24KC2PhiBelowNode3012 e24KC2PhiBelowNode3013
-
-theorem e24KC2PhiBelowNode302 :
-    adaptiveCoverCheck 11 (childHL (childLL (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childHL (childLL (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowNode3020 e24KC2PhiBelowNode3021 e24KC2PhiBelowNode3022 e24KC2PhiBelowNode3023
-
-theorem e24KC2PhiBelowNode303 :
-    adaptiveCoverCheck 11 (childHH (childLL (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childHH (childLL (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowNode3030 e24KC2PhiBelowNode3031 e24KC2PhiBelowNode3032 e24KC2PhiBelowNode3033
-
-theorem e24KC2PhiBelowNode310 :
-    adaptiveCoverCheck 11 (childLL (childLH (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childLL (childLH (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowNode3100 e24KC2PhiBelowNode3101 e24KC2PhiBelowNode3102 e24KC2PhiBelowNode3103
-
-theorem e24KC2PhiBelowNode311 :
-    adaptiveCoverCheck 11 (childLH (childLH (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childLH (childLH (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowLeaf3110 e24KC2PhiBelowLeaf3111 e24KC2PhiBelowNode3112 e24KC2PhiBelowLeaf3113
-
-theorem e24KC2PhiBelowNode312 :
-    adaptiveCoverCheck 11 (childHL (childLH (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childHL (childLH (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowNode3120 e24KC2PhiBelowNode3121 e24KC2PhiBelowNode3122 e24KC2PhiBelowNode3123
-
-theorem e24KC2PhiBelowNode313 :
-    adaptiveCoverCheck 11 (childHH (childLH (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childHH (childLH (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowNode3130 e24KC2PhiBelowNode3131 e24KC2PhiBelowNode3132 e24KC2PhiBelowNode3133
-
-theorem e24KC2PhiBelowNode320 :
-    adaptiveCoverCheck 11 (childLL (childHL (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childLL (childHL (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowNode3200 e24KC2PhiBelowNode3201 e24KC2PhiBelowNode3202 e24KC2PhiBelowNode3203
-
-theorem e24KC2PhiBelowNode321 :
-    adaptiveCoverCheck 11 (childLH (childHL (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childLH (childHL (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowNode3210 e24KC2PhiBelowNode3211 e24KC2PhiBelowNode3212 e24KC2PhiBelowNode3213
-
-theorem e24KC2PhiBelowNode322 :
-    adaptiveCoverCheck 11 (childHL (childHL (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childHL (childHL (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowNode3220 e24KC2PhiBelowNode3221 e24KC2PhiBelowNode3222 e24KC2PhiBelowNode3223
-
-theorem e24KC2PhiBelowNode323 :
-    adaptiveCoverCheck 11 (childHH (childHL (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childHH (childHL (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowNode3230 e24KC2PhiBelowNode3231 e24KC2PhiBelowNode3232 e24KC2PhiBelowNode3233
-
-theorem e24KC2PhiBelowNode330 :
-    adaptiveCoverCheck 11 (childLL (childHH (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childLL (childHH (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowNode3300 e24KC2PhiBelowNode3301 e24KC2PhiBelowNode3302 e24KC2PhiBelowNode3303
-
-theorem e24KC2PhiBelowNode331 :
-    adaptiveCoverCheck 11 (childLH (childHH (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childLH (childHH (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowNode3310 e24KC2PhiBelowNode3311 e24KC2PhiBelowNode3312 e24KC2PhiBelowNode3313
-
-theorem e24KC2PhiBelowNode332 :
-    adaptiveCoverCheck 11 (childHL (childHH (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childHL (childHH (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowNode3320 e24KC2PhiBelowNode3321 e24KC2PhiBelowNode3322 e24KC2PhiBelowNode3323
-
-theorem e24KC2PhiBelowNode333 :
-    adaptiveCoverCheck 11 (childHH (childHH (childHH e24PhiBelowRoot))) = true :=
-  adaptiveCoverCheck_succ_of_children 10 (childHH (childHH (childHH e24PhiBelowRoot)))
-    e24KC2PhiBelowNode3330 e24KC2PhiBelowNode3331 e24KC2PhiBelowNode3332 e24KC2PhiBelowNode3333
-
-theorem e24KC2PhiBelowNode30 :
-    adaptiveCoverCheck 12 (childLL (childHH e24PhiBelowRoot)) = true :=
-  adaptiveCoverCheck_succ_of_children 11 (childLL (childHH e24PhiBelowRoot))
-    e24KC2PhiBelowNode300 e24KC2PhiBelowNode301 e24KC2PhiBelowNode302 e24KC2PhiBelowNode303
-
-theorem e24KC2PhiBelowNode31 :
-    adaptiveCoverCheck 12 (childLH (childHH e24PhiBelowRoot)) = true :=
-  adaptiveCoverCheck_succ_of_children 11 (childLH (childHH e24PhiBelowRoot))
-    e24KC2PhiBelowNode310 e24KC2PhiBelowNode311 e24KC2PhiBelowNode312 e24KC2PhiBelowNode313
-
-theorem e24KC2PhiBelowNode32 :
-    adaptiveCoverCheck 12 (childHL (childHH e24PhiBelowRoot)) = true :=
-  adaptiveCoverCheck_succ_of_children 11 (childHL (childHH e24PhiBelowRoot))
-    e24KC2PhiBelowNode320 e24KC2PhiBelowNode321 e24KC2PhiBelowNode322 e24KC2PhiBelowNode323
-
-theorem e24KC2PhiBelowNode33 :
-    adaptiveCoverCheck 12 (childHH (childHH e24PhiBelowRoot)) = true :=
-  adaptiveCoverCheck_succ_of_children 11 (childHH (childHH e24PhiBelowRoot))
-    e24KC2PhiBelowNode330 e24KC2PhiBelowNode331 e24KC2PhiBelowNode332 e24KC2PhiBelowNode333
-
-theorem e24KC2PhiBelowNode3 :
-    adaptiveCoverCheck 13 (childHH e24PhiBelowRoot) = true :=
-  adaptiveCoverCheck_succ_of_children 12 (childHH e24PhiBelowRoot)
-    e24KC2PhiBelowNode30 e24KC2PhiBelowNode31 e24KC2PhiBelowNode32 e24KC2PhiBelowNode33
-
-theorem e24KC2PhiBelowNodeROOT :
-    adaptiveCoverCheck 14 e24PhiBelowRoot = true :=
-  adaptiveCoverCheck_succ_of_children 13 e24PhiBelowRoot
-    e24PhiBelowKernelLL e24PhiBelowKernelLH e24PhiBelowKernelHL e24KC2PhiBelowNode3
-
-theorem e24PhiBelowKernelCheck :
-    adaptiveCoverCheck 14 e24PhiBelowRoot = true :=
-  e24KC2PhiBelowNodeROOT
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -8218,53 +7288,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c1_c1_c3_c1_c2_4_00016
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells22695df69a
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002011` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002011 : AngleCell :=
-  childLH (childLH (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCells22695df69a
-
-open CertificateCells22695df69a
-
-theorem e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c2 :
-    adaptiveCoverCheck 4 (childHL (childLH (childHH thetaAboveCell000022002011))) = true :=
-  adaptiveCoverCheck_succ_of_children 3 (childHL (childLH (childHH thetaAboveCell000022002011)))
-    e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c2_c0
-      e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c2_c1
-      e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c2_c2
-      e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c2_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -8686,99 +7709,7 @@ end
 
 end
 
-section
 
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c1_c1_c3_c1_c3_4_00022
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells782ac45202
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002011` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002011 : AngleCell :=
-  childLH (childLH (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCells782ac45202
-
-open CertificateCells782ac45202
-
-theorem e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c3 :
-    adaptiveCoverCheck 4 (childHH (childLH (childHH thetaAboveCell000022002011))) = true :=
-  adaptiveCoverCheck_succ_of_children 3 (childHH (childLH (childHH thetaAboveCell000022002011)))
-    e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c3_c0
-      e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c3_c1
-      e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c3_c2
-      e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c3_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
-
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c1_c1_c3_c1_5_00023
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCellsb8f48433cf
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002011` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002011 : AngleCell :=
-  childLH (childLH (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCellsb8f48433cf
-
-open CertificateCellsb8f48433cf
-
-theorem e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1 :
-    adaptiveCoverCheck 5 (childLH (childHH thetaAboveCell000022002011)) = true :=
-  adaptiveCoverCheck_succ_of_children 4 (childLH (childHH thetaAboveCell000022002011))
-    e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c0 e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c1
-      e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c2 e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -10014,53 +8945,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c0_c0_c2_c0_c0_4_00484
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells5bc1aa1a31
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002000 : AngleCell :=
-  childLL (childLL (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCells5bc1aa1a31
-
-open CertificateCells5bc1aa1a31
-
-theorem e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c0 :
-    adaptiveCoverCheck 4 (childLL (childLL (childHL thetaAboveCell000022002000))) = true :=
-  adaptiveCoverCheck_succ_of_children 3 (childLL (childLL (childHL thetaAboveCell000022002000)))
-    e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c0_c0
-      e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c0_c1
-      e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c0_c2
-      e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c0_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -10754,53 +9638,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c0_c0_c2_c0_c1_4_00490
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells29b43c6eb7
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002000 : AngleCell :=
-  childLL (childLL (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCells29b43c6eb7
-
-open CertificateCells29b43c6eb7
-
-theorem e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c1 :
-    adaptiveCoverCheck 4 (childLH (childLL (childHL thetaAboveCell000022002000))) = true :=
-  adaptiveCoverCheck_succ_of_children 3 (childLH (childLL (childHL thetaAboveCell000022002000)))
-    e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c1_c0
-      e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c1_c1
-      e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c1_c2
-      e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c1_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -11210,51 +10047,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c0_c0_c2_c0_5_00493
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCells64bf70ad53
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002000 : AngleCell :=
-  childLL (childLL (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCells64bf70ad53
-
-open CertificateCells64bf70ad53
-
-theorem e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0 :
-    adaptiveCoverCheck 5 (childLL (childHL thetaAboveCell000022002000)) = true :=
-  adaptiveCoverCheck_succ_of_children 4 (childLL (childHL thetaAboveCell000022002000))
-    e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c0 e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c1
-      e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c2 e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
@@ -11948,53 +10740,6 @@ end
 
 end
 
-section
-
-/-!
-# Gerver Sofa / Kernel Only / Part E / E24KC5Join_e24KC2Theta Above
-Leaf0000220020_c0_c0_c2_c1_c0_4_00500
--/
-
-@[expose] public section
-
-noncomputable section
-
-namespace GerverSofa
-namespace PartE
-
-namespace CertificateCellsc935d550f9
-
--- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
-/-- Subcell `0000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell0000 : AngleCell :=
-  childLL (childLL (childLL (childLL e24ThetaAboveRoot)))
-/-- Subcell `00002200` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell00002200 : AngleCell :=
-  childLL (childLL (childHL (childHL thetaAboveCell0000)))
-/-- Subcell `000022002000` of the theta-above root; digits 0–3 mean LL, LH, HL, HH. -/
-abbrev thetaAboveCell000022002000 : AngleCell :=
-  childLL (childLL (childLL (childHL thetaAboveCell00002200)))
-
-end CertificateCellsc935d550f9
-
-open CertificateCellsc935d550f9
-
-theorem e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c1_c0 :
-    adaptiveCoverCheck 4 (childLL (childLH (childHL thetaAboveCell000022002000))) = true :=
-  adaptiveCoverCheck_succ_of_children 3 (childLL (childLH (childHL thetaAboveCell000022002000)))
-    e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c1_c0_c0
-      e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c1_c0_c1
-      e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c1_c0_c2
-      e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c1_c0_c3
-
-end PartE
-end GerverSofa
-
-end
-
-end
-
-end
 
 section
 
