@@ -1,4 +1,4 @@
-"""Reproduce all 47 moving-sofa Part E certificate modules from pinned inputs."""
+"""Reproduce the moving-sofa Part E certificate modules from pinned inputs."""
 
 import argparse
 import hashlib
@@ -33,6 +33,7 @@ STAGES = (
     "wrap_roots",
     "public_root",
     "separate_joins",
+    "bundle_certificates",
 )
 
 
@@ -133,9 +134,11 @@ def read_sources(archive: Path) -> dict[str, str]:
     return sources
 
 
-def verify_outputs(folder: Path) -> dict[str, str]:
-    """Require the exact expected file set and all 47 source digests."""
-    expected = json.loads((DATA / "outputs.json").read_text())
+def verify_outputs(
+    folder: Path, manifest: Path = DATA / "outputs.json"
+) -> dict[str, str]:
+    """Require the exact expected file set and all expected source digests."""
+    expected = json.loads(manifest.read_text())
     actual = {path.name: digest(path.read_bytes()) for path in folder.glob("*.lean")}
     if actual != expected:
         changed = sorted(
@@ -160,6 +163,12 @@ def reproduce(archive: Path, workspace: Path) -> None:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(prepare_source(source))
     for name in STAGES:
+        if name == "bundle_certificates":
+            for path in (workspace / "pool" / CERTIFICATES).glob("*.lean"):
+                path.write_text(path.read_text().rstrip() + "\n")
+            verify_outputs(
+                workspace / "pool" / CERTIFICATES, DATA / "intermediate-outputs.json"
+            )
         print(f"Running {name}", flush=True)
         stage = importlib.import_module(f"lean_pool.sofa_certificates.stages.{name}")
         stage.run(workspace)

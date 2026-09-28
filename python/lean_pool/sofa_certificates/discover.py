@@ -7,7 +7,7 @@ from pathlib import Path
 
 from lean_pool.sofa_certificates.__main__ import DATA
 
-PREAMBLE = """import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Semantics.Batch002
+PREAMBLE = """import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle007
 open GerverSofa GerverSofa.PartE
 
 def discoverCover : Nat → AngleCell → String → List (String × Nat × String)

@@ -1,9 +1,12 @@
 # Reproducing the moving-sofa Part E certificates
 
-This recipe regenerates all **47** files in
+This recipe regenerates all **32** files in
 `LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/Certificates/`, byte for byte,
-at content commit `0f0182131407cb4e2f7b1234f07f34271982d46a` (PR #548).
-That corpus contains 334,787 lines and 25,086 named declarations.
+at content commit `9ac84ed0910d4615a0238a6d465b471d7cee53a0` in PR #548
+(see `data/outputs.json`).
+That corpus contains 323,037 lines and 25,086 named declarations. The recipe
+also verifies the intermediate 47-file layout at content commit
+`0f0182131407cb4e2f7b1234f07f34271982d46a` against its original digests.
 The recipe contains transformations, subdivision witnesses, module assignments,
 and checksums; it does not embed the final Lean files or a compressed copy of them.
 
@@ -39,9 +42,9 @@ The workspace must not already exist. The command checks archive SHA-256
 `88538a166208cdb7ba2c4079a296c8d7becf18758c9b4540750d81b271e79f70`,
 reads only named archive members without extracting arbitrary paths, validates
 all witness trees, and runs the ordered source transformations. It requires all
-47 expected output digests to match before reporting success. The generated
+32 expected output digests to match before reporting success. The generated
 files are under the workspace's `pool/LeanPool/MovingSofa/.../Certificates/`.
-`verification.json` records the archive digest, every output digest, and elapsed
+`verification.json` records the archive digest, every final output digest, and elapsed
 wall time. Intermediate source and audit reports remain available for inspection.
 The command never writes to the content checkout.
 
@@ -66,7 +69,7 @@ It requires the content checkout at the pinned commit, Lean v4.34.0 and Mathlib
 
 ```bash
 # In the content checkout:
-lake build LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Semantics.Batch002
+lake build LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle007
 
 # In this tooling checkout's python/ directory:
 uv run python -m lean_pool.sofa_certificates.discover \
@@ -98,24 +101,31 @@ trust assumptions to the imported library.
    check identical unary subdivision paths.
 6. Move 119 pure combination fragments to `Reconstruction.lean`, preserving all
    25,086 public declaration names. This lets expensive leaf modules build in
-   parallel. Normalize final trailing whitespace and check every output digest.
+   parallel. Normalize trailing whitespace and check all 47 intermediate digests.
+7. Repack those modules into 32 certificate bundles, moving closed cell definitions
+   before proof bodies, removing vacuous namespaces and preserving all names.
+   This keeps the combined pool index below its size limit after main gained a
+   further project. Check every final output digest.
 
 `data/batch-assignment.json` records ordered source fragments;
 `data/module-consolidation-map.json` records import relocation, including semantic
 modules outside the emitted corpus. `data/cover-expansion-candidates.json` records
 each selected theorem, root region, subdivision path and recursion budget.
-These are explicit inputs to the deterministic recipe. No current build timings,
+`data/final-batch-assignment.json` and `data/final-module-map.json` record the
+subsequent packing and semantic import relocation. These are explicit inputs
+to the deterministic recipe. No current build timings,
 GitHub credentials, machine-specific source paths or private generator are needed.
 
 This is a reproduction of the **imported and optimized certificate corpus from
 public upstream source**, not a claim to recover the upstream author's private
 search history or regenerate the whole MovingSofa project from the paper alone.
-The 37 other imported modules contain semantic and geometric proofs and are
+The 22 other imported modules contain semantic and geometric proofs and are
 outside this recipe. Mathematical changes to a cover domain or evaluator require
 new witness search, reviewed source changes and the usual full Lean validation;
 updating a checksum alone does not certify such a change. The expected digests
 are tied to this content version and intentionally fail after an unrecorded port.
 
-The initial clean replay verified all 47 modules in 25.42 seconds on the shared
-Azure VM. This measures source generation only. The import PR separately records
+The initial clean replay verified all 47 intermediate modules in 25.42 seconds;
+the complete replay including all 32 final bundles took 70.14 seconds on the
+shared Azure VM. These measure source generation only. The import PR separately records
 controlled Lean compile benchmarks and complete CI validation.
