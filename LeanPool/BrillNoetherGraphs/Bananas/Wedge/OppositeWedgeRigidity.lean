@@ -30,7 +30,7 @@ private theorem rank_difference_eq_neg_one_of_pointedRigid
   intro hWin
   apply hG.nontrivial u hu
   have hZero := linear_equiv_zero_of_winnable_deg_zero G _ hWin (by
-    rw [deg.map_sub, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_sub, deg_one_chip, deg_one_chip]
     norm_num)
   unfold linearEquiv at hZero ⊢
   have hNeg := (principalDivisors G).neg_mem hZero

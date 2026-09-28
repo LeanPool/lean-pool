@@ -59,7 +59,7 @@ def divisorSupport (D : CFDiv G) : Finset G.V :=
 /-- An effective divisor has at least one chip on each support vertex, so the
 support is no bigger than the degree. -/
 theorem card_divisorSupport_le_deg {D : CFDiv G} (hD : effective D) :
-    ((divisorSupport D).card : ℤ) ≤ deg D := by
+    ((divisorSupport D).card : ℤ) ≤ CFDiv.degree D := by
   have hsub : ∑ v ∈ divisorSupport D, (1 : ℤ) ≤ ∑ v ∈ divisorSupport D, D v :=
     Finset.sum_le_sum fun v hv => by
       have := mem_divisorSupport.mp hv
@@ -68,7 +68,7 @@ theorem card_divisorSupport_le_deg {D : CFDiv G} (hD : effective D) :
     refine Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _) ?_
     intro v _ _
     exact hD v
-  have hdeg : deg D = ∑ v : G.V, D v := rfl
+  have hdeg : CFDiv.degree D = ∑ v : G.V, D v := rfl
   simp only [Finset.sum_const, nsmul_eq_mul, mul_one] at hsub
   omega
 
@@ -379,7 +379,7 @@ theorem charge_of_legal {D : CFDiv G} {U : Finset G.V} (hU : legalSet G D U) :
 
 /-- The degree of an effective divisor bounds any cut it can legally fire. -/
 theorem edgeCut_le_deg_of_legal {D : CFDiv G} {U : Finset G.V} (hD : effective D)
-    (hU : legalSet G D U) : edgeCut G U ≤ deg D := by
+    (hU : legalSet G D U) : edgeCut G U ≤ CFDiv.degree D := by
   refine le_trans (charge_of_legal hU) ?_
   have : ∑ v ∈ U, D v ≤ ∑ v : G.V, D v :=
     Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _) fun v _ _ => hD v
@@ -455,7 +455,7 @@ theorem bramble_order_le_gonality_succ (h_conn : graphConnected G)
   -- one hitting the most members.  The maximum exists because the counts form a
   -- nonempty set of naturals bounded by `𝔅.members.card`.
   set N : Set ℕ :=
-    {n | ∃ E : CFDiv G, effective E ∧ deg E = (d : ℤ) ∧ rank G E ≥ 1 ∧ (hitFam E).card = n}
+    {n | ∃ E : CFDiv G, effective E ∧ CFDiv.degree E = (d : ℤ) ∧ rank G E ≥ 1 ∧ (hitFam E).card = n}
     with hNdef
   have hNne : N.Nonempty := by
     obtain ⟨E, hEeff, hEdeg, hErank⟩ := exists_divisor_of_divisorialGonality h_conn
@@ -465,7 +465,7 @@ theorem bramble_order_le_gonality_succ (h_conn : graphConnected G)
     rintro n ⟨E, -, -, -, rfl⟩
     exact Finset.card_filter_le _ _
   obtain ⟨D, hDeff, hDdeg, hDrank, hDcard⟩ := Nat.sSup_mem hNne hNbdd
-  have hmax : ∀ E : CFDiv G, effective E → deg E = (d : ℤ) → rank G E ≥ 1 →
+  have hmax : ∀ E : CFDiv G, effective E → CFDiv.degree E = (d : ℤ) → rank G E ≥ 1 →
       (hitFam E).card ≤ (hitFam D).card := by
     intro E h1 h2 h3
     rw [hDcard]
@@ -487,7 +487,7 @@ theorem bramble_order_le_gonality_succ (h_conn : graphConnected G)
       exists_nested_legal_chain h_conn v hDeff
     have hEff : ∀ t, t ≤ k → effective (fireChain G D U t) :=
       fireChain_effective hDeff hUlegal
-    have hDegT : ∀ t, deg (fireChain G D U t) = (d : ℤ) := by
+    have hDegT : ∀ t, CFDiv.degree (fireChain G D U t) = (d : ℤ) := by
       intro t
       have h := linear_equiv_preserves_deg G D (fireChain G D U t) (fireChain_linear_equiv D U t)
       rw [← h]; exact hDdeg

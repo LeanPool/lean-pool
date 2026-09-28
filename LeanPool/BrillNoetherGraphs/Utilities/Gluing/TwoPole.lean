@@ -111,7 +111,7 @@ theorem phase_add
 @[simp] theorem deg_phase
     (A : CFGraph.{u}) (B : CFGraph.{v}) (p : TwoPole A) (q : TwoPole B)
     (D : CFDiv (join A B p q)) (n : ℤ) :
-    deg (phase A B p q D n) = deg D := by
+    CFDiv.degree (phase A B p q D n) = CFDiv.degree D := by
   exact deg_add_zsmul_seamDivisor D _ _ n
 /-- On a factor sum, changing phase credits the second left pole and debits
 the second right pole. -/
@@ -144,7 +144,7 @@ theorem phase_sumDivisor
 @[simp] theorem deg_sumDivisor
     (A : CFGraph.{u}) (B : CFGraph.{v}) (p : TwoPole A) (q : TwoPole B)
     (D : CFDiv A) (E : CFDiv B) :
-    deg (sumDivisor A B p q D E) = deg D + deg E := by
+    CFDiv.degree (sumDivisor A B p q D E) = CFDiv.degree D + CFDiv.degree E := by
   change (∑ z : Sum A.V B.V, Sum.elim D E z) =
     (∑ a : A.V, D a) + ∑ b : B.V, E b
   rw [Fintype.sum_sum_type]
@@ -258,14 +258,14 @@ theorem connected_join
   exact graph_connected_bridgeGraph A B p.first q.first hA hB
 @[simp] theorem deg_boundaryDivisor
     (A : CFGraph.{u}) (B : CFGraph.{v}) (p : TwoPole A) (q : TwoPole B) :
-    deg (boundaryDivisor A B p q) = 4 := by
-  simp only [boundaryDivisor, deg.map_add, deg_one_chip]
+    CFDiv.degree (boundaryDivisor A B p q) = 4 := by
+  simp only [boundaryDivisor, CFDiv.degree.map_add, deg_one_chip]
   norm_num
 
 @[simp] theorem deg_canonicalSum
     (A : CFGraph.{u}) (B : CFGraph.{v}) (p : TwoPole A) (q : TwoPole B) :
-    deg (canonicalSum A B p q) = 2 * genus A + 2 * genus B - 4 := by
-  change deg (sumDivisor A B p q (canonicalDivisor A) (canonicalDivisor B)) = _
+    CFDiv.degree (canonicalSum A B p q) = 2 * genus A + 2 * genus B - 4 := by
+  change CFDiv.degree (sumDivisor A B p q (canonicalDivisor A) (canonicalDivisor B)) = _
   rw [deg_sumDivisor]
   simp only [degree_of_canonical_divisor]
   ring

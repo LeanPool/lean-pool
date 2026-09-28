@@ -217,7 +217,7 @@ theorem six_le_divisorialGonality (hcore : spec.core = tricycleCore)
       ((rank_geq_iff spec.graph D 0).mpr (by omega))
   have hEff : effective D :=
     effective_of_winnable_and_q_reduced spec.graph _ D hwin hred
-  have hdeg : deg D = 5 := by
+  have hdeg : CFDiv.degree D = 5 := by
     rw [← linear_equiv_preserves_deg spec.graph E D hequiv]
     simpa using hEdeg
   obtain ⟨hc, htp0, htp1, htp2⟩ := lemma_graad5 hcore hEff hred hrank (by omega)

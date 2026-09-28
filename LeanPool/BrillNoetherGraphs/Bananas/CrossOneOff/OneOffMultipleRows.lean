@@ -63,13 +63,13 @@ theorem rankDelta_oneOff_rightEndpoint_nsmul_eq_one_all
       (c • oneChip (rightEndpoint B)) = 1 := by
   by_cases hcZero : c = 0
   · subst c
-    have hLeftDeg : deg
+    have hLeftDeg : CFDiv.degree
         ((0 : CFDiv B.graph) - oneChip (leftEndpoint B)) < 0 := by simp
-    have hMarkDeg : deg
+    have hMarkDeg : CFDiv.degree
         ((0 : CFDiv B.graph) - oneChip
           (strandVertex B alpha ⟨B.length alpha - 1, by omega⟩)) < 0 := by
       simp
-    have hBothDeg : deg
+    have hBothDeg : CFDiv.degree
         ((0 : CFDiv B.graph) - oneChip (leftEndpoint B) -
           oneChip
             (strandVertex B alpha ⟨B.length alpha - 1, by omega⟩)) < 0 := by
@@ -206,7 +206,7 @@ theorem rankDelta_oneOff_complement_normalForm_eq_one
   have hE : IsSemibreak B E :=
     isSemibreak_one_strand_chip B alpha _ hv
   have hZero : IsSemibreak B (0 : CFDiv B.graph) := isSemibreak_zero B
-  have hdegE : deg E = 1 := by simp [E, deg_one_chip]
+  have hdegE : CFDiv.degree E = 1 := by simp [E, deg_one_chip]
   have hD : (g : ℤ) • oneChip (leftEndpoint B) + E +
       c • oneChip (rightEndpoint B) =
       bananaNormalForm B (g : ℤ) (c : ℤ) E := by
@@ -244,11 +244,11 @@ theorem rankDelta_oneOff_complement_normalForm_eq_one
       smul_eq_mul]
     rw [nsmul_eq_mul]
     ring
-  have hRangeE : (c : ℤ) + deg E ≤ (g : ℤ) := by
+  have hRangeE : (c : ℤ) + CFDiv.degree E ≤ (g : ℤ) := by
     rw [hdegE]
     exact_mod_cast (show c + 1 ≤ g by omega)
-  have hRangeZero : (c : ℤ) + deg (0 : CFDiv B.graph) ≤ (g : ℤ) := by
-    simp
+  have hRangeZero : (c : ℤ) + CFDiv.degree (0 : CFDiv B.graph) ≤ (g : ℤ) := by
+    simp only [map_zero, add_zero, Nat.cast_le]
     exact_mod_cast hc.trans (Nat.sub_le g 1)
   have hRankD := rank_bananaNormalForm B (g : ℤ) (c : ℤ) E hE
     (by omega) (by omega) hRangeE

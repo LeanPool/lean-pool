@@ -131,7 +131,7 @@ def WedgeSameLeftTransmissionProfileWithRightProfile
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (_y : H.V)
     (D : CFDiv G) (E : CFDiv H) (p q : G.V)
     (tau : AspPerm) (Q : ℤ → ℤ) : Prop :=
-  deg D + deg E = (genus G : ℤ) + (genus H : ℤ) + tau.χ ∧
+  CFDiv.degree D + CFDiv.degree E = (genus G : ℤ) + (genus H : ℤ) + tau.χ ∧
     ∀ a b ell : ℤ,
       rank G
           (D + a • oneChip p - b • oneChip q -
@@ -167,7 +167,7 @@ def WedgeSameRightTransmissionProfileWithLeftProfile
     (G : CFGraph.{u}) (H : CFGraph.{v}) (_x : G.V) (y : H.V)
     (D : CFDiv G) (E : CFDiv H) (p q : H.V)
     (tau : AspPerm) (F : ℤ → ℤ) : Prop :=
-  deg D + deg E = (genus G : ℤ) + (genus H : ℤ) + tau.χ ∧
+  CFDiv.degree D + CFDiv.degree E = (genus G : ℤ) + (genus H : ℤ) + tau.χ ∧
     ∀ a b ell : ℤ,
       F (-(ell + 1)) +
         rank H

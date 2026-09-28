@@ -124,7 +124,7 @@ variable {n p : ℕ}
 
 theorem bnExists_of_reaches_coreVertices (d : DegSpec n p)
     (hCore : d.core.Connected) (D : CFDiv d.graph) (degree : ℤ)
-    (hDegree : deg D = degree)
+    (hDegree : CFDiv.degree D = degree)
     (hReaches : ∀ v : Fin n, StrongSeparator.Reaches d.graph D (d.coreVertex v)) :
     BNExists d.graph 1 degree := by
   refine ⟨D, hDegree, ?_⟩
@@ -653,9 +653,9 @@ def pen (d : DegSpec 6 9) : CFDiv d.graph :=
 
 variable {d : DegSpec 6 9}
 
-theorem deg_pen : deg (pen d) = 3 := by
+theorem deg_pen : CFDiv.degree (pen d) = 3 := by
   unfold pen
-  rw [deg.map_add, deg.map_add, deg_one_chip, deg_one_chip, deg_one_chip]
+  rw [CFDiv.degree.map_add, CFDiv.degree.map_add, deg_one_chip, deg_one_chip, deg_one_chip]
   norm_num
 
 theorem state_v (hp : IsCore097 d.core) (hrep : RepGen d) {u : ℕ}

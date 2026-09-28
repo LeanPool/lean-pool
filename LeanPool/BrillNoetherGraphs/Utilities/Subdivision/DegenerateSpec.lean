@@ -721,7 +721,7 @@ theorem one_le_coreClassDivisor_of_chip (weight : Fin n → ℤ)
 
 /-- Contracting core classes preserves the total core weight. -/
 theorem deg_coreClassDivisor (weight : Fin n → ℤ) :
-    deg (d.coreClassDivisor weight) = ∑ v : Fin n, weight v := by
+    CFDiv.degree (d.coreClassDivisor weight) = ∑ v : Fin n, weight v := by
   classical
   have hFiber : ∀ c : d.Class,
       (Finset.univ.filter (fun v : Fin n => d.rep v = c.val)) =
@@ -731,10 +731,10 @@ theorem deg_coreClassDivisor (weight : Fin n → ℤ) :
     ext v
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     exact ⟨fun h => Subtype.ext h, fun h => congrArg Subtype.val h⟩
-  have hsplit : deg (d.coreClassDivisor weight) =
+  have hsplit : CFDiv.degree (d.coreClassDivisor weight) =
       ∑ c : d.Class, ∑ v ∈ Finset.univ.filter
         (fun v : Fin n => d.rep v = c.val), weight v := by
-    simp [deg, coreClassDivisor, Fintype.sum_sum_type]
+    simp [CFDiv.degree, coreClassDivisor, Fintype.sum_sum_type]
   rw [hsplit, Finset.sum_congr rfl (fun c _ => by rw [hFiber c])]
   exact Finset.sum_fiberwise Finset.univ
     (fun v : Fin n => (⟨d.rep v, d.rep_idem v⟩ : d.Class)) weight

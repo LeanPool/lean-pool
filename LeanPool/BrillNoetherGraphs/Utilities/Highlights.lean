@@ -104,7 +104,7 @@ example (G : CFGraph) (h_conn : graphConnected G) :
 
 /-- The gonality is **attained** by an actual divisor. -/
 example (G : CFGraph) (h_conn : graphConnected G) :
-    ∃ D : CFDiv G, effective D ∧ deg D = (divisorialGonality G : ℤ) ∧
+    ∃ D : CFDiv G, effective D ∧ CFDiv.degree D = (divisorialGonality G : ℤ) ∧
       rank G D ≥ 1 :=
   Utilities.Gonality.exists_divisor_of_divisorialGonality h_conn
 

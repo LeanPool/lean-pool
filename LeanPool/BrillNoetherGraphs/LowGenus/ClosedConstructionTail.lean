@@ -48,7 +48,7 @@ theorem ClosedSubdivisionDharConstruction.ofReachesCoreClasses
     (core_nonempty : 0 < n) (core_connected : core.Connected)
     (divisor : ∀ d : DegSpec n p, CFDiv d.graph)
     (divisor_effective : ∀ d : DegSpec n p, effective (divisor d))
-    (divisor_degree : ∀ d : DegSpec n p, deg (divisor d) = 4)
+    (divisor_degree : ∀ d : DegSpec n p, CFDiv.degree (divisor d) = 4)
     (reaches : ∀ d : DegSpec n p, d.core = core →
       (∀ x y : Fin n,
         d.rep x = d.rep y ↔ ReachIn core (zeroSlots d.length) x y) →
@@ -88,7 +88,7 @@ theorem ClosedSubdivisionDharConstruction.ofReachesFaceClasses
     (core_nonempty : 0 < n) (core_connected : core.Connected)
     (divisor : ∀ d : DegSpec n p, CFDiv d.graph)
     (divisor_effective : ∀ d : DegSpec n p, effective (divisor d))
-    (divisor_degree : ∀ d : DegSpec n p, deg (divisor d) = 4)
+    (divisor_degree : ∀ d : DegSpec n p, CFDiv.degree (divisor d) = 4)
     (reaches : ∀ (length : Fin p → ℕ)
       (forest : IsForest core (zeroSlots length))
       (not_loopy : ¬ IsLoopy core (zeroSlots length)) (center : Fin n),

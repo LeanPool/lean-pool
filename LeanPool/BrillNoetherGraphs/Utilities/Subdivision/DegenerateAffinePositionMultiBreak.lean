@@ -105,10 +105,10 @@ theorem deg_divisorOf (d : DegSpec n p) (certificate : ExplicitPotential.Certifi
     (hLength : LengthCompatible d certificate point)
     (hBounds : BoundsCertified certificate chips)
     (hCone : ExplicitPotential.FormsHold certificate.cone point) :
-    deg (divisorOf d certificate chips point hValid hLength hBounds hCone) =
+    CFDiv.degree (divisorOf d certificate chips point hValid hLength hBounds hCone) =
       (chips.map WeightedChip.coefficient).sum := by
   have hsum : ∀ entries : List {chip // chip ∈ chips},
-      deg (entries.map fun chip => chip.1.coefficient • oneChip
+      CFDiv.degree (entries.map fun chip => chip.1.coefficient • oneChip
         (G := d.graph)
         (Code.decodeClosedVertex d certificate chip.1.position point hValid hLength
           (hBounds chip.1 chip.2) hCone)).sum =

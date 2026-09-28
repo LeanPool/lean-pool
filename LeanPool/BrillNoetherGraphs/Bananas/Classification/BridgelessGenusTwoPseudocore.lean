@@ -97,7 +97,7 @@ theorem pseudocore_loopCount_eq_zero_or_two_of_two_base_vertices
   rcases hWF with ⟨hDiagonal, hSymmetric⟩
   have hZero := hStable 0
   have hOne := hStable 1
-  simp [Pseudocore.valence, Fin.sum_univ_two] at hZero hOne
+  simp only [Pseudocore.valence, Fin.sum_univ_two] at hZero hOne
   rw [hDiagonal 0] at hZero
   rw [hDiagonal 1, hSymmetric 1 0] at hOne
   simp [Pseudocore.edgeCount, Pseudocore.loopCount,

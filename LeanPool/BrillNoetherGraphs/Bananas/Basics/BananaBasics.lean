@@ -186,8 +186,8 @@ theorem endpoint_sum_linearEquiv_strand_reflection
       rfl
     rw [hSymm]
     ext x
-    simp [leftEndpoint, rightEndpoint, strandVertex, strandMirror,
-      hTail, hHead]
+    simp only [strandVertex, hTail, Fin.isValue, ↓reduceIte, strandMirror, leftEndpoint,
+      rightEndpoint, Pi.sub_apply, Pi.add_apply, hHead, Pi.neg_apply]
     ring
   · have hTail' : B.core.tail α = 1 := by
       rcases fin_two_eq_zero_or_one (B.core.tail α) with h | h

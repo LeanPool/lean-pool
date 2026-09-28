@@ -74,18 +74,18 @@ private theorem rankDelta_unfold_mark (G : CFGraph) (u v : G.V) (X : CFDiv G) :
         rank G (X - oneChip u - oneChip v) := rfl
 
 private theorem degree_sub_chip (G : CFGraph) (X : CFDiv G) (x : G.V) :
-    deg (X - oneChip x) = deg X - 1 := by
-  rw [deg.map_sub, deg_one_chip]
+    CFDiv.degree (X - oneChip x) = CFDiv.degree X - 1 := by
+  rw [CFDiv.degree.map_sub, deg_one_chip]
 
 private theorem degree_sub_two_chips (G : CFGraph) (X : CFDiv G)
     (u v : G.V) :
-    deg (X - oneChip u - oneChip v) = deg X - 2 := by
+    CFDiv.degree (X - oneChip u - oneChip v) = CFDiv.degree X - 2 := by
   rw [degree_sub_chip, degree_sub_chip]
   ring
 
 /-- In negative degree, every term in the marked rank difference vanishes. -/
 theorem rankDelta_genusOne_of_degree_neg
-    (hDegree : deg X < 0) :
+    (hDegree : CFDiv.degree X < 0) :
     rankDelta (mark G u v) X = 0 := by
   have hX := rank_neg_one_of_deg_neg G X hDegree
   have hXu := rank_neg_one_of_deg_neg G (X - oneChip u) (by
@@ -103,7 +103,7 @@ theorem rankDelta_genusOne_of_degree_neg
 /-- The degree-zero row is exactly the principality indicator, written as
 `rank X + 1`. -/
 theorem rankDelta_genusOne_of_degree_zero
-    (hDegree : deg X = 0) :
+    (hDegree : CFDiv.degree X = 0) :
     rankDelta (mark G u v) X = rank G X + 1 := by
   have hXu := rank_neg_one_of_deg_neg G (X - oneChip u) (by
     rw [degree_sub_chip, hDegree]
@@ -121,7 +121,7 @@ theorem rankDelta_genusOne_of_degree_zero
 marked rank difference. -/
 theorem rankDelta_genusOne_of_degree_one
     (hConnected : _root_.graphConnected G) (hGenus : genus G = 1)
-    (hDegree : deg X = 1) :
+    (hDegree : CFDiv.degree X = 1) :
     rankDelta (mark G u v) X =
       - rank G (X - oneChip u) - rank G (X - oneChip v) - 1 := by
   have hX := genusOne_rank_eq_degree_sub_one hConnected hGenus X (by
@@ -136,7 +136,7 @@ theorem rankDelta_genusOne_of_degree_one
 /-- The degree-two row is the principality indicator of the double deletion. -/
 theorem rankDelta_genusOne_of_degree_two
     (hConnected : _root_.graphConnected G) (hGenus : genus G = 1)
-    (hDegree : deg X = 2) :
+    (hDegree : CFDiv.degree X = 2) :
     rankDelta (mark G u v) X = rank G (X - oneChip u - oneChip v) + 1 := by
   have hX := genusOne_rank_eq_degree_sub_one hConnected hGenus X (by
     rw [hDegree]
@@ -145,10 +145,10 @@ theorem rankDelta_genusOne_of_degree_two
     (X - oneChip u) (by rw [degree_sub_chip, hDegree]; norm_num)
   have hXv := genusOne_rank_eq_degree_sub_one hConnected hGenus
     (X - oneChip v) (by rw [degree_sub_chip, hDegree]; norm_num)
-  have hDu : deg (X - oneChip u) = 1 := by
+  have hDu : CFDiv.degree (X - oneChip u) = 1 := by
     rw [degree_sub_chip, hDegree]
     norm_num
-  have hDv : deg (X - oneChip v) = 1 := by
+  have hDv : CFDiv.degree (X - oneChip v) = 1 := by
     rw [degree_sub_chip, hDegree]
     norm_num
   rw [rankDelta_unfold_mark, hX, hXu, hXv, hDegree,
@@ -159,7 +159,7 @@ theorem rankDelta_genusOne_of_degree_two
 their second difference is zero. -/
 theorem rankDelta_genusOne_of_degree_gt_two
     (hConnected : _root_.graphConnected G) (hGenus : genus G = 1)
-    (hDegree : 2 < deg X) :
+    (hDegree : 2 < CFDiv.degree X) :
     rankDelta (mark G u v) X = 0 := by
   have hX := genusOne_rank_eq_degree_sub_one hConnected hGenus X (by omega)
   have hXu := genusOne_rank_eq_degree_sub_one hConnected hGenus
@@ -168,9 +168,9 @@ theorem rankDelta_genusOne_of_degree_gt_two
     (X - oneChip v) (by rw [degree_sub_chip]; omega)
   have hXuv := genusOne_rank_eq_degree_sub_one hConnected hGenus
     (X - oneChip u - oneChip v) (by rw [degree_sub_two_chips]; omega)
-  have hDu : deg (X - oneChip u) = deg X - 1 := degree_sub_chip G X u
-  have hDv : deg (X - oneChip v) = deg X - 1 := degree_sub_chip G X v
-  have hDuv : deg (X - oneChip u - oneChip v) = deg X - 2 :=
+  have hDu : CFDiv.degree (X - oneChip u) = CFDiv.degree X - 1 := degree_sub_chip G X u
+  have hDv : CFDiv.degree (X - oneChip v) = CFDiv.degree X - 1 := degree_sub_chip G X v
+  have hDuv : CFDiv.degree (X - oneChip u - oneChip v) = CFDiv.degree X - 2 :=
     degree_sub_two_chips G X u v
   rw [rankDelta_unfold_mark, hX, hXu, hXv, hXuv,
     hDu, hDv, hDuv]
@@ -178,17 +178,17 @@ theorem rankDelta_genusOne_of_degree_gt_two
 
 /-- The degree-zero member of the marked twist orbit at index `b`. -/
 def genusOneZeroTwist (D : CFDiv G) (b : ℤ) : CFDiv G :=
-  D + (b - deg D) • oneChip u - b • oneChip v
+  D + (b - CFDiv.degree D) • oneChip u - b • oneChip v
 
 private theorem degree_genusOneZeroTwist (D : CFDiv G) (b : ℤ) :
-    deg (genusOneZeroTwist (u := u) (v := v) D b) = 0 := by
+    CFDiv.degree (genusOneZeroTwist (u := u) (v := v) D b) = 0 := by
   unfold genusOneZeroTwist
-  rw [deg.map_sub, deg.map_add, map_zsmul, map_zsmul,
+  rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, map_zsmul, map_zsmul,
     deg_one_chip, deg_one_chip]
   ring
 
 private theorem genusOneDegreeOneTwist_sub_u (D : CFDiv G) (b : ℤ) :
-    D + (b - deg D + 1) • oneChip u - b • oneChip v - oneChip u =
+    D + (b - CFDiv.degree D + 1) • oneChip u - b • oneChip v - oneChip u =
       genusOneZeroTwist (u := u) (v := v) D b := by
   unfold genusOneZeroTwist
   funext z
@@ -196,7 +196,7 @@ private theorem genusOneDegreeOneTwist_sub_u (D : CFDiv G) (b : ℤ) :
   ring
 
 private theorem genusOneDegreeOneTwist_sub_v (D : CFDiv G) (b : ℤ) :
-    D + (b - deg D + 1) • oneChip u - b • oneChip v - oneChip v =
+    D + (b - CFDiv.degree D + 1) • oneChip u - b • oneChip v - oneChip v =
       genusOneZeroTwist (u := u) (v := v) D (b + 1) := by
   unfold genusOneZeroTwist
   funext z
@@ -211,12 +211,12 @@ theorem transmission_eq_translation_of_no_principal_genusOne
     (hTau : IsTransmissionPermutation (mark G u v) D tau)
     (hNoPrincipal : ∀ b : ℤ,
       ¬ linearEquiv G (genusOneZeroTwist (u := u) (v := v) D b) 0) :
-    ∀ b : ℤ, tau b = b - deg D + 1 := by
+    ∀ b : ℤ, tau b = b - CFDiv.degree D + 1 := by
   intro b
-  let X : CFDiv G := D + (b - deg D + 1) • oneChip u - b • oneChip v
-  have hDegree : deg X = 1 := by
+  let X : CFDiv G := D + (b - CFDiv.degree D + 1) • oneChip u - b • oneChip v
+  have hDegree : CFDiv.degree X = 1 := by
     dsimp [X]
-    rw [deg.map_sub, deg.map_add, map_zsmul, map_zsmul,
+    rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, map_zsmul, map_zsmul,
       deg_one_chip, deg_one_chip]
     ring
   have hXu : rank G (X - oneChip u) = -1 := by
@@ -231,12 +231,12 @@ theorem transmission_eq_translation_of_no_principal_genusOne
     rw [rankDelta_genusOne_of_degree_one hConnected hGenus hDegree, hXu, hXv]
     norm_num
   have hDelta' : rankDelta (mark G u v)
-      (D + (b - deg D + 1) • oneChip u - b • oneChip v) = 1 := by
+      (D + (b - CFDiv.degree D + 1) • oneChip u - b • oneChip v) = 1 := by
     simpa only [X] using hDelta
-  have hValue := hTau.2 (b - deg D + 1) b
-  change (if tau b = b - deg D + 1 then (1 : ℤ) else 0) =
+  have hValue := hTau.2 (b - CFDiv.degree D + 1) b
+  change (if tau b = b - CFDiv.degree D + 1 then (1 : ℤ) else 0) =
     rankDelta (mark G u v)
-      (D + (b - deg D + 1) • oneChip u - b • oneChip v) at hValue
+      (D + (b - CFDiv.degree D + 1) • oneChip u - b • oneChip v) at hValue
   rw [hDelta'] at hValue
   by_contra hNot
   simp [hNot] at hValue
@@ -250,7 +250,7 @@ theorem kInversionCount_eq_zero_of_no_principal_genusOne
     (hNoPrincipal : ∀ b : ℤ,
       ¬ linearEquiv G (genusOneZeroTwist (u := u) (v := v) D b) 0) :
     kInversionCount k tau = 0 := by
-  apply kInversionCount_eq_zero_of_translation k tau (1 - deg D)
+  apply kInversionCount_eq_zero_of_translation k tau (1 - CFDiv.degree D)
   intro b
   rw [transmission_eq_translation_of_no_principal_genusOne
     hConnected hGenus D tau hTau hNoPrincipal]
@@ -263,7 +263,7 @@ theorem transmission_value_of_principal_genusOneZeroTwist
     (hTau : IsTransmissionPermutation (mark G u v) D tau)
     (hPrincipal : linearEquiv G
       (genusOneZeroTwist (u := u) (v := v) D c) 0) :
-    tau c = c - deg D := by
+    tau c = c - CFDiv.degree D := by
   let X := genusOneZeroTwist (u := u) (v := v) D c
   have hRank : rank G X = 0 := by
     rw [rank_eq_of_linear_equiv G hPrincipal, zero_divisor_rank]
@@ -279,11 +279,11 @@ theorem transmission_value_of_principal_genusOneZeroTwist
   have hDelta : rankDelta (mark G u v) X = 1 := by
     rw [rankDelta_unfold_mark, hRank, hXu, hXv, hXuv]
     norm_num
-  have hValue := hTau.2 (c - deg D) c
-  change (if tau c = c - deg D then (1 : ℤ) else 0) =
+  have hValue := hTau.2 (c - CFDiv.degree D) c
+  change (if tau c = c - CFDiv.degree D then (1 : ℤ) else 0) =
     rankDelta (mark G u v)
-      (D + (c - deg D) • oneChip u - c • oneChip v) at hValue
-  have hX : D + (c - deg D) • oneChip u - c • oneChip v = X := by
+      (D + (c - CFDiv.degree D) • oneChip u - c • oneChip v) at hValue
+  have hX : D + (c - CFDiv.degree D) • oneChip u - c • oneChip v = X := by
     dsimp [X, genusOneZeroTwist]
   rw [hX, hDelta] at hValue
   by_contra hNot
@@ -297,11 +297,11 @@ theorem transmission_value_before_principal_genusOneZeroTwist
     (hTau : IsTransmissionPermutation (mark G u v) D tau)
     (hPrincipal : linearEquiv G
       (genusOneZeroTwist (u := u) (v := v) D c) 0) :
-    tau (c - 1) = c - deg D + 1 := by
-  let X : CFDiv G := D + (c - deg D + 1) • oneChip u - (c - 1) • oneChip v
-  have hDegree : deg X = 2 := by
+    tau (c - 1) = c - CFDiv.degree D + 1 := by
+  let X : CFDiv G := D + (c - CFDiv.degree D + 1) • oneChip u - (c - 1) • oneChip v
+  have hDegree : CFDiv.degree X = 2 := by
     dsimp [X]
-    rw [deg.map_sub, deg.map_add, map_zsmul, map_zsmul,
+    rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, map_zsmul, map_zsmul,
       deg_one_chip, deg_one_chip]
     ring
   have hXuv : linearEquiv G (X - oneChip u - oneChip v) 0 := by
@@ -318,11 +318,11 @@ theorem transmission_value_before_principal_genusOneZeroTwist
   have hDelta : rankDelta (mark G u v) X = 1 := by
     rw [rankDelta_genusOne_of_degree_two hConnected hGenus hDegree, hRankUV]
     norm_num
-  have hValue := hTau.2 (c - deg D + 1) (c - 1)
-  change (if tau (c - 1) = c - deg D + 1 then (1 : ℤ) else 0) =
+  have hValue := hTau.2 (c - CFDiv.degree D + 1) (c - 1)
+  change (if tau (c - 1) = c - CFDiv.degree D + 1 then (1 : ℤ) else 0) =
     rankDelta (mark G u v)
-      (D + (c - deg D + 1) • oneChip u - (c - 1) • oneChip v) at hValue
-  rw [show D + (c - deg D + 1) • oneChip u - (c - 1) • oneChip v = X by rfl,
+      (D + (c - CFDiv.degree D + 1) • oneChip u - (c - 1) • oneChip v) at hValue
+  rw [show D + (c - CFDiv.degree D + 1) • oneChip u - (c - 1) • oneChip v = X by rfl,
     hDelta] at hValue
   by_contra hNot
   simp [hNot] at hValue
@@ -344,15 +344,15 @@ theorem not_principal_genusOneZeroTwist_of_not_dvd
       (genusOneZeroTwist (u := u) (v := v) D b)
       (genusOneZeroTwist (u := u) (v := v) D c) := hB.trans hPrincipal.symm
   change linearEquiv G
-    (D + (0 - deg D + b) • oneChip u - b • oneChip v)
-    (D + (0 - deg D + c) • oneChip u - c • oneChip v)
-  have hB' : D + (0 - deg D + b) • oneChip u - b • oneChip v =
+    (D + (0 - CFDiv.degree D + b) • oneChip u - b • oneChip v)
+    (D + (0 - CFDiv.degree D + c) • oneChip u - c • oneChip v)
+  have hB' : D + (0 - CFDiv.degree D + b) • oneChip u - b • oneChip v =
       genusOneZeroTwist (u := u) (v := v) D b := by
     unfold genusOneZeroTwist
     funext z
     simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply]
     ring
-  have hC' : D + (0 - deg D + c) • oneChip u - c • oneChip v =
+  have hC' : D + (0 - CFDiv.degree D + c) • oneChip u - c • oneChip v =
       genusOneZeroTwist (u := u) (v := v) D c := by
     unfold genusOneZeroTwist
     funext z
@@ -371,11 +371,11 @@ theorem transmission_value_of_two_nonprincipal_genusOneZeroTwists
       (genusOneZeroTwist (u := u) (v := v) D b) 0)
     (hNext : ¬ linearEquiv G
       (genusOneZeroTwist (u := u) (v := v) D (b + 1)) 0) :
-    tau b = b - deg D + 1 := by
-  let X : CFDiv G := D + (b - deg D + 1) • oneChip u - b • oneChip v
-  have hDegree : deg X = 1 := by
+    tau b = b - CFDiv.degree D + 1 := by
+  let X : CFDiv G := D + (b - CFDiv.degree D + 1) • oneChip u - b • oneChip v
+  have hDegree : CFDiv.degree X = 1 := by
     dsimp [X]
-    rw [deg.map_sub, deg.map_add, map_zsmul, map_zsmul,
+    rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, map_zsmul, map_zsmul,
       deg_one_chip, deg_one_chip]
     ring
   have hXu : rank G (X - oneChip u) = -1 := by
@@ -389,11 +389,11 @@ theorem transmission_value_of_two_nonprincipal_genusOneZeroTwists
   have hDelta : rankDelta (mark G u v) X = 1 := by
     rw [rankDelta_genusOne_of_degree_one hConnected hGenus hDegree, hXu, hXv]
     norm_num
-  have hValue := hTau.2 (b - deg D + 1) b
-  change (if tau b = b - deg D + 1 then (1 : ℤ) else 0) =
+  have hValue := hTau.2 (b - CFDiv.degree D + 1) b
+  change (if tau b = b - CFDiv.degree D + 1 then (1 : ℤ) else 0) =
     rankDelta (mark G u v)
-      (D + (b - deg D + 1) • oneChip u - b • oneChip v) at hValue
-  rw [show D + (b - deg D + 1) • oneChip u - b • oneChip v = X by rfl,
+      (D + (b - CFDiv.degree D + 1) • oneChip u - b • oneChip v) at hValue
+  rw [show D + (b - CFDiv.degree D + 1) • oneChip u - b • oneChip v = X by rfl,
     hDelta] at hValue
   by_contra hNot
   simp [hNot] at hValue

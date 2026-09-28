@@ -27,14 +27,16 @@ See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Chapter 5.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Theorem 5.9. -/
 theorem riemann_roch_for_graphs {G : CFGraph} (h_conn : graphConnected G) (D : CFDiv G) :
-  rank G D - rank G (canonicalDivisor G - D) = deg D - genus G + 1 := by
+  rank G D - rank G (canonicalDivisor G - D) = CFDiv.degree D - genus G + 1 := by
   set K := canonicalDivisor G with K_eq
   have h_ineq := rank_degree_inequality h_conn D
-  have h_ineq_rev : deg (K-D) - genus G < rank G (K-D) - rank G D := by
+  have h_ineq_rev : CFDiv.degree (K-D) - genus G < rank G (K-D) - rank G D := by
     convert rank_degree_inequality h_conn (K-D)
     abel
-  have deg_sub : deg (K-D) = deg K - deg D := by rw [deg.map_sub]
-  have h_deg_K : deg (canonicalDivisor G) = 2 * genus G - 2 := degree_of_canonical_divisor G
+  have deg_sub : CFDiv.degree (K-D) = CFDiv.degree K - CFDiv.degree D := by
+    rw [CFDiv.degree.map_sub]
+  have h_deg_K : CFDiv.degree (canonicalDivisor G) = 2 * genus G - 2 :=
+    degree_of_canonical_divisor G
   linarith
 
 /-- $D$ is maximal unwinnable if and only if $K_G - D$ is maximal unwinnable.
@@ -46,7 +48,7 @@ theorem maximal_unwinnable_symmetry
   set K := canonicalDivisor G with K_def
   suffices ∀ (D : CFDiv G), maximalUnwinnable G D → maximalUnwinnable G (canonicalDivisor G - D) by
     constructor
-    exact this D
+    · exact this D
     intro h
     apply this (K-D) at h
     rw [sub_sub_self] at h
@@ -58,14 +60,14 @@ theorem maximal_unwinnable_symmetry
     rw [rank_neg_one_iff_unwinnable]
     exact h_max_unwin.1
   -- Get degree = g-1 from maximal unwinnable
-  have h_deg : deg D = genus G - 1 := maximal_unwinnable_deg h_conn D h_max_unwin
+  have h_deg : CFDiv.degree D = genus G - 1 := maximal_unwinnable_deg h_conn D h_max_unwin
   -- Use Riemann-Roch
   have h_RR := riemann_roch_for_graphs h_conn D
   rw [h_rank_neg] at h_RR
   -- Get degree of K-D
   have h_deg_K := degree_of_canonical_divisor G
-  have h_deg_KD : deg (canonicalDivisor G - D) = genus G - 1 := by
-    rw [deg.map_sub]
+  have h_deg_KD : CFDiv.degree (canonicalDivisor G - D) = genus G - 1 := by
+    rw [CFDiv.degree.map_sub]
     rw [h_deg_K, h_deg]
     linarith
   constructor
@@ -79,15 +81,15 @@ theorem maximal_unwinnable_symmetry
     suffices winnable G E by
       exact this
     -- To show E is winnable, we will use Riemann-Roch on E
-    have h_deg_E : deg E = genus G := by
-      rw [E_def, deg.map_add, deg_one_chip, h_deg_KD]
+    have h_deg_E : CFDiv.degree E = genus G := by
+      rw [E_def, CFDiv.degree.map_add, deg_one_chip, h_deg_KD]
       linarith
     apply (rank_nonneg_iff_winnable G E).mp
     rw [rank_geq_iff G E]
     calc
-      rank G E = rank G (K-E) + deg E +1 - genus G := by
+      rank G E = rank G (K-E) + CFDiv.degree E +1 - genus G := by
         linarith [riemann_roch_for_graphs h_conn E]
-      _ ≥ deg E - genus G := by
+      _ ≥ CFDiv.degree E - genus G := by
         linarith [rank_geq_neg_one G (K - E)]
       _ = 0 := by linarith[h_deg_E]
 
@@ -128,7 +130,7 @@ theorem clifford_theorem
     {G : CFGraph} (h_conn : graphConnected G) (D : CFDiv G)
     (h_D : rank G D ≥ 0)
     (h_KD : rank G (canonicalDivisor G - D) ≥ 0) :
-    (rank G D : ℚ) ≤ (deg D : ℚ) / 2 := by
+    (rank G D : ℚ) ≤ (CFDiv.degree D : ℚ) / 2 := by
   -- Get canonical divisor K's rank using Riemann-Roch
   have h_K_rank : rank G (canonicalDivisor G) = genus G - 1 := by
     -- Apply Riemann-Roch with D = K
@@ -159,8 +161,8 @@ theorem clifford_theorem
   -- Use Riemann-Roch to get r(K-D) in terms of r(D)
   have h_rr := riemann_roch_for_graphs h_conn D
   -- Combining subadditivity and Riemann-Roch gives 2 r(D) ≤ deg D; conclude in ℚ
-  have h_two : 2 * rank G D ≤ deg D := by linarith
-  have h_two' : (2 : ℚ) * (rank G D : ℚ) ≤ (deg D : ℚ) := by exact_mod_cast h_two
+  have h_two : 2 * rank G D ≤ CFDiv.degree D := by linarith
+  have h_two' : (2 : ℚ) * (rank G D : ℚ) ≤ (CFDiv.degree D : ℚ) := by exact_mod_cast h_two
   linarith
 
 /-- The rank of a divisor in terms of its degree:
@@ -172,11 +174,12 @@ See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Corollary 5.14. -/
 theorem rank_nonspecial_range
   {G : CFGraph} (h_conn : graphConnected G) (D : CFDiv G) :
   -- Part 1
-  (deg D < 0 → rank G D = -1) ∧
+  (CFDiv.degree D < 0 → rank G D = -1) ∧
   -- Part 2
-  (0 ≤ (deg D : ℚ) ∧ (deg D : ℚ) ≤ 2 * (genus G : ℚ) - 2 → (rank G D : ℚ) ≤ (deg D : ℚ) / 2) ∧
+  (0 ≤ (CFDiv.degree D : ℚ) ∧ (CFDiv.degree D : ℚ) ≤ 2 * (genus G : ℚ) - 2 →
+    (rank G D : ℚ) ≤ (CFDiv.degree D : ℚ) / 2) ∧
   -- Part 3
-  (deg D > 2 * genus G - 2 → rank G D = deg D - genus G) := by
+  (CFDiv.degree D > 2 * genus G - 2 → rank G D = CFDiv.degree D - genus G) := by
   constructor
   · -- Part 1: deg(D) < 0 implies r(D) = -1
     exact rank_neg_one_of_deg_neg G D
@@ -193,7 +196,7 @@ theorem rank_nonspecial_range
         have h_rr := riemann_roch_for_graphs h_conn D
         rw [rank_neg_one_of_not_nonneg G (K - D) h_rankKD] at h_rr
         -- So r(D) = deg D - g, which is at most deg D / 2 since deg D ≤ 2g - 2
-        have h_rank_eq : rank G D = deg D - genus G := by linarith
+        have h_rank_eq : rank G D = CFDiv.degree D - genus G := by linarith
         rw [h_rank_eq]
         push_cast
         linarith
@@ -206,7 +209,7 @@ theorem rank_nonspecial_range
     -- K-D has negative degree, hence rank -1
     have h_rankKD : rank G (canonicalDivisor G - D) = -1 := by
       apply rank_neg_one_of_deg_neg
-      rw [deg.map_sub, degree_of_canonical_divisor]
+      rw [CFDiv.degree.map_sub, degree_of_canonical_divisor]
       linarith
     -- Apply Riemann-Roch to get r(D) = deg(D) - g
     have h_rr := riemann_roch_for_graphs h_conn D
@@ -222,7 +225,7 @@ of a graph.
 
 /-- The relation $\operatorname{gon}(G) \le k$: there exists a divisor of degree $k$
 with rank at least $1$. -/
-def gonalityLeq (G : CFGraph) (k : ℤ) : Prop := ∃ D : CFDiv G, rank G D ≥ 1 ∧ deg D = k
+def gonalityLeq (G : CFGraph) (k : ℤ) : Prop := ∃ D : CFDiv G, rank G D ≥ 1 ∧ CFDiv.degree D = k
 
 /-- The relation $\operatorname{gon}(G) \ge k$: no divisor of degree less than $k$
 has rank at least $1$. -/
@@ -234,7 +237,7 @@ theorem gonality_leq_genus_add_one
     {G : CFGraph} (h_conn : graphConnected G) : gonalityLeq G (genus G + 1) := by
   let q : G.V := Classical.arbitrary G.V
   let D : CFDiv G := (genus G + 1) • oneChip q
-  have h_deg_D : deg D = genus G + 1 := by
+  have h_deg_D : CFDiv.degree D = genus G + 1 := by
     dsimp only [D]
     rw [map_zsmul, deg_one_chip, zsmul_one]
     simp only [Int.cast_add, Int.cast_eq, Int.cast_one]
@@ -242,8 +245,8 @@ theorem gonality_leq_genus_add_one
     intro E hE
     dsimp only [effOfDegree, Set.mem_ofPred_eq] at hE
     rcases hE with ⟨hE_eff, hE_deg⟩
-    have h_deg_sub : deg (D - E) = genus G := by
-      rw [deg.map_sub, h_deg_D, hE_deg]
+    have h_deg_sub : CFDiv.degree (D - E) = genus G := by
+      rw [CFDiv.degree.map_sub, h_deg_D, hE_deg]
       ring
     apply winnable_of_deg_ge_genus h_conn (D - E)
     rw [h_deg_sub]
@@ -252,7 +255,7 @@ theorem gonality_leq_genus_add_one
 private theorem one_le_of_gonality_leq {G : CFGraph} {k : ℤ} (h_gon : gonalityLeq G k) : 1 ≤ k := by
   rcases h_gon with ⟨D, h_rank, h_deg⟩
   have h_rank_geq : rankGeq G D 1 := (rank_geq_iff G D 1).mpr h_rank
-  have h_deg_lower : (1 : ℤ) ≤ deg D := rank_le_degree G D 1 (by norm_num) h_rank_geq
+  have h_deg_lower : (1 : ℤ) ≤ CFDiv.degree D := rank_le_degree G D 1 (by norm_num) h_rank_geq
   simpa only [ge_iff_le, h_deg] using h_deg_lower
 
 /-- The *(divisorial) gonality* of a connected graph is the smallest degree of a divisor
@@ -371,4 +374,4 @@ Conjecture 3.9(1). -/
 def brillNoetherConjecture {G : CFGraph} (_h_conn : graphConnected G) (r d : ℤ) : Prop :=
   let g := genus G
   let ρ := g - (r + 1) * (g - d + r)
-  0 ≤ ρ → ∃ (D : CFDiv G), rank G D ≥ r ∧ deg D = d
+  0 ≤ ρ → ∃ (D : CFDiv G), rank G D ≥ r ∧ CFDiv.degree D = d

@@ -133,7 +133,7 @@ abbrev divisor (d : DegSpec n p) : CFDiv d.graph := d.coreClassDivisor G.chips
 theorem divisor_effective (d : DegSpec n p) : effective (G.divisor d) :=
   d.coreClassDivisor_effective G.chips G.chips_nonneg
 
-theorem divisor_degree (d : DegSpec n p) : deg (G.divisor d) = 4 := by
+theorem divisor_degree (d : DegSpec n p) : CFDiv.degree (G.divisor d) = 4 := by
   rw [DegSpec.deg_coreClassDivisor]
   exact G.chips_deg
 

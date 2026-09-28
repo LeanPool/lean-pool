@@ -504,7 +504,7 @@ theorem finitePointedDiagram_card_ge_of_vanishing
     (r : ℕ) (m : ℤ)
     (hrank : (r : ℤ) ≤ rank G D)
     (hm : 0 ≤ rank G (D - m • oneChip v)) :
-    ((r : ℤ) + 1) * (genus G - deg D + (r : ℤ)) + (m - (r : ℤ)) ≤
+    ((r : ℤ) + 1) * (genus G - CFDiv.degree D + (r : ℤ)) + (m - (r : ℤ)) ≤
       ((finitePointedDiagram G hG D v r).card : ℤ) := by
   -- The `r`-th threshold is at most `0`, so the `i`-th is at most `i - r`.
   have hTop : pointedRankThreshold G hG D v r ≤ 0 := by
@@ -527,37 +527,37 @@ theorem finitePointedDiagram_card_ge_of_vanishing
     simpa using hm
   -- Row lengths.  `Int.self_le_toNat` makes the truncation harmless.
   have hRawRow : ∀ i : ℕ,
-      (i : ℤ) + genus G - deg D - pointedRankThreshold G hG D v i ≤
+      (i : ℤ) + genus G - CFDiv.degree D - pointedRankThreshold G hG D v i ≤
         (pointedRowLength G hG D v i : ℤ) := by
     intro i
     exact Int.self_le_toNat _
   have hRow : ∀ i : ℕ, i ≤ r →
-      genus G - deg D + (r : ℤ) ≤ (pointedRowLength G hG D v i : ℤ) := by
+      genus G - CFDiv.degree D + (r : ℤ) ≤ (pointedRowLength G hG D v i : ℤ) := by
     intro i hi
     have h1 := hStep i hi
     have h2 := hRawRow i
     omega
-  have hRow0 : genus G - deg D + m ≤ (pointedRowLength G hG D v 0 : ℤ) := by
+  have hRow0 : genus G - CFDiv.degree D + m ≤ (pointedRowLength G hG D v 0 : ℤ) := by
     have h2 := hRawRow 0
     simp only [Nat.cast_zero, zero_add] at h2
     omega
   -- Sum the rows.
   rw [finitePointedDiagram_card, finitePointedRows, List.sum_ofFn]
   rw [Nat.cast_sum, Fin.sum_univ_succ]
-  have hTail : (r : ℤ) * (genus G - deg D + (r : ℤ)) ≤
+  have hTail : (r : ℤ) * (genus G - CFDiv.degree D + (r : ℤ)) ≤
       ∑ i : Fin r, (pointedRowLength G hG D v ((i.succ : Fin (r + 1)) : ℕ) : ℤ) := by
     have hle := Finset.sum_le_sum
       (s := (Finset.univ : Finset (Fin r)))
-      (f := fun _ : Fin r => genus G - deg D + (r : ℤ))
+      (f := fun _ : Fin r => genus G - CFDiv.degree D + (r : ℤ))
       (g := fun i : Fin r =>
         (pointedRowLength G hG D v ((i.succ : Fin (r + 1)) : ℕ) : ℤ))
       (fun i _ => hRow _ (by have := i.isLt; simp only [Fin.val_succ]; omega))
     simpa [Finset.sum_const, Finset.card_univ, nsmul_eq_mul] using hle
-  have hHead : genus G - deg D + m ≤
+  have hHead : genus G - CFDiv.degree D + m ≤
       (pointedRowLength G hG D v ((0 : Fin (r + 1)) : ℕ) : ℤ) := by
     simpa using hRow0
-  have : ((r : ℤ) + 1) * (genus G - deg D + (r : ℤ)) + (m - (r : ℤ))
-      = (genus G - deg D + m) + (r : ℤ) * (genus G - deg D + (r : ℤ)) := by
+  have : ((r : ℤ) + 1) * (genus G - CFDiv.degree D + (r : ℤ)) + (m - (r : ℤ))
+      = (genus G - CFDiv.degree D + m) + (r : ℤ) * (genus G - CFDiv.degree D + (r : ℤ)) := by
     ring
   rw [this]
   exact add_le_add hHead hTail
@@ -572,15 +572,15 @@ theorem rank_sub_high_multiplicity_neg
     (G : CFGraph.{u}) (hG : graphConnected G) (v : G.V)
     (hOM : OnceMarkedBrillNoetherGeneral G v)
     (D : CFDiv G) (r : ℤ) (hr : 0 ≤ r) (hrank : r ≤ rank G D) :
-    rank G (D - (r + bnNumber G r (deg D) + 1) • oneChip v) < 0 := by
+    rank G (D - (r + bnNumber G r (CFDiv.degree D) + 1) • oneChip v) < 0 := by
   by_contra hcon
   have hL8 := finitePointedDiagram_card_ge_of_vanishing G hG D v r.toNat
-    (r + bnNumber G r (deg D) + 1)
+    (r + bnNumber G r (CFDiv.degree D) + 1)
     (by rwa [Int.toNat_of_nonneg hr]) (not_lt.mp hcon)
   have hCard := hOM _ (finitePointedDiagram_censusContains G hG D v r.toNat)
   rw [Int.toNat_of_nonneg hr] at hL8
-  have hbn : bnNumber G r (deg D)
-      = genus G - (r + 1) * (genus G - deg D + r) := rfl
+  have hbn : bnNumber G r (CFDiv.degree D)
+      = genus G - (r + 1) * (genus G - CFDiv.degree D + r) := rfl
   linarith
 
 /-- The same, transported along a graph isomorphism: it is enough for the
@@ -590,17 +590,17 @@ theorem rank_sub_high_multiplicity_neg_of_iso
     (hG : graphConnected G) (v : G.V)
     (hOM : OnceMarkedBrillNoetherGeneral H (phi.vertexEquiv v))
     (D : CFDiv G) (r : ℤ) (hr : 0 ≤ r) (hrank : r ≤ rank G D) :
-    rank G (D - (r + bnNumber G r (deg D) + 1) • oneChip v) < 0 := by
+    rank G (D - (r + bnNumber G r (CFDiv.degree D) + 1) • oneChip v) < 0 := by
   have hkey := rank_sub_high_multiplicity_neg H (phi.graph_connected_map hG)
     (phi.vertexEquiv v) hOM (phi.mapDiv D) r hr
     (by rw [phi.rank_mapDiv]; exact hrank)
   rw [phi.deg_mapDiv] at hkey
-  have hbn : bnNumber H r (deg D) = bnNumber G r (deg D) := by
+  have hbn : bnNumber H r (CFDiv.degree D) = bnNumber G r (CFDiv.degree D) := by
     simp only [bnNumber, rectangleWidth, phi.genus_eq]
   rw [hbn] at hkey
   rw [← phi.rank_mapDiv]
-  have hmap : phi.mapDiv (D - (r + bnNumber G r (deg D) + 1) • oneChip v)
-      = phi.mapDiv D - (r + bnNumber G r (deg D) + 1) •
+  have hmap : phi.mapDiv (D - (r + bnNumber G r (CFDiv.degree D) + 1) • oneChip v)
+      = phi.mapDiv D - (r + bnNumber G r (CFDiv.degree D) + 1) •
         oneChip (phi.vertexEquiv v) := by
     rw [map_sub, map_zsmul, CFGraphIso.mapDiv_one_chip]
   rw [hmap]
@@ -618,8 +618,8 @@ need it, since the `r + 1` rows it sums exist for every `r`. -/
 theorem cdpr_no_high_multiplicity (P : Loop) (L : List Loop)
     (hg : 2 ≤ L.length + 1) (hGeneric : CDPRGeneric (P :: L))
     (D : CFDiv (chainGraph P L)) (r d : ℤ) (hr : 0 ≤ r)
-    (hrbound : r < genus (chainGraph P L))
-    (hdeg : deg D = d) (hrank : rank (chainGraph P L) D ≥ r)
+    (_ : r < genus (chainGraph P L))
+    (hdeg : CFDiv.degree D = d) (hrank : rank (chainGraph P L) D ≥ r)
     (hrho : 0 ≤ bnNumber (chainGraph P L) r d) :
     rank (chainGraph P L)
         (D - (r + bnNumber (chainGraph P L) r d + 1) •
@@ -666,8 +666,8 @@ testing at `v_0` under the prefix budget is false (blueprint section 6.4). -/
 theorem cdpr_no_high_multiplicity_left (P : Loop) (L : List Loop)
     (hg : 2 ≤ L.length + 1) (hGeneric : CDPRGeneric (P :: L))
     (D : CFDiv (chainGraph P L)) (r d : ℤ) (hr : 0 ≤ r)
-    (hrbound : r < genus (chainGraph P L))
-    (hdeg : deg D = d) (hrank : rank (chainGraph P L) D ≥ r)
+    (_ : r < genus (chainGraph P L))
+    (hdeg : CFDiv.degree D = d) (hrank : rank (chainGraph P L) D ≥ r)
     (hrho : 0 ≤ bnNumber (chainGraph P L) r d) :
     rank (chainGraph P L)
         (D - (r + bnNumber (chainGraph P L) r d + 1) •

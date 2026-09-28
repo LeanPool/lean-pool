@@ -31,12 +31,12 @@ open Utilities
 /-- The degree-`d` representative at an integer marked-difference index. -/
 noncomputable def degreeTwistInt
     (M : TwiceMarked) (D : CFDiv M.graph) (d b : ℤ) : CFDiv M.graph :=
-  D + (d - deg D + b) • oneChip M.u - b • oneChip M.v
+  D + (d - CFDiv.degree D + b) • oneChip M.u - b • oneChip M.v
 
 /-- Integer-indexed degree twists have the prescribed degree. -/
 @[simp] theorem deg_degreeTwistInt
     (M : TwiceMarked) (D : CFDiv M.graph) (d b : ℤ) :
-    deg (degreeTwistInt M D d b) = d := by
+    CFDiv.degree (degreeTwistInt M D d b) = d := by
   unfold degreeTwistInt
   rw [deg_add_marked_twist]
   ring
@@ -62,7 +62,7 @@ theorem degreeTwistInt_add_torsion_linearEquiv
       (degreeTwistInt M D d (b + k))
       (degreeTwistInt M D d b) := by
   unfold degreeTwistInt
-  convert linearEquiv_marked_twist_add_torsion hk D (d - deg D + b) b using 1 ;
+  convert linearEquiv_marked_twist_add_torsion hk D (d - CFDiv.degree D + b) b using 1 ;
     ring
 
 /-- The paper's nonrecurrence condition, formulated on concrete torsion
@@ -534,9 +534,9 @@ theorem transmission_complement_rank_eq_northwest_ncard
     dsimp [X]
     abel
   have hRR := riemann_roch_for_graphs hconn X
-  have hDegX : deg X = deg D + a - b := by
+  have hDegX : CFDiv.degree X = CFDiv.degree D + a - b := by
     dsimp [X]
-    rw [deg.map_sub, deg.map_add, map_zsmul, map_zsmul,
+    rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, map_zsmul, map_zsmul,
       deg_one_chip, deg_one_chip]
     simp
   have hSlipApply :
@@ -549,12 +549,12 @@ theorem transmission_complement_rank_eq_northwest_ncard
       rw [add_smul, one_smul]
       abel
     rw [hDiv]
-  have hChi : σ.χ = deg D - genus M.graph := by
+  have hChi : σ.χ = CFDiv.degree D - genus M.graph := by
     have hChi' := rankSlipFace_chi M (D - oneChip M.u) hconn
     rw [← hσSlip] at hChi'
     simpa only [AspPerm.s_chi_eq] using hChi'
       |>.trans (by
-        rw [deg.map_sub, deg_one_chip]
+        rw [CFDiv.degree.map_sub, deg_one_chip]
         ring)
   have hDual := σ.duality (a + 1) b
   have hRankEq :
@@ -593,9 +593,9 @@ theorem rankSupport_two_distinct_interior_strand_chips
   have hSemi : IsSemibreak B E := by
     dsimp [E, x, y]
     exact isSemibreak_two_distinct_strand_chips B alpha beta p q hp hq hab
-  have hDeg : deg E ≤ (2 : ℤ) := by
+  have hDeg : CFDiv.degree E ≤ (2 : ℤ) := by
     dsimp [E]
-    rw [deg.map_add, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
     norm_num
   ext w
   constructor
@@ -838,9 +838,9 @@ private theorem mem_rankSupport_canonical_sub_of_rank_nonneg
       (canonicalDivisor B.graph - (n : ℤ) • (oneChip u - oneChip v)) := by
   let X : CFDiv B.graph :=
     oneChip w + (n : ℤ) • (oneChip u - oneChip v)
-  have hDeg : deg X = 1 := by
+  have hDeg : CFDiv.degree X = 1 := by
     dsimp [X]
-    rw [deg.map_add, deg_one_chip, map_zsmul, deg.map_sub,
+    rw [CFDiv.degree.map_add, deg_one_chip, map_zsmul, CFDiv.degree.map_sub,
       deg_one_chip, deg_one_chip]
     norm_num
   have hRR := riemann_roch_for_graphs (graphConnected B) X
@@ -899,7 +899,7 @@ theorem evenlyMarkedTheta_mark_pair_rank_zero
     exact isSemibreak_two_distinct_strand_chips B alpha beta i j
       ⟨hEven.2.1, hEven.2.2.1⟩ ⟨hEven.2.2.2.1, hEven.2.2.2.2.1⟩ hEven.1
   apply rank_semibreak_eq_zero B _ hSemi
-  rw [deg.map_add, deg_one_chip, deg_one_chip]
+  rw [CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
   norm_num
 
 /-- An evenly-marked pair is not linearly equivalent to the canonical

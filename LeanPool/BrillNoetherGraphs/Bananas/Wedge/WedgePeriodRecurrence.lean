@@ -25,11 +25,11 @@ open Utilities
 
 private theorem rank_eq_zero_of_degree_one_genus_one
     (H : CFGraph) (hConnected : _root_.graphConnected H)
-    (hGenus : genus H = 1) (E : CFDiv H) (hDegree : deg E = 1) :
+    (hGenus : genus H = 1) (E : CFDiv H) (hDegree : CFDiv.degree E = 1) :
     rank H E = 0 := by
   have hNeg : rank H (canonicalDivisor H - E) = -1 :=
     rank_neg_one_of_deg_neg H _ (by
-      rw [deg.map_sub, degree_of_canonical_divisor, hGenus, hDegree]
+      rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hGenus, hDegree]
       norm_num)
   have hRR := riemann_roch_for_graphs hConnected E
   rw [hNeg, hGenus, hDegree] at hRR
@@ -118,9 +118,9 @@ theorem not_nonRecurrent_of_left_torsionWitness_lt_wedge_period
       (wedgeAddDivisor G H x y A E)
       (wedgeAddDivisor G H x y AX E) :=
     linear_equiv_wedgeAddDivisor G H x y A AX E E hAUx (linearEquiv.refl H E)
-  have hFdegree : deg F = 1 := by
+  have hFdegree : CFDiv.degree F = 1 := by
     dsimp [F, E]
-    rw [deg.map_add, map_zsmul, map_zsmul, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_add, map_zsmul, map_zsmul, deg_one_chip, deg_one_chip]
     ring
   have hFwin : winnable H F := by
     apply (rank_nonneg_iff_winnable H F).mp

@@ -157,7 +157,7 @@ sides hold vacuously, so nothing is claimed there. -/
 def RankDeterminingSet (G : CFGraph) (A : Finset G.V) : Prop :=
   ∀ (D : CFDiv G) (r : ℤ),
     rank G D ≥ r ↔
-      ∀ E : CFDiv G, effective E → deg E = r → SupportedOn A E → winnable G (D - E)
+      ∀ E : CFDiv G, effective E → CFDiv.degree E = r → SupportedOn A E → winnable G (D - E)
 
 /-! ## The trivial direction, and cheap general theory -/
 
@@ -166,7 +166,7 @@ def RankDeterminingSet (G : CFGraph) (A : Finset G.V) : Prop :=
 This holds for all graphs and needs no hypothesis on any vertex set. -/
 theorem winnable_sub_of_rank_ge {G : CFGraph} {D : CFDiv G} {r : ℤ}
     (hRank : rank G D ≥ r) {E : CFDiv G} (hEffective : effective E)
-    (hDegree : deg E = r) :
+    (hDegree : CFDiv.degree E = r) :
     winnable G (D - E) :=
   ((rank_geq_iff G D r).mpr hRank) E ⟨hEffective, hDegree⟩
 
@@ -175,7 +175,7 @@ set rank-determining only ever have to supply this implication. -/
 theorem rankDeterminingSet_iff {G : CFGraph} (A : Finset G.V) :
     RankDeterminingSet G A ↔
       ∀ (D : CFDiv G) (r : ℤ),
-        (∀ E : CFDiv G, effective E → deg E = r → SupportedOn A E →
+        (∀ E : CFDiv G, effective E → CFDiv.degree E = r → SupportedOn A E →
           winnable G (D - E)) →
         rank G D ≥ r := by
   constructor
@@ -271,7 +271,7 @@ geometry is involved. -/
 
 /-- An effective divisor of positive degree carries a chip somewhere. -/
 theorem exists_chip_of_effective_of_deg_pos {G : CFGraph} {E : CFDiv G}
-    (hEffective : effective E) (hDegree : 0 < deg E) :
+    (hEffective : effective E) (hDegree : 0 < CFDiv.degree E) :
     ∃ v : G.V, 1 ≤ E v := by
   by_contra hNone
   push Not at hNone
@@ -309,8 +309,8 @@ theorem rank_ge_add_one_of_forall_rank_sub_one_chip_ge {G : CFGraph}
   obtain ⟨hEffective, hDegree⟩ := hE
   obtain ⟨v, hv⟩ :=
     exists_chip_of_effective_of_deg_pos hEffective (by rw [hDegree]; omega)
-  have hSubDegree : deg (E - oneChip v) = k := by
-    rw [deg.map_sub, deg_one_chip, hDegree]
+  have hSubDegree : CFDiv.degree (E - oneChip v) = k := by
+    rw [CFDiv.degree.map_sub, deg_one_chip, hDegree]
     ring
   have hWin := (rank_geq_iff G (D - oneChip v) k).mpr (hChips v)
     (E - oneChip v) ⟨effective_sub_one_chip hEffective hv, hSubDegree⟩
@@ -330,7 +330,7 @@ theorem rankDeterminingSet_of_rank_ge_one {G : CFGraph} {A : Finset G.V}
       rank G D ≥ 1) :
     RankDeterminingSet G A := by
   have key : ∀ k : ℕ, ∀ D : CFDiv G,
-      (∀ E : CFDiv G, effective E → deg E = (k : ℤ) → SupportedOn A E →
+      (∀ E : CFDiv G, effective E → CFDiv.degree E = (k : ℤ) → SupportedOn A E →
         winnable G (D - E)) →
       rank G D ≥ (k : ℤ) := by
     intro k
@@ -344,7 +344,7 @@ theorem rankDeterminingSet_of_rank_ge_one {G : CFGraph} {A : Finset G.V}
         exact (rank_geq_iff G D 0).mp ((rank_nonneg_iff_winnable G D).mpr hWin)
     | succ k ih =>
         intro D hTests
-        have hTests' : ∀ E : CFDiv G, effective E → deg E = (k : ℤ) + 1 →
+        have hTests' : ∀ E : CFDiv G, effective E → CFDiv.degree E = (k : ℤ) + 1 →
             SupportedOn A E → winnable G (D - E) := by
           intro E hEffective hDegree hSupport
           refine hTests E hEffective ?_ hSupport
@@ -359,7 +359,7 @@ theorem rankDeterminingSet_of_rank_ge_one {G : CFGraph} {A : Finset G.V}
             intro v hv
             have hAddEffective : effective (E + oneChip v) := fun x =>
               add_nonneg (hEffective x) (eff_one_chip v x)
-            have hAddDegree : deg (E + oneChip v) = (k : ℤ) + 1 := by
+            have hAddDegree : CFDiv.degree (E + oneChip v) = (k : ℤ) + 1 := by
               rw [map_add, hDegree, deg_one_chip]
             have hAddSupport : SupportedOn A (E + oneChip v) := by
               intro x hx
@@ -420,21 +420,21 @@ theorem winnable_iff_forall_add_supported_effective
     {G : CFGraph} {A : Finset G.V} (hConnected : graphConnected G)
     (hSet : RankDeterminingSet G A) (D : CFDiv G) :
     winnable G D ↔
-      ∀ F : CFDiv G, effective F → deg F = genus G - 1 - deg D →
+      ∀ F : CFDiv G, effective F → CFDiv.degree F = genus G - 1 - CFDiv.degree D →
         SupportedOn A F → winnable G (D + F) := by
   have hDual :
       winnable G D ↔
-        rank G (canonicalDivisor G - D) ≥ genus G - 1 - deg D :=
+        rank G (canonicalDivisor G - D) ≥ genus G - 1 - CFDiv.degree D :=
     (canonical_sub_rank_ge_iff_winnable_of_degree hConnected D
-      (genus G - 1 - deg D) (by ring)).symm
-  rw [hDual, hSet (canonicalDivisor G - D) (genus G - 1 - deg D)]
+      (genus G - 1 - CFDiv.degree D) (by ring)).symm
+  rw [hDual, hSet (canonicalDivisor G - D) (genus G - 1 - CFDiv.degree D)]
   refine forall_congr' fun F => ?_
   refine imp_congr_right fun _hEffective => ?_
   refine imp_congr_right fun hDegree => ?_
   refine imp_congr_right fun _hSupport => ?_
   have hSum : canonicalDivisor G - D - F = canonicalDivisor G - (D + F) := by
     abel
-  have hDegSum : deg (D + F) = genus G - 1 := by
+  have hDegSum : CFDiv.degree (D + F) = genus G - 1 := by
     rw [map_add, hDegree]
     ring
   rw [hSum]
@@ -453,8 +453,8 @@ theorem rank_ge_iff_forall_sub_add_supported
     {G : CFGraph} {A : Finset G.V} (hConnected : graphConnected G)
     (hSet : RankDeterminingSet G A) (D : CFDiv G) (r : ℤ) :
     rank G D ≥ r ↔
-      ∀ E : CFDiv G, effective E → deg E = r → SupportedOn A E →
-        ∀ F : CFDiv G, effective F → deg F = genus G - deg D + r - 1 →
+      ∀ E : CFDiv G, effective E → CFDiv.degree E = r → SupportedOn A E →
+        ∀ F : CFDiv G, effective F → CFDiv.degree F = genus G - CFDiv.degree D + r - 1 →
           SupportedOn A F → winnable G (D - E + F) := by
   rw [hSet D r]
   refine forall_congr' fun E => ?_
@@ -462,10 +462,10 @@ theorem rank_ge_iff_forall_sub_add_supported
   refine imp_congr_right fun hDegree => ?_
   refine imp_congr_right fun _hSupport => ?_
   rw [winnable_iff_forall_add_supported_effective hConnected hSet (D - E)]
-  have hDegSub : deg (D - E) = deg D - r := by
-    rw [deg.map_sub, hDegree]
+  have hDegSub : CFDiv.degree (D - E) = CFDiv.degree D - r := by
+    rw [CFDiv.degree.map_sub, hDegree]
   rw [hDegSub,
-    show genus G - 1 - (deg D - r) = genus G - deg D + r - 1 from by ring]
+    show genus G - 1 - (CFDiv.degree D - r) = genus G - CFDiv.degree D + r - 1 from by ring]
 
 end Utilities
 
@@ -606,10 +606,10 @@ theorem Spec.rank_ge_iff_core_criterion (spec : Spec n p)
     (hLoopless : ∀ edge : Fin p, spec.core.tail edge ≠ spec.core.head edge)
     (hConnected : graphConnected spec.graph) (D : CFDiv spec.graph) (r : ℤ) :
     rank spec.graph D ≥ r ↔
-      ∀ E : CFDiv spec.graph, effective E → deg E = r →
+      ∀ E : CFDiv spec.graph, effective E → CFDiv.degree E = r →
           SupportedOn spec.coreVertices E →
         ∀ F : CFDiv spec.graph, effective F →
-            deg F = genus spec.graph - deg D + r - 1 →
+            CFDiv.degree F = genus spec.graph - CFDiv.degree D + r - 1 →
           SupportedOn spec.coreVertices F →
             winnable spec.graph (D - E + F) :=
   rank_ge_iff_forall_sub_add_supported hConnected

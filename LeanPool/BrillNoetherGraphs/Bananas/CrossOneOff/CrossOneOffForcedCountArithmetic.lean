@@ -173,7 +173,7 @@ theorem crossOneOffMiddleIndex_data
     unfold crossOneOffMiddleIndex
     omega
   have hMiddle : crossOneOffRow g n (crossOneOffMiddleIndex n t) = g - t := by
-    simp [crossOneOffRow, hMod, hDiv, hrZero, hrLast]
+    simp only [crossOneOffRow, hMod, hrZero, ↓reduceIte, hrLast, hDiv]
     unfold crossOneOffMiddleIndex
     omega
   refine ⟨by unfold crossOneOffMiddleIndex; omega, ?_, hMiddle, ?_⟩

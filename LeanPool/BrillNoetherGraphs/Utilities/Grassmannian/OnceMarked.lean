@@ -96,7 +96,7 @@ def OnceMarkedCensusContains (G : CFGraph) (u : G.V)
   ∃ D : CFDiv G,
     ∀ i : ℕ,
       rank G
-        (D + ((i : ℤ) + genus G - deg D - (onceMarkedPart lambda i : ℤ)) •
+        (D + ((i : ℤ) + genus G - CFDiv.degree D - (onceMarkedPart lambda i : ℤ)) •
           oneChip u) ≥ (i : ℤ)
 
 /-- The normalized form of membership of `lambda` in the divisor census of
@@ -104,7 +104,7 @@ the once-marked graph `(G,u)`. -/
 def OnceMarkedBNExists (G : CFGraph) (u : G.V)
     (lambda : YoungDiagram) : Prop :=
   ∃ D : CFDiv G,
-    deg D = genus G ∧
+    CFDiv.degree D = genus G ∧
     ∀ c ∈ onceMarkedCorners lambda,
       rank G (D + c.1 • oneChip u) ≥ c.2.2
 
@@ -127,7 +127,7 @@ theorem onceMarkedBNExists_iff_rank_rows
     (G : CFGraph) (u : G.V) (lambda : YoungDiagram) :
     OnceMarkedBNExists G u lambda ↔
       ∃ D : CFDiv G,
-        deg D = genus G ∧
+        CFDiv.degree D = genus G ∧
         ∀ (i : ℕ) (hi : i < lambda.rowLens.length),
           rank G
             (D + ((i : ℤ) - (lambda.rowLens[i] : ℤ)) • oneChip u) ≥
@@ -144,7 +144,7 @@ theorem onceMarkedBNExists_iff_rank_cells
     (G : CFGraph) (u : G.V) (lambda : YoungDiagram) :
     OnceMarkedBNExists G u lambda ↔
       ∃ D : CFDiv G,
-        deg D = genus G ∧
+        CFDiv.degree D = genus G ∧
         ∀ (i j : ℕ), (i, j) ∈ lambda →
           rank G
             (D + ((i : ℤ) - (j : ℤ) - 1) • oneChip u) ≥ (i : ℤ) := by
@@ -212,22 +212,22 @@ def onceMarkedDualDivisor (G : CFGraph) (u : G.V) (D : CFDiv G) : CFDiv G :=
 
 @[simp] theorem deg_onceMarkedDualDivisor
     {G : CFGraph} (u : G.V) (D : CFDiv G)
-    (hDegree : deg D = genus G) :
-    deg (onceMarkedDualDivisor G u D) = genus G := by
-  rw [onceMarkedDualDivisor, deg.map_add, deg.map_sub,
+    (hDegree : CFDiv.degree D = genus G) :
+    CFDiv.degree (onceMarkedDualDivisor G u D) = genus G := by
+  rw [onceMarkedDualDivisor, CFDiv.degree.map_add, CFDiv.degree.map_sub,
     degree_of_canonical_divisor, map_zsmul, deg_one_chip, hDegree]
   ring
 
 /-- Exact marked Riemann--Roch identity for a normalized divisor. -/
 theorem rank_onceMarkedDualDivisor_add_zsmul
     {G : CFGraph} (hG : graphConnected G) (u : G.V)
-    (D : CFDiv G) (hDegree : deg D = genus G) (ell : ℤ) :
+    (D : CFDiv G) (hDegree : CFDiv.degree D = genus G) (ell : ℤ) :
     rank G (onceMarkedDualDivisor G u D + ell • oneChip u) =
       rank G (D - (ell + 2) • oneChip u) + ell + 1 := by
   let X : CFDiv G := D - (ell + 2) • oneChip u
-  have hXDegree : deg X = genus G - (ell + 2) := by
+  have hXDegree : CFDiv.degree X = genus G - (ell + 2) := by
     dsimp [X]
-    rw [deg.map_sub, map_zsmul, deg_one_chip, hDegree]
+    rw [CFDiv.degree.map_sub, map_zsmul, deg_one_chip, hDegree]
     ring
   have hComplement :
       canonicalDivisor G - X =
@@ -291,10 +291,10 @@ theorem onceMarkedCensusContains_iff_onceMarkedBNExists
   rw [onceMarkedBNExists_iff_rank_rows]
   constructor
   · rintro ⟨E, hE⟩
-    let D : CFDiv G := E + (genus G - deg E) • oneChip u
+    let D : CFDiv G := E + (genus G - CFDiv.degree E) • oneChip u
     refine ⟨D, ?_, ?_⟩
     · dsimp [D]
-      rw [deg.map_add, map_zsmul, deg_one_chip]
+      rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip]
       ring
     · intro i hi
       have hPart : onceMarkedPart lambda i = lambda.rowLens[i] := by
@@ -302,7 +302,7 @@ theorem onceMarkedCensusContains_iff_onceMarkedBNExists
       have hRank := hE i
       have hTwist :
           D + ((i : ℤ) - (lambda.rowLens[i] : ℤ)) • oneChip u =
-            E + ((i : ℤ) + genus G - deg E -
+            E + ((i : ℤ) + genus G - CFDiv.degree E -
               (onceMarkedPart lambda i : ℤ)) • oneChip u := by
         rw [hPart]
         dsimp [D]
@@ -319,7 +319,7 @@ theorem onceMarkedCensusContains_iff_onceMarkedBNExists
         exact List.getD_eq_getElem lambda.rowLens 0 hi
       have hRank := hRows i hi
       have hTwist :
-          D + ((i : ℤ) + genus G - deg D -
+          D + ((i : ℤ) + genus G - CFDiv.degree D -
               (onceMarkedPart lambda i : ℤ)) • oneChip u =
             D + ((i : ℤ) - (lambda.rowLens[i] : ℤ)) • oneChip u := by
         rw [hDegree, hPart]
@@ -332,14 +332,14 @@ theorem onceMarkedCensusContains_iff_onceMarkedBNExists
       have hRank := rank_ge_deg_sub_genus hG
         (D + (i : ℤ) • oneChip u)
       have hTwist :
-          D + ((i : ℤ) + genus G - deg D -
+          D + ((i : ℤ) + genus G - CFDiv.degree D -
               (onceMarkedPart lambda i : ℤ)) • oneChip u =
             D + (i : ℤ) • oneChip u := by
         rw [hDegree, hPart]
         congr 2
         ring
       rw [hTwist]
-      rw [deg.map_add, map_zsmul, deg_one_chip, hDegree] at hRank
+      rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip, hDegree] at hRank
       norm_num at hRank
       exact hRank
 

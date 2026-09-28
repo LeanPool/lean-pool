@@ -117,7 +117,7 @@ theorem distinctInterior_strand_pair_not_linearEquiv_canonical
   have hZero : rank B.graph
       (oneChip (strandVertex B alpha i) + oneChip (strandVertex B beta j)) = 0 :=
     rank_semibreak_eq_zero B _ hSemi (by
-      rw [deg.map_add, deg_one_chip, deg_one_chip]
+      rw [CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
       norm_num)
   have hRank := rank_eq_of_linear_equiv B.graph hCanon
   rw [hZero, rank_canonical_banana_two B] at hRank

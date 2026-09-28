@@ -81,7 +81,7 @@ theorem rank_ge_of_add_effective {G : CFGraph} {D E : CFDiv G} (hE : effective E
 positive-rank effective divisor from below. -/
 theorem le_divisorialGonality_of_forall {G : CFGraph} (h_conn : graphConnected G)
     {k : ℕ}
-    (h : ∀ D : CFDiv G, effective D → rank G D ≥ 1 → (k : ℤ) ≤ deg D) :
+    (h : ∀ D : CFDiv G, effective D → rank G D ≥ 1 → (k : ℤ) ≤ CFDiv.degree D) :
     k ≤ divisorialGonality G := by
   obtain ⟨D, hEff, hDeg, hRank⟩ := exists_divisor_of_divisorialGonality h_conn
   have := h D hEff hRank
@@ -93,7 +93,7 @@ effective divisor of degree *exactly* `d` for any `d < k`.  `rank_ge_of_add_effe
 is what lets the smaller degrees be skipped. -/
 theorem le_divisorialGonality_of_no_small {G : CFGraph} (h_conn : graphConnected G)
     {k : ℕ}
-    (h : ∀ D : CFDiv G, effective D → deg D = ((k : ℤ) - 1) → ¬ (rank G D ≥ 1)) :
+    (h : ∀ D : CFDiv G, effective D → CFDiv.degree D = ((k : ℤ) - 1) → ¬ (rank G D ≥ 1)) :
     k ≤ divisorialGonality G := by
   classical
   refine le_divisorialGonality_of_forall h_conn ?_
@@ -102,22 +102,22 @@ theorem le_divisorialGonality_of_no_small {G : CFGraph} (h_conn : graphConnected
   push Not at hlt
   -- pad `D` up to degree `k - 1` with chips at an arbitrary vertex
   obtain ⟨v⟩ := G.instNonempty
-  set m : ℕ := ((k : ℤ) - 1 - deg D).toNat with hm
-  have hdegnn : 0 ≤ deg D := by
+  set m : ℕ := ((k : ℤ) - 1 - CFDiv.degree D).toNat with hm
+  have hdegnn : 0 ≤ CFDiv.degree D := by
     have : effective D := hEff
     exact Finset.sum_nonneg fun x _ => this x
-  have hmval : (m : ℤ) = (k : ℤ) - 1 - deg D := by
+  have hmval : (m : ℤ) = (k : ℤ) - 1 - CFDiv.degree D := by
     rw [hm, Int.toNat_of_nonneg]; omega
   set E : CFDiv G := fun w => if w = v then (m : ℤ) else 0 with hE
   have hEeff : effective E := by
     intro w
     by_cases hw : w = v <;> simp [hE, hw]
-  have hEdeg : deg E = (m : ℤ) := by
+  have hEdeg : CFDiv.degree E = (m : ℤ) := by
     change (∑ w : G.V, if w = v then (m : ℤ) else 0) = (m : ℤ)
     simp
   have hrank' : rank G (D + E) ≥ 1 := rank_ge_of_add_effective hEeff hRank
-  have hdeg' : deg (D + E) = (k : ℤ) - 1 := by
-    have : deg (D + E) = deg D + deg E := map_add deg D E
+  have hdeg' : CFDiv.degree (D + E) = (k : ℤ) - 1 := by
+    have : CFDiv.degree (D + E) = CFDiv.degree D + CFDiv.degree E := map_add CFDiv.degree D E
     rw [this, hEdeg, hmval]; ring
   have hEff' : effective (D + E) := by
     intro w

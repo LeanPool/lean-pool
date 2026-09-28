@@ -546,7 +546,9 @@ public import LeanPool.BrillNoetherGraphs.Utilities.Transmission.TransmissionWed
 Source: url:https://github.com/npflueger/brill-noether-graphs
 Authors: Nathan Pflueger
 Status: verified
-Main declarations: `Highlights.brill_noether_existence_through_five`, `Highlights.treewidth_le_gonality`, `Highlights.gonality_drops_under_regular_subdivision`
+Main declarations: `Highlights.brill_noether_existence_through_five`,
+`Highlights.treewidth_le_gonality`,
+`Highlights.gonality_drops_under_regular_subdivision`
 Tags: brill-noether-theory, graph-theory, chip-firing, tropical-geometry
 MSC: 14T15, 05C50
 -/

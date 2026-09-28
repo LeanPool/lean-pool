@@ -64,14 +64,14 @@ the Riemann--Roch translated lower bound on its canonical complement. -/
 theorem transmission_row_iff_canonical_complement_row
     {G : CFGraph} (hconn : graphConnected G)
     {u v : G.V} {τ : AspPerm} {D : CFDiv G}
-    (hDegree : deg D = (genus G : ℤ) + τ.χ)
+    (hDegree : CFDiv.degree D = (genus G : ℤ) + τ.χ)
     (a b : ℤ) :
     TransmissionInequality G u v τ D a b ↔
       rank G (canonicalDivisor G -
         (D + a • oneChip u - b • oneChip v)) ≥
           τ.s (a + 1) b - τ.χ - a + b - 2 := by
   have hTwistDegree :
-      deg (D + a • oneChip u - b • oneChip v) =
+      CFDiv.degree (D + a • oneChip u - b • oneChip v) =
         (genus G : ℤ) + τ.χ + a - b := by
     rw [deg_add_marked_twist, hDegree]
   have hRR := riemann_roch_for_graphs hconn

@@ -53,16 +53,16 @@ theorem genus_fossil (G : CFGraph.{u}) (hConnected : graphConnected G) :
     genus_nonneg_of_graph_connected G hConnected
   have hFossilGenusNonnegative : 0 ≤ genus (fossil G) :=
     genus_nonneg_of_graph_connected (fossil G) hFossilConnected
-  have hDegree : deg D = n := by
+  have hDegree : CFDiv.degree D = n := by
     dsimp [D]
     rw [map_zsmul, deg_one_chip]
     ring
-  have hSourceRange : deg D > 2 * genus G - 2 := by
+  have hSourceRange : CFDiv.degree D > 2 * genus G - 2 := by
     rw [hDegree]
     dsimp [n]
     omega
   have hTargetRange :
-      deg (fossilPushforward G D) > 2 * genus (fossil G) - 2 := by
+      CFDiv.degree (fossilPushforward G D) > 2 * genus (fossil G) - 2 := by
     rw [deg_fossilPushforward, hDegree]
     dsimp [n]
     omega

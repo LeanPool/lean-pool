@@ -36,9 +36,9 @@ inverse ASP permutation. -/
 theorem degree_transmissionDualDivisor
     {G : CFGraph} {u v : G.V} {τ : AspPerm} {D : CFDiv G}
     (h : SatisfiesTransmission G u v τ D) :
-    deg (transmissionDualDivisor u v D) = (genus G : ℤ) + (τ⁻¹).χ := by
+    CFDiv.degree (transmissionDualDivisor u v D) = (genus G : ℤ) + (τ⁻¹).χ := by
   unfold transmissionDualDivisor
-  rw [deg.map_add, deg.map_add, deg.map_sub,
+  rw [CFDiv.degree.map_add, CFDiv.degree.map_add, CFDiv.degree.map_sub,
     degree_of_canonical_divisor, h.1, deg_one_chip, deg_one_chip,
     AspPerm.chi_dual]
   ring

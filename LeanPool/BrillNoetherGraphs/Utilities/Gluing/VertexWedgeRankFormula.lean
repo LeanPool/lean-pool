@@ -72,14 +72,14 @@ theorem rank_add_zsmul_one_chip_step
 /-- The degree along a marked rank profile is affine with slope one. -/
 theorem deg_add_zsmul_one_chip
     (G : CFGraph.{u}) (D : CFDiv G) (q : G.V) (n : ℤ) :
-    deg (D + n • oneChip q) = deg D + n := by
-  rw [deg.map_add, map_zsmul, deg_one_chip]
+    CFDiv.degree (D + n • oneChip q) = CFDiv.degree D + n := by
+  rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip]
   simp
 
 /-- The negative-degree tail of a marked rank profile is constantly `-1`. -/
 theorem rank_add_zsmul_one_chip_eq_neg_one_of_degree_neg
     (G : CFGraph.{u}) (D : CFDiv G) (q : G.V) (n : ℤ)
-    (hDegree : deg D + n < 0) :
+    (hDegree : CFDiv.degree D + n < 0) :
     rank G (D + n • oneChip q) = -1 := by
   apply rank_neg_one_of_deg_neg
   rw [deg_add_zsmul_one_chip]
@@ -90,15 +90,15 @@ profile is the affine Riemann--Roch line `degree - genus`. -/
 theorem rank_add_zsmul_one_chip_eq_degree_sub_genus_of_large
     (G : CFGraph.{u}) (hG : graphConnected G)
     (D : CFDiv G) (q : G.V) (n : ℤ)
-    (hLarge : 2 * (genus G : ℤ) - 2 < deg D + n) :
-    rank G (D + n • oneChip q) = deg D + n - (genus G : ℤ) := by
+    (hLarge : 2 * (genus G : ℤ) - 2 < CFDiv.degree D + n) :
+    rank G (D + n • oneChip q) = CFDiv.degree D + n - (genus G : ℤ) := by
   let A : CFDiv G := D + n • oneChip q
-  change rank G A = deg D + n - (genus G : ℤ)
-  have hADegree : deg A = deg D + n := by
+  change rank G A = CFDiv.degree D + n - (genus G : ℤ)
+  have hADegree : CFDiv.degree A = CFDiv.degree D + n := by
     dsimp [A]
     exact deg_add_zsmul_one_chip G D q n
-  have hDualDegree : deg (canonicalDivisor G - A) < 0 := by
-    rw [deg.map_sub, degree_of_canonical_divisor, hADegree]
+  have hDualDegree : CFDiv.degree (canonicalDivisor G - A) < 0 := by
+    rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hADegree]
     omega
   have hDualRank : rank G (canonicalDivisor G - A) = -1 :=
     rank_neg_one_of_deg_neg G _ hDualDegree
@@ -109,9 +109,10 @@ theorem rank_add_zsmul_one_chip_eq_degree_sub_genus_of_large
 /-- A finite sequence which starts below a threshold and ends above it has an
 adjacent crossing.  No monotonicity is needed: choose the last failed step. -/
 theorem exists_adjacent_crossing_nat
-    (p : ℕ → Prop) [DecidablePred p] (n : ℕ)
+    (p : ℕ → Prop) (n : ℕ)
     (hStart : ¬ p 0) (hEnd : p n) :
     ∃ i : ℕ, i < n ∧ ¬ p i ∧ p (i + 1) := by
+  classical
   induction n with
   | zero => exact (hStart hEnd).elim
   | succ n ih =>
@@ -122,9 +123,10 @@ theorem exists_adjacent_crossing_nat
 
 /-- Integer-indexed form of `exists_adjacent_crossing_nat`. -/
 theorem exists_adjacent_crossing_int
-    (p : ℤ → Prop) [DecidablePred p] (lo hi : ℤ)
+    (p : ℤ → Prop) (lo hi : ℤ)
     (hlohi : lo ≤ hi) (hStart : ¬ p lo) (hEnd : p hi) :
     ∃ ell : ℤ, ¬ p ell ∧ p (ell + 1) := by
+  classical
   let n : ℕ := (hi - lo).toNat
   let pNat : ℕ → Prop := fun i => p (lo + (i : ℤ))
   have hnCast : (n : ℤ) = hi - lo := by
@@ -237,8 +239,8 @@ theorem effective_wedgeRestrictRightDivisor
 theorem deg_wedgeRestrictions
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (Q : CFDiv (vertexWedge G H x y)) :
-    deg (wedgeRestrictLeftDivisor G H x y Q) +
-      deg (wedgeRestrictRightDivisor G H x y Q) = deg Q := by
+    CFDiv.degree (wedgeRestrictLeftDivisor G H x y Q) +
+      CFDiv.degree (wedgeRestrictRightDivisor G H x y Q) = CFDiv.degree Q := by
   rw [← deg_wedgeAddDivisor]
   rw [wedgeAddDivisor_restrict]
 
@@ -249,7 +251,7 @@ theorem vertexWedge_rank_ge_of_factor_shift_cover
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (D : CFDiv G) (E : CFDiv H) (k : ℤ)
     (hCover : ∀ (A : CFDiv G) (B : CFDiv H),
-      effective A → effective B → deg A + deg B = k →
+      effective A → effective B → CFDiv.degree A + CFDiv.degree B = k →
       ∃ t : ℤ, winnable G (chipShift G (D - A) x t) ∧
         winnable H (chipShift H (E - B) y (-t))) :
     rank (vertexWedge G H x y) (wedgeAddDivisor G H x y D E) ≥ k := by
@@ -259,7 +261,7 @@ theorem vertexWedge_rank_ge_of_factor_shift_cover
   let B := wedgeRestrictRightDivisor G H x y Q
   have hA : effective A := effective_wedgeRestrictLeftDivisor G H x y Q hQ.1
   have hB : effective B := effective_wedgeRestrictRightDivisor G H x y Q hQ.1
-  have hDegrees : deg A + deg B = k := by
+  have hDegrees : CFDiv.degree A + CFDiv.degree B = k := by
     rw [deg_wedgeRestrictions G H x y Q, hQ.2]
   obtain ⟨t, hLeft, hRight⟩ := hCover A B hA hB hDegrees
   have hWin := (winnable_vertexWedge_iff_exists_chipShift
@@ -283,15 +285,15 @@ theorem vertexWedge_rank_ge_of_staggered_profile_split_cover
     rank (vertexWedge G H x y) (wedgeAddDivisor G H x y D E) ≥ k := by
   apply vertexWedge_rank_ge_of_factor_shift_cover G H x y D E k
   intro A B hA hB hDegrees
-  obtain ⟨ell, hRankA, hRankB⟩ := hProfile (deg A) (deg B)
+  obtain ⟨ell, hRankA, hRankB⟩ := hProfile (CFDiv.degree A) (CFDiv.degree B)
     (deg_of_eff_nonneg A hA) (deg_of_eff_nonneg B hB) hDegrees
   have hLeftPhase : winnable G
       ((D - (ell + 1) • oneChip x) - A) :=
-    ((rank_geq_iff G (D - (ell + 1) • oneChip x) (deg A)).mpr hRankA)
+    ((rank_geq_iff G (D - (ell + 1) • oneChip x) (CFDiv.degree A)).mpr hRankA)
       A ⟨hA, rfl⟩
   have hRightPhase : winnable H
       ((E + (ell + 1) • oneChip y) - B) :=
-    ((rank_geq_iff H (E + (ell + 1) • oneChip y) (deg B)).mpr hRankB)
+    ((rank_geq_iff H (E + (ell + 1) • oneChip y) (CFDiv.degree B)).mpr hRankB)
       B ⟨hB, rfl⟩
   refine ⟨-(ell + 1), ?_, ?_⟩
   · convert hLeftPhase using 1
@@ -318,14 +320,14 @@ theorem vertexWedge_rank_ge_of_profile_split_cover
     rank (vertexWedge G H x y) (wedgeAddDivisor G H x y D E) ≥ k := by
   apply vertexWedge_rank_ge_of_factor_shift_cover G H x y D E k
   intro A B hA hB hDegrees
-  obtain ⟨ell, hRankA, hRankB⟩ := hProfile (deg A) (deg B)
+  obtain ⟨ell, hRankA, hRankB⟩ := hProfile (CFDiv.degree A) (CFDiv.degree B)
     (deg_of_eff_nonneg A hA) (deg_of_eff_nonneg B hB) hDegrees
   have hLeftPhase : winnable G
       ((D - (ell + 1) • oneChip x) - A) :=
-    ((rank_geq_iff G (D - (ell + 1) • oneChip x) (deg A)).mpr hRankA)
+    ((rank_geq_iff G (D - (ell + 1) • oneChip x) (CFDiv.degree A)).mpr hRankA)
       A ⟨hA, rfl⟩
   have hRightPhase : winnable H ((E + ell • oneChip y) - B) :=
-    ((rank_geq_iff H (E + ell • oneChip y) (deg B)).mpr hRankB)
+    ((rank_geq_iff H (E + ell • oneChip y) (CFDiv.degree B)).mpr hRankB)
       B ⟨hB, rfl⟩
   have hRightShift : winnable H (E - B + (ell + 1) • oneChip y) := by
     apply winnable_add_zsmul_one_chip_mono H (E - B) y ell (ell + 1) (by omega)
@@ -363,21 +365,21 @@ theorem exists_staggered_rank_profile_split_of_inequalities
       rank G (D - (ell + 1) • oneChip x) ≥ a ∧
       rank H (E + (ell + 1) • oneChip y) ≥ b := by
   classical
-  let lo : ℤ := min (-deg E - 1) (deg D)
-  let hi : ℤ := deg D
+  let lo : ℤ := min (-CFDiv.degree E - 1) (CFDiv.degree D)
+  let hi : ℤ := CFDiv.degree D
   have hlohi : lo ≤ hi := by
     dsimp [lo, hi]
     exact min_le_right _ _
-  have hRightLoDegree : deg E + lo < 0 := by
-    have hlo : lo ≤ -deg E - 1 := by
+  have hRightLoDegree : CFDiv.degree E + lo < 0 := by
+    have hlo : lo ≤ -CFDiv.degree E - 1 := by
       dsimp [lo]
       exact min_le_left _ _
     omega
   have hRightLoRank : rank H (E + lo • oneChip y) = -1 :=
     rank_add_zsmul_one_chip_eq_neg_one_of_degree_neg
       H E y lo hRightLoDegree
-  have hLeftHiDegree : deg (D - (hi + 1) • oneChip x) < 0 := by
-    rw [deg.map_sub, map_zsmul, deg_one_chip]
+  have hLeftHiDegree : CFDiv.degree (D - (hi + 1) • oneChip x) < 0 := by
+    rw [CFDiv.degree.map_sub, map_zsmul, deg_one_chip]
     dsimp [hi]
     ring_nf
     norm_num
@@ -447,16 +449,16 @@ theorem vertexWedge_rank_profile_inequality
   have hA'Effective : effective A' :=
     fun z => add_nonneg (hAEffective z)
       (effective_zsmul_one_chip_of_nonneg G x c hc z)
-  have hA'Degree : deg A' = r + 1 + c := by
+  have hA'Degree : CFDiv.degree A' = r + 1 + c := by
     dsimp [A']
-    rw [deg.map_add, map_zsmul, deg_one_chip, hADegree]
+    rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip, hADegree]
     dsimp [r]
     ring
   let Q : CFDiv (vertexWedge G H x y) :=
     wedgeAddDivisor G H x y A' B
   have hQEffective : effective Q :=
     effective_wedgeAddDivisor G H x y A' B hA'Effective hBEffective
-  have hQDegree : deg Q = k := by
+  have hQDegree : CFDiv.degree Q = k := by
     dsimp [Q]
     rw [deg_wedgeAddDivisor, hA'Degree, hBDegree]
     dsimp [c, s]

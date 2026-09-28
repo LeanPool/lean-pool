@@ -107,8 +107,11 @@ theorem paperCoordinateChips_eq_of_positionCoordinateDivisor_eq
       | some offset' =>
           have h := congrFun hSemibreak (B.interiorVertex alpha offset)
           have hoffset : offset' = offset := by
-            simp [paperCoordinateSemibreak, hpChip, hqChip] at h
-            exact h
+            change (if paperCoordinateChips B p alpha = some offset then (1 : ℤ) else 0) =
+              (if paperCoordinateChips B q alpha = some offset then 1 else 0) at h
+            by_contra hne
+            simp only [hpChip, hqChip, Option.some.injEq, ↓reduceIte, hne,
+              one_ne_zero] at h
           simp [hoffset]
 
 /-- An interior coordinate is recovered strand-by-strand from the associated

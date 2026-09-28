@@ -336,8 +336,7 @@ theorem q_reduced_two_chip_sub_of_twoEdgeCutCondition_of_twoCut_burn
       apply (not_lt_of_ge (hLegal z hzS))
       rw [outdeg_S_eq_sum_filter]
       simpa using hzBurn
-    ·
-      have hPointwise : ∀ z ∈ S,
+    · have hPointwise : ∀ z ∈ S,
           ∑ w ∈ (Finset.univ.filter fun t => t ∉ S), (numEdges G z w : ℤ) ≤
             oneChip x z + oneChip y z - oneChip q z := by
         intro z hz
@@ -1609,11 +1608,11 @@ theorem rank_aux_add_mark_sub_distinct_mark_ne_zero
       omega
 
 private theorem linearEquiv_zero_of_rank_nonneg_degree_zero_sameStrand
-    (G : CFGraph) (D : CFDiv G) (hRank : 0 ≤ rank G D) (hDeg : deg D = 0) :
+    (G : CFGraph) (D : CFDiv G) (hRank : 0 ≤ rank G D) (hDeg : CFDiv.degree D = 0) :
     linearEquiv G D 0 := by
   obtain ⟨E, hEff, hDE⟩ := (rank_nonneg_iff_winnable G D).mp
     ((rank_geq_iff G D 0).mpr hRank)
-  have hEDeg : deg E = 0 := by
+  have hEDeg : CFDiv.degree E = 0 := by
     rw [← linear_equiv_preserves_deg G D E hDE, hDeg]
   have hE : E = 0 := eff_degree_zero E hEff hEDeg
   simpa [hE] using hDE
@@ -1634,11 +1633,11 @@ theorem rank_same_strand_pair_zero_of_not_reflection
     apply (rank_geq_iff B.graph D 0).mp
     exact (rank_nonneg_iff_winnable B.graph D).mpr
       (winnable_of_effective B.graph D hEff)
-  have hDeg : deg D = 2 := by
+  have hDeg : CFDiv.degree D = 2 := by
     dsimp [D]
-    simp [deg.map_add, deg_one_chip]
-  have hKDeg : deg (canonicalDivisor B.graph - D) = 0 := by
-    rw [deg.map_sub, degree_of_canonical_divisor, B.genus_graph, hDeg]
+    simp [CFDiv.degree.map_add, deg_one_chip]
+  have hKDeg : CFDiv.degree (canonicalDivisor B.graph - D) = 0 := by
+    rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, B.genus_graph, hDeg]
     norm_num
   have hRR := riemann_roch_for_graphs (graphConnected B) D
   have hKLe : rank B.graph (canonicalDivisor B.graph - D) ≤ 0 := by
@@ -1709,9 +1708,9 @@ private theorem rank_one_chip_eq_zero_banana_two
     have hxyWin := (rank_ge_one_iff_winnable_sub_one_chip B.graph
       (oneChip x)).mp hRank y
     obtain ⟨E, hEff, hEquiv⟩ := hxyWin
-    have hEDeg : deg E = 0 := by
+    have hEDeg : CFDiv.degree E = 0 := by
       rw [← linear_equiv_preserves_deg B.graph _ E hEquiv,
-        deg.map_sub, deg_one_chip, deg_one_chip]
+        CFDiv.degree.map_sub, deg_one_chip, deg_one_chip]
       norm_num
     have hZero : E = 0 := eff_degree_zero E hEff hEDeg
     apply marks_not_linearEquiv (by omega : 1 ≤ 2) B hxy
@@ -1831,11 +1830,11 @@ theorem rank_same_path_pair_sub_of_sum_inside_full
       (rank_nonneg_iff_winnable B.graph E).mp
         ((rank_geq_iff B.graph E 0).mpr hERankNonneg)
     obtain ⟨F, hFEff, hEF⟩ := hEWin
-    have hEDeg : deg E = 1 := by
+    have hEDeg : CFDiv.degree E = 1 := by
       dsimp [E, D]
-      rw [deg.map_sub, deg.map_add, deg_one_chip, deg_one_chip, deg_one_chip]
+      rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, deg_one_chip, deg_one_chip, deg_one_chip]
       norm_num
-    have hFDeg : deg F = 1 := by
+    have hFDeg : CFDiv.degree F = 1 := by
       rw [← linear_equiv_preserves_deg B.graph E F hEF, hEDeg]
     obtain ⟨x, rfl⟩ := effective_degree_one_eq_one_chip F hFEff hFDeg
     have hRankEq := rank_eq_of_linear_equiv B.graph hEF

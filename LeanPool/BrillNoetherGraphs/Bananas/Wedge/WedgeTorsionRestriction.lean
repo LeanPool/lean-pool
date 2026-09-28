@@ -107,29 +107,30 @@ theorem torsionWitness_factors_of_vertexWedge_opposite
       exact hW.2
   obtain ⟨t, hGwin, hHwin⟩ :=
     (winnable_vertexWedge_iff_exists_chipShift G H x y DG EH).mp hWinnable
-  have hDegG : deg DG = 0 := by
+  have hDegG : CFDiv.degree DG = 0 := by
     dsimp [DG]
-    rw [map_zsmul, deg.map_sub, deg_one_chip, deg_one_chip]
+    rw [map_zsmul, CFDiv.degree.map_sub, deg_one_chip, deg_one_chip]
     ring
-  have hDegH : deg EH = 0 := by
+  have hDegH : CFDiv.degree EH = 0 := by
     dsimp [EH]
-    rw [map_zsmul, deg.map_sub, deg_one_chip, deg_one_chip]
+    rw [map_zsmul, CFDiv.degree.map_sub, deg_one_chip, deg_one_chip]
     ring
   have htNonneg : 0 ≤ t := by
     have h := deg_nonneg_of_winnable G (chipShift G DG x t) hGwin
-    have hShift : deg (chipShift G DG x t) = t := by
+    have hShift : CFDiv.degree (chipShift G DG x t) = t := by
       calc
-        deg (chipShift G DG x t) = deg DG + deg (t • oneChip x) := by
-          rw [chipShift, deg.map_add]
+        CFDiv.degree (chipShift G DG x t) = CFDiv.degree DG + CFDiv.degree (t • oneChip x) := by
+          rw [chipShift, CFDiv.degree.map_add]
         _ = t := by rw [hDegG, map_zsmul, deg_one_chip]; ring
     rw [hShift] at h
     exact h
   have htNonpos : t ≤ 0 := by
     have h := deg_nonneg_of_winnable H (chipShift H EH y (-t)) hHwin
-    have hShift : deg (chipShift H EH y (-t)) = -t := by
+    have hShift : CFDiv.degree (chipShift H EH y (-t)) = -t := by
       calc
-        deg (chipShift H EH y (-t)) = deg EH + deg ((-t) • oneChip y) := by
-          rw [chipShift, deg.map_add]
+        CFDiv.degree (chipShift H EH y (-t)) =
+          CFDiv.degree EH + CFDiv.degree ((-t) • oneChip y) := by
+          rw [chipShift, CFDiv.degree.map_add]
         _ = -t := by rw [hDegH, map_zsmul, deg_one_chip]; ring
     rw [hShift] at h
     omega

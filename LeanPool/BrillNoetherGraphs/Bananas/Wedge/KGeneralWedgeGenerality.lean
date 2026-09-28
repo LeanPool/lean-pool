@@ -68,7 +68,7 @@ theorem onceMarkedBrillNoetherGeneral_vertexWedge_of_kGeneralTransmission
   intro lambda hCensus
   let Q : CFDiv W := Classical.choose hCensus
   have hRows : ∀ i : ℕ,
-      rank W (Q + ((i : ℤ) + genus W - deg Q -
+      rank W (Q + ((i : ℤ) + genus W - CFDiv.degree Q -
         (onceMarkedPart lambda i : ℤ)) • oneChip wv) ≥ (i : ℤ) :=
     Classical.choose_spec hCensus
   let D : CFDiv G := wedgeRestrictLeftDivisor G H x y Q
@@ -137,7 +137,7 @@ theorem onceMarkedBrillNoetherGeneral_of_kGeneralTransmission
   intro lambda hCensus
   let D : CFDiv G := Classical.choose hCensus
   have hRows : ∀ i : ℕ,
-      rank G (D + ((i : ℤ) + genus G - deg D -
+      rank G (D + ((i : ℤ) + genus G - CFDiv.degree D -
         (onceMarkedPart lambda i : ℤ)) • oneChip v) ≥ (i : ℤ) :=
     Classical.choose_spec hCensus
   obtain ⟨tau, hTau, hAffine, hCount⟩ :=

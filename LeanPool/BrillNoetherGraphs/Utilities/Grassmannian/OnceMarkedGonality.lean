@@ -116,9 +116,9 @@ theorem bnExists_of_onceMarkedBNExistence
   rcases le_or_gt (rectangleWidth G (r : ℤ) d) 0 with hnle | hnpos
   · -- `d ≥ genus G + r`: Riemann's inequality alone gives rank `≥ r`, no census needed.
     refine ⟨d • oneChip u, ?_, ?_⟩
-    · have hDeg : deg (d • oneChip u) = d := by rw [map_zsmul, deg_one_chip]; ring
+    · have hDeg : CFDiv.degree (d • oneChip u) = d := by rw [map_zsmul, deg_one_chip]; ring
       exact hDeg
-    · have hDeg : deg (d • oneChip u) = d := by rw [map_zsmul, deg_one_chip]; ring
+    · have hDeg : CFDiv.degree (d • oneChip u) = d := by rw [map_zsmul, deg_one_chip]; ring
       have hRR := rank_ge_deg_sub_genus hG (d • oneChip u)
       rw [hDeg] at hRR
       unfold rectangleWidth at hnle
@@ -149,7 +149,7 @@ theorem bnExists_of_onceMarkedBNExistence
     have hrow := hRows r hLen
     rw [hval] at hrow
     refine ⟨D + ((r : ℤ) - (n : ℤ)) • oneChip u, ?_, hrow⟩
-    rw [deg.map_add, map_zsmul, deg_one_chip, hDegree, hn_cast]
+    rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip, hDegree, hn_cast]
     unfold rectangleWidth
     ring
 
@@ -175,7 +175,7 @@ theorem gonality_le_of_gonality_leq {G : CFGraph} (h_conn : graphConnected G) {k
   refine ⟨1, ?_⟩
   rintro l ⟨D, hRank, hDeg⟩
   have hRankGeq : rankGeq G D 1 := (rank_geq_iff G D 1).mpr hRank
-  have hDegLower : (1 : ℤ) ≤ deg D := rank_le_degree G D 1 (by norm_num) hRankGeq
+  have hDegLower : (1 : ℤ) ≤ CFDiv.degree D := rank_le_degree G D 1 (by norm_num) hRankGeq
   simpa [hDeg] using hDegLower
 
 /-- The gonality conjecture in this genus follows from once-marked Brill--Noether
@@ -206,7 +206,8 @@ theorem brillNoetherConjecture_of_onceMarkedBNExistence
     {G : CFGraph} (hG : graphConnected G) (u : G.V)
     (hCensus : OnceMarkedBNExistence G u) (r d : ℤ) :
     brillNoetherConjecture hG r d := by
-  change 0 ≤ genus G - (r + 1) * (genus G - d + r) → ∃ D : CFDiv G, rank G D ≥ r ∧ deg D = d
+  change 0 ≤ genus G - (r + 1) * (genus G - d + r) →
+    ∃ D : CFDiv G, rank G D ≥ r ∧ CFDiv.degree D = d
   intro hrho
   rcases le_or_gt 0 r with hr0 | hrneg
   · lift r to ℕ using hr0 with rNat

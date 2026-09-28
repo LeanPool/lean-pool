@@ -32,7 +32,7 @@ at the marked vertices: degree equal to the genus, rank at least one, and
 nonnegative rank after the two marked chips are removed. -/
 def IsSlackNearRectangleDivisor
     (H : CFGraph) (x y : H.V) (D : CFDiv H) : Prop :=
-  deg D = genus H ∧
+  CFDiv.degree D = genus H ∧
   rank H D ≥ 1 ∧
   rank H (D - oneChip x - oneChip y) ≥ 0
 
@@ -41,12 +41,12 @@ the two marked chips, is a slack near-rectangle divisor. -/
 theorem isSlackNearRectangleDivisor_of_canonical_split
     (H : CFGraph) (hH : graphConnected H) (x y : H.V)
     (E F : CFDiv H) (hEEffective : effective E) (hFEffective : effective F)
-    (hEDegree : deg E = genus H - 2)
+    (hEDegree : CFDiv.degree E = genus H - 2)
     (hSplit : linearEquiv H
       (canonicalDivisor H - (oneChip x + oneChip y)) (E + F)) :
     IsSlackNearRectangleDivisor H x y (E + oneChip x + oneChip y) := by
-  have hDegree : deg (E + oneChip x + oneChip y) = genus H := by
-    rw [deg.map_add, deg.map_add, deg_one_chip, deg_one_chip, hEDegree]
+  have hDegree : CFDiv.degree (E + oneChip x + oneChip y) = genus H := by
+    rw [CFDiv.degree.map_add, CFDiv.degree.map_add, deg_one_chip, deg_one_chip, hEDegree]
     ring
   have hERank : rank H E ≥ 0 := by
     apply (rank_geq_iff H E 0).mp
@@ -90,16 +90,16 @@ theorem exists_canonical_slack_dual_pair
         (canonicalDivisor H + oneChip x + oneChip y) := by
   have hMarkedEffective : effective (oneChip x + oneChip y) := by
     exact (Eff H).add_mem (eff_one_chip x) (eff_one_chip y)
-  have hMarkedDegree : deg (oneChip x + oneChip y) = 2 := by
+  have hMarkedDegree : CFDiv.degree (oneChip x + oneChip y) = 2 := by
     simp
   have hMarkedRank : rank H (oneChip x + oneChip y) ≥ 0 := by
     apply (rank_geq_iff H (oneChip x + oneChip y) 0).mp
     exact (rank_nonneg_iff_winnable H (oneChip x + oneChip y)).mpr
       (winnable_of_effective H (oneChip x + oneChip y) hMarkedEffective)
   have hResidualDegree :
-      deg (canonicalDivisor H - (oneChip x + oneChip y)) =
+      CFDiv.degree (canonicalDivisor H - (oneChip x + oneChip y)) =
         2 * genus H - 4 := by
-    rw [deg.map_sub, degree_of_canonical_divisor, hMarkedDegree]
+    rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hMarkedDegree]
     ring
   have hResidualRank :
       rank H (canonicalDivisor H - (oneChip x + oneChip y)) ≥ 0 := by
@@ -121,7 +121,7 @@ theorem exists_canonical_slack_dual_pair
   obtain ⟨M, hMEffective, hMEquiv⟩ :=
     (winnable_iff_exists_effective H
       (canonicalDivisor H - (oneChip x + oneChip y))).mp hResidualWinnable
-  have hMDegree : deg M = 2 * genus H - 4 := by
+  have hMDegree : CFDiv.degree M = 2 * genus H - 4 := by
     have hEq := linear_equiv_preserves_deg H
       (canonicalDivisor H - (oneChip x + oneChip y)) M hMEquiv
     omega
@@ -130,8 +130,8 @@ theorem exists_canonical_slack_dual_pair
   obtain ⟨E, F, hEEffective, hFEffective, hEDegree, hFDegree, hMSplit⟩ :=
     effective_divisor_decomposition H M (genus H - 2).toNat (genus H - 2).toNat
       hMEffective (by rw [hMDegree, hHalf]; ring)
-  have hEDegree' : deg E = genus H - 2 := hEDegree.trans hHalf
-  have hFDegree' : deg F = genus H - 2 := hFDegree.trans hHalf
+  have hEDegree' : CFDiv.degree E = genus H - 2 := hEDegree.trans hHalf
+  have hFDegree' : CFDiv.degree F = genus H - 2 := hFDegree.trans hHalf
   have hSplit : linearEquiv H
       (canonicalDivisor H - (oneChip x + oneChip y)) (E + F) := by
     rw [← hMSplit]

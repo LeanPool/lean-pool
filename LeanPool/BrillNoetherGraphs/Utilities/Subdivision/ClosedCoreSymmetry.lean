@@ -48,14 +48,14 @@ theorem adj_map {u v : Fin n} :
   · have ht := symmetry.tail_eq e
     have hh := symmetry.head_eq e
     by_cases hr : symmetry.reversed e
-    · simp [hr] at ht hh
+    · simp only [ite_eq_left hr] at ht hh
       rcases huv with huv | huv
       · exact Or.inr ⟨hh.trans (congrArg symmetry.vertexPerm huv.1),
           ht.trans (congrArg symmetry.vertexPerm huv.2)⟩
       · exact Or.inl ⟨ht.trans (congrArg symmetry.vertexPerm huv.1),
           hh.trans (congrArg symmetry.vertexPerm huv.2)⟩
     · have hr' : symmetry.reversed e = false := Bool.eq_false_of_not_eq_true hr
-      simp [hr'] at ht hh
+      simp only [ite_eq_right hr] at ht hh
       rcases huv with huv | huv
       · exact Or.inl ⟨ht.trans (congrArg symmetry.vertexPerm huv.1),
           hh.trans (congrArg symmetry.vertexPerm huv.2)⟩
@@ -78,7 +78,7 @@ theorem adj_map_iff {u v : Fin n} :
     have hh := symmetry.head_eq e
     rw [hfe] at ht hh
     by_cases hr : symmetry.reversed e
-    · simp [hr] at ht hh
+    · simp only [ite_eq_left hr] at ht hh
       rcases huv with huv | huv
       · right
         constructor
@@ -89,7 +89,7 @@ theorem adj_map_iff {u v : Fin n} :
         · exact symmetry.vertexPerm.injective (huv.1.symm.trans hh) |>.symm
         · exact symmetry.vertexPerm.injective (huv.2.symm.trans ht) |>.symm
     · have hr' : symmetry.reversed e = false := Bool.eq_false_of_not_eq_true hr
-      simp [hr'] at ht hh
+      simp only [ite_eq_right hr] at ht hh
       rcases huv with huv | huv
       · left
         constructor
@@ -255,7 +255,7 @@ theorem bnExists_iff (hn : 0 < n) (hForest : IsForest core (zeroSet length))
           rw [hclass]
           apply Subtype.ext
           have ht := symmetry.tail_eq e
-          simp [hr] at ht
+          simp only [ite_eq_left hr] at ht
           change target.rep (symmetry.vertexPerm (core.head e)) =
             target.rep (core.tail (symmetry.slotPerm e))
           rw [ht]
@@ -264,7 +264,7 @@ theorem bnExists_iff (hn : 0 < n) (hForest : IsForest core (zeroSet length))
           rw [hclass]
           apply Subtype.ext
           have ht := symmetry.tail_eq e
-          simp [hr'] at ht
+          simp only [ite_eq_right hr] at ht
           change target.rep (symmetry.vertexPerm (core.tail e)) =
             target.rep (core.tail (symmetry.slotPerm e))
           rw [ht]
@@ -274,7 +274,7 @@ theorem bnExists_iff (hn : 0 < n) (hForest : IsForest core (zeroSet length))
           rw [hclass]
           apply Subtype.ext
           have hh := symmetry.head_eq e
-          simp [hr] at hh
+          simp only [ite_eq_left hr] at hh
           change target.rep (symmetry.vertexPerm (core.tail e)) =
             target.rep (core.head (symmetry.slotPerm e))
           rw [hh]
@@ -283,7 +283,7 @@ theorem bnExists_iff (hn : 0 < n) (hForest : IsForest core (zeroSet length))
           rw [hclass]
           apply Subtype.ext
           have hh := symmetry.head_eq e
-          simp [hr'] at hh
+          simp only [ite_eq_right hr] at hh
           change target.rep (symmetry.vertexPerm (core.head e)) =
             target.rep (core.head (symmetry.slotPerm e))
           rw [hh] }

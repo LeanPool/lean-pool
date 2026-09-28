@@ -333,7 +333,7 @@ theorem effective_fossilPushforward (G : CFGraph.{u}) {D : CFDiv G}
   (fossilContraction G).effective_pushDiv hD
 
 @[simp] theorem deg_fossilPushforward (G : CFGraph.{u}) (D : CFDiv G) :
-    deg (fossilPushforward G D) = deg D :=
+    CFDiv.degree (fossilPushforward G D) = CFDiv.degree D :=
   (fossilContraction G).deg_pushDiv D
 
 /-- Fibre summation, packaged as an additive homomorphism. -/

@@ -111,20 +111,20 @@ theorem eq_of_interiorVertex_eq_one {g : ℕ} {B : Banana g}
 degree. -/
 theorem sum_le_degree {g : ℕ} {B : Banana g}
     {E : CFDiv B.graph} (hE : IsSemibreak B E) (S : Finset B.graph.V) :
-    (∑ z ∈ S, E z) ≤ deg E := by
+    (∑ z ∈ S, E z) ≤ CFDiv.degree E := by
   have hSubset : S ⊆ (Finset.univ : Finset B.graph.V) := by simp
   have hSum := Finset.sum_le_sum_of_subset_of_nonneg hSubset
     (fun z _ _ => hE.effective z)
-  simpa only [deg, AddMonoidHom.coe_mk, ZeroHom.coe_mk] using hSum
+  simpa only [CFDiv.degree, AddMonoidHom.coe_mk, ZeroHom.coe_mk] using hSum
 
 end IsSemibreak
 
 theorem degree_semibreakDivisor {g : ℕ} (B : Banana g)
     (chips : ∀ γ : Fin (g + 1), Option (Fin (B.length γ - 1))) :
-    deg (semibreakDivisor B chips) =
+    CFDiv.degree (semibreakDivisor B chips) =
       ∑ γ : Fin (g + 1), if (chips γ).isSome then (1 : ℤ) else 0 := by
   classical
-  simp only [deg, AddMonoidHom.coe_mk, ZeroHom.coe_mk, Fintype.sum_sum_type,
+  simp only [CFDiv.degree, AddMonoidHom.coe_mk, ZeroHom.coe_mk, Fintype.sum_sum_type,
     Fintype.sum_sigma]
   change (∑ _v : Fin 2, (0 : ℤ)) +
       (∑ γ : Fin (g + 1), ∑ offset : Fin (B.length γ - 1),
@@ -140,7 +140,7 @@ theorem degree_semibreakDivisor {g : ℕ} (B : Banana g)
 
 theorem exists_free_strand_of_degree_le_genus {g : ℕ} (B : Banana g)
     (chips : ∀ γ : Fin (g + 1), Option (Fin (B.length γ - 1)))
-    (hdeg : deg (semibreakDivisor B chips) ≤ (g : ℤ)) :
+    (hdeg : CFDiv.degree (semibreakDivisor B chips) ≤ (g : ℤ)) :
     ∃ γ : Fin (g + 1), chips γ = none := by
   by_contra hFree
   push Not at hFree
@@ -525,9 +525,9 @@ private theorem false_of_no_burn_semibreak_of_core_out
           simpa [hcore] using hz)).elim
     · rcases interior with ⟨γ, q⟩
       apply neighbor_mem_of_no_burn_zero_direct B.graph D S hNoBurn hz
-      change D (B.interiorVertex γ q) = 0
-      rw [hInteriorValue]
-      simpa [SubdivisionGraph.Spec.interiorVertex] using hEz
+      · change D (B.interiorVertex γ q) = 0
+        rw [hInteriorValue]
+        simpa [SubdivisionGraph.Spec.interiorVertex] using hEz
       exact hEdge
   obtain ⟨z, hz⟩ := hNonempty
   rcases z with core | interior
@@ -656,7 +656,7 @@ private theorem false_of_no_burn_semibreak_of_core_out
             omega
 
 theorem q_reduced_semibreak_sub_vertex {g : ℕ} (B : Banana g)
-    (E : CFDiv B.graph) (hE : IsSemibreak B E) (hdeg : deg E ≤ (g : ℤ))
+    (E : CFDiv B.graph) (hE : IsSemibreak B E) (hdeg : CFDiv.degree E ≤ (g : ℤ))
     (w : B.graph.V) (hw : E w = 0) :
     qReduced B.graph w (E - oneChip w) := by
   rcases hE with ⟨chips, rfl⟩
@@ -821,7 +821,7 @@ theorem q_reduced_semibreak_sub_vertex {g : ℕ} (B : Banana g)
               omega
 
 theorem rank_semibreak_sub_vertex_eq_neg_one {g : ℕ} (B : Banana g)
-    (E : CFDiv B.graph) (hE : IsSemibreak B E) (hdeg : deg E ≤ (g : ℤ))
+    (E : CFDiv B.graph) (hE : IsSemibreak B E) (hdeg : CFDiv.degree E ≤ (g : ℤ))
     (w : B.graph.V) (hw : E w = 0) :
     rank B.graph (E - oneChip w) = -1 := by
   apply rank_eq_neg_one_of_qReduced_debt B.graph w
@@ -830,7 +830,7 @@ theorem rank_semibreak_sub_vertex_eq_neg_one {g : ℕ} (B : Banana g)
 
 /-- A semibreak divisor of degree at most the genus has rank exactly zero. -/
 theorem rank_semibreak_eq_zero {g : ℕ} (B : Banana g)
-    (E : CFDiv B.graph) (hE : IsSemibreak B E) (hdeg : deg E ≤ (g : ℤ)) :
+    (E : CFDiv B.graph) (hE : IsSemibreak B E) (hdeg : CFDiv.degree E ≤ (g : ℤ)) :
     rank B.graph E = 0 := by
   have hEffective := hE.effective
   have hNonneg : 0 ≤ rank B.graph E := by
@@ -863,12 +863,12 @@ noncomputable def bananaNormalForm {g : ℕ} (B : Banana g) (a b : ℤ)
 /-- The numerical side condition in the paper's banana normal form. -/
 def IsBananaNormalForm {g : ℕ} (B : Banana g) (b : ℤ)
     (E : CFDiv B.graph) : Prop :=
-  IsSemibreak B E ∧ 0 ≤ b ∧ b + deg E ≤ (g : ℤ)
+  IsSemibreak B E ∧ 0 ≤ b ∧ b + CFDiv.degree E ≤ (g : ℤ)
 
 @[simp] theorem degree_bananaNormalForm {g : ℕ} (B : Banana g)
     (a b : ℤ) (E : CFDiv B.graph) :
-    deg (bananaNormalForm B a b E) = a + b + deg E := by
-  rw [bananaNormalForm, deg.map_add, deg.map_add, map_zsmul, map_zsmul,
+    CFDiv.degree (bananaNormalForm B a b E) = a + b + CFDiv.degree E := by
+  rw [bananaNormalForm, CFDiv.degree.map_add, CFDiv.degree.map_add, map_zsmul, map_zsmul,
     deg_one_chip, deg_one_chip]
   simp
 
@@ -927,7 +927,7 @@ reduced at the left endpoint.  The coefficient at the reducing endpoint is
 unrestricted, as reducedness only asks for effectivity away from it. -/
 theorem q_reduced_bananaNormalForm {g : ℕ} (B : Banana g)
     (a b : ℤ) (E : CFDiv B.graph) (hE : IsSemibreak B E)
-    (hb : 0 ≤ b) (hdeg : b + deg E ≤ (g : ℤ)) :
+    (hb : 0 ≤ b) (hdeg : b + CFDiv.degree E ≤ (g : ℤ)) :
     qReduced B.graph (leftEndpoint B) (bananaNormalForm B a b E) := by
   rcases hE with ⟨chips, rfl⟩
   let E : CFDiv B.graph := semibreakDivisor B chips
@@ -982,7 +982,7 @@ theorem q_reduced_bananaNormalForm {g : ℕ} (B : Banana g)
       simp [bananaNormalForm, Finset.sum_add_distrib, oneChip,
         hLeftOut, hRight]
     have hSumE := hE.sum_le_degree S
-    have hdegE : b + deg E ≤ (g : ℤ) := by
+    have hdegE : b + CFDiv.degree E ≤ (g : ℤ) := by
       simpa [E] using hdeg
     rw [hSumNormal] at hCutLe
     omega
@@ -1002,8 +1002,8 @@ theorem bananaNormalForm_parameters_unique {g : ℕ} (B : Banana g)
     (a b a' b' : ℤ) (E E' : CFDiv B.graph)
     (hE : IsSemibreak B E) (hE' : IsSemibreak B E')
     (hb : 0 ≤ b) (hb' : 0 ≤ b')
-    (hdeg : b + deg E ≤ (g : ℤ))
-    (hdeg' : b' + deg E' ≤ (g : ℤ))
+    (hdeg : b + CFDiv.degree E ≤ (g : ℤ))
+    (hdeg' : b' + CFDiv.degree E' ≤ (g : ℤ))
     (hLinear : linearEquiv B.graph (bananaNormalForm B a b E)
       (bananaNormalForm B a' b' E')) :
     a = a' ∧ b = b' ∧ E = E' := by
@@ -1049,7 +1049,7 @@ theorem q_effective_bananaNormalForm_right {g : ℕ} (B : Banana g)
 normal-form divisor reduced at the right endpoint. -/
 theorem q_reduced_bananaNormalForm_right {g : ℕ} (B : Banana g)
     (a b : ℤ) (E : CFDiv B.graph) (hE : IsSemibreak B E)
-    (ha : 0 ≤ a) (hdeg : a + deg E ≤ (g : ℤ)) :
+    (ha : 0 ≤ a) (hdeg : a + CFDiv.degree E ≤ (g : ℤ)) :
     qReduced B.graph (rightEndpoint B) (bananaNormalForm B a b E) := by
   rcases hE with ⟨chips, rfl⟩
   let E : CFDiv B.graph := semibreakDivisor B chips
@@ -1104,7 +1104,7 @@ theorem q_reduced_bananaNormalForm_right {g : ℕ} (B : Banana g)
       simp [bananaNormalForm, Finset.sum_add_distrib, oneChip,
         hLeft, hRightOut]
     have hSumE := hE.sum_le_degree S
-    have hdegE : a + deg E ≤ (g : ℤ) := by
+    have hdegE : a + CFDiv.degree E ≤ (g : ℤ) := by
       simpa [E] using hdeg
     rw [hSumNormal] at hCutLe
     omega
@@ -1146,7 +1146,7 @@ theorem rank_bananaNormalForm_neg_iff_of_q_reduced {g : ℕ} (B : Banana g)
 unrestricted left-endpoint coefficient is negative. -/
 theorem rank_bananaNormalForm_neg_iff {g : ℕ} (B : Banana g)
     (a b : ℤ) (E : CFDiv B.graph) (hE : IsSemibreak B E)
-    (hb : 0 ≤ b) (hdeg : b + deg E ≤ (g : ℤ)) :
+    (hb : 0 ≤ b) (hdeg : b + CFDiv.degree E ≤ (g : ℤ)) :
     rank B.graph (bananaNormalForm B a b E) = -1 ↔ a < 0 := by
   exact rank_bananaNormalForm_neg_iff_of_q_reduced B a b E hE hb
     (q_reduced_bananaNormalForm B a b E hE hb hdeg)
@@ -1155,7 +1155,7 @@ theorem rank_bananaNormalForm_neg_iff {g : ℕ} (B : Banana g)
 upper bound on rank. -/
 private theorem rank_lt_of_effective_sub_rank_neg_one
     (G : CFGraph) (D A : CFDiv G) (k : ℤ)
-    (hEffective : effective A) (hDegree : deg A = k)
+    (hEffective : effective A) (hDegree : CFDiv.degree A = k)
     (hResidual : rank G (D - A) = -1) :
     rank G D < k := by
   by_contra hNot
@@ -1169,9 +1169,9 @@ the right-endpoint coefficient; the left coefficient need only be at least
 `-1`. -/
 theorem rank_bananaNormalForm {g : ℕ} (B : Banana g)
     (a b : ℤ) (E : CFDiv B.graph) (hE : IsSemibreak B E)
-    (ha : -1 ≤ a) (hb : 0 ≤ b) (hdeg : b + deg E ≤ (g : ℤ)) :
+    (ha : -1 ≤ a) (hb : 0 ≤ b) (hdeg : b + CFDiv.degree E ≤ (g : ℤ)) :
     rank B.graph (bananaNormalForm B a b E) =
-      max (min a b) (a + b + deg E - (g : ℤ)) := by
+      max (min a b) (a + b + CFDiv.degree E - (g : ℤ)) := by
   by_cases haNonneg : 0 ≤ a
   · have hMinNonneg : 0 ≤ min a b := by omega
     let m : ℕ := (min a b).toNat
@@ -1203,17 +1203,17 @@ theorem rank_bananaNormalForm {g : ℕ} (B : Banana g)
     have hDual := rank_geq_neg_one B.graph
       (canonicalDivisor B.graph - bananaNormalForm B a b E)
     have hLowerRR :
-        a + b + deg E - (g : ℤ) ≤
+        a + b + CFDiv.degree E - (g : ℤ) ≤
           rank B.graph (bananaNormalForm B a b E) := by
       rw [degree_bananaNormalForm, B.genus_graph] at hRR
       omega
-    by_cases haBound : a + deg E ≤ (g : ℤ)
+    by_cases haBound : a + CFDiv.degree E ≤ (g : ℤ)
     · by_cases hab : a ≤ b
       · let A : CFDiv B.graph := (a + 1) • oneChip (leftEndpoint B)
         have hAEffective : effective A := by
           exact effective_zsmul_one_chip_of_nonneg B.graph
             (leftEndpoint B) (a + 1) (by omega)
-        have hADegree : deg A = a + 1 := by
+        have hADegree : CFDiv.degree A = a + 1 := by
           dsimp [A]
           rw [map_zsmul, deg_one_chip]
           ring
@@ -1233,7 +1233,7 @@ theorem rank_bananaNormalForm {g : ℕ} (B : Banana g)
           (bananaNormalForm B a b E) A (a + 1)
           hAEffective hADegree hResidualRank
         have hMin : min a b = a := min_eq_left hab
-        have hRRLe : a + b + deg E - (g : ℤ) ≤ a := by omega
+        have hRRLe : a + b + CFDiv.degree E - (g : ℤ) ≤ a := by omega
         rw [hMin, max_eq_left hRRLe]
         omega
       · have hba : b ≤ a := by omega
@@ -1241,7 +1241,7 @@ theorem rank_bananaNormalForm {g : ℕ} (B : Banana g)
         have hAEffective : effective A := by
           exact effective_zsmul_one_chip_of_nonneg B.graph
             (rightEndpoint B) (b + 1) (by omega)
-        have hADegree : deg A = b + 1 := by
+        have hADegree : CFDiv.degree A = b + 1 := by
           dsimp [A]
           rw [map_zsmul, deg_one_chip]
           ring
@@ -1265,47 +1265,47 @@ theorem rank_bananaNormalForm {g : ℕ} (B : Banana g)
           (bananaNormalForm B a b E) A (b + 1)
           hAEffective hADegree hResidualRank
         have hMin : min a b = b := min_eq_right hba
-        have hRRLe : a + b + deg E - (g : ℤ) ≤ b := by omega
+        have hRRLe : a + b + CFDiv.degree E - (g : ℤ) ≤ b := by omega
         rw [hMin, max_eq_left hRRLe]
         omega
-    · have hLeftCoeff : 0 ≤ a - (g : ℤ) + deg E := by omega
+    · have hLeftCoeff : 0 ≤ a - (g : ℤ) + CFDiv.degree E := by omega
       let A : CFDiv B.graph :=
-        (a - (g : ℤ) + deg E) • oneChip (leftEndpoint B) +
+        (a - (g : ℤ) + CFDiv.degree E) • oneChip (leftEndpoint B) +
           (b + 1) • oneChip (rightEndpoint B)
       have hAEffective : effective A := by
         apply (Eff B.graph).add_mem
         · exact effective_zsmul_one_chip_of_nonneg B.graph
-            (leftEndpoint B) (a - (g : ℤ) + deg E) hLeftCoeff
+            (leftEndpoint B) (a - (g : ℤ) + CFDiv.degree E) hLeftCoeff
         · exact effective_zsmul_one_chip_of_nonneg B.graph
             (rightEndpoint B) (b + 1) (by omega)
       have hADegree :
-          deg A = a + b + deg E - (g : ℤ) + 1 := by
+          CFDiv.degree A = a + b + CFDiv.degree E - (g : ℤ) + 1 := by
         dsimp [A]
-        rw [deg.map_add, map_zsmul, map_zsmul, deg_one_chip, deg_one_chip]
+        rw [CFDiv.degree.map_add, map_zsmul, map_zsmul, deg_one_chip, deg_one_chip]
         ring
       have hResidual :
           bananaNormalForm B a b E - A =
-            bananaNormalForm B ((g : ℤ) - deg E) (-1) E := by
+            bananaNormalForm B ((g : ℤ) - CFDiv.degree E) (-1) E := by
         dsimp [A]
         unfold bananaNormalForm
         ext z
         simp only [Pi.sub_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
         ring
-      have hRightCoeff : 0 ≤ (g : ℤ) - deg E := by omega
+      have hRightCoeff : 0 ≤ (g : ℤ) - CFDiv.degree E := by omega
       have hReduced := q_reduced_bananaNormalForm_right B
-        ((g : ℤ) - deg E) (-1) E hE hRightCoeff (by omega)
+        ((g : ℤ) - CFDiv.degree E) (-1) E hE hRightCoeff (by omega)
       have hResidualRank :
           rank B.graph (bananaNormalForm B a b E - A) = -1 := by
         rw [hResidual]
         apply rank_eq_neg_one_of_qReduced_debt B.graph (rightEndpoint B)
-          (bananaNormalForm B ((g : ℤ) - deg E) (-1) E) hReduced
-        rw [bananaNormalForm_rightEndpoint B ((g : ℤ) - deg E) (-1) E hE]
+          (bananaNormalForm B ((g : ℤ) - CFDiv.degree E) (-1) E) hReduced
+        rw [bananaNormalForm_rightEndpoint B ((g : ℤ) - CFDiv.degree E) (-1) E hE]
         omega
       have hUpper := rank_lt_of_effective_sub_rank_neg_one B.graph
         (bananaNormalForm B a b E) A
-        (a + b + deg E - (g : ℤ) + 1)
+        (a + b + CFDiv.degree E - (g : ℤ) + 1)
         hAEffective hADegree hResidualRank
-      have hMinLe : min a b ≤ a + b + deg E - (g : ℤ) := by
+      have hMinLe : min a b ≤ a + b + CFDiv.degree E - (g : ℤ) := by
         have := min_le_right a b
         omega
       rw [max_eq_right hMinLe]
@@ -1314,12 +1314,12 @@ theorem rank_bananaNormalForm {g : ℕ} (B : Banana g)
     have hRank : rank B.graph (bananaNormalForm B a b E) = -1 :=
       (rank_bananaNormalForm_neg_iff B a b E hE hb hdeg).2 (by omega)
     have hMin : min a b = a := min_eq_left (by omega)
-    have hRRLe : a + b + deg E - (g : ℤ) ≤ a := by omega
+    have hRRLe : a + b + CFDiv.degree E - (g : ℤ) ≤ a := by omega
     rw [hRank, hMin, max_eq_left hRRLe]
     exact haEq.symm
 
 @[simp] theorem rank_bananaNormalForm_zero_zero {g : ℕ} (B : Banana g)
-    (E : CFDiv B.graph) (hE : IsSemibreak B E) (hdeg : deg E ≤ (g : ℤ)) :
+    (E : CFDiv B.graph) (hE : IsSemibreak B E) (hdeg : CFDiv.degree E ≤ (g : ℤ)) :
     rank B.graph (bananaNormalForm B 0 0 E) = 0 := by
   simpa [bananaNormalForm] using rank_semibreak_eq_zero B E hE hdeg
 
@@ -1718,7 +1718,7 @@ divisor satisfy the numerical normal-form bound. -/
 theorem q_reduced_rightEndpoint_add_reducedSemibreakDivisor_degree_le_genus
     {g : ℕ} {B : Banana g} {D : CFDiv B.graph}
     (hD : qReduced B.graph (leftEndpoint B) D) :
-    D (rightEndpoint B) + deg (reducedSemibreakDivisor B D) ≤ (g : ℤ) := by
+    D (rightEndpoint B) + CFDiv.degree (reducedSemibreakDivisor B D) ≤ (g : ℤ) := by
   let debt : CFDiv B.graph :=
     D + (-1 - D (leftEndpoint B)) • oneChip (leftEndpoint B)
   have hDebtReduced : qReduced B.graph (leftEndpoint B) debt := by
@@ -1731,13 +1731,13 @@ theorem q_reduced_rightEndpoint_add_reducedSemibreakDivisor_degree_le_genus
     exact rank_eq_neg_one_of_qReduced_debt B.graph (leftEndpoint B)
       debt hDebtReduced (by omega)
   have hNormal := eq_bananaNormalForm_reducedSemibreakDivisor hD
-  have hDegD := congrArg deg hNormal
+  have hDegD := congrArg CFDiv.degree hNormal
   rw [degree_bananaNormalForm] at hDegD
   have hDebtDegree :
-      deg debt = D (rightEndpoint B) +
-        deg (reducedSemibreakDivisor B D) - 1 := by
+      CFDiv.degree debt = D (rightEndpoint B) +
+        CFDiv.degree (reducedSemibreakDivisor B D) - 1 := by
     dsimp [debt]
-    rw [deg.map_add, map_zsmul, deg_one_chip, hDegD]
+    rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip, hDegD]
     ring
   have hInequality := rank_degree_inequality (graphConnected B) debt
   have hResidualLower := rank_geq_neg_one B.graph
@@ -1751,7 +1751,7 @@ theorem exists_bananaNormalForm_of_q_reduced {g : ℕ} {B : Banana g}
     (hD : qReduced B.graph (leftEndpoint B) D) :
     ∃ E : CFDiv B.graph, IsSemibreak B E ∧
       0 ≤ D (rightEndpoint B) ∧
-      D (rightEndpoint B) + deg E ≤ (g : ℤ) ∧
+      D (rightEndpoint B) + CFDiv.degree E ≤ (g : ℤ) ∧
       D = bananaNormalForm B (D (leftEndpoint B))
         (D (rightEndpoint B)) E := by
   refine ⟨reducedSemibreakDivisor B D,
@@ -1765,7 +1765,7 @@ normal form with the required semibreak and numerical conditions. -/
 theorem exists_linearly_equiv_bananaNormalForm {g : ℕ} (B : Banana g)
     (D : CFDiv B.graph) :
     ∃ (a b : ℤ) (E : CFDiv B.graph),
-      IsSemibreak B E ∧ 0 ≤ b ∧ b + deg E ≤ (g : ℤ) ∧
+      IsSemibreak B E ∧ 0 ≤ b ∧ b + CFDiv.degree E ≤ (g : ℤ) ∧
       linearEquiv B.graph D (bananaNormalForm B a b E) := by
   obtain ⟨Dred, hLinear, hReduced⟩ :=
     exists_q_reduced_representative (graphConnected B) (leftEndpoint B) D
@@ -1779,7 +1779,7 @@ theorem exists_linearly_equiv_bananaNormalForm {g : ℕ} (B : Banana g)
 /-- TeX label: Lemma 2.23 (unlabeled), final clause: `r(D) ≥ 0` iff `a ≥ 0`. -/
 theorem banana_normalForm_rank_nonneg_iff {g : ℕ} (B : Banana g)
     (a b : ℤ) (E : CFDiv B.graph) (hE : IsSemibreak B E)
-    (hb : 0 ≤ b) (hdeg : b + deg E ≤ (g : ℤ)) :
+    (hb : 0 ≤ b) (hdeg : b + CFDiv.degree E ≤ (g : ℤ)) :
     0 ≤ rank B.graph (bananaNormalForm B a b E) ↔ 0 ≤ a := by
   have hLower := rank_geq_neg_one B.graph (bananaNormalForm B a b E)
   have hIff := rank_bananaNormalForm_neg_iff B a b E hE hb hdeg

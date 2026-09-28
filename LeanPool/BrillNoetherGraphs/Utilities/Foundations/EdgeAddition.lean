@@ -71,7 +71,7 @@ theorem num_edges_le_addEdge
 edge, since the vertex type and its finite structure are unchanged. -/
 @[simp] theorem deg_on_addEdge
     (H : CFGraph) (x y : H.V) (hxy : x ≠ y) (D : H.V → ℤ) :
-    @deg (addEdge H x y hxy) D = @deg H D := by
+    @CFDiv.degree (addEdge H x y hxy) D = @CFDiv.degree H D := by
   rfl
 
 @[simp] theorem num_edges_addEdge_endpoints
@@ -141,13 +141,13 @@ def seamDivisor {H : CFGraph} (x y : H.V) : CFDiv H :=
   oneChip x - oneChip y
 
 @[simp] theorem deg_seamDivisor {H : CFGraph} (x y : H.V) :
-    deg (seamDivisor x y) = 0 := by
+    CFDiv.degree (seamDivisor x y) = 0 := by
   simp [seamDivisor]
 
 @[simp] theorem deg_add_zsmul_seamDivisor
     {H : CFGraph} (D : CFDiv H) (x y : H.V) (n : ℤ) :
-    deg (D + n • seamDivisor x y) = deg D := by
-  simp only [deg.map_add, map_zsmul, deg_seamDivisor, smul_zero, add_zero]
+    CFDiv.degree (D + n • seamDivisor x y) = CFDiv.degree D := by
+  simp only [CFDiv.degree.map_add, map_zsmul, deg_seamDivisor, smul_zero, add_zero]
 
 @[simp] theorem prin_addEdge_apply_left
     (H : CFGraph) (x y : H.V) (hxy : x ≠ y)

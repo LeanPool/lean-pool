@@ -192,7 +192,7 @@ theorem sum_unmarked_eq_sum_of_marked_zero
 @[simp] theorem deg_wedgeAddDivisor
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (D : CFDiv G) (E : CFDiv H) :
-    deg (wedgeAddDivisor G H x y D E) = deg D + deg E := by
+    CFDiv.degree (wedgeAddDivisor G H x y D E) = CFDiv.degree D + CFDiv.degree E := by
   classical
   change (∑ z : Sum G.V { b : H.V // b ≠ y }, wedgeAddDivisor G H x y D E z) =
     (∑ a : G.V, D a) + ∑ b : H.V, E b
@@ -207,15 +207,15 @@ theorem sum_unmarked_eq_sum_of_marked_zero
 
 @[simp] theorem deg_wedgeLiftLeftDivisor
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) (D : CFDiv G) :
-    deg (wedgeLiftLeftDivisor G H x y D) = deg D := by
-  change deg (wedgeAddDivisor G H x y D 0) = deg D
+    CFDiv.degree (wedgeLiftLeftDivisor G H x y D) = CFDiv.degree D := by
+  change CFDiv.degree (wedgeAddDivisor G H x y D 0) = CFDiv.degree D
   rw [deg_wedgeAddDivisor]
   simp
 
 @[simp] theorem deg_wedgeLiftRightDivisor
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) (E : CFDiv H) :
-    deg (wedgeLiftRightDivisor G H x y E) = deg E := by
-  change deg (wedgeAddDivisor G H x y 0 E) = deg E
+    CFDiv.degree (wedgeLiftRightDivisor G H x y E) = CFDiv.degree E := by
+  change CFDiv.degree (wedgeAddDivisor G H x y 0 E) = CFDiv.degree E
   rw [deg_wedgeAddDivisor]
   simp
 

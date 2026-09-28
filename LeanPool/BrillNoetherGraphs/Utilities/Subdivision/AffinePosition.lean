@@ -217,7 +217,7 @@ theorem decodePosition_val_of_fromHead_true
     (hDirection : code.fromHead = true) :
     (code.decodePosition certificate point core_nonempty hValid hBounds hCone).val =
       certificate.segmentNat point code.edge - code.rawOffset point := by
-  simp only [decodePosition_val, coordinate, hDirection, Bool.false_eq_true, ite_false]
+  simp only [decodePosition_val, coordinate, hDirection]
   rfl
 /-- Tail-oriented decoding is definitionally the ordinary bounded path
 position constructor. -/

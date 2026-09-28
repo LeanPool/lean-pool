@@ -37,20 +37,20 @@ theorem rankDelta_endpointPencil_nsmul
   · have hag : g < a := by omega
     have hagZ : (g : ℤ) < (a : ℤ) := by exact_mod_cast hag
     let D : CFDiv B.graph := a • endpointPencilDivisor B
-    have hDegreeD : deg D = 2 * (a : ℤ) := by
+    have hDegreeD : CFDiv.degree D = 2 * (a : ℤ) := by
       dsimp [D]
       rw [map_nsmul, degree_endpointPencilDivisor]
       ring
     have hDegreeLeft :
-        deg (D - oneChip (leftEndpoint B)) = 2 * (a : ℤ) - 1 := by
-      rw [deg.map_sub, hDegreeD, deg_one_chip]
+        CFDiv.degree (D - oneChip (leftEndpoint B)) = 2 * (a : ℤ) - 1 := by
+      rw [CFDiv.degree.map_sub, hDegreeD, deg_one_chip]
     have hDegreeRight :
-        deg (D - oneChip (rightEndpoint B)) = 2 * (a : ℤ) - 1 := by
-      rw [deg.map_sub, hDegreeD, deg_one_chip]
+        CFDiv.degree (D - oneChip (rightEndpoint B)) = 2 * (a : ℤ) - 1 := by
+      rw [CFDiv.degree.map_sub, hDegreeD, deg_one_chip]
     have hDegreeBoth :
-        deg (D - oneChip (leftEndpoint B) - oneChip (rightEndpoint B)) =
+        CFDiv.degree (D - oneChip (leftEndpoint B) - oneChip (rightEndpoint B)) =
           2 * (a : ℤ) - 2 := by
-      rw [deg.map_sub, hDegreeLeft, deg_one_chip]
+      rw [CFDiv.degree.map_sub, hDegreeLeft, deg_one_chip]
       omega
     have hRankD : rank B.graph D = 2 * (a : ℤ) - (g : ℤ) := by
       have h := (rank_nonspecial_range (banana_graph_connected B) D).2.2 (by

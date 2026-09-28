@@ -268,7 +268,7 @@ theorem theta_negative_path_pair_rank_data
     marks_not_linearEquiv (by omega) B huv
   have hReduced := degree_and_rank_eq_of_rankDelta_neg_genus_two M D
     (graphConnected B) B.genus_graph hDistinct hNeg
-  change deg D = 2 ∧ rank B.graph D = 0 at hReduced
+  change CFDiv.degree D = 2 ∧ rank B.graph D = 0 at hReduced
   have hRankD : rank B.graph D = 0 := hReduced.2
   have hDeletions :=
     (rankDelta_neg_iff_rank_zero_deletions M D hRankD).mp hNeg

@@ -348,7 +348,10 @@ theorem follows_capsOf_rowsOf {n deg : ℕ} {M : ℕ → ℕ → ℕ}
       Follows (capsOf deg M i len) (rowsOf M i len) := by
   intro len
   induction len with
-  | zero => intro i _; simp [capsOf, rowsOf]; exact Follows.nil
+  | zero =>
+      intro i _
+      change Follows [] []
+      exact Follows.nil
   | succ len ih =>
       intro i hSum
       have hi : i < n := by omega

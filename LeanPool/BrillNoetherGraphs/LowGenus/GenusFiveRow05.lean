@@ -450,8 +450,8 @@ theorem rowDivisor_effective (d : DegSpec 8 12) : effective (rowDivisor d) :=
       (eff_one_chip _))
     (eff_one_chip _)
 
-theorem rowDivisor_degree (d : DegSpec 8 12) : deg (rowDivisor d) = 4 := by
-  simp only [rowDivisor, deg.map_add, d.deg_coreClassDivisor, sum_chipWeight,
+theorem rowDivisor_degree (d : DegSpec 8 12) : CFDiv.degree (rowDivisor d) = 4 := by
+  simp only [rowDivisor, CFDiv.degree.map_add, d.deg_coreClassDivisor, sum_chipWeight,
     deg_one_chip]
   norm_num
 
@@ -693,8 +693,10 @@ theorem lbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row05Core) (v : Fin 8) :
     (by simp [heightLB]) (by simp [heightLB])
   rw [baseWeight_eq hCore]
   fin_cases v
-  all_goals simp [lbCoeff, contribForm, heightLB, chipWeight, zeroChip,
-    markL, markR, hT3, hH3, hT8, hH8]
+  all_goals simp only [chipWeight, Fin.zero_eta, Fin.isValue, Fin.reduceEq, ↓reduceIte, markL,
+      zero_ne_one, ite_self, add_zero, markR, contribForm, heightLB, one_ne_zero,
+      tailContribution_same, zero_add, lbCoeff, Fin.mk_one, hT3, headContribution_same,
+      zeroChip, add_left_inj, Fin.reduceFinMk, hH3, hT8, hH8]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
   all_goals (try simp_all)
@@ -800,8 +802,10 @@ theorem rbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row05Core)
     (by simp [heightRB]) (by simp [heightRB, markR]; omega)
   rw [baseWeight_eq hCore]
   fin_cases v
-  all_goals simp [rbCoeff, contribForm, heightRB, chipWeight, zeroChip,
-    markL, markR, hT3, hH3, hT8, hH8]
+  all_goals simp only [chipWeight, Fin.zero_eta, Fin.isValue, Fin.reduceEq, ↓reduceIte, markL,
+      zero_ne_one, ite_self, add_zero, markR, contribForm, heightRB, tailContribution_same,
+      headContribution_same, rbCoeff, Fin.mk_one, zero_add, one_ne_zero, hT3, zeroChip,
+      Fin.reduceFinMk, hH3, hT8, tsub_pos_iff_lt, add_left_inj, hH8]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
   all_goals (try simp_all)
@@ -944,9 +948,11 @@ theorem t3Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row05Core)
   simp only [pairAlloc]
   rw [baseWeight_eq hCore]
   fin_cases v
-  all_goals simp [t3Coeff, contribForm, heightT3, chipWeight, zeroChip,
-    positiveChip, transferWeight, indicatorWeight, markL, markR,
-    hT3, hH3, hT8, hH8]
+  all_goals simp only [chipWeight, Fin.zero_eta, Fin.isValue, Fin.reduceEq, ↓reduceIte, markL,
+      zero_ne_one, ite_self, add_zero, markR, transferWeight, indicatorWeight, sub_self,
+      contribForm, heightT3, tailContribution_same, headContribution_same, t3Coeff, Fin.mk_one,
+      zero_add, zero_sub, Int.reduceNeg, one_ne_zero, hT3, zeroChip, Fin.reduceFinMk,
+      positiveChip, add_left_inj, sub_zero, hH3, hT8, hH8, tsub_lt_self_iff]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
   all_goals (try simp_all)
@@ -1128,9 +1134,11 @@ theorem t4Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row05Core)
   simp only [pairAlloc]
   rw [baseWeight_eq hCore]
   fin_cases v
-  all_goals simp [t4Coeff, contribForm, heightT4, chipWeight, zeroChip,
-    positiveChip, transferWeight, indicatorWeight, markL, markR,
-    hT3, hH3, hT8, hH8]
+  all_goals simp only [chipWeight, Fin.zero_eta, Fin.isValue, Fin.reduceEq, ↓reduceIte, markL,
+      zero_ne_one, ite_self, add_zero, markR, transferWeight, indicatorWeight, sub_self,
+      contribForm, heightT4, tailContribution_same, headContribution_same, t4Coeff, Fin.mk_one,
+      zero_add, zero_sub, Int.reduceNeg, one_ne_zero, hT3, zeroChip, Fin.reduceFinMk,
+      positiveChip, add_left_inj, sub_zero, hH3, hT8, hH8, tsub_lt_self_iff]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
   all_goals (try simp_all)

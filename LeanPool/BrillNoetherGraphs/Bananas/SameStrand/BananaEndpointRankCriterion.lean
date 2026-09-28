@@ -108,13 +108,13 @@ theorem banana_rank_one_of_endpoint_residuals {g : ℕ} (B : Banana g)
     omega
   have hRankN := rank_bananaNormalForm B a b E hE (by omega) hb hBound
   have hRankD : rank B.graph D =
-      max (min a b) (a + b + deg E - (g : ℤ)) := by
+      max (min a b) (a + b + CFDiv.degree E - (g : ℤ)) := by
     rw [rank_eq_of_linear_equiv B.graph hDN]
     exact hRankN
-  by_cases hLarge : (g : ℤ) < a + deg E
+  by_cases hLarge : (g : ℤ) < a + CFDiv.degree E
   · rw [hRankD]
     omega
-  · have haBound : a + deg E ≤ (g : ℤ) := by omega
+  · have haBound : a + CFDiv.degree E ≤ (g : ℤ) := by omega
     have hRightN : 0 ≤ rank B.graph
         (bananaNormalForm B a (b - 1) E) := by
       rw [← bananaNormalForm_sub_rightEndpoint]

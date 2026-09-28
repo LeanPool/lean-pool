@@ -502,10 +502,11 @@ private theorem nonempty_directedCycle_of_repeat (O : CFOrientation G) (l : List
 /-- **Walking backwards inside a finite set produces a cycle.** Combine
 `exists_isChain_of_backward_step` — which makes an `R`-chain longer than `Fintype.card V` —
 with `nonempty_relCycle_of_repeat`, which turns its unavoidable repeat into a cycle. -/
-theorem nonempty_relCycle_of_backward_step {V : Type*} [Fintype V] {R : V → V → Prop}
+theorem nonempty_relCycle_of_backward_step {V : Type*} [Finite V] {R : V → V → Prop}
     (hirr : ∀ v : V, ¬ R v v) {P : V → Prop} (step : ∀ v, P v → ∃ u, P u ∧ R u v)
     {v₀ : V} (h₀ : P v₀) : Nonempty (RelCycle R) := by
   classical
+  let := Fintype.ofFinite V
   have : Nonempty V := ⟨v₀⟩
   obtain ⟨l, hlen, hchain, -⟩ := exists_isChain_of_backward_step step h₀ (Fintype.card V)
   have hnd : ¬ l.Nodup := fun hnd => by
@@ -520,7 +521,7 @@ theorem nonempty_relCycle_of_backward_step {V : Type*} [Fintype V] {R : V → V 
 /-- **Walking forwards inside a finite set produces a cycle**, the mirror image of
 `nonempty_relCycle_of_backward_step` obtained by running it on the opposite relation and
 reading the resulting cycle backwards (`RelCycle.op`). -/
-theorem nonempty_relCycle_of_forward_step {V : Type*} [Fintype V] {R : V → V → Prop}
+theorem nonempty_relCycle_of_forward_step {V : Type*} [Finite V] {R : V → V → Prop}
     (hirr : ∀ v : V, ¬ R v v) {P : V → Prop} (step : ∀ v, P v → ∃ w, P w ∧ R v w)
     {v₀ : V} (h₀ : P v₀) : Nonempty (RelCycle R) :=
   (nonempty_relCycle_of_backward_step (R := fun u v => R v u) hirr step h₀).map RelCycle.op

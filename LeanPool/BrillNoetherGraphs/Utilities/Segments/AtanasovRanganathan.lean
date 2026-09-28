@@ -57,7 +57,7 @@ form needed both for the genus-four `g^1_3` and the genus-five `g^1_4` in the
 Atanasov--Ranganathan argument. -/
 theorem bnExists_one_of_reaches_off_support
     (D : CFDiv G) (hEffective : effective D) {degree : ℤ}
-    (hDegree : deg D = degree)
+    (hDegree : CFDiv.degree D = degree)
     (hOffSupport : ∀ vertex : G.V, D vertex = 0 →
       StrongSeparator.Reaches G D vertex) :
     BNExists G 1 degree :=
@@ -67,7 +67,7 @@ theorem bnExists_one_of_reaches_off_support
 /-- Genus-four specialization retained under its original name for existing
 configuration proofs. -/
 theorem bnExists_one_three_of_reaches_off_support
-    (D : CFDiv G) (hEffective : effective D) (hDegree : deg D = 3)
+    (D : CFDiv G) (hEffective : effective D) (hDegree : CFDiv.degree D = 3)
     (hOffSupport : ∀ vertex : G.V, D vertex = 0 →
       StrongSeparator.Reaches G D vertex) :
     BNExists G 1 3 :=

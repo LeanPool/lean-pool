@@ -62,6 +62,7 @@ universe u v
 section EquivImage
 variable {α : Type u} {β : Type v} [DecidableEq α] [DecidableEq β]
 
+omit [DecidableEq α] in
 theorem mem_image_equiv_apply (f : α ≃ β) (S : Finset α) (x : α) :
     f x ∈ S.image f ↔ x ∈ S := by
   constructor
@@ -71,10 +72,12 @@ theorem mem_image_equiv_apply (f : α ≃ β) (S : Finset α) (x : α) :
   · intro h
     exact Finset.mem_image_of_mem f h
 
+omit [DecidableEq α] in
 theorem mem_image_equiv (f : α ≃ β) (S : Finset α) (y : β) :
     y ∈ S.image f ↔ f.symm y ∈ S := by
   rw [← mem_image_equiv_apply f S (f.symm y), Equiv.apply_symm_apply]
 
+omit [DecidableEq β] in
 theorem mem_image_equiv_symm (f : α ≃ β) (T : Finset β) (x : α) :
     x ∈ T.image f.symm ↔ f x ∈ T := by
   constructor
@@ -97,15 +100,18 @@ theorem image_equiv_symm_image (f : α ≃ β) (T : Finset β) :
     exact Finset.mem_image.mpr
       ⟨f.symm y, Finset.mem_image.mpr ⟨y, h, rfl⟩, f.apply_symm_apply y⟩
 
+omit [DecidableEq α] in
 theorem image_equiv_univ [Fintype α] [Fintype β] (f : α ≃ β) :
     (Finset.univ : Finset α).image f = Finset.univ := by
   ext y
   simp only [Finset.mem_image, Finset.mem_univ, true_and, iff_true]
   exact ⟨f.symm y, f.apply_symm_apply y⟩
 
+omit [DecidableEq β] in
 theorem image_equiv_symm_ne_univ [Fintype α] [Fintype β] (f : α ≃ β)
     {T : Finset β} (h : T ≠ Finset.univ) :
     T.image f.symm ≠ Finset.univ := by
+  classical
   intro hEq
   apply h
   rw [← image_equiv_symm_image f T, hEq, image_equiv_univ]

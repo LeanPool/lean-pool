@@ -48,14 +48,14 @@ theorem adj_map {u v : Fin n} :
   · have ht := r.tail_eq e
     have hh := r.head_eq e
     by_cases hr : r.reversed e
-    · simp [hr] at ht hh
+    · simp only [ite_eq_left hr] at ht hh
       rcases huv with huv | huv
       · exact Or.inr ⟨hh.trans (congrArg r.coreEquiv huv.1),
           ht.trans (congrArg r.coreEquiv huv.2)⟩
       · exact Or.inl ⟨ht.trans (congrArg r.coreEquiv huv.1),
           hh.trans (congrArg r.coreEquiv huv.2)⟩
     · have hr' : r.reversed e = false := Bool.eq_false_of_not_eq_true hr
-      simp [hr'] at ht hh
+      simp only [ite_eq_right hr] at ht hh
       rcases huv with huv | huv
       · exact Or.inl ⟨ht.trans (congrArg r.coreEquiv huv.1),
           hh.trans (congrArg r.coreEquiv huv.2)⟩
@@ -78,14 +78,14 @@ theorem adj_map_iff {u v : Fin n} :
     have hh := r.head_eq e
     rw [hfe] at ht hh
     by_cases hr : r.reversed e
-    · simp [hr] at ht hh
+    · simp only [ite_eq_left hr] at ht hh
       rcases huv with huv | huv
       · exact Or.inr ⟨r.coreEquiv.injective (huv.1.symm.trans ht) |>.symm,
           r.coreEquiv.injective (huv.2.symm.trans hh) |>.symm⟩
       · exact Or.inl ⟨r.coreEquiv.injective (huv.1.symm.trans hh) |>.symm,
           r.coreEquiv.injective (huv.2.symm.trans ht) |>.symm⟩
     · have hr' : r.reversed e = false := Bool.eq_false_of_not_eq_true hr
-      simp [hr'] at ht hh
+      simp only [ite_eq_right hr] at ht hh
       rcases huv with huv | huv
       · exact Or.inl ⟨r.coreEquiv.injective (huv.1.symm.trans ht) |>.symm,
           r.coreEquiv.injective (huv.2.symm.trans hh) |>.symm⟩
@@ -270,7 +270,7 @@ noncomputable def faceRelabeling
       rw [faceClassEquiv_apply r length source_nonempty hForest hNotLoopy]
       apply Subtype.ext
       have ht := r.tail_eq e
-      simp [hr] at ht
+      simp only [ite_eq_left hr] at ht
       change compFold target (zeroSlots (r.reindexedLength length))
           (r.coreEquiv (source.head e)) =
         compFold target (zeroSlots (r.reindexedLength length))
@@ -281,7 +281,7 @@ noncomputable def faceRelabeling
       rw [faceClassEquiv_apply r length source_nonempty hForest hNotLoopy]
       apply Subtype.ext
       have ht := r.tail_eq e
-      simp [hr'] at ht
+      simp only [ite_eq_right hr] at ht
       change compFold target (zeroSlots (r.reindexedLength length))
           (r.coreEquiv (source.tail e)) =
         compFold target (zeroSlots (r.reindexedLength length))
@@ -294,7 +294,7 @@ noncomputable def faceRelabeling
       rw [faceClassEquiv_apply r length source_nonempty hForest hNotLoopy]
       apply Subtype.ext
       have hh := r.head_eq e
-      simp [hr] at hh
+      simp only [ite_eq_left hr] at hh
       change compFold target (zeroSlots (r.reindexedLength length))
           (r.coreEquiv (source.tail e)) =
         compFold target (zeroSlots (r.reindexedLength length))
@@ -305,7 +305,7 @@ noncomputable def faceRelabeling
       rw [faceClassEquiv_apply r length source_nonempty hForest hNotLoopy]
       apply Subtype.ext
       have hh := r.head_eq e
-      simp [hr'] at hh
+      simp only [ite_eq_right hr] at hh
       change compFold target (zeroSlots (r.reindexedLength length))
           (r.coreEquiv (source.head e)) =
         compFold target (zeroSlots (r.reindexedLength length))

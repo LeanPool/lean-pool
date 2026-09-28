@@ -507,12 +507,12 @@ theorem numEdges_small_eq (small : Spec n p) (a b : small.Vertex) (hab : a ≠ b
     have hswap : ¬ (small.stepLeft j i = b ∧ small.stepRight j i = a) := by
       rintro ⟨hl, hr⟩
       exact h2 ⟨hr, hl⟩
-    simp [h1]
-    exact fun _ => hab
+    simp only [h1, hab, hab.symm, true_and, true_or, and_false,
+      ite_true, ite_false, add_zero]
   · by_cases h2 : small.stepRight j i = a ∧ small.stepLeft j i = b
     · have hswap : small.stepLeft j i = b ∧ small.stepRight j i = a := ⟨h2.2, h2.1⟩
-      simp [h2]
-      exact fun _ => hab
+      simp only [h2, hab, hab.symm, true_and, and_false, false_or,
+        ite_true, ite_false, zero_add]
     · have hswap : ¬ (small.stepLeft j i = b ∧ small.stepRight j i = a) := by
         rintro ⟨hl, hr⟩
         exact h2 ⟨hr, hl⟩

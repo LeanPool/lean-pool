@@ -265,7 +265,7 @@ private theorem sum_fibres (c : GraphContractionCertificate G H)
 /-- Fibre summation preserves total degree. -/
 @[simp] theorem deg_pushDiv (c : GraphContractionCertificate G H)
     (D : CFDiv G) :
-    deg (c.pushDiv D) = deg D := by
+    CFDiv.degree (c.pushDiv D) = CFDiv.degree D := by
   change (∑ b : H.V, ∑ x : G.V,
     if c.vertexMap x = b then D x else 0) = ∑ x : G.V, D x
   exact c.sum_fibres D
@@ -468,7 +468,7 @@ theorem rank_ge_one_pushDiv_of_pushableRepresentatives
 /-- A compact one-way Brill--Noether package for quotient certificates. -/
 theorem bnExists_pushDiv_of_pushableRepresentatives
     (c : GraphContractionCertificate G H) (hValid : c.Valid)
-    (D : CFDiv G) (d : ℤ) (hDegree : deg D = d)
+    (D : CFDiv G) (d : ℤ) (hDegree : CFDiv.degree D = d)
     (hReach : c.PushableReachabilityAtRepresentatives D) :
     BNExists H 1 d :=
   ⟨c.pushDiv D, (c.deg_pushDiv D).trans hDegree,

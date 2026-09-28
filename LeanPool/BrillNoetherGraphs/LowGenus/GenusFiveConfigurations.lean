@@ -56,8 +56,8 @@ theorem fourChipDivisor_effective (first second third fourth : G.V) :
     (eff_one_chip fourth)
 
 @[simp] theorem deg_fourChipDivisor (first second third fourth : G.V) :
-    deg (fourChipDivisor first second third fourth) = 4 := by
-  simp [fourChipDivisor, deg.map_add, deg_one_chip]
+    CFDiv.degree (fourChipDivisor first second third fourth) = 4 := by
+  simp [fourChipDivisor, CFDiv.degree.map_add, deg_one_chip]
 
 theorem fourChipDivisor_has_chip_first (first second third fourth : G.V) :
     1 ≤ fourChipDivisor first second third fourth first := by
@@ -118,7 +118,7 @@ structure DegreeFourDharPencil (G : CFGraph) where
   its support. -/
   divisor : CFDiv G
   divisor_effective : effective divisor
-  divisor_degree : deg divisor = 4
+  divisor_degree : CFDiv.degree divisor = 4
   /-- For each vertex outside the divisor support, a configuration label and a verified Dhar
   move reaching that vertex. -/
   moveOffSupport : ∀ vertex : G.V, divisor vertex = 0 →
@@ -134,7 +134,7 @@ not add a mathematical hypothesis: rank one says that `D - [v]` is winnable
 at every vertex, and the definitions of winnability and principality expose
 an effective representative and an integral firing script. -/
 noncomputable def ofEffectiveRankOne (D : CFDiv G)
-    (hEffective : effective D) (hDegree : deg D = 4)
+    (hEffective : effective D) (hDegree : CFDiv.degree D = 4)
     (hRank : rank G D ≥ 1) : DegreeFourDharPencil G where
   divisor := D
   divisor_effective := hEffective

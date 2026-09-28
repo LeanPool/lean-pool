@@ -152,7 +152,7 @@ theorem effective_mapDiv_iff (equivalence : LaplacianEquiv G H)
 /-- Divisor degree is unchanged by relabeling vertices. -/
 @[simp] theorem deg_mapDiv (equivalence : LaplacianEquiv G H)
     (D : CFDiv G) :
-    deg (equivalence.mapDiv D) = deg D := by
+    CFDiv.degree (equivalence.mapDiv D) = CFDiv.degree D := by
   change (∑ y : H.V, D (equivalence.toEquiv.symm y)) = ∑ x : G.V, D x
   exact Fintype.sum_equiv equivalence.toEquiv.symm _ _ (fun _ => rfl)
 
@@ -236,7 +236,7 @@ theorem rank_geq_mapDiv_iff (equivalence : LaplacianEquiv G H)
     let E' : CFDiv G := equivalence.symm.mapDiv E
     have hE'Effective : effective E' :=
       (equivalence.symm.effective_mapDiv_iff E).2 hE.1
-    have hE'Degree : deg E' = k := by
+    have hE'Degree : CFDiv.degree E' = k := by
       simpa [E'] using hE.2
     have hWin : winnable G (D - E') := h E' ⟨hE'Effective, hE'Degree⟩
     have hMapped := equivalence.winnable_mapDiv hWin

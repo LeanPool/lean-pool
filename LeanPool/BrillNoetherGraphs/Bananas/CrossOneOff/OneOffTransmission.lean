@@ -108,7 +108,7 @@ theorem rankDelta_oneOff_rightEndpoint_nsmul_eq_one
   have hE : IsSemibreak B E := by
     exact isSemibreak_one_strand_chip B alpha one hOne
   have hZero : IsSemibreak B (0 : CFDiv B.graph) := isSemibreak_zero B
-  have hdegE : deg E = 1 := by simp [E, deg_one_chip]
+  have hdegE : CFDiv.degree E = 1 := by simp [E, deg_one_chip]
   have hDDef : bananaNormalForm B 0 (c : ℤ) 0 =
       c • oneChip (rightEndpoint B) := by
     unfold bananaNormalForm
@@ -126,14 +126,16 @@ theorem rankDelta_oneOff_rightEndpoint_nsmul_eq_one
     rw [nsmul_eq_mul]
     ring
   have hRankDForm := rank_bananaNormalForm B 0 (c : ℤ) 0 hZero
-    (by omega) (by omega) (by simp; exact_mod_cast hcg)
+    (by omega) (by omega)
+    (by simp only [map_zero, add_zero, Nat.cast_le]; exact_mod_cast hcg)
   have hRankD : rank B.graph (c • oneChip (rightEndpoint B)) = 0 := by
     rw [← hDDef]
     rw [hRankDForm]
     simp
     omega
   have hRankDUForm := rank_bananaNormalForm B (-1) (c : ℤ) 0 hZero
-    (by omega) (by omega) (by simp; exact_mod_cast hcg)
+    (by omega) (by omega)
+    (by simp only [map_zero, add_zero, Nat.cast_le]; exact_mod_cast hcg)
   have hRankDU : rank B.graph
       (c • oneChip (rightEndpoint B) - oneChip (leftEndpoint B)) = -1 := by
     rw [← hDUDef]

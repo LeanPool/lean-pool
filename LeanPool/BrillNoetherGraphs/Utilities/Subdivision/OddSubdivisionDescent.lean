@@ -238,7 +238,7 @@ the fine vertices that already come from the coarse graph and those that are
 genuine chips. -/
 private theorem rank_ge_nearest_of_split {ι : Type*} [Fintype ι]
     (ys : ι → (spec.scale N hN).Vertex) (D₀ : CFDiv spec.graph) (r : ℤ)
-    (P : ι → Prop) [DecidablePred P]
+    (P : ι → Prop)
     (chips : {i : ι // P i} → spec.Chip N) (lefts : {i : ι // ¬ P i} → spec.Vertex)
     (hchips : ∀ i : {i : ι // P i}, spec.roundData N hN (ys i.1) = Sum.inr (chips i))
     (hlefts : ∀ i : {i : ι // ¬ P i}, spec.roundData N hN (ys i.1) = Sum.inl (lefts i))
@@ -246,6 +246,7 @@ private theorem rank_ge_nearest_of_split {ι : Type*} [Fintype ι]
     (hrank : rank (spec.scale N hN).graph
       (spec.embed N hN D₀ + ∑ i, oneChip (ys i)) ≥ r) :
     rank spec.graph (D₀ + ∑ i, oneChip (spec.nearest N hN (ys i))) ≥ r := by
+  classical
   have hys_right : ∀ i : {i : ι // P i}, ys i.1 = (chips i).fineVertex hN :=
     fun i => spec.eq_fineVertex_of_roundData_eq_inr N hN (hchips i)
   have hys_left : ∀ i : {i : ι // ¬ P i}, ys i.1 = spec.fineOf N hN (lefts i) :=
@@ -345,9 +346,9 @@ degree-two coarse divisor completing `E` to rank at least `r`, whenever `N` is
 odd. -/
 private theorem exists_coarse_completion_two (hodd : Odd N) {r : ℤ}
     (E : CFDiv spec.graph) (F : CFDiv (spec.scale N hN).graph)
-    (hFeff : effective F) (hFdeg : deg F = 2)
+    (hFeff : effective F) (hFdeg : CFDiv.degree F = 2)
     (hrank : rank (spec.scale N hN).graph (spec.embed N hN E + F) ≥ r) :
-    ∃ B : CFDiv spec.graph, effective B ∧ deg B = 2 ∧ rank spec.graph (E + B) ≥ r := by
+    ∃ B : CFDiv spec.graph, effective B ∧ CFDiv.degree B = 2 ∧ rank spec.graph (E + B) ≥ r := by
   obtain ⟨y₁, y₂, hF⟩ := exists_chip_pair_of_effective_deg_two _ F hFeff hFdeg
   subst hF
   have hsum2 : (∑ i : Fin 2, oneChip (![y₁, y₂] i) : CFDiv (spec.scale N hN).graph)
@@ -372,9 +373,9 @@ private theorem exists_coarse_completion_two (hodd : Odd N) {r : ℤ}
     intro v
     exact add_nonneg (eff_one_chip (spec.nearest N hN y₁) v)
       (eff_one_chip (spec.nearest N hN y₂) v)
-  have hdegB : deg (oneChip (spec.nearest N hN y₁) + oneChip (spec.nearest N hN y₂)
+  have hdegB : CFDiv.degree (oneChip (spec.nearest N hN y₁) + oneChip (spec.nearest N hN y₂)
       : CFDiv spec.graph) = 2 := by
-    rw [deg.map_add, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
     norm_num
   exact ⟨_, heff, hdegB, hcoarse⟩
 
@@ -383,9 +384,9 @@ private theorem exists_coarse_completion_two (hodd : Odd N) {r : ℤ}
 `N ≥ 1`. -/
 private theorem exists_coarse_completion_one {r : ℤ}
     (E : CFDiv spec.graph) (F : CFDiv (spec.scale N hN).graph)
-    (hFeff : effective F) (hFdeg : deg F = 1)
+    (hFeff : effective F) (hFdeg : CFDiv.degree F = 1)
     (hrank : rank (spec.scale N hN).graph (spec.embed N hN E + F) ≥ r) :
-    ∃ B : CFDiv spec.graph, effective B ∧ deg B = 1 ∧ rank spec.graph (E + B) ≥ r := by
+    ∃ B : CFDiv spec.graph, effective B ∧ CFDiv.degree B = 1 ∧ rank spec.graph (E + B) ≥ r := by
   obtain ⟨y, hF⟩ := effective_degree_one_eq_one_chip hFeff hFdeg
   subst hF
   have hsum1 : (∑ i : Fin 1, oneChip (![y] i) : CFDiv (spec.scale N hN).graph)
@@ -414,8 +415,8 @@ theorem bnRankGe_of_bnRankGe_scale_two (hodd : Odd N) {r d k : ℤ} (hd : d = r 
   obtain ⟨D', _hD'eff, hD'deg, hD'rank, hres⟩ :=
     (bnRankGe_iff_contained _ r d k).mp h (spec.embed N hN E)
       (spec.effective_embed N hN hE) (by rw [spec.deg_embed N hN, hdeg])
-  have hFdeg : deg (D' - spec.embed N hN E) = 2 := by
-    rw [deg.map_sub, hD'deg, spec.deg_embed N hN, hdeg, hd]
+  have hFdeg : CFDiv.degree (D' - spec.embed N hN E) = 2 := by
+    rw [CFDiv.degree.map_sub, hD'deg, spec.deg_embed N hN, hdeg, hd]
     ring
   have hrank' : rank (spec.scale N hN).graph
       (spec.embed N hN E + (D' - spec.embed N hN E)) ≥ r := by
@@ -424,7 +425,7 @@ theorem bnRankGe_of_bnRankGe_scale_two (hodd : Odd N) {r d k : ℤ} (hd : d = r 
   obtain ⟨B, hBeff, hBdeg, hBrank⟩ :=
     spec.exists_coarse_completion_two N hN hodd E _ hres hFdeg hrank'
   refine ⟨E + B, ?_, hBrank, ?_⟩
-  · rw [deg.map_add, hdeg, hBdeg, hd]
+  · rw [CFDiv.degree.map_add, hdeg, hBdeg, hd]
   · rw [show E + B - E = B by abel]
     exact winnable_of_effective spec.graph _ hBeff
 
@@ -436,8 +437,8 @@ theorem bnRankGe_of_bnRankGe_scale_one {r d k : ℤ} (hd : d = r + k + 1)
   obtain ⟨D', _hD'eff, hD'deg, hD'rank, hres⟩ :=
     (bnRankGe_iff_contained _ r d k).mp h (spec.embed N hN E)
       (spec.effective_embed N hN hE) (by rw [spec.deg_embed N hN, hdeg])
-  have hFdeg : deg (D' - spec.embed N hN E) = 1 := by
-    rw [deg.map_sub, hD'deg, spec.deg_embed N hN, hdeg, hd]
+  have hFdeg : CFDiv.degree (D' - spec.embed N hN E) = 1 := by
+    rw [CFDiv.degree.map_sub, hD'deg, spec.deg_embed N hN, hdeg, hd]
     ring
   have hrank' : rank (spec.scale N hN).graph
       (spec.embed N hN E + (D' - spec.embed N hN E)) ≥ r := by
@@ -446,7 +447,7 @@ theorem bnRankGe_of_bnRankGe_scale_one {r d k : ℤ} (hd : d = r + k + 1)
   obtain ⟨B, hBeff, hBdeg, hBrank⟩ :=
     spec.exists_coarse_completion_one N hN E _ hres hFdeg hrank'
   refine ⟨E + B, ?_, hBrank, ?_⟩
-  · rw [deg.map_add, hdeg, hBdeg, hd]
+  · rw [CFDiv.degree.map_add, hdeg, hBdeg, hd]
   · rw [show E + B - E = B by abel]
     exact winnable_of_effective spec.graph _ hBeff
 
@@ -489,7 +490,7 @@ one.  This is the exact combinatorial input that the algebraic degree-five
 argument of the research notes is meant to produce for genus-five graphs. -/
 def OddPairWitness (G : CFGraph) : Prop :=
   ∀ x y : G.V, ∃ (N : ℕ) (hN : 0 < N), Odd N ∧
-    ∃ F : CFDiv (regularSubdivision G N hN), effective F ∧ deg F = 2 ∧
+    ∃ F : CFDiv (regularSubdivision G N hN), effective F ∧ CFDiv.degree F = 2 ∧
       rank (regularSubdivision G N hN)
         (oneChip (regularSubdivisionVertex G N hN x) +
           oneChip (regularSubdivisionVertex G N hN y) + F) ≥ 1
@@ -525,7 +526,7 @@ theorem bnRankGe_one_four_of_oddPairWitness (G : CFGraph) (h : OddPairWitness G)
     (UnitSubdivisionPresentation.spec G).exists_coarse_completion_two N hN hodd
       (r := 1) E F hFeff hFdeg (by rw [hembed]; exact hFrank)
   refine ⟨E + B, ?_, hBrank, ?_⟩
-  · rw [deg.map_add, hdeg, hBdeg]
+  · rw [CFDiv.degree.map_add, hdeg, hBdeg]
     norm_num
   · rw [show E + B - E = B by abel]
     exact winnable_of_effective _ _ hBeff

@@ -36,9 +36,9 @@ theorem mem_rankSupport_canonical_sub_markedTwist_iff
         (oneChip w + (n : ℤ) • (oneChip M.u - oneChip M.v)) := by
   let X : CFDiv M.graph :=
     oneChip w + (n : ℤ) • (oneChip M.u - oneChip M.v)
-  have hDeg : deg X = 1 := by
+  have hDeg : CFDiv.degree X = 1 := by
     dsimp [X]
-    rw [deg.map_add, deg_one_chip, map_zsmul, deg.map_sub,
+    rw [CFDiv.degree.map_add, deg_one_chip, map_zsmul, CFDiv.degree.map_sub,
       deg_one_chip, deg_one_chip]
     norm_num
   have hRR := riemann_roch_for_graphs hconn X

@@ -109,7 +109,7 @@ def rowDivisor (d : DegSpec 8 12) : CFDiv d.graph :=
 theorem rowDivisor_effective (d : DegSpec 8 12) : effective (rowDivisor d) :=
   d.coreClassDivisor_effective chipWeight chipWeight_nonneg
 
-theorem rowDivisor_degree (d : DegSpec 8 12) : deg (rowDivisor d) = 4 := by
+theorem rowDivisor_degree (d : DegSpec 8 12) : CFDiv.degree (rowDivisor d) = 4 := by
   rw [rowDivisor, d.deg_coreClassDivisor, sum_chipWeight]
 
 /-! ## The configuration-2 tripod at the hub `2` -/
@@ -589,12 +589,18 @@ theorem bananaCoefficient_eq_one (d : DegSpec 8 12)
       bananaCoefficient 1 d v := by
   fin_cases v
   all_goals
-    simp +decide [heightEndpointSum, bananaCoefficient, allocatedWeight,
-      transferWeight, indicatorWeight, chipWeight, shiftWeight, rawHeight,
-      armSlotA, armSlotB, midSlot, banSlotP, banSlotQ, tailSlot, banChip,
-      tailLedger, armMin, parMin, armHeight, midHeight, endHeight,
-      ConfigurationThreeChain.forward, fwd, positiveChip, zeroChip, hCore,
-      row06Core, Fin.sum_univ_succ, reduceIte]
+    simp +decide only [allocatedWeight, chipWeight, ↓reduceIte, armSlotA, Fin.isValue,
+        transferWeight, indicatorWeight, sub_self, ite_self, add_zero, armSlotB, tailSlot,
+        midSlot, midHeight, endHeight, armMin, parMin, banSlotP, banSlotQ, Nat.min_assoc,
+        le_add_iff_nonneg_right, le_inf_iff, zero_le, and_self, inf_of_le_right, lt_min_iff,
+        min_lt_iff, lt_self_iff_false, false_or, lt_add_iff_pos_right, sub_zero,
+        heightEndpointSum, hCore, row06Core, Fin.zero_eta, rawHeight, armHeight, banChip,
+        Fin.sum_univ_succ, Matrix.cons_val_succ, Fin.succ_zero_eq_one, Fin.succ_one_eq_two,
+        zero_add, Finset.univ_unique, Fin.default_eq_zero, Matrix.cons_val_fin_one,
+        Fin.reduceEq, Finset.sum_const_zero, bananaCoefficient, shiftWeight, fwd,
+        ConfigurationThreeChain.forward, add_right_inj, Fin.mk_one, Fin.reduceSucc, zeroChip,
+        tailLedger, zero_sub, Int.reduceNeg, Fin.reduceFinMk, headContribution_same,
+        tailContribution_same, positiveChip, add_left_inj]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
   all_goals ring
@@ -605,13 +611,19 @@ theorem bananaCoefficient_eq_five (d : DegSpec 8 12)
       bananaCoefficient 5 d v := by
   fin_cases v
   all_goals
-    simp +decide [heightEndpointSum, bananaCoefficient, allocatedWeight,
-      transferWeight, indicatorWeight, chipWeight, shiftWeight, rawHeight,
-      armSlotA, armSlotB, midSlot, banSlotP, banSlotQ, tailSlot, banChip,
-      tailLedger, armMin, parMin, armHeight, midHeight, endHeight,
-      ConfigurationThreeChain.forward, ConfigurationThreeChain.reverse, fwd,
-      rev, positiveChip, zeroChip, hCore, row06Core, Fin.sum_univ_succ,
-      reduceIte]
+    simp +decide only [allocatedWeight, chipWeight, ↓reduceIte, armSlotA, Fin.isValue,
+        transferWeight, indicatorWeight, zero_sub, Int.reduceNeg, armSlotB, sub_self, ite_self,
+        add_zero, tailSlot, midSlot, midHeight, endHeight, armMin, parMin, banSlotP, banSlotQ,
+        Nat.min_assoc, le_add_iff_nonneg_right, le_inf_iff, zero_le, and_self, inf_of_le_right,
+        lt_min_iff, min_lt_iff, lt_self_iff_false, false_or, lt_add_iff_pos_right,
+        heightEndpointSum, hCore, row06Core, Fin.zero_eta, rawHeight, armHeight, banChip,
+        Fin.sum_univ_succ, tailContribution_same, Matrix.cons_val_succ, Fin.succ_zero_eq_one,
+        Fin.succ_one_eq_two, zero_add, Finset.univ_unique, Fin.default_eq_zero,
+        Matrix.cons_val_fin_one, Fin.reduceEq, Finset.sum_const_zero, bananaCoefficient,
+        positiveChip, fwd, ConfigurationThreeChain.forward, add_left_inj, Fin.mk_one,
+        headContribution_same, Fin.reduceSucc, sub_zero, Fin.reduceFinMk, zeroChip,
+        shiftWeight, tailLedger, rev, ConfigurationThreeChain.reverse, Finset.sum_singleton,
+        add_right_inj]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
   all_goals ring
@@ -622,12 +634,18 @@ theorem bananaCoefficient_eq_six (d : DegSpec 8 12)
       bananaCoefficient 6 d v := by
   fin_cases v
   all_goals
-    simp +decide [heightEndpointSum, bananaCoefficient, allocatedWeight,
-      transferWeight, indicatorWeight, chipWeight, shiftWeight, rawHeight,
-      armSlotA, armSlotB, midSlot, banSlotP, banSlotQ, tailSlot, banChip,
-      tailLedger, armMin, parMin, armHeight, midHeight, endHeight,
-      ConfigurationThreeChain.forward, fwd, positiveChip, zeroChip, hCore,
-      row06Core, Fin.sum_univ_succ, reduceIte]
+    simp +decide only [allocatedWeight, chipWeight, ↓reduceIte, armSlotA, Fin.isValue,
+        transferWeight, indicatorWeight, zero_sub, Int.reduceNeg, armSlotB, sub_self, ite_self,
+        add_zero, tailSlot, midSlot, midHeight, endHeight, armMin, parMin, banSlotP, banSlotQ,
+        Nat.min_assoc, le_add_iff_nonneg_right, le_inf_iff, zero_le, and_self, inf_of_le_right,
+        lt_min_iff, min_lt_iff, lt_self_iff_false, false_or, lt_add_iff_pos_right,
+        heightEndpointSum, hCore, row06Core, Fin.zero_eta, rawHeight, armHeight, banChip,
+        Fin.sum_univ_succ, tailContribution_same, Matrix.cons_val_succ, Fin.succ_zero_eq_one,
+        Fin.succ_one_eq_two, zero_add, Finset.univ_unique, Fin.default_eq_zero,
+        Matrix.cons_val_fin_one, Fin.reduceEq, Finset.sum_const_zero, bananaCoefficient,
+        positiveChip, fwd, ConfigurationThreeChain.forward, add_left_inj, Fin.mk_one,
+        headContribution_same, Fin.reduceSucc, sub_zero, Fin.reduceFinMk, zeroChip,
+        shiftWeight, tailLedger, add_right_inj]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
   all_goals ring

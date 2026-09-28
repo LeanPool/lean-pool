@@ -27,11 +27,11 @@ namespace Bananas
 open Utilities
 
 private theorem linearEquiv_zero_of_rank_nonneg_degree_zero
-    (G : CFGraph) (D : CFDiv G) (hRank : 0 ≤ rank G D) (hDeg : deg D = 0) :
+    (G : CFGraph) (D : CFDiv G) (hRank : 0 ≤ rank G D) (hDeg : CFDiv.degree D = 0) :
     linearEquiv G D 0 := by
   obtain ⟨E, hEff, hDE⟩ := (rank_nonneg_iff_winnable G D).mp
     ((rank_geq_iff G D 0).mpr hRank)
-  have hEDeg : deg E = 0 := by
+  have hEDeg : CFDiv.degree E = 0 := by
     rw [← linear_equiv_preserves_deg G D E hDE, hDeg]
   have hE : E = 0 := eff_degree_zero E hEff hEDeg
   simpa [hE] using hDE
@@ -42,11 +42,11 @@ theorem two_le_degree_of_rankDelta_neg
     (M : TwiceMarked) (D : CFDiv M.graph)
     (hDistinct : ¬ linearEquiv M.graph (oneChip M.u - oneChip M.v) 0)
     (hNeg : rankDelta M D < 0) :
-    2 ≤ deg D := by
+    2 ≤ CFDiv.degree D := by
   by_contra hNot
-  have hDeg : deg D ≤ 1 := by omega
-  have hDuvDeg : deg (D - oneChip M.u - oneChip M.v) < 0 := by
-    rw [deg.map_sub, deg.map_sub, deg_one_chip, deg_one_chip]
+  have hDeg : CFDiv.degree D ≤ 1 := by omega
+  have hDuvDeg : CFDiv.degree (D - oneChip M.u - oneChip M.v) < 0 := by
+    rw [CFDiv.degree.map_sub, CFDiv.degree.map_sub, deg_one_chip, deg_one_chip]
     omega
   have hDuv : rank M.graph (D - oneChip M.u - oneChip M.v) = -1 :=
     rank_neg_one_of_deg_neg M.graph _ hDuvDeg
@@ -57,18 +57,18 @@ theorem two_le_degree_of_rankDelta_neg
     (rank_nonneg_iff_winnable M.graph (D - oneChip M.u)).mp
       ((rank_geq_iff M.graph _ 0).mpr (by omega :
         0 ≤ rank M.graph (D - oneChip M.u)))
-  have hEuDeg : deg Eu = deg D - 1 := by
+  have hEuDeg : CFDiv.degree Eu = CFDiv.degree D - 1 := by
     rw [← linear_equiv_preserves_deg M.graph (D - oneChip M.u) Eu hDuEu]
-    rw [deg.map_sub, deg_one_chip]
-  have hDegLower : 1 ≤ deg D := by
+    rw [CFDiv.degree.map_sub, deg_one_chip]
+  have hDegLower : 1 ≤ CFDiv.degree D := by
     have := deg_of_eff_nonneg Eu hEuEff
     omega
-  have hDegEq : deg D = 1 := by omega
-  have hDuDeg : deg (D - oneChip M.u) = 0 := by
-    rw [deg.map_sub, deg_one_chip, hDegEq]
+  have hDegEq : CFDiv.degree D = 1 := by omega
+  have hDuDeg : CFDiv.degree (D - oneChip M.u) = 0 := by
+    rw [CFDiv.degree.map_sub, deg_one_chip, hDegEq]
     norm_num
-  have hDvDeg : deg (D - oneChip M.v) = 0 := by
-    rw [deg.map_sub, deg_one_chip, hDegEq]
+  have hDvDeg : CFDiv.degree (D - oneChip M.v) = 0 := by
+    rw [CFDiv.degree.map_sub, deg_one_chip, hDegEq]
     norm_num
   have hDuEquiv : linearEquiv M.graph (D - oneChip M.u) 0 :=
     linearEquiv_zero_of_rank_nonneg_degree_zero M.graph _ (by omega) hDuDeg
@@ -87,7 +87,7 @@ theorem degree_eq_two_of_rankDelta_neg_genus_two
     (hGenus : genus M.graph = 2)
     (hDistinct : ¬ linearEquiv M.graph (oneChip M.u - oneChip M.v) 0)
     (hNeg : rankDelta M D < 0) :
-    deg D = 2 := by
+    CFDiv.degree D = 2 := by
   have hLower := two_le_degree_of_rankDelta_neg M D hDistinct hNeg
   let E : CFDiv M.graph :=
     canonicalDivisor M.graph + oneChip M.u + oneChip M.v - D
@@ -95,8 +95,8 @@ theorem degree_eq_two_of_rankDelta_neg_genus_two
     rw [← rankDelta_canonical_dual M hConn D]
     exact hNeg
   have hDualLower := two_le_degree_of_rankDelta_neg M E hDistinct hDualNeg
-  have hEDeg : deg E = 4 - deg D := by
-    simp only [E, deg.map_sub, deg.map_add, degree_of_canonical_divisor,
+  have hEDeg : CFDiv.degree E = 4 - CFDiv.degree D := by
+    simp only [E, CFDiv.degree.map_sub, CFDiv.degree.map_add, degree_of_canonical_divisor,
       deg_one_chip, hGenus]
     norm_num
   omega
@@ -116,9 +116,9 @@ private theorem rank_one_chip_eq_zero_of_not_linearEquiv
     have hUVWin := (rank_ge_one_iff_winnable_sub_one_chip M.graph
       (oneChip M.u)).mp hRank M.v
     obtain ⟨E, hEff, hEquiv⟩ := hUVWin
-    have hEDeg : deg E = 0 := by
+    have hEDeg : CFDiv.degree E = 0 := by
       rw [← linear_equiv_preserves_deg M.graph _ E hEquiv,
-        deg.map_sub, deg_one_chip, deg_one_chip]
+        CFDiv.degree.map_sub, deg_one_chip, deg_one_chip]
       norm_num
     have hZero : E = 0 := eff_degree_zero E hEff hEDeg
     apply hDistinct
@@ -135,11 +135,11 @@ theorem rank_eq_zero_of_rankDelta_neg_genus_two
     (hDistinct : ¬ linearEquiv M.graph (oneChip M.u - oneChip M.v) 0)
     (hNeg : rankDelta M D < 0) :
     rank M.graph D = 0 := by
-  have hDeg : deg D = 2 :=
+  have hDeg : CFDiv.degree D = 2 :=
     degree_eq_two_of_rankDelta_neg_genus_two M D hConn hGenus hDistinct hNeg
   have hRR := riemann_roch_for_graphs hConn D
-  have hKDeg : deg (canonicalDivisor M.graph - D) = 0 := by
-    rw [deg.map_sub, degree_of_canonical_divisor, hGenus, hDeg]
+  have hKDeg : CFDiv.degree (canonicalDivisor M.graph - D) = 0 := by
+    rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hGenus, hDeg]
     norm_num
   have hKLe : rank M.graph (canonicalDivisor M.graph - D) ≤ 0 := by
     by_cases hNonneg : 0 ≤ rank M.graph (canonicalDivisor M.graph - D)
@@ -202,7 +202,7 @@ theorem degree_and_rank_eq_of_rankDelta_neg_genus_two
     (hGenus : genus M.graph = 2)
     (hDistinct : ¬ linearEquiv M.graph (oneChip M.u - oneChip M.v) 0)
     (hNeg : rankDelta M D < 0) :
-    deg D = 2 ∧ rank M.graph D = 0 :=
+    CFDiv.degree D = 2 ∧ rank M.graph D = 0 :=
   ⟨degree_eq_two_of_rankDelta_neg_genus_two M D hConn hGenus hDistinct hNeg,
     rank_eq_zero_of_rankDelta_neg_genus_two M D hConn hGenus hDistinct hNeg⟩
 

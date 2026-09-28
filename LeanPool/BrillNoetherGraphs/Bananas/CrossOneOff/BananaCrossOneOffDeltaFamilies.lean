@@ -72,8 +72,8 @@ theorem rankDelta_crossOneOff_two_interior_boundary_eq_zero
     dsimp [EUV]
     exact isSemibreak_two_distinct_strand_chips B alpha beta pPrev qNext
       hpPrev hqNext hab
-  have hdegE : deg E = 2 := by simp [E, deg.map_add, deg_one_chip]
-  have hdegEUV : deg EUV = 2 := by simp [EUV, deg.map_add, deg_one_chip]
+  have hdegE : CFDiv.degree E = 2 := by simp [E, CFDiv.degree.map_add, deg_one_chip]
+  have hdegEUV : CFDiv.degree EUV = 2 := by simp [EUV, CFDiv.degree.map_add, deg_one_chip]
   let D : CFDiv B.graph :=
     bananaNormalForm B ((g : ℤ) - 1) ((g : ℤ) - 1) E
   have hDDef : D =
@@ -108,20 +108,20 @@ theorem rankDelta_crossOneOff_two_interior_boundary_eq_zero
        simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, Pi.zero_apply,
          smul_eq_mul]
        ring)
-  have hDegreeD : deg D = 2 * (g : ℤ) := by
+  have hDegreeD : CFDiv.degree D = 2 * (g : ℤ) := by
     rw [degree_bananaNormalForm, hdegE]
     ring
-  have hDegreeDU : deg
+  have hDegreeDU : CFDiv.degree
       (D - oneChip
         (strandVertex B alpha
           ⟨1, by have := B.length_pos alpha; omega⟩)) =
       2 * (g : ℤ) - 1 := by
-    rw [deg.map_sub, hDegreeD, deg_one_chip]
-  have hDegreeDV : deg
+    rw [CFDiv.degree.map_sub, hDegreeD, deg_one_chip]
+  have hDegreeDV : CFDiv.degree
       (D - oneChip
         (strandVertex B beta ⟨B.length beta - 1, by omega⟩)) =
       2 * (g : ℤ) - 1 := by
-    rw [deg.map_sub, hDegreeD, deg_one_chip]
+    rw [CFDiv.degree.map_sub, hDegreeD, deg_one_chip]
   have hRankD : rank B.graph D = (g : ℤ) := by
     have h := (rank_nonspecial_range (banana_graph_connected B) D).2.2 (by
       rw [hDegreeD, banana_genus]

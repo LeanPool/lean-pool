@@ -330,9 +330,9 @@ theorem coreRise_evaluatedPotential
 theorem deg_subdivisionDivisor
     (certificate : ExplicitPotential.CertificateData m n p)
     (spec : SubdivisionGraph.Spec n p) :
-    deg (certificate.subdivisionDivisor spec) =
+    CFDiv.degree (certificate.subdivisionDivisor spec) =
       ∑ vertex : Fin n, certificate.divisor vertex := by
-  simp [deg, subdivisionDivisor, Fintype.sum_sum_type]
+  simp [CFDiv.degree, subdivisionDivisor, Fintype.sum_sum_type]
 
 /-- The firing script attached to a core anchor, assembled on the concrete
 subdivision by canonical integral interpolation. -/

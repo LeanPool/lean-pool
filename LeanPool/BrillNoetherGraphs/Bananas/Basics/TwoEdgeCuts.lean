@@ -31,12 +31,13 @@ open Utilities.Certificate.SubdivisionGraph.Spec
 private theorem fin_two_cases (x : Fin 2) : x = 0 ∨ x = 1 := by
   fin_cases x <;> simp
 
-private theorem four_le_card_of_four_mem {X : Type} [DecidableEq X]
+private theorem four_le_card_of_four_mem {X : Type}
     {s : Finset X} {a b c d : X}
     (hab : a ≠ b) (hac : a ≠ c) (had : a ≠ d)
     (hbc : b ≠ c) (hbd : b ≠ d) (hcd : c ≠ d)
     (ha : a ∈ s) (hb : b ∈ s) (hc : c ∈ s) (hd : d ∈ s) :
     4 ≤ s.card := by
+  classical
   have hsub : ({a, b, c, d} : Finset X) ⊆ s := by
     intro z hz
     simp only [Finset.mem_insert, Finset.mem_singleton] at hz
@@ -46,9 +47,10 @@ private theorem four_le_card_of_four_mem {X : Type} [DecidableEq X]
       simp [hab, hac, had, hbc, hbd, hcd]
     _ ≤ s.card := Finset.card_le_card hsub
 
-private theorem three_le_card_of_three_mem {X : Type} [DecidableEq X]
+private theorem three_le_card_of_three_mem {X : Type}
     {s : Finset X} {a b c : X} (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c)
     (ha : a ∈ s) (hb : b ∈ s) (hc : c ∈ s) : 3 ≤ s.card := by
+  classical
   have hsub : ({a, b, c} : Finset X) ⊆ s := by
     intro z hz
     simp only [Finset.mem_insert, Finset.mem_singleton] at hz

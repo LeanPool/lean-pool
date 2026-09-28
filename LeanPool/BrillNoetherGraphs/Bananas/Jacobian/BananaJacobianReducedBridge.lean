@@ -191,7 +191,7 @@ theorem bananaPositionCoordinateDivisor_eq_normalForm {g : ℕ}
 
 private theorem degree_paperCoordinateSemibreak {g : ℕ} (B : Banana g)
     (p : ∀ alpha : Fin (g + 1), B.PathPosition alpha) :
-    deg (paperCoordinateSemibreak B p) =
+    CFDiv.degree (paperCoordinateSemibreak B p) =
       ∑ alpha : Fin (g + 1),
         if 0 < (p alpha).val ∧ (p alpha).val < B.length alpha then
           (1 : ℤ) else 0 := by
@@ -217,7 +217,7 @@ theorem paperCoordinateRightCoefficient_add_degree_le_genus {g : ℕ}
     (p : ∀ alpha : Fin (g + 1), B.PathPosition alpha)
     (hPaper : IsPaperReducedPositionCoordinates B p) :
     paperCoordinateRightCoefficient B p +
-      deg (paperCoordinateSemibreak B p) ≤ (g : ℤ) := by
+      CFDiv.degree (paperCoordinateSemibreak B p) ≤ (g : ℤ) := by
   classical
   rcases hPaper.1 with ⟨zeroSlot, hzeroSlot⟩
   rw [paperCoordinateRightCoefficient, degree_paperCoordinateSemibreak,

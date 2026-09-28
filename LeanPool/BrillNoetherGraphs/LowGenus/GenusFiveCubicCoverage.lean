@@ -42,7 +42,7 @@ theorem closedConstruction_of_mem_arAtlas
     (constructions : CubicAtlasConstructions)
     (row : Row) (hRow : row ∈ arAtlas) :
     ClosedSubdivisionDharConstruction row.core (by norm_num) := by
-  simp [arAtlas] at hRow
+  simp only [arAtlas, List.mem_cons, List.not_mem_nil, or_false] at hRow
   rcases hRow with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
       rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
   · exact constructions.row01

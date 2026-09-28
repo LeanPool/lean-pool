@@ -217,7 +217,7 @@ private theorem effective_sum_one_chip {G : CFGraph} {ι : Type*} [Fintype ι] (
   exact Finset.sum_nonneg fun i _ => eff_one_chip (v i) w
 
 private theorem deg_sum_one_chip {G : CFGraph} {ι : Type*} [Fintype ι] (v : ι → G.V) :
-    deg (∑ i, oneChip (v i) : CFDiv G) = (Fintype.card ι : ℤ) := by
+    CFDiv.degree (∑ i, oneChip (v i) : CFDiv G) = (Fintype.card ι : ℤ) := by
   rw [map_sum]
   simp
 
@@ -233,7 +233,7 @@ points have been separated into those that are images of coarse vertices (with
 `chips0` the chips).  Each interior point is doubled by `Chip.double`, and the
 hypothesis `hbudget` is exactly the grouped signed budget. -/
 private theorem exists_coarse_double_of_split {n p : ℕ} (spec : Spec n p) (N : ℕ) (hN : 0 < N)
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (ys : ι → (spec.scale N hN).Vertex) (r : ℤ)
     (P : ι → Prop) [DecidablePred P]
     (chips0 : {i : ι // P i} → spec.Chip N) (lefts : {i : ι // ¬ P i} → spec.Vertex)
@@ -243,8 +243,9 @@ private theorem exists_coarse_double_of_split {n p : ℕ} (spec : Spec n p) (N :
       |∑ k : Fin 2, ((chips0 i).double k).signedCost|) < (N : ℤ))
     (hrank : rank (spec.scale N hN).graph
       ((∑ i, oneChip (ys i)) + ∑ i, oneChip (ys i)) ≥ r) :
-    ∃ D : CFDiv spec.graph, effective D ∧ deg D = 2 * (Fintype.card ι : ℤ) ∧
+    ∃ D : CFDiv spec.graph, effective D ∧ CFDiv.degree D = 2 * (Fintype.card ι : ℤ) ∧
       rank spec.graph D ≥ r := by
+  classical
   refine ⟨(∑ q : {i : ι // ¬ P i} × Fin 2, (oneChip (lefts q.1) : CFDiv spec.graph))
       + spec.coarseChips N (fun q : {i : ι // P i} × Fin 2 => (chips0 q.1).double q.2),
     ?_, ?_, ?_⟩
@@ -258,10 +259,11 @@ private theorem exists_coarse_double_of_split {n p : ℕ} (spec : Spec n p) (N :
       have h := Fintype.sum_subtype_add_sum_subtype P (fun _ : ι => (1 : ℤ))
       simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one] at h
       exact h
-    have h₁ : deg (∑ q : {i : ι // ¬ P i} × Fin 2, (oneChip (lefts q.1) : CFDiv spec.graph))
+    have h₁ : CFDiv.degree
+        (∑ q : {i : ι // ¬ P i} × Fin 2, (oneChip (lefts q.1) : CFDiv spec.graph))
         = (Fintype.card ({i : ι // ¬ P i} × Fin 2) : ℤ) :=
       deg_sum_one_chip (G := spec.graph) (fun q : {i : ι // ¬ P i} × Fin 2 => lefts q.1)
-    have h₂ : deg (spec.coarseChips N
+    have h₂ : CFDiv.degree (spec.coarseChips N
           (fun q : {i : ι // P i} × Fin 2 => (chips0 q.1).double q.2))
         = (Fintype.card ({i : ι // P i} × Fin 2) : ℤ) :=
       deg_sum_one_chip (G := spec.graph)
@@ -327,9 +329,9 @@ is effective of degree two on the `N`-fold refinement with `N` odd, and
 degree four with rank at least `r`.  Each of the two points of `C` is doubled,
 and the doubled pair is rounded so that its signed cost is at most `(N-1)/2`. -/
 theorem rank_ge_of_rank_scale_two_smul_two (hodd : Odd N)
-    (C : CFDiv (spec.scale N hN).graph) (hC : effective C) (hdeg : deg C = 2) (r : ℤ)
+    (C : CFDiv (spec.scale N hN).graph) (hC : effective C) (hdeg : CFDiv.degree C = 2) (r : ℤ)
     (hrank : rank (spec.scale N hN).graph (2 • C) ≥ r) :
-    ∃ D : CFDiv spec.graph, effective D ∧ deg D = 4 ∧ rank spec.graph D ≥ r := by
+    ∃ D : CFDiv spec.graph, effective D ∧ CFDiv.degree D = 4 ∧ rank spec.graph D ≥ r := by
   classical
   obtain ⟨m, hm⟩ := hodd
   obtain ⟨y₁, y₂, hCeq⟩ := exists_chip_pair_of_effective_deg_two _ C hC hdeg
@@ -392,7 +394,7 @@ rank at least one.  For a genus-six graph this applies to any degree-two class
 `C` with `2 • C` linearly equivalent to a specialized tetragonal class. -/
 theorem bnExists_one_four_of_effective_square_root (G : CFGraph) {N : ℕ} (hN : 0 < N)
     (hodd : Odd N) (C : CFDiv (regularSubdivision G N hN)) (hC : effective C)
-    (hdeg : deg C = 2) (hrank : rank (regularSubdivision G N hN) (2 • C) ≥ 1) :
+    (hdeg : CFDiv.degree C = 2) (hrank : rank (regularSubdivision G N hN) (2 • C) ≥ 1) :
     BNExists G 1 4 := by
   obtain ⟨D, _hDeff, hDdeg, hDrank⟩ :=
     (UnitSubdivisionPresentation.spec G).rank_ge_of_rank_scale_two_smul_two N hN hodd

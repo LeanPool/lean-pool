@@ -42,8 +42,8 @@ theorem rank_sub_one_chip_ge_of_rank_ge_succ
   intro A hA
   have hSumEffective : effective (A + oneChip q) :=
     (Eff G).add_mem hA.1 (eff_one_chip q)
-  have hSumDegree : deg (A + oneChip q) = k + 1 := by
-    rw [deg.map_add, hA.2, deg_one_chip]
+  have hSumDegree : CFDiv.degree (A + oneChip q) = k + 1 := by
+    rw [CFDiv.degree.map_add, hA.2, deg_one_chip]
   have hWin := hRankGeq (A + oneChip q) ⟨hSumEffective, hSumDegree⟩
   convert hWin using 1
   abel

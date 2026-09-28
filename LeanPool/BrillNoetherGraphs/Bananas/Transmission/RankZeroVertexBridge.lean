@@ -28,13 +28,13 @@ open Utilities
 chip. -/
 theorem exists_one_chip_representative_of_rank_zero_degree_one
     (G : CFGraph) (A : CFDiv G)
-    (hRank : rank G A = 0) (hDeg : deg A = 1) :
+    (hRank : rank G A = 0) (hDeg : CFDiv.degree A = 1) :
     ∃ x : G.V, linearEquiv G A (oneChip x) := by
   have hWin : winnable G A :=
     (rank_nonneg_iff_winnable G A).mp
       ((rank_geq_iff G A 0).mpr (by omega))
   obtain ⟨E, hEff, hAE⟩ := (winnable_iff_exists_effective G A).mp hWin
-  have hEDeg : deg E = 1 := by
+  have hEDeg : CFDiv.degree E = 1 := by
     rw [← linear_equiv_preserves_deg G A E hAE, hDeg]
   obtain ⟨x, hx⟩ := effective_degree_one_eq_one_chip E hEff hEDeg
   exact ⟨x, hx ▸ hAE⟩
@@ -66,10 +66,10 @@ theorem exists_qReduced_vertex_rep_of_rankDelta_neg_genus_two
   have hEEff : effective E :=
     effective_of_winnable_and_q_reduced M.graph M.v E
       (winnable_equiv_winnable M.graph _ _ hUWin hUE) hERed
-  have hEDeg : deg E = 1 := by
+  have hEDeg : CFDiv.degree E = 1 := by
     rw [← linear_equiv_preserves_deg M.graph (D - oneChip M.u) E hUE,
-      deg.map_sub, deg_one_chip]
-    have hDDeg : deg D = 2 :=
+      CFDiv.degree.map_sub, deg_one_chip]
+    have hDDeg : CFDiv.degree D = 2 :=
       degree_eq_two_of_rankDelta_neg_genus_two M D hConn hGenus hDistinct hNeg
     omega
   obtain ⟨w, hw⟩ := effective_degree_one_eq_one_chip E hEEff hEDeg

@@ -35,11 +35,12 @@ open Finset
 universe u v
 
 private theorem sum_card_filter_eq_sum_map {ι α : Type*} [Fintype ι]
-    [DecidableEq ι] (M : Multiset α) (crit : ι → α → Prop)
+    (M : Multiset α) (crit : ι → α → Prop)
     [∀ i edge, Decidable (crit i edge)] :
     ∑ i : ι, (M.filter (crit i)).card =
       Multiset.sum (M.map fun edge =>
         (Finset.univ.filter fun i => crit i edge).card) := by
+  classical
   induction M using Multiset.induction_on with
   | empty => simp
   | cons edge M ih =>

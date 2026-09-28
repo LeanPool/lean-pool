@@ -150,8 +150,9 @@ def trivialDecomposition [Fintype V] (H : SimpleGraph V) : TreeDecomposition H w
 
 /-- Some tree decomposition exists, so `treewidth` is an infimum over a nonempty
 set of naturals. -/
-theorem widthSet_nonempty [Fintype V] (H : SimpleGraph V) : (widthSet H).Nonempty :=
-  ⟨(trivialDecomposition H).width, trivialDecomposition H, rfl⟩
+theorem widthSet_nonempty [Finite V] (H : SimpleGraph V) : (widthSet H).Nonempty := by
+  let := Fintype.ofFinite V
+  exact ⟨(trivialDecomposition H).width, trivialDecomposition H, rfl⟩
 
 /-- Any tree decomposition bounds the treewidth. -/
 theorem treewidth_le_width {H : SimpleGraph V} (D : TreeDecomposition H) :
@@ -159,7 +160,7 @@ theorem treewidth_le_width {H : SimpleGraph V} (D : TreeDecomposition H) :
   Nat.sInf_le ⟨D, rfl⟩
 
 /-- The treewidth is realized by an actual decomposition. -/
-theorem exists_treeDecomposition_width_eq_treewidth [Fintype V] (H : SimpleGraph V) :
+theorem exists_treeDecomposition_width_eq_treewidth [Finite V] (H : SimpleGraph V) :
     ∃ D : TreeDecomposition H, D.width = treewidth H :=
   Nat.sInf_mem (widthSet_nonempty H)
 

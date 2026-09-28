@@ -161,17 +161,17 @@ theorem rank_bananaNormalForm_remove_midpoint_chip
     (hE : IsSemibreak B E) (α : Fin (g + 1)) (i : B.PathPosition α)
     (hα : B.length α = 2) (hi : i.val = 1)
     (a b : ℤ) (ha : 0 ≤ a) (hb : 0 ≤ b)
-    (hdeg : a + b + deg E ≤ (g : ℤ))
+    (hdeg : a + b + CFDiv.degree E ≤ (g : ℤ))
     (hmem : E (strandVertex B α i) = 1) :
     rank B.graph (bananaNormalForm B a b E) =
       rank B.graph (bananaNormalForm B a b E -
         oneChip (strandVertex B α i)) := by
   have hE' := isSemibreak_remove_midpoint_chip B E hE α i hα hi hmem
-  have hdeg' : b + deg (E - oneChip (strandVertex B α i)) ≤ (g : ℤ) := by
-    rw [deg.map_sub, deg_one_chip]
+  have hdeg' : b + CFDiv.degree (E - oneChip (strandVertex B α i)) ≤ (g : ℤ) := by
+    rw [CFDiv.degree.map_sub, deg_one_chip]
     omega
-  have hdeg_remove : deg (E - oneChip (strandVertex B α i)) = deg E - 1 := by
-    rw [deg.map_sub, deg_one_chip]
+  have hdeg_remove : CFDiv.degree (E - oneChip (strandVertex B α i)) = CFDiv.degree E - 1 := by
+    rw [CFDiv.degree.map_sub, deg_one_chip]
   have hrewrite : bananaNormalForm B a b E -
       oneChip (strandVertex B α i) =
       bananaNormalForm B a b (E - oneChip (strandVertex B α i)) := by
@@ -179,12 +179,12 @@ theorem rank_bananaNormalForm_remove_midpoint_chip
     abel
   rw [hrewrite]
   rw [rank_bananaNormalForm B a b E hE (by omega) hb
-    (by omega : b + deg E ≤ (g : ℤ))]
+    (by omega : b + CFDiv.degree E ≤ (g : ℤ))]
   rw [rank_bananaNormalForm B a b (E - oneChip (strandVertex B α i)) hE'
     (by omega) hb hdeg']
   have hmin : min a b ≥ 0 := by omega
-  have htop : a + b + deg E - (g : ℤ) ≤ min a b := by omega
-  have htop' : a + b + deg (E - oneChip (strandVertex B α i)) -
+  have htop : a + b + CFDiv.degree E - (g : ℤ) ≤ min a b := by omega
+  have htop' : a + b + CFDiv.degree (E - oneChip (strandVertex B α i)) -
       (g : ℤ) ≤ min a b := by
     rw [hdeg_remove]
     omega
@@ -257,9 +257,9 @@ theorem two_smul_midpoint_linearEquiv_endpoints {g : ℕ} (B : Banana g)
 
 theorem deg_canonical_dual {g : ℕ} (B : Banana g) (u v : B.graph.V)
     (D : CFDiv B.graph) :
-    deg (canonicalDivisor B.graph + oneChip u + oneChip v - D) =
-      2 * (g : ℤ) - deg D := by
-  rw [deg.map_sub, deg.map_add, deg.map_add, degree_of_canonical_divisor,
+    CFDiv.degree (canonicalDivisor B.graph + oneChip u + oneChip v - D) =
+      2 * (g : ℤ) - CFDiv.degree D := by
+  rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, CFDiv.degree.map_add, degree_of_canonical_divisor,
     deg_one_chip, deg_one_chip, B.genus_graph]
   push_cast
   ring

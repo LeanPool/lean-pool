@@ -25,7 +25,7 @@ namespace Utilities
 theorem rank_ge_iff_dual_rank_ge
     {G : CFGraph} (hG : graphConnected G) (D : CFDiv G) (r : ℤ) :
     rank G D ≥ r ↔
-      rank G (canonicalDivisor G - D) ≥ dualRank G r (deg D) := by
+      rank G (canonicalDivisor G - D) ≥ dualRank G r (CFDiv.degree D) := by
   unfold dualRank rectangleWidth
   constructor <;> intro hRank
   · linarith [riemann_roch_for_graphs hG D]
@@ -65,13 +65,13 @@ theorem BNExists_dual_iff
   constructor
   · rintro ⟨D, hDegree, hRank⟩
     refine ⟨canonicalDivisor G - D, ?_, ?_⟩
-    · rw [deg.map_sub, degree_of_canonical_divisor, hDegree]
+    · rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hDegree]
       rfl
     · have hDual := (rank_ge_iff_dual_rank_ge hG D r).mp hRank
       simpa [hDegree] using hDual
   · rintro ⟨E, hDegree, hRank⟩
     refine ⟨canonicalDivisor G - E, ?_, ?_⟩
-    · rw [deg.map_sub, degree_of_canonical_divisor, hDegree]
+    · rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hDegree]
       unfold dualDegree
       ring
     · have hDual :=

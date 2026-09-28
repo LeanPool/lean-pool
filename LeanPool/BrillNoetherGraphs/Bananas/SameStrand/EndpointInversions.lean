@@ -62,22 +62,22 @@ private theorem rankSlipFunction_D_props (M : TwiceMarked)
       abel
     simpa only [rankSlipFunction, hDiv, add_le_add_iff_right] using h
   · intro a
-    refine ⟨deg D + a + 1, ?_⟩
+    refine ⟨CFDiv.degree D + a + 1, ?_⟩
     intro b hb
     unfold rankSlipFunction
     rw [rank_neg_one_of_deg_neg]
     · norm_num
-    · rw [deg.map_sub, deg.map_add, map_zsmul, map_zsmul,
+    · rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, map_zsmul, map_zsmul,
         deg_one_chip, deg_one_chip]
       simp only [smul_eq_mul, mul_one]
       omega
   · intro b
-    refine ⟨b - deg D - 1, ?_⟩
+    refine ⟨b - CFDiv.degree D - 1, ?_⟩
     intro a ha
     unfold rankSlipFunction
     rw [rank_neg_one_of_deg_neg]
     · norm_num
-    · rw [deg.map_sub, deg.map_add, map_zsmul, map_zsmul,
+    · rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, map_zsmul, map_zsmul,
         deg_one_chip, deg_one_chip]
       simp only [smul_eq_mul, mul_one]
       omega
@@ -87,7 +87,7 @@ private theorem rankSlip_duality (M : TwiceMarked) (D : CFDiv M.graph)
     (a b : ℤ) :
     rankSlipFunction M D a b -
         rankSlipFunction (mark M.graph M.v M.u) (canonicalDivisor M.graph - D) b a =
-      a - b + (deg D - genus M.graph + 1) := by
+      a - b + (CFDiv.degree D - genus M.graph + 1) := by
   have hRR := riemann_roch_for_graphs hconn
     (D + a • oneChip M.u - b • oneChip M.v)
   have hComplement :
@@ -100,7 +100,7 @@ private theorem rankSlip_duality (M : TwiceMarked) (D : CFDiv M.graph)
   change rank M.graph (D + a • oneChip M.u - b • oneChip M.v) + 1 -
       (rank M.graph
         ((canonicalDivisor M.graph - D) + b • oneChip M.v - a • oneChip M.u) + 1) = _
-  rw [deg.map_sub, deg.map_add, map_zsmul, map_zsmul,
+  rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, map_zsmul, map_zsmul,
     deg_one_chip, deg_one_chip] at hRR
   simp only [smul_eq_mul, mul_one] at hRR
   omega
@@ -110,7 +110,7 @@ slipface. -/
 noncomputable def rankSlipFace (M : TwiceMarked) (D : CFDiv M.graph)
     (hconn : graphConnected M.graph) : SlipFace :=
   Classical.choose (show ∃ sf : SlipFace,
-    (sf.func = rankSlipFunction M D ∧ sf.χ = deg D - genus M.graph + 1) ∧
+    (sf.func = rankSlipFunction M D ∧ sf.χ = CFDiv.degree D - genus M.graph + 1) ∧
       sf.dual.func = rankSlipFunction (mark M.graph M.v M.u) (canonicalDivisor M.graph - D)
     from by
       exact SlipFace.sf_of_D_props (rankSlip_duality M D hconn)
@@ -131,7 +131,7 @@ noncomputable def rankSlipFace (M : TwiceMarked) (D : CFDiv M.graph)
 
 @[simp] theorem rankSlipFace_chi (M : TwiceMarked) (D : CFDiv M.graph)
     (hconn : graphConnected M.graph) :
-    (rankSlipFace M D hconn).χ = deg D - genus M.graph + 1 := by
+    (rankSlipFace M D hconn).χ = CFDiv.degree D - genus M.graph + 1 := by
   exact (Classical.choose_spec (SlipFace.sf_of_D_props (rankSlip_duality M D hconn)
     ⟨rankSlipFunction_D_props M D,
       rankSlipFunction_D_props (mark M.graph M.v M.u)
@@ -330,7 +330,7 @@ def endpointPencilDivisor {g : ℕ} (B : Banana g) : CFDiv B.graph :=
   oneChip (leftEndpoint B) + oneChip (rightEndpoint B)
 
 @[simp] theorem degree_endpointPencilDivisor {g : ℕ} (B : Banana g) :
-    deg (endpointPencilDivisor B) = 2 := by
+    CFDiv.degree (endpointPencilDivisor B) = 2 := by
   simp [endpointPencilDivisor]
 
 /-- The literal endpoint divisor (not merely some divisor supplied by
@@ -431,7 +431,7 @@ theorem rank_endpointPencil_nsmul_eq {g : ℕ} (B : Banana g) (b : ℕ)
     (hb : b ≤ g) :
     rank B.graph (b • endpointPencilDivisor B) = (b : ℤ) := by
   have hLower := rank_endpointPencil_nsmul_ge B b
-  have hDegree : deg (b • endpointPencilDivisor B) = (2 * b : ℕ) := by
+  have hDegree : CFDiv.degree (b • endpointPencilDivisor B) = (2 * b : ℕ) := by
     rw [map_nsmul, degree_endpointPencilDivisor]
     push_cast
     ring
@@ -487,8 +487,8 @@ private theorem rank_endpointPencil_nsmul_sub_endpoint_eq
     (eff_one_chip other) ((b : ℤ) - 1) hBase'.ge
   rw [← hDiv] at hLower
   have hDegree :
-      deg (b • endpointPencilDivisor B - oneChip w) = 2 * (b : ℤ) - 1 := by
-    rw [deg.map_sub, map_nsmul, degree_endpointPencilDivisor, deg_one_chip]
+      CFDiv.degree (b • endpointPencilDivisor B - oneChip w) = 2 * (b : ℤ) - 1 := by
+    rw [CFDiv.degree.map_sub, map_nsmul, degree_endpointPencilDivisor, deg_one_chip]
     ring
   by_cases hbg : b < g
   · have hUpperQ := (rank_nonspecial_range (banana_graph_connected B)
@@ -549,11 +549,11 @@ theorem rankDelta_endpointPencil_nsmul_eq_one
       (b • endpointPencilDivisor B) = 1 := by
   by_cases hbZero : b = 0
   · subst b
-    have hLeftDeg : deg ((0 : CFDiv B.graph) - oneChip (leftEndpoint B)) < 0 := by
+    have hLeftDeg : CFDiv.degree ((0 : CFDiv B.graph) - oneChip (leftEndpoint B)) < 0 := by
       simp
-    have hRightDeg : deg ((0 : CFDiv B.graph) - oneChip (rightEndpoint B)) < 0 := by
+    have hRightDeg : CFDiv.degree ((0 : CFDiv B.graph) - oneChip (rightEndpoint B)) < 0 := by
       simp
-    have hBothDeg : deg ((0 : CFDiv B.graph) - oneChip (leftEndpoint B) -
+    have hBothDeg : CFDiv.degree ((0 : CFDiv B.graph) - oneChip (leftEndpoint B) -
         oneChip (rightEndpoint B)) < 0 := by
       simp
     unfold rankDelta

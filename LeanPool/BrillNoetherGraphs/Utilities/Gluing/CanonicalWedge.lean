@@ -124,13 +124,13 @@ theorem canonical_sub_wedgeCanonicalSum
 
 @[simp] theorem deg_wedgeCanonicalSum
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) :
-    deg (wedgeCanonicalSum G H x y) =
+    CFDiv.degree (wedgeCanonicalSum G H x y) =
       2 * genus G + 2 * genus H - 4 := by
   simp [wedgeCanonicalSum, degree_of_canonical_divisor]
   ring
 @[simp] theorem deg_wedgeGlueDouble
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) :
-    deg (wedgeGlueDouble G H x y) = 2 := by
+    CFDiv.degree (wedgeGlueDouble G H x y) = 2 := by
   unfold wedgeGlueDouble
   simp only [map_zsmul, deg_one_chip, smul_eq_mul]
   norm_num

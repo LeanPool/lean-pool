@@ -170,7 +170,7 @@ theorem doubleMatching_closed (genusFour : GenusFourRankOneExistence) :
 theorem bridgeAtlasClosedCoverage
     (genusFour : GenusFourRankOneExistence) : BridgeAtlasClosedCoverage := by
   intro row hRow
-  simp [bridgeAtlas] at hRow
+  simp only [bridgeAtlas, List.mem_cons, List.not_mem_nil, or_false] at hRow
   rcases hRow with rfl | rfl | rfl | rfl
   · exact rootDouble_closed genusFour
   · exact oneChord_closed genusFour

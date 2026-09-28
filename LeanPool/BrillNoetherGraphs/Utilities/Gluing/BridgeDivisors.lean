@@ -61,7 +61,7 @@ def liftRightDivisor (G : CFGraph.{u}) (H : CFGraph.{v})
 @[simp] theorem deg_liftLeftDivisor
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (D : CFDiv G) :
-    deg (liftLeftDivisor G H x y D) = deg D := by
+    CFDiv.degree (liftLeftDivisor G H x y D) = CFDiv.degree D := by
   change (∑ z : Sum G.V H.V, liftLeftDivisor G H x y D z) =
     ∑ a : G.V, D a
   rw [Fintype.sum_sum_type]
@@ -70,7 +70,7 @@ def liftRightDivisor (G : CFGraph.{u}) (H : CFGraph.{v})
 @[simp] theorem deg_liftRightDivisor
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (D : CFDiv H) :
-    deg (liftRightDivisor G H x y D) = deg D := by
+    CFDiv.degree (liftRightDivisor G H x y D) = CFDiv.degree D := by
   change (∑ z : Sum G.V H.V, liftRightDivisor G H x y D z) =
     ∑ b : H.V, D b
   rw [Fintype.sum_sum_type]
@@ -210,7 +210,8 @@ theorem prin_extendLeftScript
         exact num_edges_bridgeGraph_inl_inr G H x y a b
       simp_rw [extendLeftScript_inl, extendLeftScript_inr, hCross,
         num_edges_bridgeGraph_inr]
-      simp
+      simp only [Nat.cast_ite, Nat.cast_one, CharP.cast_eq_zero, mul_ite, mul_one,
+        mul_zero, sub_self, zero_mul, sum_const_zero, add_zero]
       apply Finset.sum_eq_zero
       intro a _ha
       by_cases h : a = x ∧ b = y
@@ -234,7 +235,8 @@ theorem prin_extendRightScript
       rw [Fintype.sum_sum_type]
       simp_rw [extendRightScript_inl, extendRightScript_inr,
         num_edges_bridgeGraph_inl, num_edges_bridgeGraph_inl_inr]
-      simp
+      simp only [sub_self, zero_mul, sum_const_zero, Nat.cast_ite, Nat.cast_one,
+        CharP.cast_eq_zero, mul_ite, mul_one, mul_zero, zero_add]
       apply Finset.sum_eq_zero
       intro b _hb
       by_cases h : a = x ∧ b = y
@@ -371,10 +373,13 @@ theorem prin_leftSideIndicator
         rw [num_edges_symmetric]
         exact num_edges_bridgeGraph_inl_inr G H x y a b
       simp_rw [hCross]
-      simp [oneChip]
+      simp only [leftSideIndicator_inl, leftSideIndicator_inr, sub_zero, Nat.cast_ite,
+        Nat.cast_one, CharP.cast_eq_zero, mul_ite, mul_one, mul_zero, sum_boole,
+        sub_self, num_edges_bridgeGraph_inr, zero_mul, sum_const_zero, add_zero,
+        ne_eq, reduceCtorEq, not_false_eq_true, one_chip_apply_other]
       by_cases hb : b = y
       · subst b
-        simp
+        simp only [and_true, one_chip_apply_v, Nat.cast_eq_one]
         have hFilter :
             Finset.univ.filter (fun a : G.V => a = x) = {x} := by
           ext a

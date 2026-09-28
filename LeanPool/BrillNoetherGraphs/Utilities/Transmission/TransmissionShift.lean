@@ -146,7 +146,7 @@ theorem satisfiesTransmission_outputShift
     (h : SatisfiesTransmission G u v τ D) :
     SatisfiesTransmission G u v (outputShift τ c) (D + c • oneChip u) := by
   constructor
-  · rw [deg.map_add, map_zsmul, deg_one_chip, h.1, outputShift_chi]
+  · rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip, h.1, outputShift_chi]
     ring
   · intro a b
     exact (transmissionInequality_outputShift u v τ D c a b).mpr (h.2 (a + c) b)

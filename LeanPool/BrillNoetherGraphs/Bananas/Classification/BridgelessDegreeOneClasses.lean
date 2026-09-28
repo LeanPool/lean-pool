@@ -61,7 +61,7 @@ theorem rank_one_chip_eq_zero_of_twoEdgeCutCondition
     intro hOne
     have hResidual : winnable G (oneChip x - oneChip y) :=
       (rank_ge_one_iff_winnable_sub_one_chip G (oneChip x)).1 hOne y
-    have hDegree : deg (oneChip x - oneChip y) = 0 := by simp
+    have hDegree : CFDiv.degree (oneChip x - oneChip y) = 0 := by simp
     have hPrincipal := linear_equiv_zero_of_winnable_deg_zero G
       (oneChip x - oneChip y) hResidual hDegree
     exact (not_linear_equiv_one_chip_sub_of_twoEdgeCutCondition
@@ -74,7 +74,7 @@ def RankZeroDegreeOneClass (G : CFGraph) :=
   {c : CFDiv G ⧸ principalDivisors G //
     ∃ D : CFDiv G,
       QuotientAddGroup.mk' (principalDivisors G) D = c ∧
-      rank G D = 0 ∧ deg D = 1}
+      rank G D = 0 ∧ CFDiv.degree D = 1}
 
 /-- The Abel--Jacobi vertex map, with codomain restricted to rank-zero
 degree-one divisor classes. -/

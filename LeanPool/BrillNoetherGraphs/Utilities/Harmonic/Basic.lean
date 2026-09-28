@@ -290,7 +290,7 @@ theorem pullback_prin_of_unitIndexed
 /-- The (constant) degree of the map, expressed as the degree of every fibre.
 This is the one global numerical datum needed by the rank-one argument. -/
 def HasDegree (f : IndexedHarmonicData G H) (d : ℤ) : Prop :=
-  ∀ z, deg (f.fibre z) = d
+  ∀ z, CFDiv.degree (f.fibre z) = d
 
 /-- The degrees of two fibres above adjacent target vertices agree.  This is
 the finite double-counting identity behind the usual assertion that the
@@ -298,17 +298,17 @@ degree of a harmonic map is independent of the target point. -/
 theorem fibre_degree_eq_of_target_edge
     (f : IndexedHarmonicData G H) {z w : H.V}
     (hzw : numEdges H z w > 0) :
-    deg (f.fibre z) = deg (f.fibre w) := by
+    CFDiv.degree (f.fibre z) = CFDiv.degree (f.fibre w) := by
   let m : ℤ := (numEdges H z w : ℤ)
-  have hleft : m * deg (f.fibre z) =
+  have hleft : m * CFDiv.degree (f.fibre z) =
       ∑ x : G.V, if f.vertexMap x = z then
         ∑ y : G.V, if f.vertexMap y = w then (f.edgeIndex x y : ℤ) else 0
       else 0 := by
     calc
-      m * deg (f.fibre z) =
+      m * CFDiv.degree (f.fibre z) =
           ∑ x : G.V, if f.vertexMap x = z then
             m * (f.localDegree x : ℤ) else 0 := by
-              rw [show deg (f.fibre z) =
+              rw [show CFDiv.degree (f.fibre z) =
                 ∑ x : G.V, if f.vertexMap x = z then
                   (f.localDegree x : ℤ) else 0 by rfl]
               rw [Finset.mul_sum]
@@ -333,15 +333,15 @@ theorem fibre_degree_eq_of_target_edge
                 dsimp [m]
                 ring
               · simp [hx]
-  have hright : m * deg (f.fibre w) =
+  have hright : m * CFDiv.degree (f.fibre w) =
       ∑ y : G.V, if f.vertexMap y = w then
         ∑ x : G.V, if f.vertexMap x = z then (f.edgeIndex y x : ℤ) else 0
       else 0 := by
     calc
-      m * deg (f.fibre w) =
+      m * CFDiv.degree (f.fibre w) =
           ∑ y : G.V, if f.vertexMap y = w then
             m * (f.localDegree y : ℤ) else 0 := by
-              rw [show deg (f.fibre w) =
+              rw [show CFDiv.degree (f.fibre w) =
                 ∑ y : G.V, if f.vertexMap y = w then
                   (f.localDegree y : ℤ) else 0 by rfl]
               rw [Finset.mul_sum]
@@ -409,10 +409,11 @@ theorem fibre_degree_eq_of_target_edge
 every target edge is constant everywhere.  The cut-based definition of
 `graphConnected` makes this a short finite proof. -/
 theorem eq_of_graph_connected_of_eq_on_edges
-    {α : Type} [DecidableEq α] (F : H.V → α)
+    {α : Type} (F : H.V → α)
     (hConnected : graphConnected H)
     (hEdge : ∀ z w : H.V, numEdges H z w > 0 → F z = F w)
     (z₀ z : H.V) : F z = F z₀ := by
+  classical
   by_contra hz
   let S : Finset H.V := Finset.univ.filter fun u => F u = F z₀
   have hz₀ : z₀ ∈ S := by simp [S]
@@ -427,15 +428,15 @@ therefore constant on every connected target. -/
 theorem fibre_degree_eq_of_target_connected
     (f : IndexedHarmonicData G H) (hConnected : graphConnected H)
     (z w : H.V) :
-    deg (f.fibre z) = deg (f.fibre w) :=
-  eq_of_graph_connected_of_eq_on_edges (fun u => deg (f.fibre u)) hConnected
+    CFDiv.degree (f.fibre z) = CFDiv.degree (f.fibre w) :=
+  eq_of_graph_connected_of_eq_on_edges (fun u => CFDiv.degree (f.fibre u)) hConnected
     (fun _ _ huv => f.fibre_degree_eq_of_target_edge huv) w z
 
 /-- One fibre-degree calculation suffices for a harmonic map to a connected
 target. -/
 theorem hasDegree_of_fibre_degree_at
     (f : IndexedHarmonicData G H) (hConnected : graphConnected H)
-    (z₀ : H.V) {d : ℤ} (hDegree : deg (f.fibre z₀) = d) :
+    (z₀ : H.V) {d : ℤ} (hDegree : CFDiv.degree (f.fibre z₀) = d) :
     f.HasDegree d := by
   intro z
   exact (f.fibre_degree_eq_of_target_connected hConnected z z₀).trans hDegree
@@ -447,7 +448,7 @@ theorem hasDegree_toData
     (hDegree : c.HasDegree d) :
     (c.toData hValid).HasDegree d := by
   intro z
-  unfold fibre deg
+  unfold fibre CFDiv.degree
   change (∑ x : G.V,
     if c.vertexMap x = z then (c.localDegree x : ℤ) else 0) = d
   exact hDegree z
@@ -456,7 +457,7 @@ theorem hasDegree_toData
 fibre of validated data. -/
 theorem fibreDegree_toData
     (c : IndexedHarmonicCertificate G H) (hValid : c.Valid) (z : H.V) :
-    deg ((c.toData hValid).fibre z) = c.fibreDegree z := by
+    CFDiv.degree ((c.toData hValid).fibre z) = c.fibreDegree z := by
   rfl
 
 /-- The global degree field is redundant for valid harmonic data over a
@@ -512,7 +513,7 @@ theorem targetOneChipEquivalent_of_connected_genus_zero
     TargetOneChipEquivalent H := by
   intro y z
   let A : CFDiv H := oneChip y - oneChip z
-  have hDegree : deg A = 0 := by
+  have hDegree : CFDiv.degree A = 0 := by
     simp [A]
   have hRank : rank H A ≥ 0 := by
     have h := rank_ge_degree_sub_genus hConnected A
@@ -522,7 +523,7 @@ theorem targetOneChipEquivalent_of_connected_genus_zero
       effective E ∧ linearEquiv H A E :=
     (winnable_iff_exists_effective H A).mp
       ((rank_nonneg_iff_winnable H A).mp ((rank_geq_iff H A 0).mpr hRank))
-  have hEDegree : deg E = 0 := by
+  have hEDegree : CFDiv.degree E = 0 := by
     rw [← linear_equiv_preserves_deg H A E hAE, hDegree]
   have hEZero : E = 0 := eff_degree_zero E hEffective hEDegree
   subst E

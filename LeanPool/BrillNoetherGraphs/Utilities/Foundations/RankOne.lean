@@ -23,7 +23,7 @@ namespace Utilities
 /-- An effective divisor of degree one consists of a single chip. -/
 theorem effective_degree_one_eq_one_chip
     {G : CFGraph} (E : CFDiv G) (hEffective : effective E)
-    (hDegree : deg E = 1) :
+    (hDegree : CFDiv.degree E = 1) :
     ∃ v : G.V, E = oneChip v := by
   have hPositive : ∃ v : G.V, E v ≥ 1 := by
     by_contra h
@@ -33,7 +33,7 @@ theorem effective_degree_one_eq_one_chip
       have hvEffective := hEffective v
       simp only [Pi.zero_apply]
       omega
-    have hZero : deg E = 0 := by simp [hDivisorZero]
+    have hZero : CFDiv.degree E = 0 := by simp [hDivisorZero]
     omega
   obtain ⟨v, hv⟩ := hPositive
   have hSubEffective : effective (E - oneChip v) := by
@@ -42,8 +42,8 @@ theorem effective_degree_one_eq_one_chip
     · subst w
       simp [oneChip, hv]
     · simpa [oneChip, hw] using hEffective w
-  have hSubDegree : deg (E - oneChip v) = 0 := by
-    rw [deg.map_sub, deg_one_chip, hDegree]
+  have hSubDegree : CFDiv.degree (E - oneChip v) = 0 := by
+    rw [CFDiv.degree.map_sub, deg_one_chip, hDegree]
     norm_num
   have hSubZero := eff_degree_zero (E - oneChip v) hSubEffective hSubDegree
   exact ⟨v, sub_eq_zero.mp hSubZero⟩
@@ -94,7 +94,7 @@ theorem rank_ge_one_of_firing_certificates
 /-- A divisor of the requested degree, together with explicit vertexwise
 firing certificates, is a rank-one Brill--Noether witness. -/
 theorem BNExists_rank_one_of_firing_certificates
-    (G : CFGraph) (D : CFDiv G) {d : ℤ} (hDegree : deg D = d)
+    (G : CFGraph) (D : CFDiv G) {d : ℤ} (hDegree : CFDiv.degree D = d)
     (hCertificates : ∀ v : G.V,
       ∃ (E : CFDiv G) (σ : firingScript G),
         effective E ∧ E = D - oneChip v + prin G σ) :

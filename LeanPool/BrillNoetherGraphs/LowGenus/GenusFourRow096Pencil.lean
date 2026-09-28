@@ -214,9 +214,9 @@ def pencil1 (htri : spec.length 0 ≤ spec.length 3 + spec.length 8) :
       have := kPos_le spec htri; omega⟩)
 
 theorem deg_pencil1 (htri : spec.length 0 ≤ spec.length 3 + spec.length 8) :
-    deg (pencil1 spec htri) = 3 := by
+    CFDiv.degree (pencil1 spec htri) = 3 := by
   unfold pencil1
-  rw [deg.map_add, deg.map_add, deg_one_chip, deg_one_chip, deg_one_chip]
+  rw [CFDiv.degree.map_add, CFDiv.degree.map_add, deg_one_chip, deg_one_chip, deg_one_chip]
   norm_num
 
 /-- The regime-2 relay depth `s = min(x, a₇)`, where `x = a₀ − a₁ − a₂`.  It is
@@ -232,9 +232,9 @@ def pencil2 : CFDiv spec.graph :=
   oneChip (spec.coreVertex 0) + oneChip (spec.coreVertex 5) +
     oneChip (spec.pathVertex 6 ⟨spec.length 6 - sPos spec, by omega⟩)
 
-theorem deg_pencil2 : deg (pencil2 spec) = 3 := by
+theorem deg_pencil2 : CFDiv.degree (pencil2 spec) = 3 := by
   unfold pencil2
-  rw [deg.map_add, deg.map_add, deg_one_chip, deg_one_chip, deg_one_chip]
+  rw [CFDiv.degree.map_add, CFDiv.degree.map_add, deg_one_chip, deg_one_chip, deg_one_chip]
   norm_num
 
 end Pencil

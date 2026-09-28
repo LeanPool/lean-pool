@@ -24,9 +24,10 @@ namespace Bananas
 open Utilities
 
 private theorem eq_of_ne_of_card_eq_two
-    {X : Type*} [Fintype X] [DecidableEq X]
+    {X : Type*} [Fintype X]
     (hCard : Fintype.card X = 2) {x u w : X}
     (hxu : x ≠ u) (hwu : w ≠ u) : w = x := by
+  classical
   by_contra hwx
   have hSubset : ({w, x, u} : Finset X) ⊆ Finset.univ := by simp
   have hThree : ({w, x, u} : Finset X).card = 3 := by

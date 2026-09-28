@@ -345,17 +345,17 @@ theorem rank_bananaNormalForm_remove_midpoint_chip_of_ge_neg_one
     (hα : B.length α = 2) (hi : i.val = 1)
     (a b : ℤ) (ha : -1 ≤ a) (hb : -1 ≤ b)
     (hOneNonneg : 0 ≤ a ∨ 0 ≤ b)
-    (hLeftDeg : a + deg E ≤ (g : ℤ))
-    (hRightDeg : b + deg E ≤ (g : ℤ))
-    (hTotalDeg : a + b + deg E ≤ (g : ℤ))
+    (hLeftDeg : a + CFDiv.degree E ≤ (g : ℤ))
+    (hRightDeg : b + CFDiv.degree E ≤ (g : ℤ))
+    (hTotalDeg : a + b + CFDiv.degree E ≤ (g : ℤ))
     (hmem : E (strandVertex B α i) = 1) :
     rank B.graph (bananaNormalForm B a b E) =
       rank B.graph (bananaNormalForm B a b E -
         oneChip (strandVertex B α i)) := by
   have hEminus : IsSemibreak (B := B) (E - oneChip (strandVertex B α i)) :=
     isSemibreak_remove_midpoint_chip B E hE α i hα hi hmem
-  have hdegMinus : deg (E - oneChip (strandVertex B α i)) = deg E - 1 := by
-    rw [deg.map_sub, deg_one_chip]
+  have hdegMinus : CFDiv.degree (E - oneChip (strandVertex B α i)) = CFDiv.degree E - 1 := by
+    rw [CFDiv.degree.map_sub, deg_one_chip]
   rw [bananaNormalForm_sub]
   by_cases haNonneg : 0 ≤ a
   · by_cases hbNonneg : 0 ≤ b
@@ -413,7 +413,7 @@ theorem basePointDrop_bananaNormalForm_sub_empty_strand_eq_zero
     (hEmpty : ∀ chip : Fin (B.length β - 1),
       E (B.interiorVertex β chip) = 0)
     (ha : 0 ≤ a) (hb : 0 ≤ b)
-    (hLowDeg : a + b + deg E ≤ (g : ℤ)) :
+    (hLowDeg : a + b + CFDiv.degree E ≤ (g : ℤ)) :
     basePointDrop
       (mark B.graph (strandVertex B α i) (B.pathVertex β p))
       ((bananaNormalForm B a b E - oneChip (B.pathVertex β p) :
@@ -437,13 +437,13 @@ theorem basePointDrop_bananaNormalForm_sub_empty_strand_eq_zero
     length_two_midpoint_ne_pathVertex_of_distinct_strand B α β i _ hαβ hα hi hr
   by_cases habZero : a = 0 ∧ b = 0
   · obtain ⟨rfl, rfl⟩ := habZero
-    have hdegE : deg E ≤ (g : ℤ) := by simpa using hLowDeg
+    have hdegE : CFDiv.degree E ≤ (g : ℤ) := by simpa using hLowDeg
     have hRankV : rank B.graph (E - oneChip (B.pathVertex β p)) = -1 :=
       rank_semibreak_sub_vertex_eq_neg_one B E hE hdegE _ hvZero
     have hEminus : IsSemibreak (B := B) (E - oneChip (strandVertex B α i)) :=
       isSemibreak_remove_midpoint_chip B E hE α i hα hi hmem
-    have hdegEminus : deg (E - oneChip (strandVertex B α i)) ≤ (g : ℤ) := by
-      rw [deg.map_sub, deg_one_chip]
+    have hdegEminus : CFDiv.degree (E - oneChip (strandVertex B α i)) ≤ (g : ℤ) := by
+      rw [CFDiv.degree.map_sub, deg_one_chip]
       omega
     have hvZeroMinus :
         (E - oneChip (strandVertex B α i)) (B.pathVertex β p) = 0 := by
@@ -463,9 +463,10 @@ theorem basePointDrop_bananaNormalForm_sub_empty_strand_eq_zero
       rw [hrVertex]
       exact isSemibreak_add_interior_chip_of_empty B E hE β _ hEmpty
     have hdegPlus :
-        deg (E + oneChip (B.pathVertex β (⟨B.length β - p.val, by omega⟩ : B.PathPosition β)))
-          = deg E + 1 := by
-      rw [deg.map_add, deg_one_chip]
+        CFDiv.degree
+          (E + oneChip (B.pathVertex β (⟨B.length β - p.val, by omega⟩ : B.PathPosition β)))
+          = CFDiv.degree E + 1 := by
+      rw [CFDiv.degree.map_add, deg_one_chip]
     have hmemPlus :
         (E + oneChip (B.pathVertex β (⟨B.length β - p.val, by omega⟩ : B.PathPosition β)) :
         CFDiv B.graph) (strandVertex B α i) = 1 := by
@@ -493,7 +494,7 @@ theorem basePointDrop_bananaNormalForm_sub_occupied_tail_eq_zero
     (huMem : E (strandVertex B α i) = 1)
     (hOld : E (B.interiorVertex β oldChip) = 1)
     (ha : 0 ≤ a) (hb : 0 ≤ b)
-    (hLowDeg : a + b + deg E ≤ (g : ℤ))
+    (hLowDeg : a + b + CFDiv.degree E ≤ (g : ℤ))
     (hSum : oldChip.val + 1 + (B.length β - p.val) < B.length β) :
     basePointDrop
       (mark B.graph (strandVertex B α i) (B.pathVertex β p))
@@ -534,10 +535,11 @@ theorem basePointDrop_bananaNormalForm_sub_occupied_tail_eq_zero
     rw [hqVertex, hxVertex]
     exact isSemibreak_replace_interior_chip_of_eq_one B E hE β oldChip _ hOld
   have hdegE' :
-      deg (E + oneChip (B.pathVertex β
+      CFDiv.degree (E + oneChip (B.pathVertex β
               (⟨oldChip.val + 1 + (B.length β - p.val), by omega⟩ : B.PathPosition β)) -
-          oneChip (B.pathVertex β (⟨oldChip.val + 1, by omega⟩ : B.PathPosition β))) = deg E := by
-    rw [deg.map_sub, deg.map_add, deg_one_chip, deg_one_chip]
+          oneChip (B.pathVertex β (⟨oldChip.val + 1, by omega⟩ : B.PathPosition β))) =
+          CFDiv.degree E := by
+    rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
     ring
   have huq : strandVertex B α i ≠
       B.pathVertex β (⟨oldChip.val + 1, by omega⟩ : B.PathPosition β) :=
@@ -613,7 +615,7 @@ theorem basePointDrop_bananaNormalForm_sub_occupied_head_eq_zero
     (huMem : E (strandVertex B α i) = 1)
     (hOld : E (B.interiorVertex β oldChip) = 1)
     (ha : 0 ≤ a) (hb : 0 ≤ b)
-    (hLowDeg : a + b + deg E ≤ (g : ℤ))
+    (hLowDeg : a + b + CFDiv.degree E ≤ (g : ℤ))
     (hSum : B.length β < oldChip.val + 1 + (B.length β - p.val)) :
     basePointDrop
       (mark B.graph (strandVertex B α i) (B.pathVertex β p))
@@ -657,11 +659,12 @@ theorem basePointDrop_bananaNormalForm_sub_occupied_head_eq_zero
     rw [hqVertex, hxVertex]
     exact isSemibreak_replace_interior_chip_of_eq_one B E hE β oldChip _ hOld
   have hdegE' :
-      deg (E + oneChip (B.pathVertex β
+      CFDiv.degree (E + oneChip (B.pathVertex β
               ⟨oldChip.val + 1 + (B.length β - p.val) - B.length β,
                 by omega⟩) -
-          oneChip (B.pathVertex β (⟨oldChip.val + 1, by omega⟩ : B.PathPosition β))) = deg E := by
-    rw [deg.map_sub, deg.map_add, deg_one_chip, deg_one_chip]
+          oneChip (B.pathVertex β (⟨oldChip.val + 1, by omega⟩ : B.PathPosition β))) =
+          CFDiv.degree E := by
+    rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
     ring
   have huq : strandVertex B α i ≠
       B.pathVertex β (⟨oldChip.val + 1, by omega⟩ : B.PathPosition β) :=
@@ -747,7 +750,7 @@ theorem basePointDrop_bananaNormalForm_sub_occupied_endpoint_pair_eq_zero
     (huMem : E (strandVertex B α i) = 1)
     (hOld : E (B.interiorVertex β oldChip) = 1)
     (ha : 0 ≤ a) (hb : 0 ≤ b)
-    (hLowDeg : a + b + deg E ≤ (g : ℤ))
+    (hLowDeg : a + b + CFDiv.degree E ≤ (g : ℤ))
     (hSum : oldChip.val + 1 + (B.length β - p.val) = B.length β) :
     basePointDrop
       (mark B.graph (strandVertex B α i) (B.pathVertex β p))
@@ -770,9 +773,9 @@ theorem basePointDrop_bananaNormalForm_sub_occupied_endpoint_pair_eq_zero
     rw [hqVertex]
     exact isSemibreak_remove_interior_chip_of_eq_one B E hE β oldChip hOld
   have hdegE' :
-      deg (E - oneChip (B.pathVertex β (⟨oldChip.val + 1, by omega⟩ : B.PathPosition β)))
-        = deg E - 1 := by
-    rw [deg.map_sub, deg_one_chip]
+      CFDiv.degree (E - oneChip (B.pathVertex β (⟨oldChip.val + 1, by omega⟩ : B.PathPosition β)))
+        = CFDiv.degree E - 1 := by
+    rw [CFDiv.degree.map_sub, deg_one_chip]
   have huq : strandVertex B α i ≠
       B.pathVertex β (⟨oldChip.val + 1, by omega⟩ : B.PathPosition β) :=
     length_two_midpoint_ne_pathVertex_of_distinct_strand B α β i _ hαβ hα hi hq
@@ -810,7 +813,7 @@ theorem rankDelta_bananaNormalForm_lengthTwoCross_nonneg
     (hp : B.IsInteriorPosition β p)
     (hE : IsSemibreak B E)
     (ha : 0 ≤ a) (hb : 0 ≤ b)
-    (hLowDeg : a + b + deg E ≤ (g : ℤ)) :
+    (hLowDeg : a + b + CFDiv.degree E ≤ (g : ℤ)) :
     0 ≤ rankDelta
       (mark B.graph (strandVertex B α i) (B.pathVertex β p))
       (bananaNormalForm B a b E) := by
@@ -883,10 +886,10 @@ theorem rankDelta_lengthTwoCross_path_nonneg
     omega
   obtain ⟨Dlow, hDlowDeg, hDlowNeg⟩ :
       ∃ Dlow : CFDiv B.graph,
-        deg Dlow ≤ (g : ℤ) ∧
+        CFDiv.degree Dlow ≤ (g : ℤ) ∧
           rankDelta (mark B.graph (strandVertex B α i)
             (B.pathVertex β p)) Dlow < 0 := by
-    by_cases hDeg : deg D ≤ (g : ℤ)
+    by_cases hDeg : CFDiv.degree D ≤ (g : ℤ)
     · exact ⟨D, hDeg, hNeg⟩
     · refine ⟨canonicalDivisor B.graph + oneChip (strandVertex B α i) +
         oneChip (B.pathVertex β p) - D, ?_, ?_⟩
@@ -897,7 +900,7 @@ theorem rankDelta_lengthTwoCross_path_nonneg
         exact hNeg
   obtain ⟨a, b, E, hE, hb, hbdeg, hLinear⟩ :=
     exists_linearly_equiv_bananaNormalForm B Dlow
-  have hNormalDeg : a + b + deg E ≤ (g : ℤ) := by
+  have hNormalDeg : a + b + CFDiv.degree E ≤ (g : ℤ) := by
     have hDegEq := linear_equiv_preserves_deg B.graph Dlow
       (bananaNormalForm B a b E) hLinear
     rw [degree_bananaNormalForm] at hDegEq

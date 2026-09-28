@@ -179,7 +179,7 @@ def richCoreDivisor
 /-- Quotienting the core cannot change its total degree. -/
 theorem deg_richCoreDivisor
     (d : Utilities.Certificate.DegenerateSpec.DegSpec n p) (w : RichWitness) :
-    deg (w.richCoreDivisor d) = ∑ v : Fin n, w.divisorCore.getD v.val 0 := by
+    CFDiv.degree (w.richCoreDivisor d) = ∑ v : Fin n, w.divisorCore.getD v.val 0 := by
   classical
   have hFiber : ∀ c : d.Class,
       (Finset.univ.filter (fun v : Fin n => d.rep v = c.val)) =
@@ -189,10 +189,10 @@ theorem deg_richCoreDivisor
     ext v
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     exact ⟨fun h => Subtype.ext h, fun h => congrArg Subtype.val h⟩
-  have hsplit : deg (w.richCoreDivisor d) =
+  have hsplit : CFDiv.degree (w.richCoreDivisor d) =
       ∑ c : d.Class, ∑ v ∈ Finset.univ.filter (fun v : Fin n => d.rep v = c.val),
         w.divisorCore.getD v.val 0 := by
-    simp [deg, richCoreDivisor, Fintype.sum_sum_type]
+    simp [CFDiv.degree, richCoreDivisor, Fintype.sum_sum_type]
   rw [hsplit, Finset.sum_congr rfl (fun c _ => by rw [hFiber c])]
   exact Finset.sum_fiberwise Finset.univ
     (fun v : Fin n => (⟨d.rep v, d.rep_idem v⟩ : d.Class))
@@ -345,10 +345,10 @@ core class. -/
 theorem deg_rawChipDivisor
     (d : Utilities.Certificate.DegenerateSpec.DegSpec n p) (w : RichWitness)
     (decode : ℕ → Form → d.Vertex) :
-    deg (w.rawChipDivisor d decode) =
+    CFDiv.degree (w.rawChipDivisor d decode) =
       (w.chips.map fun chip => chip.2.2).sum := by
   have hsum : ∀ entries : List (ℕ × Form × ℤ),
-      deg (entries.map fun chip => chip.2.2 • oneChip
+      CFDiv.degree (entries.map fun chip => chip.2.2 • oneChip
         (G := d.graph) (decode chip.1 chip.2.1)).sum =
         (entries.map fun chip => chip.2.2).sum := by
     intro entries

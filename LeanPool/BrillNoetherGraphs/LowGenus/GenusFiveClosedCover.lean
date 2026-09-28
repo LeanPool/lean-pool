@@ -254,7 +254,7 @@ theorem coveredCell_of_valid
         rw [List.getD_eq_getElem _ _ hiReceipts] at this
         simpa [receipt, hConeAt, hEq] using this
       by_contra hFails
-      apply receipt.not_formsHold_of_valid _ hReceipt
+      apply receipt.not_formsHold_of_valid _ (point := point) hReceipt
       intro row hRow
       simp only [List.mem_append, List.mem_singleton] at hRow
       rcases hRow with hRow | rfl

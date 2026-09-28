@@ -30,7 +30,7 @@ theorem bnExists_of_reaches_coreVertices
     {n p : ℕ} (spec : SubdivisionGraph.Spec n p)
     (hConnected : graphConnected spec.graph)
     (D : CFDiv spec.graph) (degree : ℤ)
-    (hDegree : deg D = degree)
+    (hDegree : CFDiv.degree D = degree)
     (hReaches : ∀ vertex : Fin n,
       StrongSeparator.Reaches spec.graph D (spec.coreVertex vertex)) :
     BNExists spec.graph 1 degree := by

@@ -274,9 +274,9 @@ theorem slotInteriorChips_nonneg {D : CFDiv spec.graph} (hEff : effective D)
 /-- **The coordinate system.**  Total degree splits as the core-vertex values
 plus the slot-interior totals. -/
 theorem deg_eq_core_add_slotInteriorChips (D : CFDiv spec.graph) :
-    deg D = (∑ v : Fin n, D (spec.coreVertex v))
+    CFDiv.degree D = (∑ v : Fin n, D (spec.coreVertex v))
       + ∑ edge : Fin p, spec.slotInteriorChips D edge := by
-  have hdeg : deg D = ∑ x : spec.graph.V, D x := rfl
+  have hdeg : CFDiv.degree D = ∑ x : spec.graph.V, D x := rfl
   rw [hdeg, Fintype.sum_sum_type]
   congr 1
   rw [show (∑ x : spec.Interior, D (Sum.inr x))

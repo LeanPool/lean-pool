@@ -100,11 +100,10 @@ noncomputable def vertexWedgeCongrPresentation
       have hx : ψ.vertexEquiv (ψ.vertexEquiv.symm x.1) ≠ ψ.vertexEquiv b := by
         intro h
         exact x.2 (by simpa using h)
-      rw [wedgeRightVertex_unmarked]
+      rw [wedgeRightVertex_unmarked _ _ _ _ _ hx]
       apply congrArg Sum.inr
       apply Subtype.ext
       simp only [ne_eq, Equiv.apply_symm_apply]
-      exact hx
   num_edges_left := by
     intro x y
     simpa using φ.map_num_edges x y

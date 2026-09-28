@@ -194,7 +194,7 @@ structure LeftRankTransport (M N : MarkedGraph.{u}) where
   map_sub : ∀ D E, mapDiv (D - E) = mapDiv D - mapDiv E
   map_zsmul : ∀ (n : ℤ) D, mapDiv (n • D) = n • mapDiv D
   map_one_chip : mapDiv (oneChip M.left) = oneChip N.left
-  deg_map : ∀ D, deg (mapDiv D) = deg D
+  deg_map : ∀ D, CFDiv.degree (mapDiv D) = CFDiv.degree D
   rank_map : ∀ D, rank N.graph (mapDiv D) = rank M.graph D
   genus_eq : genus N.graph = genus M.graph
 

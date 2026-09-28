@@ -91,7 +91,7 @@ def TmOuterRing : Finset Tm.graph.V :=
 
 theorem sixChips_effective : effective sixChips := by decide
 
-theorem sixChips_deg : deg sixChips = 6 := by decide
+theorem sixChips_deg : CFDiv.degree sixChips = 6 := by decide
 
 theorem sixChips_rank : rank Tm.graph sixChips ≥ 1 := by
   refine Tm.rank_ge_one_of_forall_mem_coreVertices Tm_connected sixChips ?_
@@ -141,7 +141,7 @@ def cycleComponentCompl (i : Fin 3) : Finset Tm2.graph.V :=
 
 theorem specialDivisor_effective : effective specialDivisor := by decide
 
-theorem specialDivisor_deg : deg specialDivisor = 5 := by decide
+theorem specialDivisor_deg : CFDiv.degree specialDivisor = 5 := by decide
 
 theorem specialDivisor_rank : rank Tm2.graph specialDivisor ≥ 1 := by
   refine Tm2.rank_ge_one_of_forall_mem_coreVertices Tm2_connected specialDivisor ?_

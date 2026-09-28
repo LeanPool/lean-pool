@@ -70,24 +70,24 @@ and rank at least `r`"; since rank is a class invariant, that is the same as
 asking for `D - E` to be winnable, which is the form stated here.  The
 containment form is recovered by `bnRankGe_iff_contained`. -/
 def BNRankGe (G : CFGraph) (r d k : ℤ) : Prop :=
-  ∀ E : CFDiv G, effective E → deg E = r + k →
-    ∃ D : CFDiv G, deg D = d ∧ rank G D ≥ r ∧ winnable G (D - E)
+  ∀ E : CFDiv G, effective E → CFDiv.degree E = r + k →
+    ∃ D : CFDiv G, CFDiv.degree D = d ∧ rank G D ≥ r ∧ winnable G (D - E)
 
 /-- The literal Lim--Payne--Potashnik phrasing: every effective `E` of degree
 `r + k` is *contained in* an effective divisor of degree `d` and rank at least
 `r`. -/
 theorem bnRankGe_iff_contained (G : CFGraph) (r d k : ℤ) :
     BNRankGe G r d k ↔
-      ∀ E : CFDiv G, effective E → deg E = r + k →
-        ∃ D : CFDiv G, effective D ∧ deg D = d ∧ rank G D ≥ r ∧ effective (D - E) := by
+      ∀ E : CFDiv G, effective E → CFDiv.degree E = r + k →
+        ∃ D : CFDiv G, effective D ∧ CFDiv.degree D = d ∧ rank G D ≥ r ∧ effective (D - E) := by
   constructor
   · intro h E hEffective hDegree
     obtain ⟨D, hDegD, hRankD, hWin⟩ := h E hEffective hDegree
     obtain ⟨F, hFEffective, hEquiv⟩ := hWin
     refine ⟨F + E, (Eff G).add_mem hFEffective hEffective, ?_, ?_, ?_⟩
-    · have hDegF : deg F = deg (D - E) :=
+    · have hDegF : CFDiv.degree F = CFDiv.degree (D - E) :=
         (linear_equiv_preserves_deg G (D - E) F hEquiv).symm
-      rw [deg.map_add, hDegF, deg.map_sub, hDegD]
+      rw [CFDiv.degree.map_add, hDegF, CFDiv.degree.map_sub, hDegD]
       ring
     · have hEquiv' : linearEquiv G D (F + E) := by
         have hDifference : (F + E) - D = F - (D - E) := by abel
@@ -117,10 +117,10 @@ theorem bnRankGe_zero_iff_bnExists
     let v : G.V := Classical.arbitrary G.V
     let E : CFDiv G := r.toNat • oneChip v
     have hEffective : effective E := (Eff G).nsmul_mem (eff_one_chip v) r.toNat
-    have hDegree : deg E = r + 0 := by
+    have hDegree : CFDiv.degree E = r + 0 := by
       dsimp [E]
       simpa [Int.toNat_of_nonneg hr] using
-        (AddMonoidHom.map_nsmul deg r.toNat (oneChip v))
+        (AddMonoidHom.map_nsmul CFDiv.degree r.toNat (oneChip v))
     obtain ⟨D, hDegD, hRankD, _⟩ := h E hEffective hDegree
     exact ⟨D, hDegD, hRankD⟩
   · rintro ⟨D, hDegD, hRankD⟩ E hEffective hDegree
@@ -141,17 +141,17 @@ theorem bnRankGe_of_bnExists_pred
     BNRankGe G r d 1 := by
   obtain ⟨D₀, hDegD₀, hRankD₀⟩ := hExists
   intro E hEffective hDegree
-  have hDegree' : deg E = (r.toNat : ℕ) + (1 : ℕ) := by
+  have hDegree' : CFDiv.degree E = (r.toNat : ℕ) + (1 : ℕ) := by
     have : ((r.toNat : ℕ) : ℤ) = r := Int.toNat_of_nonneg hr
     push_cast
     omega
   obtain ⟨E₁, E₂, hE₁, hE₂, hDegE₁, hDegE₂, hSplit⟩ :=
     effective_divisor_decomposition G E r.toNat 1 hEffective hDegree'
-  have hDegE₁' : deg E₁ = r := by
+  have hDegE₁' : CFDiv.degree E₁ = r := by
     rw [hDegE₁]
     exact Int.toNat_of_nonneg hr
   refine ⟨D₀ + E₂, ?_, ?_, ?_⟩
-  · rw [deg.map_add, hDegD₀, hDegE₂]; ring
+  · rw [CFDiv.degree.map_add, hDegD₀, hDegE₂]; ring
   · exact rank_add_effective_ge G D₀ E₂ hE₂ r hRankD₀
   · have hDifference : D₀ + E₂ - E = D₀ - E₁ := by
       rw [hSplit]; abel
@@ -162,9 +162,9 @@ theorem bnRankGe_of_bnExists_pred
 
 /-- An effective divisor of degree two is a sum of two vertex chips. -/
 theorem exists_chip_pair_of_effective_deg_two
-    (G : CFGraph) (A : CFDiv G) (hEffective : effective A) (hDegree : deg A = 2) :
+    (G : CFGraph) (A : CFDiv G) (hEffective : effective A) (hDegree : CFDiv.degree A = 2) :
     ∃ x y : G.V, A = oneChip x + oneChip y := by
-  have hDegree' : deg A = (1 : ℕ) + (1 : ℕ) := by
+  have hDegree' : CFDiv.degree A = (1 : ℕ) + (1 : ℕ) := by
     norm_num
     exact hDegree
   obtain ⟨E, F, hE, hF, hDegE, hDegF, hSplit⟩ :=
@@ -198,12 +198,12 @@ theorem bnRankGe_of_le {G : CFGraph} {r d k k' : ℤ}
   let v : G.V := Classical.arbitrary G.V
   let F : CFDiv G := (k - k').toNat • oneChip v
   have hFEffective : effective F := (Eff G).nsmul_mem (eff_one_chip v) (k - k').toNat
-  have hFDegree : deg F = k - k' := by
+  have hFDegree : CFDiv.degree F = k - k' := by
     dsimp [F]
     simpa [Int.toNat_of_nonneg hSlack] using
-      (AddMonoidHom.map_nsmul deg (k - k').toNat (oneChip v))
-  have hPaddedDegree : deg (E + F) = r + k := by
-    rw [deg.map_add, hDegree, hFDegree]
+      (AddMonoidHom.map_nsmul CFDiv.degree (k - k').toNat (oneChip v))
+  have hPaddedDegree : CFDiv.degree (E + F) = r + k := by
+    rw [CFDiv.degree.map_add, hDegree, hFDegree]
     ring
   obtain ⟨D, hDegD, hRankD, hWin⟩ :=
     h (E + F) ((Eff G).add_mem hEffective hFEffective) hPaddedDegree
@@ -223,14 +223,14 @@ theorem not_bnRankGe_of_lt {G : CFGraph} {r d k : ℤ}
   let v : G.V := Classical.arbitrary G.V
   let E : CFDiv G := (r + k).toNat • oneChip v
   have hEffective : effective E := (Eff G).nsmul_mem (eff_one_chip v) (r + k).toNat
-  have hDegree : deg E = r + k := by
+  have hDegree : CFDiv.degree E = r + k := by
     dsimp [E]
     simpa [Int.toNat_of_nonneg (show (0 : ℤ) ≤ r + k by omega)] using
-      (AddMonoidHom.map_nsmul deg (r + k).toNat (oneChip v))
+      (AddMonoidHom.map_nsmul CFDiv.degree (r + k).toNat (oneChip v))
   obtain ⟨D, hDegD, _, hWin⟩ := h E hEffective hDegree
   obtain ⟨B, hBEffective, hEquiv⟩ := hWin
-  have hDegB : deg B ≥ 0 := deg_of_eff_nonneg B hBEffective
-  rw [← linear_equiv_preserves_deg G (D - E) B hEquiv, deg.map_sub, hDegD,
+  have hDegB : CFDiv.degree B ≥ 0 := deg_of_eff_nonneg B hBEffective
+  rw [← linear_equiv_preserves_deg G (D - E) B hEquiv, CFDiv.degree.map_sub, hDegD,
     hDegree] at hDegB
   omega
 

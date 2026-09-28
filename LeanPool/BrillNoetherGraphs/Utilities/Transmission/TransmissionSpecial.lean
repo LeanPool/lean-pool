@@ -36,7 +36,7 @@ namespace Utilities
 /-- Universal Riemann--Roch lower bound `r(D) ≥ deg(D)-g`. -/
 theorem rank_ge_degree_sub_genus
     {G : CFGraph} (hconn : graphConnected G) (D : CFDiv G) :
-    rank G D ≥ deg D - (genus G : ℤ) := by
+    rank G D ≥ CFDiv.degree D - (genus G : ℤ) := by
   have hRR := riemann_roch_for_graphs hconn D
   have hDual : rank G (canonicalDivisor G - D) ≥ -1 :=
     rank_geq_neg_one G (canonicalDivisor G - D)
@@ -66,7 +66,7 @@ transmission degree. -/
 theorem transmissionInequality_of_not_special
     {G : CFGraph} (hconn : graphConnected G)
     (u v : G.V) (τ : AspPerm) (D : CFDiv G)
-    (hDegree : deg D = (genus G : ℤ) + τ.χ)
+    (hDegree : CFDiv.degree D = (genus G : ℤ) + τ.χ)
     (a b : ℤ) (h : ¬ SpecialTransmissionPair τ a b) :
     TransmissionInequality G u v τ D a b := by
   have hBase := slipface_eq_baseline_of_not_special τ a b h
@@ -77,7 +77,7 @@ theorem transmissionInequality_of_not_special
       max_eq_right (le_of_lt hPos)
     rw [hMax]
     have hTwistDegree :
-        deg (D + a • oneChip u - b • oneChip v) =
+        CFDiv.degree (D + a • oneChip u - b • oneChip v) =
           (genus G : ℤ) + τ.χ + a - b := by
       rw [deg_add_marked_twist, hDegree]
     have hRank := rank_ge_degree_sub_genus hconn
@@ -95,7 +95,7 @@ theorem satisfiesTransmission_iff_special
     {G : CFGraph} (hconn : graphConnected G)
     (u v : G.V) (τ : AspPerm) (D : CFDiv G) :
     SatisfiesTransmission G u v τ D ↔
-      deg D = (genus G : ℤ) + τ.χ ∧
+      CFDiv.degree D = (genus G : ℤ) + τ.χ ∧
         ∀ a b : ℤ, SpecialTransmissionPair τ a b →
           TransmissionInequality G u v τ D a b := by
   constructor
@@ -113,7 +113,7 @@ theorem satisfiesTransmission_iff_specialSet
     {G : CFGraph} (hconn : graphConnected G)
     (u v : G.V) (τ : AspPerm) (D : CFDiv G) :
     SatisfiesTransmission G u v τ D ↔
-      deg D = (genus G : ℤ) + τ.χ ∧
+      CFDiv.degree D = (genus G : ℤ) + τ.χ ∧
         SatisfiesTransmissionOn G u v τ D (SpecialTransmissionSet τ) := by
   rw [satisfiesTransmission_iff_special hconn u v τ D]
   constructor

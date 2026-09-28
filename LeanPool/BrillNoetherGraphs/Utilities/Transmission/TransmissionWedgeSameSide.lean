@@ -107,7 +107,7 @@ theorem transmissionInequality_wedgeAddDivisor_sameLeft_iff_rowProfile
 def WedgeSameLeftTransmissionProfile
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (D : CFDiv G) (E : CFDiv H) (p q : G.V) (tau : AspPerm) : Prop :=
-  deg D + deg E = (genus G : ℤ) + (genus H : ℤ) + tau.χ ∧
+  CFDiv.degree D + CFDiv.degree E = (genus G : ℤ) + (genus H : ℤ) + tau.χ ∧
     ∀ a b ell : ℤ,
       WedgeSameLeftTransmissionRowProfile
         G H x y D E p q tau a b ell
@@ -206,7 +206,7 @@ theorem transmissionInequality_wedgeAddDivisor_sameRight_iff_rowProfile
 def WedgeSameRightTransmissionProfile
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (D : CFDiv G) (E : CFDiv H) (p q : H.V) (tau : AspPerm) : Prop :=
-  deg D + deg E = (genus G : ℤ) + (genus H : ℤ) + tau.χ ∧
+  CFDiv.degree D + CFDiv.degree E = (genus G : ℤ) + (genus H : ℤ) + tau.χ ∧
     ∀ a b ell : ℤ,
       WedgeSameRightTransmissionRowProfile
         G H x y D E p q tau a b ell

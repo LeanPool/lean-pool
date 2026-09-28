@@ -199,11 +199,13 @@ disjoint (`Sum.inl r₁` and `Sum.inr r₂` are non-adjacent in the sum by
 sum's edge set, and `SimpleGraph.IsTree.card_edgeFinset` gives
 `|Eᵢ| + 1 = |Nᵢ|`, so `(|N₁| - 1) + (|N₂| - 1) + 1 + 1 = |N₁ ⊕ N₂|`.
 Acyclicity is never proved directly. -/
-theorem isTree_joinTree {N₁ N₂ : Type} [Fintype N₁] [Fintype N₂]
-    [DecidableEq N₁] [DecidableEq N₂] {T₁ : SimpleGraph N₁} {T₂ : SimpleGraph N₂}
+theorem isTree_joinTree {N₁ N₂ : Type} [Finite N₁] [Finite N₂]
+    {T₁ : SimpleGraph N₁} {T₂ : SimpleGraph N₂}
     (h₁ : T₁.IsTree) (h₂ : T₂.IsTree) (r₁ : N₁) (r₂ : N₂) :
     (joinTree T₁ T₂ r₁ r₂).IsTree := by
   classical
+  let := Fintype.ofFinite N₁
+  let := Fintype.ofFinite N₂
   have hne : (Sum.inl r₁ : N₁ ⊕ N₂) ≠ Sum.inr r₂ := by simp
   have hedgeSet :
       (SimpleGraph.edge (Sum.inl r₁) (Sum.inr r₂) : SimpleGraph (N₁ ⊕ N₂)).edgeSet

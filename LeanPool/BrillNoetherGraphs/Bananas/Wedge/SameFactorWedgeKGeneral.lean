@@ -54,7 +54,7 @@ theorem same_leftFactor_wedge_isTorsionOrder_two
       ((2 : ℤ) • (oneChip x - oneChip u)) 0 0 0 hFactor
       (linearEquiv.refl H 0)
     convert h using 1 <;> ext z <;> cases z <;>
-      simp [wedgeLiftLeftDivisor, wedgeAddDivisor] <;> rfl
+      simp [wedgeLiftLeftDivisor, wedgeAddDivisor]
   have hNotOne : ¬ TorsionWitness M 1 := by
     intro hOne
     apply left_mark_difference_not_principal G H x u y hG hxu.symm

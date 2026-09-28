@@ -132,15 +132,13 @@ private theorem num_edges_cross (a : cut.leftGraph.V) (b : cut.rightGraph.V) :
         apply hb
         apply Subtype.ext
         simpa [rightGlue] using hValue
-      simp [ha, hb, leftGlue, hbVal] at hRaw ⊢
-      exact hRaw
+      simpa [ha, hb, leftGlue, hbVal] using hRaw
   · have hRawFalse : ¬ (a.val = cut.leftAttach ∧ b.val = cut.rightAttach) := by
       rintro ⟨haVal, _⟩
       apply ha
       apply Subtype.ext
       simpa [leftGlue] using haVal
-    simp [ha, hRawFalse] at hRaw ⊢
-    exact hRaw
+    simpa [ha, hRawFalse] using hRaw
 /-- The occurrence-safe isomorphism from the bridge model to the ambient
 graph. -/
 noncomputable def graphIso : CFGraphIso cut.bridgeGraph K where
@@ -216,7 +214,7 @@ theorem graph_connected_left_of_connected (hK : graphConnected K) :
       · exact hxLeft
       · by_contra hxNotLeft
         have hZero := cut.cross_num_edges y x hyLeft hxRight
-        simp [hyNeAttach] at hZero
+        simp only [hyNeAttach, false_and, ite_false] at hZero
         rw [num_edges_symmetric] at hZero
         omega
     let xLeft : cut.leftGraph.V := ⟨x, hxLeft⟩
@@ -259,7 +257,7 @@ theorem graph_connected_left_of_connected (hK : graphConnected K) :
       rcases cut.vertex_cover y with hyLeft | hyRight
       · exact hyLeft
       · have hZero := cut.cross_num_edges x y hxLeftMem hyRight
-        simp [hxNeAttach] at hZero
+        simp only [hxNeAttach, false_and, ite_false] at hZero
         exact False.elim (by rw [hZero] at hxy; omega)
     let yLeft : cut.leftGraph.V := ⟨y, hyLeft⟩
     have hyA : yLeft ∉ A := by
@@ -296,7 +294,7 @@ def swap : OneBridgeCut K where
       have hReverse : ¬ (b = cut.leftAttach ∧ a = cut.rightAttach) := by
         rintro ⟨hLeft, hRight⟩
         exact hPair ⟨hRight, hLeft⟩
-      simp [hReverse] at h
+      simp only [hReverse, ite_false] at h
       exact h
 
 @[simp] theorem swap_leftGraph : cut.swap.leftGraph = cut.rightGraph := rfl

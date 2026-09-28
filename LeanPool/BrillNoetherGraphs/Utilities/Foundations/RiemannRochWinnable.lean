@@ -26,10 +26,10 @@ namespace Utilities
 the canonical complement. -/
 theorem rank_ge_iff_canonical_sub_winnable_of_degree
     {G : CFGraph} (hG : graphConnected G) (D : CFDiv G) (k : ℤ)
-    (hDegree : deg D = (genus G : ℤ) - 1 + k) :
+    (hDegree : CFDiv.degree D = (genus G : ℤ) - 1 + k) :
     rank G D ≥ k ↔ winnable G (canonicalDivisor G - D) := by
   rw [rank_ge_iff_dual_rank_ge hG D k]
-  have hDualRank : dualRank G k (deg D) = 0 := by
+  have hDualRank : dualRank G k (CFDiv.degree D) = 0 := by
     unfold dualRank rectangleWidth
     rw [hDegree]
     ring
@@ -42,7 +42,7 @@ criterion.  This is convenient for residual constructions: a rank hypothesis
 can be destructed directly into an effective representative of `K - D`. -/
 theorem rank_ge_iff_exists_effective_canonical_complement
     {G : CFGraph} (hG : graphConnected G) (D : CFDiv G) (k : ℤ)
-    (hDegree : deg D = (genus G : ℤ) - 1 + k) :
+    (hDegree : CFDiv.degree D = (genus G : ℤ) - 1 + k) :
     rank G D ≥ k ↔
       ∃ E : CFDiv G, effective E ∧ linearEquiv G (canonicalDivisor G - D) E := by
   rw [rank_ge_iff_canonical_sub_winnable_of_degree hG D k hDegree]
@@ -52,11 +52,11 @@ theorem rank_ge_iff_exists_effective_canonical_complement
 at least `k` exactly when `F` is winnable. -/
 theorem canonical_sub_rank_ge_iff_winnable_of_degree
     {G : CFGraph} (hG : graphConnected G) (F : CFDiv G) (k : ℤ)
-    (hDegree : deg F = (genus G : ℤ) - 1 - k) :
+    (hDegree : CFDiv.degree F = (genus G : ℤ) - 1 - k) :
     rank G (canonicalDivisor G - F) ≥ k ↔ winnable G F := by
   have hComplementDegree :
-      deg (canonicalDivisor G - F) = (genus G : ℤ) - 1 + k := by
-    rw [deg.map_sub, degree_of_canonical_divisor, hDegree]
+      CFDiv.degree (canonicalDivisor G - F) = (genus G : ℤ) - 1 + k := by
+    rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hDegree]
     ring
   rw [rank_ge_iff_canonical_sub_winnable_of_degree hG
     (canonicalDivisor G - F) k hComplementDegree]
@@ -68,7 +68,7 @@ theorem canonical_sub_rank_ge_iff_winnable_of_degree
 /-- Effective-representative version of the complementary criterion. -/
 theorem canonical_sub_rank_ge_iff_exists_effective
     {G : CFGraph} (hG : graphConnected G) (F : CFDiv G) (k : ℤ)
-    (hDegree : deg F = (genus G : ℤ) - 1 - k) :
+    (hDegree : CFDiv.degree F = (genus G : ℤ) - 1 - k) :
     rank G (canonicalDivisor G - F) ≥ k ↔
       ∃ E : CFDiv G, effective E ∧ linearEquiv G F E := by
   rw [canonical_sub_rank_ge_iff_winnable_of_degree hG F k hDegree]
@@ -78,7 +78,7 @@ theorem canonical_sub_rank_ge_iff_exists_effective
 prescribed-residual constructions. -/
 theorem canonical_sub_rank_ge_one_iff_winnable
     {G : CFGraph} (hG : graphConnected G) (F : CFDiv G)
-    (hDegree : deg F = (genus G : ℤ) - 2) :
+    (hDegree : CFDiv.degree F = (genus G : ℤ) - 2) :
     rank G (canonicalDivisor G - F) ≥ 1 ↔ winnable G F := by
   apply canonical_sub_rank_ge_iff_winnable_of_degree hG F 1
   omega
@@ -87,7 +87,7 @@ theorem canonical_sub_rank_ge_one_iff_winnable
 complement is winnable. -/
 theorem degree_genus_sub_one_winnable_iff_complement_winnable
     {G : CFGraph} (hG : graphConnected G) (D : CFDiv G)
-    (hDegree : deg D = (genus G : ℤ) - 1) :
+    (hDegree : CFDiv.degree D = (genus G : ℤ) - 1) :
     winnable G D ↔ winnable G (canonicalDivisor G - D) := by
   constructor
   · intro hWin

@@ -47,7 +47,7 @@ variable {G : CFGraph}
 /-- A divisor of rank at least one has an effective representative of the same
 degree and rank. -/
 theorem exists_effective_of_rank_ge_one {D : CFDiv G} (hD : rank G D ≥ 1) :
-    ∃ E : CFDiv G, effective E ∧ deg E = deg D ∧ rank G E ≥ 1 := by
+    ∃ E : CFDiv G, effective E ∧ CFDiv.degree E = CFDiv.degree D ∧ rank G E ≥ 1 := by
   have hwin : winnable G D :=
     (rank_nonneg_iff_winnable G D).mp ((rank_geq_iff G D 0).mpr (by omega))
   obtain ⟨E, hEeff, hequiv⟩ := (winnable_iff_exists_effective G D).mp hwin
@@ -56,14 +56,14 @@ theorem exists_effective_of_rank_ge_one {D : CFDiv G} (hD : rank G D ≥ 1) :
   exact hD
 
 /-- A divisor of rank at least one has degree at least one. -/
-theorem one_le_deg_of_rank_ge_one {D : CFDiv G} (hD : rank G D ≥ 1) : 1 ≤ deg D :=
+theorem one_le_deg_of_rank_ge_one {D : CFDiv G} (hD : rank G D ≥ 1) : 1 ≤ CFDiv.degree D :=
   rank_le_degree G D 1 (by norm_num) ((rank_geq_iff G D 1).mpr hD)
 
 /-! ## The gonality set and `divisorialGonality` -/
 
 /-- The degrees of the effective divisors of rank at least one. -/
 def gonalitySet (G : CFGraph) : Set ℕ :=
-  {d : ℕ | ∃ D : CFDiv G, effective D ∧ deg D = (d : ℤ) ∧ rank G D ≥ 1}
+  {d : ℕ | ∃ D : CFDiv G, effective D ∧ CFDiv.degree D = (d : ℤ) ∧ rank G D ≥ 1}
 
 /-- The **divisorial gonality** of `G`: the least degree of an effective divisor
 of rank at least one, as a natural number. -/
@@ -72,7 +72,7 @@ noncomputable def divisorialGonality (G : CFGraph) : ℕ :=
 
 /-- Membership in `gonalitySet` from an explicit witness. -/
 theorem mem_gonalitySet {d : ℕ} {D : CFDiv G} (hEff : effective D)
-    (hDeg : deg D = (d : ℤ)) (hRank : rank G D ≥ 1) : d ∈ gonalitySet G :=
+    (hDeg : CFDiv.degree D = (d : ℤ)) (hRank : rank G D ≥ 1) : d ∈ gonalitySet G :=
   ⟨D, hEff, hDeg, hRank⟩
 
 /-- On a connected graph there is an effective divisor of rank at least one (of
@@ -82,18 +82,18 @@ theorem gonalitySet_nonempty (h_conn : graphConnected G) :
     (gonalitySet G).Nonempty := by
   obtain ⟨D, hRank, hDeg⟩ := gonality_leq_genus_add_one h_conn
   obtain ⟨E, hEeff, hEdeg, hErank⟩ := exists_effective_of_rank_ge_one hRank
-  have hpos : 0 ≤ deg E := le_trans (by norm_num) (one_le_deg_of_rank_ge_one hErank)
-  exact ⟨(deg E).toNat, E, hEeff, by rw [Int.toNat_of_nonneg hpos], hErank⟩
+  have hpos : 0 ≤ CFDiv.degree E := le_trans (by norm_num) (one_le_deg_of_rank_ge_one hErank)
+  exact ⟨(CFDiv.degree E).toNat, E, hEeff, by rw [Int.toNat_of_nonneg hpos], hErank⟩
 
 /-- Any effective divisor of rank at least one bounds the gonality. -/
 theorem divisorialGonality_le {d : ℕ} {D : CFDiv G} (hEff : effective D)
-    (hDeg : deg D = (d : ℤ)) (hRank : rank G D ≥ 1) :
+    (hDeg : CFDiv.degree D = (d : ℤ)) (hRank : rank G D ≥ 1) :
     divisorialGonality G ≤ d :=
   Nat.sInf_le (mem_gonalitySet hEff hDeg hRank)
 
 /-- The gonality is realized by an actual divisor. -/
 theorem exists_divisor_of_divisorialGonality (h_conn : graphConnected G) :
-    ∃ D : CFDiv G, effective D ∧ deg D = (divisorialGonality G : ℤ) ∧
+    ∃ D : CFDiv G, effective D ∧ CFDiv.degree D = (divisorialGonality G : ℤ) ∧
       rank G D ≥ 1 :=
   Nat.sInf_mem (gonalitySet_nonempty h_conn)
 
@@ -109,10 +109,10 @@ theorem divisorialGonality_le_genus_add_one (h_conn : graphConnected G) :
     (divisorialGonality G : ℤ) ≤ genus G + 1 := by
   obtain ⟨D, hRank, hDeg⟩ := gonality_leq_genus_add_one h_conn
   obtain ⟨E, hEeff, hEdeg, hErank⟩ := exists_effective_of_rank_ge_one hRank
-  have hpos : 0 ≤ deg E := le_trans (by norm_num) (one_le_deg_of_rank_ge_one hErank)
-  have hle : divisorialGonality G ≤ (deg E).toNat :=
+  have hpos : 0 ≤ CFDiv.degree E := le_trans (by norm_num) (one_le_deg_of_rank_ge_one hErank)
+  have hle : divisorialGonality G ≤ (CFDiv.degree E).toNat :=
     divisorialGonality_le hEeff (by rw [Int.toNat_of_nonneg hpos]) hErank
-  have : ((deg E).toNat : ℤ) = genus G + 1 := by
+  have : ((CFDiv.degree E).toNat : ℤ) = genus G + 1 := by
     rw [Int.toNat_of_nonneg hpos, hEdeg, hDeg]
   omega
 
@@ -129,10 +129,10 @@ theorem divisorialGonality_le_of_BNExists {d : ℤ} (h : BNExists G 1 d) :
     (divisorialGonality G : ℤ) ≤ d := by
   obtain ⟨D, hDeg, hRank⟩ := h
   obtain ⟨E, hEeff, hEdeg, hErank⟩ := exists_effective_of_rank_ge_one hRank
-  have hpos : 0 ≤ deg E := le_trans (by norm_num) (one_le_deg_of_rank_ge_one hErank)
-  have hle : divisorialGonality G ≤ (deg E).toNat :=
+  have hpos : 0 ≤ CFDiv.degree E := le_trans (by norm_num) (one_le_deg_of_rank_ge_one hErank)
+  have hle : divisorialGonality G ≤ (CFDiv.degree E).toNat :=
     divisorialGonality_le hEeff (by rw [Int.toNat_of_nonneg hpos]) hErank
-  have hcast : ((deg E).toNat : ℤ) = d := by rw [Int.toNat_of_nonneg hpos, hEdeg, hDeg]
+  have hcast : ((CFDiv.degree E).toNat : ℤ) = d := by rw [Int.toNat_of_nonneg hpos, hEdeg, hDeg]
   omega
 
 /-- The dependency's predicate `gonalityLeq` holds at the gonality. -/

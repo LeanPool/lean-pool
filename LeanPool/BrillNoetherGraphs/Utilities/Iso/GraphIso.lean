@@ -106,7 +106,7 @@ abbrev mapScript (φ : CFGraphIso G H) : firingScript G ≃+ firingScript H :=
 
 /-- Divisor degree is invariant under relabeling. -/
 @[simp] theorem deg_mapDiv (φ : CFGraphIso G H) (D : CFDiv G) :
-    deg (φ.mapDiv D) = deg D := by
+    CFDiv.degree (φ.mapDiv D) = CFDiv.degree D := by
   change (∑ w : H.V, D (φ.vertexEquiv.symm w)) = ∑ v : G.V, D v
   exact φ.vertexEquiv.symm.sum_comp D
 

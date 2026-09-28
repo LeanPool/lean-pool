@@ -413,7 +413,7 @@ relating the two marked strand lengths beyond the two lengths not both
 being `2`. -/
 theorem crossOneOff_cutoff_le_torsionWitness_of_not_both_two
     {g : ℕ} (B : Banana g) (alpha beta : Fin (g + 1))
-    (hg : 3 ≤ g) (hab : alpha ≠ beta)
+    (_ : 3 ≤ g) (hab : alpha ≠ beta)
     (hAlpha : 1 < B.length alpha) (hBeta : 1 < B.length beta)
     (hNotBoth : ¬ (B.length alpha = 2 ∧ B.length beta = 2))
     (m : ℕ) (hm : TorsionWitness

@@ -232,7 +232,7 @@ theorem effective_embed {D : CFDiv spec.graph} (hD : effective D) :
   · exact le_rfl
 
 theorem deg_embed (D : CFDiv spec.graph) :
-    deg (spec.embed N hN D) = deg D := by
+    CFDiv.degree (spec.embed N hN D) = CFDiv.degree D := by
   classical
   change (∑ y, ∑ x : spec.Vertex, if spec.fineOf N hN x = y then D x else 0) =
     ∑ x, D x

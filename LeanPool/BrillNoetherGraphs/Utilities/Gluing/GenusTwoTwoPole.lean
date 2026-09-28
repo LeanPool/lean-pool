@@ -39,14 +39,14 @@ universe u v
 /-- A divisor whose degree equals the genus is winnable. -/
 theorem winnable_of_degree_eq_genus
     (G : CFGraph.{u}) (hG : graphConnected G) (D : CFDiv G)
-    (hDegree : deg D = genus G) :
+    (hDegree : CFDiv.degree D = genus G) :
     winnable G D := by
   exact winnable_of_deg_ge_genus hG D (by omega)
 
 /-- Degree of an integral pile at one vertex. -/
 @[simp] theorem deg_zsmul_one_chip
     (G : CFGraph.{u}) (q : G.V) (n : ℤ) :
-    deg (n • oneChip (G := G) q) = n := by
+    CFDiv.degree (n • oneChip (G := G) q) = n := by
   rw [map_zsmul, deg_one_chip]
   simp
 
@@ -58,7 +58,7 @@ theorem winnable_four_pile_sub_two
     winnable G
       ((4 : ℤ) • oneChip a - (2 : ℤ) • oneChip uMark) := by
   apply winnable_of_degree_eq_genus G hG
-  rw [deg.map_sub, deg_zsmul_one_chip, deg_zsmul_one_chip, hGenus]
+  rw [CFDiv.degree.map_sub, deg_zsmul_one_chip, deg_zsmul_one_chip, hGenus]
   norm_num
 
 /-! ## The four-chip pile on a genus-two/genus-two wedge -/

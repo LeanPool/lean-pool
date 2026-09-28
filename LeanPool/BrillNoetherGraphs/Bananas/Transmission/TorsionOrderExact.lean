@@ -94,9 +94,10 @@ theorem KGeneralTransmission.isTorsionOrder
     have h := σ.nw_finite m n
     rwa [hστ] at h
   have hDegX : ∀ a b : ℤ,
-      deg ((0 : CFDiv M.graph) + a • oneChip M.u - b • oneChip M.v) = a - b := by
+      CFDiv.degree ((0 : CFDiv M.graph) + a • oneChip M.u - b • oneChip M.v) = a - b := by
     intro a b
-    rw [deg.map_sub, deg.map_add, map_zsmul, map_zsmul, deg_one_chip, deg_one_chip, map_zero]
+    rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, map_zsmul, map_zsmul,
+      deg_one_chip, deg_one_chip, map_zero]
     ring
   -- `rank 0 = 0`, and the two neighboring degree-`(-1)` twists have rank `-1`.
   have hRank0 : rank M.graph (0 : CFDiv M.graph) = 0 := zero_divisor_rank M.graph

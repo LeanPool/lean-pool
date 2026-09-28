@@ -174,9 +174,9 @@ theorem rank_bridgeRankOneDivisor_ge_one
 theorem deg_bridgeRankOneDivisor
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (D : CFDiv G) (E : CFDiv H) :
-    deg (bridgeRankOneDivisor G H x y D E) = deg D + deg E - 1 := by
+    CFDiv.degree (bridgeRankOneDivisor G H x y D E) = CFDiv.degree D + CFDiv.degree E - 1 := by
   unfold bridgeRankOneDivisor
-  rw [deg.map_sub, deg.map_add, deg_liftLeftDivisor,
+  rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, deg_liftLeftDivisor,
     deg_liftRightDivisor, deg_one_chip]
 
 /-- Rank-one Brill--Noether witnesses glue across a bridge with the expected

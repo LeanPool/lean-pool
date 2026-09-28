@@ -206,18 +206,18 @@ theorem rankDelta_second_cross_witness_neg
       (oneChip (strandVertex B alpha p) +
         oneChip (strandVertex B beta q)) :=
     isSemibreak_two_distinct_strand_chips B alpha beta p q hp hq hAlphaBeta
-  have hDegD : deg (oneChip (strandVertex B alpha p) +
+  have hDegD : CFDiv.degree (oneChip (strandVertex B alpha p) +
       oneChip (strandVertex B beta ⟨1, by omega⟩)) = 2 := by
-    rw [deg.map_add, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
     norm_num
-  have hDegDU : deg
+  have hDegDU : CFDiv.degree
       (oneChip (strandVertex B alpha ⟨B.length alpha - 1, by omega⟩) +
         oneChip (strandVertex B beta ⟨1, by omega⟩)) = 2 := by
-    rw [deg.map_add, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
     norm_num
-  have hDegDV : deg (oneChip (strandVertex B alpha p) +
+  have hDegDV : CFDiv.degree (oneChip (strandVertex B alpha p) +
       oneChip (strandVertex B beta q)) = 2 := by
-    rw [deg.map_add, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
     norm_num
   have hRankD : rank B.graph
       (oneChip (strandVertex B alpha i) +

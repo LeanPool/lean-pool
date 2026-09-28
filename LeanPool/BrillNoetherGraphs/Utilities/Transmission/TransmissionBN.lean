@@ -32,7 +32,7 @@ def TransmissionTwist
 theorem degree_transmissionTwist
     {G : CFGraph} {u v : G.V} {τ : AspPerm} {D : CFDiv G}
     (h : SatisfiesTransmission G u v τ D) (a b : ℤ) :
-    deg (TransmissionTwist G u v D a b) =
+    CFDiv.degree (TransmissionTwist G u v D a b) =
       (genus G : ℤ) + τ.χ + a - b := by
   simpa [TransmissionTwist] using degree_twist_of_satisfiesTransmission h a b
 

@@ -146,7 +146,8 @@ def singletonBramble (H : SimpleGraph V) (v : V) : Bramble H where
     rw [Finset.union_self]
     exact connected_induce_singleton H v
 
-theorem one_le_order_singletonBramble (H : SimpleGraph V) (v : V) :
+omit [Fintype V] in
+theorem one_le_order_singletonBramble [Finite V] (H : SimpleGraph V) (v : V) :
     1 ≤ (Bramble.singletonBramble H v).order :=
   Bramble.one_le_order _ ⟨{v}, Finset.mem_singleton_self _⟩
 
@@ -774,13 +775,16 @@ theorem exists_admissible (k : ℕ) (hk : ∀ 𝔅 : Bramble H, 𝔅.order ≤ k
         exact core 𝔅 (fun 𝔅' hlt => ih 𝔅' (by omega))
   exact fun 𝔅 => key _ 𝔅 le_rfl
 
+omit [Fintype V] in
 /-- Applying `exists_admissible` to the empty bramble bounds the treewidth.
 
 Discharge plan: admissibility for `Bramble.empty` says no bag has more than `k`
 vertices (every set covers the empty bramble, `Bramble.isHittingSet_empty`), so
 `width ≤ k − 1`; then `treewidth_le_width` on `toTreeDecomposition`. -/
-theorem treewidth_le_of_forall_order_le (k : ℕ) (hk : ∀ 𝔅 : Bramble H, 𝔅.order ≤ k) :
+theorem treewidth_le_of_forall_order_le [Finite V]
+    (k : ℕ) (hk : ∀ 𝔅 : Bramble H, 𝔅.order ≤ k) :
     treewidth H ≤ k - 1 := by
+  let := Fintype.ofFinite V
   obtain ⟨D, hD⟩ := exists_admissible k hk (Bramble.empty H)
   have hbag : ∀ t : D.Node, (D.bag t).card ≤ k := by
     intro t
@@ -793,6 +797,7 @@ theorem treewidth_le_of_forall_order_le (k : ℕ) (hk : ∀ 𝔅 : Bramble H, �
     omega
   exact le_trans (treewidth_le_width D.toTreeDecomposition) hw
 
+omit [Fintype V] in
 /-- **The hard half of Seymour--Thomas duality**: some bramble has order at
 least `treewidth H + 1`.
 
@@ -801,7 +806,7 @@ If every bramble had order `≤ treewidth H` we would get
 `treewidth H ≤ treewidth H − 1`, impossible unless `treewidth H = 0`; and
 `treewidth H = 0` is excluded because `Bramble.singletonBramble H v` has order
 `≥ 1` (this is where `Nonempty V` is used). -/
-theorem exists_bramble_treewidth_succ_le [Nonempty V] (H : SimpleGraph V) :
+theorem exists_bramble_treewidth_succ_le [Finite V] [Nonempty V] (H : SimpleGraph V) :
     ∃ 𝔅 : Bramble H, treewidth H + 1 ≤ 𝔅.order := by
   by_contra hcon
   push Not at hcon

@@ -227,10 +227,10 @@ theorem not_step_right_left (h : c.Valid)
       exact (c.mem_leftVertices_core spec _).mpr hTail
     · have hBoth : spec.core.tail edge ∈ c.left ∧ spec.core.head edge ∈ c.left := by
         constructor
-        by_cases hEq : edge = c.bridge
-        · subst edge
-          exact False.elim (h.2.1 hHead)
-        · exact (h.2.2 edge hEq).mpr hHead
+        · by_cases hEq : edge = c.bridge
+          · subst edge
+            exact False.elim (h.2.1 hHead)
+          · exact (h.2.2 edge hEq).mpr hHead
         exact hHead
       apply hLeft
       rw [SubdivisionGraph.Spec.stepLeft, dite_eq_right hZero]
@@ -323,7 +323,7 @@ noncomputable def toOneBridgeCut (h : c.Valid) : OneBridgeCut spec.graph where
           spec.unitEdge step = (a, b) ∨ spec.unitEdge step = (b, a)) = ∅ := by
         ext step
         simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-        simp
+        simp only [notMem_empty, iff_false, not_or]
         constructor
         · intro hForward
           apply hAttach

@@ -167,20 +167,16 @@ def vertexWedgeAssoc
         · rcases b with b | r
           · rw [vertexWedgeAssocVertexEquiv_apply_first,
               vertexWedgeAssocVertexEquiv_apply_first]
-            simp only [hLeftTarget, hLeftSource, hLeftFirst, hLeftSecond, hRightTarget,
-              hRightSource, hRightFirst, hRightSecond, hCrossTarget, hCrossSource, hCrossFirst,
-              hCrossSecond]
+            simp only [hLeftTarget, hLeftSource, hLeftFirst]
           · rw [vertexWedgeAssocVertexEquiv_apply_first,
               vertexWedgeAssocVertexEquiv_apply_middle]
-            simp only [vertexWedgeAssocMiddleVertex, hLeftTarget, hLeftSource, hLeftFirst,
-              hLeftSecond, hRightTarget, hRightSource, hRightFirst, hRightSecond, hCrossTarget,
-              hCrossSource, hCrossFirst, hCrossSecond, ite_true, ite_false]
+            simp only [vertexWedgeAssocMiddleVertex, hLeftSource,
+              hLeftSecond, hCrossTarget,
+              hCrossFirst]
         · rw [vertexWedgeAssocVertexEquiv_apply_first,
             vertexWedgeAssocVertexEquiv_apply_last]
           simp only [hCrossTarget,
-              hCrossSource,
-              hCrossFirst,
-              hCrossSecond]
+              hCrossSource]
           rw [vertexWedgeAssocLastVertex_val]
           rw [hCrossSecond y d]
           by_cases hzy : z = y
@@ -188,9 +184,7 @@ def vertexWedgeAssoc
             rw [wedgeRightVertex_marked G H x y]
             by_cases hax : a = x
             · subst a
-              simp only [hLeftTarget, hLeftSource, hLeftFirst, hLeftSecond, hRightTarget,
-                hRightSource, hRightFirst, hRightSecond, hCrossTarget, hCrossSource,
-                hCrossFirst, hCrossSecond, ite_true, ite_false]
+              simp only [ite_true]
             · have hsum : (Sum.inl a : (vertexWedge G H x y).V) ≠ Sum.inl x :=
                 fun h => hax (Sum.inl.inj h)
               simp [hax, hsum]
@@ -204,17 +198,16 @@ def vertexWedgeAssoc
             rw [num_edges_symmetric (vertexWedge G (vertexWedge H K z t) x (Sum.inl y)),
               num_edges_symmetric (vertexWedge (vertexWedge G H x y) K
                 (wedgeRightVertex G H x y z) t)]
-            simp only [vertexWedgeAssocMiddleVertex, hLeftTarget, hLeftSource, hLeftFirst,
-              hLeftSecond, hRightTarget, hRightSource, hRightFirst, hRightSecond, hCrossTarget,
-              hCrossSource, hCrossFirst, hCrossSecond, ite_true, ite_false]
+            simp only [vertexWedgeAssocMiddleVertex, hLeftSource,
+              hLeftSecond, hCrossTarget,
+              hCrossFirst]
           · rw [vertexWedgeAssocVertexEquiv_apply_middle,
               vertexWedgeAssocVertexEquiv_apply_middle]
-            simp only [vertexWedgeAssocMiddleVertex, hLeftTarget, hLeftSource, hLeftFirst,
-              hLeftSecond, hRightTarget, hRightSource, hRightFirst, hRightSecond, hCrossTarget,
-              hCrossSource, hCrossFirst, hCrossSecond, ite_true, ite_false]
+            simp only [vertexWedgeAssocMiddleVertex, hLeftSource,
+              hLeftSecond, hRightTarget, hRightFirst]
         · rw [vertexWedgeAssocVertexEquiv_apply_middle,
             vertexWedgeAssocVertexEquiv_apply_last]
-          simp only [hRightTarget, hRightSource, hCrossTarget, hCrossSource]
+          simp only [hRightTarget, hCrossSource]
           rw [vertexWedgeAssocMiddleVertex_val, vertexWedgeAssocLastVertex_val]
           rw [hCrossSecond q.1 d]
           by_cases hzy : z = y
@@ -246,9 +239,7 @@ def vertexWedgeAssoc
             rw [wedgeRightVertex_marked G H x y]
             by_cases hbx : b = x
             · subst b
-              simp only [hLeftTarget, hLeftSource, hLeftFirst, hLeftSecond, hRightTarget,
-                hRightSource, hRightFirst, hRightSecond, hCrossTarget, hCrossSource,
-                hCrossFirst, hCrossSecond, ite_true, ite_false]
+              simp only [ite_true]
             · have hsum : (Sum.inl b : (vertexWedge G H x y).V) ≠ Sum.inl x :=
                 fun h => hbx (Sum.inl.inj h)
               simp [hbx, hsum]
@@ -257,7 +248,7 @@ def vertexWedgeAssoc
             simp [hyz]
         · rw [vertexWedgeAssocVertexEquiv_apply_last,
             vertexWedgeAssocVertexEquiv_apply_middle]
-          simp only [hRightTarget, hRightSource, hReverseTarget, hReverseSource]
+          simp only [hRightTarget, hReverseSource]
           rw [vertexWedgeAssocLastVertex_val, vertexWedgeAssocMiddleVertex_val]
           rw [num_edges_vertexWedge_right_left H K z t c r.1]
           by_cases hzy : z = y
@@ -279,9 +270,8 @@ def vertexWedgeAssoc
               · rfl
       · rw [vertexWedgeAssocVertexEquiv_apply_last,
           vertexWedgeAssocVertexEquiv_apply_last]
-        simp only [vertexWedgeAssocLastVertex, hLeftTarget, hLeftSource, hLeftFirst,
-          hLeftSecond, hRightTarget, hRightSource, hRightFirst, hRightSecond, hCrossTarget,
-          hCrossSource, hCrossFirst, hCrossSecond, ite_true, ite_false]
+        simp only [vertexWedgeAssocLastVertex,
+          hRightTarget, hRightSource, hRightSecond]
 
 /-- Brill--Noether generality is invariant under graph isomorphism. -/
 theorem brillNoetherGeneral_iff_graphIso

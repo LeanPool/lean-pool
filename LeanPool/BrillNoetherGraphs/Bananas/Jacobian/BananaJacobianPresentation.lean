@@ -50,8 +50,8 @@ def bananaCoordinateDivisorHom {g : ℕ} (B : Banana g) :
 /-- Every coordinate vector maps to a divisor of degree zero. -/
 @[simp] theorem degree_bananaCoordinateDivisorHom {g : ℕ} (B : Banana g)
     (a : Fin (g + 1) → ℤ) :
-    deg (bananaCoordinateDivisorHom B a) = 0 := by
-  change deg (∑ alpha : Fin (g + 1),
+    CFDiv.degree (bananaCoordinateDivisorHom B a) = 0 := by
+  change CFDiv.degree (∑ alpha : Fin (g + 1),
     a alpha • bananaCoordinateStep B alpha) = 0
   rw [map_sum]
   apply Finset.sum_eq_zero

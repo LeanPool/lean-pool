@@ -30,16 +30,16 @@ theorem rankDelta_zero_eq_one (M : TwiceMarked) :
     rankDelta M (0 : CFDiv M.graph) = 1 := by
   have hU : rank M.graph ((0 : CFDiv M.graph) - oneChip M.u) = -1 := by
     apply rank_neg_one_of_deg_neg
-    rw [deg.map_sub, map_zero, deg_one_chip]
+    rw [CFDiv.degree.map_sub, map_zero, deg_one_chip]
     norm_num
   have hV : rank M.graph ((0 : CFDiv M.graph) - oneChip M.v) = -1 := by
     apply rank_neg_one_of_deg_neg
-    rw [deg.map_sub, map_zero, deg_one_chip]
+    rw [CFDiv.degree.map_sub, map_zero, deg_one_chip]
     norm_num
   have hUV : rank M.graph
       ((0 : CFDiv M.graph) - oneChip M.u - oneChip M.v) = -1 := by
     apply rank_neg_one_of_deg_neg
-    rw [deg.map_sub, deg.map_sub, map_zero, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_sub, CFDiv.degree.map_sub, map_zero, deg_one_chip, deg_one_chip]
     norm_num
   unfold rankDelta
   rw [zero_divisor_rank, hU, hV, hUV]
@@ -76,18 +76,18 @@ theorem rankDelta_one_chip_eq_one_of_distinct_mark_classes
     by_contra hNot
     have hNonneg : 0 ≤ rank B.graph (oneChip w - oneChip u) := by omega
     exact hwu (linearEquiv_zero_of_rank_nonneg_degree_zero' B.graph _ hNonneg (by
-      rw [deg.map_sub, deg_one_chip, deg_one_chip]
+      rw [CFDiv.degree.map_sub, deg_one_chip, deg_one_chip]
       norm_num))
   have hWV : rank B.graph (oneChip w - oneChip v) = -1 := by
     have hLower := rank_geq_neg_one B.graph (oneChip w - oneChip v)
     by_contra hNot
     have hNonneg : 0 ≤ rank B.graph (oneChip w - oneChip v) := by omega
     exact hwv (linearEquiv_zero_of_rank_nonneg_degree_zero' B.graph _ hNonneg (by
-      rw [deg.map_sub, deg_one_chip, deg_one_chip]
+      rw [CFDiv.degree.map_sub, deg_one_chip, deg_one_chip]
       norm_num))
   have hWUV : rank B.graph (oneChip w - oneChip u - oneChip v) = -1 := by
     apply rank_neg_one_of_deg_neg
-    rw [deg.map_sub, deg.map_sub, deg_one_chip, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_sub, CFDiv.degree.map_sub, deg_one_chip, deg_one_chip, deg_one_chip]
     norm_num
   change rank B.graph (oneChip w) -
       rank B.graph (oneChip w - oneChip u) -
@@ -137,8 +137,8 @@ theorem rank_pair_eq_zero_of_not_linearEquiv_canonical
   have hNonneg : 0 ≤ rank B.graph (oneChip x + oneChip y) :=
     (rank_geq_iff B.graph _ 0).mp
       ((rank_nonneg_iff_winnable B.graph _).mpr hWin)
-  have hDegree : deg (oneChip x + oneChip y : CFDiv B.graph) = 2 := by
-    rw [deg.map_add, deg_one_chip, deg_one_chip]
+  have hDegree : CFDiv.degree (oneChip x + oneChip y : CFDiv B.graph) = 2 := by
+    rw [CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
     norm_num
   have hUpper := rank_le_one_of_degree_two_genus_two
     (banana_graph_connected B) B.genus_graph _ hDegree
@@ -193,8 +193,8 @@ theorem transmission_eq_add_one_of_linearEquiv_v_add_one_chip
           (oneChip w : CFDiv B.graph) := by abel
     have hDelVW : oneChip v + oneChip w - oneChip v =
         (oneChip w : CFDiv B.graph) := by abel
-    have hTripleDegree : deg (oneChip u + oneChip v + oneChip w : CFDiv B.graph) = 3 := by
-      rw [deg.map_add, deg.map_add, deg_one_chip, deg_one_chip, deg_one_chip]
+    have hTripleDegree : CFDiv.degree (oneChip u + oneChip v + oneChip w : CFDiv B.graph) = 3 := by
+      rw [CFDiv.degree.map_add, CFDiv.degree.map_add, deg_one_chip, deg_one_chip, deg_one_chip]
       norm_num
     have hTripleRank : rank B.graph (oneChip u + oneChip v + oneChip w) = 1 := by
       have h := (rank_nonspecial_range (banana_graph_connected B)
@@ -246,18 +246,18 @@ theorem transmission_eq_add_two_of_linearEquiv_canonical_sub_u_add_v
         canonicalDivisor B.graph := by abel
     have hDelVV : canonicalDivisor B.graph + oneChip v - oneChip v =
         canonicalDivisor B.graph := by abel
-    have hRank (X : CFDiv B.graph) (hDeg : deg X > 2 * genus B.graph - 2) :
-        rank B.graph X = deg X - genus B.graph :=
+    have hRank (X : CFDiv B.graph) (hDeg : CFDiv.degree X > 2 * genus B.graph - 2) :
+        rank B.graph X = CFDiv.degree X - genus B.graph :=
       (rank_nonspecial_range (banana_graph_connected B) X).2.2 hDeg
-    have hDegBig : deg (canonicalDivisor B.graph + oneChip u + oneChip v) = 4 := by
-      rw [deg.map_add, deg.map_add, degree_of_canonical_divisor, B.genus_graph,
+    have hDegBig : CFDiv.degree (canonicalDivisor B.graph + oneChip u + oneChip v) = 4 := by
+      rw [CFDiv.degree.map_add, CFDiv.degree.map_add, degree_of_canonical_divisor, B.genus_graph,
         deg_one_chip, deg_one_chip]
       norm_num
-    have hDegU : deg (canonicalDivisor B.graph + oneChip u) = 3 := by
-      rw [deg.map_add, degree_of_canonical_divisor, B.genus_graph, deg_one_chip]
+    have hDegU : CFDiv.degree (canonicalDivisor B.graph + oneChip u) = 3 := by
+      rw [CFDiv.degree.map_add, degree_of_canonical_divisor, B.genus_graph, deg_one_chip]
       norm_num
-    have hDegV : deg (canonicalDivisor B.graph + oneChip v) = 3 := by
-      rw [deg.map_add, degree_of_canonical_divisor, B.genus_graph, deg_one_chip]
+    have hDegV : CFDiv.degree (canonicalDivisor B.graph + oneChip v) = 3 := by
+      rw [CFDiv.degree.map_add, degree_of_canonical_divisor, B.genus_graph, deg_one_chip]
       norm_num
     have hRankBig : rank B.graph (canonicalDivisor B.graph + oneChip u + oneChip v) = 2 := by
       have h := hRank _ (by rw [hDegBig, B.genus_graph]; norm_num)
@@ -365,7 +365,7 @@ private theorem subTwoCase_or_subOneCase_of_linearEquiv_canonical
       omega
     obtain ⟨w, hw⟩ := exists_one_chip_representative_of_rank_zero_degree_one
       B.graph (canonicalDivisor B.graph - oneChip u) hDualRank (by
-        rw [deg.map_sub, degree_of_canonical_divisor, B.genus_graph, deg_one_chip]
+        rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, B.genus_graph, deg_one_chip]
         norm_num)
     have hKPair : linearEquiv B.graph (canonicalDivisor B.graph)
         (oneChip u + oneChip w) := by
@@ -393,7 +393,7 @@ has rank pattern `(0,-1,-1,-1)` after deleting neither, either, or both
 marked chips. -/
 theorem thetaTransmission_default_rank_pattern
     (B : Banana 2) (u v : B.graph.V) (X : CFDiv B.graph)
-    (hDegree : deg X = 2)
+    (hDegree : CFDiv.degree X = 2)
     (hRigid : ¬ linearEquiv B.graph
       (oneChip u + oneChip v) (canonicalDivisor B.graph))
     (hNotSubTwo : ¬ ThetaTransmissionSubTwoCase B u X)
@@ -435,10 +435,10 @@ theorem thetaTransmission_default_rank_pattern
       have hLower := rank_geq_neg_one B.graph (X - oneChip u)
       omega
     have hRankZero := rank_eq_zero_of_deg_one_rank_nonneg_banana_two B
-      (X - oneChip u) (by rw [deg.map_sub, hDegree, deg_one_chip]; norm_num) hNonneg
+      (X - oneChip u) (by rw [CFDiv.degree.map_sub, hDegree, deg_one_chip]; norm_num) hNonneg
     obtain ⟨w, hw⟩ := exists_one_chip_representative_of_rank_zero_degree_one
       B.graph (X - oneChip u) hRankZero (by
-        rw [deg.map_sub, hDegree, deg_one_chip]
+        rw [CFDiv.degree.map_sub, hDegree, deg_one_chip]
         norm_num)
     have hAdd := linearEquiv_add_left_of_linearEquiv (C := oneChip u) hw
     have hXPair : linearEquiv B.graph X (oneChip u + oneChip w) := by
@@ -464,10 +464,10 @@ theorem thetaTransmission_default_rank_pattern
       have hLower := rank_geq_neg_one B.graph (X - oneChip v)
       omega
     have hRankZero := rank_eq_zero_of_deg_one_rank_nonneg_banana_two B
-      (X - oneChip v) (by rw [deg.map_sub, hDegree, deg_one_chip]; norm_num) hNonneg
+      (X - oneChip v) (by rw [CFDiv.degree.map_sub, hDegree, deg_one_chip]; norm_num) hNonneg
     obtain ⟨w, hw⟩ := exists_one_chip_representative_of_rank_zero_degree_one
       B.graph (X - oneChip v) hRankZero (by
-        rw [deg.map_sub, hDegree, deg_one_chip]
+        rw [CFDiv.degree.map_sub, hDegree, deg_one_chip]
         norm_num)
     have hAdd := linearEquiv_add_left_of_linearEquiv (C := oneChip v) hw
     have hXPair : linearEquiv B.graph X (oneChip v + oneChip w) := by
@@ -493,7 +493,7 @@ theorem thetaTransmission_default_rank_pattern
     have hZero : linearEquiv B.graph
         (X - oneChip u - oneChip v) 0 :=
       linearEquiv_zero_of_rank_nonneg_degree_zero' B.graph _ hNonneg (by
-        rw [deg.map_sub, deg.map_sub, hDegree, deg_one_chip, deg_one_chip]
+        rw [CFDiv.degree.map_sub, CFDiv.degree.map_sub, hDegree, deg_one_chip, deg_one_chip]
         norm_num)
     apply catchMarkPair
     unfold linearEquiv at hZero ⊢
@@ -508,7 +508,7 @@ theorem transmission_eq_self_of_no_theta_exception
     (B : Banana 2) (u v : B.graph.V) (D : CFDiv B.graph)
     (tau : ℤ → ℤ) (t : ℤ)
     (hTau : IsTransmissionPermutation (mark B.graph u v) D tau)
-    (hDegree : deg D = 2)
+    (hDegree : CFDiv.degree D = 2)
     (hRigid : ¬ linearEquiv B.graph
       (oneChip u + oneChip v) (canonicalDivisor B.graph))
     (hNotSubTwo : ¬ ThetaTransmissionSubTwoCase B u
@@ -521,9 +521,9 @@ theorem transmission_eq_self_of_no_theta_exception
       (D + t • (oneChip u - oneChip v))) :
     tau t = t := by
   let X : CFDiv B.graph := D + t • (oneChip u - oneChip v)
-  have hXDegree : deg X = 2 := by
+  have hXDegree : CFDiv.degree X = 2 := by
     dsimp [X]
-    rw [deg.map_add, map_zsmul, deg.map_sub, deg_one_chip, deg_one_chip, hDegree]
+    rw [CFDiv.degree.map_add, map_zsmul, CFDiv.degree.map_sub, deg_one_chip, deg_one_chip, hDegree]
     ring
   obtain ⟨hX, hXu, hXv, hXuv⟩ := thetaTransmission_default_rank_pattern
     B u v X hXDegree hRigid hNotSubTwo hNotSubOne hNotAddOne hNotAddTwo
@@ -552,7 +552,7 @@ theorem theta_transmission_characteristic_rows
     (B : Banana 2) (u v : B.graph.V) (D : CFDiv B.graph)
     (tau : ℤ → ℤ) (t : ℤ)
     (hTau : IsTransmissionPermutation (mark B.graph u v) D tau)
-    (hDegree : deg D = 2)
+    (hDegree : CFDiv.degree D = 2)
     (hRigid : ¬ linearEquiv B.graph
       (oneChip u + oneChip v) (canonicalDivisor B.graph)) :
     (ThetaTransmissionSubTwoCase B u

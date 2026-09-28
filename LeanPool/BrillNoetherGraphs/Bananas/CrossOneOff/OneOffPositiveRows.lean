@@ -147,8 +147,8 @@ theorem rankDelta_oneOff_positive_normalForm_eq_one
   have hE : IsSemibreak B E := isSemibreak_one_strand_chip B alpha p hp
   have hENext : IsSemibreak B ENext :=
     isSemibreak_one_strand_chip B alpha pNext hpNext
-  have hdegE : deg E = 1 := by simp [E, deg_one_chip]
-  have hdegENext : deg ENext = 1 := by simp [ENext, deg_one_chip]
+  have hdegE : CFDiv.degree E = 1 := by simp [E, deg_one_chip]
+  have hdegENext : CFDiv.degree ENext = 1 := by simp [ENext, deg_one_chip]
   by_cases hcZero : c = 0
   · subst c
     have hRankE : rank B.graph E = 0 :=
@@ -166,9 +166,9 @@ theorem rankDelta_oneOff_positive_normalForm_eq_one
       (by rw [hdegE]; omega) (leftEndpoint B) hSupportLeft
     have hRankV := rank_semibreak_sub_vertex_eq_neg_one B E hE
       (by rw [hdegE]; omega) (strandVertex B alpha v) hSupportV
-    have hBothDeg : deg
+    have hBothDeg : CFDiv.degree
         (E - oneChip (leftEndpoint B) - oneChip (strandVertex B alpha v)) < 0 := by
-      rw [deg.map_sub, deg.map_sub, hdegE, deg_one_chip, deg_one_chip]
+      rw [CFDiv.degree.map_sub, CFDiv.degree.map_sub, hdegE, deg_one_chip, deg_one_chip]
       norm_num
     have hRankBoth := rank_neg_one_of_deg_neg B.graph _ hBothDeg
     unfold rankDelta mark
@@ -202,7 +202,7 @@ theorem rankDelta_oneOff_positive_normalForm_eq_one
       (by omega) (by omega) (by rw [hdegE]; exact hRange)
     have hRankDU := rank_bananaNormalForm B (c - 1) c E hE
       (by omega) (by omega) (by rw [hdegE]; exact hRange)
-    have hRangeNext : (c : ℤ) - 1 + deg ENext ≤ (g : ℤ) := by
+    have hRangeNext : (c : ℤ) - 1 + CFDiv.degree ENext ≤ (g : ℤ) := by
       rw [hdegENext]
       omega
     have hRankDV := rank_bananaNormalForm B c (c - 1) ENext hENext

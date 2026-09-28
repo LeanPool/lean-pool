@@ -339,9 +339,12 @@ theorem efProfile_endpointDivisors :
         5)) - oneChip (q length hLength hNorm)) +
       (oneChip ((Spec length hLength).coreVertex 2) - oneChip (r length hLength hBC hmy)) := by
   rw [WindowProfile.Data.endpointDivisors]
-  simp [Fin.sum_univ_succ, efProfile_slope, ef_start_three_eq_one, ef_stop_three_eq_three,
-    ef_start_four_eq_dStart, ef_stop_four_eq_four, ef_start_five_eq_dStart,
-    ef_start_eight_eq_two, ef_stop_eight_eq_r]
+  simp only [efProfile_slope, Fin.isValue, Int.reduceNeg, ite_smul, neg_smul, one_smul,
+    neg_sub, zero_smul, Fin.sum_univ_succ, Fin.reduceEq, ↓reduceIte, or_self,
+    Fin.succ_zero_eq_one, Fin.succ_one_eq_two, Fin.reduceSucc, ef_stop_three_eq_three,
+    ef_start_three_eq_one, or_false, ef_start_four_eq_dStart, ef_stop_four_eq_four,
+    or_true, ef_start_five_eq_dStart, univ_unique, Fin.default_eq_zero,
+    sum_singleton, ef_start_eight_eq_two, ef_stop_eight_eq_r, zero_add]
   rw [ef_stop_five_eq_q length hLength hNorm hBC hmy]
   abel
 

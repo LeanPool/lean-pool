@@ -260,7 +260,7 @@ theorem effective_extendDiv {D : CFDiv H} (hD : effective D) :
 -- needed (Mathlib v4.33).
 /-- Extending by zero preserves divisor degree. -/
 @[simp] theorem deg_extendDiv (D : CFDiv H) :
-    deg (extendDiv H root D) = deg D := by
+    CFDiv.degree (extendDiv H root D) = CFDiv.degree D := by
   change (∑ vertex : Option H.V, extendDiv H root D vertex) =
     ∑ x : H.V, D x
   rw [Fintype.sum_option]
@@ -498,7 +498,7 @@ theorem winnable_retractDiv {E : CFDiv (addLeaf H root)}
     linearEquiv_retractDiv H root hEquiv⟩
 /-- Moving all leaf chips to the root preserves divisor degree. -/
 @[simp] theorem deg_retractDiv (E : CFDiv (addLeaf H root)) :
-    deg (retractDiv H root E) = deg E := by
+    CFDiv.degree (retractDiv H root E) = CFDiv.degree E := by
   classical
   change
     (∑ x : H.V, (E (some x) + if x = root then E none else 0)) =

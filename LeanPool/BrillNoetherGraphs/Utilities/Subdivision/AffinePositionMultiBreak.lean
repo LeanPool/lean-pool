@@ -327,7 +327,7 @@ theorem divisorOf_apply
     {degree : ℤ} (hValid : certificate.Valid degree)
     (hBounds : family.BoundsCertified certificate)
     (hCone : ExplicitPotential.FormsHold certificate.cone point) :
-    deg (family.divisorOf certificate point core_nonempty hValid hBounds hCone) =
+    CFDiv.degree (family.divisorOf certificate point core_nonempty hValid hBounds hCone) =
       (d : ℤ) := by
   unfold divisorOf
   rw [map_sum]

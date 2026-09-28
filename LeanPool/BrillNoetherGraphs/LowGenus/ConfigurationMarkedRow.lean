@@ -479,13 +479,13 @@ theorem markedDivisorOne_effective (hW : ∀ v, 0 ≤ W v) (e : Fin 12) :
   (Eff d.graph).add_mem (d.coreClassDivisor_effective W hW) (eff_one_chip _)
 
 theorem deg_markedDivisorTwo (e f : Fin 12) :
-    deg (markedDivisorTwo d W mark e f) = (∑ v : Fin 8, W v) + 2 := by
-  simp only [markedDivisorTwo, deg.map_add, d.deg_coreClassDivisor, deg_one_chip]
+    CFDiv.degree (markedDivisorTwo d W mark e f) = (∑ v : Fin 8, W v) + 2 := by
+  simp only [markedDivisorTwo, CFDiv.degree.map_add, d.deg_coreClassDivisor, deg_one_chip]
   ring
 
 theorem deg_markedDivisorOne (e : Fin 12) :
-    deg (markedDivisorOne d W mark e) = (∑ v : Fin 8, W v) + 1 := by
-  simp only [markedDivisorOne, deg.map_add, d.deg_coreClassDivisor, deg_one_chip]
+    CFDiv.degree (markedDivisorOne d W mark e) = (∑ v : Fin 8, W v) + 1 := by
+  simp only [markedDivisorOne, CFDiv.degree.map_add, d.deg_coreClassDivisor, deg_one_chip]
 
 theorem baseTwo_nonneg (hW : ∀ v, 0 ≤ W v) (e f : Fin 12) (v : Fin 8) :
     0 ≤ baseTwo d W mark e f v := by

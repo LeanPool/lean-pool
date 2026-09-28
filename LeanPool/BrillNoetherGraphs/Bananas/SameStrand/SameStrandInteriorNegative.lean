@@ -58,7 +58,7 @@ theorem rank_one_chip_sub_one_chip_eq_neg_one_of_ne_banana_generic
     {g : ℕ} (hg : 1 ≤ g) (B : Banana g) (x y : B.graph.V) (hxy : x ≠ y) :
     rank B.graph (oneChip x - oneChip y) = -1 := by
   apply rank_eq_neg_one_of_degree_zero_not_linear_equiv B.graph
-  · simp [deg.map_sub, deg_one_chip]
+  · simp [CFDiv.degree.map_sub, deg_one_chip]
   · exact marks_not_linearEquiv hg B hxy
 
 /-- Corrected Theorem 3.9, same-strand interior branch.

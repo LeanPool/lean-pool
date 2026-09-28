@@ -72,7 +72,7 @@ theorem degreeTwistInt_one_chip_one
     degreeTwistInt (mark G u v) (oneChip w) 1 b =
       oneChip w + b • (oneChip u - oneChip v) := by
   unfold degreeTwistInt
-  change (oneChip w + (1 - deg (oneChip w) + b) • oneChip u -
+  change (oneChip w + (1 - CFDiv.degree (oneChip w) + b) • oneChip u -
     b • oneChip v : CFDiv G) = _
   rw [deg_one_chip]
   ext x
@@ -110,9 +110,9 @@ family `degreeTwistInt M D d ·` on `Fin k` is a system of representatives for
 the paper's set `T^d_D` of degree-`d` twist classes. -/
 theorem twist_eq_degreeTwistInt
     (M : TwiceMarked) (D : CFDiv M.graph) (a b d : ℤ)
-    (h : deg D + a - b = d) :
+    (h : CFDiv.degree D + a - b = d) :
     D + a • oneChip M.u - b • oneChip M.v = degreeTwistInt M D d b := by
-  have ha : a = d - deg D + b := by omega
+  have ha : a = d - CFDiv.degree D + b := by omega
   unfold degreeTwistInt
   rw [ha]
 
@@ -160,7 +160,7 @@ theorem canonical_sub_add_marks_linearEquiv_zero_iff
 /-- A product of two degree-zero multiplicities is one when both divisors are
 principal and zero otherwise. -/
 theorem rankPlusOne_mul_eq_one_of_linearEquiv_zero
-    (A Y : CFDiv G) (hA : deg A = 0) (hY : deg Y = 0)
+    (A Y : CFDiv G) (hA : CFDiv.degree A = 0) (hY : CFDiv.degree Y = 0)
     (h1 : linearEquiv G A 0) (h2 : linearEquiv G Y 0) :
     rankPlusOne G A * rankPlusOne G Y = 1 := by
   have e1 : rankPlusOne G A = 1 :=
@@ -173,12 +173,12 @@ theorem rankPlusOne_mul_eq_one_of_linearEquiv_zero
 /-- If either factor of a degree-zero multiplicity product is nonprincipal,
 the product vanishes. -/
 theorem rankPlusOne_mul_eq_zero_of_not_linearEquiv_zero_left
-    (A Y : CFDiv G) (hA : deg A = 0) (h1 : ¬ linearEquiv G A 0) :
+    (A Y : CFDiv G) (hA : CFDiv.degree A = 0) (h1 : ¬ linearEquiv G A 0) :
     rankPlusOne G A * rankPlusOne G Y = 0 := by
   rw [rankPlusOne_eq_zero_of_degree_zero_not_principal G A hA h1, zero_mul]
 
 theorem rankPlusOne_mul_eq_zero_of_not_linearEquiv_zero_right
-    (A Y : CFDiv G) (hY : deg Y = 0) (h2 : ¬ linearEquiv G Y 0) :
+    (A Y : CFDiv G) (hY : CFDiv.degree Y = 0) (h2 : ¬ linearEquiv G Y 0) :
     rankPlusOne G A * rankPlusOne G Y = 0 := by
   rw [rankPlusOne_eq_zero_of_degree_zero_not_principal G Y hY h2, mul_zero]
 
@@ -222,9 +222,9 @@ theorem invTauCorrection_eq_zero_of_not_mark_pair_canonical
 /-- The canonical complement of a degree-two twist has degree zero. -/
 theorem deg_canonical_sub_fixedDegreeTwist_two
     (B : Banana 2) (u v : B.graph.V) (D : CFDiv B.graph) (b : ℤ) :
-    deg (canonicalDivisor B.graph -
+    CFDiv.degree (canonicalDivisor B.graph -
       fixedDegreeTwist B.graph u v D 2 b) = 0 := by
-  rw [deg.map_sub, degree_of_canonical_divisor, B.genus_graph,
+  rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, B.genus_graph,
     deg_fixedDegreeTwist]
   norm_num
 
@@ -276,11 +276,11 @@ theorem sum_correctionProduct_eq_invTauCorrection
       invTauCorrection (mark B.graph u v) D := by
   classical
   have hDegA : ∀ b : ℤ,
-      deg (fixedDegreeTwist B.graph u v D 0 b) = 0 := by
+      CFDiv.degree (fixedDegreeTwist B.graph u v D 0 b) = 0 := by
     intro b
     exact deg_fixedDegreeTwist B.graph u v D 0 b
   have hDegY : ∀ b : ℤ,
-      deg (canonicalDivisor B.graph -
+      CFDiv.degree (canonicalDivisor B.graph -
         fixedDegreeTwist B.graph u v D 2 b) = 0 :=
     deg_canonical_sub_fixedDegreeTwist_two B u v D
   -- The residual product at index `b` reduces to a conjunction of

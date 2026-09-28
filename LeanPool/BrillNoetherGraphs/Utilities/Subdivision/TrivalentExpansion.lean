@@ -330,8 +330,14 @@ theorem exists_incident (w : Fin n) : ∃ j : Fin p, C.tail j = w ∨ C.head j =
   refine ⟨x.1, ?_⟩
   have := (mem_slotEnds C w x).mp hx
   cases hside : x.2 with
-  | false => rw [hside] at this; simp at this; exact Or.inl this
-  | true => rw [hside] at this; simp at this; exact Or.inr this
+  | false =>
+      rw [hside] at this
+      simp only [Bool.false_eq_true, ite_false] at this
+      exact Or.inl this
+  | true =>
+      rw [hside] at this
+      simp only [ite_true] at this
+      exact Or.inr this
 
 /-! ## Fibre connectivity -/
 
@@ -473,9 +479,10 @@ theorem legEnd_ne_contracted (w : Fin n) {k : ℕ} (hk : k < slotValence C w)
 theorem bigV_eq {w : Fin n} {a b : Fin (slotValence C w - 2)} (h : a.val = b.val) :
     (⟨w, a⟩ : BigV C) = ⟨w, b⟩ := congrArg (Sigma.mk w) (Fin.val_injective h)
 
-theorem three_le_card_of_three_mem {α : Type} [DecidableEq α] {s : Finset α}
+theorem three_le_card_of_three_mem {α : Type} {s : Finset α}
     {a b c : α} (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c)
     (ha : a ∈ s) (hb : b ∈ s) (hc : c ∈ s) : 3 ≤ s.card := by
+  classical
   have hsub : ({a, b, c} : Finset α) ⊆ s := by
     intro x hx
     simp only [Finset.mem_insert, Finset.mem_singleton] at hx

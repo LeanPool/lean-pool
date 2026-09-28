@@ -90,7 +90,7 @@ theorem canonical_divisor_effective
 
 /-- The canonical degree is determined by the finite core counts. -/
 @[simp] theorem deg_canonical_divisor :
-    deg (canonicalDivisor spec.graph) = 2 * ((p : ℤ) - (n : ℤ)) := by
+    CFDiv.degree (canonicalDivisor spec.graph) = 2 * ((p : ℤ) - (n : ℤ)) := by
   rw [degree_of_canonical_divisor, spec.genus_graph]
   ring
 
@@ -103,7 +103,7 @@ theorem rank_canonical_divisor (hConnected : graphConnected spec.graph) :
 
 /-- One more slot than core vertices gives canonical degree two. -/
 theorem deg_canonical_divisor_eq_two (hGenusTwo : p = n + 1) :
-    deg (canonicalDivisor spec.graph) = 2 := by
+    CFDiv.degree (canonicalDivisor spec.graph) = 2 := by
   rw [spec.deg_canonical_divisor]
   omega
 
@@ -121,7 +121,7 @@ theorem effective_canonical_pencil
     (hConnected : graphConnected spec.graph) (hGenusTwo : p = n + 1)
     (hLeafless : ∀ v : Fin n, 2 ≤ spec.core.incidenceDegree v) :
     effective (canonicalDivisor spec.graph) ∧
-      deg (canonicalDivisor spec.graph) = 2 ∧
+      CFDiv.degree (canonicalDivisor spec.graph) = 2 ∧
       rank spec.graph (canonicalDivisor spec.graph) ≥ 1 := by
   refine ⟨spec.canonical_divisor_effective hLeafless,
     spec.deg_canonical_divisor_eq_two hGenusTwo, ?_⟩

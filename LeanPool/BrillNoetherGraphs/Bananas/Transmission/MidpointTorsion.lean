@@ -46,8 +46,8 @@ private theorem zero_isSemibreak {g : ℕ} (B : Banana g) : IsSemibreak B 0 := b
 provided the other endpoint and semibreak chips lie in the reduced range. -/
 private theorem normalForm_not_linearEquiv_zero {g : ℕ} (B : Banana g)
     (a b : ℤ) (E : CFDiv B.graph) (hE : IsSemibreak B E)
-    (h : (a < 0 ∧ 0 ≤ b ∧ b + deg E ≤ g) ∨
-      (b < 0 ∧ 0 ≤ a ∧ a + deg E ≤ g)) :
+    (h : (a < 0 ∧ 0 ≤ b ∧ b + CFDiv.degree E ≤ g) ∨
+      (b < 0 ∧ 0 ≤ a ∧ a + CFDiv.degree E ≤ g)) :
     ¬ linearEquiv B.graph (bananaNormalForm B a b E) 0 := by
   intro heq
   have hRank : rank B.graph (bananaNormalForm B a b E) = -1 := by

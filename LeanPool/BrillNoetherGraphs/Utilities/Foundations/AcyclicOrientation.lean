@@ -68,12 +68,12 @@ orientation-divisor case, proved the same way `moderator_of_unwinnable`
 private lemma orientation_config_sub_one_chip_eq_ordiv {G : CFGraph} (O : CFOrientation G)
     {q : G.V} (hO : acyclicWithUniqueSource G O q) :
     (orientationToConfig G O q hO).chips - oneChip q = ordiv G O := by
-  have hDegOrqed : deg (orqed O hO).D = genus G - 1 := by
+  have hDegOrqed : CFDiv.degree (orqed O hO).D = genus G - 1 := by
     simpa [orqed] using degree_ordiv O
   have hToDiv : toDiv (genus G - 1) (toConfig (orqed O hO)) = ordiv G O := by
     calc
       toDiv (genus G - 1) (toConfig (orqed O hO))
-          = toDiv (deg (orqed O hO).D) (toConfig (orqed O hO)) := by rw [hDegOrqed]
+          = toDiv (CFDiv.degree (orqed O hO).D) (toConfig (orqed O hO)) := by rw [hDegOrqed]
       _ = (orqed O hO).D := div_of_config_of_div (orqed O hO)
       _ = ordiv G O := rfl
   have hCfgDeg : configDegree (toConfig (orqed O hO)) = genus G := by
@@ -93,14 +93,14 @@ new step); `maximal_unwinnable_char` reads off that the `q`-reduced representati
 `maximal_superstable_orientation` produces an acyclic `O` with unique source `q` realizing
 `c`; `orientation_config_sub_one_chip_eq_ordiv` identifies `c - q` with `ordiv G O`. -/
 theorem exists_acyclic_ordiv_of_unwinnable {G : CFGraph} (h_conn : graphConnected G)
-    (D : CFDiv G) (hUnwin : ¬ winnable G D) (hDeg : deg D = genus G - 1) :
+    (D : CFDiv G) (hUnwin : ¬ winnable G D) (hDeg : CFDiv.degree D = genus G - 1) :
     ∃ O : CFOrientation G, isAcyclic G O ∧ linearEquiv G D (ordiv G O) := by
   set q : G.V := Classical.arbitrary G.V with hq
   -- Step 1: unwinnable of degree `g - 1` is maximal unwinnable.
   have hMax : maximalUnwinnable G D := by
     refine ⟨hUnwin, fun v => ?_⟩
     apply winnable_of_deg_ge_genus h_conn
-    rw [deg.map_add, deg_one_chip, hDeg]
+    rw [CFDiv.degree.map_add, deg_one_chip, hDeg]
     linarith
   -- Step 2: the `q`-reduced configuration is maximal superstable, and `D`'s `q`-reduced
   -- representative has the canonical `c - q` shape.
@@ -136,7 +136,7 @@ in `OrientationPoint.lean`, which reads the same equivalence off the geometric s
 circuit is tight at the orientation's theta witness exactly when the orientation has a
 directed cycle, i.e. is not acyclic. -/
 theorem unwinnable_iff_exists_acyclic_ordiv {G : CFGraph} (h_conn : graphConnected G)
-    (D : CFDiv G) (hDeg : deg D = genus G - 1) :
+    (D : CFDiv G) (hDeg : CFDiv.degree D = genus G - 1) :
     ¬ winnable G D ↔ ∃ O : CFOrientation G, isAcyclic G O ∧ linearEquiv G D (ordiv G O) :=
   ⟨fun hUnwin => exists_acyclic_ordiv_of_unwinnable h_conn D hUnwin hDeg,
    fun ⟨O, hAcyc, hEquiv⟩ => unwinnable_of_exists_acyclic_ordiv D O hAcyc hEquiv⟩

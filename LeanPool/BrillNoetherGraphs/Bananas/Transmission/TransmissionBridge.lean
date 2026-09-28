@@ -113,7 +113,7 @@ theorem degree_eq_genus_add_chi_of_isTransmissionPermutation
     (D : CFDiv G) (τ : ℤ → ℤ)
     (hτ : IsTransmissionPermutation (mark G u v) D τ)
     (σ : AspPerm) (hσFunc : σ.func = τ) :
-    deg D = (genus G : ℤ) + σ.χ := by
+    CFDiv.degree D = (genus G : ℤ) + σ.χ := by
   -- `χ` at the origin, in terms of the two counting sets.
   have hχ : σ.χ = σ.s 0 0 - (σ⁻¹).s 0 0 := by
     have := σ.s_eq 0 0
@@ -148,8 +148,8 @@ theorem degree_eq_genus_add_chi_of_isTransmissionPermutation
     rw [hDiv] at h
     simpa using h
   have hRR := riemann_roch_for_graphs hconn (D - oneChip u)
-  have hDeg : deg (D - oneChip u) = deg D - 1 := by
-    rw [deg.map_sub, deg_one_chip]
+  have hDeg : CFDiv.degree (D - oneChip u) = CFDiv.degree D - 1 := by
+    rw [CFDiv.degree.map_sub, deg_one_chip]
   omega
 
 /-- The full bridge, unconditionally: a raw transmission permutation for `D`

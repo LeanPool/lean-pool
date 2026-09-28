@@ -142,9 +142,9 @@ theorem northwest_ncard_neg_poleOrder_eq_weierstrassPart
   have hXRank := rank_poleOrder_eq hG v D i
   let X : CFDiv G := D + poleOrder G v D i • oneChip v
   have hRR := riemann_roch_for_graphs hG X
-  have hDegree : deg X = deg D + poleOrder G v D i := by
+  have hDegree : CFDiv.degree X = CFDiv.degree D + poleOrder G v D i := by
     dsimp [X]
-    rw [deg.map_add, map_zsmul, deg_one_chip]
+    rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip]
     norm_num
   have hComplement :
       canonicalDivisor G - D - (0 : ℤ) • oneChip u +

@@ -72,12 +72,12 @@ theorem BNExists_mono_degree
   have hDifference : 0 ≤ d' - d := by omega
   have hEEffective : effective E := by
     exact (Eff G).nsmul_mem (eff_one_chip v) (d' - d).toNat
-  have hEDegree : deg E = d' - d := by
+  have hEDegree : CFDiv.degree E = d' - d := by
     dsimp [E]
     simpa [Int.toNat_of_nonneg hDifference] using
-      (AddMonoidHom.map_nsmul deg (d' - d).toNat (oneChip v))
+      (AddMonoidHom.map_nsmul CFDiv.degree (d' - d).toNat (oneChip v))
   refine ⟨D + E, ?_, rank_add_effective_ge G D E hEEffective r hDRank⟩
-  rw [deg.map_add, hDDegree, hEDegree]
+  rw [CFDiv.degree.map_add, hDDegree, hEDegree]
   ring
 
 end Utilities

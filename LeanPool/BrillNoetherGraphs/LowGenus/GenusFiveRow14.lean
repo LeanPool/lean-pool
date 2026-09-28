@@ -85,7 +85,7 @@ def rowDivisor (d : DegSpec 8 12) : CFDiv d.graph :=
 theorem rowDivisor_effective (d : DegSpec 8 12) : effective (rowDivisor d) :=
   d.coreClassDivisor_effective chipWeight chipWeight_nonneg
 
-theorem rowDivisor_degree (d : DegSpec 8 12) : deg (rowDivisor d) = 4 := by
+theorem rowDivisor_degree (d : DegSpec 8 12) : CFDiv.degree (rowDivisor d) = 4 := by
   rw [rowDivisor, d.deg_coreClassDivisor, sum_chipWeight]
 
 /-! ## The three configuration-2 tripods -/
@@ -453,10 +453,16 @@ theorem bananaCoefficient_eq
       bananaCoefficient d v := by
   fin_cases v
   all_goals
-    simp +decide [bananaCoefficient, allocatedWeight, transferWeight,
-      indicatorWeight, chipWeight, shiftWeight, rawHeight,
-      ConfigurationThreeChain.forward, ConfigurationThreeChain.reverse, fwd, rev,
-      positiveChip, zeroChip, hCore, row14Core, Fin.sum_univ_succ, reduceIte]
+    simp +decide only [allocatedWeight, chipWeight, ↓reduceIte, Fin.isValue,
+      transferWeight, indicatorWeight, sub_self, ite_self, add_zero, zero_sub,
+      Int.reduceNeg, hCore, row14Core, Fin.zero_eta, rawHeight, Fin.sum_univ_succ,
+      Matrix.cons_val_succ, Fin.succ_zero_eq_one, Fin.succ_one_eq_two,
+      Fin.reduceSucc, tailContribution_same, headContribution_same,
+      Finset.univ_unique, Fin.default_eq_zero, Matrix.cons_val_fin_one,
+      Fin.reduceEq, Finset.sum_const_zero, bananaCoefficient, positiveChip,
+      rev, ConfigurationThreeChain.reverse, add_left_inj, sub_zero, zero_add,
+      Fin.mk_one, zeroChip, shiftWeight, fwd, ConfigurationThreeChain.forward,
+      Fin.reduceFinMk, add_right_inj]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
   all_goals ring

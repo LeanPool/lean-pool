@@ -56,14 +56,14 @@ def IsCreditResponse {G : CFGraph.{u}} (p : TwoPole G) (D : CFDiv G)
 
 @[simp] theorem deg_debit {G : CFGraph.{u}} (p : TwoPole G)
     (D : CFDiv G) (c₁ c₂ : ℤ) :
-    deg (debit p D c₁ c₂) = deg D - c₁ - c₂ := by
-  simp only [debit, deg.map_sub, map_zsmul, deg_one_chip, smul_eq_mul]
+    CFDiv.degree (debit p D c₁ c₂) = CFDiv.degree D - c₁ - c₂ := by
+  simp only [debit, CFDiv.degree.map_sub, map_zsmul, deg_one_chip, smul_eq_mul]
   ring
 
 @[simp] theorem deg_credit {G : CFGraph.{u}} (p : TwoPole G)
     (D : CFDiv G) (c₁ c₂ : ℤ) :
-    deg (credit p D c₁ c₂) = deg D + c₁ + c₂ := by
-  simp only [credit, deg.map_add, map_zsmul, deg_one_chip, smul_eq_mul]
+    CFDiv.degree (credit p D c₁ c₂) = CFDiv.degree D + c₁ + c₂ := by
+  simp only [credit, CFDiv.degree.map_add, map_zsmul, deg_one_chip, smul_eq_mul]
   ring
 
 /-- Glue factor scripts, translating the right script by a constant.  The

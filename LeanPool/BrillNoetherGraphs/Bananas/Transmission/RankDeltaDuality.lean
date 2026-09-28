@@ -62,7 +62,7 @@ theorem rankDelta_canonical_dual
   rw [hCompDu] at hDu
   rw [hCompDv] at hDv
   rw [hCompDuv] at hDuv
-  simp only [deg.map_sub, deg_one_chip] at hDu hDv hDuv
+  simp only [CFDiv.degree.map_sub, deg_one_chip] at hDu hDv hDuv
   change rankDelta M D = rankDelta M E
   unfold rankDelta
   linarith

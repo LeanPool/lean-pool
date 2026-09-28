@@ -25,7 +25,7 @@ verbatim on the open orthant.
    *not injective*, so a `Fin n`-indexed divisor is ill-posed on a face: two
    named core vertices can be the same graph vertex.  The extended divisor
    therefore gives a class the **sum** of its members' chips, which is exactly
-   what keeps `deg` equal to the checked core degree
+   what keeps `CFDiv.degree` equal to the checked core degree
    (`deg_degenerateDivisor`).
 
 2. **Class-level endpoint bookkeeping.**  `lowerEndpointContribution_le_endpointContribution`
@@ -393,7 +393,7 @@ theorem degenerateDivisor_coreVertex_of_pos (certificate : CertificateData m n p
 lost when two named core vertices are merged. -/
 theorem deg_degenerateDivisor (certificate : CertificateData m n p)
     (d : Utilities.Certificate.DegenerateSpec.DegSpec n p) :
-    deg (certificate.degenerateDivisor d) =
+    CFDiv.degree (certificate.degenerateDivisor d) =
       ∑ v : Fin n, certificate.divisor v := by
   classical
   have hFiber : ∀ c : d.Class,
@@ -404,10 +404,10 @@ theorem deg_degenerateDivisor (certificate : CertificateData m n p)
     ext v
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     exact ⟨fun h => Subtype.ext h, fun h => congrArg Subtype.val h⟩
-  have hsplit : deg (certificate.degenerateDivisor d)
+  have hsplit : CFDiv.degree (certificate.degenerateDivisor d)
       = ∑ c : d.Class, ∑ v ∈ Finset.univ.filter (fun v : Fin n => d.rep v = c.val),
           certificate.divisor v := by
-    simp [deg, degenerateDivisor,
+    simp [CFDiv.degree, degenerateDivisor,
       Utilities.Certificate.DegenerateSpec.DegSpec.coreClassDivisor,
       Fintype.sum_sum_type]
   rw [hsplit, Finset.sum_congr rfl (fun c _ => by rw [hFiber c])]

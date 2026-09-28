@@ -159,7 +159,7 @@ def divisor : CFDiv d.graph :=
 theorem divisor_effective : effective (cfg.divisor d) :=
   fourChipDivisor_effective _ _ _ _
 
-theorem deg_divisor : deg (cfg.divisor d) = 4 :=
+theorem deg_divisor : CFDiv.degree (cfg.divisor d) = 4 :=
   deg_fourChipDivisor _ _ _ _
 
 theorem one_le_divisor_at_chip {chip : Fin 8} (hChip : cfg.IsChip chip) :

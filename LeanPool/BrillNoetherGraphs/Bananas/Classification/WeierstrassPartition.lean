@@ -47,27 +47,27 @@ noncomputable def poleOrder (G : CFGraph) (v : G.V) (D : CFDiv G)
 theorem poleOrderSet_nonempty {G : CFGraph} (hG : _root_.graphConnected G)
     (v : G.V) (D : CFDiv G) (i : ℕ) :
     (poleOrderSet G v D i).Nonempty := by
-  refine ⟨(i : ℤ) + genus G - deg D, ?_⟩
+  refine ⟨(i : ℤ) + genus G - CFDiv.degree D, ?_⟩
   have hRank := rank_ge_deg_sub_genus hG
-    (D + ((i : ℤ) + genus G - deg D) • oneChip v)
+    (D + ((i : ℤ) + genus G - CFDiv.degree D) • oneChip v)
   have hDegree :
-      deg (D + ((i : ℤ) + genus G - deg D) • oneChip v) - genus G =
+      CFDiv.degree (D + ((i : ℤ) + genus G - CFDiv.degree D) • oneChip v) - genus G =
         (i : ℤ) := by
-    rw [deg.map_add, map_zsmul, deg_one_chip]
+    rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip]
     norm_num
   simp only [poleOrderSet, Set.mem_ofPred_eq]
   rwa [hDegree] at hRank
 
 theorem poleOrderSet_bddBelow (G : CFGraph) (v : G.V) (D : CFDiv G)
     (i : ℕ) : BddBelow (poleOrderSet G v D i) := by
-  refine ⟨(i : ℤ) - deg D, ?_⟩
+  refine ⟨(i : ℤ) - CFDiv.degree D, ?_⟩
   intro ell hell
   have hRank : rank G (D + ell • oneChip v) ≥ (i : ℤ) := hell
   have hGeq : rankGeq G (D + ell • oneChip v) (i : ℤ) :=
     (rank_geq_iff G _ _).mpr hRank
   have hDegree := rank_le_degree G (D + ell • oneChip v) (i : ℤ)
     (by positivity) hGeq
-  rw [deg.map_add, map_zsmul, deg_one_chip] at hDegree
+  rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip] at hDegree
   norm_num at hDegree
   linarith
 
@@ -98,14 +98,14 @@ theorem rank_lt_of_lt_poleOrder {G : CFGraph} (hG : _root_.graphConnected G)
 
 theorem poleOrder_le_riemannRoch {G : CFGraph} (hG : _root_.graphConnected G)
     (v : G.V) (D : CFDiv G) (i : ℕ) :
-    poleOrder G v D i ≤ (i : ℤ) + genus G - deg D := by
+    poleOrder G v D i ≤ (i : ℤ) + genus G - CFDiv.degree D := by
   apply poleOrder_le_of_rank_ge hG
   have hRank := rank_ge_deg_sub_genus hG
-    (D + ((i : ℤ) + genus G - deg D) • oneChip v)
+    (D + ((i : ℤ) + genus G - CFDiv.degree D) • oneChip v)
   have hDegree :
-      deg (D + ((i : ℤ) + genus G - deg D) • oneChip v) - genus G =
+      CFDiv.degree (D + ((i : ℤ) + genus G - CFDiv.degree D) • oneChip v) - genus G =
         (i : ℤ) := by
-    rw [deg.map_add, map_zsmul, deg_one_chip]
+    rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip]
     norm_num
   rwa [hDegree] at hRank
 
@@ -214,7 +214,7 @@ theorem poleOrder_succ_le {G : CFGraph} (hG : _root_.graphConnected G)
 /-- The integer underlying the `i`th Weierstrass part. -/
 noncomputable def weierstrassPartInt (G : CFGraph) (v : G.V) (D : CFDiv G)
     (i : ℕ) : ℤ :=
-  (i : ℤ) + genus G - deg D - poleOrder G v D i
+  (i : ℤ) + genus G - CFDiv.degree D - poleOrder G v D i
 
 theorem weierstrassPartInt_nonneg {G : CFGraph} (hG : _root_.graphConnected G)
     (v : G.V) (D : CFDiv G) (i : ℕ) :
@@ -255,19 +255,19 @@ theorem weierstrassPart_anti {G : CFGraph} (hG : _root_.graphConnected G)
 theorem poleOrder_eq_riemannRoch_of_genus_le {G : CFGraph}
     (hG : _root_.graphConnected G) (v : G.V) (D : CFDiv G) (i : ℕ)
     (hi : (genus G).toNat ≤ i) :
-    poleOrder G v D i = (i : ℤ) + genus G - deg D := by
+    poleOrder G v D i = (i : ℤ) + genus G - CFDiv.degree D := by
   apply le_antisymm (poleOrder_le_riemannRoch hG v D i)
-  let ell : ℤ := (i : ℤ) + genus G - deg D
+  let ell : ℤ := (i : ℤ) + genus G - CFDiv.degree D
   have hDegree :
-      deg (D + (ell - 1) • oneChip v) = (i : ℤ) + genus G - 1 := by
+      CFDiv.degree (D + (ell - 1) • oneChip v) = (i : ℤ) + genus G - 1 := by
     dsimp [ell]
-    rw [deg.map_add, map_zsmul, deg_one_chip]
+    rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip]
     ring
   have hg : 0 ≤ genus G := genus_nonneg_of_graph_connected G hG
   have hiCast : genus G ≤ (i : ℤ) := by
     rw [← Int.toNat_of_nonneg hg]
     exact_mod_cast hi
-  have hLarge : deg (D + (ell - 1) • oneChip v) > 2 * genus G - 2 := by
+  have hLarge : CFDiv.degree (D + (ell - 1) • oneChip v) > 2 * genus G - 2 := by
     rw [hDegree]
     omega
   have hRankPrev := (rank_nonspecial_range hG
@@ -428,7 +428,7 @@ theorem onceMarkedCensusContains_weierstrassPartition {G : CFGraph}
   have hCast := weierstrassPart_cast hG v D i
   unfold weierstrassPartInt at hCast
   have hCoefficient :
-      (i : ℤ) + genus G - deg D - (weierstrassPart G v D i : ℤ) =
+      (i : ℤ) + genus G - CFDiv.degree D - (weierstrassPart G v D i : ℤ) =
         poleOrder G v D i := by
     omega
   rw [hCoefficient]
@@ -442,7 +442,7 @@ theorem census_partition_le_weierstrassPartition {G : CFGraph}
     (hG : _root_.graphConnected G) (v : G.V) (D : CFDiv G)
     (lambda : YoungDiagram)
     (hRows : ∀ i : ℕ,
-      rank G (D + ((i : ℤ) + genus G - deg D -
+      rank G (D + ((i : ℤ) + genus G - CFDiv.degree D -
         (onceMarkedPart lambda i : ℤ)) • oneChip v) ≥ (i : ℤ)) :
     lambda ≤ weierstrassPartition hG v D := by
   rw [← YoungDiagram.cells_subset_iff]
@@ -452,7 +452,7 @@ theorem census_partition_le_weierstrassPartition {G : CFGraph}
     rw [onceMarkedPart_eq_rowLen]
     exact YoungDiagram.mem_iff_lt_rowLen.mp hCell
   have hPole := poleOrder_le_of_rank_ge hG v D i
-    ((i : ℤ) + genus G - deg D - (onceMarkedPart lambda i : ℤ)) (hRows i)
+    ((i : ℤ) + genus G - CFDiv.degree D - (onceMarkedPart lambda i : ℤ)) (hRows i)
   have hPartCast := weierstrassPart_cast hG v D i
   have hPart : onceMarkedPart lambda i ≤ weierstrassPart G v D i := by
     unfold weierstrassPartInt at hPartCast
@@ -470,7 +470,7 @@ theorem census_card_le_weierstrassSize {G : CFGraph}
   classical
   let D : CFDiv G := Classical.choose hCensus
   have hRows : ∀ i : ℕ,
-      rank G (D + ((i : ℤ) + genus G - deg D -
+      rank G (D + ((i : ℤ) + genus G - CFDiv.degree D -
         (onceMarkedPart lambda i : ℤ)) • oneChip v) ≥ (i : ℤ) :=
     Classical.choose_spec hCensus
   change lambda.card ≤ weierstrassSize hG v D

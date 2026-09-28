@@ -37,10 +37,10 @@ open Finset
 /-- An effective degree-one divisor consists of a single chip at one vertex. -/
 theorem effective_degree_one_eq_one_chip
     {G : CFGraph} {E : CFDiv G}
-    (hEffective : effective E) (hDegree : deg E = 1) :
+    (hEffective : effective E) (hDegree : CFDiv.degree E = 1) :
     ∃ q : G.V, E = oneChip q := by
   have hSum : ∑ q : G.V, E q = 1 := by
-    simpa [deg] using hDegree
+    simpa [CFDiv.degree] using hDegree
   have hSumNe : ∑ q : G.V, E q ≠ 0 := by
     rw [hSum]
     norm_num
@@ -58,8 +58,8 @@ theorem effective_degree_one_eq_one_chip
     · subst v
       simp [oneChip, hq]
     · simp [oneChip, hv, hEffective v]
-  have hSubDegree : deg (E - oneChip q) = 0 := by
-    rw [deg.map_sub, deg_one_chip, hDegree]
+  have hSubDegree : CFDiv.degree (E - oneChip q) = 0 := by
+    rw [CFDiv.degree.map_sub, deg_one_chip, hDegree]
     norm_num
   have hSubZero : E - oneChip q = 0 :=
     eff_degree_zero (E - oneChip q) hSubEffective hSubDegree
@@ -87,7 +87,7 @@ def ValidAt (certificate : RankOne G) (q : G.V) : Prop :=
 
 /-- A rank-one certificate with the requested divisor degree. -/
 def Valid (certificate : RankOne G) (d : ℤ) : Prop :=
-  deg certificate.divisor = d ∧ ∀ q : G.V, certificate.ValidAt q
+  CFDiv.degree certificate.divisor = d ∧ ∀ q : G.V, certificate.ValidAt q
 
 /-- Executable pointwise effectivity test. -/
 def checkEffective (D : CFDiv G) : Bool :=
@@ -99,7 +99,7 @@ def checkAt (certificate : RankOne G) (q : G.V) : Bool :=
 
 /-- Executable check of the degree and every vertex script. -/
 def check (certificate : RankOne G) (d : ℤ) : Bool :=
-  decide (deg certificate.divisor = d) &&
+  decide (CFDiv.degree certificate.divisor = d) &&
     @decide (∀ q : G.V, certificate.checkAt q = true)
       Fintype.decidableForallFintype
 

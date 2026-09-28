@@ -66,7 +66,7 @@ theorem isSemibreak_two_distinct_path_chips
 on a banana of genus at least three. -/
 theorem rank_leftEndpoint_add_two_chip_semibreak_eq_zero
     {g : ℕ} (hg : 3 ≤ g) (B : Banana g)
-    (E : CFDiv B.graph) (hE : IsSemibreak B E) (hdeg : deg E = 2) :
+    (E : CFDiv B.graph) (hE : IsSemibreak B E) (hdeg : CFDiv.degree E = 2) :
     rank B.graph (oneChip (leftEndpoint B) + E) = 0 := by
   have hForm : oneChip (leftEndpoint B) + E =
       bananaNormalForm B 1 0 E := by
@@ -82,7 +82,7 @@ theorem rank_leftEndpoint_add_two_chip_semibreak_eq_zero
 on a banana of genus at least three. -/
 theorem rank_rightEndpoint_add_two_chip_semibreak_eq_zero
     {g : ℕ} (hg : 3 ≤ g) (B : Banana g)
-    (E : CFDiv B.graph) (hE : IsSemibreak B E) (hdeg : deg E = 2) :
+    (E : CFDiv B.graph) (hE : IsSemibreak B E) (hdeg : CFDiv.degree E = 2) :
     rank B.graph (oneChip (rightEndpoint B) + E) = 0 := by
   have hForm : oneChip (rightEndpoint B) + E =
         bananaNormalForm B 0 1 E := by
@@ -125,9 +125,9 @@ theorem rank_tail_slide_add_distinct_path_eq_zero
   have hE : IsSemibreak B
       (oneChip (B.pathVertex α s) + oneChip (B.pathVertex β r)) :=
     isSemibreak_two_distinct_path_chips B α β s r hs hr hαβ
-  have hdeg : deg ((oneChip (B.pathVertex α s) +
+  have hdeg : CFDiv.degree ((oneChip (B.pathVertex α s) +
       oneChip (B.pathVertex β r) : CFDiv B.graph)) = 2 := by
-    rw [deg.map_add, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
     norm_num
   have hTailRank : rank B.graph
       (oneChip (B.coreVertex (B.core.tail α)) +
@@ -308,17 +308,17 @@ theorem rankDelta_first_cross_witness_neg
   have hSemiDV : IsSemibreak B
       (oneChip (strandVertex B α p) + oneChip (strandVertex B β q)) :=
     isSemibreak_two_distinct_strand_chips B α β p q hp hq hαβ
-  have hdegD : deg (oneChip (strandVertex B α p) +
+  have hdegD : CFDiv.degree (oneChip (strandVertex B α p) +
       oneChip (strandVertex B β ⟨B.length β - 1, by omega⟩)) = 2 := by
-    rw [deg.map_add, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
     norm_num
-  have hdegDU : deg (oneChip (strandVertex B α ⟨1, by omega⟩) +
+  have hdegDU : CFDiv.degree (oneChip (strandVertex B α ⟨1, by omega⟩) +
       oneChip (strandVertex B β ⟨B.length β - 1, by omega⟩)) = 2 := by
-    rw [deg.map_add, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
     norm_num
-  have hdegDV : deg (oneChip (strandVertex B α p) +
+  have hdegDV : CFDiv.degree (oneChip (strandVertex B α p) +
       oneChip (strandVertex B β q)) = 2 := by
-    rw [deg.map_add, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
     norm_num
   have hRankD : rank B.graph
       (oneChip (strandVertex B α ⟨1, by omega⟩) +

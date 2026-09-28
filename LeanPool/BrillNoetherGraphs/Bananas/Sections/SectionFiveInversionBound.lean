@@ -198,7 +198,7 @@ theorem sectionFive_inversion_lower_bound_of_involutive_transmission_connected
   intro m
   obtain ⟨sigma, hSigmaTau, -⟩ :=
     transmissionPermutation_rankSlipFace M D hconn tau hTau
-  apply (sigma.se_finite _ _).subset
+  apply (sigma.se_finite ((m : ℕ) : ℤ) ((m : ℕ) : ℤ)).subset
   intro b hb
   change ((m : ℕ) : ℤ) ≤ b ∧ tau b = ((m : ℕ) : ℤ) - 1 at hb
   rw [← hSigmaTau] at hb

@@ -55,14 +55,14 @@ theorem exists_common_two_chip_class_genus_two
     (hConnected : graphConnected G) (hGenus : genus G = 2)
     (first second : G.V) :
     ∃ D : CFDiv G,
-      effective D ∧ deg D = 3 ∧ rank G D ≥ 1 ∧
+      effective D ∧ CFDiv.degree D = 3 ∧ rank G D ≥ 1 ∧
       HasTwoChipsRepresentative D first ∧
       HasTwoChipsRepresentative D second := by
   let gamma : CFDiv G :=
     (2 : ℤ) • oneChip first - (2 : ℤ) • oneChip second
-  have hGammaDegree : deg gamma = 0 := by
+  have hGammaDegree : CFDiv.degree gamma = 0 := by
     dsimp [gamma]
-    rw [deg.map_sub, map_zsmul, map_zsmul, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_sub, map_zsmul, map_zsmul, deg_one_chip, deg_one_chip]
     ring
   obtain ⟨E, F, hEEffective, hFEffective, hEDegree, hFDegree, hDifference⟩ :=
     exists_effective_difference_of_deg_zero hConnected (by omega)
@@ -77,13 +77,13 @@ theorem exists_common_two_chip_class_genus_two
     exact (Eff G).add_mem
       ((Eff G).nsmul_mem (eff_one_chip second) 2)
       hFEffective
-  have hDDegree : deg D = 3 := by
+  have hDDegree : CFDiv.degree D = 3 := by
     dsimp [D]
-    rw [deg.map_add, map_zsmul, deg_one_chip, hEDegree, hGenus]
+    rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip, hEDegree, hGenus]
     norm_num
-  have hDsecondDegree : deg Dsecond = 3 := by
+  have hDsecondDegree : CFDiv.degree Dsecond = 3 := by
     dsimp [Dsecond]
-    rw [deg.map_add, map_zsmul, deg_one_chip, hFDegree, hGenus]
+    rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip, hFDegree, hGenus]
     norm_num
   have hEquivSecond : linearEquiv G D Dsecond := by
     unfold linearEquiv at hDifference ⊢
@@ -663,7 +663,7 @@ theorem bnExists_of_reaches_coreVertices
     {n p : ℕ} (spec : SubdivisionGraph.Spec n p)
     (hConnected : graphConnected spec.graph)
     (D : CFDiv spec.graph) (degree : ℤ)
-    (hDegree : deg D = degree)
+    (hDegree : CFDiv.degree D = degree)
     (hReaches : ∀ vertex : Fin n,
       StrongSeparator.Reaches spec.graph D (spec.coreVertex vertex)) :
     BNExists spec.graph 1 degree :=
@@ -699,7 +699,7 @@ theorem bnExists_three_of_two_loop_split_witness
     (length : Fin core.splitEdgeCount → ℕ)
     (hLength : ∀ edge, 0 < length edge)
     (D : CFDiv (splitSubdivisionSpec data hValid length hLength).graph)
-    (hDegree : deg D = 3)
+    (hDegree : CFDiv.degree D = 3)
     (hBaseReaches : ∀ base : Fin n,
       StrongSeparator.Reaches
         (splitSubdivisionSpec data hValid length hLength).graph D

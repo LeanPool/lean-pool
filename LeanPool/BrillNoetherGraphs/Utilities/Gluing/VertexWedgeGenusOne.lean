@@ -35,9 +35,9 @@ structure PointedGenusOneRigid (H : CFGraph.{v}) (y : H.V) : Prop where
 /-- A winnable divisor of degree zero is linearly equivalent to zero. -/
 theorem linear_equiv_zero_of_winnable_deg_zero
     (K : CFGraph.{u}) (A : CFDiv K)
-    (hWin : winnable K A) (hDeg : deg A = 0) : linearEquiv K A 0 := by
+    (hWin : winnable K A) (hDeg : CFDiv.degree A = 0) : linearEquiv K A 0 := by
   obtain ⟨B, hB, hAB⟩ := hWin
-  have hDegB : deg B = 0 := by
+  have hDegB : CFDiv.degree B = 0 := by
     rw [← linear_equiv_preserves_deg K A B hAB, hDeg]
   have hZero : B = 0 := eff_degree_zero B hB hDegB
   simpa [hZero] using hAB
@@ -51,7 +51,7 @@ the right factor. -/
 /-- Winnability forces nonnegative degree. -/
 theorem deg_nonneg_of_winnable
     (K : CFGraph.{u}) (A : CFDiv K) (hWin : winnable K A) :
-    0 ≤ deg A := by
+    0 ≤ CFDiv.degree A := by
   obtain ⟨B, hBEffective, hAB⟩ := hWin
   have hDegree := deg_of_eff_nonneg B hBEffective
   rw [← linear_equiv_preserves_deg K A B hAB] at hDegree
@@ -160,7 +160,7 @@ theorem rank_wedgeLiftLeft_ge_one_iff
       have ht : t ≤ 0 := by
         have hDegree := deg_nonneg_of_winnable H
           (chipShift H 0 y (-t)) hRight
-        rw [chipShift, deg.map_add, map_zsmul, deg_one_chip] at hDegree
+        rw [chipShift, CFDiv.degree.map_add, map_zsmul, deg_one_chip] at hDegree
         simp only [map_zero, zero_add] at hDegree
         simp only [smul_eq_mul, mul_one] at hDegree
         omega
@@ -177,7 +177,7 @@ theorem rank_wedgeLiftLeft_ge_one_iff
       have htOne : t ≤ -1 := by
         have hDegree := deg_nonneg_of_winnable H
           (chipShift H (-oneChip p) y (-t)) hRight
-        rw [chipShift, deg.map_add, map_zsmul, map_neg, deg_one_chip] at hDegree
+        rw [chipShift, CFDiv.degree.map_add, map_zsmul, map_neg, deg_one_chip] at hDegree
         rw [deg_one_chip y] at hDegree
         simp only [smul_eq_mul, mul_one] at hDegree
         omega
@@ -223,7 +223,7 @@ theorem rank_wedgeLiftLeft_ge_one_iff
           unfold chipShift
           abel
         · apply winnable_of_deg_ge_genus hH.connected
-          rw [chipShift, deg.map_add, map_zsmul, map_neg, deg_one_chip,
+          rw [chipShift, CFDiv.degree.map_add, map_zsmul, map_neg, deg_one_chip,
             hH.genus_one]
           norm_num
 

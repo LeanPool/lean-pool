@@ -183,15 +183,15 @@ theorem script_sub_le_deg_of_effective_add_prin
     {D : CFDiv G} {f : firingScript G}
     (hD : effective D) (hWin : effective (D + prin G f))
     {u v : G.V} (hEdge : 0 < numEdges G u v) :
-    f u - f v ≤ deg D := by
+    f u - f v ≤ CFDiv.degree D := by
   let t := clampScript f (f v)
   have ht : ∀ w, 0 ≤ t w := clampScript_nonneg f (f v)
   have hv : t v = 0 := clampScript_at_base f v
   have hEffective : effective (D + prin G t) :=
     effective_add_prin_clamp hD hWin (f v)
-  have hCoeff : (D + prin G t) v ≤ deg (D + prin G t) :=
+  have hCoeff : (D + prin G t) v ≤ CFDiv.degree (D + prin G t) :=
     Finset.single_le_sum (fun w _ => hEffective w) (Finset.mem_univ v)
-  have hDegree : deg (D + prin G t) = deg D := by
+  have hDegree : CFDiv.degree (D + prin G t) = CFDiv.degree D := by
     apply (linear_equiv_preserves_deg G D (D + prin G t) _).symm
     change (D + prin G t - D) ∈ principalDivisors G
     apply (principal_iff_eq_prin G _).mpr
@@ -211,7 +211,7 @@ theorem script_sub_le_deg_of_effective_add_prin
   have hDifference : f u - f v ≤ t u := le_max_left _ _
   have hDv := hD v
   rw [hDegree] at hCoeff
-  change D v + prin G t v ≤ deg D at hCoeff
+  change D v + prin G t v ≤ CFDiv.degree D at hCoeff
   omega
 
 /-- The absolute edge slope of a winning script is bounded by the degree
@@ -220,7 +220,7 @@ theorem abs_script_sub_le_deg_of_effective_add_prin
     {D : CFDiv G} {f : firingScript G}
     (hD : effective D) (hWin : effective (D + prin G f))
     {u v : G.V} (hEdge : 0 < numEdges G u v) :
-    |f u - f v| ≤ deg D := by
+    |f u - f v| ≤ CFDiv.degree D := by
   apply abs_le.mpr
   constructor
   · have hEdge' : 0 < numEdges G v u := by
@@ -236,7 +236,7 @@ theorem abs_script_sub_le_deg_of_le
     (hD : effective D) (hRD : ∀ w, R w ≤ D w)
     (hWin : effective (R + prin G f))
     {u v : G.V} (hEdge : 0 < numEdges G u v) :
-    |f u - f v| ≤ deg D := by
+    |f u - f v| ≤ CFDiv.degree D := by
   apply abs_script_sub_le_deg_of_effective_add_prin hD _ hEdge
   intro w
   have h := hWin w
@@ -252,7 +252,7 @@ theorem abs_script_sub_le_deg_of_effective_sub_add_prin
     (hD : effective D) (hE : effective E)
     (hWin : effective (D - E + prin G f))
     {u v : G.V} (hEdge : 0 < numEdges G u v) :
-    |f u - f v| ≤ deg D := by
+    |f u - f v| ≤ CFDiv.degree D := by
   apply abs_script_sub_le_deg_of_effective_add_prin hD _ hEdge
   intro w
   have h := hWin w

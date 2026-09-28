@@ -34,7 +34,7 @@ def bnNumber (G : CFGraph) (r d : ℤ) : ℤ :=
 
 /-- There is a divisor of degree `d` and rank at least `r` on `G`. -/
 def BNExists (G : CFGraph) (r d : ℤ) : Prop :=
-  ∃ D : CFDiv G, deg D = d ∧ rank G D ≥ r
+  ∃ D : CFDiv G, CFDiv.degree D = d ∧ rank G D ≥ r
 
 /-- The degree complementary to `d` with respect to the canonical divisor. -/
 def dualDegree (G : CFGraph) (d : ℤ) : ℤ :=

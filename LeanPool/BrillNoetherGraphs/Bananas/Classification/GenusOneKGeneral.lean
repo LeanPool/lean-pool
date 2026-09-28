@@ -50,9 +50,9 @@ variable {G : CFGraph} {u v : G.V}
 the integer-indexed twist used by the torsion API. -/
 private theorem genusOneZeroTwist_eq_degreeTwistInt (D : CFDiv G) (b : ℤ) :
     genusOneZeroTwist (u := u) (v := v) D b = degreeTwistInt (mark G u v) D 0 b := by
-  change D + (b - deg D) • oneChip u - b • oneChip v
-      = D + (0 - deg D + b) • oneChip u - b • oneChip v
-  have hcoeff : b - deg D = 0 - deg D + b := by ring
+  change D + (b - CFDiv.degree D) • oneChip u - b • oneChip v
+      = D + (0 - CFDiv.degree D + b) • oneChip u - b • oneChip v
+  have hcoeff : b - CFDiv.degree D = 0 - CFDiv.degree D + b := by ring
   rw [hcoeff]
 
 /-- Divisibility of an integer by a natural number, in the two shapes the
@@ -102,16 +102,16 @@ theorem kGeneralTransmission_genusOne_of_torsionOrder_and_allSubmodular
         intro b
         refine principal_genusOneZeroTwist_of_dvd hWitness D b c ?_ hc
         simp [hk1']
-      have hTrans : ∀ b : ℤ, τ b = b + (-deg D) := by
+      have hTrans : ∀ b : ℤ, τ b = b + (-CFDiv.degree D) := by
         intro b
         have := transmission_value_of_principal_genusOneZeroTwist D τ b hτ (hAll b)
         omega
-      rw [kInversionCount_eq_zero_of_translation k τ (-deg D) hTrans]
+      rw [kInversionCount_eq_zero_of_translation k τ (-CFDiv.degree D) hTrans]
       norm_num
     case pos =>
       -- `2 ≤ k`: `τ` is `affineReflection k (c-1)` translated by `1 - deg D`.
       have hEq : ∀ n : ℤ,
-          τ n = affineReflection k (c - 1) hk2 n + (1 - deg D) := by
+          τ n = affineReflection k (c - 1) hk2 n + (1 - CFDiv.degree D) := by
         intro n
         by_cases hn : n ∈ affineReflectionSupport k (c - 1)
         · -- `n ≡ c - 1`, so `n + 1` is principal and this row is raised.
@@ -157,12 +157,14 @@ theorem kGeneralTransmission_genusOne_of_torsionOrder_and_allSubmodular
               hConnected hGenus D τ n hτ hB hNext
             omega
       have hRewrite : kInversionCount k τ
-          = kInversionCount k (fun n => affineReflection k (c - 1) hk2 n + (1 - deg D)) := by
+          = kInversionCount k
+            (fun n => affineReflection k (c - 1) hk2 n + (1 - CFDiv.degree D)) := by
         congr 1
         funext n
         exact hEq n
       rw [hRewrite]
-      exact kInversionCount_output_translate_affineReflection_le_one k (c - 1) (1 - deg D) hk2
+      exact kInversionCount_output_translate_affineReflection_le_one
+        k (c - 1) (1 - CFDiv.degree D) hk2
   · simp only [not_exists] at hAny
     rw [kInversionCount_eq_zero_of_no_principal_genusOne hConnected hGenus D τ k hτ hAny]
     norm_num

@@ -36,19 +36,19 @@ theorem theta_negative_rankDelta_normal_form
     (graphConnected B) B.genus_graph hDistinct hNeg
   obtain ⟨hDu, _, _⟩ := (rankDelta_neg_iff_rank_pattern M D).mp hNeg
   dsimp [M] at hReduced hDu
-  change deg D = 2 ∧ rank B.graph D = 0 at hReduced
+  change CFDiv.degree D = 2 ∧ rank B.graph D = 0 at hReduced
   change rank B.graph D = rank B.graph (D - oneChip u) at hDu
   have hDu' : rank B.graph D = rank B.graph (D - oneChip u) := by
     exact hDu
   have hRankD : rank B.graph D = 0 := by
     exact hReduced.2
-  have hDegreeD : deg D = 2 := by
+  have hDegreeD : CFDiv.degree D = 2 := by
     exact hReduced.1
   have hDuRank : rank B.graph (D - oneChip u) = 0 := by
     rw [← hDu']
     exact hRankD
-  have hDuDegree : deg (D - oneChip u) = 1 := by
-    rw [deg.map_sub, deg_one_chip]
+  have hDuDegree : CFDiv.degree (D - oneChip u) = 1 := by
+    rw [CFDiv.degree.map_sub, deg_one_chip]
     omega
   obtain ⟨w, hw⟩ :=
     exists_one_chip_representative_of_rank_zero_degree_one B.graph

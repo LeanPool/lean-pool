@@ -103,13 +103,13 @@ theorem crossingInversions_ncard_le_kInversionCount_of_degree_lt_period
     {M : TwiceMarked} {D : CFDiv M.graph} {d : ℤ} {k : ℕ}
     (hk : 0 < k)
     (hconn : _root_.graphConnected M.graph)
-    (hdeg : deg D = d) (hdk : d < k)
+    (hdeg : CFDiv.degree D = d) (hdk : d < k)
     {tau : ℤ → ℤ} (hTau : IsTransmissionPermutation M D tau)
     (hAffine : IsKAffine k tau) :
     (crossingInversions tau).ncard ≤ kInversionCount k tau := by
   have hTwistDeg :
-      deg (D + (-(k : ℤ)) • oneChip M.u - (0 : ℤ) • oneChip M.v) < 0 := by
-    rw [deg.map_sub, deg.map_add, map_zsmul, map_zsmul,
+      CFDiv.degree (D + (-(k : ℤ)) • oneChip M.u - (0 : ℤ) • oneChip M.v) < 0 := by
+    rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, map_zsmul, map_zsmul,
       deg_one_chip, deg_one_chip, hdeg]
     simp
     omega
@@ -203,7 +203,7 @@ theorem KGeneralTransmission.no_rank_one_below_period
     (hK : KGeneralTransmission M k)
     (hsmall : k ≤ (g + 3) / 2)
     {D : CFDiv M.graph} {d : ℤ}
-    (hdeg : deg D = d) (hrank : rank M.graph D ≥ 1)
+    (hdeg : CFDiv.degree D = d) (hrank : rank M.graph D ≥ 1)
     (hdk : d < k) : False := by
   obtain ⟨tau, hTau, hAffine, hfinite, hCount⟩ := hK.2.2 D
   have hCrossLe :=

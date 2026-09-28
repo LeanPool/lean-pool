@@ -38,8 +38,8 @@ open Utilities
 /-! ## The Riemann-Roch bound on a transmission permutation -/
 
 private theorem deg_markedTwist (M : TwiceMarked) (D : CFDiv M.graph) (x y : ℤ) :
-    deg (D + x • oneChip M.u - y • oneChip M.v) = deg D + x - y := by
-  rw [deg.map_sub, deg.map_add, map_zsmul, map_zsmul, deg_one_chip, deg_one_chip]
+    CFDiv.degree (D + x • oneChip M.u - y • oneChip M.v) = CFDiv.degree D + x - y := by
+  rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, map_zsmul, map_zsmul, deg_one_chip, deg_one_chip]
   simp only [smul_eq_mul, mul_one]
 
 private theorem markedTwist_sub_u (M : TwiceMarked) (D : CFDiv M.graph) (x y : ℤ) :
@@ -62,19 +62,19 @@ degree-`0` threshold. -/
 theorem transmissionPermutation_ge
     {M : TwiceMarked} {D : CFDiv M.graph} {τ : ℤ → ℤ}
     (hτ : IsTransmissionPermutation M D τ) (b : ℤ) :
-    b - deg D ≤ τ b := by
+    b - CFDiv.degree D ≤ τ b := by
   by_contra hlt
   push Not at hlt
   have hInd := hτ.2 (τ b) b
   rw [ite_eq_left rfl] at hInd
   set a := τ b with ha_def
-  have hd0 : deg (D + a • oneChip M.u - b • oneChip M.v) < 0 := by
+  have hd0 : CFDiv.degree (D + a • oneChip M.u - b • oneChip M.v) < 0 := by
     rw [deg_markedTwist]; omega
-  have hd1 : deg (D + (a - 1) • oneChip M.u - b • oneChip M.v) < 0 := by
+  have hd1 : CFDiv.degree (D + (a - 1) • oneChip M.u - b • oneChip M.v) < 0 := by
     rw [deg_markedTwist]; omega
-  have hd2 : deg (D + a • oneChip M.u - (b + 1) • oneChip M.v) < 0 := by
+  have hd2 : CFDiv.degree (D + a • oneChip M.u - (b + 1) • oneChip M.v) < 0 := by
     rw [deg_markedTwist]; omega
-  have hd3 : deg (D + (a - 1) • oneChip M.u - (b + 1) • oneChip M.v) < 0 := by
+  have hd3 : CFDiv.degree (D + (a - 1) • oneChip M.u - (b + 1) • oneChip M.v) < 0 := by
     rw [deg_markedTwist]; omega
   have hR0 := rank_neg_one_of_deg_neg M.graph _ hd0
   have hR1 := rank_neg_one_of_deg_neg M.graph _ hd1
@@ -94,19 +94,21 @@ theorem transmissionPermutation_le
     {M : TwiceMarked} {D : CFDiv M.graph} {τ : ℤ → ℤ}
     (hconn : _root_.graphConnected M.graph)
     (hτ : IsTransmissionPermutation M D τ) (b : ℤ) :
-    τ b ≤ 2 * genus M.graph + b - deg D := by
+    τ b ≤ 2 * genus M.graph + b - CFDiv.degree D := by
   by_contra hlt
   push Not at hlt
   have hInd := hτ.2 (τ b) b
   rw [ite_eq_left rfl] at hInd
   set a := τ b with ha_def
-  have hd0 : deg (D + a • oneChip M.u - b • oneChip M.v) > 2 * genus M.graph - 2 := by
+  have hd0 : CFDiv.degree (D + a • oneChip M.u - b • oneChip M.v) > 2 * genus M.graph - 2 := by
     rw [deg_markedTwist]; omega
-  have hd1 : deg (D + (a - 1) • oneChip M.u - b • oneChip M.v) > 2 * genus M.graph - 2 := by
+  have hd1 : CFDiv.degree (D + (a - 1) • oneChip M.u - b • oneChip M.v) >
+      2 * genus M.graph - 2 := by
     rw [deg_markedTwist]; omega
-  have hd2 : deg (D + a • oneChip M.u - (b + 1) • oneChip M.v) > 2 * genus M.graph - 2 := by
+  have hd2 : CFDiv.degree (D + a • oneChip M.u - (b + 1) • oneChip M.v) >
+      2 * genus M.graph - 2 := by
     rw [deg_markedTwist]; omega
-  have hd3 : deg (D + (a - 1) • oneChip M.u - (b + 1) • oneChip M.v) >
+  have hd3 : CFDiv.degree (D + (a - 1) • oneChip M.u - (b + 1) • oneChip M.v) >
       2 * genus M.graph - 2 := by
     rw [deg_markedTwist]; omega
   have hR0 := (rank_nonspecial_range hconn _).2.2 hd0

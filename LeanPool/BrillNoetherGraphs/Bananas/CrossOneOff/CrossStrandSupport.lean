@@ -83,9 +83,9 @@ theorem rankSupport_two_interior_distinct_strands
   have hSemi : IsSemibreak B
       (oneChip (strandVertex B α i) + oneChip (strandVertex B β j)) :=
     isSemibreak_two_distinct_strand_chips B α β i j hi hj hαβ
-  have hdegE : deg (oneChip (strandVertex B α i) +
+  have hdegE : CFDiv.degree (oneChip (strandVertex B α i) +
       oneChip (strandVertex B β j)) = 2 := by
-    rw [deg.map_add, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
     norm_num
   -- Deleting either multivalent vertex leaves a normal form with a negative
   -- endpoint coefficient, hence rank `-1`.

@@ -166,7 +166,7 @@ abbrev bridgeCanonicalLift (G : CFGraph.{u}) (H : CFGraph.{v})
 @[simp] theorem deg_bridgePushforward
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (D : CFDiv (bridgeGraph G H x y)) :
-    deg (bridgePushforward G H x y D) = deg D := by
+    CFDiv.degree (bridgePushforward G H x y D) = CFDiv.degree D := by
   classical
   change
     (∑ z : Sum G.V { b : H.V // b ≠ y },
@@ -185,7 +185,7 @@ abbrev bridgeCanonicalLift (G : CFGraph.{u}) (H : CFGraph.{v})
 @[simp] theorem deg_bridgeCanonicalLift
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (D : CFDiv (vertexWedge G H x y)) :
-    deg (bridgeCanonicalLift G H x y D) = deg D := by
+    CFDiv.degree (bridgeCanonicalLift G H x y D) = CFDiv.degree D := by
   have h := deg_bridgePushforward G H x y (bridgeCanonicalLift G H x y D)
   simpa using h.symm
 

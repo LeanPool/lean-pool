@@ -24,9 +24,10 @@ namespace Bananas
 open Utilities
 
 private theorem eq_attachment_of_card_two
-    {X : Type} [Fintype X] [DecidableEq X]
+    {X : Type} [Fintype X]
     (hCard : Fintype.card X = 2) {x u w : X}
     (hxu : x ≠ u) (hwu : w ≠ u) : w = x := by
+  classical
   by_contra hwx
   have hSubset : ({w, x, u} : Finset X) ⊆ Finset.univ := by simp
   have hThree : ({w, x, u} : Finset X).card = 3 := by
@@ -88,7 +89,7 @@ theorem allSubmodular_same_leftFactor_of_card_eq_two
         have h := genusOne_rank_eq_degree_sub_one hG.connected hG.genus_one A (by
           dsimp [A]
           norm_num)
-        rw [show deg A = 2 by
+        rw [show CFDiv.degree A = 2 by
           dsimp [A]
           norm_num] at h
         exact h

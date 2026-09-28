@@ -837,7 +837,7 @@ private theorem trivial_library_brillNoetherGeneral :
     (_root_.rank_geq_iff _ D 0).mpr hRankNonnegative
   obtain ⟨E, hEffective, hEquivalent⟩ :=
     (_root_.rank_nonneg_iff_winnable _ D).mp hRankGeqZero
-  have hDegreeNonnegative : 0 ≤ _root_.deg D := by
+  have hDegreeNonnegative : 0 ≤ _root_.CFDiv.degree D := by
     rw [_root_.linear_equiv_preserves_deg _ D E hEquivalent]
     change 0 ≤ ∑ v, E v
     exact Finset.sum_nonneg fun v _ => hEffective v
@@ -982,22 +982,22 @@ private theorem libraryMarkedGraph_TMTheta_eq_thetaFactor
   rw [_root_.Utilities.MarkedGraph.mk.injEq]
   refine ⟨rfl, ?_, ?_⟩
   · apply heq_of_eq
-    simp [libraryMarkedGraph, thetaBanana,
-      _root_.Bananas.bananaOfLengths, _root_.Bananas.strandVertex,
-      _root_.Utilities.Certificate.SubdivisionGraph.Spec.pathVertex,
-      _root_.Utilities.Certificate.SubdivisionGraph.Spec.interiorVertex,
-      Nat.ne_of_gt h.2.2.2.1, ne_of_lt h.2.2.2.2.1]
+    simp only [Fin.isValue, libraryMarkedGraph, Bananas.strandVertex,
+      Utilities.Certificate.SubdivisionGraph.Spec.pathVertex, Nat.reduceAdd, thetaBanana,
+      Bananas.bananaOfLengths, Matrix.cons_val_zero, ↓reduceIte,
+      Nat.ne_of_gt h.2.2.2.1, ↓reduceDIte, ne_of_lt h.2.2.2.2.1,
+      Utilities.Certificate.SubdivisionGraph.Spec.interiorVertex]
     apply congrArg Sum.inr
     apply Sigma.ext
     · rfl
     · exact HEq.rfl
   · apply heq_of_eq
-    simp [libraryMarkedGraph, thetaBanana,
-      _root_.Bananas.bananaOfLengths, _root_.Bananas.strandVertex,
-      _root_.Utilities.Certificate.SubdivisionGraph.Spec.pathVertex,
-      _root_.Utilities.Certificate.SubdivisionGraph.Spec.interiorVertex,
-      Nat.ne_of_gt h.2.2.2.2.2.1,
-      ne_of_lt h.2.2.2.2.2.2.1]
+    simp only [Fin.isValue, libraryMarkedGraph, Bananas.strandVertex,
+      Utilities.Certificate.SubdivisionGraph.Spec.pathVertex, Nat.reduceAdd, thetaBanana,
+      Bananas.bananaOfLengths, Matrix.cons_val, ↓reduceIte,
+      Nat.ne_of_gt h.2.2.2.2.2.1, ↓reduceDIte,
+      ne_of_lt h.2.2.2.2.2.2.1,
+      Utilities.Certificate.SubdivisionGraph.Spec.interiorVertex]
     apply congrArg Sum.inr
     apply Sigma.ext
     · rfl
@@ -1312,7 +1312,7 @@ theorem cdpr_marked_no_high_multiplicity
               _root_.Bananas.KGeneralChainFactor.marked)
       change _root_.CFDiv
         (libraryMarkedGraph (chainOfCycles (mn :: rest))).graph at D
-      change _root_.deg D = d at h_degree
+      change _root_.CFDiv.degree D = d at h_degree
       change _root_.rankGeq
         (libraryMarkedGraph (chainOfCycles (mn :: rest))).graph D r at h_rank
       change r < _root_.genus
@@ -1336,7 +1336,7 @@ theorem cdpr_marked_no_high_multiplicity
       have hRankTarget : r ≤ _root_.rank target.graph (transport.mapDiv D) := by
         rw [transport.rank_map]
         exact hRankSource
-      have hDegreeTarget : _root_.deg (transport.mapDiv D) = d := by
+      have hDegreeTarget : _root_.CFDiv.degree (transport.mapDiv D) = d := by
         rw [transport.deg_map, h_degree]
       have hBoundTarget : r < _root_.genus target.graph := by
         rw [transport.genus_eq]
@@ -1552,7 +1552,7 @@ theorem cycle_theta_chain_marked_no_high_multiplicity
             exact _root_.Bananas.contractBridgeChain F.marked
               (tail.map _root_.Bananas.KGeneralChainFactor.marked)
           change _root_.CFDiv source.graph at D
-          change _root_.deg D = d at h_degree
+          change _root_.CFDiv.degree D = d at h_degree
           change _root_.rankGeq source.graph D r at h_rank
           change ¬_root_.rankGeq source.graph
             (D - (r + _root_.Utilities.bnNumber source.graph r d + 1) •
@@ -1568,7 +1568,7 @@ theorem cycle_theta_chain_marked_no_high_multiplicity
               _root_.rank target.graph (transport.mapDiv D) := by
             rw [transport.rank_map]
             exact hRankSource
-          have hDegreeTarget : _root_.deg (transport.mapDiv D) = d := by
+          have hDegreeTarget : _root_.CFDiv.degree (transport.mapDiv D) = d := by
             rw [transport.deg_map, h_degree]
           have hOnceMarked : _root_.Bananas.OnceMarkedBrillNoetherGeneral
               (_root_.Bananas.reversedMarkedChain F tail).graph

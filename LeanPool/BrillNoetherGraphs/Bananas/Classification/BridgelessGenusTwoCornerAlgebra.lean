@@ -40,7 +40,7 @@ theorem rank_canonical_sub_one_chip_zero_of_genus_two
 connected genus-two graph. -/
 theorem degreeZero_slice_eq_two_mul_rankPlusOne_of_genus_two
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (X : CFDiv G) (hDeg : deg X = 0) :
+    (hGenus : genus G = 2) (X : CFDiv G) (hDeg : CFDiv.degree X = 0) :
     rankPlusOne G X * rankPlusOne G (canonicalDivisor G - X) =
       2 * rankPlusOne G X := by
   by_cases hZero : linearEquiv G X 0
@@ -72,7 +72,7 @@ divisor is shifted by one chip. -/
 theorem degreeZero_mul_canonical_sub_add_one_chip_of_genus_two
     (G : CFGraph) (hConnected : _root_.graphConnected G)
     (hGenus : genus G = 2) (X : CFDiv G) (q : G.V)
-    (hOne : rank G (oneChip q) = 0) (hDeg : deg X = 0) :
+    (hOne : rank G (oneChip q) = 0) (hDeg : CFDiv.degree X = 0) :
     rankPlusOne G X * rankPlusOne G (canonicalDivisor G - (X + oneChip q)) =
       rankPlusOne G X := by
   by_cases hZero : linearEquiv G X 0
@@ -104,8 +104,8 @@ effective divisors have rank zero. -/
 theorem degreeOne_slice_eq_rankPlusOne_of_genus_two
     (G : CFGraph) (hConnected : _root_.graphConnected G)
     (hGenus : genus G = 2)
-    (hRankZero : ∀ X : CFDiv G, deg X = 1 → 0 ≤ rank G X → rank G X = 0)
-    (X : CFDiv G) (hDeg : deg X = 1) :
+    (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
+    (X : CFDiv G) (hDeg : CFDiv.degree X = 1) :
     rankPlusOne G X * rankPlusOne G (canonicalDivisor G - X) =
       rankPlusOne G X := by
   have hRR := riemann_roch_for_graphs hConnected X
@@ -130,14 +130,14 @@ theorem degreeTwo_first_three_cancel_of_genus_two
     (hGenus : genus G = 2) (u v : G.V)
     (hOneU : rank G (oneChip u) = 0)
     (hOneV : rank G (oneChip v) = 0)
-    (X : CFDiv G) (hDeg : deg X = 2) :
+    (X : CFDiv G) (hDeg : CFDiv.degree X = 2) :
     (rankPlusOne G X - rankPlusOne G (X - oneChip u) -
         rankPlusOne G (X - oneChip v)) *
       rankPlusOne G (canonicalDivisor G - X) = 0 := by
   let Y : CFDiv G := canonicalDivisor G - X
-  have hYDeg : deg Y = 0 := by
+  have hYDeg : CFDiv.degree Y = 0 := by
     dsimp [Y]
-    rw [deg.map_sub, degree_of_canonical_divisor, hGenus, hDeg]
+    rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hGenus, hDeg]
     norm_num
   by_cases hYZero : linearEquiv G Y 0
   · have hXK : linearEquiv G X (canonicalDivisor G) := by
@@ -198,7 +198,7 @@ theorem degreeOne_twistContribution_eq_of_genus_two
     (hGenus : genus G = 2) (u v : G.V)
     (hOneU : rank G (oneChip u) = 0)
     (hOneV : rank G (oneChip v) = 0)
-    (hRankZero : ∀ X : CFDiv G, deg X = 1 → 0 ≤ rank G X → rank G X = 0)
+    (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (D : CFDiv G) (b : ℤ) :
     markedRankDelta G u v (fixedDegreeTwist G u v D 1 b) *
         rankPlusOne G (canonicalDivisor G - fixedDegreeTwist G u v D 1 b) =
@@ -215,8 +215,8 @@ theorem degreeOne_twistContribution_eq_of_genus_two
       simpa [X1, X0] using fixedDegreeTwist_sub_u G u v D 1 b
     have hV : X1 - oneChip v = X0next := by
       simpa [X1, X0next] using fixedDegreeTwist_sub_v G u v D 1 b
-    have hUVDeg : deg (X1 - oneChip u - oneChip v) < 0 := by
-      rw [deg.map_sub, deg.map_sub, deg_one_chip, deg_one_chip]
+    have hUVDeg : CFDiv.degree (X1 - oneChip u - oneChip v) < 0 := by
+      rw [CFDiv.degree.map_sub, CFDiv.degree.map_sub, deg_one_chip, deg_one_chip]
       simp [X1]
     have hUVRank := rank_neg_one_of_deg_neg G
       (X1 - oneChip u - oneChip v) hUVDeg
@@ -295,7 +295,7 @@ theorem threeDegreeTwistContribution_eq_telescoping_of_genus_two
     (hGenus : genus G = 2) (u v : G.V)
     (hOneU : rank G (oneChip u) = 0)
     (hOneV : rank G (oneChip v) = 0)
-    (hRankZero : ∀ X : CFDiv G, deg X = 1 → 0 ≤ rank G X → rank G X = 0)
+    (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (D : CFDiv G) (b : ℤ) :
     threeDegreeTwistContribution G u v D b =
       rankPlusOne G (fixedDegreeTwist G u v D 1 b) +
@@ -316,15 +316,15 @@ theorem threeDegreeTwistContribution_eq_telescoping_of_genus_two
 arbitrary connected genus-two graph. -/
 noncomputable def bridgelessGenusTwoCornerWeight (G : CFGraph) (X : CFDiv G) : ℤ := by
   classical
-  exact if deg X = 0 then 2
-    else if deg X = 1 then 1
-    else if deg X = 2 ∧ linearEquiv G X (canonicalDivisor G) then 1
+  exact if CFDiv.degree X = 0 then 2
+    else if CFDiv.degree X = 1 then 1
+    else if CFDiv.degree X = 2 ∧ linearEquiv G X (canonicalDivisor G) then 1
     else 0
 
 private theorem complement_rank_add_one_eq_two_of_corner_degree_zero'
     (G : CFGraph) (hConnected : _root_.graphConnected G)
     (hGenus : genus G = 2) (u v : G.V) (X : CFDiv G)
-    (hDelta : rankDelta (mark G u v) X = 1) (hDeg : deg X = 0) :
+    (hDelta : rankDelta (mark G u v) X = 1) (hDeg : CFDiv.degree X = 0) :
     rank G (canonicalDivisor G - X) + 1 = 2 := by
   have hRank := rank_nonneg_of_rankDelta_eq_one (mark G u v) X hDelta
   have hXZero := linearEquiv_zero_of_rank_nonneg_degree_zero'
@@ -343,9 +343,9 @@ private theorem complement_rank_add_one_eq_two_of_corner_degree_zero'
 private theorem complement_rank_add_one_eq_one_of_corner_degree_one'
     (G : CFGraph) (hConnected : _root_.graphConnected G)
     (hGenus : genus G = 2) (u v : G.V)
-    (hRankZero : ∀ X : CFDiv G, deg X = 1 → 0 ≤ rank G X → rank G X = 0)
+    (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (X : CFDiv G) (hDelta : rankDelta (mark G u v) X = 1)
-    (hDeg : deg X = 1) :
+    (hDeg : CFDiv.degree X = 1) :
     rank G (canonicalDivisor G - X) + 1 = 1 := by
   have hNonneg := rank_nonneg_of_rankDelta_eq_one (mark G u v) X hDelta
   have hXRank : rank G X = 0 := hRankZero X hDeg hNonneg
@@ -354,11 +354,11 @@ private theorem complement_rank_add_one_eq_one_of_corner_degree_one'
   omega
 
 private theorem complement_rank_add_one_eq_one_iff_canonical_of_degree_two'
-    (G : CFGraph) (hGenus : genus G = 2) (X : CFDiv G) (hDeg : deg X = 2) :
+    (G : CFGraph) (hGenus : genus G = 2) (X : CFDiv G) (hDeg : CFDiv.degree X = 2) :
     rank G (canonicalDivisor G - X) + 1 = 1 ↔
       linearEquiv G X (canonicalDivisor G) := by
-  have hCompDeg : deg (canonicalDivisor G - X) = 0 := by
-    rw [deg.map_sub, degree_of_canonical_divisor, hGenus, hDeg]
+  have hCompDeg : CFDiv.degree (canonicalDivisor G - X) = 0 := by
+    rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hGenus, hDeg]
     norm_num
   rw [rank_add_one_eq_one_iff_linearEquiv_zero_of_degree_zero G _ hCompDeg]
   constructor
@@ -370,10 +370,10 @@ private theorem complement_rank_add_one_eq_one_iff_canonical_of_degree_two'
     simpa [sub_eq_add_neg] using AddSubgroup.neg_mem (principalDivisors G) hCanon
 
 private theorem complement_rank_add_one_eq_zero_of_three_le_degree'
-    (G : CFGraph) (hGenus : genus G = 2) (X : CFDiv G) (hDeg : 3 ≤ deg X) :
+    (G : CFGraph) (hGenus : genus G = 2) (X : CFDiv G) (hDeg : 3 ≤ CFDiv.degree X) :
     rank G (canonicalDivisor G - X) + 1 = 0 := by
-  have hCompDeg : deg (canonicalDivisor G - X) < 0 := by
-    rw [deg.map_sub, degree_of_canonical_divisor, hGenus]
+  have hCompDeg : CFDiv.degree (canonicalDivisor G - X) < 0 := by
+    rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hGenus]
     omega
   rw [rank_neg_one_of_deg_neg G _ hCompDeg]
   norm_num
@@ -383,32 +383,32 @@ complementary rank, without a theta presentation. -/
 theorem complement_rank_add_one_eq_bridgelessGenusTwoCornerWeight
     (G : CFGraph) (hConnected : _root_.graphConnected G)
     (hGenus : genus G = 2) (u v : G.V)
-    (hRankZero : ∀ X : CFDiv G, deg X = 1 → 0 ≤ rank G X → rank G X = 0)
+    (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (X : CFDiv G) (hDelta : rankDelta (mark G u v) X = 1) :
     rank G (canonicalDivisor G - X) + 1 =
       bridgelessGenusTwoCornerWeight G X := by
-  have hDegNonneg : 0 ≤ deg X :=
+  have hDegNonneg : 0 ≤ CFDiv.degree X :=
     degree_nonneg_of_rankDelta_eq_one (mark G u v) X hDelta
   unfold bridgelessGenusTwoCornerWeight
-  by_cases hDegZero : deg X = 0
+  by_cases hDegZero : CFDiv.degree X = 0
   · simp only [hDegZero, ite_eq_left]
     exact complement_rank_add_one_eq_two_of_corner_degree_zero'
       G hConnected hGenus u v X hDelta hDegZero
   simp only [hDegZero, ite_false]
-  by_cases hDegOne : deg X = 1
+  by_cases hDegOne : CFDiv.degree X = 1
   · simp only [hDegOne, ite_eq_left]
     exact complement_rank_add_one_eq_one_of_corner_degree_one'
       G hConnected hGenus u v hRankZero X hDelta hDegOne
   simp only [hDegOne, ite_false]
-  by_cases hDegTwo : deg X = 2
+  by_cases hDegTwo : CFDiv.degree X = 2
   · by_cases hCanon : linearEquiv G X (canonicalDivisor G)
     · simp only [hDegTwo, hCanon, and_self, ite_eq_left]
       exact (complement_rank_add_one_eq_one_iff_canonical_of_degree_two'
         G hGenus X hDegTwo).mpr hCanon
     · simp only [hDegTwo, hCanon, and_false, ite_false]
       have hLower := rank_geq_neg_one G (canonicalDivisor G - X)
-      have hCompDeg : deg (canonicalDivisor G - X) = 0 := by
-        rw [deg.map_sub, degree_of_canonical_divisor, hGenus, hDegTwo]
+      have hCompDeg : CFDiv.degree (canonicalDivisor G - X) = 0 := by
+        rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hGenus, hDegTwo]
         norm_num
       have hUpper : rank G (canonicalDivisor G - X) ≤ 0 := by
         by_cases hNonneg : 0 ≤ rank G (canonicalDivisor G - X)
@@ -421,7 +421,7 @@ theorem complement_rank_add_one_eq_bridgelessGenusTwoCornerWeight
         ((complement_rank_add_one_eq_one_iff_canonical_of_degree_two'
           G hGenus X hDegTwo).mp hOne)
       omega
-  · have hThree : 3 ≤ deg X := by omega
+  · have hThree : 3 ≤ CFDiv.degree X := by omega
     simp only [hDegTwo, false_and, ite_false]
     exact complement_rank_add_one_eq_zero_of_three_le_degree'
       G hGenus X hThree
@@ -433,7 +433,7 @@ condition.  This removes the theta presentation from the first half of Lemma
 theorem intCast_kInversionCount_eq_sum_bridgelessGenusTwoCornerWeight
     (G : CFGraph) (hConnected : _root_.graphConnected G)
     (hGenus : genus G = 2) (u v : G.V)
-    (hRankZero : ∀ X : CFDiv G, deg X = 1 → 0 ≤ rank G X → rank G X = 0)
+    (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (D : CFDiv G) (k : ℕ) (tau : ℤ → ℤ) (hk : 0 < k)
     (hTau : IsTransmissionPermutation (mark G u v) D tau)
     (hAffine : IsKAffine k tau) :
@@ -466,7 +466,7 @@ the three fixed-degree slices. -/
 theorem bridgelessGenusTwoCornerWeight_eq_threeDegreeTwistContribution
     (G : CFGraph) (hConnected : _root_.graphConnected G)
     (hGenus : genus G = 2) (u v : G.V)
-    (hRankZero : ∀ X : CFDiv G, deg X = 1 → 0 ≤ rank G X → rank G X = 0)
+    (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (D : CFDiv G) (tau : ℤ → ℤ)
     (hTau : IsTransmissionPermutation (mark G u v) D tau) (b : ℤ) :
     bridgelessGenusTwoCornerWeight G (transmissionCorner (mark G u v) D tau b) =
@@ -477,38 +477,39 @@ theorem bridgelessGenusTwoCornerWeight_eq_threeDegreeTwistContribution
     change (if tau b = tau b then (1 : ℤ) else 0) =
       rankDelta (mark G u v) C at h
     simpa using h.symm
-  have hNonneg : 0 ≤ deg C :=
+  have hNonneg : 0 ≤ CFDiv.degree C :=
     degree_nonneg_of_rankDelta_eq_one (mark G u v) C hDeltaC
-  have hDegC : deg C = deg D + tau b - b := by
+  have hDegC : CFDiv.degree C = CFDiv.degree D + tau b - b := by
     unfold C
-    rw [deg.map_sub, deg.map_add, map_zsmul, map_zsmul, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_sub, CFDiv.degree.map_add, map_zsmul, map_zsmul,
+      deg_one_chip, deg_one_chip]
     ring
   have hDelta (d : ℤ) :
       markedRankDelta G u v (fixedDegreeTwist G u v D d b) =
-        if deg C = d then 1 else 0 := by
+        if CFDiv.degree C = d then 1 else 0 := by
     rw [markedRankDelta_eq_rankDelta]
     change rankDelta (mark G u v)
-        (D + (d - deg D + b) • oneChip u - b • oneChip v) = _
-    have hs := hTau.2 (d - deg D + b) b
-    change (if tau b = d - deg D + b then (1 : ℤ) else 0) =
+        (D + (d - CFDiv.degree D + b) • oneChip u - b • oneChip v) = _
+    have hs := hTau.2 (d - CFDiv.degree D + b) b
+    change (if tau b = d - CFDiv.degree D + b then (1 : ℤ) else 0) =
       rankDelta (mark G u v)
-        (D + (d - deg D + b) • oneChip u - b • oneChip v) at hs
-    by_cases hd : deg C = d
+        (D + (d - CFDiv.degree D + b) • oneChip u - b • oneChip v) at hs
+    by_cases hd : CFDiv.degree C = d
     · rw [ite_eq_left hd]
-      have hTauEq : tau b = d - deg D + b := by omega
+      have hTauEq : tau b = d - CFDiv.degree D + b := by omega
       simpa [hTauEq] using hs.symm
     · rw [ite_eq_right hd]
-      have hTauNe : tau b ≠ d - deg D + b := by
+      have hTauNe : tau b ≠ d - CFDiv.degree D + b := by
         intro hEq
         apply hd
         omega
       simpa [hTauNe] using hs.symm
   unfold threeDegreeTwistContribution rankPlusOne
   change bridgelessGenusTwoCornerWeight G C = _
-  by_cases h0 : deg C = 0
+  by_cases h0 : CFDiv.degree C = 0
   · have hC0 : C = fixedDegreeTwist G u v D 0 b := by
       unfold C fixedDegreeTwist
-      have hCoeff : tau b = 0 - deg D + b := by omega
+      have hCoeff : tau b = 0 - CFDiv.degree D + b := by omega
       rw [hCoeff]
     have hComp := complement_rank_add_one_eq_two_of_corner_degree_zero'
       G hConnected hGenus u v C hDeltaC h0
@@ -516,25 +517,25 @@ theorem bridgelessGenusTwoCornerWeight_eq_threeDegreeTwistContribution
     simp only [h0, ite_eq_left, OfNat.zero_ne_ofNat, ite_false, zero_mul, add_zero, one_mul]
     rw [← hC0]
     simpa [bridgelessGenusTwoCornerWeight, h0] using hComp.symm
-  by_cases h1 : deg C = 1
+  by_cases h1 : CFDiv.degree C = 1
   · have hC1 : C = fixedDegreeTwist G u v D 1 b := by
       unfold C fixedDegreeTwist
-      have hCoeff : tau b = 1 - deg D + b := by omega
+      have hCoeff : tau b = 1 - CFDiv.degree D + b := by omega
       rw [hCoeff]
     have hComp := complement_rank_add_one_eq_one_of_corner_degree_one'
       G hConnected hGenus u v hRankZero C hDeltaC h1
     rw [hDelta 0, hDelta 1, hDelta 2]
-    have h10 : deg C ≠ 0 := by omega
+    have h10 : CFDiv.degree C ≠ 0 := by omega
     simp only [h1, ite_eq_left, one_mul]
     rw [← hC1]
     simpa [bridgelessGenusTwoCornerWeight, h10, h1] using hComp.symm
-  by_cases h2 : deg C = 2
+  by_cases h2 : CFDiv.degree C = 2
   · have hC2 : C = fixedDegreeTwist G u v D 2 b := by
       unfold C fixedDegreeTwist
-      have hCoeff : tau b = 2 - deg D + b := by omega
+      have hCoeff : tau b = 2 - CFDiv.degree D + b := by omega
       rw [hCoeff]
-    have h20 : deg C ≠ 0 := by omega
-    have h21 : deg C ≠ 1 := by omega
+    have h20 : CFDiv.degree C ≠ 0 := by omega
+    have h21 : CFDiv.degree C ≠ 1 := by omega
     rw [hDelta 0, hDelta 1, hDelta 2]
     simp only [h2, ite_eq_left, one_mul]
     rw [← hC2]
@@ -547,8 +548,8 @@ theorem bridgelessGenusTwoCornerWeight_eq_threeDegreeTwistContribution
         (complement_rank_add_one_eq_one_iff_canonical_of_degree_two'
           G hGenus C h2).not.mpr hCanon
       have hLower := rank_geq_neg_one G (canonicalDivisor G - C)
-      have hCompDeg : deg (canonicalDivisor G - C) = 0 := by
-        rw [deg.map_sub, degree_of_canonical_divisor, hGenus, h2]
+      have hCompDeg : CFDiv.degree (canonicalDivisor G - C) = 0 := by
+        rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hGenus, h2]
         norm_num
       have hUpper : rank G (canonicalDivisor G - C) ≤ 0 := by
         by_cases hR : 0 ≤ rank G (canonicalDivisor G - C)
@@ -559,9 +560,9 @@ theorem bridgelessGenusTwoCornerWeight_eq_threeDegreeTwistContribution
         · omega
       have hCompZero : rank G (canonicalDivisor G - C) + 1 = 0 := by omega
       simpa [bridgelessGenusTwoCornerWeight, h20, h21, h2, hCanon] using hCompZero.symm
-  · have h3 : 3 ≤ deg C := by omega
-    have h30 : deg C ≠ 0 := by omega
-    have h31 : deg C ≠ 1 := by omega
+  · have h3 : 3 ≤ CFDiv.degree C := by omega
+    have h30 : CFDiv.degree C ≠ 0 := by omega
+    have h31 : CFDiv.degree C ≠ 1 := by omega
     rw [hDelta 0, hDelta 1, hDelta 2]
     unfold bridgelessGenusTwoCornerWeight
     simp only [h30, h31, h2, ite_false, false_and, zero_mul, add_zero]
@@ -571,7 +572,7 @@ genus-two graph. -/
 theorem intCast_kInversionCount_eq_sum_threeDegreeTwistContribution_of_genus_two
     (G : CFGraph) (hConnected : _root_.graphConnected G)
     (hGenus : genus G = 2) (u v : G.V)
-    (hRankZero : ∀ X : CFDiv G, deg X = 1 → 0 ≤ rank G X → rank G X = 0)
+    (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (D : CFDiv G) (k : ℕ) (tau : ℤ → ℤ) (hk : 0 < k)
     (hTau : IsTransmissionPermutation (mark G u v) D tau)
     (hAffine : IsKAffine k tau) :
@@ -596,8 +597,8 @@ private theorem rankPlusOne_fixedDegreeTwist_add_torsion'
   have hEquiv := degreeTwistInt_add_torsion_linearEquiv hk D d b
   have hRank := rank_eq_of_linear_equiv G hEquiv
   change rank G
-      (D + (d - deg D + (b + k)) • oneChip u - (b + k) • oneChip v) =
-    rank G (D + (d - deg D + b) • oneChip u - b • oneChip v) at hRank
+      (D + (d - CFDiv.degree D + (b + k)) • oneChip u - (b + k) • oneChip v) =
+    rank G (D + (d - CFDiv.degree D + b) • oneChip u - b • oneChip v) at hRank
   unfold rankPlusOne
   simpa [fixedDegreeTwist] using congrArg (fun r : ℤ ↦ r + 1) hRank
 
@@ -626,8 +627,8 @@ private theorem correctionProduct_eq_zero_of_not_mark_pair_canonical'
       rankPlusOne G (canonicalDivisor G - fixedDegreeTwist G u v D 2 b) = 0 := by
   let A : CFDiv G := fixedDegreeTwist G u v D 0 (b + 1)
   let Y : CFDiv G := canonicalDivisor G - fixedDegreeTwist G u v D 2 b
-  have hDegA : deg A = 0 := by simp [A]
-  have hDegY : deg Y = 0 := by simp [Y, degree_of_canonical_divisor, hGenus]
+  have hDegA : CFDiv.degree A = 0 := by simp [A]
+  have hDegY : CFDiv.degree Y = 0 := by simp [Y, degree_of_canonical_divisor, hGenus]
   by_cases hA : linearEquiv G A 0
   · by_cases hY : linearEquiv G Y 0
     · exfalso
@@ -648,7 +649,7 @@ private theorem correctionProduct_eq_zero_of_not_mark_pair_canonical'
 
 private theorem sum_rankPlusOne_degreeOne_eq_effectiveResidues_ncard'
     (G : CFGraph)
-    (hRankZero : ∀ X : CFDiv G, deg X = 1 → 0 ≤ rank G X → rank G X = 0)
+    (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (u v : G.V) (D : CFDiv G) (k : ℕ) :
     ∑ b : Fin k, rankPlusOne G (fixedDegreeTwist G u v D 1 b.val) =
       ((effectiveDegreeOneTwistResidues (mark G u v) D k).ncard : ℤ) := by
@@ -663,9 +664,9 @@ private theorem sum_rankPlusOne_degreeOne_eq_effectiveResidues_ncard'
       by_cases hb : b ∈ S
       · have hNonneg : 0 ≤ rank G (fixedDegreeTwist G u v D 1 b.val) := by
           change 0 ≤ rank G
-            (D + (1 - deg D + b.val) • oneChip u - b.val • oneChip v)
+            (D + (1 - CFDiv.degree D + b.val) • oneChip u - b.val • oneChip v)
           change 0 ≤ rank G
-            (D + (1 - deg D + b.val) • oneChip u - b.val • oneChip v) at hb
+            (D + (1 - CFDiv.degree D + b.val) • oneChip u - b.val • oneChip v) at hb
           exact hb
         have hRank := hRankZero (fixedDegreeTwist G u v D 1 b.val)
           (deg_fixedDegreeTwist G u v D 1 b.val) hNonneg
@@ -674,7 +675,7 @@ private theorem sum_rankPlusOne_degreeOne_eq_effectiveResidues_ncard'
           intro hNonneg
           apply hb
           change 0 ≤ rank G
-            (D + (1 - deg D + b.val) • oneChip u - b.val • oneChip v)
+            (D + (1 - CFDiv.degree D + b.val) • oneChip u - b.val • oneChip v)
           simpa [fixedDegreeTwist] using hNonneg
         have hRank := rank_neg_one_of_not_nonneg G
           (fixedDegreeTwist G u v D 1 b.val) hNotNonneg
@@ -698,7 +699,7 @@ theorem intCast_kInversionCount_eq_effectiveResidues_ncard_of_bridgeless_rigid
     (hGenus : genus G = 2) (u v : G.V)
     (hOneU : rank G (oneChip u) = 0)
     (hOneV : rank G (oneChip v) = 0)
-    (hRankZero : ∀ X : CFDiv G, deg X = 1 → 0 ≤ rank G X → rank G X = 0)
+    (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (D : CFDiv G) (k : ℕ) (tau : ℤ → ℤ)
     (hk : TorsionWitness (mark G u v) k)
     (hTau : IsTransmissionPermutation (mark G u v) D tau)
@@ -748,7 +749,7 @@ theorem kInversionCount_eq_effectiveResidues_ncard_of_bridgeless_rigid
     (hGenus : genus G = 2) (u v : G.V)
     (hOneU : rank G (oneChip u) = 0)
     (hOneV : rank G (oneChip v) = 0)
-    (hRankZero : ∀ X : CFDiv G, deg X = 1 → 0 ≤ rank G X → rank G X = 0)
+    (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (D : CFDiv G) (k : ℕ) (tau : ℤ → ℤ)
     (hk : TorsionWitness (mark G u v) k)
     (hTau : IsTransmissionPermutation (mark G u v) D tau)
@@ -774,7 +775,7 @@ theorem bridgelessGenusTwoRigid_kGeneral_iff_nonRecurrent
     KGeneralTransmission (mark G u v) k ↔ NonRecurrent (mark G u v) k := by
   have hOne (w : G.V) : rank G (oneChip w) = 0 :=
     rank_one_chip_eq_zero_of_twoEdgeCutCondition G hConnected hCut hNontrivial w
-  have hRankZero : ∀ X : CFDiv G, deg X = 1 → 0 ≤ rank G X → rank G X = 0 :=
+  have hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0 :=
     fun X hDeg hRank =>
       rank_eq_zero_of_degree_one_rank_nonneg_of_twoEdgeCutCondition
         G hConnected hCut hNontrivial X hDeg hRank
@@ -843,13 +844,13 @@ private theorem sum_correctionProduct_eq_invTauCorrection_of_genus_two
           rankPlusOne G (canonicalDivisor G - fixedDegreeTwist G u v D 2 (b : ℤ)) =
       invTauCorrection (mark G u v) D := by
   classical
-  have hDegA : ∀ b : ℤ, deg (fixedDegreeTwist G u v D 0 b) = 0 := by
+  have hDegA : ∀ b : ℤ, CFDiv.degree (fixedDegreeTwist G u v D 0 b) = 0 := by
     intro b
     exact deg_fixedDegreeTwist G u v D 0 b
   have hDegY : ∀ b : ℤ,
-      deg (canonicalDivisor G - fixedDegreeTwist G u v D 2 b) = 0 := by
+      CFDiv.degree (canonicalDivisor G - fixedDegreeTwist G u v D 2 b) = 0 := by
     intro b
-    rw [deg.map_sub, degree_of_canonical_divisor, hGenus, deg_fixedDegreeTwist]
+    rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hGenus, deg_fixedDegreeTwist]
     norm_num
   have hYiff : ∀ b : ℤ,
       linearEquiv G (fixedDegreeTwist G u v D 0 (b + 1)) 0 →
@@ -917,7 +918,7 @@ theorem intCast_kInversionCount_eq_effectiveResidues_add_correction_of_bridgeles
     (hGenus : genus G = 2) (u v : G.V)
     (hOneU : rank G (oneChip u) = 0)
     (hOneV : rank G (oneChip v) = 0)
-    (hRankZero : ∀ X : CFDiv G, deg X = 1 → 0 ≤ rank G X → rank G X = 0)
+    (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (D : CFDiv G) (k : ℕ) (tau : ℤ → ℤ)
     (hk : IsTorsionOrder (mark G u v) k)
     (hTau : IsTransmissionPermutation (mark G u v) D tau)
@@ -973,7 +974,7 @@ theorem bridgeless_genusTwo_invTau_formula
         invTauCorrection (mark G u v) D := by
   have hOne (w : G.V) : rank G (oneChip w) = 0 :=
     rank_one_chip_eq_zero_of_twoEdgeCutCondition G hConnected hCut hNontrivial w
-  have hRankZero : ∀ X : CFDiv G, deg X = 1 → 0 ≤ rank G X → rank G X = 0 :=
+  have hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0 :=
     fun X hDeg hRank =>
       rank_eq_zero_of_degree_one_rank_nonneg_of_twoEdgeCutCondition
         G hConnected hCut hNontrivial X hDeg hRank

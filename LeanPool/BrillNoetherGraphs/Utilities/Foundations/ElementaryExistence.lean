@@ -36,7 +36,7 @@ theorem BNExists_rank_zero
   refine ⟨D, ?_, ?_⟩
   · dsimp [D]
     simpa [Int.toNat_of_nonneg hd] using
-      (AddMonoidHom.map_nsmul deg d.toNat (oneChip v))
+      (AddMonoidHom.map_nsmul CFDiv.degree d.toNat (oneChip v))
   · rw [← rank_geq_iff G D 0, rank_nonneg_iff_winnable]
     exact winnable_of_effective G D hEffective
 
@@ -48,7 +48,7 @@ theorem BNExists_of_width_nonpos
     BNExists G r d := by
   let v : G.V := Classical.arbitrary G.V
   let D : CFDiv G := d • oneChip v
-  have hDegree : deg D = d := by
+  have hDegree : CFDiv.degree D = d := by
     dsimp [D]
     rw [map_zsmul, deg_one_chip, zsmul_one]
     simp
@@ -57,7 +57,7 @@ theorem BNExists_of_width_nonpos
   intro E hE
   apply winnable_of_deg_ge_genus hG (D - E)
   rcases hE with ⟨_, hEDegree⟩
-  rw [deg.map_sub, hDegree, hEDegree]
+  rw [CFDiv.degree.map_sub, hDegree, hEDegree]
   unfold rectangleWidth at hWidth
   linarith
 
@@ -72,14 +72,14 @@ theorem BNExists_of_width_one
   let E : CFDiv G := (bnNumber G r d).toNat • oneChip v
   have hEffective : effective E := by
     exact (Eff G).nsmul_mem (eff_one_chip v) (bnNumber G r d).toNat
-  have hEDegree : deg E = bnNumber G r d := by
+  have hEDegree : CFDiv.degree E = bnNumber G r d := by
     dsimp [E]
     simpa [Int.toNat_of_nonneg hRho] using
-      (AddMonoidHom.map_nsmul deg (bnNumber G r d).toNat (oneChip v))
+      (AddMonoidHom.map_nsmul CFDiv.degree (bnNumber G r d).toNat (oneChip v))
   let D : CFDiv G := canonicalDivisor G - E
-  have hDegree : deg D = d := by
+  have hDegree : CFDiv.degree D = d := by
     dsimp [D]
-    rw [deg.map_sub, degree_of_canonical_divisor, hEDegree]
+    rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hEDegree]
     unfold bnNumber
     rw [hWidth]
     unfold rectangleWidth at hWidth

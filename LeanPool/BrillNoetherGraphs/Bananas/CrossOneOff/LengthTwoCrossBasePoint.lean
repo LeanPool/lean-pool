@@ -35,7 +35,7 @@ theorem basePointDrop_bananaNormalForm_eq_zero_of_midpoint_mem
     (hE : IsSemibreak B E)
     (hmem : E (strandVertex B α i) = 1)
     (ha : 0 ≤ a) (hb : 0 ≤ b)
-    (hLowDeg : a + b + deg E ≤ (g : ℤ)) :
+    (hLowDeg : a + b + CFDiv.degree E ≤ (g : ℤ)) :
     basePointDrop
       (mark B.graph (strandVertex B α i) v)
       (bananaNormalForm B a b E) = 0 := by
@@ -127,7 +127,7 @@ theorem basePointDrop_bananaNormalForm_eq_one_of_midpoint_eq_zero
     (hE : IsSemibreak B E)
     (hzero : E (strandVertex B α i) = 0)
     (ha : 0 ≤ a) (hb : 0 ≤ b)
-    (hLowDeg : a + b + deg E ≤ (g : ℤ)) :
+    (hLowDeg : a + b + CFDiv.degree E ≤ (g : ℤ)) :
     basePointDrop
       (mark B.graph (strandVertex B α i) v)
       (bananaNormalForm B a b E) = 1 := by
@@ -136,14 +136,14 @@ theorem basePointDrop_bananaNormalForm_eq_one_of_midpoint_eq_zero
   have hEplus : IsSemibreak B Eplus := by
     dsimp [Eplus, u]
     exact isSemibreak_add_midpoint_chip_of_eq_zero B E hE α i hα hi hzero
-  have hdegPlus : deg Eplus = deg E + 1 := by
+  have hdegPlus : CFDiv.degree Eplus = CFDiv.degree E + 1 := by
     dsimp [Eplus]
-    rw [deg.map_add, deg_one_chip]
-  have hNormalDeg : b + deg E ≤ (g : ℤ) := by omega
+    rw [CFDiv.degree.map_add, deg_one_chip]
+  have hNormalDeg : b + CFDiv.degree E ≤ (g : ℤ) := by omega
   have hRankD : rank B.graph (bananaNormalForm B a b E) = min a b := by
     rw [rank_bananaNormalForm B a b E hE (by omega) hb hNormalDeg]
     rw [max_eq_left (by omega :
-      a + b + deg E - (g : ℤ) ≤ min a b)]
+      a + b + CFDiv.degree E - (g : ℤ) ≤ min a b)]
   have hEquiv : linearEquiv B.graph
       (bananaNormalForm B a b E - oneChip u)
       (bananaNormalForm B (a - 1) (b - 1) Eplus) := by
@@ -159,14 +159,14 @@ theorem basePointDrop_bananaNormalForm_eq_one_of_midpoint_eq_zero
       have hRankSub : rank B.graph
           (bananaNormalForm B 0 0 E - oneChip u) = -1 := by
         have hSupport := rank_semibreak_sub_vertex_eq_neg_one B E hE
-          (by omega : deg E ≤ (g : ℤ)) u (by simpa [u] using hzero)
+          (by omega : CFDiv.degree E ≤ (g : ℤ)) u (by simpa [u] using hzero)
         simpa [bananaNormalForm] using hSupport
       change rank B.graph (bananaNormalForm B 0 0 E) -
           rank B.graph (bananaNormalForm B 0 0 E - oneChip u) = 1
       rw [hRankDZero, hRankSub]
       ring
     · have haPos : 0 < a := by omega
-      have hRightDeg : (a - 1) + deg Eplus ≤ (g : ℤ) := by
+      have hRightDeg : (a - 1) + CFDiv.degree Eplus ≤ (g : ℤ) := by
         rw [hdegPlus]
         omega
       have hReduced := q_reduced_bananaNormalForm_right B
@@ -185,7 +185,7 @@ theorem basePointDrop_bananaNormalForm_eq_one_of_midpoint_eq_zero
       rw [hRankDZero, hRankSub]
       ring
   · have hbPos : 0 < b := by omega
-    have hNormalPlus : (b - 1) + deg Eplus ≤ (g : ℤ) := by
+    have hNormalPlus : (b - 1) + CFDiv.degree Eplus ≤ (g : ℤ) := by
       rw [hdegPlus]
       omega
     have hRankNormal : rank B.graph
@@ -195,7 +195,7 @@ theorem basePointDrop_bananaNormalForm_eq_one_of_midpoint_eq_zero
       have hMinLower : -1 ≤ min (a - 1) (b - 1) := by
         exact le_min (by omega) (by omega)
       have hTop :
-          a - 1 + (b - 1) + deg Eplus - (g : ℤ) ≤
+          a - 1 + (b - 1) + CFDiv.degree Eplus - (g : ℤ) ≤
             min (a - 1) (b - 1) := by
         rw [hdegPlus]
         omega
@@ -249,7 +249,7 @@ theorem basePointDrop_bananaNormalForm_eq_one_iff_midpoint_eq_zero
     (hα : B.length α = 2) (hi : i.val = 1)
     (hE : IsSemibreak B E)
     (ha : 0 ≤ a) (hb : 0 ≤ b)
-    (hLowDeg : a + b + deg E ≤ (g : ℤ)) :
+    (hLowDeg : a + b + CFDiv.degree E ≤ (g : ℤ)) :
     basePointDrop
       (mark B.graph (strandVertex B α i) v)
       (bananaNormalForm B a b E) = 1 ↔

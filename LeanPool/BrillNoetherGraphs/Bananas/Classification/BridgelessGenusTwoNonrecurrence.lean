@@ -30,11 +30,11 @@ degree-one divisor has rank zero. -/
 theorem rank_eq_zero_of_degree_one_rank_nonneg_of_twoEdgeCutCondition
     (G : CFGraph) (hConnected : _root_.graphConnected G)
     (hCut : TwoEdgeCutCondition G) (hNontrivial : ∃ p q : G.V, p ≠ q)
-    (X : CFDiv G) (hDegree : deg X = 1) (hRank : 0 ≤ rank G X) :
+    (X : CFDiv G) (hDegree : CFDiv.degree X = 1) (hRank : 0 ≤ rank G X) :
     rank G X = 0 := by
   obtain ⟨E, hEff, hXE⟩ := (rank_nonneg_iff_winnable G X).mp
     ((rank_geq_iff G X 0).mpr hRank)
-  have hEDegree : deg E = 1 := by
+  have hEDegree : CFDiv.degree E = 1 := by
     rw [← linear_equiv_preserves_deg G X E hXE, hDegree]
   obtain ⟨w, hw⟩ := effective_degree_one_eq_one_chip E hEff hEDegree
   have hRankEq := rank_eq_of_linear_equiv G hXE
@@ -121,7 +121,7 @@ private theorem mem_effectiveDegreeOneTwistResidues_one_chip_iff'
   rw [mem_effectiveDegreeOneTwistResidues_iff]
   unfold degreeTwistInt
   change 0 ≤ rank G
-    (oneChip w + (1 - deg (oneChip w) + (b : ℤ)) • oneChip u -
+    (oneChip w + (1 - CFDiv.degree (oneChip w) + (b : ℤ)) • oneChip u -
       (b : ℤ) • oneChip v) ↔ _
   rw [deg_one_chip]
   have hDiv :

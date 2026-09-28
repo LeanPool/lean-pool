@@ -41,7 +41,7 @@ def pushforward (f : IndexedHarmonicData G H) (D : CFDiv G) : CFDiv H :=
 
 /-- Pushforward preserves total degree. -/
 theorem deg_pushforward (f : IndexedHarmonicData G H) (D : CFDiv G) :
-    deg (f.pushforward D) = deg D := by
+    CFDiv.degree (f.pushforward D) = CFDiv.degree D := by
   classical
   change (∑ z : H.V, ∑ x : G.V,
     if f.vertexMap x = z then D x else 0) = ∑ x : G.V, D x
@@ -132,7 +132,7 @@ theorem rank_pullback_ge
   intro D hD
   have hPushEffective : effective (f.pushforward D) :=
     f.pushforward_effective hD.1
-  have hPushDegree : deg (f.pushforward D) = rank H A := by
+  have hPushDegree : CFDiv.degree (f.pushforward D) = rank H A := by
     rw [f.deg_pushforward, hD.2]
   have hTarget : winnable H (A - f.pushforward D) :=
     ((rank_geq_iff H A (rank H A)).mpr le_rfl)
@@ -225,7 +225,7 @@ theorem satisfiesTransmission_pullback
     (hu : f.PullsBackMark u p) (hv : f.PullsBackMark v q)
     (τ : AspPerm) (A : CFDiv H)
     (hA : SatisfiesTransmission H p q τ A)
-    (hDegree : deg (f.pullback A) = (genus G : ℤ) + τ.χ) :
+    (hDegree : CFDiv.degree (f.pullback A) = (genus G : ℤ) + τ.χ) :
     SatisfiesTransmission G u v τ (f.pullback A) := by
   refine ⟨hDegree, ?_⟩
   intro a b
@@ -241,7 +241,7 @@ theorem satisfiesTransmission_pullback_add_effective
     (hu : f.PullsBackMark u p) (hv : f.PullsBackMark v q)
     (τ : AspPerm) (A : CFDiv H) (E : CFDiv G)
     (hA : SatisfiesTransmission H p q τ A) (hE : effective E)
-    (hDegree : deg (f.pullback A + E) = (genus G : ℤ) + τ.χ) :
+    (hDegree : CFDiv.degree (f.pullback A + E) = (genus G : ℤ) + τ.χ) :
     SatisfiesTransmission G u v τ (f.pullback A + E) := by
   refine ⟨hDegree, ?_⟩
   intro a b
@@ -256,7 +256,7 @@ theorem transmissionExists_of_pullback_add_effective
     (hu : f.PullsBackMark u p) (hv : f.PullsBackMark v q)
     (τ : AspPerm) (A : CFDiv H) (E : CFDiv G)
     (hA : SatisfiesTransmission H p q τ A) (hE : effective E)
-    (hDegree : deg (f.pullback A + E) = (genus G : ℤ) + τ.χ) :
+    (hDegree : CFDiv.degree (f.pullback A + E) = (genus G : ℤ) + τ.χ) :
     TransmissionExists G u v τ :=
   ⟨f.pullback A + E,
     f.satisfiesTransmission_pullback_add_effective hPullback hu hv
@@ -269,7 +269,7 @@ target pullback plus an effective correction. -/
 def HarmonicTransmissionProfile
     (f : IndexedHarmonicData G H) (u v : G.V) (p q : H.V)
     (τ : AspPerm) (A : CFDiv H) (D : CFDiv G) : Prop :=
-  deg D = (genus G : ℤ) + τ.χ ∧
+  CFDiv.degree D = (genus G : ℤ) + τ.χ ∧
     ∀ a b : ℤ, ∃ E : CFDiv G, effective E ∧
       D + a • oneChip u - b • oneChip v =
         f.pullback (A + a • oneChip p - b • oneChip q) + E

@@ -54,7 +54,7 @@ private theorem divisor_eq_sum_smul_oneChip {G : CFGraph} (D : CFDiv G) :
 /-- A degree-zero divisor is the sum of its coefficient-weighted vertex
 differences from any chosen basepoint. -/
 private theorem sum_smul_vertexDifference_eq_of_degree_zero {G : CFGraph}
-    (q : G.V) (D : CFDiv G) (hDegree : deg D = 0) :
+    (q : G.V) (D : CFDiv G) (hDegree : CFDiv.degree D = 0) :
     (∑ v : G.V, D v • (oneChip v - oneChip q)) = D := by
   rw [Finset.sum_congr rfl (fun v _ => smul_sub (D v) (oneChip v) (oneChip q))]
   rw [Finset.sum_sub_distrib]
@@ -99,7 +99,7 @@ coordinate map.  This is the surjectivity half of Proposition 2.14 before
 packaging the codomain as a degree-zero subgroup of the divisor-class
 quotient. -/
 theorem exists_bananaCoordinate_linearEquiv_of_degree_zero
-    {g : ℕ} (B : Banana g) (D : CFDiv B.graph) (hDegree : deg D = 0) :
+    {g : ℕ} (B : Banana g) (D : CFDiv B.graph) (hDegree : CFDiv.degree D = 0) :
     ∃ a : Fin (g + 1) → ℤ,
       linearEquiv B.graph (bananaCoordinateDivisorHom B a) D := by
   classical

@@ -105,7 +105,7 @@ theorem residueShift_injective (k : ℕ) (c : Fin k) :
 /-- Every member of the finite twist family has degree one. -/
 theorem deg_effectiveDegreeOneTwistResidue
     (M : TwiceMarked) (D : CFDiv M.graph) (k : ℕ) (b : Fin k) :
-    deg (degreeTwistInt M D 1 b.val) = 1 :=
+    CFDiv.degree (degreeTwistInt M D 1 b.val) = 1 :=
   deg_degreeTwistInt M D 1 b.val
 
 /-- Rebase a degree-one twist family at any one of its representatives. -/
@@ -117,8 +117,8 @@ theorem degreeTwistInt_rebase_linearEquiv
   unfold degreeTwistInt linearEquiv at hc ⊢
   have hDiff :
       (oneChip w + (b - c) • (oneChip M.u - oneChip M.v)) -
-          (D + (1 - deg D + b) • oneChip M.u - b • oneChip M.v) =
-        (oneChip w - (D + (1 - deg D + c) • oneChip M.u - c • oneChip M.v)) := by
+          (D + (1 - CFDiv.degree D + b) • oneChip M.u - b • oneChip M.v) =
+        (oneChip w - (D + (1 - CFDiv.degree D + c) • oneChip M.u - c • oneChip M.v)) := by
     ext x
     simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply]
     ring
@@ -158,13 +158,13 @@ rank exactly zero.  This lets the effective degree-one twists in Lemma 4.10
 feed directly into the unique-crossing construction below. -/
 theorem rank_eq_zero_of_deg_one_rank_nonneg_banana_two
     (B : Banana 2) (X : CFDiv B.graph)
-    (hDegree : deg X = 1) (hRank : 0 ≤ rank B.graph X) :
+    (hDegree : CFDiv.degree X = 1) (hRank : 0 ≤ rank B.graph X) :
     rank B.graph X = 0 := by
   have hWin : winnable B.graph X :=
     (rank_nonneg_iff_winnable B.graph X).mp
       ((rank_geq_iff B.graph X 0).mpr hRank)
   obtain ⟨E, hEff, hXE⟩ := (winnable_iff_exists_effective B.graph X).mp hWin
-  have hEDeg : deg E = 1 := by
+  have hEDeg : CFDiv.degree E = 1 := by
     rw [← linear_equiv_preserves_deg B.graph X E hXE, hDegree]
   obtain ⟨w, hw⟩ := effective_degree_one_eq_one_chip E hEff hEDeg
   have hRankEq := rank_eq_of_linear_equiv B.graph hXE
@@ -246,7 +246,7 @@ theorem degree_one_rank_zero_twist_unique_crossing_inversion
     (hGenus : genus M.graph = 2)
     (tau : ℤ → ℤ) (hTau : IsTransmissionPermutation M D tau)
     (a b : ℤ)
-    (hDegree : deg (D + a • oneChip M.u - b • oneChip M.v) = 1)
+    (hDegree : CFDiv.degree (D + a • oneChip M.u - b • oneChip M.v) = 1)
     (hRank : rank M.graph
         (D + a • oneChip M.u - b • oneChip M.v) = 0) :
     ∃! p : ℤ × ℤ,
@@ -312,7 +312,7 @@ theorem degree_one_rank_zero_twist_exists_inversion
     (hGenus : genus M.graph = 2)
     (tau : ℤ → ℤ) (hTau : IsTransmissionPermutation M D tau)
     (a b : ℤ)
-    (hDegree : deg (D + a • oneChip M.u - b • oneChip M.v) = 1)
+    (hDegree : CFDiv.degree (D + a • oneChip M.u - b • oneChip M.v) = 1)
     (hRank : rank M.graph
         (D + a • oneChip M.u - b • oneChip M.v) = 0) :
     ∃ m n : ℤ,

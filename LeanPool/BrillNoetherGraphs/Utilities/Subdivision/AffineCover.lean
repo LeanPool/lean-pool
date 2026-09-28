@@ -773,7 +773,7 @@ private theorem removed_holds_of_valid_step
     (hRemaining : FormsHold (rows.erase step.removed) point) :
     step.removed.Holds point := by
   by_contra hRemoved
-  apply step.farkas.not_formsHold_of_valid
+  apply step.farkas.not_formsHold_of_valid (point := point)
     (base ++ rows.erase step.removed ++ [step.removed.violation]) hFarkas
   intro form hForm
   simp only [List.mem_append, List.mem_singleton] at hForm

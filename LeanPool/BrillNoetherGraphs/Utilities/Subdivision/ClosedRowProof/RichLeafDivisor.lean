@@ -43,7 +43,7 @@ def richDivisor
 theorem deg_richDivisor
     (d : Utilities.Certificate.DegenerateSpec.DegSpec n p) (w : RichWitness)
     (fallback : Fin n) (x : List ℤ) :
-    deg (w.richDivisor d fallback x) =
+    CFDiv.degree (w.richDivisor d fallback x) =
       (∑ v : Fin n, w.divisorCore.getD v.val 0) +
         (w.chips.map fun chip => chip.2.2).sum := by
   unfold richDivisor
@@ -75,7 +75,7 @@ theorem deg_richDivisor_eq_declared {degree : ℤ}
     (hLength : w.divisorCore.length = n) (hDegree :
       w.divisorCore.foldl (· + ·) 0 +
         w.chips.foldl (fun z c => z + c.2.2) 0 = degree) :
-    deg (w.richDivisor d fallback x) = degree := by
+    CFDiv.degree (w.richDivisor d fallback x) = degree := by
   rw [w.deg_richDivisor, sum_getD_eq_list_sum w.divisorCore n hLength]
   rw [List.sum_eq_foldl, List.sum_eq_foldl, List.foldl_map]
   exact hDegree

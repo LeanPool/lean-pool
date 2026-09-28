@@ -56,7 +56,7 @@ private theorem rankDelta_oneOff_interior_chip_eq_one
     omega
   have hE : IsSemibreak B E :=
     isSemibreak_one_strand_chip B alpha p hp
-  have hdegE : deg E = 1 := by simp [E, deg_one_chip]
+  have hdegE : CFDiv.degree E = 1 := by simp [E, deg_one_chip]
   have hRankE : rank B.graph E = 0 :=
     rank_semibreak_eq_zero B E hE (by rw [hdegE]; omega)
   have hpLeft : strandVertex B alpha p ≠ leftEndpoint B :=
@@ -74,10 +74,10 @@ private theorem rankDelta_oneOff_interior_chip_eq_one
     (by rw [hdegE]; omega) (leftEndpoint B) hSupportLeft
   have hRankV := rank_semibreak_sub_vertex_eq_neg_one B E hE
     (by rw [hdegE]; omega) (strandVertex B alpha v) hSupportV
-  have hBothDeg : deg
+  have hBothDeg : CFDiv.degree
       (E - oneChip (leftEndpoint B) -
         oneChip (strandVertex B alpha v)) < 0 := by
-    rw [deg.map_sub, deg.map_sub, hdegE, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_sub, CFDiv.degree.map_sub, hdegE, deg_one_chip, deg_one_chip]
     norm_num
   have hRankBoth := rank_neg_one_of_deg_neg B.graph _ hBothDeg
   unfold rankDelta mark
@@ -132,12 +132,12 @@ theorem rankDelta_oneOff_terminal_family
   have hE : IsSemibreak B E :=
     isSemibreak_one_strand_chip B alpha v hv
   have hZero : IsSemibreak B (0 : CFDiv B.graph) := isSemibreak_zero B
-  have hdegE : deg E = 1 := by simp [E, deg_one_chip]
-  have hRangeE : (b : ℤ) + deg E ≤ (g : ℤ) := by
+  have hdegE : CFDiv.degree E = 1 := by simp [E, deg_one_chip]
+  have hRangeE : (b : ℤ) + CFDiv.degree E ≤ (g : ℤ) := by
     rw [hdegE]
     exact_mod_cast (show b + 1 ≤ g by omega)
-  have hRangeZero : (b : ℤ) + deg (0 : CFDiv B.graph) ≤ (g : ℤ) := by
-    simp
+  have hRangeZero : (b : ℤ) + CFDiv.degree (0 : CFDiv B.graph) ≤ (g : ℤ) := by
+    simp only [map_zero, add_zero, Nat.cast_le]
     exact_mod_cast hba.le.trans hag
   have hRankD := rank_bananaNormalForm B (a : ℤ) (b : ℤ) E hE
     (by omega) (by omega) hRangeE
@@ -181,27 +181,27 @@ theorem rankDelta_oneOff_terminal_family
   have hRankD' : rank B.graph
       ((a : ℤ) • oneChip (leftEndpoint B) +
         (b : ℤ) • oneChip (rightEndpoint B) + E) =
-      max (min (a : ℤ) b) ((a : ℤ) + b + deg E - g) := by
+      max (min (a : ℤ) b) ((a : ℤ) + b + CFDiv.degree E - g) := by
     rw [hD, hRankD]
   have hRankDU' : rank B.graph
       ((a : ℤ) • oneChip (leftEndpoint B) +
         (b : ℤ) • oneChip (rightEndpoint B) + E -
         oneChip (leftEndpoint B)) =
       max (min ((a : ℤ) - 1) b)
-        ((a : ℤ) - 1 + b + deg E - g) := by
+        ((a : ℤ) - 1 + b + CFDiv.degree E - g) := by
     rw [hDU, hRankDU]
   have hRankDV' : rank B.graph
       ((a : ℤ) • oneChip (leftEndpoint B) +
         (b : ℤ) • oneChip (rightEndpoint B) + E -
         oneChip (strandVertex B alpha v)) =
-      max (min (a : ℤ) b) ((a : ℤ) + b + deg (0 : CFDiv B.graph) - g) := by
+      max (min (a : ℤ) b) ((a : ℤ) + b + CFDiv.degree (0 : CFDiv B.graph) - g) := by
     rw [hDV, hRankDV]
   have hRankBoth' : rank B.graph
       ((a : ℤ) • oneChip (leftEndpoint B) +
         (b : ℤ) • oneChip (rightEndpoint B) + E -
         oneChip (leftEndpoint B) - oneChip (strandVertex B alpha v)) =
       max (min ((a : ℤ) - 1) b)
-        ((a : ℤ) - 1 + b + deg (0 : CFDiv B.graph) - g) := by
+        ((a : ℤ) - 1 + b + CFDiv.degree (0 : CFDiv B.graph) - g) := by
     rw [hBoth, hRankBoth]
   have hMinA : min (a : ℤ) (b : ℤ) = b :=
     min_eq_right (by exact_mod_cast hba.le)

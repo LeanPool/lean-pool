@@ -163,12 +163,15 @@ theorem isHittingSet_univ : 𝔅.IsHittingSet (Finset.univ : Finset V) := by
   obtain ⟨x, hx⟩ := 𝔅.nonempty_of_mem hB
   exact ⟨x, Finset.mem_inter.mpr ⟨hx, Finset.mem_univ x⟩⟩
 
+omit [Fintype V] in
 /-- Hitting sets exist, so `order` is an infimum over a nonempty set. -/
-theorem hittingSetCards_nonempty : 𝔅.hittingSetCards.Nonempty :=
-  ⟨(Finset.univ : Finset V).card, Finset.univ, 𝔅.isHittingSet_univ, rfl⟩
+theorem hittingSetCards_nonempty [Finite V] : 𝔅.hittingSetCards.Nonempty := by
+  let := Fintype.ofFinite V
+  exact ⟨(Finset.univ : Finset V).card, Finset.univ, 𝔅.isHittingSet_univ, rfl⟩
 
+omit [Fintype V] in
 /-- The order is realized by an actual hitting set. -/
-theorem exists_isHittingSet_card_eq_order :
+theorem exists_isHittingSet_card_eq_order [Finite V] :
     ∃ S : Finset V, 𝔅.IsHittingSet S ∧ S.card = 𝔅.order :=
   Nat.sInf_mem 𝔅.hittingSetCards_nonempty
 
@@ -185,8 +188,9 @@ theorem exists_disjoint_of_card_lt_order {S : Finset V} (hS : S.card < 𝔅.orde
   push Not at hcon
   exact absurd (𝔅.order_le_card_of_isHittingSet hcon) (not_le.mpr hS)
 
+omit [Fintype V] in
 /-- A bramble with at least one member has positive order. -/
-theorem one_le_order (h : 𝔅.members.Nonempty) : 1 ≤ 𝔅.order := by
+theorem one_le_order [Finite V] (h : 𝔅.members.Nonempty) : 1 ≤ 𝔅.order := by
   obtain ⟨B, hB⟩ := h
   rcases Nat.eq_zero_or_pos 𝔅.order with h0 | hpos
   · obtain ⟨S, hS, hcard⟩ := 𝔅.exists_isHittingSet_card_eq_order
@@ -196,9 +200,10 @@ theorem one_le_order (h : 𝔅.members.Nonempty) : 1 ≤ 𝔅.order := by
     simp at hx
   · exact hpos
 
+omit [Fintype V] in
 /-- **Monotonicity of the order under passing to a subfamily**: fewer members are
 easier to hit. -/
-theorem order_restrict_le (M : Finset (Finset V)) (hM : M ⊆ 𝔅.members) :
+theorem order_restrict_le [Finite V] (M : Finset (Finset V)) (hM : M ⊆ 𝔅.members) :
     (𝔅.restrict M hM).order ≤ 𝔅.order := by
   obtain ⟨S, hS, hcard⟩ := 𝔅.exists_isHittingSet_card_eq_order
   refine le_trans (order_le_card_of_isHittingSet _ ?_) (le_of_eq hcard)

@@ -83,8 +83,8 @@ theorem coreDivisor_effective (spec : SubdivisionGraph.Spec n p)
 weights; subdivision-interior vertices contribute zero. -/
 @[simp] theorem deg_coreDivisor (spec : SubdivisionGraph.Spec n p)
     (weight : Fin n → ℤ) :
-    deg (coreDivisor spec weight) = ∑ vertex : Fin n, weight vertex := by
-  simp [deg, coreDivisor, Fintype.sum_sum_type]
+    CFDiv.degree (coreDivisor spec weight) = ∑ vertex : Fin n, weight vertex := by
+  simp [CFDiv.degree, coreDivisor, Fintype.sum_sum_type]
 
 /-- Positive core weights on a connected positive subdivision give a
 rank-one divisor, uniformly over all edge lengths. -/

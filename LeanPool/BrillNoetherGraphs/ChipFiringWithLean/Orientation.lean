@@ -81,8 +81,9 @@ private lemma eq_orient {G : CFGraph} (O1 O2 : CFOrientation G) : O1 = O2 ↔ �
     rfl
 
 /-- Rewrites a double sum over a finite type as a sum over ordered pairs. -/
-private lemma double_sum {T : Type*} [DecidableEq T] [Fintype T] (f : T × T → ℕ) :
+private lemma double_sum {T : Type*} [Fintype T] (f : T × T → ℕ) :
     ∑ (u : T), ∑ (v : T), f ⟨u, v⟩ = ∑ (e : T × T), f e := by
+  classical
   rw [← Finset.sum_product]
   simp only [univ_product_univ]
 
@@ -251,7 +252,7 @@ private lemma indeg_minus_one_nonneg_of_not_source (G : CFGraph) (O : CFOrientat
 
 /-- In an acyclic orientation, every nonempty subset of vertices contains a vertex with no
 incoming flow from within the subset (a relative source). -/
-private lemma subset_source (G : CFGraph) (O : CFOrientation G) (S : Finset G.V):
+private lemma subset_source (G : CFGraph) (O : CFOrientation G) (S : Finset G.V) :
   S.Nonempty → isAcyclic G O → ∃ v ∈ S, ∀ w ∈ S, flow O w v = 0 := by
   intro S_nonempty h_acyclic
   by_contra! no_sourceless
@@ -310,30 +311,30 @@ private lemma subset_source (G : CFGraph) (O : CFOrientation G) (S : Finset G.V)
               rw [← eq_vv']
               constructor
               -- Show the new first link is a directed edge
-              have := h_u.2
-              dsimp only [flow, ne_eq] at this
-              contrapose! this with h_no_edge
-              simp only [count_eq_zero]
-              exact h_no_edge
+              · have := h_u.2
+                dsimp only [flow, ne_eq] at this
+                contrapose! this with h_no_edge
+                simp only [count_eq_zero]
+                exact h_no_edge
               -- Now show the rest of the path is valid
-              have h_rec := p.valid_edges
-              rw [h_case] at h_rec
-              rw [← eq_vv'] at h_rec
-              exact h_rec
+              · have h_rec := p.valid_edges
+                rw [h_case] at h_rec
+                rw [← eq_vv'] at h_rec
+                exact h_rec
         }
         -- Show that the path lies in S
         constructor
-        intro v h_v_in_path
-        simp only at h_v_in_path
-        dsimp only [new_path] at h_v_in_path
-        cases h_v_in_path with
-        | head h_eq_v =>
-          exact h_u.1
-        | tail _ h_v_in_tail =>
-          exact h_len.1 v h_v_in_tail
+        · intro v h_v_in_path
+          simp only at h_v_in_path
+          dsimp only [new_path] at h_v_in_path
+          cases h_v_in_path with
+          | head h_eq_v =>
+            exact h_u.1
+          | tail _ h_v_in_tail =>
+            exact h_len.1 v h_v_in_tail
         -- Show the length is n + 2
-        rw [List.length_cons]
-        rw [h_len.2]
+        · rw [List.length_cons]
+          rw [h_len.2]
   specialize arb_path (Fintype.card G.V)
   rcases arb_path with ⟨p, h_len⟩
   have ineq := path_length_bound p (h_acyclic p)
@@ -507,10 +508,10 @@ lemma orientation_determined_by_indegrees {G : CFGraph}
     have h_indeg_contra : indeg G O v < indeg G O' v := by
       rw [indeg_eq_sum_flow O v, indeg_eq_sum_flow O' v]
       apply Finset.sum_lt_sum
-      intro x hx
-      exact h_ineq x v
-      use u
-      simp only [mem_univ, h_lt, and_self]
+      · intro x hx
+        exact h_ineq x v
+      · use u
+        simp only [mem_univ, h_lt, and_self]
     linarith [h_indeg_eq v]
   apply suff_S_empty
   -- A small helper we'll need a couple time later
@@ -547,13 +548,13 @@ lemma orientation_determined_by_indegrees {G : CFGraph}
       linarith
     have h: ∑ (w : G.V), flow O w u < ∑ (w : G.V), flow O' w u := by
       apply Finset.sum_lt_sum
-      intro i _
-      exact all_flow_le i
-      rcases one_flow_lt with ⟨w, h_flow_lt⟩
-      use w
-      constructor
-      simp only [mem_univ]
-      exact h_flow_lt
+      · intro i _
+        exact all_flow_le i
+      · rcases one_flow_lt with ⟨w, h_flow_lt⟩
+        use w
+        constructor
+        · simp only [mem_univ]
+        · exact h_flow_lt
     repeat rw [← indeg_eq_sum_flow] at h
     specialize h_indeg_eq u
     linarith
@@ -611,10 +612,11 @@ private theorem config_to_orientation_unique (G : CFGraph) (q : G.V)
 
 /-- The degree of an orientation divisor equals $g - 1$, where $g$ is the genus of $G$. -/
 lemma degree_ordiv {G : CFGraph} (O : CFOrientation G) :
-  deg (ordiv G O) = (genus G) - 1 := by
-  have flow_sum : deg (ordiv G O) = (∑ v : G.V, ∑ w : G.V, ↑(flow O w v)) - (Fintype.card G.V) := by
+  CFDiv.degree (ordiv G O) = (genus G) - 1 := by
+  have flow_sum : CFDiv.degree (ordiv G O) =
+      (∑ v : G.V, ∑ w : G.V, ↑(flow O w v)) - (Fintype.card G.V) := by
     calc
-      deg (ordiv G O)
+      CFDiv.degree (ordiv G O)
         = ∑ v : G.V, ordiv G O v := by rfl
       _ = ∑ v : G.V, (∑ w : G.V, ↑(flow O w v) - 1) := by
         apply Finset.sum_congr rfl
@@ -658,7 +660,7 @@ lemma config_degree_from_O {G : CFGraph} (O : CFOrientation G) {q : G.V}
   have h1 := config_degree_div_degree (orqed O hO)
   -- (orqed O ...).D = ordiv G O definitionally, so:
   have h2 : (orqed O hO).D q = (indeg G O q : ℤ) - 1 := rfl
-  have h3 : deg (orqed O hO).D = (genus G : ℤ) - 1 := degree_ordiv O
+  have h3 : CFDiv.degree (orqed O hO).D = (genus G : ℤ) - 1 := degree_ordiv O
   have h4 : (indeg G O q : ℤ) = 0 := by exact_mod_cast h_q_source
   linarith
 
@@ -721,8 +723,8 @@ lemma ordiv_unwinnable (G : CFGraph) (O : CFOrientation G) :
           apply le_of_sub_nonneg
           rw [neg_eq_neg_one_mul, ← sub_mul]
           apply mul_nonneg
-          linarith
-          exact Nat.cast_nonneg _
+          · linarith
+          · exact Nat.cast_nonneg _
       have h_sum : ∑ w : G.V, (σ w - σ v) * ↑(numEdges G v w) ≤ ∑ w : G.V, if w ∈ S then 0 else
         -↑(numEdges G v w) := by
         apply Finset.sum_le_sum
@@ -734,7 +736,6 @@ lemma ordiv_unwinnable (G : CFGraph) (O : CFOrientation G) :
       refine le_trans h_sum ?_
       apply le_of_neg_le_neg
       rw [neg_neg, Nat.cast_sum, neg_eq_neg_one_mul, mul_comm (-1), Finset.sum_mul]
-
       apply sum_le_sum
       intro u _
       by_cases h_u_in_S : u ∈ S
@@ -847,7 +848,7 @@ private lemma orientation_config_superstable (G : CFGraph) (O : CFOrientation G)
     have h_c := config_and_divisor_from_O O hO
     dsimp only [c]
     rw [h_c]
-    have : genus G - 1 = deg ((orqed O hO).D) := by
+    have : genus G - 1 = CFDiv.degree ((orqed O hO).D) := by
       simpa only [orqed] using (degree_ordiv O).symm
     rw [this]
     rw [div_of_config_of_div (orqed O hO)]
@@ -940,7 +941,7 @@ lemma is_acyclic_reverse_of_is_acyclic (G : CFGraph) (O : CFOrientation G)
 
 /-- The orientation divisors of $\mathcal{O}$ and its reverse sum to the canonical divisor:
 $D(\mathcal{O}) + D(\overline{\mathcal{O}}) = K_G$. -/
-lemma divisor_reverse_orientation {G : CFGraph} (O : CFOrientation G)  : ordiv G O + ordiv G
+lemma divisor_reverse_orientation {G : CFGraph} (O : CFOrientation G) : ordiv G O + ordiv G
     (O.reverse) = canonicalDivisor G := by
   let O' := O.reverse
   funext v
@@ -965,7 +966,7 @@ lemma divisor_reverse_orientation {G : CFGraph} (O : CFOrientation G)  : ordiv G
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Exercise 5.8. -/
 theorem degree_of_canonical_divisor (G : CFGraph) :
-    deg (canonicalDivisor G) = 2 * genus G - 2 := by
+    CFDiv.degree (canonicalDivisor G) = 2 * genus G - 2 := by
   -- Use sum_sub_distrib to split the sum
   have h1 : ∑ v, (canonicalDivisor G v) =
             ∑ v, vertexDegree G v - 2 * Fintype.card G.V := by
@@ -973,7 +974,7 @@ theorem degree_of_canonical_divisor (G : CFGraph) :
     rw [sum_sub_distrib]
     simp only [sum_const, card_univ, Int.nsmul_eq_mul, sub_right_inj]
     ring
-  dsimp only [deg, AddMonoidHom.coe_mk, ZeroHom.coe_mk]
+  dsimp only [CFDiv.degree, AddMonoidHom.coe_mk, ZeroHom.coe_mk]
   rw [h1]
   -- Use the fact that sum of vertex degrees = 2|E|
   have h2 : ∑ v, vertexDegree G v = 2 * Multiset.card G.edges := by
@@ -1026,7 +1027,7 @@ def orientationFromFlow {G : CFGraph} (f : G.V × G.V → ℕ) (h_count_preservi
 via `burnFlow`. This is shown to be acyclic with unique source $q$ by `burn_acyclic` and
 `burn_unique_source`. -/
 def burnOrientation {G : CFGraph} {q : G.V} {c : Config G q} (L : burnList G c) (h_full : ∀ (v
-  : G.V), v ∈ L.list): CFOrientation G := orientationFromFlow (burnFlow L) (burn_flow_reverse L
+  : G.V), v ∈ L.list) : CFOrientation G := orientationFromFlow (burnFlow L) (burn_flow_reverse L
   h_full)
 
 /-- Along any directed path in `burnOrientation L`, the positions of vertices in the burn list

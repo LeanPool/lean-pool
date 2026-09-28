@@ -121,7 +121,7 @@ theorem rank_ge_one_of_dharMoves_off_support
 /-- Degree bookkeeping for a configuration proof of any rank-one pencil. -/
 theorem bnExists_one_of_dharMoves_off_support
     (D : CFDiv G) (hEffective : effective D) {degree : ℤ}
-    (hDegree : deg D = degree)
+    (hDegree : CFDiv.degree D = degree)
     (hMoves : ∀ vertex : G.V, D vertex = 0 → DharMove G D vertex) :
     BNExists G 1 degree :=
   ⟨D, hDegree,
@@ -129,7 +129,7 @@ theorem bnExists_one_of_dharMoves_off_support
 
 /-- Degree-three specialization retained for the genus-four configurations. -/
 theorem bnExists_one_three_of_dharMoves_off_support
-    (D : CFDiv G) (hEffective : effective D) (hDegree : deg D = 3)
+    (D : CFDiv G) (hEffective : effective D) (hDegree : CFDiv.degree D = 3)
     (hMoves : ∀ vertex : G.V, D vertex = 0 → DharMove G D vertex) :
     BNExists G 1 3 :=
   bnExists_one_of_dharMoves_off_support D hEffective hDegree hMoves
@@ -148,8 +148,8 @@ theorem threeChipDivisor_effective (first second third : G.V) :
     (eff_one_chip third)
 
 @[simp] theorem deg_threeChipDivisor (first second third : G.V) :
-    deg (threeChipDivisor first second third) = 3 := by
-  simp [threeChipDivisor, deg.map_add, deg_one_chip]
+    CFDiv.degree (threeChipDivisor first second third) = 3 := by
+  simp [threeChipDivisor, CFDiv.degree.map_add, deg_one_chip]
 
 theorem threeChipDivisor_has_chip_first (first second third : G.V) :
     1 ≤ threeChipDivisor first second third first := by
@@ -203,7 +203,7 @@ def atMinLength (movingEdge leftLength rightLength : Fin p)
     (hBound : min (spec.length leftLength) (spec.length rightLength) ≤
       spec.length movingEdge)
     (fixedFirst fixedSecond : spec.Vertex) :
-    deg (atMinLength spec movingEdge leftLength rightLength hBound
+    CFDiv.degree (atMinLength spec movingEdge leftLength rightLength hBound
       fixedFirst fixedSecond) = 3 := by
   exact deg_threeChipDivisor _ _ _
 
@@ -245,7 +245,7 @@ def atDifference (movingEdge minuend subtrahend : Fin p)
     (hBound : spec.length minuend - spec.length subtrahend ≤
       spec.length movingEdge)
     (fixedFirst fixedSecond : spec.Vertex) :
-    deg (atDifference spec movingEdge minuend subtrahend hBound
+    CFDiv.degree (atDifference spec movingEdge minuend subtrahend hBound
       fixedFirst fixedSecond) = 3 := by
   exact deg_threeChipDivisor _ _ _
 
@@ -424,7 +424,7 @@ theorem bnExists_one_three_of_parallelPathMarker
       spec.core.tail edge = marker ∨ spec.core.head edge = marker →
         edge = first ∨ edge = second)
     (D : CFDiv spec.graph) (hEffective : effective D)
-    (hDegree : deg D = 3)
+    (hDegree : CFDiv.degree D = 3)
     (hTwo : 2 ≤ D (spec.coreVertex base))
     (hOther : ∀ vertex : Fin n, vertex ≠ marker →
       Reaches spec.graph D (spec.coreVertex vertex)) :

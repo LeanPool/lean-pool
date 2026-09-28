@@ -46,9 +46,9 @@ theorem bnExists_one_two_of_coreVertexCount_eq_two
   let D : CFDiv spec.graph := oneChip left + oneChip right
   have hEffective : effective D :=
     (Eff spec.graph).add_mem (eff_one_chip left) (eff_one_chip right)
-  have hDegree : deg D = 2 := by
+  have hDegree : CFDiv.degree D = 2 := by
     dsimp [D]
-    rw [deg.map_add, deg_one_chip, deg_one_chip]
+    rw [CFDiv.degree.map_add, deg_one_chip, deg_one_chip]
     norm_num
   have hCoreValue (vertex : Fin n) : 1 ≤ D (spec.coreVertex vertex) := by
     have hCases : vertex.val = 0 ∨ vertex.val = 1 := by omega

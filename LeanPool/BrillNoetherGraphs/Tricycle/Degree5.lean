@@ -270,7 +270,7 @@ end Eval
 
 /-- Total degree, written out in the twenty-two slot coordinates. -/
 theorem deg_expand (spec : Spec 7 15) (D : CFDiv spec.graph) :
-    deg D =
+    CFDiv.degree D =
       (D (spec.coreVertex 0) + D (spec.coreVertex 1) + D (spec.coreVertex 2)
         + D (spec.coreVertex 3) + D (spec.coreVertex 4) + D (spec.coreVertex 5)
         + D (spec.coreVertex 6))
@@ -426,7 +426,7 @@ theorem three_le_backward (hcore : spec.core = tricycleCore) (hEff : effective D
 theorem one_le_transitionPathChips (hcore : spec.core = tricycleCore)
     (hEff : effective D)
     (hred : qReduced spec.graph (spec.coreVertex centre) D)
-    (hrank : rank spec.graph D ≥ 1) (hdeg : deg D ≤ 5) (i : Fin 3) :
+    (hrank : rank spec.graph D ≥ 1) (hdeg : CFDiv.degree D ≤ 5) (i : Fin 3) :
     1 ≤ transitionPathChips spec D i := by
   by_contra hcon
   push Not at hcon
@@ -533,7 +533,7 @@ exactly one chip on each of the three transition paths. -/
 theorem lemma_graad5 (hcore : spec.core = tricycleCore)
     (hEff : effective D)
     (hred : qReduced spec.graph (spec.coreVertex centre) D)
-    (hrank : rank spec.graph D ≥ 1) (hdeg : deg D ≤ 5) :
+    (hrank : rank spec.graph D ≥ 1) (hdeg : CFDiv.degree D ≤ 5) :
     D (spec.coreVertex 0) = 2 ∧ transitionPathChips spec D 0 = 1
       ∧ transitionPathChips spec D 1 = 1 ∧ transitionPathChips spec D 2 = 1 := by
   have hcn : ∀ v : Fin 7, 0 ≤ D (spec.coreVertex v) := fun v => hEff _
@@ -585,7 +585,7 @@ theorem five_le_divisorialGonality (hcore : spec.core = tricycleCore)
       ((rank_geq_iff spec.graph D' 0).mpr (by omega))
   have hEff' : effective D' :=
     effective_of_winnable_and_q_reduced spec.graph _ D' hwin hred
-  have hdeg' : deg D' = 4 := by
+  have hdeg' : CFDiv.degree D' = 4 := by
     rw [← linear_equiv_preserves_deg spec.graph E D' hequiv]
     simpa using hEdeg
   obtain ⟨hc, h0, h1, h2⟩ :=

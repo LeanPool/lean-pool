@@ -36,7 +36,7 @@ def DivisorSupportedOn {G : CFGraph} (A : Set G.V) (E : CFDiv G) : Prop :=
 supported on `A` leaves a winnable divisor. -/
 def restrictedRankGeq (G : CFGraph) (A : Set G.V)
     (D : CFDiv G) (k : ℤ) : Prop :=
-  ∀ E : CFDiv G, effective E → deg E = k → DivisorSupportedOn A E →
+  ∀ E : CFDiv G, effective E → CFDiv.degree E = k → DivisorSupportedOn A E →
     winnable G (D - E)
 
 /-- A set is rank determining when restricted rank agrees with ordinary rank
@@ -109,8 +109,8 @@ theorem rankDetermining_of_rank_one_test
           intro E hEff hDeg hSupport
           have hEffAdd : effective (E + oneChip a) :=
             fun v => add_nonneg (hEff v) (eff_one_chip a v)
-          have hDegAdd : deg (E + oneChip a) = ((n + 1 : ℕ) : ℤ) := by
-            rw [deg.map_add, deg_one_chip, hDeg]
+          have hDegAdd : CFDiv.degree (E + oneChip a) = ((n + 1 : ℕ) : ℤ) := by
+            rw [CFDiv.degree.map_add, deg_one_chip, hDeg]
             norm_num
           have hWin := hRestricted (E + oneChip a) hEffAdd hDegAdd
             (supportedOn_add_one_chip hSupport ha)

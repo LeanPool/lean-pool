@@ -551,8 +551,7 @@ private theorem richCensusEndpoint_bounds
       have hs0 : s = 0 := by omega
       have hmass := w.rawChipMassAt_eq_zero_of_coord_eq_zero core Γ x hn hW1 hW3 hx
         e hcoord0 0
-      simp [tail, hz, hs0, hmass] at hle ⊢
-      exact hle
+      simpa [tail, hz, hs0, hmass] using hle
     · obtain ⟨s, hs, hzero, hmax, hle⟩ :=
         w.exists_tailContribution_le core Γ x hW1 hW3 hx anchor e
       have hsel := w.tail_blockAt_eq_collapse d core Γ x hW1 hx hCoord anchor e
@@ -585,8 +584,7 @@ private theorem richCensusEndpoint_bounds
       have hmass := w.rawChipMassAt_eq_zero_of_coord_eq_zero core Γ x hn hW1 hW3 hx
         e hcoord0 (eval (coordForm e.val) x)
       rw [hmass] at hle
-      simp [head, hz, hs0, hk] at hle ⊢
-      exact hle
+      simpa [head, hz, hs0, hk] using hle
     · obtain ⟨s, hs, hhead, hlow, hle⟩ :=
         w.exists_headContribution_le core Γ x hW1 hW3 hx anchor e
       have hsel := w.head_blockAt_eq_collapse d core Γ x hW1 hx hCoord anchor e

@@ -41,7 +41,7 @@ namespace Utilities
 /-- The Riemann inequality: rank is at least degree minus genus. -/
 theorem rank_ge_deg_sub_genus
     {G : CFGraph} (hG : graphConnected G) (D : CFDiv G) :
-    rank G D ≥ deg D - (genus G : ℤ) := by
+    rank G D ≥ CFDiv.degree D - (genus G : ℤ) := by
   have hRR := riemann_roch_for_graphs hG D
   have hDual := rank_geq_neg_one G (canonicalDivisor G - D)
   omega
@@ -160,7 +160,7 @@ corner bound satisfies the full transmission condition. -/
 theorem satisfiesTransmission_of_corners
     {G : CFGraph} (hG : graphConnected G) (u v : G.V)
     (τ : AspPerm) (D : CFDiv G) (C : List Corner)
-    (hDegree : deg D = (genus G : ℤ) + τ.χ)
+    (hDegree : CFDiv.degree D = (genus G : ℤ) + τ.χ)
     (hDom : CornersDominate τ C)
     (hCorners : ∀ c ∈ C,
       rank G (D + c.1 • oneChip u - c.2.1 • oneChip v) ≥ c.2.2) :
@@ -218,7 +218,7 @@ theorem transmissionExists_of_corner_of_BNExists
     simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
     ring
   refine satisfiesTransmission_of_corners hG u v τ _ [(a₀, b₀, r₀)] ?_ hDom ?_
-  · rw [deg.map_add, deg.map_sub, map_zsmul, map_zsmul, deg_one_chip,
+  · rw [CFDiv.degree.map_add, CFDiv.degree.map_sub, map_zsmul, map_zsmul, deg_one_chip,
       deg_one_chip, hDegE]
     simp only [Int.zsmul_eq_mul, mul_one]
     ring

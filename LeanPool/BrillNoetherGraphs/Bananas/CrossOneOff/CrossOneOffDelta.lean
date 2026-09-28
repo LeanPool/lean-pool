@@ -170,14 +170,14 @@ theorem rankDelta_crossOneOff_two_interior_eq_one
     dsimp [EUV]
     exact isSemibreak_two_distinct_strand_chips B α β pPrev qNext
       hpPrev hqNext hαβ
-  have hdegE : deg E = 2 := by
-    simp [E, deg.map_add, deg_one_chip]
-  have hdegEU : deg EU = 2 := by
-    simp [EU, deg.map_add, deg_one_chip]
-  have hdegEV : deg EV = 2 := by
-    simp [EV, deg.map_add, deg_one_chip]
-  have hdegEUV : deg EUV = 2 := by
-    simp [EUV, deg.map_add, deg_one_chip]
+  have hdegE : CFDiv.degree E = 2 := by
+    simp [E, CFDiv.degree.map_add, deg_one_chip]
+  have hdegEU : CFDiv.degree EU = 2 := by
+    simp [EU, CFDiv.degree.map_add, deg_one_chip]
+  have hdegEV : CFDiv.degree EV = 2 := by
+    simp [EV, CFDiv.degree.map_add, deg_one_chip]
+  have hdegEUV : CFDiv.degree EUV = 2 := by
+    simp [EUV, CFDiv.degree.map_add, deg_one_chip]
   have hcInt : (c : ℤ) + 2 ≤ (g : ℤ) := by
     exact_mod_cast (show c + 2 ≤ g by omega)
   let D : CFDiv B.graph := bananaNormalForm B (c : ℤ) (c : ℤ) E

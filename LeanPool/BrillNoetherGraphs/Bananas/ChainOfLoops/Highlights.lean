@@ -117,7 +117,7 @@ example (P : Loop) (L : List Loop)
     (hg : 2 ≤ L.length + 1) (hGeneric : CDPRGeneric (P :: L))
     (D : CFDiv (chainGraph P L)) (r d : ℤ) (hr : 0 ≤ r)
     (hrbound : r < genus (chainGraph P L))
-    (hdeg : deg D = d) (hrank : rank (chainGraph P L) D ≥ r)
+    (hdeg : CFDiv.degree D = d) (hrank : rank (chainGraph P L) D ≥ r)
     (hrho : 0 ≤ bnNumber (chainGraph P L) r d) :
     rank (chainGraph P L)
         (D - (r + bnNumber (chainGraph P L) r d + 1) •
@@ -132,7 +132,7 @@ example (P : Loop) (L : List Loop)
     (hg : 2 ≤ L.length + 1) (hGeneric : CDPRGeneric (P :: L))
     (D : CFDiv (chainGraph P L)) (r d : ℤ) (hr : 0 ≤ r)
     (hrbound : r < genus (chainGraph P L))
-    (hdeg : deg D = d) (hrank : rank (chainGraph P L) D ≥ r)
+    (hdeg : CFDiv.degree D = d) (hrank : rank (chainGraph P L) D ≥ r)
     (hrho : 0 ≤ bnNumber (chainGraph P L) r d) :
     rank (chainGraph P L)
         (D - (r + bnNumber (chainGraph P L) r d + 1) •

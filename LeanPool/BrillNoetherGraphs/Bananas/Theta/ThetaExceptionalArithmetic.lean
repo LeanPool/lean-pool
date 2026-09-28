@@ -44,9 +44,9 @@ theorem rank_one_chip_sub_one_chip_eq_neg_one_of_ne_banana
   obtain ⟨E, hEff, hEquiv⟩ :=
     (rank_nonneg_iff_winnable B.graph (oneChip x - oneChip y)).mp
       ((rank_geq_iff B.graph _ 0).mpr hNonneg)
-  have hEDeg : deg E = 0 := by
+  have hEDeg : CFDiv.degree E = 0 := by
     rw [← linear_equiv_preserves_deg B.graph _ E hEquiv,
-      deg.map_sub, deg_one_chip, deg_one_chip]
+      CFDiv.degree.map_sub, deg_one_chip, deg_one_chip]
     norm_num
   have hEZero : E = 0 := eff_degree_zero E hEff hEDeg
   apply marks_not_linearEquiv (by omega : 1 ≤ 2) B hxy

@@ -1271,8 +1271,7 @@ private theorem pseudocore_connected_of_markedPartition {N P k L : ℕ}
     · refine ⟨i, ?_, i', ?_, ?_⟩
       · rw [← hMemBase i, ← hvi]; exact hIn
       · rw [← hMemBase i', ← hwi]; exact hOut
-      · change 0 < pc.multiplicity i i'
-        rw [hMultiplicity]
+      · rw [hMultiplicity]
         unfold explicitCoreMultiplicity
         refine Finset.card_pos.mpr ⟨edge, ?_⟩
         simp only [Finset.mem_filter, Finset.mem_univ, true_and]
@@ -1282,8 +1281,7 @@ private theorem pseudocore_connected_of_markedPartition {N P k L : ℕ}
     · refine ⟨i', ?_, i, ?_, ?_⟩
       · rw [← hMemBase i', ← hwi]; exact hIn
       · rw [← hMemBase i, ← hvi]; exact hOut
-      · change 0 < pc.multiplicity i' i
-        rw [hMultiplicity]
+      · rw [hMultiplicity]
         unfold explicitCoreMultiplicity
         refine Finset.card_pos.mpr ⟨edge, ?_⟩
         simp only [Finset.mem_filter, Finset.mem_univ, true_and]

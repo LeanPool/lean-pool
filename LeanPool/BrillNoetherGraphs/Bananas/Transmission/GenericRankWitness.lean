@@ -29,7 +29,7 @@ open Utilities.Certificate.SubdivisionGraph.Spec
 
 /-- A degree-zero divisor which is not principal has rank `-1`. -/
 theorem rank_eq_neg_one_of_degree_zero_not_linear_equiv
-    (G : CFGraph) (D : CFDiv G) (hDeg : deg D = 0)
+    (G : CFGraph) (D : CFDiv G) (hDeg : CFDiv.degree D = 0)
     (hNotPrincipal : ¬ linearEquiv G D 0) :
     rank G D = -1 := by
   have hLower := rank_geq_neg_one G D
@@ -37,7 +37,7 @@ theorem rank_eq_neg_one_of_degree_zero_not_linear_equiv
   have hNonneg : 0 ≤ rank G D := by omega
   obtain ⟨E, hEff, hDE⟩ := (rank_nonneg_iff_winnable G D).mp
     ((rank_geq_iff G D 0).mpr hNonneg)
-  have hEDeg : deg E = 0 := by
+  have hEDeg : CFDiv.degree E = 0 := by
     rw [← linear_equiv_preserves_deg G D E hDE, hDeg]
   have hE : E = 0 := eff_degree_zero E hEff hEDeg
   apply hNotPrincipal
@@ -97,9 +97,9 @@ theorem rank_one_chip_zero_of_banana
     have hxyWin := (rank_ge_one_iff_winnable_sub_one_chip B.graph
       (oneChip x)).mp hOne y
     obtain ⟨E, hEff, hEquiv⟩ := hxyWin
-    have hEDeg : deg E = 0 := by
+    have hEDeg : CFDiv.degree E = 0 := by
       rw [← linear_equiv_preserves_deg B.graph _ E hEquiv,
-        deg.map_sub, deg_one_chip, deg_one_chip]
+        CFDiv.degree.map_sub, deg_one_chip, deg_one_chip]
       norm_num
     have hZero : E = 0 := eff_degree_zero E hEff hEDeg
     apply marks_not_linearEquiv hg B hxy

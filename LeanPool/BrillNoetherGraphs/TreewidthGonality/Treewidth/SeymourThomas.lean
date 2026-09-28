@@ -67,7 +67,7 @@ theorem order_restrict_empty (𝔅 : Bramble H) (h : (∅ : Finset (Finset V)) �
 /-- **Removing one member drops the order by at most one.**  A hitting set of
 the smaller family together with one vertex of the removed member hits the
 larger family. -/
-theorem order_le_succ_erase [Fintype V] (𝔅 : Bramble H) {M : Finset (Finset V)}
+theorem order_le_succ_erase [Finite V] (𝔅 : Bramble H) {M : Finset (Finset V)}
     (hM : M ⊆ 𝔅.members) {B : Finset V} (hB : B ∈ M) :
     (𝔅.restrict M hM).order ≤
       (𝔅.restrict (M.erase B) ((Finset.erase_subset _ _).trans hM)).order + 1 := by
@@ -97,7 +97,7 @@ Discharge plan: strong induction on `M`.  If `m = (restrict M).order` take
 `M' := M`.  Otherwise `m < (restrict M).order`, so `M` is nonempty
 (`order_restrict_empty`); pick `B ∈ M` and apply the induction hypothesis to
 `M.erase B`, whose order is at least `m` by `order_le_succ_erase`. -/
-theorem exists_subfamily_order_eq [Fintype V] (𝔅 : Bramble H) :
+theorem exists_subfamily_order_eq [Finite V] (𝔅 : Bramble H) :
     ∀ (M : Finset (Finset V)) (hM : M ⊆ 𝔅.members) (m : ℕ),
       m ≤ (𝔅.restrict M hM).order →
       ∃ (M' : Finset (Finset V)) (hM' : M' ⊆ M),
@@ -138,7 +138,7 @@ Proved 2026-08-25 from `exists_bramble_treewidth_succ_le` (Bellenbaum--Diestel's
 Theorem 5, forward direction, with Menger's theorem replaced by an explicit
 separator) and `Bramble.exists_subfamily_order_eq` (which supplies exactness
 without the easy half of duality). -/
-theorem exists_bramble_of_treewidth [Fintype V] [DecidableEq V] [Nonempty V]
+theorem exists_bramble_of_treewidth [Finite V] [DecidableEq V] [Nonempty V]
     (H : SimpleGraph V) :
     ∃ 𝔅 : Bramble H, 𝔅.order = treewidth H + 1 := by
   obtain ⟨𝔅, h𝔅⟩ := exists_bramble_treewidth_succ_le H

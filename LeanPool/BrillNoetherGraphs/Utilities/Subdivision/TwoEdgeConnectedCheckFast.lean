@@ -148,7 +148,9 @@ theorem twoEdgeConnected_of_twoEdgeConnectedCheckFast
     Finset.univ.filter fun x => compFold core (without e) x = compFold core (without e) v
     with hS
   have hv : v ∈ S := by simp [hS]
-  have hw : w ∉ S := by simp [hS]; exact fun h => hNe h.symm
+  have hw : w ∉ S := by
+    simp only [hS, Finset.mem_filter, Finset.mem_univ, true_and]
+    exact fun h => hNe h.symm
   have hProper : S ≠ Finset.univ := fun hUniv => hw (hUniv ▸ Finset.mem_univ w)
   have hCard := hTwo S ⟨v, hv⟩ hProper
   -- No surviving slot crosses `S`, so the crossing filter is inside `{e}`.
