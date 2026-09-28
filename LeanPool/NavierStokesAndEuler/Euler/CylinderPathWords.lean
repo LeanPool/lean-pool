@@ -107,7 +107,7 @@ theorem pointField_derivativePath (i : Fin 4) (t : K) (x : LiftDomain P) :
     pointField P (derivativePath P p i) (derivativePath_orbit P p hp i) t x =
       fieldFDeriv P (pointField P p hp t) x (standardDirection i) := by
   simpa only [derivativePath, iteratedFieldDerivative_succ, Fin.cons_zero,
-    Fin.tail_cons, iteratedFieldDerivative_zero] using
+    Fin.tail_cons, iteratedFieldDerivative_zero, fieldDerivative, fieldFDeriv] using
     congrFun (pointField_wordPath P p hp (fun _ : Fin 1 => i) t) x
 
 include hp in

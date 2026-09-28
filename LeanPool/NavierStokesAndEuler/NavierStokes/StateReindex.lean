@@ -32,7 +32,7 @@ variable {D E F : Type} [NormedAddCommGroup D] [NormedSpace ℝ D]
   [NormedAddCommGroup E] [NormedSpace ℝ E] [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 /-- Cylinder, bundling `toLinearEquiv`, `norm_map`. -/
-noncomputable def cylinder (e : D ≃ₗᵢ[ℝ] E) : (D × ℝ) ≃ₗᵢ[ℝ] (E × ℝ) where
+@[expose] noncomputable def cylinder (e : D ≃ₗᵢ[ℝ] E) : (D × ℝ) ≃ₗᵢ[ℝ] (E × ℝ) where
   toLinearEquiv := e.toLinearEquiv.prodCongr (LinearEquiv.refl ℝ ℝ)
   norm_map' x := by
     change max ‖e x.1‖ ‖x.2‖ = max ‖x.1‖ ‖x.2‖

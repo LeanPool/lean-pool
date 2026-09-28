@@ -395,7 +395,7 @@ open OutgoingTail
 @[expose] noncomputable def switchStart (d : TailData) : ℝ := tailStart d + 1 / 5
 
 /-- This carrier amplitude is fixed by the schedule, independently of `K`. -/
-noncomputable def outgoingAmplitude (d : TailData) : ℝ :=
+@[expose] noncomputable def outgoingAmplitude (d : TailData) : ℝ :=
   powerConstant d * Real.exp (-exponent d.h * switchStart d)
 
 /-- Outgoing shape, given by `tailShape d (t + 1 / 5)`. -/

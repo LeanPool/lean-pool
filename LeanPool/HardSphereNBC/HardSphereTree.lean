@@ -12,7 +12,7 @@ public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 
 /-! ### Elementary tree-coordinate shears -/
 
-@[expose] public section
+public section
 
 namespace HsVirial
 

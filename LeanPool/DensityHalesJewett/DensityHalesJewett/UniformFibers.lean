@@ -26,7 +26,7 @@ open scoped BigOperators
 namespace DensityHalesJewett
 
 /-- The density Hales--Jewett assertion for the alphabet `Fin k`. -/
-def HasDensityHJ (k : ℕ) : Prop :=
+@[expose] def HasDensityHJ (k : ℕ) : Prop :=
   ∀ δ : ℝ, 0 < δ → ∃ N, ∀ n, N ≤ n → ∀ A : Finset (Fin n → Fin k),
     δ * (k : ℝ) ^ n ≤ #A → ∃ l : Combinatorics.Line (Fin k) (Fin n), ∀ a, l a ∈ A
 

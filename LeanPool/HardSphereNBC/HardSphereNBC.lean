@@ -15,7 +15,7 @@ public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 
 /-! ### The canonical particle and edge conventions -/
 
-@[expose] public section
+public section
 
 namespace HsVirial
 

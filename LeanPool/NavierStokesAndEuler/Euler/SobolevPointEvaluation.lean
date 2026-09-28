@@ -26,7 +26,7 @@ open scoped Topology
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- The actual continuous representative of a genuine cylinder H3 field. -/
-def representative (u : SobolevSpace period 3) : LiftDomain period → Vector3 :=
+@[expose] def representative (u : SobolevSpace period 3) : LiftDomain period → Vector3 :=
   Classical.choose (exists_continuous_representative period (value period u) (toJet period u))
 
 /-- The chosen representative is actually continuous. -/
@@ -81,7 +81,7 @@ theorem representative_smul (c : ℝ) (u : SobolevSpace period 3) :
   simpa only [Pi.smul_apply,hu] using hs
 
 /-- Evaluation of the actual continuous representative is a bounded linear map on cylinder H3. -/
-def pointEvaluation (x : LiftDomain period) : SobolevSpace period 3 →L[ℝ] Vector3 :=
+@[expose] def pointEvaluation (x : LiftDomain period) : SobolevSpace period 3 →L[ℝ] Vector3 :=
   ({ toFun := fun u => representative period u x
      map_add' := fun u v => congrFun (representative_add period u v) x
      map_smul' := fun c u => congrFun (representative_smul period c u) x } :

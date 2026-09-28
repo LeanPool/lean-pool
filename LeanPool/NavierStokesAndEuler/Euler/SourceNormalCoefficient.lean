@@ -41,7 +41,7 @@ def normalColumn : SmoothCoefficientPath K (ℝ →L[ℝ] E) :=
 
 omit [CompleteSpace E] in
 @[simp] theorem normalColumn_apply (t : K) (x : Space) (r : ℝ) :
-    (normalColumn m).field t x r = r • m.field t x := rfl
+    (normalColumn m).field t x r = r • m.field t x := by rfl
 
 omit [CompleteSpace E] in
 theorem normalColumn_lower (c : ℝ) (hm : ∀ t x, c ≤ ‖m.field t x‖ ^ 2)
@@ -62,9 +62,12 @@ theorem normalFunctional_apply (t : K) (x : Space) (v : E) :
   have hn : ‖m.field t x‖^2 ≠ 0 := ne_of_gt (hc.trans_le (hm t x))
   have he := gram_inverse_apply ((normalColumn m).field t x) c hc (normalColumn_lower m c hm t x)
     (((normalColumn m).field t x).adjoint v)
-  change ((normalColumn m).field t x).adjoint
-    ((normalColumn m).field t x (normalFunctional m c hc hm t x v)) =
-      ((normalColumn m).field t x).adjoint v at he
+  have hfunctional :
+      normalFunctional m c hc hm t x v =
+        gramInverse ((normalColumn m).field t x) c hc
+          (normalColumn_lower m c hm t x) (((normalColumn m).field t x).adjoint v) := by
+    simp only [normalFunctional, sourceForcing, leftInversePath_apply, comp_apply]
+  rw [gram, comp_apply, ← hfunctional] at he
   have hadj : ((normalColumn m).field t x).adjoint = innerSL ℝ (m.field t x) :=
     adjoint_toSpanSingleton (m.field t x)
   rw [hadj] at he

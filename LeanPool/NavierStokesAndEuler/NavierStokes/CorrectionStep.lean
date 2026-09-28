@@ -5064,6 +5064,7 @@ theorem copyData_raw (s : StripData D) (request : ℕ → D × ℝ → SignedWav
     (p.copyData s request).raw i = (p.native i).coefficients s request := rfl
 
 /-- Exact block, constructed using `SignedWaveUpdate.blockOfCoefficients`. -/
+@[expose]
 noncomputable def exactBlock (s : StripData D) (request : ℕ → D × ℝ → SignedWaveUpdate.Vec2) :
     HarmonicBlock D :=
   SignedWaveUpdate.blockOfCoefficients

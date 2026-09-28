@@ -48,7 +48,7 @@ noncomputable def splitA (K : ℝ) (n : ℕ) : ℕ :=
   n - splitM K n
 
 /-- The technical occupied-pile invariant used in the recursion. -/
-def minPile (n : ℕ) : ℕ :=
+@[expose] def minPile (n : ℕ) : ℕ :=
   2 ^ (n / 5)
 
 /-- The recursive loss used in the paper, `n^{-2}`.  At `n = 0` this is `0`
@@ -5732,7 +5732,7 @@ theorem hasRealUpperBound_of_explicitConstants_splitCutoff_finiteBase
 
 /-- A concrete cutoff large enough for the explicit constants `A=4`,
 `K=217`.  It is exactly `(128 * 217^2)^2`. -/
-def explicitCutoff : ℕ :=
+@[expose] def explicitCutoff : ℕ :=
   36329454321664
 
 theorem explicitCutoff_pos : 0 < explicitCutoff := by

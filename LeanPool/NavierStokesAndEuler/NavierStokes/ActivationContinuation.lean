@@ -50,7 +50,7 @@ variable {D : RadialDomain} (P : Profiles D)
   1 + p.1 * radialPartial P.f p / P.f p
 
 /-- Source Q as an element of `ℝ`. -/
-noncomputable def sourceQ (h : ℝ) (p : Point) : ℝ :=
+@[expose] noncomputable def sourceQ (h : ℝ) (p : Point) : ℝ :=
   -P.W h p * logSlope P p - h * (1 - 2 * p.2 * P.U p) -
     (StressAlgebra.axialExponent h * p.2 + StressAlgebra.coordinateFactor p.2 * P.U p) *
       (parameterPartial P.f p / P.f p)

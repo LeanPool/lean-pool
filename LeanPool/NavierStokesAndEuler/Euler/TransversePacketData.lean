@@ -69,7 +69,7 @@ def coefficient (F : SmoothCoefficientPath K (Space →L[ℝ] Space)) :
 
 @[simp] theorem coefficient_apply (F : SmoothCoefficientPath K (Space →L[ℝ] Space))
     (t : K) (x : Space) (v : U) : (coefficient m₀ R F).field t x v = F.field t x (R v : Space) :=
-        rfl
+        by rfl
 
 /-- The original pointwise source coefficient derivative bound survives without loss. -/
 theorem coefficient_derivative_bound (F : SmoothCoefficientPath K (Space →L[ℝ] Space))
@@ -141,7 +141,8 @@ def normalMap : (Space →L[ℝ] Space) →L[ℝ] Space :=
     (ContinuousLinearMap.adjoint.toContinuousLinearEquiv.toContinuousLinearMap :
       (Space →L[ℝ] Space) →L[ℝ] (Space →L[ℝ] Space))
 
-@[simp] theorem normalMap_apply (A : Space →L[ℝ] Space) : normalMap m₀ A = A.adjoint m₀ := rfl
+@[simp] theorem normalMap_apply (A : Space →L[ℝ] Space) :
+    normalMap m₀ A = A.adjoint m₀ := by rfl
 
 theorem normalMap_norm (hm₀ : ‖m₀‖ = 1) : ‖normalMap m₀‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
@@ -158,7 +159,8 @@ def normalCoefficient (FInv : SmoothCoefficientPath K (Space →L[ℝ] Space)) :
     SmoothCoefficientPath K Space := SmoothCoefficientPath.map (normalMap m₀) FInv
 
 @[simp] theorem normalCoefficient_apply (FInv : SmoothCoefficientPath K (Space →L[ℝ] Space))
-    (t : K) (x : Space) : (normalCoefficient m₀ FInv).field t x = (FInv.field t x).adjoint m₀ := rfl
+    (t : K) (x : Space) :
+    (normalCoefficient m₀ FInv).field t x = (FInv.field t x).adjoint m₀ := by rfl
 
 theorem normalCoefficient_derivative_bound (FInv : SmoothCoefficientPath K (Space →L[ℝ] Space))
     (hm₀ : ‖m₀‖ = 1) (n : ℕ) (C : ℝ)

@@ -44,7 +44,7 @@ variable [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 /-- Time linear, given by `(ContinuousLinearMap.fst ℝ Q ℝ).prod (σ • ContinuousLinearMap.snd ℝ Q
 ℝ)`. -/
-noncomputable def timeLinear (σ : ℝ) : (Q × ℝ) →L[ℝ] (Q × ℝ) :=
+@[expose] noncomputable def timeLinear (σ : ℝ) : (Q × ℝ) →L[ℝ] (Q × ℝ) :=
   (ContinuousLinearMap.fst ℝ Q ℝ).prod (σ • ContinuousLinearMap.snd ℝ Q ℝ)
 
 @[simp] theorem timeLinear_apply (σ : ℝ) (z : Q × ℝ) : timeLinear σ z = (z.1, σ * z.2) := by rfl
@@ -292,7 +292,7 @@ structure EnvelopeJets {ι E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ 
     ∀ j ≤ N, ‖iteratedFDeriv ℝ j (f i) x‖ ≤ C * D.scale i ^ m * w i x
 
 /-- Product domain, bundling `scale`, `carrier`, `isOpen`, `one_le_scale`. -/
-noncomputable def productDomain {ι E : Type*} [NormedAddCommGroup E]
+@[expose] noncomputable def productDomain {ι E : Type*} [NormedAddCommGroup E]
     (D : PhaseJetBounds.Domain ι E) (V : ι → Set ℝ) (hV : ∀ i, IsOpen (V i)) :
     PhaseJetBounds.Domain ι (E × ℝ) where
   scale := D.scale
@@ -583,7 +583,7 @@ theorem positiveSeed_norm : ‖positiveSeed‖ = 1 := by
 
 /-- Reference P, given by `GaussianEnvelope.envelope (GaussianEnvelope.referenceRate lam u L) (L
 / 2) t`. -/
-noncomputable def referenceP (lam u L t : ℝ) : ℝ :=
+@[expose] noncomputable def referenceP (lam u L t : ℝ) : ℝ :=
   GaussianEnvelope.envelope (GaussianEnvelope.referenceRate lam u L) (L / 2) t
 
 theorem referenceP_pos (lam u L t : ℝ) : 0 < referenceP lam u L t :=
@@ -1911,7 +1911,7 @@ noncomputable def canonicalPrimaryPath
 /-- A literal `PartitionedCovariance.Pulse` made from this same primary
 solution. Only its uncut components are continuously clamped; the cutoff
 has compact support strictly inside the interval. -/
-noncomputable def canonicalPrimaryPulse
+@[expose] noncomputable def canonicalPrimaryPulse
     (d : PrimaryODE.FrameData Q) (lam u : ℝ) {L : ℝ} (hL : 0 < L)
     (U : Set Q) (hA : ContinuousOn (d.coefficient 1) (U ×ˢ Icc 0 L))
     (p : Q) (hp : p ∈ U) (hk : d.Kinematics p (Icc 0 L)) : PartitionedCovariance.Pulse where

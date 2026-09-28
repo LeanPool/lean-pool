@@ -163,7 +163,8 @@ theorem cellUnion_congr {S₁ S₂ : CellStructure γ} {R₁ : S₁.Realization}
 cells strictly below it. Under assertion (i) this is the topological frontier of the open
 2-cell (`IsCellDecomposition.faceBoundary_eq_frontier`), which is what makes it the right thing
 for the blueprint's "boundary walk of `F`" without a walk being available. -/
-def faceBoundary (R : S.Realization) (F : γ) : Set Plane := R.cellUnion (S.subcells F \ {F})
+@[expose] def faceBoundary (R : S.Realization) (F : γ) : Set Plane :=
+  R.cellUnion (S.subcells F \ {F})
 
 namespace IsCellDecomposition
 

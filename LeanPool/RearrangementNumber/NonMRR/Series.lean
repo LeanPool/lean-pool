@@ -30,7 +30,7 @@ open scoped Topology
 namespace NonMRR
 
 /-- The sum of the first `n` terms. -/
-def partialSum (a : ℕ → ℝ) (n : ℕ) : ℝ := ∑ i ∈ range n, a i
+@[expose] def partialSum (a : ℕ → ℝ) (n : ℕ) : ℝ := ∑ i ∈ range n, a i
 
 theorem hasSum_conditional_iff {a : ℕ → ℝ} {s : ℝ} :
     HasSum a s (SummationFilter.conditional ℕ) ↔
@@ -48,11 +48,11 @@ structure ConditionalSeries where
   not_absolute : ¬ Summable (fun n ↦ |term n|)
 
 /-- A permutation rearranges a series when it fails to preserve its natural sum. -/
-def Rearranges (a : ConditionalSeries) (π : Equiv.Perm ℕ) : Prop :=
+@[expose] def Rearranges (a : ConditionalSeries) (π : Equiv.Perm ℕ) : Prop :=
   ¬ HasSum (a.term ∘ π) a.sum (SummationFilter.conditional ℕ)
 
 /-- A family which rearranges every conditionally convergent real series. -/
-def IsRearranging (s : Set (Equiv.Perm ℕ)) : Prop :=
+@[expose] def IsRearranging (s : Set (Equiv.Perm ℕ)) : Prop :=
   ∀ a : ConditionalSeries, ∃ π ∈ s, Rearranges a π
 
 /-- The rearrangement number, with the cardinal-minimum definition in the manuscript. -/

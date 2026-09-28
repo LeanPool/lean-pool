@@ -100,6 +100,7 @@ structure Pulse where
 
 /-- Native pulse, given by `TorusAverages.nativeField (TorusAverages.slotChart vr vt hdet)
 center (TorusAverages.transverseStretch ci r f)`. -/
+@[expose]
 noncomputable def nativePulse (vr vt center : Plane) (hdet : vr.1 * vt.2 - vr.2 * vt.1 ≠ 0)
     (ci r : ℝ) (f : Plane → ℝ) : Plane → ℝ :=
   TorusAverages.nativeField (TorusAverages.slotChart vr vt hdet) center
@@ -1114,6 +1115,7 @@ theorem compact_actual_pair_strictCone
 
 /-- Rounded phase remainder, given by `k * ((pz / ε) * s.2.1 + x0 * s.1 - v Y *
 (PhaseEstimates.roundedFrequency k target * F s + pz * G s))`. -/
+@[expose]
 noncomputable def roundedPhaseRemainder (k ε target pz x0 : ℝ) (F G : PhaseCalculus.Slow → ℝ)
     (s : PhaseCalculus.Slow) (v : Plane → ℝ) (Y : Plane) : ℝ :=
   k * ((pz / ε) * s.2.1 + x0 * s.1 -

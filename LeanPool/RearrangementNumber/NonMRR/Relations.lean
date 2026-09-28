@@ -41,7 +41,7 @@ structure Relation where
 namespace Relation
 
 /-- A family of responses solving every challenge. -/
-def Dominating (A : Relation.{u}) (s : Set A.Response) : Prop :=
+@[expose] def Dominating (A : Relation.{u}) (s : Set A.Response) : Prop :=
   ∀ x, ∃ y ∈ s, A.relates x y
 
 /-- The least cardinality of a dominating family. -/
@@ -87,7 +87,7 @@ theorem Morphism.norm_le {A B : Relation.{u}} (f : Morphism A B) : B.norm ≤ A.
     _ = A.norm := hcard
 
 /-- The second challenge in a sequential composition depends on the first response. -/
-def sequential (A B : Relation.{u}) : Relation.{u} where
+@[expose] def sequential (A B : Relation.{u}) : Relation.{u} where
   Challenge := A.Challenge × (A.Response → B.Challenge)
   Response := A.Response × B.Response
   relates x y := A.relates x.1 y.1 ∧ B.relates (x.2 y.1) y.2

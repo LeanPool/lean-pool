@@ -37,11 +37,11 @@ namespace NonMRR
 universe u
 
 /-- The least size of a nonmeagre subset of a topological space. -/
-noncomputable def nonMeagreCardinal (X : Type u) [TopologicalSpace X] : Cardinal.{u} :=
+@[expose] noncomputable def nonMeagreCardinal (X : Type u) [TopologicalSpace X] : Cardinal.{u} :=
   sInf {κ | ∃ s : Set X, ¬ IsMeagre s ∧ Cardinal.mk s = κ}
 
 /-- The uniformity of the meagre ideal on the real line, as in the manuscript. -/
-noncomputable def nonM : Cardinal := nonMeagreCardinal ℝ
+@[expose] noncomputable def nonM : Cardinal := nonMeagreCardinal ℝ
 
 /-- The corresponding cardinal for Baire space; no identification is postulated. -/
 noncomputable def nonMBaire : Cardinal := nonMeagreCardinal (ℕ → ℕ)

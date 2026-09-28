@@ -1690,7 +1690,7 @@ theorem profiles_stocks_congr {D E : RadialDomain} (P : Profiles D) (Q : Profile
     rfl
 
 /-- Natural domain, bundling `carrier`, `isOpen`, `scale_mem`. -/
-noncomputable def naturalDomain {Λ : ℝ} (hΛ : 0 < Λ) : RadialDomain where
+@[expose] noncomputable def naturalDomain {Λ : ℝ} (hΛ : 0 < Λ) : RadialDomain where
   carrier := NaturalProfile.domain Λ
   isOpen := NaturalProfile.domain_isOpen Λ
   scale_mem := by
@@ -1713,7 +1713,7 @@ variable {h j σ Λ C : ℝ} {P0 : ℝ → ℝ} {d : NaturalAxisCoefficients.Ana
 
 /-- Natural histories, bundling `f`, `U`, `f_smooth`, `U_smooth` and the required compatibility
 proofs. -/
-noncomputable def naturalHistories : Profiles (naturalDomain hΛ) where
+@[expose] noncomputable def naturalHistories : Profiles (naturalDomain hΛ) where
   f := F.f
   U := F.U
   f_smooth := F.natural.f_smooth

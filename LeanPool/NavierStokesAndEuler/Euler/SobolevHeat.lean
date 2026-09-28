@@ -203,7 +203,7 @@ open scoped Topology NNReal
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- The genuine cylinder heat semigroup lifted to the complete Sobolev space. -/
-def heatOperator (q : ℕ) (v : ℝ≥0) : SobolevSpace period q →L[ℝ] SobolevSpace period q :=
+@[expose] def heatOperator (q : ℕ) (v : ℝ≥0) : SobolevSpace period q →L[ℝ] SobolevSpace period q :=
   liftOperator period q (cylinderHeat period v) (cylinderHeat_translation period v)
 
 /-- Every Sobolev derivative coordinate evolves by the actual L² heat semigroup. -/

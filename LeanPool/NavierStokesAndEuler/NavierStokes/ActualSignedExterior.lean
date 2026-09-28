@@ -118,7 +118,7 @@ theorem singleton_request (L : NativeLabel f.active) :
   rfl
 
 /-- Extend actual values by zero without extending their primary data. -/
-noncomputable def valueAt {V : Type*} [Zero V]
+@[expose] noncomputable def valueAt {V : Type*} [Zero V]
     (value : NativeLabel f.active → V) (L : BandLabel) : V := by
   classical
   exact if hL : L ∈ f.active then value ⟨L.val, L.property, hL⟩ else 0
@@ -254,7 +254,7 @@ namespace Family
 variable (f : Family)
 
 /-- The missing labels receive zero copies, never invented primary data. -/
-noncomputable def copyAt (copies : NativeLabel f.active → CopyFamily H K)
+@[expose] noncomputable def copyAt (copies : NativeLabel f.active → CopyFamily H K)
     (L : BandLabel) : CopyFamily H K := by
   classical
   exact if hL : L ∈ f.active then copies ⟨L.val, L.property, hL⟩ else zeroCopies
@@ -286,7 +286,7 @@ theorem assembled_term_inactive (copies : NativeLabel f.active → CopyFamily H 
   rw [assembled, diagonal_term, copyAt_inactive f copies hI, zeroCopies_term]
 
 /-- Branch cells as an element of `SupportCells (f.copyAt copies L)`. -/
-noncomputable def branchCells (copies : NativeLabel f.active → CopyFamily H K)
+@[expose] noncomputable def branchCells (copies : NativeLabel f.active → CopyFamily H K)
     (c : ∀ L, SupportCells (copies L)) (L : BandLabel) :
     SupportCells (f.copyAt copies L) := by
   classical

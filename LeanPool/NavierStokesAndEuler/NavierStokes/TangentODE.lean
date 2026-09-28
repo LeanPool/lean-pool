@@ -235,7 +235,7 @@ theorem linear_solution_unique {a b : ℝ} (hab : a ≤ b)
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
 
 /-- Continuous linear part of equation (27), including the moving-normal term. -/
-def projectedOperator (n n' : H) (K : H →L[ℝ] H) (δ : ℝ) : H →L[ℝ] H :=
+@[expose] def projectedOperator (n n' : H) (K : H →L[ℝ] H) (δ : ℝ) : H →L[ℝ] H :=
   -K + (((innerSL ℝ n).comp K - innerSL ℝ n').smulRight ((⟪n, n⟫_ℝ)⁻¹ • n)) -
     δ • ContinuousLinearMap.id ℝ H
 

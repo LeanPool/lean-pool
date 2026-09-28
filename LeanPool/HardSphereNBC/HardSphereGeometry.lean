@@ -15,7 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 Graph, coordinate, and measure constructions for the hard-sphere NBC volume identity.
 -/
 
-@[expose] public section
+public section
 
 namespace HsVirial
 

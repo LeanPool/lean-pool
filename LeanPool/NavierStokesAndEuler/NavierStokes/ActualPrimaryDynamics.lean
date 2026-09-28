@@ -335,7 +335,7 @@ noncomputable def slotLinear (j : Fin 2) (L : Label B N0) (n : ℕ) :
             n))))
 
 /-- Slot point, given by `((copyPoint j L n k x).1,(x.2,(copyPoint j L n k x).2.2))`. -/
-noncomputable def slotPoint (j : Fin 2) (L : Label B N0) (n : ℕ)
+@[expose] noncomputable def slotPoint (j : Fin 2) (L : Label B N0) (n : ℕ)
     (k : TorusInverse.Frequency) (x : FullPoint) : PhaseCalculus.Slot :=
   ((copyPoint j L n k x).1,(x.2,(copyPoint j L n k x).2.2))
 

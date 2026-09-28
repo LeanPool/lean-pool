@@ -40,7 +40,7 @@ noncomputable def windowDomain (Ω : Set D) (ρ : D → ℝ) (a b : ℝ) : Set D
   Ω ∩ window ρ a b
 
 /-- Extension as an element of `E`. -/
-noncomputable def extension (ρ : D → ℝ) (a b : ℝ) (f : D → E) (x : D) : E :=
+@[expose] noncomputable def extension (ρ : D → ℝ) (a b : ℝ) (f : D → E) (x : D) : E :=
   by classical exact if x ∈ window ρ a b then f x else 0
 
 omit [NormedAddCommGroup D] [NormedSpace ℝ D] [NormedSpace ℝ E] in

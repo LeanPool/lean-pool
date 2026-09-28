@@ -371,7 +371,7 @@ theorem newEdge₂_notMem_outer : d.newEdge₂ ∉ E(S.outerGraph) := fun h =>
 
 /-- The subdivided outer cycle. When the subdivided edge is not an outer edge this is the old
 outer cycle unchanged (`SubdivData.outer_eq`). -/
-def outer : Graph γ γ :=
+@[expose] def outer : Graph γ γ :=
   subdivGraph S.outerGraph d.edge d.left d.right d.newVertex d.newEdge₁ d.newEdge₂
     d.newEdge_ne d.newEdge₁_notMem_outer d.newEdge₂_notMem_outer
 
@@ -620,7 +620,7 @@ theorem paths_disjoint ⦃f : γ⦄ (h₁ : f ∈ d.path₁) (h₂ : f ∈ d.pat
     S.disjoint_vertexSet_edgeSet.ne_of_mem d.isPath₁.right_mem hfE rfl]
 
 /-- All cells of the ear: its vertices, including its two old ends, and its edges. -/
-def earCells : Set γ := V(d.ear) ∪ E(d.ear)
+@[expose] def earCells : Set γ := V(d.ear) ∪ E(d.ear)
 
 /-- The cells the split creates: the interior cells of the ear, its edges, and the two new
 2-cells. The ear's two ends are *not* new — they are old vertices, and the blueprint is
@@ -628,10 +628,10 @@ explicit that they are their own parents. -/
 def newCells : Set γ := (V(d.ear) \ {d.source, d.target}) ∪ E(d.ear) ∪ {d.face₁, d.face₂}
 
 /-- The cells of the first boundary path. -/
-def cells₁ : Set γ := S.pathCells d.source d.path₁
+@[expose] def cells₁ : Set γ := S.pathCells d.source d.path₁
 
 /-- The cells of the second boundary path. -/
-def cells₂ : Set γ := S.pathCells d.source d.path₂
+@[expose] def cells₂ : Set γ := S.pathCells d.source d.path₂
 
 theorem source_mem_skel : d.source ∈ V(S.skel) := d.isPath₁.left_mem
 

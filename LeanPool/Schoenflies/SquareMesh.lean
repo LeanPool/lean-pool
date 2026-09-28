@@ -481,7 +481,7 @@ theorem anchors_subset_meshPoints (N : ℕ) (fresh anchors : List Plane) :
     anchors ⊆ meshPoints N fresh anchors := List.subset_append_left _ _
 
 /-- **The mesh graph.** -/
-noncomputable def meshGraph (N : ℕ) (fresh anchors : List Plane) : Graph Plane Piece :=
+@[expose] noncomputable def meshGraph (N : ℕ) (fresh anchors : List Plane) : Graph Plane Piece :=
   overlayGraph (meshSegments N fresh) (meshPoints N fresh anchors)
 
 instance meshGraph_finite (N : ℕ) (fresh anchors : List Plane) :
@@ -1083,7 +1083,7 @@ theorem meshCount_spec {δ : ℝ} (hδ : 0 < δ) : 2 * Real.sqrt 2 < δ * meshCo
 /-- **The anchored square mesh**: `meshCount δ` concentric ring frames inside `Q = [-1,1]²`,
 one radial spoke at each fresh boundary point, and the anchors inserted as extra vertices of
 the outer ring. -/
-noncomputable def squareMesh (δ : ℝ) (fresh anchors : List Plane) : Graph Plane Piece :=
+@[expose] noncomputable def squareMesh (δ : ℝ) (fresh anchors : List Plane) : Graph Plane Piece :=
   meshGraph (meshCount δ) fresh anchors
 
 instance squareMesh_finite (δ : ℝ) (fresh anchors : List Plane) :

@@ -116,6 +116,7 @@ theorem axisKite_inter {lo hi : ℝ} (hlo : lo < 0) (hhi : 0 < hi) :
     fin_cases v <;> simp [axisKitePosition] at hv ⊢
 
 /-- The `axisKiteMesh` declaration. -/
+@[expose]
 noncomputable def axisKiteMesh (lo hi : ℝ) (hlo : lo < 0) (hhi : 0 < hi) : TriangleMesh where
   Vertex := Fin 4
   position := axisKitePosition lo hi
@@ -166,7 +167,7 @@ theorem thinKiteScale_pos {δ : ℝ} (hδ : 0 < δ) : 0 < thinKiteScale δ := by
   positivity
 
 /-- The `thinKiteGlobalHomeomorph` declaration. -/
-noncomputable def thinKiteGlobalHomeomorph (δ : ℝ) (hδ : 0 < δ) : Plane ≃ₜ Plane := by
+@[expose] noncomputable def thinKiteGlobalHomeomorph (δ : ℝ) (hδ : 0 < δ) : Plane ≃ₜ Plane := by
   have hs : thinKiteScale δ ≠ 0 := (thinKiteScale_pos hδ).ne'
   have hleft : Function.LeftInverse (thinKiteInv δ) (thinKiteMap δ) := by
     intro p
@@ -1008,7 +1009,7 @@ theorem isClosed_thinKitePatch (δ : ℝ) : IsClosed (thinKitePatch δ) := by
     fun_prop)).isClosed
 
 /-- The `thinKiteAmbientHomeomorph` declaration. -/
-noncomputable def thinKiteAmbientHomeomorph (δ : ℝ) (hδ : 0 < δ) : Plane ≃ₜ Plane :=
+@[expose] noncomputable def thinKiteAmbientHomeomorph (δ : ℝ) (hδ : 0 < δ) : Plane ≃ₜ Plane :=
   (thinKiteGlobalHomeomorph δ hδ).symm.trans
     ((diamondFanAmbientHomeomorph (thinKiteSource δ) (thinKiteTarget δ)
       (thinKiteSource_lower hδ) (thinKiteSource_upper hδ)

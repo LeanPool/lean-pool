@@ -34,7 +34,7 @@ noncomputable section Definitions
 
 /- The discriminant form -/
 /-- The modular discriminant `Δ` on the upper half-plane, via its product expansion. -/
-def Δ (z : UpperHalfPlane) := cexp (2 * π * Complex.I * z) * ∏' (n : ℕ),
+@[expose] def Δ (z : UpperHalfPlane) := cexp (2 * π * Complex.I * z) * ∏' (n : ℕ),
     (1 - cexp (2 * π * Complex.I * (n + 1) * z)) ^ 24
 
 lemma DiscriminantProductFormula (z : ℍ) : Δ z = cexp (2 * π * Complex.I * z) * ∏' (n : ℕ+),

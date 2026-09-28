@@ -41,10 +41,10 @@ namespace BrokenLineData
 variable {U : Set Plane} (B : BrokenLineData U)
 
 /-- The `start` declaration. -/
-def start : Plane := B.vertex 0
+@[expose] def start : Plane := B.vertex 0
 
 /-- The `finish` declaration. -/
-def finish : Plane := B.vertex (Fin.last B.n)
+@[expose] def finish : Plane := B.vertex (Fin.last B.n)
 
 /-- An auxiliary broken line listing an arbitrary finite family of segments.  The prescribed
 segments occur at the even indices; the odd indices are disposable connectors.  This is the
@@ -1925,13 +1925,13 @@ theorem resolvedGlobalParameter_finish :
     exact_mod_cast Nat.sub_add_cancel hpos
 
 /-- Affine inclusion of the real axis into the plane. -/
-def realAxisLinear : ℝ →ₗ[ℝ] Plane where
+@[expose] def realAxisLinear : ℝ →ₗ[ℝ] Plane where
   toFun t := planePoint t 0
   map_add' := by intro x y; ext i ; fin_cases i <;> simp [planePoint]
   map_smul' := by intro c x; ext i ; fin_cases i <;> simp [planePoint]
 
 /-- The `realAxisAffine` declaration. -/
-def realAxisAffine : ℝ →ᵃ[ℝ] Plane := realAxisLinear.toAffineMap
+@[expose] def realAxisAffine : ℝ →ᵃ[ℝ] Plane := realAxisLinear.toAffineMap
 
 @[simp] theorem realAxisAffine_apply (t : ℝ) : realAxisAffine t = planePoint t 0 := by rfl
 

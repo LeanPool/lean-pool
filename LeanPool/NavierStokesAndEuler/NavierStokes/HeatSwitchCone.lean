@@ -835,7 +835,7 @@ theorem logPi_eq_canonical (F : Profile) {XR C : ℝ}
 @[expose] noncomputable def radialA (F : Profile) (XR : ℝ) (c : ℝ → Coeff) (p : Point) : ℝ :=
   1 - 2 * deriv (fun y => logE F XR c (y, p.2)) p.1 / logE F XR c p
 /-- Radial B, given by `2 * OutgoingHistories.dY F.logU p / logE F XR c p`. -/
-noncomputable def radialB (F : Profile) (XR : ℝ) (c : ℝ → Coeff) (p : Point) : ℝ :=
+@[expose] noncomputable def radialB (F : Profile) (XR : ℝ) (c : ℝ → Coeff) (p : Point) : ℝ :=
   2 * OutgoingHistories.dY F.logU p / logE F XR c p
 /-- Ratio, given by `Ns F XR c p / (logE F XR c p * Qs F XR c p)`. -/
 @[expose] noncomputable def ratio (F : Profile) (XR : ℝ) (c : ℝ → Coeff) (p : Point) : ℝ :=

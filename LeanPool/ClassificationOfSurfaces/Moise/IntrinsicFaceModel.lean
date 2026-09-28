@@ -87,7 +87,7 @@ variable (K : IntrinsicTwoComplex)
     (ZMod.finEquiv 3).symm i = i := rfl
 
 /-- The chosen ordering of one intrinsic face, viewed as an embedding into all vertices. -/
-noncomputable def faceVertexEmbedding (t : K.Face) : Fin 3 ↪ K.Vertex where
+@[expose] noncomputable def faceVertexEmbedding (t : K.Face) : Fin 3 ↪ K.Vertex where
   toFun i := (K.faceVertexEquiv t i).1
   inj' := fun _ _ hij => (K.faceVertexEquiv t).injective (Subtype.ext hij)
 
@@ -204,7 +204,7 @@ theorem standardTriangle_oneSkeleton_support :
 abbrev ClosedFace (t : K.Face) := {x : K.realization // x ∈ K.faceCarrier t.1}
 
 /-- Reindex the barycentric coordinates of an intrinsic face by its chosen `Fin 3` ordering. -/
-noncomputable def faceReindexToStandard (t : K.Face) (x : K.ClosedFace t) :
+@[expose] noncomputable def faceReindexToStandard (t : K.Face) (x : K.ClosedFace t) :
     standardTrianglePlaneComplex.toIntrinsic.realization := by
   let z : Fin 3 → ℝ := fun i => x.1.1 (K.faceVertexEquiv t i).1
   refine ⟨z, ⟨?_, ?_⟩, ⟨Finset.univ, standardTriangle_univ_mem_cells, ?_⟩⟩
@@ -274,7 +274,7 @@ theorem continuous_faceReindexToStandard (t : K.Face) :
 
 /-- The canonical barycentric homeomorphism from one intrinsic face to the standard intrinsic
 triangle. -/
-noncomputable def faceReindexHomeomorph (t : K.Face) :
+@[expose] noncomputable def faceReindexHomeomorph (t : K.Face) :
     K.ClosedFace t ≃ₜ standardTrianglePlaneComplex.toIntrinsic.realization := by
   let e : K.ClosedFace t ≃ standardTrianglePlaneComplex.toIntrinsic.realization := {
     toFun := K.faceReindexToStandard t
@@ -317,14 +317,14 @@ theorem faceReindexToStandard_mem_faceCarrier (t : K.Face) (s : Finset (Fin 3))
     exact hj (hkj' ▸ hks)
 
 /-- The standard plane realization of one intrinsic closed face. -/
-noncomputable def facePlaneHomeomorph (t : K.Face) :
+@[expose] noncomputable def facePlaneHomeomorph (t : K.Face) :
     K.ClosedFace t ≃ₜ standardTrianglePlaneComplex.support :=
   (K.faceReindexHomeomorph t).trans
     (standardTrianglePlaneComplex.realizationHomeomorph
       standardTrianglePlaneComplex_pure)
 
 /-- Restrict ambient intrinsic barycentric coordinates to the ordered vertices of one face. -/
-noncomputable def faceCoordRestrictionAffine (t : K.Face) :
+@[expose] noncomputable def faceCoordRestrictionAffine (t : K.Face) :
     (K.Vertex → ℝ) →ᵃ[ℝ] (Fin 3 → ℝ) :=
   AffineMap.pi fun j =>
     (LinearMap.proj (K.faceVertexEmbedding t j)).toAffineMap
@@ -337,7 +337,7 @@ noncomputable def faceCoordRestrictionAffine (t : K.Face) :
 
 /-- The forward standard-plane chart is affine in the ambient intrinsic barycentric
 coordinates. -/
-noncomputable def facePlaneForwardAffine (t : K.Face) :
+@[expose] noncomputable def facePlaneForwardAffine (t : K.Face) :
     (K.Vertex → ℝ) →ᵃ[ℝ] Plane :=
   standardTrianglePlaneComplex.baryEvalAffine.comp
     (K.faceCoordRestrictionAffine t)

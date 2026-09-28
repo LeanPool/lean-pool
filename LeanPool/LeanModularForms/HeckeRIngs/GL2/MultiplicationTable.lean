@@ -102,7 +102,8 @@ private theorem HA_mul_assoc (a b c : HeckeAlgebra 2) :
 
 private theorem HA_mul_comm (a b : HeckeAlgebra 2) :
     a * b = b * a :=
-  (instCommRingHeckeAlgebra (n := 2)).mul_comm a b
+  (GLPairAntiInvolution 2).mul_comm_of_antiInvolution
+    (GL_pair_onHeckeCoset_eq 2) a b
 
 end HeckeAlgRing
 

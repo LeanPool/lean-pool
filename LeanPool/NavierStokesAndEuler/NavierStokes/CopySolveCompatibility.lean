@@ -271,7 +271,7 @@ variable {P V E : Type}
   {a b : ℝ}
 
 /-- Scale source, given by `{ d with source := fun x => c • d.source x }`. -/
-noncomputable def scaleSource (d : LinearData P V E) (c : ℝ) : LinearData P V E :=
+@[expose] noncomputable def scaleSource (d : LinearData P V E) (c : ℝ) : LinearData P V E :=
   { d with source := fun x => c • d.source x }
 
 omit [CompleteSpace E] in

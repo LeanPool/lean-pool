@@ -41,7 +41,7 @@ abbrev Components := Cylinder → Fin 3 → ℝ
 abbrev ScaledGraph := PhysicalResidualBridge.ScaledGraph
 
 /-- The actual cylindrical realization is linear in the three components. -/
-noncomputable def velocityMap (G : ScaledGraph) : Components →ₗ[ℝ] VelocityField where
+@[expose] noncomputable def velocityMap (G : ScaledGraph) : Components →ₗ[ℝ] VelocityField where
   toFun := PhysicalResidualTZ.velocityTZ G
   map_add' a b := by
     funext z
@@ -162,7 +162,7 @@ theorem cylindricalPressure_difference (G : ScaledGraph) (n : ℕ) (p₀ : Cylin
 end OneStep
 
 /-- A genuine local Cartesian realization using the frozen inverse polar chart. -/
-noncomputable def polarVelocityMap (a : ℝ) (j : PolarCharts.Index) :
+@[expose] noncomputable def polarVelocityMap (a : ℝ) (j : PolarCharts.Index) :
     VelocityField →ₗ[ℝ] VelocityField where
   toFun v z := CylindricalResidual.frame (PhysicalCurlCovariance.polarInput a j z).2
     (v (PhysicalCurlCovariance.polarCoordinates a j z))

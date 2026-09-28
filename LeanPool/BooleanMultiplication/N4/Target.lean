@@ -32,7 +32,7 @@ def targetANFLinear : TargetCoeff →ₗ[F₂] ANF 8 where
       smul_eq_mul]
 
 @[simp] theorem targetANFLinear_apply (c : TargetCoeff) :
-    targetANFLinear c = targetANF c := rfl
+    targetANFLinear c = targetANF c := by rfl
 
 /-- Seven quadratic monomials, one private to each coordinate of `Mul 4`. -/
 def fourTargetAnchor : Fin 7 → Monomial 8 :=

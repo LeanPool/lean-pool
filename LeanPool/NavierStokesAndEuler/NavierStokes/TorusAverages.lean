@@ -559,7 +559,7 @@ theorem compact_uniform_amplitudes (hK : IsCompact K)
 end Compact
 
 /-- The strict area inequalities define an open set of matrix-target pairs. -/
-def strictConeRegion : Set Datum := {z | StrictCone z.1 z.2}
+@[expose] def strictConeRegion : Set Datum := {z | StrictCone z.1 z.2}
 
 theorem isOpen_strictConeRegion : IsOpen strictConeRegion := by
   have hH : ∀ i j, Continuous (fun z : Datum => z.1 i j) := fun i j =>
@@ -1783,7 +1783,7 @@ theorem modelDirection_affine_drift (c₀ s₀ slope r v : ℝ) (i : Fin 2) :
   fun i => ci * ∫ v : ℝ, ψ v ^ 2 * x v * t v i
 
 /-- Normalized column, defined pointwise by `averagedDirection ψ x (fun v => t v i / x v)`. -/
-noncomputable def normalizedColumn (ψ x : ℝ → ℝ) (t : ℝ → Vec2) : Vec2 :=
+@[expose] noncomputable def normalizedColumn (ψ x : ℝ → ℝ) (t : ℝ → Vec2) : Vec2 :=
   fun i => averagedDirection ψ x (fun v => t v i / x v)
 
 namespace PulseBounds

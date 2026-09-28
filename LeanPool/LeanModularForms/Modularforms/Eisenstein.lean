@@ -116,14 +116,14 @@ noncomputable section
 
 /- φ₀, φ₋₂ and φ₋₄, except we can't use - signs in subscripts for definitions... -/
 /-- The auxiliary quotient `((E₂ E₄ - E₆) ^ 2) / Δ` on the upper half-plane. -/
-def φ₀ (z : ℍ) := (((E₂ z) * (E₄ z) - (E₆ z)) ^ 2) / (Δ z)
+@[expose] def φ₀ (z : ℍ) := (((E₂ z) * (E₄ z) - (E₆ z)) ^ 2) / (Δ z)
 /-- The auxiliary quotient `E₄ (E₂ E₄ - E₆) / Δ` on the upper half-plane. -/
-def φ₂' (z : ℍ) := (E₄ z) * ((E₂ z) * (E₄ z) - (E₆ z)) / (Δ z)
+@[expose] def φ₂' (z : ℍ) := (E₄ z) * ((E₂ z) * (E₄ z) - (E₆ z)) / (Δ z)
 /-- The auxiliary quotient `E₄ ^ 2 / Δ` on the upper half-plane. -/
-def φ₄' (z : ℍ) := ((E₄ z) ^ 2) / (Δ z)
+@[expose] def φ₄' (z : ℍ) := ((E₄ z) ^ 2) / (Δ z)
 /- We extend these definitions to ℂ for convenience. -/
 /-- The extension of `φ₀` to all of `ℂ`, set to `0` off the upper half-plane. -/
-def φ₀'' (z : ℂ) : ℂ := if hz : 0 < z.im then φ₀ ⟨z, hz⟩ else 0
+@[expose] def φ₀'' (z : ℂ) : ℂ := if hz : 0 < z.im then φ₀ ⟨z, hz⟩ else 0
 /-- The extension of `φ₂'` to all of `ℂ`, set to `0` off the upper half-plane. -/
 def φ₂'' (z : ℂ) : ℂ := if hz : 0 < z.im then φ₂' ⟨z, hz⟩ else 0
 /-- The extension of `φ₄'` to all of `ℂ`, set to `0` off the upper half-plane. -/
@@ -610,7 +610,7 @@ theorem E4E6_coeff_zero_eq_zero :
   simp
 
 /-- The discriminant cusp form built from `E₄` and `E₆` via `(E₄ ^ 3 - E₆ ^ 2) / 1728`. -/
-def DeltaE4E6Aux : CuspForm (CongruenceSubgroup.Gamma 1) 12 :=
+@[expose] def DeltaE4E6Aux : CuspForm (CongruenceSubgroup.Gamma 1) 12 :=
   let F := DirectSum.of _ 4 E₄
   let G := DirectSum.of _ 6 E₆
   cuspFormOfCoeffZero ((1 / 1728 : ℂ) • (F ^ 3 - G ^ 2) 12) E4E6_coeff_zero_eq_zero

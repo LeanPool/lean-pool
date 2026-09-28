@@ -31,7 +31,7 @@ def truncateIndex {q : ℕ} (w : SobolevWord q) : SobolevWord (q + 1) :=
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- Continuous truncation forgets the highest derivative level. -/
-def truncateOperator (q : ℕ) : SobolevSpace period (q + 1) →L[ℝ] SobolevSpace period q :=
+@[expose] def truncateOperator (q : ℕ) : SobolevSpace period (q + 1) →L[ℝ] SobolevSpace period q :=
   ((ContinuousLinearMap.pi (fun w : SobolevWord q =>
     ContinuousLinearMap.proj (truncateIndex w))).comp (arrayOperator period (q + 1))).codRestrict
     (sobolevSubspace period q).toSubmodule (by

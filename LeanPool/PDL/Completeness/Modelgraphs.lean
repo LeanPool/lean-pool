@@ -468,7 +468,7 @@ theorem Qsteps_append : Qsteps R (δ1 ++ δ2) v w ↔ ∃ u, Qsteps R δ1 v u �
     · aesop
 
 /-- Q_Fδ for a list of tests F and a list or programs δ. -/
-def Qcombo {W : Finset (Finset Formula)} (R : Nat → W → W → Prop)
+@[expose] def Qcombo {W : Finset (Finset Formula)} (R : Nat → W → W → Prop)
     (F : List Formula) (δ : List Program) : W → W → Prop
   := Relation.Comp (Qtests R F) (Qsteps R δ)
 

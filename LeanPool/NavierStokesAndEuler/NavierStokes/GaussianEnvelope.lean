@@ -363,7 +363,7 @@ theorem hasDerivAt_netGrowth (lam u s : ℝ) :
   lam * u / ((1 + u ^ 2) * Real.sqrt (1 + u ^ 2))
 
 /-- An upper bound on the magnitude of the rate derivative in the slot. -/
-noncomputable def referenceMaxSlope (lam u : ℝ) : ℝ :=
+@[expose] noncomputable def referenceMaxSlope (lam u : ℝ) : ℝ :=
   3 * lam * u / 2 + 3 * lam * u / ((1 + u ^ 2) * Real.sqrt (1 + u ^ 2))
 
 theorem referenceMinSlope_pos {lam u : ℝ} (hlam : 0 < lam) (hu : 0 < u) :

@@ -290,7 +290,7 @@ off the structure; it is decided by a case distinction, once, here. -/
 noncomputable def leftParam : ℝ := if R.drawing d.edge 0 = R.pos d.left then 0 else 1
 
 /-- The endpoint parameter at which the drawn subdivided edge sits at `R.pos d.right`. -/
-noncomputable def rightParam : ℝ := 1 - d.leftParam R
+@[expose] noncomputable def rightParam : ℝ := 1 - d.leftParam R
 
 theorem leftParam_eq_zero_or_one : d.leftParam R = 0 ∨ d.leftParam R = 1 := by
   unfold leftParam

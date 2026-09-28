@@ -137,7 +137,7 @@ theorem velocity_hasDerivWithinAt
     s.velocity s.velocity_ac s.velocity_derivative t
 
 /-- The physical derivative path is the actual continuous product-rule expression. -/
-def classicalPhysicalDerivative : C(Icc (0 : ℝ) T, L2) :=
+@[expose] def classicalPhysicalDerivative : C(Icc (0 : ℝ) T, L2) :=
   ⟨fun t => F₁ t (s.coordinateVelocityPath t : L2) +
       F t (s.classicalAcceleration c hc hLower fC t : L2),
     (F₁.continuous.clm_apply (solenoidalSpace.subtypeL.continuous.comp

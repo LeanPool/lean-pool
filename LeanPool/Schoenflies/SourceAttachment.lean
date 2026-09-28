@@ -608,7 +608,7 @@ noncomputable abbrev innerGraph : _root_.Graph Plane γ :=
   (Q.crosscutOverlay J p s epsilon extra).relabelEdges w.name w.name_inj
 
 /-- The mixed crosscut source graph. -/
-noncomputable def graph : _root_.Graph Plane γ := w.outerGraph.union w.innerGraph
+@[expose] noncomputable def graph : _root_.Graph Plane γ := w.outerGraph.union w.innerGraph
 
 /-- The mixed drawing keeps the wild outer parametrizations and uses straight segments on all
 fresh inner edges. -/

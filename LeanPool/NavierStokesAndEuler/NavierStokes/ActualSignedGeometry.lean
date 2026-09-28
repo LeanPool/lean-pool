@@ -2418,7 +2418,7 @@ end CutoffSupport
 
 /-- Swap parameter, bundling `toFun`, `invFun`, `left_inv`, `right_inv` and the required
 compatibility proofs. -/
-noncomputable def swapParameter : Slow ≃ₗᵢ[ℝ] Slow where
+@[expose] noncomputable def swapParameter : Slow ≃ₗᵢ[ℝ] Slow where
   toFun x := (x.1, (x.2.2, x.2.1))
   invFun x := (x.1, (x.2.2, x.2.1))
   left_inv _ := rfl

@@ -244,7 +244,7 @@ variable (S : CellStructure γ)
 def outerCells : Set γ := V(S.outerGraph) ∪ E(S.outerGraph)
 
 /-- The supercells of a cell: the index set of its closed star. -/
-def supercells (σ : γ) : Set γ := {τ | S.sub σ τ}
+@[expose] def supercells (σ : γ) : Set γ := {τ | S.sub σ τ}
 
 /-- A cell is incident with the outer cycle when some outer cell is a subcell of it. This is
 the middle, purely combinatorial condition of lem:outer-incidence. -/
@@ -302,13 +302,13 @@ instance finite_graph : (R.graph).Finite where
   finite_edgeSet := by rw [edgeSet_graph]; exact S.finite_edgeSet
 
 /-- The realized 1-skeleton `|Γ|`. -/
-def skeletonSet : Set Plane := pointSet R.graph R.drawing
+@[expose] def skeletonSet : Set Plane := pointSet R.graph R.drawing
 
 /-- The realized outer cycle: `C` in the source realization, `S` in the target one. -/
 def outerSet : Set Plane := pointSet (S.outerGraph.map R.pos) R.drawing
 
 /-- The **open nonboundary part** `|Γ| \ C` of def:admissible-graph. -/
-def nonboundary : Set Plane := R.skeletonSet \ R.outerSet
+@[expose] def nonboundary : Set Plane := R.skeletonSet \ R.outerSet
 
 /-- The closed star of a cell: the union of the closures of its supercells. The index set is
 abstract; only the summands are geometric. -/

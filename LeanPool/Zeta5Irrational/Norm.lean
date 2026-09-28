@@ -73,7 +73,7 @@ namespace Zeta5Irrational
     (kfSel (betaI n p (m := m)) (37 * n) (L0I n p) (kloI n p) (ktopI n p))
 
 /-- The side conditions of the inner bound. -/
-def InnerOK (n p : ℕ) : Prop :=
+@[expose] def InnerOK (n p : ℕ) : Prop :=
   ∃ _hm : 2 * (p / 2) + 1 = p,
     ∃ hm1 : 1 ≤ p / 2,
       5 ≤ p ∧
@@ -89,7 +89,7 @@ def InnerOK (n p : ℕ) : Prop :=
   if hm1 : 1 ≤ p / 2 then ∑ s, wcap hm1 (allocI n p (p / 2)) (Bse p (40 * n) (3 * n)) s else 0
 
 /-- The side conditions of the outer bound. -/
-def OuterOK (n p : ℕ) : Prop :=
+@[expose] def OuterOK (n p : ℕ) : Prop :=
   2 * (p / 2) + 1 = p ∧ 7 ≤ p ∧ 40 * n < 3 * p ∧ 2 * (40 * n) < p ^ 2 ∧ 3 * n < p
 
 /-- The outer weight sum minus the rank loss (for `m = p / 2`). -/

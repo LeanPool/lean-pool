@@ -814,7 +814,7 @@ theorem physical_before_Xi
       ShapeTransition.shapeField_before Xi_pos c.shapeTime_pos hp]
 
 /-- F, with branches according to `p.1 ≤ Xi`. -/
-noncomputable def f (p : Point) : ℝ :=
+@[expose] noncomputable def f (p : Point) : ℝ :=
   if p.1 ≤ Xi then c.seedF p else c.E p / Real.sqrt (2 * p.1)
 
 theorem f_before_Xi {p : Point} (hp : p.1 ≤ Xi) : c.f p = c.seedF p := ite_eq_left hp

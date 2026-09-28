@@ -290,9 +290,9 @@ theorem initialU_smooth (_hJ : IsOpen J) : ContDiffOn ℝ ∞ R.initialU J := by
     (contDiffAt_const.prodMk contDiffAt_id)).contDiffWithinAt
 
 /-- Big time, given by `Real.log (100 / R.radius0)`. -/
-noncomputable def bigTime : ℝ := Real.log (100 / R.radius0)
+@[expose] noncomputable def bigTime : ℝ := Real.log (100 / R.radius0)
 /-- Final time, given by `Real.log (110 / R.radius0)`. -/
-noncomputable def finalTime : ℝ := Real.log (110 / R.radius0)
+@[expose] noncomputable def finalTime : ℝ := Real.log (110 / R.radius0)
 
 /-- Log amplitude, given by `logField T κ R.bigTime w₁ w₂ R.initialLog R.angularStock`. -/
 noncomputable def logAmplitude (T κ w₁ w₂ : ℝ) : Field :=

@@ -64,7 +64,7 @@ theorem copy_unique {g : Geometry} {r L : ℝ} (hsep : Separated g r L)
 
 /-- The envelope of the grouped label on the common cover. The summands
 are nonzero only on their own native integration rectangles. -/
-noncomputable def copyEnvelope (g : Geometry) (r L : ℝ) (W : ℝ → ℝ) (Y : Plane) : ℝ := by
+@[expose] noncomputable def copyEnvelope (g : Geometry) (r L : ℝ) (W : ℝ → ℝ) (Y : Plane) : ℝ := by
   classical
   exact ∑' k : Frequency, if g.coordinates k Y ∈ rectangle r L then W (g.coordinates k Y).2 else 0
 

@@ -206,7 +206,7 @@ theorem mixedOperator_bound (B : SmoothCoefficientPath (Icc (0 : ℝ) T) (V →L
 variable (hT : 0 ≤ T) (B : C(Icc (0 : ℝ) T, Space →ᵇ V →L[ℝ] V))
 
 /-- The cylinder evolution is constructed from the genuine spatial fundamental fields. -/
-def constructedEvolution : Evolution T hT (liftedOperatorPath (V := V) period S hS T B) :=
+@[expose] def constructedEvolution : Evolution T hT (liftedOperatorPath (V := V) period S hS T B) :=
   liftEvolution (V := V) (liftMeasure period) (spatialSet period S) (spatialSet_measurable period S
       hS) T hT
     (fieldPathLift period B)

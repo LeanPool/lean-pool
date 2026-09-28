@@ -528,7 +528,7 @@ noncomputable def cutoff (n : ℕ) (x : Cylinder) : ℝ :=
   GaussianTailFlat.profile (B.coordinate n x).2
 
 /-- Coefficients, constructed using `SignedWaveUpdate.coefficients`. -/
-noncomputable def coefficients (request : ℕ → Cylinder → Vec2) (j : Fin 2) :
+@[expose] noncomputable def coefficients (request : ℕ → Cylinder → Vec2) (j : Fin 2) :
     LinearWaveBounds.WaveCoefficients Cylinder :=
   SignedWaveUpdate.coefficients B.base B.strip B.directions B.matrix B.target request B.mask
     (B.fundamental j) B.normalMotion B.action j

@@ -1290,7 +1290,7 @@ theorem residualBandPressure_rebase_at (D : ParticularWaveAssembly.AssemblyData 
   exact hf
 
 /-- The literal current-source common coefficient in the actual stage. -/
-noncomputable def actualCoefficients
+@[expose] noncomputable def actualCoefficients
     (x : CorrectionStep.CycleState (ActualParticularStageControls.Label B N0))
     (l : ActualParticularStageControls.Label B N0) (j : ℤ) : LinearWaveBounds.WaveCoefficients
         WaveSpace :=

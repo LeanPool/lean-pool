@@ -1030,9 +1030,9 @@ noncomputable def _root_.LieAlgebra.Dim3.Family.commutatorBasis (α β : K) (hα
     simp only [B, Matrix.range_cons, Matrix.range_empty,
       Set.union_empty, Set.union_singleton]
     exact Set.pair_comm e₃ e₂
-  let basis := Basis.span (B_is_li_ambient (α := α) (β := β))
-  rw [range_B, ← commutator_is_span_e₂e₃ hα] at basis
-  exact basis
+  exact (Basis.span (B_is_li_ambient (α := α) (β := β))).map
+    (LinearEquiv.ofEq _ (commutator K (Family K α β)).toSubmodule
+      (by rw [range_B, commutator_is_span_e₂e₃ hα]))
 
 theorem _root_.LieAlgebra.Dim3.Family.dim_commutator {hα : α ≠ 0} : finrank K (commutator K
     (Family K α β)) = 2 := by
@@ -1040,12 +1040,13 @@ theorem _root_.LieAlgebra.Dim3.Family.dim_commutator {hα : α ≠ 0} : finrank 
 
 theorem _root_.LieAlgebra.Dim3.Family.B_basis_0 {hα : α ≠ 0} : ((commutatorBasis α β hα) 0).val =
     (e₂ : Family K α β) := by
-  simp only [commutatorBasis, Basis.coe_span_apply, B, Matrix.cons_val_zero]
+  simp only [commutatorBasis, Basis.map_apply, LinearEquiv.coe_ofEq_apply,
+    Basis.coe_span_apply, B, Matrix.cons_val_zero]
 
 theorem _root_.LieAlgebra.Dim3.Family.B_basis_1 {hα : α ≠ 0} : ((commutatorBasis α β hα) 1).val =
     (e₃ : Family K α β) := by
-  simp only [commutatorBasis, Basis.coe_span_apply, B, Matrix.cons_val_one,
-    Matrix.cons_val_fin_one]
+  simp only [commutatorBasis, Basis.map_apply, LinearEquiv.coe_ofEq_apply,
+    Basis.coe_span_apply, B, Matrix.cons_val_one, Matrix.cons_val_fin_one]
 
 theorem _root_.LieAlgebra.Dim3.Family.B_basis_repr {hα : α ≠ 0} {x : commutator K
     (Family K α β)} : (commutatorBasis α β hα).repr x = ![x.val 1, x.val 2] := by

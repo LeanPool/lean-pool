@@ -122,8 +122,8 @@ StarAlgEquiv.ofAlgEquiv
     (AlgEquiv.piCongrRight (fun i => tensorToKronecker)))
   (fun x => by
     ext1 i
-    simp only [AlgEquiv.trans_apply, AlgEquiv.piCongrRight_apply,
-      directSumTensorAlgEquiv_apply, tensorToKronecker_apply]
+    simp only [AlgEquiv.trans_apply, Pi.star_apply,
+      AlgEquiv.piCongrRight_apply, directSumTensorAlgEquiv_apply]
     rw [TensorProduct.toKronecker_star]
     congr 1
     obtain ⟨S, rfl⟩ := TensorProduct.exists_finset x
@@ -1159,7 +1159,7 @@ theorem unitaryTensorEuclidean_apply {U : (i : ι) → Matrix.unitaryGroup (p i)
       ((WithLp.toLp 2 ((U i.1 : Matrix _ _ ℂ) *ᵥ x.ofLp)) ⊗ₜ
         WithLp.toLp 2 ((U i.2 : Matrix _ _ ℂ)ᴴᵀ *ᵥ y.ofLp)) := by
   rw [unitaryTensorEuclidean, LinearIsometryEquiv.trans_apply,
-    LinearIsometryEquiv.symm_apply_apply]
+    LinearIsometryEquiv.symm_apply_apply, LinearIsometryEquiv.trans_apply]
   simp only [LinearIsometryEquiv.TensorProduct.map_tmul,
     Matrix.UnitaryGroup.toEuclideanLinearIsometryEquiv_apply,
     Matrix.unitaryGroup.conj_coe, Matrix.conj_conjTranspose]

@@ -226,7 +226,7 @@ local instance instTransverseSourceCoefficientPath1 : NormedAddCommGroup (Space 
 local instance instTransverseSourceCoefficientPath2 : NormedSpace ℝ (Space →ᵇ V) := inferInstance
 
 /-- Actual spatial evaluation, performed uniformly along the time path. -/
-def pathEvaluation (x : Space) : C(K,Space →ᵇ V) →L[ℝ] C(K,V) :=
+@[expose] def pathEvaluation (x : Space) : C(K,Space →ᵇ V) →L[ℝ] C(K,V) :=
   (BoundedContinuousFunction.evalCLM ℝ x).compLeftContinuous ℝ K
 
 /-- Evaluation is a contraction in the genuine uniform path norm. -/
@@ -341,7 +341,7 @@ theorem referenceEmbedding_norm : ‖referenceEmbedding m₀ Rperp‖ ≤ 1 := b
   rw [one_mul, Rperp.norm_map]
 
 /-- Restrict an actual coefficient operator to the reference plane. -/
-def referenceRestriction : (Space →L[ℝ] Space) →L[ℝ] (U →L[ℝ] Space) :=
+@[expose] def referenceRestriction : (Space →L[ℝ] Space) →L[ℝ] (U →L[ℝ] Space) :=
   (compL ℝ U Space Space).flip (referenceEmbedding m₀ Rperp)
 
 /-- The time-path reference restriction is a genuine bounded linear map. -/

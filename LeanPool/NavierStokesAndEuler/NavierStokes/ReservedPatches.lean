@@ -448,7 +448,7 @@ theorem heat_increment_tsupport (F : Profile) (XR : ℝ) (hXR : 0 < XR)
 /-! ## Conversion to the similarity radius R, where X = R squared / 2 -/
 
 /-- Radial left, given by `Real.sqrt (2 * left F XR s)`. -/
-noncomputable def radialLeft (F : Profile) (XR : ℝ) (s : Slot) : ℝ :=
+@[expose] noncomputable def radialLeft (F : Profile) (XR : ℝ) (s : Slot) : ℝ :=
   Real.sqrt (2 * left F XR s)
 
 /-- Radial right, given by `Real.sqrt (2 * right F XR s)`. -/

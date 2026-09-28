@@ -156,7 +156,7 @@ theorem heatList_one_derivative (directions : List LiftTangent) (a : LiftTangent
 @[expose] def cylinderDirections : List LiftTangent := List.ofFn standardDirection
 
 /-- The actual cylinder heat semigroup, parameterized by Gaussian variance. -/
-def cylinderHeat (v : ℝ≥0) : LiftL2 period →L[ℝ] LiftL2 period :=
+@[expose] def cylinderHeat (v : ℝ≥0) : LiftL2 period →L[ℝ] LiftL2 period :=
   heatListOperator period cylinderDirections v
 
 @[simp] theorem cylinderHeat_apply (v : ℝ≥0) (f : LiftL2 period) :

@@ -50,7 +50,7 @@ def initialCoordinateField (u : TimeLp T E) : TimeLp T U :=
   timeMultiplier T hT (frameLeftInversePath T Q c hc hQ) (initialPrimitiveTimeLp T hT u)
 
 /-- Initial coordinate derivative, constructed using `fieldProductDerivative`. -/
-def initialCoordinateDerivative (u : TimeLp T E) : TimeLp T U :=
+@[expose] def initialCoordinateDerivative (u : TimeLp T E) : TimeLp T U :=
   fieldProductDerivative T hT (frameLeftInversePath T Q c hc hQ)
     (frameLeftInverseDerivativePath T Q Q₁ c hc hQ) (initialPrimitiveTimeLp T hT u) u
 

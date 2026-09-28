@@ -159,7 +159,7 @@ theorem fixedMeanOperator_coercive (v : TimeLp T solenoidalSpace) :
       hp.trans_eq (fixedMeanOperator_inner T hT F F₁ H M0 A L v v).symm
 
 /-- The actual fixed-space inverse operator. -/
-def fixedMeanInverse : TimeLp T solenoidalSpace →L[ℝ] TimeLp T solenoidalSpace :=
+@[expose] def fixedMeanInverse : TimeLp T solenoidalSpace →L[ℝ] TimeLp T solenoidalSpace :=
   coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) (fixedMeanCoercivity T F F₁ FInv)
     (fixedMeanCoercivity_pos T hT F F₁ FInv)
     (fixedMeanOperator_coercive T hT F F₁ H M0 A L FInv hInv hF K B hK hB hFInv₀ hH hboundary

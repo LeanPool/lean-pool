@@ -207,7 +207,8 @@ section Delete
 variable {m : ℕ}
 
 /-- An index of the shortened list, read in the original one: the same numeral. -/
-def emb (j : ZMod (m + 3)) : ZMod (m + 1 + 3) := ((j.val : ℕ) : ZMod (m + 1 + 3))
+@[expose] def emb (j : ZMod (m + 3)) : ZMod (m + 1 + 3) :=
+  ((j.val : ℕ) : ZMod (m + 1 + 3))
 
 theorem neg_one_eq_cast : (-1 : ZMod (m + 1 + 3)) = ((m + 3 : ℕ) : ZMod (m + 1 + 3)) := by
   have h0 : ((m + 1 + 3 : ℕ) : ZMod (m + 1 + 3)) = 0 := ZMod.natCast_self _
@@ -736,7 +737,7 @@ noncomputable def par (T : Finset ℝ) (hcard : T.card = n) (i : Fin n) : ℝ :=
   T.orderEmbOfFin hcard i
 
 /-- The right end of the `i`-th gap: the next parameter, or `1` for the last gap. -/
-noncomputable def parNext (T : Finset ℝ) (hcard : T.card = n) (i : Fin n) : ℝ :=
+@[expose] noncomputable def parNext (T : Finset ℝ) (hcard : T.card = n) (i : Fin n) : ℝ :=
   if h : (i : ℕ) + 1 < n then T.orderEmbOfFin hcard ⟨(i : ℕ) + 1, h⟩ else 1
 
 theorem par_mem (i : Fin n) : par T hcard i ∈ T := T.orderEmbOfFin_mem hcard i

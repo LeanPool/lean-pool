@@ -381,7 +381,7 @@ def earGraph (d : S.SplitData) (earPos : γ → Plane) : Graph Plane γ := d.ear
     E(d.earGraph earPos) = E(d.ear) := Graph.edgeSet_map _ _
 
 /-- The point set the drawn ear occupies: the crosscut `P` of `thm:general-crosscut`. -/
-def earSet (d : S.SplitData) (earPos : γ → Plane) (earDraw : γ → ℝ → Plane) : Set Plane :=
+@[expose] def earSet (d : S.SplitData) (earPos : γ → Plane) (earDraw : γ → ℝ → Plane) : Set Plane :=
   Graph.pointSet (d.earGraph earPos) earDraw
 
 /-- **The geometric input of one 2-cell split.** A position for each vertex of the abstract

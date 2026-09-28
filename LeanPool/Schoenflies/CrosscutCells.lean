@@ -200,7 +200,7 @@ are *the* two regions". Both are stated without a separation hypothesis; the fac
 them useful carry one. -/
 
 /-- `Ω` is a region of the complement of `C`. -/
-def IsRegionOf (C Ω : Set Plane) : Prop := Ω = inside C ∨ Ω = outside C
+@[expose] def IsRegionOf (C Ω : Set Plane) : Prop := Ω = inside C ∨ Ω = outside C
 
 /-- `Ω` and `Ω'` are the two regions of the complement of `C`, in one order or the other. -/
 @[expose] def IsRegionPair (C Ω Ω' : Set Plane) : Prop :=

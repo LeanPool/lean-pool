@@ -93,15 +93,15 @@ noncomputable def copySource {P : Type} (f : P × Plane → Space)
 
 @[simp] theorem copyFrame_normal {P : Type} (d : PrimaryODE.FrameData (P × ℝ))
     (g : CommonCoverSolve.Geometry) (k : Frequency) (z : (P × Plane) × ℝ) :
-    (copyFrame d g k).normal z = d.normal (copyParameter g k z.1, z.2) := rfl
+    (copyFrame d g k).normal z = d.normal (copyParameter g k z.1, z.2) := by rfl
 
 @[simp] theorem copyFrame_normalMotion {P : Type} (d : PrimaryODE.FrameData (P × ℝ))
     (g : CommonCoverSolve.Geometry) (k : Frequency) (z : (P × Plane) × ℝ) :
-    (copyFrame d g k).normalMotion z = d.normalMotion (copyParameter g k z.1, z.2) := rfl
+    (copyFrame d g k).normalMotion z = d.normalMotion (copyParameter g k z.1, z.2) := by rfl
 
 @[simp] theorem copyFrame_ambient {P : Type} (d : PrimaryODE.FrameData (P × ℝ))
     (g : CommonCoverSolve.Geometry) (k : Frequency) (z : (P × Plane) × ℝ) (w : State) :
-    (copyFrame d g k).ambient z w = d.ambient (copyParameter g k z.1, z.2) w := rfl
+    (copyFrame d g k).ambient z w = d.ambient (copyParameter g k z.1, z.2) w := by rfl
 
 theorem ambient_zero {P : Type} (d : PrimaryODE.FrameData P) (z : P × ℝ) :
     d.ambient z 0 = 0 := by
@@ -118,7 +118,7 @@ noncomputable def baseOperator (F : ℝ) (g : State) : Space →L[ℝ] Space :=
         ((2 * F) • MovingFrameODE.unitTheta + g)))
 
 @[simp] theorem baseOperator_apply (F : ℝ) (g : State) (x : Space) :
-    baseOperator F g x = MovingFrameODE.baseAction F g x := rfl
+    baseOperator F g x = MovingFrameODE.baseAction F g x := by rfl
 
 /-- Native point, given by `((z.1, z.2.1), z.2.2)`. -/
 @[expose] noncomputable def nativePoint {P : Type} (z : P × Plane) : (P × ℝ) × ℝ :=
@@ -391,7 +391,7 @@ noncomputable def baseOperatorFamily : (ℝ × State) →L[ℝ] (Space →L[ℝ]
         ring }
 
 @[simp] theorem baseOperatorFamily_apply (z : ℝ × State) :
-    baseOperatorFamily z = baseOperator z.1 z.2 := rfl
+    baseOperatorFamily z = baseOperator z.1 z.2 := by rfl
 
 theorem projectedOperator_continuousOn {X H : Type*} [TopologicalSpace X]
     [NormedAddCommGroup H] [InnerProductSpace ℝ H]
@@ -1587,7 +1587,7 @@ noncomputable def frameForcingLinear (d : FrameData Q) (z : Q × ℝ) : PrimaryO
 omit [NormedAddCommGroup Q] [NormedSpace ℝ Q] in
 @[simp] theorem frameForcingLinear_apply (d : FrameData Q) (f : Q × ℝ → PrimaryODE.Space) (z : Q ×
     ℝ) :
-    frameForcingLinear d z (f z) = d.forcing f z := rfl
+    frameForcingLinear d z (f z) = d.forcing f z := by rfl
 
 omit [NormedAddCommGroup Q] [NormedSpace ℝ Q] in
 theorem forcing_eq_columns (d : FrameData Q) (f : Q × ℝ → PrimaryODE.Space) (z : Q × ℝ) :
@@ -2194,7 +2194,7 @@ noncomputable def complexScale (c : ℂ) : ComplexVector →L[ℝ] ComplexVector
   ContinuousLinearMap.pi fun i => ((ContinuousLinearMap.mul ℝ ℂ) c).comp (ContinuousLinearMap.proj
       i)
 
-@[simp] theorem complexScale_apply (c : ℂ) (a : ComplexVector) : complexScale c a = c • a := rfl
+@[simp] theorem complexScale_apply (c : ℂ) (a : ComplexVector) : complexScale c a = c • a := by rfl
 
 theorem complex_parts (a : ComplexVector) :
     CurlClassBounds.complexify (realPart a) + Complex.I • CurlClassBounds.complexify (imagPart a) =

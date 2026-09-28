@@ -67,7 +67,7 @@ local instance instSmoothTimeField8 (n : ℕ) : NormedSpace ℝ (E →ᵇ (E [×
 
 /-- Derivative field, given by `mapPath (continuousMultilinearCurryFin1 ℝ E
 V).toContinuousLinearEquiv.toContinuousLinearMap (A.jet 1)`. -/
-def derivativeField (A : SmoothTimeField K E V) : C(K,E →ᵇ (E →L[ℝ] V)) :=
+@[expose] def derivativeField (A : SmoothTimeField K E V) : C(K,E →ᵇ (E →L[ℝ] V)) :=
   mapPath (continuousMultilinearCurryFin1 ℝ E V).toContinuousLinearEquiv.toContinuousLinearMap
     (A.jet 1)
 
@@ -95,7 +95,7 @@ theorem derivativeJet_eq (A : SmoothTimeField K E V) (n : ℕ) (t : K) (x : E) :
 
 /-- Derivative, bundling `field`, `smooth`, `have`, `exact` and the required compatibility
 proofs. -/
-def derivative (A : SmoothTimeField K E V) : SmoothTimeField K E (E →L[ℝ] V) where
+@[expose] def derivative (A : SmoothTimeField K E V) : SmoothTimeField K E (E →L[ℝ] V) where
   field := A.derivativeField
   smooth t := by
     have he : (A.derivativeField t : E → E →L[ℝ] V) = fderiv ℝ (A.field t : E → V) :=

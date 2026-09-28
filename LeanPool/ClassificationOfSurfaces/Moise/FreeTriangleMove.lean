@@ -23,7 +23,7 @@ namespace ClassificationOfSurfaces
 namespace Moise
 
 /-- An affine equivalence of the plane, regarded as a homeomorphism. -/
-noncomputable def affineEquivHomeomorph (e : Plane ≃ᵃ[ℝ] Plane) : Plane ≃ₜ Plane where
+@[expose] noncomputable def affineEquivHomeomorph (e : Plane ≃ᵃ[ℝ] Plane) : Plane ≃ₜ Plane where
   toEquiv := e.toEquiv
   continuous_toFun := e.toAffineMap.continuous_of_finiteDimensional
   continuous_invFun := e.symm.toAffineMap.continuous_of_finiteDimensional
@@ -39,13 +39,13 @@ theorem affineEquivHomeomorph_image_segment (e : Plane ≃ᵃ[ℝ] Plane) (a b :
   exact image_segment ℝ e.toAffineMap a b
 
 /-- Conjugate the normalized kite move by an affine coordinate system. -/
-noncomputable def transportedThinKiteHomeomorph (e : Plane ≃ᵃ[ℝ] Plane)
+@[expose] noncomputable def transportedThinKiteHomeomorph (e : Plane ≃ᵃ[ℝ] Plane)
     (δ : ℝ) (hδ : 0 < δ) : Plane ≃ₜ Plane :=
   (affineEquivHomeomorph e).symm.trans
     ((thinKiteAmbientHomeomorph δ hδ).trans (affineEquivHomeomorph e))
 
 /-- The `transportedThinKitePatch` declaration. -/
-def transportedThinKitePatch (e : Plane ≃ᵃ[ℝ] Plane) (δ : ℝ) : Set Plane :=
+@[expose] def transportedThinKitePatch (e : Plane ≃ᵃ[ℝ] Plane) (δ : ℝ) : Set Plane :=
   e '' thinKitePatch δ
 
 theorem transportedThinKiteHomeomorph_eqOn_compl (e : Plane ≃ᵃ[ℝ] Plane)

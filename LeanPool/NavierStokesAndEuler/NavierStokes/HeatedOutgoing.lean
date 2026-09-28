@@ -94,9 +94,10 @@ theorem integrable_dilate_Ioi_iff (f : ℝ → ℝ) (R X : ℝ) (hR : 0 < R) :
 /-- Power E, given by `F.powerE (X / XR)`. -/
 def powerE (F : Profile) (XR X : ℝ) : ℝ := F.powerE (X / XR)
 /-- Power H, given by `Real.sqrt (2 * X) * powerE F XR X`. -/
-def powerH (F : Profile) (XR X : ℝ) : ℝ := Real.sqrt (2 * X) * powerE F XR X
+@[expose] def powerH (F : Profile) (XR X : ℝ) : ℝ := Real.sqrt (2 * X) * powerE F XR X
 
 /-- Energy density, given by `U F XR (X, eta) ^ 2 - E F XR (X, eta) ^ 2 / 2`. -/
+@[expose]
 def energyDensity (F : Profile) (XR eta X : ℝ) : ℝ := U F XR (X, eta) ^ 2 - E F XR (X, eta) ^ 2 / 2
 /-- Canonical kernel, given by `E F XR (X, eta) ^ 2 / X`. -/
 @[expose] def canonicalKernel (F : Profile) (XR eta X : ℝ) : ℝ := E F XR (X, eta) ^ 2 / X
@@ -113,6 +114,7 @@ def S (F : Profile) (XR eta X : ℝ) : ℝ := ∫ u in Ioc 0 X, energyDensity F 
 /-- Total S, given by `∫ u in Ioi 0, energyDensity F XR eta u`. -/
 @[expose] def totalS (F : Profile) (XR eta : ℝ) : ℝ := ∫ u in Ioi 0, energyDensity F XR eta u
 /-- Renormalized I, given by `∫ u in Ioi 0, H F XR (u, eta) - powerH F XR u`. -/
+@[expose]
 def renormalizedI (F : Profile) (XR eta : ℝ) : ℝ := ∫ u in Ioi 0, H F XR (u, eta) - powerH F XR u
 /-- Axis datum, given by `-(1 / 2 : ℝ) * ∫ u in Ioi 0, canonicalKernel F XR eta u`. -/
 @[expose]
@@ -340,7 +342,7 @@ theorem Pi_tendsto_axis (F : Profile) (XR eta : ℝ) (hXR : 0 < XR) :
     exact div_pos hX hXR
 
 /-- Clock, given by `Real.log (X / XR)`. -/
-def clock (XR X : ℝ) : ℝ := Real.log (X / XR)
+@[expose] def clock (XR X : ℝ) : ℝ := Real.log (X / XR)
 /-- Radius, given by `XR * Real.exp y`. -/
 @[expose] def radius (XR y : ℝ) : ℝ := XR * Real.exp y
 
@@ -477,7 +479,7 @@ def shapedPatchAmplitude (F : Profile) (eta : ℝ) : ℝ := patchAmplitude F * O
 
 /-- In the coordinate `x = X / patchRadius`, the second reserved patch is
 the fixed interval `(1, exp 5)`. -/
-def compensationPatch : TerminalCompensation.Patch where
+@[expose] def compensationPatch : TerminalCompensation.Patch where
   left := 1
   right := Real.exp 5
   left_pos := by norm_num
@@ -763,7 +765,7 @@ compensationPatch (c p.2) (p.1 / patchRadius F XR)`. -/
     (p.1 / patchRadius F XR)
 
 /-- E, given by `heatE F XR p + patchIncrement F XR c p`. -/
-noncomputable def E (F : Profile) (XR : ℝ) (c : ℝ → Coeff) (p : ℝ × ℝ) : ℝ :=
+@[expose] noncomputable def E (F : Profile) (XR : ℝ) (c : ℝ → Coeff) (p : ℝ × ℝ) : ℝ :=
   heatE F XR p + patchIncrement F XR c p
 
 /-- U, given by `OutgoingDilation.U F XR`. -/
@@ -1348,7 +1350,7 @@ end CompensationWitness
 coefficients, then composing with the constructed relative smooth branch. -/
 
 /-- Free log E, constructed using `extendedHeatE`. -/
-noncomputable def freeLogE (F : Profile) (XR : ℝ) (z : (Coeff × ℝ) × ℝ) : ℝ :=
+@[expose] noncomputable def freeLogE (F : Profile) (XR : ℝ) (z : (Coeff × ℝ) × ℝ) : ℝ :=
   extendedHeatE F XR (Real.exp z.2, z.1.2) + shapedPatchAmplitude F z.1.2 *
     TerminalCompensation.correction compensationPatch z.1.1 (Real.exp z.2 / patchRadius F XR)
 

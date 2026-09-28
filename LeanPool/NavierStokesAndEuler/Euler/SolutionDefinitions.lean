@@ -100,7 +100,7 @@ open scoped ENNReal Topology
 /-- The L² equivalence class of a square-integrable function. The fallback makes
 this a total function; the solution conditions require square integrability
 wherever it is used. -/
-noncomputable def toL2 {V : Type*} [NormedAddCommGroup V] (f : ℝ³ → V) :
+@[expose] noncomputable def toL2 {V : Type*} [NormedAddCommGroup V] (f : ℝ³ → V) :
     Lp V 2 (volume : Measure ℝ³) := by
   classical
   exact if h : MemLp f 2 volume then h.toLp f else 0

@@ -27,7 +27,8 @@ def restrictIndex {p q : ℕ} (h : q ≤ p) (w : SobolevWord q) : SobolevWord p 
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- Restriction is a bounded linear map between the actual complete Sobolev spaces. -/
-def restrictOperator {p q : ℕ} (h : q ≤ p) : SobolevSpace period p →L[ℝ] SobolevSpace period q :=
+@[expose] def restrictOperator {p q : ℕ} (h : q ≤ p) :
+    SobolevSpace period p →L[ℝ] SobolevSpace period q :=
   ((ContinuousLinearMap.pi (fun w : SobolevWord q =>
     ContinuousLinearMap.proj (restrictIndex h w))).comp (arrayOperator period p)).codRestrict
     (sobolevSubspace period q).toSubmodule (by

@@ -1186,7 +1186,7 @@ structure MeanInput (h degree : ℝ) where
 
 /-- Package the existing moving-field and native-class theorems without
 changing the supplied coherent physical field. -/
-noncomputable def MeanInput.ofMoving {h degree a b α : ℝ} {N Δ : ℕ}
+@[expose] noncomputable def MeanInput.ofMoving {h degree a b α : ℝ} {N Δ : ℕ}
     (R : LocalSignedRequest.SlowRegion (2 * h)) (hR : R.carrier = region h)
     (M : PhysicalMeanJetBounds.CoherentFamily h degree N Δ (region h) ℝ)
     (hN : 4 ≤ N) (ha : 0 < a) (hab : a < b)

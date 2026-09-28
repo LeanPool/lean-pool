@@ -37,10 +37,10 @@ noncomputable def pulseVector (P : Pulse) (r : ℝ) (z : Plane) : Vector :=
   Fin.cases (P.radialProfile r z) (fun i => P.tangentProfile r i z)
 
 @[simp] theorem pulseVector_zero (P : Pulse) (r : ℝ) (z : Plane) :
-    pulseVector P r z 0 = P.radialProfile r z := rfl
+    pulseVector P r z 0 = P.radialProfile r z := by rfl
 
 @[simp] theorem pulseVector_succ (P : Pulse) (r : ℝ) (z : Plane) (i : Fin 2) :
-    pulseVector P r z i.succ = P.tangentProfile r i z := rfl
+    pulseVector P r z i.succ = P.tangentProfile r i z := by rfl
 
 private theorem compact_vector {f : Plane → Vector}
     (hf : ∀ i, HasCompactSupport (fun z => f z i)) : HasCompactSupport f := by
@@ -64,11 +64,11 @@ noncomputable def nativeVector {U : UnsignedLabel} (P : PairData sys U)
 
 @[simp] theorem nativeVector_zero {U : UnsignedLabel} (P : PairData sys U)
     (hdet : vr.1 * vt.2 - vr.2 * vt.1 ≠ 0) (j : Fin 2) (Y : Plane) :
-    nativeVector P hdet j Y 0 = P.rawRadial hdet j Y := rfl
+    nativeVector P hdet j Y 0 = P.rawRadial hdet j Y := by rfl
 
 @[simp] theorem nativeVector_succ {U : UnsignedLabel} (P : PairData sys U)
     (hdet : vr.1 * vt.2 - vr.2 * vt.1 ≠ 0) (j : Fin 2) (Y : Plane) (i : Fin 2) :
-    nativeVector P hdet j Y i.succ = P.rawTangent hdet j i Y := rfl
+    nativeVector P hdet j Y i.succ = P.rawTangent hdet j i Y := by rfl
 
 theorem nativeVector_compact {U : UnsignedLabel} (P : PairData sys U)
     (hdet : vr.1 * vt.2 - vr.2 * vt.1 ≠ 0) (j : Fin 2) :
@@ -909,8 +909,10 @@ theorem principal_torus_average {N : ℕ} (hN : 1 ≤ N)
     intro Y k
     exact congrArg Complex.ofReal (hp Y k)
   let g := SmoothFourierData.descendContinuous (fun Y => (f Y : ℂ)) hcc hpc
-  refine ⟨g, fun _ => rfl, ?_⟩
-  rw [← TorusAverages.squareAverage_torusLift g]
+  have hg : SmoothFourierData.torusLift g = fun Y => (f Y : ℂ) :=
+    SmoothFourierData.torusLift_descendContinuous _ hcc hpc
+  refine ⟨g, fun Y => congrFun hg Y, ?_⟩
+  rw [← TorusAverages.squareAverage_torusLift g, hg]
   change TorusAverages.squareAverage (fun Y => (f Y : ℂ)) =
     ((TorusAverages.squareAverage f : ℝ) : ℂ)
   simp only [TorusAverages.squareAverage, ← intervalIntegral.integral_ofReal]

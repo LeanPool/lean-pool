@@ -41,11 +41,11 @@ structure Patch where
   ordered : left < right
 
 /-- Lower, given by `P.left + (2 * (j.val : ℝ) + 1) * (P.right - P.left) / 7`. -/
-noncomputable def lower (P : Patch) (j : Fin 3) : ℝ :=
+@[expose] noncomputable def lower (P : Patch) (j : Fin 3) : ℝ :=
   P.left + (2 * (j.val : ℝ) + 1) * (P.right - P.left) / 7
 
 /-- Upper, given by `P.left + (2 * (j.val : ℝ) + 2) * (P.right - P.left) / 7`. -/
-noncomputable def upper (P : Patch) (j : Fin 3) : ℝ :=
+@[expose] noncomputable def upper (P : Patch) (j : Fin 3) : ℝ :=
   P.left + (2 * (j.val : ℝ) + 2) * (P.right - P.left) / 7
 
 theorem lower_gt_left (P : Patch) (j : Fin 3) : P.left < lower P j := by

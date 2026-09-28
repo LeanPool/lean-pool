@@ -223,7 +223,7 @@ noncomputable def coupling (F : ℝ) (g : Plane) : ℝ := 2 * F * normalDirectio
 noncomputable def lambda0 (F : ℝ) (g : Plane) : ℝ :=
   Real.sqrt (-(coupling F g) * (coupling F g + ‖g‖))
 /-- C0, given by `lambda0 F g / coupling F g`. -/
-noncomputable def c0 (F : ℝ) (g : Plane) : ℝ := lambda0 F g / coupling F g
+@[expose] noncomputable def c0 (F : ℝ) (g : Plane) : ℝ := lambda0 F g / coupling F g
 
 /-- Primitive strict shear conditions. The last inequality is the positive
 opening of the unstable two-dimensional reference system. -/
@@ -589,7 +589,7 @@ theorem physicalMask_has_representative {h a b : ℝ} (L : Label) (hL : 1 ≤ L.
 /-! ## One target-direction parameter, with uniform mixed-point slack -/
 
 /-- Target ratio, given by `|c0 F g * ⟪T, transverseDirection g⟫_ℝ / ⟪T, normalDirection g⟫_ℝ|`. -/
-noncomputable def targetRatio (F : ℝ) (g T : Plane) : ℝ :=
+@[expose] noncomputable def targetRatio (F : ℝ) (g T : Plane) : ℝ :=
   |c0 F g * ⟪T, transverseDirection g⟫_ℝ / ⟪T, normalDirection g⟫_ℝ|
 
 /-- `T` is a continuous target direction, including at zero-amplitude edges. -/

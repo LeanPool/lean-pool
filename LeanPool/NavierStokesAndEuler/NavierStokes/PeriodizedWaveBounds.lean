@@ -88,7 +88,7 @@ theorem memClass_of_local_germs {s : StripData D} {w : ℕ → D → ℝ} {α : 
 
 /-- The actual locally finite copy sum.  Local finiteness is proved from
 support cells below; it is not encoded by replacing the sum with a selector. -/
-noncomputable def copySum (f : I → D → E) (x : D) : E := ∑' i, f i x
+@[expose] noncomputable def copySum (f : I → D → E) (x : D) : E := ∑' i, f i x
 
 omit [NormedSpace ℝ D] [NormedSpace ℝ E] in
 theorem zero_germ_of_support {K : Set D} (hK : IsClosed K) {f : D → E}

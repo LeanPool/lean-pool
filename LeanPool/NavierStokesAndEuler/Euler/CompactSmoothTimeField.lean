@@ -113,7 +113,7 @@ local instance instCompactSmoothTimeField4 (n : ℕ) : NormedSpace ℝ (E →ᵇ
 
 /-- Continuous spatial jets with one common compact support yield a bounded
 smooth coefficient path. The support condition on derivatives is derived. -/
-def ofCompactSupportJets (u : A × E → V) (hu : Continuous u)
+@[expose] def ofCompactSupportJets (u : A × E → V) (hu : Continuous u)
     (hsmooth : ∀ t, ContDiff ℝ ∞ (fun x => u (t, x)))
     (hjet : ∀ n : ℕ, Continuous
       (fun z : A × E => iteratedFDeriv ℝ n (fun x => u (z.1, x)) z.2))
@@ -143,7 +143,7 @@ variable {P E V : Type} [NormedAddCommGroup P] [NormedSpace ℝ P]
 
 /-- A jointly smooth family on a compact parameter set with common compact
 spatial support has all spatial jets continuous in the uniform norm. -/
-def ofContDiffOnCompactSupport (s : Set P) [CompactSpace s]
+@[expose] def ofContDiffOnCompactSupport (s : Set P) [CompactSpace s]
     (u : P × E → V) (hu : ContDiffOn ℝ ∞ u (s ×ˢ univ))
     (K : Set E) (hK : IsCompact K)
     (hsupp : ∀ t ∈ s, tsupport (fun x => u (t, x)) ⊆ K) :

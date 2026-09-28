@@ -74,7 +74,7 @@ abbrev Idx (h : ℕ) :=
   Fin h ⊕ Fin 16
 
 /-- The weights. -/
-noncomputable def atomS (h : ℕ) (K : ℝ) : Idx h → ℝ
+@[expose] noncomputable def atomS (h : ℕ) (K : ℝ) : Idx h → ℝ
   | Sum.inl _ => 1 / K
   | Sum.inr j => -cρ (j + 1)
 

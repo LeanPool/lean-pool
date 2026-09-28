@@ -29,7 +29,7 @@ open NavierStokes.TerminalCompensation
 namespace NavierStokes.ParametricTerminalCompensation
 
 /-- First jet within bound as an element of `Prop`. -/
-noncomputable def FirstJetWithinBound (P : Patch) (a : ℝ → ℝ) (c : ℝ → Coeff)
+@[expose] noncomputable def FirstJetWithinBound (P : Patch) (a : ℝ → ℝ) (c : ℝ → Coeff)
     (S : Set ℝ) (η L : ℝ) : Prop :=
   ∀ x : ℝ, |a η * correction P (c η) x| ≤ L ∧
     |a η * deriv (correction P (c η)) x| ≤ L ∧

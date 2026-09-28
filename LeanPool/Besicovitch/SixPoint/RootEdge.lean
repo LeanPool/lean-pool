@@ -1068,7 +1068,7 @@ theorem rootEdge_internal_expanded_lt {E : Type*} [NormedAddCommGroup E]
   L - 1 + B₁₁ + (b₁ + M - b₂) / 2 - c * (L + (b₁ + b₂ + M) / 2)
 
 /-- Internal failure slack for the red root--second-child edge. -/
-def redRootEdgeInternalSlack (c M r₂ b₁ b₂ : ℝ) : ℝ :=
+@[expose] def redRootEdgeInternalSlack (c M r₂ b₁ b₂ : ℝ) : ℝ :=
   2 * M - c * (r₂ + (b₁ + b₂ + M) / 2)
 
 /-- Failure slack for the blue coincident endpoint on the first matching edge. -/
@@ -1076,7 +1076,7 @@ def redRootEdgeInternalSlack (c M r₂ b₁ b₂ : ℝ) : ℝ :=
   M - 1 + B₁₁ + (r₁ + L - r₂) / 2 - c * (M + (r₁ + r₂ + L) / 2)
 
 /-- Internal failure slack for the blue root--second-child edge. -/
-def blueRootEdgeInternalSlack (c L b₂ r₁ r₂ : ℝ) : ℝ :=
+@[expose] def blueRootEdgeInternalSlack (c L b₂ r₁ r₂ : ℝ) : ℝ :=
   2 * L - c * (b₂ + (r₁ + r₂ + L) / 2)
 
 /-- The internal root-edge slack has a strictly negative positive separator. -/

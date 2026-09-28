@@ -90,12 +90,6 @@ theorem sobolevPrimitive_eq_integral {q : ℕ} (u : SobolevSpace P q) :
   rw [map_smul, ← (valueOperator P q).intervalIntegral_comp_comm
     ((sobolevKernel_continuous P u).intervalIntegrable 0 P)]
   rw [primitive_eq_integral]
-  congr 1
-  apply intervalIntegral.integral_congr
-  intro s _
-  change s • translation P (angleShift P s) (value P u) =
-    s • value P (sobolevTranslation P q (angleShift P s) u)
-  rw [value_sobolevTranslation]
 
 theorem pointEvaluation_translation (u : SobolevSpace P 3) (a x : LiftDomain P) :
     pointEvaluation P x (sobolevTranslation P 3 a u) = representative P u (x+a) := by

@@ -317,7 +317,7 @@ local instance instLpCylinderRectangular22 : NormedSpace ℝ (C(K,CylinderL2 per
     inferInstance
 
 /-- Actual multiplication on cylinder L² by an angle-independent field. -/
-def fullOperatorMap : (Space →ᵇ E →L[ℝ] F) →L[ℝ]
+@[expose] def fullOperatorMap : (Space →ᵇ E →L[ℝ] F) →L[ℝ]
     (CylinderL2 period E →L[ℝ] CylinderL2 period F) :=
   (EulerLpOperatorField.fullMap (E := E) (F := F) (liftMeasure period)).comp (fieldLift period)
 
@@ -336,7 +336,7 @@ theorem fullOperatorMap_norm : ‖fullOperatorMap (E := E) (F := F) period‖ �
           period) (norm_nonneg A)))
 
 /-- The same contraction uniformly along a compact time set. -/
-def fullPathMap : C(K,Space →ᵇ E →L[ℝ] F) →L[ℝ]
+@[expose] def fullPathMap : C(K,Space →ᵇ E →L[ℝ] F) →L[ℝ]
     C(K,CylinderL2 period E →L[ℝ] CylinderL2 period F) :=
   (fullOperatorMap (E := E) (F := F) period).compLeftContinuous ℝ K
 

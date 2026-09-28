@@ -811,7 +811,7 @@ theorem hasDerivAt_projected_iff {β ρ x y : ℝ → ℝ} {B : ℝ → Frame}
     exact h ▸ ht
 
 /-- Counterclockwise quarter-turn in the angular-axial plane. -/
-noncomputable def quarterTurn : Plane →L[ℝ] Plane :=
+@[expose] noncomputable def quarterTurn : Plane →L[ℝ] Plane :=
   LinearMap.toContinuousLinearMap {
     toFun := fun w => !₂[-w 1, w 0]
     map_add' := by
@@ -1405,6 +1405,7 @@ theorem nonzeroRound_error (x : ℝ) : |(nonzeroRound x : ℝ) - x| ≤ 1 := by
   · exact abs_le.mpr ⟨by linarith, by linarith⟩
 
 /-- Rounded frequency, given by `(nonzeroRound (k * target) : ℝ) / k`. -/
+@[expose]
 noncomputable def roundedFrequency (k target : ℝ) : ℝ := (nonzeroRound (k * target) : ℝ) / k
 
 theorem roundedFrequency_integer {k : ℝ} (hk : k ≠ 0) (target : ℝ) :
@@ -1431,7 +1432,7 @@ theorem roundedFrequency_error {k : ℝ} (hk : 0 < k) (target : ℝ) :
   exact div_le_div_of_nonneg_right (nonzeroRound_error _) hk.le
 
 /-- The fixed representative frequency in its two tangential components. -/
-noncomputable def representativeFrequency (B sigma u L : ℝ) (K g : Plane) : Plane :=
+@[expose] noncomputable def representativeFrequency (B sigma u L : ℝ) (K g : Plane) : Plane :=
   B • (K - (sigma * u / (L * ‖g‖ ^ 2)) • g)
 
 theorem representative_slope (B sigma u L : ℝ) (K g : Plane)
@@ -1598,7 +1599,7 @@ theorem axial_frequency_bound {p target pz a b M rounding : ℝ}
   !₂[x0 - v * (p * FR + pz * GR), p / R, pz - ε * v * (p * FZ + pz * GZ)]
 
 /-- Reference normal, given by `MovingFrameODE.pack (B * signedSlot sigma u L v) (B • K)`. -/
-noncomputable def referenceNormal (B sigma u L v : ℝ) (K : Plane) : Space :=
+@[expose] noncomputable def referenceNormal (B sigma u L v : ℝ) (K : Plane) : Space :=
   MovingFrameODE.pack (B * signedSlot sigma u L v) (B • K)
 
 theorem vec3_norm_le_sum (w : Space) : ‖w‖ ≤ |w 0| + |w 1| + |w 2| := by

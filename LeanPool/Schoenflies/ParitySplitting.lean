@@ -184,7 +184,8 @@ theorem chainSum_map_orientPiece (f : Plane → ZMod 2) (L : List Piece) :
 to be named by either of its two ends first. This is the relation under which "the edge list of
 `Jᵢ` is that of `Aᵢ` together with that of `P`" is true — a `ClosedPolygon` built on `Aᵢ ∪ P`
 lists its edges in its own cyclic order, and traverses one of the two pieces backwards. -/
-def SameEdges (L₁ L₂ : List Piece) : Prop := (L₁.map orientPiece).Perm (L₂.map orientPiece)
+@[expose] def SameEdges (L₁ L₂ : List Piece) : Prop :=
+  (L₁.map orientPiece).Perm (L₂.map orientPiece)
 
 @[refl] theorem SameEdges.refl (L : List Piece) : SameEdges L L := List.Perm.refl _
 

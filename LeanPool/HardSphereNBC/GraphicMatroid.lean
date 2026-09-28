@@ -18,7 +18,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Finite
 Graph, coordinate, and measure constructions for the hard-sphere NBC volume identity.
 -/
 
-@[expose] public section
+public section
 
 namespace HsVirial
 

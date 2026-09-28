@@ -81,7 +81,7 @@ theorem standardTriangleVertex_triple_affineIndependent (a b c : Fin 3)
 
 /-- **Positive anchor** for `PolygonalCircle`: the boundary of the standard triangle with
 vertices `(0,0)`, `(1,0)`, `(0,1)` is a polygonal simple closed curve. -/
-def standardTriangleCircle : PolygonalCircle where
+@[expose] def standardTriangleCircle : PolygonalCircle where
   n := 3
   three_le := le_rfl
   vertex := standardTriangleVertex

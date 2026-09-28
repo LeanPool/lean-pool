@@ -48,7 +48,7 @@ noncomputable abbrev dY := ProfileHistories.radialPartial
 noncomputable abbrev dEta := ProfileHistories.parameterPartial
 
 /-- The whole log-coordinate plane; this is not a radial domain at `X=0`. -/
-noncomputable def logDomain : ProfileHistories.RadialDomain where
+@[expose] noncomputable def logDomain : ProfileHistories.RadialDomain where
   carrier := univ
   isOpen := isOpen_univ
   scale_mem := by intros; trivial

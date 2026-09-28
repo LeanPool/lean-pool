@@ -209,7 +209,7 @@ theorem compact_equation_eleven_gap {K : Set X} (hK : IsCompact K)
 abbrev ConeDatum := ℝ × ℝ × ℝ
 
 /-- The exact open true cone, retaining the square-root inequality. -/
-def trueCone : Set ConeDatum :=
+@[expose] def trueCone : Set ConeDatum :=
   {z | 2 < z.2.2 ∧ 2 < z.1 ∧ z.2.2 < coneBound z.1 z.2.1}
 
 theorem continuous_coneBound : Continuous (fun z : ConeDatum => coneBound z.1 z.2.1) := by

@@ -94,7 +94,7 @@ theorem stronglyAccessible_of_isMinOn {a : Plane} (hq : q ∉ C) (ha : a ∈ C)
 at radius `s`: the points seen from `p` in a direction `w` with `⟪v, w⟫ > 1/2` and at distance
 less than `s`. Writing the condition as `‖x - p‖ / 2 < ⟪v, x - p⟫` avoids normalizing `x - p`,
 and makes the openness of the cone immediate. -/
-def accessCone (p v : Plane) (s : ℝ) : Set Plane :=
+@[expose] def accessCone (p v : Plane) (s : ℝ) : Set Plane :=
   {x | ‖x - p‖ < s ∧ ‖x - p‖ / 2 < inner ℝ v (x - p)}
 
 theorem mem_accessCone_iff {x : Plane} :

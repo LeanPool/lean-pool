@@ -1095,12 +1095,12 @@ theorem potentialFromScalars_rate {l : Filter SpaceTime} {q : SpaceTime → ℝ}
 
 /-- Prefix stream, given by `physicalUncutPrefix h (-CoordinateAlgebra.A h) (bundleComponent C d
 0) J`. -/
-noncomputable def prefixStream (J : ℕ) (h C : ℝ) (d : Coefficients) : Chart → ℝ :=
+@[expose] noncomputable def prefixStream (J : ℕ) (h C : ℝ) (d : Coefficients) : Chart → ℝ :=
   physicalUncutPrefix h (-CoordinateAlgebra.A h) (bundleComponent C d 0) J
 
 /-- Prefix swirl, given by `physicalUncutPrefix h (1 / 2 - CoordinateAlgebra.A h)
 (bundleComponent C d 1) J`. -/
-noncomputable def prefixSwirl (J : ℕ) (h C : ℝ) (d : Coefficients) : Chart → ℝ :=
+@[expose] noncomputable def prefixSwirl (J : ℕ) (h C : ℝ) (d : Coefficients) : Chart → ℝ :=
   physicalUncutPrefix h (1 / 2 - CoordinateAlgebra.A h) (bundleComponent C d 1) J
 
 /-- Prefix potential, given by `AxisymmetricFields.potential (prefixStream J h C d) (prefixSwirl

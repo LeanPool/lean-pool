@@ -98,12 +98,12 @@ namespace Data
 variable {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U] (D : Data U)
 
 /-- The specified mean-zero angular primitive, applied directly to a raw field. -/
-def rawPotential (P : ℝ) (A : VectorField) : VectorField := fun z =>
+@[expose] def rawPotential (P : ℝ) (A : VectorField) : VectorField := fun z =>
   EulerPacketAngularPotential.potential P (D.normal.field (D.clamp z.1) z.2.1)
     (fun θ => A (z.1,(z.2.1,θ))) z.2.2
 
 /-- The actual slow curl in deformation coordinates; this defines a total raw-field operator. -/
-def curlCorrector (P : ℝ) (A : VectorField) : VectorField := fun z =>
+@[expose] def curlCorrector (P : ℝ) (A : VectorField) : VectorField := fun z =>
   EulerMeanBoundary.curlMatrix
     ((fderiv ℝ (fun y : LiftTangent => D.rawPotential P A (z.1,y)) z.2).comp
       ((ContinuousLinearMap.inl ℝ Space ℝ).comp (D.FInv.field (D.clamp z.1) z.2.1)))

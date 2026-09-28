@@ -1541,11 +1541,11 @@ namespace Data
 variable {P T : ℝ} [Fact (0 < P)] (G : Data P T)
 
 /-- Velocity radius, given by `flowRadius G.B G.R T G.S`. -/
-def velocityRadius : ℝ := flowRadius G.B G.R T G.S
+@[expose] def velocityRadius : ℝ := flowRadius G.B G.R T G.S
 /-- Acceleration radius, given by `flowRadius G.B G.R T (4*G.R+G.S+G.S₁)`. -/
-def accelerationRadius : ℝ := flowRadius G.B G.R T (4*G.R+G.S+G.S₁)
+@[expose] def accelerationRadius : ℝ := flowRadius G.B G.R T (4*G.R+G.S+G.S₁)
 /-- Acceleration amplitude, given by `G.C₁+3*G.B*G.R*G.C`. -/
-def accelerationAmplitude : ℝ := G.C₁+3*G.B*G.R*G.C
+@[expose] def accelerationAmplitude : ℝ := G.C₁+3*G.B*G.R*G.C
 
 theorem velocityRadius_nonneg : 0 ≤ G.velocityRadius := by
   have := G.B_nonneg

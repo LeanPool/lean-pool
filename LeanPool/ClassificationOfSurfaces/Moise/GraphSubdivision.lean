@@ -121,11 +121,11 @@ variable (K : PlaneComplex)
 abbrev EdgeFace := {e : Finset K.Vertex // e ∈ K.edges}
 
 /-- The `edgeEquiv` declaration. -/
-noncomputable def edgeEquiv : K.EdgeFace ≃ Fin (Fintype.card K.EdgeFace) :=
+@[expose] noncomputable def edgeEquiv : K.EdgeFace ≃ Fin (Fintype.card K.EdgeFace) :=
   Fintype.equivFin K.EdgeFace
 
 /-- The `edgeAt` declaration. -/
-noncomputable def edgeAt (i : Fin (Fintype.card K.EdgeFace)) : K.EdgeFace :=
+@[expose] noncomputable def edgeAt (i : Fin (Fintype.card K.EdgeFace)) : K.EdgeFace :=
   K.edgeEquiv.symm i
 
 /-- The `vertexEquiv` declaration. -/

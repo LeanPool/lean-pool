@@ -435,7 +435,8 @@ cycle. -/
 def gridHEdge (xc yc : ℕ → ℝ) (i j : ℕ) : Piece := (gridPt xc yc i j, gridPt xc yc (i + 1) j)
 
 /-- The vertical grid edge from `(i, j)` to `(i, j+1)`. -/
-def gridVEdge (xc yc : ℕ → ℝ) (i j : ℕ) : Piece := (gridPt xc yc i j, gridPt xc yc i (j + 1))
+@[expose] def gridVEdge (xc yc : ℕ → ℝ) (i j : ℕ) : Piece :=
+  (gridPt xc yc i j, gridPt xc yc i (j + 1))
 
 theorem gridPt_ne_of_fst {xc yc : ℕ → ℝ} {i i' j j' : ℕ} (h : xc i ≠ xc i') :
     gridPt xc yc i j ≠ gridPt xc yc i' j' := fun he => by
@@ -460,12 +461,13 @@ def stripEdges (xc yc : ℕ → ℝ) (i n : ℕ) : List Piece :=
   (List.range n).flatMap (cellEdges xc yc i)
 
 /-- The `m × n` grid: `m` columns of `n` cells. -/
-def gridEdges (xc yc : ℕ → ℝ) (m n : ℕ) : List Piece :=
+@[expose] def gridEdges (xc yc : ℕ → ℝ) (m n : ℕ) : List Piece :=
   (List.range m).flatMap fun i => stripEdges xc yc i n
 
 /-- **The grid graph**: the `m × n` rectangular grid on the coordinates `xc`, `yc`, as a plane
 graph with straight edges. -/
-def gridGraph (xc yc : ℕ → ℝ) (m n : ℕ) : Graph Plane Piece := pieceListGraph (gridEdges xc yc m n)
+@[expose] def gridGraph (xc yc : ℕ → ℝ) (m n : ℕ) : Graph Plane Piece :=
+  pieceListGraph (gridEdges xc yc m n)
 
 theorem stripEdges_succ (xc yc : ℕ → ℝ) (i n : ℕ) :
     stripEdges xc yc i (n + 1) = stripEdges xc yc i n ++ cellEdges xc yc i n := by

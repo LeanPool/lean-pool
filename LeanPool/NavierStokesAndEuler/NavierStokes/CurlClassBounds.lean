@@ -1098,6 +1098,7 @@ structure PhaseFamily (ι : Type*) where
 
 /-- Velocity, given by `PhaseCalculus.normalSlotDerivative (a.epsilon i) (a.p i) (a.pz i) (a.F
 i) (a.G i) z.1`. -/
+@[expose]
 noncomputable def PhaseFamily.velocity (a : PhaseFamily ι) (i : ι) (z : Slow × ℝ) : Space :=
   PhaseCalculus.normalSlotDerivative (a.epsilon i) (a.p i) (a.pz i) (a.F i) (a.G i) z.1
 

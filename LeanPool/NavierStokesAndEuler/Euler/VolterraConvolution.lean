@@ -114,7 +114,7 @@ theorem causalIntegral_continuous (f : C(Icc (0 : ℝ) T, Y)) :
     exact causalIntegrand_bound T hT K k hk0 hbound f s r hr
 
 /-- The actual causal convolution as a continuous path. -/
-def convolution (f : C(Icc (0 : ℝ) T, Y)) : C(Icc (0 : ℝ) T, X) where
+@[expose] def convolution (f : C(Icc (0 : ℝ) T, Y)) : C(Icc (0 : ℝ) T, X) where
   toFun t := ∫ r in Ioc 0 T, causalIntegrand T hT K f t r
   continuous_toFun := causalIntegral_continuous T hT K k hK hk hk0 hbound f
 

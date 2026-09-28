@@ -83,9 +83,10 @@ def hessian : C(Icc (0 : ℝ) T,CylinderL2 P E →L[ℝ] CylinderL2 P E) := full
 
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem frame_lower (t : Icc (0 : ℝ) T) (u : CylinderL2 P U) :
-    D.lower*‖u‖^2 ≤ ‖D.frame P t u‖^2 :=
-  EulerLpOperatorField.full_norm_sq_lower (liftMeasure P) (fieldLift P (D.Q t))
-    D.lower D.lower_pos.le (fun x v => D.lower_bound t x.1 v) u
+    D.lower*‖u‖^2 ≤ ‖D.frame P t u‖^2 := by
+  simpa only [frame, fullPathMap_apply, fullOperatorMap_apply] using
+    (EulerLpOperatorField.full_norm_sq_lower (liftMeasure P) (fieldLift P (D.Q t))
+      D.lower D.lower_pos.le (fun x v => D.lower_bound t x.1 v) u)
 
 omit [CompleteSpace U] in
 theorem frame_derivative (t : Icc (0 : ℝ) T) :
@@ -101,15 +102,17 @@ theorem frame_second_derivative (t : Icc (0 : ℝ) T) :
 
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem frame_equation (t : Icc (0 : ℝ) T) :
-    D.frameSecond P t = -((D.hessian P t).comp (D.frame P t)) :=
-  EulerLpOperatorField.full_eq_neg_comp (liftMeasure P) (fieldLift P (D.Q₂ t))
-    (fieldLift P (D.H t)) (fieldLift P (D.Q t)) (fun x v => D.jacobi t x.1 v)
+    D.frameSecond P t = -((D.hessian P t).comp (D.frame P t)) := by
+  simpa only [frameSecond, hessian, frame, fullPathMap_apply, fullOperatorMap_apply] using
+    (EulerLpOperatorField.full_eq_neg_comp (liftMeasure P) (fieldLift P (D.Q₂ t))
+      (fieldLift P (D.H t)) (fieldLift P (D.Q t)) (fun x v => D.jacobi t x.1 v))
 
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem hessian_upper (t : Icc (0 : ℝ) T) (u : CylinderL2 P E) :
-    ⟪D.hessian P t u,u⟫_ℝ ≤ D.potential*‖u‖^2 :=
-  EulerLpOperatorField.full_quadratic_upper (liftMeasure P) (fieldLift P (D.H t))
-    D.potential (fun x v => D.potential_bound t x.1 v) u
+    ⟪D.hessian P t u,u⟫_ℝ ≤ D.potential*‖u‖^2 := by
+  simpa only [hessian, fullPathMap_apply, fullOperatorMap_apply] using
+    (EulerLpOperatorField.full_quadratic_upper (liftMeasure P) (fieldLift P (D.H t))
+      D.potential (fun x v => D.potential_bound t x.1 v) u)
 
 /-- The fixed-space coercive construction, with every L² hypothesis derived
 from the actual pointwise fields. -/

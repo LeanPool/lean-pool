@@ -34,7 +34,7 @@ theorem timeApply_memLp (T : ℝ) (hT : 0 ≤ T) (A : C(Icc (0 : ℝ) T, E →L[
         (mul_le_mul_of_nonneg_right (extendPath_norm_le T hT A t) (norm_nonneg (u t)))
 
 /-- The genuine pointwise time-dependent operator action, represented in Bochner L². -/
-def timeApply (T : ℝ) (hT : 0 ≤ T) (A : C(Icc (0 : ℝ) T, E →L[ℝ] F))
+@[expose] def timeApply (T : ℝ) (hT : 0 ≤ T) (A : C(Icc (0 : ℝ) T, E →L[ℝ] F))
     (u : TimeLp T E) : TimeLp T F :=
   (timeApply_memLp T hT A u).toLp (fun t => extendPath T hT A t (u t))
 

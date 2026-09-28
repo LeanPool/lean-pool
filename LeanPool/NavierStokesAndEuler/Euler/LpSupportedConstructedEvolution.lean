@@ -132,7 +132,7 @@ variable (T : ℝ) (hT : 0 ≤ T)
 
 /-- The actual pointwise homogeneous fields give a homogeneous evolution on
 the genuine supported spatial L² space. -/
-def liftEvolution : Evolution T hT (operatorPath μ S hS T B) where
+@[expose] def liftEvolution : Evolution T hT (operatorPath μ S hS T B) where
   forward := operatorPath μ S hS T Φ
   backward := operatorPath μ S hS T Ψ
   forward_backward := by

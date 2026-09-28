@@ -83,7 +83,7 @@ private theorem quadratic_taylor_bound
   simpa only [add_sub_cancel_left, pow_two, mul_assoc] using H
 
 /-- Superposition, bundling `toFun`, `continuous_toFun`. -/
-def superposition (A : SmoothTimeField K E V) (u : C(K, E)) : C(K,V) where
+@[expose] def superposition (A : SmoothTimeField K E V) (u : C(K, E)) : C(K,V) where
   toFun t := A.field t (u t)
   continuous_toFun := by fun_prop
 
@@ -92,7 +92,7 @@ def superposition (A : SmoothTimeField K E V) (u : C(K, E)) : C(K,V) where
 
 /-- Superposition derivative, given by `EulerContinuousTimeIntegral.multiplier
 (A.derivative.superposition u)`. -/
-def superpositionDerivative (A : SmoothTimeField K E V) (u : C(K, E)) :
+@[expose] def superpositionDerivative (A : SmoothTimeField K E V) (u : C(K, E)) :
     C(K,E) →L[ℝ] C(K,V) :=
   EulerContinuousTimeIntegral.multiplier (A.derivative.superposition u)
 

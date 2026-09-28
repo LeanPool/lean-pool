@@ -20,7 +20,7 @@ public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
   occur in the finite tree sum.
 -/
 
-@[expose] public section
+public section
 
 namespace HsVirial
 

@@ -91,14 +91,14 @@ open Lean4GlCoalgebras
 
 mutual
 /-- Manual replacement for `sizeOf (bt : BuildTree)` so we also count the `next` parts. -/
-def BuildTree.size : BuildTree H X → Nat
+@[expose] def BuildTree.size : BuildTree H X → Nat
   | .loc _ _ next => 1 + ((UniOpenLT.all X).map (fun lt => (next lt).size)).sum
   | .pdl _ _ next => 1 + ((PdlRule.all X).map (fun ⟨Y,r⟩ => (next Y r).size)).sum
   | .freeRepeat _ => 1
   | .openLeaf _ _ => 1
 
 /-- The size of the continuation selected by Builder. -/
-def BuildChoice.size {YS} : BuildChoice H X YS → Nat
+@[expose] def BuildChoice.size {YS} : BuildChoice H X YS → Nat
   | .pick _ bt_Y => bt_Y.size
 end
 
@@ -344,14 +344,14 @@ def Match.length {H : History} {X : Sequent} {bt : BuildTree H X} : Match bt →
   | .pdl tail => tail.length + 1
 
 /-- The subtree reached by a match, together with its history and root sequent. -/
-@[implicit_reducible]
+@[implicit_reducible, expose]
 def Match.btAt {H X} {bt : BuildTree H X} : Match bt → Σ H' Y, BuildTree H' Y
 | .nil => ⟨_, _, bt⟩
 | .loc tail => btAt tail
 | .pdl tail => btAt tail
 
 /-- The sequent reached at the end of a match. -/
-def Match.endSeq {bt : BuildTree H X} (m : Match bt) : Sequent := m.btAt.2.1
+@[expose] def Match.endSeq {bt : BuildTree H X} (m : Match bt) : Sequent := m.btAt.2.1
 
 /- All possible Matches in a given BuildTree. -/
 /-- Enumerate every finite match in a strategy tree. -/

@@ -1379,7 +1379,7 @@ theorem p2_eq_stock {D : RadialDomain} (P : Profiles D) (h : ℝ) (p : Point) :
 /-! ## Local smooth coordinates for the modulation annulus -/
 
 /-- Tilt, given by `ActivationContinuation.shearB P p / ActivationContinuation.shearA P p`. -/
-noncomputable def tilt {D : RadialDomain} (P : Profiles D) (p : Point) : ℝ :=
+@[expose] noncomputable def tilt {D : RadialDomain} (P : Profiles D) (p : Point) : ℝ :=
   ActivationContinuation.shearB P p / ActivationContinuation.shearA P p
 
 theorem physicalE_smoothAt {D : RadialDomain} (P : Profiles D) {p : Point}

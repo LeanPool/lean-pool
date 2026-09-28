@@ -334,7 +334,7 @@ def treeHomRes : (Tree.res (2 * k)).obj ⟨_, gameTree hyp⟩ ≅
     rcases x with ⟨x, h⟩
     change pInvTreeHomMap hyp (List.map Prod.fst x) = x
     induction x using List.reverseRecOn with
-    | nil => simp [pInvTreeHomMap]
+    | nil => simpa only [List.map_nil] using (pInvTreeHomMap_nil (hyp := hyp))
     | append_singleton x a ih =>
       have hx : x ++ [a] ∈ gameTree hyp := h.1
       have hxprev : x ∈ gameTree hyp := mem_of_append hx

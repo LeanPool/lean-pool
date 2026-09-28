@@ -38,7 +38,7 @@ theorem scalarProduct_memLp {q : ℕ} (hq : 3 ≤ q) (L : Vector3 →L[ℝ] ℝ)
     exact (mul_le_mul_of_nonneg_right hL (norm_nonneg (v x))).trans_eq (by ring)
 
 /-- The actual almost-everywhere scalar-vector product represented in cylinder L². -/
-def scalarProduct {q : ℕ} (hq : 3 ≤ q) (L : Vector3 →L[ℝ] ℝ)
+@[expose] def scalarProduct {q : ℕ} (hq : 3 ≤ q) (L : Vector3 →L[ℝ] ℝ)
     (u : SobolevSpace period q) (v : LiftL2 period) : LiftL2 period :=
   (scalarProduct_memLp period hq L u v).toLp (fun x => L (value period u x) • v x)
 

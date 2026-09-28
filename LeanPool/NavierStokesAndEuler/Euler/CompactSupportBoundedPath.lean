@@ -25,7 +25,7 @@ variable {A E V : Type*} [TopologicalSpace A] [TopologicalSpace E]
   [NormedAddCommGroup V]
 
 /-- A continuous, compactly supported function, regarded as a bounded continuous function. -/
-def boundedOfCompactSupport (f : E → V) (hf : Continuous f)
+@[expose] def boundedOfCompactSupport (f : E → V) (hf : Continuous f)
     (hs : HasCompactSupport f) : E →ᵇ V where
   toFun := f
   continuous_toFun := hf

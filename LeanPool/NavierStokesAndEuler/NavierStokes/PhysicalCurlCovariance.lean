@@ -852,7 +852,7 @@ theorem cartesianPotential_curl_overlap {a : ℝ} (ha : 0 < a) (i j : PolarChart
 
 /-- A single actual Cartesian potential is selected from the compatible
 local inverse charts. Outside their union it is defined to be zero. -/
-noncomputable def globalCartesianPotential (a : ℝ) (B : SpaceTime → ComplexVector)
+@[expose] noncomputable def globalCartesianPotential (a : ℝ) (B : SpaceTime → ComplexVector)
     (x : SpaceTime) : Space := by
   classical
   exact if h : ∃ j : PolarCharts.Index,

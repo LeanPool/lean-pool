@@ -29,7 +29,7 @@ section Average
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] [CompleteSpace V]
 
 /-- Angle curve, given by `translate P (0,s) u`. -/
-def angleCurve (u : CylinderL2 P V) (s : ℝ) : CylinderL2 P V :=
+@[expose] def angleCurve (u : CylinderL2 P V) (s : ℝ) : CylinderL2 P V :=
   translate P (0,s) u
 
 omit [CompleteSpace V] in
@@ -94,6 +94,7 @@ omit [CompleteSpace V] in
 @[simp] theorem average_apply (u : CylinderL2 P V) :
     average P u = averageIntegral P u := by rfl
 
+omit [CompleteSpace V] in
 theorem average_eq_integral (u : CylinderL2 P V) :
     average P u = P⁻¹ • (∫ s in (0 : ℝ)..P, angleCurve P u s) := by
   rw [average_apply]

@@ -102,7 +102,7 @@ theorem applyField_norm (A : α →ᵇ (E →L[ℝ] F)) (u : Lp E 2 μ) :
     (mul_le_mul_of_nonneg_right (A.norm_coe_le_norm x) (norm_nonneg _))
 
 /-- The actual bounded rectangular multiplier on full spatial L². -/
-def full (A : α →ᵇ (E →L[ℝ] F)) : Lp E 2 μ →L[ℝ] Lp F 2 μ :=
+@[expose] def full (A : α →ᵇ (E →L[ℝ] F)) : Lp E 2 μ →L[ℝ] Lp F 2 μ :=
   (fullLinear μ A).mkContinuous ‖A‖ (applyField_norm μ A)
 
 theorem full_ae (A : α →ᵇ (E →L[ℝ] F)) (u : Lp E 2 μ) :
@@ -134,7 +134,7 @@ theorem full_smul (r : ℝ) (A : α →ᵇ (E →L[ℝ] F)) : full μ (r • A) 
   rfl
 
 /-- Rectangular multiplier formation is itself a linear contraction. -/
-def fullMap : (α →ᵇ (E →L[ℝ] F)) →L[ℝ] (Lp E 2 μ →L[ℝ] Lp F 2 μ) where
+@[expose] def fullMap : (α →ᵇ (E →L[ℝ] F)) →L[ℝ] (Lp E 2 μ →L[ℝ] Lp F 2 μ) where
   toLinearMap := { toFun := full μ, map_add' := full_add μ, map_smul' := full_smul μ }
   cont := AddMonoidHomClass.continuous_of_bound
     ({ toFun := full μ, map_add' := full_add μ, map_smul' := full_smul μ } :

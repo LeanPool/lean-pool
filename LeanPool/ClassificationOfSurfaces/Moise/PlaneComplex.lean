@@ -1079,7 +1079,7 @@ retiring `PL.lean` layer. -/
     ∀ s' ∈ K'.simplexes, IsAffineOn f (K'.cellCarrier s')
 
 /-- `f` is a PL embedding of the support of `K`: piecewise linear and injective on the support. -/
-def IsPLEmbeddingOn (K : PlaneComplex) (f : Plane → Plane) : Prop :=
+@[expose] def IsPLEmbeddingOn (K : PlaneComplex) (f : Plane → Plane) : Prop :=
   IsPLOn K f ∧ Set.InjOn f K.support
 
 /-- A function is PL on a geometric set when the set is the support of a finite plane complex

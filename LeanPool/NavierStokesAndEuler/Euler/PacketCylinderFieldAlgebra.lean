@@ -26,7 +26,7 @@ open scoped ContDiff
 variable {P T : ℝ} [Fact (0 < P)] {raw raw' : VectorField}
 
 /-- Recover a raw witness from an actual continuous representative of its L² path. -/
-def ofLifted (p : C(Icc (0 : ℝ) T, LiftL2 P))
+@[expose] def ofLifted (p : C(Icc (0 : ℝ) T, LiftL2 P))
     (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
     (f : Icc (0 : ℝ) T → LiftDomain P → Space) (hc : ∀ t, Continuous (f t))
     (hrep : ∀ t, (p t : LiftDomain P → Space) =ᵐ[liftMeasure P] f t)
@@ -39,7 +39,7 @@ def ofLifted (p : C(Icc (0 : ℝ) T, LiftL2 P))
       (hc t) (smoothField_continuous P _ (pointField_smooth P p hp t))) (x,(θ : AddCircle P)))
 
 /-- Equality is needed only on the actual closed time interval. -/
-def congr (G : Field P T raw)
+@[expose] def congr (G : Field P T raw)
     (he : ∀ (t : Icc (0 : ℝ) T) x θ, raw' (t, (x, θ)) = raw (t, (x, θ))) :
     Field P T raw' where
   path := G.path
@@ -47,14 +47,14 @@ def congr (G : Field P T raw)
   raw_eq t x θ := (he t x θ).trans (G.raw_eq t x θ)
 
 /-- Zero, constructed using `ofLifted`. -/
-def zero (P T : ℝ) [Fact (0 < P)] : Field P T (0 : VectorField) :=
+@[expose] def zero (P T : ℝ) [Fact (0 < P)] : Field P T (0 : VectorField) :=
   ofLifted 0 (by simpa only [map_zero] using (contDiff_const :
       ContDiff ℝ ∞ (fun _ : LiftTangent => (0 : C(Icc (0 : ℝ) T,LiftL2 P)))))
     (fun _ _ => 0) (fun _ => continuous_const)
     (fun _ => Lp.coeFn_zero Space 2 (liftMeasure P)) (fun _ _ _ => rfl)
 
 /-- Add, constructed using `ofLifted`. -/
-def add (G : Field P T raw) (H : Field P T raw') : Field P T (raw+raw') :=
+@[expose] def add (G : Field P T raw) (H : Field P T raw') : Field P T (raw+raw') :=
   ofLifted (G.path+H.path) (by simpa only [map_add] using G.orbit.add H.orbit)
     (fun t x => pointField P G.path G.orbit t x+pointField P H.path H.orbit t x)
     (fun t => (smoothField_continuous P _ (pointField_smooth P G.path G.orbit t)).add
@@ -80,7 +80,7 @@ def sub (G : Field P T raw) (H : Field P T raw') : Field P T (raw-raw') :=
   (G.add H.neg).congr (fun t x θ => by simp only [sub_eq_add_neg])
 
 /-- Smul, constructed using `ofLifted`. -/
-def smul (G : Field P T raw) (c : ℝ) : Field P T (c • raw) :=
+@[expose] def smul (G : Field P T raw) (c : ℝ) : Field P T (c • raw) :=
   ofLifted (c • G.path) (by simpa only [map_smul] using G.orbit.const_smul c)
     (fun t x => c • pointField P G.path G.orbit t x)
     (fun t => (smoothField_continuous P _ (pointField_smooth P G.path G.orbit t)).const_smul c)
@@ -90,7 +90,7 @@ def smul (G : Field P T raw) (c : ℝ) : Field P T (c • raw) :=
     (fun t x θ => by simp only [Pi.smul_apply,G.raw_eq])
 
 /-- Literal finite raw sums have a single actual continuous L² witness. -/
-def finsetSum {ι : Type*} (s : Finset ι) (f : ι → VectorField)
+@[expose] def finsetSum {ι : Type*} (s : Finset ι) (f : ι → VectorField)
     (G : ∀ i, Field P T (f i)) : Field P T (∑ i ∈ s, f i) :=
   ofLifted (∑ i ∈ s, (G i).path)
     (by simpa only [map_sum] using ContDiff.sum (fun i _ => (G i).orbit))

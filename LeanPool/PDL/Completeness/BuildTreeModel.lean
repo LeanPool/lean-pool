@@ -48,7 +48,7 @@ pre-state collected at the node we arrive at. The lemmas in this section provide
 for these steps. -/
 
 /-- The world of the model graph given by a pre-state. -/
-def PreState.toW {X} {bt : BuildTree [] X} (π : PreState bt) :
+@[expose] def PreState.toW {X} {bt : BuildTree [] X} (π : PreState bt) :
     { w : Finset Formula // w ∈ bt.toModel.1 } := ⟨π.forms, π.mem_toModel⟩
 
 @[simp]

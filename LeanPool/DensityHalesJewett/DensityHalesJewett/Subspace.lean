@@ -45,7 +45,7 @@ lemma mem_range [Fintype (η → α)] [DecidableEq (ι → α)]
   simp [range]
 
 /-- A subspace is contained in a finite word family when all its evaluations belong to it. -/
-def IsContained (V : Combinatorics.Subspace η α ι) (A : Finset (ι → α)) : Prop :=
+@[expose] def IsContained (V : Combinatorics.Subspace η α ι) (A : Finset (ι → α)) : Prop :=
   ∀ x, V x ∈ A
 
 /-- Compose a parameter subspace with an ambient subspace. -/

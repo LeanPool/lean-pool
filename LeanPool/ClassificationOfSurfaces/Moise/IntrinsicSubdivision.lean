@@ -39,7 +39,7 @@ two-complex. -/
 @[simp] theorem toIntrinsic_faces : K.toIntrinsic.faces = K.cells := rfl
 
 /-- Barycentric evaluation is an affine map on the ambient coordinate space. -/
-noncomputable def baryEvalAffine : (K.Vertex → ℝ) →ᵃ[ℝ] Plane :=
+@[expose] noncomputable def baryEvalAffine : (K.Vertex → ℝ) →ᵃ[ℝ] Plane :=
   (∑ v, (LinearMap.proj v).smulRight (K.position v)).toAffineMap
 
 @[simp] theorem baryEvalAffine_apply (x : K.Vertex → ℝ) :

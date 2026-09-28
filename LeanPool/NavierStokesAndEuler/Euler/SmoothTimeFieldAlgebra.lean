@@ -45,7 +45,7 @@ local instance instSmoothTimeFieldAlgebra4 (n : ℕ) : NormedSpace ℝ (E →ᵇ
     inferInstance
 
 /-- Add, bundling `field`, `smooth`, `jet`, `jet_eq`. -/
-def add (A B : SmoothTimeField K E V) : SmoothTimeField K E V where
+@[expose] def add (A B : SmoothTimeField K E V) : SmoothTimeField K E V where
   field := A.field + B.field
   smooth t := (A.smooth t).add (B.smooth t)
   jet n := A.jet n + B.jet n

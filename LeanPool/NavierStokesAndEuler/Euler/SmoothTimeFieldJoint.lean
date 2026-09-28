@@ -43,7 +43,7 @@ theorem realField_joint_continuous : Continuous (Function.uncurry (A.realField T
 
 /-- Time derivative, given by `∀ t : Icc (0 : ℝ) T, ∀ x : E, HasDerivWithinAt (fun s =>
 A.realField T hT s x) (A₁.field t x) (Icc (0 : ℝ) T) t`. -/
-def TimeDerivative : Prop := ∀ t : Icc (0 : ℝ) T, ∀ x : E,
+@[expose] def TimeDerivative : Prop := ∀ t : Icc (0 : ℝ) T, ∀ x : E,
   HasDerivWithinAt (fun s => A.realField T hT s x) (A₁.field t x) (Icc (0 : ℝ) T) t
 
 /-- Joint derivative, given by `(ContinuousLinearMap.toSpanSingleton ℝ (A₁.realField T hT t

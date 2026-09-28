@@ -109,7 +109,7 @@ ActualPrimary.modulation (nativePoint l n k x).1 q)`. -/
     (ActualPrimary.phasePoint l.1 (nativePoint l n k x))
 
 /-- Action, constructed using `clockScale`. -/
-noncomputable def action (l : SignedLabel B N0) (k : Frequency) (n : ℕ)
+@[expose] noncomputable def action (l : SignedLabel B N0) (k : Frequency) (n : ℕ)
     (x : FullPoint) : Space →L[ℝ] Space :=
   clockScale l n • PrimaryCopyBridge.baseOperator
     ((ActualPrimary.phases B N0 l.2).phase.F l.1 (nativePoint l n k x).1)

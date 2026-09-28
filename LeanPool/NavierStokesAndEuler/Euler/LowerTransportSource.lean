@@ -406,8 +406,7 @@ theorem derivative_H5_le_H6 {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ 
     have hi : fieldDerivative period (standardDirection i) f =
         iteratedFieldDerivative period (fun _ : Fin 1 => i) f := by
       funext x
-      simp only [iteratedFieldDerivative_succ, Fin.cons_zero, Fin.tail_cons,
-        iteratedFieldDerivative_zero]
+      simp only [iteratedFieldDerivative_succ, iteratedFieldDerivative_zero]
     rw [hi]
     rw [hv]
     exact word_L2_le_liftSobolevNorm period (by have := Finset.mem_range.mp hr; omega) v f

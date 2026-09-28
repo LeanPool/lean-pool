@@ -217,7 +217,7 @@ theorem halfPlaneExtension_zero {g : Plane → E}
 
 /-- The global smooth extension.  The outer parameter cutoff and the
 negative radial support bound are independent of the input profile. -/
-noncomputable def extension {S : Set ℝ} (w : ParameterWindow S) (F : Plane → E)
+@[expose] noncomputable def extension {S : Set ℝ} (w : ParameterWindow S) (F : Plane → E)
     (hF : ContDiffOn ℝ ∞ F (univ ×ˢ S))
     (he : ∀ eta ∈ S, ∀ r, F (-r, eta) = F (r, eta)) (p : Plane) : E :=
   w.bump p.2 • halfPlaneExtension (descent (regularize w F))

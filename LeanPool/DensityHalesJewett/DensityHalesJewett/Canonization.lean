@@ -32,7 +32,7 @@ open Combinatorics
 namespace DensityHalesJewett
 
 /-- Two words over `Option α` have the same support when their variable positions agree. -/
-def SameSupport {α ι : Type*} (x y : ι → Option α) : Prop := ∀ i, x i = none ↔ y i = none
+@[expose] def SameSupport {α ι : Type*} (x y : ι → Option α) : Prop := ∀ i, x i = none ↔ y i = none
 
 namespace Line
 

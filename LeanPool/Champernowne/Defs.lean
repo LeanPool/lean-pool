@@ -66,7 +66,7 @@ of the list. In particular `countOccurrences w l = 0` whenever
 
 /-- Normality of a digit sequence in base `b`: every block of length `k`
 (entries `< b`, leading zeros allowed) has asymptotic frequency `b⁻ᵏ`. -/
-def IsNormalSequence (b : ℕ) (s : ℕ → ℕ) : Prop :=
+@[expose] def IsNormalSequence (b : ℕ) (s : ℕ → ℕ) : Prop :=
   ∀ w : List ℕ, w ≠ [] → (∀ d ∈ w, d < b) →
     Filter.Tendsto
       (fun n => (countOccurrences w ((List.range n).map s) : ℝ) / n)

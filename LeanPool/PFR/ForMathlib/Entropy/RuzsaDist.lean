@@ -63,7 +63,7 @@ lemma continuous_measureEntropy_probabilityMeasure {Ω : Type*} [Finite Ω]
   cases nonempty_fintype Ω
   have entropy_eq (μ : ProbabilityMeasure Ω) :
       measureEntropy (S := Ω) μ =
-        ∑' ω, negMulLog ((μ : Measure Ω).real {ω}) :=
+        ∑' ω, Real.negMulLog ((μ : Measure Ω).real {ω}) :=
     measureEntropy_of_isProbabilityMeasure (μ : Measure Ω)
   simp_rw [entropy_eq]
   simp_rw [tsum_fintype]

@@ -1562,7 +1562,7 @@ theorem nativeStrip_weight (U : LocalSignedRequest.SlowRegion (2 * F.data.h))
   exact PrimaryTargetBounds.movingWeight_eq W (nativeStrip_time W U hx) (nativeStrip_radius W U hx)
 
 /-- Insert zero auxiliary variables, retaining the explicit coordinate order. -/
-noncomputable def insertSlow : Slow →L[ℝ] Point where
+@[expose] noncomputable def insertSlow : Slow →L[ℝ] Point where
   toFun p := (p.1, ((p.2.2, p.2.1), 0))
   map_add' _ _ := by ext <;> simp
   map_smul' _ _ := by ext <;> simp

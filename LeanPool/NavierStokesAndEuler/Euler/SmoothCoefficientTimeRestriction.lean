@@ -107,13 +107,13 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
 
 /-- Initial inclusion, given by `⟨fun t => ⟨t,t.property.1,t.property.2.trans hτS⟩,
 continuous_subtype_val.subtype_mk _⟩`. -/
-def initialInclusion (S τ : ℝ) (hτS : τ ≤ S) : C(Icc (0 : ℝ) τ,Icc (0 : ℝ) S) :=
+@[expose] def initialInclusion (S τ : ℝ) (hτS : τ ≤ S) : C(Icc (0 : ℝ) τ,Icc (0 : ℝ) S) :=
   ⟨fun t => ⟨t,t.property.1,t.property.2.trans hτS⟩,
     continuous_subtype_val.subtype_mk _⟩
 
 /-- Tail inclusion, given by `⟨fun t => ⟨τ+t,add_nonneg hτ t.property.1,by linarith
 [t.property.2]⟩, (continuous_const.add continuous_subtype_val).subtype_mk _⟩`. -/
-def tailInclusion (S τ : ℝ) (hτ : 0 ≤ τ) : C(Icc (0 : ℝ) (S-τ),Icc (0 : ℝ) S) :=
+@[expose] def tailInclusion (S τ : ℝ) (hτ : 0 ≤ τ) : C(Icc (0 : ℝ) (S-τ),Icc (0 : ℝ) S) :=
   ⟨fun t => ⟨τ+t,add_nonneg hτ t.property.1,by linarith [t.property.2]⟩,
     (continuous_const.add continuous_subtype_val).subtype_mk _⟩
 

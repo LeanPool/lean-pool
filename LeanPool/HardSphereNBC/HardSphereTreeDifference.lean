@@ -12,7 +12,7 @@ public import Mathlib.LinearAlgebra.Matrix.Block
 
 /-! ### Triangular difference maps -/
 
-@[expose] public section
+public section
 
 namespace HsVirial
 

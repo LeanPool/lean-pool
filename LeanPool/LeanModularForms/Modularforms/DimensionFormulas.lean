@@ -27,7 +27,7 @@ open scoped Interval Real NNReal ENNReal Topology BigOperators Nat
 noncomputable section
 
 /-- Multiplication by the discriminant `Δ`, as a map from weight `k - 12` to weight `k`. -/
-def mulDeltaMap (k : ℤ) (f : ModularForm (CongruenceSubgroup.Gamma 1) (k - 12)) :
+@[expose] def mulDeltaMap (k : ℤ) (f : ModularForm (CongruenceSubgroup.Gamma 1) (k - 12)) :
     ModularForm (CongruenceSubgroup.Gamma 1) k := by
   have := (f.mul (ModFormMk _ 12 Delta))
   have hk : k - 12 + 12 = k := by ring

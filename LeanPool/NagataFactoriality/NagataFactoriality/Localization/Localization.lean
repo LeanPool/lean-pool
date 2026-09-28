@@ -30,7 +30,7 @@ def mk (a s : α) (hs : s ∈ S) : Localization S :=
   _root_.Localization.mk a ⟨s, hs⟩
 
 /-- The canonical map from the ring into its localization. -/
-def of (a : α) : Localization S :=
+@[expose] def of (a : α) : Localization S :=
   algebraMap α (Localization S) a
 
 @[simp] theorem mk_one (a : α) : mk (S := S) a 1 S.one_mem = of (S := S) a := by

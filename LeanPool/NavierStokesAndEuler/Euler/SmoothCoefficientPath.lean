@@ -89,7 +89,7 @@ local instance instSmoothCoefficientPath10 (n : ℕ) : NormedSpace ℝ (Space �
 
 /-- Derivative field, given by `mapCoefficientPath (continuousMultilinearCurryFin1 ℝ Space
 V).toContinuousLinearEquiv.toContinuousLinearMap (A.jet 1)`. -/
-def derivativeField (A : SmoothCoefficientPath K V) : C(K, Space →ᵇ (Space →L[ℝ] V)) :=
+@[expose] def derivativeField (A : SmoothCoefficientPath K V) : C(K, Space →ᵇ (Space →L[ℝ] V)) :=
   mapCoefficientPath
     (continuousMultilinearCurryFin1 ℝ Space V).toContinuousLinearEquiv.toContinuousLinearMap (A.jet
         1)
@@ -120,7 +120,8 @@ theorem derivativeJet_eq (A : SmoothCoefficientPath K V) (n : ℕ) (t : K) (x : 
 
 /-- Derivative, bundling `field`, `smooth`, `fderiv`, `exact` and the required compatibility
 proofs. -/
-def derivative (A : SmoothCoefficientPath K V) : SmoothCoefficientPath K (Space →L[ℝ] V) where
+@[expose] def derivative (A : SmoothCoefficientPath K V) :
+    SmoothCoefficientPath K (Space →L[ℝ] V) where
   field := A.derivativeField
   smooth t := by
     have he : (A.derivativeField t : Space → Space →L[ℝ] V) =

@@ -1393,7 +1393,7 @@ noncomputable def phase : PhaseJetBounds.PhaseFamily ι where
 @[expose] noncomputable def frame (i : ι) : PrimaryODE.FrameData Slow :=
   a.phase.frameData a.lam a.c0 (fun _ => u) a.length a.viscosity i
 /-- Slot, given by `Ioo (-(a.length i)) (2 * a.length i)`. -/
-noncomputable def slot (i : ι) : Set ℝ := Ioo (-(a.length i)) (2 * a.length i)
+@[expose] noncomputable def slot (i : ι) : Set ℝ := Ioo (-(a.length i)) (2 * a.length i)
 /-- Slope, given by `PhaseEstimates.signedSlot (a.sigma i) u (a.length i) z.2`. -/
 @[expose] noncomputable def slope (i : ι) (z : Slow × ℝ) : ℝ :=
   PhaseEstimates.signedSlot (a.sigma i) u (a.length i) z.2
@@ -1884,7 +1884,7 @@ noncomputable def construction (hh : 0 ≤ h) (hr : 0 < r0) (hM : 1 ≤ M)
 theorem construction_frame (hh : 0 ≤ h) (hr : 0 < r0) (hM : 1 ≤ M)
     (hu : 0 < u) (huM : u ≤ M) (hL : 1 / (2 * r0) ≤ M)
     (hslot : 4 * r0 * ChartScales.Tg ≤ M) (hlarge : ∀ i, LargeBand h M u (a.band i)) :
-    (a.construction hh hr hM hu huM hL hslot hlarge).frame = a.frame := rfl
+    (a.construction hh hr hM hu huM hL hslot hlarge).frame = a.frame := by rfl
 
 /-- Every fixed derivative of the actual coefficient is controlled after
 the derived zeroth-order geometry is inserted. -/

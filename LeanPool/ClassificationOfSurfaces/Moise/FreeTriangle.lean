@@ -37,6 +37,7 @@ variable (M : TriangleMesh)
   M.triangles.biUnion fun t => t.powersetCard 2
 
 /-- Maximal triangles incident to an edge. -/
+@[expose]
 def incidentTriangles (e : Finset M.Vertex) : Finset (Finset M.Vertex) :=
   M.triangles.filter fun t => e ⊆ t
 

@@ -141,6 +141,7 @@ theorem common_stripped_physical_bound_local {h a b : ℝ}
   exact hjet i hi
 
 /-- Band field, defined pointwise by `(ChartScales.Q n ^ (-degree)) • f (graph h n d w)`. -/
+@[expose]
 noncomputable def bandField (h : ℝ) (n d : ℕ) (degree : ℝ) (f : Point → E) : SpaceTime → E :=
   fun w => (ChartScales.Q n ^ (-degree)) • f (graph h n d w)
 
@@ -629,7 +630,7 @@ theorem angularVector_scaledRadial (n : ℕ) (w : SpaceTime) :
 
 /-- This is the direct angular vector when `degree = A h`, and the
 azimuthal stream potential when `degree = A h - 1/2`. -/
-noncomputable def bandAngularField (h : ℝ) (n d : ℕ) (degree : ℝ)
+@[expose] noncomputable def bandAngularField (h : ℝ) (n d : ℕ) (degree : ℝ)
     (f : Point → ℝ) : VelocityField :=
   fun w => bandField h n d degree f w • angularVector (PhysicalGraphBounds.radialProjection w)
 

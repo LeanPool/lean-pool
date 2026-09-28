@@ -12,7 +12,7 @@ public import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
 
 /-! ### Concrete tree and fork regions -/
 
-@[expose] public section
+public section
 
 namespace HsVirial
 

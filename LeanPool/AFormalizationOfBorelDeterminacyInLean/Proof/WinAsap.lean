@@ -39,7 +39,7 @@ open Stream'.Discrete Tree Game
 noncomputable section «Section1»
 variable {A : Type*} (G : Game A) (p : Player)
 /-- whether there exists a prefix of `x` that is a winning position for `p` -/
-def WinningPrefix (x : List A) := ∃ (n : ℕ),
+@[expose] def WinningPrefix (x : List A) := ∃ (n : ℕ),
   (G.residual (x.take n)).ExistsWinning (p.residual (x.take n))
 lemma winningPrefix_of_notMem {x} (h : x ∉ G.tree) : WinningPrefix G p x := by
   use x.length; simpa [residual_notMem G x h] using existsWinning_empty

@@ -28,6 +28,7 @@ namespace LeanPool.Besicovitch
   | .right => .left
 
 /-- Simultaneously swap the two children of both colors. -/
+@[expose]
 def swapConfigurationChildren (configuration : SixPointConfiguration) : SixPointConfiguration :=
   fun color label ↦ configuration color (swapChildLabel label)
 
@@ -1050,7 +1051,7 @@ theorem balancedBalanced_excluded_outside_lenses
   · exact (hnotS0S0 rfl).elim
 
 /-- The five possible outcomes after all tangent and direct incidence exclusions. -/
-def SiblingIncidenceOutcome (configuration : SixPointConfiguration) : Prop :=
+@[expose] def SiblingIncidenceOutcome (configuration : SixPointConfiguration) : Prop :=
   (∃ code : Fin 4, (code = 0 ∨ code = 3) ∧
       redSiblingTriangleFailure configuration (.endpoint code) ∧
       blueSiblingTriangleFailure configuration (.endpoint code)) ∨

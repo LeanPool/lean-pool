@@ -52,7 +52,7 @@ noncomputable def heatPressureJet (h : ℝ) (n : ℕ) (ν v : ℝ) : ℝ :=
     (fun i => heatJet h i ν v) n
 
 /-- Dimensionless pure-heat pressure integral, including the zero-diffusion endpoint. -/
-noncomputable def heatPressureFactor (h ν : ℝ) : ℝ :=
+@[expose] noncomputable def heatPressureFactor (h ν : ℝ) : ℝ :=
   ∫ v in Ioi (1 : ℝ), pressureWeight h v * RadialHeatProfile.profile (1 + h) (2 * ν / v) ^ 2
 
 theorem heatJet_zero (h ν v : ℝ) : heatJet h 0 ν v = RadialHeatProfile.profile (1 + h) (2 * ν / v)

@@ -31,7 +31,7 @@ namespace MetricCodes
 abbrev Sphere (n : ℕ) := {x : Ambient n // ‖x‖ = 1}
 
 /-- The spherical inner used in the metric-code argument. -/
-def sphericalInner {n : ℕ} (x y : Sphere n) : ℝ :=
+@[expose] def sphericalInner {n : ℕ} (x y : Sphere n) : ℝ :=
   ⟪(x : Ambient n), (y : Ambient n)⟫_ℝ
 
 theorem spherical_dist_sq {n : ℕ} (x y : Sphere n) :

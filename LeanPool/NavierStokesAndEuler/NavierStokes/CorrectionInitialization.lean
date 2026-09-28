@@ -3933,7 +3933,7 @@ namespace CommonWindow
 open Set Function
 
 /-- Levels, given by `insert n (Finset.Icc (max 1 (n - 2)) (n + 2))`. -/
-@[irreducible] noncomputable def levels (n : ℕ) : Finset ℕ :=
+@[expose, irreducible] noncomputable def levels (n : ℕ) : Finset ℕ :=
   insert n (Finset.Icc (max 1 (n - 2)) (n + 2))
 
 theorem self_mem (n : ℕ) : n ∈ levels n := by

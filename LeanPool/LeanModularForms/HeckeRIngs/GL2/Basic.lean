@@ -78,7 +78,7 @@ lemma T_elem_ones_eq : TElem (fun _ : Fin 2 => 1) = 1 := by
     (funext fun i => by fin_cases i <;> rfl)).trans T_elem_ones_eq
 
 /-- `T(m) = Σ_{a | m} T(a, m/a)`. -/
-noncomputable def TSum (m : ℕ+) : HeckeAlgebra 2 :=
+@[expose] noncomputable def TSum (m : ℕ+) : HeckeAlgebra 2 :=
   ∑ a ∈ (m : ℕ).divisors, TAd a ((m : ℕ) / a)
 
 section Structural

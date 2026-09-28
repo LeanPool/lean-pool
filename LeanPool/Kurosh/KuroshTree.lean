@@ -539,6 +539,7 @@ noncomputable def Internal.rawCanonicalFactor {ι : Type v} (G : ι → Type u)
   rightTailCanonical i (Word.equiv (Quotient.out c))
 
 /-- Convert a group-and-coset vertex into its canonical word-model vertex. -/
+@[expose]
 noncomputable def Internal.rawCanonicalVertex {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] : RawBassSerreVertex G → BassSerreVertex G
   | RawBassSerreVertex.central g => BassSerreVertex.central (Word.equiv g)
@@ -627,7 +628,6 @@ theorem Internal.rawCanonicalVertex_bassToRawVertex {ι : Type v}
             (bassSerreQuiver G)) a b //
         e ∈ bassSerreTree G a b } }
 
-@[expose]
 instance Internal.bassTreeQuiverArborescence {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] :
     @Quiver.Arborescence (BassSerreVertex G) (Internal.bassTreeQuiver G) := by
@@ -1676,7 +1676,6 @@ def Internal.treeDataGenerated {ι : Type v} (G : ι → Type u)
             (rawBassSerreQuiver G)) a b //
         e ∈ rawBassSerreTree G a b } }
 
-@[expose]
 instance Internal.rawSpanningTreeQuiverArborescence {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] :
     @Quiver.Arborescence (RawBassSerreVertex G) (Internal.rawSpanningTreeQuiver G) := by

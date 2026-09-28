@@ -69,15 +69,15 @@ def Circuit.empty (m : Nat) : Circuit m 0 :=
     (fun i => Fin.elim0 i) (fun i => Fin.elim0 i)
 
 /-- The final free-XOR wire space of a circuit. -/
-def Circuit.finalWire {m r : Nat} (C : Circuit m r) : Submodule F₂ (ANF m) :=
+@[expose] def Circuit.finalWire {m r : Nat} (C : Circuit m r) : Submodule F₂ (ANF m) :=
   wireSpace C.gate r
 
 /-- A circuit computes a vector-valued target when every coordinate is in its final span. -/
-def Circuit.Computes {m r o : Nat} (C : Circuit m r) (target : Fin o → ANF m) : Prop :=
+@[expose] def Circuit.Computes {m r o : Nat} (C : Circuit m r) (target : Fin o → ANF m) : Prop :=
   ∀ i, target i ∈ C.finalWire
 
 /-- There is an unrestricted circuit with `r` AND gates computing `target`. -/
-def HasCircuit {m o : Nat} (target : Fin o → ANF m) (r : Nat) : Prop :=
+@[expose] def HasCircuit {m o : Nat} (target : Fin o → ANF m) (r : Nat) : Prop :=
   Nonempty {C : Circuit m r // C.Computes target}
 
 /-- Unrestricted Boolean multiplicative complexity (zero for an uncomputable target). -/

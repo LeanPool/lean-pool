@@ -252,7 +252,7 @@ theorem exists_small_dropSpeed {e : ℝ} (he : 0 < e) :
 /-! ## The actual angular source and its ideal incoming lag -/
 
 /-- Transport W, given by `1 - L h η * averagedDrop c y`. -/
-noncomputable def transportW (c : Parameters) (h y η : ℝ) : ℝ :=
+@[expose] noncomputable def transportW (c : Parameters) (h y η : ℝ) : ℝ :=
   1 - L h η * averagedDrop c y
 
 /-- Angular rate, given by `1 + slope c.dropLength c.lam y`. -/
@@ -260,7 +260,7 @@ noncomputable def transportW (c : Parameters) (h y η : ℝ) : ℝ :=
   1 + slope c.dropLength c.lam y
 
 /-- Angular source as an element of `ℝ`. -/
-noncomputable def angularSource (c : Parameters) (h η y : ℝ) : ℝ :=
+@[expose] noncomputable def angularSource (c : Parameters) (h η y : ℝ) : ℝ :=
   -slope c.dropLength c.lam y * transportW c h y η -
     h * (1 - 2 * dropCoefficient c.m y * η ^ 2) +
       (D h + d η * dropCoefficient c.m y) * η * shapeGradient η
@@ -276,7 +276,7 @@ noncomputable def idealAngularSource (h η : ℝ) : ℝ :=
 
 /-- Angular lag, given by `linearLag (angularRate c) (angularSource c h η) (idealAngularLag h
 η)`. -/
-noncomputable def angularLag (c : Parameters) (h η : ℝ) : ℝ → ℝ :=
+@[expose] noncomputable def angularLag (c : Parameters) (h η : ℝ) : ℝ → ℝ :=
   linearLag (angularRate c) (angularSource c h η) (idealAngularLag h η)
 
 theorem angularRate_contDiff (c : Parameters) : ContDiff ℝ ∞ (angularRate c) :=
@@ -577,7 +577,7 @@ noncomputable def averagedClockEnergy (c : Parameters) : ℝ → ℝ :=
   historyAverage (clockEnergy c) ((5 / 6) * c.P ^ 2)
 
 /-- Averaged energy, given by `shape η ^ 2 * averagedClockEnergy c y`. -/
-noncomputable def averagedEnergy (c : Parameters) (y η : ℝ) : ℝ :=
+@[expose] noncomputable def averagedEnergy (c : Parameters) (y η : ℝ) : ℝ :=
   shape η ^ 2 * averagedClockEnergy c y
 
 theorem clockEnergy_contDiff (c : Parameters) : ContDiff ℝ ∞ (clockEnergy c) :=
@@ -702,17 +702,17 @@ theorem averagedClockEnergy_ideal (c : Parameters) {y : ℝ} (hy : y ≤ 0) :
 
 /-- Pressure clock, given by `(5 / 2) * c.P ^ 2 + (1 / 2) * OutgoingSchedule.primitive
 (clockEnergy c) y`. -/
-noncomputable def pressureClock (c : Parameters) (y : ℝ) : ℝ :=
+@[expose] noncomputable def pressureClock (c : Parameters) (y : ℝ) : ℝ :=
   (5 / 2) * c.P ^ 2 + (1 / 2) * OutgoingSchedule.primitive (clockEnergy c) y
 
 /-- Entrance pressure, given by `SchedulePressure.axisPressure v η + shape η ^ 2 * pressureClock
 v.core y`. -/
-noncomputable def entrancePressure (v : TailData) (y η : ℝ) : ℝ :=
+@[expose] noncomputable def entrancePressure (v : TailData) (y η : ℝ) : ℝ :=
   SchedulePressure.axisPressure v η + shape η ^ 2 * pressureClock v.core y
 
 /-- Pressure gradient, given by `deriv (SchedulePressure.axisPressure v) η - 2 * shapeGradient η
 * shape η ^ 2 * pressureClock v.core y`. -/
-noncomputable def pressureGradient (v : TailData) (y η : ℝ) : ℝ :=
+@[expose] noncomputable def pressureGradient (v : TailData) (y η : ℝ) : ℝ :=
   deriv (SchedulePressure.axisPressure v) η -
     2 * shapeGradient η * shape η ^ 2 * pressureClock v.core y
 
@@ -815,7 +815,7 @@ theorem transportW_hasDerivAt (c : Parameters) (h y η : ℝ) :
     4 * A v.h * η * entrancePressure v y η - d η * pressureGradient v y η
 
 /-- Axial lag, given by `geometricAxialLag v.core v.h y η + pressureAxialLag v y η`. -/
-noncomputable def axialLag (v : TailData) (y η : ℝ) : ℝ :=
+@[expose] noncomputable def axialLag (v : TailData) (y η : ℝ) : ℝ :=
   geometricAxialLag v.core v.h y η + pressureAxialLag v y η
 
 /-- Geometric axial source as an element of `ℝ`. -/
@@ -825,12 +825,12 @@ noncomputable def axialLag (v : TailData) (y η : ℝ) : ℝ :=
       (D h + d η * dropCoefficient c.m y) * η * dropCoefficient c.m y
 
 /-- Pressure axial source as an element of `ℝ`. -/
-noncomputable def pressureAxialSource (v : TailData) (y η : ℝ) : ℝ :=
+@[expose] noncomputable def pressureAxialSource (v : TailData) (y η : ℝ) : ℝ :=
   -d η * pressureGradient v y η + 4 * A v.h * η * entrancePressure v y η +
     η * angular v.core.P v.core.dropLength v.core.lam (y, η) ^ 2
 
 /-- Axial source, given by `geometricAxialSource v.core v.h y η + pressureAxialSource v y η`. -/
-noncomputable def axialSource (v : TailData) (y η : ℝ) : ℝ :=
+@[expose] noncomputable def axialSource (v : TailData) (y η : ℝ) : ℝ :=
   geometricAxialSource v.core v.h y η + pressureAxialSource v y η
 
 theorem geometricAxialLag_hasDerivAt (c : Parameters) (h y η : ℝ) :

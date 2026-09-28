@@ -30,7 +30,7 @@ abbrev F₂ := ZMod 2
 structure Monomial (m : Nat) where
   /-- Variables occurring in this squarefree monomial. -/
   vars : Finset (Fin m)
-deriving DecidableEq
+deriving @[expose] DecidableEq
 
 namespace Monomial
 

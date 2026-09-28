@@ -203,7 +203,7 @@ theorem rephaseFamily_contDiffOn_of_phase [CompleteSpace E]
 
 /-- Genuine iterated derivatives in the parameter while the last variable is
 held fixed. This is not a separately postulated family of jets. -/
-def parameterJet (F : E × ℝ → V) (k : ℕ) (z : E × ℝ) : E [×k]→L[ℝ] V :=
+@[expose] def parameterJet (F : E × ℝ → V) (k : ℕ) (z : E × ℝ) : E [×k]→L[ℝ] V :=
   iteratedFDeriv ℝ k (fun p : E => F (p, z.2)) z.1
 
 /-- Joint smoothness implies joint smoothness of every genuine parameter jet.

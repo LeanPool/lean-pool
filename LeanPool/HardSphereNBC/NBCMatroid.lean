@@ -19,7 +19,7 @@ public import Mathlib.Data.Finset.Max
   avoids hiding it behind a library theorem.
  -/
 
-@[expose] public section
+public section
 
 namespace HsVirial
 

@@ -22,7 +22,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
   presentations.
  -/
 
-@[expose] public section
+public section
 
 namespace HsVirial
 

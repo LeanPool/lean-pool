@@ -73,7 +73,7 @@ structure PTreesS where
   LvlStratHom T V where
   toFun p k := g.toFun p k ∘ f.toFun p k
   con := by simp [g.con, f.con]
-@[expose] instance : Category PTreesS where
+instance : Category PTreesS where
   Hom := LvlStratHom
   id := LvlStratHom.id
   comp f g := LvlStratHom.comp g f
@@ -103,7 +103,7 @@ abbrev LvlStratHom.systemOfObj {T : PTreesS} (S : (LvlStratHom.system p).obj T) 
   cast (by dsimp [LvlStratHom.system] :
     (LvlStratHom.system p).obj T = StrategySystem T.tree.1 p) S
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def LvlStratHom.global (p : Player) : PTreesS ⥤ Type where
+@[expose] def LvlStratHom.global (p : Player) : PTreesS ⥤ Type where
   obj T := Strategy T.tree.1.2 p
   map {T U} f := TypeCat.ofHom fun S : Strategy T.tree.1.2 p ↦
     strategyEquivSystem.symm
@@ -180,7 +180,7 @@ strategy -/
   str : Covering.PTreesS.mk T ⟶ Covering.PTreesS.mk U
   h_body : Covering.bodyLiftExists toHom str
 namespace Covering
-@[expose] instance : Category PTrees where
+instance : Category PTrees where
   Hom := Covering
   id T := ⟨𝟙 T.1, LvlStratHom.id _, fun {p} {S} y ↦ ⟨y, by
     simp only [CategoryTheory.Functor.map_id]
