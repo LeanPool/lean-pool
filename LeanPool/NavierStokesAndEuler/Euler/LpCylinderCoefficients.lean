@@ -145,7 +145,7 @@ def liftedOperatorPathLinear : C(Icc (0 : ℝ) T,Space →ᵇ V →L[ℝ] V) →
       r (fieldLift period (A t))
 
 /-- Lifting spatial coefficient paths to actual cylinder operators is a linear contraction. -/
-def liftedOperatorPathMap : C(Icc (0 : ℝ) T,Space →ᵇ V →L[ℝ] V) →L[ℝ]
+@[expose] def liftedOperatorPathMap : C(Icc (0 : ℝ) T,Space →ᵇ V →L[ℝ] V) →L[ℝ]
     C(Icc (0 : ℝ) T,Supported period V S hS →L[ℝ] Supported period V S hS) :=
   (liftedOperatorPathLinear period S hS T).mkContinuous 1 (fun A => by
     change ‖liftedOperatorPath period S hS T A‖ ≤ 1*‖A‖

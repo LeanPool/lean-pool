@@ -519,7 +519,7 @@ def highestWeightSubmodule (r n : ℕ) :
   simp only [highestWeightSubmodule, Submodule.mem_iInf, LinearMap.mem_ker, polarization_apply]
 
 /-- The harmonic young submodule used in the spherical-code argument. -/
-def harmonicYoungSubmodule {r n : ℕ} (lam : Fin (r + 1) → ℕ) :
+@[expose] def harmonicYoungSubmodule {r n : ℕ} (lam : Fin (r + 1) → ℕ) :
     Submodule ℝ (PolynomialSpace r n) :=
   MvPolynomial.homogeneousSubmodule
     (Fin ((r + 1) * n)) ℝ (∑ i, lam i) ⊓
@@ -538,7 +538,7 @@ def harmonicYoungSubmodule {r n : ℕ} (lam : Fin (r + 1) → ℕ) :
     mem_highestWeightSubmodule, polarization_apply]
 
 /-- The harmonic young space used in the spherical-code argument. -/
-abbrev HarmonicYoungSpace {r n : ℕ} (lam : Fin (r + 1) → ℕ) :=
+@[expose] abbrev HarmonicYoungSpace {r n : ℕ} (lam : Fin (r + 1) → ℕ) :=
   harmonicYoungSubmodule (n := n) lam
 
 instance harmonicYoungSpace_finiteDimensional
@@ -866,7 +866,7 @@ theorem youngCoefficientEmbedding_injective {r n : ℕ}
       (youngHomogeneousEmbedding_injective lam)
 
 /-- The Fischer inner product of harmonic Young polynomials through their homogeneous embedding. -/
-def youngFischerInner {r n : ℕ}
+@[expose] def youngFischerInner {r n : ℕ}
     (lam : Fin (r + 1) → ℕ)
     (p q : HarmonicYoungSpace (n := n) lam) : ℝ :=
   SpherePacking.Fischer.homogeneousInner
@@ -887,7 +887,7 @@ theorem youngFischerInner_eq_polynomialInner {r n : ℕ}
 
 /-- The inner product core on the harmonic Young space induced by its injective coefficient
 embedding. -/
-@[implicit_reducible] def youngFischerCore {r n : ℕ}
+@[expose, implicit_reducible] def youngFischerCore {r n : ℕ}
     (lam : Fin (r + 1) → ℕ) :
     InnerProductSpace.Core ℝ (HarmonicYoungSpace (n := n) lam) :=
   SpherePacking.Fischer.embeddingInnerCore

@@ -78,6 +78,7 @@ def hilbertSet (S : X →L[𝕜] Y) (n : ℕ) : Set ℝ :=
 
 `h_n S = sup { a_n (B ∘ S ∘ A) / (‖B‖ * ‖A‖) :
                   A : ℓ₂ →L X, B : Y →L ℓ₂, A ≠ 0, B ≠ 0 }`. -/
+@[expose]
 noncomputable def hilbertNumber (S : X →L[𝕜] Y) (n : ℕ) : ℝ :=
   sSup (hilbertSet S n)
 

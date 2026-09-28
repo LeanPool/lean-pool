@@ -471,7 +471,7 @@ theorem faceStandardEdge_eq_endpointIndices (t : K.Face) (i : ZMod 3) :
     K.faceVertexEmbedding_faceEdgeSecondIndex, K.edge_eq_pair]
 
 /-- The standard source point on a face side, oriented by the global intrinsic edge ordering. -/
-noncomputable def faceEdgeSourcePoint (t : K.Face) (i : ZMod 3) (r : ℝ) : Plane :=
+@[expose] noncomputable def faceEdgeSourcePoint (t : K.Face) (i : ZMod 3) (r : ℝ) : Plane :=
   AffineMap.lineMap
     (standardTriangleVertex (K.faceEdgeFirstIndex t i))
     (standardTriangleVertex (K.faceEdgeSecondIndex t i)) r

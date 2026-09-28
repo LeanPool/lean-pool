@@ -701,6 +701,7 @@ theorem pressure_weighted_identity {q : JointProfile} (hq : ContDiff ℝ ∞ q) 
 
 /-- Open parameter domains retain all radial histories while keeping the
 original parameter domain; no extension across its endpoints is needed. -/
+@[expose]
 noncomputable def parameterDomain (S : Set ℝ) (hS : IsOpen S) : ProfileHistories.RadialDomain where
   carrier := univ ×ˢ S
   isOpen := isOpen_univ.prod hS
@@ -2030,11 +2031,11 @@ theorem exterior_axialDensity {S : Set ℝ} (hS : IsOpen S) {n : ℕ}
     hr eta heta R hR, hz eta heta R hR, hk eta heta R hR, hprev eta heta R hR]
 
 /-- Angular stress, given by `stress 2 (angularDensity h n v u e)`. -/
-noncomputable def angularStress (h : ℝ) (n : ℕ) (v u e : History) : Field :=
+@[expose] noncomputable def angularStress (h : ℝ) (n : ℕ) (v u e : History) : Field :=
   stress 2 (angularDensity h n v u e)
 
 /-- Axial stress, given by `stress 1 (axialDensity h n v u p)`. -/
-noncomputable def axialStress (h : ℝ) (n : ℕ) (v u : History) (p : Field) : Field :=
+@[expose] noncomputable def axialStress (h : ℝ) (n : ℕ) (v u : History) (p : Field) : Field :=
   stress 1 (axialDensity h n v u p)
 
 /-- For n≥2 all the angular hypotheses below are supplied by ordinary

@@ -103,13 +103,13 @@ def curvature : SmoothTimeField (Icc (0 : ℝ) G.T) Space EndSpace :=
   G.acceleration.derivativeField_eq t (G.ell • x)
 
 @[simp] theorem inverse_apply (t : Icc (0 : ℝ) G.T) (x : Space) :
-    G.inverse.field t x = adjugate (G.frame.field t x) := rfl
+    G.inverse.field t x = adjugate (G.frame.field t x) := by rfl
 
 @[simp] theorem strain_apply (t : Icc (0 : ℝ) G.T) (x : Space) :
-    G.strain.field t x = (G.first.field t x).comp (G.inverse.field t x) := rfl
+    G.strain.field t x = (G.first.field t x).comp (G.inverse.field t x) := by rfl
 
 @[simp] theorem curvature_apply (t : Icc (0 : ℝ) G.T) (x : Space) :
-    G.curvature.field t x = -((G.second.field t x).comp (G.inverse.field t x)) := rfl
+    G.curvature.field t x = -((G.second.field t x).comp (G.inverse.field t x)) := by rfl
 
 theorem frame_det (t : Icc (0 : ℝ) G.T) (x : Space) : (operatorMatrix (G.frame.field t x)).det=1 :=
     by
@@ -165,7 +165,7 @@ def initialStrain : BoundedSmoothField EndSpace where
     exact (G.first.jet n G.zeroTime).norm_coe_le_norm x⟩
 
 @[simp] theorem initialStrain_apply (x : Space) :
-    G.initialStrain.field x = G.first.field G.zeroTime x := rfl
+    G.initialStrain.field x = G.first.field G.zeroTime x := by rfl
 
 end Parent
 end EulerParentPacketFrames

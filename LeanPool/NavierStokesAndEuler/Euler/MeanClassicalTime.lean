@@ -51,7 +51,7 @@ variable {T : ℝ} {hT : 0 ≤ T}
   (s : StrongMeanEvolution T hT FInv F F₁ A L u f)
 
 /-- The original coordinate velocity is continuous on the closed time interval. -/
-def coordinateVelocityPath : C(Icc (0 : ℝ) T, solenoidalSpace) :=
+@[expose] def coordinateVelocityPath : C(Icc (0 : ℝ) T, solenoidalSpace) :=
   ⟨fun t => s.velocity t, by
     have hc : ContinuousOn s.velocity (Icc (0 : ℝ) T) := by
       simpa only [uIcc_of_le hT] using s.velocity_ac.continuousOn

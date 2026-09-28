@@ -1086,7 +1086,7 @@ theorem pulse_coefficients_hasDerivAt (c : Parameters) {amp : ℝ → ℝ}
 
 /-- Affine profile, given by `∑ j : Fin 2, affineCoefficients c q A j * logTemplate (y - center
 c j)`. -/
-noncomputable def affineProfile (c : Parameters) (q A y : ℝ) : ℝ :=
+@[expose] noncomputable def affineProfile (c : Parameters) (q A y : ℝ) : ℝ :=
   ∑ j : Fin 2, affineCoefficients c q A j * logTemplate (y - center c j)
 
 theorem affineProfile_contDiff (c : Parameters) (q A : ℝ) : ContDiff ℝ ∞ (affineProfile c q A) := by
@@ -2072,7 +2072,7 @@ def prefixAngularEnergy (c : Parameters) : ℝ :=
 
 /-- Prefix energy, given by `prefixAxialEnergy c * eta ^ 2 - prefixAngularEnergy c * shape eta ^
 2`. -/
-def prefixEnergy (c : Parameters) (eta : ℝ) : ℝ :=
+@[expose] def prefixEnergy (c : Parameters) (eta : ℝ) : ℝ :=
   prefixAxialEnergy c * eta ^ 2 - prefixAngularEnergy c * shape eta ^ 2
 
 theorem prefixAngularEnergy_bound (c : Parameters) :

@@ -251,7 +251,7 @@ noncomputable def vertexLines : List (Plane →ᵃ[ℝ] ℝ) :=
     [verticalLine (B.vertex i), horizontalLine (B.vertex i)]
 
 /-- The `arrangementLines` declaration. -/
-noncomputable def arrangementLines : List (Plane →ᵃ[ℝ] ℝ) :=
+@[expose] noncomputable def arrangementLines : List (Plane →ᵃ[ℝ] ℝ) :=
   B.segmentLines ++ B.vertexLines
 
 /-- A positive radius containing every chain vertex. -/

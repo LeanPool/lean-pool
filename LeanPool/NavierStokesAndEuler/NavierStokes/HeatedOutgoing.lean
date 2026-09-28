@@ -750,7 +750,7 @@ abbrev Coeff := TerminalCompensation.Coeff
 /-- Parameter domain, given by `Icc (-1) 1`. -/
 @[expose] def parameterDomain : Set ℝ := Icc (-1) 1
 /-- Domain, given by `Ioi 0 ×ˢ parameterDomain`. -/
-def domain : Set (ℝ × ℝ) := Ioi 0 ×ˢ parameterDomain
+@[expose] def domain : Set (ℝ × ℝ) := Ioi 0 ×ˢ parameterDomain
 
 /-- Heat E, given by `OutgoingDilation.E F XR p * HeatTailEdit.multiplier F.data.h
 (ParametricHeatTail.diffusion p.2) (switchRadius F XR) p.1`. -/
@@ -933,6 +933,7 @@ noncomputable def patchRow (F : Profile) (XR : ℝ) (c : ℝ → Coeff) (eta : �
   ![(A ^ 2 - B ^ 2) / X, A ^ 2 - B ^ 2, Real.sqrt (2 * X) * (A - B)] i
 
 /-- Change row as an element of `ℝ`. -/
+@[expose]
 noncomputable def changeRow (F : Profile) (XR : ℝ) (c : ℝ → Coeff) (eta : ℝ) (i : Fin 3) (X : ℝ) :
     ℝ :=
   ![(E F XR c (X, eta) ^ 2 - OutgoingDilation.E F XR (X, eta) ^ 2) / X,

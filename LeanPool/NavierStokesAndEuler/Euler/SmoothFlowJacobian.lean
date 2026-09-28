@@ -37,7 +37,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
 /-- Jacobian evolution, given by `constructedEvolution T hT (A.derivative.superposition
 (pathFamily T hT A x))`. -/
-def jacobianEvolution (x : E) :
+@[expose] def jacobianEvolution (x : E) :
     Evolution T hT (A.derivative.superposition (pathFamily T hT A x)) :=
   constructedEvolution T hT (A.derivative.superposition (pathFamily T hT A x))
 

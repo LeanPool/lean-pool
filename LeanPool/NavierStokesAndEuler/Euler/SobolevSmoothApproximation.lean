@@ -27,7 +27,7 @@ open scoped Topology ContDiff NNReal
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- Three successive genuine heat smoothing steps. -/
-def heatGainThree (q : ℕ) (v : ℝ≥0) (hv : 0 < v) :
+@[expose] def heatGainThree (q : ℕ) (v : ℝ≥0) (hv : 0 < v) :
     SobolevSpace period q →L[ℝ] SobolevSpace period (q+3) :=
   (heatGain period (q+2) v hv).comp ((heatGain period (q+1) v hv).comp (heatGain period q v hv))
 

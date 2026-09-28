@@ -308,7 +308,7 @@ theorem replacementGraphComplex_support_eq_range :
 
 /-- The intrinsic one-skeleton is homeomorphic to the support of its conforming polygonal plane
 graph model. -/
-noncomputable def replacementGraphHomeomorph :
+@[expose] noncomputable def replacementGraphHomeomorph :
     K.oneSkeleton ≃ₜ
       (K.replacementGraphComplex
         (hcont := hcont) (hinj := hinj) (D := D) (C := C)).support :=

@@ -316,9 +316,15 @@ lemma winAsap_body (x : body (winAsap G p).subtree)
   ⟨x.val, body_mono (subtree_sub _) x.prop⟩ ∈ p.payoff G := by
   obtain ⟨N, h⟩ := h; have hN : h.num ≤ N := by simpa using h.num_le_length
   suffices x.val.drop h.num ∈ body h.strat.pre.subtree by
-    obtain ⟨_, hW⟩ := h.strat_winning this
-    conv at hW => simp [hN]
-    simpa only [Player.payoff] using hW
+    obtain ⟨w, hW, hw⟩ := h.strat_winning this
+    have hW' : body.append (x.val.take h.num) w ∈ p.payoff G := by
+      simpa [Player.payoff, hN] using hW
+    have heq : body.append (x.val.take h.num) w =
+        ⟨x.val, body_mono (subtree_sub _) x.prop⟩ := by
+      apply Subtype.ext
+      change x.val.take h.num ++ₛ (w : Stream' A) = x.val
+      rw [hw, Stream'.append_take_drop]
+    exact heq ▸ hW'
   apply mem_body_of_take 0; intro n _
   rw [← winAsap_subtree]; simp [hN]
 lemma winAsap_body' (x : body (winAsap G p).followUntilWon.subtree)

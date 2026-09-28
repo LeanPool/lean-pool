@@ -44,7 +44,7 @@ def applyField (A : SmoothTimeField K E (V →L[ℝ] W)) (B : SmoothTimeField K 
 
 @[simp] theorem applyField_apply (A : SmoothTimeField K E (V →L[ℝ] W))
     (B : SmoothTimeField K E V) (t : K) (x : E) :
-    (applyField A B).field t x = A.field t x (B.field t x) := rfl
+    (applyField A B).field t x = A.field t x (B.field t x) := by rfl
 
 end Application
 

@@ -303,7 +303,7 @@ theorem slowOrder_succ (h : ℝ) (n : ℕ) :
   ∑ n ∈ Finset.range (N + 1), q ^ (b + slowOrder h n) * a n
 
 /-- Pairs, given by `Finset.range (N + 1) ×ˢ Finset.range (N + 1)`. -/
-noncomputable def pairs (N : ℕ) : Finset (ℕ × ℕ) :=
+@[expose] noncomputable def pairs (N : ℕ) : Finset (ℕ × ℕ) :=
   Finset.range (N + 1) ×ˢ Finset.range (N + 1)
 
 /-- Convolution, given by `∑ ij ∈ Finset.antidiagonal n, K ij.1 ij.2`. -/
@@ -828,7 +828,7 @@ theorem transportResidual_scale (c α m : ℝ) (V U : Profile) {G : Profile} {p 
 /-- Axial exponent, given by `-CoordinateAlgebra.A h`. -/
 @[expose] def axialExponent (h : ℝ) : ℝ := -CoordinateAlgebra.A h
 /-- Pressure exponent, given by `-2 * CoordinateAlgebra.A h`. -/
-def pressureExponent (h : ℝ) : ℝ := -2 * CoordinateAlgebra.A h
+@[expose] def pressureExponent (h : ℝ) : ℝ := -2 * CoordinateAlgebra.A h
 
 /-- Slow profiles data, collecting `phi`, `axial`, `flux`, `pressure`. -/
 structure SlowProfiles where
@@ -867,7 +867,7 @@ f.axial (axialPressureSource h f) n`. -/
   transportCoefficient h (axialExponent h) 0 1 f.flux f.axial f.axial (axialPressureSource h f) n
 /-- Omega coefficient, given by `transportCoefficient h 0 (-(1 / 2)) 0 f.flux f.axial f.flux
 (fun _ _ => 0) n`. -/
-def omegaCoefficient (h : ℝ) (f : SlowProfiles) (n : ℕ) : InnerProfile :=
+@[expose] def omegaCoefficient (h : ℝ) (f : SlowProfiles) (n : ℕ) : InnerProfile :=
   transportCoefficient h 0 (-(1 / 2)) 0 f.flux f.axial f.flux (fun _ _ => 0) n
 /-- Divergence coefficient, given by `partialX (f.flux n) w + Z h (axialExponent h + slowOrder h
 n) (f.axial n) w`. -/

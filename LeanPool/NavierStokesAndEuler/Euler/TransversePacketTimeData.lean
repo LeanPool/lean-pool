@@ -43,14 +43,14 @@ Space) (E := ℝ))`. -/
 def normalVector : (Space →L[ℝ] ℝ) →L[ℝ] Space :=
   (ContinuousLinearMap.apply ℝ Space (1 : ℝ)).comp (realAdjoint (U := Space) (E := ℝ))
 
-@[simp] theorem normalVector_apply (N : Space →L[ℝ] ℝ) : normalVector N = N.adjoint 1 := rfl
+@[simp] theorem normalVector_apply (N : Space →L[ℝ] ℝ) : normalVector N = N.adjoint 1 := by rfl
 
 /-- Normal potential map, given by `-(crossOperator.comp normalVector)`. -/
 def normalPotentialMap : (Space →L[ℝ] ℝ) →L[ℝ] (Space →L[ℝ] Space) :=
   -(crossOperator.comp normalVector)
 
 @[simp] theorem normalPotentialMap_apply (N : Space →L[ℝ] ℝ) :
-    normalPotentialMap N = -crossLeft (N.adjoint 1) := rfl
+    normalPotentialMap N = -crossLeft (N.adjoint 1) := by rfl
 
 theorem normalPotentialMap_norm : ‖normalPotentialMap‖ ≤ 1 := by
   apply ContinuousLinearMap.opNorm_le_bound _ zero_le_one
@@ -135,7 +135,7 @@ def potentialPathMap : C(K,NormalField) →L[ℝ] C(K,PotentialField) :=
 
 omit [CompactSpace K] in
 @[simp] theorem potentialPathMap_apply (N : C(K, NormalField)) (t : K) (x : Space) :
-    potentialPathMap N t x = normalPotentialMap (N t x) := rfl
+    potentialPathMap N t x = normalPotentialMap (N t x) := by rfl
 
 theorem potentialPathMap_norm : ‖potentialPathMap (K := K)‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
@@ -368,7 +368,7 @@ def timeNormalPath (N : C(K, NormalField)) (Q₁ : C(K, Space →ᵇ ℝ →L[�
         (pathCompositionMap (E := Space) (F := ℝ) (U := ℝ) N Q₁) N
 
 theorem timeNormalPath_apply (N : C(K, NormalField)) (Q₁ : C(K, Space →ᵇ ℝ →L[ℝ] Space))
-    (t : K) (y : Space) : timeNormalPath N Q₁ t y = normalTimeMap (N t y) (Q₁ t y) := rfl
+    (t : K) (y : Space) : timeNormalPath N Q₁ t y = normalTimeMap (N t y) (Q₁ t y) := by rfl
 
 theorem timeNormalPath_translation (N : C(K, NormalField)) (Q₁ : C(K, Space →ᵇ ℝ →L[ℝ] Space))
     (a : Space) : translateCoefficientPath (timeNormalPath N Q₁) a =
@@ -797,7 +797,7 @@ def normalDerivative : C(Icc (0 : ℝ) D.T,Space →ᵇ Space) :=
   mapCoefficientPath (normalMap D.m₀) D.inverseDerivative
 
 @[simp] theorem inverseDerivative_apply (t : Icc (0 : ℝ) D.T) (x : Space) :
-    D.inverseDerivative t x = -((D.FInv.field t x).comp (D.M.field t x)) := rfl
+    D.inverseDerivative t x = -((D.FInv.field t x).comp (D.M.field t x)) := by rfl
 
 @[simp] theorem normalDerivative_apply (t : Icc (0 : ℝ) D.T) (x : Space) :
     D.normalDerivative t x = -((D.M.field t x).adjoint (D.normal.field t x)) := by

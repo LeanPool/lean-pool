@@ -3203,7 +3203,7 @@ theorem periodizedCopies_periodic (g : Geometry) (κ : Plane → ℝ)
 
 /-- Common pressure, given by `periodizedCopies g κ (fun k => complexCopyPressure t f g hab k
 frequency)`. -/
-noncomputable def commonPressure (t : TangentData P ProblemStatement.Space)
+@[expose] noncomputable def commonPressure (t : TangentData P ProblemStatement.Space)
     (f : P × Plane → ComplexVector) (g : Geometry) {a b : ℝ} (hab : a ≤ b) (κ : Plane → ℝ)
     (frequency : ℝ) : P × Plane → ℂ := periodizedCopies g κ (fun k => complexCopyPressure t f g hab
         k frequency)

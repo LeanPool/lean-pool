@@ -80,7 +80,7 @@ theorem potentialMultiplier_contDiff (m : X → Space) (hm : ContDiff ℝ ∞ m)
 
 /-- Potential multiplier derivative, given by `(2*⟪m,mt⟫_ℝ/(‖m‖^2)^2) • crossLeft m -
 ((‖m‖^2)⁻¹) • crossLeft mt`. -/
-def potentialMultiplierDerivative (m mt : Space) : Space →L[ℝ] Space :=
+@[expose] def potentialMultiplierDerivative (m mt : Space) : Space →L[ℝ] Space :=
   (2*⟪m,mt⟫_ℝ/(‖m‖^2)^2) • crossLeft m - ((‖m‖^2)⁻¹) • crossLeft mt
 
 /-- The derivative formula is valid for a time curve on its actual time set. -/

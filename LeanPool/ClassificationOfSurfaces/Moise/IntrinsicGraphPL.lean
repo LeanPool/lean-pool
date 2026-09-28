@@ -835,7 +835,7 @@ theorem completeChain_vertex_finish :
   simp [completeChain]
 
 /-- The finite plane complex carried by one complete replacement edge. -/
-noncomputable def completeTarget : PlaneComplex :=
+@[expose] noncomputable def completeTarget : PlaneComplex :=
   A.completeChain.arrangementMesh.toPlaneComplex.restrictedTo A.completeCarrier
 
 /-- Every point of a complete replacement edge lies in a one-dimensional arrangement face

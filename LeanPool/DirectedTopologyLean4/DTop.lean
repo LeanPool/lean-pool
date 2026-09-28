@@ -115,6 +115,7 @@ instance subspaceCoe {X : dTopCat} : CoeTC (Set X) dTopCat := ⟨fun s => dTopCa
   ofHom (DirectedSubtypeInclusion (fun s => s ∈ Y))
 
 /-- The inclusion between two directed subspaces, given a subset relation. -/
+@[expose]
 def DirectedSubsetHom {X : dTopCat} {Y₀ Y₁ : Set X} (h : Y₀ ⊆ Y₁) : (dTopCat.of Y₀) ⟶ Y₁ :=
   ofHom (DirectedSubsetInclusion h)
 

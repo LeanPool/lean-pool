@@ -75,6 +75,7 @@ def approximationSet (S : X →L[𝕜] Y) (n : ℕ) : Set ℝ :=
 
 /-- The `n`-th **approximation number** of a continuous linear map: the
 infimum of `‖S - L‖` over operators `L` of rank at most `n`. -/
+@[expose]
 noncomputable def approximationNumber (S : X →L[𝕜] Y) (n : ℕ) : ℝ :=
   sInf (approximationSet S n)
 

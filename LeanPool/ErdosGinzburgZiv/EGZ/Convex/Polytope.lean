@@ -28,6 +28,7 @@ open scoped BigOperators
 namespace EGZ
 
 /-- The affine integer span of a set: finite integer affine combinations. -/
+@[expose]
 def affineIntSpan {n : ℕ} (S : Set (RealCoord n)) : Set (RealCoord n) :=
   {q | ∃ (k : ℕ) (points : Fin k → RealCoord n) (coeff : Fin k → ℤ),
     (∀ i, points i ∈ S) ∧ (∑ i, coeff i) = 1 ∧

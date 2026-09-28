@@ -43,7 +43,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 /-- Of time interval, bundling `velocity`, `continuous`, `lipschitzConstant`, `lipschitz` and
 the required compatibility proofs. -/
-def ofTimeInterval (T : ℝ) (hT : 0 ≤ T)
+@[expose] def ofTimeInterval (T : ℝ) (hT : 0 ≤ T)
     (u : C(Icc (0 : ℝ) T, E →ᵇ E)) (K : ℝ≥0)
     (hLip : ∀ t, LipschitzWith K (u t)) : Data E where
   velocity t x := u (projIcc 0 T hT t) x

@@ -2306,15 +2306,15 @@ theorem normalizedLag_parameter_fine_bound (c : Parameters)
 /-! ## The coefficient in the pulse-direction expansion -/
 
 /-- Geometric source, given by `(1 / 2 - d.h) * eta * shapeGradient eta`. -/
-noncomputable def geometricSource (d : TailData) (eta : ℝ) : ℝ :=
+@[expose] noncomputable def geometricSource (d : TailData) (eta : ℝ) : ℝ :=
   (1 / 2 - d.h) * eta * shapeGradient eta
 
 /-- Equilibrium numerator, given by `d.core.lam - d.h + geometricSource d eta`. -/
-noncomputable def equilibriumNumerator (d : TailData) (eta : ℝ) : ℝ :=
+@[expose] noncomputable def equilibriumNumerator (d : TailData) (eta : ℝ) : ℝ :=
   d.core.lam - d.h + geometricSource d eta
 
 /-- Angular equilibrium, given by `equilibriumNumerator d eta / (1 - d.core.lam)`. -/
-noncomputable def angularEquilibrium (d : TailData) (eta : ℝ) : ℝ :=
+@[expose] noncomputable def angularEquilibrium (d : TailData) (eta : ℝ) : ℝ :=
   equilibriumNumerator d eta / (1 - d.core.lam)
 
 /-- Derivative coefficient, given by `d.core.lam * ((1 / 2 - d.h) + geometricSource d eta) * (1

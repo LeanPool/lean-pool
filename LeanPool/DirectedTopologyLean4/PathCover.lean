@@ -98,7 +98,7 @@ open covered
 /-- We say that `coveredPartwise hX γ n` if a dipath γ can be split into n+1 parts, each of which
 is covered by `X₁` or `X₂`
 -/
-def coveredPartwise (hX : X₀ ∪ X₁ = Set.univ) {x y : X} (γ : Dipath x y) (n : ℕ) : Prop :=
+@[expose] def coveredPartwise (hX : X₀ ∪ X₁ = Set.univ) {x y : X} (γ : Dipath x y) (n : ℕ) : Prop :=
   match n with
   | Nat.zero => covered hX γ
   | Nat.succ n =>

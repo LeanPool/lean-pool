@@ -60,7 +60,7 @@ open ContDiff Set InnerProductSpace MeasureTheory
 namespace Euler
 
 /-- The divergence of a vector field, computed as the trace of its derivative. -/
-noncomputable def divergence (v : ℝ³ → ℝ³) (x : ℝ³) : ℝ :=
+@[expose] noncomputable def divergence (v : ℝ³ → ℝ³) (x : ℝ³) : ℝ :=
   (fderiv ℝ v x).trace ℝ ℝ³
 
 local notation "∇⬝" => divergence

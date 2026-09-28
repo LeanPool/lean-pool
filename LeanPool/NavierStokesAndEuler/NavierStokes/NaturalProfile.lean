@@ -1544,7 +1544,7 @@ theorem original_interval_interior :
 /-- Complex D, given by `1 - z ^ 2`. -/
 def complexD (z : ℂ) : ℂ := 1 - z ^ 2
 /-- Complex L, given by `1 - 2 * (h : ℂ) * z ^ 2`. -/
-def complexL (h : ℝ) (z : ℂ) : ℂ := 1 - 2 * (h : ℂ) * z ^ 2
+@[expose] def complexL (h : ℝ) (z : ℂ) : ℂ := 1 - 2 * (h : ℂ) * z ^ 2
 /-- Complex U, given by `4 * z + (j : ℂ)`. -/
 @[expose] def complexU (j : ℝ) (z : ℂ) : ℂ := 4 * z + (j : ℂ)
 /-- Complex H, given by `(NaturalAxisData.D h : ℂ) * z + complexD z * complexU j z`. -/

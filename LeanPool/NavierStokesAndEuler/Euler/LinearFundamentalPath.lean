@@ -185,7 +185,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E
   (T : ℝ) (hT : 0 ≤ T) (B : C(Icc (0 : ℝ) T, E →L[ℝ] E))
 
 /-- A homogeneous evolution constructed for an arbitrary continuous operator coefficient. -/
-def constructedEvolution : Evolution T hT B where
+@[expose] def constructedEvolution : Evolution T hT B where
   forward := (fundamentalPath T hT B).forward
   backward := (fundamentalPath T hT B).backward
   forward_backward := (fundamentalPath T hT B).forward_backward

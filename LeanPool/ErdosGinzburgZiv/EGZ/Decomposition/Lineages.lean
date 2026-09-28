@@ -52,6 +52,7 @@ variable (S : System)
 abbrev LowNode (L i : ℕ) := {x : S.Node i // S.level i x ≤ L}
 
 /-- Later low-level nodes have distinct old parents. -/
+@[expose]
 def InjectiveBelow (L : ℕ) : Prop :=
   ∀ i, Set.InjOn (S.parent i) {x | S.level (i + 1) x ≤ L}
 

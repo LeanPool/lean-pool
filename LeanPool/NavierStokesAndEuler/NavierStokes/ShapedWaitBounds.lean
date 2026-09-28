@@ -129,7 +129,7 @@ theorem angularLag_abs_bound (c : Parameters) {h y η : ℝ} (hh : 0 ≤ h)
   linarith
 
 /-- Equilibrium, given by `(c.lam - h + D h * η * shapeGradient η) / (1 - c.lam)`. -/
-noncomputable def equilibrium (c : Parameters) (h η : ℝ) : ℝ :=
+@[expose] noncomputable def equilibrium (c : Parameters) (h η : ℝ) : ℝ :=
   (c.lam - h + D h * η * shapeGradient η) / (1 - c.lam)
 
 /-- Hold coefficient, given by `L h η * averagedDrop c c.holdStart`. -/

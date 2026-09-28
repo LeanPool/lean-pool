@@ -1323,7 +1323,7 @@ theorem axialWeighted_eq_zDensity (h : ℝ) (f : SlowProfiles) {n : ℕ} (hn : 0
       1 * partialX (f.axial n) (radiusPoint w)) +
     Z h (pressureExponent h + slowOrder h n) (f.pressure n) (radiusPoint w) + _ - _)
   simp only [radiusPoint, SlowStressSupport.pressureExponent, pressureExponent,
-    PositiveAxisSystem.a, CoordinateAlgebra.A]
+    PositiveAxisSystem.a]
   ring
 
 theorem radius_divergence (h : ℝ) (f : SlowProfiles) (n : ℕ) {w : InnerPoint}

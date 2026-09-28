@@ -305,7 +305,7 @@ instance finite_graph : (R.graph).Finite where
 @[expose] def skeletonSet : Set Plane := pointSet R.graph R.drawing
 
 /-- The realized outer cycle: `C` in the source realization, `S` in the target one. -/
-def outerSet : Set Plane := pointSet (S.outerGraph.map R.pos) R.drawing
+@[expose] def outerSet : Set Plane := pointSet (S.outerGraph.map R.pos) R.drawing
 
 /-- The **open nonboundary part** `|Γ| \ C` of def:admissible-graph. -/
 @[expose] def nonboundary : Set Plane := R.skeletonSet \ R.outerSet

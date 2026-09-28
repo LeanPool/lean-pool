@@ -255,7 +255,7 @@ theorem axial_row (lam C a b : ℝ) (d : Debt) (hlam : 0 < lam) (hC : C ≠ 0)
   field_simp
 
 /-- The five linear equations (35), retaining the general background fields. -/
-def FiveRows (V G : ℝ → ℝ) (d : Debt) (dv ga : ℝ → ℝ) : Prop :=
+@[expose] def FiveRows (V G : ℝ → ℝ) (d : Debt) (dv ga : ℝ → ℝ) : Prop :=
   (∫ R, R ^ (2 : ℕ) * dv R) = 0 ∧
   (∫ R, R * ga R) = 0 ∧
   (∫ R, (2 * V R / R) * dv R) = -(d 0) ∧

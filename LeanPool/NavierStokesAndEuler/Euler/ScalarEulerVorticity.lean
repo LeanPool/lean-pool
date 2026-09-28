@@ -475,7 +475,7 @@ def unitSqrtTime : C(Icc (0 : ℝ) 1, Icc (0 : ℝ) 1) where
   continuous_toFun := (Real.continuous_sqrt.comp continuous_subtype_val).subtype_mk _
 
 @[simp] theorem unitSqrtTime_apply (t : Icc (0 : ℝ) 1) :
-    (unitSqrtTime t : ℝ) = Real.sqrt t := rfl
+    (unitSqrtTime t : ℝ) = Real.sqrt t := by rfl
 
 end Euler.ComparatorBridge
 

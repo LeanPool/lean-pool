@@ -126,6 +126,7 @@ theorem le_iff_carrier_subset {n : ℕ} {P : RationalPolytope n}
     {F G : P.Face} : F ≤ G ↔ F.carrier ⊆ G.carrier := Iff.rfl
 
 /-- The whole polytope is its top exposed face. -/
+@[expose]
 def top {n : ℕ} (P : RationalPolytope n) : P.Face where
   carrier := P.carrier
   is_exposed := by
@@ -145,6 +146,7 @@ noncomputable instance faceOrderTop {n : ℕ} (P : RationalPolytope n) :
   le_top F := F.subset_polytope
 
 /-- The intersection of two faces is a face whenever it is nonempty. -/
+@[expose]
 def interOfNonempty {n : ℕ} {P : RationalPolytope n}
     (F G : P.Face) (hnonempty : (F.carrier ∩ G.carrier).Nonempty) : P.Face where
   carrier := F.carrier ∩ G.carrier

@@ -142,7 +142,7 @@ theorem cofactorBilinear_norm : ‖cofactorBilinear‖ ≤ 3 :=
   cofactorLinear.mkContinuous₂_norm_le (by norm_num) cofactorValue_norm
 
 /-- Adjugate, given by `cofactorBilinear A A`. -/
-def adjugate (A : EndSpace) : EndSpace := cofactorBilinear A A
+@[expose] def adjugate (A : EndSpace) : EndSpace := cofactorBilinear A A
 
 theorem adjugate_norm (A : EndSpace) : ‖adjugate A‖ ≤ 3*‖A‖^2 := by
   change ‖cofactorValue A A‖ ≤ 3*‖A‖^2

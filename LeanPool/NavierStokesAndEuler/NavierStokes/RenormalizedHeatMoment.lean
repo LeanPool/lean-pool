@@ -199,8 +199,10 @@ theorem axial_viscosity_moment_zero {u : ℝ × ℝ → ℝ} {reference tail : �
 /-- A, given by `1 / 2 + h`. -/
 @[expose] noncomputable def A (h : ℝ) : ℝ := 1 / 2 + h
 /-- Q, given by `SimilarityCoordinates.coordinateQ (2 * h) (τ, z)`. -/
+@[expose]
 noncomputable def Q (h τ z : ℝ) : ℝ := SimilarityCoordinates.coordinateQ (2 * h) (τ, z)
 /-- Eta, given by `SimilarityCoordinates.coordinateEta (2 * h) (τ, z)`. -/
+@[expose]
 noncomputable def eta (h τ z : ℝ) : ℝ := SimilarityCoordinates.coordinateEta (2 * h) (τ, z)
 
 /-- Reference power, given by `C * (r ^ 2 / 2) ^ (-A h)`. -/

@@ -795,7 +795,7 @@ section ChartFields
 abbrev ChartPoint := PressureStream.Lift PressureStream.Plane
 
 /-- `(R,(T,Z),Y)` to the actual inverse-coordinate variables `(T,R,Z)`. -/
-noncomputable def chartInput : ChartPoint →L[ℝ] ModelPoint :=
+@[expose] noncomputable def chartInput : ChartPoint →L[ℝ] ModelPoint :=
   (((ContinuousLinearMap.fst ℝ ℝ ℝ).comp
     ((ContinuousLinearMap.fst ℝ PressureStream.Plane PressureStream.Plane).comp
       (ContinuousLinearMap.snd ℝ ℝ (PressureStream.Plane × PressureStream.Plane))))).prod

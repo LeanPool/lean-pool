@@ -1561,12 +1561,12 @@ variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 
 /-- The marginal distribution of exact alice question prior. -/
-def exactAliceQuestionPriorMarginal
+@[expose] def exactAliceQuestionPriorMarginal
     (G : Game X Y A B) (x : X) : ℝ :=
   ∑ y : Y, G.questionWeight x y
 
 /-- The marginal distribution of exact bob question prior. -/
-def exactBobQuestionPriorMarginal
+@[expose] def exactBobQuestionPriorMarginal
     (G : Game X Y A B) (y : Y) : ℝ :=
   ∑ x : X, G.questionWeight x y
 

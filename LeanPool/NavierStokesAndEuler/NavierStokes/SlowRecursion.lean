@@ -455,6 +455,7 @@ end ExplicitInputs
 section SquaredRadius
 
 /-- Real parameter domain, given by `{eta | (eta : ℂ) ∈ U}`. -/
+@[expose]
 noncomputable def realParameterDomain (U : Set ℂ) : Set ℝ :=
   {eta | (eta : ℂ) ∈ U}
 
@@ -1034,6 +1035,7 @@ theorem partialXX_axisFactor {v : InnerProfile} {w : InnerPoint}
   ring
 
 /-- Z2, given by `Z h (b - D h) (Z h b v)`. -/
+@[expose]
 noncomputable def Z2 (h b : ℝ) (v : InnerProfile) : InnerProfile :=
   Z h (b - D h) (Z h b v)
 
@@ -2115,7 +2117,7 @@ noncomputable def symmetrize {R : ℝ} {U : Set ℂ} (hU : IsOpen U)
     (p : ℝ × ℝ) : ℝ := (F (Real.sqrt p.1, (p.2 : ℂ))).re
 
 /-- Complex profile, given by `F (Real.sqrt p.1, p.2)`. -/
-noncomputable def complexProfile {R : ℝ} {U : Set ℂ} (F : AxisFunction R U)
+@[expose] noncomputable def complexProfile {R : ℝ} {U : Set ℂ} (F : AxisFunction R U)
     (p : ℝ × ℂ) : ℂ := F (Real.sqrt p.1, p.2)
 
 theorem sqrt_mem {R X : ℝ} (hR : 0 < R) (hX : X ∈ Ico (0 : ℝ) (R ^ 2)) :
@@ -3102,7 +3104,7 @@ theorem profile_axis_jet {R : ℝ} (hR : 0 < R) {U : Set ℂ} (F : AxisFunction 
 
 /-- A base made from four genuine profiles; its divergence coefficient is
 computed by the same canonical derivative operator used in the recursion. -/
-noncomputable def makeBase {R : ℝ} {U : Set ℂ} {h : ℝ} (c : Domain R U h)
+@[expose] noncomputable def makeBase {R : ℝ} {U : Set ℂ} {h : ℝ} (c : Domain R U h)
     (phi u average pressure : AxisFunction R U) : Coefficient R U :=
   ![phi, u, average - u, pressure, betaOperator c 0 u (average - u)]
 
@@ -3138,7 +3140,7 @@ theorem sequence_mixed_pullback_holomorphic {core buffer : ℝ} {U : Set ℂ} {h
     (sequence c hcore hbuffer C base n i).2.even k m hr
 
 /-- The concrete finite equations of an actual sequence of profile functions. -/
-def OrderEquations {R : ℝ} {U : Set ℂ} (h C : ℝ) (A : ℕ → Coefficient R U)
+@[expose] def OrderEquations {R : ℝ} {U : Set ℂ} (h C : ℝ) (A : ℕ → Coefficient R U)
     (n : ℕ) (w : SimilarityProfile.InnerPoint) : Prop :=
   PositiveAxisSystem.PositiveOrderEquations h C w.2 w.1 n
     (fun j => PositiveAxisSystem.actualJet (profile (A j 0)) w)

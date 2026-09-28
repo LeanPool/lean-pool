@@ -98,7 +98,7 @@ theorem productDerivative_norm_sq_lower (v : TimeLp T U) :
 
 /-- The fixed Hilbert space of coordinate derivatives with zero initial trace.
 Terminal zero is already supplied by the primitive. -/
-def zeroTraceDerivatives (T : ℝ) (hT : 0 ≤ T) : Submodule ℝ (TimeLp T U) :=
+@[expose] def zeroTraceDerivatives (T : ℝ) (hT : 0 ≤ T) : Submodule ℝ (TimeLp T U) :=
   LinearMap.ker (initialTrace T hT).toLinearMap
 
 omit [CompleteSpace U] in

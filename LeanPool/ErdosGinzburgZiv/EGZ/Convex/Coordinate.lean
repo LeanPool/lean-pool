@@ -88,6 +88,7 @@ end IntCoord
 
 /-- A real coordinate vector represents a point of the distinguished affine
 integer lattice. -/
+@[expose]
 def IsIntegral {n : ℕ} (q : RealCoord n) : Prop := ∃ z : IntCoord n, z.real = q
 
 /-- A real point has rational coordinate data. -/
@@ -123,6 +124,7 @@ def id (n : ℕ) : IntegralAffineMap n n where
   mod_integer _ _ := rfl
 
 /-- Composition of integral-affine maps. -/
+@[expose]
 def comp {l m n : ℕ} (f : IntegralAffineMap m n) (g : IntegralAffineMap l m) :
     IntegralAffineMap l n where
   real := f.real.comp g.real

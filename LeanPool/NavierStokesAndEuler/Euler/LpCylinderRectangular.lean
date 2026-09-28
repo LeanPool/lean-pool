@@ -356,7 +356,7 @@ theorem fullPathMap_norm : ‖fullPathMap (K := K) (E := E) (F := F) period‖ �
       (by simpa only [one_mul] using A.norm_coe_le_norm t))
 
 /-- The actual coefficient-to-multiplication map on continuous cylinder paths. -/
-def fullMultiplierMap : C(K,Space →ᵇ E →L[ℝ] F) →L[ℝ]
+@[expose] def fullMultiplierMap : C(K,Space →ᵇ E →L[ℝ] F) →L[ℝ]
     (C(K,CylinderL2 period E) →L[ℝ] C(K,CylinderL2 period F)) :=
   (EulerContinuousPathCalculus.coefficientMap (K := K)
     (E := CylinderL2 period E) (F := CylinderL2 period F)).comp (fullPathMap period)
@@ -476,7 +476,7 @@ local instance instLpCylinderRectangular36 : NormedSpace ℝ (C(K,Supported peri
     hS)) := inferInstance
 
 /-- Restriction to the closed spatial-support subspaces. -/
-def supportedOperatorMap : (Space →ᵇ E →L[ℝ] F) →L[ℝ]
+@[expose] def supportedOperatorMap : (Space →ᵇ E →L[ℝ] F) →L[ℝ]
     (Supported period E S hS →L[ℝ] Supported period F S hS) :=
   (EulerLpOperatorField.supportedMap (E := E) (F := F)
     (liftMeasure period) (spatialSet period S) (spatialSet_measurable period S hS)).comp (fieldLift
@@ -498,13 +498,13 @@ theorem supportedOperatorMap_norm : ‖supportedOperatorMap (E := E) (F := F) pe
 
 /-- Supported path map, given by `(supportedOperatorMap (E := E) (F := F) period S
 hS).compLeftContinuous ℝ K`. -/
-def supportedPathMap : C(K,Space →ᵇ E →L[ℝ] F) →L[ℝ]
+@[expose] def supportedPathMap : C(K,Space →ᵇ E →L[ℝ] F) →L[ℝ]
     C(K,Supported period E S hS →L[ℝ] Supported period F S hS) :=
   (supportedOperatorMap (E := E) (F := F) period S hS).compLeftContinuous ℝ K
 
 /-- Supported multiplier map as an element of `C(K,Space →ᵇ E →L[ℝ] F) →L[ℝ] (C(K,Supported
 period E S hS) →L[ℝ] C(K,Supported period F S hS))`. -/
-def supportedMultiplierMap : C(K,Space →ᵇ E →L[ℝ] F) →L[ℝ]
+@[expose] def supportedMultiplierMap : C(K,Space →ᵇ E →L[ℝ] F) →L[ℝ]
     (C(K,Supported period E S hS) →L[ℝ] C(K,Supported period F S hS)) :=
   (EulerContinuousPathCalculus.coefficientMap (K := K)
     (E := Supported period E S hS) (F := Supported period F S hS)).comp (supportedPathMap period S

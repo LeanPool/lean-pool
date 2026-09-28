@@ -68,6 +68,7 @@ variable [NormedAddCommGroup Z] [NormedSpace 𝕜 Z]
 
 /-- Quotient form of the deviation: `‖π_V ∘ S‖`, where `π_V` is the
 quotient projection `Y →L[𝕜] Y ⧸ V`. -/
+@[expose]
 noncomputable def deviationFromSubspace (S : X →L[𝕜] Y) (V : Submodule 𝕜 Y) : ℝ :=
   ‖V.mkQL.comp S‖
 

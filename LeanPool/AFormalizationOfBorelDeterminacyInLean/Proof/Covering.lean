@@ -231,7 +231,7 @@ lemma comp_covering_str_apply (S T U : PTrees) (f : S ⟶ T) (g : T ⟶ U) A :
   (h2 : f.str = g.str) : f = g := Covering.ext h1 h2
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def Fixing k {T U : PTrees} (f : T ⟶ U) :=
+@[expose] def Fixing k {T U : PTrees} (f : T ⟶ U) :=
   ∃ _ : Tree.Fixing k f.toHom, ∀ p, f.str.toFun p k = ResStrategy.fromMap f.toHom
 @[simp] lemma fixing_id k T : Fixing k (𝟙 T) := by
   use (by synthFixing); intros; ext; simp

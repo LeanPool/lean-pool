@@ -86,7 +86,7 @@ theorem continuous_faceReindexFromStandard (f : K.Face) :
     (continuous_apply ((K.faceVertexEquiv f).symm v)).comp continuous_subtype_val
 
 /-- Native face coordinates are canonically homeomorphic to `stdSimplex ℝ (Fin 3)`. -/
-noncomputable def faceReindexHomeomorph (f : K.Face) :
+@[expose] noncomputable def faceReindexHomeomorph (f : K.Face) :
     K.ClosedFace f ≃ₜ stdSimplex ℝ (Fin 3) where
   toFun := K.faceReindexToStandard f
   invFun := K.faceReindexFromStandard f
@@ -118,7 +118,7 @@ standard plane triangle complex. -/
 
 /-- The standard simplex and the canonical intrinsic realization of the standard triangle are
 the same topological simplex. -/
-noncomputable def standardSimplexRealizationHomeomorph :
+@[expose] noncomputable def standardSimplexRealizationHomeomorph :
     stdSimplex ℝ (Fin 3) ≃ₜ standardTrianglePlaneComplex.toIntrinsic.realization where
   toFun := standardSimplexToRealization
   invFun := standardRealizationToSimplex

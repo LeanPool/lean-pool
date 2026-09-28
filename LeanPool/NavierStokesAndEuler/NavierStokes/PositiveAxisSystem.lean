@@ -82,11 +82,11 @@ noncomputable def angularPower (h : K) : K := -a h - 1 / 2
 /-- Axial power, given by `-a h`. -/
 noncomputable def axialPower (h : K) : K := -a h
 /-- Inverse square, given by `(C ^ 2)⁻¹`. -/
-noncomputable def inverseSquare (C : K) : K := (C ^ 2)⁻¹
+@[expose] noncomputable def inverseSquare (C : K) : K := (C ^ 2)⁻¹
 
 /-- Time value, given by `(-power * j.value + dScale h * eta * j.parameter + X * j.radial) / ell
 h eta`. -/
-noncomputable def timeValue (h power eta X : K) (j : Jet K) : K :=
+@[expose] noncomputable def timeValue (h power eta X : K) (j : Jet K) : K :=
   (-power * j.value + dScale h * eta * j.parameter + X * j.radial) / ell h eta
 
 /-- Axial value, given by `(2 * eta * power * j.value + edge eta * j.parameter - 2 * eta * X *
@@ -714,7 +714,7 @@ theorem profileSystem_iff_positiveOrder {h C r eta : ℝ} (hr : r ≠ 0)
     (expanded_iff_positiveOrder h C eta (r ^ 2) hn _ _ _ _ _ _ _ _ hbeta)
 
 /-- The actual radial-average difference, with its regular value at the axis. -/
-noncomputable def averageDefect (u : InnerProfile) : InnerProfile :=
+@[expose] noncomputable def averageDefect (u : InnerProfile) : InnerProfile :=
   fun w => ProfileHistories.average u w - u w
 
 theorem averageDefect_smooth (Ω : ProfileHistories.RadialDomain) {u : InnerProfile}

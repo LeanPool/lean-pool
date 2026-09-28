@@ -30,7 +30,7 @@ open scoped Topology NNReal
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- Applying a bounded linear spatial map to an actual continuous Sobolev time path. -/
-def mapPath {p q : ℕ} (T : ℝ) (A : SobolevSpace period q →L[ℝ] SobolevSpace period p)
+@[expose] def mapPath {p q : ℕ} (T : ℝ) (A : SobolevSpace period q →L[ℝ] SobolevSpace period p)
     (u : C(Icc (0 : ℝ) T, SobolevSpace period q)) : C(Icc (0 : ℝ) T, SobolevSpace period p) :=
   ⟨fun t => A (u t), A.continuous.comp u.continuous⟩
 

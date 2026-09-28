@@ -43,7 +43,7 @@ variable {α : Type*} [MeasurableSpace α] {μ : Measure α} {J : ℕ → ℝ �
 
 /-- Chain dominated, given by `∀ n L, 0 < L → ∃ b : α → ℝ, Integrable b μ ∧ ∀ᵐ t ∂μ, ∀ ν : ℝ,
 |ν| ≤ L → ‖J n ν t‖ ≤ b t`. -/
-noncomputable def ChainDominated (J : ℕ → ℝ → α → ℝ) (μ : Measure α) : Prop :=
+@[expose] noncomputable def ChainDominated (J : ℕ → ℝ → α → ℝ) (μ : Measure α) : Prop :=
   ∀ n L, 0 < L → ∃ b : α → ℝ, Integrable b μ ∧
     ∀ᵐ t ∂μ, ∀ ν : ℝ, |ν| ≤ L → ‖J n ν t‖ ≤ b t
 

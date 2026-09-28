@@ -594,6 +594,7 @@ It is a statement about a single descent step, not about outer faces, and it doe
 `n` except to keep the block inside the chain. A discharging module has
 `Graph.IsCycleThrough.split_at`, `Graph.exists_spliced_cycle`, `Graph.IsDrawing.arcs_of_split`
 and `Schoenflies.crosscutSplitsRegion` available. -/
+@[expose]
 def Descent (Γ : ℕ → Graph Plane β) (drawing : β → ℝ → Plane) (n : ℕ) (x : Plane) : Prop :=
   ∀ (i m : ℕ), i + (m + 2) ≤ n →
     ∀ (e : β) (u v : Plane) (D : List β),
@@ -624,7 +625,7 @@ member and an edge of the earlier chain outside `Γ (j-1)`, build a crosscut of 
 
 The hypothesis that `x` is enclosed is carried along because it costs nothing and a discharger
 may want it; the construction in the blueprint does not use it. -/
-def CrosscutExists (Γ : ℕ → Graph Plane β) (drawing : β → ℝ → Plane) (n : ℕ) (x : Plane) :
+@[expose] def CrosscutExists (Γ : ℕ → Graph Plane β) (drawing : β → ℝ → Plane) (n : ℕ) (x : Plane) :
     Prop :=
   ∀ (i m : ℕ), i + (m + 2) ≤ n →
     ∀ (e : β) (u v : Plane) (D : List β),

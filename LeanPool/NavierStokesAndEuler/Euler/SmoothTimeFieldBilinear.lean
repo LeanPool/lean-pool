@@ -43,7 +43,7 @@ variable {V : Type u} [NormedAddCommGroup V] [NormedSpace ℝ V]
 
 /-- Bound constant, bundling `field`, `smooth`, `jet`, `jet_eq` and the required compatibility
 proofs. -/
-def boundConstant (v : V) : SmoothTimeField K E V where
+@[expose] def boundConstant (v : V) : SmoothTimeField K E V where
   field := ContinuousMap.const K (BoundedContinuousFunction.const E v)
   smooth _ := contDiff_const
   jet n := ContinuousMap.const K (BoundedContinuousFunction.const E
@@ -161,7 +161,7 @@ theorem exists_bilinear_jet (B : V →L[ℝ] W →L[ℝ] Z)
           simp))).symm
 
 /-- Bilinear, bundling `field`, `smooth`, `jet`, `jet_eq`. -/
-def bilinear (B : V →L[ℝ] W →L[ℝ] Z)
+@[expose] def bilinear (B : V →L[ℝ] W →L[ℝ] Z)
     (A : SmoothTimeField K E V) (C : SmoothTimeField K E W) : SmoothTimeField K E Z where
   field := bilinearPath B A C
   smooth t := (B.contDiff.comp (A.smooth t)).clm_apply (C.smooth t)

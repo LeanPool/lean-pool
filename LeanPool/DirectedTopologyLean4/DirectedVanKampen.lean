@@ -389,7 +389,7 @@ lemma functorOnHomOfCovered_dihomotopic {x y : X} {γ γ' : Dipath x y} {F : Dih
 -  ### Define the behaviour on partwise covered paths
 -/
 /-- Recursive map on paths split into finitely many covered pieces. -/
-def FunctorOnHomOfCoveredPartwiseAux {n : ℕ} :
+@[expose] def FunctorOnHomOfCoveredPartwiseAux {n : ℕ} :
     ∀ (x y : X) (γ : Dipath x y) (_ : coveredPartwise hX γ n),
       F_obj ⟨x⟩ ⟶ F_obj ⟨y⟩ :=
   Nat.recOn n
@@ -977,7 +977,7 @@ lemma functorOnHom_comp {x y z : dπₓ X} (γ₁ : x ⟶ y) (γ₂ : y ⟶ z) :
   ## Define the functor F : (dπₓ X) ⟶ C
 -/
 /-- The pushout functor from the directed fundamental category of `X` to `C`. -/
-def Functor : (dπₓ X) ⥤ C where
+@[expose] def Functor : (dπₓ X) ⥤ C where
   obj := F_obj
   map γ := F_hom γ
   map_id x := functorOnHom_id hX X₁_open X₂_open h_comm x

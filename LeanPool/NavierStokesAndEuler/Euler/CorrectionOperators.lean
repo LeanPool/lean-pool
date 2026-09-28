@@ -33,14 +33,14 @@ def postcompose (A : Y →L[ℝ] Y) (B : X →L[ℝ] X →L[ℝ] Y) : X →L[ℝ
   (ContinuousLinearMap.compL ℝ X Y Y A).comp B
 
 @[simp] theorem postcompose_apply (A : Y →L[ℝ] Y) (B : X →L[ℝ] X →L[ℝ] Y) (u v : X) :
-    postcompose A B u v = A (B u v) := rfl
+    postcompose A B u v = A (B u v) := by rfl
 
 /-- Linearization of a quadratic term about the actual approximate solution. -/
 def linearize (B : X →L[ℝ] X →L[ℝ] Y) (C : X →L[ℝ] Y) (z : X) : X →L[ℝ] Y :=
   B z + B.flip z + C
 
 @[simp] theorem linearize_apply (B : X →L[ℝ] X →L[ℝ] Y) (C : X →L[ℝ] Y) (z e : X) :
-    linearize B C z e = B z e + B e z + C e := rfl
+    linearize B C z e = B z e + B e z + C e := by rfl
 
 /-- The correction source is exactly the difference of the full quadratic equations. -/
 theorem quadratic_correction_identity (B : X →L[ℝ] X →L[ℝ] Y) (C : X →L[ℝ] Y) (z e : X) :
@@ -81,7 +81,7 @@ def coordinateProduct {q : ℕ} (hq : 6 ≤ q) (i : Fin 3) :
     (u v : SobolevSpace period (q + 1)) :
     coordinateProduct period hq i u v = productHq period hq (coordinate 3 i) (coordinate_norm_le 3
         i)
-      (truncateOperator period q u) (truncateOperator period q v) := rfl
+      (truncateOperator period q u) (truncateOperator period q v) := by rfl
 
 /-- The actual order-zero quadratic coefficient terms, Σ Cᵢ(uᵢ v). -/
 def algebraicBilinear {q : ℕ} (hq : 6 ≤ q)

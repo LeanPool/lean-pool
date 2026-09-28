@@ -55,7 +55,7 @@ theorem continuous_sobolev (A : K → SmoothL2Field Space)
 
 /-- Sobolev path, given by `⟨fun t => ordinarySobolev q (A t).toLp (A
 t).translation_contDiff,continuous_sobolev A hA q⟩`. -/
-def sobolevPath (A : K → SmoothL2Field Space)
+@[expose] def sobolevPath (A : K → SmoothL2Field Space)
     (hA : ∀ n, Continuous (fun t => (A t).jetLp n)) (q : ℕ) : C(K,SobolevSpace 1 q) :=
   ⟨fun t => ordinarySobolev q (A t).toLp (A t).translation_contDiff,continuous_sobolev A hA q⟩
 

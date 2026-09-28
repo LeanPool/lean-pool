@@ -63,7 +63,7 @@ theorem restriction_norm : ‖referenceRestriction m₀ R‖ ≤ 1 := by
 variable {K : Type*} [TopologicalSpace K] [CompactSpace K]
 
 /-- The actual source F R⊥, including all its uniformly continuous spatial jets. -/
-def coefficient (F : SmoothCoefficientPath K (Space →L[ℝ] Space)) :
+@[expose] def coefficient (F : SmoothCoefficientPath K (Space →L[ℝ] Space)) :
     SmoothCoefficientPath K (U →L[ℝ] Space) :=
   SmoothCoefficientPath.map (referenceRestriction m₀ R) F
 
@@ -136,7 +136,7 @@ open scoped BoundedContinuousFunction ContDiff
 variable (m₀ : Space)
 
 /-- The fixed linear operation sending F⁻¹ to F⁻ᵀm₀. -/
-def normalMap : (Space →L[ℝ] Space) →L[ℝ] Space :=
+@[expose] def normalMap : (Space →L[ℝ] Space) →L[ℝ] Space :=
   (ContinuousLinearMap.apply ℝ Space m₀).comp
     (ContinuousLinearMap.adjoint.toContinuousLinearEquiv.toContinuousLinearMap :
       (Space →L[ℝ] Space) →L[ℝ] (Space →L[ℝ] Space))
@@ -155,7 +155,7 @@ theorem normalMap_norm (hm₀ : ‖m₀‖ = 1) : ‖normalMap m₀‖ ≤ 1 := 
 variable {K : Type*} [TopologicalSpace K] [CompactSpace K]
 
 /-- The normal has the genuine spatial jets inherited from the inverse deformation. -/
-def normalCoefficient (FInv : SmoothCoefficientPath K (Space →L[ℝ] Space)) :
+@[expose] def normalCoefficient (FInv : SmoothCoefficientPath K (Space →L[ℝ] Space)) :
     SmoothCoefficientPath K Space := SmoothCoefficientPath.map (normalMap m₀) FInv
 
 @[simp] theorem normalCoefficient_apply (FInv : SmoothCoefficientPath K (Space →L[ℝ] Space))
@@ -284,13 +284,13 @@ abbrev frameDerivative := coefficient D.m₀ D.R D.F₁
 abbrev normal := normalCoefficient D.m₀ D.FInv
 
 /-- Inverse bound, given by `1+‖D.FInv.field‖`. -/
-def inverseBound : ℝ := 1+‖D.FInv.field‖
+@[expose] def inverseBound : ℝ := 1+‖D.FInv.field‖
 /-- Frame bound, given by `1+‖D.F.field‖`. -/
-def frameBound : ℝ := 1+‖D.F.field‖
+@[expose] def frameBound : ℝ := 1+‖D.F.field‖
 /-- Frame lower, given by `D.inverseBound⁻¹^2`. -/
-def frameLower : ℝ := D.inverseBound⁻¹^2
+@[expose] def frameLower : ℝ := D.inverseBound⁻¹^2
 /-- Normal lower, given by `D.frameBound⁻¹^2`. -/
-def normalLower : ℝ := D.frameBound⁻¹^2
+@[expose] def normalLower : ℝ := D.frameBound⁻¹^2
 
 theorem inverseBound_pos : 0 < D.inverseBound := by
   unfold inverseBound

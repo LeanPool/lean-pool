@@ -468,7 +468,7 @@ noncomputable def radialWindow (F : Profile) (XR : ℝ) (s : Slot) : Set ℝ :=
   Ioo (radialLeft F XR s) (radialRight F XR s)
 
 /-- Radial closed patch, given by `Icc (radialSupportLeft F XR s) (radialSupportRight F XR s)`. -/
-noncomputable def radialClosedPatch (F : Profile) (XR : ℝ) (s : Slot) : Set ℝ :=
+@[expose] noncomputable def radialClosedPatch (F : Profile) (XR : ℝ) (s : Slot) : Set ℝ :=
   Icc (radialSupportLeft F XR s) (radialSupportRight F XR s)
 
 theorem radialLeft_pos (F : Profile) (XR : ℝ) (hXR : 0 < XR) (s : Slot) :

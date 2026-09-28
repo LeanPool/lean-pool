@@ -442,7 +442,7 @@ theorem truncationCutoff_eventually_one (R : ℝ) (hR : 0 < R) (x : Space)
   NavierStokesAndEuler.SmoothCutoff.cutoff_eventuallyEq_one hR hx
 
 /-- The truncation family used by the finite-energy flow argument. -/
-def finiteEnergyTruncation (u : Space → Space) (R : ℝ) : Space → Space :=
+@[expose] def finiteEnergyTruncation (u : Space → Space) (R : ℝ) : Space → Space :=
   potentialTruncation u (truncationCutoff R)
 
 theorem finiteEnergyTruncation_smooth

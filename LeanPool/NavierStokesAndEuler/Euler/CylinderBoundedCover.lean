@@ -51,7 +51,7 @@ def cover (u : SobolevSpace P 3) : LiftTangent →ᵇ Space :=
     (fun x => EulerSobolevPointEvaluation.representative_bound P u (coveringMap P x))
 
 @[simp] theorem cover_apply (u : SobolevSpace P 3) (x : LiftTangent) :
-    cover P u x = EulerSobolevPointEvaluation.pointEvaluation P (coveringMap P x) u := rfl
+    cover P u x = EulerSobolevPointEvaluation.pointEvaluation P (coveringMap P x) u := by rfl
 
 theorem cover_norm_le (u : SobolevSpace P 3) :
     ‖cover P u‖ ≤ sobolevEmbeddingConstant P 3 * ‖u‖ := by
@@ -121,7 +121,7 @@ def coverPath (p : C(K, LiftL2 P))
 @[simp] theorem coverPath_apply (p : C(K, LiftL2 P))
     (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
     (t : K) (x : LiftTangent) :
-    coverPath P p hp t x = pointField P p hp t (coveringMap P x) := rfl
+    coverPath P p hp t x = pointField P p hp t (coveringMap P x) := by rfl
 
 /-- Cover orbit, given by `coverPathMap P (sobolevOrbit P 3 p hp a)`. -/
 def coverOrbit (p : C(K, LiftL2 P))

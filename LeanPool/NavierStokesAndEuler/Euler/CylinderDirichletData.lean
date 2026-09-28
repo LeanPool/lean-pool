@@ -123,21 +123,21 @@ def coordinateSolver : TimeLp T (CylinderL2 P E) →L[ℝ]
     D.potential D.potential_nonneg (D.hessian_upper P) D.small
 
 /-- Velocity Lᵖ, constructed using `EulerTransverseFixedEvolution.velocityLp`. -/
-def velocityLp : TimeLp T (CylinderL2 P E) →L[ℝ] TimeLp T (CylinderL2 P U) :=
+@[expose] def velocityLp : TimeLp T (CylinderL2 P E) →L[ℝ] TimeLp T (CylinderL2 P U) :=
   EulerTransverseFixedEvolution.velocityLp T D.time_pos.le
     (D.frame P) (D.frameDerivative P) (D.hessian P)
     D.lower D.lower_pos (D.frame_lower P) (D.frame_derivative P)
     D.potential D.potential_nonneg (D.hessian_upper P) D.small
 
 /-- Acceleration Lᵖ, constructed using `EulerTransverseFixedEvolution.accelerationLp`. -/
-def accelerationLp : TimeLp T (CylinderL2 P E) →L[ℝ] TimeLp T (CylinderL2 P U) :=
+@[expose] def accelerationLp : TimeLp T (CylinderL2 P E) →L[ℝ] TimeLp T (CylinderL2 P U) :=
   EulerTransverseFixedEvolution.accelerationLp T D.time_pos.le
     (D.frame P) (D.frameDerivative P) (D.hessian P)
     D.lower D.lower_pos (D.frame_lower P) (D.frame_derivative P)
     D.potential D.potential_nonneg (D.hessian_upper P) D.small
 
 /-- Velocity path, constructed using `EulerTransverseFixedEvolution.velocityPath`. -/
-def velocityPath : TimeLp T (CylinderL2 P E) →L[ℝ] C(Icc (0 : ℝ) T,CylinderL2 P U) :=
+@[expose] def velocityPath : TimeLp T (CylinderL2 P E) →L[ℝ] C(Icc (0 : ℝ) T,CylinderL2 P U) :=
   EulerTransverseFixedEvolution.velocityPath T D.time_pos.le
     (D.frame P) (D.frameDerivative P) (D.hessian P)
     D.lower D.lower_pos (D.frame_lower P) (D.frame_derivative P)

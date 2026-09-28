@@ -37,7 +37,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensiona
   (T : ℝ) (hT : 0 ≤ T) (A : SmoothTimeField (Icc (0 : ℝ) T) E E)
 
 /-- Velocity family, given by `A.superposition (pathFamily T hT A x)`. -/
-def velocityFamily (x : E) : C(Icc (0 : ℝ) T,E) :=
+@[expose] def velocityFamily (x : E) : C(Icc (0 : ℝ) T,E) :=
   A.superposition (pathFamily T hT A x)
 
 theorem velocityFamily_contDiff : ContDiff ℝ ∞ (velocityFamily T hT A) :=
@@ -45,7 +45,7 @@ theorem velocityFamily_contDiff : ContDiff ℝ ∞ (velocityFamily T hT A) :=
 
 /-- Displacement family, given by `pathFamily T hT A x - (ContinuousLinearMap.const ℝ (Icc (0 :
 ℝ) T)) x`. -/
-def displacementFamily (x : E) : C(Icc (0 : ℝ) T,E) :=
+@[expose] def displacementFamily (x : E) : C(Icc (0 : ℝ) T,E) :=
   pathFamily T hT A x - (ContinuousLinearMap.const ℝ (Icc (0 : ℝ) T)) x
 
 theorem displacementFamily_contDiff : ContDiff ℝ ∞ (displacementFamily T hT A) := by

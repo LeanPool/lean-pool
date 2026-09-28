@@ -867,7 +867,7 @@ theorem actionOrbitMk_smul (A : Type w) (X : Type w) [Group A] [MulAction A X]
     rawBassSerreEdgeData G :=
   (a * e.1, e.2)
 
-@[expose] instance rawBassSerreEdgeDataMulAction {ι : Type v} (G : ι → Type u)
+instance rawBassSerreEdgeDataMulAction {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] : MulAction (FreeProduct G) (rawBassSerreEdgeData G) where
   smul := rawBassSerreEdgeDataAction G
   one_smul e := by
@@ -902,7 +902,7 @@ instance rawBassSerreVertexSubgroupMulAction {ι : Type v} (G : ι → Type u)
   one_smul x := by simp
   mul_smul a b x := by simp [mul_smul]
 
-@[expose] instance rawBassSerreEdgeDataSubgroupMulAction {ι : Type v} (G : ι → Type u)
+instance rawBassSerreEdgeDataSubgroupMulAction {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G)) :
     MulAction H (rawBassSerreEdgeData G) where
   smul h e := h.1 • e
@@ -2365,7 +2365,7 @@ noncomputable def treeKuroshProductToH {ι : Type v} (G : ι → Type u)
       rfl }
 
 /-- Include the quotient graph's loop group as the free factor in the tree product. -/
-noncomputable def treeKuroshFreeInclusion {ι : Type v}
+@[expose] noncomputable def treeKuroshFreeInclusion {ι : Type v}
     (G : ι → Type u) [∀ i, Group (G i)] (H : Subgroup (FreeProduct G)) :
     KuroshFreePart G H →* TreeKuroshProduct G H :=
   { toFun := fun x => Monoid.CoprodI.of

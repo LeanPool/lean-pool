@@ -85,7 +85,8 @@ theorem ordinarySpatialJet_word (n q : ℕ) (hn : n ≤ q) (u : EulerMeanSolenoi
       exact Fin.snoc_init_self _
 
 /-- A concrete element of the previously constructed complete cylinder Sobolev space. -/
-def ordinarySobolev (q : ℕ) (u : EulerMeanSolenoidal.L2) (hu : SmoothOrbit u) : SobolevSpace 1 q :=
+@[expose] def ordinarySobolev (q : ℕ) (u : EulerMeanSolenoidal.L2)
+    (hu : SmoothOrbit u) : SobolevSpace 1 q :=
   ofJet 1 (ordinarySpatialJet q u hu)
 
 @[simp] theorem ordinarySobolev_value (q : ℕ) (u : EulerMeanSolenoidal.L2) (hu : SmoothOrbit u) :

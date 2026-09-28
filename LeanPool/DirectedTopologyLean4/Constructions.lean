@@ -86,6 +86,7 @@ is a directed map. -/
 
 /-- The inclusion of one subset into another, when both carry the induced directed structure,
 is a directed map. -/
+@[expose]
 def DirectedSubsetInclusion {α : Type u} [t : DirectedSpace α] {X Y : Set α} (h : X ⊆ Y) : D(X,Y)
     where
   toFun := Set.inclusion h

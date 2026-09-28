@@ -35,7 +35,7 @@ variable {K E : Type*} [TopologicalSpace K] [CompactSpace K]
   (m : SmoothCoefficientPath K E)
 
 /-- The normal vector as a genuine scalar-to-vector coefficient path. -/
-def normalColumn : SmoothCoefficientPath K (ℝ →L[ℝ] E) :=
+@[expose] def normalColumn : SmoothCoefficientPath K (ℝ →L[ℝ] E) :=
   SmoothCoefficientPath.map
     (ContinuousLinearMap.toSpanSingletonLIE ℝ E).toLinearIsometry.toContinuousLinearMap m
 
@@ -53,7 +53,7 @@ theorem normalColumn_lower (c : ℝ) (hm : ∀ t x, c ≤ ‖m.field t x‖ ^ 2)
 variable (c : ℝ) (hc : 0 < c) (hm : ∀ t x, c ≤ ‖m.field t x‖ ^ 2)
 
 /-- The actual scalar coefficient used by the pressure in equation (11). -/
-def normalFunctional : C(K,Space →ᵇ E →L[ℝ] ℝ) :=
+@[expose] def normalFunctional : C(K,Space →ᵇ E →L[ℝ] ℝ) :=
   sourceForcing (normalColumn m) c hc (normalColumn_lower m c hm)
 
 /-- The constructed Gram left inverse is precisely the literal normal quotient. -/

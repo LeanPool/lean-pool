@@ -104,13 +104,13 @@ def deformationEquiv (t : Icc (0 : ℝ) D.T) (x : Space) : Space ≃L[ℝ] Space
     (D.inverse_left t x) (D.inverse_right t x)
 
 @[simp] theorem deformationEquiv_coe (t : Icc (0 : ℝ) D.T) (x : Space) :
-    (D.deformationEquiv t x).toContinuousLinearMap = D.F.field t x := rfl
+    (D.deformationEquiv t x).toContinuousLinearMap = D.F.field t x := by rfl
 
 @[simp] theorem deformationEquiv_symm_coe (t : Icc (0 : ℝ) D.T) (x : Space) :
-    (D.deformationEquiv t x).symm.toContinuousLinearMap = D.FInv.field t x := rfl
+    (D.deformationEquiv t x).symm.toContinuousLinearMap = D.FInv.field t x := by rfl
 
 @[simp] theorem deformationEquiv_normal (t : Icc (0 : ℝ) D.T) :
-    EulerPacketConstructedPiola.normal (D.deformationEquiv t) D.m₀ = D.normal.field t := rfl
+    EulerPacketConstructedPiola.normal (D.deformationEquiv t) D.m₀ = D.normal.field t := by rfl
 
 theorem initialNormal_ne_zero : D.m₀ ≠ 0 := by
   intro h

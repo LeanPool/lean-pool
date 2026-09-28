@@ -632,7 +632,7 @@ variable (period : ℝ)
 
 /-- Lifted slow curl, given by `curlMatrix ((fieldFDeriv period Q x).comp
 ((ContinuousLinearMap.inl ℝ Space ℝ).comp (F x.1).symm.toContinuousLinearMap))`. -/
-def liftedSlowCurl (F : Space → Space ≃L[ℝ] Space) (Q : LiftDomain period → Space)
+@[expose] def liftedSlowCurl (F : Space → Space ≃L[ℝ] Space) (Q : LiftDomain period → Space)
     (x : LiftDomain period) : Space :=
   curlMatrix ((fieldFDeriv period Q x).comp
     ((ContinuousLinearMap.inl ℝ Space ℝ).comp (F x.1).symm.toContinuousLinearMap))

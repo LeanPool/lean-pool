@@ -59,7 +59,7 @@ theorem externalCommutator_apply {s : ℕ} (hs : 6 ≤ s) (n : ℕ) (w : Fin n �
       wordAtLevel period 6 n w hn (transportBilinear period hs L hL u v) -
       transportBilinear period (by norm_num : 6 ≤ 6) L hL
         (restrictOperator period (by omega : 7 ≤ s+1) u)
-        (wordAtLevel period 7 n w (by omega : n+7 ≤ s+1) v) := rfl
+        (wordAtLevel period 7 n w (by omega : n+7 ≤ s+1) v) := by rfl
 
 omit [Fact (0 < period)] in
 /-- Classical transport of smooth cylinder fields is smooth. -/

@@ -85,7 +85,7 @@ def averageLinear : CylinderL2 P V →ₗ[ℝ] CylinderL2 P V where
   map_smul' := averageIntegral_smul P
 
 /-- The Bochner average of genuine angular translations. -/
-def average : CylinderL2 P V →L[ℝ] CylinderL2 P V :=
+@[expose] def average : CylinderL2 P V →L[ℝ] CylinderL2 P V :=
   (averageLinear P).mkContinuous 1 (fun u => by
     change ‖averageIntegral P u‖ ≤ (1 : ℝ)*‖u‖
     simpa only [one_mul] using averageIntegral_norm P u)

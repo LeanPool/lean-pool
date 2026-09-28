@@ -339,7 +339,7 @@ theorem partitionJet_apply (A : SmoothTimeField K E V) (D : SmoothTimeField K E 
 
 /-- Comp displacement, bundling `field`, `smooth`, `jet`, `jet_eq` and the required
 compatibility proofs. -/
-def compDisplacement (A : SmoothTimeField K E V) (D : SmoothTimeField K E E) :
+@[expose] def compDisplacement (A : SmoothTimeField K E V) (D : SmoothTimeField K E E) :
     SmoothTimeField K E V where
   field := pathPullback A.field D.field ‖A.jet 1‖₊ A.field_lipschitz
   smooth t := (A.smooth t).comp (contDiff_id.add (D.smooth t))

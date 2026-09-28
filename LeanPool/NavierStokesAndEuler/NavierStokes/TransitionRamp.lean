@@ -713,7 +713,7 @@ namespace StockReference
 variable {J : Set ℝ} (R : StockReference J)
 
 /-- Log time, given by `Real.log (X / R.radius0)`. -/
-noncomputable def logTime (X : ℝ) : ℝ := Real.log (X / R.radius0)
+@[expose] noncomputable def logTime (X : ℝ) : ℝ := Real.log (X / R.radius0)
 /-- Log point, given by `(R.logTime p.1, p.2)`. -/
 @[expose] noncomputable def logPoint (p : Point) : Point := (R.logTime p.1, p.2)
 
@@ -732,12 +732,12 @@ theorem chart_logTime {X η : ℝ} (hX : 0 < X) : R.chart (R.logTime X, η) = (X
 
 /-- Physical F, defined pointwise by `if p.1 ≤ R.radius0 then R.profiles.f p else Real.exp
 (R.logAmplitude T κ w₁ w₂ (R.logPoint p))`. -/
-noncomputable def physicalF (T κ w₁ w₂ : ℝ) : Field := fun p =>
+@[expose] noncomputable def physicalF (T κ w₁ w₂ : ℝ) : Field := fun p =>
   if p.1 ≤ R.radius0 then R.profiles.f p else Real.exp (R.logAmplitude T κ w₁ w₂ (R.logPoint p))
 
 /-- Physical U, defined pointwise by `if p.1 ≤ R.radius0 then R.profiles.U p else
 R.axialVelocity T κ w₁ (R.logPoint p)`. -/
-noncomputable def physicalU (T κ w₁ : ℝ) : Field := fun p =>
+@[expose] noncomputable def physicalU (T κ w₁ : ℝ) : Field := fun p =>
   if p.1 ≤ R.radius0 then R.profiles.U p else R.axialVelocity T κ w₁ (R.logPoint p)
 
 theorem physicalF_before (T κ w₁ w₂ : ℝ) {p : Point} (hp : p.1 ≤ R.radius0) :
@@ -752,7 +752,7 @@ noncomputable def endpointU (T κ w₁ : ℝ) (η : ℝ) : ℝ :=
 
 /-- Endpoint log, given by `Real.log C + Real.log 220 / 2 + R.logAmplitude T κ w₁ w₂
 (R.finalTime, η)`. -/
-noncomputable def endpointLog (T κ w₁ w₂ C : ℝ) (η : ℝ) : ℝ :=
+@[expose] noncomputable def endpointLog (T κ w₁ w₂ C : ℝ) (η : ℝ) : ℝ :=
   Real.log C + Real.log 220 / 2 + R.logAmplitude T κ w₁ w₂ (R.finalTime, η)
 
 theorem endpointU_smooth (hJ : IsOpen J) (T κ w₁ : ℝ) :
@@ -1107,7 +1107,7 @@ theorem physicalF_positive (T κ w₁ w₂ : ℝ) {p : Point}
 
 /-- The pressure and all moments are recomputed from these exact physical
 fields.  This is the object used by the later cone and matching modules. -/
-noncomputable def physicalProfiles {T κ w₁ w₂ : ℝ} (hT : 0 < T)
+@[expose] noncomputable def physicalProfiles {T κ w₁ w₂ : ℝ} (hT : 0 < T)
     (hb : δ ≤ (ofNatural F hΛ hsmall hδ hδT hP0).bigTime)
     (hw₁ : 0 < w₁) (hw₂ : 0 < w₂) : Profiles (Input.ofNatural hΛ F).radialDomain where
   f := (ofNatural F hΛ hsmall hδ hδT hP0).physicalF T κ w₁ w₂

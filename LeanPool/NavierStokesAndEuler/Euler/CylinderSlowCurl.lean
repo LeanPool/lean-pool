@@ -49,7 +49,7 @@ def curlCoefficient (i : Fin 3) : (Space →L[ℝ] Space) →L[ℝ] (Space →L[
       : (Space →L[ℝ] Space) →L[ℝ] (Space →L[ℝ] Space)))
 
 @[simp] theorem curlCoefficient_apply (i : Fin 3) (G : Space →L[ℝ] Space) :
-    curlCoefficient i G = crossLeft (G.adjoint (EuclideanSpace.single i 1)) := rfl
+    curlCoefficient i G = crossLeft (G.adjoint (EuclideanSpace.single i 1)) := by rfl
 
 theorem curlCoefficient_norm (i : Fin 3) : ‖curlCoefficient i‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
@@ -111,7 +111,7 @@ def curlCoefficientPath (i : Fin 3) :
 omit [CompactSpace K] in
 @[simp] theorem curlCoefficientPath_apply (i : Fin 3)
     (G : C(K, Space →ᵇ Space →L[ℝ] Space)) (t : K) (y : Space) :
-    curlCoefficientPath i G t y = curlCoefficient i (G t y) := rfl
+    curlCoefficientPath i G t y = curlCoefficient i (G t y) := by rfl
 
 theorem curlCoefficientPath_norm (i : Fin 3) : ‖curlCoefficientPath (K := K) i‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one

@@ -54,7 +54,7 @@ def pathMean : C(K,CylinderL2 P V) →L[ℝ] C(K,SpatialL2 V) :=
 
 omit [CompactSpace K] in
 @[simp] theorem pathMean_apply (p : C(K, CylinderL2 P V)) (t : K) :
-    pathMean P p t = mean P (p t) := rfl
+    pathMean P p t = mean P (p t) := by rfl
 
 /-- Spatial path translation, given by `(EulerLpTranslation.translation
 a).toContinuousLinearMap.compLeftContinuous ℝ K`. -/

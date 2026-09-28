@@ -473,7 +473,7 @@ def boundedPath : C(Icc (0 : ℝ) T,X →ᵇ V) where
   continuous_toFun := (boundedSlice_lipschitz T hT f q hf C D hC hD hq hd).continuous
 
 @[simp] theorem boundedPath_apply (t : Icc (0 : ℝ) T) (x : X) :
-    boundedPath T hT f q hf C D hC hD hq hd t x = f x t := rfl
+    boundedPath T hT f q hf C D hC hD hq hd t x = f x t := by rfl
 
 theorem boundedPath_norm (hCnonneg : 0 ≤ C) :
     ‖boundedPath T hT f q hf C D hC hD hq hd‖ ≤ C := by
@@ -553,7 +553,7 @@ def ofPathFamily : SmoothTimeField (Icc (0 : ℝ) T) E V where
   jet_eq n t x := jetFamily_apply T f hf n x t
 
 @[simp] theorem ofPathFamily_apply (t : Icc (0 : ℝ) T) (x : E) :
-    (ofPathFamily T hT f q hf hq hd C D hC hD).field t x = f x t := rfl
+    (ofPathFamily T hT f q hf hq hd C D hC hD).field t x = f x t := by rfl
 
 @[simp] theorem ofPathFamily_jet_apply (n : ℕ) (t : Icc (0 : ℝ) T) (x : E) :
     (ofPathFamily T hT f q hf hq hd C D hC hD).jet n t x =
@@ -657,7 +657,7 @@ def displacementCoefficient : SmoothTimeField (Icc (0 : ℝ) T) E E :=
 
 @[simp] theorem displacementCoefficient_apply (t : Icc (0 : ℝ) T) (x : E) :
     (displacementCoefficient T hT A B R hB hR hsmall hb).field t x =
-      (flowData T hT A).forward t x-x := rfl
+      (flowData T hT A).forward t x-x := by rfl
 
 theorem displacementCoefficient_jet_norm (n : ℕ) :
     ‖(displacementCoefficient T hT A B R hB hR hsmall hb).jet n‖ ≤
@@ -691,7 +691,7 @@ def velocityCoefficient : SmoothTimeField (Icc (0 : ℝ) T) E E :=
 
 @[simp] theorem velocityCoefficient_apply (t : Icc (0 : ℝ) T) (x : E) :
     (velocityCoefficient T hT A B R hB hR hsmall hb A₁ htime B₁ R₁ hB₁ hR₁ hb₁).field t x =
-      A.field t ((flowData T hT A).forward t x) := rfl
+      A.field t ((flowData T hT A).forward t x) := by rfl
 
 theorem velocityCoefficient_jet_norm (n : ℕ) :
     ‖(velocityCoefficient T hT A B R hB hR hsmall hb A₁ htime B₁ R₁ hB₁ hR₁ hb₁).jet n‖ ≤

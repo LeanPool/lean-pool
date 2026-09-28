@@ -414,7 +414,7 @@ theorem scale_endpoint : N.scale * N.endpoint = 4 := by
 /-- Log F, defined pointwise by `Real.log (N.f (N.fromLog p))`. -/
 @[expose] def logF : Field := fun p => Real.log (N.f (N.fromLog p))
 /-- Log U, defined pointwise by `N.U (N.fromLog p)`. -/
-def logU : Field := fun p => N.U (N.fromLog p)
+@[expose] def logU : Field := fun p => N.U (N.fromLog p)
 
 theorem fromLog_smooth : ContDiff ℝ ∞ N.fromLog :=
   (contDiff_const.mul contDiff_fst.exp).prodMk contDiff_snd

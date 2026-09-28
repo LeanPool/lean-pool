@@ -665,7 +665,7 @@ theorem exists_sobolev_product {q : ℕ} (hq : 6 ≤ q)
       hq n L hL u v))
 
 /-- The genuine product in the complete Sobolev space, uniquely determined by its L² value. -/
-def productHq {q : ℕ} (hq : 6 ≤ q) (L : Vector3 →L[ℝ] ℝ) (hL : ‖L‖ ≤ 1)
+@[expose] def productHq {q : ℕ} (hq : 6 ≤ q) (L : Vector3 →L[ℝ] ℝ) (hL : ‖L‖ ≤ 1)
     (u v : SobolevSpace period q) : SobolevSpace period q :=
   Classical.choose (exists_sobolev_product period hq L hL u v)
 
@@ -743,7 +743,7 @@ theorem productHqRight_norm {q : ℕ} (hq : 6 ≤ q) (L : Vector3 →L[ℝ] ℝ)
     (productHq_norm period hq L hL u)
 
 /-- The actual complete Sobolev algebra multiplication is a continuous bilinear map. -/
-def productHqBilinear {q : ℕ} (hq : 6 ≤ q) (L : Vector3 →L[ℝ] ℝ) (hL : ‖L‖ ≤ 1) :
+@[expose] def productHqBilinear {q : ℕ} (hq : 6 ≤ q) (L : Vector3 →L[ℝ] ℝ) (hL : ‖L‖ ≤ 1) :
     SobolevSpace period q →L[ℝ] SobolevSpace period q →L[ℝ] SobolevSpace period q :=
   LinearMap.mkContinuous
     { toFun := productHqRight period hq L hL

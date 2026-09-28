@@ -580,7 +580,7 @@ theorem word_derivative_comm {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ
         f hf) x
 
 /-- The literal external transport commutator D^w(b·∇e)−b·∇D^w e. -/
-def transportCommutator {n : ℕ} (w : Fin n → Fin 4)
+@[expose] def transportCommutator {n : ℕ} (w : Fin n → Fin 4)
     (b : LiftDomain period → Domain 4) (e : LiftDomain period → Vector3) : LiftDomain period →
         Vector3 :=
   iteratedFieldDerivative period w (transportField period 3 b e) -
