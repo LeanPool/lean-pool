@@ -202,6 +202,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/SemicircleCheck           https://github.com/Wondermonger-daydreaming/semicircle-catalan
   LeanPool/Sensitivity               https://github.com/SamuelSchlesinger/sensitivity-conjecture
   LeanPool/SetTheory                 https://github.com/znssong/SetTheory
+  LeanPool/SeveralComplexVariables   https://github.com/bjbraams/lean-scv
   LeanPool/SingularModuli            https://github.com/ElodinLaarz/lean-thesis
   LeanPool/SpectralPositivity        https://github.com/mrdouglasny/spectral-positivity
   LeanPool/SpectralTheory            https://github.com/savarin/lean-spectral-theory
@@ -257,6 +258,7 @@ MIT permission notice that follows them.
   LeanPool/DirectedTopologyLean4     https://github.com/Dominique-Lawson/Directed-Topology-Lean-4
       Copyright 2023 Dominique Lawson
 
+  LeanPool/ErdosGinzburgZiv          https://github.com/zakharov2k/egz-formal-proof
   LeanPool/FactorizationSystems      https://github.com/ivankobe/FactorizationSystems
       Copyright (c) 2024 ivankobe
 
