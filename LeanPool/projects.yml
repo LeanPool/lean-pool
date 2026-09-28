@@ -10938,43 +10938,39 @@ projects:
     - commutative-algebra
     msc:
     - 13F15
-  - slug: lean-malliavin
-    title: Malliavin calculus and the Clark–Ocone representation
-    summary: Constructs the Malliavin derivative, Gaussian integration by parts, closability,
-      Wiener chaos, Brownian Itô integration and martingale representation. The Clark–Ocone
-      endpoint uses a generating pre-Brownian process with continuous linear coordinates
-      on a separable real Gaussian Banach space, its natural filtration, and pairs in the
-      closed Malliavin graph; the conditional-expectation sections agree almost everywhere
-      at positive times.
-    branch: stochastic analysis
-    entry_module: LeanPool.Malliavin
+  - slug: salem-theorem
+    title: Every Pisot number is a two-sided limit of Salem numbers
+    summary: Proves Salem’s two-sided approximation theorem for Pisot numbers, preserving both the polynomial
+      reciprocal-family construction and the exceptional quadratic-unit construction.
+    branch: algebraic number theory
+    entry_module: LeanPool.SalemTheorem
     authors:
-    - Ezzeri Esa
+    - Stephanie Alexander
     source:
-      url: https://github.com/savarin/lean-malliavin
-      github_repo: savarin/lean-malliavin
-      commit: a1a6ccc6eedbdf15fc3aebf9146d1fddfa0c8272
-    license: Apache-2.0
+      url: https://github.com/stalex444/salem-theorem
+      github_repo: stalex444/salem-theorem
+      commit: 887be765bf24c6a645600dfc7bd0a1055a1761dd
+    license: MIT
     status: verified
     provenance: AI
     main_declarations:
-    - PalomarClarkOcone.generated_clark_ocone
+    - SalemTheorem.salem_theorem
     main_results:
-    - declaration: PalomarClarkOcone.generated_clark_ocone
-      informal: For a generating pre-Brownian process on a separable real Gaussian Banach
-        space whose coordinates are pointwise represented by continuous linear functionals,
-        constructs a time realization of the Malliavin derivative and an Itô isometry for
-        the natural filtration, with martingale representation for every terminal L² variable.
-        For pairs in the closed Malliavin graph, the Clark–Ocone formula identifies the
-        derivative's predictable projection with its conditional-expectation sections for
-        almost every positive time.
+    - declaration: SalemTheorem.salem_theorem
+      informal: Every Pisot number is approached by Salem numbers from both below and above.
+    - declaration: SalemTheorem.salem_construction_two_sided
+      informal: For the nondegenerate Pisot polynomial pattern, reciprocal-family polynomials have Salem
+        roots arbitrarily near the Pisot root from either side.
+    - declaration: SalemTheorem.salem_quadratic_unit
+      informal: The quadratic-unit family supplies Salem roots approaching each reciprocal quadratic Pisot
+        unit from either side.
     tags:
-    - probability
-    - malliavin-calculus
-    - stochastic-analysis
+    - number-theory
+    - pisot-numbers
+    - salem-numbers
     msc:
-    - 60H07
-    - 60H05
+    - 11R06
+    - 11R09
   - slug: rr-equals-nonmeager-paper
     title: The nonmeagre lower bound for the rearrangement number
     summary: Formalizes the inequality non(M) ≤ rr in ZFC via relational systems, category and slalom bounds,
@@ -11154,3 +11150,40 @@ projects:
     msc:
     - 47B06
     - 46B20
+  - slug: lean-malliavin
+    title: Malliavin calculus and the Clark–Ocone representation
+    summary: Constructs the Malliavin derivative, Gaussian integration by parts, closability,
+      Wiener chaos, Brownian Itô integration and martingale representation. The Clark–Ocone
+      endpoint uses a generating pre-Brownian process with continuous linear coordinates
+      on a separable real Gaussian Banach space, its natural filtration, and pairs in the
+      closed Malliavin graph; the conditional-expectation sections agree almost everywhere
+      at positive times.
+    branch: stochastic analysis
+    entry_module: LeanPool.Malliavin
+    authors:
+    - Ezzeri Esa
+    source:
+      url: https://github.com/savarin/lean-malliavin
+      github_repo: savarin/lean-malliavin
+      commit: a1a6ccc6eedbdf15fc3aebf9146d1fddfa0c8272
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - PalomarClarkOcone.generated_clark_ocone
+    main_results:
+    - declaration: PalomarClarkOcone.generated_clark_ocone
+      informal: For a generating pre-Brownian process on a separable real Gaussian Banach
+        space whose coordinates are pointwise represented by continuous linear functionals,
+        constructs a time realization of the Malliavin derivative and an Itô isometry for
+        the natural filtration, with martingale representation for every terminal L² variable.
+        For pairs in the closed Malliavin graph, the Clark–Ocone formula identifies the
+        derivative's predictable projection with its conditional-expectation sections for
+        almost every positive time.
+    tags:
+    - probability
+    - malliavin-calculus
+    - stochastic-analysis
+    msc:
+    - 60H07
+    - 60H05
