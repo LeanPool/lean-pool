@@ -28,6 +28,7 @@ open Set
 noncomputable section
 
 /-- Multiplication by a positive constant, as a self-homeomorphism of `ℝ≥0`. -/
+@[expose]
 def NNReal.mulHomeomorph (c : NNReal) (hc : 0 < c) : NNReal ≃ₜ NNReal where
   toFun x := c * x
   invFun y := c⁻¹ * y
