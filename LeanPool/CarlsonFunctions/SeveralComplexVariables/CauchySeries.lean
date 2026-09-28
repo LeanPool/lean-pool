@@ -25,7 +25,7 @@ and radius independence are developed in `CauchyCoefficients`; the separate-radi
 expansion, its uniform convergence and remainder estimates are in `PolydiscTaylor`.
 -/
 
-@[expose] public section
+public section
 
 open Complex Filter Function MeasureTheory Metric Set
 open scoped ENNReal NNReal Real Topology

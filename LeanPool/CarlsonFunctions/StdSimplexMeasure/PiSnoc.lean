@@ -29,7 +29,7 @@ TODO: if those lemmas land in Mathlib, delete this file and switch uses to the u
 
 open MeasureTheory MeasureTheory.Measure
 
-@[expose] public section
+public section
 
 namespace MeasurableEquiv
 

@@ -15,7 +15,7 @@ Geometry for the polydisc Cauchy formula. Equal-radius polydiscs use the supremu
 these are not Euclidean balls.
 -/
 
-@[expose] public section
+public section
 
 open Complex Filter Function MeasureTheory Metric Set
 open scoped ENNReal NNReal Real Topology
