@@ -1123,7 +1123,10 @@ def _load_projects_yaml(
 
 
 def _check_projects(
-    root: Path, validation_cache: ValidationCache | None = None
+    root: Path,
+    validation_cache: ValidationCache | None = None,
+    *,
+    skip_declarations: bool = False,
 ) -> list[_QualityError]:
     data, errors = _load_projects_yaml(root)
     if data is None:
@@ -1146,7 +1149,16 @@ def _check_projects(
         return errors
 
     for index, project in enumerate(projects, start=1):
-        errors.extend(_check_project(root, path, index, project, validation_cache))
+        errors.extend(
+            _check_project(
+                root,
+                path,
+                index,
+                project,
+                validation_cache,
+                skip_declarations=skip_declarations,
+            )
+        )
     return errors
 
 
@@ -1243,6 +1255,8 @@ def _check_project(
     index: int,
     project: Any,
     validation_cache: ValidationCache | None = None,
+    *,
+    skip_declarations: bool = False,
 ) -> list[_QualityError]:
     if not isinstance(project, dict):
         return [_QualityError(path, 1, f"project #{index} must be a mapping")]
@@ -1253,17 +1267,18 @@ def _check_project(
         return errors
 
     entry_path = _module_to_path(root, project["entry_module"])
-    if validation_cache is None:
-        errors.extend(_check_project_declarations(root, path, project))
-    else:
-        errors.extend(
-            validation_cache.check(
-                "declarations",
-                [project["entry_module"]],
-                lambda: _check_project_declarations(root, path, project),
-                metadata=project,
+    if not skip_declarations:
+        if validation_cache is None:
+            errors.extend(_check_project_declarations(root, path, project))
+        else:
+            errors.extend(
+                validation_cache.check(
+                    "declarations",
+                    [project["entry_module"]],
+                    lambda: _check_project_declarations(root, path, project),
+                    metadata=project,
+                )
             )
-        )
     errors.extend(_check_project_card(entry_path, path, project))
     return errors
 
@@ -1859,6 +1874,7 @@ def run_checks(
     root: Path,
     *,
     skip_lean_axioms: bool = False,
+    skip_project_declarations: bool = False,
     validation_cache: ValidationCache | None = None,
 ) -> list[_QualityError]:
     """Run all deterministic quality checks."""
@@ -1873,7 +1889,11 @@ def run_checks(
         _check_challenges,
     ]
     errors = [error for check in checks for error in check(root)]
-    errors.extend(_check_projects(root, validation_cache))
+    errors.extend(
+        _check_projects(
+            root, validation_cache, skip_declarations=skip_project_declarations
+        )
+    )
     if not skip_lean_axioms:
         if validation_cache is None:
             errors.extend(_check_axioms(root))
@@ -1927,6 +1947,12 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
         "option-manipulation environment audit.",
     )
     parser.add_argument(
+        "--static-only",
+        action="store_true",
+        help="Run repository and card checks without Lean subprocesses "
+        "(for a verified rebase).",
+    )
+    parser.add_argument(
         "--write-project-cards",
         action="store_true",
         help="Rewrite project-card module docstrings from LeanPool/projects.yml.",
@@ -1948,7 +1974,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.write_challenge_cards:
         _write_challenge_cards(root)
 
-    errors = run_checks(root, skip_lean_axioms=args.skip_lean_axioms)
+    errors = run_checks(
+        root,
+        skip_lean_axioms=args.skip_lean_axioms or args.static_only,
+        skip_project_declarations=args.static_only,
+    )
     if errors:
         for error in errors:
             print(error.format(root), file=sys.stderr)
