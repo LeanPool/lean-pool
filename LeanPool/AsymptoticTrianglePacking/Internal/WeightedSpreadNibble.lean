@@ -10,9 +10,10 @@ module
 # Nibble — the weighted (fractional) nibble for spread fractional matchings, without any
 regularity or codegree hypothesis on the hypergraph
 
-`Nibble.FracNibbleTheorem` is false (`Nibble.not_fracNibbleTheorem`): its codegree hypothesis
-`codeg ≤ γ·D` is vacuous because `D` is only an *upper* bound for the degrees.  The repaired
-statement must measure everything against the fractional matching `w` itself.  This file proves
+The former degree-upper-bound formulation of the fractional nibble was false: its codegree
+hypothesis `codeg ≤ γ·D` was vacuous because `D` was only an *upper* bound for the degrees.
+That interface has been removed. A valid statement must measure codegrees against the fractional
+matching `w` itself. This file proves
 that repaired statement in the regime where `w` is **spread** and **near-perfect**:
 
 > `Nibble.fracNibble_spread_weightedCodegree` — for all `r ≥ 2` and `β > 0` there are

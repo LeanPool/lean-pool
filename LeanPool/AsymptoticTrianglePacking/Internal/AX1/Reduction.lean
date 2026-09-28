@@ -13,7 +13,8 @@ Restates the frozen Paper III cover-side target `τ₃* − ν₃ ≤ ε n²` wi
 and reduces it to two obligations:
   * `StrongDualityHyp` — `τ₃* ≤ ν₃*` (Aristotle core `b3ee717f`; reverse of the proven weak
   duality).
-  * `NibbleGapHyp` — the UNCONDITIONAL packing gap `ν₃* − ν₃ ≤ ε n²` (`NibbleTheoremMost` + `②`
+  * `NibbleGapHyp` — the UNCONDITIONAL packing gap `ν₃* − ν₃ ≤ ε n²` (`NibbleTheoremMost` +
+  `second-stage`
     near-regularity discharged for all large graphs).
 The frozen project's definitional bridges to `PaperIII.{nu3,nu3Star}` are not imported
 into Lean Pool by this module; release integration must verify them separately.
@@ -60,7 +61,8 @@ def StrongDualityHyp : Prop :=
   ∀ {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj],
     tau3Star G ≤ nu3star G
 
-/-- **The unconditional nibble-gap obligation** (`NibbleTheoremMost` + `②` near-regularity
+/-- **The unconditional nibble-gap obligation** (`NibbleTheoremMost` + `second-stage`
+near-regularity
 discharged
 for all large graphs): `ν₃* − ν₃ ≤ ε n²` uniformly. -/
 def NibbleGapHyp : Prop :=

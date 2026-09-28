@@ -7,7 +7,7 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 module
 
 /-
-# Nibble — ② dense-regime global near-regularity of the triangle hypergraph
+# Nibble — second-stage dense-regime global near-regularity of the triangle hypergraph
 
 The corrected nibble needs a GLOBAL per-edge degree bound `∀ e, degree ≤ (1+μ)d` (not just
 majority),
@@ -73,7 +73,7 @@ private theorem edgeV_eq_pair (E : EdgeV G) : ∃ u v : V, E.val = ({u, v} : Fin
   obtain ⟨u, v, _, huv⟩ := Finset.card_eq_two.mp h2
   exact ⟨u, v, huv⟩
 
-/-- **② ceiling (global upper bound).** Every edge lies in at most `|V|` triangles. -/
+/-- **second-stage ceiling (global upper bound).** Every edge lies in at most `|V|` triangles. -/
 theorem triangleSub_degree_le_card (E : EdgeV G) :
     Hypergraph.degree (triangleHypergraphSub G) E ≤ Fintype.card V := by
   obtain ⟨u, v, huv⟩ := edgeV_eq_pair G E
@@ -82,9 +82,8 @@ theorem triangleSub_degree_le_card (E : EdgeV G) :
       ≤ (Finset.univ : Finset V).card := Finset.card_le_card (Finset.subset_univ _)
     _ = Fintype.card V := Finset.card_univ
 
-/-- **② floor (from a global min-degree bound).** If every vertex of `G` has degree `≥ D`,
-then every
-edge lies in at least `2D − |V|` triangles (common-neighbourhood inclusion–exclusion). -/
+/-- **Second-stage floor (from a global min-degree bound).** If every vertex of `G` has degree
+`≥ D`, then every edge lies in at least `2D − |V|` triangles by inclusion–exclusion. -/
 theorem triangleSub_degree_ge_of_minDeg (E : EdgeV G) {D : ℕ} (hD : ∀ x, D ≤ G.degree x) :
     2 * D - Fintype.card V ≤ Hypergraph.degree (triangleHypergraphSub G) E := by
   obtain ⟨u, v, huv⟩ := edgeV_eq_pair G E
@@ -100,8 +99,8 @@ theorem triangleSub_degree_ge_of_minDeg (E : EdgeV G) {D : ℕ} (hD : ∀ x, D �
   have hDv := hD v
   omega
 
-/-- **② global near-regularity window (packaged).** With a global min-degree `D` satisfying
-`|V| ≤ 2D`
+/-- **Second-stage global near-regularity window (packaged).** With a global min-degree `D`
+satisfying `|V| ≤ 2D`
 (dense regime), every edge's triangle-degree lies in the window `[(1−μ)d, (1+μ)d]` provided
 the window
 covers `[2D−|V|, |V|]`. This is the global (no exceptional set) near-regularity the corrected nibble

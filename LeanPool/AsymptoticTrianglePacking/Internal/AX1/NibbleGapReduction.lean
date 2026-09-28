@@ -7,13 +7,13 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 module
 
 /-
-# Nibble — reducing NibbleGapHyp to NibbleTheoremMost + the ② regularization obligation
+# Nibble — reducing NibbleGapHyp to NibbleTheoremMost + the second-stage regularization obligation
 
 Bottoms the AX1 dependency chain out at its irreducible pieces. Combined with `AX1Reduction`, gives
-  AX1  ⟸  StrongDualityHyp  +  NibbleTheoremMost  +  NearRegObligation
+  AX1  follows from  StrongDualityHyp  +  NibbleTheoremMost  +  NearRegObligation
 i.e. AX1 sorry-free reduces to EXACTLY: cover-side strong duality (Aristotle `b3ee717f`), the nibble
 theorem `NibbleTheoremMost` (Aristotle residual crux `39a79122` + convergence), and the
-`②` near-regularity
+`second-stage` near-regularity
 regularization (Szemerédi / Haxell–Rödl, pending the route decision).
 
 * `UniformNibbleGap`, `NearRegObligation` — the two sub-obligations of `NibbleGapHyp`.
@@ -49,17 +49,16 @@ def UniformNibbleGap : Prop :=
       CodegreeBounded (triangleHypergraphSub G) (μ * d) →
       nu3star G - (nu3 G : ℝ) ≤ ε * (Fintype.card V : ℝ) ^ 2
 
-/-- **Near-regularity obligation** (the ② core): for tolerances `μ, η`, every large enough
-graph admits a near-regularity witness `d` (with the free codegree bound). This is
-exactly what a Szemerédi/Haxell–Rödl
-regularization must supply. -/
+/-- **Near-regularity obligation** (the second-stage core): for tolerances `μ, η`, every
+sufficiently large graph admits a near-regularity witness `d` with the free codegree bound.
+This is exactly what a Szemerédi/Haxell–Rödl regularization must supply. -/
 def NearRegObligation (μ η d₀ : ℝ) : Prop :=
   ∃ n₀ : ℕ, ∀ (V : Type) [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj],
     n₀ ≤ Fintype.card V →
     ∃ d : ℝ, 0 < d ∧ d₀ ≤ d ∧ NearlyRegularMost (triangleHypergraphSub G) d μ η ∧
       CodegreeBounded (triangleHypergraphSub G) (μ * d) ∧
-      -- ② global ceiling (corrected nibble): every edge lies in ≤ (1+μ)d triangles (no exceptional
-      -- high-degree vertex). At δ≥(9/10+ε)|V| this is free; see
+      -- Second-stage global ceiling: every edge lies in ≤ (1+μ)d triangles, without an
+      -- exceptional high-degree vertex. At δ≥(9/10+ε)|V| this is free; see
       -- `Nibble.YusterE.triangleSub_degree_window`.
       (∀ e : EdgeV G, (Hypergraph.degree (triangleHypergraphSub G) e : ℝ) ≤ (1 + μ) * d)
 
@@ -101,8 +100,8 @@ theorem edgeV_card_le_sq_of_base_card_le {V : Type} [Fintype V] [DecidableEq V]
     _ ≤ (L * d) ^ 2 := hbase_sq
     _ = L ^ 2 * d ^ 2 := by ring
 
-/-- A linear base-size ② obligation implies the polynomial hypergraph-size obligation consumed by
-the sized nibble interface. -/
+/-- A linear base-size second-stage obligation implies the polynomial hypergraph-size
+obligation consumed by the sized nibble interface. -/
 theorem nearRegSized_of_linearSized {μ η d₀ L : ℝ} (hL : 0 ≤ L)
     (h : NearRegObligationLinearSized μ η d₀ L) :
     NearRegObligationSized μ η d₀ (L ^ 2) := by
@@ -125,7 +124,7 @@ theorem nearRegSized_of_forall_linearSized {μ η d₀ K : ℝ} (hK : 0 < K)
 /-- **NibbleGapHyp reduction.** The unconditional packing gap follows from the
 `G`-uniform nibble gap plus the near-regularity obligation for its tolerances.
 Bottoms the AX1 chain out at `NibbleTheoremMost`
-(via `UniformNibbleGap`) and the ② regularization (via `NearRegObligation`). -/
+(via `UniformNibbleGap`) and the second-stage regularization (via `NearRegObligation`). -/
 theorem nibbleGap_of_uniform_and_regularity
     (hU : UniformNibbleGap)
     (hReg : ∀ μ η d₀ : ℝ, 0 < μ → 0 < η → 0 < d₀ → NearRegObligation μ η d₀) :
@@ -143,7 +142,7 @@ theorem nibbleGap_of_uniform_and_regularity
 near-regularity obligation, and inlines the
 packing-gap arithmetic (`ν₃* ≤ |E|/3` and matching `≥ (1-3ε)|E|/3 ≤ ν₃`, so `ν₃*−ν₃ ≤ ε|E| ≤ ε n²`).
 This bottoms the AX1 dependency chain out at exactly `NibbleTheoremMost` plus
-the `②` regularization. -/
+the `second-stage` regularization. -/
 theorem nibbleGap_of_nibbleTheorem (hNib : NibbleTheoremMost)
     (hReg : ∀ μ η d₀ : ℝ, 0 < μ → 0 < η → 0 < d₀ → NearRegObligation μ η d₀) : NibbleGapHyp := by
   intro ε hε
@@ -165,7 +164,7 @@ theorem nibbleGap_of_nibbleTheorem (hNib : NibbleTheoremMost)
   nlinarith only [h2, hlb, hεE]
 
 /-- **NibbleGapHyp from the corrected ceiling-aware nibble theorem.** This is the same accounting as
-`nibbleGap_of_nibbleTheorem`, but it keeps the ② global-degree ceiling supplied by
+`nibbleGap_of_nibbleTheorem`, but it keeps the second-stage global-degree ceiling supplied by
 `NearRegObligation` and passes it into the nibble interface. -/
 theorem nibbleGap_of_nibbleTheoremCeil (hNib : NibbleTheoremMostCeil)
     (hReg : ∀ μ η d₀ : ℝ, 0 < μ → 0 < η → 0 < d₀ → NearRegObligation μ η d₀) :
@@ -225,7 +224,7 @@ theorem nibbleGap_of_nibbleTheoremCeilSized_linear (hNib : NibbleTheoremMostCeil
     (fun μ η d₀ _K hμ hη hd₀ hK =>
       nearRegSized_of_forall_linearSized hK (fun L hL => hReg μ η d₀ L hμ hη hd₀ hL))
 
-/-- **The full AX1 reduction.** AX1 sorry-free ⟸ the three irreducible obligations. -/
+/-- **The full AX1 reduction.** AX1 sorry-free follows from the three irreducible obligations. -/
 theorem ax1_of_nibbleTheorem_strongDuality_regularity
     (hNib : NibbleTheoremMost) (hdual : StrongDualityHyp)
     (hReg : ∀ μ η d₀ : ℝ, 0 < μ → 0 < η → 0 < d₀ → NearRegObligation μ η d₀) :
@@ -233,7 +232,7 @@ theorem ax1_of_nibbleTheorem_strongDuality_regularity
   ax1_of_strongDuality_and_nibbleGap hdual (nibbleGap_of_nibbleTheorem hNib hReg)
 
 /-- **The full AX1 reduction, ceiling-aware form.** This is the corrected target for the Freedman
-route: the ② regularization supplies the global degree ceiling consumed by
+route: the second-stage regularization supplies the global degree ceiling consumed by
 `NibbleTheoremMostCeil`. -/
 theorem ax1_of_nibbleTheoremCeil_strongDuality_regularity
     (hNib : NibbleTheoremMostCeil) (hdual : StrongDualityHyp)
@@ -250,7 +249,7 @@ theorem ax1_of_nibbleTheoremCeilSized_strongDuality_regularity
     AX1Statement :=
   ax1_of_strongDuality_and_nibbleGap hdual (nibbleGap_of_nibbleTheoremCeilSized hNib hReg)
 
-/-- Sized Freedman AX1 reduction consuming the linear dense-regime form of ②. -/
+/-- Sized Freedman AX1 reduction consuming the linear dense-regime regularity condition. -/
 theorem ax1_of_nibbleTheoremCeilSized_strongDuality_linearRegularity
     (hNib : NibbleTheoremMostCeilSized) (hdual : StrongDualityHyp)
     (hReg : ∀ μ η d₀ L : ℝ, 0 < μ → 0 < η → 0 < d₀ → 0 < L →

@@ -7,7 +7,8 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 module
 
 /-
-# Dense near-regularity of the triangle hypergraph (proved core of the `hReg` / AX1-② obligation)
+# Dense near-regularity of the triangle hypergraph (proved core of the `hReg` /
+AX1-second-stage obligation)
 
 `Nibble.AX1.NearRegObligationLinearSized` is stated for ALL graphs, which is too strong (sparse
 graphs give the triangle hypergraph too many codegree-0 edges for a fixed exceptional fraction).

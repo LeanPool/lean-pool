@@ -11,9 +11,8 @@ module
 
 Standalone, Mathlib-only. The hypergraph-degree of an edge `E` in the edge-based triangle hypergraph
 `triangleHypergraphSub G` equals the number of triangles of `G` containing `E` (= codegree in `G` of
-`E`'s two endpoints). This is the architecture-independent bridge that ② (edge counting /
-near-regularity)
-needs: it turns the abstract "near-regular hypergraph" degree window into the graph condition
+`E`'s two endpoints). This bridge supports the second-stage edge-counting and near-regularity
+argument: it turns the abstract "near-regular hypergraph" degree window into the graph condition
 "most edges lie on ≈ d triangles".
 
 * `triangleHypergraphSub_degree_eq` — `deg_E(E) = #{ t ∈ cliqueFinset 3 | E.val ⊆ t }`.
@@ -125,17 +124,17 @@ theorem triangles_on_edge_eq_commonNbr (E : EdgeV G) :
       · exact Finset.insert_subset hct hsub
       · rw [htri.card_eq, Finset.card_insert_of_notMem hcnotE, hE2]
 
-/-- **② bridge, graph form.** The hypergraph-degree of edge `E` in `triangleHypergraphSub G`
-equals the
-number of common neighbours of `E`'s endpoints (the codegree of `E` in `G`). -/
+/-- **Second-stage bridge, graph form.** The hypergraph-degree of edge `E` in
+`triangleHypergraphSub G` equals the number of common neighbours of its endpoints. -/
 theorem triangleHypergraphSub_degree_eq_commonNbr (E : EdgeV G) :
     Hypergraph.degree (triangleHypergraphSub G) E
       = (Finset.univ.filter (fun c => c ∉ E.val ∧ G.IsNClique 3 (insert c E.val))).card := by
   rw [triangleHypergraphSub_degree_eq, triangles_on_edge_eq_commonNbr]
 
-/-- **② mean codegree.** Summing the per-edge codegree (common-neighbour count) over all edges gives
+/-- **Second-stage mean codegree.** Summing the per-edge codegree (common-neighbour count)
+over all edges gives
 `3·#triangles`, so the average edge codegree is `3·#triangles / |E(G)|` — the target `d` for the
-near-regularity window `②`. -/
+second-stage near-regularity window. -/
 theorem sum_commonNbr_eq_three_mul_triangles :
     ∑ E : EdgeV G, (Finset.univ.filter
         (fun c => c ∉ E.val ∧ G.IsNClique 3 (insert c E.val))).card

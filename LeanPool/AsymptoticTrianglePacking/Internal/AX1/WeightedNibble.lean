@@ -7,9 +7,9 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 module
 
 /-
-# Nibble — the weighted (fractional) nibble, and what it gives for AX1
+# Nibble — fractional-packing bounds and a near-regular weighted nibble
 
-This file adds to the AX1 chain (`Nibble.CoreGapAX1`) in two independent ways.
+This file adds to the AX1 chain (`Nibble.CoreGapAX1`) in two ways.
 
 * **An unconditional improvement of the proved range.**  A maximum triangle packing covers `3ν₃`
   edges that meet every triangle, so every fractional packing has weight at most `3ν₃`
@@ -18,18 +18,10 @@ This file adds to the AX1 chain (`Nibble.CoreGapAX1`) in two independent ways.
   for every
   `ε ≥ 1/9` (`Nibble.AX1.coreGapAt_of_ninth`) — strictly more than the previously proved `ε ≥ 1/3`.
 
-* **The residual, isolated as a reusable hypergraph statement.**
-  `Nibble.FracNibbleTheorem` is the weighted / fractional nibble (Kahn's linear-programming form of
-  the Frankl–Rödl–Pippenger theorem): an `r`-uniform hypergraph of maximum degree `≤ D` and codegree
-  `≤ γD` carrying a fractional matching `w` has an integer matching of size `≥ (1−β)∑w`.  No
-  near-regularity is assumed — the weighting plays the role of the regular measure — so this is not
-  the refuted near-regularity obligation.  From it the whole AX1 packing gap follows for *every*
-  graph (`Nibble.AX1.haxellRodlGap_of_fracNibble`), hence `Nibble.AX1.CoreGapResidual`
-  (`Nibble.AX1.coreGapResidual_of_fracNibble`), the triangle hypergraph being `3`-uniform of
-  maximum degree `≤ |V|` (`Nibble.triangleHypergraphE_degree_le_card`) and codegree `≤ 1`.
-  `Nibble.fracNibble_nearlyRegular` proves the statement for nearly regular hypergraphs from the
-  already proved regular nibble, which certifies that the residual is a genuine (non-vacuous,
-  non-circular) strengthening.
+* **A near-regular weighted consequence.** `Nibble.fracMatching_sum_le` bounds the total weight
+  of a fractional matching in a uniform hypergraph. Combining it with the proved regular nibble
+  yields `Nibble.fracNibble_nearlyRegular`. This result is not an unconditional weighted nibble:
+  it retains the near-regularity hypotheses of the regular theorem.
 
 See `RESIDUAL.md` for the exact state of the obligation.
 
@@ -209,91 +201,6 @@ theorem triangleHypergraphE_degree_le_card (G : SimpleGraph V) [DecidableRel G.A
 theorem nu3star_nonneg (G : SimpleGraph V) [DecidableRel G.Adj] : 0 ≤ nu3star G :=
   le_csSup (nu3star_bddAbove G) ⟨fun _ => 0, isFracPacking_zero G, by simp⟩
 
-/-! ### The weighted (fractional) nibble -/
-
-/-- **The weighted / fractional nibble** (Kahn's linear-programming form of the
-Frankl–Rödl–Pippenger theorem).  For every uniformity `r ≥ 2` and every tolerance `β > 0` there are
-a codegree tolerance `γ > 0` and a degree scale `D₀` such that: every `r`-uniform hypergraph `H` of
-maximum degree at most `D ≥ D₀` and maximum codegree at most `γD`, equipped with a fractional
-matching `w` (nonnegative weights supported on `H`, total weight through every vertex at most `1`),
-contains an (integer) matching of size at least `(1-β)∑ w`.
-
-Unlike the regular nibble `Nibble.NibbleTheoremMostCeil` this makes no near-regularity assumption:
-the weighting `w` plays the role of the regular measure, so degree-irregular hypergraphs are
-covered.  It is exactly the input needed to turn a fractional decomposition into an approximate
-integer one, and, as `Nibble.AX1.haxellRodlGap_of_fracNibble` below shows, it closes the AX1 packing
-gap outright. -/
-def FracNibbleTheorem : Prop :=
-  ∀ r : ℕ, 2 ≤ r → ∀ β : ℝ, 0 < β → ∃ γ : ℝ, 0 < γ ∧ ∃ D₀ : ℝ, 0 < D₀ ∧
-    ∀ {W : Type} [Fintype W] [DecidableEq W] (H : Finset (Finset W)) (w : Finset W → ℝ) (D : ℝ),
-      D₀ ≤ D → IsUniform H r →
-      (∀ T, 0 ≤ w T) → (∀ T ∉ H, w T = 0) →
-      (∀ v : W, ∑ T ∈ H.filter (fun T => v ∈ T), w T ≤ 1) →
-      (∀ v : W, (Hypergraph.degree H v : ℝ) ≤ D) →
-      (∀ x y : W, x ≠ y → (Hypergraph.codegree H x y : ℝ) ≤ γ * D) →
-      ∃ M : Finset (Finset W), IsMatching H M ∧ (1 - β) * (∑ T ∈ H, w T) ≤ (M.card : ℝ)
-
-/-- **The weighted nibble closes the packing gap.**  Applied to the edge-based triangle hypergraph
-of a graph on `n` vertices — which is `3`-uniform, has maximum degree at most `n` and codegree at
-most `1` — with a near-optimal fractional triangle packing as its weighting, it yields
-`ν₃ ≥ (1-β)(ν₃* - 1)`, hence `ν₃* - ν₃ ≤ εn²` for large `n`.  No regularity or degree hypothesis on
-the graph is used. -/
-theorem AX1.haxellRodlGap_of_fracNibble (h : FracNibbleTheorem) : AX1.HaxellRodlGap := by
-  intro ε hε
-  obtain ⟨γ, hγ, D₀, hD₀, hmain⟩ := h 3 (by norm_num) (min 1 (3 * ε))
-    (lt_min one_pos (by linarith))
-  set β : ℝ := min 1 (3 * ε) with hβdef
-  have hβ1 : β ≤ 1 := min_le_left _ _
-  have hβ3 : β ≤ 3 * ε := min_le_right _ _
-  refine ⟨max ⌈D₀⌉₊ (max ⌈1 / γ⌉₊ ⌈2 / ε⌉₊), ?_⟩
-  intro V _ _ G _ hV
-  have hn0 : (0 : ℝ) ≤ (Fintype.card V : ℝ) := Nat.cast_nonneg _
-  have hD : D₀ ≤ (Fintype.card V : ℝ) := by
-    have hc : (⌈D₀⌉₊ : ℝ) ≤ (Fintype.card V : ℝ) := by
-      exact_mod_cast le_trans (le_max_left _ _) hV
-    exact le_trans (Nat.le_ceil _) hc
-  have hginv : 1 / γ ≤ (Fintype.card V : ℝ) := by
-    have hc : (⌈1 / γ⌉₊ : ℝ) ≤ (Fintype.card V : ℝ) := by
-      exact_mod_cast le_trans (le_trans (le_max_left _ _) (le_max_right _ _)) hV
-    exact le_trans (Nat.le_ceil _) hc
-  have heps : 2 / ε ≤ (Fintype.card V : ℝ) := by
-    have hc : (⌈2 / ε⌉₊ : ℝ) ≤ (Fintype.card V : ℝ) := by
-      exact_mod_cast le_trans (le_trans (le_max_right _ _) (le_max_right _ _)) hV
-    exact le_trans (Nat.le_ceil _) hc
-  have hgD : (1 : ℝ) ≤ γ * (Fintype.card V : ℝ) := by
-    rw [div_le_iff₀ hγ] at hginv
-    linarith
-  obtain ⟨x, hxmem, hxlt⟩ := exists_lt_of_lt_csSup
-    (⟨0, ⟨fun _ => 0, isFracPacking_zero G, by simp⟩⟩ :
-      Set.Nonempty {x : ℝ | ∃ w, IsFracPacking G w ∧ x = ∑ T ∈ triangleHypergraphE G, w T})
-    (show nu3star G - 1 < nu3star G by linarith)
-  obtain ⟨w, ⟨hnn, hzero, hcon⟩, rfl⟩ := hxmem
-  obtain ⟨M, hM, hMcard⟩ := hmain (triangleHypergraphE G) w ((Fintype.card V : ℝ))
-    hD (triangleHypergraphE_uniform G) hnn hzero hcon
-    (fun e => triangleHypergraphE_degree_le_card G e)
-    (fun e e' hee => by
-      have h1 : (Hypergraph.codegree (triangleHypergraphE G) e e' : ℝ) ≤ 1 := by
-        exact_mod_cast triangleHypergraphE_codegree_le_one G hee
-      linarith)
-  have hnu3 : (M.card : ℝ) ≤ (nu3 G : ℝ) := by exact_mod_cast nu3_ge G hM
-  have hstar : nu3star G ≤ (Fintype.card V : ℝ) ^ 2 / 6 := by
-    have h1 : nu3star G ≤ ((G.cliqueFinset 2).card : ℝ) / 3 := nu3star_le G
-    have h2 := edge_card_le_half_card_sq G
-    linarith
-  have hstar0 : 0 ≤ nu3star G := nu3star_nonneg G
-  have h1eps : 1 ≤ ε * (Fintype.card V : ℝ) ^ 2 / 2 := by
-    have hnpos : 0 < (Fintype.card V : ℝ) := lt_of_lt_of_le (by positivity) heps
-    have hn1 : (1 : ℝ) ≤ (Fintype.card V : ℝ) := by
-      have : 1 ≤ Fintype.card V := by exact_mod_cast hnpos
-      exact_mod_cast this
-    have h2 : 2 ≤ ε * (Fintype.card V : ℝ) := by
-      rw [div_le_iff₀ hε] at heps
-      linarith
-    nlinarith
-  have hsum : (1 - β) * (nu3star G - 1) ≤ (M.card : ℝ) :=
-    le_trans (mul_le_mul_of_nonneg_left (le_of_lt hxlt) (by linarith)) hMcard
-  nlinarith [hnu3, hsum, hstar, hstar0, h1eps]
-
 /-! ### A proved instance of the weighted nibble: the near-regular case -/
 
 /-- **Every fractional matching of an `r`-uniform hypergraph has total weight at most `|W|/r`.** -/
@@ -319,8 +226,7 @@ theorem fracMatching_sum_le {W : Type} [Fintype W] [DecidableEq W] {H : Finset (
 /-- **The weighted nibble holds for nearly regular hypergraphs**, as an immediate consequence of the
 proved regular nibble `Nibble.nibbleTheoremMostCeil_holds`: the matching it produces already covers
 all but a `β`-fraction of the ground set, and *every* fractional matching has total weight at most
-`|W|/r`.  This is a non-circular satisfiability witness for `Nibble.FracNibbleTheorem`: the residual
-is a genuine strengthening of a proved theorem, not an unfalsifiable statement. -/
+`|W|/r`. This conclusion relies on the stated near-regularity hypotheses. -/
 theorem fracNibble_nearlyRegular (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (hβ : 0 < β) :
     ∃ μ : ℝ, 0 < μ ∧ ∃ η : ℝ, 0 < η ∧ ∃ d₀ : ℝ, 0 < d₀ ∧
       ∀ {W : Type} [Fintype W] [DecidableEq W] (H : Finset (Finset W)) (w : Finset W → ℝ) (d : ℝ),
@@ -345,11 +251,5 @@ theorem fracNibble_nearlyRegular (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (hβ : 0 < 
   · have hnn' : 0 ≤ ∑ T ∈ H, w T := Finset.sum_nonneg (fun T _ => hnn T)
     have : (1 - β) * (∑ T ∈ H, w T) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg (by linarith) hnn'
     exact le_trans this (Nat.cast_nonneg _)
-
-/-- **`CoreGapResidual` from the weighted nibble.**  Composing
-`Nibble.AX1.haxellRodlGap_of_fracNibble` with the (already proved) reduction
-`Nibble.AX1.coreGapResidual_of_haxellRodl`. -/
-theorem AX1.coreGapResidual_of_fracNibble (h : FracNibbleTheorem) : AX1.CoreGapResidual :=
-  AX1.coreGapResidual_of_haxellRodl (AX1.haxellRodlGap_of_fracNibble h)
 
 end Nibble

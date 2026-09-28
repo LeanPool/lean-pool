@@ -9,7 +9,8 @@ module
 /-
 # Yuster (edge-based) — cardinality and degree-sum of `triangleHypergraphSub`
 
-Standalone, Mathlib-only. Foundation of the edge-based near-regularity (②a). The edge-vertex-type
+Standalone, Mathlib-only. Foundation of the edge-based near-regularity (edge-counting
+substep). The edge-vertex-type
 triangle hypergraph `triangleHypergraphSub G` has exactly `|cliqueFinset 3|` = `#triangles`
 hyperedges
 (the powerset-subtype map is injective on 3-cliques), and — being `3`-uniform — its degree sum

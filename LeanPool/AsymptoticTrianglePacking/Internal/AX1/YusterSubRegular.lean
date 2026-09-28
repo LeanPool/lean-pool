@@ -17,7 +17,8 @@ hypergraph `triangleHypergraphSub G`, whose matchings are edge-disjoint triangle
   (`triangleHypergraphSub_codegree_le_one`), so `CodegreeBounded C` for any `C ≥ 1` (in particular
   `C = μd ≥ 1`).
 * The **degree side** (`NearlyRegularMost`) is packaged from per-edge lower/upper bounds and the
-  exceptional (non-regular-degree) edge count `≤ η|E|`, supplied by the edge counting (②a).
+  exceptional (non-regular-degree) edge count `≤ η|E|`, supplied by the edge counting
+  (edge-counting substep).
 
 * `triangleHypergraphSub_codegreeBounded` — `1 ≤ C → CodegreeBounded (triangleHypergraphSub G) C`.
 * `triangleHypergraphSub_nearlyRegularMost_of_bounds` — package `NearlyRegularMost` from
@@ -52,7 +53,8 @@ theorem triangleHypergraphSub_codegreeBounded {C : ℝ} (hC : 1 ≤ C) :
 /-- **Majority near-regularity (packaging).** Given a per-edge degree window on all but an
 exceptional
 set `Exc` of size `≤ η|E(G)|`, the edge-based triangle hypergraph is `NearlyRegularMost d μ η`. The
-per-edge bounds and the exceptional count are supplied by the edge counting (②a). -/
+per-edge bounds and the exceptional count are supplied by the edge counting (edge-counting
+substep). -/
 theorem triangleHypergraphSub_nearlyRegularMost_of_bounds {d μ η : ℝ}
     (Exc : Finset (EdgeV G))
     (hExc : (Exc.card : ℝ) ≤ η * (Fintype.card (EdgeV G) : ℝ))
