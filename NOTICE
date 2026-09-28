@@ -169,6 +169,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/OddPrimeValuationDistribution
                                      https://github.com/lyfar/gkp-carry-lean
   LeanPool/Odlyzko                   https://github.com/ImperialCollegeLondon/FLT
+  LeanPool/OneManifold               https://github.com/sweeneyde/1mfld
   LeanPool/OrderPQ                   https://github.com/wupr/order-p-q
   LeanPool/PDL                       https://github.com/m4lvin/lean4-pdl
   LeanPool/PFR                       https://github.com/teorth/pfr
@@ -282,6 +283,7 @@ MIT permission notice that follows them.
   LeanPool/GaussianMomentsCounterexamples
                                      https://github.com/long-mathematics/gaussian-moments-counterexamples
   LeanPool/HSDInteriorPointLP        https://github.com/makoto-yamashita/proof-on-a-homogeneous-self-dual-interior-point-method-for-linear-programming
+  LeanPool/InflationTermination      https://github.com/williamjblair/inflation-termination
   LeanPool/KaltonRoberts             https://github.com/boonsuan/KaltonRoberts
   LeanPool/Kuramoto                  https://github.com/velvetmonkey/kuramoto-lean
   LeanPool/LatticeTriangle           https://github.com/AxiomMath/lattice-triangle
