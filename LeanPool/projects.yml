@@ -1,4 +1,137 @@
 projects:
+  - slug: krohn-rhodes
+    title: Aperiodic and simple-group wreath-division towers
+    summary: >-
+      Constructs a finite recursive wreath-division tower for every finite
+      monoid in universe zero, with finite aperiodic or finite simple-group
+      factors and every simple-group factor a monoid divisor of the original
+      monoid. Implements a variant of the Diekert–Kufleitner–Steinberg
+      local-divisor argument, with reusable monoid and semigroup division,
+      local divisors, action coverings, wreath reassociation, and the
+      Krasner–Kaloujnine group embedding. The endpoint permits arbitrary
+      aperiodic factors and recursive intermediate bases; it does not assert
+      the three-element flip-flop reduction, a single transformation-monoid
+      strong division, or quantitative decomposition bounds.
+    branch: algebra
+    entry_module: LeanPool.KrohnRhodes
+    authors:
+      - Aditya Rao
+    source:
+      title: Krohn–Rhodes formalization by Aditya Rao
+      url: https://github.com/adii800/krohn-rhodes-lean/tree/8152fef3507406d2b4f4ed3760404ea88298e382
+      github_repo: adii800/krohn-rhodes-lean
+      commit: 8152fef3507406d2b4f4ed3760404ea88298e382
+      arxiv: '1111.1585'
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - LeanPool.KrohnRhodes.krohn_rhodes_prime_decomposition
+    main_results:
+      - declaration: LeanPool.KrohnRhodes.krohn_rhodes_prime_decomposition
+        informal: >-
+          Every finite monoid M in universe zero admits a finite list of
+          finite monoid factors, each witnessed to be aperiodic or a simple
+          group, with DivTowerWreath M factors and every simple-group factor
+          a monoid divisor of M. An empty tower means M divides the trivial
+          monoid. At a nonempty step, M divides F wreath B for a finite
+          action of a finite monoid B that itself has the tail tower.
+        source_ref: >-
+          Upstream PrimeDecomposition.lean, completed September 28, 2026
+          at 07:36:52 UTC and publicly released at 08:48:24 UTC. Variant of
+          Diekert–Kufleitner–Steinberg, arXiv:1111.1585, Sections 3–4, with
+          left actions, the larger local divisor cM intersect Mc, arbitrary
+          aperiodic factors, and recursive semigroup divisions. The stronger
+          flip-flop and transformation-monoid claims of Theorem 4.1 are not
+          asserted. Upstream CITATION.cff attributes the proofs primarily
+          to Claude Code under Aditya Rao's direction.
+      - declaration: LeanPool.KrohnRhodes.krasnerKaloujnine_injective
+        informal: >-
+          For any group G and normal subgroup N, the constructed monoid
+          homomorphism from G to Mathlib's regular wreath product of N and
+          G/N is injective. No finiteness assumption is required.
+        source_ref: >-
+          Upstream Foundations/KrasnerKaloujnine.lean; the classical
+          Krasner–Kaloujnine embedding theorem.
+      - declaration: LeanPool.KrohnRhodes.LocalDivisor.localDivides
+        informal: >-
+          For any monoid M and c in M, the local divisor on cM intersect Mc,
+          with its twisted multiplication and identity c, is a quotient of
+          a submonoid of M.
+        source_ref: >-
+          Diekert–Kufleitner–Steinberg, arXiv:1111.1585, Section 2.5; uses
+          the full local divisor rather than the smaller cMc union {c}.
+    tags:
+      - semigroup-theory
+      - finite-monoids
+      - wreath-products
+      - automata-theory
+      - group-extensions
+    msc:
+      - 20M10
+      - 20M35
+      - 20E22
+  - slug: zeta-five-irrational
+    title: Irrationality of the Riemann zeta function at five
+    summary: >-
+      Proves that Mathlib's Riemann zeta function at five is an irrational
+      real number, following Aabir Fauzan's September 2026 preprint.
+      Constructs integer polynomials of degree 37n with positive values
+      at zeta(5) that decay exponentially in n squared. Includes a general
+      integer-polynomial irrationality criterion, Hankel determinant and
+      moment-integral identities, logarithmic-energy estimates, prime-adic
+      integrality bounds, and kernel-checked rational certificates. The
+      formalization uses a different normalizer and a positive decay
+      constant in place of the paper's specific constant 139/5. Reuses the
+      prime number theorem infrastructure already in the MooreBound project.
+    branch: number theory
+    entry_module: LeanPool.Zeta5Irrational
+    authors:
+      - Moritz Firsching
+    source:
+      title: Zeta5 formalization of Aabir Fauzan's zeta(5) is irrational
+      url: https://github.com/mo271/Zeta5/tree/f19a1960609f7d38e7b63fd2acb05e6f60a7b741
+      github_repo: mo271/Zeta5
+      commit: f19a1960609f7d38e7b63fd2acb05e6f60a7b741
+    license: Apache-2.0
+    status: verified
+    provenance: mix
+    main_declarations:
+      - Zeta5Irrational.irrational_five
+    main_results:
+      - declaration: Zeta5Irrational.irrational_five
+        informal: >-
+          There exists an irrational real number x whose complex coercion
+          equals Mathlib's Riemann zeta function evaluated at five.
+        source_ref: >-
+          Fauzan, zeta(5) is irrational, Theorem 1.1, September 17, 2026,
+          https://doi.org/10.5281/zenodo.22826419; upstream Apery/Main.lean.
+          The completed formalization was released on September 23, 2026.
+      - declaration: Zeta5Irrational.main_estimate
+        informal: >-
+          There is a positive real c such that, for all sufficiently large
+          n, an integer polynomial Q of degree 37n is a positive rational
+          multiple of the constructed determinant polynomial and satisfies
+          0 < Q(zeta(5)) < exp(-c*n^2).
+        source_ref: >-
+          Upstream Apery/MainEstimate.lean; variant of the paper's Theorem 2.1
+          with c = -800*(Aeff + U) instead of 139/5.
+      - declaration: Zeta5Irrational.irrational_of_eventually_exists_int_poly
+        informal: >-
+          A real xi is irrational if, eventually, integer polynomials of
+          degree at most d(n) have positive values at xi bounded by epsilon(n),
+          and b^d(n)*epsilon(n) tends to zero for every positive natural b.
+        source_ref: Upstream Apery/Criterion.lean; the paper's Section 1.1.
+    tags:
+      - irrationality
+      - zeta-function
+      - hankel-determinants
+      - potential-theory
+      - certified-computation
+    msc:
+      - 11J72
+      - 11M06
+      - 31A15
   - slug: block-spectral-sensitivity
     title: Block sensitivity can exceed spectral sensitivity squared
     summary: >-
@@ -10109,6 +10242,39 @@ projects:
     msc:
       - '90C35'
       - '05C21'
+  - slug: bicausalot-palomar
+    title: "BicausalOT: measurable selection and coupling strategies"
+    summary: Develops Kuratowski–Ryll-Nardzewski selection, Jankov–von Neumann uniformization,
+      and finite-horizon Bellman identities for locally feasible coupling strategies. Exact Borel
+      measurable optimal strategies and initial couplings are obtained on Polish Borel spaces
+      for weakly continuous probability kernels and nonnegative extended-real lower semicontinuous
+      costs. Equivalence with optimization over bicausal path laws is not established.
+    branch: probability
+    entry_module: LeanPool.BicausalOT
+    authors:
+    - KT. Wu
+    source:
+      url: https://github.com/maxwellapexlab/bicausalot-palomar
+      github_repo: maxwellapexlab/bicausalot-palomar
+      commit: 3fe500ff64a75d7ab71b474d0c656d5471f62992
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - MeasurableSelection.exists_measurable_selection
+    main_results:
+    - declaration: MeasurableSelection.exists_measurable_selection
+      informal: A weakly measurable multifunction from an arbitrary measurable space to a Polish
+        space with nonempty closed values admits an everywhere-defined Borel-measurable selector.
+    tags:
+    - probability
+    msc:
+    - 28B20
+    - 54C65
+    - 54H05
+    - 03E15
+    - 28A20
+    - 68V20
+    provenance: AI
   - slug: asymptotic-triangle-packing
     title: Finite near-regular hypergraph rounding
     summary: >-
@@ -10307,6 +10473,1204 @@ projects:
     msc:
       - '12F05'
       - '13F25'
+
+  - slug: lean-spectral-theory
+    title: lean-spectral-theory
+    summary: The spectral theorem for possibly unbounded self-adjoint operators on complex Hilbert
+      spaces, formalized through the Cayley transform and real projection-valued measures. The
+      selected spectral theorem constructs a PVM whose scalar measures give the exact finite-second-moment
+      domain and first-moment quadratic form, with measurable-set uniqueness, and is proved
+      equivalent to equality with the unbounded coordinate spectral integral. The selected Stone
+      theorem proves both that strongly continuous one-parameter unitary groups have self-adjoint
+      generators and that every self-adjoint operator generates such a group.
+    branch: functional analysis
+    entry_module: LeanPool.SpectralTheory
+    authors:
+    - Ezzeri Esa
+    source:
+      url: https://github.com/savarin/lean-spectral-theory
+      github_repo: savarin/lean-spectral-theory
+      commit: d19e279f0ab244657f02ce678e8d67fa69e2f407
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - PalomarSpectralStone.spectral_theorem_intrinsic
+    main_results:
+    - declaration: PalomarSpectralStone.spectral_theorem_intrinsic
+      informal: Every self-adjoint partial linear operator on a complex Hilbert space has a
+        real projection-valued measure representing its domain and scalar moments, unique on
+        Borel sets.
+    - declaration: PalomarSpectralStone.stone_theorem_intrinsic
+      informal: Every strongly continuous one-parameter unitary group has a self-adjoint
+        generator, and every self-adjoint operator generates such a group.
+    tags:
+    - functional-analysis
+    msc:
+    - 47A10
+    - 47B15
+    provenance: AI
+  - slug: nemytskii-lebesgue
+    title: Nemytskii operators on Lebesgue spaces
+    summary: >-
+      Develops superposition operators induced by Caratheodory functions:
+      measurability, Lp-to-Lq growth bounds and sequential continuity,
+      Lipschitz estimates, monotonicity and coercivity, and Frechet remainder
+      estimates. For Lebesgue measure on the real line and finite-dimensional
+      real fibers, characterizes when every Lp input has an Lq output by the
+      standard integrable-envelope growth condition, for 1 <= p,q < infinity.
+      First-order remainder estimates on arbitrary measure spaces assume a
+      Caratheodory derivative with the stated Holder-compatible growth.
+      The integral-functional result bounds the integrated remainder and
+      proves integrability of the linearized integrand; it does not assert
+      integrability of the original integrand without its separate growth
+      hypotheses. Caratheodory here requires strongly measurable sections
+      and almost-everywhere continuity in the fiber variable.
+    branch: nonlinear functional analysis
+    entry_module: LeanPool.NemytskiiLebesgue
+    authors:
+      - Petr Girg
+      - Petr Nečesal
+      - Martin Dvořák
+      - Jakub Psutka
+    source:
+      title: Nemytskii operators on Lebesgue spaces
+      url: https://github.com/madvorak/nemytskii-lebesgue/tree/d276c27a1e3ebbd9eb09f25243b5e9808ca168d7
+      github_repo: madvorak/nemytskii-lebesgue
+      commit: d276c27a1e3ebbd9eb09f25243b5e9808ca168d7
+      completion_commit: 12e914c8b05694f2ea339a27c4af3d0bdf068922
+      release: https://github.com/madvorak/nemytskii-lebesgue/releases/tag/v4.33.1
+      completion_date: '2026-09-21T13:49:28Z'
+      dependencies:
+        - url: https://github.com/madvorak/utilities-zcu/tree/49f60eacb1401f82358b7d66ee447ea7f2fdebf1
+          license: Apache-2.0
+          scope: UtilitiesZCU/Basic.lean
+      provenance_note: >-
+        Upstream credits the four listed authors. Its README and available
+        commit history contain no AI disclosure; this is evidence under the
+        repository's human-provenance rubric, not proof of tool non-use.
+        The imported version includes substantial AI-assisted Mathlib porting
+        and proof refactoring by OpenAI Codex, so it is recorded as mixed.
+    license: Apache-2.0
+    status: verified
+    provenance: mix
+    main_declarations:
+      - NemytskiiLebesgue.IsCaratheodory.memLp_nemytskii_volume_iff_growth
+    main_results:
+      - declaration: NemytskiiLebesgue.IsCaratheodory.memLp_nemytskii_volume_iff_growth
+        informal: >-
+          For f from R times R^m to R^k with strongly measurable sections and
+          almost-everywhere continuous fibers, and 1 <= p,q < infinity,
+          every Lp input gives an Lq output if and only if there exist an Lq
+          real envelope a and a nonnegative constant C such that almost
+          everywhere, simultaneously for every fiber vector xi,
+          norm(f(x,xi)) <= abs(a(x)) + C * norm(xi)^(p/q).
+        source_ref: Upstream NemytskiiLebesgue/ConverseImplication.lean.
+      - declaration: NemytskiiLebesgue.IsCaratheodory.nemytskii_seqContinuous_of_memLp_of_growth_real
+        informal: >-
+          On any measure space, the same Caratheodory and growth assumptions
+          imply that a sequence of Lp functions converging in Lp to an Lp
+          function has superposition images converging in Lq, for finite
+          exponents p,q at least one and finite-dimensional real fibers.
+        source_ref: Upstream NemytskiiLebesgue/Continuity.lean.
+      - declaration: NemytskiiLebesgue.IsCaratheodory.eLpNorm_frechet_remainder_le_ofReal_mul_eLpNorm
+        informal: >-
+          On a measure space, suppose f and its fiber derivative f'
+          are Caratheodory, f' is the Frechet derivative at every fiber point
+          almost everywhere, p,r >= 1 satisfy 1/q = 1/r + 1/p, and f' is
+          bounded by b + C * norm(xi)^(p/r) with nonnegative b in Lr and C > 0.
+          At each Lp function u, the Lq integral quantity (a quasi-norm when
+          q < 1) of the first-order remainder is at most epsilon times the
+          Lp norm of l whenever l is in Lp and
+          its Lp norm is sufficiently small.
+        source_ref: >-
+          Upstream NemytskiiLebesgue/Frechet.lean; generalized in this port
+          by removing an unused finite-measure assumption.
+      - declaration: NemytskiiLebesgue.IsCaratheodory.integralFunctional_frechet_deriv
+        informal: >-
+          On a measure space with finite-dimensional real inputs,
+          under Caratheodory assumptions on f and its fiber derivative f',
+          conjugate exponents p,q, and derivative growth b + C*norm(xi)^(p-1)
+          with nonnegative b in Lq and C > 0, the linearized integrand is
+          integrable for every Lp perturbation. The norm of the integral of
+          the first-order remainder is at most epsilon times the Lp norm of
+          the perturbation when that norm is sufficiently small.
+        source_ref: >-
+          Upstream NemytskiiLebesgue/IntegralFunctional.lean; generalized in
+          this port by removing an unused finite-measure assumption.
+    tags:
+      - nonlinear-analysis
+      - nemytskii-operators
+      - lebesgue-spaces
+      - differentiation
+    msc:
+      - 47H30
+      - 46E30
+      - 47J05
+
+  - slug: besicovitchs-1-2
+    title: A machine-checked bound of 0.6934 for Besicovitch's 1/2-problem
+    summary: >-
+      Proves the planar Besicovitch threshold is at most 6934/10000, improving the published
+      7/10 record. The development formalizes the finite six-point reduction, thirty rational Gram
+      certificates, the endpoint isolation argument, and Besicovitch's classical lower-bound example.
+    branch: geometric measure theory
+    entry_module: LeanPool.Besicovitch
+    authors:
+      - Yongxi Lin
+    source:
+      title: The bound sigma_1(R^2) <= 6934/10000 for Besicovitch's 1/2-problem
+      authors:
+        - Yongxi Lin
+      url: https://github.com/CoolRmal/Besicovitchs-1-2
+      github_repo: CoolRmal/Besicovitchs-1-2
+      commit: 17c9597b2a901bf386d5bb8382d0a74d2069f25b
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - LeanPool.Besicovitch.sigmaOne_plane_le_barS
+    main_results:
+      - declaration: LeanPool.Besicovitch.sigmaOne_plane_le_barS
+        informal: >-
+          The planar one-dimensional rectifiability threshold is at most 6934/10000, improving the
+          published upper bound 7/10.
+      - declaration: LeanPool.Besicovitch.forcesOneRectifiability_plane_of_barS_lt
+        informal: >-
+          Every threshold strictly above 6934/10000 forces countable one-rectifiability in the plane.
+      - declaration: LeanPool.Besicovitch.Example.one_half_le_sigmaOne_plane
+        informal: >-
+          The planar threshold is at least one half, witnessed by Besicovitch's purely unrectifiable
+          example.
+      - declaration: LeanPool.Besicovitch.weightedPairScore_le_of_separated
+        informal: >-
+          Thirty exact rational Gram certificates prove the weighted six-point score is at most
+          -1/2000 for every separated admissible pair in the unit ball.
+    tags:
+      - besicovitch-problem
+      - measure-theory
+      - rectifiability
+      - finite-certificates
+      - gram-matrices
+    msc:
+      - "28A75"
+      - "28A78"
+      - "49Q15"
+      - "68V20"
+      - "90C05"
+
+  - slug: stallings-folding
+    title: Verified Stallings folding for finitely generated subgroups of F2
+    summary: Constructs a finite inverse automaton recognizing the subgroup generated by any
+      finite list of signed words in the rank-two free group. Proves exact subgroup preservation
+      and correctness of canonical reduced-word membership testing. Reusable infrastructure
+      includes inverse-automaton walks, reduction-compatible traversal, finite fold congruences,
+      coset potentials, flower graphs, and basis roses. Folding uses exhaustive finite search
+      over Boolean relations; no complexity bound, core pruning, subgroup basis, intersection,
+      or index algorithm is claimed.
+    branch: computational group theory
+    entry_module: LeanPool.StallingsFolding
+    authors:
+    - Arthur Freitas Ramos
+    source:
+      title: Verified finite automata for finitely generated subgroups of F2
+      url: https://github.com/Arthur742Ramos/stallings-folding/tree/117dde0a8415d3da1787e15ad22a6223a744432d
+      github_repo: Arthur742Ramos/stallings-folding
+      commit: 117dde0a8415d3da1787e15ad22a6223a744432d
+      completion_commit: 0291588d2737f10d4fb17be947277680cd3c6462
+      completion_date: '2026-09-23T04:05:29Z'
+      announcement: https://palomar-registry.org/entry?id=PALOMAR-2026-09-23-000004&version=1
+      announcement_date: '2026-09-23T05:20:13Z'
+      mathematical_source: John R. Stallings, Topology of Finite Graphs, Inventiones Mathematicae
+        71 (1983), 551-565, doi:10.1007/BF02095993. This is the rank-two finite-recognizer special
+        case, implemented through least congruences rather than a sequence of local folds.
+      background: Ilya Kapovich and Alexei Myasnikov, Stallings Foldings and Subgroups of Free
+        Groups, Journal of Algebra 248 (2002), 608-668, doi:10.1006/jabr.2001.9033.
+      scope: All four Stallings library modules and the proved finite-recognizer endpoint from
+        Solution.lean. The standalone challenge placeholder, statement-audit tooling, and CI
+        files are omitted. Mathlib is the only dependency.
+      port_extensions: >-
+        Flower vertices now contain exactly the internal positions of each word,
+        instead of padding all words to a common maximum length. The new Restriction
+        module proves preservation when folding an edge-closed finite vertex set
+        containing the basepoint; its potential is required only on the selected set.
+        These AI-assisted port extensions are not attributed to the upstream release.
+      provenance_note: Upstream formalization.yaml records human-directed GPT-6 Codex proof
+        development. Lean Pool porting, cleanup, and optimization were also performed by OpenAI
+        Codex. Author attribution follows upstream.
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - Stallings.folded_recognizer_exists
+    main_results:
+    - declaration: Stallings.folded_recognizer_exists
+      informal: For every finite list S of signed words on two generators, there exist a finite
+        type of states, a base state, and a partial transition table with inverse-labelled reverse
+        edges, such that traversing the canonical reduced word of any g in FreeGroup (Fin 2)
+        returns to the base exactly when g lies in the subgroup generated by the word values
+        in S. The witness is the computed flower-graph fold.
+      source_ref: Upstream Solution.lean, completeStatement and folded_recognizer_exists.
+    - declaration: Stallings.foldWords_loopSubgroup_eq_generatorSubgroup
+      informal: For every finite input list of signed words in the rank-two free group, the
+        based-loop subgroup of the computed folded flower graph equals the subgroup generated
+        by the input words.
+      source_ref: Upstream Stallings/Flower.lean.
+    - declaration: Stallings.foldedMembershipTest_eq_true_iff
+      informal: For any finite generating list S and any rank-two free-group element g, the
+        executable folded-automaton test returns true if and only if g belongs to the subgroup
+        generated by S. There is no efficiency guarantee for constructing the automaton.
+      source_ref: Upstream Stallings/Flower.lean.
+    tags:
+    - free-groups
+    - stallings-folding
+    - finite-automata
+    - verified-algorithms
+    msc:
+    - 20E05
+    - 68Q45
+    - 03B35
+
+  - slug: boolean-multiplication
+    title: Exact Boolean multiplicative complexity of four-term polynomial multiplication
+    summary: >-
+      Proves that multiplying two binary polynomials with n coefficients needs
+      exactly 0, 1, 3, 6, and 9 AND gates for n = 0, 1, 2, 3, and 4, with XOR
+      and constants free and arbitrary reuse of earlier nonlinear wires.
+      The main lower bound excludes every eight-gate circuit for n = 4.
+      Develops Boolean algebraic normal forms equivalent to all Boolean
+      functions, a general circuit model, dimension bounds, circuit rewiring,
+      a Reed-Muller minimum-weight theorem, and exterior-algebra and jet
+      arguments controlling nonlinear feedback.
+    branch: computational complexity
+    entry_module: LeanPool.BooleanMultiplication
+    authors:
+      - Gregory Morse
+    source:
+      title: >-
+        Unrestricted Boolean Multiplicative Complexity of Four-Term Binary
+        Polynomial Multiplication: Rational Places, Hasse Jets, and the
+        Failure of Nonlinear Feedback
+      arxiv: '2608.30238v1'
+      url: https://github.com/GregoryMorse/unrestricted-boolean-mul/tree/79a801760668f52bb00a9e1a406e841375c58a6d
+      github_repo: GregoryMorse/unrestricted-boolean-mul
+      commit: 79a801760668f52bb00a9e1a406e841375c58a6d
+      announcement_date: '2026-08-31T04:33:48Z'
+      announcement_url: https://github.com/GregoryMorse/unrestricted-boolean-mul/releases/tag/n4-arxiv-v2
+      notes: >-
+        The complete Lean release predates the arXiv v1 submission of
+        2026-08-31T04:45:12Z. The selected September 22 commit corrects
+        release metadata; eligibility rests on the complete August 31 Lean release at
+        2ebc0cf42039e4b5de84cb7f9d97cad4791c669d. The August 29 release
+        contained computational artifacts, not the Lean formalization.
+        The author discloses GPT-5.6 Sol for original research and proof
+        development, Opus 5 as a critical referee, and Codex for release
+        preparation. Gregory Morse directed and reviewed the work and
+        assumes responsibility. AI provenance records the proof-producing
+        agent workflow; human direction alone is not classified as mixed
+        formalization. The complete upstream MIT notice is retained in
+        LeanPool/BooleanMultiplication.lean. Only the published n <= 4
+        dependency closure is imported; no n = 5 or n = 6 claim is made.
+    license: MIT
+    status: verified
+    provenance: AI
+    main_declarations:
+      - UnrestrictedBooleanMul.N4.mc_mul_four
+    main_results:
+      - declaration: UnrestrictedBooleanMul.mc_mul_zero
+        informal: The empty polynomial multiplication map needs zero AND gates.
+        source_ref: Proposition 2.3; the n = 0 target has no output coordinates.
+      - declaration: UnrestrictedBooleanMul.mc_mul_one
+        informal: Multiplying two one-coefficient binary polynomials needs exactly one AND gate.
+        source_ref: Proposition 2.3.
+      - declaration: UnrestrictedBooleanMul.mc_mul_two
+        informal: Multiplying two two-coefficient binary polynomials needs exactly three AND gates.
+        source_ref: Proposition 2.3.
+      - declaration: UnrestrictedBooleanMul.mc_mul_three
+        informal: Multiplying two three-coefficient binary polynomials needs exactly six AND gates.
+        source_ref: Proposition 2.4; the lower bound is proved internally.
+      - declaration: UnrestrictedBooleanMul.N4.mc_mul_four
+        informal: >-
+          Multiplying two four-coefficient binary polynomials needs exactly
+          nine AND gates, allowing free XOR, constants, and unrestricted
+          nonlinear reuse.
+        source_ref: Theorem 9.1.
+      - declaration: UnrestrictedBooleanMul.N4.no_eight_gate_circuit
+        informal: >-
+          No eight-AND circuit with free XOR, constants, and arbitrary
+          nonlinear reuse computes all seven output coefficients of the
+          product of two four-coefficient binary polynomials.
+        source_ref: Theorem 9.1, lower bound.
+    tags:
+      - computational-complexity
+      - boolean-circuits
+      - polynomial-multiplication
+      - algebraic-normal-form
+    msc:
+      - '68Q06'
+      - '68Q17'
+      - '68W30'
+      - '15A75'
+      - '94D10'
+  - slug: champernowne-normality
+    title: Champernowne normality in every base
+    summary: >-
+      Proves that concatenating the base-b digits of the positive integers
+      gives a normal digit sequence for every integer base b at least 2:
+      every nonempty length-k word of digits below b has limiting frequency
+      b^(-k). This is a discrete, all-base generalization of D. G.
+      Champernowne's 1933 base-ten result, without a real-number expansion
+      bridge. Includes reusable substring-counting inequalities, a
+      digit-string equivalence, exact cohort counts, and quantitative prefix
+      bounds used to establish the frequency limit.
+    branch: number theory and asymptotic analysis
+    entry_module: LeanPool.Champernowne
+    authors:
+      - Arthur Champernowne
+    source:
+      title: Champernowne Sequence Normality Proof
+      authors:
+        - Arthur Champernowne
+      url: https://github.com/OldMathematician/ChampernowneNormality
+      github_repo: OldMathematician/ChampernowneNormality
+      commit: 31a76dbde2727745beb6fb81af4cab1ce6a15fda
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - Champernowne.champernowne_normal
+    main_results:
+      - declaration: Champernowne.champernowne_normal
+        informal: >-
+          For every integer base b at least 2, the sequence formed by
+          concatenating the base-b digits of 1, 2, 3, and so on is normal:
+          each nonempty word w of digits below b has limiting occurrence
+          frequency 1 / b^(length w), counting overlapping occurrences.
+      - declaration: Champernowne.champernowne_normal_ten
+        informal: >-
+          The decimal digit sequence 123456789101112... is normal in base ten.
+      - declaration: Champernowne.sum_countOccurrences_cohort
+        informal: >-
+          For a nonempty length-k word of base-b digits with nonzero first
+          digit and k at most m, its total occurrences inside all m-digit
+          positive integers equal b^(m-k) + (m-k)(b-1)b^(m-k-1), with natural
+          subtraction in the exponents.
+      - declaration: Champernowne.sum_countOccurrences_cohort_zero
+        informal: >-
+          For a nonempty length-k word of base-b digits starting with zero
+          and k at most m, its total occurrences inside all m-digit positive
+          integers equal (m-k)(b-1)b^(m-k-1), with natural subtraction in the
+          exponent.
+    tags:
+      - normal-numbers
+      - digit-expansions
+      - combinatorics-on-words
+      - asymptotic-frequency
+    msc:
+      - 11K16
+      - 68R15
+  - slug: chip-firing-with-lean
+    title: Chip-Firing with Lean 4
+    summary: A Lean 4 / Mathlib formalization of Baker and Norine's Riemann-Roch theorem for
+      finite graphs. Chip configurations on a finite graph, modulo chip-firing moves, form an
+      abelian group analogous to the group of line bundles on a compact Riemann surface. Each
+      class can be assigned a rank, analogous to the dimension of a linear series. These ranks
+      then satisfy a formula of the form r(D) - r(K-D) = deg D + 1 - g, in exact analogy to
+      Riemann surfaces. This formula is formalized, along with the analog of Clifford's theorem
+      for finite graphs.
+    branch: combinatorics
+    entry_module: LeanPool.ChipFiring
+    authors:
+    - Dhyey Dharmendrakumar Mavani
+    - Nathan Pflueger
+    source:
+      url: https://github.com/dhyeymavani2003/chip-firing-with-lean
+      github_repo: dhyeymavani2003/chip-firing-with-lean
+      commit: 5b422d855c02af60591121ba7c11b5e8242542b8
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - ChipFiring.Propositions.riemann_roch
+    - ChipFiring.Propositions.clifford
+    main_results:
+    - declaration: ChipFiring.Propositions.riemann_roch
+      informal: For a finite connected graph, the ranks of a divisor and its canonical complement
+        satisfy the graph Riemann–Roch formula.
+    - declaration: ChipFiring.Propositions.clifford
+      informal: For a special divisor on a finite connected graph, its rank is at most half
+        its degree.
+    tags:
+    - combinatorics
+    msc:
+    - 05C57
+    - 14T20
+    provenance: mix
+  - slug: densityhalesjewett
+    title: The density Hales–Jewett theorem and Szemerédi's theorem
+    summary: 'A Lean 4 formalization of the density Hales–Jewett theorem: for every finite alphabet
+      α and every density δ > 0, all sufficiently large n have the property that any set of
+      at least δ·|α|^n words of length n over α contains a combinatorial line. The basis for
+      the formalization is the combinatorial proof of Dodos, Kanellopoulos, and Tyros. As a
+      consequence, we also formalize Szemerédi''s theorem on the integers: for every k ≥ 3 and
+      δ > 0, the following holds for all sufficiently large n. Any subset of {0, …, n−1} of
+      size at least δ·n contains a nonconstant arithmetic progression of length k.'
+    branch: combinatorics
+    entry_module: LeanPool.DensityHalesJewett
+    authors:
+    - Gabriel Dahia
+    source:
+      url: https://github.com/gdahia/densityhalesjewett
+      github_repo: gdahia/densityhalesjewett
+      commit: 1c2f5aa1b99caa8e2a87beacf80f07f066c309d3
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - Combinatorics.Line.exists_of_density_atTop
+    main_results:
+    - declaration: Combinatorics.Line.exists_of_density_atTop
+      informal: Every positive-density subset of sufficiently long words over a finite nontrivial
+        alphabet contains a combinatorial line.
+    - declaration: Combinatorics.ArithmeticProgression.exists_of_density_nat_atTop
+      informal: Every positive-density subset of a sufficiently long initial interval of the
+        natural numbers contains an arithmetic progression of any prescribed length at least
+        three with nonzero common difference.
+    tags:
+    - combinatorics
+    msc:
+    - 05D10
+    - 05A05
+    - 11B75
+    - 68R15
+    provenance: AI
+  - slug: markovprocess
+    title: MarkovProcess
+    summary: A Lean formalization of continuous-path Markov processes associated with conservative
+      Feller transition semigroups on nonempty locally compact Polish spaces. A uniform Kolmogorov
+      displacement-moment bound yields a unique measurable kernel from each starting point to
+      continuous-path space, with the prescribed finite-dimensional distributions. The library
+      also develops strong Markov properties, generators and resolvents, stopping and killing,
+      and Brownian motion as an example.
+    branch: probability
+    entry_module: LeanPool.MarkovProcess
+    authors:
+    - Scott Armstrong
+    source:
+      url: https://github.com/scottnarmstrong/markovprocess
+      github_repo: scottnarmstrong/markovprocess
+      commit: dbade0d12c4f84179441a9df7d7147df7a8bcaa0
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - MarkovProcess.existsUnique_continuousProcess
+    main_results:
+    - declaration: MarkovProcess.existsUnique_continuousProcess
+      informal: A conservative Feller transition semigroup on a nonempty locally compact Polish
+        space satisfying the Kolmogorov moment criterion determines a unique continuous-path
+        Markov kernel with its prescribed finite-dimensional distributions.
+    tags:
+    - probability
+    msc:
+    - 60J25
+    - 60J35
+    - 60G17
+    provenance: AI
+  - slug: nagatafactoriality
+    title: Nagata's prime-generated factoriality theorem
+    summary: Nagata’s factoriality criterion for noetherian domains localized at prime-generated
+      multiplicative sets, with concrete and abstract localization interfaces and applications
+      to polynomial rings through Laurent and fraction-field localizations.
+    branch: commutative algebra
+    entry_module: LeanPool.NagataFactoriality
+    authors:
+    - Arthur F. Ramos
+    - Ruy J. G. B. de Queiroz
+    - Anjolina G. de Oliveira
+    source:
+      url: https://github.com/arthur742ramos/nagatafactoriality
+      github_repo: arthur742ramos/nagatafactoriality
+      commit: 2efdf7f86085972bd758449ca43c76a2e7bdf4af
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    provenance_note: >-
+      Inferred from explicit Copilot coauthor trailers in the pinned upstream history:
+      83.5% of surviving noncomment Lean code lines, including 94.8% of the core
+      localization lemmas and 96.6% of the theorem module, trace to those commits.
+      Commits 5b1698879b05fc76597723347544cb0b02c268c4 and
+      ef73ee27e4b0a8d1260350801c6915bfb56b6658 add substantial new proofs, including
+      prime-generated descent and the fraction-field polynomial application.
+      Coauthorship records support this classification but do not identify who
+      wrote each individual line.
+    main_declarations:
+    - NagataFactoriality.nagata_theorem
+    main_results:
+    - declaration: NagataFactoriality.nagata_theorem
+      informal: A noetherian integral domain is a unique factorization domain when localization
+        at a prime-generated multiplicative set is a unique factorization domain.
+    tags:
+    - commutative-algebra
+    msc:
+    - 13F15
+  - slug: salem-theorem
+    title: Every Pisot number is a two-sided limit of Salem numbers
+    summary: Proves Salem’s two-sided approximation theorem for Pisot numbers, preserving both the polynomial
+      reciprocal-family construction and the exceptional quadratic-unit construction.
+    branch: algebraic number theory
+    entry_module: LeanPool.SalemTheorem
+    authors:
+    - Stephanie Alexander
+    source:
+      url: https://github.com/stalex444/salem-theorem
+      github_repo: stalex444/salem-theorem
+      commit: 887be765bf24c6a645600dfc7bd0a1055a1761dd
+    license: MIT
+    status: verified
+    provenance: AI
+    main_declarations:
+    - SalemTheorem.salem_theorem
+    main_results:
+    - declaration: SalemTheorem.salem_theorem
+      informal: Every Pisot number is approached by Salem numbers from both below and above.
+    - declaration: SalemTheorem.salem_construction_two_sided
+      informal: For the nondegenerate Pisot polynomial pattern, reciprocal-family polynomials have Salem
+        roots arbitrarily near the Pisot root from either side.
+    - declaration: SalemTheorem.salem_quadratic_unit
+      informal: The quadratic-unit family supplies Salem roots approaching each reciprocal quadratic Pisot
+        unit from either side.
+    tags:
+    - number-theory
+    - pisot-numbers
+    - salem-numbers
+    msc:
+    - 11R06
+    - 11R09
+  - slug: rr-equals-nonmeager-paper
+    title: The nonmeagre lower bound for the rearrangement number
+    summary: Formalizes the inequality non(M) ≤ rr in ZFC via relational systems, category and slalom bounds,
+      finite-vector constructions, and rearrangements of conditionally convergent real series. The reverse
+      inequality from the accompanying manuscript is outside the upstream Lean formalization.
+    branch: set theory
+    entry_module: LeanPool.RearrangementNumber
+    authors:
+    - Vinicius de Oliveira Rodrigues
+    source:
+      url: https://github.com/vo-rodrigues/rr-equals-nonmeager-paper
+      github_repo: vo-rodrigues/rr-equals-nonmeager-paper
+      commit: a8e74a91fe0b9f3534194910172349c9926e3b3b
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - NonMRR.nonM_le_rr
+    main_results:
+    - declaration: NonMRR.nonM_le_rr
+      informal: The uniformity of the meagre ideal is at most the rearrangement number.
+    tags:
+    - set-theory
+    - cardinal-characteristics
+    - series
+    msc:
+    - 03E17
+    - 40A05
+  - slug: li-criterion-rh-equivalence-lean
+    title: Li's criterion for the Riemann Hypothesis
+    summary: 'Li''s criterion for the Riemann zeta function, formalized in Lean 4 over
+      Mathlib: Mathlib''s `RiemannHypothesis` holds if and only if every Li-Keiper coefficient
+      of the completed xi function has nonnegative real part. The zero-indexed analytic
+      coefficient at n is Li''s classical lambda_(n+1), the n-th Taylor coefficient
+      at 0 of the logarithmic derivative of s |-> xi(1/(1-s)). A second compared theorem
+      identifies this analytic coefficient with Li''s arithmetic coefficient, the symmetrized
+      sum over the nontrivial zeros counted with multiplicity, and proves that symmetrized
+      family summable so the sum is the genuine one. Both results are unconditional:
+      the biconditional, the coefficient identification, the genus-1 Hadamard factorization
+      of xi (with multiplicity), genus-1 summability of 1/|rho|^2, and the growth bound
+      order(xi) <= 1 are all proved. This is a formalization of a classically known
+      equivalence (X.-J. Li, 1997); it is not a proof of the Riemann Hypothesis, nor
+      of the positivity of the coefficients.'
+    branch: analytic number theory
+    entry_module: LeanPool.LiCriterion
+    authors:
+    - Nicholas Bulka
+    source:
+      url: https://github.com/nicholasbulka/li-criterion-rh-equivalence-lean
+      github_repo: nicholasbulka/li-criterion-rh-equivalence-lean
+      commit: 35df682f3b709ffe5fbcfdd452dfa964bd622b87
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - li_criterion
+    - li_coefficients_eq_zero_sum
+    main_results:
+    - declaration: li_criterion
+      informal: The Riemann hypothesis is equivalent to nonnegativity of every Li–Keiper
+        coefficient.
+    - declaration: li_coefficients_eq_zero_sum
+      informal: The analytic Li–Keiper coefficients equal the symmetrically summed arithmetic
+        coefficients over the nontrivial zeros.
+    tags:
+    - number-theory
+    - riemann-hypothesis
+    - complex-analysis
+    msc:
+    - 11M26
+  - slug: hs-virial-nbc-identity
+    title: Hard-sphere Mayer NBC identity and fork-packing volume bound
+    summary: A kernel-checked Lean formalization of the exact no-broken-circuit volume identity
+      for hard-sphere Mayer cluster integrals and the stronger dimension-three fork-packing
+      upper bound for each tree-owned NBC region. The development proves finite broken-circuit
+      cancellation, the measurable finite-region decomposition, the anchored Euclidean product-measure
+      theorem, and its explicit flat-coordinate transport.  Its geometric result is the attachment-aware
+      estimate Vol(NBC_T) <= (17/32)^hardSphereNu T * hardSphereKappa^(k-1), where hardSphereNu
+      T is the maximum cardinality of a packing of pairwise vertex-disjoint, order-compatible
+      forks in T.  A formal fork is an ordered triple (a,b,c) with a < b < c, center a, leaves
+      b,c, and tree edges {a,b} and {a,c}.  The central contribution is the complete pointwise-to-integral
+      bridge together with the orientation-aware measure-preserving factorization that realizes
+      the per-fork volume suppression.
+    branch: mathematical physics
+    entry_module: LeanPool.HardSphereNBC
+    authors:
+    - ukiyois
+    - OpenCode agent sessions
+    source:
+      url: https://github.com/ukiyois/hs-virial-nbc-identity
+      github_repo: ukiyois/hs-virial-nbc-identity
+      commit: fd0a1e73c336574fa9655f9ab3c0cd9ce5c4fcce
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - PalomarHS.main_result
+    - PalomarHS.nbc_region_real_volume_le_fork_factor
+    main_results:
+    - declaration: PalomarHS.main_result
+      informal: The absolute hard-sphere Mayer coefficient, multiplied by the factorial, equals
+        the sum of nonnegative no-broken-circuit region volumes over spanning trees.
+    - declaration: PalomarHS.nbc_region_real_volume_le_fork_factor
+      informal: For a spanning tree in three dimensions, its no-broken-circuit region has volume
+        at most (17/32) to the maximum disjoint compatible-fork packing size times the unit-ball
+        volume to the number of tree edges.
+    tags:
+    - mathematical-physics
+    msc:
+    - 05C15
+    - 82B05
+    provenance: AI
+  - slug: lean-scv
+    title: Classical several complex variables
+    summary: Formalizes Cauchy and Taylor theory, Hartogs phenomena, removable singularities, analytic
+      sets and germs, Weierstrass theory, holomorphic convexity, Cartan–Thullen and Bochner tube theorems,
+      plurisubharmonic functions, Levi convexity, and elementary Runge-domain theory. Weierstrass preparation
+      and coordinate-origin germ Noetherianity overlap LocalComplexGeometry; this development also supplies
+      germ unique factorization and global extension and convexity results.
+    branch: complex analysis
+    entry_module: LeanPool.SeveralComplexVariables
+    authors:
+    - Bastiaan J Braams
+    source:
+      url: https://github.com/bjbraams/lean-scv
+      github_repo: bjbraams/lean-scv
+      commit: caef1ae776ff79933718312357980d46628d3702
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - SeveralComplexVariables.analyticOnNhd_of_separately_analytic_locally_bounded
+    main_results:
+    - declaration: SCV.cauchy_formula_polydisc
+      informal: Holomorphic functions on a polydisc satisfy the iterated Cauchy integral formula.
+    - declaration: SeveralComplexVariables.analyticOnNhd_of_separately_analytic_locally_bounded
+      informal: On an open subset of a finite complex coordinate space, a Banach-valued separately analytic
+        map that is locally bounded is jointly analytic.
+      source_ref: Boas (2013), Section 2.7, Theorem 7 (the classical two-variable scalar case).
+    - declaration: SCV.identity_theorem
+      informal: Holomorphic functions on a connected domain that agree on a nonempty open subset agree
+        throughout the domain.
+    tags:
+    - complex-analysis
+    - several-complex-variables
+    - holomorphic-functions
+    msc:
+    - 32A10
+    - 32D05
+    - 32E10
+  - slug: egz-formal-proof
+    title: Convex geometry and the Erdős–Ginzburg–Ziv problem
+    summary: For every fixed positive dimension d, the Erdős–Ginzburg–Ziv constant of
+      (ZMod p)^d equals p times its hollow-family constant plus o(p) as p tends to infinity
+      through primes. Includes the convex-flag Helly and centerpoint theorems, flag
+      decomposition, balanced combinations, relative expansion, and the polynomial hollow-family
+      bound.
+    branch: additive combinatorics
+    entry_module: LeanPool.ErdosGinzburgZiv
+    authors:
+    - Dmitrii Zakharov
+    source:
+      doi: 10.19086/da.165216
+      arxiv: '2002.09892'
+      url: https://github.com/zakharov2k/egz-formal-proof
+      github_repo: zakharov2k/egz-formal-proof
+      commit: 7c82267c43a51dd5cb3e440412780ff82aff7500
+    license: MIT
+    status: verified
+    provenance: AI
+    main_declarations:
+    - EGZ.theorem_1_2
+    - EGZ.main_upper_bound
+    main_results:
+    - declaration: EGZ.theorem_1_2
+      informal: For each positive dimension d, s((F_p)^d) = p w((F_p)^d) + o(p) as p
+        tends to infinity through primes.
+    - declaration: EGZ.main_upper_bound
+      informal: For each positive d and ε > 0, sufficiently large primes satisfy s((F_p)^d)
+        ≤ (w((F_p)^d) + ε) p.
+    tags:
+    - additive-combinatorics
+    - zero-sum
+    - convex-geometry
+    msc:
+    - 11B30
+    - 11H06
+  - slug: lean-snumbers
+    title: Pietsch s-numbers and the maximal difference theorem
+    summary: Formalizes the five classical s-number sequences, their comparison inequalities, the maximal
+      difference theorem, compact-operator singular value decomposition, John ellipsoids, entropy numbers,
+      and compactness characterizations.
+    branch: functional analysis
+    entry_module: LeanPool.SNumbers
+    authors:
+    - Mario Ullrich
+    source:
+      url: https://github.com/mario-ullrich/lean-snumbers
+      github_repo: mario-ullrich/lean-snumbers
+      commit: d984f39b53eb1579920fe987de10382dcf553f4e
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - SNumbers.approximationNumber_le_e_mul_hilbertNumber
+    main_results:
+    - declaration: SNumbers.approximationNumber_le_e_mul_hilbertNumber
+      informal: For a bounded operator, its nth approximation number is at most e times (n+1) times its
+        nth Hilbert number.
+    - declaration: SNumbers.allSNumbers_eq_on_HilbertSpace
+      informal: Every s-number sequence agrees with the approximation numbers on operators between Hilbert
+        spaces.
+    - declaration: John.john_decomposition
+      informal: In John position, the identity decomposes into a positive weighted sum of rank-one operators
+        from contact points.
+    tags:
+    - functional-analysis
+    - operator-theory
+    - s-numbers
+    msc:
+    - 47B06
+    - 46B20
+  - slug: lean-superorthogonality
+    title: Square-function estimates from type IV superorthogonality
+    summary: Proves the type IV superorthogonality square-function estimate for finite and countable index
+      sets, including the pointwise combinatorial estimate and unconditional convergence in L^(2r).
+    branch: harmonic analysis
+    entry_module: LeanPool.Superorthogonality
+    authors:
+    - Joris Roos
+    source:
+      url: https://github.com/roos-j/lean-superorthogonality
+      github_repo: roos-j/lean-superorthogonality
+      commit: 6d3a3645c1e6f6a3c50bfdc12c4a51250e63bc31
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - Superorthogonal.sqfct_estimate_of_type_iv_superorthogonal
+    main_results:
+    - declaration: Superorthogonal.sqfct_estimate_of_type_iv_superorthogonal
+      informal: For an integer r >= 1, a countable type IV superorthogonal family in L^(2r), with
+        almost-everywhere summable squared norms and square function in L^(2r), converges unconditionally
+        in L^(2r) and satisfies the square-function bound with constant C(r).
+    tags:
+    - harmonic-analysis
+    - superorthogonality
+    - square-functions
+    msc:
+    - 42B25
+    - 46E30
+  - slug: bkarforestformula
+    title: The BKAR forest interpolation formula
+    summary: Proves the Brydges–Kennedy–Abdesselam–Rivasseau forest interpolation formula for smooth functions
+      on a finite complete graph’s edge-coupling space, with unordered forest-cube contributions, ordered
+      sector variants, and choice independence.
+    branch: analysis and mathematical physics
+    entry_module: LeanPool.BKARForestFormula
+    authors:
+    - Scott Armstrong
+    source:
+      url: https://github.com/scottnarmstrong/bkarforestformula
+      github_repo: scottnarmstrong/bkarforestformula
+      commit: a07f44a534240fe6339558951dd78a19e4ef7c51
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - BKAR.bkar_formula_forestIndex_cube_contributions
+    main_results:
+    - declaration: BKAR.bkar_formula_forestIndex_cube_contributions
+      informal: A smooth function evaluated at the all-one configuration is the sum over forests of cube
+        integrals of mixed partial derivatives at path-minimum interpolation points.
+    tags:
+    - analysis
+    - graph-theory
+    - mathematical-physics
+    msc:
+    - 81T08
+    - 05C05
+  - slug: nikodym
+    title: The sharp finite-field Nikodym exponent
+    summary: Proves a lower bound for Nikodym sets over arbitrary finite fields and a matching exponent
+      upper construction over sufficiently large prime fields, using interpolation, algebraic degree bounds,
+      and multiquadratic constructions.
+    branch: additive combinatorics
+    entry_module: LeanPool.Nikodym
+    authors:
+    - Ting-Wei Chao
+    - Zach Hunter
+    - Cosmin Pohoata
+    - Hung-Hsun Hans Yu
+    - Shengtong Zhang
+    source:
+      url: https://github.com/shengtongzhang-alt/nikodym
+      github_repo: shengtongzhang-alt/nikodym
+      commit: 38d16dcdbaef04f6f85e5dee92905b7db2eba930
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - Nikodym.card_ge_pow_sub
+    - Nikodym.exists_isNikodym_card_le
+    main_results:
+    - declaration: Nikodym.card_ge_pow_sub
+      informal: Every Nikodym set in dimension d ≥ 2 over a finite field of size q has size at least q^d
+        − (8d²+1)q^(d−2^(1−d)).
+    - declaration: Nikodym.exists_isNikodym_card_le
+      informal: For every positive ε and dimension d ≥ 2, sufficiently large prime fields admit a Nikodym
+        set of size at most q^d − q^(d−2^(1−d)−ε).
+    tags:
+    - combinatorics
+    - finite-fields
+    - nikodym-sets
+    msc:
+    - 05B25
+    - 11T99
+  - slug: lean-malliavin
+    title: Malliavin calculus and the Clark–Ocone representation
+    summary: Constructs the Malliavin derivative, Gaussian integration by parts, closability,
+      Wiener chaos, Brownian Itô integration and martingale representation. The Clark–Ocone
+      endpoint uses a generating pre-Brownian process with continuous linear coordinates
+      on a separable real Gaussian Banach space, its natural filtration, and pairs in the
+      closed Malliavin graph; the conditional-expectation sections agree almost everywhere
+      at positive times.
+    branch: stochastic analysis
+    entry_module: LeanPool.Malliavin
+    authors:
+    - Ezzeri Esa
+    source:
+      url: https://github.com/savarin/lean-malliavin
+      github_repo: savarin/lean-malliavin
+      commit: a1a6ccc6eedbdf15fc3aebf9146d1fddfa0c8272
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - PalomarClarkOcone.generated_clark_ocone
+    main_results:
+    - declaration: PalomarClarkOcone.generated_clark_ocone
+      informal: For a generating pre-Brownian process on a separable real Gaussian Banach
+        space whose coordinates are pointwise represented by continuous linear functionals,
+        constructs a time realization of the Malliavin derivative and an Itô isometry for
+        the natural filtration, with martingale representation for every terminal L² variable.
+        For pairs in the closed Malliavin graph, the Clark–Ocone formula identifies the
+        derivative's predictable projection with its conditional-expectation sections for
+        almost every positive time.
+    tags:
+    - probability
+    - malliavin-calculus
+    - stochastic-analysis
+    msc:
+    - 60H07
+    - 60H05
+  - slug: 1mfld
+    title: The classification of compact 1-manifolds
+    summary: 'A Lean 4 (mathlib) proof of the classification of 1-manifolds, specifically that
+      every compact, connected, Hausdorff topological space charted on the half-line [0,∞) is
+      homeomorphic to the circle S¹ or to the closed unit interval [0,1]. The proof follows
+      David Gale''s outline: shrink to a finite atlas of interval charts, then induct on the
+      atlas size, merging two overlapping charts at each step; a connected overlap glues two
+      charts into one (two boundary charts glue onto [0, 1]), while a disconnected overlap has
+      exactly two components and yields the circle.'
+    branch: topology
+    entry_module: LeanPool.OneManifold
+    authors:
+    - Jim Fowler
+    - Dennis Sweeney
+    source:
+      url: https://github.com/sweeneyde/1mfld
+      github_repo: sweeneyde/1mfld
+      commit: 83e961ba28dd8182e7bae844756aba614eb1512e
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - OneMfld.homeomorph_circle_or_unitInterval
+    main_results:
+    - declaration: OneMfld.homeomorph_circle_or_unitInterval
+      informal: Every compact connected Hausdorff space charted on the nonnegative real half-line
+        is homeomorphic to the circle or the closed unit interval.
+    tags:
+    - topology
+    msc:
+    - 57N99
+    - 54F65
+    - 68V20
+    provenance: mix
+  - slug: inflation-termination
+    title: Inflation termination for classical pair-source networks
+    summary: 'For finite binary pair-source networks without isolated vertices, classifies
+      when the inflation hierarchy characterizes compatibility with finite latent alphabets:
+      precisely forests of double stars, where order two suffices. Also proves triangle
+      nontermination for arbitrary measurable latent probability spaces, quantitative
+      obstructions, finite and measurable Finner inequalities, and graph witnesses.'
+    branch: causal inference and probability
+    entry_module: LeanPool.InflationTermination
+    authors:
+    - William Blair
+    source:
+      url: https://github.com/williamjblair/inflation-termination
+      github_repo: williamjblair/inflation-termination
+      commit: 2aa1f05ce932fdeef3896c83d287abd77cd8befb
+    license: MIT
+    status: verified
+    provenance: AI
+    main_declarations:
+    - TriangleInflation.Graph.classification_NW
+    main_results:
+    - declaration: TriangleInflation.Graph.classification_NW
+      informal: For finite binary pair-source graphs without isolated vertices, some
+        finite order of the Navascués–Wolfe hierarchy characterizes compatibility with
+        finite latent alphabets exactly for double-star forests; order two suffices there.
+    - declaration: TriangleInflation.no_finite_characterizing_orderM
+      informal: At every positive inflation order, a triangle law passes both the AI
+        and NW tests but has no compatible model over any measurable latent probability spaces.
+    tags:
+    - causal-inference
+    - probability
+    - inflation-hierarchy
+    - graph-theory
+    msc:
+    - 60A05
+    - 05C05
+  - slug: lean-scottish-book-155
+    title: A counterexample to Scottish Book Problem 155
+    summary: A Lean proof that there are real Banach spaces X and Y and a bijection U from X
+      to Y which preserves every pairwise distance on every closed ball of radius one quarter
+      while failing to be a global isometry. This gives a counterexample to Scottish Book Problem
+      155.
+    branch: functional analysis
+    entry_module: LeanPool.ScottishBook155
+    authors:
+    - Yoshito Ishiki
+    source:
+      url: https://github.com/yoshito-ishiki-math/lean-scottish-book-155
+      github_repo: yoshito-ishiki-math/lean-scottish-book-155
+      commit: 233eff4af7901eadee7927a1eb1f814ad0f3c118
+    license: MIT
+    status: verified
+    main_declarations:
+    - ScottishBook155.claim14
+    main_results:
+    - declaration: ScottishBook155.claim14
+      informal: There exist real Banach spaces and a bijection between them that preserves all
+        pairwise distances on each closed ball of radius one quarter but is not a global isometry.
+    tags:
+    - functional-analysis
+    msc:
+    - 46B20
+    - 54E40
+    provenance: AI
+  - slug: marshallhalltheorem
+    title: Marshall Hall's theorem through finite cores
+    summary: Formalizes Marshall Hall's finite-index free-factor theorem for finitely generated
+      subgroups of finite-rank free groups. The proof extracts the finitely many suffix states
+      of a subgroup generating set, completes the resulting partial generator actions to permutations
+      of a finite state set, identifies the connected orbit with a finite core, and extends
+      a geodesic spanning tree to obtain an inclusion-compatible free-product decomposition.
+      It also exposes an explicit finite permutation separator for every finitely generated
+      subgroup and element outside it, yielding the LERF consequence. The repository also proves
+      binary and finite-indexed free-group instances of Grushko--Neumann rank additivity, and
+      the arbitrary-factor binary theorem. The arbitrary-factor proof is carried by a finite
+      labelled-graph fold, source-unfold, and monochromatic-vertex contraction reduction.
+    branch: group theory
+    entry_module: LeanPool.MarshallHall
+    authors:
+    - Arthur Freitas Ramos
+    - David Barros Hulak
+    - Ruy J. G. B. de Queiroz
+    source:
+      url: https://github.com/arthur742ramos/marshallhalltheorem
+      github_repo: arthur742ramos/marshallhalltheorem
+      commit: 99f419644cebf61a5f78eac334fcc1f19b0ccc73
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - MarshallHall.marshallHall
+    - MarshallHall.rank_freeProduct_eq_add
+    main_results:
+    - declaration: MarshallHall.marshallHall
+      informal: Every finitely generated subgroup of a finite-rank free group is an inclusion-compatible
+        free factor of a finite-index subgroup.
+    - declaration: LERFChallenge.freeGroup_finite_permutation_separator
+      informal: Every element outside a finitely generated subgroup of a finite-rank free group
+        can be separated by an explicit finite permutation action.
+    - declaration: MarshallHall.rank_freeProduct_eq_add
+      informal: The rank of a free product of finitely generated groups is the sum of their
+        ranks.
+    tags:
+    - group-theory
+    msc:
+    - 20E07
+    - 20F65
+    - 05C25
+    provenance: AI
+  - title: Carlson special functions and complex Dirichlet averages
+    summary: Formalizes Carlson special functions through complex Dirichlet averages, with simplex measures,
+      Gamma-regularized analytic continuation, Euler inversion, Euler–Poisson equations, and quadratic transformations.
+      Includes the complete supporting several-complex-variable and special-function libraries.
+    branch: complex analysis
+    main_declarations:
+    - PalomarSnapshot.r_first_quadratic
+    - PalomarSnapshot.joint_average_continuation
+    main_results:
+    - declaration: PalomarSnapshot.r_first_quadratic
+      informal: The Gamma-regularized Carlson R function satisfies the first quadratic transformation
+        for complex exponent and Dirichlet parameters with positive-real-part unsquared variables.
+    - declaration: PalomarSnapshot.joint_average_continuation
+      informal: For a holomorphic scalar function on a convex open domain D, its
+        Gamma-regularized Dirichlet average extends jointly holomorphically to all complex
+        Dirichlet parameters and all node vectors in D. The extension agrees with the
+        regularized simplex integral when every parameter has positive real part; the
+        ordinary normalized average differs by the factor Gamma of the parameter sum.
+    tags:
+    - special-functions
+    - complex-analysis
+    - dirichlet-averages
+    msc:
+    - 33C65
+    - 32A10
+    provenance: AI
+    slug: lean-codes
+    entry_module: LeanPool.CarlsonFunctions
+    authors:
+    - Bastiaan J Braams
+    source:
+      url: https://github.com/bjbraams/lean-codes
+      github_repo: bjbraams/lean-codes
+      commit: fcc2be9a086c1bdd572db91f005e868b80a8d644
+    license: Apache-2.0
+    status: verified
+  - title: Optimal fully dynamic matching on the line
+    summary: Constructs a measurable hierarchical policy for fully dynamic matching of uniformly arriving
+      demand and replenishment on the unit interval. Proves logarithmic-over-inventory bounds for long-run
+      root-mean-square distance from every initial inventory and for initialized finite-horizon expected
+      average cost.
+    branch: probability and optimization
+    main_declarations:
+    - FD1D.V5.Palomar.optimalDynamicMatchingUpperBound
+    main_results:
+    - declaration: FD1D.V5.Palomar.optimalDynamicMatchingUpperBound
+      informal: For every inventory size m at least two, an online policy has long-run RMS cost at most
+        (72000/log 2) log(m+1)/m from every initial inventory, and the same expected-average-cost bound
+        after initialization for horizons at least 2m².
+    tags:
+    - online-matching
+    - probability
+    - stochastic-optimization
+    msc:
+    - 60J20
+    - 90B15
+    provenance: AI
+    slug: fd1d-lean
+    entry_module: LeanPool.FullyDynamicMatching
+    authors:
+    - Yash Kanoria
+    source:
+      url: https://github.com/ykanoria/fd1d-lean
+      github_repo: ykanoria/fd1d-lean
+      commit: 26a5b4e2fd83fa86053239e09e92af370c62f18c
+    license: Apache-2.0
+    status: verified
+  - slug: euclidean-jordan
+    title: Euclidean Jordan algebras and the frame Peirce decomposition
+    summary: 'The frame Peirce decomposition: relative to a Jordan frame, a Euclidean Jordan
+      algebra is the internal direct sum of the blocks V_ij over unordered pairs of frame indices,
+      and in finite dimension the diagonal blocks are lines, dim V_ii = 1 - the Faraut-Koranyi
+      table entry. The frame is carried as data, so frame conjugacy is sidestepped and nothing
+      here claims anything about the rank of J. Machine checked, not peer reviewed, no priority
+      claim.'
+    branch: nonassociative algebra
+    entry_module: LeanPool.EuclideanJordan
+    authors:
+    - Bryan Ehrlich
+    source:
+      url: https://github.com/ehrlich-b/euclidean-jordan
+      github_repo: ehrlich-b/euclidean-jordan
+      commit: a83407e4dbf73c77c31a2291c02f20b37a5ebbaf
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - EuclideanJordan.frameBlock_isInternal
+    main_results:
+    - declaration: EuclideanJordan.frameBlock_isInternal
+      informal: A Euclidean Jordan algebra is the internal direct sum of the Peirce blocks associated
+        with a Jordan frame.
+    - declaration: EuclideanJordan.finrank_frameBlock_diag
+      informal: In finite dimension, every diagonal block of a Jordan frame has dimension one.
+    tags:
+    - nonassociative-algebra
+    msc:
+    - 17C20
+    - 17C27
+    - 17C37
+    - 17C65
+    - 17A15
+    - 46L70
+    provenance: AI
+  - slug: kaltonpeck
+    title: Rank parity and complex structures on the Kalton–Peck space
+    summary: Develops symplectic Fredholm theory and the real Kalton–Peck space to prove rank parity of
+      finite-rank perturbations and rule out a complex structure on a hyperplane.
+    branch: functional analysis
+    entry_module: LeanPool.KaltonPeck
+    authors:
+    - Avik Das
+    source:
+      url: https://github.com/adas1236/KaltonPeck
+      github_repo: adas1236/KaltonPeck
+      commit: 752dec47b173d05df3eeb579c1cd392335b87b60
+    license: MIT
+    status: verified
+    provenance: human
+    main_declarations:
+    - KaltonPeck.noHyperplaneComplexStructure
+    main_results:
+    - declaration: KaltonPeck.rankParityGeneral
+      informal: The abstract symplectic Fredholm construction yields a rank-parity theorem.
+    - declaration: KaltonPeck.rankParityZ2
+      informal: On the real Kalton–Peck space, T² + 1 has even rank whenever its rank is finite.
+    - declaration: KaltonPeck.noHyperplaneComplexStructure
+      informal: A hyperplane of the real Kalton–Peck space cannot carry a complex structure.
+    tags:
+    - functional-analysis
+    - banach-spaces
+    - fredholm-theory
+    msc:
+    - 46B03
+    - 47A53
   - title: Coarse-graining theory for elliptic equations
     summary: Develops the function-space, deterministic, probabilistic, and homogenization-scale machinery
       of quantitative stochastic homogenization. Includes the quenched minimal-scale theorem and a uniformly

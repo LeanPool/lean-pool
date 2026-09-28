@@ -1,0 +1,7 @@
+lemma tc_{{integer}} :
+    ∀ t,
+      ({{integer}} / {{integer}} : ℝ) ≤ t →
+        t ≤ ({{integer}} / {{integer}} : ℝ) → {{integer}} < t → {{integer}} * Uρ t - Vfield t ≤ M{{integer}} :=
+  check_right (by norm_num [bρ_{{integer}}]) (by norm_num) U_{{integer}} V_{{integer}}
+    (by unfold M{{integer}}; linarith only [Real.pi_gt_d{{integer}}, Real.pi_lt_d{{integer}}])
+

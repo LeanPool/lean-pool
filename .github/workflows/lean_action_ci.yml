@@ -7,6 +7,8 @@ name: Lean Action CI
 #   protected `Build project` check without spending hours rebuilding Lean.
 # - `single`: the classic one-job pipeline. This is the fast path for the
 #   common case — a PR that adds or edits a project or three.
+# - `rebase`: reuse an earlier green PR build after the automatic merge of
+#   independent pool content, then build the combined root and check metadata.
 # - `sharded`: for the runs that take hours serially (cold cache,
 #   toolchain/manifest bump, refactors touching many projects), the dirty
 #   projects are bin-packed into parallel `shard` build jobs. Pool projects
@@ -34,7 +36,9 @@ on:
       - 'Challenge/challenges.yml'
       - 'python/lean_pool/challenge.py'
       - 'python/lean_pool/quality.py'
+      - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
+      - 'python/lean_pool/rebase_fastpath.py'
       - 'python/pyproject.toml'
       - 'python/uv.lock'
       - 'scripts/nolints-style.txt'
@@ -61,7 +65,9 @@ on:
       - 'Challenge/challenges.yml'
       - 'python/lean_pool/challenge.py'
       - 'python/lean_pool/quality.py'
+      - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
+      - 'python/lean_pool/rebase_fastpath.py'
       - 'python/pyproject.toml'
       - 'python/uv.lock'
       - 'scripts/nolints-style.txt'
@@ -86,6 +92,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read
 
 jobs:
   plan:
@@ -94,6 +101,8 @@ jobs:
     outputs:
       mode: ${{ steps.plan.outputs.mode }}
       matrix: ${{ steps.plan.outputs.matrix }}
+      reuse_run_id: ${{ steps.plan.outputs.reuse_run_id }}
+      previous_head: ${{ steps.plan.outputs.previous_head }}
     steps:
       - name: Checkout project
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -120,6 +129,10 @@ jobs:
           BEFORE_SHA: ${{ github.event.before }}
           FORCE_FULL: ${{ inputs.force_full }}
           CACHE_MATCHED: ${{ steps.lake-cache.outputs.cache-matched-key }}
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
           diff_available=true
@@ -149,10 +162,26 @@ jobs:
           plan=$(CHANGED_FILES_PATH="$changed_files" DIFF_AVAILABLE="$diff_available" \
                  COLD="$cold" FORCE_FULL="$FORCE_FULL" \
                  python3 scripts/ci/plan-build-shards.py)
+          reuse_run_id=""
+          previous_head=""
+          if [ "$EVENT_NAME" = "pull_request" ] && [ "$FORCE_FULL" != "true" ]; then
+            reuse=$(PYTHONPATH=python python3 -m lean_pool.rebase_fastpath decide \
+              --repository "$REPOSITORY" --number "$PR_NUMBER" \
+              --head "$PR_HEAD" --base "$BASE_SHA")
+            if [ "$(echo "$reuse" | python3 -c 'import json,sys; print(str(json.load(sys.stdin)["eligible"]).lower())')" = true ]; then
+              reuse_run_id=$(echo "$reuse" | python3 -c 'import json,sys; print(json.load(sys.stdin)["run_id"])')
+              previous_head=$(echo "$reuse" | python3 -c 'import json,sys; print(json.load(sys.stdin)["previous_head"])')
+              plan='{"mode":"rebase","matrix":{"include":[{"shard":"00","projects":""}]}}'
+            else
+              echo "Rebase reuse unavailable: $(echo "$reuse" | python3 -c 'import json,sys; print(json.load(sys.stdin)["reason"])')"
+            fi
+          fi
           echo "Plan: $plan"
           {
             echo "mode=$(echo "$plan" | python3 -c 'import json,sys; print(json.load(sys.stdin)["mode"])')"
             echo "matrix=$(echo "$plan" | python3 -c 'import json,sys; print(json.dumps(json.load(sys.stdin)["matrix"]))')"
+            echo "reuse_run_id=$reuse_run_id"
+            echo "previous_head=$previous_head"
           } >> "$GITHUB_OUTPUT"
 
   # The single-job pipeline is the fast path for ordinary PRs.
@@ -229,9 +258,11 @@ jobs:
       # Publish once compilation succeeds, so docs can overlap the later
       # linters/quality checks without compiling the same PR a second time.
       - name: Package build for documentation
+        if: github.event_name != 'pull_request'
         run: PYTHONPATH=python python3 -m lean_pool.ci_artifacts pack
 
       - name: Share build with documentation
+        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: lean-pool-build
@@ -240,9 +271,24 @@ jobs:
           compression-level: 0
           retention-days: 1
 
+      # Actions scopes PR caches to refs/pull/<n>/merge: updates to the same
+      # PR can reuse receipts, while main and other PRs cannot read them.
+      - name: Restore project validation
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: .lake/validation-cache/v1
+          key: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          restore-keys: |
+            LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+
+      - name: Install validation dependencies
+        run: cd python && uv sync --locked
+
       - name: Lint
         run: |
-          ~/.elan/bin/lake exe runLinter LeanPool
+          cd python
+          uv run python -m lean_pool.validation_cache lint --repo ..
+          cd ..
           ~/.elan/bin/lake exe runLinter Challenge
           ~/.elan/bin/lake exe runLinter Solution
 
@@ -255,8 +301,33 @@ jobs:
       - name: Repository quality checks
         run: |
           cd python
-          uv sync --locked
-          uv run python -m lean_pool.quality --repo ..
+          uv run python -m lean_pool.validation_cache quality --repo ..
+
+      - name: Package PR project build for later rebases
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: PYTHONPATH=python python3 -m lean_pool.rebase_fastpath pack --base "$BASE_SHA" --head "$HEAD_SHA"
+
+      - name: Retain PR project build
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: rebase-project-build
+          path: rebase-project-build.tar.gz
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+
+      - name: Save project validation
+        # Successful receipts are tiny; retain PR results across registry rebases.
+        uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: .lake/validation-cache/v1
+          key: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
 
       - name: Save Lean dependencies
         if: always() && github.ref == 'refs/heads/main' && steps.mathlib-cache.outcome == 'success' && steps.dependency-cache.outputs.cache-hit != 'true'
@@ -465,9 +536,11 @@ jobs:
       # Publish once compilation succeeds, so docs can overlap the later
       # linters/quality checks without compiling the same PR a second time.
       - name: Package build for documentation
+        if: github.event_name != 'pull_request'
         run: PYTHONPATH=python python3 -m lean_pool.ci_artifacts pack
 
       - name: Share build with documentation
+        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: lean-pool-build
@@ -476,9 +549,24 @@ jobs:
           compression-level: 0
           retention-days: 1
 
+      # Actions scopes PR caches to refs/pull/<n>/merge: updates to the same
+      # PR can reuse receipts, while main and other PRs cannot read them.
+      - name: Restore project validation
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: .lake/validation-cache/v1
+          key: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          restore-keys: |
+            LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+
+      - name: Install validation dependencies
+        run: cd python && uv sync --locked
+
       - name: Lint
         run: |
-          ~/.elan/bin/lake exe runLinter LeanPool
+          cd python
+          uv run python -m lean_pool.validation_cache lint --repo ..
+          cd ..
           ~/.elan/bin/lake exe runLinter Challenge
           ~/.elan/bin/lake exe runLinter Solution
 
@@ -491,8 +579,33 @@ jobs:
       - name: Repository quality checks
         run: |
           cd python
-          uv sync --locked
-          uv run python -m lean_pool.quality --repo ..
+          uv run python -m lean_pool.validation_cache quality --repo ..
+
+      - name: Package PR project build for later rebases
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: PYTHONPATH=python python3 -m lean_pool.rebase_fastpath pack --base "$BASE_SHA" --head "$HEAD_SHA"
+
+      - name: Retain PR project build
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: rebase-project-build
+          path: rebase-project-build.tar.gz
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+
+      - name: Save project validation
+        # Successful receipts are tiny; retain PR results across registry rebases.
+        uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: .lake/validation-cache/v1
+          key: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
 
       - name: Save Lean dependencies
         if: always() && github.ref == 'refs/heads/main' && steps.mathlib-cache.outcome == 'success' && steps.dependency-cache.outputs.cache-hit != 'true'
@@ -510,10 +623,140 @@ jobs:
           path: .lake/build
           key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
 
+  # Reuse the prior green project's compiled modules and current main's cache.
+  # A missing artifact falls back to the full validation sequence in this job.
+  rebase:
+    needs: plan
+    if: needs.plan.outputs.mode == 'rebase'
+    runs-on: ubuntu-latest
+    name: Check rebased root
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+
+      - name: Restore Lean dependencies
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: |
+            ~/.elan
+            .lake/packages
+          key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+
+      - name: Restore current main build
+        id: main-build
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: .lake/build
+          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.event.pull_request.base.sha }}
+          restore-keys: |
+            LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+
+      - name: Reuse newly merged projects while the main cache warms
+        if: steps.main-build.outputs.cache-hit != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PREVIOUS_HEAD: ${{ needs.plan.outputs.previous_head }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.rebase_fastpath restore-main
+          --repository "$REPOSITORY" --head "$PREVIOUS_HEAD" --base "$BASE_SHA"
+
+      - name: Restore previously validated PR modules
+        id: project-build
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ needs.plan.outputs.reuse_run_id }}
+          PREVIOUS_HEAD: ${{ needs.plan.outputs.previous_head }}
+          REPOSITORY: ${{ github.repository }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.rebase_fastpath restore
+          --repository "$REPOSITORY" --run-id "$RUN_ID" --head "$PREVIOUS_HEAD"
+
+      - name: Install Lean
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+        with:
+          auto-config: false
+          use-github-cache: false
+          use-mathlib-cache: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
+        with:
+          enable-cache: true
+
+      - name: Install Mathlib cache
+        run: |
+          if [ ! -d ".lake/packages/mathlib" ]; then
+            ~/.elan/bin/lake exe cache get
+          fi
+
+      - name: Check generated index
+        run: PYTHONPATH=python python3 -m lean_pool.rebase_fastpath check-index
+
+      - name: Build combined Lean root
+        run: |
+          set -euo pipefail
+          ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
+          if grep -nE '(^|: )warning:' lean-build.log; then
+            echo "::error::Lean build emitted warnings; fix them before merging."
+            exit 1
+          fi
+
+      - name: Install validation dependencies
+        run: cd python && uv sync --locked
+
+      - name: Validate combined repository metadata
+        if: steps.project-build.outcome == 'success'
+        run: cd python && uv run python -m lean_pool.quality --repo .. --static-only
+
+      - name: Restore validation cache for full fallback
+        if: steps.project-build.outcome != 'success'
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: .lake/validation-cache/v1
+          key: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          restore-keys: |
+            LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+
+      - name: Full validation when the prior artifact is unavailable
+        if: steps.project-build.outcome != 'success'
+        run: |
+          set -euo pipefail
+          ./scripts/ci/build-challenges.sh
+          (cd python && uv run python -m lean_pool.validation_cache lint --repo ..)
+          ~/.elan/bin/lake exe runLinter Challenge
+          ~/.elan/bin/lake exe runLinter Solution
+          ~/.elan/bin/lake exe lint-style LeanPool
+          ~/.elan/bin/lake exe lint-style Challenge
+          ~/.elan/bin/lake exe lint-style Solution
+          (cd python && uv run python -m lean_pool.validation_cache quality --repo ..)
+
+      - name: Package PR project build for later rebases
+        continue-on-error: true
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: PYTHONPATH=python python3 -m lean_pool.rebase_fastpath pack --base "$BASE_SHA" --head "$HEAD_SHA"
+
+      - name: Retain PR project build
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: rebase-project-build
+          path: rebase-project-build.tar.gz
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+
   # Single overall verdict under the check name the one-job workflow used,
   # so nothing watching "Build project" needs to change.
   gate:
-    needs: [plan, build, shard, finalize]
+    needs: [plan, build, shard, finalize, rebase]
     if: always()
     runs-on: ubuntu-latest
     name: Build project
@@ -525,6 +768,7 @@ jobs:
           BUILD_RESULT: ${{ needs.build.result }}
           SHARD_RESULT: ${{ needs.shard.result }}
           FINALIZE_RESULT: ${{ needs.finalize.result }}
+          REBASE_RESULT: ${{ needs.rebase.result }}
         run: |
           set -euo pipefail
           echo "plan=$PLAN_RESULT mode=$MODE build=$BUILD_RESULT shard=$SHARD_RESULT finalize=$FINALIZE_RESULT"
@@ -535,6 +779,9 @@ jobs:
           case "$MODE" in
             skip)
               echo "No Lean build inputs changed."
+              ;;
+            rebase)
+              [ "$REBASE_RESULT" = "success" ] || { echo "::error::Rebase validation failed."; exit 1; }
               ;;
             single)
               [ "$BUILD_RESULT" = "success" ] || { echo "::error::Build failed."; exit 1; }
