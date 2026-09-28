@@ -69,7 +69,7 @@ noncomputable def superPointOfSimple
     [MonoidalLinear ℂ (Ind C)]
     (hu : HasScalarUnit C)
     (hsmul : IndOfLinear C) (hlen : ∀ Z : C, ∃ N : ℕ, LengthLE Z N)
-    (L : OddLine (Ind C)) {𝔸 𝔹 : Ind C} [MonObj 𝔸] [MonObj 𝔹]
+    (L : OddLine (Ind C)) {𝔸 𝔹 : Ind C} [MonObj 𝔹]
     [IsCommMonObj 𝔹] (π : 𝔸 ⟶ 𝔹) [Epi π]
     (hcp : CountablyPresented 𝔸) (hne : η[𝔹] ≠ 0)
     (hsimple : ∀ I : Subobject 𝔹, IsIdeal 𝔹 I → I = ⊥ ∨ I = ⊤) :

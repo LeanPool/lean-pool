@@ -85,7 +85,7 @@ one end of the other, re-pairs the two far ends with each other,
 and preserves every other path match — the boundary pairing changes
 by conjugation with a transposition. -/
 theorem pathMatch_repair_swap
-    [LinearOrder α] {W : Fragment α} {F : EdgeSubset W}
+    {W : Fragment α} {F : EdgeSubset W}
     {κ : F.RelTransitionSystem} {a : W.Flag} {b : W.Flag} {c : W.Flag}
     {d : W.Flag} {v : W.Vertex}
     (hsq : RepairSquare κ a b c d v)

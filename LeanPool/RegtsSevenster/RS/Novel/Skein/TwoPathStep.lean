@@ -381,7 +381,7 @@ theorem periodicFlag_repair_iff (hsq : RepairSquare κ a b c d v)
 square leaves the open circuit count unchanged — both repaired
 components are still boundary-terminated chains, so the periodic
 flags and the periodic walk permutation are untouched. -/
-theorem openCircuitCount_repair_of_not_localized [LinearOrder α]
+theorem openCircuitCount_repair_of_not_localized
     (hsq : RepairSquare κ a b c d v)
     (hnl : ¬ SquareLocalized κ a b c d) :
     (κ.repair a b c d v hsq).openCircuitCount =

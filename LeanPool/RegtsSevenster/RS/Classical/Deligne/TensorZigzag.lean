@@ -168,7 +168,7 @@ theorem tensorHom_actRight_π
 
 private theorem tensorDatum_pair_rawInterchange
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
-    [Preadditive D] [HasCoequalizers D]
+    [HasCoequalizers D]
     [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorLeft Z)]
     [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorRight Z)]
     (A : D) [MonObj A] [IsCommMonObj A] {N₁ : Mod D A} {N₂ : Mod D A}

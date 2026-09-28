@@ -930,9 +930,7 @@ noncomputable def superVectEpsRaw :
 vector space maps to the base change of the unit module. -/
 noncomputable def superVectEps
     [FiniteDimensional ℂ ((S.unitMod : S.Mod.{u, u, u, u}).tensor (pointMod
-      P)).even]
-    [FiniteDimensional ℂ ((S.unitMod : S.Mod.{u, u, u, u}).tensor (pointMod
-      P)).odd] :
+      P)).even] :
     𝟙_ SuperVect ⟶ toSuperVect P (S.unitMod : S.Mod.{u, u, u, u}) where
   evenMap :=
     LinearMap.comp
@@ -951,8 +949,6 @@ theorem superVectEpsRaw_apply (r : ℂ) :
 theorem superVectEps_evenMap_apply
     [FiniteDimensional ℂ ((S.unitMod : S.Mod.{u, u, u, u}).tensor (pointMod
       P)).even]
-    [FiniteDimensional ℂ ((S.unitMod : S.Mod.{u, u, u, u}).tensor (pointMod
-      P)).odd]
     (r : ℂ) :
     (superVectEps P).evenMap r =
       toSuperVectEvenEquiv P (S.unitMod : S.Mod.{u, u, u, u})
@@ -1015,8 +1011,6 @@ section EpsIsoSuper
 /-- The odd part of the fibre of the unit module vanishes. -/
 instance subsingleton_toSuperVect_unitMod_odd
     [FiniteDimensional ℂ ((S.unitMod : S.Mod.{u, u, u, u}).tensor (pointMod
-      P)).even]
-    [FiniteDimensional ℂ ((S.unitMod : S.Mod.{u, u, u, u}).tensor (pointMod
       P)).odd] :
     Subsingleton
       (toSuperVect P (S.unitMod : S.Mod.{u, u, u, u})).odd :=
@@ -1026,9 +1020,7 @@ instance subsingleton_toSuperVect_unitMod_odd
 /-- The even component of the unit comparison is bijective. -/
 theorem superVectEps_evenMap_bijective
     [FiniteDimensional ℂ ((S.unitMod : S.Mod.{u, u, u, u}).tensor (pointMod
-      P)).even]
-    [FiniteDimensional ℂ ((S.unitMod : S.Mod.{u, u, u, u}).tensor (pointMod
-      P)).odd] :
+      P)).even] :
     Function.Bijective (superVectEps P).evenMap := by
   have h : ⇑(superVectEps P).evenMap =
       ⇑(toSuperVectEvenEquiv P (S.unitMod : S.Mod.{u, u, u, u})) ∘

@@ -308,7 +308,7 @@ path matching is localized.  On a non-localized square the repaired
 `a`-flag and its repaired match `c` land on the repaired chains of
 two genuinely distinct pairs of ends, which share no flag. -/
 theorem squareLocalized_of_pathMatch_eq
-    [LinearOrder α] {W : Fragment α} {F : EdgeSubset W}
+    {W : Fragment α} {F : EdgeSubset W}
     {κ : F.RelTransitionSystem} {a : W.Flag} {b : W.Flag} {c : W.Flag}
     {d : W.Flag} {v : W.Vertex}
     (hsq : RepairSquare κ a b c d v)

@@ -439,7 +439,7 @@ theorem evalOdd_coreOddListAt_transport_closed {k ℓ : ℕ}
 /-! ### Boundary-match transports -/
 
 /-- **The vertex factor transport across the closed glue.** -/
-theorem vertexFactor_transport_closed [LinearOrder α] {k ℓ : ℕ}
+theorem vertexFactor_transport_closed {k ℓ : ℕ}
     (h : MixedFunctional k ℓ)
     (ψW : (Fl).EvenColouring k) (ψ' : (Fg).EvenColouring k)
     (hψ : ∀ (g : SurvivingFlag W i j)

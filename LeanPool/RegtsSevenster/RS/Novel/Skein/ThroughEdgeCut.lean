@@ -139,7 +139,6 @@ local notation "oW" =>
 
 /-- **The vertex factor transport (participating case).** -/
 theorem vertexFactor_transport_T
-    [LinearOrder α]
     {k ℓ : ℕ}
     (h : MixedFunctional k ℓ)
     (ψW : (Fl).EvenColouring k) (ψ' : (Fg).EvenColouring k)

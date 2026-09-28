@@ -2282,7 +2282,7 @@ def twoCrossIljkEquiv
 
 /-- Two single-pair glues at disjoint label pairs commute up to
 fragment equivalence. -/
-def gluePairComm [DecidableEq α]
+def gluePairComm
     (W : Fragment α) {i j k l : α}
     (hij : i ≠ j) (hkl : k ≠ l)
     (hik : i ≠ k) (hil : i ≠ l) (hjk : j ≠ k) (hjl : j ≠ l) :

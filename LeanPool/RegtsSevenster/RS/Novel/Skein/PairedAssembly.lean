@@ -693,7 +693,7 @@ private theorem dir_portFlip_toggled_iff
 /-- The anchor-chain toggle is chord-wise: an end's entry edge is
 on the flipped chain iff its path match's entry edge is. -/
 private theorem toggle_partner
-    [LinearOrder α] {W : Fragment α} {F : EdgeSubset W}
+    {W : Fragment α} {F : EdgeSubset W}
     {κ : F.RelTransitionSystem} {S : Finset W.Flag} {p₁ : W.Flag}
     {p₂ : W.Flag} {iβ : α} {iγ : α}
     (hpf : PortedFlipSet κ S p₁ p₂ iβ iγ)

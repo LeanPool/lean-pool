@@ -40,7 +40,7 @@ theorem mono_of_point_ne_zero
 /-- **The tensor of two nonzero points is a monomorphism.** -/
 theorem mono_tensorHom_point
     [Category.{v} A] [Abelian A] [Linear ℂ A] [MonoidalCategory A]
-    [MonoidalPreadditive A] [MonoidalLinear ℂ A] [RigidCategory A]
+    [MonoidalPreadditive A] [RigidCategory A]
     (hu : HasScalarUnit A) {X Y : A}
     {u : 𝟙_ A ⟶ X} {v : 𝟙_ A ⟶ Y} (hu0 : u ≠ 0) (hv0 : v ≠ 0) :
     Mono (u ⊗ₘ v) := by
@@ -60,7 +60,7 @@ theorem mono_tensorHom_point
 /-- **The tensor of two nonzero points is nonzero.** -/
 theorem tensorHom_point_ne_zero
     [Category.{v} A] [Abelian A] [Linear ℂ A] [MonoidalCategory A]
-    [MonoidalPreadditive A] [MonoidalLinear ℂ A] [RigidCategory A]
+    [MonoidalPreadditive A] [RigidCategory A]
     (hu : HasScalarUnit A) {X Y : A}
     {u : 𝟙_ A ⟶ X} {v : 𝟙_ A ⟶ Y} (hu0 : u ≠ 0) (hv0 : v ≠ 0) :
     (u ⊗ₘ v) ≠ 0 := by

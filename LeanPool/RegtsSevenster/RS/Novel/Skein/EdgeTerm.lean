@@ -1053,7 +1053,7 @@ theorem usedColour_inr
 
 /-- **Agreement restricts to the left half.** -/
 theorem throughAgree_left
-    {α : Type} {β : Type} [LinearOrder (α ⊕ β)] {W₁ : Fragment α}
+    {α : Type} {β : Type} {W₁ : Fragment α}
     {W₂ : Fragment β} (F : EdgeSubset (W₁.disjUnion W₂))
     {k ℓ : ℕ}
     (st : GenBoundaryState k ℓ (α ⊕ β))
@@ -1073,7 +1073,7 @@ theorem throughAgree_left
 
 /-- **Agreement restricts to the right half.** -/
 theorem throughAgree_right
-    {α : Type} {β : Type} [LinearOrder (α ⊕ β)] {W₁ : Fragment α}
+    {α : Type} {β : Type} {W₁ : Fragment α}
     {W₂ : Fragment β} (F : EdgeSubset (W₁.disjUnion W₂))
     {k ℓ : ℕ}
     (st : GenBoundaryState k ℓ (α ⊕ β))
@@ -1093,7 +1093,7 @@ theorem throughAgree_right
 
 /-- **Agreement on both halves is agreement.** -/
 theorem throughAgree_of_parts
-    {α : Type} {β : Type} [LinearOrder (α ⊕ β)] {W₁ : Fragment α}
+    {α : Type} {β : Type} {W₁ : Fragment α}
     {W₂ : Fragment β} (F : EdgeSubset (W₁.disjUnion W₂))
     {k ℓ : ℕ}
     (st : GenBoundaryState k ℓ (α ⊕ β))
@@ -1134,7 +1134,7 @@ theorem throughAgree_of_parts
 
 /-- **RS21's colouring sum splits over a disjoint union.** -/
 theorem edgeSum_disjUnion
-    {α : Type} {β : Type} [LinearOrder (α ⊕ β)] {W₁ : Fragment α}
+    {α : Type} {β : Type} {W₁ : Fragment α}
     {W₂ : Fragment β} (F : EdgeSubset (W₁.disjUnion W₂))
     {k ℓ : ℕ} (h : MixedFunctional k ℓ)
     (st : GenBoundaryState k ℓ (α ⊕ β))

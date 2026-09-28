@@ -1382,7 +1382,7 @@ theorem boundaryFlag_chordInv_through {W : Fragment α}
 
 open Classical in
 /-- **A through edge's two labels carry partner colours.** -/
-theorem partner_of_throughAgree [LinearOrder α] {W : Fragment α}
+theorem partner_of_throughAgree {W : Fragment α}
     (F : EdgeSubset W) {k ℓ : ℕ}
     (κ : F.RelTransitionSystem) (M : DirMatching (UsedLab F))
     (hM : ∀ a : UsedLab F, (M.edge a).val = chordInv F κ a.val)
@@ -1445,7 +1445,7 @@ open Classical in
 edge it says the two labels' colours are partners, and reading that
 does not need the arc directions: reversing the edge replaces both
 ends' colours by their partners at once. -/
-theorem throughAgree_of_partner [LinearOrder α] {W : Fragment α}
+theorem throughAgree_of_partner {W : Fragment α}
     (F : EdgeSubset W) {k ℓ : ℕ}
     (κ : F.RelTransitionSystem) (M : DirMatching (UsedLab F))
     (hM : ∀ a : UsedLab F, (M.edge a).val = chordInv F κ a.val)
@@ -1503,7 +1503,7 @@ theorem throughAgree_of_partner [LinearOrder α] {W : Fragment α}
 
 open Classical in
 /-- **The agreement does not read the arc directions.** -/
-theorem throughAgree_congr_matching [LinearOrder α] {W : Fragment α}
+theorem throughAgree_congr_matching {W : Fragment α}
     (F : EdgeSubset W) {k ℓ : ℕ}
     (κ : F.RelTransitionSystem) (M M' : DirMatching (UsedLab F))
     (hM : ∀ a : UsedLab F, (M.edge a).val = chordInv F κ a.val)

@@ -128,7 +128,7 @@ theorem nonempty_unitIso_of_hom_ne_zero
 vanish.** -/
 theorem hom_unit_simple_eq_zero
     [Category.{v} A] [Abelian A] [Linear ℂ A] [MonoidalCategory A]
-    [MonoidalPreadditive A] [MonoidalLinear ℂ A] [RigidCategory A]
+    [MonoidalPreadditive A] [RigidCategory A]
     (hu : HasScalarUnit A) {S : A}
     [Simple S] (h : IsEmpty (𝟙_ A ≅ S)) (φ : 𝟙_ A ⟶ S) : φ = 0 := by
   by_contra hφ
@@ -138,7 +138,7 @@ theorem hom_unit_simple_eq_zero
 unit. -/
 theorem subsingleton_hom_unit_simple
     [Category.{v} A] [Abelian A] [Linear ℂ A] [MonoidalCategory A]
-    [MonoidalPreadditive A] [MonoidalLinear ℂ A] [RigidCategory A]
+    [MonoidalPreadditive A] [RigidCategory A]
     (hu : HasScalarUnit A) {S : A}
     [Simple S] (h : IsEmpty (𝟙_ A ≅ S)) :
     Subsingleton (𝟙_ A ⟶ S) :=
@@ -149,7 +149,7 @@ theorem subsingleton_hom_unit_simple
 unit.** -/
 theorem finrank_hom_unit_simple_eq_zero
     [Category.{v} A] [Abelian A] [Linear ℂ A] [MonoidalCategory A]
-    [MonoidalPreadditive A] [MonoidalLinear ℂ A] [RigidCategory A]
+    [MonoidalPreadditive A] [RigidCategory A]
     (hu : HasScalarUnit A)
     {S : A} [Simple S] (h : IsEmpty (𝟙_ A ≅ S)) :
     Module.finrank ℂ (𝟙_ A ⟶ S) = 0 := by
@@ -425,7 +425,7 @@ hypothesis is carried explicitly. -/
 target has finite length. -/
 theorem finiteDimensional_hom_unit
     [Category.{v} A] [Abelian A] [Linear ℂ A] [MonoidalCategory A]
-    [MonoidalPreadditive A] [MonoidalLinear ℂ A] [RigidCategory A]
+    [MonoidalPreadditive A] [RigidCategory A]
     (hu : HasScalarUnit A) {Z : A}
     (h : ∃ N : ℕ, LengthLE Z N) :
     FiniteDimensional ℂ (𝟙_ A ⟶ Z) := by

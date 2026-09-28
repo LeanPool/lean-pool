@@ -125,7 +125,6 @@ include hni in
 /-- **The chord matching is unchanged** across a glue whose edge the
 subset misses: no chain reaches the cut, so no chain is rerouted. -/
 theorem chordInv_glueOpen_miss
-    [LinearOrder α]
     (κ : (Fl).RelTransitionSystem)
     (l : SurvivingLabel α i j)
     (hlg : (W.gluePairOpen i j hij hopen).boundaryFlag l ∈
