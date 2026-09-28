@@ -136,7 +136,7 @@ private def coverRhs (a : ℝ) : ConstraintSpace O := WithLp.toLp 2 (fun i =>
   | Sum.inl _ => 1
   | Sum.inr _ => a)
 
-private def nonnegativePointed (I : Type*) [Fintype I] :
+private def nonnegativePointed (I : Type*) :
     PointedCone ℝ (EuclideanSpace ℝ I) := PointedCone.ofConeComb
   {x | ∀ i, 0 ≤ x.ofLp i} ⟨0, by simp⟩ (by
     intro x hx y hy a ha b hb i
@@ -151,12 +151,12 @@ private lemma nonnegative_isClosed (I : Type*) :
   apply isClosed_le continuous_const
   fun_prop
 
-private noncomputable def nonnegativeCone (I : Type*) [Fintype I] :
+private noncomputable def nonnegativeCone (I : Type*) :
     ProperCone ℝ (EuclideanSpace ℝ I) where
   toSubmodule := nonnegativePointed I
   isClosed' := nonnegative_isClosed I
 
-private lemma mem_nonnegativeCone {I : Type*} [Fintype I]
+private lemma mem_nonnegativeCone {I : Type*}
     {x : EuclideanSpace ℝ I} : x ∈ nonnegativeCone I ↔ ∀ i, 0 ≤ x.ofLp i := Iff.rfl
 
 private def IsCoverCertificate (inc : O → Finset C) (q : ConstraintSpace O) : Prop :=
