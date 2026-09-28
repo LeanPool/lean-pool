@@ -157,10 +157,12 @@ noncomputable def digitSpace (S : Scaffold b σ φ K₀ K₁) (n q k : ℕ) (ρ 
   Fintype.piFinset fun i ↦ S.boxFinset (ρ * radix n q k i)
 
 /-- Blueprint C02: the prefix sum `yᵢ(w) = ∑_{j ≤ i} Dⱼ wⱼ`. -/
+@[expose]
 noncomputable def prefixSum (n q k : ℕ) (w : Fin k → R) (i : Fin k) : R :=
   ∑ j ∈ Finset.Iic i, (D (radix n q k) j : R) * w j
 
 /-- Blueprint C02: the base point `b(w) = ∑ j, Dⱼ wⱼ`. -/
+@[expose]
 noncomputable def base (n q k : ℕ) (w : Fin k → R) : R := ∑ j, (D (radix n q k) j : R) * w j
 
 /-- Blueprint C02: the energy color `c(w)ᵢ = trace (yᵢ(w) ^ 2)`, landed in `ℤ` via the floor

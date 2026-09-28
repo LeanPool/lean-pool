@@ -40,6 +40,7 @@ variable {K : Type*} [Field K] {n : ℕ}
 
 /-- An element of `MvPolynomial (Fin n) K ⧸ J` is *homogeneous of degree `e`* if it is the class
 of a form of degree `e`. -/
+@[expose]
 def IsHomogeneousElem (J : Ideal (MvPolynomial (Fin n) K)) (r : MvPolynomial (Fin n) K ⧸ J)
     (e : ℕ) : Prop :=
   ∃ G : MvPolynomial (Fin n) K, G.IsHomogeneous e ∧ Ideal.Quotient.mk J G = r

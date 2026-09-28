@@ -290,6 +290,7 @@ section Jets
 variable (I : Ideal (MvPolynomial (Fin d) K)) (x : Fin d → K) (r : ℕ)
 
 /-- Blueprint F03: the jet ideal `I + 𝔪ₓ ^ r` (ideal supremum). -/
+@[expose]
 noncomputable def jetIdeal : Ideal (MvPolynomial (Fin d) K) :=
   I ⊔ pointIdeal x ^ r
 
@@ -298,6 +299,7 @@ abbrev JetSpace : Type _ :=
   MvPolynomial (Fin d) K ⧸ jetIdeal I x r
 
 /-- Blueprint F03: the jet dimension `j_{I,x}(r) = dim_K Q_{I,x}(r)`. -/
+@[expose]
 noncomputable def jetDim : ℕ :=
   Module.finrank K (JetSpace I x r)
 
