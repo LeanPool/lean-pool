@@ -283,6 +283,7 @@ MIT permission notice that follows them.
   LeanPool/GaussianMomentsCounterexamples
                                      https://github.com/long-mathematics/gaussian-moments-counterexamples
   LeanPool/HSDInteriorPointLP        https://github.com/makoto-yamashita/proof-on-a-homogeneous-self-dual-interior-point-method-for-linear-programming
+  LeanPool/InflationTermination      https://github.com/williamjblair/inflation-termination
   LeanPool/KaltonRoberts             https://github.com/boonsuan/KaltonRoberts
   LeanPool/Kuramoto                  https://github.com/velvetmonkey/kuramoto-lean
   LeanPool/LatticeTriangle           https://github.com/AxiomMath/lattice-triangle
