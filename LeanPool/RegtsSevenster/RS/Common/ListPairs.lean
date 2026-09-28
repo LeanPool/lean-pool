@@ -29,7 +29,7 @@ theorem len_flatMap_pair {α β : Type*} (L : List α) (f g : α → β) :
 -- The index arithmetic under the flat-map is
 -- carried through a list induction.
 /-- Even positions in a list of pairs come from the first component. -/
-theorem getElem?_flatMap_pair_even {α β : Type*}
+theorem getElemOption_flatMap_pair_even {α β : Type*}
     (L : List α) (f g : α → β) (j : ℕ) :
     (L.flatMap (fun x => [f x, g x]))[2 * j]? = L[j]?.map f := by
   induction L generalizing j with
@@ -48,7 +48,7 @@ theorem getElem?_flatMap_pair_even {α β : Type*}
 
 -- As for the even positions.
 /-- Odd positions in a list of pairs come from the second component. -/
-theorem getElem?_flatMap_pair_odd {α β : Type*}
+theorem getElemOption_flatMap_pair_odd {α β : Type*}
     (L : List α) (f g : α → β) (j : ℕ) :
     (L.flatMap (fun x => [f x, g x]))[2 * j + 1]? = L[j]?.map g := by
   induction L generalizing j with
@@ -66,14 +66,14 @@ theorem getElem?_flatMap_pair_odd {α β : Type*}
       exact ih j
 
 /-- In a flatMap of [x, h x] blocks, element 2j+1 is h applied to element 2j. -/
-theorem getElem?_self_paired {α : Type*}
+theorem getElemOption_self_paired {α : Type*}
     (L : List α) (h : α → α) (j : ℕ) :
     (L.flatMap (fun x => [x, h x]))[2 * j + 1]? =
     (L.flatMap (fun x => [x, h x]))[2 * j]?.map h := by
   have key : (fun x => ([x, h x] : List α)) = (fun x => [id x, h x]) := by
     ext; simp
-  rw [key, getElem?_flatMap_pair_even L id h j,
-      getElem?_flatMap_pair_odd L id h j, Option.map_map]
+  rw [key, getElemOption_flatMap_pair_even L id h j,
+      getElemOption_flatMap_pair_odd L id h j, Option.map_map]
   simp
 
 /-- The entry at an even position is the first component. -/
@@ -81,7 +81,7 @@ theorem getElem_flatMap_pair_even {α β : Type*}
     (L : List α) (f g : α → β) (j : ℕ) (hj : j < L.length) :
     (L.flatMap (fun x => [f x, g x]))[2 * j]'(by
       rw [len_flatMap_pair]; omega) = f L[j] := by
-  have h := getElem?_flatMap_pair_even L f g j
+  have h := getElemOption_flatMap_pair_even L f g j
   rw [List.getElem?_eq_getElem (by rw [len_flatMap_pair]; omega),
       List.getElem?_eq_getElem hj] at h
   exact Option.some.inj h
@@ -91,9 +91,13 @@ theorem getElem_flatMap_pair_odd {α β : Type*}
     (L : List α) (f g : α → β) (j : ℕ) (hj : j < L.length) :
     (L.flatMap (fun x => [f x, g x]))[2 * j + 1]'(by
       rw [len_flatMap_pair]; omega) = g L[j] := by
-  have h := getElem?_flatMap_pair_odd L f g j
+  have h := getElemOption_flatMap_pair_odd L f g j
   rw [List.getElem?_eq_getElem (by rw [len_flatMap_pair]; omega),
       List.getElem?_eq_getElem hj] at h
   exact Option.some.inj h
+
+alias getElem?_flatMap_pair_even := getElemOption_flatMap_pair_even
+alias getElem?_flatMap_pair_odd := getElemOption_flatMap_pair_odd
+alias getElem?_self_paired := getElemOption_self_paired
 
 end RS

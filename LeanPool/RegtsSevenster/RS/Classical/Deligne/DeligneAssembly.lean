@@ -81,6 +81,7 @@ open scoped MonObj
 
 universe v u
 
+section
 noncomputable section
 
 /-! ## The scalar action of a scalar unit is the ambient action -/
@@ -324,4 +325,5 @@ theorem deligne_theorem : DeligneTheoremStatement.{u, v} :=
   deligne_theorem_of_braided schurPackage schurPackage
     braidedFibreHypothesis
 
+end
 end RS

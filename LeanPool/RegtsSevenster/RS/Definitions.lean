@@ -1027,6 +1027,7 @@ proofs run on. An auditor checking what Deligne's theorem *says* should read
 the objects, `tensorObj`, `tensorUnit` and the two Koszul blocks; the rest is
 coherence. -/
 
+section
 noncomputable section
 
 open CategoryTheory
@@ -2502,4 +2503,5 @@ def DeligneTheoremStatement : Prop :=
 
 end
 
+end
 end RS

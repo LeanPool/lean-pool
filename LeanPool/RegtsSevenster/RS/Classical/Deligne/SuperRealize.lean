@@ -467,6 +467,7 @@ end SuperMod
 
 /-! ## The Γ-functor on the ind-completion -/
 
+section
 noncomputable section Realize
 
 open CategoryTheory Limits Opposite ZeroObject
@@ -813,4 +814,5 @@ end Bilinear
 
 end HomAlgebra
 
+end
 end RS

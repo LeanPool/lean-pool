@@ -493,14 +493,14 @@ private theorem matchedPairList_paired (W : ClosedFragment) (F : EdgeSubset W)
     (matchedPairList W F o)[2 * j + 1]? =
     (matchedPairList W F o)[2 * j]?.map (matchSub κ) := by
   rw [matchedPairList_eq_flatMap]
-  exact getElem?_self_paired (matchedBase W F o) (matchSub κ) j
+  exact getElemOption_self_paired (matchedBase W F o) (matchSub κ) j
 
 private theorem globalPairList_paired (W : ClosedFragment) (F : EdgeSubset W)
     {κ : F.TransitionSystem} (o : κ.Orientation) (j : ℕ) :
     (globalPairList W F o)[2 * j + 1]? =
     (globalPairList W F o)[2 * j]?.map (matchSub κ) := by
   rw [globalPairList_eq_flatMap]
-  exact getElem?_self_paired (globalBase W F o) (matchSub κ) j
+  exact getElemOption_self_paired (globalBase W F o) (matchSub κ) j
 
 /-! ## Orientation properties of base elements -/
 
@@ -1088,7 +1088,7 @@ theorem sign_listIndexPerm_matched_global (W : ClosedFragment) (F : EdgeSubset
     have key : (fun x : {f : W.Flag // f ∈ F.flags} =>
         ([x, matchSub κ x] : List _)) =
       fun x => [id x, matchSub κ x] := by ext; simp
-    rw [hMeq, key]; exact getElem?_flatMap_pair_even mB id (matchSub κ) k
+    rw [hMeq, key]; exact getElemOption_flatMap_pair_even mB id (matchSub κ) k
   rw [List.getElem?_eq_getElem h2k_bound, List.getElem?_eq_getElem hk]
     at hM2k_even
   have hM2k_is_mBk : M[2 * k] = mB[k] := by
@@ -1111,7 +1111,7 @@ theorem sign_listIndexPerm_matched_global (W : ClosedFragment) (F : EdgeSubset
       have : m < M.length := (τ ⟨2 * k, h2k_lt⟩).isLt; omega
     have hGm_odd_eq : G[m]? = (gB[j]?).map (matchSub κ) := by
       rw [hm_eq, hGeq]
-      exact getElem?_flatMap_pair_odd gB id (matchSub κ) j
+      exact getElemOption_flatMap_pair_odd gB id (matchSub κ) j
     rw [List.getElem?_eq_getElem (by have := (τ ⟨2 * k, h2k_lt⟩).isLt; omega),
         List.getElem?_eq_getElem hj_lt] at hGm_odd_eq
     have hGm_eq_matchSub : G[m] = matchSub κ (gB[j]) :=
