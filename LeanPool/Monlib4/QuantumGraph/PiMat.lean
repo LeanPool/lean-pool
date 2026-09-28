@@ -126,7 +126,8 @@ StarAlgEquiv.ofAlgEquiv
       AlgEquiv.piCongrRight_apply, directSumTensorAlgEquiv_apply]
     have hkronecker
         (z : Matrix (p₁ i.1) (p₁ i.1) ℂ ⊗[ℂ] Matrix (p₂ i.2) (p₂ i.2) ℂ) :
-        tensorToKronecker z = TensorProduct.toKronecker z := by
+        (tensorToKronecker (R := ℂ) (m := p₁ i.1) (n := p₂ i.2)) z =
+          TensorProduct.toKronecker z := by
       rw [← tensorToKronecker_toLinearMap_eq]
       rfl
     simp only [hkronecker]

@@ -17,7 +17,7 @@ EGZ constant uses sequences with distinct selected positions.  This file
 supplies the bridge between these two models.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

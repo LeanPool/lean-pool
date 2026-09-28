@@ -29,10 +29,10 @@ open Filter Cardinal Set
 namespace NonMRR
 
 /-- Eventual domination of natural-valued sequences. -/
-def EventuallyLE (f g : ℕ → ℕ) : Prop := ∀ᶠ n in atTop, f n ≤ g n
+@[expose] def EventuallyLE (f g : ℕ → ℕ) : Prop := ∀ᶠ n in atTop, f n ≤ g n
 
 /-- The strict comparison holding at arbitrarily large coordinates. -/
-def FrequentlyLT (f g : ℕ → ℕ) : Prop := ∃ᶠ n in atTop, f n < g n
+@[expose] def FrequentlyLT (f g : ℕ → ℕ) : Prop := ∃ᶠ n in atTop, f n < g n
 
 theorem frequentlyLT_iff_not_eventuallyLE (f g : ℕ → ℕ) :
     FrequentlyLT f g ↔ ¬ EventuallyLE g f := by
@@ -48,7 +48,7 @@ theorem frequentlyLT_iff_not_eventuallyLE (f g : ℕ → ℕ) :
     exact Nat.lt_succ_self _)⟩
 
 /-- The least cardinality of an eventually unbounded family. -/
-noncomputable def boundingNumber : Cardinal := boundingRelation.norm
+@[expose] noncomputable def boundingNumber : Cardinal := boundingRelation.norm
 
 theorem dominating_boundingRelation_iff (s : Set (ℕ → ℕ)) :
     boundingRelation.Dominating s ↔ ¬ ∃ f, ∀ g ∈ s, EventuallyLE g f := by

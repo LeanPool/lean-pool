@@ -16,7 +16,7 @@ the particular exponential constants in the paper; only a positive margin
 after rounding and balancing is needed.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ.MainProof
 

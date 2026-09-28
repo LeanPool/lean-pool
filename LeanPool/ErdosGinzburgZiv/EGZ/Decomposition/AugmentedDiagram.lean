@@ -21,7 +21,7 @@ Centered lifts of cumulative atoms give a finite support diagram, even when
 the augmented finite-field maps are not surjective.
 -/
 
-@[expose] public section
+public section
 
 
 namespace EGZ.FlagDecomposition.Augmented

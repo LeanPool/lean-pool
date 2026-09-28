@@ -17,7 +17,7 @@ proper points.  These maps preserve reducedness, realized faces, and
 completeness of individual elements.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ.FlagDecomposition.Rechart
 

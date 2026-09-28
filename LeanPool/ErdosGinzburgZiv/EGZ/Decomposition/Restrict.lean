@@ -18,7 +18,7 @@ zero local weight.  The resulting flag has the same proper points, viewed
 through the inclusion of its nodes in the original flag.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

@@ -18,7 +18,7 @@ type used by this project is finite, even though an exposure is stored using
 arbitrary real affine data.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ.RationalPolytope
 

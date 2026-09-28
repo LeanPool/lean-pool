@@ -23,7 +23,7 @@ namespace N4
 noncomputable section
 
 /-- The linear map from target coefficient vectors to product ANFs. -/
-def targetANFLinear : TargetCoeff →ₗ[F₂] ANF 8 where
+@[expose] def targetANFLinear : TargetCoeff →ₗ[F₂] ANF 8 where
   toFun := targetANF
   map_add' c d := by
     simp only [targetANF, Pi.add_apply, add_smul, Finset.sum_add_distrib]

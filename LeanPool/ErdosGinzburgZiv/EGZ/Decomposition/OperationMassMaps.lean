@@ -14,7 +14,7 @@ public import LeanPool.ErdosGinzburgZiv.EGZ.Decomposition.GapCleanup
 
 /-! # Coordinate and mass maps for the elementary constructions -/
 
-@[expose] public section
+public section
 
 namespace EGZ.FlagDecomposition
 

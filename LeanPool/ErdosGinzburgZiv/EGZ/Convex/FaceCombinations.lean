@@ -18,7 +18,7 @@ is the least face containing the point.  Independently, finiteness of the
 face poset constructs such a least face for every point of the polytope.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

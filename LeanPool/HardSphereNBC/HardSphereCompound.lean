@@ -30,7 +30,7 @@ noncomputable section
 abbrev HardSphereForkTriple (k : Nat) := Fin k × Fin k × Fin k
 
 /-- The three vertices supporting an order-compatible fork triple. -/
-def hardSphereForkSupport {k : Nat} (f : HardSphereForkTriple k) : Finset (Fin k) :=
+@[expose] def hardSphereForkSupport {k : Nat} (f : HardSphereForkTriple k) : Finset (Fin k) :=
   {f.1, f.2.1, f.2.2}
 
 /-- The event associated with an order-compatible fork triple. -/

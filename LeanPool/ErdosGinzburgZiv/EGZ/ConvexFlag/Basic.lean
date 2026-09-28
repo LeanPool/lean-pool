@@ -22,7 +22,7 @@ the same coordinate at an upper node but different domains are distinct (the
 `0` versus `0'` phenomenon in the examples following Proposition 3.11).
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

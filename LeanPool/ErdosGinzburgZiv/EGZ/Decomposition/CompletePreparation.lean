@@ -19,7 +19,7 @@ actual flag decomposition, with controlled mass loss and a non-reduced old
 upper anchor, before adjoining the new slab coordinates.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

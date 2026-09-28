@@ -316,7 +316,7 @@ lemma winAsap_body (x : body (winAsap G p).subtree)
   ⟨x.val, body_mono (subtree_sub _) x.prop⟩ ∈ p.payoff G := by
   obtain ⟨N, h⟩ := h; have hN : h.num ≤ N := by simpa using h.num_le_length
   suffices x.val.drop h.num ∈ body h.strat.pre.subtree by
-    have hW := h.strat_winning this
+    obtain ⟨_, hW⟩ := h.strat_winning this
     conv at hW => simp [hN]
     simpa only [Player.payoff] using hW
   apply mem_body_of_take 0; intro n _

@@ -19,7 +19,7 @@ thin directions. Passing to the face index of its whole polytope supplies a
 reduced complete representative with exactly the same cumulative function.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ.FlagDecomposition.CompletePreparation
 

@@ -30,7 +30,7 @@ integer, and modulo-`p` realizations.  This is the compatibility needed in the
 proof of Proposition 7.1.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 
@@ -48,7 +48,7 @@ abbrev FpCoord (p n : ℕ) := Fin n → ZMod p
 namespace IntCoord
 
 /-- Realification of an integer coordinate vector. -/
-def real {n : ℕ} (z : IntCoord n) : RealCoord n := fun i ↦ (z i : ℝ)
+@[expose] def real {n : ℕ} (z : IntCoord n) : RealCoord n := fun i ↦ (z i : ℝ)
 
 /-- Coordinatewise reduction modulo `p`. -/
 def mod (p : ℕ) {n : ℕ} (z : IntCoord n) : FpCoord p n := fun i ↦ (z i : ZMod p)
@@ -335,7 +335,7 @@ theorem nonempty {n : ℕ} (P : RationalPolytope n) : P.carrier.Nonempty := by
 
 /-- The actual vertices are the extreme points of the carrier.  They are kept
 separate from an arbitrary finite generating set, which may be redundant. -/
-def vertexSet {n : ℕ} (P : RationalPolytope n) : Set (RealCoord n) :=
+@[expose] def vertexSet {n : ℕ} (P : RationalPolytope n) : Set (RealCoord n) :=
   P.carrier.extremePoints ℝ
 
 theorem vertexSet_subset_generators {n : ℕ} (P : RationalPolytope n) :

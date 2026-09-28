@@ -24,7 +24,7 @@ The zero-dimensional case is proved by the initial one-node decomposition.
 The positive-dimensional existence proof is assembled in `Existence.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ
 

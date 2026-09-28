@@ -85,7 +85,8 @@ lemma PreState.getLast_mem {H X} {bt : BuildTree H X} (π : PreState bt) :
   List.getLast_mem _
 
 /-- A pre-state "has" an `AnyNegFormula` if one of its sequents contains it. -/
-def PreState.hasAnf {H X} {bt : BuildTree H X} (π : PreState bt) (anf : AnyNegFormula) : Prop :=
+@[expose] def PreState.hasAnf {H X} {bt : BuildTree H X} (π : PreState bt)
+    (anf : AnyNegFormula) : Prop :=
   ∃ Z ∈ π.val, AnyNegFormula.memSequent Z anf
 
 /-- If a pre-state has `~''ξ` then the *unloaded* formula `~ξ.unload` is among its formulas. -/

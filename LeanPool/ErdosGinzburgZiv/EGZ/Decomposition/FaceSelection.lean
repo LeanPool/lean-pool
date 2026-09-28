@@ -17,7 +17,7 @@ same predicate on ambient points. Compatibility of centered lifts identifies
 the selected cumulative support with the inverse image of the target face.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

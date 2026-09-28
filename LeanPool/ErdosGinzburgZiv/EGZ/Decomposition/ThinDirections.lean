@@ -20,7 +20,7 @@ steps. The selected directions have the prescribed stage-dependent widths,
 and every direction outside the final submodule is thick at the next stage.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ
 

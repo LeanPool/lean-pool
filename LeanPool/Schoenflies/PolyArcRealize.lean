@@ -302,7 +302,7 @@ theorem skip_edges_meet (A : PreArc (n + 1)) (hi : i < n + 1)
         (fun he => hjk (skipIdx_injective i he)) ⟨hzj, hzk⟩
 
 /-- **The vertex list with a redundant vertex deleted.** -/
-def deleteVertex (A : PreArc (n + 1)) (hi : i < n + 1)
+@[expose] def deleteVertex (A : PreArc (n + 1)) (hi : i < n + 1)
     (hdet : det (A.vertex i - A.vertex (i + 1)) (A.vertex (i + 1 + 1) - A.vertex (i + 1)) = 0) :
     PreArc n where
   vertex k := A.vertex (skipIdx i k)

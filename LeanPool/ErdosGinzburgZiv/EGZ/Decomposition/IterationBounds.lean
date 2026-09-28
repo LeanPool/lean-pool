@@ -17,7 +17,7 @@ The state at stage `i` has at most `2^i` nodes, lies within the predetermined
 radius horizon, and has lost at most the first `i` explicit mass budgets.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

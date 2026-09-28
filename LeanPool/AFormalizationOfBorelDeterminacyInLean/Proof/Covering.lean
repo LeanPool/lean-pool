@@ -84,7 +84,7 @@ instance : Category PTreesS where
 @[ext] lemma LvlStratHom.ext' {T U : PTreesS} {f g : T ⟶ U} (h : f.toFun = g.toFun) : f = g :=
   LvlStratHom.ext h
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def LvlStratHom.system (p : Player) : PTreesS ⥤ Type where
+@[expose] def LvlStratHom.system (p : Player) : PTreesS ⥤ Type where
   obj T := StrategySystem T.tree.1 p
   map {T U} f := TypeCat.ofHom fun S : StrategySystem T.tree.1 p ↦ ({
     str := fun k ↦ f.toFun p k (S.str k),

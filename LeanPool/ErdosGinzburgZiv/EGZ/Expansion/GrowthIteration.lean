@@ -18,7 +18,7 @@ a multiplicative stage produce more than half of the group; two disjoint
 such families then cover the whole group.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators Pointwise
 open Module

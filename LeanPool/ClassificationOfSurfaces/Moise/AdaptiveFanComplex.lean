@@ -888,7 +888,7 @@ theorem adaptiveFanSourcePoint_val_injective (hU : IsOpen U)
   simpa only [source, Finset.sum_apply, Pi.smul_apply, smul_eq_mul] using hxy
 
 /-- One parametrized fan triangle in the open subspace. -/
-noncomputable def adaptiveFanFaceMap (hU : IsOpen U)
+@[expose] noncomputable def adaptiveFanFaceMap (hU : IsOpen U)
     (f : K.AdaptiveFanFace U hU) :
     K.adaptiveFanSimplex U hU f → U :=
   fun x ↦ ⟨(K.safeSubdivision f.1.1).homeo

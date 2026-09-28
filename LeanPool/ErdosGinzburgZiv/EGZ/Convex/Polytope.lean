@@ -21,7 +21,7 @@ be rational.  Without that requirement a finite set such as
 "the lattice spanned by the support" would be undefined.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 
@@ -61,7 +61,7 @@ def AdmitsHollowPolytopeVertexCount (d n : ℕ) : Prop :=
 
 /-- The paper's convex-geometric constant `L(d)`, defined as a supremum.
 Finiteness/attainment will be supplied by the hollow-polytope theory. -/
-noncomputable def hollowPolytopeNumber (d : ℕ) : ℕ :=
+@[expose] noncomputable def hollowPolytopeNumber (d : ℕ) : ℕ :=
   sSup {n : ℕ | AdmitsHollowPolytopeVertexCount d n}
 
 /-- Total mass of a finitely supported nonnegative weight. -/

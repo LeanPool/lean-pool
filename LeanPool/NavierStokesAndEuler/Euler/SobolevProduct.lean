@@ -110,7 +110,7 @@ theorem scalarProduct_hasDerivAt (L : Vector3 →L[ℝ] ℝ) (i : Fin 4)
       (scalarProduct period (le_refl 3) L (truncateOperator period 3 u) v' +
         scalarProduct period (le_refl 3) L (derivativeOperator period 3 i u) v) 0 := by
   let B := scalarProductBilinear period (le_refl 3) L
-  have hU := sobolevTranslation_hasDerivAt period i u
+  have hU := sobolevTranslation_hasDerivAt (q := 3) period i u
   have h := B.hasDerivAt_of_bilinear (fun _ => hU) (fun _ => hv)
   have hzero : sobolevTranslation period 3 (translationPath period (standardDirection i) 0)
       (truncateOperator period 3 u) = truncateOperator period 3 u := by
@@ -629,9 +629,11 @@ theorem productApprox_value_tendsto {q : ℕ} (hq : 6 ≤ q)
   apply Filter.Eventually.of_forall
   intro n
   change scalarProductBilinear period (by omega : 3 ≤ q) L (U n)
-    (value period (sobolevMollifier period q n v)) = _
-  rw [productApprox, productHighLow_value]
-  rw [scalarProductBilinear_apply]
+    (value period (sobolevMollifier period q n v)) =
+      value period (productHighLow period L (smoothApprox period q n u)
+        (sobolevMollifier period q n v))
+  conv_lhs => rw [scalarProductBilinear_apply]
+  conv_rhs => rw [productHighLow_value]
   exact scalarProduct_of_value_eq period (by omega : 3 ≤ q) (le_refl 3) L _ _ rfl _
 
 /-- The actual pointwise product lies in Hq and satisfies the proved fixed-order algebra bound. -/

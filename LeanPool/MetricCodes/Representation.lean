@@ -419,7 +419,7 @@ theorem variableIndex_injective {r n : ℕ} :
   exact finProdFinEquiv.injective
 
 /-- The row euler used in the spherical-code argument. -/
-def rowEuler (r n : ℕ) (i : Fin (r + 1)) :
+@[expose] def rowEuler (r n : ℕ) (i : Fin (r + 1)) :
     PolynomialSpace r n →ₗ[ℝ] PolynomialSpace r n :=
   ∑ j : Fin n,
     (LinearMap.mulLeft ℝ (MvPolynomial.X (variableIndex i j))).comp
@@ -435,7 +435,7 @@ def rowEuler (r n : ℕ) (i : Fin (r + 1)) :
     Finset.sum_apply, Function.comp_apply, LinearMap.mulLeft_apply]
 
 /-- The trace operator used in the spherical-code argument. -/
-def traceOperator (r n : ℕ) (i j : Fin (r + 1)) :
+@[expose] def traceOperator (r n : ℕ) (i j : Fin (r + 1)) :
     PolynomialSpace r n →ₗ[ℝ] PolynomialSpace r n :=
   ∑ k : Fin n,
     (MvPolynomial.pderiv (variableIndex i k)).toLinearMap.comp
@@ -462,7 +462,7 @@ theorem traceOperator_comm
     (variableIndex i k) (variableIndex j k) p
 
 /-- The polarization used in the spherical-code argument. -/
-def polarization (r n : ℕ) (i j : Fin (r + 1)) :
+@[expose] def polarization (r n : ℕ) (i j : Fin (r + 1)) :
     PolynomialSpace r n →ₗ[ℝ] PolynomialSpace r n :=
   ∑ k : Fin n,
     (LinearMap.mulLeft ℝ (MvPolynomial.X (variableIndex i k))).comp
@@ -833,7 +833,7 @@ section
 open scoped BigOperators InnerProductSpace
 
 /-- The young homogeneous embedding used in the spherical-code argument. -/
-def youngHomogeneousEmbedding {r n : ℕ}
+@[expose] def youngHomogeneousEmbedding {r n : ℕ}
     (lam : Fin (r + 1) → ℕ) :
     HarmonicYoungSpace (n := n) lam →ₗ[ℝ]
       SpherePacking.Fischer.Homogeneous ((r + 1) * n) (∑ i, lam i) :=
@@ -1251,7 +1251,7 @@ def rowDirectionalHomogeneous {r n : ℕ}
       simpa only [SpherePacking.directionalDerivative_apply, add_tsub_cancel_right] using hp)
 
 /-- The projected coordinate lower used in the spherical-code argument. -/
-def projectedCoordinateLower {r n : ℕ}
+@[expose] def projectedCoordinateLower {r n : ℕ}
     (mu lam : Fin (r + 1) → ℕ)
     (hdeg : (∑ i, lam i) = (∑ i, mu i) + 1)
     (i : Fin (r + 1)) (v : SpherePacking.Euclidean n) :
@@ -2258,7 +2258,7 @@ open scoped BigOperators
 open MetricCodes.Spherical.TwoRowYoungBidegreeDecomposition
 
 /-- The row exponent used in the spherical-code argument. -/
-def rowExponent {r n : ℕ}
+@[expose] def rowExponent {r n : ℕ}
     (d : Fin ((r + 1) * n) →₀ ℕ) (i : Fin (r + 1)) : Fin n →₀ ℕ :=
   Finsupp.equivFunOnFinite.symm fun j => d (variableIndex i j)
 
@@ -3639,7 +3639,7 @@ theorem movingYoungBlockFibre_support
       movingYoungBlockFibre_apply_ne lam o base i j hji]
 
 /-- The axis tensor used in the spherical-code argument. -/
-def axisTensor {n : ℕ} {V : Type*}
+@[expose] def axisTensor {n : ℕ} {V : Type*}
     [NormedAddCommGroup V] [InnerProductSpace ℝ V]
     (x : SpherePoint n) :
     V →ₗ[ℝ] (SpherePacking.Euclidean n ⊗[ℝ] V) :=
@@ -3792,7 +3792,7 @@ theorem rowPairingPolynomial_isHomogeneous {r n : ℕ}
       (variableIndex j k))
 
 /-- The homogeneous row pairing multiplication used in the spherical-code argument. -/
-def homogeneousRowPairingMultiplication {r n : ℕ}
+@[expose] def homogeneousRowPairingMultiplication {r n : ℕ}
     (i j : Fin (r + 1)) (m : ℕ) :
     SpherePacking.Fischer.Homogeneous ((r + 1) * n) m →ₗ[ℝ]
       SpherePacking.Fischer.Homogeneous ((r + 1) * n) (m + 2) :=
@@ -3823,7 +3823,7 @@ theorem traceOperator_isHomogeneous {r n m : ℕ}
     (hp.pderiv (i := variableIndex j k)).pderiv (i := variableIndex i k)
 
 /-- The homogeneous row trace used in the spherical-code argument. -/
-def homogeneousRowTrace {r n : ℕ}
+@[expose] def homogeneousRowTrace {r n : ℕ}
     (i j : Fin (r + 1)) (m : ℕ) :
     SpherePacking.Fischer.Homogeneous ((r + 1) * n) (m + 2) →ₗ[ℝ]
       SpherePacking.Fischer.Homogeneous ((r + 1) * n) m :=
@@ -4302,7 +4302,7 @@ theorem polarization_isHomogeneous_harmonicLift {r n m : ℕ}
           j k))
 
 /-- The row polarization operator restricted to homogeneous degree `m`. -/
-def homogeneousPolarization (r n m : ℕ)
+@[expose] def homogeneousPolarization (r n m : ℕ)
     (i j : Fin (r + 1)) :
     SpherePacking.Fischer.Homogeneous ((r + 1) * n) m →ₗ[ℝ]
       SpherePacking.Fischer.Homogeneous ((r + 1) * n) m :=
@@ -4782,7 +4782,7 @@ open MetricCodes.Spherical.HigherYoungGraphAssembly
 open MetricCodes.Spherical.MixedTensorRepresentations
 
 /-- The full branch weight used in the spherical-code argument. -/
-def FullBranchWeight {r : ℕ} (lam : Fin (r + 1) → ℕ) :=
+@[expose] def FullBranchWeight {r : ℕ} (lam : Fin (r + 1) → ℕ) :=
   { mu : (∀ i : Fin (r + 1), Fin (lam i + 1)) //
       ∀ i : Fin r, lam i.succ ≤ (mu i.castSucc).val }
 
@@ -4887,14 +4887,14 @@ section
 open scoped BigOperators
 
 /-- The polynomial real part used in the spherical-code argument. -/
-def polynomialRealPart {σ : Type*} :
+@[expose] def polynomialRealPart {σ : Type*} :
     MvPolynomial σ ℂ →ₗ[ℝ] MvPolynomial σ ℝ :=
   (AddMonoidAlgebra.coeffLinearEquiv ℝ).symm.toLinearMap.comp
     ((Finsupp.mapRange.linearMap Complex.reLm).comp
       (AddMonoidAlgebra.coeffLinearEquiv ℝ).toLinearMap)
 
 /-- The polynomial imaginary part used in the spherical-code argument. -/
-def polynomialImaginaryPart {σ : Type*} :
+@[expose] def polynomialImaginaryPart {σ : Type*} :
     MvPolynomial σ ℂ →ₗ[ℝ] MvPolynomial σ ℝ :=
   (AddMonoidAlgebra.coeffLinearEquiv ℝ).symm.toLinearMap.comp
     ((Finsupp.mapRange.linearMap Complex.imLm).comp
@@ -7843,7 +7843,7 @@ def projectedCoordinateRaiseAxis {r n : ℕ}
   map_smul' c v := projectedCoordinateRaise_axis_smul mu lam hdeg row c v p
 
 /-- The young clebsch raise used in the spherical-code argument. -/
-def youngClebschRaise {r n : ℕ}
+@[expose] def youngClebschRaise {r n : ℕ}
     (mu lam : Fin (r + 1) → ℕ)
     (hdeg : (∑ i, mu i) = (∑ i, lam i) + 1)
     (row : Fin (r + 1)) :
@@ -7873,7 +7873,7 @@ def youngClebschRaise {r n : ℕ}
             (EuclideanSpace.basisFun (Fin n) ℝ j) p := rfl
 
 /-- The young clebsch lower used in the spherical-code argument. -/
-def youngClebschLower {r n : ℕ}
+@[expose] def youngClebschLower {r n : ℕ}
     (mu lam : Fin (r + 1) → ℕ)
     (hdeg : (∑ i, lam i) = (∑ i, mu i) + 1)
     (row : Fin (r + 1)) :
@@ -8149,7 +8149,7 @@ instance jointHarmonicWeightSpace_finiteDimensional
 
 /-- Regard a joint harmonic weight polynomial as homogeneous of degree equal to the sum of its
 row weights. -/
-def jointHarmonicWeightHomogeneousEmbedding {r : ℕ}
+@[expose] def jointHarmonicWeightHomogeneousEmbedding {r : ℕ}
     (n : ℕ) (lam : Fin (r + 1) → ℕ) :
     JointHarmonicWeightSpace n lam →ₗ[ℝ]
       SpherePacking.Fischer.Homogeneous ((r + 1) * n) (∑ i, lam i) where
@@ -8377,7 +8377,7 @@ theorem youngClebschRaiseLower_trace {r n : ℕ}
       (EuclideanSpace.basisFun (Fin n) ℝ j))).symm
 
 /-- The normalized young clebsch raise used in the spherical-code argument. -/
-def normalizedYoungClebschRaise {r n : ℕ}
+@[expose] def normalizedYoungClebschRaise {r n : ℕ}
     (mu lam : Fin (r + 1) → ℕ)
     (hdeg : (∑ i, mu i) = (∑ i, lam i) + 1)
     (row : Fin (r + 1)) (c : ℝ) (hc : 0 < c)
@@ -8392,7 +8392,7 @@ def normalizedYoungClebschRaise {r n : ℕ}
     (youngClebschRaise mu lam hdeg row) c hc hgram
 
 /-- The normalized young clebsch lower used in the spherical-code argument. -/
-def normalizedYoungClebschLower {r n : ℕ}
+@[expose] def normalizedYoungClebschLower {r n : ℕ}
     (mu lam : Fin (r + 1) → ℕ)
     (hdeg : (∑ i, lam i) = (∑ i, mu i) + 1)
     (row : Fin (r + 1)) (c : ℝ) (hc : 0 < c)
@@ -8492,7 +8492,7 @@ abbrev YoungGramRadialWeightQuotient {r : ℕ}
     youngGramRadialWeightSubmodule n lam
 
 /-- Regard a polynomial of the prescribed row multidegrees as homogeneous of their total degree. -/
-def youngMultihomogeneousHomogeneousEmbedding {r : ℕ}
+@[expose] def youngMultihomogeneousHomogeneousEmbedding {r : ℕ}
     (n : ℕ) (lam : Fin (r + 1) → ℕ) :
     youngMultihomogeneousSubmodule n lam →ₗ[ℝ]
       SpherePacking.Fischer.Homogeneous

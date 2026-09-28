@@ -21,7 +21,7 @@ the vertex counts defining `hollowPolytopeNumber`.  It also develops the
 Smith-normal-form saturation lemma needed to prove that bridge.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

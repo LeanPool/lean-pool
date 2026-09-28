@@ -55,7 +55,7 @@ def zeroSecondJetTwo : TwoForm :=
   else 0
 
 /-- The target Hankel two-form construction as a linear map. -/
-def targetTwoLinear : TargetCoeff →ₗ[F₂] TwoForm where
+@[expose] def targetTwoLinear : TargetCoeff →ₗ[F₂] TwoForm where
   toFun := targetTwo
   map_add' c d := by
     funext i j
@@ -132,7 +132,7 @@ theorem targetTwo_rationalCoeffRep (α : Fin 3 → F₂) :
 def targetTwoSpace : Submodule F₂ TwoForm := LinearMap.range targetTwoLinear
 
 /-- The two-form is the exterior product of two linear forms. -/
-def IsDecomposableTwo (q : TwoForm) : Prop :=
+@[expose] def IsDecomposableTwo (q : TwoForm) : Prop :=
   ∃ u v : LinearForm, q = vectorWedge u v
 
 theorem targetTwoSpace_finrank : Module.finrank F₂ targetTwoSpace = 7 := by

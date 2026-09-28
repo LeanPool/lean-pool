@@ -132,7 +132,7 @@ namespace TriangleMesh
 variable (M : TriangleMesh)
 
 /-- Order a triangle so that index `2` is a specified opposite vertex. -/
-noncomputable def freeTriangleOrder (T : M.Triangle) (k : Fin 3) : Fin 3 → Plane :=
+@[expose] noncomputable def freeTriangleOrder (T : M.Triangle) (k : Fin 3) : Fin 3 → Plane :=
   fun i => M.position (M.orderedVertex T ((Equiv.swap 2 k) i))
 
 theorem freeTriangleOrder_affineIndependent (T : M.Triangle) (k : Fin 3) :
@@ -205,7 +205,7 @@ through the apex. -/
       segment ℝ (M.freeTriangleOrder T k 1) (M.freeTriangleOrder T k 2)
 
 /-- The `IsGeometricallyFreeTriangle` declaration. -/
-def IsGeometricallyFreeTriangle (T : M.Triangle) : Prop :=
+@[expose] def IsGeometricallyFreeTriangle (T : M.Triangle) : Prop :=
   ∃ k : Fin 3, M.IsOneEdgeFreeTriangle T k ∨ M.IsTwoEdgeFreeTriangle T k
 
 /-- The relative interior of the base in the Figure 3.3 ordering misses both apex edges. -/

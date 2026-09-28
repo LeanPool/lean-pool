@@ -2668,7 +2668,7 @@ theorem graphReplacementMap_affineOn_middle {h : Plane → Plane}
       exact ⟨x, hx, rfl⟩
     rw [K.graphReplacementMap_eq_edge_on_cellCarrier hcont D C i (hui hx),
       K.edgeReplacementMap_eq_middle hcont D C i (hui hx) (hmid0 x hx) (hmid1 x hx)]
-    simpa only [A, middleSourceMap_apply, Function.comp_apply] using hg hxSource
+    simpa only [A, middleSourceMap_apply, AffineMap.comp_apply] using hg hxSource
 
 /-- The simultaneous edge replacement is affine on every face of its named common source
 subdivision. -/

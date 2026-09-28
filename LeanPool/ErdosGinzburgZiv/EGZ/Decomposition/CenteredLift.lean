@@ -19,7 +19,7 @@ finite coordinate space.  The finite boxes also supply explicit support sets
 for the lifted weights used in flag decompositions.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

@@ -140,7 +140,7 @@ lemma forest_edge_formula (H : SimpleGraph V) [DecidableRel H.Adj] (hH : H.IsAcy
     _ = Fintype.card V := componentVerts_card H
 
 /-- An edge subset of the graph whose induced graph is acyclic. -/
-def IsGraphForest (G : SimpleGraph V) (A : Finset (Sym2 V)) : Prop :=
+@[expose] def IsGraphForest (G : SimpleGraph V) (A : Finset (Sym2 V)) : Prop :=
   (A : Set (Sym2 V)) ⊆ G.edgeSet ∧
     (SimpleGraph.fromEdgeSet (A : Set (Sym2 V))).IsAcyclic
 

@@ -19,7 +19,7 @@ An affine surjection from an affine subspace becomes first-coordinate
 projection after choosing coordinates on its kernel.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

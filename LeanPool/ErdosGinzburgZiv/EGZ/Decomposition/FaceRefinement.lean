@@ -20,7 +20,7 @@ that face. This allows a refinement that moves the selected local atoms to
 a lower layer to realize the face while retaining the old upper fibres.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

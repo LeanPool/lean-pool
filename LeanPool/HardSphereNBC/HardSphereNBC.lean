@@ -30,7 +30,7 @@ noncomputable section
 
 
 /-- The lexicographic key given by the smaller and larger endpoints of an edge. -/
-def hardSphereEdgeKey {k : Nat} (e : Sym2 (Fin k)) : Fin k ×ₗ Fin k :=
+@[expose] def hardSphereEdgeKey {k : Nat} (e : Sym2 (Fin k)) : Fin k ×ₗ Fin k :=
   toLex (e.inf, e.sup)
 
 /-- Order unordered edges lexicographically by their sorted endpoints. -/
@@ -54,12 +54,12 @@ abbrev HardSphereConfiguration (k d : Nat) :=
   Fin (k - 1) → HSPosition d
 
 /-- The zero-based coordinate index of a particle other than the anchored particle. -/
-def hardSphereFreeIndex {k : Nat} [NeZero k]
+@[expose] def hardSphereFreeIndex {k : Nat} [NeZero k]
     (i : Fin k) (hi : i ≠ 0) : Fin (k - 1) :=
   ⟨i.val - 1, by omega⟩
 
 /-- The particle label corresponding to a free coordinate. -/
-def hardSphereFreeParticleIndex {k : Nat}
+@[expose] def hardSphereFreeParticleIndex {k : Nat}
     (i : Fin (k - 1)) : Fin k :=
   ⟨i.val + 1, by omega⟩
 
@@ -286,12 +286,12 @@ def hardSphereOmega {k d : Nat} [NeZero k]
   (mayerKernel (hardSphereActiveExact r) : ℝ)
 
 /-- The hard-sphere cluster integral normalized by the factorial of the particle count. -/
-def hardSphereBk {k d : Nat} [NeZero k] : ℝ :=
+@[expose] def hardSphereBk {k d : Nat} [NeZero k] : ℝ :=
   (k.factorial : ℝ)⁻¹ *
     ∫ r : HardSphereConfiguration k d, hardSphereOmega r
 
 /-- The volume of configurations assigned to a fixed no-broken-circuit tree. -/
-def hardSphereNBCVolume {k d : Nat} [NeZero k]
+@[expose] def hardSphereNBCVolume {k d : Nat} [NeZero k]
     (T : Finset (Sym2 (Fin k))) : ℝ :=
   (volume : Measure (HardSphereConfiguration k d)).real
     (nbcRegion (V := Fin k)

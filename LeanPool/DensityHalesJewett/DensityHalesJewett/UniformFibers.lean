@@ -341,7 +341,7 @@ lemma exists_of_density {k : ℕ} (hDHJ : HasDensityHJ k)
   densityBound_spec hDHJ m hm δ hδ n hn A hA
 
 /-- Split the coordinates of a word family into a prefix and a suffix along a cut equivalence. -/
-def splitWords {alphabet p q n : ℕ} (e : Fin p ⊕ Fin q ≃ Fin n)
+@[expose] def splitWords {alphabet p q n : ℕ} (e : Fin p ⊕ Fin q ≃ Fin n)
     (A : Finset (Fin n → Fin alphabet)) : Finset (Fin p ⊕ Fin q → Fin alphabet) :=
   A.map (e.arrowCongr (Equiv.refl (Fin alphabet))).symm.toEmbedding
 

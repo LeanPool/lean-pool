@@ -20,7 +20,7 @@ These constructions place a lineage's varying coordinate spaces inside its
 initial coordinate space for the common-measure face-counting argument.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

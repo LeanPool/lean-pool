@@ -84,7 +84,7 @@ divisor of degree $k$. -/
   ∀ E ∈ effOfDegree G k, winnable G (D-E)
 
 /-- The relation $r(D)=r$: `rankGeq G D r` holds, but `rankGeq G D (r+1)` does not. -/
-def rankEq (G : CFGraph) (D : CFDiv G) (r : ℤ) : Prop :=
+@[expose] def rankEq (G : CFGraph) (D : CFDiv G) (r : ℤ) : Prop :=
   rankGeq G D r ∧ ¬(rankGeq G D (r+1))
 
 /-- The relation `rankGeq G D k` holds vacuously for $k < 0$, since there are no effective

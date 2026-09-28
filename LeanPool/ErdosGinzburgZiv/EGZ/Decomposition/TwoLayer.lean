@@ -19,7 +19,7 @@ selected atoms below the anchor to the lower layer; this preserves all total
 mass and every upper cumulative weight.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

@@ -18,7 +18,7 @@ gives the geometric and measure comparison between any two stages, while
 the parent agrees with the abstract lineage ancestor.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ.FlagDecomposition
 

@@ -14,7 +14,7 @@ public import Mathlib.Data.ZMod.Basic
 # Basic
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

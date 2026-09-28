@@ -2044,7 +2044,7 @@ theorem frontier_inter_triangleCarrier_side23 {t : Finset M.Vertex}
     exact ht
   have h := C.swap12.frontier_inter_triangleCarrier_side13
     (G := G.swap12) (M := M) (t := t) ht' hchord
-  simpa using h
+  simpa [C.swap12_side13Mesh] using h
 
 /-- A geometrically free triangle not incident to the cut edge remains geometrically free after
 the first cut subdisk is glued back into the original polygonal disk. -/

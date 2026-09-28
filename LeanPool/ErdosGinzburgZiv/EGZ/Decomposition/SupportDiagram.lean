@@ -19,7 +19,7 @@ is required. Choosing the support-generated lattice charts gives a new diagram
 and a convex flag in minimal integer lattice coordinates.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ
 

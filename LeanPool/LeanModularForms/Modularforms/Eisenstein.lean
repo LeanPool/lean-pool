@@ -656,7 +656,7 @@ lemma Delta_cuspFuntion_eq : Set.EqOn (cuspFunction 1 Delta)
 
 lemma Delta_ne_zero : Delta ≠ 0 :=
   DFunLike.ne_iff.mpr ⟨UpperHalfPlane.I, by
-    simpa only [Delta_apply] using Δ_ne_zero UpperHalfPlane.I⟩
+    simpa only [Delta_apply, zero_apply] using Δ_ne_zero UpperHalfPlane.I⟩
 
 lemma asdf : TendstoLocallyUniformlyOn
     (fun n : ℕ ↦ fun y : ℂ => ∏ x ∈ Finset.range n, (1 - y ^ (x + 1)))

@@ -19,7 +19,7 @@ the support polytopes and factoring the old transitions through these charts
 gives a convex flag on the same node poset with standard coordinate lattices.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ.FlagDecomposition
 

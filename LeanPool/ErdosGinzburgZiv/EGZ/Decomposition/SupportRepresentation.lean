@@ -18,7 +18,7 @@ constructs a representation without assuming surjectivity of the original
 coordinate maps on the ambient space.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

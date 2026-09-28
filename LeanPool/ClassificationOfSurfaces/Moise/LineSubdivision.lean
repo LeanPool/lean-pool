@@ -1142,7 +1142,7 @@ variable (M : TriangleMesh) (f : Plane →ᵃ[ℝ] ℝ)
 abbrev Triangle := {t : Finset M.Vertex // t ∈ M.triangles}
 
 /-- A proof-independent ordering of the three vertices of a maximal triangle. -/
-noncomputable def triangleEquiv (t : M.Triangle) : t.1 ≃ Fin 3 :=
+@[expose] noncomputable def triangleEquiv (t : M.Triangle) : t.1 ≃ Fin 3 :=
   Fintype.equivFinOfCardEq (by
     rw [Fintype.card_coe, M.card_triangle t.1 t.2])
 

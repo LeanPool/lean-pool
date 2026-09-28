@@ -20,7 +20,7 @@ a realized face whenever its pullback is nonempty. The key order inequality
 compares the new face index with the old one.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ
 

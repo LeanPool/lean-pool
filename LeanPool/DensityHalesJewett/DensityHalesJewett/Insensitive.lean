@@ -28,7 +28,7 @@ open scoped BigOperators
 namespace DensityHalesJewett
 
 /-- Two words are equivalent after freely interchanging the letters `i` and `j`. -/
-def InsensitiveEquiv {α ι : Type*} (i j : α) (x y : ι → α) : Prop :=
+@[expose] def InsensitiveEquiv {α ι : Type*} (i j : α) (x y : ι → α) : Prop :=
   ∀ a, a ≠ i → a ≠ j → ∀ c, (x c = a ↔ y c = a)
 
 /-- Membership in an `(i,j)`-insensitive family is constant on insensitive-equivalence classes. -/
@@ -91,7 +91,7 @@ lemma compl {α ι : Type*} [Fintype (ι → α)] [DecidableEq (ι → α)]
   exact D.filter fun w ↦ ∀ V ∈ 𝒱, w ∉ Subspace.range V
 
 /-- The intersection of a finite indexed family of finite sets. -/
-noncomputable def intersection {r : ℕ} {X : Type*} [Fintype X]
+@[expose] noncomputable def intersection {r : ℕ} {X : Type*} [Fintype X]
     (D : Fin r → Finset X) : Finset X := by
   classical
   exact Finset.univ.inf D

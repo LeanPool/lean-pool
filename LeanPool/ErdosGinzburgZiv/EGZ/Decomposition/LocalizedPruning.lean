@@ -18,7 +18,7 @@ The lost total mass is exactly the lost cumulative mass at the anchor. The
 surviving weights can be rebuilt using the geometric pruning construction.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

@@ -1431,7 +1431,7 @@ theorem edgeSegment_inter_subset_endpoints {i j : ZMod J.n} (hij : i ≠ j) :
     exact (Set.disjoint_left.1 hdisj hx.1 hx.2).elim
 
 /-- The union of all polygon edges other than edge `i`. -/
-def otherEdges (i : ZMod J.n) : Set Plane :=
+@[expose] def otherEdges (i : ZMod J.n) : Set Plane :=
   ⋃ (j : ZMod J.n) (_ : j ≠ i), J.edgeSegment j
 
 theorem isCompact_otherEdges (i : ZMod J.n) : IsCompact (J.otherEdges i) := by
@@ -4010,7 +4010,7 @@ theorem polygonal_jordan :
   exact J.polygonal_jordan_of_twoGateStrip J.exists_twoGateStrip.some
 
 /-- The interior region of a polygon (the bounded complementary component). -/
-noncomputable def interiorRegion : Set Plane :=
+@[expose] noncomputable def interiorRegion : Set Plane :=
   J.polygonal_jordan.choose
 
 /-- The exterior region of a polygon (the unbounded complementary component). -/

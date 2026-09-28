@@ -17,7 +17,7 @@ vector space. Its retraction identity extends from the support to its affine
 span. Integer affine generation also implies affine generation modulo `p`.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

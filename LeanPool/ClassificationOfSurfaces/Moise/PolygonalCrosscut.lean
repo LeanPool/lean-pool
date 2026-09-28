@@ -2306,7 +2306,7 @@ theorem interior13_subset_interior12 :
     G.J12.disjoint_interior_exterior hsubsetUnion ⟨z, hz13, hz12⟩
 
 /-- Exchange the two boundary arcs of a theta graph. -/
-def swap12 : PolygonalTheta where
+@[expose] def swap12 : PolygonalTheta where
   P := G.P
   Q := G.Q
   B1 := G.B2
@@ -2582,7 +2582,7 @@ namespace MeshCrosscut
 variable {G : PolygonalTheta} {M : TriangleMesh} (C : G.MeshCrosscut M)
 
 /-- Exchange the two sides of a realized mesh crosscut. -/
-noncomputable def swap12 (C : G.MeshCrosscut M) : G.swap12.MeshCrosscut M where
+@[expose] noncomputable def swap12 (C : G.MeshCrosscut M) : G.swap12.MeshCrosscut M where
   support_eq := C.support_eq
   chordEdge := C.chordEdge
   chordEdge_mem := C.chordEdge_mem

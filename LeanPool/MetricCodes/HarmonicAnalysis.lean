@@ -903,7 +903,7 @@ namespace Fischer
 abbrev MultiIndex (n : ℕ) := Fin n →₀ ℕ
 
 /-- The degree indices used in the spherical-code argument. -/
-def degreeIndices (n m : ℕ) : Finset (MultiIndex n) :=
+@[expose] def degreeIndices (n m : ℕ) : Finset (MultiIndex n) :=
   Finset.finsuppAntidiag (Finset.univ : Finset (Fin n)) m
 
 /-- The degree index used in the spherical-code argument. -/
@@ -1349,7 +1349,7 @@ theorem harmonicCoefficientEmbedding_injective (n m : ℕ) :
         MvPolynomial.homogeneousSubmodule (Fin n) ℝ m from inf_le_left))
 
 /-- The homogeneous inner used in the spherical-code argument. -/
-def homogeneousInner (n m : ℕ)
+@[expose] def homogeneousInner (n m : ℕ)
     (p q : Homogeneous n m) : ℝ :=
   @inner ℝ (CoefficientSpace n m) _
     (coefficientEmbedding n m p) (coefficientEmbedding n m q)
@@ -1416,7 +1416,7 @@ theorem homogeneousInner_eq_polynomialInner (n m : ℕ)
     ring
 
 /-- The homogeneous inner core used in the spherical-code argument. -/
-@[implicit_reducible] def homogeneousInnerCore (n m : ℕ) :
+@[expose, implicit_reducible] def homogeneousInnerCore (n m : ℕ) :
     InnerProductSpace.Core ℝ (Homogeneous n m) where
   inner p q := homogeneousInner n m p q
   conj_inner_symm p q := by
@@ -1518,7 +1518,7 @@ theorem harmonicInner_eq_polynomialInner (n m : ℕ)
       exact homogeneousInner_eq_polynomialInner n m hp hq
 
 /-- The embedding inner core used in the spherical-code argument. -/
-@[implicit_reducible] def embeddingInnerCore
+@[expose, implicit_reducible] def embeddingInnerCore
     {F E : Type*} [AddCommGroup F] [Module ℝ F]
     [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     (f : F →ₗ[ℝ] E) (hf : Function.Injective f) :
@@ -7738,7 +7738,7 @@ theorem adjoint_comp_self_of_inner
   rw [LinearMap.adjoint_inner_right, h, real_inner_smul_right]
 
 /-- The normalized channel isometry used in the spherical-code argument. -/
-def normalizedChannelIsometry
+@[expose] def normalizedChannelIsometry
     {E F : Type*}
     [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     [NormedAddCommGroup F] [InnerProductSpace ℝ F]

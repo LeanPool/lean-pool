@@ -17,7 +17,7 @@ integer span is contained in a rescaled copy of the standard integer lattice,
 so its intersection with a compact set is finite.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

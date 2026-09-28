@@ -17,7 +17,7 @@ to the bounded lattice coordinates. The same sequence bounds every possible
 number of added directions up to the ambient dimension.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ
 

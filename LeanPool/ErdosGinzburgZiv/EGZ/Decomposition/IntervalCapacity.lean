@@ -16,7 +16,7 @@ interval lemma into a uniform bound on operation-sequence length. The bound
 depends only on the number of colors and the capacity function.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ
 

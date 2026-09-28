@@ -11,7 +11,7 @@ public import LeanPool.ErdosGinzburgZiv.EGZ.Decomposition.IntervalCapacity
 
 /-! # Uniform constants for the bounded decomposition iteration -/
 
-@[expose] public section
+public section
 
 namespace EGZ.FlagDecomposition.Iteration
 

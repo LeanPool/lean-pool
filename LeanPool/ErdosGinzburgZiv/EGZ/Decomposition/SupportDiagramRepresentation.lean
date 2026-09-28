@@ -18,7 +18,7 @@ supported atoms. Injective modular lattice charts then give a surjective
 representation of the charted flag on its minimal ambient affine spaces.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ.LatticeSupportDiagram
 

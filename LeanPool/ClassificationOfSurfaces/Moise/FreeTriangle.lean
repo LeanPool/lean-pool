@@ -48,7 +48,7 @@ def incidentTriangles (e : Finset M.Vertex) : Finset (Finset M.Vertex) :=
 /-- A weakly free triangle contains an incidence-one edge.  This is the boundary-edge precursor
 used to find Moise's geometrically free triangles; by itself it does not exclude an additional
 isolated boundary vertex. -/
-def IsFreeTriangle (t : Finset M.Vertex) : Prop :=
+@[expose] def IsFreeTriangle (t : Finset M.Vertex) : Prop :=
   t ∈ M.triangles ∧ ∃ e, M.IsBoundaryEdge e ∧ e ⊆ t
 
 /-- The three abstract edges of a maximal triangle. -/
@@ -1254,7 +1254,7 @@ theorem card_incidentTriangles_eq_two_of_not_boundary {e t : Finset M.Vertex}
   omega
 
 /-- Two maximal triangles are edge-neighbors if they contain a common two-vertex face. -/
-def AreEdgeNeighbors (t u : Finset M.Vertex) : Prop :=
+@[expose] def AreEdgeNeighbors (t u : Finset M.Vertex) : Prop :=
   ∃ e : Finset M.Vertex, e.card = 2 ∧ e ⊆ t ∧ e ⊆ u
 
 /-- A triangle with an edge-neighbor cannot have all three edges on the boundary. -/

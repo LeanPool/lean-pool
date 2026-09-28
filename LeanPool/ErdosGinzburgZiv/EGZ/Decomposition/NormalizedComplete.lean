@@ -16,7 +16,7 @@ retains the explicit complete representative and removes the old upper
 anchor. Minimality, all mass bounds, and the subdivision map survive.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ.FlagDecomposition.CompletePreparation
 

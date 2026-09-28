@@ -47,11 +47,11 @@ def m (G : SimpleGraph V) : Int :=
   ∑ A ∈ connectedEdgeSubsets G, matroidParitySign A.card
 
 /-- An edge of the complete graph marked active by the overlap data. -/
-def activeEdge (x : Sym2 V → Bool) (e : Sym2 V) : Prop :=
+@[expose] def activeEdge (x : Sym2 V → Bool) (e : Sym2 V) : Prop :=
   e ∈ graphEdgeFinset (completeGraph V) ∧ x e = true
 
 /-- The finite set of active edges. -/
-noncomputable def activeEdgeFinset (x : Sym2 V → Bool) : Finset (Sym2 V) := by
+@[expose] noncomputable def activeEdgeFinset (x : Sym2 V → Bool) : Finset (Sym2 V) := by
   classical
   exact Finset.univ.filter (activeEdge x)
 
@@ -91,7 +91,7 @@ lemma matroidParitySign_eq_neg_one_pow (n : Nat) :
       ring
 
 /-- The Mayer bond: minus one for an active edge and zero otherwise. -/
-noncomputable def bond (x : Sym2 V → Bool) (e : Sym2 V) : Int := by
+@[expose] noncomputable def bond (x : Sym2 V → Bool) (e : Sym2 V) : Int := by
   classical
   exact if activeEdge x e then -1 else 0
 
@@ -100,7 +100,7 @@ def completeConnectedEdgeSubsets : Finset (Finset (Sym2 V)) :=
   connectedEdgeSubsets (completeGraph V)
 
 /-- Sum the products of Mayer bonds over connected spanning edge sets. -/
-def mayerKernel (x : Sym2 V → Bool) : Int :=
+@[expose] def mayerKernel (x : Sym2 V → Bool) : Int :=
   ∑ A ∈ completeConnectedEdgeSubsets,
     ∏ e ∈ A, bond x e
 
@@ -507,7 +507,7 @@ lemma m_eq_signed_NBC_of_connected
 /-! ### Pointwise finite tree decomposition -/
 
 /-- Configurations whose overlap graph has the specified no-broken-circuit spanning tree. -/
-def nbcRegion {X : Type*} (active : X → Sym2 V → Bool)
+@[expose] def nbcRegion {X : Type*} (active : X → Sym2 V → Bool)
     (T : Finset (Sym2 V)) : Set X :=
   {x | IsExplicitNBCTree (overlapGraph (active x)) T}
 
@@ -599,7 +599,7 @@ lemma graphNBC_zero_of_not_connected {G : SimpleGraph V}
   exact hG ((hA'.2).2.1.mono hle)
 
 /-- The absolute value of an integer as an extended nonnegative real. -/
-def intMagnitude (z : Int) : ℝ≥0∞ := z.natAbs
+@[expose] def intMagnitude (z : Int) : ℝ≥0∞ := z.natAbs
 
 lemma intMagnitude_signed_nat (n q : Nat) :
     intMagnitude ((-1 : Int) ^ n * (q : Int)) = (q : ℝ≥0∞) := by
@@ -729,7 +729,7 @@ theorem factorial_mul_absBk_eq_nbcVolumeSum
 abbrev HSPosition (d : Nat) := EuclideanSpace ℝ (Fin d)
 
 /-- Particle configurations whose distinguished particle is fixed at zero. -/
-def AnchoredHSConfiguration (k d : Nat) :=
+@[expose] def AnchoredHSConfiguration (k d : Nat) :=
   {r : Fin (k + 1) → HSPosition d // r 0 = 0}
 
 /-- The overlap indicators of an explicitly anchored configuration. -/

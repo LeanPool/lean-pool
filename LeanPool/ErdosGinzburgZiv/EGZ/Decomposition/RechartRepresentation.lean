@@ -17,7 +17,7 @@ An affine left inverse of the modular lattice chart then gives a surjective
 representation in the new coordinates, compatible with all transitions.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ.FlagDecomposition.Rechart
 

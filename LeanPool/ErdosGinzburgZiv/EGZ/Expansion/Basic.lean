@@ -18,7 +18,7 @@ weights retain these multiplicities when several positions have the same
 vector.  Affine changes of coordinates preserve zero sums of length `p`.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 
@@ -26,7 +26,7 @@ namespace EGZ
 namespace Expansion
 
 /-- Push a finite multiplicity function through an arbitrary map. -/
-noncomputable def pushWeight {α β : Type*} [Fintype α]
+@[expose] noncomputable def pushWeight {α β : Type*} [Fintype α]
     (f : α → β) (w : α → ℕ) (b : β) : ℕ := by
   classical
   exact ∑ a, if f a = b then w a else 0

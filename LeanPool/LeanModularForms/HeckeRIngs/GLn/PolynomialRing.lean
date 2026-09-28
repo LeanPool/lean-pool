@@ -57,7 +57,7 @@ variable (p : ℕ) (hp : p.Prime)
 
 /-- The diagonal for the k-th generator: `(1,...,1,p,...,p)` with `n-1-k` ones
     followed by `k+1` entries of `p`. Here `k : Fin n`, giving `n` generators. -/
-def TGenDiag (k : Fin n) : Fin n → ℕ :=
+@[expose] def TGenDiag (k : Fin n) : Fin n → ℕ :=
   fun i => if (i : ℕ) < n - 1 - (k : ℕ) then 1 else p
 
 @[simp]

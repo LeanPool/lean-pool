@@ -18,7 +18,7 @@ the loss at the node by the loss of the entire decomposition. These data
 compose, so the same estimates apply along a surviving lineage.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

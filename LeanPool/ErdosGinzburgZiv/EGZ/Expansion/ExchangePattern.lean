@@ -18,7 +18,7 @@ fibre. Sampling all these positions independently gives exact uniform
 marginals; injective samples are the disjoint exchanges used later.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

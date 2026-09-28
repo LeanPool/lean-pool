@@ -13,7 +13,7 @@ public import LeanPool.ErdosGinzburgZiv.EGZ.Main.Parameters
 # Input
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

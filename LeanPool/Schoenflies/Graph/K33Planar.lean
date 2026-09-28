@@ -235,7 +235,8 @@ those segments.
 
 This is the one thing this module assumes and does not prove. See "The gap" in the module
 docstring. -/
-def IsHexRealization (drawing : β → ℝ → Plane) (e : Fin 3 → Fin 3 → β) (s : Fin 3) : Prop :=
+@[expose] def IsHexRealization (drawing : β → ℝ → Plane) (e : Fin 3 → Fin 3 → β)
+    (s : Fin 3) : Prop :=
   ∃ (m m₁ m₂ : ℕ) (C : ClosedPolygon m) (J₁ : ClosedPolygon m₁) (J₂ : ClosedPolygon m₂)
     (K : List Piece) (a : ZMod (m + 3)) (k : ℕ),
       k ≤ m + 3 ∧

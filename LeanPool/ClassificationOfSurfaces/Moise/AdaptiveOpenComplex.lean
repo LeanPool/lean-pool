@@ -686,7 +686,7 @@ theorem locallyFinite_adaptiveFaceCarrierInOpen (hU : IsOpen U) :
 /-! ## Finite boundary data on each adaptive tile -/
 
 /-- The geometric point represented by one vertex of a level face. -/
-noncomputable def levelFaceVertexPoint {n : ℕ} (t : K.LevelFace n)
+@[expose] noncomputable def levelFaceVertexPoint {n : ℕ} (t : K.LevelFace n)
     (v : {v // v ∈ t.1}) : K.realization :=
   (K.safeSubdivision n).homeo
     ((K.safeSubdivision n).refined.facePoint t v)
@@ -704,7 +704,7 @@ abbrev AdaptiveVertexOccurrence (t : K.AdaptiveFace U) :=
   {v // v ∈ t.2.1.1}
 
 /-- The `adaptiveVertexPoint` declaration. -/
-noncomputable def adaptiveVertexPoint (t : K.AdaptiveFace U)
+@[expose] noncomputable def adaptiveVertexPoint (t : K.AdaptiveFace U)
     (v : K.AdaptiveVertexOccurrence U t) : K.realization :=
   K.levelFaceVertexPoint t.2.1 v
 

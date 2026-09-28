@@ -20,7 +20,7 @@ one. Event counts therefore reduce to counts for initial ancestor labels.
 A killed lineage cannot label any later event.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

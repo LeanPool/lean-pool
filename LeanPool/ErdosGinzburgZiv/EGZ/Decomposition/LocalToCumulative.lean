@@ -19,7 +19,7 @@ on the right-hand side.  Boundedness at the upper node prevents a transition
 of a nonzero local lift from wrapping around modulo `p`.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

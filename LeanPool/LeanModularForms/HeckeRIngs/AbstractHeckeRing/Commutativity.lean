@@ -454,7 +454,7 @@ end AntiInvolution
 
 /-- Shimura Proposition 3.8: `CommRing (𝕋 P ℤ)` from an anti-involution
 fixing every double coset. -/
-@[reducible]
+@[expose, reducible]
 noncomputable def instCommRingOfAntiInvolution (ι : AntiInvolution P)
     (h_fix : ∀ D : HeckeCoset P, ι.onHeckeCoset D = D) : CommRing (𝕋 P ℤ) :=
   { HeckeRing.instRing P with mul_comm := ι.mul_comm_of_antiInvolution h_fix }

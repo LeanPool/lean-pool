@@ -22,7 +22,7 @@ nodes and with the same local weights. Forgetting the additional coordinates
 maps its proper points to the original decomposition.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

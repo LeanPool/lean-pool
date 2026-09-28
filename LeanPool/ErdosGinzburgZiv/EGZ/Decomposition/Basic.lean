@@ -22,7 +22,7 @@ generators are defined from `localLift`.  This distinction is the correction
 integrated into the current version of the paper.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 
@@ -40,42 +40,42 @@ def HasBoundedRepresentative (p K : ℕ) (a : ZMod p) : Prop :=
   ∃ z : ℤ, z.natAbs ≤ K ∧ (z : ZMod p) = a
 
 /-- The `K`-slab cut out by an affine functional on `𝔽_p^d`. -/
-def slab {p d : ℕ} (ξ : FpCoord p d →ᵃ[ZMod p] ZMod p) (K : ℕ) :
+@[expose] def slab {p d : ℕ} (ξ : FpCoord p d →ᵃ[ZMod p] ZMod p) (K : ℕ) :
     Set (FpCoord p d) :=
   {v | HasBoundedRepresentative p K (ξ v)}
 
 /-- The mass of a natural-valued function on a subset of a finite type. -/
-noncomputable def natMassOn {α : Type*} [Fintype α] (w : α → ℕ) (S : Set α) : ℕ := by
+@[expose] noncomputable def natMassOn {α : Type*} [Fintype α] (w : α → ℕ) (S : Set α) : ℕ := by
   classical
   exact ∑ a, if a ∈ S then w a else 0
 
 /-- The total mass of a natural-valued function on a finite type. -/
-noncomputable def natMass {α : Type*} [Fintype α] (w : α → ℕ) : ℕ :=
+@[expose] noncomputable def natMass {α : Type*} [Fintype α] (w : α → ℕ) : ℕ :=
   ∑ a, w a
 
 /-- Mass of an `NNReal`-valued function on a subset of a finite type. -/
-noncomputable def nnrealMassOn {α : Type*} [Fintype α]
+@[expose] noncomputable def nnrealMassOn {α : Type*} [Fintype α]
     (w : α → NNReal) (S : Set α) : NNReal := by
   classical
   exact ∑ a, if a ∈ S then w a else 0
 
 /-- Total mass of an `NNReal`-valued function on a finite type. -/
-noncomputable def nnrealMass {α : Type*} [Fintype α] (w : α → NNReal) : NNReal :=
+@[expose] noncomputable def nnrealMass {α : Type*} [Fintype α] (w : α → NNReal) : NNReal :=
   ∑ a, w a
 
 /-- Definition 4.1 for the nonnegative real weights used in the paper. -/
-def IsThinAlongNNReal {p d : ℕ} [NeZero p] (w : FpCoord p d → NNReal)
+@[expose] def IsThinAlongNNReal {p d : ℕ} [NeZero p] (w : FpCoord p d → NNReal)
     (ξ : FpCoord p d →ᵃ[ZMod p] ZMod p) (K : ℕ) (ε : ℝ) : Prop :=
   (1 - ε) * (nnrealMass w : ℝ) ≤ (nnrealMassOn w (slab ξ K) : ℝ)
 
 /-- Natural-valued specialization used by flag decompositions and
 Theorem 4.13. -/
-def IsThinAlong {p d : ℕ} [NeZero p] (w : FpCoord p d → ℕ)
+@[expose] def IsThinAlong {p d : ℕ} [NeZero p] (w : FpCoord p d → ℕ)
     (ξ : FpCoord p d →ᵃ[ZMod p] ZMod p) (K : ℕ) (ε : ℝ) : Prop :=
   IsThinAlongNNReal (fun v ↦ (w v : NNReal)) ξ K ε
 
 /-- Thickness is the negation of thinness, as in Definition `tt`. -/
-def IsThickAlong {p d : ℕ} [NeZero p] (w : FpCoord p d → ℕ)
+@[expose] def IsThickAlong {p d : ℕ} [NeZero p] (w : FpCoord p d → ℕ)
     (ξ : FpCoord p d →ᵃ[ZMod p] ZMod p) (K : ℕ) (ε : ℝ) : Prop :=
   ¬ IsThinAlong w ξ K ε
 
@@ -116,12 +116,12 @@ end FpRepresentation
 /-! ## Coordinate lifts -/
 
 /-- Sup norm in the chosen affine-lattice coordinates. -/
-def latticeSupNorm {n : ℕ} (z : IntCoord n) : ℕ :=
+@[expose] def latticeSupNorm {n : ℕ} (z : IntCoord n) : ℕ :=
   Finset.univ.sup fun i ↦ (z i).natAbs
 
 /-- A lattice coordinate lies in the centered representative box modulo
 `p`. -/
-def IsCenteredLift (p : ℕ) {n : ℕ} (z : IntCoord n) : Prop :=
+@[expose] def IsCenteredLift (p : ℕ) {n : ℕ} (z : IntCoord n) : Prop :=
   latticeSupNorm z ≤ (p - 1) / 2
 
 namespace FlagDecompositionRaw
@@ -140,7 +140,7 @@ noncomputable def cumulativeWeight (pieces : F.Node → FpCoord p d → ℕ)
   exact ∑ y, if y ≤ x then pieces y v else 0
 
 /-- Push a finite weight through an affine map whose target rank may vary. -/
-noncomputable def affineFibreMass {n : ℕ} (w : FpCoord p d → ℕ)
+@[expose] noncomputable def affineFibreMass {n : ℕ} (w : FpCoord p d → ℕ)
     (φ : FpCoord p d → FpCoord p n) (c : FpCoord p n) : ℕ := by
   classical
   exact ∑ v, if φ v = c then w v else 0
@@ -250,12 +250,12 @@ noncomputable def hat (Φ : FlagDecomposition p d f) (x : Φ.flag.Node) :
   FlagDecompositionRaw.hat Φ.representation Φ.localWeight x
 
 /-- Total retained mass `f^Φ(V)`. -/
-noncomputable def retainedMass (Φ : FlagDecomposition p d f) : ℕ :=
+@[expose] noncomputable def retainedMass (Φ : FlagDecomposition p d f) : ℕ :=
   natMass Φ.retainedWeight
 
 /-- Mass of `hat f_x` over lattice points whose real coordinates lie in
 `S`.  The stored support makes this a finite sum. -/
-noncomputable def liftedMassOn (Φ : FlagDecomposition p d f) (x : Φ.flag.Node)
+@[expose] noncomputable def liftedMassOn (Φ : FlagDecomposition p d f) (x : Φ.flag.Node)
     (S : Set (RealCoord (Φ.flag.rank x))) : ℕ := by
   classical
   exact ∑ q ∈ Φ.liftedSupport x, if q.real ∈ S then Φ.hat x q else 0
@@ -292,7 +292,7 @@ def IsVisibleFace (Φ : FlagDecomposition p d f) (x : Φ.flag.Node)
   (Φ.pointsOnFace x Γ).Nonempty
 
 /-- The finite set of bases used to define `x_Γ`. -/
-noncomputable def faceBases (Φ : FlagDecomposition p d f) (x : Φ.flag.Node)
+@[expose] noncomputable def faceBases (Φ : FlagDecomposition p d f) (x : Φ.flag.Node)
     (Γ : (Φ.flag.polytope x).Face) : Finset Φ.flag.Node := by
   classical
   exact Finset.univ.filter fun y ↦
@@ -308,7 +308,7 @@ private theorem faceBases_nonempty (Φ : FlagDecomposition p d f) (x : Φ.flag.N
 
 /-- The element `x_Γ`: the supremum of the bases of proper points over a
 face.  Every face of a flag decomposition is visible. -/
-noncomputable def faceIndex (Φ : FlagDecomposition p d f) (x : Φ.flag.Node)
+@[expose] noncomputable def faceIndex (Φ : FlagDecomposition p d f) (x : Φ.flag.Node)
     (Γ : (Φ.flag.polytope x).Face) : Φ.flag.Node :=
   (Φ.faceBases x Γ).sup' (by exact faceBases_nonempty Φ x Γ) id
 
@@ -357,7 +357,7 @@ def IsKBounded (Φ : FlagDecomposition p d f) (K : Φ.flag.Node → ℕ) : Prop 
     z.real ∈ (Φ.flag.polytope x).carrier → latticeSupNorm z ≤ K x
 
 /-- An `ε`-large face, Definition `largef`. -/
-def IsLargeFace (Φ : FlagDecomposition p d f) (ε : ℝ) (x : Φ.flag.Node)
+@[expose] def IsLargeFace (Φ : FlagDecomposition p d f) (ε : ℝ) (x : Φ.flag.Node)
     (Γ : (Φ.flag.polytope x).Face) : Prop :=
   ε * (Φ.retainedMass : ℝ) ≤ (Φ.liftedMassOn x Γ.carrier : ℝ) ∧
     ∀ Γ' : (Φ.flag.polytope x).Face, Γ'.carrier ⊂ Γ.carrier →
@@ -365,19 +365,19 @@ def IsLargeFace (Φ : FlagDecomposition p d f) (ε : ℝ) (x : Φ.flag.Node)
         (1 - ε) * (Φ.liftedMassOn x Γ.carrier : ℝ)
 
 /-- An `ε`-large flag element. -/
-def IsLargeElement (Φ : FlagDecomposition p d f) (ε : ℝ)
+@[expose] def IsLargeElement (Φ : FlagDecomposition p d f) (ε : ℝ)
     (x : Φ.flag.Node) : Prop :=
   ε * (Φ.retainedMass : ℝ) ≤
     (Φ.liftedMassOn x (Φ.flag.polytope x).carrier : ℝ)
 
 /-- The minimum positive cumulative lifted mass at a node. -/
-noncomputable def gap (Φ : FlagDecomposition p d f) (x : Φ.flag.Node) : ℕ :=
+@[expose] noncomputable def gap (Φ : FlagDecomposition p d f) (x : Φ.flag.Node) : ℕ :=
   (Φ.liftedSupport x).image (Φ.hat x) |>.min'
     ((Φ.liftedSupport_nonempty x).image (Φ.hat x))
 
 /-- Completeness of one element: every affine functional which varies on a
 representation fibre sees a thick cumulative weight. -/
-def IsCompleteElement (Φ : FlagDecomposition p d f) (x : Φ.flag.Node)
+@[expose] def IsCompleteElement (Φ : FlagDecomposition p d f) (x : Φ.flag.Node)
     (t : ℕ) (δ : ℝ) : Prop :=
   ∀ ξ : FpCoord p d →ᵃ[ZMod p] ZMod p,
     Φ.representation.NonconstantOnFibers x ξ →

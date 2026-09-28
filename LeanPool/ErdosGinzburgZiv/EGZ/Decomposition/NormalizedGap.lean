@@ -18,7 +18,7 @@ the coordinate change. Increasing the coordinate bounds only weakens the
 required inverse-power gap threshold.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ
 

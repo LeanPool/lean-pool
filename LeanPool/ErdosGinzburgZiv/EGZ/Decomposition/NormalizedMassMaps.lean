@@ -13,7 +13,7 @@ public import LeanPool.ErdosGinzburgZiv.EGZ.Decomposition.NormalizedGap
 
 /-! # Stable mass maps for normalized refinement steps -/
 
-@[expose] public section
+public section
 
 namespace EGZ.FlagDecomposition
 

@@ -140,7 +140,7 @@ variable {α β γ δ : Type*} [DirectedSpace α] [DirectedSpace β] [DirectedSp
 by
   mapping `(a, b) : α × β` to `(f a, g b)`.
 -/
-protected def DirectedMap.prodMapMk' (f : D(α,γ)) (g : D(β,δ)) : D(α × β, γ × δ) where
+@[expose] protected def DirectedMap.prodMapMk' (f : D(α,γ)) (g : D(β,δ)) : D(α × β, γ × δ) where
   toFun := fun x => (f x.1, g x.2)
   directed_toFun := fun x y γ ⟨hγ₁, hγ₂⟩ => ⟨f.directed_toFun _ hγ₁, g.directed_toFun _ hγ₂⟩
 

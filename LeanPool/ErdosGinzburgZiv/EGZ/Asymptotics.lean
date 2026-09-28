@@ -13,7 +13,7 @@ public import Mathlib.Order.Filter.AtTopBot.Basic
 
 /-! ## Consequences of the polynomial bound -/
 
-@[expose] public section
+public section
 
 namespace EGZ
 

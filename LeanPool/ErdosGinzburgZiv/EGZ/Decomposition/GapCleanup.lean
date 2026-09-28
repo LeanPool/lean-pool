@@ -19,7 +19,7 @@ hulls. Restricting that flag to reduced nodes finishes the geometric cleanup.
 The construction retains exactly the mass supplied by numerical pruning.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

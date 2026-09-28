@@ -19,7 +19,7 @@ and increase under restriction of the represented space when the old map
 factors through the new map. This includes minimalization.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ
 

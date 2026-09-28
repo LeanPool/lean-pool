@@ -22,7 +22,7 @@ case. The constants are chosen before the centrality parameter, as required
 by the paper's uniformity in the main proof.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

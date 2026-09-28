@@ -51,7 +51,7 @@ abbrev TargetCoeff := Fin 7 → F₂
   fun i j => c ⟨i.val + j.val, by omega⟩
 
 /-- Algebraic rank-at-most-one condition: every `2 × 2` minor vanishes. -/
-def HankelRankLEOne (c : TargetCoeff) : Prop :=
+@[expose] def HankelRankLEOne (c : TargetCoeff) : Prop :=
   ∀ i k j l : Fin 4,
     hankelMatrix c i j * hankelMatrix c k l =
       hankelMatrix c i l * hankelMatrix c k j

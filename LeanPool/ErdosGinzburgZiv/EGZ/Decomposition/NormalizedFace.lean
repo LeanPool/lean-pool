@@ -17,7 +17,7 @@ keeps the upper anchor for every proper selected face of a reduced old node.
 This gives a normalized operation with unchanged mass and uniform bounds.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ.FlagDecomposition.Rechart
 

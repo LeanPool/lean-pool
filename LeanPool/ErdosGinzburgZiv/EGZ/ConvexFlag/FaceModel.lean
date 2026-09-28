@@ -23,7 +23,7 @@ is only needed when the final centerpoint is stated as lying in a relative
 interior.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

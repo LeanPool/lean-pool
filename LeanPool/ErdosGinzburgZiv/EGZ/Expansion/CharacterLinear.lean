@@ -18,7 +18,7 @@ one-dimensional character equivalence recovers its finite-field linear
 functional.  This gives the exact normalization needed for geometric sums.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ.Expansion
 

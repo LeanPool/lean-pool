@@ -54,11 +54,11 @@ lemma interp_const_le_of_le_of_le {a b T₀ T₁ : I} (hab : a ≤ b) (hT : T₀
   nlinarith
 
 /-- The continuous map `t ↦ (1 - t) * a + t * b` interpolating between `a` and `b` in `I`. -/
-def interpolateConst (a b : I) : C(I, I) where
+@[expose] def interpolateConst (a b : I) : C(I, I) where
   toFun := fun t => ⟨_, interp_mem_I t a b⟩
 
 /-- The directed-map version of `interpolateConst` when `a ≤ b`. -/
-def directedInterpolateConst {a b : I} (h : a ≤ b) : D(I,I) where
+@[expose] def directedInterpolateConst {a b : I} (h : a ≤ b) : D(I,I) where
   toContinuousMap := interpolateConst a b
   directed_toFun := fun _ _ _ hγ _ _ hxy => interp_const_le_of_le_of_le h (hγ hxy)
 

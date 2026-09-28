@@ -733,7 +733,7 @@ section Gaps
 variable {n : ℕ} {T : Finset ℝ} (hcard : T.card = n)
 
 /-- The `i`-th parameter, in increasing order. -/
-noncomputable def par (T : Finset ℝ) (hcard : T.card = n) (i : Fin n) : ℝ :=
+@[expose] noncomputable def par (T : Finset ℝ) (hcard : T.card = n) (i : Fin n) : ℝ :=
   T.orderEmbOfFin hcard i
 
 /-- The right end of the `i`-th gap: the next parameter, or `1` for the last gap. -/

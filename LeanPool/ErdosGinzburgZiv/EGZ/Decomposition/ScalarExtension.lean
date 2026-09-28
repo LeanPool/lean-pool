@@ -19,7 +19,7 @@ these integer coefficients constructs compatible affine maps over the real
 numbers and modulo every natural number.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 
@@ -54,7 +54,7 @@ namespace IntegralAffineMap
 variable {l m n : ℕ}
 
 /-- Extend the integer matrix of a linear map to a commutative ring. -/
-noncomputable def linearScalarExtension (R : Type*) [CommRing R]
+@[expose] noncomputable def linearScalarExtension (R : Type*) [CommRing R]
     (A : IntCoord m →ₗ[ℤ] IntCoord n) : (Fin m → R) →ₗ[R] (Fin n → R) where
   toFun x i := ∑ j, x j * (A (Pi.single j 1) i : R)
   map_add' x y := by

@@ -18,7 +18,7 @@ spectral gap for short integer multiples of the available translations.
 Subadditivity then transfers growth back to an original translation.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

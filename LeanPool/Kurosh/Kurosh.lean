@@ -495,7 +495,7 @@ the stabilizer calculation does not depend on a choice of representatives.
 -/
 
 /-- Equivalence under multiplication on the right by an element of `K`. -/
-def rightCosetSetoid {P : Type w} [Group P] (K : Subgroup P) : Setoid P where
+@[expose] def rightCosetSetoid {P : Type w} [Group P] (K : Subgroup P) : Setoid P where
   r a b := ∃ k : K, a * k = b
   iseqv := by
     refine ⟨?_, ?_, ?_⟩
@@ -2342,7 +2342,7 @@ noncomputable def treeKuroshProductToH {ι : Type v} (G : ι → Type u)
   Monoid.CoprodI.lift (treeKuroshComponentHom G H)
 
 /-- Include a vertex stabilizer as a factor in the tree Kurosh product. -/
-noncomputable def treeKuroshVertexInclusion {ι : Type v}
+@[expose] noncomputable def treeKuroshVertexInclusion {ι : Type v}
     (G : ι → Type u) [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     (a : RawBassSerreOrbitVertex G H) :
     treeVertexStabilizer G H a →* TreeKuroshProduct G H :=

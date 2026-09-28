@@ -17,7 +17,7 @@ the augmented support diagram admits a representation on the old cumulative
 support spans. Its maps are the modular chart inverses of the augmented maps.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ.FlagDecomposition.Augmented
 

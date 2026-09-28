@@ -177,7 +177,7 @@ theorem exists_face_of_mem_edges {e : Finset K.Vertex} (he : e ∈ K.edges) :
 abbrev Edge : Type := {e : Finset K.Vertex // e ∈ K.edges}
 
 /-- The intrinsic one-skeleton, as the finite union of all barycentric edge carriers. -/
-def oneSkeleton : Set K.realization :=
+@[expose] def oneSkeleton : Set K.realization :=
   {x | ∃ e : K.Edge, x ∈ K.faceCarrier e.1}
 
 theorem mem_oneSkeleton_iff (x : K.realization) :
@@ -353,11 +353,11 @@ theorem edge_subset_parent (e : K.Edge) : e.1 ⊆ K.edgeParent e :=
   (Classical.choose_spec (K.exists_face_of_mem_edges e.2)).2
 
 /-- The chosen first endpoint of an intrinsic edge. -/
-noncomputable def edgeFirst (e : K.Edge) : K.Vertex :=
+@[expose] noncomputable def edgeFirst (e : K.Edge) : K.Vertex :=
   (Finset.card_eq_two.mp (K.card_of_mem_edges e.2)).choose
 
 /-- The chosen second endpoint of an intrinsic edge. -/
-noncomputable def edgeSecond (e : K.Edge) : K.Vertex :=
+@[expose] noncomputable def edgeSecond (e : K.Edge) : K.Vertex :=
   (Finset.card_eq_two.mp (K.card_of_mem_edges e.2)).choose_spec.choose
 
 theorem edgeFirst_ne_edgeSecond (e : K.Edge) : K.edgeFirst e ≠ K.edgeSecond e :=
@@ -401,12 +401,12 @@ theorem edgeVertexPoint_eq_vertexPoint (e : K.Edge) (v : K.Vertex) (hv : v ∈ e
   K.edgeVertexPoint e (K.edgeSecond e) (K.edgeSecond_mem e)
 
 /-- The first endpoint as a used vertex. -/
-noncomputable def edgeFirstUsed (e : K.Edge) : K.UsedVertex :=
+@[expose] noncomputable def edgeFirstUsed (e : K.Edge) : K.UsedVertex :=
   ⟨K.edgeFirst e, K.edgeParent e, K.edgeParent_mem e,
     K.edge_subset_parent e (K.edgeFirst_mem e)⟩
 
 /-- The second endpoint as a used vertex. -/
-noncomputable def edgeSecondUsed (e : K.Edge) : K.UsedVertex :=
+@[expose] noncomputable def edgeSecondUsed (e : K.Edge) : K.UsedVertex :=
   ⟨K.edgeSecond e, K.edgeParent e, K.edgeParent_mem e,
     K.edge_subset_parent e (K.edgeSecond_mem e)⟩
 
@@ -508,7 +508,7 @@ theorem injective_edgePath (e : K.Edge) : Function.Injective (K.edgePath e) := b
   simpa using hcoord
 
 /-- An ambient map restricted to the canonical interval of one intrinsic edge. -/
-noncomputable def mappedEdgePath (h : K.realization → Plane) (e : K.Edge) :
+@[expose] noncomputable def mappedEdgePath (h : K.realization → Plane) (e : K.Edge) :
     Set.Icc (0 : ℝ) 1 → Plane :=
   h ∘ K.edgePath e
 

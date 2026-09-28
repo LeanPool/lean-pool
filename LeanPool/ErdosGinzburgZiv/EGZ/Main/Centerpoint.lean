@@ -21,7 +21,7 @@ does not require the family to be injective. Compatibility and centered
 integer transitions identify its upper masses with cumulative lifted mass.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

@@ -17,7 +17,7 @@ local summand below the anchor to the lower layer. The lower anchor keeps
 the same cumulative function, while its upper copy ceases to be reduced.
 -/
 
-@[expose] public section
+public section
 
 
 namespace EGZ.FlagDecomposition.LowerTransfer

@@ -986,7 +986,7 @@ theorem faceVertex_ne_add_two (f : K.Face) (i : ZMod 3) :
 /-! ## Edges -/
 
 /-- A two-element vertex set contained in a maximal face. -/
-def IsEdge (e : Finset K.Vertex) : Prop :=
+@[expose] def IsEdge (e : Finset K.Vertex) : Prop :=
   e.card = 2 ∧ ∃ f : K.Face, e ⊆ K.faceVertices f
 
 /-- The edge type of a locally finite triangle complex. -/

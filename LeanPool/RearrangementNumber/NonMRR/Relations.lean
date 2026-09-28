@@ -45,7 +45,7 @@ namespace Relation
   ∀ x, ∃ y ∈ s, A.relates x y
 
 /-- The least cardinality of a dominating family. -/
-noncomputable def norm (A : Relation.{u}) : Cardinal.{u} :=
+@[expose] noncomputable def norm (A : Relation.{u}) : Cardinal.{u} :=
   sInf {κ | ∃ s : Set A.Response, A.Dominating s ∧ #s = κ}
 
 theorem dominating_univ (A : Relation.{u}) : A.Dominating univ := by

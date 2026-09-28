@@ -17,7 +17,7 @@ nodes and replacing their polytopes by these support hulls reconstructs a
 flag decomposition, including visibility of every face.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

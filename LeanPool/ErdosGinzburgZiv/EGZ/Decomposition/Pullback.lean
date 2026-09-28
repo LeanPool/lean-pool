@@ -19,7 +19,7 @@ can then be rebuilt on their active nodes. This construction permits the
 two-layer face refinement before the subsequent minimalization.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

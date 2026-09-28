@@ -79,7 +79,7 @@ def coverEdgeTarget {ι : Type v} (G : ι → Type u)
       (d.1 * (coverEdgeLetter G H d.2)⁻¹)⟩
 
 /-- The auxiliary quiver of stabilizer cosets and labeled quotient edges. -/
-@[reducible] def coverQuiver {ι : Type v} (G : ι → Type u)
+@[expose, reducible] def coverQuiver {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G)) : Quiver (CoverVertex G H) where
   Hom x y := {d : CoverSource G H × CoverEdge G H //
     coverEdgeSource G H d = x ∧ coverEdgeTarget G H d = y}
@@ -151,7 +151,7 @@ theorem coverSource_vertexRange_smul {ι : Type v} (G : ι → Type u)
   exact x.property
 
 /-- Evaluate a covering coset on the chosen representative in the Bass-Serre graph. -/
-noncomputable def coverVertexMap {ι : Type v} (G : ι → Type u)
+@[expose] noncomputable def coverVertexMap {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G)) :
     CoverVertex G H → RawBassSerreVertex G
   | ⟨a, c⟩ => Quotient.lift
@@ -280,7 +280,7 @@ noncomputable def coverVertexMap {ι : Type v} (G : ι → Type u)
     (treeKuroshVertexInclusion G H a)) p⟩
 
 /-- Bundle a quotient edge with its source and target. -/
-def coverBaseEdge {ι : Type v} (G : ι → Type u)
+@[expose] def coverBaseEdge {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     {a b : RawBassSerreOrbitVertex G H} (e : a ⟶ b) :
     CoverEdge G H :=
@@ -320,7 +320,7 @@ noncomputable def coverNegativeLiftEdge {ι : Type v} (G : ι → Type u)
   exact Quiver.Hom.cast hsource rfl (Quiver.Hom.toNeg pos)
 
 /-- Label quotient edges in the opposite covering group to respect path composition. -/
-def coverGraphLabelPrefunctor {ι : Type v} (G : ι → Type u)
+@[expose] def coverGraphLabelPrefunctor {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G)) :
     RawBassSerreOrbitVertex G H ⥤q
       CategoryTheory.SingleObj (CoverSource G H)ᵐᵒᵖ where

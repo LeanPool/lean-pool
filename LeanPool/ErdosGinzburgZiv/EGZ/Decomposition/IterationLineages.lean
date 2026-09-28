@@ -17,7 +17,7 @@ sequence. A lower bound on event colors supplies the uniform cutoff needed
 for low-level ancestor bookkeeping.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ.FlagDecomposition.Iteration
 

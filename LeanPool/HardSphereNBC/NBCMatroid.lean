@@ -195,7 +195,7 @@ lemma leastNBCandidate_toggle_eq {M : Matroid α} {A : Finset α}
   simp [e, heq]
 
 /-- The alternating sign determined by a natural-number cardinality. -/
-def matroidParitySign : Nat -> Int
+@[expose] def matroidParitySign : Nat -> Int
   | 0 => 1
   | n + 1 => -matroidParitySign n
 

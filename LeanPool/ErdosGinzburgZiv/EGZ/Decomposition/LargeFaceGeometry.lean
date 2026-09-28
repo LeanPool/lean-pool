@@ -17,7 +17,7 @@ containing that set have strictly decreasing dimension in a nested polytope
 sequence satisfying the no-repetition condition.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ.RationalPolytope.Face
 

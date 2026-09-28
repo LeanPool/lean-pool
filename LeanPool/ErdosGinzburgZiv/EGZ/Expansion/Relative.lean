@@ -25,7 +25,7 @@ The paper's "linear functions" are affine functionals, consistently with
 its slab definition and with the functional constructed in its proof.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

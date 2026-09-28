@@ -20,7 +20,7 @@ occurrences of its least color.  The required number of occurrences may
 depend arbitrarily on the first index of the interval.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ
 

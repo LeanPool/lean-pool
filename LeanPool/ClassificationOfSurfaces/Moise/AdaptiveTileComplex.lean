@@ -47,7 +47,7 @@ theorem levelFaceHomeoSymm_mem_carrier {n : ℕ} (t : K.LevelFace n)
   simpa only [(K.safeSubdivision n).homeo.symm_apply_apply] using hx
 
 /-- Remove the faithful subdivision transport from one adaptive tile. -/
-noncomputable def adaptiveFaceSourceHomeomorph (t : K.AdaptiveFace U) :
+@[expose] noncomputable def adaptiveFaceSourceHomeomorph (t : K.AdaptiveFace U) :
     K.AdaptiveClosedFace U t ≃ₜ
       (K.safeSubdivision t.1).refined.ClosedFace t.2.1 where
   toFun p := ⟨(K.safeSubdivision t.1).homeo.symm p.1,

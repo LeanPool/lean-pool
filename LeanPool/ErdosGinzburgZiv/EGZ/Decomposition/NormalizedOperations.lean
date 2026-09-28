@@ -18,7 +18,7 @@ monotone prime threshold. A finite radius horizon therefore fixes the prime
 before any choices in the refinement run are made.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ
 

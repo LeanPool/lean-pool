@@ -19,7 +19,7 @@ bounded maximum: the cutoff is the number of integral points in all fibre
 polytopes, which is finite by local finiteness of the fibre lattices.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

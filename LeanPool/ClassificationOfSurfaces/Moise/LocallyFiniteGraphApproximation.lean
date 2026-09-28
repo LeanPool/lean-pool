@@ -76,7 +76,7 @@ variable {K : LocallyFiniteTriangleComplex S} (G : K.PlaneGraphRealization)
 
 /-- Reduce the quantitative replacement controls without changing the realized map, its target
 region, or any local-finiteness data. -/
-def withApproximationControls
+@[expose] def withApproximationControls
     (vertexControl : K.Vertex → ℝ) (hvertex : ∀ v, 0 < vertexControl v)
     (edgeControl : K.Edge → ℝ) (hedge : ∀ e, 0 < edgeControl e) :
     K.PlaneGraphRealization where
@@ -113,7 +113,7 @@ noncomputable def vertexImage (v : K.Vertex) : Plane :=
   G.map ⟨K.vertexPoint v, K.vertexPoint_mem_support v⟩
 
 /-- The image of an edge carrier in chart coordinates. -/
-def edgeImage (e : K.Edge) : Set Plane :=
+@[expose] def edgeImage (e : K.Edge) : Set Plane :=
   G.map '' {p : K.support | p.1 ∈ K.edgeCarrier e}
 
 theorem edgeImage_eq_structure_family (e : K.Edge) :
@@ -2757,7 +2757,7 @@ theorem edgePathInSupportToCarrier_surjective (e : K.Edge) :
   exact ⟨r, rfl⟩
 
 /-- The canonical source interval of an edge, inside the support subtype. -/
-noncomputable def edgePathInSupportHomeomorph (e : K.Edge) :
+@[expose] noncomputable def edgePathInSupportHomeomorph (e : K.Edge) :
     Set.Icc (0 : ℝ) 1 ≃ₜ edgeInSupport (K := K) e := by
   letI : T2Space K.support := G.isEmbedding.t2Space
   exact ((continuous_edgePathInSupportToCarrier (K := K) e).isClosedEmbedding

@@ -17,7 +17,7 @@ It retains all the input mass and is reduced and minimal.  This is the
 starting object for the refinement argument.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

@@ -28,7 +28,7 @@ open scoped _root_.Topology
 
 /-- A positive control on `U` is strongly positive when it has a positive lower bound on every
 compact subset of `U`.  This is Moise's notation `phi >> 0`, stated without continuity. -/
-def StronglyPositiveOn {X : Type*} [TopologicalSpace X]
+@[expose] def StronglyPositiveOn {X : Type*} [TopologicalSpace X]
     (U : Set X) (phi : X → ℝ) : Prop :=
   ∀ C : Set X, IsCompact C → C ⊆ U →
     ∃ eps : ℝ, 0 < eps ∧ ∀ x ∈ C, eps ≤ phi x

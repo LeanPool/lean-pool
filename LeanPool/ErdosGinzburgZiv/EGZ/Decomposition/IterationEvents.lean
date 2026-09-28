@@ -17,7 +17,7 @@ An event records an unsatisfied conclusion. Its color orders completeness
 and face events by the represented level, with gap cleanup last.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ.FlagDecomposition
 
@@ -90,7 +90,7 @@ noncomputable def cutoff : s.Event → ℕ
   | .complete x => s.decomposition.level x
 
 /-- Encode the event type and its level as a natural number for the stopping argument. -/
-noncomputable def color : s.Event → ℕ
+@[expose] noncomputable def color : s.Event → ℕ
   | .gap => 2 * (d + 1) ^ 2
   | .face x _ => 2 * s.decomposition.level x + 1
   | .complete x => 2 * s.decomposition.level x

@@ -18,7 +18,7 @@ additional coordinates along lower transitions, and commute with scalar
 extension and reduction modulo every modulus.
 -/
 
-@[expose] public section
+public section
 
 namespace EGZ
 

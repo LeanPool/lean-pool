@@ -18,7 +18,7 @@ equal first-coordinate sums.  Its shift lies in the remaining coordinates.
 Injective samples of a balanced pattern produce such exchanges.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 
