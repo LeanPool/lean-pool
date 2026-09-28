@@ -195,6 +195,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/RootSystem                https://github.com/Antoine-dSG/root_system
   LeanPool/RungeKuttaOrderConditions https://github.com/karlesmarin/runge-kutta-order-conditions-lean
   LeanPool/Rupert                    https://github.com/dwrensha/Rupert.lean
+  LeanPool/SNumbers                  https://github.com/mario-ullrich/lean-snumbers
   LeanPool/Sabidussi                 https://github.com/gexahedron/sabidussi-lean
   LeanPool/SardMoreira               https://github.com/urkud/SardMoreira
   LeanPool/Schoenflies               https://github.com/alonamaloh/schoenflies-lean
@@ -258,6 +259,7 @@ MIT permission notice that follows them.
   LeanPool/DirectedTopologyLean4     https://github.com/Dominique-Lawson/Directed-Topology-Lean-4
       Copyright 2023 Dominique Lawson
 
+  LeanPool/ErdosGinzburgZiv          https://github.com/zakharov2k/egz-formal-proof
   LeanPool/FactorizationSystems      https://github.com/ivankobe/FactorizationSystems
       Copyright (c) 2024 ivankobe
 
