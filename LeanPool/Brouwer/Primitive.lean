@@ -6,7 +6,7 @@ Authors: Math_XMUM
 module
 
 public import LeanPool.Brouwer.ScarfPath
-public import Mathlib.Algebra.Group.End -- shake: keep
+public import Mathlib.Algebra.Group.End
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 import Mathlib.Tactic.Linarith.Frontend
