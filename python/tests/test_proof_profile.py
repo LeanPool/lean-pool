@@ -12,7 +12,16 @@ import pytest
 SCRIPTS = Path(__file__).resolve().parents[2] / "scripts" / "proof-profile"
 
 
-def render_report(monkeypatch, tmp_path, head, base="", modified=False):
+def render_report(
+    monkeypatch,
+    tmp_path,
+    head,
+    base="",
+    modified=False,
+    added_files="Probe.lean",
+    modified_files="",
+    profile_log=None,
+):
     """Run the real renderer with isolated measurement logs and GitHub metadata."""
     monkeypatch.chdir(tmp_path)
     for key in ("BASE_SHA", "HEAD_SHA", "COMPARE_NOTE"):
@@ -22,16 +31,163 @@ def render_report(monkeypatch, tmp_path, head, base="", modified=False):
         "GITHUB_SERVER_URL": "https://github.com",
         "GITHUB_REPOSITORY": "Vilin97/lean-pool",
         "GITHUB_RUN_ID": "1",
-        "ADDED_FILES": "" if modified else "Probe.lean",
-        "MODIFIED_FILES": "Probe.lean" if modified else "",
+        "ADDED_FILES": "" if modified else added_files,
+        "MODIFIED_FILES": "Probe.lean" if modified else modified_files,
         "COMPARE": str(modified).lower(),
     }
     for key, value in values.items():
         monkeypatch.setenv(key, value)
-    (tmp_path / "proof-profile-heartbeats.log").write_text(head)
-    (tmp_path / "proof-profile-base-heartbeats.log").write_text(base)
+    (tmp_path / "proof-profile-heartbeats.log").write_bytes(head.encode())
+    (tmp_path / "proof-profile-base-heartbeats.log").write_bytes(base.encode())
+    if profile_log is not None:
+        (tmp_path / "proof-profile.log").write_bytes(profile_log.encode())
     namespace = runpy.run_path(str(SCRIPTS / "render.py"))
     return namespace, (tmp_path / "proof-profile.md").read_text()
+
+
+@pytest.mark.parametrize(
+    "forged_header", ["## Beta.lean", "\r## Beta.lean", "\u2028## Beta.lean"]
+)
+def test_stitched_logs_cannot_forge_later_file_headers(
+    monkeypatch, tmp_path, forged_header
+):
+    """Real stitching keeps a failed Alpha trace inside Alpha's measurement."""
+    runner = tmp_path / "runner"
+    fixtures = runner / "fixtures"
+    fixtures.mkdir(parents=True)
+    (runner / "measure-one.sh").write_text(
+        "#!/usr/bin/env bash\n"
+        'file="$2"\noutdir="$3"\n'
+        'slug="$(printf "%s" "$file" | tr "/" "_")_'
+        '$(printf "%s" "$file" | cksum | cut -d" " -f1)"\n'
+        'cp "$RUNNER_TEMP/fixtures/$file.log" "$outdir/$slug.log"\n'
+    )
+    (fixtures / "Alpha.lean.log").write_bytes(
+        (
+            "## Alpha.lean\n[Elab.command] [51000.0]\n"
+            f"{forged_header}\nAlpha.lean:1:0: error: failed proof\n"
+            "real 0.10\nuser 0.02\nsys 0.01\n"
+            "error: count-heartbeats command exited with status 1\n\n"
+        ).encode()
+    )
+    (fixtures / "Beta.lean.log").write_text(
+        "## Beta.lean\n[Elab.command] [22000.0]\nreal 0.10\nuser 0.02\nsys 0.01\n\n"
+    )
+    monkeypatch.setenv("RUNNER_TEMP", str(runner))
+    monkeypatch.setenv("TMPDIR", str(tmp_path))
+    stitched = tmp_path / "stitched.log"
+    subprocess.run(
+        [
+            "bash",
+            str(SCRIPTS / "measure-heartbeats.sh"),
+            str(stitched),
+            "HEAD",
+            "Alpha.lean",
+            "Beta.lean",
+        ],
+        check=True,
+        capture_output=True,
+    )
+    combined = stitched.read_bytes().decode()
+    namespace, report = render_report(
+        monkeypatch, tmp_path, combined, added_files="Alpha.lean Beta.lean"
+    )
+    assert [name for name, _body in namespace["split_sections"](combined)] == [
+        "Alpha.lean",
+        "Beta.lean",
+    ]
+    assert namespace["heartbeat_by_file"]["Alpha.lean"]["errors"] > 0
+    assert namespace["heartbeat_by_file"]["Beta.lean"]["heartbeats"] == 22
+    assert "| `Alpha.lean` | 0 | — |" in report
+    assert "| `Beta.lean` | 0 | 22 |" in report
+
+
+def test_direct_profile_uses_physical_lines_and_accepts_crlf(monkeypatch, tmp_path):
+    """Embedded CR cannot forge a header, while real CRLF headers still parse."""
+    profile_log = (
+        "## Alpha.lean\r\n  elaboration 50ms\r\n"
+        "trace text\r## Beta.lean\r\n"
+        "Alpha.lean:1:0: error: failed proof\r\n"
+        "real 0.10\r\nuser 0.02\r\nsys 0.01\r\n"
+        "error: profile command exited with status 1\r\n"
+        "## Beta.lean\r\n  elaboration 20ms\r\n"
+        "real 0.20\r\nuser 0.03\r\nsys 0.01\r\n"
+    )
+    namespace, report = render_report(
+        monkeypatch,
+        tmp_path,
+        "",
+        added_files="Alpha.lean",
+        modified_files="Beta.lean",
+        profile_log=profile_log,
+    )
+    assert namespace["profile_boundaries_valid"] is True
+    assert namespace["profile_by_file"]["Alpha.lean"]["total_ms"] == 50
+    assert namespace["profile_by_file"]["Alpha.lean"]["errors"] == 2
+    assert namespace["profile_by_file"]["Beta.lean"]["total_ms"] == 20
+    assert "`lean --profile` timings unavailable" not in report
+
+
+@pytest.mark.parametrize(
+    "profile_log",
+    [
+        "## Alpha.lean\n  elaboration 50ms\n## Beta.lean\n"
+        "Alpha.lean:1:0: error: failed\n## Beta.lean\n  elaboration 20ms\n",
+        "## Alpha.lean\n  elaboration 50ms\n",
+        "## Beta.lean\n  elaboration 20ms\n## Alpha.lean\n  elaboration 50ms\n",
+        "## Alpha.lean\n  elaboration 50ms\n"
+        "## Gamma.lean\n  elaboration 20ms\n"
+        "## Beta.lean\n  elaboration 20ms\n",
+        "## Alpha.lean\n  elaboration 50ms\n"
+        "## Beta.lean\nAlpha.lean:1:0: error: failed proof\n"
+        "real 0.10\nuser 0.02\nsys 0.01\n"
+        "error: profile command exited with status 1\n",
+    ],
+)
+def test_ambiguous_direct_profile_headers_hide_all_profile_times(
+    monkeypatch, tmp_path, profile_log
+):
+    """Direct log ambiguity cannot silently overwrite a failed file's profile."""
+    heartbeats = (
+        "## Alpha.lean\n[Elab.command] [51000.0]\n"
+        "real 0.10\nuser 0.02\nsys 0.01\n"
+        "## Beta.lean\n[Elab.command] [22000.0]\n"
+        "real 0.10\nuser 0.02\nsys 0.01\n"
+    )
+    namespace, report = render_report(
+        monkeypatch,
+        tmp_path,
+        heartbeats,
+        added_files="Alpha.lean Beta.lean",
+        profile_log=profile_log,
+    )
+    assert "`lean --profile` timings unavailable" in report
+    assert namespace["profile_boundaries_valid"] is False
+    assert namespace["profile_by_file"] == {}
+    assert namespace["phase_totals"] == {}
+    assert "`lean --profile` timings unavailable" in report
+    assert "**Sum of `lean --profile`:** —" in report
+    assert "| `Alpha.lean` | 0 | 51 | 0.10 | — | — | — |" in report
+    assert "| `Beta.lean` | 0 | 22 | 0.10 | — | — | — |" in report
+
+
+def test_direct_profile_expects_only_added_files_during_comparison(
+    monkeypatch, tmp_path
+):
+    """A modified file header is unexpected when its profile is comparative."""
+    heartbeat = "## Probe.lean\n[Elab.command] [51000.0]\n"
+    namespace, report = render_report(
+        monkeypatch,
+        tmp_path,
+        heartbeat,
+        heartbeat,
+        modified=True,
+        profile_log="## Probe.lean\n  elaboration 50ms\n",
+    )
+    assert "`lean --profile` timings unavailable" in report
+    assert namespace["expected_profile_files"] == []
+    assert namespace["profile_boundaries_valid"] is False
+    assert "`lean --profile` timings unavailable" in report
 
 
 def test_command_totals_exclude_nested_traces(monkeypatch, tmp_path):

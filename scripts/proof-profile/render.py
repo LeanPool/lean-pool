@@ -60,6 +60,9 @@ heartbeat_exit_error_re = re.compile(
     r"^error: count-heartbeats command exited with status [1-9][0-9]*$"
 )
 heartbeat_source_error_re = re.compile(r"^error: could not read .+ at revision .+$")
+profile_exit_error_re = re.compile(
+    r"^error: profile command exited with status [1-9][0-9]*$"
+)
 legacy_heartbeat_re = re.compile(r"[Uu]sed\s+(?:approximately\s+)?[0-9]+\s+heartbeats")
 
 
@@ -67,6 +70,11 @@ def format_ms(ms: float) -> str:
     """Format milliseconds with the equivalent seconds."""
 
     return f"{ms:.1f} ms (= {ms / 1000:.2f} s)"
+
+
+def format_profile_seconds(ms: float | None) -> str:
+    """Format a measured profile time without turning missing data into zero."""
+    return "—" if ms is None else f"{ms / 1000:.2f}"
 
 
 def format_seconds(seconds: float | None) -> str:
@@ -104,13 +112,13 @@ def format_delta_pct(delta: float, base: float) -> str:
 
 
 def split_sections(log_text: str) -> list[tuple[str, str]]:
-    """Split a profile log into `## <file>` sections."""
+    """Split only on physical LF-delimited `## <file>` lines."""
 
     sections: list[tuple[str, str]] = []
     name = None
     buf: list[str] = []
-    for line in log_text.splitlines():
-        header = re.match(r"^## (.+)$", line)
+    for line in log_text.split("\n"):
+        header = re.fullmatch(r"## ([^\r\n]+)\r?", line)
         if header:
             if name is not None:
                 sections.append((name, "\n".join(buf).rstrip()))
@@ -121,6 +129,19 @@ def split_sections(log_text: str) -> list[tuple[str, str]]:
     if name is not None:
         sections.append((name, "\n".join(buf).rstrip()))
     return sections
+
+
+def has_profile_trailer(body: str) -> bool:
+    """Require the timed wrapper's complete trailer in a profile section."""
+    lines = body.splitlines()
+    if lines and profile_exit_error_re.fullmatch(lines[-1]):
+        lines.pop()
+    trailer = [time_re.fullmatch(line.strip()) for line in lines[-3:]]
+    return (
+        len(trailer) == 3
+        and all(trailer)
+        and [match.group(1) for match in trailer] == ["real", "user", "sys"]
+    )
 
 
 def parse_heartbeat_sections(log_text: str) -> dict[str, dict[str, float | int | None]]:
@@ -262,6 +283,11 @@ def git_show(ref: str, path: str) -> str | None:
         return None
 
 
+def read_log(path: Path) -> str:
+    """Read a log without translating embedded CR into a section boundary."""
+    return path.read_bytes().decode(errors="replace") if path.exists() else ""
+
+
 def statement_changes(files: list[str]) -> dict[str, "statements_mod.StatementDiff"]:
     """Map each modified file to its base→head statement diff.
 
@@ -300,17 +326,9 @@ modified_files = os.environ.get("MODIFIED_FILES", "").split()
 compare = os.environ.get("COMPARE", "") == "true"
 compare_note = os.environ.get("COMPARE_NOTE", "").strip()
 
-log_text = log_path.read_text() if log_path.exists() else ""
-heartbeat_text = (
-    heartbeat_log_path.read_text(errors="replace")
-    if heartbeat_log_path.exists()
-    else ""
-)
-base_heartbeat_text = (
-    base_heartbeat_log_path.read_text(errors="replace")
-    if base_heartbeat_log_path.exists()
-    else ""
-)
+log_text = read_log(log_path)
+heartbeat_text = read_log(heartbeat_log_path)
+base_heartbeat_text = read_log(base_heartbeat_log_path)
 
 heartbeat_by_file = parse_heartbeat_sections(heartbeat_text)
 base_heartbeat_by_file = parse_heartbeat_sections(base_heartbeat_text)
@@ -345,6 +363,25 @@ if not log_text.strip() and not heartbeat_text.strip():
 # Split the log into one section per profiled file (delimited by
 # `## <file>` markers written by the profile loop).
 sections = split_sections(log_text)
+expected_profile_files = added_files if compare else added_files + modified_files
+profile_headers = [fname for fname, _body in sections]
+first_profile_line = log_text.split("\n", 1)[0].removesuffix("\r")
+profile_boundaries_valid = (
+    profile_headers == expected_profile_files
+    and (
+        not expected_profile_files
+        or first_profile_line == f"## {expected_profile_files[0]}"
+    )
+    and all(has_profile_trailer(body) for _fname, body in sections)
+)
+if not profile_boundaries_valid:
+    sections = []
+    out.append(
+        "> **`lean --profile` timings unavailable.** The log has missing, "
+        "unexpected, duplicate, or out-of-order file headers, or an incomplete "
+        "timing trailer. See the raw "
+        "artifact; count-heartbeats measurements remain separate.\n\n"
+    )
 
 # Parse `lake build` timing up front so the wall-clock number can
 # lead the comment — it is the single most useful answer to "how
@@ -656,7 +693,9 @@ absolute_heartbeats = {
     if fname not in compared_set
 }
 
-all_files = sorted(set(profile_by_file) | set(absolute_heartbeats))
+all_files = sorted(
+    set(expected_profile_files) | set(profile_by_file) | set(absolute_heartbeats)
+)
 if not all_files and not compared:
     out.append("_No files profiled._\n")
 elif all_files:
@@ -677,9 +716,9 @@ elif all_files:
                     else None
                 ),
                 heartbeat.get("wall_seconds"),
-                float(profile.get("total_ms", 0.0)),
-                float(profile.get("local_ms", 0.0)),
-                float(profile.get("import_ms", 0.0)),
+                float(profile["total_ms"]) if profile else None,
+                float(profile["local_ms"]) if profile else None,
+                float(profile["import_ms"]) if profile else None,
                 int(profile.get("phases", 0)),
                 int(profile.get("errors", 0))
                 + int(heartbeat.get("errors", 0)),
@@ -694,10 +733,19 @@ elif all_files:
         total_heartbeats if valid_heartbeat_files else None
     )
     total_wall_seconds = sum(r[3] or 0.0 for r in summary_rows)
-    total_ms = sum(r[4] for r in summary_rows)
-    total_local_ms = sum(r[5] for r in summary_rows)
-    total_import_ms = sum(r[6] for r in summary_rows)
-    total_phases = sum(r[7] for r in summary_rows)
+    total_ms = sum(r[4] or 0.0 for r in summary_rows)
+    total_local_ms = sum(r[5] or 0.0 for r in summary_rows)
+    total_import_ms = sum(r[6] or 0.0 for r in summary_rows)
+    valid_profile_files = sum(r[4] is not None for r in summary_rows)
+    table_profile_total = format_profile_seconds(
+        total_ms if valid_profile_files else None
+    )
+    table_local_total = format_profile_seconds(
+        total_local_ms if valid_profile_files else None
+    )
+    table_import_total = format_profile_seconds(
+        total_import_ms if valid_profile_files else None
+    )
     total_errors = sum(r[8] for r in summary_rows)
     total_declarations = sum(r[9] for r in summary_rows)
     file_count = len(summary_rows)
@@ -707,14 +755,19 @@ elif all_files:
         f"{'' if valid_heartbeat_files == 1 else 's'} "
         f"({format_int(total_loc)} added LOC).\n\n"
     )
+    profile_total = format_ms(total_ms) if valid_profile_files else "—"
+    local_total = format_ms(total_local_ms) if valid_profile_files else "—"
+    import_total = format_ms(total_import_ms) if valid_profile_files else "—"
     absolute_out.append(
-        f"**Sum of `lean --profile`:** {format_ms(total_ms)}. "
-        f"**Import-excluded time:** {format_ms(total_local_ms)}.\n\n"
+        f"**Sum of `lean --profile`:** {profile_total} "
+        f"across {valid_profile_files} valid file"
+        f"{'' if valid_profile_files == 1 else 's'}. "
+        f"**Import-excluded time:** {local_total}.\n\n"
     )
     absolute_out.append(
         f"**Count-heartbeats wall-clock total:** {total_wall_seconds:.2f} s. "
         f"Repeated import cost inside `lean --profile`: "
-        f"{format_ms(total_import_ms)}.\n\n"
+        f"{import_total}.\n\n"
     )
     absolute_out.append(
         "_Heartbeat values sum disjoint root command traces with "
@@ -751,8 +804,9 @@ elif all_files:
         absolute_out.append(
             f"| `{fname}` | {format_int(loc)} | "
             f"{format_heartbeats(heartbeats)} | "
-            f"{format_seconds(wall_seconds)} | {total / 1000:.2f} | "
-            f"{local / 1000:.2f} | {import_ms / 1000:.2f} | "
+            f"{format_seconds(wall_seconds)} | {format_profile_seconds(total)} | "
+            f"{format_profile_seconds(local)} | "
+            f"{format_profile_seconds(import_ms)} | "
             f"{declarations} | {errors} |\n"
         )
     # Total row in the same table so any single file's cumulative
@@ -760,9 +814,10 @@ elif all_files:
     absolute_out.append(
         f"| **Total** | **{format_int(total_loc)}** "
         f"| **{heartbeat_total_label}** "
-        f"| **{total_wall_seconds:.2f}** | **{total_ms / 1000:.2f}** "
-        f"| **{total_local_ms / 1000:.2f}** "
-        f"| **{total_import_ms / 1000:.2f}** "
+        f"| **{total_wall_seconds:.2f}** "
+        f"| **{table_profile_total}** "
+        f"| **{table_local_total}** "
+        f"| **{table_import_total}** "
         f"| **{total_declarations}** | **{total_errors}** |\n"
     )
     absolute_out.append("\n")
@@ -773,6 +828,8 @@ elif all_files:
     absolute_out.append("|---|---:|\n")
     for phase, ms in phase_rows[:12]:
         absolute_out.append(f"| `{phase}` | {format_ms(ms)} |\n")
+    if not phase_rows:
+        absolute_out.append("| _Unavailable_ | — |\n")
     absolute_out.append("\n")
 
 if all_files or compared:
