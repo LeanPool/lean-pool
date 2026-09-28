@@ -29,4 +29,3 @@ public import LeanPool.KaltonPeck.KaltonPeck.Support.Symplectic
 public import LeanPool.KaltonPeck.KaltonPeck.Support.TargetSupport
 
 /-! Supporting modules for Rank parity and complex structures on the Kalton–Peck space. -/
-
