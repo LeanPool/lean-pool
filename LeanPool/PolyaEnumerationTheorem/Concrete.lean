@@ -7,10 +7,6 @@ module
 
 public import Mathlib.GroupTheory.SpecificGroups.Dihedral
 public import LeanPool.PolyaEnumerationTheorem.Basic
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Data.Sym.Sym2.Init
-import Mathlib.Tactic.NormNum.GCD
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Numbers of distinct colorings for some concrete examples
@@ -48,7 +44,7 @@ lemma numDistinctColoringsOfTrivialGroup (X : Type u) (Y : Type v) [Fintype X] [
     by
       intro f
       rcases Quotient.mk_surjective f with ⟨g, rfl⟩
-      simp_all,
+      rfl,
     by
       intro
       rfl⟩
