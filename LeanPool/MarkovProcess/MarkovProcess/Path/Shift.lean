@@ -28,6 +28,7 @@ namespace ContinuousPath
 variable {alpha : Type*} [TopologicalSpace alpha]
 
 /-- Translation of nonnegative time by `S`, as a continuous self-map of `NNReal`. -/
+@[expose]
 def timeTranslation (S : NNReal) : C(NNReal, NNReal) where
   toFun t := S + t
   continuous_toFun := continuous_const.add continuous_id
@@ -36,6 +37,7 @@ def timeTranslation (S : NNReal) : C(NNReal, NNReal) where
 theorem timeTranslation_apply (S t : NNReal) : timeTranslation S t = S + t := rfl
 
 /-- Shift a continuous path forward by the deterministic time `S`. -/
+@[expose]
 def shift (S : NNReal) (omega : ContinuousPath alpha) : ContinuousPath alpha :=
   omega.comp (timeTranslation S)
 

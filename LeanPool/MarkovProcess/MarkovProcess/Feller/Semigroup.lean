@@ -44,6 +44,7 @@ def IsFellerKernelSemigroup (P : SubMarkovKernelSemigroup α)
 variable (P : SubMarkovKernelSemigroup α) (hC0 : P.MapsC0)
 
 /-- Package the kernel action on `C₀` as a strongly continuous contraction semigroup. -/
+@[expose]
 noncomputable def c0Semigroup (hTime : P.HasContinuousC0Orbits hC0) :
     Semigroup.StronglyContinuousContractionSemigroup C₀(α, ℝ) where
   operator := P.c0Operator hC0

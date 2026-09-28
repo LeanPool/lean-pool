@@ -89,6 +89,7 @@ theorem continuous_operator_apply (S : StronglyContinuousContractionSemigroup E)
 
 /-- Construct a strongly continuous contraction semigroup by checking strong
 convergence to the identity only at time zero. -/
+@[expose]
 def ofTendstoZero
     (T : NNReal → E →L[ℝ] E)
     (hzero : T 0 = ContinuousLinearMap.id ℝ E)

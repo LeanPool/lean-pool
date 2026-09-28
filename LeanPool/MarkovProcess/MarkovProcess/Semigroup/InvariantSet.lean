@@ -30,6 +30,7 @@ section
 namespace MarkovProcess.Semigroup
 
 /-- A map preserves a set if it sends every member of the set back into it. -/
+@[expose]
 def PreservesSet {E F : Type*} (T : E → F) (C : Set E) (D : Set F) : Prop :=
   ∀ ⦃x⦄, x ∈ C → T x ∈ D
 

@@ -28,6 +28,7 @@ variable {Ω E : Type*} {mΩ : MeasurableSpace Ω} [PseudoEMetricSpace E]
 
 /-- The event that at least one adjacent increment of a finite time grid has `p`-th power at
 least `ε ^ p`. -/
+@[expose]
 def finiteGridBadIncrement {T : Type*} {N : ℕ} (X : T → Ω → E)
     (grid : Fin (N + 1) → T) (p : ℝ) (ε : ℝ≥0∞) : Set Ω :=
   ⋃ i : Fin N,
@@ -67,6 +68,7 @@ theorem IsKolmogorovProcess.measure_finiteGridBadIncrement_le
     _ = N * (M * δ ^ q / ε ^ p) := by simp
 
 /-- The dyadic grid of mesh `2⁻ⁿ` on the unit time interval. -/
+@[expose]
 def unitDyadicGrid (n : ℕ) : Fin (2 ^ n + 1) → NNRat :=
   fun i ↦ (i : ℕ) / (2 ^ n : NNRat)
 

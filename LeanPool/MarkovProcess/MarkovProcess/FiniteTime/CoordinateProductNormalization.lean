@@ -44,6 +44,7 @@ def normalizedCoordinateFactors (factors : List (Fin n × C₀(alpha, ℝ))) :
     (fun _ ↦ none)
 
 /-- Scalar evaluation of an optional normalized factor; inactivity contributes scalar one. -/
+@[expose]
 def evalOptionalFactor (x : alpha) : Option C₀(alpha, ℝ) → ℝ
   | none => 1
   | some f => f x

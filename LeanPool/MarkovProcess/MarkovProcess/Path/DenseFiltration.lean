@@ -40,6 +40,7 @@ def denseCanonicalFiltration (S : DenseTime) : MeasurableSpace (ContinuousPath a
       inferInstance
 
 /-- Restrict a continuous path to the rational times at most `S`. -/
+@[expose]
 def densePastRestriction (S : DenseTime) (omega : ContinuousPath alpha) : Set.Iic S → alpha :=
   fun r ↦ coordinateProcess (alpha := alpha) (DenseTime.castOrderEmbedding r) omega
 

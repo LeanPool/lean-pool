@@ -39,6 +39,7 @@ def initialSegment {m n : ℕ}
   times.restrict ((Fin.castAddOrderEmb n).trans (cutIndexOrderIso m n).toOrderEmbedding)
 
 /-- Times after the cut, measured relative to the time at the cut. -/
+@[expose]
 def relativeFinalSegment {m n : ℕ}
     (times : FiniteOrderedTimes (n + (m + 1))) : FiniteOrderedTimes n :=
   OrderEmbedding.ofStrictMono

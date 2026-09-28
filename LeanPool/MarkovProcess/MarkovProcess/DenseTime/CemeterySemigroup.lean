@@ -167,6 +167,7 @@ end Kernel
 namespace SubMarkovKernelSemigroup
 
 /-- The conservative cemetery extension of a sub-Markov kernel semigroup. -/
+@[expose]
 noncomputable def cemeterySemigroup (P : SubMarkovKernelSemigroup α) :
     SubMarkovKernelSemigroup (Cemetery α) where
   kernel t := Kernel.cemeteryExtension (P t)

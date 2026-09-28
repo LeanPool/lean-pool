@@ -32,6 +32,7 @@ variable {Theta alpha : Type*} [MeasurableSpace Theta] [MeasurableSpace alpha]
 
 /-- The jointly measurable conservative cemetery extension of a parameterized sub-Markov
 kernel semigroup. -/
+@[expose]
 def cemeterySemigroup (P : ParameterizedSubMarkovKernelSemigroup Theta alpha) :
     ParameterizedSubMarkovKernelSemigroup Theta (Cemetery alpha) where
   kernel theta t := Kernel.cemeteryExtension (P theta t)

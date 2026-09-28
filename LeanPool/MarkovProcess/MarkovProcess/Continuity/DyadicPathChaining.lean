@@ -94,6 +94,7 @@ section Chaining
 variable {E : Type*} [PseudoEMetricSpace E]
 
 /-- Every adjacent increment of `f` on the level-`m` subdivision of `[0, T]` is at most `e`. -/
+@[expose]
 def HasDyadicAdjacentBound (f : ℝ≥0 → E) (T : ℝ≥0) (m : ℕ) (e : ℝ≥0∞) : Prop :=
   ∀ i < 2 ^ m, edist (f (dyadicTime T m i)) (f (dyadicTime T m (i + 1))) ≤ e
 

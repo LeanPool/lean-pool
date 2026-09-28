@@ -34,6 +34,7 @@ variable {alpha : Type*} [MetricSpace alpha]
   [MeasurableSpace alpha] [BorelSpace alpha]
 
 /-- Evaluation of a rational past at its terminal coordinate. -/
+@[expose]
 def densePastTerminal (S : DenseTime) (history : Set.Iic S → alpha) : alpha :=
   history ⟨S, Set.mem_Iic.mpr le_rfl⟩
 

@@ -48,6 +48,7 @@ private theorem measurable_finCons_snd {n : ℕ} :
           (Theta × alpha) × (Fin n → alpha) → Fin n → alpha))
 
 /-- The jointly measurable finite-time kernel for a parameterized semigroup. -/
+@[expose]
 noncomputable def parameterizedFiniteTimeKernel
     (P : ParameterizedSubMarkovKernelSemigroup Theta alpha) :
     {n : ℕ} → FiniteOrderedTimes n → Kernel (Theta × alpha) (Fin n → alpha)

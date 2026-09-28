@@ -143,6 +143,7 @@ theorem measurable_coordinate [MeasurableSpace α] (t : NNReal) :
     MeasurableSpace.comap (coordinate s) inferInstance) t)
 
 /-- An ordinary continuous path regarded as a lifetime path with infinite lifetime. -/
+@[expose]
 def ofContinuousPath (ω : C(NNReal, α)) : LifetimePath α where
   lifetime := ∞
   livePath := fun t ↦ ω t

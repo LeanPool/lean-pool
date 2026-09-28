@@ -63,6 +63,7 @@ instance normedAlgebraRatEnd : NormedAlgebra ℚ (E →L[ℝ] E) :=
   NormedAlgebra.restrictScalars ℚ ℝ (E →L[ℝ] E)
 
 /-- The exponential of the bounded Yosida generator at nonnegative time. -/
+@[expose]
 def yosidaOperator (R : ContractiveResolvent E) (α : PositiveShift) (t : NNReal) :
     E →L[ℝ] E :=
   exp ((t : ℝ) • R.yosidaGenerator α)
@@ -100,6 +101,7 @@ theorem continuous_yosidaOperator_apply (R : ContractiveResolvent E)
   fun_prop
 
 /-- The exponential Yosida approximation as a strongly continuous contraction semigroup. -/
+@[expose]
 def yosidaSemigroup (R : ContractiveResolvent E) (α : PositiveShift) :
     StronglyContinuousContractionSemigroup E where
   operator := R.yosidaOperator α

@@ -41,6 +41,7 @@ namespace ContractiveResolvent
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 /-- The normalized resolvent `α R_α`. -/
+@[expose]
 def scaledOperator (R : ContractiveResolvent E) (α : PositiveShift) : E →L[ℝ] E :=
   (α : ℝ) • R.operator α
 

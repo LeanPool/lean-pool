@@ -28,6 +28,7 @@ namespace MarkovProcess
 variable {α : Type*} [MeasurableSpace α]
 
 /-- The raw real-valued integral of `f` against the measure `κ x`. -/
+@[expose]
 noncomputable def kernelIntegral (κ : Kernel α α) (f : α → ℝ) (x : α) : ℝ :=
   ∫ y, f y ∂κ x
 

@@ -46,6 +46,7 @@ namespace SubMarkovKernelSemigroup
 variable {α : Type*} [MeasurableSpace α]
 
 /-- The finite-time kernel obtained by recursively sampling a strictly ordered family of times. -/
+@[expose]
 noncomputable def finiteTimeKernel (P : SubMarkovKernelSemigroup α) :
     {n : ℕ} → FiniteOrderedTimes n → Kernel α (Fin n → α)
   | 0, _ => Kernel.const α (Measure.dirac (FiniteOrderedTimes.emptyPath α))

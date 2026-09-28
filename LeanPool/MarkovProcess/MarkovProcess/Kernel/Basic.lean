@@ -26,6 +26,7 @@ namespace MarkovProcess
 variable {α β γ : Type*} [MeasurableSpace α] [MeasurableSpace β] [MeasurableSpace γ]
 
 /-- A kernel is sub-Markov if each of its measures has total mass at most one. -/
+@[expose]
 def IsSubMarkovKernel (κ : ProbabilityTheory.Kernel α β) : Prop :=
   ∀ x, κ x Set.univ ≤ 1
 

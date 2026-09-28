@@ -118,6 +118,7 @@ abbrev DenseTime := NNRat
 namespace DenseTime
 
 /-- The order embedding of nonnegative rational times into nonnegative real times. -/
+@[expose]
 noncomputable def castOrderEmbedding : DenseTime ↪o NNReal :=
   NNRat.castOrderEmbedding
 

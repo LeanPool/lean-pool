@@ -42,6 +42,7 @@ def increment (grid : OrderedGrid) (n : ℕ) : NNReal :=
 end OrderedGrid
 
 /-- The singleton history at index zero determined by a starting state. -/
+@[expose]
 def initialHistory (x : α) : Finset.Iic 0 → α :=
   fun _ => x
 

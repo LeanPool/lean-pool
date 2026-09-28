@@ -34,6 +34,7 @@ private theorem detectionThreshold_pos (n : ℕ) : 0 < detectionThreshold n := b
 
 /-- A countable test for whether a path on `[0, t]` meets `F`.  The endpoint `t` is included
 separately, while all earlier samples use the fixed enumeration of nonnegative rational times. -/
+@[expose]
 def DetectsClosedSetOnIic (t : NNReal) (F : Set alpha) (f : C(Set.Iic t, alpha)) : Prop :=
   F.Nonempty ∧ ∀ n : ℕ,
     Metric.infDist (f ⟨t, Set.mem_Iic.mpr le_rfl⟩) F < detectionThreshold n ∨
@@ -255,6 +256,7 @@ def restrictIic (t : NNReal) (omega : ContinuousPath alpha) : C(Set.Iic t, alpha
   continuous_toFun := omega.continuous.comp continuous_subtype_val
 
 /-- The event that a continuous path meets `F` at or before time `t`. -/
+@[expose]
 def hitsSetBy (t : NNReal) (F : Set alpha) : Set (ContinuousPath alpha) :=
   {omega | ∃ s : Set.Iic t, omega s ∈ F}
 

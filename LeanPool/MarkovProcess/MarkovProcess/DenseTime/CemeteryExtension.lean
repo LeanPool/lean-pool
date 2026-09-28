@@ -49,6 +49,7 @@ variable [MeasurableSpace α]
 
 /-- The conservative extension of a sub-Markov kernel obtained by sending its
 missing mass to the cemetery state and making that state absorbing. -/
+@[expose]
 noncomputable def cemeteryExtension (κ : ProbabilityTheory.Kernel α α) :
     ProbabilityTheory.Kernel (Cemetery α) (Cemetery α) where
   toFun := Sum.elim

@@ -35,6 +35,7 @@ variable {beta alpha : Type*} [MeasurableSpace beta] [TopologicalSpace alpha]
 
 /-- A kernel on lifetime paths is nonexplosive when its lifetime is almost surely infinite
 from every starting point. -/
+@[expose]
 def IsNonexplosive (kappa : Kernel beta (LifetimePath alpha)) : Prop :=
   ∀ x, ∀ᵐ omega ∂kappa x, omega.lifetime = ∞
 

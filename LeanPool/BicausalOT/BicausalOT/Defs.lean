@@ -35,12 +35,12 @@ variable [MeasurableSpace X₀] [MeasurableSpace X₁]
 variable [MeasurableSpace Y₀] [MeasurableSpace Y₁]
 
 /-- The measures coupling the two initial marginals. -/
-def CouplingSet₀ (μ₀ : Measure X₀) (ν₀ : Measure Y₀) :
+@[expose] def CouplingSet₀ (μ₀ : Measure X₀) (ν₀ : Measure Y₀) :
     Set (Measure (X₀ × Y₀)) :=
   { γ | γ.map Prod.fst = μ₀ ∧ γ.map Prod.snd = ν₀ }
 
 /-- The measures coupling the next-step conditional marginals at a given initial pair. -/
-def FeasibleSet₀
+@[expose] def FeasibleSet₀
     (κ_μ : X₀ → Measure X₁) (κ_ν : Y₀ → Measure Y₁)
     (z₀ : X₀ × Y₀) : Set (Measure (X₁ × Y₁)) :=
   { γ | γ.map Prod.fst = κ_μ z₀.1 ∧ γ.map Prod.snd = κ_ν z₀.2 }
@@ -58,7 +58,7 @@ structure KernelDecomp
     π s = ∫⁻ z₀, (γ₁ z₀) {z₁ | ((z₀.1, z₁.1), (z₀.2, z₁.2)) ∈ s} ∂γ₀
 
 /-- A two-step plan admits a kernel decomposition with the prescribed marginals at each step. -/
-def IsBicausal₂
+@[expose] def IsBicausal₂
     (μ₀ : Measure X₀) (ν₀ : Measure Y₀)
     (κ_μ : X₀ → Measure X₁) (κ_ν : Y₀ → Measure Y₁)
     (π : Measure ((X₀ × X₁) × (Y₀ × Y₁))) : Prop :=
