@@ -18,7 +18,7 @@ A positive contraction on real continuous functions vanishing at infinity determ
 sub-Markov kernel.  Its values are the pointwise Riesz measures of the evaluation functionals.
 -/
 
-@[expose] public section
+public section
 
 open CompactlySupported Filter MeasureTheory ProbabilityTheory Set
 open scoped ZeroAtInfty

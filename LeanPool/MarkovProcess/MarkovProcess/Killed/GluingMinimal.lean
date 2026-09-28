@@ -41,7 +41,7 @@ No transition semigroup, no process on the ambient space, and no conservativity 
 here.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

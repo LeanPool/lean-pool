@@ -17,7 +17,7 @@ induced shift of dense-time paths.  Restriction of a continuous path commutes wi
 No probability law or Markov property is asserted.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

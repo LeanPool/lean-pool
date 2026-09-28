@@ -16,7 +16,7 @@ This file identifies the result of adjoining one conditionally sampled observati
 augmented finite history. It makes no infinite-process or path-regularity claim.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

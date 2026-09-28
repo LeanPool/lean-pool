@@ -19,7 +19,7 @@ The construction also covers `I = ∅`. In that case the ordered time family and
 coordinate types are empty.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

@@ -35,7 +35,7 @@ Everything here is a statement about a fixed function of time.  No measure, no p
 and no continuity of `f` is used or asserted.
 -/
 
-@[expose] public section
+public section
 
 open Filter Topology
 open scoped ENNReal NNReal

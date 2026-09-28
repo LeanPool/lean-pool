@@ -19,7 +19,7 @@ factorization remains an explicit input; proving it from the finite-dimensional 
 next process-construction step.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

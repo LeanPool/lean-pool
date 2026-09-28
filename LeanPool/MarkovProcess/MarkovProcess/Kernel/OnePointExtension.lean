@@ -30,7 +30,7 @@ This construction does not assert a Kolmogorov moment bound or construct a conti
 process.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

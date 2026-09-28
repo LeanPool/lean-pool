@@ -23,7 +23,7 @@ This file merges the following former modules, one section each:
     rational cut
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

@@ -37,7 +37,7 @@ Main results:
 Nothing here mentions a probability law, and no continuity in a starting point is asserted.
 -/
 
-@[expose] public section
+public section
 
 open scoped BoundedContinuousFunction NNReal ZeroAtInfty
 

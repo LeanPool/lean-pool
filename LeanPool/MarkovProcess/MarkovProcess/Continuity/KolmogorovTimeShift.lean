@@ -21,7 +21,7 @@ No global path is glued here, and no measurability of the canonical limit or mod
 assertion is made.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

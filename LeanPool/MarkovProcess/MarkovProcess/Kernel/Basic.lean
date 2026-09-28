@@ -16,7 +16,7 @@ not define transition families or connect kernels to operator semigroups or
 stochastic processes.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 open scoped ENNReal ProbabilityTheory

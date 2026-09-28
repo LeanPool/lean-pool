@@ -19,7 +19,7 @@ Poisson-series argument transferring the latter invariance to each exponential
 approximant is in `Semigroup/PoissonInvariant.lean`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

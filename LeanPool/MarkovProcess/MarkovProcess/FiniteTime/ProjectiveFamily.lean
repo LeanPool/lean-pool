@@ -17,7 +17,7 @@ This file reindexes the ordered finite-time kernels by finite sets of times and 
 Mathlib-native projectivity. It does not assert or construct a projective-limit measure.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 

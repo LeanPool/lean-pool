@@ -37,7 +37,7 @@ Nothing here asserts a Hunt-process property, and no statement covers a stopping
 infinite.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

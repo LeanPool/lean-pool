@@ -27,7 +27,7 @@ The tail bounds and their scalar integral budget remain hypotheses for the consu
 estimate for a particular semigroup is asserted here.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

@@ -28,7 +28,7 @@ whole product.  Accordingly, `coordinateC0Subalgebra` is a subalgebra of continu
 `C₀` designation records its one-coordinate generators, not its ambient carrier.
 -/
 
-@[expose] public section
+public section
 
 open Topology
 open scoped ZeroAtInfty

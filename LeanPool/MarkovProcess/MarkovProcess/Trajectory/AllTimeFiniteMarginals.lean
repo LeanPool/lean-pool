@@ -24,7 +24,7 @@ their strictly ordered time coordinates.  No continuous-time Markov or Hunt prop
 or asserted.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

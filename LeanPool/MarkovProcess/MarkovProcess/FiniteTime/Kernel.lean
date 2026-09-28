@@ -23,7 +23,7 @@ This file constructs finite-dimensional kernels only.  It makes no path-space, p
 conservativity, or stochastic-process existence claim beyond the explicitly stated results.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ProbabilityTheory

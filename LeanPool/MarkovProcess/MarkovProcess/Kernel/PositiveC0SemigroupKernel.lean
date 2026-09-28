@@ -19,7 +19,7 @@ A strongly continuous semigroup of positive contractions on real continuous func
 at infinity determines a jointly measurable sub-Markov kernel semigroup.
 -/
 
-@[expose] public section
+public section
 
 open CompactlySupported MeasureTheory ProbabilityTheory
 open scoped ENNReal ZeroAtInfty

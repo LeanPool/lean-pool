@@ -19,7 +19,7 @@ Only deterministic order properties are proved here. No measurability or stoppin
 made.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

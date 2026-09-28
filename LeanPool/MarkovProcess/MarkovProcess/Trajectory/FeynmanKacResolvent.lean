@@ -29,7 +29,7 @@ Main results: `IsConservative.feynmanKacResolvent`,
 No uniqueness statement for the associated resolvent equation is asserted.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

@@ -26,7 +26,7 @@ Main definitions and results: `ContinuousPath.pathResolvent`,
 No integrability or almost-sure finiteness of the exit time is asserted.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

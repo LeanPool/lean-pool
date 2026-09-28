@@ -15,7 +15,7 @@ This file proves the uniformization argument: a normalized resolvent preserving
 a closed convex set containing zero has Yosida exponentials preserving that set.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

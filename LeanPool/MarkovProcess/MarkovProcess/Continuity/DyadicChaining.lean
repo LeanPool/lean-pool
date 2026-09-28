@@ -19,7 +19,7 @@ This file merges the following former modules, one section each:
 * `DyadicAncestorTail`: Uniform tail bounds for finite dyadic ancestor chains
 -/
 
-@[expose] public section
+public section
 
 namespace MarkovProcess
 

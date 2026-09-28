@@ -19,7 +19,7 @@ joint-law factorization.  It does not assert that any particular stochastic proc
 finite-dimensional identities.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

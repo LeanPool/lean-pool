@@ -21,7 +21,7 @@ This file identifies the continuous process of the one-point extension of a posi
 `C₀`-contractive resolvent with the process killed on leaving its live part.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

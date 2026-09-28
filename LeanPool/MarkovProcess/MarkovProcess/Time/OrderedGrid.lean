@@ -17,7 +17,7 @@ kernel semigroup on one fixed nondecreasing `NNReal`-valued time grid.  The
 result is only a discrete trajectory law on `ℕ → α` for that grid.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 open ProbabilityTheory

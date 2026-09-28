@@ -23,7 +23,7 @@ assert any Markov property.
 * `DiscretePath.canonicalFiltration`: the natural filtration of the coordinate process.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 open TopologicalSpace

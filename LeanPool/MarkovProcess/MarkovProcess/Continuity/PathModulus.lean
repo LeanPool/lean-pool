@@ -34,7 +34,7 @@ Nothing here constructs a law, asserts a Hölder exponent for individual paths, 
 tightness; tightness is assembled from this estimate elsewhere.
 -/
 
-@[expose] public section
+public section
 
 open Filter MeasureTheory ProbabilityTheory Topology
 open scoped ENNReal NNReal

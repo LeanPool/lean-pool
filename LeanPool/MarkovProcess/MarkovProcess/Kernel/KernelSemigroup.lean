@@ -19,7 +19,7 @@ Conservativity is deliberately a separate predicate.  A killed transition
 family has mass at most one, while a conservative family has mass exactly one.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

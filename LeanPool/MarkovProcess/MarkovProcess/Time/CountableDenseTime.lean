@@ -22,7 +22,7 @@ not increasing. No probability law, projective limit, stochastic process, contin
 regularity is constructed here.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

@@ -16,7 +16,7 @@ topological and Borel-measurability properties of this operation; it introduces 
 times or stochastic laws.
 -/
 
-@[expose] public section
+public section
 
 namespace MarkovProcess
 

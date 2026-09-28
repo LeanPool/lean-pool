@@ -18,7 +18,7 @@ kernel.  Subinvariance of a measure makes this operator independent, almost
 everywhere, of the chosen representative of its input.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 open ProbabilityTheory

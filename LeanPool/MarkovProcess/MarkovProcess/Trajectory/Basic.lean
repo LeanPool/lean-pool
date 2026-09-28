@@ -21,7 +21,7 @@ No continuous-time Markov property, strong Markov property, Hunt-process asserti
 increment estimate is claimed.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

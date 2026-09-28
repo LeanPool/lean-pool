@@ -42,7 +42,7 @@ marginals and independent increments, not through a projective family.  Only one
 Levy characterization, quadratic variation, or stochastic integral is asserted.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

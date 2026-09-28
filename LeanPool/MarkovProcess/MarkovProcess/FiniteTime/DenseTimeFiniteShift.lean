@@ -16,7 +16,7 @@ provides the resulting coordinate equivalence and relates restriction after shif
 path to restriction on the translated finite set.  It makes no probability-law or Markov claim.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

@@ -19,7 +19,7 @@ No assertion is made at irrational times or about a Markov, strong Markov, or Hu
 the continuous-path law.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

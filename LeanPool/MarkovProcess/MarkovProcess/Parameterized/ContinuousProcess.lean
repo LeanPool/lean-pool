@@ -33,7 +33,7 @@ No Markov, strong Markov, Feller, equivariance, annealed or killed statement is 
 of those is a separate transport through the fibre identity.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

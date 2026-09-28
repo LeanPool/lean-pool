@@ -37,7 +37,7 @@ Nothing in this file asserts independence of increments; that is proved in
 `MarkovProcess.Examples.BrownianMotion`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

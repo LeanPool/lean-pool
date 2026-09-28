@@ -18,7 +18,7 @@ the constant function `1`; in particular the representation treats constants and
 coordinate type without exceptional cases.
 -/
 
-@[expose] public section
+public section
 
 open scoped CompactlySupported ZeroAtInfty
 

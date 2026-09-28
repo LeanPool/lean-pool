@@ -17,7 +17,7 @@ enumeration, with coordinates retained in enumeration order. The enumeration nee
 the order of physical time.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

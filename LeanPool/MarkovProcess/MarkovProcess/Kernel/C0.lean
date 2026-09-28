@@ -20,7 +20,7 @@ raw integral as a contractive continuous linear map on `C₀(α, ℝ)`.  It make
 continuity in time or the existence of an associated stochastic process.
 -/
 
-@[expose] public section
+public section
 
 open Filter MeasureTheory ProbabilityTheory Topology
 open scoped ENNReal ZeroAtInfty

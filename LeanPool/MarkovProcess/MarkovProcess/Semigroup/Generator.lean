@@ -37,7 +37,7 @@ Times are `NNReal` throughout the library; the real-variable statements read the
 `Real.toNNReal s`.  The fundamental identity is what Dynkin's formula consumes.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

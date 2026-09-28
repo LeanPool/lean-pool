@@ -17,7 +17,7 @@ The lifetime is a stopping time because death by time `t` is exactly the event t
 coordinate is the cemetery state.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 open scoped ENNReal

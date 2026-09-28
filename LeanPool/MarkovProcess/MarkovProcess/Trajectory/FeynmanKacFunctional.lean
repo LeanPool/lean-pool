@@ -29,7 +29,7 @@ Main results: `feynmanKacAdditiveFunctional`,
 The resolvent and perturbation identities are developed in `Trajectory/FeynmanKacResolvent.lean`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

@@ -32,7 +32,7 @@ Kolmogorov moment criterion also transfers, with the constant multiplied by `c ^
 (`IsRescaledConjugate.hasKolmogorovMoments`).
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal ProbabilityTheory

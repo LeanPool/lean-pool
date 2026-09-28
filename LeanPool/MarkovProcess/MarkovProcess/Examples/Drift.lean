@@ -22,7 +22,7 @@ theorem are satisfiable by a semigroup that genuinely moves.  Nothing here is cl
 semigroup with a nonzero diffusion part; for that see `MarkovProcess.Examples.HeatSemigroup`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

@@ -18,7 +18,7 @@ extends one sub-Markov kernel to a Markov kernel.  It deliberately makes no
 claim about preservation of kernel composition or semigroup laws.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 open ProbabilityTheory

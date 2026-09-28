@@ -19,7 +19,7 @@ for restricting such families and their coordinate paths along order embeddings.
 ordinary finite-dimensional API and makes no probability-law or stochastic-process claim.
 -/
 
-@[expose] public section
+public section
 
 namespace MarkovProcess
 

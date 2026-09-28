@@ -17,7 +17,7 @@ fact is the filtration bridge needed to extend finite-cylinder restart identitie
 events. No probability law or Markov property is asserted here.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

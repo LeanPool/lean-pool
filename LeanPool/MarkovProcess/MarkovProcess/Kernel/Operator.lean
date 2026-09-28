@@ -17,7 +17,7 @@ canonical contractive operator families on real `Lᵖ`.  It deliberately makes
 no claim here about the operator semigroup laws or strong continuity.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 open ProbabilityTheory

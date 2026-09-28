@@ -38,7 +38,7 @@ No scaling limit is asserted: `c` is a fixed positive factor and both semigroups
 advance.  The two state spaces may coincide; the degenerate corollaries are stated on one space.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

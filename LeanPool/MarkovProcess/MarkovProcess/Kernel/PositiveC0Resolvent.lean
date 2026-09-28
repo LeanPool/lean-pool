@@ -20,7 +20,7 @@ The package in this file starts from the resolvent identity, the Hille--Yosida b
 and positivity of the actual shifted resolvents.  It assumes neither a semigroup nor a kernel.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

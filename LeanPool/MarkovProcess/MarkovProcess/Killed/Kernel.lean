@@ -34,7 +34,7 @@ the identity only on `U` (it is `0` off `U`); the semigroup structure on the car
 separate packaging.  No Feller property of the killed family is claimed.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal

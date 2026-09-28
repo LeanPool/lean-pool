@@ -16,7 +16,7 @@ killing time itself is the cemetery state, so this operation is distinct from en
 stopping.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

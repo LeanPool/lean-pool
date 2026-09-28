@@ -18,7 +18,7 @@ For a contractive resolvent `R`, this file defines the bounded generator
 records commutation and the exact formula on the range of a fixed resolvent.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

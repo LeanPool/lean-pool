@@ -18,7 +18,7 @@ as a strongly continuous contraction semigroup.  Strong continuity at zero is
 first proved on the range of one resolvent and then extended by density.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

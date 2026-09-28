@@ -33,7 +33,7 @@ Main results: `IsFellerKernelSemigroup.discountedDynkinProcess`,
 No assertion is made at an unbounded stopping time or about passage to an infinite horizon.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

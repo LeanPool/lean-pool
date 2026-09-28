@@ -34,7 +34,7 @@ the compactified process started at any point almost surely never reaches the ad
 space is produced from that statement.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

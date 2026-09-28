@@ -18,7 +18,7 @@ packages those operators as a strongly continuous contraction semigroup. Spatial
 No stochastic process or Hunt process is constructed here.
 -/
 
-@[expose] public section
+public section
 
 open Topology
 open scoped ZeroAtInfty

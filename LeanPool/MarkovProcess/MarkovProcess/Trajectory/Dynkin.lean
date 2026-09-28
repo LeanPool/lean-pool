@@ -29,7 +29,7 @@ integral in `C₀` to a pointwise integral; `evalC0CLM` is the same functional u
 name, kept for consumers.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal ZeroAtInfty

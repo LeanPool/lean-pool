@@ -22,7 +22,7 @@ product is one.  No constant-one element of `C₀` is constructed.  This is pure
 finite-product infrastructure: it involves no measure and no kernel.
 -/
 
-@[expose] public section
+public section
 
 open scoped CompactlySupported ZeroAtInfty BigOperators
 

@@ -21,7 +21,7 @@ The result is a path-law kernel on `Theta × alpha` with values in measures on `
 It is not a continuous-time path law and does not assert measurability in the grid.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 open ProbabilityTheory

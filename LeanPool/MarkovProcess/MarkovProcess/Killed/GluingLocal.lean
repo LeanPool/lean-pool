@@ -30,7 +30,7 @@ The regularity data are an explicit hypothesis: positivity, contractivity and th
 identity do not by themselves give the compactified semigroup a continuous-path process.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

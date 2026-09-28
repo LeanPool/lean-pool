@@ -19,7 +19,7 @@ from the terminal coordinate of the past.  This is finite-dimensional kernel inf
 does not assert a path-space or conditional Markov theorem.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ProbabilityTheory

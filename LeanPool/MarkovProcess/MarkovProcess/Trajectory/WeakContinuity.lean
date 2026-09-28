@@ -41,7 +41,7 @@ Nothing here asserts relative compactness of a family of laws, and no convergenc
 of semigroups is treated.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

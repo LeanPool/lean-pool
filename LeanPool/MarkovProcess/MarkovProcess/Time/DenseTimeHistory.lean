@@ -15,7 +15,7 @@ This file provides measurable coordinate equivalences for histories indexed by a
 segment of the natural numbers. It makes no probability-law, kernel, or stochastic-process claim.
 -/
 
-@[expose] public section
+public section
 
 namespace MarkovProcess
 

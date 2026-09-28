@@ -16,7 +16,7 @@ This module packages the elementary resolvent identity, the Hille--Yosida
 bound, and dense range, then derives normalization at large positive shifts.
 -/
 
-@[expose] public section
+public section
 
 open Filter Topology
 

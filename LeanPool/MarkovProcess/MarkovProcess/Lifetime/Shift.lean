@@ -15,7 +15,7 @@ This file shifts a lifetime path forward by a fixed finite time. A shift beyond 
 lifetime produces a path with zero lifetime, hence with cemetery state at every coordinate.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

@@ -22,7 +22,7 @@ Main definitions: `SubMarkovKernelSemigroup.kernelResolvent` and
 No conservativity, topology, or finiteness of the resolvent is asserted.
 -/
 
-@[expose] public section
+public section
 
 open Filter MeasureTheory ProbabilityTheory Set
 open scoped ENNReal NNReal

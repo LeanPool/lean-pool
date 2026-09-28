@@ -44,7 +44,7 @@ The shift `μ` is a positive real; nothing is asserted for complex shifts or for
 generator beyond the half-line `(0, ∞)`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

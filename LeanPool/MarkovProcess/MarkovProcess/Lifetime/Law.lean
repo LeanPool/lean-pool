@@ -17,7 +17,7 @@ embedding. It records the resulting nonexplosion and coordinate identities witho
 that any particular dense-time or PDE law has continuous paths.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

@@ -19,7 +19,7 @@ infrastructure and proves no restart identity; the restart identity obtained fro
 approximation is in `Trajectory/FellerStoppingRestart.lean`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

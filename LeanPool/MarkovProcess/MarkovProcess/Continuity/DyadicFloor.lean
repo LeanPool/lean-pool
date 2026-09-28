@@ -27,7 +27,7 @@ This file merges the following former modules, one section each:
 * `DyadicFloorUnitModification`: A continuous modification on the unit interval
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

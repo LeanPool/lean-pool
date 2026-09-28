@@ -32,7 +32,7 @@ antitone in the shift (`IsConservative.killedResolvent_antitone`), because a lar
 discounts the future more.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal

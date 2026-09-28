@@ -16,7 +16,7 @@ file records the induced measurable path reindexing and its compatibility with c
 evaluation.  No probability-law or Markov claim is made.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

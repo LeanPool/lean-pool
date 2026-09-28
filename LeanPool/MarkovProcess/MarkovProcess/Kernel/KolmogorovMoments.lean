@@ -22,7 +22,7 @@ continuity, or stochastic-process claim; the transport of this bound to the cano
 dense-time coordinate process is proved elsewhere.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 open scoped ENNReal NNReal

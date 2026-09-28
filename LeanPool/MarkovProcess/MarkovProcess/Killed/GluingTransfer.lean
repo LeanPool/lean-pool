@@ -30,7 +30,7 @@ No topology on the target space is used, and no relation between the two measure
 tested identity is assumed.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

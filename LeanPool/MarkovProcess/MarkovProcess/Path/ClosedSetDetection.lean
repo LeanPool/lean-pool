@@ -12,7 +12,7 @@ public import Mathlib.Topology.MetricSpace.HausdorffDistance
 
 /-! # Detecting closed sets from countably many path coordinates -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

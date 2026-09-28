@@ -22,7 +22,7 @@ measurably on the evaluation point, have bounded total mass, form a kernel, or s
 semigroup or stochastic-process law.
 -/
 
-@[expose] public section
+public section
 
 open CompactlySupported MeasureTheory
 open scoped ZeroAtInfty

@@ -23,7 +23,7 @@ recursions that branch only over active coordinates.
 This is purely algebraic finite-product infrastructure: it involves no measure and no kernel.
 -/
 
-@[expose] public section
+public section
 
 open scoped CompactlySupported ZeroAtInfty BigOperators
 

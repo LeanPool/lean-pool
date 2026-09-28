@@ -16,7 +16,7 @@ This file transports a kernel on dense-time trajectories to ordinary continuous 
 explicit support-on-the-continuous-range hypothesis. It does not prove that support hypothesis.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

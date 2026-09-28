@@ -37,7 +37,7 @@ Nothing is asserted about the event `{tau = ⊤}`: on it the shifted path is the
 neither statement constrains it.  No Hunt-process property is claimed.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

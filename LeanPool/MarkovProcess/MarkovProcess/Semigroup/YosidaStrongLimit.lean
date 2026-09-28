@@ -19,7 +19,7 @@ orbits is proved in `Semigroup/Generation.lean`, from the criterion of
 `Semigroup/OrbitContinuity.lean`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

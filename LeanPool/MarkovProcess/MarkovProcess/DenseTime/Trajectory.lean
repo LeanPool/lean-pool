@@ -17,7 +17,7 @@ Mathlib's Ionescu--Tulcea construction, starts the resulting trajectory at a det
 and reindexes its positive coordinates by a countable dense-time enumeration.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

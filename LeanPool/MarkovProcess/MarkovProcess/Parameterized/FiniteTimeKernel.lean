@@ -22,7 +22,7 @@ nonparameterized finite-time kernel of the fixed-parameter semigroup. No path-sp
 stochastic-process existence claim is made here.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ProbabilityTheory

@@ -20,7 +20,7 @@ No parameter family is selected here, and no concrete coefficient, domain, Felle
 or stochastic-process assertion is made.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

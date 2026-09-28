@@ -44,7 +44,7 @@ The exponentially discounted extension is developed in `Trajectory/DiscountedDyn
 its zero-discount process is identified with this one by `discountedDynkinProcess_zero`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

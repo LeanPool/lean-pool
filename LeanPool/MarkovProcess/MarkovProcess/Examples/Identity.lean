@@ -22,7 +22,7 @@ nothing about any other semigroup, and it makes no claim about a semigroup that 
 (see `MarkovProcess.Examples.Drift` for that).
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

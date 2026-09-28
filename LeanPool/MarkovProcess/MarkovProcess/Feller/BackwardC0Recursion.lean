@@ -22,7 +22,7 @@ integral against a finite-time kernel is in `Feller/BackwardC0Integral.lean`; no
 path space is proved here.
 -/
 
-@[expose] public section
+public section
 
 open Filter Topology
 open scoped NNReal ZeroAtInfty

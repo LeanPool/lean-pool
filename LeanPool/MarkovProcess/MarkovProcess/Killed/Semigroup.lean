@@ -28,7 +28,7 @@ No Feller property, strong continuity, or regularity of the killed semigroup is 
 process is not identified with the cemetery-extended process on lifetime paths.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal

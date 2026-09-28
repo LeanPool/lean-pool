@@ -22,7 +22,7 @@ No probability law is shown to be supported on this image, and no continuous mod
 stochastic-process association, or path-regularity claim is made here.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

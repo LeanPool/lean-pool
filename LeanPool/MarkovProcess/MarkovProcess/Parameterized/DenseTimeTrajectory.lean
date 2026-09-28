@@ -12,7 +12,7 @@ public import Mathlib.Probability.Kernel.IonescuTulcea.Traj
 
 /-! # Parameterized trajectories on countable dense time -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

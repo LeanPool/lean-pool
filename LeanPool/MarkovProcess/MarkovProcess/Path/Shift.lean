@@ -18,7 +18,7 @@ records the corresponding deterministic relation between the canonical filtratio
 No random-time shift, Markov property, strong Markov property, or Hunt-process assertion is made.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 

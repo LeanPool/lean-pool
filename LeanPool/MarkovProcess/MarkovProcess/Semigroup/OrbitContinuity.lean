@@ -18,7 +18,7 @@ strong continuity to joint continuity in the time and the vector, in the form
 `continuous_operator_apply`.
 -/
 
-@[expose] public section
+public section
 
 open Filter Topology
 

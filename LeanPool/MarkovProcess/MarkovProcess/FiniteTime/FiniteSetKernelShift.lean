@@ -19,7 +19,7 @@ for conservative transition-kernel semigroups.  It is finite-dimensional kernel 
 it does not assert a path-space Markov property.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

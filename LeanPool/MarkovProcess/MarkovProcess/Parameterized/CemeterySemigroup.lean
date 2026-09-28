@@ -16,7 +16,7 @@ This file extends a jointly measurable family of sub-Markov semigroups by one ab
 cemetery state.  The construction is jointly measurable in the parameter, time, and state.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

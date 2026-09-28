@@ -17,7 +17,7 @@ independent of a particular dyadic-grid encoding: a later specialization only ha
 distance between adjacent grid times.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal

@@ -31,7 +31,7 @@ This file constructs no probability law and proves no probabilistic statement; i
 does not claim that the exit time is almost surely finite for any process.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 

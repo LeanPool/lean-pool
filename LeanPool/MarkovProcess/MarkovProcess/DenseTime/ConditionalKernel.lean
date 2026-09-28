@@ -17,7 +17,7 @@ This file augments finite prefix laws by their starting point and disintegrates 
 a prefix and its next observation. It makes no infinite-process or path-regularity claim.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section PortComputability
 
