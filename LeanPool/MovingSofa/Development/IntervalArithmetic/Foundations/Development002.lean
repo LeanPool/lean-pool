@@ -53,21 +53,21 @@ Authors: LeanCert Contributors
 /-!
 # Automatic Differentiation - Partial Correctness Theorems
 
-This file proves the correctness of the partial dual evaluator `evalDual?`
+This file proves the correctness of the partial dual evaluator `evalDualOption`
 which handles expressions with inv, log, and other domain-restricted functions.
 
 ## Main theorems
 
-* `evalDual?_val_correct` - Value component is correct when evalDual? returns some
-* `evalDual?1_val_correct` - Single-variable version
-* `evalFunc1_differentiableAt_of_evalDual?` - Differentiability when evalDual? succeeds
-* `evalDual?_der_correct` - Derivative component is correct
-* `evalDual?1_correct` - Combined correctness theorem
+* `evalDualOption_val_correct` - Value component is correct when evalDualOption returns some
+* `evalDualOption1_val_correct` - Single-variable version
+* `evalFunc1_differentiableAt_of_evalDualOption` - Differentiability when evalDualOption succeeds
+* `evalDualOption_der_correct` - Derivative component is correct
+* `evalDualOption1_correct` - Combined correctness theorem
 
 ## Design notes
 
 All theorems are FULLY PROVED with no sorry or axioms.
-The key insight is that when evalDual? returns `some`, the domain
+The key insight is that when evalDualOption returns `some`, the domain
 constraints (nonzero for inv, positive for log) are satisfied.
 -/
 
@@ -80,29 +80,29 @@ namespace LeanCert.Engine
 open LeanCert.Core Filter
 open scoped Topology
 
-/-- The value component of evalDual? is correct when it returns some.
+/-- The value component of evalDualOption is correct when it returns some.
     This theorem extends to expressions with inv. -/
-theorem evalDual?_val_correct (e : Expr)
+theorem evalDualOption_val_correct (e : Expr)
     (ρ_real : Nat → ℝ) (ρ_dual : DualEnv) (D : DualInterval)
-    (hsome : evalDual? e ρ_dual = some D)
+    (hsome : evalDualOption e ρ_dual = some D)
     (hρ : ∀ i, ρ_real i ∈ (ρ_dual i).val) :
     Expr.eval ρ_real e ∈ D.val := by
   induction e generalizing D with
   | const q =>
-    simp only [evalDual?, Option.some.injEq] at hsome
+    simp only [evalDualOption, Option.some.injEq] at hsome
     rw [← hsome]
     simp only [Expr.eval_const, DualInterval.const]
     exact IntervalRat.mem_singleton q
   | var idx =>
-    simp only [evalDual?, Option.some.injEq] at hsome
+    simp only [evalDualOption, Option.some.injEq] at hsome
     rw [← hsome]
     exact hρ idx
   | add e₁ e₂ ih₁ ih₂ =>
-    simp only [evalDual?] at hsome
-    cases heq₁ : evalDual? e₁ ρ_dual with
+    simp only [evalDualOption] at hsome
+    cases heq₁ : evalDualOption e₁ ρ_dual with
     | none => simp only [heq₁, reduceCtorEq] at hsome
     | some d₁ =>
-      cases heq₂ : evalDual? e₂ ρ_dual with
+      cases heq₂ : evalDualOption e₂ ρ_dual with
       | none => simp only [heq₁, heq₂, reduceCtorEq] at hsome
       | some d₂ =>
         simp only [heq₁, heq₂, Option.some.injEq] at hsome
@@ -110,11 +110,11 @@ theorem evalDual?_val_correct (e : Expr)
         simp only [Expr.eval_add, DualInterval.add]
         exact IntervalRat.mem_add (ih₁ d₁ heq₁) (ih₂ d₂ heq₂)
   | mul e₁ e₂ ih₁ ih₂ =>
-    simp only [evalDual?] at hsome
-    cases heq₁ : evalDual? e₁ ρ_dual with
+    simp only [evalDualOption] at hsome
+    cases heq₁ : evalDualOption e₁ ρ_dual with
     | none => simp only [heq₁, reduceCtorEq] at hsome
     | some d₁ =>
-      cases heq₂ : evalDual? e₂ ρ_dual with
+      cases heq₂ : evalDualOption e₂ ρ_dual with
       | none => simp only [heq₁, heq₂, reduceCtorEq] at hsome
       | some d₂ =>
         simp only [heq₁, heq₂, Option.some.injEq] at hsome
@@ -122,8 +122,8 @@ theorem evalDual?_val_correct (e : Expr)
         simp only [Expr.eval_mul, DualInterval.mul]
         exact IntervalRat.mem_mul (ih₁ d₁ heq₁) (ih₂ d₂ heq₂)
   | neg e' ih =>
-    simp only [evalDual?] at hsome
-    cases heq : evalDual? e' ρ_dual with
+    simp only [evalDualOption] at hsome
+    cases heq : evalDualOption e' ρ_dual with
     | none => simp only [heq, reduceCtorEq] at hsome
     | some d =>
       simp only [heq, Option.some.injEq] at hsome
@@ -131,8 +131,8 @@ theorem evalDual?_val_correct (e : Expr)
       simp only [Expr.eval_neg, DualInterval.neg]
       exact IntervalRat.mem_neg (ih d heq)
   | inv e' ih =>
-    simp only [evalDual?] at hsome
-    cases heq : evalDual? e' ρ_dual with
+    simp only [evalDualOption] at hsome
+    cases heq : evalDualOption e' ρ_dual with
     | none => simp only [heq, reduceCtorEq] at hsome
     | some d =>
       simp only [heq, DualInterval.inv?] at hsome
@@ -158,8 +158,8 @@ theorem evalDual?_val_correct (e : Expr)
             exact absurd hmem.1 (not_le.mpr hlo_pos)
         exact IntervalRat.mem_invNonzero hmem heval_ne
   | sin e' ih =>
-    simp only [evalDual?] at hsome
-    cases heq : evalDual? e' ρ_dual with
+    simp only [evalDualOption] at hsome
+    cases heq : evalDualOption e' ρ_dual with
     | none => simp only [heq, reduceCtorEq] at hsome
     | some d =>
       simp only [heq, Option.some.injEq] at hsome
@@ -167,8 +167,8 @@ theorem evalDual?_val_correct (e : Expr)
       simp only [Expr.eval_sin, DualInterval.sin]
       exact mem_sinInterval (ih d heq)
   | cos e' ih =>
-    simp only [evalDual?] at hsome
-    cases heq : evalDual? e' ρ_dual with
+    simp only [evalDualOption] at hsome
+    cases heq : evalDualOption e' ρ_dual with
     | none => simp only [heq, reduceCtorEq] at hsome
     | some d =>
       simp only [heq, Option.some.injEq] at hsome
@@ -176,8 +176,8 @@ theorem evalDual?_val_correct (e : Expr)
       simp only [Expr.eval_cos, DualInterval.cos]
       exact mem_cosInterval (ih d heq)
   | exp e' ih =>
-    simp only [evalDual?] at hsome
-    cases heq : evalDual? e' ρ_dual with
+    simp only [evalDualOption] at hsome
+    cases heq : evalDualOption e' ρ_dual with
     | none => simp only [heq, reduceCtorEq] at hsome
     | some d =>
       simp only [heq, Option.some.injEq] at hsome
@@ -185,8 +185,8 @@ theorem evalDual?_val_correct (e : Expr)
       simp only [Expr.eval_exp, DualInterval.exp]
       exact IntervalRat.mem_expInterval (ih d heq)
   | sinh e' ih =>
-    simp only [evalDual?] at hsome
-    cases heq : evalDual? e' ρ_dual with
+    simp only [evalDualOption] at hsome
+    cases heq : evalDualOption e' ρ_dual with
     | none => simp only [heq, reduceCtorEq] at hsome
     | some d =>
       simp only [heq, Option.some.injEq] at hsome
@@ -194,8 +194,8 @@ theorem evalDual?_val_correct (e : Expr)
       simp only [Expr.eval_sinh, DualInterval.sinh, sinhInterval]
       exact IntervalRat.mem_sinhComputable (ih d heq) 10
   | cosh e' ih =>
-    simp only [evalDual?] at hsome
-    cases heq : evalDual? e' ρ_dual with
+    simp only [evalDualOption] at hsome
+    cases heq : evalDualOption e' ρ_dual with
     | none => simp only [heq, reduceCtorEq] at hsome
     | some d =>
       simp only [heq, Option.some.injEq] at hsome
@@ -203,14 +203,14 @@ theorem evalDual?_val_correct (e : Expr)
       simp only [Expr.eval_cosh, DualInterval.cosh, coshInterval]
       exact IntervalRat.mem_coshComputable (ih d heq) 10
   | tanh _ _ =>
-    simp only [evalDual?] at hsome
+    simp only [evalDualOption] at hsome
     cases hsome
   | log e' ih =>
-    simp only [evalDual?] at hsome
-    cases heq : evalDual? e' ρ_dual with
+    simp only [evalDualOption] at hsome
+    cases heq : evalDualOption e' ρ_dual with
     | none => simp only [heq, reduceCtorEq] at hsome
     | some d =>
-      simp only [heq, DualInterval.log?] at hsome
+      simp only [heq, DualInterval.logOption] at hsome
       split at hsome
       · rename_i hpos
         simp only [Option.some.injEq] at hsome
@@ -220,8 +220,8 @@ theorem evalDual?_val_correct (e : Expr)
         exact IntervalRat.mem_logInterval hJ_mem
       · contradiction
   | atan e' ih =>
-    simp only [evalDual?] at hsome
-    cases heq : evalDual? e' ρ_dual with
+    simp only [evalDualOption] at hsome
+    cases heq : evalDualOption e' ρ_dual with
     | none => simp only [heq, reduceCtorEq] at hsome
     | some d =>
       simp only [heq, Option.some.injEq] at hsome
@@ -229,8 +229,8 @@ theorem evalDual?_val_correct (e : Expr)
       simp only [Expr.eval_atan, DualInterval.atan]
       exact mem_atanInterval (ih d heq)
   | arsinh e' ih =>
-    simp only [evalDual?] at hsome
-    cases heq : evalDual? e' ρ_dual with
+    simp only [evalDualOption] at hsome
+    cases heq : evalDualOption e' ρ_dual with
     | none => simp only [heq, reduceCtorEq] at hsome
     | some d =>
       simp only [heq, Option.some.injEq] at hsome
@@ -238,12 +238,12 @@ theorem evalDual?_val_correct (e : Expr)
       simp only [Expr.eval_arsinh, DualInterval.arsinh]
       exact mem_arsinhInterval (ih d heq)
   | atanh _ _ =>
-    -- evalDual? returns none for atanh, so hsome : none = some D is a contradiction
-    simp only [evalDual?] at hsome
+    -- evalDualOption returns none for atanh, so hsome : none = some D is a contradiction
+    simp only [evalDualOption] at hsome
     contradiction
   | sinc e' ih =>
-    simp only [evalDual?] at hsome
-    cases heq : evalDual? e' ρ_dual with
+    simp only [evalDualOption] at hsome
+    cases heq : evalDualOption e' ρ_dual with
     | none => simp only [heq, reduceCtorEq] at hsome
     | some d =>
       simp only [heq, Option.some.injEq] at hsome
@@ -252,8 +252,8 @@ theorem evalDual?_val_correct (e : Expr)
       simp only [IntervalRat.mem_def, Rat.cast_neg, Rat.cast_one]
       exact Real.sinc_mem_Icc _
   | erf e' ih =>
-    simp only [evalDual?] at hsome
-    cases heq : evalDual? e' ρ_dual with
+    simp only [evalDualOption] at hsome
+    cases heq : evalDualOption e' ρ_dual with
     | none => simp only [heq, reduceCtorEq] at hsome
     | some d =>
       simp only [heq, Option.some.injEq] at hsome
@@ -262,8 +262,8 @@ theorem evalDual?_val_correct (e : Expr)
       simp only [IntervalRat.mem_def, Rat.cast_neg, Rat.cast_one]
       exact Real.erf_mem_Icc _
   | sqrt e' ih =>
-    simp only [evalDual?] at hsome
-    cases heq : evalDual? e' ρ_dual with
+    simp only [evalDualOption] at hsome
+    cases heq : evalDualOption e' ρ_dual with
     | none => simp only [heq, reduceCtorEq] at hsome
     | some d =>
       simp only [heq] at hsome
@@ -277,17 +277,17 @@ theorem evalDual?_val_correct (e : Expr)
         exact IntervalRat.mem_sqrtInterval' (ih d heq)
       · exact absurd hsome (by simp)
   | namedConst c =>
-    simp only [evalDual?, Option.some.injEq] at hsome
+    simp only [evalDualOption, Option.some.injEq] at hsome
     rw [← hsome]
     simp only [Expr.eval_namedConst, DualInterval.ofMathConst]
     exact c.mem_interval
 
-/-- Single-variable version of evalDual?_val_correct -/
-theorem evalDual?1_val_correct (e : Expr)
+/-- Single-variable version of evalDualOption_val_correct -/
+theorem evalDualOption1_val_correct (e : Expr)
     (I : IntervalRat) (D : DualInterval) (x : ℝ) (hx : x ∈ I)
-    (hsome : evalDual?1 e I = some D) :
+    (hsome : evalDualOption1 e I = some D) :
     Expr.eval (fun _ => x) e ∈ D.val := by
-  apply evalDual?_val_correct e (fun _ => x) (fun _ => DualInterval.varActive I)
+  apply evalDualOption_val_correct e (fun _ => x) (fun _ => DualInterval.varActive I)
   · exact hsome
   · intro _; exact hx
 
@@ -296,40 +296,40 @@ theorem evalFunc1_inv (e : Expr) :
     evalFunc1 (Expr.inv e) = fun t => (evalFunc1 e t)⁻¹ := rfl
 
 /-- Expressions with inv are differentiable when the denominator is nonzero. -/
-theorem evalFunc1_differentiableAt_of_evalDual? (e : Expr)
+theorem evalFunc1_differentiableAt_of_evalDualOption (e : Expr)
     (I : IntervalRat) (D : DualInterval) (x : ℝ) (hx : x ∈ I)
-    (hsome : evalDual?1 e I = some D) :
+    (hsome : evalDualOption1 e I = some D) :
     DifferentiableAt ℝ (evalFunc1 e) x := by
   induction e generalizing D with
   | const q => exact differentiableAt_const _
   | var _ => exact differentiableAt_id
   | add e₁ e₂ ih₁ ih₂ =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq₁ : evalDual? e₁ _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq₁ : evalDualOption e₁ _ with
     | none => rw [heq₁] at hsome; exact absurd hsome (by simp)
     | some d₁ =>
-      cases heq₂ : evalDual? e₂ _ with
+      cases heq₂ : evalDualOption e₂ _ with
       | none => rw [heq₁, heq₂] at hsome; exact absurd hsome (by simp)
       | some d₂ =>
         exact DifferentiableAt.add (ih₁ d₁ heq₁) (ih₂ d₂ heq₂)
   | mul e₁ e₂ ih₁ ih₂ =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq₁ : evalDual? e₁ _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq₁ : evalDualOption e₁ _ with
     | none => rw [heq₁] at hsome; exact absurd hsome (by simp)
     | some d₁ =>
-      cases heq₂ : evalDual? e₂ _ with
+      cases heq₂ : evalDualOption e₂ _ with
       | none => rw [heq₁, heq₂] at hsome; exact absurd hsome (by simp)
       | some d₂ =>
         exact DifferentiableAt.mul (ih₁ d₁ heq₁) (ih₂ d₂ heq₂)
   | neg e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       exact DifferentiableAt.neg (ih d heq)
   | inv e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       rw [heq] at hsome
@@ -338,7 +338,7 @@ theorem evalFunc1_differentiableAt_of_evalDual? (e : Expr)
       · exact absurd hsome (by simp)
       · next hnotzero =>
         simp only [Option.some.injEq] at hsome
-        have hval := evalDual?1_val_correct e' I d x hx heq
+        have hval := evalDualOption1_val_correct e' I d x hx heq
         -- Denominator is nonzero
         have hne : evalFunc1 e' x ≠ 0 := by
           intro heq_zero
@@ -357,49 +357,49 @@ theorem evalFunc1_differentiableAt_of_evalDual? (e : Expr)
             exact absurd hval'.1 (not_le.mpr hlo_pos)
         exact DifferentiableAt.inv (ih d heq) hne
   | sin e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       exact Real.differentiableAt_sin.comp x (ih d heq)
   | cos e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       exact Real.differentiableAt_cos.comp x (ih d heq)
   | exp e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       exact Real.differentiableAt_exp.comp x (ih d heq)
   | sinh e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       exact (ih d heq).sinh
   | cosh e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       exact (ih d heq).cosh
   | tanh _ _ =>
-    unfold evalDual?1 evalDual? at hsome
+    unfold evalDualOption1 evalDualOption at hsome
     contradiction
   | log e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       rw [heq] at hsome
-      simp only [DualInterval.log?] at hsome
+      simp only [DualInterval.logOption] at hsome
       split at hsome
       · next hpos =>
         simp only [Option.some.injEq] at hsome
-        have hval := evalDual?1_val_correct e' I d x hx heq
+        have hval := evalDualOption1_val_correct e' I d x hx heq
         -- The argument is positive, so log is differentiable
         have hpos_x : 0 < evalFunc1 e' x := by
           have hval' : evalFunc1 e' x ∈ d.val := hval
@@ -410,24 +410,24 @@ theorem evalFunc1_differentiableAt_of_evalDual? (e : Expr)
         exact Real.differentiableAt_log (ne_of_gt hpos_x) |>.comp x (ih d heq)
       · exact absurd hsome (by simp)
   | atan e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       exact (Real.differentiable_arctan _).comp x (ih d heq)
   | arsinh e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       exact (Real.differentiable_arsinh _).comp x (ih d heq)
   | atanh _ _ =>
-    -- evalDual? returns none for atanh, so hsome is a contradiction
-    simp only [evalDual?1, evalDual?] at hsome
+    -- evalDualOption returns none for atanh, so hsome is a contradiction
+    simp only [evalDualOption1, evalDualOption] at hsome
     contradiction
   | sinc e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       -- sinc is differentiable everywhere
@@ -437,8 +437,8 @@ theorem evalFunc1_differentiableAt_of_evalDual? (e : Expr)
       have hsinc_diff : Differentiable ℝ Real.sinc := Real.differentiable_sinc
       exact hsinc_diff.differentiableAt.comp x (ih d heq)
   | erf e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       -- erf is differentiable everywhere using FTC
@@ -454,8 +454,8 @@ theorem evalFunc1_differentiableAt_of_evalDual? (e : Expr)
         exact (hcont.integral_hasStrictDerivAt 0 y).hasStrictFDerivAt.differentiableAt
       exact herf_diff.differentiableAt.comp x (ih d heq)
   | sqrt e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       rw [heq] at hsome
@@ -463,7 +463,7 @@ theorem evalFunc1_differentiableAt_of_evalDual? (e : Expr)
       split at hsome
       · next hpos =>
         simp only [Option.some.injEq] at hsome
-        have hval := evalDual?1_val_correct e' I d x hx heq
+        have hval := evalDualOption1_val_correct e' I d x hx heq
         -- The argument is positive, so sqrt is differentiable
         have hpos_x : 0 < evalFunc1 e' x := by
           have hval' : evalFunc1 e' x ∈ d.val := hval
@@ -477,18 +477,18 @@ theorem evalFunc1_differentiableAt_of_evalDual? (e : Expr)
       · exact absurd hsome (by simp)
   | namedConst _ => exact differentiableAt_const _
 
-/-- The derivative component of evalDual? is correct when it returns some.
+/-- The derivative component of evalDualOption is correct when it returns some.
     For a supported expression (with inv) evaluated at a point x in the interval I,
     the derivative of the expression lies in the computed derivative interval.
 
     This extends the AD correctness theorem to expressions with inv. -/
 private theorem evalDual?_der_correct_inv (e' : Expr)
     (I : IntervalRat) (D : DualInterval) (x : ℝ) (hx : x ∈ I)
-    (hsome : evalDual?1 (Expr.inv e') I = some D)
-    (ih : ∀ D, evalDual?1 e' I = some D → deriv (evalFunc1 e') x ∈ D.der) :
+    (hsome : evalDualOption1 (Expr.inv e') I = some D)
+    (ih : ∀ D, evalDualOption1 e' I = some D → deriv (evalFunc1 e') x ∈ D.der) :
     deriv (evalFunc1 (Expr.inv e')) x ∈ D.der := by
-  unfold evalDual?1 evalDual? at hsome
-  cases heq : evalDual? e' _ with
+  unfold evalDualOption1 evalDualOption at hsome
+  cases heq : evalDualOption e' _ with
   | none => rw [heq] at hsome; exact absurd hsome (by simp)
   | some d =>
     rw [heq] at hsome
@@ -499,7 +499,7 @@ private theorem evalDual?_der_correct_inv (e' : Expr)
       simp only [Option.some.injEq] at hsome
       rw [← hsome]
       -- d(1/f) = -f'/f² = -f' * (1/f)²
-      have hval := evalDual?1_val_correct e' I d x hx heq
+      have hval := evalDualOption1_val_correct e' I d x hx heq
       have hval' : evalFunc1 e' x ∈ d.val := hval
       have hne : evalFunc1 e' x ≠ 0 := by
         intro heq_zero
@@ -513,7 +513,7 @@ private theorem evalDual?_der_correct_inv (e' : Expr)
           exact absurd (hnotzero hlo) (not_lt.mpr hhi_nonneg)
         · have hlo_pos : (0 : ℝ) < d.val.lo := by exact_mod_cast hlo
           exact absurd hval'.1 (not_le.mpr hlo_pos)
-      have hd := evalFunc1_differentiableAt_of_evalDual? e' I d x hx heq
+      have hd := evalFunc1_differentiableAt_of_evalDualOption e' I d x hx heq
       -- deriv (1/f) = deriv(f⁻¹ ∘ f) = -(f')/(f²) using chain rule
       -- We use: deriv (fun y => y⁻¹) (f x) * deriv f x = -(f x)⁻² * f'(x)
       rw [evalFunc1_inv]
@@ -545,21 +545,21 @@ private theorem evalDual?_der_correct_inv (e' : Expr)
 
 private theorem evalDual?_der_correct_log (e' : Expr)
     (I : IntervalRat) (D : DualInterval) (x : ℝ) (hx : x ∈ I)
-    (hsome : evalDual?1 (Expr.log e') I = some D)
-    (ih : ∀ D, evalDual?1 e' I = some D → deriv (evalFunc1 e') x ∈ D.der) :
+    (hsome : evalDualOption1 (Expr.log e') I = some D)
+    (ih : ∀ D, evalDualOption1 e' I = some D → deriv (evalFunc1 e') x ∈ D.der) :
     deriv (evalFunc1 (Expr.log e')) x ∈ D.der := by
-  unfold evalDual?1 evalDual? at hsome
-  cases heq : evalDual? e' _ with
+  unfold evalDualOption1 evalDualOption at hsome
+  cases heq : evalDualOption e' _ with
   | none => rw [heq] at hsome; exact absurd hsome (by simp)
   | some d =>
     rw [heq] at hsome
-    simp only [DualInterval.log?] at hsome
+    simp only [DualInterval.logOption] at hsome
     split at hsome
     · next hpos =>
       simp only [Option.some.injEq] at hsome
       rw [← hsome]
       -- d(log f)/dx = f'/f
-      have hval := evalDual?1_val_correct e' I d x hx heq
+      have hval := evalDualOption1_val_correct e' I d x hx heq
       have hval' : evalFunc1 e' x ∈ d.val := hval
       have hpos_x : 0 < evalFunc1 e' x := by
         simp only [IntervalRat.mem_def] at hval'
@@ -567,13 +567,13 @@ private theorem evalDual?_der_correct_log (e' : Expr)
         have hlo_pos : (0 : ℝ) < d.val.lo := by exact_mod_cast hpos
         exact lt_of_lt_of_le hlo_pos hval'.1
       have hne_x : evalFunc1 e' x ≠ 0 := ne_of_gt hpos_x
-      have hd := evalFunc1_differentiableAt_of_evalDual? e' I d x hx heq
+      have hd := evalFunc1_differentiableAt_of_evalDualOption e' I d x hx heq
       rw [evalFunc1_log]
       have heq_fun : (fun t => Real.log (evalFunc1 e' t)) = Real.log ∘ evalFunc1 e' := rfl
       rw [heq_fun, deriv_comp x (Real.differentiableAt_log hne_x) hd]
       simp only [Real.deriv_log (evalFunc1 e' x)]
       -- Goal: (evalFunc1 e' x)⁻¹ * deriv (evalFunc1 e') x ∈ ...
-      -- From DualInterval.log?: der' := d.der * invNonzero d.val
+      -- From DualInterval.logOption: der' := d.der * invNonzero d.val
       have hder := ih d heq
       -- Build the nonzero interval from the positive interval
       have hnotzero : ¬IntervalRat.containsZero d.val := by
@@ -591,18 +591,18 @@ private theorem evalDual?_der_correct_log (e' : Expr)
 
 private theorem evalDual?_der_correct_erf (e' : Expr)
     (I : IntervalRat) (D : DualInterval) (x : ℝ) (hx : x ∈ I)
-    (hsome : evalDual?1 (Expr.erf e') I = some D)
-    (ih : ∀ D, evalDual?1 e' I = some D → deriv (evalFunc1 e') x ∈ D.der) :
+    (hsome : evalDualOption1 (Expr.erf e') I = some D)
+    (ih : ∀ D, evalDualOption1 e' I = some D → deriv (evalFunc1 e') x ∈ D.der) :
     deriv (evalFunc1 (Expr.erf e')) x ∈ D.der := by
-  unfold evalDual?1 evalDual? at hsome
-  cases heq : evalDual? e' _ with
+  unfold evalDualOption1 evalDualOption at hsome
+  cases heq : evalDualOption e' _ with
   | none => rw [heq] at hsome; exact absurd hsome (by simp)
   | some d =>
     rw [heq, Option.some.injEq] at hsome
     rw [← hsome]
     simp only [DualInterval.erf]
     -- The derivative of erf ∘ f is (2/√π) * exp(-f(x)²) * f'(x)
-    have hd_inner := evalFunc1_differentiableAt_of_evalDual? e' I d x hx heq
+    have hd_inner := evalFunc1_differentiableAt_of_evalDualOption e' I d x hx heq
     have herf_diff : Differentiable ℝ Real.erf := by
       unfold Real.erf
       apply Differentiable.const_mul
@@ -665,7 +665,7 @@ private theorem evalDual?_der_correct_erf (e' : Expr)
         have h2 : (2 : ℝ) / 1.7724 < ((1129 / 1000 : ℚ) : ℝ) := by norm_num
         exact le_of_lt (lt_trans h1 h2)
     -- exp(-(f(x))²) ∈ expInterval(-val²)
-    have hval := evalDual?1_val_correct e' I d x hx heq
+    have hval := evalDualOption1_val_correct e' I d x hx heq
     have hval_sq := IntervalRat.mem_mul hval hval
     have hneg_val_sq := IntervalRat.mem_neg hval_sq
     have hexp := IntervalRat.mem_expInterval hneg_val_sq
@@ -680,11 +680,11 @@ private theorem evalDual?_der_correct_erf (e' : Expr)
 
 private theorem evalDual?_der_correct_sqrt (e' : Expr)
     (I : IntervalRat) (D : DualInterval) (x : ℝ) (hx : x ∈ I)
-    (hsome : evalDual?1 (Expr.sqrt e') I = some D)
-    (ih : ∀ D, evalDual?1 e' I = some D → deriv (evalFunc1 e') x ∈ D.der) :
+    (hsome : evalDualOption1 (Expr.sqrt e') I = some D)
+    (ih : ∀ D, evalDualOption1 e' I = some D → deriv (evalFunc1 e') x ∈ D.der) :
     deriv (evalFunc1 (Expr.sqrt e')) x ∈ D.der := by
-  unfold evalDual?1 evalDual? at hsome
-  cases heq : evalDual? e' _ with
+  unfold evalDualOption1 evalDualOption at hsome
+  cases heq : evalDualOption e' _ with
   | none => rw [heq] at hsome; exact absurd hsome (by simp)
   | some d =>
     rw [heq] at hsome
@@ -694,7 +694,7 @@ private theorem evalDual?_der_correct_sqrt (e' : Expr)
       simp only [Option.some.injEq] at hsome
       rw [← hsome]
       -- d(sqrt f)/dx = f'/(2*sqrt(f))
-      have hval := evalDual?1_val_correct e' I d x hx heq
+      have hval := evalDualOption1_val_correct e' I d x hx heq
       have hval' : evalFunc1 e' x ∈ d.val := hval
       have hpos_x : 0 < evalFunc1 e' x := by
         simp only [IntervalRat.mem_def] at hval'
@@ -702,7 +702,7 @@ private theorem evalDual?_der_correct_sqrt (e' : Expr)
         have hlo_pos : (0 : ℝ) < d.val.lo := by exact_mod_cast hpos
         exact lt_of_lt_of_le hlo_pos hval'.1
       have hne_x : evalFunc1 e' x ≠ 0 := ne_of_gt hpos_x
-      have hd := evalFunc1_differentiableAt_of_evalDual? e' I d x hx heq
+      have hd := evalFunc1_differentiableAt_of_evalDualOption e' I d x hx heq
       rw [evalFunc1_sqrt]
       have heq_fun : (fun t => Real.sqrt (evalFunc1 e' t)) = Real.sqrt ∘ evalFunc1 e' := rfl
       rw [heq_fun, deriv_comp x (Real.hasDerivAt_sqrt hne_x).differentiableAt hd]
@@ -768,59 +768,59 @@ private theorem evalDual?_der_correct_sqrt (e' : Expr)
       field_simp [ne_of_gt (Real.sqrt_pos.mpr hpos_x)]
     · exact absurd hsome (by simp)
 
-theorem evalDual?_der_correct (e : Expr)
+theorem evalDualOption_der_correct (e : Expr)
     (I : IntervalRat) (D : DualInterval) (x : ℝ) (hx : x ∈ I)
-    (hsome : evalDual?1 e I = some D) :
+    (hsome : evalDualOption1 e I = some D) :
     deriv (evalFunc1 e) x ∈ D.der := by
   induction e generalizing D with
   | const q =>
-    simp only [evalDual?1, evalDual?, Option.some.injEq] at hsome
+    simp only [evalDualOption1, evalDualOption, Option.some.injEq] at hsome
     rw [← hsome]
     simp only [evalFunc1_const, deriv_const, DualInterval.const]
     convert IntervalRat.mem_singleton 0 using 1
     norm_cast
   | var _ =>
-    simp only [evalDual?1, evalDual?, Option.some.injEq] at hsome
+    simp only [evalDualOption1, evalDualOption, Option.some.injEq] at hsome
     rw [← hsome]
     simp only [evalFunc1_var, deriv_id, DualInterval.varActive]
     convert IntervalRat.mem_singleton 1 using 1
     norm_cast
   | add e₁ e₂ ih₁ ih₂ =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq₁ : evalDual? e₁ _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq₁ : evalDualOption e₁ _ with
     | none => rw [heq₁] at hsome; exact absurd hsome (by simp)
     | some d₁ =>
-      cases heq₂ : evalDual? e₂ _ with
+      cases heq₂ : evalDualOption e₂ _ with
       | none => rw [heq₁, heq₂] at hsome; exact absurd hsome (by simp)
       | some d₂ =>
         rw [heq₁, heq₂, Option.some.injEq] at hsome
         rw [← hsome]
         simp only [DualInterval.add]
-        have hd₁ := evalFunc1_differentiableAt_of_evalDual? e₁ I d₁ x hx heq₁
-        have hd₂ := evalFunc1_differentiableAt_of_evalDual? e₂ I d₂ x hx heq₂
+        have hd₁ := evalFunc1_differentiableAt_of_evalDualOption e₁ I d₁ x hx heq₁
+        have hd₂ := evalFunc1_differentiableAt_of_evalDualOption e₂ I d₂ x hx heq₂
         simp only [evalFunc1_add_pi, deriv_add hd₁ hd₂]
         exact IntervalRat.mem_add (ih₁ d₁ heq₁) (ih₂ d₂ heq₂)
   | mul e₁ e₂ ih₁ ih₂ =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq₁ : evalDual? e₁ _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq₁ : evalDualOption e₁ _ with
     | none => rw [heq₁] at hsome; exact absurd hsome (by simp)
     | some d₁ =>
-      cases heq₂ : evalDual? e₂ _ with
+      cases heq₂ : evalDualOption e₂ _ with
       | none => rw [heq₁, heq₂] at hsome; exact absurd hsome (by simp)
       | some d₂ =>
         rw [heq₁, heq₂, Option.some.injEq] at hsome
         rw [← hsome]
         simp only [DualInterval.mul]
-        have hd₁ := evalFunc1_differentiableAt_of_evalDual? e₁ I d₁ x hx heq₁
-        have hd₂ := evalFunc1_differentiableAt_of_evalDual? e₂ I d₂ x hx heq₂
+        have hd₁ := evalFunc1_differentiableAt_of_evalDualOption e₁ I d₁ x hx heq₁
+        have hd₂ := evalFunc1_differentiableAt_of_evalDualOption e₂ I d₂ x hx heq₂
         simp only [evalFunc1_mul_pi, deriv_mul hd₁ hd₂]
-        have hval₁ := evalDual?1_val_correct e₁ I d₁ x hx heq₁
-        have hval₂ := evalDual?1_val_correct e₂ I d₂ x hx heq₂
+        have hval₁ := evalDualOption1_val_correct e₁ I d₁ x hx heq₁
+        have hval₂ := evalDualOption1_val_correct e₂ I d₂ x hx heq₂
         exact IntervalRat.mem_add (IntervalRat.mem_mul (ih₁ d₁ heq₁) hval₂)
                                   (IntervalRat.mem_mul hval₁ (ih₂ d₂ heq₂))
   | neg e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       rw [heq, Option.some.injEq] at hsome
@@ -829,49 +829,49 @@ theorem evalDual?_der_correct (e : Expr)
       exact IntervalRat.mem_neg (ih d heq)
   | inv e' ih => exact evalDual?_der_correct_inv e' I D x hx hsome ih
   | sin e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       rw [heq, Option.some.injEq] at hsome
       rw [← hsome]
       simp only [DualInterval.sin]
-      have hd := evalFunc1_differentiableAt_of_evalDual? e' I d x hx heq
+      have hd := evalFunc1_differentiableAt_of_evalDualOption e' I d x hx heq
       rw [evalFunc1_sin, deriv_sin hd]
       exact IntervalRat.mem_mul (cos_mem_cosInterval_of_any _ _) (ih d heq)
   | cos e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       rw [heq, Option.some.injEq] at hsome
       rw [← hsome]
       simp only [DualInterval.cos]
-      have hd := evalFunc1_differentiableAt_of_evalDual? e' I d x hx heq
+      have hd := evalFunc1_differentiableAt_of_evalDualOption e' I d x hx heq
       rw [evalFunc1_cos, deriv_cos hd]
       exact IntervalRat.mem_mul (neg_sin_mem_neg_sinInterval _ _) (ih d heq)
   | exp e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       rw [heq, Option.some.injEq] at hsome
       rw [← hsome]
       simp only [DualInterval.exp]
-      have hd := evalFunc1_differentiableAt_of_evalDual? e' I d x hx heq
+      have hd := evalFunc1_differentiableAt_of_evalDualOption e' I d x hx heq
       rw [evalFunc1_exp, deriv_exp hd]
-      have hval := evalDual?1_val_correct e' I d x hx heq
+      have hval := evalDualOption1_val_correct e' I d x hx heq
       have hexp := IntervalRat.mem_expInterval hval
       exact IntervalRat.mem_mul hexp (ih d heq)
   | sinh e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       rw [heq, Option.some.injEq] at hsome
       rw [← hsome]
       simp only [DualInterval.sinh, coshInterval]
-      have hd := evalFunc1_differentiableAt_of_evalDual? e' I d x hx heq
+      have hd := evalFunc1_differentiableAt_of_evalDualOption e' I d x hx heq
       change deriv (fun t => Real.sinh (evalFunc1 e' t)) x ∈
         IntervalRat.mul (IntervalRat.coshComputable d.val 10) d.der
       have hder :
@@ -879,18 +879,18 @@ theorem evalDual?_der_correct (e : Expr)
             (Real.cosh (evalFunc1 e' x) * deriv (evalFunc1 e') x) x :=
         (Real.hasDerivAt_sinh (evalFunc1 e' x)).comp x hd.hasDerivAt
       rw [hder.deriv]
-      have hval := evalDual?1_val_correct e' I d x hx heq
+      have hval := evalDualOption1_val_correct e' I d x hx heq
       have hcosh := IntervalRat.mem_coshComputable hval 10
       exact IntervalRat.mem_mul hcosh (ih d heq)
   | cosh e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       rw [heq, Option.some.injEq] at hsome
       rw [← hsome]
       simp only [DualInterval.cosh, sinhInterval]
-      have hd := evalFunc1_differentiableAt_of_evalDual? e' I d x hx heq
+      have hd := evalFunc1_differentiableAt_of_evalDualOption e' I d x hx heq
       change deriv (fun t => Real.cosh (evalFunc1 e' t)) x ∈
         IntervalRat.mul (IntervalRat.sinhComputable d.val 10) d.der
       have hder :
@@ -898,22 +898,22 @@ theorem evalDual?_der_correct (e : Expr)
             (Real.sinh (evalFunc1 e' x) * deriv (evalFunc1 e') x) x :=
         (Real.hasDerivAt_cosh (evalFunc1 e' x)).comp x hd.hasDerivAt
       rw [hder.deriv]
-      have hval := evalDual?1_val_correct e' I d x hx heq
+      have hval := evalDualOption1_val_correct e' I d x hx heq
       have hsinh := IntervalRat.mem_sinhComputable hval 10
       exact IntervalRat.mem_mul hsinh (ih d heq)
   | tanh _ _ =>
-    unfold evalDual?1 evalDual? at hsome
+    unfold evalDualOption1 evalDualOption at hsome
     contradiction
   | log e' ih => exact evalDual?_der_correct_log e' I D x hx hsome ih
   | atan e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       rw [heq, Option.some.injEq] at hsome
       rw [← hsome]
       simp only [DualInterval.atan]
-      have hd := evalFunc1_differentiableAt_of_evalDual? e' I d x hx heq
+      have hd := evalFunc1_differentiableAt_of_evalDualOption e' I d x hx heq
       rw [evalFunc1_atan]
       -- deriv (arctan ∘ f) x = (1 / (1 + f(x)²)) * f'(x)
       have heq_deriv := HasDerivAt.arctan (hd.hasDerivAt)
@@ -922,14 +922,14 @@ theorem evalDual?_der_correct (e : Expr)
       have hfactor := DualInterval.arctan_deriv_factor_mem_unitInterval (evalFunc1 e' x)
       exact IntervalRat.mem_mul (ih d heq) hfactor
   | arsinh e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       rw [heq, Option.some.injEq] at hsome
       rw [← hsome]
       simp only [DualInterval.arsinh]
-      have hd := evalFunc1_differentiableAt_of_evalDual? e' I d x hx heq
+      have hd := evalFunc1_differentiableAt_of_evalDualOption e' I d x hx heq
       rw [evalFunc1_arsinh]
       -- deriv (arsinh ∘ f) x = (√(1 + f(x)²))⁻¹ • f'(x)
       have heq_deriv := HasDerivAt.arsinh (hd.hasDerivAt)
@@ -938,12 +938,12 @@ theorem evalDual?_der_correct (e : Expr)
       have hfactor := DualInterval.arsinh_deriv_factor_mem_unitInterval (evalFunc1 e' x)
       exact IntervalRat.mem_mul (ih d heq) hfactor
   | atanh _ _ =>
-    -- evalDual? returns none for atanh, so hsome is a contradiction
-    simp only [evalDual?1, evalDual?] at hsome
+    -- evalDualOption returns none for atanh, so hsome is a contradiction
+    simp only [evalDualOption1, evalDualOption] at hsome
     contradiction
   | sinc e' ih =>
-    unfold evalDual?1 evalDual? at hsome
-    cases heq : evalDual? e' _ with
+    unfold evalDualOption1 evalDualOption at hsome
+    cases heq : evalDualOption e' _ with
     | none => rw [heq] at hsome; exact absurd hsome (by simp)
     | some d =>
       rw [heq, Option.some.injEq] at hsome
@@ -951,7 +951,7 @@ theorem evalDual?_der_correct (e : Expr)
       simp only [DualInterval.sinc]
       -- The derivative of sinc ∘ f is sinc'(f(x)) * f'(x)
       -- sinc'(y) ∈ [-1, 1] for all y, and f'(x) ∈ d.der
-      have hd_inner := evalFunc1_differentiableAt_of_evalDual? e' I d x hx heq
+      have hd_inner := evalFunc1_differentiableAt_of_evalDualOption e' I d x hx heq
       have heq_comp : (fun t => Real.sinc (evalFunc1 e' t)) = Real.sinc ∘ evalFunc1 e' := rfl
       rw [evalFunc1_sinc, heq_comp, deriv_comp x Real.differentiable_sinc.differentiableAt hd_inner]
       -- deriv sinc (evalFunc1 e' x) * deriv (evalFunc1 e') x ∈ sincDerivBound * d.der
@@ -963,18 +963,18 @@ theorem evalDual?_der_correct (e : Expr)
   | erf e' ih => exact evalDual?_der_correct_erf e' I D x hx hsome ih
   | sqrt e' ih => exact evalDual?_der_correct_sqrt e' I D x hx hsome ih
   | namedConst c =>
-    simp only [evalDual?1, evalDual?, Option.some.injEq] at hsome
+    simp only [evalDualOption1, evalDualOption, Option.some.injEq] at hsome
     rw [← hsome]
     simp only [evalFunc1_namedConst, deriv_const, DualInterval.ofMathConst]
     convert IntervalRat.mem_singleton 0 using 1
     norm_cast
 
-/-- Combined correctness theorem for evalDual?1 -/
-theorem evalDual?1_correct (e : Expr)
+/-- Combined correctness theorem for evalDualOption1 -/
+theorem evalDualOption1_correct (e : Expr)
     (I : IntervalRat) (D : DualInterval) (x : ℝ) (hx : x ∈ I)
-    (hsome : evalDual?1 e I = some D) :
+    (hsome : evalDualOption1 e I = some D) :
     Expr.eval (fun _ => x) e ∈ D.val ∧ deriv (evalFunc1 e) x ∈ D.der :=
-  ⟨evalDual?1_val_correct e I D x hx hsome, evalDual?_der_correct e I D x hx hsome⟩
+  ⟨evalDualOption1_val_correct e I D x hx hsome, evalDualOption_der_correct e I D x hx hsome⟩
 
 end LeanCert.Engine
 
@@ -2738,7 +2738,7 @@ with rigorous bounds on both.
 
 * `AD.Basic` - Core types: `DualInterval`, basic operations (`add`, `mul`, `neg`)
 * `AD.Transcendental` - Transcendental functions (`sin`, `cos`, `exp`, etc.)
-* `AD.Eval` - Evaluators: `LeanCert.Internal.AD.evalUnchecked`, `evalDual?`, `derivInterval`
+* `AD.Eval` - Evaluators: `LeanCert.Internal.AD.evalUnchecked`, `evalDualOption`, `derivInterval`
 * `AD.Correctness` - Correctness theorems for supported expressions
 * `AD.PartialCorrectness` - Correctness for partial functions (inv, log, sqrt)
 * `AD.Computable` - Taylor-based computable evaluators
@@ -2749,7 +2749,7 @@ with rigorous bounds on both.
 
 * `DualInterval` - A pair of intervals representing (value, derivative)
 * `LeanCert.Internal.AD.evalUnchecked` - Evaluate expression to get value and derivative intervals
-* `evalDual?` - Partial evaluator supporting inv, log, sqrt
+* `evalDualOption` - Partial evaluator supporting inv, log, sqrt
 * `LeanCert.Internal.AD.evalTotalCore` - Computable evaluator for native_decide
 * `evalDualChecked`, `derivIntervalChecked` - Computable, structured-failure APIs for inv/log
 * `evalDualDyadicChecked`, `derivIntervalDyadicChecked` - Checked Dyadic counterparts
@@ -2760,7 +2760,7 @@ with rigorous bounds on both.
 expressions
 * `LeanCert.Engine.evalDualUnchecked_der_correct` - Derivative component is correct for supported
 expressions
-* `evalDual?_val_correct`, `evalDual?_der_correct` - Correctness with domain checks
+* `evalDualOption_val_correct`, `evalDualOption_der_correct` - Correctness with domain checks
 * `LeanCert.Internal.AD.evalTotalCore_val_correct`, `LeanCert.Internal.AD.evalTotalCore_der_correct`
 - Computable correctness
 * `evalWithDerivChecked_der_correct`, `derivIntervalChecked_correct` - Golden theorems for

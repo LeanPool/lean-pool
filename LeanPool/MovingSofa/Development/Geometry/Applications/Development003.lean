@@ -548,7 +548,7 @@ private theorem gerverNicheBoundary_mem_continuousBV :
   have g2 := BoundedVariationOn.Icc_union_Icc (hsub q01) (hsub q12) g1 e3
   have g3 := BoundedVariationOn.Icc_union_Icc (hsub q02) (hsub hc22) g2 e4
   have g4 := BoundedVariationOn.Icc_union_Icc (hsub q0c2) (hsub hc23) g3 e5
-  show BoundedVariationOn (fun t : Set.Icc (0 : ℝ) 4 ↦ gerverNicheBoundary t i) Set.univ
+  change BoundedVariationOn (fun t : Set.Icc (0 : ℝ) 4 ↦ gerverNicheBoundary t i) Set.univ
   exact BoundedVariationOn.univ_of_Icc_endpoints (show (0 : ℝ) ≤ 4 by norm_num)
     (BoundedVariationOn.Icc_union_Icc (hsub q03) (hsub q34) g4 e6)
 
@@ -1166,9 +1166,9 @@ theorem paperGerver_contact_geometry :
           exact congrArg (fun a : Real.Angle ↦ (edgeVertices (K.val) a).1) Real.Angle.coe_zero
         · have hmem : (t : ℝ) ∈ Set.Ioo (0 : ℝ) (Real.pi / 2) :=
             ⟨h0, lt_of_le_of_ne htI.2 hT⟩
-          show (edgeVertices (K.val) ((t : ℝ) : Real.Angle)).1 = _
+          change (edgeVertices (K.val) ((t : ℝ) : Real.Angle)).1 = _
           rw [edgeVertices_eq_of_exposedEdge_singleton (hsing _ hmem).1]
-    · show (edgeVertices (K.val) (((t : ℝ) + Real.pi / 2 : ℝ) : Real.Angle)).1 = _
+    · change (edgeVertices (K.val) (((t : ℝ) + Real.pi / 2 : ℝ) : Real.Angle)).1 = _
       rcases eq_or_lt_of_le htI.1 with h0 | h0
       · rw [← h0, zero_add, hC0]
       rcases eq_or_lt_of_le htI.2 with hT | hT
@@ -1376,7 +1376,7 @@ private theorem gerver_tail_membership (K : SpecialCapSpace) (B D : ConvexBody P
     intro t ht
     have hl4 : gerverStageTimes 4 ∈ Set.Icc (0 : ℝ) (Real.pi / 2) :=
       ⟨by linarith only [h01, h12, h23, h34], h45.le⟩
-    show supportValue (K.val.val : Set Point)
+    change supportValue (K.val.val : Set Point)
         ((gerverStageTimes 4 + Real.pi / 2 : ℝ) : Real.Angle) - 1 ≤
       inner ℝ (paperGerverContacts t 3)
         (normalVector ((gerverStageTimes 4 + Real.pi / 2 : ℝ) : Real.Angle))
@@ -1388,7 +1388,7 @@ private theorem gerver_tail_membership (K : SpecialCapSpace) (B D : ConvexBody P
     intro t ht
     have hr1 : gerverStageTimes 1 ∈ Set.Icc (0 : ℝ) (Real.pi / 2) :=
       ⟨h01.le, by linarith only [h12, h23, h34, h45]⟩
-    show supportValue (K.val.val : Set Point) ((gerverStageTimes 1 : ℝ) : Real.Angle) - 1 ≤
+    change supportValue (K.val.val : Set Point) ((gerverStageTimes 1 : ℝ) : Real.Angle) - 1 ≤
       inner ℝ (paperGerverContacts t 1) (normalVector ((gerverStageTimes 1 : ℝ) : Real.Angle))
     rw [← hsupu _ hr1, ← gerver_niche_piece_endpoints.1]
     exact hkeyB t ht
@@ -1444,7 +1444,7 @@ private theorem gerver_tail_membership (K : SpecialCapSpace) (B D : ConvexBody P
     refine ⟨hcapD t ht, Set.mem_iInter₂.2 fun s hs ↦ ?_⟩
     rw [hl] at hs
     rcases eq_or_lt_of_le hs.1 with h0 | h0
-    · show supportValue (K.val.val : Set Point) ((s + Real.pi / 2 : ℝ) : Real.Angle) - 1 ≤
+    · change supportValue (K.val.val : Set Point) ((s + Real.pi / 2 : ℝ) : Real.Angle) - 1 ≤
         inner ℝ (paperGerverContacts t 3) (normalVector ((s + Real.pi / 2 : ℝ) : Real.Angle))
       rw [← h0, zero_add, K.val.property.2.2.2.1, inner_normalVector_pi_div_two]
       simpa only [sub_self] using hcapupper _ (hcapD t ht)
@@ -1458,7 +1458,7 @@ private theorem gerver_tail_membership (K : SpecialCapSpace) (B D : ConvexBody P
     refine ⟨hcapB t ht, Set.mem_iInter₂.2 fun s hs ↦ ?_⟩
     rw [hr] at hs
     rcases eq_or_lt_of_le hs.2 with hT | hT
-    · show supportValue (K.val.val : Set Point) (s : Real.Angle) - 1 ≤
+    · change supportValue (K.val.val : Set Point) (s : Real.Angle) - 1 ≤
         inner ℝ (paperGerverContacts t 1) (normalVector (s : Real.Angle))
       rw [hT, K.val.property.2.2.2.1, inner_normalVector_pi_div_two]
       simpa only [sub_self] using hcapupper _ (hcapB t ht)
@@ -1871,15 +1871,15 @@ theorem gerver_tailGeometry (K : SpecialCapSpace) (B D : ConvexBody Point)
     fun t ht ↦ edgeVertices_eq_of_exposedEdge_singleton (hBface t ⟨ht.1.le, ht.2⟩), ?_, ?_,
     edgeVertices_eq_of_exposedEdge_singleton (hDface _ hmemD2'), ?_, ?_, ?_,
     edgeVertices_eq_of_exposedEdge_singleton (hBface _ hmemB3'), ?_, ?_, ?_⟩
-  · show capInnerCorner K.val paperGerverConstants.2.2 = _
+  · change capInnerCorner K.val paperGerverConstants.2.2 = _
     rw [hl, hcorner _ hl4I]
     exact gerver_niche_piece_endpoints.2.1.symm
-  · show (edgeVertices D ((3 * Real.pi / 2 + paperGerverConstants.2.2 : ℝ) : Real.Angle)).2 = _
+  · change (edgeVertices D ((3 * Real.pi / 2 + paperGerverConstants.2.2 : ℝ) : Real.Angle)).2 = _
     rw [hl]
     exact hDend
   · refine ⟨by linarith only [ht0.le, h02], (continuous_paperGerverContact 3).continuousOn,
       hinjD, ?_, ?_, ?_⟩
-    · show (fun t ↦ paperGerverContacts t 3) ''
+    · change (fun t ↦ paperGerverContacts t 3) ''
         Set.Icc (gerverStageTimes 0) (gerverStageTimes 2) =
         convexBoundaryArc D (3 * Real.pi / 2) (3 * Real.pi / 2 + paperGerverConstants.2.2)
       rw [hl, convexBoundaryArc]
@@ -1912,21 +1912,21 @@ theorem gerver_tailGeometry (K : SpecialCapSpace) (B D : ConvexBody Point)
             exact ⟨gerverStageTimes 2, hmemD2, hps.symm⟩
         · rw [Set.mem_singleton_iff, hDend] at hp
           exact ⟨gerverStageTimes 2, hmemD2, hp.symm⟩
-    · show paperGerverContacts (gerverStageTimes 0) 3 =
+    · change paperGerverContacts (gerverStageTimes 0) 3 =
         (edgeVertices D ((3 * Real.pi / 2 : ℝ) : Real.Angle)).1
       rw [hDstart, ht0]
-    · show paperGerverContacts (gerverStageTimes 2) 3 =
+    · change paperGerverContacts (gerverStageTimes 2) 3 =
         (edgeVertices D ((3 * Real.pi / 2 + paperGerverConstants.2.2 : ℝ) : Real.Angle)).2
       rw [hl, hDend]
-  · show capInnerCorner K.val paperGerverConstants.2.1 = _
+  · change capInnerCorner K.val paperGerverConstants.2.1 = _
     rw [hr, hcorner _ hr1I]
     exact gerver_niche_piece_endpoints.1.symm
-  · show (edgeVertices B ((Real.pi + paperGerverConstants.2.1 : ℝ) : Real.Angle)).1 = _
+  · change (edgeVertices B ((Real.pi + paperGerverConstants.2.1 : ℝ) : Real.Angle)).1 = _
     rw [hr]
     exact hBstart
   · refine ⟨by linarith only [h34, h45, ht5.ge], (continuous_paperGerverContact 1).continuousOn,
       hinjB, ?_, ?_, ?_⟩
-    · show (fun t ↦ paperGerverContacts t 1) ''
+    · change (fun t ↦ paperGerverContacts t 1) ''
         Set.Icc (gerverStageTimes 3) (gerverStageTimes 5) =
         convexBoundaryArc B (Real.pi + paperGerverConstants.2.1) (3 * Real.pi / 2)
       rw [hr, convexBoundaryArc]
@@ -1958,10 +1958,10 @@ theorem gerver_tailGeometry (K : SpecialCapSpace) (B D : ConvexBody Point)
             exact ⟨s - Real.pi, ⟨hmem.1, hmem.2.le⟩, hps.symm⟩
         · rw [Set.mem_singleton_iff, hBend] at hp
           exact ⟨Real.pi / 2, hmemB5, hp.symm⟩
-    · show paperGerverContacts (gerverStageTimes 3) 1 =
+    · change paperGerverContacts (gerverStageTimes 3) 1 =
         (edgeVertices B ((Real.pi + paperGerverConstants.2.1 : ℝ) : Real.Angle)).1
       rw [hr, hBstart]
-    · show paperGerverContacts (gerverStageTimes 5) 1 =
+    · change paperGerverContacts (gerverStageTimes 5) 1 =
         (edgeVertices B ((3 * Real.pi / 2 : ℝ) : Real.Angle)).2
       rw [hBend, ht5]
   · intro t ht
@@ -2713,18 +2713,18 @@ private theorem gerver_contact_density_stage_identities
         derivWithin (fun s ↦ paperGerverContacts s k) (gerverStageIntervals i) t =
           deriv (fun s ↦ paperGerverContacts s k) t := fun _ ↦ derivWithin_of_mem_nhds hn
     refine ⟨?_, ?_, ?_, ?_⟩
-    · show inner ℝ (derivWithin (fun s ↦ paperGerverContacts s 0) (gerverStageIntervals i) t)
+    · change inner ℝ (derivWithin (fun s ↦ paperGerverContacts s 0) (gerverStageIntervals i) t)
         (tangentVector (t : Real.Angle)) = fA t
       rw [e 0, hfAdef]
-    · show inner ℝ (derivWithin (fun s ↦ paperGerverContacts s 1) (gerverStageIntervals i) t)
+    · change inner ℝ (derivWithin (fun s ↦ paperGerverContacts s 1) (gerverStageIntervals i) t)
         (tangentVector (t : Real.Angle)) = -fB t
       rw [e 1, hfBdef]
       simp [inner_neg_left]
-    · show inner ℝ (-derivWithin (fun s ↦ paperGerverContacts s 2) (gerverStageIntervals i) t)
+    · change inner ℝ (-derivWithin (fun s ↦ paperGerverContacts s 2) (gerverStageIntervals i) t)
         (normalVector (t : Real.Angle)) = fC (t + Real.pi / 2)
       rw [e 2, hfCdef]
       simp
-    · show inner ℝ (derivWithin (fun s ↦ paperGerverContacts s 3) (gerverStageIntervals i) t)
+    · change inner ℝ (derivWithin (fun s ↦ paperGerverContacts s 3) (gerverStageIntervals i) t)
         (normalVector (t : Real.Angle)) = fD (t + Real.pi / 2)
       rw [e 3, hfDdef]
       simp
@@ -3604,7 +3604,7 @@ private theorem exists_mem_left_tail_domain {t : Real.Angle}
   rw [gerverPhaseAngles_five_union_six] at ht
   obtain ⟨s, hs, rfl⟩ := ht
   refine ⟨s - Real.pi / 2, ⟨by linarith [hs.1], ?_⟩, ?_⟩
-  · show s - Real.pi / 2 ≤ Real.pi / 2 - GerversSofa.φ
+  · change s - Real.pi / 2 ≤ Real.pi / 2 - GerversSofa.φ
     linarith [hs.2]
   · congr 1
     ring
@@ -3861,7 +3861,7 @@ private theorem isPathConcatenation_gerverNicheBoundary (K : SpecialCapSpace)
         ⟨by rw [hv]; linarith [u.2.1], by rw [hv]; linarith [u.2.2]⟩
       rw [hΓ]
       refine (gerverNicheBoundary_base hmem (by rw [hv]; linarith [u.2.1])).trans ?_
-      show _ = (lineSegmentBVPath (paperGerverContacts 0 3)
+      change _ = (lineSegmentBVPath (paperGerverContacts 0 3)
         (paperGerverContacts (Real.pi / 2) 1)).val u
       rw [lineSegmentBVPath_apply, hv, show (4 : ℝ) - (3 + (u : ℝ)) = 1 - (u : ℝ) from by ring,
         show (3 : ℝ) + (u : ℝ) - 3 = (u : ℝ) from by ring]
@@ -4167,7 +4167,7 @@ theorem upperBoundQ_quadratic_concave :
     intro t X Y
     have h := middleMamikon_equivalent_neg_upperBoundMiddle t X.cap Y.cap
     simp only [sub_neg_eq_add, realCombination] at h
-    show middleMamikon (capTailCombination t X Y).cap +
+    change middleMamikon (capTailCombination t X Y).cap +
       upperBoundMiddle (capTailCombination t X Y).cap = realCombination t _ _
     rw [hcapval t X Y]
     simp only [realCombination]
@@ -4226,7 +4226,7 @@ private theorem segmentArea_add_segmentArea_rightWall (X : CapTailSpace) :
       (normalVector ((paperGerverConstants.2.1 : ℝ) : Real.Angle)) =
       supportValue (X.cap.val.val : Set Point)
         ((paperGerverConstants.2.1 : ℝ) : Real.Angle) - 1 := by
-    show inner ℝ (((supportValue (X.cap.val.val : Set Point)
+    change inner ℝ (((supportValue (X.cap.val.val : Set Point)
         ((paperGerverConstants.2.1 : ℝ) : Real.Angle) - 1) /
         Real.cos paperGerverConstants.2.1) • normalVector 0)
         (normalVector ((paperGerverConstants.2.1 : ℝ) : Real.Angle)) = _
@@ -4267,7 +4267,7 @@ private theorem segmentArea_add_segmentArea_leftWall (X : CapTailSpace) :
       (normalVector ((paperGerverConstants.2.2 + Real.pi / 2 : ℝ) : Real.Angle)) =
       supportValue (X.cap.val.val : Set Point)
         ((paperGerverConstants.2.2 + Real.pi / 2 : ℝ) : Real.Angle) - 1 := by
-    show inner ℝ (((supportValue (X.cap.val.val : Set Point)
+    change inner ℝ (((supportValue (X.cap.val.val : Set Point)
         ((paperGerverConstants.2.2 + Real.pi / 2 : ℝ) : Real.Angle) - 1) /
         Real.cos (Real.pi / 2 - paperGerverConstants.2.2)) •
         tangentVector ((Real.pi / 2 : ℝ) : Real.Angle))
@@ -4525,7 +4525,7 @@ private theorem topFace_sub_smul_normalVector_mem {ω : ℝ} (K : CapSpace ω)
   have hoedge : (stripParallelogram ω).2.2 ∈
       exposedEdge K.val ((Real.pi / 2 : ℝ) : Real.Angle) := by
     refine ⟨ho, ?_⟩
-    show inner ℝ (stripParallelogram ω).2.2 (normalVector _) = _
+    change inner ℝ (stripParallelogram ω).2.2 (normalVector _) = _
     rw [hT1, hcoord]
     simp [normalVector, frame, PiLp.inner_apply]
   have hsnd := edgeVertices_snd_mem K.val ((Real.pi / 2 : ℝ) : Real.Angle)
@@ -4645,7 +4645,7 @@ private theorem consumed_points_subset_innerQuadrant {ω : ℝ} (K : CapSpace ω
       x ∈ innerQuadrant (K.val : Set Point) (Real.pi / 2 - ω) := by
     intro x hx1 hx2
     refine ⟨hx1, ?_⟩
-    show inner ℝ x (normalVector ((Real.pi / 2 - ω + Real.pi / 2 : ℝ) : Real.Angle)) < _
+    change inner ℝ x (normalVector ((Real.pi / 2 - ω + Real.pi / 2 : ℝ) : Real.Angle)) < _
     rwa [hnt]
   have hpos1 : 0 < c * Real.sin ω := mul_pos hcpos hsin
   have hpos2 : 0 < c * (2 * (Real.sin ω * Real.cos ω)) := by
@@ -4707,7 +4707,7 @@ private theorem consumed_of_le_supportValue_zero {ω : ℝ}
     rw [Real.tan_eq_sin_div_cos, le_div_iff₀ hcos]
     linarith
   have hrnn : 0 ≤ (rotationCalculationValues ⟨ω, hω, hω'⟩ ⟨d, hdmin, hdtan⟩).1 := by
-    show 0 ≤ 1 - d * (Real.cos ω / Real.sin ω)
+    change 0 ≤ 1 - d * (Real.cos ω / Real.sin ω)
     rw [sub_nonneg, mul_div_assoc', div_le_one hsin]
     rw [Real.tan_eq_sin_div_cos, le_div_iff₀ hcos] at hdtan
     exact hdtan
@@ -4960,7 +4960,7 @@ private theorem smul_add_smul_mem_of_convex {U : Set Point} (hU : Convex ℝ U)
     fin_cases i
     · exact ha
     · exact hb
-    · show (0 : ℝ) ≤ 1 - a - b
+    · change (0 : ℝ) ≤ 1 - a - b
       linarith
   have hsum : ∑ i ∈ (Finset.univ : Finset (Fin 3)), (![a, b, 1 - a - b] : Fin 3 → ℝ) i = 1 := by
     simp [Fin.sum_univ_three]
@@ -5114,7 +5114,7 @@ private theorem exists_normalization_of_width {s : Set Point} {ω : ℝ}
       rw [Metric.mem_closedBall, dist_zero_right] at h
       exact h.trans (le_max_left _ _)
     have hn : ‖rotationMap ((d : ℝ) : Real.Angle) p‖ = ‖p‖ := by
-      show ‖(EuclideanGeometry.o.rotation ((d : ℝ) : Real.Angle)) p‖ = ‖p‖
+      change ‖(EuclideanGeometry.o.rotation ((d : ℝ) : Real.Angle)) p‖ = ‖p‖
       exact LinearIsometryEquiv.norm_map _ p
     calc (rotationMap ((d : ℝ) : Real.Angle) p) 0
         = inner ℝ (rotationMap ((d : ℝ) : Real.Angle) p)
@@ -5128,7 +5128,7 @@ private theorem exists_normalization_of_width {s : Set Point} {ω : ℝ}
     have h := inner_le_supportValue_of_isCompact hcpt hp
       ((Real.pi / 2 - d + Real.pi : ℝ) : Real.Angle)
     rw [normalVector_add_pi, inner_neg_right] at h
-    show -supportValue s ((Real.pi / 2 - d + Real.pi : ℝ) : Real.Angle) ≤ _
+    change -supportValue s ((Real.pi / 2 - d + Real.pi : ℝ) : Real.Angle) ≤ _
     linarith
   · intro d hd0 hd1 p hp
     have ht : ω ≤ Real.pi / 2 - d := by linarith
@@ -5141,7 +5141,7 @@ private theorem exists_normalization_of_width {s : Set Point} {ω : ℝ}
       have h := hwidth (Real.pi / 2 - d) ht ht' p hp q hq
       linarith
     rw [hcoord1]
-    show inner ℝ p (normalVector ((Real.pi / 2 - d : ℝ) : Real.Angle)) -
+    change inner ℝ p (normalVector ((Real.pi / 2 - d : ℝ) : Real.Angle)) -
       -supportValue s ((Real.pi / 2 - d + Real.pi : ℝ) : Real.Angle) ≤ 1
     linarith
 
@@ -5196,19 +5196,19 @@ private theorem hasRotationAngle_rotationMap_of_normalization {s : Set Point} {�
         rotationMap ((dd r + α₀ (τ r) : ℝ) : Real.Angle) p + C r := by
     intro r p
     have hΘsum : Θ r + δ₀ = dd r + α₀ (τ r) := by
-      show -δ₀ * min (3 * (r : ℝ)) 1 + α₀ (τ r) + δ₀ =
+      change -δ₀ * min (3 * (r : ℝ)) 1 + α₀ (τ r) + δ₀ =
         δ₀ * (1 - min (3 * (r : ℝ)) 1) + α₀ (τ r)
       ring
     rw [hnapp]
     congr 1
-    show (EuclideanGeometry.o.rotation ((Θ r : ℝ) : Real.Angle))
+    change (EuclideanGeometry.o.rotation ((Θ r : ℝ) : Real.Angle))
         ((EuclideanGeometry.o.rotation ((δ₀ : ℝ) : Real.Angle)) p) =
       (EuclideanGeometry.o.rotation ((dd r + α₀ (τ r) : ℝ) : Real.Angle)) p
     rw [Orientation.rotation_rotation, ← Real.Angle.coe_add, hΘsum]
   have hτzero : ∀ r : unitInterval, 3 * (r : ℝ) ≤ 2 → τ r = 0 := by
     intro r hr
     apply Subtype.ext
-    show max (3 * (r : ℝ) - 2) 0 = 0
+    change max (3 * (r : ℝ) - 2) 0 = 0
     exact max_eq_right (by linarith)
   -- phase one: rotating down to the horizontal position
   have hphaseA : ∀ r : unitInterval, 3 * (r : ℝ) ≤ 1 → ∀ p ∈ s,
@@ -5217,11 +5217,11 @@ private theorem hasRotationAngle_rotationMap_of_normalization {s : Set Point} {�
     have hr0 : (0 : ℝ) ≤ (r : ℝ) := r.2.1
     have hτ0 : τ r = 0 := hτzero r (by linarith)
     have hσ0 : σ r = 0 := by
-      show min (max (3 * (r : ℝ) - 1) 0) 1 = 0
+      change min (max (3 * (r : ℝ) - 1) 0) 1 = 0
       rw [max_eq_right (by linarith)]
       exact min_eq_left (by norm_num)
     have hdd : dd r = δ₀ * (1 - 3 * (r : ℝ)) := by
-      show δ₀ * (1 - min (3 * (r : ℝ)) 1) = _
+      change δ₀ * (1 - min (3 * (r : ℝ)) 1) = _
       rw [min_eq_left hr]
     have hdd0 : 0 ≤ dd r := by
       rw [hdd]
@@ -5231,7 +5231,7 @@ private theorem hasRotationAngle_rotationMap_of_normalization {s : Set Point} {�
       rw [hdd]
       linarith [h]
     have hC : C r = (!₂[-M, -low (dd r)] : Point) := by
-      show (1 - σ r) • (!₂[-M, -low (dd r)] : Point) + σ r • v + (m₀ (τ r) 0 - v) = _
+      change (1 - σ r) • (!₂[-M, -low (dd r)] : Point) + σ r • v + (m₀ (τ r) 0 - v) = _
       rw [hσ0, hτ0, hm₀0]
       simp
     have heval : n r (rotationMap ((δ₀ : ℝ) : Real.Angle) p) =
@@ -5239,13 +5239,13 @@ private theorem hasRotationAngle_rotationMap_of_normalization {s : Set Point} {�
       rw [hcompose, hτ0, hα₀0, add_zero, hC]
     rw [heval]
     refine mem_horizontalHallway_of_coordinates _ ?_ ⟨?_, ?_⟩
-    · show (rotationMap ((dd r : ℝ) : Real.Angle) p) 0 + -M ≤ 1
+    · change (rotationMap ((dd r : ℝ) : Real.Angle) p) 0 + -M ≤ 1
       have h := hhoriz (dd r) p hp
       linarith
-    · show (0 : ℝ) ≤ (rotationMap ((dd r : ℝ) : Real.Angle) p) 1 + -low (dd r)
+    · change (0 : ℝ) ≤ (rotationMap ((dd r : ℝ) : Real.Angle) p) 1 + -low (dd r)
       have h := hloleq (dd r) p hp
       linarith
-    · show (rotationMap ((dd r : ℝ) : Real.Angle) p) 1 + -low (dd r) ≤ 1
+    · change (rotationMap ((dd r : ℝ) : Real.Angle) p) 1 + -low (dd r) ≤ 1
       have h := hupleq (dd r) hdd0 hdd1 p hp
       linarith
   -- phase two: translating to the initial placement of the original motion
@@ -5254,17 +5254,17 @@ private theorem hasRotationAngle_rotationMap_of_normalization {s : Set Point} {�
     intro r hr hr' p hp
     have hτ0 : τ r = 0 := hτzero r hr'
     have hσ : σ r = 3 * (r : ℝ) - 1 := by
-      show min (max (3 * (r : ℝ) - 1) 0) 1 = _
+      change min (max (3 * (r : ℝ) - 1) 0) 1 = _
       rw [max_eq_left (by linarith)]
       exact min_eq_left (by linarith)
     have hσ0 : 0 ≤ σ r := by rw [hσ]; linarith
     have hσ1 : σ r ≤ 1 := by rw [hσ]; linarith
     have hdd : dd r = 0 := by
-      show δ₀ * (1 - min (3 * (r : ℝ)) 1) = 0
+      change δ₀ * (1 - min (3 * (r : ℝ)) 1) = 0
       rw [min_eq_right hr]
       ring
     have hC : C r = (1 - σ r) • (!₂[-M, -low 0] : Point) + σ r • v := by
-      show (1 - σ r) • (!₂[-M, -low (dd r)] : Point) + σ r • v + (m₀ (τ r) 0 - v) = _
+      change (1 - σ r) • (!₂[-M, -low (dd r)] : Point) + σ r • v + (m₀ (τ r) 0 - v) = _
       rw [hdd, hτ0, hm₀0]
       simp
     have heval : n r (rotationMap ((δ₀ : ℝ) : Real.Angle) p) =
@@ -5277,15 +5277,15 @@ private theorem hasRotationAngle_rotationMap_of_normalization {s : Set Point} {�
     obtain ⟨hi1, hi2, hi3⟩ := hinit p hp
     rw [heval]
     refine mem_horizontalHallway_of_coordinates _ ?_ ⟨?_, ?_⟩
-    · show p 0 + ((1 - σ r) * -M + σ r * v 0) ≤ 1
+    · change p 0 + ((1 - σ r) * -M + σ r * v 0) ≤ 1
       have k1 : 0 ≤ (1 - σ r) * (M - p 0) := mul_nonneg (by linarith) (by linarith)
       have k2 : 0 ≤ σ r * (1 - (p 0 + v 0)) := mul_nonneg hσ0 (by linarith)
       nlinarith only [k1, k2, hσ1]
-    · show (0 : ℝ) ≤ p 1 + ((1 - σ r) * -low 0 + σ r * v 1)
+    · change (0 : ℝ) ≤ p 1 + ((1 - σ r) * -low 0 + σ r * v 1)
       have k3 : 0 ≤ (1 - σ r) * (p 1 - low 0) := mul_nonneg (by linarith) (by linarith)
       have k4 : 0 ≤ σ r * (p 1 + v 1) := mul_nonneg hσ0 (by linarith)
       nlinarith only [k3, k4]
-    · show p 1 + ((1 - σ r) * -low 0 + σ r * v 1) ≤ 1
+    · change p 1 + ((1 - σ r) * -low 0 + σ r * v 1) ≤ 1
       have k5 : 0 ≤ (1 - σ r) * (1 - (p 1 - low 0)) := mul_nonneg (by linarith) (by linarith)
       have k6 : 0 ≤ σ r * (1 - (p 1 + v 1)) := mul_nonneg hσ0 (by linarith)
       nlinarith only [k5, k6]
@@ -5294,15 +5294,15 @@ private theorem hasRotationAngle_rotationMap_of_normalization {s : Set Point} {�
       n r (rotationMap ((δ₀ : ℝ) : Real.Angle) p) = m₀ (τ r) p := by
     intro r hr p
     have hσ1 : σ r = 1 := by
-      show min (max (3 * (r : ℝ) - 1) 0) 1 = 1
+      change min (max (3 * (r : ℝ) - 1) 0) 1 = 1
       rw [max_eq_left (by linarith)]
       exact min_eq_right (by linarith)
     have hdd : dd r = 0 := by
-      show δ₀ * (1 - min (3 * (r : ℝ)) 1) = 0
+      change δ₀ * (1 - min (3 * (r : ℝ)) 1) = 0
       rw [min_eq_right (by linarith)]
       ring
     have hC : C r = m₀ (τ r) 0 := by
-      show (1 - σ r) • (!₂[-M, -low (dd r)] : Point) + σ r • v + (m₀ (τ r) 0 - v) = _
+      change (1 - σ r) • (!₂[-M, -low (dd r)] : Point) + σ r • v + (m₀ (τ r) 0 - v) = _
       rw [hσ1]
       simp
     rw [hcompose, hC, hdd, zero_add, hm₀lift (τ r) p]
@@ -5329,14 +5329,14 @@ private theorem hasRotationAngle_rotationMap_of_normalization {s : Set Point} {�
   -- endpoint values
   have hτ1 : τ 1 = 1 := by
     apply Subtype.ext
-    show max (3 * ((1 : unitInterval) : ℝ) - 2) 0 = ((1 : unitInterval) : ℝ)
+    change max (3 * ((1 : unitInterval) : ℝ) - 2) 0 = ((1 : unitInterval) : ℝ)
     norm_num
   have hΘ0 : Θ 0 = 0 := by
-    show -δ₀ * min (3 * ((0 : unitInterval) : ℝ)) 1 + α₀ (τ 0) = 0
+    change -δ₀ * min (3 * ((0 : unitInterval) : ℝ)) 1 + α₀ (τ 0) = 0
     rw [hτzero 0 (by norm_num), hα₀0]
     norm_num
   have hΘ1 : Θ 1 = -(Real.pi / 2) := by
-    show -δ₀ * min (3 * ((1 : unitInterval) : ℝ)) 1 + α₀ (τ 1) = -(Real.pi / 2)
+    change -δ₀ * min (3 * ((1 : unitInterval) : ℝ)) 1 + α₀ (τ 1) = -(Real.pi / 2)
     rw [hτ1, hα₀1, show (3 : ℝ) * ((1 : unitInterval) : ℝ) = 3 by norm_num,
       min_eq_right (by norm_num : (1 : ℝ) ≤ 3), hδ₀def]
     ring
@@ -5540,17 +5540,17 @@ private theorem hasRotationAngle_right_of_reaches_right (S : Set Point)
     fun_prop
   have hφ0 : φ 0 = 0 := by
     apply Subtype.ext
-    show min (2 * ((0 : unitInterval) : ℝ)) 1 * (ts : ℝ) = 0
+    change min (2 * ((0 : unitInterval) : ℝ)) 1 * (ts : ℝ) = 0
     norm_num
   have hφ1 : φ 1 = ts := by
     apply Subtype.ext
-    show min (2 * ((1 : unitInterval) : ℝ)) 1 * (ts : ℝ) = (ts : ℝ)
+    change min (2 * ((1 : unitInterval) : ℝ)) 1 * (ts : ℝ) = (ts : ℝ)
     norm_num
   have hψ0 : ψ 0 = 0 := by
-    show max (2 * ((0 : unitInterval) : ℝ) - 1) 0 = 0
+    change max (2 * ((0 : unitInterval) : ℝ) - 1) 0 = 0
     norm_num
   have hψ1 : ψ 1 = 1 := by
-    show max (2 * ((1 : unitInterval) : ℝ) - 1) 0 = 1
+    change max (2 * ((1 : unitInterval) : ℝ) - 1) 0 = 1
     norm_num
   have hψnn : ∀ r : unitInterval, 0 ≤ ψ r := fun r ↦ le_max_right _ _
   have hψle : ∀ r : unitInterval, ψ r ≤ 1 := by
@@ -5562,10 +5562,10 @@ private theorem hasRotationAngle_right_of_reaches_right (S : Set Point)
       by_contra hcon
       push Not at hcon
       apply hr
-      show max (2 * (r : ℝ) - 1) 0 = 0
+      change max (2 * (r : ℝ) - 1) 0 = 0
       exact max_eq_right (by linarith)
     apply Subtype.ext
-    show min (2 * (r : ℝ)) 1 * (ts : ℝ) = (ts : ℝ)
+    change min (2 * (r : ℝ)) 1 * (ts : ℝ) = (ts : ℝ)
     rw [min_eq_right hlt.le, one_mul]
   -- the hallway containment of the new motion
   have hnhall : ∀ (r : unitInterval), n r '' S ⊆ hallway := by
@@ -5581,11 +5581,11 @@ private theorem hasRotationAngle_right_of_reaches_right (S : Set Point)
       obtain ⟨hz1, hz2, hz3⟩ := hLt ts p hp
       have hc0 : (n r p) 0 = p 1 + (e ts) 0 + ψ r * δ := by
         rw [hnapp, hcoord, hφr, hmts0 p]
-        show p 1 + (e ts) 0 + ψ r * w 0 = _
+        change p 1 + (e ts) 0 + ψ r * w 0 = _
         rw [hw0]
       have hc1 : (n r p) 1 = -p 0 + (e ts) 1 := by
         rw [hnapp, hcoord, hφr, hmts1 p]
-        show -p 0 + (e ts) 1 + ψ r * w 1 = _
+        change -p 0 + (e ts) 1 + ψ r * w 1 = _
         rw [hw1]
         ring
       rw [hmts0 p] at hz1 hz3
@@ -5613,12 +5613,12 @@ private theorem hasRotationAngle_right_of_reaches_right (S : Set Point)
     rw [hmts1 p] at hz2
     have hc0 : (n 1 p) 0 = p 1 + (e ts) 0 + δ := by
       rw [hnapp, hcoord, hφ1, hmts0 p, hψ1]
-      show p 1 + (e ts) 0 + 1 * w 0 = _
+      change p 1 + (e ts) 0 + 1 * w 0 = _
       rw [hw0]
       ring
     have hc1 : (n 1 p) 1 = -p 0 + (e ts) 1 := by
       rw [hnapp, hcoord, hφ1, hmts1 p, hψ1]
-      show -p 0 + (e ts) 1 + 1 * w 1 = _
+      change -p 0 + (e ts) 1 + 1 * w 1 = _
       rw [hw1]
       ring
     refine mem_verticalHallway_of_coordinates _ ⟨?_, ?_⟩ ?_
@@ -5634,9 +5634,9 @@ private theorem hasRotationAngle_right_of_reaches_right (S : Set Point)
   have hncont : Continuous n := by
     rw [continuous_induced_rng]
     refine ContinuousAffineMap.continuous_rng (fun p ↦ ?_) ?_
-    · show Continuous fun r : unitInterval ↦ m (φ r) p + ψ r • w
+    · change Continuous fun r : unitInterval ↦ m (φ r) p + ψ r • w
       exact ((hmcam.comp hφcont).eval_const p).add (hψcont.smul continuous_const)
-    · show Continuous fun r : unitInterval ↦
+    · change Continuous fun r : unitInterval ↦
         ((m (φ r)).toAffineIsometry.toContinuousAffineMap).contLinear
       exact ContinuousAffineMap.continuous_contLinear.comp (hmcam.comp hφcont)
   refine ⟨n, ⟨hm.isConnected, hm.isClosed, hncont, ⟨0, ?_⟩, ?_, ?_, hnhall, hnfinal⟩,
@@ -5655,9 +5655,9 @@ private theorem hasRotationAngle_right_of_reaches_right (S : Set Point)
       rfl
     rw [hid]
     exact hm.initial hp
-  · show α (φ 0) = 0
+  · change α (φ 0) = 0
     rw [hφ0, hα0]
-  · show α (φ 1) = -(Real.pi / 2)
+  · change α (φ 1) = -(Real.pi / 2)
     rw [hφ1, hts]
   · intro r p
     rw [hnapp, hnapp, hlift (φ r) p, hlift (φ r) 0]
@@ -6035,7 +6035,7 @@ Authors: Dean Cureton
 The paper's main theorem bounds the real area of every moving sofa in the paper normalization by
 the area of the paper Gerver sofa. The canonical and paper Gerver sets coincide, every admissible
 set is a paper moving sofa, and admissible sets are compact, so the comparison of real areas is a
-comparison of Lebesgue measures. No classical proposition is used.
+comparison of Lebesgue measures.
 -/
 
 @[expose] public section

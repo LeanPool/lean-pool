@@ -14,8 +14,6 @@ projects:
       - Dawid Trela
       - Rado Kirov
       - Kirill Alkhimov
-      - The Tau Ceti contributors
-      - The Formal Conjectures Authors
     source:
       title: Optimality of Gerver's Sofa
       authors:
@@ -29,8 +27,6 @@ projects:
     provenance: AI
     main_declarations:
       - MovingSofa.sofaConstant_eq_volume_gerversSofa
-      - MovingSofa.GerversSofa.ABφθSpec.existsUnique
-      - MovingSofa.isMovingSofa_gerversSofa
     main_results:
       - declaration: MovingSofa.sofaConstant_eq_volume_gerversSofa
         informal: >-
@@ -59,9 +55,7 @@ projects:
       - convex-geometry
       - moving-sofa-problem
       - geometric-optimization
-      - bounded-variation
       - interval-arithmetic
-      - Jordan-curve-theorem
     msc:
       - 52A40
       - 52A10

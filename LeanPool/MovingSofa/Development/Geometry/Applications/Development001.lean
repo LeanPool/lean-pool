@@ -179,12 +179,12 @@ private theorem distinguishedCapSides_fanPoint_fst_lt (K : SpecialCapSpace) :
   have hmul := mul_le_mul_of_nonneg_right hcon hcosr.le
   have h1 : (distinguishedCapSides K.val).1.fanPoint ∈
       (distinguishedCapSides K.val).1.upperHalfPlane := by
-    show _ ≤ inner ℝ _ (normalVector (paperGerverConstants.2.1 : Real.Angle))
+    change _ ≤ inner ℝ _ (normalVector (paperGerverConstants.2.1 : Real.Angle))
     rw [inner_normalVector_real, hW1, hsr1]
     simp
   have h2 : (distinguishedCapSides K.val).1.fanPoint ∈
       (distinguishedCapSides K.val).2.upperHalfPlane := by
-    show _ ≤ inner ℝ _
+    change _ ≤ inner ℝ _
       (normalVector ((paperGerverConstants.2.2 + Real.pi / 2 : ℝ) : Real.Angle))
     rw [inner_normalVector_real, hW1, hcosladd, hsl1]
     linarith only [hmul]
@@ -403,7 +403,7 @@ private theorem region_under_roof_diff_subset (K : SpecialCapSpace) {k w z h : �
     linarith only [hc, hm]
   have hfan : p ∈ capFan (Real.pi / 2) := by
     refine ⟨?_, ?_⟩ <;>
-      · show (0 : ℝ) ≤ inner ℝ p (normalVector ((Real.pi / 2 : ℝ) : Real.Angle))
+      · change (0 : ℝ) ≤ inner ℝ p (normalVector ((Real.pi / 2 : ℝ) : Real.Angle))
         rw [inner_normalVector_pi_div_two]
         exact hp1pos.le
   -- the roof point above `p` provides the time whose inward quadrant contains `p`
@@ -716,7 +716,7 @@ theorem sqIntegral_quadratic_convex {α : Type*} {Ω : Type*} [MeasurableSpace �
   have hfB : ∀ x, f x = B x x := fun x ↦ by
     rw [hf x, hBval, integral_congr_ae (Filter.Eventually.of_forall fun ω ↦ pow_two (g x ω))]
   refine ⟨⟨B, hB, hfB⟩, fun s x y ↦ ?_⟩
-  show f (c s x y) ≤ realCombination s (f x) (f y)
+  change f (c s x y) ≤ realCombination s (f x) (f y)
   have hnn : 0 ≤ B x x - B x y - B y x + B y y := by
     have i1 : Integrable (fun ω ↦ g x ω * g x ω - g x ω * g y ω) μ := (hint x x).sub (hint x y)
     have i2 : Integrable (fun ω ↦ g x ω * g x ω - g x ω * g y ω - g y ω * g x ω) μ :=
@@ -728,7 +728,7 @@ theorem sqIntegral_quadratic_convex {α : Type*} {Ω : Type*} [MeasurableSpace �
         integral_sub (hint x x) (hint x y)]
     have hpos : 0 ≤ ∫ ω, (g x ω * g x ω - g x ω * g y ω - g y ω * g x ω + g y ω * g y ω) ∂μ :=
       integral_nonneg fun ω ↦ by
-        show (0 : ℝ) ≤ g x ω * g x ω - g x ω * g y ω - g y ω * g x ω + g y ω * g y ω
+        change (0 : ℝ) ≤ g x ω * g x ω - g x ω * g y ω - g y ω * g x ω + g y ω * g y ω
         nlinarith [sq_nonneg (g x ω - g y ω)]
     rw [hsplit] at hpos
     rw [hBval, hBval, hBval, hBval]
@@ -1068,10 +1068,10 @@ theorem mamikon_integral (K : ConvexBody Point) (a b : ℝ)
   -- measurability and boundedness of the offset
   have hmeas : Measurable (mamikonOffset K z) := by
     refine measurable_of_restrict_of_restrict_compl (s := Set.Icc a b) measurableSet_Icc ?_ ?_
-    · show Measurable fun t : Set.Icc a b ↦ mamikonOffset K z (t : ℝ)
+    · change Measurable fun t : Set.Icc a b ↦ mamikonOffset K z (t : ℝ)
       rw [funext hoffset]
       exact hAmeas
-    · show Measurable fun t : ((Set.Icc a b)ᶜ : Set ℝ) ↦ mamikonOffset K z (t : ℝ)
+    · change Measurable fun t : ((Set.Icc a b)ᶜ : Set ℝ) ↦ mamikonOffset K z (t : ℝ)
       rw [show (fun t : ((Set.Icc a b)ᶜ : Set ℝ) ↦ mamikonOffset K z (t : ℝ)) = fun _ ↦ 0 from
         funext fun t ↦ dite_eq_right t.property]
       exact measurable_const
@@ -1357,28 +1357,28 @@ theorem tailFanPoint_identities
   -- the two fan points
   have h1 : inner ℝ (wedgeEndpoints K r).1 (normalVector ((r : ℝ) : Real.Angle)) =
       supportValue (K.1 : Set Point) ((r : ℝ) : Real.Angle) - 1 := by
-    show inner ℝ (((supportValue (K.1 : Set Point) ((r : ℝ) : Real.Angle) - 1) /
+    change inner ℝ (((supportValue (K.1 : Set Point) ((r : ℝ) : Real.Angle) - 1) /
       Real.cos r) • normalVector 0) _ = _
     rw [real_inner_smul_left, ← Real.Angle.coe_zero, inner_normalVector_normalVector,
       zero_sub, Real.cos_neg]
     field_simp
   have h2 : inner ℝ (wedgeEndpoints K r).1
       (normalVector ((Real.pi / 2 : ℝ) : Real.Angle)) = 0 := by
-    show inner ℝ (((supportValue (K.1 : Set Point) ((r : ℝ) : Real.Angle) - 1) /
+    change inner ℝ (((supportValue (K.1 : Set Point) ((r : ℝ) : Real.Angle) - 1) /
       Real.cos r) • normalVector 0) _ = _
     rw [real_inner_smul_left, ← Real.Angle.coe_zero, inner_normalVector_normalVector,
       zero_sub, Real.cos_neg, Real.cos_pi_div_two, mul_zero]
   have h5 : inner ℝ (wedgeEndpoints K l).2
       (normalVector ((Real.pi / 2 + l : ℝ) : Real.Angle)) =
       supportValue (K.1 : Set Point) ((Real.pi / 2 + l : ℝ) : Real.Angle) - 1 := by
-    show inner ℝ (((supportValue (K.1 : Set Point) ((l + Real.pi / 2 : ℝ) : Real.Angle) - 1) /
+    change inner ℝ (((supportValue (K.1 : Set Point) ((l + Real.pi / 2 : ℝ) : Real.Angle) - 1) /
       Real.cos (Real.pi / 2 - l)) • tangentVector ((Real.pi / 2 : ℝ) : Real.Angle)) _ = _
     rw [real_inner_smul_left, inner_tangentVector_normalVector_real,
       Real.cos_pi_div_two_sub, hKl, show Real.pi / 2 + l - Real.pi / 2 = l by ring]
     field_simp
   have h6 : inner ℝ (wedgeEndpoints K l).2
       (normalVector ((Real.pi / 2 : ℝ) : Real.Angle)) = 0 := by
-    show inner ℝ (((supportValue (K.1 : Set Point) ((l + Real.pi / 2 : ℝ) : Real.Angle) - 1) /
+    change inner ℝ (((supportValue (K.1 : Set Point) ((l + Real.pi / 2 : ℝ) : Real.Angle) - 1) /
       Real.cos (Real.pi / 2 - l)) • tangentVector ((Real.pi / 2 : ℝ) : Real.Angle)) _ = _
     rw [real_inner_smul_left, inner_tangentVector_normalVector_real, sub_self,
       Real.sin_zero, mul_zero]
@@ -1677,8 +1677,11 @@ private theorem mem_innerQuadrant_iff_lt_min_affine {Θ : AngleSet}
     ⟨by linarith [Real.pi_pos, htt.1], htt.2.trans_le Θ.angle_le⟩
   simp only [innerQuadrant, normalHalfPlane, Set.mem_inter_iff,
     Bool.false_eq_true, ite_false, ite_true]
-  simp [normalVector, frame, PiLp.inner_apply, Real.sin_add, Real.cos_add,
-    -Real.Angle.coe_add]
+  simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply,
+    RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero,
+    Matrix.cons_val_one, Matrix.cons_val_fin_one, Set.mem_ofPred_eq, Real.cos_add,
+    Real.cos_pi_div_two, mul_zero, Real.sin_pi_div_two, mul_one, zero_sub, Real.sin_add,
+    zero_add, neg_mul, neg_add_lt_iff_lt_add, lt_min_iff]
   change
     (Real.cos t * p 0 + Real.sin t * p 1 <
         supportValue K.val.val (t : Real.Angle) - 1 ∧
@@ -1719,8 +1722,12 @@ private theorem mem_capFan_iff_max_affine_le {Θ : AngleSet}
       max 0 (affineValue (fanAffine Θ.angle) (p 0)) ≤ p 1 := by
   have hs : 0 < Real.sin Θ.angle := Real.sin_pos_of_pos_of_lt_pi Θ.angle_pos
     (Θ.angle_le.trans_lt (by linarith [Real.pi_pos]))
-  simp [capFan, normalHalfPlane, normalVector, frame, PiLp.inner_apply,
-    affineValue, fanAffine]
+  simp only [capFan, normalHalfPlane, ↓reduceIte, Bool.false_eq_true, normalVector, frame,
+    Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply, RCLike.inner_apply, conj_trivial,
+    Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.cons_val_fin_one, Real.cos_pi_div_two, Real.sin_pi_div_two, zero_mul, one_mul,
+    zero_add, Set.mem_inter_iff, Set.mem_ofPred_eq, affineValue, fanAffine, add_zero,
+    sup_le_iff]
   have heq : -Real.cos Θ.angle / Real.sin Θ.angle * p 0 =
       (-Real.cos Θ.angle * p 0) / Real.sin Θ.angle := by ring
   rw [heq]
@@ -1838,7 +1845,11 @@ theorem capVertices_zero_snd_eq {Θ : AngleSet} (K : PolygonCapSpace Θ) :
     have h := hqFan.2
     change 0 ≤ inner ℝ q (normalVector ((Real.pi / 2 : ℝ) : Real.Angle)) at h
     simpa [normalVector, frame, PiLp.inner_apply] using h
-  simp [A, tangentVector, normalVector, frame, PiLp.inner_apply]
+  simp only [normalVector, frame, Real.Angle.cos_zero, Real.Angle.sin_zero, neg_zero,
+    tangentVector, PiLp.inner_apply, PiLp.smul_apply, smul_eq_mul, RCLike.inner_apply,
+    conj_trivial, Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero, mul_one, zero_mul,
+    Matrix.cons_val_one, Matrix.cons_val_fin_one, mul_zero, add_zero, one_mul, zero_add,
+    ge_iff_le, A]
   exact hqy
 
 /-- The terminal positive cap contact lies on the lower fan ray. -/
@@ -1976,7 +1987,11 @@ theorem polygonCap_left_x_lt_right_x {Θ : AngleSet} (K : PolygonCapSpace Θ) :
         have htop : inner ℝ m (normalVector (r : Real.Angle)) <
             inner ℝ u (normalVector (r : Real.Angle)) := by
           have hux : u 0 = l 0 := (hx u huK).trans (hx l hlK).symm
-          simp [m, normalVector, frame, PiLp.inner_apply, huy, hly]
+          simp only [smul_add, normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe,
+            PiLp.inner_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, RCLike.inner_apply,
+            conj_trivial, Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero,
+            Matrix.cons_val_one, Matrix.cons_val_fin_one, huy, mul_one, hly, mul_zero, add_zero,
+            gt_iff_lt, m]
           rw [hux]
           norm_num
           nlinarith
@@ -2074,7 +2089,11 @@ private theorem capBoundaryHeight_eq_zero_of_right {Θ : AngleSet}
     have h := hAfan.1
     change 0 ≤ inner ℝ A (normalVector (Θ.angle : Real.Angle)) at h
     rw [hAeq] at h
-    simp [normalVector, frame, PiLp.inner_apply] at h
+    simp only [normalVector, frame, Real.Angle.cos_zero, Real.Angle.sin_zero, neg_zero,
+      Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply, PiLp.smul_apply,
+      smul_eq_mul, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+      Matrix.cons_val_zero, mul_one, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+      mul_zero, add_zero] at h
     have hAcoord : A 0 = supportValue K.val.val (0 : Real.Angle) := by
       rw [hAeq]
       simp [normalVector, frame]
@@ -2587,7 +2606,8 @@ private lemma inner_le_support_iff_snd_le_affine (K : ConvexBody Point)
     ring
   rw [hformula, le_div_iff₀ ht]
   simp only [normalVector, frame, PiLp.inner_apply, Fin.sum_univ_two]
-  simp
+  simp only [Fin.isValue, Real.Angle.cos_coe, Real.Angle.sin_coe, Matrix.cons_val_zero,
+    RCLike.inner_apply, conj_trivial, Matrix.cons_val_one, Matrix.cons_val_fin_one]
   constructor <;> intro h <;> nlinarith
 
 private lemma snd_le_upperSupportHeight_iff (K : ConvexBody Point)
@@ -2630,7 +2650,10 @@ private lemma mem_capFan_of_fst_eq_of_snd_le {ω : ℝ} (hω : 0 ≤ Real.sin ω
     0 ≤ inner ℝ q (normalVector ((Real.pi / 2 : ℝ) : Real.Angle))
   change 0 ≤ inner ℝ p (normalVector (ω : Real.Angle)) ∧
     0 ≤ inner ℝ p (normalVector ((Real.pi / 2 : ℝ) : Real.Angle)) at hp
-  simp [normalVector, frame, PiLp.inner_apply] at hp ⊢
+  simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe,
+    PiLp.inner_apply, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+    Real.cos_pi_div_two, Real.sin_pi_div_two, zero_mul, one_mul, zero_add] at hp ⊢
   rw [hx] at hp
   constructor
   · nlinarith [hp.1, mul_nonneg hω (sub_nonneg.mpr hy)]
@@ -7785,7 +7808,10 @@ private theorem exposedEdge_bottom_eq_segment_zero_right {Θ : AngleSet}
     have hqx : 0 ≤ q 0 := by
       have h := hfan.1
       change 0 ≤ inner ℝ q (normalVector (Θ.angle : Real.Angle)) at h
-      simp [normalVector, frame, PiLp.inner_apply, hqy] at h
+      simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply,
+        RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+        Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, hqy, mul_zero,
+        add_zero] at h
       exact nonneg_of_mul_nonneg_left (by simpa [mul_comm] using h) hcos
     rw [htangent]
     simpa [normalVector, frame, PiLp.inner_apply] using hqx
@@ -8072,7 +8098,10 @@ private theorem polygonCapPolyline_carrier_inter_bottom_subset_exposedEdge_of_lt
       ⟨by linarith [Θ.angle_pos, Real.pi_pos], hω⟩
     have h := hfan.1
     change 0 ≤ inner ℝ q (normalVector (Θ.angle : Real.Angle)) at h
-    simp [normalVector, frame, PiLp.inner_apply, hqy] at h
+    simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply,
+      RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, hqy, mul_zero,
+      add_zero] at h
     exact nonneg_of_mul_nonneg_left (by simpa [mul_comm] using h) hcos
 
 private theorem polygonCapPolyline_carrier_inter_left_subset_exposedEdge_of_lt
@@ -8278,16 +8307,23 @@ private theorem polygonNiche_inter_bottom_subset_exposedEdge_of_lt
     have hb := hqt.1
     change inner ℝ q (normalVector (t : Real.Angle)) <
       supportValue K.val.val (t : Real.Angle) - 1 at hb
-    simp [normalVector, frame, PiLp.inner_apply, hqy] at hb
+    simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply,
+      RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, hqy, mul_zero,
+      add_zero] at hb
     simp only [wedgeEndpoints]
-    simp [normalVector, frame]
+    simp only [Fin.isValue, normalVector, frame, Real.Angle.cos_zero, Real.Angle.sin_zero, neg_zero,
+      PiLp.smul_apply, Matrix.cons_val_zero, smul_eq_mul, mul_one, gt_iff_lt]
     exact (lt_div_iff₀ hcost).2 (by simpa [mul_comm] using hb)
   have hendpoint_A : (wedgeEndpoints K.val t).1 0 < (capVertices K.val 0).1.2 0 := by
     simpa [wedgeGaps, inner_sub_left, normalVector, frame, PiLp.inner_apply] using hgap
   have hqx_nonneg : 0 ≤ q 0 := by
     have hfan := hq.1.1.1
     change 0 ≤ inner ℝ q (normalVector (Θ.angle : Real.Angle)) at hfan
-    simp [normalVector, frame, PiLp.inner_apply, hqy] at hfan
+    simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe,
+      PiLp.inner_apply, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, hqy, mul_zero,
+      add_zero] at hfan
     have hcosω : 0 < Real.cos Θ.angle := Real.cos_pos_of_mem_Ioo
       ⟨by linarith [Θ.angle_pos, Real.pi_pos], hω⟩
     exact nonneg_of_mul_nonneg_left (by simpa [mul_comm] using hfan) hcosω
@@ -8445,9 +8481,13 @@ private theorem polygonNiche_inter_bottom_subset_exposedEdge_of_eq
     have hb := hqt.1
     change inner ℝ q (normalVector (t : Real.Angle)) <
       supportValue K.val.val (t : Real.Angle) - 1 at hb
-    simp [normalVector, frame, PiLp.inner_apply, hqy] at hb
+    simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply,
+      RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, hqy, mul_zero,
+      add_zero] at hb
     simp only [wedgeEndpoints]
-    simp [normalVector, frame]
+    simp only [Fin.isValue, normalVector, frame, Real.Angle.cos_zero, Real.Angle.sin_zero, neg_zero,
+      PiLp.smul_apply, Matrix.cons_val_zero, smul_eq_mul, mul_one, gt_iff_lt]
     exact (lt_div_iff₀ hcost).2 (by simpa [mul_comm] using hb)
   have hendpoint_A : (wedgeEndpoints K.val t).1 0 < (capVertices K.val 0).1.2 0 := by
     simpa [wedgeGaps, inner_sub_left, normalVector, frame, PiLp.inner_apply] using hgapA
@@ -8789,7 +8829,7 @@ private theorem hausdorffMeasure_left_exposedEdge_sdiff_niche_eq_carrier_of_lt
             rw [show inner ℝ (tangentVector (Θ.angle : Real.Angle))
               (tangentVector (Θ.angle : Real.Angle)) = 1 by
                 exact inner_tangentVector_self Θ.angle]
-            simp
+            simp only [mul_one, lt_add_iff_pos_right]
             exact hr
           exact (not_lt_of_ge hqcoord_le hqcoord_gt).elim
         · exact (hq.2 ⟨hqcarrier, hq.1.2⟩).elim
@@ -8844,7 +8884,10 @@ private theorem bottom_exposedEdge_sdiff_niche_inter_eq_carrier_of_eq
           (polygonCap_left_x_lt_right_x K).le hD
         have hqx' : q 0 < C 0 := by
           rw [hqr]
-          simp [C, tangentVector, frame, hω]
+          simp only [Fin.isValue, hω, tangentVector, frame, Real.Angle.cos_coe, Real.cos_pi_div_two,
+            Real.Angle.sin_coe, Real.sin_pi_div_two, PiLp.add_apply, PiLp.smul_apply,
+            Matrix.cons_val_zero, smul_eq_mul, mul_neg, mul_one, add_lt_iff_neg_left,
+            Left.neg_neg_iff, C]
           exact hr
         exact (not_lt_of_ge (by simpa [C] using hqx.1) hqx').elim
       · exact ⟨hqcarrier, hq.2⟩
@@ -8855,7 +8898,10 @@ private theorem bottom_exposedEdge_sdiff_niche_inter_eq_carrier_of_eq
         (polygonCap_left_x_lt_right_x K).le hD
       have hqx' : A 0 < q 0 := by
         rw [hqr]
-        simp [A, normalVector, frame]
+        simp only [Fin.isValue, normalVector, frame, Real.Angle.cos_zero,
+          Real.Angle.sin_zero, neg_zero,
+          PiLp.add_apply, PiLp.smul_apply, Matrix.cons_val_zero, smul_eq_mul, mul_one,
+          lt_add_iff_pos_right, A]
         exact hr
       exact (not_lt_of_ge (by simpa [A] using hqx.2) hqx').elim
   · intro hq
@@ -9611,7 +9657,7 @@ theorem polygonCap_balancing_estimate_of_endpoint {Θ : AngleSet}
   rw [hupperCoeff] at hu
   rw [hlowerCoeff] at hl
   rw [hnicheCoeff, independentWallNiche_update_eq h t varepsilon] at hn
-  simp [hin] at hn
+  simp only [hin, ↓reduceIte, Real.Angle.coe_add, neg_mul, one_mul, neg_sub] at hn
   have hchangeUpper (s : angleDomain Θ) :
       |Function.update h t (h t + varepsilon) s - h s| ≤ epsilonZero := by
     by_cases hst : s = t

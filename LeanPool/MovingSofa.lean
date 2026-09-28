@@ -7,14 +7,15 @@ Authors: Dean Cureton
 module
 
 public import LeanPool.MovingSofa.Development.Geometry.Applications.Development003
+
 /-!
 # Optimality of Gerver's sofa
 
 Source: arxiv:2411.19826, url:https://github.com/deancureton/MovingSofa/tree/4d5569131940815f47a9ccf3e90a4c5043c56127
-Authors: Dean Cureton, Dawid Trela, Rado Kirov, Kirill Alkhimov, The Tau Ceti contributors, The Formal Conjectures Authors
+Authors: Dean Cureton, Dawid Trela, Rado Kirov, Kirill Alkhimov
 Status: verified
-Main declarations: `MovingSofa.sofaConstant_eq_volume_gerversSofa`, `MovingSofa.GerversSofa.ABφθSpec.existsUnique`, `MovingSofa.isMovingSofa_gerversSofa`
-Tags: convex-geometry, moving-sofa-problem, geometric-optimization, bounded-variation, interval-arithmetic, Jordan-curve-theorem
+Main declarations: `MovingSofa.sofaConstant_eq_volume_gerversSofa`
+Tags: convex-geometry, moving-sofa-problem, geometric-optimization, interval-arithmetic
 MSC: 52A40, 52A10, 49Q10
 -/
 
@@ -27,14 +28,17 @@ Codex and Claude Code under Cureton's direction. Completion was announced on 20 
 
 The coherent dependency closure also contains:
 
-* Dawid Trela's `dawidmtrela-dotcom/GerverSofaLean`, release v1.1.0 (MIT; notice below), including its Part F bridge.
+* Dawid Trela's `dawidmtrela-dotcom/GerverSofaLean`, release v1.1.0
+  (MIT; notice below), including its Part F bridge.
 * `alerad/leancert` at `571a228555ae38742448854be81d7b59d994a8e3` (Apache-2.0):
   pure interval arithmetic and its soundness proofs, without the metaprogramming front end.
 * Rado Kirov's `rkirov/jordan_pick` at
   `b3c9b7cf7358bf81a077d78ad67e6e8247869ddd` (Apache-2.0): Jordan separation and Brouwer.
-* `TauCetiProject/TauCeti` at `c52a81811e4626d2e9769fe9b0c701168c211332` (Apache-2.0):
+* The Tau Ceti contributors: `TauCetiProject/TauCeti` at
+  `c52a81811e4626d2e9769fe9b0c701168c211332` (Apache-2.0):
   variation, filled hulls, and supporting topology.
-* `google-deepmind/formal-conjectures` at `ddfbaf90f4482030d88aae5233fe933874296a23`
+* The Formal Conjectures Authors: `google-deepmind/formal-conjectures` at
+  `ddfbaf90f4482030d88aae5233fe933874296a23`
   (Apache-2.0): the moving-sofa definitions, with its open parameter theorem proved here.
 
 Jonathan Ho's isoperimetric infrastructure is reused from `LeanPool.Isoperimetric`.

@@ -99,6 +99,7 @@ certificate in GerverSofaLean, so that Gerver's constants are defined from a pro
 
 noncomputable section
 
+/-- The standard two-dimensional Euclidean space over the reals. -/
 scoped[EuclideanGeometry] notation "ℝ²" => EuclideanSpace ℝ (Fin 2)
 
 open scoped EuclideanGeometry
@@ -126,6 +127,7 @@ def verticalHallway : Set ℝ² := {!₂[x, y] | (x) (y) (_ : 0 ≤ x ∧ x ≤ 
 /-- The **hallway** is the union of its horizontal and vertical sides. -/
 def hallway : Set ℝ² := horizontalHallway ∪ verticalHallway
 
+/-- The affine isometry group of the Euclidean plane. -/
 scoped notation "E(2)" => ℝ² ≃ᵃⁱ[ℝ] ℝ²
 
 /-- The topology on the isometry group `E(2)`, induced from the continuous affine maps of the
@@ -11106,7 +11108,9 @@ def SpecialCapSpace :=
 structure CapTailSpace where
   /-- The special cap forming the central component of the triple. -/
   cap : SpecialCapSpace
+  /-- The convex body used as the right tail. -/
   rightBody : ConvexBody Point
+  /-- The convex body used as the left tail. -/
   leftBody : ConvexBody Point
   right_subset : (rightBody : Set Point) ⊆ (cap.1.1 : Set Point)
   left_subset : (leftBody : Set Point) ⊆ (cap.1.1 : Set Point)

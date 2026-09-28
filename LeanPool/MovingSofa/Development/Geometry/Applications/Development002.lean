@@ -163,8 +163,8 @@ theorem aestronglyMeasurable_tangentArm_fst (C : RightAngleCapSpace) :
 
 /-- The positive tangent arm length is nonnegative: it is the integral of the sine of a
 quarter-turn of normal directions against the surface area measure. -/
-theorem tangentArm_fst_nonneg (C : RightAngleCapSpace) {t : ℝ}
-    (ht : t ∈ Icc (0 : ℝ) (Real.pi / 2)) : 0 ≤ (tangentArmLengths C t).2.1 := by
+theorem tangentArm_fst_nonneg (C : RightAngleCapSpace) {t : ℝ} :
+    0 ≤ (tangentArmLengths C t).2.1 := by
   rw [tangentArm_convolution C t]
   refine setIntegral_nonneg (Real.Angle.measurableSet_image_Ioc t (t + Real.pi / 2)) ?_
   rintro u ⟨v, hv, rfl⟩
@@ -193,8 +193,7 @@ theorem tangentArmLengths_right_nonneg (K : RightAngleCapSpace) (t : ℝ) :
     sub_nonneg.mpr (hmem _ (edgeVertices_snd_mem K.val _).1)⟩
 
 /-- The positive tangent arm length is bounded by the total mass of the surface area measure. -/
-theorem abs_tangentArm_fst_le (C : RightAngleCapSpace) {t : ℝ}
-    (ht : t ∈ Icc (0 : ℝ) (Real.pi / 2)) :
+theorem abs_tangentArm_fst_le (C : RightAngleCapSpace) {t : ℝ} :
     |(tangentArmLengths C t).2.1| ≤ (surfaceAreaMeasure C.val).real Set.univ := by
   let _ : IsFiniteMeasure (surfaceAreaMeasure C.val) :=
     (surfaceAreaMeasure_face_union C.val).1
@@ -224,8 +223,8 @@ theorem intervalIntegrable_tangentArm_fst (C : RightAngleCapSpace) :
     (μ := volume) (s := Ioc 0 (Real.pi / 2)) (measure_Ioc_lt_top.ne)
     (C := (surfaceAreaMeasure C.val).real Set.univ)).mono'
       (aestronglyMeasurable_tangentArm_fst C)
-  filter_upwards [ae_restrict_mem measurableSet_Ioc] with t ht
-  exact abs_tangentArm_fst_le C ⟨ht.1.le, ht.2⟩
+  filter_upwards [] with t
+  exact abs_tangentArm_fst_le C
 
 private theorem maximumPolygonCap_diam_le (n : ℕ) (K : RightAngleCapSpace)
     (hK : IsMaximumPolygonCapSteps n K) : Metric.diam (K.val : Set Point) ≤ 5 := by
@@ -327,16 +326,16 @@ private theorem maximumPolygonCap_diam_le (n : ℕ) (K : RightAngleCapSpace)
     have hfan : q ∈ capFan (rightAngleSet n hn).angle := by
       rw [hangle]
       refine ⟨?_, ?_⟩ <;>
-        · show (0 : ℝ) ≤ inner ℝ q (normalVector ((Real.pi / 2 : ℝ) : Real.Angle))
+        · change (0 : ℝ) ≤ inner ℝ q (normalVector ((Real.pi / 2 : ℝ) : Real.Angle))
           rw [hqe]
           linarith
     have hquad : q ∈ innerQuadrant (P.val.val : Set Point) (Real.pi / 4) := by
       rw [hPK]
       refine ⟨?_, ?_⟩
-      · show inner ℝ q (normalVector ((Real.pi / 4 : ℝ) : Real.Angle)) < h1 - 1
+      · change inner ℝ q (normalVector ((Real.pi / 4 : ℝ) : Real.Angle)) < h1 - 1
         rw [hqu]
         linarith
-      · show inner ℝ q (normalVector ((Real.pi / 4 + Real.pi / 2 : ℝ) : Real.Angle)) < h2 - 1
+      · change inner ℝ q (normalVector ((Real.pi / 4 + Real.pi / 2 : ℝ) : Real.Angle)) < h2 - 1
         rw [hqv]
         linarith
     have hmemniche : q ∈ polygonNiche (rightAngleSet n hn) P.val :=
@@ -371,7 +370,7 @@ private theorem maximumPolygonCap_diam_le (n : ℕ) (K : RightAngleCapSpace)
     have hle : supportValue (K.val : Set Point) ((Real.pi / 2 : ℝ) : Real.Angle) ≤ hgt := by
       apply csSup_le (K.val.nonempty.image _)
       rintro _ ⟨p, hp, rfl⟩
-      show inner ℝ p (normalVector ((Real.pi / 2 : ℝ) : Real.Angle)) ≤ hgt
+      change inner ℝ p (normalVector ((Real.pi / 2 : ℝ) : Real.Angle)) ≤ hgt
       rw [hinner, Real.cos_pi_div_two, Real.sin_pi_div_two]
       have h1p := htrap1 p hp
       have h2p := htrap2 p hp
@@ -558,7 +557,7 @@ private theorem rightAnglePolygonCap_edgeVertices_eq (n : ℕ) (hn : 2 ≤ n)
       · rw [hz]
         congr 1
         show (rightAngleSet n hn).angle + Real.pi = 3 * Real.pi / 2
-        show Real.pi / 2 + Real.pi = 3 * Real.pi / 2
+        change Real.pi / 2 + Real.pi = 3 * Real.pi / 2
         ring
       · exact hz
     rcases K.properEdgeNormal_mem_allowed_or_antipodal (x : Real.Angle) hne with
@@ -721,7 +720,7 @@ private theorem tangentArmLengths_snd_support (K : RightAngleCapSpace) :
     ring
   intro s
   constructor <;>
-    · show inner ℝ (_ - _) (normalVector (s : Real.Angle)) = _
+    · change inner ℝ (_ - _) (normalVector (s : Real.Angle)) = _
       rw [inner_sub_left, hy s]
 
 theorem maximumPolygonCap_arm_cell (n : ℕ) (hn : 2 ≤ n) (K : RightAngleCapSpace)
@@ -743,7 +742,7 @@ theorem maximumPolygonCap_arm_cell (n : ℕ) (hn : 2 ≤ n) (K : RightAngleCapSp
   have hnR2 : (2 : ℝ) ≤ n := by exact_mod_cast hn
   have hδpos : 0 < polygonStepSize n := div_pos (by linarith) hnR
   have hδle : polygonStepSize n ≤ Real.pi / 4 := by
-    show Real.pi / 2 / n ≤ Real.pi / 4
+    change Real.pi / 2 / n ≤ Real.pi / 4
     rw [div_le_iff₀ hnR]
     nlinarith
   -- the cell lies in the parameter range and contains no grid direction
@@ -930,8 +929,6 @@ theorem maximumPolygonCap_arm_cell (n : ℕ) (hn : 2 ≤ n) (K : RightAngleCapSp
 
 theorem polygonCap_arm_integral_limit (K : ℕ → RightAngleCapSpace)
     (L : RightAngleCapSpace)
-    (hpolygon : ∀ i, ∃ (Θ : AngleSet) (P : PolygonCapSpace Θ),
-      Θ.angle = Real.pi / 2 ∧ (P.val.val : Set Point) = ((K i).val : Set Point))
     (hlim : Tendsto (fun i ↦ Metric.hausdorffDist ((K i).val : Set Point)
       (L.val : Set Point)) atTop (𝓝 0)) :
     Tendsto (fun i ↦ ∫ t in (0 : ℝ)..(Real.pi / 2),
@@ -993,30 +990,6 @@ theorem polygonCap_arm_integral_limit (K : ℕ → RightAngleCapSpace)
     have hLt := tangentArm_convolution L t
     simpa only [A, hKt, hLt] using hint
   have hmeas_arm := aestronglyMeasurable_tangentArm_fst
-  have hbound_arm (C : RightAngleCapSpace) (t : ℝ)
-      (ht : t ∈ Icc (0 : ℝ) (Real.pi / 2)) :
-      |(tangentArmLengths C t).2.1| ≤
-        (surfaceAreaMeasure C.val).real Set.univ := by
-    let _ : IsFiniteMeasure (surfaceAreaMeasure C.val) :=
-      (surfaceAreaMeasure_face_union C.val).1
-    rw [tangentArm_convolution C t]
-    change ‖∫ u in (fun s : ℝ ↦ (s : Real.Angle)) '' Ioc t (t + Real.pi / 2),
-      (u - (t : Real.Angle)).sin ∂surfaceAreaMeasure C.val‖ ≤ _
-    calc
-      ‖∫ u in (fun s : ℝ ↦ (s : Real.Angle)) '' Ioc t (t + Real.pi / 2),
-          (u - (t : Real.Angle)).sin ∂surfaceAreaMeasure C.val‖ ≤
-          1 * (surfaceAreaMeasure C.val).real
-            ((fun s : ℝ ↦ (s : Real.Angle)) '' Ioc t (t + Real.pi / 2)) := by
-            apply norm_setIntegral_le_of_norm_le_const
-            · finiteness
-            · intro u hu
-              simp only [Real.norm_eq_abs]
-              rw [← Real.Angle.sin_toReal]
-              exact Real.abs_sin_le_one _
-      _ ≤ (surfaceAreaMeasure C.val).real Set.univ := by
-        simpa only [one_mul] using
-          measureReal_mono (μ := surfaceAreaMeasure C.val) (Set.subset_univ _)
-            (measure_ne_top _ _)
   have hmeas : ∀ n, AEStronglyMeasurable
       (fun t ↦ |(tangentArmLengths (K n) t).2.1 - (tangentArmLengths L t).2.1|)
       (volume.restrict (Ioc 0 (Real.pi / 2))) := by
@@ -1027,7 +1000,7 @@ theorem polygonCap_arm_integral_limit (K : ℕ → RightAngleCapSpace)
       ‖|(tangentArmLengths (K n) t).2.1 - (tangentArmLengths L t).2.1|‖ ≤
         (M : ℝ) + (μ.mass : ℝ) := by
     intro n
-    filter_upwards [ae_restrict_mem measurableSet_Ioc] with t ht
+    filter_upwards [] with t
     rw [Real.norm_eq_abs, abs_abs]
     calc
       |(tangentArmLengths (K n) t).2.1 - (tangentArmLengths L t).2.1| ≤
@@ -1035,8 +1008,8 @@ theorem polygonCap_arm_integral_limit (K : ℕ → RightAngleCapSpace)
         abs_sub _ _
       _ ≤ (surfaceAreaMeasure (K n).val).real Set.univ +
           (surfaceAreaMeasure L.val).real Set.univ :=
-        add_le_add (hbound_arm (K n) t ⟨ht.1.le, ht.2⟩)
-          (hbound_arm L t ⟨ht.1.le, ht.2⟩)
+        add_le_add (abs_tangentArm_fst_le (K n) (t := t))
+          (abs_tangentArm_fst_le L (t := t))
       _ = ((μs n).mass : ℝ) + (μ.mass : ℝ) := by
         change (μs n : Measure Real.Angle).real univ +
           (μ : Measure Real.Angle).real univ = _
@@ -1197,9 +1170,13 @@ private theorem polygonNiche_fanLine_fst_lt_gapStart {Θ : AngleSet}
     have hb := hqt.1
     change inner ℝ q (normalVector (t : Real.Angle)) <
       supportValue K.val.val (t : Real.Angle) - 1 at hb
-    simp [normalVector, frame, PiLp.inner_apply, hqy] at hb
+    simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply,
+      RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, hqy, mul_zero,
+      add_zero] at hb
     simp only [wedgeEndpoints]
-    simp [normalVector, frame]
+    simp only [Fin.isValue, normalVector, frame, Real.Angle.cos_zero, Real.Angle.sin_zero, neg_zero,
+      PiLp.smul_apply, Matrix.cons_val_zero, smul_eq_mul, mul_one, gt_iff_lt]
     exact (lt_div_iff₀ hcost).2 (by simpa [mul_comm] using hb)
   have hinf : (wedgeGapInfimum K.val).1 ≤ (wedgeGaps K.val t).1 := by
     rw [wedgeGapInfimum]
@@ -1227,7 +1204,10 @@ private theorem polygonNiche_fanLine_subset_bottom_exposedEdge {Θ : AngleSet}
       change inner ℝ q (normalVector ((Real.pi / 2 : ℝ) : Real.Angle)) = 0 at hline
       simpa [normalVector, frame, PiLp.inner_apply] using hline
     change 0 ≤ inner ℝ q (normalVector (Θ.angle : Real.Angle)) at hfan
-    simp [normalVector, frame, PiLp.inner_apply, hqy] at hfan
+    simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe,
+      PiLp.inner_apply, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, hqy, mul_zero,
+      add_zero] at hfan
     exact nonneg_of_mul_nonneg_left (by simpa [mul_comm] using hfan)
       (Real.cos_pos_of_mem_Ioo
         ⟨by linarith [Θ.angle_pos, Real.pi_pos], hω⟩)
@@ -1781,7 +1761,10 @@ private theorem normalVector_mem_polygonSeedSet (Θ : AngleSet) {t : ℝ}
       exact Real.cos_nonneg_of_mem_Icc htω
     · change 0 ≤ inner ℝ (normalVector (t : Real.Angle))
         (normalVector ((Real.pi / 2 : ℝ) : Real.Angle))
-      simp [normalVector, frame, PiLp.inner_apply]
+      simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, Real.cos_pi_div_two,
+        Real.sin_pi_div_two, PiLp.inner_apply, RCLike.inner_apply, conj_trivial,
+        Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero, zero_mul, Matrix.cons_val_one,
+        Matrix.cons_val_fin_one, one_mul, zero_add]
       exact Real.sin_nonneg_of_nonneg_of_le_pi ht0 htpi
   · intro s hs
     calc
@@ -2022,8 +2005,11 @@ private theorem polygonNiche_polygonSeedCap (Θ : AngleSet) :
       ((t + Real.pi / 2 : ℝ) : Real.Angle) - 1 at h₂
   rw [supportValue_polygonSeedCap_upper Θ (Or.inl (Or.inl ht))] at h₁
   rw [supportValue_polygonSeedCap_upper Θ (Or.inl (Or.inr ⟨t, ht, rfl⟩))] at h₂
-  simp [normalVector, frame, PiLp.inner_apply, Real.cos_add, Real.sin_add,
-    -Real.Angle.coe_add] at h₁ h₂
+  simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe,
+    PiLp.inner_apply, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, sub_self,
+    Real.cos_add, Real.cos_pi_div_two, mul_zero, Real.sin_pi_div_two, mul_one,
+    zero_sub, Real.sin_add, zero_add, neg_mul, neg_add_lt_iff_lt_add, add_zero] at h₁ h₂
   have h₁' := mul_lt_mul_of_pos_left h₁ hs
   have h₂' := mul_lt_mul_of_pos_left h₂ hc
   nlinarith [Real.sin_sq_add_cos_sq t]
@@ -2074,7 +2060,9 @@ private theorem stripParallelogram_top_mem_polygonSeedCap (Θ : AngleSet) :
   · constructor
     · change 0 ≤ inner ℝ (!₂[Real.tan β, 1] : Point)
         (normalVector (Θ.angle : Real.Angle))
-      simp [normalVector, frame, PiLp.inner_apply]
+      simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply,
+        RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero,
+        Matrix.cons_val_one, Matrix.cons_val_fin_one, mul_one]
       positivity
     · change 0 ≤ inner ℝ (!₂[Real.tan β, 1] : Point)
         (normalVector ((Real.pi / 2 : ℝ) : Real.Angle))
@@ -2392,7 +2380,8 @@ private theorem exists_candidate_translate_rightAngle (Θ : AngleSet)
     refine ⟨p, hp, ?_⟩
     ext i
     fin_cases i
-    · simp [v, hΘ, stripParallelogram]
+    · simp only [Fin.isValue, Fin.zero_eta, PiLp.add_apply, Matrix.cons_val_zero, add_neg_cancel,
+      stripParallelogram, hΘ, v]
       rw [show Real.pi / 4 - Real.pi / 2 / 2 = 0 by ring, Real.tan_zero]
     · simp [v, hΘ, stripParallelogram, hp1]
   have hfan : capFan Θ.angle = (fun q ↦ q + v) '' capFan Θ.angle := by
@@ -2807,7 +2796,7 @@ theorem maximumPolygonCap_surfaceAtom_bound (n : ℕ) (hn : 2 ≤ n)
       rw [← hlenat, ← hwall]
       exact ENNReal.toReal_nonneg
     -- the three pieces
-    have hlegs := maximumPolygonCap_leg_lengths n hn2 hdy P hmax t ht
+    have hlegs := maximumPolygonCap_leg_lengths n hn2 P t ht
     have hsubset : frontier (polygonNiche (rightAngleSet n hn2) P.val) ∩
           (rotatingHallwayParts (P.val.val : Set Point) (t : Real.Angle)).bRay ⊆
         (((rotatingHallwayParts (P.val.val : Set Point) (t : Real.Angle)).bRay ∩
@@ -3195,7 +3184,7 @@ private theorem rightAngle_properEdgeNormal_real (n : ℕ) (hn : 2 ≤ n)
     have hrs' : ((3 * Real.pi / 2 : ℝ) : Real.Angle) = ((s : ℝ) : Real.Angle) := hrs
     refine Real.Angle.injOn_coe_Ioc (a := -Real.pi) (b := Real.pi) (by linarith) hs
       ⟨by linarith, by linarith⟩ ?_
-    show ((s : ℝ) : Real.Angle) = ((-(Real.pi / 2) : ℝ) : Real.Angle)
+    change ((s : ℝ) : Real.Angle) = ((-(Real.pi / 2) : ℝ) : Real.Angle)
     rw [← hrs', Real.Angle.angle_eq_iff_two_pi_dvd_sub]
     exact ⟨1, by push_cast; ring⟩
 
@@ -3633,10 +3622,7 @@ private theorem IsBalancedMaximumCap.approximatingPolygonCaps
     (fun _ t ↦ (tangentArmLengths K t).2.1)
     (fun i ↦ intervalIntegrable_tangentArm_fst _)
     (fun i ↦ intervalIntegrable_tangentArm_fst K)
-  apply polygonCap_arm_integral_limit (fun i ↦ (Q i).val) K
-  · intro i
-    exact ⟨rightAngleSet (n i) (hn i), Q i, rfl, rfl⟩
-  · exact hQlim
+  exact polygonCap_arm_integral_limit (fun i ↦ (Q i).val) K hQlim
 
 /-- The limit of the discrete inequalities on a compact subset of the rotation interval. -/
 private theorem balancedMaximumCap_surface_isCompact_le (K : RightAngleCapSpace)
@@ -4049,8 +4035,8 @@ private theorem exists_capDensity_right (K : RightAngleCapSpace)
     (fun t ↦ magicDensity (tangentArmLengths K t).2.1) hmeas
     (fun t _ ↦ magicDensity_nonneg _)
     (M := (surfaceAreaMeasure K.val).real univ + 1)
-    (fun t ht ↦ (magicDensity_le_abs_add_one _).trans
-      (by linarith [abs_tangentArm_fst_le K ht]))
+    (fun t _ ↦ (magicDensity_le_abs_add_one _).trans
+      (by linarith [abs_tangentArm_fst_le K (t := t)]))
     fun E hE hEsub ↦ balancedMaximumCap_surface_domination K hK E hE hEsub
   exact Real.Angle.measurableSet_image_of_subset_Ioc (a := -Real.pi) (b := Real.pi)
     (by linarith) measurableSet_Ico fun t ht ↦ ⟨by linarith [ht.1], by linarith [ht.2]⟩
@@ -4108,8 +4094,8 @@ theorem exists_capDensity_right_le_magicDensity (K : RightAngleCapSpace)
   obtain ⟨ρ, -, hρint, hρle, hρeq⟩ := exists_density_le_of_domination μ hμ_compl
     (fun t ↦ magicDensity (tangentArmLengths K t).2.1) hmeas (fun t _ ↦ magicDensity_nonneg _)
     (M := (surfaceAreaMeasure K.val).real univ + 1)
-    (fun t ht ↦ (magicDensity_le_abs_add_one _).trans
-      (by linarith [abs_tangentArm_fst_le K ht])) hdom
+    (fun t _ ↦ (magicDensity_le_abs_add_one _).trans
+      (by linarith [abs_tangentArm_fst_le K (t := t)])) hdom
   refine ⟨ρ, hρint, hρle, fun E hE hEsub ↦ ?_⟩
   have hEIcc : E ⊆ Icc (0 : ℝ) (Real.pi / 2) := hEsub.trans Ico_subset_Icc_self
   have hEint : Integrable ρ (volume.restrict E) := hρint.mono_set hEIcc
@@ -4184,11 +4170,9 @@ private theorem exists_capDensity_left (K : RightAngleCapSpace)
   have hbound : ∀ t ∈ Icc (0 : ℝ) (Real.pi / 2),
       magicDensity (tangentArmLengths P (Real.pi / 2 - t)).2.1 ≤
         (surfaceAreaMeasure P.val).real univ + 1 := by
-    intro t ht
+    intro t _
     refine (magicDensity_le_abs_add_one _).trans ?_
-    have harm := abs_tangentArm_fst_le P
-      (show Real.pi / 2 - t ∈ Icc (0 : ℝ) (Real.pi / 2) from
-        ⟨by linarith [ht.2], by linarith [ht.1]⟩)
+    have harm := abs_tangentArm_fst_le P (t := Real.pi / 2 - t)
     linarith
   rw [← image_coe_add_pi_div_two_Ioc]
   refine exists_arcDensity_of_domination (surfaceAreaMeasure K.val)
@@ -4582,7 +4566,7 @@ theorem tangentArmLengths_right_zero_eq_one (K : RightAngleCapSpace)
 theorem nondegenerateCapData_arm_nonneg (K : RightAngleCapSpace)
     (hD : ∃ r s, HasCapDensities K r s) (t : Set.Icc (0 : ℝ) (Real.pi / 2)) :
     0 ≤ (nondegenerateCapData K hD).2.1 t ∧ 0 ≤ (nondegenerateCapData K hD).2.2 t := by
-  refine ⟨?_, tangentArm_fst_nonneg K t.property⟩
+  refine ⟨?_, tangentArm_fst_nonneg K⟩
   simp only [nondegenerateCapData]
   split_ifs
   · exact (tangentArmLengths_right_nonneg K t).2
@@ -4699,7 +4683,7 @@ theorem balancedMaximumCap_arm_regularity (K : RightAngleCapSpace)
     rfl
   have hgcnonneg : ∀ x, 0 ≤ gc x := fun x ↦ by
     rw [hgcdef]
-    exact tangentArm_fst_nonneg K (Set.projIcc 0 (Real.pi / 2) hle x).property
+    exact tangentArm_fst_nonneg K
   -- the density of the surface measure on the first arc, bounded by `k₀ ∘ g_K`
   obtain ⟨ρ, hρint, hρle, hρeq⟩ := exists_capDensity_right_le_magicDensity K hK
   set w : ℝ → ℝ := fun t ↦ gc t - ρ t
@@ -4789,8 +4773,8 @@ theorem armIntegralOperator_monotone
 
 private theorem magicFunction_eq_affine_of_mem_Icc (y : ℝ) (hy0 : 0 ≤ y) (hy1 : y ≤ 1) :
     magicFunctions.2 (Real.toNNReal y) = 3 / 2 * y - 1 := by
-  simp [magicFunctions, abs_of_nonpos (by linarith : y - 1 ≤ 0),
-    Real.toNNReal_of_nonneg hy0]
+  simp only [magicFunctions, Real.toNNReal_of_nonneg hy0, NNReal.coe_mk, abs_of_nonpos (by
+    linarith : y - 1 ≤ 0), neg_sub]
   rw [max_eq_right (by linarith)]
   ring
 
@@ -4943,7 +4927,11 @@ private theorem lowerBoundProfile_zero_le_one
   change max (1 - (x : ℝ)) 0 ≤ _
   simp only [armLowerBoundSequence, ContinuousMap.coe_mk, NNReal.coe_max,
     NNReal.coe_zero]
-  simp [armIntegralOperator, magicFunctions, intervalIntegral.integral_const]
+  simp only [armIntegralOperator, magicFunctions, ContinuousMap.coe_mk, NNReal.coe_zero, zero_sub,
+    abs_neg, abs_one, add_self_div_two, max_self, intervalIntegral.integral_neg,
+    intervalIntegral.integral_const, sub_zero, smul_eq_mul, mul_one,
+    Real.coe_toNNReal', le_max_iff, le_add_neg_iff_add_le, zero_add, Std.le_refl, or_true,
+    sup_of_le_right, sup_le_iff, tsub_le_iff_right, and_true]
   by_cases hx : 1 ≤ (x : ℝ)
   · exact Or.inr hx
   · left
@@ -5502,12 +5490,12 @@ theorem specialCapArea_variation :
       supportValue K.val.val a ∂surfaceAreaMeasure L.val.val, ⟨?_, ?_⟩,
     fun K ↦ harea K.val.val⟩, ?_⟩
   · intro K t L M
-    show (1 / 2 : ℝ) * ∫ a : Real.Angle, supportValue K.val.val a
+    change (1 / 2 : ℝ) * ∫ a : Real.Angle, supportValue K.val.val a
         ∂surfaceAreaMeasure (specialCapCombination t L M).val.val = _
     rw [hcomb t L M]
     exact hbil.1 K.val.val t L.val.val M.val.val
   · intro M t K L
-    show (1 / 2 : ℝ) * ∫ a : Real.Angle,
+    change (1 / 2 : ℝ) * ∫ a : Real.Angle,
         supportValue (specialCapCombination t K L).val.val a
         ∂surfaceAreaMeasure M.val.val = _
     rw [hcomb t K L]
@@ -5956,7 +5944,7 @@ theorem capInnerCorner_variation :
   have hlinear : IsConvexLinear specialCapCombination bvPathCombination capMiddleBV := by
     intro t K L
     refine Subtype.ext (funext fun s ↦ ?_)
-    show capInnerCorner (specialCapCombination t K L).val s.val = _
+    change capInnerCorner (specialCapCombination t K L).val s.val = _
     rw [capInnerCorner_of_eq_convexBodyCombination (specialCap_isConvexDomain.1 t K L)]
     rfl
   refine ⟨hlinear, (curveArea_variation _ _ hrl).1.comp_isConvexLinear hlinear, ?_⟩
@@ -6225,11 +6213,11 @@ theorem cornerArea_equivalent_modulo_linear :
   refine ⟨capOuterMiddleBV, fun K ↦ funext (capOuterMiddleBV_val K), ?_, ?_, ?_⟩
   -- ### The middle window: translation by the frame-sum path
   · intro t K L
-    show curveAreaFunctional (capMiddleBV (specialCapCombination t K L) +
+    change curveAreaFunctional (capMiddleBV (specialCapCombination t K L) +
         frameSumBV paperGerverConstants.2.1 paperGerverConstants.2.2) -
       curveAreaFunctional (capMiddleBV (specialCapCombination t K L)) = _
     rw [capInnerCorner_variation.1 t K L]
-    exact curveArea_translation_convexLinear hrl _ t (capMiddleBV K) (capMiddleBV L)
+    exact curveArea_translation_convexLinear _ t (capMiddleBV K) (capMiddleBV L)
   -- ### The right end: both endpoints move by fixed vectors
   · have hcos : 0 < Real.cos paperGerverConstants.2.1 :=
       Real.cos_pos_of_mem_Ioo ⟨by linarith [Real.pi_pos, hr.1], hr.2⟩
@@ -6303,7 +6291,7 @@ private theorem mem_capNiche_inter_right_of_notMem_canonicalTail (K : SpecialCap
   obtain ⟨hmonR, -, -, -⟩ := cap_tail_monotonicity_intervals K
   have hUpEqR : (innerWallUpperHalfPlanes K.val (Real.pi / 2)).1 =
       normalHalfPlane ((Real.pi / 2 : ℝ) : Real.Angle) 0 true false := by
-    show normalHalfPlane _ (supportValue (K.1.1 : Set Point) _ - 1) true false = _
+    change normalHalfPlane _ (supportValue (K.1.1 : Set Point) _ - 1) true false = _
     rw [K.1.property.2.2.2.1, sub_self]
   obtain ⟨t, ht, hqt⟩ : ∃ t ∈ Set.Icc paperGerverConstants.2.1 (Real.pi / 2),
       q ∉ (innerWallUpperHalfPlanes K.val t).1 := by
@@ -6333,7 +6321,7 @@ private theorem mem_capNiche_inter_left_of_notMem_canonicalTail (K : SpecialCapS
       normalHalfPlane ((Real.pi / 2 : ℝ) : Real.Angle) 0 true false := by
     have hzero : ((((0 : ℝ) + Real.pi / 2 : ℝ) : Real.Angle)) =
         ((Real.pi / 2 : ℝ) : Real.Angle) := by rw [zero_add]
-    show normalHalfPlane (((0 : ℝ) + Real.pi / 2 : ℝ) : Real.Angle)
+    change normalHalfPlane (((0 : ℝ) + Real.pi / 2 : ℝ) : Real.Angle)
       (supportValue (K.1.1 : Set Point) (((0 : ℝ) + Real.pi / 2 : ℝ) : Real.Angle) - 1)
         true false = _
     rw [hzero, K.1.property.2.2.2.1, sub_self]
@@ -6874,7 +6862,7 @@ private theorem segmentArea_isConvexLinear_of_apply_one_eq (P Q : SpecialCapSpac
     (hPa : ∀ K, P K 1 = a) (hQb : ∀ K, Q K 1 = b) :
     IsConvexLinear specialCapCombination realCombination fun K ↦ segmentArea (P K) (Q K) :=
   fun t K L ↦ by
-    show segmentArea (P (specialCapCombination t K L)) (Q (specialCapCombination t K L)) =
+    change segmentArea (P (specialCapCombination t K L)) (Q (specialCapCombination t K L)) =
       realCombination t (segmentArea (P K) (Q K)) (segmentArea (P L) (Q L))
     rw [hP, hQ, realCombination]
     exact segmentArea_combination_of_apply_one_eq _ ((hPa K).trans (hPa L).symm)
@@ -7249,7 +7237,7 @@ theorem sofaMamikon_quadratic_convex :
       (γ B).val s ∈ (supportingLineHalfPlane (B : Set Point) ((s : ℝ) : Real.Angle)).1 := by
     intro B s
     rw [hγ B s]
-    show inner ℝ (rotatingHallwayParts (B : Set Point) ((s : ℝ) : Real.Angle)).outerCorner
+    change inner ℝ (rotatingHallwayParts (B : Set Point) ((s : ℝ) : Real.Angle)).outerCorner
       (normalVector ((s : ℝ) : Real.Angle)) = supportValue (B : Set Point) ((s : ℝ) : Real.Angle)
     rw [outerCorner_eq_support_sum B (s : ℝ), inner_add_left, real_inner_smul_left,
       real_inner_smul_left, inner_normalVector_self, real_inner_comm,
@@ -7314,7 +7302,7 @@ theorem sofaMamikon_quadratic_convex :
       unfold mamikonFunctional
       rw [hγ K.val.val ⟨paperGerverConstants.2.1, le_rfl, hrl.le⟩,
         hγ K.val.val ⟨paperGerverConstants.2.2, hrl.le, le_rfl⟩, hγeq]
-    show _ = middleMamikon K
+    change _ = middleMamikon K
     unfold middleMamikon
     rw [hpath1, hpath2, hpath3, hpath4, hmam]
   rw [hmideq] at hquad hconv
@@ -7390,7 +7378,7 @@ private theorem capTail_leftPair_isConvexLinear :
       (capTailCombination t Z W).leftBody).2.endPoint =
       (1 - (t : ℝ)) • (rightLeftTailArcs Z.rightBody Z.leftBody).2.endPoint +
         (t : ℝ) • (rightLeftTailArcs W.rightBody W.leftBody).2.endPoint := by
-    show (edgeVertices (capTailCombination t Z W).leftBody
+    change (edgeVertices (capTailCombination t Z W).leftBody
       ((3 * Real.pi / 2 + paperGerverConstants.2.2 : ℝ) : Real.Angle)).2 = _
     rw [(hcomb t Z W).2.2]
     exact ((convexBody_maps_linear t Z.leftBody W.leftBody).2.1 _).2
@@ -7398,7 +7386,7 @@ private theorem capTail_leftPair_isConvexLinear :
       (1 - (t : ℝ)) • (distinguishedCapSides Z.cap.val).2.corner +
         (t : ℝ) • (distinguishedCapSides W.cap.val).2.corner :=
     capInnerCorner_of_eq_convexBodyCombination (hcomb t Z W).1 paperGerverConstants.2.2
-  show ((rightLeftTailArcs (capTailCombination t Z W).rightBody
+  change ((rightLeftTailArcs (capTailCombination t Z W).rightBody
     (capTailCombination t Z W).leftBody).2.endPoint,
     (distinguishedCapSides (capTailCombination t Z W).cap.val).2.corner) = _
   rw [hvertex, hcorner]
@@ -7418,11 +7406,11 @@ private theorem capTail_rightPair_isConvexLinear :
       (capTailCombination t Z W).leftBody).1.startPoint =
       (1 - (t : ℝ)) • (rightLeftTailArcs Z.rightBody Z.leftBody).1.startPoint +
         (t : ℝ) • (rightLeftTailArcs W.rightBody W.leftBody).1.startPoint := by
-    show (edgeVertices (capTailCombination t Z W).rightBody
+    change (edgeVertices (capTailCombination t Z W).rightBody
       ((Real.pi + paperGerverConstants.2.1 : ℝ) : Real.Angle)).1 = _
     rw [(hcomb t Z W).2.1]
     exact ((convexBody_maps_linear t Z.rightBody W.rightBody).2.1 _).1
-  show ((distinguishedCapSides (capTailCombination t Z W).cap.val).1.corner,
+  change ((distinguishedCapSides (capTailCombination t Z W).cap.val).1.corner,
     (rightLeftTailArcs (capTailCombination t Z W).rightBody
       (capTailCombination t Z W).leftBody).1.startPoint) = _
   rw [hcorner, hvertex]

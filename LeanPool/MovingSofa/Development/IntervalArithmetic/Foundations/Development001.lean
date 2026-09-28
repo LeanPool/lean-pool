@@ -9377,7 +9377,7 @@ in tactics. The transcendental functions (exp, sin, cos) use Taylor series with
 configurable depth for precision control.
 
 For inv: computes bounds using `invInterval`, but correctness is not covered by
-`evalIntervalCore_correct`. Use `evalInterval?` for inv.
+`evalIntervalCore_correct`. Use `evalIntervalOption` for inv.
 -/
 
 @[expose] public section
@@ -10065,7 +10065,7 @@ open LeanCert.Core LeanCert.Engine
     bounds with a fully-verified proof (given domain validity conditions).
 
     For inv: computes bounds using `invInterval`, but correctness is not
-    covered by `evalIntervalCore_correct`. Use `evalInterval?` for inv.
+    covered by `evalIntervalCore_correct`. Use `evalIntervalOption` for inv.
 
     For log: uses `logComputable` with Taylor series. Correctness requires
     that the argument interval is positive (see `evalDomainValid`).
@@ -10093,7 +10093,7 @@ def evalTotalCore (e : Expr) (ρ : IntervalEnv) (cfg : EvalConfig := {}) : Inter
     cfg.taylorDepth
   | Expr.atan e => atanInterval (LeanCert.Internal.Rational.evalTotalCore e ρ cfg)
   | Expr.arsinh e => arsinhInterval (LeanCert.Internal.Rational.evalTotalCore e ρ cfg)
-  | Expr.atanh _ => default  -- Not in ExprSupportedCore; use evalInterval? for atanh
+  | Expr.atanh _ => default  -- Not in ExprSupportedCore; use evalIntervalOption for atanh
   | Expr.sinc _ => ⟨-1, 1, by norm_num⟩  -- sinc is bounded by [-1, 1]
   | Expr.erf e => erfInterval (LeanCert.Internal.Rational.evalTotalCore e ρ cfg) cfg.taylorDepth
   | Expr.sinh e => sinhInterval (LeanCert.Internal.Rational.evalTotalCore e ρ cfg) cfg.taylorDepth
@@ -10562,15 +10562,15 @@ supporting exp with floor/ceil bounds and partial evaluation for inv/log.
 
 * `evalInterval` - Noncomputable interval evaluator supporting exp
 * `evalInterval_correct` - Correctness theorem for extended evaluation
-* `evalInterval?` - Partial (Option-returning) evaluator with inv/log support
-* `evalInterval?_correct` - Correctness theorem for partial evaluation
+* `evalIntervalOption` - Partial (Option-returning) evaluator with inv/log support
+* `evalIntervalOption_correct` - Correctness theorem for partial evaluation
 
 ## Design notes
 
 The extended evaluator uses `Real.exp` with floor/ceil bounds, which requires
 noncomputability. For computability, use `LeanCert.Internal.Rational.evalTotalCore` instead.
 
-The partial evaluator `evalInterval?` returns `none` when:
+The partial evaluator `evalIntervalOption` returns `none` when:
 - The denominator interval for `inv` contains zero
 - The argument interval for `log` is not strictly positive
 - The argument for `atanh` is not in (-1, 1)
@@ -10599,7 +10599,7 @@ open LeanCert.Core LeanCert.Engine
 
     For unsupported expressions (inv, log), returns a default interval.
     Do not rely on results for expressions containing inv or log.
-    Use evalInterval? for partial functions like inv and log.
+    Use evalIntervalOption for partial functions like inv and log.
 
     This evaluator is NONCOMPUTABLE due to exp using Real.exp with floor/ceil. -/
 noncomputable def evalUnchecked (e : Expr) (ρ : IntervalEnv) : IntervalRat :=
@@ -10613,10 +10613,10 @@ noncomputable def evalUnchecked (e : Expr) (ρ : IntervalEnv) : IntervalRat :=
   | Expr.exp e => IntervalRat.expInterval (evalUnchecked e ρ)
   | Expr.sin e => sinInterval (evalUnchecked e ρ)
   | Expr.cos e => cosInterval (evalUnchecked e ρ)
-  | Expr.log _ => default  -- Not in ADSupported; use evalInterval? for log
+  | Expr.log _ => default  -- Not in ADSupported; use evalIntervalOption for log
   | Expr.atan e => atanInterval (evalUnchecked e ρ)
   | Expr.arsinh e => arsinhInterval (evalUnchecked e ρ)
-  | Expr.atanh _ => default  -- Not in ADSupported; use evalInterval? for atanh
+  | Expr.atanh _ => default  -- Not in ADSupported; use evalIntervalOption for atanh
   | Expr.sinc _ => ⟨-1, 1, by norm_num⟩  -- sinc is bounded by [-1, 1]
   | Expr.erf _ => ⟨-1, 1, by norm_num⟩  -- erf is bounded by [-1, 1]
   | Expr.sinh _ => default  -- sinh unbounded; use LeanCert.Internal.Rational.evalTotalCore for
@@ -10719,24 +10719,24 @@ def evalIntervalExpDepth : ℕ := 30
 def evalIntervalAtanhDepth : ℕ := 30
 
 /-- Evaluate an expression by rational intervals, failing when a domain check fails. -/
-def evalInterval? (e : Expr) (ρ : IntervalEnv) : Option IntervalRat :=
+def evalIntervalOption (e : Expr) (ρ : IntervalEnv) : Option IntervalRat :=
   match e with
   | Expr.const q => some (IntervalRat.singleton q)
   | Expr.var idx => some (ρ idx)
   | Expr.add e₁ e₂ =>
-      match evalInterval? e₁ ρ, evalInterval? e₂ ρ with
+      match evalIntervalOption e₁ ρ, evalIntervalOption e₂ ρ with
       | some I₁, some I₂ => some (IntervalRat.add I₁ I₂)
       | _, _ => none
   | Expr.mul e₁ e₂ =>
-      match evalInterval? e₁ ρ, evalInterval? e₂ ρ with
+      match evalIntervalOption e₁ ρ, evalIntervalOption e₂ ρ with
       | some I₁, some I₂ => some (IntervalRat.mul I₁ I₂)
       | _, _ => none
   | Expr.neg e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | some I => some (IntervalRat.neg I)
       | none => none
   | Expr.inv e₁ =>
-      match evalInterval? e₁ ρ with
+      match evalIntervalOption e₁ ρ with
       | none => none
       | some J =>
           if h : IntervalRat.containsZero J then
@@ -10744,19 +10744,19 @@ def evalInterval? (e : Expr) (ρ : IntervalEnv) : Option IntervalRat :=
           else
             some (IntervalRat.invNonzero ⟨J, h⟩)
   | Expr.exp e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | some I => some (IntervalRat.expComputable I evalIntervalExpDepth)
       | none => none
   | Expr.sin e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | some I => some (sinInterval I)
       | none => none
   | Expr.cos e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | some I => some (cosInterval I)
       | none => none
   | Expr.log e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | none => none
       | some J =>
           if h : IntervalRat.isPositive J then
@@ -10764,15 +10764,15 @@ def evalInterval? (e : Expr) (ρ : IntervalEnv) : Option IntervalRat :=
           else
             none
   | Expr.atan e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | some I => some (atanInterval I)
       | none => none
   | Expr.arsinh e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | some I => some (arsinhInterval I)
       | none => none
   | Expr.atanh e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | none => none
       | some J =>
           if -1 < J.lo ∧ J.hi < 1 then
@@ -10780,64 +10780,64 @@ def evalInterval? (e : Expr) (ρ : IntervalEnv) : Option IntervalRat :=
           else
             none
   | Expr.sinc e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | some _ => some ⟨-1, 1, by norm_num⟩  -- sinc is bounded by [-1, 1]
       | none => none
   | Expr.erf e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | some _ => some ⟨-1, 1, by norm_num⟩  -- erf is bounded by [-1, 1]
       | none => none
   | Expr.sinh e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | some I => some (sinhInterval I)
       | none => none
   | Expr.cosh e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | some I => some (coshInterval I)
       | none => none
   | Expr.tanh e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | some I => some (tanhInterval I)
       | none => none
   | Expr.sqrt e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | some I => some (IntervalRat.sqrtInterval I)
       | none => none
   | Expr.namedConst c => some c.interval
 
-/-- Main correctness theorem for evalInterval? (approach 1 from plan).
+/-- Main correctness theorem for evalIntervalOption (approach 1 from plan).
 
-    When evalInterval? returns `some I`:
+    When evalIntervalOption returns `some I`:
     1. The expression evaluates to a value in I for all ρ_real ∈ ρ_int
     2. All inv denominators along the evaluation are guaranteed nonzero
        (because their intervals don't contain zero)
 
     This follows your suggestion to keep ADSupported syntactic and add
-    separate semantic hypotheses. The key insight is that if evalInterval?
+    separate semantic hypotheses. The key insight is that if evalIntervalOption
     succeeds (returns Some), the interval arithmetic has already verified
     that no denominator interval contains zero. -/
-theorem evalInterval?_correct (e : Expr)
+theorem evalIntervalOption_correct (e : Expr)
     (ρ_int : IntervalEnv) (I : IntervalRat)
-    (hsome : evalInterval? e ρ_int = some I)
+    (hsome : evalIntervalOption e ρ_int = some I)
     (ρ_real : Nat → ℝ) (hρ : envMem ρ_real ρ_int) :
     Expr.eval ρ_real e ∈ I := by
   induction e generalizing I with
   | const q =>
-    simp only [evalInterval?] at hsome
+    simp only [evalIntervalOption] at hsome
     cases hsome
     simp only [Expr.eval_const]
     exact IntervalRat.mem_singleton q
   | var idx =>
-    simp only [evalInterval?] at hsome
+    simp only [evalIntervalOption] at hsome
     cases hsome
     simp only [Expr.eval_var]
     exact hρ idx
   | add e₁ e₂ ih₁ ih₂ =>
-    simp only [evalInterval?] at hsome
-    cases heq₁ : evalInterval? e₁ ρ_int with
+    simp only [evalIntervalOption] at hsome
+    cases heq₁ : evalIntervalOption e₁ ρ_int with
     | none => simp only [heq₁] at hsome; contradiction
     | some I₁ =>
-      cases heq₂ : evalInterval? e₂ ρ_int with
+      cases heq₂ : evalIntervalOption e₂ ρ_int with
       | none => simp only [heq₁, heq₂] at hsome; contradiction
       | some I₂ =>
         simp only [heq₁, heq₂] at hsome
@@ -10845,11 +10845,11 @@ theorem evalInterval?_correct (e : Expr)
         simp only [Expr.eval_add]
         exact IntervalRat.mem_add (ih₁ I₁ heq₁) (ih₂ I₂ heq₂)
   | mul e₁ e₂ ih₁ ih₂ =>
-    simp only [evalInterval?] at hsome
-    cases heq₁ : evalInterval? e₁ ρ_int with
+    simp only [evalIntervalOption] at hsome
+    cases heq₁ : evalIntervalOption e₁ ρ_int with
     | none => simp only [heq₁] at hsome; contradiction
     | some I₁ =>
-      cases heq₂ : evalInterval? e₂ ρ_int with
+      cases heq₂ : evalIntervalOption e₂ ρ_int with
       | none => simp only [heq₁, heq₂] at hsome; contradiction
       | some I₂ =>
         simp only [heq₁, heq₂] at hsome
@@ -10857,8 +10857,8 @@ theorem evalInterval?_correct (e : Expr)
         simp only [Expr.eval_mul]
         exact IntervalRat.mem_mul (ih₁ I₁ heq₁) (ih₂ I₂ heq₂)
   | neg e ih =>
-    simp only [evalInterval?] at hsome
-    cases heq : evalInterval? e ρ_int with
+    simp only [evalIntervalOption] at hsome
+    cases heq : evalIntervalOption e ρ_int with
     | none => simp only [heq] at hsome; contradiction
     | some I' =>
       simp only [heq] at hsome
@@ -10866,8 +10866,8 @@ theorem evalInterval?_correct (e : Expr)
       simp only [Expr.eval_neg]
       exact IntervalRat.mem_neg (ih I' heq)
   | inv e ih =>
-    simp only [evalInterval?] at hsome
-    cases heq : evalInterval? e ρ_int with
+    simp only [evalIntervalOption] at hsome
+    cases heq : evalIntervalOption e ρ_int with
     | none => simp only [heq] at hsome; contradiction
     | some J =>
       simp only [heq] at hsome
@@ -10892,8 +10892,8 @@ theorem evalInterval?_correct (e : Expr)
             exact absurd hJ_mem.1 (not_le.mpr hlo_pos)
         exact IntervalRat.mem_invNonzero hJ_mem heval_ne
   | log e ih =>
-    simp only [evalInterval?] at hsome
-    cases heq : evalInterval? e ρ_int with
+    simp only [evalIntervalOption] at hsome
+    cases heq : evalIntervalOption e ρ_int with
     | none => simp only [heq] at hsome; contradiction
     | some J =>
       simp only [heq] at hsome
@@ -10906,8 +10906,8 @@ theorem evalInterval?_correct (e : Expr)
         exact IntervalRat.mem_logComputable hJ_mem hpos evalIntervalLogDepth
       · contradiction
   | atanh e ih =>
-    simp only [evalInterval?] at hsome
-    cases heq : evalInterval? e ρ_int with
+    simp only [evalIntervalOption] at hsome
+    cases heq : evalIntervalOption e ρ_int with
     | none => simp only [heq] at hsome; contradiction
     | some J =>
       simp only [heq] at hsome
@@ -10919,8 +10919,8 @@ theorem evalInterval?_correct (e : Expr)
           evalIntervalAtanhDepth
       · contradiction
   | sinc e ih =>
-    simp only [evalInterval?] at hsome
-    cases heq : evalInterval? e ρ_int with
+    simp only [evalIntervalOption] at hsome
+    cases heq : evalIntervalOption e ρ_int with
     | none => simp only [heq] at hsome; contradiction
     | some I' =>
       simp only [heq] at hsome
@@ -10931,8 +10931,8 @@ theorem evalInterval?_correct (e : Expr)
       simpa only [Set.mem_Icc, Rat.cast_neg, Rat.cast_one] using
         (Real.sinc_mem_Icc (Expr.eval ρ_real e))
   | erf e ih =>
-    simp only [evalInterval?] at hsome
-    cases heq : evalInterval? e ρ_int with
+    simp only [evalIntervalOption] at hsome
+    cases heq : evalIntervalOption e ρ_int with
     | none => simp only [heq] at hsome; contradiction
     | some I' =>
       simp only [heq] at hsome
@@ -10943,16 +10943,16 @@ theorem evalInterval?_correct (e : Expr)
       simpa only [Set.mem_Icc, Rat.cast_neg, Rat.cast_one] using
         (Real.erf_mem_Icc (Expr.eval ρ_real e))
   | namedConst c =>
-    simp only [evalInterval?] at hsome
+    simp only [evalIntervalOption] at hsome
     cases hsome
     simp only [Expr.eval_namedConst]
     exact c.mem_interval
   | exp e ih | sin e ih | cos e ih | sinh e ih | cosh e ih | tanh e ih
   | atan e ih | arsinh e ih | sqrt e ih =>
-    cases heq : evalInterval? e ρ_int with
-    | none => simp only [evalInterval?, heq] at hsome; contradiction
+    cases heq : evalIntervalOption e ρ_int with
+    | none => simp only [evalIntervalOption, heq] at hsome; contradiction
     | some I' =>
-      simp only [evalInterval?, heq] at hsome
+      simp only [evalIntervalOption, heq] at hsome
       cases hsome
       first
       | exact IntervalRat.mem_expComputable (ih I' heq) evalIntervalExpDepth
@@ -10967,14 +10967,14 @@ theorem evalInterval?_correct (e : Expr)
 
 /-! ### Checked API with diagnostics -/
 
-/-- Diagnose the first partial-domain failure after `evalInterval?` returned
+/-- Diagnose the first partial-domain failure after `evalIntervalOption` returned
 `none`. This function is deliberately separate from the trusted computation:
-soundness depends only on successful `evalInterval?`, while diagnostics may be
+soundness depends only on successful `evalIntervalOption`, while diagnostics may be
 refined without changing the correctness theorem. -/
 def diagnoseEvalIntervalFailure (e : Expr) (ρ : IntervalEnv) : EvalError :=
   match e with
   | .add e₁ e₂ | .mul e₁ e₂ =>
-      if evalInterval? e₁ ρ = none then
+      if evalIntervalOption e₁ ρ = none then
         .nestedFailure "left operand" (diagnoseEvalIntervalFailure e₁ ρ)
       else
         .nestedFailure "right operand" (diagnoseEvalIntervalFailure e₂ ρ)
@@ -10982,15 +10982,15 @@ def diagnoseEvalIntervalFailure (e : Expr) (ρ : IntervalEnv) : EvalError :=
       .erf e | .sinh e | .cosh e | .tanh e | .sqrt e =>
       .nestedFailure "unary operand" (diagnoseEvalIntervalFailure e ρ)
   | .inv e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | some I => .reciprocalContainsZero I
       | none => .nestedFailure "reciprocal operand" (diagnoseEvalIntervalFailure e ρ)
   | .log e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | some I => .logNonpositive I
       | none => .nestedFailure "logarithm operand" (diagnoseEvalIntervalFailure e ρ)
   | .atanh e =>
-      match evalInterval? e ρ with
+      match evalIntervalOption e ρ with
       | some I => .atanhOutsideUnitBall I
       | none => .nestedFailure "atanh operand" (diagnoseEvalIntervalFailure e ρ)
   | .const _ | .var _ | .namedConst _ =>
@@ -11000,7 +11000,7 @@ termination_by e
 /-- Checked rational evaluator. Every successful result is a certified finite
 enclosure; domain-invalid expressions return a structured error. -/
 def evalIntervalChecked (e : Expr) (ρ : IntervalEnv) : EvalResult IntervalRat :=
-  match evalInterval? e ρ with
+  match evalIntervalOption e ρ with
   | some I => .ok I
   | none => .error (diagnoseEvalIntervalFailure e ρ)
 
@@ -11010,7 +11010,7 @@ theorem evalIntervalChecked_correct (e : Expr) (ρ_int : IntervalEnv) (I : Inter
     (hsuccess : evalIntervalChecked e ρ_int = .ok I)
     (ρ_real : Nat → ℝ) (hρ : envMem ρ_real ρ_int) :
     Expr.eval ρ_real e ∈ I := by
-  cases heval : evalInterval? e ρ_int with
+  cases heval : evalIntervalOption e ρ_int with
   | none =>
     rw [evalIntervalChecked, heval] at hsuccess
     contradiction
@@ -11018,7 +11018,7 @@ theorem evalIntervalChecked_correct (e : Expr) (ρ_int : IntervalEnv) (I : Inter
     rw [evalIntervalChecked, heval] at hsuccess
     injection hsuccess with hJI
     subst I
-    exact evalInterval?_correct e ρ_int J heval ρ_real hρ
+    exact evalIntervalOption_correct e ρ_int J heval ρ_real hρ
 
 /-- Checked Rational evaluation with a tight path for the verified computable
 core. Unsupported syntax or a failed core-domain check falls back to the
@@ -11058,39 +11058,39 @@ theorem evalIntervalTightChecked_correct (e : Expr) (ρ_int : IntervalEnv)
     rw [hfallback] at hsuccess
     exact evalIntervalChecked_correct e ρ_int I hsuccess ρ_real hρ
 
-/-- Single-variable version of evalInterval? -/
-def evalInterval?1 (e : Expr) (I : IntervalRat) : Option IntervalRat :=
-  evalInterval? e (fun _ => I)
+/-- Single-variable version of evalIntervalOption -/
+def evalIntervalOption1 (e : Expr) (I : IntervalRat) : Option IntervalRat :=
+  evalIntervalOption e (fun _ => I)
 
 /-- Correctness for single-variable partial evaluation -/
-theorem evalInterval?1_correct (e : Expr)
+theorem evalIntervalOption1_correct (e : Expr)
     (I : IntervalRat) (J : IntervalRat)
-    (hsome : evalInterval?1 e I = some J)
+    (hsome : evalIntervalOption1 e I = some J)
     (x : ℝ) (hx : x ∈ I) :
     Expr.eval (fun _ => x) e ∈ J :=
-  evalInterval?_correct e _ J hsome _ (fun _ => hx)
+  evalIntervalOption_correct e _ J hsome _ (fun _ => hx)
 
-/-- When evalInterval? succeeds, we get bounds -/
-theorem evalInterval?_le_of_hi (e : Expr)
+/-- When evalIntervalOption succeeds, we get bounds -/
+theorem evalIntervalOption_le_of_hi (e : Expr)
     (I : IntervalRat) (J : IntervalRat) (c : ℚ)
-    (hsome : evalInterval?1 e I = some J)
+    (hsome : evalIntervalOption1 e I = some J)
     (hhi : J.hi ≤ c) :
     ∀ x ∈ I, Expr.eval (fun _ => x) e ≤ c := by
   intro x hx
-  have hmem := evalInterval?1_correct e I J hsome x hx
+  have hmem := evalIntervalOption1_correct e I J hsome x hx
   simp only [IntervalRat.mem_def] at hmem
   have heval_le_hi : Expr.eval (fun _ => x) e ≤ J.hi := hmem.2
   have hhi_le_c : (J.hi : ℝ) ≤ c := by exact_mod_cast hhi
   exact le_trans heval_le_hi hhi_le_c
 
-/-- When evalInterval? succeeds, we get lower bounds -/
-theorem evalInterval?_ge_of_lo (e : Expr)
+/-- When evalIntervalOption succeeds, we get lower bounds -/
+theorem evalIntervalOption_ge_of_lo (e : Expr)
     (I : IntervalRat) (J : IntervalRat) (c : ℚ)
-    (hsome : evalInterval?1 e I = some J)
+    (hsome : evalIntervalOption1 e I = some J)
     (hlo : c ≤ J.lo) :
     ∀ x ∈ I, c ≤ Expr.eval (fun _ => x) e := by
   intro x hx
-  have hmem := evalInterval?1_correct e I J hsome x hx
+  have hmem := evalIntervalOption1_correct e I J hsome x hx
   simp only [IntervalRat.mem_def] at hmem
   have hlo_le_eval : J.lo ≤ Expr.eval (fun _ => x) e := hmem.1
   have hc_le_lo : (c : ℝ) ≤ J.lo := by exact_mod_cast hlo
@@ -11320,7 +11320,7 @@ The implementation is split across several files:
   and transcendental interval bounds
 
 * `LeanCert.Engine.Eval.Extended` - Internal noncomputable evaluator and the
-  partial evaluator with inv/log support (`evalInterval?`)
+  partial evaluator with inv/log support (`evalIntervalOption`)
 
 * `LeanCert.Engine.Bounds.Lemmas` - Semantic lemmas for deriving real bounds
 
@@ -11334,12 +11334,12 @@ cosh, tanh, pi)
 ### Evaluators
 * `LeanCert.Internal.Rational.evalTotalCore` - Computable interval evaluator (uses Taylor series)
 * `LeanCert.Internal.Rational.evalUnchecked` - Internal noncomputable evaluator
-* `evalInterval?` - Partial evaluator with inv/log support
+* `evalIntervalOption` - Partial evaluator with inv/log support
 
 ### Correctness theorems
 * `evalIntervalCore_correct` - Core evaluator correctness
 * `evalInterval_correct` - Extended evaluator correctness
-* `evalInterval?_correct` - Partial evaluator correctness
+* `evalIntervalOption_correct` - Partial evaluator correctness
 
 ### Tactic lemmas
 * `exprCore_le_of_interval_hi` / `exprCore_ge_of_interval_lo` - Core bounds
@@ -11504,9 +11504,9 @@ implementing the chain rule for each.
 * `DualInterval.sinc` - sinc function
 
 ### Partial functions (return Option)
-* `DualInterval.atanh?` - Inverse hyperbolic tangent (requires |x| < 1)
+* `DualInterval.atanhOption` - Inverse hyperbolic tangent (requires |x| < 1)
 * `DualInterval.inv?` - Inverse (requires nonzero)
-* `DualInterval.log?` - Logarithm (requires positive)
+* `DualInterval.logOption` - Logarithm (requires positive)
 * `DualInterval.sqrt?` - Square root with tight bounds (requires positive)
 -/
 
@@ -11644,7 +11644,7 @@ def sinc (d : DualInterval) : DualInterval :=
 
 /-- Partial dual for atanh (chain rule: d(atanh f) = f' / (1 - f²))
     Returns None if the value interval is not contained in (-1, 1). -/
-noncomputable def atanh? (d : DualInterval) : Option DualInterval :=
+noncomputable def atanhOption (d : DualInterval) : Option DualInterval :=
   -- For atanh to be defined, we need |val| < 1
   -- We check if the interval is strictly inside (-1, 1)
   if d.val.hi < 1 ∧ d.val.lo > -1 then
@@ -11677,7 +11677,7 @@ def inv? (d : DualInterval) : Option DualInterval :=
 
 /-- Partial dual for log (chain rule: d(log f) = f'/f)
     Returns None if the value interval is not strictly positive. -/
-noncomputable def log? (d : DualInterval) : Option DualInterval :=
+noncomputable def logOption (d : DualInterval) : Option DualInterval :=
   if h : IntervalRat.isPositive d.val then
     let log_val := IntervalRat.logInterval ⟨d.val, h⟩
     -- d(log f) = f'/f
@@ -11791,8 +11791,8 @@ mapping expressions to dual intervals.
 
 * `DualEnv` - Environment mapping variable indices to dual intervals
 * `LeanCert.Internal.AD.evalUnchecked` - Main evaluator for supported expressions (total)
-* `evalDual?` - Partial evaluator supporting domain-checked functions (returns Option)
-* `evalDual?1` - Single-variable version of evalDual?
+* `evalDualOption` - Partial evaluator supporting domain-checked functions (returns Option)
+* `evalDualOption1` - Single-variable version of evalDualOption
 * `mkDualEnv` - Create a dual environment for differentiation w.r.t. a variable
 * `evalWithDeriv` - Evaluate and differentiate w.r.t. a variable index
 * `derivInterval` - Get just the derivative interval
@@ -11823,7 +11823,7 @@ open LeanCert.Core LeanCert.Engine
 
     For unsupported expressions (inv, log), returns a default interval.
     Do not rely on results for expressions containing inv or log.
-    Use evalDual? for partial functions like inv and log. -/
+    Use evalDualOption for partial functions like inv and log. -/
 noncomputable def evalUnchecked (e : Expr) (ρ : DualEnv) : DualInterval :=
   match e with
   | Expr.const q => DualInterval.const q
@@ -11837,10 +11837,10 @@ noncomputable def evalUnchecked (e : Expr) (ρ : DualEnv) : DualInterval :=
   | Expr.exp e => DualInterval.exp (LeanCert.Internal.AD.evalUnchecked e ρ)
   | Expr.sin e => DualInterval.sin (LeanCert.Internal.AD.evalUnchecked e ρ)
   | Expr.cos e => DualInterval.cos (LeanCert.Internal.AD.evalUnchecked e ρ)
-  | Expr.log _ => default  -- Not in ADSupported; use evalDual? for log
+  | Expr.log _ => default  -- Not in ADSupported; use evalDualOption for log
   | Expr.atan e => DualInterval.atan (LeanCert.Internal.AD.evalUnchecked e ρ)
   | Expr.arsinh e => DualInterval.arsinh (LeanCert.Internal.AD.evalUnchecked e ρ)
-  | Expr.atanh _ => default  -- Partial function; use evalDual? for atanh
+  | Expr.atanh _ => default  -- Partial function; use evalDualOption for atanh
   | Expr.sinc e => DualInterval.sinc (LeanCert.Internal.AD.evalUnchecked e ρ)
   | Expr.erf e => DualInterval.erf (LeanCert.Internal.AD.evalUnchecked e ρ)
   | Expr.sinh e => DualInterval.sinh (LeanCert.Internal.AD.evalUnchecked e ρ)
@@ -11865,50 +11865,50 @@ open LeanCert.Core
 
     The total and computable dual evaluators support `tanh`, but this
     Option-returning evaluator deliberately keeps `tanh` disabled until the
-    `evalDual?`-specific value/differentiability/derivative correctness path
+    `evalDualOption`-specific value/differentiability/derivative correctness path
     is wired for that constructor. -/
-noncomputable def evalDual? (e : Expr) (ρ : DualEnv) : Option DualInterval :=
+noncomputable def evalDualOption (e : Expr) (ρ : DualEnv) : Option DualInterval :=
   match e with
   | Expr.const q => some (DualInterval.const q)
   | Expr.var idx => some (ρ idx)
   | Expr.add e₁ e₂ =>
-      match evalDual? e₁ ρ, evalDual? e₂ ρ with
+      match evalDualOption e₁ ρ, evalDualOption e₂ ρ with
       | some d₁, some d₂ => some (DualInterval.add d₁ d₂)
       | _, _ => none
   | Expr.mul e₁ e₂ =>
-      match evalDual? e₁ ρ, evalDual? e₂ ρ with
+      match evalDualOption e₁ ρ, evalDualOption e₂ ρ with
       | some d₁, some d₂ => some (DualInterval.mul d₁ d₂)
       | _, _ => none
   | Expr.neg e =>
-      match evalDual? e ρ with
+      match evalDualOption e ρ with
       | some d => some (DualInterval.neg d)
       | none => none
   | Expr.inv e₁ =>
-      match evalDual? e₁ ρ with
+      match evalDualOption e₁ ρ with
       | none => none
       | some d => DualInterval.inv? d
   | Expr.exp e =>
-      match evalDual? e ρ with
+      match evalDualOption e ρ with
       | some d => some (DualInterval.exp d)
       | none => none
   | Expr.sin e =>
-      match evalDual? e ρ with
+      match evalDualOption e ρ with
       | some d => some (DualInterval.sin d)
       | none => none
   | Expr.cos e =>
-      match evalDual? e ρ with
+      match evalDualOption e ρ with
       | some d => some (DualInterval.cos d)
       | none => none
   | Expr.log e =>
-      match evalDual? e ρ with
+      match evalDualOption e ρ with
       | none => none
-      | some d => DualInterval.log? d
+      | some d => DualInterval.logOption d
   | Expr.atan e =>
-      match evalDual? e ρ with
+      match evalDualOption e ρ with
       | some d => some (DualInterval.atan d)
       | none => none
   | Expr.arsinh e =>
-      match evalDual? e ρ with
+      match evalDualOption e ρ with
       | some d => some (DualInterval.arsinh d)
       | none => none
   | Expr.atanh _ =>
@@ -11916,36 +11916,36 @@ noncomputable def evalDual? (e : Expr) (ρ : DualEnv) : Option DualInterval :=
       -- We return none to avoid the complexity of proving atanh bounds
       none
   | Expr.sinc e =>
-      match evalDual? e ρ with
+      match evalDualOption e ρ with
       | some d => some (DualInterval.sinc d)
       | none => none
   | Expr.erf e =>
-      match evalDual? e ρ with
+      match evalDualOption e ρ with
       | some d => some (DualInterval.erf d)
       | none => none
   | Expr.sinh e =>
-      match evalDual? e ρ with
+      match evalDualOption e ρ with
       | some d => some (DualInterval.sinh d)
       | none => none
   | Expr.cosh e =>
-      match evalDual? e ρ with
+      match evalDualOption e ρ with
       | some d => some (DualInterval.cosh d)
       | none => none
   | Expr.tanh _ =>
       -- See the docstring above:
       -- `LeanCert.Internal.AD.evalUnchecked`/`LeanCert.Internal.AD.evalTotalCore` support tanh, but
-      -- the partial `evalDual?` correctness theorem currently treats tanh as
+      -- the partial `evalDualOption` correctness theorem currently treats tanh as
       -- outside this Option API.
       none
   | Expr.sqrt e =>
-      match evalDual? e ρ with
+      match evalDualOption e ρ with
       | some d => DualInterval.sqrt? d
       | none => none
   | Expr.namedConst c => some (DualInterval.ofMathConst c)
 
-/-- Single-variable version of evalDual? -/
-noncomputable def evalDual?1 (e : Expr) (I : IntervalRat) : Option DualInterval :=
-  evalDual? e (fun _ => DualInterval.varActive I)
+/-- Single-variable version of evalDualOption -/
+noncomputable def evalDualOption1 (e : Expr) (I : IntervalRat) : Option DualInterval :=
+  evalDualOption e (fun _ => DualInterval.varActive I)
 
 /-! ### Single variable differentiation -/
 

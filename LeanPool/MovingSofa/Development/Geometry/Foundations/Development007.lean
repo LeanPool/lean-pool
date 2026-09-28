@@ -3047,7 +3047,7 @@ theorem polygonCap_upper_wall_area_variation {Θ : AngleSet} (h : PolygonHeightS
     rw [hmove 0]
     have hu : Function.update h t (h t + 0) = h := by
       funext s
-      simp [Function.update]
+      simp only [Function.update, add_zero, eq_rec_constant, dite_eq_ite, ite_eq_right_iff]
       rintro rfl
       rfl
     rw [hu, independentWallCap_sub_one]
@@ -3275,7 +3275,7 @@ theorem rightAngleSet_direction_le_pred_or_ge (n : ℕ) (hn : 2 ≤ n) {r t : �
   obtain ⟨j, hj, rfl⟩ := (mem_rightAngleSet_directions_iff n hn r).mp hr
   obtain ⟨i, hi, rfl⟩ := (mem_rightAngleSet_directions_iff n hn t).mp ht
   have hnpos : (0 : ℝ) < n := by positivity
-  have hδ : 0 < polygonStepSize n := by simp [polygonStepSize]; positivity
+  have hδ : 0 < polygonStepSize n := by simp only [polygonStepSize]; positivity
   by_cases hji : j < i
   · left
     have hnat : j + 1 ≤ i := hji
@@ -3292,7 +3292,7 @@ theorem rightAngleSet_direction_le_or_succ_le (n : ℕ) (hn : 2 ≤ n) {r t : �
     r ≤ t ∨ t + polygonStepSize n ≤ r := by
   obtain ⟨j, hj, rfl⟩ := (mem_rightAngleSet_directions_iff n hn r).mp hr
   obtain ⟨i, hi, rfl⟩ := (mem_rightAngleSet_directions_iff n hn t).mp ht
-  have hδ : 0 < polygonStepSize n := by simp [polygonStepSize]; positivity
+  have hδ : 0 < polygonStepSize n := by simp only [polygonStepSize]; positivity
   by_cases hji : j ≤ i
   · left
     exact mul_le_mul_of_nonneg_right (by exact_mod_cast hji) hδ.le
@@ -3308,7 +3308,7 @@ theorem rightAngleSet_direction_bounds (n : ℕ) (hn : 2 ≤ n) {t : ℝ}
   obtain ⟨i, hi, rfl⟩ := (mem_rightAngleSet_directions_iff n hn t).mp ht
   obtain ⟨hi0, hin⟩ := Finset.mem_Ioo.mp hi
   have hnpos : (0 : ℝ) < n := by positivity
-  have hδ : 0 < polygonStepSize n := by simp [polygonStepSize]; positivity
+  have hδ : 0 < polygonStepSize n := by simp only [polygonStepSize]; positivity
   have hi1 : (1 : ℝ) ≤ i := by exact_mod_cast hi0
   have hin1 : (i : ℝ) + 1 ≤ n := by exact_mod_cast hin
   constructor
@@ -4241,7 +4241,11 @@ private theorem stripParallelogram_top_sub_vertical_mem_of_angle_lt {Θ : AngleS
       have hoω : inner ℝ o (normalVector (Θ.angle : Real.Angle)) = 1 :=
         stripParallelogram_top_inner_angle Θ hΘ
       rw [inner_sub_left, hoω]
-      simp [tangentVector, normalVector, frame, PiLp.inner_apply]
+      simp only [tangentVector, frame, Real.Angle.cos_zero, Real.Angle.sin_zero, neg_zero,
+        normalVector, Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply,
+        RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero,
+        mul_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, mul_one, zero_add, sub_nonneg,
+        ge_iff_le]
       exact Real.sin_le_one Θ.angle
     · change 0 ≤ inner ℝ a (normalVector ((Real.pi / 2 : ℝ) : Real.Angle))
       simp [a, o, stripParallelogram, tangentVector, normalVector, frame,
@@ -4281,7 +4285,10 @@ private theorem stripParallelogram_top_sub_normal_mem_of_angle_lt {Θ : AngleSet
       have hoT : inner ℝ o (normalVector ((Real.pi / 2 : ℝ) : Real.Angle)) = 1 := by
         simp [o, stripParallelogram, normalVector, frame, PiLp.inner_apply]
       rw [inner_sub_left, hoT]
-      simp [normalVector, frame, PiLp.inner_apply]
+      simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, Real.cos_pi_div_two,
+        Real.sin_pi_div_two, PiLp.inner_apply, RCLike.inner_apply, conj_trivial,
+        Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero, zero_mul, Matrix.cons_val_one,
+        Matrix.cons_val_fin_one, one_mul, zero_add, sub_nonneg, ge_iff_le]
       exact Real.sin_le_one Θ.angle
   apply K.val.mem_of_mem_capFan_of_le_supportValue hbFan
   intro s hs
@@ -4327,7 +4334,9 @@ private theorem exists_lowerFace_midpoint_strict_of_angle_lt {Θ : AngleSet}
       have hcoord := congrArg (fun p : Point ↦ p 1) hgap
       have hcos : 0 < Real.cos Θ.angle := Real.cos_pos_of_mem_Ioo
         ⟨by linarith [Θ.angle_pos, Real.pi_pos], hΘ⟩
-      simp [tangentVector, frame] at hcoord
+      simp only [Fin.isValue, PiLp.zero_apply, tangentVector, frame, Real.Angle.cos_coe,
+        Real.Angle.sin_coe, PiLp.smul_apply, Matrix.cons_val_one,
+        Matrix.cons_val_fin_one, smul_eq_mul, zero_eq_mul] at hcoord
       rcases hcoord with hgapzero | hcoszero
       · exact hgappos.ne' hgapzero
       · exact hcos.ne' hcoszero
@@ -4746,7 +4755,7 @@ private theorem rightAngle_allowedReal_gap_left (n : ℕ) (hn : 2 ≤ n) {t r : 
     r ∈ Set.Icc (t - polygonStepSize n + Real.pi / 2 - Real.pi)
         (t - polygonStepSize n + Real.pi / 2) ∨
     r ∈ Set.Icc (t + Real.pi / 2) (t + Real.pi / 2 + Real.pi) := by
-  have hδpos : 0 < polygonStepSize n := by simp [polygonStepSize]; positivity
+  have hδpos : 0 < polygonStepSize n := by simp only [polygonStepSize]; positivity
   obtain ⟨hδt, htδ⟩ := rightAngleSet_direction_bounds n hn ht
   have htI := (rightAngleSet n hn).interior t ht
   change t ∈ Set.Ioo 0 (Real.pi / 2) at htI
@@ -4769,8 +4778,7 @@ private theorem rightAngle_allowedReal_gap_left (n : ℕ) (hn : 2 ≤ n) {t r : 
       rcases rightAngleSet_direction_le_pred_or_ge n hn hq ht with hqle | hqge
       · left
         constructor
-        ·
-          linarith [Real.pi_pos]
+        · linarith [Real.pi_pos]
         · linarith
       · right
         constructor <;> linarith [Real.pi_pos]
@@ -4788,7 +4796,7 @@ private theorem rightAngle_allowedReal_gap_right (n : ℕ) (hn : 2 ≤ n) {t r :
     r ∈ Set.Icc (t + Real.pi / 2 - Real.pi) (t + Real.pi / 2) ∨
       r ∈ Set.Icc (t + polygonStepSize n + Real.pi / 2)
         (t + polygonStepSize n + Real.pi / 2 + Real.pi) := by
-  have hδpos : 0 < polygonStepSize n := by simp [polygonStepSize]; positivity
+  have hδpos : 0 < polygonStepSize n := by simp only [polygonStepSize]; positivity
   obtain ⟨hδt, htδ⟩ := rightAngleSet_direction_bounds n hn ht
   have htI := (rightAngleSet n hn).interior t ht
   change t ∈ Set.Ioo 0 (Real.pi / 2) at htI
@@ -4832,7 +4840,7 @@ private theorem rightAngle_supportValue_prev_shift (n : ℕ) (hn : 2 ≤ n)
   let a := t - polygonStepSize n + Real.pi / 2
   let b := t + Real.pi / 2
   let R := angleDomain (rightAngleSet n hn) ∪ {3 * Real.pi / 2}
-  have hδpos : 0 < polygonStepSize n := by simp [polygonStepSize]; positivity
+  have hδpos : 0 < polygonStepSize n := by simp only [polygonStepSize]; positivity
   have hδpi : polygonStepSize n < Real.pi := by
     have hnpos : (0 : ℝ) < n := by positivity
     have hn2 : (2 : ℝ) ≤ n := by exact_mod_cast hn
@@ -4874,7 +4882,7 @@ private theorem rightAngle_supportValue_next_shift (n : ℕ) (hn : 2 ≤ n)
   let a := t + Real.pi / 2
   let b := t + polygonStepSize n + Real.pi / 2
   let R := angleDomain (rightAngleSet n hn) ∪ {3 * Real.pi / 2}
-  have hδpos : 0 < polygonStepSize n := by simp [polygonStepSize]; positivity
+  have hδpos : 0 < polygonStepSize n := by simp only [polygonStepSize]; positivity
   have hδpi : polygonStepSize n < Real.pi := by
     have hnpos : (0 : ℝ) < n := by positivity
     have hn2 : (2 : ℝ) ≤ n := by exact_mod_cast hn
@@ -4954,10 +4962,6 @@ private theorem rightAngle_bRay_prev_leg_length (n : ℕ) (hn : 2 ≤ n)
   have hδI : δ ∈ Set.Ioo 0 (Real.pi / 2) := polygonStepSize_mem_Ioo n hn
   have hcδ : 0 < Real.cos δ := Real.cos_pos_of_mem_Ioo
     ⟨by linarith [hδI.1, Real.pi_pos], hδI.2⟩
-  have htI : t ∈ Set.Icc 0 (Real.pi / 2) := by
-    have hi := (rightAngleSet n hn).interior t ht
-    change t ∈ Set.Ioo 0 (Real.pi / 2) at hi
-    exact ⟨hi.1.le, hi.2.le⟩
   have hnormal : normalVector (u : Real.Angle) =
       Real.sin δ • normalVector (t : Real.Angle) +
         Real.cos δ • tangentVector (t : Real.Angle) := by
@@ -5045,10 +5049,6 @@ private theorem rightAngle_bRay_next_leg_length (n : ℕ) (hn : 2 ≤ n)
   have hδI : δ ∈ Set.Ioo 0 (Real.pi / 2) := polygonStepSize_mem_Ioo n hn
   have hcδ : 0 < Real.cos δ := Real.cos_pos_of_mem_Ioo
     ⟨by linarith [hδI.1, Real.pi_pos], hδI.2⟩
-  have htI : t ∈ Set.Icc 0 (Real.pi / 2) := by
-    have hi := (rightAngleSet n hn).interior t ht
-    change t ∈ Set.Ioo 0 (Real.pi / 2) at hi
-    exact ⟨hi.1.le, hi.2.le⟩
   have hnormal : normalVector (u : Real.Angle) =
       (-Real.sin δ) • normalVector (t : Real.Angle) +
         Real.cos δ • tangentVector (t : Real.Angle) := by
@@ -5119,9 +5119,8 @@ private theorem rightAngle_bRay_next_leg_length (n : ℕ) (hn : 2 ≤ n)
   rw [mul_max_of_nonneg _ _ (Real.tan_pos_of_pos_of_lt_pi_div_two hδI.1 hδI.2).le,
     mul_zero]
 
-theorem maximumPolygonCap_leg_lengths (n : ℕ) (hn : 2 ≤ n) (hdyadic : ∃ k : ℕ, n = 2 ^ k)
+theorem maximumPolygonCap_leg_lengths (n : ℕ) (hn : 2 ≤ n)
     (K : PolygonCapSpace (rightAngleSet n hn))
-    (hK : IsMaximumPolygonCap (rightAngleSet n hn) K)
     (t : ℝ) (ht : t ∈ (rightAngleSet n hn).directions) :
     MeasureTheory.Measure.hausdorffMeasure 1
       ((rotatingHallwayParts (K.val.val : Set Point) (t : Real.Angle)).bRay ∩
@@ -6968,7 +6967,9 @@ private theorem verticalLine_disjoint_cap_diff_niche_of_innerCorner {ω t : ℝ}
       (huI.2.trans (by linarith [K.property.2.1, Real.pi_pos]))
     have hinner : inner ℝ z (normalVector (u : Real.Angle)) ≤
         inner ℝ q (normalVector (u : Real.Angle)) := by
-      simp [normalVector, frame, PiLp.inner_apply]
+      simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply,
+        RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero,
+        Matrix.cons_val_one, Matrix.cons_val_fin_one]
       rw [hx]
       nlinarith [mul_le_mul_of_nonneg_left hy hsin]
     have hqle := inner_le_supportValue K.val hq.1 (u : Real.Angle)
@@ -7052,7 +7053,8 @@ private theorem exists_upperBoundary_segment_subset_diff {ω : ℝ} (K : CapSpac
   have hxp0 : x 0 = p 0 := by
     rw [segment_eq_image_lineMap] at hx
     obtain ⟨s, hs, rfl⟩ := hx
-    simp [AffineMap.lineMap_apply_module]
+    simp only [Fin.isValue, AffineMap.lineMap_apply_module, PiLp.add_apply, PiLp.smul_apply,
+      smul_eq_mul]
     rw [hqF.2]
     ring
   have hpx1 : p 1 ≤ x 1 := by
@@ -7069,7 +7071,10 @@ private theorem exists_upperBoundary_segment_subset_diff {ω : ℝ} (K : CapSpac
     change inner ℝ x (normalVector (u : Real.Angle)) < _ at hxU
     have hs : 0 < Real.sin u := Real.sin_pos_of_pos_of_lt_pi hu.1
       (by linarith [hu.2, K.property.2.1, Real.pi_pos])
-    simp [normalVector, frame, PiLp.inner_apply] at hxU ⊢
+    simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe,
+      PiLp.inner_apply, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two,
+      Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+      gt_iff_lt] at hxU ⊢
     rw [hxp0] at hxU
     nlinarith [mul_le_mul_of_nonneg_left hpx1 hs.le]
   · change inner ℝ p (normalVector ((u + Real.pi / 2 : ℝ) : Real.Angle)) < _
@@ -7079,7 +7084,10 @@ private theorem exists_upperBoundary_segment_subset_diff {ω : ℝ} (K : CapSpac
     rw [show ((u + Real.pi / 2 : ℝ) : Real.Angle) =
       (u : Real.Angle) + ((Real.pi / 2 : ℝ) : Real.Angle) by rfl,
       normalVector_add_pi_div_two] at hxV ⊢
-    simp [tangentVector, frame, PiLp.inner_apply] at hxV ⊢
+    simp only [tangentVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe,
+      PiLp.inner_apply, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two,
+      Fin.isValue, Matrix.cons_val_zero, neg_mul, Matrix.cons_val_one,
+      Matrix.cons_val_fin_one, neg_add_lt_iff_lt_add, gt_iff_lt] at hxV ⊢
     rw [hxp0] at hxV
     nlinarith [mul_le_mul_of_nonneg_left hpx1 hc.le]
 
@@ -7456,16 +7464,22 @@ private theorem capReflection_rotationMap (ω s : ℝ) (p : Point) :
       rotationMap ((ω - s : ℝ) : Real.Angle) (coordinateSwap p) 0
     rw [capReflection_apply_zero]
     rw [← hang]
-    simp [rotationMap, Orientation.rotation_apply, rightAngleRotation_apply,
-      coordinateSwap]
+    simp only [Fin.isValue, rotationMap, Orientation.rotation_apply, Real.Angle.cos_coe,
+      Real.Angle.sin_coe, rightAngleRotation_apply, PiLp.add_apply, PiLp.smul_apply,
+      smul_eq_mul, Matrix.cons_val_zero, mul_neg, neg_mul, Matrix.cons_val_one,
+      Matrix.cons_val_fin_one, coordinateSwap, LinearIsometryEquiv.piLpCongrLeft_apply,
+      Equiv.piCongrLeft'_apply, Equiv.symm_swap, Equiv.swap_apply_right, Equiv.swap_apply_left]
     rw [hang, Real.Angle.sin_coe, Real.Angle.cos_coe, Real.sin_sub, Real.cos_sub]
     ring
   · change capReflection ω (rotationMap (s : Real.Angle) p) 1 =
       rotationMap ((ω - s : ℝ) : Real.Angle) (coordinateSwap p) 1
     rw [capReflection_apply_one]
     rw [← hang]
-    simp [rotationMap, Orientation.rotation_apply, rightAngleRotation_apply,
-      coordinateSwap]
+    simp only [Fin.isValue, rotationMap, Orientation.rotation_apply, Real.Angle.cos_coe,
+      Real.Angle.sin_coe, rightAngleRotation_apply, PiLp.add_apply, PiLp.smul_apply,
+      smul_eq_mul, Matrix.cons_val_zero, mul_neg, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+      coordinateSwap, LinearIsometryEquiv.piLpCongrLeft_apply, Equiv.piCongrLeft'_apply,
+      Equiv.symm_swap, Equiv.swap_apply_right, Equiv.swap_apply_left]
     rw [hang, Real.Angle.sin_coe, Real.Angle.cos_coe, Real.sin_sub, Real.cos_sub]
     ring
 
@@ -9248,7 +9262,7 @@ theorem exists_cap_base_points (K : RightAngleCapSpace) :
       rw [inner_normalVector_real]
       nlinarith only [hAmax q hq, (hheight q hq).2, hcos, hsin, hsin1]
     rw [inner_normalVector_real]
-    show supportValue (K.1 : Set Point) (t : Real.Angle) - 1 ≤ A 0 * Real.cos t + 0 * Real.sin t
+    change supportValue (K.1 : Set Point) (t : Real.Angle) - 1 ≤ A 0 * Real.cos t + 0 * Real.sin t
     linarith only [hbound]
   · intro t ht
     have hcos : 0 ≤ Real.cos t :=
@@ -9264,7 +9278,7 @@ theorem exists_cap_base_points (K : RightAngleCapSpace) :
       rw [inner_normalVector_real, Real.cos_add_pi_div_two, Real.sin_add_pi_div_two]
       nlinarith only [hCmin q hq, (hheight q hq).2, hcos, hcos1, hsin]
     rw [inner_normalVector_real, Real.cos_add_pi_div_two, Real.sin_add_pi_div_two]
-    show supportValue (K.1 : Set Point) ((t + Real.pi / 2 : ℝ) : Real.Angle) - 1 ≤
+    change supportValue (K.1 : Set Point) ((t + Real.pi / 2 : ℝ) : Real.Angle) - 1 ≤
       C 0 * -Real.sin t + 0 * Real.cos t
     linarith only [hbound]
 
@@ -9592,11 +9606,11 @@ theorem canonicalTailSets_properties (K : SpecialCapSpace) :
     · linarith only [hBeqR]
     · rw [hcast _ _ (show Real.pi + Real.pi / 2 = 3 * Real.pi / 2 by ring), hBzero, htop]
       ring
-  · show normalLine ((3 * Real.pi / 2 : ℝ) : Real.Angle)
+  · change normalLine ((3 * Real.pi / 2 : ℝ) : Real.Angle)
       (supportValue (canonicalTailSets K).1 ((3 * Real.pi / 2 : ℝ) : Real.Angle)) = _
     rw [hBzero, normalLine_eq_of_cut (a := Real.pi / 2) (b := 3 * Real.pi / 2)
       (hcast _ _ (by ring)), neg_zero]
-  · show normalLine ((Real.pi + paperGerverConstants.2.1 : ℝ) : Real.Angle)
+  · change normalLine ((Real.pi + paperGerverConstants.2.1 : ℝ) : Real.Angle)
       (supportValue (canonicalTailSets K).1
         ((Real.pi + paperGerverConstants.2.1 : ℝ) : Real.Angle)) = _
     rw [hBeqR, normalLine_eq_of_cut (a := paperGerverConstants.2.1)
@@ -9612,11 +9626,11 @@ theorem canonicalTailSets_properties (K : SpecialCapSpace) :
         hcast _ _ (show Real.pi / 2 + (0 : ℝ) = Real.pi / 2 by ring), hDzero, htop]
       ring
     · linarith only [hDeqL]
-  · show normalLine ((3 * Real.pi / 2 : ℝ) : Real.Angle)
+  · change normalLine ((3 * Real.pi / 2 : ℝ) : Real.Angle)
       (supportValue (canonicalTailSets K).2 ((3 * Real.pi / 2 : ℝ) : Real.Angle)) = _
     rw [hDzero, normalLine_eq_of_cut (a := Real.pi / 2) (b := 3 * Real.pi / 2)
       (hcast _ _ (by ring)), neg_zero]
-  · show normalLine ((3 * Real.pi / 2 + paperGerverConstants.2.2 : ℝ) : Real.Angle)
+  · change normalLine ((3 * Real.pi / 2 + paperGerverConstants.2.2 : ℝ) : Real.Angle)
       (supportValue (canonicalTailSets K).2
         ((3 * Real.pi / 2 + paperGerverConstants.2.2 : ℝ) : Real.Angle)) = _
     rw [hDeqL, normalLine_eq_of_cut (a := Real.pi / 2 + paperGerverConstants.2.2)
@@ -9629,7 +9643,7 @@ theorem inner_capInnerCorner_normalVector (K : RightAngleCapSpace) (t : ℝ) :
     inner ℝ (capInnerCorner K t) (normalVector (t : Real.Angle)) =
       supportValue (K.val : Set Point) (t : Real.Angle) - 1 := by
   have hform := (rotatingHallwayParts_formulas (K.val : Set Point) (t : Real.Angle)).2.1
-  show inner ℝ (rotatingHallwayParts (K.val : Set Point) (t : Real.Angle)).innerCorner
+  change inner ℝ (rotatingHallwayParts (K.val : Set Point) (t : Real.Angle)).innerCorner
     (normalVector (t : Real.Angle)) = _
   rw [hform, inner_add_left, real_inner_smul_left, real_inner_smul_left,
     inner_normalVector_self, inner_tangentVector_normalVector_real]
@@ -9640,7 +9654,7 @@ theorem inner_capInnerCorner_tangentVector (K : RightAngleCapSpace) (t : ℝ) :
     inner ℝ (capInnerCorner K t) (tangentVector (t : Real.Angle)) =
       supportValue (K.val : Set Point) ((t + Real.pi / 2 : ℝ) : Real.Angle) - 1 := by
   have hform := (rotatingHallwayParts_formulas (K.val : Set Point) (t : Real.Angle)).2.1
-  show inner ℝ (rotatingHallwayParts (K.val : Set Point) (t : Real.Angle)).innerCorner
+  change inner ℝ (rotatingHallwayParts (K.val : Set Point) (t : Real.Angle)).innerCorner
     (tangentVector (t : Real.Angle)) = _
   rw [hform, inner_add_left, real_inner_smul_left, real_inner_smul_left,
     inner_tangentVector_tangentVector, inner_normalVector_tangentVector,
@@ -9666,7 +9680,7 @@ theorem mem_innerQuadrant_of_frame_coordinates_neg (K : RightAngleCapSpace) (t :
       inner_tangentVector_real]
     linarith only [h2]
   refine ⟨e1, ?_⟩
-  show inner ℝ q (normalVector ((t + Real.pi / 2 : ℝ) : Real.Angle)) < _
+  change inner ℝ q (normalVector ((t + Real.pi / 2 : ℝ) : Real.Angle)) < _
   rw [Real.Angle.coe_add, normalVector_add_pi_div_two]
   exact e2
 
@@ -10129,14 +10143,14 @@ theorem cap_tail_monotonicity_intervals (K : SpecialCapSpace) :
       0 ≤ inner ℝ (p - capInnerCorner K.val t) (normalVector (t : Real.Angle)) := by
     intro t p
     rw [inner_sub_left, hxu]
-    show (supportValue (K.val.val : Set Point) (t : Real.Angle) - 1 ≤
+    change (supportValue (K.val.val : Set Point) (t : Real.Angle) - 1 ≤
       inner ℝ p (normalVector (t : Real.Angle))) ↔ _
     constructor <;> intro hp <;> linarith
   have hHd : ∀ (t : ℝ) (p : Point), p ∈ (innerWallUpperHalfPlanes K.val t).2 ↔
       0 ≤ inner ℝ (p - capInnerCorner K.val t) (tangentVector (t : Real.Angle)) := by
     intro t p
     rw [inner_sub_left, hxv]
-    show (supportValue (K.val.val : Set Point) ((t + Real.pi / 2 : ℝ) : Real.Angle) - 1 ≤
+    change (supportValue (K.val.val : Set Point) ((t + Real.pi / 2 : ℝ) : Real.Angle) - 1 ≤
       inner ℝ p (normalVector ((t + Real.pi / 2 : ℝ) : Real.Angle))) ↔ _
     rw [Real.Angle.coe_add, normalVector_add_pi_div_two]
     constructor <;> intro hp <;> linarith
@@ -10145,7 +10159,7 @@ theorem cap_tail_monotonicity_intervals (K : SpecialCapSpace) :
         inner ℝ (p - capInnerCorner K.val t) (tangentVector (t : Real.Angle)) < 0 := by
     intro t p
     rw [inner_sub_left, inner_sub_left, hxu, hxv]
-    show (inner ℝ p (normalVector (t : Real.Angle)) <
+    change (inner ℝ p (normalVector (t : Real.Angle)) <
         supportValue (K.val.val : Set Point) (t : Real.Angle) - 1 ∧
       inner ℝ p (normalVector ((t + Real.pi / 2 : ℝ) : Real.Angle)) <
         supportValue (K.val.val : Set Point) ((t + Real.pi / 2 : ℝ) : Real.Angle) - 1) ↔ _
@@ -10172,7 +10186,7 @@ theorem cap_tail_monotonicity_intervals (K : SpecialCapSpace) :
         innerQuadrant (K.val.val : Set Point) t := by
       rw [(rotatingHallwayParts_formulas (K.val.val : Set Point)
         (t : Real.Angle)).2.2.2.2.2.2.2.2, innerQuadrant, ← Real.Angle.coe_add]
-    show capFan (Real.pi / 2) ∩
+    change capFan (Real.pi / 2) ∩
       (rotatingHallwayParts (K.val.val : Set Point) (t : Real.Angle)).innerQuadrant = _
     rw [hfan, hiq]
   -- monotone comparison of the corner path against the two distinguished frames
@@ -10389,8 +10403,8 @@ theorem wedgeGaps_positive_lower_bound {ω : ℝ} (K : CapSpace ω)
   change inner ℝ (capVertices K ω).2.1
       (normalVector ((ω + Real.pi / 2 : ℝ) : Real.Angle)) =
     supportValue K.val ((ω + Real.pi / 2 : ℝ) : Real.Angle) at hC
-  simp [normalVector, frame, Real.Angle.cos_add_pi_div_two,
-    Real.Angle.sin_add_pi_div_two] at hC
+  simp only [normalVector, frame, Real.Angle.coe_add, Real.Angle.cos_add_pi_div_two,
+    Real.Angle.sin_coe, Real.Angle.sin_add_pi_div_two, Real.Angle.cos_coe] at hC
   change inner ℝ (capVertices K ω).2.1 (tangentVector (ω : Real.Angle)) =
     supportValue K.val ((ω + Real.pi / 2 : ℝ) : Real.Angle) at hC
   have hgap₁ := wedgeGaps_fst_eq_supportValue K t
@@ -10464,7 +10478,7 @@ private theorem capVertices_zero_snd_eq (K : RightAngleCapSpace) :
     change inner ℝ (R • normalVector (0 : Real.Angle))
       (normalVector ((0 : ℝ) : Real.Angle)) = _
     rw [inner_smul_normalVector_zero, Real.cos_zero, mul_one]
-  show (edgeVertices K.val ((0 : ℝ) : Real.Angle)).2 = _
+  change (edgeVertices K.val ((0 : ℝ) : Real.Angle)).2 = _
   refine edgeVertices_snd_eq_of_tangent_isLeast K.val ((0 : ℝ) : Real.Angle) hedge ?_
   intro q hq
   have hq1 : 0 ≤ q 1 := (K.mem_horizontalStrip hq.1).1
@@ -10502,7 +10516,7 @@ private theorem capVertices_pi_div_two_fst_eq (K : RightAngleCapSpace) :
       (normalVector ((Real.pi : ℝ) : Real.Angle)) = _
     rw [inner_smul_normalVector_zero, Real.cos_pi]
     ring
-  show (edgeVertices K.val ((Real.pi / 2 + Real.pi / 2 : ℝ) : Real.Angle)).1 = _
+  change (edgeVertices K.val ((Real.pi / 2 + Real.pi / 2 : ℝ) : Real.Angle)).1 = _
   rw [hang]
   refine edgeVertices_fst_eq_of_tangent_isGreatest K.val ((Real.pi : ℝ) : Real.Angle) hedge ?_
   intro q hq
@@ -10639,7 +10653,7 @@ theorem specialCap_wedgeEndpoints_in_bottomEdge (K : SpecialCapSpace) :
     have h := tangentVector_add_pi_div_two 0
     rwa [zero_add, Real.Angle.coe_zero] at h
   constructor
-  · show ((supportValue (K.val.val : Set Point)
+  · change ((supportValue (K.val.val : Set Point)
         ((paperGerverConstants.2.1 : ℝ) : Real.Angle) - 1) /
         Real.cos paperGerverConstants.2.1) • normalVector (0 : Real.Angle) ∈ _
     refine smul_normalVector_zero_mem_bottomEdge K.val ?_ ?_
@@ -10647,7 +10661,7 @@ theorem specialCap_wedgeEndpoints_in_bottomEdge (K : SpecialCapSpace) :
     · have hpos : 0 < (1 - Real.sin paperGerverConstants.2.1) /
           Real.cos paperGerverConstants.2.1 := hgap₁.2.1
       linarith
-  · show ((supportValue (K.val.val : Set Point)
+  · change ((supportValue (K.val.val : Set Point)
         ((paperGerverConstants.2.2 + Real.pi / 2 : ℝ) : Real.Angle) - 1) /
         Real.cos (Real.pi / 2 - paperGerverConstants.2.2)) •
         tangentVector ((Real.pi / 2 : ℝ) : Real.Angle) ∈ _

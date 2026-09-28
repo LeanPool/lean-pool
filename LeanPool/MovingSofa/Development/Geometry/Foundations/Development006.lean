@@ -8104,12 +8104,11 @@ theorem convexArcIntegral_bilinear (a b : ℝ) :
         (convexBodyCombination t L M)) = _
     simp only [realCombination]
     rw [hmeasure, Measure.restrict_add, Measure.restrict_smul, Measure.restrict_smul,
-      integral_add_measure ((hint K L).restrict.smul_measure _)
-        ((hint K M).restrict.smul_measure _)]
+      integral_add_measure ((hint K L).restrict.smul_measure ENNReal.ofReal_ne_top)
+        ((hint K M).restrict.smul_measure ENNReal.ofReal_ne_top)]
     simp only [integral_smul_measure, ENNReal.toReal_ofReal,
       sub_nonneg.mpr (show (t : ℝ) ≤ 1 from t.property.2), t.property.1]
     ring
-    all_goals exact ENNReal.ofReal_ne_top
   · intro L t K M
     change (1 / 2 : ℝ) * (∫ u in E, supportValue (convexBodyCombination t K M) u
       ∂surfaceAreaMeasure L) = _
@@ -10537,7 +10536,7 @@ def bvPathCombination {a b : ℝ} (t : I) (x y : ContinuousBVPaths a b) :
     ContinuousBVPaths a b :=
   (1 - (t : ℝ)) • x + (t : ℝ) • y
 
-private theorem coordinate_measure_smul_add_smul {a b : ℝ} (hab : a ≤ b) (r s : ℝ)
+private theorem coordinate_measure_smul_add_smul {a b : ℝ} (r s : ℝ)
     (x y : ContinuousBVPaths a b) (i : Fin 2) :
     intervalStieltjesMeasure (continuousBVCoordinate (r • x + s • y) i) =
       r • intervalStieltjesMeasure (continuousBVCoordinate x i) +
@@ -10551,7 +10550,7 @@ private theorem coordinate_measure_smul_add_smul {a b : ℝ} (hab : a ≤ b) (r 
 private def coordinateIntegral {a b : ℝ} (x y : ContinuousBVPaths a b) (i j : Fin 2) : ℝ :=
   intervalStieltjesIntegral (continuousBVCoordinate y j) (fun t ↦ x.val t i) univ
 
-private theorem coordinateIntegral_smul_add_smul_right {a b : ℝ} (hab : a ≤ b) (r s : ℝ)
+private theorem coordinateIntegral_smul_add_smul_right {a b : ℝ} (r s : ℝ)
     (x y z : ContinuousBVPaths a b) (i j : Fin 2) :
     coordinateIntegral x (r • y + s • z) i j =
       r * coordinateIntegral x y i j + s * coordinateIntegral x z i j := by
@@ -10561,7 +10560,7 @@ private theorem coordinateIntegral_smul_add_smul_right {a b : ℝ} (hab : a ≤ 
       ((PiLp.continuous_apply 2 _ i).comp x.property.1)
   unfold coordinateIntegral intervalStieltjesIntegral
   simp only [VectorMeasure.restrict_univ]
-  rw [coordinate_measure_smul_add_smul hab, VectorMeasure.integral_add_vectorMeasure
+  rw [coordinate_measure_smul_add_smul, VectorMeasure.integral_add_vectorMeasure
     ((hi y).smul_vectorMeasure _) ((hi z).smul_vectorMeasure _)]
   simp only [VectorMeasure.integral_smul_vectorMeasure, smul_eq_mul]
 
@@ -10582,11 +10581,11 @@ private theorem coordinateIntegral_smul_add_smul_left {a b : ℝ} (r s : ℝ)
   simp only [Pi.smul_apply, VectorMeasure.integral_fun_smul] at hadd
   simpa only [smul_eq_mul] using hadd
 
-private theorem coordinateIntegral_combination_right {a b : ℝ} (hab : a ≤ b)
+private theorem coordinateIntegral_combination_right {a b : ℝ}
     (t : I) (x y z : ContinuousBVPaths a b) (i j : Fin 2) :
     coordinateIntegral x (bvPathCombination t y z) i j =
       (1 - (t : ℝ)) * coordinateIntegral x y i j + (t : ℝ) * coordinateIntegral x z i j :=
-  coordinateIntegral_smul_add_smul_right hab _ _ x y z i j
+  coordinateIntegral_smul_add_smul_right _ _ x y z i j
 
 private theorem coordinateIntegral_combination_left {a b : ℝ}
     (t : I) (x y z : ContinuousBVPaths a b) (i j : Fin 2) :
@@ -10606,7 +10605,7 @@ private theorem coordinateIntegral_difference {a b : ℝ} (x y : ContinuousBVPat
     (RightContinuousIntervalBV.integrable_of_continuous _
       ((PiLp.continuous_apply 2 _ i).comp x.property.1))
 
-private theorem curveArea_quadratic_derivative (a b : ℝ) (hab : a ≤ b) :
+private theorem curveArea_quadratic_derivative (a b : ℝ) :
     IsQuadraticFunctional bvPathCombination (@curveAreaFunctional a b) ∧
     ∀ x y : ContinuousBVPaths a b,
       convexDirectionalDerivative bvPathCombination curveAreaFunctional x y =
@@ -10619,7 +10618,7 @@ private theorem curveArea_quadratic_derivative (a b : ℝ) (hab : a ≤ b) :
     constructor
     · intro x t y z
       dsimp only [h]
-      rw [coordinateIntegral_combination_right hab, coordinateIntegral_combination_right hab]
+      rw [coordinateIntegral_combination_right, coordinateIntegral_combination_right]
       simp only [realCombination]
       ring
     · intro x t y z
@@ -10644,7 +10643,7 @@ theorem curveArea_variation (a b : ℝ) (hab : a ≤ b) :
           (fun t ↦ y.val t 1 - x.val t 1) Set.univ +
         (segmentArea (x.val ⟨b, hab, le_rfl⟩) (y.val ⟨b, hab, le_rfl⟩) -
           segmentArea (x.val ⟨a, le_rfl, hab⟩) (y.val ⟨a, le_rfl, hab⟩)) := by
-  obtain ⟨hq, hd⟩ := curveArea_quadratic_derivative a b hab
+  obtain ⟨hq, hd⟩ := curveArea_quadratic_derivative a b
   refine ⟨hq, ?_⟩
   intro x y
   have hc (w : ContinuousBVPaths a b) (i : Fin 2) :
@@ -10667,31 +10666,31 @@ private theorem curveAreaFunctional_eq_coordinateIntegral {a b : ℝ}
 
 /-- Translating a continuous BV path by another one adds the translating path's own signed area
 and the two mixed cross integrals. -/
-private theorem curveAreaFunctional_add {a b : ℝ} (hab : a ≤ b)
+private theorem curveAreaFunctional_add {a b : ℝ}
     (x c : ContinuousBVPaths a b) :
     curveAreaFunctional (x + c) = curveAreaFunctional x + curveAreaFunctional c +
       (coordinateIntegral x c 0 1 - coordinateIntegral x c 1 0 +
         (coordinateIntegral c x 0 1 - coordinateIntegral c x 1 0)) / 2 := by
   have hone : x + c = (1 : ℝ) • x + (1 : ℝ) • c := by rw [one_smul, one_smul]
   simp only [curveAreaFunctional_eq_coordinateIntegral, hone,
-    coordinateIntegral_smul_add_smul_left, coordinateIntegral_smul_add_smul_right hab]
+    coordinateIntegral_smul_add_smul_left, coordinateIntegral_smul_add_smul_right]
   ring
 
 /-- Translating a continuous BV path by a fixed one changes its signed area by a convex-linear
 functional of the path: the two mixed Stieltjes cross integrals are separately linear and the
 translating path's own area is constant. -/
-theorem curveArea_translation_convexLinear {a b : ℝ} (hab : a ≤ b)
+theorem curveArea_translation_convexLinear {a b : ℝ}
     (c : ContinuousBVPaths a b) :
     IsConvexLinear bvPathCombination realCombination
       (fun x ↦ curveAreaFunctional (x + c) - curveAreaFunctional x) := by
   intro t x y
-  show curveAreaFunctional ((1 - (t : ℝ)) • x + (t : ℝ) • y + c) -
+  change curveAreaFunctional ((1 - (t : ℝ)) • x + (t : ℝ) • y + c) -
       curveAreaFunctional ((1 - (t : ℝ)) • x + (t : ℝ) • y) =
     realCombination t (curveAreaFunctional (x + c) - curveAreaFunctional x)
       (curveAreaFunctional (y + c) - curveAreaFunctional y)
-  rw [curveAreaFunctional_add hab ((1 - (t : ℝ)) • x + (t : ℝ) • y) c,
-    curveAreaFunctional_add hab x c, curveAreaFunctional_add hab y c, realCombination]
-  simp only [coordinateIntegral_smul_add_smul_left, coordinateIntegral_smul_add_smul_right hab]
+  rw [curveAreaFunctional_add ((1 - (t : ℝ)) • x + (t : ℝ) • y) c,
+    curveAreaFunctional_add x c, curveAreaFunctional_add y c, realCombination]
+  simp only [coordinateIntegral_smul_add_smul_left, coordinateIntegral_smul_add_smul_right]
   ring
 
 theorem convexArcArea_variation (a b : ℝ) (hab : a < b) (hba : b < a + Real.pi) :
