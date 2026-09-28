@@ -139,6 +139,9 @@ def verify_outputs(
 ) -> dict[str, str]:
     """Require the exact expected file set and all expected source digests."""
     expected = json.loads(manifest.read_text())
+    for entry in folder.iterdir():
+        if entry.is_dir() or entry.is_symlink():
+            raise ValueError(f"Unexpected directory or symbolic link: {entry.name}")
     actual = {path.name: digest(path.read_bytes()) for path in folder.glob("*.lean")}
     if actual != expected:
         changed = sorted(

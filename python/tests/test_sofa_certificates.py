@@ -1,16 +1,21 @@
 """Check certificate reproduction input validation and cover completeness."""
 
+import importlib
+import json
 from pathlib import Path
 
 import pytest
 
 from lean_pool.sofa_certificates.__main__ import (
+    digest,
     prepare_source,
     read_sources,
     validate_leaves,
     validate_witnesses,
     verify_outputs,
 )
+
+FIXTURES = Path(__file__).parent / "fixtures/sofa_certificates"
 
 
 @pytest.mark.parametrize(
@@ -48,6 +53,42 @@ def test_reproduction_rejects_missing_or_extra_modules(tmp_path: Path) -> None:
     (tmp_path / "Unexpected.lean").write_text("theorem unwanted : True := trivial\n")
     with pytest.raises(ValueError, match="Unexpected.lean"):
         verify_outputs(tmp_path)
+
+
+def test_reproduction_rejects_nested_extra_module(tmp_path: Path) -> None:
+    """Matching top-level digests cannot hide an additional nested certificate."""
+    folder = tmp_path / "certificates"
+    folder.mkdir()
+    content = b"theorem valid : True := trivial\n"
+    (folder / "Expected.lean").write_bytes(content)
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(json.dumps({"Expected.lean": digest(content)}))
+    assert verify_outputs(folder, manifest) == {"Expected.lean": digest(content)}
+    (folder / "nested").mkdir()
+    (folder / "nested/Unexpected.lean").write_bytes(content)
+    with pytest.raises(ValueError, match="Unexpected directory.*nested"):
+        verify_outputs(folder, manifest)
+
+
+def test_real_subtree_passes_ordered_transformation_stages(tmp_path: Path) -> None:
+    """A pinned production subtree must reproduce its reviewed intermediate source."""
+    folder = tmp_path / "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE"
+    folder.mkdir(parents=True)
+    source = folder / "E24KC6R4Subtree_e91aff9c114b660b.lean"
+    source.write_bytes((FIXTURES / "subtree.input.txt").read_bytes())
+    for name in [
+        "split_proofs",
+        "share_cells",
+        "normalize",
+        "rename",
+        "module_names",
+        "wrap",
+    ]:
+        stage = importlib.import_module(f"lean_pool.sofa_certificates.stages.{name}")
+        stage.run(tmp_path)
+    result = folder / "E24KC6R4SubtreeE91aff9c114b660b.lean"
+    assert not source.exists()
+    assert result.read_text() == (FIXTURES / "subtree.expected.txt").read_text()
 
 
 def test_visibility_and_attribution_preserve_upstream_body() -> None:
