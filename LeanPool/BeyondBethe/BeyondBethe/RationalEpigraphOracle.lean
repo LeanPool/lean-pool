@@ -80,7 +80,7 @@ theorem finiteDot_sub_le_error_mul_vectorL1 {d : ℕ}
       _ = abs (H i - G i) * abs (D i) := abs_mul _ _
       _ ≤ e * abs (D i) :=
         mul_le_mul_of_nonneg_right (herr i) (abs_nonneg _)
-  convert hpoint using 1 <;> ring
+  convert hpoint using 1; ring
 
 /-- Dot product of an epigraph normal with an epigraph displacement. -/
 theorem epigraphNormal_dot_displacement {d : ℕ}
@@ -184,7 +184,6 @@ theorem directedEpigraphOracle_cut_valid {d : ℕ}
         epigraphBase, epigraphHeight]
       ring
     rw [hdot]
-    norm_num only [Rat.cast_mul] at hbound
     linarith
   · contradiction
 

@@ -49,13 +49,13 @@ theorem binaryRawDyadicFloorInt_natAbs_le
     (binaryRawDyadicFloorInt p q).natAbs ≤
       q.num.natAbs * 2 ^ p + 1 := by
   rw [binaryRawDyadicFloorInt, binaryLongDiv_eq_div_mod]
-  simp only [Prod.fst, Prod.snd]
+  simp only
   cases hnum : q.num with
   | ofNat n =>
-      simp only [hnum, Int.natAbs_ofNat']
+      simp only [Int.natAbs_ofNat']
       exact (Nat.div_le_self _ _).trans (by omega)
   | negSucc n =>
-      simp only [hnum, Int.natAbs_negSucc]
+      simp only [Int.natAbs_negSucc]
       split
       · simp only [Int.natAbs_neg]
         exact (Nat.div_le_self _ _).trans (by omega)
@@ -147,7 +147,7 @@ theorem dyadicFloorVector_code_length_le_bound {d : ℕ}
     intro q hq
     obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hq
     exact dyadicFloorVector_entry_code_length_le p v i
-  have hsum := List.sum_le_card_nsmul
+  have hsum := List.sum_le_length_nsmul
     ((List.ofFn (dyadicFloorVector p v)).map
       fun q ↦ 2 * (rationalEntryBinaryCode q).length + 2)
     (2 * L + 2) (by
@@ -475,11 +475,6 @@ theorem machineDyadicFloorVectorStep_semantics {d : ℕ}
         (machineDyadicFloorVectorInputBound word).length) _ _ = _
   rw [← rawRatBinaryCode_rawRatOfRat,
     machineDyadicFloorEntryCode_encode, rawRatOfRat_value]
-  change machineRationalTransposeMulVectorPack _
-      ((pair (rationalEntryBinaryCode (dyadicFloor p (v i)))
-        (binaryListCode rationalEntryBinaryCode
-          (dyadicFloorVectorPrefix p v k).reverse)).take
-        (machineDyadicFloorVectorInputBound word).length) _ _ = _
   rw [List.take_of_length_le hcandPair, hreverse]
   rfl
 

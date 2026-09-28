@@ -78,7 +78,7 @@ theorem machineBinaryNatLeBit_pair_natBits (lhs rhs : ℕ) :
           simpa only [Nat.size_eq_bits_len] using! hlen
         have := Nat.size_eq_zero.mp hsize
         omega
-    | cons bit rest => simp [hbits, h]
+    | cons bit rest => simp [h]
 
 theorem machineBinaryNatLtBit_pair_natBits (lhs rhs : ℕ) :
     machineBinaryNatLtBit (pair lhs.bits rhs.bits) = [decide (lhs < rhs)] := by
@@ -93,7 +93,7 @@ theorem machineBinaryNatLtBit_pair_natBits (lhs rhs : ℕ) :
           simpa only [Nat.size_eq_bits_len] using! hlen
         have := Nat.size_eq_zero.mp hsize
         omega
-    | cons bit rest => simp [hbits, h]
+    | cons bit rest => simp [h]
   · have hzero : rhs - lhs = 0 := Nat.sub_eq_zero_of_le (Nat.le_of_not_gt h)
     rw [hzero]
     simp [h]

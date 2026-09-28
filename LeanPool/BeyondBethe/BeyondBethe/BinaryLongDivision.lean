@@ -83,7 +83,7 @@ theorem binaryLongDivStep_invariant {divisor : ℕ} (hdivisor : 0 < divisor)
     have hb := bitValue_le_one b
     omega
   rw [binaryLongDivStep]
-  simp only [Prod.fst, Prod.snd]
+  simp only
   split
   · rename_i hzero
     omega
@@ -213,7 +213,7 @@ theorem binaryEuclid_eq_gcd : ∀ a b : ℕ,
       | succ b =>
           have hrem : a % (b + 1) < b + 1 := Nat.mod_lt _ (by omega)
           rw [binaryEuclid, binaryLongDiv_eq_div_mod]
-          simp only [Prod.snd]
+          simp only
           rw [ih (a % (b + 1)) hrem]
           calc
             Nat.gcd (b + 1) (a % (b + 1)) =
@@ -265,7 +265,7 @@ theorem binaryEuclidStep_two_snd_le_half (a b : ℕ) :
     · rw [hr, binaryEuclidStep_zero]
       simp
     · rw [binaryEuclidStep_eq, ite_eq_right hr]
-      simp only [Prod.snd]
+      simp only
       exact mod_le_half_of_pos_of_lt (Nat.pos_of_ne_zero hr) hrb
 
 /-- Fixed-budget Euclid loop. -/
@@ -317,7 +317,7 @@ theorem binaryEuclidStep_gcd (state : ℕ × ℕ) :
   rw [binaryEuclidStep_eq]
   split
   · rfl
-  · simp only [Prod.fst, Prod.snd]
+  · simp only
     calc
       Nat.gcd b (a % b) = Nat.gcd (a % b) b := Nat.gcd_comm _ _
       _ = Nat.gcd b a := (Nat.gcd_rec b a).symm

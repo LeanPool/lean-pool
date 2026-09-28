@@ -40,21 +40,21 @@ def binaryRatFloor (q : ℚ) : ℤ :=
 theorem binaryRatFloor_eq_floor (q : ℚ) :
     binaryRatFloor q = Int.floor q := by
   rw [Rat.floor_def', binaryRatFloor, binaryLongDiv_eq_div_mod]
-  simp only [Prod.fst, Prod.snd]
+  simp only
   cases hnum : q.num with
   | ofNat n =>
-      simp [hnum, Int.ediv]
+      simp
   | negSucc n =>
       have hden : 0 < q.den := q.den_pos
       by_cases hrem : (n + 1) % q.den = 0
-      · simp [hnum, hrem, Int.ediv, Int.bdiv, Int.bmod]
+      · simp [hrem]
         have hdvdNat : q.den ∣ n + 1 := Nat.dvd_of_mod_eq_zero hrem
         have hdvdInt : (q.den : ℤ) ∣ ((n + 1 : ℕ) : ℤ) := by
           exact_mod_cast hdvdNat
         have hrepr : Int.negSucc n = -((n + 1 : ℕ) : ℤ) := by omega
         rw [hrepr, Int.neg_ediv_of_dvd hdvdInt]
         norm_num
-      · simp [hnum, hrem, Int.ediv, Int.bdiv, Int.bmod]
+      · simp [hrem]
         have hndvdNat : ¬q.den ∣ n + 1 := by
           rwa [Nat.dvd_iff_mod_eq_zero]
         have hndvdInt : ¬(q.den : ℤ) ∣ ((n + 1 : ℕ) : ℤ) := by

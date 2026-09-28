@@ -296,10 +296,10 @@ theorem outputBitLanguage_flag_pair_all
         (pair k.bits word) = [(target word)[k]?.getD false] := by
   simp only [MachineRAMBridge.languageFlag, outputBitLanguage,
     machinePairFirst_pair, machinePairSecond_pair, Nat.fromBitsLE_bits,
-    Set.mem_setOf_eq]
+    Set.mem_ofPred_eq]
   cases hbit : (target word)[k]? with
-  | none => simp [hbit]
-  | some bit => cases bit <;> simp [hbit]
+  | none => simp
+  | some bit => cases bit <;> simp
 
 theorem outputBitLanguage_flag_pair
     (target : List Bool → List Bool) (word : List Bool) (k : ℕ)

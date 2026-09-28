@@ -126,12 +126,10 @@ theorem binaryRippleSubRewindTM_hoareTime_frame_internal {n : ℕ}
     · subst i
       exact hresult
     exact hother i hil hir hires
-
   let lhsTape := binaryRippleSubCanonicalTape lhsBits
   let rhsTape := binaryRippleSubCanonicalTape rhsBits
   let work₁ := Function.update work₀ lhsIdx lhsTape
   let work₂ := Function.update work₁ rhsIdx rhsTape
-
   have hwork₁ : ∀ i, Parked (work₁ i) := by
     intro i
     by_cases hi : i = lhsIdx
@@ -149,7 +147,6 @@ theorem binaryRippleSubRewindTM_hoareTime_frame_internal {n : ℕ}
       (work₁ rhsIdx).head ≤ rhsBound := by
     simpa only [work₁, Function.update_of_ne hdistinct.lhs_rhs.symm] using
       hrhsHead
-
   have hrewindLhs := binaryRippleSubRewindExact_hoareTime lhsIdx lhsBits
     lhsBound inp₀ work₀ out₀ hlhs hlhsStart hlhsHead hinput
     (fun i _ => hwork₀ i) houtput

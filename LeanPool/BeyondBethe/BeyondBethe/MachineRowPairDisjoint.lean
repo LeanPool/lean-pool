@@ -399,7 +399,7 @@ def machineDisjointInput {n : ℕ}
     machineBinaryNatEqBit_pair_natBits]
   by_cases hval : i.1 = j.1
   · have h : i = j := Fin.ext hval
-    simp [hval, h]
+    simp [h]
   · have h : i ≠ j := fun hij ↦ hval (congrArg Fin.val hij)
     simp [hval, h]
 

@@ -111,7 +111,7 @@ noncomputable def regularizedBetheObjective
 at most `τ n log n` in the Bethe objective.  This is the quantitative part of
 paper Lemma 14 that does not use KKT or boundary analysis. -/
 theorem regularized_near_bethe
-    {n : Type*} [Fintype n] [DecidableEq n] [Nonempty n]
+    {n : Type*} [Fintype n] [Nonempty n]
     {τ : ℝ} (hτ : 0 ≤ τ) (A X Y : Matrix n n ℝ)
     (hX : IsDoublyStochastic X) (hY : IsDoublyStochastic Y)
     (hmax : regularizedBetheObjective τ A Y ≤
@@ -119,6 +119,7 @@ theorem regularized_near_bethe
     betheObjective A Y -
         τ * (Fintype.card n * Real.log (Fintype.card n))
       ≤ betheObjective A X := by
+  classical
   have hEY0 := totalRowEntropy_nonneg hY
   have hEX := totalRowEntropy_le hX
   rw [regularizedBetheObjective, regularizedBetheObjective] at hmax

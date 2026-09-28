@@ -153,7 +153,7 @@ theorem realMonomial_eq_prod_columns
 theorem selectorCapacityValue_mul_realMonomial
     {κ ι : Type*} [Fintype κ] [Fintype ι]
     {α : κ × ι → ℝ} {z : κ × ι → ℝ}
-    (hα : ∀ v, 0 < α v) (hz : ∀ v, 0 < z v) :
+    (_ : ∀ v, 0 < α v) (_ : ∀ v, 0 < z v) :
     selectorCapacityValue α * realMonomial z α =
       ∏ j, (linearCapacityValue (fun _ : κ ↦ 1)
           (fun c ↦ α (c, j)) *

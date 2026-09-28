@@ -457,7 +457,7 @@ theorem rawCertificateRegularizationScale_width_le_optimizer_word
     simpa only [word, rationalOptimizerOutputCode,
       machinePairFirst_pair] using! machinePairFirst_length_le word
   have hnWord : n ≤ word.length := hnMatrix.trans hmatrixWord
-  simp only [rawCertificateRegularizationScale,
+  simp only [
     rawCertificateFourDimension] at htau
   rw [hxi] at htau
   rw [hfour] at hfourN
@@ -573,8 +573,7 @@ theorem rawNearbyRowsCost_le_uniform {tau : RawRat} {p budget : ℕ} :
         exact hwidth tailRow (by simp [htail]) q hq
       have ih' := ih hrows
       simp only [rawNearbyRowsCost] at ih'
-      simp only [rawNearbyRowsCost, List.map_cons, List.sum_cons,
-        List.length_cons]
+      simp only [rawNearbyRowsCost, List.map_cons, List.sum_cons]
       rw [Nat.add_mul]
       omega
 

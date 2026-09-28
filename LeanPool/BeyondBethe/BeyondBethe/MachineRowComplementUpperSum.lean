@@ -486,7 +486,7 @@ theorem machineRowUpperStep_semantics {n : ℕ}
       simp only [machineRowUpperCurrent_pack]
       rw [machineIfEmpty_of_ne_nil_matrix _ _ _
         (binaryListCode_cons_ne_nil rationalEntryBinaryCode q qs)]
-      simp only [machineRowUpperSource_pack, machineRowUpperCurrent_pack,
+      simp only [machineRowUpperSource_pack,
         machineRowUpperAcc_pack, machineRowUpperBound_pack,
         machineListTail_cons, machineRowUpperNextAcc,
         machineRowUpperCandidate]

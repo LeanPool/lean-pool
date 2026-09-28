@@ -367,8 +367,6 @@ private theorem compositionTail_placedEntry
       (Tape.init (y.map Γ.ofBool)).move Dir3.right)
     (houtBlank : out = (Tape.init []).move Dir3.right)
     (hc₃Output : out₃ = out) (hc₃OutputTr : transitionTape out₃ = out₃) :
-    let raw := compositionRawOutputIdx nf ng
-    let vin := compositionVirtualInputIdx nf ng
     let secondPre := 0 + (nf + 1)
     let extras : Fin (secondPre + (ng + 1) + 0) → Tape :=
       fun i => transitionTape (work₃ i)

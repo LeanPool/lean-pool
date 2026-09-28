@@ -87,9 +87,8 @@ private theorem binaryEq_terminal_step {n : ℕ}
         simp [binaryEqResultCfg, binaryEqResultWork, Γw.ofBool]
       · simpa [binaryEqResultCfg, binaryEqResultWork, hi] using!
           transitionTape_eq_self (hwork i hi)
-
   | true =>
-      simp only [if_true] at hterminal
+      simp only [ite_true] at hterminal
       rw [ite_eq_left hterminal]
       simp only [show BinaryEqPhase.scan ≠ BinaryEqPhase.done by decide,
         ite_false]

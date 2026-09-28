@@ -264,8 +264,7 @@ theorem entryAppendRestoreTM_hoareTime_frame_internal
     ?_, hreach, ?_, ?_⟩
   · unfold entryAppendRestoreTime
     omega
-  · change (entryAppendRestoreTM tapes).halted finalCfg
-    unfold entryAppendRestoreTM
+  · unfold entryAppendRestoreTM
     exact (TM.phase2Wrap_halted_iff (rewindEntryEncodeTM tapes.appendEncodeTapes)
     (TM.seqTM (TM.rewindWorkTM tapes.entry.query)
       (TM.rewindWorkTM tapes.replacement)) tailFinal).mpr htailHalt

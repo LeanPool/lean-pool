@@ -1275,7 +1275,7 @@ theorem real_exp_neg_one_le_half :
     Real.exp (-1) ≤ (1 / 2 : ℝ) := by
   rw [Real.exp_neg]
   have htwo : (2 : ℝ) ≤ Real.exp 1 := by
-    convert Real.add_one_le_exp (1 : ℝ) using 1 <;> norm_num
+    convert Real.add_one_le_exp (1 : ℝ) using 1; norm_num
   have hinv := one_div_le_one_div_of_le (by norm_num : (0 : ℝ) < 2) htwo
   simpa [one_div] using hinv
 
@@ -1298,7 +1298,7 @@ theorem exp_neg_cutRatio_le_half_pow {d M k : ℕ} (hd : 0 < d)
     Real.exp (-(k : ℝ) / (8 * (d : ℝ) ^ 3)) ≤
         Real.exp (-(M : ℝ)) := by
       rw [Real.exp_le_exp]
-      convert neg_le_neg hratio using 1 <;> ring
+      convert neg_le_neg hratio using 1; ring
     _ = Real.exp (-1) ^ M := by
       rw [show -(M : ℝ) = (M : ℝ) * (-1 : ℝ) by ring,
         Real.exp_nat_mul]

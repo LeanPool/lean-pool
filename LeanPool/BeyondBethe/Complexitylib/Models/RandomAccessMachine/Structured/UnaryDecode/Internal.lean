@@ -604,9 +604,6 @@ private theorem loop_measured {remaining : List Bool}
                   convert! hrun using 1
                   all_goals omega
                 apply MeasuredRuns.weakenCost hrun'
-                change 3 * width inputLength + 32 * width inputLength +
-                    (64 * (rest.length + 1) * width inputLength) ≤
-                  64 * ((true :: rest).length + 1) * width inputLength
                 calc
                   _ = (64 * (rest.length + 1) + 35) * width inputLength := by ring
                   _ ≤ (64 * (rest.length + 2)) * width inputLength :=
@@ -625,9 +622,6 @@ private theorem loop_measured {remaining : List Bool}
                   convert! hrun using 1
                   all_goals omega
                 apply MeasuredRuns.weakenCost hrun'
-                change 3 * width inputLength + 32 * width inputLength +
-                    (64 * (rest.length + 1) * width inputLength) ≤
-                  64 * ((true :: rest).length + 1) * width inputLength
                 calc
                   _ = (64 * (rest.length + 1) + 35) * width inputLength := by ring
                   _ ≤ (64 * (rest.length + 2)) * width inputLength :=

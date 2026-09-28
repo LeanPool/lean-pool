@@ -77,7 +77,7 @@ theorem rationalStateAbsBound_zero_ball {d : ℕ} {R : ℚ}
   rw [rationalStateAbsBound, rationalCenterAbsBound,
     rationalMatrixAbsBound, explicitBallInitialMagnitudeBound]
   simp only [rationalBallEllipsoid, Pi.zero_apply, abs_zero,
-    Finset.sum_const_zero, zero_add]
+    Finset.sum_const_zero]
   have hinner (i : Fin d) :
       (∑ j : Fin d, abs (if i = j then R else 0)) = R := by
     calc

@@ -125,8 +125,7 @@ theorem entryEncodeTM_hoareTime_frame_internal
   refine ⟨finalCfg, addressTime + 1 + valueTime, ?_, hreach, ?_, ?_⟩
   · unfold entryEncodeTime
     omega
-  · change (entryEncodeTM tapes).halted finalCfg
-    unfold entryEncodeTM
+  · unfold entryEncodeTM
     rw [TM.phase2Wrap_halted_iff]
     exact hvalueHalt
   · refine ⟨?_, ?_, ?_, ?_, hvalueSuffix, ?_, hvalueHeadFinal, ?_, ?_⟩
@@ -251,8 +250,7 @@ theorem rewindEntryEncodeTM_hoareTime_frame_internal
   refine ⟨finalCfg, addressTime + 1 + valueTime, ?_, hreach, ?_, ?_⟩
   · unfold rewindEntryEncodeTime
     omega
-  · change (rewindEntryEncodeTM tapes).halted finalCfg
-    unfold rewindEntryEncodeTM
+  · unfold rewindEntryEncodeTM
     rw [TM.phase2Wrap_halted_iff]
     exact hvalueHalt
   · refine ⟨?_, ?_, ?_, ?_, hvalueSuffix, ?_, hvalueHeadFinal, ?_, ?_⟩

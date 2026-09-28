@@ -71,7 +71,7 @@ theorem machineRationalVectorSubEntryCode_mem_FP :
     rationalFiniteVectorCode]
   rw [machineListIndex_binaryListCode (k := i.1),
     machineListIndex_binaryListCode (k := i.1)]
-  · simp only [List.getElem_ofFn, ← rawRatBinaryCode_rawRatOfRat,
+  · simp only [← rawRatBinaryCode_rawRatOfRat,
       machineRawRatNegCode_encode, machineRawRatAddCode_encode,
       machineNormalizeRawRatEntryCode_encode]
     simp [binaryNormalizeRawRat_eq_value, RawRat.value_add,
@@ -186,7 +186,7 @@ theorem rationalVectorSub_code_length_le_bound {d : ℕ}
     intro q hq
     obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hq
     exact rationalVectorSub_entry_code_length_le x y i
-  have hsum := List.sum_le_card_nsmul
+  have hsum := List.sum_le_length_nsmul
     ((List.ofFn (rationalVectorSub x y)).map
       fun q ↦ 2 * (rationalEntryBinaryCode q).length + 2)
     (2 * B + 2) (by

@@ -238,17 +238,14 @@ theorem rawCertificateRegularizationScale_value (n : ℕ) :
     (rawCertificateRegularizationScale n).value =
       explicitRegularizationScale n := by
   simp [rawCertificateRegularizationScale, rawCertificateFourDimension,
-    rawExplicitXi, explicitRegularizationScale,
-    binaryRatDiv_eq_div, binaryRatMul_eq_mul]
+    rawExplicitXi, explicitRegularizationScale]
 
 theorem rawCertificateKKTPenalty_value (n : ℕ) :
     (rawCertificateKKTPenalty n).value = explicitKKTError * n := by
-  simp [rawCertificateKKTPenalty, rawExplicitKKTError,
-    binaryRatMul_eq_mul]
+  simp [rawCertificateKKTPenalty, rawExplicitKKTError]
 
 theorem rawCertificateExpLoss_value (n : ℕ) :
     (rawCertificateExpLoss n).value = explicitExpEvaluationLoss * n := by
-  simp [rawCertificateExpLoss, rawExplicitExpEvaluationLoss,
-    binaryRatMul_eq_mul]
+  simp [rawCertificateExpLoss, rawExplicitExpEvaluationLoss]
 
 end BeyondBethe

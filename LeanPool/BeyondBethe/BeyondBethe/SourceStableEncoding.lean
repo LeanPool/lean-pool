@@ -55,7 +55,7 @@ theorem boolExponent_exponentBool {n : ℕ} (d : Fin n →₀ ℕ)
       rcases Nat.le_one_iff_eq_zero_or_eq_one.mp (hd i) with hz | ho
       · exact hz
       · exact (h ho).elim
-    simp [h, hz]
+    simp [hz]
 
 theorem coeff_eq_zero_of_not_squarefree
     {n : ℕ} {p : MvPolynomial (Fin n) ℝ}
@@ -200,7 +200,7 @@ theorem pairTableEval_eq_boolDoubleSum :
         Finset.sum_add_distrib]
       rw [sum_sum_mul_factors, sum_sum_mul_factors,
         sum_sum_mul_factors, sum_sum_mul_factors]
-      simp only [Bool.false_eq, Bool.true_eq, Bool.cond_false, Bool.cond_true,
+      simp only [Bool.cond_false, Bool.cond_true,
         one_mul, mul_one]
       change pairTableEval (n + 1) c y z =
         y 0 * z 0 *
@@ -265,7 +265,7 @@ theorem multiaffine_eval₂_eq_boolSum
       rw [MvPolynomial.eval₂_sum]
       apply Finset.sum_congr rfl
       intro S hS
-      simp only [MvPolynomial.eval₂_monomial, map_natCast]
+      simp only [MvPolynomial.eval₂_monomial]
       congr 1
       rw [Finsupp.prod_fintype]
       · simp [complexBoolMonomial, boolExponent_apply]
@@ -361,7 +361,6 @@ theorem coefficientPairTable_complexEval
   apply Finset.sum_congr rfl
   intro T hT
   simp [coefficientPairTable]
-  push_cast
   ring
 
 /-- Reads the left member of each recursively encoded variable pair into a finite complex
@@ -403,7 +402,7 @@ theorem pairTableStablePolynomial_eval_coordinates :
       rw [linearExtension_eval, linearExtension_eval, linearExtension_eval]
       simp only [MvPolynomial.eval_neg]
       rw [ih, ih, ih, ih]
-      simp only [pairTableComplexEval, pairVariablesLeft, pairVariablesRight,
+      simp only [pairTableComplexEval,
         Fin.cases_zero, Fin.cases_succ, Function.comp_apply]
       ring
 

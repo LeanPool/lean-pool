@@ -247,7 +247,7 @@ private theorem lookup_read_bit_step (p : List Bool) (b : Bool)
     rw [hstate]; exact readState_ne_haltState g S p
   by_cases hp : p ∈ S.prefixes
   · cases b <;>
-      simp [TM.step, lookupTM, hstate, hread, readState, haltState, dif_pos hp, Γ.ofBool]
+      simp [TM.step, lookupTM, hstate, hread, readState, haltState, dite_eq_left hp, Γ.ofBool]
   · have hp' : p ++ [b] ∉ S.prefixes := fun h =>
       hp (Finset.mem_prefixes_of_prefix (List.prefix_append p [b]) h)
     cases b <;>
@@ -332,7 +332,7 @@ private theorem lookup_initial_step (x : List Bool) :
     readState_ne_haltState g S []
   have hstep : (lookupTM g S).step ((lookupTM g S).initCfg x) = some c0 := by
     by_cases h : ([] : List Bool) ∈ S.prefixes
-    · simp only [TM.step, hc0, lookupTM, readState, dif_pos h]
+    · simp only [TM.step, hc0, lookupTM, readState, dite_eq_left h]
       exact congrArg some (Cfg.ext rfl rfl (Subsingleton.elim _ _) rfl)
     · simp only [TM.step, hc0, lookupTM, readState, dite_eq_right h]
       exact congrArg some (Cfg.ext rfl rfl (Subsingleton.elim _ _) rfl)
@@ -361,7 +361,8 @@ private theorem lookup_handoff_step (inp : List Bool) (c : Cfg 0 (lookupTM g S).
         (idleDir c.output.read) } with hc1
   have hstep : (lookupTM g S).step c = some c1 := by
     by_cases hp : inp ∈ S.prefixes
-    · simp [TM.step, lookupTM, hstate, hread, readState, writeState, haltState, dif_pos hp, hc1]
+    · simp [TM.step, lookupTM, hstate, hread, readState, writeState, haltState,
+        dite_eq_left hp, hc1]
     · have hpS : inp ∉ S := fun h => hp (Finset.mem_prefixes_self h)
       simp [TM.step, lookupTM, hstate, hread, readState, writeState, haltState, dite_eq_right hp,
         ite_eq_right hpS, hc1]

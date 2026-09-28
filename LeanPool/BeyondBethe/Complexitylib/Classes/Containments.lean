@@ -299,7 +299,7 @@ theorem P_inter {L₁ L₂ : Language} (h₁ : L₁ ∈ P) (h₂ : L₂ ∈ P) :
 
 /-- **P is closed under set difference**: `L₁ \ L₂ = L₁ ∩ L₂ᶜ`. -/
 theorem P_diff {L₁ L₂ : Language} (h₁ : L₁ ∈ P) (h₂ : L₂ ∈ P) : L₁ \ L₂ ∈ P := by
-  rw [Set.diff_eq]
+  rw [Set.sdiff_eq]
   exact P_inter h₁ (P_compl h₂)
 
 /-- **P is closed under symmetric difference**:

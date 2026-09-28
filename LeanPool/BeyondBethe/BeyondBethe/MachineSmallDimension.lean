@@ -141,7 +141,7 @@ theorem machineSmallDimensionPermanentCode_one
     machineSmallDimensionPermanentCode
         (rationalMatrixBinaryEncoding.encode ⟨1, A⟩) =
       rationalBinaryCode (Matrix.permanent A) := by
-  simp [machineSmallDimensionPermanentCode, Matrix.permanent_fin_one]
+  simp [machineSmallDimensionPermanentCode]
 
 theorem machineSmallDimensionPermanentCode_encode {n : ℕ}
     (hn : n < 2) (A : Matrix (Fin n) (Fin n) ℚ) :

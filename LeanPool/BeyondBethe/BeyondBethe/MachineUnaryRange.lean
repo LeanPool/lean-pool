@@ -256,7 +256,7 @@ theorem finRangeUnaryCode_length_le_bound (n : ℕ) :
   have hsum :
       ((List.finRange n).map fun i ↦ 2 * (finUnaryCode i).length + 2).sum ≤
         n * (2 * n + 2) := by
-    have h := List.sum_le_card_nsmul
+    have h := List.sum_le_length_nsmul
       ((List.finRange n).map fun i ↦ 2 * (finUnaryCode i).length + 2)
       (2 * n + 2) (by
         intro value hvalue
@@ -285,8 +285,8 @@ theorem machineUnaryRangeSemanticState_step (n k : ℕ) (hk : k < n) :
   have hdrop :
       (List.finRange n).drop (n - k - 1) =
         ⟨n - k - 1, by omega⟩ :: (List.finRange n).drop (n - k) := by
-    convert List.drop_eq_getElem_cons hindex using 1 <;>
-      simp [List.getElem_finRange] <;> omega
+    convert List.drop_eq_getElem_cons hindex using 1;
+      simp [List.getElem_finRange]; omega
   have hcandidateLength :
       (pair (List.replicate (n - k - 1) true)
         (binaryListCode finUnaryCode

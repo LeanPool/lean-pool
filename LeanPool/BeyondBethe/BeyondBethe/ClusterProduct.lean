@@ -26,7 +26,7 @@ theorem prod_monomial
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>
-      simp [ha, ih, monomial_mul]
+      simp [ha, ih]
 
 /-- An independent injection of the rows of each cluster into the columns.
 Choices belonging to different clusters are not required to have disjoint
@@ -100,7 +100,7 @@ noncomputable def permutationGlobalClusterChoiceEquiv
     funext c
     apply Function.Embedding.ext
     intro k
-    simp [clusterChoiceMap, permutationClusterChoice, Equiv.ofBijective_apply]
+    simp [permutationClusterChoice]
     rfl
 
 noncomputable instance globalClusterChoiceFintype

@@ -250,7 +250,7 @@ theorem machineBinaryMulStep_reachable
       · cases bit with
         | false => simp; omega
         | true =>
-            simp only [Bool.true_eq, if_true]
+            simp only [ite_true]
             have hadd := machineBinaryAddBits_pair_length_le acc shift
             omega
 
@@ -318,7 +318,7 @@ theorem binaryMulFold_natBits (bits : List Bool) (shift acc : ℕ) :
           rw [ih (shift + shift) (acc + shift)]
           simp only [Nat.fromBitsLE_cons]
           congr 1
-          simp only [eq_self, if_true]
+          simp only [ite_true]
           ring
 
 /-- The concrete multiplier returns the canonical binary expansion of the

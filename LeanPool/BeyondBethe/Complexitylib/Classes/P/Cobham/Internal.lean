@@ -1140,3 +1140,7 @@ theorem FPn_imp_cobham_internal {n : ℕ} {f : (Fin n → List Bool) → List Bo
     FP_subset_CobhamFP_internal hg
   refine (Cobham.comp hgCobham fun _ : Fin 1 => encodeVec_mem_internal).of_eq fun v => ?_
   exact hgf v
+
+end Cobham
+
+end Complexity

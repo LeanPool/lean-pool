@@ -44,8 +44,7 @@ theorem positiveLinearPolynomial_isRealStable
     IsRealStable (positiveLinearPolynomial u) := by
   intro z hz
   rw [positiveLinearPolynomial, eval₂_sum]
-  simp only [eval₂_monomial, RingHom.id_apply,
-    Finsupp.prod_single_index, pow_one, one_mul]
+  simp only [eval₂_monomial]
   have him : 0 < ∑ i, u i * (z i).im :=
     Finset.sum_pos (fun i _ ↦ mul_pos (hu i) (hz i))
       Finset.univ_nonempty
@@ -86,10 +85,11 @@ theorem realDot_mul_realDot
   ring
 
 theorem sum_offDiag_eq_sum_product_sub_diag
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (f : ι × ι → ℝ) :
     (∑ e ∈ (Finset.univ : Finset ι).offDiag, f e) =
       (∑ i, ∑ j, f (i, j)) - ∑ i, f (i, i) := by
+  classical
   have hunion :
       (∑ e ∈ (Finset.univ : Finset ι).diag ∪ Finset.univ.offDiag, f e) =
         (∑ e ∈ (Finset.univ : Finset ι).diag, f e) +
@@ -101,11 +101,12 @@ theorem sum_offDiag_eq_sum_product_sub_diag
   linarith
 
 theorem pairQuadraticForm_eq_offDiag
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (u v x : ι → ℝ) :
     pairQuadraticForm u v x =
       ∑ e ∈ (Finset.univ : Finset ι).offDiag,
         u e.1 * v e.2 * x e.1 * x e.2 := by
+  classical
   rw [sum_offDiag_eq_sum_product_sub_diag]
   simp only [pairQuadraticForm]
   rw [realDot_mul_realDot]
@@ -115,11 +116,12 @@ theorem pairQuadraticForm_eq_offDiag
   ring
 
 theorem pairBilinearForm_eq_offDiag
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (u v x y : ι → ℝ) :
     pairBilinearForm u v x y =
       ∑ e ∈ (Finset.univ : Finset ι).offDiag,
         u e.1 * v e.2 * (x e.1 * y e.2 + y e.1 * x e.2) := by
+  classical
   rw [sum_offDiag_eq_sum_product_sub_diag]
   simp only [pairBilinearForm]
   rw [realDot_mul_realDot, realDot_mul_realDot]
@@ -149,7 +151,7 @@ theorem pairPolynomial_eval₂_complex
   intro e _
   rw [eval₂_monomial]
   rw [Finsupp.prod_add_index]
-  · simp [Finsupp.prod_single_index, mul_assoc, mul_left_comm, mul_comm]
+  · simp [Finsupp.prod_single_index, mul_left_comm, mul_comm]
   · simp
   · intro a _ b c
     exact pow_add (z a) b c
@@ -161,7 +163,9 @@ theorem pairPolynomial_eval₂_complex_re
       pairQuadraticForm u v (fun i ↦ (z i).re) -
         pairQuadraticForm u v (fun i ↦ (z i).im) := by
   rw [pairPolynomial_eval₂_complex]
-  simp
+  simp only [Complex.ofReal_mul, Complex.re_sum, Complex.mul_re, Complex.ofReal_re,
+    Complex.ofReal_im, mul_zero, sub_zero, Complex.mul_im, zero_mul, add_zero,
+    Finset.sum_sub_distrib]
   rw [pairQuadraticForm_eq_offDiag, pairQuadraticForm_eq_offDiag]
 
 theorem pairPolynomial_eval₂_complex_im
@@ -170,7 +174,8 @@ theorem pairPolynomial_eval₂_complex_im
     ((pairPolynomial u v).eval₂ (algebraMap ℝ ℂ) z).im =
       pairBilinearForm u v (fun i ↦ (z i).re) (fun i ↦ (z i).im) := by
   rw [pairPolynomial_eval₂_complex]
-  simp
+  simp only [Complex.ofReal_mul, Complex.im_sum, Complex.mul_im, Complex.mul_re,
+    Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero, zero_mul, add_zero]
   rw [pairBilinearForm_eq_offDiag]
   ring
 
@@ -214,11 +219,12 @@ theorem pairQuadraticForm_sub_mul
   ring
 
 theorem pairQuadraticForm_pos
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {u v y : ι → ℝ} (hcard : 2 ≤ Fintype.card ι)
     (hu : ∀ i, 0 < u i) (hv : ∀ i, 0 < v i)
     (hy : ∀ i, 0 < y i) :
     0 < pairQuadraticForm u v y := by
+  classical
   rw [pairQuadraticForm_eq_offDiag]
   apply Finset.sum_pos
   · intro e he
@@ -277,7 +283,7 @@ theorem pairPolynomial_isRealStable_of_pos
     {u v : ι → ℝ} (hcard : 2 ≤ Fintype.card ι)
     (hu : ∀ i, 0 < u i) (hv : ∀ i, 0 < v i) :
     IsRealStable (pairPolynomial u v) := by
-  letI : Nonempty ι := Fintype.card_pos_iff.mp (by omega)
+  have hnonempty : Nonempty ι := Fintype.card_pos_iff.mp (by omega)
   intro z hz hzero
   let x : ι → ℝ := fun i ↦ (z i).re
   let y : ι → ℝ := fun i ↦ (z i).im
@@ -292,8 +298,8 @@ theorem pairPolynomial_isRealStable_of_pos
     rw [pairPolynomial_eval₂_complex_im] at h
     simpa [x, y] using h
   have hxnonpos : pairQuadraticForm u v x ≤ 0 :=
-    pairQuadraticForm_nonpos_of_bilinear_zero hu hv (fun i ↦ hz i)
-      hypos him
+    @pairQuadraticForm_nonpos_of_bilinear_zero ι _ hnonempty u v x y
+      hu hv (fun i ↦ hz i) hypos him
   linarith
 
 end BeyondBethe

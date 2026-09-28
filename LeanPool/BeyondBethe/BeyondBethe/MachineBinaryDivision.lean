@@ -636,7 +636,7 @@ theorem natBits_ne_nil_of_ne_zero {n : ℕ} (hn : n ≠ 0) : n.bits ≠ [] := by
   · by_cases htake : divisor ≤ remainder + remainder + bitValue bit
     · simp only [hdivisor, ite_false]
       simp only [htake, decide_true, machineIfHead_true,
-        machineBinaryDivDivisor_pack, if_true]
+        machineBinaryDivDivisor_pack, ite_true]
       rw [machineBinarySubBits_pair_natBits]
     · simp [hdivisor, htake]
 
@@ -692,6 +692,6 @@ theorem machineBinaryDivModBits_pair_natBits (dividend divisor : ℕ) :
   rw [machineBinaryDivIterate_natBits dividend.bits.reverse divisor 0 0]
   simp only [machineBinaryDivQuotient_pack, machineBinaryDivRemainder_pack]
   rw [binaryLongDivForward_reverse, binaryLongDivBits_eq_div_mod]
-  simp only [Prod.fst, Prod.snd, Nat.fromBitsLE_bits]
+  simp only [Nat.fromBitsLE_bits]
 
 end BeyondBethe

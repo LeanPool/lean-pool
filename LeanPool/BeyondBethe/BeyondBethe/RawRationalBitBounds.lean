@@ -75,16 +75,15 @@ def inv (q : RawRat) : RawRat :=
       cases n with
       | zero => simp [inv, value, zero]
       | succ n =>
-          simp only [inv, value, Int.cast_ofNat, Nat.cast_add, Nat.cast_one]
+          simp only [inv, value, Nat.cast_add, Nat.cast_one]
           field_simp
-          <;> norm_num
-          <;> ring
+         ; norm_num
+         ; ring
   | negSucc n =>
       simp only [inv, value, Int.cast_negSucc, Nat.cast_add, Nat.cast_one,
-        Int.cast_neg, Int.cast_ofNat, inv_div]
+        Int.cast_neg, inv_div]
       field_simp
-      <;> norm_num
-      <;> ring
+     ; norm_num
 
 /-- Divides raw fractions by multiplying by the totalized reciprocal of the divisor. -/
 def div (q r : RawRat) : RawRat := q.mul r.inv

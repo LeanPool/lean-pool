@@ -140,11 +140,9 @@ theorem kuhnEvalStep_iterate_call {n : ℕ}
       .ret (kuhnSearch A fuel remaining row seen mate) stack := by
   fun_induction kuhnSearch generalizing stack with
   | case1 =>
-      simp [kuhnSearchSteps, Function.iterate_one, kuhnEvalStep.eq_def,
-        kuhnSearch]
+      simp [kuhnSearchSteps, kuhnEvalStep.eq_def]
   | case2 =>
-      simp [kuhnSearchSteps, Function.iterate_one, kuhnEvalStep.eq_def,
-        kuhnSearch]
+      simp [kuhnSearchSteps, kuhnEvalStep.eq_def]
   | case3 fuel col remaining row seen mate hskip ih =>
       rw [kuhnSearchSteps]
       simp only [hskip, ↓reduceIte]
@@ -156,7 +154,7 @@ theorem kuhnEvalStep_iterate_call {n : ℕ}
   | case4 fuel col remaining row seen mate hskip seen' hmate =>
       rw [kuhnSearchSteps]
       simp only [hskip, ↓reduceIte, hmate]
-      simp [Function.iterate_one, kuhnEvalStep.eq_def, hskip, hmate, seen']
+      simp [kuhnEvalStep.eq_def, hskip, hmate, seen']
   | case5 fuel col remaining row seen mate hskip seen' oldRow hmate
       mateWithoutOld recursive mateRec hrec ih =>
       rw [kuhnSearchSteps]
@@ -284,7 +282,7 @@ theorem kuhnSearchSteps_le {n : ℕ}
       omega
 
 /-- Start (or finish) the explicit evaluator on a remaining row list. -/
-def kuhnBuildEvalState {n : ℕ} (A : Matrix (Fin n) (Fin n) ℚ)
+def kuhnBuildEvalState {n : ℕ} (_ : Matrix (Fin n) (Fin n) ℚ)
     (rows : List (Fin n)) (mate : ColumnMate n) : KuhnEvalState n :=
   match rows with
   | [] => .done mate

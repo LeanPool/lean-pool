@@ -38,7 +38,7 @@ private def paddedBinarySymbol (bits : List Bool) (i : ℕ) : Γ :=
 private theorem paddedBinarySymbol_of_lt {bits : List Bool} {i : ℕ}
     (h : i < bits.length) :
     paddedBinarySymbol bits i = Γ.ofBool bits[i] := by
-  simp only [paddedBinarySymbol, dif_pos h]
+  simp only [paddedBinarySymbol, dite_eq_left h]
 
 private theorem paddedBinarySymbol_of_ge {bits : List Bool} {i : ℕ}
     (h : bits.length ≤ i) :

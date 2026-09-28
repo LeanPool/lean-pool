@@ -173,8 +173,8 @@ theorem hasDerivAt_probabilitySegment
     {ι : Type*} (p q : ι → ℝ) (i : ι) (t : ℝ) :
     HasDerivAt (fun u ↦ probabilitySegment p q u i) (q i - p i) t := by
   convert! ((hasDerivAt_const t 1).sub (hasDerivAt_id t)).mul_const (p i) |>.add
-    ((hasDerivAt_id t).mul_const (q i)) using 1 <;>
-    simp [probabilitySegment] <;> ring
+    ((hasDerivAt_id t).mul_const (q i)) using 1;
+    simp; ring
 
 private theorem hasDerivAt_vontobelEntropyTerm_segment
     {ι : Type*} (p q : ι → ℝ) (i : ι) {t : ℝ}
@@ -194,7 +194,7 @@ private theorem hasDerivAt_vontobelEntropyTerm_segment
     exact (Real.hasDerivAt_negMulLog hpos.ne').comp t hr
   have hinner : HasDerivAt
       (fun u ↦ 1 - probabilitySegment p q u i) (-v) t := by
-    convert! (hasDerivAt_const t 1).sub hr using 1 <;> simp [v]
+    convert! (hasDerivAt_const t 1).sub hr using 1; simp [v]
   have hcomp : HasDerivAt
       (fun u ↦ Real.negMulLog (1 - probabilitySegment p q u i))
       ((-Real.log (1 - r) - 1) * (-v)) t := by
@@ -202,7 +202,7 @@ private theorem hasDerivAt_vontobelEntropyTerm_segment
   change HasDerivAt
     (fun u ↦ Real.negMulLog (probabilitySegment p q u i) -
       Real.negMulLog (1 - probabilitySegment p q u i)) _ t
-  convert! hneg.sub hcomp using 1 <;> dsimp [r, v] <;> ring
+  convert! hneg.sub hcomp using 1; dsimp [r, v]; ring
 
 private theorem hasDerivAt_vontobelEntropyTerm_segment_deriv
     {ι : Type*} (p q : ι → ℝ) (i : ι) {t : ℝ}
@@ -222,13 +222,13 @@ private theorem hasDerivAt_vontobelEntropyTerm_segment_deriv
     exact hr.log hpos.ne'
   have hinner : HasDerivAt
       (fun u ↦ 1 - probabilitySegment p q u i) (-v) t := by
-    convert! (hasDerivAt_const t 1).sub hr using 1 <;> simp [v]
+    convert! (hasDerivAt_const t 1).sub hr using 1; simp [v]
   have hlogc : HasDerivAt
       (fun u ↦ Real.log (1 - probabilitySegment p q u i))
       ((-v) / (1 - r)) t := by
     exact hinner.log (sub_pos.mpr hlt).ne'
   have hsum := ((hlogr.neg.sub hlogc).sub_const 2).const_mul v
-  convert! hsum using 1 <;> dsimp [r, v] <;> field_simp <;> ring
+  convert! hsum using 1; dsimp [r, v]; field_simp; ring
 
 /-- Concavity along a segment whose second endpoint has full support.  This
 is the exact form first needed in the regularized-optimizer argument. -/

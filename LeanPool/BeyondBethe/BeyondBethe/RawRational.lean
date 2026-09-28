@@ -78,7 +78,6 @@ def mul (q r : RawRat) : RawRat :=
   rw [add, value, value, value]
   push_cast
   field_simp [Nat.ne_of_gt q.den_pos, Nat.ne_of_gt r.den_pos]
-  <;> ring
 
 @[simp] theorem value_sub (q r : RawRat) : (q.sub r).value = q.value - r.value := by
   simp [sub, sub_eq_add_neg]
@@ -87,7 +86,6 @@ def mul (q r : RawRat) : RawRat :=
   rw [mul, value, value, value]
   push_cast
   field_simp [Nat.ne_of_gt q.den_pos, Nat.ne_of_gt r.den_pos]
-  <;> ring
 
 end RawRat
 

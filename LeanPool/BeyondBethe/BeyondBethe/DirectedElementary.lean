@@ -415,7 +415,7 @@ theorem four_mul_two_pow_le_three_pow (p : ℕ) :
       calc
         4 * 2 ^ (p + 1) = 2 * (4 * 2 ^ p) := by ring
         _ ≤ 2 * 3 ^ (2 * p + 3) := Nat.mul_le_mul_left 2 ih
-        _ ≤ 9 * 3 ^ (2 * p + 3) := by gcongr <;> norm_num
+        _ ≤ 9 * 3 ^ (2 * p + 3) := by gcongr; norm_num
         _ = 3 ^ (2 * (p + 1) + 3) := by
           rw [show 2 * (p + 1) + 3 = (2 * p + 3) + 2 by omega,
             pow_add]
@@ -711,7 +711,7 @@ theorem rationalExpApproxSteps_controls_error
   nlinarith
 
 theorem log_one_sub_between_neg_add_two_sq_and_neg {x : ℝ}
-    (hx0 : 0 ≤ x) (hxhalf : x < 1 / 2) :
+    (_ : 0 ≤ x) (hxhalf : x < 1 / 2) :
     -x - 2 * x ^ 2 ≤ Real.log (1 - x) ∧
       Real.log (1 - x) ≤ -x := by
   have hbase : 0 < 1 - x := by linarith

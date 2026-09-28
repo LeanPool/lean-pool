@@ -117,7 +117,7 @@ theorem exists_rational_completion_scales
       6 / Real.log 2 * goodRowOmega η <
           6 / Real.log 2 * (Real.log 2 / 384) :=
         mul_lt_mul_of_pos_left hωsmall hcoef
-      _ = 1 / 64 := by field_simp [hlog.ne'] <;> norm_num
+      _ = 1 / 64 := by field_simp [hlog.ne']; norm_num
   have hηκ : η * (κ₀ : ℝ) ≤ (1 / 20) * (κ₀ : ℝ) :=
     mul_le_mul_of_nonneg_right hηtwenty.le hκ₀r.le
   have htransferBase : binaryEntropy η + η <

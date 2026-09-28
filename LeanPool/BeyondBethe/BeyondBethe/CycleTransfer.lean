@@ -298,6 +298,6 @@ theorem gibbs_twoMatching_coreTransferCost_normalized_le
     (B := S + 2 * ξ * n) hglobal
   have hnR : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
   dsimp only [P, μ, S] at hcore ⊢
-  convert hcore using 1 <;> field_simp [hnR] <;> ring
+  convert hcore using 1; field_simp [hnR]
 
 end BeyondBethe

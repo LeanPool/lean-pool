@@ -42,9 +42,10 @@ theorem secondMoment_nonneg
   exact Finset.sum_nonneg fun _ _ ↦ sq_nonneg _
 
 theorem secondMoment_lt_one
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {p : ι → ℝ} (hp : IsInteriorProbabilityVector p) :
     secondMoment p < 1 := by
+  classical
   have huniv : (Finset.univ : Finset ι).Nonempty := by
     by_contra hempty
     have hsum0 : ∑ i, p i = 0 := by
@@ -109,10 +110,11 @@ theorem complementProduct_pos
 /-- The logarithmic estimate at the heart of the row-sum bound in paper
 Lemma 15. -/
 theorem neg_log_complementProduct_le
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {p : ι → ℝ} (hp : IsInteriorProbabilityVector p) :
     -Real.log (complementProduct p) ≤
       1 - Real.log (1 - secondMoment p) := by
+  classical
   let a : ℝ := Real.sqrt (secondMoment p)
   have ha0 : 0 ≤ a := Real.sqrt_nonneg _
   have ha_sq : a ^ 2 = secondMoment p := Real.sq_sqrt (secondMoment_nonneg p)
@@ -189,9 +191,10 @@ theorem neg_log_complementProduct_le
 /-- Exponentiating the preceding logarithmic estimate yields the product
 bound used in paper Lemma 15. -/
 theorem exp_neg_one_mul_one_sub_secondMoment_le_complementProduct
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {p : ι → ℝ} (hp : IsInteriorProbabilityVector p) :
     Real.exp (-1) * (1 - secondMoment p) ≤ complementProduct p := by
+  classical
   have hd : 0 < 1 - secondMoment p := sub_pos.mpr (secondMoment_lt_one hp)
   have hq : 0 < complementProduct p := complementProduct_pos hp
   have hlog := neg_log_complementProduct_le hp
@@ -205,7 +208,7 @@ theorem exp_neg_one_mul_one_sub_secondMoment_le_complementProduct
 /-- Elementary product inequality
 `1 - ∑ x_i ≤ ∏ (1 - x_i)` for nonnegative numbers with sum at most one. -/
 theorem one_sub_sum_le_prod_one_sub
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (x : ι → ℝ)
+    {ι : Type*} (s : Finset ι) (x : ι → ℝ)
     (hx : ∀ i ∈ s, 0 ≤ x i) (hsum : ∑ i ∈ s, x i ≤ 1) :
     1 - ∑ i ∈ s, x i ≤ ∏ i ∈ s, (1 - x i) := by
   classical

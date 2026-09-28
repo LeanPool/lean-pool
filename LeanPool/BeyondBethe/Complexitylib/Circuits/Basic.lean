@@ -5,7 +5,11 @@ Authors: Samuel Schlesinger
 -/
 
 module
-public import Mathlib.Data.Nat.Lattice
+public import Mathlib.Data.Finset.Attr
+public import Mathlib.Tactic.Common
+public import Mathlib.Tactic.Finiteness.Attr
+public import Mathlib.Tactic.SetLike
+public import Mathlib.Util.CompileInductive
 public import Mathlib.Order.Lattice.Nat
 public import Mathlib.Order.CompleteLattice.Basic
 

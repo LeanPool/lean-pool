@@ -186,8 +186,6 @@ theorem machineScheduledLogUpperRawCode_mem_FP :
     machineScheduledLogPrecisionBits_encode,
     machineScheduledLogExponentAbsBits_encode,
     machineBinaryAddBits_pair_natBits]
-  change machineBinaryAddBits
-      (pair (p + (rationalBinaryExponent q).natAbs).bits (2 : ℕ).bits) = _
   rw [machineBinaryAddBits_pair_natBits]
   rfl
 

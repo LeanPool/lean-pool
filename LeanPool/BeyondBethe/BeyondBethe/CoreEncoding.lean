@@ -40,10 +40,12 @@ components containing at least two rows. -/
 def alternatingRowPerm (f g : Equiv.Perm α) : Equiv.Perm α :=
   f.trans g.symm
 
+omit [Fintype α] [DecidableEq α] in
 @[simp]
 theorem alternatingRowPerm_apply (f g : Equiv.Perm α) (i : α) :
     alternatingRowPerm f g i = g.symm (f i) := rfl
 
+omit [Fintype α] [DecidableEq α] in
 theorem same_twoMatchingEncoding_core_iff
     {f g σ τ : Equiv.Perm α}
     (henc : twoMatchingEncoding f g σ = twoMatchingEncoding f g τ)
@@ -54,11 +56,12 @@ theorem same_twoMatchingEncoding_core_iff
   constructor
   · intro hσ
     by_contra hτ
-    simpa [twoMatchingEncoding, hσ, hτ] using hi
+    simp [twoMatchingEncoding, hσ, hτ] at hi
   · intro hτ
     by_contra hσ
-    simpa [twoMatchingEncoding, hσ, hτ] using hi
+    simp [twoMatchingEncoding, hσ, hτ] at hi
 
+omit [Fintype α] [DecidableEq α] in
 theorem same_twoMatchingEncoding_of_escape
     {f g σ τ : Equiv.Perm α}
     (henc : twoMatchingEncoding f g σ = twoMatchingEncoding f g τ)
@@ -70,6 +73,7 @@ theorem same_twoMatchingEncoding_of_escape
     exact fun h ↦ hσ ((same_twoMatchingEncoding_core_iff henc i).2 h)
   simpa [twoMatchingEncoding, hσ, hτ] using hi
 
+omit [Fintype α] [DecidableEq α] in
 theorem alternatingRowPerm_fixed_iff
     (f g : Equiv.Perm α) (i : α) :
     alternatingRowPerm f g i = i ↔ f i = g i := by
@@ -81,6 +85,7 @@ theorem alternatingRowPerm_fixed_iff
     apply g.injective
     simp [alternatingRowPerm, h]
 
+omit [Fintype α] [DecidableEq α] in
 /-- One oriented disagreement propagates by one step around the alternating
 cycle.  This is the direct form of the paper's "paths have unique perfect
 matchings" observation. -/
@@ -93,7 +98,7 @@ theorem oriented_disagreement_step
       τ (alternatingRowPerm f g i) = g (alternatingRowPerm f g i) := by
   let j := alternatingRowPerm f g i
   have hgj : g j = f i := by
-    simp [j, alternatingRowPerm]
+    simp [j]
   have hji : j ≠ i := by
     intro h
     apply hfg
@@ -134,6 +139,7 @@ theorem oriented_disagreement_step
   · exact h
   · exact absurd h hσj_g_ne
 
+omit [Fintype α] [DecidableEq α] in
 /-- A disagreement in either orientation propagates by one alternating step. -/
 theorem disagreement_step
     {f g σ τ : Equiv.Perm α}
@@ -171,6 +177,7 @@ theorem disagreement_step
     exact hne (hσg.trans (hfg0.symm.trans hτf.symm))
   · exact absurd (hσg.trans hτg.symm) hne
 
+omit [Fintype α] [DecidableEq α] in
 theorem disagreement_pow
     {f g σ τ : Equiv.Perm α}
     (henc : twoMatchingEncoding f g σ = twoMatchingEncoding f g τ)
@@ -286,7 +293,7 @@ theorem twoMatchingEncoding_fiber_card_le
     S.card = Fintype.card S := (Fintype.card_coe S).symm
     _ ≤ Fintype.card sigType := Fintype.card_le_of_injective encode hinj
     _ = 2 ^ (alternatingRowPerm f g).cycleFactorsFinset.card := by
-      simp [sigType, Fintype.card_fun]
+      simp [sigType]
 
 /-- A spanning two-regular bipartite multigraph.  The two slots at each row
 record its two incident edges, while `columnDegree` says that every column is
@@ -429,7 +436,7 @@ theorem exists_twoMatching_decomposition :
           rw [Finset.sum_add_distrib]
           simp only [hchosen, q]
     have hchosenCount : (∑ i, if f i = j then 1 else 0) = 1 := by
-      simp_rw [f.apply_eq_iff_eq_symm_apply]
+      simp_rw [f.eq_symm_apply.symm]
       rw [Finset.sum_ite_eq' Finset.univ (f.symm j)]
       simp
     rw [K.columnDegree j, hchosenCount] at hsplit

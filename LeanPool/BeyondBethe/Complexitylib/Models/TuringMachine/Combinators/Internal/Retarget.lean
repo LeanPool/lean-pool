@@ -162,7 +162,7 @@ theorem retargetInput_step_commute (M : TM k) {c c' : Cfg k M.Q}
         = (fun i => (c.work i).read) := by
     funext i
     change (if h : i.val < k then c.work ⟨i.val, h⟩ else c.input).read = (c.work i).read
-    rw [dif_pos i.isLt]
+    rw [dite_eq_left i.isLt]
   -- Unfold step on the LHS. `split` reduces the halting ite (the stored
   -- decidability instance blocks `simp`/`ite_eq_right` post-v4.30).
   simp only [step, show (retargetWrap M realInput c).state = c.state from rfl,
@@ -184,7 +184,7 @@ theorem retargetInput_step_commute (M : TM k) {c c' : Cfg k M.Q}
     -- RHS: (retargetWrap... c').work i where c'.work ⟨i.val, _⟩ is the updated tape.
     rw [retargetWrap_work_lt _ _ _ _ hik]
     show (_ : Tape).writeAndMove _ _ = (if h : i.val < k then _ else _)
-    rw [dif_pos hik, dif_pos hik, dif_pos hik]
+    rw [dite_eq_left hik, dite_eq_left hik, dite_eq_left hik]
   · -- i.val = k: virtual input case.
     have hik_eq : i.val = k := by have := i.isLt; omega
     have hwork_k : (retargetWrap M realInput c).work i = c.input := by

@@ -94,7 +94,7 @@ theorem betheHeightNormal_base_code_length_le_bound (m : ℕ) :
   let L := word.length
   let T := L + 16
   have hmL : m ≤ L := by simp [L, word]
-  have hsum := List.sum_le_card_nsmul
+  have hsum := List.sum_le_length_nsmul
     ((unaryGridValues (fun _ _ : Fin m ↦ (0 : ℚ))).map
       fun q ↦ 2 * (rationalEntryBinaryCode q).length + 2)
     34 (by

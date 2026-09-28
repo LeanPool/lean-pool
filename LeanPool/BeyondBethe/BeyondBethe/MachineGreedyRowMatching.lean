@@ -1593,8 +1593,8 @@ theorem certifiedGreedyOrderedStep_map_endpoints {n : ℕ}
     certifiedGreedyOrderedStep X i (selected.map rowPairEndpoints) j =
       (certifiedGreedyTypedStep X i selected j).map rowPairEndpoints := by
   by_cases hij : i < j
-  · rw [certifiedGreedyOrderedStep, dif_pos hij,
-      certifiedGreedyTypedStep, dif_pos hij]
+  · rw [certifiedGreedyOrderedStep, dite_eq_left hij,
+      certifiedGreedyTypedStep, dite_eq_left hij]
     have hiff := orderedPairsConflict_map_endpoints_eq_false_iff
       i j hij selected
     by_cases h : HasCertifiedCorePair (explicitRegularizationScale n) X
@@ -1696,7 +1696,7 @@ theorem certifiedGreedyTypedStep_eq_candidate {n : ℕ}
       | none => selected := by
   by_cases hij : i < j
   · simp only [certifiedGreedyTypedStep, canonicalRowPairCandidate,
-      dif_pos hij, certifiedGreedyEdgeStep, certifiedRowPairEligibleBit,
+      dite_eq_left hij, certifiedGreedyEdgeStep, certifiedRowPairEligibleBit,
       greedyRowListStep]
     by_cases heligible : HasCertifiedCorePair (explicitRegularizationScale n) X
         explicitKappa (directedPairCostPrecision n) (rowPairOfLT i j hij)
@@ -1722,13 +1722,13 @@ theorem certifiedGreedyTypedInnerScan_eq_filterMap_fold {n : ℕ}
           Disjoint (rowPairOfLT i j hij).1 r.1
       · simp [certifiedGreedyTypedStep, canonicalRowPairCandidate,
           certifiedGreedyEdgeStep, certifiedRowPairEligibleBit,
-          greedyRowListStep, hij, heligible, hdisjoint]
+          greedyRowListStep, hij, heligible]
       · simp [certifiedGreedyTypedStep, canonicalRowPairCandidate,
           certifiedGreedyEdgeStep, certifiedRowPairEligibleBit,
-          greedyRowListStep, hij, heligible, hdisjoint]
+          greedyRowListStep, hij, heligible]
     · simp [certifiedGreedyTypedStep, canonicalRowPairCandidate,
         certifiedGreedyEdgeStep, certifiedRowPairEligibleBit,
-        greedyRowListStep, hij, heligible]
+        hij, heligible]
   · simp [certifiedGreedyTypedStep, canonicalRowPairCandidate, hij]
 
 theorem reverse_allRowPairsList {n : ℕ} :
@@ -1854,7 +1854,7 @@ theorem certifiedGreedyTypedStep_nodup {n : ℕ}
     {selected : List (RowPair n)} (hselected : selected.Nodup) :
     (certifiedGreedyTypedStep X i selected j).Nodup := by
   by_cases hij : i < j
-  · rw [certifiedGreedyTypedStep, dif_pos hij]
+  · rw [certifiedGreedyTypedStep, dite_eq_left hij]
     dsimp only
     split_ifs with haccept
     · rw [List.nodup_cons]

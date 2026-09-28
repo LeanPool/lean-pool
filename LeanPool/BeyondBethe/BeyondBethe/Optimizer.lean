@@ -73,7 +73,7 @@ theorem isClosed_doublyStochastic
     exact isClosed_iInter fun j ↦ isClosed_eq
       (continuous_finsetSum Finset.univ fun i _ ↦
         continuous_apply_apply i j) continuous_const
-  simpa [IsDoublyStochastic, Matrix.Nonnegative, Set.setOf_and] using
+  simpa [IsDoublyStochastic, Matrix.Nonnegative, Set.ofPred_and] using
     hnonneg.inter (hrow.inter hcol)
 
 /-- The Birkhoff polytope is compact. -/
@@ -236,7 +236,7 @@ theorem regularizedBetheMaximizer_positive
     {n : ℕ} (hn : 1 < n)
     {τ : ℝ} (hτ : 0 < τ)
     {A X : Matrix (Fin n) (Fin n) ℝ}
-    (hA : Matrix.Positive A)
+    (_ : Matrix.Positive A)
     (hX : IsDoublyStochastic X)
     (hmax : ∀ Y, IsDoublyStochastic Y →
       regularizedBetheObjective τ A Y ≤
@@ -338,7 +338,7 @@ theorem hasDerivAt_regularizedBetheCoordinate
         Real.log (1 - x) - (2 + τ)) x := by
   have hlinear : HasDerivAt (fun y : ℝ ↦ y * Real.log a)
       (Real.log a) x := by
-    convert! (hasDerivAt_id x).mul_const (Real.log a) using 1 <;> simp
+    convert! (hasDerivAt_id x).mul_const (Real.log a) using 1; simp
   have hentropy : HasDerivAt
       (fun y : ℝ ↦ (1 + τ) * Real.negMulLog y)
       ((1 + τ) * (-Real.log x - 1)) x := by
@@ -354,7 +354,7 @@ theorem hasDerivAt_regularizedBetheCoordinate
         Real.negMulLog (1 - y) by
     funext y
     exact regularizedBetheCoordinate_eq_continuousForm τ a y]
-  convert! (hlinear.add hentropy).sub hcomplement using 1 <;> ring
+  convert! (hlinear.add hentropy).sub hcomplement using 1; ring
 
 /-- An affine perturbation in a matrix direction. -/
 def linearMatrixPerturb
@@ -385,14 +385,13 @@ theorem hasDerivAt_regularizedBetheObjective_line
   have hinner : HasDerivAt (fun t : ℝ ↦ X i j + t * D i j)
       (D i j) 0 := by
     convert! (hasDerivAt_const (0 : ℝ) (X i j)).add
-      ((hasDerivAt_id (0 : ℝ)).mul_const (D i j)) using 1 <;> simp
+      ((hasDerivAt_id (0 : ℝ)).mul_const (D i j)) using 1; simp
   have hcoord' : HasDerivAt (regularizedBetheCoordinate τ (A i j))
       (Real.log (A i j) - (1 + τ) * Real.log (X i j) -
         Real.log (1 - X i j) - (2 + τ))
       ((fun t : ℝ ↦ X i j + t * D i j) 0) := by
-    convert! hcoord using 1 <;> simp
-  convert! hcoord'.comp 0 hinner using 1 <;>
-    simp [linearMatrixPerturb, regularizedBetheGradient] <;> ring
+    convert! hcoord using 1; simp
+  convert! hcoord'.comp 0 hinner using 1
 
 /-- A strictly positive finite matrix remains nonnegative under all
 sufficiently small affine perturbations. -/
@@ -482,13 +481,13 @@ def signedPair
 
 theorem sum_signedPair
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {a b : ι} (hab : a ≠ b) :
+    {a b : ι} (_ : a ≠ b) :
     ∑ x, signedPair a b x = 0 := by
   simp [signedPair, Finset.sum_sub_distrib]
 
 theorem sum_signedPair_mul
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {a b : ι} (hab : a ≠ b) (q : ι → ℝ) :
+    {a b : ι} (_ : a ≠ b) (q : ι → ℝ) :
     ∑ x, signedPair a b x * q x = q a - q b := by
   simp [signedPair, sub_mul, Finset.sum_sub_distrib]
 

@@ -71,18 +71,17 @@ theorem IsSupportColumnMate.update_none {n : ℕ}
     by_cases hcol : j = col
     · subst j
       simp at hj
-    · simp [Function.update, hcol] at hj
-      exact h.support hj
+    · exact h.support (by simpa [Function.update, hcol] using hj)
   · intro j j' row hj hj'
     by_cases hjc : j = col
     · subst j
       simp at hj
-    · simp [Function.update, hjc] at hj
-      by_cases hjc' : j' = col
+    · by_cases hjc' : j' = col
       · subst j'
         simp at hj'
-      · simp [Function.update, hjc'] at hj'
-        exact h.injective hj hj'
+      · exact h.injective
+          (by simpa [Function.update, hjc] using hj)
+          (by simpa [Function.update, hjc'] using hj')
 
 theorem IsSupportColumnMate.update_some {n : ℕ}
     {A : Matrix (Fin n) (Fin n) ℚ} {mate : ColumnMate n}
@@ -93,28 +92,26 @@ theorem IsSupportColumnMate.update_some {n : ℕ}
   · intro j r hj
     by_cases hcol : j = col
     · subst j
-      simp at hj
+      have hr : row = r := by simpa using hj
       subst r
       exact hedge
-    · simp [Function.update, hcol] at hj
-      exact h.support hj
+    · exact h.support (by simpa [Function.update, hcol] using hj)
   · intro j j' r hj hj'
     by_cases hjc : j = col
     · subst j
-      simp at hj
+      have hr : row = r := by simpa using hj
       subst r
       by_cases hjc' : j' = col
       · exact hjc'.symm
-      · simp [Function.update, hjc'] at hj'
-        exact (hrow j' hj').elim
-    · simp [Function.update, hjc] at hj
-      by_cases hjc' : j' = col
+      · exact (hrow j' (by simpa [Function.update, hjc'] using hj')).elim
+    · by_cases hjc' : j' = col
       · subst j'
-        simp at hj'
+        have hr : row = r := by simpa using hj'
         subst r
-        exact (hrow j hj).elim
-      · simp [Function.update, hjc'] at hj'
-        exact h.injective hj hj'
+        exact (hrow j (by simpa [Function.update, hjc] using hj)).elim
+      · exact h.injective
+          (by simpa [Function.update, hjc] using hj)
+          (by simpa [Function.update, hjc'] using hj')
 
 theorem matchesRow_update_none_iff {n : ℕ}
     {mate : ColumnMate n} {col oldRow row : Fin n}
@@ -197,7 +194,7 @@ def kuhnSearch {n : ℕ} (A : Matrix (Fin n) (Fin n) ℚ) :
         kuhnSearch A (fuel + 1) remaining row seen mate
       else
         let seen' := insert col seen
-        match hmate : mate col with
+        match mate col with
         | none => ⟨some (Function.update mate col (some row)), seen'⟩
         | some oldRow =>
             let mateWithoutOld := Function.update mate col none
@@ -267,7 +264,7 @@ theorem kuhnSearchWork_le {n : ℕ}
   | case3 fuel col remaining row seen mate hskip ih =>
       rw [kuhnSearch.eq_def]
       dsimp only
-      rw [dif_pos hskip]
+      rw [dite_eq_left hskip]
       simp only [List.length_cons]
       omega
   | case4 fuel col remaining row seen mate hskip hmate =>
@@ -283,7 +280,7 @@ theorem kuhnSearchWork_le {n : ℕ}
       rw [kuhnSearch.eq_def]
       dsimp only
       rw [dite_eq_right hskip, hmate]
-      simp
+      simp only [List.length_cons]
       rw [show (kuhnSearch A fuel (List.finRange n) oldRow
         (insert col seen) (Function.update mate col none)).mate? = some mateRec by
           simpa [recursive] using hrec]
@@ -310,7 +307,7 @@ theorem kuhnSearchWork_le {n : ℕ}
       rw [kuhnSearch.eq_def]
       dsimp only
       rw [dite_eq_right hskip, hmate]
-      simp
+      simp only [List.length_cons]
       rw [show (kuhnSearch A fuel (List.finRange n) oldRow
         (insert col seen) (Function.update mate col none)).mate? = none by
           simpa [recursive] using hrec]

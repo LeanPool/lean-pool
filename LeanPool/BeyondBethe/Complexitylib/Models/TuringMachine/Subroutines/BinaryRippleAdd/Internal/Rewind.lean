@@ -131,14 +131,12 @@ theorem binaryRippleAddRewindTM_hoareTime_frame_internal {n : ℕ}
     · subst i
       exact hresultParked
     exact hother i hlhsIdx hrhsIdx hresultIdx
-
   let lhsTape := binaryRippleAddCanonicalTape lhsBits
   let rhsTape := binaryRippleAddCanonicalTape rhsBits
   let resultTape := binaryRippleAddCanonicalTape resultBits
   let work₁ := Function.update work₀ lhsIdx lhsTape
   let work₂ := Function.update work₁ rhsIdx rhsTape
   let work₃ := Function.update work₂ resultIdx resultTape
-
   have hwork₁ : ∀ i, Parked (work₁ i) := by
     intro i
     by_cases hi : i = lhsIdx
@@ -153,7 +151,6 @@ theorem binaryRippleAddRewindTM_hoareTime_frame_internal {n : ℕ}
       simpa [work₂, rhsTape] using
         binaryRippleAddCanonicalTape_parked rhsBits
     · simpa only [work₂, Function.update_of_ne hi] using hwork₁ i
-
   have hrhs₁ : (work₁ rhsIdx).HasBinaryContent rhsBits := by
     simpa only [work₁, Function.update_of_ne hdistinct.lhs_rhs.symm] using hrhs
   have hrhsStart₁ : (work₁ rhsIdx).cells 0 = Γ.start := by
@@ -161,7 +158,6 @@ theorem binaryRippleAddRewindTM_hoareTime_frame_internal {n : ℕ}
   have hrhsHead₁ : 1 ≤ (work₁ rhsIdx).head ∧
       (work₁ rhsIdx).head ≤ rhsBound := by
     simpa only [work₁, Function.update_of_ne hdistinct.lhs_rhs.symm] using hrhsHead
-
   have hresult₂ : (work₂ resultIdx).HasBinaryContent resultBits := by
     simpa only [work₂, Function.update_of_ne hdistinct.rhs_result.symm,
       work₁, Function.update_of_ne hdistinct.lhs_result.symm] using hresult
@@ -172,7 +168,6 @@ theorem binaryRippleAddRewindTM_hoareTime_frame_internal {n : ℕ}
       (work₂ resultIdx).head ≤ resultBound := by
     simpa only [work₂, Function.update_of_ne hdistinct.rhs_result.symm,
       work₁, Function.update_of_ne hdistinct.lhs_result.symm] using hresultHead
-
   have hrewindLhs := binaryRippleAddRewindExact_hoareTime lhsIdx lhsBits
     lhsBound inp₀ work₀ out₀ hlhs hlhsStart hlhsHead hinput
     (fun i _ => hwork₀ i) houtput
@@ -182,7 +177,6 @@ theorem binaryRippleAddRewindTM_hoareTime_frame_internal {n : ℕ}
   have hrewindResult := binaryRippleAddRewindExact_hoareTime resultIdx
     resultBits resultBound inp₀ work₂ out₀ hresult₂ hresultStart₂
     hresultHead₂ hinput (fun i _ => hwork₂ i) houtput
-
   have htail := seqTM_hoareTime (rewindWorkTM rhsIdx)
     (rewindWorkTM resultIdx) hrewindRhs
     (binaryRippleAddExactFrame_transition inp₀ work₂ out₀ hinput

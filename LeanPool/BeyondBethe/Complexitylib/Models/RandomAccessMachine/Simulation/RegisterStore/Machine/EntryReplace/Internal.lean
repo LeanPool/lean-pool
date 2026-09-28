@@ -360,8 +360,7 @@ theorem entryReplaceCleanupTM_hoareTime_frame_internal
         1 + (newValue.bits.length + 1 + 2 + 1 +
           entryMissCleanupTime tapes.entry entry queryBits readyWork)
     omega
-  · change (entryReplaceCleanupTM tapes).halted finalCfg
-    unfold entryReplaceCleanupTM
+  · unfold entryReplaceCleanupTM
     exact (TM.phase2Wrap_halted_iff (rewindEntryEncodeTM tapes.encodeTapes)
     (TM.seqTM (TM.rewindWorkTM tapes.replacement)
       (entryMissCleanupTM tapes.entry)) tailFinal).mpr htailHalt

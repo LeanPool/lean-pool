@@ -399,7 +399,7 @@ theorem machineOptimizerFeasibilityStateBoundBits_encode
     scheduledFeasibilityStateCodeBound, rationalEllipsoidMachineCodeBound,
     rationalVectorMachineCodeBound, rationalMatrixMachineCodeBound,
     rationalEntryMachineCodeBound, explicitBallFeasibilityPrecision,
-    d, T, R, K, p, KS, P, e, v, M]
+    d, T, R, K, p, KS, P, v, M]
 
 theorem optimizerFeasibilityStateBound_le_guardPolynomial
     (d K T p : ℕ) :

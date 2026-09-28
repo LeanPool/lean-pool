@@ -196,8 +196,7 @@ theorem machineIteratedBinaryWidth_mem_FP (k : ℕ) :
   | zero => rfl
   | succ k ih =>
       rw [machineIteratedBinaryWidth, machineBinaryMulWidth]
-      simp only [List.length_replicate, List.length_append, ih,
-        List.length_cons, List.length_nil, zero_add]
+      simp only [List.length_replicate, List.length_append, ih]
       simp only [certificateExpGuardWidth]
       ring
 
@@ -249,7 +248,7 @@ theorem explicitCertificateExpStepBound_le_guardWidth
   have hSfour : 1 ≤ S ^ 4 := Nat.one_le_pow 4 S (by omega)
   have hstepCoeff : explicitCertificateExpStepBound S ≤
       explicitCertificateExpCoefficient * S ^ 4 := by
-    simp only [explicitCertificateExpStepBound, K₀,
+    simp only [explicitCertificateExpStepBound,
       explicitCertificateExpCoefficient]
     nlinarith
   have hbase : 18 ≤ S + 16 := by omega

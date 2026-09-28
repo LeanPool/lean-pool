@@ -251,10 +251,10 @@ theorem binaryRawDyadicFloorInt_eq_ediv (p : ℕ) (q : RawRat) :
     binaryRawDyadicFloorInt p q =
       (q.num * (2 ^ p : ℕ)) / (q.den : ℤ) := by
   rw [binaryRawDyadicFloorInt, binaryLongDiv_eq_div_mod]
-  simp only [Prod.fst, Prod.snd]
+  simp only
   cases hnum : q.num with
   | ofNat n =>
-      simp [hnum, Int.ediv]
+      simp
   | negSucc n =>
       have hden : 0 < q.den := q.den_pos
       let a := (n + 1) * 2 ^ p
@@ -265,7 +265,7 @@ theorem binaryRawDyadicFloorInt_eq_ediv (p : ℕ) (q : RawRat) :
         push_cast
         ring
       by_cases hrem : a % q.den = 0
-      · simp only [hnum, Int.natAbs_negSucc]
+      · simp only [Int.natAbs_negSucc]
         change (if a % q.den = 0 then -((a / q.den : ℕ) : ℤ)
           else -(((a / q.den : ℕ) + 1 : ℕ) : ℤ)) = _
         rw [ite_eq_left hrem, hrepr]
@@ -274,7 +274,7 @@ theorem binaryRawDyadicFloorInt_eq_ediv (p : ℕ) (q : RawRat) :
           exact_mod_cast hdvdNat
         rw [Int.neg_ediv_of_dvd hdvdInt]
         norm_num
-      · simp only [hnum, Int.natAbs_negSucc]
+      · simp only [Int.natAbs_negSucc]
         change (if a % q.den = 0 then -((a / q.den : ℕ) : ℤ)
           else -(((a / q.den : ℕ) + 1 : ℕ) : ℤ)) = _
         rw [ite_eq_right hrem, hrepr]

@@ -284,7 +284,7 @@ theorem machineIntegerNegCode_mem_FP : machineIntegerNegCode ∈ Complexity.FP :
           rw [machineIfEmpty_of_ne_nil (k + 1).bits [false]
             (machineIntegerCodeFromSignedAbs (pair [true] (k + 1).bits))
             (natBits_ne_nil_of_ne_zero (by omega))]
-          simp only [signedMagnitudeValue, if_true]
+          simp only [signedMagnitudeValue, ite_true]
           simpa only [show ([true] : List Bool) =
               integerBinaryCode (Int.negSucc 0) by rfl] using
             machineIntegerCodeFromSignedAbs_negSucc 0 (k + 1) (by omega)
@@ -407,8 +407,7 @@ theorem machineSignedMagnitudeMul_pair
       machineSignedLeftSign, machineSignedRightSign,
       machineSignedLeftAbs, machineSignedRightAbs,
       machineSignedAbsProduct, machineBinaryMulBits_pair_natBits,
-      signedMagnitudeValue] <;>
-    congr 1 <;> ring
+      signedMagnitudeValue]
 
 theorem machineIntegerMulCode_encode (z w : ℤ) :
     machineIntegerMulCode (pair (integerBinaryCode z) (integerBinaryCode w)) =
@@ -418,7 +417,7 @@ theorem machineIntegerMulCode_encode (z w : ℤ) :
     simp only [machinePairFirst_pair, machinePairSecond_pair,
       machineIntegerSignedMagnitude_encode,
       machineSignedMagnitudeMul_pair, signedMagnitudeValue] <;>
-    congr 1 <;> ring
+    congr 1
 
 theorem machineIntegerNegCode_encode (z : ℤ) :
     machineIntegerNegCode (integerBinaryCode z) = integerBinaryCode (-z) := by

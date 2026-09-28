@@ -250,7 +250,7 @@ theorem bethe_flat_index_lt_word_length {m : ℕ} (rowMode : Bool)
           _ ≤ m * m := Nat.mul_le_mul_right m
             (Nat.succ_le_iff.mpr current.isLt)
     | true =>
-        simp only [if_true]
+        simp only [ite_true]
         calc
           fixed.1 * m + current.1 < fixed.1 * m + m :=
             Nat.add_lt_add_left current.isLt _
@@ -291,7 +291,7 @@ theorem bethe_flat_index_lt_word_length {m : ℕ} (rowMode : Bool)
   | true =>
       simp only [machineBetheFlatIndexBits, machineBetheFlatIndexMode,
         betheFlatIndexCanonicalWord, machinePairFirst_pair,
-        machineIfHead_true, if_true]
+        machineIfHead_true, ite_true]
       change machineBoundedUnary
         (pair (betheFlatIndexCanonicalWord true fixed current y)
           (machineBetheFlatIndexRowBits
@@ -343,7 +343,7 @@ theorem bethe_flat_index_lt_word_length {m : ℕ} (rowMode : Bool)
       rw [Nat.mul_comm current.1 m]
       omega
   | true =>
-      simp only [if_true, rationalFiniteVectorCode]
+      simp only [ite_true, rationalFiniteVectorCode]
       have hk : fixed.1 * m + current.1 < (List.ofFn y).length := by
         simp only [List.length_ofFn]
         calc
@@ -793,7 +793,7 @@ theorem betheAffineLineValue_cost_le_word {m : ℕ} (rowMode : Bool)
         simp only [z, Bool.false_eq_true, ite_false]
         exact (List.mem_ofFn).2 ⟨finProdFinEquiv (current, fixed), rfl⟩
     | true =>
-        simp only [z, if_true]
+        simp only [z, ite_true]
         exact (List.mem_ofFn).2 ⟨finProdFinEquiv (fixed, current), rfl⟩
   have hentry := binaryListCode_element_length_le
     rationalEntryBinaryCode hzmem
@@ -818,7 +818,7 @@ theorem rawRatListCost_betheLine_take_le {m : ℕ} (rowMode : Bool)
     intro q hq
     exact betheAffineLineValue_cost_le_word rowMode fixed y
       (List.mem_of_mem_take hq)
-  have hsum := List.sum_le_card_nsmul
+  have hsum := List.sum_le_length_nsmul
     ((values.take k).map fun q ↦ rawRatWidth (rawRatOfRat q) + 1)
     (W + 1) (by
       intro cost hcost

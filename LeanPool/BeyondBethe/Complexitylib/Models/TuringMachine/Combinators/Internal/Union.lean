@@ -143,7 +143,7 @@ private theorem phase1_step_corr (tm₁ : TM n₁) (tm₂ : TM n₂)
       (if h : i.val < n₁ then c.work ⟨i.val, h⟩
        else if i.val = n₁ then c.output else unionIdleTape).read) =
       fun j => (c.work j).read := by
-    ext ⟨j, hj⟩; simp only [phase1WorkReads]; rw [dif_pos (show j < n₁ from hj)]
+    ext ⟨j, hj⟩; simp only [phase1WorkReads]; rw [dite_eq_left (show j < n₁ from hj)]
   -- Simplify fakeOutIdx to ⟨n₁, _⟩ and reduce the dite conditions
   simp only [fakeOutIdx] at hfake_read ⊢
   -- Rewrite the work reads and fake output read

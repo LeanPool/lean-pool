@@ -30,7 +30,7 @@ in the rounded ellipsoid proof.
 -/
 
 theorem abs_finset_prod_le_pow {ι : Type*} {s : Finset ι}
-    (f : ι → ℝ) {M : ℝ} (hM : 0 ≤ M)
+    (f : ι → ℝ) {M : ℝ} (_ : 0 ≤ M)
     (hf : ∀ i ∈ s, abs (f i) ≤ M) :
     abs (∏ i ∈ s, f i) ≤ M ^ s.card := by
   classical

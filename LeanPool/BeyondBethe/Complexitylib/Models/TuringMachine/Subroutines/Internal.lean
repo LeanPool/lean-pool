@@ -1299,11 +1299,9 @@ theorem clearWorkTM_hoareTime_frame_of_binaryString {n : ℕ}
           rw [htarget_tr, hhead1]
         · rw [hinput_tr, hinp1]
           exact hinp_ns
-        · change (TM.transitionTape out1).read ≠ Γ.start
-          rw [hout_tr, hout1]
+        · rw [hout_tr, hout1]
           exact hout_ns
-        · change (TM.transitionTape out1).head ≥ 1
-          rw [hout_tr, hout1]
+        · rw [hout_tr, hout1]
           exact hout_h
         · intro i hi
           constructor
@@ -1315,10 +1313,8 @@ theorem clearWorkTM_hoareTime_frame_of_binaryString {n : ℕ}
             exact (hother_wf i hi).2
         · refine ⟨?_, ?_, ?_⟩
           · refine ⟨?_, ?_, ?_⟩
-            · change TM.transitionInput inp1 = inp
-              rw [hinput_tr, hinp1]
-            · change TM.transitionTape out1 = out
-              rw [hout_tr, hout1]
+            · rw [hinput_tr, hinp1]
+            · rw [hout_tr, hout1]
             · intro i hi
               change TM.transitionTape (work1 i) = work i
               rw [hwork_tr i hi, hwork1 i hi]

@@ -115,7 +115,7 @@ theorem polynomial_linear_perturbation_has_nearby_zero
     positivity
   let F : Polynomial ℂ := A + Polynomial.C (t : ℂ) * B
   by_contra hno
-  push_neg at hno
+  push Not at hno
   have hFzeroFree : ∀ z ∈ closedBall (0 : ℂ) r, F.eval z ≠ 0 := by
     intro z hz
     exact hno t ht z (closedBall_subset_closedBall hrR.le hz)
@@ -134,7 +134,7 @@ theorem polynomial_linear_perturbation_has_nearby_zero
     intro z hz
     calc
       ‖((t : ℂ) * B.eval z)‖ = t * ‖B.eval z‖ := by
-        simp [norm_mul, Real.norm_eq_abs, abs_of_pos ht]
+        simp [Real.norm_eq_abs, abs_of_pos ht]
       _ ≤ t * M := mul_le_mul_of_nonneg_left (hM_sphere z hz) ht.le
       _ < m / 2 := by
         dsimp [t]

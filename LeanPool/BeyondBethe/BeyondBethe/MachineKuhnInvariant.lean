@@ -207,16 +207,16 @@ theorem mateVectorCode_columnMate_length_le {n : ℕ}
     rw [columnMateList] at hvalue
     obtain ⟨j, rfl⟩ := List.mem_ofFn.mp hvalue
     cases hmate : mate j with
-    | none => simp [mateValueCode, hmate]
+    | none => simp [mateValueCode]
     | some row =>
-        simp [mateValueCode, hmate]
+        simp [mateValueCode]
         omega
   calc
     ((columnMateList mate).map
         (fun value ↦ 2 * (mateValueCode value).length + 2)).sum ≤
         (columnMateList mate).length * (2 * n + 4) := by
       simpa [Nat.nsmul_eq_mul] using!
-        List.sum_le_card_nsmul
+        List.sum_le_length_nsmul
           ((columnMateList mate).map
             (fun value ↦ 2 * (mateValueCode value).length + 2))
           (2 * n + 4) (by

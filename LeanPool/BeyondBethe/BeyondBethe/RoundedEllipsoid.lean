@@ -82,7 +82,7 @@ theorem abs_adjugateCorrection_le {d : ℕ}
     (A : Matrix (Fin d) (Fin d) ℝ) (e : Fin d → ℝ)
     {D M E : ℝ} (hD : 0 < D) (hdet : D ≤ abs (Matrix.det A))
     (hM : 1 ≤ M) (hA : ∀ i j, abs (A i j) ≤ M)
-    (he : ∀ i, abs (e i) ≤ E) (hE : 0 ≤ E) (i : Fin d) :
+    (he : ∀ i, abs (e i) ≤ E) (_ : 0 ≤ E) (i : Fin d) :
     abs (adjugateCorrection A e i) ≤
       (d * (d.factorial * M ^ d) * E) / D := by
   have hdet0 : Matrix.det A ≠ 0 := by
@@ -318,7 +318,7 @@ theorem abs_det_inflatedDyadicRound_le {d : ℕ}
         (Matrix.det
             (fun i j ↦ ((dyadicFloorMatrix p E.basis i j : ℚ) : ℝ)) -
           Matrix.det (fun i j ↦ ((E.basis i j : ℚ) : ℝ)))
-      convert this using 1 <;> ring
+      convert this using 1; ring
     have hcastRound :
         Matrix.det
             (fun i j ↦ ((dyadicFloorMatrix p E.basis i j : ℚ) : ℝ)) =

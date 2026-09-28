@@ -757,23 +757,20 @@ private theorem firstDecode_restart_measured
         UnaryDecode.verdictReg, UnaryDecode.valueReg, UnaryDecode.activeReg]
     · simp [saved, saveRestartStore, saveRestartOps, Basic.execList, Basic.exec,
         UnaryDecode.verdictReg, UnaryDecode.valueReg, UnaryDecode.activeReg]
-    · change saved UnaryDecode.pointerReg = _
-      rw [show saved UnaryDecode.pointerReg = first UnaryDecode.pointerReg by
+    · rw [show saved UnaryDecode.pointerReg = first UnaryDecode.pointerReg by
         apply saveRestart_apply_of_ne <;>
           simp [savedInput0Reg, UnaryDecode.verdictReg, UnaryDecode.valueReg,
             UnaryDecode.pointerReg, UnaryDecode.activeReg,
             UnaryDecode.inputBase]]
       rw [hfirstPointer]
       omega
-    · change saved UnaryDecode.remainingReg = secondRemaining.length
-      rw [show saved UnaryDecode.remainingReg = first UnaryDecode.remainingReg by
+    · rw [show saved UnaryDecode.remainingReg = first UnaryDecode.remainingReg by
         apply saveRestart_apply_of_ne <;>
           simp [savedInput0Reg, UnaryDecode.verdictReg, UnaryDecode.valueReg,
             UnaryDecode.remainingReg, UnaryDecode.activeReg,
             UnaryDecode.inputBase]]
       exact hfirstRemaining
-    · change saved UnaryDecode.oneReg = 1
-      rw [show saved UnaryDecode.oneReg = first UnaryDecode.oneReg by
+    · rw [show saved UnaryDecode.oneReg = first UnaryDecode.oneReg by
         apply saveRestart_apply_of_ne <;>
           simp [savedInput0Reg, UnaryDecode.verdictReg, UnaryDecode.valueReg,
             UnaryDecode.oneReg, UnaryDecode.activeReg,
@@ -829,29 +826,21 @@ private theorem marshal_ready_of_decoded
   · simp [memoBase, CircuitCode.RawGate.length_encode, GateEval.wireBase,
       UnaryDecode.inputBase]
     omega
-  · change marshalStore second GateEval.opReg = _
-    rw [marshal_op, hsecondOp, hsecondActive]
+  · rw [marshal_op, hsecondOp, hsecondActive]
     omega
-  · change marshalStore second GateEval.negated0Reg = _
-    rw [marshal_negated0, hsecondNegated0, hsecondActive]
+  · rw [marshal_negated0, hsecondNegated0, hsecondActive]
     omega
-  · change marshalStore second GateEval.negated1Reg = _
-    rw [marshal_negated1, hsecondNegated1, hsecondActive]
+  · rw [marshal_negated1, hsecondNegated1, hsecondActive]
     omega
-  · change marshalStore second GateEval.address0Reg = gate.input₀
-    rw [marshal_address0, hsecondInput0, hsecondActive]
+  · rw [marshal_address0, hsecondInput0, hsecondActive]
     omega
-  · change marshalStore second GateEval.address1Reg = gate.input₁
-    rw [marshal_address1, hsecondValue, hsecondActive]
+  · rw [marshal_address1, hsecondValue, hsecondActive]
     omega
-  · change marshalStore second GateEval.wireCountReg = wires.length
-    rw [marshal_wireCount, hsecondRemaining, hsecondActive]
+  · rw [marshal_wireCount, hsecondRemaining, hsecondActive]
     omega
-  · change marshalStore second GateEval.baseReg = memoBase gate
-    rw [marshal_base, hsecondPointer, hsecondActive]
+  · rw [marshal_base, hsecondPointer, hsecondActive]
     omega
   · intro index hindex
-    change marshalStore second (memoBase gate + index) = _
     rw [marshal_high second _ (by
       simp [memoBase, CircuitCode.RawGate.length_encode,
         UnaryDecode.inputBase]

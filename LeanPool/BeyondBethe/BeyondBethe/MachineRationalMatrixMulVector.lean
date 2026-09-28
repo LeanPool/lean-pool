@@ -167,7 +167,7 @@ theorem rationalMatrixMulVector_code_length_le_bound {d : ℕ}
     intro q hq
     obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hq
     exact rationalMatrixMulVector_entry_code_length_le A v i
-  have hsum := List.sum_le_card_nsmul
+  have hsum := List.sum_le_length_nsmul
     ((List.ofFn (rationalMatrixMulVector A v)).map
       fun q ↦ 2 * (rationalEntryBinaryCode q).length + 2)
     (2 * B + 2) (by
@@ -489,12 +489,6 @@ theorem machineRationalMatrixMulVectorStep_semantics {d : ℕ}
         (machineRationalMatrixMulVectorInputBound word).length) _ _ = _
   rw [show finUnaryCode i = List.replicate i.1 true by rfl,
     machineRationalMatrixMulVectorEntryCode_encode]
-  change machineRationalTransposeMulVectorPack _
-      ((pair (rationalEntryBinaryCode
-        (rationalMatrixMulVector A v i))
-        (binaryListCode rationalEntryBinaryCode
-          (rationalMatrixMulVectorPrefix A v k).reverse)).take
-        (machineRationalMatrixMulVectorInputBound word).length) _ _ = _
   rw [List.take_of_length_le hcandPair, hreverse]
   rfl
 

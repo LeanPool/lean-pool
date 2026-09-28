@@ -442,7 +442,7 @@ def certifiedColumnPairTest {n : ℕ}
     machineBinaryNatEqBit_pair_natBits, machineNotBit_one]
   by_cases hval : a.1 = b.1
   · have hab : a = b := Fin.ext hval
-    simp [hval, hab]
+    simp [hab]
   · have hab : a ≠ b := fun h ↦ hval (congrArg Fin.val h)
     simp [hval, hab]
 
@@ -473,9 +473,6 @@ def certifiedColumnPairTest {n : ℕ}
         r s a b (directedPairCostPrecision n) ≤ explicitKappa)] := by
   rw [machineFixedACostPassesBit,
     machineFixedAFourCoreRawCode_encode]
-  change machineRawRatLeBit
-      (pair (rawRatBinaryCode (rawDirectedFourCoreCostUpper X r s a b))
-        (rawRatBinaryCode rawExplicitKappa)) = _
   rw [machineRawRatLeBit_encode, rawDirectedFourCoreCostUpper_value]
   simp only [rawExplicitKappa, rawRatOfRat_value]
 

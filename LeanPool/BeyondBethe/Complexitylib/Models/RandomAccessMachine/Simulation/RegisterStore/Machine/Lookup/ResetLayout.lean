@@ -218,11 +218,9 @@ def entryLookupMissBits {n : ℕ} (tapes : EntryLookupRestoreTapes n)
     entryLookupFoundBits tapes entry remaining address
       tapes.scan.entry.address =
       entry.1.bits := by
-  simp [entryLookupFoundBits, entryMissBits, EntryLookupRestoreTapes.resetIdx,
-    EntryLookupRestoreTapes.resetSlot, EntryMatchTapes.address,
-    EntryMatchTapes.value, EntryMatchTapes.addressCounter,
-    EntryMatchTapes.addressWidth, EntryMatchTapes.valueCounter,
-    EntryMatchTapes.valueWidth, EntryMatchTapes.query, EntryMatchTapes.result,
+  simp [entryLookupFoundBits, entryMissBits,
+    EntryMatchTapes.address,
+    EntryMatchTapes.query,
     tapes.injective.eq_iff]
 
 @[simp] theorem entryLookupFoundBits_one {n : ℕ}
@@ -230,11 +228,10 @@ def entryLookupMissBits {n : ℕ} (tapes : EntryLookupRestoreTapes n)
     (remaining address : ℕ) :
     entryLookupFoundBits tapes entry remaining address tapes.scan.entry.value =
       entry.2.bits := by
-  simp [entryLookupFoundBits, entryMissBits, EntryLookupRestoreTapes.resetIdx,
-    EntryLookupRestoreTapes.resetSlot, EntryMatchTapes.address,
-    EntryMatchTapes.value, EntryMatchTapes.addressCounter,
-    EntryMatchTapes.addressWidth, EntryMatchTapes.valueCounter,
-    EntryMatchTapes.valueWidth, EntryMatchTapes.query, EntryMatchTapes.result,
+  simp [entryLookupFoundBits, entryMissBits,
+    EntryMatchTapes.address,
+    EntryMatchTapes.value,
+    EntryMatchTapes.query,
     tapes.injective.eq_iff]
 
 @[simp] theorem entryLookupFoundBits_two {n : ℕ}
@@ -243,11 +240,10 @@ def entryLookupMissBits {n : ℕ} (tapes : EntryLookupRestoreTapes n)
     entryLookupFoundBits tapes entry remaining address
       tapes.scan.entry.addressCounter =
       List.replicate (bitlen entry.1) true := by
-  simp [entryLookupFoundBits, entryMissBits, EntryLookupRestoreTapes.resetIdx,
-    EntryLookupRestoreTapes.resetSlot, EntryMatchTapes.address,
+  simp [entryLookupFoundBits, entryMissBits,
+    EntryMatchTapes.address,
     EntryMatchTapes.value, EntryMatchTapes.addressCounter,
-    EntryMatchTapes.addressWidth, EntryMatchTapes.valueCounter,
-    EntryMatchTapes.valueWidth, EntryMatchTapes.query, EntryMatchTapes.result,
+    EntryMatchTapes.query,
     tapes.injective.eq_iff]
 
 @[simp] theorem entryLookupFoundBits_three {n : ℕ}
@@ -256,11 +252,11 @@ def entryLookupMissBits {n : ℕ} (tapes : EntryLookupRestoreTapes n)
     entryLookupFoundBits tapes entry remaining address
       tapes.scan.entry.addressWidth =
       [] := by
-  simp [entryLookupFoundBits, entryMissBits, EntryLookupRestoreTapes.resetIdx,
-    EntryLookupRestoreTapes.resetSlot, EntryMatchTapes.address,
+  simp [entryLookupFoundBits, entryMissBits,
+    EntryMatchTapes.address,
     EntryMatchTapes.value, EntryMatchTapes.addressCounter,
-    EntryMatchTapes.addressWidth, EntryMatchTapes.valueCounter,
-    EntryMatchTapes.valueWidth, EntryMatchTapes.query, EntryMatchTapes.result,
+    EntryMatchTapes.addressWidth,
+    EntryMatchTapes.query,
     tapes.injective.eq_iff]
 
 @[simp] theorem entryLookupFoundBits_four {n : ℕ}
@@ -269,11 +265,11 @@ def entryLookupMissBits {n : ℕ} (tapes : EntryLookupRestoreTapes n)
     entryLookupFoundBits tapes entry remaining address
       tapes.scan.entry.valueCounter =
       List.replicate (bitlen entry.2) true := by
-  simp [entryLookupFoundBits, entryMissBits, EntryLookupRestoreTapes.resetIdx,
-    EntryLookupRestoreTapes.resetSlot, EntryMatchTapes.address,
+  simp [entryLookupFoundBits, entryMissBits,
+    EntryMatchTapes.address,
     EntryMatchTapes.value, EntryMatchTapes.addressCounter,
     EntryMatchTapes.addressWidth, EntryMatchTapes.valueCounter,
-    EntryMatchTapes.valueWidth, EntryMatchTapes.query, EntryMatchTapes.result,
+    EntryMatchTapes.query,
     tapes.injective.eq_iff]
 
 @[simp] theorem entryLookupFoundBits_five {n : ℕ}
@@ -282,11 +278,11 @@ def entryLookupMissBits {n : ℕ} (tapes : EntryLookupRestoreTapes n)
     entryLookupFoundBits tapes entry remaining address
       tapes.scan.entry.valueWidth =
       [] := by
-  simp [entryLookupFoundBits, entryMissBits, EntryLookupRestoreTapes.resetIdx,
-    EntryLookupRestoreTapes.resetSlot, EntryMatchTapes.address,
+  simp [entryLookupFoundBits, entryMissBits,
+    EntryMatchTapes.address,
     EntryMatchTapes.value, EntryMatchTapes.addressCounter,
     EntryMatchTapes.addressWidth, EntryMatchTapes.valueCounter,
-    EntryMatchTapes.valueWidth, EntryMatchTapes.query, EntryMatchTapes.result,
+    EntryMatchTapes.valueWidth, EntryMatchTapes.query,
     tapes.injective.eq_iff]
 
 @[simp] theorem entryLookupFoundBits_six {n : ℕ}
@@ -294,8 +290,8 @@ def entryLookupMissBits {n : ℕ} (tapes : EntryLookupRestoreTapes n)
     (remaining address : ℕ) :
     entryLookupFoundBits tapes entry remaining address tapes.scan.entry.result =
       [decide (entry.1.bits = address.bits)] := by
-  simp [entryLookupFoundBits, entryMissBits, EntryLookupRestoreTapes.resetIdx,
-    EntryLookupRestoreTapes.resetSlot, EntryMatchTapes.address,
+  simp [entryLookupFoundBits, entryMissBits,
+    EntryMatchTapes.address,
     EntryMatchTapes.value, EntryMatchTapes.addressCounter,
     EntryMatchTapes.addressWidth, EntryMatchTapes.valueCounter,
     EntryMatchTapes.valueWidth, EntryMatchTapes.query, EntryMatchTapes.result,
@@ -306,25 +302,23 @@ def entryLookupMissBits {n : ℕ} (tapes : EntryLookupRestoreTapes n)
     (remaining address : ℕ) :
     entryLookupFoundBits tapes entry remaining address tapes.scan.entry.query =
       address.bits := by
-  simp [entryLookupFoundBits, EntryLookupRestoreTapes.resetIdx,
-    EntryLookupRestoreTapes.resetSlot, EntryMatchTapes.query,
-    tapes.injective.eq_iff]
+  simp [entryLookupFoundBits,
+    EntryMatchTapes.query]
 
 @[simp] theorem entryLookupFoundBits_eight {n : ℕ}
     (tapes : EntryLookupRestoreTapes n) (entry : Entry)
     (remaining address : ℕ) :
     entryLookupFoundBits tapes entry remaining address (tapes.idx 9) =
       remaining.bits := by
-  simp [entryLookupFoundBits, EntryLookupRestoreTapes.resetIdx,
-    EntryLookupRestoreTapes.resetSlot, EntryMatchTapes.query,
+  simp [entryLookupFoundBits,
+    EntryMatchTapes.query,
     tapes.injective.eq_iff]
 
 @[simp] theorem entryLookupMissBits_seven {n : ℕ}
     (tapes : EntryLookupRestoreTapes n) (address : ℕ) :
     entryLookupMissBits tapes address tapes.scan.entry.query = address.bits := by
-  simp [entryLookupMissBits, EntryLookupRestoreTapes.resetIdx,
-    EntryLookupRestoreTapes.resetSlot, EntryMatchTapes.query,
-    tapes.injective.eq_iff]
+  simp [entryLookupMissBits,
+    EntryMatchTapes.query]
 
 @[simp] theorem entryLookupMissBits_zero {n : ℕ}
     (tapes : EntryLookupRestoreTapes n) (address : ℕ) :

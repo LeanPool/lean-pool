@@ -325,7 +325,7 @@ theorem exec_basics_exists (ops : List Basic) (initial : Store) :
           refine ⟨op.logCost initial + cost,
             max (max initial.space (op.exec initial).space) space, ?_⟩
           have hrun := Exec.seq (Exec.basic op initial) hrest
-          convert hrun using 1 <;> simp [Cmd.basics, Cmd.seqList, Basic.execList] <;> omega
+          convert hrun using 1 <;> simp [Cmd.basics, Cmd.seqList, Basic.execList]; omega
 
 namespace MeasuredRuns
 

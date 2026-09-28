@@ -233,8 +233,7 @@ theorem entryMissCopyTM_hoareTime_frame_internal
           (entryMissHeadBound entry queryBits initialWork tapes.value) +
         1 + entryMissCleanupTime tapes entry queryBits copiedWork
     omega
-  · change (entryMissCopyTM tapes).halted finalCfg
-    unfold entryMissCopyTM
+  · unfold entryMissCopyTM
     exact (TM.phase2Wrap_halted_iff (rewindEntryEncodeTM tapes.encodeTapes)
     (entryMissCleanupTM tapes) cleaned).mpr hcleanupHalt
   · have hreadyGlobal :

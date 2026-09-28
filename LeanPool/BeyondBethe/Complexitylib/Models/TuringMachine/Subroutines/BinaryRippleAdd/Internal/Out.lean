@@ -34,15 +34,15 @@ theorem binaryRippleAddScanTM_isTransducer_internal {n : ℕ}
       split
       · split
         · simp only
-          simp [idleDir]
+          simp only [idleDir]
           split <;> decide
-        · simp [allReadBack, idleDir]
+        · simp only [allReadBack, idleDir]
           split <;> decide
       · simp only
-        simp [idleDir]
+        simp only [idleDir]
         split <;> decide
   | done =>
-      simp [binaryRippleAddScanTM, allIdle, idleDir]
+      simp only [binaryRippleAddScanTM, allIdle, idleDir]
       split <;> decide
 
 /-- The scan followed by all three rewinds remains a transducer. -/

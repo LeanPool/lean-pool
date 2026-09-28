@@ -202,7 +202,7 @@ theorem encodeRegs_head_internal (tm : TM n) (cfg : Complexity.Cfg n tm.Q)
   have hstate : headReg tape ≠ stateReg := by
     simp [headReg, stateReg]
   rw [encodeRegs, dite_eq_right hstate,
-    dif_pos (headReg_lt_control_internal tape)]
+    dite_eq_left (headReg_lt_control_internal tape)]
   congr 2
   apply Fin.ext
   simp [headReg]

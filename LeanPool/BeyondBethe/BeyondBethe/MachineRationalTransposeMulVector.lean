@@ -132,7 +132,7 @@ theorem rationalTransposeMulVector_code_length_le_bound {d : ℕ}
     intro q hq
     obtain ⟨j, rfl⟩ := List.mem_ofFn.mp hq
     exact rationalTransposeMulVector_entry_code_length_le A v j
-  have hsum := List.sum_le_card_nsmul
+  have hsum := List.sum_le_length_nsmul
     ((List.ofFn (rationalTransposeMulVector A v)).map
       fun q ↦ 2 * (rationalEntryBinaryCode q).length + 2)
     (2 * B + 2) (by

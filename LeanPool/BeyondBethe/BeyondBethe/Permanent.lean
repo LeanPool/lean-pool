@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 public import Mathlib.LinearAlgebra.Matrix.Permanent
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Rat.BigOperators
 
 /-! # Permanent -/

@@ -144,7 +144,7 @@ theorem machinePositiveAlgorithmRawCode_mem_FP
     machinePositiveSmallRawCode
         (rationalMatrixBinaryEncoding.encode ⟨1, A⟩) =
       rawRatBinaryCode (rawRatOfRat (Matrix.permanent A)) := by
-  simp [machinePositiveSmallRawCode, Matrix.permanent_fin_one,
+  simp [machinePositiveSmallRawCode,
     rawRatBinaryCode_rawRatOfRat]
 
 theorem machinePositiveSmallRawCode_encode {n : ℕ}

@@ -564,7 +564,7 @@ theorem machineMatrixEntryLengthFinalState_encode {n : ℕ}
   have hcost : rationalMatrixEntryBitBound A ≤ bound.length := by
     by_cases hn : n = 0
     · subst n
-      simp only [rationalMatrixEntryBitBound, rationalMatrixRows,
+      simp only [rationalMatrixEntryBitBound,
         Finset.univ_eq_empty, Finset.sum_empty, Nat.add_zero, bound,
         machineMatrixEntryLengthInputBound_length]
       omega

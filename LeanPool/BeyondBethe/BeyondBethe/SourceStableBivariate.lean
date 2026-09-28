@@ -70,9 +70,9 @@ theorem bivariate_rayleigh_of_bistable
     rw [Complex.div_im]
     simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re,
       Complex.I_re, Complex.I_im, mul_zero, Complex.add_im,
-      Complex.ofReal_im, zero_add, Complex.mul_im, zero_mul, mul_one,
+      Complex.ofReal_im, zero_add, Complex.mul_im, mul_one,
       add_zero, Complex.normSq_apply]
-    congr 1 <;> ring
+    ring
   have hdenpos : 0 < c ^ 2 + a ^ 2 := by positivity
   have hzim : 0 < z.im := by
     rw [hzim_formula]
@@ -166,7 +166,7 @@ theorem linearCapacityCandidate_ratio
 stable-coefficient proof, in the strictly positive interior case. -/
 theorem exists_bivariate_capacity_witness
     {α a b c d : ℝ} (hα0 : 0 < α) (hα1 : α < 1)
-    (ha : 0 < a) (hb : 0 ≤ b) (hc : 0 < c) (hd : 0 < d)
+    (ha : 0 < a) (_ : 0 ≤ b) (hc : 0 < c) (hd : 0 < d)
     (hrayleigh : b * c ≤ a * d) :
     ∃ y z : ℝ, 0 < y ∧ 0 < z ∧
       stableBoundaryScalar α *
@@ -293,7 +293,7 @@ theorem exists_bivariate_capacity_witness_nonnegative_interior
 /-- The endpoint `α = 0`: send both variables to zero. -/
 theorem exists_bivariate_capacity_witness_zero
     {a b c d ε : ℝ}
-    (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) (hd : 0 ≤ d)
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) (_ : 0 ≤ d)
     (hε : 0 < ε) :
     ∃ y z : ℝ, 0 < y ∧ 0 < z ∧
       stableBoundaryScalar 0 *
@@ -328,7 +328,7 @@ theorem exists_bivariate_capacity_witness_zero
 /-- The endpoint `α = 1`: send both variables to infinity. -/
 theorem exists_bivariate_capacity_witness_one
     {a b c d ε : ℝ}
-    (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) (hd : 0 ≤ d)
+    (_ : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) (hd : 0 ≤ d)
     (hε : 0 < ε) :
     ∃ y z : ℝ, 0 < y ∧ 0 < z ∧
       stableBoundaryScalar 1 *

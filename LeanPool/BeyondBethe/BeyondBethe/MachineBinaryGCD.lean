@@ -110,7 +110,7 @@ theorem machineBinaryGcdStep_pair_natBits (a b : ℕ) :
       (natBits_ne_nil_of_ne_zero hb)]
     simp only [machineBinaryRemainderBits,
       machineBinaryDivModBits_pair_natBits, machinePairSecond_pair,
-      hb, ite_false, Prod.fst, Prod.snd]
+      hb, ite_false]
 
 /-- Expresses a state as a pair of canonical natural-number bit strings bounded by the input
 length. -/
@@ -205,7 +205,7 @@ theorem machineBinaryGcdBits_eq (word : List Bool) :
     machineBinaryGcdRuler, machineBinaryGcdInit,
     machineTrimHighZeros_eq,
     BinaryRippleSub.trimHighZeros_eq_natBits_internal,
-    List.length_append, a, b]
+    List.length_append]
   rw [show b.bits.length + b.bits.length = 2 * b.size by
     simp [Nat.size_eq_bits_len, two_mul]]
   rw [machineBinaryGcdIterate_pair_natBits]

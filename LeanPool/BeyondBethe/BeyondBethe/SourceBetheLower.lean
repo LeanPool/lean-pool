@@ -55,15 +55,15 @@ theorem singletonRowClustering_singletonPairs (n : ℕ) :
   rfl
 
 theorem paperClusterFactor_singletonRowClustering
-    {n : ℕ} (hn : 2 ≤ n)
+    {n : ℕ} (_ : 2 ≤ n)
     {A X : Matrix (Fin n) (Fin n) ℝ}
-    (hA : Matrix.Positive A) (hX : IsDoublyStochastic X)
-    (hXpos : ∀ i j, 0 < X i j) (i : Fin n) :
+    (_ : Matrix.Positive A) (_ : IsDoublyStochastic X)
+    (_ : ∀ i j, 0 < X i j) (i : Fin n) :
     paperClusterFactor A X (singletonRowClustering n)
         (singletonRowClustering_singletonPairs n) i =
       singletonFactor A X i := by
   unfold paperClusterFactor
-  rw [dif_pos (show (singletonRowClustering n).size i = 1 from rfl)]
+  rw [dite_eq_left (show (singletonRowClustering n).size i = 1 from rfl)]
   rfl
 
 /-- Gurvits's pointwise Bethe lower certificate, obtained from the

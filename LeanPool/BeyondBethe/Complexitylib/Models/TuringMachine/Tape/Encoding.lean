@@ -239,7 +239,7 @@ theorem init_move_right_hasBinarySuffix (bits : List Bool) :
       Tape.init_ofBool_cells_lt bits i hi
   · simp [Tape.move, Tape.init, Nat.add_comm]
   · intro j hj
-    simp [Tape.move]
+    simp only [ne_eq]
     exact Tape.init_ofBool_cells_ne_start bits j hj
 
 /-- A completed binary string exposes the same bits as its remaining suffix. -/

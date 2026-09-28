@@ -584,7 +584,7 @@ private theorem binaryShiftMulBodyTime_le (bit : Bool) (acc shift width : ℕ)
   have hdouble := binaryShiftMulDoubleTime_le shift width hshift
   cases bit <;>
     simp only [binaryShiftMulBodyTime, binaryShiftMulOneTime,
-      Bool.false_eq_true, ite_false, if_true] <;>
+      Bool.false_eq_true, ite_false, ite_true] <;>
     omega
 
 private theorem forBinaryWorkLoopTime_le

@@ -29,8 +29,8 @@ encoding. -/
 def pairVariablesSignedRealPoint :
     ∀ n : ℕ, (Fin n → ℝ) → (Fin n → ℝ) → PairVariables n → ℝ
   | 0, _, _, i => PEmpty.elim i
-  | n + 1, y, z, none => y 0
-  | n + 1, y, z, some none => -z 0
+  | _n + 1, y, _z, none => y 0
+  | _n + 1, _y, z, some none => -z 0
   | n + 1, y, z, some (some i) =>
       pairVariablesSignedRealPoint n (fun j ↦ y j.succ) (fun j ↦ z j.succ) i
 
@@ -165,12 +165,6 @@ theorem pairTableBivariateSlice_eval
   change Option (Option (PairVariables n)) → ℂ at w
   change (pairTableStablePolynomial (n + 1) c).eval w = _
   simp only [pairTableStablePolynomial]
-  change
-    (linearExtension
-      (linearExtension (pairTableStablePolynomial n (pairTableSection c false false))
-        (-pairTableStablePolynomial n (pairTableSection c false true)))
-      (linearExtension (pairTableStablePolynomial n (pairTableSection c true false))
-        (-pairTableStablePolynomial n (pairTableSection c true true)))).eval w = _
   rw [linearExtension_eval, linearExtension_eval, linearExtension_eval]
   have htail : (w ∘ some) ∘ some =
       fun i ↦ (pairVariablesSignedRealPoint n y z i : ℂ) := by

@@ -129,7 +129,7 @@ theorem coreOutcome_none_mass
           by_cases hja : j = a
           · subst j
             simp [hab]
-          · by_cases hjb : j = b <;> simp [hja, hjb, hab, Ne.symm hab]
+          · by_cases hjb : j = b <;> simp [hja, hjb, Ne.symm hab]
         _ = p a + p b := by rw [Finset.sum_add_distrib]; simp
 
 theorem coreOutcome_some_mass

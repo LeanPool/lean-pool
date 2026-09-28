@@ -32,10 +32,11 @@ theorem rowZeta_pos
   exact Finset.prod_pos fun j _ ↦ Real.rpow_pos_of_pos (hp j) _
 
 theorem rowZeta_le_one
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {τ : ℝ} (hτ : 0 ≤ τ) {p : ι → ℝ}
     (hp : IsProbabilityVector p) :
     rowZeta τ p ≤ 1 := by
+  classical
   rw [rowZeta]
   apply Finset.prod_le_one₀
   · intro j _
@@ -322,7 +323,7 @@ theorem capacityWitness_sum
   linarith
 
 theorem capacityWitness_nonnegative
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     {ρ δa δb : ℝ} {α : ι → ℝ}
     (hρ : 0 < ρ) (hρ1 : ρ ≤ 1)
     (hδa : 0 ≤ δa) (hδb : 0 ≤ δb)

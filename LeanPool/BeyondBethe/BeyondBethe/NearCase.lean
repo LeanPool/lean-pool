@@ -191,7 +191,7 @@ theorem twoMatching_core_mem_heavy_of_good
 
 theorem univ_sdiff_coreOutside_of_ne
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {a b : ι} (hab : a ≠ b) :
+    {a b : ι} (_hab : a ≠ b) :
     Finset.univ \ coreOutside a b = {a, b} := by
   ext j
   simp only [Finset.mem_sdiff, Finset.mem_univ, coreOutside,
@@ -963,7 +963,7 @@ theorem nearCase_successfulCleanCycles_count_ge_threeEighths
           (fun i j ↦ transferU τ (X i) j) / n ≤
         S / n + 2 * ξ + binaryEntropy η + η +
           (1 + Real.log 2) * (((badRows η P).card : ℝ) / n) := by
-      convert hraw using 1 <;> ring
+      convert hraw using 1; ring
     linarith
   have hfactor : 0 ≤ 1 / 2 - η :=
     (sub_pos.mpr (hηtenth.trans_lt (by norm_num))).le
@@ -1472,7 +1472,7 @@ theorem exists_completion_scales
       6 / Real.log 2 * goodRowOmega η <
           6 / Real.log 2 * (Real.log 2 / 384) :=
         mul_lt_mul_of_pos_left hωsmall hcoef
-      _ = 1 / 64 := by field_simp [hlog.ne'] <;> norm_num
+      _ = 1 / 64 := by field_simp [hlog.ne']; norm_num
   have hηκ : η * κ₀ ≤ (1 / 20) * κ₀ :=
     mul_le_mul_of_nonneg_right hηtwenty hκ₀.le
   have htransferBase : binaryEntropy η + η <

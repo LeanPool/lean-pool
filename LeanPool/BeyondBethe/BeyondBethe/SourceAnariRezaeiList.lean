@@ -93,7 +93,7 @@ theorem anariRezaeiListPhi_merge (L R : List ℝ) (r s : ℝ) :
 theorem anariRezaeiMergeExpandedGap_nonpos
     {q r s t : ℝ} (hq0 : 0 ≤ q) (hr0 : 0 ≤ r)
     (hs0 : 0 ≤ s) (ht0 : 0 ≤ t)
-    (hsum : q+r+s+t = 1) (hC : r+s ≤ 14/25) :
+    (hsum : q + r + s + t = 1) (hC : r + s ≤ 14 / 25) :
     anariRezaeiMergeExpandedGap q r s t ≤ 0 := by
   by_cases hrz : r = 0
   · subst r
@@ -121,13 +121,13 @@ theorem anariRezaeiListPhi_le_of_merge
     (hL : ∀ x ∈ L, 0 ≤ x) (hR : ∀ x ∈ R, 0 ≤ x)
     (hr0 : 0 ≤ r) (hs0 : 0 ≤ s)
     (hsum : (L ++ r :: s :: R).sum = 1)
-    (hC : r+s ≤ 14/25) :
+    (hC : r + s ≤ 14 / 25) :
     anariRezaeiListPhi (L ++ r :: s :: R) ≤
       anariRezaeiListPhi (L ++ (r+s) :: R) := by
   have hLsum : 0 ≤ L.sum := List.sum_nonneg hL
   have hRsum : 0 ≤ R.sum := List.sum_nonneg hR
   have hquad : L.sum+r+s+R.sum = 1 := by
-    simp only [List.sum_append, List.sum_cons, List.sum_nil] at hsum
+    simp only [List.sum_append, List.sum_cons] at hsum
     linarith
   have hgap := anariRezaeiMergeExpandedGap_nonpos
     hLsum hr0 hs0 hRsum hquad hC
@@ -135,7 +135,7 @@ theorem anariRezaeiListPhi_le_of_merge
   linarith
 
 theorem anariRezaeiListPhi_two
-    {q s : ℝ} (hsum : q+s = 1) :
+    {q s : ℝ} (hsum : q + s = 1) :
     anariRezaeiListPhi [q,s] = binaryEntropy q := by
   have hs : s = 1-q := by linarith
   subst s
@@ -145,14 +145,14 @@ theorem anariRezaeiListPhi_two
 
 theorem anariRezaeiListPhi_two_le
     {q s : ℝ} (hq0 : 0 ≤ q) (hs0 : 0 ≤ s)
-    (hsum : q+s = 1) :
+    (hsum : q + s = 1) :
     anariRezaeiListPhi [q,s] ≤ Real.log 2 := by
   rw [anariRezaeiListPhi_two hsum]
   apply binaryEntropy_le_log_two hq0
   linarith
 
 theorem anariRezaeiListPhi_three
-    {q r s : ℝ} (hsum : q+r+s = 1) :
+    {q r s : ℝ} (hsum : q + r + s = 1) :
     anariRezaeiListPhi [q,r,s] = anariRezaeiPhiThree q s := by
   have hr : r = 1-q-s := by linarith
   subst r
@@ -165,7 +165,7 @@ theorem anariRezaeiListPhi_three
 
 theorem anariRezaeiListPhi_three_le
     {q r s : ℝ} (hq0 : 0 ≤ q) (hr0 : 0 ≤ r) (hs0 : 0 ≤ s)
-    (hsum : q+r+s = 1) :
+    (hsum : q + r + s = 1) :
     anariRezaeiListPhi [q,r,s] ≤ Real.log 2 := by
   by_cases hqr : q+r ≤ 14/25
   · calc
@@ -243,7 +243,6 @@ private theorem anariRezaeiListPhi_le_log_two_fuel
           · exact hR x hx
         have hp'sum : p'.sum = 1 := by
           dsimp [p']
-          norm_num
           linarith
         have hp'len : p'.length ≤ fuel := by
           dsimp [p']
@@ -276,7 +275,6 @@ private theorem anariRezaeiListPhi_le_log_two_fuel
           · exact hR x hx
         have hp'sum : p'.sum = 1 := by
           dsimp [p']
-          norm_num
           linarith
         have hp'len : p'.length ≤ fuel := by
           dsimp [p']
@@ -344,7 +342,7 @@ theorem ofFn_orderCoordinates_revPerm {m : ℕ} (p : Fin m → ℝ) :
     rw [List.getElem_ofFn, List.getElem_reverse, List.getElem_ofFn]
     apply congrArg p
     apply Fin.ext
-    simp [orderCoordinates, Fin.revPerm_apply, Fin.val_rev]
+    simp [Fin.revPerm_apply, Fin.val_rev]
     omega
 
 theorem anariRezaeiReverseScore_ofFn {m : ℕ} (p : Fin m → ℝ) :

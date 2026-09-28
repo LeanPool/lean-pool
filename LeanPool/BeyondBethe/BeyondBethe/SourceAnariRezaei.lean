@@ -219,8 +219,8 @@ theorem two_mul_log_le_sub_inv {z : ℝ} (hz : 1 ≤ z) :
       dsimp [h]
       convert! ((hasDerivAt_id x).sub
         ((hasDerivAt_const x 1).div (hasDerivAt_id x) hx0)).sub
-          ((Real.hasDerivAt_log hx0).const_mul 2) using 1 <;>
-        simp only [id_eq] <;> ring
+          ((Real.hasDerivAt_log hx0).const_mul 2) using 1;
+        simp only [id_eq]; ring
     exact hd.differentiableAt.differentiableWithinAt
   have hderiv : ∀ x ∈ interior (Set.Ici (1 : ℝ)),
       deriv h x = (x - 1) ^ 2 / x ^ 2 := by
@@ -231,8 +231,8 @@ theorem two_mul_log_le_sub_inv {z : ℝ} (hz : 1 ≤ z) :
       dsimp [h]
       convert! ((hasDerivAt_id x).sub
         ((hasDerivAt_const x 1).div (hasDerivAt_id x) hx0)).sub
-          ((Real.hasDerivAt_log hx0).const_mul 2) using 1 <;>
-        simp only [id_eq] <;> ring
+          ((Real.hasDerivAt_log hx0).const_mul 2) using 1;
+        simp only [id_eq]; ring
     rw [hd.deriv]
     field_simp
     ring
@@ -309,7 +309,7 @@ noncomputable def anariRezaeiLargeCoordinatePolynomial
 replaces the source's `881^2` grid computation. -/
 theorem anariRezaeiLargeCoordinatePolynomial_nonneg
     {q s : ℝ} (hq0 : 0 ≤ q) (hqs : q ≤ s)
-    (hs : s ≤ 11/25) :
+    (hs : s ≤ 11 / 25) :
     0 ≤ anariRezaeiLargeCoordinatePolynomial q s := by
   have hs0 : 0 ≤ s := hq0.trans hqs
   by_cases hs_zero : s = 0
@@ -343,7 +343,7 @@ noncomputable def anariRezaeiLargeCoordinateDerivative
 not decrease the three-variable `phi`. -/
 theorem anariRezaeiLargeCoordinateDerivative_nonneg
     {q s : ℝ} (hq0 : 0 ≤ q) (hqs : q ≤ s)
-    (hs : s ≤ 11/25) (hspos : 0 < s) :
+    (hs : s ≤ 11 / 25) (hspos : 0 < s) :
     0 ≤ anariRezaeiLargeCoordinateDerivative q s := by
   have hs1 : s < 1 := hs.trans_lt (by norm_num)
   have hq1 : q < 1 := hqs.trans_lt hs1
@@ -399,17 +399,17 @@ theorem hasDerivAt_anariRezaeiPhiThree_right
   have hsum : q+s ≠ 0 := hqsum.ne'
   have hnegS := (Real.hasDerivAt_negMulLog hs0.ne').neg
   have hlin1 : HasDerivAt (fun x : ℝ => 1-q+x) 1 s := by
-    convert! (hasDerivAt_const s (1-q)).add (hasDerivAt_id s) using 1 <;> ring
+    convert! (hasDerivAt_const s (1-q)).add (hasDerivAt_id s) using 1; ring
   have hterm1 := (hlin1.mul_const (Real.log (1-q))).neg
   have hlin2 : HasDerivAt (fun x : ℝ => 1+q-x) (-1) s := by
-    convert! (hasDerivAt_const s (1+q)).sub (hasDerivAt_id s) using 1 <;> ring
+    convert! (hasDerivAt_const s (1+q)).sub (hasDerivAt_id s) using 1; ring
   have hcomp2 : HasDerivAt (fun x : ℝ => Real.log (1-x))
       (-1/(1-s)) s := by
     convert! (Real.hasDerivAt_log h1s).comp s
-      ((hasDerivAt_const s 1).sub (hasDerivAt_id s)) using 1 <;> ring
+      ((hasDerivAt_const s 1).sub (hasDerivAt_id s)) using 1; ring
   have hterm2 := (hlin2.mul hcomp2).neg
   have hsumlin : HasDerivAt (fun x : ℝ => q+x) 1 s := by
-    convert! (hasDerivAt_const s q).add (hasDerivAt_id s) using 1 <;> ring
+    convert! (hasDerivAt_const s q).add (hasDerivAt_id s) using 1; ring
   have hterm3 := ((Real.hasDerivAt_negMulLog hsum).comp s hsumlin).const_mul 2
   have hd := ((((hasDerivAt_const s (-Real.negMulLog q)).add hnegS).add
     hterm1).add hterm2).add hterm3
@@ -426,7 +426,7 @@ theorem hasDerivAt_anariRezaeiPhiThree_right
 after increasing the larger endpoint coordinate to `11/25`. -/
 theorem anariRezaeiPhiThree_le_boundary
     {q s : ℝ} (hq0 : 0 ≤ q) (hqs : q ≤ s)
-    (hs : s ≤ 11/25) :
+    (hs : s ≤ 11 / 25) :
     anariRezaeiPhiThree q s ≤ anariRezaeiPhiThree q (11/25) := by
   have hq1 : q < 1 := (hqs.trans hs).trans_lt (by norm_num)
   have hcont : ContinuousOn (anariRezaeiPhiThree q)
@@ -529,7 +529,7 @@ noncomputable def anariRezaeiEdgePolynomial (q : ℝ) : ℝ :=
     (14/25)^2*(q+11/25)^4
 
 theorem anariRezaeiEdgePolynomial_nonneg
-    {q : ℝ} (hq0 : 1/5 ≤ q) (hq1 : q ≤ 11/25) :
+    {q : ℝ} (hq0 : 1 / 5 ≤ q) (hq1 : q ≤ 11 / 25) :
     0 ≤ anariRezaeiEdgePolynomial q := by
   let v : ℝ := (q - 1/5) / (6/25)
   have hv0 : 0 ≤ v := div_nonneg (sub_nonneg.mpr hq0) (by norm_num)
@@ -548,7 +548,7 @@ theorem anariRezaeiEdgePolynomial_nonneg
 
 /-- The boundary-edge derivative is nonnegative on `[1/5, 11/25]`. -/
 theorem anariRezaeiEdgeDerivative_nonneg
-    {q : ℝ} (hq0 : 1/5 ≤ q) (hq1 : q ≤ 11/25) :
+    {q : ℝ} (hq0 : 1 / 5 ≤ q) (hq1 : q ≤ 11 / 25) :
     0 ≤ anariRezaeiLargeCoordinateDerivative (11/25) q := by
   have hqpos : 0 < q := (by norm_num : (0 : ℝ) < 1/5).trans_le hq0
   have hq_lt_one : q < 1 := hq1.trans_lt (by norm_num)
@@ -616,24 +616,24 @@ theorem hasDerivAt_anariRezaeiEdgeDerivative
   have hnum' := (hasDerivAt_id q).mul
     ((hasDerivAt_const q 1).sub (hasDerivAt_id q))
   have hsum' : HasDerivAt (fun x : ℝ ↦ 11/25+x) 1 q := by
-    convert! (hasDerivAt_const q (11/25)).add (hasDerivAt_id q) using 1 <;> ring
+    convert! (hasDerivAt_const q (11/25)).add (hasDerivAt_id q) using 1; ring
   have hden' : HasDerivAt
       (fun x : ℝ ↦ (1-11/25)*(11/25+x)^2)
       (2*(1-11/25)*(11/25+q)) q := by
-    convert! (hsum'.pow 2).const_mul (1-11/25) using 1 <;> ring
+    convert! (hsum'.pow 2).const_mul (1-11/25) using 1; ring
   have hquot := hnum'.div hden' hden
   have hlog := (Real.hasDerivAt_log (div_ne_zero hnum hden)).comp q hquot
   have hlin : HasDerivAt (fun x : ℝ ↦ 1-x) (-1) q := by
-    convert! (hasDerivAt_const q 1).sub (hasDerivAt_id q) using 1 <;> ring
+    convert! (hasDerivAt_const q 1).sub (hasDerivAt_id q) using 1; ring
   have hfrac := (hasDerivAt_const q (11/25 : ℝ)).div hlin h1q
   have hd := hlog.add hfrac
-  convert! hd using 1 <;>
+  convert! hd using 1;
     dsimp [anariRezaeiLargeCoordinateDerivative,
-      anariRezaeiEdgeSecondDerivative] <;>
-    field_simp [hq0.ne', h1q, hsum] <;> ring
+      anariRezaeiEdgeSecondDerivative];
+    field_simp [hq0.ne', h1q, hsum]; ring
 
 private theorem anariRezaeiEdgeSecondNumerator_nonneg
-    {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1/5) :
+    {q : ℝ} (_ : 0 ≤ q) (hq1 : q ≤ 1 / 5) :
     0 ≤ 11/25 - (1329/625)*q + (58/25)*q^2 := by
   have hfactor1 : 0 ≤ 1/5-q := sub_nonneg.mpr hq1
   have hfactor2 : 0 ≤ 1329/625-(58/25)*(q+1/5) := by
@@ -642,7 +642,7 @@ private theorem anariRezaeiEdgeSecondNumerator_nonneg
   nlinarith
 
 theorem anariRezaeiEdgeSecondDerivative_nonneg
-    {q : ℝ} (hq0 : 0 < q) (hq1 : q ≤ 1/5) :
+    {q : ℝ} (hq0 : 0 < q) (hq1 : q ≤ 1 / 5) :
     0 ≤ anariRezaeiEdgeSecondDerivative q := by
   have hq_lt_one : q < 1 := hq1.trans_lt (by norm_num)
   have h1q : 0 < 1-q := sub_pos.mpr hq_lt_one
@@ -760,7 +760,7 @@ theorem anariRezaeiPhiThree_diagonal_le :
     (binaryEntropy_le_log_two (by norm_num) (by norm_num))
 
 theorem anariRezaeiPhiThree_edge_le_diagonal
-    {q : ℝ} (hq0 : 1/5 ≤ q) (hq1 : q ≤ 11/25) :
+    {q : ℝ} (hq0 : 1 / 5 ≤ q) (hq1 : q ≤ 11 / 25) :
     anariRezaeiPhiThree q (11/25) ≤
       anariRezaeiPhiThree (11/25) (11/25) := by
   have hcont : ContinuousOn (fun x ↦ anariRezaeiPhiThree x (11/25))
@@ -789,7 +789,7 @@ theorem anariRezaeiPhiThree_edge_le_diagonal
 
 /-- Every point of the boundary edge satisfies the sharp `log 2` bound. -/
 theorem anariRezaeiPhiThree_edge_le
-    {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 11/25) :
+    {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 11 / 25) :
     anariRezaeiPhiThree q (11/25) ≤ Real.log 2 := by
   by_cases hq : q ≤ 1/5
   · have hmax := anariRezaeiPhiThree_edge_convex.le_max_of_mem_Icc
@@ -806,7 +806,7 @@ theorem anariRezaeiPhiThree_edge_le
 base case. -/
 theorem anariRezaeiPhiThree_le_log_two
     {q s : ℝ} (hq0 : 0 ≤ q) (hs0 : 0 ≤ s)
-    (hq : q ≤ 11/25) (hs : s ≤ 11/25) :
+    (hq : q ≤ 11 / 25) (hs : s ≤ 11 / 25) :
     anariRezaeiPhiThree q s ≤ Real.log 2 := by
   rcases le_total q s with hqs | hsq
   · exact (anariRezaeiPhiThree_le_boundary hq0 hqs hs).trans
@@ -820,7 +820,7 @@ def anariRezaeiThreeVector (q s : ℝ) : Fin 3 → ℝ :=
   ![q, 1-q-s, s]
 
 theorem anariRezaeiThreeVector_probability
-    {q s : ℝ} (hq : 0 ≤ q) (hs : 0 ≤ s) (hqs : q+s ≤ 1) :
+    {q s : ℝ} (hq : 0 ≤ q) (hs : 0 ≤ s) (hqs : q + s ≤ 1) :
     IsProbabilityVector (anariRezaeiThreeVector q s) := by
   constructor
   · intro i

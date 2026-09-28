@@ -245,8 +245,7 @@ def machineListCountSemanticState {alpha : Type*}
     (encode : alpha → List Bool) (xs : List alpha) :
     machineListCountSemanticState encode xs 0 =
       machineListCountInit (binaryListCode encode xs) := by
-  simp [machineListCountSemanticState, machineListCountInit,
-    binaryListCode]
+  simp [machineListCountSemanticState, machineListCountInit]
 
 theorem nat_succ_bits_length_le_succ (k : ℕ) :
     (k + 1).bits.length ≤ k + 1 := by

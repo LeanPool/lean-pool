@@ -161,7 +161,7 @@ theorem rationalBallDyadicExponent_works {d : ℕ} (hd : 0 < d)
           (1 / 2 : ℚ) ^ rationalBallDyadicExponent d R r =
         (2 : ℚ) ^ A * (1 / 2 : ℚ) ^ (A + (C + 1)) := by
           rw [htwo, hM]
-          congr 2 <;> omega
+          congr 2
       _ = (2 : ℚ) ^ A *
           ((1 / 2 : ℚ) ^ A * (1 / 2 : ℚ) ^ (C + 1)) := by
         congr 1
@@ -213,7 +213,6 @@ theorem physicalDot_point_sub_center_eq_pulledDot {d : ℕ}
   apply Finset.sum_congr rfl
   intro j _
   rw [cast_rationalPulledBackNormal]
-  push_cast
   rw [Finset.sum_mul]
   apply Finset.sum_congr rfl
   intro i _

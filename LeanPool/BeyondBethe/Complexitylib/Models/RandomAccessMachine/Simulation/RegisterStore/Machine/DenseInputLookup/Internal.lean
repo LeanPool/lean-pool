@@ -883,14 +883,14 @@ private theorem denseInputLookupResult_of_reset_counter {n : ℕ}
   constructor
   · rw [Function.update_of_ne hqc]
     rw [hother query hqc hqr]
-    simp [copiedWork, Function.update_of_ne hqc]
+    simp [Function.update_of_ne hqc]
   · rw [Function.update_self]
     exact hblankNat
   · rw [Function.update_of_ne hcr.symm]
     exact hresult
   · rw [Function.update_of_ne hcs.symm]
     rw [hother scratch hcs.symm hrs.symm]
-    simp [copiedWork, Function.update_of_ne hcs.symm]
+    simp [Function.update_of_ne hcs.symm]
   · intro i
     by_cases hi : i = counter
     · subst i
@@ -901,7 +901,7 @@ private theorem denseInputLookupResult_of_reset_counter {n : ℕ}
   · intro i _ hic hir _
     rw [Function.update_of_ne hic]
     rw [hother i hic hir]
-    simp [copiedWork, Function.update_of_ne hic]
+    simp [Function.update_of_ne hic]
 
 theorem denseInputLookupTM_hoareTime_internal {n : ℕ}
     (query counter result scratch : Fin n)

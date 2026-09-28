@@ -299,12 +299,12 @@ theorem betheDirectedEpigraphOracle_cut_valid {m : ℕ} (hm : 0 < m)
           rwa [hk] at this
         have hq0 : 0 ≤ (yq k : ℝ) := by
           have := hXqDS.nonnegative ij.1.castSucc ij.2.castSucc
-          simp only [Xq, Yq, birkhoffAffineMap_castSucc_castSucc,
+          simp only [Yq, birkhoffAffineMap_castSucc_castSucc,
             vectorToSquareMatrix] at this
           rwa [hk] at this
         have hq1 : (yq k : ℝ) ≤ 1 := by
           have := hXqDS.entry_le_one ij.1.castSucc ij.2.castSucc
-          simp only [Xq, Yq, birkhoffAffineMap_castSucc_castSucc,
+          simp only [Yq, birkhoffAffineMap_castSucc_castSucc,
             vectorToSquareMatrix] at this
           rwa [hk] at this
         rw [abs_le]
@@ -469,7 +469,7 @@ theorem matrixPairing_entryCovector {n : ℕ} (i j : Fin n)
     intro a
     by_cases hai : a = i
     · subst a
-      simp only [if_true]
+      simp only [ite_true]
       calc
         (∑ b, (matrixEntryCovector i j i b : ℝ) * D i b) =
             (matrixEntryCovector i j i j : ℝ) * D i j := by

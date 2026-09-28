@@ -336,13 +336,12 @@ theorem machineFalseSquareBuilderStep_semantics
   let row := List.replicate n false
   have hrowLength : (boolVectorCode row).length = 4 * n := by
     simp [boolVectorCode, binaryListCode_length_eq_sum, row,
-      boolElementCode, Nat.nsmul_eq_mul]
+      boolElementCode]
     omega
   have hmatrixLength :
       (boolMatrixCode (List.replicate (k + 1) row)).length =
         (k + 1) * (2 * (boolVectorCode row).length + 2) := by
-    simp [boolMatrixCode, binaryListCode_length_eq_sum,
-      Nat.nsmul_eq_mul]
+    simp [boolMatrixCode, binaryListCode_length_eq_sum]
   have hbound :
       (boolMatrixCode (List.replicate (k + 1) row)).length ≤
         (machineRepeatedRowMatrixBound word).length := by

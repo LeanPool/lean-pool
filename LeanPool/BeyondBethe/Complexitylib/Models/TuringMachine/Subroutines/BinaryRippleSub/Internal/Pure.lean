@@ -185,7 +185,7 @@ theorem subtract_natBits_internal (lhs rhs : ℕ) :
         omega
       rw [hvalue]
   | true =>
-      simp only [if_true]
+      simp only [ite_true]
       have hlt : lhs < rhs := by
         simp [hborrow] at hinvariant'
         omega

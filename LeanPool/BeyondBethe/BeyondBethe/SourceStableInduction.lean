@@ -181,9 +181,6 @@ theorem pairTable_stableCoefficient_witness :
             dsimp [K, a, d]
             rw [add_comm, ← pairTableEval_contract,
               ← pairTableDiagonalSum_contract]
-            change tailBoundary / (my * mz) *
-                pairTableEval n (pairTableContract c) yt zt ≤
-              pairTableDiagonalSum n (pairTableContract c) + ε / 2
             calc
               tailBoundary / (my * mz) *
                     pairTableEval n (pairTableContract c) yt zt =

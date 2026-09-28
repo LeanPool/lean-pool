@@ -74,7 +74,7 @@ theorem selectorExponent_injective
   intro h h' heq
   funext j
   have hj := congrArg (fun d : κ × ι →₀ ℕ ↦ d (h j, j)) heq
-  simp only [selectorExponent_apply, ite_eq_left rfl] at hj
+  simp only [selectorExponent_apply] at hj
   by_contra hne
   simp [hne] at hj
 
@@ -419,7 +419,7 @@ theorem pairPolynomial_eval
   intro e _
   rw [eval_monomial]
   rw [Finsupp.prod_add_index]
-  · simp [Finsupp.prod_single_index, mul_assoc, mul_left_comm, mul_comm]
+  · simp [Finsupp.prod_single_index, mul_left_comm, mul_comm]
   · simp
   · intro a _ b c
     exact pow_add (z a) b c
@@ -461,11 +461,11 @@ theorem pairPolynomial_isMultiaffine
   · rw [degreeOf_monomial_eq _ _ hc]
     by_cases hi : i = e.1
     · subst i
-      simp [Finsupp.single_apply, hne]
+      simp [hne]
     · by_cases hi' : i = e.2
       · subst i
-        simp [Finsupp.single_apply, hne, Ne.symm hne]
-      · simp [Finsupp.single_apply, hi, hi']
+        simp [Ne.symm hne]
+      · simp [hi, hi']
 
 /-- The formal Hessian matrix of `Q(u,v)`: diagonal entries vanish because
 the polynomial is multiaffine, while off-diagonal entries are the paired
@@ -485,6 +485,6 @@ theorem pairHessian_eq
   · subst j
     simp [pairHessian, Matrix.vecMulVec]
     ring
-  · simp [pairHessian, Matrix.vecMulVec, Matrix.diagonal_apply, hij]
+  · simp [pairHessian, Matrix.vecMulVec, hij]
 
 end BeyondBethe

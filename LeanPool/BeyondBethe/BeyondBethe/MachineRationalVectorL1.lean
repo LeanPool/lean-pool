@@ -42,7 +42,7 @@ def magnitude (q : RawRat) : RawRat :=
       simp [magnitude, value, abs_div, abs_of_pos hdenQ]
   | negSucc n =>
       have hdenQ : (0 : ℚ) < den := by exact_mod_cast hden
-      simp only [magnitude, value, Int.natAbs_negSucc, Int.cast_ofNat,
+      simp only [magnitude, value, Int.natAbs_negSucc,
         Int.cast_negSucc, Nat.cast_add, Nat.cast_one, abs_div,
         abs_of_pos hdenQ]
       rw [abs_neg, abs_of_nonneg (by positivity : (0 : ℚ) ≤ n + 1)]

@@ -114,28 +114,28 @@ theorem tokenize?_sound {z : List Bool} {toks : List EncToken}
     (h : tokenize? z = some toks) : z = encodeTokens toks := by
   let rec hsound : ∀ z toks, tokenize? z = some toks → z = encodeTokens toks
     | [], toks, htok => by
-        simp [tokenize?] at htok
+        simp only [tokenize?, Option.some.injEq, List.nil_eq] at htok
         cases htok
         rfl
     | [_], _, htok => by
         simp [tokenize?] at htok
     | false :: false :: rest, toks, htok => by
-        simp [tokenize?] at htok
+        simp only [tokenize?, Option.map_eq_some_iff] at htok
         rcases htok with ⟨toks', hrest, rfl⟩
         have henc := hsound rest toks' hrest
         simp [encodeTokens, EncToken.encode, henc]
     | true :: true :: rest, toks, htok => by
-        simp [tokenize?] at htok
+        simp only [tokenize?, Option.map_eq_some_iff] at htok
         rcases htok with ⟨toks', hrest, rfl⟩
         have henc := hsound rest toks' hrest
         simp [encodeTokens, EncToken.encode, henc]
     | false :: true :: rest, toks, htok => by
-        simp [tokenize?] at htok
+        simp only [tokenize?, Option.map_eq_some_iff] at htok
         rcases htok with ⟨toks', hrest, rfl⟩
         have henc := hsound rest toks' hrest
         simp [encodeTokens, EncToken.encode, henc]
     | true :: false :: rest, toks, htok => by
-        simp [tokenize?] at htok
+        simp only [tokenize?, Option.map_eq_some_iff] at htok
         rcases htok with ⟨toks', hrest, rfl⟩
         have henc := hsound rest toks' hrest
         simp [encodeTokens, EncToken.encode, henc]
@@ -303,7 +303,8 @@ private theorem parseTokensAux_clause_tokens
   | nil =>
       simp [Clause.tokens, parseTokensAux]
   | cons ℓ ℓs ih =>
-      simp [Clause.tokens, Lit.rawTokens]
+      simp only [Clause.tokens, Lit.rawTokens, List.append_assoc,
+        List.cons_append, List.nil_append]
       rw [parseTokensAux_map_bit ℓ.encodeRaw]
       simp [parseTokensAux, Lit.decodeRaw?_encodeRaw, List.reverse_reverse, ih,
         List.reverse_cons, List.append_assoc]
@@ -331,26 +332,29 @@ private theorem parseTokensAux_sound
       CNF.tokens φ := by
   induction toks generalizing rawRev clauseRev cnfRev φ with
   | nil =>
-      cases rawRev <;> cases clauseRev <;> simp [parseTokensAux, Clause.tokens] at h ⊢
+      cases rawRev <;> cases clauseRev <;>
+        simp only [parseTokensAux, ↓reduceDIte, Option.some.injEq,
+          List.reverse_nil, Clause.tokens, List.append_nil, List.map_nil,
+          reduceCtorEq] at h ⊢
       cases h
       simp
   | cons tok toks ih =>
       cases tok with
       | bit b =>
-          simp [parseTokensAux] at h
+          simp only [parseTokensAux] at h
           have hrec := ih h
           simpa [List.reverse_cons, List.append_assoc] using hrec
       | litSep =>
-          simp [parseTokensAux] at h
+          simp only [parseTokensAux] at h
           rcases hdecode : Lit.decodeRaw? rawRev.reverse with _ | ℓ
           · simp [hdecode] at h
-          · simp [hdecode] at h
+          · simp only [hdecode] at h
             have hrec := ih h
             have hraw : rawRev.reverse = ℓ.encodeRaw := Lit.decodeRaw?_sound hdecode
             simpa [hraw, Clause.tokens, Clause.tokens_append, Lit.rawTokens,
               List.reverse_cons, List.append_assoc] using hrec
       | clauseSep =>
-          simp [parseTokensAux] at h
+          simp only [parseTokensAux, dite_eq_ite, Option.ite_none_right_eq_some] at h
           rcases h with ⟨hraw, hrest⟩
           have hrec := ih hrest
           simpa [hraw, CNF.tokens, CNF.tokens_append, Clause.tokens,
@@ -378,7 +382,7 @@ theorem CNF.decode?_sound {z : List Bool} {φ : CNF}
   | none =>
       simp [htok] at h
   | some toks =>
-      simp [htok] at h
+      simp only [htok, Option.bind_eq_bind, Option.bind_some] at h
       have hz : z = encodeTokens toks := tokenize?_sound htok
       have htoks : toks = CNF.tokens φ := by
         simpa using! (parseTokensAux_sound h)
@@ -425,12 +429,12 @@ theorem verifyPair_eq_true_iff_mem_pairLang (w : List Bool) :
         simp [hunpair] at h
     | some zw =>
         rcases zw with ⟨z, α⟩
-        simp [hunpair] at h
+        simp only [hunpair] at h
         cases hdecode : CNF.decode? z with
         | none =>
             simp [hdecode] at h
         | some φ =>
-            simp [hdecode] at h
+            simp only [hdecode, Bool.and_eq_true, decide_eq_true_eq] at h
             have hz : z = φ.encode := CNF.decode?_sound hdecode
             have hw : w = pair z α := eq_pair_of_unpair?_eq_some hunpair
             have hlen : α.length ≤ z.length + 1 := by

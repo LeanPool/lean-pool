@@ -232,7 +232,7 @@ theorem matrixPairing_sub_le_error_mul_l1
       _ = abs (G i j - H i j) * abs (D i j) := abs_mul _ _
       _ ≤ e * abs (D i j) :=
         mul_le_mul_of_nonneg_right (herr i j) (abs_nonneg _)
-  convert hpoint using 1 <;> ring
+  convert hpoint using 1; ring
 
 /-- Generic tolerant epigraph-cut lemma.  It records all three losses used by
 the executable oracle: a one-sided value approximation, a coordinatewise

@@ -221,7 +221,7 @@ theorem approximateLogKKT_of_objective_gap
       abs (Gtilde i j - -regularizedBetheGradient τ A X i j) =
           abs ((Gtilde i j - -regularizedBetheGradient τ A Y i j) +
             (-regularizedBetheGradient τ A Y i j -
-              -regularizedBetheGradient τ A X i j)) := by congr 1 <;> ring
+              -regularizedBetheGradient τ A X i j)) := by congr 1; ring
       _ ≤ abs (Gtilde i j - -regularizedBetheGradient τ A Y i j) +
           abs (-regularizedBetheGradient τ A Y i j -
             -regularizedBetheGradient τ A X i j) := abs_add_le _ _

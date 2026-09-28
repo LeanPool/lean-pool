@@ -402,7 +402,7 @@ theorem machineRationalDirectionUpdateRowCode_mem_FP :
           apply hji
           exact (congrArg Fin.val h).symm
         have hij : i.1 ≠ j := Ne.symm hji
-        simp [List.getElem_set, hij, rationalDirectionDiagonalRow, hfin]
+        simp [hij, rationalDirectionDiagonalRow, hfin]
   · simpa using! i.isLt
 
 theorem rationalDirectionUpdateRow_eq {d : ℕ}

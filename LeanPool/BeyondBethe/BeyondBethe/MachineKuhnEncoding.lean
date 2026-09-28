@@ -70,7 +70,7 @@ theorem seenBoolList_insert {n : ℕ} (seen : Finset (Fin n)) (col : Fin n) :
         intro heq
         exact h (congrArg Fin.val heq)
       have hrev : col.1 ≠ i := by exact fun heq ↦ h heq.symm
-      simp [seenBoolList, List.getElem_set, h, hrev, hfin]
+      simp [seenBoolList, hrev, hfin]
 
 theorem columnMateList_update {n : ℕ} (mate : ColumnMate n)
     (col : Fin n) (value : Option (Fin n)) :
@@ -87,7 +87,7 @@ theorem columnMateList_update {n : ℕ} (mate : ColumnMate n)
         intro heq
         exact h (congrArg Fin.val heq)
       have hrev : col.1 ≠ i := by exact fun heq ↦ h heq.symm
-      simp [columnMateList, Function.update, List.getElem_set, h, hrev, hfin]
+      simp [columnMateList, Function.update, hrev, hfin]
 
 /-! ## Frame codes -/
 

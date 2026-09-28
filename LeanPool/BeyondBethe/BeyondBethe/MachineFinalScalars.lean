@@ -26,7 +26,7 @@ namespace BeyondBethe
   rw [machineMatrixNonnegativeBit_encode]
   apply congrArg singleton
   apply Bool.eq_iff_iff.mpr
-  simp [rationalMatrixNonnegativeDecision, Matrix.Nonnegative]
+  simp [rationalMatrixNonnegativeDecision]
 
 @[simp] theorem machineMatrixNormalizationScaleOutputCode_final {n : ℕ}
     (A : Matrix (Fin n) (Fin n) ℚ) :

@@ -82,7 +82,7 @@ theorem orderBetween_trans_swap
     {i j k : Fin n} (hik : i ≠ k) (hjk : j ≠ k) :
     OrderBetween (π.trans (Equiv.swap i j)) i j k ↔
       OrderBetween π j i k := by
-  simp [OrderBetween, Equiv.trans_apply, Equiv.swap_apply_def, hik, hjk,
+  simp [OrderBetween, Equiv.trans_apply, Equiv.swap_apply_def,
     Ne.symm hik, Ne.symm hjk]
 
 /-- Uniform probability that the middle argument lies between the two
@@ -174,7 +174,7 @@ theorem strictTripleOrder_trans_swap_endpoints
     StrictTripleOrder (π.trans (Equiv.swap a c)) a b c ↔
       StrictTripleOrder π c b a := by
   simp [StrictTripleOrder, Equiv.trans_apply, Equiv.swap_apply_def,
-    hab, hbc, Ne.symm hab, Ne.symm hbc]
+    hbc, Ne.symm hab]
 
 theorem tripleOrderProbability_reverse
     {n : ℕ} {a b c : Fin n} (hab : a ≠ b) (hbc : b ≠ c) :
@@ -413,7 +413,7 @@ theorem average_strictLeftMass_mul_strictRightMass
           rw [tripleOrderProbability_cases]
         _ = (1 / 6) *
             (if j ≠ i ∧ j ≠ k ∧ i ≠ k then p j * p k else 0) := by
-          by_cases h : j ≠ i ∧ j ≠ k ∧ i ≠ k <;> simp [h] <;> ring
+          by_cases h : j ≠ i ∧ j ≠ k ∧ i ≠ k <;> simp [h]; ring
     _ = (1 / 6) * ∑ j, ∑ k,
           if j ≠ i ∧ j ≠ k ∧ i ≠ k then p j * p k else 0 := by
       rw [Finset.mul_sum]
@@ -479,7 +479,7 @@ theorem inner_ordered_distinct_products
         · by_cases hik : i = k
           · subst k
             simp [hji]
-          · simp [hji, hjk, hik, Ne.symm hjk, Ne.symm hik]
+          · simp [hji, hjk, hik]
       _ = p j * (1 - p i - p j) := by
         rw [sum_away_from_two hp (Ne.symm hji)]
       _ = if j ≠ i then p j * (1 - p i - p j) else 0 := by simp [hji]
@@ -502,7 +502,7 @@ theorem sum_ordered_distinct_products
           (if j ≠ i then (p j) ^ 2 else 0)) := by
       apply Finset.sum_congr rfl
       intro j _
-      by_cases hji : j = i <;> simp [hji] <;> ring
+      by_cases hji : j = i <;> simp [hji]; ring
     _ = (∑ j, if j ≠ i then p j else 0) * (1 - p i) -
           ∑ j, (if j ≠ i then (p j) ^ 2 else 0) := by
       rw [Finset.sum_sub_distrib, Finset.sum_mul]
@@ -602,7 +602,7 @@ theorem suffixMass_eq_self_add_strictRightMass
         rcases lt_or_gt_of_ne hpos with hlt | hgt
         · simp [hki, hlt, hlt.le]
         · have hnot : ¬π.symm i < π.symm k := not_lt_of_ge hgt.le
-          simp [hki, hgt, not_le_of_gt hgt, hnot]
+          simp [hki, not_le_of_gt hgt, hnot]
     _ = (∑ k, if k = i then p k else 0) +
           ∑ k, (if π.symm i < π.symm k then p k else 0) := by
       rw [Finset.sum_add_distrib]
@@ -657,7 +657,7 @@ theorem suffixMass_reverseOrdering
         rcases lt_or_gt_of_ne hpos with hlt | hgt
         · simp [hki, hlt, hlt.le]
         · have hnot : ¬π.symm k < π.symm i := not_lt_of_ge hgt.le
-          simp [hki, hgt, not_le_of_gt hgt, hnot]
+          simp [hki, not_le_of_gt hgt, hnot]
     _ = (∑ k, if k = i then p k else 0) +
           ∑ k, (if π.symm k < π.symm i then p k else 0) := by
       rw [Finset.sum_add_distrib]
@@ -864,20 +864,20 @@ theorem hasDerivAt_rowStabilityF
     {x : ℝ} (hx : x < 1) :
     HasDerivAt rowStabilityF (rowStabilityFPrime x) x := by
   have hlinear : HasDerivAt (fun y : ℝ ↦ -(1 - y)) 1 x := by
-    convert! ((hasDerivAt_const x 1).sub (hasDerivAt_id x)).neg using 1 <;> ring
+    convert! ((hasDerivAt_const x 1).sub (hasDerivAt_id x)).neg using 1; ring
   have hlog : HasDerivAt (fun y : ℝ ↦ Real.log (1 - y))
       (-1 / (1 - x)) x := by
     simpa [Function.id_def] using
       ((hasDerivAt_const x 1).sub (hasDerivAt_id x)).log
         (by linarith : 1 - x ≠ 0)
   have hsq : HasDerivAt (fun y : ℝ ↦ y ^ 2 / 2) x x := by
-    convert! (hasDerivAt_pow 2 x).div_const 2 using 1 <;> ring
+    convert! (hasDerivAt_pow 2 x).div_const 2 using 1; ring
   have hcub : HasDerivAt (fun y : ℝ ↦ y ^ 3 / 3) (x ^ 2) x := by
-    convert! (hasDerivAt_pow 3 x).div_const 3 using 1 <;> ring
+    convert! (hasDerivAt_pow 3 x).div_const 3 using 1; ring
   have h := (hlinear.mul hlog).add hsq |>.add hcub
   unfold rowStabilityF rowStabilityFPrime
-  convert! h using 1 <;>
-    field_simp [show 1 - x ≠ 0 by linarith] <;> ring
+  convert! h using 1;
+    field_simp [show 1 - x ≠ 0 by linarith]
 
 theorem hasDerivAt_rowStabilityH
     {x : ℝ} (hx0 : 0 < x) (hx1 : x < 1) :
@@ -886,7 +886,7 @@ theorem hasDerivAt_rowStabilityH
   simp only [Function.id_def] at h
   unfold rowStabilityFPrime rowStabilityF at h
   unfold rowStabilityH rowStabilityHPrime rowStabilityF
-  convert! h using 1 <;> field_simp [hx0.ne'] <;> ring
+  convert! h using 1; field_simp [hx0.ne']; ring
 
 /-- An explicit Taylor lower bound for `log(1-x)`. -/
 theorem log_one_sub_lower_eight
@@ -913,15 +913,15 @@ theorem rowStabilityHPrime_numerator_lower
   have h4 : x ^ 4 ≤ x ^ 3 / 2 := by
     simpa [div_eq_mul_inv] using hp 1
   have h5 : x ^ 5 ≤ x ^ 3 / 4 := by
-    convert hp 2 using 1 <;> norm_num <;> ring
+    convert hp 2 using 1; norm_num; ring
   have h6 : x ^ 6 ≤ x ^ 3 / 8 := by
-    convert hp 3 using 1 <;> norm_num <;> ring
+    convert hp 3 using 1; norm_num; ring
   have h7 : x ^ 7 ≤ x ^ 3 / 16 := by
-    convert hp 4 using 1 <;> norm_num <;> ring
+    convert hp 4 using 1; norm_num; ring
   have h8 : x ^ 8 ≤ x ^ 3 / 32 := by
-    convert hp 5 using 1 <;> norm_num <;> ring
+    convert hp 5 using 1; norm_num; ring
   have h9 : x ^ 9 ≤ x ^ 3 / 64 := by
-    convert hp 6 using 1 <;> norm_num <;> ring
+    convert hp 6 using 1; norm_num; ring
   have hden : 0 < 1 - x := by linarith
   have hrem : x ^ 9 / (1 - x) ≤ x ^ 3 / 32 := by
     rw [div_le_iff₀ hden]
@@ -941,7 +941,7 @@ theorem rowStabilityHPrime_lower
   have hx2 : 0 < x ^ 2 := sq_pos_of_pos hx0
   calc
     x / 12 = (x ^ 3 / 12) / x ^ 2 := by
-      field_simp [hx0.ne'] <;> ring
+      field_simp [hx0.ne']
     _ ≤ (Real.log (1 - x) + x + x ^ 2 / 2 + 2 * x ^ 3 / 3) / x ^ 2 :=
       (div_le_div_iff_of_pos_right hx2).2 hnum
     _ = rowStabilityHPrime x := rfl
@@ -1108,7 +1108,7 @@ theorem halfHalfL1Distance_eq
 theorem halfHalfL1Distance_of_below_half
     {n : ℕ} {p : Fin n → ℝ} (hp : IsProbabilityVector p)
     {a b : Fin n} (hab : a ≠ b)
-    (ha0 : 0 ≤ p a) (hb0 : 0 ≤ p b)
+    (_ : 0 ≤ p a) (_ : 0 ≤ p b)
     (haHalf : p a ≤ 1 / 2) (hbHalf : p b ≤ 1 / 2) :
     halfHalfL1Distance p a b = 2 * (1 - p a - p b) := by
   classical
@@ -1156,7 +1156,7 @@ theorem halfHalfL1Distance_of_below_half
 theorem halfHalfL1Distance_of_above_half
     {n : ℕ} {p : Fin n → ℝ} (hp : IsProbabilityVector p)
     {a b : Fin n} (hab : a ≠ b)
-    (haHalf : 1 / 2 ≤ p a) (hb0 : 0 ≤ p b) (hbHalf : p b ≤ 1 / 2) :
+    (haHalf : 1 / 2 ≤ p a) (_ : 0 ≤ p b) (hbHalf : p b ≤ 1 / 2) :
     halfHalfL1Distance p a b =
       2 * (p a - 1 / 2) + 2 * (1 - p a - p b) := by
   classical
@@ -1215,7 +1215,7 @@ theorem le_fourthRoot_of_pow_four_le
   have hx2 : 0 ≤ x ^ 2 := sq_nonneg x
   have hxsq : x ^ 2 ≤ Real.sqrt d := by
     rw [Real.le_sqrt hx2 hd]
-    convert hpow using 1 <;> ring
+    convert hpow using 1; ring
   rw [fourthRoot, Real.le_sqrt hx (Real.sqrt_nonneg d)]
   exact hxsq
 
@@ -1319,7 +1319,7 @@ theorem tailSeparableDefect_eq_sum_gap
   rw [hFtail, ← htailSum, Finset.sum_mul, ← Finset.sum_sub_distrib]
   apply Finset.sum_congr rfl
   intro j _
-  by_cases hja : j = a <;> simp [hja] <;> ring
+  by_cases hja : j = a <;> simp [hja]; ring
 
 /-- Paper (34): the row deficit dominates a separable defect. -/
 theorem rowDeficit_ge_separable
@@ -1342,29 +1342,29 @@ theorem hasDerivAt_bernoulliExcess
     HasDerivAt bernoulliExcess
       (1 / 2 * Real.log ((1 + u) / (1 - u)) - u) u := by
   have hp : HasDerivAt (fun x : ℝ ↦ (1 + x) / 2) (1 / 2) u := by
-    convert! ((hasDerivAt_const u 1).add (hasDerivAt_id u)).div_const 2 using 1 <;>
+    convert! ((hasDerivAt_const u 1).add (hasDerivAt_id u)).div_const 2 using 1;
       ring
   have hm : HasDerivAt (fun x : ℝ ↦ (1 - x) / 2) (-1 / 2) u := by
-    convert! ((hasDerivAt_const u 1).sub (hasDerivAt_id u)).div_const 2 using 1 <;>
+    convert! ((hasDerivAt_const u 1).sub (hasDerivAt_id u)).div_const 2 using 1;
       ring
   have hlp : HasDerivAt (fun x : ℝ ↦ Real.log (1 + x))
       (1 / (1 + u)) u := by
     convert! ((hasDerivAt_const u 1).add (hasDerivAt_id u)).log (by
-      simpa using (show (1 : ℝ) + u ≠ 0 by linarith)) using 1 <;>
+      simpa using (show (1 : ℝ) + u ≠ 0 by linarith)) using 1;
       simp
   have hlm : HasDerivAt (fun x : ℝ ↦ Real.log (1 - x))
       (-1 / (1 - u)) u := by
     convert! ((hasDerivAt_const u 1).sub (hasDerivAt_id u)).log (by
-      simpa using (show (1 : ℝ) - u ≠ 0 by linarith)) using 1 <;>
+      simpa using (show (1 : ℝ) - u ≠ 0 by linarith)) using 1;
       simp
   have hsq : HasDerivAt (fun x : ℝ ↦ x ^ 2 / 2) u u := by
-    convert! (hasDerivAt_pow 2 u).div_const 2 using 1 <;> ring
+    convert! (hasDerivAt_pow 2 u).div_const 2 using 1; ring
   have h := (hp.mul hlp).add (hm.mul hlm) |>.sub hsq
   unfold bernoulliExcess
   convert! h using 1
   rw [Real.log_div (by linarith : 1 + u ≠ 0) (by linarith : 1 - u ≠ 0)]
   field_simp [(show 1 + u ≠ 0 by linarith),
-    (show 1 - u ≠ 0 by linarith)] <;> ring
+    (show 1 - u ≠ 0 by linarith)]; ring
 
 /-- The first two terms in the power series for `artanh`. -/
 theorem one_add_cube_third_le_artanh
@@ -1384,7 +1384,7 @@ theorem hasDerivAt_correctedBernoulliExcess
     HasDerivAt correctedBernoulliExcess
       (Real.artanh u - u - u ^ 3 / 3) u := by
   have hpow : HasDerivAt (fun x : ℝ ↦ x ^ 4 / 12) (u ^ 3 / 3) u := by
-    convert! (hasDerivAt_pow 4 u).div_const 12 using 1 <;> ring
+    convert! (hasDerivAt_pow 4 u).div_const 12 using 1; ring
   have h := (hasDerivAt_bernoulliExcess huLeft huRight).sub hpow
   unfold correctedBernoulliExcess
   convert! h using 1
@@ -1439,7 +1439,7 @@ theorem row_defect_quartic
   have hu1 : 2 * a - 1 < 1 := by linarith
   rw [row_defect_eq_bernoulliExcess ha0 ha1]
   have h := bernoulliExcess_quartic hu0 hu1
-  convert h using 1 <;> ring
+  convert h using 1; ring
 
 theorem halfHalfVector_nonnegative
     {n : ℕ} (a b j : Fin n) : 0 ≤ halfHalfVector a b j := by

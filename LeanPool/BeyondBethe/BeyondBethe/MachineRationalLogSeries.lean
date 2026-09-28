@@ -421,7 +421,7 @@ def logSeriesSum (x : RawRat) : ℕ → RawRat
         x.value ^ (2 * k + 1) * (x.value * x.value) =
             x.value ^ (2 * k + 1) * x.value ^ 2 := by rw [pow_two]
         _ = x.value ^ ((2 * k + 1) + 2) := (pow_add _ _ _).symm
-        _ = x.value ^ (2 * (k + 1) + 1) := by congr 1 <;> omega
+        _ = x.value ^ (2 * (k + 1) + 1) := by congr 1
 
 @[simp] theorem value_logSeriesSum (x : RawRat) : ∀ k,
     (logSeriesSum x k).value = binaryRationalLogSeriesSum x.value k := by
@@ -444,7 +444,7 @@ theorem width_ofNat_le (n : ℕ) : rawRatWidth (ofNat n) ≤ n + 1 := by
         have hpos : 0 < 2 ^ (n + 1) := by positivity
         omega
   rw [rawRatWidth, ofNat]
-  simp only [Int.natAbs_ofNat', Nat.size_one]
+  simp only [Nat.size_one]
   exact max_le (Nat.size_le.mpr hpow) (by omega)
 
 theorem width_logOddPower_le (x : RawRat) : ∀ k,
@@ -603,7 +603,7 @@ private theorem logSeriesOddBits_length_le_inputBound
   have hsize : (2 * k + 1).bits.length ≤ 2 * k + 2 := by
     have hw := RawRat.width_ofNat_le (2 * k + 1)
     rw [rawRatWidth, RawRat.ofNat] at hw
-    simp only [Int.natAbs_ofNat', Nat.size_one] at hw
+    simp only [Nat.size_one] at hw
     have hs := (le_max_left (2 * k + 1).size 1).trans hw
     simpa only [Nat.size_eq_bits_len] using! hs
   let word := pair (List.replicate total true) (rawRatBinaryCode q)

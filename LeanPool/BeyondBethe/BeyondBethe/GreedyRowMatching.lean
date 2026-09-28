@@ -170,7 +170,6 @@ theorem half_card_mul_le_sum_of_maximalRowMatching {n : ℕ}
     exact_mod_cast card_le_two_mul_of_maximalRowMatching hM hS hSE
   have hcardGain : ((S.card : ℝ) * a) / 2 ≤ (M.card : ℝ) * a := by
     have := mul_le_mul_of_nonneg_right hcard ha
-    norm_num at this ⊢
     linarith
   refine hcardGain.trans ?_
   calc

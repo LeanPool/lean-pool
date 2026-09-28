@@ -37,8 +37,7 @@ private theorem machineBinaryAddIterate_max
           cases y with
           | nil =>
               cases carry <;>
-                simp [machineBinaryAddStep_pack, BinaryRippleAdd.ripple,
-                  Function.iterate_succ_apply]
+                simp [machineBinaryAddStep_pack, BinaryRippleAdd.ripple]
           | cons y ys =>
               simp only [List.length_nil, List.length_cons, Nat.zero_add]
                 at hmeasure
@@ -51,8 +50,8 @@ private theorem machineBinaryAddIterate_max
               rw [show max 0 (ys.length + 1) + 1 =
                   (max 0 ys.length + 1).succ by omega,
                 Function.iterate_succ_apply, machineBinaryAddStep_pack]
-              simp only [List.nil_eq, List.cons_ne_nil, and_false,
-                ↓reduceIte, List.tail_cons, List.tail_nil, List.head?_nil,
+              simp only [List.cons_ne_nil,
+                List.tail_cons, List.tail_nil, List.head?_nil,
                 Option.getD_none, List.head?_cons, Option.getD_some]
               simp only [true_and, false_and, ↓reduceIte]
               rw [show
@@ -79,8 +78,8 @@ private theorem machineBinaryAddIterate_max
               rw [show max (xs.length + 1) 0 + 1 =
                   (max xs.length 0 + 1).succ by omega,
                 Function.iterate_succ_apply, machineBinaryAddStep_pack]
-              simp only [List.cons_ne_nil, List.nil_eq, and_false,
-                ↓reduceIte, List.tail_cons, List.tail_nil, List.head?_cons,
+              simp only [List.cons_ne_nil,
+                List.tail_cons, List.tail_nil, List.head?_cons,
                 Option.getD_some, List.head?_nil, Option.getD_none]
               simp only [false_and, ↓reduceIte]
               rw [show
@@ -103,7 +102,7 @@ private theorem machineBinaryAddIterate_max
               rw [show max (xs.length + 1) (ys.length + 1) + 1 =
                   (max xs.length ys.length + 1).succ by omega,
                 Function.iterate_succ_apply, machineBinaryAddStep_pack]
-              simp only [List.cons_ne_nil, and_false, ↓reduceIte,
+              simp only [List.cons_ne_nil,
                 List.tail_cons, List.head?_cons, Option.getD_some]
               simp only [false_and, ↓reduceIte]
               rw [show

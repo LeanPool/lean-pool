@@ -230,13 +230,13 @@ theorem betheFloorCut_entry_code_length_le {m : ℕ}
       (explicitBetheFloorCutBaseEntry i j a b)).length ≤ 16 := by
   refine Fin.lastCases ?_ (fun i ↦ ?_) i <;>
     refine Fin.lastCases ?_ (fun j ↦ ?_) j
-  · norm_num [rationalEntryBinaryCode, integerBinaryCode] <;> decide
+  · norm_num [rationalEntryBinaryCode, integerBinaryCode]; decide
   · by_cases hb : b = j <;>
-      simp [hb, rationalEntryBinaryCode, integerBinaryCode] <;> decide
+      simp [hb, rationalEntryBinaryCode, integerBinaryCode]
   · by_cases ha : a = i <;>
-      simp [ha, rationalEntryBinaryCode, integerBinaryCode] <;> decide
+      simp [ha, rationalEntryBinaryCode, integerBinaryCode]
   · by_cases ha : a = i <;> by_cases hb : b = j <;>
-      simp [ha, hb, rationalEntryBinaryCode, integerBinaryCode] <;> decide
+      simp [ha, hb, rationalEntryBinaryCode, integerBinaryCode]; decide
 
 theorem betheFloorCut_base_code_length_le_bound {m : ℕ}
     (i j : Fin (m + 1)) :
@@ -258,7 +258,7 @@ theorem betheFloorCut_base_code_length_le_bound {m : ℕ}
     rw [unaryGridValues] at hq
     obtain ⟨k, rfl⟩ := List.mem_ofFn.mp hq
     exact betheFloorCut_entry_code_length_le i j _ _
-  have hsum := List.sum_le_card_nsmul
+  have hsum := List.sum_le_length_nsmul
     ((unaryGridValues (explicitBetheFloorCutBaseEntry i j)).map
       fun q ↦ 2 * (rationalEntryBinaryCode q).length + 2)
     34 (by

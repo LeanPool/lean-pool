@@ -472,8 +472,7 @@ theorem rewindWordEncodeTM_hoareTime_frame_internal
   refine ⟨finalCfg, rewindTime + 1 + encodeTime, ?_, hreach, ?_, ?_⟩
   · unfold rewindWordEncodeTime
     omega
-  · change (rewindWordEncodeTM idx).halted finalCfg
-    unfold rewindWordEncodeTM
+  · unfold rewindWordEncodeTM
     rw [TM.phase2Wrap_halted_iff]
     exact hencodeHalt
   · refine ⟨?_, hencodeSuffix, ?_, ?_, ?_, ?_⟩

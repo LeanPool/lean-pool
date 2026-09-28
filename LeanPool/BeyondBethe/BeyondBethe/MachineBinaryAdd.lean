@@ -280,7 +280,7 @@ theorem machinePairFirst_length_le (word : List Bool) :
                 have hrest := ih word.length (by simp at hlength; omega)
                   word rfl
                 cases a <;> cases b <;>
-                  simp [Cobham.fstBlock, hrest] <;> omega
+                  simp [Cobham.fstBlock] <;> omega
   exact hstrong word.length word rfl
 
 theorem machinePairSecond_length_le (word : List Bool) :

@@ -112,7 +112,7 @@ theorem singletonCoordinate_factorization
   rw [← Real.rpow_mul hx.le τ x]
   have hcompPow : (1 - x) ^ x * (1 - x) ^ (1 - x) = 1 - x := by
     rw [← Real.rpow_add hcomp x (1 - x)]
-    convert Real.rpow_one (1 - x) using 2 <;> ring
+    convert Real.rpow_one (1 - x) using 2; ring
   calc
     r ^ x * c ^ x * x ^ (τ * x) * (1 - x) ^ x *
         (1 - x) ^ (1 - x) =

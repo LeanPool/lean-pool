@@ -129,7 +129,6 @@ theorem birkhoffAffineMap_coordinates_of_unit_sums
     rw [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ,
       Fintype.card_fin, nsmul_eq_mul] at hlastRow
     rw [Finset.sum_comm] at hlastRow
-    push_cast at hlastRow ⊢
     linear_combination -hlastRow
   · simp only [birkhoffAffineMap_last_castSucc, birkhoffAffineCoordinates]
     have h := hcol j.castSucc

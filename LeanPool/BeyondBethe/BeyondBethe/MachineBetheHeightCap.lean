@@ -145,11 +145,12 @@ def machineBetheHeightCapCanonicalWord {d : ℕ}
       (List.ofFn q) d]
   · rw [rawRatBinaryCode_rawRatOfRat]
     congr 1
-    change (List.ofFn q)[d] = q (Fin.last d)
-    simp only [List.getElem_ofFn]
-    apply congrArg q
-    apply Fin.ext
-    rfl
+    have hindex : (List.ofFn q)[d] = q (Fin.last d) := by
+      simp only [List.getElem_ofFn]
+      apply congrArg q
+      apply Fin.ext
+      rfl
+    exact hindex
 
 @[simp] theorem machineBetheHeightLeUpperBit_encode {d : ℕ}
     (upper : RawRat) (q : Fin (d + 1) → ℚ) :

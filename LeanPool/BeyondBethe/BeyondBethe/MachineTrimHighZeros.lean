@@ -101,7 +101,7 @@ theorem machineTrim_recFold_eq : ∀ bits : List Bool,
       simp only [Cobham.recFold]
       cases bit with
       | false =>
-          simp only [Bool.false_eq, Bool.cond_false, machineTrimFalseStep,
+          simp only [Bool.cond_false, machineTrimFalseStep,
             machineTrimAcc, machinePairFirst_pair, machinePairSecond_pair, ih]
           cases htrim : BinaryRippleSub.trimHighZeros rest with
           | nil => simp [BinaryRippleSub.trimHighZeros, htrim]

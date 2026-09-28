@@ -42,8 +42,7 @@ theorem strongConvexOn_mul_log_Icc :
       rw [interior_Icc] at hx
       have hx0 : x ≠ 0 := ne_of_gt hx.1
       convert (Real.hasDerivAt_mul_log hx0).sub
-        ((hasDerivAt_pow 2 x).div_const 2) |>.hasDerivWithinAt using 1 <;>
-        ring
+        ((hasDerivAt_pow 2 x).div_const 2) |>.hasDerivWithinAt using 1
     · intro x hx
       rw [interior_Icc] at hx
       have hx0 : x ≠ 0 := ne_of_gt hx.1

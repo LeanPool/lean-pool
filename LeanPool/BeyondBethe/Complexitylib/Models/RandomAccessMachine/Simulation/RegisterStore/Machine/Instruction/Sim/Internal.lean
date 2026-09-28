@@ -366,7 +366,7 @@ private theorem bufferedCleanup_resetPhase
       (fun inp work out => inp = inp₀ ∧ work = resetWork ∧ out = out₀)
       (TM.resetBinaryWorkManyTime resetBits resetHeads targets)) ∧
     (∀ (role : Fin 18)
-      (hrole : ∀ slot : Fin 7,
+      (_ : ∀ slot : Fin 7,
         role ≠ instructionCleanupResetParentSlot slot),
       resetWork (tapes.lifted.data.idx role) =
         initialWork (tapes.lifted.data.idx role)) ∧
@@ -707,7 +707,7 @@ private theorem bufferedCleanup_restoreSourcePhase
         inp = inp₀ ∧ work = sourceReadyWork ∧ out = out₀)
       (nextBits.length + 1 + 2)) ∧
     (∀ (i : Fin (n + 1))
-      (hiSource : i ≠ tapes.liftedSource) (hiBuffer : i ≠ tapes.buffer),
+      (_ : i ≠ tapes.liftedSource) (_ : i ≠ tapes.buffer),
       sourceReadyWork i = resetWork i) ∧
     (∀ i, TM.Parked (sourceReadyWork i)) ∧
     (∀ i, TM.Parked (bufferResetWork i)) := by
@@ -827,10 +827,10 @@ private theorem bufferedCleanup_copyCountPhase
     let finalWork := Function.update sourceReadyWork
       tapes.lifted.data.update.remaining countTape
     (∀ (i : Fin (n + 1))
-      (hiSource : i ≠ tapes.liftedSource) (hiBuffer : i ≠ tapes.buffer),
+      (_ : i ≠ tapes.liftedSource) (_ : i ≠ tapes.buffer),
       sourceReadyWork i = resetWork i) →
     (∀ (role : Fin 18)
-      (hrole : ∀ slot : Fin 7,
+      (_ : ∀ slot : Fin 7,
         role ≠ instructionCleanupResetParentSlot slot),
       resetWork (tapes.lifted.data.idx role) =
         initialWork (tapes.lifted.data.idx role)) →
@@ -921,10 +921,10 @@ private theorem bufferedCleanup_finalFrame
     let finalWork := Function.update sourceReadyWork
       tapes.lifted.data.update.remaining countTape
     (∀ (i : Fin (n + 1))
-      (hiSource : i ≠ tapes.liftedSource) (hiBuffer : i ≠ tapes.buffer),
+      (_ : i ≠ tapes.liftedSource) (_ : i ≠ tapes.buffer),
       sourceReadyWork i = resetWork i) →
     (∀ (role : Fin 18)
-      (hrole : ∀ slot : Fin 7,
+      (_ : ∀ slot : Fin 7,
         role ≠ instructionCleanupResetParentSlot slot),
       resetWork (tapes.lifted.data.idx role) =
         initialWork (tapes.lifted.data.idx role)) →
@@ -933,8 +933,8 @@ private theorem bufferedCleanup_finalFrame
         TM.resetBinaryBlank) →
     (∀ i, TM.Parked (sourceReadyWork i)) →
     (∀ (role : Fin 18)
-      (hremaining : role ≠ 9) (hsource : role ≠ 0)
-      (hreset : ∀ slot : Fin 7,
+      (_ : role ≠ 9) (_ : role ≠ 0)
+      (_ : ∀ slot : Fin 7,
         role ≠ instructionCleanupResetParentSlot slot),
       finalWork (tapes.lifted.data.idx role) =
         initialWork (tapes.lifted.data.idx role)) ∧
@@ -1052,8 +1052,8 @@ private theorem bufferedCleanup_finalScanner
       tapes.lifted.data.update.remaining countTape
     (finalWork tapes.liftedSource = nextTape) →
     (∀ (role : Fin 18)
-      (hremaining : role ≠ 9) (hsource : role ≠ 0)
-      (hreset : ∀ slot : Fin 7,
+      (_ : role ≠ 9) (_ : role ≠ 0)
+      (_ : ∀ slot : Fin 7,
         role ≠ instructionCleanupResetParentSlot slot),
       finalWork (tapes.lifted.data.idx role) =
         initialWork (tapes.lifted.data.idx role)) →
@@ -1161,7 +1161,7 @@ private theorem bufferedCleanup_finalLookup
     let finalWork := Function.update sourceReadyWork
       tapes.lifted.data.update.remaining countTape
     (∀ (i : Fin (n + 1))
-      (hiSource : i ≠ tapes.liftedSource) (hiBuffer : i ≠ tapes.buffer),
+      (_ : i ≠ tapes.liftedSource) (_ : i ≠ tapes.buffer),
       sourceReadyWork i = resetWork i) →
     (EntryScanReady tapes.lifted.data.update.entry
       nextBits [] finalWork finalWork) →
@@ -1264,8 +1264,8 @@ private theorem bufferedCleanup_finalReady
         finalWork) →
     (finalWork tapes.liftedSource = nextTape) →
     (∀ (role : Fin 18)
-      (hremaining : role ≠ 9) (hsource : role ≠ 0)
-      (hreset : ∀ slot : Fin 7,
+      (_ : role ≠ 9) (_ : role ≠ 0)
+      (_ : ∀ slot : Fin 7,
         role ≠ instructionCleanupResetParentSlot slot),
       finalWork (tapes.lifted.data.idx role) =
         initialWork (tapes.lifted.data.idx role)) →

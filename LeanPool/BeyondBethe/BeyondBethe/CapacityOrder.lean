@@ -27,7 +27,7 @@ theorem realMonomial_pos
   exact Finset.prod_pos fun i _ ↦ Real.rpow_pos_of_pos (hz i) _
 
 theorem eval_nonneg_of_nonnegativeCoefficients
-    {σ : Type*} [Fintype σ]
+    {σ : Type*}
     {p : MvPolynomial σ ℝ} (hp : HasNonnegativeCoefficients p)
     {z : σ → ℝ} (hz : ∀ i, 0 ≤ z i) :
     0 ≤ p.eval z := by

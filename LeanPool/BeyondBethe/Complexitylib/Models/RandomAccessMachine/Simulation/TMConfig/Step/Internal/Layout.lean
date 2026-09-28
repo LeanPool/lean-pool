@@ -111,7 +111,7 @@ theorem encodeRegs_storeBounded_internal (tm : TM n) (bound : ℕ)
       omega)
   · intro reg
     by_cases hreg : reg < registerCount n bound
-    · rw [encodeRegs, dif_pos hreg]
+    · rw [encodeRegs, dite_eq_left hreg]
       let field := (fieldEquiv n bound).symm ⟨reg, hreg⟩
       change fieldValue tm bound cfg field ≤ wordBound tm bound
       rcases field with state | headOrCell

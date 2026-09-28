@@ -414,7 +414,7 @@ theorem epigraphPoint_add_baseSpike {d : ℕ}
       epigraphPoint (fun l ↦ y l + coordinateSpike k r l) s := by
   ext i
   refine Fin.lastCases ?_ (fun i ↦ ?_) i <;>
-    simp [epigraphPoint, coordinateSpike, k.castSucc_ne_last,
+    simp [epigraphPoint, coordinateSpike,
       Ne.symm k.castSucc_ne_last]
 
 /-- A negative base-coordinate spike leaves the epigraph height unchanged. -/
@@ -425,7 +425,7 @@ theorem epigraphPoint_sub_baseSpike {d : ℕ}
       epigraphPoint (fun l ↦ y l - coordinateSpike k r l) s := by
   ext i
   refine Fin.lastCases ?_ (fun i ↦ ?_) i <;>
-    simp [epigraphPoint, coordinateSpike, k.castSucc_ne_last,
+    simp [epigraphPoint, coordinateSpike,
       Ne.symm k.castSucc_ne_last]
 
 /-- A spike in the last coordinate changes only the epigraph height. -/
@@ -474,8 +474,7 @@ theorem smoothedUniformSpike_mem_epigraph
   have hproperties := smoothedUniformSpike_properties hm hτ0 hτ1
     hApos hAupper hX hXfloor hmix0 hmix1 k hq
   simp only [BetheEpigraphTarget, epigraphBase_epigraphPoint,
-    epigraphHeight_epigraphPoint,
-    vectorToSquareMatrix_squareMatrixToVector]
+    epigraphHeight_epigraphPoint]
   constructor
   · intro i j
     convert! hδ.trans (hproperties.2.1 i j) using 1

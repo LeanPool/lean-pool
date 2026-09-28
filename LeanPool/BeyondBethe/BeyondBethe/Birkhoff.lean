@@ -42,19 +42,21 @@ theorem IsDoublyStochastic.col_sum
   hX.2.2 j
 
 theorem IsDoublyStochastic.entry_le_one
-    {n : Type*} [Fintype n] [DecidableEq n]
+    {n : Type*} [Fintype n]
     {X : Matrix n n ℝ} (hX : IsDoublyStochastic X) (i j : n) :
     X i j ≤ 1 := by
+  classical
   rw [← hX.row_sum i]
   exact Finset.single_le_sum
     (fun k _ ↦ hX.nonnegative i k) (Finset.mem_univ j)
 
 theorem IsDoublyStochastic.entry_lt_one_of_positive
-    {n : Type*} [Fintype n] [DecidableEq n]
+    {n : Type*} [Fintype n]
     {X : Matrix n n ℝ} (hX : IsDoublyStochastic X)
     (hXpos : ∀ i j, 0 < X i j) (hcard : 1 < Fintype.card n)
     (i j : n) :
     X i j < 1 := by
+  classical
   obtain ⟨k, hkj⟩ := Fintype.exists_ne_of_one_lt_card hcard j
   rw [← hX.row_sum i]
   calc
@@ -75,10 +77,11 @@ theorem pairAlpha_nonneg
   exact add_nonneg (hX.nonnegative r j) (hX.nonnegative s j)
 
 theorem pairAlpha_le_one
-    {n : Type*} [Fintype n] [DecidableEq n]
+    {n : Type*} [Fintype n]
     {X : Matrix n n ℝ} (hX : IsDoublyStochastic X)
     {r s : n} (hrs : r ≠ s) (j : n) :
     pairAlpha X r s j ≤ 1 := by
+  classical
   rw [← hX.col_sum j]
   calc
     pairAlpha X r s j = ∑ i ∈ ({r, s} : Finset n), X i j := by
@@ -88,9 +91,10 @@ theorem pairAlpha_le_one
         fun i _ _ ↦ hX.nonnegative i j
 
 theorem exists_ne_ne_of_two_lt_card
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (hcard : 2 < Fintype.card ι) (r s : ι) :
     ∃ t, t ≠ r ∧ t ≠ s := by
+  classical
   obtain ⟨x, y, z, hxy, hxz, hyz⟩ := Fintype.two_lt_card_iff.mp hcard
   by_cases hx : x ≠ r ∧ x ≠ s
   · exact ⟨x, hx⟩
@@ -108,11 +112,12 @@ theorem exists_ne_ne_of_two_lt_card
   · exact False.elim (hxy (hxs.trans hys.symm))
 
 theorem pairAlpha_lt_one_of_positive
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {X : Matrix ι ι ℝ} (hX : IsDoublyStochastic X)
     (hXpos : ∀ i j, 0 < X i j) (hcard : 2 < Fintype.card ι)
     {r s : ι} (hrs : r ≠ s) (j : ι) :
     pairAlpha X r s j < 1 := by
+  classical
   obtain ⟨t, htr, hts⟩ := exists_ne_ne_of_two_lt_card hcard r s
   calc
     pairAlpha X r s j < pairAlpha X r s j + X t j :=

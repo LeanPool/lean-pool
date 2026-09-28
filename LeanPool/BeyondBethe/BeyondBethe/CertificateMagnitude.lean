@@ -182,7 +182,6 @@ theorem positive_normalized_log_permanent_bounds
       norm_num [d]
     rw [hdcast, Real.log_pow] at hlogLower
     rw [hlogHalf] at hlogLower
-    push_cast
     nlinarith
   have hBJ : ∀ i j, Br i j ≤ J i j := by
     intro i j

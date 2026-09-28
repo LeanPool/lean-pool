@@ -412,7 +412,7 @@ private theorem machineBinarySubIterate_max
               rw [show max 0 (ys.length + 1) =
                   (max 0 ys.length).succ by omega,
                 Function.iterate_succ_apply, machineBinarySubStep_pack]
-              simp only [List.nil_eq, List.cons_ne_nil, and_false,
+              simp only [List.cons_ne_nil, and_false,
                 ↓reduceIte, List.tail_nil, List.tail_cons, List.head?_nil,
                 Option.getD_none, List.head?_cons, Option.getD_some]
               rw [hrec']
@@ -432,8 +432,8 @@ private theorem machineBinarySubIterate_max
               rw [show max (xs.length + 1) 0 =
                   (max xs.length 0).succ by omega,
                 Function.iterate_succ_apply, machineBinarySubStep_pack]
-              simp only [List.cons_ne_nil, List.nil_eq, and_false,
-                ↓reduceIte, List.tail_cons, List.tail_nil, List.head?_cons,
+              simp only [List.cons_ne_nil,
+                List.tail_cons, List.tail_nil, List.head?_cons,
                 Option.getD_some, List.head?_nil, Option.getD_none]
               simp only [false_and, ite_false]
               rw [hrec']

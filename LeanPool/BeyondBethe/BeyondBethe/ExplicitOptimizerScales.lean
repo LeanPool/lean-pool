@@ -221,7 +221,6 @@ theorem explicitOptimizerInitialWidth_pos {m : ℕ}
       (mul_pos (by norm_num) (explicitOptimizerInnerRadius_pos A))
   have hB : (0 : ℚ) ≤ rationalMatrixEntryBitBound A := by positivity
   have hn : (0 : ℚ) < m + 1 := by positivity
-  push_cast
   nlinarith
 
 /-- The precision exponent contains enough dyadic shift to absorb the
@@ -395,7 +394,7 @@ theorem explicitOptimizerBisectionWidth_lt {m : ℕ}
     calc
       W / 2 ^ (LW + Lg + 3) =
           W * (1 / 2 : ℚ) ^ (LW + Lg + 3) := by
-        simp [div_eq_mul_inv, one_div, inv_pow]
+        simp [div_eq_mul_inv, inv_pow]
       _ < (2 : ℚ) ^ LW *
           (1 / 2 : ℚ) ^ (LW + Lg + 3) := by
         exact mul_lt_mul_of_pos_right hW (by positivity)

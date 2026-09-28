@@ -1021,11 +1021,9 @@ theorem unaryGridOrdinal_injective (m : ℕ) :
   have hmod := congrArg (fun q : ℕ => q % m) hab
   have hmpos : 0 < m := Nat.zero_lt_of_lt a.1.isLt
   have hmodA : unaryGridOrdinal a.1 a.2 % m = a.2.1 := by
-    simp [unaryGridOrdinal, Nat.add_mod, Nat.mod_eq_of_lt a.2.isLt,
-      hmpos]
+    simp [unaryGridOrdinal, Nat.add_mod, Nat.mod_eq_of_lt a.2.isLt]
   have hmodB : unaryGridOrdinal b.1 b.2 % m = b.2.1 := by
-    simp [unaryGridOrdinal, Nat.add_mod, Nat.mod_eq_of_lt b.2.isLt,
-      hmpos]
+    simp [unaryGridOrdinal, Nat.add_mod, Nat.mod_eq_of_lt b.2.isLt]
   have hcolumn : a.2.1 = b.2.1 := by
     calc
       a.2.1 = unaryGridOrdinal a.1 a.2 % m := hmodA.symm
@@ -1121,7 +1119,7 @@ theorem unaryGridSemanticInit_valueInvariant {m : ℕ}
     (hm : 0 < m) (f : Fin m → Fin m → ℚ) :
     UnaryGridValueInvariant f 0 (unaryGridSemanticInit hm) := by
   right
-  simp [UnaryGridValueInvariant, unaryGridSemanticInit,
+  simp [unaryGridSemanticInit,
     unaryGridOrdinal, unaryGridPrefix]
 
 theorem unaryGridSemanticStep_valueInvariant {m k : ℕ}
@@ -1226,7 +1224,7 @@ theorem unaryGridSemanticStateAt_active {m k : ℕ}
   · exact hactive
 
 theorem machineUnaryGridGeneratorInit_semanticCode {m : ℕ}
-    (hm : 0 < m) (f : Fin m → Fin m → ℚ)
+    (hm : 0 < m)
     (bound payload : List Bool) :
     machineUnaryGridGeneratorInit
         (machineUnaryGridGeneratorCanonicalWord m bound payload) =
@@ -1269,7 +1267,7 @@ theorem machineUnaryGridGeneratorIterate_semanticCode {m : ℕ}
           (unaryGridSemanticStateAt hm f k) := by
   intro k hk
   induction k with
-  | zero => exact machineUnaryGridGeneratorInit_semanticCode hm f bound payload
+  | zero => exact machineUnaryGridGeneratorInit_semanticCode hm bound payload
   | succ k ih =>
       have hklt : k < m * m := by omega
       rw [Function.iterate_succ_apply', ih (by omega)]

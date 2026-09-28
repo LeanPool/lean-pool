@@ -154,7 +154,7 @@ theorem coarsenedRowEntropy_sub_binary_sub_mass_le_transferCostOn
     coarsenedRowEntropy outside p - binaryEntropy (massOn outside p) -
         massOn outside p ≤ transferCostOn outside p u := by
   rw [coarsenedRowEntropy]
-  convert scaledConditionalEntropyOn_sub_mass_le_transferCostOn outside hp hu hUsum using 1 <;>
+  convert scaledConditionalEntropyOn_sub_mass_le_transferCostOn outside hp hu hUsum using 1;
     ring
 
 theorem binaryEntropy_eq_binEntropy (ρ : ℝ) :

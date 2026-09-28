@@ -139,7 +139,7 @@ theorem coordinateBefore_trans_swap
     {n : ℕ} (a b : Fin n) (π : Equiv.Perm (Fin n)) :
     CoordinateBefore a b (π.trans (Equiv.swap a b)) ↔
       CoordinateBefore b a π := by
-  simp [CoordinateBefore, Equiv.trans_apply, Equiv.swap_apply_def]
+  simp [CoordinateBefore, Equiv.trans_apply]
 
 theorem coordinateBeforeProbability_symm
     {n : ℕ} (a b : Fin n) :
@@ -218,7 +218,7 @@ theorem strictRightMass_le_outside_of_before
       not_lt_of_ge hbefore.le
     simp [hnot]
   · by_cases horder : π.symm a < π.symm j
-    · simp [haj, hbj, horder, hp.nonnegative j]
+    · simp [haj, hbj, horder]
     · simp [haj, hbj, horder, hp.nonnegative j]
 
 theorem uniformAverage_mono
@@ -413,7 +413,7 @@ theorem rowT_ge_two_core_suffix_bound
           suffixError (p b) (p a + (1 - p a - p b))) ≤
       uniformAverage (fun π : Equiv.Perm (Fin n) ↦
         suffixError (p b) (strictRightMass p π b)) := by
-    convert hb0 using 1 <;> ring
+    convert hb0 using 1; ring
   have hcore := rowT_ge_core_errors hp hab
   rw [uniformAverage_add] at hcore
   nlinarith
@@ -511,7 +511,7 @@ theorem goodRowRadius_le_abs (η : ℝ) : goodRowRadius η ≤ |η| := by
     rw [goodRowRadius, max_eq_left hmin]
     exact abs_nonneg η
 
-theorem goodRowRadius_eq { η : ℝ } (hη₀ : 0 ≤ η) (hη₁ : η ≤ 1 / 10) :
+theorem goodRowRadius_eq {η : ℝ} (hη₀ : 0 ≤ η) (hη₁ : η ≤ 1 / 10) :
     goodRowRadius η = η := by
   unfold goodRowRadius
   rw [min_eq_left hη₁, max_eq_right hη₀]

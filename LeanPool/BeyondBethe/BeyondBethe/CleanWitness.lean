@@ -102,20 +102,20 @@ theorem cleanWitnessOrientedPair_injective
   · cases e
     cases f
     cases o <;> cases p <;>
-      simp_all [cleanWitnessOrientedPair, cleanWitnessEndpoints, hab]
+      simp_all [cleanWitnessOrientedPair, cleanWitnessEndpoints]
   · rcases f with l | l <;> cases e
     all_goals cases o <;> cases p <;>
-      simp_all [cleanWitnessOrientedPair, cleanWitnessEndpoints, hab,
-        l.ne_a, l.ne_b, Ne.symm l.ne_a, Ne.symm l.ne_b]
+      simp_all [cleanWitnessOrientedPair, cleanWitnessEndpoints,
+        Ne.symm l.ne_a, Ne.symm l.ne_b]
   · rcases e with l | l <;> cases f
     all_goals cases o <;> cases p <;>
-      simp_all [cleanWitnessOrientedPair, cleanWitnessEndpoints, hab,
-        l.ne_a, l.ne_b, Ne.symm l.ne_a, Ne.symm l.ne_b]
+      simp_all [cleanWitnessOrientedPair, cleanWitnessEndpoints,
+        l.ne_a, l.ne_b]
   · rcases e with l | l <;> rcases f with m | m
     all_goals cases o <;> cases p <;>
-      simp_all [cleanWitnessOrientedPair, cleanWitnessEndpoints, hab,
-        l.ne_a, l.ne_b, m.ne_a, m.ne_b, Ne.symm l.ne_a,
-        Ne.symm l.ne_b, Ne.symm m.ne_a, Ne.symm m.ne_b]
+      simp_all [cleanWitnessOrientedPair, cleanWitnessEndpoints,
+        l.ne_a, l.ne_b,
+        Ne.symm m.ne_a, Ne.symm m.ne_b]
 
 /-- The actual coefficient in the pair polynomial of a witness edge. -/
 noncomputable def cleanWitnessCoefficient
@@ -243,7 +243,7 @@ theorem finitePolynomial_cleanWitness_le_pairPolynomial_eval
           f (orient eo)) =
         ∑ e ∈ Finset.image orient Finset.univ, f e := by
     symm
-    simpa only [Finset.mem_univ, Set.mem_setOf_eq] using
+    simpa only [Finset.mem_univ, Set.mem_ofPred_eq] using
       (Finset.sum_image (s := Finset.univ) (f := f)
         (g := orient) (cleanWitnessOrientedPair_injective hab).injOn)
   have hsubset : Finset.image orient Finset.univ ⊆
@@ -560,7 +560,7 @@ visible is what permits the numerical algorithm to evaluate the witness
 directly, without optimizing a capacity. -/
 theorem cleanWitness_capacity_theta_lower
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {a b : ι} (hab : a ≠ b)
+    {a b : ι} (_ : a ≠ b)
     {u v : ι → ℝ} {w ρ δa δb τ : ℝ}
     {α : OutsideColumn a b → ℝ}
     (hw : 0 < w) (hρ : 0 < ρ) (hρ1 : ρ < 1)
@@ -624,7 +624,7 @@ theorem cleanWitness_capacity_theta_bound_of_certificate
     (hu : ∀ j, 0 < u j) (hv : ∀ j, 0 < v j)
     (hua : w ≤ u a) (hub : w ≤ u b)
     (hva : w ≤ v a) (hvb : w ≤ v b)
-    (hmoment : ∀ j,
+    (_ : ∀ j,
       exponentMoment (capacityWitnessMass ρ δa δb α)
         (cleanWitnessExponent a b) j = αfull j)
     (hcertUpper :
@@ -734,13 +734,13 @@ theorem cleanWitness_coreA_moment
       (cleanWitnessExponent a b) a = αa := by
   rw [exponentMoment]
   simp only [Fintype.sum_sum_type, Fintype.sum_unique,
-    cleanWitnessExponent, ite_eq_left (Or.inl rfl), Nat.cast_one, mul_one]
+    cleanWitnessExponent]
   have hright : ∀ l : OutsideColumn a b,
       ((if a = b ∨ a = l.1 then 1 else 0 : ℕ) : ℝ) = 0 := by
     intro l
     simp [hab, l.ne_a.symm]
   simp_rw [hright, mul_zero, Finset.sum_const_zero, add_zero]
-  simp only [true_or, or_true, if_true, Nat.cast_one, mul_one]
+  simp only [true_or, ite_true, Nat.cast_one, mul_one]
   exact capacityWitness_coreA_marginal hρ hαsum hδa hδsum
 
 theorem cleanWitness_coreB_moment
@@ -753,13 +753,13 @@ theorem cleanWitness_coreB_moment
       (cleanWitnessExponent a b) b = αb := by
   rw [exponentMoment]
   simp only [Fintype.sum_sum_type, Fintype.sum_unique,
-    cleanWitnessExponent, ite_eq_left (Or.inr rfl), Nat.cast_one, mul_one]
+    cleanWitnessExponent]
   have hleft : ∀ l : OutsideColumn a b,
       ((if b = a ∨ b = l.1 then 1 else 0 : ℕ) : ℝ) = 0 := by
     intro l
     simp [hab.symm, l.ne_b.symm]
   simp_rw [hleft, mul_zero, Finset.sum_const_zero, zero_add]
-  simp only [true_or, or_true, if_true, Nat.cast_one, mul_one]
+  simp only [true_or, or_true, ite_true, Nat.cast_one, mul_one]
   exact capacityWitness_coreB_marginal hρ hαsum hδb hδsum
 
 theorem cleanWitness_outside_moment
@@ -792,7 +792,7 @@ theorem cleanWitness_outside_moment
       have hcond : ¬(l.1 = a ∨ l.1 = x.1) :=
         fun h ↦ h.elim l.ne_a hne
       have hlx : l ≠ x := Ne.symm hxl
-      simp [f, hcond, l.ne_a, hlx])
+      simp [f, l.ne_a, hlx])
     simpa [f, l.ne_a] using hsingle
   have hright :
       (∑ x : OutsideColumn a b,
@@ -811,7 +811,7 @@ theorem cleanWitness_outside_moment
       have hcond : ¬(l.1 = b ∨ l.1 = x.1) :=
         fun h ↦ h.elim l.ne_b hne
       have hlx : l ≠ x := Ne.symm hxl
-      simp [f, hcond, l.ne_b, hlx])
+      simp [f, l.ne_b, hlx])
     simpa [f, l.ne_b] using hsingle
   rw [hleft, hright]
   exact capacityWitness_outside_marginal hρ hδsum l

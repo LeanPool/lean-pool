@@ -241,8 +241,8 @@ theorem rationalMatrixMul_code_length_le_cubic {d : ℕ}
               intro j _
               have h := hentry i j
               omega
-          _ = d * (2 * L + 2) := by simp [mul_comm]
-    _ = d * (2 * (d * (2 * L + 2)) + 2) := by simp [mul_comm]
+          _ = d * (2 * L + 2) := by simp
+    _ = d * (2 * (d * (2 * L + 2)) + 2) := by simp
 
 theorem rationalMatrixMul_code_length_le_bound {d : ℕ}
     (A B : Matrix (Fin d) (Fin d) ℚ) :
@@ -486,7 +486,6 @@ theorem machineRationalMatrixMulIterate_length_le_width
   rcases machineRationalMatrixMulIterate_bound word iterations with
     ⟨hdecomp, hremaining, hacc, hpayload, hbound⟩
   rw [hdecomp]
-  change (machineRationalTransposeMulVectorPack _ _ _ _).length ≤ _
   rw [hbound]
   simp only [machineRationalTransposeMulVectorPack,
     machineRationalMatrixMulWidth, machineRationalMatrixMulInputBound,

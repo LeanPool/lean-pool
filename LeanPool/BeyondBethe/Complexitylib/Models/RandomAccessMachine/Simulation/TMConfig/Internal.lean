@@ -67,7 +67,7 @@ theorem encodeRegs_field_internal (tm : TM n) (bound : ℕ)
   have hreg : fieldReg field < registerCount n bound :=
     (fieldEquiv n bound field).isLt
   unfold encodeRegs
-  rw [dif_pos hreg]
+  rw [dite_eq_left hreg]
   have hfield :
       (⟨fieldReg field, hreg⟩ : Fin (registerCount n bound)) =
         fieldEquiv n bound field := by
@@ -111,7 +111,7 @@ private theorem decodeTape_of_represents (tm : TM n) (bound : ℕ)
     rfl
   · funext position
     by_cases hposition : position < bound + 1
-    · simp only [decodeTape, hposition, dif_pos]
+    · simp only [decodeTape, hposition, dite_eq_left]
       rw [hrepresents (cellField tape ⟨position, hposition⟩)]
       exact symbolDecode_code_internal _
     · simp only [decodeTape, hposition]

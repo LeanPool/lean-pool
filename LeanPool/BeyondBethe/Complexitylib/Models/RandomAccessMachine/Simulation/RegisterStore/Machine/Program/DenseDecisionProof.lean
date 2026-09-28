@@ -148,8 +148,7 @@ theorem denseProgramDecisionTM_hoareTime_run_internal
   · unfold denseProgramDecisionTime
     dsimp only [initial, final] at hloopTime houtputTime ⊢
     omega
-  · change (denseProgramDecisionTM tapes program).halted done
-    unfold denseProgramDecisionTM
+  · unfold denseProgramDecisionTM
     exact (TM.phase2Wrap_halted_iff (denseProgramInitTM tapes)
       (TM.seqTM (denseProgramLoopTM tapes program)
         (denseProgramOutputTM tapes)) tailDone).mpr htailHalt

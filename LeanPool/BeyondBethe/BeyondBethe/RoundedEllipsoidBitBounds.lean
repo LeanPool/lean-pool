@@ -406,7 +406,6 @@ theorem roundedEllipsoidInflation_le_one {d : ℕ} (hd : 0 < d) :
   have hden : (1 : ℚ) ≤ 1024 * d ^ 4 := by
     have hdq : (1 : ℚ) ≤ d := by exact_mod_cast hd
     have hd4 : (1 : ℚ) ≤ (d : ℚ) ^ 4 := one_le_pow₀ hdq
-    norm_num only [Nat.cast_pow, Nat.cast_ofNat]
     nlinarith
   exact (div_le_one (by positivity : (0 : ℚ) < 1024 * d ^ 4)).2 hden
 
@@ -459,7 +458,7 @@ theorem rationalMatrixAbsBound_adaptiveRounded_le {d : ℕ}
       nlinarith [sq_nonneg ((d : ℚ) - 1)]
 
 theorem rationalCenterAbsBound_adaptiveRounded_le {d : ℕ}
-    (hd : 0 < d) (U : RationalEllipsoidState d) :
+    (_ : 0 < d) (U : RationalEllipsoidState d) :
     rationalCenterAbsBound (adaptiveRoundedEllipsoid U).center ≤
       rationalCenterAbsBound U.center + d := by
   let p := roundedEllipsoidPrecision U

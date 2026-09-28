@@ -57,9 +57,10 @@ theorem IsProbabilityVector.sum_eq_one
   hp.2
 
 theorem IsProbabilityVector.le_one
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {p : ι → ℝ} (hp : IsProbabilityVector p) (i : ι) :
     p i ≤ 1 := by
+  classical
   rw [← hp.sum_eq_one]
   exact Finset.single_le_sum
     (fun j _ ↦ hp.nonnegative j) (Finset.mem_univ i)
@@ -76,18 +77,20 @@ noncomputable def shannonEntropy
   ∑ i, Real.negMulLog (p i)
 
 theorem shannonEntropy_nonneg
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {p : ι → ℝ} (hp : IsProbabilityVector p) :
     0 ≤ shannonEntropy p := by
+  classical
   apply Finset.sum_nonneg
   intro i _
   exact Real.negMulLog_nonneg (hp.nonnegative i) (hp.le_one i)
 
 /-- Entropy is at most the logarithm of the support size. -/
 theorem shannonEntropy_le_log_card
-    {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
+    {ι : Type*} [Fintype ι] [Nonempty ι]
     {p : ι → ℝ} (hp : IsProbabilityVector p) :
     shannonEntropy p ≤ Real.log (Fintype.card ι) := by
+  classical
   let N : ℝ := Fintype.card ι
   have hN : 0 < N := by
     dsimp [N]
@@ -120,17 +123,19 @@ noncomputable def totalRowEntropy
   ∑ i, shannonEntropy (X i)
 
 theorem totalRowEntropy_nonneg
-    {n : Type*} [Fintype n] [DecidableEq n]
+    {n : Type*} [Fintype n]
     {X : Matrix n n ℝ} (hX : IsDoublyStochastic X) :
     0 ≤ totalRowEntropy X := by
+  classical
   exact Finset.sum_nonneg fun i _ ↦
     shannonEntropy_nonneg (hX.row_probability i)
 
 theorem totalRowEntropy_le
-    {n : Type*} [Fintype n] [DecidableEq n] [Nonempty n]
+    {n : Type*} [Fintype n] [Nonempty n]
     {X : Matrix n n ℝ} (hX : IsDoublyStochastic X) :
     totalRowEntropy X ≤
       Fintype.card n * Real.log (Fintype.card n) := by
+  classical
   rw [totalRowEntropy]
   calc
     ∑ i, shannonEntropy (X i)
@@ -167,11 +172,12 @@ theorem entropy_loss_merge_two {u v : ℝ} (hu : 0 < u) (hv : 0 < v) :
 /-- Finite log-sum inequality with strictly positive weights.  This is the
 one-sided, certificate-producing half of the entropy duality for capacity. -/
 theorem log_sum_inequality
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {θ w : ι → ℝ}
     (hθ : ∀ i, 0 < θ i) (hθsum : ∑ i, θ i = 1)
     (hw : ∀ i, 0 < w i) :
     ∑ i, θ i * Real.log (w i / θ i) ≤ Real.log (∑ i, w i) := by
+  classical
   let r : ι → ℝ := fun i ↦ w i / θ i
   have hr : ∀ i, 0 < r i := fun i ↦ div_pos (hw i) (hθ i)
   have hAM := Real.geom_mean_le_arith_mean_weighted
@@ -195,11 +201,12 @@ theorem log_sum_inequality
 continuous convention `0 * log 0 = 0`; the proof restricts to the positive
 support before applying the strict version. -/
 theorem log_sum_inequality_nonnegative
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {θ w : ι → ℝ}
     (hθ : ∀ i, 0 ≤ θ i) (hθsum : ∑ i, θ i = 1)
     (hw : ∀ i, 0 < w i) :
     ∑ i, θ i * Real.log (w i / θ i) ≤ Real.log (∑ i, w i) := by
+  classical
   let s : Finset ι := Finset.univ.filter fun i ↦ 0 < θ i
   have hs : s.Nonempty := by
     by_contra hempty
@@ -211,7 +218,7 @@ theorem log_sum_inequality_nonnegative
       exact le_antisymm (le_of_not_gt hnot) (hθ i)
     have : (∑ i, θ i) = 0 := by simp [hzero]
     linarith
-  letI : Nonempty s := ⟨⟨hs.choose, hs.choose_spec⟩⟩
+  let : Nonempty s := ⟨⟨hs.choose, hs.choose_spec⟩⟩
   let θs : s → ℝ := fun i ↦ θ i
   let ws : s → ℝ := fun i ↦ w i
   have hθs : ∀ i, 0 < θs i := by
@@ -264,10 +271,11 @@ theorem log_sum_inequality_nonnegative
 /-- Entropy bound for a nonnegative vector of total mass `ρ`.  This is the
 scaled form used for the outside mass in paper (60). -/
 theorem shannonEntropy_of_mass_le
-    {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
+    {ι : Type*} [Fintype ι] [Nonempty ι]
     {α : ι → ℝ} {ρ : ℝ}
     (hα : ∀ i, 0 ≤ α i) (hρ : 0 < ρ) (hsum : ∑ i, α i = ρ) :
     shannonEntropy α ≤ ρ * Real.log (Fintype.card ι / ρ) := by
+  classical
   let q : ι → ℝ := fun i ↦ α i / ρ
   have hq : IsProbabilityVector q := by
     constructor
@@ -622,14 +630,15 @@ theorem functionEntropy_le_sum_coordinateEntropies
           rw [Fin.sum_univ_succ]
 
 theorem entropy_on_finset_of_mass_le
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*}
     (s : Finset α) (hs : s.Nonempty) {μ : α → ℝ} {ρ : ℝ}
     (hμ : ∀ x, 0 ≤ μ x) (hρ : 0 < ρ)
     (hsum : ∑ x ∈ s, μ x = ρ) :
     (∑ x ∈ s, Real.negMulLog (μ x)) ≤
       ρ * Real.log ((s.card : ℝ) / ρ) := by
+  classical
   let q : s → ℝ := fun x ↦ μ x
-  letI : Nonempty s := ⟨⟨hs.choose, hs.choose_spec⟩⟩
+  let : Nonempty s := ⟨⟨hs.choose, hs.choose_spec⟩⟩
   have hqsum : ∑ x, q x = ρ := by
     calc
       ∑ x, q x = ∑ x ∈ s.attach, μ x := by rfl
@@ -647,7 +656,7 @@ theorem entropy_on_finset_of_mass_le
 mass times the logarithm of the maximum fiber size. -/
 theorem fiber_entropy_bound
     {α β : Type*} [Fintype α] [Fintype β]
-    [DecidableEq α] [DecidableEq β]
+    [DecidableEq β]
     {μ : α → ℝ} (hμ : IsProbabilityVector μ) (f : α → β)
     (K : ℕ) (hK : 1 ≤ K)
     (hfiber : ∀ y, (Finset.univ.filter fun x ↦ f x = y).card ≤ K)
@@ -656,6 +665,7 @@ theorem fiber_entropy_bound
         Real.negMulLog (μ x)) ≤
       Real.negMulLog (pushforwardMass μ f y) +
         pushforwardMass μ f y * Real.log K := by
+  classical
   let s := Finset.univ.filter fun x ↦ f x = y
   change (∑ x ∈ s, Real.negMulLog (μ x)) ≤ _
   have hqnonneg := (pushforwardMass_isProbabilityVector μ hμ f).nonnegative y
@@ -683,7 +693,7 @@ theorem fiber_entropy_bound
       exact hqzero this
     have hsum : ∑ x ∈ s, μ x = pushforwardMass μ f y := by
       rw [Finset.sum_filter]
-      simp [s, pushforwardMass]
+      simp [pushforwardMass]
     have hscaled := entropy_on_finset_of_mass_le s hs
       hμ.nonnegative hqpos hsum
     have hcardpos : (0 : ℝ) < s.card := by
@@ -712,12 +722,13 @@ part of paper Lemma 9, independent of the cycle combinatorics used to bound
 the fibers. -/
 theorem entropy_le_pushforward_add_log_fiberBound
     {α β : Type*} [Fintype α] [Fintype β]
-    [DecidableEq α] [DecidableEq β]
+    [DecidableEq β]
     {μ : α → ℝ} (hμ : IsProbabilityVector μ) (f : α → β)
     (K : ℕ) (hK : 1 ≤ K)
     (hfiber : ∀ y, (Finset.univ.filter fun x ↦ f x = y).card ≤ K) :
     shannonEntropy μ ≤
       shannonEntropy (pushforwardMass μ f) + Real.log K := by
+  classical
   have hpoint := fun y ↦ fiber_entropy_bound hμ f K hK hfiber y
   have hsum :
       (∑ y, ∑ x ∈ Finset.univ.filter (fun x ↦ f x = y),

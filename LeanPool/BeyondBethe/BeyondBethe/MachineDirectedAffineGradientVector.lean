@@ -294,7 +294,7 @@ theorem directedAffineGradient_vector_code_length_le_bound {m : ℕ}
     simpa only [directedAffineGradientVector, squareMatrixToVector, ij, E,
       B, L, word] using!
       directedAffineGradient_entry_code_length_le tau A y p ij.1 ij.2
-  have hsum := List.sum_le_card_nsmul
+  have hsum := List.sum_le_length_nsmul
     ((List.ofFn (directedAffineGradientVector tau A y p)).map
       fun q => 2 * (rationalEntryBinaryCode q).length + 2)
     (2 * E + 2) (by

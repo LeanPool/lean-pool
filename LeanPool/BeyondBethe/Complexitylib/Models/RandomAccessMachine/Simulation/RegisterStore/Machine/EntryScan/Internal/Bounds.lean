@@ -58,7 +58,7 @@ private theorem entryMissCleanupTime_canonical_le_linear {n : ℕ}
     (1 + matchTime) (bitlen entry.1 + bitlen entry.2 + 1)
     (fun i _ => by
       unfold entryMissHeadBound entryScanCanonicalWork
-      simp [TM.resetBinaryBlank, Tape.move, Tape.init]
+      simp only [Function.const_apply]
       dsimp only [matchTime]
       exact le_rfl)
     (fun i _ => entryMissBits_length_le_sum tapes entry queryBits i)

@@ -41,14 +41,14 @@ def rawRoundedInflationFactor (d : ℕ) : RawRat :=
     (rawRoundedInflation d).value = roundedEllipsoidInflation d := by
   simp [rawRoundedInflation, rawRoundedInflationDenominator,
     roundedEllipsoidInflation, rawEllipsoidDimensionSquare,
-    rawEllipsoidOne, RawRat.value_one, RawRat.value_ofNat]
+    rawEllipsoidOne, RawRat.value_ofNat]
   ring
 
 @[simp] theorem rawRoundedInflationFactor_value (d : ℕ) :
     (rawRoundedInflationFactor d).value =
       1 + roundedEllipsoidInflation d := by
   simp [rawRoundedInflationFactor, rawEllipsoidOne,
-    RawRat.value_one, RawRat.value_ofNat]
+    RawRat.value_ofNat]
 
 /-- Extract the unary precision ruler from a scheduled ellipsoid-rounding input. -/
 def machineScheduledRoundPrecision (word : List Bool) : List Bool :=

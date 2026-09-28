@@ -106,7 +106,7 @@ proof uses the elementary hyperbolic logarithm bound and exact polynomial
 arithmetic; it replaces the integral estimate in the source. -/
 theorem anariRezaeiMergePsiDerivative_nonpos
     {r s : ℝ} (hr0 : 0 ≤ r) (hrs : r ≤ s)
-    (hC : r+s ≤ 14/25) :
+    (hC : r + s ≤ 14 / 25) :
     anariRezaeiMergePsiDerivative r s ≤ 0 := by
   have hs0 : 0 ≤ s := hr0.trans hrs
   have hs1 : s < 1 := (le_add_of_nonneg_left hr0).trans hC |>.trans_lt (by norm_num)
@@ -158,7 +158,7 @@ theorem anariRezaeiMergePsiDerivative_nonpos
 
 theorem anariRezaeiMergePsi_nonpos_ordered
     {r s : ℝ} (hr0 : 0 ≤ r) (hrs : r ≤ s)
-    (hC : r+s ≤ 14/25) :
+    (hC : r + s ≤ 14 / 25) :
     anariRezaeiMergePsi r s ≤ 0 := by
   let C := r+s
   have hC0 : 0 ≤ C := add_nonneg hr0 (hr0.trans hrs)
@@ -201,7 +201,7 @@ theorem anariRezaeiMergePsi_comm
 
 theorem anariRezaeiMergePsi_nonpos
     {r s : ℝ} (hr0 : 0 ≤ r) (hs0 : 0 ≤ s)
-    (hC : r+s ≤ 14/25) :
+    (hC : r + s ≤ 14 / 25) :
     anariRezaeiMergePsi r s ≤ 0 := by
   rcases le_total r s with hrs | hsr
   · exact anariRezaeiMergePsi_nonpos_ordered hr0 hrs hC
@@ -219,7 +219,7 @@ noncomputable def anariRezaeiMergeTStar (r s : ℝ) : ℝ :=
   (1-s*(1+r+s))/(2+r+s)
 
 private theorem anariRezaeiCutoff_product
-    {C : ℝ} (hC0 : 0 ≤ C) (hC : C ≤ 14/25) :
+    {C : ℝ} (hC0 : 0 ≤ C) (hC : C ≤ 14 / 25) :
     C*(1+C) < 1 := by
   have hfac : 0 ≤ (14/25-C)*(1+14/25+C) :=
     mul_nonneg (sub_nonneg.mpr hC) (by positivity)
@@ -227,7 +227,7 @@ private theorem anariRezaeiCutoff_product
 
 theorem anariRezaeiMergeStars_nonnegative
     {r s : ℝ} (hr0 : 0 ≤ r) (hs0 : 0 ≤ s)
-    (hC : r+s ≤ 14/25) :
+    (hC : r + s ≤ 14 / 25) :
     0 ≤ anariRezaeiMergeQStar r s ∧
       0 ≤ anariRezaeiMergeTStar r s := by
   have hC0 : 0 ≤ r+s := add_nonneg hr0 hs0
@@ -241,7 +241,7 @@ theorem anariRezaeiMergeStars_nonnegative
   · rw [anariRezaeiMergeTStar]
     exact div_nonneg (by nlinarith) hden.le
 
-theorem anariRezaeiMergeStars_sum (r s : ℝ) (hden : 2+r+s ≠ 0) :
+theorem anariRezaeiMergeStars_sum (r s : ℝ) (hden : 2 + r + s ≠ 0) :
     anariRezaeiMergeQStar r s + anariRezaeiMergeTStar r s =
       1-r-s := by
   rw [anariRezaeiMergeQStar, anariRezaeiMergeTStar]
@@ -259,7 +259,7 @@ noncomputable def anariRezaeiMergeGapDerivative (r s x : ℝ) : ℝ :=
 
 theorem hasDerivAt_anariRezaeiMergeGapAlong
     {r s x : ℝ} (hr : 0 < r) (hs : 0 < s)
-    (hx0 : 0 ≤ x) (ht0 : 0 ≤ 1-r-s-x) :
+    (hx0 : 0 ≤ x) (ht0 : 0 ≤ 1 - r - s - x) :
     HasDerivAt (anariRezaeiMergeGapAlong r s)
       (anariRezaeiMergeGapDerivative r s x) x := by
   have hxr : 0 < x+r := add_pos_of_nonneg_of_pos hx0 hr
@@ -297,7 +297,7 @@ theorem hasDerivAt_anariRezaeiMergeGapAlong
 
 theorem anariRezaeiMergeGapDerivative_sign
     {r s x : ℝ} (hr : 0 < r) (hs : 0 < s)
-    (hx0 : 0 ≤ x) (ht0 : 0 ≤ 1-r-s-x) :
+    (hx0 : 0 ≤ x) (ht0 : 0 ≤ 1 - r - s - x) :
     (0 ≤ anariRezaeiMergeGapDerivative r s x ↔
       x ≤ anariRezaeiMergeQStar r s) ∧
     (anariRezaeiMergeGapDerivative r s x ≤ 0 ↔
@@ -343,8 +343,8 @@ theorem anariRezaeiMergeGapDerivative_sign
 
 theorem anariRezaeiMergeGap_le_stationary
     {q r s t : ℝ} (hq0 : 0 ≤ q) (hr : 0 < r) (hs : 0 < s)
-    (ht0 : 0 ≤ t) (hsum : q+r+s+t = 1)
-    (hC : r+s ≤ 14/25) :
+    (ht0 : 0 ≤ t) (hsum : q + r + s + t = 1)
+    (hC : r + s ≤ 14 / 25) :
     anariRezaeiMergeGap q r s t ≤
       anariRezaeiMergeGap (anariRezaeiMergeQStar r s) r s
         (anariRezaeiMergeTStar r s) := by
@@ -407,7 +407,7 @@ theorem anariRezaeiMergeGap_le_stationary
 
 theorem anariRezaeiMergeGap_stationary_eq
     {r s : ℝ} (hr0 : 0 ≤ r) (hs0 : 0 ≤ s)
-    (hC : r+s ≤ 14/25) :
+    (_ : r + s ≤ 14 / 25) :
     anariRezaeiMergeGap (anariRezaeiMergeQStar r s) r s
         (anariRezaeiMergeTStar r s) = anariRezaeiMergePsi r s := by
   have h1pr : 1+r ≠ 0 := by linarith
@@ -457,7 +457,7 @@ theorem anariRezaeiMergeGap_stationary_eq
 theorem anariRezaeiMergeGap_nonpos
     {q r s t : ℝ} (hq0 : 0 ≤ q) (hr0 : 0 ≤ r)
     (hs0 : 0 ≤ s) (ht0 : 0 ≤ t)
-    (hsum : q+r+s+t = 1) (hC : r+s ≤ 14/25) :
+    (hsum : q + r + s + t = 1) (hC : r + s ≤ 14 / 25) :
     anariRezaeiMergeGap q r s t ≤ 0 := by
   by_cases hrz : r = 0
   · subst r
@@ -468,7 +468,7 @@ theorem anariRezaeiMergeGap_nonpos
       norm_num
     · have hratio : (s+t)/(s+t) = (1 : ℝ) := div_self hst
       have hratio' : (s+t)/(0+s+t) = (1 : ℝ) := by
-        convert hratio using 1 <;> ring
+        convert hratio using 1; ring
       rw [hratio']
       norm_num
   · by_cases hsz : s = 0
@@ -479,7 +479,7 @@ theorem anariRezaeiMergeGap_nonpos
         exact (hrz hrzero).elim
       · have hratio : (q+r)/(q+r) = (1 : ℝ) := div_self hqr
         have hratio' : (q+r)/(q+r+0) = (1 : ℝ) := by
-          convert hratio using 1 <;> ring
+          convert hratio using 1; ring
         rw [hratio']
         norm_num
     · calc

@@ -857,7 +857,7 @@ theorem Snapshot.encodedStoreLength_run_le_internal (program : Program)
       by_cases hhalt : snapshot.Halted program
       · have hramHalted :=
           (Snapshot.halted_decode_iff_internal program snapshot).mpr hhalt
-        simp only [hhalt, hramHalted, if_true, RAM.unitTimeUpto,
+        simp only [hhalt, hramHalted, ite_true, RAM.unitTimeUpto,
           RAM.logTimeUpto]
         simp
       · have hramNotHalted : ¬RAM.Halted program snapshot.decode :=

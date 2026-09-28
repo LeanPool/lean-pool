@@ -198,7 +198,6 @@ theorem abs_det_div_coarseDenominator_le_meshTarget {d : ℕ}
         dsimp only [Q]
         rw [roundedEllipsoidCoarseDenominator,
           roundedDeterminantCoefficient]
-        push_cast
         ring
       rw [heq]
       simpa only [mul_one] using mul_le_mul_of_nonneg_left hfactor hbase
@@ -212,9 +211,8 @@ theorem abs_det_div_coarseDenominator_le_meshTarget {d : ℕ}
       dsimp only [Q]
       rw [roundedEllipsoidInflation, roundedInverseCoefficient,
         roundedEllipsoidCoarseDenominator]
-      push_cast
       field_simp [Nat.ne_of_gt hd, hM.ne']
-      <;> ring
+     ; ring
     rw [heq]
 
 theorem determinantFreeRoundedMeshTarget_le {d : ℕ} (hd : 0 < d)
@@ -236,7 +234,7 @@ def roundedEllipsoidPrecision {d : ℕ}
 
 theorem dyadicMesh_eq_half_pow (p : ℕ) :
     dyadicMesh p = (1 / 2 : ℚ) ^ p := by
-  simp [dyadicMesh, div_pow]
+  simp [dyadicMesh]
 
 theorem roundedEllipsoidMeshTarget_pos {d : ℕ} (hd : 0 < d)
     (U : RationalEllipsoidState d) (hdet : Matrix.det U.basis ≠ 0) :

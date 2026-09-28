@@ -121,7 +121,7 @@ theorem machineRawRatInvNonzeroCode_encode (q : RawRat) (hq : q.num ≠ 0) :
       | succ n =>
           simp only [machineRawRatInvNonzeroCode, rawRatBinaryCode,
             machinePairFirst_pair, machinePairSecond_pair,
-            machineHeadBit_cons, machineIntegerNatAbsBits_encode,
+            machineIntegerNatAbsBits_encode,
             RawRat.inv]
           change pair
             (machineCanonicalIntegerFromSignedAbs (pair [false] den.bits))
@@ -131,7 +131,7 @@ theorem machineRawRatInvNonzeroCode_encode (q : RawRat) (hq : q.num ≠ 0) :
   | negSucc n =>
       simp only [machineRawRatInvNonzeroCode, rawRatBinaryCode,
         machinePairFirst_pair, machinePairSecond_pair,
-        machineHeadBit_cons, machineIntegerNatAbsBits_encode,
+        machineIntegerNatAbsBits_encode,
         RawRat.inv]
       change pair
         (machineCanonicalIntegerFromSignedAbs (pair [true] den.bits))
@@ -146,7 +146,7 @@ theorem machineRawRatInvCode_encode (q : RawRat) :
     rw [machineRawRatInvCode]
     simp only [rawRatBinaryCode, machinePairFirst_pair,
       machineIntegerNatAbsBits_encode, habs, machineIfEmpty_nil]
-    simp [RawRat.inv, RawRat.zero, hq, rawRatBinaryCode,
+    simp [RawRat.inv, RawRat.zero, hq,
       integerBinaryCode]
   · have habs : q.num.natAbs.bits ≠ [] :=
       natBits_ne_nil_of_ne_zero (Int.natAbs_ne_zero.mpr hq)

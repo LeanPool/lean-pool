@@ -415,7 +415,7 @@ theorem machineKuhnInitControl_encode {n : ℕ}
   | zero =>
       simp [machineKuhnInitControl, machineKuhnInitNonemptyControl,
         kuhnBuildEvalState, kuhnControlCode, finRangeUnaryCode,
-        finListUnaryCode, binaryListCode]
+        binaryListCode]
   | succ n =>
       simp [machineKuhnInitControl, machineKuhnInitNonemptyControl,
         machineKuhnInitStack, machineKuhnInitBuildFrame,
@@ -456,7 +456,7 @@ theorem machineKuhnInputClamp_eq (matrix candidate : List Bool)
   rw [machineKuhnInputClamp_eq matrix _
     (kuhnFalseSeenCode_length_le_inputBound A)]
   simp [kuhnMachineStateCode, machineKuhnInitControl_encode,
-    matrix, initial]
+    matrix]
 
 @[simp] theorem machineKuhnFinalState_encode {n : ℕ}
     (A : Matrix (Fin n) (Fin n) ℚ) :

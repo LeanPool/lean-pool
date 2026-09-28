@@ -49,7 +49,7 @@ theorem log_natMonomial
   rw [natMonomial, Real.log_prod]
   · apply Finset.sum_congr rfl
     intro j _
-    simpa using Real.log_pow (z j) (E j)
+    simp [Real.log_pow]
   · intro j _
     exact (pow_pos (hz j) _).ne'
 
@@ -92,13 +92,14 @@ theorem averaged_log_natMonomial
 positive feasible distribution.  Unlike the reverse equality, this direction
 uses only finite log-sum and has no convex-duality dependency. -/
 theorem entropyCapacityCertificate_le_log_ratio
-    {κ σ : Type*} [Fintype κ] [DecidableEq κ] [Fintype σ]
+    {κ σ : Type*} [Fintype κ] [Fintype σ]
     {θ c : κ → ℝ} {E : κ → σ → ℕ} {α z : σ → ℝ}
     (hθ : ∀ e, 0 < θ e) (hθsum : ∑ e, θ e = 1)
     (hc : ∀ e, 0 < c e) (hz : ∀ j, 0 < z j)
     (hmoment : ∀ j, exponentMoment θ E j = α j) :
     entropyCapacityCertificate θ c ≤
       Real.log (finitePolynomial c E z / realMonomial z α) := by
+  classical
   let w : κ → ℝ := fun e ↦ c e * natMonomial z (E e)
   have hnatpos : ∀ e, 0 < natMonomial z (E e) := by
     intro e
@@ -146,13 +147,14 @@ theorem entropyCapacityCertificate_le_log_ratio
 /-- Certificate-producing capacity inequality with zero witness weights
 allowed.  This is the boundary form used by the clean-pair witness. -/
 theorem entropyCapacityCertificate_le_log_ratio_nonnegative
-    {κ σ : Type*} [Fintype κ] [DecidableEq κ] [Fintype σ]
+    {κ σ : Type*} [Fintype κ] [Fintype σ]
     {θ c : κ → ℝ} {E : κ → σ → ℕ} {α z : σ → ℝ}
     (hθ : ∀ e, 0 ≤ θ e) (hθsum : ∑ e, θ e = 1)
     (hc : ∀ e, 0 < c e) (hz : ∀ j, 0 < z j)
     (hmoment : ∀ j, exponentMoment θ E j = α j) :
     entropyCapacityCertificate θ c ≤
       Real.log (finitePolynomial c E z / realMonomial z α) := by
+  classical
   let w : κ → ℝ := fun e ↦ c e * natMonomial z (E e)
   have hnatpos : ∀ e, 0 < natMonomial z (E e) := by
     intro e
@@ -206,13 +208,14 @@ noncomputable def finitePolynomialCapacity
     v = finitePolynomial c E z / realMonomial z α}
 
 theorem exp_entropyCapacityCertificate_le_finitePolynomialCapacity
-    {κ σ : Type*} [Fintype κ] [DecidableEq κ] [Fintype σ]
+    {κ σ : Type*} [Fintype κ] [Fintype σ]
     {θ c : κ → ℝ} {E : κ → σ → ℕ} {α : σ → ℝ}
     (hθ : ∀ e, 0 ≤ θ e) (hθsum : ∑ e, θ e = 1)
     (hc : ∀ e, 0 < c e)
     (hmoment : ∀ j, exponentMoment θ E j = α j) :
     Real.exp (entropyCapacityCertificate θ c) ≤
       finitePolynomialCapacity c E α := by
+  classical
   apply le_csInf
   · let one : σ → ℝ := fun _ ↦ 1
     exact ⟨finitePolynomial c E one / realMonomial one α,
@@ -239,13 +242,14 @@ theorem exp_entropyCapacityCertificate_le_finitePolynomialCapacity
     exact hexp
 
 theorem entropyCapacityCertificate_le_log_finitePolynomialCapacity
-    {κ σ : Type*} [Fintype κ] [DecidableEq κ] [Fintype σ]
+    {κ σ : Type*} [Fintype κ] [Fintype σ]
     {θ c : κ → ℝ} {E : κ → σ → ℕ} {α : σ → ℝ}
     (hθ : ∀ e, 0 ≤ θ e) (hθsum : ∑ e, θ e = 1)
     (hc : ∀ e, 0 < c e)
     (hmoment : ∀ j, exponentMoment θ E j = α j) :
     entropyCapacityCertificate θ c ≤
       Real.log (finitePolynomialCapacity c E α) := by
+  classical
   have hexp := exp_entropyCapacityCertificate_le_finitePolynomialCapacity
     hθ hθsum hc hmoment
   have hcap : 0 < finitePolynomialCapacity c E α :=
@@ -293,7 +297,7 @@ theorem finitePolynomialCapacity_support_eq_polynomialCapacity
   rw [finitePolynomialCapacity, polynomialCapacity]
   congr 1
   ext value
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   constructor
   · rintro ⟨z, hz, rfl⟩
     exact ⟨z, hz, by rw [finitePolynomial_support_eq_eval]⟩

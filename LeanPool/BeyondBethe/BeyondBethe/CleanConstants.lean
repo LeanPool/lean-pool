@@ -178,8 +178,7 @@ theorem cleanCoreFunction_continuousAt_zero :
   have hlogexp := hexp.log (by norm_num)
   have hnml : ContinuousAt (fun p : ℝ × ℝ => Real.negMulLog p.2) (0, 0) :=
     Real.continuous_negMulLog.continuousAt.comp_of_eq hsnd rfl
-  convert ((hden.mul hlogfrac).add (hsnd.mul hlogexp)).sub hnml |>.sub hsnd using 1 <;>
-    ext p <;> rfl
+  convert ((hden.mul hlogfrac).add (hsnd.mul hlogexp)).sub hnml |>.sub hsnd using 1
 
 /-- Uniform continuity at `(kappa,rho)=(0,0)` makes the core contribution
 strictly larger than `log 2 / 2` throughout a small rectangle. -/

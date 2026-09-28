@@ -428,7 +428,7 @@ private theorem matrixNormalize_outputCode_length_le
         simpa only [rationalRowDivideValues, List.length_map] using! hsum
       have htail := ih htailEntry
       simp only [List.map_cons, binaryListCode, pair_length,
-        List.map_map, List.sum_cons, List.length_cons] at htail ⊢
+        List.sum_cons, List.length_cons] at htail ⊢
       nlinarith
 
 theorem machineMatrixNormalize_outputRows_length_le_bound {n : ℕ}

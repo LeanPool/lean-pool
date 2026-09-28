@@ -149,7 +149,7 @@ theorem scheduledRounded_det_lower {d p : ℕ} (hd : 0 < d)
       exact_mod_cast hlossQ
     norm_num only [roundedDeterminantCoefficient, Rat.cast_mul,
       Rat.cast_pow, Rat.cast_natCast, Rat.cast_div] at hc
-    convert hc using 1 <;> ring
+    convert hc using 1; ring
   have hsmallLoss :
       d.factorial *
           (d * (dyadicMesh p : ℝ) * (2 * (Mq : ℝ)) ^ d) <
@@ -433,7 +433,7 @@ theorem abs_det_scheduledRoundedCentralUpdate_le {d p : ℕ} (hd : 0 < d)
       ΔE * (1 - 7 / (128 * (d : ℝ) ^ 3)) := by
     rw [hΔeq]
     have hq' : q ≤ 1 - 8 / (128 * (d : ℝ) ^ 3) := by
-      convert hqContract using 1 <;> ring
+      convert hqContract using 1; ring
     have hqmul := mul_le_mul_of_nonneg_left hq' hΔE0
     calc
       ΔE * q + L ≤
@@ -630,7 +630,7 @@ theorem rationalMatrixAbsBound_scheduledRounded_le {d p : ℕ}
       nlinarith [sq_nonneg ((d : ℚ) - 1)]
 
 theorem rationalCenterAbsBound_scheduledRounded_le {d p : ℕ}
-    (hd : 0 < d) (U : RationalEllipsoidState d) :
+    (_ : 0 < d) (U : RationalEllipsoidState d) :
     rationalCenterAbsBound (scheduledRoundedEllipsoid p U).center ≤
       rationalCenterAbsBound U.center + d := by
   have hentry : ∀ i,

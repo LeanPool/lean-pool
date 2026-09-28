@@ -209,7 +209,6 @@ theorem abs_binaryEntropy_sub_half_le {p : ℝ}
     _ ≤ 6 * abs (p - 1 / 2) +
         6 * abs ((1 - p) - 1 / 2) := add_le_add hp h1p
     _ = 12 * abs (p - 1 / 2) := by
-      congr 1
       rw [show (1 - p) - 1 / 2 = -(p - 1 / 2) by ring, abs_neg]
       ring
 
@@ -246,7 +245,7 @@ theorem abs_continuousSuffixError_near_zero
     calc
       abs (q * Real.log (u + q) - 0 * Real.log (1 / 2)) ≤
           2 * abs (q - 0) + 4 * abs ((u + q) - 1 / 2) := hprod
-      _ ≤ 2 * r + 4 * (2 * r) := by gcongr <;> simpa using hq
+      _ ≤ 2 * r + 4 * (2 * r) := by gcongr; simpa using hq
       _ = 10 * r := by ring
   have hnml := abs_negMulLog_lt_two_sqrt_abs
     (x := q) (hq.trans (hr1.trans (by norm_num)))
@@ -519,7 +518,7 @@ theorem goodRowOmega_le_seventy_sqrt_radius (η : ℝ) :
     Prod.dist_eq, max_le_iff, Real.dist_eq, Real.dist_eq,
     Real.dist_eq] at hz'
   rcases hz' with ⟨hu, hv, hq⟩
-  simp only [goodRowCenter, Prod.fst, Prod.snd, sub_zero] at hu hv hq
+  simp only [goodRowCenter, sub_zero] at hu hv hq
   have hbound := abs_continuousGoodRowPsi_sub_center_le
     (goodRowRadius_nonneg η) (goodRowRadius_le_tenth η) hu hv hq
   have hc : continuousGoodRowPsi (1 / 2) (1 / 2) 0 = Real.log 2 / 2 := by
@@ -609,7 +608,7 @@ theorem explicitKappa_cleanCore
   have hcore' :
       Real.log 2 - ρ * Real.log 2 - 1 / 500 - Real.negMulLog ρ - ρ ≤
         cleanCoreFunction (explicitKappa : ℝ) ρ := by
-    convert hcore using 1 <;> norm_num [explicitKappa]
+    convert hcore using 1; norm_num [explicitKappa]
   have hρlog : ρ * Real.log 2 ≤ (1 / 250 : ℝ) * 0.6931471808 := by
     calc
       ρ * Real.log 2 ≤ (1 / 250 : ℝ) * Real.log 2 :=
