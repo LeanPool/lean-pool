@@ -258,6 +258,7 @@ MIT permission notice that follows them.
   LeanPool/DirectedTopologyLean4     https://github.com/Dominique-Lawson/Directed-Topology-Lean-4
       Copyright 2023 Dominique Lawson
 
+  LeanPool/ErdosGinzburgZiv          https://github.com/zakharov2k/egz-formal-proof
   LeanPool/FactorizationSystems      https://github.com/ivankobe/FactorizationSystems
       Copyright (c) 2024 ivankobe
 
