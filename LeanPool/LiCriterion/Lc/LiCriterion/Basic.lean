@@ -655,105 +655,23 @@ private lemma logDeriv_algebraic_identity
 lemma logDeriv_finite_prod (S : Finset ℂ) (hS : 0 ∉ S) (s : ℂ) (hs : ∀ ρ ∈ S, s ≠ ρ) :
     let f := fun t => ∏ ρ ∈ S, (1 - t/ρ)
     deriv f s / f s = - ∑ ρ ∈ S, (1 / ρ) / (1 - s/ρ) := by
-  -- Prove by induction on S
-  induction S using Finset.induction_on with
-  | empty =>
-    -- Base case: empty product is 1, derivative is 0
-    simp only [Finset.prod_empty, Finset.sum_empty]
-    rw [deriv_const']
-    simp only [zero_div, neg_zero]
-  | @insert a T ha ih =>
-    -- Inductive step
-    intro f
-    have ha0 : a ≠ 0 := by
-      intro h
-      rw [h] at ha
-      have : 0 ∈ insert a T := by simp [h]
-      exact hS this
-    have hT0 : 0 ∉ T := by
-      intro h
-      have : 0 ∈ insert a T := Finset.mem_insert_of_mem h
-      exact hS this
-    have hsT : ∀ ρ ∈ T, s ≠ ρ := by
-      intros ρ hρ
-      exact hs ρ (Finset.mem_insert_of_mem hρ)
-    have hsa : s ≠ a := hs a (Finset.mem_insert_self a T)
-    -- Key: f(t) = (1 - t/a) * g(t) where g(t) = ∏_{ρ ∈ T} (1 - t/ρ)
-    let g := fun t => ∏ ρ ∈ T, (1 - t/ρ)
-    -- The product splits
-    have prod_split : f = fun t => (1 - t/a) * g t := by
-      ext t
-      simp only [f, g, Finset.prod_insert ha]
-    -- Apply product rule: (fg)' = f'g + fg'
-    have deriv_prod : deriv f s = deriv (fun t => 1 - t/a) s * g s + (1 - s/a) * deriv g s := by
-      rw [prod_split]
-      have h1 : DifferentiableAt ℂ (fun t => (1 : ℂ) - t/a) s := by
-        apply DifferentiableAt.sub
-        · exact differentiableAt_const (c := (1 : ℂ))
-        · apply DifferentiableAt.div_const
-          exact differentiableAt_id
-      have h2 : DifferentiableAt ℂ g s := by
-        simp only [g]
-        apply differentiableAt_finset_prod
-        intros ρ hρ
-        apply DifferentiableAt.sub
-        · exact differentiableAt_const (c := (1 : ℂ))
-        · apply DifferentiableAt.div_const
-          exact differentiableAt_id
-      exact deriv_mul h1 h2
-    -- Compute f s
-    have f_val : f s = (1 - s/a) * g s := by
-      simp only [f, g, Finset.prod_insert ha]
-    -- Now compute the logarithmic derivative
-    calc deriv f s / f s
-        = (deriv (fun t => 1 - t/a) s * g s + (1 - s/a) * deriv g s) / ((1 - s/a) * g s) := by
-          rw [deriv_prod, f_val]
-        _ = deriv (fun t => 1 - t/a) s / (1 - s/a) + deriv g s / g s := by
-          -- We need to show:
-          -- (deriv (fun t => 1 - t/a) s * g s + (1 - s/a) * deriv g s) / ((1 - s/a) * g s)
-          -- = deriv (fun t => 1 - t/a) s / (1 - s/a) + deriv g s / g s
-          have h_ne_a : (1 - s/a) ≠ 0 := by
-            rw [sub_ne_zero]
-            intro h
-            have : s/a = 1 := h.symm
-            have : s = a := by
-              rw [div_eq_one_iff_eq] at this
-              · exact this
-              · exact ha0
-            exact hsa this
-          have h_ne_g : g s ≠ 0 := by
-            simp only [g]
-            apply Finset.prod_ne_zero_iff.mpr
-            intros ρ hρ
-            rw [sub_ne_zero]
-            intro h
-            have : s/ρ = 1 := h.symm
-            have : s = ρ := by
-              have hρ0 : ρ ≠ 0 := by
-                intro h0
-                rw [h0] at hρ
-                exact hT0 hρ
-              rw [div_eq_one_iff_eq] at this
-              · exact this
-              · exact hρ0
-            exact hsT ρ hρ this
-          -- Split the fraction
-          rw [add_div]
-          congr 1
-          · -- First term: deriv (fun t => 1 - t/a) s * g s / ((1 - s/a) * g s)
-            rw [mul_div_mul_right _ _ h_ne_g]
-          · -- Second term: (1 - s/a) * deriv g s / ((1 - s/a) * g s)
-            rw [mul_div_mul_left _ _ h_ne_a]
-        _ = (-1/a) / (1 - s/a) + deriv g s / g s := by
-          rw [deriv_single_factor a ha0]
-        _ = -1/a / (1 - s/a) + (- ∑ ρ ∈ T, (1 / ρ) / (1 - s/ρ)) := by
-          -- Apply induction hypothesis
-          have ih_applied := ih hT0 hsT
-          rw [ih_applied]
-        _ = -(1/a / (1 - s/a) + ∑ ρ ∈ T, (1 / ρ) / (1 - s/ρ)) := by
-          ring
-        _ = - ∑ ρ ∈ insert a T, (1 / ρ) / (1 - s/ρ) := by
-          rw [Finset.sum_insert ha]
+  have hnonzero : ∀ ρ ∈ S, (1 : ℂ) - s / ρ ≠ 0 := by
+    intro ρ hρ hzero
+    have hρ0 : ρ ≠ 0 := fun h => hS (h ▸ hρ)
+    have heq : s / ρ = 1 := (sub_eq_zero.mp hzero).symm
+    exact hs ρ hρ ((div_eq_one_iff_eq hρ0).mp heq)
+  have hdifferentiable : ∀ ρ ∈ S, DifferentiableAt ℂ (fun t : ℂ => 1 - t / ρ) s :=
+    fun ρ _ => (differentiableAt_const (c := (1 : ℂ))).sub
+      (differentiableAt_id.div_const ρ)
+  have hproduct := _root_.logDeriv_fun_prod (s := S)
+    (f := fun ρ t : ℂ => 1 - t / ρ) hnonzero hdifferentiable
+  simp only [_root_.logDeriv_apply] at hproduct
+  dsimp only
+  rw [hproduct, ← Finset.sum_neg_distrib]
+  apply Finset.sum_congr rfl
+  intro ρ hρ
+  rw [deriv_single_factor ρ (fun h => hS (h ▸ hρ))]
+  simp only [neg_div]
 
 /-- Helper: expansion of logarithmic derivative of phi for finite set -/
 lemma logDeriv_phi_finite (S : Finset ℂ) (hS : 0 ∉ S) {z : ℂ} (hz : ‖z‖ < 1)
