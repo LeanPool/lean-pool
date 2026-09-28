@@ -3576,10 +3576,6 @@ theorem step_B_normalized (hbr : BrouwerFPT)
   have hJnr : J_n ⊆ range r := hUnion ▸ subset_union_left
   have hJsr : J_s ⊆ range r := hUnion ▸ subset_union_right
   have hErect := normalized_subset_rectangle hm hp hfar
-  have ha0 : (!₂[(-1 : ℝ), 0] : Plane) 0 = -1 := by simp
-  have ha1 : (!₂[(-1 : ℝ), 0] : Plane) 1 = 0 := by simp
-  have hb0 : (!₂[(1 : ℝ), 0] : Plane) 0 = 1 := by simp
-  have hb1 : (!₂[(1 : ℝ), 0] : Plane) 1 = 0 := by simp
   have hs0 : (!₂[(0 : ℝ), -2] : Plane) 0 = 0 := by simp
   have hs1 : (!₂[(0 : ℝ), -2] : Plane) 1 = -2 := by simp
   have hn0 : (!₂[(0 : ℝ), 2] : Plane) 0 = 0 := by simp
@@ -3603,11 +3599,8 @@ theorem step_B_normalized (hbr : BrouwerFPT)
       rw [hInter] at hmem
       rcases hmem with h' | h' <;>
         (have hc := congrArg (fun x : Plane => x 0) h'; simp only [hm0] at hc; norm_num at hc)
-  have hqm : q 1 < m 1 := lt_of_le_of_lt hqp hpm_lt
   have hpz₀_lt : p 1 < z₀ 1 := by rw [hz₀1e]; linarith
   have hz₀m_lt : z₀ 1 < m 1 := by rw [hz₀1e]; linarith
-  have hz₀1lb : (-2 : ℝ) ≤ z₀ 1 := le_of_lt (lt_of_le_of_lt hpE1.1 hpz₀_lt)
-  have hz₀1ub : z₀ 1 ≤ 2 := le_of_lt (lt_of_lt_of_le hz₀m_lt hmE1.2)
   have hmab := axis_point_avoids_horizontal_endpoints m hm0
   have hlab := axis_point_avoids_horizontal_endpoints l hl0
   have hqab := axis_point_avoids_horizontal_endpoints q hq0
@@ -3620,15 +3613,10 @@ theorem step_B_normalized (hbr : BrouwerFPT)
     · exact absurd (hpmax z₀ hJs hz₀0 hz₀m_lt.le) (not_le.2 hpz₀_lt)
   -- interval facts
   have hIcc0x : (0 : ℝ) ∈ Icc (-1 : ℝ) 1 := by rw [mem_Icc]; norm_num
-  have hIcc0y : (0 : ℝ) ∈ Icc (-2 : ℝ) 2 := by rw [mem_Icc]; norm_num
   have hIcc2y : (2 : ℝ) ∈ Icc (-2 : ℝ) 2 := by rw [mem_Icc]; norm_num
   have hIccm2y : (-2 : ℝ) ∈ Icc (-2 : ℝ) 2 := by rw [mem_Icc]; norm_num
-  have hIccm1x : (-1 : ℝ) ∈ Icc (-1 : ℝ) 1 := by rw [mem_Icc]; norm_num
-  have hIcc1x : (1 : ℝ) ∈ Icc (-1 : ℝ) 1 := by rw [mem_Icc]; norm_num
   -- the `z₀`-component `U`, the rectangle `E`
   set U : Set Plane := connectedComponentIn (range r)ᶜ z₀ with hUdef
-  have hUsub : U ⊆ (range r)ᶜ := connectedComponentIn_subset _ _
-  have hz₀U : z₀ ∈ U := mem_connectedComponentIn hz₀c
   set E : Set Plane := {p : Plane | p 0 ∈ Icc (-1 : ℝ) 1 ∧ p 1 ∈ Icc (-2 : ℝ) 2} with hEdef
   -- the open middle axis segment `(p,m)` lies in `U`
   set Mid : Set Plane := {v : Plane | v 0 = 0 ∧ v 1 ∈ Ioo (p 1) (m 1)} with hMiddef
@@ -3647,13 +3635,9 @@ theorem step_B_normalized (hbr : BrouwerFPT)
     hMidPC.isConnected.isPreconnected.subset_connectedComponentIn hz₀Mid hMidc
   -- upward and downward axis rays lie in the complement
   set RayN : Set Plane := {v : Plane | v 0 = 0 ∧ v 1 ∈ Ioi (l 1)} with hRayNdef
-  have hRayNPC : IsPathConnected RayN :=
-    isPathConnected_vertSeg 0 ((convex_Ioi (l 1)).isPathConnected Set.nonempty_Ioi)
   have hRayNc : RayN ⊆ (range r)ᶜ := by
     rintro v ⟨hv0, hv1⟩ hvr; exact absurd (hlmax v hvr hv0) (not_le.2 hv1)
   set RayS : Set Plane := {v : Plane | v 0 = 0 ∧ v 1 ∈ Iio (q 1)} with hRaySdef
-  have hRaySPC : IsPathConnected RayS :=
-    isPathConnected_vertSeg 0 ((convex_Iio (q 1)).isPathConnected Set.nonempty_Iio)
   have hRaySc : RayS ⊆ (range r)ᶜ := by
     rintro v ⟨hv0, hv1⟩ hvr
     rw [← hUnion] at hvr
@@ -3667,7 +3651,6 @@ theorem step_B_normalized (hbr : BrouwerFPT)
     by_contra hWne
     set W : Set Plane := connectedComponentIn (range r)ᶜ w with hWdef
     have hWsub : W ⊆ (range r)ᶜ := connectedComponentIn_subset _ _
-    have hwW : w ∈ W := mem_connectedComponentIn hw
     have hWpc : IsPathConnected W := isPathConnected_component r hcont hw
     -- `W` and `U` are disjoint
     have hWU_disj : Disjoint W U := by
@@ -3748,9 +3731,8 @@ theorem step_B_normalized (hbr : BrouwerFPT)
     have hbfrW : (!₂[(1 : ℝ), 0] : Plane) ∈ frontier W := by rw [hfrW]; exact hp
     have haclW : (!₂[(-1 : ℝ), 0] : Plane) ∈ closure W := frontier_subset_closure hafrW
     have hbclW : (!₂[(1 : ℝ), 0] : Plane) ∈ closure W := frontier_subset_closure hbfrW
-    -- compact image of `β`, and small balls at `a, b` avoiding it
+    -- The crossing contradiction uses horizontal endpoints outside the spine.
     set βimg : Set Plane := β '' Icc (-1 : ℝ) 1 with hβimgdef
-    have hβimg_closed : IsClosed βimg := (isCompact_Icc.image_of_continuousOn hβcont).isClosed
     have ha_notβ : (!₂[(-1 : ℝ), 0] : Plane) ∉ βimg := by
       apply spine_image_avoids_horizontal_endpoint l m p q hl0 hm0 hp0 hq0 lm pq β hβmem
         (!₂[(-1 : ℝ), 0]) (by norm_num)
@@ -6746,10 +6728,6 @@ private theorem jordan_counterclockwise_of_winding_one
       have heq := hlc.apply_eq_of_preconnectedSpace ⟨q, hqV⟩ ⟨v, hvV⟩
       rw [hwinding_q, hvzero] at heq
       norm_num at heq
-  have hqInterior : q ∈ jordanInterior (Set.range x) := by
-    refine ⟨hqrange, ?_⟩
-    rw [hcompU q hqU]
-    exact hUbounded
   have hpUV : p ∈ U ∪ V := hcover.symm.subset hp.1
   have hpU : p ∈ U := by
     rcases hpUV with hpU | hpV

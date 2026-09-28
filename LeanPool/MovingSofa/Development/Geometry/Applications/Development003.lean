@@ -710,10 +710,6 @@ private theorem gerverNicheBoundary_orientedJordan {f : ℝ → ℝ} (hfc : Cont
     simp only [h3]
     rw [gerverNicheRoof_zero]
     rfl
-  have hψthree : ∀ s : Set.Icc (0 : ℝ) 4, s.val = 3 → (ψ s : ℝ) = 1 := by
-    intro s hs
-    rw [hψval, ite_eq_left hs.le, hbthree s hs]
-    field_simp
   -- the traversal is the loop, reparametrized
   have hΓψ : ∀ s : Set.Icc (0 : ℝ) 4,
       gerverNicheBoundary s = positiveGraphLoop gerverNicheLeft gerverNicheRight f (ψ s) := by
@@ -1499,14 +1495,10 @@ private theorem gerver_tail_support_lines (K : SpecialCapSpace) (B D : ConvexBod
      inner ℝ (paperGerverContacts t 1) (normalVector (t : Real.Angle)) = gerverRightTailSupport t)
        := by
   -- ### One cap serves every clause, and it carries the literal contact geometry
-  obtain ⟨-, hGeq, -, -, hcapeq, -, -⟩ := gerver_capSupport_identification
-  have hcarrier : (K.val.val : Set Point) = gerverOuterCap := by rw [hK, hGeq, hcapeq]
   obtain ⟨-, K', hK'set, hdens, hsel, -, -, hBwall, -, hDwall, -, -⟩ :=
     paperGerver_contact_geometry
   have hKeq : K' = K.val := Subtype.ext (SetLike.coe_injective (hK'set.trans hK.symm))
   subst hKeq
-  obtain ⟨hstrictD, hstrictB, hDmem, hBmem⟩ :=
-    gerver_tail_membership K B D hK hB hD
   have ht0 : gerverStageTimes 0 = 0 := gerverStageTimes_zero
   have ht5 : gerverStageTimes 5 = Real.pi / 2 := rfl
   have hr : paperGerverConstants.2.1 = gerverStageTimes 1 := rfl
@@ -2059,29 +2051,15 @@ theorem HasAngularDensity.angleImage_eq_setLIntegral {μ : Measure Real.Angle} {
   rw [hrestrict, h.2.2, angularDensityMeasure,
     Real.Angle.map_coe_withDensity_image_eq_setLIntegral hturn hS hT hTS]
 
-private theorem gerver_angular_density_outer_first (K : SpecialCapSpace) (B D : ConvexBody Point)
-    (hK : (K.val.val : Set Point) = capOfSofa paperGerverSofa (Real.pi / 2))
-    (hB : (B : Set Point) = (canonicalTailSets K).1)
-    (hD : (D : Set Point) = (canonicalTailSets K).2) :
+private theorem gerver_angular_density_outer_first (K : SpecialCapSpace)
+    (hK : (K.val.val : Set Point) = capOfSofa paperGerverSofa (Real.pi / 2)) :
     HasAngularDensity (surfaceAreaMeasure K.val.val)
       (fun t ↦ inner ℝ (deriv (fun s ↦ paperGerverContacts s 0) t)
         (tangentVector (t : Real.Angle))) (Set.Ico 0 (Real.pi / 2)) := by
-  -- ### The strictly increasing stage times
-  have h0 : gerverStageTimes 0 = 0 := gerverStageTimes_zero
-  have h5 : gerverStageTimes 5 = Real.pi / 2 := rfl
-  have h01 : gerverStageTimes 0 < gerverStageTimes 1 := gerverStageTimes_strictMono (by decide)
-  have h12 : gerverStageTimes 1 < gerverStageTimes 2 := gerverStageTimes_strictMono (by decide)
-  have h23 : gerverStageTimes 2 < gerverStageTimes 3 := gerverStageTimes_strictMono (by decide)
-  have h34 : gerverStageTimes 3 < gerverStageTimes 4 := gerverStageTimes_strictMono (by decide)
-  have h45 : gerverStageTimes 4 < gerverStageTimes 5 := gerverStageTimes_strictMono (by decide)
-  have hpi : (3 : ℝ) < Real.pi := Real.pi_gt_three
   -- ### The certified cap carries the two envelope densities
   obtain ⟨K', hK'set, r, sden, hdens, ⟨M, hM⟩, hstage⟩ := gerver_surface_densities
   have hKeq : K' = K.val := Subtype.ext (SetLike.coe_injective (hK'set.trans hK.symm))
   subst hKeq
-  -- ### The two tails are traced by the two inner contact curves
-  obtain ⟨htailD, htailB, -, -, htailD2, -, -, -, htailB3, -, -, -⟩ :=
-    gerver_tailGeometry K B D hK hB hD
   have haeval : ∀ᵐ t ∂volume.restrict (Set.Ico (0 : ℝ) (Real.pi / 2)),
       inner ℝ (deriv (fun s ↦ paperGerverContacts s 0) t) (tangentVector (t : Real.Angle)) =
         (r t : ℝ) := by
@@ -2285,30 +2263,16 @@ private theorem gerver_angular_density_right_tail (K : SpecialCapSpace) (B D : C
   · rw [angularDensityMeasure]
     exact measure_restrict_eq_map_withDensity measurableSet_Ico hstep2
 
-private theorem gerver_angular_density_outer_second (K : SpecialCapSpace) (B D : ConvexBody Point)
-    (hK : (K.val.val : Set Point) = capOfSofa paperGerverSofa (Real.pi / 2))
-    (hB : (B : Set Point) = (canonicalTailSets K).1)
-    (hD : (D : Set Point) = (canonicalTailSets K).2) :
+private theorem gerver_angular_density_outer_second (K : SpecialCapSpace)
+    (hK : (K.val.val : Set Point) = capOfSofa paperGerverSofa (Real.pi / 2)) :
     HasAngularDensity (surfaceAreaMeasure K.val.val)
       (fun t ↦ inner ℝ (-(deriv (fun s ↦ paperGerverContacts s 2) (t - Real.pi / 2)))
         (normalVector ((t - Real.pi / 2 : ℝ) : Real.Angle)))
       (Set.Ioc (Real.pi / 2) Real.pi) := by
-  -- ### The strictly increasing stage times
-  have h0 : gerverStageTimes 0 = 0 := gerverStageTimes_zero
-  have h5 : gerverStageTimes 5 = Real.pi / 2 := rfl
-  have h01 : gerverStageTimes 0 < gerverStageTimes 1 := gerverStageTimes_strictMono (by decide)
-  have h12 : gerverStageTimes 1 < gerverStageTimes 2 := gerverStageTimes_strictMono (by decide)
-  have h23 : gerverStageTimes 2 < gerverStageTimes 3 := gerverStageTimes_strictMono (by decide)
-  have h34 : gerverStageTimes 3 < gerverStageTimes 4 := gerverStageTimes_strictMono (by decide)
-  have h45 : gerverStageTimes 4 < gerverStageTimes 5 := gerverStageTimes_strictMono (by decide)
-  have hpi : (3 : ℝ) < Real.pi := Real.pi_gt_three
   -- ### The certified cap carries the two envelope densities
   obtain ⟨K', hK'set, r, sden, hdens, ⟨M, hM⟩, hstage⟩ := gerver_surface_densities
   have hKeq : K' = K.val := Subtype.ext (SetLike.coe_injective (hK'set.trans hK.symm))
   subst hKeq
-  -- ### The two tails are traced by the two inner contact curves
-  obtain ⟨htailD, htailB, -, -, htailD2, -, -, -, htailB3, -, -, -⟩ :=
-    gerver_tailGeometry K B D hK hB hD
   have haeval : ∀ᵐ u ∂volume.restrict (Set.Ioc (Real.pi / 2) Real.pi),
       inner ℝ (-(deriv (fun s ↦ paperGerverContacts s 2) (u - Real.pi / 2)))
           (normalVector ((u - Real.pi / 2 : ℝ) : Real.Angle)) =
@@ -2553,9 +2517,9 @@ theorem gerver_measureTranslation (K : SpecialCapSpace) (B D : ConvexBody Point)
         (normalVector ((t - Real.pi / 2 : ℝ) : Real.Angle)))
       (Set.Ioc (Real.pi / 2 + gerverStageTimes 0)
         (Real.pi / 2 + gerverStageTimes 2)) := by
-  exact ⟨gerver_angular_density_outer_first K B D hK hB hD,
+  exact ⟨gerver_angular_density_outer_first K hK,
     gerver_angular_density_right_tail K B D hK hB hD,
-    gerver_angular_density_outer_second K B D hK hB hD,
+    gerver_angular_density_outer_second K hK,
     gerver_angular_density_left_tail K B D hK hB hD⟩
 
 end MovingSofa
@@ -2804,7 +2768,7 @@ private theorem gerver_phaseMeasures_first_half (K : SpecialCapSpace) (B D : Con
   simp only [gerverStageTimes, Matrix.cons_val] at h01 h12 h23 h34 h45
   have hpi : (3 : ℝ) < Real.pi := Real.pi_gt_three
   have hturn : Real.pi ≤ -1 + 2 * Real.pi := by linarith
-  -- ### The ten phase intervals
+  -- ### The five relevant phase intervals
   have hJ0 : gerverPhaseIntervals 0 = Set.Ico 0 GerversSofa.φ :=
     gerverPhaseIntervals_explicit 0
   have hJ1 : gerverPhaseIntervals 1 = Set.Ico GerversSofa.φ GerversSofa.θ :=
@@ -2818,20 +2782,6 @@ private theorem gerver_phaseMeasures_first_half (K : SpecialCapSpace) (B D : Con
   have hJ4 : gerverPhaseIntervals 4 =
       Set.Ico (Real.pi / 2 - GerversSofa.φ) (Real.pi / 2) :=
     gerverPhaseIntervals_explicit 4
-  have hJ5 : gerverPhaseIntervals 5 =
-      Set.Ioc (Real.pi / 2) (Real.pi / 2 + GerversSofa.φ) :=
-    gerverPhaseIntervals_explicit 5
-  have hJ6 : gerverPhaseIntervals 6 =
-      Set.Ioc (Real.pi / 2 + GerversSofa.φ) (Real.pi / 2 + GerversSofa.θ) :=
-    gerverPhaseIntervals_explicit 6
-  have hJ7 : gerverPhaseIntervals 7 =
-      Set.Ioc (Real.pi / 2 + GerversSofa.θ) (Real.pi - GerversSofa.θ) :=
-    gerverPhaseIntervals_explicit 7
-  have hJ8 : gerverPhaseIntervals 8 =
-      Set.Ioc (Real.pi - GerversSofa.θ) (Real.pi - GerversSofa.φ) :=
-    gerverPhaseIntervals_explicit 8
-  have hJ9 : gerverPhaseIntervals 9 = Set.Ioc (Real.pi - GerversSofa.φ) Real.pi :=
-    gerverPhaseIntervals_explicit 9
   -- ### The four contact densities of the translated-measure proposition
   have hd := gerver_measureTranslation K B D hK hB hD
   obtain ⟨fA, hfAdef⟩ : ∃ f : ℝ → ℝ, f = fun t ↦ inner ℝ
@@ -2850,15 +2800,11 @@ private theorem gerver_phaseMeasures_first_half (K : SpecialCapSpace) (B D : Con
       Set.Ico (Real.pi / 2 - GerversSofa.θ) (Real.pi / 2) from by simp [gerverStageTimes],
     show Set.Ioc (Real.pi / 2 + gerverStageTimes 0) (Real.pi / 2 + gerverStageTimes 2) =
       Set.Ioc (Real.pi / 2) (Real.pi / 2 + GerversSofa.θ) from by simp [gerverStageTimes]] at hd
-  obtain ⟨hdA, hdB, hdC, hdD⟩ := hd
-  -- ### The four density windows sit inside a single turn
+  obtain ⟨hdA, hdB, -, -⟩ := hd
+  -- ### The two relevant density windows sit inside a single turn
   have hsubA : Set.Ico (0 : ℝ) (Real.pi / 2) ⊆ Set.Ioc (-1 : ℝ) Real.pi :=
     fun x hx ↦ ⟨by linarith [hx.1], by linarith [hx.2]⟩
   have hsubB : Set.Ico (Real.pi / 2 - GerversSofa.θ) (Real.pi / 2) ⊆
-      Set.Ioc (-1 : ℝ) Real.pi := fun x hx ↦ ⟨by linarith [hx.1], by linarith [hx.2]⟩
-  have hsubC : Set.Ioc (Real.pi / 2) Real.pi ⊆ Set.Ioc (-1 : ℝ) Real.pi :=
-    fun x hx ↦ ⟨by linarith [hx.1], hx.2⟩
-  have hsubD : Set.Ioc (Real.pi / 2) (Real.pi / 2 + GerversSofa.θ) ⊆
       Set.Ioc (-1 : ℝ) Real.pi := fun x hx ↦ ⟨by linarith [hx.1], by linarith [hx.2]⟩
   obtain ⟨hs0, hs1, hs2, hs3, hs4⟩ :=
     gerver_contact_density_stage_identities fA fB fC fD hfAdef hfBdef hfCdef hfDdef
@@ -2869,12 +2815,6 @@ private theorem gerver_phaseMeasures_first_half (K : SpecialCapSpace) (B D : Con
     have h := (K.2.1.2.2 t ht).2
     rw [derivWithin_capInnerCorner_eq_deriv_paperGerverPath K.val hK ht] at h
     exact h.le
-  have hα : ∀ t ∈ Set.Ioo (0 : ℝ) (Real.pi / 2),
-      0 ≤ -(paperGerverVelocityComponents t).1 := by
-    intro t ht
-    have h := (K.2.1.2.2 t ht).1
-    rw [derivWithin_capInnerCorner_eq_deriv_paperGerverPath K.val hK ht] at h
-    exact neg_nonneg.2 h.le
   refine ⟨?_, ?_, ?_, ?_⟩
   · have hsub : Set.Ico (0 : ℝ) GerversSofa.φ ⊆ Set.Ico (0 : ℝ) (Real.pi / 2) :=
       fun x hx ↦ ⟨hx.1, by linarith [hx.2]⟩
@@ -2979,20 +2919,7 @@ private theorem gerver_phaseMeasures_second_half (K : SpecialCapSpace) (B D : Co
   simp only [gerverStageTimes, Matrix.cons_val] at h01 h12 h23 h34 h45
   have hpi : (3 : ℝ) < Real.pi := Real.pi_gt_three
   have hturn : Real.pi ≤ -1 + 2 * Real.pi := by linarith
-  -- ### The ten phase intervals
-  have hJ0 : gerverPhaseIntervals 0 = Set.Ico 0 GerversSofa.φ :=
-    gerverPhaseIntervals_explicit 0
-  have hJ1 : gerverPhaseIntervals 1 = Set.Ico GerversSofa.φ GerversSofa.θ :=
-    gerverPhaseIntervals_explicit 1
-  have hJ2 : gerverPhaseIntervals 2 =
-      Set.Ico GerversSofa.θ (Real.pi / 2 - GerversSofa.θ) :=
-    gerverPhaseIntervals_explicit 2
-  have hJ3 : gerverPhaseIntervals 3 =
-      Set.Ico (Real.pi / 2 - GerversSofa.θ) (Real.pi / 2 - GerversSofa.φ) :=
-    gerverPhaseIntervals_explicit 3
-  have hJ4 : gerverPhaseIntervals 4 =
-      Set.Ico (Real.pi / 2 - GerversSofa.φ) (Real.pi / 2) :=
-    gerverPhaseIntervals_explicit 4
+  -- ### The five relevant phase intervals
   have hJ5 : gerverPhaseIntervals 5 =
       Set.Ioc (Real.pi / 2) (Real.pi / 2 + GerversSofa.φ) :=
     gerverPhaseIntervals_explicit 5
@@ -3025,12 +2952,8 @@ private theorem gerver_phaseMeasures_second_half (K : SpecialCapSpace) (B D : Co
       Set.Ico (Real.pi / 2 - GerversSofa.θ) (Real.pi / 2) from by simp [gerverStageTimes],
     show Set.Ioc (Real.pi / 2 + gerverStageTimes 0) (Real.pi / 2 + gerverStageTimes 2) =
       Set.Ioc (Real.pi / 2) (Real.pi / 2 + GerversSofa.θ) from by simp [gerverStageTimes]] at hd
-  obtain ⟨hdA, hdB, hdC, hdD⟩ := hd
-  -- ### The four density windows sit inside a single turn
-  have hsubA : Set.Ico (0 : ℝ) (Real.pi / 2) ⊆ Set.Ioc (-1 : ℝ) Real.pi :=
-    fun x hx ↦ ⟨by linarith [hx.1], by linarith [hx.2]⟩
-  have hsubB : Set.Ico (Real.pi / 2 - GerversSofa.θ) (Real.pi / 2) ⊆
-      Set.Ioc (-1 : ℝ) Real.pi := fun x hx ↦ ⟨by linarith [hx.1], by linarith [hx.2]⟩
+  obtain ⟨-, -, hdC, hdD⟩ := hd
+  -- ### The two relevant density windows sit inside a single turn
   have hsubC : Set.Ioc (Real.pi / 2) Real.pi ⊆ Set.Ioc (-1 : ℝ) Real.pi :=
     fun x hx ↦ ⟨by linarith [hx.1], hx.2⟩
   have hsubD : Set.Ioc (Real.pi / 2) (Real.pi / 2 + GerversSofa.θ) ⊆
@@ -3038,12 +2961,6 @@ private theorem gerver_phaseMeasures_second_half (K : SpecialCapSpace) (B D : Co
   obtain ⟨hs0, hs1, hs2, hs3, hs4⟩ :=
     gerver_contact_density_stage_identities fA fB fC fD hfAdef hfBdef hfCdef hfDdef
   -- ### The strict interior signs of the injectivity condition of the given special cap
-  have hβ : ∀ t ∈ Set.Ioo (0 : ℝ) (Real.pi / 2),
-      0 ≤ (paperGerverVelocityComponents t).2 := by
-    intro t ht
-    have h := (K.2.1.2.2 t ht).2
-    rw [derivWithin_capInnerCorner_eq_deriv_paperGerverPath K.val hK ht] at h
-    exact h.le
   have hα : ∀ t ∈ Set.Ioo (0 : ℝ) (Real.pi / 2),
       0 ≤ -(paperGerverVelocityComponents t).1 := by
     intro t ht
