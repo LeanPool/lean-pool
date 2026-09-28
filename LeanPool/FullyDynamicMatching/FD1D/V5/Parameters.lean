@@ -17,7 +17,7 @@ This module records the exact choices
 `n = 2^L = 2^floor(log₂(max(1, floor(m/a))))`.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D.V5
 

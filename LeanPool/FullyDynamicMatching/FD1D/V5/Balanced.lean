@@ -19,7 +19,7 @@ maximal, which removes the endpoint term from the finite-horizon energy
 telescope.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D.V5.Balanced
 

@@ -18,7 +18,7 @@ discharges the parameter arithmetic, and records stationary, transient, and
 ordinary-convergence bounds for the count-state cost envelope.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D.V5
 

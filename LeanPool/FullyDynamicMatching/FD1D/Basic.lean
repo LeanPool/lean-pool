@@ -24,7 +24,7 @@ bound. All analytic quantities are represented in `ℝ`; finite probability
 laws are represented by weighted sums over finite types.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D
 

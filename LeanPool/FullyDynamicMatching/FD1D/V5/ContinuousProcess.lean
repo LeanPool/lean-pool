@@ -17,7 +17,7 @@ public import Mathlib.Probability.Kernel.IonescuTulcea.Traj
 
 /-! # Continuous Process -/
 
-@[expose] public section
+public section
 
 namespace FD1D
 

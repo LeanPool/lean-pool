@@ -11,7 +11,7 @@ public import LeanPool.FullyDynamicMatching.FD1D.Tree
 
 /-! # Initialization -/
 
-@[expose] public section
+public section
 
 namespace FD1D
 

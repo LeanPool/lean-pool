@@ -11,7 +11,7 @@ public import LeanPool.FullyDynamicMatching.FD1D.Initialization
 
 /-! # Symmetry -/
 
-@[expose] public section
+public section
 
 namespace FD1D
 

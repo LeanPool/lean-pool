@@ -11,7 +11,7 @@ public import LeanPool.FullyDynamicMatching.FD1D.V5.CostBounds
 
 /-! # Trajectory Bounds -/
 
-@[expose] public section
+public section
 
 namespace FD1D.V5.ContinuousProcess
 

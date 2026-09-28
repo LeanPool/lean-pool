@@ -10,7 +10,7 @@ public import LeanPool.FullyDynamicMatching.FD1D.Spatial
 
 /-! # Realization -/
 
-@[expose] public section
+public section
 
 namespace FD1D
 

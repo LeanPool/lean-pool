@@ -17,7 +17,7 @@ the v5 deletion masses and connects it to the harmonic potential with
 regularizer `a / 2`.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D.V5.Dynamics
 

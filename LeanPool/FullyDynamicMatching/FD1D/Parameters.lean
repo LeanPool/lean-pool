@@ -16,7 +16,7 @@ computationally exact. Natural-number division is the floor in the definition
 of the tree depth.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D
 

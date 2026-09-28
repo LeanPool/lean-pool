@@ -11,7 +11,7 @@ public import Mathlib.MeasureTheory.Constructions.UnitInterval
 
 /-! # Continuous State -/
 
-@[expose] public section
+public section
 
 namespace FD1D
 

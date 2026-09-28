@@ -18,7 +18,7 @@ coefficient in the four Bellman charts without materializing enormous
 `ring_nf` goals.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D
 

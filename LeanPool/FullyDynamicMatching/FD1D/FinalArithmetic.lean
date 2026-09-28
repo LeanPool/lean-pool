@@ -19,7 +19,7 @@ the advertised `6a/m` and `7a/m` bounds. Transport enters only through an
 equation-(3) inequality supplied as a hypothesis.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D
 

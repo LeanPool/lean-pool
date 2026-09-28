@@ -17,7 +17,7 @@ bounds while allowing arbitrary occupied locations inside their certified
 dyadic cells.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D.V5.Transport
 

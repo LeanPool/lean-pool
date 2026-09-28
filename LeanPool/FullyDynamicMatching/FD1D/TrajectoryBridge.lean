@@ -16,7 +16,7 @@ homogeneous Markov kernel and identifies every coordinate marginal with the
 usual recursive iterate of the initial law.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D.TrajectoryBridge
 

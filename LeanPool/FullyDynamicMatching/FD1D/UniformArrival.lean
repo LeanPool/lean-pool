@@ -10,7 +10,7 @@ public import LeanPool.FullyDynamicMatching.FD1D.Spatial
 
 /-! # Uniform Arrival -/
 
-@[expose] public section
+public section
 
 namespace FD1D
 

@@ -16,7 +16,7 @@ This module instantiates the compact paper-facing stochastic model with the
 hierarchical V5 selector and transfers the proved continuous-process bounds.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D.V5.Palomar
 

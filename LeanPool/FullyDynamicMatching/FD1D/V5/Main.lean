@@ -19,7 +19,7 @@ theorem, the balanced-initial-law corollary, and the abstract resource
 guarantees.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D.V5
 

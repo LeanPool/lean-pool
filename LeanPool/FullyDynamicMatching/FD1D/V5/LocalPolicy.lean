@@ -16,7 +16,7 @@ the fixed left/right spatial sign. Empty-child rates are auxiliary analytic
 rates; empty children still receive zero deletion mass.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D.V5.LocalPolicy
 

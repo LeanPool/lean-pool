@@ -13,7 +13,7 @@ public import LeanPool.FullyDynamicMatching.FD1D.Spatial
 
 /-! # Concrete Transport -/
 
-@[expose] public section
+public section
 
 namespace FD1D
 

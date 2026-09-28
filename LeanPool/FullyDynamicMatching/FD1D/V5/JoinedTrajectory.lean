@@ -11,7 +11,7 @@ public import LeanPool.FullyDynamicMatching.FD1D.Refresh
 
 /-! # Joined Trajectory -/
 
-@[expose] public section
+public section
 
 namespace FD1D
 

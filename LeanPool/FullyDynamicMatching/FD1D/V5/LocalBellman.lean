@@ -15,7 +15,7 @@ This module follows the normalization and three active-cap cases in the
 appendix of `manuscript-v5/optimal_dynamic_matching.tex`.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D.V5.LocalBellman
 

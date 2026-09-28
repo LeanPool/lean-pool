@@ -21,7 +21,7 @@ dyadic mass, identifies its integrated Haar coefficients with the v5
 deletion imbalances, and proves the exact invariant-law `L²` identity.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D.V5.Transport
 

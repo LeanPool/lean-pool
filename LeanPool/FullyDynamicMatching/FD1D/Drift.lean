@@ -10,7 +10,7 @@ public import LeanPool.FullyDynamicMatching.FD1D.Arithmetic
 
 /-! # Drift -/
 
-@[expose] public section
+public section
 
 namespace FD1D
 

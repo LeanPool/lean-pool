@@ -24,7 +24,7 @@ uniform replenishment. The path measure below is the homogeneous Markov law
 driven by iid uniform demand/replenishment pairs.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D.V5.Palomar
 

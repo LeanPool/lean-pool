@@ -37,6 +37,7 @@ namespace MeasurableEquiv
 `((i : Fin n) → α i.castSucc) × α (Fin.last n) ≃ᵐ (∀ i, α i)` given by `Fin.snoc`.
 
 Measurable version of `Fin.snocEquiv` with the product factors swapped. -/
+@[expose]
 def piFinSnoc {n : ℕ} (α : Fin (n + 1) → Type*) [∀ i, MeasurableSpace (α i)] :
     ((i : Fin n) → α i.castSucc) × α (Fin.last n) ≃ᵐ (∀ i, α i) where
   toFun p := Fin.snoc p.1 p.2

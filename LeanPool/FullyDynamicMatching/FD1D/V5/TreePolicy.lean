@@ -16,7 +16,7 @@ tree. It proves the invariant domain, rate-energy monotonicity, the lifted
 local Bellman inequality, and the deterministic aggregate estimate.
 -/
 
-@[expose] public section
+public section
 
 namespace FD1D.V5.TreePolicy
 

@@ -10,7 +10,7 @@ public import LeanPool.FullyDynamicMatching.FD1D.V5.ContinuousProcess
 
 /-! # Initial Process -/
 
-@[expose] public section
+public section
 
 namespace FD1D
 
