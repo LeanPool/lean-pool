@@ -10938,43 +10938,39 @@ projects:
     - commutative-algebra
     msc:
     - 13F15
-  - slug: nikodym
-    title: The sharp finite-field Nikodym exponent
-    summary: Proves a lower bound for Nikodym sets over arbitrary finite fields and a matching exponent
-      upper construction over sufficiently large prime fields, using interpolation, algebraic degree bounds,
-      and multiquadratic constructions.
-    branch: additive combinatorics
-    entry_module: LeanPool.Nikodym
+  - slug: salem-theorem
+    title: Every Pisot number is a two-sided limit of Salem numbers
+    summary: Proves Salem’s two-sided approximation theorem for Pisot numbers, preserving both the polynomial
+      reciprocal-family construction and the exceptional quadratic-unit construction.
+    branch: algebraic number theory
+    entry_module: LeanPool.SalemTheorem
     authors:
-    - Ting-Wei Chao
-    - Zach Hunter
-    - Cosmin Pohoata
-    - Hung-Hsun Hans Yu
-    - Shengtong Zhang
+    - Stephanie Alexander
     source:
-      url: https://github.com/shengtongzhang-alt/nikodym
-      github_repo: shengtongzhang-alt/nikodym
-      commit: 38d16dcdbaef04f6f85e5dee92905b7db2eba930
-    license: Apache-2.0
+      url: https://github.com/stalex444/salem-theorem
+      github_repo: stalex444/salem-theorem
+      commit: 887be765bf24c6a645600dfc7bd0a1055a1761dd
+    license: MIT
     status: verified
     provenance: AI
     main_declarations:
-    - Nikodym.card_ge_pow_sub
-    - Nikodym.exists_isNikodym_card_le
+    - SalemTheorem.salem_theorem
     main_results:
-    - declaration: Nikodym.card_ge_pow_sub
-      informal: Every Nikodym set in dimension d ≥ 2 over a finite field of size q has size at least q^d
-        − (8d²+1)q^(d−2^(1−d)).
-    - declaration: Nikodym.exists_isNikodym_card_le
-      informal: For every positive ε and dimension d ≥ 2, sufficiently large prime fields admit a Nikodym
-        set of size at most q^d − q^(d−2^(1−d)−ε).
+    - declaration: SalemTheorem.salem_theorem
+      informal: Every Pisot number is approached by Salem numbers from both below and above.
+    - declaration: SalemTheorem.salem_construction_two_sided
+      informal: For the nondegenerate Pisot polynomial pattern, reciprocal-family polynomials have Salem
+        roots arbitrarily near the Pisot root from either side.
+    - declaration: SalemTheorem.salem_quadratic_unit
+      informal: The quadratic-unit family supplies Salem roots approaching each reciprocal quadratic Pisot
+        unit from either side.
     tags:
-    - combinatorics
-    - finite-fields
-    - nikodym-sets
+    - number-theory
+    - pisot-numbers
+    - salem-numbers
     msc:
-    - 05B25
-    - 11T99
+    - 11R06
+    - 11R09
   - slug: rr-equals-nonmeager-paper
     title: The nonmeagre lower bound for the rearrangement number
     summary: Formalizes the inequality non(M) ≤ rr in ZFC via relational systems, category and slalom bounds,
@@ -11154,3 +11150,40 @@ projects:
     msc:
     - 47B06
     - 46B20
+  - slug: nikodym
+    title: The sharp finite-field Nikodym exponent
+    summary: Proves a lower bound for Nikodym sets over arbitrary finite fields and a matching exponent
+      upper construction over sufficiently large prime fields, using interpolation, algebraic degree bounds,
+      and multiquadratic constructions.
+    branch: additive combinatorics
+    entry_module: LeanPool.Nikodym
+    authors:
+    - Ting-Wei Chao
+    - Zach Hunter
+    - Cosmin Pohoata
+    - Hung-Hsun Hans Yu
+    - Shengtong Zhang
+    source:
+      url: https://github.com/shengtongzhang-alt/nikodym
+      github_repo: shengtongzhang-alt/nikodym
+      commit: 38d16dcdbaef04f6f85e5dee92905b7db2eba930
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - Nikodym.card_ge_pow_sub
+    - Nikodym.exists_isNikodym_card_le
+    main_results:
+    - declaration: Nikodym.card_ge_pow_sub
+      informal: Every Nikodym set in dimension d ≥ 2 over a finite field of size q has size at least q^d
+        − (8d²+1)q^(d−2^(1−d)).
+    - declaration: Nikodym.exists_isNikodym_card_le
+      informal: For every positive ε and dimension d ≥ 2, sufficiently large prime fields admit a Nikodym
+        set of size at most q^d − q^(d−2^(1−d)−ε).
+    tags:
+    - combinatorics
+    - finite-fields
+    - nikodym-sets
+    msc:
+    - 05B25
+    - 11T99
