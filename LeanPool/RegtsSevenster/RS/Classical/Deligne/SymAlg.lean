@@ -1197,7 +1197,7 @@ private theorem winNSwap_winLegN
 
 /-! ### The three-slot frame
 
-Both overlap cases are compared in a frame `(Xᵃ ⊗ V) ⊗ Xᑫ` around a
+Both overlap cases are compared in a frame `(Xᵃ ⊗ V) ⊗ X^q` around a
 three-slot window `V`, glued into the ambient power through the
 assembled window and the concatenation.
 -/

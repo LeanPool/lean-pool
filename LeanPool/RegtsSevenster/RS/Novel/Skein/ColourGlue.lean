@@ -188,7 +188,6 @@ include hij hopen hct hcL hni in
 open Classical in
 /-- **The odd colouring sum transports across a missed cut.** -/
 theorem sum_odd_miss
-    [LinearOrder L]
     {k ℓ : ℕ} (h : MixedFunctional k ℓ)
     (st' : GenBoundaryState k ℓ (SurvivingLabel L i j)) (a : Fin k)
     (ψ' : (Fg).EvenColouring k) :
@@ -860,7 +859,6 @@ open Classical in
 an odd colour, and that colour is the glued colouring's own there —
 so again the sum over it has a single term. -/
 theorem edgeSum_openCut_hit
-    [LinearOrder L]
     {k ℓ : ℕ} (h : MixedFunctional k ℓ)
     (st' : GenBoundaryState k ℓ (SurvivingLabel L i j))
     (hbnd' : genBoundarySubsetMatches
@@ -1416,7 +1414,6 @@ open Classical in
 The closed edge carries the join's even colour and nothing else
 changes, so each of the `k` colours reproduces the glued sum. -/
 theorem edgeSum_closedCut_false
-    [LinearOrder L]
     {k ℓ : ℕ} (h : MixedFunctional k ℓ)
     (st' : GenBoundaryState k ℓ (SurvivingLabel L i j)) (a : Fin k)
     (hbnd' : genBoundarySubsetMatches
@@ -1901,7 +1898,6 @@ open Classical in
 The closed edge carries the join's odd colour and nothing else
 changes, so each of the `2ℓ` colours reproduces the glued sum. -/
 theorem edgeSum_closedCut_true
-    [LinearOrder L]
     {k ℓ : ℕ} (h : MixedFunctional k ℓ)
     (st' : GenBoundaryState k ℓ (SurvivingLabel L i j))
     (d : Fin (2 * ℓ))

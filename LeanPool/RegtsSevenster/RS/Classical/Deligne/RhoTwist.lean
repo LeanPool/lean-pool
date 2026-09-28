@@ -11,8 +11,8 @@ public import LeanPool.RegtsSevenster.RS.Classical.Deligne.OddParity
 /-!
 # The realization of a twisted object
 
-Deligne's `ρ(M) = (Hom(𝟙, M), Hom(1̄, M))` is computed on a twist
-by one of the two generators of `⟨1, 1̄⟩`: twisting by the unit
+Deligne's `ρ(M) = (Hom(𝟙, M), Hom(1-bar, M))` is computed on a twist
+by one of the two generators of `⟨1, 1-bar⟩`: twisting by the unit
 changes nothing, and twisting by the odd line exchanges the two
 components.  These four identifications are the base cases of the
 computation of `ρ` on the free modules of 2.11.

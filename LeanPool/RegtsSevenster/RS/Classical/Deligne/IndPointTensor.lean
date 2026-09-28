@@ -141,7 +141,7 @@ identify it with the embedding of the corresponding tensor
 downstairs, which is nonzero by `RS.tensorHom_point_ne_zero`. -/
 theorem indTensorHom_point_ne_zero_indOf
     [SmallCategory C] [MonoidalCategory C] [Abelian C] [Linear ℂ C]
-    [MonoidalPreadditive C] [MonoidalLinear ℂ C] [RigidCategory C]
+    [MonoidalPreadditive C] [RigidCategory C]
     (hu : HasScalarUnit C)
     {X Y : C} {u : 𝟙_ (Ind C) ⟶ indOf.obj X}
     {v : 𝟙_ (Ind C) ⟶ indOf.obj Y} (hu0 : u ≠ 0) (hv0 : v ≠ 0) :
@@ -252,7 +252,7 @@ embedded objects, factor the point through a stage, and use that a
 vanishing tensor vanishes at a stage. -/
 theorem indTensorHom_point_ne_zero_indOf_left
     [SmallCategory C] [MonoidalCategory C] [Abelian C] [Linear ℂ C]
-    [MonoidalPreadditive C] [MonoidalLinear ℂ C] [RigidCategory C]
+    [MonoidalPreadditive C] [RigidCategory C]
     (hu : HasScalarUnit C)
     {X : C} {N : Ind C} {u : 𝟙_ (Ind C) ⟶ indOf.obj X}
     {v : 𝟙_ (Ind C) ⟶ N} (hu0 : u ≠ 0) (hv0 : v ≠ 0) :
@@ -285,7 +285,7 @@ factor the point through a stage, and appeal to
 `RS.indTensorHom_point_ne_zero_indOf_left`. -/
 theorem indTensorHom_point_ne_zero
     [SmallCategory C] [MonoidalCategory C] [Abelian C] [Linear ℂ C]
-    [MonoidalPreadditive C] [MonoidalLinear ℂ C] [RigidCategory C]
+    [MonoidalPreadditive C] [RigidCategory C]
     (hu : HasScalarUnit C)
     {M N : Ind C} {u : 𝟙_ (Ind C) ⟶ M} {v : 𝟙_ (Ind C) ⟶ N}
     (hu0 : u ≠ 0) (hv0 : v ≠ 0) : (u ⊗ₘ v) ≠ 0 := by

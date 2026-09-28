@@ -35,7 +35,7 @@ variable {C : Type v}
 extension**: their tensor product, into which each factor maps by
 a morphism of monoid objects. -/
 theorem exists_common_algebra [SmallCategory C] [MonoidalCategory C] [Abelian C]
-    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C] [MonoidalLinear ℂ C]
+    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C]
     [RigidCategory C] [SymmetricCategory (Ind C)]
     (hu : HasScalarUnit C) {ι : Type v}
     (B : ι → Ind C) [∀ i, MonObj (B i)] [∀ i, IsCommMonObj (B i)]

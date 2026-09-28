@@ -20,7 +20,7 @@ orientation and a compatible local pairing the tensor
 
     t′_h(F,H,ω,κ) := Σ_χ t′_{h,χ}(F,H,ω,κ),
 
-    t′_{h,χ} := (−1)^{ĉ(κ)} Σ_{ψ ∼ χ₀, φ ∼ χ₁}
+    t′_{h,χ} := (−1)^{c-hat(κ)} Σ_{ψ ∼ χ₀, φ ∼ χ₁}
                   ∏_{v ∈ V′(F)} h_v( … ) ⊗_{i ∈ [t]} c_{χ,ω,i}.
 
 A basis coordinate of the tensor determines `χ`: an entering leg

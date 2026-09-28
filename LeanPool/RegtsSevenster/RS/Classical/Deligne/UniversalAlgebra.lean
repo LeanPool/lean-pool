@@ -34,7 +34,7 @@ every object of the family becomes a mixed sum and every chosen
 morphism acquires a section. -/
 theorem exists_universal_algebra
     [SmallCategory C] [MonoidalCategory C] [Abelian C]
-    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C] [MonoidalLinear ℂ C]
+    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C]
     [RigidCategory C] [SymmetricCategory (Ind C)] [HasCoequalizers (Ind C)]
     [∀ Z : Ind C, PreservesColimitsOfShape WalkingParallelPair (tensorLeft
       Z)] [HasFiniteBiproducts (Ind C)]

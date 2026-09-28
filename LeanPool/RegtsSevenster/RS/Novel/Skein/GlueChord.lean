@@ -256,7 +256,7 @@ merges nothing, while otherwise it merges two chains and closes
 nothing.  So their sum is unchanged.
 -/
 
-/-- **One glue step preserves `ĉ + c`** — RS21's circuit-count
+/-- **One glue step preserves `c-hat + c`** — RS21's circuit-count
 bookkeeping, in the form that needs neither an ordering of the
 interface nor the Eulerian position: only the two pairings. -/
 theorem openCircuitCount_add_unionCount_glueOpen
@@ -375,7 +375,7 @@ two steps gives the recursion's stage: the circuit count plus the
 number of components is unchanged across it.
 -/
 
-/-- **One stage of the interface recursion preserves `ĉ + c`.** -/
+/-- **One stage of the interface recursion preserves `c-hat + c`.** -/
 theorem openCircuitCount_add_unionCount_stage
     [LinearOrder α]
     [Fintype α]

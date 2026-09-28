@@ -270,7 +270,7 @@ component**, hence countable dimension: the even component is
 dimensional. -/
 theorem rank_hom_unit_indOf_le_aleph0
     [SmallCategory C] [MonoidalCategory C] [Abelian C]
-    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C] [MonoidalLinear ℂ C]
+    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C]
     [RigidCategory C] [CategoryTheory.Linear ℂ (Ind C)]
     (hu : HasScalarUnit C)
     (hsmul : IndOfLinear C) {W : C} (hW : ∃ N : ℕ, LengthLE W N) :
@@ -394,7 +394,7 @@ even component.**  This is the finite-stage input of
 theorem rank_hom_unit_listTensor_le_aleph0
     [SmallCategory C] [MonoidalCategory C] [Abelian C] [RigidCategory C]
     [MonoidalPreadditive C] [CategoryTheory.Linear ℂ (Ind C)]
-    [CategoryTheory.Linear ℂ C] [MonoidalLinear ℂ C]
+    [CategoryTheory.Linear ℂ C]
     (hu : HasScalarUnit C)
     (hsmul : IndOfLinear C) (hlen : ∀ X : C, ∃ N : ℕ, LengthLE X N)
     {J : Type v} (B : J → Ind C)
@@ -433,7 +433,7 @@ family, which is the finite-stage input the colimit argument
 consumes. -/
 theorem exists_common_algebra_rank_le_aleph0
     [SmallCategory C] [MonoidalCategory C] [Abelian C]
-    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C] [MonoidalLinear ℂ C]
+    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C]
     [RigidCategory C] [CategoryTheory.Linear ℂ (Ind C)]
     [SymmetricCategory (Ind C)]
     (hu : HasScalarUnit C)
@@ -461,7 +461,7 @@ colimit of embedded objects, which is what "built from countably much
 data" means for the algebras of Deligne 2.11. -/
 theorem exists_common_algebra_rank_le_aleph0_of_presented
     [SmallCategory C] [MonoidalCategory C] [Abelian C]
-    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C] [MonoidalLinear ℂ C]
+    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C]
     [RigidCategory C] [CategoryTheory.Linear ℂ (Ind C)]
     [SymmetricCategory (Ind C)]
     (hu : HasScalarUnit C) (hsmul : IndOfLinear C)
@@ -499,7 +499,7 @@ The hypotheses are those of `RS.exists_universal_algebra` with the
 chosen algebras required to be countably presented. -/
 theorem exists_universal_algebra_rank_le_aleph0
     [SmallCategory C] [MonoidalCategory C] [Abelian C]
-    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C] [MonoidalLinear ℂ C]
+    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C]
     [RigidCategory C] [CategoryTheory.Linear ℂ (Ind C)]
     [SymmetricCategory (Ind C)] [HasCoequalizers (Ind C)]
     [∀ Z : Ind C, PreservesColimitsOfShape WalkingParallelPair (tensorLeft

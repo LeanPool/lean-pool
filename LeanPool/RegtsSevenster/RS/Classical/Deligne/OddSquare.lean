@@ -12,7 +12,7 @@ public import LeanPool.RegtsSevenster.RS.Classical.Deligne.FreeModTensor
 # Contracting the shuffle of two odd twists
 
 The comparison map of Deligne's (2.11.1) at the free module of the
-odd line against itself is a shuffle of two morphisms into `R ⊗ 1̄`
+odd line against itself is a shuffle of two morphisms into `R ⊗ 1-bar`
 followed by the contraction of the two odd legs.  Every such
 morphism is a morphism into `R` with an odd leg attached, and the
 whole composite then splits: the algebra factors multiply, and what
@@ -38,7 +38,7 @@ section
 variable {D : Type u}
 
 /-- **Splitting off the algebra factors.**  If two morphisms into
-`R ⊗ 1̄` are a morphism into `R` with an odd leg attached, then
+`R ⊗ 1-bar` are a morphism into `R` with an odd leg attached, then
 shuffling them and contracting the two odd legs multiplies the two
 morphisms into `R`, after a pure contraction of the odd legs. -/
 theorem shuffle_contract

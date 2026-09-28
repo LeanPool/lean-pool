@@ -306,7 +306,7 @@ each of which has finite dimensional even component by finite
 length. -/
 theorem rank_hom_unit_le_aleph0_of_presented
     [SmallCategory C] [MonoidalCategory C] [Abelian C]
-    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C] [MonoidalLinear ℂ C]
+    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C]
     [RigidCategory C] [CategoryTheory.Linear ℂ (Ind C)]
     (hu : HasScalarUnit C)
     (hsmul : IndOfLinear C) (hlen : ∀ Z : C, ∃ N : ℕ, LengthLE Z N)
@@ -325,7 +325,7 @@ even component.**  This is the form in which the countable descent
 consumes `RS.CountablyPresented.of_epi`. -/
 theorem rank_hom_unit_le_aleph0_of_epi
     [SmallCategory C] [MonoidalCategory C] [Abelian C]
-    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C] [MonoidalLinear ℂ C]
+    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C]
     [RigidCategory C] [CategoryTheory.Linear ℂ (Ind C)]
     (hu : HasScalarUnit C)
     (hsmul : IndOfLinear C) (hlen : ∀ Z : C, ∃ N : ℕ, LengthLE Z N)

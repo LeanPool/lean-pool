@@ -13,14 +13,14 @@ public import LeanPool.RegtsSevenster.RS.Classical.Deligne.TwistShuffle
 # The realization of a left odd twist is a parity shift
 
 Twisting a module `N` over a commutative monoid object `R` by the
-odd line *on the left* produces `1̄ ⊗ N`, and its Γ-module is the
+odd line *on the left* produces `1-bar ⊗ N`, and its Γ-module is the
 parity shift of the Γ-module of `N`.  This is the mirror of
 `RS.gammaShiftIso`, which twists the regular module on the right.
 
 The two identifications are again a source identification followed
 by a contraction, but the contraction is now the *left* cap
 `RS.OddLine.capL`, which folds the two leading odd legs of
-`1̄ ⊗ (1̄ ⊗ Z)` against the square trivialisation.  The left cap is
+`1-bar ⊗ (1-bar ⊗ Z)` against the square trivialisation.  The left cap is
 natural in the capped object (`RS.OddLine.capL_naturality`), it
 commutes with carrying a further object past the two odd legs
 (`RS.OddLine.capL_braidPast`), and the tensor–hom bijection of the

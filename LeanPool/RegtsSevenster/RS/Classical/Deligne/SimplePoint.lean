@@ -39,7 +39,7 @@ unit. -/
 theorem bijective_algebraMap_gammaEven
     [SmallCategory C] [MonoidalCategory C] [SymmetricCategory C] [Abelian C]
     [RigidCategory C] [MonoidalPreadditive C] [CategoryTheory.Linear ℂ C]
-    [MonoidalLinear ℂ C] [CategoryTheory.Linear ℂ (Ind C)]
+    [CategoryTheory.Linear ℂ (Ind C)]
     [MonoidalLinear ℂ (Ind C)]
     (hu : HasScalarUnit C)
     (hsmul : IndOfLinear C) (hlen : ∀ Z : C, ∃ N : ℕ, LengthLE Z N)
@@ -65,7 +65,7 @@ condition is vacuous. -/
 noncomputable def superPointOfSimple
     [SmallCategory C] [MonoidalCategory C] [SymmetricCategory C] [Abelian C]
     [RigidCategory C] [MonoidalPreadditive C] [CategoryTheory.Linear ℂ C]
-    [MonoidalLinear ℂ C] [CategoryTheory.Linear ℂ (Ind C)]
+    [CategoryTheory.Linear ℂ (Ind C)]
     [MonoidalLinear ℂ (Ind C)]
     (hu : HasScalarUnit C)
     (hsmul : IndOfLinear C) (hlen : ∀ Z : C, ∃ N : ℕ, LengthLE Z N)

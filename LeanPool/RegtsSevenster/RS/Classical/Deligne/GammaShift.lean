@@ -13,16 +13,16 @@ public import LeanPool.RegtsSevenster.RS.Classical.Deligne.SuperModShift
 /-!
 # The realization of an odd twist is a parity shift
 
-The Γ-module of the free module `R ⊗ 1̄` on the odd line is the
+The Γ-module of the free module `R ⊗ 1-bar` on the odd line is the
 parity shift of the Γ-module of `R` itself: twisting by the odd
 line exchanges the two components of `ρ`, and the exchange is
 compatible with all four graded action blocks.
 
 The two components of the identification are the parity swaps
 `RS.rhoEvenOdd` and `RS.rhoOddOdd` of `RS.RhoTwist`, and no sign
-enters.  Both swaps have the same shape, `s ≫ (· ▷ 1̄) ≫ cap` for
+enters.  Both swaps have the same shape, `s ≫ (· ▷ 1-bar) ≫ cap` for
 a source identification `s`, where `RS.OddLine.cap` contracts the
-two twisting legs of `(Z ⊗ 1̄) ⊗ 1̄` against the square
+two twisting legs of `(Z ⊗ 1-bar) ⊗ 1-bar` against the square
 trivialisation.  The cap is natural in the capped object
 (`RS.OddLine.cap_naturality`) and compatible with the associator
 (`RS.OddLine.cap_tensor`), and those two facts alone give the one

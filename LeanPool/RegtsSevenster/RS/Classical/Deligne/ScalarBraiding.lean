@@ -22,7 +22,7 @@ one even variable — and for braiding `−1` (an odd line) by the
 signed sum — the specialisation at one odd variable.  The
 one-variable indicator evaluations kill every non-row
 (respectively non-column) Schur functor, and iterated direct sums
-give the vanishing half of Deligne 1.9 for `𝟙^p ⊕ 1̄^q` inside any
+give the vanishing half of Deligne 1.9 for `𝟙^p ⊕ 1-bar^q` inside any
 ambient category — the engine of the trichotomy 2.9.
 -/
 

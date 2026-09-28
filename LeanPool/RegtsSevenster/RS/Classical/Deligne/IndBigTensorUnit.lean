@@ -49,7 +49,7 @@ theorem id_indUnit_ne_zero [SmallCategory C] [MonoidalCategory C] [Abelian C]
 survives.** -/
 theorem bigTensorUnit_ne_zero_ind
     [SmallCategory C] [MonoidalCategory C] [Abelian C]
-    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C] [MonoidalLinear ℂ C]
+    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C]
     [RigidCategory C] [BraidedCategory (Ind C)] {ι : Type v} [LinearOrder ι]
     (B : ι → Ind C) [∀ i, MonObj (B i)]
     (hu : HasScalarUnit C)

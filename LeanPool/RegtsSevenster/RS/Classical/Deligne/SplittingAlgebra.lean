@@ -36,7 +36,7 @@ splits every embedded object into a mixed sum and splits every
 chosen epimorphism. -/
 theorem exists_splitting_algebra
     [SmallCategory C] [MonoidalCategory C] [Abelian C]
-    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C] [MonoidalLinear ℂ C]
+    [CategoryTheory.Linear ℂ C] [MonoidalPreadditive C]
     [RigidCategory C] [SymmetricCategory (Ind C)] [HasCoequalizers (Ind C)]
     [∀ Z : Ind C, PreservesColimitsOfShape WalkingParallelPair (tensorLeft
       Z)] [HasFiniteBiproducts (Ind C)]

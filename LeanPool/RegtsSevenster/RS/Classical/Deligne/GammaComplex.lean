@@ -42,7 +42,7 @@ it. -/
 theorem exists_smul_one_of_simple_of_epi
     [SmallCategory C] [MonoidalCategory C] [SymmetricCategory C] [Abelian C]
     [RigidCategory C] [MonoidalPreadditive C] [CategoryTheory.Linear ℂ C]
-    [MonoidalLinear ℂ C] [CategoryTheory.Linear ℂ (Ind C)]
+    [CategoryTheory.Linear ℂ (Ind C)]
     [MonoidalLinear ℂ (Ind C)]
     (hu : HasScalarUnit C)
     (hsmul : IndOfLinear C) (hlen : ∀ Z : C, ∃ N : ℕ, LengthLE Z N)
