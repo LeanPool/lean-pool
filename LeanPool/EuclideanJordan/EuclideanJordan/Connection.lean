@@ -385,7 +385,7 @@ theorem IsConnector.act {F : JordanFrame J n} {i j k : Fin n} (hij : i ≠ j) (h
 /-- The transfer map `y ↦ 2 (c ∘ y)` attached to a connector. -/
 def connMap (c : J) : J →ₗ[ℝ] J := (2 : ℝ) • jmulₗ J c
 
-@[simp] theorem connMap_apply (c y : J) : connMap c y = (2 : ℝ) • (c * y) := rfl
+@[simp] theorem connMap_apply (c y : J) : connMap c y = (2 : ℝ) • (c * y) := by rfl
 
 /-- The transfer map carries `V_{jk}` into `V_{ik}`. -/
 theorem connMap_mem {F : JordanFrame J n} {i j k : Fin n} (hij : i ≠ j) (hjk : j ≠ k)

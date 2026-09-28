@@ -50,7 +50,7 @@ section Bridge
 variable {J : Type*} [NormedAddCommGroup J] [Module ℝ J]
 
 /-- Build the multiplicative structure ON the ambient additive group, from a bilinear map. -/
-@[instance_reducible]
+@[expose, instance_reducible]
 def ringOfBilinear (m : J →ₗ[ℝ] J →ₗ[ℝ] J) (hcomm : ∀ x y, m x y = m y x) :
     NonUnitalNonAssocCommRing J :=
   { (inferInstance : AddCommGroup J) with

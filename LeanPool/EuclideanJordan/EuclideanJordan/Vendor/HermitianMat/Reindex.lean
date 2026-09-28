@@ -25,6 +25,7 @@ variable {d d₂ d₃ d₄ 𝕜 : Type*} [RCLike 𝕜]
 variable (A B : HermitianMat d 𝕜) (e : d ≃ d₂)
 
 /-- Reindex both rows and columns of a Hermitian matrix along an equivalence. -/
+@[expose]
 def reindex (e : d ≃ d₂) : HermitianMat d₂ 𝕜 :=
   ⟨A.mat.reindex e e, A.H.submatrix e.symm⟩
 
