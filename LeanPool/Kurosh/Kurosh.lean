@@ -2336,7 +2336,7 @@ abbrev TreeKuroshProduct {ι : Type v} (G : ι → Type u)
             exact (kuroshFreePartHom G H).map_mul x.down y.down }
 
 /-- The homomorphism induced by the stabilizer inclusions and free-part evaluation. -/
-noncomputable def treeKuroshProductToH {ι : Type v} (G : ι → Type u)
+@[expose] noncomputable def treeKuroshProductToH {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G)) :
     TreeKuroshProduct G H →* H :=
   Monoid.CoprodI.lift (treeKuroshComponentHom G H)

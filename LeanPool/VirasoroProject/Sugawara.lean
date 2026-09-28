@@ -747,7 +747,7 @@ variable {heiOper} in
 On a vector space with a representation of the Heisenberg algebra that acts locally truncatedly,
 we get a representation of the Virasoro algebra with central charge 1 by the Sugawara
 construction. -/
-noncomputable def _root_.VirasoroProject.sugawaraRepresentation [CharZero 𝕜] :
+@[expose] noncomputable def _root_.VirasoroProject.sugawaraRepresentation [CharZero 𝕜] :
     VirasoroAlgebra 𝕜 →ₗ⁅𝕜⁆ (V →ₗ[𝕜] V) := by
   apply VirasoroAlgebra.representationOfCentralChargeOfL 1 (lOper := sugawaraGen heiTrunc)
   intro n m

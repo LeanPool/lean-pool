@@ -121,26 +121,26 @@ instance : Module 𝕜 (ModuleOfModuleAlgebra 𝕜 A V) :=
   moduleScalarOfModule 𝕜 A V
 
 /-- The map from `V` to its type synonym `ModuleOfModuleAlgebra 𝕜 A V`. -/
-def _root_.ModuleOfModuleAlgebra.mk (v : V) :
+@[expose] def _root_.ModuleOfModuleAlgebra.mk (v : V) :
     ModuleOfModuleAlgebra 𝕜 A V :=
   v
 
 /-- The map from `V` to its type synonym `ModuleOfModuleAlgebra 𝕜 A V` as a
 homomorphism of additive groups. -/
-def _root_.ModuleOfModuleAlgebra.mkAddHom :
+@[expose] def _root_.ModuleOfModuleAlgebra.mkAddHom :
     V →+ ModuleOfModuleAlgebra 𝕜 A V where
   toFun := ModuleOfModuleAlgebra.mk 𝕜 A V
   map_zero' := rfl
   map_add' _ _ := rfl
 
 /-- The map from the type synonym `ModuleOfModuleAlgebra 𝕜 A V` back to `V`. -/
-def _root_.ModuleOfModuleAlgebra.unMk (v : ModuleOfModuleAlgebra 𝕜 A V) :
+@[expose] def _root_.ModuleOfModuleAlgebra.unMk (v : ModuleOfModuleAlgebra 𝕜 A V) :
     V :=
   v
 
 /-- The map from the type synonym `ModuleOfModuleAlgebra 𝕜 A V` back to `V` as a
 homomorphism of additive groups. -/
-def _root_.ModuleOfModuleAlgebra.unMkAddHom (𝕜 A V : Type*) [CommRing 𝕜]
+@[expose] def _root_.ModuleOfModuleAlgebra.unMkAddHom (𝕜 A V : Type*) [CommRing 𝕜]
     [Semiring A] [Algebra 𝕜 A] [AddCommGroup V] [Module A V] :
     ModuleOfModuleAlgebra 𝕜 A V →+ V where
   toFun := ModuleOfModuleAlgebra.unMk 𝕜 A V
@@ -159,7 +159,7 @@ variable (V : Type*) [AddCommGroup V] [Module A V]
 
 /-- An element `a ∈ A` of a `𝕜`-algebra `A` defines a `𝕜`-linear map `V → V` by left
 multiplication. -/
-def ModuleOfModuleAlgebra.lsmul (a : A) :
+@[expose] def ModuleOfModuleAlgebra.lsmul (a : A) :
     ModuleOfModuleAlgebra 𝕜 A V →ₗ[𝕜] ModuleOfModuleAlgebra 𝕜 A V where
   toFun v :=
     ModuleOfModuleAlgebra.mkAddHom 𝕜 A V (a • ModuleOfModuleAlgebra.unMkAddHom 𝕜 A V v)
@@ -359,7 +359,7 @@ variable (ρ : LieAlgebra.Representation 𝕜 𝕂 𝓰 V)
 
 /-- A representation of a `𝕜`-Lie algebra `𝓰` on a vector space `V` defines a `𝓤 𝕜 𝓰`-module
 structure on `V`. -/
-@[reducible] noncomputable def LieAlgebra.Representation.moduleUniversalEnvelopingAlgebra :
+@[expose, reducible] noncomputable def LieAlgebra.Representation.moduleUniversalEnvelopingAlgebra :
     Module (𝓤 𝕜 𝓰) V where
   smul a v := UniversalEnvelopingAlgebra.lift 𝕜 ρ a v
   one_smul v := by

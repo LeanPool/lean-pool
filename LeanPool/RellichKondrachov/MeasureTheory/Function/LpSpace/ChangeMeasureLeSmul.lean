@@ -58,7 +58,7 @@ private lemma changeMeasureFun_coe {c : ℝ≥0∞} (hc : c ≠ ∞) (hν : ν �
       (MeasureTheory.MemLp.coeFn_toLp (memLp_changeMeasure (μ := μ) (ν := ν) (p := p) hc hν f))
 
 /-- The identity map as a linear map `Lp E p μ →ₗ[ℝ] Lp E p ν` under a measure bound `ν ≤ c • μ`. -/
-noncomputable def changeMeasureₗ {c : ℝ≥0∞} (hc : c ≠ ∞) (hν : ν ≤ c • μ) :
+@[expose] noncomputable def changeMeasureₗ {c : ℝ≥0∞} (hc : c ≠ ∞) (hν : ν ≤ c • μ) :
     Lp E p μ →ₗ[ℝ] Lp E p ν where
   toFun := changeMeasureFun (μ := μ) (ν := ν) (p := p) hc hν
   map_add' f g := by

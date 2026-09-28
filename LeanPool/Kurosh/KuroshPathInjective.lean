@@ -28,7 +28,7 @@ universe u v
 namespace GraphCoveringTheory.Kurosh
 
 /-- Interpret a raw symmetrified Bass-Serre path in the path category. -/
-def rawPathToCat {ι : Type v} (G : ι → Type u) [∀ i, Group (G i)]
+@[expose] def rawPathToCat {ι : Type v} (G : ι → Type u) [∀ i, Group (G i)]
     {a b : Quiver.Symmetrify (RawBassSerreVertex G)}
     (p : @Quiver.Path (Quiver.Symmetrify (RawBassSerreVertex G))
       (@Quiver.symmetrifyQuiver (RawBassSerreVertex G)
