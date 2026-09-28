@@ -19,7 +19,7 @@ short-scale property: an excursion through the old target cannot shorten a
 source pair of distance at most `r`.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

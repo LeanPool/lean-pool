@@ -18,7 +18,7 @@ of `P`.  Unlike Mathlib's countable Kuratowski embedding, this construction
 does not require separability.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

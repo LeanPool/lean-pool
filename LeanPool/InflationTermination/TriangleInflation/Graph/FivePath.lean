@@ -23,7 +23,7 @@ coordinates, and the analytic core of the bilocal inequality. Nothing in it chan
 seven statements below, which appear in their original form.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation.Graph
 

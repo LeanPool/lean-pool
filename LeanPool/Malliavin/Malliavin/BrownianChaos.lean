@@ -17,7 +17,7 @@ defines their closed homogeneous ranges and proves that every positive range lie
 range of the natural Itô integral.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace

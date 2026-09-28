@@ -16,7 +16,7 @@ constructed from Brownian increment products.  Its range agrees orderwise with t
 operator range, so its closed ranges are the canonical Brownian homogeneous chaoses.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace

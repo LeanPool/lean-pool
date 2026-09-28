@@ -32,7 +32,7 @@ vertex blocks) and has been removed; the vertex-block form is
 in `RootSink.lean` from the root-sink lemma.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation.Graph
 

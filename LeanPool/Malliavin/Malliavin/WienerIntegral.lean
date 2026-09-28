@@ -55,7 +55,7 @@ along the dense map `stepToLp` to the Wiener integral `wienerIntegral hB`.
   value as the corresponding product of increments.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace

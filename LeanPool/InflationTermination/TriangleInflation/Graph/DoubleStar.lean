@@ -36,7 +36,7 @@ and the theorem `doubleStar_terminates` assembled from it, live in
 `InflationGraphOpen/DoubleStar.lean`; everything in this file is proved.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation.Graph
 

@@ -23,7 +23,7 @@ The explicit boundary definitions support independent statement auditing;
 named bridges transfer their witnesses to the shared library API.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal Real Topology InnerProductSpace

@@ -20,7 +20,7 @@ boundary definitions remain explicit for independent statement auditing;
 `IsSmoothBounded.toMalliavin` transfers their witnesses to the shared library API.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal Real Topology InnerProductSpace

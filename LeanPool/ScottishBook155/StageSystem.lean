@@ -16,7 +16,7 @@ This file packages exactly the data exported by the protected one-point
 extension in the form needed by the transfinite construction.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

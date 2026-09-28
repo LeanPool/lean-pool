@@ -27,7 +27,7 @@ and `square_linear_witness` using the pushforward of this density along the copi
 map together with symmetry, the diagonal law and the injectable/ancestral prescriptions.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation.Graph
 

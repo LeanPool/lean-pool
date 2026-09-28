@@ -42,7 +42,7 @@ functions, and `symmetrize` is the projection onto them.
   functions (`symmetrizeL_eq_self_iff`).
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Finset
 open scoped ENNReal

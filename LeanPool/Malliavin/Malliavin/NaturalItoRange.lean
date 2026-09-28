@@ -15,7 +15,7 @@ This packages the natural Itô terminal values as closed subspaces of ambient an
 representation as triviality of the corresponding orthogonal complement.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace

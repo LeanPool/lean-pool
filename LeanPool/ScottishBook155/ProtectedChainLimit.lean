@@ -16,7 +16,7 @@ completed direct limit. Together with `DirectedLimitStage`, this constructs a
 new protected stage at every nonempty limit segment.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

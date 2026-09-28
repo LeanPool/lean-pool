@@ -34,7 +34,7 @@ This file records the consequences for the Clark--Ocone development:
   `ClarkOcone.lean`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal InnerProductSpace

@@ -117,6 +117,7 @@ section Translate
 
 /-- Blueprint F03: the translation automorphism `τₓ : X i ↦ X i - x i` of `P_d`. It satisfies
 `ev_x ∘ τₓ = ev_0` and carries `𝔪₀` onto `𝔪ₓ`. -/
+@[expose]
 noncomputable def translate (x : Fin d → K) :
     MvPolynomial (Fin d) K ≃ₐ[K] MvPolynomial (Fin d) K :=
   AlgEquiv.ofAlgHom (aeval fun i ↦ X i - C (x i)) (aeval fun i ↦ X i + C (x i))

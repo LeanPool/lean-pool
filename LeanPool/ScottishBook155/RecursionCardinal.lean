@@ -17,7 +17,7 @@ for the recursion.  The identities below are precisely the cardinal arithmetic
 used in the manuscript.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

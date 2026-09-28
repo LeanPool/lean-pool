@@ -14,7 +14,7 @@ public import LeanPool.ScottishBook155.ProtectedChainTransport
 # Gluing compatible closed prefixes below a limit
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

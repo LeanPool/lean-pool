@@ -116,6 +116,7 @@ section Radix
 
 /-- Blueprint C02: the radix vector `(Q₁, …, Q_k)` of Q01, as a function on `Fin k`
 (here `k = h - 1`): `radix n q k i = Params.Q n q (i + 1)`. -/
+@[expose]
 noncomputable def radix (n q k : ℕ) : Fin k → ℕ := fun i ↦ Params.Q n q (i.val + 1)
 
 variable {n q k : ℕ}

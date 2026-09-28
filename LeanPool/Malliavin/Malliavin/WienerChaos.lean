@@ -32,7 +32,7 @@ global simplex tower use its onto branch.  Order zero supplies constants, and
 `IsHilbertSum.mkInternal` packages the resulting total orthogonal family.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal InnerProductSpace Topology symmDiff

@@ -16,7 +16,7 @@ systems induces a nonexpansive map between their completed normed direct
 limits. Linearity of the stage maps is neither assumed nor used.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

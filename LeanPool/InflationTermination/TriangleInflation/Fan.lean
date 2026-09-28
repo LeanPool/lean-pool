@@ -16,7 +16,7 @@ Statements for paper Section 5.4: Theorem 5.11 (`thm:fan`) with its pointwise ce
 (`prop:Rp`). Proofs are deferred.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation
 

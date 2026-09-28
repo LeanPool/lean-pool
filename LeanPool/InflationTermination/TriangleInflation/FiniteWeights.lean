@@ -18,7 +18,7 @@ positivity nor additive inverses. The original real and complex APIs specialize 
 common toolkit while retaining their existing weight definitions.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation.FiniteWeights
 

@@ -18,7 +18,7 @@ real polynomial ring.  This is the finite-dimensional algebraic half of the stan
 route from polynomial Brownian cylinders to Wiener--Itô chaos.
 -/
 
-@[expose] public section
+public section
 
 noncomputable
 section

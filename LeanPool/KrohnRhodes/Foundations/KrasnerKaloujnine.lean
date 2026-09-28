@@ -27,7 +27,7 @@ via `Function.surjInv`. The component `n_g(q) := s(q)⁻¹ * g * s(π(g)⁻¹ * 
 because its image under `π` is `q⁻¹ * π(g) * π(g)⁻¹ * q = 1`.
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.KrohnRhodes
 

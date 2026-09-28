@@ -12,7 +12,7 @@ public import LeanPool.ScottishBook155.ProtectedChain
 # Constant coherent protected chains
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

@@ -26,7 +26,7 @@ Itô integration side no longer needs to be stipulated by `ClarkOconeFamily`; th
 contract concerns martingale representation and Malliavin--Itô duality.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace

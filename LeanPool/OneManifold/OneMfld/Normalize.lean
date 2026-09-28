@@ -19,7 +19,7 @@ is `Ioo 0 1`, and an `OChart` with target `Ioo 0 1` can be orientation-reversed
 (`x ↦ 1 - x`). H-charts cannot be flipped: the closed end at `0` is a boundary point.
 -/
 
-@[expose] public section
+public section
 
 namespace OneMfld
 

@@ -14,7 +14,7 @@ This file records exact formulations of the analytic inputs still required to co
 `ClarkOconeFamily` from the natural Brownian Itô integral.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace

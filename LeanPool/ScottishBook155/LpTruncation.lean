@@ -18,7 +18,7 @@ argument.  They converge to the original vector and never increase pairwise
 distance.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

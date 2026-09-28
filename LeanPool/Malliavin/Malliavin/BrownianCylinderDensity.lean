@@ -16,7 +16,7 @@ This file proves that powers of finite linear combinations of Brownian coordinat
 ambient real `L²` space whenever the Brownian process generates the ambient measurable space.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open NormedSpace

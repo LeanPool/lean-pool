@@ -16,7 +16,7 @@ This file packages the successor clause independently of the transfinite
 recursion.  The new index is the top point of `WithTop ι`.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

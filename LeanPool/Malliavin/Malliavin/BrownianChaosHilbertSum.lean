@@ -15,7 +15,7 @@ gives a single canonical isometry from the external Hilbert sum of positive simp
 random `L²`; its range is exactly the closed supremum of the positive canonical Brownian chaoses.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace

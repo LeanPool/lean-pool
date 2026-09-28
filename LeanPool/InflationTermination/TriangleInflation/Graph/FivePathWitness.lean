@@ -17,7 +17,7 @@ five-path target with `h = 1/(16t²)`, built as the inflated law of a complex-we
 pair-source model, and its recursively expressible form. Everything here is proved.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation.Graph
 

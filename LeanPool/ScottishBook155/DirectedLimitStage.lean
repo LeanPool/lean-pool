@@ -20,7 +20,7 @@ preservation; eventual target recovery and injectivity of the earlier stages
 prove injectivity of the completed map.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

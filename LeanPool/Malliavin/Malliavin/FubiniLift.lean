@@ -39,7 +39,7 @@ representatives is delicate, so we construct the map as an isometry: on the simp
   `L²(μ; L²(ν)) ≃ L²(ν × μ)` isometrically.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Filter Topology Function
 open scoped ENNReal NNReal InnerProductSpace

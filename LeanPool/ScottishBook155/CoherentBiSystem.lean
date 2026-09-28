@@ -16,7 +16,7 @@ retractions supplies both a directed system and the projection system used at
 completed limit stages.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

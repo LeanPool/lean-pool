@@ -16,7 +16,7 @@ envelope.  Adjoining the old target as a max-product coordinate makes the
 retraction linear and explicit: it is first-coordinate projection.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

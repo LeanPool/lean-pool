@@ -21,7 +21,7 @@ whose transition maps are linear isometries, this file equips that algebraic
 direct limit with the unique norm making every canonical map isometric.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

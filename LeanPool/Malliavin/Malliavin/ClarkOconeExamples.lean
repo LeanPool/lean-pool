@@ -36,7 +36,7 @@ and for the Wick exponential `exp (B T - T / 2)` (`clarkOcone_wickExp`).  The te
 contract.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal InnerProductSpace

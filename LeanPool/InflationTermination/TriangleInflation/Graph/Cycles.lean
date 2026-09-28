@@ -20,7 +20,7 @@ The Walsh section is general Boolean-cube Fourier analysis (orthogonality, inver
 uniqueness) and is reusable by the other pair-source files.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation.Graph
 

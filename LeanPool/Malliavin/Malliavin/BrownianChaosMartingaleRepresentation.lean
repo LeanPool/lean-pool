@@ -16,7 +16,7 @@ canonical Brownian multiple-integral ranges.  The remaining hypothesis is exactl
 that concrete tower.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace

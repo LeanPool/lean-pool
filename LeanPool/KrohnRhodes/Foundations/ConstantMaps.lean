@@ -22,7 +22,7 @@ Convention: `Function.End Q` multiplies by composition, `(f * g) x = f (g x)`.
   monoids used in the decomposition genuine aperiodic factors.
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.KrohnRhodes
 

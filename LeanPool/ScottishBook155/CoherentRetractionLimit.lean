@@ -16,7 +16,7 @@ stage. A coherent family of contractive projections to an earlier component
 extends to a contractive linear map from the completed direct limit.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

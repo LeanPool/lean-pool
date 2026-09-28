@@ -17,7 +17,7 @@ bijection satisfying the paper's closed-ball conclusion while failing to be a
 global isometry.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

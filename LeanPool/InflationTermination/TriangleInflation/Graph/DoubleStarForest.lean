@@ -17,7 +17,7 @@ The graph-theoretic step of the double-star reconstruction (AUDIT-NOTES A3, Theo
 compatibility on such scenarios (`doubleStar_terminates`). Everything here is proved.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation.Graph
 

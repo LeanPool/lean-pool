@@ -22,7 +22,7 @@ The general correlation-scenario result and the rejecting-order bounds expressed
 the infimum distance to the compatible set are beyond the scope of this module.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation
 

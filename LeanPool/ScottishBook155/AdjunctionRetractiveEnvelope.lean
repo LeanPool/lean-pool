@@ -19,7 +19,7 @@ target, and recovers the nonlinear adjunction retraction by a contractive
 linear projection.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

@@ -28,6 +28,7 @@ A set `S ⊆ 𝔽_qⁿ` is a Nikodym set if for every point `x ∈ 𝔽_qⁿ` th
 all of whose points other than `x` lie in `S`. Lines are parametrised as `x + t • v` with
 `v ≠ 0`, so the condition reads `x + t • v ∈ S` for all `t ≠ 0`.
 -/
+@[expose]
 def IsNikodym {F : Type*} [Field F] {n : ℕ} (S : Finset (Fin n → F)) : Prop :=
   ∀ x, ∃ v, v ≠ 0 ∧ ∀ t : F, t ≠ 0 → x + t • v ∈ S
 

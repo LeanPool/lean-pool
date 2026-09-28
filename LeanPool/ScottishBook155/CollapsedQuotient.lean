@@ -15,7 +15,7 @@ This module constructs the pseudometric on the original space whose metric
 separation quotient is the quotient used for the injectivity coordinate.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

@@ -17,7 +17,7 @@ pure-power inner-product formula gives the usual factorial isometry.  At order o
 operator is identified with the concrete Brownian Wick power of a finite step kernel.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal InnerProductSpace

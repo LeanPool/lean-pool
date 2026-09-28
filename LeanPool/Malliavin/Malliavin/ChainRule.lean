@@ -41,7 +41,7 @@ by dominated convergence (`tendsto_toLp_of_dominated`, bound `(2K)² ‖D_cl F�
 everywhere convergent subsequence.  Closedness of the graph (`mem_domD12_of_tendsto`) concludes.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace

@@ -87,7 +87,7 @@ and agreeing with `D` on smooth bounded functionals.
   by parts, derived from the Cameron--Martin theorem.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace

@@ -21,7 +21,7 @@ named cycle and path scenarios, the fact that a target passing the order-`t` tes
 the total variation cost of a local flip, and the passage to a connected component.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation.Graph
 

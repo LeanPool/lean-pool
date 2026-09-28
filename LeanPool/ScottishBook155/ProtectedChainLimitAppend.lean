@@ -13,7 +13,7 @@ public import LeanPool.ScottishBook155.ProtectedChainSuccessor
 # Appending a completed limit stage to a coherent chain
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

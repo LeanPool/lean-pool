@@ -18,7 +18,7 @@ all selected exact distances.  The collapsed-quotient Kuratowski coordinate
 separates the remaining pairs without changing those metric estimates.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

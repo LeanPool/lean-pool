@@ -16,7 +16,7 @@ Statements split from the original `Statements.lean` skeleton (one file per prov
 See AUDIT-NOTES for the mathematics.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation.Graph
 

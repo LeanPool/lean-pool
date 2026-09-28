@@ -71,7 +71,7 @@ yet proved).
   it assumes the conditioning cell is positive.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation.Graph
 

@@ -19,7 +19,7 @@ parity rigidity `CycleModelAux.quant_rigidity` (Lemma `lem:quantrigidity`). Ever
 is proved.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation.Graph
 

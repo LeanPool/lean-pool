@@ -16,7 +16,7 @@ between real Banach spaces carrying the invariant used by the transfinite
 construction.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

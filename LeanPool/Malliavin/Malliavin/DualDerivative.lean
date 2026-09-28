@@ -26,7 +26,7 @@ Cameron--Martin space lies in `𝔻₁,₂` by closedness (`coe_space_mem_domD12
 `Dₜ (∫ g dB) = g(t)` for every `g ∈ L²(ℝ≥0)` (`timeDerivative_mderivClosure_wienerIntegral`).
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace

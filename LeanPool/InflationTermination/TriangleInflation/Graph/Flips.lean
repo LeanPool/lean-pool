@@ -30,7 +30,7 @@ per-coordinate flips. Three structural facts carry every statement below.
   flipped blocks.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation.Graph
 

@@ -17,7 +17,7 @@ propositionally equal.  These pointwise transport operations keep all large
 dependent elimination out of the coherence proofs.
  -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

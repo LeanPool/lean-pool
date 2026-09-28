@@ -35,7 +35,7 @@ these hypotheses, the public identity and its centered/norm consequences concern
 contract operator rather than asserting that it is the constructed Brownian Itô integral.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace

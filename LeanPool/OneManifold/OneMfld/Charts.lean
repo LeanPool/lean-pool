@@ -15,7 +15,7 @@ An `OChart` has an open-interval target `Ioo x y` (an interior chart); an `HChar
 half-open target `Iio x` (a boundary chart); an `IChart` is either.
 -/
 
-@[expose] public section
+public section
 
 namespace OneMfld
 

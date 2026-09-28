@@ -19,7 +19,7 @@ theorem.  The protected one-point extension and the transfinite construction
 are not asserted here.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

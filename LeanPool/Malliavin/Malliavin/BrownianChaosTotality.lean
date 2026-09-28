@@ -15,7 +15,7 @@ products of ordered, disjoint Brownian increments.  Thus its remaining totality 
 equivalent to a concrete dense-span statement for those products.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace

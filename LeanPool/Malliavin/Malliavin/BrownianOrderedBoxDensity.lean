@@ -15,7 +15,7 @@ indicators lie in the range of the ordered-box linear map, so simple-function de
 this map has dense range at every positive order.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal symmDiff

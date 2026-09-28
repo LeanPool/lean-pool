@@ -126,6 +126,7 @@ section LinearMap
 variable {ι : Type*} (I : Ideal (MvPolynomial (Fin d) K)) (x : ι → Fin d → K) (r : ℕ)
 
 /-- Blueprint G02: the `K`-linear map `P_d → ∏ i, Q_{I, x i}(r)` collecting all jets. -/
+@[expose]
 noncomputable def jetsLinearMap :
     MvPolynomial (Fin d) K →ₗ[K] ∀ i, MvPolynomial (Fin d) K ⧸ jetIdeal I (x i) r where
   toFun f i := Ideal.Quotient.mk (jetIdeal I (x i) r) f

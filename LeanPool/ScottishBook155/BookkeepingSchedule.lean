@@ -17,7 +17,7 @@ order type and recursively choose a fresh point in the full-size tail above
 `α`.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

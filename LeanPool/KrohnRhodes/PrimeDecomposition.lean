@@ -28,7 +28,7 @@ quantitative bounds in Theorem 4.1. See `DivTowerWreath` for the exact recursion
 The declarations in this file are for types in universe 0.
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.KrohnRhodes
 

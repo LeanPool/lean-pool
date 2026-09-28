@@ -17,7 +17,7 @@ attachment set in `M ⊕₁ ℝ` is parametrized by `M ⊕ Unit`: the left summa
 the base hyperplane and the right summand is the single elevated point.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

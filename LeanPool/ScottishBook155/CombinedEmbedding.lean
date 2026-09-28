@@ -18,7 +18,7 @@ in the max product preserves its metric estimates and supplies global
 injectivity once the first coordinate separates the collapsed subset.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

@@ -26,7 +26,7 @@ public import Mathlib.Data.Fintype.Pi
 * [Eilenberg, *Automata, Languages, and Machines, Vol. B*, 1976]
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.KrohnRhodes
 

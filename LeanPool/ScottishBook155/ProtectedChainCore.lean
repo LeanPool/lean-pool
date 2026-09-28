@@ -15,7 +15,7 @@ The uniform recovery law is stable when one more active or idle successor is
 attached. This is the successor induction step used by the transfinite chain.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

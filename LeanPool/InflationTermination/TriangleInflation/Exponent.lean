@@ -20,7 +20,7 @@ is the finiteness of `t_min` (which the paper quotes from the asymptotic complet
 Navascués–Wolfe hierarchy). Only the explicit finite bounds are stated.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation
 

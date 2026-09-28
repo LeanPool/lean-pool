@@ -26,7 +26,7 @@ admissible functionals to prove that the induced linear copy of the old space
 is isometric.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

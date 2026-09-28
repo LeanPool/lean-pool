@@ -15,7 +15,7 @@ finite chain of Brownian increments as an element of `L²(P)`.  These terminal v
 required images of ordered-box kernels in `IteratedIntegralFamily.IsBrownian`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal InnerProductSpace

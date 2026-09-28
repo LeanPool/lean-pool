@@ -26,7 +26,7 @@ natural Brownian filtration that identification — almost every time, almost ev
 measures — is `predictableSectionKernel_ae_eq_condExpKernel` in `KernelIdentification.lean`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal InnerProductSpace

@@ -16,7 +16,7 @@ corresponding simplex combination divided by the factorial.  On the stochastic s
 factorial cancels and the result is the matching finite combination of Brownian increment chains.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal InnerProductSpace

@@ -36,7 +36,7 @@ Hilbert sum.  The construction selects its onto branch only when process-measura
 the separable ambient space, so unrelated ambient randomness is never absorbed into the tower.
 -/
 
-@[expose] public section
+public section
 
 namespace Malliavin
 

@@ -43,7 +43,7 @@ the corresponding kernel integral of the Malliavin time derivative
 (`ClarkOconeFamily.predictableDerivative_ae_eq_integral_globalPredictableSectionKernel`).
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal InnerProductSpace

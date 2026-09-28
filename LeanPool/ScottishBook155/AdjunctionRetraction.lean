@@ -17,7 +17,7 @@ identity on the old target it is nonexpansive for the adjunction predistance,
 so it descends through metric separation.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

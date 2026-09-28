@@ -62,7 +62,7 @@ only; the statements live in `Finner.lean`, `Defect.lean`, `Main.lean`, `Fan.lea
   carries the hypothesis `1 ≤ t`, where the two agree.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation
 

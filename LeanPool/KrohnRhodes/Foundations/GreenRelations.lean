@@ -22,7 +22,7 @@ public import Mathlib.Algebra.Group.Defs
 * [J.-E. Pin, *Mathematical Foundations of Automata Theory*, 2022]
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.KrohnRhodes
 

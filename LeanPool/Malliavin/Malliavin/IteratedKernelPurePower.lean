@@ -17,7 +17,7 @@ square-integrability, symmetry, and Hilbert-space formulas.  These are the deter
 for identifying generalized Hermite values with canonical Brownian multiple integrals.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 open scoped ENNReal NNReal InnerProductSpace

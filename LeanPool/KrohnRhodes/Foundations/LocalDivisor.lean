@@ -23,7 +23,7 @@ public import Mathlib.Data.Fintype.EquivFin
   Fundamenta Informaticae 116 (2012); arXiv:1111.1585]
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.KrohnRhodes
 

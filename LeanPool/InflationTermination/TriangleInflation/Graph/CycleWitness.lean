@@ -16,7 +16,7 @@ The auxiliary-sign construction of AUDIT-NOTES A5 and Lemma `lem:cyclewitness` o
 `papers/inflation-nontermination/paper/sections/15-cycles.tex`.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation.Graph
 

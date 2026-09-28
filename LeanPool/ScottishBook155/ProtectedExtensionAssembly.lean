@@ -18,7 +18,7 @@ target embeddings and the linear recovery map together with the properties
 used by the successor construction.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

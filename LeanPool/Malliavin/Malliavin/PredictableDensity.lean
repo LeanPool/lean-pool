@@ -20,7 +20,7 @@ time; the omitted time origin is null.
 trimmed-measure `L²` model used by completion constructions of the Itô integral.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology Function
 open scoped ENNReal NNReal InnerProductSpace

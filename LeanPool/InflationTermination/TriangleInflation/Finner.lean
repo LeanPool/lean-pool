@@ -19,7 +19,7 @@ This file also collects the basic normalization facts about the weight functions
 `Defs.lean`, which the later files use.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation
 

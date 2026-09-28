@@ -40,7 +40,7 @@ the wreath-product algebra used to assemble factor towers.
 * [Eilenberg, *Automata, Languages, and Machines, Vol. B*, 1976]
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.KrohnRhodes
 

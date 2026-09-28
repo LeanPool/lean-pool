@@ -20,7 +20,7 @@ schedule, limit stages glue and complete the earlier prefixes, and the resulting
 scheduled chain supplies the unconditional witness for `Claim14`.
 -/
 
-@[expose] public section
+public section
 
 namespace ScottishBook155
 

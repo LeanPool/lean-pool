@@ -18,7 +18,7 @@ those Wick values belong to the closed span of ordered, disjoint increment produ
 that this exact assertion implies canonical-chaos totality and natural martingale representation.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace

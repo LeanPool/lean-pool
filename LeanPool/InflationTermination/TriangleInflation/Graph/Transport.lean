@@ -25,7 +25,7 @@ namespace carries their machinery, and the `Exhaustion` namespace the graph theo
 rest of the library.
 -/
 
-@[expose] public section
+public section
 
 namespace TriangleInflation.Graph
 

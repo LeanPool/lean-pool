@@ -24,7 +24,7 @@ isometry. Under that hypothesis, predictable processes and centered terminal ran
 are linearly isometrically equivalent.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace

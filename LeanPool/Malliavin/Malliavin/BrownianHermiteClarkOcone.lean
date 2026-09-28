@@ -17,7 +17,7 @@ hypothesis.  Combining the two identifies the canonical inverse-Itô integrand w
 predictable Malliavin derivative and yields the concrete Clark--Ocone formula.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal InnerProductSpace

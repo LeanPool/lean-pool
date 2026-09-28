@@ -23,7 +23,7 @@ construction-level Itô isometry for every adapted step process on a common part
 comparison theorems derive the family-level identities from these genuine Brownian values.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace
