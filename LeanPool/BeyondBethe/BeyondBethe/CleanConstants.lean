@@ -70,7 +70,7 @@ theorem outsidePairEntropy_le
   let αo : OutsideColumn a b → ℝ := fun l ↦ pairAlpha X r s l.1
   have hne : ¬ IsEmpty (OutsideColumn a b) := by
     intro hempty
-    letI : IsEmpty (OutsideColumn a b) := hempty
+    let : IsEmpty (OutsideColumn a b) := hempty
     have hsum := sum_outsideColumn_eq_outsideMassTwo
       (pairAlpha X r s) a b
     have hzero : (∑ l : OutsideColumn a b, pairAlpha X r s l.1) = 0 := by
@@ -78,7 +78,7 @@ theorem outsidePairEntropy_le
       intro l _
       exact isEmptyElim l
     linarith [hsum, hzero]
-  letI : Nonempty (OutsideColumn a b) := not_isEmpty_iff.mp hne
+  let : Nonempty (OutsideColumn a b) := not_isEmpty_iff.mp hne
   have hsum : ∑ l, αo l = ρ := by
     dsimp only [αo, ρ]
     exact sum_outsideColumn_eq_outsideMassTwo _ _ _

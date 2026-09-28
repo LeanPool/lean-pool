@@ -635,7 +635,7 @@ theorem betheLogValue_le_regularizedMaximizer
       τ * (n * Real.log n) := by
   let W := uniformBirkhoff n
   have hn0 : 0 < n := by omega
-  letI : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn0
+  let : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn0
   have hW : IsDoublyStochastic W := uniformBirkhoff_doublyStochastic hn0
   have hsetNonempty :
       ({v : ℝ | ∃ Y, BetheAdmissible A Y ∧
@@ -682,7 +682,7 @@ theorem regularizedDifference_le_betheSuboptimality_add_budget
     regularizedBetheObjective τ A X -
         regularizedBetheObjective τ A P ≤
       betheSuboptimality (betheLogValue A) (betheObjective A P) + ξ * n := by
-  letI : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn
+  let : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn
   have hbethe := betheObjective_le_betheLogValue_of_positive hA hX
   have hHX : totalRowEntropy X ≤ n * Real.log n := by
     simpa using totalRowEntropy_le hX
@@ -710,7 +710,7 @@ theorem exists_regularizedOptimizer_with_logKKT
       (∃ r c : Fin n → ℝ, HasLogKKT τ A X r c) ∧
       Real.log (bethePermanent A) - ξ * n ≤ betheObjective A X := by
   have hn0 : 0 < n := by omega
-  letI : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn0
+  let : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn0
   obtain ⟨X, hX, hmax⟩ := exists_regularizedBetheMaximizer τ A
   have hXint := regularizedBetheMaximizer_interior hn hτ hA hX hmax
   obtain ⟨r, c, hKKT⟩ :=

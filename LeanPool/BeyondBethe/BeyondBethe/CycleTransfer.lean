@@ -195,7 +195,7 @@ theorem twoMatching_coreTransferCost_normalized_le
           (fun i j ↦ transferU τ (X i) j) / n ≤
       B / n + binaryEntropy η + η +
         (1 + Real.log 2) * ((badRows η P).card : ℝ) / n := by
-  letI : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn
+  let : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn
   have hencoding := twoMatching_entropy_le_halfBits_add_coarsenedRows
     hμ hmarg hP f g
   have hbefore : matrixTransferCost P
@@ -276,7 +276,7 @@ theorem gibbs_twoMatching_coreTransferCost_normalized_le
       hn hτ hbudget hA hX hPds
   have hregularizer : τ * totalRowEntropy P ≤ ξ * n := by
     have hentropy : totalRowEntropy P ≤ n * Real.log n := by
-      letI : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn
+      let : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn
       simpa using totalRowEntropy_le hPds
     exact (mul_le_mul_of_nonneg_left hentropy hτ).trans hbudget
   have hdivergence : D = -shannonEntropy μ + ∑ i, rowScore (P i) := by

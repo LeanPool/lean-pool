@@ -154,7 +154,7 @@ theorem rowClusterProduct_isRealStable_of_singletonPairs
     (hcard : 2 ≤ n) (hA : ∀ i j, 0 < A i j)
     (hclusters : IsSingletonPairClustering C) :
     IsRealStable (rowClusterProduct A C) := by
-  letI : Nonempty (Fin n) := Fintype.card_pos_iff.mp (by
+  let : Nonempty (Fin n) := Fintype.card_pos_iff.mp (by
     simpa using (lt_of_lt_of_le (by norm_num : 0 < 2) hcard))
   apply rowClusterProduct_isRealStable_of_factors
   intro c
@@ -175,9 +175,9 @@ theorem singletonPairCluster_stableCoefficient_lower
         polynomialCapacity α (rowClusterProduct A C) *
         polynomialCapacity α (columnSelector C.Cluster (Fin n)) ≤
       Matrix.permanent A := by
-  letI : Nonempty (Fin n) := Fintype.card_pos_iff.mp (by
+  let : Nonempty (Fin n) := Fintype.card_pos_iff.mp (by
     simpa using (lt_of_lt_of_le (by norm_num : 0 < 2) hcard))
-  letI : Nonempty C.Cluster :=
+  let : Nonempty C.Cluster :=
     ⟨(C.rows.symm (Classical.choice inferInstance)).1⟩
   apply rowClusterProduct_stableCoefficient_lower stableCoefficient C
   · intro i j

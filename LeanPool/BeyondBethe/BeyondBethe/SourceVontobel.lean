@@ -345,7 +345,7 @@ theorem vontobelSimplexEntropy_segment_lower
     (1 - t) * vontobelSimplexEntropy p +
         t * vontobelSimplexEntropy q ≤
       vontobelSimplexEntropy (probabilitySegment p q t) := by
-  letI : Nonempty ι := Fintype.card_pos_iff.mp (by omega)
+  let : Nonempty ι := Fintype.card_pos_iff.mp (by omega)
   let u : ι → ℝ := uniformProbabilityVector ι
   let qs : ℝ → ι → ℝ := fun δ ↦ probabilitySegment q u δ
   let lhs : ℝ → ℝ := fun δ ↦
@@ -379,7 +379,7 @@ theorem vontobelSimplexEntropy_segment_lower
       vontobelSimplexEntropy (probabilitySegment p q t) := by
     simp [rhs, qs]
   rw [← hlhs0, ← hrhs0]
-  letI : Filter.NeBot (nhdsWithin (0 : ℝ) (Set.Ioi 0)) :=
+  let : Filter.NeBot (nhdsWithin (0 : ℝ) (Set.Ioi 0)) :=
     nhdsGT_neBot (0 : ℝ)
   refine le_of_tendsto_of_tendsto (b := nhdsWithin (0 : ℝ) (Set.Ioi 0))
     (hlhs.tendsto 0 |>.mono_left nhdsWithin_le_nhds)
@@ -493,7 +493,7 @@ theorem vontobelBetheConcavity : VontobelBetheConcavity := by
       rfl
     simpa [smul_eq_mul, hmatrix] using hjensen
   · have hsmall : Fintype.card ι ≤ 1 := Nat.le_of_not_gt hcard
-    letI : Subsingleton ι := Fintype.card_le_one_iff_subsingleton.mp hsmall
+    let : Subsingleton ι := Fintype.card_le_one_iff_subsingleton.mp hsmall
     have hXY : X = Y := by
       ext i j
       have hx := hX.row_sum i

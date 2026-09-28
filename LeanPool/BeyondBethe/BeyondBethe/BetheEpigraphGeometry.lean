@@ -51,7 +51,7 @@ theorem regularizedBetheObjective_sub_le_rationalRange
     regularizedBetheObjective (τ : ℝ) (fun i j ↦ (A i j : ℝ)) X -
         regularizedBetheObjective (τ : ℝ) (fun i j ↦ (A i j : ℝ)) Z ≤
       (rationalRegularizedObjectiveRange A : ℝ) := by
-  letI : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp (by omega)
+  let : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp (by omega)
   let B := rationalMatrixEntryBitBound A
   let m : ℚ := (1 / 2 : ℚ) ^ B
   have hmQ : 0 < m := by positivity
@@ -131,7 +131,7 @@ theorem negativeRegularizedBetheObjective_rational_bounds
       -regularizedBetheObjective (τ : ℝ)
           (fun i j ↦ (A i j : ℝ)) X ≤
         ((n * rationalMatrixEntryBitBound A + n : ℕ) : ℝ) := by
-  letI : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp (by omega)
+  let : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp (by omega)
   let B := rationalMatrixEntryBitBound A
   let a : ℚ := (1 / 2 : ℚ) ^ B
   have haQ : 0 < a := by positivity

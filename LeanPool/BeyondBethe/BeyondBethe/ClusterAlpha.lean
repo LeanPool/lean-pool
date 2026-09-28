@@ -39,7 +39,7 @@ theorem clusterAlpha_pos
     (j : Fin n) :
     0 < clusterAlpha X C (c, j) := by
   rw [clusterAlpha]
-  letI : Nonempty (Fin (C.size c)) := ⟨⟨0, hc⟩⟩
+  let : Nonempty (Fin (C.size c)) := ⟨⟨0, hc⟩⟩
   exact Finset.sum_pos
     (fun k _ ↦ hX (C.rows ⟨c, k⟩) j)
     Finset.univ_nonempty

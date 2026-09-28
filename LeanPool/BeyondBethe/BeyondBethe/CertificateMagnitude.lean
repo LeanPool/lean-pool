@@ -113,7 +113,9 @@ theorem rationalMatrixEntryBitBound_le_machineCode
   let word := rationalMatrixBinaryEncoding.encode ⟨n, B⟩
   have hrowsCode : rowsCode.length ≤ word.length := by
     change rowsCode.length ≤ (pair n.bits rowsCode).length
-    simpa using machinePairSecond_length_le (pair n.bits rowsCode)
+    have hlength := machinePairSecond_length_le (pair n.bits rowsCode)
+    rw [machinePairSecond_pair] at hlength
+    exact hlength
   have hcount : n ^ 2 = (rows.map List.length).sum := by
     simp only [rows, rationalMatrixRows, List.map_ofFn, List.sum_ofFn,
       Function.comp_apply, List.length_ofFn]
@@ -229,7 +231,9 @@ theorem preSmoothingBase_explicit_le_exp_one :
             (explicitCertifiedEpsilon : ℝ) / 4) ≤
           Real.sqrt 2 * 1 :=
         mul_le_mul_of_nonneg_left hexpNonpos (Real.sqrt_nonneg 2)
-      _ ≤ 2 := by simpa using hsqrt
+      _ ≤ 2 := by
+        rw [mul_one]
+        exact hsqrt
   have htwoExp : (2 : ℝ) ≤ Real.exp 1 := by
     have h := Real.add_one_le_exp (1 : ℝ)
     norm_num at h ⊢

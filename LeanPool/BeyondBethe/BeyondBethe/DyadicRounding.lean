@@ -134,7 +134,7 @@ def dyadicFloorMatrix {m n : ℕ} (p : ℕ)
 theorem dyadicFloorVector_error_l1_lt {d : ℕ} (hd : 0 < d) (p : ℕ)
     (x : Fin d → ℚ) :
     (∑ i, abs (dyadicFloorVector p x i - x i)) < d * dyadicMesh p := by
-  letI : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
+  let : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
   rw [show (d : ℚ) * dyadicMesh p =
       ∑ _i : Fin d, dyadicMesh p by simp]
   apply Finset.sum_lt_sum
@@ -147,7 +147,7 @@ theorem dyadicFloorVector_error_normSq_lt {d : ℕ} (hd : 0 < d)
     (p : ℕ) (x : Fin d → ℚ) :
     finiteNormSq (fun i ↦ dyadicFloorVector p x i - x i) <
       d * dyadicMesh p ^ 2 := by
-  letI : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
+  let : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
   rw [finiteNormSq, finiteDot,
     show (d : ℚ) * dyadicMesh p ^ 2 =
       ∑ _i : Fin d, dyadicMesh p ^ 2 by simp]

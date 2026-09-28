@@ -98,7 +98,7 @@ theorem betheObjective_sub_uniform_le_range
     betheObjective A X - betheObjective A (uniformBirkhoff n) ≤
       numericalObjectiveRange n m := by
   have hn0 : 0 < n := by omega
-  letI : Nonempty (Fin n) := ⟨⟨0, hn0⟩⟩
+  let : Nonempty (Fin n) := ⟨⟨0, hn0⟩⟩
   have hW := uniformBirkhoff_doublyStochastic hn0
   have hupper := (betheObjective_le_totalRowEntropy hApos hAupper hX).trans
     (by simpa using totalRowEntropy_le hX)
@@ -234,7 +234,7 @@ theorem regularizedBetheMaximizer_log_inv_entry_le
     Real.log (1 / X i₀ j₀) ≤
       n * numericalObjectiveRange n m / τ + n ^ 2 * Real.log n := by
   have hn0 : 0 < n := by omega
-  letI : Nonempty (Fin n) := ⟨⟨0, hn0⟩⟩
+  let : Nonempty (Fin n) := ⟨⟨0, hn0⟩⟩
   have hXint := regularizedBetheMaximizer_interior hn hτ hApos hX hmax
   have hXpos : ∀ i j, 0 < X i j := fun i j ↦ (hXint i).2 j |>.1
   have hdir := entropy_direction_to_uniform_mul_le_range hn hτ hm

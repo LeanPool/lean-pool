@@ -59,7 +59,7 @@ theorem cleanWitness_pairAlpha_zero
       (fun l : OutsideColumn a b ↦ α l.1)
     IsProbabilityVector θ ∧
       ∀ j, exponentMoment θ (cleanWitnessExponent a b) j = α j := by
-  letI : IsEmpty (OutsideColumn a b) := hempty
+  let : IsEmpty (OutsideColumn a b) := hempty
   dsimp only
   have ha : pairAlpha X r s a = 1 := by
     have hsplit := twoCore_add_outsideMassTwo_eq_sum
@@ -268,7 +268,7 @@ theorem log_pairGain_ge_core_of_zeroLeakage
   let Us : Fin n → ℝ := fun j ↦ transferU τ (X s) j
   let cap := polynomialCapacity α (pairPolynomial Ur Us)
   let scale := 1 / (rowZeta τ (X r) * rowZeta τ (X s))
-  letI : IsEmpty (OutsideColumn a b) :=
+  let : IsEmpty (OutsideColumn a b) :=
     isEmpty_outsideColumn_of_pairAlpha_outsideMass_eq_zero hX hXint hzero
   let θ := capacityWitnessMass 0 0 0
     (fun l : OutsideColumn a b ↦ α l.1)

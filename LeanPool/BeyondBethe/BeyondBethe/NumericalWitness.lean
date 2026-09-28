@@ -217,7 +217,7 @@ theorem coreLowerBound_le_explicitPairWitnessLogGain_of_zeroLeakage
   let α := pairAlpha X r s
   let Ur : Fin n → ℝ := fun j ↦ transferU τ (X r) j
   let Us : Fin n → ℝ := fun j ↦ transferU τ (X s) j
-  letI : IsEmpty (OutsideColumn a b) :=
+  let : IsEmpty (OutsideColumn a b) :=
     isEmpty_outsideColumn_of_pairAlpha_outsideMass_eq_zero hX hXint hzero
   have hzeroWitness := cleanWitness_pairAlpha_zero hX hrs hab hzero
     (inferInstance : IsEmpty (OutsideColumn a b))
@@ -392,7 +392,7 @@ theorem explicitPairWitnessLogGain_le_log_pairGain_of_zeroLeakage
   let Us : Fin n → ℝ := fun j ↦ transferU τ (X s) j
   let cap := polynomialCapacity α (pairPolynomial Ur Us)
   let scale := 1 / (rowZeta τ (X r) * rowZeta τ (X s))
-  letI : IsEmpty (OutsideColumn a b) :=
+  let : IsEmpty (OutsideColumn a b) :=
     isEmpty_outsideColumn_of_pairAlpha_outsideMass_eq_zero hX hXint hzero
   have hzeroWitness := cleanWitness_pairAlpha_zero hX hrs hab hzero
     (inferInstance : IsEmpty (OutsideColumn a b))
