@@ -574,79 +574,6 @@ theorem
         (isCompact_closure_numericalRange_palencia A)
         (spectrum_subset_closure_numericalRange A) hfinite hcompanion
 
-/-- The Crouzeix--Palencia balance only needs the product estimate on
-unit-vector quadratic forms.  Evaluating
-`F F† = F (F + G†)† - F G` at a unit vector bounds `‖F† x‖`; normalization
-then recovers the operator norm.  Thus a numerical-radius bound on `F G`
-is sufficient for the exact `(1 + √2)` constant. -/
-theorem norm_le_one_add_sqrt_two_mul_of_auxiliary_inner_bounds
-    (F G : E →L[ℂ] E) {m : ℝ}
-    (hsymm : ‖F + star G‖ ≤ 2 * m)
-    (hprod : ∀ x : E, ‖x‖ = 1 → ‖⟪x, (F * G) x⟫_ℂ‖ ≤ m ^ 2) :
-    ‖F‖ ≤ (1 + Real.sqrt 2) * m := by
-  have hm : 0 ≤ m := by
-    nlinarith only [norm_nonneg (F + star G), hsymm]
-  have hC : 0 ≤ (1 + Real.sqrt 2) * m :=
-    mul_nonneg (add_nonneg zero_le_one (Real.sqrt_nonneg 2)) hm
-  have hidentity : F * star F = F * star (F + star G) - F * G := by
-    rw [star_add, star_star, mul_add, add_sub_cancel_right]
-  have hunit : ∀ x : E, ‖x‖ = 1 →
-      ‖(star F) x‖ ≤ (1 + Real.sqrt 2) * m := by
-    intro x hx
-    have hinnerSelf : ⟪(star F) x, (star F) x⟫_ℂ =
-        ⟪x, (F * star F) x⟫_ℂ := by
-      rw [mul_apply_eq_comp]
-      exact ContinuousLinearMap.adjoint_inner_left F ((star F) x) x
-    have hfirst : ‖⟪x, (F * star (F + star G)) x⟫_ℂ‖ ≤
-        2 * m * ‖(star F) x‖ := by
-      rw [mul_apply_eq_comp]
-      rw [← ContinuousLinearMap.adjoint_inner_left F]
-      calc
-        ‖⟪(star F) x, star (F + star G) x⟫_ℂ‖ ≤
-            ‖(star F) x‖ * ‖star (F + star G) x‖ := norm_inner_le_norm _ _
-        _ ≤ ‖(star F) x‖ * ‖star (F + star G)‖ * ‖x‖ := by
-          calc
-            ‖(star F) x‖ * ‖star (F + star G) x‖ ≤
-                ‖(star F) x‖ * (‖star (F + star G)‖ * ‖x‖) :=
-              mul_le_mul_of_nonneg_left ((star (F + star G)).le_opNorm x)
-                (norm_nonneg _)
-            _ = ‖(star F) x‖ * ‖star (F + star G)‖ * ‖x‖ := by ring
-        _ ≤ ‖(star F) x‖ * (2 * m) * 1 := by
-          rw [norm_star, hx]
-          gcongr
-        _ = 2 * m * ‖(star F) x‖ := by ring
-    have hquad : ‖(star F) x‖ ^ 2 ≤
-        2 * m * ‖(star F) x‖ + m ^ 2 := by
-      calc
-        ‖(star F) x‖ ^ 2 = ‖⟪(star F) x, (star F) x⟫_ℂ‖ := by
-          simp only [inner_self_eq_norm_sq_to_K, norm_pow, RCLike.norm_ofReal,
-            abs_of_nonneg (norm_nonneg _)]
-        _ = ‖⟪x, (F * star F) x⟫_ℂ‖ := congrArg norm hinnerSelf
-        _ = ‖⟪x, (F * star (F + star G) - F * G) x⟫_ℂ‖ := by rw [hidentity]
-        _ ≤ ‖⟪x, (F * star (F + star G)) x⟫_ℂ‖ +
-            ‖⟪x, (F * G) x⟫_ℂ‖ := by
-          rw [sub_apply, inner_sub_right]
-          exact norm_sub_le _ _
-        _ ≤ 2 * m * ‖(star F) x‖ + m ^ 2 := add_le_add hfirst (hprod x hx)
-    exact le_one_add_sqrt_two_mul_of_sq_le hm hquad
-  rw [← norm_star F]
-  apply ContinuousLinearMap.opNorm_le_bound' (star F) hC
-  intro x hx
-  have hxpos : 0 < ‖x‖ := (norm_pos_iff.mpr (norm_ne_zero_iff.mp hx))
-  let y : E := ((‖x‖ : ℂ)⁻¹) • x
-  have hy : ‖y‖ = 1 := norm_inv_norm_smul (norm_ne_zero_iff.mp hx)
-  have hFy := hunit y hy
-  have hnorm : ‖(star F) y‖ = ‖x‖⁻¹ * ‖(star F) x‖ := by
-    simp only [y, map_smul, norm_smul, norm_inv, Complex.norm_real,
-      Real.norm_eq_abs, abs_of_pos hxpos]
-  rw [hnorm] at hFy
-  calc
-    ‖(star F) x‖ = ‖x‖ * (‖x‖⁻¹ * ‖(star F) x‖) := by
-      field_simp
-    _ ≤ ‖x‖ * ((1 + Real.sqrt 2) * m) :=
-      mul_le_mul_of_nonneg_left hFy (norm_nonneg x)
-    _ = (1 + Real.sqrt 2) * m * ‖x‖ := by ring
-
 /-- The Hermitian part of an auxiliary product is exactly the difference
 between the squared symmetric and antisymmetric components.  This is the
 operator-vector form of the polarization identity
@@ -773,6 +700,20 @@ theorem norm_le_one_add_sqrt_two_mul_of_auxiliary_re_inner_lower_bounds
     _ ≤ ‖x‖ * ((1 + Real.sqrt 2) * m) :=
       mul_le_mul_of_nonneg_left hFy (norm_nonneg x)
     _ = (1 + Real.sqrt 2) * m * ‖x‖ := by ring
+
+/-- The Crouzeix--Palencia balance only needs the product estimate on
+unit-vector quadratic forms.  Evaluating
+`F F† = F (F + G†)† - F G` at a unit vector bounds `‖F† x‖`; normalization
+then recovers the operator norm.  Thus a numerical-radius bound on `F G`
+is sufficient for the exact `(1 + √2)` constant. -/
+theorem norm_le_one_add_sqrt_two_mul_of_auxiliary_inner_bounds
+    (F G : E →L[ℂ] E) {m : ℝ}
+    (hsymm : ‖F + star G‖ ≤ 2 * m)
+    (hprod : ∀ x : E, ‖x‖ = 1 → ‖⟪x, (F * G) x⟫_ℂ‖ ≤ m ^ 2) :
+    ‖F‖ ≤ (1 + Real.sqrt 2) * m := by
+  apply norm_le_one_add_sqrt_two_mul_of_auxiliary_re_inner_lower_bounds F G hsymm
+  intro x hx
+  exact neg_le_of_abs_le ((Complex.abs_re_le_norm _).trans (hprod x hx))
 
 /-- A relative contraction of the antisymmetric auxiliary component is the
 exact extra input needed beyond the symmetrized bound.  By the polarization
