@@ -17,7 +17,7 @@ canonical order of the support.  Both carry the support as their edge set,
 so every abstract forest index acquires a concrete forest realizing it.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

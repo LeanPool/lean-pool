@@ -18,7 +18,7 @@ equivalence — the change of variables underlying the simplex-sector
 conversion.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

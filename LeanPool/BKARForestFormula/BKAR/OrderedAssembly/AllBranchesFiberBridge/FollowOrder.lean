@@ -16,7 +16,7 @@ such a growth.  Every chosen growth arises this way, giving the canonical
 realization of a support/order fiber used by the fiber bridge.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

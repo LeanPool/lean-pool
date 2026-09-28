@@ -17,7 +17,7 @@ index the regrouping of branch contributions by support and order in the
 BKAR forest interpolation formula (see `BKAR.Formula`).
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

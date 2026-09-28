@@ -23,7 +23,7 @@ between order-by-order sector contributions and the order-free contribution
 of a forest in the BKAR forest interpolation formula (see `BKAR.Formula`).
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

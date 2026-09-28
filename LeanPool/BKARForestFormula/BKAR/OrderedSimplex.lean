@@ -17,7 +17,7 @@ ordered expansion of the BKAR forest interpolation formula (see
 `BKAR.Formula`) first produces its remainder terms.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 
@@ -32,6 +32,7 @@ The list of real parameters supplied to the integrand is in the same order as
 the edge list. If `order = [e₁, e₂, ...]`, then the bounds are
 `0 ≤ tₙ ≤ ... ≤ t₂ ≤ t₁ ≤ top`.
 -/
+@[expose]
 def orderedSimplexIntegralAux (top : ℝ) :
     List (Edge V) → (List ℝ → ℝ) → ℝ
   | [], f => f []
@@ -42,6 +43,7 @@ def orderedSimplexIntegralAux (top : ℝ) :
 /--
 Nested interval integral over the ordered simplex with outer bound `1`.
 -/
+@[expose]
 def orderedSimplexIntegral (order : List (Edge V)) (f : List ℝ → ℝ) : ℝ :=
   orderedSimplexIntegralAux 1 order f
 

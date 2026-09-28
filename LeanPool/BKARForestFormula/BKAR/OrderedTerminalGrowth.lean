@@ -17,7 +17,7 @@ run the recursion behind the BKAR forest interpolation formula (see
 `BKAR.Formula`) to completion.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

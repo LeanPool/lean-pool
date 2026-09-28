@@ -19,7 +19,7 @@ integrals of the BKAR forest interpolation formula (see `BKAR.Formula`)
 into one cube integral.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

@@ -19,7 +19,7 @@ family equals the expansion at every depth — the engine driving the proof
 of the BKAR forest interpolation formula (see `BKAR.Formula`).
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

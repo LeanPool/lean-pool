@@ -25,7 +25,7 @@ suffices); assuming `C^∞` is a deliberate strengthening of the hypothesis
 that keeps the analytic bookkeeping uniform in the induction.
 -/
 
-@[expose] public section
+public section
 
 open scoped ContDiff
 

@@ -41,7 +41,7 @@ that upstream statement is maintained here.
   `indexEquiv`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 open MeasureTheory

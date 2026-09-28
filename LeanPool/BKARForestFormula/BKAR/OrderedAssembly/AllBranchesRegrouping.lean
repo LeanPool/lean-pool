@@ -16,7 +16,7 @@ expansion's boundary terms as sums over supports and their enumerating
 orders.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 
