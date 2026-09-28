@@ -659,7 +659,10 @@ for fname, body in sections:
     phases = 0
     errors = 0
     wall_seconds = None
-    for line in body.splitlines():
+    lines = body.splitlines()
+    failed = bool(lines and profile_exit_error_re.fullmatch(lines[-1]))
+    file_phase_totals: dict[str, float] = {}
+    for line in lines:
         if "error:" in line:
             errors += 1
             continue
@@ -673,15 +676,21 @@ for fname, body in sections:
             if m.group(3) == "s":
                 value *= 1000
             phase = m.group(1).strip()
-            phase_totals[phase] = phase_totals.get(phase, 0.0) + value
+            file_phase_totals[phase] = file_phase_totals.get(phase, 0.0) + value
             total += value
             if phase == "import":
                 import_ms += value
             phases += 1
+    valid_profile = not failed and phases > 0
+    if not valid_profile and not errors:
+        errors = 1
+    if valid_profile:
+        for phase, value in file_phase_totals.items():
+            phase_totals[phase] = phase_totals.get(phase, 0.0) + value
     profile_by_file[fname] = {
-        "total_ms": total,
-        "local_ms": total - import_ms,
-        "import_ms": import_ms,
+        "total_ms": total if valid_profile else None,
+        "local_ms": total - import_ms if valid_profile else None,
+        "import_ms": import_ms if valid_profile else None,
         "phases": phases,
         "errors": errors,
         "wall_seconds": wall_seconds,
@@ -716,9 +725,21 @@ elif all_files:
                     else None
                 ),
                 heartbeat.get("wall_seconds"),
-                float(profile["total_ms"]) if profile else None,
-                float(profile["local_ms"]) if profile else None,
-                float(profile["import_ms"]) if profile else None,
+                (
+                    float(profile["total_ms"])
+                    if profile.get("total_ms") is not None
+                    else None
+                ),
+                (
+                    float(profile["local_ms"])
+                    if profile.get("local_ms") is not None
+                    else None
+                ),
+                (
+                    float(profile["import_ms"])
+                    if profile.get("import_ms") is not None
+                    else None
+                ),
                 int(profile.get("phases", 0)),
                 int(profile.get("errors", 0))
                 + int(heartbeat.get("errors", 0)),

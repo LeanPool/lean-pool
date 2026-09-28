@@ -122,10 +122,44 @@ def test_direct_profile_uses_physical_lines_and_accepts_crlf(monkeypatch, tmp_pa
         profile_log=profile_log,
     )
     assert namespace["profile_boundaries_valid"] is True
-    assert namespace["profile_by_file"]["Alpha.lean"]["total_ms"] == 50
+    assert namespace["profile_by_file"]["Alpha.lean"]["total_ms"] is None
     assert namespace["profile_by_file"]["Alpha.lean"]["errors"] == 2
     assert namespace["profile_by_file"]["Beta.lean"]["total_ms"] == 20
+    assert namespace["phase_totals"] == {"elaboration": 20}
+    assert "**Sum of `lean --profile`:** 20.0 ms (= 0.02 s)" in report
+    assert "across 1 valid file" in report
+    assert "| `Alpha.lean` | 0 | — | — | — | — | — |" in report
     assert "`lean --profile` timings unavailable" not in report
+
+
+def test_zero_phase_profile_is_unavailable(monkeypatch, tmp_path):
+    """A completed wrapper without Lean phase output has no measured time."""
+    namespace, report = render_report(
+        monkeypatch,
+        tmp_path,
+        "",
+        profile_log="## Probe.lean\nreal 0.10\nuser 0.02\nsys 0.01\n",
+    )
+    assert namespace["profile_by_file"]["Probe.lean"]["total_ms"] is None
+    assert namespace["profile_by_file"]["Probe.lean"]["errors"] == 1
+    assert namespace["phase_totals"] == {}
+    assert "**Sum of `lean --profile`:** — across 0 valid files" in report
+
+
+def test_successful_profile_keeps_benign_error_text(monkeypatch, tmp_path):
+    """Only the wrapper's terminal failure marker invalidates real phases."""
+    namespace, report = render_report(
+        monkeypatch,
+        tmp_path,
+        "",
+        profile_log=(
+            "## Probe.lean\nerror: harmless trace text\n"
+            "  elaboration 50ms\nreal 0.10\nuser 0.02\nsys 0.01\n"
+        ),
+    )
+    assert namespace["profile_by_file"]["Probe.lean"]["total_ms"] == 50
+    assert namespace["phase_totals"] == {"elaboration": 50}
+    assert "across 1 valid file" in report
 
 
 @pytest.mark.parametrize(
