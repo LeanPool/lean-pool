@@ -6214,7 +6214,7 @@ theorem
           (⟨flagAlice, alice⟩, ⟨flagBob, bob⟩)‖ ^ 2
 
 /-- The total probability mass of DSV density rational heterogeneous actual asynchronous flag. -/
-def dSVDensityRationalHeterogeneousActualAsynchronousFlagMass
+@[expose] def dSVDensityRationalHeterogeneousActualAsynchronousFlagMass
     (N : ℕ) {S d L : ℕ}
     (width : Fin S → ℝ) (schedule : Fin L → Fin S)
     (ξ ζ : BipartiteUnitVector d) : ℝ :=
@@ -6807,7 +6807,7 @@ theorem dSVDensityRationalPublicLogPhasePhysicalAlignedLocalAction_apply
 The DSV density rational heterogeneous target first spectral alice construction used in the
 quantum parallel-repetition argument.
 -/
-def dSVDensityRationalHeterogeneousTargetFirstSpectralAlice
+@[expose] def dSVDensityRationalHeterogeneousTargetFirstSpectralAlice
     (S B N d L m : ℕ)
     (width : Fin S → ℝ) (schedule : Fin L → Fin S)
     (ξ : BipartiteUnitVector d) :
@@ -6827,7 +6827,7 @@ def dSVDensityRationalHeterogeneousTargetFirstSpectralAlice
 The DSV density rational heterogeneous target first spectral bob construction used in the
 quantum parallel-repetition argument.
 -/
-def dSVDensityRationalHeterogeneousTargetFirstSpectralBob
+@[expose] def dSVDensityRationalHeterogeneousTargetFirstSpectralBob
     (S B N d L m : ℕ)
     (width : Fin S → ℝ) (schedule : Fin L → Fin S)
     (ζ : BipartiteUnitVector d) :
@@ -6844,7 +6844,7 @@ def dSVDensityRationalHeterogeneousTargetFirstSpectralBob
         N width schedule ζ))
 
 /-- The source object for DSV density rational heterogeneous target first spectral physical. -/
-def dSVDensityRationalHeterogeneousTargetFirstSpectralPhysicalSource
+@[expose] def dSVDensityRationalHeterogeneousTargetFirstSpectralPhysicalSource
     (S B N d L m : ℕ)
     (width : Fin S → ℝ) (schedule : Fin L → Fin S)
     (ξ ζ : BipartiteUnitVector d) :

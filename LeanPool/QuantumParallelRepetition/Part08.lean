@@ -2284,7 +2284,7 @@ def exactSourceGlobalBobPOVM
     actual
 
 /-- The positive operator-valued measurement implementing exact source global catalyst alice. -/
-def exactSourceGlobalCatalystAlicePOVM
+@[expose] def exactSourceGlobalCatalystAlicePOVM
     [DecidableEq A]
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n)) (e : ℕ) (a₀ : A) (x : X) :
@@ -6826,7 +6826,7 @@ variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 The exact source support preserving classical sampler construction used in the quantum parallel-
 repetition argument.
 -/
-def ExactSourceSupportPreservingClassicalSampler
+@[expose] def ExactSourceSupportPreservingClassicalSampler
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (base : ExactHistoryFlag X Y A B D)

@@ -444,7 +444,7 @@ variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable {G : Game X Y A B}
 
 /-- The measurement effect for winning. -/
-def winningEffect (S : Strategy G) (x : X) (y : Y) :
+@[expose] def winningEffect (S : Strategy G) (x : X) (y : Y) :
     Matrix (S.Alice × S.Bob) (S.Alice × S.Bob) ℂ :=
   ∑ a : A, ∑ b : B,
     if G.predicate x y a b = true then S.jointEffect x y a b else 0

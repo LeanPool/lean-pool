@@ -921,7 +921,7 @@ private def dSVDensityRationalPublicBucketPhysicalPhaseWeightedMixedError
           w N ξ ζ i j))
 
 /-- The quantum state representing DSV density rational public bucket physical coherent target. -/
-def dSVDensityRationalPublicBucketPhysicalCoherentTargetState
+@[expose] def dSVDensityRationalPublicBucketPhysicalCoherentTargetState
     {d N B : ℕ} (w : ℝ) (n : ℕ)
     (ξ ζ : BipartiteUnitVector d) :
     EuclideanSpace ℂ
@@ -2887,7 +2887,7 @@ argument.
 The exact locally sampleable jb rounded construction used in the quantum parallel-repetition
 argument.
 -/
-def exactLocallySampleableJBRounded
+@[expose] def exactLocallySampleableJBRounded
     (G : Game X Y A B) (n : ℕ) (D : Finset (Fin n))
     (denominator : ℕ)
     (numerator : ExactLocalSamplerIndex X Y D →
@@ -3341,7 +3341,7 @@ def exactSourceBobPermutationHistory
 The exact source permutation matched construction used in the quantum parallel-repetition
 argument.
 -/
-def exactSourcePermutationMatched
+@[expose] def exactSourcePermutationMatched
     {n : ℕ} (D : Finset (Fin n)) (denominator : ℕ)
     (numerator : ExactLocalSamplerIndex X Y D →
       ExactHistoryFlag X Y A B D → ℕ)
@@ -4937,7 +4937,7 @@ variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 
 /-- The information increment contributed by exact conditioned reverse alice prefix entropy. -/
-def exactConditionedReverseAlicePrefixEntropyIncrement
+@[expose] def exactConditionedReverseAlicePrefixEntropyIncrement
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (remaining : 0 < (Finset.univ \ D).card)
@@ -4952,7 +4952,7 @@ def exactConditionedReverseAlicePrefixEntropyIncrement
     default k
 
 /-- The information increment contributed by exact conditioned reverse bob prefix entropy. -/
-def exactConditionedReverseBobPrefixEntropyIncrement
+@[expose] def exactConditionedReverseBobPrefixEntropyIncrement
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (remaining : 0 < (Finset.univ \ D).card)
@@ -5680,7 +5680,7 @@ abbrev ExactReverseBobNextContext
 The exact conditioned reverse alice next joint construction used in the quantum parallel-
 repetition argument.
 -/
-def exactConditionedReverseAliceNextJoint
+@[expose] def exactConditionedReverseAliceNextJoint
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (remaining : 0 < (Finset.univ \ D).card)
@@ -5714,7 +5714,7 @@ repetition argument.
 The exact conditioned reverse bob next joint construction used in the quantum parallel-
 repetition argument.
 -/
-def exactConditionedReverseBobNextJoint
+@[expose] def exactConditionedReverseBobNextJoint
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (remaining : 0 < (Finset.univ \ D).card)
@@ -5731,7 +5731,7 @@ def exactConditionedReverseBobNextJoint
 The exact conditioned reverse bob next prior construction used in the quantum parallel-
 repetition argument.
 -/
-def exactConditionedReverseBobNextPrior
+@[expose] def exactConditionedReverseBobNextPrior
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (remaining : 0 < (Finset.univ \ D).card)

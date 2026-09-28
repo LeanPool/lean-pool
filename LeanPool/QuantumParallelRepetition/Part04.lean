@@ -1139,7 +1139,7 @@ abbrev ExactRevealHistoryTuple
       j ∈ exactRightPrefix seed} → X)
 
 /-- The finite equivalence encoding exact reveal history. -/
-def exactRevealHistoryEquiv
+@[expose] def exactRevealHistoryEquiv
     {n : ℕ} (D : Finset (Fin n))
     (seed : ExactRemainingSeed D) :
     ExactRevealHistory X Y D seed ≃
@@ -1755,7 +1755,7 @@ abbrev ExactHistoryFlagTuple
       ({j : Fin n // j ∈ D} → B)
 
 /-- The finite equivalence encoding exact history flag. -/
-def exactHistoryFlagEquiv
+@[expose] def exactHistoryFlagEquiv
     {n : ℕ} (D : Finset (Fin n)) :
     ExactHistoryFlag X Y A B D ≃
       ExactHistoryFlagTuple X Y A B D where
@@ -2626,7 +2626,7 @@ variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 
 /-- The standard exponential-decay statement for quantum parallel repetition. -/
-def StandardQuantumParallelRepetition (G : Game X Y A B) : Prop :=
+@[expose] def StandardQuantumParallelRepetition (G : Game X Y A B) : Prop :=
   entangledValue G < 1 →
     HasExponentialBound (repeatedEntangledValue G)
 
@@ -2734,7 +2734,7 @@ variable [Fintype dA] [Fintype dB] [DecidableEq dA] [DecidableEq dB]
 variable [Fintype J] [DecidableEq J]
 
 /-- The measurement effect for pure verifier. -/
-def pureVerifierEffect
+@[expose] def pureVerifierEffect
     (G : Game X Y A B)
     (z : EuclideanSpace ℂ (dA × dB)) (hz : ‖z‖ = 1)
     (PA : X → POVM A dA) (PB : Y → POVM B dB)
@@ -4747,7 +4747,7 @@ variable {R : Type*} [Fintype R]
 variable {ι : R → Type*} [∀ r, Fintype (ι r)]
 
 /-- The state vector representing tagged tensor. -/
-def taggedTensorVector
+@[expose] def taggedTensorVector
     (r : R) (z : EuclideanSpace ℂ (ι r × ι r)) :
     EuclideanSpace ℂ
       ((PUnit.{1} ⊕ (Σ r : R, ι r)) ×
@@ -4869,7 +4869,7 @@ theorem finiteTotalVariation_triangle
         (∑ i, |q i - r i|) / 2 := by ring
 
 /-- The weighted conditional joint construction used in the quantum parallel-repetition argument. -/
-def weightedConditionalJoint
+@[expose] def weightedConditionalJoint
     {κ ι : Type*}
     (weight : κ → ℝ) (conditional : κ → ι → ℝ) :
     κ × ι → ℝ :=
@@ -5179,7 +5179,7 @@ theorem finiteRelativeEntropy_uniform_le_log_card
       ring
 
 /-- The uniform flag reference construction used in the quantum parallel-repetition argument. -/
-def uniformFlagReference
+@[expose] def uniformFlagReference
     {Ω Z : Type*} [Fintype Z]
     (prior : Ω → ℝ) : Ω × Z → ℝ :=
   fun t => prior t.1 * finiteUniformWeight Z
@@ -5582,7 +5582,7 @@ abbrev ConditionedAnswerFlag
 The repeated conditioned answer flag construction used in the quantum parallel-repetition
 argument.
 -/
-def repeatedConditionedAnswerFlag
+@[expose] def repeatedConditionedAnswerFlag
     (G : Game X Y A B) (n : ℕ) (_S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (ω : StrategyOutcome
@@ -5858,7 +5858,7 @@ theorem exactLocallySampleableLaw_eq_zero_of_question_zero
     zero_div, ite_self, mul_zero]
 
 /-- The total probability mass of exact alice local. -/
-def exactAliceLocalMass
+@[expose] def exactAliceLocalMass
     {n : ℕ} (D : Finset (Fin n))
     (Q : ExactLocallySampleableTuple X Y A B D → ℝ)
     (i : SourceRemainingCoordinate D) (x : X) : ℝ :=
@@ -5866,7 +5866,7 @@ def exactAliceLocalMass
     ∑ y : Y, Q (i, x, y, r)
 
 /-- The total probability mass of exact bob local. -/
-def exactBobLocalMass
+@[expose] def exactBobLocalMass
     {n : ℕ} (D : Finset (Fin n))
     (Q : ExactLocallySampleableTuple X Y A B D → ℝ)
     (i : SourceRemainingCoordinate D) (y : Y) : ℝ :=
@@ -6064,7 +6064,7 @@ theorem exactBobLocalConditional_sum
 /--
 The exact locally sampleable ja construction used in the quantum parallel-repetition argument.
 -/
-def exactLocallySampleableJA
+@[expose] def exactLocallySampleableJA
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (base : ExactHistoryFlag X Y A B D)
@@ -6078,7 +6078,7 @@ def exactLocallySampleableJA
 /--
 The exact locally sampleable jb construction used in the quantum parallel-repetition argument.
 -/
-def exactLocallySampleableJB
+@[expose] def exactLocallySampleableJB
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (base : ExactHistoryFlag X Y A B D)
@@ -6330,7 +6330,7 @@ abbrev ExactLocalSamplerIndex
 The exact local conditional family construction used in the quantum parallel-repetition
 argument.
 -/
-def exactLocalConditionalFamily
+@[expose] def exactLocalConditionalFamily
     {n : ℕ} (D : Finset (Fin n))
     (base : ExactHistoryFlag X Y A B D)
     (Q : ExactLocallySampleableTuple X Y A B D → ℝ)

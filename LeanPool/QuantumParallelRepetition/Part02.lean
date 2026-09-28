@@ -3778,14 +3778,14 @@ The distribution floor numerator construction used in the quantum parallel-repet
 /--
 The distribution floor residual construction used in the quantum parallel-repetition argument.
 -/
-def distributionFloorResidual (denominator : ℕ) (p : ι → ℝ) : ℕ :=
+@[expose] def distributionFloorResidual (denominator : ℕ) (p : ι → ℝ) : ℕ :=
   denominator - ∑ i, distributionFloorNumerator denominator p i
 
 /--
 The distribution rounded numerator construction used in the quantum parallel-repetition
 argument.
 -/
-def distributionRoundedNumerator
+@[expose] def distributionRoundedNumerator
     (base : ι) (denominator : ℕ) (p : ι → ℝ) : ι → ℕ :=
   fun i => distributionFloorNumerator denominator p i +
     if i = base then distributionFloorResidual denominator p else 0
@@ -3795,7 +3795,7 @@ private def distributionFloorProbability
   fun i => (distributionFloorNumerator denominator p i : ℝ) / denominator
 
 /-- The probability of distribution rounded. -/
-def distributionRoundedProbability
+@[expose] def distributionRoundedProbability
     (base : ι) (denominator : ℕ) (p : ι → ℝ) : ι → ℝ :=
   fun i =>
     (distributionRoundedNumerator base denominator p i : ℝ) / denominator
@@ -5202,7 +5202,7 @@ def finiteTensorLocalUnitary
   exact finiteTensorLocalUnitaryMatrix_gram U
 
 /-- The unitary operator implementing controlled finite tensor local. -/
-def controlledFiniteTensorLocalUnitary
+@[expose] def controlledFiniteTensorLocalUnitary
     {Ω ι β : Type*}
     [Fintype Ω] [DecidableEq Ω]
     [Fintype ι] [DecidableEq ι]

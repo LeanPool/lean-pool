@@ -542,7 +542,7 @@ abbrev ExactGlobalHistoryLocalIndex
       ExactPaddedLocalIndex G n S D r)
 
 /-- The state vector representing exact global history. -/
-def exactGlobalHistoryVector
+@[expose] def exactGlobalHistoryVector
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (r : ExactHistoryFlag X Y A B D)
@@ -698,7 +698,7 @@ abbrev ExactSourceGlobalState
       Fin (Fintype.card (ExactGlobalHistoryLocalIndex G n S D)))
 
 /-- The exact source tuple psi construction used in the quantum parallel-repetition argument. -/
-def exactSourceTuplePsi
+@[expose] def exactSourceTuplePsi
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (t : ExactLocallySampleableTuple X Y A B D) :
@@ -741,7 +741,7 @@ theorem exactSourceTupleGamma_norm
     G n S D t.2.2.2 t.2.1).property
 
 /-- The numerical bound for exact source state distance. -/
-def ExactSourceStateDistanceBound
+@[expose] def ExactSourceStateDistanceBound
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n)) (η : ℝ) : Prop :=
   (∑ t : ExactLocallySampleableTuple X Y A B D,
@@ -1119,7 +1119,7 @@ variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
     ((Finset.univ \ D).card : ℝ)
 
 /-- The numerical bound for exact source classical information. -/
-def ExactSourceClassicalInformationBound
+@[expose] def ExactSourceClassicalInformationBound
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
     (base : ExactHistoryFlag X Y A B D) : Prop :=
@@ -1144,7 +1144,7 @@ theorem exactFiniteRelativeEntropy_equiv
     (fun i => q i * InformationTheory.klFun (p i / q i))
 
 /-- The finite equivalence encoding exact alice information. -/
-def exactAliceInformationEquiv
+@[expose] def exactAliceInformationEquiv
     {n : ℕ} (D : Finset (Fin n)) :
     ExactLocallySampleableTuple X Y A B D ≃
       (SourceRemainingCoordinate D × X) ×
@@ -1159,7 +1159,7 @@ def exactAliceInformationEquiv
     rfl
 
 /-- The finite equivalence encoding exact bob information. -/
-def exactBobInformationEquiv
+@[expose] def exactBobInformationEquiv
     {n : ℕ} (D : Finset (Fin n)) :
     ExactLocallySampleableTuple X Y A B D ≃
       (SourceRemainingCoordinate D × Y) ×
@@ -1532,7 +1532,7 @@ variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 
 /-- The finite equivalence encoding exact source prefix flag. -/
-def exactSourcePrefixFlagEquiv
+@[expose] def exactSourcePrefixFlagEquiv
     {Ω V Z : Type*} {h : ℕ} :
     ((Ω × (Fin h → V)) × Z) ≃
       ((Ω × Z) × (Fin h → V)) where
@@ -2423,7 +2423,7 @@ open QuantumParallelRepetition.ClassicalInformation
 attribute [local instance] Classical.propDecidable
 
 /-- The finite encoding of exact prefix next. -/
-def exactPrefixNextCode
+@[expose] def exactPrefixNextCode
     {Ω V : Type*} {h : ℕ}
     (default : V) (k : Fin h) :
     (Ω × (Fin h → V)) → ((Ω × (Fin h → V)) × V) :=
@@ -3217,7 +3217,7 @@ def exactForwardSeedLaw
   weight_sum := exactSeedWeight_sum nonempty
 
 /-- The finite probability law for exact reverse alice conditional seed. -/
-def exactReverseAliceConditionalSeedLaw
+@[expose] def exactReverseAliceConditionalSeedLaw
     {M : Type*} [Fintype M] [DecidableEq M]
     (nonempty : 0 < Fintype.card M)
     (side : Finset M) :
@@ -3231,7 +3231,7 @@ def exactReverseAliceConditionalSeedLaw
   else exactForwardSeedLaw nonempty
 
 /-- The finite probability law for exact reverse bob conditional seed. -/
-def exactReverseBobConditionalSeedLaw
+@[expose] def exactReverseBobConditionalSeedLaw
     {M : Type*} [Fintype M] [DecidableEq M]
     (nonempty : 0 < Fintype.card M)
     (side : Finset M) :
@@ -3280,7 +3280,7 @@ variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 
 /-- The finite probability law for reweighted seed prior event. -/
-def reweightedSeedPriorEventLaw
+@[expose] def reweightedSeedPriorEventLaw
     {K : Type*} [Fintype K]
     (seedLaw : FiniteEventLaw K)
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n)) :
@@ -3600,7 +3600,7 @@ The reweighted seed prefix joint construction used in the quantum parallel-repet
 /--
 The reweighted seed prefix prior construction used in the quantum parallel-repetition argument.
 -/
-def reweightedSeedPrefixPrior
+@[expose] def reweightedSeedPrefixPrior
     {K Ω V : Type*} [Fintype K]
     {h : ℕ} (seedLaw : FiniteEventLaw K)
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -4098,7 +4098,7 @@ open QuantumParallelRepetition.ClassicalInformation
 attribute [local instance] Classical.propDecidable
 
 /-- The finite encoding of exact reverse alice marker. -/
-def exactReverseAliceMarkerCode
+@[expose] def exactReverseAliceMarkerCode
     {M : Type*} [Fintype M] [DecidableEq M]
     (seed : ExactForwardSeed M) :
     Σ side : Finset M,
@@ -4110,7 +4110,7 @@ def exactReverseAliceMarkerCode
         exactReverseLeftSide_coordinate_mem seed⟩⟩
 
 /-- The finite encoding of exact reverse bob marker. -/
-def exactReverseBobMarkerCode
+@[expose] def exactReverseBobMarkerCode
     {M : Type*} [Fintype M] [DecidableEq M]
     (seed : ExactForwardSeed M) :
     Σ side : Finset M,
@@ -5535,7 +5535,7 @@ open QuantumParallelRepetition.ClassicalInformation
 attribute [local instance] Classical.propDecidable
 
 /-- The finite equivalence encoding exact reverse alice weighted marker. -/
-def exactReverseAliceWeightedMarkerEquiv
+@[expose] def exactReverseAliceWeightedMarkerEquiv
     {M : Type*} [Fintype M] [DecidableEq M] :
     ExactForwardSeed M ≃
       (Σ side : Finset M,
@@ -5556,7 +5556,7 @@ def exactReverseAliceWeightedMarkerEquiv
       side context position
 
 /-- The finite equivalence encoding exact reverse bob weighted marker. -/
-def exactReverseBobWeightedMarkerEquiv
+@[expose] def exactReverseBobWeightedMarkerEquiv
     {M : Type*} [Fintype M] [DecidableEq M] :
     ExactForwardSeed M ≃
       (Σ side : Finset M,
@@ -7439,7 +7439,7 @@ private theorem exactFairGammaPsiDistance_mul_postselection_le
       · simp only [accepted, ↓reduceIte, sum_const_zero, mul_zero]
 
 /-- The numerical bound for exact fair operator entropy. -/
-def ExactFairOperatorEntropyBound
+@[expose] def ExactFairOperatorEntropyBound
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n)) (η : ℝ) : Prop :=
   exactFairAcceptedAliceEntropy G n S D ≤

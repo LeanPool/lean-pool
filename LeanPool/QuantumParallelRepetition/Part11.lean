@@ -889,7 +889,7 @@ private theorem unconditionalActualC485CompleteDecodedScalarBorn
     x y z source cleaned source_eq decoded
 
 /-- The Born-rule weight for unconditional actual fair source history stop. -/
-def unconditionalActualFairSourceHistoryStopBorn
+@[expose] def unconditionalActualFairSourceHistoryStopBorn
     {X Y A B : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -914,7 +914,7 @@ def unconditionalActualFairSourceHistoryStopBorn
       UA UB j)
 
 /-- The Born-rule weight for unconditional actual fair source physical stop. -/
-def unconditionalActualFairSourcePhysicalStopBorn
+@[expose] def unconditionalActualFairSourcePhysicalStopBorn
     {X Y A B : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
     [DecidableEq A] [DecidableEq B]

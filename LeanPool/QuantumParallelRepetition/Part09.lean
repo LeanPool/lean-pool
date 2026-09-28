@@ -93,7 +93,7 @@ variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 
 /-- The one-coordinate strategy and error data extracted from an exact source. -/
-def ExactSourceOneGameRounding
+@[expose] def ExactSourceOneGameRounding
     (G : Game X Y A B) : Prop :=
   ∃ K₀ : ℝ, 0 ≤ K₀ ∧
     ∀ (n : ℕ) (S : Strategy (G.repeat n))
@@ -886,7 +886,7 @@ abbrev UnconditionalSelectedCopyLocalIndex
   Σ _ : Fin B × Fin d, Fin (N * m)
 
 /-- The selected mixed stage after applying its coherent local bucket resets. -/
-def unconditionalSelectedCopyCleanedStage
+@[expose] def unconditionalSelectedCopyCleanedStage
     {d N B m : ℕ}
     (Q : ℕ) (w : ℝ)
     (ξ ζ : BipartiteUnitVector d)
@@ -2013,7 +2013,7 @@ open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 
 /-- The unitary operator implementing unconditional mixed conjugate selected branch. -/
-def unconditionalMixedConjugateSelectedBranchUnitary
+@[expose] def unconditionalMixedConjugateSelectedBranchUnitary
     {ι τ : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype τ] [DecidableEq τ]
     (U V : Matrix.unitaryGroup ι ℂ) :
@@ -2028,7 +2028,7 @@ def unconditionalMixedConjugateSelectedBranchUnitary
     (Matrix.unitaryGroup τ ℂ).one_mem
 
 /-- The operator action for unconditional mixed conjugate selected branch local. -/
-def unconditionalMixedConjugateSelectedBranchLocalAction
+@[expose] def unconditionalMixedConjugateSelectedBranchLocalAction
     {ι τ : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype τ] [DecidableEq τ]
     (U V : Matrix.unitaryGroup ι ℂ)
@@ -2169,7 +2169,7 @@ def actualStoppingBranchVector
   toLp 2 fun q => z (⟨r, q.1⟩, ⟨s, q.2⟩)
 
 /-- The measurement effect for actual stopping branch winning. -/
-def actualStoppingBranchWinningEffect
+@[expose] def actualStoppingBranchWinningEffect
     (G : Game X Y A B)
     (PA : (r : R) → X → POVM A (ι r))
     (PB : (s : R) → Y → POVM B (κ s))
@@ -3665,7 +3665,7 @@ private theorem unconditionalSourcePhysicalCleanedSelectedHistoryEquiv_hit
   rfl
 
 /-- Group the selected pair together and retain the bilateral prefix and tail indices. -/
-def unconditionalSourcePhysicalCleanedFullBilateralRegroup
+@[expose] def unconditionalSourcePhysicalCleanedFullBilateralRegroup
     {R : Type*} {B N d L m : ℕ} (j : Fin L) :
     ((UnconditionalSelectedCopyLocalIndex B d N m ×
        ((Fin j.val → DSVUniformDensityThresholdLocalIndex N d) ×
@@ -3707,7 +3707,7 @@ def unconditionalSourcePhysicalCleanedFullBilateralRegroup
     simp only [Prod.mk.eta]
 
 /-- The linear isometry implementing unconditional source physical cleaned full bilateral state. -/
-def unconditionalSourcePhysicalCleanedFullBilateralStateIsometry
+@[expose] def unconditionalSourcePhysicalCleanedFullBilateralStateIsometry
     {P R : Type*} [Fintype P] [Fintype R]
     {B N d L m : ℕ}
     (phaseSplit : P ≃ Fin B × R) (j : Fin L) :
@@ -4446,7 +4446,7 @@ def directDSVActualReindexedRetainedPOVM
   simp only [kroneckerMap_apply, Matrix.one_apply, mul_ite, mul_one, mul_zero]
 
 /-- The finite equivalence encoding direct DSV actual bilateral retained index. -/
-def directDSVActualBilateralRetainedIndexEquiv
+@[expose] def directDSVActualBilateralRetainedIndexEquiv
     {s t u v ι κ : Type*}
     (eA : ι ≃ s × t) (eB : κ ≃ u × v) :
     (ι × κ) ≃ ((s × u) × (t × v)) :=
@@ -4708,7 +4708,7 @@ open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 attribute [local instance] Classical.propDecidable
 
 /-- The finite equivalence encoding unconditional actual fixed source retained history pair. -/
-def unconditionalActualFixedSourceRetainedHistoryPairEquiv
+@[expose] def unconditionalActualFixedSourceRetainedHistoryPairEquiv
     {N d L : ℕ} {R : Type} (j : Fin L) :
     (UnconditionalActualCleanedSelectedRetainedIndex
       (N := N) (d := d) j R ×
@@ -5000,7 +5000,7 @@ def physical8SelectedGlobalTargetWorkEquiv
           (N := N) (d := d) j R)))
 
 /-- The positive operator-valued measurement implementing physical 8 one scale original flag. -/
-def physical8OneScaleOriginalFlagPOVM
+@[expose] def physical8OneScaleOriginalFlagPOVM
     {C Z : Type*} [Fintype C] [DecidableEq C]
     {P N d L m : ℕ} {R : Type}
     [Fintype R]
@@ -6502,7 +6502,7 @@ def integratorActualC485SourceBobPOVM
         (exactSourceGlobalCatalystBobPOVM G n S D 1 b₀ y))
 
 /-- The positive operator-valued measurement implementing integrator actual c 485 selected alice. -/
-def integratorActualC485SelectedAlicePOVM
+@[expose] def integratorActualC485SelectedAlicePOVM
     {X Y A B : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -6520,7 +6520,7 @@ def integratorActualC485SelectedAlicePOVM
       (integratorActualC485SourceAlicePOVM G n S D a₀ x)
 
 /-- The positive operator-valued measurement implementing integrator actual c 485 selected bob. -/
-def integratorActualC485SelectedBobPOVM
+@[expose] def integratorActualC485SelectedBobPOVM
     {X Y A B : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -6806,13 +6806,16 @@ private theorem unconditionalActualFairSourceBaseSupportedBorn
               (exactGlobalHistoryFinPsi
                 G n S D h.2.2.2 h.2.1 h.2.2.1))) := by
               exact unconditionalActualFairSourceEOneReindexedGlobalWinningBorn
+                (d := Fintype.card (ExactGlobalHistoryLocalIndex G n S D))
                 (unconditionalConjugateSourceGlobalCatalystWinningEffect
                   G n S D 1 a₀ b₀ h.2.1 h.2.2.1)
                 (exactGlobalHistoryFinPsi
                   G n S D h.2.2.2 h.2.1 h.2.2.1)
-    _ = _ :=
-      unconditionalConjugateSourceGlobalCatalystWinningEffect_law_supported
-        G n S D positive 1 (by norm_num) a₀ b₀ h supported
+    _ = _ := by
+      have hSupported :=
+        unconditionalConjugateSourceGlobalCatalystWinningEffect_law_supported
+          G n S D positive 1 (by decide) a₀ b₀ h supported
+      exact hSupported
 
 private def unconditionalActualFairSourcePhaseHarmonicWork
     (P k : ℕ) :

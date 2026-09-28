@@ -851,7 +851,7 @@ theorem dSVDensityRationalCanonicalAcceptedTarget_ne_zero
   nlinarith
 
 /-- Normalize the canonical accepted target vector. -/
-def dSVDensityRationalCanonicalNormalizedTarget
+@[expose] def dSVDensityRationalCanonicalNormalizedTarget
     {d : ℕ} (w : ℝ) (N : ℕ)
     (ξ : BipartiteUnitVector d) :
     EuclideanSpace ℂ (Fin d × Fin d) :=
@@ -904,7 +904,7 @@ private theorem dSVDensityRationalCanonicalNormalizedTarget_distance_le
         width grid ξ
 
 /-- The target object for DSV density rational canonical accepted unit. -/
-def dSVDensityRationalCanonicalAcceptedUnitTarget
+@[expose] def dSVDensityRationalCanonicalAcceptedUnitTarget
     {d N : ℕ} {w : ℝ} (width : 0 < w) (grid : 0 < N)
     (fine : (d : ℝ) / (N : ℝ) < 1 / (w + 1))
     (ξ : BipartiteUnitVector d) :
@@ -1833,7 +1833,7 @@ open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 attribute [local instance] Classical.propDecidable
 
 /-- The rank map for DSV density rational physical mixed accepted intersection. -/
-def dSVDensityRationalPhysicalMixedAcceptedIntersectionRank
+@[expose] def dSVDensityRationalPhysicalMixedAcceptedIntersectionRank
     {d : ℕ} (w : ℝ) (N : ℕ)
     (ξ ζ : BipartiteUnitVector d)
     (i j : Fin d) : Fin (N + 1) :=
@@ -2313,7 +2313,7 @@ attribute [local instance] Classical.propDecidable
 The DSV density rational first accept actual tensor basis construction used in the quantum
 parallel-repetition argument.
 -/
-def dSVDensityRationalFirstAcceptActualTensorBasis
+@[expose] def dSVDensityRationalFirstAcceptActualTensorBasis
     {β : Type*} [Fintype β] [DecidableEq β]
     {L : ℕ} (U : Matrix.unitaryGroup β ℂ) :
     Matrix.unitaryGroup (Σ _ : Fin (L + 1), Fin (L + 1) → β) ℂ :=
@@ -2794,7 +2794,7 @@ theorem dSVDensityRationalPublicBucketCoherentPhaseHistory_apply_norm_sq
     (fun a b => work a.1 a.2 b.2)
 
 /-- The unitary operator implementing DSV density rational public bucket coherent phase local. -/
-def dSVDensityRationalPublicBucketCoherentPhaseLocalUnitary
+@[expose] def dSVDensityRationalPublicBucketCoherentPhaseLocalUnitary
     {H I : Type*} [Fintype H] [DecidableEq H]
      {B D m : ℕ}
     (rank : H → Fin D)
@@ -3265,7 +3265,7 @@ theorem dSVDensityRationalPrefixHarmonicSpectralOverlap_nonneg
   spectralAtomOverlap_nonneg _ _ _ _ i j
 
 /-- The overlap quantity for DSV density rational local spectral pair basis. -/
-def dSVDensityRationalLocalSpectralPairBasisOverlap
+@[expose] def dSVDensityRationalLocalSpectralPairBasisOverlap
     {d : ℕ} (ξ ζ : BipartiteUnitVector d)
     (i j : Fin d) : ℂ :=
   unitaryBasisOverlap
@@ -4430,7 +4430,7 @@ theorem
       (L := L) U
 
 /-- The unitary operator implementing DSV density rational heterogeneous actual alice. -/
-def dSVDensityRationalHeterogeneousActualAliceUnitary
+@[expose] def dSVDensityRationalHeterogeneousActualAliceUnitary
     (N : ℕ) {S d L : ℕ}
     (width : Fin S → ℝ) (schedule : Fin L → Fin S)
     (ξ : BipartiteUnitVector d) :
@@ -4443,7 +4443,7 @@ def dSVDensityRationalHeterogeneousActualAliceUnitary
     (dSVUniformDensityAliceHistorySpectralCopy (N := N) ξ)
 
 /-- The unitary operator implementing DSV density rational heterogeneous actual bob. -/
-def dSVDensityRationalHeterogeneousActualBobUnitary
+@[expose] def dSVDensityRationalHeterogeneousActualBobUnitary
     (N : ℕ) {S d L : ℕ}
     (width : Fin S → ℝ) (schedule : Fin L → Fin S)
     (ζ : BipartiteUnitVector d) :
