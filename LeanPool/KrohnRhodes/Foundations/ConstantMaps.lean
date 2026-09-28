@@ -30,10 +30,9 @@ universe u
 
 /-! ## Reset / rank-drop transformations: the constant maps
 
-A transformation `t : Function.End Q` *drops rank* if it is not
-surjective.  The extreme rank-drop — rank `1` — is a **constant map**
-`constEnd q : Q → Q`, `_ ↦ q`.  The constant maps are the aperiodic building
-blocks of the reset monoids used in the decomposition.
+A constant map `constEnd q : Q → Q`, `_ ↦ q`, has one-point image.
+It is nonsurjective when `Q` has more than one point. Constant maps are the aperiodic
+building blocks of the reset monoids used in the decomposition.
 
 `Function.End Q` has multiplication `(f * g) x = f (g x)` and unit
 `1 = id`.  Under this convention:
@@ -55,7 +54,7 @@ transformation monoid `Function.End Q`. -/
 def constEnd (q : Q) : Function.End Q := fun _ => q
 
 /-- A transformation of `Q` *is constant* if it equals `constEnd q` for
-some `q` — equivalently, it has rank `1` (it is the extreme rank-drop). -/
+some `q` — equivalently, its image has exactly one point. -/
 def IsConstEnd (t : Function.End Q) : Prop := ∃ q : Q, t = constEnd q
 
 theorem isConstEnd_constEnd (q : Q) : IsConstEnd (constEnd q) := ⟨q, rfl⟩

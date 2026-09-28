@@ -16,7 +16,7 @@ public import Mathlib.Tactic.Group
 For a group `G` and a normal subgroup `N`, the Krasner–Kaloujnine homomorphism
 `krasnerKaloujnineHom : G →* N ≀ᵣ (G ⧸ N)` into Mathlib's regular wreath product is
 injective (`krasnerKaloujnine_injective`). Combined with the bridge of
-`MonoidWreathBridge.lean`, `group_sgdiv_via_normal` shows that a finite `G` divides
+`MonoidWreathBridge.lean`, `group_sgdiv_via_normal` shows that `G` divides
 `WreathProduct N (G ⧸ N) (G ⧸ N)`; this is the step that splits a finite group along a
 normal series.
 
@@ -80,7 +80,7 @@ theorem krasnerKaloujnine_map_mul (g₁ g₂ : G) :
       krasnerKaloujnineFun N g₁ * krasnerKaloujnineFun N g₂ := by
   -- Right component:  π(g₁ g₂) = π(g₁) * π(g₂).
   -- Left component (pointwise at q):
-  --   n_{g₁ g₂}(q) = s(q)⁻¹ * g₁ * g₂ * s(π(g₁)⁻¹ π(g₂)⁻¹ q)
+  --   n_{g₁ g₂}(q) = s(q)⁻¹ * g₁ * g₂ * s(π(g₂)⁻¹ π(g₁)⁻¹ q)
   -- = s(q)⁻¹ * g₁ * s(π(g₁)⁻¹ q) * s(π(g₁)⁻¹ q)⁻¹ * g₂ * s(π(g₂)⁻¹ π(g₁)⁻¹ q)
   -- = n_{g₁}(q) * n_{g₂}(π(g₁)⁻¹ q)
   -- Mathlib's regular wreath multiplication: (a * b).left = a.left * (λx, b.left (a.right⁻¹ * x))
