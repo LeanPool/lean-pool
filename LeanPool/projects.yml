@@ -10836,6 +10836,187 @@ projects:
     - 11B75
     - 68R15
     provenance: AI
+  - slug: nagatafactoriality
+    title: Nagata's prime-generated factoriality theorem
+    summary: Nagata’s factoriality criterion for noetherian domains localized at prime-generated
+      multiplicative sets, with concrete and abstract localization interfaces and applications
+      to polynomial rings through Laurent and fraction-field localizations.
+    branch: commutative algebra
+    entry_module: LeanPool.NagataFactoriality
+    authors:
+    - Arthur F. Ramos
+    - Ruy J. G. B. de Queiroz
+    - Anjolina G. de Oliveira
+    source:
+      url: https://github.com/arthur742ramos/nagatafactoriality
+      github_repo: arthur742ramos/nagatafactoriality
+      commit: 2efdf7f86085972bd758449ca43c76a2e7bdf4af
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    provenance_note: >-
+      Inferred from explicit Copilot coauthor trailers in the pinned upstream history:
+      83.5% of surviving noncomment Lean code lines, including 94.8% of the core
+      localization lemmas and 96.6% of the theorem module, trace to those commits.
+      Commits 5b1698879b05fc76597723347544cb0b02c268c4 and
+      ef73ee27e4b0a8d1260350801c6915bfb56b6658 add substantial new proofs, including
+      prime-generated descent and the fraction-field polynomial application.
+      Coauthorship records support this classification but do not identify who
+      wrote each individual line.
+    main_declarations:
+    - NagataFactoriality.nagata_theorem
+    main_results:
+    - declaration: NagataFactoriality.nagata_theorem
+      informal: A noetherian integral domain is a unique factorization domain when localization
+        at a prime-generated multiplicative set is a unique factorization domain.
+    tags:
+    - commutative-algebra
+    msc:
+    - 13F15
+  - slug: rr-equals-nonmeager-paper
+    title: The nonmeagre lower bound for the rearrangement number
+    summary: Formalizes the inequality non(M) ≤ rr in ZFC via relational systems, category and slalom bounds,
+      finite-vector constructions, and rearrangements of conditionally convergent real series. The reverse
+      inequality from the accompanying manuscript is outside the upstream Lean formalization.
+    branch: set theory
+    entry_module: LeanPool.RearrangementNumber
+    authors:
+    - Vinicius de Oliveira Rodrigues
+    source:
+      url: https://github.com/vo-rodrigues/rr-equals-nonmeager-paper
+      github_repo: vo-rodrigues/rr-equals-nonmeager-paper
+      commit: a8e74a91fe0b9f3534194910172349c9926e3b3b
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - NonMRR.nonM_le_rr
+    main_results:
+    - declaration: NonMRR.nonM_le_rr
+      informal: The uniformity of the meagre ideal is at most the rearrangement number.
+    tags:
+    - set-theory
+    - cardinal-characteristics
+    - series
+    msc:
+    - 03E17
+    - 40A05
+  - slug: hs-virial-nbc-identity
+    title: Hard-sphere Mayer NBC identity and fork-packing volume bound
+    summary: A kernel-checked Lean formalization of the exact no-broken-circuit volume identity
+      for hard-sphere Mayer cluster integrals and the stronger dimension-three fork-packing
+      upper bound for each tree-owned NBC region. The development proves finite broken-circuit
+      cancellation, the measurable finite-region decomposition, the anchored Euclidean product-measure
+      theorem, and its explicit flat-coordinate transport.  Its geometric result is the attachment-aware
+      estimate Vol(NBC_T) <= (17/32)^hardSphereNu T * hardSphereKappa^(k-1), where hardSphereNu
+      T is the maximum cardinality of a packing of pairwise vertex-disjoint, order-compatible
+      forks in T.  A formal fork is an ordered triple (a,b,c) with a < b < c, center a, leaves
+      b,c, and tree edges {a,b} and {a,c}.  The central contribution is the complete pointwise-to-integral
+      bridge together with the orientation-aware measure-preserving factorization that realizes
+      the per-fork volume suppression.
+    branch: mathematical physics
+    entry_module: LeanPool.HardSphereNBC
+    authors:
+    - ukiyois
+    - OpenCode agent sessions
+    source:
+      url: https://github.com/ukiyois/hs-virial-nbc-identity
+      github_repo: ukiyois/hs-virial-nbc-identity
+      commit: fd0a1e73c336574fa9655f9ab3c0cd9ce5c4fcce
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - PalomarHS.main_result
+    - PalomarHS.nbc_region_real_volume_le_fork_factor
+    main_results:
+    - declaration: PalomarHS.main_result
+      informal: The absolute hard-sphere Mayer coefficient, multiplied by the factorial, equals
+        the sum of nonnegative no-broken-circuit region volumes over spanning trees.
+    - declaration: PalomarHS.nbc_region_real_volume_le_fork_factor
+      informal: For a spanning tree in three dimensions, its no-broken-circuit region has volume
+        at most (17/32) to the maximum disjoint compatible-fork packing size times the unit-ball
+        volume to the number of tree edges.
+    tags:
+    - mathematical-physics
+    msc:
+    - 05C15
+    - 82B05
+    provenance: AI
+  - slug: lean-scv
+    title: Classical several complex variables
+    summary: Formalizes Cauchy and Taylor theory, Hartogs phenomena, removable singularities, analytic
+      sets and germs, Weierstrass theory, holomorphic convexity, Cartan–Thullen and Bochner tube theorems,
+      plurisubharmonic functions, Levi convexity, and elementary Runge-domain theory. Weierstrass preparation
+      and coordinate-origin germ Noetherianity overlap LocalComplexGeometry; this development also supplies
+      germ unique factorization and global extension and convexity results.
+    branch: complex analysis
+    entry_module: LeanPool.SeveralComplexVariables
+    authors:
+    - Bastiaan J Braams
+    source:
+      url: https://github.com/bjbraams/lean-scv
+      github_repo: bjbraams/lean-scv
+      commit: caef1ae776ff79933718312357980d46628d3702
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - SeveralComplexVariables.analyticOnNhd_of_separately_analytic_locally_bounded
+    main_results:
+    - declaration: SCV.cauchy_formula_polydisc
+      informal: Holomorphic functions on a polydisc satisfy the iterated Cauchy integral formula.
+    - declaration: SeveralComplexVariables.analyticOnNhd_of_separately_analytic_locally_bounded
+      informal: On an open subset of a finite complex coordinate space, a Banach-valued separately analytic
+        map that is locally bounded is jointly analytic.
+      source_ref: Boas (2013), Section 2.7, Theorem 7 (the classical two-variable scalar case).
+    - declaration: SCV.identity_theorem
+      informal: Holomorphic functions on a connected domain that agree on a nonempty open subset agree
+        throughout the domain.
+    tags:
+    - complex-analysis
+    - several-complex-variables
+    - holomorphic-functions
+    msc:
+    - 32A10
+    - 32D05
+    - 32E10
+  - slug: egz-formal-proof
+    title: Convex geometry and the Erdős–Ginzburg–Ziv problem
+    summary: For every fixed positive dimension d, the Erdős–Ginzburg–Ziv constant of
+      (ZMod p)^d equals p times its hollow-family constant plus o(p) as p tends to infinity
+      through primes. Includes the convex-flag Helly and centerpoint theorems, flag
+      decomposition, balanced combinations, relative expansion, and the polynomial hollow-family
+      bound.
+    branch: additive combinatorics
+    entry_module: LeanPool.ErdosGinzburgZiv
+    authors:
+    - Dmitrii Zakharov
+    source:
+      doi: 10.19086/da.165216
+      arxiv: '2002.09892'
+      url: https://github.com/zakharov2k/egz-formal-proof
+      github_repo: zakharov2k/egz-formal-proof
+      commit: 7c82267c43a51dd5cb3e440412780ff82aff7500
+    license: MIT
+    status: verified
+    provenance: AI
+    main_declarations:
+    - EGZ.theorem_1_2
+    - EGZ.main_upper_bound
+    main_results:
+    - declaration: EGZ.theorem_1_2
+      informal: For each positive dimension d, s((F_p)^d) = p w((F_p)^d) + o(p) as p
+        tends to infinity through primes.
+    - declaration: EGZ.main_upper_bound
+      informal: For each positive d and ε > 0, sufficiently large primes satisfy s((F_p)^d)
+        ≤ (w((F_p)^d) + ε) p.
+    tags:
+    - additive-combinatorics
+    - zero-sum
+    - convex-geometry
+    msc:
+    - 11B30
+    - 11H06
   - slug: regts-sevenster
     title: A proof of the Regts–Sevenster conjecture, formalized
     summary: A Lean 4 proof of the Regts–Sevenster conjecture. A complex-valued graph
