@@ -6,8 +6,7 @@ Authors: Dean Cureton
 
 module
 
-public import LeanPool.MovingSofa.Main
-
+public import LeanPool.MovingSofa.Development.Geometry.Applications.Development003
 /-!
 # Optimality of Gerver's sofa
 

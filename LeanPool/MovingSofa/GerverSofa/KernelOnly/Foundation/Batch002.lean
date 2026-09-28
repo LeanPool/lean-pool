@@ -6,7 +6,7 @@ Authors: Dawid Trela
 module
 
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Foundation.Batch001
-public import LeanPool.MovingSofa.LeanCert.Engine.RootFinding.Krawczyk
+public import LeanPool.MovingSofa.Development.IntervalArithmetic.Foundations.Development002
 public import Mathlib.Analysis.Normed.Operator.Banach
 public import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 /-!
