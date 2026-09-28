@@ -214,6 +214,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/SumDifferenceExponent     https://github.com/linhaowei1/sum-diff-proof
   LeanPool/SumsThreeSquares          https://github.com/pitmonticone/SumsThreeSquares
   LeanPool/Sundogcert                https://github.com/humiliati/sundogcert
+  LeanPool/Superorthogonality        https://github.com/roos-j/lean-superorthogonality
   LeanPool/SyntheticEuclid4          https://github.com/ah1112/synthetic_euclid_4
   LeanPool/ThreeGap                  https://github.com/ElVec1o/five-distance-sharp
   LeanPool/Turan3                    https://github.com/ro-gut/turan3
@@ -317,6 +318,7 @@ MIT permission notice that follows them.
   LeanPool/RlTheoryInLean            https://github.com/ShangtongZhang/rl-theory-in-lean
       Copyright (c) 2025 Shangtong Zhang
 
+  LeanPool/SalemTheorem              https://github.com/stalex444/salem-theorem
   LeanPool/SemicircleLaw             https://github.com/FredRaj3/SemicircleLaw
       Copyright (c) 2025 FredRaj3
 
