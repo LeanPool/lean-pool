@@ -105,6 +105,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/FriezePatterns            https://github.com/Antoine-dSG/frieze_patterns
   LeanPool/FrontierMathOpenHypergraphs
                                      https://github.com/math-inc/FrontierMathOpen-Hypergraphs
+  LeanPool/FullyDynamicMatching      https://github.com/ykanoria/fd1d-lean
   LeanPool/FundamentalInequality     https://github.com/linzialessandro/FundamentalInequality
   LeanPool/GKPCarry                  https://github.com/lyfar/gkp-carry-lean
   LeanPool/GapCVP                    https://github.com/openai/ten-proofs
