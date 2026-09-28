@@ -143,6 +143,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/LowDimSolvClassification  https://github.com/LieLean/LowDimSolvClassification
   LeanPool/LowWeightPauliDynamics    https://github.com/Jue-Xu/Lean4LPD
   LeanPool/MRiscX                    https://github.com/JulsDE/MRiscX
+  LeanPool/Malliavin                 https://github.com/savarin/lean-malliavin
   LeanPool/MarkovProcess             https://github.com/scottnarmstrong/markovprocess
   LeanPool/MassFormula               https://github.com/0stellensatz/MassFormula
   LeanPool/MatchingLogic             https://github.com/eveil-labs/matching-logic-lean
