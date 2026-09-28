@@ -7,10 +7,6 @@ module
 
 public import Mathlib.Data.FinEnum
 public import LeanPool.PolyaEnumerationTheorem.Basic
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Data.Sym.Sym2.Init
-import Mathlib.Tactic.NormNum.GCD
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Reduction to `Fin`
@@ -72,20 +68,12 @@ private lemma inv_fwd (f : Fin enum.card → Y) : fwdColoring X Y (invColoring X
 
 private lemma fwd_smul (g : G) (f : X → Y) :
     fwdColoring X Y (g • f) = g • fwdColoring X Y f := by
-  funext i
-  change (g • f) (enum.equiv.symm i) = (g • fwdColoring X Y f) i
-  change f (g⁻¹ • enum.equiv.symm i) = (fwdColoring X Y f) (g⁻¹ • i : Fin enum.card)
-  change f (g⁻¹ • enum.equiv.symm i) = f (enum.equiv.symm ((g⁻¹ • i) : Fin enum.card))
-  rw [smul_inv_fin]
+  exact funext fun i => congrArg f (smul_inv_fin X G g⁻¹ i).symm
 
 private lemma inv_smul (g : G) (f : Fin enum.card → Y) :
     invColoring X Y (g • f) = g • invColoring X Y f := by
-  funext x
-  change (g • f) (enum.equiv x) = (g • invColoring X Y f) x
-  change f (g⁻¹ • enum.equiv x : Fin enum.card) = (invColoring X Y f) (g⁻¹ • x)
-  change f (g⁻¹ • enum.equiv x : Fin enum.card) = f (enum.equiv (g⁻¹ • x))
-  change f (enum.equiv (g⁻¹ • enum.equiv.symm (enum.equiv x))) = f (enum.equiv (g⁻¹ • x))
-  rw [enum.equiv.symm_apply_apply]
+  exact funext fun x =>
+    congrArg (fun y => f (enum.equiv (g⁻¹ • y))) (enum.equiv.symm_apply_apply x)
 
 /-- A bijection between the distinct colorings of `X` with colors in `Y` under the group action
     of `G` on `X` and the distinct colorings of `Fin enum.card` with colors in `Y` under the
