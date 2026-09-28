@@ -10938,39 +10938,39 @@ projects:
     - commutative-algebra
     msc:
     - 13F15
-  - slug: lean-operator-theory
-    title: Unitary dilation and the Crouzeix–Palencia bound
-    summary: Proves unitary power dilation for Hilbert-space contractions, von Neumann’s polynomial inequality,
-      and the Crouzeix–Palencia polynomial spectral-set estimate for the closed numerical range.
-    branch: operator theory
-    entry_module: LeanPool.OperatorTheory
+  - slug: salem-theorem
+    title: Every Pisot number is a two-sided limit of Salem numbers
+    summary: Proves Salem’s two-sided approximation theorem for Pisot numbers, preserving both the polynomial
+      reciprocal-family construction and the exceptional quadratic-unit construction.
+    branch: algebraic number theory
+    entry_module: LeanPool.SalemTheorem
     authors:
-    - Ezzeri Esa
+    - Stephanie Alexander
     source:
-      url: https://github.com/savarin/lean-operator-theory
-      github_repo: savarin/lean-operator-theory
-      commit: 6f90bb7e6b056b54f56005e0416d77d6d7c2a478
-    license: Apache-2.0
+      url: https://github.com/stalex444/salem-theorem
+      github_repo: stalex444/salem-theorem
+      commit: 887be765bf24c6a645600dfc7bd0a1055a1761dd
+    license: MIT
     status: verified
     provenance: AI
     main_declarations:
-    - PalomarCrouzeixPalencia.crouzeix_palencia
+    - SalemTheorem.salem_theorem
     main_results:
-    - declaration: PalomarCrouzeixPalencia.exists_unitary_power_dilation
-      informal: Every contraction on a complex Hilbert space admits a unitary power dilation.
-    - declaration: PalomarCrouzeixPalencia.vonNeumann_inequality
-      informal: Polynomial evaluation on a contraction is bounded by the polynomial supremum on the closed
-        unit disk.
-    - declaration: PalomarCrouzeixPalencia.crouzeix_palencia
-      informal: The closure of the numerical range is a polynomial spectral set with constant 1 + √2.
+    - declaration: SalemTheorem.salem_theorem
+      informal: Every Pisot number is approached by Salem numbers from both below and above.
+    - declaration: SalemTheorem.salem_construction_two_sided
+      informal: For the nondegenerate Pisot polynomial pattern, reciprocal-family polynomials have Salem
+        roots arbitrarily near the Pisot root from either side.
+    - declaration: SalemTheorem.salem_quadratic_unit
+      informal: The quadratic-unit family supplies Salem roots approaching each reciprocal quadratic Pisot
+        unit from either side.
     tags:
-    - operator-theory
-    - functional-analysis
-    - spectral-theory
+    - number-theory
+    - pisot-numbers
+    - salem-numbers
     msc:
-    - 47A12
-    - 47A20
-    - 47A25
+    - 11R06
+    - 11R09
   - slug: rr-equals-nonmeager-paper
     title: The nonmeagre lower bound for the rearrangement number
     summary: Formalizes the inequality non(M) ≤ rr in ZFC via relational systems, category and slalom bounds,
@@ -11150,3 +11150,36 @@ projects:
     msc:
     - 47B06
     - 46B20
+  - slug: lean-operator-theory
+    title: Unitary dilation and the Crouzeix–Palencia bound
+    summary: Proves unitary power dilation for Hilbert-space contractions, von Neumann’s polynomial inequality,
+      and the Crouzeix–Palencia polynomial spectral-set estimate for the closed numerical range.
+    branch: operator theory
+    entry_module: LeanPool.OperatorTheory
+    authors:
+    - Ezzeri Esa
+    source:
+      url: https://github.com/savarin/lean-operator-theory
+      github_repo: savarin/lean-operator-theory
+      commit: 6f90bb7e6b056b54f56005e0416d77d6d7c2a478
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - PalomarCrouzeixPalencia.crouzeix_palencia
+    main_results:
+    - declaration: PalomarCrouzeixPalencia.exists_unitary_power_dilation
+      informal: Every contraction on a complex Hilbert space admits a unitary power dilation.
+    - declaration: PalomarCrouzeixPalencia.vonNeumann_inequality
+      informal: Polynomial evaluation on a contraction is bounded by the polynomial supremum on the closed
+        unit disk.
+    - declaration: PalomarCrouzeixPalencia.crouzeix_palencia
+      informal: The closure of the numerical range is a polynomial spectral set with constant 1 + √2.
+    tags:
+    - operator-theory
+    - functional-analysis
+    - spectral-theory
+    msc:
+    - 47A12
+    - 47A20
+    - 47A25
