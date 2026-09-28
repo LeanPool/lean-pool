@@ -34,7 +34,7 @@ series.
 The irreducibility theorem combines this description with the residue-one case of LM24,
 Proposition 8.3.6(5): irreducibility after coefficient extension implies irreducibility in the
 surreal truncation integer part. The same description shows that a constant-coefficient-one series
-is reduced in the sense of LM24, Definition 8.2.1, after the embedding.
+is reduced in the sense of LM24, Definition 8.2.6, after the embedding.
 
 The last section passes to Conway's omnific integers. A real-exponent series with integer
 constant coefficient determines the omnific integer `ofRealSeries` whose signed Conway normal form
