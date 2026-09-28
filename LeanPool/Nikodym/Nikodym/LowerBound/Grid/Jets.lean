@@ -39,7 +39,7 @@ The blueprint assumes `r ≥ 1`; none of the statements here needs it (for `r = 
 zero), so the hypothesis is omitted.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym.LowerBound
 

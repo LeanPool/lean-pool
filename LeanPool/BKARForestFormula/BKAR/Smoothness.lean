@@ -40,6 +40,7 @@ conditions in the BKAR induction.
 It is deliberately only `C^∞` smoothness on the finite edge-parameter space;
 the order/support conditions remain separate combinatorial obligations.
 -/
+@[expose]
 def BKARContDiff (ρ : (Edge V → ℝ) → ℝ) : Prop :=
   ContDiff ℝ (∞ : WithTop ℕ∞) ρ
 

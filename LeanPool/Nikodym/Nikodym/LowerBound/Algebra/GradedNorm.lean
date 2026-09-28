@@ -38,7 +38,7 @@ instance arguments `[Algebra (FractionRing S) (FractionRing R)]` and
   by `IsFractionRing.ringEquivOfRingEquiv`, and `Algebra.norm_eq_of_equiv_equiv`.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym.LowerBound
 

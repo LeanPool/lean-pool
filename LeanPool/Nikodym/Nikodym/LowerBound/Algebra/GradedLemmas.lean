@@ -35,7 +35,7 @@ the standard grading `MvPolynomial.homogeneousSubmodule σ K` (made a local inst
   and a homogeneous ideal containing `X i - c` (`c ≠ 0`) is the unit ideal.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym.LowerBound
 

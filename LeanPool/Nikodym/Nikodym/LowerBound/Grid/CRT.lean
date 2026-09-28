@@ -27,7 +27,7 @@ Nikodym exponent.
   version `exists_grid_jets_eq` of the interpolation statement.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym.LowerBound
 

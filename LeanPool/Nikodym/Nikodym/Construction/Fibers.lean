@@ -36,7 +36,7 @@ Throughout, `n` denotes `Fintype.card ι` in Layer S/D statements; in Layer C, `
 integer parameters of Q01 and the number of embeddings is written `Fintype.card ι`.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym
 

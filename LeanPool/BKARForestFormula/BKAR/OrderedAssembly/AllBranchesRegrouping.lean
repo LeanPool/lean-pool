@@ -119,6 +119,7 @@ theorem localBoundarySupportContribution_def
 Local active-boundary sectors from a recursion node with fixed child support
 and fixed canonical order.
 -/
+@[expose]
 noncomputable def localBoundarySupportOrderContribution
     (choices : ActiveExtensionChoice V)
     (F : Forest V) (pref : List (Edge V)) (prefixTs : List ℝ)

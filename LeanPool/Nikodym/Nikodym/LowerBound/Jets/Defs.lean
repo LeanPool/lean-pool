@@ -37,7 +37,7 @@ The main results are
 No localizations appear: everything is phrased with global quotients of `P_d`.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym.LowerBound
 

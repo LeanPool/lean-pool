@@ -36,7 +36,7 @@ The finite field `F` enters only through the coordinate lift `Nikodym.LowerBound
 `liftPt v` passes through `liftPt x`, then `x = b + a • v` for some `a : F`.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym.LowerBound
 

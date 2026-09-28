@@ -67,6 +67,7 @@ theorem support_edges_eq_toFinset_emptyStart
 end ChosenGrowth
 
 /-- Follow an edge order through the active extensions selected by `choices`. -/
+@[expose]
 noncomputable def followOrderOption
     (choices : ActiveExtensionChoice V) :
     Forest V → List (Edge V) → Option (Forest V)

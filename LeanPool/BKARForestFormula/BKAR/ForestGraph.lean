@@ -70,6 +70,7 @@ namespace EdgePath
 variable {V : Type*} [DecidableEq V]
 
 /-- The simple graph whose edge set is the underlying `Sym2` image of `S`. -/
+@[expose]
 def edgeSetGraph (S : Finset (Edge V)) : SimpleGraph V :=
   SimpleGraph.fromEdgeSet {x : Sym2 V | ∃ e : Edge V, e ∈ S ∧ e.val = x}
 

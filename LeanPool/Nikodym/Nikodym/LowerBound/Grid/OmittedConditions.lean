@@ -38,7 +38,7 @@ The blueprint also assumes `r ≥ 1` and `T ≤ U`; neither is needed for the st
 omitted.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym.LowerBound
 

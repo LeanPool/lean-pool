@@ -32,7 +32,7 @@ as a convention so that the files can be developed independently:
 This file only provides the notion of a *homogeneous element* of `R` used by A06′ and A07′.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym.LowerBound
 

@@ -32,7 +32,7 @@ This file implements blueprint nodes S01, S02 and S03 of
 Throughout, `n` denotes `Fintype.card ι`.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym
 

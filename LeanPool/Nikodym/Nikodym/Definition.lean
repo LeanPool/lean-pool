@@ -19,7 +19,7 @@ A finite field variant of the Nikodym problem considers subsets of `𝔽_qⁿ` s
 every point of `𝔽_qⁿ` there is a line meeting the complement of the set in at most that point.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym
 

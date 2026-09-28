@@ -18,7 +18,7 @@ Blueprint node H02: for a divisor-closed set `S` of exponent vectors in `N` vari
 `α ↦ α + eᵢ`.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym.LowerBound
 

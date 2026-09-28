@@ -366,6 +366,7 @@ theorem sum_edgeSetOrders_eq_sum_cons_of_nonempty
   exact sum_edgeSetOrders_filter_ne_nil_eq_sum_cons S φ
 
 /-- All linear orderings of the edge set of a forest. -/
+@[expose]
 def edgeOrders (F : Forest V) : Finset (List (Edge V)) :=
   edgeSetOrders F.edges
 

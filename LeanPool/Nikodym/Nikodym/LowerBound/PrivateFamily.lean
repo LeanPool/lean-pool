@@ -35,7 +35,7 @@ The main results are
 The number `L` of lines of the blueprint is `Fintype.card E`.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym.LowerBound
 

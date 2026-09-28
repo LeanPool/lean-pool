@@ -27,7 +27,7 @@ This file implements blueprint nodes D01 and D02 of
 Throughout, `n` denotes `Fintype.card ι`.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym
 

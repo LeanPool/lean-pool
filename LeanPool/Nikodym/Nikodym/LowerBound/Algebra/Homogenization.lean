@@ -35,7 +35,7 @@ the index `0` is the homogenizing variable `X₀` and `Fin.succ i` is the variab
   quotDim I + 1` for a prime `I`.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym.LowerBound
 

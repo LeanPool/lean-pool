@@ -30,7 +30,7 @@ Only the finite-dimensional image is ever given a `finrank`; the full coordinate
 need not be finite-dimensional.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym.LowerBound
 

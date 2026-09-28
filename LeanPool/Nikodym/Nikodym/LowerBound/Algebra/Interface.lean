@@ -45,7 +45,7 @@ one containing a line ideal is that line ideal) is proved here unconditionally f
 kept only for compatibility with the blueprint node list.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym.LowerBound
 

@@ -39,7 +39,7 @@ For the finite grid `F ⊆ K` we also define the grid polynomial
 the grid polynomials `Z i` lie in the point ideal of every grid point.
 -/
 
-@[expose] public section
+public section
 
 namespace Nikodym.LowerBound
 

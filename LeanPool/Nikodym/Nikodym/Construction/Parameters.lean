@@ -22,7 +22,7 @@ natural-number power inequalities that follow from the floor definition. Q02 rec
 threshold `q ≥ 2^{n 2^{h-1}}`, which forces `M, Qᵢ ≥ 2` and the matching real lower bounds.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

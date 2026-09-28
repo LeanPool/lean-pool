@@ -74,10 +74,12 @@ theorem mk_comm (i j : V) (hij : i ≠ j) :
   exact Sym2.eq_swap
 
 /-- A fixed first endpoint of an unordered edge. -/
+@[expose]
 noncomputable def left (e : Edge V) : V :=
   e.val.out.1
 
 /-- A fixed second endpoint of an unordered edge. -/
+@[expose]
 noncomputable def right (e : Edge V) : V :=
   e.val.out.2
 

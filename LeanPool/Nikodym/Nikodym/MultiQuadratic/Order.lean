@@ -21,7 +21,7 @@ sign embeddings `emb`, and conjugations `conj`. Linear independence of square ro
 used here.
 -/
 
-@[expose] public section
+public section
 
 open MvPolynomial Finset
 open scoped symmDiff
