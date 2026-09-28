@@ -201,7 +201,8 @@ theorem closedUniformizerG_cylinder_eq
         rcases Nat.lt_succ_iff_lt_or_eq.mp hi with h | h
         · rw [Function.update_of_ne (show (i : ℕ) ≠ m from by omega)] at hye ⊢
           rwa [leftmostAuxG_eq F x hcf m i h, hx' i (by omega)]
-        · subst h; rwa [Function.update_self] at hye ⊢
+        · subst h
+          rw [Function.update_self] at hye ⊢ <;> assumption
     · right
       refine ⟨fun h => hcf ((closedFiberG_nonempty_iff F x).mpr h), ?_⟩
       intro i hi
