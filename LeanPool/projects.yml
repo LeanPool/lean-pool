@@ -10938,35 +10938,39 @@ projects:
     - commutative-algebra
     msc:
     - 13F15
-  - slug: bkarforestformula
-    title: The BKAR forest interpolation formula
-    summary: Proves the Brydges–Kennedy–Abdesselam–Rivasseau forest interpolation formula for smooth functions
-      on a finite complete graph’s edge-coupling space, with unordered forest-cube contributions, ordered
-      sector variants, and choice independence.
-    branch: analysis and mathematical physics
-    entry_module: LeanPool.BKARForestFormula
+  - slug: salem-theorem
+    title: Every Pisot number is a two-sided limit of Salem numbers
+    summary: Proves Salem’s two-sided approximation theorem for Pisot numbers, preserving both the polynomial
+      reciprocal-family construction and the exceptional quadratic-unit construction.
+    branch: algebraic number theory
+    entry_module: LeanPool.SalemTheorem
     authors:
-    - Scott Armstrong
+    - Stephanie Alexander
     source:
-      url: https://github.com/scottnarmstrong/bkarforestformula
-      github_repo: scottnarmstrong/bkarforestformula
-      commit: a07f44a534240fe6339558951dd78a19e4ef7c51
-    license: Apache-2.0
+      url: https://github.com/stalex444/salem-theorem
+      github_repo: stalex444/salem-theorem
+      commit: 887be765bf24c6a645600dfc7bd0a1055a1761dd
+    license: MIT
     status: verified
     provenance: AI
     main_declarations:
-    - BKAR.bkar_formula_forestIndex_cube_contributions
+    - SalemTheorem.salem_theorem
     main_results:
-    - declaration: BKAR.bkar_formula_forestIndex_cube_contributions
-      informal: A smooth function evaluated at the all-one configuration is the sum over forests of cube
-        integrals of mixed partial derivatives at path-minimum interpolation points.
+    - declaration: SalemTheorem.salem_theorem
+      informal: Every Pisot number is approached by Salem numbers from both below and above.
+    - declaration: SalemTheorem.salem_construction_two_sided
+      informal: For the nondegenerate Pisot polynomial pattern, reciprocal-family polynomials have Salem
+        roots arbitrarily near the Pisot root from either side.
+    - declaration: SalemTheorem.salem_quadratic_unit
+      informal: The quadratic-unit family supplies Salem roots approaching each reciprocal quadratic Pisot
+        unit from either side.
     tags:
-    - analysis
-    - graph-theory
-    - mathematical-physics
+    - number-theory
+    - pisot-numbers
+    - salem-numbers
     msc:
-    - 81T08
-    - 05C05
+    - 11R06
+    - 11R09
   - slug: rr-equals-nonmeager-paper
     title: The nonmeagre lower bound for the rearrangement number
     summary: Formalizes the inequality non(M) ≤ rr in ZFC via relational systems, category and slalom bounds,
@@ -11146,3 +11150,32 @@ projects:
     msc:
     - 47B06
     - 46B20
+  - slug: bkarforestformula
+    title: The BKAR forest interpolation formula
+    summary: Proves the Brydges–Kennedy–Abdesselam–Rivasseau forest interpolation formula for smooth functions
+      on a finite complete graph’s edge-coupling space, with unordered forest-cube contributions, ordered
+      sector variants, and choice independence.
+    branch: analysis and mathematical physics
+    entry_module: LeanPool.BKARForestFormula
+    authors:
+    - Scott Armstrong
+    source:
+      url: https://github.com/scottnarmstrong/bkarforestformula
+      github_repo: scottnarmstrong/bkarforestformula
+      commit: a07f44a534240fe6339558951dd78a19e4ef7c51
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - BKAR.bkar_formula_forestIndex_cube_contributions
+    main_results:
+    - declaration: BKAR.bkar_formula_forestIndex_cube_contributions
+      informal: A smooth function evaluated at the all-one configuration is the sum over forests of cube
+        integrals of mixed partial derivatives at path-minimum interpolation points.
+    tags:
+    - analysis
+    - graph-theory
+    - mathematical-physics
+    msc:
+    - 81T08
+    - 05C05
