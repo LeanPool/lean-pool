@@ -48,9 +48,11 @@ noncomputable def probeRatFuncDerivation :
     Algebra.FormallyEtale.of_isLocalization K[X]⁰
   exact formallyEtaleDerivationExtension (Polynomial.mkDerivation K 1)
 
+omit [DecidableEq K] [DecidableEq (RatFunc K)] in
 @[simp] theorem probeRatFuncDerivation_algebraMap (f : K[X]) :
     probeRatFuncDerivation K (algebraMap K[X] (RatFunc K) f) =
       algebraMap K[X] (RatFunc K) f.derivative := by
+  classical
   let : IsScalarTower K K[X] (RatFunc K) :=
     IsScalarTower.of_algebraMap_eq' rfl
   let : Algebra.FormallyEtale K[X] (RatFunc K) :=
@@ -179,9 +181,11 @@ noncomputable def probeRatFuncReciprocalDerivation :
     Derivation K (RatFunc K) (RatFunc K) :=
   (-RatFunc.X ^ 2 : RatFunc K) • probeRatFuncDerivation K
 
+omit [DecidableEq K] [DecidableEq (RatFunc K)] in
 @[simp] theorem probeRatFuncReciprocalDerivation_apply (x : RatFunc K) :
     probeRatFuncReciprocalDerivation K x =
       -RatFunc.X ^ 2 * probeRatFuncDerivation K x := by
+  classical
   simp only [probeRatFuncReciprocalDerivation, Derivation.smul_apply,
     Algebra.smul_def, Algebra.algebraMap_self_apply]
 
@@ -507,6 +511,7 @@ theorem probeAmbientReciprocalDerivation_changeParameter
     -(sL ^ 2) * (-(xL ^ 2) * (D.restrictScalars K) z)
   rw [← mul_assoc, hscalar, one_mul]
 
+omit [DecidableEq K] in
 theorem probe_exists_normalizedInfinityScaling
     (D : Derivation (frobeniusSubfield L p) L L)
     (hDX : D (algebraMap (RatFunc K) L RatFunc.X) = 1)
@@ -521,6 +526,7 @@ theorem probe_exists_normalizedInfinityScaling
               (K := K) (L := L) P r) =
             finiteExtensionInfinityPlaceLocalizationToField
               (K := K) (L := L) P s := by
+  classical
   let : IsScalarTower K (RatFuncInfinityIntegers K) L :=
     probeInfinityConstantLTower K L
   exact exists_finiteExtensionInfinityPlace_canonicalDifferent_scaling_certificate
@@ -572,12 +578,13 @@ local instance globalInfinityClosureIsFractionRing :
     (RatFuncInfinityIntegers K) (RatFunc K) L
       (RatFuncInfinityIntegralClosure K L)
 
+omit [Fintype K] in
 /-- The exact exhaustive Proposition 2 gcd estimate from a normalized
 Frobenius-constant derivation.  The infinity-place hypotheses of
 `finiteExtensionGcdBound_of_normalizedCanonicalInfinityPlacewiseBounds` are
 automatic: the reciprocal derivation at infinity gives the change of
 parameter, and the different supplies the canonical clearing scalar. -/
-theorem finiteExtensionGcdBound_of_normalizedCanonicalPlacewiseBounds
+theorem finiteExtensionGcdBound_of_normalizedCanonicalPlacewiseBounds [Finite K]
     (D : Derivation (frobeniusSubfield L p) L L)
     (hDX : D (algebraMap (RatFunc K) L RatFunc.X) = 1)
     (u v : L) (hu : u ≠ 0) (hv : v ≠ 0)

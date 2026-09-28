@@ -26,7 +26,7 @@ noncomputable section
 
 open scoped BigOperators Polynomial
 
-variable (K : Type*) [Field K] [Fintype K] [DecidableEq K]
+variable (K : Type*) [Field K] [Finite K] [DecidableEq K]
   [DecidableEq (RatFunc K)]
 variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]

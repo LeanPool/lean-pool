@@ -28,7 +28,7 @@ open BGS.Combinatorics
 /-- A comparison-reflecting factorization encoding transports the joint
 divisor antichain into any explicitly symmetric-chain-decomposed poset. -/
 theorem nontrivialMiddleGameMaximalOrders_card_le_centralRank_of_encoding
-    {P : Type*} [PartialOrder P] [Fintype P] [DecidableEq P]
+    {P : Type*} [PartialOrder P] [Fintype P]
     {rank : P -> Nat} {total p bound : Nat}
     (hp : 1 < p)
     (decomposition : SymmetricChainDecomposition P rank total)
@@ -41,6 +41,7 @@ theorem nontrivialMiddleGameMaximalOrders_card_le_centralRank_of_encoding
         encode a <= encode b -> a ∣ b) :
     (nontrivialMiddleGameMaximalOrders p bound).card <=
       Fintype.card {point : P // rank point = total / 2} := by
+  classical
   let embedding : Nat ↪ P := ⟨encode, hinjective⟩
   let encoded : Finset P :=
     (nontrivialMiddleGameMaximalOrders p bound).map embedding
@@ -76,7 +77,7 @@ theorem nontrivialMiddleGameMaximalOrders_card_le_centralRank_of_encoding
 directly into the Corvaja--Zannier witness cap, with the two exceptional
 divisors restored. -/
 theorem bound_le_rankinCentralRankWitnessCap_of_encoding
-    {P : Type*} [PartialOrder P] [Fintype P] [DecidableEq P]
+    {P : Type*} [PartialOrder P] [Fintype P]
     {rank : P -> Nat} {total p bound : Nat}
     (hp : 1 < p)
     (hbound :
@@ -91,6 +92,7 @@ theorem bound_le_rankinCentralRankWitnessCap_of_encoding
         encode a <= encode b -> a ∣ b) :
     bound <= rankinWidthWitnessCap
       (Fintype.card {point : P // rank point = total / 2} + 2) := by
+  classical
   apply bound_le_rankinJointAntichainWitnessCap hbound
   exact nontrivialMiddleGameMaximalOrders_card_le_centralRank_of_encoding
     hp decomposition encode hinjective hcomparison

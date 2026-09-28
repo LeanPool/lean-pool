@@ -154,7 +154,8 @@ theorem splitTraceCurveEquation_right_inv_iff_swapped
     (alpha beta : K) (d e : ℕ) (x y : Kˣ) :
     SplitTraceCurveEquation alpha beta d e x y⁻¹ ↔
       SplitTraceCurveEquation beta alpha d e x y := by
-  simp [SplitTraceCurveEquation, weightedSplitTorusTrace, splitTorusTrace]
+  simp only [SplitTraceCurveEquation, weightedSplitTorusTrace, inv_pow,
+    Units.val_inv_eq_inv_val, Units.val_pow_eq_pow_val, inv_inv, splitTorusTrace]
   constructor <;> intro h <;> linear_combination h
 
 /-- The involutive first-coordinate transition on torus points. -/
@@ -326,7 +327,10 @@ theorem splitTraceCornerInitialPolynomial_factors_injective
   intro i j hij
   have hvalue := congrArg
     (fun P : MvPolynomial (Fin 2) K => MvPolynomial.eval ![(1 : K), 1] P) hij
-  simp at hvalue
+  simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.isValue, MvPolynomial.C_pow,
+    map_sub, map_mul, MvPolynomial.eval_C, map_pow, MvPolynomial.eval_X,
+    Matrix.cons_val_zero, one_pow, mul_one, Matrix.cons_val_one,
+    Matrix.cons_val_fin_one, sub_right_inj] at hvalue
   apply Fin.ext
   exact hzeta.pow_inj i.isLt j.isLt hvalue
 

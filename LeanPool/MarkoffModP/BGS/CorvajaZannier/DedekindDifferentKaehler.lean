@@ -175,10 +175,12 @@ variable {A K B L κ : Type*}
   [IsLocalization (Algebra.algebraMapSubmonoid B A⁰) L]
   [Fintype κ] [DecidableEq κ]
 
-private lemma exists_integral_traceDual_mul
+omit [Fintype κ] in
+private lemma exists_integral_traceDual_mul [Finite κ]
     (bA : Basis κ A B) (d : B) (hd : d ∈ differentIdeal A B) (i : κ) :
     ∃ c : B, algebraMap B L c = algebraMap B L d *
       (bA.localizationLocalization K A⁰ L).traceDual i := by
+  let := Fintype.ofFinite κ
   let bK := bA.localizationLocalization K A⁰ L
   have hbspan : (1 : Submodule B L).restrictScalars A =
       Submodule.span A (Set.range bK) := by

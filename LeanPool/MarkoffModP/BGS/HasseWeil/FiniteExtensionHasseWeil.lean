@@ -88,12 +88,14 @@ local instance finiteExtensionHasseNormalClosureConstantModule :
     Module K (FunctionFieldNormalClosureConstantField K F) :=
   Algebra.toModule
 
-local instance finiteExtensionHasseNormalClosureConstantFiniteDimensional :
+omit [Fintype K] in
+local instance finiteExtensionHasseNormalClosureConstantFiniteDimensional [Finite K] :
     FiniteDimensional K (FunctionFieldNormalClosureConstantField K F) :=
   functionFieldConstantField_finiteDimensional K
     (FunctionFieldNormalClosure K F)
 
-local instance finiteExtensionHasseNormalClosureConstantIsGalois :
+omit [Fintype K] in
+local instance finiteExtensionHasseNormalClosureConstantIsGalois [Finite K] :
     IsGalois K (FunctionFieldNormalClosureConstantField K F) :=
   functionFieldConstantField_isGalois K (FunctionFieldNormalClosure K F)
 

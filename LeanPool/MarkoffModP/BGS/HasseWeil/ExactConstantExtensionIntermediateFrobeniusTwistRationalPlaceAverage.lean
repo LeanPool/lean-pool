@@ -244,6 +244,7 @@ theorem intermediateBaseRationalInfinityPlaceCount_le_original_finrank :
       exact dvd_mul_right _ _
 
 omit [DecidableEq S] [DecidableEq (RatFunc S)] in
+omit [FiniteDimensional (RatFunc C) L] [Algebra.IsSeparable (RatFunc C) L] [IsGalois L N] in
 /-- The total infinity contribution of the twists is bounded by the group
 order times the original degree. -/
 theorem sum_intermediateFrobeniusTwistFieldRationalInfinityPlaceCount_le

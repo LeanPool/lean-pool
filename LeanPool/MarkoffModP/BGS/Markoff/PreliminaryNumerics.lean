@@ -83,14 +83,14 @@ theorem preliminary_divisor_sum_pow_ten_le
       add_pow_le (Nat.zero_le _) (Nat.zero_le _) 10
     _ ≤ 2 ^ 9 *
         (2 ^ 447 * (p - 1) + 2 ^ 447 * (p + 1)) := by
-      norm_num
-      gcongr
+      simpa only [Nat.reduceSub] using
+        Nat.mul_le_mul_left (2 ^ 9) (Nat.add_le_add hminus hplus)
     _ = preliminaryDivisorMomentConstant * p := by
       rw [preliminaryDivisorMomentConstant_eq]
       have hsum : p - 1 + (p + 1) = 2 * p := by omega
       have hpow : 2 ^ 9 * 2 ^ 447 * 2 = 2 ^ 457 := by
         have h447 : 2 ^ 447 * 2 = 2 ^ 448 := by
-          simpa using (pow_succ 2 447).symm
+          simpa only [Nat.reduceAdd] using (pow_succ 2 447).symm
         calc
           2 ^ 9 * 2 ^ 447 * 2 = 2 ^ 9 * (2 ^ 447 * 2) := by ring
           _ = 2 ^ 9 * 2 ^ 448 := by rw [h447]
@@ -109,8 +109,8 @@ private theorem preliminary_moment_pow_eight_le_cutoff_sq :
   rw [preliminaryDivisorMomentConstant_eq]
   calc
     (2 ^ 457) ^ 8 = 2 ^ 3656 := by
-      rw [show (3656 : ℕ) = 457 * 8 by norm_num, pow_mul]
-    _ ≤ 2 ^ 3666 := Nat.pow_le_pow_right (by norm_num) (by norm_num)
+      simpa only [Nat.reduceMul] using (pow_mul 2 457 8).symm
+    _ ≤ 2 ^ 3666 := Nat.pow_le_pow_right (by omega) (by omega)
     _ = (2 ^ 1833) ^ 2 := by
       rw [show (3666 : ℕ) = 1833 * 2 by norm_num, pow_mul]
     _ ≤ (2 ^ 1833 * (48 ^ 3 + 1) ^ 10) ^ 2 := by
@@ -124,8 +124,9 @@ private theorem preliminary_middle_coefficient_le_cutoff_pow_four :
   have htwo : (2 ^ 457) ^ 6 ≤ 2 ^ 7332 := by
     calc
       (2 ^ 457) ^ 6 = 2 ^ 2742 := by
-        rw [show (2742 : ℕ) = 457 * 6 by norm_num, pow_mul]
-      _ ≤ 2 ^ 7332 := Nat.pow_le_pow_right (by norm_num) (by norm_num)
+        exact (pow_mul 2 457 6).symm.trans
+          (congrArg (2 ^ ·) (by omega))
+      _ ≤ 2 ^ 7332 := Nat.pow_le_pow_right (by omega) (by omega)
   have hbase : 48 ^ 60 ≤ (48 ^ 3 + 1) ^ 40 := by
     calc
       48 ^ 60 = (48 ^ 3) ^ 20 := by
@@ -137,7 +138,7 @@ private theorem preliminary_middle_coefficient_le_cutoff_pow_four :
     48 ^ 60 * (2 ^ 457) ^ 6 = (2 ^ 457) ^ 6 * 48 ^ 60 := by ring
     _ ≤ 2 ^ 7332 * (48 ^ 3 + 1) ^ 40 := Nat.mul_le_mul htwo hbase
     _ = (2 ^ 1833 * (48 ^ 3 + 1) ^ 10) ^ 4 := by
-      norm_num [mul_pow, ← pow_mul]
+      rw [mul_pow, ← pow_mul, ← pow_mul]
 
 private theorem preliminary_endgame_coefficient_le_cutoff_pow_four :
     68 ^ 30 * preliminaryDivisorMomentConstant ^ 6 ≤
@@ -146,8 +147,9 @@ private theorem preliminary_endgame_coefficient_le_cutoff_pow_four :
   have htwo : (2 ^ 457) ^ 6 ≤ 2 ^ 7332 := by
     calc
       (2 ^ 457) ^ 6 = 2 ^ 2742 := by
-        rw [show (2742 : ℕ) = 457 * 6 by norm_num, pow_mul]
-      _ ≤ 2 ^ 7332 := Nat.pow_le_pow_right (by norm_num) (by norm_num)
+        exact (pow_mul 2 457 6).symm.trans
+          (congrArg (2 ^ ·) (by omega))
+      _ ≤ 2 ^ 7332 := Nat.pow_le_pow_right (by omega) (by omega)
   have hbase : 68 ^ 30 ≤ (48 ^ 3 + 1) ^ 40 := by
     calc
       68 ^ 30 ≤ (48 ^ 3 + 1) ^ 30 :=
@@ -158,7 +160,7 @@ private theorem preliminary_endgame_coefficient_le_cutoff_pow_four :
     68 ^ 30 * (2 ^ 457) ^ 6 = (2 ^ 457) ^ 6 * 68 ^ 30 := by ring
     _ ≤ 2 ^ 7332 * (48 ^ 3 + 1) ^ 40 := Nat.mul_le_mul htwo hbase
     _ = (2 ^ 1833 * (48 ^ 3 + 1) ^ 10) ^ 4 := by
-      norm_num [mul_pow, ← pow_mul]
+      rw [mul_pow, ← pow_mul, ← pow_mul]
 
 private theorem preliminary_fixed_pow_eight_le_cutoff :
     100522 ^ 8 ≤ 2 ^ 1833 * (48 ^ 3 + 1) ^ 10 := by
@@ -169,10 +171,11 @@ private theorem preliminary_lowOrder_coefficient_eq_cutoff_sq :
       (2 ^ 1833 * (48 ^ 3 + 1) ^ 10) ^ 2 := by
   rw [preliminaryDivisorMomentConstant_eq]
   have htwo457 : (2 ^ 457) ^ 8 = 2 ^ 3656 := by
-    rw [show (3656 : ℕ) = 457 * 8 by norm_num, pow_mul]
+    exact (pow_mul 2 457 8).symm.trans
+      (congrArg (2 ^ ·) (by omega))
   have htwo : 2 ^ 10 * (2 ^ 457) ^ 8 = 2 ^ 3666 := by
     rw [htwo457]
-    exact (pow_add 2 10 3656).symm.trans (by norm_num)
+    exact (pow_add 2 10 3656).symm.trans (by omega)
   have htwo' : (2 ^ 1833) ^ 2 = 2 ^ 3666 := by
     rw [show (3666 : ℕ) = 1833 * 2 by norm_num, pow_mul]
   have hbase :
@@ -180,7 +183,7 @@ private theorem preliminary_lowOrder_coefficient_eq_cutoff_sq :
     rw [show (20 : ℕ) = 10 * 2 by norm_num, pow_mul]
   calc
     2 ^ 10 * (48 ^ 3 + 1) ^ 20 * (2 ^ 457) ^ 8 =
-        (2 ^ 10 * (2 ^ 457) ^ 8) * (48 ^ 3 + 1) ^ 20 := by ring
+        (2 ^ 10 * (2 ^ 457) ^ 8) * (48 ^ 3 + 1) ^ 20 := by ac_rfl
     _ = 2 ^ 3666 * (48 ^ 3 + 1) ^ 20 := by rw [htwo]
     _ = (2 ^ 1833) ^ 2 * ((48 ^ 3 + 1) ^ 10) ^ 2 := by
       rw [htwo', hbase]
@@ -198,7 +201,7 @@ theorem preliminary_divisor_sum_lt_rpow_one_div_eight
   have hmoment : T ^ 10 ≤ preliminaryDivisorMomentConstant * p := by
     simpa [T] using preliminary_divisor_sum_pow_ten_le hpTwo
   have hQ : Q < p := by
-    simpa [Q] using preliminaryCutoff_constant_lt hp
+    exact preliminaryCutoff_constant_lt hp
   have hpowNat : T ^ 80 < p ^ 10 := by
     calc
       T ^ 80 = (T ^ 10) ^ 8 := by
@@ -207,7 +210,7 @@ theorem preliminary_divisor_sum_lt_rpow_one_div_eight
       _ = preliminaryDivisorMomentConstant ^ 8 * p ^ 8 := by rw [mul_pow]
       _ ≤ Q ^ 2 * p ^ 8 := by
         exact Nat.mul_le_mul_right _ <| by
-          simpa [Q] using preliminary_moment_pow_eight_le_cutoff_sq
+          simpa only [Q] using preliminary_moment_pow_eight_le_cutoff_sq
       _ < p ^ 2 * p ^ 8 := by gcongr
       _ = p ^ 10 := by ring
   have hpNonnegative : (0 : ℝ) ≤ p := by positivity
@@ -240,7 +243,7 @@ theorem preliminary_corvajaZannier_divisor_term_lt_rpow_one_div_six
   have hmoment : T ^ 10 ≤ preliminaryDivisorMomentConstant * p := by
     simpa [T] using preliminary_divisor_sum_pow_ten_le hpTwo
   have hQ : Q < p := by
-    simpa [Q] using preliminaryCutoff_constant_lt hp
+    exact preliminaryCutoff_constant_lt hp
   have hpowNat : (48 * T) ^ 60 < p ^ 10 := by
     calc
       (48 * T) ^ 60 = 48 ^ 60 * (T ^ 10) ^ 6 := by ring
@@ -250,7 +253,7 @@ theorem preliminary_corvajaZannier_divisor_term_lt_rpow_one_div_six
         ring
       _ ≤ Q ^ 4 * p ^ 6 := by
         exact Nat.mul_le_mul_right _ <| by
-          simpa [Q] using preliminary_middle_coefficient_le_cutoff_pow_four
+          simpa only [Q] using preliminary_middle_coefficient_le_cutoff_pow_four
       _ < p ^ 4 * p ^ 6 := by gcongr
       _ = p ^ 10 := by ring
   have hpNonnegative : (0 : ℝ) ≤ p := by positivity
@@ -283,7 +286,7 @@ theorem preliminary_weighted_divisor_sum_sq_lt_rpow_one_div_three
   have hmoment : T ^ 10 ≤ preliminaryDivisorMomentConstant * p := by
     simpa [T] using preliminary_divisor_sum_pow_ten_le hpTwo
   have hQ : Q < p := by
-    simpa [Q] using preliminaryCutoff_constant_lt hp
+    exact preliminaryCutoff_constant_lt hp
   have hpowNat : (68 * T ^ 2) ^ 30 < p ^ 10 := by
     calc
       (68 * T ^ 2) ^ 30 = 68 ^ 30 * (T ^ 10) ^ 6 := by ring
@@ -293,7 +296,7 @@ theorem preliminary_weighted_divisor_sum_sq_lt_rpow_one_div_three
         ring
       _ ≤ Q ^ 4 * p ^ 6 := by
         exact Nat.mul_le_mul_right _ <| by
-          simpa [Q] using preliminary_endgame_coefficient_le_cutoff_pow_four
+          simpa only [Q] using preliminary_endgame_coefficient_le_cutoff_pow_four
       _ < p ^ 4 * p ^ 6 := by gcongr
       _ = p ^ 10 := by ring
   have hpNonnegative : (0 : ℝ) ≤ p := by positivity
@@ -426,10 +429,10 @@ theorem preliminary_endgamePrimitiveTrace_explicitInequality_of_card_sub_one
     Nat.zero_lt_one.trans (preliminaryCutoff_gt_one.trans_le hp)
   have horbit := orbitExponent_le_rpow_of_mul_order_eq_card_sub_one
     p orbitExponent orbitOrder (δ := (1 / 3 : ℝ)) hpNat hmul (by
-      convert horder using 1 <;> norm_num)
+      convert horder using 1; norm_num)
   calc
     (orbitExponent : ℝ) ≤ (p : ℝ) ^ (1 / 6 : ℝ) := by
-      convert horbit using 1 <;> norm_num
+      convert horbit using 1; norm_num
     _ ≤ 2 * (p : ℝ) ^ (1 / 6 : ℝ) := by
       nlinarith [Real.rpow_nonneg (Nat.cast_nonneg p) (1 / 6 : ℝ)]
 
@@ -446,8 +449,8 @@ theorem preliminary_endgamePrimitiveTrace_explicitInequality_of_card_add_one
     Nat.zero_lt_one.trans (preliminaryCutoff_gt_one.trans_le hp)
   have horbit := orbitExponent_le_two_mul_rpow_of_mul_order_eq_card_add_one
     p orbitExponent orbitOrder (δ := (1 / 3 : ℝ)) hpNat hmul (by
-      convert horder using 1 <;> norm_num)
-  convert horbit using 1 <;> norm_num
+      convert horder using 1; norm_num)
+  convert horbit using 1; norm_num
 
 theorem preliminary_four_lt_rpow_five_div_six
     {p : ℕ} (hp : preliminaryStrongApproximationCutoff ≤ p) :
@@ -570,7 +573,7 @@ theorem preliminary_lowOrder_divisorSensitive_cube
         exact congrArg (fun n : ℕ => n * p ^ 8)
           preliminary_lowOrder_coefficient_eq_cutoff_sq
   have hQ : Q < p := by
-    simpa [Q, B] using preliminaryCutoff_constant_lt hp
+    exact preliminaryCutoff_constant_lt hp
   have hstrict : Q ^ 2 * p ^ 8 < p ^ 10 := by
     calc
       Q ^ 2 * p ^ 8 < p ^ 2 * p ^ 8 := by gcongr

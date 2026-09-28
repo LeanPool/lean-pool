@@ -230,8 +230,8 @@ theorem seededCayleyTraceNumeratorPolynomial_natDegree_le
     have hpow : ((Polynomial.X - Polynomial.C (quadraticNonbaseElement p)) ^
         (2 * d)).natDegree ≤ 2 * d :=
       Polynomial.natDegree_pow_le.trans (by
-        simpa using Nat.mul_le_mul_left (2 * d) hlinear)
-    exact Polynomial.natDegree_mul_le.trans (by simpa using hpow)
+        simp)
+    exact Polynomial.natDegree_mul_le.trans (by simp)
 
 theorem quadraticCayleyNormPolynomial_natDegree_le :
     (quadraticCayleyNormPolynomial p).natDegree ≤ 2 := by
@@ -493,14 +493,14 @@ theorem quadraticCayleyNormPolynomial_eval_ne_zero (z : F p) :
 /-- For positive exponents the descended plane curve has no affine zero with second coordinate
 zero.  Thus the affine Hasse--Weil count introduces no hidden `u = 0` boundary. -/
 theorem eval_seededNonsplitDescendedPolynomial_zero_second_ne_zero
-    (s : (E p)ˣ) (d e : ℕ) (hd : 0 < d) (he : 0 < e) (z : F p) :
+    (s : (E p)ˣ) (d e : ℕ) (_hd : 0 < d) (he : 0 < e) (z : F p) :
     MvPolynomial.eval ![z, (0 : F p)]
       (seededNonsplitDescendedPolynomial p s d e) ≠ 0 := by
   rw [eval_seededNonsplitDescendedPolynomial]
   have he0 : e ≠ 0 := Nat.ne_of_gt he
   have htwoe0 : 2 * e ≠ 0 := by omega
   rw [zero_pow he0, zero_pow htwoe0]
-  simp only [mul_zero, zero_add, add_zero, mul_one, zero_sub, neg_ne_zero]
+  simp only [mul_zero, zero_add, mul_one, zero_sub, neg_ne_zero]
   exact pow_ne_zero d (quadraticCayleyNormPolynomial_eval_ne_zero p z)
 
 private theorem affineDescendedZero_second_ne_zero
@@ -668,7 +668,7 @@ theorem seededNonsplitIdentityBoundaryPolynomial_ne_zero
   have h0e : 0 ≠ e := he0.symm
   have htwoe0 : 2 * e ≠ 0 := by omega
   have h0twoe : 0 ≠ 2 * e := htwoe0.symm
-  simp [seededNonsplitIdentityBoundaryPolynomial, he0, h0e, htwoe0, h0twoe] at hcoeff
+  simp [seededNonsplitIdentityBoundaryPolynomial, h0e, h0twoe] at hcoeff
 
 theorem seededNonsplitIdentityBoundaryPolynomial_natDegree_le
     (s : E p) (e : ℕ) :

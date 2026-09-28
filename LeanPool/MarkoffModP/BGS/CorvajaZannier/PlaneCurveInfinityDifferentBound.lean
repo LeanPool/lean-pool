@@ -198,6 +198,7 @@ def infinityNormalizedCoefficient
   ⟨(RatFunc.X⁻¹) ^ a * algebraMap K[X] (RatFunc K) P,
     infinityNormalizedCoefficient_mem K a P hdegree⟩
 
+omit [DecidableEq K] in
 @[simp] theorem infinityNormalizedCoefficient_coe
     (a : ℕ) (P : K[X]) (hdegree : P.natDegree ≤ a) :
     ((infinityNormalizedCoefficient K a P hdegree :
@@ -213,6 +214,7 @@ def infinityNormalizedIntegralPolynomial
   F.sum fun i _ => monomial i
     (infinityNormalizedCoefficient K a (F.coeff i) (hcoeff i))
 
+omit [DecidableEq K] in
 /-- Extending the integral infinity-chart equation to `K(X)` recovers the
 field-valued normalization. -/
 theorem infinityNormalizedIntegralPolynomial_map
@@ -221,6 +223,7 @@ theorem infinityNormalizedIntegralPolynomial_map
     (infinityNormalizedIntegralPolynomial K a F hcoeff).map
         (algebraMap (RatFuncInfinityIntegers K) (RatFunc K)) =
       infinityNormalizedPolynomial K a F := by
+  classical
   ext i
   rw [coeff_map]
   simp only [infinityNormalizedIntegralPolynomial, coeff_sum,

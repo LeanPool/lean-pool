@@ -73,7 +73,7 @@ theorem puncturedMarkoffTransitiveAt_of_maximalOrbit_frontier
     PuncturedMarkoffTransitiveAt p Fact.out := by
   classical
   have hpTwo : p ≠ 2 := by omega
-  letI : Fintype (quadraticFiniteField p) := Fintype.ofFinite _
+  let : Fintype (quadraticFiniteField p) := Fintype.ofFinite _
   have hAll : ∀ x : PuncturedMarkoffSurface (ZMod p),
       SamePuncturedComponent c x := by
     intro x
@@ -216,14 +216,14 @@ theorem puncturedMarkoffTransitiveAt_of_explicitCutoff
     (p : ℕ) (hpPrime : p.Prime)
     (hp : explicitStrongApproximationCutoff ≤ p) :
     PuncturedMarkoffTransitiveAt p hpPrime := by
-  letI : Fact p.Prime := ⟨hpPrime⟩
+  let : Fact p.Prime := ⟨hpPrime⟩
   have hpSeven : 7 ≤ p := explicitCutoff_seven_le_for_assembly hp
   have hpThree : 3 < p := by omega
   have hthree : (3 : ZMod p) ≠ 0 := by
     intro hzero
     have hpDvd : p ∣ 3 := (ZMod.natCast_eq_zero_iff 3 p).mp hzero
     exact (Nat.not_dvd_of_pos_of_lt (by omega) hpThree) hpDvd
-  letI : Invertible (3 : ZMod p) := invertibleOfNonzero hthree
+  let : Invertible (3 : ZMod p) := invertibleOfNonzero hthree
   obtain ⟨baseNormalized, hbaseCage⟩ :=
     exists_normalizedPunctured_splitCagePoint p hpSeven
   let base : PuncturedMarkoffSurface (ZMod p) :=
@@ -239,7 +239,7 @@ theorem puncturedMarkoffTransitiveAt_of_explicitCutoff
         (p : ℝ) ^ (5 / 6 : ℝ) ≤ rotationOrder z.1.u2 ∨
         (p : ℝ) ^ (5 / 6 : ℝ) ≤ rotationOrder z.1.u3 := by
       by_contra hsmall
-      push_neg at hsmall
+      push Not at hsmall
       have hmaxSmall : (maximalCoordinateRotationOrder z.1 : ℝ) <
           (p : ℝ) ^ (5 / 6 : ℝ) := by
         rw [maximalCoordinateRotationOrder, Nat.cast_max, Nat.cast_max]
@@ -287,14 +287,14 @@ theorem puncturedMarkoffTransitiveAt_of_preliminaryCutoff
     (p : ℕ) (hpPrime : p.Prime)
     (hp : preliminaryStrongApproximationCutoff ≤ p) :
     PuncturedMarkoffTransitiveAt p hpPrime := by
-  letI : Fact p.Prime := ⟨hpPrime⟩
+  let : Fact p.Prime := ⟨hpPrime⟩
   have hpSeven : 7 ≤ p := preliminaryCutoff_seven_le_for_assembly hp
   have hpThree : 3 < p := by omega
   have hthree : (3 : ZMod p) ≠ 0 := by
     intro hzero
     have hpDvd : p ∣ 3 := (ZMod.natCast_eq_zero_iff 3 p).mp hzero
     exact (Nat.not_dvd_of_pos_of_lt (by omega) hpThree) hpDvd
-  letI : Invertible (3 : ZMod p) := invertibleOfNonzero hthree
+  let : Invertible (3 : ZMod p) := invertibleOfNonzero hthree
   obtain ⟨baseNormalized, hbaseCage⟩ :=
     exists_normalizedPunctured_splitCagePoint p hpSeven
   let base : PuncturedMarkoffSurface (ZMod p) :=
@@ -310,7 +310,7 @@ theorem puncturedMarkoffTransitiveAt_of_preliminaryCutoff
         (p : ℝ) ^ (5 / 6 : ℝ) ≤ rotationOrder z.1.u2 ∨
         (p : ℝ) ^ (5 / 6 : ℝ) ≤ rotationOrder z.1.u3 := by
       by_contra hsmall
-      push_neg at hsmall
+      push Not at hsmall
       have hmaxSmall : (maximalCoordinateRotationOrder z.1 : ℝ) <
           (p : ℝ) ^ (5 / 6 : ℝ) := by
         rw [maximalCoordinateRotationOrder, Nat.cast_max, Nat.cast_max]

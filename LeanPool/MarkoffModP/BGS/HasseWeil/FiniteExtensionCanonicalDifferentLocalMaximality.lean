@@ -265,6 +265,7 @@ theorem finiteExtensionFiberLift_mem_adeleFilt_of_supported
     rw [hbAway _ hq, map_zero, mul_zero, Valuation.map_zero]
     exact zero_le
 
+omit [DecidableEq K] [Fintype K] in
 /-- Normalize a one-component base adele and lift a trace preimage without
 changing its cotrace. -/
 theorem finiteExtensionFiberLift_normalized_trace
@@ -293,6 +294,7 @@ theorem finiteExtensionFiberLift_normalized_trace
     smul_smul, mul_inv_cancel₀ hx0, one_smul]
   exact haNonzero
 
+omit [DecidableEq K] [Fintype K] in
 /-- Step (b1), finite-place branch: any coefficient strictly above the finite
 different is detected by the cotrace functional on a fiber-constant adele in
 that divisor filtration. -/
@@ -413,6 +415,7 @@ theorem finiteExtensionFiberCotrace_detects_finite_excess
   refine ⟨β, hβFilt, ?_⟩
   simpa only [β, b] using hnorm.2.2
 
+omit [DecidableEq K] [Fintype K] in
 /-- Step (b1), infinity-place branch: after compensating the `-2e` term by
 the square of the base infinity uniformizer, any coefficient strictly above
 the infinity different is detected by cotrace. -/
@@ -631,6 +634,7 @@ theorem finiteExtensionFiberCotrace_detects_infinity_excess
   refine ⟨β, hβFilt, ?_⟩
   simpa only [β, b] using hnorm.2.2
 
+omit [DecidableEq K] [Fintype K] in
 /-- Stichtenoth, Theorem 3.4.6, Step (b1), in the project chart model: every
 divisor not bounded by the explicit canonical different is detected by the
 base canonical functional after cotrace. -/
@@ -674,7 +678,7 @@ theorem finiteExtensionFiberCotrace_detects_not_le
       K L ω hω hdiv Btop P
     simpa only [hQq] using hq
 
-omit [DecidableEq K] in
+omit [DecidableEq K] [Fintype K] in
 /-- The trace-different divisor is exactly the maximal vanishing divisor of
 the Weil functional obtained by gluing cotrace to zero.  This is the direct
 local-maximality conclusion of Stichtenoth, Theorem 3.4.6, Step (b1), and does
@@ -770,6 +774,7 @@ theorem finiteExtension_genus_le_canonicalDifferent_finrank_of_cotrace
       hcanonical
   exact hcharacterization.2.ge
 
+omit [Fintype K] in
 /-- Any upper bound for the explicit different degree gives the corresponding
 genus bound directly from cotrace canonicality. -/
 theorem finiteExtension_genus_le_budget_of_cotrace

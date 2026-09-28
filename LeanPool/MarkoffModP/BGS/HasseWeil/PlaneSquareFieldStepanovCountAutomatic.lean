@@ -38,6 +38,7 @@ variable (K S : Type*) [Field K] [Fintype K]
   [Field S] [Fintype S] [DecidableEq S] [Algebra K S]
   [DecidableEq (RatFunc S)]
 
+omit [DecidableEq (RatFunc S)] in
 /-- Square-field Stepanov bound with the regular-point degree-one condition
 discharged by smooth normalization. -/
 theorem planeCurve_affinePoint_card_le_squareField
@@ -97,6 +98,7 @@ theorem planeCurve_affinePoint_card_le_squareField
   exact affinePointExhaustiveFinitePlace_degree_eq_one_of_partialY
     (K := S) hf hpartialFirst hpartialSecond z.1 z.2
 
+omit [DecidableEq (RatFunc S)] in
 /-- Explicit bidegree version of `planeCurve_affinePoint_card_le_squareField`.
 The resultant estimate replaces the critical-locus cardinal by
 `((2 * secondDegree - 1) * firstDegree) * secondDegree`. -/

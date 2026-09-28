@@ -29,7 +29,7 @@ order under the coefficient-sensitive maximal-divisor inequalities. -/
 theorem
     exists_sameNormalizedComponent_maximalOrder_increase_of_pairedMaximalDivisorBounds
     (p : ℕ) [Fact p.Prime] [Invertible (3 : ZMod p)]
-    [Fintype (quadraticFiniteField p)] (hpTwo : p ≠ 2)
+    (hpTwo : p ≠ 2)
     {delta : ℝ} (hdelta : delta ≤ (1 : ℝ) / 2)
     (x : NormalizedMarkoffSurface (ZMod p))
     (hbelow : (maximalCoordinateRotationOrder x.1 : ℝ) <

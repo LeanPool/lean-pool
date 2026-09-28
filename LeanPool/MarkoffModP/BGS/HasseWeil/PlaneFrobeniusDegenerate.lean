@@ -85,7 +85,7 @@ theorem degreeOf_one_eq_natDegree_secondPolynomialOfFirstDegreeZero
         rw [hC]
         rw [Polynomial.coeff_C, ite_eq_right hmzero]
       rw [hz] at htail
-      simpa using htail
+      simp at htail
     have htailq : m.tail ∈ q.support := by
       rw [hmzero] at htail
       exact htail

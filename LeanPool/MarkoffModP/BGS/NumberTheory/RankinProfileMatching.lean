@@ -156,8 +156,9 @@ theorem assignedPrimeWeight_power
     simpa [assignedPrimeWeight, htwo, hsupport] using
       (assignment prime).weightCap.one_le_prime_mul_weight_pow_twelve
         hfactorValid.2.1 hfloor
-  · simp [assignedPrimeWeight, htwo, hsupport]
-    exact_mod_cast hprime.one_le
+  · have hprime_one : (1 : ℚ) ≤ prime := by exact_mod_cast hprime.one_le
+    simpa only [assignedPrimeWeight, ite_eq_right htwo, ite_eq_right hsupport, one_pow,
+      mul_one] using hprime_one
 
 private theorem jointOddPrimeList_map_prod
     {M : Type*} [CommMonoid M]
@@ -190,7 +191,7 @@ private theorem oddDivisorCount_map_assignment
       simp only [List.map_cons, RankinNeighborProfile.oddDivisorCount,
         List.prod_cons]
       rw [ih htail]
-      simp [RankinOddFactor.Matches] at hhead
+      simp only [RankinOddFactor.Matches] at hhead
       rw [hhead.1, hhead.2.1]
 
 private theorem odd_prime_not_mem_both_neighbors
@@ -556,7 +557,7 @@ private theorem oddCoarseEulerProduct_map_assignment
         RankinNeighborProfile.oddCoarseEulerProduct,
         List.prod_cons]
       rw [ih htail]
-      simp [RankinOddFactor.Matches] at hhead
+      simp only [RankinOddFactor.Matches] at hhead
       rw [hhead.1, hhead.2.1]
 
 private theorem jointOddPrimeList_coarse_product_minus

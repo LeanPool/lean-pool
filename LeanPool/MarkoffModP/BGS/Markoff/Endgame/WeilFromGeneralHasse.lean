@@ -184,7 +184,7 @@ theorem weightedSplitTraceWeilBoundAssumption_of_bivariateAffineHasseWeilBound
           (Fintype.card K : ℝ)| ≤
         4 * (generalCoefficient : ℝ) * x := by
     norm_num only [Nat.cast_mul, Nat.cast_ofNat] at hAffine
-    convert hAffine using 1 <;> dsimp [x] <;> ring
+    convert hAffine using 1; dsimp [x]; ring
   have herrorIdentity :
       ((splitTraceCurveSolutions K alpha beta d e).card : ℝ) -
           (Fintype.card K : ℝ) =

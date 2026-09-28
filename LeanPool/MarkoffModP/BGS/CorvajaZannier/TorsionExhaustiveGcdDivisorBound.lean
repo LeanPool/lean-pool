@@ -140,6 +140,7 @@ theorem pointIdeal_eq_comap_dominatingValuationSubring_maximalIdeal
         (A := A) (L := L) m r hr
     exact ValuationSubring.coe_mem_nonunits_iff.mp hnonunits
 
+omit [IsDomain A] in
 /-- Equality of the chosen dominating valuation subrings forces equality of
 the affine centers. -/
 theorem pointIdeal_eq_of_dominatingValuationSubring_eq
@@ -200,6 +201,7 @@ noncomputable def dominatingIntegralClosurePrime
     (IsLocalRing.maximalIdeal
       (dominatingValuationSubring (A := A) (L := L) m))
 
+omit [IsDomain A] in
 theorem dominatingIntegralClosurePrime_isPrime
     (m : MaximalSpectrum A)
     (hbase : ∀ p : P, algebraMap P L p ∈ (algebraMap A L).range) :
@@ -219,6 +221,7 @@ noncomputable def dominatingIntegralClosurePlace
   ⟨dominatingIntegralClosurePrime m hbase,
     dominatingIntegralClosurePrime_isPrime m hbase, hne⟩
 
+omit [IsDomain A] in
 theorem valuationSubringAt_dominatingIntegralClosurePlace_le
     (m : MaximalSpectrum A)
     (hbase : ∀ p : P, algebraMap P L p ∈ (algebraMap A L).range)
@@ -252,6 +255,7 @@ theorem valuationSubringAt_dominatingIntegralClosurePlace_le
   rw [ht]
   exact t.property
 
+omit [IsDomain A] in
 theorem valuationSubringAt_dominatingIntegralClosurePlace_eq
     (m : MaximalSpectrum A)
     (hbase : ∀ p : P, algebraMap P L p ∈ (algebraMap A L).range)
@@ -263,6 +267,7 @@ theorem valuationSubringAt_dominatingIntegralClosurePlace_eq
   exact ValuationSubring.eq_of_le_of_ne_top _
     (valuationSubringAt_dominatingIntegralClosurePlace_le m hbase hne) hV
 
+omit [IsDomain A] in
 theorem dominatingIntegralClosurePlace_valuation_isEquiv
     (m : MaximalSpectrum A)
     (hbase : ∀ p : P, algebraMap P L p ∈ (algebraMap A L).range)
@@ -275,6 +280,7 @@ theorem dominatingIntegralClosurePlace_valuation_isEquiv
     ValuationSubring.valuationSubring_valuation]
   exact valuationSubringAt_dominatingIntegralClosurePlace_eq m hbase hne hV
 
+omit [IsDomain A] in
 theorem finitePlaceOrder_dominatingIntegralClosurePlace_pos_of_mem
     (m : MaximalSpectrum A)
     (hbase : ∀ p : P, algebraMap P L p ∈ (algebraMap A L).range)
@@ -299,6 +305,7 @@ theorem finitePlaceOrder_dominatingIntegralClosurePlace_pos_of_mem
   rw [horder, ← exp_zero, exp_lt_exp] at hqlt
   omega
 
+omit [IsDomain A] in
 /-- A nonzero integral element at a maximal ideal gives a centered finite place
 where both prescribed elements have positive order. -/
 theorem exists_integralClosurePlace_orders_positive

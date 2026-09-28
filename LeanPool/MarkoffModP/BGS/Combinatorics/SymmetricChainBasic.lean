@@ -89,7 +89,6 @@ theorem rank_center
   exact Nat.add_sub_of_le (decomposition.start_le_half key)
 
 private theorem key_injective_on_antichain
-    [Fintype P]
     (decomposition : SymmetricChainDecomposition P rank total)
     (antichain : Finset P)
     (hantichain : IsAntichain (· ≤ ·) (antichain : Set P)) :

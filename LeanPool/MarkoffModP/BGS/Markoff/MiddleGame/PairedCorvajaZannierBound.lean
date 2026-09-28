@@ -140,7 +140,7 @@ theorem weightedTraceEquationNonparabolicLeftSupport_card_cast_le_pairedCorvajaZ
         rw [
           corvajaZannierCorollaryTwoNumericalBound_bidegree_two_euler_eight_eq_twice_paired]
         unfold pairedCorvajaZannierTraceUpperBound
-        congr 1 <;> simp [Nat.mul_comm]
+        congr 1; simp [Nat.mul_comm]
   nlinarith
 
 end

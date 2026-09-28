@@ -348,7 +348,7 @@ theorem exists_threshold_nonparabolicPoint_with_primitive_secondTrace
     (hNonsplitWeil : SeededNonsplitTraceWeilBoundAssumption nonsplitCoefficient)
     {δ : ℝ} (hδ : 0 < δ) :
     ∃ threshold : ℕ, ∀ p : ℕ, threshold ≤ p → [Fact p.Prime] →
-      ∀ (t : ZMod p) (ht : t ^ 2 ≠ 4) (ht0 : t ≠ 0)
+      ∀ (t : ZMod p) (_ht : t ^ 2 ≠ 4) (_ht0 : t ≠ 0)
         (x : ↥(normalizedFiber1 t)),
         (p : ℝ) ^ ((1 : ℝ) / 2 + δ) ≤ rotationOrder t →
         ∃ n : ℕ, ∃ u : (ZMod p)ˣ,
@@ -372,8 +372,7 @@ theorem exists_threshold_nonparabolicPoint_with_primitive_secondTrace
   have hpTwo : p ≠ 2 := by omega
   rcases exists_split_or_nonsplitFiberParameter p hpTwo t ht ht0 x with
       ⟨w, htrace, hw, s, hx⟩ | ⟨w, htrace, hw, s, hx⟩
-  ·
-    have horder : rotationOrder t = orderOf w := by
+  · have horder : rotationOrder t = orderOf w := by
       rw [← htrace, rotationOrder_splitTorusTrace w hw]
     obtain ⟨n, u, hcoordinate, huOrder⟩ :=
       hSplitThreshold p hpSplit w s hw (by simpa [htrace] using ht0)
@@ -381,8 +380,7 @@ theorem exists_threshold_nonparabolicPoint_with_primitive_secondTrace
     refine ⟨n, u, ?_, huOrder⟩
     rw [← hx]
     exact hcoordinate
-  ·
-    have horder : rotationOrder t = orderOf w := by
+  · have horder : rotationOrder t = orderOf w := by
       rw [← htrace, rotationOrder_quadraticNormOneTrace p w hw]
     obtain ⟨n, u, hcoordinate, huOrder⟩ :=
       hNonsplitThreshold p hpNonsplit t ht ht0 w htrace s
@@ -400,7 +398,7 @@ theorem exists_threshold_nonparabolicPoint_with_maximal_secondRotation
     (hNonsplitWeil : SeededNonsplitTraceWeilBoundAssumption nonsplitCoefficient)
     {δ : ℝ} (hδ : 0 < δ) :
     ∃ threshold : ℕ, ∀ p : ℕ, threshold ≤ p → [Fact p.Prime] →
-      ∀ (t : ZMod p) (ht : t ^ 2 ≠ 4) (ht0 : t ≠ 0)
+      ∀ (t : ZMod p) (_ht : t ^ 2 ≠ 4) (_ht0 : t ≠ 0)
         (x : ↥(normalizedFiber1 t)),
         (p : ℝ) ^ ((1 : ℝ) / 2 + δ) ≤ rotationOrder t →
         ∃ n : ℕ,

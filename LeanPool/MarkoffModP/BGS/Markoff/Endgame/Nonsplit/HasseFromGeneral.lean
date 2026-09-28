@@ -83,7 +83,7 @@ theorem seededNonsplitTraceWeilBoundAssumption_of_bivariateAffineHasseWeilBound
     dsimp only [affineCard]
     rw [ZMod.card] at hAffine
     norm_num only [Nat.cast_mul, Nat.cast_ofNat] at hAffine
-    convert hAffine using 1 <;> dsimp [x] <;> ring
+    convert hAffine using 1; dsimp [x]; ring
   rw [hCardReal]
   calc
     |((affineCard : ℝ) + boundaryCard) - (p : ℝ)| =

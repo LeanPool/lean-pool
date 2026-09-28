@@ -185,6 +185,7 @@ abbrev FiniteExtensionEffectiveDivisorClassFiber (n : ℕ)
     finiteExtensionEffectiveDivisorClassOfDegree K L n D = c}
 
 omit [Fintype K] [DecidableEq K] in
+omit [FiniteDimensional (RatFunc K) L] [Algebra.IsSeparable (RatFunc K) L] in
 private theorem finiteExtensionEffectiveDivisorToDivisor_of_symm
     (D : {D : FiniteExtensionDivisor K L // ∀ P, 0 ≤ D P}) :
     finiteExtensionEffectiveDivisorToDivisor K L

@@ -120,7 +120,7 @@ omit [DecidableEq K] in
 /-- Finite-place source case (i), specialized to the consecutive derivative
 orders on the source auxiliary family. -/
 theorem finiteExtensionFinitePlace_canonicalAuxiliary_caseI
-    {p : ℕ} [Fact p.Prime] [CharP L p] [Fintype K]
+    {p : ℕ} [Fact p.Prime] [CharP L p] [Finite K]
     (q : FiniteExtensionFinitePlace K L)
     (D : Derivation (frobeniusSubfield L p) L L)
     (c : L) (hc : c ≠ 0)

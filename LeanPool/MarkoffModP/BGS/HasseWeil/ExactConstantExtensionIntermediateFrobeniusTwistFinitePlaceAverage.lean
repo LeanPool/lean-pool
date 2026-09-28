@@ -746,6 +746,7 @@ private theorem finitePlaceUnder_intermediate_original
 
 omit [DecidableEq (RatFunc S)] [FiniteDimensional (RatFunc C) L]
   [Algebra.IsSeparable (RatFunc C) L] [FiniteDimensional L N] [IsGalois L N] in
+omit [DecidableEq S] in
 /-- Choose an `S[X]`-presentation of a top finite place while transporting
 rationality of its restriction to the intermediate field `L`. -/
 private theorem exists_presentedFinitePlace_of_under_intermediate_rational :
@@ -922,6 +923,7 @@ theorem exactConstantExtensionFinitePlace_degree_eq_finrank_of_under_intermediat
   rw [heq] at hTop
   exact hTop
 
+omit [DecidableEq (RatFunc S)] [DecidableEq S] in
 /-- Presentation-free local Frobenius-coset identity over a rational finite
 place of the intermediate field `L`. -/
 theorem
@@ -1257,6 +1259,7 @@ noncomputable def
 
 omit [Finite S] [DecidableEq S] [DecidableEq (RatFunc S)] [FiniteDimensional L N]
   [IsGalois L N] in
+omit [DecidableEq C] [DecidableEq (RatFunc C)] in
 /-- Restriction through an intermediate Frobenius-twist field agrees with
 direct restriction to `L`. -/
 theorem finitePlaceUnder_intermediateFrobeniusTwist_under

@@ -186,7 +186,7 @@ def badDiagonalTaggedPointEmbedding
       intro x y hxy
       by_cases hx : x.1.1.1.2 = 0
       · by_cases hy : y.1.1.1.2 = 0
-        · simp only [hx, hy, ite_eq_left] at hxy
+        · simp only [hx, hy] at hxy
           have hpayload := Sum.inl.inj hxy
           apply Subtype.ext
           apply Prod.ext
@@ -200,7 +200,7 @@ def badDiagonalTaggedPointEmbedding
         · simp [hx, hy] at hxy
       · by_cases hy : y.1.1.1.2 = 0
         · simp [hx, hy] at hxy
-        · simp only [hx, hy, ite_eq_right] at hxy
+        · simp only [hx, hy] at hxy
           have hpayload := Sum.inr.inj hxy
           have hparameter : x.1.1.1.2 = y.1.1.1.2 :=
             congrArg Subtype.val hpayload
@@ -476,8 +476,8 @@ private lemma powerRootCount_le
     simpa [f] using (natDegree_X_pow_sub_C (R := K) (n := n) (r := 1)))
 
 def badOffDiagonalPulledEmbedding
-    (p : Nat) [Fact p.Prime] (hpTwo : p ≠ 2)
-    (xi eta : ZMod p) {d : Nat} (hd : 0 < d)
+    (p : Nat) [Fact p.Prime] (_hpTwo : p ≠ 2)
+    (xi eta : ZMod p) {d : Nat} (_hd : 0 < d)
     (hoffDiagonal : xi ^ 2 ≠ eta ^ 2) :
     {z : CagePulledRootPair p xi eta d //
       ¬ IsGoodOffDiagonalPulledPair z} ↪
@@ -632,7 +632,7 @@ def badOffDiagonalPlaneEmbedding
       intro x y hxy
       by_cases hx : x.1.1.2 = 0
       · by_cases hy : y.1.1.2 = 0
-        · simp only [hx, hy, ite_eq_left] at hxy
+        · simp only [hx, hy] at hxy
           have hpayload := Sum.inl.inj hxy
           apply Subtype.ext
           apply Subtype.ext
@@ -640,7 +640,7 @@ def badOffDiagonalPlaneEmbedding
         · simp [hx, hy] at hxy
       · by_cases hy : y.1.1.2 = 0
         · simp [hx, hy] at hxy
-        · simp only [hx, hy, ite_eq_right] at hxy
+        · simp only [hx, hy] at hxy
           have hpayload := Sum.inr.inj hxy
           have hparameter : x.1.1.2 = y.1.1.2 := congrArg Subtype.val hpayload
           have hxsum : x.1.1.1 = 0 := by

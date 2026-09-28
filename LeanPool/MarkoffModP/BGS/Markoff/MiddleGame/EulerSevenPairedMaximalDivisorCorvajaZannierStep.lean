@@ -175,7 +175,7 @@ theorem orderCount_mul_pairedEulerSevenEnvelope_lt_currentOrder
         mul_max_of_nonneg _ _ (Nat.cast_nonneg orderCount)]
       dsimp only [rootTerm, linearCoefficient]
       push_cast
-      congr 1 <;> ring
+      congr 1; ring
     _ < (currentOrder : ℝ) := max_lt hrootTerm hquotientTerm
 
 /-- Finite nonparabolic escape over maximal candidate orders with the exact

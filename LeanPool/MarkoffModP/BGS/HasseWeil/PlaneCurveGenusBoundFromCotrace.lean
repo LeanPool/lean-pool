@@ -31,6 +31,7 @@ open scoped Polynomial
 variable {K : Type*} [Field K] [Fintype K] [DecidableEq K]
   [DecidableEq (RatFunc K)]
 
+omit [Fintype K] [DecidableEq K] [DecidableEq (RatFunc K)] in
 /-- The one-separating-coordinate plane-curve genus bound obtained directly
 from cotrace canonicality and the explicit different-degree estimate. -/
 theorem planeCurve_genus_le_bidegreeGenusBudget_of_cotrace
@@ -74,6 +75,10 @@ theorem planeCurve_genus_le_bidegreeGenusBudget_of_cotrace
       separable_planeCurveFunctionField_over_ratFunc hf hpartialSecond
     @FunctionField.genus K L _ _ canonicalAlg ≤
       planeCurveBidegreeGenusBudget f := by
+  classical
+  have hfinite : Finite K :=
+    (Nat.card_pos_iff.1 (by omega : 0 < Nat.card K)).2
+  have : Fintype K := @Fintype.ofFinite K hfinite
   let hf : Irreducible f :=
     irreducible_of_irreducible_map_algebraicClosure habsolute
   let : IsDomain (PlaneCurveCoordinateRing f) :=

@@ -29,15 +29,16 @@ section InvolutionImage
 variable {G T : Type*} [Group G] [Fintype G] [DecidableEq G]
   [DecidableEq T] [IsCyclic G]
 
-omit [DecidableEq G] in
+omit [DecidableEq G] [Fintype G] in
 /-- An inversion-invariant map has at most half as many values as inputs,
 apart from the at most two elements satisfying `x² = 1`. -/
 theorem two_mul_card_image_le_card_add_two_of_inv_invariant
-    (s : Finset G) (f : G → T)
+    [Finite G] (s : Finset G) (f : G → T)
     (hsinv : ∀ x ∈ s, x⁻¹ ∈ s)
     (hfinv : ∀ x, f x⁻¹ = f x) :
     2 * (s.image f).card ≤ s.card + 2 := by
   classical
+  let := Fintype.ofFinite G
   let fixed : Finset G := s.filter fun x => x⁻¹ = x
   have hfixedSubset :
       fixed ⊆ BGS.NumberTheory.elementsWithPowOne G 2 := by

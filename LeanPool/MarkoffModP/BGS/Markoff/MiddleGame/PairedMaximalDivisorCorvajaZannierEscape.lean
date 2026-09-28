@@ -27,7 +27,7 @@ namespace BGS.Markoff
 paired maximal-order escape theorem. -/
 theorem
     exists_iterate_with_larger_secondRotationOrder_of_nonzero_nonparabolic_pairedMaximalOrders
-    (p : ℕ) [Fact p.Prime] [Fintype (quadraticFiniteField p)]
+    (p : ℕ) [Fact p.Prime]
     (hpTwo : p ≠ 2)
     (delta : ℝ) (hdelta : delta ≤ (1 : ℝ) / 2)
     (x : NormalizedPoint (ZMod p)) (hx : IsNormalizedMarkoff x)
@@ -45,6 +45,8 @@ theorem
     ∃ n : ℕ,
       rotationOrder x.u1 <
         rotationOrder ((normalizedRotate1^[n]) x).u2 := by
+  let : Fintype (quadraticFiniteField p) :=
+    Fintype.ofFinite (quadraticFiniteField p)
   obtain ⟨w, s, hw, hpoint⟩ :=
     exists_diagonalizedFiberPoint_of_nonzero_nonparabolic
       p hpTwo x hx hnonzero hnonparabolic

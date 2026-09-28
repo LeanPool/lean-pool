@@ -414,7 +414,7 @@ theorem squareExtensionFrobeniusElement_mem_pointMaximalIdeal
   rw [← hcard, FiniteField.pow_card, sub_self]
 
 private theorem residue_finrank_le_finitePlace_degree
-    (K E A : Type*) [Field K] [Fintype K] [DecidableEq K] [DecidableEq (RatFunc K)]
+    (K E A : Type*) [Field K] [Finite K] [DecidableEq K] [DecidableEq (RatFunc K)]
     [Field E] [Algebra (RatFunc K) E] [FiniteDimensional (RatFunc K) E]
     [Algebra.IsSeparable (RatFunc K) E] [Algebra K E]
     [IsScalarTower K (RatFunc K) E]
@@ -426,6 +426,7 @@ private theorem residue_finrank_le_finitePlace_degree
     (hspec : IsDedekindDomain.HeightOneSpectrum.valuationSubringAtPrime E q =
       dominatingValuationSubring (L := E) m) :
     Module.finrank K m.asIdeal.ResidueField ≤ finiteExtensionPlaceDegree K E (.inl q) := by
+  let : Fintype K := Fintype.ofFinite K
   let : Algebra (Polynomial K) E :=
     RingHom.toAlgebra ((algebraMap (RatFunc K) E).comp
       (algebraMap (Polynomial K) (RatFunc K)))

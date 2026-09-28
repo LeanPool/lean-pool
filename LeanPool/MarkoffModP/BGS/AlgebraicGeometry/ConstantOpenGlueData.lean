@@ -127,7 +127,8 @@ def constantOpenGlueDataOfCommonTargetMap
       CategoryTheory.GlueData.ofGlueData', CategoryTheory.GlueData'.f',
       constantOpenGlueDataAux] at hc
     simp only [dite_eq_right hij, dite_eq_right (Ne.symm hij)] at hc
-    simp at hc
+    simp only [dite_eq_ite, ne_eq, Category.assoc, eqToHom_trans_assoc,
+      eqToHom_refl, Category.id_comp] at hc
     exact (cancel_epi _).mp hc
   fapply Multicoequalizer.desc
   · exact fun i ↦ g i ≫ inc i
@@ -139,12 +140,13 @@ def constantOpenGlueDataOfCommonTargetMap
     by_cases hij : i = j
     · subst j
       erw [D.t_id]
-      simp
+      simp only [Category.id_comp]
     · dsimp only [D, constantOpenGlueDataOfCommonTarget, constantOpenGlueData,
         CategoryTheory.GlueData.ofGlueData', CategoryTheory.GlueData'.f',
         constantOpenGlueDataAux]
       simp only [dite_eq_right hij, dite_eq_right (Ne.symm hij)]
-      simp
+      simp only [dite_eq_ite, Category.assoc, eqToHom_trans_assoc, eqToHom_refl,
+        Category.id_comp]
       congr 1
       simp only [← Category.assoc]
       rw [h i]

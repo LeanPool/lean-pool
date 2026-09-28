@@ -28,7 +28,8 @@ theorem twentyFour_support_margin :
     24 ^ 15 * 2 ^ 687 < 2 ^ 756 := by
   have hbase : 24 ^ 5 < 2 ^ 23 := by norm_num
   calc
-    24 ^ 15 * 2 ^ 687 = (24 ^ 5) ^ 3 * 2 ^ 687 := by ring
+    24 ^ 15 * 2 ^ 687 = (24 ^ 5) ^ 3 * 2 ^ 687 := by
+      rw [show (15 : ℕ) = 5 * 3 by norm_num, pow_mul]
     _ < (2 ^ 23) ^ 3 * 2 ^ 687 :=
       Nat.mul_lt_mul_of_pos_right
         (pow_lt_pow_left₀ hbase (Nat.zero_le _) (by norm_num))
@@ -281,10 +282,10 @@ theorem coarse_endgamePrimitiveTrace_explicitInequality_of_card_sub_one
   have hpNat : 0 < p := Nat.zero_lt_of_lt hp
   have horbit := orbitExponent_le_rpow_of_mul_order_eq_card_sub_one
     p orbitExponent orbitOrder (δ := (1 / 3 : ℝ)) hpNat hmul (by
-      convert horder using 1 <;> norm_num)
+      convert horder using 1; norm_num)
   calc
     (orbitExponent : ℝ) ≤ (p : ℝ) ^ (1 / 6 : ℝ) := by
-      convert horbit using 1 <;> norm_num
+      convert horbit using 1; norm_num
     _ ≤ 2 * (p : ℝ) ^ (1 / 6 : ℝ) := by
       nlinarith [Real.rpow_nonneg (Nat.cast_nonneg p) (1 / 6 : ℝ)]
 
@@ -300,8 +301,8 @@ theorem coarse_endgamePrimitiveTrace_explicitInequality_of_card_add_one
   have hpNat : 0 < p := Nat.zero_lt_of_lt hp
   have horbit := orbitExponent_le_two_mul_rpow_of_mul_order_eq_card_add_one
     p orbitExponent orbitOrder (δ := (1 / 3 : ℝ)) hpNat hmul (by
-      convert horder using 1 <;> norm_num)
-  convert horbit using 1 <;> norm_num
+      convert horder using 1; norm_num)
+  convert horbit using 1; norm_num
 
 theorem coarse_four_lt_rpow_five_div_six
     {p : ℕ} (hp : 2 ^ 756 < p) :

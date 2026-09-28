@@ -63,7 +63,7 @@ theorem explicit_middleGame_corvajaZannier_sizeBounds
   have hpRealNonneg : (0 : ℝ) ≤ p := hpRealPos.le
   have hA : (A : ℝ) ≤ 144 * (p : ℝ) ^ (2 / 32 : ℝ) := by
     dsimp [A]
-    convert explicit_corvajaZannier_divisor_term_le hp using 1 <;> norm_num
+    convert explicit_corvajaZannier_divisor_term_le hp using 1; norm_num
   have h144cube : (144 ^ 3 : ℝ) < (p : ℝ) ^ (1 / 32 : ℝ) :=
     by
       have h := fixed_lt_rpow_one_div_thirtyTwo_of_explicitCutoff hp
@@ -195,7 +195,7 @@ theorem explicit_endgamePrimitiveTrace_explicitInequality_of_card_sub_one
   have hpNat : 0 < p := by
     exact Nat.zero_lt_one.trans (explicitCutoff_gt_one.trans_le hp)
   have horder' : (p : ℝ) ^ ((1 : ℝ) / 2 + 7 / 32) ≤ orbitOrder := by
-    convert horder using 1 <;> norm_num
+    convert horder using 1; norm_num
   have horbit := orbitExponent_le_rpow_of_mul_order_eq_card_sub_one
     p orbitExponent orbitOrder hpNat hmul horder'
   calc
@@ -219,10 +219,10 @@ theorem explicit_endgamePrimitiveTrace_explicitInequality_of_card_add_one
   have hpNat : 0 < p := by
     exact Nat.zero_lt_one.trans (explicitCutoff_gt_one.trans_le hp)
   have horder' : (p : ℝ) ^ ((1 : ℝ) / 2 + 7 / 32) ≤ orbitOrder := by
-    convert horder using 1 <;> norm_num
+    convert horder using 1; norm_num
   have horbit := orbitExponent_le_two_mul_rpow_of_mul_order_eq_card_add_one
     p orbitExponent orbitOrder hpNat hmul horder'
-  convert horbit using 1 <;> norm_num
+  convert horbit using 1; norm_num
 
 /-- The trace-zero order bound `4` lies below the explicit endgame threshold. -/
 theorem explicit_four_lt_rpow_twentyThree_div_thirtyTwo
@@ -447,10 +447,10 @@ theorem explicit_endgamePrimitiveTrace_explicitInequality_of_card_sub_one
   have hpNat : 0 < p := Nat.zero_lt_one.trans (explicitCutoff_gt_one.trans_le hp)
   have horbit := orbitExponent_le_rpow_of_mul_order_eq_card_sub_one
     p orbitExponent orbitOrder (δ := (1 / 3 : ℝ)) hpNat hmul (by
-      convert horder using 1 <;> norm_num)
+      convert horder using 1; norm_num)
   calc
     (orbitExponent : ℝ) ≤ (p : ℝ) ^ (1 / 6 : ℝ) := by
-      convert horbit using 1 <;> norm_num
+      convert horbit using 1; norm_num
     _ ≤ 2 * (p : ℝ) ^ (1 / 6 : ℝ) := by
       nlinarith [Real.rpow_nonneg (Nat.cast_nonneg p) (1 / 6 : ℝ)]
 
@@ -467,8 +467,8 @@ theorem explicit_endgamePrimitiveTrace_explicitInequality_of_card_add_one
   have hpNat : 0 < p := Nat.zero_lt_one.trans (explicitCutoff_gt_one.trans_le hp)
   have horbit := orbitExponent_le_two_mul_rpow_of_mul_order_eq_card_add_one
     p orbitExponent orbitOrder (δ := (1 / 3 : ℝ)) hpNat hmul (by
-      convert horder using 1 <;> norm_num)
-  convert horbit using 1 <;> norm_num
+      convert horder using 1; norm_num)
+  convert horbit using 1; norm_num
 
 /-- The trace-zero order bound lies below the improved endgame threshold. -/
 theorem explicit_four_lt_rpow_five_div_six

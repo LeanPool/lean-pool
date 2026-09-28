@@ -479,7 +479,6 @@ private theorem valuationSubringAt_valuationCenterPlace_eq
 
 end ValuationCenter
 
-include L in
 omit [DecidableEq (RatFunc K)] [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L] [Algebra.IsSeparable (RatFunc K) L] in
 private theorem probe_ratFuncFinitePlaceDegree_eq_finrank_residue
@@ -527,7 +526,7 @@ private theorem probe_finiteExtensionPlaceDegree_inl_eq_finrank_residue
   have : IsScalarTower K[X] (Localization.AtPrime p.asIdeal)
       (Localization.AtPrime q.asIdeal) := inferInstance
   rw [finiteExtensionPlaceDegree, Ideal.inertiaDeg_eq p.asIdeal q.asIdeal]
-  rw [← probe_ratFuncFinitePlaceDegree_eq_finrank_residue K L p]
+  rw [← probe_ratFuncFinitePlaceDegree_eq_finrank_residue K p]
   rw [mul_comm, Module.finrank_mul_finrank]
 
 omit [FiniteDimensional (RatFunc K) L] [Algebra.IsSeparable (RatFunc K) L] in
@@ -555,13 +554,14 @@ private theorem probe_finiteExtensionPlaceDegree_inr_eq_finrank_residue
       Module.finrank_mul_finrank K p.ResidueField P.1.ResidueField
 
 /-- The place degree is determined by any finite residue field with the same valuation. -/
-private theorem probe_placeDegree_eq_of_valuation_eq [Fintype K]
+private theorem probe_placeDegree_eq_of_valuation_eq [Finite K]
     {S : Type*} [CommRing S] [IsDedekindDomain S]
     [Algebra S L] [IsFractionRing S L]
     (w : FiniteExtensionPlace K L) (q : HeightOneSpectrum S)
     [Algebra K q.asIdeal.ResidueField] [Finite q.asIdeal.ResidueField]
     (hq : q.valuation L = probeFiniteExtensionPlaceValuation K L w) :
     finiteExtensionPlaceDegree K L w = Module.finrank K q.asIdeal.ResidueField := by
+  let : Fintype K := Fintype.ofFinite K
   cases w with
   | inl r =>
       rw [probe_finiteExtensionPlaceDegree_inl_eq_finrank_residue K L r]
@@ -768,7 +768,7 @@ private theorem positiveDegree_le_of_valuation_transport
 
 
 /-- Passing to a second rational-function model cannot decrease the positive degree. -/
-private theorem positiveDegree_le_in_secondModel [Fintype K]
+private theorem positiveDegree_le_in_secondModel [Finite K]
     [Algebra K L] [IsScalarTower K (RatFunc K) L]
     (second : RatFunc K →+* L) (y : L) (hy0 : y ≠ 0) :
     let source := finiteExtensionPositiveDegree K L y
@@ -835,7 +835,7 @@ noncomputable section
 section PlaneBoundaryProbe
 
 
-variable {K₀ : Type*} [Field K₀] [Fintype K₀] [DecidableEq K₀]
+variable {K₀ : Type*} [Field K₀] [Finite K₀] [DecidableEq K₀]
   [DecidableEq (RatFunc K₀)]
 
 theorem finiteExtensionPositiveDegree_planeCurveSecondCoordinate_le_degreeOf_first

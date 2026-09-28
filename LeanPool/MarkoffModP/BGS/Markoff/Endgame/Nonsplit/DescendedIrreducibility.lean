@@ -216,8 +216,7 @@ theorem finTwoSecondToIteratedPolynomial_map_seededNonsplitDescendedPolynomial
           C (-(extendedCayleyNormFactor p ^ d)) := by
   rw [seededNonsplitDescendedPolynomial]
   simp only [map_sub, map_mul, map_pow, map_add, map_one,
-    finTwoSecondToIteratedPolynomial_map_univariateInFirstCoordinate,
-    map_X, finTwoSecondToIteratedPolynomial_X_one]
+    finTwoSecondToIteratedPolynomial_map_univariateInFirstCoordinate]
   rw [seededCayleyTraceNumeratorPolynomial_map, quadraticCayleyNormPolynomial_map]
   simp [← C_mul_X_pow_eq_monomial, extendedSeededCayleyNumerator, extendedCayleyNormFactor,
     extendedCayleyNumeratorFactor, extendedCayleyDenominatorFactor,
@@ -225,11 +224,11 @@ theorem finTwoSecondToIteratedPolynomial_map_seededNonsplitDescendedPolynomial
   ring
 
 theorem cayleyTransport_splitIteratedPolynomial
-    {K : Type*} [Field K] (alpha beta r t : K) (e d : ℕ) (hrt : r ≠ t)
+    {K : Type*} [Field K] (alpha beta r t : K) (e d : ℕ) (_hrt : r ≠ t)
     (hdet : (1 : K) * (-t) - (-r) * 1 ≠ 0) :
     let phi := BGS.Algebra.ratFuncLinearFractionalEquiv
       (1 : K) (-r) 1 (-t) hdet
-    let A : RatFunc K := RatFunc.X - RatFunc.C r
+    let _A : RatFunc K := RatFunc.X - RatFunc.C r
     let B : RatFunc K := RatFunc.X - RatFunc.C t
     let Q : Polynomial K := (X - C r) * (X - C t)
     let N : Polynomial K := C alpha * (X - C r) ^ (2 * d) +
@@ -261,13 +260,12 @@ theorem cayleyTransport_splitIteratedPolynomial
   dsimp only
   rw [finTwoToIteratedPolynomial_splitTraceCoverPolynomial_general]
   simp only [← C_mul_X_pow_eq_monomial, Polynomial.map_add, Polynomial.map_mul,
-    Polynomial.map_neg, Polynomial.map_pow, Polynomial.map_C, Polynomial.map_X]
+    Polynomial.map_pow, Polynomial.map_C, Polynomial.map_X]
   rw [hphi]
-  simp only [map_pow, map_sub, Algebra.ratFuncLinearFractionalValue, map_one, one_mul,
-    map_neg, aeval_def, RatFunc.algebraMap_eq_C, eval₂_neg, eval₂_pow, eval₂_X,
-    neg_mul, RingEquiv.toRingHom_eq_coe, AlgEquiv.toRingEquiv_toRingHom, map_add, map_mul,
-    RatFunc.algebraMap_C, RatFunc.algebraMap_X, RingHom.coe_coe,
-    Algebra.ratFuncLinearFractionalEquiv_apply_X]
+  simp only [map_pow, map_sub, Algebra.ratFuncLinearFractionalValue, map_one, one_mul, map_neg,
+    aeval_def, RatFunc.algebraMap_eq_C, eval₂_X, neg_mul, RingEquiv.toRingHom_eq_coe,
+    AlgEquiv.toRingEquiv_toRingHom, map_add, map_mul, RatFunc.algebraMap_C,
+    RatFunc.algebraMap_X, RingHom.coe_coe, Algebra.ratFuncLinearFractionalEquiv_apply_X]
   rw [hconst, hconst]
   let A : RatFunc K := RatFunc.X - RatFunc.C r
   let B : RatFunc K := RatFunc.X - RatFunc.C t

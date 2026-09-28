@@ -39,12 +39,14 @@ local instance automaticIndexOneBaseConstantTower :
     IsScalarTower C (RatFunc C) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+omit [Fintype C] in
 /-- F. K. Schmidt's divisor-index-one theorem, with the constant-extension
 closed-place identity discharged internally. -/
 theorem finiteExtensionDivisorDegreeIndex_eq_one_of_exactConstants
-    (hExact : algebraicClosure C N =
+    [Finite C] (hExact : algebraicClosure C N =
       (⊥ : IntermediateField C N)) :
     finiteExtensionDivisorDegreeIndex C N = 1 := by
+  let := Fintype.ofFinite C
   apply
     finiteExtensionDivisorDegreeIndex_eq_one_of_all_exactConstantExtension_closedPlaceCount
       C N hExact

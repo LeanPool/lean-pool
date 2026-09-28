@@ -59,6 +59,7 @@ local instance cotraceCanonicalityConstantPolynomialTower :
     IsScalarTower K K[X] L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+omit [Fintype K] in
 /-- The cotrace inclusion and the Riemann--Hurwitz degree identity identify
 the explicit different divisor with a canonical divisor. -/
 theorem finiteExtensionCanonicalDifferent_isCanonical_of_degree_eq
@@ -92,6 +93,7 @@ theorem finiteExtensionCanonicalDifferent_isCanonical_of_degree_eq
       rw [hdegOmega, hdegD])
   exact ⟨ω, hω, heq.symm⟩
 
+omit [Fintype K] in
 /-- Consequently, a degree upper bound gives a genus upper bound once the
 Riemann--Hurwitz degree identity is supplied. -/
 theorem finiteExtension_genus_le_budget_of_cotrace_and_degree_eq

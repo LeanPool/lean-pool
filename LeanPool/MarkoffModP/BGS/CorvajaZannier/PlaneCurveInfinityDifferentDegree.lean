@@ -388,6 +388,7 @@ open Multiplicative WithZero Polynomial
 
 variable (K : Type*) [Field K] [DecidableEq K] [DecidableEq (RatFunc K)]
 
+omit [DecidableEq K] in
 theorem infinityNormalizedCoefficient_isUnit_of_natDegree_eq
     (a : ℕ) (P : K[X]) (hP : P ≠ 0) (hdegree : P.natDegree = a) :
     IsUnit (infinityNormalizedCoefficient K a P hdegree.le) := by
@@ -419,12 +420,14 @@ theorem infinityNormalizedCoefficient_isUnit_of_natDegree_eq
     RatFunc.intDegree_polynomial, hdegree]
   simp
 
+omit [DecidableEq K] in
 theorem infinityNormalizedIntegralPolynomial_isPrimitive
     (a : ℕ) (F : K[X][X])
     (hcoeff : ∀ i, (F.coeff i).natDegree ≤ a)
     (i : ℕ) (hFi : F.coeff i ≠ 0)
     (hi : (F.coeff i).natDegree = a) :
     (infinityNormalizedIntegralPolynomial K a F hcoeff).IsPrimitive := by
+  classical
   rw [Polynomial.isPrimitive_iff_contentIdeal_eq_top]
   let G := infinityNormalizedIntegralPolynomial K a F hcoeff
   have hcoeffG : G.coeff i =

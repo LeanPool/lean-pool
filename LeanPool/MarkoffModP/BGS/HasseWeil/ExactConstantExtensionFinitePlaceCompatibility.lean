@@ -745,7 +745,7 @@ omit [Fintype C] [Finite S] [DecidableEq C] [DecidableEq S] [DecidableEq (RatFun
   [DecidableEq (RatFunc S)] [FiniteDimensional (RatFunc C) N]
   [Algebra.IsSeparable (RatFunc C) N] [FiniteDimensional C S] [IsGalois C S]
   [FiniteDimensional (RatFunc C) L] [Algebra.IsSeparable (RatFunc C) L]
-  [FiniteDimensional L N] [IsGalois L N] in
+  [FiniteDimensional L N] [IsGalois L N] hExact in
 /-- The rational-function base, an intermediate field, and the exact
 constant extension form the tower used by the relative Galois action. -/
 private theorem exactConstantExtensionCompatibility_ratFuncBaseTower :
@@ -806,7 +806,7 @@ theorem exactConstantExtensionFinitePlace_decompositionGroup_card_of_rational_ba
     letI : Module L (ExactConstantExtension C N S) := Algebra.toModule
     letI : IsScalarTower (RatFunc C) L
         (ExactConstantExtension C N S) :=
-      by exact exactConstantExtensionCompatibility_ratFuncBaseTower C S N hExact L
+      by exact exactConstantExtensionCompatibility_ratFuncBaseTower C S N L
     letI : IsGalois L (ExactConstantExtension C N S) :=
       exactConstantExtension_isGalois C L N S hExact
     let Q := exactConstantExtensionCompatibleBaseFinitePlace
@@ -839,7 +839,7 @@ theorem exactConstantExtensionFinitePlace_decompositionGroup_card_of_rational_ba
   let : Module N (ExactConstantExtension C N S) := Algebra.toModule
   let : IsScalarTower (RatFunc C) L
       (ExactConstantExtension C N S) :=
-    exactConstantExtensionCompatibility_ratFuncBaseTower C S N hExact L
+    exactConstantExtensionCompatibility_ratFuncBaseTower C S N L
   let : IsScalarTower (RatFunc C) N
       (ExactConstantExtension C N S) :=
     exactConstantExtensionBaseTower C (RatFunc C) N S

@@ -198,6 +198,18 @@ theorem explicitCutoff_constant_lt
   rw [explicitStrongApproximationCutoff_eq] at hp
   omega
 
+private theorem divisorMomentPairFactor
+    (coefficient p : ℕ)
+    (hpair : p - 1 + (p + 1) = 2 * p) :
+    2 ^ 8 * (coefficient * (p - 1) + coefficient * (p + 1)) =
+      (2 ^ 9 * coefficient) * p := by
+  calc
+    2 ^ 8 * (coefficient * (p - 1) + coefficient * (p + 1)) =
+        2 ^ 8 * (coefficient * (p - 1 + (p + 1))) := by
+      simp only [mul_add]
+    _ = 2 ^ 8 * (coefficient * (2 * p)) := by rw [hpair]
+    _ = (2 ^ 9 * coefficient) * p := by norm_num; ring
+
 /-- The elementary factorization estimate, specialized to the simultaneous
 ninth moment needed below. -/
 theorem explicit_divisor_sum_pow_nine_le
@@ -224,11 +236,7 @@ theorem explicit_divisor_sum_pow_nine_le
       rw [explicitDivisorMomentConstant_eq]
       change 2 ^ (9 - 1) * (D * (p - 1) + D * (p + 1)) =
         (2 ^ 9 * D) * p
-      calc
-        2 ^ (9 - 1) * (D * (p - 1) + D * (p + 1)) =
-            2 ^ 8 * D * (p - 1 + (p + 1)) := by norm_num; ring
-        _ = 2 ^ 8 * D * (2 * p) := by rw [hsub]
-        _ = (2 ^ 9 * D) * p := by norm_num; ring
+      exact divisorMomentPairFactor D p hsub
 
 private theorem explicitDivisorMomentConstant_pow_two_le_pow_eight :
     explicitDivisorMomentConstant ^ 2 ≤ explicitDivisorMomentConstant ^ 8 :=

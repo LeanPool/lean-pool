@@ -756,6 +756,7 @@ theorem functionFieldNormalClosureConstantExtension_isGalois
   exact exactConstantExtensionTower_isGalois C M N S
     (functionFieldNormalClosureConstantField_isExact_for_constantRatFunc K F)
 
+omit [DecidableEq K] [DecidableEq (RatFunc K)] in
 /-- Extending the full constant field preserves the degree of the normal
 closure over the original compositum. -/
 theorem functionFieldNormalClosureConstantExtension_finrank
@@ -822,6 +823,7 @@ theorem functionFieldNormalClosureConstantExtension_finrank
   exact exactConstantExtensionTower_finrank C M N S
     (functionFieldNormalClosureConstantField_isExact_for_constantRatFunc K F)
 
+omit [DecidableEq K] [DecidableEq (RatFunc K)] in
 /-- Consequently the specialized tower Galois group has the same
 cardinality as the normal-closure group over the original compositum. -/
 theorem functionFieldNormalClosureConstantExtension_card_aut_eq

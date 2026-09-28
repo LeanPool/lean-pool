@@ -96,6 +96,8 @@ private theorem intermediateHasseRatFuncBaseTower :
   exact IsScalarTower.algebraMap_apply (RatFunc C) L N x
 
 omit [DecidableEq S] [DecidableEq (RatFunc S)] in
+omit [Finite S] [FiniteDimensional (RatFunc C) L] [Algebra.IsSeparable (RatFunc C) L]
+  [FiniteDimensional L N] [IsGalois L N] in
 /-- The complete point count of an intermediate-base twist agrees with that
 of its rational-base incarnation. -/
 theorem intermediateFrobeniusTwistFieldRationalPlaceCount_eq_rationalBase

@@ -95,7 +95,7 @@ theorem generalCorvajaZannierPlaneCurveTheorem_of_poweredImageIndexBound
 provided by the exact Galois stabilizer count. -/
 theorem poweredImageIndexBound_of_isCorvajaZannierPlaneCurve
     (p : ℕ) [Fact p.Prime]
-    (K : Type) [Field K] [Fintype K] [CharP K p]
+    (K : Type) [Field K] [Finite K] [CharP K p]
     (f : MvPolynomial (Fin 2) K) (m n : ℕ)
     (hcurve : BGS.External.IsCorvajaZannierPlaneCurve f)
     (hm : 0 < m) (hn : 0 < n) (hmPrime : ¬ p ∣ m) (hnPrime : ¬ p ∣ n) :

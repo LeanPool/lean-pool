@@ -197,6 +197,7 @@ variable (hExact : algebraicClosure C N =
   (⊥ : IntermediateField C N))
 
 omit [DecidableEq (RatFunc S)] in
+omit [DecidableEq S] in
 /-- Choose the explicit `S[X]` presentation of an actual top finite place,
 while transporting rationality of its restriction to the downstairs place.
 This is the only point where the nested integral-closure contraction tower is
@@ -345,6 +346,7 @@ theorem exactConstantExtensionFinitePlace_degree_eq_finrank_of_under_rational
   rw [heq] at hDegree
   exact hDegree
 
+omit [DecidableEq (RatFunc S)] [DecidableEq S] in
 /-- Presentation-free local Frobenius-coset identity above an arbitrary
 rational finite base place. -/
 theorem exactConstantExtensionFinitePlace_frobeniusFiber_fixedPoint_sum_of_under_rational
@@ -444,6 +446,7 @@ theorem exactConstantExtensionFrobeniusFiberEquiv_apply_val
     exactConstantExtensionBaseAlgebra C (RatFunc C) N S
   rfl
 
+omit [DecidableEq (RatFunc S)] in
 /-- Above one rational finite place of `C(X)`, summing fixed top places over
 all canonical Frobenius twists contributes exactly `|Gal(N/C(X))|`. -/
 theorem sum_card_finitePlaceUnderFiber_fixedBy_frobeniusTwist_eq_card_galois

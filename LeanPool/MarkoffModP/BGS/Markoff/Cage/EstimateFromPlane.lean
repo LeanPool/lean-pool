@@ -297,7 +297,6 @@ theorem cageWitnessPointEstimate_of_cagePlanePointEstimate
           dsimp [coefficient]
           push_cast
           nlinarith
-
     · refine ⟨1, by norm_num, ?_⟩
       intro d hd hdPositive
       rw [natCard_cageMiddleWitnessPowerRangeSolutions_eq_canonical

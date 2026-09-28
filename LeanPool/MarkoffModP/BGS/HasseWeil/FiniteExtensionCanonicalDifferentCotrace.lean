@@ -712,6 +712,7 @@ theorem ratFunc_infinite_chart_place_eq
   rw [← hsource, e.apply_symm_apply]
 
 omit [DecidableEq K] in
+omit [Fintype K] in
 /-- Outside the explicit finite exceptional set, the raw componentwise trace
 is integral at the base chart place. -/
 theorem finiteExtensionFiberTraceRaw_mem_placeValuationSubring_of_not_bad
@@ -865,6 +866,7 @@ def finiteExtensionFiberLift (z : L)
       (b.1 (finiteExtensionUnderPlaceChart K L r))
   rw [hqr]
 
+omit [DecidableEq K] [Fintype K] in
 /-- Cotrace of the lifted adele is scalar multiplication by `Tr(z)`. -/
 theorem finiteExtensionFiberTrace_lift (z : L)
     (b : FunctionField.Chart.AdeleSpace K (RatFunc K)) :
@@ -884,14 +886,17 @@ theorem finiteExtensionFiberTrace_lift (z : L)
   simpa [Algebra.smul_def, mul_comm] using
     (Algebra.trace (RatFunc K) L).map_smul (b.1 p) z
 
+omit [DecidableEq K] [Fintype K] in
 /-- Componentwise cotrace is onto the base adele space. -/
 theorem finiteExtensionFiberTrace_surjective :
     Function.Surjective (finiteExtensionFiberTrace K L) := by
+  classical
   intro b
   obtain ⟨z, hz⟩ := Algebra.trace_surjective (RatFunc K) L (1 : RatFunc K)
   refine ⟨finiteExtensionFiberLift K L z b, ?_⟩
   rw [finiteExtensionFiberTrace_lift K L z b, hz, one_smul]
 
+omit [DecidableEq K] [Fintype K] in
 /-- At a finite base place, the componentwise trace of a fiber-constant
 adele in the explicit different filtration is integral. -/
 theorem finiteExtensionFiberTrace_finite_valuation_le_one
@@ -977,6 +982,7 @@ theorem finiteExtensionFiberTrace_finite_valuation_le_one
   rw [hpImage] at htraceChart
   exact htraceChart
 
+omit [DecidableEq K] [Fintype K] in
 /-- At the infinite base place, the componentwise trace of a fiber-constant
 adele in the explicit different filtration has order at least two. -/
 theorem finiteExtensionFiberTrace_infinite_valuation_le_exp_neg_two
@@ -1184,6 +1190,7 @@ theorem ratFuncInfinityChartPlace_eq_baseChart :
   change Sum.inr p = ratFuncInfinityPlaceChart K
   exact ratFunc_infinite_chart_place_eq K p
 
+omit [DecidableEq K] [Fintype K] in
 /-- The cotrace sends the explicit different filtration into the canonical
 `-2∞` filtration on the rational function field. -/
 theorem finiteExtensionFiberTrace_mem_ratFuncCanonicalInfinityAdeleFilt
@@ -1195,6 +1202,7 @@ theorem finiteExtensionFiberTrace_mem_ratFuncCanonicalInfinityAdeleFilt
     finiteExtensionFiberTrace K L a ∈
       FunctionField.Chart.adeleFilt K (RatFunc K)
         (ratFuncCanonicalInfinityDivisor K) := by
+  classical
   intro v
   rcases v with p | p
   · have h := finiteExtensionFiberTrace_finite_valuation_le_one K L a ha p
@@ -1224,6 +1232,7 @@ theorem finiteExtension_diagonal_mem_fiberConstant (x : L) :
   intro q r _hqr
   rfl
 
+omit [DecidableEq K] [Fintype K] in
 /-- Cotrace carries a principal adele to the principal adele of the field
 trace. -/
 theorem finiteExtensionFiberTrace_diagonal (x : L) :
@@ -1236,6 +1245,7 @@ theorem finiteExtensionFiberTrace_diagonal (x : L) :
   funext p
   rfl
 
+omit [DecidableEq K] [Fintype K] in
 /-- The base canonical functional composed with cotrace vanishes on the
 intersection of fiber-constant adeles with the explicit different
 filtration plus principal adeles. -/
@@ -1251,6 +1261,7 @@ theorem finiteExtensionFiberCotrace_vanishes_on_intersection
         FunctionField.Chart.diagonalSubmodule K L))) :
     (ω.toFun.comp (finiteExtensionFiberTrace K L))
         ⟨x.1, x.2.1⟩ = 0 := by
+  classical
   let U := finiteExtensionFiberConstantAdeleSubmodule K L
   let D := finiteExtensionDivisorEquivChart K L
     (finiteExtensionCanonicalDifferentDivisor K L
@@ -1289,12 +1300,14 @@ theorem finiteExtensionFiberCotrace_vanishes_on_intersection
   rw [Submodule.add_eq_sup]
   exact Submodule.add_mem_sup htraceA htraceD
 
+omit [DecidableEq K] [Fintype K] in
 /-- A nonzero base Weil functional stays nonzero after composition with the
 surjective fiber cotrace. -/
 theorem finiteExtensionFiberCotrace_ne_zero
     (ω : FunctionField.Chart.WeilDifferential K (RatFunc K))
     (hω : ω.toFun ≠ 0) :
     ω.toFun.comp (finiteExtensionFiberTrace K L) ≠ 0 := by
+  classical
   intro hzero
   apply hω
   apply LinearMap.ext
@@ -1305,7 +1318,7 @@ theorem finiteExtensionFiberCotrace_ne_zero
   rw [ha] at hz
   exact hz
 
-omit [DecidableEq K] in
+omit [DecidableEq K] [Fintype K] in
 /-- The explicit finite-extension different divisor is a vanishing divisor
 of a nonzero Weil differential.  Consequently it is bounded above by the
 maximal divisor of that differential. -/

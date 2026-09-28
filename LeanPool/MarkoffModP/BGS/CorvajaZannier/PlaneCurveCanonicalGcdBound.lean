@@ -33,7 +33,7 @@ open scoped BigOperators Polynomial
 `u = x^m`, `v = y^n` on a plane curve and expressed using the actual
 coordinate degrees. -/
 theorem finiteExtensionGcdBound_planeCurvePowers_of_auxiliaryFamily_linearIndependent
-    {K : Type*} [Field K] [Fintype K] [DecidableEq K]
+    {K : Type*} [Field K] [Finite K] [DecidableEq K]
     {p : ℕ} [Fact p.Prime] [CharP K p]
     {f : MvPolynomial (Fin 2) K} (hf : Irreducible f)
     (hpartialFirst : MvPolynomial.pderiv 0 f ≠ 0)
@@ -182,7 +182,7 @@ theorem finiteExtensionGcdBound_planeCurvePowers_of_auxiliaryFamily_linearIndepe
 Here the leading coefficient multiplies the exact height of `x^m`, while the
 second coefficient multiplies the degree budget for `y^n`. -/
 theorem finiteExtensionGcdBound_planeCurvePowers_swapped_of_auxiliaryFamily_linearIndependent
-    {K : Type*} [Field K] [Fintype K] [DecidableEq K]
+    {K : Type*} [Field K] [Finite K] [DecidableEq K]
     {p : ℕ} [Fact p.Prime] [CharP K p]
     {f : MvPolynomial (Fin 2) K} (hf : Irreducible f)
     (hpartialFirst : MvPolynomial.pderiv 0 f ≠ 0)

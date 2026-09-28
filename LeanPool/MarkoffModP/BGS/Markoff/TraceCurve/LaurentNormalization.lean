@@ -222,6 +222,10 @@ def integralClosureAwayComparison (f : R) (hf : f ≠ 0) :
     IsLocalization.away_of_isUnit_of_bijective F hfUnit Function.bijective_id
   letI : IsLocalization.Away (algebraMap R N f) T :=
     IsLocalization.Away.integralClosure (S := F) (Rf := Rf) (Sf := F) f
+  letI : IsLocalization.Away ((Algebra.ofId R N) f)
+      (Localization.Away (algebraMap R N f)) := by
+    simpa using (inferInstance : IsLocalization.Away (algebraMap R N f)
+      (Localization.Away (algebraMap R N f)))
   let localizationEquiv : Localization.Away (algebraMap R N f) ≃ₐ[N] T :=
     IsLocalization.algEquiv (Submonoid.powers (algebraMap R N f))
       (Localization.Away (algebraMap R N f)) T
@@ -231,12 +235,26 @@ def integralClosureAwayComparison (f : R) (hf : f ≠ 0) :
   refine ⟨e, ?_⟩
   apply IsLocalization.ringHom_ext (M := Submonoid.powers f)
   ext r
-  simp [e, localizationEquiv, ambientFieldEquiv, integralClosureAwayMap]
+  simp only [RingEquiv.toRingHom_eq_coe, RingHom.coe_comp, RingHom.coe_coe,
+    Function.comp_apply, SubalgebraClass.coe_algebraMap]
+  dsimp only [e, ambientFieldEquiv]
+  simp only [RingEquiv.trans_apply]
   apply_fun fracEquiv
+  change fracEquiv ↑(fracEquiv.mapIntegralClosure.symm
+    (localizationEquiv
+      ((integralClosureAwayMap f) ((algebraMap R (Localization.Away f)) r)))) = _
   have hmap (x : T) :
       fracEquiv ↑(fracEquiv.mapIntegralClosure.symm x) = (x : F) := by
     exact congrArg Subtype.val (fracEquiv.mapIntegralClosure.apply_symm_apply x)
   rw [hmap]
+  have hclosuremap :
+      (integralClosureAwayMap f) ((algebraMap R Rf) r) =
+        (algebraMap R (Localization.Away (algebraMap R N f))) r := by
+    simpa only [integralClosureAwayMap, AlgHom.toRingHom_eq_coe,
+      RingHom.coe_coe] using
+      (IsLocalization.Away.mapₐ Rf
+        (Localization.Away (algebraMap R N f)) (Algebra.ofId R N) f).commutes r
+  rw [hclosuremap]
   rw [show
     (algebraMap R (Localization.Away (algebraMap R N f))) r =
       (algebraMap N (Localization.Away (algebraMap R N f))) ((algebraMap R N) r) by

@@ -66,8 +66,7 @@ theorem exactConstantExtensionFunctionAutHomToConstantKernel_injective
     let := exactConstantExtensionBaseAlgebra C L N S
     Function.Injective
       (exactConstantExtensionFunctionAutHomToConstantKernel C L N S hExact) := by
-  intro fieldModel algebraModel
-  intro g h hgh
+  intro fieldModel algebraModel g h hgh
   have hfun : exactConstantExtensionFunctionAutHom C L N S g =
       exactConstantExtensionFunctionAutHom C L N S h :=
     congrArg Subtype.val hgh
@@ -83,8 +82,7 @@ theorem exactConstantExtensionFunctionAutHomToConstantKernel_surjective
     let := exactConstantExtensionBaseAlgebra C L N S
     Function.Surjective
       (exactConstantExtensionFunctionAutHomToConstantKernel C L N S hExact) := by
-  intro fieldModel algebraModel
-  intro x
+  intro fieldModel algebraModel x
   have hx : x.1 ∈ (exactConstantExtensionFunctionAutHom C L N S).range := by
     rw [← exactConstantExtensionConstantQuotient_ker C L N S hExact]
     exact x.property

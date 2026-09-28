@@ -142,11 +142,11 @@ private theorem weightedTotientRatio_primePowerSum
       (pow_ne_zero _ hprime.ne_zero), factorizationWeight,
       pow_ne_zero _ hprime.ne_zero, ite_false, hprime.factorization_pow]
   rw [Finsupp.prod_single_index]
-  rw [Nat.totient_prime_pow_succ hprime]
-  push_cast
-  field_simp [hprime.ne_zero]
-  ring
-  all_goals simp
+  · rw [Nat.totient_prime_pow_succ hprime]
+    push_cast
+    field_simp [hprime.ne_zero]
+    ring
+  · simp
 
 theorem weightedTotientDivisorSum_eq_factorizationEulerProduct
     (N : ℕ) (hN : N ≠ 0) (primeWeight : ℕ → ℚ) :

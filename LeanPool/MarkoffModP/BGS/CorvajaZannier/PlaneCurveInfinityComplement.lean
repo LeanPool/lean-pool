@@ -47,6 +47,7 @@ local instance infinityComplementTopIsTorsionFree :
   Module.IsTorsionFree.trans_faithfulSMul
     (RatFuncInfinityIntegers K) (RatFunc K) L
 
+omit [DecidableEq K] in
 /-- The residue-degree-weighted different above infinity is bounded by the
 complement of the finite discriminant degree in the full bidegree budget. -/
 theorem planeCurveInfinityDifferentDegree_le_bidegreeComplement
@@ -62,6 +63,7 @@ theorem planeCurveInfinityDifferentDegree_le_bidegreeComplement
     (hcard : (F.natDegree : Cardinal) < Cardinal.mk K) :
     (infinityDifferentDegree K L : ℤ) ≤
       (a * (2 * F.natDegree - 2) : ℕ) - (F.discr.natDegree : ℤ) := by
+  classical
   let A := RatFuncInfinityIntegers K
   let G : A[X] := infinityNormalizedIntegralPolynomial K a F hcoeff
   have hGprimitive : G.IsPrimitive := by

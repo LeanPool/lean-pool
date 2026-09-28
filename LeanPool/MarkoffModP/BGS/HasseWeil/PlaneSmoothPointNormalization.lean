@@ -242,7 +242,7 @@ theorem squareExtensionClosedPoint_asIdeal_ne_bot_of_partialY
   simpa [g, r, planeCurveFunction] using congrArg
     (algebraMap A (PlaneCurveFunctionField f)) hrzero
 
-omit [DecidableEq K] in
+omit [Fintype K] [DecidableEq K] in
 /-- A finite-residue closed point on the partial-`Y` smooth locus has a
 discrete valuation local ring. -/
 theorem planeCurveClosedPoint_localization_isDiscreteValuationRing
@@ -911,10 +911,12 @@ noncomputable def affinePlaneCurvePoint_residueAlgEquiv
       m.asIdeal.bijective_algebraMap_quotient_residueField
   exact eResidue.symm.trans eQuot
 
+omit [Fintype K] in
 /-- The normalization place selected above a rational affine point that is
 regular in the second-coordinate direction has degree one over the full
 constant field. -/
 theorem affinePointExhaustiveFinitePlace_degree_eq_one_of_partialY
+    [Finite K]
     {f : MvPolynomial (Fin 2) K}
     (hf : Irreducible f)
     (hpartialFirst : MvPolynomial.pderiv 0 f ≠ 0)

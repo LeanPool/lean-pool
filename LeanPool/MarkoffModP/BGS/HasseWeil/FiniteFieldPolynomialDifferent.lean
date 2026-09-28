@@ -131,9 +131,10 @@ theorem coefficientPolynomial_differentIdeal_eq_top :
 /-- In particular, every extension of finite fields has unit different after
 coefficientwise extension of polynomial rings. -/
 theorem finiteFieldPolynomial_differentIdeal_eq_top
-    (k F : Type*) [Field k] [Fintype k] [Field F] [Finite F] [Algebra k F] :
-    differentIdeal k[X] F[X] = ⊤ :=
-  coefficientPolynomial_differentIdeal_eq_top k F
+    (k F : Type*) [Field k] [Finite k] [Field F] [Finite F] [Algebra k F] :
+    differentIdeal k[X] F[X] = ⊤ := by
+  let := Fintype.ofFinite k
+  exact coefficientPolynomial_differentIdeal_eq_top k F
 
 end
 

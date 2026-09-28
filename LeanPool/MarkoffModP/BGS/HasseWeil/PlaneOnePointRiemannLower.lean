@@ -87,7 +87,9 @@ def planeCurveBidegreeGenusBudget
 
 variable {K}
 
+omit [Fintype K] in
 theorem planeCurveSecondCoordinate_height_le_degreeOf_first
+    [Finite K]
     {f : MvPolynomial (Fin 2) K} (hf : Irreducible f)
     (hpartialFirst : MvPolynomial.pderiv 0 f ≠ 0)
     (hpartialSecond : MvPolynomial.pderiv 1 f ≠ 0) :

@@ -129,13 +129,13 @@ theorem markoffReduction_surjective_of_coarseSupportOpenCutoff
     (p : ℕ) (hpPrime : p.Prime)
     (hp : coarseSupportStrongApproximationOpenCutoff < p) :
     Function.Surjective (markoffReduction p) := by
-  letI : Fact p.Prime := ⟨hpPrime⟩
+  let : Fact p.Prime := ⟨hpPrime⟩
   have hpThree : 3 < p := by
     have hsupport := twoPow756_lt_of_coarseSupportOpenCutoff_lt hp
     omega
   have hpOdd : Odd p :=
     hpPrime.odd_of_ne_two (by omega)
-  letI : Invertible (3 : ZMod p) :=
+  let : Invertible (3 : ZMod p) :=
     invertibleOfNonzero
       (natCast_ne_zero_zmod_of_pos_of_lt (by norm_num) hpThree)
   let T := (p - 1).divisors.card + (p + 1).divisors.card

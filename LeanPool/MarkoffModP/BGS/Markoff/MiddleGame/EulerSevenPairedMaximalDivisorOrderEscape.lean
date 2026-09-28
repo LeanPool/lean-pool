@@ -22,7 +22,7 @@ namespace BGS.Markoff
 
 theorem
     exists_iterate_larger_secondRotationOrder_of_diagonalizedFiber_eulerSevenPairedMaximalOrders
-    (p : ℕ) [Fact p.Prime] [Fintype (quadraticFiniteField p)]
+    (p : ℕ) [Fact p.Prime]
     (hpTwo : p ≠ 2)
     (delta : ℝ) (hdelta : delta ≤ (1 : ℝ) / 2)
     (x : NormalizedPoint (ZMod p))
@@ -47,6 +47,8 @@ theorem
     ∃ n : ℕ,
       rotationOrder x.u1 <
         rotationOrder ((normalizedRotate1^[n]) x).u2 := by
+  let : Fintype (quadraticFiniteField p) :=
+    Fintype.ofFinite (quadraticFiniteField p)
   classical
   let alpha : quadraticFiniteField p := s
   let beta : quadraticFiniteField p :=

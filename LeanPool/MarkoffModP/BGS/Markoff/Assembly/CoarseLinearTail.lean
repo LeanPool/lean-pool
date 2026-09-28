@@ -34,10 +34,12 @@ theorem twentyFour_mul_lt_rpow_one_div_six_of_tenthMoment
     (hmoment : T ^ 10 ≤ 2 ^ 458 * p) :
     ((24 * T : ℕ) : ℝ) < (p : ℝ) ^ (1 / 6 : ℝ) := by
   let Q : ℕ := 24 ^ 15 * 2 ^ 687
-  have hQ : Q < p := by
-    simpa [Q] using hp
+  have hQ : Q < p := hp
   have hpPos : 0 < p := by
-    have hQPos : 0 < Q := by positivity
+    have hQPos : 0 < Q := by
+      dsimp only [Q]
+      exact Nat.mul_pos (pow_pos (by norm_num : 0 < (24 : ℕ)) 15)
+        (pow_pos (by norm_num : 0 < (2 : ℕ)) 687)
     exact hQPos.trans hQ
   have h24 : (24 ^ 15) ^ 4 = 24 ^ 60 := by
     rw [← pow_mul]
@@ -51,7 +53,7 @@ theorem twentyFour_mul_lt_rpow_one_div_six_of_tenthMoment
       _ ≤ 24 ^ 60 * (2 ^ 458 * p) ^ 6 := by gcongr
       _ = (24 ^ 60 * (2 ^ 458) ^ 6) * p ^ 6 := by
         rw [mul_pow]
-        ring
+        exact (mul_assoc _ _ _).symm
       _ = ((24 ^ 15) ^ 4 * (2 ^ 687) ^ 4) * p ^ 6 := by
         rw [h24, hTwoLeft, hTwoRight]
       _ = Q ^ 4 * p ^ 6 := by
@@ -84,20 +86,21 @@ theorem preliminary_twentyFour_mul_divisorSum_lt_rpow_one_div_six_of_coarseBound
       (p : ℝ) ^ (1 / 6 : ℝ) := by
   apply twentyFour_mul_lt_rpow_one_div_six_of_tenthMoment hp
   have hpTwo : 2 ≤ p := by
-    have hcoefficientPos : 0 < 24 ^ 15 * 2 ^ 687 := by positivity
+    have hcoefficientPos : 0 < 24 ^ 15 * 2 ^ 687 :=
+      Nat.mul_pos (pow_pos (by norm_num : 0 < (24 : ℕ)) 15)
+        (pow_pos (by norm_num : 0 < (2 : ℕ)) 687)
     omega
   calc
     ((p - 1).divisors.card + (p + 1).divisors.card) ^ 10 ≤
-        2 ^ 457 * p := by
-      simpa [preliminaryDivisorMomentConstant] using
-        preliminary_divisor_sum_pow_ten_le hpTwo
+        2 ^ 457 * p := preliminary_divisor_sum_pow_ten_le hpTwo
     _ ≤ 2 ^ 458 * p := by
       apply Nat.mul_le_mul_right
       calc
-        2 ^ 457 = 2 ^ 457 * 1 := by simp
+        2 ^ 457 = 2 ^ 457 * 1 := by simp only [mul_one]
         _ ≤ 2 ^ 457 * 2 := Nat.mul_le_mul_left _ (by norm_num)
         _ = 2 ^ (457 + 1) := (pow_succ 2 457).symm
-        _ = 2 ^ 458 := by norm_num
+        _ = 2 ^ 458 := by
+          congr 1
 
 /-- Once `24*T < p^(1/6)`, every `M ≤ T` and every
 `d < p^(5/6)` satisfy the linear middle-game inequality. -/

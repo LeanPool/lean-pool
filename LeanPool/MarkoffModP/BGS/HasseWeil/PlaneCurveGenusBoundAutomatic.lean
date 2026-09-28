@@ -36,7 +36,7 @@ open BGS.CorvajaZannier
 open IsDedekindDomain
 open scoped Polynomial
 
-variable (K : Type*) [Field K] [Fintype K] [DecidableEq K]
+variable (K : Type*) [Field K] [Finite K] [DecidableEq K]
   [DecidableEq (RatFunc K)]
 variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
@@ -59,7 +59,7 @@ local instance automaticGenusPolynomialTorsionFree :
     Module.IsTorsionFree K[X] L :=
   Module.IsTorsionFree.trans_faithfulSMul K[X] (RatFunc K) L
 
-omit [Fintype K] [DecidableEq K] [DecidableEq (RatFunc K)] in
+omit [Finite K] [DecidableEq K] [DecidableEq (RatFunc K)] in
 omit [FiniteDimensional (RatFunc K) L] in
 /-- A finite separable extension of `K(X)` has an exhaustive finite place.
 We select a prime of the finite integral closure lying above `(X)`. -/
@@ -103,6 +103,7 @@ theorem planeCurve_genus_le_bidegreeGenusBudget
     FunctionField.genus K (PlaneCurveFunctionField f) ≤
       planeCurveBidegreeGenusBudget f := by
   classical
+  let : Fintype K := Fintype.ofFinite K
   let hf : Irreducible f :=
     irreducible_of_irreducible_map_algebraicClosure habsolute
   let : IsDomain (PlaneCurveCoordinateRing f) :=

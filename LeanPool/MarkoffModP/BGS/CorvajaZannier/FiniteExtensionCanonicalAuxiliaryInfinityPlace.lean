@@ -934,16 +934,18 @@ section InfinityResiduePerfect
 variable {K L}
 
 omit [DecidableEq K] in
-theorem ratFuncInfinityPlace_residueField_finite [Fintype K] :
+theorem ratFuncInfinityPlace_residueField_finite [Finite K] :
     Finite (ratFuncInfinityPlace K).asIdeal.ResidueField := by
   classical
+  let := Fintype.ofFinite K
   exact Finite.of_injective (ratFuncInfinityPlaceResidueEquiv K)
     (ratFuncInfinityPlaceResidueEquiv K).injective
 
 omit [DecidableEq K] in
-theorem finiteExtensionInfinityPlace_residueField_finite [Fintype K]
+theorem finiteExtensionInfinityPlace_residueField_finite [Finite K]
     (P : FiniteExtensionInfinityPlace K L) : Finite P.1.ResidueField := by
   classical
+  let := Fintype.ofFinite K
   let p := (ratFuncInfinityPlace K).asIdeal
   let : Finite p.ResidueField :=
     ratFuncInfinityPlace_residueField_finite (K := K)
@@ -958,7 +960,7 @@ theorem finiteExtensionInfinityPlace_residueField_finite [Fintype K]
   exact Module.finite_of_finite p.ResidueField
 
 omit [DecidableEq K] in
-theorem finiteExtensionInfinityPlaceLocal_residueField_perfect [Fintype K]
+theorem finiteExtensionInfinityPlaceLocal_residueField_perfect [Finite K]
     (P : FiniteExtensionInfinityPlace K L) :
     letI : IsDiscreteValuationRing
       (FiniteExtensionInfinityPlaceLocalRing K L P) :=
@@ -970,6 +972,7 @@ theorem finiteExtensionInfinityPlaceLocal_residueField_perfect [Fintype K]
       (IsDiscreteValuationRing.maximalIdeal
         (FiniteExtensionInfinityPlaceLocalRing K L P)).asIdeal.ResidueField := by
   classical
+  let := Fintype.ofFinite K
   let q := (primeOverHeightOne (ratFuncInfinityPlace K) P).asIdeal
   let : Finite q.ResidueField := by
     simpa [q, primeOverHeightOne_asIdeal] using
@@ -1039,7 +1042,7 @@ private theorem infinityPlaceOrder_gridMonomial_eq_zero
 
 omit [DecidableEq K] in
 theorem finiteExtensionInfinityPlace_auxiliaryFamily_caseI_of_scaled_preserves
-    [Fintype K]
+    [Finite K]
     (P : FiniteExtensionInfinityPlace K L)
     (h k : ℕ) {n : ℕ}
     (e : Sum (Fin k) (Fin (k + 1) × Fin h) ≃ Fin n)
@@ -1077,6 +1080,7 @@ theorem finiteExtensionInfinityPlace_auxiliaryFamily_caseI_of_scaled_preserves
           (indexedDedekindLocalWronskian D epsilonOrder
             (auxiliaryFamily u v h k)).det := by
   classical
+  let := Fintype.ofFinite K
   let _ := finiteExtensionInfinityPlaceLocalAlgebra (K := K) (L := L) P
   let := finiteExtensionInfinityPlaceLocalIsFractionRing
     (K := K) (L := L) P
@@ -1125,7 +1129,7 @@ theorem finiteExtensionInfinityPlace_auxiliaryFamily_caseI_of_scaled_preserves
 
 omit [DecidableEq K] in
 theorem finiteExtensionInfinityPlace_canonicalAuxiliary_caseI_of_scaling
-    [Fintype K]
+    [Finite K]
     (P : FiniteExtensionInfinityPlace K L)
     (D : Derivation (frobeniusSubfield L p) L L)
     (c : L) (hc : c ≠ 0)
@@ -1164,6 +1168,7 @@ theorem finiteExtensionInfinityPlace_canonicalAuxiliary_caseI_of_scaling
             (auxiliaryFamilyDerivativeOrder h k)
             (auxiliaryFamily u v h k)).det (.inr P) := by
   classical
+  let := Fintype.ofFinite K
   let n := h * k + h + k
   have hrho : (1 - u) / (1 - v) ≠ 0 :=
     div_ne_zero (sub_ne_zero.mpr hu1.symm) (sub_ne_zero.mpr hv1.symm)
