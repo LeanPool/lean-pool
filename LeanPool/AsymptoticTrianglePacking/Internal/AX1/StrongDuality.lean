@@ -224,6 +224,22 @@ theorem coverOpt_triInc_eq_tau3Star : coverOpt (triInc G) = tau3Star G := by
         · intro c _; use c.val; simp
         · intro e he; simp only [y', he, dite_eq_left]
 
+private theorem edge_toFinset_card (e : Edg G) : #(Sym2.toFinset e.val) = 2 := by
+  rw [Sym2.toFinset]
+  have hn : (Sym2.toMultiset e.val).Nodup := by
+    simp only [Sym2.toMultiset]
+    have hmem := e.property
+    generalize hv : e.val = x
+    induction x using Sym2.ind with
+    | h a b =>
+      have hab : s(a, b) ∈ G.edgeFinset := by rwa [hv] at hmem
+      have hne : a ≠ b := by
+        intro heq
+        rw [heq] at hab
+        simp at hab
+      simp [Sym2.lift, hne]
+  rw [Multiset.toFinset_card_of_nodup hn, Sym2.card_toMultiset]
+
 /-- **Bridge 2 (packing side).** The abstract packing optimum over the triangle–edge
 incidence equals
 `ν₃*`. -/
@@ -401,26 +417,7 @@ theorem packOpt_triInc_eq_nu3star : packOpt (triInc G) = nu3star G := by
       · intro t; exact hw.1 _
       · intro e
         -- Sum over triangles containing e equals sum over T ∈ triangleHypergraphE G with e ∈ T
-        have he : #(Sym2.toFinset e.val) = 2 := by
-          rw [Sym2.toFinset]
-          have hmem : e.val ∈ G.edgeFinset := e.property
-          -- For an edge, the two endpoints are distinct (simple graph is loopless)
-          have hn : (Sym2.toMultiset e.val).Nodup := by
-            simp only [Sym2.toMultiset]
-            have := e.property
-            generalize hv : e.val = x
-            induction x using Sym2.ind with
-            | h a b =>
-              have hmem : s(a, b) ∈ G.edgeFinset := by
-                rw [hv] at this
-                exact this
-              have hne : a ≠ b := by
-                intro hab
-                rw [hab] at hmem
-                simp at hmem
-              simp [Sym2.lift, hne]
-          rw [Multiset.toFinset_card_of_nodup hn]
-          rw [Sym2.card_toMultiset e.val]
+        have he : #(Sym2.toFinset e.val) = 2 := edge_toFinset_card G e
         -- The sum ∑ t with e ∈ triInc t of w' t equals ∑ T ∈ filter (e.val ∈ ·) of w T
         have heq : ∑ o with e ∈ triInc G o, w' o =
                    ∑ T ∈ (triangleHypergraphE G).filter (fun T => e.val.toFinset ∈ T), w T := by

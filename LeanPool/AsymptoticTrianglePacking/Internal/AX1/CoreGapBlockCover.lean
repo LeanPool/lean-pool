@@ -251,6 +251,14 @@ def BlockCoverResidual : Prop :=
               + (G.edgeDensity (W i) (X i) : ℝ) * (#(B i) : ℝ) * (#(C i) : ℝ))) / 3
           + ε * (Fintype.card V : ℝ) ^ 2
 
+private theorem choose_mu2 (μ : ℝ) (hμ : 0 < μ) :
+    ∃ m : ℝ, 0 < m ∧ m ≤ 1 ∧ m ≤ μ ∧ 2 * m ≤ μ := by
+  refine ⟨min μ 1 / 2, ?_, ?_, ?_, ?_⟩
+  · have : 0 < min μ 1 := lt_min hμ one_pos; linarith only [this]
+  · have : min μ 1 ≤ 1 := min_le_right _ _; linarith only [this]
+  · have : min μ 1 ≤ μ := min_le_left _ _; linarith only [hμ, this]
+  · have : min μ 1 ≤ μ := min_le_left _ _; linarith only [this]
+
 /-- **The reduction: the deterministic block-allocation residual gives the local design residual.**
 
 All the analytic content of the design is discharged here: uniformity of the blocks
@@ -264,13 +272,7 @@ theorem subTripleDesignLocalResidual_of_blockCover (h : BlockCoverResidual) :
   classical
   intro ε hε μ hμ η hη d₀ hd₀
   -- ### the parameters of the construction
-  obtain ⟨μ₂, hμ₂0, hμ₂1, hμ₂μ, hμ₂half⟩ :
-      ∃ m : ℝ, 0 < m ∧ m ≤ 1 ∧ m ≤ μ ∧ 2 * m ≤ μ := by
-    refine ⟨min μ 1 / 2, ?_, ?_, ?_, ?_⟩
-    · have : 0 < min μ 1 := lt_min hμ one_pos; linarith only [this]
-    · have : min μ 1 ≤ 1 := min_le_right _ _; linarith only [this]
-    · have : min μ 1 ≤ μ := min_le_left _ _; linarith only [hμ, this]
-    · have : min μ 1 ≤ μ := min_le_left _ _; linarith only [this]
+  obtain ⟨μ₂, hμ₂0, hμ₂1, hμ₂μ, hμ₂half⟩ := choose_mu2 μ hμ
   obtain ⟨δ, hδ0, hδhalf, hδε⟩ : ∃ d : ℝ, 0 < d ∧ d ≤ 1 / 2 ∧ d ≤ ε := by
     refine ⟨min 1 ε / 2, ?_, ?_, ?_⟩
     · have : 0 < min 1 ε := lt_min one_pos hε; linarith only [this]
@@ -328,9 +330,7 @@ theorem subTripleDesignLocalResidual_of_blockCover (h : BlockCoverResidual) :
   -- ### the local clauses of the design
   have hαε : ε₁ / 8 ≤ δ / 2 := by linarith only [hε₁4δ]
   have hδne : δ ≠ 0 := ne_of_gt hδ0
-  have hquarter : ε₁ / 8 / (δ / 2 : ℝ) = ε₁ / (4 * δ) := by
-    field_simp
-    ring
+  have hquarter : ε₁ / 8 / (δ / 2 : ℝ) = ε₁ / (4 * δ) := by field_simp; ring
   -- the derived windows for the block uniformity scale `ε₂ = ε₁/(4δ)`
   have hε₂0 : (0:ℝ) < ε₁ / (4 * δ) := by positivity
   have hε₂1 : ε₁ / (4 * δ) ≤ 1 := by
@@ -540,13 +540,7 @@ theorem subTripleDesignLocalResidual_of_blockCoverFine (h : BlockCoverResidualFi
   classical
   intro ε hε μ hμ η hη d₀ hd₀
   -- ### the parameters of the construction
-  obtain ⟨μ₂, hμ₂0, hμ₂1, hμ₂μ, hμ₂half⟩ :
-      ∃ m : ℝ, 0 < m ∧ m ≤ 1 ∧ m ≤ μ ∧ 2 * m ≤ μ := by
-    refine ⟨min μ 1 / 2, ?_, ?_, ?_, ?_⟩
-    · have : 0 < min μ 1 := lt_min hμ one_pos; linarith only [this]
-    · have : min μ 1 ≤ 1 := min_le_right _ _; linarith only [this]
-    · have : min μ 1 ≤ μ := min_le_left _ _; linarith only [hμ, this]
-    · have : min μ 1 ≤ μ := min_le_left _ _; linarith only [this]
+  obtain ⟨μ₂, hμ₂0, hμ₂1, hμ₂μ, hμ₂half⟩ := choose_mu2 μ hμ
   obtain ⟨δ, hδ0, hδhalf, hδε, hδsq⟩ :
       ∃ d : ℝ, 0 < d ∧ d ≤ 1 / 2 ∧ d ≤ ε / 2 ∧ d / 2 ≤ (ε / 2) ^ 2 := by
     have h0 : 0 < min 1 ε := lt_min one_pos hε
@@ -605,9 +599,7 @@ theorem subTripleDesignLocalResidual_of_blockCoverFine (h : BlockCoverResidualFi
   -- ### the local clauses of the design
   have hαε : ε₁ / 8 ≤ δ / 2 := by linarith only [hε₁4δ]
   have hδne : δ ≠ 0 := ne_of_gt hδ0
-  have hquarter : ε₁ / 8 / (δ / 2 : ℝ) = ε₁ / (4 * δ) := by
-    field_simp
-    ring
+  have hquarter : ε₁ / 8 / (δ / 2 : ℝ) = ε₁ / (4 * δ) := by field_simp; ring
   -- the derived windows for the block uniformity scale `ε₂ = ε₁/(4δ)`
   have hε₂0 : (0:ℝ) < ε₁ / (4 * δ) := by positivity
   have hε₂1 : ε₁ / (4 * δ) ≤ 1 := by
