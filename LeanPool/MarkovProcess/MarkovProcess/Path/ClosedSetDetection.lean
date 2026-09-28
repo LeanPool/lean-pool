@@ -27,6 +27,7 @@ namespace ContinuousPath
 variable {alpha : Type*} [PseudoMetricSpace alpha]
 
 /-- The positive thresholds used to detect zero distance to a closed set. -/
+@[expose]
 def detectionThreshold (n : ℕ) : ℝ := 1 / (n + 1 : ℝ)
 
 private theorem detectionThreshold_pos (n : ℕ) : 0 < detectionThreshold n := by
@@ -144,6 +145,7 @@ private theorem closedSetDetectionThreshold_pos (n : ℕ) :
   exact one_div_pos.mpr (Nat.cast_add_one_pos n)
 
 /-- A countable test for whether a continuous map on `[u, t]` meets `F`. -/
+@[expose]
 def DetectsClosedSetOnIcc (u t : NNReal) (hut : u ≤ t) (F : Set alpha)
     (f : C(Set.Icc u t, alpha)) : Prop :=
   F.Nonempty ∧ ∀ n : ℕ,
@@ -251,6 +253,7 @@ theorem detectsClosedSetOnIcc_iff
         (lt_of_le_of_ne s.property.2 hst) (closedSetDetectionThreshold_pos n) hzero
 
 /-- Restrict an ordinary continuous path to a compact initial time interval. -/
+@[expose]
 def restrictIic (t : NNReal) (omega : ContinuousPath alpha) : C(Set.Iic t, alpha) where
   toFun s := omega s
   continuous_toFun := omega.continuous.comp continuous_subtype_val

@@ -46,6 +46,7 @@ namespace ContinuousPath
 variable {alpha : Type*} [PseudoMetricSpace alpha]
 
 /-- The event that a path is still inside `U` at time `t` and sits in `B` at time `t`. -/
+@[expose]
 def killedEvent (U : Set alpha) (t : NNReal) (B : Set alpha) : Set (ContinuousPath alpha) :=
   {omega | (t : ℝ≥0∞) < exitTime U omega ∧ omega t ∈ B}
 

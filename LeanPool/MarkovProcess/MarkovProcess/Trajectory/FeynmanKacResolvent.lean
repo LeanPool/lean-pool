@@ -47,6 +47,7 @@ variable {alpha : Type*} [MetricSpace alpha] [MeasurableSpace alpha] [BorelSpace
 variable (P : SubMarkovKernelSemigroup alpha) (hP : P.IsConservative)
 
 /-- The Feynman--Kac resolvent, obtained by Laplace-transforming the extended-real operators. -/
+@[expose]
 def IsConservative.feynmanKacResolvent (q : alpha → ℝ) (lam : ℝ)
     (f : alpha → ℝ≥0∞) (x : alpha) : ℝ≥0∞ :=
   ∫⁻ t in Ioi (0 : ℝ), ENNReal.ofReal (Real.exp (-lam * t)) *

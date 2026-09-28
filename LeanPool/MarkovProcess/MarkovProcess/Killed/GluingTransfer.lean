@@ -46,6 +46,7 @@ section Topological
 variable {X : Type*} [TopologicalSpace X]
 
 /-- A continuous observable with compact support, read as an observable vanishing at infinity. -/
+@[expose]
 noncomputable def compactlySupportedToZeroAtInfty (f : C_c(X, ℝ)) : C₀(X, ℝ) where
   toContinuousMap := f.toContinuousMap
   zero_at_infty' := HasCompactSupport.is_zero_at_infty f.hasCompactSupport'

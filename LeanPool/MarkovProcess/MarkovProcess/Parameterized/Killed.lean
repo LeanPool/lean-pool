@@ -77,6 +77,7 @@ variable [LocallyCompactSpace alpha]
 /-- **The killed parameterized family**: the processes of the fibres killed when they leave the
 open set `U`, as a measurably parameterized family of sub-Markov kernel semigroups on the carrier
 `U`. -/
+@[expose]
 noncomputable def IsConservative.killedFamily
     (hFeller : ∀ theta, (P.toSubMarkovKernelSemigroup theta).IsFellerKernelSemigroup)
     (hK : P.KolmogorovRegular hP) : ParameterizedSubMarkovKernelSemigroup Theta U where

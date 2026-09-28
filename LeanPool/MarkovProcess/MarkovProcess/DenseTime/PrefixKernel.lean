@@ -31,6 +31,7 @@ section
 variable {D α : Type*} [MeasurableSpace α]
 
 /-- The physical times occurring in the first `n` positions of an enumeration. -/
+@[expose]
 def denseTimePhysicalPrefix (e : ℕ ≃ D) (ι : D ↪ NNReal) (n : ℕ) : Finset NNReal :=
   (CountableEnumeration.prefix e n).map ι
 
@@ -49,6 +50,7 @@ private theorem denseTime_mem_physicalPrefix (e : ℕ ≃ D) (ι : D ↪ NNReal)
     exact i.isLt, rfl⟩
 
 /-- Reindex a path on the physical prefix by its enumeration positions. -/
+@[expose]
 def denseTimePrefixReindex (e : ℕ ≃ D) (ι : D ↪ NNReal) (n : ℕ)
     (path : denseTimePhysicalPrefix e ι n → α) : Fin n → α :=
   fun i ↦ path ⟨ι (e i), by exact denseTime_mem_physicalPrefix e ι n i⟩

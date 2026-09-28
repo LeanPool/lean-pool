@@ -27,6 +27,7 @@ section
 namespace DenseTime
 
 /-- The image of a finite dense-time set under addition by `s`. -/
+@[expose]
 def addFinset (s : DenseTime) (I : Finset DenseTime) : Finset DenseTime :=
   I.map (addOrderEmbedding s).toEmbedding
 

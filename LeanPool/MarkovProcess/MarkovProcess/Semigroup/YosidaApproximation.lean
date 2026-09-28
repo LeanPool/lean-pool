@@ -43,6 +43,7 @@ private instance cacheAlgebraCLM : Algebra ℝ (E →L[ℝ] E) := inferInstance
 private instance cacheIsTopologicalRingCLM : IsTopologicalRing (E →L[ℝ] E) := inferInstance
 
 /-- The bounded Yosida generator `G_α = α (α R_α - I)`. -/
+@[expose]
 def yosidaGenerator (R : ContractiveResolvent E) (α : PositiveShift) : E →L[ℝ] E :=
   (α : ℝ) • (R.scaledOperator α - ContinuousLinearMap.id ℝ E)
 

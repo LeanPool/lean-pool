@@ -99,6 +99,7 @@ theorem normalizedCoordinateFactors_evaluation
       rw [hEvalUpdate, prod_update_mul]
 
 /-- Active coordinates of a normalized coordinate product. -/
+@[expose]
 def activeCoordinates (factors : List (Fin n × C₀(alpha, ℝ))) : Finset (Fin n) :=
   Finset.univ.filter fun i ↦ (normalizedCoordinateFactors factors i).isSome
 

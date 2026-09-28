@@ -110,6 +110,7 @@ theorem exp_smul_sub_id_apply_eq_tsum [CompleteSpace E]
     ring
 
 /-- The Poisson coefficients with parameter `c`. -/
+@[expose]
 def poissonWeight (c : ℝ) (n : ℕ) : ℝ :=
   Real.exp (-c) * (c ^ n / n.factorial)
 

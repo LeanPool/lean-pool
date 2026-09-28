@@ -106,6 +106,7 @@ noncomputable def measurableEquivFinPrefix (e : ℕ ≃ D) (n : ℕ) (α : Type*
   MeasurableEquiv.piCongrLeft (fun _ : «prefix» e n ↦ α) (finEquivPrefix e n)
 
 /-- Measurable reindexing between paths on `ℕ` and paths on the enumerated type. -/
+@[expose]
 def measurableEquivPath (e : ℕ ≃ D) (α : Type*) [MeasurableSpace α] :
     (ℕ → α) ≃ᵐ (D → α) :=
   MeasurableEquiv.piCongrLeft (fun _ : D ↦ α) e

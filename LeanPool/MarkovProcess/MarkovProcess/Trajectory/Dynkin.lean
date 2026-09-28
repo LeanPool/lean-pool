@@ -41,6 +41,7 @@ section Eval
 variable {alpha : Type*} [TopologicalSpace alpha]
 
 /-- Evaluation at a point, as a continuous linear functional on `C₀(α, ℝ)`. -/
+@[expose]
 noncomputable def evalC0CLM (x : alpha) : C₀(alpha, ℝ) →L[ℝ] ℝ :=
   LinearMap.mkContinuous
     { toFun := fun f ↦ f x

@@ -158,6 +158,7 @@ theorem IsConservative.killedKernelOn_add (hFeller : P.IsFellerKernelSemigroup)
 
 /-- **The killed semigroup on the domain `U`**: the process of `P` killed when it leaves `U`, as a
 sub-Markov kernel semigroup on the carrier `U`. -/
+@[expose]
 noncomputable def IsConservative.killedSemigroup (hFeller : P.IsFellerKernelSemigroup)
     (hK : P.KolmogorovRegular hP) : SubMarkovKernelSemigroup U where
   kernel := IsConservative.killedKernelOn P hP U hU

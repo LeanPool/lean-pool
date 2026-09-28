@@ -29,6 +29,7 @@ namespace DenseTime
 open SubMarkovKernelSemigroup
 
 /-- Casting identifies a finite dense-time set with its image in physical nonnegative-real time. -/
+@[expose]
 def physicalSetEquiv (I : Finset DenseTime) : I ≃ denseTimePhysicalSet I :=
   Equiv.ofBijective
     (fun t ↦ ⟨castOrderEmbedding t, by
@@ -59,6 +60,7 @@ open SubMarkovKernelSemigroup
 variable {alpha : Type*}
 
 /-- Reindex a finite path labelled by physical rational times back to dense-time labels. -/
+@[expose]
 def pullbackPhysicalSet (I : Finset DenseTime)
     (path : denseTimePhysicalSet I → alpha) : I → alpha :=
   fun t ↦ path (DenseTime.physicalSetEquiv I t)

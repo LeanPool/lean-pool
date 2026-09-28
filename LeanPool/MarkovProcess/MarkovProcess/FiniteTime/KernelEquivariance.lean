@@ -179,6 +179,7 @@ variable {alpha beta : Type*} [TopologicalSpace alpha] [MeasurableSpace alpha] [
 /-- `P'` is the *rescaled conjugate* of `P` by the homeomorphism `e` and the time factor `c`:
 started at `x`, the state of `P'` at time `t` is the image under `e` of the state of `P` at the
 sped-up time `c * t` started at `e.symm x`. -/
+@[expose]
 def IsRescaledConjugate (P : SubMarkovKernelSemigroup alpha) (P' : SubMarkovKernelSemigroup beta)
     (e : alpha ≃ₜ beta)
     (c : NNReal) : Prop :=

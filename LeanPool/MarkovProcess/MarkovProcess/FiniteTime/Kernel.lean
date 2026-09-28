@@ -91,6 +91,7 @@ theorem IsConservative.isMarkovKernel_finiteTimeKernel
       exact Kernel.IsMarkovKernel.map _ measurable_finCons
 
 /-- The finite-time law at a starting state. -/
+@[expose]
 noncomputable def finiteTimeLaw (P : SubMarkovKernelSemigroup α) {n : ℕ}
     (times : FiniteOrderedTimes n) (x : α) : Measure (Fin n → α) :=
   finiteTimeKernel P times x

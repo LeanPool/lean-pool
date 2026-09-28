@@ -92,6 +92,7 @@ theorem normalizedCoordinateFactors_evaluation_active
 
 /-- Scalar evaluation of a normalized term on only its active coordinates.  For an empty active
 set this is the coefficient times the empty scalar product, hence just the coefficient. -/
+@[expose]
 def CoordinateProductTerm.activeEvaluation
     (t : CoordinateProductTerm (Fin n) alpha)
     (y : Fin (activeCoordinates t.factors).card → alpha) : ℝ :=

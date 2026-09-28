@@ -316,6 +316,7 @@ theorem enumeratedDenseTimeTrajectory_map_prefix
   · exact measurable_enumeratedDenseTimePrefix n
 
 /-- Restrict a dense-time-labelled trajectory to the first `n` labels of an enumeration. -/
+@[expose]
 def denseTimeTrajectoryPrefix (e : ℕ ≃ D) (n : ℕ) (path : D → α) : Fin n → α :=
   fun i ↦ path (e i)
 
