@@ -33,7 +33,7 @@ structure, not derived here as the order-unit norm.
 * van de Wetering, arXiv:1803.11139
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

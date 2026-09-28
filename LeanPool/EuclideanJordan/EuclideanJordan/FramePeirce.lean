@@ -101,7 +101,7 @@ existentially quantified.  Note what that does and does not settle: see the rank
 
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

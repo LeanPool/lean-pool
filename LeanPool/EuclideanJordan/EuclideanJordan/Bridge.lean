@@ -42,7 +42,7 @@ power-associativity theorem — cannot be bridged this way, because the instance
 exist before the statement elaborates.
 -/
 
-@[expose] public section
+public section
 namespace EuclideanJordan
 
 section Bridge

@@ -77,7 +77,7 @@ normalisation, and
 definite form rather than a normalised one, so `traceForm` is admissible there as it stands.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

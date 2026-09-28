@@ -26,7 +26,7 @@ public import LeanPool.EuclideanJordan.EuclideanJordan.Vendor.Misc
 
 /-! Matrix order, partial traces, spectra, and block constructions. -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

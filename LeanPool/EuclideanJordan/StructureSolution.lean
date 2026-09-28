@@ -18,7 +18,7 @@ projections. Named adapters preserve the multiplication, unit and frame data whe
 the shared interface; they introduce no ambient library algebra instance into theorem headers.
 -/
 
-@[expose] public section
+public section
 
 namespace EuclideanJordan.StructureSolution
 

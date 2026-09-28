@@ -117,7 +117,7 @@ which is **not** proved to be the rank — `EuclideanJordan/Rank.lean` proves on
 `card ≤ finrank`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

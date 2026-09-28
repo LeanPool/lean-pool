@@ -68,7 +68,7 @@ The statement "a simple `J` has every block nonzero" is **not proved anywhere in
 library**, which has no notion of a Jordan ideal to state simplicity with.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

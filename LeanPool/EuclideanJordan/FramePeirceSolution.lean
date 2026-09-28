@@ -135,7 +135,7 @@ challenge file states.  The contract here is that the two files' declaration typ
 nose, so the extra instance is kept out of every statement.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

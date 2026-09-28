@@ -17,7 +17,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
 /-! Matrix operations on HermitianMats with the CFC -/
 
-@[expose] public section
+public section
 namespace HermitianMat
 
 noncomputable section CFC

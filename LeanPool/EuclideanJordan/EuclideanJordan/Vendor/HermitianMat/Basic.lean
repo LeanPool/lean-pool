@@ -13,7 +13,7 @@ public import LeanPool.EuclideanJordan.EuclideanJordan.Vendor.Tactic.Commutes
 
 /-! Hermitian matrices, their algebraic structure, eigenspaces, and tensor products. -/
 
-@[expose] public section
+public section
 
 /-- The type of Hermitian matrices, as a `Subtype`. Equivalent to a `Matrix n n α` bundled
 with the fact that `Matrix.IsHermitian`. -/

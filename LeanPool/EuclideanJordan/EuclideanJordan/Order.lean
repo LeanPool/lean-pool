@@ -82,7 +82,7 @@ Two deliberate choices, both forced by diamonds.
   coefficient off.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

@@ -31,7 +31,7 @@ The one piece of real work is formal reality. The challenge states it as a hypot
 only by reindexing along `Finset.equivFin`, done inline in each of the two positivity proofs.
 -/
 
-@[expose] public section
+public section
 
 namespace JordanTraceForm
 

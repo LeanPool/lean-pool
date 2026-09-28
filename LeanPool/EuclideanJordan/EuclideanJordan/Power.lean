@@ -54,7 +54,7 @@ this vocabulary, and because `commuteAt_two` is what made the general pattern vi
 above and nothing more.
 -/
 
-@[expose] public section
+public section
 
 namespace EuclideanJordan
 

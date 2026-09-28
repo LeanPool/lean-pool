@@ -105,7 +105,7 @@ if one is ever declared, that scoped instance and this class's `toMul` will both
 inside `open HermMul` sections and one of them has to give way.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

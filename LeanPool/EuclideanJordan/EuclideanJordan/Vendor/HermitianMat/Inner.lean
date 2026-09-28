@@ -34,7 +34,7 @@ topology that HermitianMat inherits from the topology on Matrix. This can be don
 
 -/
 
-@[expose] public section
+public section
 
 namespace HermitianMat
 

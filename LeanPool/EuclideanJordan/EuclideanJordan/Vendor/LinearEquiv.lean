@@ -33,7 +33,7 @@ together with lemmas relating them to `Matrix.reindex`.
 
 -/
 
-@[expose] public section
+public section
 
 variable {d d₁ d₂ d₃ R 𝕜 : Type*} [RCLike 𝕜]
 

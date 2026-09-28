@@ -23,7 +23,7 @@ The `IsMaximalSelfAdjoint` class is used so that (for example) for matrices over
 it uses the real part.
 -/
 
-@[expose] public section
+public section
 
 namespace HermitianMat
 

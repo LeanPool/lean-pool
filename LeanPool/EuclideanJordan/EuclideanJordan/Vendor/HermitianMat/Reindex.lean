@@ -17,7 +17,7 @@ Hermitian matrix; however, this only makes sense when both permutations are the 
 This file then gives relevant lemmas for simplifying this.
 -/
 
-@[expose] public section
+public section
 namespace HermitianMat
 
 variable {d d₂ d₃ d₄ 𝕜 : Type*} [RCLike 𝕜]

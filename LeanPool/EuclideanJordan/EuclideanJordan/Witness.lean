@@ -54,7 +54,7 @@ with all three components nonzero, and nothing more. The rank-two carrier is use
 is the smallest place where a `1/2`-eigenvector exists, not because rank two matters here.
 -/
 
-@[expose] public section
+public section
 
 open HermMul EuclideanJordan
 

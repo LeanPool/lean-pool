@@ -55,7 +55,7 @@ without restating it.
 
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

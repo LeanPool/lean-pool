@@ -25,7 +25,7 @@ than 𝕜-linearity) is the right statement because `HermitianMat n 𝕜` is onl
 a 𝕜-multiple of a Hermitian matrix need not be Hermitian.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 
