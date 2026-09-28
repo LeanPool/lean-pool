@@ -136,7 +136,7 @@ private theorem upperGraphHeight_eq_coordinate_of_isExteriorNormal_of_pos
       nlinarith [hs]
     exact (not_lt_of_ge hnonpos) (mul_pos hpos (sub_pos.mpr hgt))
   · exact (upperGraphHeight_isGreatest K o e hx).2 (by
-      show o + e.symm !₂[e (p - o) 0, e (p - o) 1] ∈ (K : Set Point)
+      change o + e.symm !₂[e (p - o) 0, e (p - o) 1] ∈ (K : Set Point)
       rw [show o + e.symm !₂[e (p - o) 0, e (p - o) 1] = p by
         apply e.injective
         ext i
@@ -162,7 +162,7 @@ private theorem eq_upperCoordinateGraph_of_maximal_verticalCoordinate
   have hpGreatest : IsGreatest
       {y : ℝ | o + e.symm !₂[e (p - o) 0, y] ∈ (K : Set Point)} (e (p - o) 1) := by
     constructor
-    · show o + e.symm !₂[e (p - o) 0, e (p - o) 1] ∈ (K : Set Point)
+    · change o + e.symm !₂[e (p - o) 0, e (p - o) 1] ∈ (K : Set Point)
       rw [show o + e.symm !₂[e (p - o) 0, e (p - o) 1] = p by
         apply e.injective
         ext i
@@ -187,7 +187,9 @@ private theorem horizontalProjection_negCoordinates (K : ConvexBody Point) (o : 
     (e : Point ≃ₗᵢ[ℝ] Point) :
     horizontalProjection K o (negCoordinates e) = -(horizontalProjection K o e) := by
   ext x
-  simp [horizontalProjection, negCoordinates]
+  simp only [horizontalProjection, negCoordinates, LinearIsometryEquiv.trans_apply, map_sub,
+    LinearIsometryEquiv.coe_neg, Fin.isValue, PiLp.sub_apply, PiLp.neg_apply, Set.mem_image,
+    SetLike.mem_coe, Set.mem_neg]
   constructor
   · rintro ⟨p, hp, h⟩
     exact ⟨p, hp, by linarith⟩
@@ -290,7 +292,7 @@ theorem concaveOn_upperGraphHeight (K : ConvexBody Point) (o : Point)
     have hpx := upperGraphHeight_mem K o e hx
     have hpy := upperGraphHeight_mem K o e hy
     have hconv := K.convex hpx hpy ha hb hab
-    show o + e.symm !₂[a • x + b • y,
+    change o + e.symm !₂[a • x + b • y,
       a • upperGraphHeight K o e x + b • upperGraphHeight K o e y] ∈ (K : Set Point)
     rw [show o + e.symm !₂[a • x + b • y,
         a • upperGraphHeight K o e x + b • upperGraphHeight K o e y] =
@@ -351,7 +353,7 @@ theorem upperGraph_deriv_isExteriorNormal (K : ConvexBody Point) (o : Point)
     exact ⟨hx.1.le, hx.2.le⟩
   have hvertical : e (p - o) 1 ≤ g (e (p - o) 0) :=
     (upperGraphHeight_isGreatest K o e hxp).2 (by
-      show o + e.symm !₂[e (p - o) 0, e (p - o) 1] ∈ (K : Set Point)
+      change o + e.symm !₂[e (p - o) 0, e (p - o) 1] ∈ (K : Set Point)
       rw [show o + e.symm !₂[e (p - o) 0, e (p - o) 1] = p by
         apply e.injective
         ext i
@@ -1010,7 +1012,9 @@ private theorem upperCoordinateGraph_mem_frontier (K : ConvexBody Point) (o : Po
     rw [Metric.mem_ball, dist_eq_norm]
     rw [show q - p = (r / 2) • e.symm !₂[0, 1] by simp [q], norm_smul,
       e.symm.norm_map, EuclideanSpace.norm_eq]
-    simp [Fin.sum_univ_two, Real.norm_eq_abs]
+    simp only [norm_div, Real.norm_eq_abs, sq_abs, Fin.sum_univ_two, Fin.isValue,
+      Matrix.cons_val_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, one_pow, zero_add, Real.sqrt_one, mul_one]
     rw [abs_of_pos hr]
     linarith))
   have hqfiber : o + e.symm !₂[x, upperGraphHeight K o e x + r / 2] ∈ K := by
@@ -1060,7 +1064,8 @@ private theorem integral_restrict_upperCoordinateGraph_eq_integral
   apply intervalIntegral.integral_congr
   intro x _
   unfold upperGraphWeight upperGraphSurfaceIntegrand
-  simp
+  simp only [add_sub_cancel_left, LinearIsometryEquiv.apply_symm_apply, Fin.isValue,
+    Matrix.cons_val_zero]
   apply mul_comm
 
 private theorem integral_restrict_upperCoordinateGraph_eq_setIntegral
@@ -1153,7 +1158,7 @@ private theorem tendsto_innerUpperGraph_indicator_at_regularPoint
     rw [dite_eq_left hp.2]
     exact hp.2.exists.choose_spec
   have hpK : p ∈ K := by
-    show p ∈ (K : Set Point)
+    change p ∈ (K : Set Point)
     rw [← K.isClosed.closure_eq]
     exact frontier_subset_closure hp.1
   by_cases hψa : ψ a = 0
@@ -1174,7 +1179,8 @@ private theorem tendsto_innerUpperGraph_indicator_at_regularPoint
               ((horizontalBounds K o e).2 - 1 / ((n : ℝ) + 1)) := ⟨x, hx, rfl⟩
       rw [Set.indicator_of_mem hmem]
       unfold upperGraphWeight
-      simp
+      simp only [add_sub_cancel_left, LinearIsometryEquiv.apply_symm_apply, Fin.isValue,
+        Matrix.cons_val_zero]
       rw [← exteriorNormalAngle_upperGraph_eq K hK o e hxint hdiff]
     · change ψ a = _
       rw [Set.indicator]

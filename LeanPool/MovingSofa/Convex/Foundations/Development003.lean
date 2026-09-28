@@ -5,6 +5,8 @@ Authors: Dean Cureton, The Moving Sofa contributors
 -/
 module
 
+public import Mathlib.Analysis.Convex.Join
+
 public import LeanPool.MovingSofa.Infrastructure.Analysis.Foundations.Development002
 public import LeanPool.MovingSofa.Analysis.Foundations.Development005
 public import LeanPool.MovingSofa.Analysis.Foundations.Development003
@@ -118,11 +120,12 @@ theorem supportIntegral_bilinear :
     change (1 / 2 : ℝ) * (∫ u, supportValue K u ∂surfaceAreaMeasure
         (convexBodyCombination t L M)) = _
     simp only [realCombination]
-    rw [hmeasure, integral_add_measure ((hint K L).smul_measure _) ((hint K M).smul_measure _)]
+    rw [hmeasure, integral_add_measure
+      ((hint K L).smul_measure ENNReal.ofReal_ne_top)
+      ((hint K M).smul_measure ENNReal.ofReal_ne_top)]
     simp only [integral_smul_measure, ENNReal.toReal_ofReal,
       sub_nonneg.mpr (show (t : ℝ) ≤ 1 from t.property.2), t.property.1]
     ring
-    all_goals exact ENNReal.ofReal_ne_top
   · intro L t K M
     change (1 / 2 : ℝ) * (∫ u, supportValue (convexBodyCombination t K M) u
       ∂surfaceAreaMeasure L) = _

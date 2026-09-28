@@ -68,7 +68,8 @@ lemma ConvexBody.eq_of_mem_of_fst_eq_of_fst_extremal
       intro heq
       have hdiff : t.sin * (a 1 - b 1) = 0 := by
         simp only [normalVector, frame, PiLp.inner_apply, Fin.sum_univ_two] at heq
-        simp at heq
+        simp only [Fin.isValue, Matrix.cons_val_zero, RCLike.inner_apply, conj_trivial,
+          Matrix.cons_val_one, Matrix.cons_val_fin_one] at heq
         rw [hab] at heq
         nlinarith
       exact hy (sub_eq_zero.mp ((mul_eq_zero.mp hdiff).resolve_left (hsin t ht)))

@@ -652,7 +652,7 @@ theorem hausdorffMeasure_le_of_frame_bounds {S : Set Point} {t e lo hi : ℝ}
               (lo + (y - lo) / (max lo hi - lo) * (max lo hi - lo)) •
                 tangentVector (t : Real.Angle) := by
           module
-        show (1 - (y - lo) / (max lo hi - lo)) •
+        change (1 - (y - lo) / (max lo hi - lo)) •
               (e • normalVector (t : Real.Angle) + lo • tangentVector (t : Real.Angle)) +
             ((y - lo) / (max lo hi - lo)) •
               (e • normalVector (t : Real.Angle) +
@@ -1020,11 +1020,11 @@ theorem outerPathConstraintSet_isCap
       simp only [Set.mem_iInter, Set.mem_union, Set.mem_singleton_iff, Set.mem_range]
       constructor
       · rintro ⟨hq0, hqt⟩ c (rfl | ⟨t, rfl⟩ | ⟨t, rfl⟩)
-        · show inner ℝ q (normalVector ((3 * Real.pi / 2 : ℝ) : Real.Angle)) ≤ 0
+        · change inner ℝ q (normalVector ((3 * Real.pi / 2 : ℝ) : Real.Angle)) ≤ 0
           rw [inner_normalVector_three_pi_div_two]
           linarith
         · exact (hqt t).1
-        · show inner ℝ q (normalVector ((t.val + Real.pi / 2 : ℝ) : Real.Angle)) ≤ _
+        · change inner ℝ q (normalVector ((t.val + Real.pi / 2 : ℝ) : Real.Angle)) ≤ _
           rw [normalVector_add_pi_div_two_real]
           exact (hqt t).2
       · intro hq
@@ -1076,7 +1076,7 @@ theorem outerPathConstraintSet_isCap
   -- the strip inclusion and the two contacts fix the four normalized support values
   have hsvTop : supportValue (K : Set Point) ((Real.pi / 2 : ℝ) : Real.Angle) = 1 := by
     refine le_antisymm (supportValue_le_of_subset_normalHalfPlane K _ 1 fun q hq ↦ ?_) ?_
-    · show inner ℝ q (normalVector ((Real.pi / 2 : ℝ) : Real.Angle)) ≤ 1
+    · change inner ℝ q (normalVector ((Real.pi / 2 : ℝ) : Real.Angle)) ≤ 1
       rw [inner_normalVector_pi_div_two]
       rw [hKset] at hq
       exact (hxbox q hq).2.2.2
@@ -1084,7 +1084,7 @@ theorem outerPathConstraintSet_isCap
       rwa [inner_normalVector_pi_div_two, hpt1] at h
   have hsvBot : supportValue (K : Set Point) ((3 * Real.pi / 2 : ℝ) : Real.Angle) = 0 := by
     refine le_antisymm (supportValue_le_of_subset_normalHalfPlane K _ 0 fun q hq ↦ ?_) ?_
-    · show inner ℝ q (normalVector ((3 * Real.pi / 2 : ℝ) : Real.Angle)) ≤ 0
+    · change inner ℝ q (normalVector ((3 * Real.pi / 2 : ℝ) : Real.Angle)) ≤ 0
       rw [inner_normalVector_three_pi_div_two]
       rw [hKset] at hq
       linarith [(hxbox q hq).2.2.1]
@@ -1282,13 +1282,15 @@ theorem capReflection_normalVector (ω a : ℝ) :
   · change capReflection ω (normalVector (a : Real.Angle)) 0 =
       normalVector ((ω + Real.pi / 2 - a : ℝ) : Real.Angle) 0
     rw [capReflection_apply_zero, ← hrho]
-    simp [normalVector, frame]
+    simp only [Fin.isValue, normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe,
+      Matrix.cons_val_zero, neg_mul, Matrix.cons_val_one, Matrix.cons_val_fin_one]
     rw [hrho, Real.Angle.cos_coe, Real.cos_sub, Real.sin_add, Real.cos_add]
     simp
   · change capReflection ω (normalVector (a : Real.Angle)) 1 =
       normalVector ((ω + Real.pi / 2 - a : ℝ) : Real.Angle) 1
     rw [capReflection_apply_one, ← hrho]
-    simp [normalVector, frame]
+    simp only [Fin.isValue, normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one]
     rw [hrho, Real.Angle.sin_coe, Real.sin_sub, Real.sin_add, Real.cos_add]
     simp
 
@@ -1304,14 +1306,18 @@ theorem capReflection_tangentVector (ω a : ℝ) :
   · change capReflection ω (tangentVector (a : Real.Angle)) 0 =
       (-tangentVector ((ω + Real.pi / 2 - a : ℝ) : Real.Angle)) 0
     rw [capReflection_apply_zero, ← hrho]
-    simp [tangentVector, frame]
+    simp only [Fin.isValue, tangentVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe,
+      Matrix.cons_val_zero, mul_neg, neg_mul, neg_neg, Matrix.cons_val_one,
+      Matrix.cons_val_fin_one, PiLp.neg_apply]
     rw [hrho, Real.Angle.sin_coe, Real.sin_sub, Real.sin_add, Real.cos_add]
     simp
     ring
   · change capReflection ω (tangentVector (a : Real.Angle)) 1 =
       (-tangentVector ((ω + Real.pi / 2 - a : ℝ) : Real.Angle)) 1
     rw [capReflection_apply_one, ← hrho]
-    simp [tangentVector, frame]
+    simp only [Fin.isValue, tangentVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe,
+      Matrix.cons_val_zero, mul_neg, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+      PiLp.neg_apply]
     rw [hrho, Real.Angle.cos_coe, Real.cos_sub, Real.sin_add, Real.cos_add]
     simp
 

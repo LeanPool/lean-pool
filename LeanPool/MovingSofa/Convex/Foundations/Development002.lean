@@ -187,7 +187,9 @@ private theorem exists_cut_angle
   have hfa : f a < 0 := by
     dsimp only [f]
     rw [hchord, inner_add_left, real_inner_smul_left, real_inner_smul_left]
-    simp [normalVector, tangentVector, frame, PiLp.inner_apply, Fin.sum_univ_two]
+    simp only [tangentVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, normalVector,
+      PiLp.inner_apply, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+      Matrix.cons_val_zero, mul_neg, Matrix.cons_val_one, Matrix.cons_val_fin_one]
     have hid : -(Real.cos a * Real.sin b) + Real.sin a * Real.cos b =
         -Real.sin (b - a) := by rw [Real.sin_sub]; ring
     rw [hid]
@@ -195,7 +197,9 @@ private theorem exists_cut_angle
   have hfb : 0 < f b := by
     dsimp only [f]
     rw [hchord, inner_add_left, real_inner_smul_left, real_inner_smul_left]
-    simp [normalVector, tangentVector, frame, PiLp.inner_apply, Fin.sum_univ_two]
+    simp only [tangentVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, normalVector,
+      PiLp.inner_apply, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+      Matrix.cons_val_zero, mul_neg, Matrix.cons_val_one, Matrix.cons_val_fin_one]
     have hid : -(Real.cos b * Real.sin a) + Real.sin b * Real.cos a =
         Real.sin (b - a) := by rw [Real.sin_sub]; ring
     rw [hid]
@@ -840,7 +844,7 @@ theorem exists_outerCornerBV_convexLinear (a b : ℝ) :
         (fun r x y ↦ (1 - (r : ℝ)) • x + (r : ℝ) • y) γ := by
   choose γ hγ using fun K : ConvexBody Point ↦ exists_outerCornerBV K a b
   refine ⟨γ, hγ, fun t K L ↦ Subtype.ext (funext fun s ↦ ?_)⟩
-  show (γ (convexBodyCombination t K L)).val s =
+  change (γ (convexBodyCombination t K L)).val s =
     ((1 - (t : ℝ)) • (γ K).val + (t : ℝ) • (γ L).val) s
   rw [hγ, show ((1 - (t : ℝ)) • (γ K).val + (t : ℝ) • (γ L).val) s =
       (1 - (t : ℝ)) • (γ K).val s + (t : ℝ) • (γ L).val s from rfl, hγ, hγ]

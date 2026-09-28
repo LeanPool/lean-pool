@@ -119,10 +119,8 @@ theorem canonical_motion_compactness (s : Set Point) (m : I → Point ≃ᵃⁱ[
   exact ⟨hc, hc.measurableSet, hc.measure_lt_top⟩
 
 theorem real_area_le_iff_volume_le (s t : Set Point)
-    (hs : MeasurableSet s) (ht : MeasurableSet t)
     (hfinS : volume s < ⊤) (hfinT : volume t < ⊤) :
     ClassicalResults.area s ≤ ClassicalResults.area t ↔ volume s ≤ volume t := by
-  clear hs ht
   exact ENNReal.toReal_le_toReal hfinS.ne hfinT.ne
 
 end MovingSofa

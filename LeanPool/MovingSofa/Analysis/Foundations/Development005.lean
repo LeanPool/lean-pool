@@ -365,9 +365,9 @@ private theorem continuousAt_positiveVertex_of_eq_negativeVertex (K : ConvexBody
     ContinuousAt (fun s : ℝ ↦ (edgeVertices K (s : Real.Angle)).1) t := by
   rw [continuousAt_iff_continuous_left'_right']
   constructor
-  · show Tendsto _ (𝓝[<] t) _
+  · change Tendsto _ (𝓝[<] t) _
     simpa only [ht] using (contact_oneSided_limits K t).2.2.2.1
-  · show Tendsto _ (𝓝[>] t) _
+  · change Tendsto _ (𝓝[>] t) _
     exact (contact_oneSided_limits K t).1
 
 /-- Away from a proper-edge normal, the positive vertex of a finite convex hull is locally
@@ -625,7 +625,7 @@ theorem finite_properEdgeNormal_lifts (K : ConvexBody Point) (V : Finset Point)
   let c : Set.Icc a b → Real.Angle := fun t ↦ ((t : ℝ) : Real.Angle)
   let _ : Fact (0 < 2 * Real.pi) := ⟨mul_pos (by norm_num) Real.pi_pos⟩
   change S.Finite
-  apply Set.Finite.of_finite_image
+  apply Set.Finite.of_finite_image (f := c)
   · apply (finite_properEdgeNormal_angles K V hKV).subset
     rintro _ ⟨t, ht, rfl⟩
     exact ht.2
@@ -1092,7 +1092,10 @@ theorem inner_negativeVertex_zero_le_positiveVertex (K : ConvexBody Point)
       (continuous_id.inner continuous_const)).bddBelow
       ⟨(edgeVertices K 0).1, edgeVertices_fst_mem K 0, rfl⟩
   have hx := (edgeVertices_fst_mem K 0).2.trans (edgeVertices_snd_mem K 0).2.symm
-  simp [tangentVector, normalVector, frame, PiLp.inner_apply] at hx hy ⊢
+  simp only [normalVector, frame, Real.Angle.cos_zero, Real.Angle.sin_zero, neg_zero,
+    PiLp.inner_apply, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+    Matrix.cons_val_zero, one_mul, Matrix.cons_val_one, Matrix.cons_val_fin_one, zero_mul,
+    add_zero, tangentVector, zero_add, Real.Angle.cos_coe, Real.Angle.sin_coe, ge_iff_le] at hx hy ⊢
   have hsin := Real.sin_nonneg_of_mem_Icc hs
   rw [hx]
   linarith [mul_le_mul_of_nonneg_right hy hsin]
@@ -1145,8 +1148,7 @@ private theorem integral_sin_sub_eq_neg_inner_integral_tangentVector
       rw [ContinuousLinearMap.integral_comp_comm L hu]
     _ = -inner ℝ (normalVector t) (∫ x in s, tangentVector (u x) ∂μ) := rfl
 
-theorem tangentArm_convolution (K : RightAngleCapSpace) (t : ℝ)
-    (ht : t ∈ Set.Icc (0 : ℝ) (Real.pi / 2)) :
+theorem tangentArm_convolution (K : RightAngleCapSpace) (t : ℝ) :
     (tangentArmLengths K t).2.1 =
       ∫ u in (fun s : ℝ ↦ (s : Real.Angle)) '' Set.Ioc t (t + Real.pi / 2),
         (u - (t : Real.Angle)).sin ∂surfaceAreaMeasure K.val := by
@@ -1181,7 +1183,7 @@ theorem tangentArm_convolution (K : RightAngleCapSpace) (t : ℝ)
       -inner ℝ (normalVector (t : Real.Angle))
         ((edgeVertices K.val ((t + Real.pi / 2 : ℝ) : Real.Angle)).1 -
           (edgeVertices K.val (t : Real.Angle)).1) := by
-    obtain ⟨hA, _, hC, _⟩ := capTangentArm_identities K t ht
+    obtain ⟨hA, _, hC, _⟩ := capTangentArm_identities K t
     have hnt : inner ℝ (tangentVector (t : Real.Angle))
         (normalVector (t : Real.Angle)) = 0 := by
       rw [real_inner_comm]
@@ -2120,7 +2122,7 @@ theorem oppositeSurfaceData_angleImage (K : ConvexBody Point) {S : Set ℝ}
       refine ⟨s, hs, ?_⟩
       rw [Real.Angle.coe_add]
       abel
-  show Measure.map (fun t : Real.Angle ↦ t - ((Real.pi : ℝ) : Real.Angle))
+  change Measure.map (fun t : Real.Angle ↦ t - ((Real.pi : ℝ) : Real.Angle))
     (surfaceAreaMeasure K) _ = _
   rw [Measure.map_apply hm hS, hpre]
 

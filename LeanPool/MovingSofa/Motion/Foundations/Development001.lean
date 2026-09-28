@@ -976,8 +976,8 @@ private theorem rotationCalculation_g_bound (ω : RotationCalculationAngle)
       1 - rotationCalculationMinimum ω * (Real.cos ω.val / Real.sin ω.val) := by linarith
   have hr0 : 0 ≤ 1 - rotationCalculationMinimum ω * (Real.cos ω.val / Real.sin ω.val) := by linarith
   have hsquares := sq_le_sq₀ hr hr0 |>.2 hrle
-  have hrad : 0 ≤ 1 - (1 - d.val * (Real.cos ω.val / Real.sin ω.val)) ^ 2 := by nlinarith
-    [sq_nonneg (Real.cos ω.val)]
+  have hrad : 0 ≤ 1 - (1 - d.val * (Real.cos ω.val / Real.sin ω.val)) ^ 2 := by
+    nlinarith [sq_nonneg (Real.cos ω.val)]
   have hsqrt := Real.sq_sqrt hrad
   have hnonneg := Real.sqrt_nonneg (1 - (1 - d.val * (Real.cos ω.val / Real.sin ω.val)) ^ 2)
   change 2 * Real.cos ω.val < Real.sqrt _
@@ -1356,7 +1356,9 @@ theorem exists_standardPosition_translation (s : Set Point) (ω : ℝ)
         fin_cases i
         · have hcω := hcos hlt
           change v 0 = w 0
-          simp [normalVector, frame, PiLp.inner_apply, Fin.sum_univ_two] at hvω hwω
+          simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply,
+            RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+            Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one] at hvω hwω
           rw [hy] at hvω
           apply mul_left_cancel₀ hcω
           linarith [hvω, hwω]

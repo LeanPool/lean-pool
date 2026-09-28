@@ -192,7 +192,10 @@ private theorem cap_fan_boundary_mem {ω : ℝ} (K : CapSpace ω)
     rw [hsinωt, hcosωt] at hbound₂
     have hlp : l ≤ p 0 := by
       have hptv' := hptv
-      simp [tangentVector, frame, PiLp.inner_apply, hpy0] at hptv'
+      simp only [tangentVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply,
+        RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero,
+        neg_mul, Matrix.cons_val_one, Matrix.cons_val_fin_one, hpy0, mul_zero, add_zero,
+        Real.Angle.coe_add, neg_lt_sub_iff_lt_add] at hptv'
       dsimp [l]
       by_contra hp
       have hmul := mul_lt_mul_of_pos_left (lt_of_not_ge hp) hsint

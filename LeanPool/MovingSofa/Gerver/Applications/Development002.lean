@@ -69,7 +69,7 @@ private theorem gerver_cap_fiber_has_sofa_point
         inner ℝ z (normalVector ((0 : ℝ) : Real.Angle)) =
           inner ℝ q (normalVector ((0 : ℝ) : Real.Angle))} := by
       refine ⟨hf t ht, ?_⟩
-      show inner ℝ (f t) (normalVector ((0 : ℝ) : Real.Angle)) =
+      change inner ℝ (f t) (normalVector ((0 : ℝ) : Real.Angle)) =
         inner ℝ q (normalVector ((0 : ℝ) : Real.Angle))
       rw [inner_normalVector_zero, inner_normalVector_zero, ← h0, hpx]
     have hle : inner ℝ (f t) (normalVector ((Real.pi / 2 : ℝ) : Real.Angle)) ≤
@@ -135,7 +135,7 @@ private theorem gerver_cap_contact_faces (Kb : ConvexBody Point)
       rwa [hKset] at h2
     · intro h
       refine ⟨hKset ▸ h.1, ?_⟩
-      show inner ℝ z (normalVector a) = supportValue (Kb : Set Point) a
+      change inner ℝ z (normalVector a) = supportValue (Kb : Set Point) a
       rw [hKset]
       exact h.2
   have hsingleV : ∀ (a : Real.Angle) (p : Point), exposedEdge Kb a = {p} →
@@ -162,7 +162,7 @@ private theorem gerver_cap_contact_faces (Kb : ConvexBody Point)
       refine IsMinOn.isLocalMin ?_ (Icc_mem_nhds ht.1 ht.2)
       intro s hs
       have h := (hz.2 s hs).1
-      show (inner ℝ (paperGerverPath t) (normalVector (t : Real.Angle)) + 1) -
+      change (inner ℝ (paperGerverPath t) (normalVector (t : Real.Angle)) + 1) -
           inner ℝ z (normalVector (t : Real.Angle)) ≤
         (inner ℝ (paperGerverPath s) (normalVector (s : Real.Angle)) + 1) -
           inner ℝ z (normalVector (s : Real.Angle))
@@ -193,7 +193,7 @@ private theorem gerver_cap_contact_faces (Kb : ConvexBody Point)
       refine IsMinOn.isLocalMin ?_ (Icc_mem_nhds ht.1 ht.2)
       intro s hs
       have h := (hz.2 s hs).2
-      show (inner ℝ (paperGerverPath t) (tangentVector (t : Real.Angle)) + 1) -
+      change (inner ℝ (paperGerverPath t) (tangentVector (t : Real.Angle)) + 1) -
           inner ℝ z (tangentVector (t : Real.Angle)) ≤
         (inner ℝ (paperGerverPath s) (tangentVector (s : Real.Angle)) + 1) -
           inner ℝ z (tangentVector (s : Real.Angle))
@@ -311,13 +311,13 @@ private theorem gerver_literal_standard_position
       rotateTranslate ((-t : ℝ) : Real.Angle) (-v) p =
         rotationMap ((-t : ℝ) : Real.Angle) (p - v) := by
     intro t v p
-    show (EuclideanGeometry.o.rotation ((-t : ℝ) : Real.Angle)) (p + -v) =
+    change (EuclideanGeometry.o.rotation ((-t : ℝ) : Real.Angle)) (p + -v) =
       (EuclideanGeometry.o.rotation ((-t : ℝ) : Real.Angle)) (p - v)
     rw [← sub_eq_add_neg]
   have hrotinv : ∀ (t : ℝ) (w : Point),
       rotationMap ((-t : ℝ) : Real.Angle) (rotationMap ((t : ℝ) : Real.Angle) w) = w := by
     intro t w
-    show (EuclideanGeometry.o.rotation ((-t : ℝ) : Real.Angle))
+    change (EuclideanGeometry.o.rotation ((-t : ℝ) : Real.Angle))
       ((EuclideanGeometry.o.rotation ((t : ℝ) : Real.Angle)) w) = w
     rw [Real.Angle.coe_neg, ← Orientation.rotation_symm]
     exact (EuclideanGeometry.o.rotation ((t : ℝ) : Real.Angle)).symm_apply_apply w
@@ -346,7 +346,7 @@ private theorem gerver_literal_standard_position
     rw [hmapply]
     simp only [Set.Icc.coe_zero, zero_mul, neg_zero, Real.Angle.coe_zero, hpath0,
       sub_zero, add_zero]
-    show (EuclideanGeometry.o.rotation 0) p = p
+    change (EuclideanGeometry.o.rotation 0) p = p
     simp
   · -- each placement is a rotation followed by a translation
     intro r
@@ -362,7 +362,7 @@ private theorem gerver_literal_standard_position
       rw [hmapply]
       simp only [Set.Icc.coe_zero, zero_mul, neg_zero, Real.Angle.coe_zero, hpath0,
         sub_zero]
-      show (EuclideanGeometry.o.rotation 0) z = z
+      change (EuclideanGeometry.o.rotation 0) z = z
       simp
     rw [heq]
     exact mem_horizontalHallway_of_coordinates z (hcapx1 z hz.1)
@@ -380,7 +380,7 @@ private theorem gerver_literal_standard_position
     have hzw : z - paperGerverPath (r.val * (Real.pi / 2)) =
         rotationMap ((r.val * (Real.pi / 2) : ℝ) : Real.Angle) w := by
       rw [← hwz]
-      show rotationMap ((r.val * (Real.pi / 2) : ℝ) : Real.Angle) w +
+      change rotationMap ((r.val * (Real.pi / 2) : ℝ) : Real.Angle) w +
           paperGerverPath (r.val * (Real.pi / 2)) -
           paperGerverPath (r.val * (Real.pi / 2)) =
         rotationMap ((r.val * (Real.pi / 2) : ℝ) : Real.Angle) w
@@ -451,11 +451,11 @@ private theorem gerver_literal_cap_eq
       exact ⟨⟨hz.1, hcapy1 z hz⟩, hz.1, hcapy1 z hz⟩
     · rw [houter t]
       refine ⟨?_, ?_⟩
-      · show inner ℝ z (normalVector (t : Real.Angle)) ≤
+      · change inner ℝ z (normalVector (t : Real.Angle)) ≤
           supportValue gerverLiteralSofa (t : Real.Angle)
         rw [(hsupG t ht).1]
         exact (hz.2 t ht).1
-      · show inner ℝ z
+      · change inner ℝ z
             (normalVector ((t : Real.Angle) + ((Real.pi / 2 : ℝ) : Real.Angle))) ≤
           supportValue gerverLiteralSofa
             ((t : Real.Angle) + ((Real.pi / 2 : ℝ) : Real.Angle))
@@ -512,7 +512,7 @@ theorem gerver_capSupport_identification :
     rw [heq]
     exact continuous_vaddConst_trans_rotation.comp hpair
   have hpath0 : paperGerverPath 0 = 0 := by
-    show GerverSofa.PartF.Coordinates.toPlane
+    change GerverSofa.PartF.Coordinates.toPlane
       (GerverSofa.Romik.path GerverSofa.PartB.params 0) = 0
     rw [hreg.2.1]
     ext i
@@ -747,10 +747,10 @@ theorem gerver_paperNiche_identification :
     rfl
   refine ⟨fun t ht => ⟨(hhallK t ht).trans (hhallG t ht).symm, hhallG t ht, ?_⟩, ⟨K, hKset, ?_⟩,
     hmono, paperGerverSofa, Real.pi / 2, by rw [hGeq]; exact hstd, hmono.symm⟩
-  · show supportingPlacement gerverOuterCap (t : Real.Angle) hallwayParts.innerCorner =
+  · change supportingPlacement gerverOuterCap (t : Real.Angle) hallwayParts.innerCorner =
       paperGerverPath t
     rw [hplaceK t ht]
-    show rotationMap (t : Real.Angle) 0 + paperGerverPath t = paperGerverPath t
+    change rotationMap (t : Real.Angle) 0 + paperGerverPath t = paperGerverPath t
     rw [rotationMap, map_zero, zero_add]
   -- ### The cap niche is the literal niche
   · have hfan : ∀ q : Point, q ∈ capFan (Real.pi / 2) ↔ 0 ≤ q 1 := by
@@ -871,7 +871,7 @@ private theorem paperGerverContacts_zero_eq_toPlane {X W : ℝ → GerverSofa.Po
     paperGerverContacts t 0 =
       GerverSofa.PartF.Coordinates.toPlane (X t + (W t).1 • GerverSofa.v t + GerverSofa.u t) := by
   have hp : paperGerverPath t = GerverSofa.PartF.Coordinates.toPlane (X t) := by
-    show GerverSofa.PartF.Coordinates.toPlane
+    change GerverSofa.PartF.Coordinates.toPlane
       (GerverSofa.Romik.path GerverSofa.PartB.params t) = _
     rw [hx]
   simp only [paperGerverContacts, Matrix.cons_val_zero, hw, hp]
@@ -885,7 +885,7 @@ private theorem paperGerverContacts_two_eq_toPlane {X W : ℝ → GerverSofa.Poi
     paperGerverContacts t 2 =
       GerverSofa.PartF.Coordinates.toPlane (X t - (W t).2 • GerverSofa.u t + GerverSofa.v t) := by
   have hp : paperGerverPath t = GerverSofa.PartF.Coordinates.toPlane (X t) := by
-    show GerverSofa.PartF.Coordinates.toPlane
+    change GerverSofa.PartF.Coordinates.toPlane
       (GerverSofa.Romik.path GerverSofa.PartB.params t) = _
     rw [hx]
   simp only [paperGerverContacts, hw, hp]
@@ -924,14 +924,14 @@ private theorem exists_phaseCurves_of_stage (j : Fin 5) :
   fin_cases j
   · refine ⟨phaseA1, phaseC1, fun _ ↦ 0, fun _ ↦ 1 / 2, fun t ↦ A1_hasDerivAt_public t,
       fun t ↦ C1_hasDerivAt_public t, continuous_const, continuous_const, ?_, ?_⟩
-    · show ∀ t ∈ Set.Icc (0 : ℝ) GerversSofa.φ, _
+    · change ∀ t ∈ Set.Icc (0 : ℝ) GerversSofa.φ, _
       intro t ht
       have hx : path GerverSofa.PartB.params t = path1 GerverSofa.PartB.params t :=
         path_eq_path1_of_mem_Icc _ (by rw [hphi']; exact ht)
       have hw : paperGerverVelocityComponents t = alphaBeta1 GerverSofa.PartB.params t :=
         hvel 0 t ht
       exact ⟨paperGerverContacts_zero_eq_toPlane hx hw, paperGerverContacts_two_eq_toPlane hx hw⟩
-    · show ∀ t ∈ Set.Ioc (0 : ℝ) GerversSofa.φ, _
+    · change ∀ t ∈ Set.Ioc (0 : ℝ) GerversSofa.φ, _
       intro t ht
       refine ⟨?_, ?_⟩ <;> simp only [rhoA, rhoC, hphi', htheta', heta, htau] <;>
         split_ifs with h1 h2 h3 h4 <;>
@@ -944,14 +944,14 @@ private theorem exists_phaseCurves_of_stage (j : Fin 5) :
       fun t ↦ t / 2 - GerverSofa.PartC.params.b1,
       fun t ↦ A2_hasDerivAt_public t, fun t ↦ C2_hasDerivAt_public t, by fun_prop, by fun_prop,
       ?_, ?_⟩
-    · show ∀ t ∈ Set.Icc GerversSofa.φ GerversSofa.θ, _
+    · change ∀ t ∈ Set.Icc GerversSofa.φ GerversSofa.θ, _
       intro t ht
       have hx : path GerverSofa.PartB.params t = path2 GerverSofa.PartB.params t :=
         path_eq_path2_of_mem_Icc heqs (by rw [hphi', htheta']; exact ht)
       have hw : paperGerverVelocityComponents t = alphaBeta2 GerverSofa.PartB.params t :=
         hvel 1 t ht
       exact ⟨paperGerverContacts_zero_eq_toPlane hx hw, paperGerverContacts_two_eq_toPlane hx hw⟩
-    · show ∀ t ∈ Set.Ioc GerversSofa.φ GerversSofa.θ, _
+    · change ∀ t ∈ Set.Ioc GerversSofa.φ GerversSofa.θ, _
       intro t ht
       refine ⟨?_, ?_⟩ <;> simp only [rhoA, rhoC, hphi', htheta', heta, htau] <;>
         split_ifs with h1 h2 h3 h4 <;>
@@ -962,14 +962,14 @@ private theorem exists_phaseCurves_of_stage (j : Fin 5) :
       fun t ↦ 1 + GerverSofa.PartC.params.c2 + t,
       fun t ↦ A3_hasDerivAt_public t, fun t ↦ C3_hasDerivAt_public t, by fun_prop, by fun_prop,
       ?_, ?_⟩
-    · show ∀ t ∈ Set.Icc GerversSofa.θ (Real.pi / 2 - GerversSofa.θ), _
+    · change ∀ t ∈ Set.Icc GerversSofa.θ (Real.pi / 2 - GerversSofa.θ), _
       intro t ht
       have hx : path GerverSofa.PartB.params t = path3 GerverSofa.PartB.params t :=
         path_eq_path3_of_mem_Icc heqs hφθ' (by rw [htheta']; exact ht)
       have hw : paperGerverVelocityComponents t = alphaBeta3 GerverSofa.PartB.params t :=
         hvel 2 t ht
       exact ⟨paperGerverContacts_zero_eq_toPlane hx hw, paperGerverContacts_two_eq_toPlane hx hw⟩
-    · show ∀ t ∈ Set.Ioc GerversSofa.θ (Real.pi / 2 - GerversSofa.θ), _
+    · change ∀ t ∈ Set.Ioc GerversSofa.θ (Real.pi / 2 - GerversSofa.θ), _
       intro t ht
       refine ⟨?_, ?_⟩ <;> simp only [rhoA, rhoC, hphi', htheta', heta, htau] <;>
         split_ifs with h1 h2 h3 h4 <;>
@@ -981,14 +981,14 @@ private theorem exists_phaseCurves_of_stage (j : Fin 5) :
         GerverSofa.PartC.params.d2 + 1 / 2,
       fun t ↦ A4_hasDerivAt_public t, fun t ↦ C4_hasDerivAt_public t, by fun_prop, by fun_prop,
       ?_, ?_⟩
-    · show ∀ t ∈ Set.Icc (Real.pi / 2 - GerversSofa.θ) (Real.pi / 2 - GerversSofa.φ), _
+    · change ∀ t ∈ Set.Icc (Real.pi / 2 - GerversSofa.θ) (Real.pi / 2 - GerversSofa.φ), _
       intro t ht
       have hx : path GerverSofa.PartB.params t = path4 GerverSofa.PartB.params t :=
         path_eq_path4_of_mem_Icc heqs hφθ' hθq' (by rw [hphi', htheta']; exact ht)
       have hw : paperGerverVelocityComponents t = alphaBeta4 GerverSofa.PartB.params t :=
         hvel 3 t ht
       exact ⟨paperGerverContacts_zero_eq_toPlane hx hw, paperGerverContacts_two_eq_toPlane hx hw⟩
-    · show ∀ t ∈ Set.Ioc (Real.pi / 2 - GerversSofa.θ) (Real.pi / 2 - GerversSofa.φ), _
+    · change ∀ t ∈ Set.Ioc (Real.pi / 2 - GerversSofa.θ) (Real.pi / 2 - GerversSofa.φ), _
       intro t ht
       refine ⟨?_, ?_⟩ <;> simp only [rhoA, rhoC, hphi', htheta', heta, htau] <;>
         split_ifs with h1 h2 h3 h4 <;>
@@ -997,14 +997,14 @@ private theorem exists_phaseCurves_of_stage (j : Fin 5) :
           | (exfalso; linarith [ht.1, ht.2, hφθ, hθη, hητ])
   · refine ⟨phaseA5, phaseC5, fun _ ↦ 1 / 2, fun _ ↦ 0, fun t ↦ A5_hasDerivAt_public t,
       fun t ↦ by simpa using C5_hasDerivAt_public t, continuous_const, continuous_const, ?_, ?_⟩
-    · show ∀ t ∈ Set.Icc (Real.pi / 2 - GerversSofa.φ) (Real.pi / 2), _
+    · change ∀ t ∈ Set.Icc (Real.pi / 2 - GerversSofa.φ) (Real.pi / 2), _
       intro t ht
       have hx : path GerverSofa.PartB.params t = path5 GerverSofa.PartB.params t :=
         path_eq_path5_of_mem_Icc heqs hφθ' hθq' (by rw [hphi']; exact ht)
       have hw : paperGerverVelocityComponents t = alphaBeta5 GerverSofa.PartB.params t :=
         hvel 4 t ht
       exact ⟨paperGerverContacts_zero_eq_toPlane hx hw, paperGerverContacts_two_eq_toPlane hx hw⟩
-    · show ∀ t ∈ Set.Ioc (Real.pi / 2 - GerversSofa.φ) (Real.pi / 2), _
+    · change ∀ t ∈ Set.Ioc (Real.pi / 2 - GerversSofa.φ) (Real.pi / 2), _
       intro t ht
       refine ⟨?_, ?_⟩ <;> simp only [rhoA, rhoC, hphi', htheta', heta, htau] <;>
         split_ifs with h1 h2 h3 h4 <;>
@@ -1148,34 +1148,34 @@ private theorem gerverStageTimes_nonneg (k : Fin 6) : 0 ≤ gerverStageTimes k :
   obtain ⟨h0, h1, h2⟩ := gerver_switch_angle_bounds
   have hpi := Real.pi_gt_three
   fin_cases k
-  · show (0 : ℝ) ≤ 0
+  · change (0 : ℝ) ≤ 0
     exact le_refl 0
-  · show (0 : ℝ) ≤ GerversSofa.φ
+  · change (0 : ℝ) ≤ GerversSofa.φ
     linarith
-  · show (0 : ℝ) ≤ GerversSofa.θ
+  · change (0 : ℝ) ≤ GerversSofa.θ
     linarith
-  · show (0 : ℝ) ≤ Real.pi / 2 - GerversSofa.θ
+  · change (0 : ℝ) ≤ Real.pi / 2 - GerversSofa.θ
     linarith
-  · show (0 : ℝ) ≤ Real.pi / 2 - GerversSofa.φ
+  · change (0 : ℝ) ≤ Real.pi / 2 - GerversSofa.φ
     linarith
-  · show (0 : ℝ) ≤ Real.pi / 2
+  · change (0 : ℝ) ≤ Real.pi / 2
     linarith
 
 private theorem gerverStageTimes_le_pi_div_two (k : Fin 6) : gerverStageTimes k ≤ Real.pi / 2 := by
   obtain ⟨h0, h1, h2⟩ := gerver_switch_angle_bounds
   have hpi := Real.pi_gt_three
   fin_cases k
-  · show (0 : ℝ) ≤ Real.pi / 2
+  · change (0 : ℝ) ≤ Real.pi / 2
     linarith
-  · show GerversSofa.φ ≤ Real.pi / 2
+  · change GerversSofa.φ ≤ Real.pi / 2
     linarith
-  · show GerversSofa.θ ≤ Real.pi / 2
+  · change GerversSofa.θ ≤ Real.pi / 2
     linarith
-  · show Real.pi / 2 - GerversSofa.θ ≤ Real.pi / 2
+  · change Real.pi / 2 - GerversSofa.θ ≤ Real.pi / 2
     linarith
-  · show Real.pi / 2 - GerversSofa.φ ≤ Real.pi / 2
+  · change Real.pi / 2 - GerversSofa.φ ≤ Real.pi / 2
     linarith
-  · show Real.pi / 2 ≤ Real.pi / 2
+  · change Real.pi / 2 ≤ Real.pi / 2
     exact le_refl _
 
 private theorem gerverStageTimes_lt_succ (j : Fin 5) :
@@ -1183,15 +1183,15 @@ private theorem gerverStageTimes_lt_succ (j : Fin 5) :
   obtain ⟨h0, h1, h2⟩ := gerver_switch_angle_bounds
   have hpi := Real.pi_gt_three
   fin_cases j
-  · show (0 : ℝ) < GerversSofa.φ
+  · change (0 : ℝ) < GerversSofa.φ
     linarith
-  · show GerversSofa.φ < GerversSofa.θ
+  · change GerversSofa.φ < GerversSofa.θ
     linarith
-  · show GerversSofa.θ < Real.pi / 2 - GerversSofa.θ
+  · change GerversSofa.θ < Real.pi / 2 - GerversSofa.θ
     linarith
-  · show Real.pi / 2 - GerversSofa.θ < Real.pi / 2 - GerversSofa.φ
+  · change Real.pi / 2 - GerversSofa.θ < Real.pi / 2 - GerversSofa.φ
     linarith
-  · show Real.pi / 2 - GerversSofa.φ < Real.pi / 2
+  · change Real.pi / 2 - GerversSofa.φ < Real.pi / 2
     linarith
 
 private theorem gerverStageTimes_four_lt_pi_div_two : gerverStageTimes 4 < Real.pi / 2 := by
@@ -1252,7 +1252,7 @@ after the third stage time for `B` and before the second for `D`.
 /-- The second contact curve is the first one translated by `-u_t`. -/
 theorem paperGerverContacts_one_eq_sub (t : ℝ) :
     paperGerverContacts t 1 = paperGerverContacts t 0 - normalVector (t : Real.Angle) := by
-  show _ = paperGerverPath t + (paperGerverVelocityComponents t).1 •
+  change _ = paperGerverPath t + (paperGerverVelocityComponents t).1 •
     tangentVector (t : Real.Angle) + normalVector (t : Real.Angle) - normalVector _
   rw [add_sub_cancel_right]
   rfl
@@ -1260,7 +1260,7 @@ theorem paperGerverContacts_one_eq_sub (t : ℝ) :
 /-- The fourth contact curve is the third one translated by `-v_t`. -/
 theorem paperGerverContacts_three_eq_sub (t : ℝ) :
     paperGerverContacts t 3 = paperGerverContacts t 2 - tangentVector (t : Real.Angle) := by
-  show _ = paperGerverPath t - (paperGerverVelocityComponents t).2 •
+  change _ = paperGerverPath t - (paperGerverVelocityComponents t).2 •
     normalVector (t : Real.Angle) + tangentVector (t : Real.Angle) - tangentVector _
   rw [add_sub_cancel_right]
   rfl
@@ -2008,7 +2008,7 @@ theorem gerver_cap_area_lower_bound :
   -- The two path endpoints: `x(0) = 0` and `x(π/2) = (1 - a₁ + k₅₁, 0)`.
   obtain ⟨-, hzero, -⟩ := gerver_direct_path_regularity p hmem heqs
   have hpath0 : paperGerverPath 0 = 0 := by
-    show GerverSofa.PartF.Coordinates.toPlane (path GerverSofa.PartB.params 0) = 0
+    change GerverSofa.PartF.Coordinates.toPlane (path GerverSofa.PartB.params 0) = 0
     rw [hp, hzero]
     ext i
     fin_cases i <;> rfl
@@ -2018,10 +2018,10 @@ theorem gerver_cap_area_lower_bound :
       Prod.mk.injEq]
     constructor <;> ring
   have hxT0 : paperGerverPath (Real.pi / 2) 0 = 1 - p.a1 + p.k51 := by
-    show (path GerverSofa.PartB.params (Real.pi / 2)).1 = _
+    change (path GerverSofa.PartB.params (Real.pi / 2)).1 = _
     rw [hp, hpathT]
   have hxT1 : paperGerverPath (Real.pi / 2) 1 = 0 := by
-    show (path GerverSofa.PartB.params (Real.pi / 2)).2 = _
+    change (path GerverSofa.PartB.params (Real.pi / 2)).2 = _
     rw [hp, hpathT]
   -- The velocity components at the two endpoints.
   have hvel := paperGerverContactData_properties.2.2.2

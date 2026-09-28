@@ -117,8 +117,8 @@ theorem wedgeGaps_snd_eq_supportValue {ω : ℝ} (K : CapSpace ω)
   change inner ℝ (capVertices K ω).2.1
       (normalVector ((ω + Real.pi / 2 : ℝ) : Real.Angle)) =
     supportValue K.val ((ω + Real.pi / 2 : ℝ) : Real.Angle) at hC
-  simp [normalVector, frame, Real.Angle.cos_add_pi_div_two,
-    Real.Angle.sin_add_pi_div_two] at hC
+  simp only [normalVector, frame, Real.Angle.coe_add, Real.Angle.cos_add_pi_div_two,
+    Real.Angle.sin_coe, Real.Angle.sin_add_pi_div_two, Real.Angle.cos_coe] at hC
   change inner ℝ (capVertices K ω).2.1 (tangentVector (ω : Real.Angle)) =
     supportValue K.val ((ω + Real.pi / 2 : ℝ) : Real.Angle) at hC
   simp only [wedgeGaps, wedgeEndpoints, inner_sub_left,
@@ -220,8 +220,7 @@ open MeasureTheory
 
 namespace MovingSofa
 
-theorem capTangentArm_identities (K : RightAngleCapSpace) (t : ℝ)
-    (ht : t ∈ Set.Icc (0 : ℝ) (Real.pi / 2)) :
+theorem capTangentArm_identities (K : RightAngleCapSpace) (t : ℝ) :
     (rotatingHallwayParts (K.val : Set Point) (t : Real.Angle)).outerCorner =
       (capVertices K t).1.1 + (tangentArmLengths K t).1.1 • tangentVector (t : Real.Angle) ∧
     (rotatingHallwayParts (K.val : Set Point) (t : Real.Angle)).outerCorner =
@@ -713,7 +712,7 @@ theorem hasHalfPlaneRepresentation_of_base_projection (M : ConvexBody Point)
       simp only [Set.mem_iInter]
       intro u hu
       obtain ⟨θ, rfl⟩ := exists_angle_normalVector_eq hu
-      show inner ℝ p (normalVector θ) ≤ supportValue M θ
+      change inner ℝ p (normalVector θ) ≤ supportValue M θ
       rw [← Real.Angle.coe_toReal θ]
       set s : ℝ := θ.toReal
       rcases le_or_gt 0 s with hs0 | hs0
@@ -787,10 +786,11 @@ theorem supportValue_nonneg_of_mem_capUpperAngles {ω : ℝ} (K : CapSpace ω)
       ⟨(neg_nonpos.mpr (by positivity : 0 ≤ Real.pi / 2)).trans hφ.1,
         hφ.2.trans hω.le⟩
     have hinner : 0 ≤ inner ℝ p (normalVector (φ : Real.Angle)) := by
-      simp [normalVector, frame, PiLp.inner_apply, hpy]
+      simp only [normalVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply,
+        RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero,
+        Matrix.cons_val_one, Matrix.cons_val_fin_one, hpy, mul_zero, add_zero]
       exact mul_nonneg hcosφ hpx
     exact hinner.trans (inner_le_supportValue K.val hpK (φ : Real.Angle))
-
   · obtain ⟨p, hpK, hpnormal⟩ := exists_mem_inner_eq_supportValue K.val
       ((ω + Real.pi : ℝ) : Real.Angle)
     have hpFan := K.subset_capFan hpK
@@ -863,7 +863,10 @@ theorem supportValue_zero_smul_normalVector_mem {ω : ℝ} (K : CapSpace ω) :
           supportValue_nonneg_of_mem_capUpperAngles K hωlt
             (Or.inl ⟨le_rfl, K.property.1.le⟩)
         simp only [real_inner_smul_left]
-        simp [normalVector, frame, PiLp.inner_apply]
+        simp only [normalVector, frame, Real.Angle.cos_zero, Real.Angle.sin_zero, neg_zero,
+          Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply, RCLike.inner_apply,
+          conj_trivial, Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero, mul_one,
+          Matrix.cons_val_one, Matrix.cons_val_fin_one, mul_zero, add_zero, ge_iff_le]
         exact mul_nonneg hs (Real.cos_nonneg_of_mem_Icc
           ⟨by linarith [K.property.1, Real.pi_pos], K.property.2.1⟩)
     · change 0 ≤ inner ℝ (supportValue K.val (0 : Real.Angle) •
@@ -882,7 +885,11 @@ theorem supportValue_zero_smul_normalVector_mem {ω : ℝ} (K : CapSpace ω) :
     have hinner : inner ℝ
         (supportValue K.val (0 : Real.Angle) • normalVector (0 : Real.Angle))
         (normalVector (φ : Real.Angle)) ≤ inner ℝ p (normalVector (φ : Real.Angle)) := by
-      simp [normalVector, frame, PiLp.inner_apply, hpx]
+      simp only [normalVector, frame, Real.Angle.cos_zero, Real.Angle.sin_zero, neg_zero,
+        Real.Angle.cos_coe, Real.Angle.sin_coe, PiLp.inner_apply, PiLp.smul_apply, smul_eq_mul,
+        RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero,
+        mul_one, Matrix.cons_val_one, Matrix.cons_val_fin_one, mul_zero, add_zero, hpx,
+        le_add_iff_nonneg_right]
       exact mul_nonneg hsinφ hpy
     exact hinner.trans hbound
 
@@ -917,7 +924,11 @@ theorem supportValue_pi_smul_normalVector_mem_of_eq {ω : ℝ} (K : CapSpace ω)
         (supportValue K.val (Real.pi : Real.Angle) • normalVector (Real.pi : Real.Angle))
         (normalVector (φ : Real.Angle)) ≤ inner ℝ p (normalVector (φ : Real.Angle)) := by
       rw [← hpx]
-      simp [normalVector, frame, PiLp.inner_apply]
+      simp only [Fin.isValue, normalVector, frame, Real.Angle.cos_coe, Real.cos_pi,
+        Real.Angle.sin_coe, Real.sin_pi, neg_zero, neg_smul, inner_neg_left, PiLp.inner_apply,
+        PiLp.smul_apply, smul_eq_mul, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two,
+        Matrix.cons_val_zero, mul_neg, mul_one, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+        mul_zero, add_zero, neg_neg, le_add_iff_nonneg_right]
       exact mul_nonneg hsinφ hpy
     exact hinner.trans hbound
 
@@ -953,7 +964,11 @@ theorem supportValue_add_pi_div_two_smul_tangentVector_mem_of_lt {ω : ℝ}
       simp
     · change 0 ≤ inner ℝ (L • tangentVector (ω : Real.Angle))
         (normalVector ((Real.pi / 2 : ℝ) : Real.Angle))
-      simp [tangentVector, normalVector, frame, PiLp.inner_apply]
+      simp only [tangentVector, frame, Real.Angle.cos_coe, Real.Angle.sin_coe, normalVector,
+        Real.cos_pi_div_two, Real.sin_pi_div_two, PiLp.inner_apply, PiLp.smul_apply,
+        smul_eq_mul, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+        Matrix.cons_val_zero, mul_neg, zero_mul, neg_zero, Matrix.cons_val_one,
+        Matrix.cons_val_fin_one, one_mul, zero_add]
       exact mul_nonneg hL hcosω.le
   · intro φ hφ
     have hdiff : φ - ω ∈ Set.Icc (-(Real.pi / 2)) (Real.pi / 2) := by

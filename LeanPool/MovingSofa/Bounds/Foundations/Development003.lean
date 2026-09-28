@@ -294,7 +294,7 @@ private theorem rightAngle_bRay_prev_leg_length (n : ℕ) (hn : 2 ≤ n)
       (t : Real.Angle)).outerCorner =
         (capVertices K.val t).2.2 +
           (tangentArmLengths K.val t).2.2 • normalVector (t : Real.Angle)
-    exact (capTangentArm_identities K.val t htI).2.2.2
+    exact (capTangentArm_identities K.val t).2.2.2
   have hsupport : supportValue K.val.val (u : Real.Angle) =
       inner ℝ c (normalVector (u : Real.Angle)) := by
     simpa only [u, δ, c] using rightAngle_supportValue_prev_shift n hn K ht
@@ -386,7 +386,7 @@ private theorem rightAngle_bRay_next_leg_length (n : ℕ) (hn : 2 ≤ n)
       (t : Real.Angle)).outerCorner =
         (capVertices K.val t).2.1 +
           (tangentArmLengths K.val t).2.1 • normalVector (t : Real.Angle)
-    exact (capTangentArm_identities K.val t htI).2.2.1
+    exact (capTangentArm_identities K.val t).2.2.1
   have hsupport : supportValue K.val.val (u : Real.Angle) =
       inner ℝ c (normalVector (u : Real.Angle)) := by
     simpa only [u, δ, c] using rightAngle_supportValue_next_shift n hn K ht

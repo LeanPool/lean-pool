@@ -1138,7 +1138,7 @@ theorem paperGerverSofa_eq_literal : paperGerverSofa = gerverLiteralSofa := by
         rw [← inner_rotationMap_tangentVector p t, hpq]
       refine ⟨p, (mem_hallway_iff p).2 ?_, ?_⟩
       · rw [h0, h1]; exact h
-      · show rotationMap t p + v = q
+      · change rotationMap t p + v = q
         rw [hpq]; abel
   have hconttan : Continuous (fun t : ℝ ↦ tangentVector (t : Real.Angle)) := by
     let c : ℝ → (i : Fin 2) → ℝ :=
@@ -1161,7 +1161,7 @@ theorem paperGerverSofa_eq_literal : paperGerverSofa = gerverLiteralSofa := by
   have hpathcont : Continuous paperGerverPath :=
     GerverSofa.PartF.Coordinates.continuous_toPlane.comp hreg.1.continuous
   have hpath0 : paperGerverPath 0 = 0 := by
-    show GerverSofa.PartF.Coordinates.toPlane
+    change GerverSofa.PartF.Coordinates.toPlane
       (GerverSofa.Romik.path GerverSofa.PartB.params 0) = 0
     rw [hreg.2.1]
     ext i
@@ -1591,7 +1591,7 @@ theorem paperGerverContactData_properties :
       (fun t => (W t).2) (contDiff_toPlane hX) hW.fst hW.snd).contDiffOn.congr ?_
     intro t ht
     have hx : paperGerverPath t = toPlane (X t) := by
-      show toPlane (path GerverSofa.PartB.params t) = toPlane (X t)
+      change toPlane (path GerverSofa.PartB.params t) = toPlane (X t)
       rw [hp]
       exact congrArg toPlane (hXe t ht)
     simp only [paperGerverContacts, hx, hvel (W t) t (hWe t ht)]
@@ -1871,23 +1871,23 @@ private theorem gerver_contact_derivatives_from_frame (i : Fin 5) (t : ℝ)
     · simp only [paperGerverContacts, hpath t ht, hvel t ht]
       rfl
   refine ⟨?_, ?_, ?_, ?_⟩
-  · show inner ℝ (derivWithin (fun s => paperGerverContacts s 0) (gerverStageIntervals i) t)
+  · change inner ℝ (derivWithin (fun s => paperGerverContacts s 0) (gerverStageIntervals i) t)
       (tangentVector (t : Real.Angle)) = B t + a' + 1
     rw [hc0.derivWithin huniq]
     simp only [inner_add_left, real_inner_smul_left, inner_neg_left, hXv, huv, hvv]
     ring
-  · show inner ℝ (derivWithin (fun s => paperGerverContacts s 1) (gerverStageIntervals i) t)
+  · change inner ℝ (derivWithin (fun s => paperGerverContacts s 1) (gerverStageIntervals i) t)
       (tangentVector (t : Real.Angle)) = B t + a'
     rw [hc1.derivWithin huniq]
     simp only [inner_add_left, real_inner_smul_left, inner_neg_left, hXv, huv, hvv]
     ring
-  · show inner ℝ (-derivWithin (fun s => paperGerverContacts s 2) (gerverStageIntervals i) t)
+  · change inner ℝ (-derivWithin (fun s => paperGerverContacts s 2) (gerverStageIntervals i) t)
       (normalVector (t : Real.Angle)) = b' + 1 - A t
     rw [hc2.derivWithin huniq]
     simp only [inner_neg_left, inner_add_left, inner_sub_left, real_inner_smul_left, hXu, hvu,
       huu]
     ring
-  · show inner ℝ (derivWithin (fun s => paperGerverContacts s 3) (gerverStageIntervals i) t)
+  · change inner ℝ (derivWithin (fun s => paperGerverContacts s 3) (gerverStageIntervals i) t)
       (normalVector (t : Real.Angle)) = A t - b'
     rw [hc3.derivWithin huniq]
     simp only [inner_sub_left, inner_add_left, real_inner_smul_left, hXu, hvu, huu]
@@ -1973,7 +1973,7 @@ theorem gerver_stageODEs (i : Fin 5) (t : ℝ) (ht : t ∈ gerverStageIntervals 
       (hshape (1 / 2) 0 0 (-2 * p.a1) (2 * p.a2) _ fun s => by dsimp [alphaBeta1]; ring)
       (hshape (-1) 0 0 (2 * p.a2) (2 * p.a1) _ fun s => by dsimp [alphaBeta1]; ring)
       (fun r hr => by
-        show toPlane (path GerverSofa.PartB.params r) = toPlane (path1 p r)
+        change toPlane (path GerverSofa.PartB.params r) = toPlane (path1 p r)
         rw [hp]
         exact congrArg toPlane (path_eq_path1_of_mem_Icc p (hI0 ▸ hr)))
       (fun r hr => hvel r hr)
@@ -1992,7 +1992,7 @@ theorem gerver_stageODEs (i : Fin 5) (t : ℝ) (ht : t ∈ gerverStageIntervals 
       (hshape (1 + 2 * p.b1) (-1) 0 0 0 _ fun s => by dsimp [alphaBeta2]; ring)
       (hshape (p.b2 + 1 / 2) p.b1 (-(1 / 4)) 0 0 _ fun s => by dsimp [alphaBeta2]; ring)
       (fun r hr => by
-        show toPlane (path GerverSofa.PartB.params r) = toPlane (path2 p r)
+        change toPlane (path GerverSofa.PartB.params r) = toPlane (path2 p r)
         rw [hp]
         exact congrArg toPlane (path_eq_path2_of_mem_Icc heqs (hI1 ▸ hr)))
       (fun r hr => hvel r hr)
@@ -2011,7 +2011,7 @@ theorem gerver_stageODEs (i : Fin 5) (t : ℝ) (ht : t ∈ gerverStageIntervals 
       (hshape (-1 - p.c2) (-1) 0 0 0 _ fun s => by dsimp [alphaBeta3]; ring)
       (hshape (1 + p.c1) (-1) 0 0 0 _ fun s => by dsimp [alphaBeta3]; ring)
       (fun r hr => by
-        show toPlane (path GerverSofa.PartB.params r) = toPlane (path3 p r)
+        change toPlane (path GerverSofa.PartB.params r) = toPlane (path3 p r)
         rw [hp]
         exact congrArg toPlane (path_eq_path3_of_mem_Icc heqs h1 (hI2 ▸ hr)))
       (fun r hr => hvel r hr)
@@ -2030,7 +2030,7 @@ theorem gerver_stageODEs (i : Fin 5) (t : ℝ) (ht : t ∈ gerverStageIntervals 
       (hshape (-p.d2 - 1 / 2) (-p.d1) (1 / 4) 0 0 _ fun s => by dsimp [alphaBeta4]; ring)
       (hshape (2 * p.d1 - 1) (-1) 0 0 0 _ fun s => by dsimp [alphaBeta4]; ring)
       (fun r hr => by
-        show toPlane (path GerverSofa.PartB.params r) = toPlane (path4 p r)
+        change toPlane (path GerverSofa.PartB.params r) = toPlane (path4 p r)
         rw [hp]
         exact congrArg toPlane (path_eq_path4_of_mem_Icc heqs h1 h2 (hI3 ▸ hr)))
       (fun r hr => hvel r hr)
@@ -2049,7 +2049,7 @@ theorem gerver_stageODEs (i : Fin 5) (t : ℝ) (ht : t ∈ gerverStageIntervals 
       (hshape 1 0 0 (-2 * p.e1) (2 * p.e2) _ fun s => by dsimp [alphaBeta5]; ring)
       (hshape (-(1 / 2)) 0 0 (2 * p.e2) (2 * p.e1) _ fun s => by dsimp [alphaBeta5]; ring)
       (fun r hr => by
-        show toPlane (path GerverSofa.PartB.params r) = toPlane (path5 p r)
+        change toPlane (path GerverSofa.PartB.params r) = toPlane (path5 p r)
         rw [hp]
         exact congrArg toPlane (path_eq_path5_of_mem_Icc heqs h1 h2 (hI4 ▸ hr)))
       (fun r hr => hvel r hr)
@@ -2155,19 +2155,19 @@ theorem gerverStageTimes_strictMono : StrictMono gerverStageTimes := by
   rw [selected_theta] at hqt
   refine Fin.strictMono_iff_lt_succ.mpr fun i ↦ ?_
   fin_cases i
-  · show gerverStageTimes 0 < gerverStageTimes 1
+  · change gerverStageTimes 0 < gerverStageTimes 1
     simp only [gerverStageTimes, Matrix.cons_val_zero, Matrix.cons_val_one]
     linarith
-  · show gerverStageTimes 1 < gerverStageTimes 2
+  · change gerverStageTimes 1 < gerverStageTimes 2
     simp only [gerverStageTimes, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]
     linarith
-  · show gerverStageTimes 2 < gerverStageTimes 3
+  · change gerverStageTimes 2 < gerverStageTimes 3
     simp only [gerverStageTimes, Matrix.cons_val]
     linarith
-  · show gerverStageTimes 3 < gerverStageTimes 4
+  · change gerverStageTimes 3 < gerverStageTimes 4
     simp only [gerverStageTimes, Matrix.cons_val]
     linarith
-  · show gerverStageTimes 4 < gerverStageTimes 5
+  · change gerverStageTimes 4 < gerverStageTimes 5
     simp only [gerverStageTimes, Matrix.cons_val]
     linarith
 
@@ -2279,10 +2279,10 @@ theorem hasDerivWithinAt_paperGerverContacts_one {i : Fin 5} {t c α' : ℝ} {α
     convert h using 1
     module
   refine hmain.hasDerivWithinAt.congr (fun y hy ↦ ?_) ?_
-  · show paperGerverPath y + (paperGerverVelocityComponents y).1 •
+  · change paperGerverPath y + (paperGerverVelocityComponents y).1 •
       tangentVector (y : Real.Angle) = _
     rw [hαβ y hy]
-  · show paperGerverPath t + (paperGerverVelocityComponents t).1 •
+  · change paperGerverPath t + (paperGerverVelocityComponents t).1 •
       tangentVector (t : Real.Angle) = _
     rw [hαβ t ht]
 
@@ -2306,10 +2306,10 @@ theorem hasDerivWithinAt_paperGerverContacts_three {i : Fin 5} {t c β' : ℝ} {
     convert h using 1
     module
   refine hmain.hasDerivWithinAt.congr (fun y hy ↦ ?_) ?_
-  · show paperGerverPath y - (paperGerverVelocityComponents y).2 •
+  · change paperGerverPath y - (paperGerverVelocityComponents y).2 •
       normalVector (y : Real.Angle) = _
     rw [hαβ y hy]
-  · show paperGerverPath t - (paperGerverVelocityComponents t).2 •
+  · change paperGerverPath t - (paperGerverVelocityComponents t).2 •
       normalVector (t : Real.Angle) = _
     rw [hαβ t ht]
 
@@ -2431,7 +2431,7 @@ theorem hasDerivAt_inner_paperGerverPath_normalVector (t : ℝ) :
       (inner ℝ (paperGerverContacts t 1) (tangentVector (t : Real.Angle))) t := by
   have h := (hasDerivAt_paperGerverPath_frame t).inner ℝ (hasDerivAt_normalVector t)
   convert h using 1
-  show inner ℝ (paperGerverPath t + (paperGerverVelocityComponents t).1 •
+  change inner ℝ (paperGerverPath t + (paperGerverVelocityComponents t).1 •
     tangentVector (t : Real.Angle)) (tangentVector (t : Real.Angle)) = _
   rw [inner_add_left, inner_add_left, real_inner_smul_left, real_inner_smul_left,
     real_inner_smul_left, inner_tangentVector_self, inner_normalVector_self,
@@ -2446,7 +2446,7 @@ theorem hasDerivAt_inner_paperGerverPath_tangentVector (t : ℝ) :
       (-inner ℝ (paperGerverContacts t 3) (normalVector (t : Real.Angle))) t := by
   have h := (hasDerivAt_paperGerverPath_frame t).inner ℝ (hasDerivAt_tangentVector t)
   convert h using 1
-  show -inner ℝ (paperGerverPath t - (paperGerverVelocityComponents t).2 •
+  change -inner ℝ (paperGerverPath t - (paperGerverVelocityComponents t).2 •
     normalVector (t : Real.Angle)) (normalVector (t : Real.Angle)) = _
   rw [inner_sub_left, inner_add_left, real_inner_smul_left, real_inner_smul_left,
     real_inner_smul_left, inner_neg_right, inner_normalVector_self, inner_tangentVector_self,

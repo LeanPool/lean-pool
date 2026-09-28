@@ -47,10 +47,10 @@ theorem areaUpperBound : AreaUpperBound := by
   intro s m hs
   have harea := paperGerverSofa_maximum.2 s (canonical_paper_motion_bridge.2 s m hs)
   rw [← gerver_canonical_paper_literal.1] at harea
-  obtain ⟨-, hmeasS, hfinS⟩ := canonical_motion_compactness s m hs
+  obtain ⟨-, -, hfinS⟩ := canonical_motion_compactness s m hs
   obtain ⟨mG, hmG⟩ := isMovingSofa_gerversSofa
-  obtain ⟨-, hmeasG, hfinG⟩ := canonical_motion_compactness gerversSofa mG hmG
-  exact (real_area_le_iff_volume_le s gerversSofa hmeasS hmeasG hfinS hfinG).mp harea
+  obtain ⟨-, -, hfinG⟩ := canonical_motion_compactness gerversSofa mG hmG
+  exact (real_area_le_iff_volume_le s gerversSofa hfinS hfinG).mp harea
 
 end MovingSofa
 

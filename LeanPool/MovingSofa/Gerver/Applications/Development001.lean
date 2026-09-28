@@ -401,34 +401,34 @@ theorem evalZ_sound (s : ℕ) (hs1 : 1 ≤ s) (hs5 : s ≤ 5) {z : SI} {x : ℝ}
     have h' : gerverContactPoint 1 x 0 = (GerverSofa.PartC.A x).1 :=
       congrArg Prod.fst (fromPlane_paperGerverContacts x ht 0)
     rw [h']
-    show (GerverSofa.Romik.path GerverSofa.PartB.params x).1 +
+    change (GerverSofa.Romik.path GerverSofa.PartB.params x).1 +
       (GerverSofa.PartC.alphaBetaAt x).1 * (GerverSofa.v x).1 + (GerverSofa.u x).1 = _
     rw [hpath1, hal]
-    show P.1 + AB.1 * (-Real.sin x) + Real.cos x = _
+    change P.1 + AB.1 * (-Real.sin x) + Real.cos x = _
     ring
   have hdA2 : gerverContactPoint 1 x 1 = P.2 + AB.1 * Real.cos x + Real.sin x := by
     have h' : gerverContactPoint 1 x 1 = (GerverSofa.PartC.A x).2 :=
       congrArg Prod.snd (fromPlane_paperGerverContacts x ht 0)
     rw [h']
-    show (GerverSofa.Romik.path GerverSofa.PartB.params x).2 +
+    change (GerverSofa.Romik.path GerverSofa.PartB.params x).2 +
       (GerverSofa.PartC.alphaBetaAt x).1 * (GerverSofa.v x).2 + (GerverSofa.u x).2 = _
     rw [hpath2, hal]
-    show P.2 + AB.1 * Real.cos x + Real.sin x = _
+    change P.2 + AB.1 * Real.cos x + Real.sin x = _
     ring
   have hdB1 : gerverContactPoint 2 x 0 = P.1 - AB.1 * Real.sin x := by
     have h' : gerverContactPoint 2 x 0 = (GerverSofa.PartC.B x).1 :=
       congrArg Prod.fst (fromPlane_paperGerverContacts x ht 1)
     rw [h']
-    show (GerverSofa.Romik.path GerverSofa.PartB.params x).1 +
+    change (GerverSofa.Romik.path GerverSofa.PartB.params x).1 +
       (GerverSofa.PartC.alphaBetaAt x).1 * (GerverSofa.v x).1 = _
     rw [hpath1, hal]
-    show P.1 + AB.1 * (-Real.sin x) = _
+    change P.1 + AB.1 * (-Real.sin x) = _
     ring
   have hdB2 : gerverContactPoint 2 x 1 = P.2 + AB.1 * Real.cos x := by
     have h' : gerverContactPoint 2 x 1 = (GerverSofa.PartC.B x).2 :=
       congrArg Prod.snd (fromPlane_paperGerverContacts x ht 1)
     rw [h']
-    show (GerverSofa.Romik.path GerverSofa.PartB.params x).2 +
+    change (GerverSofa.Romik.path GerverSofa.PartB.params x).2 +
       (GerverSofa.PartC.alphaBetaAt x).1 * (GerverSofa.v x).2 = _
     rw [hpath2, hal]
     rfl
@@ -436,16 +436,16 @@ theorem evalZ_sound (s : ℕ) (hs1 : 1 ≤ s) (hs5 : s ≤ 5) {z : SI} {x : ℝ}
     have h' : gerverContactPoint 3 x 0 = (GerverSofa.PartC.C x).1 :=
       congrArg Prod.fst (fromPlane_paperGerverContacts x ht 2)
     rw [h']
-    show (GerverSofa.Romik.path GerverSofa.PartB.params x).1 -
+    change (GerverSofa.Romik.path GerverSofa.PartB.params x).1 -
       (GerverSofa.PartC.alphaBetaAt x).2 * (GerverSofa.u x).1 + (GerverSofa.v x).1 = _
     rw [hpath1, hbe]
-    show P.1 - AB.2 * Real.cos x + -Real.sin x = _
+    change P.1 - AB.2 * Real.cos x + -Real.sin x = _
     ring
   have hdC2 : gerverContactPoint 3 x 1 = P.2 - AB.2 * Real.sin x + Real.cos x := by
     have h' : gerverContactPoint 3 x 1 = (GerverSofa.PartC.C x).2 :=
       congrArg Prod.snd (fromPlane_paperGerverContacts x ht 2)
     rw [h']
-    show (GerverSofa.Romik.path GerverSofa.PartB.params x).2 -
+    change (GerverSofa.Romik.path GerverSofa.PartB.params x).2 -
       (GerverSofa.PartC.alphaBetaAt x).2 * (GerverSofa.u x).2 + (GerverSofa.v x).2 = _
     rw [hpath2, hbe]
     rfl
@@ -453,7 +453,7 @@ theorem evalZ_sound (s : ℕ) (hs1 : 1 ≤ s) (hs5 : s ≤ 5) {z : SI} {x : ℝ}
     have h' : gerverContactPoint 4 x 0 = (GerverSofa.PartC.D x).1 :=
       congrArg Prod.fst (fromPlane_paperGerverContacts x ht 3)
     rw [h']
-    show (GerverSofa.Romik.path GerverSofa.PartB.params x).1 -
+    change (GerverSofa.Romik.path GerverSofa.PartB.params x).1 -
       (GerverSofa.PartC.alphaBetaAt x).2 * (GerverSofa.u x).1 = _
     rw [hpath1, hbe]
     rfl
@@ -461,7 +461,7 @@ theorem evalZ_sound (s : ℕ) (hs1 : 1 ≤ s) (hs5 : s ≤ 5) {z : SI} {x : ℝ}
     have h' : gerverContactPoint 4 x 1 = (GerverSofa.PartC.D x).2 :=
       congrArg Prod.snd (fromPlane_paperGerverContacts x ht 3)
     rw [h']
-    show (GerverSofa.Romik.path GerverSofa.PartB.params x).2 -
+    change (GerverSofa.Romik.path GerverSofa.PartB.params x).2 -
       (GerverSofa.PartC.alphaBetaAt x).2 * (GerverSofa.u x).2 = _
     rw [hpath2, hbe]
     rfl
@@ -587,7 +587,7 @@ open GerverAreaCert
 theorem paperGerverPath_zero : paperGerverPath 0 = 0 := by
   have hreg := gerver_direct_path_regularity GerverSofa.PartB.params
     GerverSofa.PartB.params_mem GerverSofa.PartB.params_equations
-  show GerverSofa.PartF.Coordinates.toPlane
+  change GerverSofa.PartF.Coordinates.toPlane
     (GerverSofa.Romik.path GerverSofa.PartB.params 0) = 0
   rw [hreg.2.1]
   ext i
@@ -695,7 +695,7 @@ def gerverFanNormal (i : ℕ) : ℝ :=
 private theorem inner_paperGerverContacts_zero_normalVector (t : ℝ) :
     inner ℝ (paperGerverContacts t 0) (normalVector (t : Real.Angle)) =
       inner ℝ (paperGerverPath t) (normalVector (t : Real.Angle)) + 1 := by
-  show inner ℝ (paperGerverPath t +
+  change inner ℝ (paperGerverPath t +
     (paperGerverVelocityComponents t).1 • tangentVector (t : Real.Angle) +
       normalVector (t : Real.Angle)) (normalVector (t : Real.Angle)) = _
   rw [inner_add_left, inner_add_left, real_inner_smul_left,
@@ -706,7 +706,7 @@ private theorem inner_paperGerverContacts_zero_normalVector (t : ℝ) :
 private theorem inner_paperGerverContacts_two_tangentVector (t : ℝ) :
     inner ℝ (paperGerverContacts t 2) (tangentVector (t : Real.Angle)) =
       inner ℝ (paperGerverPath t) (tangentVector (t : Real.Angle)) + 1 := by
-  show inner ℝ (paperGerverPath t -
+  change inner ℝ (paperGerverPath t -
     (paperGerverVelocityComponents t).2 • normalVector (t : Real.Angle) +
       tangentVector (t : Real.Angle)) (tangentVector (t : Real.Angle)) = _
   rw [inner_add_left, inner_sub_left, real_inner_smul_left,
@@ -736,7 +736,7 @@ theorem gerverFanAnchor_snd : gerverFanAnchor 1 = 0 := by
   have h := congrArg Prod.snd (fromPlane_paperGerverContacts (Real.pi / 2) hT 2)
   have hC : (GerverSofa.PartC.C (Real.pi / 2)).2 = 0 :=
     GerverSofa.PartC.Stage2.C_T_snd_zero
-  show (GerverSofa.PartF.Coordinates.fromPlane (paperGerverContacts (Real.pi / 2) 2)).2 = 0
+  change (GerverSofa.PartF.Coordinates.fromPlane (paperGerverContacts (Real.pi / 2) 2)).2 = 0
   rw [h]
   simpa using hC
 
@@ -750,7 +750,7 @@ theorem gerverOuterCap_quadrant {q : Point} (hq : q ∈ gerverOuterCap) :
   have hsplit : (Real.pi / 2 + Real.pi / 2 : ℝ) = 0 + Real.pi := by ring
   rw [hsplit, normalVector_add_pi, inner_neg_right, inner_neg_right,
     inner_normalVector_zero, inner_normalVector_zero] at h
-  show gerverFanAnchor 0 ≤ q 0
+  change gerverFanAnchor 0 ≤ q 0
   simp only [gerverFanAnchor]
   linarith
 
@@ -1472,7 +1472,7 @@ theorem gerver_canonical_paper_literal :
   have hrt : ∀ (α : Real.Angle) (v s : Point),
       rotateTranslate α v s = rotationMap α s + rotationMap α v := by
     intro α v s
-    show (EuclideanGeometry.o.rotation α) (s + v) = _
+    change (EuclideanGeometry.o.rotation α) (s + v) = _
     exact map_add _ _ _
   -- The canonical placements agree with the paper ones on `[0, π/2]`.
   have himg : ∀ t ∈ Set.Icc (0 : ℝ) (Real.pi / 2), ∀ S : Set Point,
@@ -1506,7 +1506,7 @@ theorem gerver_canonical_paper_literal :
         rw [← inner_rotationMap_tangentVector s t, hsz]
       refine ⟨s, (hS s).2 ?_, ?_⟩
       · rw [h0, h1]; exact h
-      · show rotationMap t s + v = z
+      · change rotationMap t s + v = z
         rw [hsz]; abel
   have hhoriz : ∀ s : Point, s ∈ horizontalHallway ↔ s 0 ≤ 1 ∧ 0 ≤ s 1 ∧ s 1 ≤ 1 :=
     fun s => ⟨mem_horizontalHallway_coordinates,
@@ -1520,7 +1520,7 @@ theorem gerver_canonical_paper_literal :
   have hreg := gerver_direct_path_regularity GerverSofa.PartB.params
     GerverSofa.PartB.params_mem GerverSofa.PartB.params_equations
   have hpath0 : paperGerverPath 0 = 0 := by
-    show GerverSofa.PartF.Coordinates.toPlane
+    change GerverSofa.PartF.Coordinates.toPlane
       (GerverSofa.Romik.path GerverSofa.PartB.params 0) = 0
     rw [hreg.2.1]
     ext i
@@ -1546,7 +1546,7 @@ theorem gerver_canonical_paper_literal :
           paperGerverPath (Real.pi / 2)) '' verticalHallway) ∩
       ⋂ t ∈ Set.Icc (0 : ℝ) (Real.pi / 2),
         (fun s ↦ rotationMap (t : Real.Angle) s + paperGerverPath t) '' hallway := by
-    show rotateTranslate 0 (GerversSofa.p 0) '' horizontalHallway ∩
+    change rotateTranslate 0 (GerversSofa.p 0) '' horizontalHallway ∩
         rotateTranslate ((Real.pi / 2 : ℝ) : Real.Angle)
           (GerversSofa.p (Real.pi / 2)) '' verticalHallway ∩
         (⋂ t ∈ Set.Icc (0 : ℝ) (Real.pi / 2),
@@ -1558,7 +1558,7 @@ theorem gerver_canonical_paper_literal :
       {z : Point | 0 ≤ z 1 ∧ z 1 ≤ 1} ∩
         ⋂ t ∈ Set.Icc (0 : ℝ) (Real.pi / 2),
           (fun s ↦ rotationMap (t : Real.Angle) s + paperGerverPath t) '' hallway := by
-    show (strips (Real.pi / 2)).1 ∩ (strips (Real.pi / 2)).2.2 ∩ _ = _
+    change (strips (Real.pi / 2)).1 ∩ (strips (Real.pi / 2)).2.2 ∩ _ = _
     rw [Set.ext hstrip]
     rfl
   rw [hgs, hpaper]
@@ -1570,7 +1570,7 @@ theorem gerver_canonical_paper_literal :
   have hnT : inner ℝ (q - paperGerverPath (Real.pi / 2))
       (normalVector ((Real.pi / 2 : ℝ) : Real.Angle)) = q 1 := by
     rw [inner_normalVector_pi_div_two]
-    show q 1 - paperGerverPath (Real.pi / 2) 1 = q 1
+    change q 1 - paperGerverPath (Real.pi / 2) 1 = q 1
     rw [hpathT, sub_zero]
   have hAhoriz := himage (fun a b => a ≤ 1 ∧ 0 ≤ b ∧ b ≤ 1) horizontalHallway hhoriz
   have hAvert := himage (fun a b => 0 ≤ a ∧ a ≤ 1 ∧ b ≤ 1) verticalHallway hvert

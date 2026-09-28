@@ -112,8 +112,8 @@ theorem aestronglyMeasurable_tangentArm_fst (C : RightAngleCapSpace) :
     (surfaceAreaMeasure_face_union C.val).1
   apply (stronglyMeasurable_integral_positiveArmKernel
     (surfaceAreaMeasure C.val)).aestronglyMeasurable.congr
-  filter_upwards [ae_restrict_mem measurableSet_Ioc] with t ht
-  rw [tangentArm_convolution C t ⟨ht.1.le, ht.2⟩, positiveArmKernel_eq_indicator]
+  filter_upwards [] with t
+  rw [tangentArm_convolution C t, positiveArmKernel_eq_indicator]
   exact integral_indicator (μ := surfaceAreaMeasure C.val)
     (f := fun u : Real.Angle ↦ (u - (t : Real.Angle)).sin)
     (Real.Angle.measurableSet_image_Ioc t (t + Real.pi / 2))
@@ -122,7 +122,7 @@ theorem aestronglyMeasurable_tangentArm_fst (C : RightAngleCapSpace) :
 quarter-turn of normal directions against the surface area measure. -/
 theorem tangentArm_fst_nonneg (C : RightAngleCapSpace) {t : ℝ}
     (ht : t ∈ Icc (0 : ℝ) (Real.pi / 2)) : 0 ≤ (tangentArmLengths C t).2.1 := by
-  rw [tangentArm_convolution C t ht]
+  rw [tangentArm_convolution C t]
   refine setIntegral_nonneg (Real.Angle.measurableSet_image_Ioc t (t + Real.pi / 2)) ?_
   rintro u ⟨v, hv, rfl⟩
   rw [← Real.Angle.coe_sub, Real.Angle.sin_coe]
@@ -155,7 +155,7 @@ theorem abs_tangentArm_fst_le (C : RightAngleCapSpace) {t : ℝ}
     |(tangentArmLengths C t).2.1| ≤ (surfaceAreaMeasure C.val).real Set.univ := by
   let _ : IsFiniteMeasure (surfaceAreaMeasure C.val) :=
     (surfaceAreaMeasure_face_union C.val).1
-  rw [tangentArm_convolution C t ht]
+  rw [tangentArm_convolution C t]
   change ‖∫ u in (fun s : ℝ ↦ (s : Real.Angle)) '' Ioc t (t + Real.pi / 2),
     (u - (t : Real.Angle)).sin ∂surfaceAreaMeasure C.val‖ ≤ _
   calc
@@ -371,7 +371,7 @@ private theorem tangentArmLengths_le_of_diam (K : RightAngleCapSpace)
       (tangentArmLengths K t).2.1 ∈ Set.Icc (0 : ℝ) 5 ∧
       (tangentArmLengths K t).2.2 ∈ Set.Icc (0 : ℝ) 5 := by
   intro t ht
-  obtain ⟨hAp, hAm, hCp, hCm⟩ := capTangentArm_identities K t ht
+  obtain ⟨hAp, hAm, hCp, hCm⟩ := capTangentArm_identities K t
   have huu : inner ℝ (normalVector (t : Real.Angle)) (normalVector (t : Real.Angle)) = 1 :=
     inner_normalVector_self t
   have hvv : inner ℝ (tangentVector (t : Real.Angle)) (tangentVector (t : Real.Angle)) = 1 :=
@@ -946,8 +946,8 @@ theorem polygonCap_arm_integral_limit (K : ℕ → RightAngleCapSpace)
     change Tendsto (fun n ↦ ∫ u in A,
       (u - (t : Real.Angle)).sin ∂surfaceAreaMeasure (K n).val) atTop
       (𝓝 (∫ u in A, (u - (t : Real.Angle)).sin ∂surfaceAreaMeasure L.val)) at hint
-    have hKt (n : ℕ) := tangentArm_convolution (K n) t ⟨ht.1.le, ht.2⟩
-    have hLt := tangentArm_convolution L t ⟨ht.1.le, ht.2⟩
+    have hKt (n : ℕ) := tangentArm_convolution (K n) t
+    have hLt := tangentArm_convolution L t
     simpa only [A, hKt, hLt] using hint
   have hmeas_arm := aestronglyMeasurable_tangentArm_fst
   have hbound_arm (C : RightAngleCapSpace) (t : ℝ)
@@ -956,7 +956,7 @@ theorem polygonCap_arm_integral_limit (K : ℕ → RightAngleCapSpace)
         (surfaceAreaMeasure C.val).real Set.univ := by
     let _ : IsFiniteMeasure (surfaceAreaMeasure C.val) :=
       (surfaceAreaMeasure_face_union C.val).1
-    rw [tangentArm_convolution C t ht]
+    rw [tangentArm_convolution C t]
     change ‖∫ u in (fun s : ℝ ↦ (s : Real.Angle)) '' Ioc t (t + Real.pi / 2),
       (u - (t : Real.Angle)).sin ∂surfaceAreaMeasure C.val‖ ≤ _
     calc

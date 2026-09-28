@@ -210,7 +210,7 @@ theorem capCornerAngleMeasure_angleImage_eq_setLIntegral (K : SpecialCapSpace) {
   have hturn : Real.pi ≤ -1 + 2 * Real.pi := by linarith [Real.pi_gt_three]
   have hsub : Set.Icc (0 : ℝ) Real.pi ⊆ Set.Ioc (-1 : ℝ) Real.pi :=
     fun x hx ↦ ⟨by linarith [hx.1], hx.2⟩
-  show Measure.map (fun s : ℝ ↦ (s : Real.Angle))
+  change Measure.map (fun s : ℝ ↦ (s : Real.Angle))
       ((volume.restrict (Set.Icc 0 Real.pi)).withDensity
         (fun s ↦ ENNReal.ofReal (capCornerDensity K s)))
       ((fun s : ℝ ↦ (s : Real.Angle)) '' T) = _

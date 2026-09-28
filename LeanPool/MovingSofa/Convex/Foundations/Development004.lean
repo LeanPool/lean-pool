@@ -2173,7 +2173,6 @@ private theorem brokenSupportPath_injective
     have := congrArg Subtype.val heq
     norm_num at this ⊢
     linarith
-
   · have hmem : (Path.segment P O) ⟨2 * (s : ℝ), by constructor <;> linarith
         [s.property.1, s.property.2]⟩ ∈ segment ℝ P O ∩ segment ℝ O Q := by
       constructor
@@ -2903,7 +2902,7 @@ theorem convexBoundaryArc_jordan (K : ConvexBody Point) (a b : ℝ)
   · rw [hrange]
     exact jordanInterior_boundaryLoop_disjoint_supportIntersection K hab hba A hA
 
-end
+end MovingSofa
 
 end
 
@@ -3008,7 +3007,7 @@ theorem convexArc_tangentRegion_area_le (B : ConvexBody Point) (a b : ℝ)
     have hRnotB : ∀ q ∈ jordanInterior (Set.range γ.path.val), q ∉ (B : Set Point) := by
       intro q hq hqB
       refine Set.disjoint_left.mp hdisj hq (Set.mem_iInter₂.mpr fun t _ ↦ ?_)
-      show inner ℝ q (normalVector (t : Real.Angle)) ≤ supportValue (B : Set Point) _
+      change inner ℝ q (normalVector (t : Real.Angle)) ≤ supportValue (B : Set Point) _
       exact inner_le_supportValue B hqB _
     have hRE : jordanInterior (Set.range γ.path.val) ⊆ E := fun q hq =>
       hsubE q (hint hq) (hRC hq) (hRnotB q hq)
@@ -3019,7 +3018,7 @@ theorem convexArc_tangentRegion_area_le (B : ConvexBody Point) (a b : ℝ)
       curveArea_eq_jordanInterior_area γ.a γ.b γ.ordered _ γ.path horient
     have hparc : curveAreaFunctional p.path = convexArcArea B a b := by
       rw [convexArcArea_eq_jordanArcArea_of_realizes hA]
-      show _ = curveAreaFunctional (Classical.choice A.property).path
+      change _ = curveAreaFunctional (Classical.choice A.property).path
       exact (curveArea_reparametrization.2.1 A.val A.val p
         (Classical.choice A.property) rfl).1 rfl rfl
     have hval : segmentArea (edgeVertices B (a : Real.Angle)).1

@@ -135,8 +135,11 @@ theorem CapSpace.mem_horizontalStrip {ω : ℝ} (K : CapSpace ω)
   rw [K.property.2.2.2.1] at hupper
   rw [K.property.2.2.2.2.2.1] at hlower
   rw [show 3 * Real.pi / 2 = Real.pi + Real.pi / 2 by ring] at hlower
-  simp [normalVector, frame, PiLp.inner_apply, Real.sin_add, Real.cos_add,
-    -Real.Angle.coe_add] at hupper hlower
+  simp only [normalVector, frame, Real.Angle.cos_coe, Real.cos_pi_div_two, Real.Angle.sin_coe,
+    Real.sin_pi_div_two, PiLp.inner_apply, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two,
+    Fin.isValue, Matrix.cons_val_zero, zero_mul, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+    one_mul, zero_add, Real.cos_add, Real.cos_pi, mul_zero, Real.sin_pi, mul_one, sub_self,
+    Real.sin_add, neg_neg, neg_mul, Left.neg_nonpos_iff] at hupper hlower
   exact ⟨by linarith, hupper⟩
 
 /-- A cap has area at most its horizontal width. -/

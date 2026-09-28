@@ -5,6 +5,7 @@ Authors: Dawid Trela
 -/
 module
 
+public import Mathlib.Analysis.Normed.Affine.ContinuousAffineMap
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartB.Semantics.Batch003
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartC.Semantics.Batch001
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch046
@@ -255,7 +256,7 @@ theorem ofSE2_one : ofSE2 SE2.one = AffineIsometryEquiv.refl ℝ Plane := by
 
 theorem image_action (g : SE2) (S : Set Point) :
     ofSE2 g '' (toPlane '' S) = toPlane '' (g.act '' S) := by
-  simp only [Set.image_image, Function.comp_def, ofSE2_apply_toPlane]
+  simp only [Set.image_image, ofSE2_apply_toPlane]
 
 /-- The coordinate quarter-turn, used to express continuous matrix coefficients. -/
 def quarterTurnLinear : Plane →ₗ[ℝ] Plane where
