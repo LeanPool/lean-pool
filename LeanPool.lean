@@ -4414,6 +4414,17 @@ public import LeanPool.KrafftSieve.OptimalWeights
 public import LeanPool.KrafftSieve.SelbergWeights
 public import LeanPool.KrafftSieve.ThirdHarmonic
 public import LeanPool.KrafftSieve.Variance
+public import LeanPool.KrohnRhodes
+public import LeanPool.KrohnRhodes.FactorTower
+public import LeanPool.KrohnRhodes.Foundations.Cayley
+public import LeanPool.KrohnRhodes.Foundations.ConstantMaps
+public import LeanPool.KrohnRhodes.Foundations.Division
+public import LeanPool.KrohnRhodes.Foundations.GreenRelations
+public import LeanPool.KrohnRhodes.Foundations.KrasnerKaloujnine
+public import LeanPool.KrohnRhodes.Foundations.LocalDivisor
+public import LeanPool.KrohnRhodes.Foundations.MonoidWreathBridge
+public import LeanPool.KrohnRhodes.Foundations.WreathProduct
+public import LeanPool.KrohnRhodes.PrimeDecomposition
 public import LeanPool.Kuramoto
 public import LeanPool.Kuramoto.Connections
 public import LeanPool.Kuramoto.Contraction
