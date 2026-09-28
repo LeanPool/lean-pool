@@ -10938,34 +10938,39 @@ projects:
     - commutative-algebra
     msc:
     - 13F15
-  - slug: lean-scottish-book-155
-    title: A counterexample to Scottish Book Problem 155
-    summary: A Lean proof that there are real Banach spaces X and Y and a bijection U from X
-      to Y which preserves every pairwise distance on every closed ball of radius one quarter
-      while failing to be a global isometry. This gives a counterexample to Scottish Book Problem
-      155.
-    branch: functional analysis
-    entry_module: LeanPool.ScottishBook155
+  - slug: salem-theorem
+    title: Every Pisot number is a two-sided limit of Salem numbers
+    summary: Proves Salem’s two-sided approximation theorem for Pisot numbers, preserving both the polynomial
+      reciprocal-family construction and the exceptional quadratic-unit construction.
+    branch: algebraic number theory
+    entry_module: LeanPool.SalemTheorem
     authors:
-    - Yoshito Ishiki
+    - Stephanie Alexander
     source:
-      url: https://github.com/yoshito-ishiki-math/lean-scottish-book-155
-      github_repo: yoshito-ishiki-math/lean-scottish-book-155
-      commit: 233eff4af7901eadee7927a1eb1f814ad0f3c118
+      url: https://github.com/stalex444/salem-theorem
+      github_repo: stalex444/salem-theorem
+      commit: 887be765bf24c6a645600dfc7bd0a1055a1761dd
     license: MIT
     status: verified
-    main_declarations:
-    - ScottishBook155.claim14
-    main_results:
-    - declaration: ScottishBook155.claim14
-      informal: There exist real Banach spaces and a bijection between them that preserves all
-        pairwise distances on each closed ball of radius one quarter but is not a global isometry.
-    tags:
-    - functional-analysis
-    msc:
-    - 46B20
-    - 54E40
     provenance: AI
+    main_declarations:
+    - SalemTheorem.salem_theorem
+    main_results:
+    - declaration: SalemTheorem.salem_theorem
+      informal: Every Pisot number is approached by Salem numbers from both below and above.
+    - declaration: SalemTheorem.salem_construction_two_sided
+      informal: For the nondegenerate Pisot polynomial pattern, reciprocal-family polynomials have Salem
+        roots arbitrarily near the Pisot root from either side.
+    - declaration: SalemTheorem.salem_quadratic_unit
+      informal: The quadratic-unit family supplies Salem roots approaching each reciprocal quadratic Pisot
+        unit from either side.
+    tags:
+    - number-theory
+    - pisot-numbers
+    - salem-numbers
+    msc:
+    - 11R06
+    - 11R09
   - slug: rr-equals-nonmeager-paper
     title: The nonmeagre lower bound for the rearrangement number
     summary: Formalizes the inequality non(M) ≤ rr in ZFC via relational systems, category and slalom bounds,
@@ -11145,3 +11150,31 @@ projects:
     msc:
     - 47B06
     - 46B20
+  - slug: lean-scottish-book-155
+    title: A counterexample to Scottish Book Problem 155
+    summary: A Lean proof that there are real Banach spaces X and Y and a bijection U from X
+      to Y which preserves every pairwise distance on every closed ball of radius one quarter
+      while failing to be a global isometry. This gives a counterexample to Scottish Book Problem
+      155.
+    branch: functional analysis
+    entry_module: LeanPool.ScottishBook155
+    authors:
+    - Yoshito Ishiki
+    source:
+      url: https://github.com/yoshito-ishiki-math/lean-scottish-book-155
+      github_repo: yoshito-ishiki-math/lean-scottish-book-155
+      commit: 233eff4af7901eadee7927a1eb1f814ad0f3c118
+    license: MIT
+    status: verified
+    main_declarations:
+    - ScottishBook155.claim14
+    main_results:
+    - declaration: ScottishBook155.claim14
+      informal: There exist real Banach spaces and a bijection between them that preserves all
+        pairwise distances on each closed ball of radius one quarter but is not a global isometry.
+    tags:
+    - functional-analysis
+    msc:
+    - 46B20
+    - 54E40
+    provenance: AI
