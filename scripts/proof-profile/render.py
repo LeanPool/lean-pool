@@ -55,9 +55,11 @@ heartbeat_re = re.compile(
 )
 # The wrapper writes failure records after Lean and /usr/bin/time finish.
 # Successful traces can print the same text, so only terminal records count.
-heartbeat_location_error_re = re.compile(r"^[^\s\[\"']+:\d+:\d+: error:")
 heartbeat_exit_error_re = re.compile(
     r"^error: count-heartbeats command exited with status [1-9][0-9]*$"
+)
+heartbeat_exit_success_re = re.compile(
+    r"^success: count-heartbeats command exited with status 0$"
 )
 heartbeat_source_error_re = re.compile(r"^error: could not read .+ at revision .+$")
 profile_exit_error_re = re.compile(
@@ -166,34 +168,35 @@ def parse_heartbeat_sections(log_text: str) -> dict[str, dict[str, float | int |
                 declarations += 1
             elif legacy_heartbeat_re.search(line):
                 legacy = True
-        trailer = [time_re.fullmatch(line.strip()) for line in lines[-3:]]
+        terminal = lines[-1] if lines else ""
+        succeeded = bool(heartbeat_exit_success_re.fullmatch(terminal))
+        timed_lines = lines[:-1] if succeeded else lines
+        trailer = [time_re.fullmatch(line.strip()) for line in timed_lines[-3:]]
         complete_timing = (
-            len(trailer) == 3
+            succeeded
+            and len(trailer) == 3
             and all(trailer)
             and [match.group(1) for match in trailer] == ["real", "user", "sys"]
         )
         if lines:
-            terminal = lines[-1]
             if heartbeat_exit_error_re.fullmatch(terminal):
                 errors += 1
             elif heartbeat_source_error_re.fullmatch(terminal) and not any(
                 time_re.fullmatch(line.strip()) for line in lines
             ):
                 errors += 1
-        # Incomplete logs may contain a diagnostic before the wrapper's final
-        # status record. A complete successful time trailer makes traced text
-        # that looks like a diagnostic harmless.
-        if not complete_timing and any(
-            heartbeat_location_error_re.match(line) for line in lines
-        ):
+        # A trace without complete timing and an explicit wrapper success
+        # marker may stop before later commands or the failure status record.
+        if not complete_timing and not errors:
             errors += 1
         # A source file may itself use #count_heartbeats. Its messages are not
         # inputs to this measurement; root traces establish the new format.
         legacy = legacy and not declarations
-        if not declarations:
+        if not declarations and not errors:
             errors += 1
         if errors:
             heartbeats = 0.0
+            wall_seconds = None
         result[fname] = {
             "heartbeats": heartbeats,
             "declarations": declarations,
@@ -366,21 +369,28 @@ sections = split_sections(log_text)
 expected_profile_files = added_files if compare else added_files + modified_files
 profile_headers = [fname for fname, _body in sections]
 first_profile_line = log_text.split("\n", 1)[0].removesuffix("\r")
-profile_boundaries_valid = (
+profile_headers_valid = (
     profile_headers == expected_profile_files
     and (
         not expected_profile_files
         or first_profile_line == f"## {expected_profile_files[0]}"
     )
-    and all(has_profile_trailer(body) for _fname, body in sections)
 )
-if not profile_boundaries_valid:
+profile_boundaries_valid = profile_headers_valid and all(
+    has_profile_trailer(body) for _fname, body in sections
+)
+if not profile_headers_valid:
     sections = []
     out.append(
         "> **`lean --profile` timings unavailable.** The log has missing, "
-        "unexpected, duplicate, or out-of-order file headers, or an incomplete "
-        "timing trailer. See the raw "
+        "unexpected, duplicate, or out-of-order file headers. See the raw "
         "artifact; count-heartbeats measurements remain separate.\n\n"
+    )
+elif not profile_boundaries_valid:
+    out.append(
+        "> **Some `lean --profile` timings unavailable.** Files with incomplete "
+        "timing trailers are excluded; completed file timings remain in the report. "
+        "See the raw artifact for details.\n\n"
     )
 
 # Parse `lake build` timing up front so the wall-clock number can
@@ -681,9 +691,11 @@ for fname, body in sections:
             if phase == "import":
                 import_ms += value
             phases += 1
-    valid_profile = not failed and phases > 0
+    valid_profile = has_profile_trailer(body) and not failed and phases > 0
     if not valid_profile and not errors:
         errors = 1
+    if not valid_profile:
+        wall_seconds = None
     if valid_profile:
         for phase, value in file_phase_totals.items():
             phase_totals[phase] = phase_totals.get(phase, 0.0) + value

@@ -30,6 +30,8 @@ src="$outdir/src-$slug.lean"
     status=$?
     if [ "$status" -ne 0 ]; then
       echo "error: count-heartbeats command exited with status $status"
+    else
+      echo "success: count-heartbeats command exited with status 0"
     fi
   else
     echo "error: could not read $file at revision $ref"
