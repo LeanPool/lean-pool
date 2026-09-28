@@ -4997,8 +4997,9 @@ Carathéodory's continuity theorem. That application is in
 
 ## References
 
-* R. Engelking, *General Topology*, Theorem 6.1.29 (Hahn's theorem on quotients).
-* J. G. Hocking and G. S. Young, *Topology*, Ch. 3.
+* Mathlib, `Mathlib.Topology.Connected.LocallyConnected`,
+  `Topology.IsCoinducing.locallyConnectedSpace`: a topology coinduced by a locally connected
+  topology is locally connected. This is the quotient-map result applied below.
 -/
 
 @[expose] public section

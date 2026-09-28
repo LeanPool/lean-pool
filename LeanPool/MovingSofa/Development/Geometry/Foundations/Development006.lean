@@ -3777,7 +3777,8 @@ theorem finite_pairDifferenceNormal_angles (V : Finset Point) :
   refine ⟨p, hp, Set.mem_iUnion₂.mpr ⟨q, hq, ?_⟩⟩
   simp [N, hpq, ht]
 
-private theorem isExposed_exposedEdge (K : ConvexBody Point) (t : Real.Angle) :
+/-- The support edge of a convex body is an exposed face. -/
+theorem isExposed_exposedEdge (K : ConvexBody Point) (t : Real.Angle) :
     IsExposed ℝ (K : Set Point) (exposedEdge K t) := by
   intro _
   refine ⟨innerSL ℝ (normalVector t), ?_⟩
@@ -7767,21 +7768,8 @@ theorem exists_rectifiableOrientedArc_convexBoundaryArc_of_cut
     hfrontier hinter
 
 private theorem isExposed_exposedEdge_jordan (K : ConvexBody Point) (t : Real.Angle) :
-    IsExposed ℝ (K : Set Point) (exposedEdge K t) := by
-  intro _
-  refine ⟨innerSL ℝ (normalVector t), ?_⟩
-  ext p
-  simp only [Set.mem_ofPred_eq, innerSL_apply_apply, real_inner_comm]
-  constructor
-  · intro hp
-    refine ⟨hp.1, fun q hq ↦ ?_⟩
-    rw [hp.2]
-    exact inner_le_supportValue K hq t
-  · rintro ⟨hp, hmax⟩
-    refine ⟨hp, le_antisymm (inner_le_supportValue K hp t) ?_⟩
-    apply csSup_le (K.nonempty.image _)
-    rintro _ ⟨q, hq, rfl⟩
-    exact hmax q hq
+    IsExposed ℝ (K : Set Point) (exposedEdge K t) :=
+  isExposed_exposedEdge K t
 
 /-- A singleton exposed face of a segment is one of its endpoints. -/
 theorem endpoint_of_exposedEdge_eq_singleton_of_eq_segment
@@ -8927,64 +8915,8 @@ private lemma isSegmentTraversal_lineSegmentBVPath (P Q : Point) :
 private theorem boundedVariation_concatUnitIntervals_coordinate_jordan
     (p q : ContinuousBVPaths 0 1)
     (hjoin : p.val ⟨1, by norm_num⟩ = q.val ⟨0, by norm_num⟩) (i : Fin 2) :
-    BoundedVariationOn (fun t ↦ Function.concatUnitIntervals p.val q.val t i) Set.univ := by
-  let z : Set.Icc (0 : ℝ) 2 := ⟨0, by norm_num⟩
-  let o : Set.Icc (0 : ℝ) 2 := ⟨1, by norm_num⟩
-  let w : Set.Icc (0 : ℝ) 2 := ⟨2, by norm_num⟩
-  let f := fun t ↦ Function.concatUnitIntervals p.val q.val t i
-  have hzo : z ≤ o := by change (0 : ℝ) ≤ 1; norm_num
-  have how : o ≤ w := by change (1 : ℝ) ≤ 2; norm_num
-  have hsplit := eVariationOn.Icc_add_Icc f hzo how (Set.mem_univ o)
-  simp only [Set.univ_inter] at hsplit
-  have hwhole : Set.Icc z w = Set.univ := by
-    ext t
-    exact iff_true_intro t.property
-  rw [hwhole] at hsplit
-  change eVariationOn f Set.univ ≠ ⊤
-  rw [← hsplit]
-  apply ENNReal.add_ne_top.mpr
-  constructor
-  · refine ne_top_of_le_ne_top (p.property.2 i) ?_
-    calc
-      eVariationOn f (Set.Icc z o) =
-          eVariationOn (fun t : Set.Icc (0 : ℝ) 2 ↦
-            p.val (Set.projIcc 0 1 (by norm_num) (t : ℝ)) i) (Set.Icc z o) := by
-              apply eVariationOn.congr
-              intro t ht
-              have ht' : (t : ℝ) ≤ 1 := by exact ht.2
-              simp [f, Function.concatUnitIntervals, ht']
-      _ ≤ eVariationOn (fun t ↦ p.val t i) Set.univ := by
-        simpa only [Function.comp_def] using
-          (eVariationOn.comp_le_of_monotoneOn (fun t ↦ p.val t i)
-            (t := Set.Icc z o)
-            (fun t : Set.Icc (0 : ℝ) 2 ↦ Set.projIcc 0 1 (by norm_num) (t : ℝ))
-            (fun _ _ _ _ hxy ↦ Set.monotone_projIcc (by norm_num) hxy)
-            (Set.mapsTo_univ _ _))
-  · refine ne_top_of_le_ne_top (q.property.2 i) ?_
-    calc
-      eVariationOn f (Set.Icc o w) =
-          eVariationOn (fun t : Set.Icc (0 : ℝ) 2 ↦
-            q.val (Set.projIcc 0 1 (by norm_num) ((t : ℝ) - 1)) i) (Set.Icc o w) := by
-              apply eVariationOn.congr
-              intro t ht
-              have hleft : (1 : ℝ) ≤ t := by exact ht.1
-              have ht' : ¬(t : ℝ) ≤ 1 ∨ (t : ℝ) = 1 := by
-                rcases lt_or_eq_of_le hleft with h | h
-                · exact Or.inl (not_le_of_gt h)
-                · exact Or.inr h.symm
-              rcases ht' with ht' | htEq
-              · simp [f, Function.concatUnitIntervals, ht']
-              · simpa [f, Function.concatUnitIntervals, htEq] using
-                  congrArg (fun z ↦ z i) hjoin
-      _ ≤ eVariationOn (fun t ↦ q.val t i) Set.univ := by
-        simpa only [Function.comp_def] using
-          (eVariationOn.comp_le_of_monotoneOn (fun t ↦ q.val t i)
-            (t := Set.Icc o w)
-            (fun t : Set.Icc (0 : ℝ) 2 ↦
-              Set.projIcc 0 1 (by norm_num) ((t : ℝ) - 1))
-            (fun _ _ _ _ hxy ↦ Set.monotone_projIcc (by norm_num)
-              (sub_le_sub_right (show (_ : ℝ) ≤ _ from hxy) 1))
-            (Set.mapsTo_univ _ _))
+    BoundedVariationOn (fun t ↦ Function.concatUnitIntervals p.val q.val t i) Set.univ :=
+  boundedVariation_concatUnitIntervals_coordinate p q hjoin i
 
 private def concatUnitPaths_jordan (p q : ContinuousBVPaths 0 1)
     (hjoin : p.val ⟨1, by norm_num⟩ = q.val ⟨0, by norm_num⟩) :

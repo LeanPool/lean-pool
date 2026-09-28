@@ -3847,7 +3847,8 @@ theorem curveArea_cyclic_rotation
     ContinuousBVPaths.restrictionData]
   exact (curveArea_cyclic_cut_sum hab x s).symm
 
-private theorem boundedVariation_concatUnitIntervals_coordinate
+/-- Concatenating continuous paths with matching endpoints preserves coordinatewise variation. -/
+theorem boundedVariation_concatUnitIntervals_coordinate
     (p q : ContinuousBVPaths 0 1)
     (hjoin : p.val ⟨1, by norm_num⟩ = q.val ⟨0, by norm_num⟩) (i : Fin 2) :
     BoundedVariationOn (fun t ↦ Function.concatUnitIntervals p.val q.val t i) Set.univ := by

@@ -1056,23 +1056,26 @@ def vecA (r t : ℝ) : Point :=
 def vecC (r t : ℝ) : Point :=
   (-r * Real.cos t, -r * Real.sin t)
 
-private theorem square_hasDerivAt (t : ℝ) :
+/-- Derivative of the scalar square in the additive form used by the phase formulas. -/
+theorem square_hasDerivAt (t : ℝ) :
     HasDerivAt (fun s : ℝ => s * s) (t + t) t := by
   have h := (hasDerivAt_id t).fun_mul (hasDerivAt_id t)
   simpa only [id_eq, one_mul, mul_one] using h
 
-private theorem u_hasDerivAt (t : ℝ) : HasDerivAt u (v t) t := by
+/-- The horizontal frame vector has derivative equal to the vertical frame vector. -/
+theorem u_hasDerivAt (t : ℝ) : HasDerivAt u (v t) t := by
   change HasDerivAt (fun s : ℝ => (Real.cos s, Real.sin s))
     (-Real.sin t, Real.cos t) t
   exact (Real.hasDerivAt_cos t).prodMk (Real.hasDerivAt_sin t)
 
-private theorem v_hasDerivAt (t : ℝ) : HasDerivAt v (-u t) t := by
+/-- The vertical frame vector has derivative equal to the negative horizontal vector. -/
+theorem v_hasDerivAt (t : ℝ) : HasDerivAt v (-u t) t := by
   change HasDerivAt (fun s : ℝ => (-Real.sin s, Real.cos s))
     (-Real.cos t, -Real.sin t) t
   exact (Real.hasDerivAt_sin t).fun_neg.prodMk (Real.hasDerivAt_cos t)
 
 /-- Derivative of `addK (rot t (z1 t,z2 t))` in body coordinates. -/
-private theorem rotAddK_hasDerivAt
+theorem rotAddK_hasDerivAt
     {z1 z2 : ℝ → ℝ} {z1' z2' k1 k2 : ℝ} (t : ℝ)
     (hz1 : HasDerivAt z1 z1' t) (hz2 : HasDerivAt z2 z2' t) :
     HasDerivAt
@@ -1094,7 +1097,8 @@ private theorem rotAddK_hasDerivAt
     have h := (h1.fun_add h2).fun_add (hasDerivAt_const t k2)
     exact h.congr_deriv (by ring)
 
-private theorem path1_hasDerivAt (t : ℝ) :
+/-- The phase 1 path has the specified velocity in the rotating frame. -/
+theorem path1_hasDerivAt (t : ℝ) :
     HasDerivAt (Romik.path1 params)
       (Romik.rot t (Romik.alphaBeta1 params t)) t := by
   let z1 : ℝ → ℝ := fun s =>
@@ -1123,7 +1127,8 @@ private theorem path1_hasDerivAt (t : ℝ) :
   apply congrArg (Romik.rot t)
   ext <;> dsimp [z1, z2, Romik.alphaBeta1] <;> ring
 
-private theorem path2_hasDerivAt (t : ℝ) :
+/-- The phase 2 path has the specified velocity in the rotating frame. -/
+theorem path2_hasDerivAt (t : ℝ) :
     HasDerivAt (Romik.path2 params)
       (Romik.rot t (Romik.alphaBeta2 params t)) t := by
   let z1 : ℝ → ℝ := fun s =>
@@ -1152,7 +1157,8 @@ private theorem path2_hasDerivAt (t : ℝ) :
   apply congrArg (Romik.rot t)
   ext <;> dsimp [z1, z2, Romik.alphaBeta2] <;> ring
 
-private theorem path3_hasDerivAt (t : ℝ) :
+/-- The phase 3 path has the specified velocity in the rotating frame. -/
+theorem path3_hasDerivAt (t : ℝ) :
     HasDerivAt (Romik.path3 params)
       (Romik.rot t (Romik.alphaBeta3 params t)) t := by
   let z1 : ℝ → ℝ := fun s => params.c1 - s
@@ -1173,7 +1179,8 @@ private theorem path3_hasDerivAt (t : ℝ) :
   apply congrArg (Romik.rot t)
   ext <;> dsimp [z1, z2, Romik.alphaBeta3] <;> ring
 
-private theorem path4_hasDerivAt (t : ℝ) :
+/-- The phase 4 path has the specified velocity in the rotating frame. -/
+theorem path4_hasDerivAt (t : ℝ) :
     HasDerivAt (Romik.path4 params)
       (Romik.rot t (Romik.alphaBeta4 params t)) t := by
   let z1 : ℝ → ℝ := fun s => -(1 / 2 : ℝ) * s + params.d1 - 1
@@ -1201,7 +1208,8 @@ private theorem path4_hasDerivAt (t : ℝ) :
   apply congrArg (Romik.rot t)
   ext <;> dsimp [z1, z2, Romik.alphaBeta4] <;> ring
 
-private theorem path5_hasDerivAt (t : ℝ) :
+/-- The phase 5 path has the specified velocity in the rotating frame. -/
+theorem path5_hasDerivAt (t : ℝ) :
     HasDerivAt (Romik.path5 params)
       (Romik.rot t (Romik.alphaBeta5 params t)) t := by
   let z1 : ℝ → ℝ := fun s =>
@@ -1685,7 +1693,8 @@ private theorem c4_nonneg {t : ℝ} (ht : t ∈ Ioo eta tau) : 0 ≤ c4c t := by
     le_of_lt ht.2] using h
 private theorem c5_nonneg (t : ℝ) : 0 ≤ c5c t := by simp [c5c]
 
-private theorem rot_dot_u (t : ℝ) (z : Point) : dot (Romik.rot t z) (u t) = z.1 := by
+/-- The horizontal rotating-frame projection recovers the first body coordinate. -/
+theorem rot_dot_u (t : ℝ) (z : Point) : dot (Romik.rot t z) (u t) = z.1 := by
   dsimp [dot, Romik.rot, u]
   calc
     (Real.cos t * z.1 - Real.sin t * z.2) * Real.cos t +
@@ -1693,7 +1702,8 @@ private theorem rot_dot_u (t : ℝ) (z : Point) : dot (Romik.rot t z) (u t) = z.
         = z.1 * (Real.sin t ^ 2 + Real.cos t ^ 2) := by ring
     _ = z.1 := by rw [Real.sin_sq_add_cos_sq]; ring
 
-private theorem rot_dot_v (t : ℝ) (z : Point) : dot (Romik.rot t z) (v t) = z.2 := by
+/-- The vertical rotating-frame projection recovers the second body coordinate. -/
+theorem rot_dot_v (t : ℝ) (z : Point) : dot (Romik.rot t z) (v t) = z.2 := by
   dsimp [dot, Romik.rot, v]
   calc
     (Real.cos t * z.1 - Real.sin t * z.2) * (-Real.sin t) +
@@ -1701,7 +1711,8 @@ private theorem rot_dot_v (t : ℝ) (z : Point) : dot (Romik.rot t z) (v t) = z.
         = z.2 * (Real.sin t ^ 2 + Real.cos t ^ 2) := by ring
     _ = z.2 := by rw [Real.sin_sq_add_cos_sq]; ring
 
-private theorem rot_injective (t : ℝ) : Function.Injective (Romik.rot t) := by
+/-- Rotation in body coordinates is injective. -/
+theorem rot_injective (t : ℝ) : Function.Injective (Romik.rot t) := by
   intro x y h
   have hu := congrArg (fun z => dot z (u t)) h
   have hv := congrArg (fun z => dot z (v t)) h
@@ -2787,7 +2798,7 @@ section
 # Part C Stage 4: public path differential layer
 
 Source-clean phase derivatives of the five Gerver path pieces.  These are
-re-exposed here because the Stage 2 implementations were intentionally private.
+provided here as compatibility wrappers around the shared Stage 2 proofs.
 -/
 
 @[expose] public section
@@ -2798,179 +2809,30 @@ namespace GerverSofa
 namespace PartC
 namespace Stage4
 
-private theorem square_hasDerivAt (t : ℝ) :
-    HasDerivAt (fun s : ℝ => s * s) (t + t) t := by
-  have h := (hasDerivAt_id t).fun_mul (hasDerivAt_id t)
-  simpa only [id_eq, one_mul, mul_one] using h
-
-private theorem u_hasDerivAt (t : ℝ) : HasDerivAt u (v t) t := by
-  change HasDerivAt (fun s : ℝ => (Real.cos s, Real.sin s))
-    (-Real.sin t, Real.cos t) t
-  exact (Real.hasDerivAt_cos t).prodMk (Real.hasDerivAt_sin t)
-
-private theorem v_hasDerivAt (t : ℝ) : HasDerivAt v (-u t) t := by
-  change HasDerivAt (fun s : ℝ => (-Real.sin s, Real.cos s))
-    (-Real.cos t, -Real.sin t) t
-  exact (Real.hasDerivAt_sin t).fun_neg.prodMk (Real.hasDerivAt_cos t)
-
-/-- Derivative of `addK (rot t (z1 t,z2 t))` in body coordinates. -/
-private theorem rotAddK_hasDerivAt
-    {z1 z2 : ℝ → ℝ} {z1' z2' k1 k2 : ℝ} (t : ℝ)
-    (hz1 : HasDerivAt z1 z1' t) (hz2 : HasDerivAt z2 z2' t) :
-    HasDerivAt
-      (fun s => Romik.addK (Romik.rot s (z1 s, z2 s)) k1 k2)
-      (Romik.rot t (z1' - z2 t, z2' + z1 t)) t := by
-  apply HasDerivAt.prodMk
-  · change HasDerivAt
-      (fun s => Real.cos s * z1 s - Real.sin s * z2 s + k1)
-      (Real.cos t * (z1' - z2 t) - Real.sin t * (z2' + z1 t)) t
-    have h1 := (Real.hasDerivAt_cos t).fun_mul hz1
-    have h2 := (Real.hasDerivAt_sin t).fun_mul hz2
-    have h := (h1.fun_sub h2).fun_add (hasDerivAt_const t k1)
-    exact h.congr_deriv (by ring)
-  · change HasDerivAt
-      (fun s => Real.sin s * z1 s + Real.cos s * z2 s + k2)
-      (Real.sin t * (z1' - z2 t) + Real.cos t * (z2' + z1 t)) t
-    have h1 := (Real.hasDerivAt_sin t).fun_mul hz1
-    have h2 := (Real.hasDerivAt_cos t).fun_mul hz2
-    have h := (h1.fun_add h2).fun_add (hasDerivAt_const t k2)
-    exact h.congr_deriv (by ring)
-
 theorem path1_hasDerivAt_public (t : ℝ) :
     HasDerivAt (Romik.path1 params)
-      (Romik.rot t (Romik.alphaBeta1 params t)) t := by
-  let z1 : ℝ → ℝ := fun s =>
-    params.a1 * Real.cos s + params.a2 * Real.sin s - 1
-  let z2 : ℝ → ℝ := fun s =>
-    -params.a2 * Real.cos s + params.a1 * Real.sin s - 1 / 2
-  have hz1 : HasDerivAt z1
-      (-params.a1 * Real.sin t + params.a2 * Real.cos t) t := by
-    have h1 := HasDerivAt.const_mul params.a1 (Real.hasDerivAt_cos t)
-    have h2 := HasDerivAt.const_mul params.a2 (Real.hasDerivAt_sin t)
-    have h := (h1.fun_add h2).fun_sub (hasDerivAt_const t (1 : ℝ))
-    dsimp [z1]
-    exact h.congr_deriv (by ring)
-  have hz2 : HasDerivAt z2
-      (params.a2 * Real.sin t + params.a1 * Real.cos t) t := by
-    have h1 := HasDerivAt.const_mul (-params.a2) (Real.hasDerivAt_cos t)
-    have h2 := HasDerivAt.const_mul params.a1 (Real.hasDerivAt_sin t)
-    have h := (h1.fun_add h2).fun_sub (hasDerivAt_const t (1 / 2 : ℝ))
-    dsimp [z2]
-    exact h.congr_deriv (by ring)
-  change HasDerivAt
-    (fun s => Romik.addK (Romik.rot s (z1 s, z2 s)) params.k11 params.k12)
-    (Romik.rot t (Romik.alphaBeta1 params t)) t
-  have h := rotAddK_hasDerivAt (k1 := params.k11) (k2 := params.k12) t hz1 hz2
-  refine h.congr_deriv ?_
-  apply congrArg (Romik.rot t)
-  ext <;> dsimp [z1, z2, Romik.alphaBeta1] <;> ring
+      (Romik.rot t (Romik.alphaBeta1 params t)) t :=
+  Stage2.path1_hasDerivAt t
 
 theorem path2_hasDerivAt_public (t : ℝ) :
     HasDerivAt (Romik.path2 params)
-      (Romik.rot t (Romik.alphaBeta2 params t)) t := by
-  let z1 : ℝ → ℝ := fun s =>
-    -(1 / 4 : ℝ) * s * s + params.b1 * s + params.b2
-  let z2 : ℝ → ℝ := fun s =>
-    (1 / 2 : ℝ) * s - params.b1 - 1
-  have hz1 : HasDerivAt z1 (-(1 / 2 : ℝ) * t + params.b1) t := by
-    have h1 := HasDerivAt.const_mul (-(1 / 4 : ℝ)) (square_hasDerivAt t)
-    have h2 := HasDerivAt.const_mul params.b1 (hasDerivAt_id t)
-    have hraw := (h1.fun_add h2).fun_add (hasDerivAt_const t params.b2)
-    have heq : (-(1 / 4 : ℝ)) * (t + t) + params.b1 * 1 + 0 =
-        -(1 / 2 : ℝ) * t + params.b1 := by ring
-    rw [← heq]
-    simpa only [z1, id_eq, mul_assoc] using hraw
-  have hz2 : HasDerivAt z2 (1 / 2 : ℝ) t := by
-    have h1 := HasDerivAt.const_mul (1 / 2 : ℝ) (hasDerivAt_id t)
-    have h := (h1.fun_sub (hasDerivAt_const t params.b1)).fun_sub
-      (hasDerivAt_const t (1 : ℝ))
-    dsimp [z2]
-    exact h.congr_deriv (by ring)
-  change HasDerivAt
-    (fun s => Romik.addK (Romik.rot s (z1 s, z2 s)) params.k21 params.k22)
-    (Romik.rot t (Romik.alphaBeta2 params t)) t
-  have h := rotAddK_hasDerivAt (k1 := params.k21) (k2 := params.k22) t hz1 hz2
-  refine h.congr_deriv ?_
-  apply congrArg (Romik.rot t)
-  ext <;> dsimp [z1, z2, Romik.alphaBeta2] <;> ring
+      (Romik.rot t (Romik.alphaBeta2 params t)) t :=
+  Stage2.path2_hasDerivAt t
 
 theorem path3_hasDerivAt_public (t : ℝ) :
     HasDerivAt (Romik.path3 params)
-      (Romik.rot t (Romik.alphaBeta3 params t)) t := by
-  let z1 : ℝ → ℝ := fun s => params.c1 - s
-  let z2 : ℝ → ℝ := fun s => params.c2 + s
-  have hz1 : HasDerivAt z1 (-1) t := by
-    have h := (hasDerivAt_const t params.c1).fun_sub (hasDerivAt_id t)
-    dsimp [z1]
-    exact h.congr_deriv (by ring)
-  have hz2 : HasDerivAt z2 1 t := by
-    have h := (hasDerivAt_const t params.c2).fun_add (hasDerivAt_id t)
-    dsimp [z2]
-    exact h.congr_deriv (by ring)
-  change HasDerivAt
-    (fun s => Romik.addK (Romik.rot s (z1 s, z2 s)) params.k31 params.k32)
-    (Romik.rot t (Romik.alphaBeta3 params t)) t
-  have h := rotAddK_hasDerivAt (k1 := params.k31) (k2 := params.k32) t hz1 hz2
-  refine h.congr_deriv ?_
-  apply congrArg (Romik.rot t)
-  ext <;> dsimp [z1, z2, Romik.alphaBeta3] <;> ring
+      (Romik.rot t (Romik.alphaBeta3 params t)) t :=
+  Stage2.path3_hasDerivAt t
 
 theorem path4_hasDerivAt_public (t : ℝ) :
     HasDerivAt (Romik.path4 params)
-      (Romik.rot t (Romik.alphaBeta4 params t)) t := by
-  let z1 : ℝ → ℝ := fun s => -(1 / 2 : ℝ) * s + params.d1 - 1
-  let z2 : ℝ → ℝ := fun s =>
-    -(1 / 4 : ℝ) * s * s + params.d1 * s + params.d2
-  have hz1 : HasDerivAt z1 (-(1 / 2 : ℝ)) t := by
-    have h1 := HasDerivAt.const_mul (-(1 / 2 : ℝ)) (hasDerivAt_id t)
-    have h := (h1.fun_add (hasDerivAt_const t params.d1)).fun_sub
-      (hasDerivAt_const t (1 : ℝ))
-    dsimp [z1]
-    exact h.congr_deriv (by ring)
-  have hz2 : HasDerivAt z2 (-(1 / 2 : ℝ) * t + params.d1) t := by
-    have h1 := HasDerivAt.const_mul (-(1 / 4 : ℝ)) (square_hasDerivAt t)
-    have h2 := HasDerivAt.const_mul params.d1 (hasDerivAt_id t)
-    have hraw := (h1.fun_add h2).fun_add (hasDerivAt_const t params.d2)
-    have heq : (-(1 / 4 : ℝ)) * (t + t) + params.d1 * 1 + 0 =
-        -(1 / 2 : ℝ) * t + params.d1 := by ring
-    rw [← heq]
-    simpa only [z2, id_eq, mul_assoc] using hraw
-  change HasDerivAt
-    (fun s => Romik.addK (Romik.rot s (z1 s, z2 s)) params.k41 params.k42)
-    (Romik.rot t (Romik.alphaBeta4 params t)) t
-  have h := rotAddK_hasDerivAt (k1 := params.k41) (k2 := params.k42) t hz1 hz2
-  refine h.congr_deriv ?_
-  apply congrArg (Romik.rot t)
-  ext <;> dsimp [z1, z2, Romik.alphaBeta4] <;> ring
+      (Romik.rot t (Romik.alphaBeta4 params t)) t :=
+  Stage2.path4_hasDerivAt t
 
 theorem path5_hasDerivAt_public (t : ℝ) :
     HasDerivAt (Romik.path5 params)
-      (Romik.rot t (Romik.alphaBeta5 params t)) t := by
-  let z1 : ℝ → ℝ := fun s =>
-    params.e1 * Real.cos s + params.e2 * Real.sin s - 1 / 2
-  let z2 : ℝ → ℝ := fun s =>
-    -params.e2 * Real.cos s + params.e1 * Real.sin s - 1
-  have hz1 : HasDerivAt z1
-      (-params.e1 * Real.sin t + params.e2 * Real.cos t) t := by
-    have h1 := HasDerivAt.const_mul params.e1 (Real.hasDerivAt_cos t)
-    have h2 := HasDerivAt.const_mul params.e2 (Real.hasDerivAt_sin t)
-    have h := (h1.fun_add h2).fun_sub (hasDerivAt_const t (1 / 2 : ℝ))
-    dsimp [z1]
-    exact h.congr_deriv (by ring)
-  have hz2 : HasDerivAt z2
-      (params.e2 * Real.sin t + params.e1 * Real.cos t) t := by
-    have h1 := HasDerivAt.const_mul (-params.e2) (Real.hasDerivAt_cos t)
-    have h2 := HasDerivAt.const_mul params.e1 (Real.hasDerivAt_sin t)
-    have h := (h1.fun_add h2).fun_sub (hasDerivAt_const t (1 : ℝ))
-    dsimp [z2]
-    exact h.congr_deriv (by ring)
-  change HasDerivAt
-    (fun s => Romik.addK (Romik.rot s (z1 s, z2 s)) params.k51 params.k52)
-    (Romik.rot t (Romik.alphaBeta5 params t)) t
-  have h := rotAddK_hasDerivAt (k1 := params.k51) (k2 := params.k52) t hz1 hz2
-  refine h.congr_deriv ?_
-  apply congrArg (Romik.rot t)
-  ext <;> dsimp [z1, z2, Romik.alphaBeta5] <;> ring
+      (Romik.rot t (Romik.alphaBeta5 params t)) t :=
+  Stage2.path5_hasDerivAt t
 
 /-! The five public phase derivative theorems above are the complete differential
 interface used by Stage 4.  We intentionally do not assert a global `HasDerivAt`
@@ -3153,30 +3015,15 @@ private theorem phase3_reflect (t : ℝ) :
     simpa [T, hReflect] using h
 
 private theorem rot_dot_u (t : ℝ) (z : Point) :
-    dot (Romik.rot t z) (u t) = z.1 := by
-  dsimp [dot, Romik.rot, u]
-  calc
-    (Real.cos t * z.1 - Real.sin t * z.2) * Real.cos t +
-        (Real.sin t * z.1 + Real.cos t * z.2) * Real.sin t =
-      z.1 * (Real.sin t ^ 2 + Real.cos t ^ 2) := by ring
-    _ = z.1 := by rw [Real.sin_sq_add_cos_sq]; ring
+    dot (Romik.rot t z) (u t) = z.1 :=
+  Stage3.rot_dot_u t z
 
 private theorem rot_dot_v (t : ℝ) (z : Point) :
-    dot (Romik.rot t z) (v t) = z.2 := by
-  dsimp [dot, Romik.rot, v]
-  calc
-    (Real.cos t * z.1 - Real.sin t * z.2) * (-Real.sin t) +
-        (Real.sin t * z.1 + Real.cos t * z.2) * Real.cos t =
-      z.2 * (Real.sin t ^ 2 + Real.cos t ^ 2) := by ring
-    _ = z.2 := by rw [Real.sin_sq_add_cos_sq]; ring
+    dot (Romik.rot t z) (v t) = z.2 :=
+  Stage3.rot_dot_v t z
 
-private theorem rot_injective (t : ℝ) : Function.Injective (Romik.rot t) := by
-  intro x y h
-  have hu := congrArg (fun z => dot z (u t)) h
-  have hv := congrArg (fun z => dot z (v t)) h
-  rw [rot_dot_u, rot_dot_u] at hu
-  rw [rot_dot_v, rot_dot_v] at hv
-  exact Prod.ext hu hv
+private theorem rot_injective (t : ℝ) : Function.Injective (Romik.rot t) :=
+  Stage3.rot_injective t
 
 private theorem matchPrime23 :
     Romik.pathPrime2 params params.theta =
@@ -3955,10 +3802,8 @@ private def phaseB4_m71dda23 (t : ℝ) : Point :=
 private def phaseB5_m71dda23 (t : ℝ) : Point :=
   Romik.path5 params t + (Romik.alphaBeta5 params t).1 • v t
 
-private theorem u_hasDerivAt_local (t : ℝ) : HasDerivAt u (v t) t := by
-  change HasDerivAt (fun s : ℝ => (Real.cos s, Real.sin s))
-    (-Real.sin t, Real.cos t) t
-  exact (Real.hasDerivAt_cos t).prodMk (Real.hasDerivAt_sin t)
+private theorem u_hasDerivAt_local (t : ℝ) : HasDerivAt u (v t) t :=
+  Stage2.u_hasDerivAt t
 
 private theorem phaseB3_eq_A3_sub_u (t : ℝ) :
     phaseB3 t = Stage2.phaseA3 t - u t := by
@@ -4273,30 +4118,16 @@ noncomputable section
 def noHiddenReflAB (z : Point) : Point := (-z.2, -z.1)
 
 private theorem rot_dot_u_noHidden (t : ℝ) (z : Point) :
-    dot (Romik.rot t z) (u t) = z.1 := by
-  dsimp [dot, Romik.rot, u]
-  calc
-    (Real.cos t * z.1 - Real.sin t * z.2) * Real.cos t +
-        (Real.sin t * z.1 + Real.cos t * z.2) * Real.sin t =
-      z.1 * (Real.sin t ^ 2 + Real.cos t ^ 2) := by ring
-    _ = z.1 := by rw [Real.sin_sq_add_cos_sq]; ring
+    dot (Romik.rot t z) (u t) = z.1 :=
+  Stage3.rot_dot_u t z
 
 private theorem rot_dot_v_noHidden (t : ℝ) (z : Point) :
-    dot (Romik.rot t z) (v t) = z.2 := by
-  dsimp [dot, Romik.rot, v]
-  calc
-    (Real.cos t * z.1 - Real.sin t * z.2) * (-Real.sin t) +
-        (Real.sin t * z.1 + Real.cos t * z.2) * Real.cos t =
-      z.2 * (Real.sin t ^ 2 + Real.cos t ^ 2) := by ring
-    _ = z.2 := by rw [Real.sin_sq_add_cos_sq]; ring
+    dot (Romik.rot t z) (v t) = z.2 :=
+  Stage3.rot_dot_v t z
 
 private theorem rot_injective_noHidden (t : ℝ) {z w : Point}
-    (h : Romik.rot t z = Romik.rot t w) : z = w := by
-  have hu := congrArg (fun q : Point => dot q (u t)) h
-  have hv := congrArg (fun q : Point => dot q (v t)) h
-  rw [rot_dot_u_noHidden, rot_dot_u_noHidden] at hu
-  rw [rot_dot_v_noHidden, rot_dot_v_noHidden] at hv
-  exact Prod.ext hu hv
+    (h : Romik.rot t z = Romik.rot t w) : z = w :=
+  Stage3.rot_injective t h
 
 private theorem matchPrime12_noHidden :
     Romik.pathPrime1 params params.phi = Romik.pathPrime2 params params.phi := by
@@ -5043,9 +4874,8 @@ private def uVelocityPiece (ab : ℝ → Point) (t r : ℝ) : ℝ :=
   (ab r).1 * Real.cos (t - r) + (ab r).2 * Real.sin (t - r)
 
 private theorem square_hasDerivAt_noHidden (r : ℝ) :
-    HasDerivAt (fun s : ℝ => s * s) (r + r) r := by
-  simpa only [id_eq, one_mul, mul_one] using
-    (hasDerivAt_id r).fun_mul (hasDerivAt_id r)
+    HasDerivAt (fun s : ℝ => s * s) (r + r) r :=
+  Stage2.square_hasDerivAt r
 
 private theorem alpha2_hasDerivAt (r : ℝ) :
     HasDerivAt (fun s => (Romik.alphaBeta2 params s).1) (-1) r := by
@@ -6115,10 +5945,8 @@ private def diagPhaseB4 (r : ℝ) : Point :=
 private def diagPhaseB5 (r : ℝ) : Point :=
   Stage2.phaseA5 r - u r
 
-private theorem u_hasDerivAt_diag (r : ℝ) : HasDerivAt u (v r) r := by
-  change HasDerivAt (fun s : ℝ => (Real.cos s, Real.sin s))
-    (-Real.sin r, Real.cos r) r
-  exact (Real.hasDerivAt_cos r).prodMk (Real.hasDerivAt_sin r)
+private theorem u_hasDerivAt_diag (r : ℝ) : HasDerivAt u (v r) r :=
+  Stage2.u_hasDerivAt r
 
 private theorem diagPhaseB4_hasDerivAt (r : ℝ) :
     HasDerivAt diagPhaseB4 ((params.d1 - r / 2 - 1) • v r) r := by
@@ -7540,20 +7368,15 @@ namespace Stage4
 
 open Set
 
-private theorem u_hasDerivAt_frontier (t : ℝ) : HasDerivAt u (v t) t := by
-  change HasDerivAt (fun s : ℝ => (Real.cos s, Real.sin s))
-    (-Real.sin t, Real.cos t) t
-  exact (Real.hasDerivAt_cos t).prodMk (Real.hasDerivAt_sin t)
+private theorem u_hasDerivAt_frontier (t : ℝ) : HasDerivAt u (v t) t :=
+  Stage2.u_hasDerivAt t
 
-private theorem v_hasDerivAt_frontier (t : ℝ) : HasDerivAt v (-u t) t := by
-  change HasDerivAt (fun s : ℝ => (-Real.sin s, Real.cos s))
-    (-Real.cos t, -Real.sin t) t
-  exact (Real.hasDerivAt_sin t).fun_neg.prodMk (Real.hasDerivAt_cos t)
+private theorem v_hasDerivAt_frontier (t : ℝ) : HasDerivAt v (-u t) t :=
+  Stage2.v_hasDerivAt t
 
 private theorem square_hasDerivAt_frontier (t : ℝ) :
-    HasDerivAt (fun s : ℝ => s * s) (t + t) t := by
-  simpa only [id_eq, one_mul, mul_one] using
-    (hasDerivAt_id t).fun_mul (hasDerivAt_id t)
+    HasDerivAt (fun s : ℝ => s * s) (t + t) t :=
+  Stage2.square_hasDerivAt t
 
 private theorem beta1_hasDerivAt_frontier (t : ℝ) :
     HasDerivAt (fun s => (Romik.alphaBeta1 params s).2)
@@ -7566,44 +7389,18 @@ private theorem beta1_hasDerivAt_frontier (t : ℝ) :
 
 private theorem beta2_hasDerivAt_frontier (t : ℝ) :
     HasDerivAt (fun s => (Romik.alphaBeta2 params s).2)
-      (-(1 / 2 : ℝ) * t + params.b1) t := by
-  have h1 := HasDerivAt.const_mul (-(1 / 4 : ℝ))
-    (square_hasDerivAt_frontier t)
-  have h2 := HasDerivAt.const_mul params.b1 (hasDerivAt_id t)
-  have hraw := ((h1.fun_add h2).fun_add (hasDerivAt_const t params.b2)).fun_add
-    (hasDerivAt_const t (1 / 2 : ℝ))
-  have h := hraw.congr_deriv (show
-      (-(1 / 4 : ℝ) * (t + t) + params.b1 * 1 + 0 + 0) =
-        (-(1 / 2 : ℝ) * t + params.b1) by ring)
-  refine h.congr_of_eventuallyEq ?_
-  filter_upwards with s
-  dsimp [Romik.alphaBeta2]
-  ring
+      (-(1 / 2 : ℝ) * t + params.b1) t :=
+  beta2_hasDerivAt t
 
 private theorem alpha4_hasDerivAt_frontier (t : ℝ) :
     HasDerivAt (fun s => (Romik.alphaBeta4 params s).1)
-      ((1 / 2 : ℝ) * t - params.d1) t := by
-  have h1 := HasDerivAt.const_mul (1 / 4 : ℝ)
-    (square_hasDerivAt_frontier t)
-  have h2 := HasDerivAt.const_mul params.d1 (hasDerivAt_id t)
-  have hraw := (((h1.fun_sub h2).fun_sub (hasDerivAt_const t params.d2)).fun_sub
-    (hasDerivAt_const t (1 / 2 : ℝ)))
-  have h := hraw.congr_deriv (show
-      ((1 / 4 : ℝ) * (t + t) - params.d1 * 1 - 0 - 0) =
-        ((1 / 2 : ℝ) * t - params.d1) by ring)
-  refine h.congr_of_eventuallyEq ?_
-  filter_upwards with s
-  dsimp [Romik.alphaBeta4]
-  ring
+      ((1 / 2 : ℝ) * t - params.d1) t :=
+  alpha4_hasDerivAt t
 
 private theorem alpha5_hasDerivAt_frontier (t : ℝ) :
     HasDerivAt (fun s => (Romik.alphaBeta5 params s).1)
-      (-2 * params.e1 * Real.cos t - 2 * params.e2 * Real.sin t) t := by
-  have h1 := HasDerivAt.const_mul (2 * params.e1) (Real.hasDerivAt_sin t)
-  have h2 := HasDerivAt.const_mul (2 * params.e2) (Real.hasDerivAt_cos t)
-  have h := ((hasDerivAt_const t (1 : ℝ)).fun_sub h1).fun_add h2
-  refine h.congr_deriv ?_
-  ring
+      (-2 * params.e1 * Real.cos t - 2 * params.e2 * Real.sin t) t :=
+  alpha5_hasDerivAt t
 
 private theorem contactD_hasDerivAt
     {x : ℝ → Point} {ab : ℝ → Point} {bp : ℝ} (t : ℝ)
@@ -7688,10 +7485,8 @@ private theorem phaseB5_continuous : Continuous phaseB5_m421765a := by
 private theorem dot_fixed_hasDerivAt_frontier
     {f : ℝ → Point} {df w : Point} {t : ℝ}
     (h : HasDerivAt f df t) :
-    HasDerivAt (fun s => dot (f s) w) (dot df w) t := by
-  have h1 := HasDerivAt.const_mul w.1 h.fst
-  have h2 := HasDerivAt.const_mul w.2 h.snd
-  simpa [dot, mul_comm] using h1.fun_add h2
+    HasDerivAt (fun s => dot (f s) w) (dot df w) t :=
+  dot_fixed_hasDerivAt h w
 
 private theorem b1_lower_frontier : (-53 / 100 : ℝ) ≤ params.b1 := by
   have h := PartB.b1_contains.1
