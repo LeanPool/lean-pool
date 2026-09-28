@@ -1494,35 +1494,34 @@ theorem foldSymmMapPath_read {a b : V}
         (foldLabelling L e₀) _ _
         (foldSymmMapPath e₀ ha q hq p)) = L.symmPathRead p := by
   intro x y p
-  induction p with
-  | nil =>
-      simp only [foldSymmMapPath, BinaryLabelling.pathRead_nil,
-        BinaryLabelling.symmPathRead_nil]
-  | cons p e ih =>
-      calc
-        (@BinaryLabelling.pathRead G H (foldVertex a b)
-          _ _ (foldQuiver e₀) (foldHasReverse e₀)
-          (foldLabelling L e₀) _ _
-          (foldSymmMapPath e₀ ha q hq (p.cons e))) =
-            (@BinaryLabelling.pathRead G H (foldVertex a b)
-              _ _ (foldQuiver e₀) (foldHasReverse e₀)
-              (foldLabelling L e₀) _ _
-              (foldSymmMapPath e₀ ha q hq p)) *
-              (@BinaryLabelling.pathRead G H (foldVertex a b)
-                _ _ (foldQuiver e₀) (foldHasReverse e₀)
-                (foldLabelling L e₀) _ _
-                (foldSymmEdgePath e₀ ha e q hq)) := by
-          rw [foldSymmMapPath]
-          exact @BinaryLabelling.pathRead_comp G H (foldVertex a b)
-            _ _ (foldQuiver e₀) (foldHasReverse e₀) (foldLabelling L e₀)
-            _ _ (foldSymmMapPath e₀ ha q hq p) _
-              (foldSymmEdgePath e₀ ha e q hq)
-        _ = L.symmPathRead p * L.symmPathRead e.toPath := by
-          rw [ih, foldSymmEdgePath_read L e₀ ha e q hq hread,
-            L.symmPathRead_toPath]
-        _ = L.symmPathRead (p.cons e) := by
-          rw [← Path.comp_toPath_eq_cons, L.symmPathRead_comp,
-            L.symmPathRead_toPath]
+  let : Quiver (foldVertex a b) := foldQuiver (a := a) (b := b) e₀
+  let : HasInvolutiveReverse (foldVertex a b) :=
+    foldHasReverse (a := a) (b := b) e₀
+  let targetLabelling := foldLabelling L (a := a) (b := b) e₀
+  have h := pathRead_map_of_edge
+    (X := Symmetrify V) (Y := foldVertex a b) (K := G ∗ H)
+    (vertexMap := foldVertexMk (a := a) (b := b))
+    (edgeMap := fun {x y} (e : x ⟶ y) => foldSymmEdgePath e₀ ha e q hq)
+    (mapPath := foldSymmMapPath e₀ ha q hq)
+    (sourceRead := L.symmPathRead)
+    (targetRead := targetLabelling.pathRead)
+    (potential := fun _ => (1 : G ∗ H))
+    (mapPath_nil := by intro x; simp only [foldSymmMapPath])
+    (mapPath_cons := by intro x y z r e; rw [foldSymmMapPath])
+    (source_nil := by intro x; exact L.symmPathRead_nil)
+    (source_cons := by
+      intro x y z r e
+      simpa only [Path.comp_toPath_eq_cons] using
+        L.symmPathRead_comp r e.toPath)
+    (target_nil := by intro x; exact targetLabelling.pathRead_nil)
+    (target_comp := by
+      intro x y z r s
+      exact targetLabelling.pathRead_comp r s)
+    (edge_read := by
+      intro x y e
+      simpa only [inv_one, one_mul, mul_one, L.symmPathRead_toPath] using
+        (foldSymmEdgePath_read L e₀ ha e q hq hread)) p
+  simpa only [inv_one, one_mul, mul_one] using h
 
 omit [Fintype V] [(a b : V) → Fintype (a ⟶ b)] in
 theorem foldEdgePath_read {a b : V} (L : BinaryLabelling (G := G)
@@ -1580,32 +1579,34 @@ theorem foldMapPath_read {a b : V} (L : BinaryLabelling (G := G)
         _ _
         (foldMapPath e₀ ha q hq p)) = L.pathRead p := by
   intro x y p
-  induction p with
-  | nil =>
-      simp only [foldMapPath, BinaryLabelling.pathRead_nil]
-  | cons p e ih =>
-      calc
-        (@BinaryLabelling.pathRead G H (foldVertex a b)
-          _ _ (foldQuiver e₀) (foldHasReverse e₀)
-          (foldLabelling L e₀) _ _
-          (foldMapPath e₀ ha q hq (p.cons e))) =
-            (@BinaryLabelling.pathRead G H (foldVertex a b)
-              _ _ (foldQuiver e₀) (foldHasReverse e₀)
-              (foldLabelling L e₀) _ _
-              (foldMapPath e₀ ha q hq p)) *
-              (@BinaryLabelling.pathRead G H (foldVertex a b)
-                _ _ (foldQuiver e₀) (foldHasReverse e₀) (foldLabelling L e₀)
-                _ _ (foldEdgePath e₀ ha e q hq)) := by
-          rw [foldMapPath]
-          exact @BinaryLabelling.pathRead_comp G H (foldVertex a b)
-            _ _ (foldQuiver e₀) (foldHasReverse e₀) (foldLabelling L e₀)
-            _ _ (foldMapPath e₀ ha q hq p) _
-              (foldEdgePath e₀ ha e q hq)
-        _ = L.pathRead p * L.pathRead e.toPath := by
-          rw [ih, foldEdgePath_read L e₀ ha e q hq hread]
-        _ = L.pathRead (p.cons e) := by
-          rw [← L.pathRead_comp p e.toPath]
-          rfl
+  let : Quiver (foldVertex a b) := foldQuiver (a := a) (b := b) e₀
+  let : HasInvolutiveReverse (foldVertex a b) :=
+    foldHasReverse (a := a) (b := b) e₀
+  let targetLabelling := foldLabelling L (a := a) (b := b) e₀
+  have h := pathRead_map_of_edge
+    (X := V) (Y := foldVertex a b) (K := G ∗ H)
+    (vertexMap := foldVertexMk (a := a) (b := b))
+    (edgeMap := fun {x y} (e : x ⟶ y) => foldEdgePath e₀ ha e q hq)
+    (mapPath := foldMapPath e₀ ha q hq)
+    (sourceRead := L.pathRead)
+    (targetRead := targetLabelling.pathRead)
+    (potential := fun _ => (1 : G ∗ H))
+    (mapPath_nil := by intro x; simp only [foldMapPath])
+    (mapPath_cons := by intro x y z r e; rw [foldMapPath])
+    (source_nil := by intro x; exact L.pathRead_nil)
+    (source_cons := by
+      intro x y z r e
+      simpa only [Path.comp_toPath_eq_cons] using
+        L.pathRead_comp r e.toPath)
+    (target_nil := by intro x; exact targetLabelling.pathRead_nil)
+    (target_comp := by
+      intro x y z r s
+      exact targetLabelling.pathRead_comp r s)
+    (edge_read := by
+      intro x y e
+      simpa only [inv_one, one_mul, mul_one] using
+        (foldEdgePath_read L e₀ ha e q hq hread)) p
+  simpa only [inv_one, one_mul, mul_one] using h
 
 /-! ### Marked graphs after one safe fold -/
 

@@ -32,10 +32,44 @@ noncomputable section
 namespace MarshallHall
 namespace GeneralGrushko
 
-universe u v
+universe u v w
 
 variable {G H : Type u} {V : Type v} [Group G] [Group H] [Quiver V]
   [HasInvolutiveReverse V]
+
+/-- An edge-wise change of reading by a vertex potential extends to mapped paths. -/
+theorem pathRead_map_of_edge
+    {X : Type v} {Y : Type w} {K : Type u}
+    [Quiver X] [Quiver Y] [Group K]
+    (vertexMap : X → Y)
+    (edgeMap : ∀ {x y : X}, (x ⟶ y) → Path (vertexMap x) (vertexMap y))
+    (mapPath : ∀ {x y : X}, Path x y → Path (vertexMap x) (vertexMap y))
+    (sourceRead : ∀ {x y : X}, Path x y → K)
+    (targetRead : ∀ {x y : Y}, Path x y → K)
+    (potential : X → K)
+    (mapPath_nil : ∀ x : X, mapPath (Path.nil : Path x x) = Path.nil)
+    (mapPath_cons : ∀ {x y z : X} (p : Path x y) (e : y ⟶ z),
+      mapPath (p.cons e) = (mapPath p).comp (edgeMap e))
+    (source_nil : ∀ x : X, sourceRead (Path.nil : Path x x) = 1)
+    (source_cons : ∀ {x y z : X} (p : Path x y) (e : y ⟶ z),
+      sourceRead (p.cons e) = sourceRead p * sourceRead e.toPath)
+    (target_nil : ∀ y : Y, targetRead (Path.nil : Path y y) = 1)
+    (target_comp : ∀ {x y z : Y} (p : Path x y) (q : Path y z),
+      targetRead (p.comp q) = targetRead p * targetRead q)
+    (edge_read : ∀ {x y : X} (e : x ⟶ y),
+      targetRead (edgeMap e) =
+        (potential x)⁻¹ * sourceRead e.toPath * potential y)
+    {x y : X} (p : Path x y) :
+    targetRead (mapPath p) =
+      (potential x)⁻¹ * sourceRead p * potential y := by
+  induction p with
+  | nil =>
+      rw [mapPath_nil, target_nil, source_nil]
+      simp
+  | cons p e ih =>
+      rw [mapPath_cons p e, target_comp (mapPath p) (edgeMap e),
+        ih, edge_read e, source_cons p e]
+      simp [mul_assoc]
 
 omit [Quiver.HasInvolutiveReverse V] in
 theorem path_length_cast {a b a' b' : V} (ha : a = a') (hb : b = b')

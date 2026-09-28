@@ -187,6 +187,7 @@ theorem goodCore_path
             let sourceO : O := (FreeGroup.mk w : FreeGroup α) • baseO
             let targetO : O :=
               (FreeGroup.mk ((a, false) :: w) : FreeGroup α) • baseO
+            let : Quiver V := coverQuiver α O
             let e : (ActionCategory.objEquiv (FreeGroup α) O targetO ⟶
                 ActionCategory.objEquiv (FreeGroup α) O sourceO) :=
               ⟨a, by
@@ -252,6 +253,7 @@ theorem goodCore_path
             let sourceO : O := (FreeGroup.mk w : FreeGroup α) • baseO
             let targetO : O :=
               (FreeGroup.mk ((a, true) :: w) : FreeGroup α) • baseO
+            let : Quiver V := coverQuiver α O
             let e : (ActionCategory.objEquiv (FreeGroup α) O sourceO ⟶
                 ActionCategory.objEquiv (FreeGroup α) O targetO) :=
               ⟨a, by

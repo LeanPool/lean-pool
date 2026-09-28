@@ -886,44 +886,36 @@ theorem removePath_read {v : V}
       (removePotential (v := v) L e₀ x)⁻¹ *
         L.pathRead p *
         removePotential (v := v) L e₀ y := by
-  classical
-  induction p with
-  | nil =>
-      simp only [removePath, BinaryLabelling.pathRead_nil,
-        L.pathRead_nil]
-      simp []
-  | @cons z y p e ih =>
-      calc
-        (@BinaryLabelling.pathRead G H (RemovedVertex v) _ _
-            (removeQuiver e₀ hn) (removeHasReverse e₀ hn)
-            (removeLabelling L e₀ ha hn color hmono) _ _
-            (removePath e₀ ha hn (Path.cons p e))) =
-          (@BinaryLabelling.pathRead G H (RemovedVertex v) _ _
-            (removeQuiver e₀ hn) (removeHasReverse e₀ hn)
-            (removeLabelling L e₀ ha hn color hmono) _ _
-            (removePath e₀ ha hn p)) *
-          (@BinaryLabelling.pathRead G H (RemovedVertex v) _ _
-            (removeQuiver e₀ hn) (removeHasReverse e₀ hn)
-            (removeLabelling L e₀ ha hn color hmono) _ _
-            (removeEdgePath e₀ ha hn e)) := by
-              rw [removePath]
-              exact @BinaryLabelling.pathRead_comp G H (RemovedVertex v)
-                _ _ (removeQuiver e₀ hn) (removeHasReverse e₀ hn)
-                (removeLabelling L e₀ ha hn color hmono) _ _
-                (removePath e₀ ha hn p) _
-                (removeEdgePath e₀ ha hn e)
-        _ = ((removePotential (v := v) L e₀ x)⁻¹ *
-              L.pathRead p * removePotential (v := v) L e₀ z) *
-            ((removePotential (v := v) L e₀ z)⁻¹ *
-              separatedMap (L.label e) *
-              removePotential (v := v) L e₀ y) := by
-              rw [ih, removeEdgePath_read L e₀ ha hn color hmono]
-        _ = (removePotential (v := v) L e₀ x)⁻¹ *
-              L.pathRead (Path.cons p e) *
-              removePotential (v := v) L e₀ y := by
-              rw [← Path.comp_toPath_eq_cons, L.pathRead_comp,
-                L.pathRead_toPath]
-              simp [mul_assoc]
+  let : Quiver (RemovedVertex v) := removeQuiver e₀ hn
+  let : HasInvolutiveReverse (RemovedVertex v) := removeHasReverse e₀ hn
+  let targetLabelling := removeLabelling L e₀ ha hn color hmono
+  exact pathRead_map_of_edge
+    (X := V) (Y := RemovedVertex v) (K := G ∗ H)
+    (vertexMap := removeEndpoint (removeAnchorTarget e₀ hn))
+    (edgeMap := fun {x y} (e : x ⟶ y) => removeEdgePath e₀ ha hn e)
+    (mapPath := removePath e₀ ha hn)
+    (sourceRead := L.pathRead)
+    (targetRead := targetLabelling.pathRead)
+    (potential := removePotential (v := v) L e₀)
+    (mapPath_nil := by
+      intro x
+      exact removePath_nil (v := v) e₀ ha hn (x := x))
+    (mapPath_cons := by
+      intro x y z r e
+      exact removePath_cons (v := v) e₀ ha hn r e)
+    (source_nil := by intro x; exact L.pathRead_nil)
+    (source_cons := by
+      intro x y z r e
+      simpa only [Path.comp_toPath_eq_cons] using
+        L.pathRead_comp r e.toPath)
+    (target_nil := by intro x; exact targetLabelling.pathRead_nil)
+    (target_comp := by
+      intro x y z r s
+      exact targetLabelling.pathRead_comp r s)
+    (edge_read := by
+      intro x y e
+      simpa only [L.pathRead_toPath] using
+        (removeEdgePath_read L e₀ ha hn color hmono e)) p
 
 /-- The vertex map induced on symmetrized quivers by vertex removal. -/
 def removeVertexMap {v : V} (e₀ : AllArrow (V := V))
@@ -1071,49 +1063,36 @@ theorem removeSymmPath_read {v : V}
       (removePotential (v := v) L e₀ (show V from x))⁻¹ *
         L.symmPathRead p *
         removePotential (v := v) L e₀ (show V from y) := by
-  induction p with
-  | nil =>
-      simp only [removeSymmPath, BinaryLabelling.symmPathRead_nil,
-        L.symmPathRead_nil]
-      simp []
-  | @cons z y p e ih =>
-      calc
-        (@BinaryLabelling.symmPathRead G H (RemovedVertex v) _ _
-            (removeQuiver e₀ hn)
-            (removeHasReverse e₀ hn)
-            (removeLabelling L e₀ ha hn color hmono) _ _
-            (removeSymmPath e₀ ha hn (Path.cons p e))) =
-          (@BinaryLabelling.symmPathRead G H (RemovedVertex v) _ _
-            (removeQuiver e₀ hn)
-            (removeHasReverse e₀ hn)
-            (removeLabelling L e₀ ha hn color hmono) _ _
-            (removeSymmPath e₀ ha hn p)) *
-          (@BinaryLabelling.symmPathRead G H (RemovedVertex v) _ _
-            (removeQuiver e₀ hn)
-            (removeHasReverse e₀ hn)
-            (removeLabelling L e₀ ha hn color hmono) _ _
-            (removeSymmEdgePath e₀ ha hn e)) := by
-              rw [removeSymmPath]
-              exact @BinaryLabelling.symmPathRead_comp G H
-                (RemovedVertex v) _ _
-                (removeQuiver e₀ hn)
-                (removeHasReverse e₀ hn)
-                (removeLabelling L e₀ ha hn color hmono) _ _
-                (removeSymmPath e₀ ha hn p) _
-                (removeSymmEdgePath e₀ ha hn e)
-        _ = ((removePotential (v := v) L e₀ (show V from x))⁻¹ *
-              L.symmPathRead p *
-              removePotential (v := v) L e₀ (show V from z)) *
-            ((removePotential (v := v) L e₀ (show V from z))⁻¹ *
-              separatedMap (L.symmLabel e) *
-              removePotential (v := v) L e₀ (show V from y)) := by
-              rw [ih, removeSymmEdgePath_read L e₀ ha hn color hmono]
-        _ = (removePotential (v := v) L e₀ (show V from x))⁻¹ *
-              L.symmPathRead (Path.cons p e) *
-              removePotential (v := v) L e₀ (show V from y) := by
-              rw [← Path.comp_toPath_eq_cons, L.symmPathRead_comp,
-                L.symmPathRead_toPath]
-              simp [mul_assoc]
+  let : Quiver (RemovedVertex v) := removeQuiver e₀ hn
+  let : HasInvolutiveReverse (RemovedVertex v) := removeHasReverse e₀ hn
+  let targetLabelling := removeLabelling L e₀ ha hn color hmono
+  exact pathRead_map_of_edge
+    (X := Symmetrify V) (Y := Symmetrify (RemovedVertex v)) (K := G ∗ H)
+    (vertexMap := removeVertexMap e₀ hn)
+    (edgeMap := fun {x y} (e : x ⟶ y) => removeSymmEdgePath e₀ ha hn e)
+    (mapPath := removeSymmPath e₀ ha hn)
+    (sourceRead := L.symmPathRead)
+    (targetRead := targetLabelling.symmPathRead)
+    (potential := fun x => removePotential (v := v) L e₀ (show V from x))
+    (mapPath_nil := by
+      intro x
+      exact removeSymmPath_nil (v := v) e₀ ha hn (x := x))
+    (mapPath_cons := by
+      intro x y z r e
+      exact removeSymmPath_cons (v := v) e₀ ha hn r e)
+    (source_nil := by intro x; exact L.symmPathRead_nil)
+    (source_cons := by
+      intro x y z r e
+      simpa only [Path.comp_toPath_eq_cons] using
+        L.symmPathRead_comp r e.toPath)
+    (target_nil := by intro x; exact targetLabelling.symmPathRead_nil)
+    (target_comp := by
+      intro x y z r s
+      exact targetLabelling.symmPathRead_comp r s)
+    (edge_read := by
+      intro x y e
+      simpa only [L.symmPathRead_toPath] using
+        (removeSymmEdgePath_read L e₀ ha hn color hmono e)) p
 
 /-! ### The contracted marked graph -/
 

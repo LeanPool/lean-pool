@@ -30,13 +30,13 @@ namespace MarshallHall
 
 universe u
 
-
-
 /-- The objects of the action groupoid serving as vertices of the covering graph. -/
 abbrev CoverVertex (α : Type u) (A : Type u) [MulAction (FreeGroup α) A] :=
   ActionCategory (FreeGroup α) A
 
-instance coverQuiver (α : Type u) (A : Type u) [MulAction (FreeGroup α) A] :
+/-- The generator-labelled covering quiver, supplied explicitly to preserve categorical arrows. -/
+@[instance_reducible]
+def coverQuiver (α : Type u) (A : Type u) [MulAction (FreeGroup α) A] :
     Quiver (CoverVertex α A) where
   Hom x y := {e : α // FreeGroup.of e • x.back = y.back}
 
