@@ -70,7 +70,7 @@ theorem aChartLinear_eq_coordinate (χ : CharacterSpace)
 /--
 The `fullNonzeroLocus` construction used in the Connes rigidity formalization.
 -/
-def fullNonzeroLocus : Set CharacterSpace :=
+@[expose] def fullNonzeroLocus : Set CharacterSpace :=
   {χ : CharacterSpace |
     PaperDualHaar.characterLinearEquiv χ ≠ 0}
 

@@ -45,7 +45,7 @@ abbrev DiscreteCharacterSpace (A : Type u)
   PontryaginDual (Multiplicative A)
 
 /-- Inverse-dual action of a group on the character space. Paper: §4. -/
-def dualCharacterAction
+@[expose] def dualCharacterAction
     (action : H →* Multiplicative (AddAut A)) (h : H)
     (χ : DiscreteCharacterSpace A) : DiscreteCharacterSpace A where
   toFun a := χ (Multiplicative.ofAdd
@@ -122,7 +122,7 @@ theorem continuous_character_evaluation (a : A) :
 omit [MeasurableSpace (DiscreteCharacterSpace A)]
   [BorelSpace (DiscreteCharacterSpace A)] in
 /-- Compactly supported continuous test for spectral displacement. Paper: §4. -/
-def spectralEnergyTest (a : A) :
+@[expose] def spectralEnergyTest (a : A) :
     C_c(DiscreteCharacterSpace A, ℝ) where
   toFun χ := ‖((χ (Multiplicative.ofAdd a) : Circle) : ℂ) - 1‖ ^ 2
   continuous_toFun :=
@@ -212,7 +212,7 @@ structure SpectralMeasureInterface
           (∀ h : H, (π (E.splitting h) : K →L[ℂ] K) η = η)
 
 /-- Finite spectral detection inequality. Paper: §4. -/
-def HasFiniteSpectralDetection
+@[expose] def HasFiniteSpectralDetection
     (E : SplitAbelianExtension A G H) (J : Finset A) (c : ℝ) : Prop :=
   ∀ μ : ProbabilityMeasure (DiscreteCharacterSpace A),
     IsInvariantSpectralMeasure E.action μ →

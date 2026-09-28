@@ -167,7 +167,7 @@ theorem diagonal_sum_expansion {ι : Type*} [Fintype ι] [LinearOrder ι]
 /--
 The `chartIndexOfCoefficients` construction used in the Connes rigidity formalization.
 -/
-def chartIndexOfCoefficients (N : ℕ) (s : Fin 3)
+@[expose] def chartIndexOfCoefficients (N : ℕ) (s : Fin 3)
     (x : PaperFiniteCharts.CoeffIndex N → F) :
     PaperFiniteCharts.ChartIndex N :=
   (s, (fun i => x (Sum.inl i)), (fun i => x (Sum.inr i)))
@@ -378,7 +378,7 @@ The `chartEvalValue` construction used in the Connes rigidity formalization.
 /--
 The `chartEvalSupport` construction used in the Connes rigidity formalization.
 -/
-def chartEvalSupport (χ : C →ₗ[k] k) (N : ℕ) :
+@[expose] def chartEvalSupport (χ : C →ₗ[k] k) (N : ℕ) :
     Finset (ChartEvalIndex N) := by
   classical
   exact Finset.univ.filter (fun i => chartEvalValue χ N i ≠ 0)

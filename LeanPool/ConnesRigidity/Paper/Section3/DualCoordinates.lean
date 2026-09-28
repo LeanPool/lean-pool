@@ -180,7 +180,7 @@ def dualTensorToPartial : Module.Dual k AVStar →ₗ[k]
 /--
 The `partialToDual` construction used in the Connes rigidity formalization.
 -/
-def partialToDual : (VStar →ₗ[k] Module.Dual k A) →ₗ[k]
+@[expose] def partialToDual : (VStar →ₗ[k] Module.Dual k A) →ₗ[k]
     Module.Dual k AVStar where
   toFun g := TensorProduct.lift
     { toFun := fun a =>

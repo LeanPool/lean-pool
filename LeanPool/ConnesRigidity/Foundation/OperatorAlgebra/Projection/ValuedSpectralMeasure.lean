@@ -213,7 +213,7 @@ step. Paper: §4.
 /--
 The `HasQuotientFixedApproximation` construction used in the Connes rigidity formalization.
 -/
-def HasQuotientFixedApproximation
+@[expose] def HasQuotientFixedApproximation
     (E : SplitAbelianExtension A G H)
     (π : UnitaryRepresentation G K) : Prop :=
   HasKazhdanPropertyT.{u, v} H →

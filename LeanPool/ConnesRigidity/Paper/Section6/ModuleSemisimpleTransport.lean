@@ -39,7 +39,7 @@ abbrev D := PaperKernel.D
 /--
 The `paperFirstProductRepresentation` construction used in the Connes rigidity formalization.
 -/
-def paperFirstProductRepresentation : Representation k Q D :=
+@[expose] def paperFirstProductRepresentation : Representation k Q D :=
   PaperModuleSemisimple.firstProductRepresentation
 
 /- The paper-facing first action agrees with the decomposed representation. Paper: §6. -/

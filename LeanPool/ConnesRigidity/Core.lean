@@ -135,7 +135,7 @@ theorem memℓp_reindex {α : Type u} {β : Type v} {E : Type w}
   Unitary.linearIsometryEquiv.symm (l2Reindex (Equiv.mulLeft g))
 
 /-- Left-regular representation boundary. Paper: §3. -/
-def leftRegularRepresentation (G : Type u) [Group G] :
+@[expose] def leftRegularRepresentation (G : Type u) [Group G] :
     G →* unitary (GroupL2 G →L[ℂ] GroupL2 G) where
   toFun := leftRegularUnitary
   map_one' := by
@@ -192,7 +192,7 @@ abbrev GroupVonNeumannAlgebra (G : CountableDiscreteGroup.{u}) :=
   (groupVonNeumannAlgebra G).toStarSubalgebra
 
 /-- Point-mass basis vector boundary. Paper: §3. -/
-def delta (G : CountableDiscreteGroup.{u}) (g : G) : GroupL2 G :=
+@[expose] def delta (G : CountableDiscreteGroup.{u}) (g : G) : GroupL2 G :=
   by
     classical
     exact lp.single 2 g 1

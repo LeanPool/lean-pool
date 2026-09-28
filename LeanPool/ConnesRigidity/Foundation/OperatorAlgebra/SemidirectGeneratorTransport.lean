@@ -33,7 +33,7 @@ family used by the closure reduction. Paper: §3.
 /--
 The `generatorSet` construction used in the Connes rigidity formalization.
 -/
-def generatorSet
+@[expose] def generatorSet
     {A K : Type*} [Group A] [Group K]
     (φ : K →* MulAut A) :
     Set (GroupL2 (A ⋊[φ] K) →L[ℂ] GroupL2 (A ⋊[φ] K)) :=

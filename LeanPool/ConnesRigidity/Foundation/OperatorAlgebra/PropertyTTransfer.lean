@@ -33,7 +33,7 @@ namespace CountableDiscreteGroup
 /--
 The `quotient` construction used in the Connes rigidity formalization.
 -/
-noncomputable def quotient
+@[expose] noncomputable def quotient
     (G : CountableDiscreteGroup.{u}) (N : Subgroup G) (hN : N.Normal) :
     CountableDiscreteGroup.{u} := by
   let normalInstance : N.Normal := hN

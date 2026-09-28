@@ -144,7 +144,7 @@ The `chartSquare` construction used in the Connes rigidity formalization.
 
 /-- The chart span C_N. Paper: Lemma 4.2.
 -/
-def chartSubmodule (N : ℕ) : Submodule k C :=
+@[expose] def chartSubmodule (N : ℕ) : Submodule k C :=
   Submodule.span k (Set.range (chartSquare N))
 
 /-- Coordinate basis for the two polynomial parameters. Paper: Lemma 4.2.

@@ -159,7 +159,7 @@ lemma diagonal_basisVector_zero_ne_zero :
   apply basisVector_zero_ne_zero
   have hdelta := congrArg PaperKernel.delta h
   rw [PaperKernel.delta_diagonal] at hdelta
-  exact hdelta
+  simpa only [map_zero] using hdelta
 
 /- The C detector does not duplicate an A-coordinate detector. Paper: §4. -/
 lemma cDetector_not_mem_image :

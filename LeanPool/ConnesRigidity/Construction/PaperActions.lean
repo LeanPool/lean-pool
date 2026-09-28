@@ -89,7 +89,7 @@ def sl3CAction (l : SpecialLinear.SL3) : C →ₗ[k] C where
       exact Matrix.mulVec_smul _ _ _ }
 
 /-- The Q action homomorphism on the finite module. Paper: §2. -/
-def qVActionHom : Q →* (PaperV ≃ₗ[k] PaperV) where
+@[expose] def qVActionHom : Q →* (PaperV ≃ₗ[k] PaperV) where
   toFun := qVAction
   map_one' := by
     apply LinearEquiv.ext

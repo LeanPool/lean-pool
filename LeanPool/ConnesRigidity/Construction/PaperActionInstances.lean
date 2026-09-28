@@ -51,7 +51,7 @@ lemma transvection_action_apply_of_ne_target {i j r : Fin 3} (hij : i ≠ j)
   TensorProduct.congr (sl3AAction l) (qVStarActionHom q)
 
 /-- The first-summand action is a homomorphism. Paper: §2. -/
-def avStarActionHom : H →* (AVStar ≃ₗ[k] AVStar) where
+@[expose] def avStarActionHom : H →* (AVStar ≃ₗ[k] AVStar) where
   toFun h := avStarAction h.1 h.2
   map_one' := by
     apply LinearEquiv.ext
@@ -128,7 +128,7 @@ theorem sl3CAction_comp_inv (l : SpecialLinear.SL3) :
     (sl3TensorAction_comp_inv l)
 
 /-- The SL₃ action on the fixed tensor module is invertible. Paper: §2. -/
-def sl3CActionEquiv (l : SpecialLinear.SL3) : C ≃ₗ[k] C :=
+@[expose] def sl3CActionEquiv (l : SpecialLinear.SL3) : C ≃ₗ[k] C :=
   { toFun := sl3CAction l
     invFun := sl3CAction l⁻¹
     left_inv := by
@@ -153,7 +153,7 @@ def sl3CActionEquiv (l : SpecialLinear.SL3) : C ≃ₗ[k] C :=
       exact (sl3CAction l).map_smul a c }
 
 /-- The fixed-tensor action is a homomorphism. Paper: §2. -/
-def sl3CActionHom : SpecialLinear.SL3 →* (C ≃ₗ[k] C) where
+@[expose] def sl3CActionHom : SpecialLinear.SL3 →* (C ≃ₗ[k] C) where
   toFun := sl3CActionEquiv
   map_one' := by
     apply LinearEquiv.ext
@@ -183,11 +183,11 @@ def sl3CActionHom : SpecialLinear.SL3 →* (C ≃ₗ[k] C) where
       (avStarAction h.1 h.2 d.1, sl3CAction h.1 d.2) := rfl
 
 /-- Reinterpret a linear kernel equivalence as a multiplicative automorphism. Paper: §2. -/
-def additiveEquivToMulAut (e : D ≃ₗ[k] D) : MulAut (Multiplicative D) :=
+@[expose] def additiveEquivToMulAut (e : D ≃ₗ[k] D) : MulAut (Multiplicative D) :=
   e.toAddEquiv.toMultiplicative
 
 /-- The first Zhou action as a linear homomorphism. Paper: §2. -/
-def paperThetaOneLinearHom : H →* (D ≃ₗ[k] D) where
+@[expose] def paperThetaOneLinearHom : H →* (D ≃ₗ[k] D) where
   toFun := paperThetaOneLinear
   map_one' := by
     apply LinearEquiv.ext
@@ -215,7 +215,7 @@ def paperThetaOneLinearHom : H →* (D ≃ₗ[k] D) where
       exact congrArg (fun e : C ≃ₗ[k] C => e c) hm
 
 /-- The first Zhou action on the multiplicative kernel. Paper: §2. -/
-def paperThetaOneHom : H →* MulAut (Multiplicative D) where
+@[expose] def paperThetaOneHom : H →* MulAut (Multiplicative D) where
   toFun h := additiveEquivToMulAut (paperThetaOneLinearHom h)
   map_one' := by
     apply MulEquiv.ext
@@ -392,7 +392,7 @@ theorem thetaTwoLinearMap_one : thetaTwoLinearMap (1 : H) = LinearMap.id := by
     exact congrArg (fun e : C →ₗ[k] C => e c) hc
 
 /-- The second Zhou action as a linear equivalence. Paper: §2. -/
-def paperThetaTwoLinearEquiv (h : H) : D ≃ₗ[k] D :=
+@[expose] def paperThetaTwoLinearEquiv (h : H) : D ≃ₗ[k] D :=
   { toFun := thetaTwoLinearMap h
     invFun := thetaTwoLinearMap h⁻¹
     left_inv := by
@@ -429,7 +429,7 @@ def paperThetaTwoLinearEquiv (h : H) : D ≃ₗ[k] D :=
       exact (thetaTwoLinearMap h).map_smul a x }
 
 /-- The second Zhou action as a linear homomorphism. Paper: §2. -/
-def paperThetaTwoLinearHom : H →* (D ≃ₗ[k] D) where
+@[expose] def paperThetaTwoLinearHom : H →* (D ≃ₗ[k] D) where
   toFun := paperThetaTwoLinearEquiv
   map_one' := by
     apply LinearEquiv.ext
@@ -443,7 +443,7 @@ def paperThetaTwoLinearHom : H →* (D ≃ₗ[k] D) where
         (thetaTwoLinearMap_mul h h')
 
 /-- The second Zhou action on the multiplicative kernel. Paper: §2. -/
-def paperThetaTwoHom : H →* MulAut (Multiplicative D) where
+@[expose] def paperThetaTwoHom : H →* MulAut (Multiplicative D) where
   toFun h := additiveEquivToMulAut (paperThetaTwoLinearHom h)
   map_one' := by
     apply MulEquiv.ext

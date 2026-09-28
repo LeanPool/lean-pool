@@ -169,7 +169,7 @@ def characterToProduct (χ : CharacterSpace) : Additive PChar × Additive QChar 
 /--
 The `characterProductEquiv` construction used in the Connes rigidity formalization.
 -/
-def characterProductEquiv : CharacterSpace ≃+
+@[expose] def characterProductEquiv : CharacterSpace ≃+
     (Additive PChar × Additive QChar) where
   toFun := characterToProduct
   invFun := productToCharacter
@@ -260,7 +260,7 @@ theorem continuous_productToCharacter : Continuous (productToCharacter :
 /--
 The `characterProductHomeomorph` construction used in the Connes rigidity formalization.
 -/
-def characterProductHomeomorph :
+@[expose] def characterProductHomeomorph :
     CharacterSpace ≃ₜ (Additive PChar × Additive QChar) :=
   Homeomorph.mk characterProductEquiv.toEquiv
     (by exact continuous_characterToProduct)

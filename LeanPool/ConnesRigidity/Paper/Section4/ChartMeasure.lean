@@ -76,7 +76,7 @@ theorem measurable_paperDualCharacterAction {H : CountableDiscreteGroup}
 /-- Invariant probability measure for the additive character action, whose
 measurability is recorded above. Paper: §4.
 -/
-def IsInvariantPaperSpectralMeasure {H : CountableDiscreteGroup}
+@[expose] def IsInvariantPaperSpectralMeasure {H : CountableDiscreteGroup}
     (action : H →* Multiplicative (AddAut D))
     (μ : ProbabilityMeasure CharacterSpace) : Prop :=
   ∀ h : H,
@@ -85,7 +85,7 @@ def IsInvariantPaperSpectralMeasure {H : CountableDiscreteGroup}
 /--
 The `linearDetector` construction used in the Connes rigidity formalization.
 -/
-def linearDetector (d : D) : Set CharacterSpace :=
+@[expose] def linearDetector (d : D) : Set CharacterSpace :=
   {χ | BinaryPontryaginDual.characterLinear (M := D)
       (Additive.toMul χ) d = 1}
 

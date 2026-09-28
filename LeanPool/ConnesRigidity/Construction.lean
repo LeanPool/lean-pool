@@ -35,7 +35,7 @@ abbrev A := Fin 3 → R
 abbrev H := SpecialLinear.SL3 × Sp4.Group
 
 /-- Countable discrete wrapper for the acting group. Paper: §2. -/
-noncomputable def actingGroup : CountableDiscreteGroup where
+@[expose] noncomputable def actingGroup : CountableDiscreteGroup where
   Carrier := H
   group := inferInstance
   countable := by infer_instance

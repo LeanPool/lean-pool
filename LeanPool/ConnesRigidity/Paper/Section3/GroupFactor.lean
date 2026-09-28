@@ -57,14 +57,14 @@ abbrev CrossedTwo := crossedHilbert paperHaarActionTwo
 /--
 The `paperGroupFactorUnitaryOne` construction used in the Connes rigidity formalization.
 -/
-def paperGroupFactorUnitaryOne :
+@[expose] def paperGroupFactorUnitaryOne :
     GroupL2 Γ₁ ≃ₗᵢ[ℂ] CrossedOne :=
   (semidirectFubini paperThetaOneHom).trans
     (crossedFiberwiseEquiv (K := H) paperFourierCoordinateUnitary)
 
 /-- The second concrete Zhou group-factor unitary. Paper: §3.
 -/
-def paperGroupFactorUnitaryTwo :
+@[expose] def paperGroupFactorUnitaryTwo :
     GroupL2 Γ₂ ≃ₗᵢ[ℂ] CrossedTwo :=
   (semidirectFubini paperThetaTwoHom).trans
     (crossedFiberwiseEquiv (K := H) paperFourierCoordinateUnitary)

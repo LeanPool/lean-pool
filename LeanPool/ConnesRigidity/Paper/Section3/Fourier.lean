@@ -303,7 +303,7 @@ theorem characterL2_span_closure_eq_top :
 /--
 The `FourierBasis` construction used in the Connes rigidity formalization.
 -/
-def FourierBasis : HilbertBasis D ℂ (Lp ℂ 2 paperCharacterHaar) :=
+@[expose] def FourierBasis : HilbertBasis D ℂ (Lp ℂ 2 paperCharacterHaar) :=
   HilbertBasis.mk characterL2_orthonormal
     characterL2_span_closure_eq_top.ge
 

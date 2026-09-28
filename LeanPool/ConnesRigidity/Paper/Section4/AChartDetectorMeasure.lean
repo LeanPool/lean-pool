@@ -55,7 +55,7 @@ abbrev CharacterSpace := PaperDualTopology.CharacterSpace
 
 /-- The A-coordinate embedding into the first kernel summand. Paper: §4.
 -/
-def aCoordinateEmbedding (v : OpenAIPort.SymplecticIndex) :
+@[expose] def aCoordinateEmbedding (v : OpenAIPort.SymplecticIndex) :
     A →ₗ[k] D where
   toFun a := (a ⊗ₜ[k] LinearMap.proj v, 0)
   map_add' a b := by
@@ -501,7 +501,7 @@ theorem aChartVector_mem_some_chart (a : A) :
 /--
 The `aNonzeroLocus` construction used in the Connes rigidity formalization.
 -/
-def aNonzeroLocus (v : OpenAIPort.SymplecticIndex) :
+@[expose] def aNonzeroLocus (v : OpenAIPort.SymplecticIndex) :
     Set CharacterSpace :=
   {χ : CharacterSpace | aChartLinear χ v ≠ 0}
 

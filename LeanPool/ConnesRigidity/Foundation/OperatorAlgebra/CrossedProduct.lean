@@ -158,7 +158,7 @@ abbrev crossedCoefficient
 /-- Multiplication on the base Hilbert space supplies crossed multipliers.
 Paper: §3.
 -/
-def crossedBaseMultiplier
+@[expose] def crossedBaseMultiplier
     {K : Type u} {Ω : Type v} [Group K]
     [AddCommGroup Ω] [TopologicalSpace Ω] [MeasurableSpace Ω]
     (X : HaarProbabilityAction K Ω)
@@ -182,7 +182,7 @@ Paper: §3.
 /--
 The `crossedFiberwiseOperator` construction used in the Connes rigidity formalization.
 -/
-def crossedFiberwiseOperator
+@[expose] def crossedFiberwiseOperator
     {K : Type u} {H : Type v}
     [NormedAddCommGroup H] [NormedSpace ℂ H]
     (T : H →L[ℂ] H) :
@@ -224,7 +224,7 @@ def crossedFiberwiseOperator
 /-- Base multipliers are lifted fiberwise to the crossed Hilbert space.
 Paper: §3.
 -/
-def crossedMultiplier
+@[expose] def crossedMultiplier
     {K : Type u} {Ω : Type v} [Group K]
     [AddCommGroup Ω] [TopologicalSpace Ω] [MeasurableSpace Ω]
     (X : HaarProbabilityAction K Ω)
@@ -297,7 +297,7 @@ Paper: §3.
 
 /-- The crossed Hilbert space reindexes under a group equivalence. Paper: §3.
 -/
-def crossedIndexEquiv
+@[expose] def crossedIndexEquiv
     {K : Type u} {H : Type v}
     [NormedAddCommGroup H] [NormedSpace ℂ H]
     (e : K ≃ K) :
@@ -465,7 +465,7 @@ Paper: §3.
 /-- The standard two-family crossed-product generator set.
 Paper: §3.
 -/
-def crossedGeneratorSet
+@[expose] def crossedGeneratorSet
     {K : Type u} {Ω : Type v} [Group K]
     [AddCommGroup Ω] [TopologicalSpace Ω] [MeasurableSpace Ω]
     (X : HaarProbabilityAction K Ω) :
@@ -503,7 +503,7 @@ structure CrossedProductModel
 /--
 The `crossedProductModel` construction used in the Connes rigidity formalization.
 -/
-def crossedProductModel
+@[expose] def crossedProductModel
     {K : Type u} {Ω : Type v} [Group K]
     [AddCommGroup Ω] [TopologicalSpace Ω] [MeasurableSpace Ω]
     (X : HaarProbabilityAction K Ω) :

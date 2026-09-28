@@ -148,11 +148,11 @@ theorem coordinateAction_mul
           simp [coordinateAction, AddEquiv.trans_apply]
 
 /-- The first actual Zhou action on the raw dual coordinates. Paper: §3. -/
-def paperCoordinateActionOne (h : H) : Coordinates ≃+ Coordinates :=
+@[expose] def paperCoordinateActionOne (h : H) : Coordinates ≃+ Coordinates :=
   coordinateAction paperDualActionOne h
 
 /-- The second actual Zhou action on the raw dual coordinates. Paper: §3. -/
-def paperCoordinateActionTwo (h : H) : Coordinates ≃+ Coordinates :=
+@[expose] def paperCoordinateActionTwo (h : H) : Coordinates ≃+ Coordinates :=
   coordinateAction paperDualActionTwo h
 
 @[simp] theorem paperCoordinateActionOne_apply (h : H) (p : Coordinates) :
@@ -167,7 +167,7 @@ def paperCoordinateActionTwo (h : H) : Coordinates ≃+ Coordinates :=
 
 /-- Forget the additive structure when the factor witness needs permutation
 actions. Paper: §3. -/
-def paperCoordinatePermAction (dualAction : H →* (Dual ≃ₗ[k] Dual)) :
+@[expose] def paperCoordinatePermAction (dualAction : H →* (Dual ≃ₗ[k] Dual)) :
     H →* Equiv.Perm Coordinates where
   toFun h := (coordinateAction dualAction h).toEquiv
   map_one' := by
@@ -185,11 +185,11 @@ def paperCoordinatePermAction (dualAction : H →* (Dual ≃ₗ[k] Dual)) :
       (coordinateAction_mul dualAction h h')
 
 /-- The first Zhou coordinate action as a permutation action. Paper: §3. -/
-def paperCoordinatePermActionOne : H →* Equiv.Perm Coordinates :=
+@[expose] def paperCoordinatePermActionOne : H →* Equiv.Perm Coordinates :=
   paperCoordinatePermAction paperDualActionOne
 
 /-- The second Zhou coordinate action as a permutation action. Paper: §3. -/
-def paperCoordinatePermActionTwo : H →* Equiv.Perm Coordinates :=
+@[expose] def paperCoordinatePermActionTwo : H →* Equiv.Perm Coordinates :=
   paperCoordinatePermAction paperDualActionTwo
 
 end

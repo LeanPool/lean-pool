@@ -94,7 +94,7 @@ The `coordinateComplexCharacter` construction used in the Connes rigidity formal
 
 /-- The bounded coefficient used by the crossed base multiplier. Paper: §3.
 -/
-def coordinateCharacterCoefficient (d : D) : crossedCoefficient X :=
+@[expose] def coordinateCharacterCoefficient (d : D) : crossedCoefficient X :=
   ContinuousMap.toLp ⊤ coordinatesHaar ℂ (coordinateComplexCharacter d)
 
 theorem coordinateCharacterCoefficient_apply_ae (d : D) :
@@ -158,7 +158,7 @@ theorem coordinateCharacterMultiplier_eq_baseMultiplier (d : D) :
 /--
 The `paperCrossedKernelFourierUnitary` construction used in the Connes rigidity formalization.
 -/
-def paperCrossedKernelFourierUnitary : ProductL2 ≃ₗᵢ[ℂ] CrossedL2 :=
+@[expose] def paperCrossedKernelFourierUnitary : ProductL2 ≃ₗᵢ[ℂ] CrossedL2 :=
   crossedFiberwiseEquiv (K := H) paperFourierCoordinateUnitary
 
 @[simp] theorem paperCrossedKernelFourierUnitary_apply
@@ -175,7 +175,7 @@ def productKernelRegularUnitary (d : D) : ProductL2 ≃ₗᵢ[ℂ] ProductL2 :=
 
 /-- The kernel translation on the concrete crossed base. Paper: §3.
 -/
-def crossedKernelMultiplier (d : D) : CrossedL2 →L[ℂ] CrossedL2 :=
+@[expose] def crossedKernelMultiplier (d : D) : CrossedL2 →L[ℂ] CrossedL2 :=
   crossedMultiplier X (coordinateCharacterCoefficient d)
 
 /- Kernel regular translations become crossed-base multipliers on every fiber.

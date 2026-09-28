@@ -79,13 +79,13 @@ local instance paperHaarActionTwoFinite :
 /--
 The `paperIdentityOne` construction used in the Connes rigidity formalization.
 -/
-def paperIdentityOne : GroupL2 Γ₁ :=
+@[expose] def paperIdentityOne : GroupL2 Γ₁ :=
   lp.single 2 (1 : Γ₁) (1 : ℂ)
 
 /--
 The `paperIdentityTwo` construction used in the Connes rigidity formalization.
 -/
-def paperIdentityTwo : GroupL2 Γ₂ :=
+@[expose] def paperIdentityTwo : GroupL2 Γ₂ :=
   lp.single 2 (1 : Γ₂) (1 : ℂ)
 
 /- The zero Fourier character is the constant vector. Paper: §3. -/

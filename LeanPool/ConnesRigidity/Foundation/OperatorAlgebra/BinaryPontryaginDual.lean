@@ -101,7 +101,7 @@ def characterIntoRoots {M : Type*} [AddCommGroup M] [Module F M]
 
 /-- The additive binary character underlying a Pontryagin character. Paper: §3.
 -/
-def characterAdd {M : Type*} [AddCommGroup M] [Module F M]
+@[expose] def characterAdd {M : Type*} [AddCommGroup M] [Module F M]
     [TopologicalSpace M]
     (χ : PontryaginDual (Multiplicative M)) : M →+ F :=
   { toFun x := Multiplicative.toAdd

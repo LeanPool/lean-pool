@@ -330,7 +330,7 @@ noncomputable instance paperCoordinatesTopology : TopologicalSpace Coordinates :
 
 /-- The character/coordinate equivalence is a homeomorphism for the
 transported topology. Paper: §3. -/
-def characterCoordinatesHomeomorph : CharacterSpace ≃ₜ Coordinates :=
+@[expose] def characterCoordinatesHomeomorph : CharacterSpace ≃ₜ Coordinates :=
   Homeomorph.mk PaperDualHaar.characterCoordinatesEquiv.toEquiv
     (by
       apply continuous_induced_rng.mpr
