@@ -422,7 +422,7 @@ namespace diskPair
 
 /-- Homeomorphism from the pair (TopCat.disk.{u} n, TopCat.diskBoundary.{u} n)
 to the pair (TopCat.cube.{u} n, TopCat.cubeBoundary.{u} n) -/
-noncomputable def homeoCubePairULift (n : ℕ) :
+@[expose] noncomputable def homeoCubePairULift (n : ℕ) :
     CategoryTheory.Arrow.mk (diskBoundaryIncl n) ≅
     CategoryTheory.Arrow.mk (cubeBoundaryIncl n) :=
   CategoryTheory.Arrow.isoMk' _ _

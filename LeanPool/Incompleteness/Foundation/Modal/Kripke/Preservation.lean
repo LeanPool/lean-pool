@@ -43,6 +43,7 @@ end «lp_section_1»
 section «lp_section_2»
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def ModalEquivalent {M₁ M₂ : Model} (w₁ : M₁.World) (w₂ : M₂.World) : Prop := ∀ {φ}, w₁ ⊧ φ ↔ w₂ ⊧ φ
 /-- Imported declaration from the Incompleteness formalization. -/
 infix:50 " ↭ " => ModalEquivalent

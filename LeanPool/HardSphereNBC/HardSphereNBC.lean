@@ -34,8 +34,7 @@ noncomputable section
   toLex (e.inf, e.sup)
 
 /-- Order unordered edges lexicographically by their sorted endpoints. -/
-@[instance_reducible]
-@[expose]
+@[instance_reducible, expose]
 noncomputable def hardSphereEdgeLinearOrder (k : Nat) :
     LinearOrder (Sym2 (Fin k)) :=
   LinearOrder.lift' (hardSphereEdgeKey (k := k)) (by
@@ -47,7 +46,6 @@ noncomputable def hardSphereEdgeLinearOrder (k : Nat) :
     · simpa [hardSphereEdgeKey] using
         congrArg (fun p : Fin k ×ₗ Fin k => (ofLex p).2) h)
 
-@[expose]
 noncomputable instance hardSphereEdgeOrder (k : Nat) :
     LinearOrder (Sym2 (Fin k)) := hardSphereEdgeLinearOrder k
 

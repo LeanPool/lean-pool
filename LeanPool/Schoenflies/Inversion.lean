@@ -169,6 +169,7 @@ theorem isOpen_invert_image {S : Set Plane} (hS : IsOpen S) (ha : a ∉ S) :
 
 /-- "`I_a` is an involutive homeomorphism of `ℝ² ∖ {a}`", bundled. Its inverse is itself. -/
 @[simps! -isSimp apply]
+@[expose]
 noncomputable def invertHomeo (a : Plane) : ({a}ᶜ : Set Plane) ≃ₜ ({a}ᶜ : Set Plane) where
   toFun z := ⟨invert a z, fun h =>
     z.2 (mem_singleton_iff.2 (invert_eq_center_iff.1 (mem_singleton_iff.1 h)))⟩

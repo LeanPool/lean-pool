@@ -657,6 +657,7 @@ counterexample, instead of as a `sorry` nobody revisited. -/
 `Γ p ∪ Γ (p+1)` — off its drawing, with an unbounded face through it. A consumer proves the
 second clause with `Graph.beyondSquare_subset_face`, and `Graph.unbounded_face_unique` is what
 makes "an unbounded face" *the* outer face. -/
+@[expose]
 def OuterOnPairs (Γ : ℕ → Graph Plane β) (drawing : β → ℝ → Plane) (n : ℕ) (x : Plane) : Prop :=
   ∀ p, p + 1 ≤ n → x ∈ exterior (chainUnion Γ p 1) drawing ∧
     ¬ Bornology.IsBounded (face (chainUnion Γ p 1) drawing x)

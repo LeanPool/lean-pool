@@ -115,7 +115,7 @@ def supportedLinear : (α →ᵇ E →L[ℝ] F) →ₗ[ℝ]
   map_smul' := supported_smul μ S hS
 
 /-- The real coefficient-to-L²-operator map on the supported spaces. -/
-def supportedMap : (α →ᵇ E →L[ℝ] F) →L[ℝ]
+@[expose] def supportedMap : (α →ᵇ E →L[ℝ] F) →L[ℝ]
     (supportedSpace (V := E) μ S hS →L[ℝ] supportedSpace (V := F) μ S hS) where
   toLinearMap := supportedLinear μ S hS
   cont := AddMonoidHomClass.continuous_of_bound (supportedLinear μ S hS) 1 (fun A => by

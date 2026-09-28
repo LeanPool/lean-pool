@@ -727,7 +727,7 @@ theorem productHq_smul_right {q : ℕ} (hq : 6 ≤ q) (L : Vector3 →L[ℝ] ℝ
   exact scalarProduct_smul_right period (by omega : 3 ≤ q) L u r (value period v)
 
 /-- Multiplication by a Sobolev scalar component, as an actual bounded Sobolev operator. -/
-def productHqRight {q : ℕ} (hq : 6 ≤ q) (L : Vector3 →L[ℝ] ℝ) (hL : ‖L‖ ≤ 1)
+@[expose] def productHqRight {q : ℕ} (hq : 6 ≤ q) (L : Vector3 →L[ℝ] ℝ) (hL : ‖L‖ ≤ 1)
     (u : SobolevSpace period q) : SobolevSpace period q →L[ℝ] SobolevSpace period q :=
   LinearMap.mkContinuous
     { toFun := productHq period hq L hL u

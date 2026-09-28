@@ -21,7 +21,7 @@ public import LeanPool.BicausalOT.BicausalOT.DescriptiveSetTheory.AnalyticSet
 Supporting results for bicausal optimal transport and measurable selection.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Set
 
@@ -61,7 +61,7 @@ theorem IsOpen.analyticSet [PolishSpace X] {s : Set X} (hs : IsOpen s) :
 
 /-- A function is analytically measurable (BS, Def 7.20) if preimages of Borel
     sets in the codomain land in σ(Σ₁¹) on the domain. -/
-def AnalyticallyMeasurable {Y : Type*} [TopologicalSpace Y]
+@[expose] def AnalyticallyMeasurable {Y : Type*} [TopologicalSpace Y]
     (f : X → Y) : Prop :=
   @Measurable X Y (analyticMeasurableSpace X) (borel Y) f
 

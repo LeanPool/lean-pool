@@ -51,7 +51,7 @@ noncomputable def faceReindexToStandard (f : K.Face) (x : K.ClosedFace f) :
   · exact (K.faceVertexEquiv f).sum_comp (fun v ↦ x v) |>.trans x.2.2
 
 /-- Undo the cyclic coordinate reindexing. -/
-noncomputable def faceReindexFromStandard (f : K.Face) (z : stdSimplex ℝ (Fin 3)) :
+@[expose] noncomputable def faceReindexFromStandard (f : K.Face) (z : stdSimplex ℝ (Fin 3)) :
     K.ClosedFace f := by
   refine ⟨fun v ↦ z ((K.faceVertexEquiv f).symm v), ?_, ?_⟩
   · exact fun v ↦ z.2.1 _
@@ -214,7 +214,7 @@ theorem faceStandardEdge_eq_endpointIndices (f : K.Face) (i : ZMod 3) :
     exact Finset.pair_comm _ _
 
 /-- The standard source point on a face side, oriented by the global edge ordering. -/
-noncomputable def faceEdgeSourcePoint (f : K.Face) (i : ZMod 3) (r : ℝ) : Plane :=
+@[expose] noncomputable def faceEdgeSourcePoint (f : K.Face) (i : ZMod 3) (r : ℝ) : Plane :=
   AffineMap.lineMap
     (standardTriangleVertex (K.faceEdgeFirstIndex f i))
     (standardTriangleVertex (K.faceEdgeSecondIndex f i)) r

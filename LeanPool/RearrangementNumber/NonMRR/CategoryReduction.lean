@@ -27,7 +27,7 @@ namespace NonMRR
 
 /-- A family meeting each prescribed function infinitely often along
 each infinite set of coordinates. -/
-def StronglyCoincident (F : Set (ℕ → ℕ)) : Prop :=
+@[expose] def StronglyCoincident (F : Set (ℕ → ℕ)) : Prop :=
   ∀ W : Set ℕ, W.Infinite → ∀ c : ℕ → ℕ,
     ∃ f ∈ F, ∃ᶠ n in atTop, n ∈ W ∧ f n = c n
 

@@ -67,11 +67,9 @@ def zeroTraceMap (A : U →L[ℝ] V) :
       have hu : initialTrace T hT (u : TimeLp T U) = 0 := u.property
       rw [initialTrace_timeLift,hu,map_zero])
 
-omit [CompleteSpace U] [CompleteSpace V] in
 @[simp] theorem zeroTraceMap_coe (A : U →L[ℝ] V) (u : zeroTraceDerivatives (U := U) T hT) :
     (zeroTraceMap T hT A u : TimeLp T V) = timeLift T A (u : TimeLp T U) := by rfl
 
-omit [CompleteSpace U] [CompleteSpace V] in
 theorem zeroTraceMap_norm (A : U →L[ℝ] V) : ‖zeroTraceMap T hT A‖ ≤ ‖A‖ := by
   apply opNorm_le_bound _ (norm_nonneg A)
   intro u

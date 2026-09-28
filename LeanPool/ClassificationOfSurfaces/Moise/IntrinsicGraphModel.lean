@@ -108,14 +108,14 @@ noncomputable def replacementGraphArrangement : BrokenLineData (Set.univ : Set P
       (hcont := hcont) (hinj := hinj) (D := D) (C := C))
 
 /-- Restrict the common arrangement to the actual replacement segments. -/
-noncomputable def replacementGraphBaseComplex : PlaneComplex :=
+@[expose] noncomputable def replacementGraphBaseComplex : PlaneComplex :=
   (K.replacementGraphArrangement
       (hcont := hcont) (hinj := hinj) (D := D) (C := C)).arrangementMesh.toPlaneComplex
     |>.restrictToSet (K.replacementGraphCarrier
       (hcont := hcont) (hinj := hinj) (D := D) (C := C))
 
 /-- The conforming finite plane graph complex of the simultaneous intrinsic replacement. -/
-noncomputable def replacementGraphComplex : PlaneComplex :=
+@[expose] noncomputable def replacementGraphComplex : PlaneComplex :=
   (K.replacementGraphBaseComplex
     (hcont := hcont) (hinj := hinj) (D := D) (C := C)).oneSkeleton
 

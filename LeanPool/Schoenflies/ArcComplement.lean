@@ -102,7 +102,7 @@ This exists so that a *part* of one overlay can be spoken about as a graph in it
 while remaining a subgraph of the whole overlay (`segGraph_mono`).  Building the part as an
 overlay of its own source segments would not do: the total overlay cuts those segments at more
 points, so a sub-overlay is not a subgraph of it. -/
-def segGraph (S : Set Piece) : Graph Plane Piece where
+@[expose] def segGraph (S : Set Piece) : Graph Plane Piece where
   vertexSet := {v | ∃ P ∈ S, v = P.1 ∨ v = P.2}
   IsLink P x y := P ∈ S ∧ ((x = P.1 ∧ y = P.2) ∨ (x = P.2 ∧ y = P.1))
   edgeSet := S

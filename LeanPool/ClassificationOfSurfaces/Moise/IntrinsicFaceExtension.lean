@@ -87,7 +87,7 @@ theorem facePlaneHomeomorph_symm_mem_oneSkeleton (t : K.Face)
 
 /-- The canonical lift of the standard triangular frontier to the global intrinsic
 one-skeleton. -/
-noncomputable def faceBoundaryLift (t : K.Face) :
+@[expose] noncomputable def faceBoundaryLift (t : K.Face) :
     StandardFaceBoundary → K.oneSkeleton :=
   fun p => ⟨((K.facePlaneHomeomorph t).symm
     ⟨p.1, standardFaceBoundary_mem_region p⟩).1,
@@ -242,7 +242,7 @@ theorem faceStandardEdge_card (i : ZMod 3) : (faceStandardEdge i).card = 2 := by
     ((by decide : ∀ j : ZMod 3, j ≠ j + 1) i)
 
 /-- A cyclic side of the standard triangle, regarded as an edge of its one-skeleton. -/
-noncomputable def standardFaceEdgeFace (i : ZMod 3) :
+@[expose] noncomputable def standardFaceEdgeFace (i : ZMod 3) :
     standardTrianglePlaneComplex.oneSkeleton.EdgeFace :=
   ⟨faceStandardEdge i, Finset.mem_filter.mpr ⟨
     standardTrianglePlaneComplex.mem_oneSkeleton_simplexes.mpr
@@ -250,7 +250,7 @@ noncomputable def standardFaceEdgeFace (i : ZMod 3) :
     faceStandardEdge_card i⟩⟩
 
 /-- The finite graph enumeration index of a cyclic standard side. -/
-noncomputable def standardFaceEdgeIndex (i : ZMod 3) :
+@[expose] noncomputable def standardFaceEdgeIndex (i : ZMod 3) :
     Fin (Fintype.card standardTrianglePlaneComplex.oneSkeleton.EdgeFace) :=
   Classical.choose
     (standardTrianglePlaneComplex.oneSkeleton.exists_edgeAt (standardFaceEdgeFace i))

@@ -79,7 +79,7 @@ theorem circuit_first_entry_replacement {m r : Nat} (C : Circuit m r)
   Submodule.span F₂ {rZeroANF, rOneANF, rInfinityANF}
 
 /-- Affine functions together with the rational-place product targets. -/
-def rationalLowSpace : Submodule F₂ (ANF 8) :=
+@[expose] def rationalLowSpace : Submodule F₂ (ANF 8) :=
   affine 8 ⊔ rationalTargetSpace
 
 theorem targetANF_rationalCoeffRep (α : Fin 3 → F₂) :

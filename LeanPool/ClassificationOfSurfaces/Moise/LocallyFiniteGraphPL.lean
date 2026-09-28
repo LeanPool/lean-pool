@@ -124,7 +124,7 @@ noncomputable def rawEdgeMiddleBreakpoint
       (A.exitData.right - A.exitData.left) + 2) / 4
 
 /-- The `edgeMiddleBreakpoint` declaration. -/
-noncomputable def edgeMiddleBreakpoint
+@[expose] noncomputable def edgeMiddleBreakpoint
     (A : G.CentralPolygonalArc e) (v : A.parameterization.source.Vertex) : ℝ :=
   max (1 / 2 : ℝ) (min (3 / 4 : ℝ) (rawEdgeMiddleBreakpoint A v))
 
@@ -183,7 +183,7 @@ abbrev EdgeBreakpoint (A : G.CentralPolygonalArc e) :=
   Option (Option A.parameterization.source.Vertex)
 
 /-- The `edgeBreakpointParameter` declaration. -/
-noncomputable def edgeBreakpointParameter
+@[expose] noncomputable def edgeBreakpointParameter
     (A : G.CentralPolygonalArc e) (b : EdgeBreakpoint A) : ℝ :=
   match b with
   | none => 1 / 2

@@ -58,6 +58,11 @@ theorem sobolevAverage_eq_integral {q : ℕ} (u : SobolevSpace P q) :
       sobolevTranslation P q (EulerCylinderAnglePrimitive.angleShift P s) u))
   rw [map_smul, ← (valueOperator P q).intervalIntegral_comp_comm
     ((sobolevAngleCurve_continuous P u).intervalIntegrable 0 P)]
+  rw [average_eq_integral]
+  congr 1
+  apply intervalIntegral.integral_congr
+  intro s _
+  simp only [angleCurve, value_sobolevTranslation, EulerCylinderAnglePrimitive.angleShift]
   rfl
 
 theorem pointEvaluation_average_kernel (u : SobolevSpace P 3) (x : LiftDomain P) :

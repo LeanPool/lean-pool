@@ -358,7 +358,7 @@ private lemma Delta_lower_bound : ∃ r > 0, ∀ z : UpperHalfPlane,
   have hDelta_eq : Δ z = cFDelta qz := by
     have := (SlashInvariantFormClass.eq_cuspFunction Delta z
       (by simp) one_ne_zero).symm
-    simp only [cFDelta] at this ⊢; exact this
+    simpa only [cFDelta, qz] using this
   rw [hDelta_eq]
   have hq_pos : 0 < ‖qz‖ := norm_pos_iff.mpr hqz_ne
   have hdist := hδ hqz_ne (by rwa [dist_zero_right])

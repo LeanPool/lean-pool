@@ -33,7 +33,7 @@ public import LeanPool.BicausalOT.BicausalOT.DescriptiveSetTheory.ProbabilityMea
 not the Borel σ-algebra of the weak topology; the type synonym `WeakP`
 installs the Borel structure (Polish by W1). -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Set ENNReal
 

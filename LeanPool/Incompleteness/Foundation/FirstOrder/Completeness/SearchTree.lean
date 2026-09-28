@@ -82,6 +82,7 @@ inductive SearchTreeAux (T : Theory L) (Γ : Sequent L) : ℕ → Sequent L → 
   | succ : SearchTreeAux T Γ s Δ₁ → ReduxNat T s Δ₂ Δ₁ → SearchTreeAux T Γ (s + 1) Δ₂
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def SearchTree (T : Theory L) (Γ : Sequent L) := (s : ℕ) × (Δ : Sequent L) × SearchTreeAux T Γ s Δ
 
 namespace SearchTree

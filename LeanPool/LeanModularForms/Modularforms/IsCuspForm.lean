@@ -151,7 +151,7 @@ private lemma isZeroAtImInfty_of_coeffZero {k : ℤ}
   simp_all
 
 /-- Build a `CuspForm` from a modular form whose q-expansion has vanishing constant term. -/
-noncomputable def cuspFormOfCoeffZero {k : ℤ}
+@[expose] noncomputable def cuspFormOfCoeffZero {k : ℤ}
     (f : ModularForm Γ(1) k)
     (h : (qExpansion 1 f).coeff 0 = 0) : CuspForm Γ(1) k where
   toSlashInvariantForm := f.toSlashInvariantForm

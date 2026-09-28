@@ -294,6 +294,7 @@ def EvalAux (s : Structure L M) (ε : ξ → M) : ∀ {n}, (Fin n → M) → Sem
   by induction φ using rec' <;> simp [*, EvalAux, or_iff_not_imp_left]
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def Eval (s : Structure L M) (e : Fin n → M) (ε : ξ → M) : Semiformula L ξ n →ˡᶜ Prop where
   toTr := EvalAux s ε e
   map_top' := rfl

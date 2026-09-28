@@ -51,6 +51,7 @@ variable (𝕜 : Type*) [Field 𝕜]
 
 /-- A bilinear map version of the Virasoro cocycle.
 (Defining formula: `γ (lgen n) (lgen m) = (n^3 - n) / 12 * δ[n+m,0]`.) -/
+@[expose]
 noncomputable def virasoroCocycleBilin : (WittAlgebra 𝕜) →ₗ[𝕜] (WittAlgebra 𝕜) →ₗ[𝕜] 𝕜 :=
   (lgen 𝕜).constr 𝕜 <| fun n ↦ (lgen 𝕜).constr 𝕜 <| fun m ↦
       if n + m = 0 then (n^3 - n) / 12 else 0

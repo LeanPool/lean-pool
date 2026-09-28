@@ -88,6 +88,7 @@ lemma positive_operator_iff {k} {o : Operator L k} {v : Fin k → Semiterm L ξ 
 
 -- f.operator ![ ... f.operator ![f.operator ![z, t 0], t 1], ... ,t (n-1)]
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def foldr (f : Operator L 2) (z : Operator L k) : List (Operator L k) → Operator L k
   | []      => z
   | o :: os => f.comp ![foldr f z os, o]
@@ -101,6 +102,7 @@ def foldr (f : Operator L 2) (z : Operator L k) : List (Operator L k) → Operat
   simp [foldr, operator_comp, Matrix.fun_eq_vec₂]
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def iterr (f : Operator L 2) (z : Const L) : (n : ℕ) → Operator L n
   | 0     => z
   | _ + 1 => f.foldr (bvar 0) (List.ofFn fun x => bvar x.succ)
@@ -244,6 +246,7 @@ end «lp_section_1»
 section «lp_section_2»
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def npow (L : Language) [Operator.One L] [Operator.Mul L] (n : ℕ) : Operator L 1 :=
   Operator.Mul.mul.foldr (One.one.comp ![]) (List.replicate n (bvar 0))
 

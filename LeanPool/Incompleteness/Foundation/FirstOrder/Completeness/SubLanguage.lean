@@ -22,6 +22,7 @@ variable {L : Language.{u}} {L₁ : Language.{u}} {L₂ : Language.{u}}
 namespace Language
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def subLanguage (L : Language) (pfunc : ∀ k, L.Func k → Prop) (prel : ∀ k, L.Rel k → Prop) :
     Language where
   Func := fun k => Subtype (pfunc k)

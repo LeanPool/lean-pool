@@ -32,7 +32,7 @@ universal measurability (`MeasureTheory.AnalyticSet.nullMeasurableSet`)
 and the parametrized kernel version
 (`MeasureTheory.AnalyticSet.kernel_section_gt`). -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Set ENNReal
 

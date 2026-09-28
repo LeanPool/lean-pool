@@ -24,7 +24,7 @@ open scoped ContinuousMap
 universe u
 
 /-- `IsWeakHomotopyEquiv` -/
-def IsWeakHomotopyEquiv {X Y : Type u} [TopologicalSpace X] [TopologicalSpace Y]
+@[expose] def IsWeakHomotopyEquiv {X Y : Type u} [TopologicalSpace X] [TopologicalSpace Y]
     (f : C(X, Y)) : Prop :=
   Nonempty X ∧
     ∀ n x, Function.Bijective (HomotopyGroup.inducedMap n x f)

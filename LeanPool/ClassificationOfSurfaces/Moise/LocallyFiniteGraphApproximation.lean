@@ -248,7 +248,7 @@ theorem isClosed_edgeImage (e : K.Edge) : IsClosed (G.edgeImage e) :=
   (G.isCompact_edgeImage e).isClosed
 
 /-- The canonical interval parametrization of an edge, included into the source support. -/
-noncomputable def edgePathInSupport (e : K.Edge) (r : Set.Icc (0 : ℝ) 1) : K.support :=
+@[expose] noncomputable def edgePathInSupport (e : K.Edge) (r : Set.Icc (0 : ℝ) 1) : K.support :=
   edgeToSupport (K := K) e
     ⟨K.edgePath e r, by rw [← K.range_edgePath e]; exact Set.mem_range_self r⟩
 
@@ -2846,7 +2846,7 @@ theorem replacementEdgeMap_vertex (e : K.Edge) (v : K.Vertex) (hve : v ∈ e.1) 
     exact (G.replacementArc e).completePath.target
 
 /-- The source one-skeleton as a subspace of the complete support. -/
-def oneSkeletonInSupport : Set K.support :=
+@[expose] def oneSkeletonInSupport : Set K.support :=
   ⋃ e : K.Edge, edgeInSupport (K := K) e
 
 /-- A chosen source edge carrying a one-skeleton point. -/
@@ -3307,7 +3307,7 @@ theorem edgeImagesControlled_of_diam_lt_controlRadius {phi : K.support → ℝ}
   exact (hsmall e).trans_le (edgeControlRadius_le (K := K) hphi e hp)
 
 /-- Include a maximal face into the whole source support. -/
-def faceToSupport (f : K.Face)
+@[expose] def faceToSupport (f : K.Face)
     (p : stdSimplex ℝ {v // v ∈ K.faceVertices f}) : K.support :=
   ⟨K.faceMap f p, Set.mem_iUnion.mpr ⟨f, Set.mem_range_self p⟩⟩
 

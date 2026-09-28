@@ -77,7 +77,8 @@ local instance instLpCylinderCoefficients8 : NormedRing (Supported period V S hS
     inferInstance
 
 /-- The actual cylinder operator of a spatial coefficient. -/
-def liftedOperator (A : Space →ᵇ V →L[ℝ] V) : Supported period V S hS →L[ℝ] Supported period V S hS
+@[expose] def liftedOperator (A : Space →ᵇ V →L[ℝ] V) :
+    Supported period V S hS →L[ℝ] Supported period V S hS
     :=
   operator (liftMeasure period) (spatialSet period S) (spatialSet_measurable period S hS)
       (fieldLift period A)
@@ -128,7 +129,7 @@ theorem liftedOperatorPath_norm (A : C(Icc (0 : ℝ) T, Space →ᵇ V →L[ℝ]
     (fun x _ => (A t).norm_coe_le_norm x.1)).trans (A.norm_coe_le_norm t)
 
 /-- The literal linear map underlying coefficient-path lifting. -/
-def liftedOperatorPathLinear : C(Icc (0 : ℝ) T,Space →ᵇ V →L[ℝ] V) →ₗ[ℝ]
+@[expose] def liftedOperatorPathLinear : C(Icc (0 : ℝ) T,Space →ᵇ V →L[ℝ] V) →ₗ[ℝ]
     C(Icc (0 : ℝ) T,Supported period V S hS →L[ℝ] Supported period V S hS) where
   toFun := liftedOperatorPath period S hS T
   map_add' A D := by

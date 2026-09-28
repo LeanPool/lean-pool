@@ -1011,13 +1011,13 @@ lemma case2_coarse (dim3 : Module.finrank K L = 3) (h₂ : Module.finrank K (com
         let XcXBasis : Basis (Fin 2) K (commutator K L) :=
           basisOfLinearIndependentOfCardEqFinrank XcX (by simp only [Fintype.card_fin]; rw [h₂])
         have XcXBasis0 : XcXBasis 0 = ⁅B 0, X⁆ := by
-          dsimp only [XcXBasis]
-          rw [coe_basisOfLinearIndependentOfCardEqFinrank]
-          rfl
+          have h := congrFun (coe_basisOfLinearIndependentOfCardEqFinrank XcX
+            (by simp only [Fintype.card_fin]; rw [h₂])) (0 : Fin 2)
+          exact congrArg (fun y : commutator K L => (y : L)) h
         have XcXBasis1 : XcXBasis 1 = X := by
-          dsimp only [XcXBasis]
-          rw [coe_basisOfLinearIndependentOfCardEqFinrank]
-          rfl
+          have h := congrFun (coe_basisOfLinearIndependentOfCardEqFinrank XcX
+            (by simp only [Fintype.card_fin]; rw [h₂])) (1 : Fin 2)
+          exact congrArg (fun y : commutator K L => (y : L)) h
         let x : commutator K L := ⟨⁅B 0, ⁅B 0, X⁆⁆, by
           simp only [derivedSeriesOfIdeal_succ, derivedSeriesOfIdeal_zero,
             Nat.reduceAdd, Fin.isValue, V, B]

@@ -57,7 +57,7 @@ noncomputable section
   a • (1 : ANF 8) + linearANF ell
 
 /-- The target ANF of a linear combination of rational-place evaluations. -/
-def rationalANF (α : Fin 3 → F₂) : ANF 8 :=
+@[expose] def rationalANF (α : Fin 3 → F₂) : ANF 8 :=
   targetANF (rationalCoeffRep α)
 
 theorem rationalANF_eq_sum (α : Fin 3 → F₂) :
@@ -375,11 +375,11 @@ theorem anfThreeProjection_linear_mul_rational
   rfl
 
 /-- Three quartic monomials detecting the rational-place wedge coordinates. -/
-def quarticProbeSet : Fin 3 → Finset (Fin 8) :=
+@[expose] def quarticProbeSet : Fin 3 → Finset (Fin 8) :=
   ![{0, 1, 4, 6}, {1, 3, 5, 7}, {0, 3, 4, 7}]
 
 /-- Extract the three designated quartic coefficients of an ANF. -/
-def quarticProbeANF : ANF 8 →ₗ[F₂] (Fin 3 → F₂) where
+@[expose] def quarticProbeANF : ANF 8 →ₗ[F₂] (Fin 3 → F₂) where
   toFun p t := p.coeff ⟨quarticProbeSet t⟩
   map_add' p q := by ext t; simp
   map_smul' a p := by ext t; simp

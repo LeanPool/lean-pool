@@ -332,7 +332,7 @@ theorem homotopicWith_const_isMapOfPairs_of_unique_pi
         apply this }
 
 /-- `stretchToWall` -/
-noncomputable def _root_.TopCat.Cyl.stretchToWall :
+@[expose] noncomputable def _root_.TopCat.Cyl.stretchToWall :
     C(I × (disk.{u} (n + 1)), I × (disk.{u} (n + 1))) := by
   refine
     { toFun := fun ⟨t, ⟨x, hx⟩⟩ ↦

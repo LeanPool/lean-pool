@@ -63,7 +63,7 @@ noncomputable def ResToImagAxis.Pos (F : ℍ → ℂ) : Prop :=
 Function $F : \mathbb{H} \to \mathbb{C}$ whose restriction to the imaginary axis is eventually
 positive, i.e. there exists $t_0 > 0$ such that for all $t \ge t_0$, $F(it)$ is real and positive.
 -/
-@[fun_prop]
+@[fun_prop, expose]
 noncomputable def ResToImagAxis.EventuallyPos (F : ℍ → ℂ) : Prop :=
   ResToImagAxis.Real F ∧ ∃ t₀ : ℝ, 0 < t₀ ∧ ∀ t : ℝ, t₀ ≤ t → 0 < (F.resToImagAxis t).re
 

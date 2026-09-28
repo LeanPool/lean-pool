@@ -81,7 +81,8 @@ def coordinateProduct {q : ℕ} (hq : 6 ≤ q) (i : Fin 3) :
     (u v : SobolevSpace period (q + 1)) :
     coordinateProduct period hq i u v = productHq period hq (coordinate 3 i) (coordinate_norm_le 3
         i)
-      (truncateOperator period q u) (truncateOperator period q v) := by rfl
+      (truncateOperator period q u) (truncateOperator period q v) := by
+  simp only [coordinateProduct, ContinuousLinearMap.bilinearComp_apply, productHqBilinear_apply]
 
 /-- The actual order-zero quadratic coefficient terms, Σ Cᵢ(uᵢ v). -/
 def algebraicBilinear {q : ℕ} (hq : 6 ≤ q)
@@ -128,9 +129,7 @@ theorem algebraicBilinear_ae {q : ℕ} (hq : 6 ≤ q)
         hv]
       with x h1 h2 h3 h4
     rw [h1]
-    change (C i).coefficient x (value period (productHq period hq (coordinate 3 i)
-        (coordinate_norm_le 3 i)
-      (truncateOperator period q u) (truncateOperator period q v)) x) = _
+    rw [coordinateProduct_apply]
     rw [h2, value_truncateOperator, value_truncateOperator, h3, h4, map_smul]
     rfl
   filter_upwards [Lp.coeFn_finsetSum Finset.univ (fun i : Fin 3 => value period

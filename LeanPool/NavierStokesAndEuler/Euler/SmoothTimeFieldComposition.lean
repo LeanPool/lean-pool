@@ -81,7 +81,7 @@ theorem continuous_pullback (A : C(K, E →ᵇ V)) (d : C(K, E →ᵇ E))
   exact hzero
 
 /-- Path pullback, given by `⟨fun t => pullback (A t) (d t), continuous_pullback A d L hL⟩`. -/
-def pathPullback (A : C(K, E →ᵇ V)) (d : C(K, E →ᵇ E))
+@[expose] def pathPullback (A : C(K, E →ᵇ V)) (d : C(K, E →ᵇ E))
     (L : ℝ≥0) (hL : ∀ t, LipschitzWith L (A t)) : C(K,E →ᵇ V) :=
   ⟨fun t => pullback (A t) (d t), continuous_pullback A d L hL⟩
 

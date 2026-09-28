@@ -101,7 +101,7 @@ local instance instSmoothTimeFieldBilinear10 (n : ℕ) : NormedSpace ℝ (E →�
     Z))) := inferInstance
 
 /-- Bilinear path as an element of `C(K,E →ᵇ Z)`. -/
-def bilinearPath (B : V →L[ℝ] W →L[ℝ] Z)
+@[expose] def bilinearPath (B : V →L[ℝ] W →L[ℝ] Z)
     (A : SmoothTimeField K E V) (C : SmoothTimeField K E W) : C(K,E →ᵇ Z) :=
   ⟨fun t => bilinearMap B (A.field t) (C.field t),
     ((bilinearMap (α := E) B).continuous.comp A.field.continuous).clm_apply C.field.continuous⟩

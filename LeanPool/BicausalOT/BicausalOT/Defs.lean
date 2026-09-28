@@ -24,7 +24,7 @@ public import Mathlib.Probability.Kernel.Basic
 Supporting results for bicausal optimal transport and measurable selection.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Set ENNReal
 
@@ -69,13 +69,13 @@ def IsBicausal₂
 variable (c₀ : X₀ × Y₀ → ENNReal) (c₁ : (X₀ × Y₀) × (X₁ × Y₁) → ENNReal)
 
 /-- The initial cost plus the infimum of conditional continuation costs over feasible couplings. -/
-def V₀ (κ_μ : X₀ → Measure X₁) (κ_ν : Y₀ → Measure Y₁)
+@[expose] def V₀ (κ_μ : X₀ → Measure X₁) (κ_ν : Y₀ → Measure Y₁)
     (z₀ : X₀ × Y₀) : ENNReal :=
   c₀ z₀ + ⨅ (γ : Measure (X₁ × Y₁)) (_ : γ ∈ FeasibleSet₀ κ_μ κ_ν z₀),
     ∫⁻ z₁, c₁ (z₀, z₁) ∂γ
 
 /-- The expected sum of the initial and continuation costs under the decomposed plan. -/
-def totalCost (kd_γ₀ : Measure (X₀ × Y₀))
+@[expose] def totalCost (kd_γ₀ : Measure (X₀ × Y₀))
     (kd_γ₁ : X₀ × Y₀ → Measure (X₁ × Y₁)) : ENNReal :=
   ∫⁻ z₀, (c₀ z₀ + ∫⁻ z₁, c₁ (z₀, z₁) ∂(kd_γ₁ z₀)) ∂kd_γ₀
 
