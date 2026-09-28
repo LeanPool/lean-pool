@@ -26,7 +26,7 @@ Grushko-specific step is to reduce an arbitrary generating tuple to this
 separated form without increasing its length.
 -/
 
-@[expose] public section
+public section
 
 
 

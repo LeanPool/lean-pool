@@ -18,7 +18,7 @@ the change-of-basepoint transport used when the monochromatic run begins away
 from the marked base.
 -/
 
-@[expose] public section
+public section
 
 
 

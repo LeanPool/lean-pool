@@ -19,7 +19,7 @@ available even when the subgroup is not normal.  We record it explicitly
 because this is the finite-state action used by the Hall construction.
 -/
 
-@[expose] public section
+public section
 
 open Function
 

@@ -24,7 +24,7 @@ contraction.  The main certified fact here is that the old copy is
 monochromatic, exactly the invariant needed by that contraction.
 -/
 
-@[expose] public section
+public section
 
 
 

@@ -19,7 +19,7 @@ construction at the type level.  The path substitution and its label theorem
 will be added on top of these finite quotient and deletion primitives.
 -/
 
-@[expose] public section
+public section
 
 
 

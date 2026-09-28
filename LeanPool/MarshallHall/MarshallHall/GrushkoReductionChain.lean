@@ -19,7 +19,7 @@ remaining combinatorial issue is isolated precisely to the unfold case of
 the classical proof.
 -/
 
-@[expose] public section
+public section
 
 
 

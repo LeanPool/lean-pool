@@ -19,7 +19,7 @@ for the free-factor conclusion: the left coproduct injection must be the
 subgroup inclusion itself.
 -/
 
-@[expose] public section
+public section
 
 universe u
 

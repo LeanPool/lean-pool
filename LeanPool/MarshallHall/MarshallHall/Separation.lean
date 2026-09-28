@@ -11,7 +11,7 @@ public import Mathlib.GroupTheory.Finiteness
 
 /-! The finite state set used in the separation argument. -/
 
-@[expose] public section
+public section
 
 open Set Function
 

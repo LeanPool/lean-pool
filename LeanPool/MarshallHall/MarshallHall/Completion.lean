@@ -19,7 +19,7 @@ left-coset action.  The resulting graph is the finite core used in the
 completion argument.
 -/
 
-@[expose] public section
+public section
 
 open Set Function
 open CategoryTheory CategoryTheory.ActionCategory CategoryTheory.SingleObj Quiver FreeGroup

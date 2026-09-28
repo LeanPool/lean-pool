@@ -19,7 +19,7 @@ argument, including the cardinality bound needed to pad a terminal marking
 back to its original length.
 -/
 
-@[expose] public section
+public section
 
 
 

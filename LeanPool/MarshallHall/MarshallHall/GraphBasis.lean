@@ -19,7 +19,7 @@ the core construction uses; the generic Nielsen--Schreier instance instead
 uses the whole free group as a generator synonym.
 -/
 
-@[expose] public section
+public section
 
 open Set Function
 open CategoryTheory CategoryTheory.ActionCategory CategoryTheory.SingleObj Quiver FreeGroup

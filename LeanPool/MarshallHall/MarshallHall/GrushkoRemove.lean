@@ -18,7 +18,7 @@ binary labelling format.  This is the marking-preserving contraction used in
 the unsafe source-unfold branch of the Grushko proof.
 -/
 
-@[expose] public section
+public section
 
 
 

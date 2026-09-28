@@ -18,7 +18,7 @@ reduction argument.  In particular, the reduced-word object below is tied to
 the actual inclusions `Monoid.Coprod.inl` and `Monoid.Coprod.inr`.
 -/
 
-@[expose] public section
+public section
 
 
 

@@ -17,7 +17,7 @@ finite set of generator edges.  The lemmas below make that geometric fact
 visible in the free basis supplied by a spanning tree.
 -/
 
-@[expose] public section
+public section
 
 open Set Function
 open CategoryTheory CategoryTheory.SingleObj Quiver FreeGroup

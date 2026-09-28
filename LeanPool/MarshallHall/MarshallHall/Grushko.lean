@@ -23,7 +23,7 @@ calculation is obtained from abelianization, so the result is not merely a
 cardinality calculation transported through an unproved presentation.
 -/
 
-@[expose] public section
+public section
 
 universe u
 

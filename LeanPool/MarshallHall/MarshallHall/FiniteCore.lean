@@ -18,7 +18,7 @@ that appears in the usual folded covering-graph proof, but expressed directly
 in the free group.
 -/
 
-@[expose] public section
+public section
 
 open Function
 

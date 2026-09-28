@@ -19,7 +19,7 @@ monochromatic vertex and can be contracted explicitly.  This file contains
 the bridge from that local construction to the removal operation.
 -/
 
-@[expose] public section
+public section
 
 
 
