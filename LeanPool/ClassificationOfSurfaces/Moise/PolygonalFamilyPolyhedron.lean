@@ -152,7 +152,7 @@ theorem arrangementMesh_isMonochromatic (i : ι) (k : ZMod (J i).n) :
     (edgeLines J) (edgeLine_mem_edgeLines J i k)
 
 /-- Carrier of one maximal chamber of the common arrangement. -/
-def arrangementTriangleCarrier (t : Finset (arrangementMesh J).Vertex) : Set Plane :=
+@[expose] def arrangementTriangleCarrier (t : Finset (arrangementMesh J).Vertex) : Set Plane :=
   convexHull ℝ ((arrangementMesh J).position '' (t : Set _))
 
 theorem convex_arrangementTriangleCarrier

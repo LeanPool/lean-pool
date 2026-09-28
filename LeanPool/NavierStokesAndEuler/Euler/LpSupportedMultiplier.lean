@@ -41,7 +41,7 @@ variable {α V : Type*} [TopologicalSpace α] [MeasurableSpace α] [BorelSpace �
 abbrev Field := α →ᵇ (V →L[ℝ] V)
 
 /-- The ordinary full-space L² coefficient multiplier. -/
-def full (A : Field (α := α) (V := V)) : Lp V 2 μ →L[ℝ] Lp V 2 μ :=
+@[expose] def full (A : Field (α := α) (V := V)) : Lp V 2 μ →L[ℝ] Lp V 2 μ :=
   coefficientOperator A A.continuous.aestronglyMeasurable_of_secondCountable ‖A‖₊ A.norm_coe_le_norm
 
 /-- Its representative is actual pointwise multiplication. -/

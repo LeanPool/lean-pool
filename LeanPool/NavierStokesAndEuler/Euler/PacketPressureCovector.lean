@@ -37,6 +37,7 @@ open scoped ContDiff
   pressureGradient p + k • angularPressure m p
 
 /-- Covector grades, constructed using `assemble`. -/
+@[expose]
 def covectorGrades (N : ℕ) (m : Space) (a : ℕ → Profile) : ℕ → VectorField :=
   assemble N (fun i => pressureGradient (a i).meanPressure+angularPressure m (a i).highPressure)
     (fun i => pressureGradient (a i).highPressure)

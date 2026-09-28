@@ -118,7 +118,8 @@ continuous_subtype_val.subtype_mk _⟩`. -/
     (continuous_const.add continuous_subtype_val).subtype_mk _⟩
 
 /-- Initial path, given by `ContinuousMap.compCLM ℝ V (initialInclusion S τ hτS)`. -/
-def initialPath (S τ : ℝ) (hτS : τ ≤ S) : C(Icc (0 : ℝ) S,V) →L[ℝ] C(Icc (0 : ℝ) τ,V) :=
+@[expose] def initialPath (S τ : ℝ) (hτS : τ ≤ S) :
+    C(Icc (0 : ℝ) S,V) →L[ℝ] C(Icc (0 : ℝ) τ,V) :=
   ContinuousMap.compCLM ℝ V (initialInclusion S τ hτS)
 
 /-- Tail path, given by `ContinuousMap.compCLM ℝ V (tailInclusion S τ hτ)`. -/

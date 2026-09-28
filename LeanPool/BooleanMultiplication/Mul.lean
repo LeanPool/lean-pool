@@ -48,7 +48,7 @@ theorem bVar_mem_affine (n : Nat) (j : Fin n) : bVar n j ∈ affine (2 * n) :=
   Submodule.span F₂ (Set.range (Mul n))
 
 /-- Affine functions plus the multiplication target. -/
-def mulAmbient (n : Nat) : Submodule F₂ (ANF (2 * n)) :=
+@[expose] def mulAmbient (n : Nat) : Submodule F₂ (ANF (2 * n)) :=
   affine (2 * n) ⊔ mulTarget n
 
 theorem Mul_mem_target (n : Nat) (s : Fin (2 * n - 1)) : Mul n s ∈ mulTarget n := by

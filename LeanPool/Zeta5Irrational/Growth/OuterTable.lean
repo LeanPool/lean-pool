@@ -895,7 +895,7 @@ theorem outPiece_12 (x : ℝ) (h1 : ((120) / 43 : ℝ) ≤ x) (h2 : x < (3 : ℝ
     (429 / 40), (429 / 40), (503 / 40), (36 / 5)]
 
 /-- Rational intercepts of the 13 outer-range linear pieces. -/
-def bOutL : List ℚ :=
+@[expose] def bOutL : List ℚ :=
   [(-1), (-1), (-2), (-10), (-10), (-12), (-15), (-3), (-5), (-19), (-19), (-24), (-9)]
 
 /-- The `i`th outer-range endpoint as a real number; zero outside the table. -/

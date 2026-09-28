@@ -53,7 +53,8 @@ theorem heatList_smul (directions : List LiftTangent) (v : ℝ≥0) (c : ℝ) (f
   | cons a tail ih => simp only [heatList, ih, lineHeat_smul]
 
 /-- Heat list operator, constructed using `LinearMap.mkContinuous`. -/
-def heatListOperator (directions : List LiftTangent) (v : ℝ≥0) : LiftL2 period →L[ℝ] LiftL2 period
+@[expose] def heatListOperator (directions : List LiftTangent) (v : ℝ≥0) :
+    LiftL2 period →L[ℝ] LiftL2 period
     :=
   LinearMap.mkContinuous
     { toFun := heatList period directions v

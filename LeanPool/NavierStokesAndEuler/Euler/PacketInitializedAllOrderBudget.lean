@@ -388,6 +388,7 @@ local notation "ρg" => initialRadius L.R Kc.M Kc.Rc
 
 /-- Explicit scalar guards suffice because every analytic input to the
 all-order correction theorem is supplied by the constructed packet. -/
+@[expose]
 def initializedAllOrderBudget (k : ℝ) (hk : 4 ≤ k)
     (hX : 64 ≤ expansion k) (hlog : 1 ≤ Real.log k)
     (htail : tailPolynomialConstant L.R S.H0 BC.termCost ≤ smallPower k)

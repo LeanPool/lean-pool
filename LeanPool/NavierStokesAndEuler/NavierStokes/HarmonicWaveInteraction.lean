@@ -258,7 +258,7 @@ theorem residualCoefficients_mean_update (c : CorrectionState.Context D) (s₀ s
 
 /-- The slow coefficient geometry has no artificial angular coordinate.
 The actual separate angular carrier is accounted for explicitly below. -/
-noncomputable def slowGeometry {s : StripData D} {κ : ℝ} (c : CorrectionState.Context D)
+@[expose] noncomputable def slowGeometry {s : StripData D} {κ : ℝ} (c : CorrectionState.Context D)
     (ho : MeanIncrementBounds.OperatorBounds s c.operators κ)
     (hR : ∀ x ∈ s.domain, 0 < c.operators.radius x) : Geometry s κ where
   radius := fun _ => c.operators.radius

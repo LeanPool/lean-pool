@@ -56,6 +56,7 @@ U.velocity U.velocity_continuous m⟩`. -/
 
 /-- Integer energy derivative, given by `integerEnergyProduction m (U.velocity t) (U.derivative
 t)`. -/
+@[expose]
 def integerEnergyDerivative (U : Evolution T hT) (m : ℕ) (t : Icc (0 : ℝ) T) : ℝ :=
   integerEnergyProduction m (U.velocity t) (U.derivative t)
 

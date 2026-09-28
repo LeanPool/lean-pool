@@ -97,7 +97,7 @@ noncomputable def faceReindexHomeomorph (f : K.Face) :
 
 /-- Insert a standard simplex point into the one-face intrinsic realization used by the
 standard plane triangle complex. -/
-noncomputable def standardSimplexToRealization (z : stdSimplex ℝ (Fin 3)) :
+@[expose] noncomputable def standardSimplexToRealization (z : stdSimplex ℝ (Fin 3)) :
     standardTrianglePlaneComplex.toIntrinsic.realization :=
   ⟨z.1, z.2, ⟨Finset.univ, standardTriangle_univ_mem_cells, by simp⟩⟩
 

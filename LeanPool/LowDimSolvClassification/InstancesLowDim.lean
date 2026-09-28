@@ -1040,12 +1040,14 @@ theorem _root_.LieAlgebra.Dim3.Family.dim_commutator {hα : α ≠ 0} : finrank 
 
 theorem _root_.LieAlgebra.Dim3.Family.B_basis_0 {hα : α ≠ 0} : ((commutatorBasis α β hα) 0).val =
     (e₂ : Family K α β) := by
-  simp only [commutatorBasis, Basis.map_apply, LinearEquiv.coe_ofEq_apply,
+  unfold commutatorBasis
+  simp only [Basis.map_apply, LinearEquiv.coe_ofEq_apply,
     Basis.coe_span_apply, B, Matrix.cons_val_zero]
 
 theorem _root_.LieAlgebra.Dim3.Family.B_basis_1 {hα : α ≠ 0} : ((commutatorBasis α β hα) 1).val =
     (e₃ : Family K α β) := by
-  simp only [commutatorBasis, Basis.map_apply, LinearEquiv.coe_ofEq_apply,
+  unfold commutatorBasis
+  simp only [Basis.map_apply, LinearEquiv.coe_ofEq_apply,
     Basis.coe_span_apply, B, Matrix.cons_val_one, Matrix.cons_val_fin_one]
 
 theorem _root_.LieAlgebra.Dim3.Family.B_basis_repr {hα : α ≠ 0} {x : commutator K

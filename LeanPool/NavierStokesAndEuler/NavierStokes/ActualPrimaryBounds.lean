@@ -368,7 +368,7 @@ theorem coefficientScale_pos (a : ℝ) (l : SignedLabel B N0) (n : ℕ) :
         (ChartScales.Q_pos _) _
 
 /-- Copied as an element of `E`. -/
-noncomputable def copied {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+@[expose] noncomputable def copied {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (a : ℝ) (f : SignedLabel B N0 → Native → E) (l : SignedLabel B N0) (n : ℕ)
     (k : TorusInverse.Frequency) (x : Native) : E := by
   classical
@@ -1278,7 +1278,7 @@ noncomputable def normalScale (l : SignedLabel B N0) (n : ℕ) : ℝ :=
 
 /-- Chart normal, given by `(ActualPrimary.chartCoefficients l.1 l.2).normal fullStrip
 (PrimaryResidualClass.directions (ActualPrimary.commonContext B)) n`. -/
-noncomputable def chartNormal (l : SignedLabel B N0) (n : ℕ) : ActualPrimary.FullPoint →
+@[expose] noncomputable def chartNormal (l : SignedLabel B N0) (n : ℕ) : ActualPrimary.FullPoint →
     ProblemStatement.Space :=
   (ActualPrimary.chartCoefficients l.1 l.2).normal fullStrip
     (PrimaryResidualClass.directions (ActualPrimary.commonContext B)) n

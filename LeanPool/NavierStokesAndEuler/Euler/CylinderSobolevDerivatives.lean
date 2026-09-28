@@ -21,7 +21,7 @@ open EulerLiftedGradientSpace EulerPressureSpatialRegularity EulerCylinderSobole
 open scoped Topology
 
 /-- An old word viewed in the next Sobolev order. -/
-def truncateIndex {q : ℕ} (w : SobolevWord q) : SobolevWord (q + 1) :=
+@[expose] def truncateIndex {q : ℕ} (w : SobolevWord q) : SobolevWord (q + 1) :=
   ⟨⟨w.1.val, Nat.lt_succ_of_lt w.1.isLt⟩, w.2⟩
 
 /-- Appending a direction indexes a derivative of the corresponding underlying derivative field. -/
@@ -41,7 +41,7 @@ variable (period : ℝ) [Fact (0 < period)]
       exact word_hasDerivAt period u (Nat.lt_succ_of_lt e.1.isLt) e.2.1 e.2.2)
 
 /-- A coordinate derivative is a bounded map from H^(q+1) to H^q. -/
-def derivativeOperator (q : ℕ) (i : Fin 4) :
+@[expose] def derivativeOperator (q : ℕ) (i : Fin 4) :
     SobolevSpace period (q + 1) →L[ℝ] SobolevSpace period q :=
   ((ContinuousLinearMap.pi (fun w : SobolevWord q =>
     ContinuousLinearMap.proj (derivativeIndex i w))).comp (arrayOperator period (q +

@@ -999,7 +999,7 @@ theorem T_sum_mul_coprime (m n : ℕ+) (hcop : Nat.Coprime m n) :
 end CoprimeMultiplicativity
 
 /-- TSum extended to ℕ: agrees with `TSum` for positive arguments, zero for 0. -/
-noncomputable def TSumNat (k : ℕ) : HeckeAlgebra 2 :=
+@[expose] noncomputable def TSumNat (k : ℕ) : HeckeAlgebra 2 :=
   ∑ a ∈ k.divisors, TAd a (k / a)
 
 /-- `TSumNat` agrees with `TSum` on positive naturals. -/

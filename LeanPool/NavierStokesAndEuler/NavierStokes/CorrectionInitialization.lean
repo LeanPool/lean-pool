@@ -4971,8 +4971,8 @@ theorem tangentMode_diagonal_covariance (L : Label B N0) (p : PhaseCalculus.Slow
 
 /-- Physical tangent mode, given by `ChartScales.Q (BaseChartJets.cellBand L) ^
 (-CoordinateAlgebra.A h) • tangentMode j L p Y theta`. -/
-noncomputable def physicalTangentMode (j : Fin 2) (L : Label B N0) (p : PhaseCalculus.Slow)
-    (Y : TorusInverse.Plane) (theta : ℝ) : Fin 3 → ℝ :=
+@[expose] noncomputable def physicalTangentMode (j : Fin 2) (L : Label B N0)
+    (p : PhaseCalculus.Slow) (Y : TorusInverse.Plane) (theta : ℝ) : Fin 3 → ℝ :=
   ChartScales.Q (BaseChartJets.cellBand L) ^ (-CoordinateAlgebra.A h) • tangentMode j L p Y theta
 
 theorem physicalTangentMode_diagonal_covariance (L : Label B N0) (p : PhaseCalculus.Slow)
@@ -5548,7 +5548,7 @@ noncomputable def physicalScale (n : ℕ) (x : LocalSignedRequest.Point) : ℝ :
   ChartScales.Q n * SimilarityCoordinates.coordinateQ (2 * h) x.2.1
 
 /-- Active labels as an element of `Finset (Label B N0 × Fin 2)`. -/
-noncomputable def activeLabels (U : LocalSignedRequest.SlowRegion (2 * h)) (B N0 n : ℕ) :
+@[expose] noncomputable def activeLabels (U : LocalSignedRequest.SlowRegion (2 * h)) (B N0 n : ℕ) :
     Finset (Label B N0 × Fin 2) := by
   classical
   exact ((CommonWindow.labels (CoordinateAlgebra.D h) (BaseContextAssembly.geometryBound nominal U)

@@ -112,10 +112,10 @@ namespace PrePolygon
 variable {m : ℕ} (P : PrePolygon m)
 
 /-- The edge leaving vertex `i`. -/
-def edge (i : ZMod (m + 3)) : Set Plane := segment ℝ (P.vertex i) (P.vertex (i + 1))
+@[expose] def edge (i : ZMod (m + 3)) : Set Plane := segment ℝ (P.vertex i) (P.vertex (i + 1))
 
 /-- The carrier: the union of the edges. -/
-def carrier : Set Plane := ⋃ i, P.edge i
+@[expose] def carrier : Set Plane := ⋃ i, P.edge i
 
 variable {P}
 
@@ -130,7 +130,7 @@ theorem vertex_ne_succ (i : ZMod (m + 3)) : P.vertex i ≠ P.vertex (i + 1) := f
 end PrePolygon
 
 /-- A `ClosedPolygon` read as a `PrePolygon`: forget the `corner` field. -/
-def ClosedPolygon.toPre {m : ℕ} (P : ClosedPolygon m) : PrePolygon m :=
+@[expose] def ClosedPolygon.toPre {m : ℕ} (P : ClosedPolygon m) : PrePolygon m :=
   ⟨P.vertex, P.vertex_inj, P.edges_meet⟩
 
 @[simp] theorem ClosedPolygon.carrier_toPre {m : ℕ} (P : ClosedPolygon m) :
@@ -173,7 +173,7 @@ Reading the same cyclic list from a different starting vertex. It is used once, 
 vertex that is about to be deleted to the end of the list. -/
 
 /-- The same closed polygon, read from vertex `a` onwards. -/
-def rotate (P : PrePolygon m) (a : ZMod (m + 3)) : PrePolygon m where
+@[expose] def rotate (P : PrePolygon m) (a : ZMod (m + 3)) : PrePolygon m where
   vertex j := P.vertex (a + j)
   vertex_inj i j h := add_left_cancel (P.vertex_inj h)
   edges_meet i j hij := by
@@ -1363,7 +1363,7 @@ namespace ClosedPolygon
 variable {m : ℕ}
 
 /-- The same closed polygon, read from vertex `a` onwards. -/
-def rotate (P : ClosedPolygon m) (a : ZMod (m + 3)) : ClosedPolygon m where
+@[expose] def rotate (P : ClosedPolygon m) (a : ZMod (m + 3)) : ClosedPolygon m where
   vertex j := P.vertex (a + j)
   vertex_inj i j h := add_left_cancel (P.vertex_inj h)
   edges_meet i j hij := by

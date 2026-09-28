@@ -54,7 +54,7 @@ variable {U E : Type*}
 variable (m₀ : E) (R : U ≃ₗᵢ[ℝ] referencePlane m₀)
 
 /-- The fixed orthonormal reference-plane embedding. -/
-def referenceEmbedding : U →L[ℝ] E :=
+@[expose] def referenceEmbedding : U →L[ℝ] E :=
   (referencePlane m₀).subtypeL.comp R.toContinuousLinearEquiv.toContinuousLinearMap
 
 /-- Applying the source deformation to the fixed orthonormal reference plane. -/

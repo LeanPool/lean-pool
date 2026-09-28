@@ -239,6 +239,7 @@ theorem derivative_continuous (U : Evolution T hT) (n : ℕ) :
   fieldSub (V.velocity t) (U.velocity t)
 
 /-- Pressure difference, given by `fieldSub (V.pressureForce t) (U.pressureForce t)`. -/
+@[expose]
 def pressureDifference (U V : Evolution T hT) (t : Icc (0 : ℝ) T) : SmoothL2Field Space :=
   fieldSub (V.pressureForce t) (U.pressureForce t)
 

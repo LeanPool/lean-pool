@@ -42,7 +42,7 @@ theorem standardTriangle_univ_mem_cells :
   decide
 
 /-- The unique maximal face of the standard triangle mesh. -/
-noncomputable def standardTriangleMeshFace :
+@[expose] noncomputable def standardTriangleMeshFace :
     standardTrianglePlaneComplex.toTriangleMesh.Triangle :=
   ⟨Finset.univ, standardTriangle_univ_mem_cells⟩
 

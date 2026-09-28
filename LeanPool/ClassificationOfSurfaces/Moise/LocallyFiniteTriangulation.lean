@@ -948,7 +948,7 @@ noncomputable def faceVertexEquiv (f : K.Face) : Fin 3 ≃ {v // v ∈ K.faceVer
     rw [Fintype.card_fin, Fintype.card_coe, K.faceVertices_card f])
 
 /-- Cyclically indexed vertices of a maximal face. -/
-noncomputable def faceVertex (f : K.Face) (i : ZMod 3) : K.Vertex :=
+@[expose] noncomputable def faceVertex (f : K.Face) (i : ZMod 3) : K.Vertex :=
   (K.faceVertexEquiv f ((ZMod.finEquiv 3).symm i)).1
 
 theorem faceVertex_mem (f : K.Face) (i : ZMod 3) :
@@ -1265,7 +1265,7 @@ theorem range_edgeSimplexPath (e : K.Edge) :
     rw [K.edgeSimplexPath_apply_second]
 
 /-- The ambient carrier of an edge. -/
-def edgeCarrier (e : K.Edge) : Set S :=
+@[expose] def edgeCarrier (e : K.Edge) : Set S :=
   Set.range (K.edgeMap e)
 
 theorem range_edgePath (e : K.Edge) :

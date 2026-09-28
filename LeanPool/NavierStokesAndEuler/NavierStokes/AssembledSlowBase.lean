@@ -41,7 +41,7 @@ noncomputable def commonWindow {S : Set ℝ} {h C : ℝ} (s : Scheme S h C)
 
 /-- Extend even, given by `ParametricRadialExtension.extension w f f.smooth (fun _ heta R =>
 f.even heta R)`. -/
-noncomputable def extendEven {S : Set ℝ} (w : ParametricRadialExtension.ParameterWindow S)
+@[expose] noncomputable def extendEven {S : Set ℝ} (w : ParametricRadialExtension.ParameterWindow S)
     (f : EvenProfile S) : Field :=
   ParametricRadialExtension.extension w f f.smooth (fun _ heta R => f.even heta R)
 
@@ -85,7 +85,7 @@ theorem extendEven_support {S : Set ℝ} (w : ParametricRadialExtension.Paramete
 
 /-- For a profile already zero on a fixed axis neighborhood, remove the
 unused negative-X extension without changing any physical value. -/
-noncomputable def extendCoreZero {S : Set ℝ}
+@[expose] noncomputable def extendCoreZero {S : Set ℝ}
     (w : ParametricRadialExtension.ParameterWindow S) (r : ℝ) (f : EvenProfile S) (p : ℝ × ℝ) : ℝ :=
   TransportPrimitive.cutoff (r / 8) (r / 4) p.1 * extendEven w f p
 

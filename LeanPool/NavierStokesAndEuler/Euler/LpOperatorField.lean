@@ -69,14 +69,14 @@ theorem apply_memLp (A : α →ᵇ (E →L[ℝ] F)) (u : Lp E 2 μ) :
       (mul_le_mul_of_nonneg_right (A.norm_coe_le_norm x) (norm_nonneg _)))
 
 /-- Actual application to a Bochner L² class. -/
-def applyField (A : α →ᵇ (E →L[ℝ] F)) (u : Lp E 2 μ) : Lp F 2 μ :=
+@[expose] def applyField (A : α →ᵇ (E →L[ℝ] F)) (u : Lp E 2 μ) : Lp F 2 μ :=
   (apply_memLp μ A u).toLp (fun x => A x (u x))
 
 theorem applyField_ae (A : α →ᵇ (E →L[ℝ] F)) (u : Lp E 2 μ) :
     applyField μ A u =ᵐ[μ] fun x => A x (u x) := (apply_memLp μ A u).coeFn_toLp
 
 /-- Full linear, bundling `toFun`, `map_add`, `map_smul`. -/
-def fullLinear (A : α →ᵇ (E →L[ℝ] F)) : Lp E 2 μ →ₗ[ℝ] Lp F 2 μ where
+@[expose] def fullLinear (A : α →ᵇ (E →L[ℝ] F)) : Lp E 2 μ →ₗ[ℝ] Lp F 2 μ where
   toFun := applyField μ A
   map_add' u v := by
     apply Lp.ext

@@ -48,6 +48,7 @@ variable {P : ℝ} [Fact (0 < P)]
   {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U] [CompleteSpace U]
 
 /-- Zero forcing, bundling `path`, `path_orbit`, `raw_eq`, `mean_zero`. -/
+@[expose]
 def zeroForcing (D : Data U) : Forcing P D (0 : VectorField) where
   path := 0
   path_orbit := by

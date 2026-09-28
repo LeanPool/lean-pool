@@ -364,7 +364,7 @@ structure IsArcK33 (x y : Fin 3 → Plane) (P : Fin 3 → Fin 3 → Set Plane) :
 /-- **The abstract `K(3,3)` on six named points of the plane.** Its edges are index pairs, and
 `(i, j)` links `x i` to `y j`. The edge set is all of `Fin 3 × Fin 3`, so no membership side
 condition ever has to be discharged. -/
-def k33Graph (x y : Fin 3 → Plane) : Graph Plane (Fin 3 × Fin 3) where
+@[expose] def k33Graph (x y : Fin 3 → Plane) : Graph Plane (Fin 3 × Fin 3) where
   vertexSet := Set.range x ∪ Set.range y
   edgeSet := Set.univ
   IsLink p u v := (u = x p.1 ∧ v = y p.2) ∨ (u = y p.2 ∧ v = x p.1)

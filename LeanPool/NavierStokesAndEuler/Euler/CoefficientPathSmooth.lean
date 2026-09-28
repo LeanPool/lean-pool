@@ -104,6 +104,7 @@ variable (P : ℝ) [Fact (0 < P)]
 
 /-- Smooth coefficient, bundling `coefficient`, `smooth`, `bound`, `norm_bound` and the required
 compatibility proofs. -/
+@[expose]
 def smoothCoefficient (t : K) : SmoothCoefficient P where
   coefficient x := A t x.1
   smooth x := (coefficientOrbit_smooth A hA t).comp (contDiff_const.add contDiff_fst)

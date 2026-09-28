@@ -28,10 +28,10 @@ open Filter Cardinal
 namespace NonMRR
 
 /-- A slalom with the pointwise width bound `r`. -/
-def Slalom (r : ℕ → ℕ) := {φ : ℕ → Finset ℕ // ∀ n, (φ n).card ≤ r n}
+@[expose] def Slalom (r : ℕ → ℕ) := {φ : ℕ → Finset ℕ // ∀ n, (φ n).card ≤ r n}
 
 /-- The slalom relation: the response catches the challenge infinitely often. -/
-def slalomRelation (r : ℕ → ℕ) (hr : ∀ n, 0 < r n) : Relation where
+@[expose] def slalomRelation (r : ℕ → ℕ) (hr : ∀ n, 0 < r n) : Relation where
   Challenge := ℕ → ℕ
   Response := Slalom r
   relates e φ := ∃ᶠ n in atTop, e n ∈ φ.val n

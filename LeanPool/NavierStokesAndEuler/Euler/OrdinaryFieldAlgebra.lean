@@ -142,6 +142,7 @@ def coordinateProduct (i : Fin 3) (A : SmoothL2Field Space) (B : SmoothL2Field V
 
 /-- Advection field, given by `sumField univ (fun i : Fin 3 => coordinateProduct i A
 (B.directionalField (axis i)))`. -/
+@[expose]
 def advectionField (A : SmoothL2Field Space) (B : SmoothL2Field V) : SmoothL2Field V :=
   sumField univ (fun i : Fin 3 => coordinateProduct i A (B.directionalField (axis i)))
 

@@ -21,7 +21,7 @@ open EulerLiftedGradientSpace EulerPressureSpatialRegularity EulerCylinderSobole
 open scoped Topology
 
 /-- The same derivative word at a larger Sobolev order. -/
-def restrictIndex {p q : ℕ} (h : q ≤ p) (w : SobolevWord q) : SobolevWord p :=
+@[expose] def restrictIndex {p q : ℕ} (h : q ≤ p) (w : SobolevWord q) : SobolevWord p :=
   ⟨⟨w.1.val, Nat.lt_of_lt_of_le w.1.isLt (Nat.succ_le_succ h)⟩, w.2⟩
 
 variable (period : ℝ) [Fact (0 < period)]

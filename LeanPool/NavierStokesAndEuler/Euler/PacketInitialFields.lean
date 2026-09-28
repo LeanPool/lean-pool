@@ -161,6 +161,7 @@ open Set Finset EulerSmoothLimit EulerPacketProfileRecursion EulerPacketPointJet
 
 /-- High grade, given by `assemble N (fun i => timeSlice t (a i).high) (fun i => timeSlice t (a
 i).corrector)`. -/
+@[expose]
 def highGrade (N : ℕ) (t : ℝ) (a : ℕ → Profile) : ℕ → VectorField :=
   assemble N (fun i => timeSlice t (a i).high) (fun i => timeSlice t (a i).corrector)
 

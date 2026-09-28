@@ -35,7 +35,7 @@ noncomputable section
     hankelMatrix c (dropRow.succAbove i) (dropCol.succAbove j)
 
 /-- Algebraic rank-at-most-two condition: all `3 × 3` minors vanish. -/
-def HankelRankLETwo (c : TargetCoeff) : Prop :=
+@[expose] def HankelRankLETwo (c : TargetCoeff) : Prop :=
   ∀ dropRow dropCol : Fin 4, hankelMinorThree c dropRow dropCol = 0
 
 instance (c : TargetCoeff) : Decidable (HankelRankLETwo c) := by
@@ -69,7 +69,7 @@ theorem rankTwo_target_classification (c : TargetCoeff) :
   decide +kernel
 
 /-- Direct algebraic description of the rational-place span. -/
-def IsRationalCoeff (c : TargetCoeff) : Prop :=
+@[expose] def IsRationalCoeff (c : TargetCoeff) : Prop :=
   ∃ α β γ : F₂,
     c = α • rZeroCoeff + β • rOneCoeff + γ • rInfinityCoeff
 

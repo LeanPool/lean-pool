@@ -33,7 +33,7 @@ namespace Lean4GlCoalgebras
 open Split
 
 /-- Get the entire underlying sequent of a finite proof. -/
-def Split.Proof.Sequent (𝕏 : Proof) [fin_X : Fintype 𝕏.X] : Sequent :=
+@[expose] def Split.Proof.Sequent (𝕏 : Proof) [fin_X : Fintype 𝕏.X] : Sequent :=
   fin_X.elems.biUnion (fun x ↦ (f (r 𝕏.α x)).image (Sum.elim id id))
 
 /-- Find `n` such that for all `m ≥ n`, `m` is not in an the variables of the proof. -/

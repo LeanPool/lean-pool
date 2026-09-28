@@ -1343,8 +1343,9 @@ theorem goodResidual_angularMean {ι : Type*} (labels : Finset ι) (data : ι �
 
 /-- Good wave residual, given by `goodResidual labels data g B M p virtual x i - realAngularMean
 (fun θ => goodResidual labels data g B M p virtual (x.1, θ) i)`. -/
-noncomputable def goodWaveResidual {ι : Type*} (labels : Finset ι) (data : ι → LabelData D)
-    (g : Frame D) (B M : D → ComplexVector) (p : D → ℂ) (virtual : D → Fin 3 → ℝ)
+@[expose] noncomputable def goodWaveResidual {ι : Type*} (labels : Finset ι)
+    (data : ι → LabelData D) (g : Frame D) (B M : D → ComplexVector) (p : D → ℂ)
+    (virtual : D → Fin 3 → ℝ)
     (x : D × ℝ) (i : Fin 3) : ℝ :=
   goodResidual labels data g B M p virtual x i -
     realAngularMean (fun θ => goodResidual labels data g B M p virtual (x.1, θ) i)

@@ -278,6 +278,7 @@ structure Operators where
   angleMean O.period (knownForce O p a)
 
 /-- Mean result, given by `O.meanSolve (meanForce O p a)`. -/
+@[expose]
 def meanResult (O : Operators) (p : ℕ) (a : ℕ → Profile) : VectorField × ScalarField :=
   O.meanSolve (meanForce O p a)
 

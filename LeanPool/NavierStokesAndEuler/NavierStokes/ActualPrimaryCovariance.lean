@@ -413,7 +413,7 @@ noncomputable def physicalLeading (n : ℕ) (x : Point) (i : Fin 2) : ℝ :=
 
 /-- Partition factor, given by `∑ L ∈ unsignedLabels B N0 n, spatialMask L (nativePoint n x L) ^
 2`. -/
-noncomputable def partitionFactor (B N0 n : ℕ) (x : Point) : ℝ :=
+@[expose] noncomputable def partitionFactor (B N0 n : ℕ) (x : Point) : ℝ :=
   ∑ L ∈ unsignedLabels B N0 n, spatialMask L (nativePoint n x L) ^ 2
 
 theorem viewSum_covariance_factor (B N0 n : ℕ) {x : Point}

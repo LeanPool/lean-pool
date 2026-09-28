@@ -111,7 +111,7 @@ theorem operator_intertwines (Ω : Set Space) (hΩ : MeasurableSet Ω)
 variable (T : ℝ)
 
 /-- The entire coefficient time path, acting on the supported cylinder. -/
-def liftedOperatorPath (A : C(Icc (0 : ℝ) T, Space →ᵇ V →L[ℝ] V)) :
+@[expose] def liftedOperatorPath (A : C(Icc (0 : ℝ) T, Space →ᵇ V →L[ℝ] V)) :
     C(Icc (0 : ℝ) T,Supported period V S hS →L[ℝ] Supported period V S hS) :=
   operatorPath (liftMeasure period) (spatialSet period S) (spatialSet_measurable period S hS) T
     (fieldPathLift period A)

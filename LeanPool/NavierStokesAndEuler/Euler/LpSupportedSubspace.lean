@@ -85,7 +85,7 @@ def cutoffOperator : Lp V 2 μ →L[ℝ] Lp V 2 μ :=
   rfl
 
 /-- The localized Hilbert subspace is a closed kernel. -/
-def supportedSpace : Submodule ℝ (Lp V 2 μ) :=
+@[expose] def supportedSpace : Submodule ℝ (Lp V 2 μ) :=
   (ContinuousLinearMap.id ℝ (Lp V 2 μ) - cutoffOperator μ S hS).ker
 
 /-- Membership is fixedness under actual measurable-set projection. -/

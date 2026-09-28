@@ -62,7 +62,7 @@ Since $c(q)=0$, this is implemented as the degree of the underlying divisor. -/
 
 /-- Converts a configuration $c$ to a divisor of prescribed degree $d$ by placing
 $d-\deg(c)$ chips at $q$. -/
-def toDiv {G : CFGraph} {q : G.V} (d : ℤ) (c : Config G q) : CFDiv G :=
+@[expose] def toDiv {G : CFGraph} {q : G.V} (d : ℤ) (c : Config G q) : CFDiv G :=
   c.chips + (d - configDegree c) • (oneChip q)
 
 /-- Two configurations are equal if their chip counts agree at every vertex. -/

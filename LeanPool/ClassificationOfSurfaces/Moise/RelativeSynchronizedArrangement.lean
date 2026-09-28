@@ -29,7 +29,7 @@ variable {ι : Type*} [Fintype ι] (J : ι → PolygonalCircle)
 
 /-- Cut the polygon-family arrangement simultaneously by a target mesh and by an additional
 finite list of affine lines. -/
-noncomputable def relativeSynchronizedArrangement (N : TriangleMesh)
+@[expose] noncomputable def relativeSynchronizedArrangement (N : TriangleMesh)
     (lines : List (Plane →ᵃ[ℝ] ℝ)) : TriangleMesh :=
   (arrangementMesh J).refineByLines (N.coordinateLines ++ lines)
 
@@ -48,7 +48,7 @@ def IsSelectedRelativeSynchronizedTriangle (N : TriangleMesh)
       (J i).interiorRegion
 
 /-- The selected polygonal member after all additional cuts. -/
-noncomputable def selectedRelativeSynchronizedMesh (N : TriangleMesh)
+@[expose] noncomputable def selectedRelativeSynchronizedMesh (N : TriangleMesh)
     (lines : List (Plane →ᵃ[ℝ] ℝ)) (p : ι → Prop) : TriangleMesh := by
   classical
   exact (relativeSynchronizedArrangement J N lines).restrictTriangles
@@ -63,7 +63,7 @@ def IsTargetRelativeSynchronizedTriangle (N : TriangleMesh)
     N.toPlaneComplex.support).Nonempty
 
 /-- The target member after all additional cuts. -/
-noncomputable def targetRelativeSynchronizedMesh (N : TriangleMesh)
+@[expose] noncomputable def targetRelativeSynchronizedMesh (N : TriangleMesh)
     (lines : List (Plane →ᵃ[ℝ] ℝ)) : TriangleMesh := by
   classical
   exact (relativeSynchronizedArrangement J N lines).restrictTriangles

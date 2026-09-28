@@ -77,6 +77,7 @@ theorem tame_transportCommutator (A : SmoothL2Field Space) (m : ℕ) (hm : 3 ≤
     (by simpa only [Nat.add_zero] using hn) w Fin.elim0
 
 /-- Euler rhs, given by `fieldNeg (addField (advectionField A A) P)`. -/
+@[expose]
 def eulerRhs (A P : SmoothL2Field Space) : SmoothL2Field Space :=
   fieldNeg (addField (advectionField A A) P)
 

@@ -34,7 +34,7 @@ variable (K : IntrinsicTwoComplex) (U : Set K.realization)
 abbrev LevelFace (n : ℕ) := (K.safeSubdivision n).refined.Face
 
 /-- The carrier of a level face, transported back to the original realization. -/
-def levelFaceCarrier {n : ℕ} (t : K.LevelFace n) : Set K.realization :=
+@[expose] def levelFaceCarrier {n : ℕ} (t : K.LevelFace n) : Set K.realization :=
   (K.safeSubdivision n).homeo ''
     (K.safeSubdivision n).refined.faceCarrier t.1
 
@@ -323,7 +323,7 @@ theorem LevelFace.IsSafe.child {n : ℕ} {t : K.LevelFace (n + 1)}
 
 /-- Relative interior of a transported level face, expressed by positive barycentric
 coordinates on all three face vertices. -/
-def levelFaceRelInterior {n : ℕ} (t : K.LevelFace n) : Set K.realization :=
+@[expose] def levelFaceRelInterior {n : ℕ} (t : K.LevelFace n) : Set K.realization :=
   (K.safeSubdivision n).homeo ''
     {x : (K.safeSubdivision n).refined.realization |
       x ∈ (K.safeSubdivision n).refined.faceCarrier t.1 ∧
@@ -486,7 +486,7 @@ theorem adaptiveFace_level_le_commonLevel
   exact Finset.le_sup (f := fun u : K.AdaptiveFace U ↦ u.1) ht
 
 /-- Carrier of one adaptive triangle in the original realization. -/
-def adaptiveFaceCarrier (t : K.AdaptiveFace U) : Set K.realization :=
+@[expose] def adaptiveFaceCarrier (t : K.AdaptiveFace U) : Set K.realization :=
   K.levelFaceCarrier t.2.1
 
 /-- Every tile in a finite adaptive family is a union of faces of the family's common midpoint
@@ -510,7 +510,7 @@ theorem adaptiveFaceCarrier_subset (t : K.AdaptiveFace U) :
   · exact AdaptiveSafety.carrier_subset (K := K) (U := U) t.2.1
 
 /-- Relative interior of one adaptive face. -/
-def adaptiveFaceRelInterior (t : K.AdaptiveFace U) : Set K.realization :=
+@[expose] def adaptiveFaceRelInterior (t : K.AdaptiveFace U) : Set K.realization :=
   K.levelFaceRelInterior t.2.1
 
 /-- Distinct first-safe adaptive faces meet only on their relative boundaries. -/
@@ -652,7 +652,7 @@ theorem finite_adaptiveFace_level_lt (N : ℕ) :
     (show Finite {t : K.AdaptiveFace U // t.1 < N} from inferInstance)
 
 /-- Carrier of an adaptive face in the open subspace itself. -/
-def adaptiveFaceCarrierInOpen (t : K.AdaptiveFace U) : Set U :=
+@[expose] def adaptiveFaceCarrierInOpen (t : K.AdaptiveFace U) : Set U :=
   Subtype.val ⁻¹' K.adaptiveFaceCarrier U t
 
 /-- The first-safe adaptive triangle family is locally finite in the open set. -/
@@ -890,7 +890,7 @@ theorem adaptiveVertexPoint_mem_boundaryVertices (hU : IsOpen U)
   exact ⟨v, rfl⟩
 
 /-- Carrier of one cyclic edge of a level face. -/
-def levelFaceEdgeCarrier {n : ℕ} (t : K.LevelFace n) (i : ZMod 3) :
+@[expose] def levelFaceEdgeCarrier {n : ℕ} (t : K.LevelFace n) (i : ZMod 3) :
     Set K.realization :=
   (K.safeSubdivision n).homeo ''
     (K.safeSubdivision n).refined.faceCarrier

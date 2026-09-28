@@ -39,7 +39,7 @@ theorem frequentlyLT_iff_not_eventuallyLE (f g : ℕ → ℕ) :
   simp only [FrequentlyLT, EventuallyLE, Filter.Frequently, not_lt]
 
 /-- The usual relation whose norm is the bounding number. -/
-def boundingRelation : Relation where
+@[expose] def boundingRelation : Relation where
   Challenge := ℕ → ℕ
   Response := ℕ → ℕ
   relates := FrequentlyLT

@@ -762,7 +762,7 @@ This is the hypothesis the blueprint discharges by "parametrize `S` by a circle,
 continuity to cut it into arcs of diameter `< δ/8`, and pick one fresh point in the relative
 interior of each". Stated as a property of a *set* rather than of a cyclic order, it needs no
 ordering of the fresh points along `S` — which is what makes the whole mesh order-free. -/
-def FreshDense (fresh : List Plane) (δ : ℝ) : Prop :=
+@[expose] def FreshDense (fresh : List Plane) (δ : ℝ) : Prop :=
   ∀ A : Set Plane, A ⊆ modelCurve \ {x | x ∈ fresh} → IsPreconnected A →
     ∀ x ∈ A, ∀ y ∈ A, dist x y ≤ δ / 2
 

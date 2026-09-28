@@ -28,7 +28,7 @@ namespace Modelgraphs
 /-- Definition 6.3: Given relations for all atomic programs over model graph states
 (i.e. sets of formulas), define relations for all PDL programs inductively as usual,
 but using membership to interpret the test operator. -/
-def Q {W : Finset (Finset Formula)} (R : Nat → W → W → Prop)
+@[expose] def Q {W : Finset (Finset Formula)} (R : Nat → W → W → Prop)
   : Program → W → W → Prop
 | ·c     => R c
 | ?'τ    => fun v w => v = w ∧ τ ∈ v.1
@@ -443,6 +443,7 @@ theorem truthLemma {Worlds} (MG : ModelGraph Worlds) :
 /-! ## Additional Q relations for the completeness proof -/
 
 /-- Q_F - for a list `F` of tests (instead of a set in the notes). -/
+@[expose]
 def Qtests {W : Finset (Finset Formula)} (R : Nat → W → W → Prop) (F : List Formula) : W → W → Prop
 | v, w => v == w ∧ ∀ τ ∈ F, Q R (?' τ) v w
 

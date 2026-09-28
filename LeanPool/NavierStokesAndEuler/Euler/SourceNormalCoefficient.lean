@@ -66,7 +66,8 @@ theorem normalFunctional_apply (t : K) (x : Space) (v : E) :
       normalFunctional m c hc hm t x v =
         gramInverse ((normalColumn m).field t x) c hc
           (normalColumn_lower m c hm t x) (((normalColumn m).field t x).adjoint v) := by
-    simp only [normalFunctional, sourceForcing, leftInversePath_apply, comp_apply]
+    simp only [normalFunctional, sourceForcing,
+      EulerBoundedFieldForwardGenerator.leftInversePath_apply, comp_apply]
   rw [gram, comp_apply, ← hfunctional] at he
   have hadj : ((normalColumn m).field t x).adjoint = innerSL ℝ (m.field t x) :=
     adjoint_toSpanSingleton (m.field t x)

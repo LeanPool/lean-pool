@@ -124,7 +124,13 @@ StarAlgEquiv.ofAlgEquiv
     ext1 i
     simp only [AlgEquiv.trans_apply, Pi.star_apply,
       AlgEquiv.piCongrRight_apply, directSumTensorAlgEquiv_apply]
-    rw [TensorProduct.toKronecker_star]
+    have hkronecker
+        (z : Matrix (p₁ i.1) (p₁ i.1) ℂ ⊗[ℂ] Matrix (p₂ i.2) (p₂ i.2) ℂ) :
+        tensorToKronecker z = TensorProduct.toKronecker z := by
+      rw [← tensorToKronecker_toLinearMap_eq]
+      rfl
+    simp only [hkronecker]
+    rw [← TensorProduct.toKronecker_star]
     congr 1
     obtain ⟨S, rfl⟩ := TensorProduct.exists_finset x
     simp only [star_sum, map_sum, Finset.sum_apply, directSumTensorToFun_apply,
@@ -1162,7 +1168,7 @@ theorem unitaryTensorEuclidean_apply {U : (i : ι) → Matrix.unitaryGroup (p i)
     LinearIsometryEquiv.symm_apply_apply, LinearIsometryEquiv.trans_apply]
   simp only [LinearIsometryEquiv.TensorProduct.map_tmul,
     Matrix.UnitaryGroup.toEuclideanLinearIsometryEquiv_apply,
-    Matrix.unitaryGroup.conj_coe, Matrix.conj_conjTranspose]
+    Matrix.unitaryGroup.conj_coe]
 
 omit [Fintype ι] [DecidableEq ι] in
 theorem unitaryTensorEuclidean_apply' {U : (i : ι) → Matrix.unitaryGroup (p i) ℂ} (i :

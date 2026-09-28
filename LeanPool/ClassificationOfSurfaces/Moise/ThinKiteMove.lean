@@ -159,7 +159,7 @@ continuity across the vertical diagonal immediate. -/
   planePoint (p 0) (thinKiteScale δ * p 1 + (1 - |p 0|) / 2)
 
 /-- The `thinKiteInv` declaration. -/
-noncomputable def thinKiteInv (δ : ℝ) (p : Plane) : Plane :=
+@[expose] noncomputable def thinKiteInv (δ : ℝ) (p : Plane) : Plane :=
   planePoint (p 0) ((p 1 - (1 - |p 0|) / 2) / thinKiteScale δ)
 
 theorem thinKiteScale_pos {δ : ℝ} (hδ : 0 < δ) : 0 < thinKiteScale δ := by

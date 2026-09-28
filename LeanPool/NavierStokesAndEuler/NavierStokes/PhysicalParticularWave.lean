@@ -857,8 +857,8 @@ theorem waveEquiv_cylinderChange (h Q Qr : ℝ) (gap : ℕ) (x : Cylinder) :
 
 /-- Reference source, given by `residualSource D.context D.state D.carrierBlock D.gaussianInput
 D.aliasInput j D.reference.band`. -/
-noncomputable def referenceSource (D : AssemblyData Parameter) (j : ℤ) : Parameter × Plane →
-    ComplexVector :=
+@[expose] noncomputable def referenceSource (D : AssemblyData Parameter) (j : ℤ) :
+    Parameter × Plane → ComplexVector :=
   residualSource D.context D.state D.carrierBlock D.gaussianInput D.aliasInput j D.reference.band
 
 /-- Band amplitude, constructed using `ParticularWaveBounds.commonVelocity`. -/

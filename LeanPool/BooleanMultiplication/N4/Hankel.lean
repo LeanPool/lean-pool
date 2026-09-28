@@ -39,7 +39,7 @@ abbrev TargetCoeff := Fin 7 → F₂
 @[expose] def rInfinityCoeff : TargetCoeff := ![0, 0, 0, 0, 0, 0, 1]
 
 /-- The three-dimensional space spanned by the rational places. -/
-def rationalCoeffSpace : Submodule F₂ TargetCoeff :=
+@[expose] def rationalCoeffSpace : Submodule F₂ TargetCoeff :=
   Submodule.span F₂ {rZeroCoeff, rOneCoeff, rInfinityCoeff}
 
 /-- Interpret a target coefficient vector as an ANF in the `Mul 4` target. -/

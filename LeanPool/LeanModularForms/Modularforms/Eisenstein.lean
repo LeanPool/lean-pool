@@ -60,12 +60,12 @@ section Definitions
 /- The Eisenstein Series E₄ and E₆ -/
 
 /-- The normalized weight-4 Eisenstein series `E₄`. -/
-def E₄ : ModularForm (CongruenceSubgroup.Gamma ↑1) 4 :=
+@[expose] def E₄ : ModularForm (CongruenceSubgroup.Gamma ↑1) 4 :=
   (1/2 : ℂ) • eisensteinSeriesMF (by norm_num) standardcongruencecondition /-they need 1/2 for the
     normalization to match up (since the sum here is taken over coprime integers).-/
 
 /-- The normalized weight-6 Eisenstein series `E₆`. -/
-def E₆ : ModularForm (CongruenceSubgroup.Gamma ↑1) 6 :=
+@[expose] def E₆ : ModularForm (CongruenceSubgroup.Gamma ↑1) 6 :=
   (1/2 : ℂ) • eisensteinSeriesMF (by norm_num) standardcongruencecondition
 
 lemma E4_eq : E₄ = E 4 (by norm_num) := rfl
@@ -655,7 +655,8 @@ lemma Delta_cuspFuntion_eq : Set.EqOn (cuspFunction 1 Delta)
     exact hyn0
 
 lemma Delta_ne_zero : Delta ≠ 0 :=
-  DFunLike.ne_iff.mpr ⟨UpperHalfPlane.I, Δ_ne_zero UpperHalfPlane.I⟩
+  DFunLike.ne_iff.mpr ⟨UpperHalfPlane.I, by
+    simpa only [Delta_apply] using Δ_ne_zero UpperHalfPlane.I⟩
 
 lemma asdf : TendstoLocallyUniformlyOn
     (fun n : ℕ ↦ fun y : ℂ => ∏ x ∈ Finset.range n, (1 - y ^ (x + 1)))

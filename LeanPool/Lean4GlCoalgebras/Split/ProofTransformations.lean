@@ -92,7 +92,7 @@ inductive RuleApp {𝕏 : Split.Proof} (x : 𝕏.X) (τ : 𝕏.X → SplitSequen
   | RuleApp.boxᵣ Δ _ _ => Δ
 
 /-- Given a RuleApp, obtain the non-principal formulas. -/
-def fₙ {𝕏 : Split.Proof} {x : 𝕏.X} {τ : 𝕏.X → SplitSequent} :
+@[expose] def fₙ {𝕏 : Split.Proof} {x : 𝕏.X} {τ : 𝕏.X → SplitSequent} :
     RuleApp x τ → SplitSequent := fun r ↦ f r \ fₚ r
 
 /-- Relating principal formulas, non-principal formulas, and the split sequent. -/

@@ -25,7 +25,7 @@ noncomputable section
 namespace LeanPool.Besicovitch
 
 /-- The weighted geometric inequality for two ordered sibling pairs in the unit disk. -/
-def WeightedGeometricBound (lambda mu : ℝ) : Prop :=
+@[expose] def WeightedGeometricBound (lambda mu : ℝ) : Prop :=
   ∀ e p₁ p₂ w₁ w₂ : (EuclideanSpace ℝ (Fin 2)),
     ‖e‖ = 1 →
     ‖p₁‖ ≤ 1 → ‖p₂‖ ≤ 1 → ‖w₁‖ ≤ 1 → ‖w₂‖ ≤ 1 →

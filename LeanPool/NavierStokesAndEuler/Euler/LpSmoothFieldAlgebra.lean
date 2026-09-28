@@ -89,6 +89,7 @@ theorem jetLp_addField (A B : SmoothL2Field V) (n : ℕ) :
       h₄.symm))
 
 /-- Zero field, bundling `field`, `smooth`, `integrable`. -/
+@[expose]
 def zeroField : SmoothL2Field V where
   field := 0
   smooth := contDiff_const

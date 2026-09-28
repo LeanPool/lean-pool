@@ -91,6 +91,7 @@ def velocityPath (U : Evolution T hT) : C(Icc (0 : ℝ) T,L2) :=
 
 /-- L2 energy derivative, given by `2*⟪(U.difference V t).toLp,(U.differenceDerivative V
 t).toLp⟫_ℝ`. -/
+@[expose]
 def l2EnergyDerivative (U V : Evolution T hT) (t : Icc (0 : ℝ) T) : ℝ :=
   2*⟪(U.difference V t).toLp,(U.differenceDerivative V t).toLp⟫_ℝ
 

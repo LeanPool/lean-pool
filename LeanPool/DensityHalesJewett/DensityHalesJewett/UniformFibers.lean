@@ -460,7 +460,7 @@ lemma exists_denser_fiber {alphabet m q : ℕ} (halphabet : 0 < alphabet) {ε : 
 
 /-- Every ambient dimension admits a cut into a prefix carrying a subspace and a nonempty suffix
 above which all fibers are almost as dense as the whole family. -/
-def VariableCutFibersSufficient (alphabet dimension : ℕ) (ε : ℝ) (n : ℕ) : Prop :=
+@[expose] def VariableCutFibersSufficient (alphabet dimension : ℕ) (ε : ℝ) (n : ℕ) : Prop :=
   ∀ A : Finset (Fin n → Fin alphabet),
     ∃ p q : ℕ, ∃ e : Fin p ⊕ Fin q ≃ Fin n, 0 < q ∧
       ∃ V : Combinatorics.Subspace (Fin dimension) (Fin alphabet) (Fin p),
