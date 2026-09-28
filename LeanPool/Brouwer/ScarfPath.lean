@@ -7,13 +7,7 @@ module
 
 public import LeanPool.Brouwer.Scarf
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
-import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.Basic
 
 /-!
 # The Scarf path graph
