@@ -10170,41 +10170,38 @@ projects:
     msc:
       - '90C35'
       - '05C21'
-  - slug: euclidean-jordan
-    title: Euclidean Jordan algebras and the frame Peirce decomposition
-    summary: 'The frame Peirce decomposition: relative to a Jordan frame, a Euclidean Jordan
-      algebra is the internal direct sum of the blocks V_ij over unordered pairs of frame indices,
-      and in finite dimension the diagonal blocks are lines, dim V_ii = 1 - the Faraut-Koranyi
-      table entry. The frame is carried as data, so frame conjugacy is sidestepped and nothing
-      here claims anything about the rank of J. Machine checked, not peer reviewed, no priority
-      claim.'
-    branch: nonassociative algebra
-    entry_module: LeanPool.EuclideanJordan
+  - slug: bicausalot-palomar
+    title: "BicausalOT: measurable selection and coupling strategies"
+    summary: Develops Kuratowski–Ryll-Nardzewski selection, Jankov–von Neumann uniformization,
+      and finite-horizon Bellman identities for locally feasible coupling strategies. Exact Borel
+      measurable optimal strategies and initial couplings are obtained on Polish Borel spaces
+      for weakly continuous probability kernels and nonnegative extended-real lower semicontinuous
+      costs. Equivalence with optimization over bicausal path laws is not established.
+    branch: probability
+    entry_module: LeanPool.BicausalOT
     authors:
-    - Bryan Ehrlich
+    - KT. Wu
     source:
-      url: https://github.com/ehrlich-b/euclidean-jordan
-      github_repo: ehrlich-b/euclidean-jordan
-      commit: a83407e4dbf73c77c31a2291c02f20b37a5ebbaf
+      url: https://github.com/maxwellapexlab/bicausalot-palomar
+      github_repo: maxwellapexlab/bicausalot-palomar
+      commit: 3fe500ff64a75d7ab71b474d0c656d5471f62992
     license: Apache-2.0
     status: verified
     main_declarations:
-    - EuclideanJordan.frameBlock_isInternal
+    - MeasurableSelection.exists_measurable_selection
     main_results:
-    - declaration: EuclideanJordan.frameBlock_isInternal
-      informal: A Euclidean Jordan algebra is the internal direct sum of the Peirce blocks associated
-        with a Jordan frame.
-    - declaration: EuclideanJordan.finrank_frameBlock_diag
-      informal: In finite dimension, every diagonal block of a Jordan frame has dimension one.
+    - declaration: MeasurableSelection.exists_measurable_selection
+      informal: A weakly measurable multifunction from an arbitrary measurable space to a Polish
+        space with nonempty closed values admits an everywhere-defined Borel-measurable selector.
     tags:
-    - nonassociative-algebra
+    - probability
     msc:
-    - 17C20
-    - 17C27
-    - 17C37
-    - 17C65
-    - 17A15
-    - 46L70
+    - 28B20
+    - 54C65
+    - 54H05
+    - 03E15
+    - 28A20
+    - 68V20
     provenance: AI
   - slug: asymptotic-triangle-packing
     title: Finite near-regular hypergraph rounding
@@ -11088,3 +11085,39 @@ projects:
     msc:
     - 47B06
     - 46B20
+  - slug: euclidean-jordan
+    title: Euclidean Jordan algebras and the frame Peirce decomposition
+    summary: 'The frame Peirce decomposition: relative to a Jordan frame, a Euclidean Jordan
+      algebra is the internal direct sum of the blocks V_ij over unordered pairs of frame indices,
+      and in finite dimension the diagonal blocks are lines, dim V_ii = 1 - the Faraut-Koranyi
+      table entry. The frame is carried as data, so frame conjugacy is sidestepped and nothing
+      here claims anything about the rank of J. Machine checked, not peer reviewed, no priority
+      claim.'
+    branch: nonassociative algebra
+    entry_module: LeanPool.EuclideanJordan
+    authors:
+    - Bryan Ehrlich
+    source:
+      url: https://github.com/ehrlich-b/euclidean-jordan
+      github_repo: ehrlich-b/euclidean-jordan
+      commit: a83407e4dbf73c77c31a2291c02f20b37a5ebbaf
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - EuclideanJordan.frameBlock_isInternal
+    main_results:
+    - declaration: EuclideanJordan.frameBlock_isInternal
+      informal: A Euclidean Jordan algebra is the internal direct sum of the Peirce blocks associated
+        with a Jordan frame.
+    - declaration: EuclideanJordan.finrank_frameBlock_diag
+      informal: In finite dimension, every diagonal block of a Jordan frame has dimension one.
+    tags:
+    - nonassociative-algebra
+    msc:
+    - 17C20
+    - 17C27
+    - 17C37
+    - 17C65
+    - 17A15
+    - 46L70
+    provenance: AI
