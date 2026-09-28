@@ -53,6 +53,13 @@ time_re = re.compile(r"^(real|user|sys)\s+([0-9]+(?:\.[0-9]+)?)$")
 heartbeat_re = re.compile(
     r"^\[Elab\.command\]\s+\[(?P<heartbeats>[0-9]+(?:\.[0-9]+)?)\]"
 )
+# The wrapper writes failure records after Lean and /usr/bin/time finish.
+# Successful traces can print the same text, so only terminal records count.
+heartbeat_location_error_re = re.compile(r"^[^\s\[\"']+:\d+:\d+: error:")
+heartbeat_exit_error_re = re.compile(
+    r"^error: count-heartbeats command exited with status [1-9][0-9]*$"
+)
+heartbeat_source_error_re = re.compile(r"^error: could not read .+ at revision .+$")
 legacy_heartbeat_re = re.compile(r"[Uu]sed\s+(?:approximately\s+)?[0-9]+\s+heartbeats")
 
 
@@ -126,10 +133,8 @@ def parse_heartbeat_sections(log_text: str) -> dict[str, dict[str, float | int |
         errors = 0
         legacy = False
         wall_seconds = None
-        for line in body.splitlines():
-            if "error:" in line:
-                errors += 1
-                continue
+        lines = body.splitlines()
+        for line in lines:
             timing = time_re.match(line.strip())
             if timing and timing.group(1) == "real":
                 wall_seconds = float(timing.group(2))
@@ -140,6 +145,27 @@ def parse_heartbeat_sections(log_text: str) -> dict[str, dict[str, float | int |
                 declarations += 1
             elif legacy_heartbeat_re.search(line):
                 legacy = True
+        trailer = [time_re.fullmatch(line.strip()) for line in lines[-3:]]
+        complete_timing = (
+            len(trailer) == 3
+            and all(trailer)
+            and [match.group(1) for match in trailer] == ["real", "user", "sys"]
+        )
+        if lines:
+            terminal = lines[-1]
+            if heartbeat_exit_error_re.fullmatch(terminal):
+                errors += 1
+            elif heartbeat_source_error_re.fullmatch(terminal) and not any(
+                time_re.fullmatch(line.strip()) for line in lines
+            ):
+                errors += 1
+        # Incomplete logs may contain a diagnostic before the wrapper's final
+        # status record. A complete successful time trailer makes traced text
+        # that looks like a diagnostic harmless.
+        if not complete_timing and any(
+            heartbeat_location_error_re.match(line) for line in lines
+        ):
+            errors += 1
         # A source file may itself use #count_heartbeats. Its messages are not
         # inputs to this measurement; root traces establish the new format.
         legacy = legacy and not declarations

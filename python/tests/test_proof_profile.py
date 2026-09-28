@@ -63,6 +63,60 @@ def test_source_heartbeat_messages_do_not_double_count(monkeypatch, tmp_path):
 
 
 @pytest.mark.parametrize(
+    "command",
+    [
+        'def message : String := "error: harmless text"',
+        'theorem probe : True := by\n  let message := "error: harmless text"\n'
+        "  exact True.intro",
+        'def message : String := "Probe.lean:1:0: error: harmless text"',
+    ],
+)
+def test_echoed_error_literals_are_successful_measurements(
+    monkeypatch, tmp_path, command
+):
+    """Echoed source literals must not discard valid totals or comparisons."""
+    head = f"## Probe.lean\n[Elab.command] [51000.0] ✅️ {command}\nreal 0.10\n"
+    base = "## Probe.lean\n[Elab.command] [51000.0] ✅️ theorem probe\n"
+    namespace, report = render_report(monkeypatch, tmp_path, head, base, modified=True)
+    data = namespace["heartbeat_by_file"]["Probe.lean"]
+    assert data["heartbeats"] == 51
+    assert data["declarations"] == 1
+    assert data["errors"] == 0
+    assert namespace["compared"] == ["Probe.lean"]
+    assert "51 → 51" in report
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "error: count-heartbeats command exited with status 1",
+        "error: could not read Probe.lean at revision HEAD",
+        "Probe.lean:1:0: error: harmless trace text",
+    ],
+)
+def test_bare_trace_error_literals_are_successful_measurements(
+    monkeypatch, tmp_path, message
+):
+    """A successful Lean trace cannot impersonate the wrapper's final status."""
+    head = (
+        "## Probe.lean\n"
+        f'[Elab.command] [51000.0] ✅️ theorem probe := by trace "{message}"\n'
+        f"{message}\nreal 0.10\nuser 0.02\nsys 0.01\n"
+    )
+    base = (
+        "## Probe.lean\n[Elab.command] [51000.0] ✅️ theorem probe\n"
+        "real 0.10\nuser 0.02\nsys 0.01\n"
+    )
+    namespace, report = render_report(monkeypatch, tmp_path, head, base, modified=True)
+    data = namespace["heartbeat_by_file"]["Probe.lean"]
+    assert data["heartbeats"] == 51
+    assert data["declarations"] == 1
+    assert data["errors"] == 0
+    assert namespace["compared"] == ["Probe.lean"]
+    assert "51 → 51" in report
+
+
+@pytest.mark.parametrize(
     "body",
     [
         "'probe' used 4 heartbeats, which is less than the current maximum of 200000.",
@@ -80,7 +134,17 @@ def test_legacy_counts_are_unavailable(monkeypatch, tmp_path, body):
 
 
 @pytest.mark.parametrize(
-    "body", ["warning: no measurements", "[Elab.command] [1000.0]\nerror: bad proof"]
+    "body",
+    [
+        "warning: no measurements",
+        "[Elab.command] [1000.0]\nProbe.lean:1:0: error: bad proof",
+        "[Elab.command] [1000.0]\nProbe.lean:1:0: error: bad proof\n"
+        "real 0.10\nuser 0.02\nsys 0.01\n"
+        "error: count-heartbeats command exited with status 1",
+        "[Elab.command] [1000.0]\nreal 0.10\nuser 0.02\nsys 0.01\n"
+        "error: count-heartbeats command exited with status 137",
+        "error: could not read Probe.lean at revision HEAD",
+    ],
 )
 def test_missing_or_failed_measurements_are_unavailable(monkeypatch, tmp_path, body):
     """Missing instrumentation and partial failed elaborations cannot enter totals."""
