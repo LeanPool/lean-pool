@@ -29,6 +29,7 @@ universe u v
 
 /-- The retractive-envelope embedding of the adjunction space, using its canonical target
 inclusion and retraction. -/
+@[expose]
 noncomputable def adjunctionEnvelopeEmbedding
     {M : Type u} {N : Type v} [NormedAddCommGroup M] [NormedAddCommGroup N] [NormedSpace ℝ N]
     (V : M → N) (a : M) (y : N) (L H : ℝ)

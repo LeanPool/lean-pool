@@ -19,6 +19,7 @@ namespace ScottishBook155
 universe u
 
 /-- A constant family of one protected stage is a coherent chain. -/
+@[expose]
 noncomputable def constantProtectedChain
     {ι : Type u} [LinearOrder ι] {r L : ℝ} (S : ProtectedStage.{u} r) :
     ProtectedChain (ι := ι) r L where

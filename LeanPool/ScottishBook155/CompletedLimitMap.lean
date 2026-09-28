@@ -150,6 +150,7 @@ theorem algebraicMap_lipschitz
 
 /-- The coherent nonexpansive map extended to the completed normed direct
 limits. -/
+@[expose]
 noncomputable def completedMap :
     CompletedSource M eM → CompletedTarget N eN :=
   UniformSpace.Completion.extension

@@ -114,6 +114,7 @@ theorem bookkeepingSchedule_gt (p : RI × RI) :
 
 /-- The stage which receives the point named by a bookkeeping requirement.
 The schedule names the transition; the point is present at its successor. -/
+@[expose]
 noncomputable def bookkeepingReceivingStage (p : RI × RI) : RI :=
   Order.succ (bookkeepingSchedule p)
 
