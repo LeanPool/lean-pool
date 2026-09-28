@@ -419,7 +419,7 @@ theorem finrank_superVectFunctor_even
     (e : G.obj X ≅ ⨁ fun i : Fin p ⊕ Fin q =>
       Sum.elim (fun _ => S.unitMod) (fun _ => shift S.unitMod) i) :
     Module.finrank ℂ ((superVectFunctor P G hE hO).obj X).even = p :=
-  @finrank_toSuperVect_even_of_free _ P p q (G.obj X) e (hE X) (hO X)
+  @finrank_toSuperVect_even_of_free _ P p q (G.obj X) e
 
 /-- **The odd dimension of the base change of a free value.** -/
 theorem finrank_superVectFunctor_odd
@@ -430,7 +430,7 @@ theorem finrank_superVectFunctor_odd
     (e : G.obj X ≅ ⨁ fun i : Fin p ⊕ Fin q =>
       Sum.elim (fun _ => S.unitMod) (fun _ => shift S.unitMod) i) :
     Module.finrank ℂ ((superVectFunctor P G hE hO).obj X).odd = q :=
-  @finrank_toSuperVect_odd_of_free _ P p q (G.obj X) e (hE X) (hO X)
+  @finrank_toSuperVect_odd_of_free _ P p q (G.obj X) e
 
 /-! ## Exactness -/
 
