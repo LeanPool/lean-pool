@@ -68,11 +68,13 @@ theorem firstStep (h : OrderedGrowth F (e :: order) G) :
   h.consData.step
 
 /-- The remaining ordered growth after the first step. -/
+@[expose]
 def tailGrowth (h : OrderedGrowth F (e :: order) G) :
     OrderedGrowth h.tailForest order G :=
   h.consData.tail
 
 /-- The first edge of a nonempty ordered growth is active for the starting forest. -/
+@[expose]
 def firstActiveExtension (h : OrderedGrowth F (e :: order) G) :
     ActiveExtension F e :=
   ⟨h.tailForest, h.firstStep⟩

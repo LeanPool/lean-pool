@@ -162,6 +162,7 @@ A path of finite parameter lists with fixed length whose coordinates are all
 continuous. This is the small API needed for recursive ordered-simplex
 diagonals such as `prefixTs ++ [t₁] ++ [t₂]`.
 -/
+@[expose]
 def ListPathContinuous {X : Type*} [TopologicalSpace X]
     (n : Nat) (tsPath : X → List ℝ) : Prop :=
   (∀ x, (tsPath x).length = n) ∧

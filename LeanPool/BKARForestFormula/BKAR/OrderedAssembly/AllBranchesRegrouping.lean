@@ -440,6 +440,7 @@ theorem sum_firstBoundarySupportOrderContribution
 The first recursive boundary remainder after exposing and regrouping all
 one-edge sectors below the empty forest.
 -/
+@[expose]
 noncomputable def firstRecursiveBoundaryRemainder
     (choices : ActiveExtensionChoice V)
     (ρ : (Edge V → ℝ) → ℝ) : ℝ :=

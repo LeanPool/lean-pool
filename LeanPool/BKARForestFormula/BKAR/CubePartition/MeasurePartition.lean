@@ -49,6 +49,7 @@ open MeasureTheory
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- Ordered pairs of distinct forest-edge parameters. -/
+@[expose]
 def collisionPairs (F : Forest V) : Type _ :=
   {p : F.EdgeParam × F.EdgeParam // p.1 ≠ p.2}
 

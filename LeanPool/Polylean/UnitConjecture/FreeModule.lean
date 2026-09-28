@@ -208,7 +208,7 @@ theorem eq_mem_of_equalOnList (l : List X) (f g : X → R) (x : X) (mhyp : x ∈
 namespace FormalSum
 
 /-- Add a monomial, combining its coefficient with the first matching basis term. -/
-def addMonomial (term : R × X) : FormalSum R X → FormalSum R X
+@[expose] def addMonomial (term : R × X) : FormalSum R X → FormalSum R X
   | [] => if term.1 = 0 then [] else [term]
   | head :: tail =>
       if head.2 = term.2 then
@@ -240,7 +240,7 @@ theorem coords_addMonomial (term : R × X) (sum : FormalSum R X) (x : X) :
       · simp [addMonomial, hsame, coords, ih, add_left_comm]
 
 /-- Combine repeated basis terms and discard terms whose coefficients cancel. -/
-def combineCoefficients : FormalSum R X → FormalSum R X
+@[expose] def combineCoefficients : FormalSum R X → FormalSum R X
   | [] => []
   | term :: tail => addMonomial term (combineCoefficients tail)
 
@@ -478,7 +478,7 @@ namespace FormalSum
 -/
 
 /-- Scalar multiplication on formal sums. -/
-def scmul : R → FormalSum R X → FormalSum R X
+@[expose] def scmul : R → FormalSum R X → FormalSum R X
   | _, [] => []
   | r, (h :: t) =>
     let (a₀, x₀) := h
@@ -495,7 +495,7 @@ theorem scmul_coords (r : R) (s : FormalSum R X) (x₀ : X) :
     simp only [coords, left_distrib, ih, scmul, monom_coords_mul]
 
 /-- Scalar multiplication on the Free Module. -/
-def _root_.LeanPool.Polylean.FreeModule.scmul : R → R[X] → R[X] := by
+@[expose] def _root_.LeanPool.Polylean.FreeModule.scmul : R → R[X] → R[X] := by
   intro r
   let f : FormalSum R X → R[X] := fun s => ⟦s.scmul r⟧
   apply Quotient.lift f

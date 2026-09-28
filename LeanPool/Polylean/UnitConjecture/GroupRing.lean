@@ -36,13 +36,13 @@ variable {G : Type} [Group G] [DecidableEq G]
 ## Multiplication on formal sums
 -/
 /-- multiplication by a monomial -/
-def _root_.LeanPool.Polylean.FormalSum.mulMonom
+@[expose] def _root_.LeanPool.Polylean.FormalSum.mulMonom
     (b : R) (h : G) : FormalSum R G → FormalSum R G
 | [] => []
 | (a, g) :: tail => (a * b, g * h) :: (mulMonom b h tail)
 
 /-- multiplication for formal sums -/
-def _root_.LeanPool.Polylean.FormalSum.mul
+@[expose] def _root_.LeanPool.Polylean.FormalSum.mul
     (fst : FormalSum R G) : FormalSum R G → FormalSum R G
 | [] => []
 | (b, h) :: ys =>
@@ -139,7 +139,7 @@ theorem mul_zero_cons (s t : FormalSum R G) : mul s ((0, h) :: t) ≈ mul s t :=
 
 /-- Quotient in second argument for group ring multiplication
 -/
-def mulAux : FormalSum R G → R[G] → R[G] := by
+@[expose] def mulAux : FormalSum R G → R[G] → R[G] := by
   intro s
   apply Quotient.lift (⟦FormalSum.mul s ·⟧)
   apply func_eql_of_move_equiv
@@ -241,7 +241,7 @@ theorem first_arg_invariant_nil (s₁ s₂ : FormalSum R G)
   first_arg_invariant s₁ s₂ [] rel
 
 /-- multiplication for free modules -/
-def mul : R[G] → R[G] → R[G] := by
+@[expose] def mul : R[G] → R[G] → R[G] := by
   let f := fun (s : FormalSum R G) =>
     fun (t : R[G]) => mulAux s t
   apply Quotient.lift f

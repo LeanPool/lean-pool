@@ -34,6 +34,7 @@ variable {F G : Forest V} {e : Edge V} {order : List (Edge V)}
 /--
 Prepend a chosen active extension to an ordered growth from the extended forest.
 -/
+@[expose]
 def consGrowth (h : ActiveExtension F e)
     (tail : OrderedGrowth h.forest order G) :
     OrderedGrowth F (e :: order) G :=

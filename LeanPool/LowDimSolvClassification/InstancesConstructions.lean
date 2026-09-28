@@ -110,7 +110,6 @@ theorem _root_.LieAlgebra.Abelian.DerivationCoeFun {K : Type*} [CommRing K] {L :
     [LieRing L] [LieAlgebra K L] [IsLieAbelian L] (f : L →ₗ[K] L) :
     ⇑(Abelian.DerivationOfLinearMap K L f) = ⇑f := by rfl
 
-@[simp]
 theorem _root_.LieAlgebra.Abelian.DerivationCoeFun' {K : Type*} [CommRing K] {L : Type*}
     [LieRing L] [LieAlgebra K L] [IsLieAbelian L] (f : L →ₗ[K] L) :
     ⇑((Abelian.DerivationOfLinearMap K L).toLieHom f) = ⇑f := by rfl

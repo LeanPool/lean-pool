@@ -123,7 +123,7 @@ instance {α β : Type _} [dfa : DecideForall α] [dfb : DecideForall β] :
   DecideForall (α × β) :=
   ⟨by apply decideProd⟩
 
-@[reducible, instance]
+@[reducible, instance, expose]
 def decideUnit (p : Unit → Prop) [DecidablePred p] : Decidable (∀ x : Unit, p x) :=
   if c : p () then
     .isTrue (fun x => by cases x; exact c)
@@ -133,7 +133,7 @@ def decideUnit (p : Unit → Prop) [DecidablePred p] : Decidable (∀ x : Unit, 
 instance : DecideForall Unit :=
   ⟨by apply decideUnit⟩
 
-@[reducible, instance]
+@[reducible, instance, expose]
 def decideSum {α β : Type _} [dfa : DecideForall α] [dfb : DecideForall β]
     (p : α ⊕ β → Prop) [DecidablePred p] : Decidable (∀ x : α ⊕ β, p x) :=
     if c: ∀x: α, p (Sum.inl x) then

@@ -430,6 +430,7 @@ Read a list of simplex parameters as edge parameters for a forest, according
 to a chosen edge order. Missing parameters default to zero; on valid orders
 and simplex-length parameter lists, this default is never used.
 -/
+@[expose]
 def paramsOfOrder (F : Forest V) (order : List (Edge V)) (ts : List ℝ) :
     F.EdgeParam → ℝ :=
   fun e => ts.getD (order.idxOf e.val) 0
@@ -620,6 +621,7 @@ end OrderedGrowth
 The ordered-simplex contribution attached to one concrete ordering of a
 forest edge set.
 -/
+@[expose]
 def orderedContribution (F : Forest V) (order : List (Edge V))
     (ρ : (Edge V → ℝ) → ℝ) : ℝ :=
   orderedSimplexIntegral order

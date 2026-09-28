@@ -51,6 +51,7 @@ def orderedSimplexIntegral (order : List (Edge V)) (f : List ℝ → ℝ) : ℝ 
 Predicate saying that a parameter list lies in the ordered simplex with outer
 bound `top`: `0 ≤ tₙ ≤ ... ≤ t₂ ≤ t₁ ≤ top`.
 -/
+@[expose]
 def OrderedSimplexParams : ℝ → List ℝ → Prop
   | _, [] => True
   | top, t :: ts => 0 ≤ t ∧ t ≤ top ∧ OrderedSimplexParams t ts
