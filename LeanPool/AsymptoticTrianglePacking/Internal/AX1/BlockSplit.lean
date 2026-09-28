@@ -38,8 +38,10 @@ variable {V : Type} [DecidableEq V]
 /-- The index of `x ∈ S` under the canonical enumeration of `S`. -/
 noncomputable def enumIdx (S : Finset V) (x : {y // y ∈ S}) : ℕ := (S.equivFin x).val
 
+omit [DecidableEq V] in
 theorem enumIdx_lt (S : Finset V) (x : {y // y ∈ S}) : enumIdx S x < #S := (S.equivFin x).isLt
 
+omit [DecidableEq V] in
 theorem enumIdx_injective (S : Finset V) : Function.Injective (enumIdx S) := by
   intro x y h
   have : S.equivFin x = S.equivFin y := Fin.ext h

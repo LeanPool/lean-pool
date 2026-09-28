@@ -63,7 +63,7 @@ theorem card_clique2_sdiff_le (G G' : SimpleGraph V) [DecidableRel G.Adj] [Decid
       ((G.edgeFinset \ G'.edgeFinset : Finset (Sym2 V)) : Set (Sym2 V))
       ((G.cliqueFinset 2 \ G'.cliqueFinset 2 : Finset (Finset V)) : Set (Finset V)) := by
     intro f hf
-    simp only [Finset.coe_sdiff, Set.mem_diff, Finset.mem_coe, SimpleGraph.mem_cliqueFinset_iff]
+    simp only [Finset.coe_sdiff, Set.mem_sdiff, Finset.mem_coe, SimpleGraph.mem_cliqueFinset_iff]
       at hf
     obtain ⟨hfG, hfG'⟩ := hf
     obtain ⟨a, b, hab, rfl⟩ := Finset.card_eq_two.mp hfG.card_eq
@@ -73,7 +73,7 @@ theorem card_clique2_sdiff_le (G G' : SimpleGraph V) [DecidableRel G.Adj] [Decid
       refine hfG' ⟨?_, Finset.card_pair hab⟩
       simpa using SimpleGraph.isClique_pair.mpr (fun _ => h)
     refine ⟨s(a, b), ?_, ?_⟩
-    · simp only [Finset.coe_sdiff, Set.mem_diff, Finset.mem_coe, SimpleGraph.mem_edgeFinset]
+    · simp only [Finset.coe_sdiff, Set.mem_sdiff, Finset.mem_coe, SimpleGraph.mem_edgeFinset]
       exact ⟨hadj, hnadj⟩
     · ext x; simp [Sym2.mem_toFinset]
   have hcard := Finset.card_le_card_of_surjOn _ hsurj

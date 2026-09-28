@@ -18,7 +18,8 @@ appears — only the existence of a *near-regular decomposition* of the edge set
 * `Nibble.AX1.edgeSelect`, `Nibble.AX1.colorPart` — the spanning subgraph of the edges satisfying a
   predicate, and the colour classes of an edge colouring `col : Finset V → ℕ`.
 * `Nibble.AX1.nu3_sum_colorParts_le` — **superadditivity**: `∑ᵢ ν₃(Gᵢ) ≤ ν₃(G)` for the colour
-  classes `Gᵢ` of any edge colouring, since matchings in edge-disjoint subgraphs unite to a matching.
+  classes `Gᵢ` of any edge colouring, since matchings in edge-disjoint subgraphs
+  unite to a matching.
 * `Nibble.AX1.nu3_ge_of_regular_triangle_degrees` — the nibble, in the form
   `ν₃(G) ≥ (1−β)|E(G)|/3` for near-regular triangle degrees.
 * `Nibble.AX1.RegularDecompAt`, `Nibble.AX1.RegularDecompResidual` — the structural residual: every
@@ -61,9 +62,11 @@ def edgeSelect (G : SimpleGraph V) (P : Finset V → Prop) : SimpleGraph V where
 noncomputable instance instDecidableRelEdgeSelect (G : SimpleGraph V) (P : Finset V → Prop) :
     DecidableRel (edgeSelect G P).Adj := fun _ _ => Classical.dec _
 
+omit [Fintype V] in
 theorem edgeSelect_adj (G : SimpleGraph V) (P : Finset V → Prop) (x y : V) :
     (edgeSelect G P).Adj x y ↔ G.Adj x y ∧ P {x, y} := Iff.rfl
 
+omit [Fintype V] in
 theorem edgeSelect_le (G : SimpleGraph V) (P : Finset V → Prop) : edgeSelect G P ≤ G :=
   fun _ _ h => h.1
 
@@ -75,6 +78,7 @@ noncomputable instance instDecidableRelColorPart (G : SimpleGraph V)
     (col : Finset V → ℕ) (i : ℕ) : DecidableRel (colorPart G col i).Adj :=
   instDecidableRelEdgeSelect G _
 
+omit [Fintype V] in
 theorem colorPart_le (G : SimpleGraph V) (col : Finset V → ℕ) (i : ℕ) : colorPart G col i ≤ G :=
   edgeSelect_le G _
 
@@ -103,7 +107,8 @@ theorem triangleHypergraphE_nonempty_of_mem (G : SimpleGraph V) [DecidableRel G.
   rw [← Finset.card_pos, Finset.card_powersetCard, ht.card_eq]
   decide +kernel
 
-/-- **Superadditivity of `ν₃` over the colour classes of an edge colouring.**  The colour classes are
+/-- **Superadditivity of `ν₃` over the colour classes of an edge colouring.**
+The colour classes are
 edge-disjoint, so maximum packings of the classes unite to a packing of `G`. -/
 theorem nu3_sum_colorParts_le (G : SimpleGraph V) [DecidableRel G.Adj] (col : Finset V → ℕ)
     (k : ℕ) : ∑ i ∈ Finset.range k, nu3 (colorPart G col i) ≤ nu3 G := by
@@ -292,6 +297,7 @@ theorem ax1_of_regularDecomp (h : RegularDecompResidual) : AX1Statement :=
 
 /-! ### The residual is satisfiable: the one-colour witness -/
 
+omit [Fintype V] in
 /-- Colouring every edge `0` leaves the graph unchanged. -/
 theorem colorPart_const (G : SimpleGraph V) : colorPart G (fun _ => 0) 0 = G := by
   ext x y

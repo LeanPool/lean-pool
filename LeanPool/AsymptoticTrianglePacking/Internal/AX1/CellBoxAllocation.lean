@@ -55,7 +55,7 @@ clusters. -/
 def BoxCompat {P : ℕ} (I I' J J' : Finset (Fin P)) : Prop := Disjoint I I' ∨ Disjoint J J'
 
 theorem boxCompat_iff_disjoint_product {P : ℕ} (I I' J J' : Finset (Fin P))
-    (hI : I.Nonempty) (hI' : I'.Nonempty) (hJ : J.Nonempty) (hJ' : J'.Nonempty) :
+    (_hI : I.Nonempty) (_hI' : I'.Nonempty) (_hJ : J.Nonempty) (_hJ' : J'.Nonempty) :
     BoxCompat I I' J J' ↔ Disjoint (I ×ˢ J) (I' ×ˢ J') := by
   constructor
   · rintro (h | h)

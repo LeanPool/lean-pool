@@ -197,7 +197,8 @@ theorem rectDesign_pairwise_edgeDisjoint (G : SimpleGraph V) {nA nB nC : ℕ}
     (hUX : ∀ a < nA, ∀ b < nC, Disjoint (Ub a) (Xb b))
     (hWX : ∀ a < nB, ∀ b < nC, Disjoint (Wb a) (Xb b))
     {i : ℕ} (hi : i < nB * nC) {i' : ℕ} (hi' : i' < nB * nC) (hne : i ≠ i') (x y : V)
-    (h : (tripleGraph G (Ub (rectIdxA nA nC i)) (Wb (rectIdxB nC i)) (Xb (rectIdxC nC i))).Adj x y) :
+    (h : (tripleGraph G (Ub (rectIdxA nA nC i)) (Wb (rectIdxB nC i))
+      (Xb (rectIdxC nC i))).Adj x y) :
     ¬ (tripleGraph G (Ub (rectIdxA nA nC i')) (Wb (rectIdxB nC i'))
         (Xb (rectIdxC nC i'))).Adj x y := by
   have hnC : 0 < nC := by

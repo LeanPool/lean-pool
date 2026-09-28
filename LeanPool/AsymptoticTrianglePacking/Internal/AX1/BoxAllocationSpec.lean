@@ -33,7 +33,8 @@ The conclusion allows a set `bad` of copies to be left unplaced, of total area a
 The restriction `s₀ ≤ θ·P` to **small boxes** is essential and is what the reduction supplies:
 `Nibble.AX1.box_allocation_infeasible` (`Nibble.CellBoxAllocation`) shows that a `P × 1` box and a
 `1 × P` box can never be placed compatibly, so no allocation statement without a smallness
-restriction can hold.  In the reduction the prescribed sizes are `⌈K·d/δ⌉ ≤ ⌈K/δ⌉`, a constant, while
+restriction can hold.  In the reduction the prescribed sizes are `⌈K·d/δ⌉ ≤ ⌈K/δ⌉`, a
+constant, while
 the number `P` of cells per cluster grows with the accuracy, so the restriction is met.
 
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.

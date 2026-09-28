@@ -257,7 +257,7 @@ theorem boxAllocationResidual_main (ε : ℝ) (hε : 0 < ε) (s₀ : ℕ) :
       nlinarith [sq_nonneg (P : ℝ)]
     -- the hypotheses of the nibble
     have hedge : ∀ U ∈ K, U.Nonempty ∧ #U ≤ 1 + 3 * s₀ ^ 2 :=
-      fun U hU => placeFam_edge_size hidx hcl hsz1 hs U hU
+      fun U hU => placeFam_edge_size hcl hs U hU
     have hw0 : ∀ U, 0 ≤ w U := fun U => placeWt_nonneg U
     have hload : ∀ v : PlaceVtx ι κ P, Slack.wLoad K w v ≤ 1 := by
       rintro (⟨S, T, i, j⟩ | c)

@@ -129,7 +129,8 @@ theorem hasNearRegularFamily_of_subTripleDesignLocal (G : SimpleGraph V) [Decida
   · refine le_trans hcover ?_
     have hterm : ∀ i ∈ Finset.range k,
         (Elo i - designBad ε₂ (A i) (B i) (C i)) / 3
-          ≤ ((#((prune (tripleGraph G (A i) (B i) (C i)) (Bad i)).cliqueFinset 2) : ℕ) : ℝ) / 3 := by
+          ≤ ((#((prune (tripleGraph G (A i) (B i) (C i)) (Bad i)).cliqueFinset 2)
+              : ℕ) : ℝ) / 3 := by
       intro i hi
       rw [Finset.mem_range] at hi
       have h5 := (hBad i hi).2.2.2.2

@@ -488,7 +488,7 @@ theorem nu3star_blowUp_ge (H : SimpleGraph W) [DecidableRel H.Adj] {q : ℕ} (hq
 omit [Fintype W] in
 /-- A triangle of the blow-up whose projection contains the edge `{a, b}` contains exactly one
 vertex over `a` and one over `b`. -/
-theorem blowUp_filter_pair {H : SimpleGraph W} [DecidableRel H.Adj] {q : ℕ} {a b : W}
+theorem blowUp_filter_pair {H : SimpleGraph W} {q : ℕ} {a b : W}
     {t' : Finset (W × Fin q)} (ht' : (blowUp H q).IsNClique 3 t')
     (hsub : ({a, b} : Finset W) ⊆ t'.image Prod.fst) :
     ∃ i j : Fin q, t'.filter (fun v => v.1 = a ∨ v.1 = b) = {(a, i), (b, j)} ∧

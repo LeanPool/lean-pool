@@ -15,7 +15,8 @@ Standalone, Mathlib-only. Combines the two quantitative halves of the Yuster rou
 * `nu3star_le`     — `ν₃* G ≤ |E(G)|/3`         (fractional relaxation bound),
 
 to bound the integrality gap `ν₃*(G) − ν₃(G) ≤ β·|E(G)|/3`. Since `β > 0` is arbitrary and
-`|E(G)| = O(n²)`, letting `β → 0` (with the nibble tolerance `μ(β)`) drives the gap to `o(n²)` — this
+`|E(G)| = O(n²)`, letting `β → 0` (with the nibble tolerance `μ(β)`) drives the gap to `o(n²)`
+— this
 is the content of AX1 (`ν₃* − ν₃ = o(n²)`), modulo the two open inputs (`NibbleTheorem` and the
 Szemerédi regular-pair data feeding the Y3 interface).
 
@@ -37,7 +38,8 @@ namespace Nibble.YusterE
 variable {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-- **Y6 capstone — integrality gap bound.** Assuming `NibbleTheorem` and the Y3 near-regularity /
-codegree interface on `triangleHypergraphSub G`, the gap between the fractional and integral triangle
+codegree interface on `triangleHypergraphSub G`, the gap between the fractional and integral
+triangle
 packing numbers is at most `β·|E(G)|/3`. Combining `nu3_ge_nibble` and `nu3star_le`. As `β → 0` this
 is `o(n²)` — AX1. -/
 theorem nu3star_sub_nu3_le (hNibble : NibbleTheorem) {β : ℝ} (hβ : 0 < β) :

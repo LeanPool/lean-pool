@@ -131,9 +131,10 @@ theorem triCells_inter_subsingleton {T T' : Finset (ZMod q)} {j j' : ZMod q}
 
 variable {V : Type} [Fintype V] [DecidableEq V]
 
+omit [Fintype V] in
 /-- A vertex pair of the rectangle of a sub-triple whose three parts sit in the blocks of three
 distinct cells joins the blocks of two distinct cells. -/
-theorem tripleRect_cells {ι : Type} [DecidableEq ι] (blk : ι → Finset V) (S : Finset ι)
+theorem tripleRect_cells {ι : Type} (blk : ι → Finset V) (S : Finset ι)
     {A B C : Finset V} {cA cB cC : ι} (hA : A ⊆ blk cA) (hB : B ⊆ blk cB) (hC : C ⊆ blk cC)
     (hcA : cA ∈ S) (hcB : cB ∈ S) (hcC : cC ∈ S)
     (hAB : cA ≠ cB) (hAC : cA ≠ cC) (hBC : cB ≠ cC)
@@ -149,6 +150,7 @@ theorem tripleRect_cells {ι : Type} [DecidableEq ι] (blk : ι → Finset V) (S
   · exact ⟨cB, cC, hcB, hcC, hBC, hB h1, hC h2⟩
   · exact ⟨cC, cB, hcC, hcB, hBC.symm, hC h1, hB h2⟩
 
+omit [Fintype V] in
 /-- **The rectangles of the design are pairwise disjoint.**
 
 `blk` assigns to each cell — a pair (cluster index, block index) — a block of vertices, distinct

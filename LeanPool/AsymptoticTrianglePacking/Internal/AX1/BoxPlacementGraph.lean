@@ -68,6 +68,7 @@ the placements of a copy carry total weight `1`. -/
 noncomputable def placeWt (P : ℕ) (sz : κ → ZMod 3 → ℕ) : Finset (PlaceVtx ι κ P) → ℝ :=
   fun U => ∑ c : κ, if (Sum.inr c : PlaceVtx ι κ P) ∈ U then ((placeCard P sz c : ℝ))⁻¹ else 0
 
+omit [Fintype ι] in
 /-- The edges of the placement hypergraph are the placements. -/
 theorem mem_placeFam {U : Finset (PlaceVtx ι κ P)} (hU : U ∈ placeFam P idx cl sz) :
     ∃ (c : κ) (A : ZMod 3 → Finset (Fin P)), A ∈ BoxCount.plc P (sz c) ∧
@@ -83,15 +84,18 @@ theorem mem_placeFam {U : Finset (PlaceVtx ι κ P)} (hU : U ∈ placeFam P idx 
 def boxDemandC (cl : κ → ZMod 3 → ι) (sz : κ → ZMod 3 → ℕ) (c : κ) (S T : ι) : ℝ :=
   ∑ a : ZMod 3, ∑ b : ZMod 3, if cl c a = S ∧ cl c b = T then (sz c a : ℝ) * (sz c b : ℝ) else 0
 
+omit [Fintype ι] [DecidableEq κ] in
 theorem boxDemand_eq_sum (S T : ι) :
     boxDemand cl sz S T = ∑ c : κ, boxDemandC cl sz c S T := rfl
 
+omit [Fintype ι] [Fintype κ] [DecidableEq κ] in
 theorem boxDemandC_nonneg (c : κ) (S T : ι) : 0 ≤ boxDemandC cl sz c S T := by
   refine Finset.sum_nonneg fun a _ => Finset.sum_nonneg fun b _ => ?_
   split
   · positivity
   · exact le_rfl
 
+omit [Fintype ι] [Fintype κ] [DecidableEq κ] in
 theorem sz_mul_le_boxDemandC {c : κ} {p q : ZMod 3} {S T : ι} (hp : cl c p = S) (hq : cl c q = T) :
     (sz c p : ℝ) * (sz c q : ℝ) ≤ boxDemandC cl sz c S T := by
   have hterm : ∀ a : ZMod 3, 0 ≤ ∑ b : ZMod 3,
@@ -130,12 +134,14 @@ variable (hidx : Function.Injective idx) (hcl : ∀ c, Function.Injective (cl c)
   (hsz1 : ∀ c a, 1 ≤ sz c a) (hszP : ∀ c a, sz c a ≤ P)
 
 include hsz1 in
+omit [Fintype κ] [DecidableEq κ] in
 theorem plc_nonempty {c : κ} {A : ZMod 3 → Finset (Fin P)} (hA : A ∈ BoxCount.plc P (sz c))
     (a : ZMod 3) : (A a).Nonempty := by
   rw [← Finset.card_pos, BoxCount.mem_plc.mp hA a]
   exact hsz1 c a
 
 include hidx hcl hsz1 in
+omit [Fintype ι] in
 /-- A sum over the placement hypergraph is a sum over copies and placements. -/
 theorem sum_placeFam (f : Finset (PlaceVtx ι κ P) → ℝ) :
     ∑ U ∈ placeFam P idx cl sz, f U
@@ -159,6 +165,7 @@ theorem sum_placeFam (f : Finset (PlaceVtx ι κ P) → ℝ) :
   exact (placeEdge_inj hidx (hcl c) (hcl c) (plc_nonempty hsz1 hA) (plc_nonempty hsz1 hA') h).2
 
 include hidx hcl hsz1 in
+omit [Fintype ι] in
 /-- A filtered sum over the placement hypergraph. -/
 theorem sum_placeFam_filter (p : Finset (PlaceVtx ι κ P) → Prop) [DecidablePred p]
     (f : Finset (PlaceVtx ι κ P) → ℝ) :
@@ -169,6 +176,7 @@ theorem sum_placeFam_filter (p : Finset (PlaceVtx ι κ P) → Prop) [DecidableP
   rw [Finset.sum_filter, sum_placeFam hidx hcl hsz1]
   exact Finset.sum_congr rfl fun c _ => (Finset.sum_filter _ _).symm
 
+omit [Fintype ι] in
 /-- The weight of a placement of `c` is the reciprocal of the number of placements of `c`. -/
 theorem placeWt_edge (c : κ) (A : ZMod 3 → Finset (Fin P)) :
     placeWt P sz (placeEdge idx cl c A) = ((placeCard P sz c : ℝ))⁻¹ := by
@@ -177,6 +185,7 @@ theorem placeWt_edge (c : κ) (A : ZMod 3 → Finset (Fin P)) :
   rw [Finset.sum_ite_eq' Finset.univ c (fun c' => ((placeCard P sz c' : ℝ))⁻¹)]
   simp
 
+omit [Fintype ι] in
 theorem placeWt_nonneg (U : Finset (PlaceVtx ι κ P)) : 0 ≤ placeWt P sz U := by
   refine Finset.sum_nonneg fun c _ => ?_
   split
@@ -184,10 +193,12 @@ theorem placeWt_nonneg (U : Finset (PlaceVtx ι κ P)) : 0 ≤ placeWt P sz U :=
   · exact le_rfl
 
 include hszP in
+omit [Fintype κ] [DecidableEq κ] in
 theorem placeCard_pos (c : κ) : 0 < placeCard P sz c :=
   BoxCount.card_plc_pos (fun a => hszP c a)
 
 include hidx hcl hsz1 hszP in
+omit [Fintype ι] in
 /-- **The total weight is the number of copies.** -/
 theorem sum_placeWt :
     ∑ U ∈ placeFam P idx cl sz, placeWt P sz U = (Fintype.card κ : ℝ) := by
@@ -206,7 +217,8 @@ theorem sum_placeWt :
   rw [Finset.sum_congr rfl (fun c _ => hone c), Finset.sum_const, Finset.card_univ,
     nsmul_eq_mul, mul_one]
 
-include hidx hcl hsz1 in
+include hcl in
+omit [Fintype ι] in
 /-- Every edge is nonempty and has at most `1 + 3s₀²` vertices. -/
 theorem placeFam_edge_size {s₀ : ℕ} (hs : ∀ c a, sz c a ≤ s₀) (U : Finset (PlaceVtx ι κ P))
     (hU : U ∈ placeFam P idx cl sz) : U.Nonempty ∧ #U ≤ 1 + 3 * s₀ ^ 2 := by
@@ -233,7 +245,7 @@ have a residue outside the first pair inside the second. -/
 private theorem zmod3_third : ∀ p q p' q' : ZMod 3, p ≠ q → p' ≠ q' →
     ¬ (p = p' ∧ q = q') → ¬ (p = q' ∧ q = p') →
     ∃ t : ZMod 3, t ≠ p ∧ t ≠ q ∧ (t = p' ∨ t = q') := by
-  show ∀ p q p' q' : Fin 3, p ≠ q → p' ≠ q' →
+  change ∀ p q p' q' : Fin 3, p ≠ q → p' ≠ q' →
     ¬ (p = p' ∧ q = q') → ¬ (p = q' ∧ q = p') →
     ∃ t : Fin 3, t ≠ p ∧ t ≠ q ∧ (t = p' ∨ t = q')
   decide
@@ -242,10 +254,12 @@ section PerCopy
 
 variable {c : κ}
 
+omit [Fintype κ] [DecidableEq κ] in
 theorem sum_inv_const (F : Finset (ZMod 3 → Finset (Fin P))) :
     ∑ _A ∈ F, ((placeCard P sz c : ℝ))⁻¹ = (#F : ℝ) * ((placeCard P sz c : ℝ))⁻¹ := by
   rw [Finset.sum_const, nsmul_eq_mul]
 
+omit [Fintype ι] [Fintype κ] in
 /-- **The placements of `c` occupying a prescribed slot**: either there are none, or the slot is
 the cell pair `(i, j)` of two clusters `cl c p`, `cl c q` of `c`, and then they are at most a
 `sz(c,p)·sz(c,q)/P²` fraction of all placements. -/
@@ -284,6 +298,7 @@ theorem slot_count_core (hidx : Function.Injective idx) (hcl : Function.Injectiv
     obtain ⟨p, q, hpq, h1, h2, hlt, -, -⟩ := (mem_placeEdge_inl hidx hcl S T i j).mp (hF A hA)
     exact hex ⟨p, q, hpq, h1, h2, hlt⟩
 
+omit [Fintype ι] [Fintype κ] in
 /-- **The placements of `c` through a slot of `(S,T)` are a `demand/P²` fraction.** -/
 theorem slot_count_le_demand (hidx : Function.Injective idx) (hcl : Function.Injective (cl c))
     (hszP : ∀ a, sz c a ≤ P) (hP : 0 < P) (S T : ι) (i j : Fin P)
@@ -299,6 +314,7 @@ theorem slot_count_le_demand (hidx : Function.Injective idx) (hcl : Function.Inj
     gcongr
     exact sz_mul_le_boxDemandC hp hq
 
+omit [Fintype ι] [Fintype κ] in
 /-- The same count is at most `s₀²/P²`. -/
 theorem slot_count_le_sz (hidx : Function.Injective idx) (hcl : Function.Injective (cl c))
     (hszP : ∀ a, sz c a ≤ P) (hP : 0 < P) {s₀ : ℕ} (hs : ∀ a, sz c a ≤ s₀) (S T : ι)
@@ -318,6 +334,7 @@ theorem slot_count_le_sz (hidx : Function.Injective idx) (hcl : Function.Injecti
     gcongr
     nlinarith
 
+omit [Fintype ι] [Fintype κ] in
 /-- **Two slots pin a copy down in a third coordinate.**  This is the estimate that makes the
 codegrees of the placement hypergraph small, and it is where the small-box restriction enters. -/
 theorem two_slot_count_le (hidx : Function.Injective idx) (hcl : Function.Injective (cl c))
@@ -501,6 +518,7 @@ variable (hidx : Function.Injective idx) (hcl : ∀ c, Function.Injective (cl c)
   (hsz1 : ∀ c a, 1 ≤ sz c a) (hszP : ∀ c a, sz c a ≤ P)
 
 include hidx hcl hsz1 hszP in
+omit [Fintype ι] in
 /-- The load of a token is exactly `1`. -/
 theorem wLoad_inr (c : κ) :
     Slack.wLoad (placeFam P idx cl sz) (placeWt P sz) (Sum.inr c) = 1 := by
@@ -536,6 +554,7 @@ theorem wLoad_inr (c : κ) :
   simp
 
 include hidx hcl hsz1 in
+omit [Fintype ι] in
 /-- Only the slots oriented by `idx` are occupied. -/
 theorem wLoad_inl_of_not_lt {S T : ι} (h : ¬ idx S < idx T) (i j : Fin P) :
     Slack.wLoad (placeFam P idx cl sz) (placeWt P sz) (Sum.inl (S, T, i, j)) = 0 := by
@@ -549,6 +568,7 @@ theorem wLoad_inl_of_not_lt {S T : ι} (h : ¬ idx S < idx T) (i j : Fin P) :
   exact h hlt
 
 include hidx hcl hsz1 hszP in
+omit [Fintype ι] in
 /-- **The load of a slot is at most the normalised demand of its cluster pair.** -/
 theorem wLoad_inl_le (hP : 0 < P) (S T : ι) (i j : Fin P) :
     Slack.wLoad (placeFam P idx cl sz) (placeWt P sz) (Sum.inl (S, T, i, j))
@@ -567,6 +587,7 @@ theorem wLoad_inl_le (hP : 0 < P) (S T : ι) (i j : Fin P) :
   exact slot_count_le_demand hidx (hcl c) (fun a => hszP c a) hP S T i j
     (Finset.filter_subset _ _) (fun A hA => (Finset.mem_filter.mp hA).2)
 
+omit [Fintype ι] in
 /-- Two tokens are never together in an edge. -/
 theorem codeg_inr_inr {c c' : κ} (h : c ≠ c') :
     ∑ U ∈ ((placeFam P idx cl sz).filter (fun U => (Sum.inr c : PlaceVtx ι κ P) ∈ U)).filter
@@ -581,6 +602,7 @@ theorem codeg_inr_inr {c c' : κ} (h : c ≠ c') :
   exact h (hc.trans hc'.symm)
 
 include hidx hcl hsz1 hszP in
+omit [Fintype ι] in
 /-- **The codegree of a slot and a token** is at most `9 s₀²/P²`. -/
 theorem codeg_inl_inr_le (hP : 0 < P) {s₀ : ℕ} (hs : ∀ c a, sz c a ≤ s₀) (c : κ) (S T : ι)
     (i j : Fin P) :
@@ -594,7 +616,7 @@ theorem codeg_inl_inr_le (hP : 0 < P) {s₀ : ℕ} (hs : ∀ c a, sz c a ≤ s�
   refine le_trans (Finset.sum_le_sum
     (g := fun c' : κ => if c' = c then (s₀ : ℝ) ^ 2 / (P : ℝ) ^ 2 else 0)
     (fun c' _ => ?_)) ?_
-  · show _ ≤ (if c' = c then (s₀ : ℝ) ^ 2 / (P : ℝ) ^ 2 else 0)
+  · change _ ≤ (if c' = c then (s₀ : ℝ) ^ 2 / (P : ℝ) ^ 2 else 0)
     by_cases hcc : c' = c
     · subst hcc
       rw [ite_eq_left rfl, Finset.sum_congr rfl (fun A _ => placeWt_edge c' A)]
@@ -620,6 +642,7 @@ theorem codeg_inl_inr_le (hP : 0 < P) {s₀ : ℕ} (hs : ∀ c a, sz c a ≤ s�
     linarith
 
 include hidx hcl hsz1 hszP in
+omit [Fintype ι] in
 /-- **The codegree of two slots** is `O(s₀/P)` times the normalised demand: two placements sharing
 two slots are pinned down in one further coordinate.  This is where the small-box restriction is
 used. -/
@@ -649,6 +672,7 @@ theorem codeg_inl_inl_le (hP : 2 ≤ P) {s₀ : ℕ} (hs : ∀ c a, sz c a ≤ s
     exact hA.2.2
 
 include hidx hcl hsz1 hszP in
+omit [Fintype ι] in
 /-- **All weighted codegrees are `O(s₀/P)`.** -/
 theorem codeg_le (hP : 2 ≤ P) {s₀ : ℕ} (hs : ∀ c a, sz c a ≤ s₀) (hsP : s₀ ≤ P)
     (hdem : ∀ S T : ι, S ≠ T → boxDemand cl sz S T ≤ (P : ℝ) ^ 2)

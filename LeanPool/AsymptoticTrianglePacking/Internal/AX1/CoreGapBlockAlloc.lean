@@ -141,7 +141,9 @@ theorem cover_approx_of_gridSubTriple (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ### Members on nearly disjoint cluster triples never clash -/
 
-/-- The two coordinates of a point of a rectangle lie in **two different** clusters of the triple. -/
+omit [Fintype V] in
+/-- The two coordinates of a point of a rectangle lie in **two different** clusters of the
+triple. -/
 theorem exists_clusters_of_mem_tripleRect {U W X A B C : Finset V}
     (hUW : U ≠ W) (hUX : U ≠ X) (hWX : W ≠ X)
     (hA : A ⊆ U) (hB : B ⊆ W) (hC : C ⊆ X) {u v : V} (h : (u, v) ∈ tripleRect A B C) :

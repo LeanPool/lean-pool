@@ -11,7 +11,8 @@ module
 
 Restates the frozen Paper III cover-side target `τ₃* − ν₃ ≤ ε n²` with its cover LP,
 and reduces it to two obligations:
-  * `StrongDualityHyp` — `τ₃* ≤ ν₃*` (Aristotle core `b3ee717f`; reverse of the proven weak duality).
+  * `StrongDualityHyp` — `τ₃* ≤ ν₃*` (Aristotle core `b3ee717f`; reverse of the proven weak
+  duality).
   * `NibbleGapHyp` — the UNCONDITIONAL packing gap `ν₃* − ν₃ ≤ ε n²` (`NibbleTheoremMost` + `②`
     near-regularity discharged for all large graphs).
 The frozen project's definitional bridges to `PaperIII.{nu3,nu3Star}` are not imported
@@ -59,7 +60,8 @@ def StrongDualityHyp : Prop :=
   ∀ {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj],
     tau3Star G ≤ nu3star G
 
-/-- **The unconditional nibble-gap obligation** (`NibbleTheoremMost` + `②` near-regularity discharged
+/-- **The unconditional nibble-gap obligation** (`NibbleTheoremMost` + `②` near-regularity
+discharged
 for all large graphs): `ν₃* − ν₃ ≤ ε n²` uniformly. -/
 def NibbleGapHyp : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ n₀ : ℕ,
@@ -69,7 +71,8 @@ def NibbleGapHyp : Prop :=
 
 /-- **AX1 REDUCTION.** AX1 follows from the two remaining obligations: cover-side strong duality
 (`τ₃* ≤ ν₃*`) and the unconditional nibble packing gap (`ν₃* − ν₃ ≤ ε n²`). The definitional bridges
-`Nibble.{nu3,nu3star} ↔ PaperIII.{nu3,nu3Star}` (already proven) make these the SAME `ν₃, ν₃*` as AX1's. -/
+`Nibble.{nu3,nu3star} ↔ PaperIII.{nu3,nu3Star}` (already proven) make these the SAME `ν₃, ν₃*`
+as AX1's. -/
 theorem ax1_of_strongDuality_and_nibbleGap
     (hdual : StrongDualityHyp) (hgap : NibbleGapHyp) : AX1Statement := by
   intro ε hε

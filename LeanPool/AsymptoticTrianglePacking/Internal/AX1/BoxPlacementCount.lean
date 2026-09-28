@@ -25,9 +25,9 @@ public import Mathlib.Data.Finset.Fin
 public import Mathlib.Tactic.IntervalCases
 public import Mathlib.Tactic.Ring
 
-open Finset
-
 /-! # BoxPlacementCount -/
+
+open Finset
 
 @[expose] public section
 
@@ -93,7 +93,7 @@ theorem card_subs_req {u : ℕ} (B : Finset (Fin P)) (hB : #B ≤ u) :
         have := hCc.1 hxC
         rw [Finset.mem_sdiff] at this
         exact this.2 hxB
-      show (Cc ∪ B) \ B = Cc
+      change (Cc ∪ B) \ B = Cc
       rw [Finset.union_sdiff_cancel_right hdisj]
   rw [hkey, Finset.card_powersetCard, Finset.card_sdiff_of_subset (Finset.subset_univ B),
     Finset.card_univ, Fintype.card_fin]

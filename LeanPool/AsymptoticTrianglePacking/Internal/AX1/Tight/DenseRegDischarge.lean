@@ -36,7 +36,8 @@ variable {V : Type} [Fintype V] [DecidableEq V]
 
 /-- **Dense near-regularity, concrete window.**  For a graph whose minimum degree `D` satisfies
 `9n ≤ 10D` (i.e. `δ(G) ≥ (9/10)n`) and `n ≥ 5`, the triangle hypergraph is nearly `d`-regular with
-`d = n`, `μ = 1/5`, EMPTY exceptional set, codegree `≤ μd`, global ceiling `≤ (1+μ)d`, and the linear
+`d = n`, `μ = 1/5`, EMPTY exceptional set, codegree `≤ μd`, global ceiling `≤ (1+μ)d`, and the
+linear
 size bound `n ≤ 1·d`.  This is exactly the local data of `NearRegObligationLinearSized` with
 `μ = 1/5, η = 0, L = 1, d = n`. -/
 theorem triangleSub_dense_data (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -61,3 +62,5 @@ theorem triangleSub_dense_data (G : SimpleGraph V) [DecidableRel G.Adj]
     nlinarith
   · -- hhi : n ≤ (1+μ) d = (6/5) n
     nlinarith
+
+end Nibble.YusterE

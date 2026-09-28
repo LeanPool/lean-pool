@@ -69,7 +69,8 @@ theorem gridShift_WX_injective {n : ℕ} :
   exact Prod.ext (Fin.ext h.1) (Fin.ext h.2)
 
 /-- **Consequence: the diagonal grid labelling is injective** — distinct `(j,k)` give distinct
-sub-triples `(f(j,k), j, k)`.  (Immediate from any one of the block-pair injectivities, e.g. `WX`.) -/
+sub-triples `(f(j,k), j, k)`.  (Immediate from any one of the block-pair injectivities, e.g.
+`WX`.) -/
 theorem gridShift_label_injective {n : ℕ} :
     Function.Injective (fun p : Fin n × Fin n => (gridShift n p.1 p.2, p.1.val, p.2.val)) := by
   intro p q h

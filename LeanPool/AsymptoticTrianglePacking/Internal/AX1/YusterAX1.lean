@@ -9,12 +9,15 @@ module
 /-
 # Yuster — the `o(n²)` arithmetic: integrality gap in AX1 form
 
-Standalone, Mathlib-only. The Y6 gap bound `ν₃*(G) − ν₃(G) ≤ β·|E(G)|/3` (`nu3star_sub_nu3_le`) is put
-into the AX1 shape `≤ ε·|V(G)|²` using `|E(G)| ≤ |V(G)|²` and `β = 3ε`. This is the `o(n²)` accounting
+Standalone, Mathlib-only. The Y6 gap bound `ν₃*(G) − ν₃(G) ≤ β·|E(G)|/3`
+(`nu3star_sub_nu3_le`) is put
+into the AX1 shape `≤ ε·|V(G)|²` using `|E(G)| ≤ |V(G)|²` and `β = 3ε`. This is the `o(n²)`
+accounting
 step of the Yuster route (AX1 as stated in Paper III: `∀ε>0, ν₃*−ν₃ ≤ ε·|V|²` for large `V`).
 
 * `edge_card_le_card_sq` — `|E(G)| ≤ |V(G)|²`.
-* `nu3star_sub_nu3_le_eps` — `ν₃* − ν₃ ≤ ε·|V|²` (modulo `NibbleTheoremMost` + the edge-based Y3 interface).
+* `nu3star_sub_nu3_le_eps` — `ν₃* − ν₃ ≤ ε·|V|²` (modulo `NibbleTheoremMost` + the edge-based
+Y3 interface).
 
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
@@ -37,7 +40,8 @@ variable {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRe
 theorem edge_card_le_card_sq :
     ((G.cliqueFinset 2).card : ℝ) ≤ (Fintype.card V : ℝ) ^ 2 := by
   have hle : (G.cliqueFinset 2).card ≤ (Fintype.card V).choose 2 := by
-    have hsub : (G.cliqueFinset 2).card ≤ (Finset.univ.powersetCard 2 : Finset (Finset V)).card := by
+    have hsub : (G.cliqueFinset 2).card ≤
+        (Finset.univ.powersetCard 2 : Finset (Finset V)).card := by
       apply Finset.card_le_card
       intro e he
       rw [SimpleGraph.mem_cliqueFinset_iff] at he
@@ -51,8 +55,10 @@ theorem edge_card_le_card_sq :
     _ ≤ ((Fintype.card V) ^ 2 : ℝ) := by exact_mod_cast hchoose
     _ = (Fintype.card V : ℝ) ^ 2 := by ring
 
-/-- **AX1-form gap.** Assuming `NibbleTheorem` and the edge-based Y3 interface, the integrality gap is
-`≤ ε·|V(G)|²` — the shape AX1 states. Takes `β = 3ε` in `nu3star_sub_nu3_le` (so `β·|E|/3 = ε·|E|`) and
+/-- **AX1-form gap.** Assuming `NibbleTheorem` and the edge-based Y3 interface, the
+integrality gap is
+`≤ ε·|V(G)|²` — the shape AX1 states. Takes `β = 3ε` in `nu3star_sub_nu3_le` (so `β·|E|/3 =
+ε·|E|`) and
 bounds `|E| ≤ |V|²`. -/
 theorem nu3star_sub_nu3_le_eps (hNibble : NibbleTheorem) {ε : ℝ} (hε : 0 < ε) :
     ∃ μ : ℝ, 0 < μ ∧ ∃ d₀ : ℝ, 0 < d₀ ∧ ∀ {d : ℝ}, 0 < d → d₀ ≤ d →
@@ -67,6 +73,7 @@ theorem nu3star_sub_nu3_le_eps (hNibble : NibbleTheorem) {ε : ℝ} (hε : 0 < �
   rw [hEq] at hgap
   calc nu3star G - (nu3 G : ℝ)
       ≤ ε * ((G.cliqueFinset 2).card : ℝ) := hgap
-    _ ≤ ε * (Fintype.card V : ℝ) ^ 2 := mul_le_mul_of_nonneg_left (edge_card_le_card_sq G) (le_of_lt hε)
+    _ ≤ ε * (Fintype.card V : ℝ) ^ 2 :=
+      mul_le_mul_of_nonneg_left (edge_card_le_card_sq G) (le_of_lt hε)
 
 end Nibble.YusterE

@@ -12,7 +12,8 @@ module
 Bottoms the AX1 dependency chain out at its irreducible pieces. Combined with `AX1Reduction`, gives
   AX1  ⟸  StrongDualityHyp  +  NibbleTheoremMost  +  NearRegObligation
 i.e. AX1 sorry-free reduces to EXACTLY: cover-side strong duality (Aristotle `b3ee717f`), the nibble
-theorem `NibbleTheoremMost` (Aristotle residual crux `39a79122` + convergence), and the `②` near-regularity
+theorem `NibbleTheoremMost` (Aristotle residual crux `39a79122` + convergence), and the
+`②` near-regularity
 regularization (Szemerédi / Haxell–Rödl, pending the route decision).
 
 * `UniformNibbleGap`, `NearRegObligation` — the two sub-obligations of `NibbleGapHyp`.
@@ -36,18 +37,21 @@ open Finset SimpleGraph Hypergraph Nibble.YusterE
 
 namespace Nibble.AX1
 
-/-- **Uniform nibble gap**: tolerances `μ, η` depending only on `ε` (NOT on `G`) such that every graph
-that is near-`d`-regular (outside `η`-fraction) with bounded codegree has `ν₃* − ν₃ ≤ ε n²`. This is the
+/-- **Uniform nibble gap**: tolerances `μ, η` depending only on `ε` (NOT on `G`) such that
+every graph that is near-`d`-regular (outside `η`-fraction) with bounded codegree has
+`ν₃* − ν₃ ≤ ε n²`. This is the
 `G`-uniform form of the proven per-graph `nu3star_sub_nu3_le_eps_most`. -/
 def UniformNibbleGap : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ μ : ℝ, 0 < μ ∧ ∃ η : ℝ, 0 < η ∧
-    ∀ {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℝ}, 0 < d →
+    ∀ {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
+      [DecidableRel G.Adj] {d : ℝ}, 0 < d →
       NearlyRegularMost (triangleHypergraphSub G) d μ η →
       CodegreeBounded (triangleHypergraphSub G) (μ * d) →
       nu3star G - (nu3 G : ℝ) ≤ ε * (Fintype.card V : ℝ) ^ 2
 
-/-- **Near-regularity obligation** (the ② core): for tolerances `μ, η`, every large enough graph admits
-a near-regularity witness `d` (with the free codegree bound). This is exactly what a Szemerédi/Haxell–Rödl
+/-- **Near-regularity obligation** (the ② core): for tolerances `μ, η`, every large enough
+graph admits a near-regularity witness `d` (with the free codegree bound). This is
+exactly what a Szemerédi/Haxell–Rödl
 regularization must supply. -/
 def NearRegObligation (μ η d₀ : ℝ) : Prop :=
   ∃ n₀ : ℕ, ∀ (V : Type) [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj],
@@ -55,7 +59,8 @@ def NearRegObligation (μ η d₀ : ℝ) : Prop :=
     ∃ d : ℝ, 0 < d ∧ d₀ ≤ d ∧ NearlyRegularMost (triangleHypergraphSub G) d μ η ∧
       CodegreeBounded (triangleHypergraphSub G) (μ * d) ∧
       -- ② global ceiling (corrected nibble): every edge lies in ≤ (1+μ)d triangles (no exceptional
-      -- high-degree vertex). At δ≥(9/10+ε)|V| this is free — see `Nibble.YusterE.triangleSub_degree_window`.
+      -- high-degree vertex). At δ≥(9/10+ε)|V| this is free; see
+      -- `Nibble.YusterE.triangleSub_degree_window`.
       (∀ e : EdgeV G, (Hypergraph.degree (triangleHypergraphSub G) e : ℝ) ≤ (1 + μ) * d)
 
 /-- **Sized near-regularity obligation.** The corrected Freedman route also needs the triangle
@@ -117,8 +122,9 @@ theorem nearRegSized_of_forall_linearSized {μ η d₀ K : ℝ} (hK : 0 < K)
     (L := Real.sqrt K) (Real.sqrt_nonneg K) (h (Real.sqrt K) (Real.sqrt_pos.2 hK))
   simpa [Real.sq_sqrt hK.le] using hsized
 
-/-- **NibbleGapHyp reduction.** The unconditional packing gap follows from the `G`-uniform nibble gap
-plus the near-regularity obligation for its tolerances. Bottoms the AX1 chain out at `NibbleTheoremMost`
+/-- **NibbleGapHyp reduction.** The unconditional packing gap follows from the
+`G`-uniform nibble gap plus the near-regularity obligation for its tolerances.
+Bottoms the AX1 chain out at `NibbleTheoremMost`
 (via `UniformNibbleGap`) and the ② regularization (via `NearRegObligation`). -/
 theorem nibbleGap_of_uniform_and_regularity
     (hU : UniformNibbleGap)
@@ -132,10 +138,12 @@ theorem nibbleGap_of_uniform_and_regularity
   obtain ⟨d, hd, _hd0, hreg, hcod, _hceil⟩ := hn₀ V G hV
   exact hgap G hd hreg hcod
 
-/-- **NibbleGapHyp directly from `NibbleTheoremMost`.** Extracts the uniform tolerances `μ, η` from the
-nibble interface once (at `r = 3`, `β = 3ε`), consumes the near-regularity obligation, and inlines the
+/-- **NibbleGapHyp directly from `NibbleTheoremMost`.** Extracts the uniform tolerances
+`μ, η` from the nibble interface once (at `r = 3`, `β = 3ε`), consumes the
+near-regularity obligation, and inlines the
 packing-gap arithmetic (`ν₃* ≤ |E|/3` and matching `≥ (1-3ε)|E|/3 ≤ ν₃`, so `ν₃*−ν₃ ≤ ε|E| ≤ ε n²`).
-This bottoms the AX1 dependency chain out at exactly `NibbleTheoremMost` + the `②` regularization. -/
+This bottoms the AX1 dependency chain out at exactly `NibbleTheoremMost` plus
+the `②` regularization. -/
 theorem nibbleGap_of_nibbleTheorem (hNib : NibbleTheoremMost)
     (hReg : ∀ μ η d₀ : ℝ, 0 < μ → 0 < η → 0 < d₀ → NearRegObligation μ η d₀) : NibbleGapHyp := by
   intro ε hε
@@ -225,7 +233,8 @@ theorem ax1_of_nibbleTheorem_strongDuality_regularity
   ax1_of_strongDuality_and_nibbleGap hdual (nibbleGap_of_nibbleTheorem hNib hReg)
 
 /-- **The full AX1 reduction, ceiling-aware form.** This is the corrected target for the Freedman
-route: the ② regularization supplies the global degree ceiling consumed by `NibbleTheoremMostCeil`. -/
+route: the ② regularization supplies the global degree ceiling consumed by
+`NibbleTheoremMostCeil`. -/
 theorem ax1_of_nibbleTheoremCeil_strongDuality_regularity
     (hNib : NibbleTheoremMostCeil) (hdual : StrongDualityHyp)
     (hReg : ∀ μ η d₀ : ℝ, 0 < μ → 0 < η → 0 < d₀ → NearRegObligation μ η d₀) :

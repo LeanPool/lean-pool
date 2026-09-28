@@ -122,7 +122,9 @@ theorem coverOpt_triInc_eq_tau3Star : coverOpt (triInc G) = tau3Star G := by
         · intro ⟨e, _⟩; exact hy.1 e
         · intro ⟨t, ht⟩
           have h := hy.2 t ht
-          have eq_sums : (@Finset.sum (Edg G) ℝ _ (@triInc V _ _ G _ ⟨t, ht⟩) (fun c : Edg G => y (c : Sym2 V))) = ∑ e ∈ edgesIn G t, y e := by
+          have eq_sums :
+              (@Finset.sum (Edg G) ℝ _ (@triInc V _ _ G _ ⟨t, ht⟩)
+                (fun c : Edg G => y (c : Sym2 V))) = ∑ e ∈ edgesIn G t, y e := by
             rw [triInc]
             refine Finset.sum_bij (fun e _ => e.val) ?_ ?_ ?_ ?_
             · intro e he
@@ -138,7 +140,7 @@ theorem coverOpt_triInc_eq_tau3Star : coverOpt (triInc G) = tau3Star G := by
           exact h
       · refine Finset.sum_bij (fun e (he : e ∈ G.edgeFinset) => ⟨e, he⟩) ?_ ?_ ?_ ?_
         · intro e _; exact Finset.mem_univ _
-        · intro e₁ _ e₂ _ h; simp at h; exact h
+        · intro e₁ _ e₂ _ h; exact congrArg Subtype.val h
         · intro c _; use c.val; simp
         · intro e _; rfl
   · -- tau3Star ≤ coverOpt
@@ -153,7 +155,8 @@ theorem coverOpt_triInc_eq_tau3Star : coverOpt (triInc G) = tau3Star G := by
       constructor
       · refine ⟨fun _ => by norm_num, ?_⟩
         intro ⟨t, ht⟩
-        have hne : (edgesIn G t).Nonempty := by exact edgesIn_ne t (SimpleGraph.mem_cliqueFinset_iff.mp ht)
+        have hne : (edgesIn G t).Nonempty := by
+          exact edgesIn_ne t (SimpleGraph.mem_cliqueFinset_iff.mp ht)
         have hcard : #(triInc G ⟨t, ht⟩) = #(edgesIn G t) := by
           rw [triInc]
           refine Finset.card_bij (fun e _ => e.val) ?_ ?_ ?_
@@ -187,9 +190,14 @@ theorem coverOpt_triInc_eq_tau3Star : coverOpt (triInc G) = tau3Star G := by
         · intro e; simp only [y']; split_ifs with h <;> [exact hy.1 ⟨e, h⟩; norm_num]
         · intro t ht
           have h := hy.2 ⟨t, ht⟩
-          have eq_sums : (@Finset.sum (Edg G) ℝ _ (@triInc V _ _ G _ ⟨t, ht⟩) y) = ∑ e ∈ (edgesIn G t).attach, y ⟨e.val, Finset.filter_subset (fun e => ∀ v ∈ e, v ∈ t) G.edgeFinset e.prop⟩ := by
+          have eq_sums : (@Finset.sum (Edg G) ℝ _ (@triInc V _ _ G _ ⟨t, ht⟩) y) =
+              ∑ e ∈ (edgesIn G t).attach,
+                y ⟨e.val, Finset.filter_subset (fun e => ∀ v ∈ e, v ∈ t)
+                  G.edgeFinset e.prop⟩ := by
             rw [triInc]
-            have toMem : ∀ c : Edg G, c ∈ Finset.univ.filter (fun e : Edg G => e.val ∈ edgesIn G t) → c.val ∈ edgesIn G t := by simp
+            have toMem : ∀ c : Edg G,
+                c ∈ Finset.univ.filter (fun e : Edg G => e.val ∈ edgesIn G t) →
+                  c.val ∈ edgesIn G t := by simp
             refine Finset.sum_bij (fun c _ => ⟨c.val, toMem c ‹_›⟩) ?_ ?_ ?_ ?_
             · intro c _; simp
             · intro c₁ _ c₂ _ h; simpa using h
@@ -199,7 +207,10 @@ theorem coverOpt_triInc_eq_tau3Star : coverOpt (triInc G) = tau3Star G := by
             · intro c _; rfl
           rw [← Finset.sum_attach]
           simp only [y']
-          have h2 : ∀ x ∈ (edgesIn G t).attach, (if h : x.val ∈ G.edgeFinset then y ⟨x.val, h⟩ else 0) = y ⟨x.val, Finset.filter_subset (fun e => ∀ v ∈ e, v ∈ t) G.edgeFinset x.prop⟩ := by
+          have h2 : ∀ x ∈ (edgesIn G t).attach,
+              (if h : x.val ∈ G.edgeFinset then y ⟨x.val, h⟩ else 0) =
+                y ⟨x.val, Finset.filter_subset (fun e => ∀ v ∈ e, v ∈ t)
+                  G.edgeFinset x.prop⟩ := by
             intro x hx
             have hx' : x.val ∈ edgesIn G t := x.2
             rw [dite_eq_left (Finset.filter_subset _ _ hx')]
@@ -213,7 +224,8 @@ theorem coverOpt_triInc_eq_tau3Star : coverOpt (triInc G) = tau3Star G := by
         · intro c _; use c.val; simp
         · intro e he; simp only [y', he, dite_eq_left]
 
-/-- **Bridge 2 (packing side).** The abstract packing optimum over the triangle–edge incidence equals
+/-- **Bridge 2 (packing side).** The abstract packing optimum over the triangle–edge
+incidence equals
 `ν₃*`. -/
 theorem packOpt_triInc_eq_nu3star : packOpt (triInc G) = nu3star G := by
   unfold packOpt nu3star
@@ -224,9 +236,12 @@ theorem packOpt_triInc_eq_nu3star : packOpt (triInc G) = nu3star G := by
     have hinj : ∀ t1 t2 : Tri G, t1.val.powersetCard 2 = t2.val.powersetCard 2 → t1 = t2 := by
       intro ⟨t1, ht1⟩ ⟨t2, ht2⟩ h
       simp [SimpleGraph.mem_cliqueFinset_iff] at ht1 ht2
-      exact Subtype.ext (powersetCard_two_inj (by rw [ht1.card_eq]; omega) (by rw [ht2.card_eq]; omega) h)
+      exact Subtype.ext
+        (powersetCard_two_inj (by rw [ht1.card_eq]; omega)
+          (by rw [ht2.card_eq]; omega) h)
     let w' : Finset (Finset V) → ℝ := fun T => if hT : T ∈ triangleHypergraphE G then
-      w ⟨(Classical.choose (Finset.mem_image.mp hT)), (Classical.choose_spec (Finset.mem_image.mp hT)).1⟩
+      w ⟨(Classical.choose (Finset.mem_image.mp hT)),
+        (Classical.choose_spec (Finset.mem_image.mp hT)).1⟩
       else (0 : ℝ)
     refine ⟨w', ⟨?nneg, ?zero, ?cap⟩, ?sum⟩
     case nneg =>
@@ -267,18 +282,20 @@ theorem packOpt_triInc_eq_nu3star : packOpt (triInc G) = nu3star G := by
               have := hinj ⟨x, hx⟩ ⟨y, hy⟩ hxy
               simpa using this)]
             rw [Finset.sum_subtype]
-            refine Finset.sum_congr rfl (fun t _ => ?_)
-            have hT : t.val.powersetCard 2 ∈ triangleHypergraphE G := by
-              rw [triangleHypergraphE, Finset.mem_image]
-              exact ⟨t.val, t.prop, rfl⟩
-            -- The choose gives the original triangle by injectivity
-            have hcs := Classical.choose_spec (Finset.mem_image.mp hT)
-            have hchoose : Classical.choose (Finset.mem_image.mp hT) = t.val :=
-              Subtype.ext_iff.mp (hinj ⟨Classical.choose (Finset.mem_image.mp hT), hcs.1⟩ t hcs.2)
-            have hw_eq : w ⟨Classical.choose (Finset.mem_image.mp hT), hcs.1⟩ = w t := by
-              congr 1
-              exact Subtype.ext hchoose
-            simp only [w', hT, hchoose]
+            · refine Finset.sum_congr rfl (fun t _ => ?_)
+              have hT : t.val.powersetCard 2 ∈ triangleHypergraphE G := by
+                rw [triangleHypergraphE, Finset.mem_image]
+                exact ⟨t.val, t.prop, rfl⟩
+              -- The choose gives the original triangle by injectivity
+              have hcs := Classical.choose_spec (Finset.mem_image.mp hT)
+              have hchoose : Classical.choose (Finset.mem_image.mp hT) = t.val :=
+                Subtype.ext_iff.mp
+                  (hinj ⟨Classical.choose (Finset.mem_image.mp hT), hcs.1⟩ t hcs.2)
+              have hw_eq : w ⟨Classical.choose (Finset.mem_image.mp hT), hcs.1⟩ = w t := by
+                congr 1
+                exact Subtype.ext hchoose
+              simp only [w', hT, hchoose]
+              simp
             all_goals simp
           rw [heq_sum]
           -- Now show this equals the constraint sum
@@ -314,7 +331,7 @@ theorem packOpt_triInc_eq_nu3star : packOpt (triInc G) = nu3star G := by
             obtain ⟨a, b, hab, heq⟩ := Finset.card_eq_two.mp he
             apply he'
             use s(a, b)
-            simp [Sym2.toFinset, heq]
+            simp only [mem_edgeFinset, mem_edgeSet, Sym2.toFinset, heq]
             -- Need to show (a, b) is an edge of G
             -- Since e ⊆ t and t is a clique, a and b are adjacent
             have hsub := h.1
@@ -362,13 +379,16 @@ theorem packOpt_triInc_eq_nu3star : packOpt (triInc G) = nu3star G := by
       have hT : t.val.powersetCard 2 ∈ triangleHypergraphE G := by
         rw [triangleHypergraphE, Finset.mem_image]
         exact ⟨t.val, t.prop, rfl⟩
-      show w ⟨t.val, t.prop⟩ = w' (t.val.powersetCard 2)
+      change w ⟨t.val, t.prop⟩ = w' (t.val.powersetCard 2)
       change w ⟨t.val, t.prop⟩ = (if hT : t.val.powersetCard 2 ∈ triangleHypergraphE G then
-        w ⟨(Classical.choose (Finset.mem_image.mp hT)), (Classical.choose_spec (Finset.mem_image.mp hT)).1⟩
+        w ⟨(Classical.choose (Finset.mem_image.mp hT)),
+          (Classical.choose_spec (Finset.mem_image.mp hT)).1⟩
         else (0 : ℝ))
       have hcs := Classical.choose_spec (Finset.mem_image.mp hT)
       have hchoose : Classical.choose (Finset.mem_image.mp hT) = t.val :=
-        Subtype.ext_iff.mp (hinj ⟨Classical.choose (Finset.mem_image.mp hT), hcs.1⟩ ⟨t.val, t.prop⟩ hcs.2)
+        Subtype.ext_iff.mp
+          (hinj ⟨Classical.choose (Finset.mem_image.mp hT), hcs.1⟩
+            ⟨t.val, t.prop⟩ hcs.2)
       split_ifs
       · congr 1; exact Subtype.ext hchoose.symm
   · rintro ⟨w, hw, rfl⟩
@@ -387,7 +407,7 @@ theorem packOpt_triInc_eq_nu3star : packOpt (triInc G) = nu3star G := by
           -- For an edge, the two endpoints are distinct (simple graph is loopless)
           have hn : (Sym2.toMultiset e.val).Nodup := by
             simp only [Sym2.toMultiset]
-            haveI := e.property
+            have := e.property
             generalize hv : e.val = x
             induction x using Sym2.ind with
             | h a b =>
@@ -409,10 +429,13 @@ theorem packOpt_triInc_eq_nu3star : packOpt (triInc G) = nu3star G := by
               ∑ o ∈ Finset.univ, if e ∈ triInc G o then w' o else 0 from rfl]
           rw [triangleHypergraphE]
           rw [Finset.sum_image (fun x hx y hy hxy => by
-            have hinj : ∀ t1 t2 : Tri G, t1.val.powersetCard 2 = t2.val.powersetCard 2 → t1 = t2 := by
+            have hinj : ∀ t1 t2 : Tri G,
+                t1.val.powersetCard 2 = t2.val.powersetCard 2 → t1 = t2 := by
               intro ⟨t1, ht1⟩ ⟨t2, ht2⟩ h
               simp [SimpleGraph.mem_cliqueFinset_iff] at ht1 ht2
-              exact Subtype.ext (powersetCard_two_inj (by rw [ht1.card_eq]; omega) (by rw [ht2.card_eq]; omega) h)
+              exact Subtype.ext
+                (powersetCard_two_inj (by rw [ht1.card_eq]; omega)
+                  (by rw [ht2.card_eq]; omega) h)
             have := hinj ⟨x, hx⟩ ⟨y, hy⟩ hxy
             simpa using this)]
           rw [← Finset.sum_coe_sort (s := G.cliqueFinset 3)]
@@ -443,19 +466,23 @@ theorem packOpt_triInc_eq_nu3star : packOpt (triInc G) = nu3star G := by
         have hinj : ∀ t1 t2 : Tri G, t1.val.powersetCard 2 = t2.val.powersetCard 2 → t1 = t2 := by
           intro ⟨t1, ht1⟩ ⟨t2, ht2⟩ h
           simp [SimpleGraph.mem_cliqueFinset_iff] at ht1 ht2
-          exact Subtype.ext (powersetCard_two_inj (by rw [ht1.card_eq]; omega) (by rw [ht2.card_eq]; omega) h)
+          exact Subtype.ext
+            (powersetCard_two_inj (by rw [ht1.card_eq]; omega)
+              (by rw [ht2.card_eq]; omega) h)
         have := hinj ⟨x, hx⟩ ⟨y, hy⟩ hxy
         simpa using this)]
       rw [← Finset.sum_coe_sort (s := G.cliqueFinset 3)]
 
-/-- **`StrongDualityHyp` — the instantiation.** `τ₃* ≤ ν₃*` follows from the abstract finite LP strong
+/-- **`StrongDualityHyp` — the instantiation.** `τ₃* ≤ ν₃*` follows from the abstract
+finite LP strong
 duality applied to the triangle–edge incidence, via the two value bridges. -/
 theorem tau3Star_le_nu3star : tau3Star G ≤ nu3star G := by
   rw [← coverOpt_triInc_eq_tau3Star G, ← packOpt_triInc_eq_nu3star G]
   exact lp_strong_duality (triInc G)
 
-/-- **`StrongDualityHyp` DISCHARGED** — the cover-side strong-duality obligation of the AX1 chain is now
-a theorem (via the abstract finite LP duality + the triangle–edge encoding bridges). One of the three AX1
+/-- **`StrongDualityHyp` DISCHARGED** — the cover-side strong-duality obligation of
+the AX1 chain is now a theorem (via the abstract finite LP duality + the
+triangle–edge encoding bridges). One of the three AX1
 obligations is closed, independently of the nibble. -/
 theorem strongDualityHyp_holds : StrongDualityHyp :=
   fun {_} _ _ G _ => tau3Star_le_nu3star G

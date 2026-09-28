@@ -57,6 +57,7 @@ theorem pick3_mem {ι : Type} [Nonempty ι] [DecidableEq ι] {t : Finset ι} (h3
 
 variable {V : Type} [Fintype V] [DecidableEq V]
 
+omit [Fintype V] in
 /-- **The rectangles of two members that share at most one cell are disjoint.**  `blk` assigns a
 block of vertices to each cell, distinct cells getting disjoint blocks; a member is given by three
 distinct cells, and its three parts are subsets of the corresponding blocks. -/

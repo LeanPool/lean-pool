@@ -60,6 +60,7 @@ theorem card_clique2_le_card_edgeFinset (G : SimpleGraph V) [DecidableRel G.Adj]
     · ext x; simp [Sym2.mem_toFinset]
   exact_mod_cast Finset.card_le_card_of_surjOn _ hsurj
 
+omit [DecidableEq V] in
 /-- **Few vertices of low degree in an edge-rich graph.**  With `L` the set of vertices of degree
 below `t`, one has `|L|·(|V| − t) ≤ |V|² − 2|E|`. -/
 theorem card_lowDeg_mul_le (G : SimpleGraph V) [DecidableRel G.Adj] (t : ℝ) :

@@ -15,7 +15,8 @@ required by `Nibble.AX1.HasNearRegularFamily` has no exceptions on the **upper**
 edges must be deleted; deleting them lowers the triangle degrees of the edges that remain, and this
 file bounds that loss.
 
-* `Nibble.AX1.prune` — the subgraph obtained by deleting a set of edges, and `Nibble.AX1.deletedDegree`
+* `Nibble.AX1.prune` — the subgraph obtained by deleting a set of edges, and
+`Nibble.AX1.deletedDegree`
   — the number of deleted edges at a vertex.
 * `Nibble.AX1.edgeTriangleDegree_prune_ge` — a triangle of `T` through a surviving edge `{x, y}`
   survives unless one of its two other edges was deleted, so the triangle degree drops by at most
@@ -50,9 +51,11 @@ noncomputable def prune (T : SimpleGraph V) (Bad : Finset (Finset V)) : SimpleGr
 noncomputable instance instDecidableRelPrune (T : SimpleGraph V) (Bad : Finset (Finset V)) :
     DecidableRel (prune T Bad).Adj := fun _ _ => Classical.dec _
 
+omit [Fintype V] in
 theorem prune_le (T : SimpleGraph V) (Bad : Finset (Finset V)) : prune T Bad ≤ T :=
   edgeSelect_le _ _
 
+omit [Fintype V] in
 theorem prune_adj (T : SimpleGraph V) (Bad : Finset (Finset V)) (x y : V) :
     (prune T Bad).Adj x y ↔ T.Adj x y ∧ ({x, y} : Finset V) ∉ Bad :=
   edgeSelect_adj _ _ _ _
@@ -67,7 +70,8 @@ def deletedDegree (T : SimpleGraph V) [DecidableRel T.Adj] (Bad : Finset (Finset
 theorem edgeTriangleDegree_prune_ge (T : SimpleGraph V) [DecidableRel T.Adj]
     (Bad : Finset (Finset V)) {x y : V} (hadj : (prune T Bad).Adj x y) :
     edgeTriangleDegree T {x, y}
-      ≤ edgeTriangleDegree (prune T Bad) {x, y} + deletedDegree T Bad x + deletedDegree T Bad y := by
+      ≤ edgeTriangleDegree (prune T Bad) {x, y} + deletedDegree T Bad x +
+          deletedDegree T Bad y := by
   classical
   have hTadj : T.Adj x y := (prune_le T Bad) hadj
   rw [edgeTriangleDegree_pair T hTadj, edgeTriangleDegree_pair _ hadj, deletedDegree,

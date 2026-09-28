@@ -47,7 +47,7 @@ variable {V : Type} [Fintype V] [DecidableEq V]
 /-! ### Counting edges fibrewise -/
 
 /-- The number of pairs of a product satisfying a predicate, summed fibrewise. -/
-theorem card_filter_product {α β : Type*} [DecidableEq α] (s : Finset α) (t : Finset β)
+theorem card_filter_product {α β : Type*} (s : Finset α) (t : Finset β)
     (P : α × β → Prop) [DecidablePred P] :
     #{e ∈ s ×ˢ t | P e} = ∑ x ∈ s, #{y ∈ t | P (x, y)} := by
   classical
@@ -69,7 +69,7 @@ theorem card_filter_product {α β : Type*} [DecidableEq α] (s : Finset α) (t 
     simp only [Finset.mem_filter] at hy
     exact ⟨(x, y), by simp [Finset.mem_filter, Finset.mem_product, hx, hy.1, hy.2], rfl⟩
 
-omit [Fintype V] in
+omit [Fintype V] [DecidableEq V] in
 /-- The number of edges between two finsets is the sum over the first of the degrees into the
 second. -/
 theorem card_interedges_eq_sum (G : SimpleGraph V) [DecidableRel G.Adj] (s t : Finset V) :
@@ -88,7 +88,7 @@ theorem edgeDensity_real (G : SimpleGraph V) [DecidableRel G.Adj] (s t : Finset 
 
 /-! ### The one-sided degree lemmas -/
 
-omit [Fintype V] in
+omit [Fintype V] [DecidableEq V] in
 /-- **Few vertices have small degree into a large subset.**  If `(B, C)` is `ε`-uniform and
 `C' ⊆ C` has `|C'| ≥ ε|C|`, then at most `ε|B|` vertices `y ∈ B` have fewer than `θ|C'|`
 neighbours in `C'`, for any `θ ≤ d(B,C) − ε`. -/
@@ -139,7 +139,7 @@ theorem card_filter_lt_le (G : SimpleGraph V) [DecidableRel G.Adj] {B C C' : Fin
       _ = θ * ((#S : ℝ) * (#C' : ℝ)) := by ring
   linarith only [hθ, hlow, hden]
 
-omit [Fintype V] in
+omit [Fintype V] [DecidableEq V] in
 /-- **Few vertices have large degree into a large subset.**  The mirror image of
 `Nibble.AX1.card_filter_lt_le`. -/
 theorem card_filter_gt_le (G : SimpleGraph V) [DecidableRel G.Adj] {B C C' : Finset V} {ε θ : ℝ}
@@ -196,7 +196,7 @@ theorem codegreeIn_eq_card_filter (G : SimpleGraph V) [DecidableRel G.Adj] (C : 
     (x y : V) : codegreeIn G C x y = #{z ∈ {z ∈ C | G.Adj x z} | G.Adj y z} := by
   rw [codegreeIn, Finset.filter_filter]
 
-omit [Fintype V] in
+omit [Fintype V] [DecidableEq V] in
 /-- **Ingredient 1 — per-edge triangle counting in a uniform triple.**  If `(A, C)` and `(B, C)`
 are `ε`-uniform pairs of density at least `2ε`, then all but at most `4ε|A||B|` of the pairs
 `(x, y) ∈ A × B` have

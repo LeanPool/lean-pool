@@ -118,7 +118,7 @@ theorem triPos_injective {th : Finset {S : Finset V // S ∈ Pp.parts}} (h3 : #t
   obtain ⟨hab, hac, hbc, -⟩ := pick3_spec h3
   intro a b hEq
   rcases zmod3_cases a with rfl | rfl | rfl <;> rcases zmod3_cases b with rfl | rfl | rfl <;>
-    simp only [triPos, ite_eq_left, reduceIte] at hEq ⊢ <;> first
+    simp only [triPos, ite_eq_left] at hEq ⊢ <;> first
       | rfl
       | (exfalso; first
           | exact hab hEq | exact hab hEq.symm | exact hac hEq | exact hac hEq.symm
@@ -145,17 +145,20 @@ theorem dOpp_le_one (th : Finset {S : Finset V // S ∈ Pp.parts}) (a : ZMod 3) 
 theorem dOpp_zero (th : Finset {S : Finset V // S ∈ Pp.parts}) :
     dOpp G Pp th 0
       = (G.edgeDensity (triPos Pp th 1 : Finset V) (triPos Pp th 2 : Finset V) : ℝ) := by
-  rw [dOpp, show ((0 : ZMod 3) + 1) = 1 from by decide +kernel, show ((0 : ZMod 3) + 2) = 2 from by decide +kernel]
+  rw [dOpp, show ((0 : ZMod 3) + 1) = 1 from by decide +kernel,
+    show ((0 : ZMod 3) + 2) = 2 from by decide +kernel]
 
 theorem dOpp_one (th : Finset {S : Finset V // S ∈ Pp.parts}) :
     dOpp G Pp th 1
       = (G.edgeDensity (triPos Pp th 2 : Finset V) (triPos Pp th 0 : Finset V) : ℝ) := by
-  rw [dOpp, show ((1 : ZMod 3) + 1) = 2 from by decide +kernel, show ((1 : ZMod 3) + 2) = 0 from by decide +kernel]
+  rw [dOpp, show ((1 : ZMod 3) + 1) = 2 from by decide +kernel,
+    show ((1 : ZMod 3) + 2) = 0 from by decide +kernel]
 
 theorem dOpp_two (th : Finset {S : Finset V // S ∈ Pp.parts}) :
     dOpp G Pp th 2
       = (G.edgeDensity (triPos Pp th 0 : Finset V) (triPos Pp th 1 : Finset V) : ℝ) := by
-  rw [dOpp, show ((2 : ZMod 3) + 1) = 0 from by decide +kernel, show ((2 : ZMod 3) + 2) = 1 from by decide +kernel]
+  rw [dOpp, show ((2 : ZMod 3) + 1) = 0 from by decide +kernel,
+    show ((2 : ZMod 3) + 2) = 1 from by decide +kernel]
 
 /-- The density product read off the three positions in their natural order. -/
 theorem dProd_eq (th : Finset {S : Finset V // S ∈ Pp.parts}) :
@@ -219,9 +222,11 @@ private theorem prod_ge_cube {d a b c : ℝ} (hd : 0 < d) (ha : d ≤ a) (hb : d
   linarith only [this]
 
 /-- The density product of three densities below `1`. -/
-private theorem prod_le_one {a b c : ℝ} (ha0 : 0 ≤ a) (hb0 : 0 ≤ b) (hc0 : 0 ≤ c)
-    (ha : a ≤ 1) (hb : b ≤ 1) (hc : c ≤ 1) : a * b * c ≤ 1 :=
-  mul_le_one₀ (mul_le_one₀ ha hb0 hb) hc0 hc
+private theorem prod_le_one {a b c : ℝ} (_ha0 : 0 ≤ a) (hb0 : 0 ≤ b) (hc0 : 0 ≤ c)
+    (ha : a ≤ 1) (hb : b ≤ 1) (hc : c ≤ 1) : a * b * c ≤ 1 := by
+  have hab : a * b ≤ 1 := by
+    simpa using mul_le_mul ha hb hb0 zero_le_one
+  simpa using mul_le_mul hab hc hc0 zero_le_one
 
 /-- The block of a copy is at least `α` times the size of its cluster. -/
 private theorem bs_ge_alpha {lr Kr al mmaxr t : ℝ} (hl : 2 * al * mmaxr ≤ lr) (hK : 1 ≤ Kr)
@@ -515,11 +520,13 @@ private theorem box_demand_bound {V : Type} [Fintype V] [DecidableEq V]
         ≤ (1 - e / 64) * (Pn : ℝ) ^ 2 := by
   classical
   intro S T hST
-  have hbd : boxDemand (fun (c : {p // p ∈ copySet Gd nc}) a => triPos Pp c.1.1 a) (fun (c : {p // p ∈ copySet Gd nc}) a => szf c.1.1 a) S T
+  have hbd : boxDemand (fun (c : {p // p ∈ copySet Gd nc}) a => triPos Pp c.1.1 a)
+      (fun (c : {p // p ∈ copySet Gd nc}) a => szf c.1.1 a) S T
       = ∑ th ∈ Gd, (nc th) • (∑ a : ZMod 3, ∑ b : ZMod 3,
           if triPos Pp th a = S ∧ triPos Pp th b = T then
             (szf th a : ℝ) * (szf th b : ℝ) else 0) := by
-    have h1 : boxDemand (fun (c : {p // p ∈ copySet Gd nc}) a => triPos Pp c.1.1 a) (fun (c : {p // p ∈ copySet Gd nc}) a => szf c.1.1 a) S T
+    have h1 : boxDemand (fun (c : {p // p ∈ copySet Gd nc}) a => triPos Pp c.1.1 a)
+        (fun (c : {p // p ∈ copySet Gd nc}) a => szf c.1.1 a) S T
         = ∑ p ∈ copySet Gd nc, (∑ a : ZMod 3, ∑ b : ZMod 3,
           if triPos Pp p.1 a = S ∧ triPos Pp p.1 b = T then
             (szf p.1 a : ℝ) * (szf p.1 b : ℝ) else 0) := by
@@ -1241,7 +1248,7 @@ theorem blockCoverResidualCoupled_of_boxAllocation (hbox : BoxAllocationResidual
       hK1 hα0 hα16 hαθ hθ0
   have hpne : Pp.parts.Nonempty := Finset.card_pos.mp (by simpa only [hkpdef] using hkpN)
   obtain ⟨Smin, hSminmem⟩ := hpne
-  letI : Nonempty {S : Finset V // S ∈ Pp.parts} := ⟨⟨Smin, hSminmem⟩⟩
+  let : Nonempty {S : Finset V // S ∈ Pp.parts} := ⟨⟨Smin, hSminmem⟩⟩
   -- ### the LP point and the dense triples
   obtain ⟨y, hyLP, hysupp, hynu⟩ :=
     exists_sparse_clusterTripleLP_nu3star G Pp (ε₁ / 8) (ε₁ / 4) (η := 1) one_pos
@@ -1392,7 +1399,8 @@ theorem blockCoverResidualCoupled_of_boxAllocation (hbox : BoxAllocationResidual
     bad_copy_mass_bound G Pp δ τ K l Gd nc szc szf hτsq hszcdef hdnn hszLB hδ0 hKpos
   refine ⟨τ, k, U, W, X, A, B, C, hτT₀, hgrid, hdisjF, ?_⟩
   exact coarse_cover_clause G Pp ε ε₁ δ e α τ K kp mmin l Pn Cn k y Gd nc bad Good szc U W X A B C
-    hkpN hkpdef hmmin0 hnlo hyLP (by simpa only [hkpdef] using hysupp) hynu hδ0 hGddef hsumGood hτ0 hdProd0 hdProdUB
+    hkpN hkpdef hmmin0 hnlo hyLP (by simpa only [hkpdef] using hysupp)
+    hynu hδ0 hGddef hsumGood hτ0 hdProd0 hdProdUB
     hncdef hbadterm hIbad hPnl hGooddef hkle hdProdLB hτ1 hτ192 hε hτdef hl3
     hKpos hα0 hαδ he0 he1 heε hCndef hnCn hδε hgrid
 

@@ -40,11 +40,13 @@ of `(A, B, C)`. -/
 def tripleRect (A B C : Finset V) : Finset (V × V) :=
   ((A ×ˢ B) ∪ (B ×ˢ A)) ∪ ((A ×ˢ C) ∪ (C ×ˢ A)) ∪ ((B ×ˢ C) ∪ (C ×ˢ B))
 
+omit [Fintype V] in
 theorem mem_tripleRect_iff {A B C : Finset V} {x y : V} :
     (x, y) ∈ tripleRect A B C ↔ crossAdj A B C x y := by
   simp only [tripleRect, Finset.mem_union, Finset.mem_product, crossAdj]
   tauto
 
+omit [Fintype V] in
 /-- **Disjoint rectangles give edge-disjoint tripartite graphs.** -/
 theorem tripleGraph_edgeDisjoint_of_rect_disjoint (G : SimpleGraph V) {A B C A' B' C' : Finset V}
     (h : Disjoint (tripleRect A B C) (tripleRect A' B' C')) (x y : V)
@@ -54,6 +56,7 @@ theorem tripleGraph_edgeDisjoint_of_rect_disjoint (G : SimpleGraph V) {A B C A' 
   have h2 : (x, y) ∈ tripleRect A' B' C' := mem_tripleRect_iff.mpr hxy'.2
   exact (Finset.disjoint_left.mp h h1) h2
 
+omit [Fintype V] [DecidableEq V] in
 /-- Two rectangles with disjoint first sides are disjoint. -/
 private theorem disjoint_product_left {S T S' T' : Finset V} (h : Disjoint S S') :
     Disjoint (S ×ˢ T) (S' ×ˢ T') := by
@@ -62,6 +65,7 @@ private theorem disjoint_product_left {S T S' T' : Finset V} (h : Disjoint S S')
   rw [Finset.mem_product] at h1 h2
   exact (Finset.disjoint_left.mp h h1.1) h2.1
 
+omit [Fintype V] [DecidableEq V] in
 /-- Two rectangles with disjoint second sides are disjoint. -/
 private theorem disjoint_product_right {S T S' T' : Finset V} (h : Disjoint T T') :
     Disjoint (S ×ˢ T) (S' ×ˢ T') := by
@@ -70,6 +74,7 @@ private theorem disjoint_product_right {S T S' T' : Finset V} (h : Disjoint T T'
   rw [Finset.mem_product] at h1 h2
   exact (Finset.disjoint_left.mp h h1.2) h2.2
 
+omit [Fintype V] in
 /-- The area of the rectangle of a sub-triple with pairwise disjoint parts. -/
 theorem card_tripleRect {A B C : Finset V} (hAB : Disjoint A B) (hAC : Disjoint A C)
     (hBC : Disjoint B C) :
@@ -90,7 +95,7 @@ theorem card_tripleRect {A B C : Finset V} (hAB : Disjoint A B) (hAC : Disjoint 
         | exact nAB hx hx' | exact nAB hx' hx | exact nAC hx hx' | exact nAC hx' hx
         | exact nBC hx hx' | exact nBC hx' hx
         | exact nAB hy hy' | exact nAB hy' hy | exact nAC hy hy' | exact nAC hy' hy
-        | exact nBC hy hy' | exact nBC hy' hy
+        | exact nBC hy hy'
   have hd123 : Disjoint (((A ×ˢ B) ∪ (B ×ˢ A)) ∪ ((A ×ˢ C) ∪ (C ×ˢ A)))
       ((B ×ˢ C) ∪ (C ×ˢ B)) := by
     rw [Finset.disjoint_left]
@@ -101,8 +106,7 @@ theorem card_tripleRect {A B C : Finset V} (hAB : Disjoint A B) (hAC : Disjoint 
       first
         | exact nAB hx hx' | exact nAB hx' hx | exact nAC hx hx' | exact nAC hx' hx
         | exact nBC hx hx' | exact nBC hx' hx
-        | exact nAB hy hy' | exact nAB hy' hy | exact nAC hy hy' | exact nAC hy' hy
-        | exact nBC hy hy' | exact nBC hy' hy
+        | exact nAB hy hy' | exact nAB hy' hy | exact nAC hy hy'
   rw [tripleRect, Finset.card_union_of_disjoint hd123, Finset.card_union_of_disjoint hd12,
     Finset.card_union_of_disjoint hd1, Finset.card_union_of_disjoint hd2,
     Finset.card_union_of_disjoint hd3]

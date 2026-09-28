@@ -38,6 +38,7 @@ private noncomputable def crossPairs (G : SimpleGraph V) [DecidableRel G.Adj]
     (A B C : Finset V) : Finset (V × V) :=
   G.interedges A B ∪ G.interedges A C ∪ G.interedges B C
 
+omit [Fintype V] in
 private theorem mem_crossPairs {G : SimpleGraph V} [DecidableRel G.Adj] {A B C : Finset V}
     {x y : V} : (x, y) ∈ crossPairs G A B C ↔
       (x ∈ A ∧ y ∈ B ∧ G.Adj x y) ∨ (x ∈ A ∧ y ∈ C ∧ G.Adj x y)
@@ -121,6 +122,7 @@ theorem three_interedges_card_le_tripleGraph_edges (G : SimpleGraph V) [Decidabl
       · exact hnA' h'.1 h.2.1
       · exact hnB h.1 h'.2.1
 
+omit [Fintype V] [DecidableEq V] in
 /-- The density of a pair times its area is the number of interedges (as a bound). -/
 private theorem edgeDensity_mul_le_card_interedges (G : SimpleGraph V) [DecidableRel G.Adj]
     (A B : Finset V) :

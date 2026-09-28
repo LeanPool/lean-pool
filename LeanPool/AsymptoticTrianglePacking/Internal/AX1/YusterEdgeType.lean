@@ -15,8 +15,10 @@ every vertex active. So the triangle hypergraph must live on the vertex type of 
 
 Edges are `2`-cliques, so the correct vertex type is `↥(G.cliqueFinset 2)` — a `Fintype` of
 cardinality `|E(G)|`. The triangle hypergraph `triangleHypergraphSub` puts each triangle's three
-edges (its `2`-subsets, all of which are `2`-cliques) as a hyperedge over this type. It is `3`-uniform
-and, crucially, `Fintype.card ↥(G.cliqueFinset 2) = |E(G)|`, so `NibbleTheorem` here yields a triangle
+edges (its `2`-subsets, all of which are `2`-cliques) as a hyperedge over this type. It is
+`3`-uniform
+and, crucially, `Fintype.card ↥(G.cliqueFinset 2) = |E(G)|`, so `NibbleTheorem` here yields a
+triangle
 packing of size `≥ (1-β)·|E(G)|/3`.
 
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
@@ -35,7 +37,8 @@ namespace Nibble.YusterE
 
 variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
-/-- The **edge vertex type** of `G`: its edges, viewed as `2`-cliques. A `Fintype` of card `|E(G)|`. -/
+/-- The **edge vertex type** of `G`: its edges, viewed as `2`-cliques. A `Fintype` of card
+`|E(G)|`. -/
 abbrev EdgeV : Type _ := {e : Finset V // e ∈ G.cliqueFinset 2}
 
 /-- The edge vertex type has cardinality `|E(G)|` (the number of edges). -/

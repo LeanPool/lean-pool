@@ -55,7 +55,7 @@ regularity scale `ε₁` is small compared with `δ`, `μ₂` and `η`.  The fou
 computations the reduction needs; they are stated in isolation to keep the context small. -/
 
 /-- The blocks have size between `¾·τδ` and `⁵⁄₄·τ`. -/
-private theorem block_size_bounds {τ δ s dens : ℝ} (hτ : 0 < τ) (hδ : 0 < δ) (hδ1 : δ ≤ 1)
+private theorem block_size_bounds {τ δ s dens : ℝ} (hτ : 0 < τ) (_hδ : 0 < δ) (_hδ1 : δ ≤ 1)
     (hτδ : 8 ≤ τ * δ) (h1 : δ ≤ dens) (h2 : dens ≤ 1) (habs : |s - τ * dens| ≤ 1) :
     3 / 4 * (τ * δ) ≤ s ∧ s ≤ 5 / 4 * τ := by
   rw [abs_le] at habs
@@ -65,7 +65,7 @@ private theorem block_size_bounds {τ δ s dens : ℝ} (hτ : 0 < τ) (hδ : 0 <
   exact ⟨by linarith [habs.1], by linarith [habs.2]⟩
 
 /-- The area and the support of a sub-triple, in terms of the scale. -/
-private theorem area_bounds {τ δ a b c : ℝ} (hτ : 0 < τ) (hδ : 0 < δ) (hτδ : 8 ≤ τ * δ)
+private theorem area_bounds {τ δ a b c : ℝ} (hτ : 0 < τ) (_hδ : 0 < δ) (hτδ : 8 ≤ τ * δ)
     (ha : 3 / 4 * (τ * δ) ≤ a) (ha' : a ≤ 5 / 4 * τ)
     (hb : 3 / 4 * (τ * δ) ≤ b) (hb' : b ≤ 5 / 4 * τ)
     (hc : 3 / 4 * (τ * δ) ≤ c) (hc' : c ≤ 5 / 4 * τ) :
@@ -77,8 +77,8 @@ private theorem area_bounds {τ δ a b c : ℝ} (hτ : 0 < τ) (hδ : 0 < δ) (h
   refine ⟨ha0, hb0, hc0, by nlinarith, by positivity, by linarith, by linarith⟩
 
 /-- The `Elo` of a sub-triple is at least a quarter of `τ²δ³`. -/
-private theorem elo_lower {τ δ ε₁ a b c dAB dAC dBC : ℝ} (hτ : 0 < τ) (hδ : 0 < δ) (hδ1 : δ ≤ 1)
-    (hε₁0 : 0 < ε₁) (hε₁b : ε₁ ≤ δ / 2) (hx : δ - ε₁ / 8 ≤ dAB)
+private theorem elo_lower {τ δ ε₁ a b c dAB dAC dBC : ℝ} (hτ : 0 < τ) (hδ : 0 < δ) (_hδ1 : δ ≤ 1)
+    (_hε₁0 : 0 < ε₁) (hε₁b : ε₁ ≤ δ / 2) (hx : δ - ε₁ / 8 ≤ dAB)
     (hAC0 : 0 ≤ dAC) (hBC0 : 0 ≤ dBC)
     (ha : 3 / 4 * (τ * δ) ≤ a) (hb : 3 / 4 * (τ * δ) ≤ b) (hc0 : 0 ≤ c) (ha0 : 0 ≤ a)
     (hb0 : 0 ≤ b) :
@@ -174,7 +174,7 @@ private theorem eps2_bound {x δ B : ℝ} (hδ : 0 < δ) (h : x ≤ B * δ) : x 
   linarith only [h]
 
 /-- Multiplying a nonnegative quantity by `δ ≤ 1` only decreases it. -/
-private theorem mul_delta_le {B δ : ℝ} (hB : 0 ≤ B) (hδ1 : δ ≤ 1) (hδ0 : 0 ≤ δ) : B * δ ≤ B := by
+private theorem mul_delta_le {B δ : ℝ} (hB : 0 ≤ B) (hδ1 : δ ≤ 1) (_hδ0 : 0 ≤ δ) : B * δ ≤ B := by
   nlinarith only [hB, hδ1]
 
 /-- The block scale is large: `2 ≤ τ·μ₂δ³` and `μ₂ ≤ 1` give `2 ≤ τδ³`. -/
@@ -364,9 +364,12 @@ theorem subTripleDesignLocalResidual_of_blockCover (h : BlockCoverResidual) :
   -- ### the numerical data of each sub-triple
   have hdata : ∀ i < k,
       (Disjoint (A i) (B i) ∧ Disjoint (A i) (C i) ∧ Disjoint (B i) (C i)) ∧
-      (|((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (B i) : ℝ) - (G.edgeDensity (U i) (W i) : ℝ)| ≤ ε₁ / 8 ∧
-        |((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (C i) : ℝ) - (G.edgeDensity (U i) (X i) : ℝ)| ≤ ε₁ / 8 ∧
-        |((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (B i) (C i) : ℝ) - (G.edgeDensity (W i) (X i) : ℝ)| ≤ ε₁ / 8) := by
+      (|((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (B i) : ℝ)
+          - (G.edgeDensity (U i) (W i) : ℝ)| ≤ ε₁ / 8 ∧
+        |((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (C i) : ℝ)
+          - (G.edgeDensity (U i) (X i) : ℝ)| ≤ ε₁ / 8 ∧
+        |((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (B i) (C i) : ℝ)
+          - (G.edgeDensity (W i) (X i) : ℝ)| ≤ ε₁ / 8) := by
     intro i hi
     obtain ⟨h1, -, h3⟩ := gridSubTriple_data G P hε₁0 hαε (by linarith) hde (hgrid i hi)
     exact ⟨h1, h3⟩
@@ -389,10 +392,14 @@ theorem subTripleDesignLocalResidual_of_blockCover (h : BlockCoverResidual) :
   refine ⟨ε₁ / 8 / (δ / 2), μ₂, (μ - μ₂) * τ * δ ^ 3 / 2, k, A, B, C,
     fun i => τ * ((G.edgeDensity (U i) (W i) : ℝ) * (G.edgeDensity (U i) (X i) : ℝ)
       * (G.edgeDensity (W i) (X i) : ℝ)),
-    fun i => ((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (B i) : ℝ) * (#(A i) : ℝ) * (#(B i) : ℝ)
-      + ((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (C i) : ℝ) * (#(A i) : ℝ) * (#(C i) : ℝ)
-      + ((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (B i) (C i) : ℝ) * (#(B i) : ℝ) * (#(C i) : ℝ),
-    hshape, by rw [hquarter]; positivity, by rw [hquarter]; linarith, ?_, hη.le, hμ₂μ, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    fun i => ((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (B i) : ℝ)
+      * (#(A i) : ℝ) * (#(B i) : ℝ)
+      + ((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (C i) : ℝ)
+      * (#(A i) : ℝ) * (#(C i) : ℝ)
+      + ((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (B i) (C i) : ℝ)
+      * (#(B i) : ℝ) * (#(C i) : ℝ),
+    hshape, by rw [hquarter]; positivity, by rw [hquarter]; linarith,
+    ?_, hη.le, hμ₂μ, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · -- `0 < t`
     exact t_pos hτpos hδ3 hμ₂0 hμ₂half
   · -- `d₀ ≤ d i`
@@ -410,7 +417,8 @@ theorem subTripleDesignLocalResidual_of_blockCover (h : BlockCoverResidual) :
   · -- `Elo i` really is a lower bound for the number of edges
     intro i hi
     obtain ⟨⟨hd1, hd2, hd3⟩, -⟩ := hdata i hi
-    exact three_edgeDensity_mul_le_tripleGraph_edges (G.regularityReduced P (ε₁ / 8) (ε₁ / 4)) (A i) (B i) (C i) hd1 hd2 hd3
+    exact three_edgeDensity_mul_le_tripleGraph_edges
+      (G.regularityReduced P (ε₁ / 8) (ε₁ / 4)) (A i) (B i) (C i) hd1 hd2 hd3
   · -- the exceptional-edge clause
     intro i hi
     obtain ⟨-, habs1, -, -⟩ := hdata i hi
@@ -633,9 +641,12 @@ theorem subTripleDesignLocalResidual_of_blockCoverFine (h : BlockCoverResidualFi
   -- ### the numerical data of each sub-triple
   have hdata : ∀ i < k,
       (Disjoint (A i) (B i) ∧ Disjoint (A i) (C i) ∧ Disjoint (B i) (C i)) ∧
-      (|((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (B i) : ℝ) - (G.edgeDensity (U i) (W i) : ℝ)| ≤ ε₁ / 8 ∧
-        |((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (C i) : ℝ) - (G.edgeDensity (U i) (X i) : ℝ)| ≤ ε₁ / 8 ∧
-        |((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (B i) (C i) : ℝ) - (G.edgeDensity (W i) (X i) : ℝ)| ≤ ε₁ / 8) := by
+      (|((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (B i) : ℝ)
+          - (G.edgeDensity (U i) (W i) : ℝ)| ≤ ε₁ / 8 ∧
+        |((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (C i) : ℝ)
+          - (G.edgeDensity (U i) (X i) : ℝ)| ≤ ε₁ / 8 ∧
+        |((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (B i) (C i) : ℝ)
+          - (G.edgeDensity (W i) (X i) : ℝ)| ≤ ε₁ / 8) := by
     intro i hi
     obtain ⟨h1, -, h3⟩ := gridSubTriple_data G P hε₁0 hαε (by linarith) hde (hgrid i hi)
     exact ⟨h1, h3⟩
@@ -658,10 +669,14 @@ theorem subTripleDesignLocalResidual_of_blockCoverFine (h : BlockCoverResidualFi
   refine ⟨ε₁ / 8 / (δ / 2), μ₂, (μ - μ₂) * τ * δ ^ 3 / 2, k, A, B, C,
     fun i => τ * ((G.edgeDensity (U i) (W i) : ℝ) * (G.edgeDensity (U i) (X i) : ℝ)
       * (G.edgeDensity (W i) (X i) : ℝ)),
-    fun i => ((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (B i) : ℝ) * (#(A i) : ℝ) * (#(B i) : ℝ)
-      + ((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (C i) : ℝ) * (#(A i) : ℝ) * (#(C i) : ℝ)
-      + ((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (B i) (C i) : ℝ) * (#(B i) : ℝ) * (#(C i) : ℝ),
-    hshape, by rw [hquarter]; positivity, by rw [hquarter]; linarith, ?_, hη.le, hμ₂μ, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    fun i => ((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (B i) : ℝ)
+      * (#(A i) : ℝ) * (#(B i) : ℝ)
+      + ((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (C i) : ℝ)
+      * (#(A i) : ℝ) * (#(C i) : ℝ)
+      + ((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (B i) (C i) : ℝ)
+      * (#(B i) : ℝ) * (#(C i) : ℝ),
+    hshape, by rw [hquarter]; positivity, by rw [hquarter]; linarith,
+    ?_, hη.le, hμ₂μ, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · -- `0 < t`
     exact t_pos hτpos hδ3 hμ₂0 hμ₂half
   · -- `d₀ ≤ d i`
@@ -679,7 +694,8 @@ theorem subTripleDesignLocalResidual_of_blockCoverFine (h : BlockCoverResidualFi
   · -- `Elo i` really is a lower bound for the number of edges
     intro i hi
     obtain ⟨⟨hd1, hd2, hd3⟩, -⟩ := hdata i hi
-    exact three_edgeDensity_mul_le_tripleGraph_edges (G.regularityReduced P (ε₁ / 8) (ε₁ / 4)) (A i) (B i) (C i) hd1 hd2 hd3
+    exact three_edgeDensity_mul_le_tripleGraph_edges
+      (G.regularityReduced P (ε₁ / 8) (ε₁ / 4)) (A i) (B i) (C i) hd1 hd2 hd3
   · -- the exceptional-edge clause
     intro i hi
     obtain ⟨-, habs1, -, -⟩ := hdata i hi
@@ -761,7 +777,8 @@ on the LP side a fractional triangle packing of the reduced graph respects exact
 `Nibble.AX1.sum_fracPacking_cluster_pair_le` (`Nibble.CoreGapClusterCapacity`) bounds the weight it
 puts on the triangles using a `U–W` edge by `e(U, W)`.  (That the aggregated weights are an optimal
 LP solution, and hence that the LP optimum bounds `ν₃*`, is the informal reading of that constraint;
-only the per-pair constraint itself is formalised.)  In other words `Nibble.AX1.BlockCoverResidual` is precisely the statement that an (almost) optimal
+only the per-pair constraint itself is formalised.) In other words,
+`Nibble.AX1.BlockCoverResidual` is precisely the statement that an (almost) optimal
 solution of that cluster LP can be **realised** by an edge-disjoint family of block rectangles: the
 fractional-to-integral step in a blow-up.
 

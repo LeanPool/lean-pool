@@ -10,7 +10,8 @@ module
 # Yuster — the majority (`NibbleTheoremMost`) chain to AX1 form
 
 Standalone, Mathlib-only. Mirrors the strict Yuster chain (`nu3_ge_nibble`, `nu3star_sub_nu3_le`,
-`nu3star_sub_nu3_le_eps`) using the MAJORITY interface `NibbleTheoremMost` + `NearlyRegularMost` — the
+`nu3star_sub_nu3_le_eps`) using the MAJORITY interface `NibbleTheoremMost` +
+`NearlyRegularMost` — the
 version the Szemerédi+counting Y3 reconstruction actually yields (near-regularity outside a small
 exceptional edge set). This is the chain the edge-based Y1c feeds.
 
@@ -37,7 +38,8 @@ namespace Nibble.YusterE
 
 variable {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
-/-- **Majority `ν₃` lower bound.** `NibbleTheoremMost` + the Y3-majority interface ⇒ `ν₃ ≥ (1-β)|E|/3`. -/
+/-- **Majority `ν₃` lower bound.** `NibbleTheoremMost` + the Y3-majority interface ⇒ `ν₃ ≥
+(1-β)|E|/3`. -/
 theorem nu3_ge_nibble_most (hNibble : NibbleTheoremMost) {β : ℝ} (hβ : 0 < β) :
     ∃ μ : ℝ, 0 < μ ∧ ∃ η : ℝ, 0 < η ∧ ∃ d₀ : ℝ, 0 < d₀ ∧ ∀ {d : ℝ}, 0 < d → d₀ ≤ d →
       NearlyRegularMost (triangleHypergraphSub G) d μ η →
@@ -72,7 +74,8 @@ theorem nu3star_sub_nu3_le_eps_most (hNibble : NibbleTheoremMost) {ε : ℝ} (h�
       NearlyRegularMost (triangleHypergraphSub G) d μ η →
       CodegreeBounded (triangleHypergraphSub G) (μ * d) →
       nu3star G - (nu3 G : ℝ) ≤ ε * (Fintype.card V : ℝ) ^ 2 := by
-  obtain ⟨μ, hμ, η, hη, d₀, hd₀, hmain⟩ := nu3star_sub_nu3_le_most G hNibble (by linarith : (0:ℝ) < 3 * ε)
+  obtain ⟨μ, hμ, η, hη, d₀, hd₀, hmain⟩ :=
+    nu3star_sub_nu3_le_most G hNibble (by linarith : (0:ℝ) < 3 * ε)
   refine ⟨μ, hμ, η, hη, d₀, hd₀, fun {d} hd hd0 hReg hCod => ?_⟩
   have hgap := hmain hd hd0 hReg hCod
   have hEq : (3 * ε) * ((G.cliqueFinset 2).card : ℝ) / 3 = ε * ((G.cliqueFinset 2).card : ℝ) := by
@@ -80,6 +83,7 @@ theorem nu3star_sub_nu3_le_eps_most (hNibble : NibbleTheoremMost) {ε : ℝ} (h�
   rw [hEq] at hgap
   calc nu3star G - (nu3 G : ℝ)
       ≤ ε * ((G.cliqueFinset 2).card : ℝ) := hgap
-    _ ≤ ε * (Fintype.card V : ℝ) ^ 2 := mul_le_mul_of_nonneg_left (edge_card_le_card_sq G) (le_of_lt hε)
+    _ ≤ ε * (Fintype.card V : ℝ) ^ 2 :=
+      mul_le_mul_of_nonneg_left (edge_card_le_card_sq G) (le_of_lt hε)
 
 end Nibble.YusterE

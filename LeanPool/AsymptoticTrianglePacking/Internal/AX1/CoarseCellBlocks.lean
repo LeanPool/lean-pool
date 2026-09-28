@@ -123,6 +123,7 @@ theorem card_cellBlock (S : Finset V) {l P : ℕ} (hl : 0 < l) (I : Finset (Fin 
 
 variable [Fintype V]
 
+omit [Fintype V] in
 /-- The two positions of a vertex pair inside the rectangle of a member. -/
 theorem exists_positions_of_mem_tripleRect {f : ZMod 3 → Finset V} {x y : V}
     (h : (x, y) ∈ tripleRect (f 0) (f 1) (f 2)) :
@@ -136,6 +137,7 @@ theorem exists_positions_of_mem_tripleRect {f : ZMod 3 → Finset V} {x y : V}
   · exact ⟨1, 2, by decide +kernel, h1, h2⟩
   · exact ⟨2, 1, by decide +kernel, h1, h2⟩
 
+omit [Fintype V] in
 /-- **The disjointness engine.**  Two members whose blocks sit inside clusters of a partition have
 disjoint vertex-pair rectangles as soon as, whenever they share a cluster pair, one of the two
 blocks carrying it is disjoint from the corresponding block of the other member. -/

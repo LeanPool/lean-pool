@@ -42,7 +42,7 @@ of the coarse cells `I c a` of its cluster `cl c a`. -/
 theorem exists_gridSubTriple_family_of_placement
     (G : SimpleGraph V) [DecidableRel G.Adj] (Pp : Finpartition (univ : Finset V))
     {ep de α τ : ℝ} {l Pn : ℕ} (hl : 0 < l)
-    {κ : Type} [Fintype κ] [DecidableEq κ]
+    {κ : Type}
     (cl : κ → ZMod 3 → {S : Finset V // S ∈ Pp.parts})
     (sz bs : κ → ZMod 3 → ℕ) (I : κ → ZMod 3 → Finset (Fin Pn)) (Good : Finset κ)
     (hcard : ∀ c a, #(I c a) = sz c a)

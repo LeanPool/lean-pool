@@ -9,7 +9,8 @@ module
 /-
 # Yuster (edge-based) — majority near-regularity + codegree bound for `triangleHypergraphSub`
 
-Standalone, Mathlib-only. Assembles the `NibbleTheoremMost` input for the CORRECT (edge-based) triangle
+Standalone, Mathlib-only. Assembles the `NibbleTheoremMost` input for the CORRECT (edge-based)
+triangle
 hypergraph `triangleHypergraphSub G`, whose matchings are edge-disjoint triangle packings (`ν₃`).
 
 * The **codegree side is trivial**: `triangleHypergraphSub` has hypergraph-codegree `≤ 1`
@@ -19,7 +20,8 @@ hypergraph `triangleHypergraphSub G`, whose matchings are edge-disjoint triangle
   exceptional (non-regular-degree) edge count `≤ η|E|`, supplied by the edge counting (②a).
 
 * `triangleHypergraphSub_codegreeBounded` — `1 ≤ C → CodegreeBounded (triangleHypergraphSub G) C`.
-* `triangleHypergraphSub_nearlyRegularMost_of_bounds` — package `NearlyRegularMost` from per-edge bounds.
+* `triangleHypergraphSub_nearlyRegularMost_of_bounds` — package `NearlyRegularMost` from
+per-edge bounds.
 
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
@@ -37,7 +39,8 @@ namespace Nibble.YusterE
 
 variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
-/-- **Codegree side (trivial).** The edge-based triangle hypergraph has hypergraph-codegree `≤ 1`, so it
+/-- **Codegree side (trivial).** The edge-based triangle hypergraph has hypergraph-codegree `≤
+1`, so it
 is `CodegreeBounded C` for any `C ≥ 1` — in particular `C = μd` once `μd ≥ 1`. -/
 theorem triangleHypergraphSub_codegreeBounded {C : ℝ} (hC : 1 ≤ C) :
     CodegreeBounded (triangleHypergraphSub G) C := by
@@ -46,7 +49,8 @@ theorem triangleHypergraphSub_codegreeBounded {C : ℝ} (hC : 1 ≤ C) :
       ≤ 1 := by exact_mod_cast triangleHypergraphSub_codegree_le_one G hEE'
     _ ≤ C := hC
 
-/-- **Majority near-regularity (packaging).** Given a per-edge degree window on all but an exceptional
+/-- **Majority near-regularity (packaging).** Given a per-edge degree window on all but an
+exceptional
 set `Exc` of size `≤ η|E(G)|`, the edge-based triangle hypergraph is `NearlyRegularMost d μ η`. The
 per-edge bounds and the exceptional count are supplied by the edge counting (②a). -/
 theorem triangleHypergraphSub_nearlyRegularMost_of_bounds {d μ η : ℝ}

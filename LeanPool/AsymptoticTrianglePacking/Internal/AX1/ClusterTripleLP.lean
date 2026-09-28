@@ -25,7 +25,8 @@ This file supplies the two LP facts the construction consumes.
 * `Nibble.AX1.exists_clusterTripleLP` — **the bridge**: `ν₃*` of the regularity-reduced graph is at
   most the value of a feasible point, up to any positive slack.  The feasible point is the
   aggregation of a near-optimal fractional packing along cluster triples, exactly as in
-  `Nibble.AX1.nu3star_regularityReduced_le_host`, but with the true per-pair capacities in place of a
+  `Nibble.AX1.nu3star_regularityReduced_le_host`, but with the true per-pair capacities in
+  place of a
   uniform one;
 * `Nibble.AX1.exists_sparse_clusterTripleLP` — **sparsification**: a feasible point can be replaced
   by one of at least the same value whose support has at most `#P.parts ^ 2` triples.  This is the

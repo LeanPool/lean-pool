@@ -59,36 +59,45 @@ variable {V : Type} [Fintype V] [DecidableEq V]
 
 /-! ### The six rectangles of a block sub-triple -/
 
+omit [Fintype V] in
 theorem prod_subset_tripleRect_AB (A B C : Finset V) : (A ×ˢ B) ⊆ tripleRect A B C :=
   (Finset.subset_union_left.trans Finset.subset_union_left).trans Finset.subset_union_left
 
+omit [Fintype V] in
 theorem prod_subset_tripleRect_BA (A B C : Finset V) : (B ×ˢ A) ⊆ tripleRect A B C :=
   (Finset.subset_union_right.trans Finset.subset_union_left).trans Finset.subset_union_left
 
+omit [Fintype V] in
 theorem prod_subset_tripleRect_AC (A B C : Finset V) : (A ×ˢ C) ⊆ tripleRect A B C :=
   (Finset.subset_union_left.trans Finset.subset_union_right).trans Finset.subset_union_left
 
+omit [Fintype V] in
 theorem prod_subset_tripleRect_CA (A B C : Finset V) : (C ×ˢ A) ⊆ tripleRect A B C :=
   (Finset.subset_union_right.trans Finset.subset_union_right).trans Finset.subset_union_left
 
+omit [Fintype V] in
 theorem prod_subset_tripleRect_BC (A B C : Finset V) : (B ×ˢ C) ⊆ tripleRect A B C :=
   Finset.subset_union_left.trans Finset.subset_union_right
 
+omit [Fintype V] in
 theorem prod_subset_tripleRect_CB (A B C : Finset V) : (C ×ˢ B) ⊆ tripleRect A B C :=
   Finset.subset_union_right.trans Finset.subset_union_right
 
 /-! ### The density-weighted area occupied in one ordered cluster pair -/
 
+omit [Fintype V] in
 /-- **The density-weighted area a rectangle set occupies inside the ordered cluster pair `p`.** -/
 noncomputable def pairArea (G : SimpleGraph V) [DecidableRel G.Adj] (R : Finset (V × V))
     (p : Finset V × Finset V) : ℝ :=
   (G.edgeDensity p.1 p.2 : ℝ) * (#(R ∩ (p.1 ×ˢ p.2)) : ℝ)
 
+omit [Fintype V] in
 theorem pairArea_nonneg (G : SimpleGraph V) [DecidableRel G.Adj] (R : Finset (V × V))
     (p : Finset V × Finset V) : 0 ≤ pairArea G R p := by
   have : (0 : ℝ) ≤ (G.edgeDensity p.1 p.2 : ℝ) := by exact_mod_cast G.edgeDensity_nonneg p.1 p.2
   exact mul_nonneg this (Nat.cast_nonneg _)
 
+omit [Fintype V] in
 /-- A rectangle inside the ordered pair `(S, T)` contributes at most the pair's occupied area. -/
 theorem rect_le_pairArea (G : SimpleGraph V) [DecidableRel G.Adj] {R : Finset (V × V)}
     {S T D E : Finset V} (hDS : D ⊆ S) (hET : E ⊆ T) (hDE : (D ×ˢ E) ⊆ R) :
@@ -105,6 +114,7 @@ theorem rect_le_pairArea (G : SimpleGraph V) [DecidableRel G.Adj] {R : Finset (V
     _ ≤ pairArea G R (S, T) := by
         exact mul_le_mul_of_nonneg_left hcard hd
 
+omit [Fintype V] in
 /-- **Pairwise disjoint sets meet a fixed set in at most its cardinality.** -/
 theorem sum_card_inter_le (R : ℕ → Finset (V × V)) (F : Finset ℕ) (S : Finset (V × V))
     (hdisj : ∀ i ∈ F, ∀ j ∈ F, i ≠ j → Disjoint (R i) (R j)) :
@@ -148,11 +158,11 @@ theorem two_cover_le_sum_pairArea (G : SimpleGraph V) [DecidableRel G.Adj]
         + pairArea G (tripleRect A B C) (U, X) + pairArea G (tripleRect A B C) (X, U)
         + pairArea G (tripleRect A B C) (W, X) + pairArea G (tripleRect A B C) (X, W) := by
     rw [hs6def]
-    rw [Finset.sum_insert (by simp [Prod.ext_iff, hUW, hUX, hWX, hUW.symm, hUX.symm, hWX.symm]),
-      Finset.sum_insert (by simp [Prod.ext_iff, hUW, hUX, hWX, hUW.symm, hUX.symm, hWX.symm]),
-      Finset.sum_insert (by simp [Prod.ext_iff, hUW, hUX, hWX, hUW.symm, hUX.symm, hWX.symm]),
-      Finset.sum_insert (by simp [Prod.ext_iff, hUW, hUX, hWX, hUW.symm, hUX.symm, hWX.symm]),
-      Finset.sum_insert (by simp [Prod.ext_iff, hUW, hUX, hWX, hUW.symm, hUX.symm, hWX.symm]),
+    rw [Finset.sum_insert (by simp [Prod.ext_iff, hUW, hUX, hWX]),
+      Finset.sum_insert (by simp [Prod.ext_iff, hUW, hUX, hWX]),
+      Finset.sum_insert (by simp [Prod.ext_iff, hUW, hUX]),
+      Finset.sum_insert (by simp [Prod.ext_iff, hUW, hUX]),
+      Finset.sum_insert (by simp [Prod.ext_iff, hWX.symm]),
       Finset.sum_singleton]
     ring
   have h1 := rect_le_pairArea G hA hB (prod_subset_tripleRect_AB A B C)

@@ -38,24 +38,29 @@ noncomputable def packOpt (inc : O → Finset C) : ℝ :=
 noncomputable def coverOpt (inc : O → Finset C) : ℝ :=
   sInf {x | ∃ y, IsCover inc y ∧ x = ∑ c, y c}
 
+omit [Fintype C] in
 private lemma zero_isPacking (inc : O → Finset C) : IsPacking inc (0 : O → ℝ) := by
-  constructor <;> simp [IsPacking]
+  constructor <;> simp
 
+omit [Fintype C] in
 private lemma packValues_nonempty (inc : O → Finset C) :
     {x : ℝ | ∃ w, IsPacking inc w ∧ x = ∑ o, w o}.Nonempty := by
   refine ⟨0, 0, zero_isPacking inc, ?_⟩
   simp
 
-private lemma packValues_bddAbove (inc : O → Finset C)
+omit [Fintype C] in
+private lemma packValues_bddAbove [Finite C] (inc : O → Finset C)
     (hinc : ∀ o, (inc o).Nonempty) :
     BddAbove {x : ℝ | ∃ w, IsPacking inc w ∧ x = ∑ o, w o} := by
+  have : Fintype C := Fintype.ofFinite C
   refine ⟨Fintype.card C, ?_⟩
   intro x hx
   obtain ⟨w, hw, rfl⟩ := hx
   -- Double counting: ∑ c, ∑ o ∈ {o | c ∈ inc o}, w o = ∑ o, (inc o).card * w o
   have h1 : ∑ c, ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), w o ≤ (Fintype.card C : ℝ) := by
-    have := Finset.sum_le_card_nsmul (Finset.univ : Finset C) (fun c => ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), w o) 1
-    simp at this
+    have := Finset.sum_le_card_nsmul (Finset.univ : Finset C)
+      (fun c => ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), w o) 1
+    simp only [mem_univ, forall_const, card_univ, nsmul_eq_mul, mul_one] at this
     exact this (fun c => hw.2 c)
   -- Rewrite double sum: ∑ c, ∑ o ∈ {o | c ∈ inc o}, w o = ∑ o, (inc o).card * w o
   have h2 : ∑ c, ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), w o = ∑ o, (inc o).card * w o := by
@@ -71,12 +76,14 @@ private lemma packValues_bddAbove (inc : O → Finset C)
     nlinarith only [hcard, hwo]
   linarith only [h1, h2, h3]
 
-private lemma packing_value_le_packOpt (inc : O → Finset C)
+omit [Fintype C] in
+private lemma packing_value_le_packOpt [Finite C] (inc : O → Finset C)
     (hinc : ∀ o, (inc o).Nonempty) {w : O → ℝ} (hw : IsPacking inc w) :
     ∑ o, w o ≤ packOpt inc := by
   apply le_csSup (packValues_bddAbove inc hinc)
   exact ⟨w, hw, rfl⟩
 
+omit [Fintype O] [DecidableEq C] in
 private lemma coverOpt_le_value (inc : O → Finset C) {y : C → ℝ}
     (hy : IsCover inc y) : coverOpt inc ≤ ∑ c, y c := by
   unfold coverOpt
@@ -114,10 +121,12 @@ private noncomputable def coverMap (inc : O → Finset C) :
       | inl o => simp [← Finset.mul_sum]; ring
       | inr u => simp [← Finset.mul_sum]; ring }
 
+omit [DecidableEq C] in
 private lemma coverMap_apply_row (inc : O → Finset C) (x : PrimalSpace O C) (o : O) :
     (coverMap inc x).ofLp (Sum.inl o) =
       (∑ c ∈ inc o, x.ofLp (Sum.inl c)) - x.ofLp (Sum.inr (Sum.inl o)) := rfl
 
+omit [DecidableEq C] in
 private lemma coverMap_apply_value (inc : O → Finset C) (x : PrimalSpace O C) :
     (coverMap inc x).ofLp (Sum.inr ()) =
       (∑ c, x.ofLp (Sum.inl c)) + x.ofLp (Sum.inr (Sum.inr ())) := rfl
@@ -134,9 +143,9 @@ private def nonnegativePointed (I : Type*) [Fintype I] :
     simpa only [WithLp.ofLp_add, Pi.add_apply, WithLp.ofLp_smul, Pi.smul_apply, smul_eq_mul]
       using add_nonneg (mul_nonneg ha (hx i)) (mul_nonneg hb (hy i)))
 
-private lemma nonnegative_isClosed (I : Type*) [Fintype I] :
+private lemma nonnegative_isClosed (I : Type*) :
     IsClosed ({x : EuclideanSpace ℝ I | ∀ i, 0 ≤ x.ofLp i}) := by
-  simp only [Set.setOf_forall]
+  simp only [Set.ofPred_forall]
   apply isClosed_iInter
   intro i
   apply isClosed_le continuous_const
@@ -174,8 +183,8 @@ private lemma adjoint_mem_innerDual_implies_certificate (inc : O → Finset C)
     have hx : x ∈ nonnegativeCone (PrimalIndex O C) := by
       rw [mem_nonnegativeCone]
       intro i
-      simp only [x, EuclideanSpace.single, WithLp.ofLp, Pi.single]
-      simp [Function.update]
+      simp only [x, EuclideanSpace.single]
+      simp
       split_ifs <;> norm_num
     have h := hq hx
     -- Use adjointness: inner x ((coverMap).adjoint q) = inner (coverMap x) q
@@ -208,8 +217,8 @@ private lemma adjoint_mem_innerDual_implies_certificate (inc : O → Finset C)
     have hy : y ∈ nonnegativeCone (PrimalIndex O C) := by
       rw [mem_nonnegativeCone]
       intro i
-      simp only [y, EuclideanSpace.single, Pi.single]
-      simp [Function.update]
+      simp only [y, EuclideanSpace.single]
+      simp
       split_ifs <;> norm_num
     have hyq := hq hy
     rw [ContinuousLinearMap.adjoint_inner_right] at hyq
@@ -228,7 +237,10 @@ private lemma adjoint_mem_innerDual_implies_certificate (inc : O → Finset C)
       intro o'
       rw [coverMap_apply_row]
       simp [hyv_inl, hyv_inr_inl]
-    simp [inner, hymv, hymv'] at hyq
+    simp only [inner, star_trivial, RCLike.mul_re, RCLike.re_to_real,
+      RCLike.im_to_real, mul_zero, sub_zero, Fintype.sum_sum_type, hymv',
+      sum_const_zero, univ_unique, PUnit.default_eq_unit, hymv, mul_one,
+      sum_singleton, zero_add] at hyq
     exact hyq
   · -- ∀ c, 0 ≤ q.ofLp (Sum.inr ()) + ∑ o with c ∈ inc o, q.ofLp (Sum.inl o)
     intro c₀
@@ -237,8 +249,8 @@ private lemma adjoint_mem_innerDual_implies_certificate (inc : O → Finset C)
     have hz : z ∈ nonnegativeCone (PrimalIndex O C) := by
       rw [mem_nonnegativeCone]
       intro i
-      simp only [z, EuclideanSpace.single, Pi.single]
-      simp [Function.update]
+      simp only [z, EuclideanSpace.single]
+      simp
       split_ifs <;> norm_num
     have hzq := hq hz
     rw [ContinuousLinearMap.adjoint_inner_right] at hzq
@@ -257,17 +269,22 @@ private lemma adjoint_mem_innerDual_implies_certificate (inc : O → Finset C)
       intro o'
       rw [coverMap_apply_row]
       simp [hz_inl, hz_inr_inl]
-    simp [inner, hzm, hzv] at hzq
+    simp only [inner, star_trivial, RCLike.mul_re, RCLike.re_to_real,
+      RCLike.im_to_real, mul_zero, sub_zero, Fintype.sum_sum_type, hzm,
+      mul_ite, mul_one, univ_unique, PUnit.default_eq_unit, hzv,
+      sum_singleton] at hzq
     convert hzq using 1
     simp [Finset.sum_filter]
     ring
 
+omit [Fintype C] in
 /-- The elementary normalization step: a certificate with positive last coordinate gives a
 packing by `w o = -q o / q_last`; if that coordinate vanishes, nonempty rows force `q = 0`. -/
-private lemma certificate_nonneg (inc : O → Finset C)
+private lemma certificate_nonneg [Finite C] (inc : O → Finset C)
     (hinc : ∀ o, (inc o).Nonempty) {a : ℝ} (ha : packOpt inc < a)
     (q : ConstraintSpace O) (hq : IsCoverCertificate inc q) :
     0 ≤ inner ℝ (coverRhs a) q := by
+  have : Fintype C := Fintype.ofFinite C
   -- Extract certificate properties
   obtain ⟨hq_neg, hq_last, hq_constraint⟩ := hq
   -- Set up abbreviations
@@ -277,12 +294,15 @@ private lemma certificate_nonneg (inc : O → Finset C)
   simp only [inner]
   -- inner ℝ on ℝ is multiplication
   have h_inner : ∀ (r s : ℝ), inner ℝ r s = r * s := fun r s => mul_comm s r
-  simp [h_inner]
+  simp only [star_trivial, RCLike.mul_re, RCLike.re_to_real, RCLike.im_to_real,
+    mul_zero, sub_zero, Fintype.sum_sum_type, univ_unique, PUnit.default_eq_unit,
+    sum_singleton, ge_iff_le]
   -- Simplify coverRhs values
   have h_coverRhs_inl : ∀ o : O, (coverRhs a).ofLp (Sum.inl o) = 1 := by
     intro o; rfl
   have h_coverRhs_inr : (coverRhs a).ofLp (Sum.inr (α := O) ()) = a := by rfl
-  simp [h_coverRhs_inl, h_coverRhs_inr] at *
+  simp only [h_coverRhs_inl, mul_one, h_coverRhs_inr, ge_iff_le]
+    at hq_constraint hq_neg hq_last ⊢
   -- Goal: 0 ≤ ∑ o, q_o o + q_last * a
   -- Note: Sum.inr PUnit.unit = Sum.inr () in ConstraintIndex = O ⊕ Unit
   have inr_eq : (Sum.inr PUnit.unit : O ⊕ Unit) = Sum.inr () := rfl
@@ -302,14 +322,16 @@ private lemma certificate_nonneg (inc : O → Finset C)
       intro o
       obtain ⟨c, hc⟩ := hinc o
       have hsum := hq_constraint c
-      simp [hq_last_zero, hq_o_def] at hsum
+      simp only [hq_last_zero, hq_o_def, zero_add] at hsum
       -- hsum : 0 ≤ ∑ o ∈ {o | c ∈ inc o}, q.ofLp (Sum.inl o)
       -- Each term is ≤ 0, so sum ≤ 0. Thus sum = 0.
       have hsum_neg : ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), q.ofLp (Sum.inl o) ≤ 0 := by
         apply Finset.sum_nonpos
         intro o _
         exact hq_neg o
-      have hsum_eq : ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), q.ofLp (Sum.inl o) = 0 := by linarith only [hsum, hsum_neg]
+      have hsum_eq : ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o),
+          q.ofLp (Sum.inl o) = 0 := by
+        linarith only [hsum, hsum_neg]
       -- Since o is in the filter and sum = 0 with all terms ≤ 0, q.ofLp (Sum.inl o) = 0
       have ho_in_filter : o ∈ Finset.univ.filter (fun o => c ∈ inc o) := by simp [hc]
       have h_eq_zero := Finset.sum_eq_zero_iff_of_nonpos (fun o _ => hq_neg o) |>.mp hsum_eq
@@ -326,20 +348,22 @@ private lemma certificate_nonneg (inc : O → Finset C)
     rw [← hq_last_def]
     -- Goal: 0 ≤ ∑ o, q_o o + q_last * a
     -- Sum constraint inequalities
-    have h_sum_cons : ∑ c : C, (q_last + ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), q_o o) ≥ 0 := by
+    have h_sum_cons : ∑ c : C,
+        (q_last + ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), q_o o) ≥ 0 := by
       apply Finset.sum_nonneg
       intro c _
       exact hq_constraint c
     -- Expand sum: C * q_last + ∑ c, ∑ o with c ∈ inc o, q_o o
     have h_expand : ∑ c : C, (q_last + ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), q_o o) =
-        Fintype.card C * q_last + ∑ c : C, ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), q_o o := by
+        Fintype.card C * q_last +
+          ∑ c : C, ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), q_o o := by
       simp [Finset.sum_add_distrib]
     -- Double sum: ∑ c, ∑ o with c ∈ inc o, q_o o = ∑ o, (inc o).card * q_o o
     have h_double_sum : ∑ c : C, ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), q_o o =
         ∑ o : O, (inc o).card * q_o o := by
       simp only [Finset.sum_filter]
       rw [Finset.sum_comm]
-      simp [mul_comm]
+      simp
     -- Since (inc o).card ≥ 1 and q_o o ≤ 0: (inc o).card * q_o o ≤ q_o o
     have h_card_mul_le : ∑ o : O, (inc o).card * q_o o ≤ ∑ o : O, q_o o := by
       apply Finset.sum_le_sum
@@ -358,9 +382,11 @@ private lemma certificate_nonneg (inc : O → Finset C)
       -- Each constraint: ∑ o with c ∈ inc o, w o ≤ 1
       -- Summing: ∑ c, ∑ o with c ∈ inc o, w o ≤ C
       -- Double sum = ∑ o, (inc o).card * w o ≥ ∑ o, w o (since card ≥ 1 and w ≥ 0)
-      have h_sum_cons : ∑ c : C, ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), w o ≤ Fintype.card C := by
-        have := Finset.sum_le_card_nsmul Finset.univ (fun c => ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), w o) 1
-        simp at this
+      have h_sum_cons : ∑ c : C,
+          ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), w o ≤ Fintype.card C := by
+        have := Finset.sum_le_card_nsmul Finset.univ
+          (fun c => ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), w o) 1
+        simp only [mem_univ, forall_const, card_univ, nsmul_eq_mul, mul_one] at this
         exact this fun c => hw.2 c
       have h_double_sum : ∑ c : C, ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), w o =
           ∑ o : O, (inc o).card * w o := by
@@ -398,7 +424,8 @@ private lemma certificate_nonneg (inc : O → Finset C)
       -- From hc: q_last + S ≥ 0, so S ≥ -q_last
       -- So (-1/q_last) * S ≤ (-1/q_last) * (-q_last) = 1 (since q_last > 0)
       have hc' : q_last + ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), q_o o ≥ 0 := hc
-      have hS_ge : ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), q_o o ≥ -q_last := by linarith only [hc']
+      have hS_ge : ∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), q_o o ≥ -q_last := by
+        linarith only [hc']
       have hq_last_ne : q_last ≠ 0 := ne_of_gt hq_last_pos
       field_simp
       nlinarith only [hS_ge]
@@ -421,7 +448,8 @@ private lemma certificate_nonneg (inc : O → Finset C)
     have h_lower_bound : ∑ o : O, q_o o ≥ -packOpt inc * q_last := by linarith only [h_w_value]
     -- Goal: 0 ≤ ∑ o, q_o o + q_last * a
     -- We have ∑ o, q_o o ≥ -packOpt inc * q_last
-    -- So ∑ o, q_o o + q_last * a ≥ -packOpt inc * q_last + q_last * a = q_last * (a - packOpt inc) > 0
+    -- So ∑ o, q_o o + q_last * a ≥ -packOpt inc * q_last + q_last * a,
+    -- which is q_last * (a - packOpt inc) > 0.
     nlinarith only [ha, hq_last_pos, h_lower_bound]
 
 /-- The Farkas certificate inequality.  This is the algebraic heart of duality: a certificate
@@ -444,6 +472,7 @@ private lemma coverRhs_mem_conic_closure (inc : O → Finset C)
   intro y hy
   exact cover_certificate_nonneg inc hinc ha y hy
 
+omit [DecidableEq C] in
 /-- A point of the conic image closure gives covers whose values approach the encoded objective.
 The row error is repaired by scaling by `1 / (1 - ε)`. -/
 private lemma coverOpt_le_ratio_of_mem_closure (inc : O → Finset C) {a ε : ℝ}
@@ -453,7 +482,8 @@ private lemma coverOpt_le_ratio_of_mem_closure (inc : O → Finset C) {a ε : �
   rw [ProperCone.mem_map] at hmem
   -- hmem : coverRhs a ∈ closure of the image
   -- Use that closure is the topological closure
-  let S := PointedCone.map (coverMap inc).toLinearMap (nonnegativeCone (PrimalIndex O C)).toPointedCone
+  let S := PointedCone.map (coverMap inc).toLinearMap
+    (nonnegativeCone (PrimalIndex O C)).toPointedCone
   have hmem' : coverRhs a ∈ closure (S : Set (ConstraintSpace O)) := hmem
   rw [Metric.mem_closure_iff] at hmem'
   -- Choose δ small enough so that the error can be repaired by scaling
@@ -475,7 +505,8 @@ private lemma coverOpt_le_ratio_of_mem_closure (inc : O → Finset C) {a ε : �
     intro i
     have h1 : dist (coverRhs a) b < δ := hb_dist
     have h2 : |(coverRhs a).ofLp i - b.ofLp i| ≤ ‖(coverRhs a : ConstraintSpace O) - b‖ := by
-      have hnn : ((coverRhs a).ofLp i - b.ofLp i) ^ 2 ≤ ‖(coverRhs a : ConstraintSpace O) - b‖ ^ 2 := by
+      have hnn : ((coverRhs a).ofLp i - b.ofLp i) ^ 2 ≤
+          ‖(coverRhs a : ConstraintSpace O) - b‖ ^ 2 := by
         rw [EuclideanSpace.norm_eq, Real.sq_sqrt (Finset.sum_nonneg fun _ _ => sq_nonneg _)]
         have heq : ∀ j, ‖(coverRhs a - b).ofLp j‖ ^ 2 = ((coverRhs a).ofLp j - b.ofLp j) ^ 2 := by
           intro j
@@ -494,7 +525,6 @@ private lemma coverOpt_le_ratio_of_mem_closure (inc : O → Finset C) {a ε : �
   have h_row_sum_bound : ∀ o, 1 - δ < ∑ c ∈ inc o, y c := by
     intro o
     have h1 : |(coverRhs a).ofLp (Sum.inl o) - b.ofLp (Sum.inl o)| < δ := h_coord_bound (Sum.inl o)
-    simp at h1
     have h2 : b.ofLp (Sum.inl o) = (∑ c ∈ inc o, y c) - x.ofLp (Sum.inr (Sum.inl o)) := by
       rw [← hx_eq]
       rfl
@@ -509,8 +539,8 @@ private lemma coverOpt_le_ratio_of_mem_closure (inc : O → Finset C) {a ε : �
     linarith only [hx_nonneg, h1', hca]
   -- Bound on the total sum
   have h_total_sum_bound : ∑ c, y c < a + δ := by
-    have h1 : |(coverRhs a).ofLp (Sum.inr PUnit.unit) - b.ofLp (Sum.inr PUnit.unit)| < δ := h_coord_bound (Sum.inr PUnit.unit)
-    simp at h1
+    have h1 : |(coverRhs a).ofLp (Sum.inr PUnit.unit) -
+        b.ofLp (Sum.inr PUnit.unit)| < δ := h_coord_bound (Sum.inr PUnit.unit)
     have h2 : b.ofLp (Sum.inr PUnit.unit) = (∑ c, y c) + x.ofLp (Sum.inr (Sum.inr ())) := by
       rw [← hx_eq]
       rfl
@@ -543,7 +573,8 @@ private lemma coverOpt_le_ratio_of_mem_closure (inc : O → Finset C) {a ε : �
     have := h_row_sum_bound o
     have h1mδ_pos : 0 < 1 - δ := by linarith only [hδ_lt1]
     calc 1 = (1 - δ) / (1 - δ) := by field_simp
-      _ ≤ (∑ c ∈ inc o, y c) / (1 - δ) := by apply div_le_div_of_nonneg_right this.le (le_of_lt h1mδ_pos)
+      _ ≤ (∑ c ∈ inc o, y c) / (1 - δ) := by
+        apply div_le_div_of_nonneg_right this.le (le_of_lt h1mδ_pos)
       _ = ∑ c ∈ inc o, y c / (1 - δ) := by rw [← Finset.sum_div]
       _ = ∑ c ∈ inc o, z c := by rfl
   -- z is a cover
@@ -614,12 +645,13 @@ private lemma coverOpt_le_of_packOpt_lt (inc : O → Finset C)
     linarith only [hε_bound]
   linarith only [hc_le, hcontra]
 
+omit [Fintype O] [DecidableEq C] in
 private lemma coverOpt_eq_zero_of_empty_row (inc : O → Finset C) {o : O}
     (ho : inc o = ∅) : coverOpt inc = 0 := by
   unfold coverOpt
   have h_empty : {x | ∃ y, IsCover inc y ∧ x = ∑ c, y c} = ∅ := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
     intro ⟨y, hy, _⟩
     have := hy.2 o
     rw [ho] at this
@@ -634,7 +666,7 @@ theorem lp_strong_duality (inc : O → Finset C) :
     coverOpt inc ≤ packOpt inc := by
   by_cases hempty : ∃ o, inc o = ∅
   · obtain ⟨o, ho⟩ := hempty
-    have hzero : coverOpt inc = 0 := @coverOpt_eq_zero_of_empty_row O C _ _ _ inc o ho
+    have hzero : coverOpt inc = 0 := @coverOpt_eq_zero_of_empty_row O C _ inc o ho
     rw [hzero]
     apply Real.sSup_nonneg
     rintro x ⟨w, hw, rfl⟩
@@ -662,7 +694,7 @@ theorem weak_duality (inc : O → Finset C) {w : O → ℝ} {y : C → ℝ}
     _ = ∑ o : O, ∑ c : C, if c ∈ inc o then w o * y c else 0 := by
       refine Finset.sum_congr rfl fun o _ => ?_
       rw [Finset.mul_sum]
-      simp [Finset.sum_filter]
+      simp
     _ = ∑ c : C, ∑ o : O, if c ∈ inc o then w o * y c else 0 := Finset.sum_comm
     _ = ∑ c, (∑ o ∈ Finset.univ.filter (fun o => c ∈ inc o), w o) * y c := by
       refine Finset.sum_congr rfl fun c _ => ?_

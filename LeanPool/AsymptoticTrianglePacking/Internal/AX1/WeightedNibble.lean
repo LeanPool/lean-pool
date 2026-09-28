@@ -14,7 +14,8 @@ This file adds to the AX1 chain (`Nibble.CoreGapAX1`) in two independent ways.
 * **An unconditional improvement of the proved range.**  A maximum triangle packing covers `3ν₃`
   edges that meet every triangle, so every fractional packing has weight at most `3ν₃`
   (`Nibble.nu3star_le_three_nu3`).  With `ν₃* ≤ |E|/3 ≤ |V|²/6` this gives the hypothesis-free bound
-  `ν₃* − ν₃ ≤ |V|²/9` (`Nibble.nu3star_sub_nu3_le_ninth`), hence `Nibble.AX1.CoreGapAt ε δ` for every
+  `ν₃* − ν₃ ≤ |V|²/9` (`Nibble.nu3star_sub_nu3_le_ninth`), hence `Nibble.AX1.CoreGapAt ε δ`
+  for every
   `ε ≥ 1/9` (`Nibble.AX1.coreGapAt_of_ninth`) — strictly more than the previously proved `ε ≥ 1/3`.
 
 * **The residual, isolated as a reusable hypergraph statement.**
@@ -137,7 +138,8 @@ theorem edge_card_le_half_card_sq (G : SimpleGraph V) [DecidableRel G.Adj] :
     ((G.cliqueFinset 2).card : ℝ) ≤ (Fintype.card V : ℝ) ^ 2 / 2 := by
   classical
   have hle : (G.cliqueFinset 2).card ≤ (Fintype.card V).choose 2 := by
-    have hsub : (G.cliqueFinset 2).card ≤ (Finset.univ.powersetCard 2 : Finset (Finset V)).card := by
+    have hsub : (G.cliqueFinset 2).card ≤
+        (Finset.univ.powersetCard 2 : Finset (Finset V)).card := by
       apply Finset.card_le_card
       intro e he
       rw [SimpleGraph.mem_cliqueFinset_iff] at he
@@ -152,7 +154,6 @@ theorem edge_card_le_half_card_sq (G : SimpleGraph V) [DecidableRel G.Adj] :
   have h1 : (2 : ℝ) * ((G.cliqueFinset 2).card : ℝ) ≤ (Fintype.card V : ℝ) ^ 2 := by
     have : (2 * (G.cliqueFinset 2).card : ℝ) ≤ ((Fintype.card V) ^ 2 : ℝ) := by
       exact_mod_cast le_trans (Nat.mul_le_mul_left 2 hle) hchoose
-    push_cast at this ⊢
     linarith
   linarith
 

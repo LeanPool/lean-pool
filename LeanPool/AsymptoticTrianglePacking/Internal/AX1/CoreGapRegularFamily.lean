@@ -72,7 +72,7 @@ noncomputable def familyColoring (H : ℕ → SimpleGraph V) (k : ℕ) (e : Fins
   if h : ∃ i, i < k ∧ e ∈ (H i).cliqueFinset 2 then Nat.find h else k
 
 /-- The colour classes of `Nibble.AX1.familyColoring` are exactly the members of the family. -/
-theorem colorPart_familyColoring (G : SimpleGraph V) [DecidableRel G.Adj] (H : ℕ → SimpleGraph V)
+theorem colorPart_familyColoring (G : SimpleGraph V) (H : ℕ → SimpleGraph V)
     (k : ℕ) (hle : ∀ i < k, H i ≤ G) (hdisj : EdgeDisjointFamily H k) {i : ℕ} (hi : i < k) :
     colorPart G (familyColoring H k) i = H i := by
   classical

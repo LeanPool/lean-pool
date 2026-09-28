@@ -9,10 +9,13 @@ module
 /-
 # Nibble — ② dense-regime global near-regularity of the triangle hypergraph
 
-The corrected nibble needs a GLOBAL per-edge degree bound `∀ e, degree ≤ (1+μ)d` (not just majority),
-because an exceptional high-degree vertex would inflate the variance parameter Δ. In Paper III's regime
+The corrected nibble needs a GLOBAL per-edge degree bound `∀ e, degree ≤ (1+μ)d` (not just
+majority),
+because an exceptional high-degree vertex would inflate the variance parameter Δ. In Paper
+III's regime
 this is FREE: at `δ(G) ≥ (9/10+ε)n` the triangle-per-edge count `|N(u)∩N(v)|` is globally in
-`[(4/5+2ε)n, n]` — no exceptional set, no Szemerédi, no regularization. The window `[(1-μ)d,(1+μ)d]` at
+`[(4/5+2ε)n, n]` — no exceptional set, no Szemerédi, no regularization. The window
+`[(1-μ)d,(1+μ)d]` at
 `d ≈ (9/10)n` is covered with `μ ≈ 1/9 = 1 − 8/9`.
 
 * `triangleSub_degree_eq_inter` — `degree_H({u,v}) = |N(u)∩N(v)|`.
@@ -79,7 +82,8 @@ theorem triangleSub_degree_le_card (E : EdgeV G) :
       ≤ (Finset.univ : Finset V).card := Finset.card_le_card (Finset.subset_univ _)
     _ = Fintype.card V := Finset.card_univ
 
-/-- **② floor (from a global min-degree bound).** If every vertex of `G` has degree `≥ D`, then every
+/-- **② floor (from a global min-degree bound).** If every vertex of `G` has degree `≥ D`,
+then every
 edge lies in at least `2D − |V|` triangles (common-neighbourhood inclusion–exclusion). -/
 theorem triangleSub_degree_ge_of_minDeg (E : EdgeV G) {D : ℕ} (hD : ∀ x, D ≤ G.degree x) :
     2 * D - Fintype.card V ≤ Hypergraph.degree (triangleHypergraphSub G) E := by
@@ -96,8 +100,10 @@ theorem triangleSub_degree_ge_of_minDeg (E : EdgeV G) {D : ℕ} (hD : ∀ x, D �
   have hDv := hD v
   omega
 
-/-- **② global near-regularity window (packaged).** With a global min-degree `D` satisfying `|V| ≤ 2D`
-(dense regime), every edge's triangle-degree lies in the window `[(1−μ)d, (1+μ)d]` provided the window
+/-- **② global near-regularity window (packaged).** With a global min-degree `D` satisfying
+`|V| ≤ 2D`
+(dense regime), every edge's triangle-degree lies in the window `[(1−μ)d, (1+μ)d]` provided
+the window
 covers `[2D−|V|, |V|]`. This is the global (no exceptional set) near-regularity the corrected nibble
 consumes; at `δ ≥ (9/10+ε)|V|`, taking `D = (9/10+ε)|V|`, `d = (9/10)|V|`, `μ = 1/9` satisfies the
 hypotheses. -/

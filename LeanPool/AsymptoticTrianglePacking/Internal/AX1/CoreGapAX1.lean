@@ -534,8 +534,10 @@ theorem nibbleGap_denseCore (ε : ℝ) (hε : 0 < ε) :
 and `n₀` such that every large graph which becomes (isolated-or-)`θ|V|`-dense after deleting at most
 `(ε/4)|V|²` edges has packing gap at most `ε|V|²`.
 
-This strictly extends `Nibble.AX1.nibbleGap_dense` (take `G' = G`, no deletion): the graph itself may
-have arbitrarily many vertices of arbitrarily small positive degree, as long as the edges at them are
+This strictly extends `Nibble.AX1.nibbleGap_dense` (take `G' = G`, no deletion): the graph
+itself may
+have arbitrarily many vertices of arbitrarily small positive degree, as long as the edges at
+them are
 few. -/
 theorem nibbleGap_of_dense_core (ε : ℝ) (hε : 0 < ε) :
     ∃ θ : ℝ, 0 < θ ∧ θ < 1 ∧ ∃ n₀ : ℕ,

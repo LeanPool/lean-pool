@@ -44,6 +44,7 @@ noncomputable def crossEdges (G : SimpleGraph V) [DecidableRel G.Adj] (U W : Fin
     Finset (Finset V) :=
   (G.interedges U W).image (fun p => ({p.1, p.2} : Finset V))
 
+omit [Fintype V] in
 theorem card_crossEdges_le (G : SimpleGraph V) [DecidableRel G.Adj] (U W : Finset V) :
     #(crossEdges G U W) ≤ #(G.interedges U W) :=
   Finset.card_image_le

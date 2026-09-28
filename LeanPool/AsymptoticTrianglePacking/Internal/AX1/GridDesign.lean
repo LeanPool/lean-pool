@@ -10,7 +10,8 @@ module
 # Nibble — the diagonal grid design inside one cluster triple
 
 The deterministic (probability-free) route to `Nibble.AX1.ReducedFamilyResidual` splits each cluster
-of a good triple `(U, W, X)` into vertex **sub-blocks** and uses the *diagonal* family of sub-triples
+of a good triple `(U, W, X)` into vertex **sub-blocks** and uses the *diagonal* family of
+sub-triples
 
 `(U_{(j+k) mod n}, W_j, X_k)`,  `0 ≤ j, k < n`.
 

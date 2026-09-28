@@ -10,7 +10,8 @@ module
 # Yuster — bridge `triangleHypergraphSub` ↔ `nu3`, and the nibble lower bound on `ν₃`
 
 Standalone, Mathlib-only. Connects the two edge-based encodings: a matching of the edge-VERTEX-type
-triangle hypergraph `triangleHypergraphSub G` (on `EdgeV G`, the encoding `NibbleTheorem` runs on) maps
+triangle hypergraph `triangleHypergraphSub G` (on `EdgeV G`, the encoding `NibbleTheorem` runs
+on) maps
 —via the subtype-forgetting embedding `EdgeV G ↪ Finset V`— to a matching of `triangleHypergraphE G`
 (on `Finset V`, the encoding defining `nu3`) of the SAME cardinality. Hence a `Sub`-matching
 lower-bounds `nu3 G`.
@@ -41,7 +42,8 @@ variable {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRe
 /-- **Sub ↦ E bridge.** A matching of the edge-vertex-type triangle hypergraph lower-bounds `nu3`:
 mapping each hyperedge `T` by the subtype embedding `EdgeV G ↪ Finset V` (`T ↦ T.map emb`) turns a
 matching of `triangleHypergraphSub G` into a matching of `triangleHypergraphE G` of the same
-cardinality (the embedding is injective — preserves card and disjointness — and recovers the original
+cardinality (the embedding is injective — preserves card and disjointness — and recovers the
+original
 `2`-subsets of each triangle since they are all `2`-cliques). Then `nu3_ge`. -/
 theorem sub_matching_card_le_nu3 {M : Finset (Finset (EdgeV G))}
     (hM : IsMatching (triangleHypergraphSub G) M) : M.card ≤ nu3 G := by
@@ -78,9 +80,11 @@ theorem sub_matching_card_le_nu3 {M : Finset (Finset (EdgeV G))}
   calc M.card = (M.image (fun T => T.map emb)).card := hcard.symm
     _ ≤ nu3 G := nu3_ge G hM'
 
-/-- **`ν₃` lower bound from the nibble.** Assuming `NibbleTheorem` and the Y3 near-regularity/codegree
+/-- **`ν₃` lower bound from the nibble.** Assuming `NibbleTheorem` and the Y3
+near-regularity/codegree
 interface on `triangleHypergraphSub G`, the integral triangle-packing number satisfies
-`(1-β)·|E(G)|/3 ≤ ν₃ G`. Combines Y5 (`nibble_gives_triangleSub_matching`) with the Sub ↦ `nu3` bridge.
+`(1-β)·|E(G)|/3 ≤ ν₃ G`. Combines Y5 (`nibble_gives_triangleSub_matching`) with the Sub ↦
+`nu3` bridge.
 This is the quantitative half of Y6 (the other half is `ν₃* ≤` an upper bound). -/
 theorem nu3_ge_nibble (hNibble : NibbleTheorem) {β : ℝ} (hβ : 0 < β) :
     ∃ μ : ℝ, 0 < μ ∧ ∃ d₀ : ℝ, 0 < d₀ ∧ ∀ {d : ℝ}, 0 < d → d₀ ≤ d →

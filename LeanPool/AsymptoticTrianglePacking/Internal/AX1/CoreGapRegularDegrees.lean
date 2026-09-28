@@ -234,7 +234,8 @@ def deleteHeavy (G : SimpleGraph V) [DecidableRel G.Adj] (c : ℝ) : SimpleGraph
     rwa [Finset.pair_comm]⟩
   loopless := ⟨fun x h => G.irrefl h.1⟩
 
-noncomputable instance instDecidableRelDeleteHeavy (G : SimpleGraph V) [DecidableRel G.Adj] (c : ℝ) :
+noncomputable instance instDecidableRelDeleteHeavy (G : SimpleGraph V)
+    [DecidableRel G.Adj] (c : ℝ) :
     DecidableRel (deleteHeavy G c).Adj :=
   fun x y => inferInstanceAs (Decidable (G.Adj x y ∧ (edgeTriangleDegree G {x, y} : ℝ) ≤ c))
 

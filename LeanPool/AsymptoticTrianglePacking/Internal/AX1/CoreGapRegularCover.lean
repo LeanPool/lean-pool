@@ -198,7 +198,8 @@ theorem hasNearRegularFamily_of_cover (G : SimpleGraph V) [DecidableRel G.Adj]
     · exact absurd (by
         rw [cliqueFinset_two_unionFamily]
         exact Finset.mem_biUnion.mpr ⟨i, Finset.mem_range.mpr hi, hei⟩) he.2
-  have hcnt : (((triangleSupport G).cliqueFinset 2 \ W.cliqueFinset 2).card : ℝ) ≤ (D.card : ℝ) := by
+  have hcnt : (((triangleSupport G).cliqueFinset 2 \ W.cliqueFinset 2).card : ℝ) ≤
+      (D.card : ℝ) := by
     exact_mod_cast Finset.card_le_card hsub
   have hdel := nu3star_le_add_deleted (triangleSupport G) W hWle
   have hWval : nu3star W ≤ ((W.cliqueFinset 2).card : ℝ) / 3 := nu3star_le W

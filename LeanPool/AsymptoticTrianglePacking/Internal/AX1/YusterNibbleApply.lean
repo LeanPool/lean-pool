@@ -11,8 +11,10 @@ module
 
 Standalone, Mathlib-only. The Y5 step of the Yuster route: feed the edge-vertex-type triangle
 hypergraph `triangleHypergraphSub G` (on `EdgeV G`, whose `Fintype.card` is `|E(G)|`) to
-`NibbleTheorem`. Since that hypergraph is `3`-uniform and — under the Y3 hypotheses `NearlyRegular d μ`
-and `CodegreeBounded (μ·d)` — meets the nibble's requirements, `NibbleTheorem` yields an edge-disjoint
+`NibbleTheorem`. Since that hypergraph is `3`-uniform and — under the Y3 hypotheses
+`NearlyRegular d μ`
+and `CodegreeBounded (μ·d)` — meets the nibble's requirements, `NibbleTheorem` yields an
+edge-disjoint
 triangle packing (a matching) of size `≥ (1-β)·|E(G)|/3`.
 
 `NibbleTheorem` and the near-regularity/codegree data are kept as HYPOTHESES: the former is the T3
@@ -20,7 +22,8 @@ interface (to be discharged by the nibble machinery), the latter is exactly what
 `triangleHypergraph_nearlyRegular_codegreeBounded` (Y3) supplies from a Szemerédi partition. This
 scaffold wires the three together, leaving only those two inputs open.
 
-Note the vertex type `EdgeV G` has universe `0` (`{V : Type}`), matching `NibbleTheorem`'s `∀ {V : Type}`.
+Note the vertex type `EdgeV G` has universe `0` (`{V : Type}`), matching `NibbleTheorem`'s `∀
+{V : Type}`.
 
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
@@ -43,7 +46,8 @@ variable {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRe
 
 /-- **Y5 (scaffold) — nibble ⇒ large triangle packing.** Assuming `NibbleTheorem`, there is a
 near-regularity tolerance `μ > 0` such that, whenever the edge-type triangle hypergraph is
-`(1±μ)`-nearly `d`-regular with codegree `≤ μd`, it has a matching (edge-disjoint triangle packing) of
+`(1±μ)`-nearly `d`-regular with codegree `≤ μd`, it has a matching (edge-disjoint triangle
+packing) of
 size `≥ (1-β)·|E(G)|/3`. Direct application of `NibbleTheorem` to `triangleHypergraphSub G`, using
 `card_EdgeV` to turn `Fintype.card (EdgeV G)` into `|E(G)| = |cliqueFinset 2|`. -/
 theorem nibble_gives_triangleSub_matching (hNibble : NibbleTheorem) {β : ℝ} (hβ : 0 < β) :
@@ -62,7 +66,8 @@ theorem nibble_gives_triangleSub_matching (hNibble : NibbleTheorem) {β : ℝ} (
 /-- **Y5 (majority) — nibble ⇒ large triangle packing, tolerating an exceptional edge set.** The
 `NibbleTheoremMost` version of `nibble_gives_triangleSub_matching`: assuming the majority interface,
 there are tolerances `μ, η > 0` such that whenever the edge-type triangle hypergraph is
-`NearlyRegularMost d μ η` (near-`d`-regular outside an `η`-fraction of edges) with codegree `≤ μd`, it
+`NearlyRegularMost d μ η` (near-`d`-regular outside an `η`-fraction of edges) with codegree `≤
+μd`, it
 has an edge-disjoint triangle packing of size `≥ (1-β)·|E(G)|/3`. This is the version the
 Szemerédi+counting reconstruction (which yields `NearlyRegularMost`, not strict) feeds. -/
 theorem nibble_gives_triangleSub_matching_most (hNibble : NibbleTheoremMost) {β : ℝ} (hβ : 0 < β) :

@@ -11,7 +11,8 @@ module
 
 Standalone, Mathlib-only. The hypergraph-degree of an edge `E` in the edge-based triangle hypergraph
 `triangleHypergraphSub G` equals the number of triangles of `G` containing `E` (= codegree in `G` of
-`E`'s two endpoints). This is the architecture-independent bridge that ② (edge counting / near-regularity)
+`E`'s two endpoints). This is the architecture-independent bridge that ② (edge counting /
+near-regularity)
 needs: it turns the abstract "near-regular hypergraph" degree window into the graph condition
 "most edges lie on ≈ d triangles".
 
@@ -53,7 +54,9 @@ private theorem triple_injOn :
     exact ⟨b, Finset.mem_of_mem_erase hb, Finset.ne_of_mem_erase hb⟩
   have hsub : ({a, b} : Finset V) ⊆ t := by
     intro x hx; simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    rcases hx with rfl | rfl; exact ha; exact hbt
+    rcases hx with rfl | rfl
+    · exact ha
+    · exact hbt
   have hedge : ({a, b} : Finset V) ∈ G.cliqueFinset 2 := by
     rw [SimpleGraph.mem_cliqueFinset_iff]
     exact ⟨ht.isClique.subset hsub, Finset.card_pair (Ne.symm hba)⟩
@@ -122,7 +125,8 @@ theorem triangles_on_edge_eq_commonNbr (E : EdgeV G) :
       · exact Finset.insert_subset hct hsub
       · rw [htri.card_eq, Finset.card_insert_of_notMem hcnotE, hE2]
 
-/-- **② bridge, graph form.** The hypergraph-degree of edge `E` in `triangleHypergraphSub G` equals the
+/-- **② bridge, graph form.** The hypergraph-degree of edge `E` in `triangleHypergraphSub G`
+equals the
 number of common neighbours of `E`'s endpoints (the codegree of `E` in `G`). -/
 theorem triangleHypergraphSub_degree_eq_commonNbr (E : EdgeV G) :
     Hypergraph.degree (triangleHypergraphSub G) E

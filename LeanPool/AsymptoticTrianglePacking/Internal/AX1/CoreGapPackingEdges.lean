@@ -11,7 +11,8 @@ module
 
 Part of the `ν₃*` bookkeeping of the AX1 residual (`RESIDUAL.md`, §2, (R2)).  The allocation of a
 cluster pair among the triples that use it is feasible only because a fractional triangle packing
-puts total weight at most `e(U, W)` on the triangles through the `U–W` edges.  This file proves that,
+puts total weight at most `e(U, W)` on the triangles through the `U–W` edges.  This file
+proves that,
 in the general form:
 
 * `Nibble.AX1.sum_fracPacking_over_edges_le` — for a fractional triangle packing `w` and any finset

@@ -26,9 +26,9 @@ Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.BoxPlacementCount
 
-open Finset
-
 /-! # BoxPlacementEdge -/
+
+open Finset
 
 @[expose] public section
 
@@ -197,7 +197,8 @@ theorem card_rect (a : ZMod 3) : #(rect idx cl c A a) = #(A a) * #(A (a + 1)) :=
     fun p p' h => orient_inj (idx := idx) _ _ (Sum.inl_injective h)
   rw [rect, Finset.card_image_of_injective _ hinj, Finset.card_product]
 
-theorem rect_disjoint (hcl : Function.Injective (cl c)) {a b : ZMod 3} (hab : a ≠ b) : Disjoint (rect idx cl c A a) (rect idx cl c A b) := by
+theorem rect_disjoint (hcl : Function.Injective (cl c)) {a b : ZMod 3} (hab : a ≠ b) :
+    Disjoint (rect idx cl c A a) (rect idx cl c A b) := by
   rw [Finset.disjoint_left]
   rintro x ha hb
   rcases x with x | c'

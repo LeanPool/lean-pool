@@ -118,9 +118,10 @@ theorem prune_near_regular_local (T : SimpleGraph V) [DecidableRel T.Adj]
   have hlo' := hlo {x, y} heT heB
   linarith only [hdrop', hx, hy, hlo']
 
+omit [DecidableEq V] in
 /-- **A tripartite graph has degrees at most `|U| + |W| + |X|`**: all its edges stay inside the
 three parts. -/
-theorem tripleGraph_degree_le (G : SimpleGraph V) [DecidableRel G.Adj] (U W X : Finset V) (v : V) :
+theorem tripleGraph_degree_le (G : SimpleGraph V) (U W X : Finset V) (v : V) :
     #{z ∈ (univ : Finset V) | (tripleGraph G U W X).Adj v z} ≤ #U + #W + #X := by
   classical
   have hsub : {z ∈ (univ : Finset V) | (tripleGraph G U W X).Adj v z} ⊆ U ∪ W ∪ X := by

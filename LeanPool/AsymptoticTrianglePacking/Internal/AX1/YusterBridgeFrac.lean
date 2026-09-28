@@ -49,8 +49,12 @@ theorem triangle_powersetCard_two_injOn :
       exact ⟨b, Finset.mem_of_mem_erase hbm, Finset.ne_of_mem_erase hbm⟩
     have hmem : ({a, b} : Finset V) ∈ t1.powersetCard 2 := by
       rw [Finset.mem_powersetCard]
-      refine ⟨by intro z hz; simp only [Finset.mem_insert, Finset.mem_singleton] at hz; rcases hz with rfl | rfl; exact ha; exact hb,
-              Finset.card_pair (fun h => hab h.symm)⟩
+      refine ⟨?_, Finset.card_pair (fun h => hab h.symm)⟩
+      intro z hz
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hz
+      rcases hz with rfl | rfl
+      · exact ha
+      · exact hb
     rw [heq] at hmem
     rw [Finset.mem_powersetCard] at hmem
     exact hmem.1 (by simp)
@@ -62,18 +66,23 @@ theorem triangle_powersetCard_two_injOn :
       exact ⟨b, Finset.mem_of_mem_erase hbm, Finset.ne_of_mem_erase hbm⟩
     have hmem : ({a, b} : Finset V) ∈ t2.powersetCard 2 := by
       rw [Finset.mem_powersetCard]
-      refine ⟨by intro z hz; simp only [Finset.mem_insert, Finset.mem_singleton] at hz; rcases hz with rfl | rfl; exact ha; exact hb,
-              Finset.card_pair (fun h => hab h.symm)⟩
+      refine ⟨?_, Finset.card_pair (fun h => hab h.symm)⟩
+      intro z hz
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hz
+      rcases hz with rfl | rfl
+      · exact ha
+      · exact hb
     rw [← heq] at hmem
     rw [Finset.mem_powersetCard] at hmem
     exact hmem.1 (by simp)
 
+omit [Fintype V] [DecidableRel G.Adj] in
 /-- The union of the two-element subsets of a triangle recovers its vertices. -/
 theorem triangle_powersetCard_two_sup {t : Finset V} (ht : G.IsNClique 3 t) :
     (t.powersetCard 2).sup id = t := by
   apply Finset.ext
   intro v
-  simp [Finset.mem_sup]
+  simp only [mem_sup, mem_powersetCard, id_eq]
   constructor
   · rintro ⟨s, hs, hv⟩
     exact hs.1 hv
@@ -93,6 +102,7 @@ theorem triangle_powersetCard_two_sup {t : Finset V} (ht : G.IsNClique 3 t) :
     · rw [Finset.card_pair]; exact fun h => Finset.ne_of_mem_erase hu h.symm
     · simp
 
+omit [Fintype V] [DecidableEq V] in
 /-- For a two-element set `e`, membership among a triangle's edges is inclusion
 in the triangle. -/
 theorem mem_powersetCard_two_iff_subset {e t : Finset V} (he : e.card = 2) :
@@ -159,7 +169,8 @@ theorem fracPacking_to_triangleFracPacking
         have hle : t.card ≤ 3 := by
           by_contra h
           push Not at h
-          have : (t.card).choose 2 ≥ (4).choose 2 := Nat.choose_le_choose _ (by omega : (4 : ℕ) ≤ t.card)
+          have : (t.card).choose 2 ≥ (4).choose 2 :=
+            Nat.choose_le_choose _ (by omega : (4 : ℕ) ≤ t.card)
           simp [Nat.choose] at this
           omega
         interval_cases t.card <;> simp at h1 ⊢
