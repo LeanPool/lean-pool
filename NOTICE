@@ -143,6 +143,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/LowDimSolvClassification  https://github.com/LieLean/LowDimSolvClassification
   LeanPool/LowWeightPauliDynamics    https://github.com/Jue-Xu/Lean4LPD
   LeanPool/MRiscX                    https://github.com/JulsDE/MRiscX
+  LeanPool/Malliavin                 https://github.com/savarin/lean-malliavin
   LeanPool/MarkovProcess             https://github.com/scottnarmstrong/markovprocess
   LeanPool/MassFormula               https://github.com/0stellensatz/MassFormula
   LeanPool/MatchingLogic             https://github.com/eveil-labs/matching-logic-lean
@@ -168,6 +169,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/OddPrimeValuationDistribution
                                      https://github.com/lyfar/gkp-carry-lean
   LeanPool/Odlyzko                   https://github.com/ImperialCollegeLondon/FLT
+  LeanPool/OneManifold               https://github.com/sweeneyde/1mfld
   LeanPool/OrderPQ                   https://github.com/wupr/order-p-q
   LeanPool/PDL                       https://github.com/m4lvin/lean4-pdl
   LeanPool/PFR                       https://github.com/teorth/pfr
