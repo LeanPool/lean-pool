@@ -10170,6 +10170,39 @@ projects:
     msc:
       - '90C35'
       - '05C21'
+  - slug: bicausalot-palomar
+    title: "BicausalOT: measurable selection and coupling strategies"
+    summary: Develops Kuratowski–Ryll-Nardzewski selection, Jankov–von Neumann uniformization,
+      and finite-horizon Bellman identities for locally feasible coupling strategies. Exact Borel
+      measurable optimal strategies and initial couplings are obtained on Polish Borel spaces
+      for weakly continuous probability kernels and nonnegative extended-real lower semicontinuous
+      costs. Equivalence with optimization over bicausal path laws is not established.
+    branch: probability
+    entry_module: LeanPool.BicausalOT
+    authors:
+    - KT. Wu
+    source:
+      url: https://github.com/maxwellapexlab/bicausalot-palomar
+      github_repo: maxwellapexlab/bicausalot-palomar
+      commit: 3fe500ff64a75d7ab71b474d0c656d5471f62992
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - MeasurableSelection.exists_measurable_selection
+    main_results:
+    - declaration: MeasurableSelection.exists_measurable_selection
+      informal: A weakly measurable multifunction from an arbitrary measurable space to a Polish
+        space with nonempty closed values admits an everywhere-defined Borel-measurable selector.
+    tags:
+    - probability
+    msc:
+    - 28B20
+    - 54C65
+    - 54H05
+    - 03E15
+    - 28A20
+    - 68V20
+    provenance: AI
   - slug: asymptotic-triangle-packing
     title: Finite near-regular hypergraph rounding
     summary: >-
@@ -10836,6 +10869,38 @@ projects:
     - 11B75
     - 68R15
     provenance: AI
+  - slug: markovprocess
+    title: MarkovProcess
+    summary: A Lean formalization of continuous-path Markov processes associated with conservative
+      Feller transition semigroups on nonempty locally compact Polish spaces. A uniform Kolmogorov
+      displacement-moment bound yields a unique measurable kernel from each starting point to
+      continuous-path space, with the prescribed finite-dimensional distributions. The library
+      also develops strong Markov properties, generators and resolvents, stopping and killing,
+      and Brownian motion as an example.
+    branch: probability
+    entry_module: LeanPool.MarkovProcess
+    authors:
+    - Scott Armstrong
+    source:
+      url: https://github.com/scottnarmstrong/markovprocess
+      github_repo: scottnarmstrong/markovprocess
+      commit: dbade0d12c4f84179441a9df7d7147df7a8bcaa0
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - MarkovProcess.existsUnique_continuousProcess
+    main_results:
+    - declaration: MarkovProcess.existsUnique_continuousProcess
+      informal: A conservative Feller transition semigroup on a nonempty locally compact Polish
+        space satisfying the Kolmogorov moment criterion determines a unique continuous-path
+        Markov kernel with its prescribed finite-dimensional distributions.
+    tags:
+    - probability
+    msc:
+    - 60J25
+    - 60J35
+    - 60G17
+    provenance: AI
   - slug: nagatafactoriality
     title: Nagata's prime-generated factoriality theorem
     summary: Nagata’s factoriality criterion for noetherian domains localized at prime-generated
@@ -10873,6 +10938,39 @@ projects:
     - commutative-algebra
     msc:
     - 13F15
+  - slug: salem-theorem
+    title: Every Pisot number is a two-sided limit of Salem numbers
+    summary: Proves Salem’s two-sided approximation theorem for Pisot numbers, preserving both the polynomial
+      reciprocal-family construction and the exceptional quadratic-unit construction.
+    branch: algebraic number theory
+    entry_module: LeanPool.SalemTheorem
+    authors:
+    - Stephanie Alexander
+    source:
+      url: https://github.com/stalex444/salem-theorem
+      github_repo: stalex444/salem-theorem
+      commit: 887be765bf24c6a645600dfc7bd0a1055a1761dd
+    license: MIT
+    status: verified
+    provenance: AI
+    main_declarations:
+    - SalemTheorem.salem_theorem
+    main_results:
+    - declaration: SalemTheorem.salem_theorem
+      informal: Every Pisot number is approached by Salem numbers from both below and above.
+    - declaration: SalemTheorem.salem_construction_two_sided
+      informal: For the nondegenerate Pisot polynomial pattern, reciprocal-family polynomials have Salem
+        roots arbitrarily near the Pisot root from either side.
+    - declaration: SalemTheorem.salem_quadratic_unit
+      informal: The quadratic-unit family supplies Salem roots approaching each reciprocal quadratic Pisot
+        unit from either side.
+    tags:
+    - number-theory
+    - pisot-numbers
+    - salem-numbers
+    msc:
+    - 11R06
+    - 11R09
   - slug: rr-equals-nonmeager-paper
     title: The nonmeagre lower bound for the rearrangement number
     summary: Formalizes the inequality non(M) ≤ rr in ZFC via relational systems, category and slalom bounds,
@@ -11052,7 +11150,64 @@ projects:
     msc:
     - 47B06
     - 46B20
-
+  - slug: lean-superorthogonality
+    title: Square-function estimates from type IV superorthogonality
+    summary: Proves the type IV superorthogonality square-function estimate for finite and countable index
+      sets, including the pointwise combinatorial estimate and unconditional convergence in L^(2r).
+    branch: harmonic analysis
+    entry_module: LeanPool.Superorthogonality
+    authors:
+    - Joris Roos
+    source:
+      url: https://github.com/roos-j/lean-superorthogonality
+      github_repo: roos-j/lean-superorthogonality
+      commit: 6d3a3645c1e6f6a3c50bfdc12c4a51250e63bc31
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - Superorthogonal.sqfct_estimate_of_type_iv_superorthogonal
+    main_results:
+    - declaration: Superorthogonal.sqfct_estimate_of_type_iv_superorthogonal
+      informal: For an integer r >= 1, a countable type IV superorthogonal family in L^(2r), with
+        almost-everywhere summable squared norms and square function in L^(2r), converges unconditionally
+        in L^(2r) and satisfies the square-function bound with constant C(r).
+    tags:
+    - harmonic-analysis
+    - superorthogonality
+    - square-functions
+    msc:
+    - 42B25
+    - 46E30
+  - slug: bkarforestformula
+    title: The BKAR forest interpolation formula
+    summary: Proves the Brydges–Kennedy–Abdesselam–Rivasseau forest interpolation formula for smooth functions
+      on a finite complete graph’s edge-coupling space, with unordered forest-cube contributions, ordered
+      sector variants, and choice independence.
+    branch: analysis and mathematical physics
+    entry_module: LeanPool.BKARForestFormula
+    authors:
+    - Scott Armstrong
+    source:
+      url: https://github.com/scottnarmstrong/bkarforestformula
+      github_repo: scottnarmstrong/bkarforestformula
+      commit: a07f44a534240fe6339558951dd78a19e4ef7c51
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - BKAR.bkar_formula_forestIndex_cube_contributions
+    main_results:
+    - declaration: BKAR.bkar_formula_forestIndex_cube_contributions
+      informal: A smooth function evaluated at the all-one configuration is the sum over forests of cube
+        integrals of mixed partial derivatives at path-minimum interpolation points.
+    tags:
+    - analysis
+    - graph-theory
+    - mathematical-physics
+    msc:
+    - 81T08
+    - 05C05
   - slug: regts-sevenster
     title: A proof of the Regts–Sevenster conjecture, formalized
     summary: A Lean 4 proof of the Regts–Sevenster conjecture. A complex-valued graph
