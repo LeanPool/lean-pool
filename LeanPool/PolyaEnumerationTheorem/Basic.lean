@@ -6,10 +6,6 @@ Authors: Luka Opravš
 module
 
 public import Mathlib.GroupTheory.Perm.Cycle.Factors
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Data.Sym.Sym2.Init
-import Mathlib.Tactic.NormNum.GCD
-import Mathlib.Tactic.Positivity.Finset
 /-!
 # Pólya's enumeration theorem
 
@@ -159,8 +155,7 @@ lemma f_mem_fixedBy_iff_forall_eq_to_eq (g : G) (f : X → Y) :
       rfl
     rw [hpow]
     have h_fix_g : ∀ y, f (g • y) = f y := fun y => by
-      have key := h (g • y)
-      simp_all
+      simpa only [inv_smul_smul] using (h (g • y)).symm
     have h_fix : ∀ (k : ℤ) (y : X), f ((g ^ k) • y) = f y := by
       intro k y
       induction k with
@@ -175,8 +170,7 @@ lemma f_mem_fixedBy_iff_forall_eq_to_eq (g : G) (f : X → Y) :
   · intro hyp x
     apply hyp
     apply Quotient.sound
-    refine ⟨1, ?_⟩
-    simp_all
+    exact ⟨1, by simp only [zpow_one, MulAction.toPerm_apply, smul_inv_smul]⟩
 
 /-- A function that maps a coloring from fixed points of `g` to a coloring of cycles. Colorings
     that are fixed by `g` map all elements of a cycle of `g` to the same color by lemma
@@ -270,23 +264,14 @@ theorem numDistinctColorings_mul_card_group_eq_sum_numGroupOfNumCycles_mul_card_
       ∑ i : Fin (Fintype.card X + 1),
         (numGroupOfNumCycles X G i.1) * (Fintype.card Y) ^ i.1 := by
   rw [numDistinctColorings_mul_card_group_eq_sum_card_pow_numCyclesOfGroup]
-  calc
-    ∑ g : G, (Fintype.card Y) ^ (numCyclesOfGroup X g) =
-        ∑ i : Fin (Fintype.card X + 1), ∑ _ ∈ {g : G | numCyclesOfGroup X g = i},
-          (Fintype.card Y) ^ i.1 := by
-      rw [← Finset.sum_fiberwise _ (fun g ↦ (⟨numCyclesOfGroup X g,
-        by
-          apply Order.lt_add_one_iff.2
-          apply Fintype.card_quotient_le⟩
-        : Fin (Fintype.card X + 1))) _]
-      congr
-      ext
-      apply Finset.sum_congr
-      · ext
-        simp [Fin.ext_iff]
-      · simp_all
-    _ = ∑ i : Fin (Fintype.card X + 1),
-          (numGroupOfNumCycles X G i.1) * (Fintype.card Y) ^ i.1 := by simp
+  let cycleCount (g : G) : Fin (Fintype.card X + 1) :=
+    ⟨numCyclesOfGroup X g, Nat.lt_succ_of_le (Fintype.card_quotient_le _)⟩
+  rw [← Finset.sum_fiberwise' Finset.univ cycleCount
+    (fun i ↦ Fintype.card Y ^ i.1)]
+  apply Finset.sum_congr rfl
+  intro i _
+  simp only [cycleCount, Fin.ext_iff, numGroupOfNumCycles,
+    Finset.sum_const, nsmul_eq_mul, Nat.cast_id]
 
 end Theorem
 

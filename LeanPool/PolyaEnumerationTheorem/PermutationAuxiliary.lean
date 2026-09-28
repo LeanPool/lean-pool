@@ -6,12 +6,6 @@ Authors: Luka Opravš
 module
 
 public import Mathlib.GroupTheory.Perm.Cycle.Basic
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Data.Sym.Sym2.Init
-import Mathlib.GroupTheory.Perm.Cycle.Factors
-import Mathlib.Tactic.Linarith.Frontend
-import Mathlib.Tactic.NormNum.GCD
-import Mathlib.Tactic.Positivity.Finset
 /-!
 # Auxiliary results on permutations
 -/
@@ -88,23 +82,14 @@ same element. If `fⁿ⁺¹ x = x`, then for any `k ∈ ℤ`, we have `fᵏ x = 
     that `fⁿ⁺¹ x = x`. -/
 lemma exists_perm_pow [Finite X] (f : Equiv.Perm X) (x : X) :
     ∃ n, (f ^ (n + 1)) x = x := by
-  classical
-  have : Fintype X := Fintype.ofFinite X
-  by_cases hx : x ∈ f.support
-  · refine ⟨(f.cycleOf x).support.card - 1, ?_⟩
-    rw [Nat.sub_add_cancel (by simp [Equiv.Perm.mem_support.1 hx]),
-      ← (f.isCycle_cycleOf (Equiv.Perm.mem_support.1 hx)).orderOf,
-      ← f.cycleOf_pow_apply_self, pow_orderOf_eq_one, Equiv.Perm.one_apply]
-  · exact ⟨0, Equiv.Perm.notMem_support.1 hx⟩
+  refine ⟨orderOf f - 1, ?_⟩
+  rw [Nat.sub_add_cancel (orderOf_pos f), pow_orderOf_eq_one, Equiv.Perm.one_apply]
 
 /-- Given a permutation `f` satisfying `fⁿ x = x` we can reduce `fⁿ*ᵐ⁺ʳ x` to `fʳ x`. -/
 lemma perm_pow_reduce {n m r : ℕ} {f : Equiv.Perm X} {x : X} (h : (f ^ n) x = x) :
     (f ^ (m * n + r)) x = (f ^ r) x := by
-  induction m with
-  | zero => simp
-  | succ k hk =>
-    rw [add_mul, one_mul, add_assoc, add_comm n, ← add_assoc, pow_add]
-    simp [h, hk]
+  rw [Nat.add_comm, pow_add, Nat.mul_comm m n, pow_mul, Equiv.Perm.mul_apply]
+  exact congrArg (f ^ r) (Function.IsFixedPt.perm_pow h m)
 
 /-- Given a permutation `f` satisfying `fⁿ⁺¹ x = x` for some `n : ℕ`, then for any `k : ℤ`,
     `fᵏ x = fᵐ x` for some `m ∈ {0, ..., n}`. -/
@@ -113,39 +98,20 @@ lemma forall_exists_lt_perm_pow_eq_perm_pow {n : ℕ} {f : Equiv.Perm X} {x : X}
     ∀ k : ℤ, ∃ m < n + 1, (f ^ k) x = (f ^ m) x := by
   intro k
   refine ⟨(k % (n + 1 : ℤ)).toNat, ?_, ?_⟩
-  · have hp : (0 : ℤ) < n + 1 := by positivity
-    have hnn : 0 ≤ k % (n + 1 : ℤ) := Int.emod_nonneg k (by linarith)
+  · have hp : (0 : ℤ) < n + 1 := by exact_mod_cast Nat.succ_pos n
+    have hnn : 0 ≤ k % (n + 1 : ℤ) := Int.emod_nonneg k (ne_of_gt hp)
     have hlt : k % (n + 1 : ℤ) < (n + 1 : ℤ) := Int.emod_lt_of_pos k hp
     have heq : ((k % (n + 1 : ℤ)).toNat : ℤ) = k % (n + 1 : ℤ) := Int.toNat_of_nonneg hnn
     omega
-  · have hp : (0 : ℤ) < n + 1 := by positivity
-    have hnn : 0 ≤ k % (n + 1 : ℤ) := Int.emod_nonneg k (by linarith)
-    have heq : ((k % (n + 1 : ℤ)).toNat : ℤ) = k % (n + 1 : ℤ) := Int.toNat_of_nonneg hnn
-    rw [show f ^ ((k % (n + 1 : ℤ)).toNat) = f ^ (((k % (n + 1 : ℤ)).toNat : ℤ)) from
-          (zpow_natCast f _).symm, heq]
-    nth_rewrite 1 [show k = (n + 1 : ℤ) * (k / (n + 1 : ℤ)) + k % (n + 1 : ℤ) from
-          (Int.mul_ediv_add_emod k _).symm]
-    rw [zpow_add, zpow_mul]
-    have hint_h : ((f : Equiv.Perm X) ^ ((n + 1) : ℤ)) x = x := by
-      rwa [show ((n + 1) : ℤ) = ((n + 1 : ℕ) : ℤ) from by push_cast; ring, zpow_natCast]
-    have hfix : ∀ q : ℤ, ((f ^ ((n + 1) : ℤ)) ^ q) x = x := by
-      intro q
-      induction q with
-      | zero => simp
-      | succ m hm => rw [zpow_add_one, Equiv.Perm.mul_apply, hint_h, hm]
-      | pred m hm =>
-        have hinv_fix : (f ^ ((n + 1) : ℤ))⁻¹ x = x :=
-          Equiv.Perm.inv_eq_iff_eq.mpr hint_h.symm
-        rw [zpow_sub_one, Equiv.Perm.mul_apply, hinv_fix, hm]
-    have key : ∀ (q r : ℤ), ((f ^ ((n + 1) : ℤ)) ^ q) ((f ^ r) x) = (f ^ r) x := by
-      intro q r
-      have hcomm : (f ^ ((n + 1) : ℤ)) ^ q * f ^ r = f ^ r * (f ^ ((n + 1) : ℤ)) ^ q := by
-        rw [show (f ^ ((n + 1) : ℤ)) ^ q = f ^ ((n + 1 : ℤ) * q) from (zpow_mul f _ _).symm]
-        exact zpow_mul_comm _ _ _
-      rw [show ((f ^ ((n + 1) : ℤ)) ^ q) ((f ^ r) x) =
-            ((f ^ ((n + 1) : ℤ)) ^ q * f ^ r) x from rfl, hcomm,
-        Equiv.Perm.mul_apply, hfix]
-    exact key _ _
+  · have positive : (0 : ℤ) < n + 1 := by exact_mod_cast Nat.succ_pos n
+    have nonnegative := Int.emod_nonneg k (ne_of_gt positive)
+    rw [← zpow_natCast, Int.toNat_of_nonneg nonnegative]
+    have fixed : (f ^ (n + 1 : ℤ)) x = x := by
+      rw [← Int.natCast_one, ← Int.natCast_add, zpow_natCast]
+      exact h
+    conv_lhs => rw [← Int.emod_add_mul_ediv k (n + 1)]
+    rw [zpow_add, zpow_mul, Equiv.Perm.mul_apply,
+      Function.IsFixedPt.perm_zpow fixed]
 
 end PowersOfPermutation
 
