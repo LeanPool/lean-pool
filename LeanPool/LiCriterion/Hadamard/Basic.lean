@@ -48,6 +48,7 @@ public import Mathlib.Analysis.Complex.TaylorSeries
 public import Mathlib.Analysis.Analytic.Order
 public import Mathlib.Analysis.Normed.Module.MultipliableUniformlyOn
 public import Mathlib.Topology.Algebra.InfiniteSum.UniformOn
+public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import Mathlib.Analysis.Complex.LocallyUniformLimit
 public import Mathlib.Algebra.Polynomial.Degree.Defs
 public import LeanPool.LiCriterion.FunctionsOfOneComplexVariable.EntireLog
@@ -62,6 +63,25 @@ open scoped BigOperators ComplexConjugate
 
 
 namespace Hadamard
+
+/-- Convert a multiplicity-weighted inverse-norm sum to a sum over repeated indices. -/
+lemma summable_sigma_inv_norm_pow_of_weighted
+    {ι : Type*} {z : ι → ℂ} {m : ι → ℕ} {q : ℕ}
+    (hsum : Summable (fun i : ι => (m i : ℝ) / ‖z i‖ ^ q)) :
+    Summable (fun j : Σ i : ι, Fin (m i) => (1 : ℝ) / ‖z j.1‖ ^ q) := by
+  classical
+  have hnonneg : ∀ j : Σ i : ι, Fin (m i),
+      0 ≤ (1 : ℝ) / ‖z j.1‖ ^ q := fun j => by positivity
+  refine (summable_sigma_of_nonneg hnonneg).2 ?_
+  refine ⟨fun _ => Summable.of_finite, ?_⟩
+  refine hsum.congr (fun i => ?_)
+  have heq :
+      (fun b : Fin (m i) =>
+          (1 : ℝ) / ‖z (⟨i, b⟩ : Σ i : ι, Fin (m i)).1‖ ^ q)
+        = (fun _ : Fin (m i) => (1 : ℝ) / ‖z i‖ ^ q) := by
+    funext b; rfl
+  rw [tsum_fintype, heq, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+      nsmul_eq_mul, mul_one_div]
 
 /-- The maximum modulus of f on the circle of radius r.
     M(f,r) = sup {|f(z)| : |z| = r} -/

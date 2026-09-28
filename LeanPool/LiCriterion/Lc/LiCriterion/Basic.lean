@@ -2885,22 +2885,11 @@ theorem summable_inv_norm_sq_zeros_with_multiplicity_of_weighted_genus
     (hgenus : Summable
       (fun ρ : NontrivialZero => (analyticOrderNatAt riemannXi ρ.val : ℝ) / ‖ρ.val‖ ^ 2)) :
     Summable (fun i : XiZeroWithMultiplicity => (1 : ℝ) / ‖i.1.val‖ ^ 2) := by
-  classical
-  have hnonneg : ∀ i : XiZeroWithMultiplicity, 0 ≤ (1 : ℝ) / ‖i.1.val‖ ^ 2 := by
-    intro i
-    positivity
-  refine (summable_sigma_of_nonneg hnonneg).2 ?_
-  refine ⟨fun ρ => summable_of_hasFiniteSupport (Set.toFinite _), ?_⟩
-  refine hgenus.congr (fun ρ => ?_)
-  calc
-    (analyticOrderNatAt riemannXi ρ.val : ℝ) / ‖ρ.val‖ ^ 2
-        = (analyticOrderNatAt riemannXi ρ.val : ℝ) * ((1 : ℝ) / ‖ρ.val‖ ^ 2) := by
-            rw [mul_one_div]
-    _ = ∑' _k : Fin (analyticOrderNatAt riemannXi ρ.val), (1 : ℝ) / ‖ρ.val‖ ^ 2 := by
-          simp
-    _ = ∑' k : Fin (analyticOrderNatAt riemannXi ρ.val),
-          (1 : ℝ) / ‖((⟨ρ, k⟩ : XiZeroWithMultiplicity).1).val‖ ^ 2 := by
-          simp
+  simpa only [XiZeroWithMultiplicity] using
+    (Hadamard.summable_sigma_inv_norm_pow_of_weighted
+      (z := fun ρ : NontrivialZero => ρ.val)
+      (m := fun ρ : NontrivialZero => analyticOrderNatAt riemannXi ρ.val)
+      (q := 2) hgenus)
 
 lemma eventually_le_norm_of_summable_inv_norm_sq_withMultiplicity
     (hgenus : Summable (fun i : XiZeroWithMultiplicity => (1 : ℝ) / ‖i.1.val‖ ^ 2))

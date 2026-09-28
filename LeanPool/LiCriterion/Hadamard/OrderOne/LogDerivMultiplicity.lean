@@ -28,33 +28,11 @@ namespace OrderOne
 /-- Duplicate each index `i` exactly `m i` times. -/
 abbrev WithMultiplicity (ι : Type) (m : ι → ℕ) : Type := Σ i : ι, Fin (m i)
 
--- The multiplicity-aware sigma summability proof is one of the expensive
--- reindexing steps in this file.
 private lemma summable_inv_norm_sq_withMultiplicity_of_summable_mul_inv_norm_sq
     {ι : Type} {z : ι → ℂ} {m : ι → ℕ}
     (h : Summable (fun i : ι => (m i : ℝ) / ‖z i‖ ^ 2))
-    : Summable (fun j : WithMultiplicity ι m => (1 : ℝ) / ‖z j.1‖ ^ 2) := by
-  classical
-  have hnonneg :
-      ∀ j : WithMultiplicity ι m, 0 ≤ (1 : ℝ) / ‖z j.1‖ ^ 2 := by
-    intro j
-    positivity
-  refine
-    (summable_sigma_of_nonneg
-      (f := fun j : WithMultiplicity ι m => (1 : ℝ) / ‖z j.1‖ ^ 2) hnonneg).2 ?_
-  refine ⟨?_, ?_⟩
-  · intro i
-    exact (hasSum_fintype (fun _ : Fin (m i) => (1 : ℝ) / ‖z i‖ ^ 2)).summable
-  · have hrewrite :
-        (fun i : ι => ∑' _ : Fin (m i), (1 : ℝ) / ‖z i‖ ^ 2) =
-          (fun i : ι => (m i : ℝ) / ‖z i‖ ^ 2) := by
-      funext i
-      calc
-        (∑' _ : Fin (m i), (1 : ℝ) / ‖z i‖ ^ 2) =
-            (m i : ℝ) * ((1 : ℝ) / ‖z i‖ ^ 2) := by
-              simp [tsum_fintype, Finset.sum_const, nsmul_eq_mul, Finset.card_univ]
-        _ = (m i : ℝ) / ‖z i‖ ^ 2 := by simp [div_eq_mul_inv]
-    simpa [hrewrite, div_eq_mul_inv] using h
+    : Summable (fun j : WithMultiplicity ι m => (1 : ℝ) / ‖z j.1‖ ^ 2) :=
+  Hadamard.summable_sigma_inv_norm_pow_of_weighted (q := 2) h
 
 -- The `tsum_sigma'` reindexing is the remaining heartbeat hotspot.
 private lemma tsum_withMultiplicity_eq_tsum_sigma

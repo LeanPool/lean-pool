@@ -565,21 +565,8 @@ Reused by both the multipliability and non-vanishing helpers below. -/
 private lemma summable_sigma_inv_norm_pow_generic
     {ι : Type 0} {z : ι → ℂ} {m : ι → ℕ} {p : ℕ}
     (hsum : Summable (fun i : ι => (m i : ℝ) / ‖z i‖ ^ (p + 1))) :
-    Summable (fun j : Σ i : ι, Fin (m i) => (1 : ℝ) / ‖z j.1‖ ^ (p + 1)) := by
-  classical
-  have hnonneg : ∀ j : Σ i : ι, Fin (m i),
-      0 ≤ (1 : ℝ) / ‖z j.1‖ ^ (p + 1) := fun j => by positivity
-  refine (summable_sigma_of_nonneg hnonneg).2 ?_
-  refine ⟨fun _ => Summable.of_finite, ?_⟩
-  refine hsum.congr (fun i => ?_)
-  have heq :
-      (fun b : Fin (m i) =>
-          (1 : ℝ) / ‖z (⟨i, b⟩ : Σ i : ι, Fin (m i)).1‖ ^ (p + 1))
-        = (fun _ : Fin (m i) => (1 : ℝ) / ‖z i‖ ^ (p + 1)) := by
-    funext b; rfl
-  rw [tsum_fintype, heq, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-      nsmul_eq_mul, mul_one_div]
-
+    Summable (fun j : Σ i : ι, Fin (m i) => (1 : ℝ) / ‖z j.1‖ ^ (p + 1)) :=
+  Hadamard.summable_sigma_inv_norm_pow_of_weighted (q := p + 1) hsum
 
 /-- **Summability of `1/‖zWithMultiplicity i‖^(p+1)` over the sigma index type.**
 
