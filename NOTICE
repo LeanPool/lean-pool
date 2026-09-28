@@ -43,7 +43,9 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/CaffarelliKohnNirenberg   https://github.com/scottnarmstrong/CaffarelliKohnNirenberg
   LeanPool/CencovPetz                https://github.com/abenenson/cencov-petz
   LeanPool/CenteredMaximal           https://github.com/CoolRmal/centered-maximal-constant
+  LeanPool/Champernowne              https://github.com/OldMathematician/ChampernowneNormality
   LeanPool/ChannelCapacity           https://github.com/abenenson/channel-capacity
+  LeanPool/ChipFiring                https://github.com/dhyeymavani2003/chip-firing-with-lean
   LeanPool/Chudnovsky                https://github.com/ldct/lean-eval-chudnovsky
   LeanPool/CircuitComplexity         https://github.com/SamuelSchlesinger/circuit-complexity
   LeanPool/Circuitlib                https://github.com/matthunz/circuitlib
@@ -60,6 +62,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/CriticalPortraits         https://github.com/no-way-labs/lean-critical-portraits
   LeanPool/DemazureOperatorsLean     https://github.com/bolito2/DemazureOperatorsLean
   LeanPool/DemazureProduct           https://github.com/npflueger/demazure
+  LeanPool/DensityHalesJewett        https://github.com/gdahia/densityhalesjewett
   LeanPool/Desargues                 https://github.com/oneofvalts/desargues
   LeanPool/Dilatations               https://github.com/rndmx/DilCat
   LeanPool/DistanceGeometry          https://github.com/lyfar/distance-geometry-lean
@@ -150,6 +153,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/MooreBound                https://github.com/woutercvb/wewantmoore
   LeanPool/MoserLatticeColorings     https://github.com/lyfar/moser-lattice-colorings-lean
   LeanPool/MulticolorTriangleRamsey  https://github.com/openai/ten-proofs
+  LeanPool/NagataFactoriality        https://github.com/arthur742ramos/nagatafactoriality
   LeanPool/NashWilliams              https://github.com/yannpequignot/TwoBQO
   LeanPool/NavierStokesAndEuler      https://github.com/openai/NavierStokesAndEuler
   LeanPool/NemytskiiLebesgue         https://github.com/madvorak/nemytskii-lebesgue
@@ -216,6 +220,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/WhiteheadTheorem          https://github.com/jzxia/WhiteheadTheorem
   LeanPool/ZFLean                    https://github.com/VTrelat/ZFLean
   LeanPool/Zeta3Irrational           https://github.com/ahhwuhu/zeta_3_irrational
+  LeanPool/Zeta5Irrational           https://github.com/mo271/Zeta5
   LeanPool/ZetaZeros                 https://github.com/AxiomMath/ZetaZeros
   LeanPool/ZhangYeungInequality      https://github.com/cboone/zhang-yeung-inequality
 
