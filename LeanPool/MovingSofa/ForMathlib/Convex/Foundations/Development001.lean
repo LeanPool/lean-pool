@@ -242,7 +242,8 @@ theorem hausdorffMeasure_frontier_lt_top
     rw [interior_vadd]
     simpa [Set.mem_vadd_set_iff_neg_vadd_mem] using hc
   have hsfinite := hausdorffMeasure_frontier_lt_top_of_mem_nhds_zero hsconv hs₀ hscompact
-  have himage : (fun z : Plane_m58ecd66 ↦ c + z) '' frontier s = frontier (K : Set Plane_m58ecd66) := by
+  have himage : (fun z : Plane_m58ecd66 ↦ c + z) '' frontier s = frontier (K : Set Plane_m58ecd66)
+    := by
     calc
       (fun z : Plane_m58ecd66 ↦ c + z) '' frontier s =
           frontier ((fun z : Plane_m58ecd66 ↦ c + z) '' s) :=

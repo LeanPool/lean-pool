@@ -11,11 +11,10 @@ public import LeanPool.MovingSofa.External
 /-!
 # The moving sofa problem: proofs
 
-Proves the three statements of `MovingSofaSubmission.Challenge`. Two of them are proved in
-earlier files and are available here by import: `MovingSofa.GerversSofa.ABφθSpec.existsUnique`
-in `MovingSofa.Canonical.Definitions`, and `MovingSofa.isMovingSofa_gerversSofa` in
-`MovingSofa.Gerver.Motion`. The main theorem follows from
-the area upper bound `MovingSofa.areaUpperBound`.
+The imported development proves uniqueness of Gerver's defining parameters in
+`MovingSofa.GerversSofa.ABφθSpec.existsUnique` and admissibility of the resulting shape in
+`MovingSofa.isMovingSofa_gerversSofa`. The main theorem combines this admissibility result
+with the proved area upper bound `MovingSofa.areaUpperBound`.
 -/
 
 @[expose] public section

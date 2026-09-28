@@ -668,7 +668,8 @@ theorem gerver_capSupport_identification :
     have h := (hsupG 0 h0mem).2
     rw [add_zero, hpath0, inner_zero_left] at h
     linarith
-  have hstd := gerver_literal_standard_position hTpos hTmem hGcomp hmotioncont hpath0 hpathTy hcapx1 hcapy1 hsv1
+  have hstd := gerver_literal_standard_position hTpos hTmem hGcomp hmotioncont hpath0 hpathTy
+    hcapx1 hcapy1 hsv1
   -- ### Conjunct 5: the paper cap of the sofa is the certified cap
   have hcapOf := gerver_literal_cap_eq hsupG hcapy1
   -- ### Conjunct 6: the cap representative and its contact faces

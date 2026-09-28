@@ -336,7 +336,7 @@ private lemma isOrientedJordanParametrization_positiveGraphLoop (hab : a < b)
 
 /-- The positive subgraph is open, connected, bounded and relatively closed in the complement of
 the loop, hence it is the bounded complementary component. -/
-private lemma jordanInterior_range_positiveGraphLoop (hab : a < b)
+private lemma jordanInterior_range_positiveGraphLoop_of_components (hab : a < b)
     (hf : ContinuousOn f (Set.Icc a b)) (ha : f a = 0) (hb : f b = 0)
     (hpos : ∀ x ∈ Set.Ioo a b, 0 < f x) :
     jordanInterior (Set.range (positiveGraphLoop a b f)) =
@@ -479,7 +479,7 @@ theorem positiveGraphLoop_counterclockwise (a b : ℝ) (hab : a < b) (f : ℝ �
     jordanInterior (Set.range (positiveGraphLoop a b f)) =
       {p : Point | a < p 0 ∧ p 0 < b ∧ 0 < p 1 ∧ p 1 < f (p 0)} :=
   ⟨isOrientedJordanParametrization_positiveGraphLoop hab hf ha hb hpos,
-    jordanInterior_range_positiveGraphLoop hab hf ha hb hpos⟩
+    jordanInterior_range_positiveGraphLoop_of_components hab hf ha hb hpos⟩
 
 end MovingSofa
 

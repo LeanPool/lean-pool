@@ -1354,7 +1354,7 @@ theorem fullExpr_eval_16 (u : Fin 22 → ℝ) :
         Romik.fullDualOutput, Romik.fullVars, Romik.inputDual, Romik.piDual,
         Romik.phiDual, Romik.thetaDual, Romik.etaDual, Romik.tauDual,
         Romik.rotDual, Romik.pathPieceDual, Romik.alphaBetaDual,
-        Romik.pathPrimeDual]; ring
+        Romik.pathPrimeDual]; ring_nf
     _ = Romik.vectorSystem (fullAffine u) (16 : Fin 22) := by
       exact congrFun (Romik.fullDualOutput_model_eq (fullAffine u)) (16 : Fin 22)
 theorem fullExpr_eval_17 (u : Fin 22 → ℝ) :
@@ -1372,7 +1372,7 @@ theorem fullExpr_eval_17 (u : Fin 22 → ℝ) :
         Romik.fullDualOutput, Romik.fullVars, Romik.inputDual, Romik.piDual,
         Romik.phiDual, Romik.thetaDual, Romik.etaDual, Romik.tauDual,
         Romik.rotDual, Romik.pathPieceDual, Romik.alphaBetaDual,
-        Romik.pathPrimeDual]; ring
+        Romik.pathPrimeDual]; ring_nf
     _ = Romik.vectorSystem (fullAffine u) (17 : Fin 22) := by
       exact congrFun (Romik.fullDualOutput_model_eq (fullAffine u)) (17 : Fin 22)
 theorem fullExpr_eval_18 (u : Fin 22 → ℝ) :
@@ -1390,7 +1390,7 @@ theorem fullExpr_eval_18 (u : Fin 22 → ℝ) :
         Romik.fullDualOutput, Romik.fullVars, Romik.inputDual, Romik.piDual,
         Romik.phiDual, Romik.thetaDual, Romik.etaDual, Romik.tauDual,
         Romik.rotDual, Romik.pathPieceDual, Romik.alphaBetaDual,
-        Romik.pathPrimeDual]; ring
+        Romik.pathPrimeDual]; ring_nf
     _ = Romik.vectorSystem (fullAffine u) (18 : Fin 22) := by
       exact congrFun (Romik.fullDualOutput_model_eq (fullAffine u)) (18 : Fin 22)
 theorem fullExpr_eval_19 (u : Fin 22 → ℝ) :
@@ -1408,7 +1408,7 @@ theorem fullExpr_eval_19 (u : Fin 22 → ℝ) :
         Romik.fullDualOutput, Romik.fullVars, Romik.inputDual, Romik.piDual,
         Romik.phiDual, Romik.thetaDual, Romik.etaDual, Romik.tauDual,
         Romik.rotDual, Romik.pathPieceDual, Romik.alphaBetaDual,
-        Romik.pathPrimeDual]; ring
+        Romik.pathPrimeDual]; ring_nf
     _ = Romik.vectorSystem (fullAffine u) (19 : Fin 22) := by
       exact congrFun (Romik.fullDualOutput_model_eq (fullAffine u)) (19 : Fin 22)
 theorem fullExpr_eval_20 (u : Fin 22 → ℝ) :
@@ -1426,7 +1426,7 @@ theorem fullExpr_eval_20 (u : Fin 22 → ℝ) :
         Romik.fullDualOutput, Romik.fullVars, Romik.inputDual, Romik.piDual,
         Romik.phiDual, Romik.thetaDual, Romik.etaDual, Romik.tauDual,
         Romik.rotDual, Romik.pathPieceDual, Romik.alphaBetaDual,
-        Romik.pathPrimeDual]; ring
+        Romik.pathPrimeDual]; ring_nf
     _ = Romik.vectorSystem (fullAffine u) (20 : Fin 22) := by
       exact congrFun (Romik.fullDualOutput_model_eq (fullAffine u)) (20 : Fin 22)
 theorem fullExpr_eval_21 (u : Fin 22 → ℝ) :
@@ -1444,7 +1444,7 @@ theorem fullExpr_eval_21 (u : Fin 22 → ℝ) :
         Romik.fullDualOutput, Romik.fullVars, Romik.inputDual, Romik.piDual,
         Romik.phiDual, Romik.thetaDual, Romik.etaDual, Romik.tauDual,
         Romik.rotDual, Romik.pathPieceDual, Romik.alphaBetaDual,
-        Romik.pathPrimeDual]; ring
+        Romik.pathPrimeDual]; ring_nf
     _ = Romik.vectorSystem (fullAffine u) (21 : Fin 22) := by
       exact congrFun (Romik.fullDualOutput_model_eq (fullAffine u)) (21 : Fin 22)
 

@@ -69,15 +69,25 @@ def stripParallelogram (ω : ℝ) : Set Point × Point × Point :=
 
 /-- Corners, walls, rays and quadrants of a hallway. -/
 structure HallwayParts where
+  /-- The inner reentrant corner of the hallway. -/
   innerCorner : Point
+  /-- The outer corner opposite the inner corner. -/
   outerCorner : Point
+  /-- The outer wall corresponding to the fixed hallway’s line `x = 1`. -/
   a : Set Point
+  /-- The inner wall corresponding to the fixed hallway’s line `x = 0`. -/
   b : Set Point
+  /-- The outer wall corresponding to the fixed hallway’s line `y = 1`. -/
   c : Set Point
+  /-- The inner wall corresponding to the fixed hallway’s line `y = 0`. -/
   d : Set Point
+  /-- The ray on the inner B wall extending away from the corner. -/
   bRay : Set Point
+  /-- The ray on the inner D wall extending away from the corner. -/
   dRay : Set Point
+  /-- The closed quadrant cut out by the two outer walls. -/
   outerQuadrant : Set Point
+  /-- The open forbidden quadrant behind the inner corner. -/
   innerQuadrant : Set Point
 
 /-- The named parts of the fixed hallway. -/

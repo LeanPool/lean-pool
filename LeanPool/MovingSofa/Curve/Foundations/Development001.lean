@@ -2458,10 +2458,12 @@ lemma IsCurveAngleLift.add_principal_basepoint_correction {a b : ℝ}
   have hzne : z u ≠ 0 := fun hzero ↦ hprod (by simp [hzero])
   have hwne : w u ≠ 0 := fun hzero ↦ hprod (by simp [hzero])
   have hc : Real.cos (θ u) = (z u).re / ‖z u‖ := by
-    simpa only [z, pointComplex_re_m85d0e79, Complex.orthonormalBasisOneI.repr.symm.norm_map] using (hθ.2
+    simpa only [z, pointComplex_re_m85d0e79, Complex.orthonormalBasisOneI.repr.symm.norm_map]
+      using (hθ.2
         u).1
   have hs : Real.sin (θ u) = (z u).im / ‖z u‖ := by
-    simpa only [z, pointComplex_im_m85d0e79, Complex.orthonormalBasisOneI.repr.symm.norm_map] using (hθ.2
+    simpa only [z, pointComplex_im_m85d0e79, Complex.orthonormalBasisOneI.repr.symm.norm_map]
+      using (hθ.2
         u).2
   simpa only [z, w, pointComplex_re_m85d0e79, pointComplex_im_m85d0e79,
       Complex.orthonormalBasisOneI.repr.symm.norm_map] using
@@ -2744,10 +2746,12 @@ theorem exists_curveAngleLift_of_avoids {a b : ℝ} (hab : a < b)
   constructor
   · have := congrArg Real.Angle.cos hangle
     rw [Real.Angle.cos_coe, Real.Angle.cos_coe, Complex.cos_arg hne] at this
-    simpa only [pointComplex_re_m8588f5d, Complex.orthonormalBasisOneI.repr.symm.norm_map] using this
+    simpa only [pointComplex_re_m8588f5d, Complex.orthonormalBasisOneI.repr.symm.norm_map] using
+      this
   · have := congrArg Real.Angle.sin hangle
     rw [Real.Angle.sin_coe, Real.Angle.sin_coe, Complex.sin_arg] at this
-    simpa only [pointComplex_im_m8588f5d, Complex.orthonormalBasisOneI.repr.symm.norm_map] using this
+    simpa only [pointComplex_im_m8588f5d, Complex.orthonormalBasisOneI.repr.symm.norm_map] using
+      this
 
 /-- A closed path contained in a strict half-plane about a point has winding zero there. -/
 theorem curveWinding_eq_zero_of_inner_pos {a b : ℝ} (hab : a ≤ b)

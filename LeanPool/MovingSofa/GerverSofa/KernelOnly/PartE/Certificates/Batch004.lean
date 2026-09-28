@@ -20,7 +20,7 @@ noncomputable section
 namespace GerverSofa.PartE.CoverCertificate446b5129d2
 
 private abbrev cellRoot : AngleCell :=
-  (childLH phiBelowCell3330)
+  (childLH (childLL (childHH (childHH (childHH (e24PhiBelowRoot))))))
 
 
 private abbrev cell0 : AngleCell :=
@@ -43,7 +43,7 @@ end GerverSofa.PartE.CoverCertificate446b5129d2
 namespace GerverSofa.PartE.CoverCertificate3d29d6c185
 
 private abbrev cellRoot : AngleCell :=
-  (childHL phiBelowCell3330)
+  (childHL (childLL (childHH (childHH (childHH (e24PhiBelowRoot))))))
 
 
 private abbrev cell0 : AngleCell :=
@@ -114,7 +114,7 @@ end GerverSofa.PartE.CoverCertificate3d29d6c185
 namespace GerverSofa.PartE.CoverCertificate5443a01fd5
 
 private abbrev cellRoot : AngleCell :=
-  (childHH phiBelowCell3330)
+  (childHH (childLL (childHH (childHH (childHH (e24PhiBelowRoot))))))
 
 
 private abbrev cell0 : AngleCell :=
@@ -137,7 +137,7 @@ end GerverSofa.PartE.CoverCertificate5443a01fd5
 namespace GerverSofa.PartE.CoverCertificateef75f67166
 
 private abbrev cellRoot : AngleCell :=
-  (childLL phiBelowCell3331)
+  (childLL (childLH (childHH (childHH (childHH (e24PhiBelowRoot))))))
 
 
 private abbrev cell0 : AngleCell :=
@@ -160,7 +160,7 @@ end GerverSofa.PartE.CoverCertificateef75f67166
 namespace GerverSofa.PartE.CoverCertificate77769ce963
 
 private abbrev cellRoot : AngleCell :=
-  (childLH phiBelowCell3331)
+  (childLH (childLH (childHH (childHH (childHH (e24PhiBelowRoot))))))
 
 
 private abbrev cell0 : AngleCell :=
@@ -183,7 +183,7 @@ end GerverSofa.PartE.CoverCertificate77769ce963
 namespace GerverSofa.PartE.CoverCertificateaaf4f15552
 
 private abbrev cellRoot : AngleCell :=
-  (childHL phiBelowCell3331)
+  (childHL (childLH (childHH (childHH (childHH (e24PhiBelowRoot))))))
 
 
 private abbrev cell0 : AngleCell :=

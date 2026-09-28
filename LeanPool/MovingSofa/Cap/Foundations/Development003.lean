@@ -127,6 +127,7 @@ def SpecialCapSpace :=
 
 /-- A special cap and two convex tails satisfying the support constraints. -/
 structure CapTailSpace where
+  /-- The special cap forming the central component of the triple. -/
   cap : SpecialCapSpace
   rightBody : ConvexBody Point
   leftBody : ConvexBody Point

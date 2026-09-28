@@ -1455,14 +1455,16 @@ private theorem gerver_tail_support_lines (K : SpecialCapSpace) (B D : ConvexBod
     (∀ t : ℝ, HasDerivAt gerverRightTailSupport
      (inner ℝ (paperGerverContacts t 1) (tangentVector (t : Real.Angle))) t) ∧
     (∀ q ∈ (D : Set Point), ∀ s ∈ Set.Icc (Real.pi / 2)
-     (gerverStageTimes 4 + Real.pi / 2), gerverLeftTailSupport s ≤ inner ℝ q (normalVector (s : Real.Angle))) ∧
+     (gerverStageTimes 4 + Real.pi / 2), gerverLeftTailSupport s ≤ inner ℝ q (normalVector (s :
+       Real.Angle))) ∧
     (∀ q ∈ (B : Set Point), ∀ s ∈ Set.Icc (gerverStageTimes 1) (Real.pi / 2),
      gerverRightTailSupport s ≤ inner ℝ q (normalVector (s : Real.Angle))) ∧
     (∀ t ∈ Set.Icc (gerverStageTimes 0) (gerverStageTimes 2),
      inner ℝ (paperGerverContacts t 3) (normalVector ((t + Real.pi / 2 : ℝ) : Real.Angle)) =
        gerverLeftTailSupport (t + Real.pi / 2)) ∧
     (∀ t ∈ Set.Icc (gerverStageTimes 3) (gerverStageTimes 5),
-     inner ℝ (paperGerverContacts t 1) (normalVector (t : Real.Angle)) = gerverRightTailSupport t) := by
+     inner ℝ (paperGerverContacts t 1) (normalVector (t : Real.Angle)) = gerverRightTailSupport t)
+       := by
   -- ### One cap serves every clause, and it carries the literal contact geometry
   obtain ⟨-, hGeq, -, -, hcapeq, -, -⟩ := gerver_capSupport_identification
   have hcarrier : (K.val.val : Set Point) = gerverOuterCap := by rw [hK, hGeq, hcapeq]
@@ -1522,7 +1524,8 @@ private theorem gerver_tail_support_lines (K : SpecialCapSpace) (B D : ConvexBod
     unfold gerverRightTailSupport
     exact hasDerivAt_inner_paperGerverPath_normalVector t
   have hDle : ∀ q ∈ (D : Set Point), ∀ s ∈ Set.Icc (Real.pi / 2)
-      (gerverStageTimes 4 + Real.pi / 2), gerverLeftTailSupport s ≤ inner ℝ q (normalVector (s : Real.Angle)) := by
+      (gerverStageTimes 4 + Real.pi / 2), gerverLeftTailSupport s ≤ inner ℝ q (normalVector (s :
+        Real.Angle)) := by
     intro q hq s hs
     rw [hD] at hq
     have hs' : s - Real.pi / 2 ∈ Set.Icc (0 : ℝ) paperGerverConstants.2.2 :=
@@ -1534,7 +1537,8 @@ private theorem gerver_tail_support_lines (K : SpecialCapSpace) (B D : ConvexBod
     rw [sub_add_cancel] at h
     have hmem : s - Real.pi / 2 ∈ Set.Icc (0 : ℝ) (Real.pi / 2) :=
       ⟨hs'.1, by linarith only [hs'.2, hl ▸ hs'.2, h45, ht5]⟩
-    rw [show gerverLeftTailSupport s = gerverLeftTailSupport (s - Real.pi / 2 + Real.pi / 2) by rw [sub_add_cancel],
+    rw [show gerverLeftTailSupport s = gerverLeftTailSupport (s - Real.pi / 2 + Real.pi / 2) by rw
+      [sub_add_cancel],
       hmDsup _ hmem, sub_add_cancel]
     exact h
   have hBle : ∀ q ∈ (B : Set Point), ∀ s ∈ Set.Icc (gerverStageTimes 1) (Real.pi / 2),
@@ -1557,7 +1561,8 @@ private theorem gerver_tail_support_lines (K : SpecialCapSpace) (B D : ConvexBod
     have h := (mem_rotatingHallwayParts_dRay_iff _ _ _).mp (hDwall t ht).2
     rw [normalVector_add_pi_div_two_real, hmDval t, h.2, hsupv t htI, Real.Angle.coe_add]
   have hBtouch : ∀ t ∈ Set.Icc (gerverStageTimes 3) (gerverStageTimes 5),
-      inner ℝ (paperGerverContacts t 1) (normalVector (t : Real.Angle)) = gerverRightTailSupport t := by
+      inner ℝ (paperGerverContacts t 1) (normalVector (t : Real.Angle)) = gerverRightTailSupport t
+        := by
     intro t ht
     have htI : t ∈ Set.Icc (0 : ℝ) (Real.pi / 2) :=
       ⟨by linarith only [ht.1, h01, h12, h23], ht5 ▸ ht.2⟩
@@ -1624,7 +1629,8 @@ private theorem gerver_tail_contact_faces (K : SpecialCapSpace) (B D : ConvexBod
   have hmemB5 : Real.pi / 2 ∈ Set.Icc (gerverStageTimes 3) (gerverStageTimes 5) :=
     ⟨by linarith only [h34, h45], ht5.ge⟩
   have hDleIoo : ∀ q ∈ (D : Set Point), ∀ s ∈ Set.Ioo (Real.pi / 2)
-      (gerverStageTimes 4 + Real.pi / 2), gerverLeftTailSupport s ≤ inner ℝ q (normalVector (s : Real.Angle)) :=
+      (gerverStageTimes 4 + Real.pi / 2), gerverLeftTailSupport s ≤ inner ℝ q (normalVector (s :
+        Real.Angle)) :=
     fun q hq s hs ↦ hDle q hq s ⟨hs.1.le, hs.2.le⟩
   have hBleIoo : ∀ q ∈ (B : Set Point), ∀ s ∈ Set.Ioo (gerverStageTimes 1) (Real.pi / 2),
       gerverRightTailSupport s ≤ inner ℝ q (normalVector (s : Real.Angle)) :=
@@ -1634,7 +1640,8 @@ private theorem gerver_tail_contact_faces (K : SpecialCapSpace) (B D : ConvexBod
     intro t ht
     have htI : t ∈ Set.Icc (gerverStageTimes 0) (gerverStageTimes 2) := ⟨ht.1.le, ht.2⟩
     rw [ht0] at ht
-    have h := exposedEdge_add_pi_eq_singleton_of_mem_Ioo (L := D) (m := gerverLeftTailSupport) (t := t + Real.pi / 2)
+    have h := exposedEdge_add_pi_eq_singleton_of_mem_Ioo (L := D) (m := gerverLeftTailSupport) (t
+      := t + Real.pi / 2)
       ⟨by linarith only [ht.1], by linarith only [ht.2, h24]⟩ hDleIoo (hDmem t htI)
       (hDtouch t htI) (hmDderiv t)
     rwa [hcast _ _ (show t + Real.pi / 2 + Real.pi = 3 * Real.pi / 2 + t by ring)] at h
@@ -1643,7 +1650,8 @@ private theorem gerver_tail_contact_faces (K : SpecialCapSpace) (B D : ConvexBod
     intro t ht
     have htI : t ∈ Set.Icc (gerverStageTimes 3) (gerverStageTimes 5) := ⟨ht.1, ht.2.le⟩
     rw [ht5] at ht
-    have h := exposedEdge_add_pi_eq_singleton_of_mem_Ioo (L := B) (m := gerverRightTailSupport) (t := t)
+    have h := exposedEdge_add_pi_eq_singleton_of_mem_Ioo (L := B) (m := gerverRightTailSupport) (t
+      := t)
       ⟨by linarith only [ht.1, h12, h23], ht.2⟩ hBleIoo (hBmem t htI) (hBtouch t htI)
       (hmBderiv t)
     rwa [hcast _ _ (show t + Real.pi = Real.pi + t by ring)] at h
@@ -1653,7 +1661,8 @@ private theorem gerver_tail_contact_faces (K : SpecialCapSpace) (B D : ConvexBod
       gerverLeftTailSupport (gerverStageTimes 4 + Real.pi / 2) := by
     rw [hmDval, normalVector_add_pi_div_two_real, gerver_niche_piece_endpoints.2.1]
   have hBjoin : inner ℝ (paperGerverContacts (gerverStageTimes 3) 1)
-      (normalVector ((gerverStageTimes 1 : ℝ) : Real.Angle)) = gerverRightTailSupport (gerverStageTimes 1) := by
+      (normalVector ((gerverStageTimes 1 : ℝ) : Real.Angle)) = gerverRightTailSupport
+        (gerverStageTimes 1) := by
     simp only [gerverRightTailSupport]
     rw [gerver_niche_piece_endpoints.1]
   have hDouter : paperGerverContacts (gerverStageTimes 2) 3 ∈

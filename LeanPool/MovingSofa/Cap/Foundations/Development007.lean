@@ -855,9 +855,13 @@ namespace MovingSofa
 
 /-- The distinguished inner wall, upper half-plane, fan point and corner on one side. -/
 structure DistinguishedCapSide where
+  /-- The distinguished inner supporting wall. -/
   wall : Set Point
+  /-- The upper half-plane selected at the distinguished wall. -/
   upperHalfPlane : Set Point
+  /-- The corresponding endpoint of the cap fan. -/
   fanPoint : Point
+  /-- The inner hallway corner at the distinguished angle. -/
   corner : Point
 
 /-- The right and left cap geometry at the two distinguished Gerver angles. -/
