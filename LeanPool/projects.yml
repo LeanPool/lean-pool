@@ -1,4 +1,65 @@
 projects:
+  - slug: zeta-five-irrational
+    title: Irrationality of the Riemann zeta function at five
+    summary: >-
+      Proves that Mathlib's Riemann zeta function at five is an irrational
+      real number, following Aabir Fauzan's September 2026 preprint.
+      Constructs integer polynomials of degree 37n with positive values
+      at zeta(5) that decay exponentially in n squared. Includes a general
+      integer-polynomial irrationality criterion, Hankel determinant and
+      moment-integral identities, logarithmic-energy estimates, prime-adic
+      integrality bounds, and kernel-checked rational certificates. The
+      formalization uses a different normalizer and a positive decay
+      constant in place of the paper's specific constant 139/5. Reuses the
+      prime number theorem infrastructure already in the MooreBound project.
+    branch: number theory
+    entry_module: LeanPool.Zeta5Irrational
+    authors:
+      - Moritz Firsching
+    source:
+      title: Zeta5 formalization of Aabir Fauzan's zeta(5) is irrational
+      url: https://github.com/mo271/Zeta5/tree/f19a1960609f7d38e7b63fd2acb05e6f60a7b741
+      github_repo: mo271/Zeta5
+      commit: f19a1960609f7d38e7b63fd2acb05e6f60a7b741
+    license: Apache-2.0
+    status: verified
+    provenance: mix
+    main_declarations:
+      - Zeta5Irrational.irrational_five
+    main_results:
+      - declaration: Zeta5Irrational.irrational_five
+        informal: >-
+          There exists an irrational real number x whose complex coercion
+          equals Mathlib's Riemann zeta function evaluated at five.
+        source_ref: >-
+          Fauzan, zeta(5) is irrational, Theorem 1.1, September 17, 2026,
+          https://doi.org/10.5281/zenodo.22826419; upstream Apery/Main.lean.
+          The completed formalization was released on September 23, 2026.
+      - declaration: Zeta5Irrational.main_estimate
+        informal: >-
+          There is a positive real c such that, for all sufficiently large
+          n, an integer polynomial Q of degree 37n is a positive rational
+          multiple of the constructed determinant polynomial and satisfies
+          0 < Q(zeta(5)) < exp(-c*n^2).
+        source_ref: >-
+          Upstream Apery/MainEstimate.lean; variant of the paper's Theorem 2.1
+          with c = -800*(Aeff + U) instead of 139/5.
+      - declaration: Zeta5Irrational.irrational_of_eventually_exists_int_poly
+        informal: >-
+          A real xi is irrational if, eventually, integer polynomials of
+          degree at most d(n) have positive values at xi bounded by epsilon(n),
+          and b^d(n)*epsilon(n) tends to zero for every positive natural b.
+        source_ref: Upstream Apery/Criterion.lean; the paper's Section 1.1.
+    tags:
+      - irrationality
+      - zeta-function
+      - hankel-determinants
+      - potential-theory
+      - certified-computation
+    msc:
+      - 11J72
+      - 11M06
+      - 31A15
   - slug: block-spectral-sensitivity
     title: Block sensitivity can exceed spectral sensitivity squared
     summary: >-
@@ -10576,3 +10637,252 @@ projects:
     - 20E05
     - 68Q45
     - 03B35
+
+  - slug: boolean-multiplication
+    title: Exact Boolean multiplicative complexity of four-term polynomial multiplication
+    summary: >-
+      Proves that multiplying two binary polynomials with n coefficients needs
+      exactly 0, 1, 3, 6, and 9 AND gates for n = 0, 1, 2, 3, and 4, with XOR
+      and constants free and arbitrary reuse of earlier nonlinear wires.
+      The main lower bound excludes every eight-gate circuit for n = 4.
+      Develops Boolean algebraic normal forms equivalent to all Boolean
+      functions, a general circuit model, dimension bounds, circuit rewiring,
+      a Reed-Muller minimum-weight theorem, and exterior-algebra and jet
+      arguments controlling nonlinear feedback.
+    branch: computational complexity
+    entry_module: LeanPool.BooleanMultiplication
+    authors:
+      - Gregory Morse
+    source:
+      title: >-
+        Unrestricted Boolean Multiplicative Complexity of Four-Term Binary
+        Polynomial Multiplication: Rational Places, Hasse Jets, and the
+        Failure of Nonlinear Feedback
+      arxiv: '2608.30238v1'
+      url: https://github.com/GregoryMorse/unrestricted-boolean-mul/tree/79a801760668f52bb00a9e1a406e841375c58a6d
+      github_repo: GregoryMorse/unrestricted-boolean-mul
+      commit: 79a801760668f52bb00a9e1a406e841375c58a6d
+      announcement_date: '2026-08-31T04:33:48Z'
+      announcement_url: https://github.com/GregoryMorse/unrestricted-boolean-mul/releases/tag/n4-arxiv-v2
+      notes: >-
+        The complete Lean release predates the arXiv v1 submission of
+        2026-08-31T04:45:12Z. The selected September 22 commit corrects
+        release metadata; eligibility rests on the complete August 31 Lean release at
+        2ebc0cf42039e4b5de84cb7f9d97cad4791c669d. The August 29 release
+        contained computational artifacts, not the Lean formalization.
+        The author discloses GPT-5.6 Sol for original research and proof
+        development, Opus 5 as a critical referee, and Codex for release
+        preparation. Gregory Morse directed and reviewed the work and
+        assumes responsibility. AI provenance records the proof-producing
+        agent workflow; human direction alone is not classified as mixed
+        formalization. The complete upstream MIT notice is retained in
+        LeanPool/BooleanMultiplication.lean. Only the published n <= 4
+        dependency closure is imported; no n = 5 or n = 6 claim is made.
+    license: MIT
+    status: verified
+    provenance: AI
+    main_declarations:
+      - UnrestrictedBooleanMul.N4.mc_mul_four
+    main_results:
+      - declaration: UnrestrictedBooleanMul.mc_mul_zero
+        informal: The empty polynomial multiplication map needs zero AND gates.
+        source_ref: Proposition 2.3; the n = 0 target has no output coordinates.
+      - declaration: UnrestrictedBooleanMul.mc_mul_one
+        informal: Multiplying two one-coefficient binary polynomials needs exactly one AND gate.
+        source_ref: Proposition 2.3.
+      - declaration: UnrestrictedBooleanMul.mc_mul_two
+        informal: Multiplying two two-coefficient binary polynomials needs exactly three AND gates.
+        source_ref: Proposition 2.3.
+      - declaration: UnrestrictedBooleanMul.mc_mul_three
+        informal: Multiplying two three-coefficient binary polynomials needs exactly six AND gates.
+        source_ref: Proposition 2.4; the lower bound is proved internally.
+      - declaration: UnrestrictedBooleanMul.N4.mc_mul_four
+        informal: >-
+          Multiplying two four-coefficient binary polynomials needs exactly
+          nine AND gates, allowing free XOR, constants, and unrestricted
+          nonlinear reuse.
+        source_ref: Theorem 9.1.
+      - declaration: UnrestrictedBooleanMul.N4.no_eight_gate_circuit
+        informal: >-
+          No eight-AND circuit with free XOR, constants, and arbitrary
+          nonlinear reuse computes all seven output coefficients of the
+          product of two four-coefficient binary polynomials.
+        source_ref: Theorem 9.1, lower bound.
+    tags:
+      - computational-complexity
+      - boolean-circuits
+      - polynomial-multiplication
+      - algebraic-normal-form
+    msc:
+      - '68Q06'
+      - '68Q17'
+      - '68W30'
+      - '15A75'
+      - '94D10'
+  - slug: champernowne-normality
+    title: Champernowne normality in every base
+    summary: >-
+      Proves that concatenating the base-b digits of the positive integers
+      gives a normal digit sequence for every integer base b at least 2:
+      every nonempty length-k word of digits below b has limiting frequency
+      b^(-k). This is a discrete, all-base generalization of D. G.
+      Champernowne's 1933 base-ten result, without a real-number expansion
+      bridge. Includes reusable substring-counting inequalities, a
+      digit-string equivalence, exact cohort counts, and quantitative prefix
+      bounds used to establish the frequency limit.
+    branch: number theory and asymptotic analysis
+    entry_module: LeanPool.Champernowne
+    authors:
+      - Arthur Champernowne
+    source:
+      title: Champernowne Sequence Normality Proof
+      authors:
+        - Arthur Champernowne
+      url: https://github.com/OldMathematician/ChampernowneNormality
+      github_repo: OldMathematician/ChampernowneNormality
+      commit: 31a76dbde2727745beb6fb81af4cab1ce6a15fda
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - Champernowne.champernowne_normal
+    main_results:
+      - declaration: Champernowne.champernowne_normal
+        informal: >-
+          For every integer base b at least 2, the sequence formed by
+          concatenating the base-b digits of 1, 2, 3, and so on is normal:
+          each nonempty word w of digits below b has limiting occurrence
+          frequency 1 / b^(length w), counting overlapping occurrences.
+      - declaration: Champernowne.champernowne_normal_ten
+        informal: >-
+          The decimal digit sequence 123456789101112... is normal in base ten.
+      - declaration: Champernowne.sum_countOccurrences_cohort
+        informal: >-
+          For a nonempty length-k word of base-b digits with nonzero first
+          digit and k at most m, its total occurrences inside all m-digit
+          positive integers equal b^(m-k) + (m-k)(b-1)b^(m-k-1), with natural
+          subtraction in the exponents.
+      - declaration: Champernowne.sum_countOccurrences_cohort_zero
+        informal: >-
+          For a nonempty length-k word of base-b digits starting with zero
+          and k at most m, its total occurrences inside all m-digit positive
+          integers equal (m-k)(b-1)b^(m-k-1), with natural subtraction in the
+          exponent.
+    tags:
+      - normal-numbers
+      - digit-expansions
+      - combinatorics-on-words
+      - asymptotic-frequency
+    msc:
+      - 11K16
+      - 68R15
+  - slug: chip-firing-with-lean
+    title: Chip-Firing with Lean 4
+    summary: A Lean 4 / Mathlib formalization of Baker and Norine's Riemann-Roch theorem for
+      finite graphs. Chip configurations on a finite graph, modulo chip-firing moves, form an
+      abelian group analogous to the group of line bundles on a compact Riemann surface. Each
+      class can be assigned a rank, analogous to the dimension of a linear series. These ranks
+      then satisfy a formula of the form r(D) - r(K-D) = deg D + 1 - g, in exact analogy to
+      Riemann surfaces. This formula is formalized, along with the analog of Clifford's theorem
+      for finite graphs.
+    branch: combinatorics
+    entry_module: LeanPool.ChipFiring
+    authors:
+    - Dhyey Dharmendrakumar Mavani
+    - Nathan Pflueger
+    source:
+      url: https://github.com/dhyeymavani2003/chip-firing-with-lean
+      github_repo: dhyeymavani2003/chip-firing-with-lean
+      commit: 5b422d855c02af60591121ba7c11b5e8242542b8
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - ChipFiring.Propositions.riemann_roch
+    - ChipFiring.Propositions.clifford
+    main_results:
+    - declaration: ChipFiring.Propositions.riemann_roch
+      informal: For a finite connected graph, the ranks of a divisor and its canonical complement
+        satisfy the graph Riemann–Roch formula.
+    - declaration: ChipFiring.Propositions.clifford
+      informal: For a special divisor on a finite connected graph, its rank is at most half
+        its degree.
+    tags:
+    - combinatorics
+    msc:
+    - 05C57
+    - 14T20
+    provenance: mix
+  - slug: densityhalesjewett
+    title: The density Hales–Jewett theorem and Szemerédi's theorem
+    summary: 'A Lean 4 formalization of the density Hales–Jewett theorem: for every finite alphabet
+      α and every density δ > 0, all sufficiently large n have the property that any set of
+      at least δ·|α|^n words of length n over α contains a combinatorial line. The basis for
+      the formalization is the combinatorial proof of Dodos, Kanellopoulos, and Tyros. As a
+      consequence, we also formalize Szemerédi''s theorem on the integers: for every k ≥ 3 and
+      δ > 0, the following holds for all sufficiently large n. Any subset of {0, …, n−1} of
+      size at least δ·n contains a nonconstant arithmetic progression of length k.'
+    branch: combinatorics
+    entry_module: LeanPool.DensityHalesJewett
+    authors:
+    - Gabriel Dahia
+    source:
+      url: https://github.com/gdahia/densityhalesjewett
+      github_repo: gdahia/densityhalesjewett
+      commit: 1c2f5aa1b99caa8e2a87beacf80f07f066c309d3
+    license: Apache-2.0
+    status: verified
+    main_declarations:
+    - Combinatorics.Line.exists_of_density_atTop
+    main_results:
+    - declaration: Combinatorics.Line.exists_of_density_atTop
+      informal: Every positive-density subset of sufficiently long words over a finite nontrivial
+        alphabet contains a combinatorial line.
+    - declaration: Combinatorics.ArithmeticProgression.exists_of_density_nat_atTop
+      informal: Every positive-density subset of a sufficiently long initial interval of the
+        natural numbers contains an arithmetic progression of any prescribed length at least
+        three with nonzero common difference.
+    tags:
+    - combinatorics
+    msc:
+    - 05D10
+    - 05A05
+    - 11B75
+    - 68R15
+    provenance: AI
+  - slug: nagatafactoriality
+    title: Nagata's prime-generated factoriality theorem
+    summary: Nagata’s factoriality criterion for noetherian domains localized at prime-generated
+      multiplicative sets, with concrete and abstract localization interfaces and applications
+      to polynomial rings through Laurent and fraction-field localizations.
+    branch: commutative algebra
+    entry_module: LeanPool.NagataFactoriality
+    authors:
+    - Arthur F. Ramos
+    - Ruy J. G. B. de Queiroz
+    - Anjolina G. de Oliveira
+    source:
+      url: https://github.com/arthur742ramos/nagatafactoriality
+      github_repo: arthur742ramos/nagatafactoriality
+      commit: 2efdf7f86085972bd758449ca43c76a2e7bdf4af
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    provenance_note: >-
+      Inferred from explicit Copilot coauthor trailers in the pinned upstream history:
+      83.5% of surviving noncomment Lean code lines, including 94.8% of the core
+      localization lemmas and 96.6% of the theorem module, trace to those commits.
+      Commits 5b1698879b05fc76597723347544cb0b02c268c4 and
+      ef73ee27e4b0a8d1260350801c6915bfb56b6658 add substantial new proofs, including
+      prime-generated descent and the fraction-field polynomial application.
+      Coauthorship records support this classification but do not identify who
+      wrote each individual line.
+    main_declarations:
+    - NagataFactoriality.nagata_theorem
+    main_results:
+    - declaration: NagataFactoriality.nagata_theorem
+      informal: A noetherian integral domain is a unique factorization domain when localization
+        at a prime-generated multiplicative set is a unique factorization domain.
+    tags:
+    - commutative-algebra
+    msc:
+    - 13F15
