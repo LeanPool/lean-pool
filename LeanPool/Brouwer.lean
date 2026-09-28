@@ -7,8 +7,6 @@ module
 
 public import LeanPool.Brouwer.Nash
 public import LeanPool.Brouwer.Primitive
-import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Existence of Nash equilibria via Brouwer's fixed-point theorem
