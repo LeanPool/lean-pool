@@ -8,9 +8,6 @@ module
 public import LeanPool.Brouwer.Simplex
 import LeanPool.Brouwer.Brouwer
 import Mathlib.Algebra.BigOperators.Field
-import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.Data.Sym.Sym2.Init
 import Mathlib.Tactic.Positivity.Finset
 
 /-!
