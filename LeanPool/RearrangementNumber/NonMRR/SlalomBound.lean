@@ -28,6 +28,7 @@ open Cardinal
 namespace NonMRR
 
 /-- The norm of the specific bounded-slalom relation used in the construction. -/
+@[expose]
 noncomputable def blockSlalomNumber : Cardinal :=
   (slalomRelation blockCapacity blockCapacity_pos).norm
 

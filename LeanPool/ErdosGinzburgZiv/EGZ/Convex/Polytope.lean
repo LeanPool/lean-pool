@@ -50,6 +50,7 @@ def IsIntrinsicInteger {n : ℕ} (P : RationalPolytope n) (q : RealCoord n) : Pr
     q ∈ affineIntSpan (P.vertexSet ∩ F.carrier)
 
 /-- A hollow polytope has no intrinsic integer points other than vertices. -/
+@[expose]
 def IsHollow {n : ℕ} (P : RationalPolytope n) : Prop :=
   ∀ q ∈ P.carrier, P.IsIntrinsicInteger q → q ∈ P.vertexSet
 

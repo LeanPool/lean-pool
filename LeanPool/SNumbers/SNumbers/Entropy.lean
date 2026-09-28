@@ -106,7 +106,7 @@ where one is needed; the topological work is done by
 `Metric.totallyBounded_iff`.
 -/
 
-@[expose] public section
+public section
 
 universe u
 
@@ -132,6 +132,7 @@ def entropySet (S : X →L[𝕜] Y) (n : ℕ) : Set ℝ :=
 /-- The `n`-th **entropy number** of a continuous linear map: the infimum of
 the radii `ε > 0` for which `S(B_X)` is covered by at most `2 ^ n` closed
 `ε`-balls. -/
+@[expose]
 noncomputable def entropyNumber (S : X →L[𝕜] Y) (n : ℕ) : ℝ :=
   sInf (entropySet S n)
 

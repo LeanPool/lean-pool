@@ -148,7 +148,7 @@ theorem edgeSecond_faceEdge_mem_face (f : K.Face) (i : ZMod 3) :
   K.faceEdge_subset_faceVertices f i (K.edgeSecond_mem (K.faceEdge f i))
 
 /-- The standard plane realization of one locally finite closed face. -/
-noncomputable def facePlaneHomeomorph (f : K.Face) :
+@[expose] noncomputable def facePlaneHomeomorph (f : K.Face) :
     K.ClosedFace f ≃ₜ standardTrianglePlaneComplex.support :=
   (K.faceReindexHomeomorph f).trans
     (standardSimplexRealizationHomeomorph.trans

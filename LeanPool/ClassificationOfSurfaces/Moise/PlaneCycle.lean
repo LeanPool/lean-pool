@@ -193,7 +193,7 @@ end PlaneComplex
 
 /-- Change only the endpoint witnesses of a path.  Its underlying function, and hence its range
 and injectivity, are unchanged. -/
-def Path.copy {X : Type*} [TopologicalSpace X] {a b a' b' : X}
+@[expose] def Path.copy {X : Type*} [TopologicalSpace X] {a b a' b' : X}
     (p : Path a b) (ha : a = a') (hb : b = b') : Path a' b' where
   toFun := p
   continuous_toFun := p.continuous

@@ -1042,15 +1042,19 @@ theorem _root_.LieAlgebra.Dim3.Family.B_basis_0 {hα : α ≠ 0} : ((commutatorB
     (e₂ : Family K α β) := by
   unfold commutatorBasis
   rw [Basis.map_apply]
-  simp only [LinearEquiv.coe_ofEq_apply,
-    Basis.coe_span_apply, B, Matrix.cons_val_zero]
+  change (↑((LinearEquiv.ofEq _ _ _)
+    ((Basis.span (B_is_li_ambient (α := α) (β := β))) 0)) : Family K α β) = e₂
+  rw [LinearEquiv.coe_ofEq_apply, Basis.span_apply]
+  rfl
 
 theorem _root_.LieAlgebra.Dim3.Family.B_basis_1 {hα : α ≠ 0} : ((commutatorBasis α β hα) 1).val =
     (e₃ : Family K α β) := by
   unfold commutatorBasis
   rw [Basis.map_apply]
-  simp only [LinearEquiv.coe_ofEq_apply,
-    Basis.coe_span_apply, B, Matrix.cons_val_one, Matrix.cons_val_fin_one]
+  change (↑((LinearEquiv.ofEq _ _ _)
+    ((Basis.span (B_is_li_ambient (α := α) (β := β))) 1)) : Family K α β) = e₃
+  rw [LinearEquiv.coe_ofEq_apply, Basis.span_apply]
+  rfl
 
 theorem _root_.LieAlgebra.Dim3.Family.B_basis_repr {hα : α ≠ 0} {x : commutator K
     (Family K α β)} : (commutatorBasis α β hα).repr x = ![x.val 1, x.val 2] := by

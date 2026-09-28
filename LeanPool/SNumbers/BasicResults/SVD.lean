@@ -49,7 +49,7 @@ operators.
   operator (Bessel plus a row bound).
 -/
 
-@[expose] public section
+public section
 
 universe u
 

@@ -145,6 +145,7 @@ lemma forest_edge_formula (H : SimpleGraph V) [DecidableRel H.Adj] (hH : H.IsAcy
     (SimpleGraph.fromEdgeSet (A : Set (Sym2 V))).IsAcyclic
 
 /-- A nonforest edge subset that becomes a forest after deleting any edge. -/
+@[expose]
 def IsGraphCircuit (G : SimpleGraph V) (C : Finset (Sym2 V)) : Prop :=
   C ⊆ graphEdgeFinset G ∧
     ¬IsGraphForest G C ∧

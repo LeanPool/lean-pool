@@ -129,11 +129,13 @@ namespace FlagDecompositionRaw
 variable {p d : ℕ} [NeZero p] {F : ConvexFlag}
 
 /-- Sum of all local summands at an ambient point. -/
+@[expose]
 noncomputable def retainedWeight (pieces : F.Node → FpCoord p d → ℕ)
     (v : FpCoord p d) : ℕ :=
   ∑ x, pieces x v
 
 /-- The cumulative function `f_{≼ x}`. -/
+@[expose]
 noncomputable def cumulativeWeight (pieces : F.Node → FpCoord p d → ℕ)
     (x : F.Node) (v : FpCoord p d) : ℕ := by
   classical
@@ -146,6 +148,7 @@ noncomputable def cumulativeWeight (pieces : F.Node → FpCoord p d → ℕ)
   exact ∑ v, if φ v = c then w v else 0
 
 /-- The local centered lift `f_x°`, using only the summand based at `x`. -/
+@[expose]
 noncomputable def localLift (R : FpRepresentation p d F)
     (pieces : F.Node → FpCoord p d → ℕ) (x : F.Node)
     (q : IntCoord (F.rank x)) : ℕ := by
@@ -155,6 +158,7 @@ noncomputable def localLift (R : FpRepresentation p d F)
     else 0
 
 /-- The cumulative centered lift `hat f_x`. -/
+@[expose]
 noncomputable def hat (R : FpRepresentation p d F)
     (pieces : F.Node → FpCoord p d → ℕ) (x : F.Node)
     (q : IntCoord (F.rank x)) : ℕ := by
@@ -235,16 +239,19 @@ noncomputable def retainedWeight (Φ : FlagDecomposition p d f) : FpCoord p d �
   FlagDecompositionRaw.retainedWeight Φ.localWeight
 
 /-- Cumulative function `f_{≼ x}`. -/
+@[expose]
 noncomputable def cumulativeWeight (Φ : FlagDecomposition p d f)
     (x : Φ.flag.Node) : FpCoord p d → ℕ :=
   FlagDecompositionRaw.cumulativeWeight Φ.localWeight x
 
 /-- Local centered lifted function `f_x°`. -/
+@[expose]
 noncomputable def localLift (Φ : FlagDecomposition p d f) (x : Φ.flag.Node) :
     IntCoord (Φ.flag.rank x) → ℕ :=
   FlagDecompositionRaw.localLift Φ.representation Φ.localWeight x
 
 /-- Cumulative centered lifted function `hat f_x`. -/
+@[expose]
 noncomputable def hat (Φ : FlagDecomposition p d f) (x : Φ.flag.Node) :
     IntCoord (Φ.flag.rank x) → ℕ :=
   FlagDecompositionRaw.hat Φ.representation Φ.localWeight x

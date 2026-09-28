@@ -52,6 +52,7 @@ theorem lift_last (x : Φ.flag.Node) (v : FpCoord p d) :
 
 open Classical in
 /-- The finite-field affine map augmented by the same sequence of directions. -/
+@[expose]
 def map (x : Φ.flag.Node) : FpCoord p d →ᵃ[ZMod p] FpCoord p (Φ.flag.rank x + e x) :=
   Coord.append (Φ.representation.map x) (AffineMap.pi fun i : Fin (e x) ↦ ξ i)
 

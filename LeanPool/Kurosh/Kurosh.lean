@@ -862,12 +862,12 @@ theorem actionOrbitMk_smul (A : Type w) (X : Type w) [Group A] [MulAction A X]
   RawBassSerreVertex.factor e.2 (factorCosetMk G e.2 e.1)
 
 /-- Translate an unbundled edge by left multiplication on its group coordinate. -/
-def rawBassSerreEdgeDataAction {ι : Type v} (G : ι → Type u)
+@[expose] def rawBassSerreEdgeDataAction {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (a : FreeProduct G) (e : rawBassSerreEdgeData G) :
     rawBassSerreEdgeData G :=
   (a * e.1, e.2)
 
-instance rawBassSerreEdgeDataMulAction {ι : Type v} (G : ι → Type u)
+@[expose] instance rawBassSerreEdgeDataMulAction {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] : MulAction (FreeProduct G) (rawBassSerreEdgeData G) where
   smul := rawBassSerreEdgeDataAction G
   one_smul e := by
@@ -902,7 +902,7 @@ instance rawBassSerreVertexSubgroupMulAction {ι : Type v} (G : ι → Type u)
   one_smul x := by simp
   mul_smul a b x := by simp [mul_smul]
 
-instance rawBassSerreEdgeDataSubgroupMulAction {ι : Type v} (G : ι → Type u)
+@[expose] instance rawBassSerreEdgeDataSubgroupMulAction {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G)) :
     MulAction H (rawBassSerreEdgeData G) where
   smul h e := h.1 • e
@@ -928,7 +928,7 @@ theorem rawBassSerreEdgeDataOf_target {ι : Type v} (G : ι → Type u)
   cases e using RawBassSerreEdge.casesOn; rfl
 
 /-- Translate a Bass-Serre edge and both endpoints by a group element. -/
-def rawBassSerreEdgeAction {ι : Type v} (G : ι → Type u)
+@[expose] def rawBassSerreEdgeAction {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (g : FreeProduct G) {a b : RawBassSerreVertex G}
     (e : a ⟶ b) : g • a ⟶ g • b := by
   cases e using RawBassSerreEdge.casesOn with

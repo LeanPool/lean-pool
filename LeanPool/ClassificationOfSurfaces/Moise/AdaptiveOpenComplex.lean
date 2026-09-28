@@ -65,7 +65,7 @@ instance (priority := 100) defaultAdaptiveSafety : AdaptiveSafety K U where
   hereditary hts hs := hts.trans hs
 
 /-- The active safety predicate. -/
-def LevelFace.IsSafe [AdaptiveSafety K U] {n : ℕ} (t : K.LevelFace n) : Prop :=
+@[expose] def LevelFace.IsSafe [AdaptiveSafety K U] {n : ℕ} (t : K.LevelFace n) : Prop :=
   AdaptiveSafety.safe (K := K) (U := U) t
 
 theorem levelFace_isSafe_iff {n : ℕ} (t : K.LevelFace n) :
@@ -409,7 +409,7 @@ theorem LevelFace.IsSafe.ancestor_child {n k : ℕ} {t : K.LevelFace (n + k)}
     (K.levelFaceCarrier_subset_ancestor n k t) ht
 
 /-- A first-safe face is safe, but at a positive level its chosen parent is not safe. -/
-def LevelFace.IsFirstSafe : {n : ℕ} → K.LevelFace n → Prop
+@[expose] def LevelFace.IsFirstSafe : {n : ℕ} → K.LevelFace n → Prop
   | 0, t => LevelFace.IsSafe K U t
   | n + 1, t => LevelFace.IsSafe K U t ∧
       ¬LevelFace.IsSafe K U (K.levelParentFace n t)
@@ -1348,7 +1348,7 @@ theorem boundaryEdgeVertexList_last_parameter (hU : IsOpen U)
   apply le_antisymm hupper hle
 
 /-- The equal-weight point of the standard simplex on an intrinsic face. -/
-noncomputable def faceCenterSimplex (t : K.Face) :
+@[expose] noncomputable def faceCenterSimplex (t : K.Face) :
     stdSimplex ℝ {v // v ∈ t.1} := by
   let x : {v // v ∈ t.1} → ℝ := fun _ ↦ 1 / 3
   refine ⟨x, ?_, ?_⟩

@@ -42,7 +42,7 @@ theorem permutationControl_separates (π : Equiv.Perm ℕ) {n x y : ℕ}
   omega
 
 /-- Insert enough space after each point to pass the next cutoff. -/
-def spacedSequence (g : ℕ → ℕ) : ℕ → ℕ
+@[expose] def spacedSequence (g : ℕ → ℕ) : ℕ → ℕ
   | 0 => 0
   | n + 1 => max (spacedSequence g n + 1) (g (spacedSequence g n))
 

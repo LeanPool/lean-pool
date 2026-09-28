@@ -94,7 +94,7 @@ theorem safety_isAdmissible :
       _ = ε := by ring
 
 /-- The conforming adaptive triangle complex subordinate to `C`. -/
-noncomputable abbrev locallyFiniteTriangleComplex (hU : IsOpen U) :
+@[expose] noncomputable abbrev locallyFiniteTriangleComplex (hU : IsOpen U) :
     LocallyFiniteTriangleComplex U := by
   letI : K.AdaptiveSafety U := C.safety
   letI : AdaptiveSafety.IsAdmissible (K := K) (U := U) := C.safety_isAdmissible

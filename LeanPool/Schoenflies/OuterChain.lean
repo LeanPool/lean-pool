@@ -119,7 +119,7 @@ variable {α β : Type*} {Γ : ℕ → Graph α β} {G K : Graph α β} {i m p :
 Indexed by the **length** `m` of the block rather than by its right endpoint: the blueprint
 minimises `j - i`, and with this indexing that is a strong induction on the second argument
 with no subtraction anywhere. -/
-def chainUnion (Γ : ℕ → Graph α β) (i : ℕ) : ℕ → Graph α β
+@[expose] def chainUnion (Γ : ℕ → Graph α β) (i : ℕ) : ℕ → Graph α β
   | 0 => Γ i
   | m + 1 => (chainUnion Γ i m).union (Γ (i + m + 1))
 

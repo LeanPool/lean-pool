@@ -129,6 +129,7 @@ theorem targetTwo_rationalCoeffRep (α : Fin 3 → F₂) :
       placeB, rZeroCoeff, rOneCoeff, rInfinityCoeff, Fin.sum_univ_succ]
 
 /-- The seven-dimensional subspace of target Hankel two-forms. -/
+@[expose]
 def targetTwoSpace : Submodule F₂ TwoForm := LinearMap.range targetTwoLinear
 
 /-- The two-form is the exterior product of two linear forms. -/

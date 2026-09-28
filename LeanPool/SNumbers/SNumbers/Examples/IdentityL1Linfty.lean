@@ -47,7 +47,7 @@ the approximation numbers.
 Here `ℓ₁ = lp (fun _ : ℕ => 𝕜) 1` and `ℓ_∞ = lp (fun _ : ℕ => 𝕜) ∞`, and `𝕜` is `RCLike`.
 -/
 
-@[expose] public section
+public section
 
 open scoped ENNReal
 

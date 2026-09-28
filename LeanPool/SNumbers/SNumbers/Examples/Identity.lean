@@ -41,7 +41,7 @@ This file develops the case `1 ≤ p ≤ q < ∞`:
   `SNumbers.Examples.ExHelpers`.
 -/
 
-@[expose] public section
+public section
 
 universe u
 

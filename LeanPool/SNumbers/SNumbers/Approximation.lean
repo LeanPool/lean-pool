@@ -52,7 +52,7 @@ s-number sequence `s`).
     sequence `s` — the approximation numbers are the largest.
 -/
 
-@[expose] public section
+public section
 
 universe u
 
@@ -357,6 +357,7 @@ lemma approximationNumber_id_euclidean (n : ℕ) :
 /-! ### Summary: approximation numbers form a strict s-number sequence -/
 
 /-- The approximation-numbers family. -/
+@[expose]
 noncomputable def approximationFamily : Family 𝕜 :=
   fun {_X _Y} _ _ _ _ S n => approximationNumber S n
 

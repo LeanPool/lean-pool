@@ -18,6 +18,7 @@ public section
 namespace EGZ
 
 /-- The filter for a natural number tending to infinity through prime values. -/
+@[expose]
 def atTopAlongPrimes : Filter ℕ :=
   Filter.atTop ⊓ Filter.principal {p : ℕ | p.Prime}
 

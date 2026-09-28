@@ -1613,7 +1613,7 @@ theorem compactIntrinsic_face_mem [CompactSpace S] (f : K.Face) :
 
 /-- Restrict a global standard-simplex point supported on `t` to the coordinates indexed by
 `t`. -/
-noncomputable def restrictToFace [Fintype K.Vertex] (t : Finset K.Vertex)
+@[expose] noncomputable def restrictToFace [Fintype K.Vertex] (t : Finset K.Vertex)
     (x : stdSimplex ℝ K.Vertex) (hx : ∀ v ∉ t, x v = 0) :
     stdSimplex ℝ {v // v ∈ t} := by
   refine ⟨fun v ↦ x v.1, fun v ↦ x.2.1 v.1, ?_⟩
@@ -1770,7 +1770,7 @@ theorem range_compactEval [CompactSpace S] : Set.range K.compactEval = K.support
 
 /-- A locally finite triangle complex covering a compact Hausdorff space is an honest finite
 geometric triangulation. -/
-noncomputable def toGeometricTriangulation [CompactSpace S] [T2Space S]
+@[expose] noncomputable def toGeometricTriangulation [CompactSpace S] [T2Space S]
     (hcovers : K.support = Set.univ) : GeometricTriangulation S := by
   letI : Fintype K.Face := K.faceFintype
   letI : Fintype K.Vertex := K.vertexFintype

@@ -59,16 +59,19 @@ instance (anchor : α) [OrderTop α] : OrderTop (Node anchor) where
 
 open Classical in
 /-- Forget the layer; this preserves joins. -/
+@[expose]
 def projection (anchor : α) : SupHom (Node anchor) α where
   toFun a := a.1.1
   map_sup' _ _ := rfl
 
 open Classical in
 /-- The upper copy of an old node. -/
+@[expose]
 def upper (anchor : α) (a : α) : Node anchor := ⟨(a, 1), by simp⟩
 
 open Classical in
 /-- The lower copy of a node below the anchor. -/
+@[expose]
 def lower (anchor : α) (a : α) (ha : a ≤ anchor) : Node anchor := ⟨(a, 0), fun _ ↦ ha⟩
 
 @[simp] theorem projection_upper (anchor a : α) : projection anchor (upper anchor a) = a := rfl
@@ -161,6 +164,7 @@ variable {β : Type*}
 
 open Classical in
 /-- Move selected atoms below the anchor into the lower layer. -/
+@[expose]
 noncomputable def splitWeight (anchor : α) (w : α → β → ℕ) (S : β → Prop)
     (a : Node anchor) (v : β) : ℕ :=
   if a.1.2 = 0 then (if S v then w a.1.1 v else 0)

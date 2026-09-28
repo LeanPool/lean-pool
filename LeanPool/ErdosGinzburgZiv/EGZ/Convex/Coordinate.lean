@@ -51,6 +51,7 @@ namespace IntCoord
 @[expose] def real {n : ℕ} (z : IntCoord n) : RealCoord n := fun i ↦ (z i : ℝ)
 
 /-- Coordinatewise reduction modulo `p`. -/
+@[expose]
 def mod (p : ℕ) {n : ℕ} (z : IntCoord n) : FpCoord p n := fun i ↦ (z i : ZMod p)
 
 @[simp]
@@ -113,6 +114,7 @@ structure IntegralAffineMap (m n : ℕ) where
 namespace IntegralAffineMap
 
 /-- The identity integral-affine map. -/
+@[expose]
 def id (n : ℕ) : IntegralAffineMap n n where
   real := AffineMap.id ℝ (RealCoord n)
   integer := _root_.id
@@ -276,6 +278,7 @@ theorem finite_integral_convexHull {n : ℕ}
 
 /-- A nonempty finite rational set, presented as a finset, determines a
 `RationalPolytope` with exactly its ordinary real convex hull as carrier. -/
+@[expose]
 def ofFinsetConvexHull {n : ℕ} (generators : Finset (RealCoord n))
     (hnonempty : generators.Nonempty)
     (hrational : ∀ q ∈ generators, IsRational q) : RationalPolytope n where

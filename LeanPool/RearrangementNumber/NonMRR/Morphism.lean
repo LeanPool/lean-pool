@@ -30,6 +30,7 @@ namespace NonMRR
 
 /-- The rearrangement relation on conditionally convergent real series.
 The rearrangement theorem supplies a response to every challenge. -/
+@[expose]
 def rearrangementRelation : Relation where
   Challenge := ConditionalSeries
   Response := Equiv.Perm ℕ

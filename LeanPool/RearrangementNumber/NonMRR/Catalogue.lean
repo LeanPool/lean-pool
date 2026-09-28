@@ -31,6 +31,7 @@ noncomputable section
 namespace NonMRR
 
 /-- The denominators of the prescribed prefix tolerances. -/
+@[expose]
 def blockDenominator (n : ℕ) : ℕ := 2 ^ (n + 1)
 
 theorem blockDenominator_pos (n : ℕ) : 0 < blockDenominator n := by
@@ -41,6 +42,7 @@ theorem blockDenominator_pos (n : ℕ) : 0 < blockDenominator n := by
 def blockTolerance (n : ℕ) : ℝ := 1 / (blockDenominator n : ℝ)
 
 /-- The number of exceptional choices allowed at each stage. -/
+@[expose]
 def blockCapacity (n : ℕ) : ℕ := 8 * blockDenominator n ^ 4
 
 theorem blockCapacity_pos (n : ℕ) : 0 < blockCapacity n := by

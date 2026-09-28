@@ -1037,7 +1037,7 @@ theorem exists_face_on_segmentFamily {I : Type*} [Fintype I]
 /-- The geometric carrier of all listed segments of a finite broken line.  Auxiliary line
 arrangements may contain many additional faces, so this is the carrier relevant to the
 polygonal object itself. -/
-def segmentCarrier : Set Plane :=
+@[expose] def segmentCarrier : Set Plane :=
   ⋃ i : Fin B.n, segment ℝ (B.vertex i.castSucc) (B.vertex i.succ)
 
 /-- The line arrangement restricted to the actual segments of a finite broken line.  This is a

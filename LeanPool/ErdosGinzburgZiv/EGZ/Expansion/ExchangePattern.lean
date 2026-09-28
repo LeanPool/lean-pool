@@ -50,6 +50,7 @@ instance (P : ExchangePattern S) : DecidableEq P.Position :=
 def label (P : ExchangePattern S) : P.Position → S := Sum.elim Sigma.fst Sigma.fst
 
 /-- The integer sign of a position: one for a positive copy and minus one for a negative copy. -/
+@[expose]
 def sign (P : ExchangePattern S) : P.Position → ℤ := Sum.elim (fun _ ↦ 1) (fun _ ↦ -1)
 
 /-- A choice of a sample from the prescribed fibre at every labelled position. -/
@@ -78,6 +79,7 @@ theorem sum_sign_smul {G : Type*} [AddCommGroup G] (P : ExchangePattern S) (r : 
   simp [Fintype.sum_sum_type, Fintype.sum_sigma, ← Finset.sum_neg_distrib, sub_eq_add_neg]
 
 /-- The signed sum of the vectors selected by a sample of the exchange pattern. -/
+@[expose]
 noncomputable def sampleSum {G : Type*} [AddCommGroup G]
     (P : ExchangePattern S) {X : S → Type*} (v : ∀ q, X q → G) (x : P.Sample X) : G :=
   ∑ i, P.sign i • v (P.label i) (x i)

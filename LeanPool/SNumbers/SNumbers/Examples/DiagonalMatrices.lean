@@ -73,7 +73,7 @@ maps `projFin` / `padFin` in `SNumbers.PiLpCoordinates`.
   [link](https://zbmath.org/3996455).
 -/
 
-@[expose] public section
+public section
 
 universe u
 

@@ -125,8 +125,23 @@ theorem scalarProduct_hasDerivAt (L : Vector3 →L[ℝ] ℝ) (i : Fin 4)
     funext t
     simpa only [B, scalarProductBilinear_apply] using
       scalarProduct_translation period (le_refl 3) L _ _ _
-  rw [he, hzero, translationPath_zero, translation_zero] at h
-  simpa only [B, scalarProductBilinear_apply] using h
+  have hzeroV : translation period (translationPath period (standardDirection i) 0) v = v := by
+    rw [translationPath_zero, translation_zero]
+  have hderiv :
+      B (sobolevTranslation period 3 (translationPath period (standardDirection i) 0)
+        (truncateOperator period 3 u)) v' +
+        B (derivativeOperator period 3 i u)
+          (translation period (translationPath period (standardDirection i) 0) v) =
+      B (truncateOperator period 3 u) v' + B (derivativeOperator period 3 i u) v := by
+    rw [hzero, hzeroV]
+  have hproduct :
+      B (truncateOperator period 3 u) v' + B (derivativeOperator period 3 i u) v =
+      scalarProduct period (le_refl 3) L (truncateOperator period 3 u) v' +
+        scalarProduct period (le_refl 3) L (derivativeOperator period 3 i u) v := by
+    simp only [B, scalarProductBilinear_apply]
+  have h1 := h.congr_of_eventuallyEq
+    (Filter.Eventually.of_forall (fun t => congrFun he.symm t))
+  exact h1.congr_deriv (hderiv.trans hproduct)
 
 /-- Pointwise multiplication with q+3 coefficient derivatives produces a genuine q-jet. -/
 def productJet (L : Vector3 →L[ℝ] ℝ) {q : ℕ} (u : SobolevSpace period (q + 3))

@@ -192,6 +192,7 @@ lemma mayerKernel_eq_m (x : Sym2 V → Bool) :
 /-! ### Concrete NBC bases of the graphic matroid -/
 
 /-- An edge completing a broken circuit already contained in the specified edge set. -/
+@[expose]
 def IsGraphCircuitNBCandidate (G : SimpleGraph V)
     (A : Finset (Sym2 V)) (e : Sym2 V) : Prop :=
   ∃ C : Finset (Sym2 V),
@@ -199,6 +200,7 @@ def IsGraphCircuitNBCandidate (G : SimpleGraph V)
       ((C.erase e : Finset (Sym2 V)) : Set (Sym2 V)) ⊆ (A : Set (Sym2 V))
 
 /-- The edge set contains a broken circuit in the circuit-based formulation. -/
+@[expose]
 def IsGraphCircuitNBCBad (G : SimpleGraph V) (A : Finset (Sym2 V)) : Prop :=
   ∃ e, IsGraphCircuitNBCandidate G A e
 
@@ -207,7 +209,7 @@ def IsExplicitNBCBase (G : SimpleGraph V) (A : Finset (Sym2 V)) : Prop :=
   IsGraphForest G A ∧ IsGraphSpanning G A ∧ ¬IsGraphCircuitNBCBad G A
 
 /-- A connected spanning forest containing no broken circuit. -/
-def IsExplicitNBCTree (G : SimpleGraph V) (A : Finset (Sym2 V)) : Prop :=
+@[expose] def IsExplicitNBCTree (G : SimpleGraph V) (A : Finset (Sym2 V)) : Prop :=
   IsGraphForest G A ∧
     (SimpleGraph.fromEdgeSet (A : Set (Sym2 V))).Connected ∧
     ¬IsGraphCircuitNBCBad G A

@@ -173,6 +173,7 @@ theorem active_lower (x : Φ.flag.Node) (hx : x ≤ anchor) (v : FpCoord p d)
 
 open Classical in
 /-- The active upper copy of an old node. -/
+@[expose]
 noncomputable def upper (x : Φ.flag.Node) : (decomposition Φ anchor selected hp).flag.Node :=
   ⟨TwoLayer.upper anchor x, active_upper Φ anchor selected hp x⟩
 

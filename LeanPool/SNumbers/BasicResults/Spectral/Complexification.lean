@@ -40,7 +40,7 @@ of a real *inner product space* with its complex inner product. This file
 constructs it, kept deliberately elementary and self-contained.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 
@@ -50,6 +50,7 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
 
 /-- The **complexification** of a real inner product space `H`, modelled as the
 pair type `H × H`; the pair `(x, y)` represents the formal sum `x + i·y`. -/
+@[expose]
 def Complexification (H : Type*) :
     Type _ := H × H
 

@@ -2084,7 +2084,7 @@ theorem graphBreakpointPoint_mem_support {h : Plane → Plane}
   K.edge_lineMap_mem_support b.1 (K.graphBreakpointParameter_mem hcont D C b)
 
 /-- The common source subdivision carrying all edgewise PL breakpoints. -/
-noncomputable def graphReplacementSubdivision {h : Plane → Plane}
+@[expose] noncomputable def graphReplacementSubdivision {h : Plane → Plane}
     (hcont : ContinuousOn h K.support) (D : K.VertexDiskControl h)
     (C : K.CentralTubeControl hcont D) : PlaneComplex :=
   K.markedEdgeSubdivision (K.graphBreakpointPoint hcont D C)

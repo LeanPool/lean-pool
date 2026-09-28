@@ -136,7 +136,7 @@ thing. Asking for both here only spares us the purely technical work of transpor
 and U2 along `Tableau.flip`, which would need a `flip` operation on `FinePathIn`.
 What it buys us is `Tableau.isUniform.flip` below, which is needed because the
 interpolation proof flips the tableau when the loaded formula is on the left. -/
-def Tableau.isUniform {H : History} {X : Sequent} (tab : Tableau H X) : Prop :=
+@[expose] def Tableau.isUniform {H : History} {X : Sequent} (tab : Tableau H X) : Prop :=
   tab.UniCore ∧ tab.flip.UniCore
 
 /-- Transporting `Tableau.UniCore` along an equality of tableaux. -/

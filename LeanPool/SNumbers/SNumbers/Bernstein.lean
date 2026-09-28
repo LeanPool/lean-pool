@@ -28,7 +28,7 @@ The Bernstein numbers are the *smallest injective strict s-number sequence*
 The development needs only `[NontriviallyNormedField 𝕜]`.
 -/
 
-@[expose] public section
+public section
 
 universe u
 
@@ -62,6 +62,7 @@ def bernsteinSet (S : X →L[𝕜] Y) (n : ℕ) : Set ℝ :=
 /-- The `n`-th **Bernstein number** of a continuous linear map.
 
 `b_n S = sup_{M ⊆ X, dim M = n + 1} gainOnSubspace S M`. -/
+@[expose]
 noncomputable def bernsteinNumber (S : X →L[𝕜] Y) (n : ℕ) : ℝ :=
   sSup (bernsteinSet S n)
 

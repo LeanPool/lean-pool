@@ -63,6 +63,7 @@ theorem card_le_of_latticeSupNorm_le {n K : ℕ} (S : Finset (IntCoord n))
 namespace FpCoord
 
 /-- Coordinatewise integer representatives with least absolute value. -/
+@[expose]
 def centeredLift {p n : ℕ} (c : FpCoord p n) : IntCoord n :=
   fun i ↦ (c i).valMinAbs
 

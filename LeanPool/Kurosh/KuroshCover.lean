@@ -64,14 +64,14 @@ abbrev CoverEdge {ι : Type v} (G : ι → Type u)
   treeKuroshFreeInclusion G H (quotientEdgeLoop G H e.2.2)
 
 /-- The source coset of an edge labeled by a covering-group element. -/
-def coverEdgeSource {ι : Type v} (G : ι → Type u)
+@[expose] def coverEdgeSource {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     (d : CoverSource G H × CoverEdge G H) : CoverVertex G H :=
   ⟨d.2.1, rightCosetMk (MonoidHom.range
     (treeKuroshVertexInclusion G H d.2.1)) d.1⟩
 
 /-- The target coset after multiplication by the inverse edge letter. -/
-def coverEdgeTarget {ι : Type v} (G : ι → Type u)
+@[expose] def coverEdgeTarget {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     (d : CoverSource G H × CoverEdge G H) : CoverVertex G H :=
   ⟨d.2.2.1, rightCosetMk (MonoidHom.range
@@ -425,7 +425,18 @@ theorem coverPathValueOpp_pos {ι : Type v} (G : ι → Type u)
   unfold coverPathValueOpp
   rw [coverFreeGroupoidPathHom_cons, Functor.map_comp,
     CategoryTheory.SingleObj.comp_as_mul]
-  rfl
+  dsimp
+  have hs := Prefunctor.congr_hom
+    (Quiver.FreeGroupoid.lift_spec (coverGraphLabelPrefunctor G H)) e
+  have hs' :
+      (Quiver.FreeGroupoid.lift (coverGraphLabelPrefunctor G H)).map
+          ((Quiver.FreeGroupoid.of (RawBassSerreOrbitVertex G H)).map e) =
+        MulOpposite.op
+          (coverEdgeLetter G H (coverBaseEdge G H e))⁻¹ := by
+    simpa [coverGraphLabelPrefunctor, Quiver.homOfEq] using
+      congrArg (fun z => (z : (CoverSource G H)ᵐᵒᵖ)) hs
+  rw [hs']
+  simp only [MulOpposite.op_inv]
 
 theorem coverPathValueOpp_neg {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))

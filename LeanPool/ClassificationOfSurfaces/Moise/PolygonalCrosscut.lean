@@ -855,7 +855,7 @@ theorem insertZero_exteriorRegion (J : PolygonalCircle) (p : Plane)
   (regions_eq_of_carrier_eq (J.insertZero_carrier p hp hp0 hp1)).2
 
 /-- A point is a vertex of one of the cyclic presentations of a polygon. -/
-def IsVertexPoint (J : PolygonalCircle) (p : Plane) : Prop :=
+@[expose] def IsVertexPoint (J : PolygonalCircle) (p : Plane) : Prop :=
   ∃ i, J.vertex i = p
 
 /-- A point known to be a polygon vertex lies on an edge exactly when it is one of that edge's

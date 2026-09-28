@@ -228,7 +228,7 @@ scoped notation "dπ" => FundamentalCategory.fundamentalCategoryFunctor
 scoped notation "dπₓ" => FundamentalCategory.fundamentalCategoryFunctor.obj
 
 /-- The underlying functor (not just `Cat.Hom`) induced by a `dTopCat` map. -/
-@[reducible]
+@[expose, reducible]
 def fundamentalCategoryMap {X Y : dTopCat} (f : X ⟶ Y) :
     (fundamentalCategoryFunctor.obj X) ⥤ (fundamentalCategoryFunctor.obj Y) :=
   (fundamentalCategoryFunctor.map f).toFunctor

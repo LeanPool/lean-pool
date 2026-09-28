@@ -60,6 +60,7 @@ variable {L : ℕ} (hinj : S.InjectiveBelow L)
 include hinj
 
 /-- The restricted parent map is an embedding. -/
+@[expose]
 def parentEmbedding (i : ℕ) : S.LowNode L (i + 1) ↪ S.LowNode L i where
   toFun x := ⟨S.parent i x, (S.level_parent i x).trans x.property⟩
   inj' x y h := Subtype.ext (hinj i x.property y.property (congrArg Subtype.val h))

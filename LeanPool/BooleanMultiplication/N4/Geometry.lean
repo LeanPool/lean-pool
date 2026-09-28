@@ -39,6 +39,7 @@ noncomputable section
 
 /-- A target coefficient word is decomposable when it is the quadratic cross
 part of two linear forms and their same-side exterior components vanish. -/
+@[expose]
 def IsDecomposableTarget (c : TargetCoeff) : Prop :=
   ∃ u v : LinearForm,
     (∀ i j : Fin 4, vectorWedge u v (aCoord i) (aCoord j) = 0) ∧

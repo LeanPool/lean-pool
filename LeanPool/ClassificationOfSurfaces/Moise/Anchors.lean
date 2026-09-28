@@ -104,7 +104,7 @@ vertices `(0,0)`, `(1,0)`, `(0,1)` is a polygonal simple closed curve. -/
     absurd ((by decide : ∀ i j : ZMod 3, i ≠ j → i ≠ j + 1 → j = i + 1) i j h₁ h₂) h₃
 
 /-- Three affinely independent points in the plane form an affine basis. -/
-noncomputable def planeAffineBasisOfTriple (p : Fin 3 → Plane)
+@[expose] noncomputable def planeAffineBasisOfTriple (p : Fin 3 → Plane)
     (hp : AffineIndependent ℝ p) : AffineBasis (Fin 3) ℝ Plane where
   toFun := p
   ind' := hp

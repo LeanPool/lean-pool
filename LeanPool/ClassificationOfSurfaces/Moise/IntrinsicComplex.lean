@@ -703,7 +703,7 @@ theorem disjoint_range_mappedEdgePath {h : K.realization → Plane}
 
 /-- `f` is affine on an intrinsic set when it is the restriction of an ambient affine map in
 barycentric coordinates. -/
-def IsAffineOnSetTo {E : Type*} [AddCommGroup E] [Module ℝ E]
+@[expose] def IsAffineOnSetTo {E : Type*} [AddCommGroup E] [Module ℝ E]
     (f : K.realization → E) (A : Set K.realization) : Prop :=
   ∃ a : (K.Vertex → ℝ) →ᵃ[ℝ] E,
     ∀ x : K.realization, x ∈ A → f x = a x.1

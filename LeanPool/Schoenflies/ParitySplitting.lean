@@ -261,7 +261,7 @@ the two definitions compose with nothing but `List.sum_append`. -/
 
 /-- `L` is a **chain from `p` to `q`**: its mod-`2` boundary is `p` together with `q`. Stated by
 duality, exactly as `Schoenflies.IsClosedChain` is. -/
-def IsChainFrom (L : List Piece) (p q : Plane) : Prop :=
+@[expose] def IsChainFrom (L : List Piece) (p q : Plane) : Prop :=
   ∀ f : Plane → ZMod 2, (L.map fun P => f P.1 + f P.2).sum = f p + f q
 
 /-- A chain whose two ends coincide is a closed chain, and conversely. -/

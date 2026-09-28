@@ -56,6 +56,7 @@ lemma coe_graphEdgeFinset (G : SimpleGraph V) :
   simp
 
 /-- The finite edge set traversed by a closed walk. -/
+@[expose]
 def cycleEdgeFinset {G : SimpleGraph V} {v : V} (c : G.Walk v v) : Finset (Sym2 V) :=
   c.edges.toFinset
 

@@ -32,6 +32,7 @@ def StronglyCoincident (F : Set (ℕ → ℕ)) : Prop :=
     ∃ f ∈ F, ∃ᶠ n in atTop, n ∈ W ∧ f n = c n
 
 /-- A family of increasing sequences with gaps escaping each bound. -/
+@[expose]
 def GapUnbounded (B : Set (ℕ → ℕ)) : Prop :=
   (∀ t ∈ B, StrictMono t) ∧ ∀ g : ℕ → ℕ,
     ∃ t ∈ B, ∃ᶠ k in atTop, g (t k) < t (k + 1)

@@ -48,7 +48,7 @@ agree on Banach spaces.
 
 -/
 
-@[expose] public section
+public section
 
 universe u
 
@@ -74,11 +74,13 @@ noncomputable def deviationFromSubspace (S : X →L[𝕜] Y) (V : Submodule 𝕜
 /-- The set of admissible deviations at stage `n`: the numbers
 `‖π_V ∘ S‖` for subspaces `V ⊆ Y` of dimension at most `n`. The `n`-th
 Kolmogorov number is its infimum. -/
+@[expose]
 def kolmogorovSet (S : X →L[𝕜] Y) (n : ℕ) : Set ℝ :=
   {r | ∃ V : Submodule 𝕜 Y,
       Module.rank 𝕜 V ≤ (n : Cardinal) ∧ r = deviationFromSubspace S V}
 
 /-- Quotient form of the `n`-th Kolmogorov number. -/
+@[expose]
 noncomputable def kolmogorovNumber (S : X →L[𝕜] Y) (n : ℕ) : ℝ :=
   sInf (kolmogorovSet S n)
 

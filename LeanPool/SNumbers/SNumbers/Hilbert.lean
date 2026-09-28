@@ -43,7 +43,7 @@ The two non-trivial halves are:
   (`approximationNumber_id_euclidean`) via the (S3) ideal property.
 -/
 
-@[expose] public section
+public section
 
 universe u
 

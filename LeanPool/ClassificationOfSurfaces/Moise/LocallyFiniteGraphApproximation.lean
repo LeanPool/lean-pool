@@ -1896,7 +1896,7 @@ theorem exists_parameterization (A : G.CentralPolygonalArc e) :
   ⟨A.parameterizationData⟩
 
 /-- The `parameterization` declaration. -/
-noncomputable def parameterization (A : G.CentralPolygonalArc e) : A.Parameterization :=
+@[expose] noncomputable def parameterization (A : G.CentralPolygonalArc e) : A.Parameterization :=
   A.parameterizationData
 
 /-- Ordered exits of the resolved polygonal arc from the two variable-radius vertex disks. -/
@@ -1917,7 +1917,7 @@ noncomputable def exitData (A : G.CentralPolygonalArc e) :
   · exact G.disjoint_vertexDisks (K.edgeFirst_ne_edgeSecond e)
 
 /-- The `trimmedCarrier` declaration. -/
-def trimmedCarrier (A : G.CentralPolygonalArc e) : Set Plane :=
+@[expose] def trimmedCarrier (A : G.CentralPolygonalArc e) : Set Plane :=
   A.parameterization.curve '' Set.Icc A.exitData.left A.exitData.right
 
 theorem trimmedCarrier_subset_resolvedCarrier (A : G.CentralPolygonalArc e) :
@@ -1953,23 +1953,23 @@ theorem trimmedCarrier_avoids_second (A : G.CentralPolygonalArc e) {x : Plane}
     · exact lt_of_le_of_ne ht.2 fun heq => hxright (by rw [heq])
 
 /-- The `leftEndpoint` declaration. -/
-noncomputable def leftEndpoint (A : G.CentralPolygonalArc e) : Plane :=
+@[expose] noncomputable def leftEndpoint (A : G.CentralPolygonalArc e) : Plane :=
   A.parameterization.curve A.exitData.left
 
 /-- The `rightEndpoint` declaration. -/
-noncomputable def rightEndpoint (A : G.CentralPolygonalArc e) : Plane :=
+@[expose] noncomputable def rightEndpoint (A : G.CentralPolygonalArc e) : Plane :=
   A.parameterization.curve A.exitData.right
 
 /-- The `leftSpoke` declaration. -/
-noncomputable def leftSpoke (A : G.CentralPolygonalArc e) : Set Plane :=
+@[expose] noncomputable def leftSpoke (A : G.CentralPolygonalArc e) : Set Plane :=
   segment ℝ (G.vertexImage (K.edgeFirst e)) A.leftEndpoint
 
 /-- The `rightSpoke` declaration. -/
-noncomputable def rightSpoke (A : G.CentralPolygonalArc e) : Set Plane :=
+@[expose] noncomputable def rightSpoke (A : G.CentralPolygonalArc e) : Set Plane :=
   segment ℝ A.rightEndpoint (G.vertexImage (K.edgeSecond e))
 
 /-- The `completeCarrier` declaration. -/
-noncomputable def completeCarrier (A : G.CentralPolygonalArc e) : Set Plane :=
+@[expose] noncomputable def completeCarrier (A : G.CentralPolygonalArc e) : Set Plane :=
   A.leftSpoke ∪ A.trimmedCarrier ∪ A.rightSpoke
 
 theorem leftEndpoint_on_sphere (A : G.CentralPolygonalArc e) :
@@ -2114,7 +2114,7 @@ theorem leftSpoke_disjoint_rightSpoke (A : G.CentralPolygonalArc e) :
     A.leftSpoke_subset_vertexDisk A.rightSpoke_subset_vertexDisk
 
 /-- The trimmed resolved middle, with its parameter interval normalized to the unit interval. -/
-noncomputable def middlePath (A : G.CentralPolygonalArc e) :
+@[expose] noncomputable def middlePath (A : G.CentralPolygonalArc e) :
     Path A.leftEndpoint A.rightEndpoint where
   toFun t := A.parameterization.curve
     (Path.segment A.exitData.left A.exitData.right t)
@@ -2164,7 +2164,7 @@ theorem middlePath_injective (A : G.CentralPolygonalArc e) :
   exact Path.segment_injective_of_ne A.exitData.left_lt_right.ne hparam
 
 /-- The complete polygonal replacement path of a locally finite abstract edge. -/
-noncomputable def completePath (A : G.CentralPolygonalArc e) :
+@[expose] noncomputable def completePath (A : G.CentralPolygonalArc e) :
     Path (G.vertexImage (K.edgeFirst e)) (G.vertexImage (K.edgeSecond e)) :=
   (Path.segment (G.vertexImage (K.edgeFirst e)) A.leftEndpoint).trans
     (A.middlePath.trans
@@ -2733,7 +2733,7 @@ theorem range_edgePathInSupport (e : K.Edge) :
     exact hr
 
 /-- Restrict the source edge path to its carrier inside the full support. -/
-noncomputable def edgePathInSupportToCarrier (e : K.Edge) :
+@[expose] noncomputable def edgePathInSupportToCarrier (e : K.Edge) :
     Set.Icc (0 : ℝ) 1 → edgeInSupport (K := K) e :=
   fun r ↦ ⟨edgePathInSupport (K := K) e r,
     by rw [← range_edgePathInSupport (K := K) e]; exact Set.mem_range_self r⟩

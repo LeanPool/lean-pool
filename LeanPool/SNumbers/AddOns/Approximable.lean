@@ -39,7 +39,7 @@ treated in `AddOns.Compact` via the singular value decomposition.
   finite rank.
 -/
 
-@[expose] public section
+public section
 
 universe u
 

@@ -60,7 +60,7 @@ an isometry / a metric surjection (`‖J ∘ T‖ = ‖T‖`, `‖T ∘ Q‖ = �
 the infimum sets coincide.
 -/
 
-@[expose] public section
+public section
 
 universe u
 

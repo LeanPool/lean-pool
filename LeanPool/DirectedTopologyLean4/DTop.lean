@@ -111,7 +111,7 @@ lemma ofHom_comp {X Y Z : Type u} [DirectedSpace X] [DirectedSpace Y] [DirectedS
 instance subspaceCoe {X : dTopCat} : CoeTC (Set X) dTopCat := ⟨fun s => dTopCat.of s⟩
 
 /-- The inclusion of a directed subspace into its ambient space. -/
-def DirectedSubtypeHom {X : dTopCat} (Y : Set X) : (dTopCat.of Y) ⟶ X :=
+@[expose] def DirectedSubtypeHom {X : dTopCat} (Y : Set X) : (dTopCat.of Y) ⟶ X :=
   ofHom (DirectedSubtypeInclusion (fun s => s ∈ Y))
 
 /-- The inclusion between two directed subspaces, given a subset relation. -/

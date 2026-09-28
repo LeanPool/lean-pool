@@ -92,7 +92,7 @@ with `section` blocks switching to stronger hypotheses when needed:
   `[DenselyNormedField 𝕜] + [CompleteSpace 𝕜]`).
 -/
 
-@[expose] public section
+public section
 
 universe u
 

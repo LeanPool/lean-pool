@@ -650,7 +650,7 @@ variable (K L : Type*) [CommRing K] [LieRing L] [LieAlgebra K L]
 /-- We define a Lie algebra to be two-step nilpotent if its commutator ideal is contained in the
 center.
 -/
-def IsTwoStepNilpotent : Prop := commutator K L ≤ center K L
+@[expose] def IsTwoStepNilpotent : Prop := commutator K L ≤ center K L
 
 theorem isTwoStepNilpotent_iff : IsTwoStepNilpotent K L ↔ commutator K L ≤ center K L := by rfl
 

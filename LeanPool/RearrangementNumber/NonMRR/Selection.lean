@@ -31,7 +31,7 @@ def selectedBlock (u : ℕ → ℕ → ℕ → ℝ) (e g : ℕ → ℕ) (n i : �
   if e n < g n then u n (e n) i else 0
 
 /-- Values with a large prefix in the natural or the permuted order. -/
-noncomputable def badValues (u : ℕ → ℕ → ℕ → ℝ) (g : ℕ → ℕ)
+@[expose] noncomputable def badValues (u : ℕ → ℕ → ℕ → ℝ) (g : ℕ → ℕ)
     (π : Equiv.Perm ℕ) (b : ℕ → ℝ) (n : ℕ) : Finset ℕ := by
   classical
   exact (range (g n)).filter (fun k ↦

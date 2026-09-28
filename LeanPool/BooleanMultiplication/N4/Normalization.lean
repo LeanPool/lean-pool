@@ -68,11 +68,11 @@ theorem circuit_first_entry_replacement {m r : Nat} (C : Circuit m r)
   exact span_first_entry_replacement _ _ _ ht htFirst
 
 /-- The product target corresponding to evaluation at zero. -/
-def rZeroANF : ANF 8 := targetANF rZeroCoeff
+@[expose] def rZeroANF : ANF 8 := targetANF rZeroCoeff
 /-- The product target corresponding to evaluation at one. -/
-def rOneANF : ANF 8 := targetANF rOneCoeff
+@[expose] def rOneANF : ANF 8 := targetANF rOneCoeff
 /-- The product target corresponding to the leading coefficient. -/
-def rInfinityANF : ANF 8 := targetANF rInfinityCoeff
+@[expose] def rInfinityANF : ANF 8 := targetANF rInfinityCoeff
 
 /-- The span of the product evaluations at zero, one, and infinity. -/
 @[expose] def rationalTargetSpace : Submodule F₂ (ANF 8) :=

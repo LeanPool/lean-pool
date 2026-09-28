@@ -56,6 +56,7 @@ structure ConditionalSeries where
   ∀ a : ConditionalSeries, ∃ π ∈ s, Rearranges a π
 
 /-- The rearrangement number, with the cardinal-minimum definition in the manuscript. -/
+@[expose]
 noncomputable def rr : Cardinal :=
   sInf {κ | ∃ s : Set (Equiv.Perm ℕ), IsRearranging s ∧ #s = κ}
 

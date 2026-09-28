@@ -45,6 +45,7 @@ def IsPHollow (p : ℕ) {d s : ℕ} (v : Fin s → FpVec p d) : Prop :=
       ((∑ i, α i • v i) = 0 ↔ ∃ i, α i = p)
 
 /-- There is a `p`-hollow family of `s` vectors in `𝔽_p^d`. -/
+@[expose]
 def AdmitsPHollowLength (p d s : ℕ) : Prop :=
   ∃ v : Fin s → FpVec p d, IsPHollow p v
 

@@ -41,7 +41,7 @@ namespace ArithmeticProgression
   P.start + (i : ℕ) • P.diff
 
 /-- The proposition that every term of `P` belongs to `s`. -/
-def IsSubset {α : Type*} [AddMonoid α] {k : ℕ} (P : ArithmeticProgression α k)
+@[expose] def IsSubset {α : Type*} [AddMonoid α] {k : ℕ} (P : ArithmeticProgression α k)
     (s : Set α) : Prop :=
   ∀ i, P.term i ∈ s
 

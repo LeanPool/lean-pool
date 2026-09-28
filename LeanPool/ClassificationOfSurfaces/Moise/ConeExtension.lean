@@ -1066,12 +1066,12 @@ theorem repositionMap_isPL (position' : K.Vertex → Plane)
   exact K.repositionMap_affineOn_face position' hinj haff hface hs
 
 /-- Vertex positions for the cone on `K`, with `none` as the cone vertex. -/
-def conePosition (c : Plane) : Option K.Vertex → Plane
+@[expose] def conePosition (c : Plane) : Option K.Vertex → Plane
   | none => c
   | some v => K.position v
 
 /-- The `coneWeights` declaration. -/
-def coneWeights (z : K.Vertex → ℝ) : Option K.Vertex → ℝ
+@[expose] def coneWeights (z : K.Vertex → ℝ) : Option K.Vertex → ℝ
   | none => 0
   | some v => z v
 
@@ -1158,7 +1158,7 @@ theorem conePosition_injective {c : Plane} (hc : c ∉ Set.range K.position) :
       | some w => exact congrArg some (K.position_injective h)
 
 /-- All nonempty faces of cones on the faces of `K`. -/
-def coneSimplexes : Finset (Finset (Option K.Vertex)) :=
+@[expose] def coneSimplexes : Finset (Finset (Option K.Vertex)) :=
   K.simplexes.biUnion fun s =>
     (insert none (K.liftFace s)).powerset.filter (·.Nonempty)
 
