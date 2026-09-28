@@ -109,9 +109,10 @@ theorem IsStrictlySingular.exists_unit_mem_ker_norm_apply_lt
   change ‖U (V.subtypeL x)‖ < ε
   simpa only [ContinuousLinearMap.comp_apply] using hxU
 
-theorem IsStrictlySingular.exists_biorthogonal_extension
-    [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
-    {U : X →L[ℝ] Y} (hU : IsStrictlySingular.{0, uX, uY, uX} U)
+theorem exists_biorthogonal_extension_of_small_kernel
+    (U : X →L[ℝ] Y)
+    (hsmall : ∀ (m : ℕ) (ξ : Fin m → StrongDual ℝ X) {ε : ℝ},
+      0 < ε → ∃ x : X, (∀ i, ξ i x = 0) ∧ ‖x‖ = 1 ∧ ‖U x‖ < ε)
     {n : ℕ} (v : Fin n → X) (φ : Fin n → StrongDual ℝ X)
     (hvφ : ∀ i j, φ i (v j) = if i = j then 1 else 0)
     {η : ℝ} (hη : 0 < η) :
@@ -122,7 +123,6 @@ theorem IsStrictlySingular.exists_biorthogonal_extension
       ψ x = 1 ∧
       ‖ψ‖ * ‖U x‖ < η := by
   classical
-  let eval : X →L[ℝ] (Fin n → ℝ) := ContinuousLinearMap.pi φ
   let P : X →L[ℝ] X := ∑ i, (φ i).smulRight (v i)
   have hPv (j : Fin n) : P (v j) = v j := by
     simp [P, hvφ]
@@ -130,12 +130,7 @@ theorem IsStrictlySingular.exists_biorthogonal_extension
   have hC : 0 < C := by
     dsimp [C]
     positivity
-  obtain ⟨x, hxeval, hxnorm, hxsmall⟩ :=
-    IsStrictlySingular.exists_unit_mem_ker_norm_apply_lt
-      hX hU eval (div_pos hη hC)
-  have hxφ (i : Fin n) : φ i x = 0 := by
-    have := congr_fun hxeval i
-    exact this
+  obtain ⟨x, hxφ, hxnorm, hxsmall⟩ := hsmall n φ (div_pos hη hC)
   have hPx : P x = 0 := by
     simp [P, hxφ]
   obtain ⟨g, hgnorm, hgx⟩ :=
@@ -164,6 +159,27 @@ theorem IsStrictlySingular.exists_biorthogonal_extension
     _ < C * (η / C) := mul_lt_mul_of_pos_left hxsmall hC
     _ = η := by field_simp
 
+theorem IsStrictlySingular.exists_biorthogonal_extension
+    [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
+    {U : X →L[ℝ] Y} (hU : IsStrictlySingular.{0, uX, uY, uX} U)
+    {n : ℕ} (v : Fin n → X) (φ : Fin n → StrongDual ℝ X)
+    (hvφ : ∀ i j, φ i (v j) = if i = j then 1 else 0)
+    {η : ℝ} (hη : 0 < η) :
+    ∃ (x : X) (ψ : StrongDual ℝ X),
+      ‖x‖ = 1 ∧
+      (∀ i, φ i x = 0) ∧
+      (∀ i, ψ (v i) = 0) ∧
+      ψ x = 1 ∧
+      ‖ψ‖ * ‖U x‖ < η := by
+  apply exists_biorthogonal_extension_of_small_kernel U ?_ v φ hvφ hη
+  intro m ξ ε hε
+  let eval : X →L[ℝ] (Fin m → ℝ) := ContinuousLinearMap.pi ξ
+  obtain ⟨x, hxeval, hxnorm, hxsmall⟩ :=
+    IsStrictlySingular.exists_unit_mem_ker_norm_apply_lt hX hU eval hε
+  refine ⟨x, ?_, hxnorm, hxsmall⟩
+  intro i
+  exact congr_fun hxeval i
+
 /-- A finite normalized biorthogonal system whose weighted images under `U` are small. -/
 structure BiorthogonalPrefix
     (U : X →L[ℝ] Y) (η : ℕ → ℝ) (n : ℕ) where
@@ -187,22 +203,22 @@ def BiorthogonalPrefix.nil (U : X →L[ℝ] Y) (η : ℕ → ℝ) :
   bio := fun i => Fin.elim0 i
   small := fun i => Fin.elim0 i
 
-/-- Extend a biorthogonal prefix by one vector with a prescribed small image. -/
-noncomputable def BiorthogonalPrefix.snoc
-    [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
-    {U : X →L[ℝ] Y} (hU : IsStrictlySingular.{0, uX, uY, uX} U)
-    {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) {n : ℕ}
-    (p : BiorthogonalPrefix U η n) :
+/-- The data needed to extend a finite biorthogonal prefix. -/
+def BiorthogonalPrefix.Extension
+    {U : X →L[ℝ] Y} {η : ℕ → ℝ} {n : ℕ}
+    (p : BiorthogonalPrefix U η n) : Prop :=
+  ∃ (x : X) (ψ : StrongDual ℝ X),
+    ‖x‖ = 1 ∧
+    (∀ i, p.φ i x = 0) ∧
+    (∀ i, ψ (p.v i) = 0) ∧
+    ψ x = 1 ∧
+    ‖ψ‖ * ‖U x‖ < η n
+
+/-- Append any witness satisfying the extension conditions. -/
+noncomputable def BiorthogonalPrefix.snocWith
+    {U : X →L[ℝ] Y} {η : ℕ → ℝ} {n : ℕ}
+    (p : BiorthogonalPrefix U η n) (hex : p.Extension) :
     BiorthogonalPrefix U η (n + 1) := by
-  have hex :
-      ∃ (x : X) (ψ : StrongDual ℝ X),
-        ‖x‖ = 1 ∧
-        (∀ i, p.φ i x = 0) ∧
-        (∀ i, ψ (p.v i) = 0) ∧
-        ψ x = 1 ∧
-        ‖ψ‖ * ‖U x‖ < η n :=
-    IsStrictlySingular.exists_biorthogonal_extension
-      hX hU p.v p.φ p.bio (hη n)
   let x : X := Exists.choose hex
   let hψ := Exists.choose_spec hex
   let ψ : StrongDual ℝ X := Exists.choose hψ
@@ -237,14 +253,64 @@ noncomputable def BiorthogonalPrefix.snoc
         | last => simpa using hxsmall
         | cast i => simpa using p.small i }
 
+/-- Extend a biorthogonal prefix by one vector with a prescribed small image. -/
+noncomputable def BiorthogonalPrefix.snoc
+    [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
+    {U : X →L[ℝ] Y} (hU : IsStrictlySingular.{0, uX, uY, uX} U)
+    {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) {n : ℕ}
+    (p : BiorthogonalPrefix U η n) :
+    BiorthogonalPrefix U η (n + 1) := by
+  exact p.snocWith
+    (IsStrictlySingular.exists_biorthogonal_extension hX hU p.v p.φ p.bio (hη n))
+
+/-- Build every finite prefix from a witness for each extension step. -/
+noncomputable def biorthogonalPrefixWith
+    (U : X →L[ℝ] Y) (η : ℕ → ℝ)
+    (step : ∀ {n}, (p : BiorthogonalPrefix U η n) → p.Extension) :
+    (n : ℕ) → BiorthogonalPrefix U η n
+  | 0 => BiorthogonalPrefix.nil U η
+  | n + 1 =>
+      let p := biorthogonalPrefixWith U η step n
+      p.snocWith (step p)
+
 /-- Recursively construct finite biorthogonal prefixes for a strictly singular operator. -/
 noncomputable def biorthogonalPrefix
     [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
     {U : X →L[ℝ] Y} (hU : IsStrictlySingular.{0, uX, uY, uX} U)
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) :
-    (n : ℕ) → BiorthogonalPrefix U η n
-  | 0 => BiorthogonalPrefix.nil U η
-  | n + 1 => (biorthogonalPrefix hX hU hη n).snoc hX hU hη
+    (n : ℕ) → BiorthogonalPrefix U η n :=
+  biorthogonalPrefixWith U η (by
+    intro n p
+    exact IsStrictlySingular.exists_biorthogonal_extension
+      hX hU p.v p.φ p.bio (hη n))
+
+theorem BiorthogonalPrefix.snocWith_v_castSucc
+    {U : X →L[ℝ] Y} {η : ℕ → ℝ} {n : ℕ}
+    (p : BiorthogonalPrefix U η n) (hex : p.Extension) (i : Fin n) :
+    (p.snocWith hex).v i.castSucc = p.v i := by
+  simp [BiorthogonalPrefix.snocWith]
+
+theorem BiorthogonalPrefix.snocWith_φ_castSucc
+    {U : X →L[ℝ] Y} {η : ℕ → ℝ} {n : ℕ}
+    (p : BiorthogonalPrefix U η n) (hex : p.Extension) (i : Fin n) :
+    (p.snocWith hex).φ i.castSucc = p.φ i := by
+  simp [BiorthogonalPrefix.snocWith]
+
+theorem biorthogonalPrefixWith_succ_v_castSucc
+    (U : X →L[ℝ] Y) (η : ℕ → ℝ)
+    (step : ∀ {n}, (p : BiorthogonalPrefix U η n) → p.Extension)
+    {n : ℕ} (i : Fin n) :
+    (biorthogonalPrefixWith U η step (n + 1)).v i.castSucc =
+      (biorthogonalPrefixWith U η step n).v i := by
+  exact BiorthogonalPrefix.snocWith_v_castSucc _ _ i
+
+theorem biorthogonalPrefixWith_succ_φ_castSucc
+    (U : X →L[ℝ] Y) (η : ℕ → ℝ)
+    (step : ∀ {n}, (p : BiorthogonalPrefix U η n) → p.Extension)
+    {n : ℕ} (i : Fin n) :
+    (biorthogonalPrefixWith U η step (n + 1)).φ i.castSucc =
+      (biorthogonalPrefixWith U η step n).φ i := by
+  exact BiorthogonalPrefix.snocWith_φ_castSucc _ _ i
 
 theorem BiorthogonalPrefix.snoc_v_castSucc
     [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
@@ -252,7 +318,7 @@ theorem BiorthogonalPrefix.snoc_v_castSucc
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) {n : ℕ}
     (p : BiorthogonalPrefix U η n) (i : Fin n) :
     (p.snoc hX hU hη).v i.castSucc = p.v i := by
-  simp [BiorthogonalPrefix.snoc]
+  exact BiorthogonalPrefix.snocWith_v_castSucc p _ i
 
 theorem BiorthogonalPrefix.snoc_φ_castSucc
     [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
@@ -260,7 +326,7 @@ theorem BiorthogonalPrefix.snoc_φ_castSucc
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) {n : ℕ}
     (p : BiorthogonalPrefix U η n) (i : Fin n) :
     (p.snoc hX hU hη).φ i.castSucc = p.φ i := by
-  simp [BiorthogonalPrefix.snoc]
+  exact BiorthogonalPrefix.snocWith_φ_castSucc p _ i
 
 theorem biorthogonalPrefix_succ_v_castSucc
     [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
@@ -268,8 +334,7 @@ theorem biorthogonalPrefix_succ_v_castSucc
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) {n : ℕ} (i : Fin n) :
     (biorthogonalPrefix hX hU hη (n + 1)).v i.castSucc =
       (biorthogonalPrefix hX hU hη n).v i := by
-  rw [biorthogonalPrefix]
-  exact BiorthogonalPrefix.snoc_v_castSucc hX hU hη _ i
+  exact biorthogonalPrefixWith_succ_v_castSucc U η _ i
 
 theorem biorthogonalPrefix_succ_φ_castSucc
     [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
@@ -277,22 +342,96 @@ theorem biorthogonalPrefix_succ_φ_castSucc
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) {n : ℕ} (i : Fin n) :
     (biorthogonalPrefix hX hU hη (n + 1)).φ i.castSucc =
       (biorthogonalPrefix hX hU hη n).φ i := by
-  rw [biorthogonalPrefix]
-  exact BiorthogonalPrefix.snoc_φ_castSucc hX hU hη _ i
+  exact biorthogonalPrefixWith_succ_φ_castSucc U η _ i
+
+/-- Read the newest vector from each finite prefix. -/
+noncomputable def prefixVector
+    {U : X →L[ℝ] Y} {η : ℕ → ℝ}
+    (p : (n : ℕ) → BiorthogonalPrefix U η n) (n : ℕ) : X :=
+  (p (n + 1)).v (Fin.last n)
+
+/-- Read the newest functional from each finite prefix. -/
+noncomputable def prefixFunctional
+    {U : X →L[ℝ] Y} {η : ℕ → ℝ}
+    (p : (n : ℕ) → BiorthogonalPrefix U η n) (n : ℕ) : StrongDual ℝ X :=
+  (p (n + 1)).φ (Fin.last n)
+
+theorem prefix_v_eq_vector
+    {U : X →L[ℝ] Y} {η : ℕ → ℝ}
+    (p : (n : ℕ) → BiorthogonalPrefix U η n)
+    (hcast : ∀ {n} (i : Fin n), (p (n + 1)).v i.castSucc = (p n).v i)
+    (n : ℕ) (i : Fin (n + 1)) :
+    (p (n + 1)).v i = prefixVector p i.val := by
+  induction n with
+  | zero =>
+      have hi : i = Fin.last 0 := by ext; omega
+      subst i
+      rfl
+  | succ n ih =>
+      cases i using Fin.lastCases with
+      | last => rfl
+      | cast i =>
+          rw [hcast]
+          exact ih i
+
+theorem prefix_φ_eq_functional
+    {U : X →L[ℝ] Y} {η : ℕ → ℝ}
+    (p : (n : ℕ) → BiorthogonalPrefix U η n)
+    (hcast : ∀ {n} (i : Fin n), (p (n + 1)).φ i.castSucc = (p n).φ i)
+    (n : ℕ) (i : Fin (n + 1)) :
+    (p (n + 1)).φ i = prefixFunctional p i.val := by
+  induction n with
+  | zero =>
+      have hi : i = Fin.last 0 := by ext; omega
+      subst i
+      rfl
+  | succ n ih =>
+      cases i using Fin.lastCases with
+      | last => rfl
+      | cast i =>
+          rw [hcast]
+          exact ih i
+
+theorem prefixVector_norm
+    {U : X →L[ℝ] Y} {η : ℕ → ℝ}
+    (p : (n : ℕ) → BiorthogonalPrefix U η n) (n : ℕ) :
+    ‖prefixVector p n‖ = 1 :=
+  (p (n + 1)).norm_v (Fin.last n)
+
+theorem prefix_biorthogonal
+    {U : X →L[ℝ] Y} {η : ℕ → ℝ}
+    (p : (n : ℕ) → BiorthogonalPrefix U η n)
+    (hvcast : ∀ {n} (i : Fin n), (p (n + 1)).v i.castSucc = (p n).v i)
+    (hφcast : ∀ {n} (i : Fin n), (p (n + 1)).φ i.castSucc = (p n).φ i)
+    (i j : ℕ) :
+    prefixFunctional p i (prefixVector p j) = if i = j then 1 else 0 := by
+  let N := i + j
+  let ii : Fin (N + 1) := ⟨i, by dsimp [N]; omega⟩
+  let jj : Fin (N + 1) := ⟨j, by dsimp [N]; omega⟩
+  have h := (p (N + 1)).bio ii jj
+  rw [prefix_φ_eq_functional p hφcast N ii,
+    prefix_v_eq_vector p hvcast N jj] at h
+  simpa [ii, jj] using h
+
+theorem prefix_small
+    {U : X →L[ℝ] Y} {η : ℕ → ℝ}
+    (p : (n : ℕ) → BiorthogonalPrefix U η n) (n : ℕ) :
+    ‖prefixFunctional p n‖ * ‖U (prefixVector p n)‖ < η n :=
+  (p (n + 1)).small (Fin.last n)
 
 /-- The newest vector in the recursively constructed strictly-singular prefix. -/
 noncomputable def strictlySingularBasicVector
     [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
     {U : X →L[ℝ] Y} (hU : IsStrictlySingular.{0, uX, uY, uX} U)
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) (n : ℕ) : X :=
-  (biorthogonalPrefix hX hU hη (n + 1)).v (Fin.last n)
+  prefixVector (biorthogonalPrefix hX hU hη) n
 
 /-- The newest functional in the recursively constructed strictly-singular prefix. -/
 noncomputable def strictlySingularBasicFunctional
     [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
     {U : X →L[ℝ] Y} (hU : IsStrictlySingular.{0, uX, uY, uX} U)
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) (n : ℕ) : StrongDual ℝ X :=
-  (biorthogonalPrefix hX hU hη (n + 1)).φ (Fin.last n)
+  prefixFunctional (biorthogonalPrefix hX hU hη) n
 
 theorem biorthogonalPrefix_v_eq_basicVector
     [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
@@ -301,17 +440,8 @@ theorem biorthogonalPrefix_v_eq_basicVector
     (n : ℕ) (i : Fin (n + 1)) :
     (biorthogonalPrefix hX hU hη (n + 1)).v i =
       strictlySingularBasicVector hX hU hη i.val := by
-  induction n with
-  | zero =>
-      have hi : i = Fin.last 0 := by ext; omega
-      subst i
-      rfl
-  | succ n ih =>
-      cases i using Fin.lastCases with
-      | last => rfl
-      | cast i =>
-          rw [biorthogonalPrefix_succ_v_castSucc hX hU hη]
-          exact ih i
+  exact prefix_v_eq_vector (biorthogonalPrefix hX hU hη)
+    (biorthogonalPrefix_succ_v_castSucc hX hU hη) n i
 
 theorem biorthogonalPrefix_φ_eq_basicFunctional
     [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
@@ -320,24 +450,15 @@ theorem biorthogonalPrefix_φ_eq_basicFunctional
     (n : ℕ) (i : Fin (n + 1)) :
     (biorthogonalPrefix hX hU hη (n + 1)).φ i =
       strictlySingularBasicFunctional hX hU hη i.val := by
-  induction n with
-  | zero =>
-      have hi : i = Fin.last 0 := by ext; omega
-      subst i
-      rfl
-  | succ n ih =>
-      cases i using Fin.lastCases with
-      | last => rfl
-      | cast i =>
-          rw [biorthogonalPrefix_succ_φ_castSucc hX hU hη]
-          exact ih i
+  exact prefix_φ_eq_functional (biorthogonalPrefix hX hU hη)
+    (biorthogonalPrefix_succ_φ_castSucc hX hU hη) n i
 
 theorem strictlySingularBasicVector_norm
     [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
     {U : X →L[ℝ] Y} (hU : IsStrictlySingular.{0, uX, uY, uX} U)
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) (n : ℕ) :
     ‖strictlySingularBasicVector hX hU hη n‖ = 1 := by
-  exact (biorthogonalPrefix hX hU hη (n + 1)).norm_v (Fin.last n)
+  exact prefixVector_norm (biorthogonalPrefix hX hU hη) n
 
 theorem strictlySingularBasic_biorthogonal
     [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
@@ -346,13 +467,9 @@ theorem strictlySingularBasic_biorthogonal
     strictlySingularBasicFunctional hX hU hη i
         (strictlySingularBasicVector hX hU hη j) =
       if i = j then 1 else 0 := by
-  let N := i + j
-  let ii : Fin (N + 1) := ⟨i, by dsimp [N]; omega⟩
-  let jj : Fin (N + 1) := ⟨j, by dsimp [N]; omega⟩
-  have h := (biorthogonalPrefix hX hU hη (N + 1)).bio ii jj
-  rw [biorthogonalPrefix_φ_eq_basicFunctional hX hU hη N ii,
-    biorthogonalPrefix_v_eq_basicVector hX hU hη N jj] at h
-  simpa [ii, jj] using h
+  exact prefix_biorthogonal (biorthogonalPrefix hX hU hη)
+    (biorthogonalPrefix_succ_v_castSucc hX hU hη)
+    (biorthogonalPrefix_succ_φ_castSucc hX hU hη) i j
 
 theorem strictlySingularBasic_small
     [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
@@ -360,32 +477,25 @@ theorem strictlySingularBasic_small
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) (n : ℕ) :
     ‖strictlySingularBasicFunctional hX hU hη n‖ *
         ‖U (strictlySingularBasicVector hX hU hη n)‖ < η n := by
-  exact (biorthogonalPrefix hX hU hη (n + 1)).small (Fin.last n)
+  exact prefix_small (biorthogonalPrefix hX hU hη) n
 
-theorem IsStrictlySingular.exists_biorthogonal_sequence_summable
-    [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
-    {U : X →L[ℝ] Y} (hU : IsStrictlySingular.{0, uX, uY, uX} U) :
+theorem exists_biorthogonal_sequence_summable_of_prefix
+    (U : X →L[ℝ] Y) {η : ℕ → ℝ} (hηsum : Summable η)
+    (p : (n : ℕ) → BiorthogonalPrefix U η n)
+    (hvcast : ∀ {n} (i : Fin n), (p (n + 1)).v i.castSucc = (p n).v i)
+    (hφcast : ∀ {n} (i : Fin n), (p (n + 1)).φ i.castSucc = (p n).φ i) :
     ∃ (v : ℕ → X) (φ : ℕ → StrongDual ℝ X),
       (∀ n, ‖v n‖ = 1) ∧
       (∀ i j, φ i (v j) = if i = j then 1 else 0) ∧
       Summable (fun n => ‖U (v n)‖) ∧
       Summable (fun n => ‖φ n‖ * ‖U (v n)‖) := by
-  let η : ℕ → ℝ := fun n => 1 / 2 / 2 ^ n
-  have hη (n : ℕ) : 0 < η n := by
-    dsimp [η]
-    positivity
-  let v : ℕ → X := strictlySingularBasicVector hX hU hη
-  let φ : ℕ → StrongDual ℝ X := strictlySingularBasicFunctional hX hU hη
-  have hvnorm (n : ℕ) : ‖v n‖ = 1 :=
-    strictlySingularBasicVector_norm hX hU hη n
+  let v : ℕ → X := prefixVector p
+  let φ : ℕ → StrongDual ℝ X := prefixFunctional p
+  have hvnorm (n : ℕ) : ‖v n‖ = 1 := prefixVector_norm p n
   have hbio (i j : ℕ) : φ i (v j) = if i = j then 1 else 0 :=
-    strictlySingularBasic_biorthogonal hX hU hη i j
-  have hsmall (n : ℕ) : ‖φ n‖ * ‖U (v n)‖ < η n :=
-    strictlySingularBasic_small hX hU hη n
-  have hηsum : Summable η := by
-    simpa [η] using summable_geometric_two' (1 : ℝ)
-  have hprod :
-      Summable (fun n => ‖φ n‖ * ‖U (v n)‖) :=
+    prefix_biorthogonal p hvcast hφcast i j
+  have hsmall (n : ℕ) : ‖φ n‖ * ‖U (v n)‖ < η n := prefix_small p n
+  have hprod : Summable (fun n => ‖φ n‖ * ‖U (v n)‖) :=
     hηsum.of_nonneg_of_le
       (fun n => mul_nonneg (norm_nonneg _) (norm_nonneg _))
       (fun n => (hsmall n).le)
@@ -398,6 +508,39 @@ theorem IsStrictlySingular.exists_biorthogonal_sequence_summable
   have hU : Summable (fun n => ‖U (v n)‖) :=
     hprod.of_nonneg_of_le (fun n => norm_nonneg _) hUnorm
   exact ⟨v, φ, hvnorm, hbio, hU, hprod⟩
+
+theorem exists_biorthogonal_sequence_summable_of_steps
+    (U : X →L[ℝ] Y)
+    (step : ∀ (η : ℕ → ℝ), (∀ n, 0 < η n) →
+      ∀ {n}, (p : BiorthogonalPrefix U η n) → p.Extension) :
+    ∃ (v : ℕ → X) (φ : ℕ → StrongDual ℝ X),
+      (∀ n, ‖v n‖ = 1) ∧
+      (∀ i j, φ i (v j) = if i = j then 1 else 0) ∧
+      Summable (fun n => ‖U (v n)‖) ∧
+      Summable (fun n => ‖φ n‖ * ‖U (v n)‖) := by
+  let η : ℕ → ℝ := fun n => 1 / 2 / 2 ^ n
+  have hη (n : ℕ) : 0 < η n := by
+    dsimp [η]
+    positivity
+  have hηsum : Summable η := by
+    simpa [η] using summable_geometric_two' (1 : ℝ)
+  let p := biorthogonalPrefixWith U η (step η hη)
+  exact exists_biorthogonal_sequence_summable_of_prefix U hηsum p
+    (biorthogonalPrefixWith_succ_v_castSucc U η (step η hη))
+    (biorthogonalPrefixWith_succ_φ_castSucc U η (step η hη))
+
+theorem IsStrictlySingular.exists_biorthogonal_sequence_summable
+    [CompleteSpace X] (hX : ¬ FiniteDimensional ℝ X)
+    {U : X →L[ℝ] Y} (hU : IsStrictlySingular.{0, uX, uY, uX} U) :
+    ∃ (v : ℕ → X) (φ : ℕ → StrongDual ℝ X),
+      (∀ n, ‖v n‖ = 1) ∧
+      (∀ i j, φ i (v j) = if i = j then 1 else 0) ∧
+      Summable (fun n => ‖U (v n)‖) ∧
+      Summable (fun n => ‖φ n‖ * ‖U (v n)‖) := by
+  refine exists_biorthogonal_sequence_summable_of_steps U ?_
+  intro η hη n p
+  exact IsStrictlySingular.exists_biorthogonal_extension
+    hX hU p.v p.φ p.bio (hη n)
 
 theorem biorthogonal_finsupp_coefficient
     {v : ℕ → X} {φ : ℕ → StrongDual ℝ X}

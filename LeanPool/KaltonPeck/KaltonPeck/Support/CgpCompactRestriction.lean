@@ -253,49 +253,14 @@ theorem exists_biorthogonal_extension_of_not_upper
       (∀ i, ψ (v i) = 0) ∧
       ψ x = 1 ∧
       ‖ψ‖ * ‖T x‖ < η := by
-  classical
-  let eval : X →L[ℝ] (Fin n → ℝ) := ContinuousLinearMap.pi φ
-  let P : X →L[ℝ] X := ∑ i, (φ i).smulRight (v i)
-  have hPv (j : Fin n) : P (v j) = v j := by
-    simp [P, hvφ]
-  let C : ℝ := ‖(1 : X →L[ℝ] X) - P‖ + 1
-  have hC : 0 < C := by
-    dsimp [C]
-    positivity
+  apply exists_biorthogonal_extension_of_small_kernel T ?_ v φ hvφ hη
+  intro m ξ ε hε
+  let eval : X →L[ℝ] (Fin m → ℝ) := ContinuousLinearMap.pi ξ
   obtain ⟨x, hxeval, hxnorm, hxsmall⟩ :=
-    exists_unit_mem_evalKernel_norm_apply_lt_of_not_upper
-      T hT eval (div_pos hη hC)
-  have hxφ (i : Fin n) : φ i x = 0 := by
-    have := congr_fun hxeval i
-    exact this
-  have hPx : P x = 0 := by
-    simp [P, hxφ]
-  obtain ⟨g, hgnorm, hgx⟩ :=
-    exists_dual_vector ℝ x (by simp [hxnorm])
-  let ψ : StrongDual ℝ X := g.comp ((1 : X →L[ℝ] X) - P)
-  have hψv (i : Fin n) : ψ (v i) = 0 := by
-    change g (v i - P (v i)) = 0
-    rw [hPv, sub_self, map_zero]
-  have hψx : ψ x = 1 := by
-    change g (x - P x) = 1
-    rw [hPx, sub_zero, hgx, hxnorm]
-    norm_num
-  have hψnorm : ‖ψ‖ ≤ ‖(1 : X →L[ℝ] X) - P‖ := by
-    calc
-      ‖ψ‖ ≤ ‖g‖ * ‖(1 : X →L[ℝ] X) - P‖ :=
-        ContinuousLinearMap.opNorm_comp_le _ _
-      _ = ‖(1 : X →L[ℝ] X) - P‖ := by rw [hgnorm, one_mul]
-  refine ⟨x, ψ, hxnorm, hxφ, hψv, hψx, ?_⟩
-  have hTnonneg : 0 ≤ ‖T x‖ := norm_nonneg _
-  calc
-    ‖ψ‖ * ‖T x‖ ≤ ‖(1 : X →L[ℝ] X) - P‖ * ‖T x‖ :=
-      mul_le_mul_of_nonneg_right hψnorm hTnonneg
-    _ ≤ C * ‖T x‖ := by
-      apply mul_le_mul_of_nonneg_right _ hTnonneg
-      dsimp [C]
-      linarith
-    _ < C * (η / C) := mul_lt_mul_of_pos_left hxsmall hC
-    _ = η := by field_simp
+    exists_unit_mem_evalKernel_norm_apply_lt_of_not_upper T hT eval hε
+  refine ⟨x, ?_, hxnorm, hxsmall⟩
+  intro i
+  exact congr_fun hxeval i
 
 /-- Extend a biorthogonal prefix using failure of upper semi-Fredholmness. -/
 noncomputable def snocNotUpper
@@ -303,56 +268,17 @@ noncomputable def snocNotUpper
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) {n : ℕ}
     (p : BiorthogonalPrefix T η n) :
     BiorthogonalPrefix T η (n + 1) := by
-  have hex :
-      ∃ (x : X) (ψ : StrongDual ℝ X),
-        ‖x‖ = 1 ∧
-        (∀ i, p.φ i x = 0) ∧
-        (∀ i, ψ (p.v i) = 0) ∧
-        ψ x = 1 ∧
-        ‖ψ‖ * ‖T x‖ < η n :=
-    exists_biorthogonal_extension_of_not_upper
-      T hT p.v p.φ p.bio (hη n)
-  let x : X := Exists.choose hex
-  let hψ := Exists.choose_spec hex
-  let ψ : StrongDual ℝ X := Exists.choose hψ
-  have hs := Exists.choose_spec hψ
-  have hxnorm : ‖x‖ = 1 := hs.1
-  have hxφ : ∀ i, p.φ i x = 0 := hs.2.1
-  have hψv : ∀ i, ψ (p.v i) = 0 := hs.2.2.1
-  have hψx : ψ x = 1 := hs.2.2.2.1
-  have hxsmall : ‖ψ‖ * ‖T x‖ < η n := hs.2.2.2.2
-  exact
-    { v := Fin.snoc p.v x
-      φ := Fin.snoc p.φ ψ
-      norm_v := by
-        intro i
-        cases i using Fin.lastCases with
-        | last => simpa using hxnorm
-        | cast i => simpa using p.norm_v i
-      bio := by
-        intro i j
-        cases i using Fin.lastCases with
-        | last =>
-            cases j using Fin.lastCases with
-            | last => simpa using hψx
-            | cast j => simp [hψv, Ne.symm (Fin.castSucc_ne_last j)]
-        | cast i =>
-            cases j using Fin.lastCases with
-            | last => simp [hxφ]
-            | cast j => simpa using p.bio i j
-      small := by
-        intro i
-        cases i using Fin.lastCases with
-        | last => simpa using hxsmall
-        | cast i => simpa using p.small i }
+  exact p.snocWith
+    (exists_biorthogonal_extension_of_not_upper T hT p.v p.φ p.bio (hη n))
 
 /-- Recursively construct biorthogonal prefixes for an operator which is not upper semi-Fredholm. -/
 noncomputable def biorthogonalPrefixNotUpper
     (T : X →L[ℝ] Y) (hT : ¬ IsUpperSemiFredholm T)
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) :
-    (n : ℕ) → BiorthogonalPrefix T η n
-  | 0 => BiorthogonalPrefix.nil T η
-  | n + 1 => snocNotUpper T hT hη (biorthogonalPrefixNotUpper T hT hη n)
+    (n : ℕ) → BiorthogonalPrefix T η n :=
+  biorthogonalPrefixWith T η (by
+    intro n p
+    exact exists_biorthogonal_extension_of_not_upper T hT p.v p.φ p.bio (hη n))
 
 omit [CompleteSpace Y] in
 theorem snocNotUpper_v_castSucc
@@ -360,7 +286,7 @@ theorem snocNotUpper_v_castSucc
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) {n : ℕ}
     (p : BiorthogonalPrefix T η n) (i : Fin n) :
     (snocNotUpper T hT hη p).v i.castSucc = p.v i := by
-  simp [snocNotUpper]
+  exact BiorthogonalPrefix.snocWith_v_castSucc p _ i
 
 omit [CompleteSpace Y] in
 theorem snocNotUpper_φ_castSucc
@@ -368,7 +294,7 @@ theorem snocNotUpper_φ_castSucc
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) {n : ℕ}
     (p : BiorthogonalPrefix T η n) (i : Fin n) :
     (snocNotUpper T hT hη p).φ i.castSucc = p.φ i := by
-  simp [snocNotUpper]
+  exact BiorthogonalPrefix.snocWith_φ_castSucc p _ i
 
 open KaltonPeck.Support.StrictlySingular in
 omit [CompleteSpace Y] in
@@ -377,8 +303,7 @@ theorem biorthogonalPrefixNotUpper_succ_v_castSucc
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) {n : ℕ} (i : Fin n) :
     (biorthogonalPrefixNotUpper T hT hη (n + 1)).v i.castSucc =
       (biorthogonalPrefixNotUpper T hT hη n).v i := by
-  rw [biorthogonalPrefixNotUpper]
-  exact snocNotUpper_v_castSucc T hT hη _ i
+  exact biorthogonalPrefixWith_succ_v_castSucc T η _ i
 
 open KaltonPeck.Support.StrictlySingular in
 omit [CompleteSpace Y] in
@@ -387,8 +312,7 @@ theorem biorthogonalPrefixNotUpper_succ_φ_castSucc
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) {n : ℕ} (i : Fin n) :
     (biorthogonalPrefixNotUpper T hT hη (n + 1)).φ i.castSucc =
       (biorthogonalPrefixNotUpper T hT hη n).φ i := by
-  rw [biorthogonalPrefixNotUpper]
-  exact snocNotUpper_φ_castSucc T hT hη _ i
+  exact biorthogonalPrefixWith_succ_φ_castSucc T η _ i
 
 open KaltonPeck.Support.StrictlySingular in
 /-- The newest vector in the biorthogonal prefix associated to a
@@ -396,7 +320,7 @@ non-upper-semi-Fredholm operator. -/
 noncomputable def notUpperBasicVector
     (T : X →L[ℝ] Y) (hT : ¬ IsUpperSemiFredholm T)
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) (n : ℕ) : X :=
-  (biorthogonalPrefixNotUpper T hT hη (n + 1)).v (Fin.last n)
+  prefixVector (biorthogonalPrefixNotUpper T hT hη) n
 
 open KaltonPeck.Support.StrictlySingular in
 /-- The newest functional in the biorthogonal prefix associated to a
@@ -404,7 +328,7 @@ non-upper-semi-Fredholm operator. -/
 noncomputable def notUpperBasicFunctional
     (T : X →L[ℝ] Y) (hT : ¬ IsUpperSemiFredholm T)
     {η : ℕ → ℝ} (hη : ∀ n, 0 < η n) (n : ℕ) : StrongDual ℝ X :=
-  (biorthogonalPrefixNotUpper T hT hη (n + 1)).φ (Fin.last n)
+  prefixFunctional (biorthogonalPrefixNotUpper T hT hη) n
 
 open KaltonPeck.Support.StrictlySingular in
 omit [CompleteSpace Y] in
@@ -414,17 +338,8 @@ theorem biorthogonalPrefixNotUpper_v_eq_basicVector
     (n : ℕ) (i : Fin (n + 1)) :
     (biorthogonalPrefixNotUpper T hT hη (n + 1)).v i =
       notUpperBasicVector T hT hη i.val := by
-  induction n with
-  | zero =>
-      have hi : i = Fin.last 0 := by ext; omega
-      subst i
-      rfl
-  | succ n ih =>
-      cases i using Fin.lastCases with
-      | last => rfl
-      | cast i =>
-          rw [biorthogonalPrefixNotUpper_succ_v_castSucc T hT hη]
-          exact ih i
+  exact prefix_v_eq_vector (biorthogonalPrefixNotUpper T hT hη)
+    (biorthogonalPrefixNotUpper_succ_v_castSucc T hT hη) n i
 
 open KaltonPeck.Support.StrictlySingular in
 omit [CompleteSpace Y] in
@@ -434,17 +349,8 @@ theorem biorthogonalPrefixNotUpper_φ_eq_basicFunctional
     (n : ℕ) (i : Fin (n + 1)) :
     (biorthogonalPrefixNotUpper T hT hη (n + 1)).φ i =
       notUpperBasicFunctional T hT hη i.val := by
-  induction n with
-  | zero =>
-      have hi : i = Fin.last 0 := by ext; omega
-      subst i
-      rfl
-  | succ n ih =>
-      cases i using Fin.lastCases with
-      | last => rfl
-      | cast i =>
-          rw [biorthogonalPrefixNotUpper_succ_φ_castSucc T hT hη]
-          exact ih i
+  exact prefix_φ_eq_functional (biorthogonalPrefixNotUpper T hT hη)
+    (biorthogonalPrefixNotUpper_succ_φ_castSucc T hT hη) n i
 
 omit [CompleteSpace Y] in
 open KaltonPeck.Support.StrictlySingular in
@@ -455,40 +361,9 @@ theorem exists_biorthogonal_sequence_summable_of_not_upper
       (∀ i j, φ i (v j) = if i = j then 1 else 0) ∧
       Summable (fun n => ‖T (v n)‖) ∧
       Summable (fun n => ‖φ n‖ * ‖T (v n)‖) := by
-  let η : ℕ → ℝ := fun n => 1 / 2 / 2 ^ n
-  have hη (n : ℕ) : 0 < η n := by
-    dsimp [η]
-    positivity
-  let v : ℕ → X := notUpperBasicVector T hT hη
-  let φ : ℕ → StrongDual ℝ X := notUpperBasicFunctional T hT hη
-  have hvnorm (n : ℕ) : ‖v n‖ = 1 :=
-    (biorthogonalPrefixNotUpper T hT hη (n + 1)).norm_v (Fin.last n)
-  have hbio (i j : ℕ) : φ i (v j) = if i = j then 1 else 0 := by
-    let N := i + j
-    let ii : Fin (N + 1) := ⟨i, by dsimp [N]; omega⟩
-    let jj : Fin (N + 1) := ⟨j, by dsimp [N]; omega⟩
-    have h := (biorthogonalPrefixNotUpper T hT hη (N + 1)).bio ii jj
-    rw [biorthogonalPrefixNotUpper_φ_eq_basicFunctional T hT hη N ii,
-      biorthogonalPrefixNotUpper_v_eq_basicVector T hT hη N jj] at h
-    simpa [φ, v, ii, jj] using h
-  have hsmall (n : ℕ) : ‖φ n‖ * ‖T (v n)‖ < η n :=
-    (biorthogonalPrefixNotUpper T hT hη (n + 1)).small (Fin.last n)
-  have hηsum : Summable η := by
-    simpa [η] using summable_geometric_two' (1 : ℝ)
-  have hprod :
-      Summable (fun n => ‖φ n‖ * ‖T (v n)‖) :=
-    hηsum.of_nonneg_of_le
-      (fun n => mul_nonneg (norm_nonneg _) (norm_nonneg _))
-      (fun n => (hsmall n).le)
-  have hφnorm (n : ℕ) : 1 ≤ ‖φ n‖ := by
-    have happly : ‖φ n (v n)‖ ≤ ‖φ n‖ * ‖v n‖ := (φ n).le_opNorm (v n)
-    rw [hbio n n, ite_eq_left rfl, norm_one, hvnorm n, mul_one] at happly
-    exact happly
-  have hTnorm (n : ℕ) : ‖T (v n)‖ ≤ ‖φ n‖ * ‖T (v n)‖ := by
-    nlinarith [hφnorm n, norm_nonneg (T (v n))]
-  have hTsum : Summable (fun n => ‖T (v n)‖) :=
-    hprod.of_nonneg_of_le (fun n => norm_nonneg _) hTnorm
-  exact ⟨v, φ, hvnorm, hbio, hTsum, hprod⟩
+  refine exists_biorthogonal_sequence_summable_of_steps T ?_
+  intro η hη n p
+  exact exists_biorthogonal_extension_of_not_upper T hT p.v p.φ p.bio (hη n)
 
 omit [CompleteSpace X] [CompleteSpace Y] in
 private theorem functional_smulRight_isCompact
