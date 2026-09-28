@@ -81,17 +81,25 @@ private theorem upperSemi_of_antilipschitz_orthogonal
   rw [hrange]
   exact Submodule.isClosed_sup_finiteDimensional _ _ hclosed_perp
 
-private def l2Basis (n : ℕ) : CanonicalL2 :=
+/-- The standard unit coordinate vector in the canonical real `ℓ₂`. -/
+def l2Basis (n : ℕ) : CanonicalL2 :=
   lp.single 2 n 1
 
-private def l2Head (N : ℕ) : Submodule ℝ CanonicalL2 :=
+/-- The subspace spanned by the first `N` coordinate vectors. -/
+def l2Head (N : ℕ) : Submodule ℝ CanonicalL2 :=
   Submodule.span ℝ (Set.range fun i : Fin N => l2Basis i)
 
-private instance instFiniteDimensionalL2Head (N : ℕ) :
+/-- Each finite coordinate head is finite-dimensional. -/
+theorem finiteDimensional_l2Head (N : ℕ) :
     FiniteDimensional ℝ (l2Head N) :=
   FiniteDimensional.span_of_finite ℝ (Set.finite_range _)
 
-private lemma mem_l2Head_orthogonal_iff (N : ℕ) (x : CanonicalL2) :
+private instance instFiniteDimensionalL2Head (N : ℕ) :
+    FiniteDimensional ℝ (l2Head N) :=
+  finiteDimensional_l2Head N
+
+/-- Orthogonality to the finite coordinate head means its first coordinates vanish. -/
+theorem mem_l2Head_orthogonal_iff (N : ℕ) (x : CanonicalL2) :
     x ∈ (l2Head N)ᗮ ↔ ∀ k < N, x k = 0 := by
   constructor
   · intro hx k hk
@@ -114,10 +122,12 @@ private lemma mem_l2Head_orthogonal_iff (N : ℕ) (x : CanonicalL2) :
     · intro c y _ hy
       rw [inner_smul_left, hy, mul_zero]
 
-private def l2Trunc (m : ℕ) (x : CanonicalL2) : CanonicalL2 :=
+/-- Truncate a Hilbert vector after its first `m` coordinates. -/
+def l2Trunc (m : ℕ) (x : CanonicalL2) : CanonicalL2 :=
   ∑ k ∈ Finset.range m, lp.single 2 k (x k)
 
-private lemma l2Trunc_apply (m k : ℕ) (x : CanonicalL2) :
+/-- Coordinate formula for finite truncation. -/
+theorem l2Trunc_apply (m k : ℕ) (x : CanonicalL2) :
     l2Trunc m x k = if k < m then x k else 0 := by
   rw [l2Trunc]
   change
@@ -127,22 +137,10 @@ private lemma l2Trunc_apply (m k : ℕ) (x : CanonicalL2) :
   rw [map_sum]
   simp [lp.evalCLM, lp.single_apply, Pi.single_apply]
 
-private lemma l2Trunc_tendsto (x : CanonicalL2) :
+/-- Finite coordinate truncations converge to the original Hilbert vector. -/
+theorem l2Trunc_tendsto (x : CanonicalL2) :
     Filter.Tendsto (fun m => l2Trunc m x) Filter.atTop (𝓝 x) := by
   exact (lp.hasSum_single (p := (2 : ENNReal)) (by norm_num) x).tendsto_sum_nat
-
-private lemma l2Norm_coe_eq_norm (x : CanonicalL2) :
-    l2Norm (fun n => x n) = ‖x‖ := by
-  rw [lp.norm_eq_tsum_rpow (p := (2 : ENNReal)) (by norm_num)]
-  change Real.sqrt (∑' n, x n ^ 2) =
-    (∑' n, |x n| ^ (2 : ℝ)) ^ (1 / (2 : ℝ))
-  rw [Real.sqrt_eq_rpow]
-  congr 1
-  apply tsum_congr
-  intro n
-  calc
-    x n ^ (2 : ℕ) = |x n| ^ (2 : ℕ) := (sq_abs (x n)).symm
-    _ = |x n| ^ (2 : ℝ) := (Real.rpow_natCast |x n| 2).symm
 
 private lemma exists_small_unit_tail
     {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
@@ -376,7 +374,7 @@ private lemma extractedBlock_isSuccessive
   constructor
   · intro n
     change l2Norm (fun k => blockVec T hT n k) = 1
-    rw [l2Norm_coe_eq_norm (blockVec T hT n)]
+    rw [Coordinates.l2Norm_coe (blockVec T hT n)]
     exact (chosenBlock T hT (blockCut T hT n) n).norm_vec
   · intro n i j hi hj
     change (chosenBlock T hT (blockCut T hT n) n).vec i ≠ 0 at hi

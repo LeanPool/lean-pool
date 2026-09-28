@@ -1105,7 +1105,8 @@ def secondCLM : Raw →L[ℝ] L2 :=
     rw [← l2Norm_eq_norm_toL2 p.1.2 p.2.1]
     exact second_norm_le_model_norm p
 
-private lemma l2Norm_coe (x : L2) : l2Norm (fun n ↦ x n) = ‖x‖ := by
+/-- The coordinate square-sum norm agrees with the Hilbert norm on real `ℓ₂`. -/
+theorem l2Norm_coe (x : L2) : l2Norm (fun n ↦ x n) = ‖x‖ := by
   have hx : IsSquareSummable (fun n ↦ x n) := by
     rw [squareSummable_iff_memL2]
     exact x.2

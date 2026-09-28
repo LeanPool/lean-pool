@@ -29,71 +29,13 @@ noncomputable
 section
 
 open Coordinates Symplectic
+open CgpBlockExtraction
 open Filter Function
 open scoped Topology
 
-private def l2Basis (n : ℕ) : CanonicalL2 :=
-  lp.single 2 n 1
-
-private def l2Head (N : ℕ) : Submodule ℝ CanonicalL2 :=
-  Submodule.span ℝ (Set.range fun i : Fin N => l2Basis i)
-
 private instance instFiniteDimensionalL2Head (N : ℕ) :
     FiniteDimensional ℝ (l2Head N) :=
-  FiniteDimensional.span_of_finite ℝ (Set.finite_range _)
-
-private lemma mem_l2Head_orthogonal_iff (N : ℕ) (x : CanonicalL2) :
-    x ∈ (l2Head N)ᗮ ↔ ∀ k < N, x k = 0 := by
-  constructor
-  · intro hx k hk
-    have heb : l2Basis k ∈ l2Head N := by
-      apply Submodule.subset_span
-      exact ⟨⟨k, hk⟩, rfl⟩
-    have hi := Submodule.inner_right_of_mem_orthogonal heb hx
-    simpa only [l2Basis, lp.inner_single_left, RCLike.inner_apply, conj_trivial,
-      mul_one] using hi
-  · intro hx
-    rw [Submodule.mem_orthogonal]
-    intro u hu
-    refine Submodule.span_induction ?_ ?_ ?_ ?_ hu
-    · rintro y ⟨i, rfl⟩
-      simp only [l2Basis, lp.inner_single_left, RCLike.inner_apply, conj_trivial,
-        mul_one, hx i i.isLt]
-    · exact inner_zero_left _
-    · intro y z _ _ hy hz
-      rw [inner_add_left, hy, hz, add_zero]
-    · intro c y _ hy
-      rw [inner_smul_left, hy, mul_zero]
-
-private def l2Trunc (m : ℕ) (x : CanonicalL2) : CanonicalL2 :=
-  ∑ k ∈ Finset.range m, lp.single 2 k (x k)
-
-private lemma l2Trunc_apply (m k : ℕ) (x : CanonicalL2) :
-    l2Trunc m x k = if k < m then x k else 0 := by
-  rw [l2Trunc]
-  change
-    (lp.evalCLM ℝ (fun _ : ℕ => ℝ) 2 k)
-        (∑ i ∈ Finset.range m, lp.single 2 i (x i)) =
-      if k < m then x k else 0
-  rw [map_sum]
-  simp [lp.evalCLM, lp.single_apply, Pi.single_apply]
-
-private lemma l2Trunc_tendsto (x : CanonicalL2) :
-    Tendsto (fun m => l2Trunc m x) atTop (𝓝 x) :=
-  (lp.hasSum_single (p := (2 : ENNReal)) (by norm_num) x).tendsto_sum_nat
-
-private lemma l2Norm_coe_eq_norm (x : CanonicalL2) :
-    l2Norm (fun n => x n) = ‖x‖ := by
-  rw [lp.norm_eq_tsum_rpow (p := (2 : ENNReal)) (by norm_num)]
-  change Real.sqrt (∑' n, x n ^ 2) =
-    (∑' n, |x n| ^ (2 : ℝ)) ^ (1 / (2 : ℝ))
-  rw [Real.sqrt_eq_rpow]
-  congr 1
-  apply tsum_congr
-  intro n
-  calc
-    x n ^ (2 : ℕ) = |x n| ^ (2 : ℕ) := (sq_abs (x n)).symm
-    _ = |x n| ^ (2 : ℝ) := (Real.rpow_natCast |x n| 2).symm
+  CgpBlockExtraction.finiteDimensional_l2Head N
 
 /-- Every infinite-dimensional subspace of the canonical Hilbert space contains a unit vector
 whose prescribed finite coordinate head vanishes. -/
@@ -328,7 +270,7 @@ private lemma extractedBlock_isSuccessive
   constructor
   · intro n
     change l2Norm (fun k => blockVec M hM n k) = 1
-    rw [l2Norm_coe_eq_norm (blockVec M hM n)]
+    rw [Coordinates.l2Norm_coe (blockVec M hM n)]
     exact (chosenBlock M hM (blockCut M hM n) n).norm_vec
   · intro n i j hi hj
     change (chosenBlock M hM (blockCut M hM n) n).vec i ≠ 0 at hi
@@ -659,7 +601,7 @@ private theorem weakNullBlockSequence_isSuccessive
   · intro n
     change
       l2Norm (fun k => (weakNullBlockState u huNorm hu n).vec k) = 1
-    rw [l2Norm_coe_eq_norm
+    rw [Coordinates.l2Norm_coe
       (weakNullBlockState u huNorm hu n).vec]
     exact (weakNullBlockState u huNorm hu n).norm_vec
   · intro n i j hi hj

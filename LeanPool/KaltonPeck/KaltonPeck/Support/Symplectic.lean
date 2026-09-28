@@ -49,16 +49,7 @@ def toL2 (x : ℕ → ℝ) (hx : IsSquareSummable x) :
 
 private theorem l2Norm_toL2 (x : ℕ → ℝ) (hx : IsSquareSummable x) :
     l2Norm x = ‖toL2 x hx‖ := by
-  rw [lp.norm_eq_tsum_rpow (p := (2 : ENNReal)) (by norm_num)]
-  change Real.sqrt (∑' n, x n ^ 2) =
-    (∑' n, |x n| ^ (2 : ℝ)) ^ (1 / (2 : ℝ))
-  rw [Real.sqrt_eq_rpow]
-  congr 1
-  apply tsum_congr
-  intro n
-  calc
-    x n ^ (2 : ℕ) = |x n| ^ (2 : ℕ) := (sq_abs (x n)).symm
-    _ = |x n| ^ (2 : ℝ) := (Real.rpow_natCast |x n| 2).symm
+  simpa [toL2] using (Coordinates.l2Norm_coe (toL2 x hx))
 
 /-- The real Hilbert space of square-summable sequences. -/
 abbrev L2 := lp (fun _ : ℕ ↦ ℝ) 2

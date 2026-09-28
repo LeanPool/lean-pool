@@ -355,19 +355,6 @@ private lemma squareSummable_coe (x : CanonicalL2) :
   have hx := (memℓp_gen_iff (p := (2 : ENNReal)) (by norm_num)).mp x.2
   simpa [Real.norm_eq_abs, sq_abs] using hx
 
-private lemma l2Norm_coe_eq_norm (x : CanonicalL2) :
-    l2Norm (fun n ↦ x n) = ‖x‖ := by
-  rw [lp.norm_eq_tsum_rpow (p := (2 : ENNReal)) (by norm_num)]
-  change Real.sqrt (∑' n, x n ^ 2) =
-    (∑' n, |x n| ^ (2 : ℝ)) ^ (1 / (2 : ℝ))
-  rw [Real.sqrt_eq_rpow]
-  congr 1
-  apply tsum_congr
-  intro n
-  calc
-    x n ^ (2 : ℕ) = |x n| ^ (2 : ℕ) := (sq_abs (x n)).symm
-    _ = |x n| ^ (2 : ℝ) := (Real.rpow_natCast |x n| 2).symm
-
 private def centralizerLiftVector
     (M : Submodule ℝ CanonicalL2)
     (b : M →ₗ[ℝ] (ℕ → ℝ))
@@ -415,7 +402,7 @@ private theorem centralizerLiftLinear_norm_le
       (b y - centralizer (fun n ↦ (y : CanonicalL2) n)) +
         l2Norm (fun n ↦ (y : CanonicalL2) n)) ≤
     D * (C + 1) * ‖y‖
-  rw [l2Norm_coe_eq_norm]
+  rw [Coordinates.l2Norm_coe]
   calc
     D * (l2Norm
         (b y - centralizer (fun n ↦ (y : CanonicalL2) n)) + ‖y‖) ≤
@@ -495,7 +482,7 @@ private lemma signedL2_centralizer
     centralizer (fun k ↦ signedL2 N σ k) =
       (-Real.log N) • (fun k ↦ signedL2 N σ k) := by
   have hl2 : l2Norm (fun k ↦ signedL2 N σ k) = 1 := by
-    rw [l2Norm_coe_eq_norm, signedL2_norm hN σ hσ]
+    rw [Coordinates.l2Norm_coe, signedL2_norm hN σ hσ]
   have hNreal : (0 : ℝ) < N := by exact_mod_cast hN
   have hsqrt : 0 < Real.sqrt (N : ℝ) := Real.sqrt_pos.2 hNreal
   have hlogsqrt : Real.log (Real.sqrt (N : ℝ)) = Real.log N / 2 :=
@@ -584,12 +571,12 @@ private lemma signedSecondVector_quasiNorm
         Real.log N := by
     change l2Norm (fun k ↦ (Real.log N • signedL2 N σ) k) =
       Real.log N
-    rw [l2Norm_coe_eq_norm, norm_smul, Real.norm_eq_abs,
+    rw [Coordinates.l2Norm_coe, norm_smul, Real.norm_eq_abs,
       abs_of_nonneg hlog, signedL2_norm hN σ hσ, mul_one]
   rw [hscaled]
   change Real.log N + l2Norm (fun k ↦ signedL2 N σ k) =
     Real.log N + 1
-  rw [l2Norm_coe_eq_norm, signedL2_norm hN σ hσ]
+  rw [Coordinates.l2Norm_coe, signedL2_norm hN σ hσ]
 
 private theorem exists_sign_sum_sq_le
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
