@@ -421,12 +421,12 @@ theorem sentenceJConsts_subst_constTerm (φ : L'[[J]].Formulaω (Fin 1)) (j : J)
     exact Set.mem_singleton_iff.mpr (Sum.inr.injEq j' j ▸ hinj)
 
 /-- The base function symbols of an expansion formula (the `Sum.inl` layer). -/
-def BoundedFormulaω.baseFunctionsIn {α : Type} {n : ℕ} (φ : L'[[J]].BoundedFormulaω α n) :
+@[expose] def BoundedFormulaω.baseFunctionsIn {α : Type} {n : ℕ} (φ : L'[[J]].BoundedFormulaω α n) :
     Set (Σ n, L'.Functions n) :=
   {s | (⟨s.1, Sum.inl s.2⟩ : Σ n, L'[[J]].Functions n) ∈ φ.functionsIn}
 
 /-- The base relation symbols of an expansion formula (the constant layer adds none). -/
-def BoundedFormulaω.baseRelationsIn {α : Type} {n : ℕ} (φ : L'[[J]].BoundedFormulaω α n) :
+@[expose] def BoundedFormulaω.baseRelationsIn {α : Type} {n : ℕ} (φ : L'[[J]].BoundedFormulaω α n) :
     Set (Σ n, L'.Relations n) :=
   {s | (⟨s.1, Sum.inl s.2⟩ : Σ n, L'[[J]].Relations n) ∈ φ.relationsIn}
 
@@ -492,7 +492,7 @@ theorem Term.functionsIn_stripConsts {β : Type} :
       | succ l => exact nomatch c
 
 /-- Strip a constant-free expansion formula to the base language. -/
-def BoundedFormulaω.stripConsts {α : Type} :
+@[expose] def BoundedFormulaω.stripConsts {α : Type} :
     ∀ {n : ℕ} (φ : L'[[J]].BoundedFormulaω α n),
       sentenceJConsts (L' := L') φ ⊆ ∅ → L'.BoundedFormulaω α n
   | _, .falsum, _ => .falsum

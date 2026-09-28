@@ -5505,7 +5505,7 @@ theorem boxWeylDimensions_of_actualWeyl {r m n : ℕ}
     exact (boxSignature_interlaces a b hstable j).antitone_ambient
 
 /-- The box axis used in the spherical-code argument. -/
-def boxAxis (n : ℕ) (hn : 0 < n) : SpherePoint n := by
+@[expose] def boxAxis (n : ℕ) (hn : 0 < n) : SpherePoint n := by
   cases n with
   | zero => omega
   | succ d =>

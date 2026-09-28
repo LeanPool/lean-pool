@@ -8436,7 +8436,7 @@ section
 open scoped BigOperators
 
 /-- The young gram radial ideal used in the spherical-code argument. -/
-def youngGramRadialIdeal (r n : ℕ) : Ideal (PolynomialSpace r n) :=
+@[expose] def youngGramRadialIdeal (r n : ℕ) : Ideal (PolynomialSpace r n) :=
   Ideal.span (Set.range fun ij : Fin (r + 1) × Fin (r + 1) =>
     rowPairingPolynomial (n := n) ij.1 ij.2)
 

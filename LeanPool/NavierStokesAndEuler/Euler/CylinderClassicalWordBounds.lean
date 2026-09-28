@@ -35,7 +35,7 @@ open scoped ContDiff
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- The actual strong L² derivative for an ordered mixed word. -/
-def strongWord (u : LiftL2 period) {n : ℕ} (w : Fin n → Fin 4) : LiftL2 period :=
+@[expose] def strongWord (u : LiftL2 period) {n : ℕ} (w : Fin n → Fin 4) : LiftL2 period :=
   wordDerivative standardDirection (fun a : LiftTangent => translate period a u) w 0
 
 @[simp] theorem strongWord_zero (u : LiftL2 period) (w : Fin 0 → Fin 4) : strongWord period u w = u

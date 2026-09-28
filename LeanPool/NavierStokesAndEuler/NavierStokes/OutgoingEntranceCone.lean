@@ -1479,6 +1479,7 @@ theorem linearLag_eq_of_solution {r b f : ℝ → ℝ} (hr : Continuous r)
 theorem canonical_Ubar_before (v : TailData) (Amp : ℝ → ℝ) {y : ℝ}
     (hy : y ≤ v.core.pulseStart) (η : ℝ) :
     OutgoingHistories.Ubar v Amp (y, η) = averagedDrop v.core y * η := by
+  rw [OutgoingHistories.Ubar, OutgoingHistories.M_eq_massMoment, OutgoingHistories.X]
   exact averagedDrop_is_mass_history v.core Amp η hy
 
 theorem canonical_Ubar_parameter_before (v : TailData) {Amp : ℝ → ℝ}

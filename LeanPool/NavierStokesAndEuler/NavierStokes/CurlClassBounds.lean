@@ -1683,7 +1683,7 @@ theorem class_const_complex {f : ℕ → D → ComplexVector} (hf : MemClass s w
   simpa using hf.map (c • ContinuousLinearMap.id ℝ ComplexVector)
 
 /-- The phase-jet domain corresponding to the actual strip data. -/
-noncomputable def phaseDomain (s : StripData D) : PhaseJetBounds.Domain ℕ D where
+@[expose] noncomputable def phaseDomain (s : StripData D) : PhaseJetBounds.Domain ℕ D where
   scale := s.slow
   carrier := fun _ => s.domain
   isOpen := fun _ => s.isOpen_domain

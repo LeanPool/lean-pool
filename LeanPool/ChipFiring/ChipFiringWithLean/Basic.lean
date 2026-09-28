@@ -58,7 +58,7 @@ attribute [instance] CFGraph.instDecidableEq CFGraph.instFintype CFGraph.instNon
 
 When working with chip-firing graphs in this repository, prefer this function to the
 underlying multiset of edges. -/
-def numEdges (G : CFGraph) (v w : G.V) : ℕ :=
+@[expose] def numEdges (G : CFGraph) (v w : G.V) : ℕ :=
   Multiset.card (G.edges.filter (fun e => e = (v, w) ∨ e = (w, v)))
 
 /-- A graph is *connected* if its vertices cannot be partitioned into two nonempty sets
@@ -91,7 +91,7 @@ lemma num_edges_symmetric (G : CFGraph) (v w : G.V) :
   exact G.loopless v h_inE
 
 /-- The degree, or valence, of a vertex as an integer. -/
-def vertexDegree (G : CFGraph) (v : G.V) : ℤ :=
+@[expose] def vertexDegree (G : CFGraph) (v : G.V) : ℤ :=
   ∑ u : G.V, (numEdges G v u : ℤ)
 
 /-!
@@ -139,17 +139,17 @@ abbrev CFDiv (G : CFGraph) := G.V → ℤ
 /-- The result of firing a vertex $v$, starting from the divisor $D$.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 1.5. -/
-def firingMove (G : CFGraph) (D : CFDiv G) (v : G.V) : CFDiv G :=
+@[expose] def firingMove (G : CFGraph) (D : CFDiv G) (v : G.V) : CFDiv G :=
   fun w => if w = v then D v - vertexDegree G v else D w + numEdges G v w
 
 /-- The result of borrowing at a vertex $v$, starting from a divisor $D$.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 1.5. -/
-def borrowingMove (G : CFGraph) (D : CFDiv G) (v : G.V) : CFDiv G :=
+@[expose] def borrowingMove (G : CFGraph) (D : CFDiv G) (v : G.V) : CFDiv G :=
   fun w => if w = v then D v + vertexDegree G v else D w - numEdges G v w
 
 /-- The out-degree of `v` relative to `S`, counted with edge multiplicity. -/
-def outdegS (G : CFGraph) (S : Finset G.V) (v : G.V) : ℤ :=
+@[expose] def outdegS (G : CFGraph) (S : Finset G.V) (v : G.V) : ℤ :=
   ∑ w ∈ (univ \ S), (numEdges G v w : ℤ)
 
 @[simp] theorem outdeg_S_eq_sum_filter (G : CFGraph) (S : Finset G.V) (v : G.V) :
@@ -173,7 +173,7 @@ theorem outdeg_S_antitone (G : CFGraph) {S T : Finset G.V} (h : S ⊆ T) (v : G.
 /-- The result of firing a set $S$ of vertices, starting from a divisor $D$.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 1.6. -/
-def setFiring (G : CFGraph) (D : CFDiv G) (S : Finset G.V) : CFDiv G :=
+@[expose] def setFiring (G : CFGraph) (D : CFDiv G) (S : Finset G.V) : CFDiv G :=
   fun w => if w ∈ S then D w - outdegS G S w else D w + outdegS G Sᶜ w
 
 theorem set_firing_apply_of_mem (G : CFGraph) (D : CFDiv G) {S : Finset G.V}
@@ -429,7 +429,7 @@ See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 1.13. -/
 
 
 /-- The submonoid of effective divisors is denoted `Eff G`. -/
-def Eff (G : CFGraph) : AddSubmonoid (CFDiv G) :=
+@[expose] def Eff (G : CFGraph) : AddSubmonoid (CFDiv G) :=
   { carrier := {D : CFDiv G | effective D},
     zero_mem' := by
       simp only [effective, ge_iff_le, Set.mem_ofPred_eq, Pi.zero_apply, Std.le_refl, implies_true]
@@ -643,7 +643,7 @@ open Matrix
 /-- The Laplacian matrix of a CFGraph.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 2.6. -/
-def laplacianMatrix (G : CFGraph) : Matrix G.V G.V ℤ :=
+@[expose] def laplacianMatrix (G : CFGraph) : Matrix G.V G.V ℤ :=
   fun i j => if i = j then vertexDegree G i else - (numEdges G i j)
 
 -- Note: The Laplacian matrix L is given by Deg(G) - A, where Deg(G) is the diagonal
@@ -652,7 +652,7 @@ def laplacianMatrix (G : CFGraph) : Matrix G.V G.V ℤ :=
 
 /-- Applies the Laplacian matrix to a firing script and a current divisor to obtain a
 new divisor. -/
-def applyLaplacian (G : CFGraph) (σ : firingScript G) (D : CFDiv G) : CFDiv G :=
+@[expose] def applyLaplacian (G : CFGraph) (σ : firingScript G) (D : CFDiv G) : CFDiv G :=
   fun v => (D v) - (laplacianMatrix G).mulVec σ v
 
 /-!
@@ -670,7 +670,7 @@ debt concentrated on $S$ via firing moves.
 
 /-- A divisor is *$q$-effective* if it has a nonnegative number of chips at every vertex
 except possibly $q$. -/
-def qEffective {G : CFGraph} (q : G.V) (D : CFDiv G) : Prop :=
+@[expose] def qEffective {G : CFGraph} (q : G.V) (D : CFDiv G) : Prop :=
   ∀ v : G.V, v ≠ q → D v ≥ 0
 
 /-- A divisor bundled with a proof that it is $q$-effective. -/
@@ -1070,7 +1070,7 @@ theorem legal_set_union (G : CFGraph) {D : CFDiv G} {S T : Finset G.V}
 set of vertices disjoint from $q$ puts some vertex of that set into debt.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 3.4. -/
-def qReduced (G : CFGraph) (q : G.V) (D : CFDiv G) : Prop :=
+@[expose] def qReduced (G : CFGraph) (q : G.V) (D : CFDiv G) : Prop :=
   qEffective q D ∧
   ∀ S : Finset G.V, q ∉ S → S.Nonempty → ¬ legalSet G D S
 

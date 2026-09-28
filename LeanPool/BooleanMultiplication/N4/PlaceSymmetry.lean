@@ -26,7 +26,7 @@ noncomputable section
 
 /-- Images of the eight coordinate linear forms under the identity,
 translation, and reversal substitutions. -/
-def inputPlaceChange : Fin 3 → Fin 8 → LinearForm :=
+@[expose] def inputPlaceChange : Fin 3 → Fin 8 → LinearForm :=
   ![
     ![![1,0,0,0,0,0,0,0], ![0,1,0,0,0,0,0,0],
       ![0,0,1,0,0,0,0,0], ![0,0,0,1,0,0,0,0],
@@ -42,7 +42,7 @@ def inputPlaceChange : Fin 3 → Fin 8 → LinearForm :=
       ![0,0,0,0,0,1,0,0], ![0,0,0,0,1,0,0,0]]]
 
 /-- Apply the input coordinate change moving the chosen rational place to zero. -/
-def normalizePlaceLinear (theta : Fin 3) (ell : LinearForm) : LinearForm :=
+@[expose] def normalizePlaceLinear (theta : Fin 3) (ell : LinearForm) : LinearForm :=
   ∑ i : Fin 8, ell i • inputPlaceChange theta i
 
 /-- Permute rational-place coefficients under the chosen place normalization. -/

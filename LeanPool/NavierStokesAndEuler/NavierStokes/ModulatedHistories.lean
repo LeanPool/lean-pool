@@ -674,7 +674,7 @@ noncomputable def stripDomain (Ω : Set ℝ) (hΩ : IsOpen Ω) : ProfileHistorie
   pressure0_smooth := fun _ hp => hP0.contDiffAt (hΩ.mem_nhds hp.2)
 
 /-- Profile rows, given by `![P.M p, P.I p, P.J p, P.S p, P.pressure p]`. -/
-noncomputable def profileRows {D : ProfileHistories.RadialDomain}
+@[expose] noncomputable def profileRows {D : ProfileHistories.RadialDomain}
     (P : ProfileHistories.Profiles D) (p : Point) : Debt :=
   ![P.M p, P.I p, P.J p, P.S p, P.pressure p]
 
@@ -852,7 +852,7 @@ noncomputable def editE (P : FiveProfileMoments.Patch) (A : ℝ → ℝ)
     (c : ℝ → Coeff) (f : Field) (p : Point) : ℝ := f p + editF P A c p
 
 /-- Apply repair U, given by `U p + editU P A c p`. -/
-noncomputable def applyRepairU (P : FiveProfileMoments.Patch) (A : ℝ → ℝ)
+@[expose] noncomputable def applyRepairU (P : FiveProfileMoments.Patch) (A : ℝ → ℝ)
     (c : ℝ → Coeff) (U : Field) (p : Point) : ℝ := U p + editU P A c p
 
 theorem editU_contDiff (P : FiveProfileMoments.Patch) (A : ℝ → ℝ) (c : ℝ → Coeff)

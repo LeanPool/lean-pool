@@ -31,7 +31,7 @@ open Set ContinuousLinearMap EulerSmoothLimit EulerMeanSolenoidal EulerMeanTimeT
 open scoped ContDiff
 
 /-- Spatial translation of continuous solenoidal coordinate paths. -/
-def coordinatePathTranslation (T : ℝ) (a : Space) :
+@[expose] def coordinatePathTranslation (T : ℝ) (a : Space) :
     C(Icc (0 : ℝ) T,solenoidalSpace) →L[ℝ] C(Icc (0 : ℝ) T,solenoidalSpace) :=
   (solenoidalTranslation a).toContinuousLinearMap.compLeftContinuous ℝ (Icc (0 : ℝ) T)
 

@@ -166,7 +166,7 @@ def fixedMeanInverse : TimeLp T solenoidalSpace →L[ℝ] TimeLp T solenoidalSpa
         hsmall)
 
 /-- The actual forcing-to-coordinate-derivative map on the fixed space. -/
-def fixedMeanSolver : TimeLp T L2 →L[ℝ] TimeLp T solenoidalSpace :=
+@[expose] def fixedMeanSolver : TimeLp T L2 →L[ℝ] TimeLp T solenoidalSpace :=
   (fixedMeanInverse T hT F F₁ H M0 A L FInv hInv hF K B hK hB hFInv₀ hH hboundary hsmall).comp
     (-(fixedMeanPrimitive T hT F F₁).adjoint)
 

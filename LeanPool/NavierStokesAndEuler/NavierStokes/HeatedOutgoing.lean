@@ -134,7 +134,7 @@ theorem powerH_scaling (F : Profile) (XR X : ℝ) (hXR : 0 < XR) :
   field_simp
 
 theorem energyDensity_scaling (F : Profile) (XR eta X : ℝ) :
-    energyDensity F XR eta X = F.energyDensity eta (X / XR) := rfl
+    energyDensity F XR eta X = F.energyDensity eta (X / XR) := by rfl
 
 theorem canonicalKernel_scaling (F : Profile) (XR eta X : ℝ) (hXR : 0 < XR) :
     canonicalKernel F XR eta X = XR⁻¹ * F.canonicalKernel eta (X / XR) := by
@@ -1216,8 +1216,9 @@ theorem J_integrand_eq (F : Profile) (XR : ℝ) (c : ℝ → Coeff) (eta X : ℝ
   simpa only [H, OutgoingDilation.H, U, mul_assoc] using
     congrArg (fun z => Real.sqrt (2 * X) * z) (E_times_U F XR c eta X hXR hX)
 
-theorem M_unchanged (F : Profile) (XR eta X : ℝ) : M F XR eta X = OutgoingDilation.M F XR eta X :=
-    rfl
+theorem M_unchanged (F : Profile) (XR eta X : ℝ) :
+    M F XR eta X = OutgoingDilation.M F XR eta X := by
+  rfl
 
 theorem J_unchanged (F : Profile) (XR : ℝ) (c : ℝ → Coeff) (eta X : ℝ) (hXR : 0 < XR) :
     J F XR c eta X = OutgoingDilation.J F XR eta X :=

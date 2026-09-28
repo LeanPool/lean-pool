@@ -28,7 +28,7 @@ noncomputable section
 variable {S : Signature}
 
 /-- The complete theory of a model at one point under a fixed valuation. -/
-def pointedTheory (M : Model S) (rho : Nat → M.carrier) (u : M.carrier) :
+@[expose] def pointedTheory (M : Model S) (rho : Nat → M.carrier) (u : M.carrier) :
     Set (Pattern S Nat) :=
   {p | u ∈ M.denote rho p}
 
@@ -106,7 +106,7 @@ abbrev witnessCollapseModel : Model WitnessCollapseSig where
 @[expose] def witnessCollapseRho : Nat → witnessCollapseModel.carrier := fun n => n = 0
 
 /-- The complete pointed theory at `true`. -/
-def witnessCollapseTheory : Set (Pattern WitnessCollapseSig Nat) :=
+@[expose] def witnessCollapseTheory : Set (Pattern WitnessCollapseSig Nat) :=
   pointedTheory witnessCollapseModel witnessCollapseRho true
 
 private theorem witnessCollapseRho_surjective : Function.Surjective witnessCollapseRho := by

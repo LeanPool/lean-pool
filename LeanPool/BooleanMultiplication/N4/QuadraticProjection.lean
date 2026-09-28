@@ -30,7 +30,7 @@ def anfLinearProjection : ANF 8 →ₗ[F₂] LinearForm where
   map_smul' a p := by ext i; simp
 
 /-- Extract quadratic coefficients, with repeated-index coordinates zero. -/
-def anfTwoProjection : ANF 8 →ₗ[F₂] TwoForm where
+@[expose] def anfTwoProjection : ANF 8 →ₗ[F₂] TwoForm where
   toFun p i j := if i = j then 0 else p.coeff ⟨{i, j}⟩
   map_add' p q := by
     funext i j

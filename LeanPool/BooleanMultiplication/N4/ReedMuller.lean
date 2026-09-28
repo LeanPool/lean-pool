@@ -105,10 +105,10 @@ def QuadraticCode.eval : {n : Nat} → QuadraticCode n → (Fin n → F₂) → 
   rfl
 
 /-- The natural-number indicator of a nonzero field element. -/
-def truthBit (a : F₂) : Nat := if a = 0 then 0 else 1
+@[expose] def truthBit (a : F₂) : Nat := if a = 0 then 0 else 1
 
 /-- The number of inputs on which a field-valued function is nonzero. -/
-def truthWeight {X : Type*} [Fintype X] (f : X → F₂) : Nat :=
+@[expose] def truthWeight {X : Type*} [Fintype X] (f : X → F₂) : Nat :=
   ∑ x, truthBit (f x)
 
 theorem truthBit_zero : truthBit (0 : F₂) = 0 := by simp [truthBit]

@@ -22,7 +22,7 @@ open Lean4GlCoalgebras
 
 /-- Open local tableaux for `X` that are *the* uniform one, i.e. `uniLocalTab X`.
 This type has at most one element, and it is inhabited iff `uniLocalTab X` has an end node. -/
-def UniOpenLT (X : Sequent) : Type :=
+@[expose] def UniOpenLT (X : Sequent) : Type :=
   {lt : LocalTableau X // endNodesOf lt ≠ {} ∧ lt = uniLocalTab X}
 
 instance UniOpenLT.instDecidableEq {X} : DecidableEq (UniOpenLT X) :=
@@ -391,7 +391,7 @@ theorem Match.all_spec {H X} {bt : BuildTree H X} {m} :
     simp
 
 /-- Whether the subtree reached by a match is an open leaf. -/
-def Match.isOpenLeaf {H X} {bt : BuildTree H X} {m : Match bt} : Prop :=
+@[expose] def Match.isOpenLeaf {H X} {bt : BuildTree H X} {m : Match bt} : Prop :=
   match (btAt m) with | ⟨_, _, .openLeaf _ _⟩ => True | _ => False
 
 instance instDecidableIsOpenLeaf {H X} {bt : BuildTree H X} {m : Match bt} : Decidable
@@ -404,7 +404,7 @@ instance instDecidableIsOpenLeaf {H X} {bt : BuildTree H X} {m : Match bt} : Dec
     try exact instDecidableFalse
 
 /-- Whether the subtree reached by a match is a free-repeat leaf. -/
-def Match.isFreeRepeat {H X} {bt : BuildTree H X} (m : Match bt) : Prop :=
+@[expose] def Match.isFreeRepeat {H X} {bt : BuildTree H X} (m : Match bt) : Prop :=
   match (btAt m) with | ⟨_, _, .freeRepeat _⟩ => True | _ => False
 
 instance instMatchDecidableIsFreeRepeat {H X} {bt : BuildTree H X} {m : Match bt} :
@@ -741,7 +741,7 @@ lemma BuildTree.collect_nonempty (bt : BuildTree [] X) :
 /-! ## Pre-states (Def 6.13) -/
 
 /-- A pre-state is a list of sequents collected from a `BuildTree`. -/
-def PreState {H X} (bt : BuildTree H X) : Type := Subtype (· ∈ bt.collect)
+@[expose] def PreState {H X} (bt : BuildTree H X) : Type := Subtype (· ∈ bt.collect)
 
 lemma PreState.nonempty {H X} {bt : BuildTree H X} {π : PreState bt} : π.val ≠ [] := by
   rcases π with ⟨L, L_in⟩

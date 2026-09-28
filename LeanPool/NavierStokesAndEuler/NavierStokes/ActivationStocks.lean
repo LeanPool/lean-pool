@@ -804,7 +804,7 @@ NaturalAxisData.L h η`. -/
       (NaturalAxisData.L h η * Real.sqrt (2 * X) * f)
 
 /-- Profile stock one, given by `p.1 * P.angularLag h p / NaturalAxisData.L h p.2`. -/
-noncomputable def profileStockOne {D : RadialDomain} (P : Profiles D) (h : ℝ)
+@[expose] noncomputable def profileStockOne {D : RadialDomain} (P : Profiles D) (h : ℝ)
     (p : Point) : ℝ := p.1 * P.angularLag h p / NaturalAxisData.L h p.2
 
 /-- Profile stock two, given by `p.1 * P.axialLag h p / (NaturalAxisData.L h p.2 * P.E p)`. -/

@@ -124,7 +124,7 @@ lemma lineToSubspaceFinOne_apply (l : Combinatorics.Line α ι) (x : Fin 1 → �
   (Finset.univ.filter fun x ↦ V x ∈ A).dens
 
 /-- Ambient line structures whose evaluations are contained in a subspace. -/
-def Lines [Fintype (η → α)] [DecidableEq (ι → α)]
+@[expose] def Lines [Fintype (η → α)] [DecidableEq (ι → α)]
     (V : Combinatorics.Subspace η α ι) :=
   {l : Combinatorics.Line α ι // ∀ a, l a ∈ range V}
 
@@ -229,7 +229,7 @@ def mapLine (V : Combinatorics.Subspace η α ι) (l : Combinatorics.Line α η)
   composeLine V l
 
 lemma mapLine_eq_composeLine (V : Combinatorics.Subspace η α ι) (l : Combinatorics.Line α η) :
-    mapLine V l = composeLine V l :=
+    mapLine V l = composeLine V l := by
   rfl
 
 @[simp]

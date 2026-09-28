@@ -25,7 +25,7 @@ namespace N4
 noncomputable section
 
 /-- Cubic coefficients as a three-form array, with repeated-index coordinates zero. -/
-def anfThreeProjection : ANF 8 →ₗ[F₂] ThreeForm where
+@[expose] def anfThreeProjection : ANF 8 →ₗ[F₂] ThreeForm where
   toFun p i j k :=
     if ({i, j, k} : Finset (Fin 8)).card = 3 then
       p.coeff ⟨{i, j, k}⟩ else 0
@@ -37,7 +37,7 @@ def anfThreeProjection : ANF 8 →ₗ[F₂] ThreeForm where
     by_cases h : ({i, j, k} : Finset (Fin 8)).card = 3 <;> simp [h]
 
 /-- Quartic coefficients as a four-form array, with repeated-index coordinates zero. -/
-def anfFourProjection : ANF 8 →ₗ[F₂] FourForm where
+@[expose] def anfFourProjection : ANF 8 →ₗ[F₂] FourForm where
   toFun p i j k l :=
     if ({i, j, k, l} : Finset (Fin 8)).card = 4 then
       p.coeff ⟨{i, j, k, l}⟩ else 0
@@ -49,11 +49,11 @@ def anfFourProjection : ANF 8 →ₗ[F₂] FourForm where
     by_cases h : ({i, j, k, l} : Finset (Fin 8)).card = 4 <;> simp [h]
 
 /-- The Boolean ANF of the given linear form. -/
-def linearANF (ell : LinearForm) : ANF 8 :=
+@[expose] def linearANF (ell : LinearForm) : ANF 8 :=
   ∑ i : Fin 8, ell i • X i
 
 /-- The Boolean ANF with the given constant and linear parts. -/
-def affineANF (a : F₂) (ell : LinearForm) : ANF 8 :=
+@[expose] def affineANF (a : F₂) (ell : LinearForm) : ANF 8 :=
   a • (1 : ANF 8) + linearANF ell
 
 /-- The target ANF of a linear combination of rational-place evaluations. -/
@@ -69,10 +69,10 @@ theorem rationalANF_eq_sum (α : Fin 3 → F₂) :
     add_assoc]
 
 /-- The product coefficient index corresponding to two input coefficient indices. -/
-def hankelIndex (i j : Fin 4) : Fin 7 := ⟨i.val + j.val, by omega⟩
+@[expose] def hankelIndex (i j : Fin 4) : Fin 7 := ⟨i.val + j.val, by omega⟩
 
 /-- The squarefree mixed monomial for one coefficient from each input polynomial. -/
-def targetPair (i j : Fin 4) : Finset (Fin 8) := {aCoord i, bCoord j}
+@[expose] def targetPair (i j : Fin 4) : Finset (Fin 8) := {aCoord i, bCoord j}
 
 /-- The target Hankel form as its sixteen cross monomials. -/
 theorem targetANF_eq_double_sum (c : TargetCoeff) :
@@ -95,7 +95,7 @@ theorem coeff_targetANF_mul_targetANF (c d : TargetCoeff) (s : Finset (Fin 8)) :
     monomial_mul, coeff_monomial]
 
 /-- The cubic coordinate array of a squarefree monomial. -/
-def monomialThree (s : Finset (Fin 8)) : ThreeForm := fun i j k =>
+@[expose] def monomialThree (s : Finset (Fin 8)) : ThreeForm := fun i j k =>
   if ({i, j, k} : Finset (Fin 8)).card = 3 then
     if s = {i, j, k} then 1 else 0
   else 0
@@ -113,7 +113,7 @@ def cubicPlaceModel (r : Fin 8) (θ : Fin 3) : ThreeForm :=
       monomialThree ({r} ∪ targetPair i j)
 
 /-- The linear form selecting one input coordinate. -/
-def coordinateLinear (r : Fin 8) : LinearForm := fun i =>
+@[expose] def coordinateLinear (r : Fin 8) : LinearForm := fun i =>
   if i = r then 1 else 0
 
 private theorem anfThreeProjection_three_X (r a b : Fin 8) :
@@ -391,7 +391,7 @@ def quarticProbeANF : ANF 8 →ₗ[F₂] (Fin 3 → F₂) where
   simp [quarticProbeANF, coeff_monomial]
 
 /-- The three designated coordinates of a wedge of two two-forms. -/
-def quarticWedgeProbe (q r : TwoForm) : Fin 3 → F₂ :=
+@[expose] def quarticWedgeProbe (q r : TwoForm) : Fin 3 → F₂ :=
   ![wedgeTwo q r 0 1 4 6, wedgeTwo q r 1 3 5 7,
     wedgeTwo q r 0 3 4 7]
 

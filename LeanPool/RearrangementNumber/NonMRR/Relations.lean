@@ -20,7 +20,7 @@ The direction of a morphism agrees with that section: a morphism from `A` to `B`
 gives `B.norm ≤ A.norm`.
 -/
 
-@[expose] public section
+public section
 
 open Cardinal Set
 

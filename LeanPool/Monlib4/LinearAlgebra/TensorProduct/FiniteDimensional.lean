@@ -194,7 +194,7 @@ theorem StarAlgEquiv.TensorProduct.map_symm_tmul {R A B C D : Type*} [RCLike R]
 
 
 /-- Tensor a star algebra equivalence on the left by a fixed algebra. -/
-noncomputable def StarAlgEquiv.lTensor {R A B : Type*} (C : Type*) [RCLike R]
+@[expose] noncomputable def StarAlgEquiv.lTensor {R A B : Type*} (C : Type*) [RCLike R]
   [Ring A]
   [Ring B] [Ring C] [Algebra R A] [Algebra R B] [Algebra R C]
   [StarAddMonoid A] [StarAddMonoid B] [StarAddMonoid C]

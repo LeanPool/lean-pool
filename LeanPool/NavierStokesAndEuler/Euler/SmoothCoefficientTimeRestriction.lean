@@ -60,7 +60,7 @@ def comp (A : SmoothCoefficientPath K V) (φ : C(L, K)) : SmoothCoefficientPath 
   jet_eq n t x := A.jet_eq n (φ t) x
 
 @[simp] theorem comp_apply (A : SmoothCoefficientPath K V) (φ : C(L, K)) (t : L) (x : Space) :
-    (A.comp φ).field t x = A.field (φ t) x := rfl
+    (A.comp φ).field t x = A.field (φ t) x := by rfl
 
 theorem comp_norm_le (A : SmoothCoefficientPath K V) (φ : C(L, K)) :
     ‖(A.comp φ).field‖ ≤ ‖A.field‖ := by
@@ -76,7 +76,7 @@ theorem comp_jet_norm_le (A : SmoothCoefficientPath K V) (φ : C(L, K)) (n : ℕ
 
 theorem comp_translation (A : SmoothCoefficientPath K V) (φ : C(L, K)) (a : Space) :
     translateCoefficientPath (A.comp φ).field a =
-      (translateCoefficientPath A.field a).comp φ := rfl
+      (translateCoefficientPath A.field a).comp φ := by rfl
 
 /-- A continuous change of time parameter preserves each literal spatial
 derivative bound with exactly the same constant. -/

@@ -205,7 +205,7 @@ section Fields
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
 
 /-- An angle-independent coefficient on the actual cylinder. -/
-def fieldLift : (Space →ᵇ W) →L[ℝ] (LiftDomain period →ᵇ W) :=
+@[expose] def fieldLift : (Space →ᵇ W) →L[ℝ] (LiftDomain period →ᵇ W) :=
   BoundedContinuousFunction.compContinuousCLM W ℝ ⟨Prod.fst,continuous_fst⟩
 
 omit [Fact (0 < period)] in
@@ -224,7 +224,7 @@ theorem fieldLift_norm : ‖fieldLift (W := W) period‖ ≤ 1 := by
 variable {K : Type*} [TopologicalSpace K] [CompactSpace K]
 
 /-- The bounded linear lift of an entire coefficient time path. -/
-def fieldPathLift : C(K,Space →ᵇ W) →L[ℝ] C(K,LiftDomain period →ᵇ W) :=
+@[expose] def fieldPathLift : C(K,Space →ᵇ W) →L[ℝ] C(K,LiftDomain period →ᵇ W) :=
   (fieldLift period).compLeftContinuous ℝ K
 
 omit [CompactSpace K] [Fact (0 < period)] in
@@ -275,7 +275,8 @@ theorem translate_mem (a : LiftTangent) (S Ω : Set Space) (hS : MeasurableSet S
   exact hnot (hsub hs)
 
 /-- Actual isometric mixed translation into a fixed spatial support region. -/
-def intoLarger (a : LiftTangent) (S Ω : Set Space) (hS : MeasurableSet S) (hΩ : MeasurableSet Ω)
+@[expose] def intoLarger (a : LiftTangent) (S Ω : Set Space)
+    (hS : MeasurableSet S) (hΩ : MeasurableSet Ω)
     (hsub : EulerLpSupportedTranslation.shiftedSet a.1 S ⊆ Ω) :
     supportedSpace (V := V) (liftMeasure period) (spatialSet period S) (spatialSet_measurable
         period S hS) →ₗᵢ[ℝ]

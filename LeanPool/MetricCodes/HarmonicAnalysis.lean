@@ -42,7 +42,7 @@ theorem spherical_dist_sq {n : ℕ} (x y : Sphere n) :
   ring
 
 /-- The predicate asserting spherical code. -/
-def IsSphericalCode {n : ℕ} (s : ℝ) (C : Finset (Sphere n)) : Prop :=
+@[expose] def IsSphericalCode {n : ℕ} (s : ℝ) (C : Finset (Sphere n)) : Prop :=
   ∀ ⦃x⦄, x ∈ C → ∀ ⦃y⦄, y ∈ C → x ≠ y → sphericalInner x y ≤ s
 
 /-- Data encoding the spherical code construction. -/

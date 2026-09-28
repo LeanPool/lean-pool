@@ -148,7 +148,7 @@ lemma VG_eval_numOf (κ : ℚ) (hκ : VG p κ 0) (Z : Multiset ℤ) (x : ℤ) :
   simpa using hκ.mul (VG_prod_sub Z x)
 
 /-- Poles in the same class differ by exactly one power of `p`. -/
-def Sep (p : ℕ) (Pl : Finset ℤ) : Prop :=
+@[expose] def Sep (p : ℕ) (Pl : Finset ℤ) : Prop :=
   ∀ r ∈ Pl, ∀ s ∈ Pl, r ≠ s → (r : ZMod p) = s → ¬(p : ℤ) ^ 2 ∣ r - s
 
 lemma padicValRat_denom_le (Pl : Finset ℤ) (hsep : Sep p Pl) {r : ℤ} (hr : r ∈ Pl) :

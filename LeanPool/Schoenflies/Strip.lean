@@ -301,7 +301,7 @@ the block is an intersection of four open half-planes — open and convex at a g
 
 /-- Signed distance from `x` to the line of the directed edge that starts at `a` with unit
 tangent `u`; positive on the left. -/
-def coordAcross (a u x : Plane) : ℝ := det u (x - a)
+@[expose] def coordAcross (a u x : Plane) : ℝ := det u (x - a)
 
 /-- The orientation form is the inner product against the turned vector. -/
 theorem det_eq_inner_perp (u v : Plane) : det u v = inner ℝ (perp u) v := by

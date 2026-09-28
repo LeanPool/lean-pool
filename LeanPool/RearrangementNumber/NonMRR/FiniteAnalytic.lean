@@ -19,7 +19,7 @@ public import Mathlib.Tactic.NormNum
 
 /-! Finite analytic estimates. -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

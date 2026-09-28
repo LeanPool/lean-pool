@@ -260,7 +260,7 @@ theorem quadraticDefectLinear_cocycle (p q : Q) :
   abel
 
 /-- The correction term in the second Zhou action. Paper: §2. -/
-def thetaTwoTermMap (h : H) : C →ₗ[k] AVStar where
+@[expose] def thetaTwoTermMap (h : H) : C →ₗ[k] AVStar where
   toFun c := delta (sl3CAction h.1 c) ⊗ₜ[k] quadraticDefectLinear h.2
   map_add' c d := by
     simp only [map_add]
@@ -275,7 +275,7 @@ def thetaTwoTermMap (h : H) : C →ₗ[k] AVStar where
   rfl
 
 /-- The second Zhou action as a linear map. Paper: §2. -/
-def thetaTwoLinearMap (h : H) : D →ₗ[k] D where
+@[expose] def thetaTwoLinearMap (h : H) : D →ₗ[k] D where
   toFun d := (avStarAction h.1 h.2 d.1 + thetaTwoTermMap h d.2,
     sl3CAction h.1 d.2)
   map_add' d e := by

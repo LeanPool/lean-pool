@@ -22,7 +22,7 @@ from each catalogue indexed by `g`. Its response map records the exceptional
 blocks of a growth function and a permutation.
 -/
 
-@[expose] public section
+public section
 
 open Filter
 

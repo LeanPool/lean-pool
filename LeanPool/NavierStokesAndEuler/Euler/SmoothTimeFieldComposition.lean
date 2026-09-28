@@ -39,7 +39,7 @@ def pullback (A : E →ᵇ V) (d : E →ᵇ E) : E →ᵇ V :=
     (fun x => A.norm_coe_le_norm (x+d x))
 
 @[simp] theorem pullback_apply (A : E →ᵇ V) (d : E →ᵇ E) (x : E) :
-    pullback A d x = A (x+d x) := rfl
+    pullback A d x = A (x+d x) := by rfl
 
 theorem pullback_norm (A : E →ᵇ V) (d : E →ᵇ E) :
     ‖pullback A d‖ ≤ ‖A‖ :=
@@ -87,7 +87,7 @@ def pathPullback (A : C(K, E →ᵇ V)) (d : C(K, E →ᵇ E))
 
 @[simp] theorem pathPullback_apply (A : C(K, E →ᵇ V)) (d : C(K, E →ᵇ E))
     (L : ℝ≥0) (hL : ∀ t, LipschitzWith L (A t)) (t : K) (x : E) :
-    pathPullback A d L hL t x = A t (x+d t x) := rfl
+    pathPullback A d L hL t x = A t (x+d t x) := by rfl
 
 end EulerBoundedFieldPullback
 
@@ -171,7 +171,7 @@ def multilinearValue (L : ContinuousMultilinearMap ℝ V W)
 
 @[simp] theorem multilinearValue_apply (L : ContinuousMultilinearMap ℝ V W)
     (f : ∀ i, α →ᵇ V i) (x : α) :
-    multilinearValue L f x = L (fun i => f i x) := rfl
+    multilinearValue L f x = L (fun i => f i x) := by rfl
 
 theorem multilinearValue_norm (L : ContinuousMultilinearMap ℝ V W)
     (f : ∀ i, α →ᵇ V i) :
@@ -221,7 +221,7 @@ def multilinearMap (L : ContinuousMultilinearMap ℝ V W) :
 
 @[simp] theorem multilinearMap_apply (L : ContinuousMultilinearMap ℝ V W)
     (f : ∀ i, α →ᵇ V i) (x : α) :
-    multilinearMap L f x = L (fun i => f i x) := rfl
+    multilinearMap L f x = L (fun i => f i x) := by rfl
 
 theorem multilinearMap_norm (L : ContinuousMultilinearMap ℝ V W) :
     ‖multilinearMap (α := α) L‖ ≤ ‖L‖ :=
@@ -359,6 +359,6 @@ def compDisplacement (A : SmoothTimeField K E V) (D : SmoothTimeField K E E) :
 
 @[simp] theorem compDisplacement_apply (A : SmoothTimeField K E V) (D : SmoothTimeField K E E)
     (t : K) (x : E) :
-    (A.compDisplacement D).field t x = A.field t (x+D.field t x) := rfl
+    (A.compDisplacement D).field t x = A.field t (x+D.field t x) := by rfl
 
 end SmoothTimeField

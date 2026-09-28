@@ -1084,7 +1084,7 @@ def IsPLEmbeddingOn (K : PlaneComplex) (f : Plane → Plane) : Prop :=
 
 /-- A function is PL on a geometric set when the set is the support of a finite plane complex
 on which the function is PL. -/
-def IsPLOnSet (A : Set Plane) (f : Plane → Plane) : Prop :=
+@[expose] def IsPLOnSet (A : Set Plane) (f : Plane → Plane) : Prop :=
   ∃ K : PlaneComplex, K.support = A ∧ IsPLOn K f
 
 namespace IsAffineOn

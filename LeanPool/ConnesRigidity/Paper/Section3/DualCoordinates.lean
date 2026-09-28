@@ -84,7 +84,7 @@ def transposeToDual : (A →ₗ[k] V) →ₗ[k]
 /--
 The `transposeFromDual` construction used in the Connes rigidity formalization.
 -/
-def transposeFromDual : (VStar →ₗ[k] Module.Dual k A) →ₗ[k]
+@[expose] def transposeFromDual : (VStar →ₗ[k] Module.Dual k A) →ₗ[k]
     (A →ₗ[k] V) where
   toFun g :=
     { toFun := fun a =>

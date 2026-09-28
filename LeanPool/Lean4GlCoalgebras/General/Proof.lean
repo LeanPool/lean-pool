@@ -46,7 +46,7 @@ inductive RuleApp
   map_comp := by aesop_cat
 
 /-- Given a RuleApp, obtain the principal formulas. -/
-def fₚ : RuleApp → Sequent
+@[expose] def fₚ : RuleApp → Sequent
   | RuleApp.top _ _ => {⊤}
   | RuleApp.ax _ n _ => {at n, na n}
   | RuleApp.and _ A B _ => {A & B}
@@ -62,7 +62,7 @@ def fₚ : RuleApp → Sequent
   | RuleApp.box Δ _ _ => Δ
 
 /-- Given a RuleApp, obtain the non-principal formulas. -/
-def fₙ : RuleApp → Sequent := fun r ↦ f r \ fₚ r
+@[expose] def fₙ : RuleApp → Sequent := fun r ↦ f r \ fₚ r
 
 /-- Relating principal formulas, non-principal formulas, and sequent. -/
 lemma fₙ_alternate (r : RuleApp) : fₙ r = match r with

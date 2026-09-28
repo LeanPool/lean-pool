@@ -3121,6 +3121,7 @@ private theorem sharedPermutation_disagreement_card_mul
     ((left \ right) ∪ (right \ left)) hsubset
 
 /-- The probability of uniform permutation. -/
+@[expose]
 def uniformPermutationProbability (event : Equiv.Perm α → Prop) : ℝ := by
   classical
   exact ((Finset.univ.filter fun permutation : Equiv.Perm α =>
@@ -6468,6 +6469,7 @@ open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 The DSV uniform density physical async sigma continuation construction used in the quantum
 parallel-repetition argument.
 -/
+@[expose]
 def dSVUniformDensityPhysicalAsyncSigmaContinuation
     {ι κ : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype κ] [DecidableEq κ]

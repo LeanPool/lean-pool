@@ -47,6 +47,7 @@ abbrev H := S × Q
 /--
 The `kernelSubgroup` construction used in the Connes rigidity formalization.
 -/
+@[expose]
 def kernelSubgroup (action : H →* MulAut N) : Subgroup (PaperKernel.paperGammaCarrier action) :=
   (SemidirectProduct.inl (N := N) (G := H) (φ := action)).range
 

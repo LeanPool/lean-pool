@@ -94,6 +94,11 @@ omit [CompleteSpace V] in
 @[simp] theorem average_apply (u : CylinderL2 P V) :
     average P u = averageIntegral P u := by rfl
 
+theorem average_eq_integral (u : CylinderL2 P V) :
+    average P u = P⁻¹ • (∫ s in (0 : ℝ)..P, angleCurve P u s) := by
+  rw [average_apply]
+  rfl
+
 omit [CompleteSpace V] in
 theorem average_norm : ‖average (V := V) P‖ ≤ 1 :=
   opNorm_le_bound _ zero_le_one (fun u => by

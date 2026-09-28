@@ -2770,7 +2770,7 @@ noncomputable def edgePathInSupportHomeomorph (e : K.Edge) :
       edgePathInSupport (K := K) e r := rfl
 
 /-- The polygonal replacement map on one closed source edge. -/
-noncomputable def replacementEdgeMap (e : K.Edge) :
+@[expose] noncomputable def replacementEdgeMap (e : K.Edge) :
     edgeInSupport (K := K) e → Plane :=
   fun p ↦ (G.replacementArc e).completePath
     ((G.edgePathInSupportHomeomorph e).symm p)

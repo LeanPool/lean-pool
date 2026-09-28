@@ -35,7 +35,7 @@ The `SymplecticIndex` construction used in the Connes rigidity formalization.
 abbrev SymplecticIndex := OpenAIPort.SymplecticIndex
 
 /-- The SL₃ action on the polynomial module. Paper: §2. -/
-def sl3AAction : SpecialLinear.SL3 →* (A ≃ₗ[k] A) where
+@[expose] def sl3AAction : SpecialLinear.SL3 →* (A ≃ₗ[k] A) where
   toFun l := (Matrix.SpecialLinearGroup.toLin' l).restrictScalars k
   map_one' := by
     ext a
@@ -76,7 +76,7 @@ def sl3CAction (l : SpecialLinear.SL3) : C →ₗ[k] C where
     simp only [map_smul]
 
 /-- The natural linear action of Q on the finite module. Paper: §2. -/
-def qVAction (q : Q) : PaperV ≃ₗ[k] PaperV :=
+@[expose] def qVAction (q : Q) : PaperV ≃ₗ[k] PaperV :=
   { toFun := fun v => q • v
     invFun := fun v => q⁻¹ • v
     left_inv := by intro v; simp [smul_smul]
@@ -102,7 +102,7 @@ def qVActionHom : Q →* (PaperV ≃ₗ[k] PaperV) where
     rw [mul_smul]
 
 /-- The contragredient Q action on the finite dual. Paper: §2. -/
-def qVStarActionHom : Q →* (VStar ≃ₗ[k] VStar) where
+@[expose] def qVStarActionHom : Q →* (VStar ≃ₗ[k] VStar) where
   toFun q := LinearEquiv.dualMap (qVActionHom q⁻¹)
   map_one' := by
     ext f v

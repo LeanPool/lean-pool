@@ -230,7 +230,7 @@ theorem finite_support_ordOrbit_nonEll (hf : f ≠ 0) :
   exact hq
 
 /-- The canonical finite set of zeros (with nonzero order) in `𝒟`. -/
-noncomputable def s₀ (hf : f ≠ 0) : Finset ℍ := (finite_zeros_in_fd f hf).toFinset
+@[expose] noncomputable def s₀ (hf : f ≠ 0) : Finset ℍ := (finite_zeros_in_fd f hf).toFinset
 
 /-- Every point in `s₀` lies in the fundamental domain `𝒟`. -/
 theorem s₀_mem_fd (hf : f ≠ 0) : ∀ p ∈ s₀ f hf, p ∈ 𝒟 := by

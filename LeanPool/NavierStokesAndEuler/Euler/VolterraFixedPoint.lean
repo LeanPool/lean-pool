@@ -81,7 +81,7 @@ theorem pathNonlinearity_sub_bound (F : Icc (0 : ℝ) T → X → Y)
     (mul_le_mul_of_nonneg_left ((u - v).norm_coe_le_norm t) hL)
 
 /-- The actual nonlinear Volterra map, including the prescribed free evolution. -/
-def picard (a : C(Icc (0 : ℝ) T, X)) (F : Icc (0 : ℝ) T → X → Y)
+@[expose] def picard (a : C(Icc (0 : ℝ) T, X)) (F : Icc (0 : ℝ) T → X → Y)
     (hF : Continuous (fun p : Icc (0 : ℝ) T × X => F p.1 p.2))
     (u : C(Icc (0 : ℝ) T, X)) : C(Icc (0 : ℝ) T, X) :=
   a + convolution T hT K k hK hk hk0 hbound (pathNonlinearity T F hF u)

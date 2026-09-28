@@ -114,7 +114,7 @@ two new edges `e₁ : x — v`, `e₂ : v — y`.
 The three guards `f ≠ e`, `f ≠ e₁`, `f ≠ e₂` on the surviving links make the three disjuncts
 mutually exclusive with no hypotheses, and `hne` does the same for the last two. The freshness
 hypotheses `h₁`, `h₂` are what make `edgeSet` right. -/
-def subdivGraph (H : Graph γ γ) (e x y v e₁ e₂ : γ) (hne : e₁ ≠ e₂)
+@[expose] def subdivGraph (H : Graph γ γ) (e x y v e₁ e₂ : γ) (hne : e₁ ≠ e₂)
     (h₁ : e₁ ∉ E(H)) (h₂ : e₂ ∉ E(H)) : Graph γ γ where
   vertexSet := V(H) ∪ {z | z = v ∧ H.IsLink e x y}
   edgeSet := (E(H) \ {e}) ∪ {f | (f = e₁ ∨ f = e₂) ∧ H.IsLink e x y}
@@ -365,7 +365,7 @@ theorem newEdge₂_notMem_outer : d.newEdge₂ ∉ E(S.outerGraph) := fun h =>
   d.newEdge₂_notMem_edgeSet (S.outerGraph_le.edgeSet_mono h)
 
 /-- The subdivided skeleton. -/
-def skeleton : Graph γ γ :=
+@[expose] def skeleton : Graph γ γ :=
   subdivGraph S.skel d.edge d.left d.right d.newVertex d.newEdge₁ d.newEdge₂
     d.newEdge_ne d.newEdge₁_notMem_edgeSet d.newEdge₂_notMem_edgeSet
 
@@ -435,6 +435,7 @@ open scoped Classical in
 The boundary walks are the orientation-aware replacements carried by `SubdivData`.  They must
 arrive as data because an edge list does not determine the direction in which its walk crosses
 the subdivided edge; the two incident face boundaries can traverse it in opposite directions. -/
+@[expose]
 noncomputable def subdivideEdge (S : CellStructure γ) (d : S.SubdivData) : CellStructure γ where
   skel := d.skeleton
   faces := S.faces
@@ -682,7 +683,7 @@ theorem compatible : S.skel.Compatible d.ear :=
   Graph.Compatible.of_disjoint_edgeSet d.disjoint_edgeSet
 
 /-- The skeleton after the split: the old skeleton with the ear glued in along its two ends. -/
-def skeleton : Graph γ γ := S.skel.union d.ear
+@[expose] def skeleton : Graph γ γ := S.skel.union d.ear
 
 @[simp] theorem skeleton_vertexSet : V(d.skeleton) = V(S.skel) ∪ V(d.ear) := rfl
 
@@ -719,6 +720,7 @@ open scoped Classical in
 As with `CellStructure.subdivideEdge`, the boundary walks are a raw datum: the two new 2-cells
 get the concatenation of their boundary path with the reversed ear, and nothing below reads
 the orientation. -/
+@[expose]
 noncomputable def splitFace (S : CellStructure γ) (d : S.SplitData) : CellStructure γ where
   skel := d.skeleton
   faces := insert d.face₁ (insert d.face₂ (S.faces \ {d.face}))

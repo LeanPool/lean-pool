@@ -70,6 +70,7 @@ scoped instance : LogicalConnective (L.Semiformula n) where
   arrow (p q) := ⟨L.imp p.val q.val, by simp⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.Semiformula.cast (p : L.Semiformula n) (eq : n = n' := by simp) :
     L.Semiformula n' :=
   eq ▸ p
@@ -283,21 +284,25 @@ end «lp_section_1»
 open Formalized
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.Semiterm.equals {n : V} (t u : ⌜ℒₒᵣ⌝.Semiterm n) :
     ⌜ℒₒᵣ⌝.Semiformula n :=
   ⟨t.val ^= u.val, by simp [qqEQ]⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.Semiterm.notEquals {n : V} (t u : ⌜ℒₒᵣ⌝.Semiterm n) :
     ⌜ℒₒᵣ⌝.Semiformula n :=
   ⟨t.val ^≠ u.val, by simp [qqNEQ]⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.Semiterm.lessThan {n : V} (t u : ⌜ℒₒᵣ⌝.Semiterm n) :
     ⌜ℒₒᵣ⌝.Semiformula n :=
   ⟨t.val ^< u.val, by simp [qqLT]⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.Semiterm.notLessThan {n : V} (t u : ⌜ℒₒᵣ⌝.Semiterm n) :
     ⌜ℒₒᵣ⌝.Semiformula n :=
   ⟨t.val ^</ u.val, by simp [qqNLT]⟩
@@ -315,12 +320,14 @@ scoped infix:75 " <' " => Language.Semiterm.lessThan
 scoped infix:75 " </' " => Language.Semiterm.notLessThan
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.Semiformula.ball {n : V} (t : ⌜ℒₒᵣ⌝.Semiterm n) (p :
     ⌜ℒₒᵣ⌝.Semiformula (n + 1)) :
     ⌜ℒₒᵣ⌝.Semiformula n :=
   (⌜ℒₒᵣ⌝.bvar 0 </' t.bShift ⋎ p).all
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.Semiformula.bex {n : V} (t : ⌜ℒₒᵣ⌝.Semiterm n) (p :
     ⌜ℒₒᵣ⌝.Semiformula (n + 1)) :
     ⌜ℒₒᵣ⌝.Semiformula n :=

@@ -2117,7 +2117,7 @@ theorem exactLocallySampleableLaw_psi_ne_zero_of_ne_zero
     zero_div]
 
 /-- The positive operator-valued measurement implementing dependent block. -/
-def dependentBlockPOVM
+@[expose] def dependentBlockPOVM
     {R C : Type*} [Fintype R] [DecidableEq R] [Fintype C]
     {ι : R → Type*}
     [∀ r, Fintype (ι r)] [∀ r, DecidableEq (ι r)]
@@ -2142,7 +2142,7 @@ def dependentBlockPOVM
         Sigma.mk.injEq, false_and, not_false_eq_true, one_apply_ne]
 
 /-- The positive operator-valued measurement implementing reindexed. -/
-def reindexedPOVM
+@[expose] def reindexedPOVM
     {C d e : Type*} [Fintype C]
     [Fintype d] [Fintype e] [DecidableEq d] [DecidableEq e]
     (basis : d ≃ e) (P : POVM C d) : POVM C e where

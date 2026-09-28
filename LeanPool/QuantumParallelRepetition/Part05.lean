@@ -586,6 +586,7 @@ theorem exactGlobalHistoryLocalIndex_card_pos
 The exact global history fin reindex construction used in the quantum parallel-repetition
 argument.
 -/
+@[expose]
 def exactGlobalHistoryFinReindex
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n)) :

@@ -30,7 +30,7 @@ targets. -/
 abbrev FeedbackCoord := Fin 4 → F₂
 
 /-- Represent feedback coordinates in the target coefficient space. -/
-def feedbackCoeffRep (q : FeedbackCoord) : TargetCoeff :=
+@[expose] def feedbackCoeffRep (q : FeedbackCoord) : TargetCoeff :=
   q 0 • targetBasis 0 + q 1 • targetBasis 1 +
     q 2 • targetBasis 6 + q 3 • rOneCoeff
 

@@ -332,7 +332,7 @@ the list occupies the polygon. -/
 
 /-- The `m + 3` edges of the polygon, as a list of pieces in cyclic order. This is the form
 the crossing count of §2 is defined on. -/
-def pieces (P : ClosedPolygon m) : List Piece :=
+@[expose] def pieces (P : ClosedPolygon m) : List Piece :=
   (List.range (m + 3)).map fun j : ℕ =>
     (P.vertex (j : ZMod (m + 3)), P.vertex ((j : ZMod (m + 3)) + 1))
 

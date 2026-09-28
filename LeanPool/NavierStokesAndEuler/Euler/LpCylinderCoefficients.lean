@@ -153,7 +153,7 @@ def liftedOperatorPathMap : C(Icc (0 : ℝ) T,Space →ᵇ V →L[ℝ] V) →L[�
 
 omit [CompleteSpace V] in
 @[simp] theorem liftedOperatorPathMap_apply (A : C(Icc (0 : ℝ) T, Space →ᵇ V →L[ℝ] V)) :
-    liftedOperatorPathMap (V := V) period S hS T A = liftedOperatorPath period S hS T A := rfl
+    liftedOperatorPathMap (V := V) period S hS T A = liftedOperatorPath period S hS T A := by rfl
 
 omit [CompleteSpace V] in
 /-- No coefficient amplitude is lost in the actual L² lifting. -/

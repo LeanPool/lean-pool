@@ -24,11 +24,11 @@ namespace N4
 noncomputable section
 
 /-- The unit coefficient vector for one rational place. -/
-def rationalSingleton (theta : Fin 3) : Fin 3 → F₂ :=
+@[expose] def rationalSingleton (theta : Fin 3) : Fin 3 → F₂ :=
   ![![1, 0, 0], ![0, 1, 0], ![0, 0, 1]] theta
 
 /-- A first-jet target at a rational place, optionally translated by the place itself. -/
-def rationalTangentAt (theta : Fin 3) (eps : F₂) : TargetCoeff :=
+@[expose] def rationalTangentAt (theta : Fin 3) (eps : F₂) : TargetCoeff :=
   match theta with
   | ⟨0, _⟩ => ![eps, 1, 0, 0, 0, 0, 0]
   | ⟨1, _⟩ =>
@@ -55,7 +55,7 @@ def quarticAnnihilatorTable : Fin 9 → Nat :=
     0x092c00, 0x018482, 0x086000]
 
 /-- The scalar bilinear formula for a quartic-annihilator probe on target coordinates. -/
-def quarticAnnihilatorCoeffProbe
+@[expose] def quarticAnnihilatorCoeffProbe
     (c : TargetCoeff) (delta : Fin 3 → F₂) (k : Fin 9) : F₂ :=
   match k with
   | ⟨0, _⟩ => c 0 * delta 1 + c 2 * delta 0 + c 2 * delta 1

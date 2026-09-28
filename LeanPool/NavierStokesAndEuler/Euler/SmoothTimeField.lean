@@ -62,7 +62,7 @@ synthesis. -/
 local instance instSmoothTimeField8 (n : ℕ) : NormedSpace ℝ (E →ᵇ (E [×n]→L[ℝ] V)) := inferInstance
 
 /-- Map path, given by `(L.compLeftContinuousBounded E).compLeftContinuous ℝ K`. -/
-def mapPath (L : V →L[ℝ] W) : C(K,E →ᵇ V) →L[ℝ] C(K,E →ᵇ W) :=
+@[expose] def mapPath (L : V →L[ℝ] W) : C(K,E →ᵇ V) →L[ℝ] C(K,E →ᵇ W) :=
   (L.compLeftContinuousBounded E).compLeftContinuous ℝ K
 
 /-- Derivative field, given by `mapPath (continuousMultilinearCurryFin1 ℝ E
@@ -108,6 +108,10 @@ def derivative (A : SmoothTimeField K E V) : SmoothTimeField K E (E →L[ℝ] V)
       funext (A.derivativeField_eq t)
     rw [he]
     exact A.derivativeJet_eq n t x
+
+@[simp] theorem derivative_apply (A : SmoothTimeField K E V) (t : K) (x : E) :
+    A.derivative.field t x = fderiv ℝ (A.field t : E → V) x :=
+  A.derivativeField_eq t x
 
 end SmoothTimeField
 

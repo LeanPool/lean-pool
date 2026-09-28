@@ -188,7 +188,7 @@ lemma eval_val_congr' (S S' : ResStrategy T p k) (h : S = S')
   (S.res nk).res mn = S.res (mn.trans nk) := rfl
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def fromMap (f : S ⟶ T) (h : Tree.Fixing k f := by as_aux_lemma => synthFixing)
+@[expose] def fromMap (f : S ⟶ T) (h : Tree.Fixing k f := by as_aux_lemma => synthFixing)
   (S' : ResStrategy S p k) : ResStrategy T p k := fun x hx hl ↦
     ExtensionsAt.map f (x := pInv f x) (y := x) (by simp_rw [cancel_pInv_right])
       (S' _ (by simpa only [iff_pInv_lenHom]) (by simpa only [h_length_pInv]))

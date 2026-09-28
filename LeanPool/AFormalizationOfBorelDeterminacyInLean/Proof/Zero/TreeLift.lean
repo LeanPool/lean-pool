@@ -33,7 +33,7 @@ variable {A : Type*} {G : Game A} {k : ℕ} {hyp : Hyp G k} {m n : ℕ}
 noncomputable section «Section1»
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-noncomputable def stratMap (lvl : ℕ) (R : ResStrategy (gameAsTrees hyp) Player.zero lvl) :
+@[expose] noncomputable def stratMap (lvl : ℕ) (R : ResStrategy (gameAsTrees hyp) Player.zero lvl) :
   ResStrategy (oldAsTrees hyp) Player.zero lvl := by
   classical
   exact fun x hp hlen ↦

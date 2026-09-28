@@ -88,7 +88,7 @@ local instance instLpSupportedEvolution11 : NormedSpace ℝ (supportedSpace (V :
     V) μ S hS) := inferInstance
 
 /-- The actual supported-space operator associated with a continuous field path. -/
-def operatorPath (T : ℝ) (A : C(Icc (0 : ℝ) T, Field (α := α) (V := V))) :
+@[expose] def operatorPath (T : ℝ) (A : C(Icc (0 : ℝ) T, Field (α := α) (V := V))) :
     C(Icc (0 : ℝ) T,supportedSpace (V := V) μ S hS →L[ℝ] supportedSpace (V := V) μ S hS) :=
   ⟨fun t => operator μ S hS (A t), (operatorMap μ S hS).continuous.comp A.continuous⟩
 

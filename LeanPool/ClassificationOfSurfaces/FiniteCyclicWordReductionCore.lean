@@ -5766,7 +5766,7 @@ def protectedNames {n : ℕ} (tokens : List (ReductionToken n)) :
   (tokens.map extractedNames).flatten
 
 /-- Residual darts and already-extracted blocks use disjoint ambient edge names. -/
-def IsSeparated {n : ℕ} (tokens : List (ReductionToken n)) : Prop :=
+@[expose] def IsSeparated {n : ℕ} (tokens : List (ReductionToken n)) : Prop :=
   ((residualDarts tokens).map edgeOfDart).Disjoint
     (protectedEdges tokens)
 

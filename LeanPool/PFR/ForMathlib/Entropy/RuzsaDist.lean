@@ -61,7 +61,11 @@ lemma continuous_measureEntropy_probabilityMeasure {Ω : Type*} [Finite Ω]
     [TopologicalSpace Ω] [DiscreteTopology Ω] [MeasurableSpace Ω] [OpensMeasurableSpace Ω] :
     Continuous (fun (μ : ProbabilityMeasure Ω) ↦ measureEntropy (S := Ω) μ) := by
   cases nonempty_fintype Ω
-  rw [measureEntropy_of_isProbabilityMeasure]
+  have entropy_eq (μ : ProbabilityMeasure Ω) :
+      measureEntropy (S := Ω) μ =
+        ∑' ω, negMulLog ((μ : Measure Ω).real {ω}) :=
+    measureEntropy_of_isProbabilityMeasure (μ : Measure Ω)
+  simp_rw [entropy_eq]
   simp_rw [tsum_fintype]
   apply continuous_finsetSum
   intro ω _
@@ -214,6 +218,10 @@ lemma ProbabilityTheory.IndepFun.rdist_eq [IsFiniteMeasure μ]
     ((indepFun_iff_map_prod_eq_prod_map_map hX.aemeasurable hY.aemeasurable).mp h).symm
   rw [h_prod, entropy_def, map_map (by fun_prop) (by fun_prop)]
   simp only [entropy_def]
+  have hfun : (fun p : G × G => p.1 - p.2) ∘ ⟨X, Y⟩ = X - Y := by
+    funext ω
+    rfl
+  rw [hfun]
 
 /-- `d[X; Y] ≤ H[X]/2 + H[Y]/2`. -/
 public

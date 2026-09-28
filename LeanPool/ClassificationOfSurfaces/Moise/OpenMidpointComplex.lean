@@ -49,7 +49,7 @@ noncomputable abbrev safeStage (n : ℕ) : IntrinsicTwoComplex :=
     (fun t ↦ t ∈ K.safeFaces U n)
 
 /-- Include a safe stage into the original finite realization. -/
-noncomputable def safeStageInclusion (n : ℕ) :
+@[expose] noncomputable def safeStageInclusion (n : ℕ) :
     (K.safeStage U n).realization → K.realization :=
   (K.safeSubdivision n).homeo ∘
     (K.safeSubdivision n).refined.restrictFacesInclusion

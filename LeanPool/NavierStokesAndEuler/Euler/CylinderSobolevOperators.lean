@@ -80,7 +80,7 @@ theorem sumNorm_eq_jet {q : ℕ} (u : SobolevSpace period q) :
   rfl
 
 /-- A translation-commuting L² operator acts on every actual derivative coordinate. -/
-def liftOperator (q : ℕ) (A : LiftL2 period →L[ℝ] LiftL2 period)
+@[expose] def liftOperator (q : ℕ) (A : LiftL2 period →L[ℝ] LiftL2 period)
     (hA : ∀ a f, A (translation period a f) = translation period a (A f)) :
     SobolevSpace period q →L[ℝ] SobolevSpace period q :=
   ((ContinuousLinearMap.pi (fun w : SobolevWord q => A.comp (ContinuousLinearMap.proj w))).comp

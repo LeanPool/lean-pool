@@ -46,11 +46,11 @@ namespace Zeta5Irrational
   20 + i / 3
 
 /-- Integer part of the left endpoint `tT i` of a tail interval. -/
-def qT (i : ℕ) : ℕ :=
+@[expose] def qT (i : ℕ) : ℕ :=
   (60 + i) / 3
 
 /-- Integer part of `3 / 40 * tT i`, used to fix the second fractional part. -/
-def qT' (i : ℕ) : ℕ :=
+@[expose] def qT' (i : ℕ) : ℕ :=
   (60 + i) / 40
 
 /-- `F` on the piece `i`. -/

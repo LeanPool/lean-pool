@@ -3941,11 +3941,11 @@ theorem sphericalEntropy_sub_nonneg {a b : ℝ}
     (sphericalEntropy_strictMono.monotoneOn hb ha hba)
 
 /-- The feasible used in the spherical-code argument. -/
-def Feasible (s a b : ℝ) : Prop :=
+@[expose] def Feasible (s a b : ℝ) : Prop :=
   0 < b ∧ b < a ∧ s < 2 * MetricCodes.Gamma a b
 
 /-- The rate set used in the spherical-code argument. -/
-def rateSet (s : ℝ) : Set ℝ :=
+@[expose] def rateSet (s : ℝ) : Set ℝ :=
   {r | ∃ a b : ℝ, Feasible s a b ∧
     r = MetricCodes.sphericalEntropy a - MetricCodes.sphericalEntropy b}
 
@@ -5200,7 +5200,7 @@ theorem Interlacing.Phi_nonneg {r : ℕ}
       ring
 
 /-- The hierarchy rate set used in the spherical-code argument. -/
-def hierarchyRateSet (s : ℝ) : Set ℝ :=
+@[expose] def hierarchyRateSet (s : ℝ) : Set ℝ :=
   {z | ∃ (r : ℕ) (a : Fin (r + 1) → ℝ) (b : Fin r → ℝ),
     Interlacing a b ∧ s < 2 * Gamma a b ∧ z = Phi a b}
 

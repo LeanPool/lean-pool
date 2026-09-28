@@ -56,7 +56,7 @@ abbrev Coordinates := PaperFactorIsomorphism.DualCoordinates
 
 /-- Precomposition by the inverse is the contragredient of a kernel
 automorphism. Paper: §3. -/
-def dualPrecomp (e : D ≃ₗ[k] D) : Dual ≃ₗ[k] Dual where
+@[expose] def dualPrecomp (e : D ≃ₗ[k] D) : Dual ≃ₗ[k] Dual where
   toFun ℓ := ℓ.comp (e⁻¹).toLinearMap
   invFun ℓ := ℓ.comp e.toLinearMap
   left_inv ℓ := by
@@ -81,7 +81,7 @@ def dualPrecomp (e : D ≃ₗ[k] D) : Dual ≃ₗ[k] Dual where
 
 /-- Contragredient action associated to a homomorphism of kernel actions.
 Paper: §§3--4. -/
-def dualPrecompHom (theta : H →* (D ≃ₗ[k] D)) :
+@[expose] def dualPrecompHom (theta : H →* (D ≃ₗ[k] D)) :
     H →* (Dual ≃ₗ[k] Dual) where
   toFun h := dualPrecomp (theta h)
   map_one' := by

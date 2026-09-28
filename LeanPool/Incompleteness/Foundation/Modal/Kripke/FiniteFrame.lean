@@ -103,6 +103,7 @@ end ValidOnFiniteFrame
 
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def ValidOnFiniteFrameClass (C : Kripke.FiniteFrameClass) (φ : Formula ℕ) := C.toFrameClass ⊧ φ
 
 namespace ValidOnFiniteFrameClass

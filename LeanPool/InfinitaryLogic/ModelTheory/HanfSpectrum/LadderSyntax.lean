@@ -172,7 +172,7 @@ section Semantics
 variable (α) {M : Type} [(ladderLang α).Structure M]
 
 /-- The value of the `n`-th constant. -/
-def constVal (n : ℕ) : M :=
+@[expose] def constVal (n : ℕ) : M :=
   Structure.funMap (L := ladderLang α) (show (ladderLang α).Functions 0 from n) Fin.elim0
 
 /-- The level predicate `U_i`. -/

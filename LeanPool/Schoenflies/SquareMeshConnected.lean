@@ -204,7 +204,7 @@ opposite sides of the square meet nothing of each other. The two statements are 
 the integrator may want them beside each other. -/
 
 /-- The hub `K` with the pieces `Γ 0, …, Γ (m-1)` glued on, one at a time. -/
-def attachUnion (K : Graph α β) (Γ : ℕ → Graph α β) : ℕ → Graph α β
+@[expose] def attachUnion (K : Graph α β) (Γ : ℕ → Graph α β) : ℕ → Graph α β
   | 0 => K
   | (m + 1) => (attachUnion K Γ m).union (Γ m)
 
@@ -308,7 +308,7 @@ the list and the other's on the set. If a third consumer appears, hoist the set 
 `Schoenflies/OverlayGraph.lean` beside `endSet` and derive this one from it. -/
 
 /-- The graph whose edges are the listed segments and whose vertices are their ends. -/
-def pieceListGraph (edges : List Piece) : Graph Plane Piece where
+@[expose] def pieceListGraph (edges : List Piece) : Graph Plane Piece where
   vertexSet := endSet edges
   IsLink P x y := P ∈ edges ∧ ((x = P.1 ∧ y = P.2) ∨ (x = P.2 ∧ y = P.1))
   edgeSet := {P | P ∈ edges}

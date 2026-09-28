@@ -79,13 +79,13 @@ def angularWeight (F : Profile) (eta y : ℝ) : ℝ :=
   Real.sqrt 2 * Real.exp (3 * y / 2) * F.logE (y, eta) * F.logU (y, eta)
 
 /-- M, given by `∫ u in Ioc 0 X, F.U (u, eta)`. -/
-def M (F : Profile) (eta X : ℝ) : ℝ := ∫ u in Ioc 0 X, F.U (u, eta)
+@[expose] def M (F : Profile) (eta X : ℝ) : ℝ := ∫ u in Ioc 0 X, F.U (u, eta)
 
 /-- J, given by `∫ u in Ioc 0 X, F.H (u, eta) * F.U (u, eta)`. -/
 @[expose] def J (F : Profile) (eta X : ℝ) : ℝ := ∫ u in Ioc 0 X, F.H (u, eta) * F.U (u, eta)
 
 /-- Energy density, given by `F.U (X, eta) ^ 2 - F.E (X, eta) ^ 2 / 2`. -/
-def energyDensity (F : Profile) (eta X : ℝ) : ℝ :=
+@[expose] def energyDensity (F : Profile) (eta X : ℝ) : ℝ :=
   F.U (X, eta) ^ 2 - F.E (X, eta) ^ 2 / 2
 
 /-- Total S, given by `∫ X in Ioi 0, F.energyDensity eta X`. -/
@@ -102,7 +102,7 @@ def logPi (F : Profile) (p : ℝ × ℝ) : ℝ :=
 @[expose] def Pi (F : Profile) (p : ℝ × ℝ) : ℝ := F.logPi (Real.log p.1, p.2)
 
 /-- Axis datum, given by `-(1 / 2 : ℝ) * ∫ y, F.pressureWeight eta y`. -/
-def axisDatum (F : Profile) (eta : ℝ) : ℝ :=
+@[expose] def axisDatum (F : Profile) (eta : ℝ) : ℝ :=
   -(1 / 2 : ℝ) * ∫ y, F.pressureWeight eta y
 
 /-- Pressure change, given by `F.pressureWeight eta y - finalAngular F.data (y, eta) ^ 2`. -/
@@ -178,7 +178,7 @@ theorem U_after (F : Profile) (eta : ℝ) {X : ℝ}
 end Profile
 
 /-- Domain, given by `Ioi 0 ×ˢ univ`. -/
-def domain : Set (ℝ × ℝ) := Ioi 0 ×ˢ univ
+@[expose] def domain : Set (ℝ × ℝ) := Ioi 0 ×ˢ univ
 
 theorem logarithmic_coordinates_contDiffOn :
     ContDiffOn ℝ ∞ (fun p : ℝ × ℝ => (Real.log p.1, p.2)) domain := by

@@ -20,7 +20,7 @@ slalom to a common zero-sum witness. All hypotheses describe the concrete finite
 blocks and the chosen functions; no cardinal-invariant inequality is assumed.
 -/
 
-@[expose] public section
+public section
 
 open Filter Finset Topology
 

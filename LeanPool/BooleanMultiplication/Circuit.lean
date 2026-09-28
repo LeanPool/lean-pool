@@ -23,11 +23,11 @@ namespace UnrestrictedBooleanMul
 noncomputable section
 
 /-- Outputs of gates whose index is strictly before `j`. -/
-def prefixGates {m r : Nat} (g : Fin r → ANF m) (j : Nat) : Set (ANF m) :=
+@[expose] def prefixGates {m r : Nat} (g : Fin r → ANF m) (j : Nat) : Set (ANF m) :=
   {p | ∃ i : Fin r, i.val < j ∧ g i = p}
 
 /-- The functions available for free immediately before gate `j`. -/
-def wireSpace {m r : Nat} (g : Fin r → ANF m) (j : Nat) : Submodule F₂ (ANF m) :=
+@[expose] def wireSpace {m r : Nat} (g : Fin r → ANF m) (j : Nat) : Submodule F₂ (ANF m) :=
   affine m ⊔ Submodule.span F₂ (prefixGates g j)
 
 theorem affine_le_wireSpace {m r j : Nat} (g : Fin r → ANF m) :
@@ -46,7 +46,7 @@ structure Circuit (m r : Nat) where
   gate_eq : ∀ j, gate j = left j * right j
 
 /-- A circuit all of whose AND inputs are affine in the original inputs. -/
-def Circuit.ofAffineProducts {m r : Nat} (left right : Fin r → ANF m)
+@[expose] def Circuit.ofAffineProducts {m r : Nat} (left right : Fin r → ANF m)
     (left_affine : ∀ i, left i ∈ affine m)
     (right_affine : ∀ i, right i ∈ affine m) : Circuit m r where
   gate i := left i * right i

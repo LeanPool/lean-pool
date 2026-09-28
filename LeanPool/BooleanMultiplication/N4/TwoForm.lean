@@ -23,18 +23,18 @@ namespace N4
 noncomputable section
 
 /-- Coordinate linear forms on the two four-dimensional input blocks. -/
-def aLinear (i : Fin 4) : LinearForm :=
+@[expose] def aLinear (i : Fin 4) : LinearForm :=
   (Pi.basisFun F₂ (Fin 8)) (aCoord i)
 
 /-- The linear form selecting one coefficient of the second input polynomial. -/
-def bLinear (i : Fin 4) : LinearForm :=
+@[expose] def bLinear (i : Fin 4) : LinearForm :=
   (Pi.basisFun F₂ (Fin 8)) (bCoord i)
 
 /-- The first three Hasse coefficients at the rational place zero. -/
-def zeroPlaceTwo : TwoForm := vectorWedge (aLinear 0) (bLinear 0)
+@[expose] def zeroPlaceTwo : TwoForm := vectorWedge (aLinear 0) (bLinear 0)
 
 /-- The two-form of the first Hasse coefficient at zero. -/
-def zeroFirstJetTwo : TwoForm :=
+@[expose] def zeroFirstJetTwo : TwoForm :=
   vectorWedge (aLinear 0) (bLinear 1) +
     vectorWedge (aLinear 1) (bLinear 0)
 
@@ -45,7 +45,7 @@ def zeroSecondJetTwo : TwoForm :=
     vectorWedge (aLinear 2) (bLinear 0)
 
 /-- The alternating two-form whose mixed block is the target Hankel matrix. -/
-def targetTwo (c : TargetCoeff) : TwoForm := fun i j =>
+@[expose] def targetTwo (c : TargetCoeff) : TwoForm := fun i j =>
   if hi : i.val < 4 then
     if hj : 4 ≤ j.val then
       c ⟨i.val + (j.val - 4), by omega⟩

@@ -71,6 +71,7 @@ theorem _root_.Matrix.IsAlmostHermitian.matrix_isHermitian {n : Type _} {x : Mat
   simp_all
 
 /-- Eigenvalues of the Hermitian factor, rescaled by the almost-Hermitian scalar. -/
+@[expose]
 noncomputable def _root_.Matrix.IsAlmostHermitian.eigenvalues {x : Matrix n n 𝕜}
     (hx : x.IsAlmostHermitian) :
     n → 𝕜 :=

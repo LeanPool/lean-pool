@@ -131,7 +131,7 @@ theorem path_sobolev_continuous (q : ℕ) (p : C(K, LiftL2 period))
       0).continuous
 
 /-- The actual continuous Sobolev path. -/
-def sobolevPath (q : ℕ) (p : C(K, LiftL2 period))
+@[expose] def sobolevPath (q : ℕ) (p : C(K, LiftL2 period))
     (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a p)) : C(K,SobolevSpace period
         q) :=
   ⟨fun t => sobolev period q (p t) (path_evaluation_smooth period p hp t),path_sobolev_continuous

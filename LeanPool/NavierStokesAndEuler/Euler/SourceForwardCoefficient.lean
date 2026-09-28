@@ -88,7 +88,7 @@ def gramField (Q : α →ᵇ U →L[ℝ] E) : α →ᵇ U →L[ℝ] U :=
   compositionMap (α := α) (U := U) (E := E) (F := U)
     (adjointMap (α := α) (U := U) (E := E) Q) Q
 
-@[simp] theorem gramField_apply (Q : α →ᵇ U →L[ℝ] E) (x : α) : gramField Q x = gram (Q x) := rfl
+@[simp] theorem gramField_apply (Q : α →ᵇ U →L[ℝ] E) (x : α) : gramField Q x = gram (Q x) := by rfl
 
 variable (Q : α →ᵇ U →L[ℝ] E) (c : ℝ) (hc : 0 < c)
   (hQ : ∀ x v, c * ‖v‖ ^ 2 ≤ ‖Q x v‖ ^ 2)
@@ -114,7 +114,7 @@ def inverseField : α →ᵇ U →L[ℝ] U :=
     (inverseField_continuous Q c hc hQ) c⁻¹ (fun x => gramInverse_norm (Q x) c hc (hQ x))
 
 @[simp] theorem inverseField_apply (x : α) : inverseField Q c hc hQ x = gramInverse (Q x) c hc (hQ
-    x) := rfl
+    x) := by rfl
 
 theorem inverseField_norm : ‖inverseField Q c hc hQ‖ ≤ c⁻¹ :=
   BoundedContinuousFunction.norm_ofNormedAddCommGroup_le _ (inv_nonneg.mpr hc.le) _
@@ -165,7 +165,7 @@ def gramPath (Qp : C(K, α →ᵇ U →L[ℝ] E)) : C(K,α →ᵇ U →L[ℝ] U)
     (pathAdjointMap (α := α) (K := K) (U := U) (E := E) Qp) Qp
 
 @[simp] theorem gramPath_apply (Qp : C(K, α →ᵇ U →L[ℝ] E)) (t : K) : gramPath Qp t = gramField (Qp
-    t) := rfl
+    t) := by rfl
 
 /-- The constructed inverse is continuous in the spatial uniform norm as time varies. -/
 def inversePath (Qp : C(K, α →ᵇ U →L[ℝ] E))
@@ -183,7 +183,7 @@ def inversePath (Qp : C(K, α →ᵇ U →L[ℝ] E))
 
 @[simp] theorem inversePath_apply (Qp : C(K, α →ᵇ U →L[ℝ] E))
     (hLower : ∀ t x v, c * ‖v‖ ^ 2 ≤ ‖Qp t x v‖ ^ 2) (t : K) (x : α) :
-    inversePath c hc Qp hLower t x = gramInverse (Qp t x) c hc (hLower t x) := rfl
+    inversePath c hc Qp hLower t x = gramInverse (Qp t x) c hc (hLower t x) := by rfl
 
 /-- The uniform time-space inverse bound is the same coercive bound. -/
 theorem inversePath_norm (Qp : C(K, α →ᵇ U →L[ℝ] E))
@@ -526,12 +526,13 @@ def generatorPath (c : ℝ) (hc : 0 < c) (Q Q₁ : C(K, α →ᵇ U →L[ℝ] E)
 
 @[simp] theorem leftInversePath_apply (c : ℝ) (hc : 0 < c) (Q : C(K, α →ᵇ U →L[ℝ] E))
     (hQ : ∀ t x v, c * ‖v‖ ^ 2 ≤ ‖Q t x v‖ ^ 2) (t : K) (x : α) :
-    leftInversePath c hc Q hQ t x = (gramInverse (Q t x) c hc (hQ t x)).comp (Q t x).adjoint := rfl
+    leftInversePath c hc Q hQ t x =
+      (gramInverse (Q t x) c hc (hQ t x)).comp (Q t x).adjoint := by rfl
 
 @[simp] theorem generatorPath_apply (c : ℝ) (hc : 0 < c) (Q Q₁ : C(K, α →ᵇ U →L[ℝ] E))
     (hQ : ∀ t x v, c * ‖v‖ ^ 2 ≤ ‖Q t x v‖ ^ 2) (t : K) (x : α) :
     generatorPath c hc Q Q₁ hQ t x =
-      (-2 : ℝ) • (gramInverse (Q t x) c hc (hQ t x)).comp ((Q t x).adjoint.comp (Q₁ t x)) := rfl
+      (-2 : ℝ) • (gramInverse (Q t x) c hc (hQ t x)).comp ((Q t x).adjoint.comp (Q₁ t x)) := by rfl
 
 variable {P : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]
 

@@ -193,7 +193,7 @@ noncomputable def thinKiteGlobalHomeomorph (δ : ℝ) (hδ : 0 < δ) : Plane ≃
         fun_prop }
 
 /-- The thin kite is the image of the fixed diamond under the explicit transport. -/
-noncomputable def thinKitePatch (δ : ℝ) : Set Plane := thinKiteMap δ '' diamondPatch
+@[expose] noncomputable def thinKitePatch (δ : ℝ) : Set Plane := thinKiteMap δ '' diamondPatch
 
 /-- Every point of the thin kite lies in the tangent cone at its left base vertex. -/
 theorem thinKitePatch_subset_leftCone {δ : ℝ} (hδ : 0 ≤ δ) {p : Plane}

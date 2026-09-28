@@ -24,13 +24,13 @@ namespace N4
 noncomputable section
 
 /-- Determinant of a `3 × 3` matrix in characteristic two. -/
-def detThree (M : Matrix (Fin 3) (Fin 3) F₂) : F₂ :=
+@[expose] def detThree (M : Matrix (Fin 3) (Fin 3) F₂) : F₂ :=
   M 0 0 * M 1 1 * M 2 2 + M 0 0 * M 1 2 * M 2 1 +
   M 0 1 * M 1 0 * M 2 2 + M 0 1 * M 1 2 * M 2 0 +
   M 0 2 * M 1 0 * M 2 1 + M 0 2 * M 1 1 * M 2 0
 
 /-- A cubic minor obtained by deleting one row and one column. -/
-def hankelMinorThree (c : TargetCoeff) (dropRow dropCol : Fin 4) : F₂ :=
+@[expose] def hankelMinorThree (c : TargetCoeff) (dropRow dropCol : Fin 4) : F₂ :=
   detThree fun i j =>
     hankelMatrix c (dropRow.succAbove i) (dropCol.succAbove j)
 
@@ -44,7 +44,7 @@ instance (c : TargetCoeff) : Decidable (HankelRankLETwo c) := by
 
 /-- The sixteen coefficient words in the manuscript's rank-at-most-two
 table, including zero. -/
-def rankTwoWord : Fin 16 → TargetCoeff :=
+@[expose] def rankTwoWord : Fin 16 → TargetCoeff :=
   ![![0, 0, 0, 0, 0, 0, 0],
     ![0, 0, 0, 0, 0, 1, 0],
     ![0, 0, 0, 0, 0, 0, 1],

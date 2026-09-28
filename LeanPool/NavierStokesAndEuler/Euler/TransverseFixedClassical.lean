@@ -44,7 +44,7 @@ variable {U E : Type*}
 
 /-- Classical acceleration, constructed using
 `EulerContinuousGramAcceleration.accelerationPath`. -/
-def classicalAcceleration (f : C(Icc (0 : ℝ) T, E)) : C(Icc (0 : ℝ) T,U) :=
+@[expose] def classicalAcceleration (f : C(Icc (0 : ℝ) T, E)) : C(Icc (0 : ℝ) T,U) :=
   EulerContinuousGramAcceleration.accelerationPath T Q Q₁ c hc hQ
     (velocityPath T hT Q Q₁ H c hc hQ hd K hK hH hsmall (pathLp T hT f)) f
 
@@ -55,11 +55,11 @@ def displacementPath (f : TimeLp T E) : C(Icc (0 : ℝ) T,U) :=
 
 /-- Physical velocity path, given by `multiplier Q (velocityPath T hT Q Q₁ H c hc hQ hd K hK hH
 hsmall (pathLp T hT f))`. -/
-def physicalVelocityPath (f : C(Icc (0 : ℝ) T, E)) : C(Icc (0 : ℝ) T,E) :=
+@[expose] def physicalVelocityPath (f : C(Icc (0 : ℝ) T, E)) : C(Icc (0 : ℝ) T,E) :=
   multiplier Q (velocityPath T hT Q Q₁ H c hc hQ hd K hK hH hsmall (pathLp T hT f))
 
 /-- Physical derivative path, constructed using `multiplier`. -/
-def physicalDerivativePath (f : C(Icc (0 : ℝ) T, E)) : C(Icc (0 : ℝ) T,E) :=
+@[expose] def physicalDerivativePath (f : C(Icc (0 : ℝ) T, E)) : C(Icc (0 : ℝ) T,E) :=
   multiplier Q₁ (velocityPath T hT Q Q₁ H c hc hQ hd K hK hH hsmall (pathLp T hT f)) +
     multiplier Q (classicalAcceleration T hT Q Q₁ H c hc hQ hd K hK hH hsmall f)
 

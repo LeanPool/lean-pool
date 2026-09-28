@@ -19,7 +19,7 @@ The finite-block description is combined with the explicit pasting of
 separated blocks. All cardinal estimates use images of actual families.
 -/
 
-@[expose] public section
+public section
 
 open Set Filter Cardinal
 

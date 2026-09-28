@@ -19,7 +19,7 @@ An eventually bounded family of permutation controls admits a common increasing
 sequence whose tail is preserved in order by the inverse of each permutation.
 -/
 
-@[expose] public section
+public section
 
 open Filter Finset Cardinal
 

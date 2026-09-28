@@ -749,6 +749,7 @@ def _root_.LO.Arith.Language.Theory.DerivationOf (d s : V) : Prop := fstIdx d = 
 def _root_.LO.Arith.Language.Theory.Derivable (s : V) : Prop := ∃ d, T.DerivationOf d s
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.Theory.Provable (p : V) : Prop := T.Derivable {p}
 
 section «lp_section_6»

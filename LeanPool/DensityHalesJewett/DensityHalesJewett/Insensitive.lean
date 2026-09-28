@@ -84,7 +84,7 @@ lemma compl {α ι : Type*} [Fintype (ι → α)] [DecidableEq (ι → α)]
   simp only [mem_compl, hD hxy]
 
 /-- The part of `D` left uncovered by a set of subspaces. -/
-noncomputable def uncovered {η α ι : Type*} [Fintype (η → α)]
+@[expose] noncomputable def uncovered {η α ι : Type*} [Fintype (η → α)]
     [DecidableEq (ι → α)] (D : Finset (ι → α))
     (𝒱 : Set (Combinatorics.Subspace η α ι)) : Finset (ι → α) := by
   classical

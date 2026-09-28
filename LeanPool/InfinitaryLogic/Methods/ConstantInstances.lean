@@ -31,7 +31,7 @@ variable {L : Language.{0, 0}}
   (ψ.openBounds).subst (fun _ => constTerm c)
 
 /-- The closing substitution of a bounded formula by constants. -/
-noncomputable def closeBy {n : ℕ} (φ : L[[ℕ]].BoundedFormulaω Empty n) (τ : Fin n → ℕ) :
+@[expose] noncomputable def closeBy {n : ℕ} (φ : L[[ℕ]].BoundedFormulaω Empty n) (τ : Fin n → ℕ) :
     L[[ℕ]].Sentenceω :=
   (φ.openBounds).subst (fun i => constTerm (τ i))
 

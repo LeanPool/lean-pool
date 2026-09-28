@@ -419,6 +419,7 @@ variable {p : Type*} [Fintype p] [DecidableEq p]
   {ψ : Module.Dual ℂ (Matrix p p ℂ)}
 
 /-- Matrix-specialized `Psi` equivalence for faithful positive functionals. -/
+@[expose]
 noncomputable def Module.Dual.IsFaithfulPosMap.psi
     (hφ : φ.IsFaithfulPosMap) [hψ : ψ.IsFaithfulPosMap] (t r : ℝ) :
     (Matrix n n ℂ →ₗ[ℂ] Matrix p p ℂ) ≃ₗ[ℂ]
@@ -696,7 +697,7 @@ def Matrix.quantumSetDeltaForm [Nonempty n] {φ : Module.Dual ℂ (Matrix n n �
       mul_comp_comul_eq := LinearMap.mul'_comp_mul'_adjoint_of_delta_form (φ := φ) }
 
 /-- The delta-form quantum-set structure for a finite product of matrix algebras. -/
-@[reducible]
+@[reducible, expose]
 noncomputable def PiMat.quantumSetDeltaForm [Nonempty k] [∀ i, Nontrivial (s i)] {d : ℂ}
   {φ : Π i, Module.Dual ℂ (Matrix (s i) (s i) ℂ)}
   [hφ : ∀ i, (φ i).IsFaithfulPosMap] [hφ₂ : Fact (∀ i, (φ i).matrix⁻¹.trace = d)] :

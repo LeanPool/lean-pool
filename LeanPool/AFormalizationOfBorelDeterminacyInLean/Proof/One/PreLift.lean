@@ -118,7 +118,7 @@ namespace Lift
 variable (H : Lift hyp)
 attribute [local implicit_reducible] upA oldAsTrees gameAsTrees in
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def liftVeryShort : gameTree hyp where
+@[expose] def liftVeryShort : gameTree hyp where
   val := (pInv (treeHom hyp) (Tree.take (2 * k) H.x)).val ++
     [⟨H.x.val[2 * k]'H.hlvl, H.liftTree⟩]
   property := by

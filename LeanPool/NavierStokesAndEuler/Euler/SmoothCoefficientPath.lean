@@ -134,6 +134,10 @@ def derivative (A : SmoothCoefficientPath K V) : SmoothCoefficientPath K (Space 
     rw [he]
     exact A.derivativeJet_eq n t x
 
+@[simp] theorem derivative_apply (A : SmoothCoefficientPath K V) (t : K) (x : Space) :
+    A.derivative.field t x = fderiv ℝ (A.field t : Space → V) x :=
+  A.derivativeField_eq t x
+
 theorem translation_hasFDerivAt (A : SmoothCoefficientPath K V) (a : Space) :
     HasFDerivAt (translateCoefficientPath A.field)
       (pathDerivativeMap (translateCoefficientPath A.derivative.field a)) a := by

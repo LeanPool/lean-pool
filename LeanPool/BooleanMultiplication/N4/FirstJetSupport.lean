@@ -170,7 +170,7 @@ theorem nonzero_place_vector_classifies_outside_support :
 
 
 /-- A vector supported on the first two coefficients of each input polynomial. -/
-def normalizedFirstJetVector (pa pb ja jb : F₂) : LinearForm :=
+@[expose] def normalizedFirstJetVector (pa pb ja jb : F₂) : LinearForm :=
   ![pa, ja, 0, 0, pb, jb, 0, 0]
 
 theorem normalizedFirstJetVector_eq (pa pb ja jb : F₂) :

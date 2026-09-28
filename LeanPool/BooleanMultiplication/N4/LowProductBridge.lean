@@ -378,7 +378,7 @@ theorem anfTwoProjection_affine_mul_affine
     anfTwoProjection_linear_mul_linear, smul_zero, zero_add, add_zero]
 
 /-- The quadratic coordinate array of a squarefree monomial. -/
-def monomialTwo (s : Finset (Fin 8)) : TwoForm := fun i j =>
+@[expose] def monomialTwo (s : Finset (Fin 8)) : TwoForm := fun i j =>
   if i = j then 0 else if s = {i, j} then 1 else 0
 
 theorem anfTwoProjection_monomial (s : Finset (Fin 8)) :

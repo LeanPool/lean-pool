@@ -631,6 +631,7 @@ noncomputable def scottSentence (M : Type w) [L.Structure M] [Countable M] : L.F
     (stabilizationOrdinal (L := L) M)
 
 /-- Realize a formula with no free variables as a sentence in a structure. -/
+@[expose]
 def Formulaω.realizeAsSentence (φ : L.Formulaω (Fin 0)) (N : Type w) [L.Structure N] : Prop :=
   φ.Realize (Fin.elim0 : Fin 0 → N)
 

@@ -405,7 +405,7 @@ theorem normalizedCost_le_finiteBaseNormalizedBound_of_lt
 /-- Real-valued asymptotic upper-bound statement: for every dimension `n`,
 there is an ordinary solvable distribution whose size is at most
 `C * (4/3)^n`. -/
-def HasRealHypercubePebblingUpperBound (C : ℝ) : Prop :=
+@[expose] def HasRealHypercubePebblingUpperBound (C : ℝ) : Prop :=
   ∀ n : ℕ, ∃ k : ℕ,
     Pebbling.HasSolvableAtMostSize (graph n) 1 k ∧
       (k : ℝ) ≤ C * (((4 : ℝ) / 3) ^ n)

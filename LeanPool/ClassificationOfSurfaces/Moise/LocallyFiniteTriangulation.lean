@@ -409,7 +409,7 @@ theorem stdSimplex_map_embedding_apply_of_notMem_range
   simp
 
 /-- Relabel a finite face family along an embedding of its vertex type. -/
-def relabelFaceFamily
+@[expose] def relabelFaceFamily
     {A B : Type*} [DecidableEq B]
     (e : A ↪ B) (F : Finset (Finset A)) : Finset (Finset B) := by
   exact F.image fun t ↦ t.map e

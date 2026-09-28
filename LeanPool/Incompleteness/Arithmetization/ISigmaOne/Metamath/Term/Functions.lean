@@ -535,6 +535,7 @@ end «lp_section_6»
 variable (L)
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.qVec (w : V) : V := ^#0 ∷ L.termBShiftVec (len w) w
 
 variable {L}
@@ -660,6 +661,7 @@ section «lp_section_8»
 variable (L)
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.IsTermFVFree (n t : V) : Prop := L.IsSemiterm n t ∧ L.termShift t = t
 
 variable {L}

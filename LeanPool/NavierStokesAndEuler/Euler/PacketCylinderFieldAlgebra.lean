@@ -111,10 +111,10 @@ def finsetSum {ι : Type*} (s : Finset ι) (f : ι → VectorField)
       exact sum_congr rfl (fun i _ => (G i).raw_eq t x θ))
 
 @[simp] theorem add_path (G : Field P T raw) (H : Field P T raw') :
-    (G.add H).path = G.path+H.path := rfl
+    (G.add H).path = G.path+H.path := by rfl
 
-@[simp] theorem neg_path (G : Field P T raw) : (G.neg).path = -G.path := rfl
+@[simp] theorem neg_path (G : Field P T raw) : (G.neg).path = -G.path := by rfl
 
-@[simp] theorem smul_path (G : Field P T raw) (c : ℝ) : (G.smul c).path = c • G.path := rfl
+@[simp] theorem smul_path (G : Field P T raw) (c : ℝ) : (G.smul c).path = c • G.path := by rfl
 
 end EulerPacketCylinderField.Field

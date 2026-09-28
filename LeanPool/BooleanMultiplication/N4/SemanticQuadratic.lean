@@ -188,7 +188,7 @@ theorem quadratic_semantic_of_degreeLE {p : ANF 8} (hp : DegreeLE 2 p) :
   · exact Submodule.zero_mem _
 
 /-- The Boolean assignment whose nonzero coordinates form the given finite set. -/
-def supportAssignment (t : Finset (Fin 8)) : Fin 8 → F₂ :=
+@[expose] def supportAssignment (t : Finset (Fin 8)) : Fin 8 → F₂ :=
   fun i => if i ∈ t then 1 else 0
 
 theorem prod_supportAssignment (s t : Finset (Fin 8)) :

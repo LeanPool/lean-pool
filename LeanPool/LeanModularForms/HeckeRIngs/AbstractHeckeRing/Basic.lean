@@ -110,7 +110,7 @@ namespace HeckeCoset
 variable {P : HeckePair G}
 
 /-- The underlying set `HgH`, well-defined on the quotient. -/
-noncomputable def toSet (D : HeckeCoset P) : Set G :=
+@[expose] noncomputable def toSet (D : HeckeCoset P) : Set G :=
   Quotient.lift (fun (g : P.Δ) => DoubleCoset.doubleCoset (g : G) P.H P.H)
     (fun a b (h : @Setoid.r _ (dcSetoid P) a b) => h) D
 

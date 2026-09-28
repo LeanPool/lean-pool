@@ -242,6 +242,7 @@ open scoped ComplexOrder
 open scoped DirectSum
 
 /-- A linear functional $φ$ on $M_n$ is positive if $0 ≤ φ (x^*x)$ for all $x \in M_n$. -/
+@[expose]
 def Module.Dual.IsPosMap {A : Type _} [NonUnitalSemiring A] [StarRing A] [Module 𝕜 A]
     (φ : Module.Dual 𝕜 A) : Prop :=
   ∀ a : A, 0 ≤ φ (star a * a)

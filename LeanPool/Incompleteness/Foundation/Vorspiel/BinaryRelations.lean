@@ -61,7 +61,7 @@ def Equality := ∀ ⦃x y⦄, x ≺ y ↔ x = y
 def Assymetric := ∀ ⦃x y⦄, (x ≺ y) → ¬(y ≺ x)
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def Universal := ∀ ⦃x y⦄, x ≺ y
+@[expose] def Universal := ∀ ⦃x y⦄, x ≺ y
 
 /-- Imported declaration from the Incompleteness formalization. -/
 abbrev ConverseWellFounded := WellFounded <| flip (· ≺ ·)

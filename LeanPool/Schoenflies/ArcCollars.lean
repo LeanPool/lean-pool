@@ -157,7 +157,7 @@ noncomputable def pt : Plane := A.off i c 0
 def edge : Set Plane := segment ℝ (A.vertex i) (A.vertex (i + 1))
 
 /-- The carrier of the arc: the union of its `n + 1` edges. -/
-def carrier : Set Plane := ⋃ i, ⋃ (_ : i ≤ n), A.edge i
+@[expose] def carrier : Set Plane := ⋃ i, ⋃ (_ : i ≤ n), A.edge i
 
 variable {A i j c t s}
 
@@ -1436,7 +1436,7 @@ theorem subset_closure_sideR : K ⊆ closure S.sideR := by
 exported, not existentially packaged: `nbhd`, `sideL` and `sideR` are definitions with an API
 of their own, and `Schoenflies.ArcStrip.sideL_disjoint_sideR` and
 `Schoenflies.ArcStrip.isOpen_sideL` are two clauses of Lemma 1.8 (b) that the record drops. -/
-def collar : ArcCollar D A.carrier K where
+@[expose] def collar : ArcCollar D A.carrier K where
   nbhd := S.nbhd
   left := S.sideL
   right := S.sideR
@@ -1766,7 +1766,7 @@ namespace PolyArc
 variable {n k : ℕ} {A : PolyArc n}
 
 /-- The union of the first `k + 1` edges. -/
-def prefixCarrier (A : PolyArc n) (k : ℕ) : Set Plane := ⋃ i, ⋃ (_ : i ≤ k), A.edge i
+@[expose] def prefixCarrier (A : PolyArc n) (k : ℕ) : Set Plane := ⋃ i, ⋃ (_ : i ≤ k), A.edge i
 
 theorem mem_prefixCarrier_iff {x : Plane} :
     x ∈ A.prefixCarrier k ↔ ∃ i ≤ k, x ∈ A.edge i := mem_iUnion_le_nat

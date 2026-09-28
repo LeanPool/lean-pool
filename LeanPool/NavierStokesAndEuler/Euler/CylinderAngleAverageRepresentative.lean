@@ -36,6 +36,10 @@ theorem average_full_translation (a : LiftDomain P) (u : LiftL2 P) :
 def sobolevAverage (q : ℕ) : SobolevSpace P q →L[ℝ] SobolevSpace P q :=
   liftOperator P q (average P) (average_full_translation P)
 
+@[simp] theorem value_sobolevAverage {q : ℕ} (u : SobolevSpace P q) :
+    value P (sobolevAverage P q u) = average P (value P u) :=
+  liftOperator_apply P (average P) (average_full_translation P) u (emptyWord q)
+
 theorem sobolevAverage_norm (q : ℕ) : ‖sobolevAverage P q‖ ≤ 1 :=
   (norm_liftOperator_le P q (average P) (average_full_translation P)).trans (average_norm P)
 
@@ -48,6 +52,7 @@ theorem sobolevAverage_eq_integral {q : ℕ} (u : SobolevSpace P q) :
     sobolevAverage P q u = P⁻¹ • (∫ s in (0 : ℝ)..P,
       sobolevTranslation P q (EulerCylinderAnglePrimitive.angleShift P s) u) := by
   apply value_injective P
+  rw [value_sobolevAverage]
   change average P (value P u) = (valueOperator P q)
     (P⁻¹ • (∫ s in (0 : ℝ)..P,
       sobolevTranslation P q (EulerCylinderAnglePrimitive.angleShift P s) u))
@@ -92,6 +97,7 @@ theorem average_eq_zero_iff (u : SobolevSpace P 3)
   · intro h y
     have hz : sobolevAverage P 3 u = 0 := by
       apply value_injective P
+      rw [value_sobolevAverage]
       change average P (value P u) = (valueOperator P 3) 0
       simpa only [map_zero] using h
     have he := pointEvaluation_average_mean P u f hf hrep y 0
@@ -105,11 +111,12 @@ theorem average_eq_zero_iff (u : SobolevSpace P 3)
         · rfl
         · exact hθ.symm
       rw [hx]
-      change pointEvaluation P (x.1,(θ : AddCircle P)) (sobolevAverage P 3 u) = 0
+      rw [← pointEvaluation_apply]
       rw [pointEvaluation_average_mean P u f hf hrep, h, smul_zero]
     apply Lp.ext
     filter_upwards [representative_ae P (sobolevAverage P 3 u),
       Lp.coeFn_zero Vector3 2 (liftMeasure P)] with x hx hzero
+    rw [value_sobolevAverage] at hx
     exact hx.trans ((he x).trans hzero.symm)
 
 end EulerCylinderAngleAverage

@@ -46,11 +46,11 @@ lemma sum_Icc_eq_sum_range' (m : ℕ) (f : ℕ → ℝ) :
   rw [add_comm]
 
 /-- Midpoints and half-lengths of the intervals of Table 1. -/
-noncomputable def mρ (j : ℕ) : ℝ :=
+@[expose] noncomputable def mρ (j : ℕ) : ℝ :=
   (aρ j + bρ j) / 2
 
 /-- Half-width of the support of the `j`th arcsine component. -/
-noncomputable def rρ (j : ℕ) : ℝ :=
+@[expose] noncomputable def rρ (j : ℕ) : ℝ :=
   (bρ j - aρ j) / 2
 
 lemma rρ_pos (j : Fin 16) : 0 < rρ (j + 1) := by

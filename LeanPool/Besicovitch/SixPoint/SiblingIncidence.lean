@@ -73,7 +73,7 @@ inductive SiblingTriangleWitness
   | .balanced code => .balanced code
 
 /-- Simultaneously swapping the children exchanges balanced codes `0` and `3`. -/
-def swapBalancedCode : Fin 4 → Fin 4
+@[expose] def swapBalancedCode : Fin 4 → Fin 4
   | 0 => 3
   | 1 => 1
   | 2 => 2

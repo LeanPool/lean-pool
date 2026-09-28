@@ -2689,7 +2689,7 @@ noncomputable def fanVertexEmbedding (f : M.FanFace) :
     exact congrArg (fun z : M.FanVertex ↦ z.1) hpq
 
 /-- The three vertices of a marked fan face, regarded as global used vertices. -/
-noncomputable def globalFanFaceVertices (f : M.FanFace) :
+@[expose] noncomputable def globalFanFaceVertices (f : M.FanFace) :
     Finset M.FanVertex :=
   (M.fanFaceVertices f).attach.map (M.fanVertexEmbedding f)
 

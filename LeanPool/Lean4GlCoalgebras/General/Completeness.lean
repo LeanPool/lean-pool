@@ -131,6 +131,7 @@ lemma rewind_history_in_cone {Γ} (g : coalgebraGame.Pos)
 attribute [local implicit_reducible] proof_type
 
 /-- Auxiliary declaration used in the GL coalgebra development. -/
+@[expose]
 def builderRuleApp (g : coalgebraGame.Pos) (h : coalgebraGame.turn g = Builder) : RuleApp :=
   match g with
   | ⟨Sum.inr R, _, _⟩ => R
@@ -498,10 +499,12 @@ lemma rewind_history_correspondence (Γ g) (strat : Strategy coalgebraGame Prove
   exact rewind_history_correspondence_aux Γ info Γs Rs strat n h2 h3 h4 h6 in_cone
 
 /-- Defines the premise when we have a repeat. -/
-def repNext (Γ : Sequent) {Δ : Sequent} {strat : Strategy coalgebraGame Prover}
+@[expose] def repNext (Γ : Sequent) {Δ : Sequent} {strat : Strategy coalgebraGame Prover}
   (g : proof_type Γ strat) (rep : Δ ∈ g.1.2.1) : (proof_type Γ strat) :=
   ⟨repPos g rep,
-   rewind_history_in_cone g.1 ⟨(2 * (Fin.find _ (List.mem_iff_get.1 rep)).1), _⟩ strat g.2.1,
+    by
+      exact rewind_history_in_cone g.1
+        ⟨(2 * (Fin.find _ (List.mem_iff_get.1 rep)).1), _⟩ strat g.2.1,
     by
       have hbound :
           2 * (Fin.find _ (List.mem_iff_get.1 rep)).1 <

@@ -1224,7 +1224,7 @@ end FromReference
   Real.sqrt (2 * radius X0 p.1) * f p
 
 /-- Reference P2, given by `-2 * radialPartial U p / velocity X0 (referenceAngular L) p`. -/
-noncomputable def referenceP2 (X0 : ℝ) (L U : Field) (p : Point) : ℝ :=
+@[expose] noncomputable def referenceP2 (X0 : ℝ) (L U : Field) (p : Point) : ℝ :=
   -2 * radialPartial U p / velocity X0 (referenceAngular L) p
 
 /-- Actual P2, given by `-2 * deriv (fun y => controlled T κ U (y, p.2)) p.1 / velocity X0

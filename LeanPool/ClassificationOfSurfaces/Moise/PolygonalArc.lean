@@ -226,11 +226,11 @@ theorem mem_segment_of_segmentLine_eq_zero {a b x : Plane} (hab : a ≠ b)
       ring
 
 /-- The `verticalLine` declaration. -/
-noncomputable def verticalLine (p : Plane) : Plane →ᵃ[ℝ] ℝ :=
+@[expose] noncomputable def verticalLine (p : Plane) : Plane →ᵃ[ℝ] ℝ :=
   cartesianX - AffineMap.const ℝ Plane (p 0)
 
 /-- The `horizontalLine` declaration. -/
-noncomputable def horizontalLine (p : Plane) : Plane →ᵃ[ℝ] ℝ :=
+@[expose] noncomputable def horizontalLine (p : Plane) : Plane →ᵃ[ℝ] ℝ :=
   cartesianY - AffineMap.const ℝ Plane (p 1)
 
 @[simp] theorem verticalLine_apply_self (p : Plane) : verticalLine p p = 0 := by

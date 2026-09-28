@@ -26,7 +26,7 @@ namespace N4
 noncomputable section
 
 /-- Embed six complementary values between the two anchor variables. -/
-def sliceAssignment (x y : F₂) (z : Fin 6 → F₂) : Fin 8 → F₂ :=
+@[expose] def sliceAssignment (x y : F₂) (z : Fin 6 → F₂) : Fin 8 → F₂ :=
   ![x, z 0, z 1, z 2, y, z 3, z 4, z 5]
 
 /-- The zero assignment on the six complementary slice inputs. -/

@@ -233,7 +233,7 @@ theorem exists_vertexAt (v : K.Vertex) : ∃ i, K.vertexAt i = v := by
 
 /-- The auxiliary chain has one genuine edge segment at every even index; odd segments merely
 connect one enumerated edge to the next and are discarded by `subordinateTo`. -/
-noncomputable def edgeChain : BrokenLineData (Set.univ : Set Plane) := by
+@[expose] noncomputable def edgeChain : BrokenLineData (Set.univ : Set Plane) := by
   classical
   let m := Fintype.card K.EdgeFace
   let q := Fintype.card K.Vertex

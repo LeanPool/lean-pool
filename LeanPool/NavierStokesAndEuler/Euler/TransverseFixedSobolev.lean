@@ -378,7 +378,8 @@ theorem transverseCoordinates_gevrey
     funext y
     have he := fixedFrameSolver_eq_transverse T hT (Q y) (Q₁ y) (H y) c hc (hLower y) (hd y)
       K hK (hPotential y) hsmall (m y) (hTangent y) (hRange y) (f y)
-    exact (congrArg (fun z : zeroTraceDerivatives (U := U) T hT => (z : TimeLp T U)) he).symm
+    simpa only [transverseBackward_coe] using
+      (congrArg (fun z : zeroTraceDerivatives (U := U) T hT => (z : TimeLp T U)) he).symm
   rw [heq]
   have hM := solveCost_one_le T C₀ C₁ CH c hT hC₀ hC₁ hCH
   have hR0 : 0 ≤ R := by nlinarith

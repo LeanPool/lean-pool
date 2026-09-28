@@ -21,7 +21,7 @@ This defines the actual finite-set-valued slaloms of the manuscript.
 Their relation norm is not identified with `nonM` by definition.
 -/
 
-@[expose] public section
+public section
 
 open Filter Cardinal
 

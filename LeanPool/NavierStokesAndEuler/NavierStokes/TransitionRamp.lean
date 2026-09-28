@@ -820,7 +820,7 @@ theorem natural_stock_identity (y : ℝ) (hy : y ≤ δ) {η : ℝ} (hη : η �
   have hX : 0 < p.1 := mul_pos N.endpoint_pos (Real.exp_pos _)
   have hupper : p.1 ≤ N.endpoint * Real.exp δ :=
     mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr hy) N.endpoint_pos.le
-  have hfp : 0 < Q.f p := N.fromLog_f_pos ⟨hyT, hη⟩
+  have hfp : 0 < Q.f p := N.fromLog_f_pos (p := (y, η)) ⟨hyT, hη⟩
   have hfields : P.f p = Q.f p := N.refF_eq_natural hδ hδT hη hupper
   have hUfields : P.U p = Q.U p := N.refU_eq_natural hδ hδT hη hupper
   have hrows : ∀ r ξ, ξ ∈ parameterInterval →

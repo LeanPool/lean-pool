@@ -126,7 +126,7 @@ def convolution (f : C(Icc (0 : ℝ) T, Y)) : C(Icc (0 : ℝ) T, X) where
   rfl
 
 /-- The scalar mass of an integrable time-kernel bound on the chosen time interval. -/
-def kernelMass : ℝ := ∫ r in Ioc 0 T, k r
+@[expose] def kernelMass : ℝ := ∫ r in Ioc 0 T, k r
 
 include hk0 in
 /-- A nonnegative kernel has nonnegative mass. -/

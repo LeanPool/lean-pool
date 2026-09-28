@@ -26,7 +26,7 @@ namespace DensityHalesJewett
 namespace Parameters
 
 /-- A positive dimension selected from the density Hales--Jewett assertion when available. -/
-noncomputable def m₀ (k : ℕ) (δ : ℝ) : ℕ := by
+@[expose] noncomputable def m₀ (k : ℕ) (δ : ℝ) : ℕ := by
   classical
   exact if h : 0 < δ ∧ HasDensityHJ k then
     Nat.succ <| Nat.find <| h.2 (δ / 4) (by linarith)

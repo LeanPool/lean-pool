@@ -397,7 +397,7 @@ theorem affine_profile_memClass (s : StripData D) {g : ℝ → ℝ}
 
 /-- The two excluded errors, retained as actual functions. `θ` is the
 normalized slot coordinate `v/L`. -/
-noncomputable def cutoffError (L : ℝ) (θ : D → ℝ) (u f : D → E) (x : D) : E :=
+@[expose] noncomputable def cutoffError (L : ℝ) (θ : D → ℝ) (u f : D → E) (x : D) : E :=
   (L⁻¹ * deriv profile (θ x)) • u x + (1 - profile (θ x)) • f x
 
 omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
@@ -523,7 +523,7 @@ namespace SlotFamily
   profile (g.coordinate n x)
 
 /-- Error, given by `cutoffError (g.length n) (g.coordinate n) (u n) (f n)`. -/
-noncomputable def error {s : StripData D} (g : SlotFamily s) (u f : ℕ → D → E)
+@[expose] noncomputable def error {s : StripData D} (g : SlotFamily s) (u f : ℕ → D → E)
     (n : ℕ) : D → E := cutoffError (g.length n) (g.coordinate n) (u n) (f n)
 
 theorem coordinate_contDiff {s : StripData D} (g : SlotFamily s) (n : ℕ) :

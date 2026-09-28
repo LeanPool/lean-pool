@@ -132,7 +132,7 @@ lemma repr_finsum_mem_eq_ite {R M ι : Type*} [Semiring R] [Nontrivial R] [IsCan
   by_cases hi : i ∈ I <;> simp [hi, aux i]
 
 /-- The basis on the span of a subset of a basis, indexed by that subset. -/
-  noncomputable def basisSubmoduleSpan {R M ι : Type*}
+@[expose] noncomputable def basisSubmoduleSpan {R M ι : Type*}
     [Semiring R] [Nontrivial R] [IsCancelMulZero R]
     [AddCommGroup M] [Module R M] [Module.IsTorsionFree R M] (B : Basis ι R M) (I : Set ι) :
     Basis I R (Submodule.span R (B '' I)) :=

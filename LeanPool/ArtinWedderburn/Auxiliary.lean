@@ -56,7 +56,7 @@ theorem left_inv_implies_divring [Nontrivial R]
   exact ⟨y, hy, x_eq_z ▸ hz⟩
 
 /-- Promote a proof of `IsDivisionRing R` to a Mathlib `DivisionRing R` instance. -/
-@[reducible]
+@[expose, reducible]
 noncomputable
 def IsDivisionRingToDivisionRing (div : IsDivisionRing R) : DivisionRing R := by
   unfold IsDivisionRing at div

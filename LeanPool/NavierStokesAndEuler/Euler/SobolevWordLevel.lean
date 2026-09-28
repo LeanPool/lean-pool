@@ -39,7 +39,7 @@ theorem wordAtLevel_value {s : ℕ} (q n : ℕ) (w : Fin n → Fin 4) (h : n + q
     value period (wordAtLevel period q n w h u) = (toJet period u).word w := by
   change value period (wordBlock period q n w (restrictOperator period (by omega : q+n ≤ s) u)) = _
   rw [wordBlock_value, toJet_word period u (by omega)]
-  rfl
+  rw [word_restrictOperator]
 
 /-- Every actual smooth representative has the expected classical word after this operation. -/
 theorem wordAtLevel_ae {s : ℕ} (q n : ℕ) (w : Fin n → Fin 4) (h : n + q ≤ s)

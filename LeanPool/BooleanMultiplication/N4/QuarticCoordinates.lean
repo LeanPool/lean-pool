@@ -105,11 +105,11 @@ def quarticSeparatorEval (a b c d : F₂) (i : Fin 9) (q : TwoForm) : F₂ :=
   quarticSeparatorLinear a b c d i q
 
 /-- A vector in the two-dimensional input support at the place one. -/
-def quarticPoneVector (a b : F₂) : LinearForm :=
+@[expose] def quarticPoneVector (a b : F₂) : LinearForm :=
   a • placeA 1 + b • placeB 1
 
 /-- A vector in the two-dimensional input support at the place zero. -/
-def quarticPzeroVector (c d : F₂) : LinearForm :=
+@[expose] def quarticPzeroVector (c d : F₂) : LinearForm :=
   c • placeA 0 + d • placeB 0
 
 theorem quarticSeparator_target_check :
@@ -333,9 +333,9 @@ theorem quartic_cubic_kernel_zero_one (x y : LinearForm)
   exact ⟨a, b, c, d, hx, by simpa [quarticPzeroVector] using hy⟩
 
 /-- Select evaluation at zero among the three rational-place coordinates. -/
-def zeroPlaceCoeff3 : Fin 3 → F₂ := ![1, 0, 0]
+@[expose] def zeroPlaceCoeff3 : Fin 3 → F₂ := ![1, 0, 0]
 /-- Select evaluation at one among the three rational-place coordinates. -/
-def onePlaceCoeff3 : Fin 3 → F₂ := ![0, 1, 0]
+@[expose] def onePlaceCoeff3 : Fin 3 → F₂ := ![0, 1, 0]
 
 @[simp] theorem rationalTwo_zeroPlaceCoeff3 :
     rationalTwo zeroPlaceCoeff3 = rationalPlaceTwo 0 := by

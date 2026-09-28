@@ -28,7 +28,7 @@ lemma. The category comparison used in the final proof is developed in
 `NonMRR.CategoryBound`; the general Bartoszyński characterization is not assumed.
 -/
 
-@[expose] public section
+public section
 
 open Set Filter Cardinal
 

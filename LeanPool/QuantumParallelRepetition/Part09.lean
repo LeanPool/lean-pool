@@ -241,6 +241,7 @@ variable {X Y A B : Type}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 
 /-- The positive operator-valued measurement implementing unitary conjugate. -/
+@[expose]
 def unitaryConjugatePOVM
     {C d : Type} [Fintype C] [Fintype d] [DecidableEq d]
     (U : Matrix.unitaryGroup d ℂ) (P : POVM C d) : POVM C d where
@@ -4961,6 +4962,7 @@ open QuantumParallelRepetition.ClassicalSampling
 attribute [local instance] Classical.propDecidable
 
 /-- The finite equivalence encoding physical 8 selected global target work. -/
+@[expose]
 def physical8SelectedGlobalTargetWorkEquiv
     (P N d m : ℕ) :
     UnconditionalSelectedCopyLocalIndex P d N m ≃
@@ -6536,6 +6538,7 @@ def integratorActualC485SelectedBobPOVM
       (integratorActualC485SourceBobPOVM G n S D b₀ y)
 
 /-- The measurement effect for integrator actual c 485 winning. -/
+@[expose]
 def integratorActualC485WinningEffect
     {X Y A B : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]

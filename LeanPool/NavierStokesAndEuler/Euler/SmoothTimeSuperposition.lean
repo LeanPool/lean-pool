@@ -88,7 +88,7 @@ def superposition (A : SmoothTimeField K E V) (u : C(K, E)) : C(K,V) where
   continuous_toFun := by fun_prop
 
 @[simp] theorem superposition_apply (A : SmoothTimeField K E V)
-    (u : C(K, E)) (t : K) : A.superposition u t = A.field t (u t) := rfl
+    (u : C(K, E)) (t : K) : A.superposition u t = A.field t (u t) := by rfl
 
 /-- Superposition derivative, given by `EulerContinuousTimeIntegral.multiplier
 (A.derivative.superposition u)`. -/
@@ -99,8 +99,8 @@ def superpositionDerivative (A : SmoothTimeField K E V) (u : C(K, E)) :
 theorem superpositionDerivative_apply (A : SmoothTimeField K E V)
     (u h : C(K, E)) (t : K) :
     A.superpositionDerivative u h t = fderiv ℝ (A.field t : E → V) (u t) (h t) := by
-  change A.derivativeField t (u t) (h t) = _
-  rw [A.derivativeField_eq]
+  change A.derivative.field t (u t) (h t) = _
+  rw [A.derivative_apply]
 
 theorem superposition_taylor_bound (A : SmoothTimeField K E V)
     (u v : C(K, E)) :

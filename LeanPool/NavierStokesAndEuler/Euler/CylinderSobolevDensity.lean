@@ -25,7 +25,8 @@ open scoped Topology ContDiff
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- Actual smooth convolution lifted to the complete Sobolev space. -/
-def sobolevMollifier (q n : ℕ) : SobolevSpace period q →L[ℝ] SobolevSpace period q :=
+@[expose] def sobolevMollifier (q n : ℕ) :
+    SobolevSpace period q →L[ℝ] SobolevSpace period q :=
   liftOperator period q (mollifierOperator period n)
     (fun a f => by
       simp only [mollifierOperator_apply]

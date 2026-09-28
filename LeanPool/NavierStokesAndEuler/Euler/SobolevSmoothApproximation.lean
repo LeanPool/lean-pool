@@ -56,7 +56,8 @@ theorem smoothingVariance_tendsto : Filter.Tendsto smoothingVariance Filter.atTo
   simpa only [Real.toNNReal_zero, Function.comp_def, smoothingVariance] using h
 
 /-- An approximation having three extra strong derivatives and an actual C∞ representative. -/
-def smoothApprox (q n : ℕ) : SobolevSpace period q →L[ℝ] SobolevSpace period (q+3) :=
+@[expose] def smoothApprox (q n : ℕ) :
+    SobolevSpace period q →L[ℝ] SobolevSpace period (q+3) :=
   (sobolevMollifier period (q+3) n).comp
     (heatGainThree period q (smoothingVariance n) (smoothingVariance_pos n))
 

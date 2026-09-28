@@ -66,7 +66,7 @@ omit [CompleteSpace U] [CompleteSpace E] in
 /-- The frame is literally the source expression `F R⊥`. -/
 theorem framePath_apply (T : ℝ) (F : C(Icc (0 : ℝ) T, E →L[ℝ] E))
     (t : Icc (0 : ℝ) T) (x : U) :
-    framePath m₀ R T F t x = F t (R x : E) := rfl
+    framePath m₀ R T F t x = F t (R x : E) := by rfl
 
 omit [CompleteSpace U] in
 /-- The source frame maps into the moving tangent plane. -/
@@ -351,7 +351,7 @@ def framePathMap (T : ℝ) : C(Icc (0 : ℝ) T,Space →L[ℝ] Space) →L[ℝ]
 
 /-- This restriction is exactly the source frame path `F Rperp`. -/
 theorem framePathMap_apply (T : ℝ) (A : C(Icc (0 : ℝ) T, Space →L[ℝ] Space)) :
-    framePathMap m₀ Rperp T A = framePath m₀ Rperp T A := rfl
+    framePathMap m₀ Rperp T A = framePath m₀ Rperp T A := by rfl
 
 /-- Orthogonal reference restriction does not enlarge the coefficient path norm. -/
 theorem framePathMap_norm (T : ℝ) : ‖framePathMap m₀ Rperp T‖ ≤ 1 := by

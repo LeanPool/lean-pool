@@ -264,7 +264,7 @@ noncomputable def minLength : ℕ := by
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 @[simp] lemma lt_minLength : 2 * k + 1 < H.minLength := by have := H.le_minLength; omega
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps!] def takeMin := H.take H.minLength H.le_minLength
+@[expose, simps!] def takeMin := H.take H.minLength H.le_minLength
 @[simp] lemma takeMin_liftShort : H.takeMin.liftShort = H.liftShort := by
   simp [takeMin]
 @[simp] lemma takeMin_game : H.takeMin.game = H.game := by simp [takeMin]
@@ -277,12 +277,12 @@ lemma le_of_take {n : ℕ} {h : 2 * k + 2 ≤ n} (hL : (H.take n h).Lost') :
   change Nat.find H.exists_prefix ≤ n
   exact Nat.find_le ⟨h, hL⟩
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps toLift] def toWLLift : WLLift hyp where
+@[expose, simps toLift] def toWLLift : WLLift hyp where
   toLift := H.toLift
   liftTree := pullSub (subAt G.tree H.takeMin.x.val) (H.takeMin.x.val.drop (2 * k + 2))
 end LLift
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps toLift] def Lost'.mk {H : Lift hyp} (h : Lost' H) : LLift hyp := LLift.mk _ h
+@[expose, simps toLift] def Lost'.mk {H : Lift hyp} (h : Lost' H) : LLift hyp := LLift.mk _ h
 attribute [simp_lengths] LLift.toWLLift_toLift Lost'.mk_toLift
 
 section «extend'»
@@ -467,7 +467,7 @@ lemma take (hn : 1 ≤ h.2.num + n) :
   apply WinningPrefix.of_take (n := h.num)
   simpa (disch := omega) [List.take_take] using h.shrink
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps] def x' : (H.game.residual ((H.x.val.drop (2 * k + 1)).take h.2.num)).tree where
+@[expose, simps] def x' : (H.game.residual ((H.x.val.drop (2 * k + 1)).take h.2.num)).tree where
   val := H.x.val.drop (2 * k + 1 + h.2.num)
   property := by simpa [PreLift.ConLong] using h.1
 attribute [simp_lengths] x'_coe
@@ -515,7 +515,7 @@ end Losable
 variable (H : Lift hyp) (hp : IsPosition H.x.val Player.zero)
   (R : ResStrategy ⟨_, T'⟩ Player.zero H.x.val.length)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-noncomputable def extension : ExtensionsAt H.x := by
+@[expose] noncomputable def extension : ExtensionsAt H.x := by
   classical
   exact
     if h : H.Lost then h.toLLift'.extensionMap hp R

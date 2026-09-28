@@ -122,6 +122,7 @@ theorem modTwoSymplecticForm_add_right (x y z : ModTwoSpace) :
 /--
 The `quadraticDefectLinear` construction used in the Connes rigidity formalization.
 -/
+@[expose]
 def quadraticDefectLinear (g : ModTwoSymplecticGroup) :
     ModTwoSpace →ₗ[ZMod 2] ZMod 2 where
   toFun w := standardQuadraticForm (g⁻¹ • w) + standardQuadraticForm w
@@ -164,6 +165,7 @@ def quadraticDefectLinear (g : ModTwoSymplecticGroup) :
 
 /-- The pairing functional associated to a finite vector. Paper: §2.
 -/
+@[expose]
 def symplecticFunctional (d : ModTwoSpace) :
     ModTwoSpace →ₗ[ZMod 2] ZMod 2 where
   toFun w := modTwoSymplecticForm d w

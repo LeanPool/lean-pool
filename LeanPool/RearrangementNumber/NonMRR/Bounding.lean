@@ -22,7 +22,7 @@ The relation `boundingRelation` has `f` related to `g` when `f n < g n`
 infinitely often. Its norm is the bounding number in the manuscript.
 -/
 
-@[expose] public section
+public section
 
 open Filter Cardinal Set
 

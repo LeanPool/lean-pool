@@ -18,6 +18,7 @@ namespace Modal
 namespace Kripke
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Modal.Kripke.FiniteTransitiveTree.SimpleExtension (F : FiniteTransitiveTree) :
     Kripke.FiniteTransitiveTree where
   World := Unit ⊕ F.World

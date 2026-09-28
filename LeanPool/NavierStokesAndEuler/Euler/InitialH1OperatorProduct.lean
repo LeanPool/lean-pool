@@ -118,7 +118,7 @@ theorem initialProductDerivative_eq_product_of_trace_zero (u : TimeLp T E)
   rfl
 
 /-- Constants embedded as a genuine bounded operator into time L². -/
-def constantFieldOperator : E →L[ℝ] TimeLp T E :=
+@[expose] def constantFieldOperator : E →L[ℝ] TimeLp T E :=
   (pathLpOperator T hT).comp (ContinuousLinearMap.const ℝ (Icc (0 : ℝ) T))
 
 omit [CompleteSpace E] in

@@ -4461,7 +4461,7 @@ theorem commute_rootOperatorWord
         hcomm i, ← LinearMap.comp_assoc]
 
 /-- The operator word span used in the spherical-code argument. -/
-def operatorWordSpan
+@[expose] def operatorWordSpan
     {K V I : Type*} [Semiring K]
     [AddCommMonoid V] [Module K V]
     (R : I → V →ₗ[K] V) (v : V) : Submodule K V :=

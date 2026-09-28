@@ -16,7 +16,7 @@ public import Mathlib.Tactic
 
 /-! Walsh sign families. -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 open Finset

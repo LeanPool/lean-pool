@@ -1046,7 +1046,7 @@ theorem kuroshFactorOrbitVertex_eq_iff {ι : Type v} (G : ι → Type u)
         (rawBassSerreEdgeDataSource G y)) e
 
 /-- The target vertex orbit of an edge orbit. -/
-def rawBassSerreOrbitEdgeTarget {ι : Type v} (G : ι → Type u)
+@[expose] def rawBassSerreOrbitEdgeTarget {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     (e : RawBassSerreOrbitEdge G H) : RawBassSerreOrbitVertex G H :=
   Quotient.lift (fun x => actionOrbitMk H (RawBassSerreVertex G)
@@ -1822,7 +1822,7 @@ noncomputable def quotientTreePathHom {ι : Type v} (G : ι → Type u)
       (rawTreePathMap G H (rawTreePath G H a))
 
 /-- Close a quotient edge to a based loop using the chosen tree paths. -/
-noncomputable def quotientEdgeLoop {ι : Type v} (G : ι → Type u)
+@[expose] noncomputable def quotientEdgeLoop {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     {a b : RawBassSerreOrbitVertex G H} (e : a ⟶ b) :
     KuroshFreePart G H :=

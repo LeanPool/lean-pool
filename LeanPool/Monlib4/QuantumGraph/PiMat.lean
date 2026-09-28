@@ -122,8 +122,8 @@ StarAlgEquiv.ofAlgEquiv
     (AlgEquiv.piCongrRight (fun i => tensorToKronecker)))
   (fun x => by
     ext1 i
-    change TensorProduct.toKronecker (directSumTensorToFun (star x) i) =
-      star (TensorProduct.toKronecker (directSumTensorToFun x i))
+    simp only [AlgEquiv.trans_apply, AlgEquiv.piCongrRight_apply,
+      directSumTensorAlgEquiv_apply, tensorToKronecker_apply]
     rw [TensorProduct.toKronecker_star]
     congr 1
     obtain ⟨S, rfl⟩ := TensorProduct.exists_finset x
@@ -176,7 +176,7 @@ noncomputable abbrev PiMatToEuclideanLM :
 StarAlgEquiv.piCongrRight (fun _ => Matrix.toEuclideanStarAlgEquiv)
 
 /-- Trace functional on a product of matrix blocks. -/
-@[expose, simps!]
+@[simps!]
 noncomputable abbrev PiMat.traceLinearMap :
     (PiMat ℂ ι p) →ₗ[ℂ] ℂ :=
 Matrix.traceLinearMap _ _ _ ∘ₗ Matrix.blockDiagonal'AlgHom.toLinearMap
@@ -1160,7 +1160,9 @@ theorem unitaryTensorEuclidean_apply {U : (i : ι) → Matrix.unitaryGroup (p i)
         WithLp.toLp 2 ((U i.2 : Matrix _ _ ℂ)ᴴᵀ *ᵥ y.ofLp)) := by
   rw [unitaryTensorEuclidean, LinearIsometryEquiv.trans_apply,
     LinearIsometryEquiv.symm_apply_apply]
-  rfl
+  simp only [LinearIsometryEquiv.TensorProduct.map_tmul,
+    Matrix.UnitaryGroup.toEuclideanLinearIsometryEquiv_apply,
+    Matrix.unitaryGroup.conj_coe, Matrix.conj_conjTranspose]
 
 omit [Fintype ι] [DecidableEq ι] in
 theorem unitaryTensorEuclidean_apply' {U : (i : ι) → Matrix.unitaryGroup (p i) ℂ} (i :

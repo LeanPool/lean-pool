@@ -56,7 +56,7 @@ lemma T_ad_eq_zero {a d : ℕ} (h : ¬(0 < a ∧ 0 < d ∧ a ∣ d)) : TAd a d =
   dite_eq_right h
 
 /-- `T(p,p)`: the scalar double coset for prime `p`, equal to `TAd p p`. -/
-noncomputable def TPp (p : ℕ) : HeckeAlgebra 2 := TAd p p
+@[expose] noncomputable def TPp (p : ℕ) : HeckeAlgebra 2 := TAd p p
 
 /-- For `p` prime, `T(p,p)` equals the scalar diagonal element `TElem(p,p)`. -/
 lemma T_pp_of_pos (p : ℕ) (hp : p.Prime) : TPp p = TElem (fun _ : Fin 2 => p) := by

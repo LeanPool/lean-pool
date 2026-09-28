@@ -111,7 +111,7 @@ noncomputable def vertexFinset (G : Graph α β) [G.Finite] : Finset α :=
   (finite_vertexSet G).toFinset
 
 /-- The edge set of a finite graph, as a `Finset`. -/
-noncomputable def edgeFinset (G : Graph α β) [G.Finite] : Finset β :=
+@[expose] noncomputable def edgeFinset (G : Graph α β) [G.Finite] : Finset β :=
   (finite_edgeSet G).toFinset
 
 @[simp]

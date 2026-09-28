@@ -196,7 +196,7 @@ def func ⦃k⦄ (f : L.Func k) (v : Fin k → QuotEq L M) : QuotEq L M :=
     of_eq_of.mpr (eqv_funcExt f hvw)) v
 
 /-- Imported declaration from the Incompleteness formalization. -/
-@[expose] def rel ⦃k⦄ (r : L.Rel k) (v : Fin k → QuotEq L M) : Prop :=
+def rel ⦃k⦄ (r : L.Rel k) (v : Fin k → QuotEq L M) : Prop :=
   Quotient.liftVec (s := eqvSetoid L M) (Structure.rel r) (fun _ _ hvw => eqv_relExt r hvw) v
 
 instance struc : Structure L (QuotEq L M) where

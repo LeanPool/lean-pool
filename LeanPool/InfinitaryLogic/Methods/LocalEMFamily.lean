@@ -57,7 +57,7 @@ variable (Λ : Language.{0, 0})
 /-- The **canonical equality atom** of two `Fin m`-variable terms: the arity-`m` formula
 `t = u` with the variables rebound. Every de-substituted equality atom (over any `J`, any
 support) is definitionally of this shape. -/
-def canonEqAtom {m : ℕ} (t u : Λ.Term (Fin m)) : Λ.BoundedFormulaω Empty m :=
+@[expose] def canonEqAtom {m : ℕ} (t u : Λ.Term (Fin m)) : Λ.BoundedFormulaω Empty m :=
   BoundedFormulaω.equal (t.relabel Sum.inr) (u.relabel Sum.inr)
 
 /-- The **canonical equality-atom seed**: all canonical equality atoms, over all arities. -/
@@ -75,7 +75,7 @@ private theorem canonEqAtoms_countable (hf : Countable (Σ n, Λ.Functions n)) :
 
 /-- The **canonical relation atom**: a relation symbol applied to rebound `Fin m`-variable
 terms. -/
-def canonRelAtom {m l : ℕ} (R : Λ.Relations l) (ts : Fin l → Λ.Term (Fin m)) :
+@[expose] def canonRelAtom {m l : ℕ} (R : Λ.Relations l) (ts : Fin l → Λ.Term (Fin m)) :
     Λ.BoundedFormulaω Empty m :=
   BoundedFormulaω.rel R fun i => (ts i).relabel Sum.inr
 
@@ -98,6 +98,7 @@ private theorem canonRelAtoms_countable (hf : Countable (Σ n, Λ.Functions n))
 terms: open the bound variables, substitute the terms, rebind the `p` positions — the
 `openBounds → subst → relabel` template of `EMTermModel.deForm`, with the `J`-dependence already
 factored out. -/
+@[expose]
 def canonDeForm {n : ℕ} (φ : Λ.BoundedFormulaω Empty n) {p : ℕ} (g : Fin n → Λ.Term (Fin p)) :
     Λ.BoundedFormulaω Empty p :=
   (φ.openBounds.subst g).relabel Sum.inr
@@ -167,7 +168,7 @@ theorem locConstantsToVars_varFinset_subset (t : Λ[[J]].Term Empty) :
 
 /-- The **de-substituted term at ordered support positions**: each skeleton constant `c_j`
 becomes the `ℕ`-variable `deepRank S j`. -/
-def locDeTermPos (S : Finset J) (t : Λ[[J]].Term Empty) : Λ.Term ℕ :=
+@[expose] def locDeTermPos (S : Finset J) (t : Λ[[J]].Term Empty) : Λ.Term ℕ :=
   t.constantsToVars.relabel (Sum.elim (fun j => deepRank J S j) Empty.elim)
 
 /-- The ordered-position term uses only variables `< S.card` once `S` covers the term's skeleton
@@ -185,7 +186,7 @@ theorem locDeTermPos_varFinset_subset {S : Finset J} {t : Λ[[J]].Term Empty}
 /-- The **de-substituted term at `Fin S.card` positions**: `locDeTermPos` with its variables
 packaged as genuine `Fin S.card` indices. The finite-variable term through which every
 `J`-dependent atom/deForm factors. -/
-def locDeTermFin (S : Finset J) (t : Λ[[J]].Term Empty) (hsub : locJSupport Λ J t ⊆ S) :
+@[expose] def locDeTermFin (S : Finset J) (t : Λ[[J]].Term Empty) (hsub : locJSupport Λ J t ⊆ S) :
     Λ.Term (Fin S.card) :=
   (locDeTermPos Λ J S t).restrictVar
     (fun x => ⟨x.1, Finset.mem_range.mp (locDeTermPos_varFinset_subset (Λ := Λ) (J := J) hsub x.2)⟩)
@@ -207,7 +208,7 @@ private theorem locDeEqAtom_mem_canonEqAtoms (S : Finset J) (t u : Λ[[J]].Term 
   ⟨⟨S.card, (locDeTermFin Λ J S t ht, locDeTermFin Λ J S u hu)⟩, rfl⟩
 
 /-- The **local de-substituted relation atom**: definitionally a canonical relation atom. -/
-def locDeRelAtom (S : Finset J) {l : ℕ} (R : Λ.Relations l)
+@[expose] def locDeRelAtom (S : Finset J) {l : ℕ} (R : Λ.Relations l)
     (ts : Fin l → Λ[[J]].Term Empty) (ht : ∀ i, locJSupport Λ J (ts i) ⊆ S) :
     Λ.BoundedFormulaω Empty S.card :=
   canonRelAtom Λ R fun i => locDeTermFin Λ J S (ts i) (ht i)
@@ -220,7 +221,7 @@ private theorem locDeRelAtom_mem_canonRelAtoms (S : Finset J) {l : ℕ} (R : Λ.
   ⟨⟨S.card, l, (R, fun i => locDeTermFin Λ J S (ts i) (ht i))⟩, rfl⟩
 
 /-- The **local general de-substituted formula**: definitionally a canonical deForm of `φ`. -/
-def locDeForm (S : Finset J) {n : ℕ} (φ : Λ.BoundedFormulaω Empty n)
+@[expose] def locDeForm (S : Finset J) {n : ℕ} (φ : Λ.BoundedFormulaω Empty n)
     (ts : Fin n → Λ[[J]].Term Empty) (hsub : ∀ i, locJSupport Λ J (ts i) ⊆ S) :
     Λ.BoundedFormulaω Empty S.card :=
   canonDeForm Λ φ fun i => locDeTermFin Λ J S (ts i) (hsub i)

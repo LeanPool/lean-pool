@@ -713,6 +713,7 @@ instance : Inhabited (Dihomotopic.Quotient x x) :=
 
 /-- The composition of dipath dihomotopy classes. This is `Dipath.trans` descended to the
 quotient. -/
+@[expose]
 def _root_.Dipath.Dihomotopic.Quotient.comp (P₀ : Dipath.Dihomotopic.Quotient x y)
     (P₁ : Dipath.Dihomotopic.Quotient y z) : Dipath.Dihomotopic.Quotient x z :=
   Quotient.map₂ Dipath.trans
@@ -723,6 +724,7 @@ lemma _root_.Dipath.Dihomotopic.comp_lift (P₀ : Dipath x y) (P₁ : Dipath y z
 
 /-- The image of a dipath dihomotopy class `P₀` under a directed map `f`. This is `Dipath.map`
 descended to the quotient. -/
+@[expose]
 def _root_.Dipath.Dihomotopic.Quotient.mapFn (P₀ : Dipath.Dihomotopic.Quotient x y) (f : D(X,Y)) :
   Dipath.Dihomotopic.Quotient (f x) (f y) :=
 Quotient.map (fun (q : Dipath x y) => q.map f) (fun _ _ h => Dipath.Dihomotopic.map h f) P₀

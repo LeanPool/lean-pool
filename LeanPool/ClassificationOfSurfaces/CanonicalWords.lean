@@ -67,32 +67,32 @@ inductive NonOrientableEdge (p n : ℕ)
   deriving DecidableEq, Repr, Fintype
 
 /-- The commutator block `aᵢ bᵢ aᵢ⁻¹ bᵢ⁻¹`. -/
-def orientableHandleBlock {p n : ℕ} (i : Fin p) :
+@[expose] def orientableHandleBlock {p n : ℕ} (i : Fin p) :
     List (SignedDart (OrientableEdge p n)) :=
   [.pos (.a i), .pos (.b i), .neg (.a i), .neg (.b i)]
 
 /-- The boundary block `cᵢ hᵢ cᵢ⁻¹` in the orientable word. -/
-def orientableBoundaryBlock {p n : ℕ} (i : Fin n) :
+@[expose] def orientableBoundaryBlock {p n : ℕ} (i : Fin n) :
     List (SignedDart (OrientableEdge p n)) :=
   [.pos (.c i), .pos (.h i), .neg (.c i)]
 
 /-- The square block `aᵢ aᵢ` in the nonorientable word. -/
-def nonOrientableCrosscapBlock {p n : ℕ} (i : Fin p) :
+@[expose] def nonOrientableCrosscapBlock {p n : ℕ} (i : Fin p) :
     List (SignedDart (NonOrientableEdge p n)) :=
   [.pos (.a i), .pos (.a i)]
 
 /-- The boundary block `cᵢ hᵢ cᵢ⁻¹` in the nonorientable word. -/
-def nonOrientableBoundaryBlock {p n : ℕ} (i : Fin n) :
+@[expose] def nonOrientableBoundaryBlock {p n : ℕ} (i : Fin n) :
     List (SignedDart (NonOrientableEdge p n)) :=
   [.pos (.c i), .pos (.h i), .neg (.c i)]
 
 /-- The canonical orientable signed boundary word. -/
-def orientableBoundaryWord (p n : ℕ) : List (SignedDart (OrientableEdge p n)) :=
+@[expose] def orientableBoundaryWord (p n : ℕ) : List (SignedDart (OrientableEdge p n)) :=
   (List.ofFn (fun i : Fin p ↦ orientableHandleBlock (n := n) i)).flatten ++
     (List.ofFn (fun i : Fin n ↦ orientableBoundaryBlock (p := p) i)).flatten
 
 /-- The canonical nonorientable signed boundary word. -/
-def nonOrientableBoundaryWord (p n : ℕ) :
+@[expose] def nonOrientableBoundaryWord (p n : ℕ) :
     List (SignedDart (NonOrientableEdge p n)) :=
   (List.ofFn (fun i : Fin p ↦ nonOrientableCrosscapBlock (n := n) i)).flatten ++
     (List.ofFn (fun i : Fin n ↦ nonOrientableBoundaryBlock (p := p) i)).flatten

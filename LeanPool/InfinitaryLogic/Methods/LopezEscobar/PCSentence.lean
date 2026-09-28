@@ -100,7 +100,7 @@ private theorem sideEmb_onRelation_mem (side : PCSide) (p : Σ n, (MidLang L).Re
 variable (L) in
 /-- **The side-parametric functional PC sentence**: `functionalTheta` mapped into the
 tagged language along the side's embedding — defined once, instantiated twice. -/
-noncomputable def functionalPCSentence [Countable (Σ l, L.Relations l)] (side : PCSide)
+@[expose] noncomputable def functionalPCSentence [Countable (Σ l, L.Relations l)] (side : PCSide)
     (T : (n : ℕ) → Set ((Fin n → Bool) × (Fin n → ℕ))) : (KLang L).Sentenceω :=
   (functionalTheta L T).mapLanguage (sideEmb L side)
 

@@ -22,7 +22,7 @@ Convergence is taken along the natural partial sums. In particular, ordinary
 We use mathlib's `SummationFilter.conditional ℕ` explicitly.
 -/
 
-@[expose] public section
+public section
 
 open Filter Finset Cardinal
 open scoped Topology

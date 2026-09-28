@@ -33,7 +33,7 @@ def basisChangeQ (α γ : Fin 3 → F₂) (i j : Fin 3) : F₂ :=
   α i * γ j + α j * γ i
 
 /-- A two-term linear combination of rational-place coefficient vectors. -/
-def coeffCombination (p q : F₂) (α β : Fin 3 → F₂) : Fin 3 → F₂ :=
+@[expose] def coeffCombination (p q : F₂) (α β : Fin 3 → F₂) : Fin 3 → F₂ :=
   p • α + q • β
 
 /-- The two pairs of rational coefficient vectors have the same three exterior minors. -/

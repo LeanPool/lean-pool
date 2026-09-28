@@ -883,6 +883,7 @@ end «lp_section_9»
 variable (L)
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.substs₁ (t u : V) : V := L.substs ?[t] u
 
 variable {L}
@@ -917,6 +918,7 @@ end «lp_section_12»
 variable (L)
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.free (p : V) : V := L.substs₁ ^&0 (L.shift p)
 
 variable {L}

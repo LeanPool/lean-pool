@@ -5144,7 +5144,7 @@ open scoped BigOperators
 open MetricCodes.Spherical.HigherHarmonicYoung
 
 /-- The root bracket boundary coefficient used in the spherical-code argument. -/
-def rootBracketBoundaryCoefficient {r k : ℕ}
+@[expose] def rootBracketBoundaryCoefficient {r k : ℕ}
     (S : RootWedge r (k + 1)) (T : RootWedge r k) : ℝ := by
   classical
   exact ∑ α ∈ S.val, ∑ β ∈ S.val.erase α,
@@ -5197,7 +5197,7 @@ def rootBracketBoundary (r n k : ℕ) :
     Finset.erase_eq_of_notMem, insert_empty_eq, true_and, Finset.sum_empty]
 
 /-- The root chevalley eilenberg boundary used in the spherical-code argument. -/
-def rootChevalleyEilenbergBoundary (r n k : ℕ) :
+@[expose] def rootChevalleyEilenbergBoundary (r n k : ℕ) :
     RootPolynomialChain r n (k + 1) →ₗ[ℝ]
       RootPolynomialChain r n k :=
   rootActionBoundary r n k + rootBracketBoundary r n k

@@ -33,7 +33,7 @@ def HasDensityHJ (k : ℕ) : Prop :=
 namespace Subspace
 
 /-- A one-dimensional density Hales--Jewett threshold selected from `HasDensityHJ`. -/
-noncomputable def densityOneBound (k : ℕ) (δ : ℝ) : ℕ := by
+@[expose] noncomputable def densityOneBound (k : ℕ) (δ : ℝ) : ℕ := by
   classical
   exact if h : 0 < δ ∧ HasDensityHJ k then
     Nat.find (h.2 δ h.1)

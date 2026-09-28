@@ -87,7 +87,7 @@ structure Pulse where
   ψ_compact : HasCompactSupport ψ
 
 /-- Column, given by `PulseCovariance.actualColumn ci P.ψ P.x P.t`. -/
-noncomputable def Pulse.column (P : Pulse) (ci : ℝ) : Vec2 :=
+@[expose] noncomputable def Pulse.column (P : Pulse) (ci : ℝ) : Vec2 :=
   PulseCovariance.actualColumn ci P.ψ P.x P.t
 
 /-- Radial profile, given by `cutoff r z.1 * P.ψ z.2 * P.x z.2`. -/

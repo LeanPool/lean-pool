@@ -49,7 +49,7 @@ theorem glueFunction_continuous (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b)
   exact endpoint_match a b ha hb u v hmatch
 
 /-- The actual continuous path on the union of the two adjacent time intervals. -/
-def gluePath (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b)
+@[expose] def gluePath (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b)
     (u : C(Icc (0 : ℝ) a, E)) (v : C(Icc (0 : ℝ) b, E))
     (hmatch : u ⟨a, ha, le_rfl⟩ = v ⟨0, le_rfl, hb⟩) : C(Icc (0 : ℝ) (a+b), E) :=
   ⟨fun t => glueFunction a b ha hb u v t.val, (glueFunction_continuous a b ha hb u v hmatch).comp

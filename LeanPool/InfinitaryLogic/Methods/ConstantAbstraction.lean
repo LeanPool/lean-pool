@@ -228,7 +228,7 @@ noncomputable def Term.abstractConst (j : ℕ) {n : ℕ} :
   | @Term.func _ _ (_ + 1) (Sum.inr k) _ => nomatch k
 
 /-- Withdraw the constant `c_j` from a formula into the fresh free variable `0 : Fin 1`. -/
-noncomputable def BoundedFormulaω.abstractConst (j : ℕ) :
+@[expose] noncomputable def BoundedFormulaω.abstractConst (j : ℕ) :
     ∀ {n : ℕ}, L[[ℕ]].BoundedFormulaω Empty n → L[[ℕ]].BoundedFormulaω (Fin 1) n
   | _, .falsum => .falsum
   | _, .equal t u => .equal (t.abstractConst j) (u.abstractConst j)

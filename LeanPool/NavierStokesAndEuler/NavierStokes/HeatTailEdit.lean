@@ -403,7 +403,7 @@ noncomputable def outgoingAmplitude (d : TailData) : ℝ :=
 noncomputable def outgoingShape (d : TailData) (t : ℝ) : ℝ := tailShape d (t + 1 / 5)
 
 /-- Outgoing profile, given by `finalAngular d (switchStart d + Real.log (X / K), eta)`. -/
-noncomputable def outgoingProfile (d : TailData) (K eta X : ℝ) : ℝ :=
+@[expose] noncomputable def outgoingProfile (d : TailData) (K eta X : ℝ) : ℝ :=
   finalAngular d (switchStart d + Real.log (X / K), eta)
 
 /-- Outgoing edit, given by `edit (outgoingProfile d K eta) d.h ν K X`. -/

@@ -74,7 +74,7 @@ theorem dEta_smooth {f : Field} (hf : ContDiff ℝ ∞ f) : ContDiff ℝ ∞ (dE
   contDiffOn_univ.mp (ProfileHistories.parameterPartial_smooth logDomain hf.contDiffOn)
 
 /-- A fixed incoming integral plus a finite log-coordinate integral. -/
-noncomputable def history (initial : ℝ → ℝ) (f : Field) (p : Point) : ℝ :=
+@[expose] noncomputable def history (initial : ℝ → ℝ) (f : Field) (p : Point) : ℝ :=
   initial p.2 + ProfileHistories.primitive f p
 
 theorem prefix_smooth {initial : ℝ → ℝ} {f : Field}
@@ -171,9 +171,10 @@ noncomputable def I (w : ResetWitness d K) : Field := history (initialI d) (angu
 noncomputable def J (w : ResetWitness d K) (Amp : ℝ → ℝ) : Field := history (initialJ d)
     (transportWeight w Amp)
 /-- S, given by `history (initialS d) (energyWeight w Amp)`. -/
-noncomputable def S (w : ResetWitness d K) (Amp : ℝ → ℝ) : Field := history (initialS d)
+@[expose] noncomputable def S (w : ResetWitness d K) (Amp : ℝ → ℝ) : Field := history (initialS d)
     (energyWeight w Amp)
 /-- Pi, given by `history (initialPi d) (pressureWeight w)`. -/
+@[expose]
 noncomputable def Pi (w : ResetWitness d K) : Field := history (initialPi d) (pressureWeight w)
 
 theorem E_smooth (w : ResetWitness d K) : ContDiff ℝ ∞ (E w) :=
@@ -329,7 +330,7 @@ d Amp) p`. -/
 /-- W, given by `XW d Amp p / X p`. -/
 @[expose] noncomputable def W (d : TailData) (Amp : ℝ → ℝ) (p : Point) : ℝ := XW d Amp p / X p
 /-- Ubar, given by `M d Amp p / X p`. -/
-noncomputable def Ubar (d : TailData) (Amp : ℝ → ℝ) (p : Point) : ℝ := M d Amp p / X p
+@[expose] noncomputable def Ubar (d : TailData) (Amp : ℝ → ℝ) (p : Point) : ℝ := M d Amp p / X p
 
 /-- Angular source as an element of `ℝ`. -/
 @[expose] noncomputable def angularSource (w : ResetWitness d K) (Amp : ℝ → ℝ) (p : Point) : ℝ :=
@@ -1252,7 +1253,7 @@ theorem Ns_eq_source_integral (w : ResetWitness d K) {Amp : ℝ → ℝ}
 /-! ## Entrance-radius factors -/
 
 /-- Physical X, given by `XR * X p`. -/
-noncomputable def physicalX (XR : ℝ) (p : Point) : ℝ := XR * X p
+@[expose] noncomputable def physicalX (XR : ℝ) (p : Point) : ℝ := XR * X p
 /-- Physical H, given by `Real.sqrt (2 * XR) * H w p`. -/
 noncomputable def physicalH (XR : ℝ) (w : ResetWitness d K) (p : Point) : ℝ := Real.sqrt (2 * XR) *
     H w p

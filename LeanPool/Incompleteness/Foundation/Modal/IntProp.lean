@@ -17,6 +17,7 @@ namespace LO
 namespace IntProp
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.IntProp.Formula.toModalFormula : Formula α → Modal.Formula α
   | .atom a => Modal.Formula.atom a
   | ⊥ => ⊥

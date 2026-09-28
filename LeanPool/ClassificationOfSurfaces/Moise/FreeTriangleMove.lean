@@ -29,10 +29,10 @@ noncomputable def affineEquivHomeomorph (e : Plane ≃ᵃ[ℝ] Plane) : Plane �
   continuous_invFun := e.symm.toAffineMap.continuous_of_finiteDimensional
 
 @[simp] theorem affineEquivHomeomorph_apply (e : Plane ≃ᵃ[ℝ] Plane) (p : Plane) :
-    affineEquivHomeomorph e p = e p := rfl
+    affineEquivHomeomorph e p = e p := by rfl
 
 @[simp] theorem affineEquivHomeomorph_symm_apply (e : Plane ≃ᵃ[ℝ] Plane) (p : Plane) :
-    (affineEquivHomeomorph e).symm p = e.symm p := rfl
+    (affineEquivHomeomorph e).symm p = e.symm p := by rfl
 
 theorem affineEquivHomeomorph_image_segment (e : Plane ≃ᵃ[ℝ] Plane) (a b : Plane) :
     affineEquivHomeomorph e '' segment ℝ a b = segment ℝ (e a) (e b) := by
@@ -193,13 +193,13 @@ theorem triangleEdges_eq_orderedEdges (T : M.Triangle) :
       · simp_all
 
 /-- Moise's first free-triangle case: the frontier meets the triangle in exactly its base edge. -/
-def IsOneEdgeFreeTriangle (T : M.Triangle) (k : Fin 3) : Prop :=
+@[expose] def IsOneEdgeFreeTriangle (T : M.Triangle) (k : Fin 3) : Prop :=
   frontier M.toPlaneComplex.support ∩ M.triangleCarrier T.1 =
     segment ℝ (M.freeTriangleOrder T k 0) (M.freeTriangleOrder T k 1)
 
 /-- Moise's second free-triangle case: the frontier meets the triangle in exactly the two edges
 through the apex. -/
-def IsTwoEdgeFreeTriangle (T : M.Triangle) (k : Fin 3) : Prop :=
+@[expose] def IsTwoEdgeFreeTriangle (T : M.Triangle) (k : Fin 3) : Prop :=
   frontier M.toPlaneComplex.support ∩ M.triangleCarrier T.1 =
     segment ℝ (M.freeTriangleOrder T k 0) (M.freeTriangleOrder T k 2) ∪
       segment ℝ (M.freeTriangleOrder T k 1) (M.freeTriangleOrder T k 2)

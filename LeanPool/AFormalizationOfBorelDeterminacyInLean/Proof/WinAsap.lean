@@ -72,7 +72,7 @@ section «Section2»
 variable {x : List A} (h : WinningPrefix G p x)
 
 /-- the length of the shortest prefix of `x` that is winning for `p` -/
-noncomputable def num : ℕ := by
+@[expose] noncomputable def num : ℕ := by
   classical
   exact Nat.find h
 lemma num_spec : (G.residual (x.take h.num)).ExistsWinning (p.residual (x.take h.num)) := by
@@ -318,11 +318,7 @@ lemma winAsap_body (x : body (winAsap G p).subtree)
   suffices x.val.drop h.num ∈ body h.strat.pre.subtree by
     have hW := h.strat_winning this
     conv at hW => simp [hN]
-    obtain ⟨w, hpay, hw⟩ := hW
-    refine Set.mem_of_eq_of_mem (y := body.append (Stream'.take h.num x.val) w) ?_ hpay
-    apply Subtype.ext
-    change x.val = Stream'.take h.num x.val ++ₛ w.val
-    rw [hw, Stream'.append_take_drop]
+    simpa only [Player.payoff] using hW
   apply mem_body_of_take 0; intro n _
   rw [← winAsap_subtree]; simp [hN]
 lemma winAsap_body' (x : body (winAsap G p).followUntilWon.subtree)

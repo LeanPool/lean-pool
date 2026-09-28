@@ -93,7 +93,7 @@ theorem word_hasDerivAt {q n : ℕ} (u : SobolevSpace period q) (hn : n < q)
   exact h
 
 /-- Every finite strong derivative jet defines an element of the complete Sobolev space. -/
-def ofJet {q : ℕ} {f : LiftL2 period} (J : SpatialJet period standardDirection q f) :
+@[expose] def ofJet {q : ℕ} {f : LiftL2 period} (J : SpatialJet period standardDirection q f) :
     SobolevSpace period q := by
   refine ⟨fun w => J.word w.2, ?_⟩
   apply ClosedSubmodule.mem_iInf.mpr

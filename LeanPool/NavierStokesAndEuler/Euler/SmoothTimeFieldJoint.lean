@@ -79,8 +79,8 @@ theorem realField_hasFDerivAt (htime : TimeDerivative T hT A A₁)
   · apply Eventually.of_forall
     intro p
     change HasFDerivAt (A.field (projIcc 0 T hT p.1) : E → V)
-      (A.derivativeField (projIcc 0 T hT p.1) p.2) p.2
-    rw [A.derivativeField_eq]
+      (A.derivative.field (projIcc 0 T hT p.1) p.2) p.2
+    rw [A.derivative_apply]
     have hd := ((A.smooth (projIcc 0 T hT p.1)).differentiable (by simp) p.2).hasFDerivAt
     exact hd
   · exact ((ContinuousLinearMap.toSpanSingletonLIE ℝ V).continuous.comp

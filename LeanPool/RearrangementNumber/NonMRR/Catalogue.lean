@@ -21,7 +21,7 @@ The blocks are Walsh vectors supported on consecutive disjoint intervals. The
 geometrically decaying error bound makes their eventual prefix bounds summable.
 -/
 
-@[expose] public section
+public section
 
 open Finset Filter
 open scoped BigOperators

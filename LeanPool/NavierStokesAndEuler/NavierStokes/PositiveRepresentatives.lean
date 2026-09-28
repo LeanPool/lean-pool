@@ -94,11 +94,11 @@ theorem physicalMask_has_positive_representative {h a b : ℝ} (L : Label) (hL :
 /-! ## A smooth inverse on the stable branch, including its zero-time face -/
 
 /-- Stable source, given by `{p | 0 < p.1 ∧ 0 < scalarSlope a p.2 p.1}`. -/
-noncomputable def stableSource (a : ℝ) : Set (ℝ × ℝ) :=
+@[expose] noncomputable def stableSource (a : ℝ) : Set (ℝ × ℝ) :=
   {p | 0 < p.1 ∧ 0 < scalarSlope a p.2 p.1}
 
 /-- Stable target, given by `forwardMap a '' stableSource a`. -/
-noncomputable def stableTarget (a : ℝ) : Set (ℝ × ℝ) := forwardMap a '' stableSource a
+@[expose] noncomputable def stableTarget (a : ℝ) : Set (ℝ × ℝ) := forwardMap a '' stableSource a
 
 theorem scalarSlope_smoothAt {a : ℝ} {p : ℝ × ℝ} (hp : p.1 ≠ 0) :
     ContDiffAt ℝ ∞ (fun x : ℝ × ℝ => scalarSlope a x.2 x.1) p :=

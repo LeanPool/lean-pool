@@ -453,6 +453,7 @@ theorem equal_coords_of_approx (s₁ s₂ : FormalSum R X) :
   fun hyp => funext fun x₀ => congrFun hyp x₀
 
 /-- coordinates for the quotient -/
+@[expose]
 def coordinates (x₀ : X) : R[X] → R := by
   apply Quotient.lift (fun s : FormalSum R X => s.coords x₀)
   intro a b hyp

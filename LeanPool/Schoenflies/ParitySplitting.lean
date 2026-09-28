@@ -305,7 +305,7 @@ How a crosscut is normally presented: a list of points. `pathPieces` reads off i
 `isChainFrom_pathPieces` says its boundary is the two ends of the list. -/
 
 /-- The edges of the polyline `v₀, v₁, …, v_k`. -/
-def pathPieces : List Plane → List Piece
+@[expose] def pathPieces : List Plane → List Piece
   | [] => []
   | [_] => []
   | v :: w :: rest => (v, w) :: pathPieces (w :: rest)
@@ -356,7 +356,7 @@ variable {C : ClosedPolygon m} {a : ZMod (m + 3)} {k : ℕ}
 /-- The edge list of the arc of `C` that leaves vertex `a` and runs forward through `k` edges.
 For `k ≤ m + 3` this is one of the two arcs a crosscut with endpoints `C.vertex a` and
 `C.vertex (a + k)` cuts `C` into; the other is `arcPieces C (a + k) (m + 3 - k)`. -/
-def arcPieces (C : ClosedPolygon m) (a : ZMod (m + 3)) (k : ℕ) : List Piece :=
+@[expose] def arcPieces (C : ClosedPolygon m) (a : ZMod (m + 3)) (k : ℕ) : List Piece :=
   (List.range k).map fun t : ℕ => (C.vertex (a + t), C.vertex (a + t + 1))
 
 @[simp] theorem arcPieces_zero (C : ClosedPolygon m) (a : ZMod (m + 3)) :

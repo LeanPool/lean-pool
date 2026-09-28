@@ -57,7 +57,7 @@ inductive RuleApp
   map_comp := by aesop_cat
 
 /-- Given a RuleApp, obtain the principal formulas. -/
-def fₚ : RuleApp → SplitSequent
+@[expose] def fₚ : RuleApp → SplitSequent
   | RuleApp.topₗ _ _ => {Sum.inl ⊤}
   | RuleApp.topᵣ _ _ => {Sum.inr ⊤}
   | RuleApp.axₗₗ _ n _ => {Sum.inl (at n), Sum.inl (na n)}

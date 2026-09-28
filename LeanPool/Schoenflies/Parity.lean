@@ -227,7 +227,7 @@ theorem meet_swap (h : hgt u a ≠ hgt u b) (t : ℝ) : meet u b a t = meet u a 
 The height test is half-open at the bottom: an edge whose lower end is exactly at the height
 of `q` counts, one whose upper end is counts not. That convention is what makes the count
 well defined at every `q` off the polygon, with no genericity assumption. -/
-def Crosses (u : Plane) (P : Piece) (q : Plane) : Prop :=
+@[expose] def Crosses (u : Plane) (P : Piece) (q : Plane) : Prop :=
   min (hgt u P.1) (hgt u P.2) ≤ hgt u q ∧ hgt u q < max (hgt u P.1) (hgt u P.2) ∧
     fwd u q < fwd u (meet u P.1 P.2 (hgt u q))
 
@@ -244,7 +244,7 @@ theorem crosses_swap (h : hgt u a ≠ hgt u b) (q : Plane) :
   (L.map (fun P => if Crosses u P q then 1 else 0)).sum
 
 /-- The contribution of one edge to the parity. -/
-noncomputable def mark (u : Plane) (P : Piece) (q : Plane) : ZMod 2 :=
+@[expose] noncomputable def mark (u : Plane) (P : Piece) (q : Plane) : ZMod 2 :=
   if Crosses u P q then 1 else 0
 
 /-- The crossing parity `π_C(q)`. -/

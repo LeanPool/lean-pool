@@ -70,7 +70,7 @@ theorem Monomial.singleton_mul_singleton {m : Nat} (i j : Fin m) :
 abbrev ANF (m : Nat) := MonoidAlgebra F₂ (Monomial m)
 
 /-- The ANF consisting of one squarefree monomial. -/
-def monomial {m : Nat} (s : Finset (Fin m)) : ANF m :=
+@[expose] def monomial {m : Nat} (s : Finset (Fin m)) : ANF m :=
   MonoidAlgebra.single ⟨s⟩ 1
 
 @[simp]
@@ -93,7 +93,7 @@ theorem coeff_sum_smul_mul_sum_smul {m : Nat} {ι κ : Type*}
   rw [Finset.sum_comm]
 
 /-- The `i`th input variable. -/
-def X {m : Nat} (i : Fin m) : ANF m := monomial {i}
+@[expose] def X {m : Nat} (i : Fin m) : ANF m := monomial {i}
 
 @[simp]
 theorem monomial_mul {m : Nat} (s t : Finset (Fin m)) :

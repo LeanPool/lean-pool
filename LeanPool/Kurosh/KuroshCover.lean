@@ -190,7 +190,7 @@ noncomputable def coverVertexMap {ι : Type v} (G : ι → Type u)
       (treeKuroshProductToH G H p).1 • rawTreeRepresentative G H a := rfl
 
 /-- Project an auxiliary covering edge to the Bass-Serre graph. -/
-noncomputable def coverEdgeMap {ι : Type v} (G : ι → Type u)
+@[expose] noncomputable def coverEdgeMap {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     {x y : CoverVertex G H}
     (d : @Quiver.Hom (CoverVertex G H) (coverQuiver G H) x y) :

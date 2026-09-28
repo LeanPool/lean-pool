@@ -232,7 +232,7 @@ end Structures
 
 /-- Transport an arity-tagged stage-`k` formula into the local colimit language along the
 cocone inclusion. -/
-def toLocalColimFormula (k : ℕ) (p : Σ n, (Llocal s₀ k).BoundedFormulaω Empty n) :
+@[expose] def toLocalColimFormula (k : ℕ) (p : Σ n, (Llocal s₀ k).BoundedFormulaω Empty n) :
     Σ n, (localColim s₀).BoundedFormulaω Empty n :=
   ⟨p.1, p.2.mapLanguage (LlocalInclusion s₀ k)⟩
 

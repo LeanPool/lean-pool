@@ -309,7 +309,7 @@ theorem target_sum_two_decomposable_rankTwo {c : TargetCoeff}
 /-! ## Eight decomposable forms cannot cover the target space -/
 
 /-- The coefficient vectors for evaluations at zero, one, and infinity. -/
-def rationalPlaceCoeff : Fin 3 → TargetCoeff :=
+@[expose] def rationalPlaceCoeff : Fin 3 → TargetCoeff :=
   ![rZeroCoeff, rOneCoeff, rInfinityCoeff]
 
 theorem rationalPlaceCoeff_injective : Function.Injective rationalPlaceCoeff := by
@@ -402,7 +402,7 @@ theorem add_mem_of_codim_one {V : Type*} [AddCommGroup V] [Module F₂ V]
   exact hm
 
 /-- The span of the three rational-place target two-forms. -/
-def rationalPlaceTwoSpace : Submodule F₂ TwoForm :=
+@[expose] def rationalPlaceTwoSpace : Submodule F₂ TwoForm :=
   Submodule.span F₂ (Set.range (fun θ : Fin 3 => targetTwo (rationalPlaceCoeff θ)))
 
 theorem rationalPlaceTwoSpace_finrank_le_three :

@@ -24,7 +24,7 @@ namespace N4
 noncomputable section
 
 /-- An affine factor together with a linear combination of rational-place targets. -/
-def representedLowFactor (a : F₂) (ell : LinearForm)
+@[expose] def representedLowFactor (a : F₂) (ell : LinearForm)
     (α : Fin 3 → F₂) : ANF 8 :=
   affineANF a ell + rationalANF α
 

@@ -74,7 +74,7 @@ def quarticSupportPair : Fin 3 → Fin 3 × Fin 3 :=
   ![(1, 0), (0, 2), (1, 2)]
 
 /-- A vector in the two-input support of a chosen rational place. -/
-def quarticSupportVector (theta : Fin 3) (a b : F₂) : LinearForm :=
+@[expose] def quarticSupportVector (theta : Fin 3) (a b : F₂) : LinearForm :=
   a • placeA theta + b • placeB theta
 
 /-- Select a packed separating covector for one of the three rational-place pairs. -/

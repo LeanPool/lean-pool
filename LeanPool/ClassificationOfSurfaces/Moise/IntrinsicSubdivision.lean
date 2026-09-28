@@ -31,7 +31,7 @@ variable (K : PlaneComplex)
 
 /-- Forget the planar placement of a complex, retaining its maximal triangles as an intrinsic
 two-complex. -/
-@[reducible] def toIntrinsic : IntrinsicTwoComplex where
+@[expose, reducible] def toIntrinsic : IntrinsicTwoComplex where
   Vertex := K.Vertex
   faces := K.cells
   faces_card := fun _ ht => K.card_of_mem_cells ht

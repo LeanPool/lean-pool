@@ -588,7 +588,7 @@ theorem sphere_not_isBoundaryDart (d : sphere.Dart) : ¬sphere.IsBoundaryDart d 
   exact hne heq
 
 /-- The gluing from the positive monogon to the negative monogon. -/
-def sphereBoundaryPairing : sphere.BoundaryPairing where
+@[expose] def sphereBoundaryPairing : sphere.BoundaryPairing where
   source := spherePositiveOccurrence
   target := sphereNegativeOccurrence
   source_ne_target := by

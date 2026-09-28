@@ -1388,7 +1388,7 @@ theorem edgeAt_spec (x : K.realization) (hx : x ∈ K.oneSkeleton) :
   Classical.choose_spec hx
 
 /-- The edgewise replacement map, expressed on the intrinsic edge carrier. -/
-noncomputable def edgeReplacementMap {h : K.realization → Plane}
+@[expose] noncomputable def edgeReplacementMap {h : K.realization → Plane}
     (hcont : Continuous h) (hinj : Function.Injective h)
     (D : K.VertexDiskControl h) (C : K.CentralTubeControl hcont hinj D)
     (e : K.Edge) (x : K.realization) : Plane :=

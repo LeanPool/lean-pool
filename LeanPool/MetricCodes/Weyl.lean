@@ -5261,7 +5261,7 @@ section
 open MetricCodes.Spherical.HigherHarmonicYoung
 
 /-- The root joint harmonic polynomial inclusion used in the spherical-code argument. -/
-def rootJointHarmonicPolynomialInclusion {r : ℕ}
+@[expose] def rootJointHarmonicPolynomialInclusion {r : ℕ}
     (n : ℕ) (lam : Fin (r + 1) → ℕ) (k : ℕ) :
     RootJointHarmonicChain n lam k →ₗ[ℝ]
       RootPolynomialChain r n k where
@@ -7179,7 +7179,7 @@ theorem actualExteriorRootContraction_mul_self_zero
       actualExteriorRootContraction (PolynomialSpace r n) α)
 
 /-- The full root exterior bracket used in the spherical-code argument. -/
-def fullRootExteriorBracket (r n : ℕ) :
+@[expose] def fullRootExteriorBracket (r n : ℕ) :
     Module.End ℝ (FullRootExteriorPolynomialChain r n) := by
   classical
   exact ∑ α : PositiveRoot r, ∑ β : PositiveRoot r,

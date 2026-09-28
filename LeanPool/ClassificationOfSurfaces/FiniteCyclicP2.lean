@@ -70,7 +70,7 @@ theorem isNondegenerate_iff_lengths_pos {P : FiniteCyclicPresentation}
   simp only [IsNondegenerate, List.length_pos_iff_ne_nil]
 
 /-- Cut a chosen oriented representative at a linear position. -/
-def canonical {P : FiniteCyclicPresentation} (face : P.OrientedFace)
+@[expose] def canonical {P : FiniteCyclicPresentation} (face : P.OrientedFace)
     (position : Fin ((P.orientedBoundary face).length + 1)) : P2Cut P where
   face := face
   left := (P.orientedBoundary face).take position
@@ -115,7 +115,7 @@ theorem canonical_last_right {P : FiniteCyclicPresentation} (face : P.OrientedFa
     cut.boundary_rotated.trans List.isRotated_append
 
 /-- Reverse the traversal orientation of a cut. -/
-def flip {P : FiniteCyclicPresentation} (cut : P2Cut P) : P2Cut P where
+@[expose] def flip {P : FiniteCyclicPresentation} (cut : P2Cut P) : P2Cut P where
   face := cut.face.flip
   left := inverseWord cut.right
   right := inverseWord cut.left

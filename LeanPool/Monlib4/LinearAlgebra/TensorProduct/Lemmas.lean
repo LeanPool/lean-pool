@@ -144,7 +144,8 @@ lemma LinearEquiv.TensorProduct.map_tmul
 by simp [LinearEquiv.TensorProduct.map, _root_.TensorProduct.map_tmul]
 
 /-- Tensor an algebra equivalence on the left by a fixed algebra. -/
-noncomputable def AlgEquiv.lTensor {R A B : Type*} (C : Type*) [CommSemiring R] [Semiring A]
+@[expose] noncomputable def AlgEquiv.lTensor {R A B : Type*} (C : Type*)
+    [CommSemiring R] [Semiring A]
   [Semiring B] [Semiring C] [Algebra R A] [Algebra R B] [Algebra R C]
   (f : A ≃ₐ[R] B) :
   (C ⊗[R] A) ≃ₐ[R] (C ⊗[R] B) :=

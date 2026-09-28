@@ -23,7 +23,7 @@ namespace N4
 noncomputable section
 
 /-- A linear form is supported on the first two coefficients of each input polynomial. -/
-def InK0Linear (ell : LinearForm) : Prop :=
+@[expose] def InK0Linear (ell : LinearForm) : Prop :=
   ell 2 = 0 ∧ ell 3 = 0 ∧ ell 6 = 0 ∧ ell 7 = 0
 
 theorem normalizedFirstJetVector_inK0 (pa pb ja jb : F₂) :

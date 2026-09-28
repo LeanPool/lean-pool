@@ -21,7 +21,7 @@ classical bounding-number lower bound. The category comparison needed for
 the topological cardinal `nonM` is proved in `NonMRR.CategoryBound`.
 -/
 
-@[expose] public section
+public section
 
 open Cardinal
 

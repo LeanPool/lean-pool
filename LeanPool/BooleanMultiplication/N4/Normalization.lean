@@ -75,7 +75,7 @@ def rOneANF : ANF 8 := targetANF rOneCoeff
 def rInfinityANF : ANF 8 := targetANF rInfinityCoeff
 
 /-- The span of the product evaluations at zero, one, and infinity. -/
-def rationalTargetSpace : Submodule F₂ (ANF 8) :=
+@[expose] def rationalTargetSpace : Submodule F₂ (ANF 8) :=
   Submodule.span F₂ {rZeroANF, rOneANF, rInfinityANF}
 
 /-- Affine functions together with the rational-place product targets. -/

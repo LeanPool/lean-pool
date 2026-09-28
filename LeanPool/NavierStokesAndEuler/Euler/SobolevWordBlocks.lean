@@ -26,7 +26,7 @@ variable (period : ℝ) [Fact (0 < period)]
 
 /-- A derivative word as an actual bounded map H^(q+n)→Hq, with its literal differentiation order.
 -/
-def wordBlock (q : ℕ) : (n : ℕ) → (Fin n → Fin 4) →
+@[expose] def wordBlock (q : ℕ) : (n : ℕ) → (Fin n → Fin 4) →
     SobolevSpace period (q + n) →L[ℝ] SobolevSpace period q
   | 0, _ => ContinuousLinearMap.id ℝ (SobolevSpace period q)
   | n + 1, w =>

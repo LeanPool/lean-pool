@@ -528,7 +528,7 @@ theorem booleanContraction_zero (q : TwoForm) :
   simp [booleanContraction]
 
 /-- The full sliced type-A product, including its affine and rational-target correction. -/
-def sliceTypeAFullModel
+@[expose] def sliceTypeAFullModel
     (leftConst : F₂) (leftLinear : LinearForm)
     (rightConst : F₂) (rightLinear : LinearForm)
     (correctionConst : F₂) (correctionLinear : LinearForm)
@@ -539,7 +539,7 @@ def sliceTypeAFullModel
       correctionCoeff x y
 
 /-- The full sliced type-B product, including its affine and rational-target correction. -/
-def sliceTypeBFullModel
+@[expose] def sliceTypeBFullModel
     (leftConst : F₂) (leftLinear : LinearForm)
     (rightConst : F₂) (rightLinear : LinearForm)
     (correctionConst : F₂) (correctionLinear : LinearForm)
@@ -550,7 +550,7 @@ def sliceTypeBFullModel
       correctionCoeff x y
 
 /-- The full sliced infinity-type product, including its affine and rational-target correction. -/
-def sliceTypeInfinityFullModel
+@[expose] def sliceTypeInfinityFullModel
     (leftConst : F₂) (leftLinear : LinearForm)
     (rightConst : F₂) (rightLinear : LinearForm)
     (correctionConst : F₂) (correctionLinear : LinearForm)

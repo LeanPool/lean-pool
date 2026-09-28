@@ -304,7 +304,7 @@ end ValidOnModel
 
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def ValidOnFrame (F : Frame) (φ : Formula ℕ) := ∀ V, (⟨F, V⟩ : Kripke.Model) ⊧ φ
+@[expose] def ValidOnFrame (F : Frame) (φ : Formula ℕ) := ∀ V, (⟨F, V⟩ : Kripke.Model) ⊧ φ
 
 
 namespace ValidOnFrame

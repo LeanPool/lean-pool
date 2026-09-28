@@ -113,7 +113,8 @@ theorem heatGain_joint_continuous (q : ℕ) :
   else 0
 
 /-- The scalar coefficient multiplying the inverse square root in the heat-kernel bound. -/
-def parabolicConstant (ν : ℝ) : ℝ := gaussianAbsMoment 1 / Real.sqrt (2 * ν)
+@[expose] def parabolicConstant (ν : ℝ) : ℝ :=
+  gaussianAbsMoment 1 / Real.sqrt (2 * ν)
 
 /-- The explicit integrable majorant for one-derivative heat smoothing. -/
 def parabolicKernelBound (ν t : ℝ) : ℝ := 1 + parabolicConstant ν * t ^ (-(1 / 2 : ℝ))

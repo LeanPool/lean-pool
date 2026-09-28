@@ -104,7 +104,7 @@ def Move.isModal {pos newPos : GamePos} : Move pos newPos → Prop
 | .buEnd _ => False
 
 /-- Existence of a legal move between two game positions. -/
-def move (old : GamePos) (new : GamePos) : Prop := Nonempty (Move old new)
+@[expose] def move (old : GamePos) (new : GamePos) : Prop := Nonempty (Move old new)
 
 lemma move_then_no_frep {H X next} {p : (ProverPos H X ⊕ BuilderPos H X)} :
     move ⟨H, X, p⟩ next → ¬ (rep H X ∧ X.isFree) := by

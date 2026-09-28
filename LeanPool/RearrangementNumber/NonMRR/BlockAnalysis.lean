@@ -23,7 +23,7 @@ In particular, the conclusion below is deliberately a `Tendsto` statement:
 `Summable` for real series would assert unconditional (absolute) convergence.
 -/
 
-@[expose] public section
+public section
 
 open Filter Finset Topology
 

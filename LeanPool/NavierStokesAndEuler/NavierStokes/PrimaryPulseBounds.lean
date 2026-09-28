@@ -47,7 +47,7 @@ variable [NormedAddCommGroup F] [NormedSpace ℝ F]
 noncomputable def timeLinear (σ : ℝ) : (Q × ℝ) →L[ℝ] (Q × ℝ) :=
   (ContinuousLinearMap.fst ℝ Q ℝ).prod (σ • ContinuousLinearMap.snd ℝ Q ℝ)
 
-@[simp] theorem timeLinear_apply (σ : ℝ) (z : Q × ℝ) : timeLinear σ z = (z.1, σ * z.2) := rfl
+@[simp] theorem timeLinear_apply (σ : ℝ) (z : Q × ℝ) : timeLinear σ z = (z.1, σ * z.2) := by rfl
 
 theorem timeLinear_norm_le {σ : ℝ} (hσ : |σ| ≤ 1) : ‖timeLinear (Q := Q) σ‖ ≤ 1 := by
   apply ContinuousLinearMap.opNorm_le_bound _ zero_le_one
@@ -552,8 +552,9 @@ theorem intervalIntegral_polynomial (D : PhaseJetBounds.Domain ι Q)
     PhaseJetBounds.PolynomialJets D (fun i p => ∫ t in a..b, F i (p, t)) := by
   apply ((pathFamily_polynomial D V hV hI hF).clm (intervalIntegralCLM (H := H) hab)).congr
   intro i p hp
-  change (∫ t in a..b, ParametricODE.extend hab
-    (SmoothPathFamily.pathFamily (F i) p) t) = ∫ t in a..b, F i (p, t)
+  change ParametricODE.integrator hab (SmoothPathFamily.pathFamily (F i) p)
+    (⟨b, hab, le_rfl⟩ : Icc a b) = ∫ t in a..b, F i (p, t)
+  rw [ParametricODE.integrator_apply]
   apply intervalIntegral.integral_congr
   intro t ht
   have ht' : t ∈ Icc a b := by simpa only [uIcc_of_le hab] using ht

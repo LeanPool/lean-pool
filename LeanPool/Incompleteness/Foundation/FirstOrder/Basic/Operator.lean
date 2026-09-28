@@ -515,6 +515,7 @@ variable {L : Language}
 end Operator
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.FirstOrder.Semiformula.Operator.val
     {M : Type w} [s : Structure L M] {k} (o : Operator L k) (v :
     Fin k → M) :

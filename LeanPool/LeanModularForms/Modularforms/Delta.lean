@@ -468,7 +468,9 @@ theorem div_Delta_is_SIF (k : ℤ) (f : CuspForm (CongruenceSubgroup.Gamma 1) k)
       · simp_all
 
 lemma CuspForm_div_Discriminant_apply (k : ℤ) (f : CuspForm (CongruenceSubgroup.Gamma 1) k)
-    (z : ℍ) : (CuspFormDivDiscriminant k f) z = f z / Δ z := rfl
+    (z : ℍ) : (CuspFormDivDiscriminant k f) z = f z / Δ z := by
+  change f z / Delta z = f z / Δ z
+  rw [Delta_apply]
 
 theorem CuspForm_div_Discriminant_Add (k : ℤ) (x y : CuspForm (CongruenceSubgroup.Gamma 1) k) :
   (fun f ↦ CuspFormDivDiscriminant k f) (x + y) =

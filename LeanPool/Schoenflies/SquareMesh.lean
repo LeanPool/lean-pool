@@ -91,7 +91,7 @@ namespace Schoenflies
 
 /-- The frame of the square of radius `r` about the origin. For `r = 1` this is definitionally
 `modelCurve`. -/
-def ringSet (r : ℝ) : Set Plane := {x : Plane | Plane.supNorm x = r}
+@[expose] def ringSet (r : ℝ) : Set Plane := {x : Plane | Plane.supNorm x = r}
 
 theorem ringSet_one : ringSet 1 = modelCurve := rfl
 

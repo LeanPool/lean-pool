@@ -412,7 +412,7 @@ theorem scale_endpoint : N.scale * N.endpoint = 4 := by
 /-- Log time, given by `Real.log (X / N.endpoint)`. -/
 @[expose] def logTime (X : ℝ) : ℝ := Real.log (X / N.endpoint)
 /-- Log F, defined pointwise by `Real.log (N.f (N.fromLog p))`. -/
-def logF : Field := fun p => Real.log (N.f (N.fromLog p))
+@[expose] def logF : Field := fun p => Real.log (N.f (N.fromLog p))
 /-- Log U, defined pointwise by `N.U (N.fromLog p)`. -/
 def logU : Field := fun p => N.U (N.fromLog p)
 

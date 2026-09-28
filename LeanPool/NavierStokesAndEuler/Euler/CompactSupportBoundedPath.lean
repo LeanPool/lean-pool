@@ -66,7 +66,7 @@ theorem continuous_boundedOfCompactSupport
 
 /-- A continuous family with one common compact spatial support, bundled as a continuous
 path of bounded continuous functions. -/
-def compactSupportBoundedPath
+@[expose] def compactSupportBoundedPath
     (u : A × E → V) (hu : Continuous u) (K : Set E) (hK : IsCompact K)
     (hs : ∀ t, tsupport (fun x => u (t, x)) ⊆ K) : C(A, E →ᵇ V) where
   toFun t := boundedOfCompactSupport (fun x => u (t, x))

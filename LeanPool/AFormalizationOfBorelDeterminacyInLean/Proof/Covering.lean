@@ -46,7 +46,7 @@ def chooseSucc : ResStrategy T.1 p m :=
 lemma res_surjective (h : m ≤ k) : (res h (T := T.1) (p := p)).Surjective :=
   fun S ↦ ⟨_, S.res_chooseSucc h⟩
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps] def chooseSystem : StrategySystem T.1 p where
+@[expose, simps] def chooseSystem : StrategySystem T.1 p where
   str k := S.chooseSucc
   con k := by ext x; simp [chooseSucc, res]
 lemma chooseSystem_self : S.chooseSystem.str k = S := by ext _ _ hl; simp [chooseSucc, hl]
@@ -65,15 +65,15 @@ structure PTreesS where
   toFun : ∀ p k, ResStrategy T.tree.1 p k → ResStrategy U.tree.1 p k
   con : ∀ p {k m} (h : m ≤ k) S, (toFun p k S).res h = toFun p m (S.res h)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def LvlStratHom.id (T : PTreesS) : LvlStratHom T T where
+@[expose] def LvlStratHom.id (T : PTreesS) : LvlStratHom T T where
   toFun p k := _root_.id
   con := by simp
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def LvlStratHom.comp {T U V : PTreesS} (g : LvlStratHom U V) (f : LvlStratHom T U) :
+@[expose] def LvlStratHom.comp {T U V : PTreesS} (g : LvlStratHom U V) (f : LvlStratHom T U) :
   LvlStratHom T V where
   toFun p k := g.toFun p k ∘ f.toFun p k
   con := by simp [g.con, f.con]
-instance : Category PTreesS where
+@[expose] instance : Category PTreesS where
   Hom := LvlStratHom
   id := LvlStratHom.id
   comp f g := LvlStratHom.comp g f
@@ -129,6 +129,7 @@ abbrev LvlStratHom.globalOfObj {T : PTreesS} (S : (LvlStratHom.global p).obj T) 
     (LvlStratHom.global p).obj T = Strategy T.tree.1.2 p) S
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
+@[expose]
 def bodyLiftExists {T U : PTrees} (toHom : T.1 ⟶ U.1) (str : PTreesS.mk T ⟶ PTreesS.mk U) :=
   ∀ {p : Player} {S : Strategy T.1.2 p}
   (y : body (LvlStratHom.globalOfObj
@@ -179,7 +180,7 @@ strategy -/
   str : Covering.PTreesS.mk T ⟶ Covering.PTreesS.mk U
   h_body : Covering.bodyLiftExists toHom str
 namespace Covering
-instance : Category PTrees where
+@[expose] instance : Category PTrees where
   Hom := Covering
   id T := ⟨𝟙 T.1, LvlStratHom.id _, fun {p} {S} y ↦ ⟨y, by
     simp only [CategoryTheory.Functor.map_id]
@@ -249,7 +250,7 @@ lemma fixing_mon {S T} (f : S ⟶ T) (h : Fixing k f) (hn : n ≤ k) :
   Fixing n f := ⟨h.1.mon hn, fun _ ↦ fixing_snd_mon hn _ h _⟩
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def Games := Σ' (A : Type*) (G : Game A), IsPruned G.tree ∧ [] ∈ G.tree
+@[expose] def Games := Σ' (A : Type*) (G : Game A), IsPruned G.tree ∧ [] ∈ G.tree
 @[simp] lemma games_isPruned (G : Games) : IsPruned G.2.1.tree := G.2.2.1
 @[simp] lemma games_ne (G : Games) : [] ∈ G.2.1.tree := G.2.2.2
 instance (G : Games) : TopologicalSpace G.1 := ⊥

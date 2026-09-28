@@ -33,7 +33,7 @@ variable (M : TriangleMesh)
   convexHull ℝ (M.position '' (t : Set M.Vertex))
 
 /-- The two-element faces occurring in maximal triangles. -/
-def edges : Finset (Finset M.Vertex) :=
+@[expose] def edges : Finset (Finset M.Vertex) :=
   M.triangles.biUnion fun t => t.powersetCard 2
 
 /-- Maximal triangles incident to an edge. -/
@@ -41,7 +41,7 @@ def incidentTriangles (e : Finset M.Vertex) : Finset (Finset M.Vertex) :=
   M.triangles.filter fun t => e ⊆ t
 
 /-- A boundary edge is incident to exactly one maximal triangle. -/
-def IsBoundaryEdge (e : Finset M.Vertex) : Prop :=
+@[expose] def IsBoundaryEdge (e : Finset M.Vertex) : Prop :=
   e ∈ M.edges ∧ (M.incidentTriangles e).card = 1
 
 /-- A weakly free triangle contains an incidence-one edge.  This is the boundary-edge precursor

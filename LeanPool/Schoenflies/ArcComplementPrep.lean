@@ -208,7 +208,7 @@ variable {c : Plane} {r : ℝ}
 /-- **The boundary of the axis-parallel square of `ℓ^∞`-radius `r` about `c`, as a closed
 polygon.**This is the presentation the overlay and parity machinery consume;
 `Schoenflies.modelCurve` is the case `c = 0`, `r = 1` but only as a set. -/
-def squarePolygon (c : Plane) {r : ℝ} (hr : 0 < r) : ClosedPolygon 1 where
+@[expose] def squarePolygon (c : Plane) {r : ℝ} (hr : 0 < r) : ClosedPolygon 1 where
   vertex := ![sqNE c r, sqNW c r, sqSW c r, sqSE c r]
   vertex_inj := by
     -- Any two of the four corners differ in a coordinate; `r > 0` is what makes them differ.

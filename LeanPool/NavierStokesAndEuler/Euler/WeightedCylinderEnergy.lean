@@ -53,7 +53,7 @@ end WeightedNorms
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- The explicit common coefficient in the actual viscous metric-root estimate. -/
-def viscousGrowthCoefficient (K : SmoothCoefficient period)
+@[expose] def viscousGrowthCoefficient (K : SmoothCoefficient period)
     (K' : LiftL2 period →L[ℝ] LiftL2 period) (κ : ℝ) (m : Vector3) (c ν : ℝ) (B : ℝ≥0) : ℝ :=
   (‖K'‖ + 2 * transportEnergyConstant period K κ m B +
     2 * ν * heatEnergyConstant period K c) / (2 * c ^ 2)

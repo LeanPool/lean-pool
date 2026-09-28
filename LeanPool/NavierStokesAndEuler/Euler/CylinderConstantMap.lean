@@ -61,7 +61,8 @@ theorem map_translation (L : E →L[ℝ] F) (a : LiftTangent) (u : CylinderL2 pe
 variable {K : Type*} [TopologicalSpace K] [CompactSpace K]
 
 /-- Path map, given by `(map period L).compLeftContinuous ℝ K`. -/
-def pathMap (L : E →L[ℝ] F) : C(K,CylinderL2 period E) →L[ℝ] C(K,CylinderL2 period F) :=
+@[expose] def pathMap (L : E →L[ℝ] F) :
+    C(K,CylinderL2 period E) →L[ℝ] C(K,CylinderL2 period F) :=
   (map period L).compLeftContinuous ℝ K
 
 omit [CompactSpace K] in

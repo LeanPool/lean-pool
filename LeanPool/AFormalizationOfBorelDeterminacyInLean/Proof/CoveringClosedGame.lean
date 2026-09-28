@@ -50,7 +50,7 @@ variable {G : Game A} {k : ℕ} (hyp : Hyp G k)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 abbrev A' {A : Type*} {G : Game A} {k : ℕ} {hyp : Hyp G k} := upA hyp
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def getTree' (hyp : Hyp G k) (x : List (upA hyp)) := match x.getLast? with
+@[expose] def getTree' (hyp : Hyp G k) (x : List (upA hyp)) := match x.getLast? with
   | none => G.tree
   | some a => a.2
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
@@ -247,7 +247,7 @@ abbrev π {A : Type*} {G : Game A} {k : ℕ} {hyp : Hyp G k} :
     gameAsTrees hyp ⟶ oldAsTrees hyp :=
   treeHom hyp
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def pInvTreeHomMap (hyp : Hyp G k) (x : List A) : List (upA hyp) :=
+@[expose] def pInvTreeHomMap (hyp : Hyp G k) (x : List A) : List (upA hyp) :=
   x.zipInitsMap (fun a y ↦ (a, (G.residual y).tree))
 variable {hyp}
 lemma treeHom_val x : (treeHom hyp x).val = x.val.map Prod.fst := by
@@ -313,7 +313,7 @@ lemma pInvTreeHomMap_mem : ∀ {x : List A}, x ∈ G.tree → x.length ≤ 2 * k
       ⟨ih (mem_of_append hmem) hxlt.le, hvalid⟩
 variable (hyp)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def pInvTreeHom : (Tree.res (2 * k)).obj ⟨_, G.tree⟩ ⟶
+@[expose] def pInvTreeHom : (Tree.res (2 * k)).obj ⟨_, G.tree⟩ ⟶
     (Tree.res (2 * k)).obj ⟨_, gameTree hyp⟩ where
   toFun x := ⟨pInvTreeHomMap hyp x.val,
     pInvTreeHomMap_mem x.prop.1 x.prop.2,
@@ -334,7 +334,7 @@ def treeHomRes : (Tree.res (2 * k)).obj ⟨_, gameTree hyp⟩ ≅
     rcases x with ⟨x, h⟩
     change pInvTreeHomMap hyp (List.map Prod.fst x) = x
     induction x using List.reverseRecOn with
-    | nil => rfl
+    | nil => simp [pInvTreeHomMap]
     | append_singleton x a ih =>
       have hx : x ++ [a] ∈ gameTree hyp := h.1
       have hxprev : x ∈ gameTree hyp := mem_of_append hx
@@ -372,7 +372,7 @@ instance treeHom_fixing : Tree.Fixing (2 * k) (treeHom hyp) := ⟨Iso.isIso_hom 
       xs = List.map Prod.fst (xs.zipInitsMap fun a y => (a, (G.residual y).tree)) := by
     intro xs
     induction xs using List.reverseRecOn with
-    | nil => rfl
+    | nil => simp
     | append_singleton xs a ih =>
       rw [List.zipInitsMap_concat, List.map_append, ← ih]
       rfl

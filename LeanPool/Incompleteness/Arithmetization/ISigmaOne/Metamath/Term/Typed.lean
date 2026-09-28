@@ -72,6 +72,7 @@ def _root_.LO.Arith.Language.bvar {n : V} (z : V) (hz : z < n := by simp) : L.Se
 def _root_.LO.Arith.Language.fvar {n : V} (x : V) : L.Semiterm n := ⟨^&x, by simp⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.func {n k f : V} (hf : L.Func k f) (v : L.SemitermVec k n) :
     L.Semiterm n := ⟨^func k f v.val , by simp [hf]⟩
 

@@ -313,7 +313,7 @@ lemma Losable.losable_of_le {H H' : PreLift hyp} (hL : H'.Losable) (h : H ≤ H'
     exact Game.defensiveQuasi_subtree (hG := hG) (hp := rfl) _
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps toLift] def Losable.lift' {H : PreLift hyp} (h : H.Losable) := Lift'.mk _ h.2
+@[expose, simps toLift] def Losable.lift' {H : PreLift hyp} (h : H.Losable) := Lift'.mk _ h.2
 attribute [simp_lengths] Losable.lift'_toLift
 
 lemma Won.won_of_le {H H' : PreLift hyp} (hW : H.Won) (h : H ≤ H') : H'.Won := by
@@ -480,11 +480,11 @@ lemma winnable_of_le {H H' : PreLift hyp} (hW : H.Winnable) (h : H ≤ H') : H'.
   rw [← h] at hW; simp [Winnable, List.drop_take] at hW; exact hW.of_take
 variable {H : PreLift hyp} (h : H.Winnable)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps!] def takeMin := H.take (2 * k + 1 + h.num) (by omega)
+@[expose, simps!] def takeMin := H.take (2 * k + 1 + h.num) (by omega)
 lemma takeMin_winnable : h.takeMin.Winnable := by
   simpa [Winnable, takeMin, List.drop_take] using h.shrink
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-@[simps] def x' : (H.game.residual ((H.x.val.drop (2 * k + 1)).take h.num)).tree :=
+@[expose, simps] def x' : (H.game.residual ((H.x.val.drop (2 * k + 1)).take h.num)).tree :=
   ⟨H.x.val.drop (2 * k + 1 + h.num), by simp [game]⟩
 attribute [simp_lengths] x'_coe
 variable (hp : IsPosition H.x.val Player.one)

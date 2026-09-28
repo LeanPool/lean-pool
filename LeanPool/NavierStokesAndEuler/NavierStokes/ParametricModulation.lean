@@ -1262,7 +1262,7 @@ def constructedC (a m d p δ : ℝ) (ha : 0 < a) (hd : d ≠ 0) (hδ : 0 < δ) :
   rephase (seedDensity a m d p δ ha hd hδ) (fun θ => loopC (seedSpeed a m δ) (seedTilt a m d p δ θ))
 
 /-- In true cone, constructed using `0`. -/
-def InTrueCone (p₁ p₂ A C : ℝ) : Prop :=
+@[expose] def InTrueCone (p₁ p₂ A C : ℝ) : Prop :=
   0 < A ∧ 2 < A * (1 + (C / A) ^ 2) ∧ 2 < p₁ + p₂ * (C / A) ∧
     A * (1 + (C / A) ^ 2) < coneBound (p₁ + p₂ * (C / A)) (p₂ - p₁ * (C / A))
 
@@ -1851,7 +1851,7 @@ abbrev PrimitiveProfile := PhasePoint → ℝ
 /-- Phase point, given by `(X, η, n * Real.log X)`. -/
 @[expose] def phasePoint (n X η : ℝ) : PhasePoint := (X, η, n * Real.log X)
 /-- Partial X, given by `fderiv ℝ A z (1, 0, 0)`. -/
-def partialX (A : PrimitiveProfile) (z : PhasePoint) : ℝ := fderiv ℝ A z (1, 0, 0)
+@[expose] def partialX (A : PrimitiveProfile) (z : PhasePoint) : ℝ := fderiv ℝ A z (1, 0, 0)
 /-- Partial eta, given by `fderiv ℝ A z (0, 1, 0)`. -/
 def partialEta (A : PrimitiveProfile) (z : PhasePoint) : ℝ := fderiv ℝ A z (0, 1, 0)
 /-- Partial theta, given by `fderiv ℝ A z (0, 0, 1)`. -/

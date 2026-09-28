@@ -208,7 +208,7 @@ For this we introduce `FreeRepeat` and the `flprep` abbreviation.
 
 /-- A free repeat is a non-loaded sequent that occured before. Values of this type are pairs:
 the number of steps to go back in the history and a proof that we then find the same set. -/
-def FreeRepeat (Hist : History) (X : Sequent) : Type :=
+@[expose] def FreeRepeat (Hist : History) (X : Sequent) : Type :=
   Subtype (fun k => (Hist.get k) = X ∧ ¬ X.isLoaded)
 
 lemma FreeRepeat_nil_impossible {X} : FreeRepeat [] X → False := by

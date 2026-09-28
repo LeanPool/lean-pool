@@ -499,7 +499,7 @@ theorem Realization.star_subset_of_sub (R : S.Realization)
 
 /-- The clause "every outer edge is a subcell of exactly one 2-cell" — assertion (vi) of
 lem:cellulation-invariants — as a property of the abstract structure alone. -/
-def OuterEdgeUniqueFace (S : CellStructure γ) : Prop :=
+@[expose] def OuterEdgeUniqueFace (S : CellStructure γ) : Prop :=
   ∀ ⦃e⦄, e ∈ E(S.outerGraph) → ∃! F, F ∈ S.faces ∧ S.sub e F
 
 /-- **The 2-cell incident with an outer edge is combinatorial** — part (c) of
