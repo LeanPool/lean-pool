@@ -119,9 +119,9 @@ theorem cubeLpNorm_pullbackToOrigin_eq {E : Type*} [NormedAddCommGroup E]
       cubeLpNorm Q p F := by
   have htrans : AEStronglyMeasurable (pullbackToOrigin Q F)
       (normalizedCubeMeasure (originCube d Q.scale)) := by
-    simpa only [pullbackToOrigin, Function.comp_def] using
-      hF.comp_measurePreserving
-        (measurePreserving_addRight_normalizedCubeMeasure_originCube Q)
+    change AEStronglyMeasurable (fun x => F (x + triadicCubeShift Q)) _
+    exact hF.comp_measurePreserving
+      (measurePreserving_addRight_normalizedCubeMeasure_originCube Q)
   rw [cubeLpNorm_eq_eLpNorm_toReal _ _ _ htrans,
     cubeLpNorm_eq_eLpNorm_toReal _ _ _ hF]
   exact congrArg ENNReal.toReal (eLpNorm_pullbackToOrigin_eq Q p hF)
@@ -135,9 +135,9 @@ theorem cubeLpNorm_pushforwardFromOrigin_eq {E : Type*} [NormedAddCommGroup E]
       cubeLpNorm (originCube d Q.scale) p F := by
   have htrans : AEStronglyMeasurable (pushforwardFromOrigin Q F)
       (normalizedCubeMeasure Q) := by
-    simpa only [pushforwardFromOrigin, Function.comp_def] using
-      hF.comp_measurePreserving
-        (measurePreserving_subRight_normalizedCubeMeasure_originCube Q)
+    change AEStronglyMeasurable (fun x => F (x - triadicCubeShift Q)) _
+    exact hF.comp_measurePreserving
+      (measurePreserving_subRight_normalizedCubeMeasure_originCube Q)
   rw [cubeLpNorm_eq_eLpNorm_toReal _ _ _ htrans,
     cubeLpNorm_eq_eLpNorm_toReal _ _ _ hF]
   exact congrArg ENNReal.toReal (eLpNorm_pushforwardFromOrigin_eq Q p hF)

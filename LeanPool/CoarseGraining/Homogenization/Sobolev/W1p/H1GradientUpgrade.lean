@@ -385,7 +385,8 @@ private theorem eventually_valueLpSeminorm_convexApproxSmoothH1W1p_le
       add_le_add hsubbound (mul_le_mul_of_nonneg_right havgbound hM)
     _ = B := rfl
 
-private theorem memLp_of_gradMemLp_on_isOpenBoundedConvexDomain
+/-- Gradient integrability supplies value integrability on a bounded convex domain. -/
+theorem memLp_of_gradMemLp_on_isOpenBoundedConvexDomain
     {d : ℕ} [NeZero d] {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     (u : H1Function U) (p : FiniteLpExponent)
     (hgrad : GradMemLpOn U p.exponent u.grad) :

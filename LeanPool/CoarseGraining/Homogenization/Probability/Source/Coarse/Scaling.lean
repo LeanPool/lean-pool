@@ -95,7 +95,7 @@ private theorem smoothCompactProbe_inv_smul {d : ℕ} {r : ℝ} (hr : 0 < r)
   constructor
   · simpa [Function.comp_def] using
       hφ.smooth.comp (contDiff_const_smul r⁻¹)
-  · show HasCompactSupport (φ ∘ Homeomorph.smulOfNeZero r⁻¹ (inv_ne_zero hr.ne'))
+  · change HasCompactSupport (φ ∘ Homeomorph.smulOfNeZero r⁻¹ (inv_ne_zero hr.ne'))
     simpa [Function.comp_def] using
       hφ.compact.comp_homeomorph (Homeomorph.smulOfNeZero r⁻¹ (inv_ne_zero hr.ne'))
 

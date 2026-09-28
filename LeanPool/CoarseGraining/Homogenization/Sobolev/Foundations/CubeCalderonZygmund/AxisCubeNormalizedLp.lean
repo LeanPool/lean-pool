@@ -48,7 +48,7 @@ theorem axisCube_integralLpSeminorm_rpow_exponent_eq_lintegral_enorm
     (Gagliardo.integralLpSeminorm F p.exponent (axisCubeNormalizedMeasure z L)) ^ p.exponent.toReal =
       ∫⁻ x, ‖F x‖ₑ ^ p.exponent.toReal ∂axisCubeNormalizedMeasure z L := by
   simp only [Gagliardo.integralLpSeminorm,
-    if_neg (finiteLpExponent_exponent_ne_zero p), if_neg p.lt_top.ne,
+    ite_eq_right (finiteLpExponent_exponent_ne_zero p), ite_eq_right p.lt_top.ne,
     eLpNorm'_eq_lintegral_enorm]
   rw [← ENNReal.rpow_mul]
   have hp : p.exponent.toReal ≠ 0 :=

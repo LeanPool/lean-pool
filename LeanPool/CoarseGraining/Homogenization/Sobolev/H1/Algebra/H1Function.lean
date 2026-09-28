@@ -202,25 +202,25 @@ instance {d : ℕ} {U : Set (Vec d)} : Sub (H1Function U) where
 
 @[simp] theorem neg_toFun {d : ℕ} {U : Set (Vec d)} (u : H1Function U) :
     (-u).toFun = fun x => -u x := by
-  show ((-1 : ℝ) • u).toFun = fun x => -u x
+  change ((-1 : ℝ) • u).toFun = fun x => -u x
   funext x
   simp
 
 @[simp] theorem neg_grad {d : ℕ} {U : Set (Vec d)} (u : H1Function U) :
     (-u).grad = fun x => -u.grad x := by
-  show ((-1 : ℝ) • u).grad = fun x => -u.grad x
+  change ((-1 : ℝ) • u).grad = fun x => -u.grad x
   funext x
   simp
 
 @[simp] theorem sub_toFun {d : ℕ} {U : Set (Vec d)} (u v : H1Function U) :
     (u - v).toFun = fun x => u x - v x := by
-  show (u + (-v)).toFun = fun x => u x - v x
+  change (u + (-v)).toFun = fun x => u x - v x
   funext x
   simp [sub_eq_add_neg]
 
 @[simp] theorem sub_grad {d : ℕ} {U : Set (Vec d)} (u v : H1Function U) :
     (u - v).grad = fun x => u.grad x - v.grad x := by
-  show (u + (-v)).grad = fun x => u.grad x - v.grad x
+  change (u + (-v)).grad = fun x => u.grad x - v.grad x
   funext x
   simp [sub_eq_add_neg]
 

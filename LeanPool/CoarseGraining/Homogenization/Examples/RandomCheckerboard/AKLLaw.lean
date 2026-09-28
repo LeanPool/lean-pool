@@ -32,7 +32,7 @@ attribute [local instance] Classical.propDecidable
 
 /-- The regular checkerboard realization with the fixed `(1, Θ)` a.e.
 ellipticity witness required to enter AKL's quotient carrier. -/
-private def regularCheckerCarrier {d : ℕ} {Θ : ℝ} (hΘ : 1 ≤ Θ) :
+def regularCheckerCarrier {d : ℕ} {Θ : ℝ} (hΘ : 1 ≤ Θ) :
     Sample d → Source.AKL.RegularAKLCarrier d Θ :=
   fun ω => ⟨checkerRegField 1 Θ ω, Filter.Eventually.of_forall fun x =>
     scalarMatrix_isEllipticMatrix_between (d := d) one_pos hΘ

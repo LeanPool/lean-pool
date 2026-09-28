@@ -130,7 +130,7 @@ theorem measurable_coeffField_to_ambient {d : ℕ} {f : CoeffField d → CoeffFi
       @Measurable _ _ (instMeasurableSpaceCoeffField d) (LocalSigma U) f) :
     Measurable f := by
   rw [measurable_iff_comap_le]
-  show (pointwiseCoeffFieldMeasurableSpace d ⊔ boundedLocalCoeffFieldMeasurableSpace d).comap f
+  change (pointwiseCoeffFieldMeasurableSpace d ⊔ boundedLocalCoeffFieldMeasurableSpace d).comap f
       ≤ instMeasurableSpaceCoeffField d
   rw [MeasurableSpace.comap_sup, boundedLocalCoeffFieldMeasurableSpace,
     MeasurableSpace.comap_iSup]
@@ -146,7 +146,7 @@ theorem measurable_to_coeffField_ambient {α : Type*} [mα : MeasurableSpace α]
       @Measurable _ _ mα (LocalSigma U) f) :
     Measurable f := by
   rw [measurable_iff_comap_le]
-  show (pointwiseCoeffFieldMeasurableSpace d ⊔ boundedLocalCoeffFieldMeasurableSpace d).comap f
+  change (pointwiseCoeffFieldMeasurableSpace d ⊔ boundedLocalCoeffFieldMeasurableSpace d).comap f
       ≤ mα
   rw [MeasurableSpace.comap_sup, boundedLocalCoeffFieldMeasurableSpace,
     MeasurableSpace.comap_iSup]
@@ -505,14 +505,14 @@ theorem isSignedPermutationMatrix_swap {d : ℕ} (i j : Fin d) :
     by_cases h : r = Equiv.swap i j c
     · have h' : c = Equiv.swap i j r := by
         simpa using congrArg (Equiv.swap i j) h.symm
-      rw [if_pos h]
+      rw [ite_eq_left h]
       subst h'
       simp [Matrix.swap]
     · have hSwap : (Equiv.swap i j) r ≠ c := by
         intro hrc
         apply h
         simpa using (congrArg (Equiv.swap i j) hrc.symm).symm
-      rw [if_neg h]
+      rw [ite_eq_right h]
       simp [Matrix.swap, hSwap]
 
 theorem IsIsotropicInLaw.map_rotateCoeffField_signFlipMatrix {d : ℕ}

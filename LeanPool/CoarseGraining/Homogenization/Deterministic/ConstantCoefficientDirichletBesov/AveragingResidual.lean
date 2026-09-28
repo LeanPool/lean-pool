@@ -791,7 +791,7 @@ theorem exists_cubeLpNorm_sq_sub_averagingField_le_mul_depthAverage
         (hloc S hS)
     simpa [B] using
       toReal_overlapCentersAtDepth_average_lintegral_fluctuation_eq_depthAverage
-        Q h j hfin
+        Q h j hloc hfin
   have hconst_toReal :
       (((M : ℝ≥0∞) * (3 ^ d : ℝ≥0∞) *
           ((Fintype.card (Fin d) : ℝ≥0∞) * B)).toReal) =

@@ -31,10 +31,11 @@ private theorem finiteLpExponent_ne_zero (q : FiniteLpExponent) : q.exponent ≠
 
 private theorem eLpNorm_rpow_eq_lintegral_enorm {α E : Type*}
     [MeasurableSpace α] [NormedAddCommGroup E]
-    (q : FiniteLpExponent) (μ : Measure α) (f : α → E) :
+    (q : FiniteLpExponent) (μ : Measure α) (f : α → E)
+    (hf : AEStronglyMeasurable f μ) :
     (eLpNorm f q.exponent μ) ^ q.exponent.toReal =
       ∫⁻ x, ‖f x‖ₑ ^ q.exponent.toReal ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (finiteLpExponent_ne_zero q) q.lt_top.ne,
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (finiteLpExponent_ne_zero q) q.lt_top.ne hf,
     ← ENNReal.rpow_mul]
   have hq : q.exponent.toReal ≠ 0 :=
     ENNReal.toReal_pos (finiteLpExponent_ne_zero q) q.lt_top.ne |>.ne'
@@ -98,11 +99,14 @@ theorem exists_cubeEuclideanPositiveBesovOverlapDepthENorm_rpow_le
           (ENNReal.ofReal (overlapCubeScaleFactor S)) ^ q.exponent.toReal) *
         ∫⁻ x, g x ∂ScalarOverlap.normalizedCubeMeasure S := by
     intro S hS
+    have hresid := memLp_overlap_vector_residual q (by simpa [D] using hS) V
+    have hjac := memLp_overlap_jacobian q (by simpa [D] using hS) V
     have hpow := ENNReal.rpow_le_rpow (hC Q j S (by simpa [D] using hS) V)
       (show 0 ≤ q.exponent.toReal from ENNReal.toReal_nonneg)
     rw [ENNReal.mul_rpow_of_nonneg _ _ ENNReal.toReal_nonneg,
       ENNReal.mul_rpow_of_nonneg _ _ ENNReal.toReal_nonneg,
-      eLpNorm_rpow_eq_lintegral_enorm, eLpNorm_rpow_eq_lintegral_enorm] at hpow
+      eLpNorm_rpow_eq_lintegral_enorm q _ _ hresid.aestronglyMeasurable,
+      eLpNorm_rpow_eq_lintegral_enorm q _ _ hjac.aestronglyMeasurable] at hpow
     calc
       (eLpNorm (fun x => HilbertVec.ofVec
           (V.toField x - ScalarOverlap.cubeAverageVec S V.toField))
@@ -110,7 +114,7 @@ theorem exists_cubeEuclideanPositiveBesovOverlapDepthENorm_rpow_le
           ∫⁻ x, ‖HilbertVec.ofVec
             (V.toField x - ScalarOverlap.cubeAverageVec S V.toField)‖ₑ ^
               q.exponent.toReal ∂ScalarOverlap.normalizedCubeMeasure S :=
-            eLpNorm_rpow_eq_lintegral_enorm q _ _
+            eLpNorm_rpow_eq_lintegral_enorm q _ _ hresid.aestronglyMeasurable
       _ ≤ C ^ q.exponent.toReal *
           (ENNReal.ofReal (overlapCubeScaleFactor S)) ^ q.exponent.toReal *
           ∫⁻ x, ‖HilbertMat.ofMat (V.jacobian x)‖ₑ ^ q.exponent.toReal ∂
@@ -170,7 +174,8 @@ theorem exists_cubeEuclideanPositiveBesovOverlapDepthENorm_rpow_le
         (ENNReal.ofReal ℓ) ^ q.exponent.toReal *
         (eLpNorm (fun x => HilbertMat.ofMat (V.jacobian x))
           q.exponent (normalizedCubeMeasure Q)) ^ q.exponent.toReal := by
-          rw [eLpNorm_rpow_eq_lintegral_enorm]
+          rw [eLpNorm_rpow_eq_lintegral_enorm q _ _
+            V.jacobianHilbertMemLp.aestronglyMeasurable]
           ring
     _ = _ := by rfl
 

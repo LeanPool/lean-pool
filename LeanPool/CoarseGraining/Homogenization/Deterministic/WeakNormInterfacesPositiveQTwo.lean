@@ -33,7 +33,7 @@ theorem cubeLpNorm_congr_on_cubeSet_generic {d : ℕ} {E : Type*}
     {u v : Vec d → E} (h : ∀ x ∈ cubeSet Q, u x = v x) :
     cubeLpNorm Q p u = cubeLpNorm Q p v := by
   unfold cubeLpNorm
-  rw [MeasureTheory.eLpNorm_congr_ae]
+  rw [Gagliardo.integralLpSeminorm_congr_ae]
   rw [normalizedCubeMeasure, Filter.EventuallyEq]
   exact ae_smul_measure
     ((MeasureTheory.ae_restrict_iff' (measurableSet_cubeSet Q)).2 <|

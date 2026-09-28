@@ -205,7 +205,7 @@ theorem continuousKFunctionalOnOpenScale_monoOn {d : ℕ}
     (F : UnitCubeEuclideanL2Field d) :
     MonotoneOn (continuousKFunctionalOnOpenScale F) (Set.Ioo (0 : ℝ) 1) := by
   intro t ht u hu htu
-  simp only [continuousKFunctionalOnOpenScale, dif_pos ht, dif_pos hu]
+  simp only [continuousKFunctionalOnOpenScale, dite_eq_left ht, dite_eq_left hu]
   exact continuousKFunctional_mono htu F
 
 theorem continuousKFunctionalOnOpenScale_aemeasurable {d : ℕ}
@@ -254,7 +254,7 @@ theorem continuousKSeminormIntegrand_eq_of_mem {d : ℕ}
       ENNReal.ofReal (Real.rpow t (-2 * s)) *
         ENNReal.ofReal (continuousKFunctional ⟨t, ⟨ht.1, ht.2.le⟩⟩ F ^ 2) *
         ENNReal.ofReal t⁻¹ := by
-  simp only [continuousKSeminormIntegrand, continuousKFunctionalOnOpenScale, dif_pos ht]
+  simp only [continuousKSeminormIntegrand, continuousKFunctionalOnOpenScale, dite_eq_left ht]
 
 /-- The exact ENNReal-valued continuum interpolation seminorm.  Its integrand
 is a genuine Lebesgue-measurable function on `(0,1)`, rather than a lower-

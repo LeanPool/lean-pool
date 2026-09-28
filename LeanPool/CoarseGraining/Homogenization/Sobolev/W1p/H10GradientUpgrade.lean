@@ -30,7 +30,8 @@ noncomputable section
 
 namespace H10Function
 
-private theorem tendsto_eLpNorm_restrict_of_tendsto_global
+/-- Restricting the measure preserves convergence of `eLpNorm` to zero. -/
+theorem tendsto_eLpNorm_restrict_of_tendsto_global
     {l : Filter ℕ}
     {d : ℕ} {f : ℕ → Vec d → ℝ} {p : ENNReal} {U : Set (Vec d)}
     (h : Filter.Tendsto (fun n => eLpNorm (f n) p volume) l (nhds 0)) :
@@ -41,13 +42,15 @@ private theorem tendsto_eLpNorm_restrict_of_tendsto_global
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds h
     (Filter.Eventually.of_forall fun _ => zero_le) (Filter.Eventually.of_forall hle)
 
-private noncomputable def inwardApproximation
+/-- The standard inward mollification of the zero extension. -/
+noncomputable def inwardApproximation
     {d : ℕ} {U : Set (Vec d)} (u : H10Function U)
     (x0 : Vec d) (r : ℝ) (n : ℕ) : Vec d → ℝ :=
   inwardMollification (unitConvexApproxKernel (d := d)) u.zeroExtension
     x0 r (unitConvexApproxScale n)
 
-private theorem inwardApproximation_properties
+/-- The inward approximation is smooth and compactly supported in the domain. -/
+theorem inwardApproximation_properties
     {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     (u : H10Function U) {x0 : Vec d} {r : ℝ}
     (hball : Metric.closedBall x0 r ⊆ U) (hr : 0 < r) (n : ℕ) :
@@ -57,7 +60,8 @@ private theorem inwardApproximation_properties
   exact u.inwardMollification_unit_properties hU hball hr
     (W1pFunction.unitConvexApproxScale_pos n)
 
-private theorem tendsto_inwardApproximation_value
+/-- Inward approximations converge in the value `Lᵖ` norm on the domain. -/
+theorem tendsto_inwardApproximation_value
     {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     (u : H10Function U) (p : FiniteLpExponent)
     (hu : MemLpOn U p.exponent u.toH1Function.toFun)
@@ -91,7 +95,8 @@ private theorem tendsto_inwardApproximation_value
     rfl
   exact hrestricted.congr' heq
 
-private theorem tendsto_inwardApproximation_grad
+/-- Inward approximations converge in each gradient `Lᵖ` coordinate. -/
+theorem tendsto_inwardApproximation_grad
     {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     (u : H10Function U) (p : FiniteLpExponent)
     (hgrad : GradMemLpOn U p.exponent u.toH1Function.grad)
@@ -137,7 +142,8 @@ private theorem tendsto_inwardApproximation_grad
     rfl
   exact hrestricted.congr' heq
 
-private noncomputable def toW10pOfGradMemLpNonempty
+/-- Upgrade a zero-trace function when the domain has an interior point. -/
+noncomputable def toW10pOfGradMemLpNonempty
     {d : ℕ} [NeZero d] {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     (u : H10Function U) (p : FiniteLpExponent)
     (hgrad : GradMemLpOn U p.exponent u.toH1Function.grad)
@@ -178,7 +184,8 @@ private noncomputable def toW10pOfGradMemLpNonempty
         simpa only [v, H1Function.toW1pOfGradMemLp_grad] using
           u.tendsto_inwardApproximation_grad hU p hgrad x0 hr i }
 
-private noncomputable def toW10pOfGradMemLpEmpty
+/-- Upgrade a zero-trace function on the empty domain. -/
+noncomputable def toW10pOfGradMemLpEmpty
     {d : ℕ} [NeZero d] {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     (u : H10Function U) (p : FiniteLpExponent)
     (hgrad : GradMemLpOn U p.exponent u.toH1Function.grad)
@@ -224,7 +231,9 @@ noncomputable def toW10pOfGradMemLp
     (u.toW10pOfGradMemLp hU p hgrad).toW1pFunction.toFun =
       u.toH1Function.toFun := by
   rw [toW10pOfGradMemLp]
-  split <;> rfl
+  split
+  · simp only [toW10pOfGradMemLpNonempty, H1Function.toW1pOfGradMemLp_toFun]
+  · simp only [toW10pOfGradMemLpEmpty, H1Function.toW1pOfGradMemLp_toFun]
 
 @[simp] theorem toW10pOfGradMemLp_grad
     {d : ℕ} [NeZero d] {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
@@ -233,7 +242,9 @@ noncomputable def toW10pOfGradMemLp
     (u.toW10pOfGradMemLp hU p hgrad).toW1pFunction.grad =
       u.toH1Function.grad := by
   rw [toW10pOfGradMemLp]
-  split <;> rfl
+  split
+  · simp only [toW10pOfGradMemLpNonempty, H1Function.toW1pOfGradMemLp_grad]
+  · simp only [toW10pOfGradMemLpEmpty, H1Function.toW1pOfGradMemLp_grad]
 
 end H10Function
 

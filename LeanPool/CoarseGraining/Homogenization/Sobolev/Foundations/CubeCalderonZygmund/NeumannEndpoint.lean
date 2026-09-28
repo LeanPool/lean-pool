@@ -45,21 +45,24 @@ private theorem memLp_vec_of_memLp_hilbertify_neumannEndpoint
     (HilbertVec.continuousLinearEquivVec d).toContinuousLinearMap.comp_memLp' hF
 
 private theorem eLpNorm_vec_le_hilbertify_neumannEndpoint
-    {d : ℕ} {p : ℝ≥0∞} {Q : TriadicCube d} (F : Vec d → Vec d) :
+    {d : ℕ} {p : ℝ≥0∞} {Q : TriadicCube d} (F : Vec d → Vec d)
+    (hF : AEStronglyMeasurable F (normalizedCubeMeasure Q)) :
     eLpNorm F p (normalizedCubeMeasure Q) ≤
       eLpNorm (fun x ↦ HilbertVec.ofVec (F x)) p (normalizedCubeMeasure Q) := by
-  apply eLpNorm_mono_ae
+  apply eLpNorm_mono_ae hF
   filter_upwards [] with x
   exact HilbertVec.norm_le_norm_ofVec (F x)
 
 private theorem eLpNorm_hilbertify_le_dimension_mul_vec_neumannEndpoint
-    {d : ℕ} {p : ℝ≥0∞} {Q : TriadicCube d} (F : Vec d → Vec d) :
+    {d : ℕ} {p : ℝ≥0∞} {Q : TriadicCube d} (F : Vec d → Vec d)
+    (hF : AEStronglyMeasurable (fun x ↦ HilbertVec.ofVec (F x))
+      (normalizedCubeMeasure Q)) :
     eLpNorm (fun x ↦ HilbertVec.ofVec (F x)) p (normalizedCubeMeasure Q) ≤
       ENNReal.ofReal (d : ℝ) * eLpNorm F p (normalizedCubeMeasure Q) := by
   calc
     eLpNorm (fun x ↦ HilbertVec.ofVec (F x)) p (normalizedCubeMeasure Q) ≤
         eLpNorm (fun x ↦ (d : ℝ) • F x) p (normalizedCubeMeasure Q) := by
-      apply eLpNorm_mono_ae
+      apply eLpNorm_mono_ae hF
       filter_upwards [] with x
       simpa only [norm_smul, Real.norm_natCast] using
         HilbertVec.norm_ofVec_le_mul_norm (F x)
@@ -99,32 +102,46 @@ private theorem centeredCubeNeumannDivergence_eLpNorm_le
           (normalizedCubeMeasure (originCube d m)) ≤
         C * eLpNorm (fun x ↦ HilbertVec.ofVec (f x)) q.exponent
           (normalizedCubeMeasure (originCube d m)) := by
-    simpa only [BoundedMeasurableDomain.normalizedEuclideanLpENorm,
-      BoundedMeasurableDomain.normalizedLpENorm, centeredCubeDomain,
+    have hgradTwo : MemLp (hilbertifyVecField u.toH1Function.grad) 2
+        (centeredCubeDomain d m).normalizedVolume := by
+      rw [show (centeredCubeDomain d m).normalizedVolume =
+          ENNReal.ofReal ((cubeVolume (originCube d m))⁻¹) •
+            volume.restrict (openCubeSet (originCube d m)) by
+        change (cubeBoundedMeasurableDomain (originCube d m)).normalizedVolume = _
+        rw [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure,
+          normalizedCubeMeasure, cubeMeasure,
+          volume_restrict_cubeSet_eq_volume_restrict_openCubeSet]]
+      exact (memHilbertVectorL2_hilbertifyVecField
+        u.toH1Function.grad_memVectorL2).smul_measure ENNReal.ofReal_ne_top
+    have hdata : MemLp (hilbertifyVecField f) q.exponent
+        (centeredCubeDomain d m).normalizedVolume := by
+      simpa only [centeredCubeDomain,
+        cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure,
+        hilbertifyVecField, h] using! h.euclideanMemLp
+    rw [INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+      (centeredCubeDomain d m) q.exponent _ (by
+        simpa only [hilbertifyVecField] using! hgradTwo.aestronglyMeasurable),
+      INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+        (centeredCubeDomain d m) q.exponent _ (by
+          simpa only [hilbertifyVecField] using! hdata.aestronglyMeasurable)] at hEuclidean
+    simpa only [centeredCubeDomain,
       cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure,
-      euclideanNorm_eq_norm_ofVec, eLpNorm_norm, h, ENNReal.ofReal_one,
-      inv_one, mul_one] using hEuclidean
+      hilbertifyVecField, HilbertVec.ofVecL_apply, h,
+      ENNReal.ofReal_one, inv_one, mul_one] using! hEuclidean
   have hGradHilbert :
       MemLp (fun x ↦ HilbertVec.ofVec (u.toH1Function.grad x)) q.exponent
         (normalizedCubeMeasure (originCube d m)) := by
-    refine ⟨?_, ?_⟩
-    · have hrawTwo : MemLp u.toH1Function.grad 2
-          (normalizedCubeMeasure (originCube d m)) := by
-        unfold normalizedCubeMeasure cubeMeasure
-        rw [volume_restrict_cubeSet_eq_volume_restrict_openCubeSet]
-        exact u.toH1Function.grad_memVectorL2.smul_measure ENNReal.ofReal_ne_top
-      exact (HilbertVec.ofVecL d).continuous.comp_aestronglyMeasurable
-        hrawTwo.aestronglyMeasurable
-    · apply lt_of_le_of_lt hHilbert
-      exact ENNReal.mul_lt_top hCtop
-        (memLp_hilbertify_of_memLp_vec_neumannEndpoint hf).eLpNorm_lt_top
-  refine ⟨memLp_vec_of_memLp_hilbertify_neumannEndpoint hGradHilbert, ?_⟩
+    apply lt_of_le_of_lt hHilbert
+    exact ENNReal.mul_lt_top hCtop
+      (memLp_hilbertify_of_memLp_vec_neumannEndpoint hf).eLpNorm_lt_top
+  have hGradVec := memLp_vec_of_memLp_hilbertify_neumannEndpoint hGradHilbert
+  refine ⟨hGradVec, ?_⟩
   calc
     eLpNorm u.toH1Function.grad q.exponent
         (normalizedCubeMeasure (originCube d m)) ≤
       eLpNorm (fun x ↦ HilbertVec.ofVec (u.toH1Function.grad x)) q.exponent
         (normalizedCubeMeasure (originCube d m)) :=
-          eLpNorm_vec_le_hilbertify_neumannEndpoint _
+          eLpNorm_vec_le_hilbertify_neumannEndpoint _ hGradVec.aestronglyMeasurable
     _ ≤ C * eLpNorm (fun x ↦ HilbertVec.ofVec (f x)) q.exponent
         (normalizedCubeMeasure (originCube d m)) := hHilbert
     _ ≤ (C * ENNReal.ofReal (d : ℝ)) *
@@ -137,6 +154,7 @@ private theorem centeredCubeNeumannDivergence_eLpNorm_le
               (normalizedCubeMeasure (originCube d m))) := by
                 gcongr
                 exact eLpNorm_hilbertify_le_dimension_mul_vec_neumannEndpoint f
+                  (memLp_hilbertify_of_memLp_vec_neumannEndpoint hf).aestronglyMeasurable
         _ = _ := by ac_rfl
 
 /-- The raw-vector mean-zero Neumann Calderón--Zygmund estimate on arbitrary
@@ -178,12 +196,12 @@ theorem exists_cubeH1MeanZeroNeumannDivergence_cz
         (normalizedCubeMeasure (originCube d Q.scale))).toReal := by
     rw [← pushforwardFromOrigin_untranslateH1MeanZeroToOrigin_grad Q u,
       cubeLpNorm_pushforwardFromOrigin_eq Q q.exponent hgrad₀.aestronglyMeasurable]
-    rfl
+    exact cubeLpNorm_eq_eLpNorm_toReal _ _ _ hgrad₀.aestronglyMeasurable
   have hfNorm : cubeLpNorm Q q.exponent f =
       (eLpNorm f₀ q.exponent
         (normalizedCubeMeasure (originCube d Q.scale))).toReal := by
     rw [← cubeLpNorm_pullbackToOrigin_eq Q q.exponent hf.aestronglyMeasurable]
-    rfl
+    exact cubeLpNorm_eq_eLpNorm_toReal _ _ _ hf₀.aestronglyMeasurable
   rw [hgradNorm, hfNorm]
   calc
     (eLpNorm u₀.toH1Function.grad q.exponent

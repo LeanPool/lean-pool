@@ -114,7 +114,7 @@ theorem hasDerivAt_coordFaceReflection_insertNth {n : ℕ}
       (coordReflectionLinear i (basisVec j)) t₀ :=
     (coordReflectionLinear i).hasFDerivAt.comp_hasDerivAt t₀ hline
   have hvel : coordReflectionLinear i (basisVec j) = basisVec j := by
-    rw [coordReflectionLinear_basisVec, if_neg hji, one_smul]
+    rw [coordReflectionLinear_basisVec, ite_eq_right hji, one_smul]
   rw [hvel] at hA
   exact hA.add_const (coordFaceReflectionOffset a i)
 

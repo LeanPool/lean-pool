@@ -144,7 +144,7 @@ def HasQuadraticMu {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) : Prop :=
   ∃ Q : QuadraticForm ℝ (FullBlockVec d),
     ∀ P : BlockVec d, Mu U P a = (1 / 2 : ℝ) * Q (toFullBlockVec P)
 
-private noncomputable def coarseBlockEntry {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
+noncomputable def coarseBlockEntry {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     (α β : BlockCoord d) : ℝ :=
   if _h : α = β then
     2 * Mu U (blockBasis α) a
@@ -363,7 +363,7 @@ def IsSigmaStarInvCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) (sigmaSt
   sigmaStarInv.IsSymm ∧
     ∀ q : Vec d, ResponseJ U 0 q a = (1 / 2 : ℝ) * vecDot q (matVecMul sigmaStarInv q)
 
-private noncomputable def sigmaStarInvEntry {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
+noncomputable def sigmaStarInvEntry {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     (i j : Fin d) : ℝ :=
   if _h : i = j then
     2 * ResponseJ U 0 (Pi.single i 1) a
@@ -547,7 +547,7 @@ def IsSigmaCanonicalCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) (sigma
     ∀ p : Vec d,
       sigmaCorrectedResponse U a p = (1 / 2 : ℝ) * vecDot p (matVecMul sigma p)
 
-private noncomputable def sigmaEntry {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
+noncomputable def sigmaEntry {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     (i j : Fin d) : ℝ :=
   if _h : i = j then
     2 * sigmaCorrectedResponse U a (Pi.single i 1)

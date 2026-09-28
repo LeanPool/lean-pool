@@ -20,7 +20,8 @@ noncomputable section
 
 namespace MeanZeroNeumannPoissonSolution
 
-private noncomputable def originCubeParentReducedSolverEnergyInside
+/-- The inner coefficient in the reflected parent Neumann energy bound. -/
+noncomputable def originCubeParentReducedSolverEnergyInside
     (d : ℕ) (m : ℤ) : ℝ :=
   let Q : TriadicCube d := originCube d m
   let Qp : TriadicCube d := originCube d (m + 1)

@@ -242,7 +242,7 @@ theorem measureReal_absTailEvent_centeredFinsetSum_absTailIndicator_le_two_mul_d
           μ.real {ω | b ≤ F ω} := by
       refine measureReal_mono ?_
       intro ω hω
-      show b ≤ F ω
+      change b ≤ F ω
       exact le_of_lt (by simpa [F, upperTailEvent] using hω)
     have hmul :
         b * μ.real (upperTailEvent F b) ≤

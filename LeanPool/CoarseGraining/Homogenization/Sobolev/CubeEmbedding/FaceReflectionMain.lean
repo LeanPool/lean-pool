@@ -105,10 +105,10 @@ private theorem faceReflect_line_integral_diag {v : Vec (n + 1) → ℝ}
     intro t
     simp only [faceReflect, Fin.insertNth_apply_same]
     rcases lt_trichotomy t a with h | h | h
-    · rw [if_neg (not_le.mpr h), if_pos (le_of_lt h), coordFaceReflection_insertNth]
+    · rw [ite_eq_right (not_le.mpr h), ite_eq_left (le_of_lt h), coordFaceReflection_insertNth]
     · subst h
-      rw [if_pos (le_refl t), if_pos (le_refl t), show (2 * t - t : ℝ) = t by ring]
-    · rw [if_pos (le_of_lt h), if_neg (not_le.mpr h)]
+      rw [ite_eq_left (le_refl t), ite_eq_left (le_refl t), show (2 * t - t : ℝ) = t by ring]
+    · rw [ite_eq_left (le_of_lt h), ite_eq_right (not_le.mpr h)]
   -- rewrite the candidate gradient to the piecewise derivative off the kink
   have hB : ∀ t, t ≠ a → faceGrad v a j (j.insertNth t z) j
       = (if t ≤ a then (fderiv ℝ v (j.insertNth (2 * a - t) z)) (-basisVec j)
@@ -117,10 +117,10 @@ private theorem faceReflect_line_integral_diag {v : Vec (n + 1) → ℝ}
     unfold faceGrad
     rw [Fin.insertNth_apply_same]
     rcases lt_trichotomy t a with h | h | h
-    · rw [if_neg (not_le.mpr h), if_pos (le_of_lt h), if_pos (rfl : j = j),
+    · rw [ite_eq_right (not_le.mpr h), ite_eq_left (le_of_lt h), ite_eq_left (rfl : j = j),
         coordFaceReflection_insertNth, map_neg, neg_one_mul]
     · exact absurd h ht
-    · rw [if_pos (le_of_lt h), if_neg (not_le.mpr h)]
+    · rw [ite_eq_left (le_of_lt h), ite_eq_right (not_le.mpr h)]
   -- assemble
   have e1 : (∫ t, faceReflect v a j (j.insertNth t z)
         * (fderiv ℝ φ (j.insertNth t z)) (basisVec j))
@@ -174,10 +174,10 @@ private theorem faceReflect_line_integral_offdiag {v : Vec (n + 1) → ℝ}
       (hvf.comp hlineDir).clm_apply continuous_const
     have hkey := integral_mul_deriv_eq_neg hd hc hφL_deriv hcφ hφL_cs
     have hEv : ∀ t, faceReflect v a i (j.insertNth t z) = v (j.insertNth t z) := by
-      intro t; simp only [faceReflect]; rw [hci t, if_pos hac]
+      intro t; simp only [faceReflect]; rw [hci t, ite_eq_left hac]
     have hGr : ∀ t, faceGrad v a i (j.insertNth t z) j
         = (fderiv ℝ v (j.insertNth t z)) (basisVec j) := by
-      intro t; simp only [faceGrad]; rw [hci t, if_pos hac]
+      intro t; simp only [faceGrad]; rw [hci t, ite_eq_left hac]
     have e1 : (∫ t, faceReflect v a i (j.insertNth t z)
           * (fderiv ℝ φ (j.insertNth t z)) (basisVec j))
         = ∫ t, v (j.insertNth t z) * (fderiv ℝ φ (j.insertNth t z)) (basisVec j) :=
@@ -196,10 +196,10 @@ private theorem faceReflect_line_integral_offdiag {v : Vec (n + 1) → ℝ}
     have hkey := integral_mul_deriv_eq_neg hd hc hφL_deriv hcφ hφL_cs
     have hEv : ∀ t, faceReflect v a i (j.insertNth t z)
         = v (coordFaceReflection a i (j.insertNth t z)) := by
-      intro t; simp only [faceReflect]; rw [hci t, if_neg hac]
+      intro t; simp only [faceReflect]; rw [hci t, ite_eq_right hac]
     have hGr : ∀ t, faceGrad v a i (j.insertNth t z) j
         = (fderiv ℝ v (coordFaceReflection a i (j.insertNth t z))) (basisVec j) := by
-      intro t; simp only [faceGrad]; rw [hci t, if_neg hac, if_neg hji, one_mul]
+      intro t; simp only [faceGrad]; rw [hci t, ite_eq_right hac, ite_eq_right hji, one_mul]
     have e1 : (∫ t, faceReflect v a i (j.insertNth t z)
           * (fderiv ℝ φ (j.insertNth t z)) (basisVec j))
         = ∫ t, v (coordFaceReflection a i (j.insertNth t z))
@@ -255,13 +255,13 @@ theorem hasWeakPartialDerivOn_univ_faceReflect {v : Vec (n + 1) → ℝ}
     intro x
     unfold faceGrad
     by_cases h : a ≤ x i
-    · rw [if_pos h]; exact hMbound x
-    · rw [if_neg h]
+    · rw [ite_eq_left h]; exact hMbound x
+    · rw [ite_eq_right h]
       rw [norm_mul]
       by_cases hji : j = i
-      · rw [if_pos hji]; simp only [norm_neg, norm_one, one_mul]
+      · rw [ite_eq_left hji]; simp only [norm_neg, norm_one, one_mul]
         exact hMbound _
-      · rw [if_neg hji]; simp only [norm_one, one_mul]
+      · rw [ite_eq_right hji]; simp only [norm_one, one_mul]
         exact hMbound _
   have hφ_int : Integrable φ (volume : Measure (Vec (n + 1))) :=
     hφ.continuous.integrable_of_hasCompactSupport hφc

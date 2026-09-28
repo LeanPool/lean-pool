@@ -243,11 +243,7 @@ theorem exists_stoppingComparison_harmonic_remainder
             gcongr
             exact axisCubeNormalized_eLpNorm_two_add_le
               (stoppingComparisonParentCorner x r depth)
-              (stoppingComparisonParentSide r depth) huU.aestronglyMeasurable
-              (by
-                rw [axisCubeNormalizedMeasure_eq_smul_volume_restrict _ _ hL]
-                exact (memHilbertVectorL2_hilbertifyVecField
-                  w.toH1Function.grad_memVectorL2).smul_measure hscale_ne_top |>.neg.aestronglyMeasurable)
+              (stoppingComparisonParentSide r depth)
       _ ≤ (G.fixedValue * (d : ℝ≥0∞)) *
             (ENNReal.ofReal level + ENNReal.ofReal (eps * level)) := by
             gcongr

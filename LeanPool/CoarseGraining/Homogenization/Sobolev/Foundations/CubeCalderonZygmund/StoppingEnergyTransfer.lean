@@ -124,17 +124,17 @@ private theorem combined_sq_le_tail_split {a b ε level : ℝ}
       (sq_le_sq₀ hscaled_nonneg (by linarith)).2 hscaled
     nlinarith [hsq]
   by_cases hfa : level / 2 < a
-  · rw [if_pos hfa]
+  · rw [ite_eq_left hfa]
     by_cases hgb : ε * level / 2 < b
-    · rw [if_pos hgb]
+    · rw [ite_eq_left hgb]
       nlinarith [sq_nonneg level]
-    · rw [if_neg hgb]
+    · rw [ite_eq_right hgb]
       nlinarith [hg_small (le_of_not_gt hgb)]
-  · rw [if_neg hfa]
+  · rw [ite_eq_right hfa]
     by_cases hgb : ε * level / 2 < b
-    · rw [if_pos hgb]
+    · rw [ite_eq_left hgb]
       nlinarith [hf_small (le_of_not_gt hfa)]
-    · rw [if_neg hgb]
+    · rw [ite_eq_right hgb]
       nlinarith [hf_small (le_of_not_gt hfa), hg_small (le_of_not_gt hgb)]
 
 /-- At an exact combined stopping radius, the normalized energy is forced into
@@ -188,13 +188,13 @@ theorem goodLambdaCombinedEnergy_eq_tail_transfer
         · have hyC' : ε * level / 2 < ‖g y‖ := by simpa only [C] using! hyC
           have hyCB : y ∈ C ∩ B := ⟨hyC, hyB⟩
           rw [Set.indicator_of_mem hyCB, Set.indicator_of_mem hyB]
-          simpa only [if_pos hyA', if_pos hyC'] using
+          simpa only [ite_eq_left hyA', ite_eq_left hyC'] using
             (combined_sq_le_tail_split (a := ‖f y‖) (b := ‖g y‖) hε hlevel
               (norm_nonneg _) (norm_nonneg _))
         · have hyC' : ¬ ε * level / 2 < ‖g y‖ := by simpa only [C] using! hyC
           rw [Set.indicator_of_notMem (fun h : y ∈ C ∩ B => hyC h.1),
             Set.indicator_of_mem hyB]
-          simpa only [if_pos hyA', if_neg hyC'] using
+          simpa only [ite_eq_left hyA', ite_eq_right hyC'] using
             (combined_sq_le_tail_split (a := ‖f y‖) (b := ‖g y‖) hε hlevel
               (norm_nonneg _) (norm_nonneg _))
       · have hyA' : ¬ level / 2 < ‖f y‖ := by simpa only [A] using! hyA
@@ -203,13 +203,13 @@ theorem goodLambdaCombinedEnergy_eq_tail_transfer
         · have hyC' : ε * level / 2 < ‖g y‖ := by simpa only [C] using! hyC
           have hyCB : y ∈ C ∩ B := ⟨hyC, hyB⟩
           rw [Set.indicator_of_mem hyCB, Set.indicator_of_mem hyB]
-          simpa only [if_neg hyA', if_pos hyC'] using
+          simpa only [ite_eq_right hyA', ite_eq_left hyC'] using
             (combined_sq_le_tail_split (a := ‖f y‖) (b := ‖g y‖) hε hlevel
               (norm_nonneg _) (norm_nonneg _))
         · have hyC' : ¬ ε * level / 2 < ‖g y‖ := by simpa only [C] using! hyC
           rw [Set.indicator_of_notMem (fun h : y ∈ C ∩ B => hyC h.1),
             Set.indicator_of_mem hyB]
-          simpa only [if_neg hyA', if_neg hyC'] using
+          simpa only [ite_eq_right hyA', ite_eq_right hyC'] using
             (combined_sq_le_tail_split (a := ‖f y‖) (b := ‖g y‖) hε hlevel
               (norm_nonneg _) (norm_nonneg _))
     · rw [Set.indicator_of_notMem hyB, Set.indicator_of_notMem (fun h => hyB h.2),

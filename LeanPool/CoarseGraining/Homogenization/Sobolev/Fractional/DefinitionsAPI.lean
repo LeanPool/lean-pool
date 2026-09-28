@@ -46,7 +46,7 @@ theorem cubeGagliardoESeminorm_top (Q : TriadicCube d) (s : ℝ) (u : Vec d → 
         ‖(dist z.1 z.2 ^ (-s)) • (u z.1 - u z.2)‖ₑ)
         (gagliardoCubeMeasure Q) := by
   simp only [cubeGagliardoESeminorm, integralLpSeminorm, ENNReal.top_ne_zero,
-    if_false, if_true, eLpNormEssSup, gagliardoKernel, kernelExponent_top]
+    ite_false, ite_true, eLpNormEssSup, gagliardoKernel, kernelExponent_top]
 
 /-- Swap symmetry of the unnormalized seminorm: precomposing the kernel with
 the pair swap changes nothing, since the kernel is odd under the swap and the
@@ -60,7 +60,7 @@ theorem gagliardoESeminormOn_comp_swap (A : Set (Vec d)) (s : ℝ) (p : ℝ≥0�
   have hswap : gagliardoKernel s p u ∘ Prod.swap =
       -(gagliardoKernel (d := d) s p u) := by
     funext z
-    show gagliardoKernel s p u (z.2, z.1) = -(gagliardoKernel s p u z)
+    change gagliardoKernel s p u (z.2, z.1) = -(gagliardoKernel s p u z)
     rw [gagliardoKernel_apply, gagliardoKernel_apply]
     simp only [dist_comm z.2 z.1]
     rw [show u z.2 - u z.1 = -(u z.1 - u z.2) by abel, smul_neg]
@@ -144,7 +144,7 @@ theorem cubeGagliardoESeminorm_translate (shift : Fin d → ℤ)
       gagliardoKernel s p u ((T.prodCongr T) z) =
         gagliardoKernel s p (fun x => u (x + v)) z := by
     intro z
-    show gagliardoKernel s p u (T z.1, T z.2) = _
+    change gagliardoKernel s p u (T z.1, T z.2) = _
     rw [gagliardoKernel_apply, gagliardoKernel_apply, hTapp, hTapp,
       dist_add_right]
   -- conclude through the lintegral form

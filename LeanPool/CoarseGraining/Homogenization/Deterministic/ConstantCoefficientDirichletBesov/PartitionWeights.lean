@@ -63,7 +63,7 @@ theorem rawOverlapWeight_le_one {d : ℕ}
     rawOverlapWeight Q j S x ≤ 1 := by
   unfold rawOverlapWeight
   split
-  · exact Finset.prod_le_one
+  · exact Finset.prod_le_one₀
       (fun i _ =>
         mul_nonneg
           (lowerOverlapTransition_nonneg Q S i x)
@@ -233,7 +233,7 @@ theorem norm_fderiv_rawOverlapWeight_le {d : ℕ}
                 overlapTransitionFactor_nonneg Q S j x
             have hprod_le_one :
                 (∏ j ∈ (Finset.univ : Finset (Fin d)).erase i, factor j x) ≤ 1 :=
-              Finset.prod_le_one
+              Finset.prod_le_one₀
                 (fun j _hj => overlapTransitionFactor_nonneg Q S j x)
                 (fun j _hj => overlapTransitionFactor_le_one Q S j x)
             have hprod_norm_le :

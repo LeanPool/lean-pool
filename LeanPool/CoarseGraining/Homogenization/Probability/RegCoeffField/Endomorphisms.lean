@@ -159,12 +159,12 @@ theorem matTranspose_mul_mul_apply {R : Mat d} {σ : Equiv.Perm (Fin d)} {s : Fi
     (matTranspose R * M * R) i j = s i * s j * M (σ i) (σ j) := by
   classical
   rw [Matrix.mul_apply, Finset.sum_eq_single (σ j)]
-  · rw [hRdef (σ j) j, if_pos rfl, Matrix.mul_apply, Finset.sum_eq_single (σ i)]
-    · rw [matTranspose, Matrix.transpose_apply, hRdef (σ i) i, if_pos rfl]; ring
+  · rw [hRdef (σ j) j, ite_eq_left rfl, Matrix.mul_apply, Finset.sum_eq_single (σ i)]
+    · rw [matTranspose, Matrix.transpose_apply, hRdef (σ i) i, ite_eq_left rfl]; ring
     · intro l _ hl
-      rw [matTranspose, Matrix.transpose_apply, hRdef l i, if_neg hl, zero_mul]
+      rw [matTranspose, Matrix.transpose_apply, hRdef l i, ite_eq_right hl, zero_mul]
     · intro hnot; exact absurd (Finset.mem_univ (σ i)) hnot
-  · intro k _ hk; rw [hRdef k j, if_neg hk, mul_zero]
+  · intro k _ hk; rw [hRdef k j, ite_eq_right hk, mul_zero]
   · intro hnot; exact absurd (Finset.mem_univ (σ j)) hnot
 
 /-- Precomposition-and-conjugation with a signed permutation `R` is a carrier
@@ -192,7 +192,7 @@ def rotateReg (R : Mat d) (hR : IsSignedPermutationMatrix R) (a : RegCoeffField 
         (fun x => a (matVecMul R x) (σ i) (σ j)) volume :=
       locallyIntegrable_comp_homeomorph_of_measurePreserving (a.entry_locInt (σ i) (σ j))
         (matVecMulHomeomorph R hR) (measurePreserving_matVecMul R hR)
-    show LocallyIntegrable
+    change LocallyIntegrable
         (fun x => (s i * s j) • a (matVecMul R x) (σ i) (σ j)) volume
     exact hg.smul (s i * s j)
 
@@ -423,9 +423,9 @@ def ellipticTruncateReg (Θ : ℝ) (a : RegCoeffField d) : RegCoeffField d where
     refine RegCoeffField.locallyIntegrable_of_bounded_measurable hmeas
       (C := max Θ 1) (fun x => ?_)
     by_cases hx : IsEllipticMatrix 1 Θ (a x)
-    · rw [if_pos hx]
+    · rw [ite_eq_left hx]
       exact le_trans (abs_apply_le_of_isEllipticMatrix hx i j) (le_max_left _ _)
-    · rw [if_neg hx]
+    · rw [ite_eq_right hx]
       have h1 : |(1 : Mat d) i j| ≤ 1 := by
         rcases eq_or_ne i j with hij | hij
         · subst hij; rw [Matrix.one_apply_eq]; norm_num

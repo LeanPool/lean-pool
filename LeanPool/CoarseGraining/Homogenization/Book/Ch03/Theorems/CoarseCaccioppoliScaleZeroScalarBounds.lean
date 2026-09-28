@@ -35,7 +35,8 @@ noncomputable section
 
 open scoped ENNReal
 
-private noncomputable def caccioppoliScaleZeroEnvelopeBound
+/-- Common algebraic envelope for boundary and interior scale-zero constants. -/
+noncomputable def caccioppoliScaleZeroEnvelopeBound
     (A X : ℝ) : ℝ :=
   36 * ((6561 : ℝ) * 6561 * X ^ (2 : ℕ)) +
     36 * Real.exp 1 * ((9 : ℝ) * 4 * 81 * X * X * A) + 1

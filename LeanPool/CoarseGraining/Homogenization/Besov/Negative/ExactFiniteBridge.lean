@@ -198,7 +198,7 @@ theorem exactOverlapDepthAverage_eq_ofReal_cubeBesovOverlapDepthAverage
                 (ENNReal.ofReal p).toReal)) := by
           apply Finset.sum_congr rfl
           intro S hS
-          simp only [g, dif_pos hS]
+          simp only [g, dite_eq_left hS]
           rw [← ENNReal.ofReal_rpow_of_nonneg]
           · rw [exactOverlapLocalOscillation_eq_ofReal_cubeBesovOverlapOscillation S p u
               ((exactDualOverlapIntegrable Q p hp hmem).overlap j S hS)
@@ -278,7 +278,7 @@ theorem exactCircDepthAverage_eq_ofReal_cubeBesovCircDepthAverage
             ENNReal.ofReal (‖cubeAverage R f‖ ^ (ENNReal.ofReal p).toReal)) := by
           apply Finset.sum_congr rfl
           intro R hR
-          simp only [g, dif_pos hR]
+          simp only [g, dite_eq_left hR]
           rw [← ENNReal.ofReal_rpow_of_nonneg]
           · simp [ENNReal.toReal_ofReal hp0]
           · exact abs_nonneg _

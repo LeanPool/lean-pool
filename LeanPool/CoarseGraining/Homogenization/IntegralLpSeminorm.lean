@@ -32,7 +32,7 @@ def integralLpSeminorm {α : Type*} [MeasurableSpace α]
 theorem integralLpSeminorm_eq_eLpNorm {α : Type*} [MeasurableSpace α]
     (f : α → E) (p : ℝ≥0∞) (μ : Measure α) [TopologicalSpace E] (hf : AEStronglyMeasurable f μ) :
     integralLpSeminorm f p μ = eLpNorm f p μ := by
-  simp only [integralLpSeminorm, eLpNorm, if_pos hf]
+  simp only [integralLpSeminorm, eLpNorm, ite_eq_left hf]
 
 /-- Negation leaves the integral seminorm unchanged, without measurability assumptions. -/
 theorem integralLpSeminorm_neg {E : Type*} [NormedAddCommGroup E] {α : Type*} [MeasurableSpace α]
@@ -52,9 +52,9 @@ theorem integralLpSeminorm_const_smul
   by_cases hp0 : p = 0
   · simp [integralLpSeminorm, hp0]
   by_cases hpt : p = ∞
-  · simp only [integralLpSeminorm, if_neg hp0, if_pos hpt,
+  · simp only [integralLpSeminorm, ite_eq_right hp0, ite_eq_left hpt,
       eLpNormEssSup_const_smul]
-  · simp only [integralLpSeminorm, if_neg hp0, if_neg hpt]
+  · simp only [integralLpSeminorm, ite_eq_right hp0, ite_eq_right hpt]
     exact eLpNorm'_const_smul c (ENNReal.toReal_pos hp0 hpt)
 
 /-- Almost everywhere equal functions have equal integral seminorms. -/
@@ -69,7 +69,7 @@ theorem integralLpSeminorm_smul_measure {α : Type*} [MeasurableSpace α]
     integralLpSeminorm f p (c • μ) = c ^ (1 / p).toReal * integralLpSeminorm f p μ := by
   by_cases hp0 : p = 0
   · simp [integralLpSeminorm, hp0]
-  · simp only [integralLpSeminorm, if_neg hp0, if_neg hp]
+  · simp only [integralLpSeminorm, ite_eq_right hp0, ite_eq_right hp]
     simpa only [one_div, ENNReal.toReal_inv] using
       eLpNorm'_smul_measure (f := f) (μ := μ) ENNReal.toReal_nonneg c
 
@@ -81,12 +81,12 @@ theorem integralLpSeminorm_restrict_eq_of_support_subset
     (hsf : f.support ⊆ s) :
     integralLpSeminorm f p (μ.restrict s) = integralLpSeminorm f p μ := by
   by_cases hp0 : p = 0
-  · simp only [integralLpSeminorm, if_pos hp0]
+  · simp only [integralLpSeminorm, ite_eq_left hp0]
   by_cases hpt : p = ∞
-  · simp only [integralLpSeminorm, if_neg hp0, if_pos hpt,
+  · simp only [integralLpSeminorm, ite_eq_right hp0, ite_eq_left hpt,
       eLpNormEssSup_eq_essSup_enorm]
     exact ENNReal.essSup_restrict_eq_of_support_subset fun x hx ↦ hsf <| enorm_ne_zero.1 hx
-  · simp only [integralLpSeminorm, if_neg hp0, if_neg hpt,
+  · simp only [integralLpSeminorm, ite_eq_right hp0, ite_eq_right hpt,
       eLpNorm'_eq_lintegral_enorm]
     congr 1
     apply setLIntegral_eq_of_support_subset
@@ -99,7 +99,7 @@ theorem integralLpSeminorm_le_eLpNorm {α : Type*} [MeasurableSpace α]
     integralLpSeminorm f p μ ≤ eLpNorm f p μ := by
   by_cases hf : AEStronglyMeasurable f μ
   · exact (integralLpSeminorm_eq_eLpNorm f p μ hf).le
-  · simp only [eLpNorm, if_neg hf, le_top]
+  · simp only [eLpNorm, ite_eq_right hf, le_top]
 
 end
 

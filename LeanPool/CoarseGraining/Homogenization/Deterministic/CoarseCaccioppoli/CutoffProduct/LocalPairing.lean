@@ -40,7 +40,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_collapsed_average_note_terms_of_pa
   let : ENNReal.HolderTriple (2 : ℝ≥0∞) ∞ (2 : ℝ≥0∞) := by infer_instance
   have hprod :
       MeasureTheory.MemLp (fun x => u x • ξ x) (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
-    simpa using! hξLp.smul (p := (2 : ℝ≥0∞)) (r := (2 : ℝ≥0∞)) hu
+    simpa using! hu.smul (r := (2 : ℝ≥0∞)) hξLp
   have hmain :=
     abs_cubeAverage_vecDot_le_sum_average_terms_add_note_terms_of_partialBounds
       Q s flux (fun x => u x • ξ x) hs hflux hprod hBg hneg hpos
@@ -157,7 +157,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_collapsed_sharp_average_note_terms
   let : ENNReal.HolderTriple (2 : ℝ≥0∞) ∞ (2 : ℝ≥0∞) := by infer_instance
   have hprod :
       MeasureTheory.MemLp (fun x => u x • ξ x) (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
-    simpa using! hξLp.smul (p := (2 : ℝ≥0∞)) (r := (2 : ℝ≥0∞)) hu
+    simpa using! hu.smul (r := (2 : ℝ≥0∞)) hξLp
   have hmain :=
     abs_cubeAverage_vecDot_le_sum_average_terms_add_sharp_note_terms_of_partialBounds
       Q s flux (fun x => u x • ξ x) hs hflux hprod hBg hneg hpos
@@ -233,7 +233,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_collapsed_sharp_average_note_terms
   let prod : Vec d → Vec d := fun x => u x • ξ x
   have hprod :
       MeasureTheory.MemLp prod (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
-    simpa [prod] using! hξLp.smul (p := (2 : ℝ≥0∞)) (r := (2 : ℝ≥0∞)) hu
+    simpa [prod] using! hu.smul (r := (2 : ℝ≥0∞)) hξLp
   have hdecomp :
       cubeAverage Q (fun x => vecDot (flux x) (prod x)) =
         vecDot (cubeAverageVec Q flux) (cubeAverageVec Q prod) +

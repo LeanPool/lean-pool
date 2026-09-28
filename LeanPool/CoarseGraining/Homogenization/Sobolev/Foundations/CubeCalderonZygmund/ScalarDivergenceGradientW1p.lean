@@ -83,7 +83,7 @@ private theorem eLpNorm_vectorW1pDivergence_le_dimension_mul_jacobian
         eLpNorm (fun x ↦ HilbertMat.ofMat (G.jacobian x)) q.exponent
           (normalizedCubeMeasure Q) := by
     intro i
-    apply MeasureTheory.eLpNorm_mono_ae
+    apply MeasureTheory.eLpNorm_mono_ae (hdiag i).aestronglyMeasurable
     exact Filter.Eventually.of_forall fun x ↦ norm_jacobian_diag_le G i x
   calc
     eLpNorm (vectorW1pDivergence G) q.exponent (normalizedCubeMeasure Q) =
@@ -95,8 +95,7 @@ private theorem eLpNorm_vectorW1pDivergence_le_dimension_mul_jacobian
       simp only [vectorW1pDivergence, Finset.sum_apply]
     _ ≤ ∑ i : Fin d, eLpNorm (fun x ↦ G.jacobian x i i) q.exponent
           (normalizedCubeMeasure Q) := by
-      exact MeasureTheory.eLpNorm_sum_le
-        (fun i _hi ↦ (hdiag i).aestronglyMeasurable) q.one_lt.le
+      exact MeasureTheory.eLpNorm_sum_le q.one_lt.le
     _ ≤ ∑ _i : Fin d, eLpNorm (fun x ↦ HilbertMat.ofMat (G.jacobian x))
           q.exponent (normalizedCubeMeasure Q) :=
       Finset.sum_le_sum fun i _hi ↦ hdiag_le i

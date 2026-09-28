@@ -329,9 +329,9 @@ private theorem cubeBesovPositiveVectorSeminormTwo_neg_of_memLp
       abel
     rw [hfluct]
     unfold cubeLpNorm
-    change (MeasureTheory.eLpNorm (-(cubeFluctuationVec R g)) 2
+    change (Gagliardo.integralLpSeminorm (-(cubeFluctuationVec R g)) 2
       (normalizedCubeMeasure R)).toReal ^ 2 = _
-    rw [MeasureTheory.eLpNorm_neg]
+    rw [Gagliardo.integralLpSeminorm_neg]
   simp_rw [hpartial]
 
 /-- The deterministic apex constant is uniform over the manuscript range

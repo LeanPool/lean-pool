@@ -86,7 +86,11 @@ theorem openCubeSet_normalizedW1pSeminorm_two_eq_cubeLpNorm_euclideanGrad
     2 domain.normalizedVolume).toReal = _
   rw [show domain.normalizedVolume = normalizedCubeMeasure Q from
     openCubeSet_boundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure Q]
-  rfl
+  have hgrad_meas : MeasureTheory.AEStronglyMeasurable
+      (fun x => euclideanNorm (u.grad x)) (normalizedCubeMeasure Q) := by
+    simpa only [← openCubeSet_boundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure Q]
+      using (u.gradEuclideanMemLp domain 2).aestronglyMeasurable
+  exact (cubeLpNorm_eq_eLpNorm_toReal Q 2 _ hgrad_meas).symm
 
 /-- Normalized `L²` energy partitions exactly over descendants.  This is the
 measure-theoretic ingredient needed to aggregate the restricted open-cube
@@ -169,7 +173,7 @@ theorem descendantOpenCubeSetNormalizedW1pSeminormTwo_eq_of_mem
           (Book.Ch02.openCubeSet_nonempty R))
         (2 : ℝ≥0∞) (by norm_num) (by norm_num)
         (u.restrictToOpenSubcube hR) := by
-  simp only [descendantOpenCubeSetNormalizedW1pSeminormTwo, dif_pos hR]
+  simp only [descendantOpenCubeSetNormalizedW1pSeminormTwo, dite_eq_left hR]
 
 /-- The exact source-facing normalized Sobolev energy partitions over the
 open descendants of a triadic cube. -/

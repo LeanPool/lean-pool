@@ -209,7 +209,7 @@ theorem isEllipticMatrix_one (hΘ : 1 ≤ Θ) :
     simp only [matVecMul, Matrix.one_apply]
     rw [Finset.sum_eq_single i]
     · simp
-    · intro j _ hji; rw [if_neg (Ne.symm hji), zero_mul]
+    · intro j _ hji; rw [ite_eq_right (Ne.symm hji), zero_mul]
     · intro hi; exact absurd (Finset.mem_univ i) hi
   refine ⟨one_pos, hΘ, ?_, ?_⟩
   · intro ξ

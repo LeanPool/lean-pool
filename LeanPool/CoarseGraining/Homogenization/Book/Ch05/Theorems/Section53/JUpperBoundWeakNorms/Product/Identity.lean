@@ -366,15 +366,15 @@ theorem cutoffProductTermOnCube_eq_neg_half_cubeAverage_fluxDefect_centeredPoten
       MemLp (fun x => (u x - c) • ξ x) (2 : ℝ≥0∞)
         (normalizedCubeMeasure Q) := by
     let : ENNReal.HolderTriple (2 : ℝ≥0∞) ∞ (2 : ℝ≥0∞) := by infer_instance
-    simpa [ξ] using! hcutoffGradient.smul
-      (p := (2 : ℝ≥0∞)) (r := (2 : ℝ≥0∞)) hfluct
+    simpa [ξ] using! hfluct.smul
+      (q := ∞) (r := (2 : ℝ≥0∞)) hcutoffGradient
   have hprod_const :
       MemLp (fun x => c • ξ x) (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
     let : ENNReal.HolderTriple (2 : ℝ≥0∞) ∞ (2 : ℝ≥0∞) := by infer_instance
     have hc : MemLp (fun _ : Vec d => c) (2 : ℝ≥0∞) (normalizedCubeMeasure Q) :=
       MeasureTheory.memLp_const c
-    simpa [ξ] using! hcutoffGradient.smul
-      (p := (2 : ℝ≥0∞)) (r := (2 : ℝ≥0∞)) hc
+    simpa [ξ] using! hc.smul
+      (q := ∞) (r := (2 : ℝ≥0∞)) hcutoffGradient
   have hdot_fluct :
       Integrable
         (fun x => vecDot (flux x) ((u x - c) • ξ x))

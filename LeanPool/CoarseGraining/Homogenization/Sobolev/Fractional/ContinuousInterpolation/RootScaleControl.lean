@@ -65,7 +65,7 @@ private theorem ofReal_continuousKResidualNorm_default_eq_normalizedEuclideanLpE
     BoundedMeasurableDomain.normalizedLpFiniteENorm
     BoundedMeasurableDomain.normalizedLpENorm
   simp only [show (2 : ℝ≥0∞) ≠ 0 by norm_num,
-    show (2 : ℝ≥0∞) ≠ ∞ by norm_num, if_false, ENNReal.toReal_ofNat]
+    show (2 : ℝ≥0∞) ≠ ∞ by norm_num, ite_false, ENNReal.toReal_ofNat]
   change ENNReal.ofReal
       (MeasureTheory.eLpNorm'
         (fun x => euclideanNorm (F x - (default : ContinuousKCompetitor d).toField x))

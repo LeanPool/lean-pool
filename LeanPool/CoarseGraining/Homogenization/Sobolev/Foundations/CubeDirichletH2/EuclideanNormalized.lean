@@ -88,11 +88,13 @@ theorem exists_originCube_dirichlet_calderon_zygmund_regularity_q_two
       (cubeBoundedMeasurableDomain (originCube d m)).normalizedLpNorm
           (2 : ℝ≥0∞) F hFsafe = L := by
     dsimp [L]
-    unfold BoundedMeasurableDomain.normalizedLpNorm
-      BoundedMeasurableDomain.normalizedLpFiniteENorm
-      BoundedMeasurableDomain.normalizedLpENorm
-    unfold cubeLpNorm
-    simp only [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
+    change ((cubeBoundedMeasurableDomain (originCube d m)).normalizedLpENorm 2 F).toReal =
+        cubeLpNorm (originCube d m) 2 F
+    rw [(cubeBoundedMeasurableDomain (originCube d m)).normalizedLpENorm_eq_eLpNorm
+      2 F hFsafe.aestronglyMeasurable,
+      cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
+    exact (cubeLpNorm_eq_eLpNorm_toReal (originCube d m) 2 F
+      hF.aestronglyMeasurable).symm
   have hV_pos : 0 < V := by
     dsimp [V]
     exact cubeVolume_pos (originCube d m)

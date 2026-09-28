@@ -67,8 +67,8 @@ theorem isEllipticFieldOn_corridorField {Θ : ℝ} {U : Set (Vec d)}
                                           else (if x ∈ U then a x i j else 0) := by
     funext x
     by_cases hxS : x ∈ corridorSet ℓ σ
-    · rw [if_pos hxS, corridorField_apply_of_mem hxS]
-    · rw [if_neg hxS, corridorField_apply_of_not_mem hxS]
+    · rw [ite_eq_left hxS, corridorField_apply_of_mem hxS]
+    · rw [ite_eq_right hxS, corridorField_apply_of_not_mem hxS]
   rw [heq]
   exact Measurable.ite (measurableSet_corridorSet ℓ σ) hind hcomp
 

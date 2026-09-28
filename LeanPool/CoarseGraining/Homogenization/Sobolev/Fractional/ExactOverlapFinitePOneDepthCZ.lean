@@ -72,36 +72,52 @@ private theorem cubeDirichletDivergenceProblem_grad_memLp
     { toField := h
       euclideanMemLp := hhq
       euclideanMemL2 := hh2 }
-  have hbound :
-      eLpNorm (fun x => HilbertVec.ofVec (w.toH1Function.grad x)) q.exponent
-          (normalizedCubeMeasure (originCube d m)) ≤
-        C * (ENNReal.ofReal (1 : ℝ))⁻¹ *
-          eLpNorm (fun x => HilbertVec.ofVec (h x)) q.exponent
-            (normalizedCubeMeasure (originCube d m)) := by
-    simpa only [BoundedMeasurableDomain.normalizedEuclideanLpENorm,
-      BoundedMeasurableDomain.normalizedLpENorm, centeredCubeDomain,
-      cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure,
-      euclideanNorm_eq_norm_ofVec, MeasureTheory.eLpNorm_norm, hField] using
-      hC m 1 hField w (by norm_num)
-        (cubeDirichletDivergenceProblem_to_centered_normalized m hh2 hw)
   have hgrad_l2 : MemLp (fun x => HilbertVec.ofVec (w.toH1Function.grad x)) 2
       (normalizedCubeMeasure (originCube d m)) := by
     rw [MeasureTheory.memLp_piLp_iff]
     intro i
     simpa only [HilbertVec.ofVec, PiLp.toLp_apply] using
       w.toH1Function.grad_memL2_normalizedCubeMeasure i
-  refine ⟨hgrad_l2.aestronglyMeasurable, ?_⟩
+  have hbound :
+      eLpNorm (fun x => HilbertVec.ofVec (w.toH1Function.grad x)) q.exponent
+          (normalizedCubeMeasure (originCube d m)) ≤
+        C * (ENNReal.ofReal (1 : ℝ))⁻¹ *
+          eLpNorm (fun x => HilbertVec.ofVec (h x)) q.exponent
+            (normalizedCubeMeasure (originCube d m)) := by
+    have hraw := hC m 1 hField w (by norm_num)
+      (cubeDirichletDivergenceProblem_to_centered_normalized m hh2 hw)
+    rw [CubeCalderonZygmund.INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+      (centeredCubeDomain d m) q.exponent _ (by
+        simpa only [centeredCubeDomain,
+          cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
+          using hgrad_l2.aestronglyMeasurable),
+      CubeCalderonZygmund.INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+        (centeredCubeDomain d m) q.exponent _ (by
+          simpa only [centeredCubeDomain,
+            cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
+            using hField.euclideanMemLp.aestronglyMeasurable)] at hraw
+    have hgradField : hilbertifyVecField w.toH1Function.grad =
+        (fun x => HilbertVec.ofVec (w.toH1Function.grad x)) := rfl
+    have hdataField : hilbertifyVecField h =
+        (fun x => HilbertVec.ofVec (h x)) := rfl
+    rw [hgradField, hdataField] at hraw
+    simpa only [centeredCubeDomain,
+      cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure,
+      hField] using hraw
+  change eLpNorm (fun x => HilbertVec.ofVec (w.toH1Function.grad x)) q.exponent
+    (normalizedCubeMeasure (originCube d m)) < ∞
   exact lt_of_le_of_lt hbound (by
     simpa only [ENNReal.ofReal_one, inv_one, mul_one] using
       ENNReal.mul_lt_top hCtop hhq.eLpNorm_lt_top)
 
 private theorem eLpNorm_rpow_eq_lintegral_enorm {α E : Type*}
     [MeasurableSpace α] [NormedAddCommGroup E]
-    (q : FiniteLpExponent) (μ : Measure α) (f : α → E) :
+    (q : FiniteLpExponent) (μ : Measure α) (f : α → E)
+    (hf : AEStronglyMeasurable f μ) :
     (eLpNorm f q.exponent μ) ^ q.exponent.toReal =
       ∫⁻ x, ‖f x‖ₑ ^ q.exponent.toReal ∂μ := by
   rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
-    (zero_lt_one.trans q.one_lt).ne' q.lt_top.ne, ← ENNReal.rpow_mul]
+    (zero_lt_one.trans q.one_lt).ne' q.lt_top.ne hf, ← ENNReal.rpow_mul]
   have hq : q.exponent.toReal ≠ 0 :=
     ENNReal.toReal_pos (zero_lt_one.trans q.one_lt).ne' q.lt_top.ne |>.ne'
   rw [one_div, inv_mul_cancel₀ hq, ENNReal.rpow_one]
@@ -187,9 +203,14 @@ private theorem exactOverlapFiniteP_residual_rpow_le
   rw [ENNReal.mul_rpow_of_nonneg _ _ ENNReal.toReal_nonneg] at hcomparison_pow
   have hresidual :=
     lintegral_enorm_rpow_sub_averagingField_le_overlapDepthENorm_rpow P h q hhq
+  have hdataDiffQ : MemLp (fun x => HilbertVec.ofVec
+      (h x - P.averagingField h x)) q.exponent
+      (normalizedCubeMeasure (originCube d m)) := by
+    simpa only [map_sub] using! hhq.sub hGq
   rw [← eLpNorm_rpow_eq_lintegral_enorm q
     (normalizedCubeMeasure (originCube d m))
-    (fun x => HilbertVec.ofVec (h x - P.averagingField h x))] at hresidual
+    (fun x => HilbertVec.ofVec (h x - P.averagingField h x))
+    hdataDiffQ.aestronglyMeasurable] at hresidual
   calc
     (cubeEuclideanPositiveBesovOverlapDepthENorm (originCube d m) q
         (fun x => w.toH1Function.grad x - v.toH1Function.grad x) j) ^
@@ -232,7 +253,8 @@ private theorem exactOverlapFiniteP_smooth_rpow_le
     (hcomparison : eLpNorm (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
         (normalizedCubeMeasure (originCube d m)) ≤ Csplit *
           eLpNorm (fun x => HilbertMat.ofMat
-            (((concreteSmoothOverlapPartition (originCube d m) j).averagingCompetitorW1p h q).jacobian x))
+            (((concreteSmoothOverlapPartition (originCube d m) j).averagingCompetitorW1p
+              h q).jacobian x))
             q.exponent
             (normalizedCubeMeasure (originCube d m))) :
     (cubeEuclideanPositiveBesovOverlapDepthENorm (originCube d m) q V.toField j) ^
@@ -262,8 +284,9 @@ private theorem exactOverlapFiniteP_smooth_rpow_le
   have hell : 0 < ell := by
     exact div_pos (cubeScaleFactor_pos' (originCube d m))
       (pow_pos (by norm_num : (0 : ℝ) < 3) j)
-  have hjacobian := SmoothOverlapPartition.lintegral_enorm_rpow_averagingCompetitorW1p_jacobian_le_depthENorm
-    P h q hhq
+  have hjacobian :=
+    SmoothOverlapPartition.lintegral_enorm_rpow_averagingCompetitorW1p_jacobian_le_depthENorm
+      P h q hhq
   have hjacobian' :
       (eLpNorm (fun x => HilbertMat.ofMat ((P.averagingCompetitorW1p h q).jacobian x))
         q.exponent (normalizedCubeMeasure (originCube d m))) ^ r ≤
@@ -275,7 +298,10 @@ private theorem exactOverlapFiniteP_smooth_rpow_le
         (if r ≤ 2 then 1 else (3 ^ d : ℝ≥0∞) ^ (r / 2 - 1)) *
         (3 ^ d : ℝ≥0∞)) *
         (cubeEuclideanPositiveBesovOverlapDepthENorm (originCube d m) q h j) ^ r := by
-    rw [eLpNorm_rpow_eq_lintegral_enorm]
+    rw [eLpNorm_rpow_eq_lintegral_enorm q
+      (normalizedCubeMeasure (originCube d m))
+      (fun x => HilbertMat.ofMat ((P.averagingCompetitorW1p h q).jacobian x))
+      (P.averagingCompetitorW1p h q).jacobianHilbertMemLp.aestronglyMeasurable]
     simpa only [P, ell, r] using hjacobian
   have hcomparison_pow := ENNReal.rpow_le_rpow hcomparison
     (show 0 ≤ r from ENNReal.toReal_nonneg)
@@ -377,10 +403,12 @@ theorem exists_exactOverlapFiniteP_oneDepth_cz
     have hthree : (3 ^ d : ℝ≥0∞) < ∞ :=
       (ENNReal.pow_ne_top ENNReal.ofNat_ne_top).lt_top
     by_cases hq : q.exponent.toReal ≤ 2
-    · simp only [if_pos hq, one_mul, mul_one]
+    · simp only [ite_eq_left hq, one_mul, mul_one]
       exact ENNReal.mul_lt_top
-        (ENNReal.mul_lt_top (ENNReal.natCast_ne_top (Fintype.card (Fin d × Fin d))).lt_top hder) hthree
-    · simp only [if_neg hq]
+        (ENNReal.mul_lt_top
+          (ENNReal.natCast_ne_top (Fintype.card (Fin d × Fin d))).lt_top hder)
+        hthree
+    · simp only [ite_eq_right hq]
       have hr : 0 ≤ q.exponent.toReal / 2 - 1 := by
         have htwo : 2 < q.exponent.toReal := lt_of_not_ge hq
         linarith

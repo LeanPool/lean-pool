@@ -187,7 +187,7 @@ theorem deGiorgi_levelVolume_tendsto_zero
         Real.mul_rpow (by positivity) haNnn, hpow4]
       apply le_of_eq; ring
     -- convert `key` into the `Y`-recursion
-    show aN1 / Ld ≤ A * B ^ (n : ℝ) * (aN / Ld) ^ (1 + β)
+    change aN1 / Ld ≤ A * B ^ (n : ℝ) * (aN / Ld) ^ (1 + β)
     have h1β : (1 : ℝ) + β = α := by rw [hβ]; ring
     rw [h1β, hA_def, Real.div_rpow haNnn hLd.le]
     have hLdα : Ld ^ α = Ld ^ β * Ld := by

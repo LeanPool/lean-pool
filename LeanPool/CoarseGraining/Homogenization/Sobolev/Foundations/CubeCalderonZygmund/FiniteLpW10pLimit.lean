@@ -128,7 +128,7 @@ private theorem tendsto_eLpNorm_finiteLpSolutionApproximation_grad_pair
           ((finiteLpW10pSolutionApproximation q m hsigma0 h nk.2).grad x - Du x) by abel]
     exact (HilbertVec.ofVecL d).map_sub _ _
   rw [heq]
-  exact eLpNorm_sub_le hfn.aestronglyMeasurable hfk.aestronglyMeasurable q.one_lt.le
+  exact eLpNorm_sub_le q.one_lt.le
 
 private theorem tendsto_sum_eLpNorm_finiteLpSolutionApproximation_gradCoord_pair
     {d : ℕ} [NeZero d] (q : FiniteLpExponent) (m : ℤ) {sigma0 : ℝ}
@@ -309,18 +309,20 @@ private theorem tendsto_eLpNorm_finiteLpW10pSolutionApproximation_pair
   have hB := (ENNReal.tendsto_toReal_zero_iff hBtop).1 hreal
   simpa only [B] using hB
 
-private noncomputable def finiteLpW10pSolutionApproximationLp
+/-- The bounded-data approximation viewed in the cube's `L^p` space. -/
+noncomputable def finiteLpW10pSolutionApproximationLp
     {d : ℕ} [NeZero d] (q : FiniteLpExponent) (m : ℤ) {sigma0 : ℝ}
     (hsigma0 : 0 < sigma0) (h : CubeEuclideanLpField (originCube d m) q)
     (N : ℕ) :
     Lp ℝ q.exponent (volume.restrict (openCubeSet (originCube d m))) :=
   (finiteLpW10pSolutionApproximation q m hsigma0 h N).memLp.toLp _
 
-private theorem cauchySeq_finiteLpW10pSolutionApproximationLp
+/-- The `L^p` approximants form a Cauchy sequence. -/
+theorem cauchySeq_finiteLpW10pSolutionApproximationLp
     {d : ℕ} [NeZero d] (q : FiniteLpExponent) (m : ℤ) {sigma0 : ℝ}
-    (hsigma0 : 0 < sigma0) (h : CubeEuclideanLpField (originCube d m) q) :
+    (hsigma0 : 0 < sigma0) (h : CubeEuclideanLpField (originCube d m) q)
+    [Fact (1 ≤ q.exponent)] :
     CauchySeq (finiteLpW10pSolutionApproximationLp q m hsigma0 h) := by
-  let : Fact (1 ≤ q.exponent) := ⟨q.one_lt.le⟩
   rw [Lp.cauchySeq_Lp_iff_cauchySeq_eLpNorm]
   have hpair := tendsto_eLpNorm_finiteLpW10pSolutionApproximation_pair q m hsigma0 h
   refine hpair.congr' ?_
@@ -333,7 +335,8 @@ private theorem cauchySeq_finiteLpW10pSolutionApproximationLp
   simp only [finiteLpW10pSolutionApproximationLp, Pi.sub_apply]
   rw [hx, hy]
 
-private noncomputable def finiteLpW10pSolutionLimitLp
+/-- The `L^p` limit of the zero-trace solution approximants. -/
+noncomputable def finiteLpW10pSolutionLimitLp
     {d : ℕ} [NeZero d] (q : FiniteLpExponent) (m : ℤ) {sigma0 : ℝ}
     (hsigma0 : 0 < sigma0) (h : CubeEuclideanLpField (originCube d m) q) :
     Lp ℝ q.exponent (volume.restrict (openCubeSet (originCube d m))) := by
@@ -350,7 +353,8 @@ private theorem tendsto_finiteLpW10pSolutionApproximationLp
   exact Classical.choose_spec (cauchySeq_tendsto_of_complete
     (cauchySeq_finiteLpW10pSolutionApproximationLp q m hsigma0 h))
 
-private theorem tendsto_eLpNorm_finiteLpW10pSolutionApproximation_sub_limitLp
+/-- Strong convergence of the approximants to their `L^p` limit. -/
+theorem tendsto_eLpNorm_finiteLpW10pSolutionApproximation_sub_limitLp
     {d : ℕ} [NeZero d] (q : FiniteLpExponent) (m : ℤ) {sigma0 : ℝ}
     (hsigma0 : 0 < sigma0) (h : CubeEuclideanLpField (originCube d m) q) :
     Filter.Tendsto (fun N => eLpNorm (fun x =>

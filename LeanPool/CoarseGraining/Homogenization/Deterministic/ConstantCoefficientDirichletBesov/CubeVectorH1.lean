@@ -216,7 +216,6 @@ theorem norm_toScalarL2_divergence_le_gradientCoordL2NormSum {d : ℕ}
           MeasureTheory.eLpNorm_sum_le
             (μ := μ) (p := (2 : ℝ≥0∞)) (s := Finset.univ)
             (f := fun i : Fin d => fun x : Vec d => (G.coord i).grad x i)
-            (fun i _hi => (hcoord_mem i).1)
             (by norm_num : (1 : ℝ≥0∞) ≤ (2 : ℝ≥0∞))
   have hsum_toReal :
       ENNReal.toReal
@@ -224,7 +223,7 @@ theorem norm_toScalarL2_divergence_le_gradientCoordL2NormSum {d : ℕ}
             MeasureTheory.eLpNorm (fun x => (G.coord i).grad x i)
               (2 : ℝ≥0∞) μ) =
         ∑ i : Fin d, ‖(G.coord i).gradCoordToScalarL2 i‖ := by
-    rw [ENNReal.toReal_sum (fun i _hi => (hcoord_mem i).2.ne)]
+    rw [ENNReal.toReal_sum (fun i _hi => (hcoord_mem i).eLpNorm_ne_top)]
     refine Finset.sum_congr rfl ?_
     intro i _hi
     simp [H1Function.gradCoordToScalarL2, Homogenization.toScalarL2,
@@ -238,7 +237,7 @@ theorem norm_toScalarL2_divergence_le_gradientCoordL2NormSum {d : ℕ}
             MeasureTheory.eLpNorm (fun x => (G.coord i).grad x i)
               (2 : ℝ≥0∞) μ) := by
           refine ENNReal.toReal_mono ?_ hsum_eLp
-          exact ENNReal.sum_ne_top.2 fun i _hi => (hcoord_mem i).2.ne
+          exact ENNReal.sum_ne_top.2 fun i _hi => (hcoord_mem i).eLpNorm_ne_top
     _ = ∑ i : Fin d, ‖(G.coord i).gradCoordToScalarL2 i‖ := hsum_toReal
     _ ≤ ∑ i : Fin d, (G.coord i).gradientCoordL2NormSum := by
           refine Finset.sum_le_sum ?_

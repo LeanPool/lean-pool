@@ -61,13 +61,22 @@ theorem scalarOverlap_eLpNorm_eq_coordinate_euclideanOverlapResidual {d : ℕ}
 /-- The scalar overlap oscillation of a coordinate is the real value of the
 corresponding coordinate of the canonical Euclidean residual. -/
 theorem cubeBesovOverlapOscillation_coordinate_eq_residual_toReal {d : ℕ}
-    (S : TriadicCube d) (p : FiniteLpExponent) (F : Vec d → Vec d) (i : Fin d) :
+    (S : TriadicCube d) (p : FiniteLpExponent) (F : Vec d → Vec d) (i : Fin d)
+    (hF : AEStronglyMeasurable F (ScalarOverlap.normalizedCubeMeasure S)) :
     cubeBesovOverlapOscillation S p.exponent (fun x => F x i) =
       (eLpNorm (fun x => (F x - ScalarOverlap.cubeAverageVec S F) i)
         p.exponent (ScalarOverlap.normalizedCubeMeasure S)).toReal := by
+  have hcoordinate : AEStronglyMeasurable (fun x => F x i)
+      (ScalarOverlap.normalizedCubeMeasure S) :=
+    (continuous_apply i).comp_aestronglyMeasurable hF
+  have hfluctuation : AEStronglyMeasurable
+      (fun x => F x i - ScalarOverlap.cubeAverage S (fun y => F y i))
+      (ScalarOverlap.normalizedCubeMeasure S) :=
+    hcoordinate.sub aestronglyMeasurable_const
   unfold cubeBesovOverlapOscillation ScalarOverlap.cubeLpNorm
-  rw [scalarOverlap_eLpNorm_eq_coordinate_euclideanOverlapResidual]
-
+  rw [Gagliardo.integralLpSeminorm_eq_eLpNorm _ _ _ hfluctuation]
+  exact congrArg ENNReal.toReal
+    (scalarOverlap_eLpNorm_eq_coordinate_euclideanOverlapResidual S p F i)
 /-- One scalar coordinate of the overlap oscillation is bounded by the direct
 Euclidean Hilbert overlap oscillation on the same cube. -/
 theorem scalarOverlap_eLpNorm_le_euclideanOverlap {d : ℕ} (S : TriadicCube d)

@@ -29,12 +29,13 @@ noncomputable section
 theorem normalizedEuclideanLpENorm_zero_dim (F : UnitCubeEuclideanL2Field 0) :
     (unitCenteredCubeDomain 0).normalizedEuclideanLpENorm (2 : ℝ≥0∞) F = 0 := by
   unfold BoundedMeasurableDomain.normalizedEuclideanLpENorm
-    BoundedMeasurableDomain.normalizedLpENorm
   have hzero : (fun x => euclideanNorm (F x)) = fun _ => (0 : ℝ) := by
     funext x
     rw [show F x = 0 by exact Subsingleton.elim _ _]
     exact euclideanNorm_zero
-  rw [hzero, MeasureTheory.eLpNorm_zero']
+  rw [hzero, (unitCenteredCubeDomain 0).normalizedLpENorm_eq_eLpNorm
+    (2 : ℝ≥0∞) (fun _ => (0 : ℝ)) MeasureTheory.aestronglyMeasurable_const]
+  simp
 
 private theorem continuousKResidualNorm_default_zero_dim
     (F : UnitCubeEuclideanL2Field 0) :
@@ -42,10 +43,8 @@ private theorem continuousKResidualNorm_default_zero_dim
   unfold continuousKResidualNorm BoundedMeasurableDomain.normalizedEuclideanLpNorm
     BoundedMeasurableDomain.normalizedLpNorm
     BoundedMeasurableDomain.normalizedLpFiniteENorm
-    BoundedMeasurableDomain.normalizedLpENorm
-  change (MeasureTheory.eLpNorm
-    (fun x => euclideanNorm (F x - (default : ContinuousKCompetitor 0).toField x))
-    (2 : ℝ≥0∞) (unitCenteredCubeDomain 0).normalizedVolume).toReal = 0
+  change ((unitCenteredCubeDomain 0).normalizedLpENorm (2 : ℝ≥0∞)
+    (fun x => euclideanNorm (F x - (default : ContinuousKCompetitor 0).toField x))).toReal = 0
   have hzero :
       (fun x => euclideanNorm (F x - (default : ContinuousKCompetitor 0).toField x)) =
         fun _ => (0 : ℝ) := by
@@ -53,17 +52,16 @@ private theorem continuousKResidualNorm_default_zero_dim
     rw [show F x - (default : ContinuousKCompetitor 0).toField x = 0 by
       exact Subsingleton.elim _ _]
     exact euclideanNorm_zero
-  rw [hzero, MeasureTheory.eLpNorm_zero']
-  rfl
+  rw [hzero, (unitCenteredCubeDomain 0).normalizedLpENorm_eq_eLpNorm
+    (2 : ℝ≥0∞) (fun _ => (0 : ℝ)) MeasureTheory.aestronglyMeasurable_const]
+  simp
 
 private theorem continuousKGradientNorm_default_zero_dim :
     continuousKGradientNorm (default : ContinuousKCompetitor 0) = 0 := by
   unfold continuousKGradientNorm BoundedMeasurableDomain.normalizedLpNorm
     BoundedMeasurableDomain.normalizedLpFiniteENorm
-    BoundedMeasurableDomain.normalizedLpENorm
-  change (MeasureTheory.eLpNorm
-    (fun x => matrixFrobeniusMagnitude ((default : ContinuousKCompetitor 0).gradient x))
-    (2 : ℝ≥0∞) (unitCenteredCubeDomain 0).normalizedVolume).toReal = 0
+  change ((unitCenteredCubeDomain 0).normalizedLpENorm (2 : ℝ≥0∞)
+    (fun x => matrixFrobeniusMagnitude ((default : ContinuousKCompetitor 0).gradient x))).toReal = 0
   have hzero :
       (fun x => matrixFrobeniusMagnitude
         ((default : ContinuousKCompetitor 0).gradient x)) = fun _ => (0 : ℝ) := by
@@ -71,8 +69,9 @@ private theorem continuousKGradientNorm_default_zero_dim :
     rw [show (default : ContinuousKCompetitor 0).gradient x = 0 by
       exact Subsingleton.elim _ _]
     exact matrixFrobeniusMagnitude_zero
-  rw [hzero, MeasureTheory.eLpNorm_zero']
-  rfl
+  rw [hzero, (unitCenteredCubeDomain 0).normalizedLpENorm_eq_eLpNorm
+    (2 : ℝ≥0∞) (fun _ => (0 : ℝ)) MeasureTheory.aestronglyMeasurable_const]
+  simp
 
 private theorem continuousKFunctionalCompetitorValue_default_zero_dim
     (t : ContinuousKScale) (F : UnitCubeEuclideanL2Field 0) :

@@ -103,12 +103,6 @@ noncomputable def HarmonicEuclideanGradientGain.fromScalar {d : ℕ}
     let μ := normalizedCubeMeasure (centralDescendant Q depth)
     have hcoord : ∀ i : Fin d, MeasureTheory.MemLp (fun x => u.grad x i)
         r.exponent μ := fun i => G.memLp Q u h i
-    have hvec : MeasureTheory.AEStronglyMeasurable (fun x => u.grad x) μ :=
-      (aemeasurable_pi_lambda _ fun i => (hcoord i).aemeasurable).aestronglyMeasurable
-    have hhilbert : MeasureTheory.AEStronglyMeasurable
-        (fun x => HilbertVec.ofVec (u.grad x)) μ := by
-      simpa using (HilbertVec.ofVecL d).continuous.comp_aestronglyMeasurable hvec
-    refine ⟨hhilbert, ?_⟩
     have hsum : ∑ i : Fin d,
         MeasureTheory.eLpNorm (fun x => u.grad x i) r.exponent μ ≤
         (d : ℝ≥0∞) * (G.fixedValue * ∑ j : Fin d,
@@ -161,7 +155,8 @@ noncomputable def HarmonicEuclideanGradientGain.fromScalar {d : ℕ}
         simp [C]
         ring
 
-private theorem memLpOn_openCubeSet_of_memLp_normalizedCubeMeasure
+/-- Transfer normalized cube integrability to the open cube measure. -/
+theorem memLpOn_openCubeSet_of_memLp_normalizedCubeMeasure
     {d : ℕ} (Q : TriadicCube d) {p : ℝ≥0∞} {f : Vec d → ℝ}
     (hf : MeasureTheory.MemLp f p (normalizedCubeMeasure Q)) :
     MeasureTheory.MemLp f p (volumeMeasureOn (openCubeSet Q)) := by
@@ -244,7 +239,7 @@ private theorem openCubeSet_eq_axisCube {d : ℕ} (Q : TriadicCube d) :
     forall_true_left, Set.mem_Ioo]
   simp_rw [hupper]
 
-private theorem normalized_cubeSobolevEmbedding_finiteLp {d : ℕ} (hd : 0 < d)
+theorem normalized_cubeSobolevEmbedding_finiteLp {d : ℕ} (hd : 0 < d)
     (r q : FiniteLpExponent)
     (hqr : (q.exponent.toReal)⁻¹ = r.exponent.toReal⁻¹ - (d : ℝ)⁻¹)
     (hrlt : r.exponent.toReal < d) :
@@ -348,7 +343,8 @@ private theorem raw_eLpNorm_two_toReal_eq_scale_pow_mul_cubeLpNorm {d : ℕ}
   have hreal := congrArg ENNReal.toReal hraw
   rw [ENNReal.toReal_mul, ← ENNReal.toReal_rpow,
     ENNReal.toReal_ofReal hscale.le] at hreal
-  simpa [cubeLpNorm] using hreal
+  rw [cubeLpNorm_eq_eLpNorm_toReal Q 2 f hf.aestronglyMeasurable]
+  exact hreal
 
 private theorem hessianCoordL2NormSum_eq_sum_raw_eLpNorm {d : ℕ}
     {U : Set (Vec d)} {u : H1Function U} (H : HasWeakHessianOn U u) :
@@ -366,7 +362,7 @@ private theorem hessianCoordL2NormSum_eq_sum_raw_eLpNorm {d : ℕ}
 /-- Lift an inequality between real realizations of finite extended norms back
 to `ℝ≥0∞`.  All finiteness is explicit, so the induction carrier never turns
 an extended-norm comparison into an implicit integrability hypothesis. -/
-private theorem ennreal_le_of_toReal_le {a b : ℝ≥0∞}
+theorem ennreal_le_of_toReal_le {a b : ℝ≥0∞}
     (ha : a ≠ ∞) (hb : b ≠ ∞) (h : a.toReal ≤ b.toReal) : a ≤ b :=
   (ENNReal.toReal_le_toReal ha hb).mp h
 
@@ -489,7 +485,8 @@ private theorem centralChild_normalized_hessian_energy_bound {d : ℕ} :
               (cubeScaleFactor Q) ^ ((d : ℝ) / 2) * (cubeScaleFactor Q)⁻¹) * T := by ring
         _ = _ := by rw [hqpower, mul_inv_cancel₀ hscaleQpos.ne', mul_one]
 
-private theorem centralChild_normalized_hessian_energy_bound_ennreal {d : ℕ} :
+/-- The central child's normalized Hessian energy bound in extended norms. -/
+theorem centralChild_normalized_hessian_energy_bound_ennreal {d : ℕ} :
     ∃ A : ℝ≥0∞, 0 < A ∧ A ≠ ∞ ∧
       ∀ (Q : TriadicCube d) (u : H1Function (openCubeSet Q)),
         WeakPoissonEquationOn (openCubeSet Q) u (fun _ => 0) →
@@ -548,9 +545,30 @@ private theorem centralChild_normalized_hessian_energy_bound_ennreal {d : ℕ} :
   rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal (by
     simpa [cubeScaleFactor] using le_of_lt (zpow_pos (by norm_num : (0 : ℝ) < 3) P.scale)),
     hLtoReal, ENNReal.toReal_mul, ENNReal.toReal_ofReal hApos.le, hRtoReal]
-  simpa [P, cubeLpNorm] using hH
+  have hHessEq (i j : Fin d) :
+      (Gagliardo.integralLpSeminorm (fun x => H.hess i j x) 2
+        (normalizedCubeMeasure P)).toReal =
+        (MeasureTheory.eLpNorm (fun x => H.hess i j x) 2
+          (normalizedCubeMeasure P)).toReal := by
+    exact congrArg ENNReal.toReal (Gagliardo.integralLpSeminorm_eq_eLpNorm _ _ _
+      (memL2On_openCubeSet_normalizedCubeMeasure
+        ((H.restrict (isOpen_openCubeSet P)
+          ((openCubeSet_subset_cubeSet P).trans (by simpa [P] using
+            centralChild_cubeSet_subset_scaledOpenInnerHalf Q))).hess_memL2 i j)).aestronglyMeasurable)
+  have hGradEq (j : Fin d) :
+      (Gagliardo.integralLpSeminorm (fun x => u.grad x j) 2
+        (normalizedCubeMeasure Q)).toReal =
+        (MeasureTheory.eLpNorm (fun x => u.grad x j) 2
+          (normalizedCubeMeasure Q)).toReal :=
+    congrArg ENNReal.toReal (Gagliardo.integralLpSeminorm_eq_eLpNorm _ _ _
+      (u.grad_memL2_normalizedCubeMeasure j).aestronglyMeasurable)
+  simp only [cubeLpNorm] at hH
+  simp only [P] at hHessEq
+  simp_rw [hHessEq, hGradEq] at hH
+  simpa [P] using hH
 
-private theorem centralDescendant_scaleFactor_le {d : ℕ} (Q : TriadicCube d) (n : ℕ) :
+/-- Descending centrally does not increase the cube scale factor. -/
+theorem centralDescendant_scaleFactor_le {d : ℕ} (Q : TriadicCube d) (n : ℕ) :
     ENNReal.ofReal (cubeScaleFactor (centralDescendant Q n)) ≤
       ENNReal.ofReal (cubeScaleFactor Q) := by
   rw [centralDescendant_cubeScaleFactor]
@@ -560,7 +578,8 @@ private theorem centralDescendant_scaleFactor_le {d : ℕ} (Q : TriadicCube d) (
   apply div_le_self hscale.le
   exact one_le_pow₀ (by norm_num : (1 : ℝ) ≤ 3)
 
-private theorem sum_fin_le_natCast_mul {d : ℕ} (f : Fin d → ℝ≥0∞) (A : ℝ≥0∞)
+/-- A finite sum is bounded by the number of summands times a uniform bound. -/
+theorem sum_fin_le_natCast_mul {d : ℕ} (f : Fin d → ℝ≥0∞) (A : ℝ≥0∞)
     (h : ∀ i, f i ≤ A) :
     ∑ i : Fin d, f i ≤ (d : ℝ≥0∞) * A := by
   calc
@@ -568,13 +587,15 @@ private theorem sum_fin_le_natCast_mul {d : ℕ} (f : Fin d → ℝ≥0∞) (A :
       Finset.sum_le_sum fun i _ => h i
     _ = _ := by simp
 
-private theorem row_sum_le_double_sum {d : ℕ} (f : Fin d → Fin d → ℝ≥0∞) (i : Fin d) :
+/-- A row is bounded by the full nonnegative double sum. -/
+theorem row_sum_le_double_sum {d : ℕ} (f : Fin d → Fin d → ℝ≥0∞) (i : Fin d) :
     (∑ j : Fin d, f i j) ≤ ∑ k : Fin d, ∑ j : Fin d, f k j := by
   exact Finset.single_le_sum
     (fun k _ => (zero_le : (0 : ℝ≥0∞) ≤ ∑ j : Fin d, f k j))
     (Finset.mem_univ i)
 
-private noncomputable def hessianGradCoordToW1p {d : ℕ} {U : Set (Vec d)}
+/-- Package a Hessian coordinate and its derivative as a Sobolev function. -/
+noncomputable def hessianGradCoordToW1p {d : ℕ} {U : Set (Vec d)}
     {u : H1Function U} (H : HasWeakHessianOn U u) (i : Fin d) (p : FiniteLpExponent)
     (hvalue : MeasureTheory.MemLp (fun x => u.grad x i) p.exponent
       (MeasureTheory.volume.restrict U))
@@ -589,7 +610,7 @@ private noncomputable def hessianGradCoordToW1p {d : ℕ} {U : Set (Vec d)}
 
 /-- The exact depth identity used in the derivative branch of the gain
 upgrade. -/
-private theorem centralDescendant_after_centralChild {d : ℕ} (Q : TriadicCube d) (n : ℕ) :
+theorem centralDescendant_after_centralChild {d : ℕ} (Q : TriadicCube d) (n : ℕ) :
     centralDescendant (centralChild Q) n = centralDescendant Q (n + 1) :=
   centralDescendant_centralChild Q n
 
@@ -795,7 +816,8 @@ noncomputable def HarmonicGradientGain.upgrade {d : ℕ} (hd : 0 < d)
       _ = K * R := by simp [K]; ring
   refine ⟨K, hKpos, hKtop, ?_, hpoint⟩
   intro Q u h i
-  refine ⟨(G.restrict_one_more Q u h i).aestronglyMeasurable, ?_⟩
+  change MeasureTheory.eLpNorm (fun x => u.grad x i) q.exponent
+    (normalizedCubeMeasure (centralDescendant Q (depth + 1))) < ∞
   apply lt_of_le_of_lt (hpoint Q u h i)
   exact lt_top_iff_ne_top.mpr (ENNReal.mul_ne_top hKtop
     ((ENNReal.sum_ne_top).2 fun j _ =>
@@ -811,10 +833,8 @@ noncomputable def HarmonicGradientGain.downgrade {d : ℕ} {r s : FiniteLpExpone
     let : MeasureTheory.IsProbabilityMeasure
         (normalizedCubeMeasure (centralDescendant Q depth)) :=
       ⟨normalizedCubeMeasure_apply_univ _⟩
-    refine ⟨(G.memLp Q u h i).aestronglyMeasurable, ?_⟩
     apply lt_of_le_of_lt
-      (MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le hsr
-        (G.memLp Q u h i).aestronglyMeasurable)
+      (MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le hsr)
     exact lt_of_le_of_lt (G.bound Q u h i)
       (lt_top_iff_ne_top.mpr (ENNReal.mul_ne_top G.constant_ne_top
         ((ENNReal.sum_ne_top).2 fun j _ =>
@@ -823,12 +843,12 @@ noncomputable def HarmonicGradientGain.downgrade {d : ℕ} {r s : FiniteLpExpone
     let : MeasureTheory.IsProbabilityMeasure
         (normalizedCubeMeasure (centralDescendant Q depth)) :=
       ⟨normalizedCubeMeasure_apply_univ _⟩
-    exact (MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le hsr
-      (G.memLp Q u h i).aestronglyMeasurable).trans (G.bound Q u h i)
+    exact (MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le hsr).trans
+      (G.bound Q u h i)
 
 /-- The explicit finite Sobolev ladder used above the `L²` base.  The side
 condition is precisely the positivity of its denominator. -/
-private noncomputable def sobolevLadderExponent (d : ℕ) (hd : 2 ≤ d)
+noncomputable def sobolevLadderExponent (d : ℕ) (hd : 2 ≤ d)
     (n : ℕ) (hn : 2 * n < d) :
     FiniteLpExponent where
   exponent := ENNReal.ofReal (2 * (d : ℝ) / ((d : ℝ) - 2 * n))
@@ -841,7 +861,7 @@ private noncomputable def sobolevLadderExponent (d : ℕ) (hd : 2 ≤ d)
     nlinarith
   lt_top := ENNReal.ofReal_lt_top
 
-private theorem sobolevLadderExponent_toReal (d : ℕ) (hd : 2 ≤ d)
+theorem sobolevLadderExponent_toReal (d : ℕ) (hd : 2 ≤ d)
     (n : ℕ) (hn : 2 * n < d) :
     (sobolevLadderExponent d hd n hn).exponent.toReal =
       2 * (d : ℝ) / ((d : ℝ) - 2 * n) := by
@@ -851,7 +871,7 @@ private theorem sobolevLadderExponent_toReal (d : ℕ) (hd : 2 ≤ d)
   simp [sobolevLadderExponent, ENNReal.toReal_ofReal
     (div_nonneg hnum hden)]
 
-private theorem sobolevLadderExponent_step_relation (d : ℕ) (hd : 2 ≤ d)
+theorem sobolevLadderExponent_step_relation (d : ℕ) (hd : 2 ≤ d)
     (n : ℕ) (hn : 2 * (n + 1) < d) :
     (sobolevLadderExponent d hd (n + 1) hn).exponent.toReal⁻¹ =
       (sobolevLadderExponent d hd n (by omega)).exponent.toReal⁻¹ - (d : ℝ)⁻¹ := by
@@ -867,7 +887,7 @@ private theorem sobolevLadderExponent_step_relation (d : ℕ) (hd : 2 ≤ d)
   norm_num [Nat.cast_add, Nat.cast_one]
   ring
 
-private theorem sobolevLadderExponent_lt_dimension (d : ℕ) (hd : 2 ≤ d)
+theorem sobolevLadderExponent_lt_dimension (d : ℕ) (hd : 2 ≤ d)
     (n : ℕ) (hn : 2 * (n + 1) < d) :
     (sobolevLadderExponent d hd n (by omega)).exponent.toReal < d := by
   rw [sobolevLadderExponent_toReal]
@@ -883,13 +903,13 @@ private theorem finiteLpExponent_eq {p q : FiniteLpExponent}
   cases q
   simp_all
 
-private theorem sobolevLadderExponent_zero (d : ℕ) (hd : 2 ≤ d) :
+theorem sobolevLadderExponent_zero (d : ℕ) (hd : 2 ≤ d) :
     sobolevLadderExponent d hd 0 (by omega) = FiniteLpExponent.two := by
   apply finiteLpExponent_eq
   have hd' : 0 < (d : ℝ) := by exact_mod_cast (lt_of_lt_of_le (by norm_num) hd)
   simp [sobolevLadderExponent, hd'.ne']
 
-private noncomputable def harmonicGradientGain_ladder (d : ℕ) (hd : 3 ≤ d) :
+noncomputable def harmonicGradientGain_ladder (d : ℕ) (hd : 3 ≤ d) :
     ∀ (n : ℕ) (hn : 2 * n < d),
       HarmonicGradientGain d (sobolevLadderExponent d (by omega) n hn) n
   | 0, hn => by
@@ -901,7 +921,8 @@ private noncomputable def harmonicGradientGain_ladder (d : ℕ) (hd : 3 ≤ d) :
         (sobolevLadderExponent_lt_dimension d (by omega) n hn)
         (harmonicGradientGain_ladder d hd n (by omega))
 
-private theorem terminalLadderDepth_twice_lt (d : ℕ) (hd : 3 ≤ d) :
+/-- The terminal ladder depth remains below the dimension threshold. -/
+theorem terminalLadderDepth_twice_lt (d : ℕ) (hd : 3 ≤ d) :
     2 * ((d - 1) / 2) < d := by omega
 
 private theorem terminalLadderExponent_ge_dimension (d : ℕ) (hd : 3 ≤ d) :
@@ -926,7 +947,7 @@ private theorem terminalLadderExponent_ge_dimension (d : ℕ) (hd : 3 ≤ d) :
   simp only [N] at hden ⊢
   nlinarith
 
-private noncomputable def targetSobolevSourceExponent (d : ℕ) (hd2 : 2 ≤ d) (q : FiniteLpExponent)
+noncomputable def targetSobolevSourceExponent (d : ℕ) (hd2 : 2 ≤ d) (q : FiniteLpExponent)
     (hq : (2 : ℝ) < q.exponent.toReal) : FiniteLpExponent where
   exponent := ENNReal.ofReal ((d : ℝ) * q.exponent.toReal /
     ((d : ℝ) + q.exponent.toReal))
@@ -940,7 +961,7 @@ private noncomputable def targetSobolevSourceExponent (d : ℕ) (hd2 : 2 ≤ d) 
     nlinarith
   lt_top := ENNReal.ofReal_lt_top
 
-private theorem targetSobolevSourceExponent_toReal (d : ℕ) (hd2 : 2 ≤ d) (q : FiniteLpExponent)
+theorem targetSobolevSourceExponent_toReal (d : ℕ) (hd2 : 2 ≤ d) (q : FiniteLpExponent)
     (hq : (2 : ℝ) < q.exponent.toReal) :
     (targetSobolevSourceExponent d hd2 q hq).exponent.toReal =
       (d : ℝ) * q.exponent.toReal / ((d : ℝ) + q.exponent.toReal) := by
@@ -949,7 +970,7 @@ private theorem targetSobolevSourceExponent_toReal (d : ℕ) (hd2 : 2 ≤ d) (q 
   simp [targetSobolevSourceExponent, ENNReal.toReal_ofReal
     (div_nonneg (mul_nonneg hd hq') (add_nonneg hd hq'))]
 
-private theorem targetSobolevSourceExponent_lt_dimension (d : ℕ) (hd2 : 2 ≤ d)
+theorem targetSobolevSourceExponent_lt_dimension (d : ℕ) (hd2 : 2 ≤ d)
     (q : FiniteLpExponent)
     (hq : (2 : ℝ) < q.exponent.toReal) :
     (targetSobolevSourceExponent d hd2 q hq).exponent.toReal < d := by
@@ -961,7 +982,7 @@ private theorem targetSobolevSourceExponent_lt_dimension (d : ℕ) (hd2 : 2 ≤ 
   rw [div_lt_iff₀ hden]
   nlinarith
 
-private theorem targetSobolevSourceExponent_relation (d : ℕ) (hd2 : 2 ≤ d)
+theorem targetSobolevSourceExponent_relation (d : ℕ) (hd2 : 2 ≤ d)
     (q : FiniteLpExponent)
     (hq : (2 : ℝ) < q.exponent.toReal) :
     q.exponent.toReal⁻¹ = (targetSobolevSourceExponent d hd2 q hq).exponent.toReal⁻¹ -
@@ -974,7 +995,7 @@ private theorem targetSobolevSourceExponent_relation (d : ℕ) (hd2 : 2 ≤ d)
   field_simp [hd.ne', hq'.ne', hden.ne']
   ring
 
-private theorem targetSobolevSourceExponent_le_two_twoDim (q : FiniteLpExponent)
+theorem targetSobolevSourceExponent_le_two_twoDim (q : FiniteLpExponent)
     (hq : (2 : ℝ) < q.exponent.toReal) :
     (targetSobolevSourceExponent 2 (by norm_num) q hq).exponent ≤ 2 := by
   apply (ENNReal.toReal_le_toReal
@@ -1008,7 +1029,7 @@ noncomputable def harmonicEuclideanGradientGain_finiteTarget_gt_two_twoDim
   HarmonicEuclideanGradientGain.fromScalar
     (harmonicGradientGain_finiteTarget_gt_two_twoDim q hq2)
 
-private theorem targetSobolevSourceExponent_le_terminalLadder (d : ℕ) (hd : 3 ≤ d)
+theorem targetSobolevSourceExponent_le_terminalLadder (d : ℕ) (hd : 3 ≤ d)
     (q : FiniteLpExponent) (hq : (2 : ℝ) < q.exponent.toReal) :
     (targetSobolevSourceExponent d (by omega) q hq).exponent ≤
       (sobolevLadderExponent d (by omega) ((d - 1) / 2)
@@ -1107,7 +1128,12 @@ noncomputable def harmonicGradientGain_finiteTarget_oneDim
           (normalizedCubeMeasure Q) := by
       apply ennreal_le_of_toReal_le hleftmem.eLpNorm_ne_top
         (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hrightmem.eLpNorm_ne_top)
-      simpa [cubeLpNorm, centralDescendant_succ, ENNReal.toReal_mul,
+      change cubeLpNorm (centralDescendant Q 1) p.exponent
+        (fun x => u.grad x 0) ≤ C * cubeLpNorm Q 2 (fun x => u.grad x 0) at hreal
+      rw [cubeLpNorm_eq_eLpNorm_toReal (centralDescendant Q 1) p.exponent _
+        hleftmem.aestronglyMeasurable,
+        cubeLpNorm_eq_eLpNorm_toReal Q 2 _ hrightmem.aestronglyMeasurable] at hreal
+      simpa [centralDescendant_succ, ENNReal.toReal_mul,
         ENNReal.toReal_ofReal hCpos.le] using! hreal
     have hsingle : MeasureTheory.eLpNorm (fun x => u.grad x (0 : Fin 1)) 2
         (normalizedCubeMeasure Q) ≤ ∑ j : Fin 1,

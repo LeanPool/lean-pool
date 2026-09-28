@@ -60,7 +60,8 @@ theorem tendsto_eLpNorm_two_of_tendsto_ae_of_dominated
   set B : Vec d → ℝ≥0∞ := fun x => (‖h x‖ₑ + ‖g x‖ₑ) ^ (2 : ℝ) with hB
   have hFmeas : ∀ n, AEMeasurable (F n) μ := by
     intro n
-    exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable (((hf n).sub hg.1).enorm)
+    exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
+      (((hf n).sub hg.aestronglyMeasurable).enorm)
   have hBound : ∀ n, F n ≤ᵐ[μ] B := by
     intro n
     filter_upwards [hbound n] with x hx
@@ -92,7 +93,8 @@ theorem tendsto_eLpNorm_two_of_tendsto_ae_of_dominated
             · rw [(ENNReal.strictMono_rpow_of_pos (by norm_num)).monotone.map_max]
               exact max_le (le_add_right le_rfl) (le_add_left le_rfl)
     have hHmeas : AEMeasurable (fun x => ‖h x‖ₑ ^ (2:ℝ)) μ :=
-      ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hh.1.enorm
+      ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
+        hh.aestronglyMeasurable.enorm
     have hle : ∫⁻ x, B x ∂μ ≤ 4 * (∫⁻ x, ‖h x‖ₑ ^ (2:ℝ) ∂μ + ∫⁻ x, ‖g x‖ₑ ^ (2:ℝ) ∂μ) := by
       calc ∫⁻ x, B x ∂μ ≤ ∫⁻ x, 4 * (‖h x‖ₑ ^ (2:ℝ) + ‖g x‖ₑ ^ (2:ℝ)) ∂μ :=
             lintegral_mono hpt
@@ -114,7 +116,10 @@ theorem tendsto_eLpNorm_two_of_tendsto_ae_of_dominated
   rw [lintegral_zero] at hlim0
   have hrw : ∀ n, eLpNorm (fun x => f n x - g x) 2 μ = (∫⁻ x, F n x ∂μ) ^ (1 / (2:ℝ)) := by
     intro n
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal h2z h2t, h2r]
+    change eLpNorm (f n - g) 2 μ = (∫⁻ x, F n x ∂μ) ^ (1 / (2:ℝ))
+    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal h2z h2t
+      ((hf n).sub hg.aestronglyMeasurable), h2r]
+    simp only [hF, Pi.sub_apply]
   simp_rw [hrw]
   have hc : Tendsto (fun y : ℝ≥0∞ => y ^ (1 / (2:ℝ))) (𝓝 0) (𝓝 0) := by
     have := (ENNReal.continuous_rpow_const (y := 1 / (2:ℝ))).tendsto 0
@@ -219,9 +224,9 @@ theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm_two
   -- integrability of the products
   have hfh_int : ∀ n, Integrable (fun x => f n x * h x) μ := by
     intro n
-    exact memLp_one_iff_integrable.mp (hh.mul' (hf n))
+    exact memLp_one_iff_integrable.mp ((hf n).fun_mul (r := 1) hh)
   have hgh_int : Integrable (fun x => g x * h x) μ :=
-    memLp_one_iff_integrable.mp (hh.mul' hg)
+    memLp_one_iff_integrable.mp (hg.fun_mul (r := 1) hh)
   -- rewrite the goal as a difference tending to zero
   rw [← tendsto_sub_nhds_zero_iff]
   have hdiff_eq : ∀ n,
@@ -236,7 +241,7 @@ theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm_two
     eLpNorm (fun x => f n x - g x) 2 μ * eLpNorm h 2 μ with hB
   have hBtend : Filter.Tendsto (fun n => (B n).toReal) Filter.atTop (nhds 0) := by
     have hprod : Filter.Tendsto B Filter.atTop (nhds (0 * eLpNorm h 2 μ)) := by
-      refine ENNReal.Tendsto.mul htend (Or.inr hh.2.ne) tendsto_const_nhds
+      refine ENNReal.Tendsto.mul htend (Or.inr hh.eLpNorm_ne_top) tendsto_const_nhds
         (Or.inr (by simp))
     rw [zero_mul] at hprod
     have := (ENNReal.tendsto_toReal (by simp : (0 : ℝ≥0∞) ≠ ⊤)).comp hprod
@@ -252,17 +257,20 @@ theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm_two
       eLpNorm (fun x => (f n x - g x) * h x) 1 μ ≤ B n := by
     have := eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
       (μ := μ) (p := (2 : ℝ≥0∞)) (q := (2 : ℝ≥0∞)) (r := (1 : ℝ≥0∞))
-      ((hf n).sub hg).1 hh.1 (fun a b => a * b) 1 hae
+      (fun a b : ℝ => a * b) 1 (continuous_fst.mul continuous_snd)
+      ((hf n).sub hg).aestronglyMeasurable hh.aestronglyMeasurable hae
     simpa [hB] using! this
   calc ‖∫ x, (f n x - g x) * h x ∂μ‖
       ≤ (∫⁻ x, ENNReal.ofReal ‖(f n x - g x) * h x‖ ∂μ).toReal :=
         norm_integral_le_lintegral_norm _
     _ = (eLpNorm (fun x => (f n x - g x) * h x) 1 μ).toReal := by
-        rw [eLpNorm_one_eq_lintegral_enorm]
+        have hmeas : AEStronglyMeasurable (fun x => (f n x - g x) * h x) μ :=
+          ((hf n).sub hg).aestronglyMeasurable.mul hh.aestronglyMeasurable
+        rw [eLpNorm_one_eq_lintegral_enorm hmeas]
         simp_rw [ofReal_norm]
     _ ≤ (B n).toReal := by
         apply ENNReal.toReal_mono _ hHolder
-        exact ENNReal.mul_ne_top ((hf n).sub hg).2.ne hh.2.ne
+        exact ENNReal.mul_ne_top ((hf n).sub hg).eLpNorm_ne_top hh.eLpNorm_ne_top
 
 /-- **Weak partial derivatives are closed under `L²` limits.**
 If `u n → u` and `g n → g` in `L²(U)` and each `u n` has weak `i`-th partial

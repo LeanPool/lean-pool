@@ -42,9 +42,9 @@ private theorem sq_le_tail_split {E : Type*} [NormedAddCommGroup E]
       ‖f‖ = ‖v + (f - v)‖ := by congr 1; abel
       _ ≤ ‖v‖ + ‖f - v‖ := norm_add_le _ _
   by_cases hf : a < ‖f‖
-  · rw [if_pos hf]
+  · rw [ite_eq_left hf]
     by_cases hv : a / 2 < ‖v‖
-    · rw [if_pos hv]
+    · rw [ite_eq_left hv]
       have hhalf : 0 < a / 2 := by linarith
       have hv_pos : 0 < ‖v‖ := hhalf.trans hv
       have hpow : ‖v‖ ^ (2 : ℝ) ≤ (a / 2) ^ (2 - r) * ‖v‖ ^ r := by
@@ -66,11 +66,11 @@ private theorem sq_le_tail_split {E : Type*} [NormedAddCommGroup E]
         norm_num [Real.rpow_two]
         nlinarith [sq_nonneg (‖v‖ - ‖f - v‖)]
       nlinarith [hpow, sq_nonneg (‖f - v‖)]
-    · rw [if_neg hv]
+    · rw [ite_eq_right hv]
       have hv_le : ‖v‖ ≤ a / 2 := le_of_not_gt hv
       have hdiff : ‖f‖ / 2 < ‖f - v‖ := by linarith
       nlinarith [sq_nonneg (‖f - v‖)]
-  · rw [if_neg hf]
+  · rw [ite_eq_right hf]
     positivity
 
 theorem sqWeightedMeasure_tail_le_comparison {α E : Type*} [MeasurableSpace α]
@@ -108,10 +108,10 @@ theorem sqWeightedMeasure_tail_le_comparison {α E : Type*} [MeasurableSpace α]
                   (if a / 2 < ‖v x‖ then 1 else 0) +
                 6 * ‖f x - v x‖ ^ (2 : ℕ) := by
             have hfx : a < ‖f x‖ := by simpa [T] using hxT
-            simpa only [if_pos hfx] using hs
+            simpa only [ite_eq_left hfx] using hs
           by_cases hv' : a / 2 < ‖v x‖
           · simpa [hv'] using hs'
-          · rw [if_neg hv'] at hs'
+          · rw [ite_eq_right hv'] at hs'
             have hvpow : 0 ≤ 2 * ((a / 2) ^ (2 - r)) * ‖v x‖ ^ r := by
               positivity
             linarith

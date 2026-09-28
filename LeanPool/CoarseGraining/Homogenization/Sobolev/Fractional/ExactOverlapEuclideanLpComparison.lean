@@ -189,7 +189,8 @@ theorem cubeEuclideanPositiveBesovOverlapESeminorm_congr_ae {d : ℕ}
   refine Finset.sum_congr rfl fun S _ => ?_
   rw [euclideanOverlapLocalENorm_congr_ae p S.2 hFG]
 
-private theorem exactOverlapScalarPIntegrableOfEuclideanField {d : ℕ}
+/-- Each coordinate of a cube Euclidean `Lᵖ` field is integrable on exact overlaps. -/
+theorem exactOverlapScalarPIntegrableOfEuclideanField {d : ℕ}
     (Q : TriadicCube d) (p : FiniteLpExponent) (F : CubeEuclideanLpField Q p)
     (i : Fin d) : ExactOverlapIntegrable Q (fun x => F x i) where
   root := (cubeEuclideanLp_coordinate_memLp F i).integrable p.one_lt.le

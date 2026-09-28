@@ -98,11 +98,11 @@ private theorem foldComp_line_integral {v : Vec (n + 1) → ℝ}
     rw [Fold_insertNth, ← hw]
     unfold foldR
     by_cases h1 : t < lo j
-    · rw [if_pos h1, if_pos h1]
-    · rw [if_neg h1, if_neg h1]
+    · rw [ite_eq_left h1, ite_eq_left h1]
+    · rw [ite_eq_right h1, ite_eq_right h1]
       by_cases h2 : hi j < t
-      · rw [if_pos h2, if_pos h2]
-      · rw [if_neg h2, if_neg h2]
+      · rw [ite_eq_left h2, ite_eq_left h2]
+      · rw [ite_eq_right h2, ite_eq_right h2]
   -- rewrite the piecewise derivative to the candidate gradient on the line
   have hG : ∀ t,
       (if t < lo j then (fderiv ℝ v (j.insertNth (2 * lo j - t) w)) (-basisVec j)
@@ -114,11 +114,11 @@ private theorem foldComp_line_integral {v : Vec (n + 1) → ℝ}
     rw [Fin.insertNth_apply_same, Fold_insertNth, ← hw]
     unfold foldR foldSign
     by_cases h1 : t < lo j
-    · rw [if_pos h1, if_pos h1, if_pos h1, map_neg]; ring
-    · rw [if_neg h1, if_neg h1, if_neg h1]
+    · rw [ite_eq_left h1, ite_eq_left h1, ite_eq_left h1, map_neg]; ring
+    · rw [ite_eq_right h1, ite_eq_right h1, ite_eq_right h1]
       by_cases h2 : hi j < t
-      · rw [if_pos h2, if_pos h2, if_pos h2, map_neg]; ring
-      · rw [if_neg h2, if_neg h2, if_neg h2]; ring
+      · rw [ite_eq_left h2, ite_eq_left h2, ite_eq_left h2, map_neg]; ring
+      · rw [ite_eq_right h2, ite_eq_right h2, ite_eq_right h2]; ring
   -- assemble
   have e1 : (∫ t, v (Fold lo hi (j.insertNth t z))
         * (fderiv ℝ φ (j.insertNth t z)) (basisVec j))
@@ -182,10 +182,10 @@ theorem hasWeakPartialDerivOn_univ_foldComp {v : Vec (n + 1) → ℝ}
     have hsign : ‖foldSign (lo j) (hi j) (x j)‖ ≤ 1 := by
       unfold foldSign
       by_cases h1 : x j < lo j
-      · rw [if_pos h1]; simp
-      · rw [if_neg h1]; by_cases h2 : hi j < x j
-        · rw [if_pos h2]; simp
-        · rw [if_neg h2]; simp
+      · rw [ite_eq_left h1]; simp
+      · rw [ite_eq_right h1]; by_cases h2 : hi j < x j
+        · rw [ite_eq_left h2]; simp
+        · rw [ite_eq_right h2]; simp
     calc ‖(fderiv ℝ v (Fold lo hi x)) (basisVec j)‖ * ‖foldSign (lo j) (hi j) (x j)‖
         ≤ M * 1 := by
           apply mul_le_mul (hMbound _) hsign (norm_nonneg _) hM0

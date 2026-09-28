@@ -128,38 +128,25 @@ theorem memH10_of_tendsto_H1 {d : ℕ} {U : Set (Vec d)}
   · -- `ψₙ → f` in `L²`.
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hfun_bound
       (fun n => zero_le) (fun n => ?_)
-    have hsm_ψ : AEStronglyMeasurable (ψ n) μU :=
-      ((W n).approx_smooth (k n)).continuous.aestronglyMeasurable
-    have hsm_Wtf : AEStronglyMeasurable (W n).toH1Function.toFun μU :=
-      (W n).toH1Function.memL2.1
     have heq :
         (fun x => ψ n x - f.toFun x) =
           (fun x => ψ n x - (W n).toH1Function.toFun x) +
             (fun x => (W n).toH1Function.toFun x - f.toFun x) := by
       funext x; simp only [Pi.add_apply]; ring
     rw [heq]
-    refine (eLpNorm_add_le (hsm_ψ.sub hsm_Wtf) (hsm_Wtf.sub f.memL2.1) (by norm_num)).trans ?_
+    refine (eLpNorm_add_le (by norm_num)).trans ?_
     exact add_le_add (le_of_lt (hk n).1) le_rfl
   · -- `∇ψₙ → ∇f` in `L²`, coordinatewise.
     intro i
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds (hgrad_bound i)
       (fun n => zero_le) (fun n => ?_)
-    have hsm_dψ : AEStronglyMeasurable
-        (fun x => (fderiv ℝ (ψ n) x) (basisVec i)) μU := by
-      have : ContDiff ℝ (⊤ : ℕ∞) (fun x => (fderiv ℝ (ψ n) x) (basisVec i)) :=
-        (((W n).approx_smooth (k n)).fderiv_right (m := (⊤ : ℕ∞)) (by norm_cast)).clm_apply
-          contDiff_const
-      exact this.continuous.aestronglyMeasurable
-    have hsm_Wg : AEStronglyMeasurable (fun x => (W n).toH1Function.grad x i) μU :=
-      (W n).toH1Function.gradMemL2 i |>.1
     have heq :
         (fun x => (fderiv ℝ (ψ n) x) (basisVec i) - f.grad x i) =
           (fun x => (fderiv ℝ (ψ n) x) (basisVec i) - (W n).toH1Function.grad x i) +
             (fun x => (W n).toH1Function.grad x i - f.grad x i) := by
       funext x; simp only [Pi.add_apply]; ring
     rw [heq]
-    refine (eLpNorm_add_le (hsm_dψ.sub hsm_Wg) (hsm_Wg.sub (f.gradMemL2 i).1)
-      (by norm_num)).trans ?_
+    refine (eLpNorm_add_le (by norm_num)).trans ?_
     exact add_le_add (le_of_lt ((hk n).2 i)) le_rfl
 
 end Homogenization

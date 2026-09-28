@@ -28,7 +28,8 @@ noncomputable section
 
 namespace CubeCalderonZygmund
 
-private noncomputable def boundedApproximation
+/-- A bounded continuous approximation to finite-exponent cube data. -/
+noncomputable def boundedApproximation
     {d : ℕ} {Q : TriadicCube d} {q : FiniteLpExponent}
     (h : CubeEuclideanLpField Q q) (n : ℕ) :
     BoundedContinuousFunction (Vec d) (HilbertVec d) :=

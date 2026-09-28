@@ -32,7 +32,8 @@ residual has zero normal trace; on a cube this forces the residual flux average
 to vanish.
 -/
 
-private theorem isFiniteMeasureVolumeMeasureOnCubeSet_weakFluxRHS {d : ℕ}
+/-- The volume measure restricted to a triadic cube is finite. -/
+theorem isFiniteMeasureVolumeMeasureOnCubeSet_weakFluxRHS {d : ℕ}
     (Q : TriadicCube d) :
     MeasureTheory.IsFiniteMeasure (volumeMeasureOn (cubeSet Q)) := by
   let U : Set (Vec d) := cubeSet Q

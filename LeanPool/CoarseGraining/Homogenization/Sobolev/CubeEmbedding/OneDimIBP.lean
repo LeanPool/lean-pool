@@ -122,18 +122,18 @@ theorem integral_mul_deriv_piecewise_eq_neg (a : ℝ)
       ((hf₁'.mul hcφ).intervalIntegrable _ _)
     intro t ht
     rw [uIoc_of_le hle, mem_Ioc] at ht
-    simp [hpwd, if_pos ht.2]
+    simp [hpwd, ite_eq_left ht.2]
   have hGII2 : IntervalIntegrable (fun t => pwd t * φ t) volume a R := by
     refine (intervalIntegrable_congr (f := fun t => f₂' t * φ t) ?_).mp
       ((hf₂'.mul hcφ).intervalIntegrable _ _)
     intro t ht
     rw [uIoc_of_le hle', mem_Ioc] at ht
-    simp [hpwd, if_neg (not_le.mpr ht.1)]
+    simp [hpwd, ite_eq_right (not_le.mpr ht.1)]
   -- the four interval-integral evaluations
   have hL1 : ∫ t in (-R)..a, pw t * φ' t
       = f₁ a * φ a - ∫ t in (-R)..a, f₁' t * φ t := by
     rw [integral_congr (g := fun t => f₁ t * φ' t) (fun t ht => by
-      rw [uIcc_of_le hle, mem_Icc] at ht; simp [hpw, if_pos ht.2])]
+      rw [uIcc_of_le hle, mem_Icc] at ht; simp [hpw, ite_eq_left ht.2])]
     rw [integral_mul_deriv_eq_deriv_mul_of_hasDerivAt hcf₁.continuousOn hcφ.continuousOn
       (fun x _ => hf₁ x) (fun x _ => hφ x)
       (hf₁'.intervalIntegrable _ _) (hφ'.intervalIntegrable _ _)]
@@ -144,19 +144,19 @@ theorem integral_mul_deriv_piecewise_eq_neg (a : ℝ)
       rw [uIcc_of_le hle', mem_Icc] at ht
       by_cases h : t ≤ a
       · have hta : t = a := le_antisymm h ht.1
-        subst hta; simp [hpw, if_pos h, hmatch]
-      · simp [hpw, if_neg h])]
+        subst hta; simp [hpw, ite_eq_left h, hmatch]
+      · simp [hpw, ite_eq_right h])]
     rw [integral_mul_deriv_eq_deriv_mul_of_hasDerivAt hcf₂.continuousOn hcφ.continuousOn
       (fun x _ => hf₂ x) (fun x _ => hφ x)
       (hf₂'.intervalIntegrable _ _) (hφ'.intervalIntegrable _ _)]
     rw [hφR, mul_zero, zero_sub]
   have hR1 : ∫ t in (-R)..a, pwd t * φ t = ∫ t in (-R)..a, f₁' t * φ t :=
     integral_congr (fun t ht => by
-      rw [uIcc_of_le hle, mem_Icc] at ht; simp [hpwd, if_pos ht.2])
+      rw [uIcc_of_le hle, mem_Icc] at ht; simp [hpwd, ite_eq_left ht.2])
   have hR2 : ∫ t in a..R, pwd t * φ t = ∫ t in a..R, f₂' t * φ t :=
     integral_congr_ae (Filter.Eventually.of_forall (fun t ht => by
       rw [uIoc_of_le hle', mem_Ioc] at ht
-      simp [hpwd, if_neg (not_le.mpr ht.1)]))
+      simp [hpwd, ite_eq_right (not_le.mpr ht.1)]))
   -- assemble
   rw [← integral_eq_integral_of_support_subset hFsupp,
       ← integral_eq_integral_of_support_subset hGsupp,
@@ -284,29 +284,31 @@ theorem integral_mul_deriv_two_kink_eq_neg (b₁ b₂ : ℝ) (hb : b₁ ≤ b₂
         + (if t ≤ b₂ then (0 : ℝ) else f₃ t - f₂ t) := by
     intro t
     rcases lt_trichotomy t b₁ with h | h | h
-    · rw [if_pos h, if_pos (le_of_lt h), if_pos (le_of_lt (lt_of_lt_of_le h hb))]; ring
+    · rw [ite_eq_left h, ite_eq_left (le_of_lt h),
+        ite_eq_left (le_of_lt (lt_of_lt_of_le h hb))]; ring
     · subst h
-      rw [if_neg (lt_irrefl _), if_neg (by linarith : ¬ b₂ < t),
-        if_pos (le_refl t), if_pos (by linarith : t ≤ b₂), hm₁]; ring
-    · rw [if_neg (not_lt.mpr (le_of_lt h)), if_neg (by linarith : ¬ t ≤ b₁)]
+      rw [ite_eq_right (lt_irrefl _), ite_eq_right (by linarith : ¬ b₂ < t),
+        ite_eq_left (le_refl t), ite_eq_left (by linarith : t ≤ b₂), hm₁]; ring
+    · rw [ite_eq_right (not_lt.mpr (le_of_lt h)), ite_eq_right (by linarith : ¬ t ≤ b₁)]
       rcases lt_trichotomy t b₂ with h2 | h2 | h2
-      · rw [if_neg (not_lt.mpr (le_of_lt h2)), if_pos (le_of_lt h2)]; ring
+      · rw [ite_eq_right (not_lt.mpr (le_of_lt h2)), ite_eq_left (le_of_lt h2)]; ring
       · subst h2
-        rw [if_neg (lt_irrefl _), if_pos (le_refl t)]; ring
-      · rw [if_pos h2, if_neg (by linarith : ¬ t ≤ b₂)]; ring
+        rw [ite_eq_right (lt_irrefl _), ite_eq_left (le_refl t)]; ring
+      · rw [ite_eq_left h2, ite_eq_right (by linarith : ¬ t ≤ b₂)]; ring
   have hPWD : ∀ t, t ≠ b₁ → t ≠ b₂ →
       f₂' t + (if t ≤ b₁ then f₁' t - f₂' t else 0)
         + (if t ≤ b₂ then (0 : ℝ) else f₃' t - f₂' t)
       = (if t < b₁ then f₁' t else if b₂ < t then f₃' t else f₂' t) := by
     intro t ht1 ht2
     rcases lt_trichotomy t b₁ with h | h | h
-    · rw [if_pos (le_of_lt h), if_pos (le_of_lt (lt_of_lt_of_le h hb)), if_pos h]; ring
+    · rw [ite_eq_left (le_of_lt h), ite_eq_left (le_of_lt (lt_of_lt_of_le h hb)),
+        ite_eq_left h]; ring
     · exact absurd h ht1
-    · rw [if_neg (by linarith : ¬ t ≤ b₁), if_neg (not_lt.mpr (le_of_lt h))]
+    · rw [ite_eq_right (by linarith : ¬ t ≤ b₁), ite_eq_right (not_lt.mpr (le_of_lt h))]
       rcases lt_trichotomy t b₂ with h2 | h2 | h2
-      · rw [if_pos (le_of_lt h2), if_neg (not_lt.mpr (le_of_lt h2))]; ring
+      · rw [ite_eq_left (le_of_lt h2), ite_eq_right (not_lt.mpr (le_of_lt h2))]; ring
       · exact absurd h2 ht2
-      · rw [if_neg (by linarith : ¬ t ≤ b₂), if_pos h2]; ring
+      · rw [ite_eq_right (by linarith : ¬ t ≤ b₂), ite_eq_left h2]; ring
   -- assemble
   calc (∫ t, (if t < b₁ then f₁ t else if b₂ < t then f₃ t else f₂ t) * φ' t)
       = ∫ t, (f₂ t * φ' t + (if t ≤ b₁ then f₁ t - f₂ t else 0) * φ' t

@@ -77,8 +77,23 @@ private theorem scalar_overlap_coordinate_normalized_bound {d : ℕ} [NeZero d]
       ∑ k : Fin d, ENNReal.toReal (eLpNorm (fun x => w.grad x k)
         q.exponent (volumeMeasureOn (openOverlapCubeSet S))) at hraw
   rw [scalarOverlap_normalizedCubeMeasure_eq_open]
-  rw [MeasureTheory.eLpNorm_smul_measure_of_ne_top q.lt_top.ne]
-  simp_rw [MeasureTheory.eLpNorm_smul_measure_of_ne_top q.lt_top.ne]
+  rw [havg]
+  change ENNReal.toReal (eLpNorm
+      (fun x => w.toFun x - integralAverage (openOverlapCubeSet S) w.toFun)
+      q.exponent (ENNReal.ofReal (overlapCubeVolume S)⁻¹ •
+        volumeMeasureOn (openOverlapCubeSet S))) ≤
+    (C * overlapCubeScaleFactor S) *
+      ∑ k : Fin d, ENNReal.toReal (eLpNorm (fun x => w.grad x k)
+        q.exponent (ENNReal.ofReal (overlapCubeVolume S)⁻¹ •
+          volumeMeasureOn (openOverlapCubeSet S)))
+  rw [MeasureTheory.eLpNorm_smul_measure_of_ne_top q.lt_top.ne
+    (fun x => w.toFun x - integralAverage (openOverlapCubeSet S) w.toFun) _
+    (w.memLp.aestronglyMeasurable.sub aestronglyMeasurable_const)]
+  have hgrad (k : Fin d) := MeasureTheory.eLpNorm_smul_measure_of_ne_top
+    q.lt_top.ne (fun x => w.grad x k)
+      (ENNReal.ofReal (overlapCubeVolume S)⁻¹)
+      (w.gradMemLp k).aestronglyMeasurable
+  simp_rw [hgrad]
   let A : ℝ :=
     (ENNReal.ofReal (overlapCubeVolume S)⁻¹ ^ (1 / q.exponent).toReal).toReal
   have hA : 0 ≤ A := ENNReal.toReal_nonneg
@@ -86,7 +101,9 @@ private theorem scalar_overlap_coordinate_normalized_bound {d : ℕ} [NeZero d]
   simpa [A, w, havg, ENNReal.toReal_mul, Finset.mul_sum, mul_assoc,
     mul_left_comm, mul_comm] using! hmul
 
-private theorem memLp_overlap_vector_residual {d : ℕ} {Q S : TriadicCube d}
+/-- A vector field with finite parent norm has an integrable centered residual on each
+retained overlap cube. -/
+theorem memLp_overlap_vector_residual {d : ℕ} {Q S : TriadicCube d}
     {j : ℕ} (q : FiniteLpExponent) (hS : S ∈ ScalarOverlap.centersAtDepth Q j)
     (V : CubeVectorW1pFunction Q q) :
     MemLp (fun x => HilbertVec.ofVec
@@ -101,7 +118,8 @@ private theorem memLp_overlap_vector_residual {d : ℕ} {Q S : TriadicCube d}
   simpa only [Function.comp_apply, HilbertVec.ofVec, PiLp.toLp_apply,
     V.toField_apply, Pi.sub_apply, ScalarOverlap.cubeAverageVec] using hcoord
 
-private theorem memLp_overlap_jacobian {d : ℕ} {Q S : TriadicCube d}
+/-- The Jacobian's Hilbert norm remains integrable on each retained overlap cube. -/
+theorem memLp_overlap_jacobian {d : ℕ} {Q S : TriadicCube d}
     {j : ℕ} (q : FiniteLpExponent) (hS : S ∈ ScalarOverlap.centersAtDepth Q j)
     (V : CubeVectorW1pFunction Q q) :
     MemLp (fun x => HilbertMat.ofMat (V.jacobian x))
@@ -125,7 +143,14 @@ private theorem eLpNorm_overlap_jacobian_entry_le {d : ℕ} {Q S : TriadicCube d
       (ScalarOverlap.normalizedCubeMeasure S) ≤
     eLpNorm (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
       (ScalarOverlap.normalizedCubeMeasure S) := by
-  apply eLpNorm_mono_ae
+  have hmem := memLp_overlap_jacobian q _hS V
+  rw [MeasureTheory.memLp_piLp_iff] at hmem
+  have hrow := hmem i
+  rw [MeasureTheory.memLp_piLp_iff] at hrow
+  have hentry := hrow k
+  apply eLpNorm_mono_ae (by
+    simpa only [Function.comp_apply, HilbertMat.ofMat, HilbertVec.ofVec,
+      PiLp.toLp_apply, V.jacobian_apply] using hentry.aestronglyMeasurable)
   filter_upwards [] with x
   calc
     ‖V.jacobian x i k‖ ≤

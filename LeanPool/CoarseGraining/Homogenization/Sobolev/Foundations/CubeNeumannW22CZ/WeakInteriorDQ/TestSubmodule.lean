@@ -431,7 +431,8 @@ noncomputable def h1WeakTestScalarL2Submodule {d : ℕ} (U : Set (Vec d)) :
         rw [hsmul]
         rfl
 
-private theorem exists_h1WeakTestScalarL2Representative
+/-- Every point in the weak-test scalar submodule has a test-function representative. -/
+theorem exists_h1WeakTestScalarL2Representative
     {d : ℕ} {U : Set (Vec d)}
     (x : h1WeakTestScalarL2Submodule (d := d) U) :
     ∃ φ : H1WeakTestFunction U, φ.toScalarL2 = (x : ScalarL2 U) := by

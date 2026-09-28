@@ -158,9 +158,7 @@ theorem cubeEuclideanPositiveBesovOverlapDepthENorm_add_rpow_le {d : ℕ}
     have hFlocal := memLp_hilbert_scalarOverlap_of_memLp hF (by simpa [D] using hS)
     have hGlocal := memLp_hilbert_scalarOverlap_of_memLp hG (by simpa [D] using hS)
     rw [scalarOverlap_residual_add S p hFlocal hGlocal]
-    exact eLpNorm_add_le
-      (scalarOverlap_residual_memLp S p F hFlocal).aestronglyMeasurable
-      (scalarOverlap_residual_memLp S p G hGlocal).aestronglyMeasurable p.one_lt.le
+    exact eLpNorm_add_le p.one_lt.le
   have hlocal_power : ∀ S ∈ D,
       (eLpNorm (fun x => HilbertVec.ofVec
           ((F x + G x) - ScalarOverlap.cubeAverageVec S (fun y => F y + G y)))

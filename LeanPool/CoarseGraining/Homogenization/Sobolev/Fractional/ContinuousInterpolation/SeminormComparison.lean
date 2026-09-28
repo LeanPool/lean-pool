@@ -69,9 +69,13 @@ private theorem triadicContinuousKUpperSeriesConstant_lt_top (s : FractionalOrde
 private theorem normalizedEuclideanLpENorm_lt_top {d : ℕ}
     (F : UnitCubeEuclideanL2Field d) :
     (unitCenteredCubeDomain d).normalizedEuclideanLpENorm (2 : ℝ≥0∞) F < ∞ := by
-  simpa only [BoundedMeasurableDomain.normalizedEuclideanLpENorm,
-    BoundedMeasurableDomain.normalizedLpENorm] using
-    F.euclideanMagnitudeMemL2.eLpNorm_lt_top
+  unfold BoundedMeasurableDomain.normalizedEuclideanLpENorm
+  have hmeas : MeasureTheory.AEStronglyMeasurable
+      (fun x => euclideanNorm (F.toField x))
+      (unitCenteredCubeDomain d).normalizedVolume :=
+    F.euclideanMagnitudeMemL2.aestronglyMeasurable
+  rw [BoundedMeasurableDomain.normalizedLpENorm_eq_eLpNorm _ _ _ hmeas]
+  exact F.euclideanMagnitudeMemL2.eLpNorm_lt_top
 
 /-- The finite constant in the continuous `K`-seminorm to Euclidean `H^s`-seminorm
 direction. -/

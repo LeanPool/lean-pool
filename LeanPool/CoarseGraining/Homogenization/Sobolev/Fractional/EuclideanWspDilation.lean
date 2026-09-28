@@ -153,8 +153,8 @@ theorem cubeEuclideanNormalizedLpENorm_dilate {d : ℕ}
   unfold BoundedMeasurableDomain.normalizedLpENorm
   rw [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure,
     cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
-  simp only [if_neg (ne_of_gt (lt_trans zero_lt_one p.one_lt)),
-    if_neg p.lt_top.ne, eLpNorm'_eq_lintegral_enorm]
+  simp only [ite_eq_right (ne_of_gt (lt_trans zero_lt_one p.one_lt)),
+    ite_eq_right p.lt_top.ne, eLpNorm'_eq_lintegral_enorm]
   congr 1
   rw [MeasurePreserving.lintegral_map_equiv _ T hMP]
   rfl

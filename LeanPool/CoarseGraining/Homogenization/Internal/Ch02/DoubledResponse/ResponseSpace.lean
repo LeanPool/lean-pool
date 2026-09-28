@@ -253,7 +253,7 @@ theorem upperImage_memVectorL2_of_memVectorL2_of_isEllipticFieldOn {d : ℕ}
       MeasureTheory.AEStronglyMeasurable
         (fun x => (blockMatVecMul (blockCoeffField a x) (X.eval x)).1)
         (volumeMeasureOn U) :=
-    hUpper'.1.congr hEq.symm
+    hUpper'.aestronglyMeasurable.congr hEq.symm
   refine hUpper'.congr_norm hMeas ?_
   filter_upwards [hEq] with x hx
   simpa using congrArg norm hx.symm

@@ -358,7 +358,8 @@ noncomputable def originCubeParentReducedSolverEnergyBoundExact
               ((3 : ℝ) ^ d * (C * (C * B)) ^ 2))))) ^
     (1 / (2 : ℝ))
 
-private noncomputable def originCubeParentReducedSolverEnergyInsideExact
+/-- The scale-dependent inner coefficient in the exact parent Dirichlet energy bound. -/
+noncomputable def originCubeParentReducedSolverEnergyInsideExact
     (d : ℕ) [NeZero d] (m : ℤ) : ℝ :=
   let Q : TriadicCube d := originCube d m
   let Qp : TriadicCube d := originCube d (m + 1)

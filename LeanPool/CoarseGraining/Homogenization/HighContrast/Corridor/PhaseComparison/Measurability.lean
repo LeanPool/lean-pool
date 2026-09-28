@@ -89,8 +89,8 @@ noncomputable def corridorReg (ℓ : ℝ) (σ : Vec d) (a : RegCoeffField d) :
         = fun x => if x ∈ corridorSet ℓ σ then (1 : Mat d) i j else a x i j := by
       funext x
       by_cases hx : x ∈ corridorSet ℓ σ
-      · rw [corridorField_apply_of_mem hx, if_pos hx]
-      · rw [corridorField_apply_of_not_mem hx, if_neg hx]
+      · rw [corridorField_apply_of_mem hx, ite_eq_left hx]
+      · rw [corridorField_apply_of_not_mem hx, ite_eq_right hx]
     rw [hEq]
     exact Measurable.ite (measurableSet_corridorSet ℓ σ) measurable_const
       (a.entry_measurable i j)
@@ -274,7 +274,7 @@ theorem lawCarrier_map_corridorReg {L : RestrictionCoeffLaw d} (hP : Restriction
   have hT : Measurable (corridorReg (d := d) ℓ σ) := measurable_corridorReg ℓ σ
   have : IsProbabilityMeasure L := hP.isProbability
   have : IsProbabilityMeasure (L.map (corridorReg ℓ σ)) :=
-    L.isProbabilityMeasure_map hT.aemeasurable
+    inferInstance
   refine lawCarrier_of_aeLocallyUniformlyElliptic ?_
   rw [AELocallyUniformlyEllipticLaw,
     ae_map_iff hT.aemeasurable measurableSet_aeLocallyUniformlyEllipticField]

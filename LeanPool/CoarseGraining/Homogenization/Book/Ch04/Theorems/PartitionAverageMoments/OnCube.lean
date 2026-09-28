@@ -332,13 +332,13 @@ theorem integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_
       ∀ R ∈ D, IsRestrictionLocalRandomVariable (cubeSet R) (measurableSet_cubeSet R) (Yrep R) := by
     intro R hR
     dsimp [Yrep]
-    rw [dif_pos hR]
+    rw [dite_eq_left hR]
     exact (Classical.choose_spec (hX_localRep R (by simpa [D] using hR))).1
   have hX_eq_Yrep :
       ∀ R ∈ D, X (cubeSet R) =ᵐ[P] Yrep R := by
     intro R hR
     dsimp [Yrep]
-    rw [dif_pos hR]
+    rw [dite_eq_left hR]
     exact (Classical.choose_spec (hX_localRep R (by simpa [D] using hR))).2
   have hZraw_eq_Z :
       ∀ R ∈ D, Zraw R =ᵐ[P] Z R := by

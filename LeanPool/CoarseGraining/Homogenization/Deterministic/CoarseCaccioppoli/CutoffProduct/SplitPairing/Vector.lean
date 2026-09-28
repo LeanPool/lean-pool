@@ -91,7 +91,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_note_terms_of_cont
       MeasureTheory.MemLp (fun x => (u x - cubeAverage Q u) • ξ x) (2 : ℝ≥0∞)
         (normalizedCubeMeasure Q) := by
     simpa [cubeFluctuation] using!
-      hξLp.smul (p := (2 : ℝ≥0∞)) (r := (2 : ℝ≥0∞)) huFluct
+      huFluct.smul (r := (2 : ℝ≥0∞)) hξLp
   have hfluxComp :
       ∀ i : Fin d, MeasureTheory.MemLp (fun x => flux x i) (2 : ℝ≥0∞)
         (normalizedCubeMeasure Q) := by
@@ -262,7 +262,7 @@ theorem
       MeasureTheory.MemLp (fun x => (u x - cubeAverage Q u) • ξ x) (2 : ℝ≥0∞)
         (normalizedCubeMeasure Q) := by
     simpa [cubeFluctuation] using!
-      hξLp.smul (p := (2 : ℝ≥0∞)) (r := (2 : ℝ≥0∞)) huFluct
+      huFluct.smul (r := (2 : ℝ≥0∞)) hξLp
   have hfluxComp :
       ∀ i : Fin d, MeasureTheory.MemLp (fun x => flux x i) (2 : ℝ≥0∞)
         (normalizedCubeMeasure Q) := by

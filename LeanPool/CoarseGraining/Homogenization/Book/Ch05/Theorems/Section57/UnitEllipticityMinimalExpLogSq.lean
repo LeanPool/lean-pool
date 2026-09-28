@@ -32,6 +32,29 @@ manuscript-scale stochastic envelope as the quenched `J` stopping scale:
 
 noncomputable section
 
+/-- A quadratic bound for the ellipticity scale gives a polynomial bound
+for the bottom-tail denominator, with the same ratio of exponents. -/
+private theorem smallBottomTailDenominator_le_poly_of_scale_le
+    {scale G θ σ η : ℝ} (hσ : 0 ≤ σ) (hη : 0 < η)
+    (hθ : 0 ≤ θ) (hscale : scale ≤ G * θ ^ (2 : ℕ)) :
+    smallBottomTailDenominator scale η σ ≤
+      (max 1 G) ^ (σ / η) * (max 1 θ) ^ (2 * (σ / η)) := by
+  have hmax_scale : max 1 scale ≤ max 1 (G * θ ^ (2 : ℕ)) := by
+    refine max_le ?_ ?_
+    · exact le_max_left 1 (G * θ ^ (2 : ℕ))
+    · exact hscale.trans (le_max_right 1 (G * θ ^ (2 : ℕ)))
+  have hraw :
+      (max 1 scale) ^ (σ / η) ≤
+        (max 1 (G * θ ^ (2 : ℕ))) ^ (σ / η) :=
+    Real.rpow_le_rpow
+      (le_trans zero_le_one (le_max_left 1 scale)) hmax_scale (by positivity)
+  have hpoly :
+      (max 1 (G * θ ^ (2 : ℕ))) ^ (σ / η) ≤
+        (max 1 G) ^ (σ / η) * (max 1 θ) ^ (2 * (σ / η)) :=
+    rpow_max_one_mul_sq_le_const_mul_rpow
+      (A := G) (θ := θ) (r := σ / η) hθ (by positivity)
+  simpa [smallBottomTailDenominator] using hraw.trans hpoly
+
 /-- The localized unit-ellipticity minimal scale with the note-facing
 `exp(C log^2(2 + thetaHat))` stochastic size. -/
 theorem exists_unitEllipticityMinimalScale_interpolated_expLogSq
@@ -127,9 +150,6 @@ theorem exists_unitEllipticityMinimalScale_interpolated_expLogSq
     dsimp [B]
     exact le_max_left 1 Btail
   have hB_pos : 0 < B := lt_of_lt_of_le zero_lt_one hB
-  have hC_pos : 0 < C := by
-    dsimp [C]
-    positivity
   have htail :
       ∀ N : ℕ, Q ≤ N →
         P.real (badTailEvent Bad N) ≤
@@ -173,11 +193,6 @@ theorem exists_unitEllipticityMinimalScale_interpolated_expLogSq
       isBigO_quenchedMinimalScale_of_badTailEvent_bound
         (μ := P) (N0 := Q) (Bad := Bad) (B := B) (η := η)
         hη_pos hB htail
-  have hG_pos : 0 < G := by
-    dsimp [G]
-    exact mul_pos
-      (IndependentSums.gammaMomentConst_pos hσ_pos)
-      (Real.rpow_pos_of_pos (by exact_mod_cast params.xi_pos) _)
   have htheta0_le :
       thetaAtScale hP hStruct (0 : ℤ) ≤ G * hΓ.thetaHat := by
     have h := hΓ.thetaAtScale_zero_le_gammaMomentScale
@@ -196,26 +211,9 @@ theorem exists_unitEllipticityMinimalScale_interpolated_expLogSq
         (scale := scale) (η := η) (σ := σ) hη_pos hσ_pos.le
   have hBlead_poly :
       Blead ≤ A * (max 1 hΓ.thetaHat) ^ p := by
-    have hmax_scale :
-        max 1 scale ≤ max 1 (G * hΓ.thetaHat ^ (2 : ℕ)) := by
-      refine max_le ?_ ?_
-      · exact le_max_left 1 (G * hΓ.thetaHat ^ (2 : ℕ))
-      · exact hscale_le.trans
-          (le_max_right 1 (G * hΓ.thetaHat ^ (2 : ℕ)))
-    have hraw :
-        (max 1 scale) ^ (σ / η) ≤
-          (max 1 (G * hΓ.thetaHat ^ (2 : ℕ))) ^ (σ / η) := by
-      exact Real.rpow_le_rpow
-        (le_trans zero_le_one (le_max_left 1 scale)) hmax_scale
-        (by positivity)
-    have hpoly :
-        (max 1 (G * hΓ.thetaHat ^ (2 : ℕ))) ^ (σ / η) ≤
-          A * (max 1 hΓ.thetaHat) ^ p := by
-      simpa [A, p] using
-        rpow_max_one_mul_sq_le_const_mul_rpow
-          (A := G) (θ := hΓ.thetaHat) (r := σ / η)
-          hΓ.thetaHat_pos.le (by positivity)
-    simpa [Blead, smallBottomTailDenominator] using hraw.trans hpoly
+    simpa [Blead, A, p] using
+      smallBottomTailDenominator_le_poly_of_scale_le
+        hσ_pos.le hη_pos hΓ.thetaHat_pos.le hscale_le
   have hscaleC :
       C ≤
         Real.exp

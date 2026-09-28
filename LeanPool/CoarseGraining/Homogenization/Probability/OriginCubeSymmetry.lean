@@ -46,7 +46,7 @@ theorem mem_openCubeSet_originCube_signFlipMatrix_iff {d : ℕ} {m : ℤ} {x : V
   · intro hx j
     by_cases hji : j = i
     · have hj := hx j
-      rw [matVecMul_signFlipMatrix_apply, if_pos hji] at hj
+      rw [matVecMul_signFlipMatrix_apply, ite_eq_left hji] at hj
       constructor <;> nlinarith [hj.1, hj.2]
     · simpa [matVecMul_signFlipMatrix_apply, hji] using hx j
   · intro hx j

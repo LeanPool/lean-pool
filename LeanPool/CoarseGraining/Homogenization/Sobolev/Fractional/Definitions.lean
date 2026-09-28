@@ -154,7 +154,7 @@ theorem cubeGagliardoESeminorm_eq_lintegral {Q : TriadicCube d} {s : ℝ}
     cubeGagliardoESeminorm Q s p u =
       (∫⁻ z, ‖gagliardoKernel s p u z‖ₑ ^ p.toReal
         ∂gagliardoCubeMeasure Q) ^ (1 / p.toReal) := by
-  simp only [cubeGagliardoESeminorm, integralLpSeminorm, if_neg hp0, if_neg hpt]
+  simp only [cubeGagliardoESeminorm, integralLpSeminorm, ite_eq_right hp0, ite_eq_right hpt]
   exact eLpNorm'_eq_lintegral_enorm (gagliardoKernel s p u) _ _
 
 end Internal
@@ -184,21 +184,21 @@ theorem memWsp_iff {Q : TriadicCube d} {s : ℝ} {p : ℝ≥0∞} {u : Vec d →
 theorem MemWsp.add {Q : TriadicCube d} {s : ℝ} {p : ℝ≥0∞} {u v : Vec d → E}
     (hu : MemWsp Q s p u) (hv : MemWsp Q s p v) :
     MemWsp Q s p (u + v) := by
-  show MemLp (gagliardoKernel s p (u + v)) p (gagliardoCubeMeasure Q)
+  change MemLp (gagliardoKernel s p (u + v)) p (gagliardoCubeMeasure Q)
   rw [gagliardoKernel_add]
   exact MemLp.add hu hv
 
 theorem MemWsp.neg {Q : TriadicCube d} {s : ℝ} {p : ℝ≥0∞} {u : Vec d → E}
     (hu : MemWsp Q s p u) :
     MemWsp Q s p (-u) := by
-  show MemLp (gagliardoKernel s p (-u)) p (gagliardoCubeMeasure Q)
+  change MemLp (gagliardoKernel s p (-u)) p (gagliardoCubeMeasure Q)
   rw [gagliardoKernel_neg]
   exact MemLp.neg hu
 
 theorem MemWsp.smul {Q : TriadicCube d} {s : ℝ} {p : ℝ≥0∞} {u : Vec d → E}
     (c : ℝ) (hu : MemWsp Q s p u) :
     MemWsp Q s p (c • u) := by
-  show MemLp (gagliardoKernel s p (c • u)) p (gagliardoCubeMeasure Q)
+  change MemLp (gagliardoKernel s p (c • u)) p (gagliardoCubeMeasure Q)
   rw [gagliardoKernel_smul]
   exact MemLp.const_smul hu c
 
@@ -222,10 +222,10 @@ theorem cubeGagliardoESeminorm_const_smul (Q : TriadicCube d) (s : ℝ)
   · simp [cubeGagliardoESeminorm, integralLpSeminorm, hp0]
   by_cases hpt : p = ∞
   · simp only [cubeGagliardoESeminorm, gagliardoKernel_smul, integralLpSeminorm,
-      if_neg hp0, if_pos hpt]
+      ite_eq_right hp0, ite_eq_left hpt]
     exact eLpNormEssSup_const_smul _ _
   · simp only [cubeGagliardoESeminorm, gagliardoKernel_smul, integralLpSeminorm,
-      if_neg hp0, if_neg hpt]
+      ite_eq_right hp0, ite_eq_right hpt]
     exact eLpNorm'_const_smul c (ENNReal.toReal_pos hp0 hpt)
 
 /-- Triangle inequality for the fractional Sobolev seminorm. -/

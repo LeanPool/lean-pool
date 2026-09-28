@@ -139,6 +139,7 @@ theorem eLpNorm_canonicalFun_coordDeriv_mul_le_of_collar_bound {d : ℕ}
     {U : Set (Vec d)} (Q : TriadicCube d) {ρ₁ ρ₂ B : ℝ}
     (hρ₁ : 0 < ρ₁) (hρ₁₂ : ρ₁ < ρ₂) (hB : 0 ≤ B)
     (i : Fin d) (ψ : Vec d → ℝ)
+    (hψ_meas : MeasureTheory.AEStronglyMeasurable ψ (volumeMeasureOn U))
     (hψ :
       ∀ x ∈ cubeCoordInnerCollar Q ρ₁ i,
         ‖ψ x‖ ≤ B * ((ρ₂ - ρ₁) * cubeRadius Q)) :
@@ -169,13 +170,19 @@ theorem eLpNorm_canonicalFun_coordDeriv_mul_le_of_collar_bound {d : ℕ}
   have hzero_support :
       Function.support (0 : Vec d → ℝ) ⊆ cubeCoordInnerCollar Q ρ₁ i := by
     simp
+  have hF_meas : MeasureTheory.AEStronglyMeasurable F (volumeMeasureOn U) := by
+    have hderiv : Measurable (fun x : Vec d =>
+        (fderiv ℝ (QuantitativeCubeCutoff.canonicalFun Q ρ₁ ρ₂) x) (basisVec i)) :=
+      measurable_fderiv_apply_const ℝ _ (basisVec i)
+    exact hderiv.aestronglyMeasurable.mul hψ_meas
   have hmain :=
     MeasureTheory.eLpNorm_sub_le_of_dist_bdd
       (μ := volumeMeasureOn U) (p := (2 : ENNReal))
       (s := cubeCoordInnerCollar Q ρ₁ i)
       (by norm_num : (2 : ENNReal) ≠ ∞)
-      (measurableSet_cubeCoordInnerCollar Q ρ₁ i)
-      hC_nonneg hdist hsupport hzero_support
+      (measurableSet_cubeCoordInnerCollar Q ρ₁ i).nullMeasurableSet
+      hC_nonneg (hF_meas.sub MeasureTheory.aestronglyMeasurable_const)
+      hdist hsupport hzero_support
   have hsub : F - (fun _ : Vec d => (0 : ℝ)) = F := by
     funext x
     simp

@@ -429,7 +429,7 @@ theorem cubeBesovCircNorm_projection_succ_le_three_halves_mul_cubeBesovCircParti
     (cubeBesovCircNormValueSet_nonempty Q 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) uN) ?_
   intro r hr
   rcases hr with ⟨M, rfl⟩
-  simp only [cubeBesovCircNormEntry, if_neg ENNReal.one_ne_top]
+  simp only [cubeBesovCircNormEntry, ite_eq_right ENNReal.one_ne_top]
   by_cases hMN : M ≤ N
   · calc
       cubeBesovCircPartialNorm Q 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) (M + 1) uN

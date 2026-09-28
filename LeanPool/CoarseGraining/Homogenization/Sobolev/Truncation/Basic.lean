@@ -71,7 +71,7 @@ theorem exists_h1_max_sub_const {d : ℕ} {U : Set (Vec d)}
   -- Membership of `f` and of the target gradient coordinates in `L²`.
   have hf_aesm : AEStronglyMeasurable f (volumeMeasureOn U) :=
     (((continuous_id.sub continuous_const).max continuous_const).comp_aestronglyMeasurable
-      u.memL2.1)
+      u.memL2.aestronglyMeasurable)
   have hf_memL2 : MemL2On U f := by
     refine MemLp.of_le (u.memL2.sub (memLp_const c)) hf_aesm ?_
     filter_upwards with x
@@ -82,7 +82,8 @@ theorem exists_h1_max_sub_const {d : ℕ} {U : Set (Vec d)}
   -- The squared-gStep sequence and the `L²` membership of the target gradient.
   have hgstep_seq_aesm : ∀ (i : Fin d) n,
       AEStronglyMeasurable (fun x => gStep c (δ n) (u.toFun x) * u.grad x i) (volumeMeasureOn U) :=
-    fun i n => ((gStep_continuous c (δ n)).comp_aestronglyMeasurable u.memL2.1).mul (u.gradMemL2 i).1
+    fun i n => ((gStep_continuous c (δ n)).comp_aestronglyMeasurable
+      u.memL2.aestronglyMeasurable).mul (u.gradMemL2 i).aestronglyMeasurable
   have htend_g' : ∀ (i : Fin d) x,
       Tendsto (fun n => gStep c (δ n) (u.toFun x) * u.grad x i) atTop (𝓝 (Du x i)) := by
     intro i x
@@ -109,7 +110,8 @@ theorem exists_h1_max_sub_const {d : ℕ} {U : Set (Vec d)}
     set gn : ℕ → Vec d → ℝ :=
       fun n x => deriv (GApprox c (δ n)) (u.toFun x) * u.grad x i with hgn_def
     have hun_aesm : ∀ n, AEStronglyMeasurable (un n) (volumeMeasureOn U) := fun n =>
-      (GApprox_contDiff_one c (δ n)).continuous.comp_aestronglyMeasurable u.memL2.1
+      (GApprox_contDiff_one c (δ n)).continuous.comp_aestronglyMeasurable
+        u.memL2.aestronglyMeasurable
     have hgn_eq : ∀ n, gn n = fun x => gStep c (δ n) (u.toFun x) * u.grad x i := by
       intro n; funext x; simp only [hgn_def, deriv_GApprox]
     have hgn_aesm : ∀ n, AEStronglyMeasurable (gn n) (volumeMeasureOn U) := by

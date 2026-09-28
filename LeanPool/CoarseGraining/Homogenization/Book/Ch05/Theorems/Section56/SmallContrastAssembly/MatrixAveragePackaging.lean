@@ -207,7 +207,7 @@ theorem descendantsAverageFluctuationOperatorNormSqWithNormalizer_integral_le_pr
               (fullBlockQuadratic (M a)
                 (Section54.VarianceBoundGoodScale.fullBlockMinusProbe α β)) ^ (2 : ℕ))) P := by
     intro α β
-    simpa only [M, Q, j] using
+    simpa only [M, Q, j, Pi.add_apply] using
       (((hcoord_int α).add (hplus_int α β)).add (hminus_int α β)).const_mul 3
   have hbudget_int :
         Integrable

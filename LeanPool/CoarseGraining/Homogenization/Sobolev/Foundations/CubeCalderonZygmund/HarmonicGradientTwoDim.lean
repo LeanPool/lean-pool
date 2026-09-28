@@ -145,7 +145,10 @@ private theorem cubeLpNorm_two_middleChild_le_three_mul (Q : TriadicCube 2)
   have htop : 9 * MeasureTheory.eLpNorm f 2 (normalizedCubeMeasure Q) ≠ ∞ :=
     ENNReal.mul_ne_top (by norm_num) hfinQ
   have hreal := ENNReal.toReal_mono htop hle
-  simpa [R, cubeLpNorm, ENNReal.toReal_mul] using hreal
+  have hfinR := memLp_on_descendant_of_memLp hR hf
+  rw [cubeLpNorm_eq_eLpNorm_toReal R 2 f hfinR.aestronglyMeasurable,
+    cubeLpNorm_eq_eLpNorm_toReal Q 2 f hf.aestronglyMeasurable]
+  simpa [R, ENNReal.toReal_mul] using hreal
 
 private theorem exists_harmonic_gradCoord_finiteLp_bound_twoDim_le_two
     (p : FiniteLpExponent) (hp : p.exponent ≤ 2) :
@@ -168,6 +171,8 @@ private theorem exists_harmonic_gradCoord_finiteLp_bound_twoDim_le_two
     (fun x => u.grad x i) hmemR.aestronglyMeasurable
   have hdownreal : cubeLpNorm R p.exponent (fun x => u.grad x i) ≤
       cubeLpNorm R 2 (fun x => u.grad x i) := by
+    rw [cubeLpNorm_eq_eLpNorm_toReal R p.exponent _ hmemR.aestronglyMeasurable,
+      cubeLpNorm_eq_eLpNorm_toReal R 2 _ hmemR.aestronglyMeasurable]
     exact ENNReal.toReal_mono hmemR.eLpNorm_ne_top hdown
   have hchild := cubeLpNorm_two_middleChild_le_three_mul Q (fun x => u.grad x i)
     (u.grad_memL2_normalizedCubeMeasure i)
@@ -430,7 +435,8 @@ private theorem raw_eLpNorm_two_toReal_eq_scale_mul_cubeLpNorm
   have hreal := congrArg ENNReal.toReal hraw'
   rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal (by
     simpa [cubeScaleFactor] using le_of_lt (zpow_pos (by norm_num : (0 : ℝ) < 3) Q.scale))] at hreal
-  simpa [cubeLpNorm] using hreal
+  rw [cubeLpNorm_eq_eLpNorm_toReal Q 2 f hf.aestronglyMeasurable]
+  exact hreal
 
 private theorem hessianCoordL2NormSum_eq_sum_raw_eLpNorm
     {U : Set (Vec 2)} {u : H1Function U} (H : HasWeakHessianOn U u) :
@@ -482,7 +488,20 @@ private theorem highExponent_normalized_embedding_real (p : FiniteLpExponent)
     ENNReal.toReal_mul, ENNReal.toReal_sum] at hreal
   · rw [ENNReal.toReal_ofReal (by
       simpa [cubeScaleFactor] using le_of_lt (zpow_pos (by norm_num : (0 : ℝ) < 3) Q.scale))] at hreal
-    simpa [cubeLpNorm, mul_add, Finset.mul_sum] using hreal
+    have hGradMeas := (u.grad_memL2_normalizedCubeMeasure i).aestronglyMeasurable
+    have hGradPEq := cubeLpNorm_eq_eLpNorm_toReal Q p.exponent
+      (fun x => u.grad x i) hGradMeas
+    have hGradTwoEq := cubeLpNorm_eq_eLpNorm_toReal Q 2
+      (fun x => u.grad x i) hGradMeas
+    have hHessEq (j : Fin 2) :
+        cubeLpNorm Q 2 (fun x => H.hess i j x) =
+          (MeasureTheory.eLpNorm (fun x => H.hess i j x) 2
+            (normalizedCubeMeasure Q)).toReal :=
+      cubeLpNorm_eq_eLpNorm_toReal Q 2 _
+        (memL2On_openCubeSet_normalizedCubeMeasure
+          (H.hess_memL2 i j)).aestronglyMeasurable
+    simp_rw [hGradPEq, hHessEq, hGradTwoEq]
+    simpa [mul_add, Finset.mul_sum] using hreal
   · intro j _
     exact (memL2On_openCubeSet_normalizedCubeMeasure (H.hess_memL2 i j)).eLpNorm_ne_top
   · exact hfirst

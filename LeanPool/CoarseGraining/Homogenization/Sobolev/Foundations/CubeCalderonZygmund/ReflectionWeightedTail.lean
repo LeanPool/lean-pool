@@ -61,10 +61,10 @@ private theorem lintegral_sqNorm_tail_inter_openCubeSet_eq
             · have hxTQ : x ∈ T ∩ openCubeSet Q := ⟨hxT, hxQ⟩
               rw [Set.indicator_of_mem hxTQ,
                 Set.indicator_of_mem hxQ,
-                if_pos (by simpa [T] using hxT)]
+                ite_eq_left (by simpa [T] using hxT)]
             · rw [Set.indicator_of_notMem (fun h => hxT h.1),
                 Set.indicator_of_mem hxQ,
-                if_neg (by simpa [T] using hxT)]
+                ite_eq_right (by simpa [T] using hxT)]
           · rw [Set.indicator_of_notMem (fun h => hxQ h.2),
               Set.indicator_of_notMem hxQ]
     _ = ∫⁻ x in openCubeSet Q,

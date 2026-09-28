@@ -420,7 +420,7 @@ theorem pointwise_pair_sum_le (Q : TriadicCube d) {a pr : ℝ} (ha : 1 ≤ a)
             _ = ScalarOverlap.scaleFactor S := rfl
             _ = cubeScaleFactor Q / 3 ^ j :=
                 ScalarOverlap.scaleFactor_eq_cubeScaleFactor_div_pow_of_mem_centersAtDepth hS
-        rw [if_pos hd]
+        rw [ite_eq_left hd]
         refine mul_le_mul_right ?_ _
         calc (∑ S ∈ ScalarOverlap.centersAtDepth Q j,
               (ScalarOverlap.cubeSet S ×ˢ ScalarOverlap.cubeSet S).indicator

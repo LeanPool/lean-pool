@@ -250,12 +250,12 @@ theorem cubeBesovDualPartialSeminorm_le_cubeBesovDualPartialNorm_of_bddAbove {d 
     refine ⟨?_, by simpa using cubeAverage_const Q (0 : ℝ), ?_⟩
     · unfold cubeBesovDualTestSeminorm
       by_cases hq : cubeBesovConjExponent q = ∞
-      · rw [if_pos hq]
+      · rw [ite_eq_left hq]
         rw [cubeBesovPartialSeminormTop_zero (Q := Q) (s := s) (p := cubeBesovConjExponent p)
           (N := N) hp0 hpTop]
         norm_num
       · have hq0 : cubeBesovConjExponent q ≠ 0 := cubeBesovConjExponent_ne_zero q
-        rw [if_neg hq]
+        rw [ite_eq_right hq]
         rw [cubeBesovPartialSeminorm_zero (Q := Q) (s := s) (p := cubeBesovConjExponent p)
           (q := cubeBesovConjExponent q) (N := N) hp0 hpTop hq0 hq]
         norm_num

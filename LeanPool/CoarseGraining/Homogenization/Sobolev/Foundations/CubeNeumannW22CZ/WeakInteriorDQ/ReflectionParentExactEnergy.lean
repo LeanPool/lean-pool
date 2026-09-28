@@ -253,7 +253,8 @@ theorem exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_
     Finset.sum_le_sum fun _j _hj =>
       originCubeParentReducedNormEnergyBound_le_solverEnergyBoundExact W hF i
 
-private noncomputable def originCubeParentReducedSolverEnergyInsideExact
+/-- The inner coefficient in the exact reflected parent Neumann energy bound. -/
+noncomputable def originCubeParentReducedSolverEnergyInsideExact
     (d : ℕ) (m : ℤ) : ℝ :=
   let Q : TriadicCube d := originCube d m
   let Qp : TriadicCube d := originCube d (m + 1)

@@ -138,7 +138,7 @@ theorem rawPhaseObservable_restrict_eq_of_field [NeZero d]
               else 0 := by
       funext x
       by_cases hxU : x ∈ cubeSet (originCube d m)
-      · simp only [hxU, if_true]
+      · simp only [hxU, ite_true]
         by_cases hxc : x ∈ corridorSet ℓ σ
         · rw [corridorField_apply_of_mem hxc]; simp [hxc]
         · rw [corridorField_apply_of_not_mem hxc]

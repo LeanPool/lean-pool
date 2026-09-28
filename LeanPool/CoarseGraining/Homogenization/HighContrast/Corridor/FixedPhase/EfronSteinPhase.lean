@@ -66,8 +66,8 @@ theorem measurable_patchCore_entry {ℓ : ℝ} {σ : Vec d} {j : Fin d → ℤ}
       = fun x : Vec d => if x ∈ coreBox ℓ σ j then a' x i j' else a x i j' := by
     funext x
     by_cases hx : x ∈ coreBox ℓ σ j
-    · rw [patchCore_apply_of_mem hx, if_pos hx]
-    · rw [patchCore_apply_of_not_mem hx, if_neg hx]
+    · rw [patchCore_apply_of_mem hx, ite_eq_left hx]
+    · rw [patchCore_apply_of_not_mem hx, ite_eq_right hx]
   rw [hrw]
   exact Measurable.ite (measurableSet_coreBox ℓ σ j) (ha' i j') (ha i j')
 

@@ -175,7 +175,7 @@ theorem measurableSet_localSigmaR_aeeSlice (Q : TriadicCube d) (k : ℕ) :
     ext a
     simp only [Set.mem_ofPred_eq]
     rw [aeeQuantitativeEllipticSlice_carrier_iff (cubeSet Q) (measurableSet_cubeSet Q) k a]
-    show (∀ᵐ x ∂(volume.restrict (cubeSet Q)), IsEllipticMatrix lam Lam (a x)) ↔ _
+    change (∀ᵐ x ∂(volume.restrict (cubeSet Q)), IsEllipticMatrix lam Lam (a x)) ↔ _
     exact ae_restrict_cubeSet_iff
   rw [hEvent, setOf_aeRestrict_isEllipticMatrix_eq_slicePart (isOpen_openCubeSet Q) lam Lam]
   exact localSigmaR_mono (openCubeSet_subset_cubeSet Q) _ (measurableSet_slicePart lam Lam)

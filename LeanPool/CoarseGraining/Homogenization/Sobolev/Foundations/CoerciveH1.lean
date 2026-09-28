@@ -437,7 +437,7 @@ noncomputable instance [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] :
 theorem seminormedSpaceCore [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] :
     SeminormedSpace.Core ℝ (H1MeanZeroFunction U) where
   norm_nonneg u := by
-    show 0 ≤ u.gradientL2Norm
+    change 0 ≤ u.gradientL2Norm
     exact norm_nonneg u.gradToVectorL2
   norm_smul c u := by
     change ‖(c • u).gradToVectorL2‖ = ‖c‖ * ‖u.gradToVectorL2‖
@@ -590,7 +590,7 @@ noncomputable def gradientPairingCLM {f : Vec d → Vec d}
   let : AddCommGroup (H1MeanZeroFunction U) :=
     (show SeminormedAddCommGroup (H1MeanZeroFunction U) from inferInstance).toAddCommGroup
   let : Module ℝ (H1MeanZeroFunction U) := inferInstance
-  show (gradientPairingLinear hf).mkContinuous
+  change (gradientPairingLinear hf).mkContinuous
       (((d : ℝ) * ‖Homogenization.toHilbertVectorL2OfVecField hf‖))
       (fun u => by
         change ‖gradientPairingLinear hf u‖ ≤
@@ -652,7 +652,7 @@ noncomputable def toScalarL2CLM (hC : H1CoerciveEstimate U) :
 
 @[simp] theorem toScalarL2CLM_apply (hC : H1CoerciveEstimate U) (u : H1MeanZeroFunction U) :
     toScalarL2CLM (U := U) hC u = u.toScalarL2 := by
-  show (toScalarL2Linear (U := U)).mkContinuous hC.fixedValue
+  change (toScalarL2Linear (U := U)).mkContinuous hC.fixedValue
       (norm_toScalarL2Linear_apply_le (U := U) hC) u = u.toScalarL2
   rw [LinearMap.mkContinuous_apply]
   rfl
@@ -710,7 +710,7 @@ noncomputable def toHilbertProductCLM (hC : H1CoerciveEstimate U) :
 @[simp] theorem toHilbertProductCLM_apply
     (hC : H1CoerciveEstimate U) (u : H1MeanZeroFunction U) :
     toHilbertProductCLM (d := d) (U := U) hC u = (u.toScalarL2, u.gradToHilbertVectorL2) := by
-  show (toHilbertProductLinear (U := U)).mkContinuous (max hC.fixedValue (d : ℝ))
+  change (toHilbertProductLinear (U := U)).mkContinuous (max hC.fixedValue (d : ℝ))
       (norm_toHilbertProductLinear_apply_le (d := d) (U := U) hC) u =
       (u.toScalarL2, u.gradToHilbertVectorL2)
   rw [LinearMap.mkContinuous_apply]

@@ -193,7 +193,7 @@ theorem scalarAt_of_mem_openUnitCell {d : ℕ} {lam Lam : ℝ}
   classical
   unfold scalarAt
   let h : ∃ w : Lattice d, x ∈ openUnitCell w := ⟨z, hz⟩
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   congr 1
   exact congrArg ω (openUnitCell_unique (Classical.choose_spec h) hz)
 
@@ -203,7 +203,7 @@ theorem scalarAt_of_not_mem_any_openUnitCell {d : ℕ} {lam Lam : ℝ}
     scalarAt lam Lam ω x = lam := by
   classical
   unfold scalarAt
-  rw [dif_neg hx]
+  rw [dite_eq_right hx]
 
 /-- The region where the checkerboard scalar takes the upper value `Lam`. -/
 def upperConductanceRegion {d : ℕ} (ω : Sample d) : Set (Vec d) :=
@@ -697,7 +697,7 @@ theorem translateReg_checkerRegField {d : ℕ} {lam Lam : ℝ}
       checkerRegField lam Lam (shiftSample z ω) := by
   apply RegCoeffField.ext
   intro x
-  show coeffField lam Lam ω (x + intVecToRealVec z) =
+  change coeffField lam Lam ω (x + intVecToRealVec z) =
     coeffField lam Lam (shiftSample z ω) x
   have h : scalarAt lam Lam ω (x + intVecToRealVec z) =
       scalarAt lam Lam (shiftSample z ω) x := by
@@ -945,7 +945,7 @@ theorem rotateReg_checkerRegField {d : ℕ} {lam Lam : ℝ} {R : Mat d}
       checkerRegField lam Lam (reindexSample (signedLatticeEquiv σ s hs) ω) := by
   apply RegCoeffField.ext
   intro x
-  show (matTranspose R) * (coeffField lam Lam ω (matVecMul R x)) * R =
+  change (matTranspose R) * (coeffField lam Lam ω (matVecMul R x)) * R =
     coeffField lam Lam (reindexSample (signedLatticeEquiv σ s hs) ω) x
   have hscalar :
       scalarAt lam Lam ω (matVecMul R x) =
@@ -959,7 +959,7 @@ theorem adjointReg_checkerRegField {d : ℕ} {lam Lam : ℝ} (ω : Sample d) :
     adjointReg (checkerRegField lam Lam ω) = checkerRegField lam Lam ω := by
   apply RegCoeffField.ext
   intro x
-  show (coeffField lam Lam ω x).transpose = coeffField lam Lam ω x
+  change (coeffField lam Lam ω x).transpose = coeffField lam Lam ω x
   funext i j
   by_cases hij : i = j
   · subst j

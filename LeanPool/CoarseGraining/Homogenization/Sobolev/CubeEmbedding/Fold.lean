@@ -50,15 +50,15 @@ def Fold (lo hi : Vec d) (x : Vec d) : Vec d :=
 @[simp] theorem foldR_of_mem {lo hi t : ℝ} (h1 : lo ≤ t) (h2 : t ≤ hi) :
     foldR lo hi t = t := by
   unfold foldR
-  rw [if_neg (not_lt.mpr h1), if_neg (not_lt.mpr h2)]
+  rw [ite_eq_right (not_lt.mpr h1), ite_eq_right (not_lt.mpr h2)]
 
 theorem continuous_foldR (lo hi : ℝ) (h : lo ≤ hi) : Continuous (foldR lo hi) := by
   have hB : Continuous (fun t => if hi < t then 2 * hi - t else t) := by
     have hEq : (fun t => if hi < t then 2 * hi - t else t)
         = fun t => if t ≤ hi then t else 2 * hi - t := by
       funext t; by_cases ht : hi < t
-      · rw [if_pos ht, if_neg (not_le.mpr ht)]
-      · rw [if_neg ht, if_pos (not_lt.mp ht)]
+      · rw [ite_eq_left ht, ite_eq_right (not_le.mpr ht)]
+      · rw [ite_eq_right ht, ite_eq_left (not_lt.mp ht)]
     rw [hEq]
     exact Continuous.if_le continuous_id (continuous_const.sub continuous_id)
       continuous_id continuous_const (fun x hx => by rw [hx]; ring)
@@ -66,13 +66,13 @@ theorem continuous_foldR (lo hi : ℝ) (h : lo ≤ hi) : Continuous (foldR lo hi
       = fun t => if lo ≤ t then (if hi < t then 2 * hi - t else t) else 2 * lo - t := by
     funext t; unfold foldR
     by_cases ht : t < lo
-    · rw [if_pos ht, if_neg (not_le.mpr ht)]
-    · rw [if_neg ht, if_pos (not_lt.mp ht)]
+    · rw [ite_eq_left ht, ite_eq_right (not_le.mpr ht)]
+    · rw [ite_eq_right ht, ite_eq_left (not_lt.mp ht)]
   rw [hEq]
   refine Continuous.if_le hB (continuous_const.sub continuous_id) continuous_const
     continuous_id (fun x hx => ?_)
   subst hx
-  rw [if_neg (not_lt.mpr h)]; ring
+  rw [ite_eq_right (not_lt.mpr h)]; ring
 
 theorem continuous_Fold (lo hi : Vec d) (hlohi : ∀ j, lo j ≤ hi j) :
     Continuous (Fold lo hi) := by

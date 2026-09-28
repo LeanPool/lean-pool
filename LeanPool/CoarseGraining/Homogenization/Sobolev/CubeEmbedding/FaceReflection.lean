@@ -54,8 +54,8 @@ theorem coordFaceReflection_eq_self_of_face {a : ℝ} {i : Fin d} {x : Vec d}
   funext j
   rw [coordFaceReflection_apply]
   rcases eq_or_ne j i with h | h
-  · subst h; rw [if_pos rfl, hx]; ring
-  · rw [if_neg h]
+  · subst h; rw [ite_eq_left rfl, hx]; ring
+  · rw [ite_eq_right h]
 
 /-- The even reflection of a continuous function is continuous (the two branches
 agree on the face). -/
@@ -87,11 +87,11 @@ theorem hasCompactSupport_faceReflect {v : Vec d → ℝ}
     rw [Function.mem_support] at hx
     by_cases h : a ≤ x i
     · refine Or.inl (subset_tsupport v ?_)
-      rw [Function.mem_support]; intro h0; apply hx; unfold faceReflect; rw [if_pos h, h0]
+      rw [Function.mem_support]; intro h0; apply hx; unfold faceReflect; rw [ite_eq_left h, h0]
     · refine Or.inr ?_
       rw [Set.mem_preimage]
       refine subset_tsupport v ?_
-      rw [Function.mem_support]; intro h0; apply hx; unfold faceReflect; rw [if_neg h, h0]
+      rw [Function.mem_support]; intro h0; apply hx; unfold faceReflect; rw [ite_eq_right h, h0]
   exact IsCompact.of_isClosed_subset hK_compact (isClosed_tsupport _)
     (closure_minimal hsupp_sub hK_closed)
 

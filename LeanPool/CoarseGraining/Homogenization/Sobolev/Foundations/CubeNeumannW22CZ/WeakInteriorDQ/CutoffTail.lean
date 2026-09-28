@@ -99,7 +99,7 @@ theorem tendsto_integralLpSeminorm_sub_mul_of_eventually_eq_one_on_compacts
           ≤ Gagliardo.integralLpSeminorm ((U \ K).indicator g) 2 (volumeMeasureOn U) := by
             simp only [Gagliardo.integralLpSeminorm,
               show (2 : ℝ≥0∞) ≠ 0 by norm_num, show (2 : ℝ≥0∞) ≠ ∞ by norm_num,
-              if_false, ENNReal.toReal_ofNat]
+              ite_false, ENNReal.toReal_ofNat]
             apply MeasureTheory.eLpNorm'_mono_ae (by norm_num)
             have hmem : ∀ᵐ x ∂ volumeMeasureOn U, x ∈ U := by
               simpa [volumeMeasureOn] using

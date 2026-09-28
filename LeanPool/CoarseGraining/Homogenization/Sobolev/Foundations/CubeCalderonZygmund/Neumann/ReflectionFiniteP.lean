@@ -70,35 +70,22 @@ theorem norm_hilbertVec_ofVec_cubeCoordinateFoldReflectedVectorField_eq_oddRefle
 corresponding Dirichlet odd-reflection seminorm. -/
 theorem eLpNorm_cubeCoordinateFoldReflectedVectorField_eq_oddReflection
     {d : ℕ} (Q : TriadicCube d) (G : Vec d → Vec d) (p : ℝ≥0∞)
-    (mu : Measure (Vec d)) :
+    (mu : Measure (Vec d))
+    (hEven : AEStronglyMeasurable
+      (fun x ↦ HilbertVec.ofVec (cubeCoordinateFoldReflectedVectorField Q G x)) mu)
+    (hOdd : AEStronglyMeasurable
+      (fun x ↦ HilbertVec.ofVec (cubeDirichletOddReflectionVectorField Q G x)) mu) :
     eLpNorm
         (fun x ↦ HilbertVec.ofVec
           (cubeCoordinateFoldReflectedVectorField Q G x)) p mu =
       eLpNorm
         (fun x ↦ HilbertVec.ofVec
           (cubeDirichletOddReflectionVectorField Q G x)) p mu := by
-  apply eLpNorm_congr_norm_ae
+  apply eLpNorm_congr_norm_ae hEven hOdd
   filter_upwards with x
   exact
     norm_hilbertVec_ofVec_cubeCoordinateFoldReflectedVectorField_eq_oddReflection
       Q G x
-
-/-- Exact finite-`p` scaling from a centered cube to its parent under Neumann
-even reflection. -/
-theorem eLpNorm_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField
-    {d : ℕ} {m : ℤ} (G : Vec d → Vec d) (p : FiniteLpExponent) :
-    eLpNorm
-        (fun x ↦ HilbertVec.ofVec
-          (cubeCoordinateFoldReflectedVectorField (originCube d m) G x))
-        p.exponent
-        (volume.restrict (openCubeSet (originCube d (m + 1)))) =
-      ((3 : ℝ≥0∞) ^ d) ^ (1 / p.exponent.toReal) *
-        eLpNorm (fun x ↦ HilbertVec.ofVec (G x)) p.exponent
-          (volume.restrict (openCubeSet (originCube d m))) := by
-  rw [eLpNorm_cubeCoordinateFoldReflectedVectorField_eq_oddReflection]
-  exact
-    eLpNorm_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField
-      G p
 
 private theorem aestronglyMeasurable_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField
     {d : ℕ} {m : ℤ} {G : Vec d → Vec d}
@@ -174,6 +161,28 @@ private theorem aestronglyMeasurable_openCubeSet_succ_originCube_cubeCoordinateF
     (cubeCoordinateFoldReflectedVectorField_eq_cellFoldLinear_of_mem_cellCube
       (originCube d m) choice G hx).symm
 
+/-- Exact finite-`p` scaling from a centered cube to its parent under Neumann
+even reflection. -/
+theorem eLpNorm_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField
+    {d : ℕ} {m : ℤ} (G : Vec d → Vec d) (p : FiniteLpExponent)
+    (hG : MemLp (fun x ↦ HilbertVec.ofVec (G x)) p.exponent
+      (volume.restrict (openCubeSet (originCube d m)))) :
+    eLpNorm
+        (fun x ↦ HilbertVec.ofVec
+          (cubeCoordinateFoldReflectedVectorField (originCube d m) G x))
+        p.exponent
+        (volume.restrict (openCubeSet (originCube d (m + 1)))) =
+      ((3 : ℝ≥0∞) ^ d) ^ (1 / p.exponent.toReal) *
+        eLpNorm (fun x ↦ HilbertVec.ofVec (G x)) p.exponent
+          (volume.restrict (openCubeSet (originCube d m))) := by
+  rw [eLpNorm_cubeCoordinateFoldReflectedVectorField_eq_oddReflection
+    _ _ _ _
+    (aestronglyMeasurable_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField
+      hG.aestronglyMeasurable)
+    (aestronglyMeasurable_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField
+      hG.aestronglyMeasurable)]
+  exact eLpNorm_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField G p
+
 /-- Finite-`p` membership transports from a centered cube to its parent under
 Neumann even reflection. -/
 theorem memLp_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField
@@ -185,9 +194,9 @@ theorem memLp_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField
         (cubeCoordinateFoldReflectedVectorField (originCube d m) G x))
       p.exponent
       (volume.restrict (openCubeSet (originCube d (m + 1)))) := by
-  refine ⟨aestronglyMeasurable_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField
-      hG.aestronglyMeasurable, ?_⟩
-  rw [eLpNorm_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField]
+  change eLpNorm _ p.exponent _ < ⊤
+  rw [eLpNorm_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField
+    G p hG]
   refine ENNReal.mul_lt_top ?_ hG.eLpNorm_lt_top
   exact ENNReal.rpow_lt_top_of_nonneg (by positivity) (by simp)
 
@@ -217,14 +226,39 @@ private theorem restrict_openCubeSet_originCube_eq_smul_normalizedCubeMeasure
 /-- Normalized finite-`p` norms are exactly preserved from a centered cube to
 its parent under Neumann even reflection. -/
 theorem eLpNorm_normalizedCubeMeasure_succ_originCube_cubeCoordinateFoldReflectedVectorField
-    {d : ℕ} {m : ℤ} (G : Vec d → Vec d) (p : FiniteLpExponent) :
+    {d : ℕ} {m : ℤ} (G : Vec d → Vec d) (p : FiniteLpExponent)
+    (hG : MemLp (fun x ↦ HilbertVec.ofVec (G x)) p.exponent
+      (normalizedCubeMeasure (originCube d m))) :
     eLpNorm
         (fun x ↦ HilbertVec.ofVec
           (cubeCoordinateFoldReflectedVectorField (originCube d m) G x))
         p.exponent (normalizedCubeMeasure (originCube d (m + 1))) =
       eLpNorm (fun x ↦ HilbertVec.ofVec (G x)) p.exponent
         (normalizedCubeMeasure (originCube d m)) := by
-  rw [eLpNorm_cubeCoordinateFoldReflectedVectorField_eq_oddReflection]
+  have hGopen : MemLp (fun x ↦ HilbertVec.ofVec (G x)) p.exponent
+      (volume.restrict (openCubeSet (originCube d m))) := by
+    rw [restrict_openCubeSet_originCube_eq_smul_normalizedCubeMeasure]
+    exact hG.smul_measure ENNReal.ofReal_ne_top
+  have hEvenOpen :=
+    aestronglyMeasurable_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField
+      hGopen.aestronglyMeasurable
+  have hOddOpen :=
+    aestronglyMeasurable_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField
+      hGopen.aestronglyMeasurable
+  have hEven : AEStronglyMeasurable
+      (fun x ↦ HilbertVec.ofVec
+        (cubeCoordinateFoldReflectedVectorField (originCube d m) G x))
+      (normalizedCubeMeasure (originCube d (m + 1))) := by
+    rw [normalizedCubeMeasure_originCube_eq_smul_restrict_openCubeSet]
+    exact hEvenOpen.smul_measure _
+  have hOdd : AEStronglyMeasurable
+      (fun x ↦ HilbertVec.ofVec
+        (cubeDirichletOddReflectionVectorField (originCube d m) G x))
+      (normalizedCubeMeasure (originCube d (m + 1))) := by
+    rw [normalizedCubeMeasure_originCube_eq_smul_restrict_openCubeSet]
+    exact hOddOpen.smul_measure _
+  rw [eLpNorm_cubeCoordinateFoldReflectedVectorField_eq_oddReflection
+    _ _ _ _ hEven hOdd]
   exact
     eLpNorm_normalizedCubeMeasure_succ_originCube_cubeDirichletOddReflectionVectorField
       G p

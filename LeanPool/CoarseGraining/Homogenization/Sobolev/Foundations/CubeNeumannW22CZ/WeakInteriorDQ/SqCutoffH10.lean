@@ -835,19 +835,22 @@ theorem integral_sq_backwardDifferenceQuotient_sqCutoffForwardDifferenceQuotient
     simpa [T] using
       support_backwardDifferenceQuotient_sqCutoffForwardDifferenceQuotient_subset
         (U := U) (V := V) u hVU step i hVshift hη_sub
-  have hT_norm_restrict :
-      MeasureTheory.eLpNorm T 2 MeasureTheory.volume =
-        MeasureTheory.eLpNorm T 2 (MeasureTheory.volume.restrict U) :=
-    eLpNorm_eq_restrict_of_support_subset (U := U) hT_support
-  have hnorm :
-      MeasureTheory.eLpNorm T 2 (MeasureTheory.volume.restrict U) ≤
-        MeasureTheory.eLpNorm G 2 (MeasureTheory.volume.restrict U) := by
-    rwa [hT_norm_restrict] at hnorm_global
   have hT_mem : MeasureTheory.MemLp T 2 (MeasureTheory.volume.restrict U) := by
     let ψ : H10Function U :=
       backwardDifferenceQuotientSqCutoffForwardDifferenceQuotientToH10
         (U := U) (V := V) u hV hVU step i hVshift hη hη_compact hη_sub
     simpa [T, ψ] using ψ.toH1Function.memL2
+  have hT_global_meas : MeasureTheory.AEStronglyMeasurable T MeasureTheory.volume :=
+    aestronglyMeasurable_of_restrict_of_support_subset
+      (U := U) hU.measurableSet hT_mem.aestronglyMeasurable hT_support
+  have hT_norm_restrict :
+      MeasureTheory.eLpNorm T 2 MeasureTheory.volume =
+        MeasureTheory.eLpNorm T 2 (MeasureTheory.volume.restrict U) :=
+    eLpNorm_eq_restrict_of_support_subset (U := U) hT_support hT_global_meas
+  have hnorm :
+      MeasureTheory.eLpNorm T 2 (MeasureTheory.volume.restrict U) ≤
+        MeasureTheory.eLpNorm G 2 (MeasureTheory.volume.restrict U) := by
+    rwa [hT_norm_restrict] at hnorm_global
   have hG_mem : MeasureTheory.MemLp G 2 (MeasureTheory.volume.restrict U) := by
     simpa [G] using
       (localizedSqCutoffForwardDifferenceQuotientToAmbient

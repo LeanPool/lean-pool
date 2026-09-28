@@ -37,7 +37,7 @@ variable {u : H1Function U} {f : Vec d → ℝ}
 /-- The H¹₀ scalar approximants converge globally whenever both the limit and
 the approximants are genuinely supported in the domain. -/
 theorem tendsto_eLpNorm_h10_approx_sub_toFun_global_of_support_subset
-    (ψ : H10Function U)
+    (hU_meas : MeasurableSet U) (ψ : H10Function U)
     (hψ_support : Function.support ψ.toH1Function.toFun ⊆ U) :
     Filter.Tendsto
       (fun n =>
@@ -61,7 +61,17 @@ theorem tendsto_eLpNorm_h10_approx_sub_toFun_global_of_support_subset
         Function.support (fun x => ψ.approx n x - ψ.toH1Function.toFun x) ⊆ U :=
       (Function.support_sub _ _).trans
         (Set.union_subset happrox_support hψ_support)
-    exact eLpNorm_eq_restrict_of_support_subset (U := U) hdiff_support
+    have hdiff_restrict :
+        MeasureTheory.AEStronglyMeasurable
+          (fun x => ψ.approx n x - ψ.toH1Function.toFun x)
+          (MeasureTheory.volume.restrict U) :=
+      ((ψ.approx_smooth n).continuous.aestronglyMeasurable.restrict).sub
+        ψ.toH1Function.memL2.aestronglyMeasurable
+    have hdiff_global :=
+      aestronglyMeasurable_of_restrict_of_support_subset
+        (U := U) hU_meas hdiff_restrict hdiff_support
+    exact eLpNorm_eq_restrict_of_support_subset
+      (U := U) hdiff_support hdiff_global
   rw [hEq]
   exact ψ.tendsto_approx
 
@@ -108,7 +118,7 @@ theorem tendsto_eLpNorm_h10_backwardDifferenceQuotient_approx_sub_toFun_global
       aestronglyMeasurable_h10_approx_sub_toFun_global_of_support_subset
         (U := U) hU_meas ψ hψ_support n)
     (tendsto_eLpNorm_h10_approx_sub_toFun_global_of_support_subset
-      (U := U) ψ hψ_support)
+      (U := U) hU_meas ψ hψ_support)
     step i
 
 /-- The smooth whole-space quotient estimate passes to a genuinely supported
@@ -165,28 +175,14 @@ theorem eLpNorm_h10_backwardDifferenceQuotient_le_eLpNorm_grad
     let Rn : ℝ≥0∞ :=
       MeasureTheory.eLpNorm (euclideanCoordDeriv i (ψ.approx n))
         2 MeasureTheory.volume
-    have hdq_approx_meas :
-        MeasureTheory.AEStronglyMeasurable
-          (euclideanBackwardDifferenceQuotient step i (ψ.approx n))
-          MeasureTheory.volume :=
-      (contDiff_euclideanBackwardDifferenceQuotient (ψ.approx_smooth n) step i).continuous
-        |>.aestronglyMeasurable
-    have hdq_diff_meas :
-        MeasureTheory.AEStronglyMeasurable
-          (fun x =>
-            euclideanBackwardDifferenceQuotient step i (ψ.approx n) x -
-              euclideanBackwardDifferenceQuotient step i ψ.toH1Function.toFun x)
-          MeasureTheory.volume :=
-      aestronglyMeasurable_backwardDifferenceQuotient_sub_of_aestronglyMeasurable
-        (F := ψ.approx n) (G := ψ.toH1Function.toFun)
-        (aestronglyMeasurable_h10_approx_sub_toFun_global_of_support_subset
-          (U := U) hU_meas ψ hψ_support n)
-        step i
     have hL_le : L ≤ Ln + A n := by
       have htri :=
         MeasureTheory.eLpNorm_add_le
           (μ := MeasureTheory.volume) (p := (2 : ℝ≥0∞))
-          hdq_approx_meas hdq_diff_meas.neg
+          (f := euclideanBackwardDifferenceQuotient step i (ψ.approx n))
+          (g := - fun x =>
+            euclideanBackwardDifferenceQuotient step i (ψ.approx n) x -
+              euclideanBackwardDifferenceQuotient step i ψ.toH1Function.toFun x)
           (by norm_num : (1 : ℝ≥0∞) ≤ 2)
       have hpoint :
           (euclideanBackwardDifferenceQuotient step i (ψ.approx n) +
@@ -228,12 +224,6 @@ theorem eLpNorm_h10_backwardDifferenceQuotient_le_eLpNorm_grad
         (contDiff_euclideanCoordDeriv (ψ.approx_smooth n) i).continuous.memLp_of_hasCompactSupport
           (hasCompactSupport_euclideanCoordDeriv (ψ.approx_hasCompactSupport n) i)
       exact hglobal.restrict U
-    have hderiv_diff_mem :
-        MeasureTheory.MemLp
-          (fun x =>
-            euclideanCoordDeriv i (ψ.approx n) x - ψ.toH1Function.grad x i)
-          2 (MeasureTheory.volume.restrict U) :=
-      hderiv_approx_mem.sub (ψ.toH1Function.gradMemL2 i)
     have hR_le : Rn ≤ R + B n := by
       have hderiv_support :
           Function.support (euclideanCoordDeriv i (ψ.approx n)) ⊆ U :=
@@ -242,8 +232,9 @@ theorem eLpNorm_h10_backwardDifferenceQuotient_le_eLpNorm_grad
       have htri :=
         MeasureTheory.eLpNorm_add_le
           (μ := MeasureTheory.volume.restrict U) (p := (2 : ℝ≥0∞))
-          (ψ.toH1Function.gradMemL2 i).aestronglyMeasurable
-          hderiv_diff_mem.aestronglyMeasurable
+          (f := fun x => ψ.toH1Function.grad x i)
+          (g := fun x =>
+            euclideanCoordDeriv i (ψ.approx n) x - ψ.toH1Function.grad x i)
           (by norm_num : (1 : ℝ≥0∞) ≤ 2)
       have hderiv_point :
           ((fun x => ψ.toH1Function.grad x i) +
@@ -269,6 +260,9 @@ theorem eLpNorm_h10_backwardDifferenceQuotient_le_eLpNorm_grad
                     2 (MeasureTheory.volume.restrict U)
                 exact eLpNorm_eq_restrict_of_support_subset
                   (U := U) hderiv_support
+                  (aestronglyMeasurable_of_restrict_of_support_subset
+                    (U := U) hU_meas hderiv_approx_mem.aestronglyMeasurable
+                    hderiv_support)
         _ ≤ R + B n := by
           simpa [R, B, hderiv_point, Pi.add_apply] using htri
     calc
@@ -290,32 +284,11 @@ theorem memLp_h10_backwardDifferenceQuotient_of_support_subset
     MeasureTheory.MemLp
       (euclideanBackwardDifferenceQuotient step i ψ.toH1Function.toFun)
       2 MeasureTheory.volume := by
-  have hψ_meas : MeasureTheory.AEStronglyMeasurable ψ.toH1Function.toFun
-      MeasureTheory.volume :=
-    aestronglyMeasurable_of_restrict_of_support_subset
-      (U := U) hU_meas ψ.toH1Function.memL2.aestronglyMeasurable hψ_support
-  have hdiff_meas : MeasureTheory.AEStronglyMeasurable
-      (fun x => ψ.toH1Function.toFun x - (fun _ : Vec d => (0 : ℝ)) x)
-      MeasureTheory.volume :=
-    hψ_meas.sub MeasureTheory.aestronglyMeasurable_const
-  have hquot_meas : MeasureTheory.AEStronglyMeasurable
-      (euclideanBackwardDifferenceQuotient step i ψ.toH1Function.toFun)
-      MeasureTheory.volume := by
-    have hraw :=
-      aestronglyMeasurable_backwardDifferenceQuotient_sub_of_aestronglyMeasurable
-        (F := ψ.toH1Function.toFun) (G := fun _ : Vec d => (0 : ℝ))
-        hdiff_meas step i
-    change MeasureTheory.AEStronglyMeasurable
-      (fun x =>
-        (ψ.toH1Function.toFun x -
-          ψ.toH1Function.toFun (euclideanCoordShift (-step) i x)) / step)
-      MeasureTheory.volume
-    simpa [euclideanBackwardDifferenceQuotient] using hraw
   have hnorm :=
     eLpNorm_h10_backwardDifferenceQuotient_le_eLpNorm_grad
       (U := U) hU_meas ψ hψ_support hstep i
-  exact ⟨hquot_meas,
-    lt_of_le_of_lt hnorm (ψ.toH1Function.gradMemL2 i).eLpNorm_lt_top⟩
+  exact lt_of_le_of_lt hnorm
+    (ψ.toH1Function.gradMemL2 i).eLpNorm_lt_top
 
 /-- Forward version of the `H¹₀` quotient estimate. -/
 theorem eLpNorm_h10_forwardDifferenceQuotient_le_eLpNorm_grad

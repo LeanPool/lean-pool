@@ -216,7 +216,6 @@ theorem integral_abs_finsetSum_pow_rpow_inv_le_sum
     exact
       MeasureTheory.eLpNorm_sum_le
         (μ := μ) (s := s) (f := f)
-        (fun i hi => (h_meas i hi).aestronglyMeasurable)
         hp_ennreal
   have hg_toReal :
       ENNReal.toReal (MeasureTheory.eLpNorm g (p : ENNReal) μ) =
@@ -226,11 +225,11 @@ theorem integral_abs_finsetSum_pow_rpow_inv_le_sum
       ENNReal.toReal (MeasureTheory.eLpNorm g (p : ENNReal) μ) ≤
         ENNReal.toReal (∑ i ∈ s, MeasureTheory.eLpNorm (f i) (p : ENNReal) μ) := by
     exact ENNReal.toReal_mono
-      (ENNReal.sum_ne_top.2 fun i hi => (h_memLp i hi).2.ne) hg_eLp
+      (ENNReal.sum_ne_top.2 fun i hi => (h_memLp i hi).eLpNorm_ne_top) hg_eLp
   have hsum_rhs :
       ENNReal.toReal (∑ i ∈ s, MeasureTheory.eLpNorm (f i) (p : ENNReal) μ) =
         ∑ i ∈ s, ENNReal.toReal (MeasureTheory.eLpNorm (f i) (p : ENNReal) μ) := by
-    exact ENNReal.toReal_sum (fun i hi => (h_memLp i hi).2.ne)
+    exact ENNReal.toReal_sum (fun i hi => (h_memLp i hi).eLpNorm_ne_top)
   have hterm :
       ∀ i ∈ s,
         ENNReal.toReal (MeasureTheory.eLpNorm (f i) (p : ENNReal) μ) =
@@ -294,7 +293,6 @@ theorem integral_abs_finsetSum_pow_rpow_inv_le_sum_aemeasurable
     exact
       MeasureTheory.eLpNorm_sum_le
         (μ := μ) (s := s) (f := f)
-        (fun i hi => (h_aemeas i hi).aestronglyMeasurable)
         hp_ennreal
   have hg_toReal :
       ENNReal.toReal (MeasureTheory.eLpNorm g (p : ENNReal) μ) =
@@ -305,11 +303,11 @@ theorem integral_abs_finsetSum_pow_rpow_inv_le_sum_aemeasurable
       ENNReal.toReal (MeasureTheory.eLpNorm g (p : ENNReal) μ) ≤
         ENNReal.toReal (∑ i ∈ s, MeasureTheory.eLpNorm (f i) (p : ENNReal) μ) := by
     exact ENNReal.toReal_mono
-      (ENNReal.sum_ne_top.2 fun i hi => (h_memLp i hi).2.ne) hg_eLp
+      (ENNReal.sum_ne_top.2 fun i hi => (h_memLp i hi).eLpNorm_ne_top) hg_eLp
   have hsum_rhs :
       ENNReal.toReal (∑ i ∈ s, MeasureTheory.eLpNorm (f i) (p : ENNReal) μ) =
         ∑ i ∈ s, ENNReal.toReal (MeasureTheory.eLpNorm (f i) (p : ENNReal) μ) := by
-    exact ENNReal.toReal_sum (fun i hi => (h_memLp i hi).2.ne)
+    exact ENNReal.toReal_sum (fun i hi => (h_memLp i hi).eLpNorm_ne_top)
   have hterm :
       ∀ i ∈ s,
         ENNReal.toReal (MeasureTheory.eLpNorm (f i) (p : ENNReal) μ) =
@@ -351,7 +349,7 @@ theorem integral_abs_sq_rpow_half_le_integral_abs_pow_rpow_inv
       MeasureTheory.eLpNorm f (2 : ENNReal) μ ≤
         MeasureTheory.eLpNorm f (p : ENNReal) μ := by
     exact MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le
-      (μ := μ) (f := f) (by exact_mod_cast hp) hf_ae
+      (μ := μ) (f := f) (by exact_mod_cast hp)
   rw [h_memLp_two.eLpNorm_eq_integral_rpow_norm (by norm_num) (by simp),
     h_memLp_p.eLpNorm_eq_integral_rpow_norm (by exact_mod_cast hp_ne_zero) (by simp)] at hcmp
   exact (ENNReal.ofReal_le_ofReal_iff (by positivity)).1 (by
@@ -380,7 +378,7 @@ theorem integral_abs_sq_rpow_half_le_integral_abs_pow_rpow_inv_aemeasurable
       MeasureTheory.eLpNorm f (2 : ENNReal) μ ≤
         MeasureTheory.eLpNorm f (p : ENNReal) μ := by
     exact MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le
-      (μ := μ) (f := f) (by exact_mod_cast hp) hf_ae
+      (μ := μ) (f := f) (by exact_mod_cast hp)
   rw [h_memLp_two.eLpNorm_eq_integral_rpow_norm (by norm_num) (by simp),
     h_memLp_p.eLpNorm_eq_integral_rpow_norm (by exact_mod_cast hp_ne_zero) (by simp)] at hcmp
   exact (ENNReal.ofReal_le_ofReal_iff (by positivity)).1 (by
@@ -403,7 +401,7 @@ theorem integral_abs_le_integral_abs_sq_rpow_half
       MeasureTheory.eLpNorm f (1 : ENNReal) μ ≤
         MeasureTheory.eLpNorm f (2 : ENNReal) μ := by
     exact MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le
-      (μ := μ) (f := f) (by norm_num : (1 : ENNReal) ≤ 2) hf_ae
+      (μ := μ) (f := f) (by norm_num : (1 : ENNReal) ≤ 2)
   have hL1_int_f : MeasureTheory.Integrable f μ := by
     rwa [MeasureTheory.memLp_one_iff_integrable] at h_memLp_one
   have hL1_int : MeasureTheory.Integrable (fun ω => |f ω|) μ := by
@@ -426,7 +424,7 @@ theorem integral_abs_le_integral_abs_sq_rpow_half
   have hcmp_toReal :
       ENNReal.toReal (MeasureTheory.eLpNorm f (1 : ENNReal) μ) ≤
         ENNReal.toReal (MeasureTheory.eLpNorm f (2 : ENNReal) μ) := by
-    exact ENNReal.toReal_mono h_memLp_two.2.ne hcmp
+    exact ENNReal.toReal_mono h_memLp_two.eLpNorm_ne_top hcmp
   simpa [hL1_toReal, hL2_toReal] using hcmp_toReal
 
 /-- A.e.-measurable version of
@@ -448,7 +446,7 @@ theorem integral_abs_le_integral_abs_sq_rpow_half_aemeasurable
       MeasureTheory.eLpNorm f (1 : ENNReal) μ ≤
         MeasureTheory.eLpNorm f (2 : ENNReal) μ := by
     exact MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le
-      (μ := μ) (f := f) (by norm_num : (1 : ENNReal) ≤ 2) hf_ae
+      (μ := μ) (f := f) (by norm_num : (1 : ENNReal) ≤ 2)
   have hL1_int_f : MeasureTheory.Integrable f μ := by
     rwa [MeasureTheory.memLp_one_iff_integrable] at h_memLp_one
   have hL1_int : MeasureTheory.Integrable (fun ω => |f ω|) μ := by
@@ -471,7 +469,7 @@ theorem integral_abs_le_integral_abs_sq_rpow_half_aemeasurable
   have hcmp_toReal :
       ENNReal.toReal (MeasureTheory.eLpNorm f (1 : ENNReal) μ) ≤
         ENNReal.toReal (MeasureTheory.eLpNorm f (2 : ENNReal) μ) := by
-    exact ENNReal.toReal_mono h_memLp_two.2.ne hcmp
+    exact ENNReal.toReal_mono h_memLp_two.eLpNorm_ne_top hcmp
   simpa [hL1_toReal, hL2_toReal] using hcmp_toReal
 
 theorem sum_rpow_inv_le_card_rpow_mul_rpow_sum

@@ -129,7 +129,7 @@ theorem map_foldR_restrict (lo hi : ℝ) (h : lo < hi) :
       = (volume.restrict (Set.Ioo (2 * lo - hi) lo)).map (fun t => 2 * lo - t) := by
     refine Measure.map_congr ((MeasureTheory.ae_restrict_iff' measurableSet_Ioo).2
       (Filter.Eventually.of_forall ?_))
-    intro t ht; unfold foldR; rw [if_pos ht.2]
+    intro t ht; unfold foldR; rw [ite_eq_left ht.2]
   have hcongrM : (volume.restrict (Set.Ioo lo hi)).map (foldR lo hi)
       = (volume.restrict (Set.Ioo lo hi)).map id := by
     refine Measure.map_congr ((MeasureTheory.ae_restrict_iff' measurableSet_Ioo).2
@@ -140,7 +140,7 @@ theorem map_foldR_restrict (lo hi : ℝ) (h : lo < hi) :
     refine Measure.map_congr ((MeasureTheory.ae_restrict_iff' measurableSet_Ioo).2
       (Filter.Eventually.of_forall ?_))
     intro t ht; unfold foldR
-    rw [if_neg (not_lt.mpr (le_of_lt (lt_trans h ht.1))), if_pos ht.1]
+    rw [ite_eq_right (not_lt.mpr (le_of_lt (lt_trans h ht.1))), ite_eq_left ht.1]
   -- each affine branch maps onto the base interval
   have hmpL : Measure.map (fun t => 2 * lo - t) volume = volume :=
     (volume.measurePreserving_sub_left (2 * lo)).map_eq

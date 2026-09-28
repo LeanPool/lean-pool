@@ -217,7 +217,7 @@ theorem
   have hprodMem :
       MeasureTheory.MemLp prod (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
     let : ENNReal.HolderTriple (2 : ℝ≥0∞) ∞ (2 : ℝ≥0∞) := by infer_instance
-    simpa [prod] using! hξLp.smul (p := (2 : ℝ≥0∞)) (r := (2 : ℝ≥0∞)) hv
+    simpa [prod] using! hv.smul (r := (2 : ℝ≥0∞)) hξLp
   have hconj :
       cubeBesovConjExponent (1 : ℝ≥0∞) = ∞ := by
     simpa [cubeBesovConjExponent] using

@@ -297,25 +297,27 @@ def foldExtension {m : ℕ} (lo hi : Vec (m + 1)) (hlt : ∀ k, lo k < hi k)
     exact heq.fderiv_eq
   -- `L²` membership of the candidate extension and its gradient
   have hEu_mem : MemLp (fun x => g (Fold lo hi x)) 2 (volume.restrict (Box3 lo hi)) := by
-    refine ⟨(hg_meas.comp hFold_meas).aestronglyMeasurable, ?_⟩
+    rw [memLp_iff]
     rw [eLpNorm_foldComp hg_meas lo hi hlt, ← eLpNorm_congr_ae hg_ae]
     exact ENNReal.mul_lt_top hCd_lt u.memL2.eLpNorm_lt_top
   have hEu_grad_mem : ∀ i, MemLp
       (fun x => gi i (Fold lo hi x) * foldSign (lo i) (hi i) (x i)) 2
       (volume.restrict (Box3 lo hi)) := by
     intro i
-    refine ⟨(((hgi_meas i).comp hFold_meas).mul
-      (measurable_foldSign_comp lo hi i)).aestronglyMeasurable, ?_⟩
+    rw [memLp_iff]
     refine lt_of_le_of_lt
       (b := eLpNorm (fun x => gi i (Fold lo hi x)) 2 (volume.restrict (Box3 lo hi)))
-      (eLpNorm_mono_ae (Filter.Eventually.of_forall fun x => ?_)) ?_
+      (eLpNorm_mono_ae
+        (((hgi_meas i).comp hFold_meas).mul
+          (measurable_foldSign_comp lo hi i)).aestronglyMeasurable
+        (Filter.Eventually.of_forall fun x => ?_)) ?_
     · rw [norm_mul]; exact mul_le_of_le_one_right (norm_nonneg _) (norm_foldSign_le_one _ _ _)
     · rw [eLpNorm_foldComp (hgi_meas i) lo hi hlt, ← eLpNorm_congr_ae (hgi_ae i)]
       exact ENNReal.mul_lt_top hCd_lt (u.gradMemL2 i).eLpNorm_lt_top
   -- `L²` membership of the approximants and their gradients
   have hEn_mem : ∀ n, MemLp (fun x => wn n (Fold lo hi x)) 2 (volume.restrict (Box3 lo hi)) := by
     intro n
-    refine ⟨((hw_cont n).comp hFold_cont).aestronglyMeasurable, ?_⟩
+    rw [memLp_iff]
     rw [eLpNorm_foldComp (hw_meas n) lo hi hlt]
     exact ENNReal.mul_lt_top hCd_lt (hw_memLp n).eLpNorm_lt_top
   have hDEn_mem : ∀ n, GradMemL2On (Box3 lo hi)
@@ -324,12 +326,16 @@ def foldExtension {m : ℕ} (lo hi : Vec (m + 1)) (hlt : ∀ k, lo k < hi k)
     have hcont : Continuous (fun y => fderiv ℝ (wn n) y (basisVec i)) :=
       (((hw_smooth n).of_le (by exact_mod_cast le_top) : ContDiff ℝ 1 (wn n)).continuous_fderiv (by simp)).clm_apply
         continuous_const
-    refine ⟨((hcont.measurable.comp hFold_meas).mul
-      (measurable_foldSign_comp lo hi i)).aestronglyMeasurable, ?_⟩
+    change eLpNorm
+      (fun x => fderiv ℝ (wn n) (Fold lo hi x) (basisVec i) *
+        foldSign (lo i) (hi i) (x i)) 2 (volume.restrict (Box3 lo hi)) < ∞
     refine lt_of_le_of_lt
       (b := eLpNorm (fun x => fderiv ℝ (wn n) (Fold lo hi x) (basisVec i)) 2
         (volume.restrict (Box3 lo hi)))
-      (eLpNorm_mono_ae (Filter.Eventually.of_forall fun x => ?_)) ?_
+      (eLpNorm_mono_ae
+        ((hcont.measurable.comp hFold_meas).mul
+          (measurable_foldSign_comp lo hi i)).aestronglyMeasurable
+        (Filter.Eventually.of_forall fun x => ?_)) ?_
     · rw [norm_mul]; exact mul_le_of_le_one_right (norm_nonneg _) (norm_foldSign_le_one _ _ _)
     · rw [eLpNorm_foldComp hcont.measurable lo hi hlt]
       have hmem : MemLp (fun y => fderiv ℝ (wn n) y (basisVec i)) 2
@@ -383,7 +389,10 @@ def foldExtension {m : ℕ} (lo hi : Vec (m + 1)) (hlt : ∀ k, lo k < hi k)
       refine le_trans
         (b := eLpNorm (fun x => (fun y => fderiv ℝ (wn n) y (basisVec i) - gi i y) (Fold lo hi x))
           2 (volume.restrict (Box3 lo hi)))
-        (eLpNorm_mono_ae (Filter.Eventually.of_forall fun x => ?_)) ?_
+        (eLpNorm_mono_ae
+          ((hDEn_mem n i).aestronglyMeasurable.sub
+            (hEu_grad_mem i).aestronglyMeasurable)
+          (Filter.Eventually.of_forall fun x => ?_)) ?_
       · show ‖_‖ ≤ ‖(fun y => fderiv ℝ (wn n) y (basisVec i) - gi i y) (Fold lo hi x)‖
         rw [show fderiv ℝ (wn n) (Fold lo hi x) (basisVec i) * foldSign (lo i) (hi i) (x i)
               - gi i (Fold lo hi x) * foldSign (lo i) (hi i) (x i)
@@ -434,14 +443,15 @@ def foldExtension {m : ℕ} (lo hi : Vec (m + 1)) (hlt : ∀ k, lo k < hi k)
         have hfold : Fold lo hi x = x :=
           Fold_of_mem fun k => ⟨(Set.mem_univ_pi.1 hxU k).1.le, (Set.mem_univ_pi.1 hxU k).2.le⟩
         have hsign : foldSign (lo i) (hi i) (x i) = 1 := by
-          unfold foldSign; rw [if_neg (not_lt.mpr hxk.1.le), if_neg (not_lt.mpr hxk.2.le)]
+          unfold foldSign; rw [ite_eq_right (not_lt.mpr hxk.1.le), ite_eq_right (not_lt.mpr hxk.2.le)]
         show gi i (Fold lo hi x) * foldSign (lo i) (hi i) (x i) = u.grad x i
         rw [hfold, hsign, mul_one, hgix]
       eLpNorm_le := le_of_eq (by
         rw [eLpNorm_foldComp hg_meas lo hi hlt, ← eLpNorm_congr_ae hg_ae])
       grad_eLpNorm_le := fun i =>
         le_trans (b := eLpNorm (fun x => gi i (Fold lo hi x)) 2 (volume.restrict (Box3 lo hi)))
-          (eLpNorm_mono_ae (Filter.Eventually.of_forall fun x => by
+          (eLpNorm_mono_ae (hEu_grad_mem i).aestronglyMeasurable
+            (Filter.Eventually.of_forall fun x => by
             rw [norm_mul]; exact mul_le_of_le_one_right (norm_nonneg _) (norm_foldSign_le_one _ _ _)))
           (le_of_eq (by rw [eLpNorm_foldComp (hgi_meas i) lo hi hlt,
             ← eLpNorm_congr_ae (hgi_ae i)])) }

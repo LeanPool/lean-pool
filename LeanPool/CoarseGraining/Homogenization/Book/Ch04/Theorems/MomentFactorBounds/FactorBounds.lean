@@ -394,19 +394,21 @@ private theorem annealedMomentRoot_abs_sub_integral_le_two_mul
     simp [IsProbabilityMeasure.measure_univ, Real.norm_eq_abs]
   have hconst_ne_top :
       eLpNorm (fun _ : RegCoeffField d => c) (ξ : ENNReal) P ≠ ⊤ :=
-    hconst_mem.2.ne
+    hconst_mem.eLpNorm_ne_top
   have hsum_ne_top :
       eLpNorm X (ξ : ENNReal) P +
           eLpNorm (fun _ : RegCoeffField d => c) (ξ : ENNReal) P ≠ ⊤ :=
-    ENNReal.add_ne_top.mpr ⟨hmem_p.2.ne, hconst_ne_top⟩
+    ENNReal.add_ne_top.mpr ⟨hmem_p.eLpNorm_ne_top, hconst_ne_top⟩
   have hsub_le :
       eLpNorm (fun a => X a - c) (ξ : ENNReal) P ≤
         eLpNorm X (ξ : ENNReal) P +
           eLpNorm (fun _ : RegCoeffField d => c) (ξ : ENNReal) P := by
-    simpa [c, Pi.sub_apply] using!
-      eLpNorm_sub_le hX_meas.aestronglyMeasurable
-        (aestronglyMeasurable_const (μ := P) (b := c))
-        (by exact_mod_cast hξ)
+    have hfun : (fun a => X a - c) = X - fun _ => c := by
+      funext a
+      rfl
+    rw [hfun]
+    exact eLpNorm_sub_le (p := (ξ : ENNReal)) (μ := P)
+      (f := X) (g := fun _ => c) (by exact_mod_cast hξ)
   calc
     annealedMomentRoot P ξ (fun a => |X a - ∫ b, X b ∂P|)
         = ENNReal.toReal (eLpNorm (fun a => X a - c) (ξ : ENNReal) P) := by
@@ -416,7 +418,7 @@ private theorem annealedMomentRoot_abs_sub_integral_le_two_mul
             eLpNorm (fun _ : RegCoeffField d => c) (ξ : ENNReal) P) :=
           ENNReal.toReal_mono hsum_ne_top hsub_le
     _ = annealedMomentRoot P ξ (fun a => |X a|) + |c| := by
-          rw [ENNReal.toReal_add hmem_p.2.ne hconst_ne_top,
+          rw [ENNReal.toReal_add hmem_p.eLpNorm_ne_top hconst_ne_top,
             hX_toReal, hconst_toReal]
     _ ≤ annealedMomentRoot P ξ (fun a => |X a|) +
           annealedMomentRoot P ξ (fun a => |X a|) := by

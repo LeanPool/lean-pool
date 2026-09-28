@@ -163,7 +163,7 @@ theorem norm_fderiv_cubeArgument_le_of_mem_scaledClosedCubeSet {d : ℕ}
             exact False.elim (hi (Finset.mem_univ i))
     _ ≤ 2 / ((ρ₂ - ρ₁) * cubeRadius Q) := by
           have habs : |x i - cubeCenter Q i| ≤ ρ₂ * cubeRadius Q := hx i
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           rw [Real.norm_eq_abs, abs_div]
           rw [abs_of_pos hden_pos]
           have hnum : |-(2 * (x i - cubeCenter Q i) * 1)| ≤

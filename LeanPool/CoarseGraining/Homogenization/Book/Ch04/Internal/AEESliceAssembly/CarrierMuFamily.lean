@@ -61,7 +61,7 @@ noncomputable section
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {d : ℕ} {U : Set (Vec d)} {k : ℕ}
 
 /-- The raw AEE-slice element attached to a carrier source. -/
-private def rawSlice (A : Ω → RegCoeffField d)
+def rawSlice (A : Ω → RegCoeffField d)
     (hSlice : ∀ ω, AEEQuantitativeEllipticSlice U k (A ω).toFun) (ω : Ω) :
     {a : CoeffField d // AEEQuantitativeEllipticSlice U k a} :=
   ⟨(A ω).toFun, hSlice ω⟩

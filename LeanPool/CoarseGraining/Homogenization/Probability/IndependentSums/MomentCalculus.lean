@@ -76,7 +76,7 @@ theorem integrable_abs_sub_integral_rpow_of_integrable_abs_rpow
   have hmem : MemLp f (ENNReal.ofReal p) μ :=
     memLp_of_integrable_abs_rpow hp_pos hf hfp
   have hcenter : MemLp (fun ω => f ω - ∫ z, f z ∂μ) (ENNReal.ofReal p) μ := by
-    show MemLp (f - fun _ => ∫ z, f z ∂μ) (ENNReal.ofReal p) μ
+    change MemLp (f - fun _ => ∫ z, f z ∂μ) (ENNReal.ofReal p) μ
     exact hmem.sub (memLp_const (∫ z, f z ∂μ))
   have hcenter_int :
       Integrable (fun ω => ‖f ω - ∫ z, f z ∂μ‖ ^ (ENNReal.ofReal p).toReal) μ :=

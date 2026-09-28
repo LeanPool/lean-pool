@@ -44,7 +44,9 @@ private theorem cubeVolume_originCube_succ {d : ℕ} (m : ℤ) :
   rw [mul_pow]
   ring
 
-private theorem normalizedCubeMeasure_parent_restrict_source
+/-- Restricting the normalized parent measure to the source cube rescales it by the
+inverse volume ratio. -/
+theorem normalizedCubeMeasure_parent_restrict_source
     {d : ℕ} (m : ℤ) :
     (normalizedCubeMeasure (originCube d (m + 1))).restrict
         (openCubeSet (originCube d m)) =
@@ -130,9 +132,13 @@ theorem eLpNorm_sourceParentFiniteLpExtension
     hilbertifyVecField_openParentDatumExtension,
     eLpNorm_indicator_eq_eLpNorm_restrict
       (isOpen_openCubeSet _).measurableSet,
-    normalizedCubeMeasure_parent_restrict_source,
-    eLpNorm_smul_measure_of_ne_top q.lt_top.ne]
+    normalizedCubeMeasure_parent_restrict_source]
+  change eLpNorm (fun x => HilbertVec.ofVec (h.toField x))
+    q.exponent _ = _
+  rw [eLpNorm_smul_measure_of_ne_top q.lt_top.ne _ _
+    h.euclideanMemLp.aestronglyMeasurable]
   rw [smul_eq_mul, one_div, ENNReal.toReal_inv]
+  rfl
 
 /-- The source-supported parent extension cannot increase the normalized
 finite-exponent Euclidean norm. -/
@@ -163,8 +169,10 @@ theorem eLpNorm_two_sourceParentFiniteLpExtension
     hilbertifyVecField_openParentDatumExtension,
     eLpNorm_indicator_eq_eLpNorm_restrict
       (isOpen_openCubeSet _).measurableSet,
-    normalizedCubeMeasure_parent_restrict_source,
-    eLpNorm_smul_measure_of_ne_top (by norm_num : (2 : ℝ≥0∞) ≠ ∞)]
+    normalizedCubeMeasure_parent_restrict_source]
+  change eLpNorm (fun x => HilbertVec.ofVec (h.toField x)) 2 _ = _
+  rw [eLpNorm_smul_measure_of_ne_top (by norm_num : (2 : ℝ≥0∞) ≠ ∞) _ _
+    h.euclideanMemL2.aestronglyMeasurable]
   rfl
 
 /-- The source-supported parent extension cannot increase its normalized

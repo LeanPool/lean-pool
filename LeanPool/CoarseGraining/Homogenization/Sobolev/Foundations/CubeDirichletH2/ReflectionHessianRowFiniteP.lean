@@ -108,7 +108,7 @@ theorem cubeDirichletOddReflectionGradientCoordScalar_eq_vectorField_singleCoord
   simp only [cubeDirichletOddReflectionGradientCoordScalar,
     cubeDirichletOddReflectionVectorField,
     cubeCoordinateFoldReflectedVectorField,
-    Pi.smul_apply, smul_eq_mul, if_pos]
+    Pi.smul_apply, smul_eq_mul, ite_eq_left]
   ring
 
 /-- The cellwise mixed reflection of one Hessian row. Its `j`th coordinate
@@ -132,7 +132,7 @@ def cubeDirichletOddReflectionHessianRowCellVectorField {d : ℕ}
     cubeDirichletOddReflectionMixedCellSign, Pi.smul_apply, smul_eq_mul,
     cubeFaceReflectionCellFoldLinear_apply]
   by_cases hi : choice i = 1 <;> by_cases hj : choice j = 1 <;>
-    simp only [hi, hj, if_true, if_false] <;> ring
+    simp only [hi, hj, ite_true, ite_false] <;> ring
 
 /-- The global mixed reflection of one Hessian row. -/
 def cubeDirichletOddReflectionHessianRowVectorField {d : ℕ}

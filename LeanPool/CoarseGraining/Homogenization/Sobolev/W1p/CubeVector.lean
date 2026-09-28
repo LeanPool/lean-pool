@@ -166,14 +166,16 @@ theorem eLpNorm_jacobianHilbert_le_sum_grad
         (normalizedCubeMeasure Q) ≤
       ∑ i : Fin d, MeasureTheory.eLpNorm (singleRow i) p.exponent
         (normalizedCubeMeasure Q) := by
-          exact MeasureTheory.eLpNorm_sum_le
-            (fun i _ ↦ (hsingleRow i).aestronglyMeasurable) p.one_lt.le
+          exact MeasureTheory.eLpNorm_sum_le p.one_lt.le
     _ = ∑ i : Fin d, MeasureTheory.eLpNorm
         (fun x ↦ HilbertVec.ofVec ((F.coord i).grad x))
         p.exponent (normalizedCubeMeasure Q) := by
           apply Finset.sum_congr rfl
           intro i _
           apply MeasureTheory.eLpNorm_congr_norm_ae
+            (hsingleRow i).aestronglyMeasurable
+            (by simpa only [jacobian_row] using
+              (F.jacobianRowMemLp i).aestronglyMeasurable)
           exact MeasureTheory.ae_of_all (normalizedCubeMeasure Q) fun x ↦ by
             simp [singleRow, row]
 
@@ -189,7 +191,8 @@ noncomputable def toCubeEuclideanLpField
     F.toCubeEuclideanLpField.toField = F.toField :=
   rfl
 
-private theorem weakHessianRowGradMemLpOn [NeZero d]
+/-- A weak Hessian row supplies the gradient integrability of its coordinate. -/
+theorem weakHessianRowGradMemLpOn [NeZero d]
     {u : H1Function (openCubeSet Q)}
     (H : HasWeakHessianOn (openCubeSet Q) u)
     (hrows : ∀ i : Fin d,

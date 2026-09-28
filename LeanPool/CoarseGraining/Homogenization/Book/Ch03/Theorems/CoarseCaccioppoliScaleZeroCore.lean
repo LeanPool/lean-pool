@@ -246,7 +246,7 @@ theorem volume_caccioppoliCoreSet_toReal_ge_scaleFactor_div_eighteen_pow
         ∏ _i : Fin d, cubeScaleFactor Q / 18 := by
       simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     _ ≤ ∏ i : Fin d, (hi i - lo i) := by
-      apply Finset.prod_le_prod
+      apply Finset.prod_le_prod₀
       · intro i _
         exact le_of_lt (div_pos hscale_pos (by norm_num))
       · intro i _

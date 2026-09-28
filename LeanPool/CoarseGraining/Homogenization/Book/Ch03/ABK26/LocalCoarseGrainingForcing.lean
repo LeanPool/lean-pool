@@ -379,13 +379,21 @@ private theorem cubeLpNorm_two_le_eLpNorm_finite_of_memLp
   let : MeasureTheory.IsProbabilityMeasure μ := ⟨by simp [μ]⟩
   have hle : MeasureTheory.eLpNorm (fun x => HilbertVec.ofVec (f x)) 2 μ ≤
       MeasureTheory.eLpNorm (fun x => HilbertVec.ofVec (f x)) p.exponent μ :=
-    MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le hp hf.aestronglyMeasurable
-  have hcompare : MeasureTheory.eLpNorm f 2 μ ≤
-      MeasureTheory.eLpNorm (fun x => HilbertVec.ofVec (f x)) 2 μ := by
-    refine MeasureTheory.eLpNorm_mono_ae (Filter.Eventually.of_forall fun x => ?_)
+    MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le hp
+  have hcompareRaw : Gagliardo.integralLpSeminorm f 2 μ ≤
+      Gagliardo.integralLpSeminorm (fun x => HilbertVec.ofVec (f x)) 2 μ := by
+    simp only [Gagliardo.integralLpSeminorm,
+      if_neg (by norm_num : (2 : ℝ≥0∞) ≠ 0),
+      if_neg (by norm_num : (2 : ℝ≥0∞) ≠ ∞)]
+    refine MeasureTheory.eLpNorm'_mono_ae (by norm_num) ?_
+    filter_upwards [] with x
     exact HilbertVec.norm_le_norm_ofVec (f x)
+  have hcompare : Gagliardo.integralLpSeminorm f 2 μ ≤
+      MeasureTheory.eLpNorm (fun x => HilbertVec.ofVec (f x)) 2 μ := by
+    rw [← Gagliardo.integralLpSeminorm_eq_eLpNorm _ _ _ hf.aestronglyMeasurable]
+    exact hcompareRaw
   have hall := hcompare.trans hle
-  have htoReal := ENNReal.toReal_mono hf.2.ne hall
+  have htoReal := ENNReal.toReal_mono hf.eLpNorm_ne_top hall
   simpa only [μ, cubeLpNorm] using htoReal
 
 /-- The finite Euclidean carrier supplies the legacy normalized cube `L²`

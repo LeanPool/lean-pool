@@ -658,7 +658,7 @@ theorem integrable_abs_finsetSum_rpow_of_identDistrib_neg
     intro ω
     have hnonneg : 0 ≤ |X hs.choose ω| := abs_nonneg _
     have hle : |X hs.choose ω| ≤ M ω := by
-      show |X hs.choose ω| ≤ s.sup' hs (fun i => |X i ω|)
+      change |X hs.choose ω| ≤ s.sup' hs (fun i => |X i ω|)
       exact Finset.le_sup' (f := fun i => |X i ω|) hs.choose_spec
     exact le_trans hnonneg hle
   have hMpow_nonneg : 0 ≤ᵐ[μ] fun ω => M ω ^ p := by
@@ -734,7 +734,7 @@ theorem integral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
     intro ω
     have hnonneg : 0 ≤ |X hs.choose ω| := abs_nonneg _
     have hle : |X hs.choose ω| ≤ M ω := by
-      show |X hs.choose ω| ≤ s.sup' hs (fun i => |X i ω|)
+      change |X hs.choose ω| ≤ s.sup' hs (fun i => |X i ω|)
       exact Finset.le_sup' (f := fun i => |X i ω|) hs.choose_spec
     exact le_trans hnonneg hle
   have hMpow_nonneg : 0 ≤ᵐ[μ] fun ω => M ω ^ p := by

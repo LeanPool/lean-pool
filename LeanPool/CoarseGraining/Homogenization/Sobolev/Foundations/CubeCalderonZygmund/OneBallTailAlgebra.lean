@@ -82,6 +82,18 @@ theorem axisCube_lintegral_ofReal_norm_rpow_le_volume_mul
     (∫⁻ y in axisCube z L,
       ENNReal.ofReal (‖V y‖ ^ p.exponent.toReal) ∂volume) ≤
       ENNReal.ofReal (L ^ d) * B ^ p.exponent.toReal := by
+  have hp : 0 < p.exponent.toReal :=
+    ENNReal.toReal_pos (zero_lt_one.trans p.one_lt).ne' p.lt_top.ne
+  by_cases hBtop : B = ∞
+  · have hvolume : ENNReal.ofReal (L ^ d) ≠ 0 :=
+      ne_of_gt (ENNReal.ofReal_pos.mpr (pow_pos hL _))
+    rw [hBtop, ENNReal.top_rpow_of_pos hp,
+      ENNReal.mul_top hvolume]
+    exact le_top
+  have hVfinite : eLpNorm V p.exponent (axisCubeNormalizedMeasure z L) < ∞ :=
+    hV.trans_lt (lt_top_iff_ne_top.mpr hBtop)
+  have hVmeas : AEStronglyMeasurable V (axisCubeNormalizedMeasure z L) :=
+    aestronglyMeasurable_of_eLpNorm_ne_top hVfinite.ne
   let c : ℝ≥0∞ := ENNReal.ofReal ((L ^ d)⁻¹)
   let I : ℝ≥0∞ := ∫⁻ y in axisCube z L,
     ENNReal.ofReal (‖V y‖ ^ p.exponent.toReal) ∂volume
@@ -93,7 +105,7 @@ theorem axisCube_lintegral_ofReal_norm_rpow_le_volume_mul
       (eLpNorm V p.exponent (axisCubeNormalizedMeasure z L)) ^ p.exponent.toReal =
         c * I := by
     simpa only [c, I] using
-      (axisCube_eLpNorm_rpow_exponent_eq_normalized_setLIntegral z hL p V)
+      (axisCube_eLpNorm_rpow_exponent_eq_normalized_setLIntegral z hL p V hVmeas)
   have hc0 : c ≠ 0 := by
     dsimp only [c]
     exact ne_of_gt (ENNReal.ofReal_pos.mpr (inv_pos.mpr (pow_pos hL _)))
@@ -139,6 +151,18 @@ theorem closedBall_lintegral_ofReal_norm_rpow_le_axisCube_volume_mul
     (∫⁻ y in Metric.closedBall (axisCubeCenter (d := d) z L) (L / 2),
       ENNReal.ofReal (‖V y‖ ^ p.exponent.toReal) ∂(volume : MeasureTheory.Measure (Vec d))) ≤
       ENNReal.ofReal (L ^ d) * B ^ p.exponent.toReal := by
+  have hp : 0 < p.exponent.toReal :=
+    ENNReal.toReal_pos (zero_lt_one.trans p.one_lt).ne' p.lt_top.ne
+  by_cases hBtop : B = ∞
+  · have hvolume : ENNReal.ofReal (L ^ d) ≠ 0 :=
+      ne_of_gt (ENNReal.ofReal_pos.mpr (pow_pos hL _))
+    rw [hBtop, ENNReal.top_rpow_of_pos hp,
+      ENNReal.mul_top hvolume]
+    exact le_top
+  have hVfinite : eLpNorm V p.exponent (axisCubeNormalizedMeasure z L) < ∞ :=
+    hV.trans_lt (lt_top_iff_ne_top.mpr hBtop)
+  have hVmeas : AEStronglyMeasurable V (axisCubeNormalizedMeasure z L) :=
+    aestronglyMeasurable_of_eLpNorm_ne_top hVfinite.ne
   let c : ℝ≥0∞ := ENNReal.ofReal ((L ^ d)⁻¹)
   let I : ℝ≥0∞ := ∫⁻ y in Metric.closedBall (axisCubeCenter (d := d) z L) (L / 2),
     ENNReal.ofReal (‖V y‖ ^ p.exponent.toReal) ∂(volume : MeasureTheory.Measure (Vec d))
@@ -150,7 +174,7 @@ theorem closedBall_lintegral_ofReal_norm_rpow_le_axisCube_volume_mul
       (MeasureTheory.eLpNorm V p.exponent (axisCubeNormalizedMeasure z L)) ^ p.exponent.toReal =
         c * I := by
     simpa only [c, I] using
-      (axisCube_eLpNorm_rpow_exponent_eq_normalized_closedBallLIntegral z hL p V)
+      (axisCube_eLpNorm_rpow_exponent_eq_normalized_closedBallLIntegral z hL p V hVmeas)
   have hc0 : c ≠ 0 := by
     dsimp only [c]
     exact ne_of_gt (ENNReal.ofReal_pos.mpr (inv_pos.mpr (pow_pos hL _)))

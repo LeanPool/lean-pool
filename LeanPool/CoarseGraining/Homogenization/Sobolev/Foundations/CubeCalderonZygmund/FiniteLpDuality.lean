@@ -85,7 +85,7 @@ theorem norm_hilbertRadialTruncation {α : Type*} {d : ℕ} {q : ℝ}
       simp [hilbertRadialTruncation, hx]]
     rw [norm_smul, Real.norm_eq_abs,
       abs_of_nonneg (Real.rpow_nonneg (norm_nonneg _) _)]
-    simp only [if_pos hx]
+    simp only [ite_eq_left hx]
     calc
       ‖F x‖ ^ (q - 2) * ‖F x‖ =
           ‖F x‖ ^ (q - 2) * ‖F x‖ ^ (1 : ℝ) := by
@@ -110,7 +110,7 @@ theorem inner_hilbertRadialTruncation_self {α : Type*} {d : ℕ} {q : ℝ}
         ‖F x‖ ^ (q - 2) • F x by
       simp [hilbertRadialTruncation, hx]]
     rw [real_inner_smul_left, real_inner_self_eq_norm_sq]
-    simp only [if_pos hx]
+    simp only [ite_eq_left hx]
     rw [← Real.rpow_natCast]
     calc
       ‖F x‖ ^ (q - 2) * ‖F x‖ ^ (2 : ℝ) = ‖F x‖ ^ ((q - 2) + 2) :=
@@ -141,11 +141,11 @@ theorem norm_hilbertRadialTruncation_rpow_conjugate {α : Type*} {d : ℕ}
     ENNReal.HolderConjugate.toReal hq1
   rw [norm_hilbertRadialTruncation hq1]
   by_cases hx : ‖F x‖ ≤ (n : ℝ)
-  · simp only [if_pos hx]
+  · simp only [ite_eq_left hx]
     rw [← Real.rpow_mul (norm_nonneg _)]
     congr 1
     exact hreal.sub_one_mul_conj
-  · simp only [if_neg hx]
+  · simp only [ite_eq_right hx]
     exact Real.zero_rpow hreal.symm.pos.ne'
 
 /-- The algebraic-vector version of the radial pairing identity. -/
@@ -180,9 +180,9 @@ theorem norm_hilbertRadialTruncation_le {α : Type*} {d : ℕ} {q : ℝ}
     ‖hilbertRadialTruncation q n F x‖ ≤ (n : ℝ) ^ (q - 1) := by
   rw [norm_hilbertRadialTruncation hq]
   by_cases hx : ‖F x‖ ≤ (n : ℝ)
-  · rw [if_pos hx]
+  · rw [ite_eq_left hx]
     exact Real.rpow_le_rpow (norm_nonneg _) hx (sub_pos.mpr hq).le
-  · rw [if_neg hx]
+  · rw [ite_eq_right hx]
     exact Real.rpow_nonneg (Nat.cast_nonneg n) _
 
 /-- On a finite measure, every radial truncation belongs to every finite

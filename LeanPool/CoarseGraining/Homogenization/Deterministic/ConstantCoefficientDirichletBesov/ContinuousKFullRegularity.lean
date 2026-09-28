@@ -170,9 +170,16 @@ theorem exists_unitCubeGradientNormalizedEuclideanL2EnergyRegularity
     have henergy_real :
         (eLpNorm out (2 : ℝ≥0∞) μ).toReal ≤
           C₀ * (eLpNorm h (2 : ℝ≥0∞) μ).toReal := by
-      simpa only [cubeLpNorm, μ, out, unitCubeGradientEuclideanL2Field,
+      have hout_cube_mem : MemLp (fun x => w.toH1Function.grad x) 2
+          (normalizedCubeMeasure (originCube d 0)) := by
+        rw [normalizedCubeMeasure_originCube_zero_eq_unitCenteredCubeDomain_normalizedVolume]
+        simpa only [out, unitCubeGradientEuclideanL2Field] using hout_mem
+      have hraw := henergy (originCube d 0) h w hh_cube_mem hweak
+      rw [cubeLpNorm_eq_eLpNorm_toReal _ 2 _ hout_cube_mem.aestronglyMeasurable,
+        cubeLpNorm_eq_eLpNorm_toReal _ 2 _ hh_cube_mem.aestronglyMeasurable] at hraw
+      simpa only [μ, out, unitCubeGradientEuclideanL2Field,
         normalizedCubeMeasure_originCube_zero_eq_unitCenteredCubeDomain_normalizedVolume]
-        using henergy (originCube d 0) h w hh_cube_mem hweak
+        using hraw
     have henergy_ennreal :
         eLpNorm out (2 : ℝ≥0∞) μ ≤
           ENNReal.ofReal C₀ * eLpNorm h (2 : ℝ≥0∞) μ := by
@@ -183,20 +190,27 @@ theorem exists_unitCubeGradientNormalizedEuclideanL2EnergyRegularity
     have hout_euclidean_le :
         eLpNorm (fun x => euclideanNorm (out x)) (2 : ℝ≥0∞) μ ≤
           ENNReal.ofReal (d : ℝ) * eLpNorm out (2 : ℝ≥0∞) μ := by
-      apply eLpNorm_le_mul_eLpNorm_of_ae_le_mul
-      filter_upwards [] with x
+      refine eLpNorm_le_mul_eLpNorm_of_ae_le_mul
+        (by simpa only [μ] using out.euclideanMagnitudeMemL2.aestronglyMeasurable)
+        (Filter.Eventually.of_forall ?_) (2 : ℝ≥0∞)
+      intro x
       simpa only [Real.norm_eq_abs, abs_of_nonneg (euclideanNorm_nonneg (out x))] using
         euclideanNorm_le_dimension_mul_norm (out x)
     have hh_ambient_le_euclidean :
         eLpNorm h (2 : ℝ≥0∞) μ ≤
           eLpNorm (fun x => euclideanNorm (h x)) (2 : ℝ≥0∞) μ := by
-      apply eLpNorm_mono
+      apply eLpNorm_mono hh_mem.aestronglyMeasurable
       intro x
       simpa only [Real.norm_eq_abs, abs_of_nonneg (euclideanNorm_nonneg (h x))] using
         norm_le_euclideanNorm (h x)
-    change
-      eLpNorm (fun x => euclideanNorm (out x)) (2 : ℝ≥0∞) μ ≤
-        Cenergy * eLpNorm (fun x => euclideanNorm (h x)) (2 : ℝ≥0∞) μ
+    change (unitCenteredCubeDomain d).normalizedLpENorm 2
+        (fun x => euclideanNorm (out x)) ≤
+      Cenergy * (unitCenteredCubeDomain d).normalizedLpENorm 2
+        (fun x => euclideanNorm (h x))
+    rw [(unitCenteredCubeDomain d).normalizedLpENorm_eq_eLpNorm 2 _
+        (by simpa only [μ] using out.euclideanMagnitudeMemL2.aestronglyMeasurable),
+      (unitCenteredCubeDomain d).normalizedLpENorm_eq_eLpNorm 2 _
+        (by simpa only [μ] using h.euclideanMagnitudeMemL2.aestronglyMeasurable)]
     calc
       eLpNorm (fun x => euclideanNorm (out x)) (2 : ℝ≥0∞) μ ≤
           ENNReal.ofReal (d : ℝ) * eLpNorm out (2 : ℝ≥0∞) μ :=

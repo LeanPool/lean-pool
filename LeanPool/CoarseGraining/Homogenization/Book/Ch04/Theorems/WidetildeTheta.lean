@@ -844,7 +844,7 @@ theorem annealedMomentRoot_le_const_add_of_nonneg_le
   have hmono :
       eLpNorm X (ξ : ENNReal) P ≤
         eLpNorm (fun a : RegCoeffField d => A + E a) (ξ : ENNReal) P :=
-    MeasureTheory.eLpNorm_mono fun a => by
+    MeasureTheory.eLpNorm_mono hX_meas.aestronglyMeasurable fun a => by
       have hX_abs : |X a| = X a := abs_of_nonneg (hX_nonneg a)
       have hAE_nonneg : 0 ≤ A + E a := add_nonneg hA_nonneg (hE_nonneg a)
       have hAE_abs : |A + E a| = A + E a := abs_of_nonneg hAE_nonneg
@@ -854,13 +854,11 @@ theorem annealedMomentRoot_le_const_add_of_nonneg_le
         eLpNorm (fun _ : RegCoeffField d => A) (ξ : ENNReal) P +
           eLpNorm E (ξ : ENNReal) P := by
     simpa [Pi.add_apply] using!
-      (MeasureTheory.eLpNorm_add_le
-        (aestronglyMeasurable_const (μ := P) (b := A))
-        hE_meas.aestronglyMeasurable hξ_enn)
+      (MeasureTheory.eLpNorm_add_le hξ_enn)
   have hsum_ne_top :
       eLpNorm (fun _ : RegCoeffField d => A) (ξ : ENNReal) P +
           eLpNorm E (ξ : ENNReal) P ≠ ⊤ :=
-    ENNReal.add_ne_top.mpr ⟨hConst_ne_top, hE_memLp.2.ne⟩
+    ENNReal.add_ne_top.mpr ⟨hConst_ne_top, hE_memLp.eLpNorm_ne_top⟩
   calc
     annealedMomentRoot P ξ X =
         ENNReal.toReal (eLpNorm X (ξ : ENNReal) P) := hX_toReal.symm
@@ -869,7 +867,8 @@ theorem annealedMomentRoot_le_const_add_of_nonneg_le
           eLpNorm E (ξ : ENNReal) P) :=
         ENNReal.toReal_mono hsum_ne_top (le_trans hmono hadd)
     _ = A + annealedMomentRoot P ξ E := by
-        rw [ENNReal.toReal_add hConst_ne_top hE_memLp.2.ne, hConst_toReal, hE_toReal]
+        rw [ENNReal.toReal_add hConst_ne_top hE_memLp.eLpNorm_ne_top,
+          hConst_toReal, hE_toReal]
 
 /-- Internal primitive factor bounds imply `Theta_n <= widetildeTheta_n`. -/
 theorem Internal.annealedThetaAtScaleOfPrimitive_le_widetildeThetaAtScale_of_factor_bounds

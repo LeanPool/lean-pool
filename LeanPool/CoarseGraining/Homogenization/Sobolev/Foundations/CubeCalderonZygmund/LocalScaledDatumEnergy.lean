@@ -126,10 +126,7 @@ theorem axisCubeNormalized_eLpNorm_two_sub_le
     eLpNorm (F - G) 2 (axisCubeNormalizedMeasure z L) ≤
       eLpNorm F 2 (axisCubeNormalizedMeasure z L) +
         eLpNorm G 2 (axisCubeNormalizedMeasure z L) := by
-  exact eLpNorm_sub_le
-    (memHilbertVectorL2_axisCubeNormalizedMeasure z hL hF).aestronglyMeasurable
-    (memHilbertVectorL2_axisCubeNormalizedMeasure z hL hG).aestronglyMeasurable
-    (by norm_num)
+  exact eLpNorm_sub_le (p := 2) (by norm_num)
 
 end CubeCalderonZygmund
 

@@ -832,7 +832,7 @@ theorem overlapCubeLpNorm_two_sq_eq_lintegral_rpow_enorm_toReal
     (S : Cube d) (f : Vec d → E) :
     (overlapCubeLpNorm S (2 : ℝ≥0∞) f) ^ 2 =
       (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂ normalizedOverlapCubeMeasure S).toReal :=
-  Homogenization.overlapCubeLpNorm_two_sq_eq_lintegral_rpow_enorm_toReal S f
+  Homogenization.overlapCubeLpNorm_two_sq_eq_lintegral_rpow_enorm_toReal_unconditional S f
 
 theorem memLp_cubeMeasure_of_memLp_normalizedCubeMeasure
     {d : ℕ} {E : Type*} [NormedAddCommGroup E]

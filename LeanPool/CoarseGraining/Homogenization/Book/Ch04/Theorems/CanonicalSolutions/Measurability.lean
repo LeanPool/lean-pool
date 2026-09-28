@@ -193,7 +193,7 @@ private theorem measurable_canonicalMuHilbertMinimizerCubeSet_localSigmaR
       rw [Set.liftCover_of_mem
         (S := cover) (f := piece) (hf := hagree) (hS := hcover) (i := some k)
         (by simpa [cover] using hafirst)]
-      simp only [piece, cover, canonicalMuHilbertMinimizerCubeSet, ha, k, dif_pos]
+      simp only [piece, cover, canonicalMuHilbertMinimizerCubeSet, ha, k, dite_eq_left]
     · have ha_notS : a ∉ S := by
         intro haS
         rcases Set.mem_iUnion.mp haS with ⟨k, hafirst⟩
@@ -397,9 +397,9 @@ theorem aestronglyMeasurable_canonicalMuHilbertMinimizer_cubeSet
         simpa [k] using Nat.find_spec ha
       right
       refine Set.mem_iUnion.mpr ⟨k, ⟨⟨a.toFun, hslice⟩, ?_⟩⟩
-      simp only [f, canonicalMuHilbertMinimizerCubeSet, U, ha, k, dif_pos]
+      simp only [f, canonicalMuHilbertMinimizerCubeSet, U, ha, k, dite_eq_left]
     · left
-      simp only [f, canonicalMuHilbertMinimizerCubeSet, U, ha, dif_neg, not_false_eq_true,
+      simp only [f, canonicalMuHilbertMinimizerCubeSet, U, ha, dite_eq_right, not_false_eq_true,
         Set.mem_singleton_iff]
   exact (aestronglyMeasurable_iff_nullMeasurable_separable).2
     ⟨hNull, ⟨sepSet, hSep, hMemSep⟩⟩

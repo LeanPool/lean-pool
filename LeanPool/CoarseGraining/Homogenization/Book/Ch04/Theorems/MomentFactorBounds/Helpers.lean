@@ -113,11 +113,11 @@ theorem integral_le_annealedMomentRoot_of_ae_nonneg
   have hcmp :
       eLpNorm X (1 : ENNReal) P ≤ eLpNorm X (ξ : ENNReal) P := by
     exact MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le
-      (μ := P) (f := X) (by exact_mod_cast hξ) hX_meas.aestronglyMeasurable
+      (μ := P) (f := X) (by exact_mod_cast hξ)
   have hcmp_toReal :
       ENNReal.toReal (eLpNorm X (1 : ENNReal) P) ≤
         ENNReal.toReal (eLpNorm X (ξ : ENNReal) P) := by
-    exact ENNReal.toReal_mono hmem_p.2.ne hcmp
+    exact ENNReal.toReal_mono hmem_p.eLpNorm_ne_top hcmp
   have hL1 :
       ENNReal.toReal (eLpNorm X (1 : ENNReal) P) = ∫ a, ‖X a‖ ∂P := by
     calc

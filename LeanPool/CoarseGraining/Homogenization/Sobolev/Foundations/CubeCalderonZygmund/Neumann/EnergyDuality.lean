@@ -8,6 +8,7 @@ module
 
 public import LeanPool.CoarseGraining.Homogenization.Sobolev.Foundations.CubeCalderonZygmund.Neumann.ReflectionWeakEquation
 public import LeanPool.CoarseGraining.Homogenization.Sobolev.Foundations.CubeCoerciveH1
+public import LeanPool.CoarseGraining.Homogenization.Sobolev.Foundations.CubeCalderonZygmund.FiniteLpBelowTwo
 
 /-!
 # Centered-cube Neumann energy and duality
@@ -180,12 +181,27 @@ theorem centeredCubeH1MeanZeroScalarDivergence_cz_two
   rw [← ofReal_norm,
     Real.norm_of_nonneg (inv_nonneg.mpr hsigma0.le),
     ENNReal.ofReal_inv_of_pos hsigma0] at hnormalized
-  simpa only [BoundedMeasurableDomain.normalizedEuclideanLpENorm,
-    BoundedMeasurableDomain.normalizedLpENorm,
-    FiniteLpExponent.two_exponent, euclideanNorm_eq_norm_ofVec,
-    eLpNorm_norm, hilbertifyVecField] using! hnormalized
+  have huTwo : MemLp (hilbertifyVecField u.toH1Function.grad) 2
+      (centeredCubeDomain d m).normalizedVolume := by
+    rw [centeredCube_normalizedVolume_eq_smul_openCubeVolume_neumann]
+    exact (memHilbertVectorL2_hilbertifyVecField
+      u.toH1Function.grad_memVectorL2).smul_measure ENNReal.ofReal_ne_top
+  have hHTwo : MemLp (hilbertifyVecField h.toField) 2
+      (centeredCubeDomain d m).normalizedVolume := by
+    have hfield : hilbertifyVecField h.toField =
+        (fun x => HilbertVec.ofVec (h.toField x)) := rfl
+    rw [hfield, centeredCubeDomain,
+      cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
+    exact h.euclideanMemLp
+  rw [FiniteLpExponent.two_exponent,
+    INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+      (centeredCubeDomain d m) 2 _ huTwo.aestronglyMeasurable,
+    INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+      (centeredCubeDomain d m) 2 _ hHTwo.aestronglyMeasurable]
+  exact hnormalized
 
-private theorem nonempty_openCubeSet_originCube_neumann (d : ℕ) (m : ℤ) :
+/-- The centered open cube has its origin as a point. -/
+theorem nonempty_openCubeSet_originCube_neumann (d : ℕ) (m : ℤ) :
     Set.Nonempty (openCubeSet (originCube d m)) := by
   refine ⟨0, ?_⟩
   rw [mem_openCubeSet_originCube_iff]
@@ -193,7 +209,8 @@ private theorem nonempty_openCubeSet_originCube_neumann (d : ℕ) (m : ℤ) :
   have hpow : 0 < (3 : ℝ) ^ m := zpow_pos (by norm_num) _
   constructor <;> simp only [Pi.zero_apply] <;> nlinarith
 
-private theorem isEllipticFieldOn_scalarMatrix_centeredCube
+/-- A positive scalar matrix is elliptic throughout the centered cube. -/
+theorem isEllipticFieldOn_scalarMatrix_centeredCube
     {d : ℕ} {m : ℤ} {sigma0 : ℝ} (hsigma0 : 0 < sigma0) :
     IsEllipticFieldOn sigma0 sigma0 (openCubeSet (originCube d m))
       (fun _ : Vec d ↦ scalarMatrix (d := d) sigma0) := by
@@ -242,7 +259,11 @@ theorem centeredCubeMeanZeroScalarDivergenceSolution_isWeakSolution
   let : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d m))) :=
     (isOpenBoundedConvexDomain_openCubeSet
       (originCube d m)).isFiniteMeasure_restrict_volume
-  exact isMeanZeroNeumannRhsWeakSolution_coeffGradientProblemSolution_of_h1CoerciveEstimate
+  have hneg : (-G) = (fun x => -G x) := by
+    funext x
+    exact Pi.neg_apply G x
+  simpa only [centeredCubeMeanZeroScalarDivergenceSolution, hneg] using
+    isMeanZeroNeumannRhsWeakSolution_coeffGradientProblemSolution_of_h1CoerciveEstimate
     hG.neg (originCubeMeanZeroH1CoerciveEstimate d m)
     (nonempty_openCubeSet_originCube_neumann d m)
     (isEllipticFieldOn_scalarMatrix_centeredCube hsigma0)

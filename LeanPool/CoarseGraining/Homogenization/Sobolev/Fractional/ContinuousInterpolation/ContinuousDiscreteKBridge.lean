@@ -27,6 +27,25 @@ open scoped BigOperators ENNReal
 
 noncomputable section
 
+private theorem normalizedLpNorm_eq_eLpNorm_toReal {d : ℕ}
+    (U : BoundedMeasurableDomain d) {E : Type*}
+    [TopologicalSpace E] [ContinuousENorm E] (p : ℝ≥0∞) (f : Vec d → E)
+    (hf : MeasureTheory.MemLp f p U.normalizedVolume) :
+    U.normalizedLpNorm p f hf =
+      (MeasureTheory.eLpNorm f p U.normalizedVolume).toReal := by
+  change (U.normalizedLpENorm p f).toReal = _
+  rw [U.normalizedLpENorm_eq_eLpNorm p f hf.aestronglyMeasurable]
+
+private theorem continuousKGradientNorm_eq_eLpNorm_toReal {d : ℕ}
+    (G : ContinuousKCompetitor d) :
+    continuousKGradientNorm G =
+      (MeasureTheory.eLpNorm
+        (fun x => matrixFrobeniusMagnitude (G.gradient x)) (2 : ℝ≥0∞)
+        (unitCenteredCubeDomain d).normalizedVolume).toReal := by
+  change (unitCenteredCubeDomain d).normalizedLpNorm (2 : ℝ≥0∞)
+    (fun x => matrixFrobeniusMagnitude (G.gradient x)) G.gradientFrobeniusMemL2 = _
+  exact normalizedLpNorm_eq_eLpNorm_toReal _ _ _ G.gradientFrobeniusMemL2
+
 /-- Regard a continuous source competitor as an internal cube competitor on
 the origin unit cube. -/
 def ContinuousKCompetitor.toCubeVectorH1Function {d : ℕ}
@@ -119,16 +138,32 @@ theorem cubeResidualNorm_le_continuousKResidualNorm {d : ℕ}
     have hsub := F.euclideanMemL2.sub G.euclideanMemL2
     simpa only [euclideanNorm_eq_norm_ofVec, HilbertVec.ofVec, PiLp.toLp_apply,
       Pi.sub_apply] using! hsub.norm
-  change
-    (MeasureTheory.eLpNorm
-      (fun x => F x - G.toField x) (2 : ℝ≥0∞)
-      (normalizedCubeMeasure (originCube d 0))).toReal ≤
+  have hvec : MeasureTheory.MemLp (fun x => F x - G.toField x) (2 : ℝ≥0∞)
+      (normalizedCubeMeasure (originCube d 0)) := by
+    rw [normalizedCubeMeasure_originCube_zero_eq_unitCenteredCubeDomain_normalizedVolume]
+    apply MeasureTheory.MemLp.of_eval
+    intro i
+    have hF := F.euclideanMemL2
+    rw [MeasureTheory.memLp_piLp_iff] at hF
+    have hG := G.euclideanMemL2
+    rw [MeasureTheory.memLp_piLp_iff] at hG
+    simpa only [Pi.sub_apply, HilbertVec.ofVec, PiLp.toLp_apply] using!
+      (hF i).sub (hG i)
+  have hcontinuous : continuousKResidualNorm F G =
       (MeasureTheory.eLpNorm
         (fun x => euclideanNorm (F x - G.toField x)) (2 : ℝ≥0∞)
-        (unitCenteredCubeDomain d).normalizedVolume).toReal
+        (unitCenteredCubeDomain d).normalizedVolume).toReal := by
+    change (unitCenteredCubeDomain d).normalizedLpNorm (2 : ℝ≥0∞)
+      (fun x => euclideanNorm (F x - G.toField x)) hmem = _
+    exact normalizedLpNorm_eq_eLpNorm_toReal _ _ _ hmem
+  rw [ContinuousKCompetitor.toCubeVectorH1Function_toField,
+    cubeLpNorm_eq_eLpNorm_toReal (originCube d 0) 2 _ hvec.aestronglyMeasurable,
+    hcontinuous]
   rw [normalizedCubeMeasure_originCube_zero_eq_unitCenteredCubeDomain_normalizedVolume]
   apply ENNReal.toReal_mono hmem.eLpNorm_ne_top
-  apply MeasureTheory.eLpNorm_mono
+  apply MeasureTheory.eLpNorm_mono (by
+    simpa only [normalizedCubeMeasure_originCube_zero_eq_unitCenteredCubeDomain_normalizedVolume]
+      using hvec.aestronglyMeasurable)
   intro x
   simpa only [Real.norm_eq_abs, abs_of_nonneg (euclideanNorm_nonneg _)] using
     norm_le_euclideanNorm (F x - G.toField x)
@@ -155,6 +190,15 @@ theorem continuousKResidualNorm_le_dimPlusOne_mul_cubeResidualNorm {d : ℕ}
     rw [MeasureTheory.memLp_piLp_iff] at hG
     simpa only [R, Pi.sub_apply, HilbertVec.ofVec, PiLp.toLp_apply] using!
       (hF i).sub (hG i)
+  have hR_vec_memQ : MeasureTheory.MemLp R (2 : ℝ≥0∞)
+      (normalizedCubeMeasure (originCube d 0)) := by
+    rw [normalizedCubeMeasure_originCube_zero_eq_unitCenteredCubeDomain_normalizedVolume]
+    exact hR_vec_mem
+  have hR_eucl_mem : MeasureTheory.MemLp (fun x => euclideanNorm (R x))
+      (2 : ℝ≥0∞) (unitCenteredCubeDomain d).normalizedVolume := by
+    have hsub := F.euclideanMemL2.sub G.euclideanMemL2
+    simpa only [R, euclideanNorm_eq_norm_ofVec, HilbertVec.ofVec, PiLp.toLp_apply,
+      Pi.sub_apply] using! hsub.norm
   have hbound : ∀ x : Vec d, euclideanNorm (R x) ≤ ‖C • R x‖ := by
     intro x
     rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg hC_nonneg]
@@ -166,11 +210,16 @@ theorem continuousKResidualNorm_le_dimPlusOne_mul_cubeResidualNorm {d : ℕ}
         · dsimp [C]
           norm_num
         · exact norm_nonneg _
-  change
-    (MeasureTheory.eLpNorm (fun x => euclideanNorm (R x)) (2 : ℝ≥0∞)
-      (unitCenteredCubeDomain d).normalizedVolume).toReal ≤
-      C * (MeasureTheory.eLpNorm R (2 : ℝ≥0∞)
-        (normalizedCubeMeasure (originCube d 0))).toReal
+  have hcontinuous : continuousKResidualNorm F G =
+      (MeasureTheory.eLpNorm (fun x => euclideanNorm (R x)) (2 : ℝ≥0∞)
+        (unitCenteredCubeDomain d).normalizedVolume).toReal := by
+    change (unitCenteredCubeDomain d).normalizedLpNorm (2 : ℝ≥0∞)
+      (fun x => euclideanNorm (R x)) hR_eucl_mem = _
+    exact normalizedLpNorm_eq_eLpNorm_toReal _ _ _ hR_eucl_mem
+  rw [ContinuousKCompetitor.toCubeVectorH1Function_toField,
+    hcontinuous,
+    cubeLpNorm_eq_eLpNorm_toReal (originCube d 0) 2 _
+      hR_vec_memQ.aestronglyMeasurable]
   rw [normalizedCubeMeasure_originCube_zero_eq_unitCenteredCubeDomain_normalizedVolume]
   calc
     (MeasureTheory.eLpNorm (fun x => euclideanNorm (R x)) (2 : ℝ≥0∞)
@@ -180,7 +229,7 @@ theorem continuousKResidualNorm_le_dimPlusOne_mul_cubeResidualNorm {d : ℕ}
       ENNReal.toReal_mono
         ((hR_vec_mem.const_smul C).eLpNorm_ne_top)
         (by
-          apply MeasureTheory.eLpNorm_mono
+          apply MeasureTheory.eLpNorm_mono hR_eucl_mem.aestronglyMeasurable
           intro x
           simpa only [Real.norm_eq_abs, abs_of_nonneg (euclideanNorm_nonneg _)] using
             hbound x)
@@ -228,11 +277,6 @@ theorem continuousKGradientNorm_le_cubeRelativeGradientCoordL2NormSum {d : ℕ}
   have htotal_eq : total = ∑ i : Fin d, row i := by
     funext x
     simp only [total, Finset.sum_apply]
-  have hrow_meas : ∀ i : Fin d, MeasureTheory.AEStronglyMeasurable (row i) μ := by
-    intro i
-    rw [hrow_eq i]
-    exact Finset.aestronglyMeasurable_sum (s := Finset.univ)
-      (fun j _ => (hcoord i j).norm.aestronglyMeasurable)
   have hrow_bound : ∀ i : Fin d,
       MeasureTheory.eLpNorm (row i) (2 : ℝ≥0∞) μ ≤
         ∑ j : Fin d, MeasureTheory.eLpNorm (f i j) (2 : ℝ≥0∞) μ := by
@@ -243,19 +287,19 @@ theorem continuousKGradientNorm_le_cubeRelativeGradientCoordL2NormSum {d : ℕ}
           ≤ ∑ j : Fin d,
               MeasureTheory.eLpNorm (fun x => ‖f i j x‖) (2 : ℝ≥0∞) μ :=
             MeasureTheory.eLpNorm_sum_le
-              (fun j _ => (hcoord i j).norm.aestronglyMeasurable) (by norm_num)
+              (by norm_num)
       _ = ∑ j : Fin d, MeasureTheory.eLpNorm (f i j) (2 : ℝ≥0∞) μ := by
             apply Finset.sum_congr rfl
             intro j _
             exact MeasureTheory.eLpNorm_norm (f i j)
+              (hcoord i j).aestronglyMeasurable
   have htotal_bound : MeasureTheory.eLpNorm total (2 : ℝ≥0∞) μ ≤
       ∑ i : Fin d, ∑ j : Fin d, MeasureTheory.eLpNorm (f i j) (2 : ℝ≥0∞) μ := by
     calc
       MeasureTheory.eLpNorm total (2 : ℝ≥0∞) μ
           ≤ ∑ i : Fin d, MeasureTheory.eLpNorm (row i) (2 : ℝ≥0∞) μ := by
             rw [htotal_eq]
-            exact MeasureTheory.eLpNorm_sum_le
-              (fun i _ => hrow_meas i) (by norm_num)
+            exact MeasureTheory.eLpNorm_sum_le (by norm_num)
       _ ≤ ∑ i : Fin d, ∑ j : Fin d,
           MeasureTheory.eLpNorm (f i j) (2 : ℝ≥0∞) μ := by
             apply Finset.sum_le_sum
@@ -264,7 +308,12 @@ theorem continuousKGradientNorm_le_cubeRelativeGradientCoordL2NormSum {d : ℕ}
   have hfrob_bound : MeasureTheory.eLpNorm
       (fun x => matrixFrobeniusMagnitude (G.gradient x)) (2 : ℝ≥0∞) μ ≤
       MeasureTheory.eLpNorm total (2 : ℝ≥0∞) μ := by
-    apply MeasureTheory.eLpNorm_mono
+    have hFrob_mem : MeasureTheory.MemLp
+        (fun x => matrixFrobeniusMagnitude (G.gradient x)) (2 : ℝ≥0∞) μ := by
+      dsimp [μ, Q]
+      rw [normalizedCubeMeasure_originCube_zero_eq_unitCenteredCubeDomain_normalizedVolume]
+      exact G.gradientFrobeniusMemL2
+    apply MeasureTheory.eLpNorm_mono hFrob_mem.aestronglyMeasurable
     intro x
     rw [Real.norm_eq_abs, abs_of_nonneg (matrixFrobeniusMagnitude_nonneg _)]
     have htotal_nonneg : 0 ≤ total x := by
@@ -283,10 +332,7 @@ theorem continuousKGradientNorm_le_cubeRelativeGradientCoordL2NormSum {d : ℕ}
     exact (hcoord i j).eLpNorm_ne_top
   rw [CubeVectorH1Function.relativeGradientCoordL2NormSum_originCube_zero]
   rw [CubeVectorH1Function.gradientCoordL2NormSum_eq_sum_normalizedELpNorm]
-  change
-    (MeasureTheory.eLpNorm
-      (fun x => matrixFrobeniusMagnitude (G.gradient x)) (2 : ℝ≥0∞)
-      (unitCenteredCubeDomain d).normalizedVolume).toReal ≤ _
+  rw [continuousKGradientNorm_eq_eLpNorm_toReal G]
   rw [← normalizedCubeMeasure_originCube_zero_eq_unitCenteredCubeDomain_normalizedVolume]
   calc
     (MeasureTheory.eLpNorm
@@ -335,7 +381,10 @@ theorem cubeRelativeGradientCoordL2NormSum_le_dimPlusOne_sq_mul_continuousKGradi
       MeasureTheory.eLpNorm (f i j) (2 : ℝ≥0∞) μ ≤
         MeasureTheory.eLpNorm hFrob (2 : ℝ≥0∞) μ := by
     intro i j
-    apply MeasureTheory.eLpNorm_mono
+    have hcoord_mem : MeasureTheory.MemLp (f i j) (2 : ℝ≥0∞) μ := by
+      dsimp [f, μ, Q]
+      exact (G.coord i).grad_memL2_normalizedCubeMeasure j
+    apply MeasureTheory.eLpNorm_mono hcoord_mem.aestronglyMeasurable
     intro x
     have hfrob_nonneg : 0 ≤ hFrob x := by
       dsimp [hFrob]
@@ -366,9 +415,7 @@ theorem cubeRelativeGradientCoordL2NormSum_le_dimPlusOne_sq_mul_continuousKGradi
             ring
   rw [CubeVectorH1Function.relativeGradientCoordL2NormSum_originCube_zero]
   rw [CubeVectorH1Function.gradientCoordL2NormSum_eq_sum_normalizedELpNorm]
-  change _ ≤ (d + 1 : ℝ) ^ 2 *
-    (MeasureTheory.eLpNorm hFrob (2 : ℝ≥0∞)
-      (unitCenteredCubeDomain d).normalizedVolume).toReal
+  rw [continuousKGradientNorm_eq_eLpNorm_toReal G]
   rw [← normalizedCubeMeasure_originCube_zero_eq_unitCenteredCubeDomain_normalizedVolume]
   calc
     (∑ i : Fin d, ∑ j : Fin d,

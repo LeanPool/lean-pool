@@ -30,7 +30,7 @@ The centered open cube has finite Lebesgue measure.
 This is the finite-volume input needed to instantiate the `L²` and recovery
 machinery on `openCubeSet (originCube d n)`.
 -/
-theorem volume_openCubeSet_originCube_lt_top {d : ℕ} (n : ℤ) :
+theorem volume_openCubeSet_originCube_lt_top_ellipticRecovery {d : ℕ} (n : ℤ) :
     MeasureTheory.volume (openCubeSet (originCube d n)) < ⊤ := by
   rw [lt_top_iff_ne_top]
   intro htop
@@ -72,7 +72,7 @@ def HasOpenCubeEllipticRecoveryData {d : ℕ} (n : ℤ)
     {lam Lam : ℝ} (a : CoeffField d) : Prop := by
   let U : Set (Vec d) := openCubeSet (originCube d n)
   letI : Fact (MeasureTheory.volume U < ⊤) :=
-    ⟨volume_openCubeSet_originCube_lt_top (d := d) n⟩
+    ⟨volume_openCubeSet_originCube_lt_top_ellipticRecovery (d := d) n⟩
   exact
     ∃ hEll : IsEllipticFieldOn lam Lam U a,
       PotentialSolenoidalL2RecoveryData.MuRecoveryCompatibilityData (a := a) R

@@ -58,8 +58,8 @@ theorem
       Q a s t Calpha Ccross := by
   unfold coarseCaccioppoliBoundaryStandardExplicitNoteConstantSplit
   by_cases hΛ : LambdaSq Q s (.finite 1) a = 0
-  · rw [if_pos hΛ]
-  · rw [if_neg hΛ]
+  · rw [ite_eq_left hΛ]
+  · rw [ite_eq_right hΛ]
     let σ : ℝ := coarseCaccioppoliSigma s t
     let p : ℝ := 2 + 4 * s / σ
     let K : ℝ :=
@@ -456,9 +456,9 @@ theorem coarseCaccioppoliBoundaryStandardExplicitNoteConstantSplit_le_of_heightC
         (by simpa [σ, p] using hCtarget)
   unfold coarseCaccioppoliBoundaryStandardExplicitNoteConstantSplit
   by_cases hΛ : LambdaSq Q s (.finite 1) a = 0
-  · rw [if_pos hΛ]
+  · rw [ite_eq_left hΛ]
     exact hCtarget_nonneg
-  · rw [if_neg hΛ]
+  · rw [ite_eq_right hΛ]
     have hdiv' : A / K ≤ B := by
       simpa [σ, K, A] using hdiv
     have hmax_le : max (A / K) 0 ≤ B := max_le hdiv' hB
@@ -563,12 +563,12 @@ theorem
     multiscale_ellipticity_LambdaSq_one_nonneg Q s a hs.le
   unfold coarseCaccioppoliBoundaryStandardExplicitNoteConstantSplit
   by_cases hΛ : LambdaSq Q s (.finite 1) a = 0
-  · rw [if_pos hΛ]
+  · rw [ite_eq_left hΛ]
     rw [coarseCaccioppoliBoundaryStandardExplicitHeightCoeffSplit_eq_zero_of_LambdaSq_eq_zero
       Q a s t Calpha Ccross hΛ]
     exact coarseCaccioppoliBoundaryNoteCoeff_nonneg Q a s t 0
       (by norm_num) hs ht hst
-  · rw [if_neg hΛ]
+  · rw [ite_eq_right hΛ]
     let σ : ℝ := coarseCaccioppoliSigma s t
     let p : ℝ := 2 + 4 * s / σ
     let K : ℝ :=

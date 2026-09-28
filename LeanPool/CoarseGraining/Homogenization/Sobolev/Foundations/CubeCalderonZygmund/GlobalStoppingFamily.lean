@@ -121,7 +121,7 @@ theorem exists_globalStoppingFamily
   intro x hx
   have hchosen := Classical.choose_spec (hstop x hx)
   rw [show radius x = Classical.choose (hstop x hx) by
-    simp only [radius, dif_pos hx]]
+    simp only [radius, dite_eq_left hx]]
   simpa only [R, rho] using hchosen
 
 end CubeCalderonZygmund

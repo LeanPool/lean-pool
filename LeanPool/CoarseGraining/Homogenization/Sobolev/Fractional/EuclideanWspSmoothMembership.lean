@@ -44,7 +44,7 @@ private theorem smoothWspPowerKernel_integrableOn_ball {d : ℕ} [NeZero d]
         (g ∘ (‖·‖)) := by
     filter_upwards [ae_restrict_mem measurableSet_ball] with x hx
     simp only [Function.comp_apply, g, mem_ball, dist_zero_right] at hx ⊢
-    rw [if_pos hx]
+    rw [ite_eq_left hx]
   rw [IntegrableOn, integrable_congr hag]
   suffices h : Integrable (fun x : Vec d => g ‖x‖) volume from h.integrableOn
   have hradial :
@@ -61,13 +61,13 @@ private theorem smoothWspPowerKernel_integrableOn_ball {d : ℕ} [NeZero d]
       have hrpos : 0 < r := hr
       simp only [g, hInd, smul_eq_mul, Set.indicator, Set.mem_Ioo]
       by_cases hrR : r < R
-      · rw [if_pos hrR, if_pos ⟨hrpos, hrR⟩, hfin,
+      · rw [ite_eq_left hrR, ite_eq_left ⟨hrpos, hrR⟩, hfin,
           ← Real.rpow_natCast r (d - 1),
           Nat.cast_sub (Nat.one_le_iff_ne_zero.mpr (NeZero.ne d)),
           ← Real.rpow_add hrpos]
         congr 1
         ring
-      · rw [if_neg hrR, if_neg (not_and_of_not_right _ hrR), mul_zero]
+      · rw [ite_eq_right hrR, ite_eq_right (not_and_of_not_right _ hrR), mul_zero]
     have hInd_int : IntegrableOn hInd (Set.Ioi 0) := by
       have hwhole : Integrable hInd volume := by
         dsimp [hInd]
@@ -105,7 +105,7 @@ private theorem smoothWspPowerKernel_integrableOn_translated_ball {d : ℕ} [NeZ
       (by linarith : 0 < 2 * R)).congr
       (Filter.Eventually.of_forall fun z => by
         unfold smoothWspPowerKernel
-        show ‖z‖ ^ (a - (d : ℝ)) = ‖x - (z + x)‖ ^ (a - (d : ℝ))
+        change ‖z‖ ^ (a - (d : ℝ)) = ‖x - (z + x)‖ ^ (a - (d : ℝ))
         simp)
   exact hbig.mono_set hsub
 

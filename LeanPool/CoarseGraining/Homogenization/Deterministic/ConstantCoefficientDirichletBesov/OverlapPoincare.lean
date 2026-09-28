@@ -159,6 +159,7 @@ theorem overlapCentersAverage_overlapCubeLpNorm_grad_sq_le {d : ℕ}
           intro S _hS
           exact overlapCubeLpNorm_two_sq_eq_lintegral_rpow_enorm_toReal
             (E := Vec d) S (G.coord i).grad
+            (hloc S _hS).aestronglyMeasurable
     _ ≤
           (3 ^ d : ℝ) *
             (∫⁻ x, ‖(G.coord i).grad x‖ₑ ^ (2 : ℝ)

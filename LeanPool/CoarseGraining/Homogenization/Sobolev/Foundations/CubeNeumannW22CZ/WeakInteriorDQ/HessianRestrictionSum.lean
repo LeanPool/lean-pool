@@ -155,7 +155,7 @@ theorem descendants_sum_restrict_gradCoordH1Function_gradToVectorL2_norm_sq_le
             dsimp [D]
             refine Finset.sum_congr rfl ?_
             intro R hR
-            rw [dif_pos hR]
+            rw [dite_eq_left hR]
             exact hlocal_norm R (by simpa [D] using hR)
     _ = ∫ x in ⋃ R ∈ D, openCubeSet R, energy x ∂MeasureTheory.volume := hsum_int.symm
     _ ≤ ∫ x in openCubeSet Q, energy x ∂MeasureTheory.volume := hmono

@@ -55,6 +55,27 @@ noncomputable def centeredCubeExactOverlapEuclideanNormTwo {d : ℕ} {m : ℤ}
   exactOverlapEuclideanNormTwo s (originCube d m) F
     F.exactOverlapEuclideanIntegrable
 
+/-- The certified Euclidean `L²` norm agrees with the Hilbert-space norm. -/
+theorem centeredCubeEuclideanL2Field_normalizedEuclideanLpENorm_eq_eLpNorm
+    {d : ℕ} {m : ℤ} (F : CenteredCubeEuclideanL2Field d m) :
+    (centeredCubeDomain d m).normalizedEuclideanLpENorm 2 F =
+      eLpNorm (fun x => HilbertVec.ofVec (F x)) 2
+        (normalizedCubeMeasure (originCube d m)) := by
+  have hnorm : AEStronglyMeasurable (fun x => euclideanNorm (F x))
+      (centeredCubeDomain d m).normalizedVolume := by
+    simpa only [euclideanNorm_eq_norm_ofVec] using
+      F.euclideanMemL2.aestronglyMeasurable.norm
+  unfold BoundedMeasurableDomain.normalizedEuclideanLpENorm
+  rw [(centeredCubeDomain d m).normalizedLpENorm_eq_eLpNorm 2 _ hnorm,
+    show (centeredCubeDomain d m).normalizedVolume =
+      normalizedCubeMeasure (originCube d m) by
+        exact cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure _]
+  simpa only [euclideanNorm_eq_norm_ofVec] using
+    (eLpNorm_norm (p := 2) (fun x => HilbertVec.ofVec (F x))
+      (by simpa only [centeredCubeDomain,
+          cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
+          using F.euclideanMemL2.aestronglyMeasurable))
+
 /-- Evaluation of the canonical exact Euclidean overlap seminorm. -/
 theorem centeredCubeExactOverlapEuclideanSeminormTwo_eq {d : ℕ} {m : ℤ}
     (s : FractionalOrder) (F : CenteredCubeEuclideanL2Field d m) :
@@ -103,15 +124,11 @@ theorem centeredCubeExactOverlapEuclideanRootMeanENorm_le_normalizedEuclideanLpE
     _ ≤ ∫⁻ x, ‖HilbertVec.ofVec (F x)‖ₑ ∂μ :=
       enorm_integral_le_lintegral_enorm _
     _ = eLpNorm (fun x => HilbertVec.ofVec (F x)) 1 μ := by
-      rw [eLpNorm_one_eq_lintegral_enorm]
+      rw [eLpNorm_one_eq_lintegral_enorm hmem.aestronglyMeasurable]
     _ ≤ eLpNorm (fun x => HilbertVec.ofVec (F x)) 2 μ :=
-      eLpNorm_le_eLpNorm_of_exponent_le (by norm_num) hmem.aestronglyMeasurable
+      eLpNorm_le_eLpNorm_of_exponent_le (by norm_num)
     _ = (centeredCubeDomain d m).normalizedEuclideanLpENorm 2 F := by
-      simp only [μ, centeredCubeDomain,
-        cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure,
-        BoundedMeasurableDomain.normalizedEuclideanLpENorm,
-        BoundedMeasurableDomain.normalizedLpENorm, euclideanNorm_eq_norm_ofVec,
-        eLpNorm_norm]
+      exact (centeredCubeEuclideanL2Field_normalizedEuclideanLpENorm_eq_eLpNorm F).symm
 
 /-- The root-weighted normalized Euclidean `L²` norm is controlled by the
 canonical exact-overlap full norm on every centered cube. -/
@@ -128,12 +145,8 @@ theorem centeredCubeRootWeight_mul_normalizedEuclideanLpENorm_le_exactOverlapNor
         F.euclideanMemL2
   have h := exactOverlapRootWeight_mul_eLpNorm_le_exactOverlapEuclideanNormTwo
     s (originCube d m) F hmem
-  simpa only [centeredCubeExactOverlapEuclideanNormTwo,
-    centeredCubeDomain,
-    cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure,
-    BoundedMeasurableDomain.normalizedEuclideanLpENorm,
-    BoundedMeasurableDomain.normalizedLpENorm, euclideanNorm_eq_norm_ofVec,
-    eLpNorm_norm] using h
+  rw [centeredCubeEuclideanL2Field_normalizedEuclideanLpENorm_eq_eLpNorm F]
+  simpa only [centeredCubeExactOverlapEuclideanNormTwo] using h
 
 /-- One scale-independent constant for both directions of the exact-overlap
 and physical Euclidean fractional full-norm comparison. -/

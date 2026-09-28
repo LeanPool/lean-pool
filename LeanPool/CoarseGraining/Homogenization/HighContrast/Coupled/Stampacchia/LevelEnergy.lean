@@ -54,9 +54,10 @@ theorem exists_measurableRep {U : Set (Vec d)} (u : H1Function U) :
     ∃ w : H1Function U, Measurable w.toFun ∧
       w.toFun =ᵐ[volume.restrict U] u.toFun ∧ w.grad = u.grad := by
   classical
-  set f : Vec d → ℝ := u.memL2.1.mk u.toFun with hf_def
-  have hf_meas : Measurable f := u.memL2.1.stronglyMeasurable_mk.measurable
-  have hae : u.toFun =ᵐ[volume.restrict U] f := u.memL2.1.ae_eq_mk
+  have hu_asm := u.memL2.aestronglyMeasurable
+  set f : Vec d → ℝ := hu_asm.mk u.toFun with hf_def
+  have hf_meas : Measurable f := hu_asm.stronglyMeasurable_mk.measurable
+  have hae : u.toFun =ᵐ[volume.restrict U] f := hu_asm.ae_eq_mk
   have hf_memL2 : MemL2On U f := (MeasureTheory.memLp_congr_ae hae).mp u.memL2
   have hf_weak : HasWeakGradientOn U f u.grad := by
     intro i φ hφ hφc hφsub

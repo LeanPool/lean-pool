@@ -98,12 +98,22 @@ theorem centeredCubeNormalizedL2_eq_cubeLpNorm {d : ℕ} (Q : TriadicCube d)
     (hF : MeasureTheory.MemLp F (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     centeredCubeNormalizedL2 Q F hF =
       cubeLpNorm Q (2 : ℝ≥0∞) (cubeFluctuation Q F) := by
-  change
-    (MeasureTheory.eLpNorm (cubeFluctuation Q F) (2 : ℝ≥0∞)
-      (cubeBoundedMeasurableDomain Q).normalizedVolume).toReal =
+  have hcentered : MeasureTheory.MemLp (cubeFluctuation Q F) (2 : ℝ≥0∞)
+      (normalizedCubeMeasure Q) := by
+    simpa [cubeFluctuation] using! memLp_centered_normalizedCubeMeasure Q hF
+  have hcenteredDomain : MeasureTheory.AEStronglyMeasurable (cubeFluctuation Q F)
+      (cubeBoundedMeasurableDomain Q).normalizedVolume := by
+    simpa only [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
+      using hcentered.aestronglyMeasurable
+  rw [cubeLpNorm_eq_eLpNorm_toReal Q 2 _ hcentered.aestronglyMeasurable]
+  unfold centeredCubeNormalizedL2
+  change ((cubeBoundedMeasurableDomain Q).normalizedLpENorm 2
+      (cubeFluctuation Q F)).toReal =
       (MeasureTheory.eLpNorm (cubeFluctuation Q F) (2 : ℝ≥0∞)
         (normalizedCubeMeasure Q)).toReal
-  rw [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
+  rw [(cubeBoundedMeasurableDomain Q).normalizedLpENorm_eq_eLpNorm 2
+    (cubeFluctuation Q F) hcenteredDomain,
+    cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
 
 /-- The existing reflected-parent construction gives a regularity-producing
 normalized-Frobenius estimate with a constant independent of cube scale. -/

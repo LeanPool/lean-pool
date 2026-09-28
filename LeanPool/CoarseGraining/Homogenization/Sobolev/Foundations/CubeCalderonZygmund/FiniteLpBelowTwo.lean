@@ -32,6 +32,25 @@ noncomputable section
 namespace CubeCalderonZygmund
 namespace INTERNAL
 
+/-- For measurable vector fields, the normalized Euclidean norm is the
+Hilbert-space `eLpNorm` of the same field. -/
+theorem normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+    {d : ℕ} (U : BoundedMeasurableDomain d) (p : ℝ≥0∞)
+    (F : Vec d → Vec d)
+    (hF : AEStronglyMeasurable
+      (fun x => HilbertVec.ofVec (F x)) U.normalizedVolume) :
+    U.normalizedEuclideanLpENorm p F =
+      eLpNorm (hilbertifyVecField F) p U.normalizedVolume := by
+  have hnorm : AEStronglyMeasurable
+      (fun x => euclideanNorm (F x)) U.normalizedVolume := by
+    simpa only [euclideanNorm_eq_norm_ofVec] using hF.norm
+  unfold BoundedMeasurableDomain.normalizedEuclideanLpENorm
+  rw [U.normalizedLpENorm_eq_eLpNorm p _ hnorm]
+  change eLpNorm (fun x => euclideanNorm (F x)) p U.normalizedVolume =
+    eLpNorm (fun x => HilbertVec.ofVec (F x)) p U.normalizedVolume
+  simpa only [euclideanNorm_eq_norm_ofVec] using
+    (eLpNorm_norm (p := p) (fun x => HilbertVec.ofVec (F x)) hF)
+
 /-- Two scalar divergence weak equations can be tested against one another.
 The scalar coefficient cancels by symmetry of the Euclidean dot product; no
 positivity assumption is needed for this algebraic cross-pairing identity. -/
@@ -169,9 +188,8 @@ theorem memLp_of_truncatedMoment_bound
     (hA : A ≠ ∞)
     (htrunc : ∀ n : ℕ, ∫⁻ x, truncatedMoment q n F x ∂μ ≤ A) :
     MemLp F (ENNReal.ofReal q) μ := by
-  refine ⟨hF, ?_⟩
   apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
-    (ENNReal.ofReal_pos.mpr hq |>.ne') ENNReal.ofReal_ne_top).mpr
+    (ENNReal.ofReal_pos.mpr hq |>.ne') ENNReal.ofReal_ne_top hF).mpr
   rw [ENNReal.toReal_ofReal hq.le]
   have hmoment := lintegral_enorm_rpow_le_of_truncatedMoment hF htrunc
   exact lt_top_iff_ne_top.mpr (ne_top_of_le_ne_top hA hmoment)
@@ -185,7 +203,7 @@ theorem eLpNorm_le_rpow_of_truncatedMoment
     (htrunc : ∀ n : ℕ, ∫⁻ x, truncatedMoment q n F x ∂μ ≤ A) :
     eLpNorm F (ENNReal.ofReal q) μ ≤ A ^ q⁻¹ := by
   rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
-    (ENNReal.ofReal_pos.mpr hq |>.ne') ENNReal.ofReal_ne_top,
+    (ENNReal.ofReal_pos.mpr hq |>.ne') ENNReal.ofReal_ne_top hF,
     ENNReal.toReal_ofReal hq.le, one_div]
   exact ENNReal.rpow_le_rpow
     (lintegral_enorm_rpow_le_of_truncatedMoment hF htrunc) (inv_nonneg.mpr hq.le)
@@ -202,22 +220,20 @@ theorem abs_integral_vecDot_le_eLpNorm_toReal_mul
       (eLpNorm (fun x => HilbertVec.ofVec (F x)) p μ).toReal *
         (eLpNorm (fun x => HilbertVec.ofVec (G x)) r μ).toReal := by
   let f : α → ℝ := fun x => vecDot (F x) (G x)
-  have hfm' : AEStronglyMeasurable
-      (fun x => inner ℝ (HilbertVec.ofVec (F x)) (HilbertVec.ofVec (G x))) μ :=
-    hF.aestronglyMeasurable.inner hG.aestronglyMeasurable
   have hfLp' : MemLp
       (fun x => inner ℝ (HilbertVec.ofVec (F x)) (HilbertVec.ofVec (G x))) 1 μ := by
     refine MemLp.of_bilin (r := 1)
-      (b := fun x y : HilbertVec d => inner ℝ x y) (c := 1) hF hG hfm' ?_
+      (b := fun x y : HilbertVec d => inner ℝ x y) (c := 1)
+      hF hG continuous_inner ?_
     filter_upwards with x
-    simpa using! norm_inner_le_norm (𝕜 := ℝ)
+    simpa only [one_mul] using nnnorm_inner_le_nnnorm (𝕜 := ℝ)
       (HilbertVec.ofVec (F x)) (HilbertVec.ofVec (G x))
   have hfLp : MemLp f 1 μ := by
     simpa only [f, HilbertVec.inner_def] using hfLp'
   have hnorm : ENNReal.ofReal |∫ x, f x ∂μ| ≤ eLpNorm f 1 μ := by
     simpa only [Real.enorm_eq_ofReal_abs] using
       (enorm_integral_le_lintegral_enorm (μ := μ) f).trans_eq
-        eLpNorm_one_eq_lintegral_enorm.symm
+        (eLpNorm_one_eq_lintegral_enorm hfLp.aestronglyMeasurable).symm
   have hholder : eLpNorm f 1 μ ≤
       eLpNorm (fun x => HilbertVec.ofVec (F x)) p μ *
         eLpNorm (fun x => HilbertVec.ofVec (G x)) r μ := by
@@ -424,12 +440,14 @@ theorem ofReal_vecDot_vectorRadialTruncation_eq_truncatedMoment
 truncated moment as its power. -/
 theorem eLpNorm_hilbertRadialTruncation_rpow_conjugate_eq_truncatedMoment
     {α : Type*} {d : ℕ} [MeasurableSpace α] {μ : Measure α}
-    (q : FiniteLpExponent) (n : ℕ) (F : α → HilbertVec d) :
+    (q : FiniteLpExponent) (n : ℕ) (F : α → HilbertVec d)
+    (hF : AEStronglyMeasurable F μ) :
     (eLpNorm (hilbertRadialTruncation q.exponent.toReal n F)
       q.conjugate.exponent μ) ^ q.conjugate.exponent.toReal =
       ∫⁻ x, truncatedMoment q.exponent.toReal n F x ∂μ := by
   rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
-    (ne_of_gt (zero_lt_one.trans q.conjugate.one_lt)) q.conjugate.lt_top.ne,
+    (ne_of_gt (zero_lt_one.trans q.conjugate.one_lt)) q.conjugate.lt_top.ne
+    (aestronglyMeasurable_hilbertRadialTruncation hF),
     ← ENNReal.rpow_mul]
   have hqnonzero : q.conjugate.exponent.toReal ≠ 0 := by
     exact ENNReal.toReal_pos
@@ -582,7 +600,7 @@ theorem eLpNorm_le_of_truncated_cross_bound
         rw [← ENNReal.rpow_mul, inv_mul_cancel₀ hq0, ENNReal.rpow_one]
       _ ≤ B ^ q := ENNReal.rpow_le_rpow hroot (by linarith)
   rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
-    (ENNReal.ofReal_pos.mpr (by linarith : 0 < q) |>.ne') ENNReal.ofReal_ne_top,
+    (ENNReal.ofReal_pos.mpr (by linarith : 0 < q) |>.ne') ENNReal.ofReal_ne_top hF,
     ENNReal.toReal_ofReal (by linarith : 0 ≤ q)]
   have hmoment : (∫⁻ x, ‖F x‖ₑ ^ q ∂μ) ≤ A ^ q := by
     rw [lintegral_enorm_rpow_eq_iSup_lintegral_truncatedMoment hF]
@@ -708,12 +726,14 @@ private theorem centeredCubeH10ScalarDivergence_cz_of_one_lt_of_lt_two
     have hVbound : eLpNorm (hilbertifyVecField v.toH1Function.grad)
         q.conjugate.exponent μ ≤ C * (ENNReal.ofReal sigma0)⁻¹ *
           eLpNorm (hilbertifyVecField G) q.conjugate.exponent μ := by
-      simpa only [BoundedMeasurableDomain.normalizedEuclideanLpENorm,
-        BoundedMeasurableDomain.normalizedLpENorm, euclideanNorm_eq_norm_ofVec,
-        MeasureTheory.eLpNorm_norm, μ, v, G, Gfield, hilbertifyVecField] using! hvbound
+      rw [INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+        (centeredCubeDomain d m) q.conjugate.exponent _ hVtwo.aestronglyMeasurable,
+        INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+          (centeredCubeDomain d m) q.conjugate.exponent _ hGq.aestronglyMeasurable]
+        at hvbound
+      simpa only [μ, G] using hvbound
     have hVq : MemLp (hilbertifyVecField v.toH1Function.grad)
         q.conjugate.exponent μ := by
-      refine ⟨hVtwo.aestronglyMeasurable, ?_⟩
       apply lt_of_le_of_lt hVbound
       apply ENNReal.mul_lt_top
       · exact (ENNReal.mul_ne_top hCtop.ne
@@ -732,7 +752,8 @@ private theorem centeredCubeH10ScalarDivergence_cz_of_one_lt_of_lt_two
         q.conjugate.exponent.toReal =
           ∫⁻ x, INTERNAL.truncatedMoment q.exponent.toReal n F x ∂μ := by
       simpa only [μ, F, G, Gfield, hilbertifyVecField] using!
-        INTERNAL.eLpNorm_hilbertRadialTruncation_rpow_conjugate_eq_truncatedMoment q n F
+        INTERNAL.eLpNorm_hilbertRadialTruncation_rpow_conjugate_eq_truncatedMoment
+          q n F hFmeas
     have hreal : q.exponent.toReal.HolderConjugate q.conjugate.exponent.toReal :=
       ENNReal.HolderConjugate.toReal hqreal
     have hexp : (q.conjugate.exponent.toReal)⁻¹ = 1 - q.exponent.toReal⁻¹ := by
@@ -780,9 +801,12 @@ private theorem centeredCubeH10ScalarDivergence_cz_of_one_lt_of_lt_two
           rw [hGnorm]
           dsimp only [A]
           ac_rfl
-  simpa only [BoundedMeasurableDomain.normalizedEuclideanLpENorm,
-    BoundedMeasurableDomain.normalizedLpENorm, euclideanNorm_eq_norm_ofVec,
-    MeasureTheory.eLpNorm_norm, F, H, μ, A] using! hmain
+  rw [INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+    (centeredCubeDomain d m) q.exponent _ hFtwo.aestronglyMeasurable,
+    INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+      (centeredCubeDomain d m) q.exponent _ hHq.aestronglyMeasurable]
+  dsimp only [F, H, μ, A] at hmain
+  exact hmain
 
 /-- The supplied-solution cube Calderón--Zygmund estimate for every finite
 exponent.  The `q<2` branch is obtained by adjoint duality, the `q=2` branch

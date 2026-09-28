@@ -37,7 +37,7 @@ theorem setIntegral_openCubeSet_cutoff_grad_sq_le
   have hleft_mem : MemScalarL2 (openCubeSet Q)
       (fun x => (θ : Vec d → ℝ) x * uQ.grad x i) := by
     simpa [MemScalarL2, volumeMeasureOn, mul_comm] using
-      (uQ.gradMemL2 i).mul' hθ_top
+      hθ_top.fun_mul (uQ.gradMemL2 i)
   have hleft_int : MeasureTheory.IntegrableOn
       (fun x => ((θ : Vec d → ℝ) x * uQ.grad x i) ^ 2) (openCubeSet Q) := by
     simpa [MeasureTheory.IntegrableOn, volumeMeasureOn] using hleft_mem.integrable_sq
@@ -108,7 +108,7 @@ theorem setIntegral_openCubeSet_value_fderiv_cutoff_sq_le
   have hleft_mem : MemScalarL2 (openCubeSet Q)
       (fun x => uQ.toFun x * (fderiv ℝ (θ : Vec d → ℝ) x) (basisVec i)) := by
     simpa [MemScalarL2, volumeMeasureOn, mul_comm] using
-      (uQ.memL2.mul' (p := ⊤) (q := 2) (r := 2) hdθ_top)
+      (hdθ_top.fun_mul uQ.memL2)
   have hleft_int : MeasureTheory.IntegrableOn
       (fun x =>
         (uQ.toFun x * (fderiv ℝ (θ : Vec d → ℝ) x) (basisVec i)) ^ 2)

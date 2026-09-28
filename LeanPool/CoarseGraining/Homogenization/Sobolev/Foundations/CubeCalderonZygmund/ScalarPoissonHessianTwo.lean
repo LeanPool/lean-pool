@@ -59,12 +59,13 @@ theorem exists_scalarPoisson_hessianHilbertMat_normalizedCubeMeasure_le_two
     simpa only [Function.comp_apply, HilbertMat.ofMat, HilbertVec.ofVec,
       PiLp.toLp_apply] using H.hess_memLp_normalizedCubeMeasure Q i j
   refine ⟨H, hHmat, ?_⟩
+  have hmag := H.frobeniusMagnitude_memLp_normalizedCubeMeasure Q
   have hnorm :
       eLpNorm (fun x ↦ HilbertMat.ofMat (fun i j ↦ H.hess i j x)) 2
           (normalizedCubeMeasure Q) =
         eLpNorm H.frobeniusMagnitude 2 (normalizedCubeMeasure Q) := by
-    apply eLpNorm_congr_norm_ae
-    exact ae_of_all _ fun x ↦ by
+    apply eLpNorm_congr_norm_ae hHmat.aestronglyMeasurable hmag.aestronglyMeasurable
+    exact ae_of_all (normalizedCubeMeasure Q) fun x ↦ by
       have hnonneg : 0 ≤ matrixFrobeniusMagnitude (fun i j ↦ H.hess i j x) :=
         matrixFrobeniusMagnitude_nonneg _
       have habs : |matrixFrobeniusMagnitude (fun i j ↦ H.hess i j x)| =
@@ -81,20 +82,31 @@ theorem exists_scalarPoisson_hessianHilbertMat_normalizedCubeMeasure_le_two
     unfold HasWeakHessianOn.frobeniusMagnitudeNormalizedLpNorm
       BoundedMeasurableDomain.normalizedLpNorm
       BoundedMeasurableDomain.normalizedLpFiniteENorm
-      BoundedMeasurableDomain.normalizedLpENorm
     change (eLpNorm H.frobeniusMagnitude 2 (normalizedCubeMeasure Q)).toReal =
-      (eLpNorm H.frobeniusMagnitude 2
-        (cubeBoundedMeasurableDomain Q).normalizedVolume).toReal
-    exact congrArg (fun μ ↦ (eLpNorm H.frobeniusMagnitude 2 μ).toReal)
-      (cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure Q).symm
+      ((cubeBoundedMeasurableDomain Q).normalizedLpENorm 2
+        H.frobeniusMagnitude).toReal
+    rw [(cubeBoundedMeasurableDomain Q).normalizedLpENorm_eq_eLpNorm 2
+      H.frobeniusMagnitude (by
+        simpa only [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
+          using hmag.aestronglyMeasurable),
+      cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
   have hright :
       H.frobeniusNormalizedL2 Q ≤
         CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact d *
           (eLpNorm F 2 (normalizedCubeMeasure Q)).toReal := by
-    simpa only [Q, BoundedMeasurableDomain.normalizedLpNorm,
-      BoundedMeasurableDomain.normalizedLpFiniteENorm,
-      BoundedMeasurableDomain.normalizedLpENorm,
-      cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure] using hH
+    have hFsafe : MemLp F 2 (cubeBoundedMeasurableDomain Q).normalizedVolume := by
+      simpa only [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
+        using hF
+    have hFbridge :
+        (cubeBoundedMeasurableDomain Q).normalizedLpNorm 2 F hFsafe =
+          (eLpNorm F 2 (normalizedCubeMeasure Q)).toReal := by
+      unfold BoundedMeasurableDomain.normalizedLpNorm
+        BoundedMeasurableDomain.normalizedLpFiniteENorm
+      change ((cubeBoundedMeasurableDomain Q).normalizedLpENorm 2 F).toReal = _
+      rw [(cubeBoundedMeasurableDomain Q).normalizedLpENorm_eq_eLpNorm 2 F
+        hFsafe.aestronglyMeasurable,
+        cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
+    simpa only [Q, hFbridge] using hH
   apply (ENNReal.toReal_le_toReal hHmat.eLpNorm_ne_top
     (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hF.eLpNorm_ne_top)).mp
   rw [ENNReal.toReal_mul,

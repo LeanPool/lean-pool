@@ -198,32 +198,6 @@ private theorem measurePreserving_swapVecContinuousLinearEquiv {d : ℕ} (i j : 
     (MeasureTheory.volume_measurePreserving_piCongrLeft
       (fun _ : Fin d => ℝ) (Equiv.swap i j))
 
-private theorem measurePreserving_signFlipVecContinuousLinearEquiv_restrict_openCubeSet_originCube
-    {d : ℕ} (i : Fin d) (n : ℤ) :
-    MeasureTheory.MeasurePreserving (signFlipVecContinuousLinearEquiv i)
-      (MeasureTheory.volume.restrict (openCubeSet (originCube d n)))
-      (MeasureTheory.volume.restrict (openCubeSet (originCube d n))) := by
-  let U := openCubeSet (originCube d n)
-  have hpre : (signFlipVecContinuousLinearEquiv i) ⁻¹' U = U := by
-    ext x
-    simpa [U] using (mem_openCubeSet_originCube_signFlipMatrix_iff (m := n) (i := i) (x := x))
-  simpa [U, hpre] using
-    (measurePreserving_signFlipVecContinuousLinearEquiv i).restrict_preimage_emb
-      (signFlipVecContinuousLinearEquiv i).toHomeomorph.measurableEmbedding U
-
-private theorem measurePreserving_swapVecContinuousLinearEquiv_restrict_openCubeSet_originCube
-    {d : ℕ} (i j : Fin d) (n : ℤ) :
-    MeasureTheory.MeasurePreserving (swapVecContinuousLinearEquiv i j)
-      (MeasureTheory.volume.restrict (openCubeSet (originCube d n)))
-      (MeasureTheory.volume.restrict (openCubeSet (originCube d n))) := by
-  let U := openCubeSet (originCube d n)
-  have hpre : (swapVecContinuousLinearEquiv i j) ⁻¹' U = U := by
-    ext x
-    simpa [U] using (mem_openCubeSet_originCube_swap_iff (m := n) (i := i) (j := j) (x := x))
-  simpa [U, hpre] using
-    (measurePreserving_swapVecContinuousLinearEquiv i j).restrict_preimage_emb
-      (swapVecContinuousLinearEquiv i j).toHomeomorph.measurableEmbedding U
-
 theorem isBlockMuAdmissible_signFlip_openCubeSet_originCube
     {d : ℕ} {n : ℤ} {P : BlockVec d} {X : BlockState d}
     (hX : IsBlockMuAdmissible (openCubeSet (originCube d n)) P X) (i : Fin d) :

@@ -40,7 +40,8 @@ noncomputable def cubeEuclideanNegativeWspSmoothDualBesovConstant (d : ℕ) : �
   d * (3 : ℝ≥0∞) ^ ((d : ℝ) + 1) *
     cubeEuclideanWspExactOverlapFullControlConstant d
 
-private noncomputable def cubeEuclideanNegativeWspSmoothDualBesovScalarConstant
+/-- The scalar-coordinate coefficient in the smooth-dual estimate. -/
+noncomputable def cubeEuclideanNegativeWspSmoothDualBesovScalarConstant
     (d : ℕ) : ℝ≥0∞ :=
   (3 : ℝ≥0∞) ^ ((d : ℝ) + 1) *
     cubeEuclideanWspExactOverlapFullControlConstant d

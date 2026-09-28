@@ -53,8 +53,20 @@ theorem stoppingAxisCube_eLpNorm_two_sq_eq_ofReal_closedBallL2Energy
   have hhalf : stoppingAxisCubeSide S r / 2 = S * r := by
     simp only [stoppingAxisCubeSide]
     ring
+  have hlocal : MemLp F 2
+      (volume.restrict (axisCube (stoppingAxisCubeCorner x S r)
+        (stoppingAxisCubeSide S r))) := by
+    rw [Measure.restrict_congr_set
+      (axisCube_ae_eq_closedBall_axisCubeCenter _ hside)]
+    rw [hcenter, hhalf]
+    exact hF
+  have hnormalized : MemLp F 2
+      (axisCubeNormalizedMeasure (stoppingAxisCubeCorner x S r)
+        (stoppingAxisCubeSide S r)) := by
+    rw [axisCubeNormalizedMeasure_eq_smul_volume_restrict _ _ hside]
+    exact hlocal.smul_measure ENNReal.ofReal_ne_top
   have hpow := axisCube_eLpNorm_two_sq_eq_normalized_closedBallLIntegral
-    (z := stoppingAxisCubeCorner x S r) hside F
+    (z := stoppingAxisCubeCorner x S r) hside F hnormalized.aestronglyMeasurable
   rw [hcenter, hhalf] at hpow
   have hint : IntegrableOn (fun y : Vec d => ‖F y‖ ^ (2 : ℕ))
       (Metric.closedBall x (S * r)) volume := by

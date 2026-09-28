@@ -83,7 +83,7 @@ theorem isProbabilityMeasure_restrictionScaleNormalizedLaw {d : ℕ} (k : ℕ) (
     [IsProbabilityMeasure P] :
     IsProbabilityMeasure (restrictionScaleNormalizedLaw k P) := by
   rw [restrictionScaleNormalizedLaw]
-  exact Measure.isProbabilityMeasure_map (measurable_dilateReg (d := d) (-(k : ℤ))).aemeasurable
+  infer_instance
 
 /-- Bochner integral under a scale-normalized law. -/
 theorem integral_restrictionScaleNormalizedLaw {d : ℕ} {E : Type*}
@@ -118,7 +118,7 @@ theorem measurableSet_triadicDilateSet {d : ℕ} (k : ℕ) {U : Set (Vec d)}
     (hU : MeasurableSet U) : MeasurableSet (triadicDilateSet k U) := by
   have hc : ((3 : ℝ) ^ k) ≠ 0 := by positivity
   have hg : Measurable (fun x : Vec d => fun i => ((3 : ℝ) ^ k)⁻¹ * x i) :=
-    measurable_pi_lambda _ (fun i => (measurable_pi_apply i).const_mul _)
+    Measurable.of_eval (fun i => (measurable_pi_apply i).const_mul _)
   have hset : triadicDilateSet k U
       = (fun x : Vec d => fun i => ((3 : ℝ) ^ k)⁻¹ * x i) ⁻¹' U := by
     ext x
@@ -307,7 +307,7 @@ private theorem nullMeasurableSet_map_of_preimage_measurableEquiv
     NullMeasurableSet s (Measure.map e μ) := by
   rcases hs with ⟨t, ht, hst⟩
   refine ⟨e '' t, e.measurableEmbedding.measurableSet_image' ht, ?_⟩
-  unfold Filter.EventuallyEq
+  change ∀ᵐ b ∂Measure.map e μ, (b ∈ s) = (b ∈ e '' t)
   rw [e.measurableEmbedding.ae_map_iff]
   filter_upwards [hst] with a ha
   apply propext

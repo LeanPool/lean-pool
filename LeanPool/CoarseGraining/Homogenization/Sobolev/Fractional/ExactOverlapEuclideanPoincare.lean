@@ -125,7 +125,7 @@ private theorem exactOverlapDepthAverage_two_zero {d : ℕ} (Q : TriadicCube d)
           D.attach.sum (fun S => g S.1) := by
         apply Finset.sum_congr rfl
         intro S _
-        simp only [g, dif_pos S.2]
+        simp only [g, dite_eq_left S.2]
         norm_num
       _ = D.sum g := Finset.sum_attach D g
   change ((D.card : ℝ≥0∞)⁻¹) *
@@ -135,7 +135,7 @@ private theorem exactOverlapDepthAverage_two_zero {d : ℕ} (Q : TriadicCube d)
   rw [hsum]
   simp only [D, ScalarOverlap.centersAtDepth_zero, Finset.card_singleton,
     Nat.cast_one, inv_one, one_mul, Finset.sum_singleton, g,
-    dif_pos (Finset.mem_singleton_self _)]
+    dite_eq_left (Finset.mem_singleton_self _)]
 
 private theorem exactOverlapDepthTerm_two_zero {d : ℕ}
     (s : Set.Ioo (0 : ℝ) 1) (Q : TriadicCube d)

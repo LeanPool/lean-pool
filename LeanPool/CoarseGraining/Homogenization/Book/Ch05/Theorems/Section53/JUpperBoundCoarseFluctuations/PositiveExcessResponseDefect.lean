@@ -682,11 +682,19 @@ theorem ellipticityPositiveExcess_childResponseAverage_expectation_le_uniform
   have hUpperCoeff_le : upperCoeff ≤ C0 * decay := by
     apply twoExponentCoeff_le_scaled_decay m hC52_nonneg hUpperLoss_nonneg
       hdecay_nonneg hC0_ge_upper
-    simpa only [rUpper, β, decay] using shiftedUpperDecay_le_betaDecay hP4 m
+    simpa only [rUpper, β, decay,
+      section53CoarseFluctuationBetaParams_eq_of_P4,
+      QuantitativeCoarseGrainedEllipticity.params_sUpper,
+      QuantitativeCoarseGrainedEllipticity.params_xi] using
+      shiftedUpperDecay_le_betaDecay hP4 m
   have hLowerCoeff_le : lowerCoeff ≤ C0 * decay := by
     apply twoExponentCoeff_le_scaled_decay m hC52_nonneg hLowerLoss_nonneg
       hdecay_nonneg hC0_ge_lower
-    simpa only [rLower, β, decay] using shiftedLowerDecay_le_betaDecay hP4 m
+    simpa only [rLower, β, decay,
+      section53CoarseFluctuationBetaParams_eq_of_P4,
+      QuantitativeCoarseGrainedEllipticity.params_sLower,
+      QuantitativeCoarseGrainedEllipticity.params_xi] using
+      shiftedLowerDecay_le_betaDecay hP4 m
   obtain ⟨_, _, hLower_mem, hUpper_mem⟩ :=
     shifted_excess_regularity hP hStruct hP4 m
   have hLower_nonneg : ∀ᵐ a ∂P, 0 ≤ lowerExcess a := by
@@ -701,8 +709,9 @@ theorem ellipticityPositiveExcess_childResponseAverage_expectation_le_uniform
       ∫ a, lowerExcess a * childAvg a ∂P ≤
         lambdaInvPositiveExcessMomentAtScale P (m : ℤ) rLower hP4.xi hP hStruct *
           responseMoment := by
-    simpa [lowerExcess, lambdaInvPositiveExcessMomentAtScale,
-      Ch04.annealedMomentRoot, rLower, ζ, one_div, Real.rpow_natCast] using
+    simpa [lowerExcess, childAvg, responseMoment, p_e, q_e,
+      lambdaInvPositiveExcessMomentAtScale, Ch04.annealedMomentRoot,
+      rLower, β, ζ, one_div, Real.rpow_natCast] using
       integral_mul_le_momentRoot_mul_of_root_le
         (holderConjugate_xi_section53CoarseFluctuationZeta hP4)
         hLower_nonneg hChild_nonneg hLower_mem hChild_mem hChildMomentRoot_le
@@ -710,8 +719,9 @@ theorem ellipticityPositiveExcess_childResponseAverage_expectation_le_uniform
       ∫ a, upperExcess a * childAvg a ∂P ≤
         LambdaPositiveExcessMomentAtScale P (m : ℤ) rUpper hP4.xi hP hStruct *
           responseMoment := by
-    simpa [upperExcess, LambdaPositiveExcessMomentAtScale,
-      Ch04.annealedMomentRoot, rUpper, ζ, one_div, Real.rpow_natCast] using
+    simpa [upperExcess, childAvg, responseMoment, p_e, q_e,
+      LambdaPositiveExcessMomentAtScale, Ch04.annealedMomentRoot,
+      rUpper, β, ζ, one_div, Real.rpow_natCast] using
       integral_mul_le_momentRoot_mul_of_root_le
         (holderConjugate_xi_section53CoarseFluctuationZeta hP4)
         hUpper_nonneg hChild_nonneg hUpper_mem hChild_mem hChildMomentRoot_le

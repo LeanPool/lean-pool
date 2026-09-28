@@ -142,7 +142,7 @@ theorem term_zero_eq (μ : ∀ i, Measure (α i)) [∀ i, IsProbabilityMeasure (
       = (1 / 2) * ∫ t, (∫ a, ∫ b, (F (e.symm (a, t)) - F (e.symm (b, t))) ^ 2
           ∂(μ 0) ∂(μ 0)) ∂(Measure.pi ν) := by
     congr 1
-    show ∫ x, φ0 x ∂(Measure.pi μ) = _
+    change ∫ x, φ0 x ∂(Measure.pi μ) = _
     rw [htrans]
     simp_rw [hφe]
     rw [integral_prod_symm _ hInt]
@@ -238,7 +238,7 @@ theorem term_succ_le (μ : ∀ i, Measure (α i)) [∀ i, IsProbabilityMeasure (
         ∂(ν j) ∂(Measure.pi μ))
       = ∫ t, ∫ a, ∫ w, (F (e.symm (a, Function.update t j w)) - F (e.symm (a, t))) ^ 2
           ∂(ν j) ∂(μ 0) ∂(Measure.pi ν) := by
-    show ∫ x, ψ x ∂(Measure.pi μ) = _
+    change ∫ x, ψ x ∂(Measure.pi μ) = _
     rw [htrans]
     simp_rw [hψe]
     rw [integral_prod_symm _ hIntTail]

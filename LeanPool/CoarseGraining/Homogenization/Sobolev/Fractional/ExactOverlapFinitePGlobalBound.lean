@@ -82,15 +82,15 @@ private theorem eLpNorm_overlap_residual_le_two_mul {d : ℕ}
     calc
       ‖m‖ₑ = ‖∫ x, f x ∂μ‖ₑ := by rw [hmean]
       _ ≤ ∫⁻ x, ‖f x‖ₑ ∂μ := enorm_integral_le_lintegral_enorm _
-      _ = eLpNorm f 1 μ := eLpNorm_one_eq_lintegral_enorm.symm
+      _ = eLpNorm f 1 μ := (eLpNorm_one_eq_lintegral_enorm hF'.aestronglyMeasurable).symm
       _ ≤ eLpNorm f p.exponent μ :=
-        eLpNorm_le_eLpNorm_of_exponent_le hp_one hF.aestronglyMeasurable
+        eLpNorm_le_eLpNorm_of_exponent_le hp_one
   have hconst : eLpNorm (fun _ : Vec d => m) p.exponent μ = ‖m‖ₑ := by
     rw [eLpNorm_const' m hp0 htop]
     simp
   have htri : eLpNorm (fun x => f x - m) p.exponent μ ≤
       eLpNorm f p.exponent μ + eLpNorm (fun _ : Vec d => m) p.exponent μ :=
-    eLpNorm_sub_le hF.aestronglyMeasurable aestronglyMeasurable_const hp_one
+    eLpNorm_sub_le hp_one
   have hfun : (fun x => HilbertVec.ofVec (F x - ScalarOverlap.cubeAverageVec S F)) =
       fun x => f x - m := by
     funext x
@@ -104,11 +104,11 @@ private theorem eLpNorm_overlap_residual_le_two_mul {d : ℕ}
 
 private theorem eLpNorm_rpow_eq_lintegral_enorm {α E : Type*}
     [MeasurableSpace α] [NormedAddCommGroup E] {μ : Measure α}
-    {f : α → E} (p : FiniteLpExponent) :
+    {f : α → E} (p : FiniteLpExponent) (hf : AEStronglyMeasurable f μ) :
     (eLpNorm f p.exponent μ) ^ p.exponent.toReal =
       ∫⁻ x, ‖f x‖ₑ ^ p.exponent.toReal ∂μ := by
   rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
-    (zero_lt_one.trans p.one_lt).ne' p.lt_top.ne, ← ENNReal.rpow_mul]
+    (zero_lt_one.trans p.one_lt).ne' p.lt_top.ne hf, ← ENNReal.rpow_mul]
   have hp : p.exponent.toReal ≠ 0 :=
     ENNReal.toReal_pos (zero_lt_one.trans p.one_lt).ne' p.lt_top.ne |>.ne'
   rw [one_div, inv_mul_cancel₀ hp, ENNReal.rpow_one]
@@ -186,21 +186,17 @@ theorem cubeEuclideanPositiveBesovOverlapDepthENorm_le_global {d : ℕ}
         (2 : ℝ≥0∞) ^ r *
           ∫⁻ x, g x ∂ScalarOverlap.normalizedCubeMeasure S := by
     intro S hS
+    have hFlocal := memLp_hilbert_overlap_of_memLp hF (by simpa [D] using hS)
     have hpow := ENNReal.rpow_le_rpow (hlocal S hS) hr_pos.le
-    rw [eLpNorm_rpow_eq_lintegral_enorm] at hpow
     rw [ENNReal.mul_rpow_of_nonneg _ _ hr_pos.le] at hpow
     calc
       (eLpNorm (fun x => HilbertVec.ofVec (F x - ScalarOverlap.cubeAverageVec S F))
-          p.exponent (ScalarOverlap.normalizedCubeMeasure S)) ^ r =
-          ∫⁻ x, ‖HilbertVec.ofVec (F x - ScalarOverlap.cubeAverageVec S F)‖ₑ ^ r
-            ∂ScalarOverlap.normalizedCubeMeasure S := eLpNorm_rpow_eq_lintegral_enorm p
-      _ ≤ (2 : ℝ≥0∞) ^ r *
+          p.exponent (ScalarOverlap.normalizedCubeMeasure S)) ^ r ≤ (2 : ℝ≥0∞) ^ r *
           (eLpNorm (fun x => HilbertVec.ofVec (F x)) p.exponent
-            (ScalarOverlap.normalizedCubeMeasure S)) ^ r := by
-            exact hpow
+            (ScalarOverlap.normalizedCubeMeasure S)) ^ r := hpow
       _ = (2 : ℝ≥0∞) ^ r *
           ∫⁻ x, g x ∂ScalarOverlap.normalizedCubeMeasure S := by
-            rw [eLpNorm_rpow_eq_lintegral_enorm]
+            rw [eLpNorm_rpow_eq_lintegral_enorm p hFlocal.aestronglyMeasurable]
   have hassembly :
       ((D.card : ℝ≥0∞)⁻¹) *
         D.sum (fun S => ∫⁻ x, g x ∂ScalarOverlap.normalizedCubeMeasure S) ≤
@@ -256,7 +252,7 @@ theorem cubeEuclideanPositiveBesovOverlapDepthENorm_le_global {d : ℕ}
       _ = (2 : ℝ≥0∞) ^ r * (3 ^ d : ℝ≥0∞) *
           (eLpNorm (fun x => HilbertVec.ofVec (F x)) p.exponent
             (normalizedCubeMeasure Q)) ^ r := by
-            rw [eLpNorm_rpow_eq_lintegral_enorm]
+            rw [eLpNorm_rpow_eq_lintegral_enorm p hF.aestronglyMeasurable]
             ring
   have hK : (3 ^ d : ℝ≥0∞) ≤ (3 ^ d : ℝ≥0∞) ^ r := by
     have hthree : (1 : ℝ≥0∞) ≤ 3 := by norm_num

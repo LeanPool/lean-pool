@@ -175,7 +175,7 @@ theorem section52_le_add_finsetSum_of_le_add_attachSum
         Finset.sum_congr rfl (fun i _ => hFG i)
       _ = ∑ i ∈ s, G i := Finset.sum_attach s G
   calc
-    x ≤ b + ∑ i ∈ s.attach, F i := hsplit.trans (add_le_add_right hsmall _)
+    x ≤ b + ∑ i ∈ s.attach, F i := hsplit.trans (add_le_add hsmall le_rfl)
     _ = b + ∑ i ∈ s, G i := congrArg (b + ·) hsum
 
 theorem upperFactorPowerIntegrableAtScale_from_P4

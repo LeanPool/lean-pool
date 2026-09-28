@@ -849,15 +849,14 @@ the second moment on a probability space.
 theorem eLpNorm_two_le_eLpNorm_of_two_le_real_exponent
     {Ω : Type*} [MeasurableSpace Ω] {μ : MeasureTheory.Measure Ω}
     [MeasureTheory.IsProbabilityMeasure μ] {X : Ω → ℝ} {Q : ℝ}
-    (hQ : (2 : ℝ) ≤ Q)
-    (hX : MeasureTheory.AEStronglyMeasurable X μ) :
+    (hQ : (2 : ℝ) ≤ Q) :
     MeasureTheory.eLpNorm X (2 : ENNReal) μ ≤
       MeasureTheory.eLpNorm X (ENNReal.ofReal Q) μ := by
   have hQenn : (2 : ENNReal) ≤ ENNReal.ofReal Q := by
     calc
       (2 : ENNReal) = ENNReal.ofReal (2 : ℝ) := by norm_num
       _ ≤ ENNReal.ofReal Q := ENNReal.ofReal_le_ofReal hQ
-  exact MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le hQenn hX
+  exact MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le hQenn
 
 /--
 Source label `l.union.bound`: the manuscript step "Taking the power `2 / Q`"
@@ -884,11 +883,11 @@ theorem lintegral_enorm_rpow_two_le_lintegral_enorm_rpow_rpow_of_two_le
         (∫⁻ ω, ‖X ω‖ₑ ^ Q ∂ μ) ^ (1 / Q) := by
     have hmono :=
       eLpNorm_two_le_eLpNorm_of_two_le_real_exponent
-        (μ := μ) (X := X) hQ hX
+        (μ := μ) (X := X) hQ
     rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
-        (p := (2 : ENNReal)) htwo_ne_zero htwo_ne_top,
+        (p := (2 : ENNReal)) htwo_ne_zero htwo_ne_top hX,
       MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
-        (p := ENNReal.ofReal Q) hQenn_ne_zero hQenn_ne_top] at hmono
+        (p := ENNReal.ofReal Q) hQenn_ne_zero hQenn_ne_top hX] at hmono
     simpa [ENNReal.toReal_ofReal hQ_nonneg] using hmono
   have hpow := ENNReal.rpow_le_rpow hnorm (by norm_num : 0 ≤ (2 : ℝ))
   have hleft :

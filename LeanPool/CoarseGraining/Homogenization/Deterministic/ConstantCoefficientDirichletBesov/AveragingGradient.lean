@@ -761,7 +761,7 @@ theorem exists_cubeLpNorm_euclideanCoordDeriv_averagingField_coord_sq_le_depthAv
         (hloc S hS)
     simpa [B] using
       toReal_overlapCentersAtDepth_average_lintegral_fluctuation_eq_depthAverage
-        Q h j hfin
+        Q h j hloc hfin
   have hconst_toReal :
       (ENNReal.ofReal K *
           ((3 ^ d : ℝ≥0∞) *

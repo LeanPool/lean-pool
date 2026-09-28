@@ -588,8 +588,6 @@ theorem memH10_localizedMul_of_contDiff_hasCompactSupport_tsupport_subset
               rw [hEq]
               exact (Function.support_mul_subset_left φ (fun x => ψ n x - w x)).trans
                 (subset_tsupport φ |>.trans hφ_sub)
-            rw [eLpNorm_restrict_eq_restrict_of_support_subset
-              (U := U) (V := V) hVU hsupport]
             have hdiff_mem : MeasureTheory.MemLp (fun x => ψ n x - w x) 2 μV :=
               (hψ_memL2 n).sub w.memL2
             have hEq :
@@ -598,9 +596,24 @@ theorem memH10_localizedMul_of_contDiff_hasCompactSupport_tsupport_subset
               funext x
               simp [wφ]
               ring
+            have hrestricted : MeasureTheory.AEStronglyMeasurable
+                (fun x => φ x * ψ n x - wφ.toFun x) μV := by
+              rw [hEq]
+              exact hφ_top.aestronglyMeasurable.smul hdiff_mem.aestronglyMeasurable
+            have hglobal : MeasureTheory.AEStronglyMeasurable
+                (fun x => φ x * ψ n x - wφ.toFun x) MeasureTheory.volume := by
+              have hindicator :=
+                (aestronglyMeasurable_indicator_iff hV.isOpen.measurableSet).2 hrestricted
+              have hindicator_eq :
+                  V.indicator (fun x => φ x * ψ n x - wφ.toFun x) =
+                    (fun x => φ x * ψ n x - wφ.toFun x) :=
+                Set.indicator_eq_self.2 hsupport
+              rwa [hindicator_eq] at hindicator
+            rw [eLpNorm_restrict_eq_restrict_of_support_subset
+              (U := U) (V := V) hVU hsupport hglobal]
             rw [hEq]
             exact MeasureTheory.eLpNorm_smul_le_eLpNorm_top_mul_eLpNorm 2
-              hdiff_mem.aestronglyMeasurable φ
+              hφ_top.aestronglyMeasurable
           refine tendsto_of_tendsto_of_tendsto_of_le_of_le
             tendsto_const_nhds ?_ (fun n => zero_le) hupper
           simpa using hconst_tendsto
@@ -689,8 +702,6 @@ theorem memH10_localizedMul_of_contDiff_hasCompactSupport_tsupport_subset
               have hgrad_zero : wφ.grad x i = 0 := by
                 simp [wφ, dφ, hφ_zero, hdφ_zero]
               exact hx (by simp [hfd_zero, hgrad_zero])
-            rw [eLpNorm_restrict_eq_restrict_of_support_subset
-              (U := U) (V := V) hVU hsupport]
             have hbase_grad_mem :
                 MeasureTheory.MemLp
                   (fun x => (fderiv ℝ (ψ n) x) (basisVec i) - w.grad x i) 2 μV :=
@@ -698,9 +709,9 @@ theorem memH10_localizedMul_of_contDiff_hasCompactSupport_tsupport_subset
             have hbase_mem : MeasureTheory.MemLp (fun x => ψ n x - w x) 2 μV :=
               (hψ_memL2 n).sub w.memL2
             have hA_mem : MeasureTheory.MemLp A 2 μV := by
-              simpa [A, μV] using hbase_grad_mem.mul' hφ_top
+              simpa only [A] using hφ_top.fun_mul hbase_grad_mem
             have hB_mem : MeasureTheory.MemLp B 2 μV := by
-              simpa [B, dφ, μV] using hbase_mem.mul' hdφ_top
+              simpa only [B] using hdφ_top.fun_mul hbase_mem
             have hEq :
                 (fun x =>
                   (fderiv ℝ (fun y => φ y * ψ n y) x) (basisVec i) -
@@ -715,16 +726,39 @@ theorem memH10_localizedMul_of_contDiff_hasCompactSupport_tsupport_subset
                 fderiv_mul hφ_diff hψ_diff]
               simp [A, B, dφ, wφ, smul_eq_mul, add_apply]
               ring
+            have hrestricted : MeasureTheory.AEStronglyMeasurable
+                (fun x =>
+                  (fderiv ℝ (fun y => φ y * ψ n y) x) (basisVec i) - wφ.grad x i) μV := by
+              rw [hEq]
+              exact hA_mem.aestronglyMeasurable.add hB_mem.aestronglyMeasurable
+            have hglobal : MeasureTheory.AEStronglyMeasurable
+                (fun x =>
+                  (fderiv ℝ (fun y => φ y * ψ n y) x) (basisVec i) - wφ.grad x i)
+                MeasureTheory.volume := by
+              have hindicator :=
+                (aestronglyMeasurable_indicator_iff hV.isOpen.measurableSet).2 hrestricted
+              have hindicator_eq :
+                  V.indicator (fun x =>
+                    (fderiv ℝ (fun y => φ y * ψ n y) x) (basisVec i) - wφ.grad x i) =
+                    (fun x =>
+                      (fderiv ℝ (fun y => φ y * ψ n y) x) (basisVec i) - wφ.grad x i) :=
+                Set.indicator_eq_self.2 hsupport
+              rwa [hindicator_eq] at hindicator
+            rw [eLpNorm_restrict_eq_restrict_of_support_subset
+              (U := U) (V := V) hVU hsupport hglobal]
             rw [hEq]
-            refine (MeasureTheory.eLpNorm_add_le hA_mem.aestronglyMeasurable
-              hB_mem.aestronglyMeasurable (by norm_num)).trans ?_
+            refine (MeasureTheory.eLpNorm_add_le (p := 2) (f := A) (g := B)
+              (by norm_num)).trans ?_
             refine add_le_add ?_ ?_
             · simpa [A, mul_comm, mul_left_comm, mul_assoc] using!
                 (MeasureTheory.eLpNorm_smul_le_eLpNorm_top_mul_eLpNorm 2
-                  hbase_grad_mem.aestronglyMeasurable φ)
+                  (φ := φ)
+                  (f := fun x => (fderiv ℝ (ψ n) x) (basisVec i) - w.grad x i)
+                  hφ_top.aestronglyMeasurable)
             · simpa [B, dφ, mul_comm, mul_left_comm, mul_assoc] using!
                 (MeasureTheory.eLpNorm_smul_le_eLpNorm_top_mul_eLpNorm 2
-                  hbase_mem.aestronglyMeasurable dφ)
+                  (φ := dφ) (f := fun x => ψ n x - w x)
+                  hdφ_top.aestronglyMeasurable)
           refine tendsto_of_tendsto_of_tendsto_of_le_of_le
             tendsto_const_nhds ?_ (fun n => zero_le) hupper
           simpa [zero_add] using hsum_tendsto }, rfl⟩

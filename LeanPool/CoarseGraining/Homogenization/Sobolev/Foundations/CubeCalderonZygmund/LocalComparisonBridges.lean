@@ -64,10 +64,11 @@ theorem norm_toHilbertVectorL2OfVecField_eq_eLpNorm_toReal
   exact Lp.norm_toLp _ (memHilbertVectorL2_hilbertifyVecField hH)
 
 private theorem eLpNorm_two_rpow_eq_lintegral_enorm
-    {α E : Type*} [MeasurableSpace α] [ENorm E]
-    (μ : Measure α) (F : α → E) :
+    {α E : Type*} [MeasurableSpace α] [ENorm E] [TopologicalSpace E]
+    (μ : Measure α) (F : α → E)
+    (hF : AEStronglyMeasurable F μ) :
     (eLpNorm F 2 μ) ^ (2 : ℝ) = ∫⁻ x, ‖F x‖ₑ ^ (2 : ℝ) ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hF]
   rw [← ENNReal.rpow_mul]
   norm_num
 
@@ -81,7 +82,7 @@ theorem norm_sq_toHilbertVectorL2OfVecField_eq_lintegral_enorm
   let hHH : MemHilbertVectorL2 B (hilbertifyVecField H) :=
     memHilbertVectorL2_hilbertifyVecField hH
   have hpow := eLpNorm_two_rpow_eq_lintegral_enorm (volume.restrict B)
-    (hilbertifyVecField H)
+    (hilbertifyVecField H) hHH.aestronglyMeasurable
   calc
     ‖toHilbertVectorL2OfVecField hH‖ ^ (2 : ℕ) =
         (eLpNorm (hilbertifyVecField H) 2 (volume.restrict B)).toReal ^ (2 : ℕ) := by
@@ -160,13 +161,11 @@ theorem local_lintegral_sub_norm_sq_eq_of_ae_eq_restrict
 /-- Minkowski's triangle inequality on the normalized measure of an axis
 cube, in the Hilbert-valued form consumed by the comparison argument. -/
 theorem axisCubeNormalized_eLpNorm_two_add_le
-    {d : ℕ} (z : Vec d) (L : ℝ) {F G : Vec d → HilbertVec d}
-    (hF : AEStronglyMeasurable F (axisCubeNormalizedMeasure z L))
-    (hG : AEStronglyMeasurable G (axisCubeNormalizedMeasure z L)) :
+    {d : ℕ} (z : Vec d) (L : ℝ) {F G : Vec d → HilbertVec d} :
     eLpNorm (F + G) 2 (axisCubeNormalizedMeasure z L) ≤
       eLpNorm F 2 (axisCubeNormalizedMeasure z L) +
         eLpNorm G 2 (axisCubeNormalizedMeasure z L) :=
-  eLpNorm_add_le hF hG (by norm_num)
+  eLpNorm_add_le (by norm_num)
 
 /-- Scalar multiplication has its exact expected effect on the normalized
 axis-cube Hilbert `L²` `eLpNorm`. -/

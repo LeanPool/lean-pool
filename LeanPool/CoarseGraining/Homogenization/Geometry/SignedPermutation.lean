@@ -105,7 +105,7 @@ theorem IsSignedPermutationMatrix.mul_transpose_self {d : ℕ} {R : Mat d}
               rw [h]
               simp
             exact hsymm.symm
-          rw [if_neg hik]
+          rw [ite_eq_right hik]
           simp
         · intro hnot
           exact (hnot (Finset.mem_univ _)).elim
@@ -114,7 +114,7 @@ theorem IsSignedPermutationMatrix.mul_transpose_self {d : ℕ} {R : Mat d}
           s (σ.symm i) * s (σ.symm i)
         rw [hR i (σ.symm i)]
         have hi : i = σ (σ.symm i) := by simp
-        rw [if_pos hi]
+        rw [ite_eq_left hi]
       _ = 1 := by
         rcases hs (σ.symm i) with hsi | hsi <;> simp [hsi]
       _ = (1 : Mat d) i i := by simp
@@ -149,7 +149,7 @@ theorem IsSignedPermutationMatrix.transpose {d : ℕ} {R : Mat d}
         apply h
         rw [hji]
         simp
-      rw [if_neg hji, if_neg h]
+      rw [ite_eq_right hji, ite_eq_right h]
 
 theorem IsSignedPermutationMatrix.det_ne_zero {d : ℕ} {R : Mat d}
     (hR : IsSignedPermutationMatrix R) :

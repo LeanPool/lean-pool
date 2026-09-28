@@ -100,10 +100,10 @@ theorem cubeBesovDualPartialSeminormValueSet_nonneg {d : ℕ} {Q : TriadicCube d
     cubeBesovDualTestNorm Q s p q N (fun _ => (0 : ℝ)) = 0 := by
   unfold cubeBesovDualTestNorm
   by_cases hq : cubeBesovConjExponent q = ∞
-  · rw [if_pos hq]
+  · rw [ite_eq_left hq]
     simpa using cubeBesovPartialNormTop_zero
       (Q := Q) (s := s) (p := cubeBesovConjExponent p) (N := N) hp0 hpTop
-  · rw [if_neg hq]
+  · rw [ite_eq_right hq]
     have hq0 : cubeBesovConjExponent q ≠ 0 := cubeBesovConjExponent_ne_zero q
     simpa using cubeBesovPartialNorm_zero
       (Q := Q) (s := s) (p := cubeBesovConjExponent p) (q := cubeBesovConjExponent q)
@@ -115,10 +115,10 @@ theorem cubeBesovDualPartialSeminormValueSet_nonneg {d : ℕ} {Q : TriadicCube d
     cubeBesovDualTestSeminorm Q s p q N (fun _ => (0 : ℝ)) = 0 := by
   unfold cubeBesovDualTestSeminorm
   by_cases hq : cubeBesovConjExponent q = ∞
-  · rw [if_pos hq]
+  · rw [ite_eq_left hq]
     simpa using cubeBesovPartialSeminormTop_zero
       (Q := Q) (s := s) (p := cubeBesovConjExponent p) (N := N) hp0 hpTop
-  · rw [if_neg hq]
+  · rw [ite_eq_right hq]
     have hq0 : cubeBesovConjExponent q ≠ 0 := cubeBesovConjExponent_ne_zero q
     simpa using cubeBesovPartialSeminorm_zero
       (Q := Q) (s := s) (p := cubeBesovConjExponent p) (q := cubeBesovConjExponent q)

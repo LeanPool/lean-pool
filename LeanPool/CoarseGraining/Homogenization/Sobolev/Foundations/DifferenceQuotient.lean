@@ -178,7 +178,7 @@ theorem contDiff_comp_euclideanCoordShift {d : ℕ} {u : Vec d → ℝ}
 theorem hasCompactSupport_comp_euclideanCoordShift {d : ℕ}
     {u : Vec d → ℝ} (hu : HasCompactSupport u) (h : ℝ) (i : Fin d) :
     HasCompactSupport (fun x => u (euclideanCoordShift h i x)) := by
-  show HasCompactSupport (u ∘ Homeomorph.addRight (h • basisVec i))
+  change HasCompactSupport (u ∘ Homeomorph.addRight (h • basisVec i))
   simpa [euclideanCoordShift, Function.comp] using
     hu.comp_homeomorph (Homeomorph.addRight (h • basisVec i))
 

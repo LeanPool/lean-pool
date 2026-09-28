@@ -254,7 +254,7 @@ theorem integral_jUpperWeakNormManuscriptPointwiseRHSAtScale_le_manuscriptExpect
               (Real.sqrt (∫ a, (scaledGrad a) ^ 2 ∂P) *
                 Real.sqrt (∫ a, (scaledFlux a) ^ 2 ∂P)))) := by
           exact add_le_add hAddBound
-            (add_le_add_left (add_le_add_left hProductBound _) _)
+            (add_le_add_right (add_le_add_right hProductBound _) _)
     _ =
         jUpperWeakNormManuscriptExpectedRHSAtScale P m k s t
           C Cosc scaleSep BφS BφT Cprod p q p0 q0 := by

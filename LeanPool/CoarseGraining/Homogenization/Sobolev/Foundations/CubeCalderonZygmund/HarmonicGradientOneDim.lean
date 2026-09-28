@@ -209,6 +209,8 @@ private theorem cubeLpNorm_two_middleChild_le_three_mul (Q : TriadicCube 1)
   have htop : 3 * MeasureTheory.eLpNorm f 2 (normalizedCubeMeasure Q) ≠ ∞ :=
     ENNReal.mul_ne_top (by norm_num) hfinQ
   have hreal := ENNReal.toReal_mono htop hle
+  rw [cubeLpNorm_eq_eLpNorm_toReal R 2 f hfinR.aestronglyMeasurable,
+    cubeLpNorm_eq_eLpNorm_toReal Q 2 f hf.aestronglyMeasurable]
   simpa [R, cubeLpNorm, ENNReal.toReal_mul] using hreal
 
 private theorem cubeLpNorm_eq_abs_of_ae_eq_const (Q : TriadicCube 1)
@@ -216,7 +218,9 @@ private theorem cubeLpNorm_eq_abs_of_ae_eq_const (Q : TriadicCube 1)
     (h : f =ᵐ[normalizedCubeMeasure Q] fun _ => c) :
     cubeLpNorm Q p.exponent f = |c| := by
   unfold cubeLpNorm
-  rw [MeasureTheory.eLpNorm_congr_ae h,
+  rw [Gagliardo.integralLpSeminorm_congr_ae h,
+    Gagliardo.integralLpSeminorm_eq_eLpNorm _ _ _
+      MeasureTheory.aestronglyMeasurable_const,
     MeasureTheory.eLpNorm_const' c (ne_of_gt (lt_trans zero_lt_one p.one_lt)) p.lt_top.ne,
     normalizedCubeMeasure_apply_univ]
   simp

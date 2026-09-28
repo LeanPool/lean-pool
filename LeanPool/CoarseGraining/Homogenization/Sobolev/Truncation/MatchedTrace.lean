@@ -34,6 +34,8 @@ term vanishes), so the `H¹₀`-limit lemma concludes.
 
 private theorem tendsto_eLpNorm_matchedPositiveParts {d : ℕ}
     (μ : Measure (Vec d)) (a b : Vec d → ℝ) (f : ℕ → Vec d → ℝ) (c : ℝ)
+    (ha : AEStronglyMeasurable a μ) (hb : AEStronglyMeasurable b μ)
+    (hf : ∀ n, AEStronglyMeasurable (f n) μ)
     (hconv : Tendsto (fun n => eLpNorm (fun x => f n x - (a x - b x)) 2 μ)
       atTop (nhds 0)) :
     Tendsto (fun n => eLpNorm (fun x =>
@@ -56,7 +58,16 @@ private theorem tendsto_eLpNorm_matchedPositiveParts {d : ℕ}
     exact hconv
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hub
     (fun n => zero_le) (fun n => ?_)
-  refine eLpNorm_mono (fun x => ?_)
+  have hmax (g : Vec d → ℝ) (hg : AEStronglyMeasurable g μ) :
+      AEStronglyMeasurable (fun x => max (g x - c) 0) μ :=
+    ((hg.sub aestronglyMeasurable_const).aemeasurable.max
+      aemeasurable_const).aestronglyMeasurable
+  have htarget : AEStronglyMeasurable
+      (fun x => (max (a x - c) 0 - max (b x - c) 0) -
+        (max ((b x + f n x) - c) 0 - max (b x - c) 0)) μ :=
+    ((hmax a ha).sub (hmax b hb)).sub
+      ((hmax (fun x => b x + f n x) (hb.add (hf n))).sub (hmax b hb))
+  refine eLpNorm_mono htarget (fun x => ?_)
   rw [Real.norm_eq_abs, Real.norm_eq_abs,
     show max (a x - c) 0 - max (b x - c) 0 -
         (max ((b x + f n x) - c) 0 - max (b x - c) 0) =
@@ -147,7 +158,6 @@ theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
   -- a.e.-convergent subsequence.
   obtain ⟨σ, hσ_mono, hσ_ae⟩ :=
     (tendstoInMeasure_of_tendsto_eLpNorm (by norm_num)
-      (fun n => (W.approx_smooth n).continuous.aestronglyMeasurable) h.memL2.1
       hWconv).exists_seq_tendsto_ae
   -- Assemble via the `H¹₀`-limit lemma.
   refine memH10_of_tendsto_H1 hU T (fun n => V1 (σ n) - V2) (fun n => hΨmem (σ n)) ?_ ?_
@@ -155,20 +165,27 @@ theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
     have hconv : Tendsto (fun n => eLpNorm
         (fun x => W.approx (σ n) x - (w₁.toFun x - w₂.toFun x))
         2 (volumeMeasureOn U)) atTop (nhds 0) := by
-      simpa only [hh_def, H1Function.sub_toFun] using
+      simpa only [Function.comp_def, hh_def, H1Function.sub_toFun] using
         hWconv.comp hσ_mono.tendsto_atTop
-    simpa only [hTtf, H1Function.sub_toFun, hV1f, hV2f] using
+    have hSn (n : ℕ) : (S n).toFun = fun x => w₂.toFun x + W.approx n x := by
+      funext x
+      rw [hS_def, H1Function.add_toFun]
+      rfl
+    simpa only [hTtf, H1Function.sub_toFun, hV1f, hV2f, hSn] using
       tendsto_eLpNorm_matchedPositiveParts (volumeMeasureOn U)
-        w₁.toFun w₂.toFun (fun n => W.approx (σ n)) c hconv
+        w₁.toFun w₂.toFun (fun n => W.approx (σ n)) c
+        w₁.memL2.aestronglyMeasurable w₂.memL2.aestronglyMeasurable
+        (fun n => (W.approx_smooth (σ n)).continuous.aestronglyMeasurable)
+        hconv
   · -- Gradient convergence (coordinatewise).
     intro i
     have haesm_ind' :
         AEStronglyMeasurable (fun x => if c < w₁.toFun x then (1:ℝ) else 0) (volumeMeasureOn U) :=
-      hind_aesm w₁.toFun w₁.memL2.1
+      hind_aesm w₁.toFun w₁.memL2.aestronglyMeasurable
     have haesm_indn : ∀ n,
         AEStronglyMeasurable (fun x => if c < (S n).toFun x then (1:ℝ) else 0)
           (volumeMeasureOn U) :=
-      fun n => hind_aesm (S n).toFun (S n).memL2.1
+      fun n => hind_aesm (S n).toFun (S n).memL2.aestronglyMeasurable
     set TA : ℕ → Vec d → ℝ :=
       fun n x => (if c < (S n).toFun x then (1:ℝ) else 0) * (h.grad x i - (Φ n).grad x i)
       with hTA_def
@@ -201,10 +218,13 @@ theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
       split_ifs <;> ring
     have haesm_TA : ∀ n, AEStronglyMeasurable (TA n) (volumeMeasureOn U) := by
       intro n
-      exact (haesm_indn n).mul ((h.gradMemL2 i).1.sub ((Φ n).gradMemL2 i).1)
+      exact (haesm_indn n).mul
+        ((h.gradMemL2 i).aestronglyMeasurable.sub
+          ((Φ n).gradMemL2 i).aestronglyMeasurable)
     have haesm_TB : ∀ n, AEStronglyMeasurable (TB n) (volumeMeasureOn U) := by
       intro n
-      exact (haesm_ind'.sub (haesm_indn n)).mul (w₁.gradMemL2 i).1
+      exact (haesm_ind'.sub (haesm_indn n)).mul
+        (w₁.gradMemL2 i).aestronglyMeasurable
     -- `‖TA_n‖ ≤ ‖∇φ_n − ∇h‖` → 0 in L².
     have hEconv : Tendsto
         (fun n => eLpNorm (fun x => h.grad x i - (Φ n).grad x i) 2 (volumeMeasureOn U))
@@ -221,7 +241,7 @@ theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
     have hTA_conv : Tendsto (fun n => eLpNorm (TA n) 2 (volumeMeasureOn U)) atTop (nhds 0) := by
       refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hEconv
         (fun n => zero_le) (fun n => ?_)
-      refine eLpNorm_mono (fun x => ?_)
+      refine eLpNorm_mono (haesm_TA n) (fun x => ?_)
       simp only [hTA_def]
       rw [norm_mul]
       refine mul_le_of_le_one_left (norm_nonneg _) ?_
@@ -277,6 +297,6 @@ theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
       simp only [hT_def, H1Function.sub_grad, Pi.sub_apply]
       ring
     rw [hVcancel, eLpNorm_congr_ae (hkey (σ n))]
-    exact eLpNorm_add_le (haesm_TA (σ n)) (haesm_TB (σ n)) (by norm_num)
+    exact eLpNorm_add_le (by norm_num)
 
 end Homogenization

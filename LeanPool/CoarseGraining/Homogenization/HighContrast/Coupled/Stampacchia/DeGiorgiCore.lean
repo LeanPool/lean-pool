@@ -311,7 +311,7 @@ theorem deGiorgi_one_sided_core {d : ℕ} (hd : 3 ≤ d) :
     have hf0eLp : eLpNorm f0.toFun p (volumeMeasureOn (axisCube z L)) = 0 :=
       (ENNReal.toReal_eq_zero_iff _).mp hf0z |>.resolve_right (hfin_2star f0)
     have hf0ae : f0.toFun =ᵐ[volumeMeasureOn (axisCube z L)] 0 :=
-      (eLpNorm_eq_zero_iff f0.memL2.1 hp_ne_zero).mp hf0eLp
+      (eLpNorm_eq_zero_iff hp_ne_zero).mp hf0eLp
     filter_upwards [hf0ae] with x hx
     simp only [Pi.zero_apply] at hx
     rw [hf0_tf] at hx

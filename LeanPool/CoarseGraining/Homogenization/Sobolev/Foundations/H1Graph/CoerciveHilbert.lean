@@ -177,7 +177,7 @@ noncomputable def toH1MeanZeroFunction
     have hzMean :
         scalarIntegralCLM (U := U) zp.1 = 0 :=
       (mem_h1MeanZeroGraphClosedSubmodule_iff (U := U) zp).mp hzp |>.2
-    show ∫ x in U, u x ∂MeasureTheory.volume = 0
+    change ∫ x in U, u x ∂MeasureTheory.volume = 0
     calc
       ∫ x in U, u x ∂MeasureTheory.volume = scalarIntegralCLM (U := U) u.toScalarL2 := by
             symm

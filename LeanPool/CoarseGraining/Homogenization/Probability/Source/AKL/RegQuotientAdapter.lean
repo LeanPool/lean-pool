@@ -46,6 +46,9 @@ private theorem aestronglyMeasurable_regularField {d : ℕ} (a : RegCoeffField d
     AEStronglyMeasurable (fun x : Vec d => a x) volume := by
   letI : TopologicalSpace.PseudoMetrizableSpace (Mat d) :=
     inferInstanceAs (TopologicalSpace.PseudoMetrizableSpace (Fin d → Fin d → ℝ))
+  letI : OpensMeasurableSpace (Mat d) := by
+    change OpensMeasurableSpace (Fin d → Fin d → ℝ)
+    infer_instance
   have hmeas : @Measurable (Vec d) (Mat d) _ _ (fun x => a x) :=
     measurable_matrix_of_entries (fun i j => a.entry_measurable i j)
   exact hmeas.aestronglyMeasurable

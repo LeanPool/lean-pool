@@ -175,7 +175,8 @@ theorem abs_cubeAverage_vecDot_centered_scalar_cutoff_le_scaledWeakNormProduct
   have hproductField :
       MemLp productField (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
     let : ENNReal.HolderTriple (2 : ℝ≥0∞) ∞ (2 : ℝ≥0∞) := by infer_instance
-    simpa [productField] using! hξLp.smul (p := (2 : ℝ≥0∞)) (r := (2 : ℝ≥0∞)) hfluct
+    simpa [productField] using!
+      hfluct.smul (r := (2 : ℝ≥0∞)) hξLp
   have hproductMem :
       ∀ i : Fin d,
         CubeBesovDualLocalMemLpGlobal Q (2 : ℝ≥0∞) (fun x => productField x i) := by

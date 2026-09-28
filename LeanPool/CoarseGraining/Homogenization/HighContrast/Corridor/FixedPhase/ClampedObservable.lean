@@ -57,7 +57,7 @@ theorem isEllipticFieldOn_glueField_of_field {ℓ : ℝ} {σ : Vec d} {Θ : ℝ}
               (if x ∈ corridorSet ℓ σ then (1 : Mat d) i j else b x i j) else 0 := by
       funext x
       by_cases hxU : x ∈ cubeSet (originCube d m)
-      · simp only [hxU, if_true]
+      · simp only [hxU, ite_true]
         by_cases hxc : x ∈ corridorSet ℓ σ
         · rw [corridorField_apply_of_mem hxc]; simp [hxc]
         · rw [corridorField_apply_of_not_mem hxc]; simp [hxc]

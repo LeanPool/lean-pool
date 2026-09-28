@@ -90,7 +90,7 @@ theorem card_gridHits_le {ℓ : ℝ} (hℓ : 4 ≤ ℓ) {N : ℕ} (hN : (ℓ : �
     rw [hA, Finset.mem_filter] at hc
     have hex := hc.2
     have hncfc : ncf c = Classical.choose hex := by
-      simp only [hncf]; exact dif_pos hex
+      simp only [hncf]; exact dite_eq_left hex
     have hspec : |t - (c : ℝ) * ℓ / N - (ncf c) * ℓ| < 1 := by
       rw [hncfc]; exact Classical.choose_spec hex
     -- rewrite the argument as `t - (g c)·ℓ/N`
@@ -201,7 +201,7 @@ theorem sum_indicator_gridPhase_corridor_le [NeZero d] {ℓ : ℝ} (hℓ : 4 ≤
       obtain ⟨i, n, hin⟩ := hmem
       have hgi : gcoord i (j i) = 1 := by
         simp only [hgcoord]
-        rw [if_pos ⟨n, by simpa [gridPhase_apply] using hin⟩]
+        rw [ite_eq_left ⟨n, by simpa [gridPhase_apply] using hin⟩]
       calc (1 : ℝ) = gcoord i (j i) := hgi.symm
         _ ≤ ∑ i : Fin d, gcoord i (j i) := by
             apply Finset.single_le_sum (f := fun i => gcoord i (j i))

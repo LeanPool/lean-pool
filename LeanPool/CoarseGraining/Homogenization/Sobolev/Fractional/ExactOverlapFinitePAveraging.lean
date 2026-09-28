@@ -105,7 +105,7 @@ private theorem aemeasurable_overlapCubeHilbertResidualIndicator_of_memLp
   have hh_vol : AEMeasurable (fun y => HilbertVec.ofVec (h y)) μS := by
     have hh_norm : AEMeasurable (fun y => HilbertVec.ofVec (h y))
         (ScalarOverlap.normalizedCubeMeasure S) :=
-      hh.1.aemeasurable
+      hh.aestronglyMeasurable.aemeasurable
     simpa [μS, ScalarOverlap.normalizedCubeMeasure, ScalarOverlap.cubeMeasure] using
       (aemeasurable_smul_measure_iff
         (μ := volume.restrict (ScalarOverlap.cubeSet S))
@@ -554,6 +554,31 @@ private theorem memLp_hilbert_overlap_of_memLp {d : ℕ}
     ENNReal.mul_ne_top ENNReal.ofReal_ne_top ENNReal.ofReal_ne_top
   exact ((hh.smul_measure hfin).mono_measure hdom)
 
+private theorem aestronglyMeasurable_hilbert_overlap_residual_of_memLp
+    {d : ℕ} {Q S : TriadicCube d} {j : ℕ} {h : Vec d → Vec d}
+    (p : FiniteLpExponent)
+    (hh : MemLp (fun x => HilbertVec.ofVec (h x)) p.exponent
+      (normalizedCubeMeasure Q))
+    (hS : S ∈ ScalarOverlap.centersAtDepth Q j) :
+    AEStronglyMeasurable
+      (fun x => HilbertVec.ofVec (h x - ScalarOverlap.cubeAverageVec S h))
+      (ScalarOverlap.normalizedCubeMeasure S) := by
+  have hlocal := memLp_hilbert_overlap_of_memLp hh hS
+  have hsub := hlocal.aestronglyMeasurable.sub
+    (aestronglyMeasurable_const
+      (b := HilbertVec.ofVec (ScalarOverlap.cubeAverageVec S h)))
+  have heq :
+      (fun x => HilbertVec.ofVec (h x - ScalarOverlap.cubeAverageVec S h)) =
+        (fun x => HilbertVec.ofVec (h x) -
+          HilbertVec.ofVec (ScalarOverlap.cubeAverageVec S h)) := by
+    funext x
+    change (HilbertVec.ofVecL d) (h x - ScalarOverlap.cubeAverageVec S h) =
+      (HilbertVec.ofVecL d) (h x) -
+        (HilbertVec.ofVecL d) (ScalarOverlap.cubeAverageVec S h)
+    exact (HilbertVec.ofVecL d).map_sub _ _
+  rw [heq]
+  exact hsub
+
 /-- The powered finite-`p` residual of the concrete average is controlled by
 the direct Euclidean overlap energy at the same depth. -/
 theorem lintegral_enorm_rpow_sub_averagingField_le_overlapDepthENorm_rpow
@@ -625,7 +650,9 @@ theorem lintegral_enorm_rpow_sub_averagingField_le_overlapDepthENorm_rpow
               apply Finset.sum_congr rfl
               intro S _hS
               rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
-                (zero_lt_one.trans p.one_lt).ne' p.lt_top.ne,
+                (zero_lt_one.trans p.one_lt).ne' p.lt_top.ne
+                (aestronglyMeasurable_hilbert_overlap_residual_of_memLp
+                  p hh S.property),
                 ← ENNReal.rpow_mul]
               have hp : p.exponent.toReal ≠ 0 :=
                 ENNReal.toReal_pos (zero_lt_one.trans p.one_lt).ne' p.lt_top.ne |>.ne'
@@ -785,7 +812,9 @@ theorem lintegral_enorm_rpow_averagingCompetitorW1p_jacobian_le_depthENorm
                     apply Finset.sum_congr rfl
                     intro S _hS
                     rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
-                      (zero_lt_one.trans p.one_lt).ne' p.lt_top.ne,
+                      (zero_lt_one.trans p.one_lt).ne' p.lt_top.ne
+                      (aestronglyMeasurable_hilbert_overlap_residual_of_memLp
+                        p hh S.property),
                       ← ENNReal.rpow_mul]
                     have hp : p.exponent.toReal ≠ 0 :=
                       ENNReal.toReal_pos (zero_lt_one.trans p.one_lt).ne' p.lt_top.ne |>.ne'

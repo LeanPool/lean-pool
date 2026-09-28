@@ -37,7 +37,7 @@ theorem aemeasurable_overlapCubeResidualIndicator_of_memLp
     ENNReal.ofReal_ne_zero_iff.2 (inv_pos.mpr (overlapCubeVolume_pos S))
   have hh_vol : AEMeasurable h μS := by
     have hh_norm : AEMeasurable h (normalizedOverlapCubeMeasure S) :=
-      hh.1.aemeasurable
+      hh.aestronglyMeasurable.aemeasurable
     simpa [μS, normalizedOverlapCubeMeasure, overlapCubeMeasure] using
       (aemeasurable_smul_measure_iff
         (μ := MeasureTheory.volume.restrict (overlapCubeSet S))
@@ -78,7 +78,7 @@ theorem aemeasurable_overlapCubeCoordResidualIndicator_of_memLp
     ENNReal.ofReal_ne_zero_iff.2 (inv_pos.mpr (overlapCubeVolume_pos S))
   have hh_vol : AEMeasurable h μS := by
     have hh_norm : AEMeasurable h (normalizedOverlapCubeMeasure S) :=
-      hh.1.aemeasurable
+      hh.aestronglyMeasurable.aemeasurable
     simpa [μS, normalizedOverlapCubeMeasure, overlapCubeMeasure] using
       (aemeasurable_smul_measure_iff
         (μ := MeasureTheory.volume.restrict (overlapCubeSet S))
@@ -346,6 +346,7 @@ theorem cubeBesovOverlappingPositiveVectorDepthAverage_residual_le {d : ℕ}
           refine Finset.sum_congr rfl ?_
           intro S _hS
           exact overlapCubeLpNorm_two_sq_eq_lintegral_rpow_enorm_toReal S R
+            (hRloc S _hS).aestronglyMeasurable
     _ ≤
           4 * ((3 ^ d : ℝ) *
             (∫⁻ x, ‖R x‖ₑ ^ (2 : ℝ) ∂ normalizedCubeMeasure Q).toReal) := by

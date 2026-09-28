@@ -593,7 +593,13 @@ theorem cubeLpNorm_two_component_le_cubeLpNorm_two {d : ℕ} (Q : TriadicCube d)
           MeasureTheory.eLpNorm u (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
       simpa using hle
     exact ENNReal.toReal_mono htop_u hle'
-  simpa [cubeLpNorm] using htoReal
+  calc
+    cubeLpNorm Q (2 : ℝ≥0∞) (fun x => u x i) =
+        (MeasureTheory.eLpNorm (fun x => u x i) 2 (normalizedCubeMeasure Q)).toReal :=
+      cubeLpNorm_eq_eLpNorm_toReal Q 2 _ hui.aestronglyMeasurable
+    _ ≤ (MeasureTheory.eLpNorm u 2 (normalizedCubeMeasure Q)).toReal := htoReal
+    _ = cubeLpNorm Q (2 : ℝ≥0∞) u :=
+      (cubeLpNorm_eq_eLpNorm_toReal Q 2 _ hu.aestronglyMeasurable).symm
 
 theorem cubeBesovOscillation_two_component_le_cubeLpNorm_fluctuationVec {d : ℕ}
     (Q : TriadicCube d) (u : Vec d → Vec d) (i : Fin d)

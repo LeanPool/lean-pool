@@ -136,12 +136,14 @@ theorem centeredCubeH1MeanZeroNeumannDivergence_cz_lpData_of_lt_two
     have hVbound : eLpNorm (hilbertifyVecField v.toH1Function.grad)
         q.conjugate.exponent μ ≤ C * (ENNReal.ofReal sigma0)⁻¹ *
           eLpNorm (hilbertifyVecField G) q.conjugate.exponent μ := by
-      simpa only [BoundedMeasurableDomain.normalizedEuclideanLpENorm,
-        BoundedMeasurableDomain.normalizedLpENorm, euclideanNorm_eq_norm_ofVec,
-        eLpNorm_norm, μ, v, G, Gfield, hilbertifyVecField] using! hvbound
+      rw [INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+        (centeredCubeDomain d m) q.conjugate.exponent _ hVtwo.aestronglyMeasurable,
+        INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+          (centeredCubeDomain d m) q.conjugate.exponent _ hGq.aestronglyMeasurable]
+        at hvbound
+      simpa only [μ, G] using hvbound
     have hVq : MemLp (hilbertifyVecField v.toH1Function.grad)
         q.conjugate.exponent μ := by
-      refine ⟨hVtwo.aestronglyMeasurable, ?_⟩
       apply lt_of_le_of_lt hVbound
       apply ENNReal.mul_lt_top
       · exact (ENNReal.mul_ne_top hCtop.ne
@@ -156,7 +158,8 @@ theorem centeredCubeH1MeanZeroNeumannDivergence_cz_lpData_of_lt_two
         q.conjugate.exponent.toReal =
           ∫⁻ x, INTERNAL.truncatedMoment q.exponent.toReal n F x ∂μ := by
       simpa only [μ, F, G, Gfield, hilbertifyVecField] using!
-        INTERNAL.eLpNorm_hilbertRadialTruncation_rpow_conjugate_eq_truncatedMoment q n F
+        INTERNAL.eLpNorm_hilbertRadialTruncation_rpow_conjugate_eq_truncatedMoment
+          q n F hFmeas
     have hreal : q.exponent.toReal.HolderConjugate q.conjugate.exponent.toReal :=
       ENNReal.HolderConjugate.toReal hqreal
     have hexp : (q.conjugate.exponent.toReal)⁻¹ = 1 - q.exponent.toReal⁻¹ := by
@@ -205,9 +208,12 @@ theorem centeredCubeH1MeanZeroNeumannDivergence_cz_lpData_of_lt_two
           rw [hGnorm]
           dsimp only [A]
           ac_rfl
-  simpa only [BoundedMeasurableDomain.normalizedEuclideanLpENorm,
-    BoundedMeasurableDomain.normalizedLpENorm, euclideanNorm_eq_norm_ofVec,
-    eLpNorm_norm, F, H, μ, A] using! hmain
+  rw [INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+    (centeredCubeDomain d m) q.exponent _ hFtwo.aestronglyMeasurable,
+    INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+      (centeredCubeDomain d m) q.exponent _ hHq.aestronglyMeasurable]
+  dsimp only [F, H, μ, A] at hmain
+  exact hmain
 
 /-- The supplied-solution centered-cube Neumann Calderón--Zygmund estimate for
 every finite exponent and an `L^p` datum.  No auxiliary `L²` hypothesis is

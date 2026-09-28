@@ -22,10 +22,11 @@ open scoped BigOperators
 /-- Geometric ratio used in the standard beta-dependent radius iteration.
 It is close enough to `1` that the geometric loss has ratio bounded away from
 `1`, but `1 - theta` is still explicitly comparable to `(max 1 beta)⁻¹`. -/
-private noncomputable def coarseCaccioppoliStandardRadiusTheta (β : ℝ) : ℝ :=
+noncomputable def coarseCaccioppoliStandardRadiusTheta (β : ℝ) : ℝ :=
   1 - (4 * max 1 β)⁻¹
 
-private theorem coarseCaccioppoliStandardRadiusTheta_pos {β : ℝ} (_hβ : 0 ≤ β) :
+/-- The chosen geometric radius ratio is positive. -/
+theorem coarseCaccioppoliStandardRadiusTheta_pos {β : ℝ} (_hβ : 0 ≤ β) :
     0 < coarseCaccioppoliStandardRadiusTheta β := by
   let M : ℝ := max 1 β
   have hM_ge_one : 1 ≤ M := by
@@ -43,7 +44,8 @@ private theorem coarseCaccioppoliStandardRadiusTheta_pos {β : ℝ} (_hβ : 0 �
   dsimp [M] at *
   linarith
 
-private theorem coarseCaccioppoliStandardRadiusTheta_lt_one {β : ℝ} (_hβ : 0 ≤ β) :
+/-- The chosen geometric radius ratio is strictly below one. -/
+theorem coarseCaccioppoliStandardRadiusTheta_lt_one {β : ℝ} (_hβ : 0 ≤ β) :
     coarseCaccioppoliStandardRadiusTheta β < 1 := by
   let M : ℝ := max 1 β
   have hM_ge_one : 1 ≤ M := by
@@ -55,11 +57,13 @@ private theorem coarseCaccioppoliStandardRadiusTheta_lt_one {β : ℝ} (_hβ : 0
   dsimp [M] at *
   linarith
 
-private theorem coarseCaccioppoliStandardRadiusTheta_le_one {β : ℝ} (hβ : 0 ≤ β) :
+/-- The chosen geometric radius ratio is at most one. -/
+theorem coarseCaccioppoliStandardRadiusTheta_le_one {β : ℝ} (hβ : 0 ≤ β) :
     coarseCaccioppoliStandardRadiusTheta β ≤ 1 :=
   (coarseCaccioppoliStandardRadiusTheta_lt_one hβ).le
 
-private theorem coarseCaccioppoliStandardRadiusTheta_rpow_neg_le_four_thirds
+/-- The inverse-power cost of the chosen radius ratio is uniformly bounded. -/
+theorem coarseCaccioppoliStandardRadiusTheta_rpow_neg_le_four_thirds
     {β : ℝ} (hβ : 0 ≤ β) :
     Real.rpow (coarseCaccioppoliStandardRadiusTheta β) (-β) ≤
       (4 / 3 : ℝ) := by

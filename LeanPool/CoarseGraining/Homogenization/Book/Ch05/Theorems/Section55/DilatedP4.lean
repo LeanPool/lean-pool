@@ -22,7 +22,8 @@ open MeasureTheory
 
 noncomputable section
 
-private theorem upperMomentIntegrable_restrictionScaleNormalizedLaw
+/-- Upper moments remain integrable after normalizing the restriction law's scale. -/
+theorem upperMomentIntegrable_restrictionScaleNormalizedLaw
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P) (k : ℕ) :
@@ -48,7 +49,8 @@ private theorem upperMomentIntegrable_restrictionScaleNormalizedLaw
       ha k 0 hP4.sUpper (.finite 1)
   simpa [X] using (congrArg (fun z : ℝ => z ^ hP4.xi) hshift).symm
 
-private theorem lowerInvMomentIntegrable_restrictionScaleNormalizedLaw
+/-- Inverse lower moments remain integrable after normalizing the restriction law's scale. -/
+theorem lowerInvMomentIntegrable_restrictionScaleNormalizedLaw
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P) (k : ℕ) :

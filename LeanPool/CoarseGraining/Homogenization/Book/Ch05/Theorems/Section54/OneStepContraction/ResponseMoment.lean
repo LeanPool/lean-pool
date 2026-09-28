@@ -317,7 +317,7 @@ private theorem realRpowMomentRoot_le_natAnnealedMomentRoot_of_ae_le
   have hcmp₁ :
       eLpNorm X (ENNReal.ofReal ζ) P ≤
         eLpNorm Y (ENNReal.ofReal ζ) P := by
-    refine eLpNorm_mono_ae ?_
+    refine eLpNorm_mono_ae hX_memζ.aestronglyMeasurable ?_
     filter_upwards [hXY] with a hle
     rw [Real.norm_of_nonneg (hX_nonneg a),
       Real.norm_of_nonneg (hY_nonneg a)]
@@ -325,14 +325,13 @@ private theorem realRpowMomentRoot_le_natAnnealedMomentRoot_of_ae_le
   have hcmp₂ :
       eLpNorm Y (ENNReal.ofReal ζ) P ≤ eLpNorm Y (ξ : ENNReal) P :=
     eLpNorm_le_eLpNorm_of_exponent_le hζ_le_enn
-      hY_memξ.aestronglyMeasurable
   have hcmp :
       eLpNorm X (ENNReal.ofReal ζ) P ≤ eLpNorm Y (ξ : ENNReal) P :=
     hcmp₁.trans hcmp₂
   have hcmp_toReal :
       (eLpNorm X (ENNReal.ofReal ζ) P).toReal ≤
         (eLpNorm Y (ξ : ENNReal) P).toReal :=
-    ENNReal.toReal_mono hY_memξ.2.ne hcmp
+    ENNReal.toReal_mono hY_memξ.eLpNorm_ne_top hcmp
   have hleft :
       (eLpNorm X (ENNReal.ofReal ζ) P).toReal =
         Real.rpow (∫ a, Real.rpow (X a) ζ ∂P) ζ⁻¹ := by

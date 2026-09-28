@@ -89,7 +89,7 @@ private theorem tendsto_integral_vecDot_of_tendsto_eLpNorm_finiteLp
         (HilbertVec.ofVec (F n x)) (HilbertVec.ofVec (H x))
     have hpair := MemLp.of_bilin (r := 1)
       (b := fun x y : HilbertVec d => inner ℝ x y) (c := 1)
-      (hF n) hH ((hF n).aestronglyMeasurable.inner hH.aestronglyMeasurable) hbound
+      (hF n) hH continuous_inner hbound
     simpa only [HilbertVec.inner_def] using hpair
   have hlimit_pair_mem : MemLp (fun x => vecDot (G x) (H x)) 1 mu := by
     have hbound : ∀ᵐ x ∂mu,
@@ -100,7 +100,7 @@ private theorem tendsto_integral_vecDot_of_tendsto_eLpNorm_finiteLp
         (HilbertVec.ofVec (G x)) (HilbertVec.ofVec (H x))
     have hpair := MemLp.of_bilin (r := 1)
       (b := fun x y : HilbertVec d => inner ℝ x y) (c := 1)
-      hG hH (hG.aestronglyMeasurable.inner hH.aestronglyMeasurable) hbound
+      hG hH continuous_inner hbound
     simpa only [HilbertVec.inner_def] using hpair
   have hholder : ∀ n,
       eLpNorm (fun x => vecDot (F n x - G x) (H x)) 1 mu ≤
@@ -124,7 +124,6 @@ private theorem tendsto_integral_vecDot_of_tendsto_eLpNorm_finiteLp
     rw [heq]
     exact hholder n
   exact tendsto_integral_of_L1' (fun x => vecDot (G x) (H x))
-    (memLp_one_iff_integrable.mp hlimit_pair_mem).aestronglyMeasurable
     (Eventually.of_forall fun n => memLp_one_iff_integrable.mp (hpair_mem n)) hL1
 
 private theorem tendsto_normalized_gradient_difference

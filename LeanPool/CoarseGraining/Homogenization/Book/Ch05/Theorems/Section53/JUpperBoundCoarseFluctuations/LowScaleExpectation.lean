@@ -345,7 +345,10 @@ theorem integral_paired_lowScaleTailSquares_special_le_rawLowScaleTerms
   have hbound := integral_le_scaled_baseline_excess
     hJInt hLowerChildInt hUpperChildInt hXAEMeas hPointXY hXNonneg
   refine ⟨by simpa [X, β, s, s', t, t', p_e, q_e, σ] using hbound.1, ?_⟩
-  simpa [X, Jm, Ch04.expectedResponseJCubeSet] using hbound.2
+  simpa [X, Jm, childAvg, lowerExcess, upperExcess, tailFactor,
+    β, s, s', t, t', Q, j, p_e, q_e, σ,
+    Ch04.expectedResponseJCubeSet,
+    Ch04.restrictionResponseJObservableCubeSet] using hbound.2
 
 private theorem lowScale_combine {X tail baseline excess C lowTerm posTerm : ℝ}
     (hraw : X ≤ tail * (baseline + excess))

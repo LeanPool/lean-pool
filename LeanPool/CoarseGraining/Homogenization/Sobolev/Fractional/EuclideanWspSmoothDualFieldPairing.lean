@@ -69,11 +69,16 @@ private theorem enorm_cubeEuclideanWspGraphPointOfField {d : ℕ}
       (normalizedCubeMeasure Q) =
       (cubeBoundedMeasurableDomain Q).normalizedEuclideanLpENorm
         p.exponent F.toField := by
-    unfold BoundedMeasurableDomain.normalizedEuclideanLpENorm
-      BoundedMeasurableDomain.normalizedLpENorm
-    rw [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
-    simp only [euclideanNorm_eq_norm_ofVec, eLpNorm_norm]
+    have hfield : hilbertifyVecField F.toField =
+        (fun x => HilbertVec.ofVec (F.toField x)) := rfl
+    rw [← hfield, ← cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
+    exact (CubeCalderonZygmund.INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+      (cubeBoundedMeasurableDomain Q) p.exponent F.toField (by
+        rw [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
+        exact F.euclideanMemLp.aestronglyMeasurable)).symm
   rw [hlp]
+  rw [← cubeEuclideanWspESeminorm_eq_eLpNorm Q s p F.toField
+    F.euclideanMemWsp.aestronglyMeasurable]
   change (cubeEuclideanWspESeminorm Q s p F.toField ^ p.exponent.toReal +
       (‖cubeEuclideanWspGraphFieldScale Q s‖ₑ *
         (cubeBoundedMeasurableDomain Q).normalizedEuclideanLpENorm
@@ -253,8 +258,11 @@ private theorem ennreal_abs_smoothPairing_le_negativeDual_mul_full {d : ℕ}
       E.le_opENorm _
     _ = cubeEuclideanNegativeWspSmoothDualENorm Q s p F *
         cubeEuclideanWspFullENorm Q s p.conjugate h.toField := by
+      have hExtension :=
+        CubeEuclideanWspSmoothTest.enorm_completedPairingExtension_eq_negativeWspSmoothDualENorm
+          F hD
       rw [show E = CubeEuclideanWspSmoothTest.completedPairingExtension F hD by rfl,
-        CubeEuclideanWspSmoothTest.enorm_completedPairingExtension_eq_negativeWspSmoothDualENorm F hD]
+        hExtension]
       exact congrArg (fun x : ℝ≥0∞ =>
         cubeEuclideanNegativeWspSmoothDualENorm Q s p F * x)
         (CubeEuclideanWspSmoothTest.graph_enorm_eq_cubeEuclideanWspFullENorm h)
@@ -293,14 +301,18 @@ private theorem cubeEuclideanNormalizedFieldPairing_eq_zero_of_fullENorm_eq_zero
     exact (ENNReal.rpow_eq_zero_iff_of_pos ht).mp hpow
   have hLp' : eLpNorm (fun x => HilbertVec.ofVec (G.toField x)) p.exponent
       (normalizedCubeMeasure Q) = 0 := by
-    simpa only [BoundedMeasurableDomain.normalizedEuclideanLpENorm,
-      BoundedMeasurableDomain.normalizedLpENorm,
-      cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure,
-      euclideanNorm_eq_norm_ofVec, eLpNorm_norm] using hLp
+    rw [CubeCalderonZygmund.INTERNAL.normalizedEuclideanLpENorm_eq_hilbert_eLpNorm_for_duality
+      (cubeBoundedMeasurableDomain Q) p.exponent G.toField (by
+        simpa only [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure,
+          hilbertifyVecField] using G.euclideanMemLp.aestronglyMeasurable)] at hLp
+    have hfield : hilbertifyVecField G.toField =
+        (fun x => HilbertVec.ofVec (G.toField x)) := rfl
+    rw [hfield, cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
+      at hLp
+    exact hLp
   have hzero : (fun x => HilbertVec.ofVec (G.toField x)) =ᵐ[
       normalizedCubeMeasure Q] 0 :=
-    (eLpNorm_eq_zero_iff G.euclideanMemLp.aestronglyMeasurable
-      (ne_of_gt (lt_trans zero_lt_one p.one_lt))).mp hLp'
+    (eLpNorm_eq_zero_iff (ne_of_gt (lt_trans zero_lt_one p.one_lt))).mp hLp'
   unfold cubeEuclideanNormalizedFieldPairing
   apply MeasureTheory.integral_eq_zero_of_ae
   filter_upwards [hzero] with x hx
@@ -456,8 +468,8 @@ theorem ennreal_ofReal_abs_cubeEuclideanNormalizedFieldPairing_le {d : ℕ}
             ring]
         apply (div_le_iff₀ hdenom).mpr
         apply mul_le_mul_of_nonneg_left
-        linarith
-        exact hepsilon.le
+        · linarith
+        · exact hepsilon.le
   · have hDtop : D = ∞ := ((not_lt.mp hD).antisymm le_top).symm
     by_cases hNzero : N = 0
     · rw [hDtop, hNzero]

@@ -160,7 +160,7 @@ theorem coarseCaccioppoliTriadicGapScale_spec {ρ₁ ρ₂ : ℝ}
   unfold coarseCaccioppoliTriadicGapScale
   have hvalid : (1 / 3 : ℝ) ≤ ρ₁ ∧ ρ₁ < ρ₂ ∧ ρ₂ ≤ 1 :=
     ⟨hρ₁, hlt, hρ₂⟩
-  rw [dif_pos hvalid]
+  rw [dite_eq_left hvalid]
   exact
     Classical.choose_spec
       (exists_coarseCaccioppoliTriadicGapScaleChoice hρ₁ hlt hρ₂)

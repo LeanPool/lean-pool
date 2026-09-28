@@ -22,7 +22,8 @@ namespace Book.Ch02
 
 noncomputable section
 
-private noncomputable def normalizedBlockResponseESetOnCube {d : ℕ}
+/-- Unit-sphere response values for a matrix comparator on one cube. -/
+noncomputable def normalizedBlockResponseESetOnCube {d : ℕ}
     [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (a0 : Mat d) : Set ℝ≥0∞ :=
   {y | ∃ e : FullBlockVec d, fullBlockVecNormSq e = 1 ∧
@@ -33,12 +34,14 @@ private noncomputable def normalizedBlockResponseESetOnCube {d : ℕ}
         (ofFullBlockVec
           (Matrix.mulVec (constantFullBlockMatrixSqrt a0) e)))}
 
-private noncomputable def normalizedBlockResponseEMaxOnCube {d : ℕ}
+/-- Supremum of the matrix-comparator response values on one cube. -/
+noncomputable def normalizedBlockResponseEMaxOnCube {d : ℕ}
     [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (a0 : Mat d) : ℝ≥0∞ :=
   sSup (normalizedBlockResponseESetOnCube Q a a0)
 
-private noncomputable def parentMaxNormalizedBlockResponseAtScale {d : ℕ}
+/-- Maximum of one parent coefficient's response over descendants at a fixed scale. -/
+noncomputable def parentMaxNormalizedBlockResponseAtScale {d : ℕ}
     [NeZero d] (Q : TriadicCube d) (k : ℤ) (hk : k ≤ Q.scale)
     (a : CoeffOn (cubeDomain Q)) (a0 : Mat d) : ℝ≥0∞ := by
   classical
@@ -47,12 +50,14 @@ private noncomputable def parentMaxNormalizedBlockResponseAtScale {d : ℕ}
       (a.restrictToSubcube
         (openCubeSet_subset_of_mem_descendantsAtScale hk R.2)) a0
 
-private noncomputable def homogenizationErrorGeometricEWeight
+/-- Geometric weight of a scale in the truncated response error. -/
+noncomputable def homogenizationErrorGeometricEWeight
     (s q : ℝ) (j : ℕ) : ℝ≥0∞ :=
   ENNReal.ofReal (1 - Real.rpow 3 (-s * q)) *
     ENNReal.ofReal (Real.rpow 3 (-s * q * (j : ℝ)))
 
-private noncomputable def parentTruncatedHomogenizationErrorInfinityFinite
+/-- Finite-scale parent response error before specialization to a scalar comparator. -/
+noncomputable def parentTruncatedHomogenizationErrorInfinityFinite
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (n : ℤ)
     (hn : n ≤ Q.scale) (a : CoeffOn (cubeDomain Q))
     (a0 : Mat d) (s q : ℝ) : ℝ≥0∞ :=
@@ -321,7 +326,7 @@ private theorem normalizedBlockResponseEMaxOnCube_isLUB {d : ℕ}
 /-- The `ℝ≥0∞`-valued unit-sphere response values for the positive scalar
 comparator `sigma0 I` on one cube.
 
-This is a scalar-facing wrapper around the private matrix implementation.  In
+This is a scalar-facing wrapper around the matrix-valued implementation.  In
 particular, it deliberately exposes a supremum API below, rather than claiming
 that a maximizing vector has been constructed. -/
 noncomputable def normalizedBlockResponseScalarEValueSetOnCube {d : ℕ}

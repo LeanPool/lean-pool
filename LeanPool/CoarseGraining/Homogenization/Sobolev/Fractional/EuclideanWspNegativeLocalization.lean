@@ -75,7 +75,7 @@ private theorem cubeEuclideanNormalizedSmoothPairing_descendants_eq {d : â„•}
   apply Finset.sum_congr rfl
   intro R hR
   rw [cubeAverage_eq_integral_normalizedCubeMeasure]
-  simp only [dif_pos hR]
+  simp only [dite_eq_left hR]
   rfl
 
 private theorem cubeEuclideanWspFullENorm_descendant_lt_top_of_le_one {d : â„•}
@@ -448,7 +448,7 @@ theorem cubeEuclideanNegativeWspSmoothDualENorm_le_descendantsENNAverage {d : â„
     have htop : cubeEuclideanWspFullENorm R s p.conjugate h.1.toField < âˆž :=
       cubeEuclideanWspFullENorm_descendant_lt_top_of_le_one
         Q j s p.conjugate h.1 h.2 hR'
-    simp only [a, b, dif_pos hR']
+    simp only [a, b, dite_eq_left hR']
     exact negativeLocalization_pairing_le_dual_mul_full R s p
       (F.restrictToSubcube
         (openCubeSet_subset_of_mem_descendantsAtDepth hR'))
@@ -467,7 +467,7 @@ theorem cubeEuclideanNegativeWspSmoothDualENorm_le_descendantsENNAverage {d : â„
     apply Finset.sum_le_sum
     intro R hR
     have hR' : R âˆˆ D := by simpa only using hR
-    simp only [dif_pos (by simpa [D] using hR')]
+    simp only [dite_eq_left (by simpa [D] using hR')]
     exact hlocal R hR'
 
   have hbeq : descendantsENNAverage Q j (fun R => b R ^
@@ -479,7 +479,7 @@ theorem cubeEuclideanNegativeWspSmoothDualENorm_le_descendantsENNAverage {d : â„
     congr 1
     apply Finset.sum_congr rfl
     intro R hR
-    simp only [b, dif_pos hR]
+    simp only [b, dite_eq_left hR]
   have hpositive := descendantsENNAverage_cubeEuclideanWspFullENorm_root_le
     Q j s p.conjugate h.1.toField
   have hB : (descendantsENNAverage Q j (fun R => b R ^

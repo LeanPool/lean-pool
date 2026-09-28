@@ -87,7 +87,7 @@ theorem extendedVectorOverlapBesovEnergy_zero_dim
     simp [cubeBesovOverlappingPositiveVectorPartialSeminormTwo,
       cubeBesovOverlappingPositiveVectorDepthSeminorm,
       cubeBesovOverlappingPositiveVectorDepthAverage, overlapCentersAverage,
-      overlapCubeLpNorm]
+      overlapCubeLpNorm, Gagliardo.integralLpSeminorm]
   · exact bot_le
 
 private theorem iSup_scalarPartialSeminorm_le_extendedVectorOverlapBesovEnergy {d : ℕ}

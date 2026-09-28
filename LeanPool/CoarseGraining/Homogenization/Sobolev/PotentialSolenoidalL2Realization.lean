@@ -60,7 +60,7 @@ private theorem vectorL2ToHilbertVectorL2_mem_range_gradientCLM_of_mem_potential
       u.toH1Function.coeFn_gradToHilbertVectorL2] with x hhf hhu
     rw [hhf, hhu]
     simp [hilbertifyVecField, ← hu]
-  show H10GraphClosed.gradientCLM (d := d) (U := U) _ =
+  change H10GraphClosed.gradientCLM (d := d) (U := U) _ =
     vectorL2ToHilbertVectorL2 (U := U) F
   have hFhilbert :
       vectorL2ToHilbertVectorL2 (U := U) F = u.toH1Function.gradToHilbertVectorL2 := by

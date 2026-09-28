@@ -38,7 +38,7 @@ theorem sqWeightedMeasure_apply_univ_eq_integralLpSeminorm_two_sq
   simp_rw [ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm]
   simp only [Gagliardo.integralLpSeminorm,
     show (2 : ℝ≥0∞) ≠ 0 by norm_num, show (2 : ℝ≥0∞) ≠ ∞ by norm_num,
-    if_false, eLpNorm'_eq_lintegral_enorm]
+    ite_false, eLpNorm'_eq_lintegral_enorm]
   rw [← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
   norm_num
 

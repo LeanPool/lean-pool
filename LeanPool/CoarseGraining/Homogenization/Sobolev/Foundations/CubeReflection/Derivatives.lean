@@ -116,7 +116,7 @@ theorem hasCompactSupport_comp_coordFaceReflection {d : ℕ}
     {φ : Vec d → ℝ} (hφ : HasCompactSupport φ)
     (a : ℝ) (i : Fin d) :
     HasCompactSupport (fun x => φ (coordFaceReflection a i x)) := by
-  show HasCompactSupport (φ ∘ coordFaceReflectionHomeomorph a i)
+  change HasCompactSupport (φ ∘ coordFaceReflectionHomeomorph a i)
   simpa [Function.comp, coordFaceReflectionHomeomorph] using
     hφ.comp_homeomorph (coordFaceReflectionHomeomorph a i)
 
