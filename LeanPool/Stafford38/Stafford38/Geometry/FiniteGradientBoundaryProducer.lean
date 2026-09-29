@@ -100,10 +100,10 @@ using equations of the scalar-extended target ideal.  The projective Euler
 relation is retained as a check that `ell` is genuinely a projective
 annihilating row, although the affine conormal adapter needs only its tail.
 -/
-structure FiniteGradientBoundaryCertificate
+structure FiniteGradientBoundaryData
     (k : Type u) [Field k]
     (m : ℕ) (hm : 0 < m)
-    (I : Ideal (MvPolynomial (Fin m) k)) where
+    (J : Ideal (MvPolynomial (Fin m) (LaurentSeries k))) where
   /-- The number of equations in the finite-gradient conormal certificate. -/
   equationCount : ℕ
   /-- Power-series projective coordinates of the formal boundary arc. -/
@@ -114,13 +114,11 @@ structure FiniteGradientBoundaryCertificate
   projective_annihilation :
     ∑ i, laurentColumn ell i * laurentColumn q i = 0
   base_vanish :
-    ∀ f ∈ I.map
-        (scalarPolynomialMap (k := k) (K := LaurentSeries k) (Fin m)),
+    ∀ f ∈ J,
       MvPolynomial.eval (dehomogenizedPoint (laurentColumn q)) f = 0
   /-- Equations in the scalar-extended ideal whose gradients generate the conormal row. -/
   equations : Fin equationCount →
-    I.map (scalarPolynomialMap
-      (k := k) (K := LaurentSeries k) (Fin m))
+    J
   /-- The Laurent-series coefficients expressing the conormal row as a finite gradient
   combination. -/
   coefficients : Fin equationCount → LaurentSeries k
@@ -132,6 +130,13 @@ structure FiniteGradientBoundaryCertificate
   residue_axis :
     residueColumn (fun i : Fin m ↦ ell i.succ) =
       (fun i : Fin m ↦ if i = ⟨0, hm⟩ then 1 else 0)
+
+/-- The ground-field certificate specializes the common boundary data to the extended ideal. -/
+abbrev FiniteGradientBoundaryCertificate
+    (k : Type u) [Field k] (m : ℕ) (hm : 0 < m)
+    (I : Ideal (MvPolynomial (Fin m) k)) :=
+  FiniteGradientBoundaryData k m hm
+    (I.map (scalarPolynomialMap (k := k) (K := LaurentSeries k) (Fin m)))
 
 /-- The corrected finite-gradient certificate produces exactly the Laurent
 conormal witness required by the canonical asymptotic step. -/

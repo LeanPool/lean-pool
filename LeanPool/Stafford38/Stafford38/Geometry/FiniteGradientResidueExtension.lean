@@ -47,35 +47,11 @@ variable {k K : Type u} [Field k] [Field K] [Algebra k K]
 
 /-- A completed projective arc and one finite gradient identity over the
 natural boundary residue field `K`, for an affine ideal defined over `k`. -/
-structure FiniteGradientBoundaryCertificateOver
+abbrev FiniteGradientBoundaryCertificateOver
     (m : ℕ) (hm : 0 < m)
-    (I : Ideal (MvPolynomial (Fin m) k)) where
-  /-- The number of equations in the residue-extension gradient certificate. -/
-  equationCount : ℕ
-  /-- The formal projective arc over the residue coefficient field. -/
-  q : Fin (m + 1) → PowerSeries K
-  /-- The formal conormal row over the residue coefficient field. -/
-  ell : Fin (m + 1) → PowerSeries K
-  q_origin_ne : q 0 ≠ 0
-  projective_annihilation :
-    ∑ i, laurentColumn ell i * laurentColumn q i = 0
-  base_vanish :
-    ∀ f ∈ I.map (groundPolynomialMap (k := k) (K := K) (Fin m)),
-      MvPolynomial.eval (dehomogenizedPoint (laurentColumn q)) f = 0
-  /-- Ground-ideal equations after coefficient extension used to express the conormal row. -/
-  equations : Fin equationCount →
-    I.map (groundPolynomialMap (k := k) (K := K) (Fin m))
-  /-- The Laurent-series coefficients of the finite gradient representation over the residue
-  field. -/
-  coefficients : Fin equationCount → LaurentSeries K
-  gradient_identity : ∀ i : Fin m,
-    laurentColumn ell i.succ =
-      ∑ j, coefficients j *
-        differentialAt (dehomogenizedPoint (laurentColumn q))
-          (equations j).1 i
-  residue_axis :
-    residueColumn (fun i : Fin m ↦ ell i.succ) =
-      (fun i : Fin m ↦ if i = ⟨0, hm⟩ then 1 else 0)
+    (I : Ideal (MvPolynomial (Fin m) k)) :=
+  FiniteGradientBoundaryData K m hm
+    (I.map (groundPolynomialMap (k := k) (K := K) (Fin m)))
 
 /-- A residue-field finite-gradient certificate gives exactly the
 `K((t))`-valued equation-conormal point needed by residue specialization. -/
