@@ -94,4 +94,34 @@ theorem signed_sum_sq_le_diagonal_add_crossRows
     _ = _ := one_mul _
 
 
+/-- Combine finite colour-class energy bounds without repeating the analytic argument. -/
+theorem norm_sum_sq_le_of_finite_partition
+    {ι E : Type*} [NormedAddCommGroup E]
+    (S : Finset ι) (v : ι → E) (mass : ι → ℝ) (colour : ι → Fin 3) (C : ℝ)
+    (hbound : ∀ r : Fin 3,
+      ‖∑ i ∈ S.filter (fun i => colour i = r), v i‖ ^ 2 ≤
+        C * ∑ i ∈ S.filter (fun i => colour i = r), mass i) :
+    ‖∑ i ∈ S, v i‖ ^ 2 ≤ (3 * C) * ∑ i ∈ S, mass i := by
+  classical
+  let R (r : Fin 3) := S.filter fun i => colour i = r
+  let w (r : Fin 3) := ∑ i ∈ R r, v i
+  have hsum : (∑ i ∈ S, v i) = ∑ r : Fin 3, w r :=
+    (Finset.sum_fiberwise_of_maps_to (fun i (_ : i ∈ S) =>
+      Finset.mem_univ (colour i)) _).symm
+  rw [hsum]
+  calc
+    _ ≤ (∑ r : Fin 3, ‖w r‖) ^ 2 := by gcongr; exact norm_sum_le _ _
+    _ ≤ 3 * ∑ r : Fin 3, ‖w r‖ ^ 2 := by
+      simpa using sq_sum_le_card_mul_sum_sq (s := Finset.univ) (f := fun r : Fin 3 => ‖w r‖)
+    _ ≤ 3 * ∑ r : Fin 3, C * ∑ i ∈ R r, mass i := by
+      gcongr with r
+      exact hbound r
+    _ = _ := by
+      rw [← Finset.mul_sum]
+      have hm : (∑ r : Fin 3, ∑ i ∈ R r, mass i) = ∑ i ∈ S, mass i :=
+        Finset.sum_fiberwise_of_maps_to (fun i (_ : i ∈ S) =>
+          Finset.mem_univ (colour i)) _
+      rw [hm]
+      ring
+
 end QuadraticCarleson.KrauseLaceyOrderedEnergy
