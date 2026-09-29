@@ -70,6 +70,161 @@ variable {n : ℕ}
     smooth periodic functions, the real-imaginary decomposition of
     `periodicExtension` of a real-valued function, linearity of
     `integrationEmbed`, and `sobolevNormSqDistrib_triangle`. -/
+lemma integrationEmbed_const_mul (c : ℝ) (g : (Fin n → ℝ) → ℝ) :
+    integrationEmbed n (fun x => ((c * g x : ℝ) : ℂ))
+      = (c : ℂ) • integrationEmbed n (fun y => ((g y : ℝ) : ℂ)) := by
+  unfold NashEmbedding.Sobolev.integrationEmbed
+  rw [← NashEmbedding.Sobolev.seqToDual_smul]
+  congr 1
+  funext m
+  unfold NashEmbedding.Sobolev.stdFourierCoeff
+  simp only [Pi.smul_apply, smul_eq_mul]
+  push_cast
+  simp_rw [mul_assoc]
+  rw [integral_const_mul]
+  ring
+
+lemma memSobolevDistrib_smul {s : ℝ} {u : NashEmbedding.Sobolev.TrigPolyDual n}
+    (hu : MemSobolevDistrib n s u)
+    (c : ℂ) : MemSobolevDistrib n s (c • u) := by
+  unfold NashEmbedding.Sobolev.MemSobolevDistrib NashEmbedding.Sobolev.MemSobolev at *
+  have h : ∀ m, NashEmbedding.Sobolev.weight n s m * ‖fourierCoeffDistrib (c • u) m‖ ^ 2
+      = ‖c‖ ^ 2 * (NashEmbedding.Sobolev.weight n s m * ‖fourierCoeffDistrib u m‖ ^ 2) := by
+    intro m
+    rw [NashEmbedding.Sobolev.fourierCoeffDistrib_smul_complex, norm_mul, mul_pow]
+    ring
+  simp_rw [h]
+  exact hu.mul_left _
+
+/-- Per-entry quasi-triangle bound against a scalar multiple `c · g` of the target
+(generalizes the Step-1 assembly lemma, where `c = 1`). -/
+lemma perEntry_residual_bound_c
+    (hn : 0 < n) {s : ℝ} (hs : (n : ℝ) < 2 * s)
+    {φ : (Fin n → ℝ) → ℂ}
+    (hφ_sm : ContDiff ℝ ∞ φ) (hφ_supp : HasCompactSupport φ)
+    (hφ_cube : ∀ x, φ x ≠ 0 → ∀ j : Fin n, |x j| < Real.pi)
+    (hφ_im : ∀ x, (φ x).im = 0)
+    {g : (Fin n → ℝ) → ℝ} (hg_sm : ContDiff ℝ ∞ g) (hg_per : IsPeriodic2Pi g)
+    {M : ℕ} (c : ℝ) :
+    sobolevNormSqDistrib n s
+      (integrationEmbed n (fun x : (Fin n → ℝ) =>
+        (((2 * Real.pi / (M : ℝ)) ^ n
+            * ∑ k : Fin n → Fin M,
+                (periodicExtension n φ (fun j => x j - meshPoint n M k j)).re
+                * g (meshPoint n M k) - c * g x : ℝ) : ℂ)))
+      ≤ 2 * sobolevNormSqDistrib n s
+          (riemannSumDistrib n φ (integrationEmbed n (fun y => (g y : ℂ))) M
+            - convDistrib n φ (integrationEmbed n (fun y => (g y : ℂ))))
+      + 2 * sobolevNormSqDistrib n s
+          (convDistrib n φ (integrationEmbed n (fun y => (g y : ℂ)))
+            - (c : ℂ) • integrationEmbed n (fun y => (g y : ℂ))) := by
+  have hgC_sm : ContDiff ℝ ∞ (fun y : (Fin n → ℝ) => (g y : ℂ)) :=
+    Complex.ofRealCLM.contDiff.comp hg_sm
+  have hgC_per : IsPeriodic2Pi (fun y : (Fin n → ℝ) => (g y : ℂ)) := by
+    intro x k
+    change ((g (x + NashEmbedding.Sobolev.periodicShift n k) : ℝ) : ℂ) = ((g x : ℝ) : ℂ)
+    rw [hg_per x k]
+  have hgC_memSob : MemSobolevDistrib n s (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ))) :=
+    NashEmbedding.Sobolev.smooth_periodic_memSobolevDistrib hn hgC_sm hgC_per s
+  have hφ_int : Integrable φ :=
+    hφ_sm.continuous.integrable_of_hasCompactSupport hφ_supp
+  have hφ_rd : NashEmbedding.Sobolev.FTRapidDecay n φ := NashEmbedding.Sobolev.cinfty_rapidDecay
+      hn hφ_sm hφ_supp
+  have h_pe_im : ∀ y, (periodicExtension n φ y).im = 0 :=
+    NashEmbedding.Sobolev.periodicExtension_im_zero hφ_im
+  have h_fs_mesh : ∀ k : Fin n → Fin M,
+      fourierSynthesis n
+        (fourierCoeffDistrib (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ))))
+        (meshPoint n M k)
+      = ((g (meshPoint n M k) : ℝ) : ℂ) := by
+    intro k
+    rw [fourierCoeffDistrib_integrationEmbed]
+    exact NashEmbedding.Sobolev.fourierSynthesis_stdFourierCoeff_of_smoothPeriodic hn hgC_sm
+        hgC_per _
+  have h_psr_pt : ∀ x : (Fin n → ℝ),
+      positionSpaceRiemann n φ
+        (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ))) M x
+        = (((2 * Real.pi / (M : ℝ)) ^ n
+            * ∑ k : Fin n → Fin M,
+                (periodicExtension n φ (fun j => x j - meshPoint n M k j)).re
+                * g (meshPoint n M k) : ℝ) : ℂ) := by
+    intro x
+    unfold NashEmbedding.Sobolev.positionSpaceRiemann
+    simp only [h_fs_mesh]
+    push_cast
+    congr 1
+    apply Finset.sum_congr rfl
+    intro k _
+    have h_eq : periodicExtension n φ (fun j => x j - meshPoint n M k j)
+        = ((periodicExtension n φ (fun j => x j - meshPoint n M k j)).re : ℂ) := by
+      apply Complex.ext
+      · simp
+      · rw [Complex.ofReal_im]; exact h_pe_im _
+    rw [h_eq]
+    simp only [Complex.ofReal_re]
+  have h_iE_eq :
+      integrationEmbed n
+        (positionSpaceRiemann n φ
+          (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ))) M)
+      = integrationEmbed n (fun x : (Fin n → ℝ) =>
+          (((2 * Real.pi / (M : ℝ)) ^ n
+            * ∑ k : Fin n → Fin M,
+                (periodicExtension n φ (fun j => x j - meshPoint n M k j)).re
+                * g (meshPoint n M k) : ℝ) : ℂ)) := by
+    congr 1
+    funext x
+    exact h_psr_pt x
+  have hBridge := NashEmbedding.Sobolev.riemann_positionSpace hφ_sm hφ_supp hφ_cube
+    (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ))) M
+  have h_R_eq :
+      riemannSumDistrib n φ (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ))) M
+        = integrationEmbed n (fun x : (Fin n → ℝ) =>
+            (((2 * Real.pi / (M : ℝ)) ^ n
+              * ∑ k : Fin n → Fin M,
+                  (periodicExtension n φ (fun j => x j - meshPoint n M k j)).re
+                  * g (meshPoint n M k) : ℝ) : ℂ)) := by
+    rw [hBridge, h_iE_eq]
+  have h_LHS_split : (fun x : (Fin n → ℝ) =>
+        (((2 * Real.pi / (M : ℝ)) ^ n
+            * ∑ k : Fin n → Fin M,
+                (periodicExtension n φ (fun j => x j - meshPoint n M k j)).re
+                * g (meshPoint n M k) - c * g x : ℝ) : ℂ))
+      = (fun x : (Fin n → ℝ) =>
+          (((2 * Real.pi / (M : ℝ)) ^ n
+            * ∑ k : Fin n → Fin M,
+                (periodicExtension n φ (fun j => x j - meshPoint n M k j)).re
+                * g (meshPoint n M k) : ℝ) : ℂ) - ((c * g x : ℝ) : ℂ)) := by
+    funext x; push_cast; ring
+  have h_pe_contDiff : ContDiff ℝ ∞ (periodicExtension n φ) :=
+    NashEmbedding.Sobolev.periodicExtension_contDiff hφ_sm hφ_supp
+  have h_convex_combo_cts : Continuous (fun x : (Fin n → ℝ) =>
+      (((2 * Real.pi / (M : ℝ)) ^ n
+          * ∑ k : Fin n → Fin M,
+              (periodicExtension n φ (fun j => x j - meshPoint n M k j)).re
+              * g (meshPoint n M k) : ℝ) : ℂ)) := by
+    refine Complex.ofRealCLM.continuous.comp ?_
+    refine continuous_const.mul ?_
+    apply continuous_finsetSum
+    intro k _
+    refine Continuous.mul ?_ continuous_const
+    refine Complex.reCLM.continuous.comp ?_
+    refine h_pe_contDiff.continuous.comp ?_
+    exact continuous_pi (fun j => (continuous_apply j).sub continuous_const)
+  have h_gC_cts : Continuous (fun x : (Fin n → ℝ) => ((c * g x : ℝ) : ℂ)) :=
+    Complex.ofRealCLM.continuous.comp (continuous_const.mul hg_sm.continuous)
+  rw [h_LHS_split, NashEmbedding.Sobolev.integrationEmbed_sub h_convex_combo_cts h_gC_cts, ← h_R_eq,
+    integrationEmbed_const_mul]
+  have hR_memSob :
+      MemSobolevDistrib n s
+        (riemannSumDistrib n φ (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ))) M) :=
+    NashEmbedding.Sobolev.riemannSumDistrib_memSobolevDistrib hφ_rd hn hs hgC_memSob M
+  have hB_memSob :
+      MemSobolevDistrib n s
+        (convDistrib n φ (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ)))) :=
+    NashEmbedding.Sobolev.convDistrib_memSobolevDistrib hφ_int hgC_memSob
+  exact NashEmbedding.Sobolev.sobolevNormSqDistrib_triangle s _ _ _
+    (hR_memSob.sub hB_memSob) (hB_memSob.sub (memSobolevDistrib_smul hgC_memSob _))
+
 private lemma perEntry_residual_bound
     (hn : 0 < n) {s : ℝ} (hs : (n : ℝ) < 2 * s)
     {φ : (Fin n → ℝ) → ℂ}
@@ -94,119 +249,9 @@ private lemma perEntry_residual_bound
           (convDistrib n φ
               (integrationEmbed n (fun y => (g y : ℂ)))
             - integrationEmbed n (fun y => (g y : ℂ))) := by
-  -- Setup: smooth periodic complexified g, in H^s.
-  have hgC_sm : ContDiff ℝ ∞ (fun y : (Fin n → ℝ) => (g y : ℂ)) :=
-    Complex.ofRealCLM.contDiff.comp hg_sm
-  have hgC_per : IsPeriodic2Pi (fun y : (Fin n → ℝ) => (g y : ℂ)) := by
-    intro x k
-    change ((g (x + periodicShift n k) : ℝ) : ℂ) = ((g x : ℝ) : ℂ)
-    rw [hg_per x k]
-  have hgC_memSob : MemSobolevDistrib n s (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ))) :=
-    smooth_periodic_memSobolevDistrib hn hgC_sm hgC_per s
-  have hφ_int : Integrable φ :=
-    hφ_sm.continuous.integrable_of_hasCompactSupport hφ_supp
-  have hφ_rd : FTRapidDecay n φ := cinfty_rapidDecay hn hφ_sm hφ_supp
-  -- Step 1: pointwise equality `positionSpaceRiemann = (convex-combo : ℂ)`.
-  have h_pe_im : ∀ y, (periodicExtension n φ y).im = 0 :=
-    periodicExtension_im_zero hφ_im
-  have h_fs_mesh : ∀ k : Fin n → Fin M,
-      fourierSynthesis n
-        (fourierCoeffDistrib (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ))))
-        (meshPoint n M k)
-      = ((g (meshPoint n M k) : ℝ) : ℂ) := by
-    intro k
-    rw [fourierCoeffDistrib_integrationEmbed]
-    exact fourierSynthesis_stdFourierCoeff_of_smoothPeriodic hn hgC_sm hgC_per _
-  have h_psr_pt : ∀ x : (Fin n → ℝ),
-      positionSpaceRiemann n φ
-        (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ))) M x
-        = (((2 * Real.pi / (M : ℝ)) ^ n
-            * ∑ k : Fin n → Fin M,
-                (periodicExtension n φ (fun j => x j - meshPoint n M k j)).re
-                * g (meshPoint n M k) : ℝ) : ℂ) := by
-    intro x
-    unfold positionSpaceRiemann
-    simp only [h_fs_mesh]
-    push_cast
-    congr 1
-    apply Finset.sum_congr rfl
-    intro k _
-    have h_eq : periodicExtension n φ (fun j => x j - meshPoint n M k j)
-        = ((periodicExtension n φ (fun j => x j - meshPoint n M k j)).re : ℂ) := by
-      apply Complex.ext
-      · simp
-      · rw [Complex.ofReal_im]; exact h_pe_im _
-    rw [h_eq]
-    simp only [Complex.ofReal_re]
-  -- Step 2: integrationEmbed equality.
-  have h_iE_eq :
-      integrationEmbed n
-        (positionSpaceRiemann n φ
-          (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ))) M)
-      = integrationEmbed n (fun x : (Fin n → ℝ) =>
-          (((2 * Real.pi / (M : ℝ)) ^ n
-            * ∑ k : Fin n → Fin M,
-                (periodicExtension n φ (fun j => x j - meshPoint n M k j)).re
-                * g (meshPoint n M k) : ℝ) : ℂ)) := by
-    congr 1
-    funext x
-    exact h_psr_pt x
-  -- Step 3: Bridge Lemma 2 gives R = integrationEmbed (positionSpaceRiemann).
-  have hBridge := riemann_positionSpace hφ_sm hφ_supp hφ_cube
-    (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ))) M
-  -- Combined: R = integrationEmbed (convex_combo_cast).
-  have h_R_eq :
-      riemannSumDistrib n φ (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ))) M
-        = integrationEmbed n (fun x : (Fin n → ℝ) =>
-            (((2 * Real.pi / (M : ℝ)) ^ n
-              * ∑ k : Fin n → Fin M,
-                  (periodicExtension n φ (fun j => x j - meshPoint n M k j)).re
-                  * g (meshPoint n M k) : ℝ) : ℂ)) := by
-    rw [hBridge, h_iE_eq]
-  -- Step 4: A = R - C via linearity of integrationEmbed.
-  have h_LHS_split : (fun x : (Fin n → ℝ) =>
-        (((2 * Real.pi / (M : ℝ)) ^ n
-            * ∑ k : Fin n → Fin M,
-                (periodicExtension n φ (fun j => x j - meshPoint n M k j)).re
-                * g (meshPoint n M k) - g x : ℝ) : ℂ))
-      = (fun x : (Fin n → ℝ) =>
-          (((2 * Real.pi / (M : ℝ)) ^ n
-            * ∑ k : Fin n → Fin M,
-                (periodicExtension n φ (fun j => x j - meshPoint n M k j)).re
-                * g (meshPoint n M k) : ℝ) : ℂ) - ((g x : ℝ) : ℂ)) := by
-    funext x; push_cast; ring
-  -- Continuity of the two split operands, required by `integrationEmbed_sub`
-  -- (its `integral_add`/`integral_sub` step demands integrability of each
-  -- integrand on the compact period cube).
-  have h_pe_contDiff : ContDiff ℝ ∞ (periodicExtension n φ) :=
-    periodicExtension_contDiff hφ_sm hφ_supp
-  have h_convex_combo_cts : Continuous (fun x : (Fin n → ℝ) =>
-      (((2 * Real.pi / (M : ℝ)) ^ n
-          * ∑ k : Fin n → Fin M,
-              (periodicExtension n φ (fun j => x j - meshPoint n M k j)).re
-              * g (meshPoint n M k) : ℝ) : ℂ)) := by
-    refine Complex.ofRealCLM.continuous.comp ?_
-    refine continuous_const.mul ?_
-    apply continuous_finsetSum
-    intro k _
-    refine Continuous.mul ?_ continuous_const
-    refine Complex.reCLM.continuous.comp ?_
-    refine h_pe_contDiff.continuous.comp ?_
-    exact continuous_pi (fun j => (continuous_apply j).sub continuous_const)
-  have h_gC_cts : Continuous (fun x : (Fin n → ℝ) => ((g x : ℝ) : ℂ)) :=
-    hgC_sm.continuous
-  rw [h_LHS_split, integrationEmbed_sub h_convex_combo_cts h_gC_cts, ← h_R_eq]
-  -- Step 5: apply quasi-triangle with midpoint convDistrib.
-  have hR_memSob :
-      MemSobolevDistrib n s
-        (riemannSumDistrib n φ (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ))) M) :=
-    riemannSumDistrib_memSobolevDistrib hφ_rd hn hs hgC_memSob M
-  have hB_memSob :
-      MemSobolevDistrib n s
-        (convDistrib n φ (integrationEmbed n (fun y : (Fin n → ℝ) => (g y : ℂ)))) :=
-    convDistrib_memSobolevDistrib hφ_int hgC_memSob
-  exact sobolevNormSqDistrib_triangle s _ _ _
-    (hR_memSob.sub hB_memSob) (hB_memSob.sub hgC_memSob)
+  simpa only [one_mul, Complex.ofReal_one, one_smul] using
+    perEntry_residual_bound_c hn hs hφ_sm hφ_supp hφ_cube hφ_im hg_sm hg_per
+      (M := M) 1
 
 /-! ## Theorem A: convex-combination approximation -/
 
