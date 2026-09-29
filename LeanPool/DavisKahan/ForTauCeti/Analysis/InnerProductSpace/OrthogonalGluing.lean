@@ -98,10 +98,10 @@ theorem norm_orthogonalGlueMap (f : A ≃ₗᵢ[𝕜] A') (g : Aᗮ ≃ₗᵢ[�
     rw [@norm_add_sq 𝕜, hperp]
     -- The isometries preserve each component's norm.
     have h1 : ‖(f (A.orthogonalProjectionOnto x) : H')‖ = ‖A.starProjection x‖ := by
-      rw [Submodule.norm_coe, f.norm_map, Submodule.coe_norm,
+      rw [Submodule.norm_coe, f.norm_map, ← Submodule.norm_coe,
         Submodule.coe_orthogonalProjectionOnto_apply]
     have h2 : ‖(g (Aᗮ.orthogonalProjectionOnto x) : H')‖ = ‖Aᗮ.starProjection x‖ := by
-      rw [Submodule.norm_coe, g.norm_map, Submodule.coe_norm,
+      rw [Submodule.norm_coe, g.norm_map, ← Submodule.norm_coe,
         Submodule.coe_orthogonalProjectionOnto_apply]
     rw [h1, h2]
   have h1 : (0 : ℝ) ≤ ‖orthogonalGlueMap f g x‖ := norm_nonneg _
@@ -309,9 +309,9 @@ theorem norm_supGlueAmbient_of_mem_sup (hAB : A ≤ Bᗮ) (hAB' : A' ≤ B'ᗮ)
   have hperp : ⟪a, b⟫_𝕜 = 0 :=
     inner_eq_zero_symm.mp ((Submodule.mem_orthogonal _ _).mp (hAB ha) b hb)
   have hfa : ‖(f ⟨a, ha⟩ : H')‖ = ‖a‖ := by
-    rw [Submodule.norm_coe, f.norm_map, Submodule.coe_norm]
+    rw [Submodule.norm_coe, f.norm_map, ← Submodule.norm_coe]
   have hgb : ‖(g ⟨b, hb⟩ : H')‖ = ‖b‖ := by
-    rw [Submodule.norm_coe, g.norm_map, Submodule.coe_norm]
+    rw [Submodule.norm_coe, g.norm_map, ← Submodule.norm_coe]
   have hsq : ‖(f ⟨a, ha⟩ : H') + (g ⟨b, hb⟩ : H')‖ ^ 2 = ‖a + b‖ ^ 2 := by
     rw [@norm_add_sq 𝕜, @norm_add_sq 𝕜, hperp', hperp, hfa, hgb]
   have h1 : (0 : ℝ) ≤ ‖(f ⟨a, ha⟩ : H') + (g ⟨b, hb⟩ : H')‖ := norm_nonneg _
@@ -354,7 +354,7 @@ noncomputable def orthogonalSupGlue (hAB : A ≤ Bᗮ) (hAB' : A' ≤ B'ᗮ)
           (fun x => supGlueAmbient_mem_sup hAB f g x.2)
       norm_map' := fun x => ?_ } ?_
   · change ‖supGlueAmbient f g (x : H)‖ = ‖x‖
-    rw [norm_supGlueAmbient_of_mem_sup hAB hAB' f g x.2, Submodule.coe_norm]
+    rw [norm_supGlueAmbient_of_mem_sup hAB hAB' f g x.2, ← Submodule.norm_coe]
   · intro y
     obtain ⟨x, hx, hxy⟩ := supGlueAmbient_surjOn hAB f g y.2
     exact ⟨⟨x, hx⟩, Subtype.ext hxy⟩

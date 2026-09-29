@@ -852,14 +852,14 @@ private theorem reflection_block_data
     have hcoe : ((A0 x : U) : E) = A (x : E) := by
       dsimp [A0]
       exact coe_compressOperator_apply_of_maps A hAU x
-    simpa [Submodule.coe_norm, Submodule.coe_inner, hcoe] using h
+    simpa [← Submodule.norm_coe, Submodule.coe_inner, hcoe] using h
   have hA1low : ∀ x : Uᗮ, RCLike.re ⟪A1 x, x⟫_ℂ ≤ a * ‖x‖ ^ 2 := by
     intro x
     have h := hUperpLow (x : E) x.property
     have hcoe : ((A1 x : Uᗮ) : E) = A (x : E) := by
       dsimp [A1]
       exact coe_compressOperator_apply_of_maps A hAUperp x
-    simpa [Submodule.coe_norm, Submodule.coe_inner, hcoe] using h
+    simpa [← Submodule.norm_coe, Submodule.coe_inner, hcoe] using h
   obtain ⟨hgram0, hgram1⟩ := reflection_block_gram_data (U := U) (V := V) hcos
   have heq76 : (C1 ∘L T) ∘L A0 - A1 ∘L (C1 ∘L T) =
       B ∘L C0 + C1 ∘L B := by
@@ -1247,7 +1247,7 @@ theorem
       (compressOperator U A) hA0sa hA0upper xu
     have hcoe : ((compressOperator U A xu : U) : E) = A (x : E) :=
       coe_compressOperator_apply_of_maps A hAU xu
-    simpa [Submodule.coe_norm, Submodule.coe_inner, hcoe] using h
+    simpa [← Submodule.norm_coe, Submodule.coe_inner, hcoe] using h
   have hUperpHigh : ∀ x ∈ Uᗮ,
       (α + δ) * ‖x‖ ^ 2 ≤ RCLike.re ⟪A x, x⟫_ℂ := by
     intro x hx
@@ -1256,7 +1256,7 @@ theorem
       (compressOperator Uᗮ A) hA1sa hA1spec xu
     have hcoe : ((compressOperator Uᗮ A xu : Uᗮ) : E) = A (x : E) :=
       coe_compressOperator_apply_of_maps A hAUperp xu
-    simpa [Submodule.coe_norm, Submodule.coe_inner, hcoe] using h
+    simpa [← Submodule.norm_coe, Submodule.coe_inner, hcoe] using h
   have hgap : α < α + δ := by linarith
   have hcos : ∀ t ∈ spectrum ℝ (angleOperatorC U V),
       Real.cos (2 * t) ≠ 0 :=
@@ -1379,7 +1379,7 @@ theorem tanTwoTheta_ambient_bounded_spectralGap_symmetricNorming_complex
       (compressOperator U A) hA0sa hA0upper xu
     have hcoe : ((compressOperator U A xu : U) : E) = A (x : E) :=
       coe_compressOperator_apply_of_maps A hAU xu
-    simpa [Submodule.coe_norm, Submodule.coe_inner, hcoe] using h
+    simpa [← Submodule.norm_coe, Submodule.coe_inner, hcoe] using h
   have hUperpHigh : ∀ x ∈ Uᗮ,
       (α + δ) * ‖x‖ ^ 2 ≤ RCLike.re ⟪A x, x⟫_ℂ := by
     intro x hx
@@ -1388,7 +1388,7 @@ theorem tanTwoTheta_ambient_bounded_spectralGap_symmetricNorming_complex
       (compressOperator Uᗮ A) hA1sa hA1spec xu
     have hcoe : ((compressOperator Uᗮ A xu : Uᗮ) : E) = A (x : E) :=
       coe_compressOperator_apply_of_maps A hAUperp xu
-    simpa [Submodule.coe_norm, Submodule.coe_inner, hcoe] using h
+    simpa [← Submodule.norm_coe, Submodule.coe_inner, hcoe] using h
   have hgap : α < α + δ := by linarith
   have hcos : ∀ t ∈ spectrum ℝ (angleOperatorC U V),
       Real.cos (2 * t) ≠ 0 :=

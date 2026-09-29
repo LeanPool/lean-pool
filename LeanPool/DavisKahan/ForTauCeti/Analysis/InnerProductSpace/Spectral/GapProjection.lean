@@ -340,12 +340,12 @@ theorem cfc_eq_starProjection_of_blockGap [CompleteSpace U]
     intro x hx
     have h := TauCeti.SpectralOrder.re_inner_le_of_spectrum_subset_Iic A₀ hA₀sa hσ₀
       ⟨x, hx⟩
-    simpa [Submodule.coe_norm, Submodule.coe_inner, coe_block_apply hA₀ ⟨x, hx⟩] using h
+    simpa [← Submodule.norm_coe, Submodule.coe_inner, coe_block_apply hA₀ ⟨x, hx⟩] using h
   have hhigh : ∀ x ∈ Uᗮ, (α + δ) * ‖x‖ ^ 2 ≤ RCLike.re ⟪A x, x⟫_𝕜 := by
     intro x hx
     have h := TauCeti.SpectralOrder.le_re_inner_of_spectrum_subset_Ici A₁ hA₁sa hσ₁
       ⟨x, hx⟩
-    simpa [Submodule.coe_norm, Submodule.coe_inner, coe_block_apply hA₁ ⟨x, hx⟩] using h
+    simpa [← Submodule.norm_coe, Submodule.coe_inner, coe_block_apply hA₁ ⟨x, hx⟩] using h
   -- the gap is free of spectrum, so `f` is continuous where the calculus reads it
   have hspec : spectrum ℝ A ⊆ Set.Iic α ∪ Set.Ici (α + δ) :=
     spectrum_subset_union_of_formGap hA hAU hAUperp hlow hhigh
