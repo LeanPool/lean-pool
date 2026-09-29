@@ -36,7 +36,7 @@ noncomputable section
 
 /-- Evaluation homomorphism sending `ℂ[X₀, X₁]` to the graded ring of level 1 modular forms
 via `X₀ ↦ E₄` and `X₁ ↦ E₆`. -/
-noncomputable def evalE₄E₆ :
+@[expose] noncomputable def evalE₄E₆ :
     MvPolynomial (Fin 2) ℂ →ₐ[ℂ]
       DirectSum ℤ (fun k => ModularForm (CongruenceSubgroup.Gamma 1) k) :=
   MvPolynomial.aeval

@@ -68,7 +68,7 @@ lemma mul_Delta_IsCuspForm (k : ℤ) (f : ModularForm (CongruenceSubgroup.Gamma 
   exact ⟨Delta, rfl⟩
 
 /-- Multiplication by the discriminant `Δ` packaged as a cusp form of weight `k`. -/
-def ModformMulDelta' (k : ℤ) (f : ModularForm (CongruenceSubgroup.Gamma 1) (k - 12)) :
+@[expose] def ModformMulDelta' (k : ℤ) (f : ModularForm (CongruenceSubgroup.Gamma 1) (k - 12)) :
     CuspForm (CongruenceSubgroup.Gamma 1) k :=
   IsCuspFormToCuspForm _ k (mulDeltaMap k f) (mul_Delta_IsCuspForm k f)
 
@@ -88,7 +88,7 @@ lemma Modform_mul_Delta_apply (k : ℤ) (f : ModularForm (CongruenceSubgroup.Gam
 
 /-- The linear isomorphism between weight-`k` cusp forms and weight-`(k - 12)` modular forms,
 given by dividing by `Δ`. -/
-def CuspFormsIsoModforms (k : ℤ) : CuspForm (CongruenceSubgroup.Gamma 1) k ≃ₗ[ℂ]
+@[expose] def CuspFormsIsoModforms (k : ℤ) : CuspForm (CongruenceSubgroup.Gamma 1) k ≃ₗ[ℂ]
     ModularForm (CongruenceSubgroup.Gamma 1) (k - 12) where
       toFun f := CuspFormDivDiscriminant k f
       map_add' a b := CuspForm_div_Discriminant_Add k a b

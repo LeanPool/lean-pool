@@ -118,7 +118,7 @@ lemma CuspForm_to_ModularForm_Fun_coe (Γ : Subgroup SL(2, ℤ)) (k : ℤ) (f : 
   exact congr_arg (fun x ↦ x.toFun) hg
 
 /-- Build a `CuspForm` from a `SlashInvariantForm` that is holomorphic and tends to 0. -/
-noncomputable def cuspFormOfSIFTendstoZero {k : ℤ}
+@[expose] noncomputable def cuspFormOfSIFTendstoZero {k : ℤ}
     (f_SIF : SlashInvariantForm Γ(1) k)
     (h_mdiff : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) f_SIF.toFun)
     (h_zero : Tendsto f_SIF.toFun atImInfty (𝓝 0)) : CuspForm Γ(1) k where

@@ -854,7 +854,7 @@ lemma ModularForm.slash_eq_self {k : ℤ} (f : ModularForm (Gamma 1) k) (γ : SL
     (f : ℍ → ℂ) ∣[k] γ = f := by rw [SL_slash]; exact f.slash_action_eq' _ ⟨γ, mem_Gamma_one γ, rfl⟩
 
 /-- The Serre derivative of a weight-k level-1 modular form is a weight-(k+2) modular form. -/
-noncomputable def serreDModularForm (k : ℤ) (f : ModularForm (Gamma 1) k) :
+@[expose] noncomputable def serreDModularForm (k : ℤ) (f : ModularForm (Gamma 1) k) :
     ModularForm (Gamma 1) (k + 2) where
   toSlashInvariantForm := {
     toFun := serreD k f
