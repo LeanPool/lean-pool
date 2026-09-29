@@ -282,6 +282,7 @@ theorem exists_bad_component (Γ : PairGraph) (hnot : ¬ IsDoubleStarForest Γ.G
     ((SimpleGraph.ConnectedComponent.connected_toSimpleGraph _).preconnected _ _)
 
 /-- The pair-source scenario carried by one connected component. -/
+@[expose]
 noncomputable def componentPairGraph (Γ : PairGraph) (C : Γ.G.ConnectedComponent) :
     PairGraph where
   V := C

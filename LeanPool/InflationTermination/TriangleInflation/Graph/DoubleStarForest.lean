@@ -364,6 +364,7 @@ theorem mate_mate {v : Γ.V} (h : v = C.A v ∨ v = C.B v) : C.mate (C.mate v) =
 
 /-- The edge that carries a vertex: its unique source when it is a leaf, the centre source of
 its component when it is a centre. -/
+@[expose]
 def edgeAt (v : Γ.V) : Γ.Edge :=
   ⟨s(v, C.mate v), by simpa using C.mate_adj v⟩
 

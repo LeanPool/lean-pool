@@ -554,6 +554,7 @@ theorem prespR_mem (v : Fin 5) (c : (e : fivePathGraph.inc v) → Bool × Bool) 
     0 ≤ prespR v c ∧ prespR v c ≤ 1 := pfR_mem _ _ _ _ _
 
 /-- The five-path complex model at auxiliary amplitude `γ`. -/
+@[expose]
 noncomputable def PM (γ : ℝ) : CModel fivePathGraph where
   L := fun _ => Bool × Bool
   fintypeL := fun _ => inferInstance

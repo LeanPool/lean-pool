@@ -136,7 +136,7 @@ variable {m : ℕ}
 
 /-- The successor vertex on the cycle `C_m`. The edge recorded by `v` joins `v` and
 `cycleNext v`. -/
-def cycleNext (v : Fin m) : Fin m := ⟨(v.val + 1) % m, Nat.mod_lt _ v.pos⟩
+@[expose] def cycleNext (v : Fin m) : Fin m := ⟨(v.val + 1) % m, Nat.mod_lt _ v.pos⟩
 
 theorem mem_cycleBoundary (F : Finset (Fin m)) (v : Fin m) :
     v ∈ cycleBoundary m F ↔ ¬((v ∈ F) ↔ (cycleNext v ∈ F)) := by
