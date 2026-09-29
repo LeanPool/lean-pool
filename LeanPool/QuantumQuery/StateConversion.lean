@@ -200,15 +200,14 @@ theorem subProj_mulVec (K : Submodule ℂ (EuclideanSpace ℂ H))
 `Matrix.toEuclideanCLM` being a star-algebra equivalence. -/
 theorem isQProjector_subProj (K : Submodule ℂ (EuclideanSpace ℂ H))
     [K.HasOrthogonalProjection] : IsQProjector (subProj K) := by
+  let e := (Matrix.toEuclideanCLM (𝕜 := ℂ) (n := H)).symm
   constructor
-  · have h : star (subProj K) = subProj K := by
-      rw [subProj, ← map_star]
-      congr 1
-      exact isSelfAdjoint_starProjection K
-    rwa [Matrix.star_eq_conjTranspose] at h
-  · rw [subProj, ← map_mul]
-    congr 1
-    exact K.isIdempotentElem_starProjection
+  · change star (e K.starProjection) = e K.starProjection
+    exact (e.map_star' K.starProjection).symm.trans
+      (congrArg e (isSelfAdjoint_starProjection K))
+  · change e K.starProjection * e K.starProjection = e K.starProjection
+    exact (e.map_mul' K.starProjection K.starProjection).symm.trans
+      (congrArg e K.isIdempotentElem_starProjection)
 
 /-- **The fixed space.** -/
 theorem subProj_mulVec_of_mem (K : Submodule ℂ (EuclideanSpace ℂ H))
