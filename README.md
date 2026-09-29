@@ -65,6 +65,11 @@ See [Challenge mode](CONTRIBUTING.md#challenge-mode) in `CONTRIBUTING.md`.
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
+The PR author or a maintainer can comment `/profile` to request an advisory
+compile-cost report. Failed or zero-phase timed runs show unavailable timing
+and are excluded from totals; errors and any successfully measured heartbeat
+counts remain visible.
+
 Import PRs can be refreshed automatically after other projects merge. The
 [rebase helper](python/lean_pool/rebase.py) resolves conflicts in the project registry
 and generated index, preserving module headers and public imports when the index uses them.
