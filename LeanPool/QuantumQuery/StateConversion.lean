@@ -13,6 +13,7 @@ public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Commute
 # Spectral detection and coherent state conversion
 
 Ported from the corresponding upstream modules listed by the source sections below.
+References beginning with `Source` name these retained sections.
 -/
 
 @[expose] public section
@@ -61,7 +62,7 @@ variable {H : Type} [Fintype H] [DecidableEq H]
 /-- The chord form of `U`: `(1 - U)ᴴ (1 - U)`. -/
 def chordSq (U : Matrix H H ℂ) : Matrix H H ℂ := (1 - U)ᴴ * (1 - U)
 
-/-- The chord form is Hermitian — stated as the raw identity, so this file needs
+/-- The chord form is Hermitian — stated as the raw identity, so this section needs
 no extra Mathlib import. -/
 lemma chordSq_conjTranspose (U : Matrix H H ℂ) : (chordSq U)ᴴ = chordSq U := by
   unfold chordSq
@@ -396,8 +397,7 @@ open Matrix
 
 variable {H : Type} [Fintype H] [DecidableEq H]
 
-/-- The complement of a projector is a projector.  (Belongs in
-`FiniteHilbert.lean`; kept here to avoid a tree-wide rebuild.) -/
+/-- The complement of a projector is a projector. -/
 lemma IsQProjector.one_sub {P : Matrix H H ℂ} (hP : IsQProjector P) :
     IsQProjector (1 - P) := by
   constructor
@@ -755,7 +755,7 @@ theorem chordFar_bound_sq (U : Matrix H H ℂ) (Δ : ℝ) (x : H → ℂ) :
 
 The statement is naturally *squared*: everything in sight is a squared norm, and
 squaring avoids square roots entirely.  The core is the elementary identity
-`(1 - R_P R_L) w = 2 P w` of `ChordGap.lean`; the spectral content is only that
+`(1 - R_P R_L) w = 2 P w` of `SourceQuantumChordGap`; the spectral content is only that
 the near window contracts `1 - U` by `Δ` and that a projector does not expand. -/
 
 /-- **The effective spectral gap.**  If `L` annihilates `w`, then the part of
@@ -800,7 +800,7 @@ section SourceQuantumClockGap
 # Uniform-clock suppression on the far window
 
 The spectral half of the uniform-clock detector, and **nothing operational**:
-this file knows about a unitary and its chord windows, not about clocks,
+this section knows about a unitary and its chord windows, not about clocks,
 routines, or queries.
 
 The statement is that on the far window — chord distance at least `|Δ|` — the
@@ -930,7 +930,7 @@ section SourceQuantumReflection
 /-!
 # The input-dependent reflection, in exactly two queries
 
-Step 2 of the Milestone B route.  The reflection the upper bound needs is about
+The reflection the upper bound needs is about
 the orthogonal complement of a span of input-dependent vectors; it is built as
 
   `O_a · (fixed reflection) · O_a`,
@@ -1036,8 +1036,7 @@ count depends on**:
 
 `inputReflProduct_len` is therefore the theorem that licenses the `2` in the
 detector's query accounting.  The specialization of the effective-gap theorem to
-this routine lives in `OperationalGap.lean`, not here: this file is a basic
-reflection client and should not drag the functional calculus in with it. -/
+this routine is proved in `SourceQuantumOperationalGap`. -/
 
 /-- **The reflection product** `R_P · R_L`, with `R_L` a fixed zero-query
 reflection and `R_P` the input-dependent two-query reflection. -/
@@ -1147,7 +1146,7 @@ exactly on the branches whose clock has reached `j`.  Each round is
 
 so a round costs exactly `R.len` and `selectPowers R T` costs `(T-1)·R.len`.
 
-On top of `SELECT` this file builds the rest of the **operational** side of a
+On top of `SELECT` this section builds the rest of the **operational** side of a
 uniform-clock detector:
 
 * `clockPack` — a *packed history*, one workspace vector per clock branch.  The
@@ -1161,7 +1160,7 @@ uniform-clock detector:
   the only cost.
 
 The workspace is `CtrlWork ι (Fin T × W)`: the control bit and parking slot of
-`Control.lean`, then the clock register, then the routine's own workspace.  This
+`SourceQuantumControl`, then the clock register, then the routine's own workspace.  This
 file depends only on `Control` and `RoutineLift`; **whether that average is
 small — the spectral half of the detector — is proved elsewhere**, and the
 connection to spectral suppression belongs in a later file, not here.
@@ -1674,7 +1673,7 @@ theorem clockPhaseRefl_run_mulVec_uniformClock_of_fixed (R : QRoutine ι σ W) {
 
 /-! ## The uniform clock, as an isometry
 
-Moved down from `Detection.lean`: this geometry is generic, and the uniform
+Moved down from `SourceQuantumDetection`: this geometry is generic, and the uniform
 witness needs the clock isometry without importing the Boolean detection
 layer. -/
 
@@ -1786,17 +1785,14 @@ section SourceQuantumOperationalGap
 The **effective-gap specialization bridge**, where the *operational* layer
 (routines, queries, oracles) and the *spectral* layer (functional calculus,
 chord windows) meet for the reflection product.  It is not the only such
-crossing — `ClockDetector.lean` is the *suppression* bridge, joining the same
+crossing — `SourceQuantumClockDetector` is the *suppression* bridge, joining the same
 two layers for the uniform clock — so the two are kept apart, and
-`InputDetector.lean` is the single file that needs both.
+`SourceQuantumInputDetector` combines both estimates.
 
-`ChordWindow.lean` states the effective gap for an arbitrary pair of projectors,
+`SourceQuantumChordWindow` states the effective gap for an arbitrary pair of projectors,
 which is how it should be stated — it is a fact about reflections, not about
-queries.  `Reflection.lean` builds the operational product `R_P · R_L` as a
-two-query routine.  This file is the one line that joins them, and it is a file
-of its own so that neither side has to import the other: a client that only
-wants reflections does not pay for the functional calculus, and the spectral
-layer stays free of the query model.
+queries.  `SourceQuantumReflection` builds the operational product `R_P · R_L` as a
+two-query routine. This section instantiates the spectral theorem with that routine.
 -/
 
 namespace QuantumQueryComplexity
@@ -1808,8 +1804,8 @@ variable {ι σ W ι' : Type} [Fintype ι] [DecidableEq ι] [Fintype σ] [Decida
   [Fintype W] [DecidableEq W]
 
 /-- **The effective gap, for the operational product.**  The abstract theorem of
-`ChordWindow.lean`, instantiated by the two-query routine of
-`Reflection.lean`. -/
+`SourceQuantumChordWindow`, instantiated by the two-query routine of
+`SourceQuantumReflection`. -/
 theorem effective_chord_gap_sq_inputReflProduct (v : ι' → (QBasis ι σ W → ℂ))
     (L : Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ) (hL : IsQProjector L) (a : ι → σ)
     {w : QBasis ι σ W → ℂ} (hw : L *ᵥ w = 0) (Δ : ℝ) :
@@ -1827,15 +1823,15 @@ section SourceQuantumClockDetector
 /-!
 # The uniform-clock detector
 
-The **suppression bridge**: the operational clock of `Clock.lean` meets the
-spectral estimate of `ClockGap.lean`.  It needs those two and nothing else — in
-particular not `OperationalGap.lean`, which is for *specializing* this to the
+The **suppression bridge**: the operational clock of `SourceQuantumClock` meets the
+spectral estimate of `SourceQuantumClockGap`.  It needs those two and nothing else — in
+particular not `SourceQuantumOperationalGap`, which is for *specializing* this to the
 input reflection product, not for stating it.
 
 The detector is `clockPhaseRefl R T = SELECTᴴ · clockRefl · SELECT`, and the two
 facts about it are exactly the two extremes:
 
-* **Completeness** (`Clock.lean`): on a fixed vector it is the identity, exactly.
+* **Completeness** (`SourceQuantumClock`): on a fixed vector it is the identity, exactly.
 * **Soundness** (here): on the far window it is `-1` up to an error that shrinks
   like `1/T`:
 
@@ -1936,8 +1932,8 @@ section SourceQuantumInputDetector
 # The detector for the input reflection product
 
 The specialization, and the only file that needs both the suppression bridge
-(`ClockDetector.lean`) and the effective gap for the operational product
-(`OperationalGap.lean`).  Everything upstream stays generic: `ClockDetector`
+(`SourceQuantumClockDetector`) and the effective gap for the operational product
+(`SourceQuantumOperationalGap`).  Everything upstream stays generic: `ClockDetector`
 knows nothing about input reflections, `OperationalGap` nothing about clocks.
 
 Three facts, which together are the detector's guarantee on `P w`:
@@ -2022,13 +2018,13 @@ section SourceQuantumStateConversion
 /-!
 # Witness states for state conversion
 
-Phase 5 begins here.  The detector of `InputDetector.lean` distinguishes two
+The detector of `SourceQuantumInputDetector` distinguishes two
 kinds of vector: those **fixed** by the reflection product `R_P R_L`, which it
 reports as `+1` exactly, and those in the **far window**, which it reports as
 `-1` up to `16/(T²Δ²)`.  State conversion has to supply both, from a dual
 adversary solution.
 
-This file fixes the *contracts* — what a construction must prove — and derives
+This section fixes the *contracts* — what a construction must prove — and derives
 everything that follows from them formally, so that the construction itself has
 a single, sharp target.
 
@@ -2218,10 +2214,10 @@ end SourceQuantumStateConversion
 section SourceQuantumUniformWitness
 
 /-!
-# Milestone D: the coherent target states
+# The coherent target states
 
-The second component, and the one that fixes the scaling for everything
-after it.  Existing `Witness.lean` is untouched.
+These coherent targets fix the normalization used by the uniform extraction.
+The Boolean witness construction is retained in `SourceQuantumWitness`.
 
 The output register must not be indexed by `O` — `O` is an arbitrary
 decidable type with no `Fintype` — but it need not be: only the **image** of
@@ -2248,7 +2244,7 @@ Dropping the `½` — scaling by `α⁻¹` instead — would destroy that
 cancellation, and the resulting norm bound `1 + 2α⁻²c` is in any case four
 times looser than the correct `1 + c/(2α²)`.
 
-These states are literally the alphabet gadget of `UniformAlphabet.lean`
+These states are literally the alphabet gadget of `SourceQuantumUniformAlphabet`
 applied to the alphabet `Set.range f` and rescaled by `(√2)⁻¹`: the `½` in
 the overlap is exactly that rescaling squared.  So the `(1, ±e)`
 factorization does double duty — packets on `σ`, targets on `range f` — and
@@ -3768,7 +3764,7 @@ section SourceQuantumWitness
 /-!
 # The witness states, built from a dual adversary solution
 
-The construction Phase 5 needs: from a `DualPairOn read K f` this file builds the
+From a `DualPairOn read K f` this section constructs the
 generators, the fixed subspace, and both witness families, and discharges the
 `IsPosWitness` contracts from the dual's feasibility identity.
 
@@ -4030,7 +4026,7 @@ theorem scKer_mulVec_posWitness (P : DualPairOn read K f) {o : O} {x : X}
   spanProj_mulVec_self (fun x : {x : X // f x = o} => posWitness read f P x.1) ⟨x, hx⟩
 
 omit [DecidableEq X] in
-/-- **Both contracts**, so the detector of `InputDetector.lean` answers `+1` on
+/-- **Both contracts**, so the detector of `SourceQuantumInputDetector` answers `+1` on
 this witness exactly, at cost `4(T-1)`. -/
 theorem isPosWitness_posWitness (P : DualPairOn read K f) {o : O} {x : X}
     (hx : f x = o) :
@@ -4171,9 +4167,9 @@ section SourceQuantumDetection
 # The detector on the witness states: the two acceptance estimates
 
 The last quantitative step of the state-conversion construction.
-`Witness.lean` built the witness states from a `DualPairOn` and discharged the
-exact contracts; this file adds the *estimates* and combines them with the
-fidelity bounds of `Fidelity.lean` into the two numbers the eventual
+`SourceQuantumWitness` built the witness states from a `DualPairOn` and discharged the
+exact contracts; this section adds the *estimates* and combines them with the
+fidelity bounds of `SourceQuantumFidelity` into the two numbers the eventual
 measurement reads: for the detector `D = scDetector` at clock length `T` and
 the initial state `u = uniformClock T scTarget`,
 
@@ -4190,13 +4186,11 @@ With `Δ ~ 1/√(1+cv)` and `T ~ 1/Δ ~ √(1+cv)` the second bound is `≈ −1
 first is `≈ +1` for small `(|σ|−1)cu` — the separation a Hadamard test turns
 into a bounded-error measurement.  Choosing those parameters, and the dual
 rescaling `DualPairOn.scale` that balances `cu` against `cv`, is the algorithm
-extraction's job; this file keeps every bound parametric.
+extraction's job; this section keeps every bound parametric.
 
 The clock geometry those estimates ride on — the isometry
 `qInner_uniformClock`, additivity `uniformClock_add`, and their companions —
-now lives in `Clock.lean`, where it belongs: it is generic, and the uniform
-extraction of Milestone D needs it without importing this Boolean detection
-layer.
+is supplied by `SourceQuantumClock` and is shared with the uniform extraction.
 -/
 
 namespace QuantumQueryComplexity
@@ -4569,7 +4563,7 @@ end SourceQuantumDetection
 section SourceQuantumUniformConversion
 
 /-!
-# Milestone D: the uniform detector and its conversion errors
+# The uniform detector and its conversion errors
 
 The detector of the cardinality-free construction: the clocked phase
 reflection of the reflection product built from the physical generators and
@@ -4579,7 +4573,7 @@ two signed conversion errors are
     e₊ = D·clock(t_{x+}) − clock(t_{x+}),
     e₋ = D·clock(t_{x−}) + clock(t_{x−}),
 
-and this file proves the three conversion-distance facts:
+and this section proves the three conversion-distance facts:
 
 * the positive bound `‖e₊‖² ≤ 8α²c` — the detector fixes the clocked
   witness `clock(φ_x)` **exactly**, so on the bare target the error is the
@@ -5121,7 +5115,7 @@ end SourceQuantumUniformConversion
 section SourceQuantumUniformExtraction
 
 /-!
-# Milestone D: the uniform extraction
+# The uniform extraction
 
 The packaging of the cardinality-free construction: the detector run on the
 clocked input-independent `common` state, with the readout announcing the
@@ -5298,7 +5292,7 @@ end SourceQuantumUniformExtraction
 section SourceQuantumUpperBound
 
 /-!
-# The dual-to-algorithm upper bound (Milestone B step 6)
+# The dual-to-algorithm upper bound
 
 The extraction: a feasible `DualPairOn read K f` for a **Boolean** `f` becomes
 a quantum query algorithm.  The algorithm is nothing but the Hadamard test of
@@ -5307,7 +5301,7 @@ the `o = true` detector on the target state,
     scAlg = hadTest (scDetector read f P true T) (uniformClock T scTarget),
 
 at exactly `4(T−1)` queries, and its correctness is the two acceptance
-estimates of `Detection.lean` pushed through `hadTest_prob_true/false`:
+estimates of `SourceQuantumDetection` pushed through `hadTest_prob_true/false`:
 
 * `scAlg_computes` — the **parametric** correctness: any `(T, Δ, cu, cv, ε)`
   satisfying the two explicit inequalities gives
@@ -5556,10 +5550,8 @@ section SourceQuantumUniformHasDual
 # Uniform extraction: the `HasDualOn` wrappers
 
 The bundled form of the cardinality-free extraction.  `HasDualOn` hides the
-dual dimension type, and it lives in `QuantumQueryComplexity/Promise/HasDual.lean` —
-**not** one of the five shared foundation modules — so this file sits
-**outside** the `QuantumQueryComplexity.Quantum` aggregate. The full
-`QuantumQueryComplexity` library imports it, and the default build checks it.
+dual dimension type and is defined in `SourcePromiseHasDual` in `Adversary`.
+These wrappers connect it to the operational constructions in `StateConversion`.
 
 Both wrappers are one destructuring away from
 `exists_algorithm_of_dualPairOn_uniform`: any bundled dual solution of cost

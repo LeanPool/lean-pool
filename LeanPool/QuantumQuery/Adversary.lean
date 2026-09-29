@@ -13,6 +13,7 @@ public import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
 # Adversary matrices, semidefinite duality, and composition
 
 Ported from the corresponding upstream modules listed by the source sections below.
+References beginning with `Source` name these retained sections.
 -/
 
 @[expose] public section
@@ -1315,15 +1316,14 @@ with objective `max_x ∑_i ‖u x i‖²` (and the same for `v`).  The constrai
 on pairs with `g x = g y` are the extra ones isolated by LMRSS; they are what
 makes dual solutions *compose*.
 
-This file defines feasible dual solutions (`DualPair`), the dual value
+This section defines feasible dual solutions (`DualPair`), the dual value
 `advDual` as an infimum of costs, and proves **weak duality**
 `advPM g ≤ advDual g` (`advPM_le_advDual`) by the same Gram-plus-Cauchy–Schwarz
 argument that underlies the Schur-multiplier bound.
 
-Strong duality (`advDual = advPM`) is *not* proved here: it is genuine SDP
-duality, for which mathlib has no infrastructure.  Everything downstream is
-stated so that strong duality would be the only missing input — see
-`QuantumQueryComplexity/DualCompose.lean`.
+Strong duality is proved later in `SourceDualityMain` by Hahn–Banach separation:
+`advDual_eq_advPM` identifies the two values, and `advPM_composeFun_eq` gives
+unconditional exact Boolean block composition.
 -/
 
 
@@ -1409,7 +1409,7 @@ end DualPair
 /-! The two estimates behind weak duality are stated for an arbitrary finite
 type `X` of inputs rather than for the cube `ι → σ`.  Nothing in them uses the
 product structure — only that the matrices are indexed by inputs — and the extra
-generality is what lets `QuantumQueryComplexity/Promise/Defs.lean` reuse them verbatim for a
+generality is what lets `SourcePromiseDefs` reuse them verbatim for a
 promise domain. -/
 
 variable {X : Type*} [Fintype X] [DecidableEq X]
@@ -1745,7 +1745,7 @@ The first rewriting lemma (`composeE_apply_sum`): the entry
 `b = tildeE e g y` fiber automatic.  This eliminates the non-factoring
 occurrence `Γf x̃ ỹ` before any sum/product interchange.
 
-As in `Hat.lean` the block decomposition is abstract; the cube statement is the
+As in `SourceCompositionHat` the block decomposition is abstract; the cube statement is the
 instance at `cubeBlocks`.
 -/
 
@@ -1971,7 +1971,7 @@ section SourceDualityGram
 A feasible dual solution (`DualPair`) is a pair of vector families `u x i`,
 `v y i`; the dual constraints and the dual cost depend on those families only
 through their inner products, i.e. only through the Gram matrix of the whole
-family.  This file makes that change of variables explicit, which is what
+family.  This section makes that change of variables explicit, which is what
 convexifies the dual program: the set of feasible *Gram matrices* is the
 intersection of the (convex) positive semidefinite cone with affine
 constraints, whereas the set of feasible vector families is not convex.
@@ -2450,7 +2450,7 @@ zero elsewhere.  Injectivity is what makes this work — each coordinate of `ι`
 receives at most one vector, so the `ℓ²` masses simply move rather than adding
 up, and the masked sum over `ι` restricts to the masked sum over `κ`.
 
-This is how `QuantumQueryComplexity/Max/Staircase.lean`'s bound for `maxFun` on a `κ`-indexed
+This is how `upstream Max/Staircase.lean`'s bound for `maxFun` on a `κ`-indexed
 input becomes a bound for "the maximum over a block" as a function of the whole
 array, with cost governed by the block size `|κ|` and not by `|ι|`.
 -/
@@ -2819,7 +2819,7 @@ The two supporting identities:
 * `sum_prod_slice` (K2) — the sum/product interchange along
   `(α × β) → Bool ≃ α → β → Bool`.
 
-As in `Hat.lean` everything is proved over an **abstract** block decomposition
+As in `SourceCompositionHat` everything is proved over an **abstract** block decomposition
 `e : Z ≃ (α → Y)`; the cube statements are the `cubeBlocks` instance.
 This includes promise problems whose inner inputs form a subtype. Nothing in the
 spectral argument sees the difference: K1 uses only that the colouring is
@@ -2854,7 +2854,7 @@ end IsAdvCol
 
 /-- The bipartite-support lemma for a colouring of an arbitrary type: an
 eigenvector with nonzero eigenvalue of an adversary matrix for `g` has support
-in every colour class of `g`.  (`Bipartite.lean` proves this over an arbitrary
+in every colour class of `g`.  (`SourceBipartite` proves this over an arbitrary
 index type already; only the `IsAdvMatrix` wrapper was cube-tied.) -/
 theorem IsAdvCol.exists_eigenvector_support {Y : Type*} [Fintype Y]
     {g : Y → Bool} {N : Matrix Y Y ℝ} (hN : IsAdvCol g N)
@@ -3141,7 +3141,7 @@ hence what lets `geometric_hahn_banach_compact_closed` apply without any
 closedness-of-image argument; the truncation is harmless because a dual
 solution of cost at most `c` has trace at most `2 c · card (ι → σ)`.
 
-This file also records `apply_eq_sum_single`, which reads the coefficients of a
+This section also records `apply_eq_sum_single`, which reads the coefficients of a
 continuous linear functional off its values on the standard basis.
 -/
 
@@ -3440,7 +3440,7 @@ section SourceDualityWitness
 /-!
 # From a positive semidefinite certificate to an adversary matrix
 
-This file contains the elementary half of strong duality: the construction that
+This section contains the elementary half of strong duality: the construction that
 turns the multipliers produced by a separating hyperplane back into a feasible
 *primal* witness.
 
@@ -3704,8 +3704,8 @@ section SourcePromiseBasic
 /-!
 # The primal witness API on a promise domain
 
-`QuantumQueryComplexity/Promise/Defs.lean` supplies the *upper* eliminator
-`advPMOn_le`; this file supplies the *introduction* rules, so that a witness
+`SourcePromiseDefs` supplies the *upper* eliminator
+`advPMOn_le`; this section supplies the *introduction* rules, so that a witness
 matrix certifies `‖Γ‖ ≤ advPMOn read f` directly.
 
 There is one hypothesis here that the total case does not need.  `advPM` is a
@@ -3873,13 +3873,13 @@ independent; their cardinality equals the dimension, so they span; and each
 pure tensor lies in the span of the family because `tensorVecE` is linear in
 its outer argument and `W c` is a basis.
 
-As in `Hat.lean` the block decomposition is abstract: everything is proved for
+As in `SourceCompositionHat` the block decomposition is abstract: everything is proved for
 `e : Z ≃ (α → Y)` with `Y` an arbitrary finite type, and the cube statements are
 the `cubeBlocks` instance.  The only cube-specific step was the dimension count
 `Fintype.card ((α × β) → Bool) = Fintype.card (α → (β → Bool))`, which is now
 just `Fintype.card_congr e.symm`.
 
-This file is the second (and last) `WithLp`/`EuclideanSpace` quarantine zone.
+This section is the second (and last) `WithLp`/`EuclideanSpace` quarantine zone.
 -/
 
 
@@ -4061,14 +4061,14 @@ section SourceDualityGramOn
 /-!
 # Gram encoding of the dual program, on a promise domain
 
-The promise-domain mirror of `Duality/Gram.lean`: the input space is an
+The promise-domain mirror of `SourceDualityGram`: the input space is an
 abstract finite `X` read through `read : X → ι → σ`, the constraint mask is
 `read x i = read y i`, and the target is `[f x ≠ f y]`.  Everything else —
 the convexification by passing to Gram matrices, the rank-one decomposition
 back to a `DualPairOn` — is the same change of variables.
 
 The total case is the instance `X = ι → σ`, `read = id`; it is kept as the
-separate `Duality/Gram.lean` because its statements (`DualPair`, `advPM`) are
+separate `SourceDualityGram` because its statements (`DualPair`, `advPM`) are
 pinned by downstream consumers.
 -/
 
@@ -4359,7 +4359,7 @@ inner matrices `M i`.
   eigenvector with eigenvalue `± ‖Γf‖ * ∏ ‖M i‖`; it is nonvanishing by the
   bipartite-support lemma.
 
-As in `Hat.lean` the block decomposition is abstract, and the cube statements
+As in `SourceCompositionHat` the block decomposition is abstract, and the cube statements
 `norm_compose_le` / `le_norm_compose` / `norm_compose` are the `cubeBlocks`
 instance.  Two side conditions appear in the general form and are automatic at
 a cube: the `≤` direction is stated for a possibly empty composed type `Z`
@@ -4594,7 +4594,7 @@ section SourceDualityCompactOn
 /-!
 # The two convex sets of the separation argument, on a promise domain
 
-The promise mirror of `Duality/Compact.lean`: the ambient coordinate space is
+The promise mirror of `SourceDualityCompact`: the ambient coordinate space is
 `DualOmegaOn X → ℝ`, the compact set is the image of the truncated positive
 semidefinite cone over `GramIdxOn X ι`, and the closed set is the box around
 the promise dual target.  `norm_le_trace_of_posSemidef` and
@@ -4844,7 +4844,7 @@ section SourceDualityWitnessOn
 /-!
 # From a certificate to an adversary matrix, on a promise domain
 
-The promise mirror of `Duality/Witness.lean`: the multipliers of the
+The promise mirror of `SourceDualityWitness`: the multipliers of the
 separating hyperplane become a feasible `IsAdvMatrixOn` witness, so the
 certificate forces `c < advPMOn read f`.  The two generic norm lemmas
 (`l2_opNorm_le_two_of_quadratic` and the `±1` diagonal conjugation) are
@@ -5202,7 +5202,7 @@ section SourceDualityMainOn
 /-!
 # Strong duality for the adversary bound, on a promise domain
 
-The promise mirror of `Duality/Main.lean`: for a **read-determined Boolean**
+The promise mirror of `SourceDualityMain`: for a **read-determined Boolean**
 promise problem, every value above `advPMOn read f` is achieved by a feasible
 `DualPairOn`:
 
@@ -5220,9 +5220,9 @@ The `±1` masking trick
 needs the *output* to be two-valued, which is the `f : X → Bool` hypothesis —
 exactly the scope the Boolean characterization needs.
 
-Combined with the promise-native lower bound (Milestone A) and extraction
-(`UpperBound.lean`), this yields the **promise-Boolean characterization**; see
-`Quantum/Characterization.lean`.
+Combined with the promise-native lower bound  and extraction
+(`SourceQuantumUpperBound`), this yields the **promise-Boolean characterization**; see
+`SourceQuantumCharacterization`.
 -/
 
 
@@ -5965,10 +5965,10 @@ Consequently `advDual (f ∘ gᵏ) ≤ advDual f * advDual g`, and by weak duali
 
 unconditionally.  Combined with the lower bound
 `advPM_mul_le_advPM_composeFun` this sandwiches the composed value.  The
-perfect composition theorem `ADV±(f ∘ gᵏ) = ADV±(f) · ADV±(g)` follows the
-moment strong duality `advDual = advPM` is available
-(`advPM_composeFun_eq_of_dual_eq`); strong duality is the single missing
-ingredient, and is genuine SDP duality, absent from mathlib.
+perfect composition theorem `ADV±(f ∘ gᵏ) = ADV±(f) · ADV±(g)` follows by
+applying `advPM_composeFun_eq_of_dual_eq` to the strong-duality theorem
+`advDual_eq_advPM` in `SourceDualityMain`. The unconditional endpoint is
+`advPM_composeFun_eq`.
 -/
 
 
@@ -6166,9 +6166,8 @@ theorem advPM_composeFun_sandwich (f : (α → Bool) → Bool)
       advPM (composeFun f g) ≤ advDual f * advDual g :=
   ⟨advPM_mul_le_advPM_composeFun f g, advPM_composeFun_le_advDual_mul f g⟩
 
-/-- **Perfect composition, conditional on strong duality.**  Strong duality
-(`advDual = advPM`) is the only missing ingredient for the exact composition
-theorem `ADV±(f ∘ gᵏ) = ADV±(f) · ADV±(g)`. -/
+/-- Perfect composition from supplied duality equalities. The unconditional
+`advPM_composeFun_eq` below discharges these using `advDual_eq_advPM`. -/
 theorem advPM_composeFun_eq_of_dual_eq (f : (α → Bool) → Bool)
     (g : (β → Bool) → Bool) (hf : advDual f = advPM f)
     (hg : advDual g = advPM g) :
@@ -6752,7 +6751,7 @@ section SourceDualityMain
 # Strong duality for the adversary bound
 
 `advDual g = advPM g`: the LMRSS dual program has no gap against the adversary
-bound.  Weak duality (`advPM_le_advDual`) is proved in `QuantumQueryComplexity/Dual.lean`;
+bound.  Weak duality (`advPM_le_advDual`) is proved in `SourceDual`;
 what is proved here is the converse, `advDual ≤ advPM`, which is genuine
 semidefinite-programming duality.
 
@@ -7210,7 +7209,7 @@ differing from the centre in that coordinate
 (`starMatrix_hadamard_advD`).
 
 These are the optimal primal witnesses for `OR` and `AND`, and specialise to
-the two-bit case of `QuantumQueryComplexity/AndOr.lean`.
+the two-bit case of `SourceAndOr`.
 -/
 
 
@@ -7620,14 +7619,14 @@ matching dual certificates, so strong duality holds at them and they compose
 perfectly.
 
 * the primal witness for `OR_n` is the star matrix centred at the all-zero
-  input with the `n` weight-one inputs as leaves (`QuantumQueryComplexity/Star.lean`);
+  input with the `n` weight-one inputs as leaves (`SourceStar`);
   its norm is `√n` and each masked norm is `1`;
 * the dual witness is one-dimensional: weight `δ = n^(-1/4)` at the all-zero
   input, and `1/(|x| δ)` on the support of each nonzero `x`, where `|x|` is
   the Hamming weight.  Its cost is exactly `√n`.
 
 `AND_n` follows from `OR_n` by De Morgan, using the relabelling invariance
-lemmas of `QuantumQueryComplexity/AndOr.lean`.
+lemmas of `SourceAndOr`.
 -/
 
 
@@ -8175,7 +8174,7 @@ cost is exactly `V` (`orWDual_isWeightedCostLe`).  Composing gives
 
 whenever the inner functions have dual solutions of cost `cᵢ`
 (`advDual_composeFunFam_orN_le`), matching the primal bound of
-`QuantumQueryComplexity/WeightedOr.lean`.
+`SourceWeightedOr`.
 -/
 
 
@@ -8192,7 +8191,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 Stated for a general alphabet and output type: the weighted cost is what the
 outer solution of a composition must control, and in
-`QuantumQueryComplexity/ComposeShared.lean` the outer function is a non-Boolean maximum. -/
+`SourceComposeShared` the outer function is a non-Boolean maximum. -/
 def DualPair.IsWeightedCostLe {K : Type*} [Fintype K] {σ : Type*} [DecidableEq σ]
     {O : Type*} [DecidableEq O] {f : (ι → σ) → O}
     (P : DualPair K f) (c : ι → ℝ) (V : ℝ) : Prop :=
@@ -8559,7 +8558,7 @@ section SourceComposeShared
 /-!
 # Dual composition with shared inputs
 
-The composition in `QuantumQueryComplexity/DualCompose.lean` gives each inner function its
+The composition in `SourceDualCompose` gives each inner function its
 own block of variables (`composeFunFam` over `α × β`).  Divide-and-conquer needs
 the opposite: finitely many subproblems `g p`, all reading the *same* input `x`,
 whose domains typically overlap.  Write
@@ -8769,7 +8768,7 @@ puts mass `‖φ‖² = 2` on each of the `n` coordinates, so the cost is `2n`.
 
 This is the dual attached to the trivial decision tree that reads every
 coordinate in order.  Its point here is that **the bound carries no alphabet
-dependence at all**, so it complements `QuantumQueryComplexity/Max/Dyadic.lean`, whose
+dependence at all**, so it complements `upstream Max/Dyadic.lean`, whose
 `2⌈log₂ m⌉√n` degrades for very large alphabets.
 
 The same construction applied to an arbitrary decision tree gives
@@ -9294,7 +9293,7 @@ the *branch* taken there and its *colour*.  This is the algebraic core of
 Beigi–Taghavi's generalized-decision-tree dual, with weights assigned to nodes.
 
 The point of the reformulation used here is that a scan is
-`QuantumQueryComplexity/FirstDiff.lean` applied to the **branch sequence** instead of the raw
+`SourceFirstDiff` applied to the **branch sequence** instead of the raw
 input.  A tree node is exactly a branch-prefix, so "two paths agree until their
 first different branch" is literally `card_firstDiffSet`, and no tree datatype is
 needed.  Three conditions make the argument go through:
@@ -9759,7 +9758,7 @@ variable {σ : Type*} [Fintype σ] [DecidableEq σ]
 
 Nothing about the *running value* of a scan needs a linear order: it is a
 supremum, so a `SemilatticeSup` suffices.  Keeping this section general is what
-lets `QuantumQueryComplexity/Scan/Join.lean` reuse it for products in a commutative
+lets `upstream Scan/Join.lean` reuse it for products in a commutative
 idempotent semigroup, where two values may be incomparable. -/
 
 section Sup
@@ -10396,7 +10395,7 @@ So we hide the dimension:
   `HasDual f c` — *some* feasible dual solution for `f` has cost at most `c`;
   `HasWeightedDual f c V` — *some* solution has `c`-weighted cost at most `V`.
 
-Every construction of `QuantumQueryComplexity/{Pullback, FirstDiff, ComposeShared}.lean` is
+Every construction of `SourcePullback`, `SourceFirstDiff`, and `SourceComposeShared` is
 restated at this level, and the `Sigma`-plus-`embedDim` step happens exactly once,
 inside `HasWeightedDual.composeShared`.  What is left are two combinators that
 say what divide-and-conquer actually does:
@@ -10672,7 +10671,7 @@ omit [DecidableEq ι] [Fintype σ] in
 /-- **The maximum of equally expensive subproblems.**
 
 `24 √q` is the alphabet-free cost of maximum finding on `q` coordinates
-(`QuantumQueryComplexity/Scan/Final.lean`); with constant weights it turns `q` subproblems of
+(`SourceScanFinal`); with constant weights it turns `q` subproblems of
 cost `c₀` into their maximum at cost `24 √q · c₀`.  The values compared may range
 over any finite linear order, and the bound does not see how large it is. -/
 theorem HasDual.max {P A : Type} [Fintype P] [Nonempty P]
@@ -10710,7 +10709,7 @@ omit [DecidableEq ι] in
 /-- `MAX` itself, as a bundled dual: `hasDual_maxMap` at the identity value
 map, with the alphabet the finite linear order being maximized.  The
 operational `Θ(√n)` endpoints extracted from these certificates live in
-`QuantumQueryComplexity/Quantum/MaxApplications.lean`. -/
+`upstream Quantum/MaxApplications.lean`. -/
 theorem hasDual_maxFun {A : Type} [Nonempty ι]
     [DecidableEq A] [LinearOrder A] [Finite A] :
     HasDual (maxFun : (ι → A) → A) (24 * Real.sqrt (Fintype.card ι)) := by
@@ -10984,9 +10983,9 @@ section SourcePromiseHasDual
 /-!
 # Bundled dual solutions on a promise domain
 
-`QuantumQueryComplexity/HasDual.lean` hides the dimension type of a dual solution for a
+`SourceHasDual` hides the dimension type of a dual solution for a
 *total* function; a divide-and-conquer recursion whose subproblems live on
-input-dependent promises needs the same service on `DualPairOn`.  This file
+input-dependent promises needs the same service on `DualPairOn`.  This section
 is that layer, plus the two structural moves every promise construction
 needs:
 

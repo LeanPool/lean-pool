@@ -12,6 +12,7 @@ public import Mathlib.Algebra.MvPolynomial.CommRing
 # The polynomial method for value and XOR query oracles
 
 Ported from the corresponding upstream modules listed by the source sections below.
+References beginning with `Source` name these retained sections.
 -/
 
 @[expose] public section
@@ -21,7 +22,7 @@ section SourcePolynomialBoolean
 /-!
 # Real polynomials on the Boolean cube
 
-The small algebra API behind the polynomial method (`Quantum/PolynomialMethod.lean`):
+The small algebra API behind the polynomial method (`SourceQuantumPolynomialMethod`):
 
 * `bit b`, the `0/1` real value of a Boolean, and `evalBool p a`, the evaluation of a real
   multivariate polynomial at a Boolean point of the cube (any finite index type `ι`);
@@ -240,12 +241,12 @@ A quantum algorithm making `t` queries to a Boolean input has, at every basis st
 amplitude whose real and imaginary parts are real polynomials of total degree at most `t`
 in the input bits; its acceptance probabilities are therefore polynomials of degree at most
 `2·t`.  This is Lemmas 4.1 and 4.2 of *Quantum Lower Bounds by Polynomials*
-(arXiv:quant-ph/9802049), proved here from the operational model of `Quantum/Algorithm.lean`.
+(arXiv:quant-ph/9802049), proved here from the operational model of `SourceQuantumAlgorithm`.
 
 The induction is stated once, for an arbitrary finite basis `B` and any oracle whose
 action on a basis state is either input-independent or selected by one input bit
 (`HasAmpPoly.selector`); the native value oracle (`oracleMap`) and the XOR oracle
-(`XorPolynomialMethod.lean`) are two instances.  No query simulation between the models
+(`SourceQuantumXorPolynomialMethod`) are two instances.  No query simulation between the models
 is used, so both get the degree bound `2·t`, never `4·t`.
 
 Main statements:
@@ -479,11 +480,11 @@ section SourceQuantumXorPolynomialMethod
 /-!
 # The polynomial method for the XOR oracle
 
-The same induction as `PolynomialMethod.lean`, run on the XOR-oracle semantics `xorState`
-of `Quantum/XorOracle.lean`.  The XOR oracle is again a selector oracle (idle at index
+The same induction as `SourceQuantumPolynomialMethod`, run on the XOR-oracle semantics `xorState`
+of `SourceQuantumXorOracle`.  The XOR oracle is again a selector oracle (idle at index
 `none`; at index `some i` the answer register is XORed with the bit `a i`), so the shared
 lemma `HasAmpPoly.selector` applies directly and the degree bound is `2·t` — the model
-simulation of `Quantum/Simulation.lean` is not used, which would have cost a factor two.
+simulation of `SourceQuantumSimulation` is not used, which would have cost a factor two.
 -/
 
 namespace QuantumQueryComplexity

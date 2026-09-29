@@ -11,6 +11,7 @@ public import LeanPool.QuantumQuery.StateConversion
 # Operational adversary lower bounds and query characterizations
 
 Ported from the corresponding upstream modules listed by the source sections below.
+References beginning with `Source` name these retained sections.
 -/
 
 @[expose] public section
@@ -21,14 +22,14 @@ section SourceQuantumLowerBoundBridge
 # The real-matrix / complex-vector bridge
 
 The adversary side of this project is real: `advPMOn` is a supremum of L2
-operator norms of **real** matrices, and `Spectral.lean` supplies the bilinear
+operator norms of **real** matrices, and `SourceSpectral` supplies the bilinear
 bound `|x ⬝ᵥ A *ᵥ y| ≤ ‖A‖ √(x⬝ᵥx) √(y⬝ᵥy)`.  The quantum side is complex.  The
 progress measure of the lower bound lives in between: it is a real matrix `Γ`
 contracted against a family of **complex** vectors,
 
   `∑ x, ∑ y, Γ x y * Re ⟪u x, v y⟫`.
 
-This file proves the one inequality that connects them,
+This section proves the one inequality that connects them,
 
   `|∑ x, ∑ y, Γ x y * Re ⟪u x, v y⟫| ≤ ‖Γ‖ · √(∑ x, ‖u x‖²) · √(∑ y, ‖v y‖²)`,
 
@@ -38,7 +39,7 @@ needed, and the existing real API is used unchanged.
 The proof is the obvious one once the real part is expanded coordinatewise:
 `Re ⟪u, v⟫ = ∑ h, (Re uₕ Re vₕ + Im uₕ Im vₕ)`, so the double sum is
 `∑ h, (aᵣ(h) ⬝ᵥ Γ *ᵥ bᵣ(h) + aᵢ(h) ⬝ᵥ Γ *ᵥ bᵢ(h))`, a sum over the basis of
-**real** bilinear forms.  Bounding each by `Spectral.lean` and applying
+**real** bilinear forms.  Bounding each by `SourceSpectral` and applying
 Cauchy–Schwarz twice — once to combine the real and imaginary parts at a fixed
 basis vector, once to sum over the basis — gives the claim.  Working with the
 real part throughout (rather than the complex Gram value and its modulus) is
@@ -208,7 +209,7 @@ indexed by the promise domain, the **progress** is
 
 The two weight vectors are **not** a generalization for its own sake: they are
 what lets the endgame use the bilinear characterization of the operator norm
-(`l2_opNorm_le_of_forall_dotProduct`, already in `Spectral.lean`) instead of a
+(`l2_opNorm_le_of_forall_dotProduct`, already in `SourceSpectral`) instead of a
 norm-attaining eigenvector, which the project does not have and which would
 need the spectral theorem.
 
@@ -665,9 +666,9 @@ agree `Γ` is zero.  The remaining three terms are bounded by the bridge, giving
 what makes `ε = 1/3` work in the literature.  For general finite outputs the
 matrix-level argument here gives `2√ε + ε` instead, which is `< 1` exactly
 when `ε < 3 - 2√2 ≈ 0.1716`.  For **Boolean** outputs the sharp constant IS
-recovered directly — `OutputBool.lean` (the error parts are orthogonal on the
+recovered directly — `SourceQuantumLowerBoundOutputBool` (the error parts are orthogonal on the
 adversary matrix's support, and the masses are linked), consumed by
-`MainBool.lean` for the `ε = 1/3` lower bound.  Amplification remains the
+`SourceQuantumLowerBoundMainBool` for the `ε = 1/3` lower bound.  Amplification remains the
 relevant route only for general outputs, where the `B`–`B` term does not
 vanish.
 -/
@@ -830,27 +831,27 @@ section SourceQuantumLowerBoundMain
 /-!
 # The adversary lower bound
 
-**Milestone A.**  Every quantum algorithm that computes `f` on the promise
+Every quantum algorithm that computes `f` on the promise
 `read` with error at most `ε` makes at least
 
   `(1 - (2√ε + ε)) / 2 · advPMOn read f`
 
-queries.  The three ingredients are the ones proved in `Progress.lean` and
-`Output.lean`: the progress starts at `δ ⬝ᵥ Γ *ᵥ δ'`, moves by at most `2` per
+queries.  The three ingredients are the ones proved in `SourceQuantumLowerBoundProgress` and
+`SourceQuantumLowerBoundOutput`: the progress starts at `δ ⬝ᵥ Γ *ᵥ δ'`, moves by at most `2` per
 query, and ends below `‖Γ‖ (2√ε + ε)`.
 
 **Why two weight vectors.**  The classical proof takes `δ` to be a
 norm-attaining eigenvector of `Γ`, so that the initial progress *is* `‖Γ‖`.
 That needs the spectral theorem for real symmetric matrices, which this project
 has deliberately avoided.  Carrying two weight vectors instead makes the initial
-progress the **bilinear** form `δ ⬝ᵥ Γ *ᵥ δ'`, and `Spectral.lean`'s
+progress the **bilinear** form `δ ⬝ᵥ Γ *ᵥ δ'`, and `SourceSpectral`'s
 `l2_opNorm_le_of_forall_dotProduct` — already proved, and used throughout the
 adversary side — converts a bound on all of those into a bound on `‖Γ‖`.  The
 only extra work is normalizing an arbitrary pair of vectors, which is four
 lines.
 
 The error threshold is `2√ε + ε < 1`, i.e. `ε < 3 - 2√2 ≈ 0.1716`; see
-`Output.lean` for why this is not the sharp `2√(ε(1-ε))` and what recovers the
+`SourceQuantumLowerBoundOutput` for why this is not the sharp `2√(ε(1-ε))` and what recovers the
 conventional `ε = 1/3`.
 -/
 
@@ -971,7 +972,7 @@ omit [DecidableEq O] [DecidableEq ι] [Fintype O] [Fintype ι] [Fintype σ] in
 adversary matrix satisfies the bilinear bound `‖Γ‖·κ + 2q` on unit weight
 vectors, then `(1 − κ)·advPMOn ≤ 2q`.  Instantiated by
 `advPMOn_le_of_computes` with `κ = 2√ε + ε`, and by the Boolean sharpening
-(`MainBool.lean`) with `κ = 2√(ε(1−ε))`. -/
+(`SourceQuantumLowerBoundMainBool`) with `κ = 2√(ε(1−ε))`. -/
 theorem advPMOn_le_of_bilinear {κ : ℝ} (hκ0 : 0 ≤ κ) (hlt : κ < 1)
     (hbil : ∀ Γ : Matrix X X ℝ, IsAdvMatrixOn f Γ →
       (∀ i, ‖Γ ⊙ advDOn read i‖ ≤ 1) →
@@ -1074,7 +1075,7 @@ end
 /-! ## The bound on the query complexity -/
 
 omit [Fintype O] in
-/-- **Milestone A.**  Bounded-error quantum query complexity is at least
+/-- Bounded-error quantum query complexity is at least
 `(1 - (2√ε + ε))/2` times the adversary bound, for any error `ε` with
 `2√ε + ε < 1`. -/
 theorem mul_advPMOn_le_qQueryOn {read : X → ι → σ} {f : X → O} {ε : ℝ} [Nonempty O]
@@ -1112,8 +1113,8 @@ section SourceQuantumLowerBoundOutputBool
 /-!
 # The sharp output condition, for Boolean outputs
 
-`Output.lean` bounds the final progress by `‖Γ‖(2√ε + ε)` for any finite
-output type; this file proves the **sharp** constant `2√(ε(1−ε))` when the
+`SourceQuantumLowerBoundOutput` bounds the final progress by `‖Γ‖(2√ε + ε)` for any finite
+output type; this section proves the **sharp** constant `2√(ε(1−ε))` when the
 output is Boolean — which is what makes `ε = 1/3` work without amplification.
 
 Two extra facts are available for `O = Bool`, and they are exactly what the
@@ -1136,7 +1137,7 @@ two monotone steps, each an explicit product-of-nonnegatives factorization
 (`poly_step`), no calculus.
 
 No spectral decomposition, no Helstrom measurement theory: the same bridge as
-`Output.lean`, with the Boolean structure supplying the two extra facts.
+`SourceQuantumLowerBoundOutput`, with the Boolean structure supplying the two extra facts.
 -/
 
 namespace QuantumQueryComplexity
@@ -1375,9 +1376,9 @@ section SourceQuantumLowerBoundMainBool
 /-!
 # The adversary lower bound at the sharp Boolean constant
 
-`Main.lean` proves the lower bound with output constant `2√ε + ε`, which
+`SourceQuantumLowerBoundMain` proves the lower bound with output constant `2√ε + ε`, which
 requires `ε < 3 − 2√2 ≈ 0.1716`.  For **Boolean** outputs the sharp constant
-`2√(ε(1−ε))` of `OutputBool.lean` plugs into the same parametric endgame
+`2√(ε(1−ε))` of `SourceQuantumLowerBoundOutputBool` plugs into the same parametric endgame
 (`advPMOn_le_of_bilinear`), and `2√(ε(1−ε)) < 1` holds for every
 `ε < 1/2` — in particular at the conventional `ε = 1/3`:
 
@@ -1464,17 +1465,17 @@ section SourceQuantumPlurality
 /-!
 # Plurality amplification, and the general-output `1/3` lower bound
 
-Milestone H.  For a **Boolean** output the sharp `1/3` lower bound
+For a **Boolean** output the sharp `1/3` lower bound
 `(1/36)·ADV±ₚ(f) ≤ Q_{1/3}(f)` needs no amplification
-(`LowerBound/MainBool.lean`); for a general finite output type the lower
+(`SourceQuantumLowerBoundMainBool`); for a general finite output type the lower
 bound was known only at the characterization's own error,
-`(7/32)·ADV±ₚ(f) ≤ Q_{1/16}(f)`.  This file closes the gap by **plurality
+`(7/32)·ADV±ₚ(f) ≤ Q_{1/16}(f)`.  This section closes the gap by **plurality
 amplification**: run a `1/3`-error algorithm `43` times independently and
 announce the most frequent answer.
 
 The analysis is an exponential-moment (Markov) bound, not a Chernoff bound
 and not a binomial-tail library.  If `W` is the number of wrong runs, the
-product structure of the independent-run compiler (`ProductRun.lean`,
+product structure of the independent-run compiler (`SourceQuantumProductRun`,
 exact product statistics) gives
 
     E[2^W] = ∏ᵢ (1 + Pr[run i wrong]) ≤ (4/3)^43,
@@ -1559,7 +1560,8 @@ theorem Realizes.foldRec {read : X → ι → σ} [Finite O] [Finite X] :
       rw [show (consEquiv O k).symm y = (y 0, fun j => y j.succ) from rfl]
       rw [Fin.prod_univ_succ]
 
-/-! The exponential-moment tail `sum_prod_tail_le` (with `wrongCount`) lives in `Tail.lean`. -/
+/-! The exponential-moment tail `sum_prod_tail_le` (with `wrongCount`) lives in
+  `SourceQuantumTail`. -/
 
 /-! ## The plurality readout -/
 
@@ -1762,14 +1764,14 @@ end SourceQuantumPlurality
 section SourceQuantumCharacterization
 
 /-!
-# The fixed-error characterization for total Boolean functions (Milestone B)
+# The fixed-error characterization for total Boolean functions
 
 The first end-to-end deliverable of the quantum layer:
 
     (7/32) · ADV±(f)  ≤  Q_{1/16}(f)  ≤  2¹⁴ · ADV±(f)
 
 for every total Boolean function `f : (ι → Bool) → Bool`
-(`qQuery_characterized_by_advPM`).  The lower half is Milestone A
+(`qQuery_characterized_by_advPM`).  The lower half is the operational bound
 (`mul_advPMOn_le_qQueryOn_of_error_sixteenth` at `read = id`); the upper half
 chains **strong duality** (`exists_dualPair_of_advPM_lt`, giving dual pairs
 of cost arbitrarily close to `ADV±`), the total-to-promise restriction
@@ -1779,10 +1781,8 @@ of cost arbitrarily close to `ADV±`), the total-to-promise restriction
 For nonconstant functions, `one_le_advPM` supplies `ADV± ≥ 1`, so this is at
 most `2¹⁴·ADV±`. Constant functions cost zero queries.
 
-This file deliberately sits **outside** the `QuantumQueryComplexity.Quantum` aggregate: it
-imports `QuantumQueryComplexity.Duality.Main` — the tracked strong-duality development —
-alongside the quantum hierarchy, like `Quantum/Applications.lean`.  Build it
-explicitly with `lake build QuantumQueryComplexity.Quantum.Characterization`.
+This module combines the strong-duality results in `Adversary` with the operational
+quantum hierarchy. Build the complete project with `lake build LeanPool.QuantumQuery`.
 
 The conventional-error form is here too
 (`boundedErrorQQuery_characterized_by_advPM`):
@@ -1790,9 +1790,9 @@ The conventional-error form is here too
     (1/36) · ADV±(f)  ≤  Q_{1/3}(f)  ≤  2¹⁴ · ADV±(f)
 
 — the upper half by error monotonicity, the lower half by the **sharp Boolean
-output condition** of `LowerBound/OutputBool.lean` (no amplification).
+output condition** of `SourceQuantumLowerBoundOutputBool` (no amplification).
 
-The oracle-simulation theorem (`Quantum/Simulation.lean`) transports the
+The oracle-simulation theorem (`SourceQuantumSimulation`) transports the
 characterization into the conventional model
 (`xorQQuery_characterized_by_advPM`, below): the **standard Boolean XOR
 oracle with explicit idle-index and blank-answer sectors**, at two queries
@@ -1808,7 +1808,7 @@ namespace QuantumQueryComplexity
 variable {ι : Type} [Fintype ι] [DecidableEq ι]
 
 /-- **The operational lower bound, for total Boolean functions**:
-`(7/32)·ADV±(f) ≤ Q_{1/16}(f)`.  Milestone A at `read = id`. -/
+`(7/32)·ADV±(f) ≤ Q_{1/16}(f)`.  The total case uses `read = id`. -/
 theorem mul_advPM_le_qQuery_sixteenth (f : (ι → Bool) → Bool) :
     (7 / 32 : ℝ) * advPM f ≤ (qQuery f (1 / 16) : ℝ) := by
   have h := mul_advPMOn_le_qQueryOn_of_error_sixteenth
@@ -1850,7 +1850,7 @@ theorem qQuery_sixteenth_le_advPM (f : (ι → Bool) → Bool) :
     linarith [qQuery_sixteenth_le_one_add_advPM f]
 
 /-- **The fixed-error characterization for total Boolean functions**
-(Milestone B): `(7/32)·ADV±(f) ≤ Q_{1/16}(f) ≤ 2¹⁴·ADV±(f)`. -/
+: `(7/32)·ADV±(f) ≤ Q_{1/16}(f) ≤ 2¹⁴·ADV±(f)`. -/
 theorem qQuery_characterized_by_advPM (f : (ι → Bool) → Bool) :
     (7 / 32 : ℝ) * advPM f ≤ (qQuery f (1 / 16) : ℝ) ∧
       (qQuery f (1 / 16) : ℝ) ≤ 2 ^ 14 * advPM f :=
@@ -1881,7 +1881,7 @@ theorem mul_advPM_le_boundedErrorQQuery (f : (ι → Bool) → Bool) :
       ≤ (qQueryOn (id : (ι → Bool) → ι → Bool) f (1 / 3) : ℝ) := h
   exact h
 
-/-- **The conventional-error characterization** (Milestone B at `ε = 1/3`):
+/-- **The conventional-error characterization** at `ε = 1/3`:
 `(1/36)·ADV±(f) ≤ Q_{1/3}(f) ≤ 2¹⁴·ADV±(f)` for total Boolean `f`. -/
 theorem boundedErrorQQuery_characterized_by_advPM (f : (ι → Bool) → Bool) :
     (1 / 36 : ℝ) * advPM f ≤ (boundedErrorQQuery f : ℝ) ∧
@@ -1889,11 +1889,11 @@ theorem boundedErrorQQuery_characterized_by_advPM (f : (ι → Bool) → Bool) :
   ⟨mul_advPM_le_boundedErrorQQuery f, boundedErrorQQuery_le_advPM f⟩
 
 /-- **The characterization in the Boolean XOR-oracle model**: for total
-Boolean `f`, at error `1/3`, using the idle and blank sectors of `XorOracle.lean`,
+Boolean `f`, at error `1/3`, using the idle and blank sectors of `SourceQuantumXorOracle`,
 
     (1/72)·ADV±(f) ≤ Qˣ_{1/3}(f) ≤ 2¹⁵·ADV±(f),
 
-by the two-queries-per-query simulation of `Quantum/Simulation.lean` applied
+by the two-queries-per-query simulation of `SourceQuantumSimulation` applied
 to the transposition-model characterization. -/
 theorem xorQQuery_characterized_by_advPM (f : (ι → Bool) → Bool) :
     (1 / 72 : ℝ) * advPM f
@@ -1922,9 +1922,9 @@ theorem xorQQuery_characterized_by_advPM (f : (ι → Bool) → Bool) :
   · linarith
   · linarith
 
-/-! ## The promise-Boolean characterization (Milestone C step 1)
+/-! ## The promise-Boolean characterization
 
-Promise strong duality (`Duality/MainOn.lean`) feeds the promise-native
+Promise strong duality (`SourceDualityMainOn`) feeds the promise-native
 extraction, and the lower bound was promise-native from the start. -/
 
 section Promise
@@ -1961,7 +1961,7 @@ theorem qQueryOn_le_advPMOn_bool_sixteenth [Nonempty σ] (read : X → ι → σ
     linarith [hup, hb.le, hb.ge]
 
 /-- **The promise-Boolean characterization at fixed error `1/16`**
-(Milestone C step 1): for any read-determined Boolean promise problem on a
+: for any read-determined Boolean promise problem on a
 finite **nonempty** alphabet,
 `(7/32)·ADV±ₚ(f) ≤ Q_{1/16}(f) ≤ 8192(1 + 8√|σ|·ADV±ₚ(f))`.  The unsuffixed
 name is the general-output theorem below. -/
@@ -2010,12 +2010,12 @@ theorem qQueryOn_characterized_by_advPMOn_bool_third [Nonempty σ]
         ≤ ((qQueryOn read f (1 / 16) : ℕ) : ℝ) := by exact_mod_cast hmono
     linarith
 
-/-! ## Finite outputs (Milestone C, the bit-encoding route)
+/-! ## Finite outputs (the bit-encoding route)
 
 Each encoding bit of `f` is a post-composition, so its promise adversary
 bound is at most `f`'s (`advPMOn_comp_le`); the promise-Boolean
 characterization supplies a `1/16`-algorithm per bit, and the independent-run
-machinery (`Amplify.lean`, `FiniteOutput.lean`) amplifies and joins them. -/
+machinery (`SourceQuantumAmplify`, `SourceQuantumFiniteOutput`) amplifies and joins them. -/
 
 /-- **The general-output upper bound**: for `f : X → O` with `O` a finite
 nonempty output type of `m` values, on any promise and finite nonempty
@@ -2171,8 +2171,8 @@ theorem qQueryOn_characterized_by_advPMOn {O : Type} [Fintype O]
     qQueryOn_le_advPMOn_finiteOutput_sixteenth read f hdet⟩
 
 /-- **The finite-output characterization at the conventional error `1/3`**
-(Milestone H): the lower half by plurality amplification over `43` runs
-(`Plurality.lean`, `Q_{1/16} ≤ 43·Q_{1/3}`), the upper half by monotonicity
+ the lower half by plurality amplification over `43` runs
+(`SourceQuantumPlurality`, `Q_{1/16} ≤ 43·Q_{1/3}`), the upper half by monotonicity
 from the `1/16` bound.
 
     (7/1376)·ADV±ₚ(f) ≤ Q_{1/3}(f)
@@ -2257,7 +2257,7 @@ theorem qQueryOn_le_mul_advPMOn_finiteOutput {O : Type} [Fintype O]
   linarith
 
 /-- **The finite-output characterization at `1/3`, multiplicative**
-(Milestone H): the plurality-amplified lower bound paired with the
+ the plurality-amplified lower bound paired with the
 multiplicative upper bound, so that "characterization" is literally a
 two-sided proportionality —
 

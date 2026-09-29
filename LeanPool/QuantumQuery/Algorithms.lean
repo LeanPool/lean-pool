@@ -12,6 +12,7 @@ public import Mathlib.LinearAlgebra.Matrix.Permutation
 # Finite quantum algorithms, query oracles, and simulation
 
 Ported from the corresponding upstream modules listed by the source sections below.
+References beginning with `Source` name these retained sections.
 -/
 
 @[expose] public section
@@ -38,7 +39,7 @@ manipulations of finite sums over the basis, and `WithLp`/`PiLp` coercions get
 in the way of exactly those.  So the raw form is the default.
 
 It is not a quarantine, though: `qInner_eq_euclidean` and `qNormSq_eq_euclidean`
-below are **public**, and `Quantum/Projector.lean` crosses by them deliberately,
+below are **public**, and `SourceQuantumProjector` crosses by them deliberately,
 building subspaces and orthogonal projectors in `EuclideanSpace` where Mathlib's
 theory lives and carrying the results back as matrices.  Raw by default, Euclidean
 where Mathlib is stronger.
@@ -215,7 +216,7 @@ back through `WithLp.linearEquiv`, and turn it into a matrix with
 `LinearMap.toMatrix'`.  That route needs to state its correctness in raw terms,
 and these are the lemmas that let it.
 
-Everything *else* in this file stays raw: the bridge is a door, not a move.
+Everything *else* in this section stays raw: the bridge is a door, not a move.
 -/
 
 omit [DecidableEq H] in
@@ -425,7 +426,7 @@ Pure finite probability, stated over an arbitrary weight; no quantum imports.
   coordinates of the weight of the patterns wrong at that coordinate.
   (A standalone utility, currently unused: the tuple join ended up using
   Weierstrass on the diagonal instead, and plurality amplification
-  (Milestone H, `Plurality.lean`) uses the sharper exponential-moment
+  (`SourceQuantumPlurality`) uses the sharper exponential-moment
   argument `sum_prod_tail_le` rather than a union bound.)
 * `sum_prod_majority_le` — **the majority tail**: if each coordinate's wrong
   value carries probability at most `ε ≤ 1`, the product weight of the
@@ -434,7 +435,7 @@ Pure finite probability, stated over an arbitrary weight; no quantum imports.
   bound and no independence formalism: the product structure is supplied
   exactly by the bank-swap compiler, and the tail is one count over
   patterns.
-* `sum_prod_tail_le` — **the exponential-moment tail** (moved here from `Plurality.lean`, so
+* `sum_prod_tail_le` — **the exponential-moment tail** (moved here from `SourceQuantumPlurality`, so
   that circuit utilities can use it without the lower-bound development): the weight of the
   records with at least `t` wrong coordinates is at most `(1 + ε)^k / 2^t`.  Unlike the
   majority tail it decays at base error `1/3`: `(4/3)^k / 2^{k/2} = (8/9)^{k/2}`.
@@ -612,8 +613,8 @@ section SourceQuantumFidelity
 
 The two generic Hilbert-space estimates behind the state-conversion
 measurement.  The quantity a Hadamard test reads out is `Re⟪ψ, Uψ⟫`, and the
-detector `U` of `InputDetector.lean` is designed to make it large on one kind
-of input and small on the other.  This file proves the two sides in the
+detector `U` of `SourceQuantumInputDetector` is designed to make it large on one kind
+of input and small on the other.  This section proves the two sides in the
 abstract, for an arbitrary unitary `U` on an arbitrary finite space:
 
 * **the positive side** (`le_mul_re_qInner_mulVec_of_fixed`): if `U` fixes
@@ -1057,8 +1058,8 @@ Why this oracle rather than `|i⟩|s⟩ ↦ |i⟩|s ⊕ a i⟩`:
   lower bound's query decomposition uses.
 
 It is equivalent to the Boolean XOR oracle at two queries per query, in both
-directions: `XorOracle.lean` defines that oracle (with explicit idle-index
-and blank-answer sectors) and `Simulation.lean` proves the equivalence.
+directions: `SourceQuantumXorOracle` defines that oracle (with explicit idle-index
+and blank-answer sectors) and `SourceQuantumSimulation` proves the equivalence.
 
 The two lemmas that carry the whole development are `oracleMap_none` and
 `oracleMap_some`: the oracle's action at a basis state with index `some i`
@@ -1226,7 +1227,7 @@ deferred-measurement form of the model.
   `rw` and instance search fail on goals that are true by `rfl` (the type
   `QBasis ι σ A.Work` is only *definitionally* the concrete workspace a
   construction used).  Quantifying over `W` is deferred to `QueryCounts` in
-  `Complexity.lean`, which is the one place it costs anything.  Everything lives
+  `SourceQuantumComplexity`, which is the one place it costs anything.  Everything lives
   in `Type` (universe 0): every index type, alphabet and workspace in this
   project is concrete.
 * Correctness is stated **promise-natively**, through `read : X → ι → σ`.  The
@@ -1978,7 +1979,7 @@ inverted, and controlled, and whose query count is tracked exactly.  That is a
 A routine carries no initial state and no readout, so it composes; `R.toAlg`
 turns one into a `QAlg` at the end, and `toAlg_state` says the algorithm's state
 after `R.len` queries is `R.run a` applied to the initial state.  So everything
-proved about `QAlg` — in particular the Milestone A lower bound — applies to
+proved about `QAlg` — in particular the operational lower bound — applies to
 whatever the routine layer builds, with no change to the pinned statements.
 
 ## Main results
@@ -2016,8 +2017,7 @@ structure QRoutine (ι σ W : Type) [Fintype ι] [DecidableEq ι] [Fintype σ]
   /-- Each step is unitary. -/
   step_unitary : ∀ t, step t ∈ Matrix.unitaryGroup (QBasis ι σ W) ℂ
 
-/-- The adjoint of a unitary is unitary.  (Belongs in `FiniteHilbert.lean`; kept
-here to avoid a rebuild of the whole layer.) -/
+/-- The adjoint of a unitary is unitary. -/
 lemma conjTranspose_mem_qUnitary {H : Type} [Fintype H] [DecidableEq H]
     {U : Matrix H H ℂ} (hU : U ∈ Matrix.unitaryGroup H ℂ) :
     Uᴴ ∈ Matrix.unitaryGroup H ℂ := by
@@ -2181,7 +2181,7 @@ theorem comp_run (R S : QRoutine ι σ W) (a : ι → σ) :
 Padding by an *even* number of queries is free and needs no extra workspace: the
 oracle is an involution, so a query immediately followed by a query is the
 identity.  Padding by *one* is a different matter — it needs somewhere to park
-the query index so that the extra query idles — and lives in `Control.lean`. -/
+the query index so that the extra query idles — and lives in `SourceQuantumControl`. -/
 
 /-- Append two queries that cancel. -/
 def padTwo (R : QRoutine ι σ W) : QRoutine ι σ W where
@@ -2417,12 +2417,12 @@ section SourceQuantumControl
 /-!
 # The controlled query, and idling
 
-The value oracle has an **idle index** `none`, and `Oracle.lean` records that it
+The value oracle has an **idle index** `none`, and `SourceQuantumOracle` records that it
 does nothing there.  That is only half of what a circuit needs: to *use* the
 idle sector one must be able to move the query index into it and back, and
 "assign `none` to the index register" is not injective, hence not unitary.
 
-The fix is the same one `ReadAll.lean` used for copying: **swap, don't assign**.
+The fix is the same one `SourceQuantumReadAll` used for copying: **swap, don't assign**.
 Extend the workspace with a control bit and a parking slot,
 
   `CtrlWork ι W = Bool × Option ι × W`,
@@ -3400,7 +3400,7 @@ theorem exists_computesWithErrorOn [DecidableEq O] [Nonempty O] {read : X → ι
 
 omit [Fintype X] in
 /-- **The achievable set is nonempty**, which is the hypothesis every lower
-bound in `Complexity.lean` carries. -/
+bound in `SourceQuantumComplexity` carries. -/
 theorem queryCounts_nonempty [DecidableEq O] [Nonempty O] {read : X → ι → σ}
     {f : X → O} (hdet : ∀ x y, read x = read y → f x = f y) {ε : ℝ} (hε : 0 ≤ ε) [Finite X] :
     (QueryCounts read f ε).Nonempty := by
@@ -3430,7 +3430,7 @@ section SourceQuantumRunWith
 
 `QRoutine.runUpto` interleaves a routine's steps with the transposition
 oracle `oracleMat a`; nothing in the interleaving or in sequencing uses any
-property of that matrix.  This file states the run **parametrically in the
+property of that matrix.  This section states the run **parametrically in the
 oracle**: `runWith Q t` interleaves the opaque matrix `Q`, and
 
     runUpto a t  =  runWith (oracleMat a) t
@@ -3438,7 +3438,7 @@ oracle**: `runWith Q t` interleaves the opaque matrix `Q`, and
 recovers the standard semantics.  The payoff is the oracle-simulation layer:
 the XOR-model run is `runWith (xorOracleMat a)`, and the composition law
 `comp_runWith` — the mirror of `comp_run`, proved once here — serves both
-models, so the gadget compilers of `Simulation.lean` can be built with
+models, so the gadget compilers of `SourceQuantumSimulation` can be built with
 `QRoutine.comp` in either semantics.
 -/
 
@@ -3559,7 +3559,7 @@ section SourceQuantumUniformAlphabet
 /-!
 # The uniform alphabet factorization
 
-Milestone D's first component, and the one that removes the `√|σ|` loss.
+This alphabet factorization removes the `√|σ|` loss in uniform extraction.
 
 A dual solution has to realise the *inequality indicator* `[a ≠ b]` as an
 inner product of vectors attached to the two letters.  The construction used
@@ -3689,7 +3689,7 @@ Hadamard to it, and measures it.  The whole point:
     P(announce false) = (1 − Re⟪u, R.run a · u⟫)/2
 
 (`hadTest_prob_true` / `hadTest_prob_false`) — the test turns the real part of
-the expectation `⟪u, R_a u⟫`, which the fidelity bounds of `Fidelity.lean`
+the expectation `⟪u, R_a u⟫`, which the fidelity bounds of `SourceQuantumFidelity`
 control, into an outcome probability, at **exactly `R.len` queries**
 (`QRoutine.control` costs `R.len`, the Hadamards are free).
 
@@ -3947,7 +3947,7 @@ the tensor product of the two initial states parked in their banks, with
 blank global query registers.  Phase `j` swaps bank `j` into the active
 position (a basis permutation exchanging the global query/answer registers
 with the bank's stored pair), runs algorithm `j`'s schedule lifted along the
-oracle-compatible equivalence `pairEquivⱼ` (`KronLift.lean`), and swaps back.
+oracle-compatible equivalence `pairEquivⱼ` (`SourceQuantumKronLift`), and swaps back.
 Each phase therefore acts on a pristine tensor factor: no uncompute, no
 factor two in the cost, and the final state is **literally**
 
@@ -4441,7 +4441,7 @@ model's basis `QBasis ι Bool W` the answer register is `Option Bool`, the XOR
 acts on the `some`-part, and both `none` sectors are fixed.  Boolean
 specifically: for an arbitrary alphabet there is no canonical XOR directly
 on `σ` without choosing a group structure, so the simulation theorems start
-here.  Milestone G (`OneHot.lean`) instead XORs an *encoding* of the letter
+here.  The upstream construction (`upstream OneHot.lean`) instead XORs an *encoding* of the letter
 — its one-hot code in `Hot σ := σ → Bool` — which needs no structure on `σ`.
 
 Like the transposition oracle it is a basis permutation and an involution, so
@@ -4451,7 +4451,7 @@ The model: `QAlg` is oracle-agnostic data (initial state, steps, readout);
 only the *state semantics* names the oracle.  `xorState` is `QAlg.state` with
 `xorOracleMat` in place of `oracleMat`, and `XorComputesWithErrorOn`,
 `XorQueryCounts`, `xorQQueryOn` mirror the standard model's definitions
-verbatim.  `Simulation.lean` proves the two models equivalent within a factor
+verbatim.  `SourceQuantumSimulation` proves the two models equivalent within a factor
 of two in the query count.
 -/
 
@@ -4899,7 +4899,7 @@ section SourceQuantumSimulation
 /-!
 # Oracle simulation: transposition ↔ XOR, at two queries per query
 
-The model-equivalence theorem of Milestone B step 7, for Boolean input
+The model-equivalence theorem for Boolean input
 alphabets.  Each direction is one **two-query gadget** on a clean-ancilla
 encoded subspace (`embedReg` with an `Option Bool` ancilla register), compiled
 over whole routines at exactly `2·R.len` queries, and exported as a
@@ -4931,12 +4931,12 @@ encoded-subspace statements hold with no side condition.
 
 The compilers are compositional (`QRoutine.comp` + `ofUnitary` of lifted
 steps, exactly like `selectPowers`), with `comp_run` sequencing the standard
-side and `comp_runWith`/`xorRun` (from `RunWith.lean`) the XOR side.
+side and `comp_runWith`/`xorRun` (from `SourceQuantumRunWith`) the XOR side.
 
 Boolean specifically: for an arbitrary alphabet there is no canonical XOR
 directly on `σ` without choosing a group structure on `σ`; the transposition
 oracle is the alphabet-free primitive, which is why it is this development's
-native model.  Milestone G (`OneHotSimulation.lean`) handles arbitrary finite
+native model.  The upstream construction (`upstream OneHotSimulation.lean`) handles arbitrary finite
 alphabets by XORing the letter's one-hot *encoding* into a `Hot σ` register,
 with the same two-queries-per-query gadget pattern as here.
 -/
@@ -5482,11 +5482,11 @@ assembly is:
 * join the `B` amplified bits into the tuple (`exists_tuple_computes`),
   error `B·(1/4)ᵗ`, cost `∑ᵢ 2t·qᵢ`;
 * decode by post-composing the readout with the inverse encoding
-  (`ComputesWithErrorOn.postcomp` from `Quantum/Postcomp.lean` — the fibre sum
+  (`ComputesWithErrorOn.postcomp` from `SourceQuantumPostcomp` — the fibre sum
   only grows the correct outcome's probability).
 
 `exists_decode_computes` is the generic assembly; the final theorem against
-`advPMOn` lives in `Quantum/Characterization.lean`, which supplies the
+`advPMOn` lives in `SourceQuantumCharacterization`, which supplies the
 per-bit algorithms from the promise-Boolean characterization.
 -/
 
