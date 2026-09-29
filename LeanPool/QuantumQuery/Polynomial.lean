@@ -397,20 +397,13 @@ theorem QAlg.exists_event_polynomial (A : QAlg ι Bool O W) (t : ℕ) (E : Finse
 
 /-! ## Probability bounds on the whole cube -/
 
-/-- A measured probability never exceeds the squared norm (no finiteness of the output
-type needed). -/
+/-- The probability bound specialized to the polynomial-method interface. -/
 lemma qProb_le_one_of_isQState {H : Type} [Fintype H] {rd : H → O} {ψ : H → ℂ}
-    (hψ : IsQState ψ) (o : O) : qProb rd ψ o ≤ 1 := by
-  classical
-  rw [← hψ, qProb, qNormSq_def]
-  exact Finset.sum_le_sum fun h _ => by
-    split_ifs
-    · exact le_rfl
-    · exact Complex.normSq_nonneg _
+    (hψ : IsQState ψ) (o : O) : qProb rd ψ o ≤ 1 :=
+  qProb_le_one hψ rd o
 
 lemma QAlg.prob_le_one' (A : QAlg ι Bool O W) (a : ι → Bool) (t : ℕ) (o : O) :
-    A.prob a t o ≤ 1 :=
-  qProb_le_one_of_isQState (A.state_isQState a t) o
+    A.prob a t o ≤ 1 := A.prob_le_one a t o
 
 /-- With finitely many outputs the output polynomials sum to `1` on the cube. -/
 theorem QAlg.sum_prob_eq_one [Fintype O] (A : QAlg ι Bool O W) (a : ι → Bool) (t : ℕ) :

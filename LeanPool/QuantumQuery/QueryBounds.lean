@@ -667,11 +667,11 @@ namespace QuantumQueryComplexity
 open scoped Matrix Matrix.Norms.L2Operator
 open Matrix
 
-variable {O : Type} [Fintype O] [DecidableEq O]
+variable {O : Type} [DecidableEq O]
 variable {X : Type} [Fintype X] [DecidableEq X]
 variable {H : Type} [Fintype H] [DecidableEq H]
 
-omit [DecidableEq H] [Fintype O] in
+omit [DecidableEq H] in
 /-- **The output condition.**  On final states that are correct with probability
 at least `1 - ε`, the progress of any adversary matrix is at most
 `‖Γ‖ (2√ε + ε)`. -/
@@ -680,10 +680,9 @@ theorem abs_progress_output_le {Γ : Matrix X X ℝ} {f : X → O}
     {ψ : X → (H → ℂ)} (hψ : ∀ x, IsQState (ψ x))
     {p : H → O} {ε : ℝ} (hε0 : 0 ≤ ε)
     (hp : ∀ x, 1 - ε ≤ qProb p (ψ x) (f x))
-    {δ δ' : X → ℝ} (hδ : ∑ x, δ x ^ 2 = 1) (hδ' : ∑ y, δ' y ^ 2 = 1) [Finite O] :
+    {δ δ' : X → ℝ} (hδ : ∑ x, δ x ^ 2 = 1) (hδ' : ∑ y, δ' y ^ 2 = 1) :
     |progress Γ δ δ' ψ| ≤ ‖Γ‖ * (2 * Real.sqrt ε + ε) := by
   classical
-  let := Fintype.ofFinite O
   set A : X → (H → ℂ) := fun x => qRestrict p (f x) (ψ x) with hA
   set B : X → (H → ℂ) := fun x => ψ x - A x with hB
   have hsplit : ∀ x, ψ x = A x + B x := by
@@ -850,7 +849,7 @@ open scoped Matrix Matrix.Norms.L2Operator
 open Matrix
 
 variable {ι σ O : Type} [Fintype ι] [DecidableEq ι] [Fintype σ] [DecidableEq σ]
-  [Fintype O] [DecidableEq O]
+  [DecidableEq O]
 variable {X : Type} [Fintype X] [DecidableEq X]
 variable {W : Type} [Fintype W] [DecidableEq W]
 
@@ -861,7 +860,7 @@ noncomputable def algProgress (Γ : Matrix X X ℝ) (δ δ' : X → ℝ)
     (A : QAlg ι σ O W) (read : X → ι → σ) (t : ℕ) : ℝ :=
   progress Γ δ δ' (fun x => A.state (read x) t)
 
-omit [DecidableEq O] [DecidableEq X] [Fintype O] in
+omit [DecidableEq O] [DecidableEq X] in
 /-- **Before any query the progress is the bilinear form.** -/
 lemma algProgress_zero (Γ : Matrix X X ℝ) (δ δ' : X → ℝ) (A : QAlg ι σ O W)
     (read : X → ι → σ) : algProgress Γ δ δ' A read 0 = δ ⬝ᵥ Γ *ᵥ δ' := by
@@ -870,7 +869,7 @@ lemma algProgress_zero (Γ : Matrix X X ℝ) (δ δ' : X → ℝ) (A : QAlg ι �
   exact progress_const Γ δ δ'
     (IsQState.mulVec (A.step_unitary 0) A.init_isQState)
 
-omit [DecidableEq O] [Fintype O] in
+omit [DecidableEq O] in
 /-- **One query moves the progress by at most `2`.** -/
 lemma abs_algProgress_succ_sub_le {Γ : Matrix X X ℝ} {δ δ' : X → ℝ}
     (A : QAlg ι σ O W) {read : X → ι → σ}
@@ -891,7 +890,7 @@ lemma abs_algProgress_succ_sub_le {Γ : Matrix X X ℝ} {δ δ' : X → ℝ}
   rw [hw, hw', Real.sqrt_one, mul_one, mul_one] at h
   linarith
 
-omit [DecidableEq O] [Fintype O] in
+omit [DecidableEq O] in
 /-- **After `q` queries the progress has moved by at most `2q`.** -/
 lemma abs_algProgress_sub_zero_le {Γ : Matrix X X ℝ} {δ δ' : X → ℝ}
     (A : QAlg ι σ O W) {read : X → ι → σ}
@@ -916,7 +915,7 @@ section
 
 variable {A : QAlg ι σ O W} {q : ℕ} {read : X → ι → σ} {f : X → O} {ε : ℝ}
 
-omit [DecidableEq O] [Fintype O] in
+omit [DecidableEq O] in
 /-- **The telescoping step, parametric in the output constant**: any bound
 `‖Γ‖·κ` on the progress after `q` queries bounds the initial bilinear form by
 `‖Γ‖·κ + 2q`. -/
@@ -938,23 +937,21 @@ lemma abs_dotProduct_mulVec_le_of_algProgress {Γ : Matrix X X ℝ} {κ : ℝ}
   rw [h0] at hsplit htel
   linarith
 
-omit [Fintype O] in
 /-- The bilinear form of any feasible adversary matrix is bounded by the
 algorithm's query count and error. -/
 lemma abs_dotProduct_mulVec_le_of_computes {Γ : Matrix X X ℝ}
     (hΓ : IsAdvMatrixOn f Γ) (hfeas : ∀ i, ‖Γ ⊙ advDOn read i‖ ≤ 1)
     (hε0 : 0 ≤ ε) (hcomp : ComputesWithErrorOn A q read f ε)
-    {δ δ' : X → ℝ} (hδ : ∑ x, δ x ^ 2 = 1) (hδ' : ∑ y, δ' y ^ 2 = 1) [Finite O] :
+    {δ δ' : X → ℝ} (hδ : ∑ x, δ x ^ 2 = 1) (hδ' : ∑ y, δ' y ^ 2 = 1) :
     |δ ⬝ᵥ Γ *ᵥ δ'| ≤ ‖Γ‖ * (2 * Real.sqrt ε + ε) + 2 * q := by
   classical
-  let := Fintype.ofFinite O
   have hout : |algProgress Γ δ δ' A read q| ≤ ‖Γ‖ * (2 * Real.sqrt ε + ε) := by
     rw [algProgress]
     exact abs_progress_output_le (fun x y h => hΓ.2 x y h)
       (fun x => A.state_isQState (read x) q) hε0 (fun x => hcomp x) hδ hδ'
   exact abs_dotProduct_mulVec_le_of_algProgress hfeas hδ hδ' hout
 
-omit [DecidableEq O] [DecidableEq ι] [Fintype O] [Fintype ι] [Fintype σ] in
+omit [DecidableEq O] [DecidableEq ι] [Fintype ι] [Fintype σ] in
 /-- **The endgame, parametric in the output constant.**  If every feasible
 adversary matrix satisfies the bilinear bound `‖Γ‖·κ + 2q` on unit weight
 vectors, then `(1 − κ)·advPMOn ≤ 2q`.  Instantiated by
@@ -1043,14 +1040,12 @@ theorem advPMOn_le_of_bilinear {κ : ℝ} (hκ0 : 0 ≤ κ) (hlt : κ < 1)
   rw [le_div_iff₀' hpos]
   linarith
 
-omit [Fintype O] in
 /-- **The adversary lower bound.**  A `q`-query algorithm with error `ε` forces
 `advPMOn read f ≤ 2q / (1 - (2√ε + ε))`. -/
 theorem advPMOn_le_of_computes (hε0 : 0 ≤ ε) (hlt : 2 * Real.sqrt ε + ε < 1)
-    (hcomp : ComputesWithErrorOn A q read f ε) [Finite O] :
+    (hcomp : ComputesWithErrorOn A q read f ε) :
     (1 - (2 * Real.sqrt ε + ε)) * advPMOn read f ≤ 2 * q := by
   classical
-  let := Fintype.ofFinite O
   exact advPMOn_le_of_bilinear
       (add_nonneg (mul_nonneg (by norm_num) (Real.sqrt_nonneg ε)) hε0) hlt
       (fun Γ hΓ hfeas δ δ' hδ hδ' =>
@@ -1060,28 +1055,24 @@ end
 
 /-! ## The bound on the query complexity -/
 
-omit [Fintype O] in
 /-- Bounded-error quantum query complexity is at least
 `(1 - (2√ε + ε))/2` times the adversary bound, for any error `ε` with
 `2√ε + ε < 1`. -/
 theorem mul_advPMOn_le_qQueryOn {read : X → ι → σ} {f : X → O} {ε : ℝ} [Nonempty O]
     (hdet : ∀ x y, read x = read y → f x = f y)
-    (hε0 : 0 ≤ ε) (hlt : 2 * Real.sqrt ε + ε < 1) [Finite O] :
+    (hε0 : 0 ≤ ε) (hlt : 2 * Real.sqrt ε + ε < 1) :
     (1 - (2 * Real.sqrt ε + ε)) / 2 * advPMOn read f ≤ (qQueryOn read f ε : ℝ) := by
   classical
-  let := Fintype.ofFinite O
   refine le_qQueryOn_real (queryCounts_nonempty hdet hε0) fun q W' _ _ A hA => ?_
   have h := advPMOn_le_of_computes hε0 hlt hA
   linarith
 
-omit [Fintype O] in
 /-- A concrete instance of the lower bound: at error `1/16` the constant is
 `7/32`.  (The threshold `2√ε + ε < 1` holds for every `ε < 3 - 2√2 ≈ 0.1716`.) -/
 theorem mul_advPMOn_le_qQueryOn_of_error_sixteenth {read : X → ι → σ} {f : X → O}
-    [Nonempty O] (hdet : ∀ x y, read x = read y → f x = f y) [Finite O] :
+    [Nonempty O] (hdet : ∀ x y, read x = read y → f x = f y) :
     (7 / 32 : ℝ) * advPMOn read f ≤ (qQueryOn read f (1 / 16) : ℝ) := by
   classical
-  let := Fintype.ofFinite O
   have hs : Real.sqrt (1 / 16 : ℝ) = 1 / 4 := by
     rw [show (1 / 16 : ℝ) = (1 / 4) ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   have h := mul_advPMOn_le_qQueryOn (read := read) (f := f) (ε := 1 / 16) hdet
@@ -1099,7 +1090,7 @@ section SourceQuantumLowerBoundOutputBool
 /-!
 # The sharp output condition, for Boolean outputs
 
-`SourceQuantumLowerBoundOutput` bounds the final progress by `‖Γ‖(2√ε + ε)` for any finite
+`SourceQuantumLowerBoundOutput` bounds the final progress by `‖Γ‖(2√ε + ε)` for any decidable
 output type; this section proves the **sharp** constant `2√(ε(1−ε))` when the
 output is Boolean — which is what makes `ε = 1/3` work without amplification.
 
@@ -1238,7 +1229,7 @@ adversary matrix is at most `‖Γ‖ · 2√(ε(1−ε))`. -/
 theorem abs_progress_output_le_bool {Γ : Matrix X X ℝ} {f : X → Bool}
     (hΓ : ∀ x y, f x = f y → Γ x y = 0)
     {ψ : X → (H → ℂ)} (hψ : ∀ x, IsQState (ψ x))
-    {p : H → Bool} {ε : ℝ} (_hε0 : 0 ≤ ε) (hε2 : ε ≤ 1 / 2)
+    {p : H → Bool} {ε : ℝ} (hε2 : ε ≤ 1 / 2)
     (hp : ∀ x, 1 - ε ≤ qProb p (ψ x) (f x))
     {δ δ' : X → ℝ} (hδ : ∑ x, δ x ^ 2 = 1) (hδ' : ∑ y, δ' y ^ 2 = 1) :
     |progress Γ δ δ' ψ| ≤ ‖Γ‖ * (2 * Real.sqrt (ε * (1 - ε))) := by
@@ -1391,7 +1382,7 @@ variable {A : QAlg ι σ Bool W} {q : ℕ} {read : X → ι → σ} {f : X → B
 
 /-- **The Boolean-sharp adversary bound**: a `q`-query algorithm with error
 `ε ≤ 1/2` forces `(1 − 2√(ε(1−ε)))·advPMOn read f ≤ 2q`. -/
-theorem advPMOn_le_of_computes_bool (hε0 : 0 ≤ ε) (hε2 : ε ≤ 1 / 2)
+theorem advPMOn_le_of_computes_bool (hε2 : ε ≤ 1 / 2)
     (hlt : 2 * Real.sqrt (ε * (1 - ε)) < 1)
     (hcomp : ComputesWithErrorOn A q read f ε) :
     (1 - 2 * Real.sqrt (ε * (1 - ε))) * advPMOn read f ≤ 2 * q := by
@@ -1402,7 +1393,7 @@ theorem advPMOn_le_of_computes_bool (hε0 : 0 ≤ ε) (hε2 : ε ≤ 1 / 2)
       ≤ ‖Γ‖ * (2 * Real.sqrt (ε * (1 - ε))) := by
     rw [algProgress]
     exact abs_progress_output_le_bool (fun x y h => hΓ.2 x y h)
-      (fun x => A.state_isQState (read x) q) hε0 hε2 (fun x => hcomp x) hδ hδ'
+      (fun x => A.state_isQState (read x) q) hε2 (fun x => hcomp x) hδ hδ'
   exact abs_dotProduct_mulVec_le_of_algProgress hfeas hδ hδ' hout
 
 end
@@ -1417,7 +1408,7 @@ theorem mul_advPMOn_le_qQueryOn_bool {read : X → ι → σ} {f : X → Bool} {
     (1 - 2 * Real.sqrt (ε * (1 - ε))) / 2 * advPMOn read f
       ≤ (qQueryOn read f ε : ℝ) := by
   refine le_qQueryOn_real (queryCounts_nonempty hdet hε0) fun q W' _ _ A hA => ?_
-  have h := advPMOn_le_of_computes_bool hε0 hε2 hlt hA
+  have h := advPMOn_le_of_computes_bool hε2 hlt hA
   linarith
 
 /-- **The conventional-error instance**: `(1/36)·advPMOn read f ≤ Q_{1/3}(f)`
@@ -1489,61 +1480,6 @@ open Matrix
 variable {ι σ : Type} [Fintype ι] [DecidableEq ι] [Fintype σ] [DecidableEq σ]
 variable {X : Type} [Fintype X]
 variable {O : Type} [Fintype O] [DecidableEq O]
-
-/-! ## The `k`-fold product realization over any finite output type -/
-
-/-- Prepending a coordinate to a record. -/
-def consEquiv (O : Type) (k : ℕ) : O × (Fin k → O) ≃ (Fin (k + 1) → O) where
-  toFun p := Fin.cons p.1 p.2
-  invFun y := (y 0, fun j => y j.succ)
-  left_inv := by
-    rintro ⟨b, t⟩
-    refine Prod.ext (by simp) (funext fun j => ?_)
-    simp
-  right_inv := by
-    intro y
-    funext j
-    refine Fin.cases ?_ (fun j => ?_) j <;> simp
-
-omit [Fintype O] [Fintype X] in
-/-- The trivial realization: no runs, the constant distribution `1` on the
-empty record. -/
-lemma realizes_zero_rec (read : X → ι → σ) :
-    Realizes read 0 (fun (_ : X) (_ : Fin 0 → O) => (1 : ℝ)) := by
-  classical
-  refine ⟨Unit, inferInstance, inferInstance,
-    constAlg ι σ (fun j : Fin 0 => j.elim0), ?_⟩
-  intro x o
-  have ho : o = fun j : Fin 0 => j.elim0 := funext fun j => j.elim0
-  subst ho
-  simp [QAlg.prob, constAlg]
-
-omit [Fintype O] [Fintype X] in
-/-- **The `k`-fold product realization over any finite output type**: costs
-add, distributions multiply. -/
-theorem Realizes.foldRec {read : X → ι → σ} [Finite O] :
-    ∀ (k : ℕ) (q : Fin k → ℕ) (P : Fin k → X → O → ℝ),
-    (∀ j, Realizes read (q j) (P j)) →
-    Realizes read (∑ j, q j)
-      (fun x (y : Fin k → O) => ∏ j, P j x (y j)) := by
-  classical
-  let := Fintype.ofFinite O
-  intro k
-  induction k with
-  | zero =>
-      intro q P _
-      rw [show (∑ j : Fin 0, q j) = 0 from by simp]
-      exact (realizes_zero_rec read).congr fun x y => by simp
-  | succ k ih =>
-      intro q P h
-      have hfold := ih (fun j => q j.succ) (fun j => P j.succ)
-        (fun j => h j.succ)
-      have hpair := (h 0).pair hfold
-      have hmapped := hpair.map_equiv (consEquiv O k)
-      rw [Fin.sum_univ_succ]
-      refine hmapped.congr fun x y => ?_
-      rw [show (consEquiv O k).symm y = (y 0, fun j => y j.succ) from rfl]
-      rw [Fin.prod_univ_succ]
 
 /-! The exponential-moment tail `sum_prod_tail_le` (with `wrongCount`) lives in
   `SourceQuantumTail`. -/

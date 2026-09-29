@@ -1959,260 +1959,6 @@ end QuantumQueryComplexity
 
 end SourceCompositionSchurPSD
 
-section SourceDualityGram
-
-/-!
-# Gram encoding of the dual program
-
-A feasible dual solution (`DualPair`) is a pair of vector families `u x i`,
-`v y i`; the dual constraints and the dual cost depend on those families only
-through their inner products, i.e. only through the Gram matrix of the whole
-family.  This section makes that change of variables explicit, which is what
-convexifies the dual program: the set of feasible *Gram matrices* is the
-intersection of the (convex) positive semidefinite cone with affine
-constraints, whereas the set of feasible vector families is not convex.
-
-Indexing the combined family by `GramIdx ι σ = (ι → σ) × ι × Bool` — `false`
-tagging a `u`-vector and `true` a `v`-vector — the dictionary is
-
-* `gramR G = dualTarget g` ↔ the `DualPair.constraint` equations,
-* `gramCost G b x ≤ c` for all `b`, `x` ↔ `DualPair.IsCostLe c`.
-
-Both directions of the translation are proved: `gramOfDual` builds the Gram
-matrix of a dual solution, and `exists_dualPair_of_gram` extracts a dual
-solution of dimension `Fin m` from any positive semidefinite `G` satisfying the
-constraints, via the rank-one decomposition
-`Matrix.posSemidef_iff_eq_sum_vecMulVec`.
--/
-
-
-namespace QuantumQueryComplexity
-
-open scoped Matrix Matrix.Norms.L2Operator
-open Matrix
-
-variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-variable {σ : Type*} [Fintype σ] [DecidableEq σ]
-variable {O : Type*} [DecidableEq O]
-
-/-- Index type for the Gram matrix of a dual solution: `(x, i, false)` indexes
-the vector `u x i` and `(x, i, true)` indexes `v x i`. -/
-abbrev GramIdx (ι σ : Type*) : Type _ := (ι → σ) × ι × Bool
-
-/-! ## The affine data of the dual program -/
-
-/-- The right-hand side of the dual feasibility constraint:
-`dualTarget g x y = 1` if `g x ≠ g y` and `0` otherwise. -/
-def dualTarget (g : (ι → σ) → O) : Matrix (ι → σ) (ι → σ) ℝ :=
-  Matrix.of fun x y => if g x = g y then 0 else 1
-
-omit [DecidableEq ι] [DecidableEq σ] [Fintype ι] [Fintype σ] in
-@[simp] lemma dualTarget_apply (g : (ι → σ) → O) (x y : ι → σ) :
-    dualTarget g x y = if g x = g y then 0 else 1 := rfl
-
-omit [DecidableEq ι] [DecidableEq σ] [Fintype ι] [Fintype σ] in
-lemma dualTarget_comm (g : (ι → σ) → O) (x y : ι → σ) :
-    dualTarget g y x = dualTarget g x y := by
-  simp [eq_comm]
-
-/-- The left-hand side of the dual feasibility constraint, as a function of the
-Gram matrix. -/
-def gramR (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) :
-    Matrix (ι → σ) (ι → σ) ℝ :=
-  Matrix.of fun x y => ∑ i, if x i = y i then 0 else G (x, i, false) (y, i, true)
-
-omit [DecidableEq ι] [Fintype σ] in
-@[simp] lemma gramR_apply (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ)
-    (x y : ι → σ) :
-    gramR G x y = ∑ i, if x i = y i then 0 else G (x, i, false) (y, i, true) :=
-  rfl
-
-/-- The dual objective, as a function of the Gram matrix: `gramCost G false x`
-is `∑ i, ‖u x i‖²` and `gramCost G true x` is `∑ i, ‖v x i‖²`. -/
-def gramCost (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) (b : Bool)
-    (x : ι → σ) : ℝ :=
-  ∑ i, G (x, i, b) (x, i, b)
-
-/-! ### Linearity -/
-
-omit [DecidableEq ι] [Fintype σ] in
-lemma gramR_add (G H : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) :
-    gramR (G + H) = gramR G + gramR H := by
-  ext x y
-  simp only [gramR_apply, Matrix.add_apply, ← Finset.sum_add_distrib]
-  exact Finset.sum_congr rfl fun i _ => by by_cases h : x i = y i <;> simp [h]
-
-omit [DecidableEq ι] [Fintype σ] in
-lemma gramR_smul (c : ℝ) (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) :
-    gramR (c • G) = c • gramR G := by
-  ext x y
-  simp only [gramR_apply, Matrix.smul_apply, smul_eq_mul, Finset.mul_sum]
-  exact Finset.sum_congr rfl fun i _ => by by_cases h : x i = y i <;> simp [h]
-
-omit [DecidableEq ι] [DecidableEq σ] [Fintype σ] in
-lemma gramCost_add (G H : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) (b : Bool)
-    (x : ι → σ) : gramCost (G + H) b x = gramCost G b x + gramCost H b x := by
-  simp [gramCost, Finset.sum_add_distrib]
-
-omit [DecidableEq ι] [DecidableEq σ] [Fintype σ] in
-lemma gramCost_smul (c : ℝ) (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ)
-    (b : Bool) (x : ι → σ) : gramCost (c • G) b x = c * gramCost G b x := by
-  simp [gramCost, Finset.mul_sum]
-
-omit [DecidableEq σ] in
-/-- The trace splits as the total cost of the two sides. -/
-lemma trace_eq_sum_gramCost (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) :
-    G.trace = (∑ x, gramCost G false x) + ∑ x, gramCost G true x := by
-  rw [Matrix.trace]
-  simp only [Matrix.diag_apply]
-  rw [Fintype.sum_prod_type]
-  rw [← Finset.sum_add_distrib]
-  refine Finset.sum_congr rfl fun x _ => ?_
-  rw [Fintype.sum_prod_type, gramCost, gramCost, ← Finset.sum_add_distrib]
-  exact Finset.sum_congr rfl fun i _ => by simp [add_comm]
-
-omit [DecidableEq ι] [DecidableEq σ] [Fintype σ] in
-/-- A positive semidefinite Gram matrix has nonnegative costs. -/
-lemma gramCost_nonneg {G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ}
-    (hG : G.PosSemidef) (b : Bool) (x : ι → σ) : 0 ≤ gramCost G b x :=
-  Finset.sum_nonneg fun _ _ => hG.diag_nonneg
-
-/-! ## Rank-one Gram matrices -/
-
-omit [DecidableEq ι] [Fintype σ] in
-lemma gramR_vecMulVec (w : GramIdx ι σ → ℝ) (x y : ι → σ) :
-    gramR (vecMulVec w w) x y
-      = ∑ i, if x i = y i then 0 else w (x, i, false) * w (y, i, true) := by
-  simp [gramR, vecMulVec_apply]
-
-omit [DecidableEq ι] [DecidableEq σ] [Fintype σ] in
-@[simp] lemma gramCost_vecMulVec (w : GramIdx ι σ → ℝ) (b : Bool)
-    (x : ι → σ) :
-    gramCost (vecMulVec w w) b x = ∑ i, w (x, i, b) * w (x, i, b) := by
-  simp [gramCost, vecMulVec_apply]
-
-omit [DecidableEq σ] in
-lemma trace_vecMulVec (w : GramIdx ι σ → ℝ) :
-    (vecMulVec w w).trace = ∑ z, w z * w z := by
-  simp [Matrix.trace, vecMulVec_apply]
-
-omit [DecidableEq ι] [DecidableEq σ] [Fintype ι] [Fintype σ] in
-lemma posSemidef_vecMulVec_self (w : GramIdx ι σ → ℝ) [Finite ι] [Finite σ] :
-    (vecMulVec w w).PosSemidef := by
-  classical
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
-  have h : vecMulVec w w
-      = (Matrix.of fun (z : GramIdx ι σ) (_ : Unit) => w z) *
-        (Matrix.of fun (z : GramIdx ι σ) (_ : Unit) => w z)ᴴ := by
-    ext z z'
-    simp [Matrix.mul_apply, vecMulVec_apply]
-  rw [h]
-  exact Matrix.posSemidef_self_mul_conjTranspose _
-
-/-! ## From a dual solution to its Gram matrix -/
-
-variable {K : Type*} [Fintype K] {g : (ι → σ) → O}
-
-/-- The two vector families of a dual solution, packed into a single matrix
-whose rows are indexed by `GramIdx ι σ`. -/
-def dualVec (P : DualPair K g) : Matrix (GramIdx ι σ) K ℝ :=
-  Matrix.of fun z k => if z.2.2 then P.v z.1 z.2.1 k else P.u z.1 z.2.1 k
-
-omit [DecidableEq ι] [Fintype σ] in
-@[simp] lemma dualVec_false (P : DualPair K g) (x : ι → σ) (i : ι) (k : K) :
-    dualVec P (x, i, false) k = P.u x i k := rfl
-
-omit [DecidableEq ι] [Fintype σ] in
-@[simp] lemma dualVec_true (P : DualPair K g) (x : ι → σ) (i : ι) (k : K) :
-    dualVec P (x, i, true) k = P.v x i k := rfl
-
-/-- The Gram matrix of a dual solution. -/
-def gramOfDual (P : DualPair K g) :
-    Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ := dualVec P * (dualVec P)ᴴ
-
-omit [DecidableEq ι] [Fintype σ] in
-lemma gramOfDual_apply (P : DualPair K g) (z w : GramIdx ι σ) :
-    gramOfDual P z w = ∑ k, dualVec P z k * dualVec P w k := by
-  simp [gramOfDual, Matrix.mul_apply]
-
-omit [DecidableEq ι] [Fintype σ] in
-lemma gramOfDual_posSemidef (P : DualPair K g) [Finite σ] : (gramOfDual P).PosSemidef := by
-  classical
-  let := Fintype.ofFinite σ
-  exact Matrix.posSemidef_self_mul_conjTranspose _
-
-omit [DecidableEq ι] [Fintype σ] in
-lemma gramR_gramOfDual (P : DualPair K g) : gramR (gramOfDual P) = dualTarget g := by
-  classical
-  ext x y
-  rw [gramR_apply, dualTarget_apply, ← P.constraint x y]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  by_cases h : x i = y i
-  · simp [h]
-  · simp only [ite_eq_right h]
-    exact gramOfDual_apply P (x, i, false) (y, i, true)
-
-omit [DecidableEq ι] [Fintype σ] in
-lemma gramCost_gramOfDual_false (P : DualPair K g) (x : ι → σ) :
-    gramCost (gramOfDual P) false x = ∑ i, ∑ k, P.u x i k * P.u x i k := by
-  classical
-  exact Finset.sum_congr rfl fun i _ => gramOfDual_apply P (x, i, false) (x, i, false)
-
-omit [DecidableEq ι] [Fintype σ] in
-lemma gramCost_gramOfDual_true (P : DualPair K g) (x : ι → σ) :
-    gramCost (gramOfDual P) true x = ∑ i, ∑ k, P.v x i k * P.v x i k := by
-  classical
-  exact Finset.sum_congr rfl fun i _ => gramOfDual_apply P (x, i, true) (x, i, true)
-
-omit [DecidableEq ι] [Fintype σ] in
-lemma gramCost_gramOfDual_le {P : DualPair K g} {c : ℝ} (h : P.IsCostLe c)
-    (b : Bool) (x : ι → σ) : gramCost (gramOfDual P) b x ≤ c := by
-  classical
-  cases b with
-  | false => rw [gramCost_gramOfDual_false]; exact h.1 x
-  | true => rw [gramCost_gramOfDual_true]; exact h.2 x
-
-/-! ## From a Gram matrix back to a dual solution -/
-
-omit [DecidableEq ι] [Fintype σ] in
-/-- Every positive semidefinite matrix satisfying the dual constraints is the
-Gram matrix of a feasible dual solution of the same cost.  The dimension comes
-out as `Fin m`, which is the shape `advDual` normalises to. -/
-theorem exists_dualPair_of_gram {G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ}
-    (hG : G.PosSemidef) (hR : gramR G = dualTarget g) {c : ℝ}
-    (hc : ∀ b x, gramCost G b x ≤ c) [Finite σ] :
-    ∃ (m : ℕ) (P : DualPair (Fin m) g), P.IsCostLe c := by
-  classical
-  let := Fintype.ofFinite σ
-  obtain ⟨m, w, hw⟩ := Matrix.posSemidef_iff_eq_sum_vecMulVec.mp hG
-  have hentry : ∀ z z' : GramIdx ι σ, G z z' = ∑ k, w k z * w k z' := by
-    intro z z'
-    rw [hw]
-    simp [Matrix.sum_apply, vecMulVec_apply]
-  refine ⟨m, { u := fun x i k => w k (x, i, false)
-               v := fun x i k => w k (x, i, true)
-               constraint := ?_ }, ?_, ?_⟩
-  · intro x y
-    have := congrArg (fun M => M x y) hR
-    simp only [gramR_apply, dualTarget_apply] at this
-    rw [← this]
-    exact Finset.sum_congr rfl fun i _ => by
-      by_cases h : x i = y i
-      · simp [h]
-      · simp only [ite_eq_right h]
-        exact (hentry (x, i, false) (y, i, true)).symm
-  · intro x
-    refine le_trans (le_of_eq ?_) (hc false x)
-    exact Finset.sum_congr rfl fun i _ => (hentry (x, i, false) (x, i, false)).symm
-  · intro x
-    refine le_trans (le_of_eq ?_) (hc true x)
-    exact Finset.sum_congr rfl fun i _ => (hentry (x, i, true) (x, i, true)).symm
-
-end QuantumQueryComplexity
-
-end SourceDualityGram
-
 section SourcePromiseDefs
 
 /-!
@@ -2424,6 +2170,414 @@ end QuantumQueryComplexity
 
 end SourcePromiseDefs
 
+section SourceDualityGramOn
+
+/-!
+# Gram encoding of the dual program, on a promise domain
+
+The promise-domain mirror of `SourceDualityGram`: the input space is an
+abstract finite `X` read through `read : X → ι → σ`, the constraint mask is
+`read x i = read y i`, and the target is `[f x ≠ f y]`.  Everything else —
+the convexification by passing to Gram matrices, the rank-one decomposition
+back to a `DualPairOn` — is the same change of variables.
+
+The total case is the instance `X = ι → σ`, `read = id`; it is kept as the
+separate `SourceDualityGram` because its statements (`DualPair`, `advPM`) are
+pinned by downstream consumers.
+-/
+
+
+namespace QuantumQueryComplexity
+
+open scoped Matrix Matrix.Norms.L2Operator
+open Matrix
+
+variable {ι : Type*} [Fintype ι] [DecidableEq ι]
+variable {σ : Type*} [Fintype σ] [DecidableEq σ]
+variable {X : Type*} [Fintype X] [DecidableEq X]
+variable {O : Type*} [DecidableEq O]
+
+/-- Index type for the Gram matrix of a promise dual solution: `(x, i, false)`
+indexes the vector `u x i` and `(x, i, true)` indexes `v x i`. -/
+abbrev GramIdxOn (X ι : Type*) : Type _ := X × ι × Bool
+
+/-! ## The affine data of the promise dual program -/
+
+/-- The right-hand side of the dual feasibility constraint on the promise
+domain: `1` on pairs with distinct values, `0` otherwise. -/
+def dualTargetOn (f : X → O) : Matrix X X ℝ :=
+  Matrix.of fun x y => if f x = f y then 0 else 1
+
+omit [DecidableEq X] [Fintype X] in
+@[simp] lemma dualTargetOn_apply (f : X → O) (x y : X) :
+    dualTargetOn f x y = if f x = f y then 0 else 1 := rfl
+
+omit [DecidableEq X] [Fintype X] in
+lemma dualTargetOn_comm (f : X → O) (x y : X) :
+    dualTargetOn f y x = dualTargetOn f x y := by
+  simp [eq_comm]
+
+/-- The left-hand side of the dual feasibility constraint, as a function of
+the Gram matrix, with the mask read through `read`. -/
+def gramROn (read : X → ι → σ) (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) :
+    Matrix X X ℝ :=
+  Matrix.of fun x y =>
+    ∑ i, if read x i = read y i then 0 else G (x, i, false) (y, i, true)
+
+omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
+@[simp] lemma gramROn_apply (read : X → ι → σ)
+    (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) (x y : X) :
+    gramROn read G x y
+      = ∑ i, if read x i = read y i then 0 else G (x, i, false) (y, i, true) :=
+  rfl
+
+/-- The dual objective, as a function of the Gram matrix. -/
+def gramCostOn (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) (b : Bool)
+    (x : X) : ℝ :=
+  ∑ i, G (x, i, b) (x, i, b)
+
+/-! ### Linearity -/
+
+omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
+lemma gramROn_add (read : X → ι → σ)
+    (G H : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) :
+    gramROn read (G + H) = gramROn read G + gramROn read H := by
+  ext x y
+  simp only [gramROn_apply, Matrix.add_apply, ← Finset.sum_add_distrib]
+  exact Finset.sum_congr rfl fun i _ => by
+    by_cases h : read x i = read y i <;> simp [h]
+
+omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
+lemma gramROn_smul (read : X → ι → σ) (c : ℝ)
+    (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) :
+    gramROn read (c • G) = c • gramROn read G := by
+  ext x y
+  simp only [gramROn_apply, Matrix.smul_apply, smul_eq_mul, Finset.mul_sum]
+  exact Finset.sum_congr rfl fun i _ => by
+    by_cases h : read x i = read y i <;> simp [h]
+
+omit [DecidableEq X] [DecidableEq ι] [Fintype X] in
+lemma gramCostOn_add (G H : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ)
+    (b : Bool) (x : X) :
+    gramCostOn (G + H) b x = gramCostOn G b x + gramCostOn H b x := by
+  simp [gramCostOn, Finset.sum_add_distrib]
+
+omit [DecidableEq X] [DecidableEq ι] [Fintype X] in
+lemma gramCostOn_smul (c : ℝ) (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ)
+    (b : Bool) (x : X) : gramCostOn (c • G) b x = c * gramCostOn G b x := by
+  simp [gramCostOn, Finset.mul_sum]
+
+omit [DecidableEq X] [DecidableEq ι] [Fintype X] in
+/-- A positive semidefinite Gram matrix has nonnegative costs. -/
+lemma gramCostOn_nonneg {G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ}
+    (hG : G.PosSemidef) (b : Bool) (x : X) : 0 ≤ gramCostOn G b x :=
+  Finset.sum_nonneg fun _ _ => hG.diag_nonneg
+
+/-! ## Rank-one Gram matrices -/
+
+omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
+lemma gramROn_vecMulVec (read : X → ι → σ) (w : GramIdxOn X ι → ℝ)
+    (x y : X) :
+    gramROn read (vecMulVec w w) x y
+      = ∑ i, if read x i = read y i then 0
+          else w (x, i, false) * w (y, i, true) := by
+  simp [gramROn, vecMulVec_apply]
+
+omit [DecidableEq X] [DecidableEq ι] [Fintype X] in
+@[simp] lemma gramCostOn_vecMulVec (w : GramIdxOn X ι → ℝ) (b : Bool)
+    (x : X) :
+    gramCostOn (vecMulVec w w) b x = ∑ i, w (x, i, b) * w (x, i, b) := by
+  simp [gramCostOn, vecMulVec_apply]
+
+omit [DecidableEq X] [DecidableEq ι] in
+lemma trace_vecMulVec_on (w : GramIdxOn X ι → ℝ) :
+    (vecMulVec w w).trace = ∑ z, w z * w z := by
+  simp [Matrix.trace, vecMulVec_apply]
+
+omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype ι] in
+lemma posSemidef_vecMulVec_self_on (w : GramIdxOn X ι → ℝ) [Finite X] [Finite ι] :
+    (vecMulVec w w).PosSemidef := by
+  classical
+  let := Fintype.ofFinite X
+  let := Fintype.ofFinite ι
+  have h : vecMulVec w w
+      = (Matrix.of fun (z : GramIdxOn X ι) (_ : Unit) => w z) *
+        (Matrix.of fun (z : GramIdxOn X ι) (_ : Unit) => w z)ᴴ := by
+    ext z z'
+    simp [Matrix.mul_apply, vecMulVec_apply]
+  rw [h]
+  exact Matrix.posSemidef_self_mul_conjTranspose _
+
+/-! ## From a Gram matrix to a dual solution -/
+
+variable {read : X → ι → σ} {f : X → O}
+
+omit [DecidableEq X] [DecidableEq ι] [Fintype σ] in
+/-- Every positive semidefinite matrix satisfying the promise dual constraints
+is the Gram matrix of a feasible `DualPairOn` of the same cost. -/
+theorem exists_dualPairOn_of_gram
+    {G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ}
+    (hG : G.PosSemidef) (hR : gramROn read G = dualTargetOn f) {c : ℝ}
+    (hc : ∀ b x, gramCostOn G b x ≤ c) :
+    ∃ (m : ℕ) (P : DualPairOn read (Fin m) f), P.IsCostLe c := by
+  obtain ⟨m, w, hw⟩ := Matrix.posSemidef_iff_eq_sum_vecMulVec.mp hG
+  have hentry : ∀ z z' : GramIdxOn X ι, G z z' = ∑ k, w k z * w k z' := by
+    intro z z'
+    rw [hw]
+    simp [Matrix.sum_apply, vecMulVec_apply]
+  refine ⟨m, { u := fun x i k => w k (x, i, false)
+               v := fun x i k => w k (x, i, true)
+               constraint := ?_ }, ?_, ?_⟩
+  · intro x y
+    have := congrArg (fun M => M x y) hR
+    simp only [gramROn_apply, dualTargetOn_apply] at this
+    rw [← this]
+    exact Finset.sum_congr rfl fun i _ => by
+      by_cases h : read x i = read y i
+      · simp [h]
+      · simp only [ite_eq_right h]
+        exact (hentry (x, i, false) (y, i, true)).symm
+  · intro x
+    refine le_trans (le_of_eq ?_) (hc false x)
+    exact Finset.sum_congr rfl fun i _ =>
+      (hentry (x, i, false) (x, i, false)).symm
+  · intro x
+    refine le_trans (le_of_eq ?_) (hc true x)
+    exact Finset.sum_congr rfl fun i _ =>
+      (hentry (x, i, true) (x, i, true)).symm
+
+end QuantumQueryComplexity
+
+end SourceDualityGramOn
+
+section TotalDualCertificateConversion
+namespace QuantumQueryComplexity
+variable {ι σ : Type*} [Fintype ι] [DecidableEq ι] [Fintype σ] [DecidableEq σ]
+
+/-- A promise certificate for the identity read is a total-input certificate. -/
+def DualPairOn.toTotal {O K : Type*} [DecidableEq O] [Fintype K]
+    {g : (ι → σ) → O} (P : DualPairOn (fun x : ι → σ => x) K g) : DualPair K g where
+  u := P.u
+  v := P.v
+  constraint := P.constraint
+
+/-- The conversion preserves both vector families and hence the cost bound. -/
+lemma DualPairOn.toTotal_isCostLe {O K : Type*} [DecidableEq O] [Fintype K]
+    {g : (ι → σ) → O} {c : ℝ} {P : DualPairOn (fun x : ι → σ => x) K g}
+    (h : P.IsCostLe c) : P.toTotal.IsCostLe c := h
+
+end QuantumQueryComplexity
+end TotalDualCertificateConversion
+
+section SourceDualityGram
+
+/-!
+# Gram encoding of the dual program
+
+A feasible dual solution (`DualPair`) is a pair of vector families `u x i`,
+`v y i`; the dual constraints and the dual cost depend on those families only
+through their inner products, i.e. only through the Gram matrix of the whole
+family.  This section makes that change of variables explicit, which is what
+convexifies the dual program: the set of feasible *Gram matrices* is the
+intersection of the (convex) positive semidefinite cone with affine
+constraints, whereas the set of feasible vector families is not convex.
+
+Indexing the combined family by `GramIdx ι σ = (ι → σ) × ι × Bool` — `false`
+tagging a `u`-vector and `true` a `v`-vector — the dictionary is
+
+* `gramR G = dualTarget g` ↔ the `DualPair.constraint` equations,
+* `gramCost G b x ≤ c` for all `b`, `x` ↔ `DualPair.IsCostLe c`.
+
+Both directions of the translation are proved: `gramOfDual` builds the Gram
+matrix of a dual solution, and `exists_dualPair_of_gram` extracts a dual
+solution of dimension `Fin m` from any positive semidefinite `G` satisfying the
+constraints, via the rank-one decomposition
+`Matrix.posSemidef_iff_eq_sum_vecMulVec`.
+-/
+
+
+namespace QuantumQueryComplexity
+
+open scoped Matrix Matrix.Norms.L2Operator
+open Matrix
+
+variable {ι : Type*} [Fintype ι] [DecidableEq ι]
+variable {σ : Type*} [Fintype σ] [DecidableEq σ]
+variable {O : Type*} [DecidableEq O]
+
+/-- Index type for the Gram matrix of a dual solution: `(x, i, false)` indexes
+the vector `u x i` and `(x, i, true)` indexes `v x i`. -/
+abbrev GramIdx (ι σ : Type*) : Type _ := GramIdxOn (ι → σ) ι
+
+/-! ## The affine data of the dual program -/
+
+/-- The right-hand side of the dual feasibility constraint:
+`dualTarget g x y = 1` if `g x ≠ g y` and `0` otherwise. -/
+def dualTarget (g : (ι → σ) → O) : Matrix (ι → σ) (ι → σ) ℝ := dualTargetOn g
+
+omit [DecidableEq ι] [DecidableEq σ] [Fintype ι] [Fintype σ] in
+@[simp] lemma dualTarget_apply (g : (ι → σ) → O) (x y : ι → σ) :
+    dualTarget g x y = if g x = g y then 0 else 1 := rfl
+
+omit [DecidableEq ι] [DecidableEq σ] [Fintype ι] [Fintype σ] in
+lemma dualTarget_comm (g : (ι → σ) → O) (x y : ι → σ) :
+    dualTarget g y x = dualTarget g x y := dualTargetOn_comm g x y
+
+/-- The left-hand side of the dual feasibility constraint, as a function of the
+Gram matrix. -/
+def gramR (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) :
+    Matrix (ι → σ) (ι → σ) ℝ := gramROn id G
+
+omit [DecidableEq ι] [Fintype σ] in
+@[simp] lemma gramR_apply (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ)
+    (x y : ι → σ) :
+    gramR G x y = ∑ i, if x i = y i then 0 else G (x, i, false) (y, i, true) :=
+  rfl
+
+/-- The dual objective, as a function of the Gram matrix: `gramCost G false x`
+is `∑ i, ‖u x i‖²` and `gramCost G true x` is `∑ i, ‖v x i‖²`. -/
+def gramCost (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) (b : Bool)
+    (x : ι → σ) : ℝ := gramCostOn G b x
+
+/-! ### Linearity -/
+
+omit [DecidableEq ι] [Fintype σ] in
+lemma gramR_add (G H : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) :
+    gramR (G + H) = gramR G + gramR H := gramROn_add id G H
+
+omit [DecidableEq ι] [Fintype σ] in
+lemma gramR_smul (c : ℝ) (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) :
+    gramR (c • G) = c • gramR G := gramROn_smul id c G
+
+omit [DecidableEq ι] [DecidableEq σ] [Fintype σ] in
+lemma gramCost_add (G H : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) (b : Bool)
+    (x : ι → σ) : gramCost (G + H) b x = gramCost G b x + gramCost H b x := gramCostOn_add G H b x
+
+omit [DecidableEq ι] [DecidableEq σ] [Fintype σ] in
+lemma gramCost_smul (c : ℝ) (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ)
+    (b : Bool) (x : ι → σ) : gramCost (c • G) b x = c * gramCost G b x := gramCostOn_smul c G b x
+
+omit [DecidableEq σ] in
+/-- The trace splits as the total cost of the two sides. -/
+lemma trace_eq_sum_gramCost (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) :
+    G.trace = (∑ x, gramCost G false x) + ∑ x, gramCost G true x := by
+  rw [Matrix.trace]
+  simp only [Matrix.diag_apply]
+  rw [Fintype.sum_prod_type]
+  rw [← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl fun x _ => ?_
+  rw [Fintype.sum_prod_type, gramCost, gramCost, gramCostOn, gramCostOn,
+    ← Finset.sum_add_distrib]
+  exact Finset.sum_congr rfl fun i _ => by simp [add_comm]
+
+omit [DecidableEq ι] [DecidableEq σ] [Fintype σ] in
+/-- A positive semidefinite Gram matrix has nonnegative costs. -/
+lemma gramCost_nonneg {G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ}
+    (hG : G.PosSemidef) (b : Bool) (x : ι → σ) : 0 ≤ gramCost G b x := gramCostOn_nonneg hG b x
+
+/-! ## Rank-one Gram matrices -/
+
+omit [DecidableEq ι] [Fintype σ] in
+lemma gramR_vecMulVec (w : GramIdx ι σ → ℝ) (x y : ι → σ) :
+    gramR (vecMulVec w w) x y
+      = ∑ i, if x i = y i then 0 else w (x, i, false) * w (y, i, true) := gramROn_vecMulVec id w x y
+
+omit [DecidableEq ι] [DecidableEq σ] [Fintype σ] in
+@[simp] lemma gramCost_vecMulVec (w : GramIdx ι σ → ℝ) (b : Bool)
+    (x : ι → σ) :
+    gramCost (vecMulVec w w) b x = ∑ i, w (x, i, b) * w (x, i, b) := gramCostOn_vecMulVec w b x
+
+omit [DecidableEq σ] in
+lemma trace_vecMulVec (w : GramIdx ι σ → ℝ) :
+    (vecMulVec w w).trace = ∑ z, w z * w z := trace_vecMulVec_on w
+
+omit [DecidableEq ι] [DecidableEq σ] [Fintype ι] [Fintype σ] in
+lemma posSemidef_vecMulVec_self (w : GramIdx ι σ → ℝ) [Finite ι] [Finite σ] :
+    (vecMulVec w w).PosSemidef := posSemidef_vecMulVec_self_on w
+
+/-! ## From a dual solution to its Gram matrix -/
+
+variable {K : Type*} [Fintype K] {g : (ι → σ) → O}
+
+/-- The two vector families of a dual solution, packed into a single matrix
+whose rows are indexed by `GramIdx ι σ`. -/
+def dualVec (P : DualPair K g) : Matrix (GramIdx ι σ) K ℝ :=
+  Matrix.of fun z k => if z.2.2 then P.v z.1 z.2.1 k else P.u z.1 z.2.1 k
+
+omit [DecidableEq ι] [Fintype σ] in
+@[simp] lemma dualVec_false (P : DualPair K g) (x : ι → σ) (i : ι) (k : K) :
+    dualVec P (x, i, false) k = P.u x i k := rfl
+
+omit [DecidableEq ι] [Fintype σ] in
+@[simp] lemma dualVec_true (P : DualPair K g) (x : ι → σ) (i : ι) (k : K) :
+    dualVec P (x, i, true) k = P.v x i k := rfl
+
+/-- The Gram matrix of a dual solution. -/
+def gramOfDual (P : DualPair K g) :
+    Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ := dualVec P * (dualVec P)ᴴ
+
+omit [DecidableEq ι] [Fintype σ] in
+lemma gramOfDual_apply (P : DualPair K g) (z w : GramIdx ι σ) :
+    gramOfDual P z w = ∑ k, dualVec P z k * dualVec P w k := by
+  simp [gramOfDual, Matrix.mul_apply]
+
+omit [DecidableEq ι] [Fintype σ] in
+lemma gramOfDual_posSemidef (P : DualPair K g) [Finite σ] : (gramOfDual P).PosSemidef := by
+  classical
+  let := Fintype.ofFinite σ
+  exact Matrix.posSemidef_self_mul_conjTranspose _
+
+omit [DecidableEq ι] [Fintype σ] in
+lemma gramR_gramOfDual (P : DualPair K g) : gramR (gramOfDual P) = dualTarget g := by
+  classical
+  ext x y
+  rw [gramR_apply, dualTarget_apply, ← P.constraint x y]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  by_cases h : x i = y i
+  · simp [h]
+  · simp only [ite_eq_right h]
+    exact gramOfDual_apply P (x, i, false) (y, i, true)
+
+omit [DecidableEq ι] [Fintype σ] in
+lemma gramCost_gramOfDual_false (P : DualPair K g) (x : ι → σ) :
+    gramCost (gramOfDual P) false x = ∑ i, ∑ k, P.u x i k * P.u x i k := by
+  classical
+  exact Finset.sum_congr rfl fun i _ => gramOfDual_apply P (x, i, false) (x, i, false)
+
+omit [DecidableEq ι] [Fintype σ] in
+lemma gramCost_gramOfDual_true (P : DualPair K g) (x : ι → σ) :
+    gramCost (gramOfDual P) true x = ∑ i, ∑ k, P.v x i k * P.v x i k := by
+  classical
+  exact Finset.sum_congr rfl fun i _ => gramOfDual_apply P (x, i, true) (x, i, true)
+
+omit [DecidableEq ι] [Fintype σ] in
+lemma gramCost_gramOfDual_le {P : DualPair K g} {c : ℝ} (h : P.IsCostLe c)
+    (b : Bool) (x : ι → σ) : gramCost (gramOfDual P) b x ≤ c := by
+  classical
+  cases b with
+  | false => rw [gramCost_gramOfDual_false]; exact h.1 x
+  | true => rw [gramCost_gramOfDual_true]; exact h.2 x
+
+/-! ## From a Gram matrix back to a dual solution -/
+
+omit [DecidableEq ι] [Fintype σ] in
+/-- Every positive semidefinite matrix satisfying the dual constraints is the
+Gram matrix of a feasible dual solution of the same cost.  The dimension comes
+out as `Fin m`, which is the shape `advDual` normalises to. -/
+theorem exists_dualPair_of_gram {G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ}
+    (hG : G.PosSemidef) (hR : gramR G = dualTarget g) {c : ℝ}
+    (hc : ∀ b x, gramCost G b x ≤ c) [Finite σ] :
+    ∃ (m : ℕ) (P : DualPair (Fin m) g), P.IsCostLe c := by
+  classical
+  let := Fintype.ofFinite σ
+  obtain ⟨m, P, hP⟩ := exists_dualPairOn_of_gram (read := id) hG hR hc
+  exact ⟨m, P.toTotal, hP⟩
+
+end QuantumQueryComplexity
+
+end SourceDualityGram
+
+
 section SourcePullback
 
 /-!
@@ -2495,7 +2649,7 @@ lemma spread_mul_spread {e : κ → ι} (he : Function.Injective e) (i : ι)
 
 omit [DecidableEq κ] in
 /-- Summing a spread family over `ι` recovers the sum over `κ`. -/
-lemma sum_spread {e : κ → ι} (_he : Function.Injective e) (F : κ → ℝ) :
+lemma sum_spread {e : κ → ι} (F : κ → ℝ) :
     (∑ i : ι, spread e F i) = ∑ j : κ, F j := by
   simp only [spread]
   rw [Finset.sum_comm]
@@ -2541,7 +2695,7 @@ noncomputable def pullback (he : Function.Injective e) (P : DualPair K f) :
       · push Not at h
         rw [spread_eq_zero h, spread_eq_zero h, ite_self]
     simp only [hmask]
-    rw [sum_spread he]
+    rw [sum_spread]
     exact P.constraint (fun j => x (e j)) (fun j => y (e j))
 
 omit [DecidableEq κ] in
@@ -2564,7 +2718,7 @@ theorem pullback_isCostLe {c : ℝ} (he : Function.Injective e) (P : DualPair K 
       rw [Finset.sum_comm]
       exact Finset.sum_congr rfl fun j _ => by rw [Finset.mul_sum]
     simp only [h]
-    rw [sum_spread he]
+    rw [sum_spread]
     exact hP.1 _
   · intro y
     have h : ∀ i : ι, (∑ k : K, (P.pullback he).v y i k * (P.pullback he).v y i k)
@@ -2580,7 +2734,7 @@ theorem pullback_isCostLe {c : ℝ} (he : Function.Injective e) (P : DualPair K 
       rw [Finset.sum_comm]
       exact Finset.sum_congr rfl fun j _ => by rw [Finset.mul_sum]
     simp only [h]
-    rw [sum_spread he]
+    rw [sum_spread]
     exact hP.2 _
 
 end DualPair
@@ -2753,7 +2907,7 @@ noncomputable def embedDim {K K' : Type*} [Fintype K]
       intro i
       rw [Finset.sum_congr rfl fun k' (_ : k' ∈ Finset.univ) =>
         spread_mul_spread hm k' (fun k => P.u x i k) (fun k => P.v y i k)]
-      exact sum_spread hm _
+      exact sum_spread _
     simp only [hpt]
     exact P.constraint x y
 
@@ -2769,7 +2923,7 @@ theorem embedDim_isCostLe {K K' : Type*} [Fintype K]
     intro U x i
     rw [Finset.sum_congr rfl fun k' (_ : k' ∈ Finset.univ) =>
       spread_mul_spread hm k' (fun k => U x i k) (fun k => U x i k)]
-    exact sum_spread hm _
+    exact sum_spread _
   refine ⟨fun x => ?_, fun y => ?_⟩
   · change (∑ i : ι, ∑ k' : K', spread m (fun k => P.u x i k) k'
       * spread m (fun k => P.u x i k) k') ≤ c
@@ -3101,38 +3255,8 @@ end QuantumQueryComplexity
 
 end SourceCompositionEigen
 
-section SourceDualityCompact
-
-/-!
-# The two convex sets of the separation argument
-
-The dual program is separated from its target inside the finite-dimensional
-coordinate space `DualOmega ι σ → ℝ`, whose coordinates are indexed by a pair
-of inputs (the constraint `gramR`) or by an input together with a side tag (the
-two costs `gramCost`).  The map assembling those coordinates from a Gram matrix
-is `gramL`.
-
-Two sets live there:
-
-* `gramImage T`, the image of the positive semidefinite matrices of trace at
-  most `T` — convex because the positive semidefinite cone is, and **compact**
-  because that truncated cone is closed and bounded in a finite-dimensional
-  space (`‖G‖ ≤ G.trace` for positive semidefinite `G`);
-* `dualBox g c`, the points whose constraint block is the dual target and whose
-  cost block lies in `[0, c]` — convex and closed.
-
-Truncating the cone at a finite trace is what makes `gramImage` compact, and
-hence what lets `geometric_hahn_banach_compact_closed` apply without any
-closedness-of-image argument; the truncation is harmless because a dual
-solution of cost at most `c` has trace at most `2 c · card (ι → σ)`.
-
-This section also records `apply_eq_sum_single`, which reads the coefficients of a
-continuous linear functional off its values on the standard basis.
--/
-
-
+section DualityTraceBounds
 namespace QuantumQueryComplexity
-
 open scoped Matrix Matrix.Norms.L2Operator
 open Matrix
 
@@ -3199,101 +3323,128 @@ lemma rankOne_lt_of_trace_bound {n : Type*} [Fintype n]
   linarith
 
 
+end QuantumQueryComplexity
+end DualityTraceBounds
+
+section SourceDualityCompactOn
+
+/-!
+# The two convex sets of the separation argument, on a promise domain
+
+The shared implementation for promise and total inputs: the ambient coordinate space is
+`DualOmegaOn X → ℝ`, the compact set is the image of the truncated positive
+semidefinite cone over `GramIdxOn X ι`, and the closed set is the box around
+the promise dual target.  `norm_le_trace_of_posSemidef` and
+`apply_eq_sum_single` are generic and imported, not re-proved.
+-/
+
+
+namespace QuantumQueryComplexity
+
+open scoped Matrix Matrix.Norms.L2Operator
+open Matrix
+
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 variable {σ : Type*} [Fintype σ] [DecidableEq σ]
+variable {X : Type*} [Fintype X] [DecidableEq X]
 
-/-- The coordinate index of the ambient space of the separation argument: a
-pair of inputs for each constraint, and an input with a side tag for each cost
-variable. -/
-abbrev DualOmega (ι σ : Type*) : Type _ := ((ι → σ) × (ι → σ)) ⊕ ((ι → σ) × Bool)
+/-- The coordinate index of the ambient space: a pair of promise inputs for
+each constraint, and an input with a side tag for each cost variable. -/
+abbrev DualOmegaOn (X : Type*) : Type _ := (X × X) ⊕ (X × Bool)
 
-/-- The affine data of the dual program, read off a Gram matrix. -/
-def gramL (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) : DualOmega ι σ → ℝ :=
-  Sum.elim (fun q => gramR G q.1 q.2) (fun q => gramCost G q.2 q.1)
+/-- The affine data of the promise dual program, read off a Gram matrix. -/
+def gramLOn (read : X → ι → σ)
+    (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) : DualOmegaOn X → ℝ :=
+  Sum.elim (fun q => gramROn read G q.1 q.2) (fun q => gramCostOn G q.2 q.1)
 
-omit [DecidableEq ι] [Fintype σ] in
-@[simp] lemma gramL_inl (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ)
-    (x y : ι → σ) : gramL G (Sum.inl (x, y)) = gramR G x y := rfl
+omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
+@[simp] lemma gramLOn_inl (read : X → ι → σ)
+    (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) (x y : X) :
+    gramLOn read G (Sum.inl (x, y)) = gramROn read G x y := rfl
 
-omit [DecidableEq ι] [Fintype σ] in
-@[simp] lemma gramL_inr (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ)
-    (x : ι → σ) (b : Bool) : gramL G (Sum.inr (x, b)) = gramCost G b x := rfl
+omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
+@[simp] lemma gramLOn_inr (read : X → ι → σ)
+    (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) (x : X) (b : Bool) :
+    gramLOn read G (Sum.inr (x, b)) = gramCostOn G b x := rfl
 
-/-- `gramL` as a linear map. -/
-def gramLₗ : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ →ₗ[ℝ] (DualOmega ι σ → ℝ) where
-  toFun := gramL
+/-- `gramLOn` as a linear map. -/
+def gramLOnₗ (read : X → ι → σ) :
+    Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ →ₗ[ℝ] (DualOmegaOn X → ℝ) where
+  toFun := gramLOn read
   map_add' G H := by
     funext z
     rcases z with ⟨x, y⟩ | ⟨x, b⟩
-    · simpa using congrFun₂ (gramR_add G H) x y
-    · simpa using gramCost_add G H b x
+    · simpa using congrFun₂ (gramROn_add read G H) x y
+    · simpa using gramCostOn_add G H b x
   map_smul' c G := by
     funext z
     rcases z with ⟨x, y⟩ | ⟨x, b⟩
-    · simpa using congrFun₂ (gramR_smul c G) x y
-    · simpa using gramCost_smul c G b x
+    · simpa using congrFun₂ (gramROn_smul read c G) x y
+    · simpa using gramCostOn_smul c G b x
 
-omit [DecidableEq ι] [Fintype σ] in
-@[simp] lemma gramLₗ_apply (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) :
-    gramLₗ G = gramL G := rfl
+omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
+@[simp] lemma gramLOnₗ_apply (read : X → ι → σ)
+    (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) :
+    gramLOnₗ read G = gramLOn read G := rfl
 
-/-- Entry evaluation, as a linear map (hence continuous, the space being
-finite-dimensional). -/
-private def entryₗ (z z' : GramIdx ι σ) :
-    Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ →ₗ[ℝ] ℝ where
+private def entryOnₗ (z z' : GramIdxOn X ι) :
+    Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ →ₗ[ℝ] ℝ where
   toFun G := G z z'
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
-omit [DecidableEq ι] [DecidableEq σ] [Fintype ι] [Fintype σ] in
-lemma continuous_matrixEntry (z z' : GramIdx ι σ) [Finite ι] [Finite σ] :
-    Continuous fun G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ => G z z' := by
+omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype ι] in
+lemma continuous_matrixEntryOn (z z' : GramIdxOn X ι) [Finite X] [Finite ι] :
+    Continuous fun G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ => G z z' := by
   classical
+  let := Fintype.ofFinite X
   let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
-  exact (entryₗ z z').continuous_of_finiteDimensional
+  exact (entryOnₗ z z').continuous_of_finiteDimensional
 
-/-- The trace, as a linear map. -/
-private def traceₗ : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ →ₗ[ℝ] ℝ where
+private def traceOnₗ :
+    Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ →ₗ[ℝ] ℝ where
   toFun G := G.trace
   map_add' := Matrix.trace_add
   map_smul' c G := by simp
 
-omit [DecidableEq σ] in
-lemma continuous_matrixTrace :
-    Continuous fun G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ => G.trace :=
-  traceₗ.continuous_of_finiteDimensional
+omit [DecidableEq X] [DecidableEq ι] in
+lemma continuous_matrixTraceOn :
+    Continuous fun G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ => G.trace :=
+  traceOnₗ.continuous_of_finiteDimensional
 
-omit [DecidableEq ι] [Fintype σ] in
-lemma continuous_gramL [Finite σ] :
-    Continuous (gramL : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ → DualOmega ι σ → ℝ) := by
+omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
+lemma continuous_gramLOn (read : X → ι → σ) [Finite X] :
+    Continuous
+      (gramLOn read :
+        Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ → DualOmegaOn X → ℝ) := by
   classical
-  let := Fintype.ofFinite σ
-  exact gramLₗ.continuous_of_finiteDimensional
+  let := Fintype.ofFinite X
+  exact (gramLOnₗ read).continuous_of_finiteDimensional
 
 /-- Positive semidefinite matrices of trace at most `T`. -/
-def psdBall (ι σ : Type*) [Fintype ι] [DecidableEq ι] [Fintype σ]
-    (T : ℝ) : Set (Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) :=
+def psdBallOn (X ι : Type*) [Fintype X] [Fintype ι]
+    (T : ℝ) : Set (Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) :=
   {G | G.PosSemidef ∧ G.trace ≤ T}
 
-omit [DecidableEq σ] in
-lemma convex_psdBall (T : ℝ) : Convex ℝ (psdBall ι σ T) := by
+omit [DecidableEq X] [DecidableEq ι] in
+lemma convex_psdBallOn (T : ℝ) : Convex ℝ (psdBallOn X ι T) := by
   rintro G ⟨hG, hGT⟩ H ⟨hH, hHT⟩ a b ha hb hab
   refine ⟨(hG.smul ha).add (hH.smul hb), ?_⟩
-  rw [Matrix.trace_add, Matrix.trace_smul, Matrix.trace_smul, smul_eq_mul, smul_eq_mul]
+  rw [Matrix.trace_add, Matrix.trace_smul, Matrix.trace_smul, smul_eq_mul,
+    smul_eq_mul]
   have h1 : a * G.trace ≤ a * T := mul_le_mul_of_nonneg_left hGT ha
   have h2 : b * H.trace ≤ b * T := mul_le_mul_of_nonneg_left hHT hb
   have h3 : a * T + b * T = T := by rw [← add_mul, hab, one_mul]
   linarith
 
-omit [DecidableEq σ] in
-lemma isClosed_psdBall (T : ℝ) : IsClosed (psdBall ι σ T) := by
-  have hset : psdBall ι σ T =
-      (⋂ (z : GramIdx ι σ) (z' : GramIdx ι σ), {G | G z' z = G z z'}) ∩
-        ((⋂ v : GramIdx ι σ → ℝ, {G | 0 ≤ v ⬝ᵥ G *ᵥ v}) ∩
+omit [DecidableEq X] [DecidableEq ι] in
+lemma isClosed_psdBallOn (T : ℝ) : IsClosed (psdBallOn X ι T) := by
+  have hset : psdBallOn X ι T =
+      (⋂ (z : GramIdxOn X ι) (z' : GramIdxOn X ι), {G | G z' z = G z z'}) ∩
+        ((⋂ v : GramIdxOn X ι → ℝ, {G | 0 ≤ v ⬝ᵥ G *ᵥ v}) ∩
           {G | G.trace ≤ T}) := by
     ext G
-    simp only [psdBall, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter]
+    simp only [psdBallOn, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter]
     constructor
     · rintro ⟨hG, hT⟩
       refine ⟨fun z z' => ?_, fun v => ?_, hT⟩
@@ -3309,22 +3460,23 @@ lemma isClosed_psdBall (T : ℝ) : IsClosed (psdBall ι σ T) := by
   rw [hset]
   refine IsClosed.inter (isClosed_iInter fun z => isClosed_iInter fun z' => ?_)
     (IsClosed.inter (isClosed_iInter fun v => ?_) ?_)
-  · exact isClosed_eq (continuous_matrixEntry z' z) (continuous_matrixEntry z z')
+  · exact isClosed_eq (continuous_matrixEntryOn z' z) (continuous_matrixEntryOn z z')
   · refine isClosed_le continuous_const ?_
-    have : (fun G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ => v ⬝ᵥ G *ᵥ v)
+    have : (fun G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ => v ⬝ᵥ G *ᵥ v)
         = fun G => ∑ z, ∑ z', v z * G z z' * v z' := by
       funext G; exact dotProduct_mulVec_eq_sum G v v
     rw [this]
     exact continuous_finsetSum _ fun z _ => continuous_finsetSum _ fun z' _ =>
-      ((continuous_const.mul (continuous_matrixEntry z z')).mul continuous_const)
-  · exact isClosed_le continuous_matrixTrace continuous_const
+      ((continuous_const.mul (continuous_matrixEntryOn z z')).mul
+        continuous_const)
+  · exact isClosed_le continuous_matrixTraceOn continuous_const
 
-omit [DecidableEq σ] in
-lemma isCompact_psdBall (T : ℝ) : IsCompact (psdBall ι σ T) := by
+omit [DecidableEq X] [DecidableEq ι] in
+lemma isCompact_psdBallOn (T : ℝ) : IsCompact (psdBallOn X ι T) := by
   classical
-  refine Metric.isCompact_of_isClosed_isBounded (isClosed_psdBall T) ?_
-  have hsub : psdBall ι σ T ⊆
-      Metric.closedBall (0 : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) T := by
+  refine Metric.isCompact_of_isClosed_isBounded (isClosed_psdBallOn T) ?_
+  have hsub : psdBallOn X ι T ⊆
+      Metric.closedBall (0 : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) T := by
     rintro G ⟨hG, hGT⟩
     simp only [Metric.mem_closedBall, dist_zero_right]
     exact (norm_le_trace_of_posSemidef hG).trans hGT
@@ -3332,36 +3484,50 @@ lemma isCompact_psdBall (T : ℝ) : IsCompact (psdBall ι σ T) := by
 
 /-! ## The two sets -/
 
-/-- The image of the truncated positive semidefinite cone: the affine data
-achievable by dual solutions of total weight at most `T`. -/
-def gramImage (ι σ : Type*) [Fintype ι] [DecidableEq ι] [Fintype σ] [DecidableEq σ]
-    (T : ℝ) : Set (DualOmega ι σ → ℝ) := gramL '' psdBall ι σ T
+/-- The image of the truncated positive semidefinite cone. -/
+def gramImageOn (read : X → ι → σ) (T : ℝ) : Set (DualOmegaOn X → ℝ) :=
+  gramLOn read '' psdBallOn X ι T
 
-lemma convex_gramImage (T : ℝ) : Convex ℝ (gramImage ι σ T) :=
-  (convex_psdBall T).linear_image gramLₗ
+omit [Fintype σ] in
+omit [DecidableEq X] [DecidableEq ι] in
+lemma convex_gramImageOn (read : X → ι → σ) (T : ℝ) :
+    Convex ℝ (gramImageOn read T) := by
+  classical
+  exact (convex_psdBallOn T).linear_image (gramLOnₗ read)
 
-lemma isCompact_gramImage (T : ℝ) : IsCompact (gramImage ι σ T) :=
-  (isCompact_psdBall T).image continuous_gramL
+omit [Fintype σ] in
+omit [DecidableEq X] [DecidableEq ι] in
+lemma isCompact_gramImageOn (read : X → ι → σ) (T : ℝ) :
+    IsCompact (gramImageOn read T) := by
+  classical
+  exact (isCompact_psdBallOn T).image (continuous_gramLOn read)
 
-lemma zero_mem_gramImage {T : ℝ} (hT : 0 ≤ T) : (0 : DualOmega ι σ → ℝ) ∈ gramImage ι σ T := by
+omit [Fintype σ] in
+omit [DecidableEq X] [DecidableEq ι] in
+lemma zero_mem_gramImageOn {read : X → ι → σ} {T : ℝ} (hT : 0 ≤ T) :
+    (0 : DualOmegaOn X → ℝ) ∈ gramImageOn read T := by
   refine ⟨0, ⟨Matrix.PosSemidef.zero, by simpa using hT⟩, ?_⟩
   funext z
   rcases z with ⟨x, y⟩ | ⟨x, b⟩
-  · simp [gramR]
-  · simp [gramCost]
+  · simp [gramROn]
+  · simp [gramCostOn]
 
-lemma mem_gramImage_vecMulVec {T : ℝ} (w : GramIdx ι σ → ℝ)
-    (hw : ∑ z, w z * w z ≤ T) : gramL (vecMulVec w w) ∈ gramImage ι σ T :=
-  ⟨vecMulVec w w, ⟨posSemidef_vecMulVec_self w, by rwa [trace_vecMulVec]⟩, rfl⟩
+omit [Fintype σ] in
+omit [DecidableEq X] [DecidableEq ι] in
+lemma mem_gramImageOn_vecMulVec {read : X → ι → σ} {T : ℝ}
+    (w : GramIdxOn X ι → ℝ) (hw : ∑ z, w z * w z ≤ T) :
+    gramLOn read (vecMulVec w w) ∈ gramImageOn read T :=
+  ⟨vecMulVec w w, ⟨posSemidef_vecMulVec_self_on w,
+    by rwa [trace_vecMulVec_on]⟩, rfl⟩
 
-/-- The target of the dual program: constraint block equal to `dualTarget g`,
-cost block in `[0, c]`. -/
-def dualBox (g : (ι → σ) → Bool) (c : ℝ) : Set (DualOmega ι σ → ℝ) :=
-  {z | (∀ x y, z (Sum.inl (x, y)) = dualTarget g x y) ∧
-    ∀ q : (ι → σ) × Bool, 0 ≤ z (Sum.inr q) ∧ z (Sum.inr q) ≤ c}
+/-- The target of the promise dual program: constraint block equal to
+`dualTargetOn f`, cost block in `[0, c]`. -/
+def dualBoxOn (f : X → Bool) (c : ℝ) : Set (DualOmegaOn X → ℝ) :=
+  {z | (∀ x y, z (Sum.inl (x, y)) = dualTargetOn f x y) ∧
+    ∀ q : X × Bool, 0 ≤ z (Sum.inr q) ∧ z (Sum.inr q) ≤ c}
 
-omit [DecidableEq ι] [DecidableEq σ] [Fintype ι] [Fintype σ] in
-lemma convex_dualBox (g : (ι → σ) → Bool) (c : ℝ) : Convex ℝ (dualBox g c) := by
+omit [DecidableEq X] [Fintype X] in
+lemma convex_dualBoxOn (f : X → Bool) (c : ℝ) : Convex ℝ (dualBoxOn f c) := by
   rintro z ⟨hz1, hz2⟩ z' ⟨hz1', hz2'⟩ a b ha hb hab
   constructor
   · intro x y
@@ -3375,16 +3541,16 @@ lemma convex_dualBox (g : (ι → σ) → Bool) (c : ℝ) : Convex ℝ (dualBox 
       positivity
     · nlinarith [(hz2 q).2, (hz2' q).2, (hz2 q).1, (hz2' q).1]
 
-omit [DecidableEq ι] [DecidableEq σ] [Fintype ι] [Fintype σ] in
-lemma isClosed_dualBox (g : (ι → σ) → Bool) (c : ℝ) : IsClosed (dualBox g c) := by
-  have hset : dualBox g c =
-      (⋂ (x : ι → σ) (y : ι → σ), {z : DualOmega ι σ → ℝ |
-          z (Sum.inl (x, y)) = dualTarget g x y}) ∩
-        ⋂ q : (ι → σ) × Bool,
-          ({z : DualOmega ι σ → ℝ | 0 ≤ z (Sum.inr q)} ∩
-            {z : DualOmega ι σ → ℝ | z (Sum.inr q) ≤ c}) := by
+omit [DecidableEq X] [Fintype X] in
+lemma isClosed_dualBoxOn (f : X → Bool) (c : ℝ) : IsClosed (dualBoxOn f c) := by
+  have hset : dualBoxOn f c =
+      (⋂ (x : X) (y : X), {z : DualOmegaOn X → ℝ |
+          z (Sum.inl (x, y)) = dualTargetOn f x y}) ∩
+        ⋂ q : X × Bool,
+          ({z : DualOmegaOn X → ℝ | 0 ≤ z (Sum.inr q)} ∩
+            {z : DualOmegaOn X → ℝ | z (Sum.inr q) ≤ c}) := by
     ext z
-    simp only [dualBox, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter]
+    simp only [dualBoxOn, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter]
   rw [hset]
   refine IsClosed.inter (isClosed_iInter fun x => isClosed_iInter fun y => ?_)
     (isClosed_iInter fun q => IsClosed.inter ?_ ?_)
@@ -3392,14 +3558,144 @@ lemma isClosed_dualBox (g : (ι → σ) → Bool) (c : ℝ) : IsClosed (dualBox 
   · exact isClosed_le continuous_const (continuous_apply _)
   · exact isClosed_le (continuous_apply _) continuous_const
 
+/-- The corner of the box. -/
+def dualCornerOn (f : X → Bool) (c : ℝ) : DualOmegaOn X → ℝ :=
+  Sum.elim (fun q => dualTargetOn f q.1 q.2) (fun _ => c)
+
+omit [DecidableEq X] [Fintype X] in
+lemma dualCornerOn_mem {f : X → Bool} {c : ℝ} (hc : 0 ≤ c) :
+    dualCornerOn f c ∈ dualBoxOn f c :=
+  ⟨fun _ _ => rfl, fun _ => ⟨hc, le_refl c⟩⟩
+
+end QuantumQueryComplexity
+
+end SourceDualityCompactOn
+
+section SourceDualityCompact
+
+/-!
+# The two convex sets of the separation argument
+
+The dual program is separated from its target inside the finite-dimensional
+coordinate space `DualOmega ι σ → ℝ`, whose coordinates are indexed by a pair
+of inputs (the constraint `gramR`) or by an input together with a side tag (the
+two costs `gramCost`).  The map assembling those coordinates from a Gram matrix
+is `gramL`.
+
+Two sets live there:
+
+* `gramImage T`, the image of the positive semidefinite matrices of trace at
+  most `T` — convex because the positive semidefinite cone is, and **compact**
+  because that truncated cone is closed and bounded in a finite-dimensional
+  space (`‖G‖ ≤ G.trace` for positive semidefinite `G`);
+* `dualBox g c`, the points whose constraint block is the dual target and whose
+  cost block lies in `[0, c]` — convex and closed.
+
+Truncating the cone at a finite trace is what makes `gramImage` compact, and
+hence what lets `geometric_hahn_banach_compact_closed` apply without any
+closedness-of-image argument; the truncation is harmless because a dual
+solution of cost at most `c` has trace at most `2 c · card (ι → σ)`.
+
+This section also records `apply_eq_sum_single`, which reads the coefficients of a
+continuous linear functional off its values on the standard basis.
+-/
+
+
+namespace QuantumQueryComplexity
+
+open scoped Matrix Matrix.Norms.L2Operator
+open Matrix
+
+variable {ι : Type*} [Fintype ι] [DecidableEq ι]
+variable {σ : Type*} [Fintype σ] [DecidableEq σ]
+
+/-- The coordinate index of the ambient space of the separation argument: a
+pair of inputs for each constraint, and an input with a side tag for each cost
+variable. -/
+abbrev DualOmega (ι σ : Type*) : Type _ := DualOmegaOn (ι → σ)
+
+/-- The affine data of the dual program, read off a Gram matrix. -/
+def gramL (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) : DualOmega ι σ → ℝ := gramLOn id G
+
+omit [DecidableEq ι] [Fintype σ] in
+@[simp] lemma gramL_inl (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ)
+    (x y : ι → σ) : gramL G (Sum.inl (x, y)) = gramR G x y := rfl
+
+omit [DecidableEq ι] [Fintype σ] in
+@[simp] lemma gramL_inr (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ)
+    (x : ι → σ) (b : Bool) : gramL G (Sum.inr (x, b)) = gramCost G b x := rfl
+
+/-- `gramL` as a linear map. -/
+def gramLₗ : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ →ₗ[ℝ] (DualOmega ι σ → ℝ) := gramLOnₗ id
+
+omit [DecidableEq ι] [Fintype σ] in
+@[simp] lemma gramLₗ_apply (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) :
+    gramLₗ G = gramL G := rfl
+
+omit [DecidableEq ι] [DecidableEq σ] [Fintype ι] [Fintype σ] in
+lemma continuous_matrixEntry (z z' : GramIdx ι σ) [Finite ι] [Finite σ] :
+    Continuous fun G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ => G z z' :=
+  continuous_matrixEntryOn z z'
+
+omit [DecidableEq σ] in
+lemma continuous_matrixTrace :
+    Continuous fun G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ => G.trace := continuous_matrixTraceOn
+
+omit [DecidableEq ι] [Fintype σ] in
+lemma continuous_gramL [Finite σ] :
+    Continuous (gramL : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ → DualOmega ι σ → ℝ) := by
+  classical
+  let := Fintype.ofFinite σ
+  exact continuous_gramLOn id
+
+/-- Positive semidefinite matrices of trace at most `T`. -/
+def psdBall (ι σ : Type*) [Fintype ι] [DecidableEq ι] [Fintype σ]
+    (T : ℝ) : Set (Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) := psdBallOn (ι → σ) ι T
+
+omit [DecidableEq σ] in
+lemma convex_psdBall (T : ℝ) : Convex ℝ (psdBall ι σ T) := convex_psdBallOn T
+
+omit [DecidableEq σ] in
+lemma isClosed_psdBall (T : ℝ) : IsClosed (psdBall ι σ T) := isClosed_psdBallOn T
+
+omit [DecidableEq σ] in
+lemma isCompact_psdBall (T : ℝ) : IsCompact (psdBall ι σ T) := isCompact_psdBallOn T
+
+/-! ## The two sets -/
+
+/-- The image of the truncated positive semidefinite cone: the affine data
+achievable by dual solutions of total weight at most `T`. -/
+def gramImage (ι σ : Type*) [Fintype ι] [DecidableEq ι] [Fintype σ] [DecidableEq σ]
+    (T : ℝ) : Set (DualOmega ι σ → ℝ) := gramImageOn (id : (ι → σ) → ι → σ) T
+
+lemma convex_gramImage (T : ℝ) : Convex ℝ (gramImage ι σ T) := convex_gramImageOn id T
+
+lemma isCompact_gramImage (T : ℝ) : IsCompact (gramImage ι σ T) := isCompact_gramImageOn id T
+
+lemma zero_mem_gramImage {T : ℝ} (hT : 0 ≤ T) : (0 : DualOmega ι σ → ℝ) ∈ gramImage ι σ T :=
+  zero_mem_gramImageOn hT
+
+lemma mem_gramImage_vecMulVec {T : ℝ} (w : GramIdx ι σ → ℝ)
+    (hw : ∑ z, w z * w z ≤ T) : gramL (vecMulVec w w) ∈ gramImage ι σ T :=
+  mem_gramImageOn_vecMulVec w hw
+
+/-- The target of the dual program: constraint block equal to `dualTarget g`,
+cost block in `[0, c]`. -/
+def dualBox (g : (ι → σ) → Bool) (c : ℝ) : Set (DualOmega ι σ → ℝ) := dualBoxOn g c
+
+omit [DecidableEq ι] [DecidableEq σ] [Fintype ι] [Fintype σ] in
+lemma convex_dualBox (g : (ι → σ) → Bool) (c : ℝ) : Convex ℝ (dualBox g c) := convex_dualBoxOn g c
+
+omit [DecidableEq ι] [DecidableEq σ] [Fintype ι] [Fintype σ] in
+lemma isClosed_dualBox (g : (ι → σ) → Bool) (c : ℝ) : IsClosed (dualBox g c) :=
+  isClosed_dualBoxOn g c
+
 /-- The corner of the box: the dual target with every cost variable at `c`. -/
-def dualCorner (g : (ι → σ) → Bool) (c : ℝ) : DualOmega ι σ → ℝ :=
-  Sum.elim (fun q => dualTarget g q.1 q.2) (fun _ => c)
+def dualCorner (g : (ι → σ) → Bool) (c : ℝ) : DualOmega ι σ → ℝ := dualCornerOn g c
 
 omit [DecidableEq ι] [DecidableEq σ] [Fintype ι] [Fintype σ] in
 lemma dualCorner_mem {g : (ι → σ) → Bool} {c : ℝ} (hc : 0 ≤ c) :
-    dualCorner g c ∈ dualBox g c :=
-  ⟨fun _ _ => rfl, fun _ => ⟨hc, le_refl c⟩⟩
+    dualCorner g c ∈ dualBox g c := dualCornerOn_mem hc
 
 /-! ## Reading off the coefficients of a functional -/
 
@@ -3658,8 +3954,7 @@ theorem norm_div_le_advPMOn (hdet : ∀ x y, read x = read y → f x = f y)
 
 omit [DecidableEq ι] [Fintype ι] in
 /-- The ε-accessor, for arguments that need a witness beating a given value. -/
-theorem exists_lt_of_lt_advPMOn (_hdet : ∀ x y, read x = read y → f x = f y)
-    {c : ℝ} (h : c < advPMOn read f) :
+theorem exists_lt_of_lt_advPMOn {c : ℝ} (h : c < advPMOn read f) :
     ∃ Γ, IsAdvMatrixOn f Γ ∧ (∀ i, ‖Γ ⊙ advDOn read i‖ ≤ 1) ∧ c < ‖Γ‖ := by
   classical
   obtain ⟨r, hr, hcr⟩ := exists_lt_of_lt_csSup (advPMOn_set_nonempty read f) h
@@ -3890,185 +4185,6 @@ end QuantumQueryComplexity
 
 end SourceCompositionSpan
 
-section SourceDualityGramOn
-
-/-!
-# Gram encoding of the dual program, on a promise domain
-
-The promise-domain mirror of `SourceDualityGram`: the input space is an
-abstract finite `X` read through `read : X → ι → σ`, the constraint mask is
-`read x i = read y i`, and the target is `[f x ≠ f y]`.  Everything else —
-the convexification by passing to Gram matrices, the rank-one decomposition
-back to a `DualPairOn` — is the same change of variables.
-
-The total case is the instance `X = ι → σ`, `read = id`; it is kept as the
-separate `SourceDualityGram` because its statements (`DualPair`, `advPM`) are
-pinned by downstream consumers.
--/
-
-
-namespace QuantumQueryComplexity
-
-open scoped Matrix Matrix.Norms.L2Operator
-open Matrix
-
-variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-variable {σ : Type*} [Fintype σ] [DecidableEq σ]
-variable {X : Type*} [Fintype X] [DecidableEq X]
-variable {O : Type*} [DecidableEq O]
-
-/-- Index type for the Gram matrix of a promise dual solution: `(x, i, false)`
-indexes the vector `u x i` and `(x, i, true)` indexes `v x i`. -/
-abbrev GramIdxOn (X ι : Type*) : Type _ := X × ι × Bool
-
-/-! ## The affine data of the promise dual program -/
-
-/-- The right-hand side of the dual feasibility constraint on the promise
-domain: `1` on pairs with distinct values, `0` otherwise. -/
-def dualTargetOn (f : X → O) : Matrix X X ℝ :=
-  Matrix.of fun x y => if f x = f y then 0 else 1
-
-omit [DecidableEq X] [Fintype X] in
-@[simp] lemma dualTargetOn_apply (f : X → O) (x y : X) :
-    dualTargetOn f x y = if f x = f y then 0 else 1 := rfl
-
-omit [DecidableEq X] [Fintype X] in
-lemma dualTargetOn_comm (f : X → O) (x y : X) :
-    dualTargetOn f y x = dualTargetOn f x y := by
-  simp [eq_comm]
-
-/-- The left-hand side of the dual feasibility constraint, as a function of
-the Gram matrix, with the mask read through `read`. -/
-def gramROn (read : X → ι → σ) (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) :
-    Matrix X X ℝ :=
-  Matrix.of fun x y =>
-    ∑ i, if read x i = read y i then 0 else G (x, i, false) (y, i, true)
-
-omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
-@[simp] lemma gramROn_apply (read : X → ι → σ)
-    (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) (x y : X) :
-    gramROn read G x y
-      = ∑ i, if read x i = read y i then 0 else G (x, i, false) (y, i, true) :=
-  rfl
-
-/-- The dual objective, as a function of the Gram matrix. -/
-def gramCostOn (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) (b : Bool)
-    (x : X) : ℝ :=
-  ∑ i, G (x, i, b) (x, i, b)
-
-/-! ### Linearity -/
-
-omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
-lemma gramROn_add (read : X → ι → σ)
-    (G H : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) :
-    gramROn read (G + H) = gramROn read G + gramROn read H := by
-  ext x y
-  simp only [gramROn_apply, Matrix.add_apply, ← Finset.sum_add_distrib]
-  exact Finset.sum_congr rfl fun i _ => by
-    by_cases h : read x i = read y i <;> simp [h]
-
-omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
-lemma gramROn_smul (read : X → ι → σ) (c : ℝ)
-    (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) :
-    gramROn read (c • G) = c • gramROn read G := by
-  ext x y
-  simp only [gramROn_apply, Matrix.smul_apply, smul_eq_mul, Finset.mul_sum]
-  exact Finset.sum_congr rfl fun i _ => by
-    by_cases h : read x i = read y i <;> simp [h]
-
-omit [DecidableEq X] [DecidableEq ι] [Fintype X] in
-lemma gramCostOn_add (G H : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ)
-    (b : Bool) (x : X) :
-    gramCostOn (G + H) b x = gramCostOn G b x + gramCostOn H b x := by
-  simp [gramCostOn, Finset.sum_add_distrib]
-
-omit [DecidableEq X] [DecidableEq ι] [Fintype X] in
-lemma gramCostOn_smul (c : ℝ) (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ)
-    (b : Bool) (x : X) : gramCostOn (c • G) b x = c * gramCostOn G b x := by
-  simp [gramCostOn, Finset.mul_sum]
-
-omit [DecidableEq X] [DecidableEq ι] [Fintype X] in
-/-- A positive semidefinite Gram matrix has nonnegative costs. -/
-lemma gramCostOn_nonneg {G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ}
-    (hG : G.PosSemidef) (b : Bool) (x : X) : 0 ≤ gramCostOn G b x :=
-  Finset.sum_nonneg fun _ _ => hG.diag_nonneg
-
-/-! ## Rank-one Gram matrices -/
-
-omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
-lemma gramROn_vecMulVec (read : X → ι → σ) (w : GramIdxOn X ι → ℝ)
-    (x y : X) :
-    gramROn read (vecMulVec w w) x y
-      = ∑ i, if read x i = read y i then 0
-          else w (x, i, false) * w (y, i, true) := by
-  simp [gramROn, vecMulVec_apply]
-
-omit [DecidableEq X] [DecidableEq ι] [Fintype X] in
-@[simp] lemma gramCostOn_vecMulVec (w : GramIdxOn X ι → ℝ) (b : Bool)
-    (x : X) :
-    gramCostOn (vecMulVec w w) b x = ∑ i, w (x, i, b) * w (x, i, b) := by
-  simp [gramCostOn, vecMulVec_apply]
-
-omit [DecidableEq X] [DecidableEq ι] in
-lemma trace_vecMulVec_on (w : GramIdxOn X ι → ℝ) :
-    (vecMulVec w w).trace = ∑ z, w z * w z := by
-  simp [Matrix.trace, vecMulVec_apply]
-
-omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype ι] in
-lemma posSemidef_vecMulVec_self_on (w : GramIdxOn X ι → ℝ) [Finite X] [Finite ι] :
-    (vecMulVec w w).PosSemidef := by
-  classical
-  let := Fintype.ofFinite X
-  let := Fintype.ofFinite ι
-  have h : vecMulVec w w
-      = (Matrix.of fun (z : GramIdxOn X ι) (_ : Unit) => w z) *
-        (Matrix.of fun (z : GramIdxOn X ι) (_ : Unit) => w z)ᴴ := by
-    ext z z'
-    simp [Matrix.mul_apply, vecMulVec_apply]
-  rw [h]
-  exact Matrix.posSemidef_self_mul_conjTranspose _
-
-/-! ## From a Gram matrix to a dual solution -/
-
-variable {read : X → ι → σ} {f : X → O}
-
-omit [DecidableEq X] [DecidableEq ι] [Fintype σ] in
-/-- Every positive semidefinite matrix satisfying the promise dual constraints
-is the Gram matrix of a feasible `DualPairOn` of the same cost. -/
-theorem exists_dualPairOn_of_gram
-    {G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ}
-    (hG : G.PosSemidef) (hR : gramROn read G = dualTargetOn f) {c : ℝ}
-    (hc : ∀ b x, gramCostOn G b x ≤ c) :
-    ∃ (m : ℕ) (P : DualPairOn read (Fin m) f), P.IsCostLe c := by
-  obtain ⟨m, w, hw⟩ := Matrix.posSemidef_iff_eq_sum_vecMulVec.mp hG
-  have hentry : ∀ z z' : GramIdxOn X ι, G z z' = ∑ k, w k z * w k z' := by
-    intro z z'
-    rw [hw]
-    simp [Matrix.sum_apply, vecMulVec_apply]
-  refine ⟨m, { u := fun x i k => w k (x, i, false)
-               v := fun x i k => w k (x, i, true)
-               constraint := ?_ }, ?_, ?_⟩
-  · intro x y
-    have := congrArg (fun M => M x y) hR
-    simp only [gramROn_apply, dualTargetOn_apply] at this
-    rw [← this]
-    exact Finset.sum_congr rfl fun i _ => by
-      by_cases h : read x i = read y i
-      · simp [h]
-      · simp only [ite_eq_right h]
-        exact (hentry (x, i, false) (y, i, true)).symm
-  · intro x
-    refine le_trans (le_of_eq ?_) (hc false x)
-    exact Finset.sum_congr rfl fun i _ =>
-      (hentry (x, i, false) (x, i, false)).symm
-  · intro x
-    refine le_trans (le_of_eq ?_) (hc true x)
-    exact Finset.sum_congr rfl fun i _ =>
-      (hentry (x, i, true) (x, i, true)).symm
-
-end QuantumQueryComplexity
-
-end SourceDualityGramOn
 
 section SourcePromisePost
 
@@ -4212,7 +4328,7 @@ lemma div_self_sq {a R : ℝ} (hR : 0 < R) (h : |a| = R) :
 conjugated by the `±1` diagonal is an eigenvector of `Γf ⊙ Emat R lam` with
 eigenvalue `(∏ R) * θ`. -/
 lemma vertex_eigen {α : Type*} [Fintype α] [DecidableEq α]
-    {Γf : Matrix (α → Bool) (α → Bool) ℝ} (_hΓf : Γf.IsHermitian)
+    {Γf : Matrix (α → Bool) (α → Bool) ℝ}
     {R lam ε : α → ℝ}
     (hε : ∀ i, ε i * ε i = 1) (hlam_eq : ∀ i, ε i * R i = lam i)
     {θ : ℝ} {w : (α → Bool) → ℝ} (hw : Γf *ᵥ w = θ • w) :
@@ -4321,7 +4437,7 @@ theorem le_normE_compose [Nonempty Y] (e : Z ≃ (α → Y)) (hΓf : Γf.IsHermi
   have hvert := vertex_eigen (ε := fun i =>
       (hM i).isHermitian.eigenvalues (d i) / ‖M i‖)
     (lam := fun i => (hM i).isHermitian.eigenvalues (d i))
-    (R := fun i => ‖M i‖) hΓf hε hlam_eq hw
+    (R := fun i => ‖M i‖) hε hlam_eq hw
   have hvv : ∀ i, M i *ᵥ
       WithLp.ofLp ((hM i).isHermitian.eigenvectorBasis (d i))
       = (hM i).isHermitian.eigenvalues (d i) •
@@ -4415,252 +4531,6 @@ end QuantumQueryComplexity
 
 end SourceCompositionNormCompose
 
-section SourceDualityCompactOn
-
-/-!
-# The two convex sets of the separation argument, on a promise domain
-
-The promise mirror of `SourceDualityCompact`: the ambient coordinate space is
-`DualOmegaOn X → ℝ`, the compact set is the image of the truncated positive
-semidefinite cone over `GramIdxOn X ι`, and the closed set is the box around
-the promise dual target.  `norm_le_trace_of_posSemidef` and
-`apply_eq_sum_single` are generic and imported, not re-proved.
--/
-
-
-namespace QuantumQueryComplexity
-
-open scoped Matrix Matrix.Norms.L2Operator
-open Matrix
-
-variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-variable {σ : Type*} [Fintype σ] [DecidableEq σ]
-variable {X : Type*} [Fintype X] [DecidableEq X]
-
-/-- The coordinate index of the ambient space: a pair of promise inputs for
-each constraint, and an input with a side tag for each cost variable. -/
-abbrev DualOmegaOn (X : Type*) : Type _ := (X × X) ⊕ (X × Bool)
-
-/-- The affine data of the promise dual program, read off a Gram matrix. -/
-def gramLOn (read : X → ι → σ)
-    (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) : DualOmegaOn X → ℝ :=
-  Sum.elim (fun q => gramROn read G q.1 q.2) (fun q => gramCostOn G q.2 q.1)
-
-omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
-@[simp] lemma gramLOn_inl (read : X → ι → σ)
-    (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) (x y : X) :
-    gramLOn read G (Sum.inl (x, y)) = gramROn read G x y := rfl
-
-omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
-@[simp] lemma gramLOn_inr (read : X → ι → σ)
-    (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) (x : X) (b : Bool) :
-    gramLOn read G (Sum.inr (x, b)) = gramCostOn G b x := rfl
-
-/-- `gramLOn` as a linear map. -/
-def gramLOnₗ (read : X → ι → σ) :
-    Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ →ₗ[ℝ] (DualOmegaOn X → ℝ) where
-  toFun := gramLOn read
-  map_add' G H := by
-    funext z
-    rcases z with ⟨x, y⟩ | ⟨x, b⟩
-    · simpa using congrFun₂ (gramROn_add read G H) x y
-    · simpa using gramCostOn_add G H b x
-  map_smul' c G := by
-    funext z
-    rcases z with ⟨x, y⟩ | ⟨x, b⟩
-    · simpa using congrFun₂ (gramROn_smul read c G) x y
-    · simpa using gramCostOn_smul c G b x
-
-omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
-@[simp] lemma gramLOnₗ_apply (read : X → ι → σ)
-    (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) :
-    gramLOnₗ read G = gramLOn read G := rfl
-
-private def entryOnₗ (z z' : GramIdxOn X ι) :
-    Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ →ₗ[ℝ] ℝ where
-  toFun G := G z z'
-  map_add' _ _ := rfl
-  map_smul' _ _ := rfl
-
-omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype ι] in
-lemma continuous_matrixEntryOn (z z' : GramIdxOn X ι) [Finite X] [Finite ι] :
-    Continuous fun G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ => G z z' := by
-  classical
-  let := Fintype.ofFinite X
-  let := Fintype.ofFinite ι
-  exact (entryOnₗ z z').continuous_of_finiteDimensional
-
-private def traceOnₗ :
-    Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ →ₗ[ℝ] ℝ where
-  toFun G := G.trace
-  map_add' := Matrix.trace_add
-  map_smul' c G := by simp
-
-omit [DecidableEq X] [DecidableEq ι] in
-lemma continuous_matrixTraceOn :
-    Continuous fun G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ => G.trace :=
-  traceOnₗ.continuous_of_finiteDimensional
-
-omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype σ] in
-lemma continuous_gramLOn (read : X → ι → σ) [Finite X] :
-    Continuous
-      (gramLOn read :
-        Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ → DualOmegaOn X → ℝ) := by
-  classical
-  let := Fintype.ofFinite X
-  exact (gramLOnₗ read).continuous_of_finiteDimensional
-
-/-- Positive semidefinite matrices of trace at most `T`. -/
-def psdBallOn (X ι : Type*) [Fintype X] [Fintype ι]
-    (T : ℝ) : Set (Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) :=
-  {G | G.PosSemidef ∧ G.trace ≤ T}
-
-omit [DecidableEq X] [DecidableEq ι] in
-lemma convex_psdBallOn (T : ℝ) : Convex ℝ (psdBallOn X ι T) := by
-  rintro G ⟨hG, hGT⟩ H ⟨hH, hHT⟩ a b ha hb hab
-  refine ⟨(hG.smul ha).add (hH.smul hb), ?_⟩
-  rw [Matrix.trace_add, Matrix.trace_smul, Matrix.trace_smul, smul_eq_mul,
-    smul_eq_mul]
-  have h1 : a * G.trace ≤ a * T := mul_le_mul_of_nonneg_left hGT ha
-  have h2 : b * H.trace ≤ b * T := mul_le_mul_of_nonneg_left hHT hb
-  have h3 : a * T + b * T = T := by rw [← add_mul, hab, one_mul]
-  linarith
-
-omit [DecidableEq X] [DecidableEq ι] in
-lemma isClosed_psdBallOn (T : ℝ) : IsClosed (psdBallOn X ι T) := by
-  have hset : psdBallOn X ι T =
-      (⋂ (z : GramIdxOn X ι) (z' : GramIdxOn X ι), {G | G z' z = G z z'}) ∩
-        ((⋂ v : GramIdxOn X ι → ℝ, {G | 0 ≤ v ⬝ᵥ G *ᵥ v}) ∩
-          {G | G.trace ≤ T}) := by
-    ext G
-    simp only [psdBallOn, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter]
-    constructor
-    · rintro ⟨hG, hT⟩
-      refine ⟨fun z z' => ?_, fun v => ?_, hT⟩
-      · simpa using congrFun₂ hG.1 z z'
-      · simpa using hG.dotProduct_mulVec_nonneg v
-    · rintro ⟨hherm, hquad, hT⟩
-      have hH : G.IsHermitian := by
-        change Gᴴ = G
-        ext z z'
-        simpa [Matrix.conjTranspose_apply] using hherm z z'
-      refine ⟨Matrix.PosSemidef.of_dotProduct_mulVec_nonneg hH fun v => ?_, hT⟩
-      · simpa using hquad v
-  rw [hset]
-  refine IsClosed.inter (isClosed_iInter fun z => isClosed_iInter fun z' => ?_)
-    (IsClosed.inter (isClosed_iInter fun v => ?_) ?_)
-  · exact isClosed_eq (continuous_matrixEntryOn z' z) (continuous_matrixEntryOn z z')
-  · refine isClosed_le continuous_const ?_
-    have : (fun G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ => v ⬝ᵥ G *ᵥ v)
-        = fun G => ∑ z, ∑ z', v z * G z z' * v z' := by
-      funext G; exact dotProduct_mulVec_eq_sum G v v
-    rw [this]
-    exact continuous_finsetSum _ fun z _ => continuous_finsetSum _ fun z' _ =>
-      ((continuous_const.mul (continuous_matrixEntryOn z z')).mul
-        continuous_const)
-  · exact isClosed_le continuous_matrixTraceOn continuous_const
-
-omit [DecidableEq X] [DecidableEq ι] in
-lemma isCompact_psdBallOn (T : ℝ) : IsCompact (psdBallOn X ι T) := by
-  classical
-  refine Metric.isCompact_of_isClosed_isBounded (isClosed_psdBallOn T) ?_
-  have hsub : psdBallOn X ι T ⊆
-      Metric.closedBall (0 : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ) T := by
-    rintro G ⟨hG, hGT⟩
-    simp only [Metric.mem_closedBall, dist_zero_right]
-    exact (norm_le_trace_of_posSemidef hG).trans hGT
-  exact Metric.isBounded_closedBall.subset hsub
-
-/-! ## The two sets -/
-
-/-- The image of the truncated positive semidefinite cone. -/
-def gramImageOn (read : X → ι → σ) (T : ℝ) : Set (DualOmegaOn X → ℝ) :=
-  gramLOn read '' psdBallOn X ι T
-
-omit [Fintype σ] in
-omit [DecidableEq X] [DecidableEq ι] in
-lemma convex_gramImageOn (read : X → ι → σ) (T : ℝ) :
-    Convex ℝ (gramImageOn read T) := by
-  classical
-  classical
-  exact (convex_psdBallOn T).linear_image (gramLOnₗ read)
-
-omit [Fintype σ] in
-omit [DecidableEq X] [DecidableEq ι] in
-lemma isCompact_gramImageOn (read : X → ι → σ) (T : ℝ) :
-    IsCompact (gramImageOn read T) := by
-  classical
-  classical
-  exact (isCompact_psdBallOn T).image (continuous_gramLOn read)
-
-omit [Fintype σ] in
-omit [DecidableEq X] [DecidableEq ι] in
-lemma zero_mem_gramImageOn {read : X → ι → σ} {T : ℝ} (hT : 0 ≤ T) :
-    (0 : DualOmegaOn X → ℝ) ∈ gramImageOn read T := by
-  refine ⟨0, ⟨Matrix.PosSemidef.zero, by simpa using hT⟩, ?_⟩
-  funext z
-  rcases z with ⟨x, y⟩ | ⟨x, b⟩
-  · simp [gramROn]
-  · simp [gramCostOn]
-
-omit [Fintype σ] in
-omit [DecidableEq X] [DecidableEq ι] in
-lemma mem_gramImageOn_vecMulVec {read : X → ι → σ} {T : ℝ}
-    (w : GramIdxOn X ι → ℝ) (hw : ∑ z, w z * w z ≤ T) :
-    gramLOn read (vecMulVec w w) ∈ gramImageOn read T :=
-  ⟨vecMulVec w w, ⟨posSemidef_vecMulVec_self_on w,
-    by rwa [trace_vecMulVec_on]⟩, rfl⟩
-
-/-- The target of the promise dual program: constraint block equal to
-`dualTargetOn f`, cost block in `[0, c]`. -/
-def dualBoxOn (f : X → Bool) (c : ℝ) : Set (DualOmegaOn X → ℝ) :=
-  {z | (∀ x y, z (Sum.inl (x, y)) = dualTargetOn f x y) ∧
-    ∀ q : X × Bool, 0 ≤ z (Sum.inr q) ∧ z (Sum.inr q) ≤ c}
-
-omit [DecidableEq X] [Fintype X] in
-lemma convex_dualBoxOn (f : X → Bool) (c : ℝ) : Convex ℝ (dualBoxOn f c) := by
-  rintro z ⟨hz1, hz2⟩ z' ⟨hz1', hz2'⟩ a b ha hb hab
-  constructor
-  · intro x y
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, hz1 x y, hz1' x y]
-    rw [← add_mul, hab, one_mul]
-  · intro q
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
-    constructor
-    · have := (hz2 q).1
-      have := (hz2' q).1
-      positivity
-    · nlinarith [(hz2 q).2, (hz2' q).2, (hz2 q).1, (hz2' q).1]
-
-omit [DecidableEq X] [Fintype X] in
-lemma isClosed_dualBoxOn (f : X → Bool) (c : ℝ) : IsClosed (dualBoxOn f c) := by
-  have hset : dualBoxOn f c =
-      (⋂ (x : X) (y : X), {z : DualOmegaOn X → ℝ |
-          z (Sum.inl (x, y)) = dualTargetOn f x y}) ∩
-        ⋂ q : X × Bool,
-          ({z : DualOmegaOn X → ℝ | 0 ≤ z (Sum.inr q)} ∩
-            {z : DualOmegaOn X → ℝ | z (Sum.inr q) ≤ c}) := by
-    ext z
-    simp only [dualBoxOn, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter]
-  rw [hset]
-  refine IsClosed.inter (isClosed_iInter fun x => isClosed_iInter fun y => ?_)
-    (isClosed_iInter fun q => IsClosed.inter ?_ ?_)
-  · exact isClosed_eq (continuous_apply _) continuous_const
-  · exact isClosed_le continuous_const (continuous_apply _)
-  · exact isClosed_le (continuous_apply _) continuous_const
-
-/-- The corner of the box. -/
-def dualCornerOn (f : X → Bool) (c : ℝ) : DualOmegaOn X → ℝ :=
-  Sum.elim (fun q => dualTargetOn f q.1 q.2) (fun _ => c)
-
-omit [DecidableEq X] [Fintype X] in
-lemma dualCornerOn_mem {f : X → Bool} {c : ℝ} (hc : 0 ≤ c) :
-    dualCornerOn f c ∈ dualBoxOn f c :=
-  ⟨fun _ _ => rfl, fun _ => ⟨hc, le_refl c⟩⟩
-
-end QuantumQueryComplexity
-
-end SourceDualityCompactOn
 
 section SourceDualityWitnessOn
 
@@ -4882,17 +4752,6 @@ theorem lt_advPM_of_certificate {g : (ι → σ) → Bool}
   exact lt_advPMOn_of_certificate (read := id) (f := g)
     (fun _ _ h => congrArg g h) hsym hp hquad hobj
 
-/-- A promise certificate for the identity read is a total-input certificate. -/
-def DualPairOn.toTotal {O K : Type*} [DecidableEq O] [Fintype K]
-    {g : (ι → σ) → O} (P : DualPairOn (fun x : ι → σ => x) K g) : DualPair K g where
-  u := P.u
-  v := P.v
-  constraint := P.constraint
-
-/-- The conversion preserves both vector families and hence the cost bound. -/
-lemma DualPairOn.toTotal_isCostLe {O K : Type*} [DecidableEq O] [Fintype K]
-    {g : (ι → σ) → O} {c : ℝ} {P : DualPairOn (fun x : ι → σ => x) K g}
-    (h : P.IsCostLe c) : P.toTotal.IsCostLe c := h
 
 end QuantumQueryComplexity
 
@@ -5826,6 +5685,17 @@ namespace QuantumQueryComplexity
 open scoped Matrix Matrix.Norms.L2Operator
 open Matrix
 
+/-- The `c`-weighted cost of a dual solution is bounded by `V`.
+
+Stated for a general alphabet and output type: the weighted cost is what the
+outer solution of a composition must control, and in
+`SourceComposeShared` the outer function is a non-Boolean maximum. -/
+def DualPair.IsWeightedCostLe {ι K : Type*} [Fintype ι] [Fintype K] {σ : Type*} [DecidableEq σ]
+    {O : Type*} [DecidableEq O] {f : (ι → σ) → O}
+    (P : DualPair K f) (c : ι → ℝ) (V : ℝ) : Prop :=
+  (∀ x, ∑ i, c i * ∑ k, P.u x i k * P.u x i k ≤ V) ∧
+  (∀ x, ∑ i, c i * ∑ k, P.v x i k * P.v x i k ≤ V)
+
 variable {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
   {f : (α → Bool) → Bool} {g : α → (β → Bool) → Bool}
   {K₁ K₂ : Type*} [Fintype K₁] [Fintype K₂]
@@ -5890,84 +5760,59 @@ def DualPair.compose (Pf : DualPair K₁ f) (Pg : ∀ i, DualPair K₂ (g i)) :
     · exact Pf.constraint (tilde g x) (tilde g y)
 
 omit [DecidableEq α] [DecidableEq β] in
+/-- Squared mass of a block tensor factors into the two squared masses. -/
+lemma sum_tensor_mass (u : α → K₁ → ℝ) (v : α → β → K₂ → ℝ) :
+    (∑ ℓ : α × β, ∑ k : K₁ × K₂,
+      (u ℓ.1 k.1 * v ℓ.1 ℓ.2 k.2) * (u ℓ.1 k.1 * v ℓ.1 ℓ.2 k.2)) =
+      ∑ p, (∑ k₁, u p k₁ * u p k₁) * (∑ q, ∑ k₂, v p q k₂ * v p q k₂) := by
+  rw [Fintype.sum_prod_type]
+  refine Finset.sum_congr rfl fun p _ => ?_
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl fun q _ => ?_
+  rw [Fintype.sum_prod_type, Finset.sum_mul_sum]
+  exact Finset.sum_congr rfl fun k₁ _ => Finset.sum_congr rfl fun k₂ _ => by ring
+
+omit [DecidableEq α] [DecidableEq β] in
+/-- Inner mass bounds give a weighted bound on the block tensor's mass. -/
+lemma sum_tensor_mass_le (u : α → K₁ → ℝ) (v : α → β → K₂ → ℝ)
+    {c : α → ℝ} {V : ℝ} (hu : ∑ p, c p * ∑ k₁, u p k₁ * u p k₁ ≤ V)
+    (hv : ∀ p, ∑ q, ∑ k₂, v p q k₂ * v p q k₂ ≤ c p) :
+    (∑ ℓ : α × β, ∑ k : K₁ × K₂,
+      (u ℓ.1 k.1 * v ℓ.1 ℓ.2 k.2) * (u ℓ.1 k.1 * v ℓ.1 ℓ.2 k.2)) ≤ V := by
+  rw [sum_tensor_mass]
+  refine le_trans (Finset.sum_le_sum fun p _ => ?_) hu
+  rw [mul_comm (c p)]
+  exact mul_le_mul_of_nonneg_left (hv p) (Finset.sum_nonneg fun _ _ => mul_self_nonneg _)
+
+omit [DecidableEq α] [DecidableEq β] in
+/-- **Weighted dual composition**: a `c`-weighted outer bound composes with
+inner solutions of costs `c i` to an ordinary bound. -/
+lemma DualPair.compose_isWeightedCostLe {Pf : DualPair K₁ f}
+    {Pg : ∀ i, DualPair K₂ (g i)} {c : α → ℝ} {V : ℝ}
+    (hf : Pf.IsWeightedCostLe c V) (hg : ∀ i, (Pg i).IsCostLe (c i)) :
+    (Pf.compose Pg).IsCostLe V := by
+  constructor
+  · intro x
+    exact sum_tensor_mass_le (Pf.u (tilde g x)) (fun p => (Pg p).u (slice x p))
+      (hf.1 (tilde g x)) (fun p => (hg p).1 (slice x p))
+  · intro x
+    exact sum_tensor_mass_le (Pf.v (tilde g x)) (fun p => (Pg p).v (slice x p))
+      (hf.2 (tilde g x)) (fun p => (hg p).2 (slice x p))
+
+omit [DecidableEq α] [DecidableEq β] in
 /-- The cost of a composed dual solution is the product of the costs. -/
 lemma DualPair.compose_isCostLe {Pf : DualPair K₁ f} {Pg : ∀ i, DualPair K₂ (g i)}
     {c₁ c₂ : ℝ} (hf : Pf.IsCostLe c₁) (hg : ∀ i, (Pg i).IsCostLe c₂)
     (hc₂ : 0 ≤ c₂) :
     (Pf.compose Pg).IsCostLe (c₁ * c₂) := by
+  apply DualPair.compose_isWeightedCostLe (c := fun _ => c₂) ?_ hg
   constructor
   · intro x
-    change (∑ ℓ : α × β, ∑ k : K₁ × K₂,
-      (Pf.u (tilde g x) ℓ.1 k.1 * (Pg ℓ.1).u (slice x ℓ.1) ℓ.2 k.2) *
-      (Pf.u (tilde g x) ℓ.1 k.1 * (Pg ℓ.1).u (slice x ℓ.1) ℓ.2 k.2)) ≤ c₁ * c₂
-    rw [Fintype.sum_prod_type]
-    have hin : ∀ (p : α) (q : β),
-        (∑ k : K₁ × K₂,
-          (Pf.u (tilde g x) p k.1 * (Pg p).u (slice x p) q k.2) *
-          (Pf.u (tilde g x) p k.1 * (Pg p).u (slice x p) q k.2))
-        = (∑ k₁, Pf.u (tilde g x) p k₁ * Pf.u (tilde g x) p k₁) *
-          (∑ k₂, (Pg p).u (slice x p) q k₂ * (Pg p).u (slice x p) q k₂) := by
-      intro p q
-      rw [Fintype.sum_prod_type]
-      change (∑ k₁, ∑ k₂,
-          (Pf.u (tilde g x) p k₁ * (Pg p).u (slice x p) q k₂) *
-          (Pf.u (tilde g x) p k₁ * (Pg p).u (slice x p) q k₂)) = _
-      rw [Finset.sum_mul_sum]
-      exact Finset.sum_congr rfl fun k₁ _ =>
-        Finset.sum_congr rfl fun k₂ _ => by ring
-    have hSnn : ∀ p : α,
-        0 ≤ ∑ k₁, Pf.u (tilde g x) p k₁ * Pf.u (tilde g x) p k₁ :=
-      fun p => Finset.sum_nonneg fun k₁ _ => mul_self_nonneg _
-    calc (∑ p : α, ∑ q : β, ∑ k : K₁ × K₂,
-          (Pf.u (tilde g x) p k.1 * (Pg p).u (slice x p) q k.2) *
-          (Pf.u (tilde g x) p k.1 * (Pg p).u (slice x p) q k.2))
-        = ∑ p : α, (∑ k₁, Pf.u (tilde g x) p k₁ * Pf.u (tilde g x) p k₁) *
-            (∑ q : β, ∑ k₂, (Pg p).u (slice x p) q k₂ * (Pg p).u (slice x p) q k₂) := by
-          refine Finset.sum_congr rfl fun p _ => ?_
-          rw [Finset.mul_sum]
-          exact Finset.sum_congr rfl fun q _ => hin p q
-      _ ≤ ∑ p : α, (∑ k₁, Pf.u (tilde g x) p k₁ * Pf.u (tilde g x) p k₁) * c₂ :=
-          Finset.sum_le_sum fun p _ =>
-            mul_le_mul_of_nonneg_left ((hg p).1 (slice x p)) (hSnn p)
-      _ = (∑ p : α, ∑ k₁, Pf.u (tilde g x) p k₁ * Pf.u (tilde g x) p k₁) * c₂ :=
-          (Finset.sum_mul _ _ _).symm
-      _ ≤ c₁ * c₂ := mul_le_mul_of_nonneg_right (hf.1 (tilde g x)) hc₂
+    simpa only [← Finset.mul_sum, mul_comm] using
+      mul_le_mul_of_nonneg_right (hf.1 x) hc₂
   · intro x
-    change (∑ ℓ : α × β, ∑ k : K₁ × K₂,
-      (Pf.v (tilde g x) ℓ.1 k.1 * (Pg ℓ.1).v (slice x ℓ.1) ℓ.2 k.2) *
-      (Pf.v (tilde g x) ℓ.1 k.1 * (Pg ℓ.1).v (slice x ℓ.1) ℓ.2 k.2)) ≤ c₁ * c₂
-    rw [Fintype.sum_prod_type]
-    have hin : ∀ (p : α) (q : β),
-        (∑ k : K₁ × K₂,
-          (Pf.v (tilde g x) p k.1 * (Pg p).v (slice x p) q k.2) *
-          (Pf.v (tilde g x) p k.1 * (Pg p).v (slice x p) q k.2))
-        = (∑ k₁, Pf.v (tilde g x) p k₁ * Pf.v (tilde g x) p k₁) *
-          (∑ k₂, (Pg p).v (slice x p) q k₂ * (Pg p).v (slice x p) q k₂) := by
-      intro p q
-      rw [Fintype.sum_prod_type]
-      change (∑ k₁, ∑ k₂,
-          (Pf.v (tilde g x) p k₁ * (Pg p).v (slice x p) q k₂) *
-          (Pf.v (tilde g x) p k₁ * (Pg p).v (slice x p) q k₂)) = _
-      rw [Finset.sum_mul_sum]
-      exact Finset.sum_congr rfl fun k₁ _ =>
-        Finset.sum_congr rfl fun k₂ _ => by ring
-    have hSnn : ∀ p : α,
-        0 ≤ ∑ k₁, Pf.v (tilde g x) p k₁ * Pf.v (tilde g x) p k₁ :=
-      fun p => Finset.sum_nonneg fun k₁ _ => mul_self_nonneg _
-    calc (∑ p : α, ∑ q : β, ∑ k : K₁ × K₂,
-          (Pf.v (tilde g x) p k.1 * (Pg p).v (slice x p) q k.2) *
-          (Pf.v (tilde g x) p k.1 * (Pg p).v (slice x p) q k.2))
-        = ∑ p : α, (∑ k₁, Pf.v (tilde g x) p k₁ * Pf.v (tilde g x) p k₁) *
-            (∑ q : β, ∑ k₂, (Pg p).v (slice x p) q k₂ * (Pg p).v (slice x p) q k₂) := by
-          refine Finset.sum_congr rfl fun p _ => ?_
-          rw [Finset.mul_sum]
-          exact Finset.sum_congr rfl fun q _ => hin p q
-      _ ≤ ∑ p : α, (∑ k₁, Pf.v (tilde g x) p k₁ * Pf.v (tilde g x) p k₁) * c₂ :=
-          Finset.sum_le_sum fun p _ =>
-            mul_le_mul_of_nonneg_left ((hg p).2 (slice x p)) (hSnn p)
-      _ = (∑ p : α, ∑ k₁, Pf.v (tilde g x) p k₁ * Pf.v (tilde g x) p k₁) * c₂ :=
-          (Finset.sum_mul _ _ _).symm
-      _ ≤ c₁ * c₂ := mul_le_mul_of_nonneg_right (hf.2 (tilde g x)) hc₂
+    simpa only [← Finset.mul_sum, mul_comm] using
+      mul_le_mul_of_nonneg_right (hf.2 x) hc₂
 
 omit [DecidableEq α] [DecidableEq β] in
 /-- **The dual value is submultiplicative under composition.** -/
@@ -6848,7 +6693,7 @@ lemma starMatrix_mulVec_apply (S : Finset (ι → σ)) (c : ι → σ)
   · simp [hc]
   · simp [hc]
 
-lemma starMatrix_bilinear {S : Finset (ι → σ)} {c : ι → σ} (_hc : c ∉ S)
+lemma starMatrix_bilinear {S : Finset (ι → σ)} {c : ι → σ}
     (x y : (ι → σ) → ℝ) :
     x ⬝ᵥ starMatrix S c *ᵥ y
       = (∑ w ∈ S, x w) * y c + x c * ∑ z ∈ S, y z := by
@@ -6886,7 +6731,7 @@ lemma norm_starMatrix_le {S : Finset (ι → σ)} {c : ι → σ} (hc : c ∉ S)
   rcases S.eq_empty_or_nonempty with rfl | hS
   · simp [starMatrix]
   refine l2_opNorm_le_of_forall_dotProduct _ (Real.sqrt_nonneg _) fun x y => ?_
-  rw [starMatrix_bilinear hc]
+  rw [starMatrix_bilinear]
   have hkpos : (0:ℝ) < (S.card : ℝ) := by exact_mod_cast Finset.card_pos.mpr hS
   have hCSx : (∑ w ∈ S, x w) ^ 2 ≤ (S.card : ℝ) * ∑ w ∈ S, x w * x w := by
     have h := Finset.sum_mul_sq_le_sq_mul_sq S (fun _ => (1:ℝ)) x
@@ -6959,7 +6804,7 @@ lemma sqrt_card_le_norm_starMatrix {S : Finset (ι → σ)} {c : ι → σ}
       Finset.sum_const, nsmul_eq_mul, mul_one, ← hk]
     ring
   have h := abs_dotProduct_mulVec_le (starMatrix S c) v v
-  rw [starMatrix_bilinear hc, hsum, hvc, hvv] at h
+  rw [starMatrix_bilinear, hsum, hvc, hvv] at h
   have habs : |k * Real.sqrt k + Real.sqrt k * k| = 2 * k * Real.sqrt k := by
     rw [abs_of_nonneg (by positivity)]
     ring
@@ -7035,7 +6880,7 @@ lemma wStarMatrix_mulVec_apply (S : Finset (ι → σ)) (c : ι → σ)
   · simp [hcv]
 
 lemma wStarMatrix_bilinear {S : Finset (ι → σ)} {c : ι → σ}
-    (_hc : c ∉ S) (w : (ι → σ) → ℝ) (x y : (ι → σ) → ℝ) :
+    (w : (ι → σ) → ℝ) (x y : (ι → σ) → ℝ) :
     x ⬝ᵥ wStarMatrix S c w *ᵥ y
       = (∑ z ∈ S, w z * x z) * y c + x c * ∑ z ∈ S, w z * y z := by
   change (∑ v, x v * (wStarMatrix S c w *ᵥ y) v) = _
@@ -7067,7 +6912,7 @@ lemma norm_wStarMatrix_le {S : Finset (ι → σ)} {c : ι → σ} (hc : c ∉ S
       Finset.sum_eq_zero fun z hz => by rw [hzero z hz, zero_smul]
     rw [h0, norm_zero, ← hW, Real.sqrt_zero]
   refine l2_opNorm_le_of_forall_dotProduct _ (Real.sqrt_nonneg _) fun x y => ?_
-  rw [wStarMatrix_bilinear hc]
+  rw [wStarMatrix_bilinear]
   have hCSx : (∑ z ∈ S, w z * x z) ^ 2
       ≤ starWeight S w * ∑ z ∈ S, x z * x z := by
     have h := Finset.sum_mul_sq_le_sq_mul_sq S w x
@@ -7143,7 +6988,7 @@ lemma sqrt_starWeight_le_norm_wStarMatrix {S : Finset (ι → σ)}
       show (∑ z ∈ S, w z * w z) = W from hWdef.symm]
     ring
   have h := abs_dotProduct_mulVec_le (wStarMatrix S c w) v v
-  rw [wStarMatrix_bilinear hc, hsum, hvc, hvv] at h
+  rw [wStarMatrix_bilinear, hsum, hvc, hvv] at h
   have habs : |W * Real.sqrt W + Real.sqrt W * W| = 2 * W * Real.sqrt W := by
     rw [abs_of_nonneg (by positivity)]
     ring
@@ -7751,109 +7596,6 @@ open Matrix
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- The `c`-weighted cost of a dual solution is bounded by `V`.
-
-Stated for a general alphabet and output type: the weighted cost is what the
-outer solution of a composition must control, and in
-`SourceComposeShared` the outer function is a non-Boolean maximum. -/
-def DualPair.IsWeightedCostLe {K : Type*} [Fintype K] {σ : Type*} [DecidableEq σ]
-    {O : Type*} [DecidableEq O] {f : (ι → σ) → O}
-    (P : DualPair K f) (c : ι → ℝ) (V : ℝ) : Prop :=
-  (∀ x, ∑ i, c i * ∑ k, P.u x i k * P.u x i k ≤ V) ∧
-  (∀ x, ∑ i, c i * ∑ k, P.v x i k * P.v x i k ≤ V)
-
-section Compose
-
-variable {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
-  {f : (α → Bool) → Bool} {g : α → (β → Bool) → Bool}
-  {K₁ K₂ : Type*} [Fintype K₁] [Fintype K₂]
-
-omit [DecidableEq α] [DecidableEq β] in
-/-- **Weighted dual composition**: a `c`-weighted outer bound composes with
-inner solutions of costs `c i` to an ordinary bound. -/
-lemma DualPair.compose_isWeightedCostLe {Pf : DualPair K₁ f}
-    {Pg : ∀ i, DualPair K₂ (g i)} {c : α → ℝ} {V : ℝ}
-    (hf : Pf.IsWeightedCostLe c V) (hg : ∀ i, (Pg i).IsCostLe (c i)) :
-    (Pf.compose Pg).IsCostLe V := by
-  constructor
-  · intro x
-    change (∑ ℓ : α × β, ∑ k : K₁ × K₂,
-      (Pf.u (tilde g x) ℓ.1 k.1 * (Pg ℓ.1).u (slice x ℓ.1) ℓ.2 k.2) *
-      (Pf.u (tilde g x) ℓ.1 k.1 * (Pg ℓ.1).u (slice x ℓ.1) ℓ.2 k.2)) ≤ V
-    rw [Fintype.sum_prod_type]
-    have hin : ∀ (p : α) (q : β),
-        (∑ k : K₁ × K₂,
-          (Pf.u (tilde g x) p k.1 * (Pg p).u (slice x p) q k.2) *
-          (Pf.u (tilde g x) p k.1 * (Pg p).u (slice x p) q k.2))
-        = (∑ k₁, Pf.u (tilde g x) p k₁ * Pf.u (tilde g x) p k₁) *
-          (∑ k₂, (Pg p).u (slice x p) q k₂ * (Pg p).u (slice x p) q k₂) := by
-      intro p q
-      rw [Fintype.sum_prod_type]
-      change (∑ k₁, ∑ k₂,
-          (Pf.u (tilde g x) p k₁ * (Pg p).u (slice x p) q k₂) *
-          (Pf.u (tilde g x) p k₁ * (Pg p).u (slice x p) q k₂)) = _
-      rw [Finset.sum_mul_sum]
-      exact Finset.sum_congr rfl fun k₁ _ =>
-        Finset.sum_congr rfl fun k₂ _ => by ring
-    have hSnn : ∀ p : α,
-        0 ≤ ∑ k₁, Pf.u (tilde g x) p k₁ * Pf.u (tilde g x) p k₁ :=
-      fun p => Finset.sum_nonneg fun k₁ _ => mul_self_nonneg _
-    calc (∑ p : α, ∑ q : β, ∑ k : K₁ × K₂,
-          (Pf.u (tilde g x) p k.1 * (Pg p).u (slice x p) q k.2) *
-          (Pf.u (tilde g x) p k.1 * (Pg p).u (slice x p) q k.2))
-        = ∑ p : α, (∑ k₁, Pf.u (tilde g x) p k₁ * Pf.u (tilde g x) p k₁) *
-            (∑ q : β, ∑ k₂, (Pg p).u (slice x p) q k₂ *
-              (Pg p).u (slice x p) q k₂) := by
-          refine Finset.sum_congr rfl fun p _ => ?_
-          rw [Finset.mul_sum]
-          exact Finset.sum_congr rfl fun q _ => hin p q
-      _ ≤ ∑ p : α, (∑ k₁, Pf.u (tilde g x) p k₁ * Pf.u (tilde g x) p k₁) * c p :=
-          Finset.sum_le_sum fun p _ =>
-            mul_le_mul_of_nonneg_left ((hg p).1 (slice x p)) (hSnn p)
-      _ = ∑ p : α, c p *
-            ∑ k₁, Pf.u (tilde g x) p k₁ * Pf.u (tilde g x) p k₁ :=
-          Finset.sum_congr rfl fun p _ => mul_comm _ _
-      _ ≤ V := hf.1 (tilde g x)
-  · intro x
-    change (∑ ℓ : α × β, ∑ k : K₁ × K₂,
-      (Pf.v (tilde g x) ℓ.1 k.1 * (Pg ℓ.1).v (slice x ℓ.1) ℓ.2 k.2) *
-      (Pf.v (tilde g x) ℓ.1 k.1 * (Pg ℓ.1).v (slice x ℓ.1) ℓ.2 k.2)) ≤ V
-    rw [Fintype.sum_prod_type]
-    have hin : ∀ (p : α) (q : β),
-        (∑ k : K₁ × K₂,
-          (Pf.v (tilde g x) p k.1 * (Pg p).v (slice x p) q k.2) *
-          (Pf.v (tilde g x) p k.1 * (Pg p).v (slice x p) q k.2))
-        = (∑ k₁, Pf.v (tilde g x) p k₁ * Pf.v (tilde g x) p k₁) *
-          (∑ k₂, (Pg p).v (slice x p) q k₂ * (Pg p).v (slice x p) q k₂) := by
-      intro p q
-      rw [Fintype.sum_prod_type]
-      change (∑ k₁, ∑ k₂,
-          (Pf.v (tilde g x) p k₁ * (Pg p).v (slice x p) q k₂) *
-          (Pf.v (tilde g x) p k₁ * (Pg p).v (slice x p) q k₂)) = _
-      rw [Finset.sum_mul_sum]
-      exact Finset.sum_congr rfl fun k₁ _ =>
-        Finset.sum_congr rfl fun k₂ _ => by ring
-    have hSnn : ∀ p : α,
-        0 ≤ ∑ k₁, Pf.v (tilde g x) p k₁ * Pf.v (tilde g x) p k₁ :=
-      fun p => Finset.sum_nonneg fun k₁ _ => mul_self_nonneg _
-    calc (∑ p : α, ∑ q : β, ∑ k : K₁ × K₂,
-          (Pf.v (tilde g x) p k.1 * (Pg p).v (slice x p) q k.2) *
-          (Pf.v (tilde g x) p k.1 * (Pg p).v (slice x p) q k.2))
-        = ∑ p : α, (∑ k₁, Pf.v (tilde g x) p k₁ * Pf.v (tilde g x) p k₁) *
-            (∑ q : β, ∑ k₂, (Pg p).v (slice x p) q k₂ *
-              (Pg p).v (slice x p) q k₂) := by
-          refine Finset.sum_congr rfl fun p _ => ?_
-          rw [Finset.mul_sum]
-          exact Finset.sum_congr rfl fun q _ => hin p q
-      _ ≤ ∑ p : α, (∑ k₁, Pf.v (tilde g x) p k₁ * Pf.v (tilde g x) p k₁) * c p :=
-          Finset.sum_le_sum fun p _ =>
-            mul_le_mul_of_nonneg_left ((hg p).2 (slice x p)) (hSnn p)
-      _ = ∑ p : α, c p *
-            ∑ k₁, Pf.v (tilde g x) p k₁ * Pf.v (tilde g x) p k₁ :=
-          Finset.sum_congr rfl fun p _ => mul_comm _ _
-      _ ≤ V := hf.2 (tilde g x)
-
-end Compose
 
 /-! ## The weighted `OR` dual -/
 
@@ -7924,7 +7666,7 @@ lemma orWSqrtSupp_pos (hc : ∀ i, 0 < c i) {x : ι → Bool}
     exact Real.sqrt_pos.mpr (hc p₀)
 
 omit [DecidableEq ι] in
-lemma orWSupp_eq (_hc : ∀ i, 0 < c i) (x : ι → Bool) :
+lemma orWSupp_eq (x : ι → Bool) :
     orWSupp c x = orWSqrtSupp c x / Real.sqrt (orWVal c) := by
   rw [orWSupp, orWSqrtSupp, Finset.sum_div]
   exact Finset.sum_congr rfl fun p _ => by
@@ -7934,7 +7676,7 @@ omit [DecidableEq ι] in
 lemma orWSupp_pos [Nonempty ι] (hc : ∀ i, 0 < c i) {x : ι → Bool}
     (hx : x ≠ zeroVec) : 0 < orWSupp c x := by
   classical
-  rw [orWSupp_eq hc]
+  rw [orWSupp_eq]
   exact div_pos (orWSqrtSupp_pos hc hx)
     (Real.sqrt_pos.mpr (orWVal_pos c hc))
 
@@ -8083,7 +7825,7 @@ theorem orWDual_isWeightedCostLe [Nonempty ι] (hc : ∀ i, 0 < c i) :
       -- `D = S/√V`, so `(1/D)² = V/S²`
       have hDS : orWSupp c x * orWSupp c x
           = orWSqrtSupp c x * orWSqrtSupp c x / orWVal c := by
-        rw [orWSupp_eq hc, div_mul_div_comm, Real.mul_self_sqrt hV.le]
+        rw [orWSupp_eq, div_mul_div_comm, Real.mul_self_sqrt hV.le]
       have hVne : orWVal c ≠ 0 := ne_of_gt hV
       rw [show (1 / orWSupp c x) * (1 / orWSupp c x) *
             (∑ p, if x p then c p else 0)
@@ -8276,7 +8018,7 @@ omit [DecidableEq P] [DecidableEq ι] in
 /-- **The cost of a shared composition.**  An outer solution of `c`-weighted cost
 `V` composed with inner solutions of cost `c p` has cost `V`. -/
 theorem composeShared_isCostLe {c : P → ℝ} {Vout : ℝ} (Q : DualPair K h)
-    (R : ∀ p, DualPair K' (g p)) (_hc : ∀ p, 0 ≤ c p)
+    (R : ∀ p, DualPair K' (g p))
     (hQ : Q.IsWeightedCostLe c Vout) (hR : ∀ p, (R p).IsCostLe (c p)) :
     (Q.composeShared R).IsCostLe Vout := by
   classical
@@ -8299,13 +8041,13 @@ omit [DecidableEq P] in
 and inner solutions. -/
 theorem advPM_sharedFun_le [Fintype σ] {K K' : Type*} [Fintype K] [Fintype K']
     {h : (P → V) → O} {g : P → (ι → σ) → V} {c : P → ℝ} {Vout : ℝ}
-    (Q : DualPair K h) (R : ∀ p, DualPair K' (g p)) (hc : ∀ p, 0 ≤ c p)
+    (Q : DualPair K h) (R : ∀ p, DualPair K' (g p))
     (hV : 0 ≤ Vout) (hQ : Q.IsWeightedCostLe c Vout)
     (hR : ∀ p, (R p).IsCostLe (c p)) :
     advPM (sharedFun h g) ≤ Vout := by
   classical
   exact advPM_le_of_dualPair (Q.composeShared R) hV
-      (DualPair.composeShared_isCostLe Q R hc hQ hR)
+      (DualPair.composeShared_isCostLe Q R hQ hR)
 
 end QuantumQueryComplexity
 
@@ -8715,8 +8457,8 @@ private lemma sum_average_sq_coord (p : Z → ℝ) (hp0 : ∀ z, 0 ≤ p z)
       = (Real.sqrt (p z) * Real.sqrt (p z)) * (U z x i k * U z x i k) from by ring,
     Real.mul_self_sqrt (hp0 z)]
 
-omit [DecidableEq ι] in
-lemma sum_average_sq (_P : Z → DualPair K f) (p : Z → ℝ)
+omit [DecidableEq ι] [DecidableEq σ] in
+lemma sum_average_sq (p : Z → ℝ)
     (hp0 : ∀ z, 0 ≤ p z) (U : Z → (ι → σ) → ι → K → ℝ) (x : ι → σ) :
     (∑ i : ι, ∑ zk : Z × K, (Real.sqrt (p zk.1) * U zk.1 x i zk.2)
         * (Real.sqrt (p zk.1) * U zk.1 x i zk.2))
@@ -8752,9 +8494,9 @@ theorem average_isCostLe (P : Z → DualPair K f) (p : Z → ℝ)
   classical
   constructor
   · intro x
-    exact le_trans (le_of_eq (sum_average_sq P p hp0 (fun z => (P z).u) x)) (hu x)
+    exact le_trans (le_of_eq (sum_average_sq p hp0 (fun z => (P z).u) x)) (hu x)
   · intro y
-    exact le_trans (le_of_eq (sum_average_sq P p hp0 (fun z => (P z).v) y)) (hv y)
+    exact le_trans (le_of_eq (sum_average_sq p hp0 (fun z => (P z).v) y)) (hv y)
 
 omit [DecidableEq ι] in
 /-- **The averaged weighted cost is the average of the weighted costs.** -/
@@ -8792,7 +8534,7 @@ theorem sum_averageUnif_u_sq [Nonempty Z] (P : Z → DualPair K f) (x : ι → �
       = (Fintype.card Z : ℝ)⁻¹
         * ∑ z : Z, ∑ i : ι, ∑ k : K, (P z).u x i k * (P z).u x i k := by
   classical
-  have h := sum_average_sq P (fun _ => (Fintype.card Z : ℝ)⁻¹)
+  have h := sum_average_sq (fun _ => (Fintype.card Z : ℝ)⁻¹)
     (fun _ => by positivity) (fun z => (P z).u) x
   rw [← Finset.mul_sum] at h
   exact h
@@ -8803,7 +8545,7 @@ theorem sum_averageUnif_v_sq [Nonempty Z] (P : Z → DualPair K f) (y : ι → �
       = (Fintype.card Z : ℝ)⁻¹
         * ∑ z : Z, ∑ i : ι, ∑ k : K, (P z).v y i k * (P z).v y i k := by
   classical
-  have h := sum_average_sq P (fun _ => (Fintype.card Z : ℝ)⁻¹)
+  have h := sum_average_sq (fun _ => (Fintype.card Z : ℝ)⁻¹)
     (fun _ => by positivity) (fun z => (P z).v) y
   rw [← Finset.mul_sum] at h
   exact h
@@ -10169,7 +9911,7 @@ omit [DecidableEq P] [DecidableEq ι] [Fintype σ] in
 /-- **Shared-input composition, bundled.**  An outer solution of `c`-weighted
 cost `Vout` and subproblem solutions of costs `c p` compose to cost `Vout`. -/
 theorem HasWeightedDual.composeShared {c : P → ℝ} {Vout : ℝ}
-    (hQ : HasWeightedDual h c Vout) (hc : ∀ p, 0 ≤ c p)
+    (hQ : HasWeightedDual h c Vout)
     (hg : ∀ p, HasDual (g p) (c p)) : HasDual (sharedFun h g) Vout := by
   classical
   obtain ⟨K, hK, Q, hQ'⟩ := hQ
@@ -10179,7 +9921,7 @@ theorem HasWeightedDual.composeShared {c : P → ℝ} {Vout : ℝ}
   let : DecidableEq ((p : P) × Kp p) := Classical.decEq _
   refine ⟨P × K × ((p : P) × Kp p), inferInstance,
     Q.composeShared fun p => (R p).embedDim (sigma_mk_injective (i := p)), ?_⟩
-  exact DualPair.composeShared_isCostLe _ _ hc hQ' fun p =>
+  exact DualPair.composeShared_isCostLe _ _ hQ' fun p =>
     DualPair.embedDim_isCostLe _ _ (hR p)
 
 end Shared
@@ -10195,14 +9937,14 @@ summaries, or assemble a whole matrix out of its entries.  The price is a factor
 `2` on the total of the subproblem costs. -/
 theorem HasDual.combine {P V : Type} [Fintype P]
     [DecidableEq V] (h : (P → V) → O) {g : P → (ι → σ) → V}
-    {c : P → ℝ} (hc : ∀ p, 0 ≤ c p) (hg : ∀ p, HasDual (g p) (c p)) [Finite O] [Finite V] :
+    {c : P → ℝ} (hg : ∀ p, HasDual (g p) (c p)) [Finite O] [Finite V] :
     HasDual (fun x => h fun p => g p x) (2 * ∑ p, c p) := by
   classical
   let := Fintype.ofFinite O
   let := Fintype.ofFinite V
   exact HasWeightedDual.composeShared
       (hasWeightedDual_of_dualPair (firstDiffDual h)
-        (firstDiffDual_isWeightedCostLe h c)) hc hg
+        (firstDiffDual_isWeightedCostLe h c)) hg
 
 omit [DecidableEq ι] [Fintype σ] in
 /-- **The maximum of equally expensive subproblems.**
@@ -10221,7 +9963,7 @@ theorem HasDual.max {P A : Type} [Fintype P] [Nonempty P]
   obtain ⟨Q, hQ⟩ := exists_maxFun_dual_isCostLe (ι := P) (A := A)
   exact HasWeightedDual.composeShared
     (hasWeightedDual_of_dualPair Q (DualPair.isWeightedCostLe_const hc₀ hQ))
-    (fun _ => hc₀) hg
+    hg
 
 /-! ## Maximum of a value map over a block of coordinates
 
@@ -10321,7 +10063,7 @@ omit [DecidableEq ι] [Fintype σ] in
 and output types.** -/
 theorem HasDual.combine' {Pi V O' : Type} [Fintype Pi]
     [DecidableEq V] [DecidableEq O'] (h : (Pi → V) → O') {g : Pi → (ι → σ) → V}
-    {c : Pi → ℝ} (hc : ∀ p, 0 ≤ c p) (hg : ∀ p, HasDual (g p) (c p)) [Finite σ] :
+    {c : Pi → ℝ} (hg : ∀ p, HasDual (g p) (c p)) [Finite σ] :
     HasDual (fun x => h fun p => g p x) (2 * ∑ p, c p) := by
   classical
   let := Fintype.ofFinite σ
@@ -10338,7 +10080,7 @@ theorem HasDual.combine' {Pi V O' : Type} [Fintype Pi]
   set h₀ : (Pi → {v // v ∈ SV}) → {o // o ∈ SO} := fun z =>
     ⟨h fun p => (z p : V), hmemO z⟩ with hh₀def
   have hbase : HasDual (fun x => h₀ fun p => g₀ p x) (2 * ∑ p, c p) :=
-    HasDual.combine h₀ hc fun p => (hg p).ofKer fun x y => by
+    HasDual.combine h₀ fun p => (hg p).ofKer fun x y => by
       simp [Subtype.ext_iff]
   exact hbase.ofKer fun x y =>
     ⟨fun hxy => congrArg Subtype.val hxy, fun hxy => Subtype.ext hxy⟩
@@ -10354,13 +10096,13 @@ what a coarsening must cost — a particular recoding may well be cheaper, and
 an injective one is free (`HasDual.ofKer`).  This is the priced form of the
 joint-output discipline. -/
 theorem HasDual.postcomp {V O' : Type} [DecidableEq V] [DecidableEq O']
-    {f : (ι → σ) → V} {c : ℝ} (hc : 0 ≤ c) (h : HasDual f c) (H : V → O') [Finite σ] :
+    {f : (ι → σ) → V} {c : ℝ} (h : HasDual f c) (H : V → O') [Finite σ] :
     HasDual (fun x => H (f x)) (2 * c) := by
   classical
   let := Fintype.ofFinite σ
   have hcomb := HasDual.combine' (ι := ι) (σ := σ) (Pi := Unit) (V := V)
     (O' := O') (fun z : Unit → V => H (z ())) (g := fun _ => f)
-    (c := fun _ => c) (fun _ => hc) fun _ => h
+    (c := fun _ => c) fun _ => h
   simpa using hcomb
 
 omit [DecidableEq ι] [Fintype σ] in
@@ -10369,12 +10111,12 @@ factor two — with the collapsing map obtained from the determination rather
 than supplied.  This is the form a transcript compiler needs: it builds a
 joint and reads off the answer that the joint determines. -/
 theorem HasDual.postcomp_of_determined {V O' : Type} [DecidableEq V] [DecidableEq O']
-    [Nonempty O'] {f : (ι → σ) → V} {g : (ι → σ) → O'} {c : ℝ} (hc : 0 ≤ c)
+    [Nonempty O'] {f : (ι → σ) → V} {g : (ι → σ) → O'} {c : ℝ}
     (h : HasDual f c) (hdet : ∀ x y, f x = f y → g x = g y) [Finite σ] :
     HasDual g (2 * c) := by
   classical
   let := Fintype.ofFinite σ
-  refine (h.postcomp hc (fun v => if hv : ∃ x, f x = v then g hv.choose
+  refine (h.postcomp (fun v => if hv : ∃ x, f x = v then g hv.choose
     else Classical.arbitrary O')).ofEq fun x => ?_
   have hv : ∃ z, f z = f x := ⟨x, rfl⟩
   rw [dite_eq_left hv]
@@ -10460,18 +10202,14 @@ omit [DecidableEq ι] [Fintype σ] in
 two tropical path weights are multiplied — `h` is `(+)` on `ℝ ∪ {-∞}` — and
 nothing about `h` is used. -/
 theorem HasDual.combine₂ {V O' : Type} [DecidableEq V] [DecidableEq O']
-    (h : V → V → O') {g₀ g₁ : (ι → σ) → V} {c₀ c₁ : ℝ} (hc₀ : 0 ≤ c₀)
-    (hc₁ : 0 ≤ c₁) (hg₀ : HasDual g₀ c₀) (hg₁ : HasDual g₁ c₁) [Finite σ] :
+    (h : V → V → O') {g₀ g₁ : (ι → σ) → V} {c₀ c₁ : ℝ}
+    (hg₀ : HasDual g₀ c₀) (hg₁ : HasDual g₁ c₁) [Finite σ] :
     HasDual (fun x => h (g₀ x) (g₁ x)) (2 * (c₀ + c₁)) := by
   classical
   let := Fintype.ofFinite σ
   have hsum : (∑ b : Bool, bif b then c₁ else c₀) = c₀ + c₁ := by
     rw [Fintype.sum_bool]
     exact add_comm _ _
-  have hc : ∀ b : Bool, 0 ≤ (bif b then c₁ else c₀) := by
-    intro b; cases b
-    · exact hc₀
-    · exact hc₁
   have hgb : ∀ b : Bool,
       HasDual (bif b then g₁ else g₀) (bif b then c₁ else c₀) := by
     intro b; cases b
@@ -10479,7 +10217,7 @@ theorem HasDual.combine₂ {V O' : Type} [DecidableEq V] [DecidableEq O']
     · exact hg₁
   have := HasDual.combine' (Pi := Bool) (fun z : Bool → V => h (z false) (z true))
     (g := fun b => bif b then g₁ else g₀) (c := fun b => bif b then c₁ else c₀)
-    hc hgb
+    hgb
   rwa [hsum] at this
 
 omit [DecidableEq ι] [Fintype σ] in
@@ -10738,7 +10476,7 @@ noncomputable def pullbackCoord {ι' : Type} [Fintype ι']
       · push Not at h
         rw [spread_eq_zero h, spread_eq_zero h, ite_self]
     simp only [hmask]
-    rw [sum_spread he]
+    rw [sum_spread]
     exact P.constraint x y
 
 omit [DecidableEq X] in
@@ -10761,7 +10499,7 @@ theorem pullbackCoord_isCostLe {ι' : Type} [Fintype ι']
       rw [Finset.sum_comm]
       exact Finset.sum_congr rfl fun j _ => by rw [Finset.mul_sum]
     simp only [h]
-    rw [sum_spread he]
+    rw [sum_spread]
     exact hP.1 x
   · intro y
     have h : ∀ i : ι,
@@ -10776,7 +10514,7 @@ theorem pullbackCoord_isCostLe {ι' : Type} [Fintype ι']
       rw [Finset.sum_comm]
       exact Finset.sum_congr rfl fun j _ => by rw [Finset.mul_sum]
     simp only [h]
-    rw [sum_spread he]
+    rw [sum_spread]
     exact hP.2 y
 
 end DualPairOn

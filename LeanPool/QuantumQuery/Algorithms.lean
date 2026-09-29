@@ -929,19 +929,19 @@ lemma sum_qProb_eq_one {ψ : H → ℂ} (hψ : IsQState ψ) (p : H → O) :
   exact hψ
 
 omit [DecidableEq H] [Fintype O] in
-lemma qProb_le_qNormSq (p : H → O) (ψ : H → ℂ) (o : O) [Finite O] :
+lemma qProb_le_qNormSq (p : H → O) (ψ : H → ℂ) (o : O) :
     qProb p ψ o ≤ qNormSq ψ := by
   classical
-  let := Fintype.ofFinite O
-  rw [← sum_qProb p ψ]
-  exact Finset.single_le_sum (f := fun o => qProb p ψ o)
-    (fun o _ => qProb_nonneg p ψ o) (Finset.mem_univ o)
+  rw [qProb, qNormSq_def]
+  exact Finset.sum_le_sum fun h _ => by
+    split_ifs
+    · exact le_rfl
+    · exact Complex.normSq_nonneg _
 
 omit [DecidableEq H] [Fintype O] in
-lemma qProb_le_one {ψ : H → ℂ} (hψ : IsQState ψ) (p : H → O) (o : O) [Finite O] :
+lemma qProb_le_one {ψ : H → ℂ} (hψ : IsQState ψ) (p : H → O) (o : O) :
     qProb p ψ o ≤ 1 := by
   classical
-  let := Fintype.ofFinite O
   rw [← hψ]
   exact qProb_le_qNormSq p ψ o
 
@@ -949,21 +949,21 @@ omit [DecidableEq H] [Fintype O] in
 /-- **Two distinct outcomes cannot both be likely.**  This is what forbids a
 single state from answering two different questions, and hence what makes the
 query model unable to compute an unobservable distinction. -/
-lemma qProb_add_qProb_le_qNormSq (p : H → O) (ψ : H → ℂ) {a b : O} (hab : a ≠ b) [Finite O] :
+lemma qProb_add_qProb_le_qNormSq (p : H → O) (ψ : H → ℂ) {a b : O} (hab : a ≠ b) :
     qProb p ψ a + qProb p ψ b ≤ qNormSq ψ := by
   classical
-  let := Fintype.ofFinite O
-  rw [← sum_qProb p ψ]
-  have h := Finset.sum_le_sum_of_subset_of_nonneg
-    (Finset.subset_univ ({a, b} : Finset O))
-    (fun o _ _ => qProb_nonneg p ψ o)
-  rwa [Finset.sum_pair hab] at h
+  simp only [qProb, qNormSq_def, ← Finset.sum_add_distrib]
+  refine Finset.sum_le_sum fun h _ => ?_
+  by_cases ha : p h = a
+  · simp [ha, hab]
+  · by_cases hb : p h = b
+    · simp [hb, Ne.symm hab]
+    · simp [ha, hb, Complex.normSq_nonneg]
 
 omit [DecidableEq H] [Fintype O] in
 lemma qProb_add_qProb_le_one {ψ : H → ℂ} (hψ : IsQState ψ) (p : H → O) {a b : O}
-    (hab : a ≠ b) [Finite O] : qProb p ψ a + qProb p ψ b ≤ 1 := by
+    (hab : a ≠ b) : qProb p ψ a + qProb p ψ b ≤ 1 := by
   classical
-  let := Fintype.ofFinite O
   rw [← hψ]
   exact qProb_add_qProb_le_qNormSq p ψ hab
 
@@ -1296,10 +1296,9 @@ def prob (A : QAlg ι σ O W) (a : ι → σ) (t : ℕ) (o : O) : ℝ :=
 lemma prob_nonneg (A : QAlg ι σ O W) (a : ι → σ) (t : ℕ) (o : O) :
     0 ≤ A.prob a t o := qProb_nonneg _ _ _
 
-lemma prob_le_one (A : QAlg ι σ O W) (a : ι → σ) (t : ℕ) (o : O) [Finite O] :
+lemma prob_le_one (A : QAlg ι σ O W) (a : ι → σ) (t : ℕ) (o : O) :
     A.prob a t o ≤ 1 := by
   classical
-  let := Fintype.ofFinite O
   exact qProb_le_one (A.state_isQState a t) _ _
 
 end QAlg
@@ -1999,11 +1998,43 @@ lemma conjTranspose_mem_qUnitary {H : Type} [Fintype H] [DecidableEq H]
 
 namespace QRoutine
 
+section GeneralOracle
+
+variable (Q : Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ)
+
+/-- The operator implemented by the first `t` queries of `R`, with the opaque
+oracle matrix `Q` in place of the transposition oracle. -/
+def runWith (R : QRoutine ι σ W) : ℕ → Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ
+  | 0 => R.step 0
+  | t + 1 => R.step (t + 1) * (Q * R.runWith t)
+
+@[simp] lemma runWith_zero (R : QRoutine ι σ W) : R.runWith Q 0 = R.step 0 := rfl
+
+@[simp] lemma runWith_succ (R : QRoutine ι σ W) (t : ℕ) :
+    R.runWith Q (t + 1) = R.step (t + 1) * (Q * R.runWith Q t) := rfl
+
+lemma runWith_mem_unitaryGroup (R : QRoutine ι σ W)
+    (hQ : Q ∈ Matrix.unitaryGroup (QBasis ι σ W) ℂ) (t : ℕ) :
+    R.runWith Q t ∈ Matrix.unitaryGroup (QBasis ι σ W) ℂ := by
+  induction t with
+  | zero => exact R.step_unitary 0
+  | succ t ih => exact mul_mem (R.step_unitary (t + 1)) (mul_mem hQ ih)
+
+/-- Only the steps up to `t` matter. -/
+lemma runWith_congr {R S : QRoutine ι σ W} {t : ℕ}
+    (h : ∀ k, k ≤ t → R.step k = S.step k) : R.runWith Q t = S.runWith Q t := by
+  induction t with
+  | zero => exact h 0 le_rfl
+  | succ t ih =>
+      rw [runWith_succ, runWith_succ, h (t + 1) le_rfl,
+        ih (fun k hk => h k (le_trans hk (Nat.le_succ t)))]
+
+end GeneralOracle
+
 /-- The operator implemented by the first `t` queries of `R`. -/
 def runUpto (R : QRoutine ι σ W) (a : ι → σ) :
-    ℕ → Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ
-  | 0 => R.step 0
-  | t + 1 => R.step (t + 1) * (oracleMat a * R.runUpto a t)
+    ℕ → Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ := R.runWith (oracleMat a)
+
 
 @[simp] lemma runUpto_zero (R : QRoutine ι σ W) (a : ι → σ) :
     R.runUpto a 0 = R.step 0 := rfl
@@ -2016,12 +2047,8 @@ def run (R : QRoutine ι σ W) (a : ι → σ) : Matrix (QBasis ι σ W) (QBasis
   R.runUpto a R.len
 
 lemma runUpto_mem_unitaryGroup (R : QRoutine ι σ W) (a : ι → σ) (t : ℕ) :
-    R.runUpto a t ∈ Matrix.unitaryGroup (QBasis ι σ W) ℂ := by
-  induction t with
-  | zero => exact R.step_unitary 0
-  | succ t ih =>
-      exact mul_mem (R.step_unitary (t + 1))
-        (mul_mem (oracleMat_mem_unitaryGroup a) ih)
+    R.runUpto a t ∈ Matrix.unitaryGroup (QBasis ι σ W) ℂ :=
+  R.runWith_mem_unitaryGroup _ (oracleMat_mem_unitaryGroup a) t
 
 lemma run_mem_unitaryGroup (R : QRoutine ι σ W) (a : ι → σ) :
     R.run a ∈ Matrix.unitaryGroup (QBasis ι σ W) ℂ :=
@@ -2029,12 +2056,7 @@ lemma run_mem_unitaryGroup (R : QRoutine ι σ W) (a : ι → σ) :
 
 /-- Only the steps up to `t` matter for the first `t` queries. -/
 lemma runUpto_congr {R S : QRoutine ι σ W} (a : ι → σ) {t : ℕ}
-    (h : ∀ k, k ≤ t → R.step k = S.step k) : R.runUpto a t = S.runUpto a t := by
-  induction t with
-  | zero => exact h 0 le_rfl
-  | succ t ih =>
-      rw [runUpto_succ, runUpto_succ, h (t + 1) le_rfl,
-        ih (fun k hk => h k (le_trans hk (Nat.le_succ t)))]
+    (h : ∀ k, k ≤ t → R.step k = S.step k) : R.runUpto a t = S.runUpto a t := runWith_congr _ h
 
 /-! ## The bridge to `QAlg` -/
 
@@ -2099,48 +2121,82 @@ lemma comp_step_of_gt (R S : QRoutine ι σ W) {t : ℕ} (h : R.len < t) :
   change (if t < R.len then _ else if t = R.len then _ else _) = _
   rw [ite_eq_right (by omega), ite_eq_right (by omega)]
 
-lemma comp_runUpto_of_lt (R S : QRoutine ι σ W) (a : ι → σ) {t : ℕ}
-    (ht : t < R.len) : (R.comp S).runUpto a t = R.runUpto a t :=
-  runUpto_congr a fun _ hk => comp_step_of_lt R S (lt_of_le_of_lt hk ht)
+section GeneralOracleComposition
+variable (Q : Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ)
 
-lemma comp_runUpto_len (R S : QRoutine ι σ W) (a : ι → σ) :
-    (R.comp S).runUpto a R.len = S.step 0 * R.runUpto a R.len := by
+/-- The standard semantics is the transposition-oracle instance. -/
+lemma runUpto_eq_runWith (R : QRoutine ι σ W) (a : ι → σ) (t : ℕ) :
+    R.runUpto a t = R.runWith (oracleMat a) t := rfl
+
+lemma run_eq_runWith (R : QRoutine ι σ W) (a : ι → σ) :
+    R.run a = R.runWith (oracleMat a) R.len :=
+  runUpto_eq_runWith R a R.len
+
+/-! ## Sequencing, parametrically -/
+
+lemma comp_runWith_of_lt (R S : QRoutine ι σ W) {t : ℕ}
+    (ht : t < R.len) : (R.comp S).runWith Q t = R.runWith Q t :=
+  runWith_congr Q fun _ hk => comp_step_of_lt R S (lt_of_le_of_lt hk ht)
+
+lemma comp_runWith_len (R S : QRoutine ι σ W) :
+    (R.comp S).runWith Q R.len = S.step 0 * R.runWith Q R.len := by
   rcases Nat.eq_zero_or_pos R.len with h0 | hpos
-  · calc (R.comp S).runUpto a R.len
+  · calc (R.comp S).runWith Q R.len
         = (R.comp S).step R.len := by rw [h0]; rfl
       _ = S.step 0 * R.step R.len := comp_step_self R S
-      _ = S.step 0 * R.runUpto a R.len := by rw [h0]; rfl
+      _ = S.step 0 * R.runWith Q R.len := by rw [h0]; rfl
   · obtain ⟨m, hm⟩ : ∃ m, R.len = m + 1 := ⟨R.len - 1, by omega⟩
     have hlt : m < R.len := by omega
-    calc (R.comp S).runUpto a R.len
-        = (R.comp S).step R.len * (oracleMat a * (R.comp S).runUpto a m) := by
+    calc (R.comp S).runWith Q R.len
+        = (R.comp S).step R.len * (Q * (R.comp S).runWith Q m) := by
           rw [hm]
           rfl
-      _ = (S.step 0 * R.step R.len) * (oracleMat a * R.runUpto a m) := by
-          rw [comp_step_self, comp_runUpto_of_lt R S a hlt]
-      _ = S.step 0 * (R.step R.len * (oracleMat a * R.runUpto a m)) := by
+      _ = (S.step 0 * R.step R.len) * (Q * R.runWith Q m) := by
+          rw [comp_step_self, comp_runWith_of_lt Q R S hlt]
+      _ = S.step 0 * (R.step R.len * (Q * R.runWith Q m)) := by
           rw [Matrix.mul_assoc]
-      _ = S.step 0 * R.runUpto a R.len := by
+      _ = S.step 0 * R.runWith Q R.len := by
           rw [hm]
           rfl
 
-lemma comp_runUpto_add (R S : QRoutine ι σ W) (a : ι → σ) (k : ℕ) :
-    (R.comp S).runUpto a (R.len + k) = S.runUpto a k * R.run a := by
+lemma comp_runWith_add (R S : QRoutine ι σ W) (k : ℕ) :
+    (R.comp S).runWith Q (R.len + k)
+      = S.runWith Q k * R.runWith Q R.len := by
   induction k with
-  | zero => simpa [run] using comp_runUpto_len R S a
+  | zero => simpa using comp_runWith_len Q R S
   | succ k ih =>
       have hgt : R.len < R.len + (k + 1) := by omega
       have hsub : R.len + (k + 1) - R.len = k + 1 := by omega
-      calc (R.comp S).runUpto a (R.len + (k + 1))
+      calc (R.comp S).runWith Q (R.len + (k + 1))
           = (R.comp S).step (R.len + (k + 1))
-              * (oracleMat a * (R.comp S).runUpto a (R.len + k)) := by
+              * (Q * (R.comp S).runWith Q (R.len + k)) := by
             rw [show R.len + (k + 1) = (R.len + k) + 1 from by omega]
             rfl
-        _ = S.step (k + 1) * (oracleMat a * (S.runUpto a k * R.run a)) := by
+        _ = S.step (k + 1) * (Q * (S.runWith Q k * R.runWith Q R.len)) := by
             rw [comp_step_of_gt R S hgt, hsub, ih]
-        _ = (S.step (k + 1) * (oracleMat a * S.runUpto a k)) * R.run a := by
+        _ = (S.step (k + 1) * (Q * S.runWith Q k)) * R.runWith Q R.len := by
             rw [Matrix.mul_assoc, Matrix.mul_assoc]
-        _ = S.runUpto a (k + 1) * R.run a := by rw [runUpto_succ]
+        _ = S.runWith Q (k + 1) * R.runWith Q R.len := by rw [runWith_succ]
+
+/-- **Sequencing against any oracle**: the mirror of `comp_run`. -/
+theorem comp_runWith_full (R S : QRoutine ι σ W) :
+    (R.comp S).runWith Q (R.len + S.len)
+      = S.runWith Q S.len * R.runWith Q R.len :=
+  comp_runWith_add Q R S S.len
+
+
+end GeneralOracleComposition
+
+lemma comp_runUpto_of_lt (R S : QRoutine ι σ W) (a : ι → σ) {t : ℕ}
+    (ht : t < R.len) : (R.comp S).runUpto a t = R.runUpto a t :=
+  comp_runWith_of_lt (oracleMat a) R S ht
+
+lemma comp_runUpto_len (R S : QRoutine ι σ W) (a : ι → σ) :
+    (R.comp S).runUpto a R.len = S.step 0 * R.runUpto a R.len := comp_runWith_len (oracleMat a) R S
+
+lemma comp_runUpto_add (R S : QRoutine ι σ W) (a : ι → σ) (k : ℕ) :
+    (R.comp S).runUpto a (R.len + k) = S.runUpto a k * R.run a :=
+  comp_runWith_add (oracleMat a) R S k
 
 /-- **Sequencing, at the level of operators.** -/
 theorem comp_run (R S : QRoutine ι σ W) (a : ι → σ) :
@@ -2278,6 +2334,11 @@ def ofUnitary (U : Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ)
 @[simp] lemma ofUnitary_run (U : Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ)
     (hU : U ∈ Matrix.unitaryGroup (QBasis ι σ W) ℂ) (a : ι → σ) :
     (ofUnitary U hU).run a = U := rfl
+
+lemma ofUnitary_runWith (Q : Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ)
+    (U : Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ)
+    (hU : U ∈ Matrix.unitaryGroup (QBasis ι σ W) ℂ) :
+    (ofUnitary U hU).runWith Q 0 = U := rfl
 
 /-- The zero-query identity routine. -/
 def identity : QRoutine ι σ W := ofUnitary 1 one_mem_qUnitary
@@ -3377,134 +3438,14 @@ end QuantumQueryComplexity
 end SourceQuantumReadAll
 
 section SourceQuantumRunWith
-
 /-!
 # Running a routine against an arbitrary oracle matrix
 
-`QRoutine.runUpto` interleaves a routine's steps with the transposition
-oracle `oracleMat a`; nothing in the interleaving or in sequencing uses any
-property of that matrix.  This section states the run **parametrically in the
-oracle**: `runWith Q t` interleaves the opaque matrix `Q`, and
-
-    runUpto a t  =  runWith (oracleMat a) t
-
-recovers the standard semantics.  The payoff is the oracle-simulation layer:
-the XOR-model run is `runWith (xorOracleMat a)`, and the composition law
-`comp_runWith` — the mirror of `comp_run`, proved once here — serves both
-models, so the gadget compilers of `SourceQuantumSimulation` can be built with
-`QRoutine.comp` in either semantics.
+The `QRoutine.runWith` semantics and composition laws are proved alongside
+`QRoutine` in `SourceQuantumRoutine`. The standard `runUpto` semantics is their
+transposition-oracle specialization. Both the standard and XOR simulation
+compilers use the shared arbitrary-oracle implementation.
 -/
-
-namespace QuantumQueryComplexity
-
-open scoped Matrix
-open Matrix
-
-variable {ι σ W : Type} [Fintype ι] [DecidableEq ι] [Fintype σ] [DecidableEq σ]
-  [Fintype W] [DecidableEq W]
-
-namespace QRoutine
-
-variable (Q : Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ)
-
-/-- The operator implemented by the first `t` queries of `R`, with the opaque
-oracle matrix `Q` in place of the transposition oracle. -/
-def runWith (R : QRoutine ι σ W) : ℕ → Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ
-  | 0 => R.step 0
-  | t + 1 => R.step (t + 1) * (Q * R.runWith t)
-
-@[simp] lemma runWith_zero (R : QRoutine ι σ W) : R.runWith Q 0 = R.step 0 := rfl
-
-@[simp] lemma runWith_succ (R : QRoutine ι σ W) (t : ℕ) :
-    R.runWith Q (t + 1) = R.step (t + 1) * (Q * R.runWith Q t) := rfl
-
-/-- The standard semantics is the transposition-oracle instance. -/
-lemma runUpto_eq_runWith (R : QRoutine ι σ W) (a : ι → σ) (t : ℕ) :
-    R.runUpto a t = R.runWith (oracleMat a) t := by
-  induction t with
-  | zero => rfl
-  | succ t ih => rw [runUpto_succ, runWith_succ, ih]
-
-lemma run_eq_runWith (R : QRoutine ι σ W) (a : ι → σ) :
-    R.run a = R.runWith (oracleMat a) R.len :=
-  runUpto_eq_runWith R a R.len
-
-lemma runWith_mem_unitaryGroup (R : QRoutine ι σ W)
-    (hQ : Q ∈ Matrix.unitaryGroup (QBasis ι σ W) ℂ) (t : ℕ) :
-    R.runWith Q t ∈ Matrix.unitaryGroup (QBasis ι σ W) ℂ := by
-  induction t with
-  | zero => exact R.step_unitary 0
-  | succ t ih => exact mul_mem (R.step_unitary (t + 1)) (mul_mem hQ ih)
-
-/-- Only the steps up to `t` matter. -/
-lemma runWith_congr {R S : QRoutine ι σ W} {t : ℕ}
-    (h : ∀ k, k ≤ t → R.step k = S.step k) : R.runWith Q t = S.runWith Q t := by
-  induction t with
-  | zero => exact h 0 le_rfl
-  | succ t ih =>
-      rw [runWith_succ, runWith_succ, h (t + 1) le_rfl,
-        ih (fun k hk => h k (le_trans hk (Nat.le_succ t)))]
-
-/-! ## Sequencing, parametrically -/
-
-lemma comp_runWith_of_lt (R S : QRoutine ι σ W) {t : ℕ}
-    (ht : t < R.len) : (R.comp S).runWith Q t = R.runWith Q t :=
-  runWith_congr Q fun _ hk => comp_step_of_lt R S (lt_of_le_of_lt hk ht)
-
-lemma comp_runWith_len (R S : QRoutine ι σ W) :
-    (R.comp S).runWith Q R.len = S.step 0 * R.runWith Q R.len := by
-  rcases Nat.eq_zero_or_pos R.len with h0 | hpos
-  · calc (R.comp S).runWith Q R.len
-        = (R.comp S).step R.len := by rw [h0]; rfl
-      _ = S.step 0 * R.step R.len := comp_step_self R S
-      _ = S.step 0 * R.runWith Q R.len := by rw [h0]; rfl
-  · obtain ⟨m, hm⟩ : ∃ m, R.len = m + 1 := ⟨R.len - 1, by omega⟩
-    have hlt : m < R.len := by omega
-    calc (R.comp S).runWith Q R.len
-        = (R.comp S).step R.len * (Q * (R.comp S).runWith Q m) := by
-          rw [hm]
-          rfl
-      _ = (S.step 0 * R.step R.len) * (Q * R.runWith Q m) := by
-          rw [comp_step_self, comp_runWith_of_lt Q R S hlt]
-      _ = S.step 0 * (R.step R.len * (Q * R.runWith Q m)) := by
-          rw [Matrix.mul_assoc]
-      _ = S.step 0 * R.runWith Q R.len := by
-          rw [hm]
-          rfl
-
-lemma comp_runWith_add (R S : QRoutine ι σ W) (k : ℕ) :
-    (R.comp S).runWith Q (R.len + k)
-      = S.runWith Q k * R.runWith Q R.len := by
-  induction k with
-  | zero => simpa using comp_runWith_len Q R S
-  | succ k ih =>
-      have hgt : R.len < R.len + (k + 1) := by omega
-      have hsub : R.len + (k + 1) - R.len = k + 1 := by omega
-      calc (R.comp S).runWith Q (R.len + (k + 1))
-          = (R.comp S).step (R.len + (k + 1))
-              * (Q * (R.comp S).runWith Q (R.len + k)) := by
-            rw [show R.len + (k + 1) = (R.len + k) + 1 from by omega]
-            rfl
-        _ = S.step (k + 1) * (Q * (S.runWith Q k * R.runWith Q R.len)) := by
-            rw [comp_step_of_gt R S hgt, hsub, ih]
-        _ = (S.step (k + 1) * (Q * S.runWith Q k)) * R.runWith Q R.len := by
-            rw [Matrix.mul_assoc, Matrix.mul_assoc]
-        _ = S.runWith Q (k + 1) * R.runWith Q R.len := by rw [runWith_succ]
-
-/-- **Sequencing against any oracle**: the mirror of `comp_run`. -/
-theorem comp_runWith_full (R S : QRoutine ι σ W) :
-    (R.comp S).runWith Q (R.len + S.len)
-      = S.runWith Q S.len * R.runWith Q R.len :=
-  comp_runWith_add Q R S S.len
-
-lemma ofUnitary_runWith (U : Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ)
-    (hU : U ∈ Matrix.unitaryGroup (QBasis ι σ W) ℂ) :
-    (ofUnitary U hU).runWith Q 0 = U := rfl
-
-end QRoutine
-
-end QuantumQueryComplexity
-
 end SourceQuantumRunWith
 
 section SourceQuantumUniformAlphabet
@@ -4335,21 +4276,16 @@ theorem Realizes.map [Fintype O] {read : X → ι → σ} {q : ℕ} {P : X → O
 omit [Fintype X] in
 /-- The bijective special case: relabel the outcomes. -/
 theorem Realizes.map_equiv {read : X → ι → σ} {q : ℕ}
-    {P : X → O → ℝ} (h : Realizes read q P) (g : O ≃ O') [Finite O] :
+    {P : X → O → ℝ} (h : Realizes read q P) (g : O ≃ O') :
     Realizes read q (fun x o' => P x (g.symm o')) := by
-  classical
-  let := Fintype.ofFinite O
-  refine (h.map g).congr fun x o' => ?_
-  have hset : Finset.univ.filter (fun o => g o = o') = {g.symm o'} := by
-    ext o
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and,
-      Finset.mem_singleton]
-    constructor
-    · intro hgo
-      rw [← hgo, Equiv.symm_apply_apply]
-    · rintro rfl
-      exact g.apply_symm_apply o'
-  rw [hset, Finset.sum_singleton]
+  obtain ⟨W, hW, hW', A, hA⟩ := h
+  refine ⟨W, hW, hW', A.postcomp g, ?_⟩
+  intro x o
+  change (A.postcomp g).prob (read x) q o = P x (g.symm o)
+  rw [← hA x (g.symm o)]
+  simp only [QAlg.prob, QAlg.postcomp_state, QAlg.postcomp_readout, qProb]
+  exact Finset.sum_congr rfl fun h _ => if_congr g.eq_symm_apply.symm rfl rfl
+
 
 end Realizes
 
@@ -4573,10 +4509,14 @@ open Matrix
 variable {ι σ : Type} [Fintype ι] [DecidableEq ι] [Fintype σ] [DecidableEq σ]
 variable {X : Type} [Fintype X]
 
-/-! ## The base and the cons step -/
+section GeneralRecords
+variable {O : Type} [DecidableEq O]
+omit [Fintype X]
 
-/-- Prepending a coordinate to a Boolean tuple. -/
-def finConsEquiv (k : ℕ) : Bool × (Fin k → Bool) ≃ (Fin (k + 1) → Bool) where
+/-! ## The `k`-fold product realization over any decidable output type -/
+
+/-- Prepending a coordinate to a record. -/
+def consEquiv (O : Type) (k : ℕ) : O × (Fin k → O) ≃ (Fin (k + 1) → O) where
   toFun p := Fin.cons p.1 p.2
   invFun y := (y 0, fun j => y j.succ)
   left_inv := by
@@ -4588,11 +4528,11 @@ def finConsEquiv (k : ℕ) : Bool × (Fin k → Bool) ≃ (Fin (k + 1) → Bool)
     funext j
     refine Fin.cases ?_ (fun j => ?_) j <;> simp
 
-omit [Fintype X] in
+
 /-- The trivial realization: no runs, the constant distribution `1` on the
-empty tuple. -/
-lemma realizes_zero_tuple (read : X → ι → σ) :
-    Realizes read 0 (fun (_ : X) (_ : Fin 0 → Bool) => (1 : ℝ)) := by
+empty record. -/
+lemma realizes_zero_rec (read : X → ι → σ) :
+    Realizes read 0 (fun (_ : X) (_ : Fin 0 → O) => (1 : ℝ)) := by
   classical
   refine ⟨Unit, inferInstance, inferInstance,
     constAlg ι σ (fun j : Fin 0 => j.elim0), ?_⟩
@@ -4601,6 +4541,46 @@ lemma realizes_zero_tuple (read : X → ι → σ) :
   subst ho
   simp [QAlg.prob, constAlg]
 
+
+/-- **The `k`-fold product realization over any decidable output type**: costs
+add, distributions multiply. -/
+theorem Realizes.foldRec {read : X → ι → σ} :
+    ∀ (k : ℕ) (q : Fin k → ℕ) (P : Fin k → X → O → ℝ),
+    (∀ j, Realizes read (q j) (P j)) →
+    Realizes read (∑ j, q j)
+      (fun x (y : Fin k → O) => ∏ j, P j x (y j)) := by
+  classical
+  intro k
+  induction k with
+  | zero =>
+      intro q P _
+      rw [show (∑ j : Fin 0, q j) = 0 from by simp]
+      exact (realizes_zero_rec read).congr fun x y => by simp
+  | succ k ih =>
+      intro q P h
+      have hfold := ih (fun j => q j.succ) (fun j => P j.succ)
+        (fun j => h j.succ)
+      have hpair := (h 0).pair hfold
+      have hmapped := hpair.map_equiv (consEquiv O k)
+      rw [Fin.sum_univ_succ]
+      refine hmapped.congr fun x y => ?_
+      rw [show (consEquiv O k).symm y = (y 0, fun j => y j.succ) from rfl]
+      rw [Fin.prod_univ_succ]
+
+end GeneralRecords
+
+/-! ## The base and the cons step -/
+
+/-- Prepending a coordinate to a Boolean tuple. -/
+def finConsEquiv (k : ℕ) : Bool × (Fin k → Bool) ≃ (Fin (k + 1) → Bool) :=
+  consEquiv Bool k
+
+omit [Fintype X] in
+/-- The trivial realization: no runs, the constant distribution `1` on the
+empty tuple. -/
+lemma realizes_zero_tuple (read : X → ι → σ) :
+    Realizes read 0 (fun (_ : X) (_ : Fin 0 → Bool) => (1 : ℝ)) := realizes_zero_rec read
+
 omit [Fintype X] in
 /-- **The `k`-fold product realization**: costs add, distributions
 multiply. -/
@@ -4608,24 +4588,7 @@ theorem Realizes.fold {read : X → ι → σ} :
     ∀ (k : ℕ) (q : Fin k → ℕ) (P : Fin k → X → Bool → ℝ),
     (∀ j, Realizes read (q j) (P j)) →
     Realizes read (∑ j, q j)
-      (fun x (y : Fin k → Bool) => ∏ j, P j x (y j)) := by
-  classical
-  intro k
-  induction k with
-  | zero =>
-      intro q P _
-      rw [show (∑ j : Fin 0, q j) = 0 from by simp]
-      exact (realizes_zero_tuple read).congr fun x y => by simp
-  | succ k ih =>
-      intro q P h
-      have hfold := ih (fun j => q j.succ) (fun j => P j.succ)
-        (fun j => h j.succ)
-      have hpair := (h 0).pair hfold
-      have hmapped := hpair.map_equiv (finConsEquiv k)
-      rw [Fin.sum_univ_succ]
-      refine hmapped.congr fun x y => ?_
-      rw [show (finConsEquiv k).symm y = (y 0, fun j => y j.succ) from rfl]
-      rw [Fin.prod_univ_succ]
+      (fun x (y : Fin k → Bool) => ∏ j, P j x (y j)) := Realizes.foldRec
 
 /-- Probabilities sum to one. -/
 lemma QAlg.sum_prob {O W : Type} [DecidableEq O] [Fintype O] [Fintype W]
