@@ -126,6 +126,7 @@ theorem canonicalOrderedBoxMultipleIntegralMap_eq_orderedBoxToRandom
 
 omit [CompleteSpace W] [BorelSpace W] in
 /-- The algebraic range of finite ordered Brownian increment chains of one fixed order. -/
+@[expose]
 noncomputable def brownianOrderedBoxOrderRange
     (hB : IsPreBrownianReal B P) (n : ℕ) : Submodule ℝ (RandomL2 P) :=
   LinearMap.range (orderedBoxToRandom hB n)

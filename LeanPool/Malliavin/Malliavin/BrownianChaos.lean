@@ -83,11 +83,13 @@ theorem positiveIntegralCLM_mem_naturalItoRange
     (restrictToSimplex (n + 1) f)
 
 /-- The unclosed range of the canonical Brownian order-`n` multiple-integral operator. -/
+@[expose]
 noncomputable def brownianMultipleIntegralRange
     (hB : IsPreBrownianReal B P) (n : ℕ) : Submodule ℝ (RandomL2 P) :=
   LinearMap.range (integralCLM hB n).toLinearMap
 
 /-- The canonical Brownian `n`th homogeneous subspace. -/
+@[expose]
 noncomputable def brownianHomogeneousChaos
     (hB : IsPreBrownianReal B P) (n : ℕ) : ClosedSubmodule ℝ (RandomL2 P) :=
   (brownianMultipleIntegralRange hB n).closure

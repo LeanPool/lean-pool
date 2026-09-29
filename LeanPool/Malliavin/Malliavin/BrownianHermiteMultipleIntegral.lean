@@ -35,6 +35,7 @@ variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
 
 /-- The genuinely higher-order Hermite/multiple-integral identity for finite Brownian step
 kernels. -/
+@[expose]
 def BrownianHigherHermiteMultipleIntegralIdentity
     (hB : IsPreBrownianReal B P) : Prop :=
   ∀ v n, 2 ≤ n →

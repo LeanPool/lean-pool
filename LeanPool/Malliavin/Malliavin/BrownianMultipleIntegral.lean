@@ -35,7 +35,7 @@ variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
 omit [CompleteSpace W] [BorelSpace W] in
 /-- The canonical Brownian multiple-integral operator
 `Iₙ = n! Jₙ ∘ symmetrizeL`. -/
-noncomputable def brownianMultipleIntegralCLM
+@[expose] noncomputable def brownianMultipleIntegralCLM
     (hB : IsPreBrownianReal B P) (n : ℕ) :
     IteratedKernel n →L[ℝ] RandomL2 P :=
   (n.factorial : ℝ) • (integralCLM hB n).comp

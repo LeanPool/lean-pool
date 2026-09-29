@@ -119,6 +119,7 @@ theorem compLpₗᵢ_comp_compLpₗᵢ (e : E ≃ₗᵢ[ℝ] F) (f : Lp F 2 μ) 
 
 /-- Postcomposition with a linear isometric equivalence `E ≃ F` as an equivalence
 `L²(μ; E) ≃ L²(μ; F)`. -/
+@[expose]
 noncomputable def compLpEquiv (e : E ≃ₗᵢ[ℝ] F) : Lp E 2 μ ≃ₗᵢ[ℝ] Lp F 2 μ :=
   LinearIsometryEquiv.ofSurjective (compLpₗᵢ e.toLinearIsometry) fun f ↦
     ⟨compLpₗᵢ e.symm.toLinearIsometry f, compLpₗᵢ_comp_compLpₗᵢ e f⟩
@@ -135,6 +136,7 @@ section WienerEquiv
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {B : ℝ≥0 → Ω → ℝ}
 
 /-- The Wiener integral as a linear isometric equivalence `L²(ℝ≥0) ≃ firstChaos`. -/
+@[expose]
 noncomputable def wienerIntegralEquiv (hB : IsPreBrownianReal B P) :
     Lp ℝ 2 nonnegativeLebesgueMeasure ≃ₗᵢ[ℝ] firstChaos hB :=
   (wienerIntegralₗᵢ hB).equivRange.trans (LinearIsometryEquiv.ofEq _ _ (range_wienerIntegral hB))
@@ -176,6 +178,7 @@ variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {B : ℝ≥0 → Ω 
 
 /-- **The time derivative** on first-chaos-valued square-integrable random variables:
 apply `J₁⁻¹` pointwise, then the Fubini lift. -/
+@[expose]
 noncomputable def timeDerivativeOfFirstChaos (hB : IsPreBrownianReal B P) :
     Lp (firstChaos hB) 2 P →ₗᵢ[ℝ] Lp ℝ 2 (nonnegativeLebesgueMeasure.prod P) :=
   fubiniLift.comp (compLpₗᵢ (wienerIntegralEquiv hB).symm.toLinearIsometry)
@@ -246,6 +249,7 @@ theorem firstChaos_le_space (hB : IsPreBrownianReal B P) (L : ℝ≥0 → Strong
 
 /-- **The contract's time derivative**, given the identification of the Cameron--Martin space with
 the first chaos: `L²(P; Space P) → L²(ℝ≥0 × W)`, an isometry. -/
+@[expose]
 noncomputable def timeDerivativeOfEq (hB : IsPreBrownianReal B P)
     (hS : Space P = firstChaos hB) :
     Lp (Space P) 2 P →ₗᵢ[ℝ] Lp ℝ 2 (nonnegativeLebesgueMeasure.prod P) :=
@@ -469,12 +473,14 @@ theorem space_eq_firstChaos (hB : IsPreBrownianReal B P) (L : ℝ≥0 → Strong
 
 /-- **The Clark--Ocone time derivative on a Brownian-generated Gaussian space** with
 linear-functional coordinates: an isometry `L²(P; Space P) → L²(ℝ≥0 × W)`. -/
+@[expose]
 noncomputable def timeDerivative (hB : IsPreBrownianReal B P) (L : ℝ≥0 → StrongDual ℝ W)
     (hL : ∀ t w, B t w = L t w) (hgen : IsWienerGenerated B) :
     Lp (Space P) 2 P →ₗᵢ[ℝ] Lp ℝ 2 (nonnegativeLebesgueMeasure.prod P) :=
   timeDerivativeOfEq hB (space_eq_firstChaos hB L hL hgen)
 
 /-- **The time derivative is an isometric equivalence** `L²(P; Space P) ≃ L²(ℝ≥0 × W)`. -/
+@[expose]
 noncomputable def timeDerivativeEquiv (hB : IsPreBrownianReal B P) (L : ℝ≥0 → StrongDual ℝ W)
     (hL : ∀ t w, B t w = L t w) (hgen : IsWienerGenerated B) :
     Lp (Space P) 2 P ≃ₗᵢ[ℝ] Lp ℝ 2 (nonnegativeLebesgueMeasure.prod P) :=

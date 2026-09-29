@@ -86,6 +86,7 @@ section Order
 variable [LinearOrder T]
 
 /-- The (open) simplex `Δₙ = {t : Fin n → T | t 0 < t 1 < ⋯ < t (n-1)}`. -/
+@[expose]
 def simplex (T : Type*) [LinearOrder T] (n : ℕ) : Set (Fin n → T) :=
   {t | StrictMono t}
 

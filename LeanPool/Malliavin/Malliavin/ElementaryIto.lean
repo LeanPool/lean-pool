@@ -224,6 +224,7 @@ theorem elementaryBrownianValue_smul
 
 /-- For a fixed interval, the genuine Brownian terminal value is a linear function of the
 adapted coefficient. -/
+@[expose]
 noncomputable def elementaryBrownianValueLinear
     (hB : IsPreBrownianReal B P) (hsm : ∀ t, StronglyMeasurable (B t))
     {𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›}

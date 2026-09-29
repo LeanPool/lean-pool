@@ -216,6 +216,7 @@ theorem homogeneousChaos_orthogonalFamily (hB : IsPreBrownianReal B P) :
   exact homogeneousChaos_isOrtho hB hmn
 
 /-- The closed subspace of (almost-everywhere) constant random variables. -/
+@[expose]
 def constantRandomVariables (P : Measure Ω) [IsFiniteMeasure P] :
     Submodule ℝ (RandomL2 P) :=
   (MeasureTheory.Lp.constL 2 P ℝ : ℝ →L[ℝ] RandomL2 P).range.topologicalClosure

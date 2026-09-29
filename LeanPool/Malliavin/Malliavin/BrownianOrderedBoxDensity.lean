@@ -468,7 +468,7 @@ theorem positiveOrderedBoxDense : PositiveOrderedBoxDense :=
 
 /-- The canonical completed Brownian iterated-integral family, with ordered-box density
 discharged. -/
-noncomputable def brownianIteratedIntegralFamily
+@[expose] noncomputable def brownianIteratedIntegralFamily
     {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [MeasurableSpace W]
     [SecondCountableTopology W]

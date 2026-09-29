@@ -319,6 +319,7 @@ variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   (μ : Measure W) [IsGaussian μ]
 
 /-- The constant `H`-valued random variable `h`, as a linear isometry `H → L²(μ; H)`. -/
+@[expose]
 noncomputable def constLp : Space μ →ₗᵢ[ℝ] Lp (Space μ) 2 μ :=
   ⟨(Lp.constL 2 μ ℝ : Space μ →L[ℝ] Lp (Space μ) 2 μ).toLinearMap, fun h ↦ by
     rw [ContinuousLinearMap.coe_coe, Lp.constL_apply]
