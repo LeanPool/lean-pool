@@ -72,7 +72,6 @@ variable {𝕜 E : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [InnerProductSpac
 /-- **The cosines of the principal angles** between the subspaces spanned by two
 orthonormal families `u, v : Fin d → E`: the (sorted, `ℕ →₀ ℝ`-indexed) singular
 values of the overlap operator `overlapOp hu hv`. -/
-@[expose]
 noncomputable def cosPrincipalAngles {u v : Fin d → E} (hu : Orthonormal 𝕜 u)
     (hv : Orthonormal 𝕜 v) : ℕ →₀ ℝ :=
   (overlapOp hu hv).singularValues
@@ -110,7 +109,6 @@ theorem cosPrincipalAngles_comm {u v : Fin d → E} (hu : Orthonormal 𝕜 u)
 
 /-- **The squared Frobenius sine** `‖sin Θ‖²_F = ∑ᵢ sin²θᵢ = ∑ᵢ (1 − cos²θᵢ)`
 between the subspaces spanned by two orthonormal families of the same size. -/
-@[expose]
 noncomputable def sinThetaSq {u v : Fin d → E} (hu : Orthonormal 𝕜 u)
     (hv : Orthonormal 𝕜 v) : ℝ :=
   ∑ k : Fin d, (1 - cosPrincipalAngles hu hv (k : ℕ) ^ 2)

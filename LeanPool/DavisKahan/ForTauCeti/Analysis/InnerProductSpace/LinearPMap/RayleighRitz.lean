@@ -123,7 +123,6 @@ theorem inner_specProjection_sub_specProjection {B : Set ℝ} (hB : MeasurableSe
 /-! ## The energy split across a spectral projection -/
 
 /-- The spectral projection of a domain vector, as a domain vector. -/
-@[expose]
 noncomputable def specProjectionDomain (B : Set ℝ) (hB : MeasurableSet B) (x : A.domain) :
     A.domain :=
   ⟨specProjection hA B hB (x : H), specProjection_mem_domain hA B hB x⟩

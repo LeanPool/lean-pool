@@ -32,25 +32,21 @@ open scoped Nat
 noncomputable section
 
 /-- The `n`th cosine-series term at `x` in a normed algebra. -/
-@[expose]
 def cosSeriesTerm {𝕜 : Type*} [RCLike 𝕜] {A : Type*} [NormedRing A]
     [NormedAlgebra 𝕜 A] (x : A) (n : ℕ) : A :=
   ((((2 * n)! : 𝕜)⁻¹) * (-1 : 𝕜) ^ n) • x ^ (2 * n)
 
 /-- The `n`th sine-series term at `x` in a normed algebra. -/
-@[expose]
 def sinSeriesTerm {𝕜 : Type*} [RCLike 𝕜] {A : Type*} [NormedRing A]
     [NormedAlgebra 𝕜 A] (x : A) (n : ℕ) : A :=
   ((((2 * n + 1)! : 𝕜)⁻¹) * (-1 : 𝕜) ^ n) • x ^ (2 * n + 1)
 
 /-- The cosine power series in a normed algebra. -/
-@[expose]
 noncomputable def cosSeries {𝕜 : Type*} [RCLike 𝕜] {A : Type*} [NormedRing A]
     [NormedAlgebra 𝕜 A] (x : A) : A :=
   ∑' n : ℕ, cosSeriesTerm (𝕜 := 𝕜) x n
 
 /-- The sine power series in a normed algebra. -/
-@[expose]
 noncomputable def sinSeries {𝕜 : Type*} [RCLike 𝕜] {A : Type*} [NormedRing A]
     [NormedAlgebra 𝕜 A] (x : A) : A :=
   ∑' n : ℕ, sinSeriesTerm (𝕜 := 𝕜) x n

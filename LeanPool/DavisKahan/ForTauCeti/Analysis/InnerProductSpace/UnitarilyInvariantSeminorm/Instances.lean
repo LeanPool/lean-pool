@@ -131,7 +131,6 @@ theorem comp_le_mul_opNorm (A : E →ₗ[𝕜] F) (C : E →ₗ[𝕜] E) :
   simpa only [mul_comm] using h
 
 /-- Operator norm as a rectangular UI norm. -/
-@[expose]
 noncomputable def opNorm : UnitarilyInvariantSeminorm 𝕜 E F where
   toSeminorm := Seminorm.of
     (fun A => ‖A.toContinuousLinearMap‖)
@@ -183,7 +182,6 @@ theorem sqrt_sum_add_sq_le {m : ℕ} (f g : Fin m → ℝ) :
   exact norm_add_le x y
 
 /-- Frobenius/Hilbert--Schmidt norm as a rectangular UI norm. -/
-@[expose]
 noncomputable def frobenius : UnitarilyInvariantSeminorm 𝕜 E F where
   toSeminorm := Seminorm.of
     (fun A => Real.sqrt
@@ -230,7 +228,6 @@ noncomputable def frobenius : UnitarilyInvariantSeminorm 𝕜 E F where
           sum_sq_norm_apply_unitary_comp A V rfl (stdOrthonormalBasis 𝕜 E)])
 
 /-- Ky Fan `k`-norm. -/
-@[expose]
 noncomputable def kyFan (k : ℕ) : UnitarilyInvariantSeminorm 𝕜 E F where
   toSeminorm := Seminorm.of
     (fun A => kyFanSum k A)
@@ -247,7 +244,6 @@ noncomputable def kyFan (k : ℕ) : UnitarilyInvariantSeminorm 𝕜 E F where
         rw [singularValues_unitary_comp, singularValues_comp_unitary])
 
 /-- Nuclear/trace norm. -/
-@[expose]
 noncomputable def nuclear : UnitarilyInvariantSeminorm 𝕜 E F :=
   kyFan (finrank 𝕜 E)
 

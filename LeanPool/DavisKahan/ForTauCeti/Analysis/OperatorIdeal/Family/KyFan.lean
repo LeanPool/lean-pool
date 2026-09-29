@@ -73,7 +73,6 @@ open ContinuousLinearMap
 
 `hk : 0 < k` is needed for exactly one law, `enorm_le_gauge`: at `k = 0` the gauge is
 identically `0`, which satisfies the other three but is not a norm. -/
-@[expose]
 noncomputable def kyFanIdealFamily (𝕜 : Type u) [RCLike 𝕜]
     [ContinuousLinearMap.HasMinMaxLowerBoundEverywhere.{u, v} 𝕜] (k : ℕ) (hk : 0 < k) :
     SymmetricOperatorIdealFamily.{u, v} 𝕜 where

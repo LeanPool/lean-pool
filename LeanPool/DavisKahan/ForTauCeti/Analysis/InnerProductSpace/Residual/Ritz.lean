@@ -55,7 +55,6 @@ noncomputable def compression (A : E →ₗ[𝕜] E) (X : F →ₗᵢ[𝕜] E) :
 
 /-- Residual of an approximate invariant pair represented by an isometric
 embedding. -/
-@[expose]
 noncomputable def residual (A : E →ₗ[𝕜] E) (X : F →ₗᵢ[𝕜] E)
     (M : F →ₗ[𝕜] F) : F →ₗ[𝕜] E :=
   A ∘ₗ X.toLinearMap - X.toLinearMap ∘ₗ M
@@ -67,7 +66,6 @@ noncomputable def ritzResidual (A : E →ₗ[𝕜] E) (X : F →ₗᵢ[𝕜] E) 
   residual A X (compression A X)
 
 /-- The represented approximate subspace. -/
-@[expose]
 def approximateSubspace (X : F →ₗᵢ[𝕜] E) : Submodule 𝕜 E :=
   LinearMap.range X.toLinearMap
 

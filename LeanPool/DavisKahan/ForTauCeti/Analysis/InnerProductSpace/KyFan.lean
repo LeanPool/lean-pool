@@ -453,7 +453,6 @@ values.  `kyFanSum 1 A = ‖A‖`, `kyFanSum (finrank 𝕜 E) A` is the trace no
 `@[expose]`: the defining sum is the working form throughout the Ky Fan and
 unitarily-invariant-norm development, so the body must stay visible to the
 kernel for the `rfl`-level rewrites below. -/
-@[expose]
 noncomputable def kyFanSum (k : ℕ) (A : E →ₗ[𝕜] F) : ℝ :=
   ∑ i : Fin k, A.singularValues (i : ℕ)
 

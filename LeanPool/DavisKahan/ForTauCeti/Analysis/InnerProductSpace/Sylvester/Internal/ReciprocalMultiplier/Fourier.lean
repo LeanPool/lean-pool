@@ -253,7 +253,6 @@ finite real frequency arrays.
 The certificate is deliberately independent of Hilbert spaces, matrix units,
 singular values, and norms on operators.  Its coefficient mass is the finite
 analogue of the total variation of the classical reciprocal Fourier measure. -/
-@[expose]
 def HasFiniteReciprocalFourierInterpolation
     {m n : ℕ} (α : Fin m → ℝ) (β : Fin n → ℝ)
     (δ mass : ℝ) : Prop :=
@@ -280,7 +279,6 @@ def HasApproximateFiniteReciprocalFourierInterpolation
 /-- A reciprocal interpolation on real coordinate matrix units after doubling
 both Hilbert spaces.  Complex Fourier coefficients have been replaced by real
 weights and coordinatewise orthogonal rotations. -/
-@[expose]
 def HasDoubledRealReciprocalOrbitInterpolation
     {ER FR : Type*}
     [NormedAddCommGroup ER] [InnerProductSpace ℝ ER]
@@ -753,7 +751,6 @@ the orbit average by the coordinate difference gives `δ` times the matrix
 unit.  Positive separation guarantees that this is equivalent to reciprocal
 interpolation, while the division-free form is substantially more robust in
 the downstream finite algebra. -/
-@[expose]
 def HasReciprocalOrbitInterpolation
     (eF : OrthonormalBasis (Fin (Module.finrank 𝕜 F)) 𝕜 F)
     (eE : OrthonormalBasis (Fin (Module.finrank 𝕜 E)) 𝕜 E)

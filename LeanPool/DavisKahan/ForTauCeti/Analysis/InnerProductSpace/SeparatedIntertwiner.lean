@@ -115,7 +115,6 @@ theorem resolvent_intertwines' {A : E →ₗ.[𝕜] E} {B : F →ₗ.[𝕜] F}
 This is scalar-generic: both the complex normal calculus and the real self-adjoint
 calculus need the same common-domain adapter when two operators have different
 spectra. -/
-@[expose]
 noncomputable def symbolRestrict {K s : Set 𝕜} (h : s ⊆ K) :
     C(K, 𝕜) →⋆ₐ[𝕜] C(s, 𝕜) :=
   ContinuousMap.compStarAlgHom' 𝕜 𝕜 ⟨Set.inclusion h, continuous_inclusion h⟩

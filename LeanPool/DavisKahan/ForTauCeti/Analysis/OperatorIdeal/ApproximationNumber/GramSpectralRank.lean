@@ -70,7 +70,6 @@ variable {E1 : Type v} [NormedAddCommGroup E1] [InnerProductSpace ℂ E1]
 
 
 /-- The bounded positive Gram operator. -/
-@[expose]
 def gramOperator (X : E0 →L[ℂ] E1) : E0 →L[ℂ] E0 :=
   X.adjoint ∘L X
 
@@ -91,7 +90,6 @@ theorem re_inner_gramOperator (X : E0 →L[ℂ] E1) (x : E0) :
   norm_cast
 
 /-- The bounded Gram operator viewed as an everywhere-defined partial map. -/
-@[expose]
 def gramLinearPMap (X : E0 →L[ℂ] E1) : E0 →ₗ.[ℂ] E0 :=
   ((gramOperator X : E0 →ₗ[ℂ] E0).toPMap ⊤)
 

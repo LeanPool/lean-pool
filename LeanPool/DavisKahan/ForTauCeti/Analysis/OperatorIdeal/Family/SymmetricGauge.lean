@@ -191,7 +191,6 @@ end Laws
 `gauge A = Φ∞ (a(A))`: the extended gauge applied to the approximation-number
 sequence.  The four laws are the four theorems above, each of which is one
 approximation-number fact composed with one law of `SymmetricGauge.extend`. -/
-@[expose]
 noncomputable def symmetricGaugeFamily (𝕜 : Type u) [RCLike 𝕜]
     (Φ : SymmetricGauge) :
     OperatorIdealFamily.{u, v, w} 𝕜 where
@@ -368,7 +367,6 @@ family's and not new work.
 -/
 
 /-- The rectangular Schatten family induced by the finite-exponent gauge. -/
-@[expose]
 noncomputable def schattenFamily (𝕜 : Type u) [RCLike 𝕜]
     (p : ℝ) (hp : 1 ≤ p) : OperatorIdealFamily.{u, v, w} 𝕜 :=
   symmetricGaugeFamily 𝕜 (schattenGauge p hp)

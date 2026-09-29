@@ -73,7 +73,6 @@ onto.
 /-- Orthogonal projection onto the span of a subset `S` of an orthonormal basis; the building block
 for the spectral projections of a symmetric operator, which is what it was
 misleadingly named after. -/
-@[expose]
 noncomputable def spanIndicesProjection (b : OrthonormalBasis (Fin n) 𝕜 E) (S : Finset (Fin n)) :
     E →ₗ[𝕜] E :=
   ∑ i ∈ S, (InnerProductSpace.rankOne 𝕜 (b i) (b i)).toLinearMap
@@ -173,7 +172,6 @@ variable {m : ℕ}
 
 /-- The complete orthogonal family of rank-one spectral projections attached to an orthonormal
 basis: `proj i` is the orthogonal projection onto `span (b i)`. -/
-@[expose]
 noncomputable def OrthoProjFamily.ofOrthonormalBasis (b : OrthonormalBasis (Fin n) 𝕜 E) :
     OrthoProjFamily 𝕜 E n where
   proj i := OrthonormalBasis.spanIndicesProjection b {i}

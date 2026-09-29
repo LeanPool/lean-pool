@@ -68,7 +68,6 @@ This is the standard "same measure class" relation.  It is stated as a plain con
 than as a structure so that the two halves are available as `.1` and `.2` with no projection
 lemmas.  Exposed so that consumers can take `.1` and `.2` and build the conjunction directly:
 `measureEquiv_sliceSum` and the frontier's `SameSpectralMultiplicity` both do. -/
-@[expose]
 def MeasureEquiv (μ ν : Measure α) : Prop :=
   μ ≪ ν ∧ ν ≪ μ
 

@@ -104,7 +104,6 @@ theorem sum_basisMatrixUnit
 
 /-- The linear action on rectangular maps induced by left and right unitary
 composition. -/
-@[expose]
 noncomputable def unitaryOrbitAction
     (U : F ≃ₗᵢ[𝕜] F) (V : E ≃ₗᵢ[𝕜] E) :
     (E →ₗ[𝕜] F) →ₗ[𝕜] (E →ₗ[𝕜] F) where
@@ -190,7 +189,6 @@ theorem unitaryOrbitAction_basisMatrixUnit
   · simp [hjq]
 
 /-- The complex unitary phase with angular frequency parameter `x`. -/
-@[expose]
 noncomputable def complexFourierPhase (x : ℝ) : unitary ℂ := by
   let z : ℂ := Circle.exp x
   have hz : ‖z‖ = 1 := Circle.norm_coe (Circle.exp x)

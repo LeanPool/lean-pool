@@ -47,7 +47,6 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteS
 variable {A : H →ₗ.[ℂ] H} (hA : IsSelfAdjoint A) (B : Set ℝ) (hB : MeasurableSet B)
 
 /-- `A - c`, cut down to the spectral range of `B`, as a bounded operator. -/
-@[expose]
 noncomputable def specCutOp {c r : ℝ} (hr : 0 ≤ r) (hcr : ∀ s ∈ B, |s - c| ≤ r) :
     H →L[ℂ] H :=
   BorelCalculus.borelCalculus (isStarNormal_cayley hA)

@@ -100,7 +100,6 @@ variable {E : Type v} {F : Type w}
   [NormedAddCommGroup F] [InnerProductSpace 𝕜 F]
 
 /-- The `k`th **Ky Fan gauge**: the sum of the first `k` approximation numbers. -/
-@[expose]
 def kyFanGauge (T : E →L[𝕜] F) (k : ℕ) : ℝ :=
   ∑ n ∈ Finset.range k, T.approximationNumber n
 

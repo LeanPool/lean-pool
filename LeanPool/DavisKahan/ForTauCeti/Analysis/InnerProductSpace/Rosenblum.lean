@@ -75,7 +75,6 @@ variable [NormedAddCommGroup F] [InnerProductSpace ℂ F] [CompleteSpace F]
 section Separator
 
 /-- The scalar inverse Cayley map on all of `ℂ`, with junk value at `1`. -/
-@[expose]
 noncomputable def cayleyCoordFun (w : ℂ) : ℝ := (Complex.I * (1 + w) / (1 - w)).re
 
 /-- The inverse Cayley map is continuous away from `w = 1`.  Only `ContinuousOn` is available: the

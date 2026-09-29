@@ -219,7 +219,6 @@ theorem compl_gapSet (δ : ℝ) : (gapSet δ)ᶜ = Set.Ioo (-δ) δ := by
 /-- **A vector spectral gap**: the diagonal measure of `ξ` gives no mass to
 `(-δ, δ)`.  This is the hypothesis under which `ξ` is in the range of `A` with
 the sharp bound. -/
-@[expose]
 def HasVectorSpectralGap (δ : ℝ) (ξ : H) : Prop :=
   (spectralPVM hA).diag ξ (Set.Ioo (-δ) δ) = 0
 

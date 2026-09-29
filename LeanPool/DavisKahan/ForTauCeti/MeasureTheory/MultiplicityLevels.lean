@@ -142,7 +142,6 @@ variable {X : Type*}
 open scoped Classical in
 /-- The number of indices below `n` at which `x` lies in the family. -/
 -- Exposed: `rank_zero` and `rank_succ` are `rfl`, and every induction below runs on them.
-@[expose]
 noncomputable def rank (S : ℕ → Set X) (x : X) : ℕ → ℕ
   | 0 => 0
   | n + 1 => rank S x n + (if x ∈ S n then 1 else 0)
@@ -340,7 +339,6 @@ theorem measurable_invIdx [MeasurableSpace X] {S : ℕ → Set X} (hS : ∀ n, M
 /-- The fibrewise relabelling `(x, n) ↦ (x, rank S x n)`. -/
 -- Exposed: `fst_rankMap` is `rfl`, and it is the fact that makes the relabelling commute with
 -- multiplication by any symbol pulled back along `Prod.fst`.
-@[expose]
 noncomputable def rankMap (S : ℕ → Set X) : X × ℕ → X × ℕ :=
   fun p => (p.1, rank S p.1 p.2)
 

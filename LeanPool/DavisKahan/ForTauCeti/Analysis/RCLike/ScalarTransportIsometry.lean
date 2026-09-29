@@ -81,7 +81,6 @@ theorem submodule_inf (S T : Submodule 𝕜 X) :
 This canonical isometry is the adapter between those two spellings.  It is the
 missing coordinate map needed to transport partial operators whose domain or
 codomain is a closed subspace, such as an unbounded Ritz compression. -/
-@[expose]
 noncomputable def submoduleSubtypeEquiv (S : Submodule 𝕜 X) :
     ScalarTransport e S ≃ₗᵢ[𝕂] (submodule (e := e) S : Submodule 𝕂 (ScalarTransport e X)) where
   toFun x := ⟨of (e := e) ((out (e := e) x : S) : X), (out (e := e) x : S).2⟩

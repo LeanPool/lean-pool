@@ -392,7 +392,6 @@ theorem I_mem_resolventSet {A : E →ₗ.[ℂ] E} (hA : IsSelfAdjoint A) :
 
 The canonical resolvent inverts `-i • I - A`, so `(A + i)⁻¹ = -R(-i)` and the
 `-2i` of the `(A - z)` convention becomes `+2i` here. -/
-@[expose]
 noncomputable def cayley {A : E →ₗ.[ℂ] E} (_hA : IsSelfAdjoint A) : E →L[ℂ] E :=
   1 + (2 * Complex.I) • resolvent A (-Complex.I)
 

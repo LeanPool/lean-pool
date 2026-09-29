@@ -130,7 +130,6 @@ of the spectrum of the Cayley transform.  Its value at `w = 1` is junk; see
 -- `cayleyInv_def` below covers them. Note that `measurable_cayleyInv` still `unfold`s this
 -- definition, which is fine: that is inside the defining module, where the body is visible
 -- whatever the attribute says.
-@[expose]
 noncomputable def cayleyInv (w : _root_.spectrum ℂ (cayley hA)) : ℝ :=
   (Complex.I * (1 + (w : ℂ)) / (1 - (w : ℂ))).re
 
@@ -709,7 +708,6 @@ ranges.** -/
 -- `addBounded` and `perturb`. Measured, not assumed: with the attribute removed the
 -- elaborator rejects `specRestrict_apply`'s statement at `x.property`, reporting
 -- `specRestrict` as the definition it could not unfold.
-@[expose]
 noncomputable def specRestrict : specRange hA B hB →ₗ.[ℂ] specRange hA B hB where
   domain := A.domain.comap (specRange hA B hB).subtype
   toFun :=

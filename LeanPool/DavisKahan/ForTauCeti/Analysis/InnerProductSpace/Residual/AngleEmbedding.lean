@@ -51,7 +51,6 @@ variable {F : Type*} [NormedAddCommGroup F] [InnerProductSpace 𝕜 F]
   [FiniteDimensional 𝕜 F]
 /-- Sine map from approximate coordinates into the orthogonal complement of
 an exact subspace. -/
-@[expose]
 noncomputable def sinThetaEmbedding (U : Submodule 𝕜 E)
     [U.HasOrthogonalProjection] (X : F →ₗᵢ[𝕜] E) : F →ₗ[𝕜] E :=
   complementaryProjection U ∘ₗ X.toLinearMap

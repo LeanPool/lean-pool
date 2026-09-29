@@ -56,13 +56,11 @@ theorem singularValues_operatorAbs (A : E →ₗ[𝕜] F) :
 end OperatorAbsSingularValues
 
 /-- The cosine cross-projection `P_V P_U`. -/
-@[expose]
 noncomputable def cosThetaMap (U V : Submodule 𝕜 E)
     [U.HasOrthogonalProjection] [V.HasOrthogonalProjection] : E →ₗ[𝕜] E :=
   projection V ∘ₗ projection U
 
 /-- The sine cross-projection `P_{Vᗮ} P_U`. -/
-@[expose]
 noncomputable def sinThetaMap (U V : Submodule 𝕜 E)
     [U.HasOrthogonalProjection] [V.HasOrthogonalProjection] : E →ₗ[𝕜] E :=
   complementaryProjection V ∘ₗ projection U
@@ -76,7 +74,6 @@ noncomputable def cosAngleOperator (U V : Submodule 𝕜 E)
 /-- `sin Θ` on the full ambient space, the modulus `|P_U - P_V|` of the projector
 difference.  This is the symmetric full-space sine operator; its singular values
 are those of `P_U - P_V` (`singularValues_projection_sub_projection`). -/
-@[expose]
 noncomputable def sinAngleOperator (U V : Submodule 𝕜 E)
     [U.HasOrthogonalProjection] [V.HasOrthogonalProjection] : E →ₗ[𝕜] E :=
   TauCeti.operatorAbs (projection U - projection V)
@@ -101,7 +98,6 @@ noncomputable def sinTwoAngleOperator (U V : Submodule 𝕜 E)
 /-- Principal-angle cosines: the singular values of the cross projection
 `P_V P_U`, sorted decreasingly and padded by zeros beyond the finite rank.  These
 are symmetric in `U, V` because `(P_V P_U)⋆ = P_U P_V` (`principalCosines_comm`). -/
-@[expose]
 noncomputable def principalCosines (U V : Submodule 𝕜 E)
     [U.HasOrthogonalProjection] [V.HasOrthogonalProjection] : ℕ →₀ ℝ :=
   (cosThetaMap U V : E →ₗ[𝕜] E).singularValues
@@ -110,7 +106,6 @@ noncomputable def principalCosines (U V : Submodule 𝕜 E)
 `P_{Vᗮ} P_U`.  In equal-dimension configurations these are the sines of the
 principal angles; when `dim U ≠ dim V` the directed map also records the
 `π/2` "defect" directions, so this is not symmetric in `U, V` in general. -/
-@[expose]
 noncomputable def principalSines (U V : Submodule 𝕜 E)
     [U.HasOrthogonalProjection] [V.HasOrthogonalProjection] : ℕ →₀ ℝ :=
   (sinThetaMap U V : E →ₗ[𝕜] E).singularValues
@@ -148,7 +143,6 @@ theorem principalAngles_self (U : Submodule 𝕜 E) [U.HasOrthogonalProjection]
   simp [principalAngles, h]
 
 /-- The pair has no angle `π/2`; equivalently, `P_V` is injective on `U`. -/
-@[expose]
 def IsTransverse (U V : Submodule 𝕜 E) [V.HasOrthogonalProjection] : Prop :=
   ∀ x ∈ U, V.starProjection x = 0 → x = 0
 
@@ -409,7 +403,6 @@ theorem isAcute_iff_projectionGap_lt_one {U V : Submodule 𝕜 E}
 for `tan (2 Θ)` before the canonical branch is selected.  The arbitrary
 reducing subspace in the raw `tan 2Θ` theorem may have angles on either side
 of `π/4`; the theorem itself excludes equality. -/
-@[expose]
 def AvoidsQuarterTurn (U V : Submodule 𝕜 E)
     [U.HasOrthogonalProjection] [V.HasOrthogonalProjection] : Prop :=
   ∀ i, principalAngles U V i ≠ Real.pi / 4

@@ -49,7 +49,6 @@ theorem inner_conj_smul_eq_of_orthogonal_shiftRange {A : E →ₗ.[𝕜] E} {z :
   exact h.symm
 
 /-- `A - z` as a linear map out of the domain of `A`. -/
-@[expose]
 def shiftMap (A : E →ₗ.[𝕜] E) (z : 𝕜) : A.domain →ₗ[𝕜] E :=
   A.toFun - z • A.domain.subtype
 

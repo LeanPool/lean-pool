@@ -66,7 +66,7 @@ variable {𝕜 : Type*} [RCLike 𝕜]
 /-- The Lebesgue measure of the half-open unit interval, the ambient measure for the
 free-beam `L²` model.  Exposed so downstream modules can unfold to the restriction;
 the ratchet carve-out is deliberate api design. -/
-@[expose] def unitIocMeasure : Measure ℝ := volume.restrict (Set.Ioc (0 : ℝ) 1)
+def unitIocMeasure : Measure ℝ := volume.restrict (Set.Ioc (0 : ℝ) 1)
 
 /-- Unfolding equation for the ambient measure, exported for downstream modules. -/
 theorem unitIocMeasure_def : unitIocMeasure = volume.restrict (Set.Ioc (0 : ℝ) 1) := rfl
@@ -272,7 +272,7 @@ theorem abs_secondPrimitiveKernel_sub_le (t t' s : ℝ) :
 /-- Second primitive of an integrable function on the unit interval, normalized so that it
 and its first derivative vanish at `0`.  Exposed so downstream modules can unfold the
 integral form; the ratchet carve-out is deliberate api design. -/
-@[expose] def secondPrimitive (w : ℝ → 𝕜) (t : ℝ) : 𝕜 :=
+def secondPrimitive (w : ℝ → 𝕜) (t : ℝ) : 𝕜 :=
   ∫ s, (secondPrimitiveKernel t s : 𝕜) * w s ∂unitIocMeasure
 
 /-- Unfolding equation for the second primitive, exported for downstream modules. -/

@@ -416,7 +416,6 @@ end StrongCutoff
 This is `ContinuousLinearMap.kyFanGauge` with the arguments in the paper's order; the
 theory lives in `ForTauCeti/Analysis/OperatorIdeal/ApproximationNumber/KyFan.lean` and
 every statement below delegates to it. -/
-@[expose]
 noncomputable def kyFanApproximationGauge
     (k : ℕ) (K : E →L[𝕜] F) : ℝ :=
   K.kyFanGauge k

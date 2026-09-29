@@ -96,7 +96,6 @@ variable [FiniteDimensional 𝕜 E]
 `(familyIsometry hu)⋆ ∘ (familyIsometry hv)` on `EuclideanSpace 𝕜 (Fin d)`, with
 matrix `⟪uᵢ, vⱼ⟫`.  Its singular values are the cosines of the principal angles
 between `span u` and `span v`. -/
-@[expose]
 noncomputable def overlapOp {u v : Fin d → E} (hu : Orthonormal 𝕜 u) (hv : Orthonormal 𝕜 v) :
     EuclideanSpace 𝕜 (Fin d) →ₗ[𝕜] EuclideanSpace 𝕜 (Fin d) :=
   (familyIsometry hu).toLinearMap.adjoint ∘ₗ (familyIsometry hv).toLinearMap

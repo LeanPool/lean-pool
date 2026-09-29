@@ -106,7 +106,6 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
 Unlike Spectra's `Set ℝ` version this makes no self-adjointness assumption; for a
 self-adjoint operator the spectrum is real, but that is a theorem rather than
 part of the definition. -/
-@[expose]
 def spectrum (A : E →ₗ.[𝕜] E) : Set 𝕜 :=
   (resolventSet A)ᶜ
 

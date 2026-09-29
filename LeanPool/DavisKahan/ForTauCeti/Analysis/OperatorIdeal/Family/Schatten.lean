@@ -104,7 +104,6 @@ section Gauge
 
 /-- The **Schatten `p`-norm**, valued in `ℝ≥0∞` and therefore defined for every bounded
 operator: it is `∞` exactly when `T` is not Schatten-`p`. -/
-@[expose]
 noncomputable def schattenENorm (p : ℝ) (T : E →L[𝕜] F) : ℝ≥0∞ :=
   (∑' n : ℕ, ENNReal.ofReal (T.approximationNumber n) ^ p) ^ p⁻¹
 
@@ -281,7 +280,6 @@ omit [CompleteSpace E] [CompleteSpace F] in
 
 `@[expose]`: membership in the Schatten family's carrier is this predicate by definition, and
 the carrier lemmas downstream are stated with `rfl`. -/
-@[expose]
 def IsSchattenClass (p : ℝ) (T : E →L[𝕜] F) : Prop := T.schattenENorm p ≠ ∞
 
 section AgreementAtOne

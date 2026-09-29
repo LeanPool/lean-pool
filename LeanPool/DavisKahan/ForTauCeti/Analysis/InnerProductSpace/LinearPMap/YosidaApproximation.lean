@@ -99,12 +99,10 @@ theorem norm_I_mul_pnat (n : ℕ+) : ‖I * (n : ℂ)‖ = (n : ℝ) := by
 variable {A : H →ₗ.[ℂ] H}
 
 /-- The resolvent at `z = in`. -/
-@[expose]
 noncomputable def resolventAtIn (_hA : IsSelfAdjoint A) (n : ℕ+) : H →L[ℂ] H :=
   resolvent A (I * (n : ℂ))
 
 /-- The resolvent at `z = -in`. -/
-@[expose]
 noncomputable def resolventAtNegIn (_hA : IsSelfAdjoint A) (n : ℕ+) : H →L[ℂ] H :=
   resolvent A (-I * (n : ℂ))
 
@@ -137,7 +135,6 @@ noncomputable def yosidaApproximant (hA : IsSelfAdjoint A) (n : ℕ+) : H →L[�
   -((n : ℂ) ^ 2 • resolventAtIn hA n) - (I * (n : ℂ)) • ContinuousLinearMap.id ℂ H
 
 /-- The symmetric Yosida approximant `-(n²/2)(R(in) + R(-in))`. -/
-@[expose]
 noncomputable def yosidaApproximantSym (hA : IsSelfAdjoint A) (n : ℕ+) : H →L[ℂ] H :=
   (-((n : ℂ) ^ 2 / 2)) • (resolventAtIn hA n + resolventAtNegIn hA n)
 
@@ -688,7 +685,6 @@ theorem norm_expLimitFun (hA : IsSelfAdjoint A) (t : ℝ) (ψ : H) :
   simpa only [norm_expApprox] using tendsto_const_nhds
 
 /-- The limit flow `exp(itA)` as a bounded operator. -/
-@[expose]
 noncomputable def expLimit (hA : IsSelfAdjoint A) (t : ℝ) : H →L[ℂ] H :=
   LinearMap.mkContinuous
     { toFun := expLimitFun hA t
@@ -843,7 +839,6 @@ theorem continuous_expLimit (hA : IsSelfAdjoint A) (ψ : H) :
 
 /-- **Stone's theorem, the construction half.**  A self-adjoint operator
 generates a one-parameter unitary group. -/
-@[expose]
 noncomputable def genToGroup (hA : IsSelfAdjoint A) : TauCeti.OneParameterUnitaryGroup H where
   U := expLimit hA
   unitary := inner_expLimit hA

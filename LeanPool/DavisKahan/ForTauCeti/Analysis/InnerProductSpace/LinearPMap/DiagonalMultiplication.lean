@@ -68,7 +68,6 @@ variable {ι : Type*} {𝕜 : Type*} [RCLike 𝕜]
 -- construction — has to see through the `Submodule` and the `LinearPMap` bundle.
 /-- **The maximal domain of the diagonal multiplication operator** with multiplier
 `d`: the vectors whose coordinatewise product with `d` is still square summable. -/
-@[expose]
 def lpDiagonalDomain (d : ι → 𝕜) : Submodule 𝕜 (lp (fun _ : ι => 𝕜) 2) where
   carrier := {x | Memℓp (fun i => d i * (x : ι → 𝕜) i) 2}
   add_mem' {x y} hx hy := by
@@ -101,7 +100,6 @@ theorem mem_lpDiagonalDomain_iff (d : ι → 𝕜) (x : lp (fun _ : ι => 𝕜) 
     x ∈ lpDiagonalDomain d ↔ Memℓp (fun i => d i * (x : ι → 𝕜) i) 2 := Iff.rfl
 
 /-- **The unbounded diagonal multiplication operator**, on its maximal domain. -/
-@[expose]
 noncomputable def lpDiagonal (d : ι → 𝕜) :
     lp (fun _ : ι => 𝕜) 2 →ₗ.[𝕜] lp (fun _ : ι => 𝕜) 2 where
   domain := lpDiagonalDomain d
