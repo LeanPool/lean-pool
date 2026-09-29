@@ -77,7 +77,7 @@ theorem two_le_degree_of_rankDelta_neg
   apply hDistinct
   unfold linearEquiv at hDuEquiv hDvEquiv ⊢
   have hSub := AddSubgroup.sub_mem (principalDivisors M.graph) hDvEquiv hDuEquiv
-  convert hSub using 1 ; abel
+  convert hSub using 1; abel
 
 /-- On a connected genus-two graph, the preceding lower bound and
 Riemann--Roch duality force every negative second-difference witness to have
@@ -173,7 +173,7 @@ theorem rank_eq_zero_of_rankDelta_neg_genus_two
       (oneChip M.u + oneChip M.v) := by
     unfold linearEquiv at hDK ⊢
     have hNegDK := AddSubgroup.neg_mem (principalDivisors M.graph) hDK
-    convert hNegDK using 1 ; abel
+    convert hNegDK using 1; abel
   have hUVNeg : rankDelta M (oneChip M.u + oneChip M.v) < 0 := by
     have hDualNeg : rankDelta M
         (canonicalDivisor M.graph + oneChip M.u + oneChip M.v - D) < 0 := by

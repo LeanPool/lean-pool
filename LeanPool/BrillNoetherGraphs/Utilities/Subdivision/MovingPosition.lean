@@ -62,7 +62,7 @@ theorem pathVertex_eq_iff_val_eq (edge : Fin p)
     exact congrArg Fin.val (spec.pathVertex_injective edge h)
   · exact spec.pathVertex_eq_of_val_eq edge
 
-@[simp] theorem pathPosition_eq_zero_iff (edge : Fin p) (offset : ℕ)
+theorem pathPosition_eq_zero_iff (edge : Fin p) (offset : ℕ)
     (hOffset : offset ≤ spec.length edge) :
     spec.pathPosition edge offset hOffset = ⟨0, by omega⟩ ↔ offset = 0 := by
   constructor

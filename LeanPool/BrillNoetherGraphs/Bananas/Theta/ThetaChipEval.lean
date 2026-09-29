@@ -29,13 +29,13 @@ open Utilities
 open Utilities.Certificate SubdivisionGraph
 open Utilities.Certificate.SubdivisionGraph.Spec
 
-@[simp] theorem one_chip_pathVertex_zero_eq_core
+theorem one_chip_pathVertex_zero_eq_core
     {g : ℕ} (B : Banana g) (α : Fin (g + 1)) :
     oneChip (G := B.graph) (B.pathVertex α ⟨0, by omega⟩) =
       oneChip (G := B.graph) (B.coreVertex (B.core.tail α)) := by
   rw [B.pathVertex_zero]
 
-@[simp] theorem one_chip_pathVertex_length_eq_core
+theorem one_chip_pathVertex_length_eq_core
     {g : ℕ} (B : Banana g) (α : Fin (g + 1)) :
     oneChip (G := B.graph) (B.pathVertex α ⟨B.length α, by omega⟩) =
       oneChip (G := B.graph) (B.coreVertex (B.core.head α)) := by
@@ -72,7 +72,7 @@ theorem one_chip_pathVertex_one_eq_interior_of_one_lt_length
     rfl, hVertex]
   congr 2
 
-@[simp] theorem one_chip_pathVertex_zero_apply_core
+theorem one_chip_pathVertex_zero_apply_core
     {g : ℕ} (B : Banana g) (α : Fin (g + 1)) (v : Fin 2) :
     (oneChip (G := B.graph) (B.pathVertex α ⟨0, by omega⟩))
         (B.coreVertex v) =
@@ -80,7 +80,7 @@ theorem one_chip_pathVertex_one_eq_interior_of_one_lt_length
   rw [one_chip_pathVertex_zero_eq_core]
   simp [oneChip, SubdivisionGraph.Spec.coreVertex, eq_comm]
 
-@[simp] theorem one_chip_pathVertex_length_apply_core
+theorem one_chip_pathVertex_length_apply_core
     {g : ℕ} (B : Banana g) (α : Fin (g + 1)) (v : Fin 2) :
     (oneChip (G := B.graph) (B.pathVertex α ⟨B.length α, by omega⟩))
         (B.coreVertex v) =
@@ -88,7 +88,7 @@ theorem one_chip_pathVertex_one_eq_interior_of_one_lt_length
   rw [one_chip_pathVertex_length_eq_core]
   simp [oneChip, SubdivisionGraph.Spec.coreVertex, eq_comm]
 
-@[simp] theorem one_chip_pathVertex_zero_apply_interior
+theorem one_chip_pathVertex_zero_apply_interior
     {g : ℕ} (B : Banana g) (α : Fin (g + 1))
     (edge : Fin (g + 1)) (offset : Fin (B.length edge - 1)) :
     (oneChip (G := B.graph) (B.pathVertex α ⟨0, by omega⟩))
@@ -97,7 +97,7 @@ theorem one_chip_pathVertex_one_eq_interior_of_one_lt_length
   simp [oneChip, SubdivisionGraph.Spec.coreVertex,
     SubdivisionGraph.Spec.interiorVertex]
 
-@[simp] theorem one_chip_pathVertex_length_apply_interior
+theorem one_chip_pathVertex_length_apply_interior
     {g : ℕ} (B : Banana g) (α : Fin (g + 1))
     (edge : Fin (g + 1)) (offset : Fin (B.length edge - 1)) :
     (oneChip (G := B.graph) (B.pathVertex α ⟨B.length α, by omega⟩))

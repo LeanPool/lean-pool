@@ -269,7 +269,7 @@ variable (c : CoreVertexCut.Data spec.core)
 
 /-- The core vertices in the derived subdivision side are exactly the core
 vertices in `right`. -/
-@[simp] theorem mem_rightVertices_core (vertex : Fin n) :
+theorem mem_rightVertices_core (vertex : Fin n) :
     spec.coreVertex vertex ∈ c.rightVertices spec ↔ vertex ∈ c.right := by
   rw [c.mem_rightVertices_iff spec, c.mem_right_iff]
   constructor

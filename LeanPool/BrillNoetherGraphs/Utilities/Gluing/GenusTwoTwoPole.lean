@@ -44,7 +44,7 @@ theorem winnable_of_degree_eq_genus
   exact winnable_of_deg_ge_genus hG D (by omega)
 
 /-- Degree of an integral pile at one vertex. -/
-@[simp] theorem deg_zsmul_one_chip
+theorem deg_zsmul_one_chip
     (G : CFGraph.{u}) (q : G.V) (n : ℤ) :
     CFDiv.degree (n • oneChip (G := G) q) = n := by
   rw [map_zsmul, deg_one_chip]

@@ -129,7 +129,7 @@ def IsTransmissionPermutation (M : TwiceMarked) (D : CFDiv M.graph)
       rankDelta M (D + a • oneChip M.u - b • oneChip M.v)
 
 /-- Paper source: `def-EA` (Definition 2.10), membership in the extended
-affine symmetric group `Σ̃_k`. -/
+affine symmetric group `\widetilde{Sigma}_k`. -/
 def IsKAffine (k : ℕ) (τ : ℤ → ℤ) : Prop :=
   ∀ n : ℤ, τ (n + k) = τ n + k
 

@@ -41,7 +41,7 @@ noncomputable def simpleReflection (i : ℤ) : AspPerm :=
     Set.mem_singleton_iff]
   split_ifs <;> omega
 
-@[simp] theorem simpleReflection_involutive (i n : ℤ) :
+theorem simpleReflection_involutive (i n : ℤ) :
     simpleReflection i (simpleReflection i n) = n := by
   rw [simpleReflection_apply, simpleReflection_apply]
   split_ifs <;> omega

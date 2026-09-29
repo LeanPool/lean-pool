@@ -227,7 +227,7 @@ noncomputable def thetaLatticeQuotientEquivClassRange (B : Banana 2) :
 
 /-- Under the theta presentation, `[x,y]` is represented by the general
 banana coordinate vector `(x,y,0)`, exactly as in the paper's construction. -/
-@[simp] theorem thetaLatticeQuotientEquivClassRange_mk (B : Banana 2)
+theorem thetaLatticeQuotientEquivClassRange_mk (B : Banana 2)
     (x : ℤ × ℤ) :
     thetaLatticeQuotientEquivClassRange B
         (QuotientAddGroup.mk'

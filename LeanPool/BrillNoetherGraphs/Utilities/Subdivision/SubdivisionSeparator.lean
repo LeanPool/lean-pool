@@ -60,7 +60,7 @@ def stepRightPosition (edge : Fin p) (offset : Fin (spec.length edge)) :
     spec.PathPosition edge :=
   ⟨offset.val + 1, by have := offset.isLt; omega⟩
 
-@[simp] theorem pathVertex_zero (edge : Fin p) :
+theorem pathVertex_zero (edge : Fin p) :
     spec.pathVertex edge ⟨0, by omega⟩ =
       spec.coreVertex (spec.core.tail edge) := by
   simp [pathVertex]

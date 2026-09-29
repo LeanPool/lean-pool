@@ -67,7 +67,7 @@ noncomputable def edgeAt (slot : Fin G.edges.card) : G.V × G.V :=
 
 /-- Distinct multiset occurrences always receive distinct slots, even when
 their coerced endpoint pairs are equal. -/
-@[simp] theorem edgeEquiv_inj (first second : G.edges) :
+theorem edgeEquiv_inj (first second : G.edges) :
     edgeEquiv G first = edgeEquiv G second ↔ first = second :=
   (edgeEquiv G).injective.eq_iff
 
@@ -101,12 +101,12 @@ noncomputable def core :
 @[simp] theorem core_head (slot : Fin G.edges.card) :
     (core G).head slot = vertexEquiv G (edgeAt G slot).2 := rfl
 
-@[simp] theorem core_tail_edgeEquiv (occurrence : G.edges) :
+theorem core_tail_edgeEquiv (occurrence : G.edges) :
     (core G).tail (edgeEquiv G occurrence) =
       vertexEquiv G (occurrence : G.V × G.V).1 := by
   simp
 
-@[simp] theorem core_head_edgeEquiv (occurrence : G.edges) :
+theorem core_head_edgeEquiv (occurrence : G.edges) :
     (core G).head (edgeEquiv G occurrence) =
       vertexEquiv G (occurrence : G.V × G.V).2 := by
   simp

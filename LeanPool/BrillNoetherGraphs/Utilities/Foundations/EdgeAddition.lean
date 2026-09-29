@@ -74,12 +74,12 @@ edge, since the vertex type and its finite structure are unchanged. -/
     @CFDiv.degree (addEdge H x y hxy) D = @CFDiv.degree H D := by
   rfl
 
-@[simp] theorem num_edges_addEdge_endpoints
+theorem num_edges_addEdge_endpoints
     (H : CFGraph) (x y : H.V) (hxy : x ≠ y) :
     numEdges (addEdge H x y hxy) x y = numEdges H x y + 1 := by
   simp [num_edges_addEdge]
 
-@[simp] theorem num_edges_addEdge_of_not_endpoints
+theorem num_edges_addEdge_of_not_endpoints
     (H : CFGraph) (x y : H.V) (hxy : x ≠ y) (v w : H.V)
     (hvw : ¬ ((v = x ∧ w = y) ∨ (v = y ∧ w = x))) :
     numEdges (addEdge H x y hxy) v w = numEdges H v w := by
@@ -144,12 +144,12 @@ def seamDivisor {H : CFGraph} (x y : H.V) : CFDiv H :=
     CFDiv.degree (seamDivisor x y) = 0 := by
   simp [seamDivisor]
 
-@[simp] theorem deg_add_zsmul_seamDivisor
+theorem deg_add_zsmul_seamDivisor
     {H : CFGraph} (D : CFDiv H) (x y : H.V) (n : ℤ) :
     CFDiv.degree (D + n • seamDivisor x y) = CFDiv.degree D := by
   simp only [CFDiv.degree.map_add, map_zsmul, deg_seamDivisor, smul_zero, add_zero]
 
-@[simp] theorem prin_addEdge_apply_left
+theorem prin_addEdge_apply_left
     (H : CFGraph) (x y : H.V) (hxy : x ≠ y)
     (σ : firingScript H) :
     prin (addEdge H x y hxy) σ x = prin H σ x + (σ y - σ x) := by
@@ -163,7 +163,7 @@ def seamDivisor {H : CFGraph} (x y : H.V) : CFDiv H :=
   rw [Finset.sum_add_distrib]
   simp [hxy]
 
-@[simp] theorem prin_addEdge_apply_right
+theorem prin_addEdge_apply_right
     (H : CFGraph) (x y : H.V) (hxy : x ≠ y)
     (σ : firingScript H) :
     prin (addEdge H x y hxy) σ y = prin H σ y + (σ x - σ y) := by
@@ -177,7 +177,7 @@ def seamDivisor {H : CFGraph} (x y : H.V) : CFDiv H :=
   rw [Finset.sum_add_distrib]
   simp [hxy.symm]
 
-@[simp] theorem prin_addEdge_apply_of_ne
+theorem prin_addEdge_apply_of_ne
     (H : CFGraph) (x y : H.V) (hxy : x ≠ y)
     (σ : firingScript H) (v : H.V) (hvx : v ≠ x) (hvy : v ≠ y) :
     prin (addEdge H x y hxy) σ v = prin H σ v := by

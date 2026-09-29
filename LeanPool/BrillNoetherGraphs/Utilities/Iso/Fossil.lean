@@ -346,7 +346,7 @@ noncomputable def fossilPushforwardHom (G : CFGraph.{u}) :
 @[simp] theorem fossilPushforwardHom_apply (G : CFGraph.{u}) (D : CFDiv G) :
     fossilPushforwardHom G D = fossilPushforward G D := rfl
 
-@[simp] theorem fossilPushforward_zsmul (G : CFGraph.{u})
+theorem fossilPushforward_zsmul (G : CFGraph.{u})
     (n : ℤ) (D : CFDiv G) :
     fossilPushforward G (n • D) = n • fossilPushforward G D := by
   exact (fossilPushforwardHom G).map_zsmul n D

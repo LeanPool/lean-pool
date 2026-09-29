@@ -319,7 +319,7 @@ theorem banana_graph_connected {g : ℕ} (B : Banana g) :
     graphConnected B.graph :=
   B.graph_connected_of_coreConnected (banana_core_connected B)
 
-@[simp] theorem banana_genus {g : ℕ} (B : Banana g) :
+theorem banana_genus {g : ℕ} (B : Banana g) :
     CFGraph.genus B.graph = (g : ℤ) := by
   rw [B.genus_graph]
   push_cast
@@ -402,7 +402,7 @@ theorem rank_add_ge_add_rank
     have hEWin := (rank_geq_iff G E s).mpr (le_of_eq hs) A₂
       ⟨hA₂Effective, hA₂Degree⟩
     have hWin := winnable_add_winnable G (D - A₁) (E - A₂) hDWin hEWin
-    convert hWin using 1 ; abel
+    convert hWin using 1; abel
   have h := (rank_geq_iff G (D + E) (r + s)).mp hRankGeq
   omega
 

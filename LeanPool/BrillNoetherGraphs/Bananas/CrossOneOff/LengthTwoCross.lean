@@ -200,7 +200,7 @@ theorem linear_equiv_rearrange_pair {G : CFGraph} {A B C D : CFDiv G}
     (h : linearEquiv G (A + B) (C + D)) :
     linearEquiv G (A - C) (D - B) := by
   unfold linearEquiv at h ⊢
-  convert h using 1 ; abel
+  convert h using 1; abel
 
 theorem path_pair_linearEquiv_tail_sum_sub
     {g : ℕ} (B : Banana g) (α : Fin (g + 1))
@@ -229,7 +229,7 @@ theorem path_pair_linearEquiv_head_excess_sub
   unfold linearEquiv
   have h := path_pair_linearEquiv_head_excess B α i k hi hk hsum
   unfold linearEquiv at h
-  convert h using 1 ; abel
+  convert h using 1; abel
 
 theorem rankDelta_eq_basePointDrop_sub (M : TwiceMarked) (D : CFDiv M.graph) :
     rankDelta M D =

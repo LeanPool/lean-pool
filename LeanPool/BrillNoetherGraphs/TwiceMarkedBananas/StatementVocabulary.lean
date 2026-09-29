@@ -546,6 +546,7 @@ structure MarkedPointAutomorphism (M : TwiceMarked) where
     (x = M.u ∨ x = M.v) ↔
       (iso.vertexEquiv x = M.u ∨ iso.vertexEquiv x = M.v)
 
+/-- A marked-point automorphism that interchanges the two distinguished vertices. -/
 structure MarkedPointSwap (M : TwiceMarked) extends MarkedPointAutomorphism M where
   map_u : toMarkedPointAutomorphism.iso.vertexEquiv M.u = M.v
   map_v : toMarkedPointAutomorphism.iso.vertexEquiv M.v = M.u

@@ -91,6 +91,7 @@ the contribution at the end carrying `hv`.  A row picks `forward` when the
 picture's first end is the core tail of the slot and `reverse` when it is the
 core head. -/
 
+/-- Contributions at both ends of a chain slot, with the bounds needed to orient each row. -/
 structure ChainLedger where
   /-- The tail contribution along a chain slot, parameterized by length and endpoint heights. -/
   tail : ℕ → ℕ → ℕ → ℤ

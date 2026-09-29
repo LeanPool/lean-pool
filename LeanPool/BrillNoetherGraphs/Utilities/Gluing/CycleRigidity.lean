@@ -191,7 +191,7 @@ theorem connected : graphConnected (spec length hLength).graph := by
   apply (spec length hLength).graph_connected_of_coreConnected
   exact core_connected
 
-@[simp] theorem genus_one : CFGraph.genus (spec length hLength).graph = 1 := by
+theorem genus_one : CFGraph.genus (spec length hLength).graph = 1 := by
   rw [(spec length hLength).genus_graph]
   norm_num
 

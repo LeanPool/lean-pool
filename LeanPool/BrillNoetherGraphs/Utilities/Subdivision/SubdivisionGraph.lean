@@ -185,13 +185,13 @@ abbrev graph (spec : Spec n p) : CFGraph where
       (Finset.univ : Finset spec.Step).val.map spec.unitEdge := rfl
 
 /-- Exact edge count: subdividing a slot of length `L` emits `L` edges. -/
-@[simp] theorem card_edges :
+theorem card_edges :
     spec.graph.edges.card = ∑ edge : Fin p, spec.length edge := by
   simp [graph, Fintype.card_sigma]
 
 /-- Exact vertex count: each slot of length `L` contributes `L - 1`
 interior vertices. -/
-@[simp] theorem card_vertices :
+theorem card_vertices :
     Fintype.card spec.graph.V =
       n + ∑ edge : Fin p, (spec.length edge - 1) := by
   simp [graph, Vertex, Interior, Fintype.card_sigma]

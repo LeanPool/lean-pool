@@ -269,7 +269,7 @@ noncomputable def toOneVertexCut (h : c.Valid) : OneVertexCut spec.graph where
 
 /-- Brill--Noether existence on a subdivided core is equivalent to existence
 on the vertex wedge extracted from valid core-cut data. -/
-@[simp] theorem BNExists_iff (h : c.Valid) (r d : ℤ) :
+theorem BNExists_iff (h : c.Valid) (r d : ℤ) :
     BNExists spec.graph r d ↔
       BNExists
         (vertexWedge (c.toOneVertexCut spec h).leftGraph

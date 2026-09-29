@@ -57,13 +57,13 @@ private theorem linearEquiv_add {G : CFGraph} {A B C D : CFDiv G}
     linearEquiv G (A + C) (B + D) := by
   unfold linearEquiv at h₁ h₂ ⊢
   have h := (principalDivisors G).add_mem h₁ h₂
-  convert h using 1 ; abel
+  convert h using 1; abel
 
 private theorem linearEquiv_add_common {G : CFGraph} {A B : CFDiv G}
     (h : linearEquiv G A B) (C : CFDiv G) :
     linearEquiv G (C + A) (C + B) := by
   unfold linearEquiv at h ⊢
-  convert h using 1 ; abel
+  convert h using 1; abel
 
 /-- The positive-multiple residue case of corrected Lemma 4.30.  The normal
 form consists of a right-endpoint coefficient and one interior chip on the
@@ -144,10 +144,10 @@ theorem rankDelta_crossOneOff_multiple_normalForm_eq_one
     dsimp [D, E, EV, qOne, qMark]
     unfold bananaNormalForm
     unfold linearEquiv at hShiftV ⊢
-    convert hShiftV using 1 ;
-      ext z ;
+    convert hShiftV using 1;
+      ext z;
       simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
-        Nat.zero_add] ;
+        Nat.zero_add];
       ring
   have hRankD : rank B.graph D = 0 := by
     rw [rank_bananaNormalForm B 0 (c : ℤ) E hE (by omega) (by omega)]

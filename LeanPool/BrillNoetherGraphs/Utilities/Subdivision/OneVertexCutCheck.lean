@@ -97,7 +97,7 @@ theorem graph_connected_factors_of_check
   (c.cutOfCheck h).graph_connected_factors hK
 
 /-- Brill--Noether existence transfers across an accepted cut check. -/
-@[simp] theorem BNExists_iff_of_check (c : Data K) (h : c.check = true) (r d : ℤ) :
+theorem BNExists_iff_of_check (c : Data K) (h : c.check = true) (r d : ℤ) :
     BNExists K r d ↔
       BNExists
         (vertexWedge (c.cutOfCheck h).leftGraph (c.cutOfCheck h).rightGraph

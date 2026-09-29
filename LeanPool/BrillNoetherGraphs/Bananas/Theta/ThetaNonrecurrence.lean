@@ -62,7 +62,7 @@ theorem degreeTwistInt_add_torsion_linearEquiv
       (degreeTwistInt M D d (b + k))
       (degreeTwistInt M D d b) := by
   unfold degreeTwistInt
-  convert linearEquiv_marked_twist_add_torsion hk D (d - CFDiv.degree D + b) b using 1 ;
+  convert linearEquiv_marked_twist_add_torsion hk D (d - CFDiv.degree D + b) b using 1;
     ring
 
 /-- The paper's nonrecurrence condition, formulated on concrete torsion
@@ -103,7 +103,7 @@ private theorem linear_equiv_sub' {G : CFGraph} {A B C D : CFDiv G}
     (hAC : linearEquiv G A C) (hBD : linearEquiv G B D) :
     linearEquiv G (A - B) (C - D) := by
   unfold linearEquiv at hAC hBD ⊢
-  convert (principalDivisors G).sub_mem hAC hBD using 1 ; abel
+  convert (principalDivisors G).sub_mem hAC hBD using 1; abel
 
 /-- Before either marked position wraps around its strand, multiplying the
 marked difference simply advances both points by the same multiplier. -/
@@ -171,7 +171,7 @@ private theorem linear_equiv_add' {G : CFGraph} {A B C D : CFDiv G}
     (hAC : linearEquiv G A C) (hBD : linearEquiv G B D) :
     linearEquiv G (A + B) (C + D) := by
   unfold linearEquiv at hAC hBD ⊢
-  convert (principalDivisors G).add_mem hAC hBD using 1 ; abel
+  convert (principalDivisors G).add_mem hAC hBD using 1; abel
 
 /-- A multiple of one normalized strand prefix is its quotient number of
 endpoint differences plus its residue prefix. -/
@@ -366,7 +366,7 @@ theorem evenlyMarkedTheta_canonical_sub_multiple_residue_linearEquiv
         (oneChip (strandVertex B alpha p) - oneChip (strandVertex B beta q)))
       (oneChip (strandVertex B alpha (strandMirror B alpha p)) +
         oneChip (strandVertex B beta q)) := by
-    convert hSecond using 1 ; abel
+    convert hSecond using 1; abel
   exact hFirst.trans hCancel
 
 private theorem linear_equiv_sub_right' {G : CFGraph} {A B C : CFDiv G}
@@ -434,7 +434,7 @@ theorem theta_canonical_sub_multiple_noWrap_linearEquiv
         (oneChip (strandVertex B alpha p) - oneChip (strandVertex B beta q)))
       (oneChip (strandVertex B alpha (strandMirror B alpha p)) +
         oneChip (strandVertex B beta q)) := by
-    convert hSecond using 1 ; abel
+    convert hSecond using 1; abel
   exact hFirst.trans hCancel
 
 /-- The indicator characterization makes a raw transmission permutation

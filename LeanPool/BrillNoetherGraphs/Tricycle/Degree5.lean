@@ -232,10 +232,10 @@ section Eval
 @[simp] theorem spokeOf_3 : spokeOf 3 = 3 := by decide
 @[simp] theorem spokeOf_4 : spokeOf 4 = 4 := by decide
 @[simp] theorem spokeOf_5 : spokeOf 5 = 5 := by decide
-@[simp] theorem fin3_01 : (0 : Fin 3) + 1 = 1 := by decide
+theorem fin3_01 : (0 : Fin 3) + 1 = 1 := by decide
 @[simp] theorem fin3_11 : (1 : Fin 3) + 1 = 2 := by decide
 @[simp] theorem fin3_21 : (2 : Fin 3) + 1 = 0 := by decide
-@[simp] theorem fin3_02 : (0 : Fin 3) + 2 = 2 := by decide
+theorem fin3_02 : (0 : Fin 3) + 2 = 2 := by decide
 @[simp] theorem fin3_12 : (1 : Fin 3) + 2 = 0 := by decide
 @[simp] theorem fin3_22 : (2 : Fin 3) + 2 = 1 := by decide
 

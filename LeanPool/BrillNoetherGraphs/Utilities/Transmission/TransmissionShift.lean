@@ -97,7 +97,7 @@ theorem outputShift_injective (τ : AspPerm) :
   omega
 
 /-- The inverse shift cancels an output shift. -/
-@[simp] theorem outputShift_neg_add (τ : AspPerm) (c : ℤ) :
+theorem outputShift_neg_add (τ : AspPerm) (c : ℤ) :
     outputShift (outputShift τ c) (-c) = τ := by
   apply AspPerm.eq_of_inv_set_eq_of_chi_eq
   · simp

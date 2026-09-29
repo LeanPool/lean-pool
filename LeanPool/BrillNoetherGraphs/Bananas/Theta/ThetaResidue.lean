@@ -28,7 +28,7 @@ private theorem linear_equiv_sub_common {G : CFGraph} {D E F : CFDiv G}
     (h : linearEquiv G D E) :
     linearEquiv G (D - F) (E - F) := by
   unfold linearEquiv at h ⊢
-  convert h using 1 ; abel
+  convert h using 1; abel
 
 /-! Paper source: `eq:multDiffMarkedPts` and `cor:evenlyMarkedKGT`.
 The one-strand prefix identity, together with the common reduced ratio,

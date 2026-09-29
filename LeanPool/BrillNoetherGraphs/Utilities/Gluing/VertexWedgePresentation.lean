@@ -215,7 +215,7 @@ theorem graph_connected_of_factors
 
 /-- Brill--Noether existence on a presented graph is exactly existence on its
 concrete wedge model, at every rank and degree. -/
-@[simp] theorem BNExists_iff (P : VertexWedgePresentation K G H x y)
+theorem BNExists_iff (P : VertexWedgePresentation K G H x y)
     (r d : ℤ) :
     BNExists K r d ↔ BNExists (vertexWedge G H x y) r d :=
   P.graphIso.BNExists_iff r d

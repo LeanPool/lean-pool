@@ -287,6 +287,7 @@ end CellTree
 receipts.  `CompactCellTree` stores indices into shared tables, keeping the
 checked source proportional to the genuinely distinct arithmetic data. -/
 
+/-- A cell decision tree whose forms and receipts are indices into shared tables. -/
 inductive CompactCellTree where
   | cell (index : ℕ) (receipts : List ℕ)
   | absurd (receipt : ℕ)

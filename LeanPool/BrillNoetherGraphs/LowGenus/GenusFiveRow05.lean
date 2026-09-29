@@ -538,7 +538,8 @@ def pairAlloc (d : DegSpec 8 12) (v : Fin 8) : ℤ :=
 
 theorem baseWeight_classSum (d : DegSpec 8 12) (r : Fin 8) :
     ∑ v ∈ Finset.univ.filter (fun v : Fin 8 => d.rep v = d.rep r), baseWeight d v =
-      ∑ v ∈ Finset.univ.filter (fun v : Fin 8 => d.rep v = d.rep r), baseWeight d v := rfl
+      rowDivisor d (d.coreVertex r) := by
+  exact (rowDivisor_coreVertex_eq d r).symm
 
 theorem pairAlloc_classSum (d : DegSpec 8 12) (hCore : d.core = row05Core)
     (r : Fin 8) :

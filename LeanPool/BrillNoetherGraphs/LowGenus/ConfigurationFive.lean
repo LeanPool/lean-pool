@@ -56,14 +56,14 @@ def headContribution (L hu hv : ℕ) : ℤ :=
   if L = 0 then 0
   else -SubdivisionArithmetic.step L ((hu : ℤ) - (hv : ℤ)) (L - 1)
 
-@[simp] theorem tailContribution_zero_zero (L : ℕ) :
+theorem tailContribution_zero_zero (L : ℕ) :
     tailContribution L 0 0 = 0 := by
   rcases Nat.eq_zero_or_pos L with h | h
   · simp [tailContribution, h]
   · simp [tailContribution, h.ne',
       SubdivisionArithmetic.step_zero_of_lt h]
 
-@[simp] theorem headContribution_zero_zero (L : ℕ) :
+theorem headContribution_zero_zero (L : ℕ) :
     headContribution L 0 0 = 0 := by
   rcases Nat.eq_zero_or_pos L with h | h
   · simp [headContribution, h]

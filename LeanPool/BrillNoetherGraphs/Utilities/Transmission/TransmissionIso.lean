@@ -29,7 +29,7 @@ namespace CFGraphIso
 variable {G : CFGraph.{u}} {H : CFGraph.{v}}
 
 /-- Relabeling commutes with every twice-marked divisor twist. -/
-@[simp] theorem mapDiv_add_marked_twist
+theorem mapDiv_add_marked_twist
     (φ : CFGraphIso G H) (D : CFDiv G) (u v : G.V) (a b : ℤ) :
     φ.mapDiv (D + a • oneChip u - b • oneChip v) =
       φ.mapDiv D + a • oneChip (φ.vertexEquiv u) -

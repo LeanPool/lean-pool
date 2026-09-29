@@ -98,7 +98,7 @@ theorem residueShift_injective (k : ℕ) (c : Fin k) :
       rw [← residueShift_val, ← residueShift_val]
       exact congrArg (fun x : Fin k => (x : ℤ)) hbd
     rw [Int.emod_eq_emod_iff_emod_sub_eq_zero] at hVal
-    convert hVal using 1 ; ring_nf
+    convert hVal using 1; ring_nf
   have hEq := int_eq_of_emod_sub_eq_zero_of_fundamental hk hb0 hb hd0 hd hmod
   exact_mod_cast hEq
 
