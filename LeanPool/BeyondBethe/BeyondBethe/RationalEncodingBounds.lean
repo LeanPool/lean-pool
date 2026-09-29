@@ -325,7 +325,7 @@ theorem dataEncode_list_ofFn_size {d : ℕ} {α : Type}
       2 + ∑ i, (DataEncode.encode (x i)).size := by
   change (Data.l ((List.ofFn x).map DataEncode.encode)).size = _
   rw [Data.size]
-  simpa only [List.map_ofFn, List.sum_ofFn, Function.comp_apply]
+  simp only [List.map_ofFn, List.sum_ofFn, Function.comp_apply]
 
 theorem rationalMatrixInput_encodedBitLength_eq {n : ℕ}
     (A : Matrix (Fin n) (Fin n) ℚ) :

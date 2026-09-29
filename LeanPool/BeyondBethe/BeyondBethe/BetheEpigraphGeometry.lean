@@ -544,7 +544,7 @@ theorem BetheEpigraphTarget_smoothed_inner_cross
         simpa only [Zbase, Ybase] using!
           smoothedUniformSpike_mem_epigraph hm hτ0 hτ1 hApos hAupper
             hX hXfloor hmix0' hmix1 k0 (q := 0) (by
-              simp; positivity) hδ
+              simp only [abs_zero, one_div, inv_nonneg]; positivity) hδ
             (hobjectiveCenter.trans hcenterUpper) le_rfl
       have hvec : squareMatrixToVector Ybase =
           squareMatrixToVector (smoothedUniformAffineBase X mix) := by
@@ -599,7 +599,7 @@ theorem BetheEpigraphTarget_smoothed_inner_cross
         simpa only [Zbase, Ybase] using!
           smoothedUniformSpike_mem_epigraph hm hτ0 hτ1 hApos hAupper
             hX hXfloor hmix0' hmix1 k0 (q := 0) (by
-              simp; positivity) hδ hobjectiveLow hlowUpper
+              simp only [abs_zero, one_div, inv_nonneg]; positivity) hδ hobjectiveLow hlowUpper
       have hvec : squareMatrixToVector Ybase =
           squareMatrixToVector (smoothedUniformAffineBase X mix) := by
         have h := squareMatrixToVector_smoothedUniformSpike_of_mul

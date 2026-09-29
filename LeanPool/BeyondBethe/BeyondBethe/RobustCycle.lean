@@ -81,7 +81,7 @@ def coreOutcome {α : Type*} [DecidableEq α] (a b j : α) : Option α :=
   if j = a ∨ j = b then none else some j
 
 theorem twoMatchingEncoding_apply
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [DecidableEq α]
     (f g σ : Equiv.Perm α) (i : α) :
     twoMatchingEncoding f g σ i = coreOutcome (f i) (g i) (σ i) := by
   by_cases h : UsesCoreEdge f g σ i
@@ -728,7 +728,7 @@ theorem alternating_cleanCycle_count
               cycleGoodCount η P h c = 2 := by
           simpa [k, gc] using And.intro hkEq hg2
         rw [cleanCycleIndicator, ite_eq_left hclean]
-        simp [longComponentGoodRows, hkEq]
+        simp only [ge_iff_le]
         omega
       · have hgb : gc c ≤ bc c := by omega
         have hnotclean : ¬((c : Equiv.Perm (Fin n)).support.card = 2 ∧

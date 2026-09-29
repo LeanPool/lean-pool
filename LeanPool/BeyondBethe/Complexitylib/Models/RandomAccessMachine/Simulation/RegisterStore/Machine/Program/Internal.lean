@@ -685,7 +685,7 @@ theorem programLoop_rewind_check_internal (tmBody tmTest : TM n)
       rw [hwork₁]
       exact hwork i
     · simp [Tape.writeAndMove, Tape.move, Tape.write_head, hhead₁]
-    · show ((c₁.output.write (Γw.blank).toΓ).move Dir3.right).cells =
+    · change ((c₁.output.write (Γw.blank).toΓ).move Dir3.right).cells =
         c₁.output.cells
       rw [Tape.move_cells]
       simp only [Tape.write, hhead₁, ↓reduceIte]

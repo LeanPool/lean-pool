@@ -340,7 +340,7 @@ theorem rejectProg_decides : rejectProg.DecidesInTime (∅ : Language) (fun _ =>
   intro x
   refine ⟨1, ?_, ?_, ?_, ?_⟩
   · rfl
-  · show (1 : ℕ) ≤ 2; omega
+  · change (1 : ℕ) ≤ 2; omega
   · intro hx; simp at hx
   · intro _; rfl
 

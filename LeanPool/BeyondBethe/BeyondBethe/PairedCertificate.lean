@@ -68,8 +68,7 @@ theorem selectorExponent_apply
   simp [selectorExponent]
 
 theorem selectorExponent_injective
-    {κ ι : Type*} [Fintype κ] [DecidableEq κ] [Fintype ι]
-    [DecidableEq ι] :
+    {κ ι : Type*} [Fintype κ] [DecidableEq κ] [Fintype ι] :
     Function.Injective (selectorExponent : (ι → κ) → κ × ι →₀ ℕ) := by
   intro h h' heq
   funext j
@@ -80,7 +79,7 @@ theorem selectorExponent_injective
 
 theorem selectorExponent_eq_sum_single
     {κ ι : Type*} [Fintype κ] [DecidableEq κ]
-    [Fintype ι] [DecidableEq ι] (h : ι → κ) :
+    [Fintype ι] (h : ι → κ) :
     selectorExponent h =
       ∑ j, Finsupp.single (h j, j) 1 := by
   classical
@@ -115,14 +114,14 @@ theorem selectorExponent_eq_sum_single
 
 theorem selectorExponent_degree
     {κ ι : Type*} [Fintype κ] [DecidableEq κ]
-    [Fintype ι] [DecidableEq ι] (h : ι → κ) :
+    [Fintype ι] (h : ι → κ) :
     Finsupp.degree (selectorExponent h) = Fintype.card ι := by
   rw [selectorExponent_eq_sum_single, map_sum]
   simp [Finsupp.degree_single]
 
 theorem monomial_selectorExponent
     {κ ι : Type*} [Fintype κ] [DecidableEq κ]
-    [Fintype ι] [DecidableEq ι] (h : ι → κ) :
+    [Fintype ι] (h : ι → κ) :
     (monomial (selectorExponent h) 1 : MvPolynomial (κ × ι) ℝ) =
       ∏ j, X (h j, j) := by
   rw [selectorExponent_eq_sum_single, monomial_sum_one]
@@ -357,7 +356,7 @@ noncomputable def pairPolynomial
       (u e.1 * v e.2)
 
 theorem single_add_single_one_eq_iff
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     {a b j k : ι} (hab : a ≠ b) (hjk : j ≠ k) :
     Finsupp.single a 1 + Finsupp.single b 1 =
         Finsupp.single j 1 + Finsupp.single k 1 ↔

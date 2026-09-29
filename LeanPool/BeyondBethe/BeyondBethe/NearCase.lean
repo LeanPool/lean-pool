@@ -131,7 +131,7 @@ theorem cleanCycle_core_columns
       · exact hrq
       · exact hsq
     · have hqcard : q.support.card = 2 := (cleanCycleFactor_property c).1
-      simpa [hrs, hqcard]
+      simp [hrs, hqcard]
   have hqr_ne : q r ≠ r := Equiv.Perm.mem_support.mp hrq
   have hqs_ne : q s ≠ s := Equiv.Perm.mem_support.mp hsq
   have hqr_mem : q r ∈ q.support := by

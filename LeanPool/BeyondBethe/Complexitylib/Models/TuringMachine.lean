@@ -588,7 +588,7 @@ theorem reachesIn_trans (tm : TM n) {t₁ t₂ : ℕ} {c₁ c₂ c₃ : Cfg n tm
     (h₁ : tm.reachesIn t₁ c₁ c₂) (h₂ : tm.reachesIn t₂ c₂ c₃) :
     tm.reachesIn (t₁ + t₂) c₁ c₃ := by
   induction h₁ with
-  | zero => simp; exact h₂
+  | zero => simp only [zero_add]; exact h₂
   | step hstep _ ih =>
     show tm.reachesIn (_ + 1 + t₂) _ _
     rw [Nat.add_right_comm]

@@ -78,7 +78,7 @@ theorem isClosed_doublyStochastic
 
 /-- The Birkhoff polytope is compact. -/
 theorem isCompact_doublyStochastic
-    {n : Type*} [Fintype n] [DecidableEq n] :
+    {n : Type*} [Fintype n] :
     IsCompact {X : Matrix n n ℝ | IsDoublyStochastic X} := by
   let box : Set (Matrix n n ℝ) :=
     Set.univ.pi fun _i ↦ Set.univ.pi fun _j ↦ Set.Icc 0 1
@@ -546,7 +546,7 @@ theorem sum_mul_rectangleDirection
 /-- The gradient at an interior maximizer has vanishing alternating sum on
 every four-cycle. -/
 theorem regularizedGradient_rectangle_identity
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {τ : ℝ} {A X : Matrix ι ι ℝ}
     (hX : IsDoublyStochastic X)
     (hXint : ∀ i, IsInteriorProbabilityVector (X i))
@@ -556,8 +556,9 @@ theorem regularizedGradient_rectangle_identity
     {i k j l : ι} (hik : i ≠ k) (hjl : j ≠ l) :
     regularizedBetheGradient τ A X i j -
         regularizedBetheGradient τ A X i l -
-        regularizedBetheGradient τ A X k j +
+    regularizedBetheGradient τ A X k j +
         regularizedBetheGradient τ A X k l = 0 := by
+  classical
   have htangent := regularizedBetheMaximizer_tangent_orthogonal
     hX hXint hmax
     (rectangleDirection_row_sum hjl)
@@ -568,7 +569,7 @@ theorem regularizedGradient_rectangle_identity
 /-- Any matrix with zero alternating sum on every rectangle is a sum of a
 row potential and a column potential. -/
 theorem exists_rowColumnPotentials_of_rectangle_identity
-    {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
+    {ι : Type*} [Nonempty ι]
     (G : Matrix ι ι ℝ)
     (hrect : ∀ {i k j l : ι}, i ≠ k → j ≠ l →
       G i j - G i l - G k j + G k l = 0) :
@@ -591,7 +592,7 @@ theorem exists_rowColumnPotentials_of_rectangle_identity
 
 /-- The logarithmic KKT factorization in paper Lemma 14. -/
 theorem exists_logKKT_of_regularizedBetheMaximizer
-    {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
+    {ι : Type*} [Fintype ι] [Nonempty ι]
     {τ : ℝ} {A X : Matrix ι ι ℝ}
     (hX : IsDoublyStochastic X)
     (hXint : ∀ i, IsInteriorProbabilityVector (X i))
