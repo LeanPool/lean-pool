@@ -862,6 +862,7 @@ noncomputable def exactConstantExtensionPresentedInfinityPlaceEquiv :
         C S N hExact))
 
 omit [DecidableEq C] [DecidableEq (RatFunc C)] in
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- The reciprocal presentation equivalence respects restriction to the
 original function field. -/
 @[simp]
@@ -896,6 +897,7 @@ theorem exactConstantExtensionPresentedInfinityPlaceEquiv_under
         (exactConstantExtensionPresentedInfinityPlaceEquiv
           C S N hExact q) =
       exactConstantExtensionDownstairsInfinityPlace C S N q.1 q.2 := by
+  classical
   let : DecidableEq C := infinityBridgeDecidableEqConstants C
   let : DecidableEq (RatFunc C) :=
     infinityBridgeDecidableEqRatFuncConstants C
