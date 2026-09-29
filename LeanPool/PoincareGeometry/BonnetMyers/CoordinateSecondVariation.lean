@@ -526,12 +526,10 @@ theorem coordinateParallelOperator_hasDerivAt_of_left_eq_zero
         have hterm := ((hasDerivAt_const e (b.repr w j)).mul hcoord |>.mul hg)
           |>.smul_const (b i)
         convert hterm using 1
-        · funext s
-          rfl
-        · have hcoord0 : b.repr (U e) k = 0 := by
-            simp [hU0]
-          simp only [Pi.mul_apply, hcoord0, mul_zero, zero_mul, add_zero,
-            zero_add, g]
+        have hcoord0 : b.repr (U e) k = 0 := by
+          simp [hU0]
+        simp only [Pi.mul_apply, hcoord0, mul_zero, zero_mul, add_zero,
+          zero_add, g]
 
 /-- If the varying field slot vanishes at the differentiation point, only
 its first derivative contributes to the Christoffel derivative. -/
@@ -613,11 +611,9 @@ theorem coordinateParallelOperator_hasDerivAt_of_right_eq_zero
             (hgdiff.hasFDerivAt.comp e hQ.hasFDerivAt).hasDerivAt
         have hterm := (hWcoord.mul hAcoord |>.mul hg).smul_const (b i)
         convert hterm using 1
-        · funext s
-          rfl
-        · have hcoord0 : b.repr (W e) j = 0 := by
-            simp [hW0]
-          simp only [Pi.mul_apply, hcoord0, zero_mul, add_zero, g]
+        have hcoord0 : b.repr (W e) j = 0 := by
+          simp [hW0]
+        simp only [Pi.mul_apply, hcoord0, zero_mul, add_zero, g]
 
 /-- Product rule for the Christoffel operator when the coordinate base and
 both vector slots vary simultaneously. -/
@@ -719,9 +715,7 @@ theorem coordinateFirstVariationCovariantField_hasDerivAt
   unfold coordinateFirstVariationCovariantField
   simp only [coordinateCovariantFieldDerivative]
   convert hdV.add hP using 1
-  · funext s
-    rfl
-  · abel
+  abel
 
 /-- Half the squared speed of a coordinate variation. -/
 def coordinateEnergyDensity

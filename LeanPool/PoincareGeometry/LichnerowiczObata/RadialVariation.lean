@@ -40,6 +40,7 @@ theorem inner_gradient_mfderiv_eq_zero {ρ : M → ℝ} {ψ : M → M} {x : M} {
   have hd := mfderiv_comp x hρ hψ
   have hz : mfderiv I 𝓘(ℝ, ℝ) (ρ ∘ ψ) x = 0 := by
     rw [he.mfderiv_eq, mfderiv_const]
+    simp
   have hv := congrArg (fun L => L v) (hd.symm.trans hz)
   exact hv
 
@@ -121,6 +122,10 @@ theorem radial_initial_derivative {ρ : M → ℝ} {η : M × ℝ → M} {x : M}
   have hd := mfderiv_comp x hη (mdifferentiableAt_id.prodMk hρ)
   have he : mfderiv I I (fun y => η (y, ρ y)) x = ContinuousLinearMap.id ℝ _ := by
     rw [hinit.mfderiv_eq, mfderiv_id]
+    have hpoint : η (x, ρ x) = x := by
+      simpa only [id_eq] using hinit.eq_of_nhds
+    rw [hpoint]
+    rfl
   change mfderiv I I (fun y => η (y, ρ y)) x = _ at hd
   simp only [id_eq] at hd
   erw [mfderiv_prod_eq_add_comp hη, mfderiv_prodMk mdifferentiableAt_id hρ,
@@ -160,6 +165,10 @@ theorem radial_transport_kernel_trivial {U : Set M} {J : Set ℝ} {ρ : M → �
   have he : mfderiv I I (fun y => η (y, ρ x)) (η (x, r))
       (mfderiv I I (fun y => η (y, r)) x v) = v := by
     exact hd.trans hi
-  simpa only [hz, map_zero] using he.symm
+  have hpoint : η (η (x, r), ρ x) = x := by
+    rw [hreset x hx r hr (ρ x) hρx, hinit x hx]
+  rw [hz, map_zero] at he
+  rw [hpoint] at he
+  exact he.symm
 
 end LichnerowiczObata
