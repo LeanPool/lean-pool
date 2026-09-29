@@ -6,7 +6,9 @@ Authors: Jon Crall, Claude Fable 5
 module
 
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.KyFan
-public import Mathlib.Analysis.Seminorm
+public import Mathlib.Algebra.Order.Algebra
+public import Mathlib.Analysis.Normed.Group.Basic
+public import Mathlib.Data.EReal.Operations
 public import Mathlib.Analysis.Convex.Caratheodory
 
 /-!

@@ -129,8 +129,8 @@ statement is *not* proved here; see the module note below.
   source form,
   `δ N(tan 2Θ) ≤ 2 N(H)` for every unitarily invariant norm `N` in the paper's
   sense.
-* `TauCeti.DavisKahan1970.tanTwoTheta_directed_boundedResidual_blockRepresentative_kyFan_complex`: the
-  printed *residual* form of the directed half, `δ · kyFan_k (tan 2Θ₀) ≤
+* `TauCeti.DavisKahan1970.tanTwoTheta_directed_boundedResidual_blockRepresentative_kyFan_complex`:
+  the printed *residual* form of the directed half, `δ · kyFan_k (tan 2Θ₀) ≤
   2 · kyFan_k R`, which the ambient half consumes.
 
 ## What is not proved here

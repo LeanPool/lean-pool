@@ -442,7 +442,8 @@ def toNormalizedSymmetricOperatorIdealFamily (N : NormalizedUnitaryInvariantNorm
     intro E F E' F' _ _ _ _ _ _ _ _ _ _ _ _ A B _ _ hAB
     exact N.toFanDominantIdealFamily.gauge_le_of_forall_kyFanApproximationGauge_le hAB
 
-/-- The forgotten base family satisfies unconditional Fan dominance by the field carried above it. -/
+/-- The forgotten base family satisfies unconditional Fan dominance by the
+field carried above it. -/
 theorem toNormalizedSymmetricOperatorIdealFamily_hasFanDominance (N :
   NormalizedUnitaryInvariantNorm.{u, v} 𝕜) :
     N.toNormalizedSymmetricOperatorIdealFamily.HasFanDominance :=

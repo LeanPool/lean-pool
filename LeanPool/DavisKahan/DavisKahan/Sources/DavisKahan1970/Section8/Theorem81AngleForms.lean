@@ -163,8 +163,8 @@ theorem approximationNumber_eq_eigenvalues_of_isPositive [FiniteDimensional 𝕜
   exact TauCeti.singularValues_of_isPositive hpos i
 
 omit [CompleteSpace H] in
-/-- The positivity of an ambient block in the form `approximationNumber_eq_eigenvalues_of_isPositive`
-consumes. -/
+/-- The positivity of an ambient block, in the form consumed by
+`approximationNumber_eq_eigenvalues_of_isPositive`. -/
 theorem isPositive_toLinearMap_of_nonneg {S : H →L[𝕜] H}
     (hS : (0 : H →L[𝕜] H) ≤ S) : (S : H →ₗ[𝕜] H).IsPositive :=
   ((ContinuousLinearMap.nonneg_iff_isPositive (f := S)).mp hS).toLinearMap

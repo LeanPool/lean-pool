@@ -98,8 +98,7 @@ public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.ApproximationNumbers.
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.OperatorIdeal.Family.OperatorNorm
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.Ideals.RankOneNormalization
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.Ideals.KyFanNorm
-public import
-  LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.Ideals.NormalizedUnitaryInvariantNormExamples
+public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.Ideals.NormalizedUnitaryInvariantNormExamples
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.SineTheta.Presentation
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.SinTwoThetaAmbientUnbounded
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.SinTwoThetaDirectedAngle
@@ -2213,16 +2212,16 @@ noncomputable def finiteRankNormalizedSymmetricOperatorIdealFamily :
     have hAfin : ProbeFiniteRank A := by
       by_contra hn
       change finiteRankOperatorNormGauge A ≠ ⊤ at hA
-      rw [finiteRankOperatorNormGauge, if_neg hn] at hA
+      rw [finiteRankOperatorNormGauge, ite_eq_right hn] at hA
       exact hA rfl
     have hBfin : ProbeFiniteRank B := by
       by_contra hn
       change finiteRankOperatorNormGauge B ≠ ⊤ at hB
-      rw [finiteRankOperatorNormGauge, if_neg hn] at hB
+      rw [finiteRankOperatorNormGauge, ite_eq_right hn] at hB
       exact hB rfl
     change finiteRankOperatorNormGauge A ≤ finiteRankOperatorNormGauge B
-    rw [finiteRankOperatorNormGauge, if_pos hAfin,
-      finiteRankOperatorNormGauge, if_pos hBfin]
+    rw [finiteRankOperatorNormGauge, ite_eq_left hAfin,
+      finiteRankOperatorNormGauge, ite_eq_left hBfin]
     have h1 := hAB 1
     rw [kyFanApproximationGauge_one, kyFanApproximationGauge_one] at h1
     rw [← ofReal_norm, ← ofReal_norm]

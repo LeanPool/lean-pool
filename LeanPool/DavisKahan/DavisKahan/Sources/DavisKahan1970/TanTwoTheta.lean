@@ -137,8 +137,9 @@ invariant graph subspace. -/
 alias tanTwoTheta_principalBranch_finiteDimensional_uiNorm_rclike :=
   DavisKahan.FiniteDimensional.tanTwoTheta0_offDiagonal_le
 
-/-- The Ky Fan prefix root of `tanTwoTheta_principalBranch_finiteDimensional_uiNorm_rclike`: equation (7.6) summed
-over paired singular vectors. -/
+/-- The Ky Fan prefix root of
+`tanTwoTheta_principalBranch_finiteDimensional_uiNorm_rclike`: equation (7.6)
+summed over paired singular vectors. -/
 alias tanTwoTheta_principalBranch_finiteDimensional_kyFan_rclike :=
   DavisKahan.FiniteDimensional.kyFan_tanTwoTheta0_offDiagonal_le
 

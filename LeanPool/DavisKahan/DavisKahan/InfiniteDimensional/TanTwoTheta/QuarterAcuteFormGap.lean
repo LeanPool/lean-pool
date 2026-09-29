@@ -286,7 +286,8 @@ theorem spectrum_re_lower_of_coercive
   rw [hneg]
   exact hunit.neg
 
-/-- A positive Lyapunov identity forces the conjugated operator's spectrum into a right half-plane. -/
+/-- A positive Lyapunov identity forces the conjugated operator's spectrum
+into a right half-plane. -/
 private theorem exists_spectrum_re_lower_of_lyapunov
     (W B C : E →L[ℂ] E) {δ : ℝ} (hδ : 0 < δ)
     (hBcoer : ∀ x, δ * ‖x‖ ^ 2 ≤ RCLike.re ⟪B x, x⟫_ℂ)

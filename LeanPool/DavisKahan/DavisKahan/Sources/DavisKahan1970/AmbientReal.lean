@@ -68,7 +68,7 @@ kinds of hypothesis have to travel, and all three were already available:
 
 * `TauCeti.DavisKahan1970.tanTheta_ambient_bounded_symmetricNorming_real_of_transversality`
 * `TauCeti.DavisKahan1970.sinTwoTheta_ambient_bounded_symmetricNorming_real`
-* `TauCeti.DavisKahan1970.tanTwoTheta_directed_boundedResidual_blockRepresentative_spectralGap_symmetricNorming_real`
+* `tanTwoTheta_directed_boundedResidual_blockRepresentative_spectralGap_symmetricNorming_real`
 * `TauCeti.DavisKahan1970.tanTwoTheta_ambient_bounded_spectralGap_symmetricNorming_real`
 
 ## References
