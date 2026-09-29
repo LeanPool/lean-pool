@@ -392,18 +392,13 @@ lemma qNormSq_qScale (δ : X → ℝ) (ψ : X → (H → ℂ)) (x : X) :
   exact qNormSq_real_smul _ _
 
 omit [DecidableEq H] [DecidableEq X] [Fintype H] [Fintype X] in
-lemma qScale_add (δ : X → ℝ) (u v : X → (H → ℂ)) (x : X) [Finite H] [Finite X] :
+lemma qScale_add (δ : X → ℝ) (u v : X → (H → ℂ)) (x : X) :
     qScale δ (fun x => u x + v x) x = qScale δ u x + qScale δ v x := by
-  classical
-  let := Fintype.ofFinite H
-  let := Fintype.ofFinite X
   rw [qScale_apply, qScale_apply, qScale_apply, smul_add]
 
 omit [DecidableEq H] [DecidableEq X] [Fintype X] in
-lemma qScale_mulVec (U : Matrix H H ℂ) (δ : X → ℝ) (ψ : X → (H → ℂ)) (x : X) [Finite X] :
+lemma qScale_mulVec (U : Matrix H H ℂ) (δ : X → ℝ) (ψ : X → (H → ℂ)) (x : X) :
     qScale δ (fun x => U *ᵥ ψ x) x = U *ᵥ (qScale δ ψ x) := by
-  classical
-  let := Fintype.ofFinite X
   rw [qScale_apply, qScale_apply, Matrix.mulVec_smul]
 
 /-- **The progress measure.** -/
@@ -473,14 +468,9 @@ lemma sectFam_apply (o : Option ι) (x : X) :
 
 omit [DecidableEq W] [DecidableEq X] [DecidableEq σ] [Fintype W] [Fintype X] [Fintype ι]
     [Fintype σ] in
-lemma qScale_restrict_eq_sectFam (o : Option ι) (x : X) [Finite W] [Finite X] [Finite ι]
-    [Finite σ] :
+lemma qScale_restrict_eq_sectFam (o : Option ι) (x : X) :
     qRestrict idxOf o (qScale δ ψ x) = sectFam o δ ψ x := by
   classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite X
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   funext p
   rw [qRestrict, qScale_apply, sectFam_apply, Pi.smul_apply, Pi.smul_apply,
     smul_eq_mul, smul_eq_mul, qRestrict]
@@ -490,11 +480,10 @@ lemma qScale_restrict_eq_sectFam (o : Option ι) (x : X) [Finite W] [Finite X] [
 
 omit [DecidableEq X] [Fintype X] in
 /-- The oracle acts on the sector families through the state family. -/
-lemma sectFam_oracle (o : Option ι) (x : X) [Finite X] :
+lemma sectFam_oracle (o : Option ι) (x : X) :
     sectFam o δ (fun x => oracleMat (read x) *ᵥ ψ x) x
       = oracleMat (read x) *ᵥ sectFam o δ ψ x := by
   classical
-  let := Fintype.ofFinite X
   rw [sectFam_apply, sectFam_apply, qRestrict_idxOf_oracleMat, Matrix.mulVec_smul]
 
 /-- The weight carried by the sector `o`. -/
@@ -907,10 +896,9 @@ omit [DecidableEq O] [Fintype O] in
 lemma abs_algProgress_sub_zero_le {Γ : Matrix X X ℝ} {δ δ' : X → ℝ}
     (A : QAlg ι σ O W) {read : X → ι → σ}
     (hfeas : ∀ i, ‖Γ ⊙ advDOn read i‖ ≤ 1)
-    (hδ : ∑ x, δ x ^ 2 = 1) (hδ' : ∑ y, δ' y ^ 2 = 1) (q : ℕ) [Finite O] :
+    (hδ : ∑ x, δ x ^ 2 = 1) (hδ' : ∑ y, δ' y ^ 2 = 1) (q : ℕ) :
     |algProgress Γ δ δ' A read q - algProgress Γ δ δ' A read 0| ≤ 2 * q := by
   classical
-  let := Fintype.ofFinite O
   induction q with
   | zero => simp
   | succ t ih =>
@@ -935,10 +923,9 @@ omit [DecidableEq O] [Fintype O] in
 lemma abs_dotProduct_mulVec_le_of_algProgress {Γ : Matrix X X ℝ} {κ : ℝ}
     (hfeas : ∀ i, ‖Γ ⊙ advDOn read i‖ ≤ 1)
     {δ δ' : X → ℝ} (hδ : ∑ x, δ x ^ 2 = 1) (hδ' : ∑ y, δ' y ^ 2 = 1)
-    (hout : |algProgress Γ δ δ' A read q| ≤ ‖Γ‖ * κ) [Finite O] :
+    (hout : |algProgress Γ δ δ' A read q| ≤ ‖Γ‖ * κ) :
     |δ ⬝ᵥ Γ *ᵥ δ'| ≤ ‖Γ‖ * κ + 2 * q := by
   classical
-  let := Fintype.ofFinite O
   have htel := abs_algProgress_sub_zero_le A hfeas hδ hδ' q
   have h0 := algProgress_zero Γ δ δ' A read
   have hsplit : |algProgress Γ δ δ' A read 0|
@@ -977,10 +964,9 @@ theorem advPMOn_le_of_bilinear {κ : ℝ} (hκ0 : 0 ≤ κ) (hlt : κ < 1)
     (hbil : ∀ Γ : Matrix X X ℝ, IsAdvMatrixOn f Γ →
       (∀ i, ‖Γ ⊙ advDOn read i‖ ≤ 1) →
       ∀ δ δ' : X → ℝ, (∑ x, δ x ^ 2 = 1) → (∑ y, δ' y ^ 2 = 1) →
-        |δ ⬝ᵥ Γ *ᵥ δ'| ≤ ‖Γ‖ * κ + 2 * q) [Finite ι] :
+        |δ ⬝ᵥ Γ *ᵥ δ'| ≤ ‖Γ‖ * κ + 2 * q) :
     (1 - κ) * advPMOn read f ≤ 2 * q := by
   classical
-  let := Fintype.ofFinite ι
   have hpos : 0 < 1 - κ := by linarith
   rw [← le_div_iff₀' hpos]
   refine advPMOn_le fun Γ hΓ hfeas => ?_
@@ -1535,14 +1521,13 @@ lemma realizes_zero_rec (read : X → ι → σ) :
 omit [Fintype O] [Fintype X] in
 /-- **The `k`-fold product realization over any finite output type**: costs
 add, distributions multiply. -/
-theorem Realizes.foldRec {read : X → ι → σ} [Finite O] [Finite X] :
+theorem Realizes.foldRec {read : X → ι → σ} [Finite O] :
     ∀ (k : ℕ) (q : Fin k → ℕ) (P : Fin k → X → O → ℝ),
     (∀ j, Realizes read (q j) (P j)) →
     Realizes read (∑ j, q j)
       (fun x (y : Fin k → O) => ∏ j, P j x (y j)) := by
   classical
   let := Fintype.ofFinite O
-  let := Fintype.ofFinite X
   intro k
   induction k with
   | zero =>
@@ -1620,10 +1605,9 @@ lemma plurality_eq_of_majority {k : ℕ} {y : Fin (k + 1) → O} {o : O}
 omit [Fintype O] in
 /-- A wrong plurality has at least `⌈(k+1)/2⌉` wrong runs. -/
 lemma le_wrongCount_of_plurality_ne {k : ℕ} {y : Fin (k + 1) → O} {o : O}
-    (h : plurality y ≠ o) [Finite O] :
+    (h : plurality y ≠ o) :
     (k + 2) / 2 ≤ wrongCount y (fun _ => o) := by
   classical
-  let := Fintype.ofFinite O
   have hmaj : ¬ (k + 1 < 2 * voteCount y o) :=
     fun hc => h (plurality_eq_of_majority hc)
   have hsplit : voteCount y o + wrongCount y (fun _ => o) = k + 1 := by
@@ -1642,14 +1626,13 @@ the same function with error `(1 + ε)^{k+1} / 2^{⌈(k+1)/2⌉}`, at `k + 1`
 times the cost. -/
 theorem amplify_plurality {read : X → ι → σ} {f : X → O} {q : ℕ} {ε : ℝ}
     (hex : ∃ (W : Type) (_ : Fintype W) (_ : DecidableEq W)
-      (A : QAlg ι σ O W), ComputesWithErrorOn A q read f ε) (k : ℕ) [Finite O] [Finite X] :
+      (A : QAlg ι σ O W), ComputesWithErrorOn A q read f ε) (k : ℕ) [Finite O] :
     ∃ (W' : Type) (_ : Fintype W') (_ : DecidableEq W')
       (A' : QAlg ι σ O W'),
       ComputesWithErrorOn A' ((k + 1) * q) read f
         ((1 + ε) ^ (k + 1) / 2 ^ ((k + 2) / 2)) := by
   classical
   let := Fintype.ofFinite O
-  let := Fintype.ofFinite X
   obtain ⟨W, hW, hW', A, hA⟩ := hex
   have hbase : Realizes read q (fun x o => A.prob (read x) q o) :=
     ⟨W, hW, hW', A, fun _ _ => rfl⟩
@@ -1710,11 +1693,10 @@ omit [Fintype O] [Fintype X] in
 /-- **`43` runs at error `1/3` give error below `1/16`**:
 `(4/3)^43 / 2^22 = 2^64 / 3^43 < 1/16`. -/
 theorem fortythree_mem_queryCounts_sixteenth {read : X → ι → σ} {f : X → O}
-    {q : ℕ} (hq : q ∈ QueryCounts read f (1 / 3)) [Finite O] [Finite X] :
+    {q : ℕ} (hq : q ∈ QueryCounts read f (1 / 3)) [Finite O] :
     43 * q ∈ QueryCounts read f (1 / 16) := by
   classical
   let := Fintype.ofFinite O
-  let := Fintype.ofFinite X
   obtain ⟨W', hW1, hW2, A', hA'⟩ := amplify_plurality hq 42
   exact ⟨W', hW1, hW2, A', hA'.mono (by norm_num)⟩
 

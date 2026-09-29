@@ -1356,24 +1356,17 @@ noncomputable def clockPack (f : Fin T → (QBasis ι σ W → ℂ)) :
   ∑ c : Fin T, embedClock c false (f c)
 
 omit [DecidableEq W] [DecidableEq σ] [Fintype W] [Fintype ι] [Fintype σ] in
-lemma embedClock_smul (c : Fin T) (b : Bool) (a : ℂ) (ψ : QBasis ι σ W → ℂ) [Finite W]
-    [Finite ι] [Finite σ] :
+lemma embedClock_smul (c : Fin T) (b : Bool) (a : ℂ) (ψ : QBasis ι σ W → ℂ) :
     embedClock c b (a • ψ) = a • embedClock c b ψ := by
   classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   simp only [embedClock, embedCtrl]
   rw [embedReg_smul, embedReg_smul, embedReg_smul]
 
 omit [DecidableEq W] [DecidableEq σ] [Fintype W] [Fintype ι] [Fintype σ] in
 lemma embedClock_sum {α : Type*} (c : Fin T) (b : Bool) (s : Finset α)
-    (f : α → (QBasis ι σ W → ℂ)) [Finite W] [Finite ι] [Finite σ] :
+    (f : α → (QBasis ι σ W → ℂ)) :
     embedClock c b (∑ i ∈ s, f i) = ∑ i ∈ s, embedClock c b (f i) := by
   classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   simp only [embedClock, embedCtrl]
   rw [embedReg_sum, embedReg_sum, embedReg_sum]
 
@@ -1678,32 +1671,24 @@ layer. -/
 
 omit [DecidableEq W] [DecidableEq ι] [DecidableEq σ] [Fintype W] [Fintype ι] [Fintype σ] in
 lemma embedReg_add {V : Type} [DecidableEq V] (v : V)
-    (ψ φ : QBasis ι σ W → ℂ) [Finite V] :
+    (ψ φ : QBasis ι σ W → ℂ) :
     embedReg v (ψ + φ) = embedReg v ψ + embedReg v φ := by
   classical
-  let := Fintype.ofFinite V
   funext p
   by_cases h : p.2.2.1 = v <;> simp [embedReg_apply, h]
 
 omit [DecidableEq W] [DecidableEq σ] [Fintype W] [Fintype ι] [Fintype σ] in
-lemma embedClock_add (c : Fin T) (b : Bool) (ψ φ : QBasis ι σ W → ℂ) [Finite W] [Finite ι]
-    [Finite σ] :
+lemma embedClock_add (c : Fin T) (b : Bool) (ψ φ : QBasis ι σ W → ℂ) :
     embedClock c b (ψ + φ) = embedClock c b ψ + embedClock c b φ := by
   classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   simp only [embedClock, embedCtrl]
   rw [embedReg_add, embedReg_add, embedReg_add]
 
 omit [DecidableEq W] [DecidableEq σ] [Fintype W] [Fintype ι] [Fintype σ] in
 /-- **The uniform clock is additive.** -/
-lemma uniformClock_add (T : ℕ) (ψ φ : QBasis ι σ W → ℂ) [Finite W] [Finite ι] [Finite σ] :
+lemma uniformClock_add (T : ℕ) (ψ φ : QBasis ι σ W → ℂ) :
     uniformClock T (ψ + φ) = uniformClock T ψ + uniformClock T φ := by
   classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   simp only [uniformClock, clockPack]
   rw [← smul_add, ← Finset.sum_add_distrib]
   congr 1
@@ -1741,24 +1726,18 @@ theorem qInner_uniformClock (hT : 0 < T) (ψ φ : QBasis ι σ W → ℂ) :
 
 omit [DecidableEq W] [DecidableEq σ] [Fintype W] [Fintype ι] [Fintype σ] in
 /-- **The uniform clock is `ℂ`-homogeneous.** -/
-lemma uniformClock_smul (T : ℕ) (r : ℂ) (ψ : QBasis ι σ W → ℂ) [Finite W] [Finite ι] [Finite σ] :
+lemma uniformClock_smul (T : ℕ) (r : ℂ) (ψ : QBasis ι σ W → ℂ) :
     uniformClock T (r • ψ) = r • uniformClock T ψ := by
   classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   simp only [uniformClock, clockPack]
   rw [Finset.sum_congr rfl fun c _ => embedClock_smul c false r ψ,
     ← Finset.smul_sum, smul_comm]
 
 omit [DecidableEq W] [DecidableEq σ] [Fintype W] [Fintype ι] [Fintype σ] in
 /-- **The uniform clock is subtractive.** -/
-lemma uniformClock_sub (T : ℕ) (ψ φ : QBasis ι σ W → ℂ) [Finite W] [Finite ι] [Finite σ] :
+lemma uniformClock_sub (T : ℕ) (ψ φ : QBasis ι σ W → ℂ) :
     uniformClock T (ψ - φ) = uniformClock T ψ - uniformClock T φ := by
   classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   have h2 := uniformClock_add T (ψ - φ) φ
   rw [sub_add_cancel] at h2
   rw [h2, add_sub_cancel_right]
@@ -2470,14 +2449,10 @@ def uTarget (t : Option R → ℝ) : UBasis R ι σ K → ℂ :=
 
 omit [DecidableEq K] [DecidableEq R] [DecidableEq ι] [DecidableEq σ] [Fintype K] [Fintype R]
     [Fintype ι] [Fintype σ] in
-lemma uTarget_add (t t' : Option R → ℝ) [Finite K] [Finite R] [Finite ι] [Finite σ] :
+lemma uTarget_add (t t' : Option R → ℝ) :
     uTarget (ι := ι) (σ := σ) (K := K) (t + t')
       = uTarget t + uTarget t' := by
   classical
-  let := Fintype.ofFinite K
-  let := Fintype.ofFinite R
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   funext b
   cases b with
   | inl s => simp [uTarget]
@@ -2485,14 +2460,10 @@ lemma uTarget_add (t t' : Option R → ℝ) [Finite K] [Finite R] [Finite ι] [F
 
 omit [DecidableEq K] [DecidableEq R] [DecidableEq ι] [DecidableEq σ] [Fintype K] [Fintype R]
     [Fintype ι] [Fintype σ] in
-lemma uTarget_sub (t t' : Option R → ℝ) [Finite K] [Finite R] [Finite ι] [Finite σ] :
+lemma uTarget_sub (t t' : Option R → ℝ) :
     uTarget (ι := ι) (σ := σ) (K := K) (t - t')
       = uTarget t - uTarget t' := by
   classical
-  let := Fintype.ofFinite K
-  let := Fintype.ofFinite R
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   funext b
   cases b with
   | inl s => simp [uTarget]
@@ -2502,14 +2473,10 @@ omit [DecidableEq K] [DecidableEq R] [DecidableEq ι] [DecidableEq σ] [Fintype 
     [Fintype ι] [Fintype σ] in
 /-- Real scaling of the target vector is complex scaling of its
 embedding. -/
-lemma uTarget_realSmul (r : ℝ) (t : Option R → ℝ) [Finite K] [Finite R] [Finite ι] [Finite σ] :
+lemma uTarget_realSmul (r : ℝ) (t : Option R → ℝ) :
     uTarget (ι := ι) (σ := σ) (K := K) (r • t)
       = ((r : ℝ) : ℂ) • uTarget t := by
   classical
-  let := Fintype.ofFinite K
-  let := Fintype.ofFinite R
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   funext b
   cases b with
   | inl s => simp [uTarget]
@@ -2916,14 +2883,9 @@ omit [DecidableEq K] [DecidableEq R] [DecidableEq σ] [Fintype K] [Fintype R] [F
 
 omit [DecidableEq K] [DecidableEq R] [DecidableEq ι] [DecidableEq σ] [Fintype K] [Fintype R]
     [Fintype ι] [Fintype σ] in
-lemma uEmb_injective [Finite K] [Finite R] [Finite ι]
-    [Finite σ] : Function.Injective (uEmb (R := R) (ι := ι) (σ := σ)
+lemma uEmb_injective : Function.Injective (uEmb (R := R) (ι := ι) (σ := σ)
     (K := K)) := by
   classical
-  let := Fintype.ofFinite K
-  let := Fintype.ofFinite R
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   rintro (s | ⟨p, a⟩) (s' | ⟨p', a'⟩) h
   · exact congrArg Sum.inl (by simpa [uEmb] using h)
   · cases a' <;> simp [uEmb] at h
@@ -2935,13 +2897,8 @@ omit [DecidableEq K] [DecidableEq R] [DecidableEq σ] [Fintype K] [Fintype R] [F
 /-- Off the image the realization vanishes — which is what makes it an
 isometry. -/
 lemma uRealize_eq_zero_of_forall_ne (ψ : UBasis R ι σ K → ℂ)
-    {q : UQBasis R ι σ K} (h : ∀ b, uEmb b ≠ q) [Finite K] [Finite R] [Finite ι]
-    [Finite σ] : uRealize ψ q = 0 := by
+    {q : UQBasis R ι σ K} (h : ∀ b, uEmb b ≠ q) : uRealize ψ q = 0 := by
   classical
-  let := Fintype.ofFinite K
-  let := Fintype.ofFinite R
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   by_contra hne
   obtain ⟨i, a, w⟩ := q
   cases i with
@@ -3030,14 +2987,9 @@ lemma uRealize_sub (ψ φ : UBasis R ι σ K → ℂ) :
 
 omit [DecidableEq K] [DecidableEq R] [DecidableEq σ] [Fintype K] [Fintype R] [Fintype ι]
     [Fintype σ] in
-lemma uRealize_sum {α : Type*} (s : Finset α) (F : α → (UBasis R ι σ K → ℂ)) [Finite K]
-    [Finite R] [Finite ι] [Finite σ] :
+lemma uRealize_sum {α : Type*} (s : Finset α) (F : α → (UBasis R ι σ K → ℂ)) :
     uRealize (∑ a ∈ s, F a) = ∑ a ∈ s, uRealize (F a) := by
   classical
-  let := Fintype.ofFinite K
-  let := Fintype.ofFinite R
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   induction s using Finset.induction with
   | empty => simp [uRealize_zero]
   | insert a s ha ih =>
@@ -3091,15 +3043,11 @@ def uniformGen (p : ι × K) : UQBasis R ι σ K → ℂ := idleFlag p + activeB
 
 omit [Fintype K] [Fintype R] [Fintype ι] [Fintype σ] in
 /-- The realized `leftAtom` is a two-term basis sum. -/
-lemma uRealize_leftAtom (i : ι) (k : K) (c : σ) [Finite K] [Finite R] [Finite ι] [Finite σ] :
+lemma uRealize_leftAtom (i : ι) (k : K) (c : σ) :
     uRealize (leftAtom (R := R) i k c)
       = qBasis ((none, none, Sum.inr (i, k)) : UQBasis R ι σ K)
         + qBasis ((some i, some c, Sum.inr (i, k)) : UQBasis R ι σ K) := by
   classical
-  let := Fintype.ofFinite K
-  let := Fintype.ofFinite R
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   funext q
   obtain ⟨j, x, w⟩ := q
   cases j with
@@ -3208,36 +3156,32 @@ omit [DecidableEq K] [DecidableEq R] [DecidableEq σ] in
 
 omit [DecidableEq R] [Fintype X] in
 @[simp] theorem qInner_realizedTarget_realizedPacketU (t : Option R → ℝ)
-    (u : X → ι → K → ℝ) (read : X → ι → σ) (x : X) [Finite X] :
+    (u : X → ι → K → ℝ) (read : X → ι → σ) (x : X) :
     qInner (realizedTarget (ι := ι) (σ := σ) (K := K) t)
       (realizedPacketU u read x) = 0 := by
   classical
-  let := Fintype.ofFinite X
   rw [realizedTarget, realizedPacketU, qInner_uRealize, qInner_uTarget_packetU]
 
 omit [DecidableEq R] [Fintype X] in
 @[simp] theorem qInner_realizedTarget_realizedPacketV (t : Option R → ℝ)
-    (v : X → ι → K → ℝ) (read : X → ι → σ) (x : X) [Finite X] :
+    (v : X → ι → K → ℝ) (read : X → ι → σ) (x : X) :
     qInner (realizedTarget (ι := ι) (σ := σ) (K := K) t)
       (realizedPacketV v read x) = 0 := by
   classical
-  let := Fintype.ofFinite X
   rw [realizedTarget, realizedPacketV, qInner_uRealize, qInner_uTarget_packetV]
 
 omit [DecidableEq R] [Fintype X] in
 @[simp] theorem qInner_realizedPacketU_realizedTarget (u : X → ι → K → ℝ)
-    (read : X → ι → σ) (x : X) (t : Option R → ℝ) [Finite X] :
+    (read : X → ι → σ) (x : X) (t : Option R → ℝ) :
     qInner (realizedPacketU (R := R) u read x) (realizedTarget t) = 0 := by
   classical
-  let := Fintype.ofFinite X
   rw [realizedPacketU, realizedTarget, qInner_uRealize, qInner_packetU_uTarget]
 
 omit [DecidableEq R] [Fintype X] in
 @[simp] theorem qInner_realizedPacketV_realizedTarget (v : X → ι → K → ℝ)
-    (read : X → ι → σ) (x : X) (t : Option R → ℝ) [Finite X] :
+    (read : X → ι → σ) (x : X) (t : Option R → ℝ) :
     qInner (realizedPacketV (R := R) v read x) (realizedTarget t) = 0 := by
   classical
-  let := Fintype.ofFinite X
   rw [realizedPacketV, realizedTarget, qInner_uRealize, qInner_packetV_uTarget]
 
 omit [DecidableEq R] in
@@ -3252,20 +3196,18 @@ theorem qInner_realizedPacketU_realizedPacketV
 
 omit [DecidableEq R] [Fintype X] in
 theorem qInner_realizedPacketU_self (u : X → ι → K → ℝ) (read : X → ι → σ)
-    (x : X) [Finite X] :
+    (x : X) :
     qInner (realizedPacketU (R := R) u read x) (realizedPacketU u read x)
       = ((2 * ∑ p : ι × K, u x p.1 p.2 * u x p.1 p.2 : ℝ) : ℂ) := by
   classical
-  let := Fintype.ofFinite X
   rw [realizedPacketU, qInner_uRealize, qInner_packetU_self]
 
 omit [DecidableEq R] [Fintype X] in
 theorem qInner_realizedPacketV_self (v : X → ι → K → ℝ) (read : X → ι → σ)
-    (x : X) [Finite X] :
+    (x : X) :
     qInner (realizedPacketV (R := R) v read x) (realizedPacketV v read x)
       = ((2 * ∑ p : ι × K, v x p.1 p.2 * v x p.1 p.2 : ℝ) : ℂ) := by
   classical
-  let := Fintype.ofFinite X
   rw [realizedPacketV, qInner_uRealize, qInner_packetV_self]
 
 /-! ### The operational form of the `u`-packet -/
@@ -3289,11 +3231,10 @@ theorem realizedPacketU_eq_sum_oracleGen (u : X → ι → K → ℝ)
 omit [Fintype X] in
 /-- **The `u`-packet is killed.** -/
 theorem inputProj_mulVec_realizedPacketU (u : X → ι → K → ℝ)
-    (read : X → ι → σ) (x : X) [Finite X] :
+    (read : X → ι → σ) (x : X) :
     inputProj (uniformGen (R := R) (ι := ι) (σ := σ) (K := K)) (read x)
         *ᵥ realizedPacketU u read x = 0 := by
   classical
-  let := Fintype.ofFinite X
   rw [realizedPacketU_eq_sum_oracleGen, Matrix.mulVec_sum, Matrix.mulVec_sum]
   refine Finset.sum_eq_zero fun p _ => ?_
   rw [Matrix.mulVec_smul, Matrix.mulVec_smul,
@@ -3329,22 +3270,20 @@ theorem qNormSq_realizedTarget (t : Option R → ℝ) :
 
 omit [DecidableEq R] [Fintype X] in
 theorem qNormSq_realizedPacketU (u : X → ι → K → ℝ) (read : X → ι → σ)
-    (x : X) [Finite X] :
+    (x : X) :
     qNormSq (realizedPacketU (R := R) u read x)
       = 2 * ∑ p : ι × K, u x p.1 p.2 * u x p.1 p.2 := by
   classical
-  let := Fintype.ofFinite X
   have h := qInner_realizedPacketU_self (R := R) u read x
   rw [qInner_self] at h
   exact_mod_cast h
 
 omit [DecidableEq R] [Fintype X] in
 theorem qNormSq_realizedPacketV (v : X → ι → K → ℝ) (read : X → ι → σ)
-    (x : X) [Finite X] :
+    (x : X) :
     qNormSq (realizedPacketV (R := R) v read x)
       = 2 * ∑ p : ι × K, v x p.1 p.2 * v x p.1 p.2 := by
   classical
-  let := Fintype.ofFinite X
   have h := qInner_realizedPacketV_self (R := R) v read x
   rw [qInner_self] at h
   exact_mod_cast h
@@ -3634,15 +3573,11 @@ noncomputable def realizedOut (f : X → O) (x : X) :
 
 omit [DecidableEq K] [DecidableEq σ] [Fintype K] [Fintype X] [Fintype ι] [Fintype σ] in
 /-- `common = (t₊ + t₋)/√2`, realized — for **every** `x`. -/
-theorem realizedCommon_eq_smul (f : X → O) (x : X) [Finite K] [Finite X] [Finite ι] [Finite σ] :
+theorem realizedCommon_eq_smul (f : X → O) (x : X) :
     realizedCommon (ι := ι) (σ := σ) (K := K) f
       = (((Real.sqrt 2)⁻¹ : ℝ) : ℂ) •
           (realizedTPlus (K := K) f x + realizedTMinus (K := K) f x) := by
   classical
-  let := Fintype.ofFinite K
-  let := Fintype.ofFinite X
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   have h : (((Real.sqrt 2)⁻¹ : ℝ) : ℂ) •
       (realizedTPlus (K := K) f x + realizedTMinus (K := K) f x)
       = realizedCommon (ι := ι) (σ := σ) (K := K) f := by
@@ -3653,15 +3588,11 @@ theorem realizedCommon_eq_smul (f : X → O) (x : X) [Finite K] [Finite X] [Fini
 
 omit [DecidableEq K] [DecidableEq σ] [Fintype K] [Fintype X] [Fintype ι] [Fintype σ] in
 /-- `out(f x) = (t₊ − t₋)/√2`, realized. -/
-theorem realizedOut_eq_smul (f : X → O) (x : X) [Finite K] [Finite X] [Finite ι] [Finite σ] :
+theorem realizedOut_eq_smul (f : X → O) (x : X) :
     realizedOut (ι := ι) (σ := σ) (K := K) f x
       = (((Real.sqrt 2)⁻¹ : ℝ) : ℂ) •
           (realizedTPlus (K := K) f x - realizedTMinus (K := K) f x) := by
   classical
-  let := Fintype.ofFinite K
-  let := Fintype.ofFinite X
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   have h : (((Real.sqrt 2)⁻¹ : ℝ) : ℂ) •
       (realizedTPlus (K := K) f x - realizedTMinus (K := K) f x)
       = realizedOut (ι := ι) (σ := σ) (K := K) f x := by
@@ -3720,13 +3651,9 @@ coordinate `(⊥, ⊥, inl (some (f x)))` the realized output state vanishes.
 This is exactly what the final readout consumes. -/
 theorem realizedOut_apply_of_ne (f : X → O) (x : X)
     {q : UQBasis ↥(Set.range f) ι σ K}
-    (hq : q.2.2 ≠ Sum.inl (some (rangeElem f x))) [Finite K] [Finite X] [Finite ι] [Finite σ] :
+    (hq : q.2.2 ≠ Sum.inl (some (rangeElem f x))) :
     realizedOut (ι := ι) (σ := σ) (K := K) f x q = 0 := by
   classical
-  let := Fintype.ofFinite K
-  let := Fintype.ofFinite X
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   obtain ⟨i, a, w⟩ := q
   rw [realizedOut, realizedTarget]
   cases i with
@@ -3880,13 +3807,10 @@ theorem qNormSq_scState (α : ℂ) (A : ι → σ → K → ℂ) :
   simp [qNormSq_def, Fintype.sum_prod_type, Fintype.sum_option]
 
 omit [DecidableEq K] [DecidableEq ι] [DecidableEq σ] [Fintype K] [Fintype ι] [Fintype σ] in
-lemma scState_add (α β : ℂ) (A B : ι → σ → K → ℂ) [Finite K] [Finite ι] [Finite σ] :
+lemma scState_add (α β : ℂ) (A B : ι → σ → K → ℂ) :
     scState (α + β) (fun i s k => A i s k + B i s k)
       = scState α A + scState (K := K) β B := by
   classical
-  let := Fintype.ofFinite K
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   funext p
   obtain ⟨(_ | i), (_ | s), (_ | k)⟩ := p <;> simp
 
@@ -3946,10 +3870,9 @@ def negCorr (P : DualPairOn read K f) (y : X) : QBasis ι σ (Option K) → ℂ 
   scState 0 (fun i s k => if s = read y i then (P.v y i k : ℂ) else 0)
 
 omit [DecidableEq K] [DecidableEq X] [DecidableEq ι] [Fintype σ] in
-lemma negWitness_eq_target_add (P : DualPairOn read K f) (y : X) [Finite σ] :
+lemma negWitness_eq_target_add (P : DualPairOn read K f) (y : X) :
     negWitness read f P y = scTarget + negCorr read f P y := by
   classical
-  let := Fintype.ofFinite σ
   funext p
   obtain ⟨(_ | i), (_ | s), (_ | k)⟩ := p <;>
     simp [negWitness, negCorr, scTarget]
@@ -4233,11 +4156,10 @@ omit [DecidableEq K] [DecidableEq X] [DecidableEq ι] [Fintype σ] in
 
 omit [DecidableEq K] [DecidableEq X] [DecidableEq ι] [Fintype σ] in
 /-- The `u`-mass scales by `α²`. -/
-lemma scale_u_mass (P : DualPairOn read K f) {α : ℝ} (hα : α ≠ 0) (x : X) [Finite σ] :
+lemma scale_u_mass (P : DualPairOn read K f) {α : ℝ} (hα : α ≠ 0) (x : X) :
     ∑ i, ∑ k, (P.scale hα).u x i k * (P.scale hα).u x i k
       = α ^ 2 * ∑ i, ∑ k, P.u x i k * P.u x i k := by
   classical
-  let := Fintype.ofFinite σ
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.mul_sum]
@@ -4245,11 +4167,10 @@ lemma scale_u_mass (P : DualPairOn read K f) {α : ℝ} (hα : α ≠ 0) (x : X)
 
 omit [DecidableEq K] [DecidableEq X] [DecidableEq ι] [Fintype σ] in
 /-- The `v`-mass scales by `α⁻²`. -/
-lemma scale_v_mass (P : DualPairOn read K f) {α : ℝ} (hα : α ≠ 0) (y : X) [Finite σ] :
+lemma scale_v_mass (P : DualPairOn read K f) {α : ℝ} (hα : α ≠ 0) (y : X) :
     ∑ i, ∑ k, (P.scale hα).v y i k * (P.scale hα).v y i k
       = (α⁻¹) ^ 2 * ∑ i, ∑ k, P.v y i k * P.v y i k := by
   classical
-  let := Fintype.ofFinite σ
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.mul_sum]
@@ -5178,29 +5099,19 @@ def uniformReadout (f : X → O) (o₀ : O) (T : ℕ) :
 omit [DecidableEq K] [DecidableEq O] [DecidableEq ι] [DecidableEq σ] [Fintype K] [Fintype X]
     [Fintype ι] [Fintype σ] in
 lemma uniformReadout_apply (f : X → O) (o₀ : O) (T : ℕ)
-    (b : QBasis ι σ (ClockWork ι T (UWork ↥(Set.range f) ι K))) [Finite K] [Finite X]
-    [Finite ι] [Finite σ] :
+    (b : QBasis ι σ (ClockWork ι T (UWork ↥(Set.range f) ι K))) :
     uniformReadout f o₀ T b = uniformLabel f o₀ b.2.2.2.2.2 := by
   classical
-  let := Fintype.ofFinite K
-  let := Fintype.ofFinite X
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   exact rfl
 
 omit [DecidableEq K] [DecidableEq σ] [Fintype K] [Fintype X] [Fintype ι] [Fintype σ] in
 /-- **The clocked output state announces its label surely**: it is its own
 restriction to the `f x`-sector of the readout. -/
-theorem qRestrict_uniformClock_realizedOut (o₀ : O) (T : ℕ) (x : X) [Finite K] [Finite X]
-    [Finite ι] [Finite σ] :
+theorem qRestrict_uniformClock_realizedOut (o₀ : O) (T : ℕ) (x : X) :
     qRestrict (uniformReadout (ι := ι) (σ := σ) (K := K) f o₀ T) (f x)
         (uniformClock T (realizedOut (K := K) f x))
       = uniformClock T (realizedOut (K := K) f x) := by
   classical
-  let := Fintype.ofFinite K
-  let := Fintype.ofFinite X
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   funext b
   rw [qRestrict]
   by_cases hb : uniformReadout (ι := ι) (σ := σ) (K := K) f o₀ T b = f x

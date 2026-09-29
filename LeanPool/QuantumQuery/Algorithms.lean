@@ -1423,26 +1423,17 @@ def regEquiv : QBasis ι σ (V × W) ≃ QBasis ι σ W × V where
 
 omit [DecidableEq V] [DecidableEq W] [DecidableEq ι] [DecidableEq σ] [Fintype V] [Fintype W]
     [Fintype ι] [Fintype σ] in
-@[simp] lemma regEquiv_apply (p : QBasis ι σ (V × W)) [Finite V] [Finite W] [Finite ι] [Finite σ] :
+@[simp] lemma regEquiv_apply (p : QBasis ι σ (V × W)) :
     regEquiv p = ((p.1, p.2.1, p.2.2.2), p.2.2.1) := by
   classical
-  let := Fintype.ofFinite V
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   exact rfl
 
 omit [DecidableEq V] [DecidableEq W] [DecidableEq ι] [DecidableEq σ] [Fintype V] [Fintype W]
     [Fintype ι] [Fintype σ] in
-@[simp] lemma regEquiv_symm_apply (x : QBasis ι σ W × V) [Finite V] [Finite W] [Finite ι]
-    [Finite σ] :
+@[simp] lemma regEquiv_symm_apply (x : QBasis ι σ W × V) :
     (regEquiv (ι := ι) (σ := σ) (V := V) (W := W)).symm x
       = (x.1.1, x.1.2.1, (x.2, x.1.2.2)) := by
   classical
-  let := Fintype.ofFinite V
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   exact rfl
 
 /-- **A register-indexed family of operators**, acting block-diagonally on the
@@ -1564,13 +1555,9 @@ lemma liftReg_mulVec_embed (U : Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ) (v
 
 omit [DecidableEq W] [DecidableEq ι] [DecidableEq σ] [Fintype W] [Fintype ι] [Fintype σ] in
 omit [Fintype V] in
-lemma liftReg_conjTranspose (U : Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ) [Finite W]
-    [Finite ι] [Finite σ] :
+lemma liftReg_conjTranspose (U : Matrix (QBasis ι σ W) (QBasis ι σ W) ℂ) :
     (liftReg V U)ᴴ = liftReg V Uᴴ := by
   classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   exact blockFam_conjTranspose _
 
 omit [DecidableEq W] [DecidableEq ι] [DecidableEq σ] in
@@ -1608,13 +1595,9 @@ lemma embedReg_smul (v : V) (a : ℂ) (ψ : QBasis ι σ W → ℂ) :
 omit [DecidableEq W] [DecidableEq ι] [DecidableEq σ] [Fintype V] [Fintype W] [Fintype ι]
     [Fintype σ] in
 lemma embedReg_sum {α : Type*} (v : V) (s : Finset α)
-    (f : α → (QBasis ι σ W → ℂ)) [Finite V] [Finite W] [Finite ι] [Finite σ] :
+    (f : α → (QBasis ι σ W → ℂ)) :
     embedReg v (∑ i ∈ s, f i) = ∑ i ∈ s, embedReg v (f i) := by
   classical
-  let := Fintype.ofFinite V
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   funext p
   rw [embedReg_apply, Finset.sum_apply, Finset.sum_apply]
   by_cases h : p.2.2.1 = v
@@ -1749,13 +1732,9 @@ lemma oracleMap_reg_drop (a : ι → σ) (p : QBasis ι σ (V × W)) :
   cases k <;> rfl
 
 omit [Fintype V] [Fintype W] [Fintype ι] [Fintype σ] in
-lemma qBasis_eq_embedReg (r : QBasis ι σ (V × W)) [Finite V] [Finite W] [Finite ι] [Finite σ] :
+lemma qBasis_eq_embedReg (r : QBasis ι σ (V × W)) :
     qBasis r = embedReg r.2.2.1 (qBasis (r.1, r.2.1, r.2.2.2)) := by
   classical
-  let := Fintype.ofFinite V
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   funext p
   obtain ⟨k, t, v, w⟩ := p
   obtain ⟨k', t', v', w'⟩ := r
@@ -1854,10 +1833,9 @@ omit [Fintype X] in
 /-- **One algorithm bounds the complexity.** -/
 theorem qQueryOn_le {read : X → ι → σ} {f : X → O} {ε : ℝ} {q : ℕ}
     {W : Type} [Fintype W] [DecidableEq W] {A : QAlg ι σ O W}
-    (h : ComputesWithErrorOn A q read f ε) [Finite X] :
+    (h : ComputesWithErrorOn A q read f ε) :
     qQueryOn read f ε ≤ q := by
   classical
-  let := Fintype.ofFinite X
   exact Nat.sInf_le (mem_queryCounts h)
 
 /-! ## Lower bounds and the optimal witness -/
@@ -1876,10 +1854,9 @@ omit [Fintype X] in
 theorem le_qQueryOn {read : X → ι → σ} {f : X → O} {ε : ℝ} {c : ℕ}
     (hne : (QueryCounts read f ε).Nonempty)
     (h : ∀ (q : ℕ) (W : Type) (_ : Fintype W) (_ : DecidableEq W) (A : QAlg ι σ O W),
-      ComputesWithErrorOn A q read f ε → c ≤ q) [Finite X] :
+      ComputesWithErrorOn A q read f ε → c ≤ q) :
     c ≤ qQueryOn read f ε := by
   classical
-  let := Fintype.ofFinite X
   obtain ⟨W, hW, hW', A, hA⟩ := exists_computes_qQueryOn hne
   exact h _ W hW hW' A hA
 
@@ -1888,29 +1865,26 @@ omit [Fintype X] in
 theorem le_qQueryOn_real {read : X → ι → σ} {f : X → O} {ε : ℝ} {c : ℝ}
     (hne : (QueryCounts read f ε).Nonempty)
     (h : ∀ (q : ℕ) (W : Type) (_ : Fintype W) (_ : DecidableEq W) (A : QAlg ι σ O W),
-      ComputesWithErrorOn A q read f ε → c ≤ (q : ℝ)) [Finite X] :
+      ComputesWithErrorOn A q read f ε → c ≤ (q : ℝ)) :
     c ≤ (qQueryOn read f ε : ℝ) := by
   classical
-  let := Fintype.ofFinite X
   obtain ⟨W, hW, hW', A, hA⟩ := exists_computes_qQueryOn hne
   exact h _ W hW hW' A hA
 
 /-! ## Monotonicity in the error -/
 
 omit [Fintype X] in
-theorem queryCounts_mono {read : X → ι → σ} {f : X → O} {ε ε' : ℝ} (hε : ε ≤ ε') [Finite X] :
+theorem queryCounts_mono {read : X → ι → σ} {f : X → O} {ε ε' : ℝ} (hε : ε ≤ ε') :
     QueryCounts read f ε ⊆ QueryCounts read f ε' := by
   classical
-  let := Fintype.ofFinite X
   rintro q ⟨W, hW, hW', A, hA⟩
   exact ⟨W, hW, hW', A, hA.mono hε⟩
 
 omit [Fintype X] in
 theorem qQueryOn_mono {read : X → ι → σ} {f : X → O} {ε ε' : ℝ} (hε : ε ≤ ε')
-    (hne : (QueryCounts read f ε).Nonempty) [Finite X] :
+    (hne : (QueryCounts read f ε).Nonempty) :
     qQueryOn read f ε' ≤ qQueryOn read f ε := by
   classical
-  let := Fintype.ofFinite X
   exact Nat.sInf_le (queryCounts_mono hε (Nat.sInf_mem hne))
 
 /-! ## Restriction to a promise
@@ -1930,11 +1904,10 @@ theorem computesWithErrorOn_comp_read {W : Type} [Fintype W] [DecidableEq W]
 
 omit [Fintype X] in
 theorem queryCounts_subset_of_read (read : X → ι → σ) (f : (ι → σ) → O)
-    (ε : ℝ) [Finite X] :
+    (ε : ℝ) :
     QueryCounts (X := ι → σ) id f ε
       ⊆ QueryCounts read (fun x => f (read x)) ε := by
   classical
-  let := Fintype.ofFinite X
   rintro q ⟨W, hW, hW', A, hA⟩
   exact ⟨W, hW, hW', A, computesWithErrorOn_comp_read hA read⟩
 
@@ -1943,10 +1916,9 @@ omit [Fintype X] in
 is what turns a promise lower bound into a lower bound on the honest total
 function. -/
 theorem qQueryOn_comp_read_le_qQuery (read : X → ι → σ) (f : (ι → σ) → O)
-    {ε : ℝ} (hne : (QueryCounts (X := ι → σ) id f ε).Nonempty) [Finite X] :
+    {ε : ℝ} (hne : (QueryCounts (X := ι → σ) id f ε).Nonempty) :
     qQueryOn read (fun x => f (read x)) ε ≤ qQuery f ε := by
   classical
-  let := Fintype.ofFinite X
   exact Nat.sInf_le (queryCounts_subset_of_read read f ε (Nat.sInf_mem hne))
 
 /-! ## The constant case -/
@@ -1954,9 +1926,8 @@ theorem qQueryOn_comp_read_le_qQuery (read : X → ι → σ) (f : (ι → σ) �
 omit [Fintype X] in
 /-- A constant function has quantum query complexity zero. -/
 theorem qQueryOn_const_eq_zero (read : X → ι → σ) {f : X → O} {c : O}
-    (hf : ∀ x, f x = c) {ε : ℝ} (hε : 0 ≤ ε) [Finite X] : qQueryOn read f ε = 0 := by
+    (hf : ∀ x, f x = c) {ε : ℝ} (hε : 0 ≤ ε) : qQueryOn read f ε = 0 := by
   classical
-  let := Fintype.ofFinite X
   exact Nat.le_zero.mp (qQueryOn_le (computesWithErrorOn_const read c hf hε))
 
 end QuantumQueryComplexity
@@ -2536,12 +2507,9 @@ lemma ctrlQuery_mulVec_apply (a : ι → σ) (ψ : QBasis ι σ (CtrlWork ι W) 
   rfl
 
 omit [DecidableEq W] [DecidableEq ι] [Fintype W] [Fintype ι] [Fintype σ] in
-lemma ctrlMap_involutive (a : ι → σ) [Finite W] [Finite ι] [Finite σ] :
+lemma ctrlMap_involutive (a : ι → σ) :
     Function.Involutive (ctrlMap (σ := σ) (W := W) a) := by
   classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   intro p
   change parkMap (oracleMap a (parkMap (parkMap (oracleMap a (parkMap p))))) = p
   rw [parkMap_involutive, oracleMap_involutive, parkMap_involutive]
@@ -2598,12 +2566,9 @@ lemma ctrlMap_eq_self {a : ι → σ} {p : QBasis ι σ (CtrlWork ι W)}
 
 omit [DecidableEq W] [DecidableEq ι] [Fintype W] [Fintype ι] [Fintype σ] in
 lemma ctrlMap_not_parked {a : ι → σ} {p : QBasis ι σ (CtrlWork ι W)}
-    (h : ¬ (p.2.2.1 = false ∧ p.2.2.2.1 = none)) [Finite W] [Finite ι] [Finite σ] :
+    (h : ¬ (p.2.2.1 = false ∧ p.2.2.2.1 = none)) :
     ¬ ((ctrlMap a p).2.2.1 = false ∧ (ctrlMap a p).2.2.2.1 = none) := by
   classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   intro hc
   apply h
   have hfix : ctrlMap a (ctrlMap a p) = ctrlMap a p := ctrlMap_eq_self hc.1 hc.2
@@ -2678,23 +2643,17 @@ def embedCtrl (b : Bool) (ψ : QBasis ι σ W → ℂ) : QBasis ι σ (CtrlWork 
 
 omit [DecidableEq W] [DecidableEq σ] [Fintype W] [Fintype ι] [Fintype σ] in
 lemma embedCtrl_apply (b : Bool) (ψ : QBasis ι σ W → ℂ)
-    (p : QBasis ι σ (CtrlWork ι W)) [Finite W] [Finite ι] [Finite σ] :
+    (p : QBasis ι σ (CtrlWork ι W)) :
     embedCtrl b ψ p =
       if p.2.2.1 = b ∧ p.2.2.2.1 = none then ψ (p.1, p.2.1, p.2.2.2.2) else 0 := by
   classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   rw [embedCtrl, embedReg_apply, embedReg_apply]
   by_cases h1 : p.2.2.1 = b <;> by_cases h2 : p.2.2.2.1 = none <;> simp [h1, h2]
 
 omit [DecidableEq W] [DecidableEq σ] [Fintype W] [Fintype ι] [Fintype σ] in
-lemma isParked_embedCtrl_false (ψ : QBasis ι σ W → ℂ) [Finite W] [Finite ι] [Finite σ] :
+lemma isParked_embedCtrl_false (ψ : QBasis ι σ W → ℂ) :
     IsParked (embedCtrl false ψ) := by
   classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   intro p hp
   by_contra h
   exact hp (by rw [embedCtrl_apply, ite_eq_right h])
@@ -2963,10 +2922,9 @@ omit [DecidableEq D] [Fintype D] in
 /-- The oracle preserves split states along an oracle-compatible
 equivalence, acting on the system factor. -/
 lemma oracleMat_mulVec_splitVec {e : QBasis ι σ W' ≃ QBasis ι σ W × D}
-    (he : OracleCompat e) (a : ι → σ) (φ : QBasis ι σ W → ℂ) (ξ : D → ℂ) [Finite D] :
+    (he : OracleCompat e) (a : ι → σ) (φ : QBasis ι σ W → ℂ) (ξ : D → ℂ) :
     oracleMat a *ᵥ splitVec e φ ξ = splitVec e (oracleMat a *ᵥ φ) ξ := by
   classical
-  let := Fintype.ofFinite D
   funext p
   rw [oracleMat_mulVec_apply, splitVec_apply, splitVec_apply, he a p,
     oracleMat_mulVec_apply]
@@ -3096,10 +3054,9 @@ theorem ComputesWithErrorOn.exists_postcomp {O O' W : Type} [DecidableEq O]
 /-- Every achievable query count survives postprocessing — the mirror of
 `queryCounts_subset_of_read`. -/
 theorem queryCounts_postcomp {O O' : Type} [DecidableEq O]
-    [DecidableEq O'] (g : O → O') (read : X → ι → σ) (f : X → O) (ε : ℝ) [Finite X] :
+    [DecidableEq O'] (g : O → O') (read : X → ι → σ) (f : X → O) (ε : ℝ) :
     QueryCounts read f ε ⊆ QueryCounts read (fun x => g (f x)) ε := by
   classical
-  let := Fintype.ofFinite X
   rintro q ⟨W, hW, hW', A, hA⟩
   exact ⟨W, hW, hW', A.postcomp g, hA.postcomp g⟩
 
@@ -3107,10 +3064,9 @@ theorem queryCounts_postcomp {O O' : Type} [DecidableEq O]
 output function can only lower the quantum query complexity. -/
 theorem qQueryOn_postcomp_le {O O' : Type} [DecidableEq O]
     [DecidableEq O'] {read : X → ι → σ} {f : X → O} {ε : ℝ} (g : O → O')
-    (hne : (QueryCounts read f ε).Nonempty) [Finite X] :
+    (hne : (QueryCounts read f ε).Nonempty) :
     qQueryOn read (fun x => g (f x)) ε ≤ qQueryOn read f ε := by
   classical
-  let := Fintype.ofFinite X
   exact Nat.sInf_le (queryCounts_postcomp g read f ε (Nat.sInf_mem hne))
 
 end QuantumQueryComplexity
@@ -3265,20 +3221,18 @@ lemma recAt_zero (a : ι → σ) : recAt a 0 = fun _ => none := by
 
 omit [DecidableEq ι] [DecidableEq σ] [Fintype σ] in
 /-- Once every index has been read the record is complete. -/
-lemma recAt_of_card_le (a : ι → σ) {t : ℕ} (h : Fintype.card ι ≤ t) [Finite σ] :
+lemma recAt_of_card_le (a : ι → σ) {t : ℕ} (h : Fintype.card ι ≤ t) :
     recAt a t = fun i => some (a i) := by
   classical
-  let := Fintype.ofFinite σ
   funext i
   rw [recAt_apply, ite_eq_left]
   exact lt_of_lt_of_le (Fintype.equivFin ι i).isLt h
 
 omit [DecidableEq σ] [Fintype σ] in
 /-- Storing the answer at the index read at time `t` advances the record. -/
-lemma update_recAt (a : ι → σ) {t : ℕ} {j : ι} (hj : (Fintype.equivFin ι j : ℕ) = t) [Finite σ] :
+lemma update_recAt (a : ι → σ) {t : ℕ} {j : ι} (hj : (Fintype.equivFin ι j : ℕ) = t) :
     Function.update (recAt a t) j (some (a j)) = recAt a (t + 1) := by
   classical
-  let := Fintype.ofFinite σ
   funext i
   by_cases hij : i = j
   · subst hij
@@ -3294,9 +3248,8 @@ lemma update_recAt (a : ι → σ) {t : ℕ} {j : ι} (hj : (Fintype.equivFin ι
 omit [DecidableEq ι] [DecidableEq σ] [Fintype σ] in
 /-- The slot the algorithm is about to write to is blank. -/
 lemma recAt_self_eq_none (a : ι → σ) {t : ℕ} {j : ι}
-    (hj : (Fintype.equivFin ι j : ℕ) = t) [Finite σ] : recAt a t j = none := by
+    (hj : (Fintype.equivFin ι j : ℕ) = t) : recAt a t j = none := by
   classical
-  let := Fintype.ofFinite σ
   rw [recAt_apply, ite_eq_right (by omega)]
 
 /-! ## The algorithm -/
@@ -3775,23 +3728,17 @@ lemma ctrlHad_mulVec_embedCtrl (b : Bool) (ψ : QBasis ι σ W → ℂ) :
 /-! ## Sector algebra -/
 
 omit [DecidableEq W] [DecidableEq σ] [Fintype W] [Fintype ι] [Fintype σ] in
-lemma embedCtrl_add (b : Bool) (ψ φ : QBasis ι σ W → ℂ) [Finite W] [Finite ι] [Finite σ] :
+lemma embedCtrl_add (b : Bool) (ψ φ : QBasis ι σ W → ℂ) :
     embedCtrl b (ψ + φ) = embedCtrl b ψ + embedCtrl b φ := by
   classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   funext p
   by_cases h : p.2.2.1 = b ∧ p.2.2.2.1 = none <;>
     simp [embedCtrl_apply, h]
 
 omit [DecidableEq W] [DecidableEq σ] [Fintype W] [Fintype ι] [Fintype σ] in
-lemma embedCtrl_sub (b : Bool) (ψ φ : QBasis ι σ W → ℂ) [Finite W] [Finite ι] [Finite σ] :
+lemma embedCtrl_sub (b : Bool) (ψ φ : QBasis ι σ W → ℂ) :
     embedCtrl b (ψ - φ) = embedCtrl b ψ - embedCtrl b φ := by
   classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   funext p
   by_cases h : p.2.2.1 = b ∧ p.2.2.2.1 = none <;>
     simp [embedCtrl_apply, h]
@@ -3991,24 +3938,16 @@ def pairEquiv₂ : QBasis ι σ (QBasis ι σ W₁ × QBasis ι σ W₂)
 
 omit [DecidableEq W₁] [DecidableEq W₂] [DecidableEq ι] [Fintype W₁] [Fintype W₂] [Fintype ι]
     [Fintype σ] in
-lemma oracleCompat_pairEquiv₁ [Finite W₁] [Finite W₂] [Finite ι] [Finite σ] :
+lemma oracleCompat_pairEquiv₁ :
     OracleCompat (pairEquiv₁ (ι := ι) (σ := σ) (W₁ := W₁) (W₂ := W₂)) := by
   classical
-  let := Fintype.ofFinite W₁
-  let := Fintype.ofFinite W₂
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   rintro a ⟨(_ | i), ans, ⟨⟨i₁, a₁, w₁⟩, β₂⟩⟩ <;> rfl
 
 omit [DecidableEq W₁] [DecidableEq W₂] [DecidableEq ι] [Fintype W₁] [Fintype W₂] [Fintype ι]
     [Fintype σ] in
-lemma oracleCompat_pairEquiv₂ [Finite W₁] [Finite W₂] [Finite ι] [Finite σ] :
+lemma oracleCompat_pairEquiv₂ :
     OracleCompat (pairEquiv₂ (ι := ι) (σ := σ) (W₁ := W₁) (W₂ := W₂)) := by
   classical
-  let := Fintype.ofFinite W₁
-  let := Fintype.ofFinite W₂
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   rintro a ⟨(_ | i), ans, ⟨β₁, ⟨i₂, a₂, w₂⟩⟩⟩ <;> rfl
 
 /-- Swap the global query/answer registers with bank 1's parked pair. -/
@@ -4018,14 +3957,10 @@ def pairSwap₁Map : QBasis ι σ (QBasis ι σ W₁ × QBasis ι σ W₂)
 
 omit [DecidableEq W₁] [DecidableEq W₂] [DecidableEq ι] [DecidableEq σ] [Fintype W₁]
     [Fintype W₂] [Fintype ι] [Fintype σ] in
-lemma pairSwap₁Map_involutive [Finite W₁] [Finite W₂] [Finite ι] [Finite σ] :
+lemma pairSwap₁Map_involutive :
     Function.Involutive
       (pairSwap₁Map (ι := ι) (σ := σ) (W₁ := W₁) (W₂ := W₂)) := by
   classical
-  let := Fintype.ofFinite W₁
-  let := Fintype.ofFinite W₂
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   rintro ⟨idx, ans, ⟨⟨i₁, a₁, w₁⟩, β₂⟩⟩
   rfl
 
@@ -4036,14 +3971,10 @@ def pairSwap₂Map : QBasis ι σ (QBasis ι σ W₁ × QBasis ι σ W₂)
 
 omit [DecidableEq W₁] [DecidableEq W₂] [DecidableEq ι] [DecidableEq σ] [Fintype W₁]
     [Fintype W₂] [Fintype ι] [Fintype σ] in
-lemma pairSwap₂Map_involutive [Finite W₁] [Finite W₂] [Finite ι] [Finite σ] :
+lemma pairSwap₂Map_involutive :
     Function.Involutive
       (pairSwap₂Map (ι := ι) (σ := σ) (W₁ := W₁) (W₂ := W₂)) := by
   classical
-  let := Fintype.ofFinite W₁
-  let := Fintype.ofFinite W₂
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   rintro ⟨idx, ans, ⟨β₁, ⟨i₂, a₂, w₂⟩⟩⟩
   rfl
 
@@ -4404,11 +4335,10 @@ theorem Realizes.map [Fintype O] {read : X → ι → σ} {q : ℕ} {P : X → O
 omit [Fintype X] in
 /-- The bijective special case: relabel the outcomes. -/
 theorem Realizes.map_equiv {read : X → ι → σ} {q : ℕ}
-    {P : X → O → ℝ} (h : Realizes read q P) (g : O ≃ O') [Finite O] [Finite X] :
+    {P : X → O → ℝ} (h : Realizes read q P) (g : O ≃ O') [Finite O] :
     Realizes read q (fun x o' => P x (g.symm o')) := by
   classical
   let := Fintype.ofFinite O
-  let := Fintype.ofFinite X
   refine (h.map g).congr fun x o' => ?_
   have hset : Finset.univ.filter (fun o => g o = o') = {g.symm o'} := by
     ext o
@@ -4674,13 +4604,12 @@ lemma realizes_zero_tuple (read : X → ι → σ) :
 omit [Fintype X] in
 /-- **The `k`-fold product realization**: costs add, distributions
 multiply. -/
-theorem Realizes.fold {read : X → ι → σ} [Finite X] :
+theorem Realizes.fold {read : X → ι → σ} :
     ∀ (k : ℕ) (q : Fin k → ℕ) (P : Fin k → X → Bool → ℝ),
     (∀ j, Realizes read (q j) (P j)) →
     Realizes read (∑ j, q j)
       (fun x (y : Fin k → Bool) => ∏ j, P j x (y j)) := by
   classical
-  let := Fintype.ofFinite X
   intro k
   induction k with
   | zero =>
@@ -4771,13 +4700,12 @@ with error `ε ≤ 1` compute the same function with error `2^k·ε^{⌈k/2⌉}`
 theorem amplify {read : X → ι → σ} {f : X → Bool} {q : ℕ} {ε : ℝ}
     (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1)
     (hex : ∃ (W : Type) (_ : Fintype W) (_ : DecidableEq W)
-      (A : QAlg ι σ Bool W), ComputesWithErrorOn A q read f ε) (k : ℕ) [Finite X] :
+      (A : QAlg ι σ Bool W), ComputesWithErrorOn A q read f ε) (k : ℕ) :
     ∃ (W' : Type) (_ : Fintype W') (_ : DecidableEq W')
       (A' : QAlg ι σ Bool W'),
       ComputesWithErrorOn A' (k * q) read f
         (2 ^ k * ε ^ ((k + 1) / 2)) := by
   classical
-  let := Fintype.ofFinite X
   obtain ⟨W, hW, hW', A, hA⟩ := hex
   -- the base realization
   have hbase : Realizes read q (fun x b => A.prob (read x) q b) :=
@@ -4868,13 +4796,12 @@ theorem exists_tuple_computes {read : X → ι → σ} {B : ℕ}
     {g : Fin B → X → Bool} {q : Fin B → ℕ} {ε : Fin B → ℝ}
     (hε0 : ∀ i, 0 ≤ ε i)
     (hex : ∀ i, ∃ (W : Type) (_ : Fintype W) (_ : DecidableEq W)
-      (A : QAlg ι σ Bool W), ComputesWithErrorOn A (q i) read (g i) (ε i)) [Finite X] :
+      (A : QAlg ι σ Bool W), ComputesWithErrorOn A (q i) read (g i) (ε i)) :
     ∃ (W' : Type) (_ : Fintype W') (_ : DecidableEq W')
       (A' : QAlg ι σ (Fin B → Bool) W'),
       ComputesWithErrorOn A' (∑ i, q i) read (fun x i => g i x)
         (∑ i, ε i) := by
   classical
-  let := Fintype.ofFinite X
   choose W hW hW' A hA using hex
   have hbase : ∀ i, Realizes read (q i)
       (fun x b => (A i).prob (read x) (q i) b) := fun i =>
@@ -5026,11 +4953,9 @@ omit [DecidableEq W] [DecidableEq ι] [Fintype W] [Fintype ι] in
       = (some i, none, (t, w)) := rfl
 
 omit [DecidableEq W] [DecidableEq ι] [Fintype W] [Fintype ι] in
-lemma ctrlSwapMap_involutive [Finite W] [Finite ι] :
+lemma ctrlSwapMap_involutive :
     Function.Involutive (ctrlSwapMap (ι := ι) (W := W)) := by
   classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
   rintro ⟨(_ | i), (_ | v), t, w⟩ <;> simp
 
 /-! ## The gadget unitaries -/
@@ -5289,14 +5214,10 @@ def stripReadout (r : QBasis ι σ W → O) : QBasis ι σ (V × W) → O :=
 omit [DecidableEq W] [DecidableEq ι] [DecidableEq σ] [Fintype V] [Fintype W] [Fintype ι]
     [Fintype σ] in
 lemma qRestrict_stripReadout_embedReg (r : QBasis ι σ W → O) (v : V) (o : O)
-    (χ : QBasis ι σ W → ℂ) [Finite V] [Finite W] [Finite ι] [Finite σ] :
+    (χ : QBasis ι σ W → ℂ) :
     qRestrict (stripReadout (V := V) r) o (embedReg v χ)
       = embedReg v (qRestrict r o χ) := by
   classical
-  let := Fintype.ofFinite V
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite σ
   funext p
   rw [qRestrict, embedReg_apply, embedReg_apply, qRestrict, stripReadout]
   by_cases hv : p.2.2.1 = v <;>
@@ -5357,10 +5278,9 @@ omit [Fintype X] in
 /-- **The transposition model simulates the XOR model** at a factor of two:
 every achievable XOR query count doubles into the native model. -/
 theorem two_mul_mem_queryCounts_of_xor {read : X → ι → Bool} {f : X → O}
-    {ε : ℝ} {q : ℕ} (hq : q ∈ XorQueryCounts read f ε) [Finite X] :
+    {ε : ℝ} {q : ℕ} (hq : q ∈ XorQueryCounts read f ε) :
     2 * q ∈ QueryCounts read f ε := by
   classical
-  let := Fintype.ofFinite X
   obtain ⟨W', _, _, A, hA⟩ := hq
   refine mem_queryCounts
     (A := (simXor (QRoutine.mk q A.step A.step_unitary)).toAlg
@@ -5385,10 +5305,9 @@ theorem two_mul_mem_queryCounts_of_xor {read : X → ι → Bool} {f : X → O}
 omit [Fintype X] in
 /-- **The XOR model simulates the transposition model** at a factor of two. -/
 theorem two_mul_mem_xorQueryCounts_of_std {read : X → ι → Bool} {f : X → O}
-    {ε : ℝ} {q : ℕ} (hq : q ∈ QueryCounts read f ε) [Finite X] :
+    {ε : ℝ} {q : ℕ} (hq : q ∈ QueryCounts read f ε) :
     2 * q ∈ XorQueryCounts read f ε := by
   classical
-  let := Fintype.ofFinite X
   obtain ⟨W', _, _, A, hA⟩ := hq
   refine mem_xorQueryCounts
     (A := (simTrans (QRoutine.mk q A.step A.step_unitary)).toAlg
@@ -5566,13 +5485,12 @@ theorem exists_decode_computes {O : Type} [Fintype O] [DecidableEq O]
     {qb : Fin (encBits O) → ℕ} (t : ℕ)
     (halg : ∀ i, ∃ (W : Type) (_ : Fintype W) (_ : DecidableEq W)
       (A : QAlg ι σ Bool W),
-      ComputesWithErrorOn A (qb i) read (fun x => encBit (f x) i) (1 / 16)) [Finite X] :
+      ComputesWithErrorOn A (qb i) read (fun x => encBit (f x) i) (1 / 16)) :
     ∃ (W' : Type) (_ : Fintype W') (_ : DecidableEq W')
       (A' : QAlg ι σ O W'),
       ComputesWithErrorOn A' (∑ i, 2 * t * qb i) read f
         ((encBits O : ℝ) * (1 / 4) ^ t) := by
   classical
-  let := Fintype.ofFinite X
   -- amplify each bit
   have hamp : ∀ i, ∃ (W : Type) (_ : Fintype W) (_ : DecidableEq W)
       (A : QAlg ι σ Bool W),

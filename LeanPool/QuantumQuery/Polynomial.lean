@@ -340,10 +340,9 @@ theorem HasAmpPoly.exists_qProb_polynomial [Fintype B] (h : HasAmpPoly φ t) (rd
 omit [DecidableEq ι] [Fintype ι] in
 /-- The probability of an event (a finite set of outputs). -/
 theorem HasAmpPoly.exists_event_polynomial [Fintype B] (h : HasAmpPoly φ t) (rd : B → O)
-    (E : Finset O) [Finite ι] : ∃ p : MvPolynomial ι ℝ, p.totalDegree ≤ 2 * t ∧
+    (E : Finset O) : ∃ p : MvPolynomial ι ℝ, p.totalDegree ≤ 2 * t ∧
       ∀ a, evalBool p a = ∑ o ∈ E, qProb rd (φ a) o := by
   classical
-  let := Fintype.ofFinite ι
   have key : ∀ o : O, ∃ p : MvPolynomial ι ℝ, p.totalDegree ≤ 2 * t ∧
       ∀ a, evalBool p a = qProb rd (φ a) o := fun o => h.exists_qProb_polynomial rd o
   choose P hP using key
@@ -358,12 +357,9 @@ variable {W : Type} [Fintype W] [DecidableEq W]
 omit [DecidableEq W] [DecidableEq ι] [Fintype W] [Fintype ι] in
 /-- The native oracle is a selector oracle: idle on index `none`, and at index `some i` a
 swap determined by the bit `a i`. -/
-lemma oracleMap_selector (p : QBasis ι Bool W) [Finite W] [Finite ι] :
+lemma oracleMap_selector (p : QBasis ι Bool W) :
     (∀ a : ι → Bool, oracleMap a p = p) ∨
       ∃ i p₀ p₁, ∀ a : ι → Bool, oracleMap a p = if a i then p₁ else p₀ := by
-  classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
   obtain ⟨(_ | i), s, w⟩ := p
   · exact Or.inl fun a => rfl
   · refine Or.inr ⟨i, (some i, Equiv.swap none (some false) s, w),
@@ -459,11 +455,10 @@ omit [Fintype X] in
 /-- **The approximating polynomial of a bounded-error algorithm**: degree at most `2·t`,
 within `ε` of `bit ∘ f` on the promise, and with values in `[0, 1]` on the entire cube. -/
 theorem ComputesWithErrorOn.exists_approx_polynomial {A : QAlg ι Bool Bool W} {t : ℕ}
-    {read : X → ι → Bool} {f : X → Bool} {ε : ℝ} (h : ComputesWithErrorOn A t read f ε) [Finite X] :
+    {read : X → ι → Bool} {f : X → Bool} {ε : ℝ} (h : ComputesWithErrorOn A t read f ε) :
     ∃ p : MvPolynomial ι ℝ, p.totalDegree ≤ 2 * t ∧ ApproximatesOn p read f ε ∧
       ∀ a, 0 ≤ evalBool p a ∧ evalBool p a ≤ 1 := by
   classical
-  let := Fintype.ofFinite X
   obtain ⟨p, hdeg, heval⟩ := A.exists_probability_polynomial t true
   refine ⟨p, hdeg, fun x => ?_, fun a => ?_⟩
   · rw [heval]
@@ -498,12 +493,9 @@ variable {O : Type} [DecidableEq O]
 
 omit [DecidableEq W] [DecidableEq ι] [Fintype W] [Fintype ι] in
 /-- The XOR oracle is a selector oracle. -/
-lemma xorOracleMap_selector (p : QBasis ι Bool W) [Finite W] [Finite ι] :
+lemma xorOracleMap_selector (p : QBasis ι Bool W) :
     (∀ a : ι → Bool, xorOracleMap a p = p) ∨
       ∃ i p₀ p₁, ∀ a : ι → Bool, xorOracleMap a p = if a i then p₁ else p₀ := by
-  classical
-  let := Fintype.ofFinite W
-  let := Fintype.ofFinite ι
   obtain ⟨(_ | i), s, w⟩ := p
   · exact Or.inl fun a => rfl
   · refine Or.inr ⟨i, (some i, optXor s (some false), w), (some i, optXor s (some true), w),
@@ -553,11 +545,10 @@ omit [Fintype X] in
 /-- **The approximating polynomial of a bounded-error XOR algorithm.** -/
 theorem XorComputesWithErrorOn.exists_approx_polynomial {A : QAlg ι Bool Bool W} {t : ℕ}
     {read : X → ι → Bool} {f : X → Bool} {ε : ℝ}
-    (h : XorComputesWithErrorOn A t read f ε) [Finite X] :
+    (h : XorComputesWithErrorOn A t read f ε) :
     ∃ p : MvPolynomial ι ℝ, p.totalDegree ≤ 2 * t ∧ ApproximatesOn p read f ε ∧
       ∀ a, 0 ≤ evalBool p a ∧ evalBool p a ≤ 1 := by
   classical
-  let := Fintype.ofFinite X
   obtain ⟨p, hdeg, heval⟩ := exists_xor_probability_polynomial A t true
   refine ⟨p, hdeg, fun x => ?_, fun a => ?_⟩
   · rw [heval]
