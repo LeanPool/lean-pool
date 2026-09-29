@@ -187,34 +187,24 @@ theorem quarticTrace_add_leadingChar_eq_monicCubicTrace
 /-- The monic Weierstrass model obtained from the cubic trace sum.  Its equation is
 `Y^2 = X * (X - u) * (X - v)`. -/
 def auxiliaryEllipticCurve (u v : F) : WeierstrassCurve F :=
-  ⟨0, -(u + v), 0, u * v, 0⟩
+  BGS.FiniteField.legendreWeierstrassCurve u v
 
 omit [Fintype F] [DecidableEq F] in
 theorem auxiliaryEllipticCurve_equation_iff (u v x y : F) :
     (auxiliaryEllipticCurve u v).toAffine.Equation x y ↔
-      y ^ 2 = x * (x - u) * (x - v) := by
-  rw [WeierstrassCurve.Affine.equation_iff]
-  simp only [auxiliaryEllipticCurve, zero_mul, add_zero]
-  ring_nf
+      y ^ 2 = x * (x - u) * (x - v) :=
+  BGS.FiniteField.legendreWeierstrassCurve_equation_iff u v x y
 
 omit [Fintype F] [DecidableEq F] in
 theorem auxiliaryEllipticCurve_delta (u v : F) :
-    (auxiliaryEllipticCurve u v).Δ = 16 * u ^ 2 * v ^ 2 * (u - v) ^ 2 := by
-  simp only [auxiliaryEllipticCurve, WeierstrassCurve.Δ, WeierstrassCurve.b₂,
-    WeierstrassCurve.b₄, WeierstrassCurve.b₆, WeierstrassCurve.b₈]
-  ring
+    (auxiliaryEllipticCurve u v).Δ = 16 * u ^ 2 * v ^ 2 * (u - v) ^ 2 :=
+  BGS.FiniteField.legendreWeierstrassCurve_discriminant u v
 
 omit [Fintype F] [DecidableEq F] in
 theorem auxiliaryEllipticCurve_delta_ne_zero
     (hF : ringChar F ≠ 2) {u v : F} (hu : u ≠ 0) (hv : v ≠ 0) (huv : u ≠ v) :
-    (auxiliaryEllipticCurve u v).Δ ≠ 0 := by
-  have h2 : (2 : F) ≠ 0 := Ring.two_ne_zero hF
-  have h16 : (16 : F) ≠ 0 := by
-    rw [show (16 : F) = 2 ^ 4 by norm_num]
-    exact pow_ne_zero 4 h2
-  rw [auxiliaryEllipticCurve_delta]
-  exact mul_ne_zero (mul_ne_zero (mul_ne_zero h16 (pow_ne_zero 2 hu)) (pow_ne_zero 2 hv))
-    (pow_ne_zero 2 (sub_ne_zero.mpr huv))
+    (auxiliaryEllipticCurve u v).Δ ≠ 0 :=
+  BGS.FiniteField.legendreWeierstrassCurve_discriminant_ne_zero hu hv huv hF
 
 omit [Fintype F] [DecidableEq F] in
 theorem auxiliaryEllipticCurve_isElliptic

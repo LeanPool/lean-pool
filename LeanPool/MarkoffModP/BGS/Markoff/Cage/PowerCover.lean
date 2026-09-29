@@ -112,7 +112,8 @@ def canonicalCagePowerCoverToPulled
   let parameter := z.1.2
   have hmiddle : equations.middle = splitTorusTrace (parameter ^ d) := by
     simpa [equations, parameter, canonicalCageWitnessToEquations,
-      cageMiddleWitnessTrace, normalizedCoordinateAt, cageBridgeAxis] using z.2
+      cageMiddleWitnessTrace, normalizedCoordinateAt, cageBridgeAxis,
+      normalizedBridgeAxis] using z.2
   refine
     { parameter := parameter
       firstRoot := (parameter : ZMod p) ^ d * equations.firstRoot
@@ -163,7 +164,7 @@ def canonicalCagePulledToPowerCover
   let witness := canonicalCageEquationsToWitness p hpTwo xi eta equations
   refine ⟨(witness, z.parameter), ?_⟩
   simp [witness, equations, canonicalCageEquationsToWitness,
-    cageMiddleWitnessTrace, normalizedCoordinateAt, cageBridgeAxis]
+    cageMiddleWitnessTrace, normalizedCoordinateAt, cageBridgeAxis, normalizedBridgeAxis]
 
 @[simp]
 lemma canonicalCageWitnessToEquations_equationsToWitness
@@ -194,9 +195,9 @@ def canonicalCagePowerCoverEquivPulled
       simpa [normalizedFiberAt] using z.1.1.2.2.1.2
     have hmiddleFirst : z.1.1.1.1.u3 = splitTorusTrace (z.1.2 ^ d) := by
       simpa [cageMiddleWitnessTrace, normalizedCoordinateAt,
-        cageBridgeAxis] using z.2
+        cageBridgeAxis, normalizedBridgeAxis] using z.2
     have hmiddleCommon : z.1.1.1.1.u3 = z.1.1.1.2.u3 := by
-      simpa [normalizedCoordinateAt, cageBridgeAxis] using z.1.1.2.2.2
+      simpa [normalizedCoordinateAt, cageBridgeAxis, normalizedBridgeAxis] using z.1.1.2.2.2
     apply Subtype.ext
     apply Prod.ext
     · apply Subtype.ext

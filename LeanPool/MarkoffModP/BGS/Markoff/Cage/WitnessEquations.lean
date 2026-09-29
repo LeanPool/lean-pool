@@ -126,7 +126,7 @@ def canonicalCageWitnessToEquations
       have heta : z.1.2.u2 = eta := by
         simpa [normalizedFiberAt] using z.2.2.1.2
       have hmiddle : z.1.1.u3 = z.1.2.u3 := by
-        simpa [normalizedCoordinateAt, cageBridgeAxis] using z.2.2.2
+        simpa [normalizedCoordinateAt, cageBridgeAxis, normalizedBridgeAxis] using z.2.2.2
       calc
         normalizedPolynomial
             (⟨z.1.2.u1, eta, z.1.1.u3⟩ : NormalizedPoint (ZMod p)) =
@@ -176,7 +176,7 @@ def canonicalCageWitnessEquivIncidenceEquations
     have heta : eta = z.1.2.u2 := by
       simpa [normalizedFiberAt] using z.2.2.1.2.symm
     have hmiddle : z.1.1.u3 = z.1.2.u3 := by
-      simpa [normalizedCoordinateAt, cageBridgeAxis] using z.2.2.2
+      simpa [normalizedCoordinateAt, cageBridgeAxis, normalizedBridgeAxis] using z.2.2.2
     apply Subtype.ext
     apply Prod.ext <;> apply NormalizedPoint.ext <;>
       simp [canonicalCageWitnessToEquations,

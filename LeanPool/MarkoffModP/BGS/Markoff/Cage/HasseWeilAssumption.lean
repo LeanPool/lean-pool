@@ -32,24 +32,15 @@ def IsSplitMaximalTrace (p : ℕ) [Fact p.Prime] (t : ZMod p) : Prop :=
 
 /-- Choose an axis different from both prescribed axes. -/
 def cageBridgeAxis : NormalizedCoordinateAxis → NormalizedCoordinateAxis →
-    NormalizedCoordinateAxis
-  | .first, .first => .second
-  | .first, .second => .third
-  | .first, .third => .second
-  | .second, .first => .third
-  | .second, .second => .first
-  | .second, .third => .first
-  | .third, .first => .second
-  | .third, .second => .first
-  | .third, .third => .first
+    NormalizedCoordinateAxis := normalizedBridgeAxis
 
 theorem cageBridgeAxis_ne_left (axis other : NormalizedCoordinateAxis) :
-    cageBridgeAxis axis other ≠ axis := by
-  cases axis <;> cases other <;> decide
+    cageBridgeAxis axis other ≠ axis :=
+  normalizedBridgeAxis_ne_left axis other
 
 theorem cageBridgeAxis_ne_right (axis other : NormalizedCoordinateAxis) :
-    cageBridgeAxis axis other ≠ other := by
-  cases axis <;> cases other <;> decide
+    cageBridgeAxis axis other ≠ other :=
+  normalizedBridgeAxis_ne_right axis other
 
 /-- Coordinate selected by an axis label. -/
 def normalizedCoordinateAt (axis : NormalizedCoordinateAxis) {R : Type*}
