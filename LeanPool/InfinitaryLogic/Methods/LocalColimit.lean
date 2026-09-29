@@ -88,7 +88,7 @@ private theorem Llocal_relations_countable (k m : ℕ) : Countable ((Llocal s₀
 each arity are the sequential colimits of the staged symbol types along `LlocalHom`. Every
 `L_Γ`-symbol lives at a finite stage; in particular every family formula's existential acquires
 its local Skolem function at the next stage, so `L_Γ` is Skolem-complete *for the family*. -/
-def localColim : Language.{0, 0} where
+@[expose] def localColim : Language.{0, 0} where
   Functions m :=
     DirectedColim (fun k => (Llocal s₀ k).Functions m)
       (fun k x => (LlocalHom s₀ k).onFunction x)
@@ -98,7 +98,7 @@ def localColim : Language.{0, 0} where
 
 /-- The cocone: the inclusion of stage `k` into the local colimit language `L_Γ`. On symbols it
 is the colimit inclusion `DirectedColim.incl k`. -/
-def LlocalInclusion (k : ℕ) : Llocal s₀ k →ᴸ localColim s₀ where
+@[expose] def LlocalInclusion (k : ℕ) : Llocal s₀ k →ᴸ localColim s₀ where
   onFunction {m} f :=
     DirectedColim.incl (F := fun j => (Llocal s₀ j).Functions m)
       (φ := fun j x => (LlocalHom s₀ j).onFunction x) k f
@@ -192,7 +192,8 @@ private theorem localStageStructure_relMap_succ {k m : ℕ}
 
 /-- The **colimit structure**: an `L_Γ`-symbol is interpreted through any stage representative,
 well-defined by the (definitional) stage coherence above. -/
-@[implicit_reducible] noncomputable def localColimStructure : (localColim s₀).Structure M where
+@[expose, implicit_reducible] noncomputable def localColimStructure :
+    (localColim s₀).Structure M where
   funMap {m} f x :=
     Quot.lift
       (fun p => @Structure.funMap (Llocal s₀ p.1) M (localStageStructure s₀ p.1) m p.2 x)
@@ -239,7 +240,7 @@ cocone inclusion. -/
 /-- The **colimit family** `Γ_Γ ⊆ L_Γ`-formulas: the union over all stages of the colimit images
 of the staged families `Γlocal s₀ k`. This is the family over which the re-based EM term model's
 truth lemma will run. -/
-def ΓlocalColim : Set (Σ n, (localColim s₀).BoundedFormulaω Empty n) :=
+@[expose] def ΓlocalColim : Set (Σ n, (localColim s₀).BoundedFormulaω Empty n) :=
   ⋃ k, toLocalColimFormula s₀ k '' Γlocal s₀ k
 
 /-- Stage membership transports into the colimit family. -/

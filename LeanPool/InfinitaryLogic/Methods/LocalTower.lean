@@ -136,6 +136,7 @@ private theorem not_mem_skolemNeed_of_all_mem {Γ : Set (Σ n, L.BoundedFormula�
 
 /-- The local Skolem **witness symbol** for (the negated body of) a universal family member — the
 arity-`n` function symbol of `localSkolem L (skolemNeed Γ)` witnessing `∃ xₙ, ¬ψ`. -/
+@[expose]
 def skolemNeedSymbol {Γ : Set (Σ n, L.BoundedFormulaω Empty n)} {n : ℕ}
     {ψ : L.BoundedFormulaω Empty (n + 1)}
     (h : (⟨n, .all ψ⟩ : Σ n, L.BoundedFormulaω Empty n) ∈ Γ) :

@@ -48,7 +48,7 @@ variable {L}
 /-- The **local Skolem structure** on `M`: each symbol (a formula `φ` of `Γ`) is interpreted as a
 Hilbert-choice witness for `∃ xₙ, φ`, exactly as in `skolem₁ωStructure` but only for the symbols of
 the restricted family. -/
-@[expose] noncomputable instance localSkolemStructure {M : Type w} [L.Structure M] [Nonempty M]
+noncomputable instance localSkolemStructure {M : Type w} [L.Structure M] [Nonempty M]
     (Γ : Set (Σ n, L.BoundedFormulaω Empty n)) : (localSkolem L Γ).Structure M where
   funMap {_} φ x := Classical.epsilon fun a => φ.1.Realize (Empty.elim : Empty → M) (Fin.snoc x a)
   RelMap {_} r := r.elim

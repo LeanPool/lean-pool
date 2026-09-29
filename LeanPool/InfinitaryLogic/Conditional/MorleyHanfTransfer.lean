@@ -84,7 +84,7 @@ Ehrenfeucht–Mostowski / Skolem-hull construction over `J`.
 `Conditional/MorleyHanfSchemaDischarge.lean`) via the schema-completion construction — in fact
 without consuming the sequence's tail indiscernibility. Kept as a named `Prop` because the
 bridge theorems below are stated against it. -/
-def MorleySeedTailTemplateRealizable : Prop :=
+@[expose] def MorleySeedTailTemplateRealizable : Prop :=
   ∀ (φ : L'.Sentenceω) (M : Type) [L'.Structure M] (a : ℕ → M) (J : Type) [LinearOrder J],
     Cardinal.mk M ≥ Cardinal.beth (Ordinal.omega 1) →
     Sentenceω.Realize φ M →

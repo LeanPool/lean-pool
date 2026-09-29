@@ -139,7 +139,7 @@ theorem symbSublang_rel_countable (F : Set (Σ n, L.Functions n))
   rfl
 
 /-- Restrict a term whose function symbols lie in `F` to the two-sorted sublanguage. -/
-def Term.restrictSymbols {α : Type} {F : Set (Σ n, L.Functions n)}
+@[expose] def Term.restrictSymbols {α : Type} {F : Set (Σ n, L.Functions n)}
     (R : Set (Σ n, L.Relations n)) :
     (t : L.Term α) → t.functionsIn ⊆ F → (symbSublang (L := L) F R).Term α
   | .var x, _ => .var x
@@ -163,7 +163,7 @@ private theorem Term.onTerm_restrictSymbols {α : Type} {F : Set (Σ n, L.Functi
 
 /-- Restrict a formula whose function AND relation symbols lie in `F`/`R` to the two-sorted
 generated sublanguage. -/
-def BoundedFormulaω.restrictSymbols {α : Type} {F : Set (Σ n, L.Functions n)}
+@[expose] def BoundedFormulaω.restrictSymbols {α : Type} {F : Set (Σ n, L.Functions n)}
     {R : Set (Σ n, L.Relations n)} :
     ∀ {n : ℕ} (φ : L.BoundedFormulaω α n), φ.functionsIn ⊆ F → φ.relationsIn ⊆ R →
       (symbSublang (L := L) F R).BoundedFormulaω α n

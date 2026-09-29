@@ -345,6 +345,7 @@ section HenkinSubstrate
 variable {L'' : Language.{0, 0}} {J : Type}
 
 /-- The `n`-th Henkin witness constant of a constant expansion `L[[ℕ]]`, as a closed term. -/
+@[expose]
 def henkinConst {L : Language.{0, 0}} (n : ℕ) : (L[[ℕ]]).Term Empty :=
   Term.func (Sum.inr n : (L[[ℕ]]).Functions 0) Fin.elim0
 
@@ -386,6 +387,7 @@ Henkin interpretation `h : ℕ → M`. -/
 
 /-- Realization of an expansion formula under a skeleton interpretation `σ : J → M` and a
 Henkin interpretation `h : ℕ → M`. -/
+@[expose]
 def realizeWith (σ : J → M) (h : ℕ → M) {α : Type} {n : ℕ}
     (φ : ((L''[[J]])[[ℕ]]).BoundedFormulaω α n) (v : α → M) (xs : Fin n → M) : Prop :=
   letI : (constantsOn J).Structure M := constantsOn.structure σ
@@ -661,7 +663,7 @@ the source, and — for EVERY skeleton interpretation increasing on `S` into `e`
 SOME Henkin interpretation making every member true. The skeleton side stays universal (the
 EM tuples); the witness side is existential per interpretation, because quantifier witnesses
 vary with the tuple. The support-tracking conjuncts live in the wrapping predicates. -/
-def MarkerHenkinBody (α : Ordinal.{0}) (S : Finset J)
+@[expose] def MarkerHenkinBody (α : Ordinal.{0}) (S : Finset J)
     (F : Set ((L''[[J]])[[ℕ]].Sentenceω)) : Prop :=
   ∃ e : (Order.succ (Cardinal.beth α)).ord.ToType ↪o M,
     ∀ σ : J → M, StrictMonoOn σ ↑S → (∀ j ∈ S, σ j ∈ Set.range e) →
@@ -683,6 +685,7 @@ cofinally many levels below `ω₁`. The arbitrary-set `extension` field and the
 uniformization of the ambient `ConsistencyPropertyEq` API are deliberately avoided: the
 Henkin construction consumes finite members along its enumeration, choosing disjuncts and
 witnesses per member (the classical Marker/Keisler shape). -/
+@[expose]
 def MarkerHenkinConsistent (F : Finset ((L''[[J]])[[ℕ]].Sentenceω)) : Prop :=
   ∃ (S : Finset J) (H : Finset ℕ),
     (∀ τ ∈ (↑F : Set ((L''[[J]])[[ℕ]].Sentenceω)), expJConstsIn (L'' := L'') τ ⊆ ↑S) ∧
@@ -1097,6 +1100,7 @@ whether `τ` is realized). -/
 
 /-- A sentence of finite constant support: finitely many `J`-constants and finitely many
 Henkin constants. The restricted universe the adapter decides over. -/
+@[expose]
 def HasFiniteConstSupport (τ : ((L''[[J]])[[ℕ]]).Sentenceω) : Prop :=
   ∃ (S : Finset J) (H : Finset ℕ),
     expJConstsIn (L'' := L'') τ ⊆ ↑S ∧ henkinConstsIn (L'' := L'') τ ⊆ ↑H

@@ -61,6 +61,7 @@ support) is definitionally of this shape. -/
   BoundedFormulaω.equal (t.relabel Sum.inr) (u.relabel Sum.inr)
 
 /-- The **canonical equality-atom seed**: all canonical equality atoms, over all arities. -/
+@[expose]
 def canonEqAtoms : Set (Σ n, Λ.BoundedFormulaω Empty n) :=
   Set.range fun p : Σ m, Λ.Term (Fin m) × Λ.Term (Fin m) =>
     (⟨p.1, canonEqAtom Λ p.2.1 p.2.2⟩ : Σ n, Λ.BoundedFormulaω Empty n)
@@ -81,6 +82,7 @@ terms. -/
 
 /-- The **canonical relation-atom seed**: all canonical relation atoms, over all arities and all
 relation symbols. -/
+@[expose]
 def canonRelAtoms : Set (Σ n, Λ.BoundedFormulaω Empty n) :=
   Set.range fun q : Σ (m l : ℕ), Λ.Relations l × (Fin l → Λ.Term (Fin m)) =>
     (⟨q.1, canonRelAtom Λ q.2.2.1 q.2.2.2⟩ : Σ n, Λ.BoundedFormulaω Empty n)
@@ -243,7 +245,7 @@ variable (s₀ : LocalStage)
 /-- **The extracted-family candidate**: the colimit family together with the full canonical atom
 seeds and the canonical deForm closure of the colimit family — everything the local `EMContext`'s
 `hind`/`atom_mem`/`rel_mem`/deForm-closure obligations will quantify over. -/
-def ΓEMlocal : Set (Σ n, (localColim s₀).BoundedFormulaω Empty n) :=
+@[expose] def ΓEMlocal : Set (Σ n, (localColim s₀).BoundedFormulaω Empty n) :=
   ΓlocalColim s₀ ∪ canonEqAtoms (localColim s₀) ∪ canonRelAtoms (localColim s₀)
     ∪ canonDeForms (localColim s₀) (ΓlocalColim s₀)
 

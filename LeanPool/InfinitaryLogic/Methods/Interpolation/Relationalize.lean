@@ -54,13 +54,14 @@ def ctxLiftEmb (k : ℕ) (z : α ⊕ Fin n) : (graphLanguage L).Term (α ⊕ Fin
 
 /-- The equality atom, relationalized with **one** witness: `∃ y, termGraph(t,y) ∧
 termGraph(u,y)`. -/
-def equalGraph (t u : L.Term (α ⊕ Fin n)) : (graphLanguage L).BoundedFormulaω α n :=
+@[expose] def equalGraph (t u : L.Term (α ⊕ Fin n)) :
+    (graphLanguage L).BoundedFormulaω α n :=
   .existsBlock (k := 1)
     ((termGraphAux t (ctxLiftEmb 1) (graphWitnessVar n 0)).and
       (termGraphAux u (ctxLiftEmb 1) (graphWitnessVar n 0)))
 
 /-- The relation atom, relationalized: `∃ ys, (⋀ᵢ termGraph(tᵢ, yᵢ)) ∧ R^base(ys)`. -/
-def relGraph {k : ℕ} (R : L.Relations k) (ts : Fin k → L.Term (α ⊕ Fin n)) :
+@[expose] def relGraph {k : ℕ} (R : L.Relations k) (ts : Fin k → L.Term (α ⊕ Fin n)) :
     (graphLanguage L).BoundedFormulaω α n :=
   .existsBlock
     ((BoundedFormulaω.einf fun i => termGraphAux (ts i) (ctxLiftEmb k) (graphWitnessVar n i)).and
