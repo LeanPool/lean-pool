@@ -16,7 +16,6 @@ over the reusable sparse-lookup ABI and a disjoint canonical binary program-
 counter tape.
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -33,15 +32,6 @@ private theorem hasBinaryNat_parked {t : Tape} {value : ℕ}
     (h : t.HasBinaryNat value) : TM.Parked t := by
   refine ⟨by rw [h.2.1], ?_⟩
   exact Tape.HasBinaryContent.cells_ne_start h.2.2
-
-private theorem phaseTransition_of_parked
-    {inp out : Tape} {work : Fin n → Tape}
-    (hinput : TM.Parked inp) (hwork : ∀ i, TM.Parked (work i))
-    (houtput : TM.Parked out) :
-    TM.transitionInput inp = inp ∧
-      (fun i => TM.transitionTape (work i)) = work ∧
-      TM.transitionTape out = out :=
-  TM.phaseTransition_of_parked hinput hwork houtput
 
 private theorem controlReady_update_pc
     (tapes : ControlInstructionTapes n) (store : Store)
@@ -355,7 +345,7 @@ theorem setProgramCounterTM_hoareTime_frame_internal
     (TM.binaryAddConstTM pc target) hreset'
     (by
       rintro inp work out ⟨hinp, hworkEq, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using hinput)
         (by simpa [hworkEq] using hmidWork)
@@ -571,7 +561,7 @@ theorem zeroJumpInstructionTM_hoareTime_frame_internal
       rintro inp work out ⟨hinp, hbranchResult, hout⟩
       obtain ⟨lookupWork, hlookupResult, hoperand, hpcResult,
         hparked, hframe⟩ := hbranchResult
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using hinput) hparked
         (by simpa [hout] using houtput)
@@ -588,7 +578,7 @@ theorem zeroJumpInstructionTM_hoareTime_frame_internal
       (TM.resetBinaryWorkTM tapes.data.lhs)) hlookup
     (by
       rintro inp work out ⟨hinp, hlookupResult, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using hinput) hlookupResult.parked
         (by simpa [hout] using houtput)

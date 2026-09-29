@@ -12,7 +12,6 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.RandomAccessMachine.Simu
 # Direct sparse-store arithmetic instructions -- proof internals
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -264,19 +263,6 @@ private theorem directAddress_ready
   · exact (scanner_updateQuery_internal tapes store destination operandsWork
       hrhs.scanner).parked
 
-private theorem hasBinaryPrefix_parked {t : Tape} {bits : List Bool}
-    (h : t.HasBinaryPrefix bits) : TM.Parked t :=
-  TM.hasBinaryPrefix_parked h
-
-private theorem phaseTransition_of_parked
-    {inp out : Tape} {work : Fin n → Tape}
-    (hinput : TM.Parked inp) (hwork : ∀ i, TM.Parked (work i))
-    (houtput : TM.Parked out) :
-    TM.transitionInput inp = inp ∧
-      (fun i => TM.transitionTape (work i)) = work ∧
-      TM.transitionTape out = out :=
-  TM.phaseTransition_of_parked hinput hwork houtput
-
 /-- The shared two-direct-operand prefix used by arithmetic and indirect
 store instructions. -/
 theorem directBinaryOperands_hoareTime_internal
@@ -325,7 +311,7 @@ theorem directBinaryOperands_hoareTime_internal
     (entryLookupStaticTM tapes.rhsLookup source₁) hlhs
     (by
       rintro inp work out ⟨hinp, hlhsResult, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput) hlhsResult.parked
         (by simpa [hout] using! houtput)
@@ -361,7 +347,7 @@ theorem directBinaryInstructionTM_hoareTime_frame_internal
                 (RegisterStore.read store source₁))).flatMap Entry.encode))
       (directBinaryInstructionTime tapes op store destination source₀
         source₁) := by
-  have houtputParked := hasBinaryPrefix_parked houtput
+  have houtputParked := TM.hasBinaryPrefix_parked houtput
   have hlhs := entryLookupStatic_hoareTime_internal tapes.lhsLookup store
     source₀ initialWork inp₀ out₀ hinitial hinput houtputParked
   have hrhs : (entryLookupStaticTM tapes.rhsLookup source₁).HoareTime
@@ -457,7 +443,7 @@ theorem directBinaryInstructionTM_hoareTime_frame_internal
       have hready := directAddress_ready tapes store destination source₀
         source₁ initialWork work hinitial hreplacement htmp hdbl
         haddressResult
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput) hready.parked
         (by simpa [hout] using! houtputParked)
@@ -471,7 +457,7 @@ theorem directBinaryInstructionTM_hoareTime_frame_internal
     (by
       rintro inp work out ⟨hinp, operands, hout⟩
       rcases operands with ⟨lhsWork, hlhsResult, hrhsResult⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput) hrhsResult.parked
         (by simpa [hout] using! houtputParked)
@@ -485,7 +471,7 @@ theorem directBinaryInstructionTM_hoareTime_frame_internal
         (binaryInstructionUpdateTM tapes op))) hlhs
     (by
       rintro inp work out ⟨hinp, hlhsResult, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput) hlhsResult.parked
         (by simpa [hout] using! houtputParked)

@@ -5,7 +5,6 @@ Authors: Nima Anari
 -/
 module
 
-
 public import LeanPool.BeyondBethe.BeyondBethe.Permanent
 public import Mathlib.Algebra.Order.Ring.Pow
 public import Mathlib.Analysis.Complex.Exponential
@@ -79,7 +78,7 @@ theorem one_add_pow_sub_one_le_two_mul
 most the change at the all-ones vector.  This is the termwise estimate used in
 the smoothing lemma. -/
 theorem prod_add_const_sub_prod_le
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (a : ι → ℝ) {δ : ℝ}
+    {ι : Type*} (s : Finset ι) (a : ι → ℝ) {δ : ℝ}
     (hδ : 0 ≤ δ)
     (ha0 : ∀ i ∈ s, 0 ≤ a i)
     (ha1 : ∀ i ∈ s, a i ≤ 1) :

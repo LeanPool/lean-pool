@@ -13,7 +13,6 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.TuringMachine.Subroutine
 # Uniform next-store buffering for control instructions
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -30,10 +29,6 @@ private theorem hasBinaryNat_parked {t : Tape} {value : ℕ}
     (h : t.HasBinaryNat value) : TM.Parked t := by
   refine ⟨by rw [h.2.1], ?_⟩
   exact Tape.HasBinaryContent.cells_ne_start h.2.2
-
-private theorem hasBinaryPrefix_parked {t : Tape} {bits : List Bool}
-    (h : t.HasBinaryPrefix bits) : TM.Parked t :=
-  TM.hasBinaryPrefix_parked h
 
 /-- Restore the empty entry scanner after copying a control instruction's store buffer. -/
 private theorem controlCopy_entryScannerReady
@@ -303,7 +298,7 @@ private theorem finishControlInstructionTM_hoareTime_frame_internal
         exact hsourceSuffix.2.2.2 j hj
       by_cases hiBuffer : i = buffer
       · subst i
-        exact hasBinaryPrefix_parked hbufferPrefix
+        exact TM.hasBinaryPrefix_parked hbufferPrefix
       · exact hotherParked i hiSource hiBuffer
     have hfinalScanner : EntryScanReady
         tapes.lifted.data.update.entry [] [] final.work final.work := by

@@ -11,7 +11,6 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.RandomAccessMachine.Simu
 # Indirect sparse-store instructions -- proof internals
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -23,19 +22,6 @@ namespace RegisterStore
 namespace Machine
 
 variable {n : ℕ}
-
-private theorem hasBinaryPrefix_parked {t : Tape} {bits : List Bool}
-    (h : t.HasBinaryPrefix bits) : TM.Parked t :=
-  TM.hasBinaryPrefix_parked h
-
-private theorem phaseTransition_of_parked
-    {inp out : Tape} {work : Fin n → Tape}
-    (hinput : TM.Parked inp) (hwork : ∀ i, TM.Parked (work i))
-    (houtput : TM.Parked out) :
-    TM.transitionInput inp = inp ∧
-      (fun i => TM.transitionTape (work i)) = work ∧
-      TM.transitionTape out = out :=
-  TM.phaseTransition_of_parked hinput hwork houtput
 
 private theorem storeOperands_values
     (tapes : BinaryInstructionTapes n) (store : Store)
@@ -360,7 +346,7 @@ theorem indirectStoreInstructionTM_hoareTime_frame_internal
       (indirectStoreInstructionTime tapes store addressRegister source) := by
   let address := RegisterStore.read store addressRegister
   let value := RegisterStore.read store source
-  have houtputParked := hasBinaryPrefix_parked houtput
+  have houtputParked := TM.hasBinaryPrefix_parked houtput
   have hoperands := directBinaryOperands_hoareTime_internal tapes store
     addressRegister source initialWork inp₀ out₀ hinitial hrhs₀ hinput
     houtputParked
@@ -485,7 +471,7 @@ theorem indirectStoreInstructionTM_hoareTime_frame_internal
       subst work
       have hready := storeUpdate_ready tapes store addressRegister source
         initialWork operandsWork hinitial hops
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp)
         (work := Function.update
           (Function.update operandsWork tapes.update.entry.query
@@ -519,7 +505,7 @@ theorem indirectStoreInstructionTM_hoareTime_frame_internal
                 ((Tape.init (address.bits.map Γ.ofBool)).move Dir3.right) from
               ⟨by rw [hnat.2.1], hnat.2.hasBinaryContent.cells_ne_start⟩)
         · simpa only [Function.update_of_ne hi] using! hvalues.2.2.2 i
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp)
         (work := Function.update operandsWork tapes.update.entry.query
           ((Tape.init (address.bits.map Γ.ofBool)).move Dir3.right))
@@ -540,7 +526,7 @@ theorem indirectStoreInstructionTM_hoareTime_frame_internal
       rintro inp work out ⟨hinp, hops, hout⟩
       have hvalues := storeOperands_values tapes store addressRegister source
         initialWork work hops
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput) hvalues.2.2.2
         (by simpa [hout] using! houtputParked)

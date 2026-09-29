@@ -14,7 +14,6 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.TuringMachine.Subroutine
 # Concrete sparse-store arithmetic instruction kernel -- proof internals
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -30,10 +29,6 @@ variable {n : ℕ}
 private theorem hasBinaryNat_parked {t : Tape} {value : ℕ}
     (h : t.HasBinaryNat value) : TM.Parked t :=
   ⟨by rw [h.2.1], h.2.hasBinaryContent.cells_ne_start⟩
-
-private theorem hasBinaryPrefix_parked {t : Tape} {bits : List Bool}
-    (h : t.HasBinaryPrefix bits) : TM.Parked t :=
-  TM.hasBinaryPrefix_parked h
 
 private theorem arithmeticResult_of_threeTape
     (tapes : BinaryInstructionTapes n) (op : BinaryInstrOp) (lhs rhs : ℕ)
@@ -215,7 +210,7 @@ theorem binaryInstructionUpdateTM_hoareTime_frame_internal
   have harithmetic :=
     binaryInstructionArithmeticTM_hoareTime_frame_internal tapes op lhs rhs
       inp₀ initialWork out₀ hlhs hrhs hresult hshift htmp hdbl hinput
-      hwork (hasBinaryPrefix_parked houtput)
+      hwork (TM.hasBinaryPrefix_parked houtput)
   have hupdate : (entryUpdateTM tapes.update).HoareTime
       (fun inp work out =>
         inp = inp₀ ∧
@@ -343,7 +338,7 @@ theorem binaryInstructionUpdateTM_hoareTime_frame_internal
     fun i => (harith.parked i).read_ne_start
   have houtread : out.read ≠ Γ.start := by
     rw [hout]
-    exact (hasBinaryPrefix_parked houtput).read_ne_start
+    exact (TM.hasBinaryPrefix_parked houtput).read_ne_start
   have htransition := TM.phaseTransition_eq_self_of_reads_ne_start
     hinread hworkread houtread
   rw [htransition.1, htransition.2.1, htransition.2.2]

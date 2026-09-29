@@ -12,7 +12,6 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.RandomAccessMachine.Simu
 # Dense-overlay control instructions
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -25,15 +24,6 @@ variable {n : ℕ}
 private theorem hasBinaryNat_parked {t : Tape} {value : ℕ}
     (h : t.HasBinaryNat value) : TM.Parked t :=
   ⟨by rw [h.2.1], h.2.hasBinaryContent.cells_ne_start⟩
-
-private theorem phaseTransition_of_parked
-    {inp out : Tape} {work : Fin n → Tape}
-    (hinput : TM.Parked inp) (hwork : ∀ i, TM.Parked (work i))
-    (houtput : TM.Parked out) :
-    TM.transitionInput inp = inp ∧
-      (fun i => TM.transitionTape (work i)) = work ∧
-      TM.transitionTape out = out :=
-  TM.phaseTransition_of_parked hinput hwork houtput
 
 private def DenseZeroJumpBranchResult
     (tapes : ControlInstructionTapes n) (input : List Bool)
@@ -341,7 +331,7 @@ theorem denseZeroJumpInstructionTM_hoareTime_frame
       rintro inp work out ⟨hinp, hbranchResult, hout⟩
       obtain ⟨lookupWork, hlookupResult, hoperand, hpcResult,
         hparked, hframe⟩ := hbranchResult
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput) hparked
         (by simpa [hout] using! houtput)
@@ -358,7 +348,7 @@ theorem denseZeroJumpInstructionTM_hoareTime_frame
       (TM.resetBinaryWorkTM tapes.data.lhs)) hlookup
     (by
       rintro inp work out ⟨hinp, hlookupResult, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [inp₀, hinp] using! hinput) hlookupResult.parked
         (by simpa [hout] using! houtput)

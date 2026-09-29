@@ -13,7 +13,6 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.RandomAccessMachine.Simu
 # Dense-overlay immediate instruction
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -22,19 +21,6 @@ namespace RegisterStore
 namespace Machine
 
 variable {n : ℕ}
-
-private theorem hasBinaryPrefix_parked {t : Tape} {bits : List Bool}
-    (h : t.HasBinaryPrefix bits) : TM.Parked t :=
-  TM.hasBinaryPrefix_parked h
-
-private theorem phaseTransition_of_parked
-    {inp out : Tape} {work : Fin n → Tape}
-    (hinput : TM.Parked inp) (hwork : ∀ i, TM.Parked (work i))
-    (houtput : TM.Parked out) :
-    TM.transitionInput inp = inp ∧
-      (fun i => TM.transitionTape (work i)) = work ∧
-      TM.transitionTape out = out :=
-  TM.phaseTransition_of_parked hinput hwork houtput
 
 /-- Exact semantic and time contract for one immediate dense-overlay write. -/
 theorem denseImmediateInstructionTM_hoareTime_frame
@@ -60,7 +46,7 @@ theorem denseImmediateInstructionTM_hoareTime_frame
     ((Tape.init (value.bits.map Γ.ofBool)).move Dir3.right)
   let updateWork := Function.update valueWork tapes.update.entry.query
     ((Tape.init (destination.bits.map Γ.ofBool)).move Dir3.right)
-  have houtputParked := hasBinaryPrefix_parked houtput
+  have houtputParked := TM.hasBinaryPrefix_parked houtput
   have hvalue := TM.binaryAddConstTM_hoareTime_frame
     tapes.update.replacement value 0 inp₀ initialWork out₀ hreplacement
     hinput (fun i _ => hinitial.scanner.parked i) houtputParked
@@ -122,7 +108,7 @@ theorem denseImmediateInstructionTM_hoareTime_frame
     (by
       rintro inp work out ⟨hinp, hwork, hout⟩
       subst work
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := updateWork) (out := out)
         (by simpa [hinp] using! hinput) hready.2.2.2.2.2
         (by simpa [hout] using! houtputParked)
@@ -147,7 +133,7 @@ theorem denseImmediateInstructionTM_hoareTime_frame
               ⟨by rw [hnat.2.1], hnat.2.hasBinaryContent.cells_ne_start⟩)
         · simpa only [valueWork, Function.update_of_ne hi] using!
             hinitial.scanner.parked i
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := valueWork) (out := out)
         (by simpa [hinp] using! hinput) hparked
         (by simpa [hout] using! houtputParked)

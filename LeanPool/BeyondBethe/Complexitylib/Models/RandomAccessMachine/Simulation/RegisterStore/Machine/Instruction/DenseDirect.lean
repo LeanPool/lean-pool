@@ -14,7 +14,6 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.RandomAccessMachine.Simu
 # Dense-overlay direct arithmetic instructions
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -27,19 +26,6 @@ variable {n : ℕ}
 private theorem hasBinaryNat_parked {t : Tape} {value : ℕ}
     (h : t.HasBinaryNat value) : TM.Parked t :=
   ⟨by rw [h.2.1], h.2.hasBinaryContent.cells_ne_start⟩
-
-private theorem hasBinaryPrefix_parked {t : Tape} {bits : List Bool}
-    (h : t.HasBinaryPrefix bits) : TM.Parked t :=
-  TM.hasBinaryPrefix_parked h
-
-private theorem phaseTransition_of_parked
-    {inp out : Tape} {work : Fin n → Tape}
-    (hinput : TM.Parked inp) (hwork : ∀ i, TM.Parked (work i))
-    (houtput : TM.Parked out) :
-    TM.transitionInput inp = inp ∧
-      (fun i => TM.transitionTape (work i)) = work ∧
-      TM.transitionTape out = out :=
-  TM.phaseTransition_of_parked hinput hwork houtput
 
 private theorem denseScanner_rhs_of_lhs
     (tapes : BinaryInstructionTapes n) (input : List Bool)
@@ -150,7 +136,7 @@ theorem denseDirectBinaryOperands_hoareTime
     (denseOverlayLookupStaticTM tapes.rhsLookup source₁) hlhs
     (by
       rintro inp work out ⟨hinp, hlhsResult, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [inp₀, hinp] using! hinput) hlhsResult.parked
         (by simpa [hout] using! houtput)
@@ -359,7 +345,7 @@ theorem denseBinaryInstructionUpdateTM_hoareTime_frame
       (denseBinaryInstructionUpdateTime tapes op overlay address lhs rhs) := by
   have harithmetic := binaryInstructionArithmeticTM_hoareTime_frame_internal
     tapes op lhs rhs inp₀ initialWork out₀ hlhs hrhs hresult hshift htmp hdbl
-    hinput hwork (hasBinaryPrefix_parked houtput)
+    hinput hwork (TM.hasBinaryPrefix_parked houtput)
   have hupdate : (taggedEntryUpdateTM tapes.update).HoareTime
       (fun inp work out =>
         inp = inp₀ ∧
@@ -390,10 +376,10 @@ theorem denseBinaryInstructionUpdateTM_hoareTime_frame
     (taggedEntryUpdateTM tapes.update) harithmetic
     (by
       rintro inp work out ⟨hinp, harith, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput) harith.parked
-        (by simpa [hout] using! hasBinaryPrefix_parked houtput)
+        (by simpa [hout] using! TM.hasBinaryPrefix_parked houtput)
       rw [hi, hw, ho]
       exact ⟨hinp, harith, hout⟩)
     hupdate
@@ -433,7 +419,7 @@ theorem denseDirectBinaryInstructionTM_hoareTime_frame
   have hinput : TM.Parked inp₀ := by
     refine ⟨by simp [inp₀, Tape.move], ?_⟩
     simpa [inp₀] using! Tape.init_ofBool_move_right_cells_ne_start input
-  have houtputParked := hasBinaryPrefix_parked houtput
+  have houtputParked := TM.hasBinaryPrefix_parked houtput
   have hoperands := denseDirectBinaryOperands_hoareTime tapes input overlay
     source₀ source₁ initialWork out₀ hvalid hinitial hrhs₀ houtputParked
   have haddress : (TM.binaryAddConstTM tapes.update.entry.query
@@ -503,7 +489,7 @@ theorem denseDirectBinaryInstructionTM_hoareTime_frame
         source₀ source₁ initialWork work hinitial hreplacement htmp hdbl
         haddressResult
       rcases hready with ⟨_, _, _, _, _, _, _, _, _, _, hparked⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput)
         hparked
@@ -519,7 +505,7 @@ theorem denseDirectBinaryInstructionTM_hoareTime_frame
     (by
       rintro inp work out ⟨hinp, operands, hout⟩
       rcases operands with ⟨lhsWork, hlhsResult, hrhsResult⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput) hrhsResult.parked
         (by simpa [hout] using! houtputParked)

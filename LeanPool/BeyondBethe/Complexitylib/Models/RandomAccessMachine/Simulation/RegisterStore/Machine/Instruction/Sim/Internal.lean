@@ -16,7 +16,6 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.TuringMachine.Subroutine
 # Fixed-program dispatch -- proof internals
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -34,10 +33,6 @@ private theorem hasBinaryNat_parked {t : Tape} {value : ℕ}
   refine ⟨by rw [h.2.1], ?_⟩
   exact Tape.HasBinaryContent.cells_ne_start h.2.2
 
-private theorem hasBinaryPrefix_parked {t : Tape} {bits : List Bool}
-    (h : t.HasBinaryPrefix bits) : TM.Parked t :=
-  TM.hasBinaryPrefix_parked h
-
 private theorem instructionCleanupPrefixTape_hasBinaryPrefix
     (bits : List Bool) :
     (instructionCleanupPrefixTape bits).HasBinaryPrefix bits := by
@@ -53,7 +48,7 @@ private theorem instructionCleanupPrefixTape_start (bits : List Bool) :
 
 private theorem instructionCleanupPrefixTape_parked (bits : List Bool) :
     TM.Parked (instructionCleanupPrefixTape bits) :=
-  hasBinaryPrefix_parked (instructionCleanupPrefixTape_hasBinaryPrefix bits)
+  TM.hasBinaryPrefix_parked (instructionCleanupPrefixTape_hasBinaryPrefix bits)
 
 private theorem hasBinaryString_parked {t : Tape} {bits : List Bool}
     (h : t.HasBinaryString bits) : TM.Parked t := by
@@ -64,15 +59,6 @@ private theorem blank_parked :
   refine ⟨by simp [Tape.move], ?_⟩
   intro j hj
   simp [Tape.move, Tape.init, show j ≠ 0 by omega]
-
-private theorem phaseTransition_of_parked
-    {inp out : Tape} {work : Fin n → Tape}
-    (hinput : TM.Parked inp) (hwork : ∀ i, TM.Parked (work i))
-    (houtput : TM.Parked out) :
-    TM.transitionInput inp = inp ∧
-      (fun i => TM.transitionTape (work i)) = work ∧
-      TM.transitionTape out = out :=
-  TM.phaseTransition_of_parked hinput hwork houtput
 
 /-- Reset the dispatch selector and execute halt when the program list is empty. -/
 private theorem dispatchEmptyProgramTM_hoareTime
@@ -139,7 +125,7 @@ private theorem dispatchEmptyProgramTM_hoareTime
     (executeInstructionTM tapes .halt) hreset'
     (by
       rintro inp work out ⟨hinp, hworkEq, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using hinput)
         (by simpa [hworkEq] using
@@ -294,7 +280,7 @@ theorem dispatchProgramTM_hoareTime_of_execute_internal
           (dispatchProgramTM tapes program) hpred'
           (by
             rintro inp' work' out' ⟨hinp', hwork', hout'⟩
-            obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+            obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
               (inp := inp') (work := work') (out := out')
               (by simpa [hinp', hinp] using hinput)
               (by
@@ -1518,7 +1504,7 @@ theorem bufferedCleanupTM_hoareTime_frame_internal
     have houtParked : TM.Parked out := by simpa [hout] using houtput
     have hworkParked : ∀ i, TM.Parked (work i) := by
       simpa [hwork] using hwork₀
-    obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked hinpParked
+    obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked hinpParked
       hworkParked houtParked
     rw [hi, hw, ho]
     exact ⟨hinp, hwork, hout⟩
@@ -1715,7 +1701,7 @@ theorem programStepTM_hoareTime_frame_internal
       rintro inp work out ⟨hinp, hcleanupReady, hout⟩
       have hinpParked : TM.Parked inp := by simpa [hinp] using hinput
       have houtParked : TM.Parked out := by simpa [hout, blank] using blank_parked
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked hinpParked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked hinpParked
         hcleanupReady.result.parked houtParked
       rw [hi, hw, ho]
       exact ⟨hinp, hcleanupReady, hout⟩)

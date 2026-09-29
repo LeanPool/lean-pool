@@ -14,7 +14,6 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.RandomAccessMachine.Simu
 # Dense-overlay indirect load
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -23,19 +22,6 @@ namespace RegisterStore
 namespace Machine
 
 variable {n : ℕ}
-
-private theorem hasBinaryPrefix_parked {t : Tape} {bits : List Bool}
-    (h : t.HasBinaryPrefix bits) : TM.Parked t :=
-  TM.hasBinaryPrefix_parked h
-
-private theorem phaseTransition_of_parked
-    {inp out : Tape} {work : Fin n → Tape}
-    (hinput : TM.Parked inp) (hwork : ∀ i, TM.Parked (work i))
-    (houtput : TM.Parked out) :
-    TM.transitionInput inp = inp ∧
-      (fun i => TM.transitionTape (work i)) = work ∧
-      TM.transitionTape out = out :=
-  TM.phaseTransition_of_parked hinput hwork houtput
 
 private theorem denseScanner_indirect_of_lhs
     (tapes : BinaryInstructionTapes n) (input : List Bool)
@@ -160,7 +146,7 @@ private theorem denseIndirectReads_hoareTime
     (denseOverlayLookupTM tapes.indirectLoadLookup) haddress
     (by
       rintro inp work out ⟨hinp, haddressResult, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [inp₀, hinp] using! hinput) haddressResult.parked
         (by simpa [hout] using! houtput)
@@ -198,7 +184,7 @@ theorem denseIndirectLoadInstructionTM_hoareTime_frame
   have hinput : TM.Parked inp₀ := by
     refine ⟨by simp [inp₀, Tape.move], ?_⟩
     simpa [inp₀] using! Tape.init_ofBool_move_right_cells_ne_start input
-  have houtputParked := hasBinaryPrefix_parked houtput
+  have houtputParked := TM.hasBinaryPrefix_parked houtput
   have hreads := denseIndirectReads_hoareTime tapes input overlay
     addressRegister initialWork out₀ hvalid hinitial hreplacement houtputParked
   have hquery : (TM.binaryAddConstTM tapes.update.entry.query
@@ -319,7 +305,7 @@ theorem denseIndirectLoadInstructionTM_hoareTime_frame
       subst work
       have hparked := (scanner_updateQuery_of_indirect_internal tapes overlay
         destination loadedWork hloadedResult.scanner).parked
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp)
         (work := Function.update loadedWork tapes.update.entry.query
           ((Tape.init (destination.bits.map Γ.ofBool)).move Dir3.right))
@@ -337,7 +323,7 @@ theorem denseIndirectLoadInstructionTM_hoareTime_frame
     (by
       rintro inp work out ⟨hinp, ⟨addressWork, haddressResult,
         hloadedResult⟩, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput) hloadedResult.parked
         (by simpa [hout] using! houtputParked)

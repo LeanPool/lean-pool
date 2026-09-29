@@ -13,7 +13,6 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.RandomAccessMachine.Simu
 # Dense-overlay RAM program controller -- proof internals
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -34,15 +33,6 @@ private theorem blankOutput_parked :
   intro j hj
   simp [Tape.init, Tape.move]
   omega
-
-private theorem phaseTransition_of_parked
-    {inp out : Tape} {work : Fin n → Tape}
-    (hinput : TM.Parked inp) (hwork : ∀ i, TM.Parked (work i))
-    (houtput : TM.Parked out) :
-    TM.transitionInput inp = inp ∧
-      (fun i => TM.transitionTape (work i)) = work ∧
-      TM.transitionTape out = out :=
-  TM.phaseTransition_of_parked hinput hwork houtput
 
 /-- Final dense lookup and Boolean emission recover the decoded RAM verdict
 register. -/
@@ -90,7 +80,7 @@ theorem denseProgramOutputTM_hoareTime_internal
     (registerVerdictTM tapes.liftedLhs) hlookup
     (by
       rintro inp work out ⟨hinp, hresult, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput) hresult.parked
         (by simpa [hout, blank] using! blankOutput_parked)
@@ -153,7 +143,7 @@ theorem denseProgramOutputTM_hoareTime_haltOutput_internal
     (registerVerdictTM tapes.liftedLhs) hlookup
     (by
       rintro inp work out ⟨hinp, hresult, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput) hresult.parked
         (by simpa [hout, haltOut] using! hhaltOutParked)
