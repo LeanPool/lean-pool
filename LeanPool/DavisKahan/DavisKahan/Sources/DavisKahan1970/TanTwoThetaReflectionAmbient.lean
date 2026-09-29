@@ -167,16 +167,8 @@ private theorem proj_comm_sq_reflection (hp : p * p = p)
 
 private theorem inverse_comm_reflection {a x : A} (ha : IsUnit a)
     (h : x * a = a * x) :
-    x * Ring.inverse a = Ring.inverse a * x := by
-  have h1 : Ring.inverse a * a = 1 := Ring.inverse_mul_cancel a ha
-  have h2 : a * Ring.inverse a = 1 := Ring.mul_inverse_cancel a ha
-  calc
-    x * Ring.inverse a = (Ring.inverse a * a) * (x * Ring.inverse a) := by
-      rw [h1, one_mul]
-    _ = Ring.inverse a * ((a * x) * Ring.inverse a) := by noncomm_ring
-    _ = Ring.inverse a * ((x * a) * Ring.inverse a) := by rw [h]
-    _ = Ring.inverse a * x * (a * Ring.inverse a) := by noncomm_ring
-    _ = Ring.inverse a * x := by rw [h2, mul_one]
+    x * Ring.inverse a = Ring.inverse a * x :=
+  TauCeti.ringInverse_semiconj ha ha h
 
 end ReflectionRing
 

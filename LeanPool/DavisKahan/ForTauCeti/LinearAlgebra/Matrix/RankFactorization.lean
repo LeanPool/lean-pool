@@ -60,11 +60,8 @@ resolution is that a challenge statement **follows** the API rather than pinning
 challenges validate an implementation through the comparator, they are not the target.  The
 conformance statement moved in the same commit, so the two still export identically.
 
-Three `set_option linter.unusedDecidableInType false in` lines went with the instance.  The
-one that remains is on `eq_of_mul_left_cancel`, where `[Fintype p]` and `[DecidableEq p]`
-really are used — by `*ᵥ` and `Pi.single` in the proof — and are quantified over `p`, not
-over the `n` of the public signature.  That is a different question from the one the review
-raised.
+The left-cancellation lemma works column by column, so its column index type needs no
+finiteness or decidable-equality assumptions.
 
 ## Provenance
 
@@ -254,20 +251,16 @@ theorem exists_mul_eq_of_range_le {L L' : Matrix m (Fin r) 𝕜}
     LinearMap.toMatrix'_toLin', LinearMap.toMatrix'_toLin'] at this
 
 omit [Fintype n] in
--- `Fintype p` and `DecidableEq p` are used by `*ᵥ` and `Pi.single` in the proof but do not
--- appear in the statement, which is exactly what these two linters flag.
 /-- Left cancellation against an injective factor. -/
-theorem eq_of_mul_left_cancel {p : Type*} [Fintype p] [DecidableEq p]
+theorem eq_of_mul_left_cancel {p : Type*}
     {L : Matrix m (Fin r) 𝕜} (hL : Function.Injective L.mulVecLin)
     {A B : Matrix (Fin r) p 𝕜} (hAB : L * A = L * B) : A = B := by
-  have hmv : ∀ x, A *ᵥ x = B *ᵥ x := by
-    intro x
-    refine hL ?_
-    have := congrArg (fun N : Matrix m p 𝕜 => N *ᵥ x) hAB
-    simpa [← Matrix.mulVec_mulVec] using this
   ext i j
-  have := congrFun (hmv (Pi.single j 1)) i
-  simpa [Matrix.mulVec, dotProduct, Pi.single_apply] using this
+  have hcolumn : (fun k => A k j) = (fun k => B k j) := by
+    apply hL
+    funext row
+    exact congrFun (congrFun hAB row) j
+  exact congrFun hcolumn i
 
 /-- **Milestone A2 — uniqueness of a rank factorization.**
 
