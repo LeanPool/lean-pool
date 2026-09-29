@@ -7,6 +7,7 @@ module
 
 
 public import LeanPool.OperatorTheory.Operator.Crouzeix.ScalarCompanionBoundaryMeasure
+public import LeanPool.OperatorTheory.Operator.Crouzeix.SmoothJordanAffine
 
 /-!
 # Complex-affine invariance of the boundary double-layer density
@@ -47,75 +48,21 @@ map `z ↦ a * z + b`, with its boundary parametrization transported by the
 same map. -/
 noncomputable def SmoothJordanDomain.complexAffine
     (Omega : SmoothJordanDomain) (a b : ℂ) (ha : a ≠ 0) :
-    SmoothJordanDomain := by
-  let e : ℂ ≃ₜ ℂ :=
-    (Homeomorph.mulLeft₀ a ha).trans (Homeomorph.addRight b)
-  refine
-    { carrier := (fun z => a * z + b) '' Omega.carrier
-      isOpen_carrier := ?_
-      strictConvex_carrier := ?_
-      boundaryParam := fun t => a * Omega.boundaryParam t + b
-      boundaryParam_periodic := ?_
-      boundaryParam_contDiff := ?_
-      boundaryParam_range := ?_
-      boundaryParam_injOn := ?_
-      boundaryParam_regular := ?_ }
-  · change IsOpen (e '' Omega.carrier)
-    exact e.isOpenMap Omega.carrier Omega.isOpen_carrier
-  · rintro x' ⟨x, hx, hx'⟩ y' ⟨y, hy, hy'⟩ hxy α β hα hβ hsum
-    subst x'
-    subst y'
-    have hxy0 : x ≠ y := by
-      intro h
-      apply hxy
-      rw [h]
-    have hcombo :=
-      Omega.strictConvex_carrier hx hy hxy0 hα hβ hsum
-    change α • e x + β • e y ∈ interior (e '' Omega.carrier)
-    rw [← e.image_interior]
-    refine ⟨α • x + β • y, hcombo, ?_⟩
-    dsimp only [e, Homeomorph.trans_apply]
-    change a * (α • x + β • y) + b =
-      α • (a * x + b) + β • (a * y + b)
-    rw [Complex.real_smul, Complex.real_smul, Complex.real_smul,
-      Complex.real_smul]
-    have hsumC : (α : ℂ) + (β : ℂ) = 1 := by
-      exact_mod_cast hsum
-    calc
-      a * ((α : ℂ) * x + (β : ℂ) * y) + b =
-          a * ((α : ℂ) * x + (β : ℂ) * y) +
-            ((α : ℂ) + (β : ℂ)) * b := by rw [hsumC, one_mul]
-      _ = (α : ℂ) * (a * x + b) +
-          (β : ℂ) * (a * y + b) := by ring
-  · intro t
-    exact congrArg (fun z => a * z + b)
-      (Omega.boundaryParam_periodic t)
-  · exact (contDiff_const.mul Omega.boundaryParam_contDiff).add contDiff_const
-  · change Set.range (fun t => e (Omega.boundaryParam t)) =
-      frontier (e '' Omega.carrier)
-    rw [show (fun t => e (Omega.boundaryParam t)) =
-        e ∘ Omega.boundaryParam by rfl,
-      Set.range_comp, Omega.boundaryParam_range, e.image_frontier]
-  · intro x hx y hy hxy
-    apply Omega.boundaryParam_injOn hx hy
-    apply e.injective
-    exact hxy
-  · intro t
-    have hgamma : HasDerivAt Omega.boundaryParam
-        (deriv Omega.boundaryParam t) t :=
-      (Omega.boundaryParam_contDiff.differentiable (by norm_num) t).hasDerivAt
-    have hderiv : deriv (fun s : ℝ => a * Omega.boundaryParam s + b) t =
-        a * deriv Omega.boundaryParam t := by
-      have hmul := (hasDerivAt_const t a).mul hgamma
-      have hadd := hmul.add (hasDerivAt_const t b)
-      rw [show (fun s : ℝ => a * Omega.boundaryParam s + b) =
-          (fun _ : ℝ => a) * Omega.boundaryParam +
-            (fun _ : ℝ => b) by
-        funext s
-        rfl]
-      simpa only [zero_mul, zero_add, add_zero] using hadd.deriv
-    rw [hderiv]
-    exact mul_ne_zero ha (Omega.boundaryParam_regular t)
+    SmoothJordanDomain :=
+  (Omega.linearImage (ContinuousLinearEquiv.smulLeft (Units.mk0 a ha))).translate b
+
+@[simp] theorem SmoothJordanDomain.complexAffine_carrier
+    (Omega : SmoothJordanDomain) (a b : ℂ) (ha : a ≠ 0) :
+    (Omega.complexAffine a b ha).carrier =
+      (fun z => a * z + b) '' Omega.carrier := by
+  simp [complexAffine, Set.image_image, add_comm]
+
+@[simp] theorem SmoothJordanDomain.complexAffine_boundaryParam
+    (Omega : SmoothJordanDomain) (a b : ℂ) (ha : a ≠ 0) :
+    (Omega.complexAffine a b ha).boundaryParam =
+      fun t => a * Omega.boundaryParam t + b := by
+  funext t
+  simp [complexAffine, add_comm]
 
 /-- The frontier of a complex-affine image is exactly the image of the
 original frontier. -/
@@ -125,6 +72,7 @@ theorem SmoothJordanDomain.frontier_complexAffine
       (fun z => a * z + b) '' frontier Omega.carrier := by
   let e : ℂ ≃ₜ ℂ :=
     (Homeomorph.mulLeft₀ a ha).trans (Homeomorph.addRight b)
+  rw [SmoothJordanDomain.complexAffine_carrier]
   change frontier (e '' Omega.carrier) = e '' frontier Omega.carrier
   exact (e.image_frontier Omega.carrier).symm
 
@@ -149,6 +97,7 @@ theorem crouzeixBoundaryDoubleLayerDensity_complexAffine
       rfl]
     simpa only [zero_mul, zero_add, add_zero] using hadd.deriv
   unfold crouzeixBoundaryDoubleLayerDensity
+  simp only [SmoothJordanDomain.complexAffine_boundaryParam]
   change (deriv (fun s : ℝ => a * Omega.boundaryParam s + b) t *
       (a * Omega.boundaryParam t + b - (a * xi + b))⁻¹).im /
         Real.pi = _

@@ -61,8 +61,8 @@ theorem SmoothJordanDomain.hasSmoothJordanOuterApproximation_closure
     have hhom :=
       hconvex.closure_subset_image_homothety_interior_of_one_lt
         hcInterior t ht
-    change closure Omega.carrier ⊆
-      (fun z => (t : ℂ) * z + b) '' Omega.carrier
+    change closure Omega.carrier ⊆ (Omega.complexAffine (t : ℂ) b htC).carrier
+    rw [SmoothJordanDomain.complexAffine_carrier]
     rw [show (fun z : ℂ => (t : ℂ) * z + b) =
         AffineMap.homothety c t by
       funext z
@@ -73,6 +73,8 @@ theorem SmoothJordanDomain.hasSmoothJordanOuterApproximation_closure
       (fun z => (t : ℂ) * z + b) '' closure Omega.carrier := by
     let e : ℂ ≃ₜ ℂ :=
       (Homeomorph.mulLeft₀ (t : ℂ) htC).trans (Homeomorph.addRight b)
+    dsimp only [Psi]
+    rw [SmoothJordanDomain.complexAffine_carrier]
     change closure (e '' Omega.carrier) = e '' closure Omega.carrier
     exact (e.image_closure Omega.carrier).symm
   rw [hclosure]
