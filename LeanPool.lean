@@ -8807,6 +8807,12 @@ public import LeanPool.QuantumParallelRepetition.Part09
 public import LeanPool.QuantumParallelRepetition.Part10
 public import LeanPool.QuantumParallelRepetition.Part11
 public import LeanPool.QuantumParallelRepetition.Part12
+public import LeanPool.QuantumQuery
+public import LeanPool.QuantumQuery.Adversary
+public import LeanPool.QuantumQuery.Algorithms
+public import LeanPool.QuantumQuery.Polynomial
+public import LeanPool.QuantumQuery.QueryBounds
+public import LeanPool.QuantumQuery.StateConversion
 public import LeanPool.QuasiBorelSpaces
 public import LeanPool.QuasiBorelSpaces.Basic
 public import LeanPool.QuasiBorelSpaces.Chain
