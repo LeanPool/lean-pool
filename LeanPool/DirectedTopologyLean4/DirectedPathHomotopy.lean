@@ -122,9 +122,11 @@ variable {p₀ p₁ p₂ : Dipath x y}
 
 /-- Given a dipath `p`, we can define a `Dihomotopy p p` by `F (t, x) = p x`
 -/
-@[simps!]
+@[simps! (isSimp := false)]
 def refl (p : Dipath x y) : Dihomotopy p p :=
   DirectedMap.DihomotopyRel.refl p.toDirectedMap {0, 1}
+
+attribute [simp] _root_.Dipath.Dihomotopy.refl_toFun
 
 /-- Given `Dihomotopy p₀ p₁` and `Dihomotopy p₁ p₂`, we can define a `Dihomotopy p₀ p₂` by putting
 the first
@@ -520,7 +522,7 @@ def _root_.Dipath.Dihomotopy.reflTransToReparamTransRefl (p : Dipath x y) (f : D
 /-- Given `F : Dihomotopy p q`, and `f : D(X,Y)`, there is a dihomotopy from `p.map f` to
 `q.map f` given by `f ∘ F`.
 -/
-@[expose, simps!]
+@[expose, simps! (isSimp := false)]
 def _root_.Dipath.Dihomotopy.map {p q : Dipath x y} (F : Dihomotopy p q) (f : D(X,Y)) :
     Dihomotopy (p.map f) (q.map f) where
   toFun := f ∘ F
@@ -536,6 +538,8 @@ def _root_.Dipath.Dihomotopy.map {p q : Dipath x y} (F : Dihomotopy p q) (f : D(
       change f (F (t, 1)) = (p.map f) 1
       simp
   directed_toFun := (f.comp F.toDirectedMap).directed_toFun
+
+attribute [simp] _root_.Dipath.Dihomotopy.map_toFun
 
 end Dihomotopy
 

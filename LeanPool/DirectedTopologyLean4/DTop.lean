@@ -75,14 +75,12 @@ abbrev ofHom {X Y : Type u} [DirectedSpace X] [DirectedSpace Y] (f : D(X,Y)) : o
 @[simp]
 lemma hom_id {X : dTopCat.{u}} : (𝟙 X : X ⟶ X).hom = DirectedMap.id X := rfl
 
-@[simp]
 lemma id_app (X : dTopCat.{u}) (x : ↑X) : (𝟙 X : X ⟶ X) x = x := rfl
 
 @[simp]
 lemma hom_comp {X Y Z : dTopCat.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) :
     (f ≫ g).hom = g.hom.comp f.hom := rfl
 
-@[simp]
 lemma comp_app {X Y Z : dTopCat.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) (x : X) :
     (f ≫ g : X → Z) x = g (f x) := rfl
 
