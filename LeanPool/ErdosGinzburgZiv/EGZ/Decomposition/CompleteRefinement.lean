@@ -135,6 +135,7 @@ theorem refined_isKBounded {B : ℕ}
     (D.refined hp hδ hsmall C hmod hcenter).IsKBounded (fun _ ↦ B) := hB
 
 /-- Subdivision map from the augmented refinement back to the original decomposition. -/
+@[expose]
 noncomputable def refinedSubdivisionMap :
     SubdivisionMap Φ (D.refined hp hδ hsmall C hmod hcenter) :=
   (D.subdivisionMap hp hδ hsmall).comp

@@ -95,6 +95,7 @@ theorem coord_base {F : ConvexFlag} (q : F.Point) : q.coord (le_refl q.base) = q
 
 /-- A point is integral if its coordinate at its base is in that fibre's
 distinguished affine lattice. -/
+@[expose]
 def IsIntegral {F : ConvexFlag} (q : F.Point) : Prop := q.val ∈ F.lattice q.base
 
 theorem isIntegral_coord {F : ConvexFlag} {q : F.Point} (hq : q.IsIntegral)
@@ -104,6 +105,7 @@ theorem isIntegral_coord {F : ConvexFlag} {q : F.Point} (hq : q.IsIntegral)
 /-- `q` is a projection of `q'` when `q'` has the larger domain and they agree
 on the domain of `q`.  By the cocycle law it is enough to compare at `q.base`.
 -/
+@[expose]
 def IsProjectionOf {F : ConvexFlag} (q q' : F.Point) : Prop :=
   ∃ h : q'.base ≤ q.base, q.val = q'.coord h
 
@@ -288,6 +290,7 @@ theorem exists_convexCombination {F : ConvexFlag} {I : Type*} [Fintype I]
       (fun i _ ↦ hx i i.property)
 
 /-- The flag-convex hull from Definition 3.5. -/
+@[expose]
 def convexHull (F : ConvexFlag) (S : Set F.Point) : Set F.Point :=
   {result | ∃ (n : ℕ) (points : Fin n → F.Point) (weight : Fin n → ℝ),
     (∀ i, points i ∈ S) ∧ ConvexCombination points weight result}

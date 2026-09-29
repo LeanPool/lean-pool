@@ -24,6 +24,7 @@ open scoped BigOperators
 namespace EGZ
 
 /-- A submultiset of exactly `p` vectors whose sum vanishes. -/
+@[expose]
 def HasZeroSumMultiplicity {p d : ℕ} [NeZero p]
     (f : FpCoord p d → ℕ) : Prop :=
   ∃ a : FpCoord p d → ℕ,

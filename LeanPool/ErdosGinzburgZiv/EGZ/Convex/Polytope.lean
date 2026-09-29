@@ -40,12 +40,14 @@ namespace RationalPolytope
 standard equivalent characterization that `q` lies in the relative interior
 of `F`.  The order-theoretic characterization (every containing face also
 contains `F`) belongs in the finite-face API. -/
+@[expose]
 def IsMinimalFaceAt {n : ℕ} (P : RationalPolytope n) (q : RealCoord n)
     (F : P.Face) : Prop :=
   q ∈ F.relInterior
 
 /-- Definition 1.7 (`intpt`): integrality is measured in the affine integer
 span of the vertices of the minimal face, not in an ambient fixed lattice. -/
+@[expose]
 def IsIntrinsicInteger {n : ℕ} (P : RationalPolytope n) (q : RealCoord n) : Prop :=
   ∃ F : P.Face, P.IsMinimalFaceAt q F ∧
     q ∈ affineIntSpan (P.vertexSet ∩ F.carrier)
@@ -58,6 +60,7 @@ def IsHollow {n : ℕ} (P : RationalPolytope n) : Prop :=
 end RationalPolytope
 
 /-- There is a hollow rational `d`-polytope with exactly `n` vertices. -/
+@[expose]
 def AdmitsHollowPolytopeVertexCount (d n : ℕ) : Prop :=
   ∃ P : RationalPolytope d, P.IsHollow ∧ P.vertexSet.ncard = n
 
@@ -67,10 +70,12 @@ Finiteness/attainment will be supplied by the hollow-polytope theory. -/
   sSup {n : ℕ | AdmitsHollowPolytopeVertexCount d n}
 
 /-- Total mass of a finitely supported nonnegative weight. -/
+@[expose]
 noncomputable def totalWeight {n : ℕ} (w : RealCoord n → NNReal) : NNReal :=
   ∑ᶠ q, w q
 
 /-- Weight on the closed affine halfspace through `q` selected by `xi`. -/
+@[expose]
 noncomputable def upperHalfspaceWeight {n : ℕ} (w : RealCoord n → NNReal)
     (q : RealCoord n) (xi : RealCoord n →ᵃ[ℝ] ℝ) : NNReal :=
   ∑ᶠ x, if xi q ≤ xi x then w x else 0
@@ -78,12 +83,14 @@ noncomputable def upperHalfspaceWeight {n : ℕ} (w : RealCoord n → NNReal)
 /-- A point is `theta`-central if every closed halfspace containing it has at
 least a `theta` fraction of the total weight.  It suffices to test supporting
 halfspaces whose boundary passes through the point. -/
+@[expose]
 def IsCentral {n : ℕ} (w : RealCoord n → NNReal) (theta : NNReal)
     (q : RealCoord n) : Prop :=
   ∀ xi : RealCoord n →ᵃ[ℝ] ℝ,
     theta * totalWeight w ≤ upperHalfspaceWeight w q xi
 
 /-- The exact conclusion of Theorem 1.12. -/
+@[expose]
 def PolytopeCenterpointConclusion {d : ℕ} (P : RationalPolytope d)
     (w : RealCoord d → NNReal) : Prop :=
   ∃ (F : P.Face) (q : RealCoord d),

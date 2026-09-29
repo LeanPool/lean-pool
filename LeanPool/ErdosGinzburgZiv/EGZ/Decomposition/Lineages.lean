@@ -121,6 +121,7 @@ theorem card_lowNode_le_initial (i : ℕ) :
 
 /-- A selected node is killed when it has no child below the cutoff in
 the next stage. Higher-level replacements are permitted. -/
+@[expose]
 def IsKilled (i : ℕ) (x : S.LowNode L i) : Prop :=
   ∀ y : S.LowNode L (i + 1), S.parent i y ≠ x.val
 

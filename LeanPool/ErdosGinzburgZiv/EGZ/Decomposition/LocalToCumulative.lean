@@ -30,6 +30,7 @@ variable {p d : ℕ} [NeZero p] {F : ConvexFlag}
 open Classical in
 /-- Local lifted masses below a node, transported by the integer transition
 maps and summed over the finite centered boxes. -/
+@[expose]
 noncomputable def localIntegerMassBelow (R : FpRepresentation p d F)
     (pieces : F.Node → FpCoord p d → ℕ) (x : F.Node)
     (q : IntCoord (F.rank x)) : ℕ := by

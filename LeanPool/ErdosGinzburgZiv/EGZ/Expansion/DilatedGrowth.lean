@@ -25,6 +25,7 @@ open scoped BigOperators
 namespace EGZ.Expansion
 
 /-- The non-strict central-slab thickness condition for real weights. -/
+@[expose]
 def IsCentrallyThick {p d : ℕ} [NeZero p] (w : FpCoord p d → ℝ)
     (K : ℕ) (δ : ℝ) : Prop := by
   classical

@@ -30,6 +30,7 @@ open scoped BigOperators
 noncomputable def decayRatio (d : ℕ) : ℝ := (3 : ℝ)⁻¹ ^ (2 * d)
 
 /-- The scale `δ_i = δ₀ 3^(-2di)`. -/
+@[expose]
 noncomputable def scale (d : ℕ) (δ₀ : ℝ) (i : ℕ) : ℝ := δ₀ * decayRatio d ^ i
 
 /-- A bound for the mass lost at one stage, divided by the input mass. -/

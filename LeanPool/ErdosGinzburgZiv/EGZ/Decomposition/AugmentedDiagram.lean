@@ -118,6 +118,7 @@ theorem first_image_support (hp : Odd p) (x : Φ.flag.Node) :
 
 open Classical in
 /-- Along an order relation keep only the upper node's prefix of directions. -/
+@[expose]
 noncomputable def transition (he : Antitone e) {x y : Φ.flag.Node} (h : x ≤ y) :
     IntegralAffineMap (Φ.flag.rank x + e x) (Φ.flag.rank y + e y) :=
   (Φ.flag.transition h).extendPrefix (e x) (e y) (he h)

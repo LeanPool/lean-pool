@@ -52,6 +52,7 @@ namespace IntegerLatticeChart
 
 open Classical in
 /-- Express a finite-field representation map in the chart coordinates. -/
+@[expose]
 noncomputable def rechartMap {p d n : ℕ} [Fact p.Prime]
     {S : Finset (IntCoord n)} (C : IntegerLatticeChart S)
     (φ : FpCoord p d →ᵃ[ZMod p] FpCoord p n) :

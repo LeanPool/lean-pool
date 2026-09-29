@@ -26,6 +26,7 @@ variable {p d : ℕ} [Fact p.Prime] {f : FpCoord p d → ℕ}
     (P : ∀ i, Progress (s i) (s (i + 1)) ε (δ i) g)
 
 /-- The lineage mass maps induced by a sequence of iteration progress steps. -/
+@[expose]
 noncomputable def lineageMassMaps : LineageMassMaps (fun i ↦ (s i).decomposition) where
   minimal i := (s i).minimal
   step i := (P i).subdivision

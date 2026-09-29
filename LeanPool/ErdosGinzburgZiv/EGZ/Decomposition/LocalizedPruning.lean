@@ -133,6 +133,7 @@ theorem active_anchor :
 
 open Classical in
 /-- The surviving anchor as a node of the rebuilt decomposition. -/
+@[expose]
 def anchorNode : (decomposition Φ anchor S hne hp).flag.Node :=
   ⟨anchor, active_anchor Φ anchor S hne hp⟩
 

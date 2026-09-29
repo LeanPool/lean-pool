@@ -95,6 +95,7 @@ variable (Φ : FlagDecomposition p d f) (anchor : Φ.flag.Node)
 
 open Classical in
 /-- The layer-forgetting order map. -/
+@[expose]
 def projection : TwoLayer.Node anchor →o Φ.flag.Node where
   toFun := TwoLayer.projection anchor
   monotone' := OrderHomClass.monotone (TwoLayer.projection anchor)
@@ -179,6 +180,7 @@ noncomputable def upper (x : Φ.flag.Node) : (decomposition Φ anchor selected h
 
 open Classical in
 /-- The original node order embeds into the active upper layer. -/
+@[expose]
 noncomputable def upperOrderEmbedding :
     Φ.flag.Node ↪o (decomposition Φ anchor selected hp).flag.Node where
   toFun := upper Φ anchor selected hp
@@ -250,6 +252,7 @@ theorem upper_polytope (x : Φ.flag.Node) :
 
 open Classical in
 /-- An original face, viewed in its unchanged upper polytope. -/
+@[expose]
 noncomputable def upperFace (x : Φ.flag.Node) (Γ : (Φ.flag.polytope x).Face) :
     ((decomposition Φ anchor selected hp).flag.polytope (upper Φ anchor selected hp x)).Face where
   carrier := Γ.carrier
@@ -296,6 +299,7 @@ theorem isKBounded {K : Φ.flag.Node → ℕ} (hK : Φ.IsKBounded K) :
 
 open Classical in
 /-- Forgetting layers maps the split decomposition into the old one. -/
+@[expose]
 noncomputable def subdivisionMap : SubdivisionMap Φ (decomposition Φ anchor selected hp) :=
   (splitWeights Φ anchor selected).subdivisionMap hp (fun _ _ ↦ rfl)
 
@@ -404,6 +408,7 @@ theorem face_active_lower_anchor (Γ : (Φ.flag.polytope anchor).Face) :
 
 open Classical in
 /-- The active lower copy of the selected anchor. -/
+@[expose]
 noncomputable def lowerAnchor (Γ : (Φ.flag.polytope anchor).Face) :
     (decomposition Φ anchor (Φ.faceSelector anchor Γ) hp).flag.Node :=
   ⟨TwoLayer.lower anchor anchor le_rfl, face_active_lower_anchor Φ anchor hp Γ⟩

@@ -92,6 +92,7 @@ integer lattice. -/
 def IsIntegral {n : ℕ} (q : RealCoord n) : Prop := ∃ z : IntCoord n, z.real = q
 
 /-- A real point has rational coordinate data. -/
+@[expose]
 def IsRational {n : ℕ} (q : RealCoord n) : Prop :=
   ∀ i, ∃ a : ℚ, (a : ℝ) = q i
 
@@ -299,6 +300,7 @@ theorem ofFinsetConvexHull_carrier {n : ℕ}
       convexHull ℝ (↑generators : Set (RealCoord n)) := rfl
 
 /-- Set-based constructor used for the support hull in Theorem 1.12. -/
+@[expose]
 noncomputable def ofFiniteConvexHull {n : ℕ} (S : Set (RealCoord n))
     (hfinite : S.Finite) (hnonempty : S.Nonempty)
     (hrational : ∀ q ∈ S, IsRational q) : RationalPolytope n :=
@@ -383,6 +385,7 @@ theorem ext {n : ℕ} {P : RationalPolytope n} {F G : P.Face}
   simp_all
 
 /-- Relative interior, called simply "interior of a face" in the paper. -/
+@[expose]
 def relInterior {n : ℕ} {P : RationalPolytope n} (F : P.Face) : Set (RealCoord n) :=
   intrinsicInterior ℝ F.carrier
 

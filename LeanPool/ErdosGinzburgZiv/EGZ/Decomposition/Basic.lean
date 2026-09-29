@@ -36,6 +36,7 @@ universe u
 
 This definition remains meaningful without a large-prime hypothesis.  Such a
 hypothesis is needed only when uniqueness of the representative is used. -/
+@[expose]
 def HasBoundedRepresentative (p K : ℕ) (a : ZMod p) : Prop :=
   ∃ z : ℤ, z.natAbs ≤ K ∧ (z : ZMod p) = a
 
@@ -105,6 +106,7 @@ namespace FpRepresentation
 
 /-- An affine functional is nonconstant on the fibres of the representation
 at `x` if two points in one fibre receive different values. -/
+@[expose]
 def NonconstantOnFibers {p d : ℕ} {F : ConvexFlag}
     (R : FpRepresentation p d F) (x : F.Node)
     (ξ : FpCoord p d →ᵃ[ZMod p] ZMod p) : Prop :=
@@ -169,17 +171,20 @@ noncomputable def hat (R : FpRepresentation p d F)
 
 /-- Corrected local generating points.  A generator based at `x` is selected
 by positive `localLift`, not by cumulative `hat`. -/
+@[expose]
 def omegaZero (R : FpRepresentation p d F)
     (pieces : F.Node → FpCoord p d → ℕ) : Set F.Point :=
   {q | ∃ z : IntCoord (F.rank q.base),
     z.real = q.val ∧ localLift R pieces q.base z ≠ 0}
 
 /-- Proper points associated with local decomposition data. -/
+@[expose]
 def omega (R : FpRepresentation p d F)
     (pieces : F.Node → FpCoord p d → ℕ) : Set F.Point :=
   F.convexHull (omegaZero R pieces)
 
 /-- Proper points whose coordinate at `x` lies on a given face. -/
+@[expose]
 def pointsOnFace (R : FpRepresentation p d F)
     (pieces : F.Node → FpCoord p d → ℕ) (x : F.Node)
     (Γ : (F.polytope x).Face) : Set F.Point :=
@@ -187,6 +192,7 @@ def pointsOnFace (R : FpRepresentation p d F)
     ∃ h : q.base ≤ x, q.coord h ∈ Γ.carrier}
 
 /-- Visibility before packaging the data into a `FlagDecomposition`. -/
+@[expose]
 def VisibleFace (R : FpRepresentation p d F)
     (pieces : F.Node → FpCoord p d → ℕ) (x : F.Node)
     (Γ : (F.polytope x).Face) : Prop :=
@@ -235,6 +241,7 @@ namespace FlagDecomposition
 variable {p d : ℕ} [NeZero p] {f : FpCoord p d → ℕ}
 
 /-- Total retained function `f^Φ`. -/
+@[expose]
 noncomputable def retainedWeight (Φ : FlagDecomposition p d f) : FpCoord p d → ℕ :=
   FlagDecompositionRaw.retainedWeight Φ.localWeight
 
@@ -268,14 +275,17 @@ noncomputable def hat (Φ : FlagDecomposition p d f) (x : Φ.flag.Node) :
   exact ∑ q ∈ Φ.liftedSupport x, if q.real ∈ S then Φ.hat x q else 0
 
 /-- Corrected set `Ω₀` of local generating points. -/
+@[expose]
 def omegaZero (Φ : FlagDecomposition p d f) : Set Φ.flag.Point :=
   FlagDecompositionRaw.omegaZero Φ.representation Φ.localWeight
 
 /-- Corrected proper-point set `Ω = conv Ω₀`. -/
+@[expose]
 def omega (Φ : FlagDecomposition p d f) : Set Φ.flag.Point :=
   FlagDecompositionRaw.omega Φ.representation Φ.localWeight
 
 /-- The corrected proper points, packaged with convex closure. -/
+@[expose]
 def properPoints (Φ : FlagDecomposition p d f) : Φ.flag.ProperPointSet where
   carrier := Φ.omega
   convex_closed := FlagDecompositionRaw.omega_convex_closed
@@ -289,6 +299,7 @@ def HasLocalPointMass (Φ : FlagDecomposition p d f) (q : Φ.flag.Point)
   ∃ z : IntCoord (Φ.flag.rank q.base), z.real = q.val ∧ Φ.localLift q.base z = m
 
 /-- Points of `Ω` lying over the face `Γ` at `x`. -/
+@[expose]
 def pointsOnFace (Φ : FlagDecomposition p d f) (x : Φ.flag.Node)
     (Γ : (Φ.flag.polytope x).Face) : Set Φ.flag.Point :=
   FlagDecompositionRaw.pointsOnFace Φ.representation Φ.localWeight x Γ
@@ -329,21 +340,25 @@ theorem faceIndex_le (Φ : FlagDecomposition p d f) (x : Φ.flag.Node)
   exact hq.2.choose
 
 /-- A face is realized when the polytope at `x_Γ` maps into it. -/
+@[expose]
 def IsRealizedFace (Φ : FlagDecomposition p d f) (x : Φ.flag.Node)
     (Γ : (Φ.flag.polytope x).Face) : Prop :=
   ∀ q ∈ (Φ.flag.polytope (Φ.faceIndex x Γ)).carrier,
     (Φ.flag.transition (Φ.faceIndex_le x Γ)).real q ∈ Γ.carrier
 
 /-- An element is reduced when some proper point is based exactly there. -/
+@[expose]
 def IsReducedElement (Φ : FlagDecomposition p d f) (x : Φ.flag.Node) : Prop :=
   ∃ q, q ∈ Φ.omega ∧ q.base = x
 
 /-- Every element of the decomposition is reduced. -/
+@[expose]
 def IsReduced (Φ : FlagDecomposition p d f) : Prop :=
   ∀ x, Φ.IsReducedElement x
 
 /-- A finite set of lattice points affinely generates the full coordinate
 lattice over `ℤ`. -/
+@[expose]
 def AffineIntSpans {n : ℕ} (S : Finset (IntCoord n)) : Prop :=
   ∀ z : IntCoord n, ∃ c : IntCoord n →₀ ℤ,
     c.support ⊆ S ∧
@@ -351,6 +366,7 @@ def AffineIntSpans {n : ℕ} (S : Finset (IntCoord n)) : Prop :=
       (∑ q ∈ c.support, c q • q) = z
 
 /-- Minimality of the finite-field affine spaces and affine lattices. -/
+@[expose]
 def IsMinimal (Φ : FlagDecomposition p d f) : Prop :=
   ∀ x,
     Φ.representation.space x =
@@ -359,6 +375,7 @@ def IsMinimal (Φ : FlagDecomposition p d f) : Prop :=
 
 /-- The chosen affine-lattice coordinates are bounded by `K` on every
 lattice point of every node polytope. -/
+@[expose]
 def IsKBounded (Φ : FlagDecomposition p d f) (K : Φ.flag.Node → ℕ) : Prop :=
   ∀ x (z : IntCoord (Φ.flag.rank x)),
     z.real ∈ (Φ.flag.polytope x).carrier → latticeSupNorm z ≤ K x
@@ -391,6 +408,7 @@ representation fibre sees a thick cumulative weight. -/
       IsThickAlong (Φ.cumulativeWeight x) ξ t δ
 
 /-- A `(T, ε, δ)`-complete flag decomposition. -/
+@[expose]
 def IsComplete (Φ : FlagDecomposition p d f) (T : Φ.flag.Node → ℕ)
     (ε δ : ℝ) : Prop :=
   Φ.IsMinimal ∧ Φ.IsReduced ∧
@@ -401,6 +419,7 @@ def IsComplete (Φ : FlagDecomposition p d f) (T : Φ.flag.Node → ℕ)
 end FlagDecomposition
 
 /-- A growing function is monotone and strictly exceeds the identity. -/
+@[expose]
 def IsGrowing (g : ℕ → ℕ) : Prop :=
   Monotone g ∧ ∀ n, n < g n
 

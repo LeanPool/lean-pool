@@ -45,6 +45,7 @@ theorem errorScale_le_inv {C ζ W : ℝ} (hC : 0 ≤ C)
 
 /-- The flag lemma supplies this fraction of `p` in every nonempty fibre,
 because the normalized input contains at least `p` terms. -/
+@[expose]
 noncomputable def gapScale (d : ℕ) (δ : ℝ) (K : ℕ) : ℝ :=
   δ ^ 3 * (K : ℝ)⁻¹ ^ d
 

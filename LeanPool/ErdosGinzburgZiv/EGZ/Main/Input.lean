@@ -34,6 +34,7 @@ theorem one_le_hollowConstant {p d : ℕ} (hp : p.Prime) : 1 ≤ hollowConstant 
 namespace MainProof
 
 /-- A convenient prime-independent upper bound for the hollow constant. -/
+@[expose]
 def hollowBound (d : ℕ) : ℕ := (2 * d - 1).choose d + 1
 
 theorem hollowBound_pos (d : ℕ) : 0 < hollowBound d := by unfold hollowBound; omega

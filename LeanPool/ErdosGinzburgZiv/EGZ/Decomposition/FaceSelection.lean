@@ -28,6 +28,7 @@ variable {p d : ℕ} [NeZero p] {f : FpCoord p d → ℕ}
 
 open Classical in
 /-- Ambient atoms whose centered coordinate at the anchor lies on its face. -/
+@[expose]
 def faceSelector (x : Φ.flag.Node) (Γ : (Φ.flag.polytope x).Face)
     (v : FpCoord p d) : Prop :=
   (FpCoord.centeredLift (Φ.representation.map x v)).real ∈ Γ.carrier

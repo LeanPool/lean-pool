@@ -119,12 +119,14 @@ theorem hasZeroSumMultiplicity_pushWeight {p m n : ℕ} [NeZero p]
     exact affine_sum_eq_zero A u hm hz
 
 /-- Two points in one fibre of `φ` are distinguished by `ξ`. -/
+@[expose]
 def NonconstantOnFibers {p n r : ℕ}
     (φ : FpCoord p n → FpCoord p r)
     (ξ : FpCoord p n →ᵃ[ZMod p] ZMod p) : Prop :=
   ∃ v u, φ v = φ u ∧ ξ v ≠ ξ u
 
 /-- The thickness assumption of the relative expansion theorem. -/
+@[expose]
 def IsThickRelative {p n r : ℕ} [NeZero p]
     (w : FpCoord p n → ℕ) (φ : FpCoord p n → FpCoord p r)
     (T : ℕ) (δ : ℝ) : Prop :=

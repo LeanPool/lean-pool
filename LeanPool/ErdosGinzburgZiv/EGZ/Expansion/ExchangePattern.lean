@@ -37,6 +37,7 @@ variable {S : Type*} [Fintype S] [DecidableEq S]
 
 /-- The labelled positions of an exchange pattern, separated into positive and negative
 copies. -/
+@[expose]
 def Position (P : ExchangePattern S) :=
   (Σ q, Fin (P.positive q)) ⊕ (Σ q, Fin (P.negative q))
 
@@ -47,6 +48,7 @@ instance (P : ExchangePattern S) : DecidableEq P.Position :=
   inferInstanceAs (DecidableEq ((Σ q, Fin (P.positive q)) ⊕ (Σ q, Fin (P.negative q))))
 
 /-- The label carried by a position of the exchange pattern. -/
+@[expose]
 def label (P : ExchangePattern S) : P.Position → S := Sum.elim Sigma.fst Sigma.fst
 
 /-- The integer sign of a position: one for a positive copy and minus one for a negative copy. -/
@@ -57,6 +59,7 @@ def sign (P : ExchangePattern S) : P.Position → ℤ := Sum.elim (fun _ ↦ 1) 
 abbrev Sample (P : ExchangePattern S) (X : S → Type*) := ∀ i : P.Position, X (P.label i)
 
 /-- The total number of positive and negative positions in the pattern. -/
+@[expose]
 def size (P : ExchangePattern S) : ℕ := (∑ q, P.positive q) + ∑ q, P.negative q
 
 omit [DecidableEq S] in
@@ -86,6 +89,7 @@ noncomputable def sampleSum {G : Type*} [AddCommGroup G]
 
 /-- The exchange pattern obtained by separating an integral relation into positive and
 negative parts. -/
+@[expose]
 def ofRelation (b : S → ℤ) : ExchangePattern S := ⟨fun q ↦ (b q).toNat, fun q ↦ (-b q).toNat⟩
 
 omit [DecidableEq S] in

@@ -123,6 +123,7 @@ theorem IsThinAlong.compl_mass_le {p d : ℕ} [NeZero p]
   linarith
 
 /-- The intersection of the first `k` stage-indexed slabs. -/
+@[expose]
 def slabIntersection {p d : ℕ} (k : ℕ)
     (ξ : ℕ → FpCoord p d →ᵃ[ZMod p] ZMod p) (t : ℕ → ℕ) : Set (FpCoord p d) :=
   {v | ∀ i : Fin k, v ∈ slab (ξ i) (t (i + 1))}

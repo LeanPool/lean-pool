@@ -114,6 +114,7 @@ def lowerEmbedding (anchor : α) : {a : α // a ≤ anchor} ↪o Node anchor whe
 
 open Classical in
 /-- Every layered node is uniquely either an upper copy or a lower copy. -/
+@[expose]
 noncomputable def layerEquiv (anchor : α) : α ⊕ {a : α // a ≤ anchor} ≃ Node anchor where
   toFun := Sum.elim (upper anchor) (fun a ↦ lower anchor a.1 a.2)
   invFun a := if h : a.1.2 = 0 then Sum.inr ⟨a.1.1, a.2 h⟩ else Sum.inl a.1.1
@@ -217,6 +218,7 @@ theorem sum_splitWeight (anchor : α) (w : α → β → ℕ) (S : β → Prop) 
 
 open Classical in
 /-- Cumulative weight in an arbitrary finite node order. -/
+@[expose]
 noncomputable def cumulativeWeight (w : α → β → ℕ) (a : α) (v : β) : ℕ :=
   ∑ b, if b ≤ a then w b v else 0
 

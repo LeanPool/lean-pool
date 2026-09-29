@@ -27,18 +27,21 @@ field structure will carry a primality hypothesis. -/
 abbrev FpVec (p d : ℕ) := Fin d → ZMod p
 
 /-- A sequence contains `p` terms, at distinct positions, whose sum is zero. -/
+@[expose]
 def HasZeroSumSubsequence {ι : Type*} (p : ℕ) {d : ℕ}
     (a : ι → FpVec p d) : Prop :=
   ∃ I : Finset ι, I.card = p ∧ ∑ i ∈ I, a i = 0
 
 /-- Every sequence of exactly `n` vectors in `𝔽_p^d` has a zero-sum
 subsequence of length `p`. -/
+@[expose]
 def EGZProperty (p d n : ℕ) : Prop :=
   ∀ a : Fin n → FpVec p d, HasZeroSumSubsequence p a
 
 /-- A family `v₁, ..., vₛ` is `p`-hollow when the only nonnegative integer
 combinations of total weight `p` that sum to zero put all their weight on a
 single vector.  For prime `p`, this condition forces `v` to be injective. -/
+@[expose]
 def IsPHollow (p : ℕ) {d s : ℕ} (v : Fin s → FpVec p d) : Prop :=
   ∀ α : Fin s → ℕ,
     (∑ i, α i) = p →

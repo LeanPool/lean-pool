@@ -26,6 +26,7 @@ namespace Face
 
 /-- The generators of `P` which lie on a face.  This finite set uniquely
 determines the face. -/
+@[expose]
 noncomputable def generatorFinset {n : ℕ} {P : RationalPolytope n}
     (F : P.Face) : Finset (RealCoord n) := by
   classical

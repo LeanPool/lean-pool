@@ -24,6 +24,7 @@ open scoped BigOperators
 namespace EGZ
 
 /-- An affine retraction that is a left inverse when the original affine map is injective. -/
+@[expose]
 noncomputable def affineLeftInverse {k : Type*} [Field k] {m n : ℕ}
     (A : (Fin m → k) →ᵃ[k] (Fin n → k)) : (Fin n → k) →ᵃ[k] (Fin m → k) :=
   A.linear.leftInverse.toAffineMap.comp
