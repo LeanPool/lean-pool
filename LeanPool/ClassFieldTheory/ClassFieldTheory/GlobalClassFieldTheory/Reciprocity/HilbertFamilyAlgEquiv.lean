@@ -5,9 +5,9 @@ Authors: n-yamaguchi-0729
 -/
 module
 
-
 public import LeanPool.ClassFieldTheory.ClassFieldTheory.AlgebraicNumberTheory.Completion.FinitePlaceAdicCompletionCongrEquiv
 public import LeanPool.ClassFieldTheory.ClassFieldTheory.GlobalClassFieldTheory.Reciprocity.HilbertFiniteFactorNaturality
+public import Mathlib.Algebra.FiniteSupport.Basic
 /-!
 # Hilbert-pairing families under equivalences of number fields
 
