@@ -244,7 +244,9 @@ sine.**
 `(f(A + H) − f(A))E₀ = −P_{Q^⊥}|_U`, whose norm is the source's `‖Q^⊥E₀‖ = ‖sin Θ₀‖` —
 `TauCeti.principalSineOperator U V` is the directed sine operator by definition.  The source's
 `tan 2θ` residual bound `δ‖tan 2Θ₀‖ ≤ 2‖R‖` applies to the right side and is already proved
-as `tanTwoTheta_directed_boundedResidual_blockRepresentative_spectralGap_symmetricNorming_complex`. -/
+as
+`tanTwoTheta_directed_boundedResidual_blockRepresentative_spectralGap_symmetricNorming_complex`.
+-/
 theorem Question10_4_directed_functionalChange_complex
     {A H : E →L[ℂ] E} (hA : IsSelfAdjoint A) (hH : IsSelfAdjoint H)
     (hAU : ∀ x ∈ U, A x ∈ U) (hAplusH_V : ∀ x ∈ V, (A + H) x ∈ V)

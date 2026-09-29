@@ -61,7 +61,7 @@ theorem residual_orthonormalizedEmbedding_whitenedCoordinateOperator
     X ((trialGramSqrtEquiv X hX).symm z) from fun _ => rfl]
   -- the inner application arrives through the linear-map coercion, so the
   -- equiv cancellation lemma needs `simp` rather than a bare rewrite
-  simp
+  simp only [trialGramSqrtEquiv_toLinearMap, LinearEquiv.coe_coe, sub_right_inj]
   congr 1
   exact (trialGramSqrtEquiv X hX).symm_apply_apply _
 

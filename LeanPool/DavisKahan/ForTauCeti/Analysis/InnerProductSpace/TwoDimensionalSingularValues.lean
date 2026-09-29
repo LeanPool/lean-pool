@@ -192,7 +192,7 @@ theorem singularValues_lowerLeft_two_by_two (r : ℝ) :
       ext j <;> fin_cases j <;>
       simp [A, LinearMap.comp_apply, Matrix.toLpLin_apply,
         Matrix.vecHead, Matrix.vecTail, EuclideanSpace.basisFun_apply,
-        sq_abs] <;>
+        sq_abs];
       ring
   refine singularValues_eq_pair_of_gram_eq finrank_euclideanSpace_fin
     (EuclideanSpace.basisFun (Fin 2) 𝕜) A (abs_nonneg r) le_rfl

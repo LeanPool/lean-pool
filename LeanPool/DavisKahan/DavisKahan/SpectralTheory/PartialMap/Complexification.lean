@@ -710,7 +710,8 @@ complexification. -/
 theorem mem_realResolventSet_complexify_iff
     (A : E →ₗ.[ℝ] E)
     (lam : ℝ) :
-    lam ∈ TauCeti.LinearPMap.realResolventSet (complexify A) ↔ lam ∈ TauCeti.LinearPMap.realResolventSet A := by
+    lam ∈ TauCeti.LinearPMap.realResolventSet (complexify A) ↔ lam ∈
+      TauCeti.LinearPMap.realResolventSet A := by
   exact ⟨complexify_realResolvent_mem A, realResolvent_mem_complexify A⟩
 
 omit [CompleteSpace E] in

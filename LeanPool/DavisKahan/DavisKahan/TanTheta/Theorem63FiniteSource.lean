@@ -1174,7 +1174,8 @@ theorem theorem6_3_generalizedTanTheta_of_formBounds_equalRank
     N.Mem (theorem63DirectedTangent Z V) ∧
       delta * N.gauge (theorem63DirectedTangent Z V) ≤
         N.gauge (theorem63Residual T Z) :=
-  ExactSinTheta.mem_and_scaled_gauge_le_of_all_scaled_kyFan_le N.toFanDominantIdealFamily hdelta hResidual
+  ExactSinTheta.mem_and_scaled_gauge_le_of_all_scaled_kyFan_le
+    N.toFanDominantIdealFamily hdelta hResidual
     (theorem6_3_all_kyFan_core_directedTangent Z V T hT hV hdelta
       hCompressionUpper hUnwantedLower)
 

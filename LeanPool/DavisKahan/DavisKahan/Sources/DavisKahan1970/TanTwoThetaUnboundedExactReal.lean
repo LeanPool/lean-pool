@@ -613,7 +613,6 @@ Separable ambient Hilbert space and normalized unitarily invariant norm.  Unlike
 the directed real clause, both sides of this estimate are real operators, so a
 single real source norm reaches them. -/
 theorem tanTwoTheta_ambient_unbounded_normalizedUIN_real
-    
     (N : NormalizedUnitaryInvariantNorm.{0, u} ℝ)
     {A : E →ₗ.[ℝ] E} {B : E →L[ℝ] E} {a b c : ℝ}
     (V : Submodule ℝ E) [V.HasOrthogonalProjection]

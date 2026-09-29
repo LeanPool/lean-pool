@@ -760,7 +760,8 @@ open DavisKahan in
 /-- **Davis--Kahan 1970, `sin 2Θ` for a bounded perturbation of an unbounded
 self-adjoint operator, stated on the angle operator itself.**
 
-`sinTwoTheta_directed_unbounded_addBounded_blockRepresentative_spectrumGap_symmetricNorming_complex` above concludes about
+`sinTwoTheta_directed_unbounded_addBounded_blockRepresentative_spectrumGap_symmetricNorming_complex`
+above concludes about
 `sinTwoThetaIdealBlock`, the overlap of the selected spectral subspace with the
 reflected complement.  That block is the proof's vehicle, not the paper's object.
 `DavisKahan.sinTwoThetaIdealBlock_hasSameApproximationNumbers` shows the two have

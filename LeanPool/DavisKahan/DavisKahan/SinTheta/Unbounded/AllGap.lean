@@ -125,7 +125,8 @@ theorem sinTheta_unbounded_exact_of_spectrumGap
           ((ContinuousLinearMap.id ℂ E - F₀ ∘L F₀.adjoint) ∘L D.X)
         ≤ N.gauge D.residual := by
   have hEq := unbounded_adjoint_residual_block_identity D hA hA₀ hΛ₁
-  have hC := adjointResidualBlock_mem_and_gauge_le N.toSymmetricOperatorIdealFamily D hdecomp.isometry₁ hR
+  have hC := adjointResidualBlock_mem_and_gauge_le
+    N.toSymmetricOperatorIdealFamily D hdecomp.isometry₁ hR
   have hRaw := davisKahan1970_sylvester_of_spectrumGap
     N hA₀ hΛ₁ hδ hgap hEq hC.1
   have hAngle := isometricComplementaryBlock_mem_and_gauge_eq_directed

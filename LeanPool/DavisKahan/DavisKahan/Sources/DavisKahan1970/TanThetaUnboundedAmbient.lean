@@ -756,7 +756,6 @@ Separable ambient Hilbert space and normalized unitarily invariant norm.  The
 definedness hypothesis stays exactly as printed; the estimate goes through the
 Fan-dominance bridge. -/
 theorem tanTheta_ambient_unboundedRitz_definedTangent_normalizedUIN_complex
-    
     (N : NormalizedUnitaryInvariantNorm.{0, u} ℂ)
     {A : E →ₗ.[ℂ] E}
     {U V : Submodule ℂ E}

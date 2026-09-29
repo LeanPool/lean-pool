@@ -421,7 +421,8 @@ theorem tanTheta_unbounded_exactSpectralIcc
     rw [hdomEq]
     exact h
   exact tanTheta_unbounded_vector_of_centered_bounds
-    (V := Wᗮ) (Z := Z) A (TauCeti.LinearPMap.isSymmetric_of_isSelfAdjoint hA) hZdom hVperpdom hVperpinv
+    (V := Wᗮ) (Z := Z) A (TauCeti.LinearPMap.isSymmetric_of_isSelfAdjoint hA)
+      hZdom hVperpdom hVperpinv
       (halfWidth := (β - α) / 2)
       (center := (α + β) / 2)
       (δ := δ) (ρ := ρ)

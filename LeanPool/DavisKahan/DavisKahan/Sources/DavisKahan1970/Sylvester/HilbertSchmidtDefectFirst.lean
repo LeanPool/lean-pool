@@ -7,7 +7,9 @@ module
 
 
 /-
-Copyright (c) 2026 Kitware, Inc. All rights reserved.Released under Apache 2.0 license as described in the file LICENSE.Authors: Jon Crall, OpenAI GPT-5.6 Thinking, Claude Opus 5
+Copyright (c) 2026 Kitware, Inc. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Jon Crall, OpenAI GPT-5.6 Thinking, Claude Opus 5
 -/
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.Ideals.HilbertSchmidtTensor
 public import LeanPool.DavisKahan.DavisKahan.Sylvester.HomogeneousUniqueness

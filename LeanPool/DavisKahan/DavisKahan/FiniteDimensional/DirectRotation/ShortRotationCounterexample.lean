@@ -318,7 +318,8 @@ theorem singularValues_displacement_R (j : Fin 4) :
       Real.sqrt (2 - Real.sqrt 2) := by
   set D := LinearMap.id - (directRotation U4 V4 acute).toLinearMap with hD
   have hfr : finrank ℝ E4 = 4 := finrank_euclideanSpace_fin
-  have heig := LinearMap.IsSymmetric.eigenvalues_eq_of_eigenbasis D.isSymmetric_adjoint_comp_self hfr
+  have heig := LinearMap.IsSymmetric.eigenvalues_eq_of_eigenbasis
+    D.isSymmetric_adjoint_comp_self hfr
     (EuclideanSpace.basisFun (Fin 4) ℝ)
     (μ := fun _ => 2 - Real.sqrt 2) (fun _ _ _ => le_rfl)
     (fun i => by

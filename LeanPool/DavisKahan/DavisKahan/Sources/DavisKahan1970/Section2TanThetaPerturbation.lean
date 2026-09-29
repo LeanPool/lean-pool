@@ -202,7 +202,8 @@ theorem theorem6_3_perturbation_infiniteTrial
       (fun n => approximationSingularValue_sineBlock_lt_one_infiniteTrial T V Z hT hV
         hdelta hCompressionUpper hUnwantedLower n)
   refine ⟨tanTheta0, htan, ?_⟩
-  refine mem_and_scaled_gauge_le_of_all_scaled_kyFan_le N.toFanDominantIdealFamily hdelta hEmem fun k => ?_
+  refine mem_and_scaled_gauge_le_of_all_scaled_kyFan_le
+    N.toFanDominantIdealFamily hdelta hEmem fun k => ?_
   have hKyTan : kyFanApproximationGauge k tanTheta0 =
       ∑ n ∈ Finset.range k, Real.tan (Real.arcsin
         (approximationSingularValue n (theorem63DirectedSineBlock Z V))) := by

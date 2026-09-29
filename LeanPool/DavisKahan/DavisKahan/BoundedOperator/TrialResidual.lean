@@ -185,7 +185,6 @@ theorem norm_isometricRangeCrossBlock_le_residual
 range cross block. -/
 theorem isometricRangeCrossBlock_mem
     (N : TauCeti.SymmetricOperatorIdealFamily.{0, u} ℂ)
-    
     (A : H →L[ℂ] H) (X : F →L[ℂ] H) (M : F →L[ℂ] F)
     (hX : IsometricEmbedding X) (hR : N.Mem (residual A X M)) :
     N.Mem (isometricRangeCrossBlock A X hX) := by
@@ -204,7 +203,6 @@ theorem isometricRangeCrossBlock_mem
 trial residual gauge. -/
 theorem gauge_isometricRangeCrossBlock_le
     (N : TauCeti.SymmetricOperatorIdealFamily.{0, u} ℂ)
-    
     (A : H →L[ℂ] H) (X : F →L[ℂ] H) (M : F →L[ℂ] F)
     (hX : IsometricEmbedding X) (hR : N.Mem (residual A X M)) :
     N.gaugeReal (isometricRangeCrossBlock A X hX) ≤

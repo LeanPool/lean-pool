@@ -198,7 +198,8 @@ theorem intertwiningUnitary_apply_ofOrthonormalBasis {b b' : OrthonormalBasis (F
       (OrthonormalBasis.isPositive_spanIndicesProjection b {i}).adjoint_eq,
       (OrthonormalBasis.isPositive_spanIndicesProjection b' {i}).adjoint_eq]
     -- Pᵢ (P'ᵢ (P'ᵢ (Pᵢ (b i)))) = (c * conj c) • b i = ‖c‖² • b i
-    simp only [hPb, OrthonormalBasis.spanIndicesProjection_singleton_apply, LinearMap.comp_apply, map_smul,
+    simp only [hPb, OrthonormalBasis.spanIndicesProjection_singleton_apply,
+      LinearMap.comp_apply, map_smul,
         hP'b',
       map_smul, OrthonormalBasis.spanIndicesProjection_singleton_apply, smul_smul,
       ← inner_conj_symm (b i) (b' i), RCLike.mul_conj, pow_two]

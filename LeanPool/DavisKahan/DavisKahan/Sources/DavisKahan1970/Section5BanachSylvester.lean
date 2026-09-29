@@ -334,7 +334,6 @@ the two bound norms.
 `theorem5_1_banach_sylvester_exact` is the same statement without completeness; it is the
 stronger theorem, and this one is the printed one. -/
 theorem theorem5_1_banach_sylvester_banachScope
-     
     (N : CompatibleCrossOperatorNorm (𝕜 := 𝕜) (X := X) (Y := Y))
     (A Ainv : Y →L[𝕜] Y) (B : X →L[𝕜] X)
     (T C : X →L[𝕜] Y) {gamma delta : ℝ}

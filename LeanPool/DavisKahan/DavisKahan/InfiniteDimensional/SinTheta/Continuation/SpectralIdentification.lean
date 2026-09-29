@@ -279,7 +279,7 @@ theorem SpectralSeparatingContour.intervalIntegrable_contourResolventSymbol
           Integrable f μ :=
       LipschitzWith.integrable_comp_iff_of_antilipschitz
         (μ := μ) (f := f) (g := fun g : C(spectrum ℂ A, ℂ) => L g)
-        hIso.lipschitz hIso.antilipschitz (by simp)
+        hIso.lipschitzWith hIso.antilipschitzWith (by simp)
     exact hiff.mp (by simpa only [Function.comp_def] using hf)
   exact ⟨hpull hmapped.1, hpull hmapped.2⟩
 

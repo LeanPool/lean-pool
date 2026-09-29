@@ -436,8 +436,7 @@ private theorem sinTwoAngleOperator_model_eq_matrix (θ : ℝ) :
     try push_cast
     try simp only [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal]
     ring1
-  ·
-    simp only [sinTwoAngleOperator, complementaryProjection, projection,
+  · simp only [sinTwoAngleOperator, complementaryProjection, projection,
       ContinuousLinearMap.coe_coe, LinearMap.comp_apply,
       LinearMap.smul_apply,
       modelSubspace_starProjection_e1,

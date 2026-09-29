@@ -316,9 +316,7 @@ variable {𝕜 : Type*} [RCLike 𝕜]
 ambient scope on both pairs.** -/
 theorem corollary3_1_compact_defectBlock_sourceAngleList_classification_separable
     {H₁ : Type u} [NormedAddCommGroup H₁] [InnerProductSpace 𝕜 H₁] [CompleteSpace H₁]
-    
     {H₂ : Type v} [NormedAddCommGroup H₂] [InnerProductSpace 𝕜 H₂] [CompleteSpace H₂]
-    
     (W₁ X₁ : Submodule 𝕜 H₁) [W₁.HasOrthogonalProjection] [X₁.HasOrthogonalProjection]
     (W₂ X₂ : Submodule 𝕜 H₂) [W₂.HasOrthogonalProjection] [X₂.HasOrthogonalProjection]
     (hcompact₁ : IsCompactOperator
@@ -346,7 +344,6 @@ section Prop42
 ambient scope.** -/
 theorem proposition4_2_compact_nonacute_separable {H : Type v}
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
-    
     (U V : Submodule ℂ H) [U.HasOrthogonalProjection] [V.HasOrthogonalProjection]
     (hcompact : IsCompactOperator (TauCeti.principalSineOperator U V))
     (hcrossed : DavisKahan.CrossedDefectsEquivalent U V)
@@ -363,7 +360,6 @@ theorem proposition4_2_compact_nonacute_separable {H : Type v}
 ambient scope.** -/
 theorem proposition4_2_compact_nonacute_real_separable {E : Type v}
     [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
-    
     (U V : Submodule ℝ E) [U.HasOrthogonalProjection] [V.HasOrthogonalProjection]
     (hcompact : IsCompactOperator (TauCeti.principalSineOperator U V))
     (hcrossed : DavisKahan.CrossedDefectsEquivalent U V)

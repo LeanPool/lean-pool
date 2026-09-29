@@ -114,7 +114,8 @@ theorem approximationNumberEnergy_ne_top_sub
     (hB : approximationNumberEnergy B ≠ ⊤) :
     approximationNumberEnergy (A - B) ≠ ⊤ := by
   rw [sub_eq_add_neg]
-  exact approximationNumberEnergy_ne_top_add_complex hA ((approximationNumberEnergy_ne_top_neg_iff B).2 hB)
+  exact approximationNumberEnergy_ne_top_add_complex hA
+    ((approximationNumberEnergy_ne_top_neg_iff B).2 hB)
 
 /-- The canonical tensor respects subtraction. -/
 theorem hilbertSchmidtTensor_sub

@@ -232,7 +232,8 @@ theorem schurUpperInv_apply
     neg_apply, ContinuousLinearMap.comp_apply,
     zero_add, sub_eq_add_neg]
 
-omit [NormedAddCommGroup E0] [InnerProductSpace ℂ E0] [CompleteSpace E0] [NormedAddCommGroup E1] [InnerProductSpace ℂ E1] [CompleteSpace E1] in
+omit [NormedAddCommGroup E0] [InnerProductSpace ℂ E0] [CompleteSpace E0]
+  [NormedAddCommGroup E1] [InnerProductSpace ℂ E1] [CompleteSpace E1] in
 /-- Reconstruct a direct-sum vector from its two coordinates. -/
 theorem rectangularDirectSum_eta (x : WithLp 2 (E0 × E1)) :
     WithLp.toLp 2 (WithLp.fst x, WithLp.snd x) = x := by

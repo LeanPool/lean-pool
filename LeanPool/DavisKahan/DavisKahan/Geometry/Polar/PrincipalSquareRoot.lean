@@ -296,7 +296,8 @@ private theorem principalSquareRoot_sum_eq_modulus (T : H →L[ℂ] H)
         = (spectraReflectionProduct U V + 1) + (star (spectraReflectionProduct U V) + 1) := by
           abel
       _ = (spectraCanonicalIntertwiner U V + spectraCanonicalIntertwiner U V)
-            + (star (spectraCanonicalIntertwiner U V) + star (spectraCanonicalIntertwiner U V)) := by
+            + (star (spectraCanonicalIntertwiner U V) + star
+              (spectraCanonicalIntertwiner U V)) := by
           rw [hG, hstarG]
       _ = (spectraCanonicalIntertwiner U V + star (spectraCanonicalIntertwiner U V))
             + (spectraCanonicalIntertwiner U V + star (spectraCanonicalIntertwiner U V)) := by
@@ -357,7 +358,8 @@ theorem proposition3_3_principalSquareRoot_converse
   have hkey : T + star T = A + A := principalSquareRoot_sum_eq_modulus U V T hroot
   -- (3) T * A = S
   have hTA : T * A = spectraCanonicalIntertwiner U V := by
-    have h1 : T * (T + star T) = spectraCanonicalIntertwiner U V + spectraCanonicalIntertwiner U V := by
+    have h1 : T * (T + star T) = spectraCanonicalIntertwiner U V +
+      spectraCanonicalIntertwiner U V := by
       rw [mul_add, hroot.square_eq, hTsT,
         spectraCanonicalIntertwiner_add_self_eq_one_add_reflectionProduct U V]
       abel

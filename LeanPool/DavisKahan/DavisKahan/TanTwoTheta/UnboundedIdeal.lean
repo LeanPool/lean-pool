@@ -61,7 +61,6 @@ rectangular ideal membership and introduces only the quarter-angle cosine
 denominator in the gauge. -/
 theorem tanTwoThetaIdealBlock_mem_and_gauge_le
     (N : TauCeti.SymmetricOperatorIdealFamily.{0, v} ℂ)
-    
     (U V : Submodule ℂ H)
     [U.HasOrthogonalProjection] [V.HasOrthogonalProjection]
     (hquarter : IsQuarterAcute U V)

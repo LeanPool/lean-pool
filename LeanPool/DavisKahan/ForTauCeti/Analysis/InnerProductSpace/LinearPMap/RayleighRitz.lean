@@ -556,7 +556,7 @@ theorem finrank_le_of_le_specRange_Iic
     (hCoercive : ∀ x : A.domain, (x : H) ∈ Kᗮ →
       β * ‖(x : H)‖ ^ 2 ≤ (⟪A x, (x : H)⟫_ℂ).re)
     (hdom : ∀ x ∈ specRange hA (Set.Iic c) measurableSet_Iic, x ∈ A.domain)
-    {W : Submodule ℂ H} 
+    {W : Submodule ℂ H}
     (hW : W ≤ specRange hA (Set.Iic c) measurableSet_Iic) :
     Module.finrank ℂ W ≤ Module.finrank ℂ K := by
   classical

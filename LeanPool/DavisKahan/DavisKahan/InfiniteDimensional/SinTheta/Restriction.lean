@@ -227,7 +227,6 @@ omit [CompleteSpace E] in
 theorem hybridGap_restrictions
     {A B : E →L[𝕜] E}
     {U V : Submodule 𝕜 E}
-     
     (_hA : A.IsSymmetric) (_hB : B.IsSymmetric)
     (hU : A.Reduces U) (hV : B.Reduces V)
     {d : ℝ} (hgap : HybridGap A B U V d) :
@@ -251,7 +250,6 @@ rectangular ideal theorem. -/
 theorem intervalExteriorSeparated_restrictions
     {A B : E →L[𝕜] E}
     {U V : Submodule 𝕜 E}
-     
     (_hA : A.IsSymmetric) (_hB : B.IsSymmetric)
     (hU : A.Reduces U) (hV : B.Reduces V)
     {left right d : ℝ}

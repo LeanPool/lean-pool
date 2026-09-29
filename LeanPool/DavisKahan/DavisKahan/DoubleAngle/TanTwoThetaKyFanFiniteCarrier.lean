@@ -440,7 +440,8 @@ theorem sum_absDoubleAngleTangent_le_of_finiteDimensional_invariantSubspace
       fun n _ _ => approximationSingularValue_nonneg n H
   -- apply the branch-free finite theorem on the carrier
   have hfin := sum_absDoubleAngleTangent_le
-    (compression_isSymmetric M A hA) (compression_isSymmetric M H hH) hAU' hHU' hHUperp' hTmem' hTzero'
+    (compression_isSymmetric M A hA) (compression_isSymmetric M H hH) hAU' hHU'
+      hHUperp' hTmem' hTzero'
     hUb' hUa' hinv' hab S'
   rw [hLHS]
   calc (b - a) * ∑ x ∈ S',

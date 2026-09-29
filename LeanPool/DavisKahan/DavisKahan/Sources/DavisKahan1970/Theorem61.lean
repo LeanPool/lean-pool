@@ -318,7 +318,8 @@ theorem theorem6_2_complex
       (sectionSixSinThetaBlock E₀ F₁ hframe hε))
     (hR : approximationNumberEnergy R ≠ ⊤) :
     approximationNumberEnergy S.operator ≠ ⊤ ∧
-      δ * ε * ContinuousLinearMap.hilbertSchmidtNorm S.operator ≤ ContinuousLinearMap.hilbertSchmidtNorm R := by
+      δ * ε * ContinuousLinearMap.hilbertSchmidtNorm S.operator ≤
+        ContinuousLinearMap.hilbertSchmidtNorm R := by
   let P : Theorem62Data (E := E) (F := F) (G := G) (H := H) :=
     { data := sectionSixData A A₀ Λ₁ E₀ F₀ F₁ R htrial hexact
       exactMap := F₀
@@ -373,7 +374,8 @@ theorem theorem6_2_real
       (sectionSixSinThetaBlockReal E₀ F₁ hframe hε))
     (hR : approximationNumberEnergy R ≠ ⊤) :
     approximationNumberEnergy S.operator ≠ ⊤ ∧
-      δ * ε * ContinuousLinearMap.hilbertSchmidtNorm S.operator ≤ ContinuousLinearMap.hilbertSchmidtNorm R := by
+      δ * ε * ContinuousLinearMap.hilbertSchmidtNorm S.operator ≤
+        ContinuousLinearMap.hilbertSchmidtNorm R := by
   let P : RealTheorem62Data (E := E) (F := F) (G := G) (H := H) :=
     { data := sectionSixData A A₀ Λ₁ E₀ F₀ F₁ R htrial hexact
       exactMap := F₀

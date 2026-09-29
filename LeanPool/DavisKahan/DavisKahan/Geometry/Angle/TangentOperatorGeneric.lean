@@ -190,7 +190,8 @@ variable {F : Type v} [NormedAddCommGroup F] [InnerProductSpace ℂ F] [Complete
 variable (U V : Submodule ℂ F) [U.HasOrthogonalProjection] [V.HasOrthogonalProjection]
 
 @[simp] theorem tanAngleOperator_complex : tanAngleOperator U V = tanAngleOperatorC U V := rfl
-@[simp] theorem tanTwoAngleOperator_complex : tanTwoAngleOperator U V = tanTwoAngleOperatorC U V := rfl
+@[simp] theorem tanTwoAngleOperator_complex : tanTwoAngleOperator U V =
+  tanTwoAngleOperatorC U V := rfl
 @[simp] theorem absTanTwoAngleOperator_complex :
     absTanTwoAngleOperator U V = absTanTwoAngleOperatorC U V := rfl
 end Complex

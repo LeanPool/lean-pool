@@ -49,7 +49,6 @@ variable {Hspace : Type v} [NormedAddCommGroup Hspace]
 to the real spectrum. -/
 theorem spectralDistance_of_subset
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
-    
     (T : E →L[ℂ] E) {S : Set ℝ}
     (hT : realSpectrum T ⊆ S)
     (z : ℂ) (delta : ℝ)

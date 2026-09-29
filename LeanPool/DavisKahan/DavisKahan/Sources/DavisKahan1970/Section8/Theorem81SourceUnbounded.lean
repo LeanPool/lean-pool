@@ -144,7 +144,6 @@ own blocks, at unbounded ambient scope over `ℂ`.**
 the source writes them.  The hypotheses are the `tan 2θ` theorem's, likewise on
 the blocks `A₀`, `A₁`. -/
 theorem theorem8_1_maximalAngle_le_iff_blockPlacement_unbounded_complex
-    
     (hA : IsSelfAdjoint A) (hH : Hop.IsSymmetric)
     (hPred : TauCeti.LinearPMap.ReducesSubspace A P)
     (hPlow : TauCeti.LinearPMap.SemiboundedAbove
@@ -177,7 +176,6 @@ blocks, at unbounded ambient scope over `ℂ`.**
 properties."  The witness is the spectral projector of `A + H` on the side of
 `α`, but the statement is the existential the source asserts. -/
 theorem theorem8_1_exists_branch_blockPlacement_unbounded_complex
-    
     (hA : IsSelfAdjoint A) (hH : Hop.IsSymmetric)
     (hPred : TauCeti.LinearPMap.ReducesSubspace A P)
     (hPlow : TauCeti.LinearPMap.SemiboundedAbove
@@ -299,7 +297,6 @@ block `P_{Qᗮ}`.  A `_`-prefixed binder is a hypothesis Davis and Kahan print
 and this particular inequality does not consume; it is carried so that the Lean
 context is the source's. -/
 theorem theorem8_1_upperCompressionRepulsion_sourceExact_unbounded_complex
-    
     (_hA : IsSelfAdjoint A) (_hH : Hop.IsSymmetric)
     (hPred : TauCeti.LinearPMap.ReducesSubspace A P)
     (_hPlow : TauCeti.LinearPMap.SemiboundedAbove
@@ -333,7 +330,6 @@ cosine block `P_Q`.  A `_`-prefixed binder is a hypothesis Davis and Kahan
 print and this particular inequality does not consume; it is carried so that the
 Lean context is the source's. -/
 theorem theorem8_1_lowerCompressionRepulsion_sourceExact_unbounded_complex
-    
     (_hA : IsSelfAdjoint A) (_hH : Hop.IsSymmetric)
     (hPred : TauCeti.LinearPMap.ReducesSubspace A P)
     (_hPlow : TauCeti.LinearPMap.SemiboundedAbove
@@ -369,7 +365,6 @@ properties … For this `Q`: (i) …".  This is that sentence: one existential
 carrying the placement, the acute angle, and both compression inequalities, so
 that "this `Q`" is the `Q` the clause just produced and nothing else. -/
 theorem theorem8_1_exists_branch_withCompression_unbounded_complex
-    
     (hA : IsSelfAdjoint A) (hH : Hop.IsSymmetric)
     (hPred : TauCeti.LinearPMap.ReducesSubspace A P)
     (hPlow : TauCeti.LinearPMap.SemiboundedAbove
@@ -454,7 +449,6 @@ theorem semiboundedBelow_reducingRestriction_real_iff
 /-- **Davis--Kahan 1970, Theorem 8.1's printed characterization, on the source's
 own blocks, at unbounded ambient scope over `ℝ`.** -/
 theorem theorem8_1_maximalAngle_le_iff_blockPlacement_unbounded_real
-    
     (hA : IsSelfAdjoint A) (hH : Hop.IsSymmetric)
     (hPred : TauCeti.LinearPMap.ReducesSubspace A P)
     (hPlow : TauCeti.LinearPMap.SemiboundedAbove
@@ -484,7 +478,6 @@ theorem theorem8_1_maximalAngle_le_iff_blockPlacement_unbounded_real
 /-- **Davis--Kahan 1970, Theorem 8.1's existence clause, on the source's own
 blocks, at unbounded ambient scope over `ℝ`.** -/
 theorem theorem8_1_exists_branch_blockPlacement_unbounded_real
-    
     (hA : IsSelfAdjoint A) (hH : Hop.IsSymmetric)
     (hPred : TauCeti.LinearPMap.ReducesSubspace A P)
     (hPlow : TauCeti.LinearPMap.SemiboundedAbove
@@ -594,7 +587,6 @@ As over `ℂ`: `Q` carries the properties the existence half asserts of it, not 
 equality with a Lean construction.  A `_`-prefixed binder is a hypothesis Davis
 and Kahan print and this particular inequality does not consume. -/
 theorem theorem8_1_upperCompressionRepulsion_sourceExact_unbounded_real
-    
     (_hA : IsSelfAdjoint A) (_hH : Hop.IsSymmetric)
     (hPred : TauCeti.LinearPMap.ReducesSubspace A P)
     (_hPlow : TauCeti.LinearPMap.SemiboundedAbove
@@ -626,7 +618,6 @@ theorem theorem8_1_upperCompressionRepulsion_sourceExact_unbounded_real
 scope over `ℝ`.**  The analogous lower-block inequality, read on `P` with the
 cosine block `P_Q`. -/
 theorem theorem8_1_lowerCompressionRepulsion_sourceExact_unbounded_real
-    
     (_hA : IsSelfAdjoint A) (_hH : Hop.IsSymmetric)
     (hPred : TauCeti.LinearPMap.ReducesSubspace A P)
     (_hPlow : TauCeti.LinearPMap.SemiboundedAbove
@@ -658,7 +649,6 @@ theorem theorem8_1_lowerCompressionRepulsion_sourceExact_unbounded_real
 over `ℝ`.**  The source's own word order: one existential carrying the placement,
 the acute angle, and both compression inequalities for the `Q` it produces. -/
 theorem theorem8_1_exists_branch_withCompression_unbounded_real
-    
     (hA : IsSelfAdjoint A) (hH : Hop.IsSymmetric)
     (hPred : TauCeti.LinearPMap.ReducesSubspace A P)
     (hPlow : TauCeti.LinearPMap.SemiboundedAbove

@@ -80,7 +80,8 @@ unrestricted dimension.  Nothing in it mentions a spectral branch.
 The **endpoints** stay pinned at `ℂ`, and for one reason only: they name
 `canonicalLowBranch`, which is the bounded self-adjoint spectral subspace and is
 complex by construction.  Their real companions are not re-elaborations; they
-descend across `complexify` in `DavisKahan/Sources/DavisKahan1970/Section8/Theorem81ApproximationReal.lean`,
+descend across `complexify` in
+`DavisKahan/Sources/DavisKahan1970/Section8/Theorem81ApproximationReal.lean`,
 which is also where the block bridges
 `complexify_upperBlockShift` and friends live.
 -/

@@ -99,7 +99,8 @@ theorem beamRitzCompression_isSelfAdjoint (ε : ℝ) :
 /-- **The Rayleigh--Ritz trial block of the Section 9 example.**  The trial subspace
 is the affine plane, the compression is `beamRitzCompression`, and the residual is
 the part of `(A + ε t)|_Z` orthogonal to `Z`. -/
-noncomputable def beamTrialBlock (ε : ℝ) : BoundedCompressionTrialBlock (beamPerturbed ε) beamTrial where
+noncomputable def beamTrialBlock (ε : ℝ) : BoundedCompressionTrialBlock
+  (beamPerturbed ε) beamTrial where
   domain_le := fun _ hy => beamTrial_le_domain hy
   operator := beamRitzCompression ε
   operator_selfAdjoint := beamRitzCompression_isSelfAdjoint ε

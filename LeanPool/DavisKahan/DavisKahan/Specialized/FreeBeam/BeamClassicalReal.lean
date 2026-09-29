@@ -804,7 +804,8 @@ theorem classicalFreeBeamCoreGraph_has_classical_representative
   have hycont : Continuous ybar := by
     rw [hybar]
     exact gbar.continuous.sub hucont
-  have hyae : ((g - beamCoerciveFormData.resolvent g : BeamL2) : ℝ → ℝ) =ᵐ[unitIocMeasure] ybar := by
+  have hyae : ((g - beamCoerciveFormData.resolvent g : BeamL2) : ℝ → ℝ)
+    =ᵐ[unitIocMeasure] ybar := by
     filter_upwards [Lp.coeFn_sub g (beamCoerciveFormData.resolvent g), hgae, hRae] with
       t hsub hga hRa
     rw [hsub]

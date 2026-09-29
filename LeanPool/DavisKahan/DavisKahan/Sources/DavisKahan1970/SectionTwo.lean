@@ -169,7 +169,7 @@ The caller supplies the mathematics -- semiboundedness of the compression above
 condition (3.5) of Section 3, and the Rayleigh--Ritz residual identity -- and
 nothing else: the structural facts live in `DavisKahan.UnboundedRitzPair` and
 `DavisKahan.ReducingComplement`. -/
-@[deprecated "The unqualified clause names are not uniform; use `tanTheta_ambient_complex`, which says which of the two printed conclusions it is." (since := "2026-09-05")]
+@[deprecated "Use `tanTheta_ambient_complex`." (since := "2026-09-05")]
 alias tanTheta_complex := tanTheta_ambient_unboundedRitz_definedTangent_symmetricNorming_complex
 
 /-- **Davis--Kahan 1970, the `tan Θ` theorem, over `ℝ` -- the AMBIENT clause.**
@@ -181,7 +181,7 @@ The real sibling of `tanTheta_ambient_complex`, on the real ambient tangent
 gauge are all real; only the Appendix Ky Fan passage is proved by
 complexification, at the level where approximation numbers are preserved
 exactly. -/
-@[deprecated "The unqualified clause names are not uniform; use `tanTheta_ambient_real`, which says which of the two printed conclusions it is." (since := "2026-09-05")]
+@[deprecated "Use `tanTheta_ambient_real`." (since := "2026-09-05")]
 alias tanTheta_real := tanTheta_ambient_unboundedRitz_definedTangent_symmetricNorming_real
 
 /-! ## `sin 2Θ` -/
@@ -222,7 +222,7 @@ right-hand side is `2 N(E)` for the full bounded perturbation `E`.  That is a
 different source quantity from the printed residual `R`; that theorem is retained
 as a derived perturbation-norm corollary and is no longer presented as this
 clause. -/
-@[deprecated "The unqualified clause names are not uniform; use `sinTwoTheta_directed_complex`, which says which of the two printed conclusions it is." (since := "2026-09-05")]
+@[deprecated "Use `sinTwoTheta_directed_complex`." (since := "2026-09-05")]
 alias sinTwoTheta_complex := sinTwoTheta_directed_unboundedResidual_symmetricNorming_complex
 
 /-- **Davis--Kahan 1970, the `sin 2Θ` theorem, over `ℝ` -- the DIRECTED clause.**
@@ -234,7 +234,7 @@ The real sibling of `sinTwoTheta_complex`: the printed trial residual on the rig
 `FormBoundedSylvesterGap` for the separation, and the conclusion on the real directed
 double-angle sine of the real pair in the trial-side ordering.  Nothing here is read
 in a complexification. -/
-@[deprecated "The unqualified clause names are not uniform; use `sinTwoTheta_directed_real`, which says which of the two printed conclusions it is." (since := "2026-09-05")]
+@[deprecated "Use `sinTwoTheta_directed_real`." (since := "2026-09-05")]
 alias sinTwoTheta_real := sinTwoTheta_directed_unboundedResidual_symmetricNorming_real
 
 /-! ## The two printed clauses, named
@@ -374,7 +374,7 @@ subspace `V` whose reflection intertwines `A + B`
 
 No pole certificate is asked for: the ordered gap forces the reflection's diagonal
 block to be a unit, and that unit excludes the quarter-turn poles. -/
-@[deprecated "The unqualified clause names are not uniform; use `tanTwoTheta_ambient_complex`, which says which of the two printed conclusions it is." (since := "2026-09-05")]
+@[deprecated "Use `tanTwoTheta_ambient_complex`." (since := "2026-09-05")]
 alias tanTwoTheta_complex := tanTwoTheta_ambient_unbounded_symmetricNorming_complex
 
 /-- **Davis--Kahan 1970, the `tan 2Θ` theorem, over `ℝ` -- the AMBIENT clause.**
@@ -384,7 +384,7 @@ Its directed partner is `tanTwoTheta_directed_real`.
 The real sibling of `tanTwoTheta_ambient_complex`, on the real ambient `|tan 2Θ|`.  The real
 statement is transported from the complex one through the complexification, with
 no loss of constant or norm class and no second analytic proof. -/
-@[deprecated "The unqualified clause names are not uniform; use `tanTwoTheta_ambient_real`, which says which of the two printed conclusions it is." (since := "2026-09-05")]
+@[deprecated "Use `tanTwoTheta_ambient_real`." (since := "2026-09-05")]
 alias tanTwoTheta_real := tanTwoTheta_ambient_unbounded_symmetricNorming_real
 
 /-! ## Fixed-field combined presentations retained for compatibility

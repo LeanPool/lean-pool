@@ -740,7 +740,8 @@ theorem mem_and_gauge_le_reflectionTangentCorner_real
     N.Mem (((b - a) / 2 : ℝ) • reflectionTangentCorner U Z) ∧
       N.gauge (((b - a) / 2 : ℝ) • reflectionTangentCorner U Z) ≤
         N.gauge (reflectionResidualCorner U B) := by
-  refine mem_and_gauge_le_of_all_kyFanApproximationGauge_le N.toFanDominantIdealFamily hBmem fun k => ?_
+  refine mem_and_gauge_le_of_all_kyFanApproximationGauge_le
+    N.toFanDominantIdealFamily hBmem fun k => ?_
   rw [kyFanApproximationGauge_smul, Real.norm_eq_abs,
     abs_of_nonneg (by linarith : (0 : ℝ) ≤ (b - a) / 2)]
   have h := gap_mul_kyFan_reflectionTangentCorner_le_two_mul_kyFan_real hred hB hZsa

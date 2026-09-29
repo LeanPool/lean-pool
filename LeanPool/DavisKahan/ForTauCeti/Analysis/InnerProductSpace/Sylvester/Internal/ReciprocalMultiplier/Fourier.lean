@@ -404,7 +404,7 @@ private theorem measurable_and_norm_le_one_frequencyAtom
         ((((t * (α (Prod.fst ij) - β (Prod.snd ij)) : ℝ) : ℂ) * Complex.I)) :
       Fin m × Fin n → ℂ)‖ ≤ 1 := by
   constructor
-  · apply measurable_pi_lambda
+  · apply Measurable.of_eval
     intro ij
     fun_prop
   · intro t

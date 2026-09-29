@@ -623,7 +623,8 @@ theorem tanTwoTheta_ambient_unbounded_blockRepresentative_derivedReflection_symm
 operator.**
 
 The same theorem as
-  `tanTwoTheta_ambient_unbounded_blockRepresentative_derivedReflection_symmetricNorming_complex`, with the
+`tanTwoTheta_ambient_unbounded_blockRepresentative_derivedReflection_symmetricNorming_complex`,
+with the
 proof's block tangent replaced by the paper's ambient `|tan 2Θ|`.  The two have
 the same approximation numbers -- `unboundedReflectionTangent U J_V = Ξ · J_U`
 with `J_U` a self-adjoint unitary, and `|Ξ| = |tan 2Θ|` -- so every source
@@ -690,7 +691,6 @@ pole-exclusion conjunct does not mention the norm and is read off the Ky Fan
 norming function; the estimate goes through the Fan-dominance bridge with the
 source's constant 2. -/
 theorem tanTwoTheta_ambient_unbounded_normalizedUIN_complex
-    
     (N : NormalizedUnitaryInvariantNorm.{0, u} ℂ)
     {A : G →ₗ.[ℂ] G} {B : G →L[ℂ] G} {a b c : ℝ}
     (V : Submodule ℂ G) [V.HasOrthogonalProjection]
@@ -1033,7 +1033,6 @@ two pole-exclusion conjuncts do not mention the norm, so they are read off the
 Ky Fan norming function, whose ideal is everything; the estimate itself goes
 through the Fan-dominance bridge. -/
 theorem tanTwoTheta_directed_unboundedResidual_normalizedUIN_complex
-    
     (N : NormalizedUnitaryInvariantNorm.{0, _} ℂ)
     {A : Ea →ₗ.[ℂ] Ea} {B : Ea →L[ℂ] Ea} {a b : ℝ}
     (hA : IsSelfAdjoint A) (hred : TauCeti.LinearPMap.ReducesSubspace A U)
