@@ -1,4 +1,71 @@
 projects:
+  - slug: floatlib-binary
+    title: Verified binary floating-point arithmetic and error bounds
+    summary: >-
+      Connects executable binary floating-point arithmetic to exact dyadic and rational
+      specifications and real-valued rounding theory. Proves word and limb backend
+      refinements, half-ULP error bounds for finite arithmetic, normal-range relative
+      error bounds, exact Sterbenz subtraction, dyadic comparison, and bfloat16
+      widening. Retains generic radix and rounding theory, exact dyadics, and reusable
+      integer kernels. This is the binary analysis dependency closure of FloatLib;
+      decimal, posit, quire, dispatch-planner, benchmark, and conformance-test workspaces
+      are outside this import.
+    branch: numerical analysis
+    entry_module: LeanPool.FloatLibBinary
+    authors:
+      - Robert Joseph George
+      - Will Adkisson
+      - Anima Anandkumar
+      - Nicolas Rouquette
+    source:
+      title: 'FloatLib: Verified Floating-Point Arithmetic in Lean'
+      authors:
+        - Robert Joseph George
+        - Will Adkisson
+        - Anima Anandkumar
+      arxiv: '2609.19352'
+      url: https://github.com/lean-dojo/FloatLib/tree/0d91825727839f597fd06b22fdd038ea21480f0c
+      github_repo: lean-dojo/FloatLib
+      commit: 0d91825727839f597fd06b22fdd038ea21480f0c
+    license: MIT
+    status: verified
+    provenance: mix
+    main_declarations:
+      - FloatLib.Floats.Formats.BinaryInterchange.Model.toReal_sub_eq_of_sterbenz
+    main_results:
+      - declaration: FloatLib.Floats.Formats.BinaryInterchange.Model.toReal_sub_eq_of_sterbenz
+        informal: >-
+          For an IEEE binary descriptor and positive finite operands whose real values
+          are within a factor of two, executable subtraction equals their exact real
+          difference. Finiteness of the result is derived, not assumed.
+        source_ref: >-
+          FloatLib Analysis/Sterbenz.lean. The paper was first submitted on
+          2026-09-16 at 19:27:55 UTC; the public Lean Zulip project announcement
+          was posted on 2026-09-22 at 03:50:35 UTC (message 625911729).
+      - declaration: FloatLib.Floats.Formats.BinaryInterchange.Model.abs_toReal_fma_sub_le
+        informal: >-
+          For an IEEE binary descriptor, finite operands, and a finite fused
+          multiply-add result, the absolute error is at most half the ULP of the
+          exact real product-plus-addend in the descriptor's rounding grid.
+        source_ref: FloatLib Analysis/Error.lean, with analogous addition, subtraction, multiplication, division, square-root, and cast bounds.
+      - declaration: FloatLib.Floats.Formats.BinaryInterchange.Model.relativeError_roundAt_le_of_normal
+        informal: >-
+          Nearest-even rounding of a nonzero real in the normal range has relative
+          error at most the unit roundoff determined by the descriptor's precision.
+          This real rounding grid has no upper exponent bound.
+        source_ref: >-
+          FloatLib Analysis/Error.lean and its generic rounding theory, adapting
+          Sylvie Boldo and Guillaume Melquiond, Flocq: A Unified Library for Proving
+          Floating-Point Algorithms in Coq (doi:10.1109/ARITH.2011.40).
+    tags:
+      - floating-point
+      - numerical-analysis
+      - rounding
+      - error-bounds
+      - verified-arithmetic
+    msc:
+      - 65G50
+      - 68V15
   - slug: moving-sofa
     title: Optimality of Gerver's sofa
     summary: >-
