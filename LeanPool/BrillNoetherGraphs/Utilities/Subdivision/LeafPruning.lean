@@ -36,6 +36,7 @@ abbrev Remaining := {x : G.V // x ≠ leaf}
 
 /-! ## The unique neighbor of a degree-one vertex -/
 
+/-- The unique neighbor and edge-count facts certified by a degree-one leaf. -/
 structure LeafData where
   /-- The unique neighbor of the leaf, joined to it by exactly one edge occurrence. -/
   root : G.V

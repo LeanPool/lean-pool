@@ -205,7 +205,7 @@ theorem sum_unmarked_eq_sum_of_marked_zero
   have hSplit := sum_unmarked_add_marked H y E
   linarith
 
-@[simp] theorem deg_wedgeLiftLeftDivisor
+theorem deg_wedgeLiftLeftDivisor
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) (D : CFDiv G) :
     CFDiv.degree (wedgeLiftLeftDivisor G H x y D) = CFDiv.degree D := by
   change CFDiv.degree (wedgeAddDivisor G H x y D 0) = CFDiv.degree D
@@ -237,7 +237,7 @@ theorem effective_wedgeAddDivisor
       rw [wedgeAddDivisor_right]
       exact hE b.1
 
-@[simp] theorem effective_wedgeLiftLeftDivisor_iff
+theorem effective_wedgeLiftLeftDivisor_iff
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) (D : CFDiv G) :
     effective (wedgeLiftLeftDivisor G H x y D) ↔ effective D := by
   constructor
@@ -279,13 +279,13 @@ def wedgeScript (G : CFGraph.{u}) (H : CFGraph.{v})
 /- The raw edge construction preserves the two input edge multisets.  The
 following cardinality lemma is deliberately stated before the more refined
 edge-multiplicity transport lemmas, which will use the same maps. -/
-@[simp] theorem vertexWedge_edge_card
+theorem vertexWedge_edge_card
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) :
     (vertexWedge G H x y).edges.card = G.edges.card + H.edges.card := by
   simp [vertexWedge]
 
 /-- Identifying one vertex reduces the total vertex count by one. -/
-@[simp] theorem vertexWedge_vertex_card
+theorem vertexWedge_vertex_card
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) :
     Fintype.card (vertexWedge G H x y).V =
       Fintype.card G.V + Fintype.card H.V - 1 := by
@@ -610,7 +610,7 @@ theorem prin_wedgeScript
       rfl
 
 /-- A constant firing script has zero principal divisor. -/
-@[simp] theorem prin_const_script (G : CFGraph.{u}) (c : ℤ) :
+theorem prin_const_script (G : CFGraph.{u}) (c : ℤ) :
     prin G (fun _ => c) = 0 := by
   funext v
   simp [prin]

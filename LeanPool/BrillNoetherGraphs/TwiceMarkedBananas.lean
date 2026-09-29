@@ -812,7 +812,7 @@ Exact: `Bananas.Submodular` / `.AllSubmodular`
 /- **Definition 2.10** (`def-EA`) — extended affine symmetric group.
 
 > "A permutation is a bijection τ:ℤ→ℤ. Given k ∈ ℕ, permutations satisfying
-> τ(n+k) = τ(n)+k for all n ∈ ℤ form a group denoted Ẽa_k, referred to as
+> τ(n+k) = τ(n)+k for all n ∈ ℤ form a group denoted \widetilde{E}a_k, referred to as
 > the extended affine symmetric group."
 
 Exact, modelled as a predicate rather than a bundled group:
@@ -837,7 +837,7 @@ existence half. Section 2.
 
 > "A divisor D on (G,u,v) has a well-defined transmission permutation if and
 > only if it is submodular. If (G,u,v) has torsion order k, or more
-> generally if ku ∼ kv, then τ_D ∈ Ẽa_k."
+> generally if ku ∼ kv, then τ_D ∈ \widetilde{E}a_k."
 
 Partial: only the "all divisors submodular + torsion witness ⇒ affine
 transmission permutation exists" direction, and only for banana graphs; the
@@ -2165,7 +2165,7 @@ hypothesis `hInvolutive` rather than the paper's `φ(D)+D∼K_G+u+v` — Lemma
 5.3(1) supplies it from a marked-point automorphism, so the paper's literal
 statement is the (unbundled) composite of that lemma with this one. Two
 further hypotheses are made explicit: `0 < k` and `IsKAffine k tau`
-(the paper's `τ_D ∈ Ẽa_k`). -/
+(the paper's `τ_D ∈ \widetilde{E}a_k`). -/
 theorem _root_.Bananas.TwiceMarkedBananas.s5_prop5_5
     {M : TwiceMarked} {D : CFDiv M.graph} {tau : ℤ → ℤ} {k : ℕ}
     (hk : 0 < k) (hconn : graphConnected M.graph)
@@ -2495,7 +2495,7 @@ theorem s6_lem6_12
 
 /-- **Proposition 6.13** (`prop:sciInvStar`). Section 6.
 
-> "Suppose α ∈ Asp and β ∈ Ẽa_k satisfy k > sci(α) + inv_k(β). Then
+> "Suppose α ∈ Asp and β ∈ \widetilde{E}a_k satisfy k > sci(α) + inv_k(β). Then
 > sci(α ⋆ β) ≤ sci(α) + inv_k(β)."
 
 Literal match, with the affine Coxeter reduction discharged

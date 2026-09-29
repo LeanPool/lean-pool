@@ -90,7 +90,7 @@ theorem inducedSubgraphInclusion_injective (G : CFGraph.{u}) (S : Finset G.V)
   intro x y hxy
   exact Subtype.ext hxy
 
-@[simp] theorem inducedSubgraph_edge_card (G : CFGraph.{u}) (S : Finset G.V)
+theorem inducedSubgraph_edge_card (G : CFGraph.{u}) (S : Finset G.V)
     (hS : S.Nonempty) :
     (inducedSubgraph G S hS).edges.card = (inducedEdges G S).card := by
   simp [inducedSubgraph]
@@ -173,7 +173,7 @@ private theorem filter_inducedEdges_endpoints (G : CFGraph.{u}) (S : Finset G.V)
                   edge = (x.val, y.val) ∨ edge = (y.val, x.val)))
     _ = _ := by rw [filter_inducedEdges_endpoints]
 
-@[simp] theorem inducedSubgraph_vertex_card (G : CFGraph.{u}) (S : Finset G.V)
+theorem inducedSubgraph_vertex_card (G : CFGraph.{u}) (S : Finset G.V)
     (hS : S.Nonempty) :
     Fintype.card (inducedSubgraph G S hS).V = S.card := by
   exact Fintype.card_coe S

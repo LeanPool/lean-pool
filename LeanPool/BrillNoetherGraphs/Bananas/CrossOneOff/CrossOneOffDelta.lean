@@ -103,20 +103,20 @@ private theorem linearEquiv_sub {G : CFGraph} {A B C D : CFDiv G}
     linearEquiv G (A - C) (B - D) := by
   unfold linearEquiv at h₁ h₂ ⊢
   have h := (principalDivisors G).sub_mem h₁ h₂
-  convert h using 1 ; abel
+  convert h using 1; abel
 
 private theorem linearEquiv_add {G : CFGraph} {A B C D : CFDiv G}
     (h₁ : linearEquiv G A B) (h₂ : linearEquiv G C D) :
     linearEquiv G (A + C) (B + D) := by
   unfold linearEquiv at h₁ h₂ ⊢
   have h := (principalDivisors G).add_mem h₁ h₂
-  convert h using 1 ; abel
+  convert h using 1; abel
 
 private theorem linearEquiv_add_common {G : CFGraph} {A B : CFDiv G}
     (h : linearEquiv G A B) (C : CFDiv G) :
     linearEquiv G (C + A) (C + B) := by
   unfold linearEquiv at h ⊢
-  convert h using 1 ; abel
+  convert h using 1; abel
 
 /-- Paper Corollary 2.25(3), first rank-difference calculation, in normalized
 coordinates. -/

@@ -105,7 +105,7 @@ noncomputable def bananaDisplayedQuotientEquivClassRange
   AddEquiv.ofBijective (bananaDisplayedClassRangeHom B)
     (bananaDisplayedClassRangeHom_bijective B)
 
-@[simp] theorem bananaDisplayedQuotientEquivClassRange_mk
+theorem bananaDisplayedQuotientEquivClassRange_mk
     {g : ℕ} (B : Banana g) (a : Fin (g + 1) → ℤ) :
     bananaDisplayedQuotientEquivClassRange B
         (QuotientAddGroup.mk' (bananaDisplayedRelations B) a) =

@@ -48,7 +48,7 @@ private theorem linearEquiv_sub {G : CFGraph} {A B C D : CFDiv G}
     linearEquiv G (A - C) (B - D) := by
   unfold linearEquiv at h₁ h₂ ⊢
   have h := (principalDivisors G).sub_mem h₁ h₂
-  convert h using 1 ; abel
+  convert h using 1; abel
 
 /-- A multiple of the first off-endpoint mark can be replaced by one chip at
 the corresponding coordinate and the remaining chips at the left endpoint.
@@ -63,8 +63,8 @@ theorem crossOneOff_first_mark_multiple
         oneChip (strandVertex B α ⟨a, by omega⟩)) := by
   have h := strand_prefix_linearEquiv B α ⟨a, by omega⟩
   unfold linearEquiv at h ⊢
-  convert h using 1 ;
-    simp only [smul_sub   ] ;
+  convert h using 1;
+    simp only [smul_sub   ];
     ring
 
 /-- Deleting the first off-endpoint mark from a chip farther along the same
@@ -84,10 +84,10 @@ theorem crossOneOff_sub_first_mark_shift
   have hStepSymm := hStep.symm
   have hpPred : ((p - 1 : ℕ) : ℤ) = (p : ℤ) - 1 := by omega
   unfold linearEquiv at hStepSymm ⊢
-  convert hStepSymm using 1 ;
-    ext z ;
-    simp only [smul_sub, Pi.smul_apply, Pi.sub_apply ] ;
-    rw [hpPred] ;
+  convert hStepSymm using 1;
+    ext z;
+    simp only [smul_sub, Pi.smul_apply, Pi.sub_apply ];
+    rw [hpPred];
     ring
 
 /-- Deleting the second off-endpoint mark from a chip earlier on the same
@@ -137,7 +137,7 @@ theorem crossOneOff_sub_second_mark_shift
     simp
   have h := hLeft.symm.trans (hScalars.trans hRight)
   unfold linearEquiv at h ⊢
-  convert h using 1 ; abel
+  convert h using 1; abel
 
 /-- If `b = mN+r`, a multiple of the second off-endpoint mark has the
 canonical endpoint-plus-residue representative.  This is the common
@@ -181,11 +181,11 @@ theorem crossOneOff_second_mark_multiple
           (oneChip (rightEndpoint B) - oneChip (leftEndpoint B)) -
         (oneChip (strandVertex B β ⟨r, by omega⟩) -
           oneChip (leftEndpoint B))) := by
-    convert hCombined using 1 ;
-      ext z ;
+    convert hCombined using 1;
+      ext z;
       simp only [e, smul_sub, smul_smul, Pi.smul_apply, Pi.sub_apply,
-        ] ;
-      rw [hCoefficient] ;
+        ];
+      rw [hCoefficient];
       ring
   have hDifference : linearEquiv B.graph
       ((b : ℤ) •
@@ -198,8 +198,8 @@ theorem crossOneOff_second_mark_multiple
           oneChip (leftEndpoint B))) := by
     exact hPenultimateScaled.symm.trans hMiddle
   unfold linearEquiv at hDifference ⊢
-  convert hDifference using 1 ;
-    simp only [smul_sub   ] ;
+  convert hDifference using 1;
+    simp only [smul_sub   ];
     ring
 
 /-- The common corrected firing identity for the cross-one-off marking. -/
@@ -223,9 +223,9 @@ theorem crossOneOff_firing_identity
   have hSecond := crossOneOff_second_mark_multiple B β b m r hb hr
   unfold linearEquiv at hFirst hSecond ⊢
   have h := (principalDivisors B.graph).sub_mem hFirst hSecond
-  convert h using 1 ;
-    ext z ;
-    simp only [Pi.smul_apply, Pi.sub_apply, Pi.add_apply] ;
+  convert h using 1;
+    ext z;
+    simp only [Pi.smul_apply, Pi.sub_apply, Pi.add_apply];
     ring
 
 /-! ## The corrected residue cases of Lemma 4.30 -/
@@ -250,10 +250,10 @@ theorem crossOneOff_firing_multiple
     (by simp [hb]) (by omega)
   rw [strandVertex_zero B β] at h
   unfold linearEquiv at h ⊢
-  convert h using 1 ;
-    ext z ;
-    simp only [Pi.smul_apply, Pi.sub_apply, Pi.add_apply] ;
-    push_cast ;
+  convert h using 1;
+    ext z;
+    simp only [Pi.smul_apply, Pi.sub_apply, Pi.add_apply];
+    push_cast;
     ring
 
 /-- Lemma 4.30(2), in the unambiguous convention `b+1 = mN`.  The
@@ -295,11 +295,11 @@ theorem crossOneOff_firing_complement_residue
       exact_mod_cast hb
     omega
   unfold linearEquiv at h ⊢
-  convert h using 1 ;
-    ext z ;
-    simp only [Pi.smul_apply, Pi.sub_apply, Pi.add_apply] ;
-    push_cast ;
-    rw [hmCast, hbCast] ;
+  convert h using 1;
+    ext z;
+    simp only [Pi.smul_apply, Pi.sub_apply, Pi.add_apply];
+    push_cast;
+    rw [hmCast, hbCast];
     ring
 
 /-- Corrected Lemma 4.30(3), using the positive remainder convention
@@ -329,10 +329,10 @@ theorem crossOneOff_firing_positive_residue
       (g : ℤ) + 2 * (m : ℤ) + 2 - (b : ℤ) := by
     omega
   unfold linearEquiv at h ⊢
-  convert h using 1 ;
-    ext z ;
-    simp only [Pi.smul_apply, Pi.sub_apply, Pi.add_apply] ;
-    rw [hCandidateCast] ;
+  convert h using 1;
+    ext z;
+    simp only [Pi.smul_apply, Pi.sub_apply, Pi.add_apply];
+    rw [hCandidateCast];
     ring
 
 end Bananas

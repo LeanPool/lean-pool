@@ -65,7 +65,7 @@ theorem youngDiagram_rowLens_sum_eq_card (lambda : YoungDiagram) :
     _ = lambda.cells.card := congrArg Finset.card hCells
 
 /-- Transposition preserves the number of boxes. -/
-@[simp] theorem youngDiagram_transpose_card (lambda : YoungDiagram) :
+theorem youngDiagram_transpose_card (lambda : YoungDiagram) :
     lambda.transpose.card = lambda.card := by
   change lambda.transpose.cells.card = lambda.cells.card
   rw [YoungDiagram.transpose]

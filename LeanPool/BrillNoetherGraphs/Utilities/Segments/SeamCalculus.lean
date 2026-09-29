@@ -686,7 +686,7 @@ theorem not_hasGap_of_junction_winnable (hconn : graphConnected H) (C : CFDiv H)
   exact absurd (hgap _ _ ⟨f, heff, rfl⟩
     (isDisplacement_succ_of_junction_winnable C x y hxy m heff hred hjun)) (lt_irrefl _)
 
-/-- **Theorem C ⟺ Theorem C′ (gap rigidity is an equivalence).**  For a winnable
+/-- **Theorem C iff Theorem C′ (gap rigidity is an equivalence).**  For a winnable
 `m`-twist on a connected graph, the junction `m | m+1` has a gap exactly when
 its junction class `ξ_m = [C + m•α - (y)] = [C + (m+1)•α - (x)]` fails to be
 effective. -/

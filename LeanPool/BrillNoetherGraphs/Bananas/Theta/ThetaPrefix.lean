@@ -24,7 +24,7 @@ private theorem linear_equiv_add {G : CFGraph} {A B C D : CFDiv G}
     (hA : linearEquiv G A C) (hB : linearEquiv G B D) :
     linearEquiv G (A + B) (C + D) := by
   unfold linearEquiv at hA hB ⊢
-  convert (principalDivisors G).add_mem hA hB using 1 ; abel
+  convert (principalDivisors G).add_mem hA hB using 1; abel
 
 private theorem raw_endpoint_pair_linearEquiv
     {g : ℕ} (B : Banana g) (α : Fin (g + 1)) (i k : B.PathPosition α)
@@ -79,14 +79,14 @@ theorem raw_strand_prefix_linearEquiv
               (oneChip (B.pathVertex α ⟨B.length α, by omega⟩) -
                 oneChip (B.pathVertex α ⟨m, by omega⟩)) := by
             unfold linearEquiv at hPair ⊢
-            convert hPair using 1 ;
+            convert hPair using 1;
               simp [B.pathVertex_length,
-                sub_eq_add_neg] ; abel
+                sub_eq_add_neg]; abel
           have hAdd := linear_equiv_add (ih (by omega)) hStep
           unfold linearEquiv at hAdd ⊢
-          convert hAdd using 1 ;
+          convert hAdd using 1;
             simp [← hLast, sub_eq_add_neg, add_smul,
-              Nat.cast_add] ; abel
+              Nat.cast_add]; abel
         · have hsum : 1 + m < B.length α := by omega
           have hmPos : 0 < m := by omega
           have hmLt : m < B.length α + 1 := by omega
@@ -99,11 +99,11 @@ theorem raw_strand_prefix_linearEquiv
               (oneChip (B.pathVertex α ⟨1 + m, by omega⟩) -
                 oneChip (B.pathVertex α ⟨m, by omega⟩)) := by
             unfold linearEquiv at hSlide ⊢
-            convert hSlide using 1 ; abel
+            convert hSlide using 1; abel
           have hAdd := linear_equiv_add (ih (by omega)) hStep
           unfold linearEquiv at hAdd ⊢
-          convert hAdd using 1 ;
-            simp [sub_eq_add_neg, add_smul, Nat.cast_add] ; abel_nf
+          convert hAdd using 1;
+            simp [sub_eq_add_neg, add_smul, Nat.cast_add]; abel_nf
   exact aux n hn
 
 /-! Paper source: the prefix firing calculation used in `eq:multDiffMarkedPts`.
@@ -172,14 +172,14 @@ private theorem raw_strand_prefix_from_length_linearEquiv
               (oneChip (B.pathVertex α ⟨0, by omega⟩) -
                 oneChip (B.pathVertex α ⟨1, by omega⟩)) := by
             unfold linearEquiv at hPair ⊢
-            convert hPair using 1 ;
+            convert hPair using 1;
               simp [B.pathVertex_length,
-                sub_eq_add_neg] ; abel
+                sub_eq_add_neg]; abel
           have hAdd := linear_equiv_add (ih (by omega)) hStep
           unfold linearEquiv at hAdd ⊢
-          convert hAdd using 1 ;
+          convert hAdd using 1;
             simp [← hLast, sub_eq_add_neg, add_smul,
-              Nat.cast_add] ; abel
+              Nat.cast_add]; abel
         · have hsum : B.length α < (B.length α - 1) +
               (B.length α - r) := by omega
           have hrpos : 0 < r := by omega
@@ -196,13 +196,13 @@ private theorem raw_strand_prefix_from_length_linearEquiv
             unfold linearEquiv at hSlide ⊢
             have hidx : B.length α - 1 + (B.length α - r) - B.length α =
                 B.length α - r - 1 := by omega
-            convert hSlide using 1 ; simp [hidx] ; abel_nf
+            convert hSlide using 1; simp [hidx]; abel_nf
           have hAdd := linear_equiv_add (ih (by omega)) hStep
           unfold linearEquiv at hAdd ⊢
           have hidx : B.length α - (r + 1) = B.length α - r - 1 := by omega
-          convert hAdd using 1 ;
+          convert hAdd using 1;
             simp [hidx, sub_eq_add_neg, add_smul,
-              Nat.cast_add] ; abel
+              Nat.cast_add]; abel
   exact aux m hm
 
 theorem strand_prefix_linearEquiv_of_tail_nonzero

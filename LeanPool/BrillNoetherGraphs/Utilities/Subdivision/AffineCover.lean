@@ -58,14 +58,15 @@ def allFin {k : ℕ} (test : Fin k → Bool) : Bool :=
 /-- Boolean universal quantification over an arbitrary finite set.  `Finset.fold`
 keeps kernel evaluation proof-free even when the element type itself is a
 finite combinatorial object such as `Finset (Fin n)`. -/
-def allFinset {α : Type*} [DecidableEq α]
+def allFinset {α : Type*}
     (elements : Finset α) (test : α → Bool) : Bool :=
   elements.fold (fun left right => left && right) true test
 
-@[simp] theorem allFinset_eq_true_iff {α : Type*} [DecidableEq α]
+@[simp] theorem allFinset_eq_true_iff {α : Type*}
     (elements : Finset α) (test : α → Bool) :
     allFinset elements test = true ↔
       ∀ element ∈ elements, test element = true := by
+  classical
   induction elements using Finset.induction_on with
   | empty => simp [allFinset]
   | @insert element elements hNotMem inductionHypothesis =>

@@ -40,6 +40,7 @@ inductive DecisionTreeData (m : ℕ) where
 
 namespace DecisionTreeData
 
+/-- Validity of a decision tree relative to the affine constraints active at this node. -/
 def ValidActive {m : ℕ}
     (cones : List (List (AffineForm m)))
     (active : List (AffineForm m)) : DecisionTreeData m → Prop
@@ -51,6 +52,7 @@ def ValidActive {m : ℕ}
       ValidActive cones (active ++ [form]) holds ∧
         ValidActive cones (active ++ [form.violation]) fails
 
+/-- Check active affine constraints at each decision-tree node using Boolean arithmetic. -/
 def checkActive {m : ℕ}
     (cones : List (List (AffineForm m)))
     (active : List (AffineForm m)) : DecisionTreeData m → Bool

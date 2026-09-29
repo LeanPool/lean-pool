@@ -143,7 +143,7 @@ theorem graph_connected_of_factors
 
 /-- Brill--Noether existence on the ambient graph is exactly existence on the
 extracted wedge. -/
-@[simp] theorem BNExists_iff (r d : ℤ) :
+theorem BNExists_iff (r d : ℤ) :
     BNExists K r d ↔
       BNExists
         (vertexWedge cut.leftGraph cut.rightGraph cut.leftGlue cut.rightGlue)

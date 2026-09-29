@@ -64,7 +64,7 @@ theorem swappedLength_pos (length : Fin 9 → ℕ)
   intro edge
   exact hLength (slotSwap.symm edge)
 
-@[simp] theorem swappedLength_slotSwap (length : Fin 9 → ℕ)
+theorem swappedLength_slotSwap (length : Fin 9 → ℕ)
     (edge : Fin 9) :
     swappedLength length (slotSwap edge) = length edge := by
   unfold swappedLength

@@ -289,11 +289,11 @@ theorem card_class :
     Fintype.card d.Class = (Finset.univ.image d.rep).card := by
   rw [d.image_rep_eq_filter, Fintype.card_subtype]
 
-@[simp] theorem card_edges :
+theorem card_edges :
     d.graph.edges.card = ∑ e : Fin p, d.length e := by
   simp [graph, Fintype.card_sigma]
 
-@[simp] theorem card_vertices :
+theorem card_vertices :
     Fintype.card d.graph.V
       = (Finset.univ.image d.rep).card + ∑ e : Fin p, (d.length e - 1) := by
   simp [graph, Vertex, Interior, Fintype.card_sigma, d.card_class]

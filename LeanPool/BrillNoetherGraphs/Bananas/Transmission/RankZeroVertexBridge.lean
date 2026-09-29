@@ -80,14 +80,14 @@ theorem exists_qReduced_vertex_rep_of_rankDelta_neg_genus_two
     have hZero : linearEquiv M.graph
         (D - oneChip M.u - oneChip M.v) 0 := by
       unfold linearEquiv at hUE ⊢
-      convert hUE using 1 ; abel
+      convert hUE using 1; abel
     have hRankZero := rank_eq_of_linear_equiv M.graph hZero
     rw [hUV, zero_divisor_rank] at hRankZero
     omega
   · have hShift : linearEquiv M.graph (D - oneChip M.v)
         (oneChip w + oneChip M.u - oneChip M.v) := by
       unfold linearEquiv at hUE ⊢
-      convert hUE using 1 ; abel
+      convert hUE using 1; abel
     rw [← rank_eq_of_linear_equiv M.graph hShift]
     exact hV
 

@@ -66,13 +66,13 @@ abbrev bridgeGraph (G : CFGraph.{u}) (H : CFGraph.{v})
           H.edges.map (fun e => (Sum.inr e.1, Sum.inr e.2))) := rfl
 
 /-- Joining two factors by one bridge adds their edge counts and one. -/
-@[simp] theorem bridgeGraph_edge_card
+theorem bridgeGraph_edge_card
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) :
     (bridgeGraph G H x y).edges.card = G.edges.card + H.edges.card + 1 := by
   simp [bridgeGraph, Nat.add_assoc]
 
 /-- The sum vertex type has the sum of the two factor vertex counts. -/
-@[simp] theorem bridgeGraph_vertex_card
+theorem bridgeGraph_vertex_card
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) :
     Fintype.card (bridgeGraph G H x y).V =
       Fintype.card G.V + Fintype.card H.V := by
@@ -139,7 +139,7 @@ abbrev bridgeGraph (G : CFGraph.{u}) (H : CFGraph.{v})
       Multiset.filter_map, h, hReverse]
 
 /-- The distinguished endpoints are joined by exactly one cross edge. -/
-@[simp] theorem num_edges_bridgeGraph_endpoints
+theorem num_edges_bridgeGraph_endpoints
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) :
     numEdges (bridgeGraph G H x y) (Sum.inl x) (Sum.inr y) = 1 := by
   simp

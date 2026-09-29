@@ -58,7 +58,7 @@ def toGraphIso (equivalence : LaplacianEquiv G H) : CFGraphIso G H where
     (D : CFDiv G) :
     equivalence.toGraphIso.mapDiv D = equivalence.mapDiv D := rfl
 
-@[simp] theorem toGraphIso_mapScript (equivalence : LaplacianEquiv G H)
+theorem toGraphIso_mapScript (equivalence : LaplacianEquiv G H)
     (script : firingScript G) :
     equivalence.toGraphIso.mapScript script = equivalence.mapScript script := rfl
 

@@ -21,8 +21,8 @@ The proof assembles the following results from `chip-firing-with-lean`:
 * `ordiv`, `isAcyclic`, `acyclicWithUniqueSource`, `orientationToConfig`
   (`Orientation.lean:402,221,357,431`) — the definitions.
 * `ordiv_unwinnable` (`Orientation.lean:666`) — acyclic ⟹ `ordiv` unwinnable. This alone is
-  the `⟸` direction, after transporting along `linearEquiv` with `winnable_equiv_winnable`
-  (`Rank.lean:32`).
+  the reverse implication, after transporting along `linearEquiv` with
+  `winnable_equiv_winnable` (`Rank.lean:32`).
 * `config_and_divisor_from_O` (`Orientation.lean:449`) and `div_of_config_of_div`
   (`Config.lean:161`) — together they give, for any acyclic `O` with unique source `q`,
   `(orientationToConfig G O q hO).chips - oneChip q = ordiv G O`

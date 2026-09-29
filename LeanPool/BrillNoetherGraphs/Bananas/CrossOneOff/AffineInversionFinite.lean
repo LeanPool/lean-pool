@@ -38,7 +38,7 @@ theorem IsKAffine.iterate_int {k : ℕ} {τ : ℤ → ℤ}
   refine Int.induction_on q (by simp) ?_ ?_
   · intro n ih
     calc
-      τ (x + (n + 1) * k) = τ ((x + n * k) + k) := by congr 1 ; ring
+      τ (x + (n + 1) * k) = τ ((x + n * k) + k) := by congr 1; ring
       _ = τ (x + n * k) + k := hAffine _
       _ = τ x + (n + 1) * k := by rw [ih]; ring
   · intro n ih

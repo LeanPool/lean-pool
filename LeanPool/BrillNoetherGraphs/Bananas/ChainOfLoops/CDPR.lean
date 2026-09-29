@@ -204,7 +204,7 @@ noncomputable def factor (P : Loop) : KGeneralChainFactor where
     P.factor.marked.graph = P.banana.graph := rfl
 
 /-- Every loop has genus one. -/
-@[simp] theorem genus_factor (P : Loop) : CFGraph.genus P.factor.marked.graph = 1 :=
+theorem genus_factor (P : Loop) : CFGraph.genus P.factor.marked.graph = 1 :=
   P.banana.genus_graph
 
 end Loop

@@ -72,7 +72,7 @@ theorem clampScript_eq_sub_of_le (σ : firingScript G) {c : ℤ} {v : G.V}
     (h : c ≤ σ v) : clampScript σ c v = σ v - c :=
   max_eq_left (sub_nonneg.mpr h)
 
-@[simp] theorem clampScript_at_base (σ : firingScript G) (q : G.V) :
+theorem clampScript_at_base (σ : firingScript G) (q : G.V) :
     clampScript σ (σ q) q = 0 := by
   simp [clampScript]
 

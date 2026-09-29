@@ -41,6 +41,7 @@ namespace ClosedAuto
 decodes them only after verifying two-sided inverses and the endpoint laws.
 The inverse lists are emitted mechanically from the row's permutations. -/
 
+/-- Raw vertex and slot permutation data checked before use as a graph automorphism. -/
 structure AutoData where
   /-- Proposed images of core vertices, decoded modulo the number of vertices. -/
   vertex : List ℕ

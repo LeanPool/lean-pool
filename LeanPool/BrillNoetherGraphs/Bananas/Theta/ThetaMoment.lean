@@ -149,7 +149,7 @@ private theorem interiorMoment_sub
   apply Finset.sum_congr rfl
   intro r hr
   by_cases hvalid : r + 1 < B.length α
-  · simp [hvalid, Pi.sub_apply] ; ring
+  · simp [hvalid, Pi.sub_apply]; ring
   · simp [hvalid]
 
 /- TeX label: `prop-JacBanana` (marked-point moment calculation). -/

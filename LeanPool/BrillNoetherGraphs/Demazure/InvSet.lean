@@ -76,7 +76,7 @@ private lemma not_mem_of_ge (asps : AspSet) {m n : ℤ} (n_le_m : n ≤ m) : ⟨
   intro h
   exact (not_lt_of_ge n_le_m) (asps.directed m n h)
 
-@[simp] private lemma not_mem_self (asps : AspSet) (n : ℤ) : ⟨n, n⟩ ∉ asps :=
+private lemma not_mem_self (asps : AspSet) (n : ℤ) : ⟨n, n⟩ ∉ asps :=
   asps.not_mem_of_ge (le_refl n)
 
 /-- The order on indices after the inversions in `asps` are applied.
@@ -183,11 +183,11 @@ noncomputable abbrev inset (asps : AspSet) (n : ℤ) : Finset ℤ :=
 noncomputable abbrev outset (asps : AspSet) (n : ℤ) : Finset ℤ :=
   (asps.finiteOutdegree n).toFinset
 
-@[simp] lemma mem_inset (asps : AspSet) (n x : ℤ) :
+lemma mem_inset (asps : AspSet) (n x : ℤ) :
     x ∈ asps.inset n ↔ ⟨x, n⟩ ∈ asps := by
   simp only [inset, Set.Finite.mem_toFinset, Set.mem_ofPred_eq, mem_AspSet]
 
-@[simp] lemma mem_outset (asps : AspSet) (n x : ℤ) :
+lemma mem_outset (asps : AspSet) (n x : ℤ) :
     x ∈ asps.outset n ↔ ⟨n, x⟩ ∈ asps := by
   simp only [outset, Set.Finite.mem_toFinset, Set.mem_ofPred_eq, mem_AspSet]
 
@@ -718,11 +718,11 @@ noncomputable def AspPermEquivAspSet :
 @[simp] lemma AspPerm_equiv_AspSet_toFun_snd (τ : AspPerm) :
     (AspPermEquivAspSet τ).2 = τ.χ := rfl
 
-@[simp] lemma inv_set_AspPerm_equiv_AspSet_invFun (asps : AspSet) (χ : ℤ) :
+lemma inv_set_AspPerm_equiv_AspSet_invFun (asps : AspSet) (χ : ℤ) :
     invSet (AspPermEquivAspSet.invFun (asps, χ)) = asps :=
   invSet_of_toAspPerm asps χ
 
-@[simp] lemma chi_AspPerm_equiv_AspSet_invFun (asps : AspSet) (χ : ℤ) :
+lemma chi_AspPerm_equiv_AspSet_invFun (asps : AspSet) (χ : ℤ) :
     (AspPermEquivAspSet.invFun (asps, χ)).χ = χ :=
   chi_of_toAspPerm asps χ
 

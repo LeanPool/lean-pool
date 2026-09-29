@@ -74,7 +74,7 @@ def bananaDiagonalNormalize {g : ℕ} (a : Fin (g + 1) → ℤ)
     bananaDiagonalNormalize a pivot alpha = a alpha - a pivot := by
   simp [bananaDiagonalNormalize, bananaDiagonalRelation]
 
-@[simp] theorem bananaDiagonalNormalize_pivot {g : ℕ}
+theorem bananaDiagonalNormalize_pivot {g : ℕ}
     (a : Fin (g + 1) → ℤ) (pivot : Fin (g + 1)) :
     bananaDiagonalNormalize a pivot pivot = 0 := by
   simp

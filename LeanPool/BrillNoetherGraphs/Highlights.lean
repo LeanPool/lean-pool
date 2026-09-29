@@ -728,7 +728,7 @@ private def loopsOfPositive :
       simp only [loopsOfPositive, List.length_cons]
       rw [ih]
 
-@[simp] private theorem loopsOfPositive_get_top
+private theorem loopsOfPositive_get_top
     (lengths : List (ℕ × ℕ))
     (hpos : ∀ mn ∈ lengths, 0 < mn.1 ∧ 0 < mn.2)
     (i : ℕ) (hi : i < (loopsOfPositive lengths hpos).length)
@@ -744,7 +744,7 @@ private def loopsOfPositive :
           exact ih (fun pair hpair => hpos pair (by simp [hpair])) i
             (by simpa using hi) (by simpa using hi')
 
-@[simp] private theorem loopsOfPositive_get_bot
+private theorem loopsOfPositive_get_bot
     (lengths : List (ℕ × ℕ))
     (hpos : ∀ mn ∈ lengths, 0 < mn.1 ∧ 0 < mn.2)
     (i : ℕ) (hi : i < (loopsOfPositive lengths hpos).length)

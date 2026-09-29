@@ -362,7 +362,7 @@ theorem degreeZero_mul_canonical_sub_add_one_chip
         (canonicalDivisor B.graph - oneChip q) := by
       unfold linearEquiv at hZero ⊢
       have hX := AddSubgroup.neg_mem (principalDivisors B.graph) hZero
-      convert hX using 1 ; abel
+      convert hX using 1; abel
     have hRankEq := rank_eq_of_linear_equiv B.graph hComp
     have hRComp : rankPlusOne B.graph
         (canonicalDivisor B.graph - (X + oneChip q)) = 1 := by
@@ -430,15 +430,15 @@ theorem degreeTwo_first_three_cancel
       unfold linearEquiv at hYZero ⊢
       have hNeg := AddSubgroup.neg_mem (principalDivisors B.graph) hYZero
       dsimp [Y] at hNeg
-      convert hNeg using 1 ; abel
+      convert hNeg using 1; abel
     have hXu : linearEquiv B.graph (X - oneChip u)
         (canonicalDivisor B.graph - oneChip u) := by
       unfold linearEquiv at hXK ⊢
-      convert hXK using 1 ; abel
+      convert hXK using 1; abel
     have hXv : linearEquiv B.graph (X - oneChip v)
         (canonicalDivisor B.graph - oneChip v) := by
       unfold linearEquiv at hXK ⊢
-      convert hXK using 1 ; abel
+      convert hXK using 1; abel
     have hRankX := rank_eq_of_linear_equiv B.graph hXK
     have hRankXu := rank_eq_of_linear_equiv B.graph hXu
     have hRankXv := rank_eq_of_linear_equiv B.graph hXv

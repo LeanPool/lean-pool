@@ -144,13 +144,13 @@ theorem kInversions_ncard_eq_kInversionsBySecond
     have hpSecondMod : (n - (m / k) * k) % (k : ℤ) = n := by
       calc
         (n - (m / k) * k) % (k : ℤ) =
-            (n + k * (-(m / k))) % k := by congr 2 ; ring
+            (n + k * (-(m / k))) % k := by congr 2; ring
         _ = n % k := Int.add_mul_emod_self_left n k (-(m / k))
         _ = n := hnMod
     have hpSecondDiv : (n - (m / k) * k) / (k : ℤ) = -(m / k) := by
       calc
         (n - (m / k) * k) / (k : ℤ) =
-            (n + k * (-(m / k))) / k := by congr 2 ; ring
+            (n + k * (-(m / k))) / k := by congr 2; ring
         _ = n / k + (-(m / k)) :=
           Int.add_mul_ediv_left n (-(m / k)) (by omega)
         _ = -(m / k) := by rw [hnDiv]; omega

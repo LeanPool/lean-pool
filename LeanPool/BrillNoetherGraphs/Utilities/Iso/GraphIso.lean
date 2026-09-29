@@ -69,7 +69,7 @@ abbrev mapScript (φ : CFGraphIso G H) : firingScript G ≃+ firingScript H :=
 @[simp] theorem mapDiv_apply (φ : CFGraphIso G H) (D : CFDiv G) (w : H.V) :
     φ.mapDiv D w = D (φ.vertexEquiv.symm w) := rfl
 
-@[simp] theorem mapDiv_apply_vertex
+theorem mapDiv_apply_vertex
     (φ : CFGraphIso G H) (D : CFDiv G) (v : G.V) :
     φ.mapDiv D (φ.vertexEquiv v) = D v := by
   simp
@@ -80,12 +80,12 @@ abbrev mapScript (φ : CFGraphIso G H) : firingScript G ≃+ firingScript H :=
 @[simp] theorem mapDiv_trans (φ : CFGraphIso G H) (ψ : CFGraphIso H K) :
     (φ.trans ψ).mapDiv = φ.mapDiv.trans ψ.mapDiv := rfl
 
-@[simp] theorem mapDiv_symm_mapDiv
+theorem mapDiv_symm_mapDiv
     (φ : CFGraphIso G H) (D : CFDiv G) :
     φ.symm.mapDiv (φ.mapDiv D) = D := by
   simp
 
-@[simp] theorem mapDiv_mapDiv_symm
+theorem mapDiv_mapDiv_symm
     (φ : CFGraphIso G H) (D : CFDiv H) :
     φ.mapDiv (φ.symm.mapDiv D) = D := by
   simp
@@ -212,13 +212,13 @@ relabeling. -/
       ((rank_geq_iff G D (rank G D)).mpr le_rfl)
 
 /-- Isomorphic graphs have the same number of vertices. -/
-@[simp] theorem vertex_card_eq (φ : CFGraphIso G H) :
+theorem vertex_card_eq (φ : CFGraphIso G H) :
     Fintype.card H.V = Fintype.card G.V := by
   exact (Fintype.card_congr φ.vertexEquiv).symm
 
 /-- The raw edge multisets of isomorphic graphs have the same cardinality,
 even though their choices of pair orientation need not agree. -/
-@[simp] theorem edge_card_eq (φ : CFGraphIso G H) :
+theorem edge_card_eq (φ : CFGraphIso G H) :
     H.edges.card = G.edges.card := by
   have hDegreeSum :
       (∑ w : H.V, vertexDegree H w) =
@@ -232,7 +232,7 @@ even though their choices of pair orientation need not agree. -/
   exact_mod_cast hCast
 
 /-- Graph genus is invariant under isomorphism. -/
-@[simp] theorem genus_eq (φ : CFGraphIso G H) : CFGraph.genus H = CFGraph.genus G := by
+theorem genus_eq (φ : CFGraphIso G H) : CFGraph.genus H = CFGraph.genus G := by
   rw [CFGraph.genus, CFGraph.genus, φ.edge_card_eq, φ.vertex_card_eq]
 
 /-- Connectivity is transported in the forward direction by a graph
@@ -254,12 +254,12 @@ theorem graph_connected_map (φ : CFGraphIso G H)
     exact hxy
 
 /-- Graph connectivity is invariant under isomorphism. -/
-@[simp] theorem graph_connected_iff (φ : CFGraphIso G H) :
+theorem graph_connected_iff (φ : CFGraphIso G H) :
     graphConnected H ↔ graphConnected G := by
   exact ⟨φ.symm.graph_connected_map, φ.graph_connected_map⟩
 
 /-- Brill--Noether existence is invariant under graph isomorphism. -/
-@[simp] theorem BNExists_iff (φ : CFGraphIso G H) (r d : ℤ) :
+theorem BNExists_iff (φ : CFGraphIso G H) (r d : ℤ) :
     BNExists H r d ↔ BNExists G r d := by
   constructor
   · rintro ⟨D, hDegree, hRank⟩

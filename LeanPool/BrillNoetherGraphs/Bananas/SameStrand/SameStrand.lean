@@ -1672,12 +1672,12 @@ theorem rank_same_strand_pair_zero_of_not_reflection
         (oneChip (strandVertex B α k))
         (canonicalDivisor B.graph - oneChip (strandVertex B α i)) := by
       unfold linearEquiv at hDK ⊢
-      convert hDK using 1 ; dsimp [D] ; abel
+      convert hDK using 1; dsimp [D]; abel
     have hRefResidual : linearEquiv B.graph
         (canonicalDivisor B.graph - oneChip (strandVertex B α i))
         (oneChip (strandVertex B α (strandMirror B α i))) := by
       unfold linearEquiv at hRef ⊢
-      convert hRef using 1 ; abel
+      convert hRef using 1; abel
     have hVertices : strandVertex B α k =
         strandVertex B α (strandMirror B α i) :=
       one_chip_representative_unique_on_banana (by omega) B
