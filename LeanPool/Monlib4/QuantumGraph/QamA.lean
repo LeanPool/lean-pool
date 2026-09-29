@@ -68,7 +68,7 @@ local notation "τ⁻¹" => (LinearEquiv.symm (TensorProduct.lid ℂ ℍ) : ℍ 
 local notation "id" => (1 : ℍ →ₗ[ℂ] ℍ)
 
 /-- The rank-one quantum adjacency map associated to a nonzero matrix. -/
-noncomputable def qamA (hφ : φ.IsFaithfulPosMap)
+@[expose] noncomputable def qamA (hφ : φ.IsFaithfulPosMap)
     (x : { x : ℍ // x ≠ 0 }) :--(hx : x ≠ 0) :
       ℍ →ₗ[ℂ]
       ℍ := by

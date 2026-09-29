@@ -304,7 +304,7 @@ theorem InnerAut.reflIdempotent [hφ : φ.IsFaithfulPosMap]
     exact Qam.reflIdempotent_starAlgEquiv_conj hU _ _)
 
 /-- Isomorphism relation between two matrix quantum adjacency maps. -/
-def Qam.Iso (A B : l((Matrix n n ℂ))) : Prop :=
+@[expose] def Qam.Iso (A B : l((Matrix n n ℂ))) : Prop :=
   ∃ f : (Matrix n n ℂ) ≃⋆ₐ[ℂ] (Matrix n n ℂ),
     A ∘ₗ f.toLinearMap = f.toLinearMap ∘ₗ B ∧ f φ.matrix = φ.matrix
 

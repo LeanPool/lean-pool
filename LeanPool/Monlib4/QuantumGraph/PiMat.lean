@@ -131,7 +131,7 @@ StarAlgEquiv.ofAlgEquiv
       rw [← tensorToKronecker_toLinearMap_eq]
       rfl
     simp only [hkronecker]
-    rw [← TensorProduct.toKronecker_star]
+    rw [TensorProduct.toKronecker_star]
     congr 1
     obtain ⟨S, rfl⟩ := TensorProduct.exists_finset x
     simp only [star_sum, map_sum, Finset.sum_apply, directSumTensorToFun_apply,
@@ -189,7 +189,7 @@ noncomputable abbrev PiMat.traceLinearMap :
 Matrix.traceLinearMap _ _ _ ∘ₗ Matrix.blockDiagonal'AlgHom.toLinearMap
 
 /-- Coalgebra structure on a finite product of matrix blocks. -/
-@[reducible]
+@[expose, reducible]
 noncomputable def PiMat.finiteDimensionalHilbertCoalgebraStruct :
     CoalgebraStruct ℂ (PiMat ℂ ι p) := by
   withPiQuantumCtx[φ]
@@ -558,7 +558,7 @@ theorem QuantumGraph.Real.PiMat_isOrthogonalProjection :
     (quantumGraphReal_iff_Psi_isIdempotentElem_and_isSelfAdjoint.mp hA).2.star_eq, and_self]
 
 /-- Block submodules associated to a real `PiMat` quantum graph. -/
-noncomputable def QuantumGraph.Real.PiMatSubmodule :
+@[expose] noncomputable def QuantumGraph.Real.PiMatSubmodule :
   withPiQuantum[φ]
     ∀ {A : PiMat ℂ ι p →ₗ[ℂ] PiMat ℂ ι p},
       QuantumGraph.Real (PiMat ℂ ι p) A →

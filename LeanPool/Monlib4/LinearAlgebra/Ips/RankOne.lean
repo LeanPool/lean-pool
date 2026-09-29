@@ -151,8 +151,8 @@ variable {𝕜 E₁ E₂ : Type*} [RCLike 𝕜] [NormedAddCommGroup E₁] [Inner
 theorem rankOne_apply_apply_apply (x : E₁) (y z : E₂) :
     rankOne 𝕜 x y z = ⟪y,z⟫_𝕜 • x := by rfl
 
-@[simp]
-theorem rankOne_apply {x : E₁} {y : E₂} (z : E₂) : rankOne 𝕜 x y z = ⟪y,z⟫_𝕜 • x :=
+theorem rankOne_apply {x : E₁} {y : E₂} (z : E₂) :
+    rankOne 𝕜 x y z = ⟪y,z⟫_𝕜 • x :=
 by rfl
 
 theorem ket_bra_eq_rankOne {x : E₁} {y : E₂} :

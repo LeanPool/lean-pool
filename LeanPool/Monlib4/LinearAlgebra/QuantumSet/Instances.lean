@@ -672,7 +672,7 @@ theorem Pi.Qam.Nontracial.delta_ne_zero [Nonempty k] [∀ i, Nontrivial (s i)] {
   exact Qam.Nontracial.delta_pos
 
 /-- The delta-form quantum-set structure for a single matrix algebra. -/
-@[reducible]
+@[reducible, expose]
 noncomputable
 def Matrix.quantumSetDeltaForm [Nonempty n] {φ : Module.Dual ℂ (Matrix n n ℂ)}
     [hφ : φ.IsFaithfulPosMap] :

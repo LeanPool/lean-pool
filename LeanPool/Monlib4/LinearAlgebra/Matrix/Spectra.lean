@@ -78,7 +78,7 @@ noncomputable def _root_.Matrix.IsAlmostHermitian.eigenvalues {x : Matrix n n �
   fun i => hx.scalar • hx.matrix_isHermitian.eigenvalues i
 
 /-- Multiset of eigenvalues for an almost-Hermitian matrix. -/
-noncomputable def _root_.Matrix.IsAlmostHermitian.spectra {A : Matrix n n 𝕜}
+@[expose] noncomputable def _root_.Matrix.IsAlmostHermitian.spectra {A : Matrix n n 𝕜}
     (hA : A.IsAlmostHermitian) :
     Multiset 𝕜 :=
   Finset.univ.val.map fun i => hA.eigenvalues i

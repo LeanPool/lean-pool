@@ -322,7 +322,6 @@ variable [(i : ι₁) → FiniteDimensional 𝕜 (M₁ i)]
 
 omit [(i : ι₁) → FiniteDimensional 𝕜 (M₁ i)]
   [(i : ι₂) → FiniteDimensional 𝕜 (M₂ i)] in
-@[simp]
 theorem PiLpTensorEquiv_norm_map
   (x : (PiLp 2 M₁ ⊗[𝕜] PiLp 2 M₂)) :
   ‖(PiLpTensorEquiv x : PiLp 2 (fun i : ι₁ × ι₂ => M₁ i.1 ⊗[𝕜] M₂ i.2))‖ = ‖x‖ := by

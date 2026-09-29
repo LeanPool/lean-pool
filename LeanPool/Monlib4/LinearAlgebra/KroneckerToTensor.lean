@@ -31,7 +31,7 @@ variable {R m n : Type _} [CommSemiring R] [Fintype m] [Fintype n] [DecidableEq 
   [DecidableEq n]
 
 /-- Convert a tensor of square matrices into its Kronecker-product matrix. -/
-noncomputable def TensorProduct.toKronecker :
+@[expose] noncomputable def TensorProduct.toKronecker :
     Matrix m m R ⊗[R] Matrix n n R →ₗ[R] Matrix (m × n) (m × n) R :=
   (kroneckerLinearEquiv m m n n R).toLinearMap
 
@@ -40,7 +40,7 @@ theorem TensorProduct.toKronecker_apply (x : Matrix m m R) (y : Matrix n n R) :
   exact kroneckerLinearEquiv_tmul x y
 
 /-- Convert a Kronecker-product matrix back to the tensor of matrix algebras. -/
-noncomputable def Matrix.kroneckerToTensorProduct :
+@[expose] noncomputable def Matrix.kroneckerToTensorProduct :
     Matrix (m × n) (m × n) R →ₗ[R] Matrix m m R ⊗[R] Matrix n n R :=
   (kroneckerLinearEquiv m m n n R).symm.toLinearMap
 

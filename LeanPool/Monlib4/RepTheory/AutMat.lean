@@ -346,7 +346,7 @@ end Algebra
 namespace AlgEquiv
 
 /-- An algebra automorphism is inner if it is conjugation by an invertible element. -/
-def IsInner {R E : Type*} [CommSemiring R] [Semiring E]
+@[expose] def IsInner {R E : Type*} [CommSemiring R] [Semiring E]
     [Algebra R E] (f : E ≃ₐ[R] E) : Prop :=
   ∃ (a : E) (_ : Invertible a), f = Algebra.autInner a
 
@@ -838,7 +838,7 @@ theorem matrixPiFinAlgEquivPiFinTwo_symm_apply {𝕜 : Type*} [CommSemiring 𝕜
   aesop
 
 /-- Identify a two-term dependent product of matrix algebras with a binary product. -/
-def matrixPiFinTwoAlgEquivProd {𝕜 : Type*} [CommSemiring 𝕜]
+@[expose] def matrixPiFinTwoAlgEquivProd {𝕜 : Type*} [CommSemiring 𝕜]
     {n : Fin 2 → Type*} [∀ i, Fintype (n i)] [∀ i, DecidableEq (n i)] :
     (Π i : Fin 2, Mat 𝕜 (n i)) ≃ₐ[𝕜]
       (Mat 𝕜 (n 0) × Mat 𝕜 (n 1)) where
