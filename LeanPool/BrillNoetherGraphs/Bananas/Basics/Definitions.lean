@@ -160,7 +160,7 @@ def KGeneralTransmission (M : TwiceMarked) (k : ℕ) : Prop :=
     ∀ D : CFDiv M.graph, ∃ τ : ℤ → ℤ,
       IsTransmissionPermutation M D τ ∧ IsKAffine k τ ∧
         (kInversions k τ).Finite ∧
-          kInversionCount k τ ≤ Int.toNat (genus M.graph)
+          kInversionCount k τ ≤ Int.toNat (CFGraph.genus M.graph)
 
 /-- Paper source: Definition 1.3, i.e. part 2 of Conjecture 1.2.  Every pair
 in the divisor census satisfies `ρ(g,r,d) ≥ 0`.

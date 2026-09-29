@@ -94,22 +94,22 @@ theorem transmissionPermutation_le
     {M : TwiceMarked} {D : CFDiv M.graph} {τ : ℤ → ℤ}
     (hconn : _root_.graphConnected M.graph)
     (hτ : IsTransmissionPermutation M D τ) (b : ℤ) :
-    τ b ≤ 2 * genus M.graph + b - CFDiv.degree D := by
+    τ b ≤ 2 * CFGraph.genus M.graph + b - CFDiv.degree D := by
   by_contra hlt
   push Not at hlt
   have hInd := hτ.2 (τ b) b
   rw [ite_eq_left rfl] at hInd
   set a := τ b with ha_def
-  have hd0 : CFDiv.degree (D + a • oneChip M.u - b • oneChip M.v) > 2 * genus M.graph - 2 := by
+  have hd0 : CFDiv.degree (D + a • oneChip M.u - b • oneChip M.v) > 2 * CFGraph.genus M.graph - 2 := by
     rw [deg_markedTwist]; omega
   have hd1 : CFDiv.degree (D + (a - 1) • oneChip M.u - b • oneChip M.v) >
-      2 * genus M.graph - 2 := by
+      2 * CFGraph.genus M.graph - 2 := by
     rw [deg_markedTwist]; omega
   have hd2 : CFDiv.degree (D + a • oneChip M.u - (b + 1) • oneChip M.v) >
-      2 * genus M.graph - 2 := by
+      2 * CFGraph.genus M.graph - 2 := by
     rw [deg_markedTwist]; omega
   have hd3 : CFDiv.degree (D + (a - 1) • oneChip M.u - (b + 1) • oneChip M.v) >
-      2 * genus M.graph - 2 := by
+      2 * CFGraph.genus M.graph - 2 := by
     rw [deg_markedTwist]; omega
   have hR0 := (rank_nonspecial_range hconn _).2.2 hd0
   have hR1 := (rank_nonspecial_range hconn _).2.2 hd1
@@ -135,13 +135,13 @@ theorem kInversionCount_two_le_genus
     {M : TwiceMarked} {D : CFDiv M.graph} {τ : ℤ → ℤ}
     (hconn : _root_.graphConnected M.graph)
     (hτ : IsTransmissionPermutation M D τ) (hAff : IsKAffine 2 τ) :
-    kInversionCount 2 τ ≤ Int.toNat (genus M.graph) := by
+    kInversionCount 2 τ ≤ Int.toNat (CFGraph.genus M.graph) := by
   have hA0 := transmissionPermutation_ge hτ 0
   have hA1 := transmissionPermutation_ge hτ 1
   have hB0 := transmissionPermutation_le hconn hτ 0
   have hB1 := transmissionPermutation_le hconn hτ 1
-  have hDiff01 : τ 0 - τ 1 ≤ 2 * genus M.graph - 1 := by omega
-  have hDiff10 : τ 1 - τ 0 ≤ 2 * genus M.graph + 1 := by omega
+  have hDiff01 : τ 0 - τ 1 ≤ 2 * CFGraph.genus M.graph - 1 := by omega
+  have hDiff10 : τ 1 - τ 0 ≤ 2 * CFGraph.genus M.graph + 1 := by omega
   have hShift : ∀ r k : ℤ, τ (r + k * 2) = τ r + k * 2 := by
     intro r k
     have h := hAff.iterate_int r k
@@ -159,7 +159,7 @@ theorem kInversionCount_two_le_genus
     rcases (by omega : n % 2 = 0 ∨ n % 2 = 1) with h | h
     · exact Or.inl ⟨n / 2, by omega⟩
     · exact Or.inr ⟨n / 2, by omega⟩
-  have hMem : ∀ p ∈ kInversions 2 τ, f p ∈ (↑(Finset.Ico (0 : ℤ) (genus M.graph)) : Set ℤ) := by
+  have hMem : ∀ p ∈ kInversions 2 τ, f p ∈ (↑(Finset.Ico (0 : ℤ) (CFGraph.genus M.graph)) : Set ℤ) := by
     rintro ⟨m, n⟩ hp
     obtain ⟨hmn, hτmn, hm0, hmk⟩ := hp
     simp only at hmn hτmn hm0 hmk
@@ -195,13 +195,13 @@ theorem kInversionCount_two_le_genus
         have hτk0 := hShift 0 k <;> have hτk1 := hShift 1 k <;>
         have hτk0' := hShift 0 k' <;> have hτk1' := hShift 1 k' <;>
         simp only [Prod.mk.injEq, true_and] <;> omega
-  have hFinite : ((↑(Finset.Ico (0 : ℤ) (genus M.graph)) : Set ℤ)).Finite :=
+  have hFinite : ((↑(Finset.Ico (0 : ℤ) (CFGraph.genus M.graph)) : Set ℤ)).Finite :=
     (Finset.Ico _ _).finite_toSet
   have hle := Set.ncard_le_ncard_of_injOn f hMem hInj hFinite
-  have hCard : ((↑(Finset.Ico (0 : ℤ) (genus M.graph)) : Set ℤ)).ncard =
-      Int.toNat (genus M.graph) := by
+  have hCard : ((↑(Finset.Ico (0 : ℤ) (CFGraph.genus M.graph)) : Set ℤ)).ncard =
+      Int.toNat (CFGraph.genus M.graph) := by
     rw [Set.ncard_coe_finset, Int.card_Ico, sub_zero]
-  change (kInversions 2 τ).ncard ≤ Int.toNat (genus M.graph)
+  change (kInversions 2 τ).ncard ≤ Int.toNat (CFGraph.genus M.graph)
   rw [← hCard]
   exact hle
 

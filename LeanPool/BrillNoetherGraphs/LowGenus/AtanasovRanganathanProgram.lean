@@ -86,7 +86,7 @@ theorem genusFiveRankOneExistence_of_pseudocorePencils
   intro G hConnected hGenus
   let F := fossil G
   have hFConnected : graphConnected F := graph_connected_fossil G hConnected
-  have hFGenus : genus F = 5 := (genus_fossil G hConnected).trans hGenus
+  have hFGenus : CFGraph.genus F = 5 := (genus_fossil G hConnected).trans hGenus
   have hFLeafless : ∀ vertex : F.V, vertexDegree F vertex ≠ 1 :=
     fossil_vertex_degree_ne_one G hConnected
   obtain ⟨vertexCount, core, split, hSmall, hValid, hCompatible,
@@ -146,7 +146,7 @@ theorem genusFivePseudocorePencil_of_splitVertexCount_eq_two
 
 /-- A positive subdivision of a two-vertex, six-edge core has genus five. -/
 theorem genus_twoVertex_sixEdges
-    (spec : Spec 2 6) : genus spec.graph = 5 := by
+    (spec : Spec 2 6) : CFGraph.genus spec.graph = 5 := by
   rw [spec.genus_graph]
   norm_num
 
@@ -214,7 +214,7 @@ theorem brillNoetherConjecture_twoVertex_sixEdges
     (spec : Spec 2 6) (r d : ℤ) :
     brillNoetherConjecture
       (graph_connected_twoVertex_sixEdges spec) r d := by
-  change 0 ≤ genus spec.graph - (r + 1) * (genus spec.graph - d + r) →
+  change 0 ≤ CFGraph.genus spec.graph - (r + 1) * (CFGraph.genus spec.graph - d + r) →
     ∃ D : CFDiv spec.graph, rank spec.graph D ≥ r ∧ CFDiv.degree D = d
   intro hRho
   by_cases hR : 0 ≤ r

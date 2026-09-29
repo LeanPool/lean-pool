@@ -142,7 +142,7 @@ theorem nonRecurrent_of_kGeneralTransmission_of_effectiveResidueFormula
     (G : CFGraph) (u v : G.V) (k : ℕ)
     (hConnected : _root_.graphConnected G)
     (hCut : TwoEdgeCutCondition G) (hNontrivial : ∃ p q : G.V, p ≠ q)
-    (hGenus : genus G = 2)
+    (hGenus : CFGraph.genus G = 2)
     (hFormula : ∀ w τ,
       IsTransmissionPermutation (mark G u v) (oneChip w) τ →
       IsKAffine k τ →
@@ -154,8 +154,8 @@ theorem nonRecurrent_of_kGeneralTransmission_of_effectiveResidueFormula
   intro w n m hn hm hnRank hmRank
   obtain ⟨tau, hTau, hAffine, -, hCount⟩ := hData (oneChip w)
   have hEq := hFormula w tau hTau hAffine
-  have hGenusNat : Int.toNat (genus (mark G u v).graph) = 2 := by
-    change Int.toNat (genus G) = 2
+  have hGenusNat : Int.toNat (CFGraph.genus (mark G u v).graph) = 2 := by
+    change Int.toNat (CFGraph.genus G) = 2
     rw [hGenus]
     rfl
   rw [hGenusNat, hEq] at hCount

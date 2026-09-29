@@ -35,7 +35,7 @@ this lemma abstract prevents the elaborator from unfolding `oneChip` on a
 concrete subdivision vertex type merely to compare `mark G u v` with `G`. -/
 theorem exists_vertex_rep_of_rankDelta_neg_genus_two
     (G : CFGraph) (u v : G.V) (D : CFDiv G)
-    (hConn : _root_.graphConnected G) (hGenus : genus G = 2)
+    (hConn : _root_.graphConnected G) (hGenus : CFGraph.genus G = 2)
     (hDistinct : ¬ linearEquiv G (oneChip u - oneChip v) 0)
     (hNeg : rankDelta (mark G u v) D < 0) :
     ∃ w : G.V,

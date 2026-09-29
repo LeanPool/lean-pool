@@ -75,7 +75,7 @@ paper's structural characterization. -/
 theorem kGeneralTransmission_bridgelessGenusTwo_iff
     (G : CFGraph.{0}) (u v : G.V) (k : ℕ)
     (hConnected : _root_.graphConnected G) (hCut : TwoEdgeCutCondition G)
-    (huv : u ≠ v) (hGenus : genus G = 2)
+    (huv : u ≠ v) (hGenus : CFGraph.genus G = 2)
     (hTO : IsTorsionOrder (mark G u v) k) :
     KGeneralTransmission (mark G u v) k ↔
       BridgelessGenusTwoKGeneralCharacterization G u v k := by

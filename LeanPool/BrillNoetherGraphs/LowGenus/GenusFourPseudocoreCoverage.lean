@@ -96,8 +96,8 @@ theorem bnExists_of_loopCount_pos
   let root := MarkerPackage.root split spec marker hCore hCompatible
   have hBaseConnected : graphConnected base :=
     MarkerPackage.base_connected split spec marker hCore hCompatible hSplitConnected
-  have hSpecGenus : genus spec.graph = 4 := genus_eq hValid spec
-  have hBaseGenus : genus base = 3 := by
+  have hSpecGenus : CFGraph.genus spec.graph = 4 := genus_eq hValid spec
+  have hBaseGenus : CFGraph.genus base = 3 := by
     have h := MarkerPackage.base_genus split spec marker hCore hCompatible
     rw [hSpecGenus] at h
     simpa [base] using h
@@ -135,7 +135,7 @@ theorem bnExists_of_loopCount_zero
     PseudocoreSubdivisionProperties.graphConnected split hValid hCompatible spec hCore
   have hCoreConnected : spec.core.Connected :=
     core_connected_of_graph_connected spec hConnected
-  have hGenus : genus spec.graph = 4 := genus_eq hValid spec
+  have hGenus : CFGraph.genus spec.graph = 4 := genus_eq hValid spec
   have hSize : core.splitEdgeCount - (vertexCount + core.loopCount) = 3 := by
     have hEuler : (core.splitEdgeCount : ℤ) -
         (vertexCount + core.loopCount : ℕ) + 1 = 4 := by
@@ -168,7 +168,7 @@ theorem genusFourRankOneExistence_of_cubicClosedCoverage
   intro G hConnected hGenus
   let F := fossil G
   have hFConnected : graphConnected F := graph_connected_fossil G hConnected
-  have hFGenus : genus F = 4 := (genus_fossil G hConnected).trans hGenus
+  have hFGenus : CFGraph.genus F = 4 := (genus_fossil G hConnected).trans hGenus
   have hFLeafless : ∀ vertex : F.V, vertexDegree F vertex ≠ 1 :=
     fossil_vertex_degree_ne_one G hConnected
   obtain ⟨vertexCount, core, split, _hSmall, hValid, hCompatible,

@@ -30,7 +30,7 @@ theorem same_leftFactor_kGeneral_period_eq_two
     k = 2 := by
   have hConn : _root_.graphConnected (vertexWedge G H x y) :=
     graph_connected_vertexWedge G H x y hG.connected hH.connected
-  have hPos : 0 < genus (vertexWedge G H x y) := by
+  have hPos : 0 < CFGraph.genus (vertexWedge G H x y) := by
     rw [genus_vertexWedge, hG.genus_one, hH.genus_one]
     norm_num
   have hDistinct : (Sum.inl x : (vertexWedge G H x y).V) ≠ Sum.inl u := by
@@ -50,7 +50,7 @@ theorem same_rightFactor_kGeneral_period_eq_two
     k = 2 := by
   have hConn : _root_.graphConnected (vertexWedge G H x y) :=
     graph_connected_vertexWedge G H x y hG.connected hH.connected
-  have hPos : 0 < genus (vertexWedge G H x y) := by
+  have hPos : 0 < CFGraph.genus (vertexWedge G H x y) := by
     rw [genus_vertexWedge, hG.genus_one, hH.genus_one]
     norm_num
   have hDistinct : wedgeRightVertex G H x y y ≠ wedgeRightVertex G H x y p := by

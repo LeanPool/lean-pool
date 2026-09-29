@@ -109,20 +109,20 @@ theorem bnExists_face_of_two_three_cut
   let graphCut := transported.toOneVertexCut d.contractedSpec hTransportedValid
   have hContractedConnected : graphConnected d.contractedSpec.graph :=
     d.contractedSpec.graph_connected_of_coreConnected hTransportedConnected
-  have hFaceGenus : genus d.graph = 5 := by
+  have hFaceGenus : CFGraph.genus d.graph = 5 := by
     rw [d.genus_graph]
     have hSum := cut.leftGenus_add_rightGenus hValid hLoopless
     rw [hLeft, hRight] at hSum
     omega
-  have hContractedGenus : genus d.contractedSpec.graph = 5 := by
+  have hContractedGenus : CFGraph.genus d.contractedSpec.graph = 5 := by
     have hEq := d.canonicalContraction.laplacianEquiv.genus_eq
     rw [hFaceGenus] at hEq
     exact hEq.symm
-  have hLeftGraph : genus graphCut.leftGraph = 2 := by
+  have hLeftGraph : CFGraph.genus graphCut.leftGraph = 2 := by
     dsimp only [graphCut]
     rw [transported.leftGraph_genus d.contractedSpec hTransportedValid]
     exact (contractedCut_leftGenus d cut hValid hRep hLoopless).trans hLeft
-  have hRightGraph : genus graphCut.rightGraph = 3 := by
+  have hRightGraph : CFGraph.genus graphCut.rightGraph = 3 := by
     dsimp only [graphCut]
     rw [transported.rightGraph_genus d.contractedSpec hTransportedValid]
     exact (contractedCut_rightGenus d cut hValid hRep hLoopless).trans hRight

@@ -131,7 +131,7 @@ noncomputable def graphIso :
   cut.presentation.graphIso
 
 /-- Genus is additive across a one-vertex cut. -/
-theorem genus_eq : genus K = genus cut.leftGraph + genus cut.rightGraph :=
+theorem genus_eq : CFGraph.genus K = CFGraph.genus cut.leftGraph + CFGraph.genus cut.rightGraph :=
   cut.presentation.genus_eq
 
 /-- Connected induced factors give a connected ambient graph. -/
@@ -244,9 +244,9 @@ private def threeVertexPathCut : OneVertexCut threeVertexPath where
   no_cross := by decide
 
 example :
-    genus threeVertexPath =
-      genus threeVertexPathCut.leftGraph +
-        genus threeVertexPathCut.rightGraph :=
+    CFGraph.genus threeVertexPath =
+      CFGraph.genus threeVertexPathCut.leftGraph +
+        CFGraph.genus threeVertexPathCut.rightGraph :=
   threeVertexPathCut.genus_eq
 
 end Utilities

@@ -225,7 +225,7 @@ theorem satisfiesTransmission_pullback
     (hu : f.PullsBackMark u p) (hv : f.PullsBackMark v q)
     (τ : AspPerm) (A : CFDiv H)
     (hA : SatisfiesTransmission H p q τ A)
-    (hDegree : CFDiv.degree (f.pullback A) = (genus G : ℤ) + τ.χ) :
+    (hDegree : CFDiv.degree (f.pullback A) = (CFGraph.genus G : ℤ) + τ.χ) :
     SatisfiesTransmission G u v τ (f.pullback A) := by
   refine ⟨hDegree, ?_⟩
   intro a b
@@ -241,7 +241,7 @@ theorem satisfiesTransmission_pullback_add_effective
     (hu : f.PullsBackMark u p) (hv : f.PullsBackMark v q)
     (τ : AspPerm) (A : CFDiv H) (E : CFDiv G)
     (hA : SatisfiesTransmission H p q τ A) (hE : effective E)
-    (hDegree : CFDiv.degree (f.pullback A + E) = (genus G : ℤ) + τ.χ) :
+    (hDegree : CFDiv.degree (f.pullback A + E) = (CFGraph.genus G : ℤ) + τ.χ) :
     SatisfiesTransmission G u v τ (f.pullback A + E) := by
   refine ⟨hDegree, ?_⟩
   intro a b
@@ -256,7 +256,7 @@ theorem transmissionExists_of_pullback_add_effective
     (hu : f.PullsBackMark u p) (hv : f.PullsBackMark v q)
     (τ : AspPerm) (A : CFDiv H) (E : CFDiv G)
     (hA : SatisfiesTransmission H p q τ A) (hE : effective E)
-    (hDegree : CFDiv.degree (f.pullback A + E) = (genus G : ℤ) + τ.χ) :
+    (hDegree : CFDiv.degree (f.pullback A + E) = (CFGraph.genus G : ℤ) + τ.χ) :
     TransmissionExists G u v τ :=
   ⟨f.pullback A + E,
     f.satisfiesTransmission_pullback_add_effective hPullback hu hv
@@ -269,7 +269,7 @@ target pullback plus an effective correction. -/
 def HarmonicTransmissionProfile
     (f : IndexedHarmonicData G H) (u v : G.V) (p q : H.V)
     (τ : AspPerm) (A : CFDiv H) (D : CFDiv G) : Prop :=
-  CFDiv.degree D = (genus G : ℤ) + τ.χ ∧
+  CFDiv.degree D = (CFGraph.genus G : ℤ) + τ.χ ∧
     ∀ a b : ℤ, ∃ E : CFDiv G, effective E ∧
       D + a • oneChip u - b • oneChip v =
         f.pullback (A + a • oneChip p - b • oneChip q) + E

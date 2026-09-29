@@ -120,7 +120,7 @@ theorem rankDelta_genusOne_of_degree_zero
 /-- In degree one, only the two degree-zero residual classes can affect the
 marked rank difference. -/
 theorem rankDelta_genusOne_of_degree_one
-    (hConnected : _root_.graphConnected G) (hGenus : genus G = 1)
+    (hConnected : _root_.graphConnected G) (hGenus : CFGraph.genus G = 1)
     (hDegree : CFDiv.degree X = 1) :
     rankDelta (mark G u v) X =
       - rank G (X - oneChip u) - rank G (X - oneChip v) - 1 := by
@@ -135,7 +135,7 @@ theorem rankDelta_genusOne_of_degree_one
 
 /-- The degree-two row is the principality indicator of the double deletion. -/
 theorem rankDelta_genusOne_of_degree_two
-    (hConnected : _root_.graphConnected G) (hGenus : genus G = 1)
+    (hConnected : _root_.graphConnected G) (hGenus : CFGraph.genus G = 1)
     (hDegree : CFDiv.degree X = 2) :
     rankDelta (mark G u v) X = rank G (X - oneChip u - oneChip v) + 1 := by
   have hX := genusOne_rank_eq_degree_sub_one hConnected hGenus X (by
@@ -158,7 +158,7 @@ theorem rankDelta_genusOne_of_degree_two
 /-- Above degree two, Riemann--Roch makes the four ranks affine-linear, so
 their second difference is zero. -/
 theorem rankDelta_genusOne_of_degree_gt_two
-    (hConnected : _root_.graphConnected G) (hGenus : genus G = 1)
+    (hConnected : _root_.graphConnected G) (hGenus : CFGraph.genus G = 1)
     (hDegree : 2 < CFDiv.degree X) :
     rankDelta (mark G u v) X = 0 := by
   have hX := genusOne_rank_eq_degree_sub_one hConnected hGenus X (by omega)
@@ -206,7 +206,7 @@ private theorem genusOneDegreeOneTwist_sub_v (D : CFDiv G) (b : ℤ) :
 /-- If a genus-one marked twist orbit has no principal degree-zero member,
 the transmission permutation is the corresponding translated identity. -/
 theorem transmission_eq_translation_of_no_principal_genusOne
-    (hConnected : _root_.graphConnected G) (hGenus : genus G = 1)
+    (hConnected : _root_.graphConnected G) (hGenus : CFGraph.genus G = 1)
     (D : CFDiv G) (tau : ℤ → ℤ)
     (hTau : IsTransmissionPermutation (mark G u v) D tau)
     (hNoPrincipal : ∀ b : ℤ,
@@ -244,7 +244,7 @@ theorem transmission_eq_translation_of_no_principal_genusOne
 /-- Consequently, the no-principal-orbit transmission has zero inversion
 classes at every period. -/
 theorem kInversionCount_eq_zero_of_no_principal_genusOne
-    (hConnected : _root_.graphConnected G) (hGenus : genus G = 1)
+    (hConnected : _root_.graphConnected G) (hGenus : CFGraph.genus G = 1)
     (D : CFDiv G) (tau : ℤ → ℤ) (k : ℕ)
     (hTau : IsTransmissionPermutation (mark G u v) D tau)
     (hNoPrincipal : ∀ b : ℤ,
@@ -292,7 +292,7 @@ theorem transmission_value_of_principal_genusOneZeroTwist
 /-- The row immediately preceding a principal degree-zero twist is raised
 by one.  This is the other half of the affine adjacent interchange. -/
 theorem transmission_value_before_principal_genusOneZeroTwist
-    (hConnected : _root_.graphConnected G) (hGenus : genus G = 1)
+    (hConnected : _root_.graphConnected G) (hGenus : CFGraph.genus G = 1)
     (D : CFDiv G) (tau : ℤ → ℤ) (c : ℤ)
     (hTau : IsTransmissionPermutation (mark G u v) D tau)
     (hPrincipal : linearEquiv G
@@ -364,7 +364,7 @@ theorem not_principal_genusOneZeroTwist_of_not_dvd
 /-- Away from a principal degree-zero twist and its successor, the genus-one
 transmission row is the ordinary translated-identity row. -/
 theorem transmission_value_of_two_nonprincipal_genusOneZeroTwists
-    (hConnected : _root_.graphConnected G) (hGenus : genus G = 1)
+    (hConnected : _root_.graphConnected G) (hGenus : CFGraph.genus G = 1)
     (D : CFDiv G) (tau : ℤ → ℤ) (b : ℤ)
     (hTau : IsTransmissionPermutation (mark G u v) D tau)
     (hB : ¬ linearEquiv G

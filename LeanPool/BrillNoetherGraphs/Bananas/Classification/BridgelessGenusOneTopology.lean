@@ -25,7 +25,7 @@ open Utilities
 /-- Every vertex of a nontrivial bridgeless genus-one graph is bivalent. -/
 theorem vertex_degree_eq_two_of_bridgeless_genus_one
     (G : CFGraph) (hCut : TwoEdgeCutCondition G)
-    (hNontrivial : ∃ p q : G.V, p ≠ q) (hGenus : genus G = 1)
+    (hNontrivial : ∃ p q : G.V, p ≠ q) (hGenus : CFGraph.genus G = 1)
     (vertex : G.V) : vertexDegree G vertex = 2 := by
   let hMin := hasMinimumValenceTwo_of_twoEdgeCutCondition G hCut hNontrivial
   have hSum := sum_vertex_degree_sub_two G

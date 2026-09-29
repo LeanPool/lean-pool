@@ -76,16 +76,16 @@ def IsTopologicallyTrivalent (G : CFGraph) : Prop :=
 
 /-- The sum of the valence excesses over two is `2g - 2`. -/
 theorem sum_vertex_degree_sub_two (G : CFGraph) :
-    (∑ v : G.V, (vertexDegree G v - 2)) = 2 * genus G - 2 := by
+    (∑ v : G.V, (vertexDegree G v - 2)) = 2 * CFGraph.genus G - 2 := by
   rw [Finset.sum_sub_distrib, sum_vertex_degree_eq_twice_card_edges]
-  simp only [Finset.sum_const, Finset.card_univ, Int.nsmul_eq_mul, genus]
+  simp only [Finset.sum_const, Finset.card_univ, Int.nsmul_eq_mul, CFGraph.genus]
   ring
 
 /-- A graph of minimum valence two has at most `2g - 2` topological
 vertices. -/
 theorem card_topologicalVertices_le
     (G : CFGraph) (hMin : HasMinimumValenceTwo G) :
-    ((topologicalVertices G).card : ℤ) ≤ 2 * genus G - 2 := by
+    ((topologicalVertices G).card : ℤ) ≤ 2 * CFGraph.genus G - 2 := by
   calc
     ((topologicalVertices G).card : ℤ) =
         ∑ v : G.V, if 3 ≤ vertexDegree G v then (1 : ℤ) else 0 := by
@@ -98,13 +98,13 @@ theorem card_topologicalVertices_le
         omega
       · simp only [hTopological, ↓reduceIte, Int.sub_nonneg]
         exact hMin v
-    _ = 2 * genus G - 2 := sum_vertex_degree_sub_two G
+    _ = 2 * CFGraph.genus G - 2 := sum_vertex_degree_sub_two G
 
 /-- In a bivalent/trivalent graph, the number of trivalent vertices is exactly
 `2g - 2`. -/
 theorem card_topologicalVertices_eq_of_topologicallyTrivalent
     (G : CFGraph) (hTri : IsTopologicallyTrivalent G) :
-    ((topologicalVertices G).card : ℤ) = 2 * genus G - 2 := by
+    ((topologicalVertices G).card : ℤ) = 2 * CFGraph.genus G - 2 := by
   calc
     ((topologicalVertices G).card : ℤ) =
         ∑ v : G.V, if 3 ≤ vertexDegree G v then (1 : ℤ) else 0 := by
@@ -115,12 +115,12 @@ theorem card_topologicalVertices_eq_of_topologicallyTrivalent
       rcases hTri v with hDegree | hDegree
       · simp [hDegree]
       · simp [hDegree]
-    _ = 2 * genus G - 2 := sum_vertex_degree_sub_two G
+    _ = 2 * CFGraph.genus G - 2 := sum_vertex_degree_sub_two G
 
 /-- A topologically trivalent genus-four graph has six topological vertices. -/
 theorem card_topologicalVertices_eq_six_of_genus_four
     (G : CFGraph) (hTri : IsTopologicallyTrivalent G)
-    (hGenus : genus G = 4) :
+    (hGenus : CFGraph.genus G = 4) :
     (topologicalVertices G).card = 6 := by
   have hCard := card_topologicalVertices_eq_of_topologicallyTrivalent G hTri
   rw [hGenus] at hCard
@@ -130,7 +130,7 @@ theorem card_topologicalVertices_eq_six_of_genus_four
 /-- A topologically trivalent genus-five graph has eight topological vertices. -/
 theorem card_topologicalVertices_eq_eight_of_genus_five
     (G : CFGraph) (hTri : IsTopologicallyTrivalent G)
-    (hGenus : genus G = 5) :
+    (hGenus : CFGraph.genus G = 5) :
     (topologicalVertices G).card = 8 := by
   have hCard := card_topologicalVertices_eq_of_topologicallyTrivalent G hTri
   rw [hGenus] at hCard

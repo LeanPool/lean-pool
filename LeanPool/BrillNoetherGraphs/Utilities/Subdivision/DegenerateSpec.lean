@@ -323,13 +323,13 @@ theorem card_pos_add_card_zero :
 
 /-- **Genus is preserved on every forest face.**  No vertex weight appears:
 the `forest` field is exactly what makes the two `z`'s cancel. -/
-@[simp] theorem genus_graph : genus d.graph = (p : ℤ) - (n : ℤ) + 1 := by
+@[simp] theorem genus_graph : CFGraph.genus d.graph = (p : ℤ) - (n : ℤ) + 1 := by
   have hE := d.card_edges
   have hV := d.card_vertices
   have hSum := d.sum_length_eq
   have hCard := d.card_pos_add_card_zero
   have hForest := d.forest
-  unfold genus
+  unfold CFGraph.genus
   rw [hE, hV]
   have hSumZ : ((∑ e : Fin p, d.length e : ℕ) : ℤ)
       = ((∑ e : Fin p, (d.length e - 1) : ℕ) : ℤ)

@@ -46,7 +46,7 @@ applied in the paper. -/
 theorem exists_qReduced_vertex_rep_of_rankDelta_neg_genus_two
     (M : TwiceMarked) (D : CFDiv M.graph)
     (hConn : _root_.graphConnected M.graph)
-    (hGenus : genus M.graph = 2)
+    (hGenus : CFGraph.genus M.graph = 2)
     (hDistinct : ¬ linearEquiv M.graph (oneChip M.u - oneChip M.v) 0)
     (hNeg : rankDelta M D < 0) :
     ∃ w : M.graph.V,

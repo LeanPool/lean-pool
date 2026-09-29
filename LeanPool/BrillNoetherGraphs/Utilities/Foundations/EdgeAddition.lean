@@ -87,7 +87,7 @@ edge, since the vertex type and its finite structure are unchanged. -/
 
 @[simp] theorem genus_addEdge
     (H : CFGraph) (x y : H.V) (hxy : x ≠ y) :
-    genus (addEdge H x y hxy) = genus H + 1 := by
+    CFGraph.genus (addEdge H x y hxy) = CFGraph.genus H + 1 := by
   change
     ((↑((x, y) ::ₘ H.edges).card : ℤ) - ↑(Fintype.card H.V) + 1) =
       (↑H.edges.card - ↑(Fintype.card H.V) + 1) + 1

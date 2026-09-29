@@ -36,7 +36,7 @@ theorem rank_le_zero_of_degree_zero
 /-- On a connected genus-two graph, a degree-two divisor has rank at most
 one. -/
 theorem rank_le_one_of_degree_two_genus_two
-    {G : CFGraph} (hconn : _root_.graphConnected G) (hgenus : genus G = 2)
+    {G : CFGraph} (hconn : _root_.graphConnected G) (hgenus : CFGraph.genus G = 2)
     (X : CFDiv G) (hDegree : CFDiv.degree X = 2) :
     rank G X ≤ 1 := by
   have hDualDegree : CFDiv.degree (canonicalDivisor G - X) = 0 := by
@@ -50,7 +50,7 @@ theorem rank_le_one_of_degree_two_genus_two
 
 /-- The canonical divisor has rank one on every connected genus-two graph. -/
 theorem rank_canonical_eq_one_of_genus_two
-    {G : CFGraph} (hconn : _root_.graphConnected G) (hgenus : genus G = 2) :
+    {G : CFGraph} (hconn : _root_.graphConnected G) (hgenus : CFGraph.genus G = 2) :
     rank G (canonicalDivisor G) = 1 := by
   have hRR := riemann_roch_for_graphs hconn (canonicalDivisor G)
   have hZero : canonicalDivisor G - canonicalDivisor G = 0 := by abel
@@ -59,7 +59,7 @@ theorem rank_canonical_eq_one_of_genus_two
 
 /-- A rank-one degree-two divisor is the canonical class. -/
 theorem linearEquiv_canonical_of_rank_eq_one_degree_two_genus_two
-    {G : CFGraph} (hconn : _root_.graphConnected G) (hgenus : genus G = 2)
+    {G : CFGraph} (hconn : _root_.graphConnected G) (hgenus : CFGraph.genus G = 2)
     (X : CFDiv G) (hDegree : CFDiv.degree X = 2) (hRank : rank G X = 1) :
     linearEquiv G X (canonicalDivisor G) := by
   have hDualDegree : CFDiv.degree (canonicalDivisor G - X) = 0 := by
@@ -78,7 +78,7 @@ theorem linearEquiv_canonical_of_rank_eq_one_degree_two_genus_two
 /-- On a connected genus-two graph, a degree-two divisor has rank one exactly
 when it is linearly equivalent to the canonical divisor. -/
 theorem rank_eq_one_iff_linearEquiv_canonical_of_degree_two_genus_two
-    {G : CFGraph} (hconn : _root_.graphConnected G) (hgenus : genus G = 2)
+    {G : CFGraph} (hconn : _root_.graphConnected G) (hgenus : CFGraph.genus G = 2)
     (X : CFDiv G) (hDegree : CFDiv.degree X = 2) :
     rank G X = 1 ↔ linearEquiv G X (canonicalDivisor G) := by
   constructor

@@ -33,7 +33,7 @@ theorem degree_transmissionTwist
     {G : CFGraph} {u v : G.V} {τ : AspPerm} {D : CFDiv G}
     (h : SatisfiesTransmission G u v τ D) (a b : ℤ) :
     CFDiv.degree (TransmissionTwist G u v D a b) =
-      (genus G : ℤ) + τ.χ + a - b := by
+      (CFGraph.genus G : ℤ) + τ.χ + a - b := by
   simpa [TransmissionTwist] using degree_twist_of_satisfiesTransmission h a b
 
 /-- Exact rank lower bound supplied by one transmission row. -/
@@ -50,7 +50,7 @@ theorem BNExists_of_transmission_row
     (h : SatisfiesTransmission G u v τ D)
     (a b r : ℤ)
     (hTarget : r ≤ τ.s (a + 1) b - 1) :
-    BNExists G r ((genus G : ℤ) + τ.χ + a - b) := by
+    BNExists G r ((CFGraph.genus G : ℤ) + τ.χ + a - b) := by
   refine ⟨TransmissionTwist G u v D a b, ?_, ?_⟩
   · exact degree_transmissionTwist h a b
   · exact le_trans hTarget (rank_transmissionTwist h a b)
@@ -61,7 +61,7 @@ theorem BNExists_at_transmission_threshold
     (h : SatisfiesTransmission G u v τ D)
     (a b : ℤ) :
     BNExists G (τ.s (a + 1) b - 1)
-      ((genus G : ℤ) + τ.χ + a - b) := by
+      ((CFGraph.genus G : ℤ) + τ.χ + a - b) := by
   exact BNExists_of_transmission_row h a b (τ.s (a + 1) b - 1) le_rfl
 
 /-- Existence-level version: a transmission locus witness yields every ordinary
@@ -71,7 +71,7 @@ theorem BNExists_of_transmissionExists_row
     (h : TransmissionExists G u v τ)
     (a b r : ℤ)
     (hTarget : r ≤ τ.s (a + 1) b - 1) :
-    BNExists G r ((genus G : ℤ) + τ.χ + a - b) := by
+    BNExists G r ((CFGraph.genus G : ℤ) + τ.χ + a - b) := by
   obtain ⟨D, hD⟩ := h
   exact BNExists_of_transmission_row hD a b r hTarget
 

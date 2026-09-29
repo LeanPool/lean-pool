@@ -549,7 +549,7 @@ theorem transmission_complement_rank_eq_northwest_ncard
       rw [add_smul, one_smul]
       abel
     rw [hDiv]
-  have hChi : σ.χ = CFDiv.degree D - genus M.graph := by
+  have hChi : σ.χ = CFDiv.degree D - CFGraph.genus M.graph := by
     have hChi' := rankSlipFace_chi M (D - oneChip M.u) hconn
     rw [← hσSlip] at hChi'
     simpa only [AspPerm.s_chi_eq] using hChi'

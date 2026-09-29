@@ -159,11 +159,11 @@ theorem crossOneOff_not_kGeneral_of_five_le_genus
   have hLower := crossOneOff_extended_simple_inversion_lower_bound
     B alpha beta tau (by omega) hab hAlpha hBetaVeryLong hLong
       hTau hPeriod hFinite
-  have hGenus : Int.toNat (genus
+  have hGenus : Int.toNat (CFGraph.genus
       (mark B.graph
         (strandVertex B alpha ⟨1, by omega⟩)
         (strandVertex B beta ⟨B.length beta - 1, by omega⟩)).graph) = g := by
-    change Int.toNat (genus B.graph) = g
+    change Int.toNat (CFGraph.genus B.graph) = g
     rw [B.genus_graph]
     omega
   rw [hGenus] at hUpper

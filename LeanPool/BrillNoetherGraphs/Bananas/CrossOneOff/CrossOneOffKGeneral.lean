@@ -57,7 +57,7 @@ theorem crossOneOff_kGeneral_period_ge_genus
   have hTO : IsTorsionOrder
       (mark B.graph (strandVertex B alpha i) (strandVertex B beta j)) k :=
     hK.isTorsionOrder huv (banana_graph_connected B) (by
-      change 0 < genus B.graph
+      change 0 < CFGraph.genus B.graph
       rw [B.genus_graph]
       omega)
   have hDichotomy := cross_oneOff_torsion_dichotomy (by omega) B alpha beta
@@ -93,11 +93,11 @@ theorem crossOneOff_not_kGeneral_of_seven_le_genus
     hK.2.2 (g • oneChip (rightEndpoint B))
   have hLower := crossOneOff_simple_inversion_lower_bound
     B alpha beta tau (by omega) hab hAlpha hBetaLong hLong hTau hPeriod hFinite
-  have hGenus : Int.toNat (genus
+  have hGenus : Int.toNat (CFGraph.genus
       (mark B.graph
         (strandVertex B alpha ⟨1, by omega⟩)
         (strandVertex B beta ⟨B.length beta - 1, by omega⟩)).graph) = g := by
-    change Int.toNat (genus B.graph) = g
+    change Int.toNat (CFGraph.genus B.graph) = g
     rw [B.genus_graph]
     omega
   rw [hGenus] at hUpper

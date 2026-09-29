@@ -31,7 +31,7 @@ section Generic
 /-- On a connected genus-one graph every positive-degree divisor has the
 Riemann--Roch rank `deg D - 1`. -/
 theorem genusOne_rank_eq_degree_sub_one
-    {G : CFGraph} (hG : _root_.graphConnected G) (hGenus : genus G = 1)
+    {G : CFGraph} (hG : _root_.graphConnected G) (hGenus : CFGraph.genus G = 1)
     (D : CFDiv G) (hDegree : 0 < CFDiv.degree D) :
     rank G D = CFDiv.degree D - 1 := by
   have hDualDegree : CFDiv.degree (canonicalDivisor G - D) < 0 := by
@@ -57,7 +57,7 @@ private theorem mark_difference_principal_of_two_residuals
 divisor submodular.  This is the factor-level submodularity input for the
 opposite-side vertex-wedge branch of the genus-two classification. -/
 theorem allSubmodular_of_connected_genus_one_distinct_classes
-    {G : CFGraph} (hG : _root_.graphConnected G) (hGenus : genus G = 1)
+    {G : CFGraph} (hG : _root_.graphConnected G) (hGenus : CFGraph.genus G = 1)
     (u v : G.V)
     (hMarks : ¬ linearEquiv G (oneChip u - oneChip v) 0) :
     AllSubmodular (mark G u v) := by
@@ -293,7 +293,7 @@ the divisor consisting of the gluing mark and that third vertex has negative
 marked second difference after attaching a rigid genus-one right factor. -/
 theorem rankDelta_wedgeLiftLeft_pair_neg
     (G H : CFGraph) (x u w : G.V) (y : H.V)
-    (hGconn : _root_.graphConnected G) (hGgenus : genus G = 1)
+    (hGconn : _root_.graphConnected G) (hGgenus : CFGraph.genus G = 1)
     (hGx : PointedGenusOneRigid G x) (hGu : PointedGenusOneRigid G u)
     (hH : PointedGenusOneRigid H y)
     (hwx : w ≠ x) (hwu : w ≠ u) :
@@ -417,7 +417,7 @@ theorem rankDelta_wedgeLiftLeft_pair_neg
 the auxiliary chip in the paper's negative-second-difference witness. -/
 theorem rankDelta_wedgeLiftLeft_mark_add_glue_neg
     (G H : CFGraph) (x p q : G.V) (y : H.V)
-    (hGconn : _root_.graphConnected G) (hGgenus : genus G = 1)
+    (hGconn : _root_.graphConnected G) (hGgenus : CFGraph.genus G = 1)
     (hGx : PointedGenusOneRigid G x) (hGq : PointedGenusOneRigid G q)
     (hH : PointedGenusOneRigid H y)
     (hpx : p ≠ x) (hqx : q ≠ x) :
@@ -644,13 +644,13 @@ theorem chainTwoLoops_allSubmodular_same_left_iff
     TwoPathCycle.connected leftLength hLeftLength
   have hHconn : _root_.graphConnected H :=
     TwoPathCycle.connected rightLength hRightLength
-  have hGgenus : genus G = 1 :=
+  have hGgenus : CFGraph.genus G = 1 :=
     TwoPathCycle.genus_one leftLength hLeftLength
-  have hHgenus : genus H = 1 :=
+  have hHgenus : CFGraph.genus H = 1 :=
     TwoPathCycle.genus_one rightLength hRightLength
   have hWconn : _root_.graphConnected W :=
     graph_connected_vertexWedge G H leftGlue rightGlue hGconn hHconn
-  have hWgenus : genus W = 2 := by
+  have hWgenus : CFGraph.genus W = 2 := by
     dsimp [W]
     rw [genus_vertexWedge, hGgenus, hHgenus]
     norm_num
@@ -840,7 +840,7 @@ theorem chainTwoLoops_not_allSubmodular_same_left_of_two_lt_length
       omega
     · have hGconn : _root_.graphConnected G :=
         TwoPathCycle.connected leftLength hLeftLength
-      have hGgenus : genus G = 1 :=
+      have hGgenus : CFGraph.genus G = 1 :=
         TwoPathCycle.genus_one leftLength hLeftLength
       have hGx : PointedGenusOneRigid G leftGlue :=
         TwoPathCycle.pointedGenusOneRigid leftLength hLeftLength leftGlue

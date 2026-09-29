@@ -297,7 +297,7 @@ explicit graph isomorphism transports that conclusion to the canonical chain.
 -/
 theorem brillNoetherGeneral_mixedTorsionChain_of_minBudget_of_positive
     (F next : KGeneralChainFactor) (rest : List KGeneralChainFactor)
-    (hPositive : ∀ Q ∈ F :: next :: rest, 0 < genus Q.marked.graph)
+    (hPositive : ∀ Q ∈ F :: next :: rest, 0 < CFGraph.genus Q.marked.graph)
     (hMin : ChainMinBudget (F :: next :: rest)) :
     BrillNoetherGeneral
       (F.marked.chain ((next :: rest).map KGeneralChainFactor.marked)).graph := by
@@ -324,7 +324,7 @@ reduction needed to extend Corollary 6.16(2) from positive-genus factors to
 the paper's full graph convention. -/
 theorem brillNoetherGeneral_factorChain_cons_genus_zero_of_tail
     (F next : KGeneralChainFactor) (rest : List KGeneralChainFactor)
-    (hZero : genus F.marked.graph = 0)
+    (hZero : CFGraph.genus F.marked.graph = 0)
     (hTail : BrillNoetherGeneral
       (next.marked.chain (rest.map KGeneralChainFactor.marked)).graph) :
     BrillNoetherGeneral
@@ -352,7 +352,7 @@ connected genus-zero factors preserves Brill--Noether generality. -/
 theorem brillNoetherGeneral_markedChain_of_tail_genus_zero
     (M : MarkedGraph) (tail : List KGeneralChainFactor)
     (hGeneral : BrillNoetherGeneral M.graph)
-    (hZero : ∀ F ∈ tail, genus F.marked.graph = 0) :
+    (hZero : ∀ F ∈ tail, CFGraph.genus F.marked.graph = 0) :
     BrillNoetherGeneral
       (M.chain (tail.map KGeneralChainFactor.marked)).graph := by
   induction tail generalizing M with
@@ -370,12 +370,12 @@ theorem brillNoetherGeneral_markedChain_of_tail_genus_zero
 genus-period bound appearing at an endpoint of Corollary 6.16(2). -/
 private theorem brillNoetherGeneral_chainFactor_of_genus_lt_period
     (F : KGeneralChainFactor)
-    (hBudget : genus F.marked.graph < (F.period : ℤ)) :
+    (hBudget : CFGraph.genus F.marked.graph < (F.period : ℤ)) :
     BrillNoetherGeneral F.marked.graph := by
-  let g : ℕ := (genus F.marked.graph).toNat
-  have hGenusNonnegative : 0 ≤ genus F.marked.graph :=
+  let g : ℕ := (CFGraph.genus F.marked.graph).toNat
+  have hGenusNonnegative : 0 ≤ CFGraph.genus F.marked.graph :=
     genus_nonneg_of_graph_connected F.marked.graph F.connected
-  have hGenus : genus F.marked.graph = (g : ℤ) := by
+  have hGenus : CFGraph.genus F.marked.graph = (g : ℤ) := by
     exact (Int.toNat_of_nonneg hGenusNonnegative).symm
   have hThreshold : g + 2 ≤ 2 * F.period := by
     have hPeriodPositive : 0 < F.period := F.kGeneral.1.1
@@ -412,24 +412,24 @@ theorem brillNoetherGeneral_mixedTorsionChain_of_minBudget
         have hTailNonnegative : 0 ≤ chainFactorGenus (next :: rest) :=
           chainFactorGenus_nonneg (next :: rest)
         have hCrossing' :
-            genus F.marked.graph + chainFactorGenus (next :: rest) ≤
-              genus F.marked.graph := by
+            CFGraph.genus F.marked.graph + chainFactorGenus (next :: rest) ≤
+              CFGraph.genus F.marked.graph := by
           simpa only [List.drop_zero, List.take_succ_cons, List.take_zero,
             chainFactorGenus_cons, chainFactorGenus_nil, add_zero] using
               hCrossing
         have hTailSum : chainFactorGenus (next :: rest) = 0 := by
           exact le_antisymm (by omega) hTailNonnegative
         have hEveryTailZero :
-            ∀ Q ∈ next :: rest, genus Q.marked.graph = 0 := by
+            ∀ Q ∈ next :: rest, CFGraph.genus Q.marked.graph = 0 := by
           intro Q hQ
           exact genus_eq_zero_of_mem_of_chainFactorGenus_eq_zero
             (next :: rest) hTailSum Q hQ
-        have hHeadBudget : genus F.marked.graph < (F.period : ℤ) := by
+        have hHeadBudget : CFGraph.genus F.marked.graph < (F.period : ℤ) := by
           have h := hMin 0 (by simp)
           simp only [List.take_succ_cons, List.take_zero, List.drop_zero,
             chainFactorGenus_cons, chainFactorGenus_nil, add_zero] at h
           have hTailSum' :
-              genus next.marked.graph + chainFactorGenus rest = 0 := by
+              CFGraph.genus next.marked.graph + chainFactorGenus rest = 0 := by
             simpa only [chainFactorGenus_cons] using hTailSum
           rw [hTailSum', add_zero, min_self] at h
           exact h

@@ -62,8 +62,8 @@ theorem bnExists_of_loopCount_pos
   let root := MarkerPackage.root split spec marker hCore hCompatible
   have hBaseConnected : graphConnected base :=
     MarkerPackage.base_connected split spec marker hCore hCompatible hSplitConnected
-  have hSpecGenus : genus spec.graph = 5 := genus_eq hValid spec
-  have hBaseGenus : genus base = 4 := by
+  have hSpecGenus : CFGraph.genus spec.graph = 5 := genus_eq hValid spec
+  have hBaseGenus : CFGraph.genus base = 4 := by
     have h := MarkerPackage.base_genus split spec marker hCore hCompatible
     rw [hSpecGenus] at h
     simpa [base] using h
@@ -114,7 +114,7 @@ theorem bnExists_or_bridge_of_loopCount_zero
     PseudocoreSubdivisionProperties.graphConnected split hValid hCompatible spec hCore
   have hCoreConnected : spec.core.Connected :=
     core_connected_of_graph_connected spec hConnected
-  have hGenus : genus spec.graph = 5 := genus_eq hValid spec
+  have hGenus : CFGraph.genus spec.graph = 5 := genus_eq hValid spec
   have hSize : core.splitEdgeCount - (vertexCount + core.loopCount) = 4 := by
     have hEuler : (core.splitEdgeCount : ℤ) -
         (vertexCount + core.loopCount : ℕ) + 1 = 5 := by
@@ -161,7 +161,7 @@ theorem bnExists_of_loopCount_zero
     PseudocoreSubdivisionProperties.graphConnected split hValid hCompatible spec hCore
   have hCoreConnected : spec.core.Connected :=
     core_connected_of_graph_connected spec hConnected
-  have hGenus : genus spec.graph = 5 := genus_eq hValid spec
+  have hGenus : CFGraph.genus spec.graph = 5 := genus_eq hValid spec
   have hSize : core.splitEdgeCount - (vertexCount + core.loopCount) = 4 := by
     have hEuler : (core.splitEdgeCount : ℤ) -
         (vertexCount + core.loopCount : ℕ) + 1 = 5 := by

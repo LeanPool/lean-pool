@@ -69,7 +69,7 @@ def wedge (M N : MarkedGraph.{u}) : MarkedGraph.{u} where
   right := wedgeRightVertex M.graph N.graph M.right N.left N.right
 
 @[simp] theorem genus_wedge (M N : MarkedGraph.{u}) :
-    genus (M.wedge N).graph = genus M.graph + genus N.graph :=
+    CFGraph.genus (M.wedge N).graph = CFGraph.genus M.graph + CFGraph.genus N.graph :=
   genus_vertexWedge _ _ _ _
 
 /-- The left-associated iterated vertex gluing of a chain, growing to the
@@ -86,8 +86,8 @@ def chain (M : MarkedGraph.{u}) : List MarkedGraph.{u} → MarkedGraph.{u}
 
 /-- Genera add along a chain: vertex identification creates no cycle. -/
 theorem genus_chain (M : MarkedGraph.{u}) (L : List MarkedGraph.{u}) :
-    genus (M.chain L).graph =
-      genus M.graph + (L.map fun N => genus N.graph).sum := by
+    CFGraph.genus (M.chain L).graph =
+      CFGraph.genus M.graph + (L.map fun N => CFGraph.genus N.graph).sum := by
   induction L generalizing M with
   | nil => simp
   | cons N rest ih =>
@@ -150,7 +150,7 @@ theorem onceMarkedBNExists_chain
     (tau : AspPerm) (lambda : YoungDiagram)
     (hProfile : GrassmannianPartitionProfile tau lambda)
     (hFinite : FiniteTransmissionPerm tau)
-    (hLength : ((invSet tau).ncard : ℤ) ≤ genus (M.chain L).graph) :
+    (hLength : ((invSet tau).ncard : ℤ) ≤ CFGraph.genus (M.chain L).graph) :
     OnceMarkedBNExists (M.chain L).graph (M.chain L).left lambda := by
   refine (transmissionExists_iff_onceMarkedBNExists hconn (M.chain L).left
     (M.chain L).right tau lambda hProfile).mp ?_

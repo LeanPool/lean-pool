@@ -45,14 +45,14 @@ it has the prescribed degree `g + χτ` and every twice-marked twist satisfies
 the corresponding slipface rank inequality. -/
 def SatisfiesTransmission
     (G : CFGraph) (u v : G.V) (τ : AspPerm) (D : CFDiv G) : Prop :=
-  CFDiv.degree D = (genus G : ℤ) + τ.χ ∧
+  CFDiv.degree D = (CFGraph.genus G : ℤ) + τ.χ ∧
     ∀ a b : ℤ, TransmissionInequality G u v τ D a b
 
 /-- The degree part of a transmission witness. -/
 theorem degree_of_satisfiesTransmission
     {G : CFGraph} {u v : G.V} {τ : AspPerm} {D : CFDiv G}
     (h : SatisfiesTransmission G u v τ D) :
-    CFDiv.degree D = (genus G : ℤ) + τ.χ :=
+    CFDiv.degree D = (CFGraph.genus G : ℤ) + τ.χ :=
   h.1
 
 /-- Extract one marked rank inequality from a transmission witness. -/
@@ -98,7 +98,7 @@ theorem degree_twist_of_satisfiesTransmission
     {G : CFGraph} {u v : G.V} {τ : AspPerm} {D : CFDiv G}
     (h : SatisfiesTransmission G u v τ D) (a b : ℤ) :
     CFDiv.degree (D + a • oneChip u - b • oneChip v) =
-      (genus G : ℤ) + τ.χ + a - b := by
+      (CFGraph.genus G : ℤ) + τ.χ + a - b := by
   rw [deg_add_marked_twist, h.1]
 
 /-- Adding the same marked twist to linearly equivalent divisors preserves

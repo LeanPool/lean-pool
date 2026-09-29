@@ -102,7 +102,7 @@ theorem transmissionExistence_vertexWedge_opposite_of_factorizations
     (u : G.V) (v : H.V)
     (hG : TransmissionExistence G u x)
     (hH : TransmissionExistence H y v)
-    (hFactor : HasBoundedDemazureFactorizations (genus G : ℤ) (genus H : ℤ)) :
+    (hFactor : HasBoundedDemazureFactorizations (CFGraph.genus G : ℤ) (CFGraph.genus H : ℤ)) :
     TransmissionExistence (vertexWedge G H x y) (Sum.inl u)
       (wedgeRightVertex G H x y v) := by
   intro tau hFinite hLength

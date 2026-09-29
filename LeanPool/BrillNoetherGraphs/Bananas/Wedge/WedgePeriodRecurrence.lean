@@ -25,7 +25,7 @@ open Utilities
 
 private theorem rank_eq_zero_of_degree_one_genus_one
     (H : CFGraph) (hConnected : _root_.graphConnected H)
-    (hGenus : genus H = 1) (E : CFDiv H) (hDegree : CFDiv.degree E = 1) :
+    (hGenus : CFGraph.genus H = 1) (E : CFDiv H) (hDegree : CFDiv.degree E = 1) :
     rank H E = 0 := by
   have hNeg : rank H (canonicalDivisor H - E) = -1 :=
     rank_neg_one_of_deg_neg H _ (by
@@ -100,7 +100,7 @@ marked vertex.  Hence the wedge difference is recurrent. -/
 theorem not_nonRecurrent_of_left_torsionWitness_lt_wedge_period
     (G H : CFGraph) (x : G.V) (y : H.V) (u : G.V) (v : H.V)
     (a k : ℕ) (hHConnected : _root_.graphConnected H)
-    (hHGenus : genus H = 1)
+    (hHGenus : CFGraph.genus H = 1)
     (ha : TorsionWitness (mark G u x) a)
     (haOne : 1 < a) (haK : a < k) :
     ¬ NonRecurrent
@@ -161,7 +161,7 @@ nondegenerate cycle conditions used by the paper's period comparison. -/
 theorem left_torsionOrder_eq_of_nonRecurrent_of_le
     (G H : CFGraph) (x : G.V) (y : H.V) (u : G.V) (v : H.V)
     (a b k : ℕ) (hHConnected : _root_.graphConnected H)
-    (hHGenus : genus H = 1)
+    (hHGenus : CFGraph.genus H = 1)
     (hA : IsTorsionOrder (mark G u x) a)
     (hB : IsTorsionOrder (mark H y v) b)
     (hW : IsTorsionOrder

@@ -50,16 +50,16 @@ theorem exact_gonality_of_leftRankTransport
     (hTargetConn : _root_.graphConnected target.graph)
     (hTargetK : KGeneralTransmission
       (mark target.graph target.left target.right) k)
-    (hsmall : k ≤ ((genus source.graph).toNat + 3) / 2) :
+    (hsmall : k ≤ ((CFGraph.genus source.graph).toNat + 3) / 2) :
     BNExists source.graph 1 (k : ℤ) ∧
       ∀ d : ℤ, d < k → ¬ BNExists source.graph 1 d := by
   let targetMarked := mark target.graph target.left target.right
-  have hTargetGenusNonneg : 0 ≤ genus target.graph :=
+  have hTargetGenusNonneg : 0 ≤ CFGraph.genus target.graph :=
     genus_nonneg_of_graph_connected target.graph hTargetConn
-  have hTargetGenus : genus target.graph = (genus target.graph).toNat :=
+  have hTargetGenus : CFGraph.genus target.graph = (CFGraph.genus target.graph).toNat :=
     (Int.toNat_of_nonneg hTargetGenusNonneg).symm
   have hsmallTarget :
-      k ≤ ((genus target.graph).toNat + 3) / 2 := by
+      k ≤ ((CFGraph.genus target.graph).toNat + 3) / 2 := by
     rw [transport.genus_eq]
     exact hsmall
   have hExactTarget := hTargetK.exact_gonality
@@ -97,7 +97,7 @@ theorem exact_gonality_bridgeChain_of_commonPeriod
     (hLconn : ∀ N ∈ L, _root_.graphConnected N.graph)
     (hLK : ∀ N ∈ L,
       KGeneralTransmission (mark N.graph N.left N.right) k)
-    (hsmall : k ≤ ((genus (M.bridgeChain L).graph).toNat + 3) / 2) :
+    (hsmall : k ≤ ((CFGraph.genus (M.bridgeChain L).graph).toNat + 3) / 2) :
     BNExists (M.bridgeChain L).graph 1 (k : ℤ) ∧
       ∀ d : ℤ, d < k → ¬ BNExists (M.bridgeChain L).graph 1 d := by
   let target := M.chain L

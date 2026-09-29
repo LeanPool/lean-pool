@@ -65,7 +65,7 @@ def KGeneralChainFactor.swapMarks (F : KGeneralChainFactor) :
 
 /-- The sum of the genera of a list of chain factors. -/
 def chainFactorGenus (L : List KGeneralChainFactor) : ℤ :=
-  (L.map fun F => genus F.marked.graph).sum
+  (L.map fun F => CFGraph.genus F.marked.graph).sum
 
 @[simp] theorem chainFactorGenus_nil : chainFactorGenus [] = 0 := by
   simp [chainFactorGenus]
@@ -73,7 +73,7 @@ def chainFactorGenus (L : List KGeneralChainFactor) : ℤ :=
 @[simp] theorem chainFactorGenus_cons
     (F : KGeneralChainFactor) (rest : List KGeneralChainFactor) :
     chainFactorGenus (F :: rest) =
-      genus F.marked.graph + chainFactorGenus rest := by
+      CFGraph.genus F.marked.graph + chainFactorGenus rest := by
   simp [chainFactorGenus]
 
 /-- The paper's suffix-genus inequalities.
@@ -112,12 +112,12 @@ theorem chainPrefixBudget_iff_indexed
         | zero => simpa [chainFactorGenus] using hHead
         | succ i =>
             have hiRest : i < rest.length := by simpa using hi
-            have h := (ih (g + genus F.marked.graph)).mp hRest i hiRest
+            have h := (ih (g + CFGraph.genus F.marked.graph)).mp hRest i hiRest
             simpa [chainFactorGenus, add_assoc] using h
       · intro h
         constructor
         · simpa [chainFactorGenus] using h 0 (by simp)
-        · apply (ih (g + genus F.marked.graph)).mpr
+        · apply (ih (g + CFGraph.genus F.marked.graph)).mpr
           intro i hi
           have h' := h (i + 1) (by simp; omega)
           simpa [chainFactorGenus, add_assoc] using h'
@@ -238,7 +238,7 @@ def reversedMarkedChain
 /-- The reversed chain has the sum of the original factor genera. -/
 theorem genus_reversedMarkedChain
     (F : KGeneralChainFactor) (rest : List KGeneralChainFactor) :
-    genus (reversedMarkedChain F rest).graph =
+    CFGraph.genus (reversedMarkedChain F rest).graph =
       chainFactorGenus (F :: rest) := by
   induction rest generalizing F with
   | nil => simp [reversedMarkedChain]
@@ -304,7 +304,7 @@ theorem onceMarkedBrillNoetherGeneral_reversedMixedTorsionChain
         (allSubmodular_reversedMarkedChain next rest)
         (ih next hBudget.2) F.swapMarks.kGeneral
       rw [genus_reversedMarkedChain]
-      change chainFactorGenus (next :: rest) + genus F.marked.graph <
+      change chainFactorGenus (next :: rest) + CFGraph.genus F.marked.graph <
         (F.period : ℤ)
       simpa only [chainFactorGenus_cons, add_comm] using hBudget.1
 

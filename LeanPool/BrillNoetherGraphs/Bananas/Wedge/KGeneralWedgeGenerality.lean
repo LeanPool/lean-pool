@@ -37,8 +37,8 @@ theorem weierstrassSize_le_genus_of_sci_le
     {G : CFGraph} (u v : G.V) (hG : _root_.graphConnected G)
     (D : CFDiv G) (tau : ℤ → ℤ)
     (hTau : IsTransmissionPermutation (mark G u v) D tau)
-    (hSci : (sci tau : ℤ) ≤ genus G) :
-    (weierstrassSize hG v D : ℤ) ≤ genus G := by
+    (hSci : (sci tau : ℤ) ≤ CFGraph.genus G) :
+    (weierstrassSize hG v D : ℤ) ≤ CFGraph.genus G := by
   rw [← sci_eq_weierstrassSize u v hG D tau hTau]
   exact hSci
 
@@ -57,7 +57,7 @@ theorem onceMarkedBrillNoetherGeneral_vertexWedge_of_kGeneralTransmission
     (hGsub : AllSubmodular (mark G u x))
     (hGgeneral : OnceMarkedBrillNoetherGeneral G x)
     {k : ℕ} (hK : KGeneralTransmission (mark H y v) k)
-    (hbudget : genus G + genus H < (k : ℤ)) :
+    (hbudget : CFGraph.genus G + CFGraph.genus H < (k : ℤ)) :
     OnceMarkedBrillNoetherGeneral
       (vertexWedge G H x y) (wedgeRightVertex G H x y v) := by
   classical
@@ -68,7 +68,7 @@ theorem onceMarkedBrillNoetherGeneral_vertexWedge_of_kGeneralTransmission
   intro lambda hCensus
   let Q : CFDiv W := Classical.choose hCensus
   have hRows : ∀ i : ℕ,
-      rank W (Q + ((i : ℤ) + genus W - CFDiv.degree Q -
+      rank W (Q + ((i : ℤ) + CFGraph.genus W - CFDiv.degree Q -
         (onceMarkedPart lambda i : ℤ)) • oneChip wv) ≥ (i : ℤ) :=
     Classical.choose_spec hCensus
   let D : CFDiv G := wedgeRestrictLeftDivisor G H x y Q
@@ -82,23 +82,23 @@ theorem onceMarkedBrillNoetherGeneral_vertexWedge_of_kGeneralTransmission
   obtain ⟨alpha, beta, hAlpha, hBeta, hWedge⟩ :=
     exists_isTransmissionPermutation_wedgeAddDivisor_star
       G H x y hGconn hHconn D E u v tau sigma hTau hSigma
-  have hAlphaSci : (sci alpha.func : ℤ) ≤ genus G := by
-    have hSize : (weierstrassSize hGconn x D : ℤ) ≤ genus G :=
+  have hAlphaSci : (sci alpha.func : ℤ) ≤ CFGraph.genus G := by
+    have hSize : (weierstrassSize hGconn x D : ℤ) ≤ CFGraph.genus G :=
       hGgeneral (weierstrassPartition hGconn x D)
         (onceMarkedCensusContains_weierstrassPartition hGconn x D)
     have hSci := sci_eq_weierstrassSize u x hGconn D tau hTau
     rw [hAlpha, hSci]
     exact hSize
-  have hGenusH : 0 ≤ genus H := genus_nonneg_of_graph_connected H hHconn
-  have hBetaCount : (kInversionCount k beta.func : ℤ) ≤ genus H := by
+  have hGenusH : 0 ≤ CFGraph.genus H := genus_nonneg_of_graph_connected H hHconn
+  have hBetaCount : (kInversionCount k beta.func : ℤ) ≤ CFGraph.genus H := by
     rw [hBeta]
-    have hCast : ((Int.toNat (genus H) : ℕ) : ℤ) = genus H := by
+    have hCast : ((Int.toNat (CFGraph.genus H) : ℕ) : ℤ) = CFGraph.genus H := by
       exact Int.toNat_of_nonneg hGenusH
     have hSigmaCountZ : (kInversionCount k sigma : ℤ) ≤
-        (Int.toNat (genus H) : ℤ) := by
+        (Int.toNat (CFGraph.genus H) : ℤ) := by
       exact_mod_cast hSigmaCount
     rwa [hCast] at hSigmaCountZ
-  have hStarSci : (sci (alpha ⋆ beta).func : ℤ) ≤ genus G + genus H := by
+  have hStarSci : (sci (alpha ⋆ beta).func : ℤ) ≤ CFGraph.genus G + CFGraph.genus H := by
     apply le_trans (sci_star_le k alpha beta (by simpa [hBeta] using hSigmaAffine) ?_)
     · exact add_le_add hAlphaSci hBetaCount
     · omega
@@ -106,7 +106,7 @@ theorem onceMarkedBrillNoetherGeneral_vertexWedge_of_kGeneralTransmission
       (mark W (Sum.inl u) wv) Q (alpha ⋆ beta).func := by
     rw [hQ] at hWedge
     exact hWedge
-  have hWedgeSize : (weierstrassSize hWconn wv Q : ℤ) ≤ genus W := by
+  have hWedgeSize : (weierstrassSize hWconn wv Q : ℤ) ≤ CFGraph.genus W := by
     apply weierstrassSize_le_genus_of_sci_le (G := W)
       (Sum.inl u) wv hWconn Q (alpha ⋆ beta).func hWedge'
     simpa only [W, genus_vertexWedge] using hStarSci
@@ -131,13 +131,13 @@ theorem onceMarkedBrillNoetherGeneral_of_kGeneralTransmission
     {G : CFGraph} (u v : G.V)
     (hGconn : _root_.graphConnected G)
     {k : ℕ} (hK : KGeneralTransmission (mark G u v) k)
-    (hbudget : genus G < (k : ℤ)) :
+    (hbudget : CFGraph.genus G < (k : ℤ)) :
     OnceMarkedBrillNoetherGeneral G v := by
   classical
   intro lambda hCensus
   let D : CFDiv G := Classical.choose hCensus
   have hRows : ∀ i : ℕ,
-      rank G (D + ((i : ℤ) + genus G - CFDiv.degree D -
+      rank G (D + ((i : ℤ) + CFGraph.genus G - CFDiv.degree D -
         (onceMarkedPart lambda i : ℤ)) • oneChip v) ≥ (i : ℤ) :=
     Classical.choose_spec hCensus
   obtain ⟨tau, hTau, hAffine, hCount⟩ :=
@@ -145,14 +145,14 @@ theorem onceMarkedBrillNoetherGeneral_of_kGeneralTransmission
   obtain ⟨beta, hBeta, _hRank⟩ :=
     exists_aspPerm_rank_eq_of_isTransmissionPermutation
       u v hGconn D tau hTau
-  have hGenus : 0 ≤ genus G := genus_nonneg_of_graph_connected G hGconn
-  have hCountZ : (kInversionCount k beta.func : ℤ) ≤ genus G := by
+  have hGenus : 0 ≤ CFGraph.genus G := genus_nonneg_of_graph_connected G hGconn
+  have hCountZ : (kInversionCount k beta.func : ℤ) ≤ CFGraph.genus G := by
     rw [hBeta]
     have hCount' : (kInversionCount k tau : ℤ) ≤
-        (Int.toNat (genus G) : ℤ) := by
+        (Int.toNat (CFGraph.genus G) : ℤ) := by
       exact_mod_cast hCount
     rwa [Int.toNat_of_nonneg hGenus] at hCount'
-  have hSci : (sci beta.func : ℤ) ≤ genus G := by
+  have hSci : (sci beta.func : ℤ) ≤ CFGraph.genus G := by
     have hSciId : sci AspPerm.id.func = 0 := by
       exact sci_id
     have hStar := sci_star_le k AspPerm.id beta
@@ -160,7 +160,7 @@ theorem onceMarkedBrillNoetherGeneral_of_kGeneralTransmission
     rw [AspPerm.id_star] at hStar
     rw [hSciId, Nat.cast_zero, zero_add] at hStar
     exact le_trans hStar hCountZ
-  have hSize : (weierstrassSize hGconn v D : ℤ) ≤ genus G :=
+  have hSize : (weierstrassSize hGconn v D : ℤ) ≤ CFGraph.genus G :=
     weierstrassSize_le_genus_of_sci_le
       u v hGconn D beta.func (by simpa [hBeta] using hTau) hSci
   have hContained : lambda ≤ weierstrassPartition hGconn v D :=

@@ -457,7 +457,7 @@ theorem kGeneralTransmission_vertexWedge_opposite
         (by simpa [hBeta] using hSigmaAffine)).2
     rw [hAlpha, hBeta] at hCount
     change kInversionCount k (alpha ⋆ beta).func ≤
-      (genus (vertexWedge G H x y)).toNat
+      (CFGraph.genus (vertexWedge G H x y)).toNat
     rw [genus_vertexWedge]
     rw [Int.toNat_add (genus_nonneg_of_graph_connected G hGconn)
       (genus_nonneg_of_graph_connected H hHconn)]
@@ -515,14 +515,14 @@ theorem brillNoetherGeneral_markedChain_of_commonPeriod
     (hMK : KGeneralTransmission (mark M.graph M.left M.right) k)
     (hLconn : ∀ N ∈ L, _root_.graphConnected N.graph)
     (hLK : ∀ N ∈ L, KGeneralTransmission (mark N.graph N.left N.right) k)
-    (hthreshold : (genus (M.chain L).graph).toNat + 2 ≤ 2 * k) :
+    (hthreshold : (CFGraph.genus (M.chain L).graph).toNat + 2 ≤ 2 * k) :
     BrillNoetherGeneral (M.chain L).graph := by
   let T := mark (M.chain L).graph (M.chain L).left (M.chain L).right
   have hTconn : _root_.graphConnected T.graph :=
     graph_connected_markedChain M L hMconn hLconn
   have hTK : KGeneralTransmission T k :=
     kGeneralTransmission_markedChain_of_commonPeriod M L k hMconn hMK hLconn hLK
-  have hGenus : genus T.graph = (genus (M.chain L).graph).toNat :=
+  have hGenus : CFGraph.genus T.graph = (CFGraph.genus (M.chain L).graph).toNat :=
     (Int.toNat_of_nonneg (genus_nonneg_of_graph_connected T.graph hTconn)).symm
   have hBN := kGeneralTransmission_brillNoetherGeneral hTconn hGenus hTK hthreshold
   exact hBN

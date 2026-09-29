@@ -243,7 +243,7 @@ cardinalities equal to one. -/
 theorem degree_one_rank_zero_twist_unique_crossing_inversion
     (M : TwiceMarked) (D : CFDiv M.graph)
     (hconn : _root_.graphConnected M.graph)
-    (hGenus : genus M.graph = 2)
+    (hGenus : CFGraph.genus M.graph = 2)
     (tau : ℤ → ℤ) (hTau : IsTransmissionPermutation M D tau)
     (a b : ℤ)
     (hDegree : CFDiv.degree (D + a • oneChip M.u - b • oneChip M.v) = 1)
@@ -309,7 +309,7 @@ ordinary inversion of the transmission permutation. -/
 theorem degree_one_rank_zero_twist_exists_inversion
     (M : TwiceMarked) (D : CFDiv M.graph)
     (hconn : _root_.graphConnected M.graph)
-    (hGenus : genus M.graph = 2)
+    (hGenus : CFGraph.genus M.graph = 2)
     (tau : ℤ → ℤ) (hTau : IsTransmissionPermutation M D tau)
     (a b : ℤ)
     (hDegree : CFDiv.degree (D + a • oneChip M.u - b • oneChip M.v) = 1)

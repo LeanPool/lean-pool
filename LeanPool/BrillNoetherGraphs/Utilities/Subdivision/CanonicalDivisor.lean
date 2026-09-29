@@ -32,7 +32,7 @@ namespace Utilities
 /-- Riemann--Roch gives the canonical divisor rank on every connected graph. -/
 theorem rank_canonical_divisor_eq_genus_sub_one {G : CFGraph}
     (hConnected : graphConnected G) :
-    rank G (canonicalDivisor G) = genus G - 1 := by
+    rank G (canonicalDivisor G) = CFGraph.genus G - 1 := by
   have hRR := riemann_roch_for_graphs hConnected (canonicalDivisor G)
   rw [sub_self, zero_divisor_rank, sub_zero, degree_of_canonical_divisor] at hRR
   linarith

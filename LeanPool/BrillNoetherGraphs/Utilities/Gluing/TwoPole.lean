@@ -246,7 +246,7 @@ def canonicalSum (A : CFGraph.{u}) (B : CFGraph.{v})
 /-- Adding the second cross-edge creates one cycle. -/
 @[simp] theorem genus_join
     (A : CFGraph.{u}) (B : CFGraph.{v}) (p : TwoPole A) (q : TwoPole B) :
-    genus (join A B p q) = genus A + genus B + 1 := by
+    CFGraph.genus (join A B p q) = CFGraph.genus A + CFGraph.genus B + 1 := by
   rw [join, genus_addEdge, bridge, genus_bridgeGraph]
 
 /-- A two-pole join of connected factors is connected. -/
@@ -264,7 +264,7 @@ theorem connected_join
 
 @[simp] theorem deg_canonicalSum
     (A : CFGraph.{u}) (B : CFGraph.{v}) (p : TwoPole A) (q : TwoPole B) :
-    CFDiv.degree (canonicalSum A B p q) = 2 * genus A + 2 * genus B - 4 := by
+    CFDiv.degree (canonicalSum A B p q) = 2 * CFGraph.genus A + 2 * CFGraph.genus B - 4 := by
   change CFDiv.degree (sumDivisor A B p q (canonicalDivisor A) (canonicalDivisor B)) = _
   rw [deg_sumDivisor]
   simp only [degree_of_canonical_divisor]
@@ -309,7 +309,7 @@ theorem rank_canonicalSum_sub_rank_boundary
     (hA : graphConnected A) (hB : graphConnected B) :
     rank (join A B p q) (canonicalSum A B p q) -
         rank (join A B p q) (boundaryDivisor A B p q) =
-      genus A + genus B - 4 := by
+      CFGraph.genus A + CFGraph.genus B - 4 := by
   have hRR := riemann_roch_for_graphs
     (connected_join A B p q hA hB) (canonicalSum A B p q)
   rw [canonical_sub_canonicalSum, deg_canonicalSum, genus_join] at hRR
@@ -321,8 +321,8 @@ have equal rank.  Thus either one may be used as the unmarked degree-four
 witness. -/
 theorem rank_canonicalSum_eq_rank_boundary_of_genus_two
     (A : CFGraph.{u}) (B : CFGraph.{v}) (p : TwoPole A) (q : TwoPole B)
-    (hA : graphConnected A) (hGenusA : genus A = 2)
-    (hB : graphConnected B) (hGenusB : genus B = 2) :
+    (hA : graphConnected A) (hGenusA : CFGraph.genus A = 2)
+    (hB : graphConnected B) (hGenusB : CFGraph.genus B = 2) :
     rank (join A B p q) (canonicalSum A B p q) =
       rank (join A B p q) (boundaryDivisor A B p q) := by
   have h := rank_canonicalSum_sub_rank_boundary A B p q hA hB

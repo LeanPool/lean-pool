@@ -37,7 +37,7 @@ theorem opposite_wedge_kGeneral_factor_orders
   let W := vertexWedge G H x y
   have hConn : _root_.graphConnected W :=
     graph_connected_vertexWedge G H x y hG.connected hH.connected
-  have hPos : 0 < genus W := by
+  have hPos : 0 < CFGraph.genus W := by
     dsimp [W]
     rw [genus_vertexWedge, hG.genus_one, hH.genus_one]
     norm_num

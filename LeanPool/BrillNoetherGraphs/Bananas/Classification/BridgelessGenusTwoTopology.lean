@@ -67,7 +67,7 @@ valence at least three.  Equality is the theta-core numerology; the strict
 case is the vertex-wedge-of-cycles branch of Theorem 4.13. -/
 theorem card_topologicalVertices_le_two_of_bridgeless_genus_two
     (G : CFGraph) (hCut : TwoEdgeCutCondition G)
-    (hNontrivial : ∃ p q : G.V, p ≠ q) (hGenus : genus G = 2) :
+    (hNontrivial : ∃ p q : G.V, p ≠ q) (hGenus : CFGraph.genus G = 2) :
     (topologicalVertices G).card ≤ 2 := by
   have hBound := card_topologicalVertices_le G
     (hasMinimumValenceTwo_of_twoEdgeCutCondition G hCut hNontrivial)
@@ -79,7 +79,7 @@ theorem card_topologicalVertices_le_two_of_bridgeless_genus_two
 valence at least two. -/
 theorem topologicalVertices_nonempty_of_bridgeless_genus_two
     (G : CFGraph) (hCut : TwoEdgeCutCondition G)
-    (hNontrivial : ∃ p q : G.V, p ≠ q) (hGenus : genus G = 2) :
+    (hNontrivial : ∃ p q : G.V, p ≠ q) (hGenus : CFGraph.genus G = 2) :
     (topologicalVertices G).Nonempty := by
   let hMin : HasMinimumValenceTwo G :=
     hasMinimumValenceTwo_of_twoEdgeCutCondition G hCut hNontrivial
@@ -107,7 +107,7 @@ theorem topologicalVertices_nonempty_of_bridgeless_genus_two
 graph has either one or two topological vertices. -/
 theorem card_topologicalVertices_eq_one_or_two_of_bridgeless_genus_two
     (G : CFGraph) (hCut : TwoEdgeCutCondition G)
-    (hNontrivial : ∃ p q : G.V, p ≠ q) (hGenus : genus G = 2) :
+    (hNontrivial : ∃ p q : G.V, p ≠ q) (hGenus : CFGraph.genus G = 2) :
     (topologicalVertices G).card = 1 ∨ (topologicalVertices G).card = 2 := by
   have hNonempty := topologicalVertices_nonempty_of_bridgeless_genus_two
     G hCut hNontrivial hGenus

@@ -150,7 +150,7 @@ theorem marks_not_linearEquiv {g : ℕ} (hg : 1 ≤ g) (B : Banana g)
 
 /-- The subdivision model has the advertised genus. -/
 @[simp] theorem genus_graph {g : ℕ} (B : Banana g) :
-    genus B.graph = g := by
+    CFGraph.genus B.graph = g := by
   rw [SubdivisionGraph.Spec.genus_graph]
   omega
 

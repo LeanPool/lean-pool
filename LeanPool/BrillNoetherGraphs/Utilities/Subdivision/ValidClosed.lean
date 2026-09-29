@@ -382,7 +382,7 @@ core's `p − n + 1`, by `DegSpec.genus_graph`. -/
 theorem genus_degenerateSpec (certificate : CertificateData m n p)
     (point : Fin m → ℤ) (core_nonempty : 0 < n) (rep : Fin n → Fin n)
     (rep_idem rep_zero rep_loopless forest) :
-    genus (certificate.degenerateSpec point core_nonempty rep rep_idem rep_zero
+    CFGraph.genus (certificate.degenerateSpec point core_nonempty rep rep_idem rep_zero
         rep_loopless forest).graph = (p : ℤ) - (n : ℤ) + 1 :=
   Utilities.Certificate.DegenerateSpec.DegSpec.genus_graph _
 

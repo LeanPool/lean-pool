@@ -47,11 +47,11 @@ noncomputable def poleOrder (G : CFGraph) (v : G.V) (D : CFDiv G)
 theorem poleOrderSet_nonempty {G : CFGraph} (hG : _root_.graphConnected G)
     (v : G.V) (D : CFDiv G) (i : ℕ) :
     (poleOrderSet G v D i).Nonempty := by
-  refine ⟨(i : ℤ) + genus G - CFDiv.degree D, ?_⟩
+  refine ⟨(i : ℤ) + CFGraph.genus G - CFDiv.degree D, ?_⟩
   have hRank := rank_ge_deg_sub_genus hG
-    (D + ((i : ℤ) + genus G - CFDiv.degree D) • oneChip v)
+    (D + ((i : ℤ) + CFGraph.genus G - CFDiv.degree D) • oneChip v)
   have hDegree :
-      CFDiv.degree (D + ((i : ℤ) + genus G - CFDiv.degree D) • oneChip v) - genus G =
+      CFDiv.degree (D + ((i : ℤ) + CFGraph.genus G - CFDiv.degree D) • oneChip v) - CFGraph.genus G =
         (i : ℤ) := by
     rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip]
     norm_num
@@ -98,12 +98,12 @@ theorem rank_lt_of_lt_poleOrder {G : CFGraph} (hG : _root_.graphConnected G)
 
 theorem poleOrder_le_riemannRoch {G : CFGraph} (hG : _root_.graphConnected G)
     (v : G.V) (D : CFDiv G) (i : ℕ) :
-    poleOrder G v D i ≤ (i : ℤ) + genus G - CFDiv.degree D := by
+    poleOrder G v D i ≤ (i : ℤ) + CFGraph.genus G - CFDiv.degree D := by
   apply poleOrder_le_of_rank_ge hG
   have hRank := rank_ge_deg_sub_genus hG
-    (D + ((i : ℤ) + genus G - CFDiv.degree D) • oneChip v)
+    (D + ((i : ℤ) + CFGraph.genus G - CFDiv.degree D) • oneChip v)
   have hDegree :
-      CFDiv.degree (D + ((i : ℤ) + genus G - CFDiv.degree D) • oneChip v) - genus G =
+      CFDiv.degree (D + ((i : ℤ) + CFGraph.genus G - CFDiv.degree D) • oneChip v) - CFGraph.genus G =
         (i : ℤ) := by
     rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip]
     norm_num
@@ -214,7 +214,7 @@ theorem poleOrder_succ_le {G : CFGraph} (hG : _root_.graphConnected G)
 /-- The integer underlying the `i`th Weierstrass part. -/
 noncomputable def weierstrassPartInt (G : CFGraph) (v : G.V) (D : CFDiv G)
     (i : ℕ) : ℤ :=
-  (i : ℤ) + genus G - CFDiv.degree D - poleOrder G v D i
+  (i : ℤ) + CFGraph.genus G - CFDiv.degree D - poleOrder G v D i
 
 theorem weierstrassPartInt_nonneg {G : CFGraph} (hG : _root_.graphConnected G)
     (v : G.V) (D : CFDiv G) (i : ℕ) :
@@ -254,20 +254,20 @@ theorem weierstrassPart_anti {G : CFGraph} (hG : _root_.graphConnected G)
 
 theorem poleOrder_eq_riemannRoch_of_genus_le {G : CFGraph}
     (hG : _root_.graphConnected G) (v : G.V) (D : CFDiv G) (i : ℕ)
-    (hi : (genus G).toNat ≤ i) :
-    poleOrder G v D i = (i : ℤ) + genus G - CFDiv.degree D := by
+    (hi : (CFGraph.genus G).toNat ≤ i) :
+    poleOrder G v D i = (i : ℤ) + CFGraph.genus G - CFDiv.degree D := by
   apply le_antisymm (poleOrder_le_riemannRoch hG v D i)
-  let ell : ℤ := (i : ℤ) + genus G - CFDiv.degree D
+  let ell : ℤ := (i : ℤ) + CFGraph.genus G - CFDiv.degree D
   have hDegree :
-      CFDiv.degree (D + (ell - 1) • oneChip v) = (i : ℤ) + genus G - 1 := by
+      CFDiv.degree (D + (ell - 1) • oneChip v) = (i : ℤ) + CFGraph.genus G - 1 := by
     dsimp [ell]
     rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip]
     ring
-  have hg : 0 ≤ genus G := genus_nonneg_of_graph_connected G hG
-  have hiCast : genus G ≤ (i : ℤ) := by
+  have hg : 0 ≤ CFGraph.genus G := genus_nonneg_of_graph_connected G hG
+  have hiCast : CFGraph.genus G ≤ (i : ℤ) := by
     rw [← Int.toNat_of_nonneg hg]
     exact_mod_cast hi
-  have hLarge : CFDiv.degree (D + (ell - 1) • oneChip v) > 2 * genus G - 2 := by
+  have hLarge : CFDiv.degree (D + (ell - 1) • oneChip v) > 2 * CFGraph.genus G - 2 := by
     rw [hDegree]
     omega
   have hRankPrev := (rank_nonspecial_range hG
@@ -297,7 +297,7 @@ theorem poleOrder_eq_riemannRoch_of_genus_le {G : CFGraph}
 
 @[simp] theorem weierstrassPart_eq_zero_of_genus_le {G : CFGraph}
     (hG : _root_.graphConnected G) (v : G.V) (D : CFDiv G) (i : ℕ)
-    (hi : (genus G).toNat ≤ i) :
+    (hi : (CFGraph.genus G).toNat ≤ i) :
     weierstrassPart G v D i = 0 := by
   apply Int.ofNat_eq_zero.mp
   rw [weierstrassPart_cast hG]
@@ -309,14 +309,14 @@ theorem poleOrder_eq_riemannRoch_of_genus_le {G : CFGraph}
 harmless to `YoungDiagram.ofRowLens`. -/
 noncomputable def weierstrassRowLens (G : CFGraph) (v : G.V) (D : CFDiv G) :
     List ℕ :=
-  (List.range (genus G).toNat).map (weierstrassPart G v D)
+  (List.range (CFGraph.genus G).toNat).map (weierstrassPart G v D)
 
 theorem weierstrassRowLens_sorted {G : CFGraph} (hG : _root_.graphConnected G)
     (v : G.V) (D : CFDiv G) :
     (weierstrassRowLens G v D).SortedGE := by
   unfold weierstrassRowLens
   have hPairwise : List.Pairwise (fun x y : ℕ => x ≥ y)
-      ((List.range (genus G).toNat).map (weierstrassPart G v D)) :=
+      ((List.range (CFGraph.genus G).toNat).map (weierstrassPart G v D)) :=
     List.pairwise_le_range.map _
       (fun _ _ hij => weierstrassPart_anti hG v D hij)
   exact hPairwise.sortedGE
@@ -350,7 +350,7 @@ theorem onceMarkedPart_eq_rowLen (lambda : YoungDiagram) (i : ℕ) :
 theorem weierstrassPartition_rowLen {G : CFGraph}
     (hG : _root_.graphConnected G) (v : G.V) (D : CFDiv G) (i : ℕ) :
     (weierstrassPartition hG v D).rowLen i = weierstrassPart G v D i := by
-  by_cases hi : i < (genus G).toNat
+  by_cases hi : i < (CFGraph.genus G).toNat
   · have hiList : i < (weierstrassRowLens G v D).length := by
       simp [weierstrassRowLens, hi]
     have hRow := YoungDiagram.rowLen_ofRowLens
@@ -366,7 +366,7 @@ theorem weierstrassPartition_rowLen {G : CFGraph}
       YoungDiagram.mem_iff_lt_rowLen.mpr hPos
     rw [weierstrassPartition, YoungDiagram.mem_ofRowLens] at hCell
     obtain ⟨hiList, _⟩ := hCell
-    have hLength : (weierstrassRowLens G v D).length = (genus G).toNat := by
+    have hLength : (weierstrassRowLens G v D).length = (CFGraph.genus G).toNat := by
       simp [weierstrassRowLens]
     rw [hLength] at hiList
     exact hi hiList
@@ -403,7 +403,7 @@ noncomputable def weierstrassSize {G : CFGraph}
 theorem weierstrassSize_eq_sum {G : CFGraph}
     (hG : _root_.graphConnected G) (v : G.V) (D : CFDiv G) :
     weierstrassSize hG v D =
-      ∑ i ∈ Finset.range (genus G).toNat, weierstrassPart G v D i := by
+      ∑ i ∈ Finset.range (CFGraph.genus G).toNat, weierstrassPart G v D i := by
   rw [weierstrassSize, weierstrassPartition]
   change (YoungDiagram.cellsOfRowLens (weierstrassRowLens G v D)).card = _
   rw [card_cellsOfRowLens]
@@ -428,7 +428,7 @@ theorem onceMarkedCensusContains_weierstrassPartition {G : CFGraph}
   have hCast := weierstrassPart_cast hG v D i
   unfold weierstrassPartInt at hCast
   have hCoefficient :
-      (i : ℤ) + genus G - CFDiv.degree D - (weierstrassPart G v D i : ℤ) =
+      (i : ℤ) + CFGraph.genus G - CFDiv.degree D - (weierstrassPart G v D i : ℤ) =
         poleOrder G v D i := by
     omega
   rw [hCoefficient]
@@ -442,7 +442,7 @@ theorem census_partition_le_weierstrassPartition {G : CFGraph}
     (hG : _root_.graphConnected G) (v : G.V) (D : CFDiv G)
     (lambda : YoungDiagram)
     (hRows : ∀ i : ℕ,
-      rank G (D + ((i : ℤ) + genus G - CFDiv.degree D -
+      rank G (D + ((i : ℤ) + CFGraph.genus G - CFDiv.degree D -
         (onceMarkedPart lambda i : ℤ)) • oneChip v) ≥ (i : ℤ)) :
     lambda ≤ weierstrassPartition hG v D := by
   rw [← YoungDiagram.cells_subset_iff]
@@ -452,7 +452,7 @@ theorem census_partition_le_weierstrassPartition {G : CFGraph}
     rw [onceMarkedPart_eq_rowLen]
     exact YoungDiagram.mem_iff_lt_rowLen.mp hCell
   have hPole := poleOrder_le_of_rank_ge hG v D i
-    ((i : ℤ) + genus G - CFDiv.degree D - (onceMarkedPart lambda i : ℤ)) (hRows i)
+    ((i : ℤ) + CFGraph.genus G - CFDiv.degree D - (onceMarkedPart lambda i : ℤ)) (hRows i)
   have hPartCast := weierstrassPart_cast hG v D i
   have hPart : onceMarkedPart lambda i ≤ weierstrassPart G v D i := by
     unfold weierstrassPartInt at hPartCast
@@ -470,7 +470,7 @@ theorem census_card_le_weierstrassSize {G : CFGraph}
   classical
   let D : CFDiv G := Classical.choose hCensus
   have hRows : ∀ i : ℕ,
-      rank G (D + ((i : ℤ) + genus G - CFDiv.degree D -
+      rank G (D + ((i : ℤ) + CFGraph.genus G - CFDiv.degree D -
         (onceMarkedPart lambda i : ℤ)) • oneChip v) ≥ (i : ℤ) :=
     Classical.choose_spec hCensus
   change lambda.card ≤ weierstrassSize hG v D

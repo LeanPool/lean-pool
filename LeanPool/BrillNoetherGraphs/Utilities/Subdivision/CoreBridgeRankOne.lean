@@ -36,7 +36,7 @@ variable {n p : ℕ}
   (cutData : CoreBridgeCut.Data spec.core)
 
 private theorem genusTwo_bnExists
-    {G : CFGraph} (hConnected : graphConnected G) (hGenus : genus G = 2) :
+    {G : CFGraph} (hConnected : graphConnected G) (hGenus : CFGraph.genus G = 2) :
     BNExists G 1 2 := by
   apply BNExists_elementary hConnected
   · norm_num
@@ -53,15 +53,15 @@ theorem bnExists_one_three_of_two_two
     BNExists spec.graph 1 3 := by
   let cut := cutData.toOneBridgeCut spec hValid
   have hFactors := cut.graph_connected_factors_of_connected hConnected
-  have hLeftGenus : genus cut.leftGraph = 2 := by
+  have hLeftGenus : CFGraph.genus cut.leftGraph = 2 := by
     dsimp only [cut]
     rw [cutData.leftGraph_genus spec hValid, hLeft]
-  have hAmbientGenus : genus spec.graph = 4 := by
+  have hAmbientGenus : CFGraph.genus spec.graph = 4 := by
     have hSum := cutData.toCoreVertexCut.leftGenus_add_rightGenus_eq_graph_genus
       spec (cutData.toCoreVertexCut_valid hValid)
     rw [hLeft, hRight] at hSum
     omega
-  have hRightGenus : genus cut.rightGraph = 2 := by
+  have hRightGenus : CFGraph.genus cut.rightGraph = 2 := by
     dsimp only [cut]
     rw [cutData.rightGraph_genus_eq spec hValid, hAmbientGenus, hLeft]
     norm_num

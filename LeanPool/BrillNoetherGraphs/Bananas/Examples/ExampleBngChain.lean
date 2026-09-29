@@ -147,11 +147,11 @@ noncomputable def bngF5 : KGeneralChainFactor where
       bngEvenlyMarked623
 
 /-- The genus of each factor, read off `Spec.genus_graph`. -/
-theorem bngF1_genus : genus bngF1.marked.graph = 1 := bngB31.genus_graph
-theorem bngF2_genus : genus bngF2.marked.graph = 2 := bngTheta414.genus_graph
-theorem bngF3_genus : genus bngF3.marked.graph = 1 := bngB32.genus_graph
-theorem bngF4_genus : genus bngF4.marked.graph = 2 := bngTheta5210.genus_graph
-theorem bngF5_genus : genus bngF5.marked.graph = 2 := bngTheta623.genus_graph
+theorem bngF1_genus : CFGraph.genus bngF1.marked.graph = 1 := bngB31.genus_graph
+theorem bngF2_genus : CFGraph.genus bngF2.marked.graph = 2 := bngTheta414.genus_graph
+theorem bngF3_genus : CFGraph.genus bngF3.marked.graph = 1 := bngB32.genus_graph
+theorem bngF4_genus : CFGraph.genus bngF4.marked.graph = 2 := bngTheta5210.genus_graph
+theorem bngF5_genus : CFGraph.genus bngF5.marked.graph = 2 := bngTheta623.genus_graph
 
 theorem bngChainMinBudget :
     ChainMinBudget [bngF1, bngF2, bngF3, bngF4, bngF5] := by
@@ -173,7 +173,7 @@ theorem exampleBng_brillNoetherGeneral :
     [bngF2, bngF3, bngF4, bngF5] bngChainMinBudget
 
 theorem exampleBng_genus :
-    genus (bngF1.marked.chain
+    CFGraph.genus (bngF1.marked.chain
         ([bngF2, bngF3, bngF4, bngF5].map KGeneralChainFactor.marked)).graph
       = 8 := by
   rw [MarkedGraph.genus_chain]

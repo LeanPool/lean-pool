@@ -39,7 +39,7 @@ theorem evenlyMarkedTheta_kGeneral_of_torsion_and_count
       IsTransmissionPermutation
         (mark B.graph (strandVertex B α i) (strandVertex B β j)) D τ ∧
       IsKAffine k τ ∧
-      kInversionCount k τ ≤ Int.toNat (genus B.graph)) :
+      kInversionCount k τ ≤ Int.toNat (CFGraph.genus B.graph)) :
     KGeneralTransmission
       (mark B.graph (strandVertex B α i) (strandVertex B β j)) k := by
   let M := mark B.graph (strandVertex B α i) (strandVertex B β j)

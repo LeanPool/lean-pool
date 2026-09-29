@@ -54,7 +54,7 @@ theorem allSubmodular_same_leftFactor_of_card_eq_two
     omega
   have hWconn : _root_.graphConnected W :=
     graph_connected_vertexWedge G H x y hG.connected hH.connected
-  have hWgenus : genus W = 2 := by
+  have hWgenus : CFGraph.genus W = 2 := by
     rw [genus_vertexWedge, hG.genus_one, hH.genus_one]
     norm_num
   have hDistinct : ¬ linearEquiv W

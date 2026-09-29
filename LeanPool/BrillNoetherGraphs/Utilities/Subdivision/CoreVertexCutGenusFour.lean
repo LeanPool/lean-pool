@@ -93,7 +93,7 @@ theorem graph_connected_of_genusFourRankOneConditions
 the subdivision lengths. -/
 theorem graph_genus_eq_four_of_genusFourRankOneConditions
     (h : c.GenusFourRankOneConditions) :
-    genus spec.graph = 4 := by
+    CFGraph.genus spec.graph = 4 := by
   have hSum := c.leftGenus_add_rightGenus_eq_graph_genus spec h.1
   rcases h.2.2 with hTwoTwo | hThreeOne | hOneThree
   · omega
@@ -109,15 +109,15 @@ theorem bnExists_one_three_of_genusFourRankOneConditions
   have hConnected : graphConnected spec.graph :=
     c.graph_connected_of_genusFourRankOneConditions spec h
   rcases h.2.2 with hTwoTwo | hThreeOne | hOneThree
-  · have hLeftGenus : genus cut.leftGraph = 2 := by
+  · have hLeftGenus : CFGraph.genus cut.leftGraph = 2 := by
       dsimp [cut]
       rw [c.leftGraph_genus spec h.1, hTwoTwo.1]
-    have hRightGenus : genus cut.rightGraph = 2 := by
+    have hRightGenus : CFGraph.genus cut.rightGraph = 2 := by
       dsimp [cut]
       rw [c.rightGraph_genus spec h.1, hTwoTwo.2]
     exact cut.BNExists_rankOneDegreeThree_of_genus_two_two
       hConnected hLeftGenus hRightGenus
-  · have hLeftGenus : genus cut.leftGraph = 3 := by
+  · have hLeftGenus : CFGraph.genus cut.leftGraph = 3 := by
       dsimp [cut]
       rw [c.leftGraph_genus spec h.1, hThreeOne.1]
     have hRightRigid : PointedGenusOneRigid cut.rightGraph cut.rightGlue := by
@@ -130,7 +130,7 @@ theorem bnExists_one_three_of_genusFourRankOneConditions
       dsimp [cut]
       exact c.leftPointedGenusOneRigid spec
         ⟨h.1, h.2.1, hOneThree.1, hOneThree.2.1⟩
-    have hRightGenus : genus cut.rightGraph = 3 := by
+    have hRightGenus : CFGraph.genus cut.rightGraph = 3 := by
       dsimp [cut]
       rw [c.rightGraph_genus spec h.1, hOneThree.2.2]
     exact cut.BNExists_rankOneDegreeThree_of_left_rigid_one_right_three

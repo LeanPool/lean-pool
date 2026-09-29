@@ -34,7 +34,7 @@ factor. -/
 theorem BNExists_vertexWedge_rankOneDegreeThree_of_genus_three
     (G : CFGraph.{uOneCycle}) (H : CFGraph.{vOneCycle})
     (x : G.V) (y : H.V)
-    (hG : graphConnected G) (hGenusG : genus G = 3)
+    (hG : graphConnected G) (hGenusG : CFGraph.genus G = 3)
     (hH : PointedGenusOneRigid H y) :
     BNExists (vertexWedge G H x y) 1 3 := by
   obtain ⟨D, _Ddual, hD, _hDdual, _hPair⟩ :=

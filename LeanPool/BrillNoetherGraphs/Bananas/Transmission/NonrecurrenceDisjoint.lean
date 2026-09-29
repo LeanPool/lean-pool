@@ -29,7 +29,7 @@ open Utilities
 the rank support of the corresponding canonical complementary twist. -/
 theorem mem_rankSupport_canonical_sub_markedTwist_iff
     {M : TwiceMarked} (hconn : _root_.graphConnected M.graph)
-    (hgenus : genus M.graph = 2) (w : M.graph.V) (n : ℕ) :
+    (hgenus : CFGraph.genus M.graph = 2) (w : M.graph.V) (n : ℕ) :
     w ∈ rankSupport M.graph
         (canonicalDivisor M.graph - (n : ℤ) • (oneChip M.u - oneChip M.v)) ↔
       0 ≤ rank M.graph
@@ -69,7 +69,7 @@ def CanonicalMarkedSupportsPairwiseDisjoint (M : TwiceMarked) (k : ℕ) : Prop :
 canonical support complexes of the nonzero marked twists. -/
 theorem nonRecurrent_iff_canonicalMarkedSupportsPairwiseDisjoint
     {M : TwiceMarked} {k : ℕ} (hconn : _root_.graphConnected M.graph)
-    (hgenus : genus M.graph = 2) :
+    (hgenus : CFGraph.genus M.graph = 2) :
     NonRecurrent M k ↔ CanonicalMarkedSupportsPairwiseDisjoint M k := by
   constructor
   · intro hNonrec n m hn hm hne

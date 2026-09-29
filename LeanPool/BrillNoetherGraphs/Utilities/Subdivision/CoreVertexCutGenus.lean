@@ -268,7 +268,7 @@ theorem leftGraph_vertex_card (h : c.Valid) :
 /-- The named induced factor has the core-computed genus, independently of
 all positive subdivision lengths. -/
 @[simp] theorem leftGraph_genus (h : c.Valid) :
-    genus (c.toOneVertexCut spec h).leftGraph = c.leftGenus := by
+    CFGraph.genus (c.toOneVertexCut spec h).leftGraph = c.leftGenus := by
   have hTerm (edge : Fin p) :
       spec.length edge - 1 + 1 = spec.length edge := by
     have := spec.length_pos edge
@@ -287,7 +287,7 @@ all positive subdivision lengths. -/
         apply Finset.sum_congr rfl
         intro edge _hEdge
         exact hTerm edge
-  unfold genus leftGenus leftSlotCount
+  unfold CFGraph.genus leftGenus leftSlotCount
   rw [c.leftGraph_edge_card spec h, c.leftGraph_vertex_card spec h]
   push_cast
   have hSumInt :
@@ -301,7 +301,7 @@ all positive subdivision lengths. -/
 /-- The complementary induced factor has its core-computed genus,
 independently of all positive subdivision lengths. -/
 @[simp] theorem rightGraph_genus (h : c.Valid) :
-    genus (c.toOneVertexCut spec h).rightGraph = c.rightGenus := by
+    CFGraph.genus (c.toOneVertexCut spec h).rightGraph = c.rightGenus := by
   have hCut := (c.toOneVertexCut spec h).genus_eq
   rw [spec.genus_graph, c.leftGraph_genus spec h] at hCut
   have hCore := c.leftGenus_add_rightGenus h spec.core_loopless
@@ -310,19 +310,19 @@ independently of all positive subdivision lengths. -/
 /-- Both computed factor genera sum to the genus of every positive
 subdivision of the core. -/
 theorem leftGenus_add_rightGenus_eq_graph_genus (h : c.Valid) :
-    c.leftGenus + c.rightGenus = genus spec.graph := by
+    c.leftGenus + c.rightGenus = CFGraph.genus spec.graph := by
   rw [spec.genus_graph]
   exact c.leftGenus_add_rightGenus h spec.core_loopless
 
 /-- Checker-facing form of the named factor genus calculation. -/
 @[simp] theorem leftGraph_genus_of_check (hCheck : c.check = true) :
-    genus (c.cutOfCheck spec hCheck).leftGraph = c.leftGenus := by
+    CFGraph.genus (c.cutOfCheck spec hCheck).leftGraph = c.leftGenus := by
   unfold CoreVertexCut.Data.cutOfCheck
   exact c.leftGraph_genus spec (c.check_eq_true_iff.mp hCheck)
 
 /-- Checker-facing form of the complementary factor genus calculation. -/
 @[simp] theorem rightGraph_genus_of_check (hCheck : c.check = true) :
-    genus (c.cutOfCheck spec hCheck).rightGraph = c.rightGenus := by
+    CFGraph.genus (c.cutOfCheck spec hCheck).rightGraph = c.rightGenus := by
   unfold CoreVertexCut.Data.cutOfCheck
   exact c.rightGraph_genus spec (c.check_eq_true_iff.mp hCheck)
 
@@ -370,17 +370,17 @@ private theorem twoCycleCut_rightGenus : twoCycleCut.rightGenus = 1 := by
   decide
 
 private theorem twoCycleCut_leftGraph_genus :
-    genus (twoCycleCut.cutOfCheck twoCycleSpec twoCycleCut_check).leftGraph = 1 := by
+    CFGraph.genus (twoCycleCut.cutOfCheck twoCycleSpec twoCycleCut_check).leftGraph = 1 := by
   calc
-    genus (twoCycleCut.cutOfCheck twoCycleSpec twoCycleCut_check).leftGraph =
+    CFGraph.genus (twoCycleCut.cutOfCheck twoCycleSpec twoCycleCut_check).leftGraph =
         twoCycleCut.leftGenus := by
       simp [twoCycleSpec]
     _ = 1 := twoCycleCut_leftGenus
 
 private theorem twoCycleCut_rightGraph_genus :
-    genus (twoCycleCut.cutOfCheck twoCycleSpec twoCycleCut_check).rightGraph = 1 := by
+    CFGraph.genus (twoCycleCut.cutOfCheck twoCycleSpec twoCycleCut_check).rightGraph = 1 := by
   calc
-    genus (twoCycleCut.cutOfCheck twoCycleSpec twoCycleCut_check).rightGraph =
+    CFGraph.genus (twoCycleCut.cutOfCheck twoCycleSpec twoCycleCut_check).rightGraph =
         twoCycleCut.rightGenus := by
       simp [twoCycleSpec]
     _ = 1 := twoCycleCut_rightGenus

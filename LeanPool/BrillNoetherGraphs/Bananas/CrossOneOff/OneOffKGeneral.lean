@@ -40,10 +40,10 @@ theorem oneOff_not_kGeneral_of_inversion_bound_gt_genus
   have hk : 0 < k := hK.1.1
   have hLower := oneOff_inversion_lower_bound
     B alpha tau hg hk hLength hTau hAffine hFinite
-  have hGenus : Int.toNat (genus
+  have hGenus : Int.toNat (CFGraph.genus
       (mark B.graph (leftEndpoint B)
         (strandVertex B alpha ⟨B.length alpha - 1, by omega⟩)).graph) = g := by
-    change Int.toNat (genus B.graph) = g
+    change Int.toNat (CFGraph.genus B.graph) = g
     rw [B.genus_graph]
     omega
   rw [hGenus] at hUpper

@@ -69,7 +69,7 @@ def graphConnected (G : CFGraph) : Prop :=
     (∃ v ∈ S, ∃ w ∉ S, numEdges G v w > 0)
 
 /-- The genus of a graph is its cyclomatic number, $|E| - |V| + 1$. -/
-def genus (G : CFGraph) : ℤ :=
+def CFGraph.genus (G : CFGraph) : ℤ :=
   Multiset.card G.edges - Fintype.card G.V + 1
 
 /-- The number of edges between two vertices is symmetric (the graph is undirected). -/

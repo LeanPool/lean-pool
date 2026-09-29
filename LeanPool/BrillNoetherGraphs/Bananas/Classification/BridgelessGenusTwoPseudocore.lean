@@ -43,7 +43,7 @@ inductive BridgelessGenusTwoCoreNormalForm (G : CFGraph.{0}) : Prop
   | theta (B : Banana 2) (equivalence : LaplacianEquiv G B.graph) :
       BridgelessGenusTwoCoreNormalForm G
   | rigidWedge (base factor : CFGraph.{0}) (attachment : base.V) (root : factor.V)
-      (baseConnected : _root_.graphConnected base) (baseGenus : genus base = 1)
+      (baseConnected : _root_.graphConnected base) (baseGenus : CFGraph.genus base = 1)
       (baseCut : TwoEdgeCutCondition base) (factorCut : TwoEdgeCutCondition factor)
       (wedgeCut : TwoEdgeCutCondition (vertexWedge base factor attachment root))
       (baseRigid : PointedGenusOneRigid base attachment)
@@ -62,7 +62,7 @@ inductive MarkedBridgelessGenusTwoCoreNormalForm
       MarkedBridgelessGenusTwoCoreNormalForm G u v
   | rigidWedge (base factor : CFGraph.{0}) (attachment : base.V) (root : factor.V)
       (u' v' : (vertexWedge base factor attachment root).V)
-      (baseConnected : _root_.graphConnected base) (baseGenus : genus base = 1)
+      (baseConnected : _root_.graphConnected base) (baseGenus : CFGraph.genus base = 1)
       (baseCut : TwoEdgeCutCondition base) (factorCut : TwoEdgeCutCondition factor)
       (wedgeCut : TwoEdgeCutCondition (vertexWedge base factor attachment root))
       (baseRigid : PointedGenusOneRigid base attachment)
@@ -155,7 +155,7 @@ with at most two base vertices. -/
 theorem bridgelessGenusTwo_pseudocorePresentation
     (G : CFGraph.{0}) (hConnected : _root_.graphConnected G)
     (hCut : TwoEdgeCutCondition G) (hNontrivial : ∃ p q : G.V, p ≠ q)
-    (hGenus : genus G = 2) :
+    (hGenus : CFGraph.genus G = 2) :
     ∃ (k : ℕ) (core : Pseudocore k) (split : core.SplitMetadata),
       k ≤ 2 ∧ core.ValidAt 2 ∧ PseudocoreSplitGlue.Compatible split ∧
       ∃ spec : Spec (k + core.loopCount) core.splitEdgeCount,
@@ -171,7 +171,7 @@ theorem bridgelessGenusTwo_pseudocorePresentation
     (UnitSubdivisionPresentation.laplacianEquiv G).trans reduction
   have hSpecConnected : _root_.graphConnected spec.graph :=
     equivalence.graphConnected hConnected
-  have hSpecGenus : genus spec.graph = 2 := by
+  have hSpecGenus : CFGraph.genus spec.graph = 2 := by
     rw [equivalence.genus_eq, hGenus]
   have hSpecDegree : ∀ v : Fin N, 2 ≤ slotValence spec.core v := by
     intro v
@@ -193,14 +193,14 @@ bridgeless genus-two graph. -/
 theorem bridgelessGenusTwo_coreNormalForm
     (G : CFGraph.{0}) (hConnected : _root_.graphConnected G)
     (hCut : TwoEdgeCutCondition G) (hNontrivial : ∃ p q : G.V, p ≠ q)
-    (hGenus : genus G = 2) : BridgelessGenusTwoCoreNormalForm G := by
+    (hGenus : CFGraph.genus G = 2) : BridgelessGenusTwoCoreNormalForm G := by
   obtain ⟨k, core, split, hBound, hValid, hCompatible, spec, hCore,
     hPresentation⟩ := bridgelessGenusTwo_pseudocorePresentation
       G hConnected hCut hNontrivial hGenus
   obtain ⟨presentation⟩ := hPresentation
   have hSpecConnected : _root_.graphConnected spec.graph :=
     presentation.graphConnected hConnected
-  have hSpecGenus : genus spec.graph = 2 := by
+  have hSpecGenus : CFGraph.genus spec.graph = 2 := by
     rw [presentation.genus_eq, hGenus]
   have hSpecCut : TwoEdgeCutCondition spec.graph :=
     (presentation.toGraphIso.twoEdgeCutCondition_map_iff).mpr hCut
@@ -291,7 +291,7 @@ theorem bridgelessGenusTwo_coreNormalForm
 theorem marked_bridgelessGenusTwo_coreNormalForm
     (G : CFGraph.{0}) (u v : G.V) (hConnected : _root_.graphConnected G)
     (hCut : TwoEdgeCutCondition G) (hNontrivial : ∃ p q : G.V, p ≠ q)
-    (hGenus : genus G = 2) :
+    (hGenus : CFGraph.genus G = 2) :
     MarkedBridgelessGenusTwoCoreNormalForm G u v := by
   cases bridgelessGenusTwo_coreNormalForm G hConnected hCut hNontrivial hGenus with
   | theta B equivalence =>

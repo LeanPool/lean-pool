@@ -81,8 +81,8 @@ abbrev bridgeGraph (G : CFGraph.{u}) (H : CFGraph.{v})
 /-- A bridge joining two components creates no new cycle. -/
 @[simp] theorem genus_bridgeGraph
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) :
-    genus (bridgeGraph G H x y) = genus G + genus H := by
-  simp only [genus, bridgeGraph, Multiset.card_cons, Multiset.card_add,
+    CFGraph.genus (bridgeGraph G H x y) = CFGraph.genus G + CFGraph.genus H := by
+  simp only [CFGraph.genus, bridgeGraph, Multiset.card_cons, Multiset.card_add,
     Multiset.card_map, Fintype.card_sum]
   push_cast
   ring

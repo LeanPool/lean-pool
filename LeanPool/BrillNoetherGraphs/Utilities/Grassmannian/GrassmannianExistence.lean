@@ -29,7 +29,7 @@ the first mark up to existence. -/
 def GrassmannianTransmissionExistence
     (G : CFGraph) (u v : G.V) : Prop :=
   ∀ lambda : YoungDiagram,
-    (lambda.card : ℤ) ≤ genus G →
+    (lambda.card : ℤ) ≤ CFGraph.genus G →
       ∀ chi : ℤ,
         TransmissionExists G u v (shiftedGrassmannianPerm lambda chi)
 

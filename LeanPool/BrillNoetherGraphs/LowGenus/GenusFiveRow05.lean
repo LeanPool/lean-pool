@@ -699,7 +699,9 @@ theorem lbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row05Core) (v : Fin 8) :
       zeroChip, add_left_inj, Fin.reduceFinMk, hH3, hT8, hH8]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try (simp_all only [Fin.isValue, ↓reduceIte, add_zero,
+    not_lt, nonpos_iff_eq_zero, headContribution_same, lt_self_iff_false,
+    add_right_inj, not_le, tsub_lt_self_iff]))
   all_goals (first | ring | omega)
 
 theorem lbCoeff_nonneg {d : DegSpec 8 12} (hL : d.length 2 ≤ d.length 3) (v : Fin 8) :

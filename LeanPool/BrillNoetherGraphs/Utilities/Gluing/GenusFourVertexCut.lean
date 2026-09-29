@@ -28,7 +28,7 @@ namespace Utilities
 universe u v
 
 private theorem genusTwo_bnExists {G : CFGraph} (hConnected : graphConnected G)
-    (hGenus : genus G = 2) : BNExists G 1 2 := by
+    (hGenus : CFGraph.genus G = 2) : BNExists G 1 2 := by
   apply BNExists_elementary hConnected
   · norm_num
   · simp [bnNumber, rectangleWidth, hGenus]
@@ -40,7 +40,7 @@ vertex wedge. -/
 theorem BNExists_vertexWedge_rankOneDegreeThree_of_genus_two_two
     (G : CFGraph.{u}) (H : CFGraph.{v})
     (hG : graphConnected G) (hH : graphConnected H)
-    (hGenusG : genus G = 2) (hGenusH : genus H = 2)
+    (hGenusG : CFGraph.genus G = 2) (hGenusH : CFGraph.genus H = 2)
     (x : G.V) (y : H.V) :
     BNExists (vertexWedge G H x y) 1 3 := by
   have hBridge : BNExists (bridgeGraph G H x y) 1 3 := by
@@ -60,8 +60,8 @@ variable {K : CFGraph.{u}} (cut : OneVertexCut K)
 degree-three rank-one divisor. -/
 theorem BNExists_rankOneDegreeThree_of_genus_two_two
     (hK : graphConnected K)
-    (hLeftGenus : genus cut.leftGraph = 2)
-    (hRightGenus : genus cut.rightGraph = 2) :
+    (hLeftGenus : CFGraph.genus cut.leftGraph = 2)
+    (hRightGenus : CFGraph.genus cut.rightGraph = 2) :
     BNExists K 1 3 := by
   apply (cut.BNExists_iff 1 3).mpr
   exact Utilities.BNExists_vertexWedge_rankOneDegreeThree_of_genus_two_two
@@ -74,7 +74,7 @@ theorem BNExists_rankOneDegreeThree_of_genus_two_two
 factor give the ambient degree-three pencil. -/
 theorem BNExists_rankOneDegreeThree_of_left_three_right_rigid_one
     (hK : graphConnected K)
-    (hLeftGenus : genus cut.leftGraph = 3)
+    (hLeftGenus : CFGraph.genus cut.leftGraph = 3)
     (hRightRigid : PointedGenusOneRigid cut.rightGraph cut.rightGlue) :
     BNExists K 1 3 := by
   apply (cut.BNExists_iff 1 3).mpr
@@ -86,7 +86,7 @@ theorem BNExists_rankOneDegreeThree_of_left_three_right_rigid_one
 theorem BNExists_rankOneDegreeThree_of_left_rigid_one_right_three
     (hK : graphConnected K)
     (hLeftRigid : PointedGenusOneRigid cut.leftGraph cut.leftGlue)
-    (hRightGenus : genus cut.rightGraph = 3) :
+    (hRightGenus : CFGraph.genus cut.rightGraph = 3) :
     BNExists K 1 3 := by
   exact cut.swap.BNExists_rankOneDegreeThree_of_left_three_right_rigid_one
     hK hRightGenus hLeftRigid

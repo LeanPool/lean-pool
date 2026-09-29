@@ -53,8 +53,8 @@ theorem banana_not_kGeneralTransmission_of_genus_le_period
   intro hK
   have hThreshold : g + 2 ≤ 2 * k := by
     nlinarith
-  have hGenus : genus (mark B.graph u v).graph = g := by
-    change genus B.graph = g
+  have hGenus : CFGraph.genus (mark B.graph u v).graph = g := by
+    change CFGraph.genus B.graph = g
     rw [B.genus_graph]
     omega
   have hBN : BrillNoetherGeneral B.graph :=

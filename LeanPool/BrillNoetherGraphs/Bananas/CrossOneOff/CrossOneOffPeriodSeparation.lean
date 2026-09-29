@@ -204,7 +204,7 @@ theorem crossOneOff_kGeneral_cutoff_le_period
   have hTO : IsTorsionOrder
       (mark B.graph (strandVertex B alpha i) (strandVertex B beta j)) k :=
     hK.isTorsionOrder huv (banana_graph_connected B) (by
-      change 0 < genus B.graph
+      change 0 < CFGraph.genus B.graph
       rw [B.genus_graph]
       omega)
   exact crossOneOff_cutoff_le_torsionOrder

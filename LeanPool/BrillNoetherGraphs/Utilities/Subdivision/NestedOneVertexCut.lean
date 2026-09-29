@@ -197,9 +197,9 @@ noncomputable def restrictRightLeftIso
 and the two factors of the restricted second cut. -/
 theorem genus_eq_nested_restrictRight
     (hLeft : second.left ⊆ first.right) :
-    genus K = genus first.leftGraph +
-      genus (first.restrictRight second hLeft).leftGraph +
-        genus (first.restrictRight second hLeft).rightGraph := by
+    CFGraph.genus K = CFGraph.genus first.leftGraph +
+      CFGraph.genus (first.restrictRight second hLeft).leftGraph +
+        CFGraph.genus (first.restrictRight second hLeft).rightGraph := by
   have hFirst := first.genus_eq
   have hSecond := (first.restrictRight second hLeft).genus_eq
   omega

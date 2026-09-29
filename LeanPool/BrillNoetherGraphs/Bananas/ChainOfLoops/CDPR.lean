@@ -204,7 +204,7 @@ noncomputable def factor (P : Loop) : KGeneralChainFactor where
     P.factor.marked.graph = P.banana.graph := rfl
 
 /-- Every loop has genus one. -/
-@[simp] theorem genus_factor (P : Loop) : genus P.factor.marked.graph = 1 :=
+@[simp] theorem genus_factor (P : Loop) : CFGraph.genus P.factor.marked.graph = 1 :=
   P.banana.genus_graph
 
 end Loop
@@ -254,8 +254,8 @@ theorem graph_connected_chainGraph (P : Loop) (L : List Loop) :
 sum. -/
 theorem genus_markedChain_map (M : MarkedGraph)
     (Ls : List KGeneralChainFactor) :
-    genus (M.chain (Ls.map KGeneralChainFactor.marked)).graph =
-      genus M.graph + chainFactorGenus Ls := by
+    CFGraph.genus (M.chain (Ls.map KGeneralChainFactor.marked)).graph =
+      CFGraph.genus M.graph + chainFactorGenus Ls := by
   rw [MarkedGraph.genus_chain, List.map_map, chainFactorGenus]
   rfl
 
@@ -273,7 +273,7 @@ genus one. -/
 
 /-- The genus of a chain of `g` loops is `g`. -/
 theorem genus_chainGraph (P : Loop) (L : List Loop) :
-    genus (chainGraph P L) = (L.length : ℤ) + 1 := by
+    CFGraph.genus (chainGraph P L) = (L.length : ℤ) + 1 := by
   rw [chainGraph, chainMarked, genus_markedChain_map, Loop.genus_factor,
     chainFactorGenus_map]
   ring
@@ -346,7 +346,7 @@ genus-one factors: `i + 1 < k_i`. -/
 theorem chainPrefixBudget_of_torsion (P : Loop) (L : List Loop)
     (h : ∀ (i : ℕ) (hi : i < (P :: L).length),
       (i : ℤ) + 1 < (((P :: L).get ⟨i, hi⟩).torsionOrder : ℤ)) :
-    ChainPrefixBudget (genus P.factor.marked.graph) (L.map Loop.factor) := by
+    ChainPrefixBudget (CFGraph.genus P.factor.marked.graph) (L.map Loop.factor) := by
   apply (chainPrefixBudget_iff_indexed _ _).mpr
   intro i hi
   have hiL : i < L.length := by simpa using hi
@@ -461,7 +461,7 @@ theorem onceMarkedBrillNoetherGeneral_chainOfLoops (P : Loop) (L : List Loop)
     (hBudget : ∀ (i : ℕ) (hi : i < (P :: L).length),
       (i : ℤ) + 1 < (((P :: L).get ⟨i, hi⟩).torsionOrder : ℤ)) :
     OnceMarkedBrillNoetherGeneral (chainGraph P L) (chainMarked P L).right := by
-  have hHead : genus P.factor.marked.graph < (P.factor.period : ℤ) := by
+  have hHead : CFGraph.genus P.factor.marked.graph < (P.factor.period : ℤ) := by
     have h0 := hBudget 0 (by simp)
     simpa using h0
   exact onceMarkedBrillNoetherGeneral_mixedTorsionChain
@@ -504,7 +504,7 @@ theorem finitePointedDiagram_card_ge_of_vanishing
     (r : ℕ) (m : ℤ)
     (hrank : (r : ℤ) ≤ rank G D)
     (hm : 0 ≤ rank G (D - m • oneChip v)) :
-    ((r : ℤ) + 1) * (genus G - CFDiv.degree D + (r : ℤ)) + (m - (r : ℤ)) ≤
+    ((r : ℤ) + 1) * (CFGraph.genus G - CFDiv.degree D + (r : ℤ)) + (m - (r : ℤ)) ≤
       ((finitePointedDiagram G hG D v r).card : ℤ) := by
   -- The `r`-th threshold is at most `0`, so the `i`-th is at most `i - r`.
   have hTop : pointedRankThreshold G hG D v r ≤ 0 := by
@@ -527,37 +527,37 @@ theorem finitePointedDiagram_card_ge_of_vanishing
     simpa using hm
   -- Row lengths.  `Int.self_le_toNat` makes the truncation harmless.
   have hRawRow : ∀ i : ℕ,
-      (i : ℤ) + genus G - CFDiv.degree D - pointedRankThreshold G hG D v i ≤
+      (i : ℤ) + CFGraph.genus G - CFDiv.degree D - pointedRankThreshold G hG D v i ≤
         (pointedRowLength G hG D v i : ℤ) := by
     intro i
     exact Int.self_le_toNat _
   have hRow : ∀ i : ℕ, i ≤ r →
-      genus G - CFDiv.degree D + (r : ℤ) ≤ (pointedRowLength G hG D v i : ℤ) := by
+      CFGraph.genus G - CFDiv.degree D + (r : ℤ) ≤ (pointedRowLength G hG D v i : ℤ) := by
     intro i hi
     have h1 := hStep i hi
     have h2 := hRawRow i
     omega
-  have hRow0 : genus G - CFDiv.degree D + m ≤ (pointedRowLength G hG D v 0 : ℤ) := by
+  have hRow0 : CFGraph.genus G - CFDiv.degree D + m ≤ (pointedRowLength G hG D v 0 : ℤ) := by
     have h2 := hRawRow 0
     simp only [Nat.cast_zero, zero_add] at h2
     omega
   -- Sum the rows.
   rw [finitePointedDiagram_card, finitePointedRows, List.sum_ofFn]
   rw [Nat.cast_sum, Fin.sum_univ_succ]
-  have hTail : (r : ℤ) * (genus G - CFDiv.degree D + (r : ℤ)) ≤
+  have hTail : (r : ℤ) * (CFGraph.genus G - CFDiv.degree D + (r : ℤ)) ≤
       ∑ i : Fin r, (pointedRowLength G hG D v ((i.succ : Fin (r + 1)) : ℕ) : ℤ) := by
     have hle := Finset.sum_le_sum
       (s := (Finset.univ : Finset (Fin r)))
-      (f := fun _ : Fin r => genus G - CFDiv.degree D + (r : ℤ))
+      (f := fun _ : Fin r => CFGraph.genus G - CFDiv.degree D + (r : ℤ))
       (g := fun i : Fin r =>
         (pointedRowLength G hG D v ((i.succ : Fin (r + 1)) : ℕ) : ℤ))
       (fun i _ => hRow _ (by have := i.isLt; simp only [Fin.val_succ]; omega))
     simpa [Finset.sum_const, Finset.card_univ, nsmul_eq_mul] using hle
-  have hHead : genus G - CFDiv.degree D + m ≤
+  have hHead : CFGraph.genus G - CFDiv.degree D + m ≤
       (pointedRowLength G hG D v ((0 : Fin (r + 1)) : ℕ) : ℤ) := by
     simpa using hRow0
-  have : ((r : ℤ) + 1) * (genus G - CFDiv.degree D + (r : ℤ)) + (m - (r : ℤ))
-      = (genus G - CFDiv.degree D + m) + (r : ℤ) * (genus G - CFDiv.degree D + (r : ℤ)) := by
+  have : ((r : ℤ) + 1) * (CFGraph.genus G - CFDiv.degree D + (r : ℤ)) + (m - (r : ℤ))
+      = (CFGraph.genus G - CFDiv.degree D + m) + (r : ℤ) * (CFGraph.genus G - CFDiv.degree D + (r : ℤ)) := by
     ring
   rw [this]
   exact add_le_add hHead hTail
@@ -580,7 +580,7 @@ theorem rank_sub_high_multiplicity_neg
   have hCard := hOM _ (finitePointedDiagram_censusContains G hG D v r.toNat)
   rw [Int.toNat_of_nonneg hr] at hL8
   have hbn : bnNumber G r (CFDiv.degree D)
-      = genus G - (r + 1) * (genus G - CFDiv.degree D + r) := rfl
+      = CFGraph.genus G - (r + 1) * (CFGraph.genus G - CFDiv.degree D + r) := rfl
   linarith
 
 /-- The same, transported along a graph isomorphism: it is enough for the
@@ -618,7 +618,7 @@ need it, since the `r + 1` rows it sums exist for every `r`. -/
 theorem cdpr_no_high_multiplicity (P : Loop) (L : List Loop)
     (hg : 2 ≤ L.length + 1) (hGeneric : CDPRGeneric (P :: L))
     (D : CFDiv (chainGraph P L)) (r d : ℤ) (hr : 0 ≤ r)
-    (_ : r < genus (chainGraph P L))
+    (_ : r < CFGraph.genus (chainGraph P L))
     (hdeg : CFDiv.degree D = d) (hrank : rank (chainGraph P L) D ≥ r)
     (hrho : 0 ≤ bnNumber (chainGraph P L) r d) :
     rank (chainGraph P L)
@@ -666,7 +666,7 @@ testing at `v_0` under the prefix budget is false (blueprint section 6.4). -/
 theorem cdpr_no_high_multiplicity_left (P : Loop) (L : List Loop)
     (hg : 2 ≤ L.length + 1) (hGeneric : CDPRGeneric (P :: L))
     (D : CFDiv (chainGraph P L)) (r d : ℤ) (hr : 0 ≤ r)
-    (_ : r < genus (chainGraph P L))
+    (_ : r < CFGraph.genus (chainGraph P L))
     (hdeg : CFDiv.degree D = d) (hrank : rank (chainGraph P L) D ≥ r)
     (hrho : 0 ≤ bnNumber (chainGraph P L) r d) :
     rank (chainGraph P L)

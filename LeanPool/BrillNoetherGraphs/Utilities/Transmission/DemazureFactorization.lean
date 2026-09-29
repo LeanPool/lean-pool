@@ -429,12 +429,12 @@ theorem transmissionExistence_vertexWedge_opposite
     (u : G.V) (v : H.V)
     (hTG : TransmissionExistence G u x)
     (hTH : TransmissionExistence H y v)
-    (hGenusG : 0 ≤ genus G) (hGenusH : 0 ≤ genus H) :
+    (hGenusG : 0 ≤ CFGraph.genus G) (hGenusH : 0 ≤ CFGraph.genus H) :
     TransmissionExistence (vertexWedge G H x y) (Sum.inl u)
       (wedgeRightVertex G H x y v) := by
   apply transmissionExistence_vertexWedge_opposite_of_factorizations
     G H x y u v hTG hTH
   exact hasBoundedDemazureFactorizations_of_nonneg
-    (genus G : ℤ) (genus H : ℤ) hGenusG hGenusH
+    (CFGraph.genus G : ℤ) (CFGraph.genus H : ℤ) hGenusG hGenusH
 
 end Utilities

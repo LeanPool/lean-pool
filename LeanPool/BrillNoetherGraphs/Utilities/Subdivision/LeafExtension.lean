@@ -141,7 +141,7 @@ private theorem filter_map_liftEdge_none_some
   exact num_edges_none_some H root x
 
 /-- Adjoining one vertex and one edge preserves genus. -/
-@[simp] theorem genus_addLeaf : genus (addLeaf H root) = genus H := by
+@[simp] theorem genus_addLeaf : CFGraph.genus (addLeaf H root) = CFGraph.genus H := by
   change
     ((↑(((none, some root) ::ₘ H.edges.map (liftEdge H)).card) : ℤ) -
         ↑(Fintype.card (Option H.V)) + 1) =

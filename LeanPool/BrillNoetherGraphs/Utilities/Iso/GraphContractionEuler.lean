@@ -255,11 +255,11 @@ multiplicity is exactly twice the number of vertices removed.  This is the
 Euler identity underlying the assertion that connected fibres must be trees. -/
 theorem internalDirectedMultiplicity_eq_two_mul_vertexLoss_of_genus_eq
     (c : GraphContractionCertificate G H) (hValid : c.Valid)
-    (hGenus : genus G = genus H) :
+    (hGenus : CFGraph.genus G = CFGraph.genus H) :
     c.internalDirectedMultiplicity =
       2 * ((Fintype.card G.V : ℤ) - Fintype.card H.V) := by
   rw [c.internalDirectedMultiplicity_eq_two_mul_edgeLoss hValid]
-  simp only [genus] at hGenus
+  simp only [CFGraph.genus] at hGenus
   omega
 
 end GraphContractionCertificate

@@ -90,10 +90,10 @@ profile is the affine Riemann--Roch line `degree - genus`. -/
 theorem rank_add_zsmul_one_chip_eq_degree_sub_genus_of_large
     (G : CFGraph.{u}) (hG : graphConnected G)
     (D : CFDiv G) (q : G.V) (n : ℤ)
-    (hLarge : 2 * (genus G : ℤ) - 2 < CFDiv.degree D + n) :
-    rank G (D + n • oneChip q) = CFDiv.degree D + n - (genus G : ℤ) := by
+    (hLarge : 2 * (CFGraph.genus G : ℤ) - 2 < CFDiv.degree D + n) :
+    rank G (D + n • oneChip q) = CFDiv.degree D + n - (CFGraph.genus G : ℤ) := by
   let A : CFDiv G := D + n • oneChip q
-  change rank G A = CFDiv.degree D + n - (genus G : ℤ)
+  change rank G A = CFDiv.degree D + n - (CFGraph.genus G : ℤ)
   have hADegree : CFDiv.degree A = CFDiv.degree D + n := by
     dsimp [A]
     exact deg_add_zsmul_one_chip G D q n

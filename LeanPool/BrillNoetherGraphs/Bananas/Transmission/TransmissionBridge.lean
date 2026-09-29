@@ -113,7 +113,7 @@ theorem degree_eq_genus_add_chi_of_isTransmissionPermutation
     (D : CFDiv G) (τ : ℤ → ℤ)
     (hτ : IsTransmissionPermutation (mark G u v) D τ)
     (σ : AspPerm) (hσFunc : σ.func = τ) :
-    CFDiv.degree D = (genus G : ℤ) + σ.χ := by
+    CFDiv.degree D = (CFGraph.genus G : ℤ) + σ.χ := by
   -- `χ` at the origin, in terms of the two counting sets.
   have hχ : σ.χ = σ.s 0 0 - (σ⁻¹).s 0 0 := by
     have := σ.s_eq 0 0

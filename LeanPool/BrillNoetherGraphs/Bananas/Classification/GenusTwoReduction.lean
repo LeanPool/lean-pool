@@ -84,7 +84,7 @@ Riemann--Roch duality force every negative second-difference witness to have
 degree exactly two. -/
 theorem degree_eq_two_of_rankDelta_neg_genus_two
     (M : TwiceMarked) (D : CFDiv M.graph) (hConn : _root_.graphConnected M.graph)
-    (hGenus : genus M.graph = 2)
+    (hGenus : CFGraph.genus M.graph = 2)
     (hDistinct : ¬ linearEquiv M.graph (oneChip M.u - oneChip M.v) 0)
     (hNeg : rankDelta M D < 0) :
     CFDiv.degree D = 2 := by
@@ -131,7 +131,7 @@ The Riemann--Roch term is handled explicitly: in genus two it is `1`, not
 inequivalence of the marks. -/
 theorem rank_eq_zero_of_rankDelta_neg_genus_two
     (M : TwiceMarked) (D : CFDiv M.graph) (hConn : _root_.graphConnected M.graph)
-    (hGenus : genus M.graph = 2)
+    (hGenus : CFGraph.genus M.graph = 2)
     (hDistinct : ¬ linearEquiv M.graph (oneChip M.u - oneChip M.v) 0)
     (hNeg : rankDelta M D < 0) :
     rank M.graph D = 0 := by
@@ -199,7 +199,7 @@ theorem rank_eq_zero_of_rankDelta_neg_genus_two
 Lemma 3.1(1) in the paper. -/
 theorem degree_and_rank_eq_of_rankDelta_neg_genus_two
     (M : TwiceMarked) (D : CFDiv M.graph) (hConn : _root_.graphConnected M.graph)
-    (hGenus : genus M.graph = 2)
+    (hGenus : CFGraph.genus M.graph = 2)
     (hDistinct : ¬ linearEquiv M.graph (oneChip M.u - oneChip M.v) 0)
     (hNeg : rankDelta M D < 0) :
     CFDiv.degree D = 2 ∧ rank M.graph D = 0 :=

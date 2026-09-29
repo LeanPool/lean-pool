@@ -180,7 +180,7 @@ theorem not_linear_equiv_one_chip_sub_of_twoEdgeCutCondition
 /-- A connected genus-one graph with a second vertex and no one-edge cut is
 a pointed rigid genus-one block. -/
 theorem pointedGenusOneRigid_of_twoEdgeCutCondition
-    (y : H.V) (hConnected : graphConnected H) (hGenus : genus H = 1)
+    (y : H.V) (hConnected : graphConnected H) (hGenus : CFGraph.genus H = 1)
     (hExists : ∃ p : H.V, p ≠ y) (hCut : TwoEdgeCutCondition H) :
     PointedGenusOneRigid H y where
   connected := hConnected

@@ -43,7 +43,7 @@ witness on the twice-marked graph `(G,u,v)`. -/
 def TransmissionExistence (G : CFGraph) (u v : G.V) : Prop :=
   forall tau : AspPerm,
     FiniteTransmissionPerm tau ->
-    ((invSet tau).ncard : Int) <= genus G ->
+    ((invSet tau).ncard : Int) <= CFGraph.genus G ->
     TransmissionExists G u v tau
 
 /-- The general transmission-existence conjecture for finite connected

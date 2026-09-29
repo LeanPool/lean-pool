@@ -829,7 +829,7 @@ private theorem trivial_library_brillNoetherGeneral :
       change Fin 1 at v w
       exact Fin.ext (by omega)
     exact (hw (hvw ▸ hv)).elim
-  have hGenus : _root_.genus
+  have hGenus : _root_.CFGraph.genus
       (libraryMarkedGraph trivialTwiceMarkedGraph).graph = 0 := by rfl
   have hRankNonnegative : 0 ≤ _root_.rank _ D := le_trans hr hrank
   have hRankGeqZero : _root_.rankGeq
@@ -1006,7 +1006,7 @@ private theorem libraryMarkedGraph_TMTheta_eq_thetaFactor
 private structure ReadableFactorRealization (F : CycleThetaFactor) where
   factor : _root_.Bananas.KGeneralChainFactor
   marked_eq : libraryMarkedGraph F.markedGraph = factor.marked
-  genus_eq : _root_.genus factor.marked.graph = F.factorGenus
+  genus_eq : _root_.CFGraph.genus factor.marked.graph = F.factorGenus
   period_eq : factor.period = F.period
 
 private noncomputable def realizeReadableFactor
@@ -1031,7 +1031,7 @@ private noncomputable def realizeReadableFactor
           marked_eq := libraryMarkedGraph_TMTheta_eq_thetaFactor
             a b c u v k h
           genus_eq := by
-            change _root_.genus (thetaBanana a b c h.1 h.2.1 h.2.2.1).graph = 2
+            change _root_.CFGraph.genus (thetaBanana a b c h.1 h.2.1 h.2.2.1).graph = 2
             exact (thetaBanana a b c h.1 h.2.1 h.2.2.1).genus_graph
           period_eq := rfl }
 
@@ -1046,7 +1046,7 @@ private structure ReadableFactorsRealization
     source.map (fun F => libraryMarkedGraph F.markedGraph) =
       libraryFactors.map _root_.Bananas.KGeneralChainFactor.marked
   genus_eq :
-    libraryFactors.map (fun F => _root_.genus F.marked.graph) =
+    libraryFactors.map (fun F => _root_.CFGraph.genus F.marked.graph) =
       source.map (fun F => (F.factorGenus : ℤ))
   period_at : ∀ (i : ℕ)
       (hi : i < libraryFactors.length) (hi' : i < source.length),
@@ -1232,13 +1232,13 @@ theorem brill_noether_existence_through_five
       edges := G.edges
       loopless := G.loopless }
   have library_connected : _root_.graphConnected libraryGraph := h_connected
-  have library_genus : _root_.genus libraryGraph = g := h_genus
-  have library_genus_le_five : _root_.genus libraryGraph ≤ 5 := by
+  have library_genus : _root_.CFGraph.genus libraryGraph = g := h_genus
+  have library_genus_le_five : _root_.CFGraph.genus libraryGraph ≤ 5 := by
     rw [library_genus]
     exact h_genus_le_five
   have library_brill_noether :
-      0 ≤ _root_.genus libraryGraph -
-        (r + 1) * (_root_.genus libraryGraph - d + r) := by
+      0 ≤ _root_.CFGraph.genus libraryGraph -
+        (r + 1) * (_root_.CFGraph.genus libraryGraph - d + r) := by
     rw [library_genus]
     omega
   obtain ⟨D, h_rank, h_degree⟩ :=
@@ -1315,7 +1315,7 @@ theorem cdpr_marked_no_high_multiplicity
       change _root_.CFDiv.degree D = d at h_degree
       change _root_.rankGeq
         (libraryMarkedGraph (chainOfCycles (mn :: rest))).graph D r at h_rank
-      change r < _root_.genus
+      change r < _root_.CFGraph.genus
         (libraryMarkedGraph (chainOfCycles (mn :: rest))).graph
         at h_rank_below_genus
       change 0 ≤ _root_.Utilities.bnNumber
@@ -1338,7 +1338,7 @@ theorem cdpr_marked_no_high_multiplicity
         exact hRankSource
       have hDegreeTarget : _root_.CFDiv.degree (transport.mapDiv D) = d := by
         rw [transport.deg_map, h_degree]
-      have hBoundTarget : r < _root_.genus target.graph := by
+      have hBoundTarget : r < _root_.CFGraph.genus target.graph := by
         rw [transport.genus_eq]
         exact h_rank_below_genus
       have hRhoTarget : 0 ≤ _root_.Utilities.bnNumber target.graph r d := by
@@ -1710,18 +1710,18 @@ private theorem cycle_theta_chain_connected_and_genus
           rw [hLibrary] at hGenusFactors
           simp only [List.map_cons, List.sum_cons] at hGenusFactors
           have hFactorSum :
-              _root_.genus F.marked.graph +
-                  (tail.map fun Q => _root_.genus Q.marked.graph).sum =
+              _root_.CFGraph.genus F.marked.graph +
+                  (tail.map fun Q => _root_.CFGraph.genus Q.marked.graph).sum =
                 (CycleThetaFactor.totalGenus (first :: rest) : ℤ) := by
             calc
-              _root_.genus F.marked.graph +
-                    (tail.map fun Q => _root_.genus Q.marked.graph).sum =
+              _root_.CFGraph.genus F.marked.graph +
+                    (tail.map fun Q => _root_.CFGraph.genus Q.marked.graph).sum =
                   ((first :: rest).map
                     fun Q => (Q.factorGenus : ℤ)).sum := hGenusFactors
               _ = (CycleThetaFactor.totalGenus (first :: rest) : ℤ) :=
                 (totalGenus_cast_eq_sum (first :: rest)).symm
           have hBridgeGenus :
-              _root_.genus
+              _root_.CFGraph.genus
                   (F.marked.bridgeChain
                     (tail.map
                       _root_.Bananas.KGeneralChainFactor.marked)).graph =
@@ -1729,17 +1729,17 @@ private theorem cycle_theta_chain_connected_and_genus
             let transport := _root_.Bananas.contractBridgeChain F.marked
               (tail.map _root_.Bananas.KGeneralChainFactor.marked)
             calc
-              _root_.genus
+              _root_.CFGraph.genus
                     (F.marked.bridgeChain
                       (tail.map
                         _root_.Bananas.KGeneralChainFactor.marked)).graph =
-                  _root_.genus
+                  _root_.CFGraph.genus
                     (F.marked.chain
                       (tail.map
                         _root_.Bananas.KGeneralChainFactor.marked)).graph :=
                 transport.genus_eq.symm
-              _ = _root_.genus F.marked.graph +
-                    (tail.map fun Q => _root_.genus Q.marked.graph).sum := by
+              _ = _root_.CFGraph.genus F.marked.graph +
+                    (tail.map fun Q => _root_.CFGraph.genus Q.marked.graph).sum := by
                 simpa only [List.map_map, Function.comp_def] using
                   (_root_.Utilities.MarkedGraph.genus_chain F.marked
                     (tail.map _root_.Bananas.KGeneralChainFactor.marked))
@@ -1755,7 +1755,7 @@ private theorem cycle_theta_chain_connected_and_genus
             · intro N hN
               obtain ⟨Q, _hQ, rfl⟩ := List.mem_map.mp hN
               exact Q.connected
-          · change _root_.genus
+          · change _root_.CFGraph.genus
               (libraryMarkedGraph
                 (chainOfCyclesAndThetas (first :: rest))).graph = _
             rw [hMarkedChain]
@@ -1850,18 +1850,18 @@ theorem cycle_theta_chain_gonality_eq_common_torsion
           rw [hLibrary] at hGenusFactors
           simp only [List.map_cons, List.sum_cons] at hGenusFactors
           have hFactorSum :
-              _root_.genus F.marked.graph +
-                  (tail.map fun Q => _root_.genus Q.marked.graph).sum =
+              _root_.CFGraph.genus F.marked.graph +
+                  (tail.map fun Q => _root_.CFGraph.genus Q.marked.graph).sum =
                 (CycleThetaFactor.totalGenus (first :: rest) : ℤ) := by
             calc
-              _root_.genus F.marked.graph +
-                    (tail.map fun Q => _root_.genus Q.marked.graph).sum =
+              _root_.CFGraph.genus F.marked.graph +
+                    (tail.map fun Q => _root_.CFGraph.genus Q.marked.graph).sum =
                   ((first :: rest).map
                     fun Q => (Q.factorGenus : ℤ)).sum := hGenusFactors
               _ = (CycleThetaFactor.totalGenus (first :: rest) : ℤ) :=
                 (totalGenus_cast_eq_sum (first :: rest)).symm
           have hBridgeGenus :
-              _root_.genus
+              _root_.CFGraph.genus
                   (F.marked.bridgeChain
                     (tail.map
                       _root_.Bananas.KGeneralChainFactor.marked)).graph =
@@ -1869,17 +1869,17 @@ theorem cycle_theta_chain_gonality_eq_common_torsion
             let transport := _root_.Bananas.contractBridgeChain F.marked
               (tail.map _root_.Bananas.KGeneralChainFactor.marked)
             calc
-              _root_.genus
+              _root_.CFGraph.genus
                     (F.marked.bridgeChain
                       (tail.map
                         _root_.Bananas.KGeneralChainFactor.marked)).graph =
-                  _root_.genus
+                  _root_.CFGraph.genus
                     (F.marked.chain
                       (tail.map
                         _root_.Bananas.KGeneralChainFactor.marked)).graph :=
                 transport.genus_eq.symm
-              _ = _root_.genus F.marked.graph +
-                    (tail.map fun Q => _root_.genus Q.marked.graph).sum :=
+              _ = _root_.CFGraph.genus F.marked.graph +
+                    (tail.map fun Q => _root_.CFGraph.genus Q.marked.graph).sum :=
                 by
                   simpa only [List.map_map, Function.comp_def] using
                     (_root_.Utilities.MarkedGraph.genus_chain F.marked
@@ -1888,7 +1888,7 @@ theorem cycle_theta_chain_gonality_eq_common_torsion
               _ = (CycleThetaFactor.totalGenus (first :: rest) : ℤ) :=
                 hFactorSum
           have hSmallLibrary :
-              k ≤ ((_root_.genus
+              k ≤ ((_root_.CFGraph.genus
                 (F.marked.bridgeChain
                   (tail.map
                     _root_.Bananas.KGeneralChainFactor.marked)).graph).toNat +

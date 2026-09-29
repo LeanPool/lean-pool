@@ -612,7 +612,7 @@ private theorem config_to_orientation_unique (G : CFGraph) (q : G.V)
 
 /-- The degree of an orientation divisor equals $g - 1$, where $g$ is the genus of $G$. -/
 lemma degree_ordiv {G : CFGraph} (O : CFOrientation G) :
-  CFDiv.degree (ordiv G O) = (genus G) - 1 := by
+  CFDiv.degree (ordiv G O) = (CFGraph.genus G) - 1 := by
   have flow_sum : CFDiv.degree (ordiv G O) =
       (∑ v : G.V, ∑ w : G.V, ↑(flow O w v)) - (Fintype.card G.V) := by
     calc
@@ -627,7 +627,7 @@ lemma degree_ordiv {G : CFGraph} (O : CFOrientation G) :
       _ = (∑ v : G.V, ∑ w : G.V, ↑(flow O w v)) - (Fintype.card G.V) := by
         rw [Finset.sum_sub_distrib]
         simp only [sum_const, card_univ, Int.nsmul_eq_mul, mul_one]
-  dsimp only [genus]
+  dsimp only [CFGraph.genus]
   rw [flow_sum]
   suffices h : (∑ v : G.V, ∑ w : G.V, ↑(flow O w v)) = ↑(Multiset.card G.edges) by linarith [h]
   calc
@@ -653,14 +653,14 @@ lemma degree_ordiv {G : CFGraph} (O : CFOrientation G) :
 /-- The configuration degree of an acyclic orientation with unique source equals the genus. -/
 lemma config_degree_from_O {G : CFGraph} (O : CFOrientation G) {q : G.V}
     (hO : acyclicWithUniqueSource G O q) :
-  configDegree (orientationToConfig G O q hO) = genus G := by
+  configDegree (orientationToConfig G O q hO) = CFGraph.genus G := by
   rw [config_and_divisor_from_O O hO]
   -- Use config_degree_div_degree to relate configDegree to deg of the underlying divisor.
   have h_q_source : indeg G O q = 0 := source_of_acyclic_with_unique_source hO
   have h1 := config_degree_div_degree (orqed O hO)
   -- (orqed O ...).D = ordiv G O definitionally, so:
   have h2 : (orqed O hO).D q = (indeg G O q : ℤ) - 1 := rfl
-  have h3 : CFDiv.degree (orqed O hO).D = (genus G : ℤ) - 1 := degree_ordiv O
+  have h3 : CFDiv.degree (orqed O hO).D = (CFGraph.genus G : ℤ) - 1 := degree_ordiv O
   have h4 : (indeg G O q : ℤ) = 0 := by exact_mod_cast h_q_source
   linarith
 
@@ -844,11 +844,11 @@ private lemma orientation_config_superstable (G : CFGraph) (O : CFOrientation G)
     (hO : acyclicWithUniqueSource G O q) :
     superstable G q (orientationToConfig G O q hO) := by
     let c := orientationToConfig G O q hO
-    apply (superstable_iff_q_reduced G q (genus G -1) c).mpr
+    apply (superstable_iff_q_reduced G q (CFGraph.genus G -1) c).mpr
     have h_c := config_and_divisor_from_O O hO
     dsimp only [c]
     rw [h_c]
-    have : genus G - 1 = CFDiv.degree ((orqed O hO).D) := by
+    have : CFGraph.genus G - 1 = CFDiv.degree ((orqed O hO).D) := by
       simpa only [orqed] using (degree_ordiv O).symm
     rw [this]
     rw [div_of_config_of_div (orqed O hO)]
@@ -966,7 +966,7 @@ lemma divisor_reverse_orientation {G : CFGraph} (O : CFOrientation G) : ordiv G 
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Exercise 5.8. -/
 theorem degree_of_canonical_divisor (G : CFGraph) :
-    CFDiv.degree (canonicalDivisor G) = 2 * genus G - 2 := by
+    CFDiv.degree (canonicalDivisor G) = 2 * CFGraph.genus G - 2 := by
   -- Use sum_sub_distrib to split the sum
   have h1 : ∑ v, (canonicalDivisor G v) =
             ∑ v, vertexDegree G v - 2 * Fintype.card G.V := by
@@ -981,7 +981,7 @@ theorem degree_of_canonical_divisor (G : CFGraph) :
     exact sum_vertex_degree_eq_twice_card_edges G
   rw [h2]
   -- Use genus definition: g = |E| - |G.V| + 1
-  rw [genus]
+  rw [CFGraph.genus]
   ring
 
 /-!
@@ -1169,7 +1169,7 @@ theorem orientation_config_maximal (G : CFGraph) (O : CFOrientation G) (q : G.V)
   have h_deg_le' : configDegree c ≤ configDegree c' := config_degree_mono h_ge'
   rw [config_degree_from_O O hO] at h_deg_le
   rw [config_degree_from_O O' hO'] at h_deg_le'
-  have h_deg : configDegree c = genus G := by
+  have h_deg : configDegree c = CFGraph.genus G := by
     linarith
   have h_deg : configDegree c = configDegree cO := by
     rw [config_degree_from_O O hO]

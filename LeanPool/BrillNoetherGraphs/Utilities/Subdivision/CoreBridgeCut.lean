@@ -364,14 +364,14 @@ noncomputable def toOneBridgeCut (h : c.Valid) : OneBridgeCut spec.graph where
 does not change the genus of an induced subgraph. -/
 private theorem inducedSubgraph_genus_congr {G : CFGraph} (S T : Finset G.V)
     (hS : S.Nonempty) (hT : T.Nonempty) (hST : S = T) :
-    genus (inducedSubgraph G S hS) = genus (inducedSubgraph G T hT) := by
+    CFGraph.genus (inducedSubgraph G S hS) = CFGraph.genus (inducedSubgraph G T hT) := by
   subst T
   rfl
 
 /-- The left bridge factor has the genus computed from the finite tail-side
 core data.  In particular this number is independent of all edge lengths. -/
 theorem leftGraph_genus (h : c.Valid) :
-    genus (c.toOneBridgeCut spec h).leftGraph = c.toCoreVertexCut.leftGenus := by
+    CFGraph.genus (c.toOneBridgeCut spec h).leftGraph = c.toCoreVertexCut.leftGenus := by
   have hCore := c.toCoreVertexCut.leftGraph_genus spec (c.toCoreVertexCut_valid h)
   let bridgeCut := c.toOneBridgeCut spec h
   let vertexCut := c.toCoreVertexCut.toOneVertexCut spec (c.toCoreVertexCut_valid h)
@@ -379,7 +379,7 @@ theorem leftGraph_genus (h : c.Valid) :
     simp [bridgeCut, vertexCut, toOneBridgeCut,
       CoreVertexCut.Data.toOneVertexCut, leftVertices_eq_coreVertexCut_leftVertices]
   calc
-    genus bridgeCut.leftGraph = genus vertexCut.leftGraph := by
+    CFGraph.genus bridgeCut.leftGraph = CFGraph.genus vertexCut.leftGraph := by
       apply inducedSubgraph_genus_congr bridgeCut.left vertexCut.left
         bridgeCut.left_nonempty vertexCut.left_nonempty hSets
     _ = c.toCoreVertexCut.leftGenus := hCore
@@ -387,8 +387,8 @@ theorem leftGraph_genus (h : c.Valid) :
 /-- The complementary bridge factor genus is forced by additive genus across
 the separating unit edge. -/
 theorem rightGraph_genus_eq (h : c.Valid) :
-    genus (c.toOneBridgeCut spec h).rightGraph =
-      genus spec.graph - c.toCoreVertexCut.leftGenus := by
+    CFGraph.genus (c.toOneBridgeCut spec h).rightGraph =
+      CFGraph.genus spec.graph - c.toCoreVertexCut.leftGenus := by
   have hAdd := (c.toOneBridgeCut spec h).genus_eq
   rw [c.leftGraph_genus spec h] at hAdd
   omega

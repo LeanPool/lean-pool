@@ -196,7 +196,7 @@ structure LeftRankTransport (M N : MarkedGraph.{u}) where
   map_one_chip : mapDiv (oneChip M.left) = oneChip N.left
   deg_map : ∀ D, CFDiv.degree (mapDiv D) = CFDiv.degree D
   rank_map : ∀ D, rank N.graph (mapDiv D) = rank M.graph D
-  genus_eq : genus N.graph = genus M.graph
+  genus_eq : CFGraph.genus N.graph = CFGraph.genus M.graph
 
 namespace LeftRankTransport
 
@@ -261,8 +261,8 @@ noncomputable def contractBridgeTransport (M N : MarkedGraph.{u}) :
   deg_map := deg_bridgePushforward M.graph N.graph M.right N.left
   rank_map := rank_bridgePushforward M.graph N.graph M.right N.left
   genus_eq := by
-    change genus (vertexWedge M.graph N.graph M.right N.left) =
-      genus (bridgeGraph M.graph N.graph M.right N.left)
+    change CFGraph.genus (vertexWedge M.graph N.graph M.right N.left) =
+      CFGraph.genus (bridgeGraph M.graph N.graph M.right N.left)
     rw [genus_vertexWedge, genus_bridgeGraph]
 
 /-- Move the initial bridge of a wedge-chain to the outside and contract it. -/

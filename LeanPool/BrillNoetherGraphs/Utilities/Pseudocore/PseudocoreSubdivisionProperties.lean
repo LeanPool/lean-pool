@@ -90,7 +90,7 @@ pseudocore. -/
 theorem genus_eq {n g : ℕ} {core : Pseudocore n}
     (hValid : core.ValidAt g)
     (spec : Spec (n + core.loopCount) core.splitEdgeCount) :
-    genus spec.graph = g := by
+    CFGraph.genus spec.graph = g := by
   rw [spec.genus_graph]
   exact core.splitTopologicalGenus_eq hValid
 

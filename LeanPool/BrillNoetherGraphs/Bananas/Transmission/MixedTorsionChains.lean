@@ -51,8 +51,8 @@ For factors `F₂, ..., Fℓ` and `g = g₁`, this unfolds to
 def ChainPrefixBudget : ℤ → List KGeneralChainFactor → Prop
   | _, [] => True
   | g, F :: rest =>
-      g + genus F.marked.graph < (F.period : ℤ) ∧
-        ChainPrefixBudget (g + genus F.marked.graph) rest
+      g + CFGraph.genus F.marked.graph < (F.period : ℤ) ∧
+        ChainPrefixBudget (g + CFGraph.genus F.marked.graph) rest
 
 @[simp] theorem chainPrefixBudget_nil (g : ℤ) :
     ChainPrefixBudget g [] := trivial
@@ -60,8 +60,8 @@ def ChainPrefixBudget : ℤ → List KGeneralChainFactor → Prop
 @[simp] theorem chainPrefixBudget_cons (g : ℤ)
     (F : KGeneralChainFactor) (rest : List KGeneralChainFactor) :
     ChainPrefixBudget g (F :: rest) ↔
-      g + genus F.marked.graph < (F.period : ℤ) ∧
-        ChainPrefixBudget (g + genus F.marked.graph) rest :=
+      g + CFGraph.genus F.marked.graph < (F.period : ℤ) ∧
+        ChainPrefixBudget (g + CFGraph.genus F.marked.graph) rest :=
   Iff.rfl
 
 /-- Inductive engine for Corollary 6.16(1).  The accumulated twice-marked
@@ -77,7 +77,7 @@ theorem onceMarkedBrillNoetherGeneral_chain_aux
     (hMsub : AllSubmodular (mark M.graph M.left M.right))
     (hMgeneral : OnceMarkedBrillNoetherGeneral M.graph M.right)
     (L : List KGeneralChainFactor)
-    (hBudget : ChainPrefixBudget (genus M.graph) L) :
+    (hBudget : ChainPrefixBudget (CFGraph.genus M.graph) L) :
     OnceMarkedBrillNoetherGeneral
       (M.chain (L.map KGeneralChainFactor.marked)).graph
       (M.chain (L.map KGeneralChainFactor.marked)).right := by
@@ -106,8 +106,8 @@ The head inequality is the `i = 1` case of the paper's hypothesis, and
 own period and `k`-general transmission; no common torsion order is assumed. -/
 theorem onceMarkedBrillNoetherGeneral_mixedTorsionChain
     (head : KGeneralChainFactor) (tail : List KGeneralChainFactor)
-    (hHeadBudget : genus head.marked.graph < (head.period : ℤ))
-    (hTailBudget : ChainPrefixBudget (genus head.marked.graph) tail) :
+    (hHeadBudget : CFGraph.genus head.marked.graph < (head.period : ℤ))
+    (hTailBudget : ChainPrefixBudget (CFGraph.genus head.marked.graph) tail) :
     OnceMarkedBrillNoetherGeneral
       (head.marked.chain (tail.map KGeneralChainFactor.marked)).graph
       (head.marked.chain (tail.map KGeneralChainFactor.marked)).right := by

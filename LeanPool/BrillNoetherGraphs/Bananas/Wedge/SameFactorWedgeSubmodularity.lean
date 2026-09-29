@@ -28,7 +28,7 @@ open Utilities
 vertex, not merely at the wedge attachment. -/
 theorem pointedGenusOneRigid_of_any_vertex
     (G : CFGraph) (x : G.V) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 1) (hCut : TwoEdgeCutCondition G) :
+    (hGenus : CFGraph.genus G = 1) (hCut : TwoEdgeCutCondition G) :
     PointedGenusOneRigid G x :=
   pointedGenusOneRigid_of_twoEdgeCutCondition x hConnected hGenus
     (exists_vertex_ne_of_genus_pos x (by rw [hGenus]; norm_num)) hCut

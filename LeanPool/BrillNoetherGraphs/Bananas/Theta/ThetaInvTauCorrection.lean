@@ -462,8 +462,8 @@ theorem nonRecurrent_of_kGeneralTransmission
   obtain ⟨tau, hTau, hAffine, -, hCount⟩ := hData (oneChip w)
   have hEq := kInversionCount_eq_effectiveResidues_ncard_of_rigid
     B u v (oneChip w) k tau hTorsion hTau hAffine hRigid
-  have hGenus : Int.toNat (genus (mark B.graph u v).graph) = 2 := by
-    change Int.toNat (genus B.graph) = 2
+  have hGenus : Int.toNat (CFGraph.genus (mark B.graph u v).graph) = 2 := by
+    change Int.toNat (CFGraph.genus B.graph) = 2
     rw [B.genus_graph]
     rfl
   rw [hGenus, hEq] at hCount

@@ -2806,7 +2806,7 @@ theorem bnExists (ℓ : Fin 9 → ℕ)
 theorem genus_eq (ℓ : Fin 9 → ℕ)
     (hForest : IsForest core (zeroSet ℓ))
     (hNotLoopy : ¬ IsLoopy core (zeroSet ℓ)) :
-    genus (censusSpec core (by norm_num) ℓ hForest hNotLoopy).graph = 4 := by
+    CFGraph.genus (censusSpec core (by norm_num) ℓ hForest hNotLoopy).graph = 4 := by
   rw [Utilities.Certificate.DegenerateSpec.DegSpec.genus_graph]
   norm_num
 

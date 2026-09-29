@@ -108,7 +108,7 @@ theorem KGeneralTransmission.exists_affine_transmission
     (hK : KGeneralTransmission M k) (D : CFDiv M.graph) :
     ∃ τ : ℤ → ℤ,
       IsTransmissionPermutation M D τ ∧ IsKAffine k τ ∧
-        kInversionCount k τ ≤ Int.toNat (genus M.graph) := by
+        kInversionCount k τ ≤ Int.toNat (CFGraph.genus M.graph) := by
   rcases hK with ⟨hk, _hsub, hD⟩
   obtain ⟨τ, hτ, hAffine, _hfinite, hCount⟩ := hD D
   exact ⟨τ, hτ, hAffine, hCount⟩
@@ -123,7 +123,7 @@ theorem KGeneralTransmission_iff_without_finiteness
       TorsionWitness M k ∧ AllSubmodular M ∧
         ∀ D : CFDiv M.graph, ∃ τ : ℤ → ℤ,
           IsTransmissionPermutation M D τ ∧ IsKAffine k τ ∧
-            kInversionCount k τ ≤ Int.toNat (genus M.graph) := by
+            kInversionCount k τ ≤ Int.toNat (CFGraph.genus M.graph) := by
   constructor
   · intro hK
     rcases hK with ⟨hk, hsub, hAll⟩

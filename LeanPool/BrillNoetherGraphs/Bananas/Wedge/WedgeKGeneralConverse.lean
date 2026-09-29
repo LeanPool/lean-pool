@@ -50,7 +50,7 @@ theorem factor_torsionOrders_eq_of_vertexWedge_opposite_kGeneral
   let V : W.V := wedgeRightVertex G H x y v
   have hWConn : _root_.graphConnected W :=
     graph_connected_vertexWedge G H x y hG.connected hH.connected
-  have hWGenus : genus W = 2 := by
+  have hWGenus : CFGraph.genus W = 2 := by
     dsimp [W]
     rw [genus_vertexWedge, hG.genus_one, hH.genus_one]
     norm_num
@@ -64,8 +64,8 @@ theorem factor_torsionOrders_eq_of_vertexWedge_opposite_kGeneral
   have hWRigid' : ¬ linearEquiv W (oneChip U + oneChip V)
       (canonicalDivisor W) := by
     simpa only [W, U, V] using hWRigid
-  have hWPos : 0 < genus (mark W U V).graph := by
-    change 0 < genus W
+  have hWPos : 0 < CFGraph.genus (mark W U V).graph := by
+    change 0 < CFGraph.genus W
     rw [hWGenus]
     norm_num
   have hWOrder : IsTorsionOrder (mark W U V) k :=

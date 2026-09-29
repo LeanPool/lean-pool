@@ -196,7 +196,7 @@ noncomputable def graphIso (P : VertexWedgePresentation K G H x y) :
 
 /-- The presented graph has the genus expected of the two factors. -/
 theorem genus_eq (P : VertexWedgePresentation K G H x y) :
-    genus K = genus G + genus H := by
+    CFGraph.genus K = CFGraph.genus G + CFGraph.genus H := by
   rw [P.graphIso.genus_eq, genus_vertexWedge]
 
 /-- Connectivity of the presented graph is equivalent to connectivity of its

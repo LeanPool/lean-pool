@@ -246,8 +246,8 @@ theorem transmission_eq_add_two_of_linearEquiv_canonical_sub_u_add_v
         canonicalDivisor B.graph := by abel
     have hDelVV : canonicalDivisor B.graph + oneChip v - oneChip v =
         canonicalDivisor B.graph := by abel
-    have hRank (X : CFDiv B.graph) (hDeg : CFDiv.degree X > 2 * genus B.graph - 2) :
-        rank B.graph X = CFDiv.degree X - genus B.graph :=
+    have hRank (X : CFDiv B.graph) (hDeg : CFDiv.degree X > 2 * CFGraph.genus B.graph - 2) :
+        rank B.graph X = CFDiv.degree X - CFGraph.genus B.graph :=
       (rank_nonspecial_range (banana_graph_connected B) X).2.2 hDeg
     have hDegBig : CFDiv.degree (canonicalDivisor B.graph + oneChip u + oneChip v) = 4 := by
       rw [CFDiv.degree.map_add, CFDiv.degree.map_add, degree_of_canonical_divisor, B.genus_graph,

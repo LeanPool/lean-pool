@@ -61,7 +61,7 @@ theorem chainFactorGenus_take_mono
               simp only [List.take_succ_cons, chainFactorGenus_cons]
               simpa only [add_comm] using
                 add_le_add_left (ih (Nat.le_of_succ_le_succ hij))
-                  (genus F.marked.graph)
+                  (CFGraph.genus F.marked.graph)
 
 /-- Suffix genus is antitone in the number of discarded factors. -/
 theorem chainFactorGenus_drop_anti
@@ -109,17 +109,17 @@ theorem chain_last_suffix_le_prefix
 when a positive-genus tail is present. -/
 theorem first_prefix_lt_suffix_of_positive_tail
     (F next : KGeneralChainFactor) (rest : List KGeneralChainFactor)
-    (hPositive : ∀ Q ∈ next :: rest, 0 < genus Q.marked.graph) :
+    (hPositive : ∀ Q ∈ next :: rest, 0 < CFGraph.genus Q.marked.graph) :
     chainFactorGenus ((F :: next :: rest).take 1) <
       chainFactorGenus ((F :: next :: rest).drop 0) := by
   have hTailPositive : 0 < chainFactorGenus (next :: rest) := by
     rw [chainFactorGenus_cons]
-    have hNext : 0 < genus next.marked.graph := hPositive next (by simp)
+    have hNext : 0 < CFGraph.genus next.marked.graph := hPositive next (by simp)
     have hRest : 0 ≤ chainFactorGenus rest := chainFactorGenus_nonneg rest
     exact add_pos_of_pos_of_nonneg hNext hRest
   simpa only [List.take_succ_cons, List.take_zero, List.drop_zero,
     chainFactorGenus_cons, chainFactorGenus_nil, add_zero] using
-      (lt_add_of_pos_right (genus F.marked.graph) hTailPositive)
+      (lt_add_of_pos_right (CFGraph.genus F.marked.graph) hTailPositive)
 
 /-- The prefix and suffix genus functions have crossed at `i`. -/
 def GenusCrossed (L : List KGeneralChainFactor) (i : ℕ) : Prop :=
@@ -182,7 +182,7 @@ theorem suffix_le_prefix_from_firstGenusCrossing
 /-- Positivity forces the first crossing to occur after the initial factor. -/
 theorem firstGenusCrossing_pos_of_positive_tail
     (F next : KGeneralChainFactor) (rest : List KGeneralChainFactor)
-    (hPositive : ∀ Q ∈ next :: rest, 0 < genus Q.marked.graph) :
+    (hPositive : ∀ Q ∈ next :: rest, 0 < CFGraph.genus Q.marked.graph) :
     0 < firstGenusCrossing (F :: next :: rest) (by simp) := by
   by_contra h
   have hZero : firstGenusCrossing (F :: next :: rest) (by simp) = 0 := by omega
@@ -197,7 +197,7 @@ theorem firstGenusCrossing_pos_of_positive_tail
 crossing split.  The split is canonical: take the first genus crossing. -/
 theorem exists_chainDominatesAtSplit_of_positive
     (F next : KGeneralChainFactor) (rest : List KGeneralChainFactor)
-    (hPositive : ∀ Q ∈ F :: next :: rest, 0 < genus Q.marked.graph) :
+    (hPositive : ∀ Q ∈ F :: next :: rest, 0 < CFGraph.genus Q.marked.graph) :
     ∃ (leftHead : KGeneralChainFactor)
       (leftTail : List KGeneralChainFactor)
       (rightHead : KGeneralChainFactor)
@@ -328,7 +328,7 @@ theorem exists_chainDominatesAtSplit_of_firstCrossing_pos
 for every chain of at least two positive-genus factors. -/
 theorem exists_chainBalancedAtSplit_of_minBudget_of_positive
     (F next : KGeneralChainFactor) (rest : List KGeneralChainFactor)
-    (hPositive : ∀ Q ∈ F :: next :: rest, 0 < genus Q.marked.graph)
+    (hPositive : ∀ Q ∈ F :: next :: rest, 0 < CFGraph.genus Q.marked.graph)
     (hMin : ChainMinBudget (F :: next :: rest)) :
     ∃ (leftHead : KGeneralChainFactor)
       (leftTail : List KGeneralChainFactor)
@@ -351,7 +351,7 @@ theorem exists_chainBalancedAtSplit_of_minBudget_of_positive
 restricts to the remaining nonempty tail without change. -/
 theorem chainMinBudget_tail_of_head_genus_zero
     (F next : KGeneralChainFactor) (rest : List KGeneralChainFactor)
-    (hZero : genus F.marked.graph = 0)
+    (hZero : CFGraph.genus F.marked.graph = 0)
     (hMin : ChainMinBudget (F :: next :: rest)) :
     ChainMinBudget (next :: rest) := by
   intro i hi
@@ -380,16 +380,16 @@ Connectivity of each bundled factor supplies nonnegativity. -/
 theorem genus_eq_zero_of_mem_of_chainFactorGenus_eq_zero
     (L : List KGeneralChainFactor) (hSum : chainFactorGenus L = 0)
     (F : KGeneralChainFactor) (hMem : F ∈ L) :
-    genus F.marked.graph = 0 := by
+    CFGraph.genus F.marked.graph = 0 := by
   induction L with
   | nil => simp at hMem
   | cons head rest ih =>
       rw [chainFactorGenus_cons] at hSum
-      have hHeadNonneg : 0 ≤ genus head.marked.graph :=
+      have hHeadNonneg : 0 ≤ CFGraph.genus head.marked.graph :=
         genus_nonneg_of_graph_connected head.marked.graph head.connected
       have hRestNonneg : 0 ≤ chainFactorGenus rest :=
         chainFactorGenus_nonneg rest
-      have hHeadZero : genus head.marked.graph = 0 := by omega
+      have hHeadZero : CFGraph.genus head.marked.graph = 0 := by omega
       have hRestZero : chainFactorGenus rest = 0 := by omega
       rcases List.mem_cons.mp hMem with rfl | hMem
       · exact hHeadZero

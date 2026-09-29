@@ -27,7 +27,7 @@ universe u v
 equivalent to the marked point in degree zero. -/
 structure PointedGenusOneRigid (H : CFGraph.{v}) (y : H.V) : Prop where
   connected : graphConnected H
-  genus_one : genus H = 1
+  genus_one : CFGraph.genus H = 1
   exists_ne : ∃ p : H.V, p ≠ y
   nontrivial : ∀ p : H.V, p ≠ y →
     ¬ linearEquiv H (oneChip y - oneChip p) 0

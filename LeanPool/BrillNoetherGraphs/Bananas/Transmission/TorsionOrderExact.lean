@@ -79,7 +79,7 @@ connectivity hypothesis already threaded through
 theorem KGeneralTransmission.isTorsionOrder
     {M : TwiceMarked} {k : ℕ} (hK : KGeneralTransmission M k)
     (_huv : M.u ≠ M.v) (hconn : _root_.graphConnected M.graph)
-    (hg : 0 < genus M.graph) :
+    (hg : 0 < CFGraph.genus M.graph) :
     IsTorsionOrder M k := by
   obtain ⟨hTW, _hSub, hAll⟩ := hK
   have hk0 : 0 < k := hTW.1
@@ -158,7 +158,7 @@ theorem KGeneralTransmission.isTorsionOrder
     have hnn := hτNonneg 0 le_rfl
     omega
   -- `rank (canonicalDivisor) = genus - 1`.
-  have hRankK : rank M.graph (canonicalDivisor M.graph) = genus M.graph - 1 := by
+  have hRankK : rank M.graph (canonicalDivisor M.graph) = CFGraph.genus M.graph - 1 := by
     have hRR := riemann_roch_for_graphs hconn (canonicalDivisor M.graph)
     have hKK : canonicalDivisor M.graph - canonicalDivisor M.graph = (0 : CFDiv M.graph) :=
       sub_self _
@@ -172,7 +172,7 @@ theorem KGeneralTransmission.isTorsionOrder
       (0 : ℤ) • oneChip M.u + (0 : ℤ) • oneChip M.v = canonicalDivisor M.graph := by
     simp
   rw [hXK, hRankK] at hNW
-  have hAcard : ((northwestSet τ 1 0).ncard : ℤ) = genus M.graph := by
+  have hAcard : ((northwestSet τ 1 0).ncard : ℤ) = CFGraph.genus M.graph := by
     rw [show (0 : ℤ) + 1 = 1 from by ring] at hNW
     omega
   have hAnonempty : (northwestSet τ 1 0).Nonempty := by
@@ -212,7 +212,7 @@ theorem KGeneralTransmission.isTorsionOrder
     exact hφmem a ha
   have hCardImage : (φ '' (northwestSet τ 1 0)).ncard = (northwestSet τ 1 0).ncard :=
     Set.InjOn.ncard_image hφInj
-  have hAcardNat : ((northwestSet τ 1 0).ncard : ℤ) = (Int.toNat (genus M.graph) : ℤ) := by
+  have hAcardNat : ((northwestSet τ 1 0).ncard : ℤ) = (Int.toNat (CFGraph.genus M.graph) : ℤ) := by
     rw [hAcard, Int.toNat_of_nonneg (by omega)]
   have hleft : (northwestSet τ 1 0).ncard ≤ (kInversions k τ).ncard := by
     rw [← hCardImage]
@@ -220,9 +220,9 @@ theorem KGeneralTransmission.isTorsionOrder
   have hright : (kInversions k τ).ncard ≤ (northwestSet τ 1 0).ncard := by
     have h := hτCount
     unfold kInversionCount at h
-    have heq : (Int.toNat (genus M.graph) : ℤ) = ((northwestSet τ 1 0).ncard : ℤ) :=
+    have heq : (Int.toNat (CFGraph.genus M.graph) : ℤ) = ((northwestSet τ 1 0).ncard : ℤ) :=
       hAcardNat.symm
-    have hnat : Int.toNat (genus M.graph) = (northwestSet τ 1 0).ncard := by exact_mod_cast heq
+    have hnat : Int.toNat (CFGraph.genus M.graph) = (northwestSet τ 1 0).ncard := by exact_mod_cast heq
     omega
   have hSetEq : φ '' (northwestSet τ 1 0) = kInversions k τ :=
     Set.eq_of_subset_of_ncard_le hSubset (by omega) hτFinite
@@ -272,7 +272,7 @@ marking `u = v` has a `TorsionWitness` at *every* period
 (`torsionWitness_diagonal`), so minimality can fail without it. -/
 theorem banana_kGeneral_isTorsionOrder
     {g k : ℕ} (B : Banana g) (u v : B.graph.V) (huv : u ≠ v)
-    (hg : 0 < genus B.graph)
+    (hg : 0 < CFGraph.genus B.graph)
     (hK : KGeneralTransmission (mark B.graph u v) k) :
     IsTorsionOrder (mark B.graph u v) k :=
   hK.isTorsionOrder huv (banana_graph_connected B) hg

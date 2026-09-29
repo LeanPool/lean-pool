@@ -112,7 +112,7 @@ example (G : CFGraph) (h_conn : graphConnected G) :
 
 /-- Passing to the fossil preserves genus and divisorial gonality. -/
 example (G : CFGraph) (h_conn : graphConnected G) :
-    genus (fossil G) = genus G ∧
+    CFGraph.genus (fossil G) = CFGraph.genus G ∧
       divisorialGonality (fossil G) = divisorialGonality G :=
   ⟨Utilities.genus_fossil G h_conn,
     Utilities.divisorialGonality_fossil G h_conn⟩

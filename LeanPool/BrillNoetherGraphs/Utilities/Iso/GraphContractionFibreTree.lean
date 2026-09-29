@@ -126,9 +126,9 @@ theorem graph_connected_card_vertices_le_card_edges_add_one
 
 /-- The cyclomatic genus of a connected loopless multigraph is nonnegative. -/
 theorem genus_nonneg_of_graph_connected (G : CFGraph.{u})
-    (hConnected : graphConnected G) : 0 ≤ genus G := by
+    (hConnected : graphConnected G) : 0 ≤ CFGraph.genus G := by
   have hBound := graph_connected_card_vertices_le_card_edges_add_one G hConnected
-  simp only [genus]
+  simp only [CFGraph.genus]
   omega
 
 namespace Certificate.GraphContractionCertificate
@@ -334,7 +334,7 @@ theorem internalDirectedMultiplicity_eq_two_mul_sum_fibreGraph_edge_cards
 
 /-- A connected-fibre quotient cannot increase cyclomatic genus. -/
 theorem genus_le_of_topologicalValid (c : GraphContractionCertificate G H)
-    (hTopological : c.TopologicalValid) : genus H ≤ genus G := by
+    (hTopological : c.TopologicalValid) : CFGraph.genus H ≤ CFGraph.genus G := by
   have hBound (target : H.V) :
       (Fintype.card (c.fibreGraph hTopological.1 target).V : ℤ) ≤
         (c.fibreGraph hTopological.1 target).edges.card + 1 := by
@@ -375,14 +375,14 @@ theorem genus_le_of_topologicalValid (c : GraphContractionCertificate G H)
     exact Finset.sum_le_sum fun target _ => hBound target
   rw [Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ,
     nsmul_eq_mul, mul_one, hVertexSum, hEdgeSum] at hTotalBound
-  simp only [genus]
+  simp only [CFGraph.genus]
   omega
 
 /-- If a connected-fibre quotient preserves genus, every fibre has exactly
 one fewer edge occurrence than vertices. -/
 theorem fibreGraph_edge_card_add_one_eq_vertex_card_of_genus_eq
     (c : GraphContractionCertificate G H) (hTopological : c.TopologicalValid)
-    (hGenus : genus G = genus H) (target : H.V) :
+    (hGenus : CFGraph.genus G = CFGraph.genus H) (target : H.V) :
     (c.fibreGraph hTopological.1 target).edges.card + 1 =
       Fintype.card (c.fibreGraph hTopological.1 target).V := by
   have hBound (vertex : H.V) :
@@ -424,7 +424,7 @@ theorem fibreGraph_edge_card_add_one_eq_vertex_card_of_genus_eq
             (Fintype.card (c.fibreGraph hTopological.1 vertex).V : ℤ) := by
     rw [Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ,
       nsmul_eq_mul, mul_one, hEdgeSum, hVertexSum]
-    simp only [genus] at hGenus
+    simp only [CFGraph.genus] at hGenus
     omega
   have hDeficitSum :
       (∑ vertex : H.V,
@@ -446,7 +446,7 @@ theorem fibreGraph_edge_card_add_one_eq_vertex_card_of_genus_eq
 forgetting parallel-edge multiplicities. -/
 theorem fibreGraph_underlyingSimpleGraph_isTree_of_genus_eq
     (c : GraphContractionCertificate G H) (hTopological : c.TopologicalValid)
-    (hGenus : genus G = genus H) (target : H.V) :
+    (hGenus : CFGraph.genus G = CFGraph.genus H) (target : H.V) :
     (underlyingSimpleGraph (c.fibreGraph hTopological.1 target)).IsTree := by
   let fibre := c.fibreGraph hTopological.1 target
   have hFibreConnected : _root_.graphConnected fibre := by
@@ -475,7 +475,7 @@ theorem fibreGraph_underlyingSimpleGraph_isTree_of_genus_eq
 theorem fibreGraph_genus_nonneg_of_topologicalValid
     (c : GraphContractionCertificate G H) (hTopological : c.TopologicalValid)
     (target : H.V) :
-    0 ≤ genus (c.fibreGraph hTopological.1 target) :=
+    0 ≤ CFGraph.genus (c.fibreGraph hTopological.1 target) :=
   genus_nonneg_of_graph_connected _
     (c.fibreGraph_connected_of_topologicalValid hTopological target)
 

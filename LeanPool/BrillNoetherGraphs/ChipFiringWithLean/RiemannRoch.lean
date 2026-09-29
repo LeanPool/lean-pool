@@ -27,15 +27,15 @@ See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Chapter 5.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Theorem 5.9. -/
 theorem riemann_roch_for_graphs {G : CFGraph} (h_conn : graphConnected G) (D : CFDiv G) :
-  rank G D - rank G (canonicalDivisor G - D) = CFDiv.degree D - genus G + 1 := by
+  rank G D - rank G (canonicalDivisor G - D) = CFDiv.degree D - CFGraph.genus G + 1 := by
   set K := canonicalDivisor G with K_eq
   have h_ineq := rank_degree_inequality h_conn D
-  have h_ineq_rev : CFDiv.degree (K-D) - genus G < rank G (K-D) - rank G D := by
+  have h_ineq_rev : CFDiv.degree (K-D) - CFGraph.genus G < rank G (K-D) - rank G D := by
     convert rank_degree_inequality h_conn (K-D)
     abel
   have deg_sub : CFDiv.degree (K-D) = CFDiv.degree K - CFDiv.degree D := by
     rw [CFDiv.degree.map_sub]
-  have h_deg_K : CFDiv.degree (canonicalDivisor G) = 2 * genus G - 2 :=
+  have h_deg_K : CFDiv.degree (canonicalDivisor G) = 2 * CFGraph.genus G - 2 :=
     degree_of_canonical_divisor G
   linarith
 
@@ -60,13 +60,13 @@ theorem maximal_unwinnable_symmetry
     rw [rank_neg_one_iff_unwinnable]
     exact h_max_unwin.1
   -- Get degree = g-1 from maximal unwinnable
-  have h_deg : CFDiv.degree D = genus G - 1 := maximal_unwinnable_deg h_conn D h_max_unwin
+  have h_deg : CFDiv.degree D = CFGraph.genus G - 1 := maximal_unwinnable_deg h_conn D h_max_unwin
   -- Use Riemann-Roch
   have h_RR := riemann_roch_for_graphs h_conn D
   rw [h_rank_neg] at h_RR
   -- Get degree of K-D
   have h_deg_K := degree_of_canonical_divisor G
-  have h_deg_KD : CFDiv.degree (canonicalDivisor G - D) = genus G - 1 := by
+  have h_deg_KD : CFDiv.degree (canonicalDivisor G - D) = CFGraph.genus G - 1 := by
     rw [CFDiv.degree.map_sub]
     rw [h_deg_K, h_deg]
     linarith
@@ -81,15 +81,15 @@ theorem maximal_unwinnable_symmetry
     suffices winnable G E by
       exact this
     -- To show E is winnable, we will use Riemann-Roch on E
-    have h_deg_E : CFDiv.degree E = genus G := by
+    have h_deg_E : CFDiv.degree E = CFGraph.genus G := by
       rw [E_def, CFDiv.degree.map_add, deg_one_chip, h_deg_KD]
       linarith
     apply (rank_nonneg_iff_winnable G E).mp
     rw [rank_geq_iff G E]
     calc
-      rank G E = rank G (K-E) + CFDiv.degree E +1 - genus G := by
+      rank G E = rank G (K-E) + CFDiv.degree E +1 - CFGraph.genus G := by
         linarith [riemann_roch_for_graphs h_conn E]
-      _ ≥ CFDiv.degree E - genus G := by
+      _ ≥ CFDiv.degree E - CFGraph.genus G := by
         linarith [rank_geq_neg_one G (K - E)]
       _ = 0 := by linarith[h_deg_E]
 
@@ -132,7 +132,7 @@ theorem clifford_theorem
     (h_KD : rank G (canonicalDivisor G - D) ≥ 0) :
     (rank G D : ℚ) ≤ (CFDiv.degree D : ℚ) / 2 := by
   -- Get canonical divisor K's rank using Riemann-Roch
-  have h_K_rank : rank G (canonicalDivisor G) = genus G - 1 := by
+  have h_K_rank : rank G (canonicalDivisor G) = CFGraph.genus G - 1 := by
     -- Apply Riemann-Roch with D = K
     have h_rr := riemann_roch_for_graphs h_conn (canonicalDivisor G)
     -- For K-K = 0, rank is 0
@@ -176,10 +176,10 @@ theorem rank_nonspecial_range
   -- Part 1
   (CFDiv.degree D < 0 → rank G D = -1) ∧
   -- Part 2
-  (0 ≤ (CFDiv.degree D : ℚ) ∧ (CFDiv.degree D : ℚ) ≤ 2 * (genus G : ℚ) - 2 →
+  (0 ≤ (CFDiv.degree D : ℚ) ∧ (CFDiv.degree D : ℚ) ≤ 2 * (CFGraph.genus G : ℚ) - 2 →
     (rank G D : ℚ) ≤ (CFDiv.degree D : ℚ) / 2) ∧
   -- Part 3
-  (CFDiv.degree D > 2 * genus G - 2 → rank G D = CFDiv.degree D - genus G) := by
+  (CFDiv.degree D > 2 * CFGraph.genus G - 2 → rank G D = CFDiv.degree D - CFGraph.genus G) := by
   constructor
   · -- Part 1: deg(D) < 0 implies r(D) = -1
     exact rank_neg_one_of_deg_neg G D
@@ -196,7 +196,7 @@ theorem rank_nonspecial_range
         have h_rr := riemann_roch_for_graphs h_conn D
         rw [rank_neg_one_of_not_nonneg G (K - D) h_rankKD] at h_rr
         -- So r(D) = deg D - g, which is at most deg D / 2 since deg D ≤ 2g - 2
-        have h_rank_eq : rank G D = CFDiv.degree D - genus G := by linarith
+        have h_rank_eq : rank G D = CFDiv.degree D - CFGraph.genus G := by linarith
         rw [h_rank_eq]
         push_cast
         linarith
@@ -234,10 +234,10 @@ def gonalityGeq (G : CFGraph) (k : ℤ) : Prop :=
 
 /-- A connected graph has gonality at most $g+1$, where $g$ is its genus. -/
 theorem gonality_leq_genus_add_one
-    {G : CFGraph} (h_conn : graphConnected G) : gonalityLeq G (genus G + 1) := by
+    {G : CFGraph} (h_conn : graphConnected G) : gonalityLeq G (CFGraph.genus G + 1) := by
   let q : G.V := Classical.arbitrary G.V
-  let D : CFDiv G := (genus G + 1) • oneChip q
-  have h_deg_D : CFDiv.degree D = genus G + 1 := by
+  let D : CFDiv G := (CFGraph.genus G + 1) • oneChip q
+  have h_deg_D : CFDiv.degree D = CFGraph.genus G + 1 := by
     dsimp only [D]
     rw [map_zsmul, deg_one_chip, zsmul_one]
     simp only [Int.cast_add, Int.cast_eq, Int.cast_one]
@@ -245,7 +245,7 @@ theorem gonality_leq_genus_add_one
     intro E hE
     dsimp only [effOfDegree, Set.mem_ofPred_eq] at hE
     rcases hE with ⟨hE_eff, hE_deg⟩
-    have h_deg_sub : CFDiv.degree (D - E) = genus G := by
+    have h_deg_sub : CFDiv.degree (D - E) = CFGraph.genus G := by
       rw [CFDiv.degree.map_sub, h_deg_D, hE_deg]
       ring
     apply winnable_of_deg_ge_genus h_conn (D - E)
@@ -265,7 +265,7 @@ noncomputable def gonality {G : CFGraph} (_h_conn : graphConnected G) : ℤ :=
 
 /-- A connected graph has gonality at most $g+1$, where $g$ is its genus. -/
 private lemma gonality_le_genus_add_one {G : CFGraph} (h_conn : graphConnected G) :
-    gonality h_conn ≤ genus G + 1 := by
+    gonality h_conn ≤ CFGraph.genus G + 1 := by
   let S : Set ℤ := {k : ℤ | gonalityLeq G k}
   have h_bdd : BddBelow S := by
     refine ⟨1, ?_⟩
@@ -278,7 +278,7 @@ private lemma gonality_le_genus_add_one {G : CFGraph} (h_conn : graphConnected G
 private lemma gonality_ge_one {G : CFGraph} (h_conn : graphConnected G) : 1 ≤ gonality h_conn := by
   let S : Set ℤ := {k : ℤ | gonalityLeq G k}
   have h_nonempty : S.Nonempty := by
-    refine ⟨genus G + 1, ?_⟩
+    refine ⟨CFGraph.genus G + 1, ?_⟩
     exact gonality_leq_genus_add_one h_conn
   dsimp only [gonality]
   refine le_csInf h_nonempty ?_
@@ -290,7 +290,7 @@ private lemma gonality_ge_one {G : CFGraph} (h_conn : graphConnected G) : 1 ≤ 
     gonalityGeq G k ↔ gonality h_conn ≥ k := by
   let S : Set ℤ := {l : ℤ | gonalityLeq G l}
   have h_nonempty : S.Nonempty := by
-    refine ⟨genus G + 1, ?_⟩
+    refine ⟨CFGraph.genus G + 1, ?_⟩
     exact gonality_leq_genus_add_one h_conn
   have h_bdd : BddBelow S := by
     refine ⟨1, ?_⟩
@@ -328,7 +328,7 @@ and via a different construction by Hendrey in
 [Sparse graphs of high gonality](https://doi.org/10.1137/16M1095329). We are not aware
 of a formalization of this result. -/
 def maxGonalityExistence (g : ℕ) : Prop :=
-  ∃ (G : CFGraph.{u}) (h_conn : graphConnected G) (_g_eq : genus G = g),
+  ∃ (G : CFGraph.{u}) (h_conn : graphConnected G) (_g_eq : CFGraph.genus G = g),
     gonality h_conn = (g + 3) / 2
 
 /-- The statement that in a given genus $g$, there exists a Brill-Noether general graph:
@@ -349,7 +349,7 @@ namely Conjecture 3.9(2). It was proved by Cools-Draisma-Payne-Robeva in
 [A tropical proof of the Brill-Noether theorem](https://doi.org/10.1016/j.aim.2012.02.019),
 but we are not aware of a formalization of this result. -/
 def brillNoetherGeneralExistence (g : ℤ) : Prop :=
-  ∃ (G : CFGraph.{u}) (_h_conn : graphConnected G) (_g_eq : genus G = g),
+  ∃ (G : CFGraph.{u}) (_h_conn : graphConnected G) (_g_eq : CFGraph.genus G = g),
     ∀ (D : CFDiv G), (rank G D + 1) * (rank G (canonicalDivisor G - D) + 1) ≤ g
 
 /-- The gonality conjecture for finite graphs: every connected graph of genus $g$ has gonality
@@ -359,7 +359,7 @@ This is an open problem, posed by Baker in
 [Specialization of linear systems from curves to graphs](https://doi.org/10.2140/ant.2008.2.613),
 Conjecture 3.10(1). -/
 def gonalityConjecture {G : CFGraph} (h_conn : graphConnected G) : Prop :=
-  gonality h_conn ≤ (genus G + 3) / 2
+  gonality h_conn ≤ (CFGraph.genus G + 3) / 2
 
 /-- The Brill-Noether conjecture for finite graphs: for every connected graph of genus $g$
 and integers $r,d$ with
@@ -372,6 +372,6 @@ This is an open problem, posed in slightly different form by Baker in
 [Specialization of linear systems from curves to graphs](https://doi.org/10.2140/ant.2008.2.613),
 Conjecture 3.9(1). -/
 def brillNoetherConjecture {G : CFGraph} (_h_conn : graphConnected G) (r d : ℤ) : Prop :=
-  let g := genus G
+  let g := CFGraph.genus G
   let ρ := g - (r + 1) * (g - d + r)
   0 ≤ ρ → ∃ (D : CFDiv G), rank G D ≥ r ∧ CFDiv.degree D = d

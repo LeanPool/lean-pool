@@ -420,21 +420,21 @@ theorem winnable_iff_forall_add_supported_effective
     {G : CFGraph} {A : Finset G.V} (hConnected : graphConnected G)
     (hSet : RankDeterminingSet G A) (D : CFDiv G) :
     winnable G D ↔
-      ∀ F : CFDiv G, effective F → CFDiv.degree F = genus G - 1 - CFDiv.degree D →
+      ∀ F : CFDiv G, effective F → CFDiv.degree F = CFGraph.genus G - 1 - CFDiv.degree D →
         SupportedOn A F → winnable G (D + F) := by
   have hDual :
       winnable G D ↔
-        rank G (canonicalDivisor G - D) ≥ genus G - 1 - CFDiv.degree D :=
+        rank G (canonicalDivisor G - D) ≥ CFGraph.genus G - 1 - CFDiv.degree D :=
     (canonical_sub_rank_ge_iff_winnable_of_degree hConnected D
-      (genus G - 1 - CFDiv.degree D) (by ring)).symm
-  rw [hDual, hSet (canonicalDivisor G - D) (genus G - 1 - CFDiv.degree D)]
+      (CFGraph.genus G - 1 - CFDiv.degree D) (by ring)).symm
+  rw [hDual, hSet (canonicalDivisor G - D) (CFGraph.genus G - 1 - CFDiv.degree D)]
   refine forall_congr' fun F => ?_
   refine imp_congr_right fun _hEffective => ?_
   refine imp_congr_right fun hDegree => ?_
   refine imp_congr_right fun _hSupport => ?_
   have hSum : canonicalDivisor G - D - F = canonicalDivisor G - (D + F) := by
     abel
-  have hDegSum : CFDiv.degree (D + F) = genus G - 1 := by
+  have hDegSum : CFDiv.degree (D + F) = CFGraph.genus G - 1 := by
     rw [map_add, hDegree]
     ring
   rw [hSum]
@@ -454,7 +454,7 @@ theorem rank_ge_iff_forall_sub_add_supported
     (hSet : RankDeterminingSet G A) (D : CFDiv G) (r : ℤ) :
     rank G D ≥ r ↔
       ∀ E : CFDiv G, effective E → CFDiv.degree E = r → SupportedOn A E →
-        ∀ F : CFDiv G, effective F → CFDiv.degree F = genus G - CFDiv.degree D + r - 1 →
+        ∀ F : CFDiv G, effective F → CFDiv.degree F = CFGraph.genus G - CFDiv.degree D + r - 1 →
           SupportedOn A F → winnable G (D - E + F) := by
   rw [hSet D r]
   refine forall_congr' fun E => ?_
@@ -465,7 +465,7 @@ theorem rank_ge_iff_forall_sub_add_supported
   have hDegSub : CFDiv.degree (D - E) = CFDiv.degree D - r := by
     rw [CFDiv.degree.map_sub, hDegree]
   rw [hDegSub,
-    show genus G - 1 - (CFDiv.degree D - r) = genus G - CFDiv.degree D + r - 1 from by ring]
+    show CFGraph.genus G - 1 - (CFDiv.degree D - r) = CFGraph.genus G - CFDiv.degree D + r - 1 from by ring]
 
 end Utilities
 
@@ -609,7 +609,7 @@ theorem Spec.rank_ge_iff_core_criterion (spec : Spec n p)
       ∀ E : CFDiv spec.graph, effective E → CFDiv.degree E = r →
           SupportedOn spec.coreVertices E →
         ∀ F : CFDiv spec.graph, effective F →
-            CFDiv.degree F = genus spec.graph - CFDiv.degree D + r - 1 →
+            CFDiv.degree F = CFGraph.genus spec.graph - CFDiv.degree D + r - 1 →
           SupportedOn spec.coreVertices F →
             winnable spec.graph (D - E + F) :=
   rank_ge_iff_forall_sub_add_supported hConnected

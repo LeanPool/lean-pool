@@ -299,8 +299,8 @@ edge-multiplicity transport lemmas, which will use the same maps. -/
 /-- Vertex identification creates no cycle: genera add across a wedge. -/
 @[simp] theorem genus_vertexWedge
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) :
-    genus (vertexWedge G H x y) = genus G + genus H := by
-  unfold genus
+    CFGraph.genus (vertexWedge G H x y) = CFGraph.genus G + CFGraph.genus H := by
+  unfold CFGraph.genus
   rw [vertexWedge_edge_card, vertexWedge_vertex_card]
   have hH : 1 ≤ Fintype.card H.V := Fintype.card_pos_iff.mpr inferInstance
   push_cast

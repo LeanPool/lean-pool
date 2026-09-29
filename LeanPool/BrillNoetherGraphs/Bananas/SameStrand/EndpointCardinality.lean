@@ -189,9 +189,9 @@ theorem endpoint_marking_not_kGeneral
   obtain ⟨σ, hσ, _hAffineσ, _hFin, hCount⟩ := hK.2.2 D
   have hEq : τ = σ := transmissionPermutation_unique hτ hσ
   rw [hEq] at hLower
-  have hGenus : Int.toNat (genus (mark B.graph (leftEndpoint B)
+  have hGenus : Int.toNat (CFGraph.genus (mark B.graph (leftEndpoint B)
       (rightEndpoint B)).graph) = g := by
-    change Int.toNat (genus B.graph) = g
+    change Int.toNat (CFGraph.genus B.graph) = g
     rw [B.genus_graph]
     omega
   rw [hGenus] at hCount

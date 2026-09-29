@@ -64,8 +64,8 @@ theorem cardEdges_eq (equivalence : LaplacianEquiv G H) :
 
 /-- A Laplacian-preserving vertex equivalence preserves cyclomatic genus. -/
 theorem genus_eq (equivalence : LaplacianEquiv G H) :
-    genus H = genus G := by
-  unfold genus
+    CFGraph.genus H = CFGraph.genus G := by
+  unfold CFGraph.genus
   rw [equivalence.cardEdges_eq]
   have hVertices : Fintype.card H.V = Fintype.card G.V :=
     Fintype.card_congr equivalence.toEquiv.symm
@@ -164,7 +164,7 @@ theorem card_vertices_deleteLeaf_lt
 /-- Deleting a degree-one vertex preserves genus. -/
 @[simp] theorem genus_deleteLeaf
     (hDegree : vertexDegree G leaf = 1) :
-    genus (deleteLeaf G leaf hDegree) = genus G := by
+    CFGraph.genus (deleteLeaf G leaf hDegree) = CFGraph.genus G := by
   have hEquivGenus :=
     (laplacianEquivDeleteLeafAddLeaf G leaf hDegree).genus_eq
   simpa using hEquivGenus
@@ -209,7 +209,7 @@ theorem bnExists_rank_one_leafStep
     {d : ℤ}
     (recursive :
       graphConnected (deleteLeaf G leaf hDegree) →
-      genus (deleteLeaf G leaf hDegree) = genus G →
+      CFGraph.genus (deleteLeaf G leaf hDegree) = CFGraph.genus G →
       BNExists (deleteLeaf G leaf hDegree) 1 d) :
     BNExists G 1 d := by
   apply bnExists_rank_one_of_deleteLeaf G leaf hG hDegree
@@ -220,11 +220,11 @@ theorem bnExists_rank_one_leafStep
 /-- Genus-four specialization of the recursive leaf-removal step. -/
 theorem bnExists_rank_one_degree_three_genus_four_leafStep
     (hG : graphConnected G)
-    (hGenus : genus G = 4)
+    (hGenus : CFGraph.genus G = 4)
     (hDegree : vertexDegree G leaf = 1)
     (recursive :
       graphConnected (deleteLeaf G leaf hDegree) →
-      genus (deleteLeaf G leaf hDegree) = 4 →
+      CFGraph.genus (deleteLeaf G leaf hDegree) = 4 →
       BNExists (deleteLeaf G leaf hDegree) 1 3) :
     BNExists G 1 3 := by
   apply bnExists_rank_one_leafStep G leaf hG hDegree
@@ -239,18 +239,18 @@ theorem bnExists_rank_one_of_leafless
     (targetGenus degree : ℤ)
     (terminal : ∀ H : CFGraph.{u},
       graphConnected H →
-      genus H = targetGenus →
+      CFGraph.genus H = targetGenus →
       (∀ vertex : H.V, vertexDegree H vertex ≠ 1) →
       BNExists H 1 degree)
     (G : CFGraph.{u})
     (hG : graphConnected G)
-    (hGenus : genus G = targetGenus) :
+    (hGenus : CFGraph.genus G = targetGenus) :
     BNExists G 1 degree := by
   let statement : ℕ → Prop := fun bound =>
     ∀ H : CFGraph.{u},
       Fintype.card H.V = bound →
       graphConnected H →
-      genus H = targetGenus →
+      CFGraph.genus H = targetGenus →
       BNExists H 1 degree
   have recurse : ∀ bound, statement bound := by
     intro bound
@@ -262,7 +262,7 @@ theorem bnExists_rank_one_of_leafless
           apply bnExists_rank_one_leafStep H leaf hConnected hDegree
           intro hPrunedConnected hSameGenus
           have hPrunedGenus :
-              genus (deleteLeaf H leaf hDegree) = targetGenus :=
+              CFGraph.genus (deleteLeaf H leaf hDegree) = targetGenus :=
             hSameGenus.trans hTargetGenus
           have hSmaller :
               Fintype.card (deleteLeaf H leaf hDegree).V < bound := by
@@ -284,12 +284,12 @@ choose or expose a globally pruned graph. -/
 theorem bnExists_rank_one_degree_three_genus_four_of_leafless
     (terminal : ∀ H : CFGraph.{u},
       graphConnected H →
-      genus H = 4 →
+      CFGraph.genus H = 4 →
       (∀ vertex : H.V, vertexDegree H vertex ≠ 1) →
       BNExists H 1 3)
     (G : CFGraph.{u})
     (hG : graphConnected G)
-    (hGenus : genus G = 4) :
+    (hGenus : CFGraph.genus G = 4) :
     BNExists G 1 3 := by
   exact bnExists_rank_one_of_leafless 4 3 terminal G hG hGenus
 

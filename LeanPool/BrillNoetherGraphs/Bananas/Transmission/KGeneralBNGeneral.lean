@@ -98,7 +98,7 @@ here because `CFGraph` itself does not bundle connectedness. -/
 theorem kGeneralTransmission_brillNoetherGeneral
     {M : TwiceMarked} {g k : ℕ}
     (hconn : _root_.graphConnected M.graph)
-    (hgenus : genus M.graph = g)
+    (hgenus : CFGraph.genus M.graph = g)
     (hK : KGeneralTransmission M k)
     (hthreshold : g + 2 ≤ 2 * k) :
     BrillNoetherGeneral M.graph := by
@@ -116,7 +116,7 @@ theorem kGeneralTransmission_brillNoetherGeneral
   have hSEcard : ((southeastSet τ 1 0).ncard : ℤ) = rank M.graph D + 1 := by
     simpa using hSE.symm
   have hNWcard : ((northwestSet τ 1 0).ncard : ℤ) =
-      genus M.graph - d + rank M.graph D := by
+      CFGraph.genus M.graph - d + rank M.graph D := by
     have hComplement : canonicalDivisor M.graph - D -
         (0 : ℤ) • oneChip M.u + (0 : ℤ) • oneChip M.v =
           canonicalDivisor M.graph - D := by simp
@@ -126,23 +126,23 @@ theorem kGeneralTransmission_brillNoetherGeneral
     omega
   have hCrossCard : ((crossingInversions τ).ncard : ℤ) =
       (rank M.graph D + 1) *
-        (genus M.graph - d + rank M.graph D) := by
+        (CFGraph.genus M.graph - d + rank M.graph D) := by
     rw [crossingInversions_ncard]
     push_cast
     rw [hNWcard, hSEcard]
     ring
-  have hgenusNonneg : 0 ≤ genus M.graph := by rw [hgenus]; omega
-  have hTarget : genus M.graph <
-      (r + 1) * (genus M.graph - d + r) := by
+  have hgenusNonneg : 0 ≤ CFGraph.genus M.graph := by rw [hgenus]; omega
+  have hTarget : CFGraph.genus M.graph <
+      (r + 1) * (CFGraph.genus M.graph - d + r) := by
     unfold bnNumber rectangleWidth at hBNneg
     omega
-  have hWidthPos : 0 < genus M.graph - d + r := by
+  have hWidthPos : 0 < CFGraph.genus M.graph - d + r := by
     nlinarith
-  have hActual : genus M.graph <
+  have hActual : CFGraph.genus M.graph <
       (rank M.graph D + 1) *
-        (genus M.graph - d + rank M.graph D) := by
+        (CFGraph.genus M.graph - d + rank M.graph D) := by
     nlinarith
-  have hCrossGtZ : genus M.graph < ((crossingInversions τ).ncard : ℤ) := by
+  have hCrossGtZ : CFGraph.genus M.graph < ((crossingInversions τ).ncard : ℤ) := by
     rw [hCrossCard]
     exact hActual
   have hCrossGt : g < (crossingInversions τ).ncard := by

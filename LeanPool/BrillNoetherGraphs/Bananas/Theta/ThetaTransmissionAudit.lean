@@ -84,7 +84,7 @@ theorem evenlyMarkedTheta_kGeneral_of_uniform_inversion_bound
           (mark B.graph (strandVertex B α i) (strandVertex B β j)) D τ →
       IsKAffine (B.length α / Nat.gcd (B.length α) i.val) τ →
       kInversionCount (B.length α / Nat.gcd (B.length α) i.val) τ ≤
-        Int.toNat (genus B.graph)) :
+        Int.toNat (CFGraph.genus B.graph)) :
     KGeneralTransmission
       (mark B.graph (strandVertex B α i) (strandVertex B β j))
       (B.length α / Nat.gcd (B.length α) i.val) := by

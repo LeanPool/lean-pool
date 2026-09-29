@@ -87,7 +87,7 @@ private theorem rankSlip_duality (M : TwiceMarked) (D : CFDiv M.graph)
     (a b : ℤ) :
     rankSlipFunction M D a b -
         rankSlipFunction (mark M.graph M.v M.u) (canonicalDivisor M.graph - D) b a =
-      a - b + (CFDiv.degree D - genus M.graph + 1) := by
+      a - b + (CFDiv.degree D - CFGraph.genus M.graph + 1) := by
   have hRR := riemann_roch_for_graphs hconn
     (D + a • oneChip M.u - b • oneChip M.v)
   have hComplement :
@@ -110,7 +110,7 @@ slipface. -/
 noncomputable def rankSlipFace (M : TwiceMarked) (D : CFDiv M.graph)
     (hconn : graphConnected M.graph) : SlipFace :=
   Classical.choose (show ∃ sf : SlipFace,
-    (sf.func = rankSlipFunction M D ∧ sf.χ = CFDiv.degree D - genus M.graph + 1) ∧
+    (sf.func = rankSlipFunction M D ∧ sf.χ = CFDiv.degree D - CFGraph.genus M.graph + 1) ∧
       sf.dual.func = rankSlipFunction (mark M.graph M.v M.u) (canonicalDivisor M.graph - D)
     from by
       exact SlipFace.sf_of_D_props (rankSlip_duality M D hconn)
@@ -131,7 +131,7 @@ noncomputable def rankSlipFace (M : TwiceMarked) (D : CFDiv M.graph)
 
 @[simp] theorem rankSlipFace_chi (M : TwiceMarked) (D : CFDiv M.graph)
     (hconn : graphConnected M.graph) :
-    (rankSlipFace M D hconn).χ = CFDiv.degree D - genus M.graph + 1 := by
+    (rankSlipFace M D hconn).χ = CFDiv.degree D - CFGraph.genus M.graph + 1 := by
   exact (Classical.choose_spec (SlipFace.sf_of_D_props (rankSlip_duality M D hconn)
     ⟨rankSlipFunction_D_props M D,
       rankSlipFunction_D_props (mark M.graph M.v M.u)
@@ -320,7 +320,7 @@ theorem banana_graph_connected {g : ℕ} (B : Banana g) :
   B.graph_connected_of_coreConnected (banana_core_connected B)
 
 @[simp] theorem banana_genus {g : ℕ} (B : Banana g) :
-    genus B.graph = (g : ℤ) := by
+    CFGraph.genus B.graph = (g : ℤ) := by
   rw [B.genus_graph]
   push_cast
   omega

@@ -52,7 +52,7 @@ def HasTwoChipsRepresentative (D : CFDiv G) (base : G.V) : Prop :=
 For any two prospective loop bases, one degree-three class has effective
 representatives carrying two chips at either base. -/
 theorem exists_common_two_chip_class_genus_two
-    (hConnected : graphConnected G) (hGenus : genus G = 2)
+    (hConnected : graphConnected G) (hGenus : CFGraph.genus G = 2)
     (first second : G.V) :
     ∃ D : CFDiv G,
       effective D ∧ CFDiv.degree D = 3 ∧ rank G D ≥ 1 ∧

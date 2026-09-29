@@ -193,7 +193,7 @@ ASP permutation. -/
 def WedgeTransmissionProfile
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (D : CFDiv G) (E : CFDiv H) (u : G.V) (v : H.V) (tau : AspPerm) : Prop :=
-  CFDiv.degree D + CFDiv.degree E = (genus G : ℤ) + (genus H : ℤ) + tau.χ ∧
+  CFDiv.degree D + CFDiv.degree E = (CFGraph.genus G : ℤ) + (CFGraph.genus H : ℤ) + tau.χ ∧
     ∀ a b ell : ℤ, WedgeTransmissionRowProfile G H x y D E u v tau a b ell
 
 /-- Exact wedge criterion for a fixed wedge-additive divisor.  In particular,

@@ -43,10 +43,10 @@ private theorem exists_normalized_twist_rank_ge
     (i : ℕ) :
     ∃ n : ℕ,
       rank G (D + ((n : ℤ) - CFDiv.degree D) • oneChip q) ≥ (i : ℤ) := by
-  have hg : 0 ≤ genus G := genus_nonneg_of_graph_connected G hG
-  let n : ℕ := (genus G).toNat + i
+  have hg : 0 ≤ CFGraph.genus G := genus_nonneg_of_graph_connected G hG
+  let n : ℕ := (CFGraph.genus G).toNat + i
   refine ⟨n, ?_⟩
-  have hn : (n : ℤ) = genus G + (i : ℤ) := by
+  have hn : (n : ℤ) = CFGraph.genus G + (i : ℤ) := by
     dsimp [n]
     rw [Int.toNat_of_nonneg hg]
   have hRank := rank_ge_deg_sub_genus hG
@@ -56,7 +56,7 @@ private theorem exists_normalized_twist_rank_ge
     rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip]
     ring
   rw [hDegree] at hRank
-  have hNumeric : (i : ℤ) ≤ (n : ℤ) - genus G := by omega
+  have hNumeric : (i : ℤ) ≤ (n : ℤ) - CFGraph.genus G := by omega
   exact hNumeric.trans hRank
 
 /-- The first integral twist at which `D` has rank at least `i`.  We search
@@ -149,7 +149,7 @@ theorem pointedRankThreshold_succ_le
 noncomputable def pointedRowLength
     (G : CFGraph.{u}) (hG : graphConnected G) (D : CFDiv G) (q : G.V)
     (i : ℕ) : ℕ :=
-  Int.toNat ((i : ℤ) + genus G - CFDiv.degree D -
+  Int.toNat ((i : ℤ) + CFGraph.genus G - CFDiv.degree D -
     pointedRankThreshold G hG D q i)
 
 theorem pointedRowLength_anti
@@ -216,7 +216,7 @@ theorem finitePointedDiagram_censusContains
     OnceMarkedCensusContains G q (finitePointedDiagram G hG D q r) := by
   rw [onceMarkedCensusContains_iff_onceMarkedBNExists hG]
   rw [onceMarkedBNExists_iff_rank_cells]
-  let E : CFDiv G := D + (genus G - CFDiv.degree D) • oneChip q
+  let E : CFDiv G := D + (CFGraph.genus G - CFDiv.degree D) • oneChip q
   refine ⟨E, ?_, ?_⟩
   · dsimp [E]
     rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip]
@@ -230,7 +230,7 @@ theorem finitePointedDiagram_censusContains
       have hj' : j < (List.ofFn (fun k : Fin (r + 1) =>
           pointedRowLength G hG D q k))[i]'(by simpa using hiBound) := hj
       simpa only [List.getElem_ofFn] using hj'
-    let raw : ℤ := (i : ℤ) + genus G - CFDiv.degree D -
+    let raw : ℤ := (i : ℤ) + CFGraph.genus G - CFDiv.degree D -
       pointedRankThreshold G hG D q i
     have hrawPos : 0 < raw := by
       by_contra hnot
@@ -244,14 +244,14 @@ theorem finitePointedDiagram_censusContains
       exact_mod_cast hjRow
     have hExponent :
         pointedRankThreshold G hG D q i ≤
-          genus G - CFDiv.degree D + (i : ℤ) - (j : ℤ) - 1 := by
+          CFGraph.genus G - CFDiv.degree D + (i : ℤ) - (j : ℤ) - 1 := by
       dsimp [raw] at hjCast
       omega
     have hAt := rank_at_pointedRankThreshold_ge G hG D q i
-    let n : ℕ := (genus G - CFDiv.degree D + (i : ℤ) - (j : ℤ) - 1 -
+    let n : ℕ := (CFGraph.genus G - CFDiv.degree D + (i : ℤ) - (j : ℤ) - 1 -
       pointedRankThreshold G hG D q i).toNat
     have hn : (n : ℤ) =
-        genus G - CFDiv.degree D + (i : ℤ) - (j : ℤ) - 1 -
+        CFGraph.genus G - CFDiv.degree D + (i : ℤ) - (j : ℤ) - 1 -
           pointedRankThreshold G hG D q i := by
       dsimp [n]
       exact Int.toNat_of_nonneg (sub_nonneg.mpr hExponent)
@@ -311,7 +311,7 @@ theorem pointedRowLength_add_ge_wedge_width
     (hRank : rank (vertexWedge G H x y)
       (wedgeAddDivisor G H x y D E) ≥ (r : ℤ))
     (i : ℕ) (hi : i ≤ r) :
-    genus G + genus H - (CFDiv.degree D + CFDiv.degree E) + (r : ℤ) ≤
+    CFGraph.genus G + CFGraph.genus H - (CFDiv.degree D + CFDiv.degree E) + (r : ℤ) ≤
       (pointedRowLength G hG D x i : ℤ) +
         (pointedRowLength H hH E y (r - i) : ℤ) := by
   have hThreshold := pointedRankThreshold_add_le_zero_of_wedge_rank
@@ -349,16 +349,16 @@ theorem onceMarkedBrillNoetherGeneral_vertexWedge
     finitePointedDiagram_censusContains G hG D x rn
   have hLambdaH : OnceMarkedCensusContains H y lambdaH :=
     finitePointedDiagram_censusContains H hH E y rn
-  have hCardG : (lambdaG.card : ℤ) ≤ genus G :=
+  have hCardG : (lambdaG.card : ℤ) ≤ CFGraph.genus G :=
     hGeneralG lambdaG hLambdaG
-  have hCardH : (lambdaH.card : ℤ) ≤ genus H :=
+  have hCardH : (lambdaH.card : ℤ) ≤ CFGraph.genus H :=
     hGeneralH lambdaH hLambdaH
   have hRankSplit : rank (vertexWedge G H x y)
       (wedgeAddDivisor G H x y D E) ≥ (rn : ℤ) := by
     rw [hQSplit, hrCast]
     exact hRank
   have hWidthRows : ∀ i : Fin (rn + 1),
-      genus G + genus H - (CFDiv.degree D + CFDiv.degree E) + (rn : ℤ) ≤
+      CFGraph.genus G + CFGraph.genus H - (CFDiv.degree D + CFDiv.degree E) + (rn : ℤ) ≤
         (pointedRowLength G hG D x i : ℤ) +
           (pointedRowLength H hH E y (rn - i) : ℤ) := by
     intro i
@@ -366,12 +366,12 @@ theorem onceMarkedBrillNoetherGeneral_vertexWedge
       hRankSplit i (Nat.le_of_lt_succ i.isLt)
   have hSumRows :
       ((rn + 1 : ℕ) : ℤ) *
-          (genus G + genus H - (CFDiv.degree D + CFDiv.degree E) + (rn : ℤ)) ≤
+          (CFGraph.genus G + CFGraph.genus H - (CFDiv.degree D + CFDiv.degree E) + (rn : ℤ)) ≤
         ((finitePointedRows G hG D x rn).sum : ℤ) +
           ((finitePointedRows H hH E y rn).sum : ℤ) := by
     have hSummed :
         ∑ _i : Fin (rn + 1),
-            (genus G + genus H - (CFDiv.degree D + CFDiv.degree E) + (rn : ℤ)) ≤
+            (CFGraph.genus G + CFGraph.genus H - (CFDiv.degree D + CFDiv.degree E) + (rn : ℤ)) ≤
           ∑ i : Fin (rn + 1),
             ((pointedRowLength G hG D x i : ℤ) +
               (pointedRowLength H hH E y (rn - i) : ℤ)) := by
@@ -392,7 +392,7 @@ theorem onceMarkedBrillNoetherGeneral_vertexWedge
   have hCards :
       ((finitePointedRows G hG D x rn).sum : ℤ) +
           ((finitePointedRows H hH E y rn).sum : ℤ) ≤
-        genus G + genus H := by
+        CFGraph.genus G + CFGraph.genus H := by
     rw [← finitePointedDiagram_card G hG D x rn,
       ← finitePointedDiagram_card H hH E y rn]
     change (lambdaG.card : ℤ) + (lambdaH.card : ℤ) ≤ _

@@ -182,7 +182,7 @@ end OneVertexCut
 /-- A graph of positive genus has at least two vertices: a single vertex
 carries no edge, since chip-firing graphs are loopless. -/
 theorem exists_vertex_ne_of_genus_pos {H : CFGraph.{u}} (y : H.V)
-    (hGenus : 0 < genus H) : ∃ p : H.V, p ≠ y := by
+    (hGenus : 0 < CFGraph.genus H) : ∃ p : H.V, p ≠ y := by
   by_contra hNone
   push Not at hNone
   have hEdges : H.edges = 0 := by
@@ -196,8 +196,8 @@ theorem exists_vertex_ne_of_genus_pos {H : CFGraph.{u}} (y : H.V)
     rw [hLoop] at hEdge
     exact H.loopless y hEdge
   have hCard : 0 < Fintype.card H.V := Fintype.card_pos
-  have hValue : genus H = 0 - (Fintype.card H.V : ℤ) + 1 := by
-    unfold genus
+  have hValue : CFGraph.genus H = 0 - (Fintype.card H.V : ℤ) + 1 := by
+    unfold CFGraph.genus
     rw [hEdges]
     simp
   omega

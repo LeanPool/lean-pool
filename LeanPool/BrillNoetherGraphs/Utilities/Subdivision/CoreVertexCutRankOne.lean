@@ -35,7 +35,7 @@ theorem bnExists_one_three_of_left_three_right_rigid
   let cut := cutData.toOneVertexCut spec hRightRigid.1
   have hConnected : graphConnected spec.graph :=
     spec.graph_connected_of_coreConnected hRightRigid.2.1
-  have hLeftGraphGenus : genus cut.leftGraph = 3 := by
+  have hLeftGraphGenus : CFGraph.genus cut.leftGraph = 3 := by
     dsimp only [cut]
     rw [cutData.leftGraph_genus spec hRightRigid.1, hLeftGenus]
   have hRigid : PointedGenusOneRigid cut.rightGraph cut.rightGlue := by

@@ -73,7 +73,7 @@ alias CDPRGeneric := ChainOfLoops.CDPRGeneric
 
 /-- A chain of `g` loops has genus `g`. -/
 example (P : Loop) (L : List Loop) :
-    genus (chainGraph P L) = (L.length : ℤ) + 1 :=
+    CFGraph.genus (chainGraph P L) = (L.length : ℤ) + 1 :=
   ChainOfLoops.genus_chainGraph P L
 
 /-- The repository's `bnNumber` on a chain of loops is CDPR's
@@ -116,7 +116,7 @@ kept for faithfulness. -/
 example (P : Loop) (L : List Loop)
     (hg : 2 ≤ L.length + 1) (hGeneric : CDPRGeneric (P :: L))
     (D : CFDiv (chainGraph P L)) (r d : ℤ) (hr : 0 ≤ r)
-    (hrbound : r < genus (chainGraph P L))
+    (hrbound : r < CFGraph.genus (chainGraph P L))
     (hdeg : CFDiv.degree D = d) (hrank : rank (chainGraph P L) D ≥ r)
     (hrho : 0 ≤ bnNumber (chainGraph P L) r d) :
     rank (chainGraph P L)
@@ -131,7 +131,7 @@ isomorphism to the canonical one. -/
 example (P : Loop) (L : List Loop)
     (hg : 2 ≤ L.length + 1) (hGeneric : CDPRGeneric (P :: L))
     (D : CFDiv (chainGraph P L)) (r d : ℤ) (hr : 0 ≤ r)
-    (hrbound : r < genus (chainGraph P L))
+    (hrbound : r < CFGraph.genus (chainGraph P L))
     (hdeg : CFDiv.degree D = d) (hrank : rank (chainGraph P L) D ≥ r)
     (hrho : 0 ≤ bnNumber (chainGraph P L) r d) :
     rank (chainGraph P L)

@@ -232,8 +232,8 @@ even though their choices of pair orientation need not agree. -/
   exact_mod_cast hCast
 
 /-- Graph genus is invariant under isomorphism. -/
-@[simp] theorem genus_eq (φ : CFGraphIso G H) : genus H = genus G := by
-  rw [genus, genus, φ.edge_card_eq, φ.vertex_card_eq]
+@[simp] theorem genus_eq (φ : CFGraphIso G H) : CFGraph.genus H = CFGraph.genus G := by
+  rw [CFGraph.genus, CFGraph.genus, φ.edge_card_eq, φ.vertex_card_eq]
 
 /-- Connectivity is transported in the forward direction by a graph
 isomorphism. -/

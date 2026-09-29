@@ -178,7 +178,7 @@ theorem sci_eq_weierstrassSize
   classical
   obtain ⟨sigma, hFunc, _hRank⟩ :=
     exists_aspPerm_rank_eq_of_isTransmissionPermutation u v hG D tau hTau
-  let rows : Fin (genus G).toNat → Set (ℤ × ℤ) := fun i =>
+  let rows : Fin (CFGraph.genus G).toNat → Set (ℤ × ℤ) := fun i =>
     sciRow tau (-poleOrder G v D i)
   have hRowsFinite : ∀ i, (rows i).Finite := by
     intro i
@@ -216,7 +216,7 @@ theorem sci_eq_weierstrassSize
           northwest_ncard_neg_poleOrder_eq_weierstrassPart u v hG D tau hTau i]
           at hNWpos
         exact hNWpos
-      have hiGenus : i < (genus G).toNat := by
+      have hiGenus : i < (CFGraph.genus G).toNat := by
         by_contra hi
         have hZero := weierstrassPart_eq_zero_of_genus_le hG v D i
           (Nat.le_of_not_gt hi)
@@ -238,12 +238,12 @@ theorem sci_eq_weierstrassSize
     finsum_eq_sum_of_fintype, weierstrassSize_eq_sum]
   calc
     (∑ i, (rows i).ncard) =
-        ∑ i : Fin (genus G).toNat, weierstrassPart G v D i := by
+        ∑ i : Fin (CFGraph.genus G).toNat, weierstrassPart G v D i := by
       apply Finset.sum_congr rfl
       intro i _hi
       rw [sciRow_ncard,
         northwest_ncard_neg_poleOrder_eq_weierstrassPart u v hG D tau hTau]
-    _ = ∑ i ∈ Finset.range (genus G).toNat,
+    _ = ∑ i ∈ Finset.range (CFGraph.genus G).toNat,
         weierstrassPart G v D i :=
       Fin.sum_univ_eq_sum_range (weierstrassPart G v D) _
 

@@ -203,7 +203,7 @@ the wedge torsion witness. -/
 theorem exists_factor_torsionOrders_lcm_eq_of_vertexWedge_opposite_kGeneral
     (G H : CFGraph) (x : G.V) (y : H.V) (u : G.V) (v : H.V) (k : ℕ)
     (hConn : _root_.graphConnected (vertexWedge G H x y))
-    (hPos : 0 < genus (vertexWedge G H x y))
+    (hPos : 0 < CFGraph.genus (vertexWedge G H x y))
     (huv : (Sum.inl u : (vertexWedge G H x y).V) ≠
       wedgeRightVertex G H x y v)
     (hK : KGeneralTransmission
@@ -218,7 +218,7 @@ theorem exists_factor_torsionOrders_lcm_eq_of_vertexWedge_opposite_kGeneral
       (mark (vertexWedge G H x y) (Sum.inl u)
         (wedgeRightVertex G H x y v)) k :=
     KGeneralTransmission.isTorsionOrder hK huv hConn (by
-      change 0 < genus (vertexWedge G H x y)
+      change 0 < CFGraph.genus (vertexWedge G H x y)
       exact hPos)
   have hLcm := isTorsionOrder_vertexWedge_opposite_lcm
     G H x y u v a b hA hB

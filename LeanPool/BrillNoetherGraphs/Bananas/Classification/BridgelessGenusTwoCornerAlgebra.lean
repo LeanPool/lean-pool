@@ -29,7 +29,7 @@ open Utilities
 whenever that chip has rank zero. -/
 theorem rank_canonical_sub_one_chip_zero_of_genus_two
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (q : G.V)
+    (hGenus : CFGraph.genus G = 2) (q : G.V)
     (hOne : rank G (oneChip q) = 0) :
     rank G (canonicalDivisor G - oneChip q) = 0 := by
   have hRR := riemann_roch_for_graphs hConnected (oneChip q)
@@ -40,7 +40,7 @@ theorem rank_canonical_sub_one_chip_zero_of_genus_two
 connected genus-two graph. -/
 theorem degreeZero_slice_eq_two_mul_rankPlusOne_of_genus_two
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (X : CFDiv G) (hDeg : CFDiv.degree X = 0) :
+    (hGenus : CFGraph.genus G = 2) (X : CFDiv G) (hDeg : CFDiv.degree X = 0) :
     rankPlusOne G X * rankPlusOne G (canonicalDivisor G - X) =
       2 * rankPlusOne G X := by
   by_cases hZero : linearEquiv G X 0
@@ -71,7 +71,7 @@ theorem degreeZero_slice_eq_two_mul_rankPlusOne_of_genus_two
 divisor is shifted by one chip. -/
 theorem degreeZero_mul_canonical_sub_add_one_chip_of_genus_two
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (X : CFDiv G) (q : G.V)
+    (hGenus : CFGraph.genus G = 2) (X : CFDiv G) (q : G.V)
     (hOne : rank G (oneChip q) = 0) (hDeg : CFDiv.degree X = 0) :
     rankPlusOne G X * rankPlusOne G (canonicalDivisor G - (X + oneChip q)) =
       rankPlusOne G X := by
@@ -103,7 +103,7 @@ theorem degreeZero_mul_canonical_sub_add_one_chip_of_genus_two
 effective divisors have rank zero. -/
 theorem degreeOne_slice_eq_rankPlusOne_of_genus_two
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2)
+    (hGenus : CFGraph.genus G = 2)
     (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (X : CFDiv G) (hDeg : CFDiv.degree X = 1) :
     rankPlusOne G X * rankPlusOne G (canonicalDivisor G - X) =
@@ -127,7 +127,7 @@ degree-two calculation needed before the residual correction term in Lemma
 4.10. -/
 theorem degreeTwo_first_three_cancel_of_genus_two
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (u v : G.V)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V)
     (hOneU : rank G (oneChip u) = 0)
     (hOneV : rank G (oneChip v) = 0)
     (X : CFDiv G) (hDeg : CFDiv.degree X = 2) :
@@ -182,7 +182,7 @@ theorem degreeTwo_first_three_cancel_of_genus_two
 /-- The degree-zero fixed-twist contribution in the finite inversion sum. -/
 theorem degreeZero_twistContribution_eq_of_genus_two
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (u v : G.V) (D : CFDiv G) (b : ℤ) :
+    (hGenus : CFGraph.genus G = 2) (u v : G.V) (D : CFDiv G) (b : ℤ) :
     markedRankDelta G u v (fixedDegreeTwist G u v D 0 b) *
         rankPlusOne G (canonicalDivisor G - fixedDegreeTwist G u v D 0 b) =
       2 * rankPlusOne G (fixedDegreeTwist G u v D 0 b) := by
@@ -195,7 +195,7 @@ theorem degreeZero_twistContribution_eq_of_genus_two
 boundary terms made explicit. -/
 theorem degreeOne_twistContribution_eq_of_genus_two
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (u v : G.V)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V)
     (hOneU : rank G (oneChip u) = 0)
     (hOneV : rank G (oneChip v) = 0)
     (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
@@ -254,7 +254,7 @@ theorem degreeOne_twistContribution_eq_of_genus_two
 product survives. -/
 theorem degreeTwo_twistContribution_eq_of_genus_two
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (u v : G.V)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V)
     (hOneU : rank G (oneChip u) = 0)
     (hOneV : rank G (oneChip v) = 0)
     (D : CFDiv G) (b : ℤ) :
@@ -292,7 +292,7 @@ theorem degreeTwo_twistContribution_eq_of_genus_two
 of a theta presentation. -/
 theorem threeDegreeTwistContribution_eq_telescoping_of_genus_two
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (u v : G.V)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V)
     (hOneU : rank G (oneChip u) = 0)
     (hOneV : rank G (oneChip v) = 0)
     (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
@@ -323,7 +323,7 @@ noncomputable def bridgelessGenusTwoCornerWeight (G : CFGraph) (X : CFDiv G) : �
 
 private theorem complement_rank_add_one_eq_two_of_corner_degree_zero'
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (u v : G.V) (X : CFDiv G)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V) (X : CFDiv G)
     (hDelta : rankDelta (mark G u v) X = 1) (hDeg : CFDiv.degree X = 0) :
     rank G (canonicalDivisor G - X) + 1 = 2 := by
   have hRank := rank_nonneg_of_rankDelta_eq_one (mark G u v) X hDelta
@@ -342,7 +342,7 @@ private theorem complement_rank_add_one_eq_two_of_corner_degree_zero'
 
 private theorem complement_rank_add_one_eq_one_of_corner_degree_one'
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (u v : G.V)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V)
     (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (X : CFDiv G) (hDelta : rankDelta (mark G u v) X = 1)
     (hDeg : CFDiv.degree X = 1) :
@@ -354,7 +354,7 @@ private theorem complement_rank_add_one_eq_one_of_corner_degree_one'
   omega
 
 private theorem complement_rank_add_one_eq_one_iff_canonical_of_degree_two'
-    (G : CFGraph) (hGenus : genus G = 2) (X : CFDiv G) (hDeg : CFDiv.degree X = 2) :
+    (G : CFGraph) (hGenus : CFGraph.genus G = 2) (X : CFDiv G) (hDeg : CFDiv.degree X = 2) :
     rank G (canonicalDivisor G - X) + 1 = 1 ↔
       linearEquiv G X (canonicalDivisor G) := by
   have hCompDeg : CFDiv.degree (canonicalDivisor G - X) = 0 := by
@@ -370,7 +370,7 @@ private theorem complement_rank_add_one_eq_one_iff_canonical_of_degree_two'
     simpa [sub_eq_add_neg] using AddSubgroup.neg_mem (principalDivisors G) hCanon
 
 private theorem complement_rank_add_one_eq_zero_of_three_le_degree'
-    (G : CFGraph) (hGenus : genus G = 2) (X : CFDiv G) (hDeg : 3 ≤ CFDiv.degree X) :
+    (G : CFGraph) (hGenus : CFGraph.genus G = 2) (X : CFDiv G) (hDeg : 3 ≤ CFDiv.degree X) :
     rank G (canonicalDivisor G - X) + 1 = 0 := by
   have hCompDeg : CFDiv.degree (canonicalDivisor G - X) < 0 := by
     rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hGenus]
@@ -382,7 +382,7 @@ private theorem complement_rank_add_one_eq_zero_of_three_le_degree'
 complementary rank, without a theta presentation. -/
 theorem complement_rank_add_one_eq_bridgelessGenusTwoCornerWeight
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (u v : G.V)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V)
     (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (X : CFDiv G) (hDelta : rankDelta (mark G u v) X = 1) :
     rank G (canonicalDivisor G - X) + 1 =
@@ -432,7 +432,7 @@ condition.  This removes the theta presentation from the first half of Lemma
 4.10. -/
 theorem intCast_kInversionCount_eq_sum_bridgelessGenusTwoCornerWeight
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (u v : G.V)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V)
     (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (D : CFDiv G) (k : ℕ) (tau : ℤ → ℤ) (hk : 0 < k)
     (hTau : IsTransmissionPermutation (mark G u v) D tau)
@@ -465,7 +465,7 @@ theorem intCast_kInversionCount_eq_sum_bridgelessGenusTwoCornerWeight
 the three fixed-degree slices. -/
 theorem bridgelessGenusTwoCornerWeight_eq_threeDegreeTwistContribution
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (u v : G.V)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V)
     (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (D : CFDiv G) (tau : ℤ → ℤ)
     (hTau : IsTransmissionPermutation (mark G u v) D tau) (b : ℤ) :
@@ -571,7 +571,7 @@ theorem bridgelessGenusTwoCornerWeight_eq_threeDegreeTwistContribution
 genus-two graph. -/
 theorem intCast_kInversionCount_eq_sum_threeDegreeTwistContribution_of_genus_two
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (u v : G.V)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V)
     (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
     (D : CFDiv G) (k : ℕ) (tau : ℤ → ℤ) (hk : 0 < k)
     (hTau : IsTransmissionPermutation (mark G u v) D tau)
@@ -621,7 +621,7 @@ private theorem sum_rankPlusOne_fixedDegreeTwist_zero_sub_next_eq_zero'
   simp
 
 private theorem correctionProduct_eq_zero_of_not_mark_pair_canonical'
-    (G : CFGraph) (hGenus : genus G = 2) (u v : G.V) (D : CFDiv G) (b : ℤ)
+    (G : CFGraph) (hGenus : CFGraph.genus G = 2) (u v : G.V) (D : CFDiv G) (b : ℤ)
     (hRigid : ¬ linearEquiv G (oneChip u + oneChip v) (canonicalDivisor G)) :
     rankPlusOne G (fixedDegreeTwist G u v D 0 (b + 1)) *
       rankPlusOne G (canonicalDivisor G - fixedDegreeTwist G u v D 2 b) = 0 := by
@@ -696,7 +696,7 @@ private theorem sum_rankPlusOne_degreeOne_eq_effectiveResidues_ncard'
 /-- Correction-free, arbitrary bridgeless genus-two form of Lemma 4.10. -/
 theorem intCast_kInversionCount_eq_effectiveResidues_ncard_of_bridgeless_rigid
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (u v : G.V)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V)
     (hOneU : rank G (oneChip u) = 0)
     (hOneV : rank G (oneChip v) = 0)
     (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
@@ -746,7 +746,7 @@ theorem intCast_kInversionCount_eq_effectiveResidues_ncard_of_bridgeless_rigid
 inversion identity. -/
 theorem kInversionCount_eq_effectiveResidues_ncard_of_bridgeless_rigid
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (u v : G.V)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V)
     (hOneU : rank G (oneChip u) = 0)
     (hOneV : rank G (oneChip v) = 0)
     (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
@@ -768,7 +768,7 @@ excludes the vacuous one-vertex graph, where a one-chip divisor has rank one.
 theorem bridgelessGenusTwoRigid_kGeneral_iff_nonRecurrent
     (G : CFGraph) (hConnected : _root_.graphConnected G)
     (hCut : TwoEdgeCutCondition G) (hNontrivial : ∃ p q : G.V, p ≠ q)
-    (hGenus : genus G = 2) (u v : G.V) (k : ℕ)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V) (k : ℕ)
     (hSub : AllSubmodular (mark G u v))
     (hTO : IsTorsionOrder (mark G u v) k)
     (hRigid : ¬ linearEquiv G (oneChip u + oneChip v) (canonicalDivisor G)) :
@@ -800,8 +800,8 @@ theorem bridgelessGenusTwoRigid_kGeneral_iff_nonRecurrent
     rw [kInversionCount_eq_effectiveResidues_ncard_of_bridgeless_rigid
       G hConnected hGenus u v (hOne u) (hOne v) hRankZero D k tau
         hTO.1 hTau hAffine hRigid]
-    have hGenusNat : Int.toNat (genus (mark G u v).graph) = 2 := by
-      change Int.toNat (genus G) = 2
+    have hGenusNat : Int.toNat (CFGraph.genus (mark G u v).graph) = 2 := by
+      change Int.toNat (CFGraph.genus G) = 2
       rw [hGenus]
       rfl
     simpa [hGenusNat] using hCount
@@ -837,7 +837,7 @@ private theorem fin_eq_of_shifted_degreeTwist_linearEquiv_zero'
   omega
 
 private theorem sum_correctionProduct_eq_invTauCorrection_of_genus_two
-    (G : CFGraph) (hGenus : genus G = 2) (u v : G.V)
+    (G : CFGraph) (hGenus : CFGraph.genus G = 2) (u v : G.V)
     (D : CFDiv G) (k : ℕ) (hk : IsTorsionOrder (mark G u v) k) :
     ∑ b : Fin k,
         rankPlusOne G (fixedDegreeTwist G u v D 0 ((b : ℤ) + 1)) *
@@ -915,7 +915,7 @@ private theorem sum_correctionProduct_eq_invTauCorrection_of_genus_two
 canonical correction term. -/
 theorem intCast_kInversionCount_eq_effectiveResidues_add_correction_of_bridgeless
     (G : CFGraph) (hConnected : _root_.graphConnected G)
-    (hGenus : genus G = 2) (u v : G.V)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V)
     (hOneU : rank G (oneChip u) = 0)
     (hOneV : rank G (oneChip v) = 0)
     (hRankZero : ∀ X : CFDiv G, CFDiv.degree X = 1 → 0 ≤ rank G X → rank G X = 0)
@@ -964,7 +964,7 @@ bridgeless convention. -/
 theorem bridgeless_genusTwo_invTau_formula
     (G : CFGraph) (hConnected : _root_.graphConnected G)
     (hCut : TwoEdgeCutCondition G) (hNontrivial : ∃ p q : G.V, p ≠ q)
-    (hGenus : genus G = 2) (u v : G.V) (D : CFDiv G)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V) (D : CFDiv G)
     (k : ℕ) (τ : ℤ → ℤ)
     (hTO : IsTorsionOrder (mark G u v) k)
     (hτ : IsTransmissionPermutation (mark G u v) D τ)
@@ -986,7 +986,7 @@ genus-two scope. -/
 theorem bridgeless_genusTwo_rigid_kGeneral_iff_nonRecurrent
     (G : CFGraph) (hConnected : _root_.graphConnected G)
     (hCut : TwoEdgeCutCondition G) (hNontrivial : ∃ p q : G.V, p ≠ q)
-    (hGenus : genus G = 2) (u v : G.V) (k : ℕ)
+    (hGenus : CFGraph.genus G = 2) (u v : G.V) (k : ℕ)
     (hSub : AllSubmodular (mark G u v))
     (hTO : IsTorsionOrder (mark G u v) k)
     (hRigid : ¬ linearEquiv G

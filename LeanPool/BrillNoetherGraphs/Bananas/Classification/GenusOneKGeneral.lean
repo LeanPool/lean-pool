@@ -78,7 +78,7 @@ end Genus
 all divisors submodular has general transmission at that order. -/
 theorem kGeneralTransmission_genusOne_of_torsionOrder_and_allSubmodular
     {M : TwiceMarked} {k : ℕ}
-    (hConnected : _root_.graphConnected M.graph) (hGenus : genus M.graph = 1)
+    (hConnected : _root_.graphConnected M.graph) (hGenus : CFGraph.genus M.graph = 1)
     (hOrder : IsTorsionOrder M k) (hSub : AllSubmodular M) :
     KGeneralTransmission M k := by
   obtain ⟨G, u, v⟩ := M
@@ -89,7 +89,7 @@ theorem kGeneralTransmission_genusOne_of_torsionOrder_and_allSubmodular
     exists_affineTransmissionPermutation_of_submodular _ D hConnected (hSub D) hWitness
   have hkpos : 0 < k := hWitness.1
   refine ⟨τ, hτ, hAffine, kInversions_finite_of_isKAffine hkpos hAffine, ?_⟩
-  have hGenusNat : Int.toNat (genus G) = 1 := by rw [hGenus]; rfl
+  have hGenusNat : Int.toNat (CFGraph.genus G) = 1 := by rw [hGenus]; rfl
   rw [hGenusNat]
   by_cases hAny : ∃ c : ℤ, linearEquiv G (genusOneZeroTwist (u := u) (v := v) D c) 0
   · obtain ⟨c, hc⟩ := hAny

@@ -36,7 +36,7 @@ theorem chainTransmissionExistence_unconditional
     (M : MarkedGraph.{u}) (L : List MarkedGraph.{u})
     (hM : TransmissionExistence M.graph M.left M.right)
     (hL : ∀ N ∈ L, TransmissionExistence N.graph N.left N.right)
-    (hGenus : ∀ N ∈ M :: L, 0 ≤ genus N.graph) :
+    (hGenus : ∀ N ∈ M :: L, 0 ≤ CFGraph.genus N.graph) :
     TransmissionExistence (M.chain L).graph (M.chain L).left
       (M.chain L).right := by
   induction L generalizing M with
@@ -65,12 +65,12 @@ theorem onceMarkedBNExists_chain_unconditional
     (M : MarkedGraph.{u}) (L : List MarkedGraph.{u})
     (hM : TransmissionExistence M.graph M.left M.right)
     (hL : ∀ N ∈ L, TransmissionExistence N.graph N.left N.right)
-    (hGenus : ∀ N ∈ M :: L, 0 ≤ genus N.graph)
+    (hGenus : ∀ N ∈ M :: L, 0 ≤ CFGraph.genus N.graph)
     (hconn : graphConnected (M.chain L).graph)
     (tau : AspPerm) (lambda : YoungDiagram)
     (hProfile : GrassmannianPartitionProfile tau lambda)
     (hFinite : FiniteTransmissionPerm tau)
-    (hLength : ((invSet tau).ncard : ℤ) ≤ genus (M.chain L).graph) :
+    (hLength : ((invSet tau).ncard : ℤ) ≤ CFGraph.genus (M.chain L).graph) :
     OnceMarkedBNExists (M.chain L).graph (M.chain L).left lambda := by
   refine (transmissionExists_iff_onceMarkedBNExists hconn (M.chain L).left
     (M.chain L).right tau lambda hProfile).mp ?_

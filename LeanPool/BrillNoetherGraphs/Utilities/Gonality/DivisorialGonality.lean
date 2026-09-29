@@ -106,13 +106,13 @@ theorem one_le_divisorialGonality (h_conn : graphConnected G) :
 
 /-- `divisorialGonality G ≤ genus G + 1` for connected `G`. -/
 theorem divisorialGonality_le_genus_add_one (h_conn : graphConnected G) :
-    (divisorialGonality G : ℤ) ≤ genus G + 1 := by
+    (divisorialGonality G : ℤ) ≤ CFGraph.genus G + 1 := by
   obtain ⟨D, hRank, hDeg⟩ := gonality_leq_genus_add_one h_conn
   obtain ⟨E, hEeff, hEdeg, hErank⟩ := exists_effective_of_rank_ge_one hRank
   have hpos : 0 ≤ CFDiv.degree E := le_trans (by norm_num) (one_le_deg_of_rank_ge_one hErank)
   have hle : divisorialGonality G ≤ (CFDiv.degree E).toNat :=
     divisorialGonality_le hEeff (by rw [Int.toNat_of_nonneg hpos]) hErank
-  have : ((CFDiv.degree E).toNat : ℤ) = genus G + 1 := by
+  have : ((CFDiv.degree E).toNat : ℤ) = CFGraph.genus G + 1 := by
     rw [Int.toNat_of_nonneg hpos, hEdeg, hDeg]
   omega
 
@@ -154,7 +154,7 @@ coercion of `divisorialGonality`. -/
 theorem gonality_eq_divisorialGonality (h_conn : graphConnected G) :
     gonality h_conn = (divisorialGonality G : ℤ) := by
   have hne : {k : ℤ | gonalityLeq G k}.Nonempty :=
-    ⟨genus G + 1, gonality_leq_genus_add_one h_conn⟩
+    ⟨CFGraph.genus G + 1, gonality_leq_genus_add_one h_conn⟩
   refine le_antisymm ?_ ?_
   · exact csInf_le (bddBelow_gonality_leq G) (gonality_leq_divisorialGonality h_conn)
   · refine le_csInf hne ?_

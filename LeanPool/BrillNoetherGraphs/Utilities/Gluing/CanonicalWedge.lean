@@ -125,7 +125,7 @@ theorem canonical_sub_wedgeCanonicalSum
 @[simp] theorem deg_wedgeCanonicalSum
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) :
     CFDiv.degree (wedgeCanonicalSum G H x y) =
-      2 * genus G + 2 * genus H - 4 := by
+      2 * CFGraph.genus G + 2 * CFGraph.genus H - 4 := by
   simp [wedgeCanonicalSum, degree_of_canonical_divisor]
   ring
 @[simp] theorem deg_wedgeGlueDouble
@@ -142,7 +142,7 @@ theorem rank_wedgeCanonicalSum_sub_rank_wedgeGlueDouble
     (hG : graphConnected G) (hH : graphConnected H) :
     rank (vertexWedge G H x y) (wedgeCanonicalSum G H x y) -
         rank (vertexWedge G H x y) (wedgeGlueDouble G H x y) =
-      genus G + genus H - 3 := by
+      CFGraph.genus G + CFGraph.genus H - 3 := by
   have hRR := riemann_roch_for_graphs
     (graph_connected_vertexWedge G H x y hG hH) (wedgeCanonicalSum G H x y)
   rw [canonical_sub_wedgeCanonicalSum, deg_wedgeCanonicalSum,
@@ -153,7 +153,7 @@ canonical divisors has rank at least one. -/
 theorem rank_wedgeCanonicalSum_ge_one_of_genus_sum_four
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (hG : graphConnected G) (hH : graphConnected H)
-    (hGenus : genus G + genus H = 4) :
+    (hGenus : CFGraph.genus G + CFGraph.genus H = 4) :
     rank (vertexWedge G H x y) (wedgeCanonicalSum G H x y) ≥ 1 := by
   have hCompare :=
     rank_wedgeCanonicalSum_sub_rank_wedgeGlueDouble G H x y hG hH

@@ -130,7 +130,7 @@ theorem bnExists_of_onceMarkedBNExistence
     have hnpos' : 0 < n := by
       have : (0 : ℤ) < (n : ℤ) := by rw [hn_cast]; exact hnpos
       exact_mod_cast this
-    have hCardLe : ((bnRectangle r n).card : ℤ) ≤ genus G := by
+    have hCardLe : ((bnRectangle r n).card : ℤ) ≤ CFGraph.genus G := by
       rw [bnRectangle_card]
       push_cast
       rw [hn_cast]
@@ -188,14 +188,14 @@ theorem gonalityConjecture_of_onceMarkedBNExistence
     (hCensus : OnceMarkedBNExistence G u) :
     gonalityConjecture hG := by
   have hgnn := genus_nonneg_of_graph_connected G hG
-  set d : ℤ := (genus G + 3) / 2 with hd_def
+  set d : ℤ := (CFGraph.genus G + 3) / 2 with hd_def
   have hBN : 0 ≤ bnNumber G (1 : ℤ) d := by
     unfold bnNumber rectangleWidth
     omega
   obtain ⟨D, hDeg, hRank⟩ := bnExists_one_of_onceMarkedBNExistence hG u hCensus d hBN
   have hgle : gonalityLeq G d := ⟨D, hRank, hDeg⟩
   have hle := gonality_le_of_gonality_leq hG hgle
-  change gonality hG ≤ (genus G + 3) / 2
+  change gonality hG ≤ (CFGraph.genus G + 3) / 2
   omega
 
 /-- The Brill--Noether conjecture in this genus follows from once-marked Brill--Noether
@@ -206,7 +206,7 @@ theorem brillNoetherConjecture_of_onceMarkedBNExistence
     {G : CFGraph} (hG : graphConnected G) (u : G.V)
     (hCensus : OnceMarkedBNExistence G u) (r d : ℤ) :
     brillNoetherConjecture hG r d := by
-  change 0 ≤ genus G - (r + 1) * (genus G - d + r) →
+  change 0 ≤ CFGraph.genus G - (r + 1) * (CFGraph.genus G - d + r) →
     ∃ D : CFDiv G, rank G D ≥ r ∧ CFDiv.degree D = d
   intro hrho
   rcases le_or_gt 0 r with hr0 | hrneg

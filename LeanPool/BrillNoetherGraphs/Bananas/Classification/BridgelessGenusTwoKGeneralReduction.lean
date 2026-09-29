@@ -32,7 +32,7 @@ theorem kGeneralTransmission_bridgelessGenusTwo_coreNormalForm
     (G : CFGraph.{0}) (u v : G.V) (k : ℕ)
     (hConnected : _root_.graphConnected G)
     (hCut : TwoEdgeCutCondition G) (hNontrivial : ∃ p q : G.V, p ≠ q)
-    (hGenus : genus G = 2)
+    (hGenus : CFGraph.genus G = 2)
     (hKGT : KGeneralTransmission (mark G u v) k) :
     (∃ (B : Banana 2) (u' v' : B.graph.V),
       KGeneralTransmission (mark B.graph u' v') k) ∨

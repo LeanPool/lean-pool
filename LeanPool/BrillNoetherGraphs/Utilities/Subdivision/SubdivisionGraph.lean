@@ -199,7 +199,7 @@ interior vertices. -/
 /-- Subdivision preserves cyclomatic genus.  The right side is the genus of
 the abstract core with `p` edge slots and `n` vertices. -/
 @[simp] theorem genus_graph :
-    genus spec.graph = (p : ℤ) - (n : ℤ) + 1 := by
+    CFGraph.genus spec.graph = (p : ℤ) - (n : ℤ) + 1 := by
   have hTerm (edge : Fin p) : spec.length edge - 1 + 1 = spec.length edge := by
     have := spec.length_pos edge
     omega
@@ -215,7 +215,7 @@ the abstract core with `p` edge slots and `n` vertices. -/
         apply Finset.sum_congr rfl
         intro edge _hedge
         exact hTerm edge
-  unfold genus
+  unfold CFGraph.genus
   rw [spec.card_edges, spec.card_vertices]
   have hSumInt :
       ((∑ edge : Fin p, (spec.length edge - 1) : ℕ) : ℤ) + (p : ℤ) =

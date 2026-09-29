@@ -122,7 +122,7 @@ theorem Orientable.congr {D D' : CFDiv G} (h : linearEquiv G D D') :
 /-- **An orientable divisor has degree `genus G - 1`.** This is the converse half of the main
 theorem, and unlike the forward half it is unconditional: it needs neither connectivity nor
 simplicity, only `degree_ordiv`. -/
-theorem Orientable.deg_eq {D : CFDiv G} (h : Orientable G D) : CFDiv.degree D = genus G - 1 := by
+theorem Orientable.deg_eq {D : CFDiv G} (h : Orientable G D) : CFDiv.degree D = CFGraph.genus G - 1 := by
   obtain ⟨O, hO⟩ := h
   rw [linear_equiv_preserves_deg G D (ordiv G O) hO]
   exact degree_ordiv O
@@ -134,7 +134,7 @@ theorem AcyclicallyOrientable.orientable {D : CFDiv G} (h : AcyclicallyOrientabl
 
 /-- An acyclically orientable divisor has degree `genus G - 1`. -/
 theorem AcyclicallyOrientable.deg_eq {D : CFDiv G} (h : AcyclicallyOrientable G D) :
-    CFDiv.degree D = genus G - 1 :=
+    CFDiv.degree D = CFGraph.genus G - 1 :=
   h.orientable.deg_eq
 
 /-! ## 2. The unwinnable half, which is already done
@@ -147,7 +147,7 @@ opposite ways form a directed `2`-cycle. -/
 `unwinnable_iff_exists_acyclic_ordiv` (`Foundations/AcyclicOrientation.lean`, `sorry`-free)
 in the vocabulary of this file. -/
 theorem acyclicallyOrientable_iff_not_winnable (h_conn : graphConnected G) (D : CFDiv G)
-    (hDeg : CFDiv.degree D = genus G - 1) : AcyclicallyOrientable G D ↔ ¬ winnable G D :=
+    (hDeg : CFDiv.degree D = CFGraph.genus G - 1) : AcyclicallyOrientable G D ↔ ¬ winnable G D :=
   (unwinnable_iff_exists_acyclic_ordiv h_conn D hDeg).symm
 
 /-- **Every unwinnable class of degree `genus G - 1` is orientable, by an acyclic
@@ -159,7 +159,7 @@ It is kept
 because it says more than `orientable_of_deg_eq` does on unwinnable classes: the witnessing
 orientation is acyclic. -/
 theorem orientable_of_not_winnable (h_conn : graphConnected G) (D : CFDiv G)
-    (hDeg : CFDiv.degree D = genus G - 1) (hUnwin : ¬ winnable G D) : Orientable G D :=
+    (hDeg : CFDiv.degree D = CFGraph.genus G - 1) (hUnwin : ¬ winnable G D) : Orientable G D :=
   ((acyclicallyOrientable_iff_not_winnable h_conn D hDeg).mpr hUnwin).orientable
 
 /-- **The decomposition, made explicit.** To orient every degree-`(g−1)` class it suffices to
@@ -173,8 +173,8 @@ still records why the winnable case was the hard one: such a class is by
 of an acyclic orientation, so any witness for it must be cyclic, and cyclic orientations were
 precisely what `CFOrientation.no_bidirectional` failed to represent on a multigraph. -/
 theorem orientable_of_forall_winnable (h_conn : graphConnected G)
-    (hwin : ∀ D : CFDiv G, CFDiv.degree D = genus G - 1 → winnable G D → Orientable G D)
-    (D : CFDiv G) (hDeg : CFDiv.degree D = genus G - 1) : Orientable G D := by
+    (hwin : ∀ D : CFDiv G, CFDiv.degree D = CFGraph.genus G - 1 → winnable G D → Orientable G D)
+    (D : CFDiv G) (hDeg : CFDiv.degree D = CFGraph.genus G - 1) : Orientable G D := by
   by_cases hw : winnable G D
   · exact hwin D hDeg hw
   · exact orientable_of_not_winnable h_conn D hDeg hw
@@ -198,13 +198,13 @@ def eulerChi (G : CFGraph) (S : Finset G.V) (D : CFDiv G) : ℤ :=
 /-- Sanity check on the definitions, and the reason `χ(V,D) = 0 ↔ deg D = g - 1`: on the full
 vertex set, `χ` measures the deviation of `deg D` from `genus G - 1`. -/
 theorem eulerChi_univ (D : CFDiv G) :
-    eulerChi G Finset.univ D = CFDiv.degree D - (genus G - 1) := by
+    eulerChi G Finset.univ D = CFDiv.degree D - (CFGraph.genus G - 1) := by
   have hEdges : edgesWithin G Finset.univ = Multiset.card G.edges := by
     unfold edgesWithin
     congr 1
     exact Multiset.filter_eq_self.mpr (by intro e _; exact ⟨Finset.mem_univ _, Finset.mem_univ _⟩)
   have hDeg : (∑ v ∈ Finset.univ, D v) = CFDiv.degree D := rfl
-  rw [eulerChi, hEdges, hDeg, Finset.card_univ, genus]
+  rw [eulerChi, hEdges, hDeg, Finset.card_univ, CFGraph.genus]
   ring
 
 /-! ## 3a. Edge counts, on an arbitrary edge multiset
@@ -603,7 +603,7 @@ target in-degree `d v = D v + 1`. The hypothesis enters twice: at `S = {v}` it s
 `D v + 1 ≥ 0`, so `d` is a well-defined natural number, and at general `S` it is exactly
 Hakimi's inequality `e(S) ≤ ∑_{v ∈ S} d v`. `deg D = genus G - 1` is what makes `∑ d` the
 number of edges. -/
-theorem exists_ordiv_eq_of_chi_nonneg (D : CFDiv G) (hDeg : CFDiv.degree D = genus G - 1)
+theorem exists_ordiv_eq_of_chi_nonneg (D : CFDiv G) (hDeg : CFDiv.degree D = CFGraph.genus G - 1)
     (hchi : ∀ S : Finset G.V, S.Nonempty → 0 ≤ eulerChi G S D) :
     ∃ O : CFOrientation G, D = ordiv G O := by
   classical
@@ -624,7 +624,7 @@ theorem exists_ordiv_eq_of_chi_nonneg (D : CFDiv G) (hDeg : CFDiv.degree D = gen
     have hZ : (∑ v : G.V, (d v : ℤ)) = (Multiset.card G.edges : ℤ) := by
       rw [Finset.sum_congr rfl fun v _ => hdv v, Finset.sum_add_distrib]
       have hdegD : (∑ v : G.V, D v) = CFDiv.degree D := rfl
-      rw [hdegD, hDeg, genus]
+      rw [hdegD, hDeg, CFGraph.genus]
       simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one, Finset.card_univ]
       ring
     exact_mod_cast hZ
@@ -801,7 +801,7 @@ because the empty intersection is not a special case once `χ(∅, ·) = 0 ≥ �
 Connectivity is used exactly once, in the case `S = S₀`: it makes `e(S₀ᶜ, S₀) > 0`, which is
 what turns that case's inequality into a strict one. -/
 private lemma chiMin_le_eulerChi_set_firing (h_conn : graphConnected G) (D : CFDiv G)
-    (hdeg : CFDiv.degree D = genus G - 1) (hneg : chiMin G D < 0) (S : Finset G.V) :
+    (hdeg : CFDiv.degree D = CFGraph.genus G - 1) (hneg : chiMin G D < 0) (S : Finset G.V) :
     chiMin G D ≤ eulerChi G S (setFiring G D (chiMinimizer G D)ᶜ) ∧
       (eulerChi G S (setFiring G D (chiMinimizer G D)ᶜ) = chiMin G D →
         chiMinimizer G D ⊂ S) := by
@@ -915,7 +915,7 @@ lemma chiPotential_le (D : CFDiv G) : chiPotential G D ≤ Fintype.card G.V := b
 /-- **The descent step strictly increases the potential.** Either the minimum goes up (worth
 `|V| + 1`, more than any possible loss in `|S₀|`), or it stays put and `S₀` strictly grows. -/
 private lemma chiPotential_lt (h_conn : graphConnected G) (D : CFDiv G)
-    (hdeg : CFDiv.degree D = genus G - 1) (hneg : chiMin G D < 0) :
+    (hdeg : CFDiv.degree D = CFGraph.genus G - 1) (hneg : chiMin G D < 0) :
     chiPotential G D < chiPotential G (setFiring G D (chiMinimizer G D)ᶜ) := by
   classical
   set D₁ := setFiring G D (chiMinimizer G D)ᶜ with hD₁def
@@ -954,7 +954,7 @@ there is one of greatest potential (`Int.exists_greatest_of_bdd`), and `chiPoten
 that a divisor with `χ_D < 0` is never of greatest potential. Hence the maximiser has
 `χ_D ≥ 0`, which is Hakimi's criterion. -/
 theorem exists_linear_equiv_chi_nonneg (h_conn : graphConnected G) (D : CFDiv G)
-    (hDeg : CFDiv.degree D = genus G - 1) :
+    (hDeg : CFDiv.degree D = CFGraph.genus G - 1) :
     ∃ D' : CFDiv G, linearEquiv G D D' ∧ ∀ S : Finset G.V, S.Nonempty → 0 ≤ eulerChi G S D' := by
   classical
   have hbdd : ∃ b : ℤ, ∀ z : ℤ,
@@ -964,7 +964,7 @@ theorem exists_linear_equiv_chi_nonneg (h_conn : graphConnected G) (D : CFDiv G)
     exact chiPotential_le D'
   obtain ⟨z, ⟨D', hequiv, hz⟩, hmax⟩ :=
     Int.exists_greatest_of_bdd hbdd ⟨chiPotential G D, D, linearEquiv.refl G D, rfl⟩
-  have hdeg' : CFDiv.degree D' = genus G - 1 := by
+  have hdeg' : CFDiv.degree D' = CFGraph.genus G - 1 := by
     rw [← linear_equiv_preserves_deg G D D' hequiv]
     exact hDeg
   rcases lt_or_ge (chiMin G D') 0 with hneg | hpos
@@ -992,9 +992,9 @@ submodularity descent) moves the class to a representative satisfying Hakimi's c
 nose. The unwinnable case also has an independent proof with an *acyclic* witness — see
 `orientable_of_not_winnable`. -/
 theorem orientable_of_deg_eq (h_conn : graphConnected G) (D : CFDiv G)
-    (hDeg : CFDiv.degree D = genus G - 1) : Orientable G D := by
+    (hDeg : CFDiv.degree D = CFGraph.genus G - 1) : Orientable G D := by
   obtain ⟨D', hEquiv, hchi⟩ := exists_linear_equiv_chi_nonneg h_conn D hDeg
-  have hDeg' : CFDiv.degree D' = genus G - 1 := by
+  have hDeg' : CFDiv.degree D' = CFGraph.genus G - 1 := by
     rw [← linear_equiv_preserves_deg G D D' hEquiv]; exact hDeg
   obtain ⟨O, hO⟩ := exists_ordiv_eq_of_chi_nonneg D' hDeg' hchi
   exact ⟨O, by rw [← hO]; exact hEquiv⟩
@@ -1003,7 +1003,7 @@ theorem orientable_of_deg_eq (h_conn : graphConnected G) (D : CFDiv G)
 divisors of degree `genus G - 1`. The `→` direction is unconditional (`Orientable.deg_eq`);
 only `←` needs connectivity. -/
 theorem orientable_iff_deg_eq (h_conn : graphConnected G) (D : CFDiv G) :
-    Orientable G D ↔ CFDiv.degree D = genus G - 1 :=
+    Orientable G D ↔ CFDiv.degree D = CFGraph.genus G - 1 :=
   ⟨Orientable.deg_eq, orientable_of_deg_eq h_conn D⟩
 
 end Utilities

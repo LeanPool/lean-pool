@@ -27,7 +27,7 @@ open Utilities
 that vertex has valence four and every other vertex is bivalent. -/
 theorem exists_degree_four_vertex_of_unique_topological_of_bridgeless_genus_two
     (G : CFGraph) (hCut : TwoEdgeCutCondition G)
-    (hNontrivial : ∃ p q : G.V, p ≠ q) (hGenus : genus G = 2)
+    (hNontrivial : ∃ p q : G.V, p ≠ q) (hGenus : CFGraph.genus G = 2)
     (hCard : (topologicalVertices G).card = 1) :
     ∃ w : G.V, vertexDegree G w = 4 ∧
       ∀ v : G.V, v ≠ w → vertexDegree G v = 2 := by
@@ -61,7 +61,7 @@ theorem exists_degree_four_vertex_of_unique_topological_of_bridgeless_genus_two
 they are both trivalent and every remaining vertex is bivalent. -/
 theorem exists_two_trivalent_vertices_of_two_topological_of_bridgeless_genus_two
     (G : CFGraph) (hCut : TwoEdgeCutCondition G)
-    (hNontrivial : ∃ p q : G.V, p ≠ q) (hGenus : genus G = 2)
+    (hNontrivial : ∃ p q : G.V, p ≠ q) (hGenus : CFGraph.genus G = 2)
     (hCard : (topologicalVertices G).card = 2) :
     ∃ w₁ w₂ : G.V, w₁ ≠ w₂ ∧
       vertexDegree G w₁ = 3 ∧ vertexDegree G w₂ = 3 ∧

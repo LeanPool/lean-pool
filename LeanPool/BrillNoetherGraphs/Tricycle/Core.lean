@@ -147,7 +147,7 @@ theorem tricycleSpec_connected (length : Fin 15 → ℕ) (hpos : ∀ e, 0 < leng
 /-- Every subdivision of the minimal tricycle has genus nine; in particular the
 tricycle attains the Brill--Noether bound `⌊(g+3)/2⌋ = 6` with equality. -/
 theorem tricycleSpec_genus (length : Fin 15 → ℕ) (hpos : ∀ e, 0 < length e) :
-    genus (tricycleSpec length hpos).graph = 9 := by
+    CFGraph.genus (tricycleSpec length hpos).graph = 9 := by
   rw [Spec.genus_graph]
   decide
 

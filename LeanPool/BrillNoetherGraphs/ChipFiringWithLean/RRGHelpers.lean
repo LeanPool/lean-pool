@@ -134,7 +134,7 @@ See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Corollary 4.9(1),
 "only if" direction. -/
 private lemma degree_max_superstable {G : CFGraph} {q : G.V}
     (c : ChipFiringConfiguration G q) (h_max :
-    maximalSuperstable G c) : configDegree c = genus G := by
+    maximalSuperstable G c) : configDegree c = CFGraph.genus G := by
   have := maximal_superstable_orientation G q c h_max
   rcases this with ⟨O, hO, h_orient_eq⟩
   rw [← h_orient_eq]
@@ -164,7 +164,7 @@ private lemma maximal_unwinnable_q_reduced_form (G : CFGraph) (q : G.V) (D : CFD
 /-- The degree of a superstable configuration is bounded above by the genus. -/
 private lemma superstable_degree_le_genus (G : CFGraph) (q : G.V)
     (c : ChipFiringConfiguration G q) :
-  superstable G q c → configDegree c ≤ genus G := by
+  superstable G q c → configDegree c ≤ CFGraph.genus G := by
   intro h_super
   rcases maximal_superstable_exists G q c h_super with ⟨c_max, h_maximal, h_ge_c⟩
   rw [← degree_max_superstable c_max h_maximal]
@@ -176,12 +176,12 @@ See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Corollary 4.9(1),
 "if" direction. -/
 private lemma maximal_superstable_of_degree_eq_genus (G : CFGraph) (q : G.V)
     (c : ChipFiringConfiguration G q) :
-  superstable G q c → configDegree c = genus G → maximalSuperstable G c := by
+  superstable G q c → configDegree c = CFGraph.genus G → maximalSuperstable G c := by
   intro h_super h_deg_eq
   -- Choose a maximal above c (we'll show it's equal to c)
   have := maximal_superstable_exists G q c h_super
   rcases this with ⟨c_max, h_maximal, h_ge_c⟩
-  have c_max_deg : configDegree c_max = genus G := by
+  have c_max_deg : configDegree c_max = CFGraph.genus G := by
     exact degree_max_superstable c_max h_maximal
   let E := c_max.chips - c.chips
   have E_eff : E ≥ 0 := by
@@ -208,7 +208,7 @@ private lemma maximal_superstable_of_degree_eq_genus (G : CFGraph) (q : G.V)
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Corollary 4.9(1). -/
 private theorem maximal_superstable_config_prop (G : CFGraph) (q : G.V)
     (c : ChipFiringConfiguration G q) :
-  superstable G q c → (maximalSuperstable G c ↔ configDegree c = genus G) := by
+  superstable G q c → (maximalSuperstable G c ↔ configDegree c = CFGraph.genus G) := by
   intro h_super
   constructor
   { -- Forward direction: maximalSuperstable → degree = g
@@ -224,12 +224,12 @@ private theorem maximal_superstable_config_prop (G : CFGraph) (q : G.V)
 /-- A divisor of degree at least $g$ is winnable. -/
 lemma winnable_of_deg_ge_genus {G : CFGraph} (h_conn : graphConnected G) (D : CFDiv G) :
     CFDiv.degree D ≥
-    genus G → winnable G D := by
+    CFGraph.genus G → winnable G D := by
   intro h_deg_ge_g
   let q := Classical.arbitrary G.V
   rcases (exists_q_reduced_representative h_conn q D) with ⟨D_qred, h_equiv, h_qred⟩
   rcases (q_reduced_superstable_correspondence G q D_qred).mp h_qred with ⟨c, h_super, h_D_eq⟩
-  have h_deg_c : configDegree c ≤ genus G := superstable_degree_le_genus G q c h_super
+  have h_deg_c : configDegree c ≤ CFGraph.genus G := superstable_degree_le_genus G q c h_super
   have D_deg : CFDiv.degree D = CFDiv.degree D_qred := linear_equiv_preserves_deg G D D_qred h_equiv
   refine ⟨D_qred, ?_, h_equiv⟩
   -- D_qred = toDiv (deg D_qred) c is effective: there are enough chips at q, since
@@ -244,14 +244,14 @@ private lemma maximal_superstable_chip_winnable {G : CFGraph} (h_conn : graphCon
   ∀ (v : G.V), winnable G (c'.chips- (oneChip q) + (oneChip v)) := by
   intro h_max_superstable v
   let D' := c'.chips - oneChip q + oneChip v
-  have deg_ineq : CFDiv.degree D' ≥ genus G := by
+  have deg_ineq : CFDiv.degree D' ≥ CFGraph.genus G := by
     calc
       CFDiv.degree D' = configDegree c' := by
         dsimp only [D']
         simp only [_root_.map_add, deg_chips_sub_one_chip, configDegree, deg_one_chip,
             sub_add_cancel]
-      _ = genus G := degree_max_superstable c' h_max_superstable
-      _ ≥ genus G := by rfl
+      _ = CFGraph.genus G := degree_max_superstable c' h_max_superstable
+      _ ≥ CFGraph.genus G := by rfl
   exact winnable_of_deg_ge_genus h_conn D' deg_ineq
 
 /-- A maximal unwinnable $q$-reduced divisor is its canonical configuration minus one chip
@@ -356,7 +356,7 @@ $q$-reduced representative and canonical configuration.
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Corollary 4.9(4). -/
 theorem maximal_unwinnable_deg
   {G : CFGraph} (h_conn : graphConnected G) (D : CFDiv G) :
-  maximalUnwinnable G D → CFDiv.degree D = genus G - 1 := by
+  maximalUnwinnable G D → CFDiv.degree D = CFGraph.genus G - 1 := by
   intro h_max_unwin
   let q := Classical.arbitrary G.V
   have h_char := maximal_unwinnable_char h_conn q D
@@ -364,12 +364,12 @@ theorem maximal_unwinnable_deg
   have h_rep_form :
       qReducedRep h_conn q D =
         (qReducedConfig h_conn q D).chips - oneChip q := (h_char.mp h_max_unwin).2
-  have h_deg_D' : CFDiv.degree (qReducedRep h_conn q D) = genus G - 1 := calc
+  have h_deg_D' : CFDiv.degree (qReducedRep h_conn q D) = CFGraph.genus G - 1 := calc
     CFDiv.degree (qReducedRep h_conn q D) =
         CFDiv.degree ((qReducedConfig h_conn q D).chips - oneChip q) := by rw [h_rep_form]
     _ = configDegree (qReducedConfig h_conn q D) - 1 :=
         deg_chips_sub_one_chip (c := qReducedConfig h_conn q D)
-    _ = genus G - 1 := by rw [degree_max_superstable (qReducedConfig h_conn q D) h_max_cfg]
+    _ = CFGraph.genus G - 1 := by rw [degree_max_superstable (qReducedConfig h_conn q D) h_max_cfg]
   have h_deg_eq : CFDiv.degree D = CFDiv.degree (qReducedRep h_conn q D) :=
     linear_equiv_preserves_deg G D (qReducedRep h_conn q D) (qReducedRep_spec h_conn q D).1
   rw [h_deg_eq, h_deg_D']
@@ -385,7 +385,7 @@ theorem acyclic_orientation_maximal_unwinnable_correspondence_and_degree
     {G : CFGraph} (h_conn : graphConnected G) (q : G.V) :
     (Function.Injective (fun (O : {O : CFOrientation G // isAcyclic G O ∧ isSource G O q}) =>
       fun v => (indeg G O.val v) - if v = q then 1 else 0)) ∧
-    (∀ D : CFDiv G, maximalUnwinnable G D → CFDiv.degree D = genus G - 1) := by
+    (∀ D : CFDiv G, maximalUnwinnable G D → CFDiv.degree D = CFGraph.genus G - 1) := by
   constructor
   { -- Part 1: Injection proof
     intros O₁ O₂ h_eq
@@ -435,7 +435,7 @@ lemma moderator_symmetry {G : CFGraph} (D : CFDiv G) :
 
 /-- Moderators have degree $g-1$. -/
 lemma moderator_degree {G : CFGraph} {D : CFDiv G} (h : isModerator D) :
-    CFDiv.degree D = genus G - 1 := by
+    CFDiv.degree D = CFGraph.genus G - 1 := by
   rcases h with ⟨O, hO, rfl⟩
   exact degree_ordiv O
 
@@ -481,11 +481,11 @@ lemma moderator_of_unwinnable {G : CFGraph} (h_conn : graphConnected G) (D : CFD
     have c'_eq : c' = toConfig (orqed O hO) := by
       rw [← h_orient_eq_c']
       exact config_and_divisor_from_O O hO
-    have : toDiv (genus G - 1) (toConfig (orqed O hO)) = ordiv G O := by
+    have : toDiv (CFGraph.genus G - 1) (toConfig (orqed O hO)) = ordiv G O := by
       calc
-        toDiv (genus G - 1) (toConfig (orqed O hO))
+        toDiv (CFGraph.genus G - 1) (toConfig (orqed O hO))
             = toDiv (CFDiv.degree (orqed O hO).D) (toConfig (orqed O hO)) := by
-                have h_deg_orqed : CFDiv.degree (orqed O hO).D = genus G - 1 := by
+                have h_deg_orqed : CFDiv.degree (orqed O hO).D = CFGraph.genus G - 1 := by
                   simpa only [orqed] using degree_ordiv O
                 rw [h_deg_orqed]
         _ = (orqed O hO).D := div_of_config_of_div (orqed O hO)
@@ -493,8 +493,8 @@ lemma moderator_of_unwinnable {G : CFGraph} (h_conn : graphConnected G) (D : CFD
     rw [← this]
     dsimp only [toDiv, M]
     rw [c'_eq]
-    have : (genus G - 1 - configDegree (toConfig (orqed O hO))) = -1 := by
-      have h_cfg_deg : configDegree (toConfig (orqed O hO)) = genus G := by
+    have : (CFGraph.genus G - 1 - configDegree (toConfig (orqed O hO))) = -1 := by
+      have h_cfg_deg : configDegree (toConfig (orqed O hO)) = CFGraph.genus G := by
         rw [← config_and_divisor_from_O O hO]
         exact config_degree_from_O O hO
       rw [h_cfg_deg]
@@ -519,7 +519,7 @@ dualizes via `moderator_symmetry` to bound $r(K_G - D)$ by $\deg(F)$.
 /-- The strict Riemann-Roch inequality: $\deg(D) - g < r(D) - r(K_G - D)$. -/
 theorem rank_degree_inequality
     {G : CFGraph} (h_conn : graphConnected G) (D : CFDiv G) :
-    CFDiv.degree D - genus G < rank G D - rank G (canonicalDivisor G - D) := by
+    CFDiv.degree D - CFGraph.genus G < rank G D - rank G (canonicalDivisor G - D) := by
   rcases rank_get_effective G D with ⟨E, E_eff, E_deg, D_E_unwin⟩
   rcases moderator_of_unwinnable h_conn (D - E) D_E_unwin with ⟨M, F, M_moderator, F_eff, M_equiv⟩
   set M' := canonicalDivisor G - M with M'_eq

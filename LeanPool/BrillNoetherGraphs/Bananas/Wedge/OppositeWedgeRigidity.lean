@@ -92,7 +92,7 @@ theorem opposite_wedge_mark_pair_not_linearEquiv_canonical
     exact rank_wedgeAdd_opposite_one_chips_eq_zero G H x u y v hG hH hu
   have hConn : _root_.graphConnected (vertexWedge G H x y) :=
     graph_connected_vertexWedge G H x y hG.connected hH.connected
-  have hGenus : genus (vertexWedge G H x y) = 2 := by
+  have hGenus : CFGraph.genus (vertexWedge G H x y) = 2 := by
     rw [genus_vertexWedge, hG.genus_one, hH.genus_one]
     norm_num
   have hRank := rank_eq_of_linear_equiv _ hCanon

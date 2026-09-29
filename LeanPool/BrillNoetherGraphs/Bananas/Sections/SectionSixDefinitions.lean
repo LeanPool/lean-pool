@@ -34,7 +34,7 @@ census, so this is a literal formalization of the paper's definition rather
 than the differently directed `OnceMarkedBNExistence` predicate. -/
 def OnceMarkedBrillNoetherGeneral (G : CFGraph) (v : G.V) : Prop :=
   ∀ lambda : YoungDiagram,
-    OnceMarkedCensusContains G v lambda → (lambda.card : ℤ) ≤ genus G
+    OnceMarkedCensusContains G v lambda → (lambda.card : ℤ) ≤ CFGraph.genus G
 
 /-- On a connected graph the upper-census definition may equivalently use the
 finite normalized witness predicate.  This is the form suited to the vertex
@@ -43,7 +43,7 @@ theorem onceMarkedBrillNoetherGeneral_iff_normalized
     {G : CFGraph} (hconn : graphConnected G) (v : G.V) :
     OnceMarkedBrillNoetherGeneral G v ↔
       ∀ lambda : YoungDiagram,
-        OnceMarkedBNExists G v lambda → (lambda.card : ℤ) ≤ genus G := by
+        OnceMarkedBNExists G v lambda → (lambda.card : ℤ) ≤ CFGraph.genus G := by
   constructor
   · intro h lambda hExists
     apply h lambda

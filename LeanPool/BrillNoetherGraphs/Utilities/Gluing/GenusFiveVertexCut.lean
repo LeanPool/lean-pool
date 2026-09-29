@@ -29,7 +29,7 @@ universe u
 
 private theorem elementary_rank_one_pencil
     (G : CFGraph.{u}) (hConnected : graphConnected G)
-    (g d : ℤ) (hGenus : genus G = g)
+    (g d : ℤ) (hGenus : CFGraph.genus G = g)
     (hRho : 0 ≤ g - 2 * (g - d + 1))
     (hWidth : g - d + 1 ≤ 1) :
     BNExists G 1 d := by
@@ -51,10 +51,10 @@ theorem BNExists_vertexWedge_rank_one_bridge_corrected
 /-- Attaching a pointed rigid genus-one factor to a genus-four graph raises
 the critical pencil degree from three to four. -/
 theorem BNExists_vertexWedge_one_four_of_genus_four
-    (genusFour : ∀ (G : CFGraph.{u}), graphConnected G → genus G = 4 →
+    (genusFour : ∀ (G : CFGraph.{u}), graphConnected G → CFGraph.genus G = 4 →
       BNExists G 1 3)
     (G H : CFGraph.{u}) (x : G.V) (y : H.V)
-    (hGConnected : graphConnected G) (hGGenus : genus G = 4)
+    (hGConnected : graphConnected G) (hGGenus : CFGraph.genus G = 4)
     (hHRigid : PointedGenusOneRigid H y) :
     BNExists (vertexWedge G H x y) 1 4 := by
   have hG : BNExists G 1 3 := genusFour G hGConnected hGGenus
@@ -67,21 +67,21 @@ theorem BNExists_vertexWedge_one_four_of_genus_four
 graph supplies a degree-four rank-one divisor, assuming only the genus-four
 critical pencil theorem in the same universe. -/
 theorem BNExists_one_four_of_positiveGenus_oneVertexCut
-    (genusFour : ∀ (G : CFGraph.{u}), graphConnected G → genus G = 4 →
+    (genusFour : ∀ (G : CFGraph.{u}), graphConnected G → CFGraph.genus G = 4 →
       BNExists G 1 3)
-    (K : CFGraph.{u}) (hConnected : graphConnected K) (hGenus : genus K = 5)
+    (K : CFGraph.{u}) (hConnected : graphConnected K) (hGenus : CFGraph.genus K = 5)
     (cut : OneVertexCut K)
-    (hLeftPos : 0 < genus cut.leftGraph)
-    (hRightPos : 0 < genus cut.rightGraph) :
+    (hLeftPos : 0 < CFGraph.genus cut.leftGraph)
+    (hRightPos : 0 < CFGraph.genus cut.rightGraph) :
     BNExists K 1 4 := by
   have hFactors := cut.graph_connected_factors hConnected
   have hAdd := cut.genus_eq
   rw [hGenus] at hAdd
   have hCases :
-      (genus cut.leftGraph = 1 ∧ genus cut.rightGraph = 4) ∨
-      (genus cut.leftGraph = 2 ∧ genus cut.rightGraph = 3) ∨
-      (genus cut.leftGraph = 3 ∧ genus cut.rightGraph = 2) ∨
-      (genus cut.leftGraph = 4 ∧ genus cut.rightGraph = 1) := by
+      (CFGraph.genus cut.leftGraph = 1 ∧ CFGraph.genus cut.rightGraph = 4) ∨
+      (CFGraph.genus cut.leftGraph = 2 ∧ CFGraph.genus cut.rightGraph = 3) ∨
+      (CFGraph.genus cut.leftGraph = 3 ∧ CFGraph.genus cut.rightGraph = 2) ∨
+      (CFGraph.genus cut.leftGraph = 4 ∧ CFGraph.genus cut.rightGraph = 1) := by
     omega
   apply (cut.BNExists_iff 1 4).mpr
   rcases hCases with hOneFour | hTwoThree | hThreeTwo | hFourOne

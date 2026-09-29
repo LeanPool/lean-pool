@@ -137,16 +137,16 @@ theorem base_connected (marker : Fin core.loopCount)
 theorem base_genus (marker : Fin core.loopCount)
     (hCore : spec.core = split.splitCore)
     (hCompatible : PseudocoreSplitGlue.Compatible split) :
-    genus (base split spec marker hCore hCompatible) = genus spec.graph - 1 := by
+    CFGraph.genus (base split spec marker hCore hCompatible) = CFGraph.genus spec.graph - 1 := by
   let c := data split spec marker hCore
   have hValid := data_valid split spec marker hCore hCompatible
-  have hLeft : genus (c.toOneVertexCut spec hValid).leftGraph = 1 := by
+  have hLeft : CFGraph.genus (c.toOneVertexCut spec hValid).leftGraph = 1 := by
     rw [c.leftGraph_genus spec hValid]
     unfold c data
     rw [hCore]
     exact PseudocoreMarkerCut.cut_leftGenus split marker hCompatible
   have hSum := (c.toOneVertexCut spec hValid).genus_eq
-  change genus (c.toOneVertexCut spec hValid).rightGraph = genus spec.graph - 1
+  change CFGraph.genus (c.toOneVertexCut spec hValid).rightGraph = CFGraph.genus spec.graph - 1
   omega
 
 /-- Compose a presentation of `G` by the split subdivision with the
@@ -287,28 +287,28 @@ theorem restricted_base_genus_three
     (hCore : spec.core = split.splitCore)
     (hCompatible : PseudocoreSplitGlue.Compatible split)
     (hConnected : split.splitCore.Connected) (hNe : second ≠ first)
-    (hGenus : genus spec.graph = 5) :
+    (hGenus : CFGraph.genus spec.graph = 5) :
     let hSubset := cut_left_subset_right_of_ne split spec first second
       hCore hCompatible hNe
     let restricted := (cut split spec first hCore hCompatible).restrictRight
       (cut split spec second hCore hCompatible) hSubset
-    genus restricted.rightGraph = 3 := by
+    CFGraph.genus restricted.rightGraph = 3 := by
   dsimp only
   let firstCut := cut split spec first hCore hCompatible
   let secondCut := cut split spec second hCore hCompatible
   let hSubset := cut_left_subset_right_of_ne split spec first second
     hCore hCompatible hNe
   let restricted := firstCut.restrictRight secondCut hSubset
-  have hFirstGenus : genus firstCut.leftGraph = 1 :=
+  have hFirstGenus : CFGraph.genus firstCut.leftGraph = 1 :=
     (factor_rigid split spec first hCore hCompatible hConnected).genus_one
-  have hSecondGenus : genus restricted.leftGraph = 1 :=
+  have hSecondGenus : CFGraph.genus restricted.leftGraph = 1 :=
     (restricted_second_factor_rigid split spec first second hCore hCompatible
       hConnected hNe).genus_one
   have hSum := firstCut.genus_eq_nested_restrictRight secondCut hSubset
-  change genus spec.graph = genus firstCut.leftGraph + genus restricted.leftGraph +
-    genus restricted.rightGraph at hSum
+  change CFGraph.genus spec.graph = CFGraph.genus firstCut.leftGraph + CFGraph.genus restricted.leftGraph +
+    CFGraph.genus restricted.rightGraph at hSum
   rw [hGenus, hFirstGenus, hSecondGenus] at hSum
-  have hResult : genus restricted.rightGraph = 3 := by omega
+  have hResult : CFGraph.genus restricted.rightGraph = 3 := by omega
   exact hResult
 
 end MarkerPackage

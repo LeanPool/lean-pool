@@ -43,26 +43,26 @@ divisor in the nonspecial range for both graphs.  Fossil pushforward preserves
 its degree and rank, while Riemann--Roch says that this rank is `degree - genus`
 on each side, forcing the genera to agree. -/
 theorem genus_fossil (G : CFGraph.{u}) (hConnected : graphConnected G) :
-    genus (fossil G) = genus G := by
-  let n : ℤ := 2 * genus G + 2 * genus (fossil G) + 1
+    CFGraph.genus (fossil G) = CFGraph.genus G := by
+  let n : ℤ := 2 * CFGraph.genus G + 2 * CFGraph.genus (fossil G) + 1
   let v : G.V := Classical.choice (inferInstance : Nonempty G.V)
   let D : CFDiv G := n • oneChip v
   have hFossilConnected : graphConnected (fossil G) :=
     graph_connected_fossil G hConnected
-  have hGenusNonnegative : 0 ≤ genus G :=
+  have hGenusNonnegative : 0 ≤ CFGraph.genus G :=
     genus_nonneg_of_graph_connected G hConnected
-  have hFossilGenusNonnegative : 0 ≤ genus (fossil G) :=
+  have hFossilGenusNonnegative : 0 ≤ CFGraph.genus (fossil G) :=
     genus_nonneg_of_graph_connected (fossil G) hFossilConnected
   have hDegree : CFDiv.degree D = n := by
     dsimp [D]
     rw [map_zsmul, deg_one_chip]
     ring
-  have hSourceRange : CFDiv.degree D > 2 * genus G - 2 := by
+  have hSourceRange : CFDiv.degree D > 2 * CFGraph.genus G - 2 := by
     rw [hDegree]
     dsimp [n]
     omega
   have hTargetRange :
-      CFDiv.degree (fossilPushforward G D) > 2 * genus (fossil G) - 2 := by
+      CFDiv.degree (fossilPushforward G D) > 2 * CFGraph.genus (fossil G) - 2 := by
     rw [deg_fossilPushforward, hDegree]
     dsimp [n]
     omega

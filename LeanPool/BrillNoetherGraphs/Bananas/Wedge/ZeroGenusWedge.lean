@@ -34,7 +34,7 @@ universe u v
 rank equal to its degree. -/
 theorem rank_eq_degree_of_connected_genus_zero
     (H : CFGraph.{v}) (hConnected : graphConnected H)
-    (hGenus : genus H = 0) (E : CFDiv H) (hDegree : 0 ≤ CFDiv.degree E) :
+    (hGenus : CFGraph.genus H = 0) (E : CFDiv H) (hDegree : 0 ≤ CFDiv.degree E) :
     rank H E = CFDiv.degree E := by
   have hLower : CFDiv.degree E ≤ rank H E := by
     have hRR := rank_ge_degree_sub_genus hConnected E
@@ -49,7 +49,7 @@ theorem rank_eq_degree_of_connected_genus_zero
 /-- Complete rank formula on a connected genus-zero graph. -/
 theorem rank_eq_degree_or_neg_one_of_connected_genus_zero
     (H : CFGraph.{v}) (hConnected : graphConnected H)
-    (hGenus : genus H = 0) (E : CFDiv H) :
+    (hGenus : CFGraph.genus H = 0) (E : CFDiv H) :
     rank H E = if CFDiv.degree E < 0 then -1 else CFDiv.degree E := by
   by_cases hDegree : CFDiv.degree E < 0
   · rw [ite_eq_left hDegree]
@@ -94,7 +94,7 @@ gluing coefficient on the other factor.  This is an exact rank identity for
 arbitrary divisors, not merely a Brill--Noether implication. -/
 theorem rank_vertexWedge_genus_zero_right
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
-    (hConnected : graphConnected H) (hGenus : genus H = 0)
+    (hConnected : graphConnected H) (hGenus : CFGraph.genus H = 0)
     (D : CFDiv G) (E : CFDiv H) :
     rank (vertexWedge G H x y) (wedgeAddDivisor G H x y D E) =
       rank G (D + CFDiv.degree E • oneChip x) := by
@@ -154,7 +154,7 @@ theorem rank_vertexWedge_genus_zero_right
 Brill--Noether generality. -/
 theorem brillNoetherGeneral_vertexWedge_genus_zero_right
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
-    (hConnected : graphConnected H) (hGenus : genus H = 0)
+    (hConnected : graphConnected H) (hGenus : CFGraph.genus H = 0)
     (hGeneral : BrillNoetherGeneral G) :
     BrillNoetherGeneral (vertexWedge G H x y) := by
   intro r d hRankNonnegative hExists

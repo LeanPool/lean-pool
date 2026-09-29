@@ -26,11 +26,11 @@ namespace Utilities
 
 /-- The width `g - d + r` of the Brill--Noether rectangle. -/
 def rectangleWidth (G : CFGraph) (r d : ℤ) : ℤ :=
-  genus G - d + r
+  CFGraph.genus G - d + r
 
 /-- The Brill--Noether number `g - (r + 1) * (g - d + r)`. -/
 def bnNumber (G : CFGraph) (r d : ℤ) : ℤ :=
-  genus G - (r + 1) * rectangleWidth G r d
+  CFGraph.genus G - (r + 1) * rectangleWidth G r d
 
 /-- There is a divisor of degree `d` and rank at least `r` on `G`. -/
 def BNExists (G : CFGraph) (r d : ℤ) : Prop :=
@@ -38,7 +38,7 @@ def BNExists (G : CFGraph) (r d : ℤ) : Prop :=
 
 /-- The degree complementary to `d` with respect to the canonical divisor. -/
 def dualDegree (G : CFGraph) (d : ℤ) : ℤ :=
-  2 * genus G - 2 - d
+  2 * CFGraph.genus G - 2 - d
 
 /-- The dual rank `g - d + r - 1`. -/
 def dualRank (G : CFGraph) (r d : ℤ) : ℤ :=

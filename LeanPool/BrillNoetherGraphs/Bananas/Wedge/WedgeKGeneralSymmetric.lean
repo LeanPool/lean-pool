@@ -98,7 +98,7 @@ theorem factor_torsionOrders_eq_of_vertexWedge_opposite_kGeneral_symmetric
       (phi.twoEdgeCutCondition_map_iff).mpr (by simpa [W] using hWCut)
     have hConn : _root_.graphConnected W :=
       graph_connected_vertexWedge G H x y hG.connected hH.connected
-    have hGenus : genus W = 2 := by
+    have hGenus : CFGraph.genus W = 2 := by
       dsimp [W]
       rw [genus_vertexWedge, hG.genus_one, hH.genus_one]
       norm_num

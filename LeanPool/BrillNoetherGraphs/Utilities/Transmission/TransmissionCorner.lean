@@ -41,7 +41,7 @@ namespace Utilities
 /-- The Riemann inequality: rank is at least degree minus genus. -/
 theorem rank_ge_deg_sub_genus
     {G : CFGraph} (hG : graphConnected G) (D : CFDiv G) :
-    rank G D ≥ CFDiv.degree D - (genus G : ℤ) := by
+    rank G D ≥ CFDiv.degree D - (CFGraph.genus G : ℤ) := by
   have hRR := riemann_roch_for_graphs hG D
   have hDual := rank_geq_neg_one G (canonicalDivisor G - D)
   omega
@@ -160,7 +160,7 @@ corner bound satisfies the full transmission condition. -/
 theorem satisfiesTransmission_of_corners
     {G : CFGraph} (hG : graphConnected G) (u v : G.V)
     (τ : AspPerm) (D : CFDiv G) (C : List Corner)
-    (hDegree : CFDiv.degree D = (genus G : ℤ) + τ.χ)
+    (hDegree : CFDiv.degree D = (CFGraph.genus G : ℤ) + τ.χ)
     (hDom : CornersDominate τ C)
     (hCorners : ∀ c ∈ C,
       rank G (D + c.1 • oneChip u - c.2.1 • oneChip v) ≥ c.2.2) :
@@ -191,7 +191,7 @@ theorem transmissionExists_of_riemann
     TransmissionExists G u v τ := by
   classical
   let w : G.V := Classical.arbitrary G.V
-  refine ⟨((genus G : ℤ) + τ.χ) • oneChip w, ?_⟩
+  refine ⟨((CFGraph.genus G : ℤ) + τ.χ) • oneChip w, ?_⟩
   refine satisfiesTransmission_of_corners hG u v τ _ [] ?_ ?_ ?_
   · rw [map_zsmul, deg_one_chip]
     simp
@@ -207,7 +207,7 @@ theorem transmissionExists_of_corner_of_BNExists
     {G : CFGraph} (hG : graphConnected G) (u v : G.V) (τ : AspPerm)
     (a₀ b₀ r₀ : ℤ)
     (hDom : CornersDominate τ [(a₀, b₀, r₀)])
-    (hBN : BNExists G r₀ ((genus G : ℤ) + τ.χ + a₀ - b₀)) :
+    (hBN : BNExists G r₀ ((CFGraph.genus G : ℤ) + τ.χ + a₀ - b₀)) :
     TransmissionExists G u v τ := by
   obtain ⟨E, hDegE, hRankE⟩ := hBN
   refine ⟨E - a₀ • oneChip u + b₀ • oneChip v, ?_⟩
@@ -236,7 +236,7 @@ theorem BNExists_of_transmissionExists_corner
     {G : CFGraph} (u v : G.V) (τ : AspPerm) (a₀ b₀ r₀ : ℤ)
     (hThreshold : r₀ ≤ τ.s (a₀ + 1) b₀ - 1)
     (h : TransmissionExists G u v τ) :
-    BNExists G r₀ ((genus G : ℤ) + τ.χ + a₀ - b₀) :=
+    BNExists G r₀ ((CFGraph.genus G : ℤ) + τ.χ + a₀ - b₀) :=
   BNExists_of_transmissionExists_row h a₀ b₀ r₀ hThreshold
 
 /-- **Dictionary.**  For a permutation whose slipface has a single dominating
@@ -249,7 +249,7 @@ theorem transmissionExists_iff_BNExists_of_corner
     (hDom : CornersDominate τ [(a₀, b₀, r₀)])
     (hThreshold : r₀ ≤ τ.s (a₀ + 1) b₀ - 1) :
     TransmissionExists G u v τ ↔
-      BNExists G r₀ ((genus G : ℤ) + τ.χ + a₀ - b₀) :=
+      BNExists G r₀ ((CFGraph.genus G : ℤ) + τ.χ + a₀ - b₀) :=
   ⟨BNExists_of_transmissionExists_corner u v τ a₀ b₀ r₀ hThreshold,
     transmissionExists_of_corner_of_BNExists hG u v τ a₀ b₀ r₀ hDom⟩
 
@@ -269,9 +269,9 @@ theorem transmissionExists_of_corner_elementary
     (a₀ b₀ r₀ : ℤ)
     (hDom : CornersDominate τ [(a₀, b₀, r₀)])
     (hR : 0 ≤ r₀)
-    (hRho : 0 ≤ bnNumber G r₀ ((genus G : ℤ) + τ.χ + a₀ - b₀))
+    (hRho : 0 ≤ bnNumber G r₀ ((CFGraph.genus G : ℤ) + τ.χ + a₀ - b₀))
     (hEasy : r₀ = 0 ∨
-      rectangleWidth G r₀ ((genus G : ℤ) + τ.χ + a₀ - b₀) ≤ 1) :
+      rectangleWidth G r₀ ((CFGraph.genus G : ℤ) + τ.χ + a₀ - b₀) ≤ 1) :
     TransmissionExists G u v τ :=
   transmissionExists_of_corner_of_BNExists hG u v τ a₀ b₀ r₀ hDom
     (BNExists_elementary hG hR hRho hEasy)
@@ -281,7 +281,7 @@ theorem transmissionExists_of_corner_rank_zero
     {G : CFGraph} (hG : graphConnected G) (u v : G.V) (τ : AspPerm)
     (a₀ b₀ : ℤ)
     (hDom : CornersDominate τ [(a₀, b₀, 0)])
-    (hDeg : 0 ≤ (genus G : ℤ) + τ.χ + a₀ - b₀) :
+    (hDeg : 0 ≤ (CFGraph.genus G : ℤ) + τ.χ + a₀ - b₀) :
     TransmissionExists G u v τ := by
   refine transmissionExists_of_corner_elementary hG u v τ a₀ b₀ 0 hDom le_rfl ?_
     (Or.inl rfl)

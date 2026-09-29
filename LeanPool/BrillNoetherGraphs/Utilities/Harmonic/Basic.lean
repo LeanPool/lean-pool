@@ -509,7 +509,7 @@ def TargetOneChipEquivalent (H : CFGraph) : Prop :=
 group.  This is the graph-theoretic content of the usual phrase “target is a
 tree”; it is stated in the invariant form available in `CFGraph`. -/
 theorem targetOneChipEquivalent_of_connected_genus_zero
-    (H : CFGraph) (hConnected : graphConnected H) (hGenus : genus H = 0) :
+    (H : CFGraph) (hConnected : graphConnected H) (hGenus : CFGraph.genus H = 0) :
     TargetOneChipEquivalent H := by
   intro y z
   let A : CFDiv H := oneChip y - oneChip z
@@ -625,7 +625,7 @@ instead of exposing the target Picard-group condition. -/
 theorem bnExists_rank_one_of_connected_genus_zero_target
     (f : IndexedHarmonicData G H) {d : ℤ} (hDegree : f.HasDegree d)
     (hPullback : f.PullbackPrincipalCompatible)
-    (hConnected : graphConnected H) (hGenus : genus H = 0) (z : H.V) :
+    (hConnected : graphConnected H) (hGenus : CFGraph.genus H = 0) (z : H.V) :
     BNExists G 1 d :=
   f.bnExists_rank_one_of_target_one_chip_equiv hDegree hPullback
     (targetOneChipEquivalent_of_connected_genus_zero H hConnected hGenus) z
@@ -638,7 +638,7 @@ theorem bnExists_rank_one_of_checked_harmonic_tree
     (hCheck : c.check = true)
     (hUnitCheck : c.checkUnitIndexed = true)
     (hDegreeCheck : c.checkDegree d = true)
-    (hConnected : graphConnected H) (hGenus : genus H = 0) (z : H.V) :
+    (hConnected : graphConnected H) (hGenus : CFGraph.genus H = 0) (z : H.V) :
     BNExists G 1 d := by
   let hValid : c.Valid := (c.check_eq_true_iff).mp hCheck
   let f : IndexedHarmonicData G H := c.toData hValid
@@ -660,7 +660,7 @@ theorem bnExists_rank_one_of_checked_harmonic_tree_one_degree
     (hCheck : c.check = true)
     (hUnitCheck : c.checkUnitIndexed = true)
     (hDegreeCheck : c.checkDegreeAt z₀ d = true)
-    (hConnected : graphConnected H) (hGenus : genus H = 0) (z : H.V) :
+    (hConnected : graphConnected H) (hGenus : CFGraph.genus H = 0) (z : H.V) :
     BNExists G 1 d := by
   let hValid : c.Valid := (c.check_eq_true_iff).mp hCheck
   let f : IndexedHarmonicData G H := c.toData hValid

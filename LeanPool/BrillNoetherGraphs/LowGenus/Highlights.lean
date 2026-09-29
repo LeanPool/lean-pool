@@ -107,7 +107,7 @@ example {core : Core} (hLoopless : Loopless core)
 critical genus-five degree-four pencil on **every** connected graph of genus
 five.  (The conclusion is `GenusFiveRankOneExistence`, spelled out.) -/
 example (coverage : CubicAtlasClosedCoverage) :
-    ∀ (G : CFGraph.{0}), graphConnected G → genus G = 5 → BNExists G 1 4 :=
+    ∀ (G : CFGraph.{0}), graphConnected G → CFGraph.genus G = 5 → BNExists G 1 4 :=
   genusFiveRankOneExistence_of_cubicAtlasClosedCoverage coverage
 
 /-! ## The public conclusion -/
@@ -121,7 +121,7 @@ example : BrillNoetherExistenceThroughFive :=
   AtanasovRanganathan.brillNoetherExistenceThroughFive
 
 /-- Genus at most three is elementary: no geometric input is needed. -/
-example {G : CFGraph} (hG : graphConnected G) (hGenus : genus G ≤ 3)
+example {G : CFGraph} (hG : graphConnected G) (hGenus : CFGraph.genus G ≤ 3)
     {r d : ℤ} (hR : 0 ≤ r) (hRho : 0 ≤ bnNumber G r d) :
     BNExists G r d :=
   Utilities.bnExists_of_genus_le_three hG hGenus hR hRho
@@ -129,7 +129,7 @@ example {G : CFGraph} (hG : graphConnected G) (hGenus : genus G ≤ 3)
 /-- The two critical pencils imply Brill–Noether existence for every
 nonnegative rank and every admissible parameter pair in genus at most five. -/
 example (critical : LowGenusCriticalPencils)
-    {G : CFGraph.{0}} (hG : graphConnected G) (hGenus : genus G ≤ 5)
+    {G : CFGraph.{0}} (hG : graphConnected G) (hGenus : CFGraph.genus G ≤ 5)
     {r d : ℤ} (hR : 0 ≤ r) (hRho : 0 ≤ bnNumber G r d) :
     BNExists G r d :=
   Utilities.bnExists_of_genus_le_five_of_criticalPencils critical hG hGenus hR hRho
@@ -138,7 +138,7 @@ example (critical : LowGenusCriticalPencils)
 assertions imply the full Brill–Noether existence conjecture for every
 connected graph of genus at most five. -/
 example (critical : LowGenusCriticalPencils) :
-    ∀ (G : CFGraph.{0}) (hG : graphConnected G), genus G ≤ 5 →
+    ∀ (G : CFGraph.{0}) (hG : graphConnected G), CFGraph.genus G ≤ 5 →
       ∀ r d : ℤ, brillNoetherConjecture hG r d :=
   Utilities.criticalPencils_imply_brillNoetherExistenceThroughFive critical
 

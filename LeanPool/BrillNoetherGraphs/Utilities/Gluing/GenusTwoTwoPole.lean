@@ -39,7 +39,7 @@ universe u v
 /-- A divisor whose degree equals the genus is winnable. -/
 theorem winnable_of_degree_eq_genus
     (G : CFGraph.{u}) (hG : graphConnected G) (D : CFDiv G)
-    (hDegree : CFDiv.degree D = genus G) :
+    (hDegree : CFDiv.degree D = CFGraph.genus G) :
     winnable G D := by
   exact winnable_of_deg_ge_genus hG D (by omega)
 
@@ -54,7 +54,7 @@ theorem winnable_of_degree_eq_genus
 chips at any anchor absorb a doubled chip at any marked vertex. -/
 theorem winnable_four_pile_sub_two
     (G : CFGraph.{u}) (a uMark : G.V)
-    (hG : graphConnected G) (hGenus : genus G = 2) :
+    (hG : graphConnected G) (hGenus : CFGraph.genus G = 2) :
     winnable G
       ((4 : ℤ) • oneChip a - (2 : ℤ) • oneChip uMark) := by
   apply winnable_of_degree_eq_genus G hG
@@ -134,8 +134,8 @@ theorem wedgeGluePile_sub_two_inr
 genus-two/genus-two wedge absorb a doubled chip at every vertex. -/
 theorem winnable_wedgeGluePile_sub_two
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
-    (hG : graphConnected G) (hGenusG : genus G = 2)
-    (hH : graphConnected H) (hGenusH : genus H = 2)
+    (hG : graphConnected G) (hGenusG : CFGraph.genus G = 2)
+    (hH : graphConnected H) (hGenusH : CFGraph.genus H = 2)
     (uMark : (vertexWedge G H x y).V) :
     winnable (vertexWedge G H x y)
       (wedgeGluePile G H x y - (2 : ℤ) • oneChip uMark) := by
@@ -155,8 +155,8 @@ theorem winnable_wedgeGluePile_sub_two
 rank-one divisor. -/
 theorem rank_wedgeGluePile_ge_one
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
-    (hG : graphConnected G) (hGenusG : genus G = 2)
-    (hH : graphConnected H) (hGenusH : genus H = 2) :
+    (hG : graphConnected G) (hGenusG : CFGraph.genus G = 2)
+    (hH : graphConnected H) (hGenusH : CFGraph.genus H = 2) :
     rank (vertexWedge G H x y) (wedgeGluePile G H x y) ≥ 1 := by
   rw [rank_ge_one_iff_winnable_sub_one_chip]
   intro uMark
@@ -177,8 +177,8 @@ factor canonical divisors has rank at least one on a wedge of connected
 genus-two graphs. -/
 theorem rank_wedge_canonicalSum_ge_one
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
-    (hG : graphConnected G) (hGenusG : genus G = 2)
-    (hH : graphConnected H) (hGenusH : genus H = 2) :
+    (hG : graphConnected G) (hGenusG : CFGraph.genus G = 2)
+    (hH : graphConnected H) (hGenusH : CFGraph.genus H = 2) :
     rank (vertexWedge G H x y)
       (wedgeAddDivisor G H x y (canonicalDivisor G) (canonicalDivisor H)) ≥ 1 := by
   simpa only [wedgeCanonicalSum] using

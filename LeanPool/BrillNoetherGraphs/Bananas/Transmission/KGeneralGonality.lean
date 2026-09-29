@@ -199,7 +199,7 @@ below `k`, provided `k` is no larger than the generic gonality
 theorem KGeneralTransmission.no_rank_one_below_period
     {M : TwiceMarked} {g k : ℕ}
     (hconn : _root_.graphConnected M.graph)
-    (hgenus : genus M.graph = g)
+    (hgenus : CFGraph.genus M.graph = g)
     (hK : KGeneralTransmission M k)
     (hsmall : k ≤ (g + 3) / 2)
     {D : CFDiv M.graph} {d : ℤ}
@@ -217,7 +217,7 @@ theorem KGeneralTransmission.no_rank_one_below_period
   have hSEcard : ((southeastSet tau 1 0).ncard : ℤ) =
       rank M.graph D + 1 := by simpa using hSE.symm
   have hNWcard : ((northwestSet tau 1 0).ncard : ℤ) =
-      genus M.graph - d + rank M.graph D := by
+      CFGraph.genus M.graph - d + rank M.graph D := by
     have hComplement : canonicalDivisor M.graph - D -
         (0 : ℤ) • oneChip M.u + (0 : ℤ) • oneChip M.v =
           canonicalDivisor M.graph - D := by simp
@@ -227,20 +227,20 @@ theorem KGeneralTransmission.no_rank_one_below_period
     omega
   have hCrossCard : ((crossingInversions tau).ncard : ℤ) =
       (rank M.graph D + 1) *
-        (genus M.graph - d + rank M.graph D) := by
+        (CFGraph.genus M.graph - d + rank M.graph D) := by
     rw [crossingInversions_ncard]
     push_cast
     rw [hNWcard, hSEcard]
     ring
-  have hGenusNonneg : 0 ≤ genus M.graph := by rw [hgenus]; omega
+  have hGenusNonneg : 0 ≤ CFGraph.genus M.graph := by rw [hgenus]; omega
   have hDegreePos : 1 ≤ d := by
     have := rank_le_degree M.graph D 1 (by norm_num)
       ((rank_geq_iff M.graph D 1).mpr hrank)
     rw [hdeg] at this
     exact this
-  have hRectangleLarge : genus M.graph <
+  have hRectangleLarge : CFGraph.genus M.graph <
       (rank M.graph D + 1) *
-        (genus M.graph - d + rank M.graph D) := by
+        (CFGraph.genus M.graph - d + rank M.graph D) := by
     rw [hgenus]
     have hDiv : 2 * k ≤ g + 3 := by
       simpa [Nat.mul_comm] using
@@ -258,7 +258,7 @@ special range. -/
 theorem KGeneralTransmission.exact_gonality
     {M : TwiceMarked} {g k : ℕ}
     (hconn : _root_.graphConnected M.graph)
-    (hgenus : genus M.graph = g)
+    (hgenus : CFGraph.genus M.graph = g)
     (hK : KGeneralTransmission M k)
     (hsmall : k ≤ (g + 3) / 2) :
     BNExists M.graph 1 (k : ℤ) ∧
