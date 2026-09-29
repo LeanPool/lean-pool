@@ -163,6 +163,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Monsky                    https://github.com/dhyan-aranha/Monsky
   LeanPool/MooreBound                https://github.com/woutercvb/wewantmoore
   LeanPool/MoserLatticeColorings     https://github.com/lyfar/moser-lattice-colorings-lean
+  LeanPool/MovingSofa                https://github.com/deancureton/MovingSofa
   LeanPool/MulticolorTriangleRamsey  https://github.com/openai/ten-proofs
   LeanPool/NagataFactoriality        https://github.com/arthur742ramos/nagatafactoriality
   LeanPool/NashWilliams              https://github.com/yannpequignot/TwoBQO
