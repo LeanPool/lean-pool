@@ -986,7 +986,7 @@ replaces the sign-flipping analysis of HLŠ Lemma 16 (following the PSD
 viewpoint of Belovs–Lee, arXiv:2004.06439 §4).
 
 Also: small PSD facts — the all-ones matrix, the `2×2` seed
-`[[R, λ], [λ, R]]` for `|λ| ≤ R`, and `M + ‖M‖ • 1 ⪰ 0` for symmetric `M`
+`[[R, λ], [λ, R]]` for `|λ| ≤ R`, and `M + ‖M‖ • 1 ≥ 0` for symmetric `M`
 (BL Lemma 18).  The "PSD lift" fact (BL Fact 2) is mathlib's
 `Matrix.PosSemidef.submatrix`, which takes an arbitrary index map.
 -/
@@ -1743,7 +1743,7 @@ The first rewriting lemma (`composeE_apply_sum`): the entry
 `composeE e g Γf M x y` can be written as a sum over all outer inputs
 `b : α → Bool`, with guards `if g i (sliceE e y i) = b i` making the
 `b = tildeE e g y` fiber automatic.  This eliminates the non-factoring
-occurrence `Γf x̃ ỹ` before any sum/product interchange.
+occurrence `Γf x_tilde y_tilde` before any sum/product interchange.
 
 As in `SourceCompositionHat` the block decomposition is abstract; the cube statement is the
 instance at `cubeBlocks`.
@@ -1979,8 +1979,8 @@ constraints, whereas the set of feasible vector families is not convex.
 Indexing the combined family by `GramIdx ι σ = (ι → σ) × ι × Bool` — `false`
 tagging a `u`-vector and `true` a `v`-vector — the dictionary is
 
-* `gramR G = dualTarget g` ⟺ the `DualPair.constraint` equations,
-* `gramCost G b x ≤ c` for all `b`, `x` ⟺ `DualPair.IsCostLe c`.
+* `gramR G = dualTarget g` ↔ the `DualPair.constraint` equations,
+* `gramCost G b x ≤ c` for all `b`, `x` ↔ `DualPair.IsCostLe c`.
 
 Both directions of the translation are proved: `gramOfDual` builds the Gram
 matrix of a dual solution, and `exists_dualPair_of_gram` extracts a dual
@@ -5509,7 +5509,7 @@ theorem exists_dualPairOn_of_advPMOn_lt {read : X → ι → σ} {f : X → Bool
       rw [dotProduct_mulVec_eq_sum]
       refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => ?_
       rw [gramROn_concVecOn, hadamard_advDOn_apply]
-      by_cases h : read x i = read y i <;> simp [h] ; ring
+      by_cases h : read x i = read y i <;> simp [h]; ring
     have e2 : (∑ x, ∑ b,
           gramCostOn (vecMulVec (concVecOn i s t) (concVecOn i s t)) b x
             * γ b x)
@@ -5952,7 +5952,7 @@ Dual solutions compose multiplicatively (Belovs–Lee, arXiv:2004.06439,
 Theorem 24; the construction is from LMRSS): tensoring an outer dual solution
 with an inner one,
 
-  `u_{x,(p,q)} = ψ_{x̃,p} ⊗ u_{x·ₚ,q}`,  `v_{x,(p,q)} = φ_{x̃,p} ⊗ v_{x·ₚ,q}`,
+  `u_{x,(p,q)} = ψ_{x_tilde,p} ⊗ u_{x·ₚ,q}`,  `v_{x,(p,q)} = φ_{x_tilde,p} ⊗ v_{x·ₚ,q}`,
 
 produces a feasible dual solution for `f ∘ gᵏ` of cost the product of the
 costs (`DualPair.compose`).  This is exactly where the LMRSS constraints on
@@ -7041,7 +7041,7 @@ theorem exists_dualPair_of_advPM_lt [Nonempty σ] {g : (ι → σ) → Bool} {c 
       rw [dotProduct_mulVec_eq_sum]
       refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => ?_
       rw [gramR_concVec, hadamard_advD_apply]
-      by_cases h : x i = y i <;> simp [h] ; ring
+      by_cases h : x i = y i <;> simp [h]; ring
     have e2 : (∑ x, ∑ b,
           gramCost (vecMulVec (concVec i s t) (concVec i s t)) b x * γ b x)
         = (∑ x, γ false x * (s x * s x)) + ∑ x, γ true x * (t x * t x) := by
@@ -7461,7 +7461,7 @@ lemma wStarMatrix_mulVec_apply (S : Finset (ι → σ)) (c : ι → σ)
         + ∑ z ∈ S, (if c = v then w z * y z else 0) from by
     rw [← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun z _ => by
-      by_cases h1 : z = v <;> by_cases h2 : c = v <;> simp [h1, h2] ; ring]
+      by_cases h1 : z = v <;> by_cases h2 : c = v <;> simp [h1, h2]; ring]
   rw [Finset.sum_ite_eq' S v fun z => w z * y c]
   congr 1
   by_cases hcv : c = v
@@ -7479,7 +7479,7 @@ lemma wStarMatrix_bilinear {S : Finset (ι → σ)} {c : ι → σ}
   · rw [show (∑ v : ι → σ, x v * if v ∈ S then w v * y c else 0)
         = ∑ v : ι → σ, if v ∈ S then (w v * x v) * y c else 0 from
       Finset.sum_congr rfl fun v _ => by
-        by_cases h : v ∈ S <;> simp [h] ; ring]
+        by_cases h : v ∈ S <;> simp [h]; ring]
     rw [← Finset.sum_filter, Finset.filter_mem_eq_inter, Finset.univ_inter,
       ← Finset.sum_mul]
   · rw [show (∑ v : ι → σ, x v * if c = v then ∑ z ∈ S, w z * y z else 0)
@@ -8159,7 +8159,7 @@ section SourceWeightedDual
 The cost side of the weighted composition theorem.  Composing an outer dual
 solution with inner ones of costs `c i` gives a composed cost
 
-  `∑_p c_p ‖ψ_{x̃,p}‖²`,
+  `∑_p c_p ‖ψ_{x_tilde,p}‖²`,
 
 which is the **`c`-weighted** cost of the outer solution
 (`DualPair.IsWeightedCostLe`).  So `DualPair.compose_isWeightedCostLe` turns
@@ -8925,7 +8925,7 @@ noncomputable def firstDiffDual (f : (ι → σ) → O) :
           = (if p = prefixOf x i then
               (if prefixOf x i = prefixOf y i then (1 : ℝ) else 0) else 0) from by
           by_cases h1 : p = prefixOf x i <;> by_cases h2 : p = prefixOf y i <;>
-            simp [h1, h2] ; grind]
+            simp [h1, h2]; grind]
       rw [Finset.sum_ite_eq' Finset.univ (prefixOf x i)
         fun _ => (if prefixOf x i = prefixOf y i then (1 : ℝ) else 0),
         ite_eq_left (Finset.mem_univ _)]
@@ -9494,7 +9494,7 @@ lemma sum_ndVec (x y : ι → σ) (i : ι) :
       = (if p = S.node x i then (if S.node x i = S.node y i then (1 : ℝ) else 0)
           else 0) from by
       by_cases h1 : p = S.node x i <;> by_cases h2 : p = S.node y i <;>
-        simp [h1, h2] ; grind]
+        simp [h1, h2]; grind]
   rw [Finset.sum_ite_eq' Finset.univ (S.node x i)
     fun _ => (if S.node x i = S.node y i then (1 : ℝ) else 0),
     ite_eq_left (Finset.mem_univ _)]
@@ -9557,7 +9557,7 @@ lemma sum_colV_sq (hW : ∀ i c, 0 < W i c) (y : ι → σ) (i : ι) [Finite O] 
   rw [Fintype.sum_bool]
   cases hy : S.col y i <;>
     simp only [Bool.false_or, Bool.true_or, ite_true] <;> norm_num <;>
-    rw [Real.mul_self_sqrt (hW _ _).le] ;
+    rw [Real.mul_self_sqrt (hW _ _).le];
     try rw [Real.mul_self_sqrt (hW _ _).le]
 
 /-! ## The dual solution -/

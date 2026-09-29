@@ -2997,7 +2997,7 @@ omit [DecidableEq K] [DecidableEq R] [DecidableEq σ] [Fintype K] [Fintype R] [F
   funext q
   obtain ⟨i, a, w⟩ := q
   cases i <;> cases a <;> cases w <;>
-    simp only [uRealize, Pi.zero_apply] ;
+    simp only [uRealize, Pi.zero_apply];
     first
       | rfl
       | (split_ifs <;> simp)

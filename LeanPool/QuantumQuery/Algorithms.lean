@@ -4282,7 +4282,7 @@ theorem qProb_pairReadout (r₁ : QBasis ι σ W₁ → O₁) (r₂ : QBasis ι 
         : QBasis ι σ (QBasis ι σ W₁ × QBasis ι σ W₂))
         = χ (i, a) * ψ₁ β₁ * ψ₂ β₂ from rfl]
     by_cases h1 : r₁ β₁ = o₁ <;> by_cases h2 : r₂ β₂ = o₂ <;>
-      simp [h1, h2, Prod.ext_iff, Complex.normSq_mul] ; ring]
+      simp [h1, h2, Prod.ext_iff, Complex.normSq_mul]; ring]
   rw [Fintype.sum_prod_type, Finset.sum_mul, Finset.sum_mul]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.sum_mul, Finset.sum_mul]
