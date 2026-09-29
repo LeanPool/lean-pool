@@ -92,7 +92,7 @@ theorem exists_obata_differentiable_polar_inverse
   let U : Opens M := ⟨{x | -a < f x ∧ f x < a},
     (isOpen_lt continuous_const hf.continuous).inter
       (isOpen_lt hf.continuous continuous_const)⟩
-  have hDim : Module.finrank ℝ E = n + 1 := Fact.out
+  have hDim : Module.finrank ℝ (TM p) = n + 1 := Fact.out
   let : Nontrivial (TM p) := Module.nontrivial_of_finrank_eq_succ (R := ℝ) hDim
   obtain ⟨u, hu⟩ := NormedSpace.sphere_nonempty (E := TM p) |>.mpr (show (0 : ℝ) ≤ 1 by norm_num)
   have hL : 0 < Real.pi / Real.sqrt K := div_pos Real.pi_pos (Real.sqrt_pos.mpr hK)

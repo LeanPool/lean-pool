@@ -747,9 +747,7 @@ theorem GlobalParallelField.fixedChartSineField_hasDerivAt
   unfold GlobalParallelField.fixedChartSineField
     GlobalParallelField.fixedChartSineFieldDerivative
   convert h using 1
-  · funext s
-    rfl
-  · module
+  module
 
 theorem GlobalParallelField.coordinateCovariantFieldDerivative_fixedChartSineField
     {G : GlobalGeodesic (I := I) (M := M) cov x₀ v₀}
