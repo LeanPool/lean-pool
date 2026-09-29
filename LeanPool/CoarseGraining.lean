@@ -1074,6 +1074,7 @@ public import LeanPool.CoarseGraining.Homogenization.HighContrast.Variance.Proje
 public import LeanPool.CoarseGraining.Homogenization.HighContrast.Variance.RpowOpt
 public import LeanPool.CoarseGraining.Homogenization.HighContrast.Variance.Scalar
 public import LeanPool.CoarseGraining.Homogenization.HighContrast.Variance.ScalarBounds
+public import LeanPool.CoarseGraining.Homogenization.IntegralLpSeminorm
 public import LeanPool.CoarseGraining.Homogenization.Internal
 public import LeanPool.CoarseGraining.Homogenization.Internal.Ch02
 public import LeanPool.CoarseGraining.Homogenization.Internal.Ch02.Adapters
@@ -1609,7 +1610,5 @@ Main declarations: `Homogenization.Book.MainResults.homogenizationComparison_uni
 Tags: elliptic-pde, stochastic-homogenization, probability, functional-analysis
 MSC: 35B27, 60H25
 -/
-
-public import LeanPool.CoarseGraining.Homogenization.IntegralLpSeminorm
 
 @[expose] public section

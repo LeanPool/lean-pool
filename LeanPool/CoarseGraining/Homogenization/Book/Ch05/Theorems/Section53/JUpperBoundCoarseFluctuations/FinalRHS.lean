@@ -407,12 +407,16 @@ theorem specialWeakNormManuscriptRHSAtScale_le_coarseFluctuationManuscriptRHSAtS
       σ, θ, gradWeak, fluxWeak, G, F] using hPair
   obtain ⟨hA_nonneg, hB_nonneg, hR_nonneg, hD_nonneg⟩ :=
     coarseFluctuationTerms_nonneg hP hstat hStruct hP4 k m e
+  change 0 ≤ A at hA_nonneg
+  change 0 ≤ B at hB_nonneg
+  change 0 ≤ R at hR_nonneg
+  change 0 ≤ D at hD_nonneg
   have hS_nonneg : 0 ≤ Ssum := by
-    simpa [Ssum] using
-      finalRHS_sum_four_nonneg hA_nonneg hB_nonneg hR_nonneg hD_nonneg
+    dsimp only [Ssum]
+    exact finalRHS_sum_four_nonneg hA_nonneg hB_nonneg hR_nonneg hD_nonneg
   have hD_le_Ssum : D ≤ Ssum := by
-    simpa [Ssum] using
-      finalRHS_fourth_le_sum_four (D := D) hA_nonneg hB_nonneg hR_nonneg
+    dsimp only [Ssum]
+    exact finalRHS_fourth_le_sum_four hA_nonneg hB_nonneg hR_nonneg
   have hT_nonneg : 0 ≤ T := by
     dsimp [T]
     exact mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)

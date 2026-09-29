@@ -921,16 +921,25 @@ theorem paired_weakNormSquares_special_le_coarseFluctuationTerms
     paired_constantTail_special_le_lowScaleTail hP hStruct hP4 hkm e he
   obtain ⟨hA_nonneg, hB_nonneg, hR_nonneg, hD_nonneg⟩ :=
     coarseFluctuationTerms_nonneg hP hstat hStruct hP4 k m e
+  change 0 ≤ A at hA_nonneg
+  change 0 ≤ B at hB_nonneg
+  change 0 ≤ R at hR_nonneg
+  change 0 ≤ D at hD_nonneg
   have hS_nonneg : 0 ≤ Ssum := by
-    simpa [Ssum] using rhsSum_nonneg hA_nonneg hB_nonneg hR_nonneg hD_nonneg
+    dsimp only [Ssum]
+    exact rhsSum_nonneg hA_nonneg hB_nonneg hR_nonneg hD_nonneg
   have hA_le_Ssum : A ≤ Ssum := by
-    simpa [Ssum] using first_le_rhsSum hB_nonneg hR_nonneg hD_nonneg
+    dsimp only [Ssum]
+    exact first_le_rhsSum hB_nonneg hR_nonneg hD_nonneg
   have hBR_le_Ssum : B + R ≤ Ssum := by
-    simpa [Ssum] using middle_pair_le_rhsSum hA_nonneg hD_nonneg
+    dsimp only [Ssum]
+    exact middle_pair_le_rhsSum hA_nonneg hD_nonneg
   have hDR_le_Ssum : D + R ≤ Ssum := by
-    simpa [Ssum] using last_pair_le_rhsSum hA_nonneg hB_nonneg
+    dsimp only [Ssum]
+    exact last_pair_le_rhsSum hA_nonneg hB_nonneg
   have hD_le_Ssum : D ≤ Ssum := by
-    simpa [Ssum] using fourth_le_rhsSum (D := D) hA_nonneg hB_nonneg hR_nonneg
+    dsimp only [Ssum]
+    exact fourth_le_rhsSum hA_nonneg hB_nonneg hR_nonneg
   have hH_le : H ≤ CH * Ssum := by
     have hHA : H ≤ CH * A := by
       simpa [H, A, β, s, t, p_e, q_e, p0_e, q0_e, σ, θ, mul_assoc] using hH

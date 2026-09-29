@@ -39,7 +39,7 @@ private theorem section53CoarseFluctuationBetaCoreParams_pos {d : ℕ}
   exact lt_min hgap
     (lt_min hupper (lt_min hlower (lt_min hupper_gain hlower_gain)))
 
-private theorem section53CoarseFluctuationBetaParams_pos {d : ℕ}
+theorem shiftedCoarseFluctuationBetaParams_pos {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     0 < section53CoarseFluctuationBetaParams params := by
   unfold section53CoarseFluctuationBetaParams
@@ -52,7 +52,7 @@ private theorem section53CoarseFluctuationBetaCoreParams_le_sum_gap {d : ℕ}
   unfold section53CoarseFluctuationBetaCoreParams
   exact min_le_left _ _
 
-private theorem betaShiftedParams_sUpper_lt_one {d : ℕ}
+theorem betaShiftedParams_sUpper_lt_one {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     params.sUpper + section53CoarseFluctuationBetaParams params < 1 := by
   have hcore_le := section53CoarseFluctuationBetaCoreParams_le_sum_gap params
@@ -61,7 +61,7 @@ private theorem betaShiftedParams_sUpper_lt_one {d : ℕ}
   unfold section53CoarseFluctuationBetaParams
   linarith
 
-private theorem betaShiftedParams_sLower_lt_one {d : ℕ}
+theorem betaShiftedParams_sLower_lt_one {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     params.sLower + section53CoarseFluctuationBetaParams params < 1 := by
   have hcore_le := section53CoarseFluctuationBetaCoreParams_le_sum_gap params
@@ -70,7 +70,7 @@ private theorem betaShiftedParams_sLower_lt_one {d : ℕ}
   unfold section53CoarseFluctuationBetaParams
   linarith
 
-private theorem betaShiftedParams_sum_lt_one {d : ℕ}
+theorem betaShiftedParams_sum_lt_one {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     (params.sUpper + section53CoarseFluctuationBetaParams params) +
         (params.sLower + section53CoarseFluctuationBetaParams params) < 1 := by
@@ -90,11 +90,11 @@ def betaShiftedParams {d : ℕ}
   two_le_dim := params.two_le_dim
   sUpper_nonneg :=
     add_nonneg params.sUpper_nonneg
-      (section53CoarseFluctuationBetaParams_pos params).le
+      (shiftedCoarseFluctuationBetaParams_pos params).le
   sUpper_lt_one := betaShiftedParams_sUpper_lt_one params
   sLower_nonneg :=
     add_nonneg params.sLower_nonneg
-      (section53CoarseFluctuationBetaParams_pos params).le
+      (shiftedCoarseFluctuationBetaParams_pos params).le
   sLower_lt_one := betaShiftedParams_sLower_lt_one params
   xi_gt_two_mul_dim := params.xi_gt_two_mul_dim
   sum_lt_one := betaShiftedParams_sum_lt_one params
@@ -102,9 +102,9 @@ def betaShiftedParams {d : ℕ}
     rw [lt_min_iff]
     constructor
     · linarith [params.dim_div_xi_lt_sUpper,
-        section53CoarseFluctuationBetaParams_pos params]
+        shiftedCoarseFluctuationBetaParams_pos params]
     · linarith [params.dim_div_xi_lt_sLower,
-        section53CoarseFluctuationBetaParams_pos params]
+        shiftedCoarseFluctuationBetaParams_pos params]
 
 @[simp]
 theorem betaShiftedP4_params {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
@@ -343,7 +343,7 @@ theorem shiftedOneStepContraction_homogenizationScale
     shiftedOneStepContraction_homogenizationScale_of_local_shifted_budget
       (d := d) params
   have hβpos : 0 < section53CoarseFluctuationBetaParams params :=
-    section53CoarseFluctuationBetaParams_pos params
+    shiftedCoarseFluctuationBetaParams_pos params
   obtain ⟨Cshift, hCshift_nonneg, hCshift⟩ :=
     shiftedWidetildeThetaAtScale_shifted_bound_homogenizationScale
       (d := d) params.xi (section53CoarseFluctuationBetaParams params) hβpos

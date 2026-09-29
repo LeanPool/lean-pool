@@ -422,7 +422,8 @@ private theorem max_one_mul_le_weighted_product {a x u v : ℝ}
     (hx0 : 0 ≤ x) (hx : x ≤ u * v) (hu : 1 ≤ u) (hv : 1 ≤ v) :
     max 1 (a * x) ≤ max 1 a * u * v := by
   apply max_le
-  · exact one_le_mul₀ (one_le_mul₀ (le_max_left 1 a) hu) hv
+  · exact one_le_mul_of_one_le_of_one_le
+      (one_le_mul_of_one_le_of_one_le (le_max_left 1 a) hu) hv
   · calc
       a * x ≤ max 1 a * (u * v) :=
         mul_le_mul (le_max_right 1 a) hx hx0 (zero_le_one.trans (le_max_left 1 a))
