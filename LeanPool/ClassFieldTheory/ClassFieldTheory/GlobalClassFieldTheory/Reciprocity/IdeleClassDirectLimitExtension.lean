@@ -173,11 +173,12 @@ noncomputable def rationalAbstractExtensionIdeleClassEquiv
   let eTower :
       Additive (RelativeIdeleGroup.ClassGroup ℚ E) ≃+
         Additive (RelativeIdeleGroup.ClassGroup F E) :=
-    MulEquiv.toAdditive
-      ((TowerRelativeIdeleGroup.classGroupEquiv
-        ℚ F E).symm.trans
-          (towerRelativeIdeleClassBaseChangeMulEquiv
-            ℚ F E))
+    (MulEquiv.toAdditive
+      (TowerRelativeIdeleGroup.classGroupEquiv
+        ℚ F E).symm).trans
+      (MulEquiv.toAdditive
+        (towerRelativeIdeleClassBaseChangeMulEquiv
+          ℚ F E))
   exact
     (((extensionFixedRepresentationEquiv
       rationalIdeleClassRepresentation K L hLK hnormal).trans
