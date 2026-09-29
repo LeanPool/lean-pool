@@ -27,10 +27,9 @@ This affine set has dimension at most `(p - 2) + 1 = p - 1` in `Real^p`, and
 therefore has zero `p`-dimensional Lebesgue measure.  Fubini then gives nullity
 of the complete bad parameter set.
 
-The definitions below isolate this argument independently of the collar's
-coordinate bookkeeping.  The only collar-specific obligation left after this
-file is to exhibit the `p` independent movable scalar orbits forming the value
-of the selected local vertex and the corresponding product-coordinate split.
+The Fubini lemma below supplies the measure-theoretic step. The concrete
+vector-block geometry and coordinate transport are provided by the downstream
+construction.
 -/
 
 @[expose] public section
@@ -66,92 +65,6 @@ theorem volume_prod_eq_zero_of_fiberwise_eq_zero
     exact hfiber x
   rw [hfiber']
   exact lintegral_zero
-
-/-- Abstract data for a full vector-block elimination.
-
-`Rest` represents all movable parameters except the `p` scalar coordinates of
-one selected vertex value.  `badInSplitCoordinates` is the complete bad set in
-those product coordinates, including the existential barycentric witness.
-The substantive geometric field is `fiber_null`: unlike the old scalar
-statement, it already quantifies over every barycentric witness. -/
-structure VectorBlockEliminationData (p : Nat) where
-  /-- The measured parameter space remaining after one vector block is separated. -/
-  Rest : Type*
-  [instMeasureSpaceRest : MeasureSpace Rest]
-  [instSFiniteVolumeRest : SFinite (volume : Measure Rest)]
-  /-- The exceptional set expressed in the remaining parameters and selected vector block. -/
-  badInSplitCoordinates : Set (Rest × (Fin p → Real))
-  measurable_bad : MeasurableSet badInSplitCoordinates
-  fiber_null : ∀ rest,
-    volume {u : Fin p → Real | (rest, u) ∈ badInSplitCoordinates} = 0
-
-attribute [instance]
-  VectorBlockEliminationData.instMeasureSpaceRest
-  VectorBlockEliminationData.instSFiniteVolumeRest
-
-/-- Vector-fiber elimination removes the uncountable barycentric witness by
-Fubini. -/
-theorem VectorBlockEliminationData.volume_bad_eq_zero
-    {p : Nat} (D : VectorBlockEliminationData p) :
-    ((volume : Measure D.Rest).prod volume) D.badInSplitCoordinates = 0 := by
-  let : MeasureSpace D.Rest := D.instMeasureSpaceRest
-  let : SFinite (volume : Measure D.Rest) := D.instSFiniteVolumeRest
-  exact volume_prod_eq_zero_of_fiberwise_eq_zero
-    (volume : Measure D.Rest) volume D.badInSplitCoordinates
-    D.measurable_bad D.fiber_null
-
-/-- Collar-specific coordinate transport certificate.
-
-The image equality says that the complete mixed-face bad set, after splitting
-movable parameters into all remaining coordinates and the selected vertex's
-full value, is exactly `D.badInSplitCoordinates`.  `measure_transport` records
-that this finite coordinate permutation preserves Lebesgue measure. -/
-structure MixedFaceVectorBlockCertificate
-    {p N₀ N₁ M L : Nat}
-    (hp : Nat.Prime p)
-    (C : RelativeAffineCellSystem hp N₀ N₁ M L)
-    (base : Assignment hp C)
-    (κ : MixedFaceCase hp C) where
-  /-- The measurable null-fiber data used to eliminate the mixed-face exceptional set. -/
-  data : VectorBlockEliminationData p
-  /-- The coordinate split transporting the mixed-face bad set to the null-fiber model. -/
-  split : MovableParameterSpace hp C → data.Rest × (Fin p → Real)
-  bad_image : split '' mixedFaceBadSet hp C base κ = data.badInSplitCoordinates
-  measure_transport :
-    volume (mixedFaceBadSet hp C base κ) =
-      ((volume : Measure data.Rest).prod volume) data.badInSplitCoordinates
-
-/-- A full vector-block certificate solves the Step 5 elimination subproblem. -/
-theorem hasNullElimination_of_vectorBlockCertificate
-    {p N₀ N₁ M L : Nat}
-    (hp : Nat.Prime p)
-    (C : RelativeAffineCellSystem hp N₀ N₁ M L)
-    (base : Assignment hp C)
-    (κ : MixedFaceCase hp C)
-    (D : MixedFaceVectorBlockCertificate hp C base κ) :
-    HasNullElimination hp C base κ := by
-  change volume (mixedFaceBadSet hp C base κ) = 0
-  rw [D.measure_transport]
-  exact D.data.volume_bad_eq_zero
-
-/-- Simultaneous perturbation follows once every finite mixed-face case is
-supplied with its vector-block coordinate certificate. -/
-theorem exists_mem_ball_avoiding_all_of_vectorBlockCertificates
-    {p N₀ N₁ M L : Nat}
-    (hp : Nat.Prime p)
-    (C : RelativeAffineCellSystem hp N₀ N₁ M L)
-    (base : Assignment hp C)
-    (center : MovableParameterSpace hp C)
-    (radius : Real)
-    (hball : volume (Metric.ball center radius) ≠ 0)
-    (hcert : ∀ κ : MixedFaceCase hp C,
-      MixedFaceVectorBlockCertificate hp C base κ) :
-    ∃ x ∈ Metric.ball center radius,
-      ∀ κ : MixedFaceCase hp C, x ∉ mixedFaceBadSet hp C base κ := by
-  apply exists_mem_ball_avoiding_all_mixedFaceBadSets hp C base center radius hball
-  intro κ
-  apply certificate_of_hasNullElimination hp C base κ
-  exact hasNullElimination_of_vectorBlockCertificate hp C base κ (hcert κ)
 
 end RouteB
 end ExplicitAffineRelativeCollar
