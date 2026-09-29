@@ -554,7 +554,8 @@ theorem sinTwoTheta_directed_boundedResidual_blockRepresentative_kyFan_complex
 
 /-- **The directed residual `sin 2Θ₀` theorem for every source unitarily
 invariant norm.**  This is the paper-norm lift of
-`sinTwoTheta_directed_boundedResidual_blockRepresentative_kyFan_complex`, retaining the sharp factor `2`.
+`sinTwoTheta_directed_boundedResidual_blockRepresentative_kyFan_complex`, retaining the sharp
+factor `2`.
 
 The residual acts from the trial subspace into the ambient space, whereas the
 canonical doubled-angle block is ambient-to-ambient.  Before invoking the

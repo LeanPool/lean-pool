@@ -33,7 +33,8 @@ Section 1 does make three claims, and this file gives them the paper's numbering
 The first two are already compiled; this file supplies the source names.  The third is proved
 here, in the quadratic form the paper uses it in: for `u ∈ Pℋ`, `P(Hu)` is `E₀H₀u` and
 `Ptilde(Hu)` is `E₁Bu`, and both isometries preserve norms, so
-`‖Ru‖² = ‖H₀u‖² + ‖Bu‖²` is exactly the printed operator identity read at `u`.  The norm-square formulation is scalar-generic over `RCLike`, and the coordinate
+`‖Ru‖² = ‖H₀u‖² + ‖Bu‖²` is exactly the printed operator identity read at `u`.  The norm-square
+formulation is scalar-generic over `RCLike`, and the coordinate
 isometries `E₀, E₁` are unnecessary for the source identity.
 
 The residual identities live upstream in `DavisKahan/BoundedOperator/TrialResidual.lean`,

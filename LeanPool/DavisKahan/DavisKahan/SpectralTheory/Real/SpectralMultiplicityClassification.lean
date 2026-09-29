@@ -62,9 +62,9 @@ variable {H₂ : Type*} [NormedAddCommGroup H₂] [InnerProductSpace ℝ H₂]
 separability hypothesis on either space and no reality hypothesis on the base measures.
 
 The complex statement is confined to `ℂ` because the middle step
-`TauCeti.operatorUnitaryEquiv_of_measureEquiv_complex` uses the complex `rnDerivL2Equiv` API.  That turns
-out not to matter here: the real model operator is multiplication by a *real valued* symbol, so
-it is the restriction to the real classes of the complex operator with the same symbol, and a
+`TauCeti.operatorUnitaryEquiv_of_measureEquiv_complex` uses the complex `rnDerivL2Equiv` API.
+This does not matter here: the real model operator is multiplication by a *real valued* symbol,
+so it is the restriction to the real classes of the complex operator with the same symbol, and a
 real symbol commutes with pointwise conjugation.  The complex Radon--Nikodym unitary is
 `star`-equivariant (`TauCeti.star_rnDerivL2Equiv`), so it restricts.  A field-generic
 Radon--Nikodym unitary is therefore *not* needed. -/
@@ -110,7 +110,7 @@ It is written out rather than derived from the complex statement: the only
 obstruction to sharing is the missing `Algebra ℝ (H →L[𝕜] H)` instance, and the
 real classification pair above supplies everything the argument needs. -/
 theorem sameSpectralMultiplicity_cfc_iff_real [CompleteSpace H₁] [CompleteSpace H₂]
-    [TopologicalSpace.SeparableSpace H₁] 
+    [TopologicalSpace.SeparableSpace H₁]
     {A : H₁ →L[ℝ] H₁} {B : H₂ →L[ℝ] H₂}
     (hA : IsSelfAdjoint A) (hB : IsSelfAdjoint B)
     (f g : ℝ → ℝ)

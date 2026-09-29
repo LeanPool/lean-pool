@@ -106,7 +106,7 @@ The two-sided ideal inequality with both norms at most one.  Stated for a bare p
 contractions rather than for an isometry equivalence, so that the equality below can apply
 it twice with the roles exchanged. -/
 theorem kyFanApproximationGauge_conj_le_complex {F : Type v} [NormedAddCommGroup F]
-    [InnerProductSpace ℂ F]  {L : E →L[ℂ] F} {R : F →L[ℂ] E}
+    [InnerProductSpace ℂ F] {L : E →L[ℂ] F} {R : F →L[ℂ] E}
     (hL : ‖L‖ ≤ 1) (hR : ‖R‖ ≤ 1) (A : E →L[ℂ] E) (k : ℕ) :
     kyFanApproximationGauge k (L ∘L A ∘L R) ≤ kyFanApproximationGauge k A := by
   refine (kyFanApproximationGauge_comp_le (𝕜 := ℂ) k L A R).trans ?_
@@ -127,7 +127,7 @@ Only the one-sided hypothesis `R ∘L L = 1` is used.  The `≤` direction is
 exchanged, applied to `L ∘L A ∘L R`, since `R ∘L (L ∘L A ∘L R) ∘L L = A`.  Proving it once
 and applying it twice is what keeps this off a self-referential rewrite. -/
 theorem kyFanApproximationGauge_conj_eq_complex {F : Type v} [NormedAddCommGroup F]
-    [InnerProductSpace ℂ F]  {L : E →L[ℂ] F} {R : F →L[ℂ] E}
+    [InnerProductSpace ℂ F] {L : E →L[ℂ] F} {R : F →L[ℂ] E}
     (hL : ‖L‖ ≤ 1) (hR : ‖R‖ ≤ 1) (hRL : R ∘L L = ContinuousLinearMap.id ℂ E)
     (A : E →L[ℂ] E) (k : ℕ) :
     kyFanApproximationGauge k (L ∘L A ∘L R) = kyFanApproximationGauge k A := by

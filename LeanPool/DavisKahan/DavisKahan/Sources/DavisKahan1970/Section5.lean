@@ -93,7 +93,8 @@ source's ordering `A ≥ c + δ > c ≥ B`, a bounded solution of the Sylvester 
 `A X = X B + R` satisfies the sharp inequality `δ · N(X) ≤ N(R)` in every Fan-dominant
 unitarily invariant ideal gauge, and `X` lies in the ideal whenever `R` does.
 
-The ordering is the paper's: `TauCeti.LinearPMap.SemiboundedBelow A (c + δ)` and `TauCeti.LinearPMap.SemiboundedAbove B c`.  The
+The ordering is the paper's: `TauCeti.LinearPMap.SemiboundedBelow A (c + δ)` and
+`TauCeti.LinearPMap.SemiboundedAbove B c`.  The
 constant `δ` is sharp.  More general than the printed theorem in the scalar-ideal axis --
 the conclusion is for an arbitrary `KyFanDominantIdealFamily`, not just a fixed unitarily
 invariant norm -- and the operators are unbounded closed self-adjoint rather than bounded.

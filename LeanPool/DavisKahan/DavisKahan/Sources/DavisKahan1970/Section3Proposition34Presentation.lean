@@ -150,7 +150,8 @@ for the ordered pair `(Q₋ℋ, Qℋ)` -- the paper's own proof verifies exactly
 (ii) plus the intertwining `U²Q₋ = QU²`; and `hcos` is `C₀² ≥ ½` read through equation (3.7),
 `C₀² = E₀⋆ Q E₀`, so its quadratic form at `x ∈ Pℋ` is `‖Qx‖²`.
 
-Three narrowings of `TauCeti.DavisKahan1970.proposition3_4_square_is_reflected_directRotation` are removed.  That
+Three narrowings of `TauCeti.DavisKahan1970.proposition3_4_square_is_reflected_directRotation`
+are removed.  That
 statement exhibits an existential pair rather than the printed `(Q₋ℋ, Qℋ)`; assumes the
 symmetrized whole-space form bound rather than the printed `Pℋ` one; and carries an extra
 `IsUniformlyAcute U (reflectedSubspace V U)`.  The extra acuteness is genuinely not available

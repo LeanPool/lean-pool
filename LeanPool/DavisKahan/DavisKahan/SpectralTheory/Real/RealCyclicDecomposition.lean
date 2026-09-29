@@ -139,7 +139,8 @@ theorem conjugateOperator_borelCalculus (hT : IsSelfAdjoint T)
 
 /-- **Pointwise conjugation equivariance at a conjugation-fixed vector.**
 
-If `conjugation ξ = ξ` then conjugating `f(A) ξ` gives `conj(f)(A) ξ` -- the vector stays put and only
+If `conjugation ξ = ξ` then conjugating `f(A) ξ` gives `conj(f)(A) ξ` -- the vector stays put
+and only
 the symbol is conjugated.  This is the form the cyclic-subspace argument consumes. -/
 theorem conjugation_borelCalculus_of_fixed (hT : IsSelfAdjoint T)
     {f : _root_.spectrum ℂ (complexify T) → ℂ}

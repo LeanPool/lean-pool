@@ -127,7 +127,8 @@ perturbation across the form gap `[a, b]` of the unperturbed operator, on an
 arbitrary complex Hilbert space, with **no finite-dimensionality hypothesis on
 the trial subspace or on the ambient space**.
 
-This is `tanTwoTheta_branchFree_bounded_finiteSubspace_symmetricNorming_rclike` with `[FiniteDimensional 𝕜 U]`
+This is `tanTwoTheta_branchFree_bounded_finiteSubspace_symmetricNorming_rclike` with
+`[FiniteDimensional 𝕜 U]`
 removed.  `[U.HasOrthogonalProjection]` is the formal encoding of the paper's
 "closed subspace", not a restriction.
 

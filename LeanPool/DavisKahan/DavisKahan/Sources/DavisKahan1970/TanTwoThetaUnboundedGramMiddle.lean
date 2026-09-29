@@ -431,7 +431,7 @@ theorem inner_reflectionResidualCorner (K : H →L[ℂ] H) (u : Uᗮ) (v : U) :
 omit [CompleteSpace H] in
 /-- A linear combination of a family inside a subspace has the same norm read in
 the subspace and in the ambient space. -/
-theorem norm_sum_smul_coe {W : Submodule ℂ H} 
+theorem norm_sum_smul_coe {W : Submodule ℂ H}
     {n : ℕ} (u : Fin n → W) (α : Fin n → ℂ) :
     ‖∑ i, α i • u i‖ = ‖∑ i, α i • ((u i : W) : H)‖ := by
   have h : ((∑ i, α i • u i : W) : H) = ∑ i, α i • ((u i : W) : H) := by

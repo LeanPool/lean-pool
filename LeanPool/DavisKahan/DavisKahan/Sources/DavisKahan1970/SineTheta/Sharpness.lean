@@ -52,7 +52,7 @@ universe u
 variable {𝕜 : Type u} [RCLike 𝕜]
 
 /-- The two-dimensional model space `𝕜²` carrying the planar equality configuration. -/
-abbrev PlanarModelSpace (𝕜 : Type u)  := EuclideanSpace 𝕜 (Fin 2)
+abbrev PlanarModelSpace (𝕜 : Type u) := EuclideanSpace 𝕜 (Fin 2)
 
 /-- First standard vector of the planar equality model. -/
 def planarModelE0 : PlanarModelSpace 𝕜 :=

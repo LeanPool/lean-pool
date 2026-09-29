@@ -123,7 +123,8 @@ to the unwanted exact subspace lies in `[α + δ, ∞)`, and the conclusion is
 `δ N(tan Θ₀) ≤ N(R)` for the paper's norm class, with the tangent representative
 exhibited and its membership concluded.
 
-Grounded on `tanTheta_directed_bounded_symmetricNorming_complex`; the spectral placement is converted
+Grounded on `tanTheta_directed_bounded_symmetricNorming_complex`; the spectral placement is
+converted
 to the form bounds by the same two `SpectralOrder` lemmas the ideal-family
 endpoint `theorem6_3_infiniteTrial_ideal` uses. -/
 theorem tanTheta_directed_bounded_spectralGap_symmetricNorming_complex

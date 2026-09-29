@@ -934,7 +934,8 @@ theorem beamResolvent_eigenvalue_classify {mu : ℂ} (hmu : mu ≠ 0)
       push_cast; ring, ← hmuinv, inv_inv]
 
 /-- **Every real spectral point of the free beam is an eigenvalue.**  The free beam has no
-continuous or residual real spectrum at all: if `lam` is in `TauCeti.LinearPMap.realSpectrum beamOperator` then
+continuous or residual real spectrum at all: if `lam` is in
+`TauCeti.LinearPMap.realSpectrum beamOperator` then
 `B x = lam x` for some nonzero `x` in the domain.
 
 This is the Fredholm alternative for the compact variational resolvent, run in the direction

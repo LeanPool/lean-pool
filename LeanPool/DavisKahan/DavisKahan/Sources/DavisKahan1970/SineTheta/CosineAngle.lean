@@ -84,7 +84,7 @@ noncomputable def cosineBlockModulusC
 /-- The positive directed sine modulus on the trial coordinate space. -/
 noncomputable def sineBlockModulusC
     (U V : Submodule ℂ E)
-    [U.HasOrthogonalProjection]  : U →L[ℂ] U :=
+    [U.HasOrthogonalProjection] : U →L[ℂ] U :=
   ContinuousLinearMap.modulus (sineBlockC U V)
 
 /-- The cosine modulus is a positive contraction. -/

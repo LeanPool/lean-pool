@@ -368,8 +368,8 @@ follow-up review caught them; the row's registration had already been corrected 
 a bare ideal gauge rather than a norm. -/
 theorem theorem5_1_banach_sylvester_banachScope_ofProperties
     {𝕜 : Type*} [NontriviallyNormedField 𝕜]
-    {E F : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E] 
-    [NormedAddCommGroup F] [NormedSpace 𝕜 F] 
+    {E F : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+    [NormedAddCommGroup F] [NormedSpace 𝕜 F]
     {N : (F →L[𝕜] E) → ℝ}
     (hadd : ∀ f g : F →L[𝕜] E, N (f + g) ≤ N f + N g)
     (hidealL : ∀ (L : E →L[𝕜] E) (f : F →L[𝕜] E), N (L ∘L f) ≤ ‖L‖ * N f)

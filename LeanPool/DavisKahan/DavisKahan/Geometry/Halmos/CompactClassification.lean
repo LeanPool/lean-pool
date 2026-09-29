@@ -81,8 +81,8 @@ noncomputable def compactAngleEigenvalueList
 equivalence sandwiches the operator between two contractions in both directions, so no
 approximation number can move. -/
 theorem approximationNumber_eq_of_boundedOperatorsUnitaryEquivalent
-    {E F : Type*} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] 
-    [NormedAddCommGroup F] [InnerProductSpace 𝕜 F] 
+    {E F : Type*} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E]
+    [NormedAddCommGroup F] [InnerProductSpace 𝕜 F]
     {A : E →L[𝕜] E} {B : F →L[𝕜] F}
     (h : BoundedOperatorsUnitaryEquivalent A B) (n : ℕ) :
     A.approximationNumber n = B.approximationNumber n := by

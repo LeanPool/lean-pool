@@ -54,7 +54,7 @@ universe u
 variable {𝕜 : Type u} [RCLike 𝕜]
 
 /-- Coordinate space for the multiplicity-`m` equality model. -/
-abbrev FiniteMultiplicitySpace (𝕜 : Type u)  (m : ℕ) :=
+abbrev FiniteMultiplicitySpace (𝕜 : Type u) (m : ℕ) :=
   EuclideanSpace 𝕜 (Fin m)
 
 /-- Ambient orthogonal sum of the exact and complementary coordinate spaces. -/

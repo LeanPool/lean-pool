@@ -49,7 +49,8 @@ separation configurations — the interval/exterior one over `realSpectrum`, and
 both ordered half-line configurations as operator-form bounds — and it is the
 weaker of this tree's two spellings of spectral separation
 (`DavisKahan/Sylvester/Gap.lean`).  It is a *different* spelling from the
-complex statements' `TauCeti.LinearPMap.SemiboundedBelow`/`TauCeti.LinearPMap.SemiboundedAbove` pair together with
+complex statements' `TauCeti.LinearPMap.SemiboundedBelow`/`TauCeti.LinearPMap.SemiboundedAbove`
+pair together with
 resolvent-set avoidance, not a translation of it, because the latter cannot be
 written over `ℝ` at all.
 

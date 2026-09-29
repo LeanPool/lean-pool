@@ -50,11 +50,13 @@ itself never has to be transported.
 
 * `norm_sinAngleOperatorR_lt_one_of_data_crossedDefectsEquivalent`: real ambient
   uniform transversality from real trial-block form bounds and the printed (3.5);
-* `tanTheta_ambient_unboundedOperator_boundedRitzData_symmetricNorming_real`: the ambient estimate over real
+* `tanTheta_ambient_unboundedOperator_boundedRitzData_symmetricNorming_real`: the ambient
+  estimate over real
   trial-block data;
 * `tanTheta_ambient_unboundedOperator_boundedRitz_symmetricNorming_real`: the specialization with an
   unbounded ambient operator but bounded Ritz compression;
-* `tanTheta_ambient_unboundedRitz_explicitCompatibility_symmetricNorming_real`: the Appendix-complete
+* `tanTheta_ambient_unboundedRitz_explicitCompatibility_symmetricNorming_real`: the
+  Appendix-complete
   endpoint in which the Ritz compression itself may be unbounded.
 
 ## References

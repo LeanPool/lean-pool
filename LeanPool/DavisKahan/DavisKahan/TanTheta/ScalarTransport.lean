@@ -98,7 +98,7 @@ omit [CompleteSpace H] in
 /-- Every finite source gauge is unchanged for a transported subspace-domain map. -/
 theorem prefixGauge_scalarTransportSubspaceCLM
     (N : SymmetricNormingFunction) (n : ℕ)
-    (Z : Submodule 𝕜 H)  (T : Z →L[𝕜] H) :
+    (Z : Submodule 𝕜 H) (T : Z →L[𝕜] H) :
     N.prefixGauge n (scalarTransportSubspaceCLM (e := e) Z T) =
       N.prefixGauge n T := by
   unfold SymmetricNormingFunction.prefixGauge

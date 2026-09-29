@@ -153,7 +153,8 @@ theorem isCalculusInvariant_iSup {ha : IsStarNormal a} {ι : Type*} {K : ι → 
 calculus-invariant.
 
 The two steps are exactly the ones inside `norm_borelCalculus_apply_sq`: the calculus is
-`⋆`-preserving, so `⟪x, f(a) η⟫ = ⟪conj(f)(a) x, η⟫`, and `conj(f)(a) x` lies back in `K` by hypothesis,
+`⋆`-preserving, so `⟪x, f(a) η⟫ = ⟪conj(f)(a) x, η⟫`, and `conj(f)(a) x` lies back in `K` by
+hypothesis,
 so the inner product vanishes for `η ∈ Kᗮ`. -/
 theorem IsCalculusInvariant.orthogonal {ha : IsStarNormal a} {K : Submodule ℂ H}
     (hK : IsCalculusInvariant ha K) : IsCalculusInvariant ha Kᗮ := by

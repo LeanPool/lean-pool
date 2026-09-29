@@ -591,7 +591,7 @@ theorem finrank_le_of_le_specRange_Iic
 /-- **Rayleigh--Ritz dimension count, lower half.**  The Ritz bound embeds the
 trial subspace into the low spectral range. -/
 theorem finrank_le_finrank_of_le_specRange_Iic
-    {K : Submodule ℂ H}  
+    {K : Submodule ℂ H}
     {α : ℝ} (hKdom : K ≤ A.domain)
     (hRitz : ∀ x : A.domain, (x : H) ∈ K → (⟪A x, (x : H)⟫_ℂ).re ≤ α * ‖(x : H)‖ ^ 2)
     {W : Submodule ℂ H} [FiniteDimensional ℂ W]

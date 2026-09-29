@@ -63,7 +63,7 @@ variable (U V : Submodule 𝕜 H) [U.HasOrthogonalProjection] [V.HasOrthogonalPr
 
 /-- **Davis--Kahan 1970, Proposition 3.1, at the paper's separable ambient
 scope.** -/
-theorem proposition3_1_separable 
+theorem proposition3_1_separable
     (hacute : TauCeti.IsAcute U V) :
     acuteDirectRotation U V ∈ unitary (H →L[𝕜] H) ∧
       acuteDirectRotation U V * U.starProjection =
@@ -102,7 +102,7 @@ theorem proposition3_2_exists_iff_crossedDefectsEquivalent_separable
 
 /-- **Davis--Kahan 1970, Proposition 3.2, non-uniqueness half, at the paper's
 separable ambient scope.** -/
-theorem proposition3_2_not_unique_separable 
+theorem proposition3_2_not_unique_separable
     (hdefect : CrossedDefectsEquivalent U V) (hnonacute : ¬ TauCeti.IsAcute U V) :
     ∃ T₁ T₂ : H →L[𝕜] H,
       IsDirectRotation U V T₁ ∧ IsDirectRotation U V T₂ ∧ T₁ ≠ T₂ :=
@@ -123,7 +123,7 @@ attribute [local instance 100] ContinuousLinearMap.realAlgebra
 
 /-- **Davis--Kahan 1970, Proposition 3.5, commutations, at the paper's separable
 ambient scope.** -/
-theorem proposition3_5_commutations_separable 
+theorem proposition3_5_commutations_separable
     (J : halmosSourceDefect U V ≃ₗᵢ[𝕜] halmosTargetDefect U V) :
     Commute (proposition3Point5AngleOperator U V) (U.starProjection) ∧
       Commute (proposition3Point5AngleOperator U V) (V.starProjection) ∧
@@ -133,7 +133,7 @@ theorem proposition3_5_commutations_separable
 
 /-- **Davis--Kahan 1970, Proposition 3.5, eigenvector angle, at the paper's
 separable ambient scope.** -/
-theorem proposition3_5_eigenvector_angle_separable 
+theorem proposition3_5_eigenvector_angle_separable
     (J : halmosSourceDefect U V ≃ₗᵢ[𝕜] halmosTargetDefect U V)
     {x : H} (hx0 : x ≠ 0) {θ : ℝ}
     (hx : proposition3Point5AngleOperator U V x = ((θ : ℝ) : 𝕜) • x) :
@@ -142,7 +142,7 @@ theorem proposition3_5_eigenvector_angle_separable
 
 /-- **Davis--Kahan 1970, Proposition 3.5, maximal fixed-cosine subspace, at the
 paper's separable ambient scope.** -/
-theorem proposition3_5_angleEigenspace_uniqueMaximal_separable 
+theorem proposition3_5_angleEigenspace_uniqueMaximal_separable
     (hacute : TauCeti.IsAcute U V) {θ : ℝ}
     (hθ : Module.End.HasEigenvalue (proposition3Point5AngleOperator U V).toLinearMap
       ((θ : ℝ) : 𝕜)) :
@@ -155,7 +155,7 @@ theorem proposition3_5_angleEigenspace_uniqueMaximal_separable
 
 /-- **Davis--Kahan 1970, Corollary 3.2, at the paper's separable ambient
 scope.** -/
-theorem corollary3_2_separable 
+theorem corollary3_2_separable
     (J : halmosSourceDefect U V ≃ₗᵢ[𝕜] halmosTargetDefect U V) :
     proposition3Point5AngleOperator V U = proposition3Point5AngleOperator U V ∧
       corollary3Point2NonacuteQuarterTurn V U (swapCrossedDefectEquiv U V J) =
@@ -175,7 +175,7 @@ variable (U V : Submodule ℂ H) [U.HasOrthogonalProjection] [V.HasOrthogonalPro
 
 /-- **Davis--Kahan 1970, Proposition 3.3 over `ℂ`, forward half, at the paper's
 separable ambient scope.** -/
-theorem proposition3_3_complex_forward_separable 
+theorem proposition3_3_complex_forward_separable
     (T : H →L[ℂ] H)
     (hunitary : T ∈ unitary (H →L[ℂ] H))
     (hintertwines : T * U.starProjection = V.starProjection * T)
@@ -189,7 +189,7 @@ theorem proposition3_3_complex_forward_separable
 
 /-- **Davis--Kahan 1970, Proposition 3.3 over `ℂ`, converse half, at the paper's
 separable ambient scope.** -/
-theorem proposition3_3_complex_converse_separable 
+theorem proposition3_3_complex_converse_separable
     (T : H →L[ℂ] H)
     (hroot : IsPrincipalUnitarySquareRoot (spectraReflectionProduct U V) T)
     (hcross : T '' (halmosSourceDefect U V : Set H) =
@@ -211,7 +211,7 @@ variable (U V : Submodule ℝ E) [U.HasOrthogonalProjection] [V.HasOrthogonalPro
 
 /-- **Davis--Kahan 1970, Proposition 3.3 over `ℝ`, forward half, at the paper's
 separable ambient scope.** -/
-theorem proposition3_3_real_forward_separable 
+theorem proposition3_3_real_forward_separable
     (T : E →L[ℝ] E)
     (hunitary : T ∈ unitary (E →L[ℝ] E))
     (hintertwines : T * U.starProjection = V.starProjection * T)
@@ -225,7 +225,7 @@ theorem proposition3_3_real_forward_separable
 
 /-- **Davis--Kahan 1970, Proposition 3.3 over `ℝ`, converse half, at the paper's
 separable ambient scope.** -/
-theorem proposition3_3_real_converse_separable 
+theorem proposition3_3_real_converse_separable
     (T : E →L[ℝ] E)
     (hroot : IsRealPrincipalUnitarySquareRoot U V T)
     (hcross : T '' (halmosSourceDefect U V : Set E) =
@@ -248,7 +248,7 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteS
 
 /-- **Davis--Kahan 1970, Proposition 3.4 over `ℂ`, at the paper's separable
 ambient scope.** -/
-theorem proposition3_4_full_complex_separable 
+theorem proposition3_4_full_complex_separable
     (U V : Submodule ℂ H) [U.HasOrthogonalProjection] [V.HasOrthogonalProjection]
     (W : H →L[ℂ] H)
     (hunitary : W ∈ unitary (H →L[ℂ] H))
@@ -281,7 +281,7 @@ variable (U V : Submodule ℝ E) [U.HasOrthogonalProjection] [V.HasOrthogonalPro
 
 /-- **Davis--Kahan 1970, Proposition 3.4 over `ℝ`, at the paper's separable
 ambient scope.** -/
-theorem proposition3_4_full_real_separable 
+theorem proposition3_4_full_real_separable
     (W : E →L[ℝ] E)
     (hunitary : W ∈ unitary (E →L[ℝ] E))
     (hintertwines : W * U.starProjection = V.starProjection * W)

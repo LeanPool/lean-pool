@@ -389,7 +389,8 @@ printed constant needs the singular-value identification of `sin 2Θ₀` with
 decomposition.  It does not.  The printed conclusion is about `Θ₀`, so the route
 that works never forms the ambient sum at all: prove the estimate at the
 directed block `sinTwoThetaIdealBlock Q P`, and the constant `2` comes
-out of `sinTwoTheta_directed_boundedResidual_blockRepresentative_symmetricNorming_complex`'s own chain -- the paper
+out of `sinTwoTheta_directed_boundedResidual_blockRepresentative_symmetricNorming_complex`'s
+own chain -- the paper
 projection block dominates `δ` times the ideal block, the block defect costs the
 factor `2`, and the residual is extended by zero along `P.subtypeL.adjoint`,
 which preserves the whole approximation-singular sequence and hence every paper

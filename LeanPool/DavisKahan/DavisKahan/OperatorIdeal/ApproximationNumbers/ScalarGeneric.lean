@@ -407,7 +407,8 @@ theorem gauge_eq_toReal (A : E →L[𝕜] F) :
 
 /-! Both accessors are `abbrev`, so they are reducible and `exact` sees through
 them.  `rw` does **not**: it keys on the head symbol, and the accessor form and
-the canonical-gauge form have different ones.  A proof whose goal is stated through these accessors but
+the canonical-gauge form have different ones.  A proof whose goal is stated through these
+accessors but
 whose supporting lemmas are stated over the historical record — the block lemmas
 in `SinTheta/**` are the usual case — has to reconcile the two.
 

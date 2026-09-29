@@ -84,7 +84,7 @@ correspondence and not an appeal to symmetry. -/
 partial map on the nose, domains included. -/
 theorem addBounded_cancellation_is_on_the_nose
     {𝕜 : Type*} [RCLike 𝕜] {H : Type v}
-    [NormedAddCommGroup H] [InnerProductSpace 𝕜 H] 
+    [NormedAddCommGroup H] [InnerProductSpace 𝕜 H]
     (A : H →ₗ.[𝕜] H) (V : H →L[𝕜] H) :
     TauCeti.LinearPMap.addBounded (TauCeti.LinearPMap.addBounded A V) (-V) = A :=
   TauCeti.LinearPMap.addBounded_neg_cancel A V
@@ -102,8 +102,8 @@ theorem ambient_sinTwoTheta_is_symmetric_in_the_pair
 membership and its value. -/
 theorem source_gauge_does_not_see_the_perturbation_sign
     {𝕜 : Type*} [RCLike 𝕜] {E F : Type v}
-    [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] 
-    [NormedAddCommGroup F] [InnerProductSpace 𝕜 F] 
+    [NormedAddCommGroup E] [InnerProductSpace 𝕜 E]
+    [NormedAddCommGroup F] [InnerProductSpace 𝕜 F]
     (N : SymmetricNormingFunction) (A : E →L[𝕜] F) :
     N.gauge (-A) = N.gauge A ∧ (N.Mem (-A) ↔ N.Mem A) :=
   ⟨N.gauge_neg A, N.mem_neg⟩

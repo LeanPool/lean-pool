@@ -1589,7 +1589,7 @@ dominance.
 private theorem blockInl_enorm_le_one_stabilization
     {E H : Type v}
     [NormedAddCommGroup E] [InnerProductSpace ℂ E]
-    [NormedAddCommGroup H] [InnerProductSpace ℂ H]  :
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] :
     ‖(blockInl (𝕜 := ℂ) (E₀ := E) (E₁ := H))‖ₑ ≤ 1 := by
   rw [← ofReal_norm, ← ENNReal.ofReal_one]
   exact ENNReal.ofReal_le_ofReal
@@ -1598,7 +1598,7 @@ private theorem blockInl_enorm_le_one_stabilization
 private theorem blockInr_enorm_le_one_stabilization
     {E H : Type v}
     [NormedAddCommGroup E] [InnerProductSpace ℂ E]
-    [NormedAddCommGroup H] [InnerProductSpace ℂ H]  :
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] :
     ‖(blockInr (𝕜 := ℂ) (E₀ := E) (E₁ := H))‖ₑ ≤ 1 := by
   rw [← ofReal_norm, ← ENNReal.ofReal_one]
   exact ENNReal.ofReal_le_ofReal
@@ -1607,7 +1607,7 @@ private theorem blockInr_enorm_le_one_stabilization
 private theorem fstL_enorm_le_one_stabilization
     {E H : Type v}
     [NormedAddCommGroup E] [InnerProductSpace ℂ E]
-    [NormedAddCommGroup H] [InnerProductSpace ℂ H]  :
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] :
     ‖(WithLp.fstL 2 ℂ E H)‖ₑ ≤ 1 := by
   rw [← ofReal_norm, ← ENNReal.ofReal_one]
   exact ENNReal.ofReal_le_ofReal
@@ -1616,7 +1616,7 @@ private theorem fstL_enorm_le_one_stabilization
 private theorem sndL_enorm_le_one_stabilization
     {E H : Type v}
     [NormedAddCommGroup E] [InnerProductSpace ℂ E]
-    [NormedAddCommGroup H] [InnerProductSpace ℂ H]  :
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] :
     ‖(WithLp.sndL 2 ℂ E H)‖ₑ ≤ 1 := by
   rw [← ofReal_norm, ← ENNReal.ofReal_one]
   exact ENNReal.ofReal_le_ofReal

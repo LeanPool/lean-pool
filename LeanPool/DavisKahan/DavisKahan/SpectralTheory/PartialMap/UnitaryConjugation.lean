@@ -14,7 +14,8 @@ public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.LinearPM
 /-!
 # Unitary conjugation for unbounded operators
 
-This module states unitary conjugation for a partial map `H →ₗ.[ℂ] H`.  The source and target Hilbert spaces may differ, which is important
+This module states unitary conjugation for a partial map `H →ₗ.[ℂ] H`.  The source and target
+Hilbert spaces may differ, which is important
 when conjugating operators restricted to spectral subspaces.  The construction
 came from the vendored Spectra package, retired on 2026-07-29; it is now built
 on Mathlib's `LinearPMap`.

@@ -170,7 +170,7 @@ private theorem reflectionTangentCorner_gauge_congr_unboundedExactReal
 
 private theorem unboundedReflectionTangent_congr_unboundedExactReal
     {k : Type*} [RCLike k] {G : Type*}
-    [NormedAddCommGroup G] [InnerProductSpace k G] 
+    [NormedAddCommGroup G] [InnerProductSpace k G]
     {U V : Submodule k G} [U.HasOrthogonalProjection] [V.HasOrthogonalProjection]
     (h : U = V) (Z : G →L[k] G) :
     unboundedReflectionTangent U Z = unboundedReflectionTangent V Z := by

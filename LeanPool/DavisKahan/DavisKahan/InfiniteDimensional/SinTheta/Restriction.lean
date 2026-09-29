@@ -118,7 +118,7 @@ theorem projection_comp_opNorm_le
 omit [CompleteSpace E] [CompleteSpace F] in
 /-- The rectangular projection--operator--inclusion block is contractive. -/
 theorem restricted_projection_sandwich_norm_le
-    (U : Submodule 𝕜 E) 
+    (U : Submodule 𝕜 E)
     (V : Submodule 𝕜 F) [V.HasOrthogonalProjection]
     (T : E →L[𝕜] F) :
     ‖((Vᗮ.starProjection ∘L T ∘L U.subtypeL)).codRestrict Vᗮ

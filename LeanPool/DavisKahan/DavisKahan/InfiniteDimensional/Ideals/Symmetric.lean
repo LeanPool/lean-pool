@@ -345,7 +345,8 @@ Lean proof route for a weaker agent:
 
 1. Let `J=2P-I`; show `J` is unitary and `diagonalPart U A = (A+J A J)/2`.
 2. Use ideal membership under left/right multiplication to obtain membership of `J A J` and the sum.
-3. Apply unitary invariance, homogeneity, and the triangle inequality to get the sharp contraction bound.
+3. Apply unitary invariance, homogeneity, and the triangle inequality to get the sharp
+contraction bound.
 
 
 Ext-agent signature audit (GPT 5.6 High): Correct for symmetric ideals. Reflection
