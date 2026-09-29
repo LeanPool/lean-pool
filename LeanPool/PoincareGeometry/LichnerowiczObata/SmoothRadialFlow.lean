@@ -161,8 +161,8 @@ theorem exists_smooth_obata_radial_family [Nonempty M] [PreconnectedSpace M]
     · rw [hpoint]
       exact obata_radial_time_identity (γ := G x) hK hp₀ hs hd hr
     · have hv := norm_velocity_obataRadial_timeChange (γ := G x) hK hp₀ hf hn (hG x) hs hd hr
-      rw [hG0] at hv
-      simpa only [η, obataRadialFamily, Function.comp_def] using hv
+      rw [hpoint, hη]
+      exact hv
 
 
 end LichnerowiczObata
