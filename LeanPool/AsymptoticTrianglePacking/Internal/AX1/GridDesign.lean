@@ -27,8 +27,74 @@ hypothesis `hpair` of `Nibble.AX1.hasNearRegularFamily_of_subTripleDesign`.
 
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.GridShiftUnique
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapDesign
+public import LeanPool.AsymptoticTrianglePacking.Internal.Prelude
+
+
+/-! # GridShiftUnique -/
+
+@[expose] public section
+
+open Finset
+
+namespace Nibble.AX1
+
+/-- The shift `f(j,k) = (j+k) mod n`. -/
+def gridShift (n : ℕ) (j k : Fin n) : ℕ := (j.val + k.val) % n
+
+/-- **The `U`–`W` block pair is used at most once**: `(j,k) ↦ (f(j,k), j)` is injective. -/
+theorem gridShift_UW_injective {n : ℕ} :
+    Function.Injective (fun p : Fin n × Fin n => (gridShift n p.1 p.2, p.1.val)) := by
+  rintro ⟨j, k⟩ ⟨j', k'⟩ h
+  simp only [gridShift, Prod.mk.injEq] at h
+  obtain ⟨hs, hj⟩ := h
+  have hjj : j = j' := Fin.ext hj
+  subst hjj
+  -- hs : (j + k) % n = (j + k') % n, and k, k' < n ⇒ k = k'
+  have hmod : k.val % n = k'.val % n :=
+    Nat.ModEq.add_left_cancel' j.val (by simpa [Nat.ModEq] using hs)
+  have hk : k.val = k'.val := by
+    rwa [Nat.mod_eq_of_lt k.isLt, Nat.mod_eq_of_lt k'.isLt] at hmod
+  exact Prod.ext rfl (Fin.ext hk)
+
+/-- **The `U`–`X` block pair is used at most once**: `(j,k) ↦ (f(j,k), k)` is injective. -/
+theorem gridShift_UX_injective {n : ℕ} :
+    Function.Injective (fun p : Fin n × Fin n => (gridShift n p.1 p.2, p.2.val)) := by
+  rintro ⟨j, k⟩ ⟨j', k'⟩ h
+  simp only [gridShift, Prod.mk.injEq] at h
+  obtain ⟨hs, hk⟩ := h
+  have hkk : k = k' := Fin.ext hk
+  subst hkk
+  -- hs : (j + k) % n = (j' + k) % n, i.e. (k + j) % n = (k + j') % n after commuting
+  have hs' : (k.val + j.val) % n = (k.val + j'.val) % n := by
+    rw [Nat.add_comm k.val j.val, Nat.add_comm k.val j'.val]; exact hs
+  have hmod : j.val % n = j'.val % n :=
+    Nat.ModEq.add_left_cancel' k.val (by simpa [Nat.ModEq] using hs')
+  have hj : j.val = j'.val := by
+    rwa [Nat.mod_eq_of_lt j.isLt, Nat.mod_eq_of_lt j'.isLt] at hmod
+  exact Prod.ext (Fin.ext hj) rfl
+
+/-- **The `W`–`X` block pair is used at most once**: `(j,k) ↦ (j,k)` is injective (trivial). -/
+theorem gridShift_WX_injective {n : ℕ} :
+    Function.Injective (fun p : Fin n × Fin n => (p.1.val, p.2.val)) := by
+  rintro ⟨j, k⟩ ⟨j', k'⟩ h
+  simp only [Prod.mk.injEq] at h
+  exact Prod.ext (Fin.ext h.1) (Fin.ext h.2)
+
+/-- **Consequence: the diagonal grid labelling is injective** — distinct `(j,k)` give distinct
+sub-triples `(f(j,k), j, k)`.  (Immediate from any one of the block-pair injectivities, e.g.
+`WX`.) -/
+theorem gridShift_label_injective {n : ℕ} :
+    Function.Injective (fun p : Fin n × Fin n => (gridShift n p.1 p.2, p.1.val, p.2.val)) := by
+  intro p q h
+  have : (p.1.val, p.2.val) = (q.1.val, q.2.val) := by
+    simpa using congrArg (fun t => (t.2.1, t.2.2)) h
+  exact gridShift_WX_injective this
+
+end Nibble.AX1
+
+end
+
 
 /-! # GridDesign -/
 
