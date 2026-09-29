@@ -45,13 +45,8 @@ def render_report(
     return namespace, (tmp_path / "proof-profile.md").read_text()
 
 
-@pytest.mark.parametrize(
-    "forged_header", ["## Beta.lean", "\r## Beta.lean", "\u2028## Beta.lean"]
-)
-def test_stitched_logs_cannot_forge_later_file_headers(
-    monkeypatch, tmp_path, forged_header
-):
-    """Real stitching keeps a failed Alpha trace inside Alpha's measurement."""
+def create_stitching_fixture(tmp_path: Path, forged_header: str) -> Path:
+    """Provide deterministic per-file logs to the real stitching script."""
     runner = tmp_path / "runner"
     fixtures = runner / "fixtures"
     fixtures.mkdir(parents=True)
@@ -74,6 +69,17 @@ def test_stitched_logs_cannot_forge_later_file_headers(
         "## Beta.lean\n[Elab.command] [22000.0]\nreal 0.10\nuser 0.02\nsys 0.01\n"
         "success: count-heartbeats command exited with status 0\n\n"
     )
+    return runner
+
+
+@pytest.mark.parametrize(
+    "forged_header", ["## Beta.lean", "\r## Beta.lean", "\u2028## Beta.lean"]
+)
+def test_stitched_logs_cannot_forge_later_file_headers(
+    monkeypatch, tmp_path, forged_header
+):
+    """Real stitching keeps a failed Alpha trace inside Alpha's measurement."""
+    runner = create_stitching_fixture(tmp_path, forged_header)
     monkeypatch.setenv("RUNNER_TEMP", str(runner))
     monkeypatch.setenv("TMPDIR", str(tmp_path))
     stitched = tmp_path / "stitched.log"
