@@ -8,7 +8,7 @@ module
 
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveConfigurations
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveCoreAtlas
-public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.CoreSymmetry
+public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.ClosedCoreSymmetry
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.DegenerateSubdivisionIso
 
 /-!
@@ -25,7 +25,7 @@ That is what this module supplies.  The proofs deliberately use reachability
 rather than the literal output of `compFold`: canonical union-find
 representatives need not commute definitionally with a vertex permutation,
 but their fibres do.  Everything below is the public restatement, at
-`faceSpec`, of the private row-proof transport `RowProof.ClosedAuto`.
+`faceSpec`, of the shared transport `Utilities.Certificate.ClosedCoreSymmetry`.
 
 The payoff for a row author is `closedConstruction_of_chamber`: prove the row
 on any chamber `P` of length space, exhibit for each nonloopy forest face one
@@ -67,79 +67,20 @@ theorem zero_mem_map (e : Fin p) :
 theorem adj_map {u v : Fin n} :
     AdjInList core (edgeList (zeroSlots length)) u v →
       AdjInList core (edgeList (zeroSlots (targetLength symmetry length)))
-        (symmetry.vertexPerm u) (symmetry.vertexPerm v) := by
-  rintro ⟨e, he, huv⟩
-  refine ⟨symmetry.slotPerm e, (mem_edgeList _ _).2 ?_, ?_⟩
-  · exact (zero_mem_map symmetry length e).2 ((mem_edgeList _ _).1 he)
-  · have ht := symmetry.tail_eq e
-    have hh := symmetry.head_eq e
-    by_cases hr : symmetry.reversed e
-    · simp only [hr, ↓reduceIte] at ht hh
-      rcases huv with huv | huv
-      · exact Or.inr ⟨hh.trans (congrArg symmetry.vertexPerm huv.1),
-          ht.trans (congrArg symmetry.vertexPerm huv.2)⟩
-      · exact Or.inl ⟨ht.trans (congrArg symmetry.vertexPerm huv.1),
-          hh.trans (congrArg symmetry.vertexPerm huv.2)⟩
-    · have hr' : symmetry.reversed e = false := Bool.eq_false_of_not_eq_true hr
-      simp only [hr', Bool.false_eq_true, ↓reduceIte] at ht hh
-      rcases huv with huv | huv
-      · exact Or.inl ⟨ht.trans (congrArg symmetry.vertexPerm huv.1),
-          hh.trans (congrArg symmetry.vertexPerm huv.2)⟩
-      · exact Or.inr ⟨hh.trans (congrArg symmetry.vertexPerm huv.1),
-          ht.trans (congrArg symmetry.vertexPerm huv.2)⟩
+        (symmetry.vertexPerm u) (symmetry.vertexPerm v) :=
+  Utilities.Certificate.ClosedCoreSymmetry.adj_map symmetry length
 
 theorem adj_map_iff {u v : Fin n} :
     AdjInList core (edgeList (zeroSlots (targetLength symmetry length)))
         (symmetry.vertexPerm u) (symmetry.vertexPerm v) ↔
-      AdjInList core (edgeList (zeroSlots length)) u v := by
-  constructor
-  · rintro ⟨f, hf, huv⟩
-    let e := symmetry.slotPerm.symm f
-    have hfe : symmetry.slotPerm e = f := symmetry.slotPerm.apply_symm_apply f
-    have he : e ∈ zeroSlots length := by
-      apply (zero_mem_map symmetry length e).1
-      simpa [hfe] using (mem_edgeList _ _).1 hf
-    refine ⟨e, (mem_edgeList _ _).2 he, ?_⟩
-    have ht := symmetry.tail_eq e
-    have hh := symmetry.head_eq e
-    rw [hfe] at ht hh
-    by_cases hr : symmetry.reversed e
-    · simp only [hr, ↓reduceIte] at ht hh
-      rcases huv with huv | huv
-      · right
-        constructor
-        · exact symmetry.vertexPerm.injective (huv.1.symm.trans ht) |>.symm
-        · exact symmetry.vertexPerm.injective (huv.2.symm.trans hh) |>.symm
-      · left
-        constructor
-        · exact symmetry.vertexPerm.injective (huv.1.symm.trans hh) |>.symm
-        · exact symmetry.vertexPerm.injective (huv.2.symm.trans ht) |>.symm
-    · have hr' : symmetry.reversed e = false := Bool.eq_false_of_not_eq_true hr
-      simp only [hr', Bool.false_eq_true, ↓reduceIte] at ht hh
-      rcases huv with huv | huv
-      · left
-        constructor
-        · exact symmetry.vertexPerm.injective (huv.1.symm.trans ht) |>.symm
-        · exact symmetry.vertexPerm.injective (huv.2.symm.trans hh) |>.symm
-      · right
-        constructor
-        · exact symmetry.vertexPerm.injective (huv.1.symm.trans hh) |>.symm
-        · exact symmetry.vertexPerm.injective (huv.2.symm.trans ht) |>.symm
-  · exact adj_map symmetry length
+      AdjInList core (edgeList (zeroSlots length)) u v :=
+  Utilities.Certificate.ClosedCoreSymmetry.adj_map_iff symmetry length
 
 theorem reach_map_iff (u v : Fin n) :
     ReachIn core (zeroSlots (targetLength symmetry length))
         (symmetry.vertexPerm u) (symmetry.vertexPerm v) ↔
-      ReachIn core (zeroSlots length) u v := by
-  unfold ReachIn ReachInList
-  constructor
-  · intro h
-    simpa [Function.onFun] using Relation.ReflTransGen.lift symmetry.vertexPerm.symm
-      (fun a b hab => (adj_map_iff symmetry length
-        (u := symmetry.vertexPerm.symm a) (v := symmetry.vertexPerm.symm b)).1
-        (by simpa using hab)) (symmetry.vertexPerm u) (symmetry.vertexPerm v) h
-  · exact Relation.ReflTransGen.lift symmetry.vertexPerm
-      (fun _ _ h => adj_map symmetry length h) u v
+      ReachIn core (zeroSlots length) u v :=
+  Utilities.Certificate.ClosedCoreSymmetry.reach_map_iff symmetry length u v
 
 /-- **The fibre statement.**  Canonical union-find representatives do not
 commute definitionally with a vertex permutation, but their fibres do: two
@@ -148,8 +89,8 @@ identified at `targetLength`. -/
 theorem rep_eq_iff (u v : Fin n) :
     compFold core (zeroSlots (targetLength symmetry length)) (symmetry.vertexPerm u) =
         compFold core (zeroSlots (targetLength symmetry length)) (symmetry.vertexPerm v) ↔
-      compFold core (zeroSlots length) u = compFold core (zeroSlots length) v := by
-  rw [compFold_iff, compFold_iff, reach_map_iff symmetry length]
+      compFold core (zeroSlots length) u = compFold core (zeroSlots length) v :=
+  Utilities.Certificate.ClosedCoreSymmetry.rep_eq_iff symmetry length u v
 
 /-- The induced bijection of contracted classes.  It is built from the fibre
 statement by `Equiv.ofBijective`, never by claiming that `compFold` commutes
@@ -157,110 +98,21 @@ with `vertexPerm`. -/
 noncomputable def classEquiv :
     {v : Fin n // compFold core (zeroSlots length) v = v} ≃
       {v : Fin n // compFold core (zeroSlots (targetLength symmetry length)) v = v} :=
-  Equiv.ofBijective
-    (fun x => ⟨compFold core (zeroSlots (targetLength symmetry length))
-      (symmetry.vertexPerm x.val), compFold_idem _ _ _⟩)
-    ⟨by
-      intro x y hxy
-      apply Subtype.ext
-      have hrep := (rep_eq_iff symmetry length x.val y.val).1
-        (congrArg Subtype.val hxy)
-      simpa [x.property, y.property] using hrep,
-     by
-      intro y
-      let z := symmetry.vertexPerm.symm y.val
-      let x : {v : Fin n // compFold core (zeroSlots length) v = v} :=
-        ⟨compFold core (zeroSlots length) z, compFold_idem _ _ _⟩
-      refine ⟨x, Subtype.ext ?_⟩
-      change compFold core (zeroSlots (targetLength symmetry length))
-        (symmetry.vertexPerm (compFold core (zeroSlots length) z)) = y.val
-      have hreach : ReachIn core (zeroSlots length) (compFold core (zeroSlots length) z) z :=
-        (reachIn_equivalence core (zeroSlots length)).symm
-          (reachIn_self_compFold core (zeroSlots length) z)
-      have htarget := (reach_map_iff symmetry length
-        (compFold core (zeroSlots length) z) z).2 hreach
-      have hrep := (compFold_iff core _ _ _).2 htarget
-      simpa [z, y.property] using hrep⟩
-
-private theorem card_fixed_eq_image (rep : Fin n → Fin n)
-    (hidem : ∀ v, rep (rep v) = rep v) :
-    Fintype.card {v : Fin n // rep v = v} =
-      (Finset.image rep Finset.univ).card := by
-  have himage : Finset.image rep Finset.univ =
-      Finset.univ.filter (fun v : Fin n => rep v = v) := by
-    ext v
-    constructor
-    · intro hv
-      obtain ⟨u, -, hu⟩ := Finset.mem_image.mp hv
-      exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, by rw [← hu, hidem u]⟩
-    · intro hv
-      exact Finset.mem_image.mpr
-        ⟨v, Finset.mem_univ _, (Finset.mem_filter.mp hv).2⟩
-  rw [himage, Fintype.card_subtype]
-
-private theorem zero_card_eq :
-    (zeroSlots (targetLength symmetry length)).card = (zeroSlots length).card := by
-  refine Finset.card_bij (fun e _ => symmetry.slotPerm.symm e) ?_ ?_ ?_
-  · intro e he
-    have := (zero_mem_map symmetry length (symmetry.slotPerm.symm e)).1
-      (by simpa using he)
-    simpa using this
-  · intro a _ b _ hab
-    exact symmetry.slotPerm.symm.injective hab
-  · intro e he
-    refine ⟨symmetry.slotPerm e, (zero_mem_map symmetry length e).2 he, ?_⟩
-    simp
+  Utilities.Certificate.ClosedCoreSymmetry.classEquiv symmetry length
 
 /-! ## The two face hypotheses transport -/
 
 /-- Genus preservation is a symmetry-invariant property of a face. -/
 theorem isForest_iff :
     IsForest core (zeroSlots (targetLength symmetry length)) ↔
-      IsForest core (zeroSlots length) := by
-  unfold IsForest
-  have hclass := Fintype.card_congr (classEquiv symmetry length)
-  rw [card_fixed_eq_image _ (compFold_idem core (zeroSlots length)),
-    card_fixed_eq_image _ (compFold_idem core (zeroSlots (targetLength symmetry length)))]
-    at hclass
-  rw [zero_card_eq symmetry length, hclass]
+      IsForest core (zeroSlots length) :=
+  Utilities.Certificate.ClosedCoreSymmetry.isForest_iff symmetry length
 
 /-- Surviving loops are a symmetry-invariant property of a face. -/
 theorem isLoopy_iff :
     IsLoopy core (zeroSlots (targetLength symmetry length)) ↔
-      IsLoopy core (zeroSlots length) := by
-  unfold IsLoopy
-  constructor
-  · rintro ⟨f, hf, hrep⟩
-    let e := symmetry.slotPerm.symm f
-    have hfe : symmetry.slotPerm e = f := symmetry.slotPerm.apply_symm_apply f
-    have he : e ∉ zeroSlots length := by
-      intro he
-      have himage := (zero_mem_map symmetry length e).2 he
-      rw [hfe] at himage
-      exact hf himage
-    refine ⟨e, he, ?_⟩
-    apply (rep_eq_iff symmetry length (core.tail e) (core.head e)).1
-    have ht := symmetry.tail_eq e
-    have hh := symmetry.head_eq e
-    rw [hfe] at ht hh
-    by_cases hr : symmetry.reversed e
-    · simp only [hr, ↓reduceIte] at ht hh
-      simpa [ht, hh] using hrep.symm
-    · have hr' : symmetry.reversed e = false := Bool.eq_false_of_not_eq_true hr
-      simp only [hr', Bool.false_eq_true, ↓reduceIte] at ht hh
-      simpa [ht, hh] using hrep
-  · rintro ⟨e, he, hrep⟩
-    refine ⟨symmetry.slotPerm e, ?_, ?_⟩
-    · exact fun h => he ((zero_mem_map symmetry length e).1 h)
-    · have htarget := (rep_eq_iff symmetry length (core.tail e) (core.head e)).2 hrep
-      have ht := symmetry.tail_eq e
-      have hh := symmetry.head_eq e
-      by_cases hr : symmetry.reversed e
-      · simp only [hr, ↓reduceIte] at ht hh
-        simpa [ht, hh] using htarget.symm
-      · have hr' : symmetry.reversed e = false := Bool.eq_false_of_not_eq_true hr
-        simp only [hr', Bool.false_eq_true, ↓reduceIte] at ht hh
-        simpa [ht, hh] using htarget
+      IsLoopy core (zeroSlots length) :=
+  Utilities.Certificate.ClosedCoreSymmetry.isLoopy_iff symmetry length
 
 /-- The transported forest hypothesis. -/
 theorem forest_target (forest : IsForest core (zeroSlots length)) :
@@ -279,8 +131,8 @@ theorem not_loopy_target (not_loopy : ¬ IsLoopy core (zeroSlots length)) :
 `bnExists_iff` used to build this datum inline.  Naming it is what lets a
 *per-vertex* statement — `StrongSeparator.Reaches` at one contracted core
 class — be transported as well as a whole-graph one; see
-`AtanasovRanganathan.Guarding.faceGuard_map`.  The body is the one that was
-inside `bnExists_iff`, unchanged. -/
+`AtanasovRanganathan.Guarding.faceGuard_map`. The shared closed-core transport
+supplies the relabeling and its vertex action. -/
 noncomputable def relabeling (core_nonempty : 0 < n)
     (forest : IsForest core (zeroSlots length))
     (not_loopy : ¬ IsLoopy core (zeroSlots length)) :
@@ -288,57 +140,7 @@ noncomputable def relabeling (core_nonempty : 0 < n)
       (faceSpec core core_nonempty (targetLength symmetry length)
         (forest_target symmetry length forest)
         (not_loopy_target symmetry length not_loopy)) :=
-  let source := faceSpec core core_nonempty length forest not_loopy
-  let target := faceSpec core core_nonempty (targetLength symmetry length)
-    (forest_target symmetry length forest) (not_loopy_target symmetry length not_loopy)
-  let ce : source.Class ≃ target.Class := classEquiv symmetry length
-  have hclass : ∀ u : Fin n,
-      ce ⟨source.rep u, source.rep_idem u⟩ =
-        ⟨target.rep (symmetry.vertexPerm u), target.rep_idem _⟩ := fun u => by
-    apply Subtype.ext
-    exact (rep_eq_iff symmetry length (source.rep u) u).2 (source.rep_idem u)
-  { classEquiv := ce
-    slotEquiv := symmetry.slotPerm
-    reversed := symmetry.reversed
-    length_eq := fun e => symmetry.reindexLength_compat length e
-    tail_eq := fun e => by
-      by_cases hr : symmetry.reversed e
-      · simp only [ite_eq_left hr]
-        rw [hclass]
-        apply Subtype.ext
-        have ht := symmetry.tail_eq e
-        simp only [hr, ↓reduceIte] at ht
-        change target.rep (symmetry.vertexPerm (core.head e)) =
-          target.rep (core.tail (symmetry.slotPerm e))
-        rw [ht]
-      · have hr' : symmetry.reversed e = false := Bool.eq_false_of_not_eq_true hr
-        simp only [ite_eq_right hr]
-        rw [hclass]
-        apply Subtype.ext
-        have ht := symmetry.tail_eq e
-        simp only [hr', Bool.false_eq_true, ↓reduceIte] at ht
-        change target.rep (symmetry.vertexPerm (core.tail e)) =
-          target.rep (core.tail (symmetry.slotPerm e))
-        rw [ht]
-    head_eq := fun e => by
-      by_cases hr : symmetry.reversed e
-      · simp only [ite_eq_left hr]
-        rw [hclass]
-        apply Subtype.ext
-        have hh := symmetry.head_eq e
-        simp only [hr, ↓reduceIte] at hh
-        change target.rep (symmetry.vertexPerm (core.tail e)) =
-          target.rep (core.head (symmetry.slotPerm e))
-        rw [hh]
-      · have hr' : symmetry.reversed e = false := Bool.eq_false_of_not_eq_true hr
-        simp only [ite_eq_right hr]
-        rw [hclass]
-        apply Subtype.ext
-        have hh := symmetry.head_eq e
-        simp only [hr', Bool.false_eq_true, ↓reduceIte] at hh
-        change target.rep (symmetry.vertexPerm (core.head e)) =
-          target.rep (core.head (symmetry.slotPerm e))
-        rw [hh] }
+  Utilities.Certificate.ClosedCoreSymmetry.relabeling symmetry length core_nonempty forest not_loopy
 
 /-- The relabeling sends a contracted core class to the class of its image
 under the symmetry's vertex permutation. -/

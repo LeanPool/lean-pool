@@ -206,7 +206,7 @@ lemma inv_iff_le {i j : ℤ} (i_lt_j : i < j) :
       rw [heq] at i_lt_j; exact lt_irrefl i i_lt_j
     exact ⟨i_lt_j, lt_of_le_of_ne τ_j_le_i this⟩
 
-@[simp] lemma ext {σ τ : AspPerm} : σ = τ ↔ σ.func = τ.func := by
+lemma ext {σ τ : AspPerm} : σ = τ ↔ σ.func = τ.func := by
   constructor
   · intro h; rw [h]
   · intro h; cases σ; cases τ; congr

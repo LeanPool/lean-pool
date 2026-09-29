@@ -621,6 +621,7 @@ Everything above this point is statement vocabulary.  The following public
 conversion is where the file deliberately crosses into the implementation
 library. -/
 
+/-- View a public graph in the chip-firing implementation model. -/
 def libraryGraph (G : CFGraph) : _root_.CFGraph :=
   { V := G.V
     instDecidableEq := G.instDecidableEq

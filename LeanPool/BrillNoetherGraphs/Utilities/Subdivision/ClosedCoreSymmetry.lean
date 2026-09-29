@@ -121,7 +121,8 @@ theorem rep_eq_iff (u v : Fin n) :
       compFold core (zeroSet length) u = compFold core (zeroSet length) v := by
   rw [compFold_iff, compFold_iff, reach_map_iff symmetry length]
 
-private noncomputable def classEquiv :
+/-- The core symmetry induces an equivalence of contracted vertex classes. -/
+noncomputable def classEquiv :
     {v : Fin n // compFold core (zeroSet length) v = v} ≃
       {v : Fin n // compFold core (zeroSet (targetLength symmetry length)) v = v} :=
   Equiv.ofBijective
@@ -225,13 +226,13 @@ theorem isLoopy_iff :
         simp [hr'] at ht hh
         simpa [ht, hh] using htarget
 
-theorem bnExists_iff (hn : 0 < n) (hForest : IsForest core (zeroSet length))
-    (hNotLoopy : ¬ IsLoopy core (zeroSet length)) (rank degree : ℤ) :
-    BNExists
-        (censusSpec core hn (targetLength symmetry length)
-          ((isForest_iff symmetry length).2 hForest)
-          (fun h => hNotLoopy ((isLoopy_iff symmetry length).1 h))).graph rank degree ↔
-      BNExists (censusSpec core hn length hForest hNotLoopy).graph rank degree := by
+/-- Relabel the canonical forest contraction along a core symmetry. -/
+noncomputable def relabeling (hn : 0 < n) (hForest : IsForest core (zeroSet length))
+    (hNotLoopy : ¬ IsLoopy core (zeroSet length)) :
+    (censusSpec core hn length hForest hNotLoopy).Relabeling
+      (censusSpec core hn (targetLength symmetry length)
+        ((isForest_iff symmetry length).2 hForest)
+        (fun h => hNotLoopy ((isLoopy_iff symmetry length).1 h))) := by
   let source := censusSpec core hn length hForest hNotLoopy
   let hForest' := (isForest_iff symmetry length).2 hForest
   let hNotLoopy' : ¬ IsLoopy core (zeroSet (targetLength symmetry length)) :=
@@ -287,7 +288,16 @@ theorem bnExists_iff (hn : 0 < n) (hForest : IsForest core (zeroSet length))
           change target.rep (symmetry.vertexPerm (core.head e)) =
             target.rep (core.head (symmetry.slotPerm e))
           rw [hh] }
-  exact Utilities.Certificate.DegenerateSpec.DegSpec.Relabeling.bnExists_iff source target rel rank
-    degree
+  exact rel
+
+theorem bnExists_iff (hn : 0 < n) (hForest : IsForest core (zeroSet length))
+    (hNotLoopy : ¬ IsLoopy core (zeroSet length)) (rank degree : ℤ) :
+    BNExists
+        (censusSpec core hn (targetLength symmetry length)
+          ((isForest_iff symmetry length).2 hForest)
+          (fun h => hNotLoopy ((isLoopy_iff symmetry length).1 h))).graph rank degree ↔
+      BNExists (censusSpec core hn length hForest hNotLoopy).graph rank degree :=
+  Utilities.Certificate.DegenerateSpec.DegSpec.Relabeling.bnExists_iff _ _
+    (relabeling symmetry length hn hForest hNotLoopy) rank degree
 
 end Utilities.Certificate.ClosedCoreSymmetry
