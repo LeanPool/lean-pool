@@ -26,7 +26,7 @@ variable {α : Sort u} (r : α → α → Prop)
 local infix:50 " ≺ " => r
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def IsInfiniteDescendingChain (c : ℕ → α) : Prop := ∀ i, c (i + 1) ≺ c i
+@[expose] def IsInfiniteDescendingChain (c : ℕ → α) : Prop := ∀ i, c (i + 1) ≺ c i
 
 /-- Imported declaration from the Incompleteness formalization. -/
 @[expose] noncomputable def descendingChain (z : α) : ℕ → α

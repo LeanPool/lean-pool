@@ -96,6 +96,7 @@ def id : F →ₚ F where
   back := by simp;
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def TransitiveClosure (f : F₁ →ₚ F₂) (F₂_trans : IsTrans F₂.World F₂.Rel) : F₁^+ →ₚ F₂ where
   toFun := f.toFun
   forth := by
@@ -150,7 +151,7 @@ def id : M →ₚ M where
   atomic := by simp;
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def ofAtomic (f : M₁.toFrame →ₚ M₂.toFrame) (atomic : ∀ {w a}, (M₁ w a) ↔ (M₂ (f w) a)) :
+@[expose] def ofAtomic (f : M₁.toFrame →ₚ M₂.toFrame) (atomic : ∀ {w a}, (M₁ w a) ↔ (M₂ (f w) a)) :
     M₁ →ₚ M₂ where
   toFun := f
   forth := f.forth
@@ -215,6 +216,7 @@ end «lp_section_3»
 
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Modal.Kripke.Frame.isRooted (F : Frame) (r : F.World) : Prop := ∀ w ≠ r, r ≺ w
 
 /-- Imported declaration from the Incompleteness formalization. -/

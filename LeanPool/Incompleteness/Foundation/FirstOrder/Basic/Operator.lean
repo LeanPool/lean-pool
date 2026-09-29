@@ -44,6 +44,7 @@ def equiv : Operator L n ≃ Semiterm L Empty n where
   right_inv := by intro _; simp
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def operator {arity : ℕ} (o : Operator L arity) (v : Fin arity → Semiterm L ξ n) : Semiterm L ξ n :=
   Rew.substs v (Rew.emb o.term)
 
@@ -284,7 +285,7 @@ abbrev goedelNumber' (a : α) : Semiterm L ξ n := const (goedelNumber a)
 instance : GoedelQuote α (Semiterm L ξ n) := ⟨goedelNumber'⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
-@[reducible]
+@[expose, reducible]
 def ofEncodable [Operator.Zero L] [Operator.One L] [Operator.Add L] {α : Type*} [Encodable α] :
     GoedelNumber L α :=
   ⟨Operator.encode L⟩
@@ -322,7 +323,7 @@ end «lp_section_3»
 section «lp_section_4»
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def _root_.LO.FirstOrder.Semiterm.Operator.val
+@[expose] def _root_.LO.FirstOrder.Semiterm.Operator.val
     {M : Type w} [s : Structure L M] (o : Operator L k) (v :
     Fin k → M) :
     M := Semiterm.val s v Empty.elim o.term

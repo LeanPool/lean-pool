@@ -369,7 +369,7 @@ variable (𝓢 : S)
 @[expose] def Complete : Prop := ∀ f, 𝓢 ⊢! f ∨ 𝓢 ⊢! ∼f
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def Undecidable (f : F) : Prop := 𝓢 ⊬ f ∧ 𝓢 ⊬ ∼f
+@[expose] def Undecidable (f : F) : Prop := 𝓢 ⊬ f ∧ 𝓢 ⊬ ∼f
 
 end «lp_section_3»
 

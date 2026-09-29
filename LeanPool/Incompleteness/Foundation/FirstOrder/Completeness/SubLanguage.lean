@@ -35,7 +35,7 @@ variable (L)
 variable {pf : (k : ℕ) → L.Func k → Prop} {pr : (k : ℕ) → L.Rel k → Prop}
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def ofSubLanguage : subLanguage L pf pr →ᵥ L where
+@[expose] def ofSubLanguage : subLanguage L pf pr →ᵥ L where
   func := Subtype.val
   rel  := Subtype.val
 

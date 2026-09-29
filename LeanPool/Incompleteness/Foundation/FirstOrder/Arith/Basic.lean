@@ -50,7 +50,7 @@ namespace Language
 variable {L : Language} [L.ORing]
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def oringEmb : ℒₒᵣ →ᵥ L where
+@[expose] def oringEmb : ℒₒᵣ →ᵥ L where
   func := fun {k} f ↦
     match k, f with
     | _, Zero.zero => Zero.zero

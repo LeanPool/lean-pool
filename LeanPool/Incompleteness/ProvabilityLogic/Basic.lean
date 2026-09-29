@@ -28,6 +28,7 @@ variable [Semiterm.Operator.GoedelNumber L (Sentence L)]
 namespace ProvabilityLogic
 
 /-- Mapping modal prop vars to first-order sentence -/
+@[expose]
 def Realization (L) := ℕ → FirstOrder.Sentence L
 
 /-- Mapping modal formulae to first-order sentence -/

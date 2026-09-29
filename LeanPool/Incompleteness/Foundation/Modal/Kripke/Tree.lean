@@ -249,6 +249,7 @@ end Model
 
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Modal.Kripke.Model.TransitiveTreeUnravelling (M : Kripke.Model) (r : M.World) :
     Kripke.Model where
   toFrame := M.toFrame.TransitiveTreeUnravelling r

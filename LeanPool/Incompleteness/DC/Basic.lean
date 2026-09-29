@@ -45,7 +45,7 @@ namespace ProvabilityPredicate
 variable {T₀ T : Theory L}
 
 /-- Imported declaration from the Incompleteness formalization. -/
-@[coe] def pr (𝔅 : ProvabilityPredicate T₀ T) (σ : Sentence L) : Sentence L := 𝔅.prov/[⌜σ⌝]
+@[expose, coe] def pr (𝔅 : ProvabilityPredicate T₀ T) (σ : Sentence L) : Sentence L := 𝔅.prov/[⌜σ⌝]
 
 instance : CoeFun (ProvabilityPredicate T₀ T) (fun _ => Sentence L → Sentence L) := ⟨pr⟩
 

@@ -58,7 +58,7 @@ def Equality := ∀ ⦃x y⦄, x ≺ y ↔ x = y
 @[expose] def Isolated := ∀ ⦃x y⦄, ¬(x ≺ y)
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def Assymetric := ∀ ⦃x y⦄, (x ≺ y) → ¬(y ≺ x)
+@[expose] def Assymetric := ∀ ⦃x y⦄, (x ≺ y) → ¬(y ≺ x)
 
 /-- Imported declaration from the Incompleteness formalization. -/
 @[expose] def Universal := ∀ ⦃x y⦄, x ≺ y

@@ -65,10 +65,12 @@ lemma _root_.LO.Arith.Language.SemitermVec.ext {v w : L.SemitermVec k n}
     (h : v.val = w.val) : v = w := by rcases v; rcases w; simpa using h
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.bvar {n : V} (z : V) (hz : z < n := by simp) : L.Semiterm n :=
   ⟨^#z, by simp [hz]⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.fvar {n : V} (x : V) : L.Semiterm n := ⟨^&x, by simp⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
@@ -96,6 +98,7 @@ scoped prefix:max "&'" => fv
   rfl
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.Semiterm.cons {m n} (t : L.Semiterm n) (v : L.SemitermVec m n) :
     L.SemitermVec (m + 1) n := ⟨t.val ∷ v.val, by simp⟩
 
@@ -108,6 +111,7 @@ scoped infixr:67 " ∷ᵗ " => Language.Semiterm.cons
 variable (L)
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.SemitermVec.nil (n) : L.SemitermVec 0 n := ⟨0, by simp⟩
 
 variable {L}
@@ -127,6 +131,7 @@ namespace Semiterm
   ⟨L.termShift t.val, Language.IsSemiterm.termShift t.prop⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def bShift (t : L.Semiterm n) : L.Semiterm (n + 1) :=
   ⟨L.termBShift t.val, Language.IsSemiterm.termBShift t.prop⟩
 
@@ -150,10 +155,12 @@ namespace Language
 namespace SemitermVec
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def shift (v : L.SemitermVec k n) : L.SemitermVec k n :=
   ⟨L.termShiftVec k v.val, Language.IsSemitermVec.termShiftVec v.prop⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def bShift (v : L.SemitermVec k n) : L.SemitermVec k (n + 1) :=
   ⟨L.termBShiftVec k v.val, Language.IsSemitermVec.termBShiftVec v.prop⟩
 
@@ -315,12 +322,15 @@ end «lp_section_2»
 namespace Formalized
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def typedNumeral (n m : V) : ⌜ℒₒᵣ⌝.Semiterm n := ⟨numeral m, by simp⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def add {n : V} (t u : ⌜ℒₒᵣ⌝.Semiterm n) : ⌜ℒₒᵣ⌝.Semiterm n := ⟨t.val ^+ u.val, by simp [qqAdd]⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def mul {n : V} (t u : ⌜ℒₒᵣ⌝.Semiterm n) : ⌜ℒₒᵣ⌝.Semiterm n := ⟨t.val ^* u.val, by simp [qqMul]⟩
 
 instance (n : V) : Add (⌜ℒₒᵣ⌝.Semiterm n) := ⟨add⟩

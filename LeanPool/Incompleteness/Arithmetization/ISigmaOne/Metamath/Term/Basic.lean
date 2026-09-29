@@ -206,6 +206,7 @@ instance isUTermDef_definable' (Γ) : Γ-[m + 1]-Predicate L.IsUTerm :=
   L.isUTerm_definable.of_deltaOne
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.IsUTermVec (n w : V) : Prop := n = len w ∧ ∀ i < n, L.IsUTerm w.[i]
 
 variable {L}
@@ -890,6 +891,7 @@ variable (L)
 def _root_.LO.Arith.Language.IsSemiterm (n t : V) : Prop := L.IsUTerm t ∧ L.termBV t ≤ n
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.IsSemitermVec (k n v : V) : Prop :=
   L.IsUTermVec k v ∧ ∀ i < k, L.termBV v.[i] ≤ n
 

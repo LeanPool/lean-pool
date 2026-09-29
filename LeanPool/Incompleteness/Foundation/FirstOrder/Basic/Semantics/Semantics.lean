@@ -279,6 +279,7 @@ variable {M : Type w} {s : Structure L M}
 variable {n : ℕ} {e : Fin n → M} {e₂ : Fin n₂ → M} {ε : ξ → M} {ε₂ : μ₂ → M}
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def EvalAux (s : Structure L M) (ε : ξ → M) : ∀ {n}, (Fin n → M) → Semiformula L ξ n → Prop
   | _, _, ⊤        => True
   | _, _, ⊥        => False

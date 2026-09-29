@@ -76,17 +76,20 @@ def _root_.LO.Arith.Language.Semiformula.cast (p : L.Semiformula n) (eq : n = n'
   eq ▸ p
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def verums (k : V) : L.Semiformula n := ⟨qqVerums k, by simp⟩
 
 @[simp] lemma _root_.LO.Arith.Language.Semiformula.val_cast (p : L.Semiformula n) (eq : n = n') :
     (p.cast eq).val = p.val := by rcases eq; simp [Language.Semiformula.cast]
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.Semiformula.all (p : L.Semiformula (n + 1)) :
     L.Semiformula n :=
   ⟨^∀ p.val, by simp⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.Semiformula.ex (p : L.Semiformula (n + 1)) :
     L.Semiformula n :=
   ⟨^∃ p.val, by simp⟩
@@ -148,6 +151,7 @@ lemma imp_def (p q : L.Semiformula n) : p ==> q = ∼p ⋎ q := by ext; simp [im
 @[simp] lemma neg_neg (p : L.Semiformula n) : ∼∼p = p := by ext; simp [Language.IsUFormula.neg_neg]
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def shift (p : L.Semiformula n) : L.Semiformula n := ⟨L.shift p.val, p.prop.shift⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
@@ -228,12 +232,15 @@ namespace Language
 namespace SemiformulaVec
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def conj (ps : L.SemiformulaVec n) : L.Semiformula n := ⟨^⋀ ps.val, by simpa using ps.prop⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def disj (ps : L.SemiformulaVec n) : L.Semiformula n := ⟨^⋁ ps.val, by simpa using ps.prop⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def nth (ps : L.SemiformulaVec n) (i : V) (hi : i < len ps.val) : L.Semiformula n :=
   ⟨ps.val.[i], ps.prop i hi⟩
 

@@ -195,12 +195,14 @@ end «lp_section_1»
 variable (L)
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.imp (p q : V) : V := L.neg p ^⋎ q
 
 /-- Imported declaration from the Incompleteness formalization. -/
 notation:60 p:61 " ^→[" L "] " q:60 => Language.imp L p q
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.iff (p q : V) : V := (L.imp p q) ^⋏ (L.imp q p)
 
 variable {L}
@@ -526,6 +528,7 @@ open Substs
 variable (L)
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def _root_.LO.Arith.Language.substs (w p : V) : V := (construction L).result w p
 
 variable {L}

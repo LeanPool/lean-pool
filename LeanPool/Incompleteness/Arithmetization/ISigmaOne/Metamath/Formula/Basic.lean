@@ -28,6 +28,7 @@ variable {L : Arith.Language V} {pL : LDef} [Arith.Language.Defined L pL]
 @[expose] def qqRel (k r v : V) : V := ⟪0, k, r, v⟫ + 1
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def qqNRel (k r v : V) : V := ⟪1, k, r, v⟫ + 1
 
 /-- Imported declaration from the Incompleteness formalization. -/
@@ -1167,6 +1168,7 @@ lemma exists_unique_all (p : V) :
   by_cases hp : L.IsUFormula p <;> simp [hp, exists_unique]
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def result (p : V) : V := Classical.choose! (c.exists_unique_all param p)
 
 lemma result_prop {p : V} (hp : L.IsUFormula p) : c.Graph param p (c.result param p) :=

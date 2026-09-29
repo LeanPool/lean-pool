@@ -80,6 +80,7 @@ variable {T : Theory L} [T.Delta1Definable]
 variable (T V)
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def codeIn : (L.codeIn V).Theory where
   set := T.tDef.ch.val.curve
 
@@ -116,14 +117,14 @@ namespace Delta1Definable
 open Arith.HierarchySymbol.Semiformula LO.FirstOrder.Theory
 
 /-- Imported declaration from the Incompleteness formalization. -/
-@[reducible]
+@[expose, reducible]
 def add (dT : T.Delta1Definable) (dU : U.Delta1Definable) : (T + U).Delta1Definable where
   ch := T.tDef.ch ⋎ U.tDef.ch
   mem_iff {φ} := by simp
   isDelta1 := ProvablyProperOn.ofProperOn.{0} _ fun V _ _ ↦ ProperOn.or (by simp) (by simp)
 
 /-- Imported declaration from the Incompleteness formalization. -/
-@[reducible]
+@[expose, reducible]
 def ofEq (dT : T.Delta1Definable) (h : T = U) : U.Delta1Definable where
   ch := dT.ch
   mem_iff := by rcases h; exact dT.mem_iff
@@ -154,7 +155,7 @@ instance empty : Theory.Delta1Definable (∅ : Theory L) where
 
 /-! memo: This noncomputable is *not* essetial. -/
 /-- Imported declaration from the Incompleteness formalization. -/
-@[reducible]
+@[expose, reducible]
 noncomputable
 def singleton (φ : SyntacticFormula L) : Theory.Delta1Definable {φ} where
   ch := .ofZero (.mkSigma “x. x = ↑⌜φ⌝” (by simp)) _

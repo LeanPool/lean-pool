@@ -194,6 +194,7 @@ end Satisfies
 open Satisfies
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def ValidOnModel (M : Kripke.Model) (φ : Formula ℕ) := ∀ w : M.World, w ⊧ φ
 
 namespace ValidOnModel

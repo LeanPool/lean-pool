@@ -28,6 +28,7 @@ open FirstOrder FirstOrder.Arith
 variable {V : Type*} [ORingStruc V] [V ⊧ₘ* 𝐈Sg1]
 
 /-- Imported declaration from the Incompleteness formalization. -/
+@[expose]
 def Seq (s : V) : Prop := IsMapping s ∧ ∃ l, domain s = under l
 
 /-- Imported declaration from the Incompleteness formalization. -/

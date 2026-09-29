@@ -483,7 +483,7 @@ end «lp_section_9»
 section «lp_section_10»
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def IsMapping (m : V) : Prop := ∀ x ∈ domain m, ∃! y, ⟪x, y⟫ ∈ m
+@[expose] def IsMapping (m : V) : Prop := ∀ x ∈ domain m, ∃! y, ⟪x, y⟫ ∈ m
 
 section «lp_section_11»
 

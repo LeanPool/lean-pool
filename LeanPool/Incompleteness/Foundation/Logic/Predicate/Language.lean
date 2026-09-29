@@ -279,7 +279,7 @@ abbrev unit : Language := constLang PUnit
 end «lp_section_1»
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def ofFunc (F : ℕ → Type v) : Language := ⟨F, fun _ => PEmpty⟩
+@[expose] def ofFunc (F : ℕ → Type v) : Language := ⟨F, fun _ => PEmpty⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
 @[expose] def add (L₁ : Language.{u₁}) (L₂ : Language.{u₂}) : Language :=
