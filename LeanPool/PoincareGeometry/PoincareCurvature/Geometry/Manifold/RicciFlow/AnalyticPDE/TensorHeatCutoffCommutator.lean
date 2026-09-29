@@ -109,6 +109,8 @@ theorem localTensorCoordinates_smul_function
       fun z => writtenInExtChartAt I 𝓘(ℝ) chartCenter g z •
         localTensorCoordinates (I := I) chartCenter e b h z := by
   funext z out
+  change (localTensorCoordinates (I := I) chartCenter e b
+    (fun x => g x • h x)) z out = _
   simp [localTensorCoordinates, localTwoTensorComponentInChart,
     localTwoTensorComponent, writtenInExtChartAt,
     Function.comp_def, PartialEquiv.refl_coe, chartAt_self_eq]
