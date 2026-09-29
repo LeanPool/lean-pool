@@ -545,8 +545,6 @@ theorem coordinateBrokenVariationSecondCovariantField_hasDerivAt_time
   unfold coordinateBrokenVariationSecondCovariantField
     coordinateBrokenVariationSecondCovariantFieldTimeDerivative
   convert hsecond.add hP using 1
-  · funext s
-    rfl
   · abel
 
 /-- The final term in the pointwise second-variation identity is the ordinary

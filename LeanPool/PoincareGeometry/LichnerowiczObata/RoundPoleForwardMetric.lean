@@ -80,8 +80,11 @@ theorem round_pole_forward_metric
     intro v w
     change inner ℝ (mfderiv 𝓘(ℝ, P) I (N ∘ roundPoleGraph ε R) 0 v)
       (mfderiv 𝓘(ℝ, P) I (N ∘ roundPoleGraph ε R) 0 w) = _
-    rw [mfderiv_comp_apply _ hNgraph hgraphd, mfderiv_comp_apply _ hNgraph hgraphd,
-      hj, hj, hgraph0]
+    have hv := mfderiv_comp_apply (f := roundPoleGraph ε R) (g := N)
+      (0 : P) hNgraph hgraphd v
+    have hw := mfderiv_comp_apply (f := roundPoleGraph ε R) (g := N)
+      (0 : P) hNgraph hgraphd w
+    rw [hv, hw, hj, hj, hgraph0]
     rw [show (N ∘ roundPoleGraph ε R) (0 : P) = N (b : RoundAmbient P) from hχN0]
     exact hNm v w
   have hgc : Continuous g := by dsimp [g]; fun_prop

@@ -104,7 +104,8 @@ theorem exists_obata_unit_spherical_product
       rw [he] at hh
       change Φ (u, r) = (extChartAt I c).symm (e (A (r • (u : TM p))))
       have hA : A (r • (u : TM p)) = L ((r / t) • (u : TM p)) := by
-        simp [A, map_smul, smul_smul, div_eq_mul_inv, mul_comm]
+        simp only [A, smul_apply, map_smul, smul_smul, div_eq_mul_inv,
+          mul_one, mul_comm]
       rw [hA]
       exact hh
   · intro q

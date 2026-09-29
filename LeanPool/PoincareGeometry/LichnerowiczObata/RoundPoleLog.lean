@@ -86,7 +86,11 @@ theorem HasRadialPoleModel.exists_round_north_extension [CompleteSpace P]
     intro v w
     change inner ℝ (mfderiv 𝓘(ℝ, RoundAmbient P) I (χ ∘ B) (R • roundNorth) (roundAngularInclusion v))
       (mfderiv 𝓘(ℝ, RoundAmbient P) I (χ ∘ B) (R • roundNorth) (roundAngularInclusion w)) = _
-    rw [mfderiv_comp_apply _ hc hBm, mfderiv_comp_apply _ hc hBm, hBA, hBA]
+    have hv := mfderiv_comp_apply (f := B) (g := χ)
+      (R • roundNorth) hc hBm (roundAngularInclusion v)
+    have hw := mfderiv_comp_apply (f := B) (g := χ)
+      (R • roundNorth) hc hBm (roundAngularInclusion w)
+    rw [hv, hw, hBA, hBA]
     exact hm v w
   · intro u r hr
     change χ (roundPoleLog R (A (roundPolarCurve R roundNorth (roundAngularInclusion u) r))) = _
