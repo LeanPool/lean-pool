@@ -34,6 +34,7 @@ SOFTWARE.
 module
 
 public import LeanPool.FloatLibBinary.Floats.Formats.BinaryInterchange.Dyadic.Classification
+public import LeanPool.FloatLibBinary.Numerics.Exact.Dyadic.Comparison.Runtime
 
 /-!
 # Executable binary comparisons
@@ -76,12 +77,13 @@ def compareNonNaN {fmt : FloatFormat} (x y : Model fmt)
     let hyFinite :=
       isFinite_eq_true_of_isNaN_eq_false_of_isInf_eq_false y hyNaN
         (Bool.eq_false_of_not_eq_true hyInf)
-    cmpDyadic (finiteDyadic x hxFinite) (finiteDyadic y hyFinite)
+    Numerics.Dyadic.Internal.compareScalable
+      (finiteDyadic x hxFinite) (finiteDyadic y hyFinite)
 
 /--
 IEEE numerical comparison: `none` if either is NaN (unordered); otherwise `some Ordering`.
 
-Infinities are handled first by sign; finite values are compared through `cmpDyadic`.
+Infinities are handled first by sign; finite values use the exponent-scalable dyadic comparator.
 -/
 def compare {fmt : FloatFormat} (x y : Model fmt) : Option Ordering :=
   if hnan : isNaN x || isNaN y then
@@ -176,8 +178,8 @@ IEEE 754-2019 §9.6 `minimumNumber`.
 If exactly one operand is a NaN, quiet or signaling, the other operand is returned; a signaling
 NaN is not propagated. When both operands are NaNs the result is a quiet NaN chosen by
 `bothNaNNumber`. On two numbers this is `minimum`, so `minimumNumber(-0, +0) = -0`. The invalid
-signal owed to a signaling operand is reported by `minimumNumberWithStatus` in
-`Operations.Runtime`, since the value alone carries no status.
+signal owed to a signaling operand is not reported by this value-only operation. The corresponding
+upstream status-bearing wrapper is outside this imported component.
 -/
 def minimumNumber {fmt : FloatFormat} (x y : Model fmt) : Model fmt :=
   if isNaN x then
@@ -193,8 +195,8 @@ IEEE 754-2019 §9.6 `maximumNumber`.
 If exactly one operand is a NaN, quiet or signaling, the other operand is returned; a signaling
 NaN is not propagated. When both operands are NaNs the result is a quiet NaN chosen by
 `bothNaNNumber`. On two numbers this is `maximum`, so `maximumNumber(-0, +0) = +0`. The invalid
-signal owed to a signaling operand is reported by `maximumNumberWithStatus` in
-`Operations.Runtime`.
+signal owed to a signaling operand is not reported by this value-only operation. The corresponding
+upstream status-bearing wrapper is outside this imported component.
 -/
 def maximumNumber {fmt : FloatFormat} (x y : Model fmt) : Model fmt :=
   if isNaN x then

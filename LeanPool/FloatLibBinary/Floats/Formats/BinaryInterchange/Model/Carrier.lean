@@ -655,8 +655,8 @@ reserved NaN word intact, avoiding the raw-bit alias between those two encodings
 The next representable value strictly greater than `x`.
 
 A quiet NaN and the positive endpoint are fixed. A signaling NaN becomes the corresponding quiet
-NaN; since this value-only operation carries no status, the `invalid` signal IEEE 754-2019 §5.3.1
-owes to a signaling operand is reported by `nextUpWithStatus` in `Operations.Runtime`. Formats
+NaN. This value-only operation does not report the `invalid` signal owed by IEEE 754-2019 §5.3.1;
+the corresponding upstream status-bearing wrapper is outside this imported component. Formats
 without infinity saturate at their largest finite value. In an unsigned-zero encoding, the word
 immediately below the negative minimum subnormal is reserved for NaN, so that transition goes
 directly to the format's unique zero.
@@ -681,8 +681,9 @@ directly to the format's unique zero.
 The next representable value strictly less than `x`.
 
 A quiet NaN and the negative endpoint are fixed. A signaling NaN becomes the corresponding quiet
-NaN; the `invalid` signal it owes is reported by `nextDownWithStatus` in `Operations.Runtime`.
-Formats without infinity saturate at their most negative finite value.
+NaN. This value-only operation does not report the `invalid` signal; the corresponding upstream
+status-bearing wrapper is outside this imported component. Formats without infinity saturate at
+their most negative finite value.
 -/
 @[inline] def nextDown {fmt : FloatFormat} (x : Model fmt) : Model fmt :=
   if isNaN x then

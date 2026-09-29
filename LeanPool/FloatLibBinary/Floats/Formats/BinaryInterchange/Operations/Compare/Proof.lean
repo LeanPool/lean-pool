@@ -36,6 +36,7 @@ module
 public import LeanPool.FloatLibBinary.Floats.Formats.BinaryInterchange.Operations.Compare.Runtime
 public import LeanPool.FloatLibBinary.Floats.Formats.BinaryInterchange.Analysis.DyadicOrder
 public import LeanPool.FloatLibBinary.Floats.Formats.BinaryInterchange.Model.ERealSemantics
+public import LeanPool.FloatLibBinary.Numerics.Exact.Dyadic.Order
 
 /-!
 # Correctness of binary comparisons
@@ -330,7 +331,11 @@ theorem compare_eq_some_cmpDyadic_of_toDyadicOption
   have hyNaN := isNaN_eq_false_of_toDyadicOption_some hy
   have hxInf := isInf_eq_false_of_toDyadicOption_some hx
   have hyInf := isInf_eq_false_of_toDyadicOption_some hy
-  simp [compare, compareNonNaN, hxNaN, hyNaN, hxInf, hyInf, hx, hy]
+  have hcomparison (a b : Numerics.Dyadic) :
+      Numerics.Dyadic.Internal.compareScalable a b = cmpDyadic a b := by
+    rw [Numerics.Dyadic.Internal.compareScalable_eq_compare]
+    rfl
+  simp [compare, compareNonNaN, hxNaN, hyNaN, hxInf, hyInf, hx, hy, hcomparison]
 
 /-- Finite executable comparison returns `.lt` exactly when the decoded reals are ordered. -/
 theorem compare_eq_some_lt_iff_toReal_lt
