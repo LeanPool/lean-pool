@@ -826,7 +826,7 @@ private theorem exists_presentedFinitePlace_of_under_intermediate_rational :
     finitePlaceUnder_intermediate_original C S N hExact L Q]
   exact hBase
 
-omit [FiniteDimensional L N] in
+omit [FiniteDimensional L N] [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Every top finite place over a rational finite place of `L` has absolute
 degree `[S : C]` when `[N : L]` divides the constant-extension degree. -/
 theorem exactConstantExtensionFinitePlace_degree_eq_finrank_of_under_intermediate_rational
@@ -857,6 +857,7 @@ theorem exactConstantExtensionFinitePlace_degree_eq_finrank_of_under_intermediat
           (.inl (finitePlaceUnder C L (ExactConstantExtension C N S) Q)) = 1 →
         finiteExtensionPlaceDegree C (ExactConstantExtension C N S) (.inl Q) =
           Module.finrank C S := by
+  classical
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=

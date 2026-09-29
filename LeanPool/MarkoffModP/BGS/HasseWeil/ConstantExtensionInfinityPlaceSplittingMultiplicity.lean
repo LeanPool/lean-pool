@@ -275,7 +275,8 @@ private theorem exactConstantExtensionSReciprocalPolynomialAlgebra_eq :
   rw [ratFuncToExactConstantExtension_reciprocal_X C S N hExact]
 
 omit [Fintype C] [Finite S] [FiniteDimensional (RatFunc C) N]
-  [Algebra.IsSeparable (RatFunc C) N] in
+  [Algebra.IsSeparable (RatFunc C) N]
+  [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- The transported reciprocal `C[X]`-action is the actual action induced by
 the canonical embedding of `C(X)` into the exact constant extension. -/
 theorem exactConstantExtensionCReciprocalPolynomialAlgebra_eq :

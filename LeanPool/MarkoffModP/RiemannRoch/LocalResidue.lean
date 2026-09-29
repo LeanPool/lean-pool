@@ -21,6 +21,10 @@ noncomputable section
 
 open IsDedekindDomain
 
+namespace MarkoffRiemannRoch
+
+open _root_.IsDedekindDomain.HeightOneSpectrum
+
 namespace IsDedekindDomain.HeightOneSpectrum
 
 variable {R K : Type*} [CommRing R] [IsDedekindDomain R] [Field K]
@@ -108,3 +112,5 @@ theorem residueHom_apply_localizationAlgEquiv (v : HeightOneSpectrum R)
   simp [localizationAlgEquiv, residueHom_mk'_residue]
 
 end IsDedekindDomain.HeightOneSpectrum
+
+end MarkoffRiemannRoch

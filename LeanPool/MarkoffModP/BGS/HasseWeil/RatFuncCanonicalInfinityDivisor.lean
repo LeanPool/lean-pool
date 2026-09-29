@@ -113,26 +113,26 @@ theorem ratFuncIdentityInfinityPlace_degree_eq_one :
 
 /-- The chosen infinity place in the Riemann--Roch two-chart place model. -/
 noncomputable def ratFuncInfinityChartPlace :
-    FunctionField.Chart.PlaceA K (RatFunc K) :=
+    MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K) :=
   finiteExtensionPlaceEquivChart K (RatFunc K)
     (.inr (ratFuncIdentityInfinityPlace K))
 
 /-- The explicit divisor `-2∞` on `K(X)`. -/
 noncomputable def ratFuncCanonicalInfinityDivisor :
-    FunctionField.Chart.DivisorA K (RatFunc K) :=
+    MarkoffRiemannRoch.FunctionField.Chart.DivisorA K (RatFunc K) :=
   Finsupp.single (ratFuncInfinityChartPlace K) (-2)
 
 omit [Fintype K] [DecidableEq K] in
 /-- The explicit divisor `-2∞` has degree `-2`. -/
 theorem ratFuncCanonicalInfinityDivisor_degree :
-    FunctionField.Chart.deg K (RatFunc K)
+    MarkoffRiemannRoch.FunctionField.Chart.deg K (RatFunc K)
         (ratFuncCanonicalInfinityDivisor K) = -2 := by
   classical
-  rw [ratFuncCanonicalInfinityDivisor, FunctionField.Chart.deg_single]
+  rw [ratFuncCanonicalInfinityDivisor, MarkoffRiemannRoch.FunctionField.Chart.deg_single]
   have hdegree := finiteExtensionPlaceDegree_eq_chart K (RatFunc K)
     (.inr (ratFuncIdentityInfinityPlace K))
   rw [ratFuncIdentityInfinityPlace_degree_eq_one K] at hdegree
-  change (1 : ℕ) = FunctionField.Chart.placeDegree K (RatFunc K)
+  change (1 : ℕ) = MarkoffRiemannRoch.FunctionField.Chart.placeDegree K (RatFunc K)
     (ratFuncInfinityChartPlace K) at hdegree
   rw [← hdegree]
   norm_num
@@ -140,20 +140,20 @@ theorem ratFuncCanonicalInfinityDivisor_degree :
 omit [Fintype K] [DecidableEq K] in
 /-- The explicit divisor `-2∞` is canonical on `K(X)`. -/
 theorem ratFuncCanonicalInfinityDivisor_isCanonical :
-    FunctionField.Chart.IsCanonical K (RatFunc K)
+    MarkoffRiemannRoch.FunctionField.Chart.IsCanonical K (RatFunc K)
       (ratFuncCanonicalInfinityDivisor K) := by
   classical
-  rw [FunctionField.chart_isCanonical_iff_degree_ell]
+  rw [MarkoffRiemannRoch.FunctionField.chart_isCanonical_iff_degree_ell]
   constructor
   · rw [ratFuncCanonicalInfinityDivisor_degree,
-      FunctionField.Chart.genus_ratFunc]
+      MarkoffRiemannRoch.FunctionField.Chart.genus_ratFunc]
     norm_num
-  · have hnegative : FunctionField.Chart.deg K (RatFunc K)
+  · have hnegative : MarkoffRiemannRoch.FunctionField.Chart.deg K (RatFunc K)
         (ratFuncCanonicalInfinityDivisor K) < 0 := by
       rw [ratFuncCanonicalInfinityDivisor_degree]
       norm_num
-    rw [FunctionField.Chart.RRspace_neg_deg_ell K (RatFunc K) hnegative,
-      FunctionField.Chart.genus_ratFunc]
+    rw [MarkoffRiemannRoch.FunctionField.Chart.RRspace_neg_deg_ell K (RatFunc K) hnegative,
+      MarkoffRiemannRoch.FunctionField.Chart.genus_ratFunc]
 
 end
 

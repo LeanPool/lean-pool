@@ -28,6 +28,10 @@ open Polynomial BigOperators Submodule IntermediateField Ideal FunctionField
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField.Chart
 
 private theorem ramificationSum_eq_fractionField_finrank
@@ -400,5 +404,7 @@ theorem deg_polarX_le_finrank :
   exact le_of_eq heq
 
 end FunctionField.Chart
+
+end MarkoffRiemannRoch
 
 end

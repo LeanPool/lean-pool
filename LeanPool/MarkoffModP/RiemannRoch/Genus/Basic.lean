@@ -38,6 +38,10 @@ open scoped nonZeroDivisors Polynomial RatFunc WithZero
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField.Chart
 
 variable (k K : Type*) [Field k] [Field K]
@@ -349,5 +353,7 @@ theorem genus_ratFunc : genus k (RatFunc k) = 0 := by
 end RatFunc
 
 end FunctionField.Chart
+
+end MarkoffRiemannRoch
 
 end

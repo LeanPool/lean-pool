@@ -21,6 +21,10 @@ non-special divisors).
 
 open scoped nonZeroDivisors Polynomial RatFunc WithZero
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField.Chart
 
 variable (k K : Type*) [Field k] [Field K]
@@ -511,5 +515,7 @@ theorem exists_nonspecial_divisor :
   omega
 
 end FunctionField.Chart
+
+end MarkoffRiemannRoch
 
 end

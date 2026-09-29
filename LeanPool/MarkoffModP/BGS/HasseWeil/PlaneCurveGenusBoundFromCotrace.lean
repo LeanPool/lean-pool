@@ -73,7 +73,7 @@ theorem planeCurve_genus_le_bidegreeGenusBudget_of_cotrace
         hf hpartialSecond
     letI : Algebra.IsSeparable (RatFunc K) L :=
       separable_planeCurveFunctionField_over_ratFunc hf hpartialSecond
-    @FunctionField.genus K L _ _ canonicalAlg ≤
+    @MarkoffRiemannRoch.FunctionField.genus K L _ _ canonicalAlg ≤
       planeCurveBidegreeGenusBudget f := by
   classical
   have hfinite : Finite K :=
@@ -135,8 +135,8 @@ theorem planeCurve_genus_le_bidegreeGenusBudget_of_cotrace
     change @algebraicClosure K L _ _ inducedAlg = ⊥
     rw [hinducedAlg]
     exact hconstantsCanonical
-  let : FunctionField.IsFullConstantField K L :=
-    (FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot K L).2
+  let : MarkoffRiemannRoch.FunctionField.IsFullConstantField K L :=
+    (MarkoffRiemannRoch.FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot K L).2
       hconstants
   have hcardK' : MvPolynomial.degreeOf 1 f < Fintype.card K := by
     simpa only [Nat.card_eq_fintype_card] using hcardK
@@ -148,13 +148,13 @@ theorem planeCurve_genus_le_bidegreeGenusBudget_of_cotrace
     simpa only [L] using
       planeCurve_canonicalDifferentDivisor_degree_le_two_genusBudget_sub_two
         hf hpartialSecond hcardK'
-  have hgenus : FunctionField.genus K L ≤
+  have hgenus : MarkoffRiemannRoch.FunctionField.genus K L ≤
       planeCurveBidegreeGenusBudget f :=
     finiteExtension_genus_le_budget_of_cotrace
       K L (planeCurveBidegreeGenusBudget f) hdegreeLe
-  change @FunctionField.genus K L _ _ canonicalAlg ≤
+  change @MarkoffRiemannRoch.FunctionField.genus K L _ _ canonicalAlg ≤
     planeCurveBidegreeGenusBudget f
-  change @FunctionField.genus K L _ _ inducedAlg ≤
+  change @MarkoffRiemannRoch.FunctionField.genus K L _ _ inducedAlg ≤
     planeCurveBidegreeGenusBudget f at hgenus
   rw [hinducedAlg] at hgenus
   exact hgenus

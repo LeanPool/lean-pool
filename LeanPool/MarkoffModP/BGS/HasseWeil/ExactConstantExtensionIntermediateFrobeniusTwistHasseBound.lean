@@ -164,8 +164,8 @@ theorem abs_intermediateBaseRationalPlaceError_le_squareField_of_genus_exact
     (hExact : algebraicClosure C N = (⊥ : IntermediateField C N))
     (hdivL : Nat.card (N ≃ₐ[L] N) ∣ Module.finrank C S)
     (hdivBase : Nat.card (N ≃ₐ[RatFunc C] N) ∣ Module.finrank C S)
-    (hlarge : (FunctionField.genus C N + 1) *
-        (FunctionField.genus C N + 2) ≤ Fintype.card K) :
+    (hlarge : (MarkoffRiemannRoch.FunctionField.genus C N + 1) *
+        (MarkoffRiemannRoch.FunctionField.genus C N + 2) ≤ Fintype.card K) :
     |(finiteExtensionRationalPlaceCount C L : ℝ) -
         (Nat.card C : ℝ) - 1| ≤
       2 * (Module.finrank (RatFunc C) N : ℝ) ^ 2 +
@@ -173,7 +173,7 @@ theorem abs_intermediateBaseRationalPlaceError_le_squareField_of_genus_exact
           ((Nat.card (N ≃ₐ[RatFunc C] N) : ℝ) *
               Module.finrank (RatFunc C) N +
             (Nat.card (N ≃ₐ[RatFunc C] N) - 1 : ℕ) *
-              (((2 * FunctionField.genus C N + 1) * Fintype.card K +
+              (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K +
                 Module.finrank (RatFunc C) N : ℕ) : ℝ)) := by
   classical
   let : DecidableEq (N ≃ₐ[L] N) := Classical.decEq _
@@ -182,7 +182,7 @@ theorem abs_intermediateBaseRationalPlaceError_le_squareField_of_genus_exact
     (Nat.card (N ≃ₐ[RatFunc C] N) : ℝ) *
         Module.finrank (RatFunc C) N +
       (Nat.card (N ≃ₐ[RatFunc C] N) - 1 : ℕ) *
-        (((2 * FunctionField.genus C N + 1) * Fintype.card K +
+        (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K +
           Module.finrank (RatFunc C) N : ℕ) : ℝ)
   have haverage :
       |∑ g : N ≃ₐ[L] N,
@@ -245,14 +245,14 @@ theorem abs_intermediateBaseRationalPlaceError_le_squareField_of_genus
     (hExact : algebraicClosure C N = (⊥ : IntermediateField C N))
     (hdivL : Nat.card (N ≃ₐ[L] N) ∣ Module.finrank C S)
     (hdivBase : Nat.card (N ≃ₐ[RatFunc C] N) ∣ Module.finrank C S)
-    (hlarge : (FunctionField.genus C N + 1) *
-        (FunctionField.genus C N + 2) ≤ Fintype.card K) :
+    (hlarge : (MarkoffRiemannRoch.FunctionField.genus C N + 1) *
+        (MarkoffRiemannRoch.FunctionField.genus C N + 2) ≤ Fintype.card K) :
     |(finiteExtensionRationalPlaceCount C L : ℝ) -
         (Nat.card C : ℝ) - 1| ≤
       2 * (Module.finrank (RatFunc C) N : ℝ) ^ 2 +
         2 * (Module.finrank (RatFunc C) N : ℝ) ^ 3 +
         (Module.finrank (RatFunc C) N : ℝ) ^ 2 *
-          (((2 * FunctionField.genus C N + 1) * Fintype.card K : ℕ) : ℝ) := by
+          (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K : ℕ) : ℝ) := by
   classical
   have hbound :=
     abs_intermediateBaseRationalPlaceError_le_squareField_of_genus_exact
@@ -270,9 +270,9 @@ theorem abs_intermediateBaseRationalPlaceError_le_squareField_of_genus
         (Module.finrank (RatFunc C) N : ℝ) := by
     exact_mod_cast Nat.sub_le (Module.finrank (RatFunc C) N) 1
   have hsum :
-      (((2 * FunctionField.genus C N + 1) * Fintype.card K +
+      (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K +
           Module.finrank (RatFunc C) N : ℕ) : ℝ) =
-        (((2 * FunctionField.genus C N + 1) * Fintype.card K : ℕ) : ℝ) +
+        (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K : ℕ) : ℝ) +
           (Module.finrank (RatFunc C) N : ℝ) := by
     norm_num
   have hinnerNonneg :
@@ -280,24 +280,24 @@ theorem abs_intermediateBaseRationalPlaceError_le_squareField_of_genus
         (Module.finrank (RatFunc C) N : ℝ) *
             Module.finrank (RatFunc C) N +
           ((Module.finrank (RatFunc C) N - 1 : ℕ) : ℝ) *
-            (((2 * FunctionField.genus C N + 1) * Fintype.card K +
+            (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K +
               Module.finrank (RatFunc C) N : ℕ) : ℝ) := by
     positivity
   have hsumNonneg :
       0 ≤
-        (((2 * FunctionField.genus C N + 1) * Fintype.card K : ℕ) : ℝ) +
+        (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K : ℕ) : ℝ) +
           (Module.finrank (RatFunc C) N : ℝ) :=
     add_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
   have hinner :
       (Module.finrank (RatFunc C) N : ℝ) *
             Module.finrank (RatFunc C) N +
           ((Module.finrank (RatFunc C) N - 1 : ℕ) : ℝ) *
-            (((2 * FunctionField.genus C N + 1) * Fintype.card K +
+            (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K +
               Module.finrank (RatFunc C) N : ℕ) : ℝ) ≤
         (Module.finrank (RatFunc C) N : ℝ) *
             Module.finrank (RatFunc C) N +
           (Module.finrank (RatFunc C) N : ℝ) *
-            ((((2 * FunctionField.genus C N + 1) * Fintype.card K : ℕ) : ℝ) +
+            ((((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K : ℕ) : ℝ) +
               Module.finrank (RatFunc C) N) := by
     rw [hsum]
     exact add_le_add_right
@@ -307,35 +307,35 @@ theorem abs_intermediateBaseRationalPlaceError_le_squareField_of_genus
           ((Module.finrank (RatFunc C) N : ℝ) *
               Module.finrank (RatFunc C) N +
             ((Module.finrank (RatFunc C) N - 1 : ℕ) : ℝ) *
-              (((2 * FunctionField.genus C N + 1) * Fintype.card K +
+              (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K +
                 Module.finrank (RatFunc C) N : ℕ) : ℝ)) ≤
         2 * (Module.finrank (RatFunc C) N : ℝ) ^ 3 +
           (Module.finrank (RatFunc C) N : ℝ) ^ 2 *
-            (((2 * FunctionField.genus C N + 1) * Fintype.card K : ℕ) : ℝ) := by
+            (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K : ℕ) : ℝ) := by
     calc
       (Nat.card (N ≃ₐ[L] N) : ℝ) *
             ((Module.finrank (RatFunc C) N : ℝ) *
                 Module.finrank (RatFunc C) N +
               ((Module.finrank (RatFunc C) N - 1 : ℕ) : ℝ) *
-                (((2 * FunctionField.genus C N + 1) * Fintype.card K +
+                (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K +
                   Module.finrank (RatFunc C) N : ℕ) : ℝ)) ≤
           (Module.finrank (RatFunc C) N : ℝ) *
             ((Module.finrank (RatFunc C) N : ℝ) *
                 Module.finrank (RatFunc C) N +
               ((Module.finrank (RatFunc C) N - 1 : ℕ) : ℝ) *
-                (((2 * FunctionField.genus C N + 1) * Fintype.card K +
+                (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K +
                   Module.finrank (RatFunc C) N : ℕ) : ℝ)) :=
         mul_le_mul_of_nonneg_right hL hinnerNonneg
       _ ≤ (Module.finrank (RatFunc C) N : ℝ) *
             ((Module.finrank (RatFunc C) N : ℝ) *
                 Module.finrank (RatFunc C) N +
               (Module.finrank (RatFunc C) N : ℝ) *
-                ((((2 * FunctionField.genus C N + 1) * Fintype.card K : ℕ) : ℝ) +
+                ((((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K : ℕ) : ℝ) +
                   Module.finrank (RatFunc C) N)) :=
         mul_le_mul_of_nonneg_left hinner (by positivity)
       _ = 2 * (Module.finrank (RatFunc C) N : ℝ) ^ 3 +
           (Module.finrank (RatFunc C) N : ℝ) ^ 2 *
-            (((2 * FunctionField.genus C N + 1) * Fintype.card K : ℕ) : ℝ) := by
+            (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K : ℕ) : ℝ) := by
         ring
   nlinarith
 

@@ -18,6 +18,10 @@ specialty.
 
 open scoped nonZeroDivisors Polynomial RatFunc WithZero
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField.Chart
 
 variable (k K : Type*) [Field k] [Field K]
@@ -36,3 +40,5 @@ theorem riemann_roch {W : DivisorA k K} (hW : IsCanonical k K W) (D : DivisorA k
   omega
 
 end FunctionField.Chart
+
+end MarkoffRiemannRoch

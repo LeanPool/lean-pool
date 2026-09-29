@@ -31,6 +31,10 @@ open scoped nonZeroDivisors Polynomial RatFunc
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField.Chart
 
 variable (k K : Type*) [Field k] [Field K]
@@ -644,3 +648,5 @@ theorem le_iff_sub_effective {D D' : DivisorA k K} :
   simp only [Finsupp.le_def, IsEffective, Finsupp.sub_apply, sub_nonneg]
 
 end FunctionField.Chart
+
+end MarkoffRiemannRoch

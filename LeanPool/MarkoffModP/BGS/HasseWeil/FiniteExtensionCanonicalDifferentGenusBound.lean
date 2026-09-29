@@ -20,7 +20,7 @@ after transporting that divisor to the Riemann--Roch chart, it must be shown
 to be canonical.
 
 No canonicality premise is hidden in a definition.  The generic theorem
-below takes `FunctionField.Chart.IsCanonical` explicitly, while the plane
+below takes `MarkoffRiemannRoch.FunctionField.Chart.IsCanonical` explicitly, while the plane
 theorem proves the complete degree estimate available below that boundary.
 -/
 
@@ -64,9 +64,9 @@ omit [Fintype K] in
 /-- Identifying the explicit different divisor with a canonical divisor
 turns any upper bound for its degree into a genus bound. -/
 theorem finiteExtension_genus_le_budget_of_canonicalDifferent_isCanonical
-    [FunctionField.IsFullConstantField K L]
+    [MarkoffRiemannRoch.FunctionField.IsFullConstantField K L]
     (budget : ℕ)
-    (hcanonical : FunctionField.Chart.IsCanonical K L
+    (hcanonical : MarkoffRiemannRoch.FunctionField.Chart.IsCanonical K L
       (finiteExtensionDivisorEquivChart K L
         (finiteExtensionCanonicalDifferentDivisor K L
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L))))
@@ -74,21 +74,21 @@ theorem finiteExtension_genus_le_budget_of_canonicalDifferent_isCanonical
         (finiteExtensionCanonicalDifferentDivisor K L
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L)) ≤
       2 * (budget : ℤ) - 2) :
-    FunctionField.genus K L ≤ budget := by
+    MarkoffRiemannRoch.FunctionField.genus K L ≤ budget := by
   let D := finiteExtensionCanonicalDifferentDivisor K L
     (finiteExtensionFiniteDifferentIdeal_ne_bot K L)
   have hcanonicalDegree : finiteExtensionDivisorDegree K L D =
-      2 * (FunctionField.Chart.genus K L : ℤ) - 2 := by
+      2 * (MarkoffRiemannRoch.FunctionField.Chart.genus K L : ℤ) - 2 := by
     rw [finiteExtensionDivisorDegree_eq_chart]
-    exact FunctionField.Chart.deg_canonical K L hcanonical
-  have hchart : FunctionField.Chart.genus K L ≤ budget := by
+    exact MarkoffRiemannRoch.FunctionField.Chart.deg_canonical K L hcanonical
+  have hchart : MarkoffRiemannRoch.FunctionField.Chart.genus K L ≤ budget := by
     have hdegree' : finiteExtensionDivisorDegree K L D ≤
         2 * (budget : ℤ) - 2 := by
       simpa only [D] using hdegree
-    have hcast : (FunctionField.Chart.genus K L : ℤ) ≤ budget := by
+    have hcast : (MarkoffRiemannRoch.FunctionField.Chart.genus K L : ℤ) ≤ budget := by
       omega
     exact_mod_cast hcast
-  rw [FunctionField.genus_eq_genusChart K L]
+  rw [MarkoffRiemannRoch.FunctionField.genus_eq_genusChart K L]
   exact hchart
 
 end

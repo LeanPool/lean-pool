@@ -24,6 +24,10 @@ open scoped nonZeroDivisors Polynomial RatFunc WithZero
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField
 
 open Chart
@@ -283,3 +287,5 @@ theorem isCanonical_iff_chart (W : Divisor k K) :
     simpa only [hetaChart] using hdiv
 
 end FunctionField
+
+end MarkoffRiemannRoch

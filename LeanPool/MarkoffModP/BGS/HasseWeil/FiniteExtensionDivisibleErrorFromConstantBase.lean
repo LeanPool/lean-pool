@@ -144,7 +144,7 @@ theorem finiteExtensionClosedPlaceHasseBound_of_constantBase_bound
     (budget : ℕ)
     (hExact : algebraicClosure K F =
       (⊥ : IntermediateField K F))
-    (hgenus : FunctionField.genus K F ≤ budget)
+    (hgenus : MarkoffRiemannRoch.FunctionField.genus K F ≤ budget)
     (H : ℕ) (hH : 0 < H) (A B : ℝ) (hA : 0 ≤ A)
     (hbound : ∀ n, 0 < n →
       |(exactConstantExtensionClosedPlaceExtensionCount

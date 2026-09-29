@@ -119,7 +119,7 @@ theorem abs_affinePlaneCurveZeros_card_sub_card_le_eight_mul_bidegree_of_evenErr
     rw [hinducedAlg]
     exact hExactCanonical
   have hgenusActualCanonical :
-      @FunctionField.genus K L _ _ canonicalAlg ≤
+      @MarkoffRiemannRoch.FunctionField.genus K L _ _ canonicalAlg ≤
       planeCurveBidegreeGenusBudget f := by
     simpa only [L] using
       planeCurve_genus_le_bidegreeGenusBudget
@@ -134,10 +134,10 @@ theorem abs_affinePlaneCurveZeros_card_sub_card_le_eight_mul_bidegree_of_evenErr
       (Nat.sub_le_sub_right hfirstDegree 1)
       (Nat.sub_le_sub_right hsecondDegree 1)
   have hgenusCanonical :
-      @FunctionField.genus K L _ _ canonicalAlg ≤ budget :=
+      @MarkoffRiemannRoch.FunctionField.genus K L _ _ canonicalAlg ≤ budget :=
     hgenusActualCanonical.trans hbudget
-  have hgenus : FunctionField.genus K L ≤ budget := by
-    change @FunctionField.genus K L _ _ inducedAlg ≤ budget
+  have hgenus : MarkoffRiemannRoch.FunctionField.genus K L ≤ budget := by
+    change @MarkoffRiemannRoch.FunctionField.genus K L _ _ inducedAlg ≤ budget
     rw [hinducedAlg]
     exact hgenusCanonical
   have hhasse :=
@@ -254,7 +254,7 @@ theorem
     rw [hinducedAlg]
     exact hExactCanonical
   have hgenusActualCanonical :
-      @FunctionField.genus K L _ _ canonicalAlg ≤
+      @MarkoffRiemannRoch.FunctionField.genus K L _ _ canonicalAlg ≤
       planeCurveBidegreeGenusBudget f := by
     simpa only [L] using
       planeCurve_genus_le_bidegreeGenusBudget
@@ -269,10 +269,10 @@ theorem
       (Nat.sub_le_sub_right hfirstDegree 1)
       (Nat.sub_le_sub_right hsecondDegree 1)
   have hgenusCanonical :
-      @FunctionField.genus K L _ _ canonicalAlg ≤ budget :=
+      @MarkoffRiemannRoch.FunctionField.genus K L _ _ canonicalAlg ≤ budget :=
     hgenusActualCanonical.trans hbudget
-  have hgenus : FunctionField.genus K L ≤ budget := by
-    change @FunctionField.genus K L _ _ inducedAlg ≤ budget
+  have hgenus : MarkoffRiemannRoch.FunctionField.genus K L ≤ budget := by
+    change @MarkoffRiemannRoch.FunctionField.genus K L _ _ inducedAlg ≤ budget
     rw [hinducedAlg]
     exact hgenusCanonical
   have hhasse :=

@@ -35,6 +35,10 @@ open scoped nonZeroDivisors Polynomial RatFunc WithZero
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField.Chart
 
 variable (k K : Type*) [Field k] [Field K]
@@ -843,5 +847,7 @@ theorem indexOfSpecialty_eq_ell_sub {W : DivisorA k K} (hW : IsCanonical k K W) 
   exact_mod_cast (duality k K hW D).symm
 
 end FunctionField.Chart
+
+end MarkoffRiemannRoch
 
 end

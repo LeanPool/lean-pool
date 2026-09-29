@@ -23,6 +23,10 @@ open Filter
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField.Chart
 
 variable (k K : Type*) [Field k] [Field K]
@@ -243,5 +247,7 @@ theorem adeleFilt_sup_eq_add {D₁ D₂ : DivisorA k K} :
       exact (ha v).trans (WithZero.exp_le_exp.mpr le_sup_right)
 
 end FunctionField.Chart
+
+end MarkoffRiemannRoch
 
 end

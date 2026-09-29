@@ -113,7 +113,7 @@ subring of `RatFunc K`; this equivalence makes the harmless instance-level
 difference explicit. -/
 def finiteExtensionInfinityBaseRingEquiv :
     RatFuncInfinityIntegers K ≃+*
-      FunctionField.Chart.inftyValuationSubring K where
+      MarkoffRiemannRoch.FunctionField.Chart.inftyValuationSubring K where
   toFun x := ⟨x.1, by
     have hx := x.2
     unfold RatFuncInfinityIntegers at hx
@@ -125,7 +125,7 @@ def finiteExtensionInfinityBaseRingEquiv :
     exact hx⟩
   invFun x := ⟨x.1, by
     have hx := x.2
-    unfold FunctionField.Chart.inftyValuationSubring at hx
+    unfold MarkoffRiemannRoch.FunctionField.Chart.inftyValuationSubring at hx
     rw [Valuation.mem_valuationSubring_iff] at hx
     unfold RatFuncInfinityIntegers
     rw [Valuation.mem_integer_iff]
@@ -143,17 +143,17 @@ omit [Fintype K] [DecidableEq K] in
 theorem finiteExtensionInfinityBaseRingEquiv_apply_coe
     (x : RatFuncInfinityIntegers K) :
     ((finiteExtensionInfinityBaseRingEquiv K x :
-      FunctionField.Chart.inftyValuationSubring K) : RatFunc K) = x :=
+      MarkoffRiemannRoch.FunctionField.Chart.inftyValuationSubring K) : RatFunc K) = x :=
   rfl
 
 omit [Fintype K] [DecidableEq K] [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L] in
 private theorem isIntegral_infinityBase_iff (x : L) :
     IsIntegral (RatFuncInfinityIntegers K) x ↔
-      IsIntegral (FunctionField.Chart.inftyValuationSubring K) x := by
+      IsIntegral (MarkoffRiemannRoch.FunctionField.Chart.inftyValuationSubring K) x := by
   let e := finiteExtensionInfinityBaseRingEquiv K
   have hforward :
-      (algebraMap (FunctionField.Chart.inftyValuationSubring K) L).comp
+      (algebraMap (MarkoffRiemannRoch.FunctionField.Chart.inftyValuationSubring K) L).comp
           e.toRingHom =
         algebraMap (RatFuncInfinityIntegers K) L := by
     ext a
@@ -161,13 +161,13 @@ private theorem isIntegral_infinityBase_iff (x : L) :
   have hbackward :
       (algebraMap (RatFuncInfinityIntegers K) L).comp
           e.symm.toRingHom =
-        algebraMap (FunctionField.Chart.inftyValuationSubring K) L := by
+        algebraMap (MarkoffRiemannRoch.FunctionField.Chart.inftyValuationSubring K) L := by
     ext a
     rfl
   constructor
   · intro hx
     have hx' :
-        ((algebraMap (FunctionField.Chart.inftyValuationSubring K) L).comp
+        ((algebraMap (MarkoffRiemannRoch.FunctionField.Chart.inftyValuationSubring K) L).comp
           e.toRingHom).IsIntegralElem x := by
       rw [hforward]
       exact hx
@@ -183,7 +183,7 @@ private theorem isIntegral_infinityBase_iff (x : L) :
 /-- Identity-on-`L` equivalence between the two infinity integral closures. -/
 def finiteExtensionInfinityIntegralClosureRingEquiv :
     RatFuncInfinityIntegralClosure K L ≃+*
-      FunctionField.Chart.infiniteIntegers K L where
+      MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K L where
   toFun x := ⟨x.1, by exact (isIntegral_infinityBase_iff K L x.1).mp x.2⟩
   invFun x := ⟨x.1, by exact (isIntegral_infinityBase_iff K L x.1).mpr x.2⟩
   left_inv _ := rfl
@@ -197,13 +197,13 @@ omit [Fintype K] [DecidableEq K] [FiniteDimensional (RatFunc K) L]
 theorem finiteExtensionInfinityIntegralClosureRingEquiv_apply_coe
     (x : RatFuncInfinityIntegralClosure K L) :
     ((finiteExtensionInfinityIntegralClosureRingEquiv K L x :
-      FunctionField.Chart.infiniteIntegers K L) : L) = x :=
+      MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K L) : L) = x :=
   rfl
 
 /-- Constant-field-linear form of the infinity integral-closure equivalence. -/
 def finiteExtensionInfinityIntegralClosureAlgEquiv :
     RatFuncInfinityIntegralClosure K L ≃ₐ[K]
-      FunctionField.Chart.infiniteIntegers K L where
+      MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K L where
   __ := finiteExtensionInfinityIntegralClosureRingEquiv K L
   commutes' c := by
     apply Subtype.ext
@@ -236,7 +236,7 @@ def finiteExtensionInfinityPrimesOverEquivHeightOne :
 /-- Infinity places in the exhaustive BGS model and in the Riemann--Roch chart. -/
 def finiteExtensionInfinityPlaceEquivChart :
     FiniteExtensionInfinityPlace K L ≃
-      HeightOneSpectrum (FunctionField.Chart.infiniteIntegers K L) :=
+      HeightOneSpectrum (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K L) :=
   (finiteExtensionInfinityPrimesOverEquivHeightOne K L).trans
     (HeightOneSpectrum.equivOfRingEquiv
       (finiteExtensionInfinityIntegralClosureRingEquiv K L))
@@ -244,7 +244,7 @@ def finiteExtensionInfinityPlaceEquivChart :
 /-- Equivalence from the exhaustive BGS place type to the Riemann--Roch
 two-chart place type. -/
 def finiteExtensionPlaceEquivChart :
-    FiniteExtensionPlace K L ≃ FunctionField.Chart.PlaceA K L :=
+    FiniteExtensionPlace K L ≃ MarkoffRiemannRoch.FunctionField.Chart.PlaceA K L :=
   Equiv.sumCongr (Equiv.refl _)
     (finiteExtensionInfinityPlaceEquivChart K L)
 
@@ -260,13 +260,13 @@ noncomputable def finiteExtensionFiniteQuotientResidueAlgEquiv
     (Ideal.bijective_algebraMap_quotient_residueField q.asIdeal)
 
 noncomputable def finiteExtensionInfinityQuotientResidueAlgEquiv
-    (q : HeightOneSpectrum (FunctionField.Chart.infiniteIntegers K L)) :
-    (FunctionField.Chart.infiniteIntegers K L ⧸ q.asIdeal) ≃ₐ[K]
+    (q : HeightOneSpectrum (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K L)) :
+    (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K L ⧸ q.asIdeal) ≃ₐ[K]
       q.asIdeal.ResidueField := by
   letI : q.asIdeal.IsMaximal := q.isPrime.isMaximal q.ne_bot
   exact AlgEquiv.ofBijective
     (IsScalarTower.toAlgHom K
-      (FunctionField.Chart.infiniteIntegers K L ⧸ q.asIdeal)
+      (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K L ⧸ q.asIdeal)
       q.asIdeal.ResidueField)
     (Ideal.bijective_algebraMap_quotient_residueField q.asIdeal)
 
@@ -285,7 +285,7 @@ omit [Fintype K] in
 theorem finiteExtensionPlaceDegree_eq_chart
     (v : FiniteExtensionPlace K L) :
     finiteExtensionPlaceDegree K L v =
-      FunctionField.Chart.placeDegree K L
+      MarkoffRiemannRoch.FunctionField.Chart.placeDegree K L
         (finiteExtensionPlaceEquivChart K L v) := by
   rcases v with q | P
   · rw [finiteExtensionFinitePlace_degree_eq_finrank_residueField K L q]
@@ -295,7 +295,7 @@ theorem finiteExtensionPlaceDegree_eq_chart
   · rw [finiteExtensionInfinityPlace_degree_eq_finrank_residueField K L P]
     let q := finiteExtensionInfinityPlaceEquivChart K L P
     change Module.finrank K P.1.ResidueField =
-      Module.finrank K (FunctionField.Chart.infiniteIntegers K L ⧸ q.asIdeal)
+      Module.finrank K (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K L ⧸ q.asIdeal)
     exact (finiteExtensionInfinityResidueAlgEquiv K L P).toLinearEquiv.finrank_eq.trans
       (finiteExtensionInfinityQuotientResidueAlgEquiv K L q).toLinearEquiv.finrank_eq.symm
 
@@ -451,7 +451,7 @@ its corresponding Riemann--Roch chart place. -/
 theorem finiteExtensionPlaceValuation_eq_chart
     (v : FiniteExtensionPlace K L) :
     finiteExtensionPlaceValuation K L v =
-      FunctionField.Chart.placeValuation K L
+      MarkoffRiemannRoch.FunctionField.Chart.placeValuation K L
         (finiteExtensionPlaceEquivChart K L v) := by
   rcases v with q | P
   · rfl
@@ -460,7 +460,7 @@ theorem finiteExtensionPlaceValuation_eq_chart
 /-- Transport of exhaustive divisors to the two-chart Riemann--Roch model. -/
 def finiteExtensionDivisorEquivChart :
     FiniteExtensionDivisor K L ≃+
-      FunctionField.Chart.DivisorA K L :=
+      MarkoffRiemannRoch.FunctionField.Chart.DivisorA K L :=
   Finsupp.domCongr (finiteExtensionPlaceEquivChart K L)
 
 omit [Fintype K] in
@@ -468,18 +468,18 @@ omit [Fintype K] in
 theorem finiteExtensionDivisorDegree_eq_chart
     (D : FiniteExtensionDivisor K L) :
     finiteExtensionDivisorDegree K L D =
-      FunctionField.Chart.deg K L
+      MarkoffRiemannRoch.FunctionField.Chart.deg K L
         (finiteExtensionDivisorEquivChart K L D) := by
   classical
   induction D using Finsupp.induction with
   | zero =>
-      simp [finiteExtensionDivisorDegree, FunctionField.Chart.deg,
+      simp [finiteExtensionDivisorDegree, MarkoffRiemannRoch.FunctionField.Chart.deg,
         finiteExtensionDivisorEquivChart]
   | single_add v n D hv hn ih =>
       rw [map_add, finiteExtensionDivisorDegree_add,
-        FunctionField.Chart.deg_add, ih]
+        MarkoffRiemannRoch.FunctionField.Chart.deg_add, ih]
       congr 1
-      simp [finiteExtensionDivisorDegree, FunctionField.Chart.deg,
+      simp [finiteExtensionDivisorDegree, MarkoffRiemannRoch.FunctionField.Chart.deg,
         finiteExtensionDivisorEquivChart, Finsupp.domCongr_apply,
         Finsupp.equivMapDomain_single,
         finiteExtensionPlaceDegree_eq_chart]
@@ -507,12 +507,12 @@ transporting its divisor. -/
 theorem finiteExtensionRiemannSpace_eq_chart
     (D : FiniteExtensionDivisor K L) :
     finiteExtensionRiemannSpace K L D =
-      FunctionField.Chart.RRspace K L
+      MarkoffRiemannRoch.FunctionField.Chart.RRspace K L
         (finiteExtensionDivisorEquivChart K L D) := by
   classical
   ext x
   rw [mem_finiteExtensionRiemannSpace,
-    FunctionField.Chart.mem_RRspace_iff]
+    MarkoffRiemannRoch.FunctionField.Chart.mem_RRspace_iff]
   constructor
   · rintro (rfl | ⟨hx, horders⟩)
     · intro w
@@ -533,15 +533,15 @@ theorem finiteExtensionRiemannSpace_eq_chart
         finiteExtensionPlaceValuation_eq_exp_neg_principalDivisor
           K L x hx v
       have hplace : finiteExtensionPlaceValuation K L v x =
-          FunctionField.Chart.placeValuation K L
+          MarkoffRiemannRoch.FunctionField.Chart.placeValuation K L
             (finiteExtensionPlaceEquivChart K L v) x := by
         exact congrArg (fun u : Valuation L ℤᵐ⁰ => u x)
           (finiteExtensionPlaceValuation_eq_chart K L v)
       have hvw : finiteExtensionPlaceEquivChart K L v = w :=
         (finiteExtensionPlaceEquivChart K L).apply_symm_apply w
       calc
-        FunctionField.Chart.placeValuation K L w x =
-            FunctionField.Chart.placeValuation K L
+        MarkoffRiemannRoch.FunctionField.Chart.placeValuation K L w x =
+            MarkoffRiemannRoch.FunctionField.Chart.placeValuation K L
               (finiteExtensionPlaceEquivChart K L v) x := by rw [hvw]
         _ = finiteExtensionPlaceValuation K L v x := hplace.symm
         _ = WithZero.exp (-(finiteExtensionPrincipalDivisor K L x v)) :=
@@ -560,7 +560,7 @@ theorem finiteExtensionRiemannSpace_eq_chart
         finiteExtensionPlaceValuation_eq_exp_neg_principalDivisor
           K L x hx v
       have hplace : finiteExtensionPlaceValuation K L v x =
-          FunctionField.Chart.placeValuation K L
+          MarkoffRiemannRoch.FunctionField.Chart.placeValuation K L
             (finiteExtensionPlaceEquivChart K L v) x := by
         exact congrArg (fun u : Valuation L ℤᵐ⁰ => u x)
           (finiteExtensionPlaceValuation_eq_chart K L v)
@@ -571,7 +571,7 @@ theorem finiteExtensionRiemannSpace_eq_chart
           WithZero.exp (-(finiteExtensionPrincipalDivisor K L x v)) =
               finiteExtensionPlaceValuation K L v x :=
               hprincipal.symm
-          _ = FunctionField.Chart.placeValuation K L
+          _ = MarkoffRiemannRoch.FunctionField.Chart.placeValuation K L
                 (finiteExtensionPlaceEquivChart K L v) x := hplace
           _ ≤ WithZero.exp
                 ((finiteExtensionDivisorEquivChart K L D)
@@ -584,37 +584,37 @@ theorem finiteExtensionRiemannSpace_eq_chart
 /-- Riemann--Roch supplies the uniform eventual formula with genus `g` and
 threshold `2g` once the chosen finite constant field is full in `L`. -/
 theorem hasFiniteExtensionUniformEventualRiemannFormula_of_fullConstantField
-    [FunctionField.IsFullConstantField K L] :
+    [MarkoffRiemannRoch.FunctionField.IsFullConstantField K L] :
     HasFiniteExtensionUniformEventualRiemannFormula K L
-      (FunctionField.Chart.genus K L)
-      (2 * FunctionField.Chart.genus K L) := by
+      (MarkoffRiemannRoch.FunctionField.Chart.genus K L)
+      (2 * MarkoffRiemannRoch.FunctionField.Chart.genus K L) := by
   refine ⟨by omega, ?_⟩
   intro D n hn hdegree
   let Dchart := finiteExtensionDivisorEquivChart K L D
   have hspace : finiteExtensionRiemannSpace K L D =
-      FunctionField.Chart.RRspace K L Dchart :=
+      MarkoffRiemannRoch.FunctionField.Chart.RRspace K L Dchart :=
     finiteExtensionRiemannSpace_eq_chart K L D
-  have hdegreeChart : FunctionField.Chart.deg K L Dchart = (n : ℤ) := by
+  have hdegreeChart : MarkoffRiemannRoch.FunctionField.Chart.deg K L Dchart = (n : ℤ) := by
     rw [← finiteExtensionDivisorDegree_eq_chart K L D]
     exact hdegree
   constructor
   · rw [hspace]
-    exact FunctionField.Chart.finiteDimensional_RRspace K L Dchart
+    exact MarkoffRiemannRoch.FunctionField.Chart.finiteDimensional_RRspace K L Dchart
   · rw [hspace]
-    change FunctionField.Chart.ell K L Dchart =
-      n + 1 - FunctionField.Chart.genus K L
-    obtain ⟨W, hW⟩ := FunctionField.Chart.exists_isCanonical K L
-    have hnZ : (2 : ℤ) * (FunctionField.Chart.genus K L : ℤ) ≤
+    change MarkoffRiemannRoch.FunctionField.Chart.ell K L Dchart =
+      n + 1 - MarkoffRiemannRoch.FunctionField.Chart.genus K L
+    obtain ⟨W, hW⟩ := MarkoffRiemannRoch.FunctionField.Chart.exists_isCanonical K L
+    have hnZ : (2 : ℤ) * (MarkoffRiemannRoch.FunctionField.Chart.genus K L : ℤ) ≤
         (n : ℤ) := by
       exact_mod_cast hn
-    have hlarge : FunctionField.Chart.deg K L Dchart ≥
-        2 * (FunctionField.Chart.genus K L : ℤ) - 1 := by
+    have hlarge : MarkoffRiemannRoch.FunctionField.Chart.deg K L Dchart ≥
+        2 * (MarkoffRiemannRoch.FunctionField.Chart.genus K L : ℤ) - 1 := by
       rw [hdegreeChart]
       omega
-    have hRR := FunctionField.Chart.ell_eq_of_deg_ge
+    have hRR := MarkoffRiemannRoch.FunctionField.Chart.ell_eq_of_deg_ge
       K L hW Dchart hlarge
     rw [hdegreeChart] at hRR
-    have hgn : FunctionField.Chart.genus K L ≤ n := by omega
+    have hgn : MarkoffRiemannRoch.FunctionField.Chart.genus K L ≤ n := by omega
     omega
 
 /-- If the algebraic closure of the finite constant field inside `L` is
@@ -625,11 +625,11 @@ theorem exists_hasFiniteExtensionUniformEventualRiemannFormula_of_constants
     ∃ genus threshold,
       HasFiniteExtensionUniformEventualRiemannFormula
         K L genus threshold := by
-  let : FunctionField.IsFullConstantField K L :=
-    (FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot K L).2
+  let : MarkoffRiemannRoch.FunctionField.IsFullConstantField K L :=
+    (MarkoffRiemannRoch.FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot K L).2
       hconstants
-  exact ⟨FunctionField.Chart.genus K L,
-    2 * FunctionField.Chart.genus K L,
+  exact ⟨MarkoffRiemannRoch.FunctionField.Chart.genus K L,
+    2 * MarkoffRiemannRoch.FunctionField.Chart.genus K L,
     hasFiniteExtensionUniformEventualRiemannFormula_of_fullConstantField K L⟩
 
 end

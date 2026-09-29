@@ -56,33 +56,33 @@ local instance genusRiemannConstantPolynomialTower :
 for every one-point Riemann space in the exhaustive finite/infinity place
 model. -/
 theorem finiteExtension_onePoint_riemann_lower_of_genus
-    [FunctionField.IsFullConstantField K L]
+    [MarkoffRiemannRoch.FunctionField.IsFullConstantField K L]
     (P : FiniteExtensionPlace K L) (N : Nat) :
     N * finiteExtensionPlaceDegree K L P + 1 ≤
       Module.finrank K (finiteExtensionOnePointRiemannSpace K L P N) +
-        FunctionField.genus K L := by
+        MarkoffRiemannRoch.FunctionField.genus K L := by
   let D : FiniteExtensionDivisor K L := Finsupp.single P (N : Int)
   let Dchart := finiteExtensionDivisorEquivChart K L D
-  have hRR := FunctionField.Chart.riemann_ineq K L Dchart
-  have hdegree : FunctionField.Chart.deg K L Dchart =
+  have hRR := MarkoffRiemannRoch.FunctionField.Chart.riemann_ineq K L Dchart
+  have hdegree : MarkoffRiemannRoch.FunctionField.Chart.deg K L Dchart =
       (N * finiteExtensionPlaceDegree K L P : Nat) := by
     rw [← finiteExtensionDivisorDegree_eq_chart K L D]
     dsimp only [D]
     rw [finiteExtensionDivisorDegree_single]
     norm_num
-  have hspace : FunctionField.Chart.RRspace K L Dchart =
+  have hspace : MarkoffRiemannRoch.FunctionField.Chart.RRspace K L Dchart =
       finiteExtensionOnePointRiemannSpace K L P N := by
     rw [← finiteExtensionRiemannSpace_eq_chart K L D]
     rfl
-  rw [FunctionField.Chart.ell, hspace, hdegree,
-    ← FunctionField.genus_eq_genusChart K L] at hRR
+  rw [MarkoffRiemannRoch.FunctionField.Chart.ell, hspace, hdegree,
+    ← MarkoffRiemannRoch.FunctionField.genus_eq_genusChart K L] at hRR
   change ((Module.finrank K
       (finiteExtensionOnePointRiemannSpace K L P N) : Nat) : Int) ≥
     ((N * finiteExtensionPlaceDegree K L P : Nat) : Int) + 1 -
-      (FunctionField.genus K L : Int) at hRR
+      (MarkoffRiemannRoch.FunctionField.genus K L : Int) at hRR
   exact_mod_cast (show N * finiteExtensionPlaceDegree K L P + 1 ≤
       Module.finrank K (finiteExtensionOnePointRiemannSpace K L P N) +
-        FunctionField.genus K L by omega)
+        MarkoffRiemannRoch.FunctionField.genus K L by omega)
 
 end
 

@@ -64,7 +64,7 @@ theorem exists_finiteExtensionClosedPlaceZeta_rational_with_genus_degree_bound_o
     ∃ P : Polynomial ℂ,
       P.coeff 0 = 1 ∧
         P.eval 1 ≠ 0 ∧
-        P.natDegree < 2 * FunctionField.genus C N + 2 ∧
+        P.natDegree < 2 * MarkoffRiemannRoch.FunctionField.genus C N + 2 ∧
         HasCurveZetaRationalForm
           (formalPointCountZeta
             (finiteExtensionClosedPlaceExtensionCount C N))
@@ -80,7 +80,7 @@ theorem exists_finiteExtensionClosedPlaceZeta_trace_with_degree_budget_of_exactC
     (budget : ℕ)
     (hExact : algebraicClosure C N =
       (⊥ : IntermediateField C N))
-    (hgenus : FunctionField.genus C N ≤ budget) :
+    (hgenus : MarkoffRiemannRoch.FunctionField.genus C N ≤ budget) :
     ∃ P : Polynomial ℂ,
       P.coeff 0 = 1 ∧
         P.eval 1 ≠ 0 ∧

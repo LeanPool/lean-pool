@@ -29,6 +29,10 @@ open scoped nonZeroDivisors Polynomial RatFunc WithZero
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField
 
 open Chart
@@ -219,3 +223,5 @@ theorem deg_principal_eq_zero (x : Kˣ) :
 end Divisor
 
 end FunctionField
+
+end MarkoffRiemannRoch

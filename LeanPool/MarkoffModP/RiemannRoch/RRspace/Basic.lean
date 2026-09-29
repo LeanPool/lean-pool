@@ -28,6 +28,10 @@ open scoped nonZeroDivisors Polynomial RatFunc WithZero
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField.Chart
 
 lemma exp_neg_mul_lt_one_iff_le (x : ℤᵐ⁰) (n : ℤ) :
@@ -940,3 +944,5 @@ theorem defect_mono {D D' : DivisorA k K} (h : D ≤ D') :
   omega
 
 end FunctionField.Chart
+
+end MarkoffRiemannRoch

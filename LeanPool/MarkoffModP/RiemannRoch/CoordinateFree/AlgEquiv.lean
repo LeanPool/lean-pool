@@ -23,6 +23,10 @@ open scoped WithZero
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField
 
 open MonoidWithZeroHom
@@ -288,3 +292,5 @@ theorem genus_eq_of_algEquiv (e : K ≃ₐ[k] L) :
   rw [hsets]
 
 end FunctionField
+
+end MarkoffRiemannRoch

@@ -40,6 +40,13 @@ open scoped nonZeroDivisors Polynomial RatFunc WithZero
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FractionalIdeal
+open _root_.RatFunc
+open _root_.FunctionField
+open MarkoffRiemannRoch.IsDedekindDomain
+
 namespace FractionalIdeal
 
 variable {R K : Type*} [CommRing R] [IsDedekindDomain R] [Field K]
@@ -593,8 +600,8 @@ theorem placeValuation_algebraMap_eq_one (v : PlaceA k K) (c : kˣ) :
   have hc_le := placeValuation_algebraMap_le_one k K v (c : k)
   have hc_inv_le := placeValuation_algebraMap_le_one k K v ((c⁻¹ : kˣ) : k)
   have hmap_ne : placeValuation k K v (algebraMap k K (c : k)) ≠ 0 := by
-    rw [map_ne_zero]
-    exact (map_ne_zero (algebraMap k K)).2 c.ne_zero
+    rw [_root_.map_ne_zero]
+    exact (_root_.map_ne_zero (algebraMap k K)).2 c.ne_zero
   have hmap_pos : 0 < placeValuation k K v (algebraMap k K (c : k)) :=
     WithZero.pos_iff_ne_zero.2 hmap_ne
   have hinv_le : (placeValuation k K v (algebraMap k K (c : k)))⁻¹ ≤ 1 := by
@@ -624,3 +631,5 @@ end ConstantField
 end Chart
 
 end FunctionField
+
+end MarkoffRiemannRoch

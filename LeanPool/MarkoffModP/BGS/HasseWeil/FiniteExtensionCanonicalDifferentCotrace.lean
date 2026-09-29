@@ -60,34 +60,34 @@ theorem ratFuncFiniteBaseRingEquivChart_algebraMap
 inside `K(X)` are canonically equivalent. -/
 def ratFuncInfinityBaseRingEquivChart :
     RatFuncInfinityIntegers K ≃+*
-      FunctionField.Chart.infiniteIntegers K (RatFunc K) :=
+      MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K (RatFunc K) :=
   (finiteExtensionInfinityBaseRingEquiv K).trans
     (IsIntegralClosure.equiv
-      (FunctionField.Chart.inftyValuationSubring K)
-      (FunctionField.Chart.inftyValuationSubring K) (RatFunc K)
-      (FunctionField.Chart.infiniteIntegers K (RatFunc K))).toRingEquiv
+      (MarkoffRiemannRoch.FunctionField.Chart.inftyValuationSubring K)
+      (MarkoffRiemannRoch.FunctionField.Chart.inftyValuationSubring K) (RatFunc K)
+      (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K (RatFunc K))).toRingEquiv
 
 omit [Fintype K] [DecidableEq K] in
 @[simp]
 theorem ratFuncInfinityBaseRingEquivChart_algebraMap
     (r : RatFuncInfinityIntegers K) :
-    algebraMap (FunctionField.Chart.infiniteIntegers K (RatFunc K))
+    algebraMap (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K (RatFunc K))
         (RatFunc K) (ratFuncInfinityBaseRingEquivChart K r) =
       algebraMap (RatFuncInfinityIntegers K) (RatFunc K) r := by
   calc
-    _ = algebraMap (FunctionField.Chart.inftyValuationSubring K)
+    _ = algebraMap (MarkoffRiemannRoch.FunctionField.Chart.inftyValuationSubring K)
         (RatFunc K) (finiteExtensionInfinityBaseRingEquiv K r) :=
       IsIntegralClosure.algebraMap_equiv
-        (FunctionField.Chart.inftyValuationSubring K)
-        (FunctionField.Chart.inftyValuationSubring K) (RatFunc K)
-        (FunctionField.Chart.infiniteIntegers K (RatFunc K))
+        (MarkoffRiemannRoch.FunctionField.Chart.inftyValuationSubring K)
+        (MarkoffRiemannRoch.FunctionField.Chart.inftyValuationSubring K) (RatFunc K)
+        (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K (RatFunc K))
         (finiteExtensionInfinityBaseRingEquiv K r)
     _ = (r : RatFunc K) := rfl
     _ = algebraMap (RatFuncInfinityIntegers K) (RatFunc K) r := rfl
 
 /-- Reindex the exhaustive BGS rational-function places as chart places. -/
 def ratFuncExhaustivePlaceEquivChart :
-    RatFuncExhaustivePlace K ≃ FunctionField.Chart.PlaceA K (RatFunc K) :=
+    RatFuncExhaustivePlace K ≃ MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K) :=
   Equiv.sumCongr
     (HeightOneSpectrum.equivOfRingEquiv
       (ratFuncFiniteBaseRingEquivChart K))
@@ -343,7 +343,7 @@ theorem zero_le_count_spanSingleton_of_valuation_le_one
     (hval : q.valuation F x ≤ 1) :
     0 ≤ FractionalIdeal.count F q
       (FractionalIdeal.spanSingleton R⁰ x) := by
-  have hvaluation := FractionalIdeal.valuation_eq_exp_neg_count
+  have hvaluation := MarkoffRiemannRoch.FractionalIdeal.valuation_eq_exp_neg_count
     q (Units.mk0 x hx)
   have hval' : q.valuation F (↑(Units.mk0 x hx) : F) ≤ 1 := by
     simpa using hval
@@ -452,8 +452,8 @@ theorem finiteExtensionUnderPlace_tendstoCofinite :
 
 /-- The place below a top chart place, expressed in the base chart. -/
 def finiteExtensionUnderPlaceChart
-    (q : FunctionField.Chart.PlaceA K L) :
-    FunctionField.Chart.PlaceA K (RatFunc K) :=
+    (q : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K L) :
+    MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K) :=
   ratFuncExhaustivePlaceEquivChart K
     (finiteExtensionUnderPlace K L
       ((finiteExtensionPlaceEquivChart K L).symm q))
@@ -486,10 +486,10 @@ omit [Fintype K] [DecidableEq K] in
 /-- A base element integral at a chart place remains integral at every
 upstairs chart place above it. -/
 theorem finiteExtension_placeValuation_algebraMap_le_one
-    (q : FunctionField.Chart.PlaceA K L) {x : RatFunc K}
-    (hx : FunctionField.Chart.placeValuation K (RatFunc K)
+    (q : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K L) {x : RatFunc K}
+    (hx : MarkoffRiemannRoch.FunctionField.Chart.placeValuation K (RatFunc K)
       (finiteExtensionUnderPlaceChart K L q) x ≤ 1) :
-    FunctionField.Chart.placeValuation K L q
+    MarkoffRiemannRoch.FunctionField.Chart.placeValuation K L q
       (algebraMap (RatFunc K) L x) ≤ 1 := by
   let P := (finiteExtensionPlaceEquivChart K L).symm q
   have hP : finiteExtensionPlaceEquivChart K L P = q :=
@@ -550,21 +550,21 @@ theorem finiteExtension_placeValuation_algebraMap_le_one
 
 /-- A chosen place of `L` above each rational-function chart place. -/
 def finiteExtensionPlaceSectionChart
-    (p : FunctionField.Chart.PlaceA K (RatFunc K)) :
-    FunctionField.Chart.PlaceA K L :=
+    (p : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K)) :
+    MarkoffRiemannRoch.FunctionField.Chart.PlaceA K L :=
   Classical.choose (finiteExtensionUnderPlaceChart_surjective K L p)
 
 omit [Fintype K] [DecidableEq K] in
 @[simp]
 theorem finiteExtensionUnderPlaceChart_section
-    (p : FunctionField.Chart.PlaceA K (RatFunc K)) :
+    (p : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K)) :
     finiteExtensionUnderPlaceChart K L
       (finiteExtensionPlaceSectionChart K L p) = p :=
   Classical.choose_spec (finiteExtensionUnderPlaceChart_surjective K L p)
 
 /-- Adeles whose components are constant on every fiber over a base place. -/
 def finiteExtensionFiberConstantAdeleSubmodule :
-    Submodule K (FunctionField.Chart.AdeleSpace K L) where
+    Submodule K (MarkoffRiemannRoch.FunctionField.Chart.AdeleSpace K L) where
   carrier := {a | ∀ q r,
     finiteExtensionUnderPlaceChart K L q =
       finiteExtensionUnderPlaceChart K L r → a.1 q = a.1 r}
@@ -581,7 +581,7 @@ omit [Fintype K] [DecidableEq K] in
 every upstairs place. -/
 theorem fiberConstant_component_eq_section
     (a : finiteExtensionFiberConstantAdeleSubmodule K L)
-    (q : FunctionField.Chart.PlaceA K L) :
+    (q : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K L) :
     a.1.1 q = a.1.1 (finiteExtensionPlaceSectionChart K L
       (finiteExtensionUnderPlaceChart K L q)) := by
   apply a.2
@@ -591,7 +591,7 @@ theorem fiberConstant_component_eq_section
 the resulting tuple is a rational-function adele. -/
 def finiteExtensionFiberTraceRaw :
     finiteExtensionFiberConstantAdeleSubmodule K L →ₗ[K]
-      (FunctionField.Chart.PlaceA K (RatFunc K) → RatFunc K) where
+      (MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K) → RatFunc K) where
   toFun a p := Algebra.trace (RatFunc K) L
     (a.1.1 (finiteExtensionPlaceSectionChart K L p))
   map_add' a b := by
@@ -610,23 +610,23 @@ def finiteExtensionFiberTraceRaw :
 
 /-- Top chart places at which a given adele is not integral. -/
 def finiteExtensionAdeleExceptionalSet
-    (a : FunctionField.Chart.AdeleSpace K L) :
-    Set (FunctionField.Chart.PlaceA K L) :=
-  {q | a.1 q ∉ FunctionField.Chart.placeValuationSubring K L q}
+    (a : MarkoffRiemannRoch.FunctionField.Chart.AdeleSpace K L) :
+    Set (MarkoffRiemannRoch.FunctionField.Chart.PlaceA K L) :=
+  {q | a.1 q ∉ MarkoffRiemannRoch.FunctionField.Chart.placeValuationSubring K L q}
 
 omit [Fintype K] [DecidableEq K] [DecidableEq (RatFunc K)] in
 theorem finiteExtensionAdeleExceptionalSet_finite
-    (a : FunctionField.Chart.AdeleSpace K L) :
+    (a : MarkoffRiemannRoch.FunctionField.Chart.AdeleSpace K L) :
     (finiteExtensionAdeleExceptionalSet K L a).Finite := by
   have ha := a.2
-  change ∀ᶠ q : FunctionField.Chart.PlaceA K L in Filter.cofinite,
-    a.1 q ∈ FunctionField.Chart.placeValuationSubring K L q at ha
+  change ∀ᶠ q : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K L in Filter.cofinite,
+    a.1 q ∈ MarkoffRiemannRoch.FunctionField.Chart.placeValuationSubring K L q at ha
   simpa only [Filter.eventually_cofinite,
     finiteExtensionAdeleExceptionalSet] using ha
 
 /-- Finite chart places in the support of the finite different. -/
 def finiteExtensionDifferentExceptionalSet :
-    Set (FunctionField.Chart.PlaceA K L) :=
+    Set (MarkoffRiemannRoch.FunctionField.Chart.PlaceA K L) :=
   finiteExtensionPlaceEquivChart K L ''
     (Sum.inl '' {q : FiniteExtensionFinitePlace K L |
       multiplicity q.asIdeal
@@ -667,14 +667,14 @@ theorem finiteExtensionDifferentExceptionalSet_finite :
 /-- The unique base infinity chart place, expressed through the exhaustive
 place equivalence. -/
 def ratFuncInfinityPlaceChart :
-    FunctionField.Chart.PlaceA K (RatFunc K) :=
+    MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K) :=
   ratFuncExhaustivePlaceEquivChart K (.inr (ratFuncInfinityPlace K))
 
 /-- The finite exceptional set outside which the componentwise trace is
 integral. -/
 def finiteExtensionCotraceBadBaseSet
-    (a : FunctionField.Chart.AdeleSpace K L) :
-    Set (FunctionField.Chart.PlaceA K (RatFunc K)) :=
+    (a : MarkoffRiemannRoch.FunctionField.Chart.AdeleSpace K L) :
+    Set (MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K)) :=
   finiteExtensionUnderPlaceChart K L ''
       (finiteExtensionAdeleExceptionalSet K L a ∪
         finiteExtensionDifferentExceptionalSet K L) ∪
@@ -682,7 +682,7 @@ def finiteExtensionCotraceBadBaseSet
 
 omit [Fintype K] [DecidableEq K] in
 theorem finiteExtensionCotraceBadBaseSet_finite
-    (a : FunctionField.Chart.AdeleSpace K L) :
+    (a : MarkoffRiemannRoch.FunctionField.Chart.AdeleSpace K L) :
     (finiteExtensionCotraceBadBaseSet K L a).Finite := by
   apply Set.Finite.union
   · exact ((finiteExtensionAdeleExceptionalSet_finite K L a).union
@@ -695,8 +695,8 @@ omit [Fintype K] [DecidableEq K] in
 place transported from the BGS infinity valuation ring. -/
 theorem ratFunc_infinite_chart_place_eq
     (p : HeightOneSpectrum
-      (FunctionField.Chart.infiniteIntegers K (RatFunc K))) :
-    (Sum.inr p : FunctionField.Chart.PlaceA K (RatFunc K)) =
+      (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K (RatFunc K))) :
+    (Sum.inr p : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K)) =
       ratFuncInfinityPlaceChart K := by
   let e := HeightOneSpectrum.equivOfRingEquiv
     (ratFuncInfinityBaseRingEquivChart K)
@@ -717,23 +717,23 @@ omit [Fintype K] in
 is integral at the base chart place. -/
 theorem finiteExtensionFiberTraceRaw_mem_placeValuationSubring_of_not_bad
     (a : finiteExtensionFiberConstantAdeleSubmodule K L)
-    (p : FunctionField.Chart.PlaceA K (RatFunc K))
+    (p : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K))
     (hp : p ∉ finiteExtensionCotraceBadBaseSet K L a.1) :
     finiteExtensionFiberTraceRaw K L a p ∈
-      FunctionField.Chart.placeValuationSubring K (RatFunc K) p := by
+      MarkoffRiemannRoch.FunctionField.Chart.placeValuationSubring K (RatFunc K) p := by
   classical
   rcases p with p | p
   · let e := HeightOneSpectrum.equivOfRingEquiv
       (ratFuncFiniteBaseRingEquivChart K)
     let p₀ : HeightOneSpectrum K[X] := e.symm p
     let q₀ := finiteExtensionPlaceSectionChart K L
-      (Sum.inl p : FunctionField.Chart.PlaceA K (RatFunc K))
+      (Sum.inl p : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K))
     let y : L := a.1.1 q₀
     by_cases hy : y = 0
     · change Algebra.trace (RatFunc K) L y ∈ _
       rw [hy, map_zero]
       exact zero_mem _
-    have hnotTop (q : FunctionField.Chart.PlaceA K L)
+    have hnotTop (q : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K L)
         (hq : finiteExtensionUnderPlaceChart K L q = Sum.inl p) :
         q ∉ finiteExtensionAdeleExceptionalSet K L a.1 ∪
           finiteExtensionDifferentExceptionalSet K L := by
@@ -751,7 +751,7 @@ theorem finiteExtensionFiberTraceRaw_mem_placeValuationSubring_of_not_bad
               (FractionalIdeal.spanSingleton
                 (RatFuncFiniteIntegralClosure K L)⁰ y) := by
       intro q hqUnder
-      let qChart : FunctionField.Chart.PlaceA K L :=
+      let qChart : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K L :=
         finiteExtensionPlaceEquivChart K L (.inl q)
       have hpImage : e p₀ = p := e.apply_symm_apply p
       have hqBelow : finiteExtensionUnderPlaceChart K L qChart =
@@ -773,15 +773,15 @@ theorem finiteExtensionFiberTraceRaw_mem_placeValuationSubring_of_not_bad
         rw [hqBelow] at hcomponent
         exact hcomponent
       have hqMem : a.1.1 qChart ∈
-          FunctionField.Chart.placeValuationSubring K L qChart := by
+          MarkoffRiemannRoch.FunctionField.Chart.placeValuationSubring K L qChart := by
         exact Classical.not_not.mp hqAdele
-      have hqValChart : FunctionField.Chart.placeValuation K L qChart
+      have hqValChart : MarkoffRiemannRoch.FunctionField.Chart.placeValuation K L qChart
           (a.1.1 qChart) ≤ 1 := by
         rwa [← Valuation.mem_valuationSubring_iff]
       have hqVal : q.valuation L y ≤ 1 := by
         rw [← hyEq]
         simpa [qChart, finiteExtensionPlaceEquivChart,
-          FunctionField.Chart.placeValuation] using hqValChart
+          MarkoffRiemannRoch.FunctionField.Chart.placeValuation] using hqValChart
       have hqCount : 0 ≤ FractionalIdeal.count L q
           (FractionalIdeal.spanSingleton
             (RatFuncFiniteIntegralClosure K L)⁰ y) :=
@@ -819,12 +819,12 @@ theorem finiteExtensionFiberTraceRaw_mem_placeValuationSubring_of_not_bad
 /-- Componentwise field trace as an actual rational-function adele. -/
 def finiteExtensionFiberTrace :
     finiteExtensionFiberConstantAdeleSubmodule K L →ₗ[K]
-      FunctionField.Chart.AdeleSpace K (RatFunc K) where
+      MarkoffRiemannRoch.FunctionField.Chart.AdeleSpace K (RatFunc K) where
   toFun a := ⟨finiteExtensionFiberTraceRaw K L a, by
-    change ∀ᶠ p : FunctionField.Chart.PlaceA K (RatFunc K) in
+    change ∀ᶠ p : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K) in
       Filter.cofinite,
         finiteExtensionFiberTraceRaw K L a p ∈
-          FunctionField.Chart.placeValuationSubring K (RatFunc K) p
+          MarkoffRiemannRoch.FunctionField.Chart.placeValuationSubring K (RatFunc K) p
     rw [Filter.eventually_cofinite]
     refine (finiteExtensionCotraceBadBaseSet_finite K L a.1).subset ?_
     intro p hp
@@ -841,17 +841,17 @@ def finiteExtensionFiberTrace :
 /-- Lift a base adele to a fiber-constant upstairs adele after multiplying by
 a fixed extension-field element. -/
 def finiteExtensionFiberLift (z : L)
-    (b : FunctionField.Chart.AdeleSpace K (RatFunc K)) :
+    (b : MarkoffRiemannRoch.FunctionField.Chart.AdeleSpace K (RatFunc K)) :
     finiteExtensionFiberConstantAdeleSubmodule K L := by
   letI : Filter.TendstoCofinite (finiteExtensionUnderPlaceChart K L) :=
     finiteExtensionUnderPlaceChart_tendstoCofinite K L
-  let a : FunctionField.Chart.AdeleSpace K L :=
+  let a : MarkoffRiemannRoch.FunctionField.Chart.AdeleSpace K L :=
     ⟨fun q => z * algebraMap (RatFunc K) L
         (b.1 (finiteExtensionUnderPlaceChart K L q)), by
-      have hz := FunctionField.Chart.eventually_mem_placeValuationSubring K L z
-      have hb : ∀ᶠ q : FunctionField.Chart.PlaceA K L in Filter.cofinite,
+      have hz := MarkoffRiemannRoch.FunctionField.Chart.eventually_mem_placeValuationSubring K L z
+      have hb : ∀ᶠ q : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K L in Filter.cofinite,
           b.1 (finiteExtensionUnderPlaceChart K L q) ∈
-            FunctionField.Chart.placeValuationSubring K (RatFunc K)
+            MarkoffRiemannRoch.FunctionField.Chart.placeValuationSubring K (RatFunc K)
               (finiteExtensionUnderPlaceChart K L q) :=
         Filter.TendstoCofinite.tendsto_cofinite
           (finiteExtensionUnderPlaceChart K L) b.2
@@ -869,7 +869,7 @@ def finiteExtensionFiberLift (z : L)
 omit [DecidableEq K] [Fintype K] in
 /-- Cotrace of the lifted adele is scalar multiplication by `Tr(z)`. -/
 theorem finiteExtensionFiberTrace_lift (z : L)
-    (b : FunctionField.Chart.AdeleSpace K (RatFunc K)) :
+    (b : MarkoffRiemannRoch.FunctionField.Chart.AdeleSpace K (RatFunc K)) :
     finiteExtensionFiberTrace K L (finiteExtensionFiberLift K L z b) =
       (Algebra.trace (RatFunc K) L z) • b := by
   apply Subtype.ext
@@ -901,7 +901,7 @@ omit [DecidableEq K] [Fintype K] in
 adele in the explicit different filtration is integral. -/
 theorem finiteExtensionFiberTrace_finite_valuation_le_one
     (a : finiteExtensionFiberConstantAdeleSubmodule K L)
-    (ha : a.1 ∈ FunctionField.Chart.adeleFilt K L
+    (ha : a.1 ∈ MarkoffRiemannRoch.FunctionField.Chart.adeleFilt K L
       (finiteExtensionDivisorEquivChart K L
         (finiteExtensionCanonicalDifferentDivisor K L
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L))))
@@ -913,7 +913,7 @@ theorem finiteExtensionFiberTrace_finite_valuation_le_one
     (ratFuncFiniteBaseRingEquivChart K)
   let p₀ : HeightOneSpectrum K[X] := e.symm p
   let q₀ := finiteExtensionPlaceSectionChart K L
-    (Sum.inl p : FunctionField.Chart.PlaceA K (RatFunc K))
+    (Sum.inl p : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K))
   let y : L := a.1.1 q₀
   by_cases hy : y = 0
   · change p.valuation (RatFunc K) (Algebra.trace (RatFunc K) L y) ≤ 1
@@ -929,7 +929,7 @@ theorem finiteExtensionFiberTrace_finite_valuation_le_one
             (FractionalIdeal.spanSingleton
               (RatFuncFiniteIntegralClosure K L)⁰ y) := by
     intro q hqUnder
-    let qChart : FunctionField.Chart.PlaceA K L :=
+    let qChart : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K L :=
       finiteExtensionPlaceEquivChart K L (.inl q)
     have hpImage : e p₀ = p := e.apply_symm_apply p
     have hqBelow : finiteExtensionUnderPlaceChart K L qChart =
@@ -951,7 +951,7 @@ theorem finiteExtensionFiberTrace_finite_valuation_le_one
               (RatFuncFiniteIntegralClosure K L)) : ℤ) := by
       rw [← hyEq]
       simpa [qChart, finiteExtensionPlaceEquivChart,
-        FunctionField.Chart.placeValuation,
+        MarkoffRiemannRoch.FunctionField.Chart.placeValuation,
         finiteExtensionDivisorEquivChart, Finsupp.domCongr_apply,
         finiteExtensionCanonicalDifferentDivisor_inl] using hqFilter
     have hqValuation := valuation_eq_exp_neg_finitePlaceOrder q y hy
@@ -987,12 +987,12 @@ omit [DecidableEq K] [Fintype K] in
 adele in the explicit different filtration has order at least two. -/
 theorem finiteExtensionFiberTrace_infinite_valuation_le_exp_neg_two
     (a : finiteExtensionFiberConstantAdeleSubmodule K L)
-    (ha : a.1 ∈ FunctionField.Chart.adeleFilt K L
+    (ha : a.1 ∈ MarkoffRiemannRoch.FunctionField.Chart.adeleFilt K L
       (finiteExtensionDivisorEquivChart K L
         (finiteExtensionCanonicalDifferentDivisor K L
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L))))
     (p : HeightOneSpectrum
-      (FunctionField.Chart.infiniteIntegers K (RatFunc K))) :
+      (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K (RatFunc K))) :
     p.valuation (RatFunc K)
       ((finiteExtensionFiberTrace K L a).1 (.inr p)) ≤
         WithZero.exp (-2 : ℤ) := by
@@ -1006,7 +1006,7 @@ theorem finiteExtensionFiberTrace_infinite_valuation_le_exp_neg_two
         ratFunc_infinite_chart_place_eq K p
       _ = Sum.inr pChart := rfl
   let q₀ := finiteExtensionPlaceSectionChart K L
-    (Sum.inr p : FunctionField.Chart.PlaceA K (RatFunc K))
+    (Sum.inr p : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K))
   let y : L := a.1.1 q₀
   by_cases hy : y = 0
   · change p.valuation (RatFunc K) (Algebra.trace (RatFunc K) L y) ≤ _
@@ -1042,7 +1042,7 @@ theorem finiteExtensionFiberTrace_infinite_valuation_le_exp_neg_two
       (finiteExtensionInfinityPrimesOverEquivHeightOne K L).symm q
     have hPq : primeOverHeightOne (ratFuncInfinityPlace K) P = q :=
       (finiteExtensionInfinityPrimesOverEquivHeightOne K L).apply_symm_apply q
-    let qChart : FunctionField.Chart.PlaceA K L :=
+    let qChart : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K L :=
       finiteExtensionPlaceEquivChart K L (.inr P)
     have hqBelow : finiteExtensionUnderPlaceChart K L qChart =
         Sum.inr p := by
@@ -1070,7 +1070,7 @@ theorem finiteExtensionFiberTrace_infinite_valuation_le_exp_neg_two
     rw [hcoeff] at hqFilter
     have hvaluationEq :
         (primeOverHeightOne (ratFuncInfinityPlace K) P).valuation L y =
-          FunctionField.Chart.placeValuation K L qChart y := by
+          MarkoffRiemannRoch.FunctionField.Chart.placeValuation K L qChart y := by
       simpa only [finiteExtensionPlaceValuation, qChart] using
         congrArg (fun v : Valuation L ℤᵐ⁰ => v y)
           (finiteExtensionPlaceValuation_eq_chart K L (.inr P))
@@ -1184,7 +1184,7 @@ infinity place in the base chart. -/
 theorem ratFuncInfinityChartPlace_eq_baseChart :
     ratFuncInfinityChartPlace K = ratFuncInfinityPlaceChart K := by
   let p : HeightOneSpectrum
-      (FunctionField.Chart.infiniteIntegers K (RatFunc K)) :=
+      (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K (RatFunc K)) :=
     finiteExtensionInfinityPlaceEquivChart K (RatFunc K)
       (ratFuncIdentityInfinityPlace K)
   change Sum.inr p = ratFuncInfinityPlaceChart K
@@ -1195,12 +1195,12 @@ omit [DecidableEq K] [Fintype K] in
 `-2∞` filtration on the rational function field. -/
 theorem finiteExtensionFiberTrace_mem_ratFuncCanonicalInfinityAdeleFilt
     (a : finiteExtensionFiberConstantAdeleSubmodule K L)
-    (ha : a.1 ∈ FunctionField.Chart.adeleFilt K L
+    (ha : a.1 ∈ MarkoffRiemannRoch.FunctionField.Chart.adeleFilt K L
       (finiteExtensionDivisorEquivChart K L
         (finiteExtensionCanonicalDifferentDivisor K L
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L)))) :
     finiteExtensionFiberTrace K L a ∈
-      FunctionField.Chart.adeleFilt K (RatFunc K)
+      MarkoffRiemannRoch.FunctionField.Chart.adeleFilt K (RatFunc K)
         (ratFuncCanonicalInfinityDivisor K) := by
   classical
   intro v
@@ -1215,7 +1215,7 @@ theorem finiteExtensionFiberTrace_mem_ratFuncCanonicalInfinityAdeleFilt
     exact h
   · have h := finiteExtensionFiberTrace_infinite_valuation_le_exp_neg_two
       K L a ha p
-    have hp : (Sum.inr p : FunctionField.Chart.PlaceA K (RatFunc K)) =
+    have hp : (Sum.inr p : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K)) =
         ratFuncInfinityChartPlace K := by
       rw [ratFuncInfinityChartPlace_eq_baseChart K]
       exact ratFunc_infinite_chart_place_eq K p
@@ -1227,7 +1227,7 @@ theorem finiteExtensionFiberTrace_mem_ratFuncCanonicalInfinityAdeleFilt
 omit [Fintype K] [DecidableEq K] in
 /-- Principal adeles are fiber-constant. -/
 theorem finiteExtension_diagonal_mem_fiberConstant (x : L) :
-    FunctionField.Chart.diagonal K L x ∈
+    MarkoffRiemannRoch.FunctionField.Chart.diagonal K L x ∈
       finiteExtensionFiberConstantAdeleSubmodule K L := by
   intro q r _hqr
   rfl
@@ -1237,9 +1237,9 @@ omit [DecidableEq K] [Fintype K] in
 trace. -/
 theorem finiteExtensionFiberTrace_diagonal (x : L) :
     finiteExtensionFiberTrace K L
-        ⟨FunctionField.Chart.diagonal K L x,
+        ⟨MarkoffRiemannRoch.FunctionField.Chart.diagonal K L x,
           finiteExtension_diagonal_mem_fiberConstant K L x⟩ =
-      FunctionField.Chart.diagonal K (RatFunc K)
+      MarkoffRiemannRoch.FunctionField.Chart.diagonal K (RatFunc K)
         (Algebra.trace (RatFunc K) L x) := by
   apply Subtype.ext
   funext p
@@ -1250,15 +1250,15 @@ omit [DecidableEq K] [Fintype K] in
 intersection of fiber-constant adeles with the explicit different
 filtration plus principal adeles. -/
 theorem finiteExtensionFiberCotrace_vanishes_on_intersection
-    (ω : FunctionField.Chart.WeilDifferential K (RatFunc K))
+    (ω : MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential K (RatFunc K))
     (hωvan : ratFuncCanonicalInfinityDivisor K ∈
-      FunctionField.Chart.WeilDifferential.vanishingDivisors ω)
+      MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.vanishingDivisors ω)
     (x : ↥(finiteExtensionFiberConstantAdeleSubmodule K L ⊓
-      (FunctionField.Chart.adeleFilt K L
+      (MarkoffRiemannRoch.FunctionField.Chart.adeleFilt K L
           (finiteExtensionDivisorEquivChart K L
             (finiteExtensionCanonicalDifferentDivisor K L
               (finiteExtensionFiniteDifferentIdeal_ne_bot K L))) +
-        FunctionField.Chart.diagonalSubmodule K L))) :
+        MarkoffRiemannRoch.FunctionField.Chart.diagonalSubmodule K L))) :
     (ω.toFun.comp (finiteExtensionFiberTrace K L))
         ⟨x.1, x.2.1⟩ = 0 := by
   classical
@@ -1266,18 +1266,18 @@ theorem finiteExtensionFiberCotrace_vanishes_on_intersection
   let D := finiteExtensionDivisorEquivChart K L
     (finiteExtensionCanonicalDifferentDivisor K L
       (finiteExtensionFiniteDifferentIdeal_ne_bot K L))
-  have hxsum : x.1 ∈ FunctionField.Chart.adeleFilt K L D ⊔
-      FunctionField.Chart.diagonalSubmodule K L := by
+  have hxsum : x.1 ∈ MarkoffRiemannRoch.FunctionField.Chart.adeleFilt K L D ⊔
+      MarkoffRiemannRoch.FunctionField.Chart.diagonalSubmodule K L := by
     rw [← Submodule.add_eq_sup]
     exact x.2.2
   rcases Submodule.mem_sup.mp hxsum with ⟨a, ha, d, hd, had⟩
   obtain ⟨y, rfl⟩ := hd
   let dU : U :=
-    ⟨FunctionField.Chart.diagonal K L y,
+    ⟨MarkoffRiemannRoch.FunctionField.Chart.diagonal K L y,
       finiteExtension_diagonal_mem_fiberConstant K L y⟩
   have haUmem : a ∈ U := by
     have hsub := U.sub_mem x.2.1 dU.2
-    have haEq : x.1 - FunctionField.Chart.diagonal K L y = a := by
+    have haEq : x.1 - MarkoffRiemannRoch.FunctionField.Chart.diagonal K L y = a := by
       rw [← had]
       abel
     rw [haEq] at hsub
@@ -1287,12 +1287,12 @@ theorem finiteExtensionFiberCotrace_vanishes_on_intersection
     apply Subtype.ext
     exact had.symm
   have htraceA : finiteExtensionFiberTrace K L aU ∈
-      FunctionField.Chart.adeleFilt K (RatFunc K)
+      MarkoffRiemannRoch.FunctionField.Chart.adeleFilt K (RatFunc K)
         (ratFuncCanonicalInfinityDivisor K) :=
     finiteExtensionFiberTrace_mem_ratFuncCanonicalInfinityAdeleFilt
       K L aU ha
   have htraceD : finiteExtensionFiberTrace K L dU ∈
-      FunctionField.Chart.diagonalSubmodule K (RatFunc K) := by
+      MarkoffRiemannRoch.FunctionField.Chart.diagonalSubmodule K (RatFunc K) := by
     rw [finiteExtensionFiberTrace_diagonal K L y]
     exact ⟨Algebra.trace (RatFunc K) L y, rfl⟩
   apply hωvan
@@ -1304,7 +1304,7 @@ omit [DecidableEq K] [Fintype K] in
 /-- A nonzero base Weil functional stays nonzero after composition with the
 surjective fiber cotrace. -/
 theorem finiteExtensionFiberCotrace_ne_zero
-    (ω : FunctionField.Chart.WeilDifferential K (RatFunc K))
+    (ω : MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential K (RatFunc K))
     (hω : ω.toFun ≠ 0) :
     ω.toFun.comp (finiteExtensionFiberTrace K L) ≠ 0 := by
   classical
@@ -1323,35 +1323,35 @@ omit [DecidableEq K] [Fintype K] in
 of a nonzero Weil differential.  Consequently it is bounded above by the
 maximal divisor of that differential. -/
 theorem finiteExtensionCanonicalDifferent_le_divOmega
-    [FunctionField.IsFullConstantField K L] :
-    ∃ (ωTop : FunctionField.Chart.WeilDifferential K L)
-        (hωTop : FunctionField.Chart.WeilDifferential.IsNonzero ωTop),
+    [MarkoffRiemannRoch.FunctionField.IsFullConstantField K L] :
+    ∃ (ωTop : MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential K L)
+        (hωTop : MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.IsNonzero ωTop),
       finiteExtensionDivisorEquivChart K L
           (finiteExtensionCanonicalDifferentDivisor K L
             (finiteExtensionFiniteDifferentIdeal_ne_bot K L)) ≤
-        FunctionField.Chart.WeilDifferential.divOmega ωTop hωTop := by
+        MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.divOmega ωTop hωTop := by
   classical
   obtain ⟨ωBase, hωBase, hdivBase⟩ :=
     ratFuncCanonicalInfinityDivisor_isCanonical K
   have hmaxBase :
-      FunctionField.Chart.WeilDifferential.divOmega ωBase hωBase ∈
-          FunctionField.Chart.WeilDifferential.vanishingDivisors ωBase ∧
-        ∀ D ∈ FunctionField.Chart.WeilDifferential.vanishingDivisors ωBase,
-          D ≤ FunctionField.Chart.WeilDifferential.divOmega ωBase hωBase := by
-    simpa only [FunctionField.Chart.WeilDifferential.divOmega] using
+      MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.divOmega ωBase hωBase ∈
+          MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.vanishingDivisors ωBase ∧
+        ∀ D ∈ MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.vanishingDivisors ωBase,
+          D ≤ MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.divOmega ωBase hωBase := by
+    simpa only [MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.divOmega] using
       (Classical.choose_spec
-        (FunctionField.Chart.WeilDifferential.exists_max_vanishingDivisor
+        (MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.exists_max_vanishingDivisor
           (k := K) (K := RatFunc K) hωBase)).1
   have hbaseVan : ratFuncCanonicalInfinityDivisor K ∈
-      FunctionField.Chart.WeilDifferential.vanishingDivisors ωBase := by
+      MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.vanishingDivisors ωBase := by
     rw [hdivBase] at hmaxBase
     exact hmaxBase.1
   let U := finiteExtensionFiberConstantAdeleSubmodule K L
   let D := finiteExtensionDivisorEquivChart K L
     (finiteExtensionCanonicalDifferentDivisor K L
       (finiteExtensionFiniteDifferentIdeal_ne_bot K L))
-  let V := FunctionField.Chart.adeleFilt K L D +
-    FunctionField.Chart.diagonalSubmodule K L
+  let V := MarkoffRiemannRoch.FunctionField.Chart.adeleFilt K L D +
+    MarkoffRiemannRoch.FunctionField.Chart.diagonalSubmodule K L
   let f := ωBase.toFun.comp (finiteExtensionFiberTrace K L)
   have hfVan : ∀ x : ↥(U ⊓ V), f ⟨x, x.property.1⟩ = 0 := by
     intro x
@@ -1361,22 +1361,22 @@ theorem finiteExtensionCanonicalDifferent_le_divOmega
     finiteExtensionFiberCotrace_ne_zero K L ωBase hωBase
   obtain ⟨g, hgU, hgV, hgNe⟩ :=
     exists_ne_zero_linearMap_extending_eq_zero_on_inf U V f hfVan hfNe
-  let ωTop : FunctionField.Chart.WeilDifferential K L :=
+  let ωTop : MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential K L :=
     ⟨g, ⟨D, fun a ha => LinearMap.mem_ker.mp (hgV ha)⟩⟩
-  have hωTop : FunctionField.Chart.WeilDifferential.IsNonzero ωTop := by
+  have hωTop : MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.IsNonzero ωTop := by
     exact hgNe
   have hDvan : D ∈
-      FunctionField.Chart.WeilDifferential.vanishingDivisors ωTop := by
+      MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.vanishingDivisors ωTop := by
     intro a ha
     exact LinearMap.mem_ker.mp (hgV ha)
   have hmaxTop :
-      FunctionField.Chart.WeilDifferential.divOmega ωTop hωTop ∈
-          FunctionField.Chart.WeilDifferential.vanishingDivisors ωTop ∧
-        ∀ D' ∈ FunctionField.Chart.WeilDifferential.vanishingDivisors ωTop,
-          D' ≤ FunctionField.Chart.WeilDifferential.divOmega ωTop hωTop := by
-    simpa only [FunctionField.Chart.WeilDifferential.divOmega] using
+      MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.divOmega ωTop hωTop ∈
+          MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.vanishingDivisors ωTop ∧
+        ∀ D' ∈ MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.vanishingDivisors ωTop,
+          D' ≤ MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.divOmega ωTop hωTop := by
+    simpa only [MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.divOmega] using
       (Classical.choose_spec
-        (FunctionField.Chart.WeilDifferential.exists_max_vanishingDivisor
+        (MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.exists_max_vanishingDivisor
           (k := K) (K := L) hωTop)).1
   exact ⟨ωTop, hωTop, hmaxTop.2 D hDvan⟩
 

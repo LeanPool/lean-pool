@@ -58,7 +58,7 @@ theorem genus_frobeniusTwistField_eq_original
     let F := exactConstantExtensionFrobeniusTwistField
       C (RatFunc C) N S hExact g
     letI : Algebra (RatFunc C) F := SubalgebraClass.toAlgebra F.toSubalgebra
-    FunctionField.genus C F = FunctionField.genus C N := by
+    MarkoffRiemannRoch.FunctionField.genus C F = MarkoffRiemannRoch.FunctionField.genus C N := by
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=
@@ -88,14 +88,18 @@ theorem genus_frobeniusTwistField_eq_original
   let e : U ≃ₐ[S] T :=
     exactConstantExtensionFrobeniusTwistMultiplicationAlgEquivOverConstants
       C (RatFunc C) N S hExact g hdiv
-  have hF : FunctionField.genus S U = FunctionField.genus C F :=
+  have hF : MarkoffRiemannRoch.FunctionField.genus S U =
+      MarkoffRiemannRoch.FunctionField.genus C F :=
     exactConstantExtension_genus_eq C S F hExactF
-  have hN : FunctionField.genus S T = FunctionField.genus C N :=
+  have hN : MarkoffRiemannRoch.FunctionField.genus S T =
+      MarkoffRiemannRoch.FunctionField.genus C N :=
     exactConstantExtension_genus_eq C S N hExact
   calc
-    FunctionField.genus C F = FunctionField.genus S U := hF.symm
-    _ = FunctionField.genus S T := FunctionField.genus_eq_of_algEquiv e
-    _ = FunctionField.genus C N := hN
+    MarkoffRiemannRoch.FunctionField.genus C F =
+        MarkoffRiemannRoch.FunctionField.genus S U := hF.symm
+    _ = MarkoffRiemannRoch.FunctionField.genus S T :=
+      MarkoffRiemannRoch.FunctionField.genus_eq_of_algEquiv e
+    _ = MarkoffRiemannRoch.FunctionField.genus C N := hN
 
 end
 

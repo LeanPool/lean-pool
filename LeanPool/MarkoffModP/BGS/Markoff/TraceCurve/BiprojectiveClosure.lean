@@ -327,7 +327,7 @@ theorem splitTraceCornerInitialPolynomial_factors_injective
   intro i j hij
   have hvalue := congrArg
     (fun P : MvPolynomial (Fin 2) K => MvPolynomial.eval ![(1 : K), 1] P) hij
-  simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.isValue, MvPolynomial.C_pow,
+  simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.isValue,
     map_sub, map_mul, MvPolynomial.eval_C, map_pow, MvPolynomial.eval_X,
     Matrix.cons_val_zero, one_pow, mul_one, Matrix.cons_val_one,
     Matrix.cons_val_fin_one, sub_right_inj] at hvalue

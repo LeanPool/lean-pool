@@ -24,6 +24,10 @@ open scoped nonZeroDivisors Polynomial RatFunc
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField
 
 open Chart
@@ -82,5 +86,7 @@ instance ratFuncIsFullConstantField : IsFullConstantField k (RatFunc k) where
     exact RatFunc.transcendental_of_ne_C x h hx
 
 end FunctionField
+
+end MarkoffRiemannRoch
 
 end

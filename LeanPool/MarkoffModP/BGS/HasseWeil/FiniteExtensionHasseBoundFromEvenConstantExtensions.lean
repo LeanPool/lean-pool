@@ -152,7 +152,7 @@ theorem finiteExtensionClosedPlaceHasseBound_of_exactConstants_and_evenError
     (budget : ℕ)
     (hExact : algebraicClosure C N =
       (⊥ : IntermediateField C N))
-    (hgenus : FunctionField.genus C N ≤ budget)
+    (hgenus : MarkoffRiemannRoch.FunctionField.genus C N ≤ budget)
     (herror :
       (fun n : ℕ ↦
         (finiteExtensionClosedPlaceExtensionCount C N (2 * n) : ℂ) -
@@ -184,7 +184,7 @@ theorem
     (budget δ : ℕ)
     (hExact : algebraicClosure C N =
       (⊥ : IntermediateField C N))
-    (hgenus : FunctionField.genus C N ≤ budget)
+    (hgenus : MarkoffRiemannRoch.FunctionField.genus C N ≤ budget)
     (hδ : 0 < δ)
     (herror :
       (fun n : ℕ ↦
@@ -219,7 +219,7 @@ theorem
     (budget δ : ℕ)
     (hExact : algebraicClosure C N =
       (⊥ : IntermediateField C N))
-    (hgenus : FunctionField.genus C N ≤ budget)
+    (hgenus : MarkoffRiemannRoch.FunctionField.genus C N ≤ budget)
     (hδ : 0 < δ)
     (A B : ℝ)
     (hA : 0 ≤ A)
@@ -246,7 +246,7 @@ theorem finiteExtensionClosedPlaceHasseBound_of_evenExactConstantExtension_bound
     (budget : ℕ)
     (hExact : algebraicClosure C N =
       (⊥ : IntermediateField C N))
-    (hgenus : FunctionField.genus C N ≤ budget)
+    (hgenus : MarkoffRiemannRoch.FunctionField.genus C N ≤ budget)
     (A : ℝ)
     (hbound : ∀ n (hn : 0 < n),
       letI : NeZero (2 * n) := ⟨by omega⟩

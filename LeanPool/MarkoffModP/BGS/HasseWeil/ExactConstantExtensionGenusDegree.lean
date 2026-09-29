@@ -61,28 +61,28 @@ local instance genusDegreeConstantPolynomialTower :
 /-- Cotrace canonicality gives the Riemann--Hurwitz equality for the weighted
 finite and infinite trace-different degrees. -/
 theorem finiteExtension_totalDifferentDegree_eq_two_finrank_add_two_genus_sub_two
-    [FunctionField.IsFullConstantField K L] :
+    [MarkoffRiemannRoch.FunctionField.IsFullConstantField K L] :
     (finiteExtensionFiniteDifferentDegree K L
         (finiteExtensionFiniteDifferentIdeal_ne_bot K L) : ℤ) +
       (infinityDifferentDegree K L : ℤ) =
         2 * (Module.finrank (RatFunc K) L : ℤ) +
-          2 * (FunctionField.Chart.genus K L : ℤ) - 2 := by
+          2 * (MarkoffRiemannRoch.FunctionField.Chart.genus K L : ℤ) - 2 := by
   apply
     (finiteExtensionCanonicalDifferent_degree_eq_two_genus_sub_two_iff K L).mp
   rw [finiteExtensionDivisorDegree_eq_chart]
-  exact FunctionField.Chart.deg_canonical K L
+  exact MarkoffRiemannRoch.FunctionField.Chart.deg_canonical K L
     (finiteExtensionCanonicalDifferent_isCanonical_of_cotrace K L)
 
 /-- The same Riemann--Hurwitz identity stated with the intrinsic genus.  This
 form no longer remembers which compatible polynomial chart was installed. -/
 theorem finiteExtension_totalDifferentDegree_eq_two_finrank_add_two_genus_sub_two_intrinsic
-    [FunctionField.IsFullConstantField K L] :
+    [MarkoffRiemannRoch.FunctionField.IsFullConstantField K L] :
     (finiteExtensionFiniteDifferentDegree K L
         (finiteExtensionFiniteDifferentIdeal_ne_bot K L) : ℤ) +
       (infinityDifferentDegree K L : ℤ) =
         2 * (Module.finrank (RatFunc K) L : ℤ) +
-          2 * (FunctionField.genus K L : ℤ) - 2 := by
-  rw [FunctionField.genus_eq_genusChart K L]
+          2 * (MarkoffRiemannRoch.FunctionField.genus K L : ℤ) - 2 := by
+  rw [MarkoffRiemannRoch.FunctionField.genus_eq_genusChart K L]
   exact finiteExtension_totalDifferentDegree_eq_two_finrank_add_two_genus_sub_two K L
 
 end RiemannHurwitzDegree
@@ -114,13 +114,13 @@ as `finiteExtension_totalDifferentDegree_eq_two_finrank_add_two_genus_sub_two`,
 but it keeps an explicitly installed chart instead of replacing it by the
 induced one. -/
 theorem finiteExtension_totalDifferentDegree_eq_two_finrank_add_two_genus_sub_two_of_compatibleChart
-    [FunctionField.IsFullConstantField K L] :
+    [MarkoffRiemannRoch.FunctionField.IsFullConstantField K L] :
     (finiteExtensionFiniteDifferentDegree K L
         (finiteExtensionFiniteDifferentIdeal_ne_bot K L) : ℤ) +
       (infinityDifferentDegree K L : ℤ) =
         2 * (Module.finrank (RatFunc K) L : ℤ) +
-          2 * (FunctionField.Chart.genus K L : ℤ) - 2 := by
-  rw [← FunctionField.genus_eq_genusChart K L]
+          2 * (MarkoffRiemannRoch.FunctionField.Chart.genus K L : ℤ) - 2 := by
+  rw [← MarkoffRiemannRoch.FunctionField.genus_eq_genusChart K L]
   exact
     finiteExtension_totalDifferentDegree_eq_two_finrank_add_two_genus_sub_two_intrinsic K L
 

@@ -1025,7 +1025,7 @@ theorem exactConstantExtension_genus_eq
     letI : Field E := exactConstantExtensionField C N S hExact
     letI : Algebra (RatFunc S) E :=
       ratFuncExactConstantExtensionAlgebra C S N hExact
-    FunctionField.genus S E = FunctionField.genus C N := by
+    MarkoffRiemannRoch.FunctionField.genus S E = MarkoffRiemannRoch.FunctionField.genus C N := by
   dsimp only
   let E := ExactConstantExtension C N S
   let : Field E := exactConstantExtensionField C N S hExact
@@ -1061,8 +1061,8 @@ theorem exactConstantExtension_genus_eq
     intro s
     exact (hconstantMap s).symm
   have hIntrinsicGenus :
-      @FunctionField.genus S E _ _ tensorConstantAlgebra =
-        @FunctionField.genus S E _ _ extendedConstantAlgebra := by
+      @MarkoffRiemannRoch.FunctionField.genus S E _ _ tensorConstantAlgebra =
+        @MarkoffRiemannRoch.FunctionField.genus S E _ _ extendedConstantAlgebra := by
     rw [hConstantAlgebra]
   have htensorPolynomialMap (s : S) :
       (@algebraMap S E _ _ tensorConstantAlgebra) s =
@@ -1093,28 +1093,28 @@ theorem exactConstantExtension_genus_eq
       apply DFunLike.ext _ _
       intro s
       exact (hconstantMap s).trans (htensorPolynomialMap s))
-  let : FunctionField.IsFullConstantField C N :=
-    (FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot C N).2
+  let : MarkoffRiemannRoch.FunctionField.IsFullConstantField C N :=
+    (MarkoffRiemannRoch.FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot C N).2
       hExact
-  let : FunctionField.IsFullConstantField S E :=
-    (FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot S E).2
+  let : MarkoffRiemannRoch.FunctionField.IsFullConstantField S E :=
+    (MarkoffRiemannRoch.FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot S E).2
       (by
         simpa only [E] using
           (exactConstantExtension_extended_algebraicClosure_eq_bot
             C S N hExact))
   calc
-    @FunctionField.genus S E _ _ tensorConstantAlgebra =
-        @FunctionField.genus S E _ _ extendedConstantAlgebra :=
+    @MarkoffRiemannRoch.FunctionField.genus S E _ _ tensorConstantAlgebra =
+        @MarkoffRiemannRoch.FunctionField.genus S E _ _ extendedConstantAlgebra :=
       hIntrinsicGenus
-    _ = FunctionField.Chart.genus S E :=
-      FunctionField.genus_eq_genusChart S E
-    _ = FunctionField.Chart.genus C N :=
+    _ = MarkoffRiemannRoch.FunctionField.Chart.genus S E :=
+      MarkoffRiemannRoch.FunctionField.genus_eq_genusChart S E
+    _ = MarkoffRiemannRoch.FunctionField.Chart.genus C N :=
       exactConstantExtension_chart_genus_eq_of_presentedMultiplicity
         C S N hExact
           (exactConstantExtension_presented_totalDifferentMultiplicity_eq
             C S N hExact)
-    _ = FunctionField.genus C N :=
-      (FunctionField.genus_eq_genusChart C N).symm
+    _ = MarkoffRiemannRoch.FunctionField.genus C N :=
+      (MarkoffRiemannRoch.FunctionField.genus_eq_genusChart C N).symm
 
 end
 

@@ -24,6 +24,10 @@ open Module
 open UniqueFactorizationMonoid
 open scoped nonZeroDivisors
 
+namespace MarkoffRiemannRoch
+
+open _root_.Ideal
+
 namespace Ideal
 
 
@@ -171,7 +175,7 @@ theorem sum_normalizedFactors_relNorm_of_isSeparable
           normalize_eq, Multiset.nsmul_singleton]
         simp [ih hs', p]
   let s := normalizedFactors I
-  have hsprod : s.prod = I := prod_normalizedFactors_eq_self hI
+  have hsprod : s.prod = I := _root_.Ideal.prod_normalizedFactors_eq_self hI
   calc
     ((normalizedFactors (relNorm R I)).map w).sum =
         ((normalizedFactors (relNorm R s.prod)).map w).sum := by rw [hsprod]
@@ -183,3 +187,5 @@ theorem sum_normalizedFactors_relNorm_of_isSeparable
         P.inertiaDeg R * w (P.under R)).sum := rfl
 
 end Ideal
+
+end MarkoffRiemannRoch

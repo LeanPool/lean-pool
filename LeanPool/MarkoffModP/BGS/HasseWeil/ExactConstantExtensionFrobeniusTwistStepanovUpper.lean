@@ -153,10 +153,10 @@ theorem frobeniusTwistFieldRationalPlaceCount_le_squareField_of_genus
       (⊥ : IntermediateField C N))
     (hdiv : Nat.card (N ≃ₐ[RatFunc C] N) ∣ Module.finrank C S)
     (g : N ≃ₐ[RatFunc C] N)
-    (hlarge : (FunctionField.genus C N + 1) *
-        (FunctionField.genus C N + 2) ≤ Fintype.card K) :
+    (hlarge : (MarkoffRiemannRoch.FunctionField.genus C N + 1) *
+        (MarkoffRiemannRoch.FunctionField.genus C N + 2) ≤ Fintype.card K) :
     frobeniusTwistFieldRationalPlaceCount C S N hExact g ≤
-      Fintype.card C + (2 * FunctionField.genus C N + 1) *
+      Fintype.card C + (2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) *
         Fintype.card K + Module.finrank (RatFunc C) N := by
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
@@ -182,29 +182,30 @@ theorem frobeniusTwistFieldRationalPlaceCount_le_squareField_of_genus
       (⊥ : IntermediateField C F) :=
     exactConstantExtensionFrobeniusTwistField_algebraicClosure_eq_bot
       C (RatFunc C) N S hExact g
-  let : FunctionField.IsFullConstantField C F :=
-    (FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot C F).2
+  let : MarkoffRiemannRoch.FunctionField.IsFullConstantField C F :=
+    (MarkoffRiemannRoch.FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot C F).2
       hExactF
-  have hgenus : FunctionField.genus C F = FunctionField.genus C N :=
+  have hgenus : MarkoffRiemannRoch.FunctionField.genus C F =
+      MarkoffRiemannRoch.FunctionField.genus C N :=
     genus_frobeniusTwistField_eq_original C S N hExact hdiv g
   have hriemann : ∀ (Q : FiniteExtensionRationalFinitePlace C F) m,
       m + 1 ≤ Module.finrank C
           (finiteExtensionOnePointRiemannSpace C F (.inl Q.1) m) +
-        FunctionField.genus C N := by
+        MarkoffRiemannRoch.FunctionField.genus C N := by
     intro Q m
     have h := finiteExtension_onePoint_riemann_lower_of_genus
       C F (.inl Q.1) m
     simpa only [Q.2, Nat.mul_one, hgenus] using h
   have hstepanov :=
     finiteExtensionRationalPlaceCount_le_squareFieldStepanov_of_finitePlaceRiemann
-      K C F (FunctionField.genus C N) hcard hExactF hriemann hlarge
+      K C F (MarkoffRiemannRoch.FunctionField.genus C N) hcard hExactF hriemann hlarge
   rw [← frobeniusTwistFieldRationalPlaceCount_eq_finiteExtensionRationalPlaceCount
     C S N hExact g] at hstepanov
   calc
     frobeniusTwistFieldRationalPlaceCount C S N hExact g ≤
-        Fintype.card C + (2 * FunctionField.genus C N + 1) *
+        Fintype.card C + (2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) *
           Fintype.card K + Module.finrank (RatFunc C) F := hstepanov
-    _ = Fintype.card C + (2 * FunctionField.genus C N + 1) *
+    _ = Fintype.card C + (2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) *
           Fintype.card K + Module.finrank (RatFunc C) N := by
       rw [finrank_frobeniusTwistField_over_ratFunc_eq_original
         C N S hExact g hdiv]
@@ -217,18 +218,18 @@ theorem abs_frobeniusTwistFieldRationalPlaceError_le_squareField_of_genus
     (hExact : algebraicClosure C N =
       (⊥ : IntermediateField C N))
     (hdiv : Nat.card (N ≃ₐ[RatFunc C] N) ∣ Module.finrank C S)
-    (hlarge : (FunctionField.genus C N + 1) *
-        (FunctionField.genus C N + 2) ≤ Fintype.card K)
+    (hlarge : (MarkoffRiemannRoch.FunctionField.genus C N + 1) *
+        (MarkoffRiemannRoch.FunctionField.genus C N + 2) ≤ Fintype.card K)
     (g : N ≃ₐ[RatFunc C] N) :
     |(frobeniusTwistFieldRationalPlaceCount C S N hExact g : ℝ) -
         (Nat.card C : ℝ) - 1| ≤
       (Nat.card (N ≃ₐ[RatFunc C] N) : ℝ) *
           Module.finrank (RatFunc C) N +
         (Nat.card (N ≃ₐ[RatFunc C] N) - 1 : ℕ) *
-          (((2 * FunctionField.genus C N + 1) * Fintype.card K +
+          (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K +
             Module.finrank (RatFunc C) N : ℕ) : ℝ) := by
   let B : ℝ :=
-    (((2 * FunctionField.genus C N + 1) * Fintype.card K +
+    (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K +
       Module.finrank (RatFunc C) N : ℕ) : ℝ)
   apply abs_frobeniusTwistFieldRationalPlaceError_le_of_uniform_upper
     C S N hExact hdiv g B
@@ -241,12 +242,12 @@ theorem abs_frobeniusTwistFieldRationalPlaceError_le_squareField_of_genus
     have hreal :
         (frobeniusTwistFieldRationalPlaceCount C S N hExact τ : ℝ) ≤
           (Fintype.card C : ℝ) +
-            (((2 * FunctionField.genus C N + 1) * Fintype.card K +
+            (((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K +
               Module.finrank (RatFunc C) N : ℕ) : ℝ) := by
       have hnat' :
           frobeniusTwistFieldRationalPlaceCount C S N hExact τ ≤
             Fintype.card C +
-              ((2 * FunctionField.genus C N + 1) * Fintype.card K +
+              ((2 * MarkoffRiemannRoch.FunctionField.genus C N + 1) * Fintype.card K +
                 Module.finrank (RatFunc C) N) := by
         simpa only [Nat.add_assoc] using hnat
       exact_mod_cast hnat'

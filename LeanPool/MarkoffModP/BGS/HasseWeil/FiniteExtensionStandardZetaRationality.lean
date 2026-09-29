@@ -120,18 +120,18 @@ theorem exists_finiteExtensionClosedPlaceZeta_rational_with_genus_degree_bound
     ∃ P : Polynomial ℂ,
       P.coeff 0 = 1 ∧
         P.eval 1 ≠ 0 ∧
-        P.natDegree < 2 * FunctionField.genus K L + 2 ∧
+        P.natDegree < 2 * MarkoffRiemannRoch.FunctionField.genus K L + 2 ∧
         HasCurveZetaRationalForm
           (formalPointCountZeta
             (finiteExtensionClosedPlaceExtensionCount K L))
           (Nat.card K) P := by
-  let : FunctionField.IsFullConstantField K L :=
-    (FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot K L).2
+  let : MarkoffRiemannRoch.FunctionField.IsFullConstantField K L :=
+    (MarkoffRiemannRoch.FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot K L).2
       hconstants
-  simpa only [FunctionField.genus_eq_genusChart K L] using
+  simpa only [MarkoffRiemannRoch.FunctionField.genus_eq_genusChart K L] using
     exists_finiteExtensionClosedPlaceZeta_rational_with_natDegree_lt_of_uniformRiemann
-      K L (FunctionField.Chart.genus K L)
-        (2 * FunctionField.Chart.genus K L) hconstants
+      K L (MarkoffRiemannRoch.FunctionField.Chart.genus K L)
+        (2 * MarkoffRiemannRoch.FunctionField.Chart.genus K L) hconstants
         (hasFiniteExtensionUniformEventualRiemannFormula_of_fullConstantField K L)
         hindex
 
@@ -143,7 +143,7 @@ theorem exists_finiteExtensionClosedPlaceZeta_trace_with_degree_budget
     (hconstants : algebraicClosure K L =
       (⊥ : IntermediateField K L))
     (hindex : finiteExtensionDivisorDegreeIndex K L = 1)
-    (hgenus : FunctionField.genus K L ≤ budget) :
+    (hgenus : MarkoffRiemannRoch.FunctionField.genus K L ≤ budget) :
     ∃ P : Polynomial ℂ,
       P.coeff 0 = 1 ∧
         P.eval 1 ≠ 0 ∧

@@ -29,6 +29,10 @@ open scoped nonZeroDivisors Polynomial RatFunc WithZero
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField
 
 open Chart
@@ -348,3 +352,5 @@ theorem exists_nonspecial_divisor :
   simpa using hD
 
 end FunctionField
+
+end MarkoffRiemannRoch

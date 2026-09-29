@@ -128,11 +128,11 @@ theorem exactConstantExtension_chart_genus_eq_of_presentedMultiplicity
         apply DFunLike.ext _ _
         intro s
         exact (hconstantMap s).trans (htensorPolynomialMap s))
-    letI : FunctionField.IsFullConstantField C N :=
-      (FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot C N).2
+    letI : MarkoffRiemannRoch.FunctionField.IsFullConstantField C N :=
+      (MarkoffRiemannRoch.FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot C N).2
         hExact
-    letI : FunctionField.IsFullConstantField S E :=
-      (FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot S E).2
+    letI : MarkoffRiemannRoch.FunctionField.IsFullConstantField S E :=
+      (MarkoffRiemannRoch.FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot S E).2
         (exactConstantExtension_extended_algebraicClosure_eq_bot
           C S N hExact)
     (∀ q : ExactConstantExtensionPresentedPlace C S N,
@@ -142,7 +142,8 @@ theorem exactConstantExtension_chart_genus_eq_of_presentedMultiplicity
         finiteExtensionTotalDifferentEffectiveDivisor C N
           (exactConstantExtensionPresentedDownstairsPlace
             C S N hExact q)) →
-      FunctionField.Chart.genus S E = FunctionField.Chart.genus C N := by
+      MarkoffRiemannRoch.FunctionField.Chart.genus S E =
+        MarkoffRiemannRoch.FunctionField.Chart.genus C N := by
   dsimp only
   let E := ExactConstantExtension C N S
   let : Field E := exactConstantExtensionField C N S hExact
@@ -204,14 +205,14 @@ theorem exactConstantExtension_chart_genus_eq_of_presentedMultiplicity
       intro s
       exact (hconstantMap s).trans (htensorPolynomialMap s))
   intro hPresentedMultiplicity
-  let : FunctionField.IsFullConstantField C N :=
-    (FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot C N).2
+  let : MarkoffRiemannRoch.FunctionField.IsFullConstantField C N :=
+    (MarkoffRiemannRoch.FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot C N).2
       hExact
   have hExtendedExact : algebraicClosure S E =
       (⊥ : IntermediateField S E) :=
     exactConstantExtension_extended_algebraicClosure_eq_bot C S N hExact
-  let : FunctionField.IsFullConstantField S E :=
-    (FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot S E).2
+  let : MarkoffRiemannRoch.FunctionField.IsFullConstantField S E :=
+    (MarkoffRiemannRoch.FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot S E).2
       hExtendedExact
   have hTotalNat :=
     exactConstantExtension_totalDifferentDegree_eq_of_presentedMultiplicity

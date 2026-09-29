@@ -29,6 +29,10 @@ open IsDedekindDomain Cardinal
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField.Chart
 
 variable (k K : Type*) [Field k] [Field K]
@@ -1110,5 +1114,7 @@ theorem sandwichDiagonalSubmodule_eq_of_rank_zero {D D' : DivisorA k K} (hle : D
   exact le_antisymm hpr_le_sr hsr_le_pr
 
 end FunctionField.Chart
+
+end MarkoffRiemannRoch
 
 end

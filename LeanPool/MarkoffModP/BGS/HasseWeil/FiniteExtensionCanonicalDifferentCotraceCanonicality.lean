@@ -63,12 +63,12 @@ omit [Fintype K] in
 /-- The cotrace inclusion and the Riemann--Hurwitz degree identity identify
 the explicit different divisor with a canonical divisor. -/
 theorem finiteExtensionCanonicalDifferent_isCanonical_of_degree_eq
-    [FunctionField.IsFullConstantField K L]
+    [MarkoffRiemannRoch.FunctionField.IsFullConstantField K L]
     (hdegree : finiteExtensionDivisorDegree K L
         (finiteExtensionCanonicalDifferentDivisor K L
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L)) =
-      2 * (FunctionField.Chart.genus K L : ℤ) - 2) :
-    FunctionField.Chart.IsCanonical K L
+      2 * (MarkoffRiemannRoch.FunctionField.Chart.genus K L : ℤ) - 2) :
+    MarkoffRiemannRoch.FunctionField.Chart.IsCanonical K L
       (finiteExtensionDivisorEquivChart K L
         (finiteExtensionCanonicalDifferentDivisor K L
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L))) := by
@@ -77,19 +77,19 @@ theorem finiteExtensionCanonicalDifferent_isCanonical_of_degree_eq
       (finiteExtensionFiniteDifferentIdeal_ne_bot K L))
   obtain ⟨ω, hω, hDle⟩ :=
     finiteExtensionCanonicalDifferent_le_divOmega K L
-  have hcanonicalOmega : FunctionField.Chart.IsCanonical K L
-      (FunctionField.Chart.WeilDifferential.divOmega ω hω) :=
+  have hcanonicalOmega : MarkoffRiemannRoch.FunctionField.Chart.IsCanonical K L
+      (MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.divOmega ω hω) :=
     ⟨ω, hω, rfl⟩
-  have hdegOmega : FunctionField.Chart.deg K L
-      (FunctionField.Chart.WeilDifferential.divOmega ω hω) =
-        2 * (FunctionField.Chart.genus K L : ℤ) - 2 :=
-    FunctionField.Chart.deg_canonical K L hcanonicalOmega
-  have hdegD : FunctionField.Chart.deg K L D =
-      2 * (FunctionField.Chart.genus K L : ℤ) - 2 := by
+  have hdegOmega : MarkoffRiemannRoch.FunctionField.Chart.deg K L
+      (MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.divOmega ω hω) =
+        2 * (MarkoffRiemannRoch.FunctionField.Chart.genus K L : ℤ) - 2 :=
+    MarkoffRiemannRoch.FunctionField.Chart.deg_canonical K L hcanonicalOmega
+  have hdegD : MarkoffRiemannRoch.FunctionField.Chart.deg K L D =
+      2 * (MarkoffRiemannRoch.FunctionField.Chart.genus K L : ℤ) - 2 := by
     rw [← finiteExtensionDivisorDegree_eq_chart]
     exact hdegree
-  have heq : D = FunctionField.Chart.WeilDifferential.divOmega ω hω :=
-    FunctionField.Chart.eq_of_le_of_deg_le K L hDle (by
+  have heq : D = MarkoffRiemannRoch.FunctionField.Chart.WeilDifferential.divOmega ω hω :=
+    MarkoffRiemannRoch.FunctionField.Chart.eq_of_le_of_deg_le K L hDle (by
       rw [hdegOmega, hdegD])
   exact ⟨ω, hω, heq.symm⟩
 
@@ -97,17 +97,17 @@ omit [Fintype K] in
 /-- Consequently, a degree upper bound gives a genus upper bound once the
 Riemann--Hurwitz degree identity is supplied. -/
 theorem finiteExtension_genus_le_budget_of_cotrace_and_degree_eq
-    [FunctionField.IsFullConstantField K L]
+    [MarkoffRiemannRoch.FunctionField.IsFullConstantField K L]
     (budget : ℕ)
     (hdegreeEq : finiteExtensionDivisorDegree K L
         (finiteExtensionCanonicalDifferentDivisor K L
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L)) =
-      2 * (FunctionField.Chart.genus K L : ℤ) - 2)
+      2 * (MarkoffRiemannRoch.FunctionField.Chart.genus K L : ℤ) - 2)
     (hdegreeLe : finiteExtensionDivisorDegree K L
         (finiteExtensionCanonicalDifferentDivisor K L
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L)) ≤
       2 * (budget : ℤ) - 2) :
-    FunctionField.genus K L ≤ budget := by
+    MarkoffRiemannRoch.FunctionField.genus K L ≤ budget := by
   exact finiteExtension_genus_le_budget_of_canonicalDifferent_isCanonical
     K L budget
       (finiteExtensionCanonicalDifferent_isCanonical_of_degree_eq

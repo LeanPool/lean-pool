@@ -65,12 +65,12 @@ theorem exists_finiteExtensionClosedPlaceZeta_indexed_rational_of_constants
           (formalPointCountZeta
             (finiteExtensionClosedPlaceExtensionCount K L))
           (Nat.card K) (finiteExtensionDivisorDegreeIndex K L) P := by
-  let : FunctionField.IsFullConstantField K L :=
-    (FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot K L).2
+  let : MarkoffRiemannRoch.FunctionField.IsFullConstantField K L :=
+    (MarkoffRiemannRoch.FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot K L).2
       hconstants
   exact exists_finiteExtensionClosedPlaceZeta_indexed_rational
-    K L (FunctionField.Chart.genus K L)
-      (2 * FunctionField.Chart.genus K L) hconstants
+    K L (MarkoffRiemannRoch.FunctionField.Chart.genus K L)
+      (2 * MarkoffRiemannRoch.FunctionField.Chart.genus K L) hconstants
       (hasFiniteExtensionUniformEventualRiemannFormula_of_fullConstantField K L)
 
 /-- The same automatic composition retains the truncation bound on the

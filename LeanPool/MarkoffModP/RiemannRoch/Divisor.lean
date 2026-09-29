@@ -27,6 +27,10 @@ function `FractionalIdeal.count K v`.
 
 @[expose] public section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FractionalIdeal
+
 open IsDedekindDomain
 open scoped nonZeroDivisors
 
@@ -36,6 +40,8 @@ namespace IsDedekindDomain
 abbrev Divisor (R : Type*) [CommRing R] := HeightOneSpectrum R →₀ ℤ
 
 end IsDedekindDomain
+
+open MarkoffRiemannRoch.IsDedekindDomain
 
 namespace FractionalIdeal
 
@@ -234,3 +240,5 @@ theorem weightedDegree_principal_mk' (w : Ideal R → ℕ) (x : Kˣ) (n : R)
       (Ideal.span_singleton_eq_bot.not.mpr hd) w]
 
 end FractionalIdeal
+
+end MarkoffRiemannRoch

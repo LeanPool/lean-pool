@@ -94,7 +94,7 @@ theorem le_count_spanSingleton_of_valuation_le_exp_neg
   have hvaluation : q.valuation L x =
       WithZero.exp (-FractionalIdeal.count L q
         (FractionalIdeal.spanSingleton B⁰ x)) := by
-    simpa using (FractionalIdeal.valuation_eq_exp_neg_count
+    simpa using (MarkoffRiemannRoch.FractionalIdeal.valuation_eq_exp_neg_count
       (R := B) (K := L) q (Units.mk0 x hx))
   rw [hvaluation] at hval
   have := WithZero.exp_le_exp.mp hval
@@ -175,7 +175,7 @@ theorem exists_element_with_counts_over_and_exact_at
     have hvaluation : q₀.valuation L u =
         WithZero.exp (-FractionalIdeal.count L q₀
           (FractionalIdeal.spanSingleton B⁰ u)) := by
-      simpa using (FractionalIdeal.valuation_eq_exp_neg_count
+      simpa using (MarkoffRiemannRoch.FractionalIdeal.valuation_eq_exp_neg_count
         (R := B) (K := L) q₀ (Units.mk0 u hu0))
     rw [huVal] at hvaluation
     exact neg_injective (WithZero.exp_injective hvaluation.symm)
@@ -322,7 +322,7 @@ theorem exists_trace_eq_of_count_threshold_lt_neg_different
   have htVal : p.valuation K₀ t =
       WithZero.exp (-FractionalIdeal.count K₀ p
         (FractionalIdeal.spanSingleton A⁰ t)) := by
-    simpa using (FractionalIdeal.valuation_eq_exp_neg_count
+    simpa using (MarkoffRiemannRoch.FractionalIdeal.valuation_eq_exp_neg_count
       (R := A) (K := K₀) p (Units.mk0 t ht0))
   have hwLeTrace : p.valuation K₀ w ≤ p.valuation K₀ t := by
     rw [hwVal, htVal, WithZero.exp_le_exp]

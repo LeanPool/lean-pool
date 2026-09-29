@@ -27,6 +27,10 @@ open Filter
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField.Chart
 
 variable (k K : Type*) [Field k] [Field K]
@@ -182,5 +186,7 @@ theorem finrank_adele_quotient (D : DivisorA k K) :
         simp only [Int.toNat_natCast]
 
 end FunctionField.Chart
+
+end MarkoffRiemannRoch
 
 end

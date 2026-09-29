@@ -35,6 +35,10 @@ open scoped nonZeroDivisors Polynomial RatFunc WithZero
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField
 
 open MonoidWithZeroHom
@@ -465,3 +469,5 @@ theorem placeValuation_eq (w : PlaceA k K) :
   Place.ofChart_valuation_eq k K w
 
 end FunctionField
+
+end MarkoffRiemannRoch

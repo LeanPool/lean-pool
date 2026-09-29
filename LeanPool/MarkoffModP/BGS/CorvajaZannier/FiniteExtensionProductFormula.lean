@@ -79,7 +79,7 @@ private theorem relNorm_eq_pow_of_isMaximal_of_isSeparable
     (P : Ideal S) (p : Ideal R) [P.LiesOver p]
     [P.IsMaximal] [p.IsMaximal] :
     Ideal.relNorm R P = p ^ P.inertiaDeg R := by
-  exact Ideal.relNorm_eq_pow_of_isMaximal_of_isSeparable P p
+  exact MarkoffRiemannRoch.Ideal.relNorm_eq_pow_of_isMaximal_of_isSeparable P p
 
 private theorem count_relNorm_heightOne_of_liesOver (p : HeightOneSpectrum R)
     (Q : HeightOneSpectrum S) (hQp : Q.asIdeal.LiesOver p.asIdeal) :

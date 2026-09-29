@@ -280,6 +280,7 @@ private theorem exists_presentedFinitePlace_of_under_rational :
   rw [← hDownstairs, hUnderTower]
   exact hBase
 
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Every actual top finite place over a rational finite place of `C(X)` has
 ambient degree `[S : C]`, provided the constant-extension degree is divisible
 by the original Galois degree. -/
@@ -309,6 +310,7 @@ theorem exactConstantExtensionFinitePlace_degree_eq_finrank_of_under_rational
             (ExactConstantExtension C N S) Q)) = 1 →
     finiteExtensionPlaceDegree C (ExactConstantExtension C N S) (.inl Q) =
       Module.finrank C S := by
+  classical
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=
@@ -397,6 +399,7 @@ theorem exactConstantExtensionFinitePlace_frobeniusFiber_fixedPoint_sum_of_under
         (FinitePlaceUnderFiber C (RatFunc C)
           (ExactConstantExtension C N S) P) g.1)) =
       Nat.card (N ≃ₐ[RatFunc C] N) := by
+  classical
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=
@@ -446,7 +449,7 @@ theorem exactConstantExtensionFrobeniusFiberEquiv_apply_val
     exactConstantExtensionBaseAlgebra C (RatFunc C) N S
   rfl
 
-omit [DecidableEq (RatFunc S)] in
+omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Above one rational finite place of `C(X)`, summing fixed top places over
 all canonical Frobenius twists contributes exactly `|Gal(N/C(X))|`. -/
 theorem sum_card_finitePlaceUnderFiber_fixedBy_frobeniusTwist_eq_card_galois

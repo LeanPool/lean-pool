@@ -30,6 +30,10 @@ split.
 
 open scoped Pointwise
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField
 
 variable (k K : Type*) [Field k] [Field K] [Algebra k K]
@@ -227,3 +231,5 @@ theorem mul_finrank (A B : Submodule k K)
   omega
 
 end FunctionField
+
+end MarkoffRiemannRoch

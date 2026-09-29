@@ -100,7 +100,7 @@ theorem planeCurve_genus_le_bidegreeGenusBudget
     let hf : Irreducible f :=
       irreducible_of_irreducible_map_algebraicClosure habsolute
     letI := planeCurveCoordinateRing_isDomain hf
-    FunctionField.genus K (PlaneCurveFunctionField f) ≤
+    MarkoffRiemannRoch.FunctionField.genus K (PlaneCurveFunctionField f) ≤
       planeCurveBidegreeGenusBudget f := by
   classical
   let : Fintype K := Fintype.ofFinite K
@@ -152,29 +152,29 @@ theorem planeCurve_genus_le_bidegreeGenusBudget
     change @algebraicClosure K L _ _ inducedAlg = ⊥
     rw [hinducedAlg]
     exact hconstantsCanonical
-  let : FunctionField.IsFullConstantField K L :=
-    (FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot K L).2
+  let : MarkoffRiemannRoch.FunctionField.IsFullConstantField K L :=
+    (MarkoffRiemannRoch.FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot K L).2
       hconstants
   let q : FiniteExtensionFinitePlace K L :=
     Classical.choice (finiteExtensionFinitePlace_nonempty K L)
-  have hchart : FunctionField.Chart.genus K L ≤
+  have hchart : MarkoffRiemannRoch.FunctionField.Chart.genus K L ≤
       planeCurveBidegreeGenusBudget f := by
     apply genus_le_budget_of_uniformRiemann_onePoint K L
-      (FunctionField.Chart.genus K L)
-      (2 * FunctionField.Chart.genus K L)
+      (MarkoffRiemannRoch.FunctionField.Chart.genus K L)
+      (2 * MarkoffRiemannRoch.FunctionField.Chart.genus K L)
       (planeCurveBidegreeGenusBudget f) (.inl q)
       (hasFiniteExtensionUniformEventualRiemannFormula_of_fullConstantField K L)
     intro N
     simpa only [L] using
       planeCurve_finitePlace_riemann_lower
         hf hpartialFirst hpartialSecond q N
-  have hintrinsic : FunctionField.genus K L ≤
+  have hintrinsic : MarkoffRiemannRoch.FunctionField.genus K L ≤
       planeCurveBidegreeGenusBudget f := by
-    rw [FunctionField.genus_eq_genusChart K L]
+    rw [MarkoffRiemannRoch.FunctionField.genus_eq_genusChart K L]
     exact hchart
-  change @FunctionField.genus K L _ _ canonicalAlg ≤
+  change @MarkoffRiemannRoch.FunctionField.genus K L _ _ canonicalAlg ≤
     planeCurveBidegreeGenusBudget f
-  change @FunctionField.genus K L _ _ inducedAlg ≤
+  change @MarkoffRiemannRoch.FunctionField.genus K L _ _ inducedAlg ≤
     planeCurveBidegreeGenusBudget f at hintrinsic
   rw [hinducedAlg] at hintrinsic
   exact hintrinsic

@@ -33,6 +33,10 @@ open Polynomial BigOperators Submodule IntermediateField
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField.Chart
 
 section TranscendentalPowers
@@ -743,5 +747,7 @@ end Auxiliary
 end PolarDivisor
 
 end FunctionField.Chart
+
+end MarkoffRiemannRoch
 
 end

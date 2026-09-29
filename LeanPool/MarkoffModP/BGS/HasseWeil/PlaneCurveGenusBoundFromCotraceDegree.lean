@@ -79,8 +79,8 @@ theorem planeCurve_genus_le_bidegreeGenusBudget_of_cotrace_degree_eq
     finiteExtensionDivisorDegree K L
         (finiteExtensionCanonicalDifferentDivisor K L
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L)) =
-      2 * (FunctionField.genus K L : ℤ) - 2 →
-    @FunctionField.genus K L _ _ canonicalAlg ≤
+      2 * (MarkoffRiemannRoch.FunctionField.genus K L : ℤ) - 2 →
+    @MarkoffRiemannRoch.FunctionField.genus K L _ _ canonicalAlg ≤
       planeCurveBidegreeGenusBudget f := by
   let hf : Irreducible f :=
     irreducible_of_irreducible_map_algebraicClosure habsolute
@@ -140,15 +140,15 @@ theorem planeCurve_genus_le_bidegreeGenusBudget_of_cotrace_degree_eq
     change @algebraicClosure K L _ _ inducedAlg = ⊥
     rw [hinducedAlg]
     exact hconstantsCanonical
-  let : FunctionField.IsFullConstantField K L :=
-    (FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot K L).2
+  let : MarkoffRiemannRoch.FunctionField.IsFullConstantField K L :=
+    (MarkoffRiemannRoch.FunctionField.isFullConstantField_iff_algebraicClosure_eq_bot K L).2
       hconstants
   have hdegreeEqChart :
       finiteExtensionDivisorDegree K L
           (finiteExtensionCanonicalDifferentDivisor K L
             (finiteExtensionFiniteDifferentIdeal_ne_bot K L)) =
-        2 * (FunctionField.Chart.genus K L : ℤ) - 2 := by
-    rw [← FunctionField.genus_eq_genusChart K L]
+        2 * (MarkoffRiemannRoch.FunctionField.Chart.genus K L : ℤ) - 2 := by
+    rw [← MarkoffRiemannRoch.FunctionField.genus_eq_genusChart K L]
     exact hdegreeEq
   have hdegreeLe :
       finiteExtensionDivisorDegree K L
@@ -158,13 +158,13 @@ theorem planeCurve_genus_le_bidegreeGenusBudget_of_cotrace_degree_eq
     simpa only [L] using
       planeCurve_canonicalDifferentDivisor_degree_le_two_genusBudget_sub_two
         hf hpartialSecond hcardK
-  have hgenus : FunctionField.genus K L ≤
+  have hgenus : MarkoffRiemannRoch.FunctionField.genus K L ≤
       planeCurveBidegreeGenusBudget f :=
     finiteExtension_genus_le_budget_of_cotrace_and_degree_eq
       K L (planeCurveBidegreeGenusBudget f) hdegreeEqChart hdegreeLe
-  change @FunctionField.genus K L _ _ canonicalAlg ≤
+  change @MarkoffRiemannRoch.FunctionField.genus K L _ _ canonicalAlg ≤
     planeCurveBidegreeGenusBudget f
-  change @FunctionField.genus K L _ _ inducedAlg ≤
+  change @MarkoffRiemannRoch.FunctionField.genus K L _ _ inducedAlg ≤
     planeCurveBidegreeGenusBudget f at hgenus
   rw [hinducedAlg] at hgenus
   exact hgenus

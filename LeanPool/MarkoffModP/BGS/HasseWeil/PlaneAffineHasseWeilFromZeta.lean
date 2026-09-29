@@ -104,7 +104,7 @@ theorem abs_finiteExtensionRationalPlaceCount_sub_card_sub_one_le_of_index_one_a
     (hconstants : algebraicClosure K L =
       (⊥ : IntermediateField K L))
     (hindex : finiteExtensionDivisorDegreeIndex K L = 1)
-    (hgenus : FunctionField.genus K L ≤ budget)
+    (hgenus : MarkoffRiemannRoch.FunctionField.genus K L ≤ budget)
     (herror :
       (fun n : ℕ ↦
         (finiteExtensionClosedPlaceExtensionCount K L (2 * n) : ℂ) -

@@ -96,7 +96,7 @@ theorem
     rw [hinducedAlg]
     exact hExactCanonical
   have hgenusActualCanonical :
-      @FunctionField.genus K L _ _ canonicalAlg ≤
+      @MarkoffRiemannRoch.FunctionField.genus K L _ _ canonicalAlg ≤
         planeCurveBidegreeGenusBudget f := by
     simpa only [L] using
       planeCurve_genus_le_bidegreeGenusBudget
@@ -111,10 +111,10 @@ theorem
       (Nat.sub_le_sub_right hfirstDegree 1)
       (Nat.sub_le_sub_right hsecondDegree 1)
   have hgenusCanonical :
-      @FunctionField.genus K L _ _ canonicalAlg ≤ budget :=
+      @MarkoffRiemannRoch.FunctionField.genus K L _ _ canonicalAlg ≤ budget :=
     hgenusActualCanonical.trans hbudget
-  have hgenus : FunctionField.genus K L ≤ budget := by
-    change @FunctionField.genus K L _ _ inducedAlg ≤ budget
+  have hgenus : MarkoffRiemannRoch.FunctionField.genus K L ≤ budget := by
+    change @MarkoffRiemannRoch.FunctionField.genus K L _ _ inducedAlg ≤ budget
     rw [hinducedAlg]
     exact hgenusCanonical
   have hhasse := finiteExtensionClosedPlaceHasseWeil K L hExact
@@ -134,7 +134,7 @@ theorem
         |(@finiteExtensionRationalPlaceCount K _ _ L _ ratAlg
             (Classical.decEq (RatFunc K)) : ℝ) -
             (Fintype.card K : ℝ) - 1| ≤
-          (2 * FunctionField.genus K L + 1 : ℝ) *
+          (2 * MarkoffRiemannRoch.FunctionField.genus K L + 1 : ℝ) *
             Real.sqrt (Fintype.card K : ℝ) := by
       simpa only [Fintype.card_eq_nat_card] using hhasse
     apply hhasse'.trans

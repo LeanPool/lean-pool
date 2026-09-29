@@ -24,6 +24,10 @@ open Filter
 
 noncomputable section
 
+namespace MarkoffRiemannRoch
+
+open _root_.FunctionField
+
 namespace FunctionField
 
 open Chart
@@ -244,3 +248,5 @@ theorem mem_adeleFilt_add_diagonal_equivChart (D : Divisor k K) (a : AdeleSpace 
     exact ⟨a, ha, rfl⟩
 
 end FunctionField
+
+end MarkoffRiemannRoch

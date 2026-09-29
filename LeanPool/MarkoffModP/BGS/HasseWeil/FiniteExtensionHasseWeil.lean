@@ -46,7 +46,8 @@ private theorem exactConstantExtension_genus_eq_for_ratFunc
     let E := ExactConstantExtension C N S
     let : Field E := exactConstantExtensionField C N S hExact
     let : Algebra (RatFunc S) E := ratFuncExactConstantExtensionAlgebra C S N hExact
-    @FunctionField.genus S E _ _ (bridgeBaseConstantAlgebra S E) = FunctionField.genus C N := by
+    @MarkoffRiemannRoch.FunctionField.genus S E _ _ (bridgeBaseConstantAlgebra S E) =
+      MarkoffRiemannRoch.FunctionField.genus C N := by
   intro E fieldStructure rationalAlgebra
   have hConstantAlgebra : (Algebra.TensorProduct.leftAlgebra : Algebra S E) =
       bridgeBaseConstantAlgebra S E := by
@@ -139,7 +140,7 @@ local instance finiteExtensionHasseNormalClosureCanonicalConstantAlgebra :
 
 /-- The genus of the chosen normal closure over its full constant field. -/
 noncomputable def functionFieldNormalClosureGenus : ℕ :=
-  FunctionField.genus (FunctionFieldNormalClosureConstantField K F)
+  MarkoffRiemannRoch.FunctionField.genus (FunctionFieldNormalClosureConstantField K F)
     (FunctionFieldNormalClosure K F)
 
 /-- The degree of the chosen normal closure over the canonical rational
@@ -203,7 +204,7 @@ private theorem exactConstantExtensionClosedPlaceError_le_galoisTowerConstants
     (hExactM : algebraicClosure C M = (⊥ : IntermediateField C M))
     (hExactN : algebraicClosure C N = (⊥ : IntermediateField C N))
     (n : ℕ) (hn : 0 < n) :
-    let g := FunctionField.genus C N
+    let g := MarkoffRiemannRoch.FunctionField.genus C N
     let H := (g + 1) * (g + 2)
     let D := Module.finrank (RatFunc C) N
     let p := ringChar C
@@ -301,7 +302,7 @@ private theorem exactConstantExtensionClosedPlaceError_le_galoisTowerConstants
     exactConstantExtension_extended_algebraicClosure_eq_bot
       C Cbig N hExactN
   have hgenusEN :
-      @FunctionField.genus Cbig E_N _ _
+      @MarkoffRiemannRoch.FunctionField.genus Cbig E_N _ _
         (bridgeBaseConstantAlgebra Cbig E_N) = g := by
     simpa only [E_N, g] using
       exactConstantExtension_genus_eq_for_ratFunc C Cbig N hExactN
@@ -310,9 +311,9 @@ private theorem exactConstantExtensionClosedPlaceError_le_galoisTowerConstants
       C Cbig N hExactN
   have hHg : H = (g + 1) * (g + 2) := rfl
   have hlarge :
-      (@FunctionField.genus Cbig E_N _ _
+      (@MarkoffRiemannRoch.FunctionField.genus Cbig E_N _ _
           (bridgeBaseConstantAlgebra Cbig E_N) + 1) *
-        (@FunctionField.genus Cbig E_N _ _
+        (@MarkoffRiemannRoch.FunctionField.genus Cbig E_N _ _
           (bridgeBaseConstantAlgebra Cbig E_N) + 2) ≤
           Fintype.card Ksmall := by
     simpa only [hgenusEN, hHg] using hlargeBase
@@ -458,7 +459,7 @@ theorem finiteExtensionClosedPlaceHasseWeil
       (⊥ : IntermediateField K F)) :
     |(finiteExtensionClosedPlaceExtensionCount K F 1 : ℝ) -
         Nat.card K - 1| ≤
-      (2 * FunctionField.genus K F + 1 : ℝ) *
+      (2 * MarkoffRiemannRoch.FunctionField.genus K F + 1 : ℝ) *
         Real.sqrt (Nat.card K) := by
   classical
   let C := FunctionFieldNormalClosureConstantField K F
@@ -487,7 +488,7 @@ theorem finiteExtensionClosedPlaceHasseWeil
       K F hExact n hn
     simpa only [C, g, H, D, A, B] using h
   exact finiteExtensionClosedPlaceHasseBound_of_constantBase_bound
-    K C F (FunctionField.genus K F) hExact le_rfl H hH A B hA hbound
+    K C F (MarkoffRiemannRoch.FunctionField.genus K F) hExact le_rfl H hH A B hA hbound
 
 end
 
