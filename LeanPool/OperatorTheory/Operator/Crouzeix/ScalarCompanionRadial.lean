@@ -617,256 +617,6 @@ theorem exists_norm_inward_regularized_integrand_sub_le
     exists_uniform_norm_inward_regularized_integrand_sub_le Omega p hc
   exact ⟨C, hC, hbound xi hxi⟩
 
-/-- The regularized scalar companion converges to its self-integral along
-every inward chord from a frontier point to an interior center.  The proof is
-an ordinary dominated-convergence argument using the preceding geometric
-majorant; unlike full unrestricted Plemelj continuity, it requires no local
-chart or curvature estimate. -/
-theorem tendsto_crouzeixPolynomialScalarCompanionRegularized_inward
-    (Omega : SmoothJordanDomain) (p : Polynomial ℂ) {c xi : ℂ}
-    (hc : c ∈ Omega.carrier) (hxi : xi ∈ frontier Omega.carrier) :
-    Filter.Tendsto
-      (fun r : ℝ ↦ crouzeixPolynomialScalarCompanionRegularized
-        Omega p xi (smoothJordanInwardPoint c xi r))
-      (nhdsWithin 0 (Ioc (0 : ℝ) 1))
-      (nhds
-        (crouzeixPolynomialScalarCompanionRegularized Omega p xi xi)) := by
-  let l : Filter ℝ := nhdsWithin 0 (Ioc (0 : ℝ) 1)
-  let q := p /ₘ (Polynomial.X - Polynomial.C xi)
-  let N : ℂ → ℂ := fun sigma ↦
-    star (Polynomial.eval sigma p) - star (Polynomial.eval xi p)
-  let D : ℝ → ℝ → ℂ := fun r t ↦
-    deriv Omega.boundaryParam t •
-      ((N (Omega.boundaryParam t) *
-          (Omega.boundaryParam t - smoothJordanInwardPoint c xi r)⁻¹) -
-        (N (Omega.boundaryParam t) *
-          (Omega.boundaryParam t - xi)⁻¹))
-  obtain ⟨C, hC, hdom⟩ :=
-    exists_norm_inward_regularized_integrand_sub_le Omega p hc hxi
-  let bound : ℝ → ℝ := fun t ↦
-    C * (‖deriv Omega.boundaryParam t‖ *
-      ‖Polynomial.eval (Omega.boundaryParam t) q‖)
-  have hboundCont : Continuous bound := by
-    exact continuous_const.mul
-      ((Omega.boundaryParam_contDiff.continuous_deriv (by norm_num)).norm.mul
-        (q.continuous.comp
-          Omega.boundaryParam_contDiff.continuous).norm)
-  have hboundInt : IntervalIntegrable bound MeasureTheory.volume
-      (0 : ℝ) (2 * Real.pi) := hboundCont.intervalIntegrable _ _
-  have hselfInt :=
-    contourIntegrable_crouzeixPolynomialScalarCompanionRegularized_self
-      Omega p xi
-  have hDmeas : ∀ᶠ r in l,
-      AEStronglyMeasurable (D r)
-        (MeasureTheory.volume.restrict (Ι (0 : ℝ) (2 * Real.pi))) := by
-    filter_upwards [self_mem_nhdsWithin] with r hr
-    have hz : smoothJordanInwardPoint c xi r ∈ Omega.carrier :=
-      smoothJordanInwardPoint_mem_carrier Omega hc hxi hr
-    have hne : ∀ t : ℝ,
-        Omega.boundaryParam t - smoothJordanInwardPoint c xi r ≠ 0 := by
-      intro t
-      apply sub_ne_zero.mpr
-      intro heq
-      have hsigma : Omega.boundaryParam t ∈ frontier Omega.carrier := by
-        rw [← Omega.boundaryParam_range]
-        exact mem_range_self t
-      have hsigmaCarrier : Omega.boundaryParam t ∈ Omega.carrier := heq ▸ hz
-      have hempty : Omega.boundaryParam t ∈ (∅ : Set ℂ) := by
-        rw [← Omega.isOpen_carrier.inter_frontier_eq]
-        exact ⟨hsigmaCarrier, hsigma⟩
-      exact hempty
-    have hden : Continuous (fun t : ℝ ↦
-        Omega.boundaryParam t - smoothJordanInwardPoint c xi r) :=
-      Omega.boundaryParam_contDiff.continuous.sub continuous_const
-    have hfirst : StronglyMeasurable (fun t : ℝ ↦
-        deriv Omega.boundaryParam t •
-          (N (Omega.boundaryParam t) *
-            (Omega.boundaryParam t -
-              smoothJordanInwardPoint c xi r)⁻¹)) := by
-      apply Continuous.stronglyMeasurable
-      exact
-        (Omega.boundaryParam_contDiff.continuous_deriv (by norm_num)).smul
-          ((((p.continuous.comp
-              Omega.boundaryParam_contDiff.continuous).star.sub
-                continuous_const).mul (hden.inv₀ hne)))
-    have hselfMeas : AEStronglyMeasurable
-        (fun t : ℝ ↦ deriv Omega.boundaryParam t •
-          (N (Omega.boundaryParam t) *
-            (Omega.boundaryParam t - xi)⁻¹))
-        (MeasureTheory.volume.restrict (Ι (0 : ℝ) (2 * Real.pi))) := by
-      change IntervalIntegrable
-          (fun t : ℝ ↦ deriv Omega.boundaryParam t •
-            ((star (Polynomial.eval (Omega.boundaryParam t) p) -
-                star (Polynomial.eval xi p)) *
-              (Omega.boundaryParam t - xi)⁻¹))
-          MeasureTheory.volume (0 : ℝ) (2 * Real.pi) at hselfInt
-      exact hselfInt.def'.aestronglyMeasurable
-    have heq : D r =
-        (fun t : ℝ ↦ deriv Omega.boundaryParam t •
-          (N (Omega.boundaryParam t) *
-            (Omega.boundaryParam t -
-              smoothJordanInwardPoint c xi r)⁻¹)) -
-        fun t : ℝ ↦ deriv Omega.boundaryParam t •
-          (N (Omega.boundaryParam t) *
-            (Omega.boundaryParam t - xi)⁻¹) := by
-      funext t
-      simp only [D, Pi.sub_apply, smul_sub]
-    rw [heq]
-    exact hfirst.aestronglyMeasurable.sub hselfMeas
-  have hDbound : ∀ᶠ r in l,
-      ∀ᵐ t ∂MeasureTheory.volume, t ∈ Ι (0 : ℝ) (2 * Real.pi) →
-        ‖D r t‖ ≤ bound t := by
-    filter_upwards [self_mem_nhdsWithin] with r hr
-    filter_upwards with t
-    intro ht
-    have ht' := uIoc_subset_uIcc ht
-    rw [uIcc_of_le Real.two_pi_pos.le] at ht'
-    exact hdom r hr t ht'
-  have hDlim : ∀ᵐ t ∂MeasureTheory.volume,
-      t ∈ Ι (0 : ℝ) (2 * Real.pi) →
-        Filter.Tendsto (fun r ↦ D r t) l (nhds 0) := by
-    filter_upwards with t
-    intro _ht
-    let sigma := Omega.boundaryParam t
-    by_cases hsigma : sigma = xi
-    · have hzero : (fun r ↦ D r t) = fun _ ↦ 0 := by
-        funext r
-        dsimp only [D, N, sigma] at hsigma ⊢
-        rw [hsigma]
-        simp only [sub_self, inv_zero, mul_zero, zero_mul, sub_self, smul_zero]
-      rw [hzero]
-      exact tendsto_const_nhds
-    · have hzcont : Continuous (smoothJordanInwardPoint c xi) := by
-        unfold smoothJordanInwardPoint
-        fun_prop
-      have hden : ContinuousAt
-          (fun r : ℝ ↦ sigma - smoothJordanInwardPoint c xi r) 0 :=
-        continuousAt_const.sub hzcont.continuousAt
-      have hden0 : sigma - smoothJordanInwardPoint c xi 0 ≠ 0 := by
-        simpa only [smoothJordanInwardPoint, sub_zero, one_smul, zero_smul,
-          add_zero] using sub_ne_zero.mpr hsigma
-      have hinv := hden.inv₀ hden0
-      have hmul : ContinuousAt
-          (fun r : ℝ ↦ N sigma *
-            (sigma - smoothJordanInwardPoint c xi r)⁻¹) 0 :=
-        continuousAt_const.mul hinv
-      have hsecond : ContinuousAt
-          (fun _ : ℝ ↦ N sigma * (sigma - xi)⁻¹) 0 :=
-        continuousAt_const
-      have hcont : ContinuousAt (fun r ↦ D r t) 0 := by
-        change ContinuousAt
-          (fun r : ℝ ↦ deriv Omega.boundaryParam t •
-            (N sigma * (sigma - smoothJordanInwardPoint c xi r)⁻¹ -
-              N sigma * (sigma - xi)⁻¹)) 0
-        have hderiv : ContinuousAt
-            (fun _ : ℝ ↦ deriv Omega.boundaryParam t) 0 :=
-          continuousAt_const
-        exact hderiv.smul (hmul.sub hsecond)
-      have hl : l ≤ nhds (0 : ℝ) := by
-        dsimp only [l, nhdsWithin]
-        exact inf_le_left
-      have htend := hcont.tendsto.mono_left hl
-      simpa only [l, D, smoothJordanInwardPoint, sub_zero, one_smul,
-        zero_smul, add_zero, sub_self, smul_zero] using htend
-  have hDIntegral : Filter.Tendsto
-      (fun r ↦ ∫ t in (0 : ℝ)..(2 * Real.pi), D r t)
-      l (nhds 0) := by
-    have h :=
-      intervalIntegral.tendsto_integral_filter_of_dominated_convergence
-        bound hDmeas hDbound hboundInt hDlim
-    simpa only [intervalIntegral.integral_zero] using h
-  rw [← tendsto_sub_nhds_zero_iff]
-  have hscaled : Filter.Tendsto
-      (fun r ↦ (2 * (Real.pi : ℂ) * I)⁻¹ *
-        ∫ t in (0 : ℝ)..(2 * Real.pi), D r t)
-      l (nhds 0) := by
-    simpa only [mul_zero] using tendsto_const_nhds.mul hDIntegral
-  apply hscaled.congr'
-  filter_upwards [self_mem_nhdsWithin] with r hr
-  have hz : smoothJordanInwardPoint c xi r ∈ Omega.carrier :=
-    smoothJordanInwardPoint_mem_carrier Omega hc hxi hr
-  have hzfrontier : smoothJordanInwardPoint c xi r ∉
-      frontier Omega.carrier := by
-    intro hzfrontier
-    have hempty : smoothJordanInwardPoint c xi r ∈ (∅ : Set ℂ) := by
-      rw [← Omega.isOpen_carrier.inter_frontier_eq]
-      exact ⟨hz, hzfrontier⟩
-    exact hempty
-  have hfirst : ContourIntegrable
-      (fun sigma ↦ N sigma *
-        (sigma - smoothJordanInwardPoint c xi r)⁻¹)
-      Omega.boundaryParam := by
-    apply ContourIntegrable.of_continuousOn
-    · exact Omega.boundaryParam_contDiff.continuous.continuousOn
-    · exact
-        (Omega.boundaryParam_contDiff.continuous_deriv
-          (by norm_num)).continuousOn
-    · have hden : ContinuousOn
-          (fun sigma : ℂ ↦
-            sigma - smoothJordanInwardPoint c xi r)
-          (Omega.boundaryParam '' Icc (0 : ℝ) (2 * Real.pi)) :=
-        continuous_id.continuousOn.sub continuous_const.continuousOn
-      have hne : ∀ sigma ∈
-          Omega.boundaryParam '' Icc (0 : ℝ) (2 * Real.pi),
-          sigma - smoothJordanInwardPoint c xi r ≠ 0 := by
-        rintro sigma ⟨t, _ht, rfl⟩ hzero
-        apply hzfrontier
-        have heq := sub_eq_zero.mp hzero
-        rw [← heq, ← Omega.boundaryParam_range]
-        exact mem_range_self t
-      exact ((p.continuous.star.continuousOn.sub
-        continuous_const.continuousOn).mul (hden.inv₀ hne))
-  have hself : ContourIntegrable
-      (fun sigma ↦ N sigma * (sigma - xi)⁻¹)
-      Omega.boundaryParam := by
-    exact
-      contourIntegrable_crouzeixPolynomialScalarCompanionRegularized_self
-        Omega p xi
-  unfold crouzeixPolynomialScalarCompanionRegularized
-  rw [← mul_sub, ← contourIntegral_sub hfirst hself]
-  rfl
-
-/-- When the scalar winding kernel is normalized to one in the carrier, the
-full scalar companion converges along every inward chord to the explicit
-Plemelj boundary value. -/
-theorem tendsto_crouzeixPolynomialScalarCompanion_inward
-    (Omega : SmoothJordanDomain) (p : Polynomial ℂ)
-    (hkernel : ∀ z ∈ Omega.carrier,
-      crouzeixScalarCauchyKernel Omega z = 1)
-    {c xi : ℂ} (hc : c ∈ Omega.carrier)
-    (hxi : xi ∈ frontier Omega.carrier) :
-    Filter.Tendsto
-      (fun r : ℝ ↦ crouzeixPolynomialScalarCompanion Omega p
-        (smoothJordanInwardPoint c xi r))
-      (nhdsWithin 0 (Ioc (0 : ℝ) 1))
-      (nhds (crouzeixPolynomialScalarCompanionBoundaryValue Omega p xi)) := by
-  have hreg :=
-    tendsto_crouzeixPolynomialScalarCompanionRegularized_inward
-      Omega p hc hxi
-  have hlim : Filter.Tendsto
-      (fun r : ℝ ↦ star (Polynomial.eval xi p) +
-        crouzeixPolynomialScalarCompanionRegularized Omega p xi
-          (smoothJordanInwardPoint c xi r))
-      (nhdsWithin 0 (Ioc (0 : ℝ) 1))
-      (nhds (star (Polynomial.eval xi p) +
-        crouzeixPolynomialScalarCompanionRegularized Omega p xi xi)) :=
-    tendsto_const_nhds.add hreg
-  unfold crouzeixPolynomialScalarCompanionBoundaryValue
-  apply hlim.congr'
-  filter_upwards [self_mem_nhdsWithin] with r hr
-  have hz : smoothJordanInwardPoint c xi r ∈ Omega.carrier :=
-    smoothJordanInwardPoint_mem_carrier Omega hc hxi hr
-  have hzfrontier : smoothJordanInwardPoint c xi r ∉
-      frontier Omega.carrier := by
-    intro hzfrontier
-    have hempty : smoothJordanInwardPoint c xi r ∈ (∅ : Set ℂ) := by
-      rw [← Omega.isOpen_carrier.inter_frontier_eq]
-      exact ⟨hz, hzfrontier⟩
-    exact hempty
-  rw [crouzeixPolynomialScalarCompanion_eq_regularized_add Omega p xi
-    hzfrontier, hkernel _ hz, mul_one]
-  exact add_comm _ _
-
 /-- The radial Plemelj error tends to zero jointly when the inward radius
 tends to zero and the chord endpoint varies along the frontier.  The target
 self-value moves with the endpoint; continuity of that self-value is a
@@ -1284,6 +1034,46 @@ theorem tendsto_crouzeixPolynomialScalarCompanion_inward_joint
   rw [crouzeixPolynomialScalarCompanion_eq_regularized_add Omega p x.2
     hzfrontier, hkernel _ hz, mul_one]
   exact add_comm _ _
+
+/-- The joint radial limit specializes to each fixed frontier endpoint. -/
+theorem tendsto_crouzeixPolynomialScalarCompanionRegularized_inward
+    (Omega : SmoothJordanDomain) (p : Polynomial ℂ) {c xi : ℂ}
+    (hc : c ∈ Omega.carrier) (hxi : xi ∈ frontier Omega.carrier) :
+    Filter.Tendsto
+      (fun r : ℝ ↦ crouzeixPolynomialScalarCompanionRegularized
+        Omega p xi (smoothJordanInwardPoint c xi r))
+      (nhdsWithin 0 (Ioc (0 : ℝ) 1))
+      (nhds
+        (crouzeixPolynomialScalarCompanionRegularized Omega p xi xi)) := by
+  have hparam : Filter.Tendsto (fun r : ℝ => (r, xi))
+      (nhdsWithin 0 (Ioc (0 : ℝ) 1))
+      (nhdsWithin (0, xi) (Ioc (0 : ℝ) 1 ×ˢ frontier Omega.carrier)) := by
+    rw [nhdsWithin_prod_eq]
+    exact Filter.Tendsto.prodMk tendsto_id (tendsto_const_nhdsWithin hxi)
+  simpa only [Function.comp_def] using
+    (tendsto_crouzeixPolynomialScalarCompanionRegularized_inward_joint
+      Omega p hc hxi).comp hparam
+
+/-- The full companion inherits the fixed-endpoint radial limit. -/
+theorem tendsto_crouzeixPolynomialScalarCompanion_inward
+    (Omega : SmoothJordanDomain) (p : Polynomial ℂ)
+    (hkernel : ∀ z ∈ Omega.carrier,
+      crouzeixScalarCauchyKernel Omega z = 1)
+    {c xi : ℂ} (hc : c ∈ Omega.carrier)
+    (hxi : xi ∈ frontier Omega.carrier) :
+    Filter.Tendsto
+      (fun r : ℝ ↦ crouzeixPolynomialScalarCompanion Omega p
+        (smoothJordanInwardPoint c xi r))
+      (nhdsWithin 0 (Ioc (0 : ℝ) 1))
+      (nhds (crouzeixPolynomialScalarCompanionBoundaryValue Omega p xi)) := by
+  have hparam : Filter.Tendsto (fun r : ℝ => (r, xi))
+      (nhdsWithin 0 (Ioc (0 : ℝ) 1))
+      (nhdsWithin (0, xi) (Ioc (0 : ℝ) 1 ×ˢ frontier Omega.carrier)) := by
+    rw [nhdsWithin_prod_eq]
+    exact Filter.Tendsto.prodMk tendsto_id (tendsto_const_nhdsWithin hxi)
+  simpa only [Function.comp_def] using
+    (tendsto_crouzeixPolynomialScalarCompanion_inward_joint
+      Omega p hkernel hc hxi).comp hparam
 
 /-- Any inward-coordinate chart whose radius and endpoint tend jointly to
 `(0, xi)` transfers the joint radial theorem to the unrestricted interior
