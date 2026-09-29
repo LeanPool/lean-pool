@@ -424,7 +424,8 @@ theorem tanTheta (N : SymmetricNormingFunction)
       tanSeq (directedSineBlock U V) n := by
     intro n
     change tanTheta0.approximationNumber n =
-      Real.tan (Real.arcsin ((TauCeti.DavisKahan.TanTheta.directedSineBlock U V).approximationNumber n))
+      Real.tan
+        (Real.arcsin ((TauCeti.DavisKahan.TanTheta.directedSineBlock U V).approximationNumber n))
     exact htan n
   have heval : N.evalSeq (tanSeq (directedSineBlock U V)) =
       N.toSourceNorm.extendedGauge tanTheta0 :=

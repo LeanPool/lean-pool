@@ -801,7 +801,8 @@ theorem sinTwoTheta_directed_unbounded_addBounded_spectrumGap_symmetricNorming_c
           (DavisKahan.addBounded_isSelfAdjoint A hA Eop hEop) S hS)) ≤
         2 * N.gauge Eop := by
   obtain ⟨hmem, hle⟩ :=
-    sinTwoTheta_directed_unbounded_addBounded_blockRepresentative_spectrumGap_symmetricNorming_complex N A hA Eop hEop B S hB hS
+    sinTwoTheta_directed_unbounded_addBounded_blockRepresentative_spectrumGap_symmetricNorming_complex
+      N A hA Eop hEop B S hB hS
     hβα hδ hBlow hBhigh hBcomplSpec hEmem
   refine ⟨(DavisKahan.mem_directedSinTwoAngleOperatorC_iff _ _ N).mpr hmem, ?_⟩
   rwa [DavisKahan.gauge_directedSinTwoAngleOperatorC]

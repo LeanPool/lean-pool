@@ -324,7 +324,8 @@ theorem sum_absDoubleAngleTangent_le_add_error
     have hden : (3 : ℝ) / 4 ≤ 1 - approximationSingularValue n T ^ 2 := by nlinarith
     have hdenabs : (3 : ℝ) / 4 ≤ |1 - approximationSingularValue n T ^ 2| :=
       hden.trans (le_abs_self _)
-    rw [absDoubleAngleTangent, div_le_iff₀ (by linarith : (0:ℝ) < |1 - approximationSingularValue n T ^ 2|)]
+    rw [absDoubleAngleTangent,
+      div_le_iff₀ (by linarith : (0 : ℝ) < |1 - approximationSingularValue n T ^ 2|)]
     nlinarith
   have hpart₂ : ∑ n ∈ S₂,
       absDoubleAngleTangent (approximationSingularValue n T) ≤
