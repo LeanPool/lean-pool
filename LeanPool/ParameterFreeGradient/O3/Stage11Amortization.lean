@@ -22,13 +22,6 @@ last trial" occurs.
 
 namespace O3
 
-/-- Abstract properties shared by the three source cost envelopes. -/
-structure DoublingWeight (w : ℝ → ℝ) (ratio : ℝ) : Prop where
-  ratio_gt_one : 1 < ratio
-  nonneg : ∀ {x}, 0 ≤ x → 0 ≤ w x
-  mono : MonotoneOn w (Set.Ici 0)
-  doubling : ∀ {x}, 0 ≤ x → ratio * w x ≤ w (2 * x)
-
 /-- The exponent in all three wrapper regimes is strictly positive. -/
 noncomputable def WrapperExponent (p : ℝ) : ℝ :=
   if p ≤ 2 then (1 / 2 : ℝ) else aboveAlpha p
@@ -103,72 +96,5 @@ noncomputable def aboveWrapperWeight (a x : ℝ) : ℝ := x ^ a
 /-- The square-root logarithmic cost weight used for exponents below two. -/
 noncomputable def belowWrapperWeight (x : ℝ) : ℝ :=
   Real.sqrt x * Real.log (Real.exp 1 + x)
-
-theorem euclideanWrapperWeight_doubling :
-    DoublingWeight euclideanWrapperWeight (Real.sqrt 2) := by
-  have hsqrt : 1 < Real.sqrt 2 := by
-    nlinarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2), Real.sqrt_nonneg 2]
-  refine ⟨hsqrt, ?_, ?_, ?_⟩
-  · intro x hx
-    exact Real.sqrt_nonneg _
-  · intro x hx y hy hxy
-    exact Real.sqrt_le_sqrt hxy
-  · intro x hx
-    unfold euclideanWrapperWeight
-    rw [show 2 * x = 2 * x by rfl, Real.sqrt_mul (by norm_num : 0 ≤ (2 : ℝ))]
-
-theorem aboveWrapperWeight_doubling {a : ℝ} (ha : 0 < a) :
-    DoublingWeight (aboveWrapperWeight a) ((2 : ℝ) ^ a) := by
-  refine ⟨two_rpow_gt_one ha, ?_, ?_, ?_⟩
-  · intro x hx
-    exact Real.rpow_nonneg hx _
-  · intro x hx y hy hxy
-    exact Real.rpow_le_rpow hx hxy ha.le
-  · intro x hx
-    unfold aboveWrapperWeight
-    rw [Real.mul_rpow (by norm_num : (0 : ℝ) ≤ 2) hx]
-
-theorem belowWrapperWeight_nonneg {x : ℝ} (hx : 0 ≤ x) :
-    0 ≤ belowWrapperWeight x := by
-  unfold belowWrapperWeight
-  exact mul_nonneg (Real.sqrt_nonneg _) (Real.log_nonneg (by
-    have : 1 ≤ Real.exp 1 := Real.one_le_exp (by norm_num)
-    linarith))
-
-theorem belowWrapperWeight_mono :
-    MonotoneOn belowWrapperWeight (Set.Ici 0) := by
-  intro x hx y hy hxy
-  change 0 ≤ x at hx
-  change 0 ≤ y at hy
-  unfold belowWrapperWeight
-  have hpx : 0 < Real.exp 1 + x := add_pos_of_pos_of_nonneg (Real.exp_pos 1) hx
-  have hpy : 0 < Real.exp 1 + y := add_pos_of_pos_of_nonneg (Real.exp_pos 1) hy
-  have hsum : Real.exp 1 + x ≤ Real.exp 1 + y := by linarith
-  have hlog : Real.log (Real.exp 1 + x) ≤ Real.log (Real.exp 1 + y) :=
-    Real.strictMonoOn_log.monotoneOn hpx hpy hsum
-  apply mul_le_mul (Real.sqrt_le_sqrt hxy)
-  · exact hlog
-  · exact Real.log_nonneg (by
-      have := Real.one_le_exp (by norm_num : (0 : ℝ) ≤ 1)
-      linarith)
-  · exact Real.sqrt_nonneg _
-
-theorem belowWrapperWeight_doubling :
-    DoublingWeight belowWrapperWeight (Real.sqrt 2) := by
-  have hsqrt : 1 < Real.sqrt 2 := by
-    nlinarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2), Real.sqrt_nonneg 2]
-  refine ⟨hsqrt, @belowWrapperWeight_nonneg, ?_, ?_⟩
-  · exact belowWrapperWeight_mono
-  · intro x hx
-    unfold belowWrapperWeight
-    rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 2)]
-    have hp1 : 0 < Real.exp 1 + x := add_pos_of_pos_of_nonneg (Real.exp_pos 1) hx
-    have hp2 : 0 < Real.exp 1 + 2 * x :=
-      add_pos_of_pos_of_nonneg (Real.exp_pos 1) (mul_nonneg (by norm_num) hx)
-    have hlog : Real.log (Real.exp 1 + x) ≤ Real.log (Real.exp 1 + 2 * x) := by
-      exact Real.strictMonoOn_log.monotoneOn hp1 hp2 (by linarith)
-    have hfac : 0 ≤ Real.sqrt 2 * Real.sqrt x :=
-      mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)
-    nlinarith
 
 end O3
