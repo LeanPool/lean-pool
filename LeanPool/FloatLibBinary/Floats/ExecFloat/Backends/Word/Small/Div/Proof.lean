@@ -156,7 +156,7 @@ private theorem carryExponentFitsWord (fmt : FloatFormat) (hwidth : fmt.bitWidth
 
 private theorem quotientNativeCarryCases (fmt : FloatFormat) (hwidth : fmt.bitWidth ≤ 64)
   (hfracWidth : fmt.fracWidth ≤ 61) (sign : Bool) (num den : UInt64) (exponent : ℤ)
-  (hnumFit : num.toNat < 2 ^ (fmt.fracWidth + 1)) (hnumZero : (num.toNat == 0) = false)
+  (hnumZero : (num.toNat == 0) = false)
   (hdenZero : (den.toNat == 0) = false)
   (htotalMin : fmt.ieeeMinNormalExponent ≤ floorLog2RatWord num den + exponent)
   (htotalMax : floorLog2RatWord num den + exponent ≤ Int.ofNat fmt.ieeeMaxNormalExponent) :
@@ -166,81 +166,16 @@ private theorem quotientNativeCarryCases (fmt : FloatFormat) (hwidth : fmt.bitWi
   nativeMantissa.toNat = genericMantissa →
     (nativeMantissa = NativeSmallWord.carryBit fmt ↔ genericMantissa = pow2 (fmt.fracWidth + 1)) →
       2 ^ fmt.fracWidth ≤ genericMantissa ∧ genericMantissa ≤ 2 ^ (fmt.fracWidth + 1) →
-        (if false = true then none
-          else
-            if
-                Int.ofNat fmt.ieeeMaxNormalExponent <
-                  if
-                      (roundScaledQuotient num den (Int.ofNat fmt.fracWidth - floorLog2RatWord
-                        num den).toNat ==
-                          NativeSmallWord.carryBit fmt) =
-                        true then
-                    floorLog2RatWord num den + exponent + 1
-                  else floorLog2RatWord num den + exponent then
-              none
-            else
-              some
-                (NativeSmallWord.ofWord
-                  (NativeSmallWord.packFields fmt sign
-                    (UInt64.ofNat
-                      ((if
-                              (roundScaledQuotient num den (Int.ofNat fmt.fracWidth -
-                                floorLog2RatWord num den).toNat ==
-                                  NativeSmallWord.carryBit fmt) =
-                                true then
-                            floorLog2RatWord num den + exponent + 1
-                          else floorLog2RatWord num den + exponent) +
-                          Int.ofNat fmt.bias).toNat)
-                    ((if
-                          (roundScaledQuotient num den (Int.ofNat fmt.fracWidth -
-                            floorLog2RatWord num den).toNat ==
-                              NativeSmallWord.carryBit fmt) =
-                            true then
-                        NativeSmallWord.hiddenBit fmt
-                      else roundScaledQuotient num den (Int.ofNat fmt.fracWidth -
-                        floorLog2RatWord num den).toNat) -
-                      NativeSmallWord.hiddenBit fmt)))) =
-          if (den.toNat == 0 || num.toNat == 0) = true then none
-          else
-            if false = true then none
-            else
-              if
-                  Int.ofNat fmt.ieeeMaxNormalExponent <
-                    if
-                        (Numerics.roundQuotientEven
-                              (num.toNat <<< (Int.ofNat fmt.fracWidth - floorLog2RatWord num
-                                den).toNat) den.toNat ==
-                            pow2 (fmt.fracWidth + 1)) =
-                          true then
-                      floorLog2RatWord num den + exponent + 1
-                    else floorLog2RatWord num den + exponent then
-                none
-              else
-                some
-                  (ofFields fmt sign
-                    ((if
-                            (Numerics.roundQuotientEven
-                                  (num.toNat <<< (Int.ofNat fmt.fracWidth - floorLog2RatWord num
-                                    den).toNat)
-                                  den.toNat ==
-                                pow2 (fmt.fracWidth + 1)) =
-                              true then
-                          floorLog2RatWord num den + exponent + 1
-                        else floorLog2RatWord num den + exponent) +
-                        Int.ofNat fmt.bias).toNat
-                    ((if
-                          (Numerics.roundQuotientEven
-                                (num.toNat <<< (Int.ofNat fmt.fracWidth - floorLog2RatWord num
-                                  den).toNat) den.toNat ==
-                              pow2 (fmt.fracWidth + 1)) =
-                            true then
-                        pow2 fmt.fracWidth
-                      else
-                        Numerics.roundQuotientEven
-                          (num.toNat <<< (Int.ofNat fmt.fracWidth - floorLog2RatWord num
-                            den).toNat) den.toNat) -
-                      pow2 fmt.fracWidth)) := by
+        roundNormalNativeBoundsOption fmt sign num den exponent =
+          FiniteQuotientRound.normalSpecOption fmt sign num.toNat den.toNat exponent := by
   intro shift nativeMantissa genericMantissa hmantissa hcarry hbounds
+  have hnum : num ≠ 0 := by simpa [← UInt64.toNat_inj] using hnumZero
+  have hden : den ≠ 0 := by simpa [← UInt64.toNat_inj] using hdenZero
+  have hlow := not_lt_of_ge htotalMin
+  have hhigh := not_lt_of_ge htotalMax
+  unfold roundNormalNativeBoundsOption FiniteQuotientRound.normalSpecOption
+  rw [← floorLog2RatWord_eq num den hnum hden]
+  simp only [hlow, hhigh, decide_false, Bool.false_or]
   by_cases hnativeCarry :
       nativeMantissa = NativeSmallWord.carryBit fmt
   · have hgenericCarry := hcarry.mp hnativeCarry
@@ -439,8 +374,10 @@ private theorem roundNormalNative_eq_spec
     simpa only [shift, genericMantissa] using
       (NativeWordQuotient.roundedMantissa_bounds
         fmt num den hnum hden hnumFit)
-  exact quotientNativeCarryCases (fmt := fmt) (hwidth := hwidth) (hfracWidth := hfracWidth)
-    (sign := sign) (num := num) (den := den) (exponent := exponent) (hnumFit := hnumFit)
+  simpa only [roundNormalNativeBoundsOption, FiniteQuotientRound.normalSpecOption,
+    ← hfloor, hlow, hhigh, decide_false, Bool.false_or] using
+    quotientNativeCarryCases (fmt := fmt) (hwidth := hwidth) (hfracWidth := hfracWidth)
+    (sign := sign) (num := num) (den := den) (exponent := exponent)
     (hnumZero := hnumZero) (hdenZero := hdenZero)
     (htotalMin := htotalMin) (htotalMax := htotalMax) hmantissa hcarry hbounds
 

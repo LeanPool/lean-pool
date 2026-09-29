@@ -426,19 +426,15 @@ private theorem fmaFarSameSignResult (x y z : Value) :
   let xExponent := expField (toUInt32 x);
   let yExponent := expField (toUInt32 y);
   let zExponent := expField (toUInt32 z);
-  zExponent = expField (toUInt32 z) →
     let xFraction := fracField (toUInt32 x);
     let yFraction := fracField (toUInt32 y);
     let zFraction := fracField (toUInt32 z);
-    zFraction = fracField (toUInt32 z) →
       let xMantissa := finiteMantissa xExponent xFraction;
       let yMantissa := finiteMantissa yExponent yFraction;
       let zMantissa := finiteMantissa zExponent zFraction;
-      zMantissa = finiteMantissa zExponent zFraction →
         let xScale := finiteScale xExponent;
         let yScale := finiteScale yExponent;
         let zScale := finiteScale zExponent;
-        zScale = finiteScale zExponent →
           let product := xMantissa * yMantissa;
           let productScale := xScale + yScale;
           let zProductScale := zScale + 149;
@@ -471,8 +467,8 @@ private theorem fmaFarSameSignResult (x y z : Value) :
                                               { negative := signBit (toUInt32 z), significand :=
                                                   zMantissa.toNat,
                                                 exponent := Int.ofNat zScale.toNat - 149 }))) := by
-  intro xExponent yExponent zExponent hzExponent xFraction yFraction zFraction hzFraction
-    xMantissa yMantissa zMantissa hzMantissa xScale yScale zScale hzScale product productScale
+  intro xExponent yExponent zExponent xFraction yFraction zFraction
+    xMantissa yMantissa zMantissa xScale yScale zScale product productScale
     zProductScale hzExceptional hproductZero hzZero hzMantissaLt hproductNatBound hproductToNat
     hproductBound hzProductScaleToNat hproductExponent hzExponentValue hscale hfar hsign
   have hscaleNat : productScale.toNat ≤ zProductScale.toNat :=
@@ -497,15 +493,11 @@ private theorem fmaFarSameSignResult (x y z : Value) :
   have hzMantissaValue :
       zMantissa =
         finiteMantissa
-          (expField (toUInt32 z)) (fracField (toUInt32 z)) := by
-    rw [hzMantissa, hzExponent, hzFraction]
+          (expField (toUInt32 z)) (fracField (toUInt32 z)) := rfl
   have hzScaleValue :
-      zScale = finiteScale (expField (toUInt32 z)) := by
-    rw [hzScale, hzExponent]
+      zScale = finiteScale (expField (toUInt32 z)) := rfl
   have hzActualFinite :
-      expField (toUInt32 z) ≠ 0xff := by
-    rw [← hzExponent]
-    exact hzExceptional
+      expField (toUInt32 z) ≠ 0xff := hzExceptional
   have hscaleValue :
       productScale.toNat +
           (zProductScale.toNat - productScale.toNat) =
@@ -567,19 +559,15 @@ private theorem fmaFiniteAlignmentCases (x y z : Value) :
   let xExponent := expField (toUInt32 x);
   let yExponent := expField (toUInt32 y);
   let zExponent := expField (toUInt32 z);
-  zExponent = expField (toUInt32 z) →
     let xFraction := fracField (toUInt32 x);
     let yFraction := fracField (toUInt32 y);
     let zFraction := fracField (toUInt32 z);
-    zFraction = fracField (toUInt32 z) →
       let xMantissa := finiteMantissa xExponent xFraction;
       let yMantissa := finiteMantissa yExponent yFraction;
       let zMantissa := finiteMantissa zExponent zFraction;
-      zMantissa = finiteMantissa zExponent zFraction →
         let xScale := finiteScale xExponent;
         let yScale := finiteScale yExponent;
         let zScale := finiteScale zExponent;
-        zScale = finiteScale zExponent →
           let product := xMantissa * yMantissa;
           let productScale := xScale + yScale;
           let zProductScale := zScale + 149;
@@ -658,8 +646,8 @@ private theorem fmaFiniteAlignmentCases (x y z : Value) :
                                             { negative := signBit (toUInt32 z), significand :=
                                                 zMantissa.toNat,
                                               exponent := Int.ofNat zScale.toNat - 149 }))) := by
-  intro xExponent yExponent zExponent hzExponent xFraction yFraction zFraction hzFraction
-    xMantissa yMantissa zMantissa hzMantissa xScale yScale zScale hzScale product productScale
+  intro xExponent yExponent zExponent xFraction yFraction zFraction
+    xMantissa yMantissa zMantissa xScale yScale zScale product productScale
     zProductScale hzExceptional hproductZero hzZero hzMantissaLt hproductNatBound hproductToNat
     hproductBound hzProductScaleToNat hproductScaleLe hzProductScaleLe hproductExponent
     hzExponentValue
@@ -685,8 +673,8 @@ private theorem fmaFiniteAlignmentCases (x y z : Value) :
                   signBit (toUInt32 z))) = true := by
             simp [hfar, hsign]
           rw [ite_eq_left hcondition]
-          exact fmaFarSameSignResult (x := x) (y := y) (z := z) hzExponent hzFraction
-            hzMantissa hzScale hzExceptional hproductZero hzZero hzMantissaLt hproductNatBound
+          exact fmaFarSameSignResult (x := x) (y := y) (z := z)
+            hzExceptional hproductZero hzZero hzMantissaLt hproductNatBound
             hproductToNat hproductBound hzProductScaleToNat hproductExponent hzExponentValue
             hscale hfar hsign
         · have hcondition :
@@ -821,8 +809,8 @@ theorem fmaFiniteImpl_eq (x y z : Value) :
     rw [hzProductScaleToNat]
     simp only [Int.ofNat_eq_natCast, Nat.cast_add, Nat.cast_ofNat]
     omega
-  exact fmaFiniteAlignmentCases (x := x) (y := y) (z := z) hzExponent hzFraction hzMantissa
-    hzScale hzExceptional hproductZero hzZero hzMantissaLt hproductNatBound hproductToNat
+  exact fmaFiniteAlignmentCases (x := x) (y := y) (z := z)
+    hzExceptional hproductZero hzZero hzMantissaLt hproductNatBound hproductToNat
     hproductBound hzProductScaleToNat hproductScaleLe hzProductScaleLe hproductExponent
     hzExponentValue
 

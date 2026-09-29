@@ -456,7 +456,6 @@ private theorem packRoundedSquareRoot (mantissa scale : UInt64) :
         genericPosition ≤ 2097 →
           nativePosition.toNat = genericPosition →
             nativeRoot.toNat = genericRoot ∧ nativeRemainder.toNat = genericRemainder →
-              nativeRoot.toNat = genericRoot →
                 (nativeRemainder ≤ nativeRoot ↔ genericRemainder ≤ genericRoot) →
                   genericRoot < 2 ^ 53 →
                     packFieldsWord false nativeEncoded nativeFraction =
@@ -466,7 +465,8 @@ private theorem packRoundedSquareRoot (mantissa scale : UInt64) :
     nativeRounded nativeCarry nativeEncoded nativeRoundedMantissa nativeFraction genericLeading
     genericPosition genericShift genericScaled genericRoot genericRemainder genericRounded
     genericCarry genericEncoded genericRoundedMantissa genericFraction hmantissaNat hleading
-    hleadingLt hpositionLe hposition hstate hroot hremainderLe hrootLt
+    hleadingLt hpositionLe hposition hstate hremainderLe hrootLt
+  have hroot := hstate.1
   have hrounded : nativeRounded.toNat = genericRounded := by
     dsimp only [nativeRounded, genericRounded]
     by_cases hle : nativeRemainder ≤ nativeRoot
@@ -707,7 +707,7 @@ private theorem sqrtPositiveFiniteCore_eq_spec
     norm_num
     exact hscaledFit
   exact packRoundedSquareRoot (mantissa := mantissa) (scale := scale) hmantissaNat hleading
-    hleadingLt hpositionLe hposition hstate hroot hremainderLe hrootLt
+    hleadingLt hpositionLe hposition hstate hremainderLe hrootLt
 
 /-! ## Unpacked binary64 semantic refinement -/
 
