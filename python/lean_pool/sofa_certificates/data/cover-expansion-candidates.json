@@ -1,0 +1,4943 @@
+[
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32033.lean",
+    "name": "e24KC2PhiBelowLeaf32033",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3203)",
+    "id": 0,
+    "region": 0,
+    "path": "32033"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF88LL00253.lean",
+    "name": "e24KC2PhiBelowLeaf33213",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3321)",
+    "id": 1,
+    "region": 0,
+    "path": "33213"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF88LL00253.lean",
+    "name": "e24KC2PhiBelowLeaf33220",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3322)",
+    "id": 2,
+    "region": 0,
+    "path": "33220"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30213.lean",
+    "name": "e24KC2PhiBelowLeaf30213",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3021)",
+    "id": 3,
+    "region": 0,
+    "path": "30213"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32110.lean",
+    "name": "e24KC2PhiBelowLeaf32110",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3211)",
+    "id": 4,
+    "region": 0,
+    "path": "32110"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4800229.lean",
+    "name": "e24KC2PhiBelowLeaf32311",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3231)",
+    "id": 5,
+    "region": 0,
+    "path": "32311"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4800229.lean",
+    "name": "e24KC2PhiBelowLeaf32312",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3231)",
+    "id": 6,
+    "region": 0,
+    "path": "32312"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4800229.lean",
+    "name": "e24KC2PhiBelowLeaf32313",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3231)",
+    "id": 7,
+    "region": 0,
+    "path": "32313"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4800229.lean",
+    "name": "e24KC2PhiBelowLeaf32320",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3232)",
+    "id": 8,
+    "region": 0,
+    "path": "32320"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4800229.lean",
+    "name": "e24KC2PhiBelowLeaf32321",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3232)",
+    "id": 9,
+    "region": 0,
+    "path": "32321"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4800229.lean",
+    "name": "e24KC2PhiBelowLeaf32322",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3232)",
+    "id": 10,
+    "region": 0,
+    "path": "32322"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4800229.lean",
+    "name": "e24KC2PhiBelowLeaf32323",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3232)",
+    "id": 11,
+    "region": 0,
+    "path": "32323"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4800229.lean",
+    "name": "e24KC2PhiBelowLeaf32330",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3233)",
+    "id": 12,
+    "region": 0,
+    "path": "32330"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4PilotPhiAboveF90002.lean",
+    "name": "e24KC2PhiAboveLeaf1011011",
+    "depth": 9,
+    "cell": "(childLH (childLH (childLL phiAboveCell1011)))",
+    "id": 13,
+    "region": 1,
+    "path": "1011011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4PilotPhiAboveF90002.lean",
+    "name": "e24KC2PhiAboveLeaf1011100",
+    "depth": 9,
+    "cell": "(childLL (childLL (childLH phiAboveCell1011)))",
+    "id": 14,
+    "region": 1,
+    "path": "1011100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4PilotPhiAboveF90002.lean",
+    "name": "e24KC2PhiAboveLeaf1011101",
+    "depth": 9,
+    "cell": "(childLH (childLL (childLH phiAboveCell1011)))",
+    "id": 15,
+    "region": 1,
+    "path": "1011101"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4PilotPhiAboveF90002.lean",
+    "name": "e24KC2PhiAboveLeaf1011110",
+    "depth": 9,
+    "cell": "(childLL (childLH (childLH phiAboveCell1011)))",
+    "id": 16,
+    "region": 1,
+    "path": "1011110"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4PilotPhiAboveF90002.lean",
+    "name": "e24KC2PhiAboveLeaf1011111",
+    "depth": 9,
+    "cell": "(childLH (childLH (childLH phiAboveCell1011)))",
+    "id": 17,
+    "region": 1,
+    "path": "1011111"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4PilotPhiAboveF90002.lean",
+    "name": "e24KC2PhiAboveLeaf1100000",
+    "depth": 9,
+    "cell": "(childLL (childLL (childLL phiAboveCell1100)))",
+    "id": 18,
+    "region": 1,
+    "path": "1100000"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4PilotPhiAboveF90002.lean",
+    "name": "e24KC2PhiAboveLeaf1100001",
+    "depth": 9,
+    "cell": "(childLH (childLL (childLL phiAboveCell1100)))",
+    "id": 19,
+    "region": 1,
+    "path": "1100001"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4PilotPhiAboveF90002.lean",
+    "name": "e24KC2PhiAboveLeaf1100010",
+    "depth": 9,
+    "cell": "(childLL (childLH (childLL phiAboveCell1100)))",
+    "id": 20,
+    "region": 1,
+    "path": "1100010"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4PilotPhiAboveF90002.lean",
+    "name": "e24KC2PhiAboveLeaf1100011",
+    "depth": 9,
+    "cell": "(childLH (childLH (childLL phiAboveCell1100)))",
+    "id": 21,
+    "region": 1,
+    "path": "1100011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4PilotPhiAboveF90002.lean",
+    "name": "e24KC2PhiAboveLeaf1100100",
+    "depth": 9,
+    "cell": "(childLL (childLL (childLH phiAboveCell1100)))",
+    "id": 22,
+    "region": 1,
+    "path": "1100100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4PilotPhiAboveF90002.lean",
+    "name": "e24KC2PhiAboveLeaf1100101",
+    "depth": 9,
+    "cell": "(childLH (childLL (childLH phiAboveCell1100)))",
+    "id": 23,
+    "region": 1,
+    "path": "1100101"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4PilotPhiAboveF90002.lean",
+    "name": "e24KC2PhiAboveLeaf1100110",
+    "depth": 9,
+    "cell": "(childLL (childLH (childLH phiAboveCell1100)))",
+    "id": 24,
+    "region": 1,
+    "path": "1100110"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf31202.lean",
+    "name": "e24KC2PhiBelowLeaf31202",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3120)",
+    "id": 25,
+    "region": 0,
+    "path": "31202"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24PhiBelowKernelHL.lean",
+    "name": "e24PhiBelowKernelHL",
+    "depth": 13,
+    "cell": "(childHL e24PhiBelowRoot)",
+    "id": 26,
+    "region": 0,
+    "path": "2"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32011.lean",
+    "name": "e24KC2PhiBelowLeaf32011",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3201)",
+    "id": 27,
+    "region": 0,
+    "path": "32011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30121.lean",
+    "name": "e24KC2PhiBelowLeaf30121",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3012)",
+    "id": 28,
+    "region": 0,
+    "path": "30121"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32123.lean",
+    "name": "e24KC2PhiBelowLeaf32123",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3212)",
+    "id": 29,
+    "region": 0,
+    "path": "32123"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF80LRR00238.lean",
+    "name": "e24KC2PhiBelowLeaf33202",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3320)",
+    "id": 30,
+    "region": 0,
+    "path": "33202"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF16LR00216.lean",
+    "name": "e24KC2PhiAboveLeaf1110103",
+    "depth": 9,
+    "cell": "(childHH (childLL (childLH phiAboveCell1110)))",
+    "id": 31,
+    "region": 1,
+    "path": "1110103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF16LR00216.lean",
+    "name": "e24KC2PhiAboveLeaf1110110",
+    "depth": 9,
+    "cell": "(childLL (childLH (childLH phiAboveCell1110)))",
+    "id": 32,
+    "region": 1,
+    "path": "1110110"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF88RRL00287.lean",
+    "name": "e24KC2PhiBelowLeaf33231",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3323)",
+    "id": 33,
+    "region": 0,
+    "path": "33231"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30231.lean",
+    "name": "e24KC2PhiBelowLeaf30231",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3023)",
+    "id": 34,
+    "region": 0,
+    "path": "30231"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30320.lean",
+    "name": "e24KC2PhiBelowLeaf30320",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3032)",
+    "id": 35,
+    "region": 0,
+    "path": "30320"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30330.lean",
+    "name": "e24KC2PhiBelowLeaf30330",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3033)",
+    "id": 36,
+    "region": 0,
+    "path": "30330"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30100.lean",
+    "name": "e24KC2PhiBelowLeaf30100",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3010)",
+    "id": 37,
+    "region": 0,
+    "path": "30100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30130.lean",
+    "name": "e24KC2PhiBelowLeaf30130",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3013)",
+    "id": 38,
+    "region": 0,
+    "path": "30130"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32131.lean",
+    "name": "e24KC2PhiBelowLeaf32131",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3213)",
+    "id": 39,
+    "region": 0,
+    "path": "32131"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF5600230.lean",
+    "name": "e24KC2PhiBelowLeaf32331",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3233)",
+    "id": 40,
+    "region": 0,
+    "path": "32331"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF5600230.lean",
+    "name": "e24KC2PhiBelowLeaf32332",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3233)",
+    "id": 41,
+    "region": 0,
+    "path": "32332"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF5600230.lean",
+    "name": "e24KC2PhiBelowLeaf32333",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3233)",
+    "id": 42,
+    "region": 0,
+    "path": "32333"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF5600230.lean",
+    "name": "e24KC2PhiBelowLeaf33000",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3300)",
+    "id": 43,
+    "region": 0,
+    "path": "33000"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF5600230.lean",
+    "name": "e24KC2PhiBelowLeaf33001",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3300)",
+    "id": 44,
+    "region": 0,
+    "path": "33001"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF5600230.lean",
+    "name": "e24KC2PhiBelowLeaf33002",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3300)",
+    "id": 45,
+    "region": 0,
+    "path": "33002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF5600230.lean",
+    "name": "e24KC2PhiBelowLeaf33003",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3300)",
+    "id": 46,
+    "region": 0,
+    "path": "33003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF5600230.lean",
+    "name": "e24KC2PhiBelowLeaf33010",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3301)",
+    "id": 47,
+    "region": 0,
+    "path": "33010"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF0RRL00171.lean",
+    "name": "e24KC2PhiAboveLeaf1101113",
+    "depth": 9,
+    "cell": "(childHH (childLH (childLH phiAboveCell1101)))",
+    "id": 48,
+    "region": 1,
+    "path": "1101113"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30303.lean",
+    "name": "e24KC2PhiBelowLeaf30303",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3030)",
+    "id": 49,
+    "region": 0,
+    "path": "30303"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF0LRL00114.lean",
+    "name": "e24KC2PhiAboveLeaf1101103",
+    "depth": 9,
+    "cell": "(childHH (childLL (childLH phiAboveCell1101)))",
+    "id": 50,
+    "region": 1,
+    "path": "1101103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF3200227.lean",
+    "name": "e24KC2PhiAboveLeaf1111101",
+    "depth": 9,
+    "cell": "(childLH (childLL (childLH phiAboveCell1111)))",
+    "id": 51,
+    "region": 1,
+    "path": "1111101"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF3200227.lean",
+    "name": "e24KC2PhiAboveLeaf1111102",
+    "depth": 9,
+    "cell": "(childHL (childLL (childLH phiAboveCell1111)))",
+    "id": 52,
+    "region": 1,
+    "path": "1111102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF3200227.lean",
+    "name": "e24KC2PhiAboveLeaf1111103",
+    "depth": 9,
+    "cell": "(childHH (childLL (childLH phiAboveCell1111)))",
+    "id": 53,
+    "region": 1,
+    "path": "1111103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF3200227.lean",
+    "name": "e24KC2PhiAboveLeaf1111110",
+    "depth": 9,
+    "cell": "(childLL (childLH (childLH phiAboveCell1111)))",
+    "id": 54,
+    "region": 1,
+    "path": "1111110"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF3200227.lean",
+    "name": "e24KC2PhiAboveLeaf1111111",
+    "depth": 9,
+    "cell": "(childLH (childLH (childLH phiAboveCell1111)))",
+    "id": 55,
+    "region": 1,
+    "path": "1111111"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF3200227.lean",
+    "name": "e24KC2PhiAboveLeaf1111112",
+    "depth": 9,
+    "cell": "(childHL (childLH (childLH phiAboveCell1111)))",
+    "id": 56,
+    "region": 1,
+    "path": "1111112"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF3200227.lean",
+    "name": "e24KC2PhiAboveLeaf1111113",
+    "depth": 9,
+    "cell": "(childHH (childLH (childLH phiAboveCell1111)))",
+    "id": 57,
+    "region": 1,
+    "path": "1111113"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF3200227.lean",
+    "name": "e24KC2PhiAboveLeaf1111131",
+    "depth": 9,
+    "cell": "(childLH (childHH (childLH phiAboveCell1111)))",
+    "id": 58,
+    "region": 1,
+    "path": "1111131"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32101.lean",
+    "name": "e24KC2PhiBelowLeaf32101",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3210)",
+    "id": 59,
+    "region": 0,
+    "path": "32101"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32112.lean",
+    "name": "e24KC2PhiBelowLeaf32112",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3211)",
+    "id": 60,
+    "region": 0,
+    "path": "32112"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30312.lean",
+    "name": "e24KC2PhiBelowLeaf30312",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3031)",
+    "id": 61,
+    "region": 0,
+    "path": "30312"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30313.lean",
+    "name": "e24KC2PhiBelowLeaf30313",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3031)",
+    "id": 62,
+    "region": 0,
+    "path": "30313"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30321.lean",
+    "name": "e24KC2PhiBelowLeaf30321",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3032)",
+    "id": 63,
+    "region": 0,
+    "path": "30321"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30102.lean",
+    "name": "e24KC2PhiBelowLeaf30102",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3010)",
+    "id": 64,
+    "region": 0,
+    "path": "30102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32130.lean",
+    "name": "e24KC2PhiBelowLeaf32130",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3213)",
+    "id": 65,
+    "region": 0,
+    "path": "32130"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30331.lean",
+    "name": "e24KC2PhiBelowLeaf30331",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3033)",
+    "id": 66,
+    "region": 0,
+    "path": "30331"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf31223.lean",
+    "name": "e24KC2PhiBelowLeaf31223",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3122)",
+    "id": 67,
+    "region": 0,
+    "path": "31223"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32100.lean",
+    "name": "e24KC2PhiBelowLeaf32100",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3210)",
+    "id": 68,
+    "region": 0,
+    "path": "32100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF96R00465.lean",
+    "name": "e24KC2PhiBelowLeaf33303",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3330)",
+    "id": 69,
+    "region": 0,
+    "path": "33303"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF96R00465.lean",
+    "name": "e24KC2PhiBelowLeaf33310",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3331)",
+    "id": 70,
+    "region": 0,
+    "path": "33310"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF96R00465.lean",
+    "name": "e24KC2PhiBelowLeaf33311",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3331)",
+    "id": 71,
+    "region": 0,
+    "path": "33311"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF96R00465.lean",
+    "name": "e24KC2PhiBelowLeaf33312",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3331)",
+    "id": 72,
+    "region": 0,
+    "path": "33312"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF16RL00218.lean",
+    "name": "e24KC2PhiAboveLeaf1110111",
+    "depth": 9,
+    "cell": "(childLH (childLH (childLH phiAboveCell1110)))",
+    "id": 73,
+    "region": 1,
+    "path": "1110111"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF16RL00218.lean",
+    "name": "e24KC2PhiAboveLeaf1110112",
+    "depth": 9,
+    "cell": "(childHL (childLH (childLH phiAboveCell1110)))",
+    "id": 74,
+    "region": 1,
+    "path": "1110112"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF24LR00223.lean",
+    "name": "e24KC2PhiAboveLeaf1111003",
+    "depth": 9,
+    "cell": "(childHH (childLL (childLL phiAboveCell1111)))",
+    "id": 75,
+    "region": 1,
+    "path": "1111003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF24LR00223.lean",
+    "name": "e24KC2PhiAboveLeaf1111010",
+    "depth": 9,
+    "cell": "(childLL (childLH (childLL phiAboveCell1111)))",
+    "id": 76,
+    "region": 1,
+    "path": "1111010"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF96LR00464.lean",
+    "name": "e24KC2PhiBelowLeaf33301",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3330)",
+    "id": 77,
+    "region": 0,
+    "path": "33301"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF96LR00464.lean",
+    "name": "e24KC2PhiBelowLeaf33302",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3330)",
+    "id": 78,
+    "region": 0,
+    "path": "33302"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32121.lean",
+    "name": "e24KC2PhiBelowLeaf32121",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3212)",
+    "id": 79,
+    "region": 0,
+    "path": "32121"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4000228.lean",
+    "name": "e24KC2PhiBelowLeaf32211",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3221)",
+    "id": 80,
+    "region": 0,
+    "path": "32211"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4000228.lean",
+    "name": "e24KC2PhiBelowLeaf32213",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3221)",
+    "id": 81,
+    "region": 0,
+    "path": "32213"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4000228.lean",
+    "name": "e24KC2PhiBelowLeaf32231",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3223)",
+    "id": 82,
+    "region": 0,
+    "path": "32231"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4000228.lean",
+    "name": "e24KC2PhiBelowLeaf32300",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3230)",
+    "id": 83,
+    "region": 0,
+    "path": "32300"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4000228.lean",
+    "name": "e24KC2PhiBelowLeaf32301",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3230)",
+    "id": 84,
+    "region": 0,
+    "path": "32301"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4000228.lean",
+    "name": "e24KC2PhiBelowLeaf32302",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3230)",
+    "id": 85,
+    "region": 0,
+    "path": "32302"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4000228.lean",
+    "name": "e24KC2PhiBelowLeaf32303",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3230)",
+    "id": 86,
+    "region": 0,
+    "path": "32303"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF4000228.lean",
+    "name": "e24KC2PhiBelowLeaf32310",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3231)",
+    "id": 87,
+    "region": 0,
+    "path": "32310"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF8RLR00209.lean",
+    "name": "e24KC2PhiAboveLeaf1110012",
+    "depth": 9,
+    "cell": "(childHL (childLH (childLL phiAboveCell1110)))",
+    "id": 88,
+    "region": 1,
+    "path": "1110012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32102.lean",
+    "name": "e24KC2PhiBelowLeaf32102",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3210)",
+    "id": 89,
+    "region": 0,
+    "path": "32102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF80RLR00247.lean",
+    "name": "e24KC2PhiBelowLeaf33210",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3321)",
+    "id": 90,
+    "region": 0,
+    "path": "33210"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32103.lean",
+    "name": "e24KC2PhiBelowLeaf32103",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3210)",
+    "id": 91,
+    "region": 0,
+    "path": "32103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4BatchPhiAboveF9C1LLRLL0009.lean",
+    "name": "e24KC2PhiAboveLeaf1101013",
+    "depth": 9,
+    "cell": "(childHH (childLH (childLL phiAboveCell1101)))",
+    "id": 92,
+    "region": 1,
+    "path": "1101013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF24RL00225.lean",
+    "name": "e24KC2PhiAboveLeaf1111011",
+    "depth": 9,
+    "cell": "(childLH (childLH (childLL phiAboveCell1111)))",
+    "id": 93,
+    "region": 1,
+    "path": "1111011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF24RL00225.lean",
+    "name": "e24KC2PhiAboveLeaf1111012",
+    "depth": 9,
+    "cell": "(childHL (childLH (childLL phiAboveCell1111)))",
+    "id": 94,
+    "region": 1,
+    "path": "1111012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF80LL00235.lean",
+    "name": "e24KC2PhiBelowLeaf33132",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3313)",
+    "id": 95,
+    "region": 0,
+    "path": "33132"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF80LL00235.lean",
+    "name": "e24KC2PhiBelowLeaf33200",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3320)",
+    "id": 96,
+    "region": 0,
+    "path": "33200"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF96LLR00463.lean",
+    "name": "e24KC2PhiBelowLeaf33300",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3330)",
+    "id": 97,
+    "region": 0,
+    "path": "33300"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF24LL00222.lean",
+    "name": "e24KC2PhiAboveLeaf1111001",
+    "depth": 9,
+    "cell": "(childLH (childLL (childLL phiAboveCell1111)))",
+    "id": 98,
+    "region": 1,
+    "path": "1111001"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF24LL00222.lean",
+    "name": "e24KC2PhiAboveLeaf1111002",
+    "depth": 9,
+    "cell": "(childHL (childLL (childLL phiAboveCell1111)))",
+    "id": 99,
+    "region": 1,
+    "path": "1111002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF6400231.lean",
+    "name": "e24KC2PhiBelowLeaf33011",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3301)",
+    "id": 100,
+    "region": 0,
+    "path": "33011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF6400231.lean",
+    "name": "e24KC2PhiBelowLeaf33012",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3301)",
+    "id": 101,
+    "region": 0,
+    "path": "33012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF6400231.lean",
+    "name": "e24KC2PhiBelowLeaf33013",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3301)",
+    "id": 102,
+    "region": 0,
+    "path": "33013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF6400231.lean",
+    "name": "e24KC2PhiBelowLeaf33020",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3302)",
+    "id": 103,
+    "region": 0,
+    "path": "33020"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF6400231.lean",
+    "name": "e24KC2PhiBelowLeaf33021",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3302)",
+    "id": 104,
+    "region": 0,
+    "path": "33021"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF6400231.lean",
+    "name": "e24KC2PhiBelowLeaf33022",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3302)",
+    "id": 105,
+    "region": 0,
+    "path": "33022"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF6400231.lean",
+    "name": "e24KC2PhiBelowLeaf33023",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3302)",
+    "id": 106,
+    "region": 0,
+    "path": "33023"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF6400231.lean",
+    "name": "e24KC2PhiBelowLeaf33030",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3303)",
+    "id": 107,
+    "region": 0,
+    "path": "33030"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30123.lean",
+    "name": "e24KC2PhiBelowLeaf30123",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3012)",
+    "id": 108,
+    "region": 0,
+    "path": "30123"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4BatchPhiAboveF9C1LLL0006.lean",
+    "name": "e24KC2PhiAboveLeaf1100111",
+    "depth": 9,
+    "cell": "(childLH (childLH (childLH phiAboveCell1100)))",
+    "id": 109,
+    "region": 1,
+    "path": "1100111"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4BatchPhiAboveF9C1LLL0006.lean",
+    "name": "e24KC2PhiAboveLeaf1101000",
+    "depth": 9,
+    "cell": "(childLL (childLL (childLL phiAboveCell1101)))",
+    "id": 110,
+    "region": 1,
+    "path": "1101000"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4BatchPhiAboveF9C1LLL0006.lean",
+    "name": "e24KC2PhiAboveLeaf1101001",
+    "depth": 9,
+    "cell": "(childLH (childLL (childLL phiAboveCell1101)))",
+    "id": 111,
+    "region": 1,
+    "path": "1101001"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4BatchPhiAboveF9C1LLL0006.lean",
+    "name": "e24KC2PhiAboveLeaf1101010",
+    "depth": 9,
+    "cell": "(childLL (childLH (childLL phiAboveCell1101)))",
+    "id": 112,
+    "region": 1,
+    "path": "1101010"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4BatchPhiAboveF9C1LLL0006.lean",
+    "name": "e24KC2PhiAboveLeaf1101011",
+    "depth": 9,
+    "cell": "(childLH (childLH (childLL phiAboveCell1101)))",
+    "id": 113,
+    "region": 1,
+    "path": "1101011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC4BatchPhiAboveF9C1LLL0006.lean",
+    "name": "e24KC2PhiAboveLeaf1101012",
+    "depth": 9,
+    "cell": "(childHL (childLH (childLL phiAboveCell1101)))",
+    "id": 114,
+    "region": 1,
+    "path": "1101012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30311.lean",
+    "name": "e24KC2PhiBelowLeaf30311",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3031)",
+    "id": 115,
+    "region": 0,
+    "path": "30311"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30120.lean",
+    "name": "e24KC2PhiBelowLeaf30120",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3012)",
+    "id": 116,
+    "region": 0,
+    "path": "30120"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30122.lean",
+    "name": "e24KC2PhiBelowLeaf30122",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3012)",
+    "id": 117,
+    "region": 0,
+    "path": "30122"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30300.lean",
+    "name": "e24KC2PhiBelowLeaf30300",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3030)",
+    "id": 118,
+    "region": 0,
+    "path": "30300"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF8LLR00192.lean",
+    "name": "e24KC2PhiAboveLeaf1110002",
+    "depth": 9,
+    "cell": "(childHL (childLL (childLL phiAboveCell1110)))",
+    "id": 119,
+    "region": 1,
+    "path": "1110002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24PhiBelowKernelLL.lean",
+    "name": "e24PhiBelowKernelLL",
+    "depth": 13,
+    "cell": "(childLL e24PhiBelowRoot)",
+    "id": 120,
+    "region": 0,
+    "path": "0"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32133.lean",
+    "name": "e24KC2PhiBelowLeaf32133",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3213)",
+    "id": 121,
+    "region": 0,
+    "path": "32133"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF16RR00219.lean",
+    "name": "e24KC2PhiAboveLeaf1110113",
+    "depth": 9,
+    "cell": "(childHH (childLH (childLH phiAboveCell1110)))",
+    "id": 122,
+    "region": 1,
+    "path": "1110113"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF16RR00219.lean",
+    "name": "e24KC2PhiAboveLeaf1111000",
+    "depth": 9,
+    "cell": "(childLL (childLL (childLL phiAboveCell1111)))",
+    "id": 123,
+    "region": 1,
+    "path": "1111000"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30332.lean",
+    "name": "e24KC2PhiBelowLeaf30332",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3033)",
+    "id": 124,
+    "region": 0,
+    "path": "30332"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF80RRR00250.lean",
+    "name": "e24KC2PhiBelowLeaf33212",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3321)",
+    "id": 125,
+    "region": 0,
+    "path": "33212"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF88LRR00261.lean",
+    "name": "e24KC2PhiBelowLeaf33222",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3322)",
+    "id": 126,
+    "region": 0,
+    "path": "33222"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30301.lean",
+    "name": "e24KC2PhiBelowLeaf30301",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3030)",
+    "id": 127,
+    "region": 0,
+    "path": "30301"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF10400466.lean",
+    "name": "e24KC2PhiBelowLeaf33313",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3331)",
+    "id": 128,
+    "region": 0,
+    "path": "33313"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF10400466.lean",
+    "name": "e24KC2PhiBelowLeaf33320",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3332)",
+    "id": 129,
+    "region": 0,
+    "path": "33320"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF10400466.lean",
+    "name": "e24KC2PhiBelowLeaf33321",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3332)",
+    "id": 130,
+    "region": 0,
+    "path": "33321"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF10400466.lean",
+    "name": "e24KC2PhiBelowLeaf33322",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3332)",
+    "id": 131,
+    "region": 0,
+    "path": "33322"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF10400466.lean",
+    "name": "e24KC2PhiBelowLeaf33323",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3332)",
+    "id": 132,
+    "region": 0,
+    "path": "33323"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF10400466.lean",
+    "name": "e24KC2PhiBelowLeaf33330",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3333)",
+    "id": 133,
+    "region": 0,
+    "path": "33330"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF10400466.lean",
+    "name": "e24KC2PhiBelowLeaf33331",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3333)",
+    "id": 134,
+    "region": 0,
+    "path": "33331"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF10400466.lean",
+    "name": "e24KC2PhiBelowLeaf33332",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3333)",
+    "id": 135,
+    "region": 0,
+    "path": "33332"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30310.lean",
+    "name": "e24KC2PhiBelowLeaf30310",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3031)",
+    "id": 136,
+    "region": 0,
+    "path": "30310"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF112L00468.lean",
+    "name": "e24KC2PhiBelowLeaf33333",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3333)",
+    "id": 137,
+    "region": 0,
+    "path": "33333"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF112L00468.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220002",
+    "depth": 9,
+    "cell": "(childHL (childLL thetaAboveCell00002200))",
+    "id": 138,
+    "region": 3,
+    "path": "0000220002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF112L00468.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220003",
+    "depth": 9,
+    "cell": "(childHH (childLL thetaAboveCell00002200))",
+    "id": 139,
+    "region": 3,
+    "path": "0000220003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF112L00468.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220012",
+    "depth": 9,
+    "cell": "(childHL (childLH thetaAboveCell00002200))",
+    "id": 140,
+    "region": 3,
+    "path": "0000220012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF80LRL00237.lean",
+    "name": "e24KC2PhiBelowLeaf33201",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3320)",
+    "id": 141,
+    "region": 0,
+    "path": "33201"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30323.lean",
+    "name": "e24KC2PhiBelowLeaf30323",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3032)",
+    "id": 142,
+    "region": 0,
+    "path": "30323"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30101.lean",
+    "name": "e24KC2PhiBelowLeaf30101",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3010)",
+    "id": 143,
+    "region": 0,
+    "path": "30101"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30112.lean",
+    "name": "e24KC2PhiBelowLeaf30112",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3011)",
+    "id": 144,
+    "region": 0,
+    "path": "30112"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30333.lean",
+    "name": "e24KC2PhiBelowLeaf30333",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3033)",
+    "id": 145,
+    "region": 0,
+    "path": "30333"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30133.lean",
+    "name": "e24KC2PhiBelowLeaf30133",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3013)",
+    "id": 146,
+    "region": 0,
+    "path": "30133"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30132.lean",
+    "name": "e24KC2PhiBelowLeaf30132",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3013)",
+    "id": 147,
+    "region": 0,
+    "path": "30132"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF8LRL00194.lean",
+    "name": "e24KC2PhiAboveLeaf1110003",
+    "depth": 9,
+    "cell": "(childHH (childLL (childLL phiAboveCell1110)))",
+    "id": 148,
+    "region": 1,
+    "path": "1110003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF0RLR00169.lean",
+    "name": "e24KC2PhiAboveLeaf1101112",
+    "depth": 9,
+    "cell": "(childHL (childLH (childLH phiAboveCell1101)))",
+    "id": 149,
+    "region": 1,
+    "path": "1101112"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF16LLL00214.lean",
+    "name": "e24KC2PhiAboveLeaf1110101",
+    "depth": 9,
+    "cell": "(childLH (childLL (childLH phiAboveCell1110)))",
+    "id": 150,
+    "region": 1,
+    "path": "1110101"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30302.lean",
+    "name": "e24KC2PhiBelowLeaf30302",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3030)",
+    "id": 151,
+    "region": 0,
+    "path": "30302"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24PhiBelowKernelLH.lean",
+    "name": "e24PhiBelowKernelLH",
+    "depth": 13,
+    "cell": "(childLH e24PhiBelowRoot)",
+    "id": 152,
+    "region": 0,
+    "path": "1"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30211.lean",
+    "name": "e24KC2PhiBelowLeaf30211",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3021)",
+    "id": 153,
+    "region": 0,
+    "path": "30211"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF8RR00210.lean",
+    "name": "e24KC2PhiAboveLeaf1110013",
+    "depth": 9,
+    "cell": "(childHH (childLH (childLL phiAboveCell1110)))",
+    "id": 154,
+    "region": 1,
+    "path": "1110013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF8RR00210.lean",
+    "name": "e24KC2PhiAboveLeaf1110100",
+    "depth": 9,
+    "cell": "(childLL (childLL (childLH phiAboveCell1110)))",
+    "id": 155,
+    "region": 1,
+    "path": "1110100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32132.lean",
+    "name": "e24KC2PhiBelowLeaf32132",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3213)",
+    "id": 156,
+    "region": 0,
+    "path": "32132"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32122.lean",
+    "name": "e24KC2PhiBelowLeaf32122",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3212)",
+    "id": 157,
+    "region": 0,
+    "path": "32122"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf31232.lean",
+    "name": "e24KC2PhiBelowLeaf31232",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3123)",
+    "id": 158,
+    "region": 0,
+    "path": "31232"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF7200232.lean",
+    "name": "e24KC2PhiBelowLeaf33031",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3303)",
+    "id": 159,
+    "region": 0,
+    "path": "33031"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF7200232.lean",
+    "name": "e24KC2PhiBelowLeaf33032",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3303)",
+    "id": 160,
+    "region": 0,
+    "path": "33032"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF7200232.lean",
+    "name": "e24KC2PhiBelowLeaf33033",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3303)",
+    "id": 161,
+    "region": 0,
+    "path": "33033"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF7200232.lean",
+    "name": "e24KC2PhiBelowLeaf33102",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3310)",
+    "id": 162,
+    "region": 0,
+    "path": "33102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF7200232.lean",
+    "name": "e24KC2PhiBelowLeaf33120",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3312)",
+    "id": 163,
+    "region": 0,
+    "path": "33120"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF7200232.lean",
+    "name": "e24KC2PhiBelowLeaf33121",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3312)",
+    "id": 164,
+    "region": 0,
+    "path": "33121"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF7200232.lean",
+    "name": "e24KC2PhiBelowLeaf33122",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3312)",
+    "id": 165,
+    "region": 0,
+    "path": "33122"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF7200232.lean",
+    "name": "e24KC2PhiBelowLeaf33123",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3312)",
+    "id": 166,
+    "region": 0,
+    "path": "33123"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32013.lean",
+    "name": "e24KC2PhiBelowLeaf32013",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3201)",
+    "id": 167,
+    "region": 0,
+    "path": "32013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF80RRL00249.lean",
+    "name": "e24KC2PhiBelowLeaf33211",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3321)",
+    "id": 168,
+    "region": 0,
+    "path": "33211"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30322.lean",
+    "name": "e24KC2PhiBelowLeaf30322",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3032)",
+    "id": 169,
+    "region": 0,
+    "path": "30322"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf31220.lean",
+    "name": "e24KC2PhiBelowLeaf31220",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3122)",
+    "id": 170,
+    "region": 0,
+    "path": "31220"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf31203.lean",
+    "name": "e24KC2PhiBelowLeaf31203",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3120)",
+    "id": 171,
+    "region": 0,
+    "path": "31203"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32113.lean",
+    "name": "e24KC2PhiBelowLeaf32113",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3211)",
+    "id": 172,
+    "region": 0,
+    "path": "32113"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF112RLL00471.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220013",
+    "depth": 9,
+    "cell": "(childHH (childLH thetaAboveCell00002200))",
+    "id": 173,
+    "region": 3,
+    "path": "0000220013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30233.lean",
+    "name": "e24KC2PhiBelowLeaf30233",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3023)",
+    "id": 174,
+    "region": 0,
+    "path": "30233"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF24RR00226.lean",
+    "name": "e24KC2PhiAboveLeaf1111013",
+    "depth": 9,
+    "cell": "(childHH (childLH (childLL phiAboveCell1111)))",
+    "id": 175,
+    "region": 1,
+    "path": "1111013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF24RR00226.lean",
+    "name": "e24KC2PhiAboveLeaf1111100",
+    "depth": 9,
+    "cell": "(childLL (childLL (childLH phiAboveCell1111)))",
+    "id": 176,
+    "region": 1,
+    "path": "1111100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf31222.lean",
+    "name": "e24KC2PhiBelowLeaf31222",
+    "depth": 9,
+    "cell": "(childHL phiBelowCell3122)",
+    "id": 177,
+    "region": 0,
+    "path": "31222"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF0LLR00112.lean",
+    "name": "e24KC2PhiAboveLeaf1101102",
+    "depth": 9,
+    "cell": "(childHL (childLL (childLH phiAboveCell1101)))",
+    "id": 178,
+    "region": 1,
+    "path": "1101102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32031.lean",
+    "name": "e24KC2PhiBelowLeaf32031",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3203)",
+    "id": 179,
+    "region": 0,
+    "path": "32031"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32111.lean",
+    "name": "e24KC2PhiBelowLeaf32111",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3211)",
+    "id": 180,
+    "region": 0,
+    "path": "32111"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf30103.lean",
+    "name": "e24KC2PhiBelowLeaf30103",
+    "depth": 9,
+    "cell": "(childHH phiBelowCell3010)",
+    "id": 181,
+    "region": 0,
+    "path": "30103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf31221.lean",
+    "name": "e24KC2PhiBelowLeaf31221",
+    "depth": 9,
+    "cell": "(childLH phiBelowCell3122)",
+    "id": 182,
+    "region": 0,
+    "path": "31221"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf31200.lean",
+    "name": "e24KC2PhiBelowLeaf31200",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3120)",
+    "id": 183,
+    "region": 0,
+    "path": "31200"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC5FrontierBatchF16LLR00215.lean",
+    "name": "e24KC2PhiAboveLeaf1110102",
+    "depth": 9,
+    "cell": "(childHL (childLL (childLH phiAboveCell1110)))",
+    "id": 184,
+    "region": 1,
+    "path": "1110102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/E24KC2PhiBelowLeaf32120.lean",
+    "name": "e24KC2PhiBelowLeaf32120",
+    "depth": 9,
+    "cell": "(childLL phiBelowCell3212)",
+    "id": 185,
+    "region": 0,
+    "path": "32120"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00180.lean",
+    "name": "e24KC2PhiAboveLeaf1110000_c2",
+    "depth": 8,
+    "cell": "phiAboveCell11100002",
+    "id": 186,
+    "region": 1,
+    "path": "11100002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00076.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c3",
+    "depth": 7,
+    "cell": "(childHH phiAboveCell11011010)",
+    "id": 187,
+    "region": 1,
+    "path": "110110103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00041.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c1_c1_c3",
+    "depth": 4,
+    "cell": "phiAboveCell110110100113",
+    "id": 188,
+    "region": 1,
+    "path": "110110100113"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00093.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c0_c3",
+    "depth": 6,
+    "cell": "(childHH (childLL phiAboveCell11011011))",
+    "id": 189,
+    "region": 1,
+    "path": "1101101103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00068.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c1_c1",
+    "depth": 5,
+    "cell": "(childLH (childLH (childLH phiAboveCell11011010)))",
+    "id": 190,
+    "region": 1,
+    "path": "11011010111"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00044.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c1_c3",
+    "depth": 5,
+    "cell": "(childHH (childLH (childLL phiAboveCell11011010)))",
+    "id": 191,
+    "region": 1,
+    "path": "11011010013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00177.lean",
+    "name": "e24KC2PhiAboveLeaf1110000_c0_c3",
+    "depth": 7,
+    "cell": "(childHH phiAboveCell11100000)",
+    "id": 192,
+    "region": 1,
+    "path": "111000003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00055.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c0_c0_c3",
+    "depth": 4,
+    "cell": "phiAboveCell110110101003",
+    "id": 193,
+    "region": 1,
+    "path": "110110101003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00196.lean",
+    "name": "e24KC2PhiAboveLeaf1110010_c0",
+    "depth": 8,
+    "cell": "phiAboveCell11100100",
+    "id": 194,
+    "region": 1,
+    "path": "11100100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00034.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c1_c0_c2",
+    "depth": 4,
+    "cell": "phiAboveCell110110100102",
+    "id": 195,
+    "region": 1,
+    "path": "110110100102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00134.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c0_c2",
+    "depth": 7,
+    "cell": "(childHL phiAboveCell11011100)",
+    "id": 196,
+    "region": 1,
+    "path": "110111002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00092.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c0_c2",
+    "depth": 6,
+    "cell": "(childHL (childLL phiAboveCell11011011))",
+    "id": 197,
+    "region": 1,
+    "path": "1101101102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00204.lean",
+    "name": "e24KC2PhiAboveLeaf1110011_c0",
+    "depth": 8,
+    "cell": "phiAboveCell11100110",
+    "id": 198,
+    "region": 1,
+    "path": "11100110"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00166.lean",
+    "name": "e24KC2PhiAboveLeaf1101111_c2",
+    "depth": 8,
+    "cell": "phiAboveCell11011112",
+    "id": 199,
+    "region": 1,
+    "path": "11011112"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00110.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c3",
+    "depth": 8,
+    "cell": "phiAboveCell11011013",
+    "id": 200,
+    "region": 1,
+    "path": "11011013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00061.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c0_c1_c3",
+    "depth": 4,
+    "cell": "phiAboveCell110110101013",
+    "id": 201,
+    "region": 1,
+    "path": "110110101013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00039.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c1_c1_c1",
+    "depth": 4,
+    "cell": "phiAboveCell110110100111",
+    "id": 202,
+    "region": 1,
+    "path": "110110100111"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00164.lean",
+    "name": "e24KC2PhiAboveLeaf1101111_c1_c3",
+    "depth": 7,
+    "cell": "(childHH phiAboveCell11011111)",
+    "id": 203,
+    "region": 1,
+    "path": "110111113"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00190.lean",
+    "name": "e24KC2PhiAboveLeaf1110001_c3",
+    "depth": 8,
+    "cell": "phiAboveCell11100013",
+    "id": 204,
+    "region": 1,
+    "path": "11100013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00060.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c0_c1_c2",
+    "depth": 4,
+    "cell": "phiAboveCell110110101012",
+    "id": 205,
+    "region": 1,
+    "path": "110110101012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00140.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c1_c2",
+    "depth": 7,
+    "cell": "(childHL phiAboveCell11011101)",
+    "id": 206,
+    "region": 1,
+    "path": "110111012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00075.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c2",
+    "depth": 7,
+    "cell": "(childHL phiAboveCell11011010)",
+    "id": 207,
+    "region": 1,
+    "path": "110110102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00046.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c2",
+    "depth": 6,
+    "cell": "(childHL (childLL phiAboveCell11011010))",
+    "id": 208,
+    "region": 1,
+    "path": "1101101002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00088.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c0_c1_c1",
+    "depth": 5,
+    "cell": "(childLH (childLH (childLL phiAboveCell11011011)))",
+    "id": 209,
+    "region": 1,
+    "path": "11011011011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00107.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c3",
+    "depth": 7,
+    "cell": "(childHH phiAboveCell11011011)",
+    "id": 210,
+    "region": 1,
+    "path": "110110113"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00027.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c0_c2",
+    "depth": 5,
+    "cell": "(childHL (childLL (childLL phiAboveCell11011010)))",
+    "id": 211,
+    "region": 1,
+    "path": "11011010002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00181.lean",
+    "name": "e24KC2PhiAboveLeaf1110000_c3",
+    "depth": 8,
+    "cell": "phiAboveCell11100003",
+    "id": 212,
+    "region": 1,
+    "path": "11100003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00174.lean",
+    "name": "e24KC2PhiAboveLeaf1110000_c0_c0",
+    "depth": 7,
+    "cell": "(childLL phiAboveCell11100000)",
+    "id": 213,
+    "region": 1,
+    "path": "111000000"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00163.lean",
+    "name": "e24KC2PhiAboveLeaf1101111_c1_c2",
+    "depth": 7,
+    "cell": "(childHL phiAboveCell11011111)",
+    "id": 214,
+    "region": 1,
+    "path": "110111112"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00064.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c0_c3",
+    "depth": 5,
+    "cell": "(childHH (childLL (childLH phiAboveCell11011010)))",
+    "id": 215,
+    "region": 1,
+    "path": "11011010103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00127.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c0_c1_c0_c2",
+    "depth": 5,
+    "cell": "(childHL (childLL (childLH phiAboveCell11011100)))",
+    "id": 216,
+    "region": 1,
+    "path": "11011100102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00130.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c0_c1_c1",
+    "depth": 6,
+    "cell": "(childLH (childLH phiAboveCell11011100))",
+    "id": 217,
+    "region": 1,
+    "path": "1101110011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00154.lean",
+    "name": "e24KC2PhiAboveLeaf1101111_c0_c1_c2",
+    "depth": 6,
+    "cell": "(childHL (childLH phiAboveCell11011110))",
+    "id": 218,
+    "region": 1,
+    "path": "1101111012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00158.lean",
+    "name": "e24KC2PhiAboveLeaf1101111_c0_c3",
+    "depth": 7,
+    "cell": "(childHH phiAboveCell11011110)",
+    "id": 219,
+    "region": 1,
+    "path": "110111103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00167.lean",
+    "name": "e24KC2PhiAboveLeaf1101111_c3",
+    "depth": 8,
+    "cell": "phiAboveCell11011113",
+    "id": 220,
+    "region": 1,
+    "path": "11011113"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00100.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c1_c0_c3",
+    "depth": 5,
+    "cell": "(childHH (childLL (childLH phiAboveCell11011011)))",
+    "id": 221,
+    "region": 1,
+    "path": "11011011103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00043.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c1_c2",
+    "depth": 5,
+    "cell": "(childHL (childLH (childLL phiAboveCell11011010)))",
+    "id": 222,
+    "region": 1,
+    "path": "11011010012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00053.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c0_c0_c1",
+    "depth": 4,
+    "cell": "phiAboveCell110110101001",
+    "id": 223,
+    "region": 1,
+    "path": "110110101001"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00150.lean",
+    "name": "e24KC2PhiAboveLeaf1101111_c0_c0",
+    "depth": 7,
+    "cell": "(childLL phiAboveCell11011110)",
+    "id": 224,
+    "region": 1,
+    "path": "110111100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00187.lean",
+    "name": "e24KC2PhiAboveLeaf1110001_c0",
+    "depth": 8,
+    "cell": "phiAboveCell11100010",
+    "id": 225,
+    "region": 1,
+    "path": "11100010"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00126.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c0_c1_c0_c1",
+    "depth": 5,
+    "cell": "(childLH (childLL (childLH phiAboveCell11011100)))",
+    "id": 226,
+    "region": 1,
+    "path": "11011100101"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00155.lean",
+    "name": "e24KC2PhiAboveLeaf1101111_c0_c1_c3",
+    "depth": 6,
+    "cell": "(childHH (childLH phiAboveCell11011110))",
+    "id": 227,
+    "region": 1,
+    "path": "1101111013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00138.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c1_c0",
+    "depth": 7,
+    "cell": "(childLL phiAboveCell11011101)",
+    "id": 228,
+    "region": 1,
+    "path": "110111010"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00084.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c0_c0_c3",
+    "depth": 5,
+    "cell": "(childHH (childLL (childLL phiAboveCell11011011)))",
+    "id": 229,
+    "region": 1,
+    "path": "11011011003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00161.lean",
+    "name": "e24KC2PhiAboveLeaf1101111_c1_c0",
+    "depth": 7,
+    "cell": "(childLL phiAboveCell11011111)",
+    "id": 230,
+    "region": 1,
+    "path": "110111110"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00206.lean",
+    "name": "e24KC2PhiAboveLeaf1110011_c2",
+    "depth": 8,
+    "cell": "phiAboveCell11100112",
+    "id": 231,
+    "region": 1,
+    "path": "11100112"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00089.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c0_c1_c2",
+    "depth": 5,
+    "cell": "(childHL (childLH (childLL phiAboveCell11011011)))",
+    "id": 232,
+    "region": 1,
+    "path": "11011011012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00189.lean",
+    "name": "e24KC2PhiAboveLeaf1110001_c2",
+    "depth": 8,
+    "cell": "phiAboveCell11100012",
+    "id": 233,
+    "region": 1,
+    "path": "11100012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00059.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c0_c1_c1",
+    "depth": 4,
+    "cell": "phiAboveCell110110101011",
+    "id": 234,
+    "region": 1,
+    "path": "110110101011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00176.lean",
+    "name": "e24KC2PhiAboveLeaf1110000_c0_c2",
+    "depth": 7,
+    "cell": "(childHL phiAboveCell11100000)",
+    "id": 235,
+    "region": 1,
+    "path": "111000002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00026.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c0_c1",
+    "depth": 5,
+    "cell": "(childLH (childLL (childLL phiAboveCell11011010)))",
+    "id": 236,
+    "region": 1,
+    "path": "11011010001"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00188.lean",
+    "name": "e24KC2PhiAboveLeaf1110001_c1",
+    "depth": 8,
+    "cell": "phiAboveCell11100011",
+    "id": 237,
+    "region": 1,
+    "path": "11100011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00052.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c0_c0_c0",
+    "depth": 4,
+    "cell": "phiAboveCell110110101000",
+    "id": 238,
+    "region": 1,
+    "path": "110110101000"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00205.lean",
+    "name": "e24KC2PhiAboveLeaf1110011_c1",
+    "depth": 8,
+    "cell": "phiAboveCell11100111",
+    "id": 239,
+    "region": 1,
+    "path": "11100111"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00099.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c1_c0_c2",
+    "depth": 5,
+    "cell": "(childHL (childLL (childLH phiAboveCell11011011)))",
+    "id": 240,
+    "region": 1,
+    "path": "11011011102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00153.lean",
+    "name": "e24KC2PhiAboveLeaf1101111_c0_c1_c1",
+    "depth": 6,
+    "cell": "(childLH (childLH phiAboveCell11011110))",
+    "id": 241,
+    "region": 1,
+    "path": "1101111011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00157.lean",
+    "name": "e24KC2PhiAboveLeaf1101111_c0_c2",
+    "depth": 7,
+    "cell": "(childHL phiAboveCell11011110)",
+    "id": 242,
+    "region": 1,
+    "path": "110111102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00143.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c2",
+    "depth": 8,
+    "cell": "phiAboveCell11011102",
+    "id": 243,
+    "region": 1,
+    "path": "11011102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00025.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c0_c0",
+    "depth": 5,
+    "cell": "(childLL (childLL (childLL phiAboveCell11011010)))",
+    "id": 244,
+    "region": 1,
+    "path": "11011010000"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00132.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c0_c1_c3",
+    "depth": 6,
+    "cell": "(childHH (childLH phiAboveCell11011100))",
+    "id": 245,
+    "region": 1,
+    "path": "1101110013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00067.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c1_c0",
+    "depth": 5,
+    "cell": "(childLL (childLH (childLH phiAboveCell11011010)))",
+    "id": 246,
+    "region": 1,
+    "path": "11011010110"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00175.lean",
+    "name": "e24KC2PhiAboveLeaf1110000_c0_c1",
+    "depth": 7,
+    "cell": "(childLH phiAboveCell11100000)",
+    "id": 247,
+    "region": 1,
+    "path": "111000001"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00144.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c3",
+    "depth": 8,
+    "cell": "phiAboveCell11011103",
+    "id": 248,
+    "region": 1,
+    "path": "11011103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00035.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c1_c0_c3",
+    "depth": 4,
+    "cell": "phiAboveCell110110100103",
+    "id": 249,
+    "region": 1,
+    "path": "110110100103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00047.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c3",
+    "depth": 6,
+    "cell": "(childHH (childLL phiAboveCell11011010))",
+    "id": 250,
+    "region": 1,
+    "path": "1101101003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00139.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c1_c1",
+    "depth": 7,
+    "cell": "(childLH phiAboveCell11011101)",
+    "id": 251,
+    "region": 1,
+    "path": "110111011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00097.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c1_c0_c0",
+    "depth": 5,
+    "cell": "(childLL (childLL (childLH phiAboveCell11011011)))",
+    "id": 252,
+    "region": 1,
+    "path": "11011011100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00103.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c1_c2",
+    "depth": 6,
+    "cell": "(childHL (childLH phiAboveCell11011011))",
+    "id": 253,
+    "region": 1,
+    "path": "1101101112"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00118.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c0_c0_c0",
+    "depth": 6,
+    "cell": "(childLL (childLL phiAboveCell11011100))",
+    "id": 254,
+    "region": 1,
+    "path": "1101110000"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00033.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c1_c0_c1",
+    "depth": 4,
+    "cell": "phiAboveCell110110100101",
+    "id": 255,
+    "region": 1,
+    "path": "110110100101"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00121.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c0_c0_c3",
+    "depth": 6,
+    "cell": "(childHH (childLL phiAboveCell11011100))",
+    "id": 256,
+    "region": 1,
+    "path": "1101110003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00162.lean",
+    "name": "e24KC2PhiAboveLeaf1101111_c1_c1",
+    "depth": 7,
+    "cell": "(childLH phiAboveCell11011111)",
+    "id": 257,
+    "region": 1,
+    "path": "110111111"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00070.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c1_c3",
+    "depth": 5,
+    "cell": "(childHH (childLH (childLH phiAboveCell11011010)))",
+    "id": 258,
+    "region": 1,
+    "path": "11011010113"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00069.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c1_c2",
+    "depth": 5,
+    "cell": "(childHL (childLH (childLH phiAboveCell11011010)))",
+    "id": 259,
+    "region": 1,
+    "path": "11011010112"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00198.lean",
+    "name": "e24KC2PhiAboveLeaf1110010_c2",
+    "depth": 8,
+    "cell": "phiAboveCell11100102",
+    "id": 260,
+    "region": 1,
+    "path": "11100102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00081.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c0_c0_c0",
+    "depth": 5,
+    "cell": "(childLL (childLL (childLL phiAboveCell11011011)))",
+    "id": 261,
+    "region": 1,
+    "path": "11011011000"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00028.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c0_c3",
+    "depth": 5,
+    "cell": "(childHH (childLL (childLL phiAboveCell11011010)))",
+    "id": 262,
+    "region": 1,
+    "path": "11011010003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00128.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c0_c1_c0_c3",
+    "depth": 5,
+    "cell": "(childHH (childLL (childLH phiAboveCell11011100)))",
+    "id": 263,
+    "region": 1,
+    "path": "11011100103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00199.lean",
+    "name": "e24KC2PhiAboveLeaf1110010_c3",
+    "depth": 8,
+    "cell": "phiAboveCell11100103",
+    "id": 264,
+    "region": 1,
+    "path": "11100103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00106.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c2",
+    "depth": 7,
+    "cell": "(childHL phiAboveCell11011011)",
+    "id": 265,
+    "region": 1,
+    "path": "110110112"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00098.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c1_c0_c1",
+    "depth": 5,
+    "cell": "(childLH (childLL (childLH phiAboveCell11011011)))",
+    "id": 266,
+    "region": 1,
+    "path": "11011011101"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00032.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c1_c0_c0",
+    "depth": 4,
+    "cell": "phiAboveCell110110100100",
+    "id": 267,
+    "region": 1,
+    "path": "110110100100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00072.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c2",
+    "depth": 6,
+    "cell": "(childHL (childLH phiAboveCell11011010))",
+    "id": 268,
+    "region": 1,
+    "path": "1101101012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00090.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c0_c1_c3",
+    "depth": 5,
+    "cell": "(childHH (childLH (childLL phiAboveCell11011011)))",
+    "id": 269,
+    "region": 1,
+    "path": "11011011013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00038.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c1_c1_c0",
+    "depth": 4,
+    "cell": "phiAboveCell110110100110",
+    "id": 270,
+    "region": 1,
+    "path": "110110100110"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00179.lean",
+    "name": "e24KC2PhiAboveLeaf1110000_c1",
+    "depth": 8,
+    "cell": "phiAboveCell11100001",
+    "id": 271,
+    "region": 1,
+    "path": "11100001"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00141.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c1_c3",
+    "depth": 7,
+    "cell": "(childHH phiAboveCell11011101)",
+    "id": 272,
+    "region": 1,
+    "path": "110111013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00152.lean",
+    "name": "e24KC2PhiAboveLeaf1101111_c0_c1_c0",
+    "depth": 6,
+    "cell": "(childLL (childLH phiAboveCell11011110))",
+    "id": 273,
+    "region": 1,
+    "path": "1101111010"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00109.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c2",
+    "depth": 8,
+    "cell": "phiAboveCell11011012",
+    "id": 274,
+    "region": 1,
+    "path": "11011012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00040.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c0_c1_c1_c2",
+    "depth": 4,
+    "cell": "phiAboveCell110110100112",
+    "id": 275,
+    "region": 1,
+    "path": "110110100112"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00125.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c0_c1_c0_c0",
+    "depth": 5,
+    "cell": "(childLL (childLL (childLH phiAboveCell11011100)))",
+    "id": 276,
+    "region": 1,
+    "path": "11011100100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00063.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c0_c2",
+    "depth": 5,
+    "cell": "(childHL (childLL (childLH phiAboveCell11011010)))",
+    "id": 277,
+    "region": 1,
+    "path": "11011010102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00054.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c0_c0_c2",
+    "depth": 4,
+    "cell": "phiAboveCell110110101002",
+    "id": 278,
+    "region": 1,
+    "path": "110110101002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00087.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c0_c1_c0",
+    "depth": 5,
+    "cell": "(childLL (childLH (childLL phiAboveCell11011011)))",
+    "id": 279,
+    "region": 1,
+    "path": "11011011010"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00082.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c0_c0_c1",
+    "depth": 5,
+    "cell": "(childLH (childLL (childLL phiAboveCell11011011)))",
+    "id": 280,
+    "region": 1,
+    "path": "11011011001"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00073.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c3",
+    "depth": 6,
+    "cell": "(childHH (childLH phiAboveCell11011010))",
+    "id": 281,
+    "region": 1,
+    "path": "1101101013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00104.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c1_c3",
+    "depth": 6,
+    "cell": "(childHH (childLH phiAboveCell11011011))",
+    "id": 282,
+    "region": 1,
+    "path": "1101101113"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00119.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c0_c0_c1",
+    "depth": 6,
+    "cell": "(childLH (childLL phiAboveCell11011100))",
+    "id": 283,
+    "region": 1,
+    "path": "1101110001"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00058.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c0_c1_c0_c1_c0",
+    "depth": 4,
+    "cell": "phiAboveCell110110101010",
+    "id": 284,
+    "region": 1,
+    "path": "110110101010"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00207.lean",
+    "name": "e24KC2PhiAboveLeaf1110011_c3",
+    "depth": 8,
+    "cell": "phiAboveCell11100113",
+    "id": 285,
+    "region": 1,
+    "path": "11100113"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00102.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c1_c1",
+    "depth": 6,
+    "cell": "(childLH (childLH phiAboveCell11011011))",
+    "id": 286,
+    "region": 1,
+    "path": "1101101111"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00135.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c0_c3",
+    "depth": 7,
+    "cell": "(childHH phiAboveCell11011100)",
+    "id": 287,
+    "region": 1,
+    "path": "110111003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00120.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c0_c0_c2",
+    "depth": 6,
+    "cell": "(childHL (childLL phiAboveCell11011100))",
+    "id": 288,
+    "region": 1,
+    "path": "1101110002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00083.lean",
+    "name": "e24KC2PhiAboveLeaf1101101_c1_c0_c0_c2",
+    "depth": 5,
+    "cell": "(childHL (childLL (childLL phiAboveCell11011011)))",
+    "id": 289,
+    "region": 1,
+    "path": "11011011002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00131.lean",
+    "name": "e24KC2PhiAboveLeaf1101110_c0_c1_c2",
+    "depth": 6,
+    "cell": "(childHL (childLH phiAboveCell11011100))",
+    "id": 290,
+    "region": 1,
+    "path": "1101110012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiAbove/Leaf00197.lean",
+    "name": "e24KC2PhiAboveLeaf1110010_c1",
+    "depth": 8,
+    "cell": "phiAboveCell11100101",
+    "id": 291,
+    "region": 1,
+    "path": "11100101"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00012.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c2_c0",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020113120",
+    "id": 292,
+    "region": 3,
+    "path": "0000220020113120"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00602.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c3",
+    "depth": 7,
+    "cell": "thetaAboveCell000022002003",
+    "id": 293,
+    "region": 3,
+    "path": "000022002003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00594.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c1_c2",
+    "depth": 4,
+    "cell": "(childHL (childLH (childHH thetaAboveCell000022002001)))",
+    "id": 294,
+    "region": 3,
+    "path": "000022002001312"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00611.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c0_c1",
+    "depth": 4,
+    "cell": "(childLH (childLL (childHL thetaAboveCell000022002010)))",
+    "id": 295,
+    "region": 3,
+    "path": "000022002010201"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00020.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c3_c2",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020113132",
+    "id": 296,
+    "region": 3,
+    "path": "0000220020113132"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00541.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c1_c1_c3",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003113",
+    "id": 297,
+    "region": 3,
+    "path": "0000220020003113"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00586.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c0_c0",
+    "depth": 4,
+    "cell": "(childLL (childLL (childHH thetaAboveCell000022002001)))",
+    "id": 298,
+    "region": 3,
+    "path": "000022002001300"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00575.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c0_c3",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020012103",
+    "id": 299,
+    "region": 3,
+    "path": "0000220020012103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00488.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c1_c2",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002012",
+    "id": 300,
+    "region": 3,
+    "path": "0000220020002012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00633.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c1_c1",
+    "depth": 4,
+    "cell": "(childLH (childLH (childHH thetaAboveCell000022002010)))",
+    "id": 301,
+    "region": 3,
+    "path": "000022002010311"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00009.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c0",
+    "depth": 4,
+    "cell": "(childLL (childLH (childHH thetaAboveCell000022002011)))",
+    "id": 302,
+    "region": 3,
+    "path": "000022002011310"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00619.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c1_c3",
+    "depth": 4,
+    "cell": "(childHH (childLH (childHL thetaAboveCell000022002010)))",
+    "id": 303,
+    "region": 3,
+    "path": "000022002010213"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00544.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c1_c3",
+    "depth": 4,
+    "cell": "(childHH (childLH (childHH thetaAboveCell000022002000)))",
+    "id": 304,
+    "region": 3,
+    "path": "000022002000313"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00607.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c1",
+    "depth": 6,
+    "cell": "(childLH thetaAboveCell000022002010)",
+    "id": 305,
+    "region": 3,
+    "path": "0000220020101"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00476.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c1",
+    "depth": 6,
+    "cell": "(childLH thetaAboveCell000022002000)",
+    "id": 306,
+    "region": 3,
+    "path": "0000220020001"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00556.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0_c0_c0",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020012000",
+    "id": 307,
+    "region": 3,
+    "path": "0000220020012000"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00632.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c1_c0",
+    "depth": 4,
+    "cell": "(childLL (childLH (childHH thetaAboveCell000022002010)))",
+    "id": 308,
+    "region": 3,
+    "path": "000022002010310"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00568.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0_c3",
+    "depth": 4,
+    "cell": "(childHH (childLL (childHL thetaAboveCell000022002001)))",
+    "id": 309,
+    "region": 3,
+    "path": "000022002001203"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00664.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c0_c2",
+    "depth": 4,
+    "cell": "(childHL (childLL (childHH thetaAboveCell000022002011)))",
+    "id": 310,
+    "region": 3,
+    "path": "000022002011302"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00021.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c3_c3",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020113133",
+    "id": 311,
+    "region": 3,
+    "path": "0000220020113133"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00658.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c2_c3",
+    "depth": 5,
+    "cell": "(childHH (childHL thetaAboveCell000022002011))",
+    "id": 312,
+    "region": 3,
+    "path": "00002200201123"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00643.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c1",
+    "depth": 6,
+    "cell": "(childLH thetaAboveCell000022002011)",
+    "id": 313,
+    "region": 3,
+    "path": "0000220020111"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00508.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c1_c3",
+    "depth": 4,
+    "cell": "(childHH (childLH (childHL thetaAboveCell000022002000)))",
+    "id": 314,
+    "region": 3,
+    "path": "000022002000213"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00519.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c0_c0_c3",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003003",
+    "id": 315,
+    "region": 3,
+    "path": "0000220020003003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00487.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c1_c1",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002011",
+    "id": 316,
+    "region": 3,
+    "path": "0000220020002011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00612.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c0_c2",
+    "depth": 4,
+    "cell": "(childHL (childLL (childHL thetaAboveCell000022002010)))",
+    "id": 317,
+    "region": 3,
+    "path": "000022002010202"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00629.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c0_c3",
+    "depth": 4,
+    "cell": "(childHH (childLL (childHH thetaAboveCell000022002010)))",
+    "id": 318,
+    "region": 3,
+    "path": "000022002010303"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00024.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c2",
+    "depth": 5,
+    "cell": "(childHL (childHH thetaAboveCell000022002011))",
+    "id": 319,
+    "region": 3,
+    "path": "00002200201132"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00601.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c2",
+    "depth": 7,
+    "cell": "thetaAboveCell000022002002",
+    "id": 320,
+    "region": 3,
+    "path": "000022002002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00595.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c1_c3",
+    "depth": 4,
+    "cell": "(childHH (childLH (childHH thetaAboveCell000022002001)))",
+    "id": 321,
+    "region": 3,
+    "path": "000022002001313"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00516.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c0_c0_c0",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003000",
+    "id": 322,
+    "region": 3,
+    "path": "0000220020003000"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00648.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c2_c0_c2",
+    "depth": 4,
+    "cell": "(childHL (childLL (childHL thetaAboveCell000022002011)))",
+    "id": 323,
+    "region": 3,
+    "path": "000022002011202"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00565.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0_c1_c3",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020012013",
+    "id": 324,
+    "region": 3,
+    "path": "0000220020012013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00613.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c0_c3",
+    "depth": 4,
+    "cell": "(childHH (childLL (childHL thetaAboveCell000022002010)))",
+    "id": 325,
+    "region": 3,
+    "path": "000022002010203"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00543.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c1_c2",
+    "depth": 4,
+    "cell": "(childHL (childLH (childHH thetaAboveCell000022002000)))",
+    "id": 326,
+    "region": 3,
+    "path": "000022002000312"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00014.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c2_c2",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020113122",
+    "id": 327,
+    "region": 3,
+    "path": "0000220020113122"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00029.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c3",
+    "depth": 7,
+    "cell": "thetaAboveCell000022002013",
+    "id": 328,
+    "region": 3,
+    "path": "000022002013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00510.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c2",
+    "depth": 5,
+    "cell": "(childHL (childHL thetaAboveCell000022002000))",
+    "id": 329,
+    "region": 3,
+    "path": "00002200200022"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00610.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c0_c0",
+    "depth": 4,
+    "cell": "(childLL (childLL (childHL thetaAboveCell000022002010)))",
+    "id": 330,
+    "region": 3,
+    "path": "000022002010200"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00562.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0_c1_c0",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020012010",
+    "id": 331,
+    "region": 3,
+    "path": "0000220020012010"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00635.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c1_c3",
+    "depth": 4,
+    "cell": "(childHH (childLH (childHH thetaAboveCell000022002010)))",
+    "id": 332,
+    "region": 3,
+    "path": "000022002010313"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00653.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c2_c1_c1",
+    "depth": 4,
+    "cell": "(childLH (childLH (childHL thetaAboveCell000022002011)))",
+    "id": 333,
+    "region": 3,
+    "path": "000022002011211"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00540.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c1_c1_c2",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003112",
+    "id": 334,
+    "region": 3,
+    "path": "0000220020003112"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00013.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c2_c1",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020113121",
+    "id": 335,
+    "region": 3,
+    "path": "0000220020113121"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00606.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c0",
+    "depth": 6,
+    "cell": "(childLL thetaAboveCell000022002010)",
+    "id": 336,
+    "region": 3,
+    "path": "0000220020100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00524.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c0_c1_c2",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003012",
+    "id": 337,
+    "region": 3,
+    "path": "0000220020003012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00617.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c1_c1",
+    "depth": 4,
+    "cell": "(childLH (childLH (childHL thetaAboveCell000022002010)))",
+    "id": 338,
+    "region": 3,
+    "path": "000022002010211"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00573.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c0_c1",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020012101",
+    "id": 339,
+    "region": 3,
+    "path": "0000220020012101"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00505.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c1_c1_c3",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002113",
+    "id": 340,
+    "region": 3,
+    "path": "0000220020002113"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00649.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c2_c0_c3",
+    "depth": 4,
+    "cell": "(childHH (childLL (childHL thetaAboveCell000022002011)))",
+    "id": 341,
+    "region": 3,
+    "path": "000022002011203"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00642.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c0",
+    "depth": 6,
+    "cell": "(childLL thetaAboveCell000022002011)",
+    "id": 342,
+    "region": 3,
+    "path": "0000220020110"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00581.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c2",
+    "depth": 5,
+    "cell": "(childHL (childHL thetaAboveCell000022002001))",
+    "id": 343,
+    "region": 3,
+    "path": "00002200200122"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00646.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c2_c0_c0",
+    "depth": 4,
+    "cell": "(childLL (childLL (childHL thetaAboveCell000022002011)))",
+    "id": 344,
+    "region": 3,
+    "path": "000022002011200"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00522.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c0_c1_c0",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003010",
+    "id": 345,
+    "region": 3,
+    "path": "0000220020003010"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00532.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c1_c0_c0",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003100",
+    "id": 346,
+    "region": 3,
+    "path": "0000220020003100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00622.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c3",
+    "depth": 5,
+    "cell": "(childHH (childHL thetaAboveCell000022002010))",
+    "id": 347,
+    "region": 3,
+    "path": "00002200201023"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00538.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c1_c1_c0",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003110",
+    "id": 348,
+    "region": 3,
+    "path": "0000220020003110"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00552.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c1",
+    "depth": 6,
+    "cell": "(childLH thetaAboveCell000022002001)",
+    "id": 349,
+    "region": 3,
+    "path": "0000220020011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00663.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c0_c1",
+    "depth": 4,
+    "cell": "(childLH (childLL (childHH thetaAboveCell000022002011)))",
+    "id": 350,
+    "region": 3,
+    "path": "000022002011301"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00579.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c3",
+    "depth": 4,
+    "cell": "(childHH (childLH (childHL thetaAboveCell000022002001)))",
+    "id": 351,
+    "region": 3,
+    "path": "000022002001213"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00480.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c0_c0",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002000",
+    "id": 352,
+    "region": 3,
+    "path": "0000220020002000"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00665.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c0_c3",
+    "depth": 4,
+    "cell": "(childHH (childLL (childHH thetaAboveCell000022002011)))",
+    "id": 353,
+    "region": 3,
+    "path": "000022002011303"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00563.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0_c1_c1",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020012011",
+    "id": 354,
+    "region": 3,
+    "path": "0000220020012011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00588.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c0_c2",
+    "depth": 4,
+    "cell": "(childHL (childLL (childHH thetaAboveCell000022002001)))",
+    "id": 355,
+    "region": 3,
+    "path": "000022002001302"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00025.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c3",
+    "depth": 5,
+    "cell": "(childHH (childHH thetaAboveCell000022002011))",
+    "id": 356,
+    "region": 3,
+    "path": "00002200201133"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00523.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c0_c1_c1",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003011",
+    "id": 357,
+    "region": 3,
+    "path": "0000220020003011"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00528.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c0_c3",
+    "depth": 4,
+    "cell": "(childHH (childLL (childHH thetaAboveCell000022002000)))",
+    "id": 358,
+    "region": 3,
+    "path": "000022002000303"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00019.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c3_c1",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020113131",
+    "id": 359,
+    "region": 3,
+    "path": "0000220020113131"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00497.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c1_c0_c1",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002101",
+    "id": 360,
+    "region": 3,
+    "path": "0000220020002101"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00491.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c2",
+    "depth": 4,
+    "cell": "(childHL (childLL (childHL thetaAboveCell000022002000)))",
+    "id": 361,
+    "region": 3,
+    "path": "000022002000202"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00502.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c1_c1_c0",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002110",
+    "id": 362,
+    "region": 3,
+    "path": "0000220020002110"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00627.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c0_c1",
+    "depth": 4,
+    "cell": "(childLH (childLL (childHH thetaAboveCell000022002010)))",
+    "id": 363,
+    "region": 3,
+    "path": "000022002010301"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00504.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c1_c1_c2",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002112",
+    "id": 364,
+    "region": 3,
+    "path": "0000220020002112"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00634.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c1_c2",
+    "depth": 4,
+    "cell": "(childHL (childLH (childHH thetaAboveCell000022002010)))",
+    "id": 365,
+    "region": 3,
+    "path": "000022002010312"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00547.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c3",
+    "depth": 5,
+    "cell": "(childHH (childHH thetaAboveCell000022002000))",
+    "id": 366,
+    "region": 3,
+    "path": "00002200200033"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00533.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c1_c0_c1",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003101",
+    "id": 367,
+    "region": 3,
+    "path": "0000220020003101"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00597.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c2",
+    "depth": 5,
+    "cell": "(childHL (childHH thetaAboveCell000022002001))",
+    "id": 368,
+    "region": 3,
+    "path": "00002200200132"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00564.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0_c1_c2",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020012012",
+    "id": 369,
+    "region": 3,
+    "path": "0000220020012012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00572.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c0_c0",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020012100",
+    "id": 370,
+    "region": 3,
+    "path": "0000220020012100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00558.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0_c0_c2",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020012002",
+    "id": 371,
+    "region": 3,
+    "path": "0000220020012002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00018.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c3_c0",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020113130",
+    "id": 372,
+    "region": 3,
+    "path": "0000220020113130"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00492.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c3",
+    "depth": 4,
+    "cell": "(childHH (childLL (childHL thetaAboveCell000022002000)))",
+    "id": 373,
+    "region": 3,
+    "path": "000022002000203"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00662.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c0_c0",
+    "depth": 4,
+    "cell": "(childLL (childLL (childHH thetaAboveCell000022002011)))",
+    "id": 374,
+    "region": 3,
+    "path": "000022002011300"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00647.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c2_c0_c1",
+    "depth": 4,
+    "cell": "(childLH (childLL (childHL thetaAboveCell000022002011)))",
+    "id": 375,
+    "region": 3,
+    "path": "000022002011201"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00546.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c2",
+    "depth": 5,
+    "cell": "(childHL (childHH thetaAboveCell000022002000))",
+    "id": 376,
+    "region": 3,
+    "path": "00002200200032"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00475.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c0",
+    "depth": 6,
+    "cell": "(childLL thetaAboveCell000022002000)",
+    "id": 377,
+    "region": 3,
+    "path": "0000220020000"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00551.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c0",
+    "depth": 6,
+    "cell": "(childLL thetaAboveCell000022002001)",
+    "id": 378,
+    "region": 3,
+    "path": "0000220020010"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00582.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c3",
+    "depth": 5,
+    "cell": "(childHH (childHL thetaAboveCell000022002001))",
+    "id": 379,
+    "region": 3,
+    "path": "00002200200123"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00577.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c1",
+    "depth": 4,
+    "cell": "(childLH (childLH (childHL thetaAboveCell000022002001)))",
+    "id": 380,
+    "region": 3,
+    "path": "000022002001211"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00587.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c0_c1",
+    "depth": 4,
+    "cell": "(childLH (childLL (childHH thetaAboveCell000022002001)))",
+    "id": 381,
+    "region": 3,
+    "path": "000022002001301"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00578.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c2",
+    "depth": 4,
+    "cell": "(childHL (childLH (childHL thetaAboveCell000022002001)))",
+    "id": 382,
+    "region": 3,
+    "path": "000022002001212"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00626.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c0_c0",
+    "depth": 4,
+    "cell": "(childLL (childLL (childHH thetaAboveCell000022002010)))",
+    "id": 383,
+    "region": 3,
+    "path": "000022002010300"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00527.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c0_c2",
+    "depth": 4,
+    "cell": "(childHL (childLL (childHH thetaAboveCell000022002000)))",
+    "id": 384,
+    "region": 3,
+    "path": "000022002000302"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00557.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0_c0_c1",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020012001",
+    "id": 385,
+    "region": 3,
+    "path": "0000220020012001"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00589.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c0_c3",
+    "depth": 4,
+    "cell": "(childHH (childLL (childHH thetaAboveCell000022002001)))",
+    "id": 386,
+    "region": 3,
+    "path": "000022002001303"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00518.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c0_c0_c2",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003002",
+    "id": 387,
+    "region": 3,
+    "path": "0000220020003002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00517.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c0_c0_c1",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003001",
+    "id": 388,
+    "region": 3,
+    "path": "0000220020003001"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00482.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c0_c2",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002002",
+    "id": 389,
+    "region": 3,
+    "path": "0000220020002002"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00621.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c2",
+    "depth": 5,
+    "cell": "(childHL (childHL thetaAboveCell000022002010))",
+    "id": 390,
+    "region": 3,
+    "path": "00002200201022"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00598.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c3",
+    "depth": 5,
+    "cell": "(childHH (childHH thetaAboveCell000022002001))",
+    "id": 391,
+    "region": 3,
+    "path": "00002200200133"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00496.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c1_c0_c0",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002100",
+    "id": 392,
+    "region": 3,
+    "path": "0000220020002100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00654.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c2_c1_c2",
+    "depth": 4,
+    "cell": "(childHL (childLH (childHL thetaAboveCell000022002011)))",
+    "id": 393,
+    "region": 3,
+    "path": "000022002011212"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00511.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c3",
+    "depth": 5,
+    "cell": "(childHH (childHL thetaAboveCell000022002000))",
+    "id": 394,
+    "region": 3,
+    "path": "00002200200023"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00618.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c1_c2",
+    "depth": 4,
+    "cell": "(childHL (childLH (childHL thetaAboveCell000022002010)))",
+    "id": 395,
+    "region": 3,
+    "path": "000022002010212"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00028.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c2",
+    "depth": 7,
+    "cell": "thetaAboveCell000022002012",
+    "id": 396,
+    "region": 3,
+    "path": "000022002012"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00628.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c0_c2",
+    "depth": 4,
+    "cell": "(childHL (childLL (childHH thetaAboveCell000022002010)))",
+    "id": 397,
+    "region": 3,
+    "path": "000022002010302"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00593.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c1_c1",
+    "depth": 4,
+    "cell": "(childLH (childLH (childHH thetaAboveCell000022002001)))",
+    "id": 398,
+    "region": 3,
+    "path": "000022002001311"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00535.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c1_c0_c3",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003103",
+    "id": 399,
+    "region": 3,
+    "path": "0000220020003103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00489.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c1_c3",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002013",
+    "id": 400,
+    "region": 3,
+    "path": "0000220020002013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00567.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0_c2",
+    "depth": 4,
+    "cell": "(childHL (childLL (childHL thetaAboveCell000022002001)))",
+    "id": 401,
+    "region": 3,
+    "path": "000022002001202"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00499.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c1_c0_c3",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002103",
+    "id": 402,
+    "region": 3,
+    "path": "0000220020002103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00481.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c0_c1",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002001",
+    "id": 403,
+    "region": 3,
+    "path": "0000220020002001"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00539.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c1_c1_c1",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003111",
+    "id": 404,
+    "region": 3,
+    "path": "0000220020003111"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00637.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c2",
+    "depth": 5,
+    "cell": "(childHL (childHH thetaAboveCell000022002010))",
+    "id": 405,
+    "region": 3,
+    "path": "00002200201032"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00616.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c2_c1_c0",
+    "depth": 4,
+    "cell": "(childLL (childLH (childHL thetaAboveCell000022002010)))",
+    "id": 406,
+    "region": 3,
+    "path": "000022002010210"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00507.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c1_c2",
+    "depth": 4,
+    "cell": "(childHL (childLH (childHL thetaAboveCell000022002000)))",
+    "id": 407,
+    "region": 3,
+    "path": "000022002000212"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00655.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c2_c1_c3",
+    "depth": 4,
+    "cell": "(childHH (childLH (childHL thetaAboveCell000022002011)))",
+    "id": 408,
+    "region": 3,
+    "path": "000022002011213"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00534.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c1_c0_c2",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003102",
+    "id": 409,
+    "region": 3,
+    "path": "0000220020003102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00525.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c3_c0_c1_c3",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020003013",
+    "id": 410,
+    "region": 3,
+    "path": "0000220020003013"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00592.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c3_c1_c0",
+    "depth": 4,
+    "cell": "(childLL (childLH (childHH thetaAboveCell000022002001)))",
+    "id": 411,
+    "region": 3,
+    "path": "000022002001310"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00559.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c0_c0_c3",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020012003",
+    "id": 412,
+    "region": 3,
+    "path": "0000220020012003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00483.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c0_c3",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002003",
+    "id": 413,
+    "region": 3,
+    "path": "0000220020002003"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00498.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c1_c0_c2",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002102",
+    "id": 414,
+    "region": 3,
+    "path": "0000220020002102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00657.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c2_c2",
+    "depth": 5,
+    "cell": "(childHL (childHL thetaAboveCell000022002011))",
+    "id": 415,
+    "region": 3,
+    "path": "00002200201122"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00638.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c0_c3_c3",
+    "depth": 5,
+    "cell": "(childHH (childHH thetaAboveCell000022002010))",
+    "id": 416,
+    "region": 3,
+    "path": "00002200201033"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00010.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c1",
+    "depth": 4,
+    "cell": "(childLH (childLH (childHH thetaAboveCell000022002011)))",
+    "id": 417,
+    "region": 3,
+    "path": "000022002011311"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00652.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c2_c1_c0",
+    "depth": 4,
+    "cell": "(childLL (childLH (childHL thetaAboveCell000022002011)))",
+    "id": 418,
+    "region": 3,
+    "path": "000022002011210"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00574.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c1_c2_c1_c0_c2",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020012102",
+    "id": 419,
+    "region": 3,
+    "path": "0000220020012102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00015.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c1_c1_c3_c1_c2_c3",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020113123",
+    "id": 420,
+    "region": 3,
+    "path": "0000220020113123"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00503.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c1_c1_c1",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002111",
+    "id": 421,
+    "region": 3,
+    "path": "0000220020002111"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/ThetaAbove/Leaf00486.lean",
+    "name": "e24KC2ThetaAboveLeaf0000220020_c0_c0_c2_c0_c1_c0",
+    "depth": 3,
+    "cell": "thetaAboveCell0000220020002010",
+    "id": 422,
+    "region": 3,
+    "path": "0000220020002010"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00432.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c3_c2",
+    "depth": 3,
+    "cell": "(childHL (childHH (childHL phiBelowCell33233223)))",
+    "id": 423,
+    "region": 0,
+    "path": "33233223232"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00243.lean",
+    "name": "e24KC2PhiBelowLeaf33203_c1",
+    "depth": 8,
+    "cell": "(childLH (childHH phiBelowCell3320))",
+    "id": 424,
+    "region": 0,
+    "path": "332031"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00257.lean",
+    "name": "e24KC2PhiBelowLeaf33221_c1",
+    "depth": 8,
+    "cell": "(childLH (childLH phiBelowCell3322))",
+    "id": 425,
+    "region": 0,
+    "path": "332211"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00420.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c1_c2_c0_c3",
+    "depth": 1,
+    "cell": "(childHH phiBelowCell332332232120)",
+    "id": 426,
+    "region": 0,
+    "path": "3323322321203"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00440.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c3_c2_c0",
+    "depth": 3,
+    "cell": "(childLL (childHL (childHH phiBelowCell33233223)))",
+    "id": 427,
+    "region": 0,
+    "path": "33233223320"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00306.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c1_c2_c2",
+    "depth": 6,
+    "cell": "phiBelowCell33232122",
+    "id": 428,
+    "region": 0,
+    "path": "33232122"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00409.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c1",
+    "depth": 5,
+    "cell": "(childLH phiBelowCell33233223)",
+    "id": 429,
+    "region": 0,
+    "path": "332332231"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00272.lean",
+    "name": "e24KC2PhiBelowLeaf33230_c1",
+    "depth": 8,
+    "cell": "(childLH (childLL phiBelowCell3323))",
+    "id": 430,
+    "region": 0,
+    "path": "332301"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00322.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c1_c1_c0",
+    "depth": 5,
+    "cell": "(childLL phiBelowCell33232311)",
+    "id": 431,
+    "region": 0,
+    "path": "332323110"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00405.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c0_c1",
+    "depth": 4,
+    "cell": "(childLH (childLL phiBelowCell33233223))",
+    "id": 432,
+    "region": 0,
+    "path": "3323322301"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00430.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c3_c0",
+    "depth": 3,
+    "cell": "(childLL (childHH (childHL phiBelowCell33233223)))",
+    "id": 433,
+    "region": 0,
+    "path": "33233223230"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00242.lean",
+    "name": "e24KC2PhiBelowLeaf33203_c0",
+    "depth": 8,
+    "cell": "(childLL (childHH phiBelowCell3320))",
+    "id": 434,
+    "region": 0,
+    "path": "332030"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00372.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c1",
+    "depth": 7,
+    "cell": "(childLH (childHL (childHH phiBelowCell3323)))",
+    "id": 435,
+    "region": 0,
+    "path": "3323321"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00282.lean",
+    "name": "e24KC2PhiBelowLeaf33230_c3_c2",
+    "depth": 7,
+    "cell": "(childHL (childHH (childLL phiBelowCell3323)))",
+    "id": 436,
+    "region": 0,
+    "path": "3323032"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00428.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c2",
+    "depth": 4,
+    "cell": "(childHL (childHL phiBelowCell33233223))",
+    "id": 437,
+    "region": 0,
+    "path": "3323322322"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00244.lean",
+    "name": "e24KC2PhiBelowLeaf33203_c2",
+    "depth": 8,
+    "cell": "(childHL (childHH phiBelowCell3320))",
+    "id": 438,
+    "region": 0,
+    "path": "332032"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00450.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c3_c0",
+    "depth": 6,
+    "cell": "phiBelowCell33233230",
+    "id": 439,
+    "region": 0,
+    "path": "33233230"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00418.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c1_c2_c0_c1",
+    "depth": 1,
+    "cell": "(childLH phiBelowCell332332232120)",
+    "id": 440,
+    "region": 0,
+    "path": "3323322321201"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00375.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c0_c0",
+    "depth": 5,
+    "cell": "(childLL phiBelowCell33233220)",
+    "id": 441,
+    "region": 0,
+    "path": "332332200"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00438.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c3_c1",
+    "depth": 4,
+    "cell": "(childLH (childHH phiBelowCell33233223))",
+    "id": 442,
+    "region": 0,
+    "path": "3323322331"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00419.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c1_c2_c0_c2",
+    "depth": 1,
+    "cell": "(childHL phiBelowCell332332232120)",
+    "id": 443,
+    "region": 0,
+    "path": "3323322321202"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00304.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c1_c2_c0",
+    "depth": 6,
+    "cell": "phiBelowCell33232120",
+    "id": 444,
+    "region": 0,
+    "path": "33232120"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00275.lean",
+    "name": "e24KC2PhiBelowLeaf33230_c2_c1",
+    "depth": 7,
+    "cell": "(childLH (childHL (childLL phiBelowCell3323)))",
+    "id": 445,
+    "region": 0,
+    "path": "3323021"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00406.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c0_c2",
+    "depth": 4,
+    "cell": "(childHL (childLL phiBelowCell33233223))",
+    "id": 446,
+    "region": 0,
+    "path": "3323322302"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00365.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c0_c2_c0",
+    "depth": 5,
+    "cell": "(childLL phiBelowCell33233202)",
+    "id": 447,
+    "region": 0,
+    "path": "332332020"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00455.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c3_c2_c2",
+    "depth": 5,
+    "cell": "(childHL phiBelowCell33233232)",
+    "id": 448,
+    "region": 0,
+    "path": "332332322"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00266.lean",
+    "name": "e24KC2PhiBelowLeaf33223_c1",
+    "depth": 8,
+    "cell": "(childLH (childHH phiBelowCell3322))",
+    "id": 449,
+    "region": 0,
+    "path": "332231"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00357.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c0_c3",
+    "depth": 7,
+    "cell": "(childHH (childLL (childHH phiBelowCell3323)))",
+    "id": 450,
+    "region": 0,
+    "path": "3323303"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00339.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c3_c1_c0",
+    "depth": 5,
+    "cell": "(childLL phiBelowCell33232331)",
+    "id": 451,
+    "region": 0,
+    "path": "332323310"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00354.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c0_c0",
+    "depth": 7,
+    "cell": "(childLL (childLL (childHH phiBelowCell3323)))",
+    "id": 452,
+    "region": 0,
+    "path": "3323300"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00456.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c3_c2_c3",
+    "depth": 5,
+    "cell": "(childHH phiBelowCell33233232)",
+    "id": 453,
+    "region": 0,
+    "path": "332332323"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00377.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c0_c2",
+    "depth": 5,
+    "cell": "(childHL phiBelowCell33233220)",
+    "id": 454,
+    "region": 0,
+    "path": "332332202"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00411.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c0",
+    "depth": 4,
+    "cell": "(childLL (childHL phiBelowCell33233223))",
+    "id": 455,
+    "region": 0,
+    "path": "3323322320"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00442.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c3_c2_c2",
+    "depth": 3,
+    "cell": "(childHL (childHL (childHH phiBelowCell33233223)))",
+    "id": 456,
+    "region": 0,
+    "path": "33233223322"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00307.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c1_c2_c3",
+    "depth": 6,
+    "cell": "phiBelowCell33232123",
+    "id": 457,
+    "region": 0,
+    "path": "33232123"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00441.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c3_c2_c1",
+    "depth": 3,
+    "cell": "(childLH (childHL (childHH phiBelowCell33233223)))",
+    "id": 458,
+    "region": 0,
+    "path": "33233223321"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00280.lean",
+    "name": "e24KC2PhiBelowLeaf33230_c3_c0",
+    "depth": 7,
+    "cell": "(childLL (childHH (childLL phiBelowCell3323)))",
+    "id": 459,
+    "region": 0,
+    "path": "3323030"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00376.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c0_c1",
+    "depth": 5,
+    "cell": "(childLH phiBelowCell33233220)",
+    "id": 460,
+    "region": 0,
+    "path": "332332201"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00388.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c1_c2",
+    "depth": 5,
+    "cell": "(childHL phiBelowCell33233221)",
+    "id": 461,
+    "region": 0,
+    "path": "332332212"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00356.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c0_c2",
+    "depth": 7,
+    "cell": "(childHL (childLL (childHH phiBelowCell3323)))",
+    "id": 462,
+    "region": 0,
+    "path": "3323302"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00394.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c2_c1_c0",
+    "depth": 4,
+    "cell": "(childLL (childLH phiBelowCell33233222))",
+    "id": 463,
+    "region": 0,
+    "path": "3323322210"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00259.lean",
+    "name": "e24KC2PhiBelowLeaf33221_c3",
+    "depth": 8,
+    "cell": "(childHH (childLH phiBelowCell3322))",
+    "id": 464,
+    "region": 0,
+    "path": "332213"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00310.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c1_c3_c0",
+    "depth": 6,
+    "cell": "phiBelowCell33232130",
+    "id": 465,
+    "region": 0,
+    "path": "33232130"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00335.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c2",
+    "depth": 7,
+    "cell": "(childHL (childHH (childHL phiBelowCell3323)))",
+    "id": 466,
+    "region": 0,
+    "path": "3323232"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00387.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c1_c1",
+    "depth": 5,
+    "cell": "(childLH phiBelowCell33233221)",
+    "id": 467,
+    "region": 0,
+    "path": "332332211"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00366.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c0_c2_c1",
+    "depth": 5,
+    "cell": "(childLH phiBelowCell33233202)",
+    "id": 468,
+    "region": 0,
+    "path": "332332021"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00297.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c1_c0_c0",
+    "depth": 6,
+    "cell": "phiBelowCell33232100",
+    "id": 469,
+    "region": 0,
+    "path": "33232100"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00451.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c3_c1",
+    "depth": 6,
+    "cell": "phiBelowCell33233231",
+    "id": 470,
+    "region": 0,
+    "path": "33233231"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00327.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c1_c2",
+    "depth": 6,
+    "cell": "phiBelowCell33232312",
+    "id": 471,
+    "region": 0,
+    "path": "33232312"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00267.lean",
+    "name": "e24KC2PhiBelowLeaf33223_c2",
+    "depth": 8,
+    "cell": "(childHL (childHH phiBelowCell3322))",
+    "id": 472,
+    "region": 0,
+    "path": "332232"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00316.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c2",
+    "depth": 8,
+    "cell": "(childHL (childHL phiBelowCell3323))",
+    "id": 473,
+    "region": 0,
+    "path": "332322"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00367.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c0_c2_c2",
+    "depth": 5,
+    "cell": "(childHL phiBelowCell33233202)",
+    "id": 474,
+    "region": 0,
+    "path": "332332022"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00283.lean",
+    "name": "e24KC2PhiBelowLeaf33230_c3_c3",
+    "depth": 7,
+    "cell": "(childHH (childHH (childLL phiBelowCell3323)))",
+    "id": 475,
+    "region": 0,
+    "path": "3323033"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00323.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c1_c1_c1",
+    "depth": 5,
+    "cell": "(childLH phiBelowCell33232311)",
+    "id": 476,
+    "region": 0,
+    "path": "332323111"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00461.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c3",
+    "depth": 8,
+    "cell": "(childHH (childHH phiBelowCell3323))",
+    "id": 477,
+    "region": 0,
+    "path": "332333"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00342.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c3_c1_c3",
+    "depth": 5,
+    "cell": "(childHH phiBelowCell33232331)",
+    "id": 478,
+    "region": 0,
+    "path": "332323313"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00382.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c0_c3_c3",
+    "depth": 4,
+    "cell": "(childHH (childHH phiBelowCell33233220))",
+    "id": 479,
+    "region": 0,
+    "path": "3323322033"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00424.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c1_c2_c3",
+    "depth": 2,
+    "cell": "phiBelowCell332332232123",
+    "id": 480,
+    "region": 0,
+    "path": "332332232123"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00395.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c2_c1_c1",
+    "depth": 4,
+    "cell": "(childLH (childLH phiBelowCell33233222))",
+    "id": 481,
+    "region": 0,
+    "path": "3323322211"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00426.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c1_c3",
+    "depth": 3,
+    "cell": "(childHH (childLH (childHL phiBelowCell33233223)))",
+    "id": 482,
+    "region": 0,
+    "path": "33233223213"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00368.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c0_c2_c3",
+    "depth": 5,
+    "cell": "(childHH phiBelowCell33233202)",
+    "id": 483,
+    "region": 0,
+    "path": "332332023"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00363.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c0_c1",
+    "depth": 6,
+    "cell": "phiBelowCell33233201",
+    "id": 484,
+    "region": 0,
+    "path": "33233201"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00458.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c3_c3",
+    "depth": 6,
+    "cell": "phiBelowCell33233233",
+    "id": 485,
+    "region": 0,
+    "path": "33233233"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00265.lean",
+    "name": "e24KC2PhiBelowLeaf33223_c0",
+    "depth": 8,
+    "cell": "(childLL (childHH phiBelowCell3322))",
+    "id": 486,
+    "region": 0,
+    "path": "332230"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00312.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c1_c3_c2",
+    "depth": 6,
+    "cell": "phiBelowCell33232132",
+    "id": 487,
+    "region": 0,
+    "path": "33232132"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00399.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c2_c2",
+    "depth": 5,
+    "cell": "(childHL phiBelowCell33233222)",
+    "id": 488,
+    "region": 0,
+    "path": "332332222"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00299.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c1_c0_c2",
+    "depth": 6,
+    "cell": "phiBelowCell33232102",
+    "id": 489,
+    "region": 0,
+    "path": "33232102"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00437.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c3_c0",
+    "depth": 4,
+    "cell": "(childLL (childHH phiBelowCell33233223))",
+    "id": 490,
+    "region": 0,
+    "path": "3323322330"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00379.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c0_c3_c0",
+    "depth": 4,
+    "cell": "(childLL (childHH phiBelowCell33233220))",
+    "id": 491,
+    "region": 0,
+    "path": "3323322030"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00268.lean",
+    "name": "e24KC2PhiBelowLeaf33223_c3",
+    "depth": 8,
+    "cell": "(childHH (childHH phiBelowCell3322))",
+    "id": 492,
+    "region": 0,
+    "path": "332233"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00423.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c1_c2_c2",
+    "depth": 2,
+    "cell": "phiBelowCell332332232122",
+    "id": 493,
+    "region": 0,
+    "path": "332332232122"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00414.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c1_c1",
+    "depth": 3,
+    "cell": "(childLH (childLH (childHL phiBelowCell33233223)))",
+    "id": 494,
+    "region": 0,
+    "path": "33233223211"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00274.lean",
+    "name": "e24KC2PhiBelowLeaf33230_c2_c0",
+    "depth": 7,
+    "cell": "(childLL (childHL (childLL phiBelowCell3323)))",
+    "id": 495,
+    "region": 0,
+    "path": "3323020"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00320.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c1_c0",
+    "depth": 6,
+    "cell": "phiBelowCell33232310",
+    "id": 496,
+    "region": 0,
+    "path": "33232310"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00380.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c0_c3_c1",
+    "depth": 4,
+    "cell": "(childLH (childHH phiBelowCell33233220))",
+    "id": 497,
+    "region": 0,
+    "path": "3323322031"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00305.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c1_c2_c1",
+    "depth": 6,
+    "cell": "phiBelowCell33232121",
+    "id": 498,
+    "region": 0,
+    "path": "33232121"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00331.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c1_c3_c2",
+    "depth": 5,
+    "cell": "(childHL phiBelowCell33232313)",
+    "id": 499,
+    "region": 0,
+    "path": "332323132"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00325.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c1_c1_c3",
+    "depth": 5,
+    "cell": "(childHH phiBelowCell33232311)",
+    "id": 500,
+    "region": 0,
+    "path": "332323113"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00311.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c1_c3_c1",
+    "depth": 6,
+    "cell": "phiBelowCell33232131",
+    "id": 501,
+    "region": 0,
+    "path": "33232131"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00443.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c3_c2_c3",
+    "depth": 3,
+    "cell": "(childHH (childHL (childHH phiBelowCell33233223)))",
+    "id": 502,
+    "region": 0,
+    "path": "33233223323"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00381.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c0_c3_c2",
+    "depth": 4,
+    "cell": "(childHL (childHH phiBelowCell33233220))",
+    "id": 503,
+    "region": 0,
+    "path": "3323322032"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00400.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c2_c3",
+    "depth": 5,
+    "cell": "(childHH phiBelowCell33233222)",
+    "id": 504,
+    "region": 0,
+    "path": "332332223"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00431.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c3_c1",
+    "depth": 3,
+    "cell": "(childLH (childHH (childHL phiBelowCell33233223)))",
+    "id": 505,
+    "region": 0,
+    "path": "33233223231"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00300.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c1_c0_c3",
+    "depth": 6,
+    "cell": "phiBelowCell33232103",
+    "id": 506,
+    "region": 0,
+    "path": "33232103"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00332.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c1_c3_c3",
+    "depth": 5,
+    "cell": "(childHH phiBelowCell33232313)",
+    "id": 507,
+    "region": 0,
+    "path": "332323133"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00404.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c0_c0",
+    "depth": 4,
+    "cell": "(childLL (childLL phiBelowCell33233223))",
+    "id": 508,
+    "region": 0,
+    "path": "3323322300"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00370.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c0_c3",
+    "depth": 6,
+    "cell": "phiBelowCell33233203",
+    "id": 509,
+    "region": 0,
+    "path": "33233203"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00340.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c3_c1_c1",
+    "depth": 5,
+    "cell": "(childLH phiBelowCell33232331)",
+    "id": 510,
+    "region": 0,
+    "path": "332323311"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00362.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c0_c0",
+    "depth": 6,
+    "cell": "phiBelowCell33233200",
+    "id": 511,
+    "region": 0,
+    "path": "33233200"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00386.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c1_c0",
+    "depth": 5,
+    "cell": "(childLL phiBelowCell33233221)",
+    "id": 512,
+    "region": 0,
+    "path": "332332210"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00344.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c3_c2",
+    "depth": 6,
+    "cell": "phiBelowCell33232332",
+    "id": 513,
+    "region": 0,
+    "path": "33232332"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00291.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c0_c1",
+    "depth": 7,
+    "cell": "(childLH (childLL (childHL phiBelowCell3323)))",
+    "id": 514,
+    "region": 0,
+    "path": "3323201"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00256.lean",
+    "name": "e24KC2PhiBelowLeaf33221_c0",
+    "depth": 8,
+    "cell": "(childLL (childLH phiBelowCell3322))",
+    "id": 515,
+    "region": 0,
+    "path": "332210"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00292.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c0_c2",
+    "depth": 7,
+    "cell": "(childHL (childLL (childHL phiBelowCell3323)))",
+    "id": 516,
+    "region": 0,
+    "path": "3323202"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00417.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c1_c2_c0_c0",
+    "depth": 1,
+    "cell": "(childLL phiBelowCell332332232120)",
+    "id": 517,
+    "region": 0,
+    "path": "3323322321200"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00359.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c1",
+    "depth": 8,
+    "cell": "(childLH (childHH phiBelowCell3323))",
+    "id": 518,
+    "region": 0,
+    "path": "332331"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00454.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c3_c2_c1",
+    "depth": 5,
+    "cell": "(childLH phiBelowCell33233232)",
+    "id": 519,
+    "region": 0,
+    "path": "332332321"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00293.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c0_c3",
+    "depth": 7,
+    "cell": "(childHH (childLL (childHL phiBelowCell3323)))",
+    "id": 520,
+    "region": 0,
+    "path": "3323203"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00355.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c0_c1",
+    "depth": 7,
+    "cell": "(childLH (childLL (childHH phiBelowCell3323)))",
+    "id": 521,
+    "region": 0,
+    "path": "3323301"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00290.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c0_c0",
+    "depth": 7,
+    "cell": "(childLL (childLL (childHL phiBelowCell3323)))",
+    "id": 522,
+    "region": 0,
+    "path": "3323200"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00318.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c0",
+    "depth": 7,
+    "cell": "(childLL (childHH (childHL phiBelowCell3323)))",
+    "id": 523,
+    "region": 0,
+    "path": "3323230"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00337.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c3_c0",
+    "depth": 6,
+    "cell": "phiBelowCell33232330",
+    "id": 524,
+    "region": 0,
+    "path": "33232330"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00341.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c3_c1_c2",
+    "depth": 5,
+    "cell": "(childHL phiBelowCell33232331)",
+    "id": 525,
+    "region": 0,
+    "path": "332323312"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00258.lean",
+    "name": "e24KC2PhiBelowLeaf33221_c2",
+    "depth": 8,
+    "cell": "(childHL (childLH phiBelowCell3322))",
+    "id": 526,
+    "region": 0,
+    "path": "332212"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00277.lean",
+    "name": "e24KC2PhiBelowLeaf33230_c2_c3",
+    "depth": 7,
+    "cell": "(childHH (childHL (childLL phiBelowCell3323)))",
+    "id": 527,
+    "region": 0,
+    "path": "3323023"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00413.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c1_c0",
+    "depth": 3,
+    "cell": "(childLL (childLH (childHL phiBelowCell33233223)))",
+    "id": 528,
+    "region": 0,
+    "path": "33233223210"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00276.lean",
+    "name": "e24KC2PhiBelowLeaf33230_c2_c2",
+    "depth": 7,
+    "cell": "(childHL (childHL (childLL phiBelowCell3323)))",
+    "id": 529,
+    "region": 0,
+    "path": "3323022"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00389.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c1_c3",
+    "depth": 5,
+    "cell": "(childHH phiBelowCell33233221)",
+    "id": 530,
+    "region": 0,
+    "path": "332332213"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00298.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c1_c0_c1",
+    "depth": 6,
+    "cell": "phiBelowCell33232101",
+    "id": 531,
+    "region": 0,
+    "path": "33232101"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00397.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c2_c1_c3",
+    "depth": 4,
+    "cell": "(childHH (childLH phiBelowCell33233222))",
+    "id": 532,
+    "region": 0,
+    "path": "3323322213"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00407.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c0_c3",
+    "depth": 4,
+    "cell": "(childHH (childLL phiBelowCell33233223))",
+    "id": 533,
+    "region": 0,
+    "path": "3323322303"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00329.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c1_c3_c0",
+    "depth": 5,
+    "cell": "(childLL phiBelowCell33232313)",
+    "id": 534,
+    "region": 0,
+    "path": "332323130"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00330.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c1_c3_c1",
+    "depth": 5,
+    "cell": "(childLH phiBelowCell33232313)",
+    "id": 535,
+    "region": 0,
+    "path": "332323131"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00302.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c1_c1",
+    "depth": 7,
+    "cell": "(childLH (childLH (childHL phiBelowCell3323)))",
+    "id": 536,
+    "region": 0,
+    "path": "3323211"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00313.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c1_c3_c3",
+    "depth": 6,
+    "cell": "phiBelowCell33232133",
+    "id": 537,
+    "region": 0,
+    "path": "33232133"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00396.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c2_c1_c2",
+    "depth": 4,
+    "cell": "(childHL (childLH phiBelowCell33233222))",
+    "id": 538,
+    "region": 0,
+    "path": "3323322212"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00433.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c3_c3",
+    "depth": 3,
+    "cell": "(childHH (childHH (childHL phiBelowCell33233223)))",
+    "id": 539,
+    "region": 0,
+    "path": "33233223233"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00324.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c1_c1_c2",
+    "depth": 5,
+    "cell": "(childHL phiBelowCell33232311)",
+    "id": 540,
+    "region": 0,
+    "path": "332323112"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00422.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c2_c1_c2_c1",
+    "depth": 2,
+    "cell": "phiBelowCell332332232121",
+    "id": 541,
+    "region": 0,
+    "path": "332332232121"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00345.lean",
+    "name": "e24KC2PhiBelowLeaf33232_c3_c3_c3",
+    "depth": 6,
+    "cell": "phiBelowCell33232333",
+    "id": 542,
+    "region": 0,
+    "path": "33232333"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00453.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c3_c2_c0",
+    "depth": 5,
+    "cell": "(childLL phiBelowCell33233232)",
+    "id": 543,
+    "region": 0,
+    "path": "332332320"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00445.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c3_c3_c3",
+    "depth": 4,
+    "cell": "(childHH (childHH phiBelowCell33233223))",
+    "id": 544,
+    "region": 0,
+    "path": "3323322333"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00281.lean",
+    "name": "e24KC2PhiBelowLeaf33230_c3_c1",
+    "depth": 7,
+    "cell": "(childLH (childHH (childLL phiBelowCell3323)))",
+    "id": 545,
+    "region": 0,
+    "path": "3323031"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00392.lean",
+    "name": "e24KC2PhiBelowLeaf33233_c2_c2_c2_c0",
+    "depth": 5,
+    "cell": "(childLL phiBelowCell33233222)",
+    "id": 546,
+    "region": 0,
+    "path": "332332220"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00271.lean",
+    "name": "e24KC2PhiBelowLeaf33230_c0",
+    "depth": 8,
+    "cell": "(childLL (childLL phiBelowCell3323))",
+    "id": 547,
+    "region": 0,
+    "path": "332300"
+  },
+  {
+    "file": "pool/LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/PhiBelow/Leaf00245.lean",
+    "name": "e24KC2PhiBelowLeaf33203_c3",
+    "depth": 8,
+    "cell": "(childHH (childHH phiBelowCell3320))",
+    "id": 548,
+    "region": 0,
+    "path": "332033"
+  }
+]
