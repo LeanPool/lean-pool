@@ -617,11 +617,11 @@ noncomputable def treewidth {V : Type u} (H : SimpleGraph V) : ℕ :=
 
 /-! ## Proof bridges
 
-Everything above this point is statement vocabulary.  The following private
+Everything above this point is statement vocabulary.  The following public
 conversion is where the file deliberately crosses into the implementation
 library. -/
 
-private def libraryGraph (G : CFGraph) : _root_.CFGraph :=
+def libraryGraph (G : CFGraph) : _root_.CFGraph :=
   { V := G.V
     instDecidableEq := G.instDecidableEq
     instFintype := G.instFintype
@@ -631,11 +631,30 @@ private def libraryGraph (G : CFGraph) : _root_.CFGraph :=
 
 /-- Cross a reader-facing twice-marked graph into the library's marked-graph
 bundle without changing any graph data. -/
-private def libraryMarkedGraph (M : TwiceMarkedGraph) :
+def libraryMarkedGraph (M : TwiceMarkedGraph) :
     _root_.Utilities.MarkedGraph where
   graph := libraryGraph M.graph
   left := M.u
   right := M.v
+
+/-- Convert a library graph to the auditable statement vocabulary. -/
+def ofLibraryGraph (G : _root_.CFGraph) : CFGraph :=
+  { V := G.V
+    instDecidableEq := G.instDecidableEq
+    instFintype := G.instFintype
+    instNonempty := G.instNonempty
+    edges := G.edges
+    loopless := G.loopless }
+
+@[simp] theorem libraryGraph_ofLibraryGraph (G : _root_.CFGraph) :
+    libraryGraph (ofLibraryGraph G) = G := by
+  cases G
+  rfl
+
+@[simp] theorem ofLibraryGraph_libraryGraph (G : CFGraph) :
+    ofLibraryGraph (libraryGraph G) = G := by
+  cases G
+  rfl
 
 private theorem libraryMarkedGraph_bridge_glue (M N : TwiceMarkedGraph) :
     libraryMarkedGraph (bridgeGlue M N) =
@@ -671,7 +690,7 @@ private theorem libraryMarkedGraph_glue_chain_cons
 
 /-- The copied local definition of Brill--Noether generality agrees with the
 library predicate after crossing the graph boundary. -/
-private theorem brill_noether_general_library_iff (G : CFGraph) :
+theorem brill_noether_general_library_iff (G : CFGraph) :
     brillNoetherGeneral G ↔
       _root_.Bananas.BrillNoetherGeneral (libraryGraph G) := by
   constructor
@@ -1145,7 +1164,7 @@ private theorem realized_chainSuffixBudget
 
 /-- The readable construction above agrees exactly with the occurrence-safe
 regular subdivision used by the library. -/
-private theorem libraryGraph_regularSubdivision (G : CFGraph) (n : ℕ)
+theorem libraryGraph_regularSubdivision (G : CFGraph) (n : ℕ)
     (hn : 0 < n) :
     libraryGraph (regularSubdivision G n hn) =
       _root_.Utilities.Gonality.regularSubdivision (libraryGraph G) n hn := by
@@ -1155,7 +1174,7 @@ private theorem libraryGraph_regularSubdivision (G : CFGraph) (n : ℕ)
 
 /-- The local witness-based gonality predicate is exactly the library's
 predicate after crossing the graph-structure boundary. -/
-private theorem gonality_leq_library_iff (G : CFGraph) (k : ℤ) :
+theorem gonality_leq_library_iff (G : CFGraph) (k : ℤ) :
     gonalityLeq G k ↔ _root_.gonalityLeq (libraryGraph G) k := by
   constructor
   · rintro ⟨D, hdegree, hrank⟩
@@ -1164,7 +1183,7 @@ private theorem gonality_leq_library_iff (G : CFGraph) (k : ℤ) :
     exact ⟨D, hdegree, (_root_.rank_geq_iff (libraryGraph G) D 1).mpr hrank⟩
 
 /-- Convert a local tree decomposition to the implementation structure. -/
-private def libraryTreeDecomposition {V : Type u} {H : SimpleGraph V}
+def libraryTreeDecomposition {V : Type u} {H : SimpleGraph V}
     (D : TreeDecomposition H) :
     _root_.Utilities.Treewidth.TreeDecomposition H where
   Node := D.Node
@@ -1192,7 +1211,7 @@ private def localTreeDecomposition {V : Type u} {H : SimpleGraph V}
   coherent := D.coherent
 
 /-- The local and implementation definitions realize exactly the same widths. -/
-private theorem treewidthSet_eq_library {V : Type u} (H : SimpleGraph V) :
+theorem treewidthSet_eq_library {V : Type u} (H : SimpleGraph V) :
     treewidthSet H = _root_.Utilities.Treewidth.widthSet H := by
   ext w
   constructor
@@ -1203,13 +1222,13 @@ private theorem treewidthSet_eq_library {V : Type u} (H : SimpleGraph V) :
 
 /-- Consequently the copied reader-facing definition of treewidth agrees with
 the load-bearing implementation definition. -/
-private theorem treewidth_eq_library {V : Type u} (H : SimpleGraph V) :
+theorem treewidth_eq_library {V : Type u} (H : SimpleGraph V) :
     treewidth H = _root_.Utilities.Treewidth.treewidth H := by
   unfold treewidth _root_.Utilities.Treewidth.treewidth
   rw [treewidthSet_eq_library]
 
 /-- The locally defined underlying simple graph agrees with the library's. -/
-private theorem underlyingSimpleGraph_eq_library (G : CFGraph) :
+theorem underlyingSimpleGraph_eq_library (G : CFGraph) :
     underlyingSimpleGraph G =
       _root_.Utilities.underlyingSimpleGraph (libraryGraph G) := by
   ext v w
