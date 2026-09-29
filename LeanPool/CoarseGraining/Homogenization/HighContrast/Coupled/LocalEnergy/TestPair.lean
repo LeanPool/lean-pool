@@ -48,7 +48,7 @@ omit [NeZero d] in
     (p : Vec d) (c : ℝ) (x : Vec d) :
     (centeredPotential m v p c).toFun x = v.toFun x - (1 / 2 : ℝ) * vecDot p x - c := by
   let := isFiniteMeasure_openCubeSet_originCube (d := d) m
-  show (v + (-(1 / 2 : ℝ)) • affineH1 m p + H1Function.const (-c)).toFun x = _
+  change (v + (-(1 / 2 : ℝ)) • affineH1 m p + H1Function.const (-c)).toFun x = _
   simp only [Homogenization.H1Function.add_toFun, Homogenization.H1Function.smul_toFun,
     affineH1_toFun, H1Function.const_apply]
   ring
@@ -59,7 +59,7 @@ omit [NeZero d] in
     (p : Vec d) (c : ℝ) (x : Vec d) :
     (centeredPotential m v p c).grad x = v.grad x - (1 / 2 : ℝ) • p := by
   let := isFiniteMeasure_openCubeSet_originCube (d := d) m
-  show (v + (-(1 / 2 : ℝ)) • affineH1 m p + H1Function.const (-c)).grad x = _
+  change (v + (-(1 / 2 : ℝ)) • affineH1 m p + H1Function.const (-c)).grad x = _
   simp only [Homogenization.H1Function.add_grad, Homogenization.H1Function.smul_grad,
     affineH1_grad, H1Function.grad_const, add_zero]
   module
@@ -142,7 +142,7 @@ theorem memH10_testPair_sum (hη : ContDiff ℝ (⊤ : ℕ∞) η)
     (fun i => sqCutoff_fderiv_memLpTop (m := m) hη hIcc hGη i), ?_⟩
   funext x
   rw [Homogenization.H10Function.mulContDiffMemLpTop_toFun]
-  show sqCutoff η x * w0.toH1Function.toFun x = _
+  change sqCutoff η x * w0.toH1Function.toFun x = _
   rw [hw0]
   simp only [testFun_toFun, centeredPotential_toFun]
   ring

@@ -370,7 +370,7 @@ theorem overlapCubeAverageVec_add_of_memLp_two {d : ℕ}
   have hvi : MeasureTheory.MemLp (fun x => v x i) (2 : ℝ≥0∞)
       (normalizedOverlapCubeMeasure S) := by
     simpa using! (ContinuousLinearMap.proj (R := ℝ) i).comp_memLp' hv
-  show overlapCubeAverage S (fun x => (u x + v x) i) =
+  change overlapCubeAverage S (fun x => (u x + v x) i) =
     overlapCubeAverage S (fun x => u x i) +
       overlapCubeAverage S (fun x => v x i)
   have hfun : (fun x => (u x + v x) i) =
@@ -492,7 +492,7 @@ theorem toReal_overlapCentersAtDepth_average_lintegral_fluctuation_eq_depthAvera
       ∀ S ∈ overlapCentersAtDepth Q j,
         (∫⁻ x,
           ‖overlapCubeFluctuationVec S u x‖ₑ ^ (2 : ℝ)
-          ∂ normalizedOverlapCubeMeasure S) ≠ ∞) :
+          ∂normalizedOverlapCubeMeasure S) ≠ ∞) :
     ((((overlapCentersAtDepth Q j).card : ℝ≥0∞)⁻¹) *
         (overlapCentersAtDepth Q j).sum
           (fun S =>

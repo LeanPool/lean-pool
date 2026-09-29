@@ -902,7 +902,7 @@ private theorem tendsto_cubeEuclideanWspESeminorm_convexApproxSmoothField_sub_ze
             F.euclideanMemWsp.aestronglyMeasurable |>.const_smul (c n)
       have hsecondmeas : AEStronglyMeasurable (fun xy => (c n - 1) • K xy) μ :=
         by simpa only [μ, K] using! F.euclideanMemWsp.aestronglyMeasurable.const_smul (c n - 1)
-      simp only [T', if_pos hε]
+      simp only [T', ite_eq_left hε]
       change T n ≤ _
       have hsmoothmeas : AEStronglyMeasurable
           (cubeEuclideanWspKernel s p

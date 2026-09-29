@@ -41,7 +41,7 @@ Public deliverables (all on `U = cubeSet (originCube d m)`):
 * `mu_eq_half_coarseBlockMatrix_cube` — `Mu = ½ P·A P` (item (e));
 * `isBlockTestOn_sub_of_isBlockMuAdmissible` — the componentwise difference of
   two `Mu`-admissible states for the same `P` is a block test state (load-bearing
-  for the `Y = Z̃ − Z` composition used downstream).
+  for the `Y = Z_tilde − Z` composition used downstream).
 
 All fields are `Vec d = Fin d → ℝ` valued; no `EuclideanSpace`.
 -/
@@ -56,7 +56,7 @@ omit [NeZero d] in
 /-- The componentwise difference `X − X'` of two `Mu`-admissible block states
 for the same parameter `P` is a block test state: its potential part is
 zero-trace and its flux part is zero-normal-trace.  This is the algebraic
-closure the downstream stability lemmas need in order to feed `Y = Z̃ − Z` into
+closure the downstream stability lemmas need in order to feed `Y = Z_tilde − Z` into
 the Euler orthogonality of a minimizer. -/
 theorem isBlockTestOn_sub_of_isBlockMuAdmissible
     {U : Set (Vec d)} {P : BlockVec d} {X X' : BlockState d}
@@ -171,7 +171,7 @@ theorem cubeBlockMinimizer_euler_orthogonality
   hResp.2.2 Y hY
 
 omit [NeZero d] in
-/-- The `Y = Z̃ − Z` instantiation of Euler orthogonality used downstream:
+/-- The `Y = Z_tilde − Z` instantiation of Euler orthogonality used downstream:
 the difference of two admissible states for the same `P` is a valid test
 perturbation, so it pairs to zero against `𝐁 Z` for a minimizer `Z`. -/
 theorem cubeBlockMinimizer_euler_orthogonality_sub

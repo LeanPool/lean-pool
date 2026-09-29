@@ -49,7 +49,7 @@ theorem coarseBlockMatrix_upperLeft_apply {d : ℕ} (U : Set (Vec d)) (a : Coeff
           - Mu U (Pi.single j 1, 0) a := by
   by_cases h : i = j
   · subst j
-    show
+    change
       (if (Sum.inl i : BlockCoord d) = Sum.inl i then
           2 * Mu U (blockBasis (Sum.inl i)) a
         else
@@ -65,7 +65,7 @@ theorem coarseBlockMatrix_upperLeft_apply {d : ℕ} (U : Set (Vec d)) (a : Coeff
     simp [blockBasis]
   · have hsum : (Sum.inl i : BlockCoord d) ≠ Sum.inl j := by
       simpa using h
-    show
+    change
       (if (Sum.inl i : BlockCoord d) = Sum.inl j then
           2 * Mu U (blockBasis (Sum.inl i)) a
         else
@@ -113,7 +113,7 @@ theorem coarseBlockMatrix_lowerRight_apply {d : ℕ} (U : Set (Vec d)) (a : Coef
           - Mu U (0, Pi.single j 1) a := by
   by_cases h : i = j
   · subst j
-    show
+    change
       (if (Sum.inr i : BlockCoord d) = Sum.inr i then
           2 * Mu U (blockBasis (Sum.inr i)) a
         else
@@ -129,7 +129,7 @@ theorem coarseBlockMatrix_lowerRight_apply {d : ℕ} (U : Set (Vec d)) (a : Coef
     simp [blockBasis]
   · have hsum : (Sum.inr i : BlockCoord d) ≠ Sum.inr j := by
       simpa using h
-    show
+    change
       (if (Sum.inr i : BlockCoord d) = Sum.inr j then
           2 * Mu U (blockBasis (Sum.inr i)) a
         else

@@ -424,7 +424,7 @@ theorem ofReal_vecDot_vectorRadialTruncation_eq_truncatedMoment
   · have hx' : ‖HilbertVec.ofVec (F x)‖ ≤ (n : ℝ) := by
       simpa only [euclideanNorm_eq_norm_ofVec] using hx
     have hxmem : x ∈ {y | ‖HilbertVec.ofVec (F y)‖ ≤ (n : ℝ)} := hx'
-    rw [if_pos hx, truncatedMoment, Set.indicator_of_mem hxmem]
+    rw [ite_eq_left hx, truncatedMoment, Set.indicator_of_mem hxmem]
     have hq0 : 0 ≤ q := by linarith
     rw [← ofReal_norm (HilbertVec.ofVec (F x))]
     simpa only [euclideanNorm_eq_norm_ofVec] using
@@ -433,7 +433,7 @@ theorem ofReal_vecDot_vectorRadialTruncation_eq_truncatedMoment
   · have hx' : ¬ ‖HilbertVec.ofVec (F x)‖ ≤ (n : ℝ) := by
       simpa only [euclideanNorm_eq_norm_ofVec] using hx
     have hxmem : x ∉ {y | ‖HilbertVec.ofVec (F y)‖ ≤ (n : ℝ)} := hx'
-    rw [if_neg hx, truncatedMoment, Set.indicator_of_notMem hxmem]
+    rw [ite_eq_right hx, truncatedMoment, Set.indicator_of_notMem hxmem]
     exact ENNReal.ofReal_zero
 
 /-- The conjugate norm of a radial truncation has exactly the original
@@ -460,11 +460,11 @@ theorem eLpNorm_hilbertRadialTruncation_rpow_conjugate_eq_truncatedMoment
     norm_hilbertRadialTruncation_rpow_conjugate]
   by_cases hx : ‖F x‖ ≤ (n : ℝ)
   · have hxmem : x ∈ {y | ‖F y‖ ≤ (n : ℝ)} := hx
-    rw [if_pos hx, truncatedMoment, Set.indicator_of_mem hxmem]
+    rw [ite_eq_left hx, truncatedMoment, Set.indicator_of_mem hxmem]
     rw [← ofReal_norm,
       ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) ENNReal.toReal_nonneg]
   · have hxmem : x ∉ {y | ‖F y‖ ≤ (n : ℝ)} := hx
-    rw [if_neg hx, truncatedMoment, Set.indicator_of_notMem hxmem]
+    rw [ite_eq_right hx, truncatedMoment, Set.indicator_of_notMem hxmem]
     exact ENNReal.ofReal_zero
 
 private theorem centeredCube_normalizedVolume_eq_smul_openCubeVolume

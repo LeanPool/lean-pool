@@ -255,14 +255,14 @@ private theorem coupledWeakForm_aux {P : BlockVec d}
     set β : H1Function (openCubeSet (originCube d m)) := (1 / 2 : ℝ) • (φ - φstar) with hβ
     have hβgrad : ∀ x, β.grad x = βg x := by
       intro x
-      show (1 / 2 : ℝ) • ((φ - φstar).grad x) = βg x
+      change (1 / 2 : ℝ) • ((φ - φstar).grad x) = βg x
       rw [hβg, Homogenization.H1Function.sub_grad]
     have hadm := hAdmO.isSolenoidalZeroNormalTrace β
     have hexp : (fun x => vecDot ((fun y => Z.flux y - P.2) x) (β.grad x)) =
         (fun x => vecDot (Z.flux x) (βg x) - vecDot P.2 (βg x)) := by
       funext x
       rw [hβgrad x]
-      show vecDot (Z.flux x - P.2) (βg x) = vecDot (Z.flux x) (βg x) - vecDot P.2 (βg x)
+      change vecDot (Z.flux x - P.2) (βg x) = vecDot (Z.flux x) (βg x) - vecDot P.2 (βg x)
       rw [sub_eq_add_neg, vecDot_add_left, vecDot_neg_left, ← sub_eq_add_neg]
     rw [hexp] at hadm
     have hsub := MeasureTheory.integral_sub
@@ -301,7 +301,7 @@ private theorem coupledWeakForm_aux {P : BlockVec d}
         (fun x => vecDot (αg x) P.2 + vecDot (βg x) P.2) := by
       apply MeasureTheory.ae_of_all
       intro x
-      show vecDot P.2 (φ.grad x) = vecDot (αg x) P.2 + vecDot (βg x) P.2
+      change vecDot P.2 (φ.grad x) = vecDot (αg x) P.2 + vecDot (βg x) P.2
       rw [vecDot_comm P.2 (φ.grad x), ← vecDot_add_left]
       congr 1
       show φ.grad x = αg x + βg x
@@ -416,13 +416,13 @@ theorem exists_coupledRepresentation
   set u : H1Function U := w.toH1Function + affineH1 m P.1 with hudef
   have hugrad : ∀ x, u.grad x = Z.potential x := by
     intro x
-    show w.toH1Function.grad x + (affineH1 m P.1).grad x = Z.potential x
+    change w.toH1Function.grad x + (affineH1 m P.1).grad x = Z.potential x
     rw [hw, affineH1_grad]
-    show (Z.potential x - P.1) + P.1 = Z.potential x
+    change (Z.potential x - P.1) + P.1 = Z.potential x
     abel
   have hutoFun : ∀ x, u.toFun x = w.toH1Function.toFun x + vecDot P.1 x := by
     intro x
-    show w.toH1Function.toFun x + (affineH1 m P.1).toFun x =
+    change w.toH1Function.toFun x + (affineH1 m P.1).toFun x =
       w.toH1Function.toFun x + vecDot P.1 x
     rw [affineH1_toFun]
   -- The pair `v = (u+ψ)/2`, `v* = (u−ψ)/2`.
@@ -431,13 +431,13 @@ theorem exists_coupledRepresentation
   have hvg : ∀ x, v.grad x = (1 / 2 : ℝ) • (Z.potential x + τ x) := by
     intro x
     have hstep : v.grad x = (1 / 2 : ℝ) • (u.grad x + ψ.grad x) := by
-      show ((1 / 2 : ℝ) • (u + ψ)).grad x = (1 / 2 : ℝ) • (u.grad x + ψ.grad x)
+      change ((1 / 2 : ℝ) • (u + ψ)).grad x = (1 / 2 : ℝ) • (u.grad x + ψ.grad x)
       rw [Homogenization.H1Function.smul_grad, Homogenization.H1Function.add_grad]
     rw [hstep, hugrad, hψ]
   have hvsg : ∀ x, vstar.grad x = (1 / 2 : ℝ) • (Z.potential x - τ x) := by
     intro x
     have hstep : vstar.grad x = (1 / 2 : ℝ) • (u.grad x - ψ.grad x) := by
-      show ((1 / 2 : ℝ) • (u - ψ)).grad x = (1 / 2 : ℝ) • (u.grad x - ψ.grad x)
+      change ((1 / 2 : ℝ) • (u - ψ)).grad x = (1 / 2 : ℝ) • (u.grad x - ψ.grad x)
       rw [Homogenization.H1Function.smul_grad, Homogenization.H1Function.sub_grad]
     rw [hstep, hugrad, hψ]
   have hsumg : ∀ x, v.grad x + vstar.grad x = Z.potential x := by
@@ -458,7 +458,7 @@ theorem exists_coupledRepresentation
       isUnit_det_symmPart_of_isEllipticMatrix (hEllO.2 x hx)
     have hsτ : matVecMul (symmPart (a x)) (τ x) =
         Z.flux x - matVecMul (skewPart (a x)) (Z.potential x) := by
-      show matVecMul (symmPart (a x)) (matVecMul ((symmPart (a x))⁻¹)
+      change matVecMul (symmPart (a x)) (matVecMul ((symmPart (a x))⁻¹)
         (Z.flux x - matVecMul (skewPart (a x)) (Z.potential x))) = _
       rw [matVecMul_mul, Matrix.mul_nonsing_inv _ hdet, matVecMul_one]
     rw [hsτ]; abel
@@ -469,7 +469,7 @@ theorem exists_coupledRepresentation
     funext x
     show w.toH1Function.toFun x = v.toFun x + vstar.toFun x - vecDot P.1 x
     have hvtf : v.toFun x + vstar.toFun x = u.toFun x := by
-      show ((1 / 2 : ℝ) • (u + ψ)).toFun x + ((1 / 2 : ℝ) • (u - ψ)).toFun x = u.toFun x
+      change ((1 / 2 : ℝ) • (u + ψ)).toFun x + ((1 / 2 : ℝ) • (u - ψ)).toFun x = u.toFun x
       rw [Homogenization.H1Function.smul_toFun, Homogenization.H1Function.smul_toFun,
         Homogenization.H1Function.add_toFun, Homogenization.H1Function.sub_toFun]
       ring
@@ -486,14 +486,14 @@ theorem exists_coupledRepresentation
     refine MeasureTheory.ae_of_all _ (fun x hx => ?_)
     have hdet : IsUnit (symmPart (a x)).det :=
       isUnit_det_symmPart_of_isEllipticMatrix (hEllO.2 x hx)
-    show blockVecDot (Z.eval x) (blockMatVecMul (blockCoeffField a x) (Z.eval x)) =
+    change blockVecDot (Z.eval x) (blockMatVecMul (blockCoeffField a x) (Z.eval x)) =
       2 * vecDot (v.grad x) (matVecMul (symmPart (a x)) (v.grad x)) +
         2 * vecDot (vstar.grad x) (matVecMul (symmPart (a x)) (vstar.grad x))
     rw [hvg x, hvsg x]
     have hLHS : blockVecDot (Z.eval x) (blockMatVecMul (blockCoeffField a x) (Z.eval x)) =
         vecDot (Z.potential x) (matVecMul (symmPart (a x)) (Z.potential x)) +
           vecDot (τ x) (matVecMul (symmPart (a x)) (τ x)) := by
-      show blockVecDot (Z.potential x, Z.flux x)
+      change blockVecDot (Z.potential x, Z.flux x)
         (blockMatVecMul (blockMatrixOfCoeff (a x)) (Z.potential x, Z.flux x)) = _
       rw [blockEnergy_pointwise_eq hdet]
     rw [hLHS, ← two_vecDot_symmPart_half_add_sub (symmPart (a x)) (Z.potential x) (τ x)]

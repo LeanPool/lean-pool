@@ -922,7 +922,7 @@ private theorem adjointReg_comp_rescaleReg {d : ℕ} (k : ℕ) :
 theorem scaleNormalized {d : ℕ} {P : RestrictionCoeffLaw d}
     (hP : RestrictionAdjointInvariantLaw P) (k : ℕ) :
     RestrictionAdjointInvariantLaw (restrictionScaleNormalizedLaw k P) := by
-  show Measure.map adjointReg (restrictionScaleNormalizedLaw k P) = restrictionScaleNormalizedLaw k P
+  change Measure.map adjointReg (restrictionScaleNormalizedLaw k P) = restrictionScaleNormalizedLaw k P
   rw [restrictionScaleNormalizedLaw_eq_map_rescaleReg,
     Measure.map_map measurable_adjointReg (measurable_rescaleReg k),
     adjointReg_comp_rescaleReg k,

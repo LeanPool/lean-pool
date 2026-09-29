@@ -116,7 +116,7 @@ theorem stationary_law {d : ℕ} {lam Lam : ℝ} (p : ℝ≥0) (hp : p ≤ 1) :
 
 theorem adjointInvariant_law {d : ℕ} {lam Lam : ℝ} (p : ℝ≥0) (hp : p ≤ 1) :
     Book.Ch04.RestrictionAdjointInvariantLaw (law d lam Lam p hp) := by
-  show Measure.map adjointReg (law d lam Lam p hp) = law d lam Lam p hp
+  change Measure.map adjointReg (law d lam Lam p hp) = law d lam Lam p hp
   rw [law]
   calc
     Measure.map adjointReg (Measure.map (checkerRegField lam Lam) (sampleMeasure d p hp))

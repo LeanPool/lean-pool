@@ -65,7 +65,7 @@ theorem memScalarL2_mul_euclideanGradient_coord_of_contDiff_hasCompactSupport_ts
   have hprodV :
       MeasureTheory.MemLp (fun x => euclideanGradient φ x j * F x) 2
         (MeasureTheory.volume.restrict V) := by
-    simpa [MemScalarL2, volumeMeasureOn, mul_comm] using hF.mul' hdφ_top
+    simpa [MemScalarL2, volumeMeasureOn, mul_comm] using hF.fun_mul hdφ_top
   have hsupport : Function.support (fun x => euclideanGradient φ x j * F x) ⊆ V :=
     (Function.support_mul_subset_left (fun x => euclideanGradient φ x j) F).trans
       ((support_euclideanGradient_coord_subset_tsupport j).trans hφ_sub)

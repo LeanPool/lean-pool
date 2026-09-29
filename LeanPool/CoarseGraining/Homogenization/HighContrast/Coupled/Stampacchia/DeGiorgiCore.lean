@@ -128,7 +128,7 @@ theorem deGiorgi_one_sided_core {d : ℕ} (hd : 3 ≤ d) :
   have hμvol : ∀ S : Set (Vec d), S ⊆ axisCube z L →
       (volumeMeasureOn (axisCube z L)) S = volume S := by
     intro S hSU
-    show (volume.restrict (axisCube z L)) S = volume S
+    change (volume.restrict (axisCube z L)) S = volume S
     rw [Measure.restrict_apply' hUmeas, Set.inter_eq_left.mpr hSU]
   -- Finiteness of the critical-exponent norm via the Sobolev embedding (E1).
   have hfin_2star : ∀ (u : H1Function (axisCube z L)),
@@ -375,7 +375,7 @@ theorem deGiorgi_one_sided_core {d : ℕ} (hd : 3 ≤ d) :
     have hset : {x | ¬ (w₁.toFun x ≤ m₀ + Cd * L * E₀)} = {x | m₀ + K < w₁.toFun x} := by
       ext x; rw [hK_def]; simp only [Set.mem_ofPred_eq, not_le]
     rw [hset]
-    show (volume.restrict (axisCube z L)) {x | m₀ + K < w₁.toFun x} = 0
+    change (volume.restrict (axisCube z L)) {x | m₀ + K < w₁.toFun x} = 0
     rw [Measure.restrict_apply' hUmeas]
     have hTeq : {x | m₀ + K < w₁.toFun x} ∩ axisCube z L = T := by
       rw [hT_def]; ext x; exact ⟨fun h => ⟨h.2, h.1⟩, fun h => ⟨h.2, h.1⟩⟩

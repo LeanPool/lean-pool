@@ -157,7 +157,7 @@ noncomputable def canonicalMaximizerPotentialDefectH1OnCube {d : ℕ}
     (canonicalMaximizerPotentialDefectH1OnCube Q a p q p0).toFun =
       canonicalMaximizerPotentialDefectOnCube Q a p q p0 := by
   funext x
-  show ((canonicalMaximizerSolutionOnCube Q a p q).toH1 - linearPotentialH1OnCube Q p0) x =
+  change ((canonicalMaximizerSolutionOnCube Q a p q).toH1 - linearPotentialH1OnCube Q p0) x =
     canonicalMaximizerPotentialDefectOnCube Q a p q p0 x
   rw [congrFun (H1Function.sub_toFun _ _) x]
   simp [canonicalMaximizerPotentialDefectOnCube]
@@ -168,7 +168,7 @@ noncomputable def canonicalMaximizerPotentialDefectH1OnCube {d : ℕ}
     (canonicalMaximizerPotentialDefectH1OnCube Q a p q p0).grad =
       fun x => canonicalMaximizerGradientOnCube Q a p q x - p0 := by
   funext x i
-  show ((canonicalMaximizerSolutionOnCube Q a p q).toH1 - linearPotentialH1OnCube Q p0).grad x i =
+  change ((canonicalMaximizerSolutionOnCube Q a p q).toH1 - linearPotentialH1OnCube Q p0).grad x i =
     canonicalMaximizerGradientOnCube Q a p q x i - p0 i
   rw [congrFun (congrFun (H1Function.sub_grad _ _) x) i]
   simp [canonicalMaximizerGradientOnCube]

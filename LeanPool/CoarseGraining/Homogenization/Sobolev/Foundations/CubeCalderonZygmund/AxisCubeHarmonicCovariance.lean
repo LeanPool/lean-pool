@@ -291,7 +291,7 @@ theorem WeakPoissonEquationOn.undilateSet_zero {d : ℕ} {U V : Set (Vec d)}
   have hψ_smooth : ContDiff ℝ (⊤ : ℕ∞) ψ := by
     simpa [ψ] using! hφ.comp (contDiff_const_smul a⁻¹)
   have hψ_supp : HasCompactSupport ψ := by
-    show HasCompactSupport (φ ∘ Homeomorph.smulOfNeZero a⁻¹ (inv_ne_zero ha_ne))
+    change HasCompactSupport (φ ∘ Homeomorph.smulOfNeZero a⁻¹ (inv_ne_zero ha_ne))
     simpa [ψ, Function.comp] using
       hφs.comp_homeomorph (Homeomorph.smulOfNeZero a⁻¹ (inv_ne_zero ha_ne))
   have hψ_sub : tsupport ψ ⊆ a • U := by

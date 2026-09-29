@@ -223,7 +223,7 @@ theorem localizedZeroTraceFunctionOn_dilate {d : ℕ} {Ω V Ω' V' : Set (Vec d)
     simpa [ζ] using! hη.comp (contDiff_const_smul r)
   have hζ_compact : HasCompactSupport ζ := by
     have hr_ne : r ≠ 0 := hr.ne'
-    show HasCompactSupport (η ∘ Homeomorph.smulOfNeZero r hr_ne)
+    change HasCompactSupport (η ∘ Homeomorph.smulOfNeZero r hr_ne)
     simpa [ζ, Function.comp] using
       hη_compact.comp_homeomorph (Homeomorph.smulOfNeZero r hr_ne)
   have hζ_sub : tsupport ζ ⊆ V := by

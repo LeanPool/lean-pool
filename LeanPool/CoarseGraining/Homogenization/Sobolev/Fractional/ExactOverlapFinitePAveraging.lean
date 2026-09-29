@@ -211,7 +211,7 @@ private theorem enorm_rpow_euclideanCoordDeriv_averagingField_coord_le
         (3 ^ d : ℝ≥0∞) ^ (r - 1)) *
       D.sum (fun S => (a S) ^ r) := by
     by_cases hp_two : p.exponent.toReal ≤ 2
-    · rw [if_pos hp_two, one_mul]
+    · rw [ite_eq_left hp_two, one_mul]
       calc
         (D.sum a) ^ r = (A.sum a) ^ r := by rw [hactive_sum]
         _ ≤ A.sum (fun S => (a S) ^ r) :=
@@ -224,7 +224,7 @@ private theorem enorm_rpow_euclideanCoordDeriv_averagingField_coord_le
             exact (mem_overlapCentersAtDepthContaining_iff.mp hS).1
           · intro S _hS _hnot
             exact bot_le
-    · rw [if_neg hp_two]
+    · rw [ite_eq_right hp_two]
       have hr_one : 1 ≤ r := by dsimp [r]; linarith
       have hactive := ENNReal.rpow_sum_le_const_mul_sum_rpow (s := A) (f := a) hr_one
       have hcard : (A.card : ℝ≥0∞) ≤ (3 ^ d : ℝ≥0∞) := by
@@ -395,11 +395,11 @@ private theorem enorm_rpow_averagingField_jacobian_le
         (Fintype.card (Fin d × Fin d) : ℝ≥0∞) ^ (r - 1)) *
       ∑ z : Fin d × Fin d, (E z) ^ r := by
     by_cases hp_two : p.exponent.toReal ≤ 2
-    · rw [if_pos hp_two, one_mul]
+    · rw [ite_eq_left hp_two, one_mul]
       exact ennreal_rpow_finset_sum_le_sum_rpow Finset.univ E hr_pos (by
         dsimp [r]
         linarith)
-    · rw [if_neg hp_two]
+    · rw [ite_eq_right hp_two]
       apply ENNReal.rpow_sum_le_const_mul_sum_rpow
       dsimp [r]
       linarith
@@ -829,12 +829,12 @@ theorem lintegral_enorm_rpow_averagingCompetitorW1p_jacobian_le_depthENorm
                       p.exponent.toReal ∂ ScalarOverlap.normalizedCubeMeasure S)
   have hC_ne_top : C ≠ ∞ := by
     by_cases hp_two : p.exponent.toReal ≤ 2
-    · simp only [C, if_pos hp_two, one_mul, mul_one]
+    · simp only [C, ite_eq_left hp_two, one_mul, mul_one]
       apply ENNReal.mul_ne_top (ENNReal.natCast_ne_top _)
       apply ENNReal.rpow_ne_top_of_nonneg
       · positivity
       · exact ENNReal.ofReal_ne_top
-    · simp only [C, if_neg hp_two]
+    · simp only [C, ite_eq_right hp_two]
       apply ENNReal.mul_ne_top
       · apply ENNReal.mul_ne_top
         · apply ENNReal.mul_ne_top

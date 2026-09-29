@@ -41,7 +41,7 @@ def memH34 {d : ℕ} (Q : TriadicCube d) (φ : Vec d → ℝ) : Prop :=
 def seminorm {d : ℕ} (Q : TriadicCube d) (φ : Vec d → ℝ) : ℝ :=
   (eLpNorm (kernel φ) 2 (Gagliardo.gagliardoCubeMeasure Q)).toReal
 
-/-- A full fractional norm which detects constants and has units `length⁻³ᐟ⁴`. -/
+/-- A full fractional norm which detects constants and has units `length^(-3/4)`. -/
 def testNorm {d : ℕ} (Q : TriadicCube d) (φ : Vec d → ℝ) : ℝ :=
   seminorm Q φ + cubeScaleFactor Q ^ (-(3 / 4 : ℝ)) * cubeLpNorm Q 2 φ
 

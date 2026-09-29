@@ -401,7 +401,7 @@ theorem upperPositiveExcessMomentAtScale_integrable_and_le_raw_twoExponentCoeff
   have hG_nonneg :
       ∀ n ∈ section52LargeScaleSet m, ∀ a, 0 ≤ G n a := by
     intro n hn a
-    simpa only [G, scalarization, hn, dif_pos] using!
+    simpa only [G, scalarization, hn, dite_eq_left] using!
       upperLargeScalePositiveExcess_nonneg_source
         hP hStruct hr_nonneg hn a
   have hS_aemeas : AEMeasurable S P := by
@@ -412,7 +412,7 @@ theorem upperPositiveExcessMomentAtScale_integrable_and_le_raw_twoExponentCoeff
   have hG_aemeas :
       ∀ n ∈ section52LargeScaleSet m, AEMeasurable (G n) P := by
     intro n hn
-    simpa only [G, scalarization, hn, dif_pos] using!
+    simpa only [G, scalarization, hn, dite_eq_left] using!
       upperLargeScalePositiveExcess_aemeasurable_source
         hP hStruct (r := r) hn
   have hS_int : Integrable (fun a : RegCoeffField d => |S a| ^ ξ) P := by
@@ -431,7 +431,7 @@ theorem upperPositiveExcessMomentAtScale_integrable_and_le_raw_twoExponentCoeff
       upperLargeScalePositiveExcess_integrable_abs_pow_source
         hP hStruct (sSource := s) (r := r) (ξ := ξ)
         hs hξ_one hξ_two hUpperSourceInt hn
-    simpa only [G, scalarization, Real.norm_eq_abs, hn, dif_pos] using! hInt
+    simpa only [G, scalarization, Real.norm_eq_abs, hn, dite_eq_left] using! hInt
   have hX_aemeas :
       AEMeasurable
         (fun a : RegCoeffField d =>
@@ -455,7 +455,7 @@ theorem upperPositiveExcessMomentAtScale_integrable_and_le_raw_twoExponentCoeff
       (G := fun n => G n a) hsplit hsmall ?_
     intro n
     dsimp [G]
-    rw [dif_pos n.2]
+    rw [dite_eq_left n.2]
   have hRoot0 : Ch04.annealedMomentRoot P ξ G0 ≤ coeff0 * initial := by
     have hSRoot := upper_unitDescendantSup_momentRoot_le_card_mul_origin
       (d := d) (P := P) hP hStruct (s := s) (ξ := ξ) (m := m)
@@ -470,7 +470,7 @@ theorem upperPositiveExcessMomentAtScale_integrable_and_le_raw_twoExponentCoeff
       ∀ n ∈ section52LargeScaleSet m,
         Ch04.annealedMomentRoot P ξ (G n) ≤ coeff n * initial := by
     intro n hn
-    simpa only [G, coeff, scalarization, initial, hn, dif_pos, mul_assoc] using!
+    simpa only [G, coeff, scalarization, initial, hn, dite_eq_left, mul_assoc] using!
       upperLargeScalePositiveExcessRoot_le_largeScaleRootCoeff_source
         hP hStruct (sSource := s) (r := r) (ξ := ξ)
         hs hr_nonneg hξ_one hξ_two hUpperSourceInt hn
@@ -643,7 +643,7 @@ theorem lowerPositiveExcessMomentAtScale_integrable_and_le_raw_twoExponentCoeff
   have hG_nonneg :
       ∀ n ∈ section52LargeScaleSet m, ∀ a, 0 ≤ G n a := by
     intro n hn a
-    simpa only [G, scalarization, hn, dif_pos] using!
+    simpa only [G, scalarization, hn, dite_eq_left] using!
       lowerLargeScalePositiveExcess_nonneg_source
         hP hStruct hr_nonneg hn a
   have hS_aemeas : AEMeasurable S P := by
@@ -654,7 +654,7 @@ theorem lowerPositiveExcessMomentAtScale_integrable_and_le_raw_twoExponentCoeff
   have hG_aemeas :
       ∀ n ∈ section52LargeScaleSet m, AEMeasurable (G n) P := by
     intro n hn
-    simpa only [G, scalarization, hn, dif_pos] using!
+    simpa only [G, scalarization, hn, dite_eq_left] using!
       lowerLargeScalePositiveExcess_aemeasurable_source
         hP hStruct (r := r) hn
   have hS_int : Integrable (fun a : RegCoeffField d => |S a| ^ ξ) P := by
@@ -673,7 +673,7 @@ theorem lowerPositiveExcessMomentAtScale_integrable_and_le_raw_twoExponentCoeff
       lowerLargeScalePositiveExcess_integrable_abs_pow_source
         hP hStruct (sSource := s) (r := r) (ξ := ξ)
         hs hξ_one hξ_two hLowerSourceInt hn
-    simpa only [G, scalarization, Real.norm_eq_abs, hn, dif_pos] using! hInt
+    simpa only [G, scalarization, Real.norm_eq_abs, hn, dite_eq_left] using! hInt
   have hX_aemeas :
       AEMeasurable
         (fun a : RegCoeffField d =>
@@ -697,7 +697,7 @@ theorem lowerPositiveExcessMomentAtScale_integrable_and_le_raw_twoExponentCoeff
       (G := fun n => G n a) hsplit hsmall ?_
     intro n
     dsimp [G]
-    rw [dif_pos n.2]
+    rw [dite_eq_left n.2]
   have hRoot0 : Ch04.annealedMomentRoot P ξ G0 ≤ coeff0 * initial := by
     have hSRoot := lower_unitDescendantSup_momentRoot_le_card_mul_origin
       (d := d) (P := P) hP hStruct (s := s) (ξ := ξ) (m := m)
@@ -712,7 +712,7 @@ theorem lowerPositiveExcessMomentAtScale_integrable_and_le_raw_twoExponentCoeff
       ∀ n ∈ section52LargeScaleSet m,
         Ch04.annealedMomentRoot P ξ (G n) ≤ coeff n * initial := by
     intro n hn
-    simpa only [G, coeff, scalarization, initial, hn, dif_pos, mul_assoc] using!
+    simpa only [G, coeff, scalarization, initial, hn, dite_eq_left, mul_assoc] using!
       lowerLargeScalePositiveExcessRoot_le_largeScaleRootCoeff_source
         hP hStruct (sSource := s) (r := r) (ξ := ξ)
         hs hr_nonneg hξ_one hξ_two hLowerSourceInt hn

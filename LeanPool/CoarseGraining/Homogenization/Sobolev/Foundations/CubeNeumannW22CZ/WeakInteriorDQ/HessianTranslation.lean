@@ -60,7 +60,7 @@ theorem translate {d : ℕ} {U : Set (Vec d)} {i : Fin d}
   have hψ_smooth : ContDiff ℝ (⊤ : ℕ∞) ψ := by
     simpa [ψ] using! hφ.comp (contDiff_id.add contDiff_const)
   have hψ_supp : HasCompactSupport ψ := by
-    show HasCompactSupport (φ ∘ Homeomorph.addRight z)
+    change HasCompactSupport (φ ∘ Homeomorph.addRight z)
     simpa [ψ, Function.comp] using hφ_supp.comp_homeomorph (Homeomorph.addRight z)
   have hψ_sub : tsupport ψ ⊆ U := by
     intro x hx
@@ -125,7 +125,7 @@ noncomputable def translate (H : HasWeakHessianOn U u) (z : Vec d) :
     let V : Set (Vec d) := translateSet z U
     let T : Vec d → Vec d := fun x => x - z
     have hμ := measurePreserving_subRight_restrict_translateSet (d := d) z U
-    show MemScalarL2 V ((H.hess i j) ∘ T)
+    change MemScalarL2 V ((H.hess i j) ∘ T)
     simpa [MemScalarL2, volumeMeasureOn, V, T, Function.comp] using
       (H.hess_memL2 i j).comp_measurePreserving hμ
   weak_second := by

@@ -45,7 +45,7 @@ theorem abs_cutoffOscillationTermOnCubeAtDepth_le_osc_mul_responseJOnCube
           (cubeSet R) volume)
     (hOscPoint :
       ∀ R ∈ descendantsAtDepth Q j,
-        ∀ᵐ x ∂ volumeMeasureOn (cubeSet R),
+        ∀ᵐ x ∂volumeMeasureOn (cubeSet R),
           |cubeAverage R φ - φ x| ≤ osc) :
     |cutoffOscillationTermOnCubeAtDepth Q a j φ p q| ≤
       osc * Ch02.responseJ (Ch02.cubeDomain Q) a p q := by
@@ -132,10 +132,10 @@ theorem abs_cutoffOscillationTermOnCubeAtDepth_le_scale_mul_responseJOnCube_of_a
     {d : ℕ} (Q : TriadicCube d) (a : Ch02.CoeffOn (Ch02.cubeDomain Q))
     (j : ℕ) {φ : Vec d → ℝ} {B C scaleSep : ℝ} (p q : Vec d)
     (hφ_meas : AEStronglyMeasurable φ (volumeMeasureOn (cubeSet Q)))
-    (hφ_bound : ∀ᵐ x ∂ volumeMeasureOn (cubeSet Q), ‖φ x‖ ≤ B)
+    (hφ_bound : ∀ᵐ x ∂volumeMeasureOn (cubeSet Q), ‖φ x‖ ≤ B)
     (hOscPoint :
       ∀ R ∈ descendantsAtDepth Q j,
-        ∀ᵐ x ∂ volumeMeasureOn (cubeSet R),
+        ∀ᵐ x ∂volumeMeasureOn (cubeSet R),
           |cubeAverage R φ - φ x| ≤ C * scaleSep) :
     |cutoffOscillationTermOnCubeAtDepth Q a j φ p q| ≤
       C * scaleSep * Ch02.responseJ (Ch02.cubeDomain Q) a p q := by
@@ -156,10 +156,10 @@ theorem abs_cutoffOscillationTermOnDependentFamilyAtDepth_le_scale_mul_restricti
     (Q : TriadicCube d) (j : ℕ) {φ : Vec d → ℝ} {B C scaleSep : ℝ}
     (p q : Vec d)
     (hφ_meas : AEStronglyMeasurable φ (volumeMeasureOn (cubeSet Q)))
-    (hφ_bound : ∀ᵐ x ∂ volumeMeasureOn (cubeSet Q), ‖φ x‖ ≤ B)
+    (hφ_bound : ∀ᵐ x ∂volumeMeasureOn (cubeSet Q), ‖φ x‖ ≤ B)
     (hOscPoint :
       ∀ R ∈ descendantsAtDepth Q j,
-        ∀ᵐ x ∂ volumeMeasureOn (cubeSet R),
+        ∀ᵐ x ∂volumeMeasureOn (cubeSet R),
           |cubeAverage R φ - φ x| ≤ C * scaleSep) :
     |cutoffOscillationTermOnCubeAtDepth Q
         ((Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha).coeffOn Q)

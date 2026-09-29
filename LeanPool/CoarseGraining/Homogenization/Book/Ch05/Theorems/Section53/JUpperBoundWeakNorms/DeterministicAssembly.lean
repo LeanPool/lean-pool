@@ -233,10 +233,10 @@ theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentF
         (cubeSet Q) volume)
     (hMean : cubeAverage Q φ = 1)
     (hφ_meas : AEStronglyMeasurable φ (volumeMeasureOn (cubeSet Q)))
-    (hφ_bound : ∀ᵐ x ∂ volumeMeasureOn (cubeSet Q), ‖φ x‖ ≤ B)
+    (hφ_bound : ∀ᵐ x ∂volumeMeasureOn (cubeSet Q), ‖φ x‖ ≤ B)
     (hOscPoint :
       ∀ R ∈ descendantsAtDepth Q j,
-        ∀ᵐ x ∂ volumeMeasureOn (cubeSet R),
+        ∀ᵐ x ∂volumeMeasureOn (cubeSet R),
           |cubeAverage R φ - φ x| ≤ Cosc * scaleSep)
     (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
     (hφ_compact : HasCompactSupport φ)

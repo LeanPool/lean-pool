@@ -15,7 +15,7 @@ public import LeanPool.CoarseGraining.Homogenization.Multiscale.NormalizedNorms
 # Fractional Sobolev (Gagliardo) seminorms on triadic cubes
 
 This file defines the volume-normalized fractional Sobolev seminorm
-`[u]_{W̲^{s,p}(□)}` of the manuscript (CG Chapter 1, "Fractional Sobolev
+`[u]_{W_res^{s,p}(□)}` of the manuscript (CG Chapter 1, "Fractional Sobolev
 seminorms") as an `eLpNorm` of a difference-quotient kernel over a product
 measure, together with the membership predicate `MemWsp` playing the role of
 `u ∈ W^{s,p}(□)`.
@@ -32,7 +32,7 @@ Design notes:
 * At `p = ∞` the kernel exponent `s + d / p.toReal` collapses to `s`
   (junk-value `d / 0 = 0`), so the seminorm degenerates to the essential
   Hölder `C^{0,s}` seminorm, matching the manuscript's
-  `[·]_{C^{0,s}} ≈ [·]_{W̲^{s,∞}}` convention.
+  `[·]_{C^{0,s}} ≈ [·]_{W_res^{s,∞}}` convention.
 * Consumers must not unfold the definitions: the lemmas in the `Internal`
   namespace are reserved for the comparison proof files.  Everything else
   goes through the exported API.
@@ -117,7 +117,7 @@ instance instSFiniteGagliardoCubeMeasure (Q : TriadicCube d) :
   unfold gagliardoCubeMeasure
   infer_instance
 
-/-- `[u]_{W̲^{s,p}(Q)}`, ℝ≥0∞-valued, defined for all `p ∈ [1,∞]`
+/-- `[u]_{W_res^{s,p}(Q)}`, ℝ≥0∞-valued, defined for all `p ∈ [1,∞]`
 (`p = ∞` gives the essential Hölder seminorm). -/
 noncomputable def cubeGagliardoESeminorm (Q : TriadicCube d) (s : ℝ)
     (p : ℝ≥0∞) (u : Vec d → E) : ℝ≥0∞ :=

@@ -145,7 +145,7 @@ theorem cubeSobolevEmbedding {d : ℕ} (hd : 3 ≤ d) :
   set hi : Vec (m + 1) := fun k => z k + L with hhi
   have hlt : ∀ k, z k < hi k := fun k => by simp only [hhi]; linarith
   have hval : ∀ k, hi k = z k + L := fun k => by simp only [hhi]
-  show eLpNorm u.toFun (twoStar (m + 1)) (volume.restrict (Box z hi))
+  change eLpNorm u.toFun (twoStar (m + 1)) (volume.restrict (Box z hi))
     ≤ (↑(C0.toNNReal + 1) : ℝ≥0∞) *
         ((∑ i, eLpNorm (fun x => u.grad x i) 2 (volume.restrict (Box z hi)))
           + ENNReal.ofReal L⁻¹ * eLpNorm u.toFun 2 (volume.restrict (Box z hi)))
@@ -221,7 +221,7 @@ theorem cubeSobolevEmbedding {d : ℕ} (hd : 3 ≤ d) :
     with hbdef
   have hab : ∀ k, a k ≤ b k := by
     intro k
-    show eLpNorm (ψ k) (twoStar (m + 1)) (volume.restrict (Box3 z hi))
+    change eLpNorm (ψ k) (twoStar (m + 1)) (volume.restrict (Box3 z hi))
       ≤ Cgns * ∑ i, eLpNorm (fun x => fderiv ℝ (ψ k) x (basisVec i)) 2
           (volume.restrict (Box3 z hi))
     rw [hrestr _ _ (hψ_meas k) (hψ_supp k)]

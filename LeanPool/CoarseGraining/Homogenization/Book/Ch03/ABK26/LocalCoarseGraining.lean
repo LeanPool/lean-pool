@@ -874,7 +874,7 @@ private theorem localCoarseGraining_outer_power_bound
               B * ENNReal.ofReal (cubeBesovPositiveVectorSeminormTwo R s.1 g))) := by
             simpa only [K, A, B] using hbound
       _ = K * (E j R + F j R) := by
-        simp only [E, F, dif_pos hR]
+        simp only [E, F, dite_eq_left hR]
         ring
   rw [localFluxDefectNegativeBesovLpAverage_rpow_eq_tsum_descendantsAtScale]
   calc
@@ -944,7 +944,7 @@ private theorem localCoarseGraining_outer_power_bound
                 rw [← Finset.sum_attach]
                 apply Finset.sum_congr rfl
                 intro R hR
-                simp only [E, dif_pos R.2]
+                simp only [E, dite_eq_left R.2]
               rw [hsum]
               ring
             rw [hE]

@@ -96,7 +96,7 @@ def affineH1 (m : ℤ) (p : Vec d) : H1Function (openCubeSet (originCube d m)) :
   rw [affineH1, H1Function.sum_grad]
   funext x
   simp only [Homogenization.H1Function.smul_grad]
-  show (∑ i : Fin d, p i • basisVec i) = p
+  change (∑ i : Fin d, p i • basisVec i) = p
   funext j
   rw [Finset.sum_apply]
   simp only [Pi.smul_apply, smul_eq_mul, basisVec, Pi.single_apply, mul_ite, mul_one, mul_zero]

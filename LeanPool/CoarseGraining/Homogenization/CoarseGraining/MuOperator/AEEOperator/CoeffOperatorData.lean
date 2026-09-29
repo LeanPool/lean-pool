@@ -575,7 +575,7 @@ noncomputable def submoduleClosureToMuCorrectionSpace
     M.blockPotentialZeroTraceSolenoidalZeroNormalTrace.toSubmodule →
       M.toMuCorrectionSpaceData.correctionSpace.toSubmodule :=
   fun X => ⟨blockL2ToHilbertBlockL2 (U := U) X, by
-    show
+    change
       hilbertBlockL2ToBlockL2 (U := U)
           (blockL2ToHilbertBlockL2 (U := U) X) ∈
         M.blockPotentialZeroTraceSolenoidalZeroNormalTrace

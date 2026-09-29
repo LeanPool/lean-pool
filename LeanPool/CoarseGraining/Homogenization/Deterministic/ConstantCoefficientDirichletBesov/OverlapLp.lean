@@ -459,7 +459,7 @@ theorem cubeLpNorm_two_sq_le_lintegral_ofReal_vecNormSq_toReal_of_le
     {d : ℕ} {Q : TriadicCube d} {F : Vec d → Vec d} {B : ℝ≥0∞}
     (hB_ne_top : B ≠ ∞)
     (hbound :
-      ∫⁻ x, ENNReal.ofReal (vecNormSq (F x)) ∂ normalizedCubeMeasure Q ≤ B) :
+      ∫⁻ x, ENNReal.ofReal (vecNormSq (F x)) ∂normalizedCubeMeasure Q ≤ B) :
     (cubeLpNorm Q (2 : ℝ≥0∞) F) ^ 2 ≤ B.toReal := by
   have hnorm :
       ∫⁻ x, ‖F x‖ₑ ^ (2 : ℝ) ∂ normalizedCubeMeasure Q ≤
@@ -525,7 +525,7 @@ theorem overlapCubeLpNorm_two_sq_le_lintegral_ofReal_vecNormSq_toReal_of_le
     {d : ℕ} {S : TriadicCube d} {F : Vec d → Vec d} {B : ℝ≥0∞}
     (hB_ne_top : B ≠ ∞)
     (hbound :
-      ∫⁻ x, ENNReal.ofReal (vecNormSq (F x)) ∂ normalizedOverlapCubeMeasure S ≤ B) :
+      ∫⁻ x, ENNReal.ofReal (vecNormSq (F x)) ∂normalizedOverlapCubeMeasure S ≤ B) :
     (overlapCubeLpNorm S (2 : ℝ≥0∞) F) ^ 2 ≤ B.toReal := by
   have hnorm :
       ∫⁻ x, ‖F x‖ₑ ^ (2 : ℝ) ∂normalizedOverlapCubeMeasure S ≤

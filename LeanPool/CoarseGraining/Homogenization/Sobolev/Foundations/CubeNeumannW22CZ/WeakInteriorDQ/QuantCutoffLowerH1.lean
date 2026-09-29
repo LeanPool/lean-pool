@@ -672,7 +672,7 @@ theorem integral_product_rule_grad_sq_le_two_integral_cutoff_grad_sq_add_two_int
   have hφgrad : MeasureTheory.MemLp (fun x => φ x * u.grad x i) 2
       (volumeMeasureOn U) := by
     simpa [MemScalarL2, volumeMeasureOn, mul_comm] using
-      (u.gradMemL2 i).mul' hφ_top
+      (u.gradMemL2 i).fun_mul hφ_top
   have hdφ_top : MeasureTheory.MemLp
       (fun x => (fderiv ℝ φ x) (basisVec i)) ⊤ (volumeMeasureOn U) := by
     simpa [euclideanCoordDeriv, volumeMeasureOn] using!
@@ -682,7 +682,7 @@ theorem integral_product_rule_grad_sq_le_two_integral_cutoff_grad_sq_add_two_int
       (fun x => u.toFun x * (fderiv ℝ φ x) (basisVec i)) 2
       (volumeMeasureOn U) := by
     simpa [MemScalarL2, volumeMeasureOn, mul_comm, mul_left_comm] using
-      u.memL2.mul' hdφ_top
+      u.memL2.fun_mul hdφ_top
   have hleft_int : MeasureTheory.IntegrableOn
       (fun x =>
         (φ x * u.grad x i + u.toFun x * (fderiv ℝ φ x) (basisVec i)) ^ 2) U := by

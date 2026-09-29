@@ -85,7 +85,7 @@ theorem quenchedMinimalScaleIndex_le_of_goodTail
   let hgood : hasGoodTailFrom N0 Bad ω := ⟨M, hN0M, hM⟩
   have hidx_eq : quenchedMinimalScaleIndex N0 Bad ω = Nat.find hgood := by
     unfold quenchedMinimalScaleIndex
-    rw [dif_pos hgood]
+    rw [dite_eq_left hgood]
   rw [hidx_eq]
   exact Nat.find_min' hgood ⟨hN0M, hM⟩
 

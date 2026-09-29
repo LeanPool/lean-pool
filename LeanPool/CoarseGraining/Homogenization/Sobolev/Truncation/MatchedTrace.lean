@@ -108,7 +108,7 @@ theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
   have hTtf : T.toFun = fun x => max (w₁.toFun x - c) 0 - max (w₂.toFun x - c) 0 := by
     funext x
     rw [hT_def, H1Function.sub_toFun]
-    show V1'.toFun x - V2.toFun x = _
+    change V1'.toFun x - V2.toFun x = _
     rw [congrFun hV1'f x, congrFun hV2f x]
   rw [show (fun x => max (w₁.toFun x - c) 0 - max (w₂.toFun x - c) 0) = T.toFun from hTtf.symm]
   -- Weak-gradient uniqueness bridge `W.grad =ᵐ h.grad`.
@@ -141,13 +141,13 @@ theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
     intro x hx
     have hφ0 : W.approx n x = 0 := image_eq_zero_of_notMem_tsupport hx
     have hSx : (S n).toFun x = w₂.toFun x := by
-      show w₂.toFun x + (Φ n).toFun x = w₂.toFun x
+      change w₂.toFun x + (Φ n).toFun x = w₂.toFun x
       rw [show (Φ n).toFun x = W.approx n x from rfl, hφ0, add_zero]
     have e1 : (V1 n).toFun x = max ((S n).toFun x - c) 0 := congrFun (hV1f n) x
     have e2 : V2.toFun x = max (w₂.toFun x - c) 0 := congrFun hV2f x
-    show (V1 n - V2).toFun x = 0
+    change (V1 n - V2).toFun x = 0
     rw [H1Function.sub_toFun]
-    show (V1 n).toFun x - V2.toFun x = 0
+    change (V1 n).toFun x - V2.toFun x = 0
     rw [e1, e2, hSx]; ring
   -- L² convergence of `φ_n → h` (function side).
   have hWconv : Tendsto
@@ -196,8 +196,8 @@ theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
         (Sset.indicator g x) i = if x ∈ Sset then g x i else 0 := by
       intro Sset g x
       by_cases hxs : x ∈ Sset
-      · rw [Set.indicator_of_mem hxs, if_pos hxs]
-      · rw [Set.indicator_of_notMem hxs, if_neg hxs]; rfl
+      · rw [Set.indicator_of_mem hxs, ite_eq_left hxs]
+      · rw [Set.indicator_of_notMem hxs, ite_eq_right hxs]; rfl
     -- The actual gradient difference equals `TA + TB` a.e.
     have hkey : ∀ n, (fun x => V1'.grad x i - (V1 n).grad x i)
         =ᵐ[volumeMeasureOn U] (fun x => TA n x + TB n x) := by
@@ -272,7 +272,7 @@ theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
             filter_upwards [hSconv.eventually_const_lt hlt] with n hn using hn
           refine Tendsto.congr' ?_ tendsto_const_nhds
           filter_upwards [hev] with n hn
-          simp only [hTB_def]; rw [if_pos hlt, if_pos hn]; ring
+          simp only [hTB_def]; rw [ite_eq_left hlt, ite_eq_left hn]; ring
         · have hg0 : w₁.grad x i = 0 := by simp [hxD2 heqc.symm]
           refine Tendsto.congr' ?_ tendsto_const_nhds
           filter_upwards with n
@@ -281,7 +281,7 @@ theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
             filter_upwards [hSconv.eventually_lt_const hgt] with n hn using not_lt.mpr hn.le
           refine Tendsto.congr' ?_ tendsto_const_nhds
           filter_upwards [hev] with n hn
-          simp only [hTB_def]; rw [if_neg (not_lt.mpr hgt.le), if_neg hn]; ring
+          simp only [hTB_def]; rw [ite_eq_right (not_lt.mpr hgt.le), ite_eq_right hn]; ring
       have hmain := tendsto_eLpNorm_two_of_tendsto_ae_of_dominated
         (fun n => haesm_TB (σ n)) (memLp_const (0:ℝ)) hdom hbnd hae
       simpa using hmain

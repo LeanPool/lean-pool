@@ -35,7 +35,7 @@ theorem isSigmaStarInvCoarse_homogeneous_coeffField {d : ℕ} (U : Set (Vec d))
   refine ⟨?_, ?_⟩
   · rw [Matrix.IsSymm.ext_iff]
     intro i j
-    show lam⁻¹ * sigmaStar⁻¹ j i = lam⁻¹ * sigmaStar⁻¹ i j
+    change lam⁻¹ * sigmaStar⁻¹ j i = lam⁻¹ * sigmaStar⁻¹ i j
     rw [hInvSymm.apply j i]
   · intro q
     calc
@@ -144,7 +144,7 @@ theorem isSigmaStarCoarse_homogeneous_coeffField {d : ℕ} (U : Set (Vec d))
   refine ⟨?_, ?_⟩
   · rw [Matrix.IsSymm.ext_iff] at hsymm ⊢
     intro i j
-    show lam * sigmaStar j i = lam * sigmaStar i j
+    change lam * sigmaStar j i = lam * sigmaStar i j
     rw [hsymm j i]
   · intro q
     calc
@@ -219,7 +219,7 @@ theorem isSigmaCoarse_homogeneous_coeffField {d : ℕ} (U : Set (Vec d))
   refine ⟨?_, ?_⟩
   · rw [Matrix.IsSymm.ext_iff] at hsymm ⊢
     intro i j
-    show lam * sigma j i = lam * sigma i j
+    change lam * sigma j i = lam * sigma i j
     rw [hsymm j i]
   · intro p
     have hp0 :

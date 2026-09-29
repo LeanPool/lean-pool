@@ -318,7 +318,7 @@ noncomputable def mulContDiffMemLpTop {d : ℕ} {U : Set (Vec d)}
       simpa [μU, mul_comm] using (u.gradMemL2 i).fun_mul (r := 2) hφ_memTop
     have hsecond :
         MeasureTheory.MemLp (fun x => u x * dφ x) 2 μU := by
-      simpa [dφ, Dφ, μU, mul_comm] using u.memL2.mul' (hdφ_memTop i)
+      simpa [dφ, Dφ, μU, mul_comm] using u.memL2.fun_mul (hdφ_memTop i)
     simpa [dφ, Dφ, Pi.add_apply] using! hfirst.add hsecond
   · intro i ψ hψ_smooth hψ_compact hψ_sub
     let ei : Vec d := basisVec i
@@ -500,7 +500,7 @@ noncomputable def mulContDiffHasCompactSupport {d : ℕ} {U : Set (Vec d)}
       simpa [μU, mul_comm] using (u.gradMemL2 i).fun_mul (r := 2) hφ_memTop
     have hsecond :
         MeasureTheory.MemLp (fun x => u x * dφ x) 2 μU := by
-      simpa [dφ, μU, mul_comm] using u.memL2.mul' hdφ_memTop
+      simpa [dφ, μU, mul_comm] using u.memL2.fun_mul hdφ_memTop
     simpa [dφ, Dφ, Pi.add_apply] using! hfirst.add hsecond
   · intro i ψ hψ_smooth hψ_compact hψ_sub
     let ei : Vec d := basisVec i

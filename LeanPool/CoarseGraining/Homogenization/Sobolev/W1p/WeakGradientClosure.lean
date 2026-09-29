@@ -44,9 +44,9 @@ private theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm_finiteLp
   have hfh_int : ∀ n, Integrable (fun x => f n x * h x) μ := by
     intro n
     simpa [μ, mul_comm] using
-      (memLp_one_iff_integrable.mp (hh.mul' (hf n)))
+      (memLp_one_iff_integrable.mp (hh.fun_mul (hf n)))
   have hgh_int : Integrable (fun x => g x * h x) μ := by
-    simpa [μ, mul_comm] using (memLp_one_iff_integrable.mp (hh.mul' hg))
+    simpa [μ, mul_comm] using (memLp_one_iff_integrable.mp (hh.fun_mul hg))
   rw [← tendsto_sub_nhds_zero_iff]
   have hdiff_eq : ∀ n,
       (∫ x, f n x * h x ∂μ) - (∫ x, g x * h x ∂μ)

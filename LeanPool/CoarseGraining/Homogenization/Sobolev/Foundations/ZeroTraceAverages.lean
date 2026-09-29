@@ -306,7 +306,7 @@ theorem cubeAverage_eq_neg_cubeAverage_grad_mul_centeredCoord_of_h10OnCube
     have hmem :
         MeasureTheory.MemLp (fun x => φ x * u.toH1Function.grad x i)
           (2 : ENNReal) (MeasureTheory.volume.restrict (cubeSet Q)) := by
-      simpa [mul_comm] using (u.toH1Function.gradMemL2 i).mul' hφ_memTop
+      simpa [mul_comm] using (u.toH1Function.gradMemL2 i).fun_mul hφ_memTop
     simpa [MeasureTheory.IntegrableOn] using
       (hmem.integrable (by norm_num : (1 : ENNReal) ≤ 2))
   have hsplit :

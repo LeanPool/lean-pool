@@ -38,11 +38,11 @@ theorem blockMatVecMul_blockMatMul (A B : BlockMat d) (X : BlockVec d) :
     blockMatVecMul (blockMatMul A B) X = blockMatVecMul A (blockMatVecMul B X) := by
   rcases X with ⟨p, q⟩
   refine Prod.ext ?_ ?_
-  · show matVecMul (blockMatMul A B).upperLeft p + matVecMul (blockMatMul A B).upperRight q =
+  · change matVecMul (blockMatMul A B).upperLeft p + matVecMul (blockMatMul A B).upperRight q =
         matVecMul A.upperLeft (matVecMul B.upperLeft p + matVecMul B.upperRight q) +
           matVecMul A.upperRight (matVecMul B.lowerLeft p + matVecMul B.lowerRight q)
     simp only [blockMatMul, add_matVecMul, matVecMul_add, ← matVecMul_mul]; abel
-  · show matVecMul (blockMatMul A B).lowerLeft p + matVecMul (blockMatMul A B).lowerRight q =
+  · change matVecMul (blockMatMul A B).lowerLeft p + matVecMul (blockMatMul A B).lowerRight q =
         matVecMul A.lowerLeft (matVecMul B.upperLeft p + matVecMul B.upperRight q) +
           matVecMul A.lowerRight (matVecMul B.lowerLeft p + matVecMul B.lowerRight q)
     simp only [blockMatMul, add_matVecMul, matVecMul_add, ← matVecMul_mul]; abel
@@ -211,7 +211,7 @@ theorem blockDiag_blockMatLoewnerLE_blockMatrixOfCoeff_of_isThetaElliptic
     rw [hdhi] at hup'
     exact hup'
   -- reduce the block Loewner goal and finish
-  show (1 / 2 : ℝ) * blockVecDot (p, q) Ylo ≤
+  change (1 / 2 : ℝ) * blockVecDot (p, q) Ylo ≤
     (1 / 2 : ℝ) * blockVecDot (p, q) (blockMatVecMul (blockMatrixOfCoeff A) (p, q))
   rw [hDlo]
   rw [hDlo] at hfen

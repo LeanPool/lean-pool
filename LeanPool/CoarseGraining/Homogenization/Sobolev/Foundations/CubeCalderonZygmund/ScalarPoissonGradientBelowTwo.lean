@@ -486,7 +486,7 @@ private theorem ofReal_vecDot_radialTruncation_eq_truncatedMoment
   · have hx' : ‖HilbertVec.ofVec (F x)‖ ≤ (n : ℝ) := by
       simpa only [euclideanNorm_eq_norm_ofVec] using hx
     have hxmem : x ∈ {y | ‖HilbertVec.ofVec (F y)‖ ≤ (n : ℝ)} := hx'
-    rw [if_pos hx, INTERNAL.truncatedMoment, Set.indicator_of_mem hxmem]
+    rw [ite_eq_left hx, INTERNAL.truncatedMoment, Set.indicator_of_mem hxmem]
     rw [← ofReal_norm (HilbertVec.ofVec (F x))]
     simpa only [euclideanNorm_eq_norm_ofVec] using
       (ENNReal.ofReal_rpow_of_nonneg
@@ -494,7 +494,7 @@ private theorem ofReal_vecDot_radialTruncation_eq_truncatedMoment
   · have hx' : ¬ ‖HilbertVec.ofVec (F x)‖ ≤ (n : ℝ) := by
       simpa only [euclideanNorm_eq_norm_ofVec] using hx
     have hxmem : x ∉ {y | ‖HilbertVec.ofVec (F y)‖ ≤ (n : ℝ)} := hx'
-    rw [if_neg hx, INTERNAL.truncatedMoment, Set.indicator_of_notMem hxmem]
+    rw [ite_eq_right hx, INTERNAL.truncatedMoment, Set.indicator_of_notMem hxmem]
     exact ENNReal.ofReal_zero
 
 private theorem eLpNorm_radialTruncation_rpow_conjugate_eq_truncatedMoment
@@ -519,11 +519,11 @@ private theorem eLpNorm_radialTruncation_rpow_conjugate_eq_truncatedMoment
     INTERNAL.norm_hilbertRadialTruncation_rpow_conjugate]
   by_cases hx : ‖F x‖ ≤ (n : ℝ)
   · have hxmem : x ∈ {y | ‖F y‖ ≤ (n : ℝ)} := hx
-    rw [if_pos hx, INTERNAL.truncatedMoment, Set.indicator_of_mem hxmem,
+    rw [ite_eq_left hx, INTERNAL.truncatedMoment, Set.indicator_of_mem hxmem,
       ← ofReal_norm,
       ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) ENNReal.toReal_nonneg]
   · have hxmem : x ∉ {y | ‖F y‖ ≤ (n : ℝ)} := hx
-    rw [if_neg hx, INTERNAL.truncatedMoment, Set.indicator_of_notMem hxmem]
+    rw [ite_eq_right hx, INTERNAL.truncatedMoment, Set.indicator_of_notMem hxmem]
     exact ENNReal.ofReal_zero
 
 private theorem eLpNorm_le_of_truncated_cross_bound

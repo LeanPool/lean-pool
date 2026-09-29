@@ -345,7 +345,7 @@ theorem rawOverlapWeight_pos_of_mem_openOverlap {d : ℕ}
     (hS : S ∈ overlapCentersAtDepth Q j)
     (hxS : x ∈ openOverlapCubeSet S) :
     0 < rawOverlapWeight Q j S x := by
-  simp only [rawOverlapWeight, if_pos hS]
+  simp only [rawOverlapWeight, ite_eq_left hS]
   exact Finset.prod_pos fun i _ =>
     mul_pos
       (lowerOverlapTransition_pos_of_mem_openOverlap (Q := Q) hxS)

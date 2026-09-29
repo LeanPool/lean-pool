@@ -178,12 +178,12 @@ noncomputable def endpoint :
     Ch05.Section57.GammaInfinityCoarseGrainedEllipticityNoXi S.P S.hP S.hStruct :=
   S.hUE.toGammaInfinityCoarseGrainedEllipticityNoXi S.hP S.hStruct S.gammaParams
 
-/-- Positivity of the homogenized scalar `σ̄`, independent of the exponents. -/
+/-- Positivity of the homogenized scalar `sigma_bar`, independent of the exponents. -/
 theorem barSigmaLimit_pos :
     0 < Ch05.Section57.barSigmaLimit S.hP S.hStruct :=
   (S.endpoint.withInternalXi.toGammaSigma 1 zero_lt_one).barSigmaLimit_pos
 
-/-- The homogenized constant coefficient matrix `ā = σ̄ I`. -/
+/-- The homogenized constant coefficient matrix `a_bar = sigma_bar I`. -/
 noncomputable def homogenizedMatrix : Ch03.ConstantCoeffMatrix d :=
   Ch05.Section57.assemblyConstantCoeffMatrixOfScalar
     (Ch05.Section57.barSigmaLimit S.hP S.hStruct) S.barSigmaLimit_pos
@@ -191,7 +191,7 @@ noncomputable def homogenizedMatrix : Ch03.ConstantCoeffMatrix d :=
 /-- A comparison pair on the triadic cube `□ₘ`: weak solutions `u, v ∈ H¹(□ₘ)`
 with the same right-hand side `∇·g` and the same boundary data, where `u` solves
 the heterogeneous equation `-∇·a∇u = ∇·g`, `v` solves the homogenized equation
-`-∇·ā∇v = ∇·g`, and `u - v ∈ H¹₀(□ₘ)`.  Wraps
+`-∇·a_bar∇v = ∇·g`, and `u - v ∈ H¹₀(□ₘ)`.  Wraps
 `Ch05.Section57.assemblyComparisonDatumOfScalar`; `pair.u` and `pair.v` are the
 two solutions. -/
 abbrev ComparisonPair (aω : RegCoeffField d)

@@ -387,7 +387,7 @@ theorem cubeSobolevEmbedding_finiteLp {d : ℕ} (hd : 0 < d)
   set hi : Vec (m + 1) := fun k => z k + L with hhi
   have hlt : ∀ k, z k < hi k := fun k => by simp only [hhi]; linarith
   have hval : ∀ k, hi k = z k + L := fun k => by simp only [hhi]
-  show eLpNorm u.toFun q.exponent (volume.restrict (Box z hi)) ≤
+  change eLpNorm u.toFun q.exponent (volume.restrict (Box z hi)) ≤
     (↑(C0.toNNReal + 1) : ℝ≥0∞) *
       ((∑ i, eLpNorm (fun x => u.grad x i) p.exponent (volume.restrict (Box z hi))) +
         ENNReal.ofReal L⁻¹ * eLpNorm u.toFun p.exponent (volume.restrict (Box z hi)))
@@ -459,7 +459,7 @@ theorem cubeSobolevEmbedding_finiteLp {d : ℕ} (hd : 0 < d)
       (volume.restrict (Box3 z hi))
   have hab : ∀ n, a n ≤ b n := by
     intro n
-    show eLpNorm (ψ n) q.exponent (volume.restrict (Box3 z hi)) ≤
+    change eLpNorm (ψ n) q.exponent (volume.restrict (Box3 z hi)) ≤
       Cgns * ∑ i, eLpNorm (fun x => fderiv ℝ (ψ n) x (basisVec i)) p.exponent
         (volume.restrict (Box3 z hi))
     rw [hrestr _ _ (hψ_smooth n).continuous.aestronglyMeasurable

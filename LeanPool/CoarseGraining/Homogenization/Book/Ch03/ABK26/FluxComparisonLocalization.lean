@@ -103,7 +103,7 @@ theorem centeredCubeRootFluxDefectL2Field_negativeWspSmoothDual_localize
     congr 2
     apply Finset.sum_congr rfl
     intro R hR
-    simp only [dif_pos R.2]
+    simp only [dite_eq_left R.2]
   have hmain := cubeEuclideanNegativeWspSmoothDualENorm_le_descendantsENNAverage
     (originCube d m) j s p (centeredCubeRootFluxDefectL2Field m a sigma0 u)
   rw [hj, hlocal] at hmain

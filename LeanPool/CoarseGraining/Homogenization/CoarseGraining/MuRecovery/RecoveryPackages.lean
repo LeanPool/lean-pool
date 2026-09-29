@@ -50,7 +50,7 @@ noncomputable def toLinearMuMinimizerFamily (M : MuMinimizerRecoveryData U a) :
         (X := M.field P)
         (hX := M.mem_blockL2 P)
     rw [M.mu_eq_muCandidate P]
-    show
+    change
       quadraticEnergy
           (energyBilinOfOperator M.system.toMuOperatorRealization.operator)
           (M.system.toMuHilbertRealization.minimizerMap P) =

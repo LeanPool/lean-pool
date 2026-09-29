@@ -383,8 +383,8 @@ private theorem cubeLpNorm_two_le_eLpNorm_finite_of_memLp
   have hcompareRaw : Gagliardo.integralLpSeminorm f 2 μ ≤
       Gagliardo.integralLpSeminorm (fun x => HilbertVec.ofVec (f x)) 2 μ := by
     simp only [Gagliardo.integralLpSeminorm,
-      if_neg (by norm_num : (2 : ℝ≥0∞) ≠ 0),
-      if_neg (by norm_num : (2 : ℝ≥0∞) ≠ ∞)]
+      ite_eq_right (by norm_num : (2 : ℝ≥0∞) ≠ 0),
+      ite_eq_right (by norm_num : (2 : ℝ≥0∞) ≠ ∞)]
     refine MeasureTheory.eLpNorm'_mono_ae (by norm_num) ?_
     filter_upwards [] with x
     exact HilbertVec.norm_le_norm_ofVec (f x)

@@ -72,8 +72,8 @@ theorem isEllipticFieldOn_patchCore {Θ : ℝ} {m : ℤ} {ℓ : ℝ} {σ : Vec d
             else (if x ∈ cubeSet (originCube d m) then a x i j else 0) := by
       funext x
       by_cases hc : x ∈ coreBox ℓ σ k
-      · simp only [patchCore_apply_of_mem hc, if_pos hc]
-      · simp only [patchCore_apply_of_not_mem hc, if_neg hc]
+      · simp only [patchCore_apply_of_mem hc, ite_eq_left hc]
+      · simp only [patchCore_apply_of_not_mem hc, ite_eq_right hc]
     rw [heq]
     exact Measurable.ite (measurableSet_coreBox ℓ σ k) ha' ha
   · by_cases hc : x ∈ coreBox ℓ σ k

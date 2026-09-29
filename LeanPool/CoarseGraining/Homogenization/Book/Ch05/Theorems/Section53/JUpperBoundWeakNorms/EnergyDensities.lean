@@ -304,7 +304,7 @@ theorem integrableOn_mul_left_of_integrableOn_of_ae_bounded
     {d : ℕ} {U : Set (Vec d)} {φ f : Vec d → ℝ} {C : ℝ}
     (hf : IntegrableOn f U volume)
     (hφ_meas : AEStronglyMeasurable φ (volumeMeasureOn U))
-    (hφ_bound : ∀ᵐ x ∂ volumeMeasureOn U, ‖φ x‖ ≤ C) :
+    (hφ_bound : ∀ᵐ x ∂volumeMeasureOn U, ‖φ x‖ ≤ C) :
     IntegrableOn (fun x => φ x * f x) U volume := by
   have hf_int : Integrable f (volumeMeasureOn U) := by
     simpa [IntegrableOn, volumeMeasureOn] using hf
@@ -447,7 +447,7 @@ theorem cutoffOscillationTermOnCubeAtDepth_integrableOn_descendants_of_ae_bounde
     {d : ℕ} (Q : TriadicCube d) (a : Ch02.CoeffOn (Ch02.cubeDomain Q))
     (j : ℕ) {φ : Vec d → ℝ} {C : ℝ} (p q : Vec d)
     (hφ_meas : AEStronglyMeasurable φ (volumeMeasureOn (cubeSet Q)))
-    (hφ_bound : ∀ᵐ x ∂ volumeMeasureOn (cubeSet Q), ‖φ x‖ ≤ C) :
+    (hφ_bound : ∀ᵐ x ∂volumeMeasureOn (cubeSet Q), ‖φ x‖ ≤ C) :
     ∀ R ∈ descendantsAtDepth Q j,
       IntegrableOn
         (fun x =>
@@ -498,7 +498,7 @@ theorem abs_cubeAverage_mul_nonneg_le_mul_cubeAverage_of_ae_abs_le
     (hf_int : IntegrableOn f (cubeSet R) volume)
     (hwf_int : IntegrableOn (fun x => w x * f x) (cubeSet R) volume)
     (hf_nonneg : 0 ≤ᵐ[volumeMeasureOn (cubeSet R)] f)
-    (hw_bound : ∀ᵐ x ∂ volumeMeasureOn (cubeSet R), |w x| ≤ B) :
+    (hw_bound : ∀ᵐ x ∂volumeMeasureOn (cubeSet R), |w x| ≤ B) :
     |cubeAverage R (fun x => w x * f x)| ≤
       B * cubeAverage R f := by
   have hwf_int' : Integrable (fun x => w x * f x)

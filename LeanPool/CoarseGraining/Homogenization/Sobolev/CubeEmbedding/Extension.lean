@@ -393,7 +393,7 @@ def foldExtension {m : ℕ} (lo hi : Vec (m + 1)) (hlt : ∀ k, lo k < hi k)
           ((hDEn_mem n i).aestronglyMeasurable.sub
             (hEu_grad_mem i).aestronglyMeasurable)
           (Filter.Eventually.of_forall fun x => ?_)) ?_
-      · show ‖_‖ ≤ ‖(fun y => fderiv ℝ (wn n) y (basisVec i) - gi i y) (Fold lo hi x)‖
+      · change ‖_‖ ≤ ‖(fun y => fderiv ℝ (wn n) y (basisVec i) - gi i y) (Fold lo hi x)‖
         rw [show fderiv ℝ (wn n) (Fold lo hi x) (basisVec i) * foldSign (lo i) (hi i) (x i)
               - gi i (Fold lo hi x) * foldSign (lo i) (hi i) (x i)
             = (fderiv ℝ (wn n) (Fold lo hi x) (basisVec i) - gi i (Fold lo hi x))
@@ -434,7 +434,7 @@ def foldExtension {m : ℕ} (lo hi : Vec (m + 1)) (hlt : ∀ k, lo k < hi k)
         filter_upwards [ae_restrict_mem (isOpen_Box lo hi).measurableSet, hg_ae] with x hxU hgx
         have hfold : Fold lo hi x = x :=
           Fold_of_mem fun k => ⟨(Set.mem_univ_pi.1 hxU k).1.le, (Set.mem_univ_pi.1 hxU k).2.le⟩
-        show g (Fold lo hi x) = u.toFun x
+        change g (Fold lo hi x) = u.toFun x
         rw [hfold, hgx]
       grad_ae := fun i => by
         filter_upwards [ae_restrict_mem (isOpen_Box lo hi).measurableSet, hgi_ae i]
@@ -444,7 +444,7 @@ def foldExtension {m : ℕ} (lo hi : Vec (m + 1)) (hlt : ∀ k, lo k < hi k)
           Fold_of_mem fun k => ⟨(Set.mem_univ_pi.1 hxU k).1.le, (Set.mem_univ_pi.1 hxU k).2.le⟩
         have hsign : foldSign (lo i) (hi i) (x i) = 1 := by
           unfold foldSign; rw [ite_eq_right (not_lt.mpr hxk.1.le), ite_eq_right (not_lt.mpr hxk.2.le)]
-        show gi i (Fold lo hi x) * foldSign (lo i) (hi i) (x i) = u.grad x i
+        change gi i (Fold lo hi x) * foldSign (lo i) (hi i) (x i) = u.grad x i
         rw [hfold, hsign, mul_one, hgix]
       eLpNorm_le := le_of_eq (by
         rw [eLpNorm_foldComp hg_meas lo hi hlt, ← eLpNorm_congr_ae hg_ae])

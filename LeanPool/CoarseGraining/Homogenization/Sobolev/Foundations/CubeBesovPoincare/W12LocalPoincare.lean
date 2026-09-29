@@ -75,8 +75,8 @@ private theorem cubeLpNorm_grad_le_cubeLpNorm_euclideanGrad {d : ℕ}
         using u.gradEuclideanMemLp U (2 : ℝ≥0∞)
     rw [Gagliardo.integralLpSeminorm_eq_eLpNorm _ _ _ hmem.aestronglyMeasurable]
     exact hmem.eLpNorm_ne_top
-  · simp only [Gagliardo.integralLpSeminorm, if_neg (by norm_num : (2 : ℝ≥0∞) ≠ 0),
-      if_neg (by norm_num : (2 : ℝ≥0∞) ≠ ∞)]
+  · simp only [Gagliardo.integralLpSeminorm, ite_eq_right (by norm_num : (2 : ℝ≥0∞) ≠ 0),
+      ite_eq_right (by norm_num : (2 : ℝ≥0∞) ≠ ∞)]
     apply MeasureTheory.eLpNorm'_mono_ae (by norm_num)
     filter_upwards [] with x
     simpa only [Real.norm_eq_abs, abs_of_nonneg (norm_nonneg _),

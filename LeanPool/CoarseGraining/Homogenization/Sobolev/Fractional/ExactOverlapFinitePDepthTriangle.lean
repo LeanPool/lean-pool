@@ -73,7 +73,7 @@ private theorem scalarOverlap_cubeAverageVec_add_of_memLp {d : ℕ}
     hFi.integrable p.one_lt.le
   have hGi_int : Integrable (fun x => G x i) (ScalarOverlap.normalizedCubeMeasure S) :=
     hGi.integrable p.one_lt.le
-  show ScalarOverlap.cubeAverage S (fun x => (F x + G x) i) =
+  change ScalarOverlap.cubeAverage S (fun x => (F x + G x) i) =
     ScalarOverlap.cubeAverage S (fun x => F x i) +
       ScalarOverlap.cubeAverage S (fun x => G x i)
   have hadd : (fun x => (F x + G x) i) = fun x => F x i + G x i := by

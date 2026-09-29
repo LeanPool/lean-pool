@@ -397,7 +397,7 @@ theorem PotentialSolenoidalL2Data.mem_potentialZeroTrace_of_mem_blockPotentialZe
       blockPotentialZeroTraceSolenoidalZeroNormalTraceSubmodule U ≤ K.toSubmodule := by
     intro Y hY
     rcases hY with ⟨f, g, hf, hg, rfl, hpot, _hsol⟩
-    show blockFstCLM (U := U) (toBlockL2OfComponents hf hg) ∈ M.potentialZeroTrace
+    change blockFstCLM (U := U) (toBlockL2OfComponents hf hg) ∈ M.potentialZeroTrace
     rw [blockFstCLM_apply_toBlockL2OfComponents hf hg]
     simpa [M] using M.mem_potentialZeroTrace hf hpot
   have hclosure :
@@ -423,7 +423,7 @@ theorem PotentialSolenoidalL2Data.mem_solenoidalZeroNormalTrace_of_mem_blockPote
       blockPotentialZeroTraceSolenoidalZeroNormalTraceSubmodule U ≤ K.toSubmodule := by
     intro Y hY
     rcases hY with ⟨f, g, hf, hg, rfl, _hpot, hsol⟩
-    show blockSndCLM (U := U) (toBlockL2OfComponents hf hg) ∈ M.solenoidalZeroNormalTrace
+    change blockSndCLM (U := U) (toBlockL2OfComponents hf hg) ∈ M.solenoidalZeroNormalTrace
     rw [blockSndCLM_apply_toBlockL2OfComponents hf hg]
     simpa [M] using M.mem_solenoidalZeroNormalTrace hg hsol
   have hclosure :

@@ -358,11 +358,11 @@ theorem scalarResponseIntegrand_le_plainUpperBound_of_isEllipticFieldOn {d : ℕ
     let B : ℝ := (lam / 2 : ℝ) * vecNormSq ξ
     have hAB_rhs : A / 2 + B / 2 =
         lam⁻¹ * Lam ^ 2 * vecNormSq p + (lam / 4 : ℝ) * vecNormSq ξ := by
-      show (2 * lam⁻¹ * Lam ^ 2 * vecNormSq p) / 2 +
+      change (2 * lam⁻¹ * Lam ^ 2 * vecNormSq p) / 2 +
           ((lam / 2 : ℝ) * vecNormSq ξ) / 2 = _
       ring
     have hAB_eq : A * B = Lam ^ 2 * vecNormSq p * vecNormSq ξ := by
-      show (2 * lam⁻¹ * Lam ^ 2 * vecNormSq p) * ((lam / 2 : ℝ) * vecNormSq ξ) =
+      change (2 * lam⁻¹ * Lam ^ 2 * vecNormSq p) * ((lam / 2 : ℝ) * vecNormSq ξ) =
         Lam ^ 2 * vecNormSq p * vecNormSq ξ
       field_simp [hlam_pos.ne']
     have hsq : vecDot p (matVecMul (a x) ξ) ^ 2 ≤ A * B := hpSq.trans_eq hAB_eq.symm
@@ -381,11 +381,11 @@ theorem scalarResponseIntegrand_le_plainUpperBound_of_isEllipticFieldOn {d : ℕ
     let B : ℝ := (lam / 2 : ℝ) * vecNormSq ξ
     have hAB_rhs : A / 2 + B / 2 =
         lam⁻¹ * vecNormSq q + (lam / 4 : ℝ) * vecNormSq ξ := by
-      show (2 * lam⁻¹ * vecNormSq q) / 2 +
+      change (2 * lam⁻¹ * vecNormSq q) / 2 +
           ((lam / 2 : ℝ) * vecNormSq ξ) / 2 = _
       ring
     have hAB_eq : A * B = vecNormSq q * vecNormSq ξ := by
-      show (2 * lam⁻¹ * vecNormSq q) * ((lam / 2 : ℝ) * vecNormSq ξ) =
+      change (2 * lam⁻¹ * vecNormSq q) * ((lam / 2 : ℝ) * vecNormSq ξ) =
         vecNormSq q * vecNormSq ξ
       field_simp [hlam_pos.ne']
     have hsq : vecDot q ξ ^ 2 ≤ A * B := hqSq.trans_eq hAB_eq.symm

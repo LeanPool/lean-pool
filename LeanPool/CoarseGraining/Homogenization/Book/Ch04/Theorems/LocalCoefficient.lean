@@ -101,7 +101,7 @@ noncomputable def localTest {d : ℕ} {U : Set (Vec d)} (hU : MeasurableSet U)
           fun a => ∑ i, ∑ j, (e' i * e j) * entryTestR i j φ a := by
       funext a
       exact localTestObservable_toFun_eq_sum_entryTestR e e' hφ a
-    show @Measurable (RegCoeffField d) ℝ (RestrictionSigmaR U hU) _
+    change @Measurable (RegCoeffField d) ℝ (RestrictionSigmaR U hU) _
       (fun a => localTestObservable e e' φ a.toFun)
     rw [hrw]
     let : MeasurableSpace (RegCoeffField d) := LocalSigmaR U

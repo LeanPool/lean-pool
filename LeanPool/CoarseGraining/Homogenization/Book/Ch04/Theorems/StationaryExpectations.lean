@@ -132,7 +132,7 @@ theorem integral_comp_toFun_translation_transfer_of_restrictionStationaryLaw
         fun a : RegCoeffField d =>
           (fun a : RegCoeffField d => X U a.toFun) (translateReg (intVecToRealVec z) a) := by
     funext a
-    show X (translateSet (intVecToRealVec z) U) a.toFun =
+    change X (translateSet (intVecToRealVec z) U) a.toFun =
       X U (translateReg (intVecToRealVec z) a).toFun
     rw [hcov U z a.toFun, translateReg_toFun]
   calc
@@ -156,7 +156,7 @@ theorem isRestrictionTranslationCovariant_comp_toFun {β : Type*} {d : ℕ}
     {X : Set (Vec d) → CoeffField d → β} (hX : IsTranslationCovariant X) :
     IsRestrictionTranslationCovariant (fun U a => X U a.toFun) := by
   intro U z a
-  show X (translateSet (intVecToRealVec z) U) a.toFun =
+  change X (translateSet (intVecToRealVec z) U) a.toFun =
     X U (translateReg (intVecToRealVec z) a).toFun
   rw [hX U z a.toFun, translateReg_toFun]
 
@@ -443,7 +443,7 @@ theorem integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_of_statio
   have hcomp := hmap.comp_measurable (measurable_translateReg (intVecToRealVec z))
   refine hcomp.congr ?_
   filter_upwards with a
-  show fullBlockNormalizedFluctuationOperatorNormSqAtScale hP hStruct center
+  change fullBlockNormalizedFluctuationOperatorNormSqAtScale hP hStruct center
         (originCube d R.scale) (translateReg (intVecToRealVec z) a) =
       fullBlockNormalizedFluctuationOperatorNormSqAtScale hP hStruct center R a
   simp only [fullBlockNormalizedFluctuationOperatorNormSqAtScale, translateReg_toFun]
@@ -587,7 +587,7 @@ theorem integrable_coarseFullBlockMatrixAtCube_of_mem_descendantsAtScale_originC
   have hcomp := hmap.comp_measurable (measurable_translateReg (intVecToRealVec z))
   refine hcomp.congr ?_
   filter_upwards with a
-  show coarseFullBlockMatrixAtCube (originCube d n) (translateReg (intVecToRealVec z) a) =
+  change coarseFullBlockMatrixAtCube (originCube d n) (translateReg (intVecToRealVec z) a) =
       coarseFullBlockMatrixAtCube R a
   simp only [coarseFullBlockMatrixAtCube, coarseFullBlockMatrixObservable, translateReg_toFun]
   rw [hset, coarseBlockMatrix_translateSet_eq_translateCoeffField]

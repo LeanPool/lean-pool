@@ -278,7 +278,7 @@ theorem levelEnergy_identity {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U
         = (fun x => max (w₁.toFun x - (m₀ + k)) 0 - max (w₂.toFun x - (m₀ + k)) 0) := by
       funext x
       rw [Homogenization.H1Function.neg_toFun]
-      show fk.toFun x + -gk.toFun x = _
+      change fk.toFun x + -gk.toFun x = _
       rw [congrFun hfk_tf x, congrFun hgk_tf x]; ring
     rw [heq]; exact hD4
   have hkey := hCWF fk (-gk) hsum
@@ -314,7 +314,7 @@ theorem levelEnergy_identity {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U
     refine MeasureTheory.integral_congr_ae ?_
     filter_upwards [hgk_grad, MeasureTheory.ae_restrict_mem hUmeas] with x hgx hxU
     rw [Homogenization.H1Function.neg_grad]
-    show vecDot (-gk.grad x) (matVecMul (matTranspose (a x)) (vstar.grad x)) = _
+    change vecDot (-gk.grad x) (matVecMul (matTranspose (a x)) (vstar.grad x)) = _
     rw [hgx, hvsg x]
     by_cases hc : m₀ + k < w₂.toFun x
     · rw [Set.indicator_of_mem (show x ∈ {y | m₀ + k < w₂.toFun y} from hc),
@@ -540,7 +540,7 @@ theorem sumCoordNorm_le {U : Set (Vec d)}
         funext x
         by_cases h : x ∈ A <;>
           simp [Set.indicator_of_mem, Set.indicator_of_notMem, h]
-      show ∫ x, (A.indicator (fun y => w.grad y i) x) ^ 2 ∂(volumeMeasureOn U) = _
+      change ∫ x, (A.indicator (fun y => w.grad y i) x) ^ 2 ∂(volumeMeasureOn U) = _
       rw [hind]
       exact setIntegral_indicator_subset hAm hAU (fun x => (w.grad x i) ^ 2)
     have hsum : (∑ i : Fin d,
@@ -651,7 +651,7 @@ theorem coupled_levelEnergy {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     have hae : (w₁ - w₂).toFun =ᵐ[volume.restrict U] W.toH1Function.toFun := by
       filter_upwards [hw1ae', hw2ae'] with x hx1 hx2
       rw [Homogenization.H1Function.sub_toFun]
-      show w₁.toFun x - w₂.toFun x = W.toH1Function.toFun x
+      change w₁.toFun x - w₂.toFun x = W.toH1Function.toFun x
       rw [hx1, hx2, congrFun hW x]; ring
     have hmem := memH10_of_ae_eq_h10 hU (w₁ - w₂) W hae
     rwa [Homogenization.H1Function.sub_toFun] at hmem

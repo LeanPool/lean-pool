@@ -40,7 +40,7 @@ theorem cubeAverageVec_sub
   have hvi_int :
       MeasureTheory.Integrable (fun x => v x i) (volumeMeasureOn (cubeSet Q)) :=
     hvi.integrable (by norm_num : (1 : ENNReal) ≤ (2 : ENNReal))
-  show cubeAverage Q (fun x => (u x - v x) i) =
+  change cubeAverage Q (fun x => (u x - v x) i) =
     cubeAverage Q (fun x => u x i) - cubeAverage Q (fun x => v x i)
   have hfun : (fun x => (u x - v x) i) = fun x => u x i - v x i := by
     funext x
@@ -69,7 +69,7 @@ theorem cubeAverageVec_add
   have hvi_int :
       MeasureTheory.Integrable (fun x => v x i) (volumeMeasureOn (cubeSet Q)) :=
     hvi.integrable (by norm_num : (1 : ENNReal) ≤ (2 : ENNReal))
-  show cubeAverage Q (fun x => (u x + v x) i) =
+  change cubeAverage Q (fun x => (u x + v x) i) =
     cubeAverage Q (fun x => u x i) + cubeAverage Q (fun x => v x i)
   have hfun : (fun x => (u x + v x) i) = fun x => u x i + v x i := by
     funext x

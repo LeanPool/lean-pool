@@ -162,9 +162,9 @@ private theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm_finiteLp
   have hfh_int : ∀ n, Integrable (fun x => f n x * h x) μ := by
     intro n
     simpa [μ, mul_comm] using
-      (memLp_one_iff_integrable.mp (hh.mul' (hf n)))
+      (memLp_one_iff_integrable.mp (hh.fun_mul (hf n)))
   have hgh_int : Integrable (fun x => g x * h x) μ := by
-    simpa [μ, mul_comm] using (memLp_one_iff_integrable.mp (hh.mul' hg))
+    simpa [μ, mul_comm] using (memLp_one_iff_integrable.mp (hh.fun_mul hg))
   rw [← tendsto_sub_nhds_zero_iff]
   have hdiff_eq : ∀ n,
       (∫ x, f n x * h x ∂μ) - (∫ x, g x * h x ∂μ)
@@ -540,7 +540,7 @@ def foldExtensionFiniteP {m : ℕ} (lo hi : Vec (m + 1)) (hlt : ∀ k, lo k < hi
         have hfold : Fold lo hi x = x :=
           Fold_of_mem fun k => ⟨(Set.mem_univ_pi.1 hxU k).1.le,
             (Set.mem_univ_pi.1 hxU k).2.le⟩
-        show g (Fold lo hi x) = u.toFun x
+        change g (Fold lo hi x) = u.toFun x
         rw [hfold, hgx]
       grad_ae := fun i => by
         filter_upwards [ae_restrict_mem (isOpen_Box lo hi).measurableSet, hgi_ae i]
@@ -552,7 +552,7 @@ def foldExtensionFiniteP {m : ℕ} (lo hi : Vec (m + 1)) (hlt : ∀ k, lo k < hi
         have hsign : foldSign (lo i) (hi i) (x i) = 1 := by
           unfold foldSign
           rw [ite_eq_right (not_lt.mpr hxk.1.le), ite_eq_right (not_lt.mpr hxk.2.le)]
-        show gi i (Fold lo hi x) * foldSign (lo i) (hi i) (x i) = u.grad x i
+        change gi i (Fold lo hi x) * foldSign (lo i) (hi i) (x i) = u.grad x i
         rw [hfold, hsign, mul_one, hgix]
       eLpNorm_le := le_of_eq (by
         rw [eLpNorm_foldComp_finiteLp p hg_meas lo hi hlt, ← eLpNorm_congr_ae hg_ae])

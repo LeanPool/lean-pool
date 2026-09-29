@@ -163,7 +163,7 @@ theorem exists_cubeKBesovVectorPartialSeminormTwo_le_mul_overlapPartialSeminorm
   have hc_nonneg : ∀ j ∈ S, 0 ≤ c j := by
     intro j hj
     dsimp [c]
-    rw [dif_pos hj]
+    rw [dite_eq_left hj]
     exact (Classical.choose_spec (hdepth_exists j hj)).1
   have hC_nonneg : 0 ≤ C := by
     dsimp [C]
@@ -179,7 +179,7 @@ theorem exists_cubeKBesovVectorPartialSeminormTwo_le_mul_overlapPartialSeminorm
         cubeKBesovVectorDepthSeminorm Q s h j ≤
           c j * cubeBesovOverlappingPositiveVectorDepthSeminorm Q s h j := by
       dsimp [c]
-      rw [dif_pos hjS]
+      rw [dite_eq_left hjS]
       exact (Classical.choose_spec (hdepth_exists j hjS)).2
     have hc_le_C : c j ≤ C := by
       dsimp [C]

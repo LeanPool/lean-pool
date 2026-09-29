@@ -867,7 +867,7 @@ theorem lintegral_enorm_rpow_two_le_lintegral_enorm_rpow_rpow_of_two_le
     [MeasureTheory.IsProbabilityMeasure μ] {X : Ω → ℝ} {Q : ℝ} {B : ENNReal}
     (hQ : (2 : ℝ) ≤ Q)
     (hX : MeasureTheory.AEStronglyMeasurable X μ)
-    (hB : ∫⁻ ω, ‖X ω‖ₑ ^ Q ∂ μ ≤ B) :
+    (hB : ∫⁻ ω, ‖X ω‖ₑ ^ Q ∂μ ≤ B) :
     ∫⁻ ω, ‖X ω‖ₑ ^ (2 : ℝ) ∂ μ ≤ B ^ ((2 : ℝ) / Q) := by
   have hQ_pos : 0 < Q := by linarith
   have hQ_nonneg : 0 ≤ Q := le_of_lt hQ_pos
@@ -923,7 +923,7 @@ theorem lintegral_enorm_rpow_two_le_lintegral_enorm_rpow_rpow_highCenteredMoment
     {d : ℕ} {hc : HighContrastExponents d}
     (hm : HighCenteredMomentParameters d hc)
     (hX : MeasureTheory.AEStronglyMeasurable X μ) {B : ENNReal}
-    (hB : ∫⁻ ω, ‖X ω‖ₑ ^ hm.Q ∂ μ ≤ B) :
+    (hB : ∫⁻ ω, ‖X ω‖ₑ ^ hm.Q ∂μ ≤ B) :
     ∫⁻ ω, ‖X ω‖ₑ ^ (2 : ℝ) ∂ μ ≤ B ^ ((2 : ℝ) / hm.Q) :=
   lintegral_enorm_rpow_two_le_lintegral_enorm_rpow_rpow_of_two_le
     hm.two_le_Q hX hB
@@ -947,7 +947,7 @@ theorem lintegral_enorm_rpow_two_le_of_lintegral_ennreal_envelope_highCenteredMo
     (hm : HighCenteredMomentParameters d hc)
     (hX : MeasureTheory.AEStronglyMeasurable X μ) {B : ENNReal}
     (hpoint : ∀ ω, ‖X ω‖ₑ ^ hm.Q ≤ Z ω)
-    (hB : ∫⁻ ω, Z ω ∂ μ ≤ B) :
+    (hB : ∫⁻ ω, Z ω ∂μ ≤ B) :
     ∫⁻ ω, ‖X ω‖ₑ ^ (2 : ℝ) ∂ μ ≤ B ^ ((2 : ℝ) / hm.Q) := by
   have hQ :
       ∫⁻ ω, ‖X ω‖ₑ ^ hm.Q ∂ μ ≤ B :=

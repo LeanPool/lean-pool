@@ -254,7 +254,7 @@ theorem exists_correctorGradientSelector_fluxSeminormStepCorrectorEnergyLocalErr
         (if hR : IsDescendantOfQ R then
           fun x => (Classical.choose (hlocal R hR)).toH1MeanZero.toH1Function.grad x
         else 0) = fun x => ω.toH1MeanZero.toH1Function.grad x
-      rw [dif_pos hRdesc]
+      rw [dite_eq_left hRdesc]
     exact ⟨ω, hz⟩
   · intro j R hR
     have hRdesc : IsDescendantOfQ R := ⟨j, hR⟩
@@ -266,7 +266,7 @@ theorem exists_correctorGradientSelector_fluxSeminormStepCorrectorEnergyLocalErr
         (if hR : IsDescendantOfQ R then
           fun x => (Classical.choose (hlocal R hR)).toH1MeanZero.toH1Function.grad x
         else 0) = fun x => ω.toH1MeanZero.toH1Function.grad x
-      rw [dif_pos hRdesc]
+      rw [dite_eq_left hRdesc]
     have hstep :=
       (Classical.choose_spec (Classical.choose_spec (hlocal R hRdesc))).2
     rw [hz]
@@ -576,7 +576,7 @@ theorem exists_harmonicRemainderSelector_fluxSeminormStepAbsorbedLocalError_with
         (if hR : IsDescendantOfQ R then
           fun x => (Classical.choose (Classical.choose_spec (hlocal R hR))).toH1.grad x
         else 0) = fun x => w.toH1.grad x
-      rw [dif_pos hRdesc]
+      rw [dite_eq_left hRdesc]
     have hspec :
         (∀ x ∈ cubeSet R,
           u x = w.toH1.grad x + ω.toH1MeanZero.toH1Function.grad x) ∧
@@ -606,7 +606,7 @@ theorem exists_harmonicRemainderSelector_fluxSeminormStepAbsorbedLocalError_with
         (if hR : IsDescendantOfQ R then
           fun x => (Classical.choose (Classical.choose_spec (hlocal R hR))).toH1.grad x
         else 0) = fun x => w.toH1.grad x
-      rw [dif_pos hRdesc]
+      rw [dite_eq_left hRdesc]
     have hwBdd :
         BddAbove (Set.range fun N : ℕ =>
           cubeBesovNegativeVectorPartialSeminormTwo R s N

@@ -105,7 +105,7 @@ theorem dirac_isotropic {d : ℕ} {a₀ : RegCoeffField d}
 theorem dirac_adjointInvariant {d : ℕ} {a₀ : RegCoeffField d}
     (hadj : IsAdjointInvariantCoeffField a₀.toFun) :
     Book.Ch04.RestrictionAdjointInvariantLaw (diracCoeffLaw a₀) := by
-  show Measure.map adjointReg (Measure.dirac a₀) = Measure.dirac a₀
+  change Measure.map adjointReg (Measure.dirac a₀) = Measure.dirac a₀
   rw [Measure.map_dirac' measurable_adjointReg,
     adjointReg_eq_self_of_adjointInvariant hadj]
 

@@ -436,12 +436,12 @@ theorem undilate_isDilation {d : ℕ} {k : ℤ} {Q : TriadicCube d}
     { value_ae_eq := Filter.Eventually.of_forall fun x => ?_
       grad_ae_eq := Filter.Eventually.of_forall fun x => ?_
       flux_ae_eq := hCoeff.coeff_ae_eq.mono fun x hx => ?_ }
-  · show v.toH1.toFun x = s * (undilate hCoeff v).toH1.toFun (s⁻¹ • x)
+  · change v.toH1.toFun x = s * (undilate hCoeff v).toH1.toFun (s⁻¹ • x)
     rw [hval (s⁻¹ • x), hcancel_smul x, hcancel_mul (v.toH1.toFun x)]
-  · show v.toH1.grad x = (undilate hCoeff v).toH1.grad (s⁻¹ • x)
+  · change v.toH1.grad x = (undilate hCoeff v).toH1.grad (s⁻¹ • x)
     rw [hgrad (s⁻¹ • x), hcancel_smul x]
   · have hx' : b.toCoeffField x = a.toCoeffField (s⁻¹ • x) := hx
-    show matVecMul (b.toCoeffField x) (v.toH1.grad x) =
+    change matVecMul (b.toCoeffField x) (v.toH1.grad x) =
         matVecMul (a.toCoeffField (s⁻¹ • x)) ((undilate hCoeff v).toH1.grad (s⁻¹ • x))
     rw [hx', hgrad (s⁻¹ • x), hcancel_smul x]
 

@@ -452,7 +452,7 @@ theorem memScalarL2_mul_of_contDiff_hasCompactSupport_tsupport_subset
   have hprodV :
       MeasureTheory.MemLp (fun x => φ x * F x) 2
         (MeasureTheory.volume.restrict V) := by
-    simpa [MemScalarL2, volumeMeasureOn, mul_comm] using hF.mul' hφ_top
+    simpa [MemScalarL2, volumeMeasureOn, mul_comm] using hF.fun_mul hφ_top
   have hsupport : Function.support (fun x => φ x * F x) ⊆ V :=
     (Function.support_mul_subset_left φ F).trans (subset_tsupport φ |>.trans hφ_sub)
   simpa [MemScalarL2, volumeMeasureOn] using

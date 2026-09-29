@@ -66,7 +66,7 @@ resolves the resulting `ContinuousENorm` synthesis gap for every `Matrix m n ℝ
 specializations). -/
 instance instContinuousENormMatrix {m n : Type*} [Fintype m] [Fintype n] :
     ContinuousENorm (Matrix m n ℝ) := by
-  show ContinuousENorm (m → n → ℝ)
+  change ContinuousENorm (m → n → ℝ)
   infer_instance
 
 /-- Strong ambient measurability of the variational quantity `Mu U P a` for

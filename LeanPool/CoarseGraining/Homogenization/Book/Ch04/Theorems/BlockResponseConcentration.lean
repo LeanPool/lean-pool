@@ -54,7 +54,7 @@ theorem AELocallyUniformlyEllipticField.adjointReg {d : ℕ}
   rcases ha Q with ⟨lam, Lam, hlam, hle, hEll⟩
   refine ⟨lam, Lam, hlam, hle, ?_⟩
   have hEll' : IsAEEllipticFieldOn lam Lam (openCubeSet Q) a.toFun := hEll
-  show IsAEEllipticFieldOn lam Lam (openCubeSet Q) (Homogenization.adjointReg a).toFun
+  change IsAEEllipticFieldOn lam Lam (openCubeSet Q) (Homogenization.adjointReg a).toFun
   rw [adjointReg_toFun]
   exact IsAEEllipticFieldOn.adjointCoeffField hEll'
 
