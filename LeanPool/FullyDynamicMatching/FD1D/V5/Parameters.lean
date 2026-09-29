@@ -38,6 +38,7 @@ def treeDepth (m : ℕ) : ℕ :=
   Nat.log 2 (depthTarget m)
 
 /-- The number of leaves in the complete dyadic partition. -/
+@[expose]
 def leafCount (m : ℕ) : ℕ :=
   2 ^ treeDepth m
 

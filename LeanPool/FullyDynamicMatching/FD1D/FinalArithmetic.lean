@@ -29,6 +29,7 @@ open scoped BigOperators
 
 /-- The concrete hierarchical count kernel with the paper's parameter and
 tree depth. -/
+@[expose]
 def parameterizedKernel (m : ℕ) (hm : 1 ≤ m) :
     FiniteKernel
       (InventoryState (DyadicNode (treeDepth m)) m) :=
@@ -37,6 +38,7 @@ def parameterizedKernel (m : ℕ) (hm : 1 ≤ m) :
     (parameterA_cast_pos hm) (by omega)
 
 /-- Terminal hazard energy for the paper's parameter and tree depth. -/
+@[expose]
 def parameterizedHazardEnergy (m : ℕ)
     (x : InventoryState (DyadicNode (treeDepth m)) m) : ℝ :=
   HierarchicalDynamics.stateHazardEnergy

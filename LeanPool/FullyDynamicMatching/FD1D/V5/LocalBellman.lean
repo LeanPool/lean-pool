@@ -1753,6 +1753,7 @@ end Normalized
 /-! ## Concrete local policy -/
 
 /-- The left side of the manuscript's local Bellman inequality. -/
+@[expose]
 def localResidual (a p h : ℝ) (x y : ℕ) : ℝ :=
   ((discrepancyLeft a p h x y * regularizedMassLeft a p x +
         bellman (rateLeft a p h x y) (discrepancyLeft a p h x y)
@@ -1763,6 +1764,7 @@ def localResidual (a p h : ℝ) (x y : ℕ) : ℝ :=
     bellman h (discrepancy a p h x y) (regularizedMass a p x y)
 
 /-- The rate increment plus squared deletion bias in the local inequality. -/
+@[expose]
 def localEnergy (a p h : ℝ) (x y : ℕ) : ℝ :=
   (rateLeft a p h x y ^ 2 + rateRight a p h x y ^ 2) / 2 -
     h ^ 2 + bias a p h x y ^ 2 / a ^ 2

@@ -31,6 +31,7 @@ namespace FD1D
 noncomputable section
 
 /-- The regularizing parameter used by the policy. -/
+@[expose]
 def policyA (m : ℕ) : ℕ := 200 * ⌈Real.logb 2 (m + 1)⌉₊
 
 /-- A probability mass function on a finite type, represented without quotienting. -/
@@ -45,6 +46,7 @@ namespace FiniteLaw
 variable {α β : Type*} [Fintype α] [Fintype β]
 
 /-- Expectation of a real observable under the finite law. -/
+@[expose]
 def expect (μ : FiniteLaw α) (f : α → ℝ) : ℝ :=
   ∑ x, μ.mass x * f x
 

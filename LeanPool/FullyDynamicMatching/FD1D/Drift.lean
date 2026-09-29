@@ -26,6 +26,7 @@ stationary and finite-horizon arguments.
 -/
 
 /-- The finite harmonic potential used at a node with inventory `k`. -/
+@[expose]
 def harmonicPotential (a : ℝ) (k : ℕ) : ℝ :=
   ∑ j ∈ Finset.Icc 1 k, 1 / (j + a)
 

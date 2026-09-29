@@ -29,6 +29,7 @@ open Filter MeasureTheory
 open scoped BigOperators Topology
 
 /-- One universal constant sufficient for both parts of the main theorem. -/
+@[expose]
 def universalConstant : ℝ :=
   72000 / Real.log 2
 
