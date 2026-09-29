@@ -119,8 +119,8 @@ statement is *not* proved here; see the module note below.
 * `TauCeti.DavisKahan1970.directedTanTwoAngleOperatorC_eq_modulus_blockRepresentative`:
   its quarter-acute specialisation, `|Ξ| = tan 2Θ`.
 * `TauCeti.DavisKahan1970.tanTwoTheta_ambient_bounded_branchFree_kyFan_complex_of_corner` and
-  `TauCeti.DavisKahan1970.tanTwoTheta_ambient_bounded_branchFree_symmetricNorming_complex_of_corner`: the
-  **branch-free reduction** of the ambient conclusion to the directed corner
+  `tanTwoTheta_ambient_bounded_branchFree_symmetricNorming_complex_of_corner`:
+  the **branch-free reduction** of the ambient conclusion to the directed corner
   estimate, `δ N(|tan 2Θ|) ≤ 2 N(H)` given `δ · kyFan_k (corner) ≤ 2 ·
   kyFan_k R`.
 * `TauCeti.DavisKahan1970.tanTwoTheta_ambient_bounded_orderedForm_kyFan_complex`: the Ky Fan form,

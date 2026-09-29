@@ -98,7 +98,7 @@ theorem schattenGaugeFun_add_le (hp : 1 ≤ p) (a b : ℕ →₀ ℝ≥0) :
 
 Relabelling the index set is a bijection of the support, so the sum is
 unchanged; `Finset.sum_nbij'` states that with the two directions explicit. -/
-theorem schattenGaugeFun_symm (_hp : 1 ≤ p) (σ : Equiv.Perm ℕ) (a : ℕ →₀ ℝ≥0) :
+theorem schattenGaugeFun_symm (σ : Equiv.Perm ℕ) (a : ℕ →₀ ℝ≥0) :
     schattenGaugeFun p (Finsupp.equivMapDomain σ a) = schattenGaugeFun p a := by
   unfold schattenGaugeFun
   congr 1
@@ -139,7 +139,7 @@ noncomputable def schattenGauge (p : ℝ) (hp : 1 ≤ p) : SymmetricGauge where
   toFun := schattenGaugeFun p
   add_le := schattenGaugeFun_add_le hp
   smul := schattenGaugeFun_smul hp
-  symm := fun σ a => schattenGaugeFun_symm hp σ a
+  symm := fun σ a => schattenGaugeFun_symm σ a
   mono := fun _ _ hab => schattenGaugeFun_mono hp hab
   normalized := schattenGaugeFun_normalized hp
 

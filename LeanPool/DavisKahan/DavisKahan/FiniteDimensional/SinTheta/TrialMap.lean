@@ -241,7 +241,7 @@ theorem generalizedSinTheta_residual_le_of_gramLowerBound
       (orthonormalizedEmbedding X (hgram.injective hε))) ≤
       N (generalResidual A X M) := by
   exact generalizedSinTheta_residual_le_of_intervalGap
-    N hA hV X hM hδ hε (hgram.lowerFrameBound hε.le) hgap
+    N hA hV X hM hδ hε (hgram.lowerFrameBound) hgap
 
 /-- **Davis--Kahan Theorem 6.1 in its permissive `sin Θ₀` form.**
 

@@ -222,8 +222,7 @@ theorem unitaryGroup_mem_unitary (A : H →L[ℂ] H)
   exact (selfAdjoint.expUnitary (⟨(t : ℂ) • A, hsa⟩ : selfAdjoint (H →L[ℂ] H))).2
 
 /-- The inverse of `exp(i t A)` is `exp(-i t A)`. -/
-theorem unitaryGroup_neg_mul (A : H →L[ℂ] H)
-    (_hA : A.IsSymmetric) (t : ℝ) :
+theorem unitaryGroup_neg_mul (A : H →L[ℂ] H) (t : ℝ) :
     unitaryGroup A (-t) ∘L unitaryGroup A t = 1 ∧
       unitaryGroup A t ∘L unitaryGroup A (-t) = 1 := by
   have hsum1 := unitaryGroup_add A (-t) t
@@ -273,8 +272,8 @@ theorem norm_unitary_left_right
   have hrecover : UAinv ∘L (UA ∘L C ∘L UB) ∘L UBinv = C := by
     ext x
     simp only [ContinuousLinearMap.comp_apply]
-    have hAinv := (unitaryGroup_neg_mul A hA t).1
-    have hBinv := (unitaryGroup_neg_mul B hB (-t)).2
+    have hAinv := (unitaryGroup_neg_mul A t).1
+    have hBinv := (unitaryGroup_neg_mul B (-t)).2
     have hBx : UB (UBinv x) = x := by
       simpa [UB, UBinv] using
         congrArg (fun T : E →L[ℂ] E => T x) hBinv
