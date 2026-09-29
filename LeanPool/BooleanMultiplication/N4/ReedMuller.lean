@@ -44,6 +44,7 @@ def assignmentTail {n : Nat} (x : Fin (n + 1) → F₂) : Fin n → F₂ :=
   fun i => x i.succ
 
 /-- Prepend one field element to a Boolean assignment. -/
+@[expose]
 def assignmentCons {n : Nat} (b : F₂) (x : Fin n → F₂) :
     Fin (n + 1) → F₂ := Fin.cases b x
 
@@ -59,6 +60,7 @@ def assignmentCons {n : Nat} (b : F₂) (x : Fin n → F₂) :
   rfl
 
 /-- Split a Boolean assignment into its first coordinate and its tail. -/
+@[expose]
 def assignmentEquiv (n : Nat) :
     (Fin (n + 1) → F₂) ≃ F₂ × (Fin n → F₂) where
   toFun x := (x 0, assignmentTail x)
@@ -73,12 +75,14 @@ def assignmentEquiv (n : Nat) :
     rfl
 
 /-- Evaluate a recursively encoded affine polynomial on a Boolean assignment. -/
+@[expose]
 def AffineCode.eval : {n : Nat} → AffineCode n → (Fin n → F₂) → F₂
   | 0, .nil c, _ => c
   | _ + 1, .cons tail head, x =>
       AffineCode.eval tail (assignmentTail x) + x 0 * head
 
 /-- Evaluate a recursively encoded quadratic polynomial on a Boolean assignment. -/
+@[expose]
 def QuadraticCode.eval : {n : Nat} → QuadraticCode n → (Fin n → F₂) → F₂
   | 0, .nil c, _ => c
   | _ + 1, .cons tail cross, x =>

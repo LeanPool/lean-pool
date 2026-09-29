@@ -153,6 +153,7 @@ theorem feedbackCorner_has_zero (delta rho sigma : F₂) :
   decide
 
 /-- The feedback factor vanishes at exactly one of the four Boolean anchor corners. -/
+@[expose]
 def ExactlyThreeActiveCorners (delta rho sigma : F₂) : Prop :=
   ∃ x₀ y₀ : F₂,
     feedbackCorner delta rho sigma x₀ y₀ = 0 ∧

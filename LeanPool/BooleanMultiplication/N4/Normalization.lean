@@ -185,6 +185,7 @@ theorem NormalizedEight.seed_right_mem_rationalLow {C : Circuit 8 8}
   exact C.right_mem 3
 
 /-- Algebraic factor data exposed by the normalized seed. -/
+@[expose]
 def SeedFactorData (C : Circuit 8 8) : Prop :=
   ∃ (leftAffine rightAffine : ANF 8)
       (leftCoeff rightCoeff : Fin 3 → F₂),

@@ -243,6 +243,7 @@ theorem vectorWedgeTwo_smul_right_h (u : LinearForm) (a : F₂)
   ring
 
 /-- The vector and two-form exterior product as a bilinear map. -/
+@[expose]
 def vectorWedgeTwoBilinear :
     LinearForm →ₗ[F₂] TwoForm →ₗ[F₂] ThreeForm where
   toFun u :=

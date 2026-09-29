@@ -24,6 +24,7 @@ namespace N4
 noncomputable section
 
 /-- Every row indexed outside the normalized first-jet coordinates vanishes. -/
+@[expose]
 def SupportedK0Two (k : TwoForm) : Prop :=
   ∀ z j : Fin 8, OutsideK0Index z → k z j = 0
 

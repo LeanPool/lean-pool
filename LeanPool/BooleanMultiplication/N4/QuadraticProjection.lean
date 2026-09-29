@@ -24,6 +24,7 @@ namespace N4
 noncomputable section
 
 /-- Extract the coefficients of the eight linear monomials. -/
+@[expose]
 def anfLinearProjection : ANF 8 →ₗ[F₂] LinearForm where
   toFun p i := p.coeff ⟨{i}⟩
   map_add' p q := by ext i; simp

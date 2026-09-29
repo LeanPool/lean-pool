@@ -434,6 +434,7 @@ theorem decomposable_mem_rationalPlaceTwoSpace {q : TwoForm}
       h).symm⟩
 
 /-- The span of eight candidate two-form generators. -/
+@[expose]
 def decomposableTwoSpan (q : Fin 8 → TwoForm) : Submodule F₂ TwoForm :=
   Submodule.span F₂ (Set.range q)
 

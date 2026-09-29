@@ -530,6 +530,7 @@ theorem seedUsingCubicClassifiedForm_impossible
     htargetEq' htargetRep' hfeedbackRep hright'
 
 /-- A new target at the fifth gate represented, modulo the preceding flag, by a low-low product. -/
+@[expose]
 def FirstLowLowData (C : Circuit 8 8) : Prop :=
   ∃ (target representative shift : ANF 8),
     target ∈ targetAmbient 8 (mulTarget 4) ∧

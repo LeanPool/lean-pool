@@ -24,6 +24,7 @@ namespace N4
 noncomputable section
 
 /-- A seed-using target witness with its factor in the classified quartic normal form. -/
+@[expose]
 def SeedUsingQuarticClassifiedForm (g : ANF 8) : Prop :=
   ∃ (correction factor target : ANF 8)
     (targetConst factorConst : F₂)

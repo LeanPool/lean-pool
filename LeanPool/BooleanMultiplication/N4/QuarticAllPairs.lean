@@ -70,6 +70,7 @@ def quarticOtherPairSeparatorTable (i : Fin 288) : Nat :=
 
 /-- Pair zero is `(P₁,P₀)`, pair one `(P₀,P∞)`, and pair two
 `(P₁,P∞)`. -/
+@[expose]
 def quarticSupportPair : Fin 3 → Fin 3 × Fin 3 :=
   ![(1, 0), (0, 2), (1, 2)]
 

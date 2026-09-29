@@ -125,6 +125,7 @@ theorem anf_four_eq_zero {m : Nat} : (4 : ANF m) = 0 := by
   simp [CharTwo.ofNat_eq_mod]
 
 /-- Evaluation of a canonical ANF on a Boolean input. -/
+@[expose]
 def eval {m : Nat} (p : ANF m) (x : Fin m → F₂) : F₂ :=
   p.coeff.sum fun s c => c * ∏ i ∈ s.vars, x i
 
@@ -174,19 +175,20 @@ theorem prod_union_f2 {m : Nat} (x : Fin m → F₂) (s t : Finset (Fin m)) :
     · rw [h, k]
 
 /-- Evaluation of a squarefree monomial as a monoid homomorphism. -/
+@[expose]
 def monomialEval {m : Nat} (x : Fin m → F₂) : Monomial m →* F₂ where
   toFun s := ∏ i ∈ s.vars, x i
   map_one' := by simp
   map_mul' s t := prod_union_f2 x s.vars t.vars
 
 /-- Evaluation at a Boolean point as an `F₂`-algebra homomorphism. -/
+@[expose]
 noncomputable def evalHom {m : Nat} (x : Fin m → F₂) : ANF m →ₐ[F₂] F₂ :=
   MonoidAlgebra.lift F₂ F₂ (Monomial m) (monomialEval x)
 
 theorem eval_eq_evalHom {m : Nat} (p : ANF m) (x : Fin m → F₂) :
     eval p x = evalHom x p := by
   simp [eval, evalHom, monomialEval, MonoidAlgebra.lift_apply]
-  rfl
 
 @[simp] theorem eval_zero' {m : Nat} (x : Fin m → F₂) : eval 0 x = 0 := by
   rw [eval_eq_evalHom]

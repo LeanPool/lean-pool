@@ -52,6 +52,7 @@ noncomputable section
   sliceQuadraticA + sliceInfinityQuadratic
 
 /-- The plane spanned by the complementary evaluation-at-one input directions. -/
+@[expose]
 def InSliceComplementPlane (ell : LinearForm) : Prop :=
   ∃ a b : F₂, ell = a • sliceABar + b • sliceBBar
 

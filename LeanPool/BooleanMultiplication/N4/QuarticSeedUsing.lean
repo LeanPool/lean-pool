@@ -26,6 +26,7 @@ namespace N4
 noncomputable section
 
 /-- A seed-using product that gives a target outside the affine-plus-rational-target space. -/
+@[expose]
 def SeedUsingTargetWitness (g : ANF 8) : Prop :=
   ∃ (a c F : ANF 8),
     a ∈ rationalLowSpace ∧

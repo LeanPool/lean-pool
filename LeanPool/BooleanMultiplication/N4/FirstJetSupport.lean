@@ -182,6 +182,7 @@ theorem normalizedFirstJetVector_eq (pa pb ja jb : F₂) :
     simp [normalizedFirstJetVector, aLinear, bLinear, aCoord, bCoord, Pi.basisFun]
 
 /-- After place normalization, the vector has first-jet support and a nonzero jet component. -/
+@[expose]
 def InNormalizedFirstJet (theta : Fin 3) (u : LinearForm) : Prop :=
   ∃ pa pb ja jb : F₂,
     normalizePlaceLinear theta u = normalizedFirstJetVector pa pb ja jb ∧
@@ -454,6 +455,7 @@ theorem NormalizedEight.exteriorFirstJetNormalForm
     (exteriorFirstJetCollision_reduced h.exteriorFirstJetCollision)
 
 /-- The full ANF target normal form associated with a first-jet seed. -/
+@[expose]
 def FirstJetTargetNormalForm
     (g target targetAffine : ANF 8) (targetCoeff : TargetCoeff) : Prop :=
   ∃ (theta : Fin 3) (eps : F₂)

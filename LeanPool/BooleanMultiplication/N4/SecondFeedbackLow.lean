@@ -185,6 +185,7 @@ private theorem equal_feedback_factor_product_mem
       · exact feedbackTarget_mem_zeroFeedbackLow q
 
 /-- An input coordinate outside the normalized first-jet support. -/
+@[expose]
 def OutsideK0Index (i : Fin 8) : Prop :=
   i = 2 ∨ i = 3 ∨ i = 6 ∨ i = 7
 

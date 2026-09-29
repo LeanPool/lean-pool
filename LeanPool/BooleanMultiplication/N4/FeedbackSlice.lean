@@ -211,6 +211,7 @@ theorem factorLinear_mem_anchor_plane
   · simpa [sliceX, sliceY, aLinear, bLinear, aCoord, bCoord, Pi.basisFun] using h7
 
 /-- The affine perturbations of the zero-place product supported on its two inputs. -/
+@[expose]
 def ZeroPlaceFeedbackForm (factor : ANF 8) : Prop :=
   ∃ delta rho sigma : F₂,
     factor = affineANF delta (rho • sliceX + sigma • sliceY) +

@@ -129,7 +129,7 @@ theorem quadratic_monomial_semantic (i j : Fin 8) :
   simp [a, b, eval_mul', eval_X]
 
 /-- Retain only the coefficients of squarefree monomials of degree at most two. -/
-def lowReconstruct (p : ANF 8) : ANF 8 :=
+@[expose] def lowReconstruct (p : ANF 8) : ANF 8 :=
   ∑ s : Monomial 8,
     if s.vars.card ≤ 2 then p.coeff s • monomial s.vars else 0
 
@@ -208,15 +208,18 @@ theorem eval_monomial_supportAssignment (s t : Finset (Fin 8)) :
   rw [eval_monomial, prod_supportAssignment]
 
 /-- Evaluate an ANF on the indicator assignment of a finite set. -/
+@[expose]
 def sparseEvalMap (t : Finset (Fin 8)) : ANF 8 →ₗ[F₂] F₂ :=
   (evalHom (supportAssignment t)).toLinearMap
 
 /-- The second finite difference at zero in two coordinate directions. -/
+@[expose]
 def pairPolarMap (i j : Fin 8) : ANF 8 →ₗ[F₂] F₂ :=
   sparseEvalMap ∅ + sparseEvalMap {i} + sparseEvalMap {j} +
     sparseEvalMap {i, j}
 
 /-- Extract the coefficient supported on the specified pair of variables. -/
+@[expose]
 def pairCoeffMap (i j : Fin 8) : ANF 8 →ₗ[F₂] F₂ where
   toFun p := p.coeff ⟨{i, j}⟩
   map_add' p q := by simp
@@ -324,7 +327,8 @@ theorem sparseEvalMap_single (t : Finset (Fin 8)) (s : Monomial 8)
     (c : F₂) :
     sparseEvalMap t (MonoidAlgebra.single s c) =
       c * (if s.vars ⊆ t then 1 else 0) := by
-  change eval (MonoidAlgebra.single s c) (supportAssignment t) = _
+  change evalHom (supportAssignment t) (MonoidAlgebra.single s c) = _
+  rw [← eval_eq_evalHom]
   have hsingle : (MonoidAlgebra.single s c : ANF 8) =
       c • monomial s.vars := by
     apply MonoidAlgebra.coeff_injective

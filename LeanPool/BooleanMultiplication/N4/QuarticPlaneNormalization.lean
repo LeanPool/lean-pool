@@ -25,6 +25,7 @@ namespace N4
 noncomputable section
 
 /-- One of the three nonzero coefficient vectors supported away from the zero place. -/
+@[expose]
 def QuarticPlaneTypeAtZero (zeta : Fin 3 → F₂) : Prop :=
   zeta = rationalSingleton 1 ∨
   zeta = rationalSingleton 2 ∨
@@ -78,6 +79,7 @@ theorem representedLowFactor_linear_combination
     _ = _ := by rw [hgamma]
 
 /-- A quartic seed and correction expressed in the normalized zero-anchored plane form. -/
+@[expose]
 def ZeroAnchoredQuarticSeedForm (g correction : ANF 8) : Prop :=
   ∃ (normalizedSeed normalizedCorrection : ANF 8)
     (leftConst rightConst : F₂)

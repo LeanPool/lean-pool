@@ -37,6 +37,7 @@ noncomputable section
 
 /-- A compact set of quartic coordinates sufficient for the rational
 annihilator classification. -/
+@[expose]
 def quarticAnnihilatorCoord :
     Fin 9 → Fin 8 × Fin 8 × Fin 8 × Fin 8 :=
   ![(0,1,4,5), (0,3,5,7), (0,1,4,6),
@@ -76,6 +77,7 @@ def quarticAnnihilatorTable : Fin 9 → Nat :=
   | ⟨8, _⟩ => c 4 * delta 1 + c 4 * delta 2 + c 6 * delta 1
 
 /-- Every designated quartic-annihilator coefficient vanishes. -/
+@[expose]
 def VanishesOnQuarticAnnihilatorProbe
     (c : TargetCoeff) (delta : Fin 3 → F₂) : Prop :=
   ∀ k : Fin 9, quarticAnnihilatorCoeffProbe c delta k = 0
@@ -97,6 +99,7 @@ theorem quarticAnnihilatorCoeffProbe_eq
     simp [N3Certificate.two_eq_zero_f2]
 
 /-- The rational-place coefficient vectors paired with the six tangent targets. -/
+@[expose]
 def rationalAnnihilatorDelta : Fin 6 → (Fin 3 → F₂) :=
   ![![1, 0, 0], ![1, 0, 0],
     ![0, 1, 0], ![0, 1, 0],

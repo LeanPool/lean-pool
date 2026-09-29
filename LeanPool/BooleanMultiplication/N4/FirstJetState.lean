@@ -24,6 +24,7 @@ namespace N4
 noncomputable section
 
 /-- The normalized seed and fifth-gate target data at a rational first jet. -/
+@[expose]
 def FirstJetState (C : Circuit 8 8) : Prop :=
   ∃ (theta : Fin 3) (eps : F₂)
     (seedLinear seedCompanion : LinearForm) (seedRho : F₂),

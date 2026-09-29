@@ -229,6 +229,7 @@ theorem rationalTripleDet_eq_zero_of_seedUsing_target
     _ = 0 := htargetProbe
 
 /-- The third rational coefficient vector belongs to the span of the first two. -/
+@[expose]
 def InRationalCoeffPlane
     (alpha beta delta : Fin 3 → F₂) : Prop :=
   ∃ p q : F₂, delta = p • alpha + q • beta

@@ -126,6 +126,7 @@ theorem sliceQuadratics_independent
     exact hI
 
 /-- Membership in the two-input support of the infinity place. -/
+@[expose]
 def InSliceInfinityPlane (ell : LinearForm) : Prop :=
   ∃ a b : F₂, ell = a • placeA 2 + b • placeB 2
 

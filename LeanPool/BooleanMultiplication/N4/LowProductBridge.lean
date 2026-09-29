@@ -308,6 +308,7 @@ theorem lowProduct_cubicProjection_of_quartic_zero
   rw [add_comm]
 
 /-- The exterior product of two linear forms as a bilinear map. -/
+@[expose]
 def vectorWedgeBilinear :
     LinearForm →ₗ[F₂] LinearForm →ₗ[F₂] TwoForm where
   toFun ell :=

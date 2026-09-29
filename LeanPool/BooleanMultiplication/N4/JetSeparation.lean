@@ -25,10 +25,12 @@ namespace N4
 noncomputable section
 
 /-- The plane spanned by the constant-coefficient inputs of the two polynomials. -/
+@[expose]
 def anchorPlane : Submodule F₂ LinearForm :=
   Submodule.span F₂ (Set.range ![aLinear 0, bLinear 0])
 
 /-- The target subspace spanned by the first two coefficients, the last, and evaluation at one. -/
+@[expose]
 def feedbackCoeffSpace : Submodule F₂ TargetCoeff :=
   Submodule.span F₂
     (Set.range ![targetBasis 0, targetBasis 1,
@@ -49,6 +51,7 @@ def feedbackBasePart (c : TargetCoeff) : TargetCoeff :=
     c 5 • rOneCoeff
 
 /-- The three remaining target coordinates after removing the feedback component. -/
+@[expose]
 def jetResidualCoeff (c : TargetCoeff) : TargetCoeff :=
   jetA c • targetBasis 2 + jetB c • targetBasis 3 +
     jetC c • targetBasis 4

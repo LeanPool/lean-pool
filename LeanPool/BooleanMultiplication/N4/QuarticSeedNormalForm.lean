@@ -26,6 +26,7 @@ noncomputable section
 /-- The complete seed-using normal form, kept in `Prop` so that it can be
 obtained from the existential useful-child certificate without choosing
 data computationally. -/
+@[expose]
 def SeedUsingQuarticNormalForm (g : ANF 8) : Prop :=
   ∃ (correction factor target : ANF 8)
     (targetConst factorConst : F₂)

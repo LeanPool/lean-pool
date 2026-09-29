@@ -77,6 +77,7 @@ instance (c : TargetCoeff) : Decidable (IsRationalCoeff c) :=
   Fintype.decidableExistsFintype
 
 /-- Six tangent words followed by the three nonzero degree-two-place words. -/
+@[expose]
 def outsideRankTwoWord : Fin 9 → TargetCoeff :=
   ![![0, 1, 0, 0, 0, 0, 0],
     ![1, 1, 0, 0, 0, 0, 0],
@@ -106,6 +107,7 @@ def degreeTwoCoeffSpace : Submodule F₂ TargetCoeff :=
 
 /-- The first Hasse-jet direction at each rational place, with its translate
 by the place itself. -/
+@[expose]
 def tangentWord : Fin 6 → TargetCoeff :=
   ![outsideRankTwoWord 0, outsideRankTwoWord 1,
     outsideRankTwoWord 2, outsideRankTwoWord 3,

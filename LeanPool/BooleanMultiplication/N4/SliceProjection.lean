@@ -40,10 +40,12 @@ theorem eval_linearANF_supportAssignment
   simp [supportAssignment]
 
 /-- The first finite difference at zero in one coordinate direction. -/
+@[expose]
 def singlePolarMap (i : Fin 8) : ANF 8 →ₗ[F₂] F₂ :=
   sparseEvalMap ∅ + sparseEvalMap {i}
 
 /-- Extract the coefficient of one linear monomial. -/
+@[expose]
 def singleCoeffMap (i : Fin 8) : ANF 8 →ₗ[F₂] F₂ where
   toFun p := p.coeff ⟨{i}⟩
   map_add' p q := by simp

@@ -42,7 +42,7 @@ noncomputable section
 
 /-- A gate is nonredundant when its output is not already in the preceding
 wire space.  Minimal circuits have this property at every gate. -/
-def NonredundantAt {m r : Nat} (C : Circuit m r) (j : Fin r) : Prop :=
+@[expose] def NonredundantAt {m r : Nat} (C : Circuit m r) (j : Fin r) : Prop :=
   C.gate j ∉ circuitFlag C j.val
 
 /-- A gate is useful when adjoining it raises the target rank. -/
