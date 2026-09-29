@@ -172,17 +172,13 @@ theorem normalized_denominator_nonunit_of_polynomial_inverse
   change (parameter : K) * (gV : K) = (1 : V)
   simpa [hparameter, hgV] using hinverse
 
-/-- The denominator in the retained normalization of a component point is a
-nonunit whenever the ambient support avoids the selected coordinate axis. -/
-theorem normalizedComponentProjectivePoint_zero_nonunit
-    {k : Type u} [Field k] [IsAlgClosed k] {n : ℕ}
-    (I : RightIdeal (PresentedWeyl k n)) (i : Fin n)
-    (hdisjoint : Disjoint
-      (orderCharacteristicSupport k I)
-      (PrimeSpectrum.zeroLocus
-        ({MvPolynomial.X (.inl i)} : Set (SymbolRing k n))))
-    (P : PrimeSpectrum (MvPolynomial (Fin n) k))
-    (hBP : reducedOrderBaseIdeal k I ≤ P.asIdeal)
+/-- A polynomial inverse on an affine component makes the normalized
+projective denominator a nonunit at its retained boundary place. -/
+theorem normalizedComponentProjectivePoint_zero_nonunit_of_polynomial_inverse
+    {k : Type u} [Field k] {n : ℕ}
+    (P : PrimeSpectrum (MvPolynomial (Fin n) k)) (i : Fin n)
+    (hunit : ∃ g : MvPolynomial (Fin n) k,
+      MvPolynomial.X i * g - 1 ∈ P.asIdeal)
     (W : Data k (FractionRing (MvPolynomial (Fin n) k ⧸ P.asIdeal))
       (componentCoordinate P i)) :
     letI : Algebra (CoordinateZeroLocalRing W.coefficientField)
@@ -204,8 +200,7 @@ theorem normalizedComponentProjectivePoint_zero_nonunit
   let : IsScalarTower W.coefficientField
       (CoordinateZeroLocalRing W.coefficientField) F := W.coefficientTower
   let V := W.place.valuation.toSubring
-  obtain ⟨g, hg⟩ := exists_componentCoordinate_polynomial_inverse
-    I i hdisjoint P hBP
+  obtain ⟨g, hg⟩ := hunit
   let phi : MvPolynomial (Fin n) k →+* F :=
     (algebraMap (MvPolynomial (Fin n) k ⧸ P.asIdeal) F).comp
       (Ideal.Quotient.mk P.asIdeal)
@@ -267,6 +262,31 @@ theorem normalizedComponentProjectivePoint_zero_nonunit
   · exact W.parameter_eq_coordinate
   · exact W.place.parameter_nonunit
   · exact hinverse
+
+/-- The denominator in the retained normalization of a component point is a
+nonunit whenever the ambient support avoids the selected coordinate axis. -/
+theorem normalizedComponentProjectivePoint_zero_nonunit
+    {k : Type u} [Field k] [IsAlgClosed k] {n : ℕ}
+    (I : RightIdeal (PresentedWeyl k n)) (i : Fin n)
+    (hdisjoint : Disjoint
+      (orderCharacteristicSupport k I)
+      (PrimeSpectrum.zeroLocus
+        ({MvPolynomial.X (.inl i)} : Set (SymbolRing k n))))
+    (P : PrimeSpectrum (MvPolynomial (Fin n) k))
+    (hBP : reducedOrderBaseIdeal k I ≤ P.asIdeal)
+    (W : Data k (FractionRing (MvPolynomial (Fin n) k ⧸ P.asIdeal))
+      (componentCoordinate P i)) :
+    letI : Algebra (CoordinateZeroLocalRing W.coefficientField)
+        (FractionRing (MvPolynomial (Fin n) k ⧸ P.asIdeal)) :=
+      W.ambientAlgebra
+    ∀ (q : Fin (n + 1) → W.place.valuation.toSubring)
+      (scale : FractionRing (MvPolynomial (Fin n) k ⧸ P.asIdeal)),
+      (∀ a, (q a : FractionRing
+          (MvPolynomial (Fin n) k ⧸ P.asIdeal)) =
+        scale * componentProjectivePoint P a) →
+      ¬IsUnit (q 0) := by
+  exact normalizedComponentProjectivePoint_zero_nonunit_of_polynomial_inverse
+    P i (exists_componentCoordinate_polynomial_inverse I i hdisjoint P hBP) W
 
 /-- The normalized homogeneous zeroth coordinate therefore vanishes in the
 completed residue chart. -/

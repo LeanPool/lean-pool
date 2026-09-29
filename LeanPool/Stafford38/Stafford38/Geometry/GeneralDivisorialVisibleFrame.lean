@@ -106,77 +106,9 @@ theorem generalDivisorialVisibleFrameExistence
     change (q (Fin.succ i) : K) = (q 0 : K) * componentCoordinate P i
     rw [hq, hq]
     simp [componentProjectivePoint]
-  have hq0nonunit : ¬ IsUnit (q 0) := by
-    obtain ⟨g, hg⟩ := hunit
-    let F := K
-    let : Algebra (CoordinateZeroLocalRing W.coefficientField) F :=
-      W.ambientAlgebra
-    let : SMul W.coefficientField (CoordinateZeroLocalRing W.coefficientField) :=
-      (inferInstance : Algebra W.coefficientField
-        (CoordinateZeroLocalRing W.coefficientField)).toSMul
-    let : SMul (CoordinateZeroLocalRing W.coefficientField) F := W.ambientAlgebra.toSMul
-    let : SMul W.coefficientField F :=
-      (inferInstance : Algebra W.coefficientField F).toSMul
-    let : IsScalarTower W.coefficientField
-        (CoordinateZeroLocalRing W.coefficientField) F := W.coefficientTower
-    let phi : MvPolynomial (Fin m) k →+* F :=
-      (algebraMap (MvPolynomial (Fin m) k ⧸ P.asIdeal) F).comp
-        (Ideal.Quotient.mk P.asIdeal)
-    have hphiC : phi.comp MvPolynomial.C = algebraMap k F := by
-      ext c
-      exact IsScalarTower.algebraMap_apply k
-        (MvPolynomial (Fin m) k ⧸ P.asIdeal) F c
-    have hphiX : ∀ j, phi (MvPolynomial.X j) = componentCoordinate P j := by
-      intro j
-      rfl
-    have hpoly : phi g = MvPolynomial.eval₂ (algebraMap k F)
-        (fun j ↦ componentCoordinate P j) g := by
-      rw [MvPolynomial.map_mvPolynomial_eq_eval₂ phi g]
-      change MvPolynomial.eval₂Hom (phi.comp MvPolynomial.C)
-          (fun j ↦ phi (MvPolynomial.X j)) g =
-        MvPolynomial.eval₂Hom (algebraMap k F)
-          (fun j ↦ componentCoordinate P j) g
-      apply MvPolynomial.eval₂Hom_congr hphiC
-      · funext j
-        exact hphiX j
-      · rfl
-    have hinverse : componentCoordinate P i *
-        MvPolynomial.eval₂ (algebraMap k F)
-          (fun j ↦ componentCoordinate P j) g = 1 := by
-      have hzero : phi (MvPolynomial.X i * g - 1) = 0 := by
-        have hmk : Ideal.Quotient.mk P.asIdeal
-            (MvPolynomial.X i * g - 1) = 0 :=
-          Ideal.Quotient.eq_zero_iff_mem.mpr hg
-        simpa [phi] using (congrArg
-          (algebraMap (MvPolynomial (Fin m) k ⧸ P.asIdeal) F) hmk)
-      rw [map_sub, map_mul, map_one, sub_eq_zero, hphiX, hpoly] at hzero
-      exact hzero
-    let coeff : k →+* V :=
-      (relativeCoefficientMap W.coefficientField W.place).comp
-        (algebraMap k W.coefficientField)
-    have hcoeff : W.place.valuation.toSubring.subtype.comp coeff =
-        algebraMap k F := by
-      ext c
-      change ((relativeCoefficientMap W.coefficientField W.place
-        (algebraMap k W.coefficientField c) : V) : F) = algebraMap k F c
-      calc
-        ((relativeCoefficientMap W.coefficientField W.place
-            (algebraMap k W.coefficientField c) : V) : F) =
-            algebraMap W.coefficientField F
-              (algebraMap k W.coefficientField c) :=
-          DFunLike.congr_fun
-            (relativeCoefficientMap_commutes W.coefficientField W.place)
-            (algebraMap k W.coefficientField c)
-        _ = algebraMap k F c :=
-          IsScalarTower.algebraMap_apply k W.coefficientField F c
-    exact normalized_denominator_nonunit_of_polynomial_inverse
-      (V := W.place.valuation) (coeff := coeff) hcoeff
-      (x := fun j ↦ componentCoordinate P j)
-      (qzero := q 0) (q := fun j ↦ q (Fin.succ j)) (scale := scale)
-      (i := i) (parameter := W.place.parameter) (g := g)
-      (by simpa [componentProjectivePoint] using hq 0)
-      (by intro j; simpa [componentProjectivePoint] using hq (Fin.succ j))
-      W.parameter_eq_coordinate W.place.parameter_nonunit hinverse
+  have hq0nonunit : ¬ IsUnit (q 0) :=
+    normalizedComponentProjectivePoint_zero_nonunit_of_polynomial_inverse
+      P i hunit W q scale hq
   have halg := halgAll scale q hq ⟨chart, hchart⟩ hq0nonunit
   have hchart_ne : chart ≠ 0 := by
     intro hzero
