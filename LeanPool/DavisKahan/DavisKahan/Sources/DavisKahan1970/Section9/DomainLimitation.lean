@@ -410,7 +410,8 @@ theorem tendsto_norm_truncatedTrial_sub_geometricTrial {μ : ℝ} (hμ0 : 0 ≤ 
           (((truncatedTrial μ N - geometricTrial hμ0 hμ1 : DomainLimitationSpace) : ℕ → ℝ) n)
           (((truncatedTrial μ N - geometricTrial hμ0 hμ1 : DomainLimitationSpace) : ℕ → ℝ) n))
         = fun n : ℕ =>
-          ((truncatedTrial μ N - geometricTrial hμ0 hμ1 : DomainLimitationSpace) : ℕ → ℝ) n ^ 2 := by
+          ((truncatedTrial μ N - geometricTrial hμ0 hμ1 : DomainLimitationSpace) : ℕ → ℝ)
+            n ^ 2 := by
       funext n
       rw [RCLike.inner_apply', sq]
       simp

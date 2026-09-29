@@ -47,8 +47,8 @@ support it — `spectralProjection_eq_zero_of_forall_mem_resolventSet` and
 * and for a **self-adjoint** element the norm *is* the spectral radius, which is
   Mathlib's `IsSelfAdjoint.spectralRadius_eq_nnnorm`.
 
-The replacement lives in
-`ForTauCeti/Analysis/InnerProductSpace/LinearPMap/{Resolvent,ResolventBound,SelfAdjointResolvent}.lean`
+The replacement lives in `ForTauCeti/Analysis/InnerProductSpace/LinearPMap/`
+(`Resolvent.lean`, `ResolventBound.lean`, and `SelfAdjointResolvent.lean`)
 and is Spectra-free.  The two intermediate theorems were deleted rather than
 kept: they were scaffolding for the PVM route, nothing outside this file used
 them, and retaining them would have kept the whole projection-valued-measure

@@ -336,7 +336,8 @@ theorem tanTheta_ambient_unboundedOperator_boundedRitzData_symmetricNorming_comp
         U V h35]
     exact hambient
   exact ⟨(hasDefinedAmbientTangent_iff_norm_sinAngleOperatorC_lt_one U V).2 htr,
-    tanTheta_ambient_unboundedOperator_boundedRitzData_symmetricNorming_complex_of_transversality N data H hH
+    tanTheta_ambient_unboundedOperator_boundedRitzData_symmetricNorming_complex_of_transversality
+      N data H hH
       hdelta hCompression hcross htr hResidual hMem⟩
 
 /-! ## Appendix scope: the Ritz compression itself may be unbounded -/
