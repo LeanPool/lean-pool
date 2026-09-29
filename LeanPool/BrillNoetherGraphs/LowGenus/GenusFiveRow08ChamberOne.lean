@@ -410,7 +410,8 @@ theorem lbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       Fin.reduceFinMk, hT3, tsub_pos_iff_lt, hH2, hT2]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, ↓reduceIte, not_le, tsub_lt_self_iff, zero_le,
+    add_zero, Int.reduceAdd, left_eq_add, zero_add])
   all_goals (try split_ifs)
   all_goals (try omega)
 
@@ -552,7 +553,9 @@ theorem rbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       add_left_inj]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, ↓reduceIte, not_le, tsub_lt_self_iff, zero_le,
+    add_zero, not_lt, nonpos_iff_eq_zero, headContribution_same, lt_self_iff_false,
+    Int.reduceAdd, add_right_inj, left_eq_add, zero_add])
   all_goals (try split_ifs)
   all_goals (try omega)
 
@@ -696,7 +699,10 @@ theorem t2Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       zeroChip, add_right_inj, hT3, hH2, zero_sub, Int.reduceNeg, positiveChip, hT2]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, rowMark_three, ↓reduceIte, not_le,
+    tsub_lt_self_iff, Std.le_refl, zero_tsub, add_zero, Int.reduceAdd, tsub_self, zero_le,
+    tsub_zero, nonpos_iff_eq_zero, Nat.sub_eq_zero_of_le, left_eq_add, zero_add, Int.reduceNeg,
+    add_neg_cancel, lt_self_iff_false, not_false_eq_true, sub_self, not_lt])
   all_goals (try split_ifs)
   all_goals (try omega)
 
@@ -883,7 +889,10 @@ theorem t3Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       zeroChip, add_right_inj, hT3, hH2, zero_sub, Int.reduceNeg, positiveChip, hT2]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, rowMark_three, ↓reduceIte, not_le,
+    tsub_lt_self_iff, Std.le_refl, zero_tsub, add_zero, Int.reduceAdd, tsub_self, zero_le,
+    tsub_zero, nonpos_iff_eq_zero, Nat.sub_eq_zero_of_le, left_eq_add, zero_add, Int.reduceNeg,
+    add_neg_cancel, lt_self_iff_false, not_false_eq_true, sub_self, not_lt])
   all_goals (try split_ifs)
   all_goals (try omega)
 

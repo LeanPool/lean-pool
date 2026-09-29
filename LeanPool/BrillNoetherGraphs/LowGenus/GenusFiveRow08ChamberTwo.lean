@@ -516,7 +516,8 @@ theorem lbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       zeroChip, add_left_inj, Fin.reduceFinMk, hH4, hT7, hH7]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, zero_le, ↓reduceIte, add_zero, not_lt,
+    nonpos_iff_eq_zero, headContribution_same, lt_self_iff_false, add_right_inj, not_le])
   all_goals (try split_ifs)
   all_goals (try omega)
 
@@ -630,7 +631,7 @@ theorem rbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       Fin.reduceFinMk, hH4, hT7, hH7]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, zero_le, ↓reduceIte, not_le])
   all_goals (try split_ifs)
   all_goals (try omega)
 
@@ -799,7 +800,11 @@ theorem t4Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       positiveChip, add_left_inj, hH4, armAl, hT7, hH7]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, Std.le_refl, zero_tsub, nonpos_iff_eq_zero,
+    zero_le, zero_add, lt_self_iff_false, not_false_eq_true, Int.reduceNeg, add_neg_cancel,
+    tailContribution_same, add_zero, ↓reduceIte, sub_self, sub_zero, not_lt, Int.reduceAdd,
+    headContribution_same, not_and, tsub_self, not_true_eq_false, tsub_zero,
+    Nat.sub_eq_zero_of_le, not_le, left_eq_add, one_ne_zero])
   all_goals (try omega)
 
 theorem t4Coeff_nonneg {d : DegSpec 8 12} (hB : d.length 3 ≤ d.length 4)
@@ -1028,7 +1033,12 @@ theorem t5Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       lend, positiveChip, add_left_inj, hH4, hT7, hH7]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, Std.le_refl, zero_tsub, nonpos_iff_eq_zero,
+    zero_add, zero_le, lt_self_iff_false, not_false_eq_true, Int.reduceNeg, add_neg_cancel,
+    tailContribution_same, add_zero, ↓reduceIte, sub_self, sub_zero, not_lt, tsub_pos_iff_lt,
+    Int.reduceAdd, and_self, not_and, tsub_le_iff_right, tsub_self, and_false,
+    headContribution_same, not_true_eq_false, tsub_zero, left_eq_add, ite_eq_right_iff,
+    one_ne_zero, imp_false, implies_true, not_lt_zero, Nat.sub_eq_zero_of_le, not_le])
   all_goals (try split_ifs)
   all_goals (try omega)
 

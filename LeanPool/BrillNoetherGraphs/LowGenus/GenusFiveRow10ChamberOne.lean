@@ -480,7 +480,9 @@ theorem fCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       one_ne_zero, hT4, tsub_pos_iff_lt, zeroChip, Fin.reduceFinMk, sub_zero, hH4]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, zero_le, Int.reduceNeg, add_neg_cancel, add_zero,
+    nonpos_iff_eq_zero, tsub_self, ↓reduceIte, sub_self, sub_zero, not_true_eq_false,
+    Std.le_refl, zero_add, tsub_zero, not_false_eq_true, one_ne_zero, not_le, tsub_lt_self_iff])
   all_goals (try omega)
 
 theorem fCoeff_owner_three {d : DegSpec 8 12} : 1 ≤ fCoeff d 3 := by
@@ -589,7 +591,9 @@ theorem bCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       hH4]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, zero_le, Int.reduceNeg, add_neg_cancel, add_zero,
+    nonpos_iff_eq_zero, tsub_self, ↓reduceIte, sub_self, sub_zero, not_true_eq_false,
+    Std.le_refl, zero_add, tsub_zero, not_false_eq_true, one_ne_zero, not_le, tsub_lt_self_iff])
   all_goals (try omega)
 
 theorem htB_le_three {d : DegSpec 8 12} : htB d ≤ d.length 3 := by
@@ -758,7 +762,11 @@ theorem pCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       add_right_inj]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, zero_le, Int.reduceNeg, add_neg_cancel, add_zero,
+    nonpos_iff_eq_zero, tsub_self, ↓reduceIte, sub_self, sub_zero, not_true_eq_false, zero_add,
+    headContribution_same, add_sub_cancel_left, Std.le_refl, tsub_zero, not_false_eq_true,
+    one_ne_zero, not_le, tsub_lt_self_iff, Int.reduceAdd, Int.reduceSub, not_and, not_lt,
+    zero_sub])
   all_goals (try omega)
 
 /-- The nested minima of the target-`P` profile, in the shape
@@ -949,7 +957,8 @@ theorem tCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       Fin.reduceFinMk, headContribution_same, hH4, tsub_lt_self_iff]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, rowMark_four, Int.reduceNeg, add_neg_cancel,
+    add_zero, Int.reduceAdd, ↓reduceIte, zero_add, not_le, tsub_lt_self_iff])
   all_goals (try split_ifs)
   all_goals (try omega)
 

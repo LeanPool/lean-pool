@@ -480,7 +480,9 @@ theorem fCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       one_ne_zero, positiveChip, Fin.reduceFinMk, sub_zero, hH10]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, nonpos_iff_eq_zero, zero_le, tsub_self,
+    Int.reduceNeg, add_neg_cancel, ↓reduceIte, sub_self, add_zero, sub_zero, not_true_eq_false,
+    Std.le_refl, zero_add, tsub_zero, not_false_eq_true, one_ne_zero, not_le, tsub_lt_self_iff])
   all_goals (try omega)
 
 theorem fCoeff_owner_three {d : DegSpec 8 12} : 1 ≤ fCoeff d 3 := by
@@ -586,7 +588,9 @@ theorem bCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       one_ne_zero, positiveChip, Fin.reduceFinMk, sub_zero, hH10]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, nonpos_iff_eq_zero, zero_le, tsub_self,
+    Int.reduceNeg, add_neg_cancel, ↓reduceIte, sub_self, add_zero, sub_zero, not_true_eq_false,
+    Std.le_refl, zero_add, tsub_zero, not_false_eq_true, one_ne_zero, not_le, tsub_lt_self_iff])
   all_goals (try omega)
 
 theorem htB_le_three {d : DegSpec 8 12} : htB d ≤ d.length 3 := by
@@ -752,7 +756,10 @@ theorem pCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       one_ne_zero, positiveChip, Fin.reduceFinMk, sub_zero, hH10, shift, add_right_inj]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, nonpos_iff_eq_zero, zero_le, tsub_self,
+    Int.reduceNeg, add_neg_cancel, ↓reduceIte, sub_self, add_zero, sub_zero, not_true_eq_false,
+    Std.le_refl, zero_add, tsub_zero, zero_sub, not_false_eq_true, zero_eq_neg, one_ne_zero,
+    not_le, tsub_lt_self_iff, Int.reduceAdd, Int.reduceSub, not_and, not_lt])
   all_goals (try omega)
 
 /-- The nested minima of the target-`P` profile, in the shape
@@ -942,7 +949,8 @@ theorem tCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       positiveChip, add_left_inj, Fin.reduceFinMk, hH10, tsub_lt_self_iff]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, rowMark_ten, Int.reduceAdd, ↓reduceIte, add_zero,
+    zero_add, Int.reduceNeg, add_neg_cancel, not_le, tsub_lt_self_iff])
   all_goals (try split_ifs)
   all_goals (try omega)
 

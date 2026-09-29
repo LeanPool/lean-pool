@@ -447,7 +447,8 @@ theorem lbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       zeroChip, add_left_inj, Fin.reduceFinMk, hH4]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, zero_le, ↓reduceIte, add_zero, not_lt,
+    nonpos_iff_eq_zero, headContribution_same, lt_self_iff_false, add_right_inj, not_le])
   all_goals (try split_ifs)
   all_goals (try omega)
 
@@ -565,7 +566,10 @@ theorem t2Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       add_right_inj, positiveChip, add_left_inj, hH4]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, Std.le_refl, zero_tsub, lt_self_iff_false,
+    not_false_eq_true, Int.reduceNeg, add_neg_cancel, zero_add, ↓reduceIte, sub_self, zero_le,
+    add_zero, sub_zero, nonpos_iff_eq_zero, not_lt, tsub_self, Int.reduceAdd, not_true_eq_false,
+    tsub_zero, Nat.sub_eq_zero_of_le, not_le, OfNat.one_ne_ofNat, zero_ne_one])
   all_goals (try omega)
 
 theorem t2Coeff_nonneg {d : DegSpec 8 12} (hB : d.length 3 ≤ d.length 4)
@@ -726,7 +730,10 @@ theorem t4Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       add_right_inj, positiveChip, add_left_inj, hH4]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, Std.le_refl, zero_tsub, lt_self_iff_false,
+    not_false_eq_true, Int.reduceNeg, add_neg_cancel, zero_add, ↓reduceIte, sub_self, zero_le,
+    add_zero, sub_zero, nonpos_iff_eq_zero, not_lt, tsub_self, Int.reduceAdd, not_true_eq_false,
+    tsub_zero, Nat.sub_eq_zero_of_le, not_le, OfNat.one_ne_ofNat, zero_ne_one])
   all_goals (try omega)
 
 theorem t4Coeff_nonneg {d : DegSpec 8 12} (hB : d.length 3 ≤ d.length 4)
@@ -872,7 +879,7 @@ theorem rb7Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       Fin.reduceFinMk, hH4]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, zero_le, ↓reduceIte, not_le])
   all_goals (try split_ifs)
   all_goals (try omega)
 
@@ -968,7 +975,8 @@ theorem rb6Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       add_left_inj, hH4, mul_ite, mul_zero, mul_one, sub_zero]
   all_goals (try (first | ring1 | ring_nf))
   all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals (try simp_all only [Fin.isValue, zero_le, ↓reduceIte, nonpos_iff_eq_zero,
+    Int.reduceNeg, add_neg_cancel, add_zero, not_le, neg_mul, one_mul, zero_mul])
   all_goals (try split_ifs)
   all_goals (try omega)
 
