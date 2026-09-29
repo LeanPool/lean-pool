@@ -173,7 +173,8 @@ noncomputable def laplacianEquiv : Certificate.LaplacianEquiv cut.bridgeGraph K 
   cut.graphIso.toLaplacianEquiv
 
 /-- Genus is additive across a separating bridge. -/
-theorem genus_eq : CFGraph.genus K = CFGraph.genus cut.leftGraph + CFGraph.genus cut.rightGraph := by
+theorem genus_eq :
+    CFGraph.genus K = CFGraph.genus cut.leftGraph + CFGraph.genus cut.rightGraph := by
   rw [cut.graphIso.genus_eq]
   exact genus_bridgeGraph _ _ _ _
 

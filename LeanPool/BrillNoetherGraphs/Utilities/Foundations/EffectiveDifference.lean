@@ -61,7 +61,8 @@ theorem exists_effective_difference_of_deg_zero
     rw [CFDiv.degree.map_sub, degree_of_canonical_divisor, hγ] at hEq
     omega
   -- Step 2: split `M` into effective `E, F*` of degree `g - 1` each.
-  have hd : ((CFGraph.genus G - 1).toNat : ℤ) = CFGraph.genus G - 1 := Int.toNat_of_nonneg (by omega)
+  have hd : ((CFGraph.genus G - 1).toNat : ℤ) = CFGraph.genus G - 1 :=
+    Int.toNat_of_nonneg (by omega)
   obtain ⟨E, Fstar, hEEff, hFstarEff, hEDeg, hFstarDeg, hMSplit⟩ :=
     effective_divisor_decomposition G M (CFGraph.genus G - 1).toNat (CFGraph.genus G - 1).toNat
       hMEff (by rw [hMDeg, hd]; ring)

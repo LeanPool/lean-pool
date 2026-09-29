@@ -222,7 +222,8 @@ theorem KGeneralTransmission.isTorsionOrder
     unfold kInversionCount at h
     have heq : (Int.toNat (CFGraph.genus M.graph) : ℤ) = ((northwestSet τ 1 0).ncard : ℤ) :=
       hAcardNat.symm
-    have hnat : Int.toNat (CFGraph.genus M.graph) = (northwestSet τ 1 0).ncard := by exact_mod_cast heq
+    have hnat : Int.toNat (CFGraph.genus M.graph) = (northwestSet τ 1 0).ncard := by
+      exact_mod_cast heq
     omega
   have hSetEq : φ '' (northwestSet τ 1 0) = kInversions k τ :=
     Set.eq_of_subset_of_ncard_le hSubset (by omega) hτFinite

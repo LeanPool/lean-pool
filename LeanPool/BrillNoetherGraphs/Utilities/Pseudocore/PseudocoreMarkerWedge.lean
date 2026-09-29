@@ -305,8 +305,9 @@ theorem restricted_base_genus_three
     (restricted_second_factor_rigid split spec first second hCore hCompatible
       hConnected hNe).genus_one
   have hSum := firstCut.genus_eq_nested_restrictRight secondCut hSubset
-  change CFGraph.genus spec.graph = CFGraph.genus firstCut.leftGraph + CFGraph.genus restricted.leftGraph +
-    CFGraph.genus restricted.rightGraph at hSum
+  change CFGraph.genus spec.graph =
+    CFGraph.genus firstCut.leftGraph + CFGraph.genus restricted.leftGraph +
+      CFGraph.genus restricted.rightGraph at hSum
   rw [hGenus, hFirstGenus, hSecondGenus] at hSum
   have hResult : CFGraph.genus restricted.rightGraph = 3 := by omega
   exact hResult

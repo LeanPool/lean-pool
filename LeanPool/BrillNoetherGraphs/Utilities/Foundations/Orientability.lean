@@ -122,7 +122,8 @@ theorem Orientable.congr {D D' : CFDiv G} (h : linearEquiv G D D') :
 /-- **An orientable divisor has degree `genus G - 1`.** This is the converse half of the main
 theorem, and unlike the forward half it is unconditional: it needs neither connectivity nor
 simplicity, only `degree_ordiv`. -/
-theorem Orientable.deg_eq {D : CFDiv G} (h : Orientable G D) : CFDiv.degree D = CFGraph.genus G - 1 := by
+theorem Orientable.deg_eq {D : CFDiv G} (h : Orientable G D) :
+    CFDiv.degree D = CFGraph.genus G - 1 := by
   obtain ⟨O, hO⟩ := h
   rw [linear_equiv_preserves_deg G D (ordiv G O) hO]
   exact degree_ordiv O

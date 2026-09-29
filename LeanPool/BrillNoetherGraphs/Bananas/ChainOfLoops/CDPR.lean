@@ -557,7 +557,8 @@ theorem finitePointedDiagram_card_ge_of_vanishing
       (pointedRowLength G hG D v ((0 : Fin (r + 1)) : ℕ) : ℤ) := by
     simpa using hRow0
   have : ((r : ℤ) + 1) * (CFGraph.genus G - CFDiv.degree D + (r : ℤ)) + (m - (r : ℤ))
-      = (CFGraph.genus G - CFDiv.degree D + m) + (r : ℤ) * (CFGraph.genus G - CFDiv.degree D + (r : ℤ)) := by
+      = (CFGraph.genus G - CFDiv.degree D + m) +
+          (r : ℤ) * (CFGraph.genus G - CFDiv.degree D + (r : ℤ)) := by
     ring
   rw [this]
   exact add_le_add hHead hTail

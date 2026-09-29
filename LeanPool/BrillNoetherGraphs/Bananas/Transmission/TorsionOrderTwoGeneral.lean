@@ -100,7 +100,8 @@ theorem transmissionPermutation_le
   have hInd := hτ.2 (τ b) b
   rw [ite_eq_left rfl] at hInd
   set a := τ b with ha_def
-  have hd0 : CFDiv.degree (D + a • oneChip M.u - b • oneChip M.v) > 2 * CFGraph.genus M.graph - 2 := by
+  have hd0 : CFDiv.degree (D + a • oneChip M.u - b • oneChip M.v) >
+      2 * CFGraph.genus M.graph - 2 := by
     rw [deg_markedTwist]; omega
   have hd1 : CFDiv.degree (D + (a - 1) • oneChip M.u - b • oneChip M.v) >
       2 * CFGraph.genus M.graph - 2 := by
@@ -159,7 +160,9 @@ theorem kInversionCount_two_le_genus
     rcases (by omega : n % 2 = 0 ∨ n % 2 = 1) with h | h
     · exact Or.inl ⟨n / 2, by omega⟩
     · exact Or.inr ⟨n / 2, by omega⟩
-  have hMem : ∀ p ∈ kInversions 2 τ, f p ∈ (↑(Finset.Ico (0 : ℤ) (CFGraph.genus M.graph)) : Set ℤ) := by
+  have hMem :
+      ∀ p ∈ kInversions 2 τ,
+        f p ∈ (↑(Finset.Ico (0 : ℤ) (CFGraph.genus M.graph)) : Set ℤ) := by
     rintro ⟨m, n⟩ hp
     obtain ⟨hmn, hτmn, hm0, hmk⟩ := hp
     simp only at hmn hτmn hm0 hmk

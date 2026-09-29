@@ -51,7 +51,8 @@ theorem poleOrderSet_nonempty {G : CFGraph} (hG : _root_.graphConnected G)
   have hRank := rank_ge_deg_sub_genus hG
     (D + ((i : ℤ) + CFGraph.genus G - CFDiv.degree D) • oneChip v)
   have hDegree :
-      CFDiv.degree (D + ((i : ℤ) + CFGraph.genus G - CFDiv.degree D) • oneChip v) - CFGraph.genus G =
+      CFDiv.degree (D + ((i : ℤ) + CFGraph.genus G - CFDiv.degree D) • oneChip v) -
+        CFGraph.genus G =
         (i : ℤ) := by
     rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip]
     norm_num
@@ -103,7 +104,8 @@ theorem poleOrder_le_riemannRoch {G : CFGraph} (hG : _root_.graphConnected G)
   have hRank := rank_ge_deg_sub_genus hG
     (D + ((i : ℤ) + CFGraph.genus G - CFDiv.degree D) • oneChip v)
   have hDegree :
-      CFDiv.degree (D + ((i : ℤ) + CFGraph.genus G - CFDiv.degree D) • oneChip v) - CFGraph.genus G =
+      CFDiv.degree (D + ((i : ℤ) + CFGraph.genus G - CFDiv.degree D) • oneChip v) -
+        CFGraph.genus G =
         (i : ℤ) := by
     rw [CFDiv.degree.map_add, map_zsmul, deg_one_chip]
     norm_num

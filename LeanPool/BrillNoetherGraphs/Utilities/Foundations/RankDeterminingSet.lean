@@ -465,7 +465,8 @@ theorem rank_ge_iff_forall_sub_add_supported
   have hDegSub : CFDiv.degree (D - E) = CFDiv.degree D - r := by
     rw [CFDiv.degree.map_sub, hDegree]
   rw [hDegSub,
-    show CFGraph.genus G - 1 - (CFDiv.degree D - r) = CFGraph.genus G - CFDiv.degree D + r - 1 from by ring]
+    show CFGraph.genus G - 1 - (CFDiv.degree D - r) =
+        CFGraph.genus G - CFDiv.degree D + r - 1 from by ring]
 
 end Utilities
 
