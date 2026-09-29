@@ -110,7 +110,7 @@ private theorem quotientRoundingCarryCases (fmt : FloatFormat) (hfmt : fmt.isIEE
               (ofFields fmt sign (normalizedExponent + Int.ofNat fmt.bias).toNat
                 (normalizedMantissa - pow2 fmt.fracWidth))) =
       some result)
-  (hden : ¬den = 0) (hnum : ¬num = 0) :
+  :
   let rationalExponent := Numerics.RationalBinary.floorLog2 num den;
   let totalExponent := rationalExponent + exponent;
   ¬totalExponent < fmt.ieeeMinNormalExponent →
@@ -128,159 +128,17 @@ private theorem quotientRoundingCarryCases (fmt : FloatFormat) (hfmt : fmt.isIEE
                 exponent := by
   intro rationalExponent totalExponent hlow hhigh
     hscaleRaw hhigh' hnotUnder' hnotSub' hdenBool hnumBool
-  let shift := (Int.ofNat fmt.fracWidth - rationalExponent).toNat
-  let roundedMantissa := Numerics.roundQuotientEven (num <<< shift) den
-  let carry := roundedMantissa == pow2 (fmt.fracWidth + 1)
-  let normalizedExponent := if carry then totalExponent + 1 else totalExponent
-  cases hcarryValue : carry with
-  | false =>
-      have hcarry :
-          roundedMantissa ≠ Model.pow2 (fmt.fracWidth + 1) := by
-        simpa only [carry] using
-          (beq_eq_false_iff_ne.mp hcarryValue)
-      have hcarryRaw :
-          Numerics.roundQuotientEven
-              (num <<< (Int.ofNat fmt.fracWidth -
-                Numerics.RationalBinary.floorLog2 num den).toNat) den ≠
-            Model.pow2 (fmt.fracWidth + 1) := by
-        simpa only [roundedMantissa, shift, rationalExponent] using hcarry
-      have hcarryRawCast :
-          Numerics.roundQuotientEven
-              (num <<< ((fmt.fracWidth : Int) -
-                Numerics.RationalBinary.floorLog2 num den).toNat) den ≠
-            Model.pow2 (fmt.fracWidth + 1) := by
-        simpa only [Int.ofNat_eq_natCast] using hcarryRaw
-      have hnormalized :
-          normalizedExponent = totalExponent := by
-        simp only [normalizedExponent, hcarryValue, Bool.false_eq_true,
-          ite_false]
-      by_cases hoverflow :
-          Int.ofNat fmt.ieeeMaxNormalExponent < normalizedExponent
-      · rw [hnormalized] at hoverflow
-        omega
-      have hpacked :
-          Model.ofFields fmt sign
-              (Int.toNat (totalExponent + Int.ofNat fmt.bias))
-              (roundedMantissa - Model.pow2 fmt.fracWidth) =
-            result := by
-        have hresult' := hresult
-        simp only [Bool.or_eq_true, beq_iff_eq, hden, hnum, or_self, ↓reduceIte, hlow, decide_false,
-          Int.ofNat_eq_natCast, Bool.false_or, decide_eq_true_eq, Option.ite_none_left_eq_some,
-            not_lt, Option.some.injEq,
-          totalExponent, rationalExponent] at hresult'
-        have hpackedRaw := hresult'.2.2
-        simpa only [totalExponent, rationalExponent, roundedMantissa, shift,
-          Int.ofNat_eq_natCast, ite_eq_right hcarryRawCast] using hpackedRaw
-      have hieee :
-          Model.ieeeRoundRatScaled fmt sign num den exponent hfmt =
-            Model.ofFields fmt sign
-              (Int.toNat (totalExponent + Int.ofNat fmt.bias))
-              (roundedMantissa - Model.pow2 fmt.fracWidth) := by
-        unfold Model.ieeeRoundRatScaled
-        have hoverflow' :
-            ¬Int.ofNat fmt.ieeeMaxNormalExponent <
-              Numerics.RationalBinary.floorLog2 num den + exponent := by
-          simpa only [hnormalized, totalExponent, rationalExponent] using
-            hoverflow
-        have hcarryBool :
-            (Numerics.roundQuotientEven
-                (num <<< (Int.ofNat fmt.fracWidth -
-                  Numerics.RationalBinary.floorLog2 num den).toNat) den ==
-              Model.pow2 (fmt.fracWidth + 1)) = false :=
-          beq_eq_false_iff_ne.mpr hcarryRaw
-        simp only [hdenBool, hnumBool, Bool.false_eq_true, ite_false, hhigh',
-          hnotUnder', hnotSub']
-        rw [hscaleRaw]
-        rw [hcarryBool]
-        simp only [Bool.false_eq_true, ite_false, hoverflow', totalExponent,
-          rationalExponent, roundedMantissa, shift]
-      rw [Model.roundRatScaled, dite_eq_left hfmt]
-      exact hpacked.symm.trans hieee.symm
-  | true =>
-      have hcarry :
-          roundedMantissa = Model.pow2 (fmt.fracWidth + 1) := by
-        simpa only [carry, beq_iff_eq] using hcarryValue
-      have hcarryRaw :
-          Numerics.roundQuotientEven
-              (num <<< (Int.ofNat fmt.fracWidth -
-                Numerics.RationalBinary.floorLog2 num den).toNat) den =
-            Model.pow2 (fmt.fracWidth + 1) := by
-        simpa only [roundedMantissa, shift, rationalExponent] using hcarry
-      have hcarryRawCast :
-          Numerics.roundQuotientEven
-              (num <<< ((fmt.fracWidth : Int) -
-                Numerics.RationalBinary.floorLog2 num den).toNat) den =
-            Model.pow2 (fmt.fracWidth + 1) := by
-        simpa only [Int.ofNat_eq_natCast] using hcarryRaw
-      have hnormalized :
-          normalizedExponent = totalExponent + 1 := by
-        simp only [normalizedExponent, hcarryValue, ite_true]
-      by_cases hoverflow :
-          Int.ofNat fmt.ieeeMaxNormalExponent < normalizedExponent
-      · have hresult' := hresult
-        simp only [Bool.or_eq_true, beq_iff_eq, hden, hnum, or_self, ↓reduceIte, hlow, decide_false,
-          Int.ofNat_eq_natCast, Bool.false_or, decide_eq_true_eq, Option.ite_none_left_eq_some,
-            not_lt, Option.some.injEq,
-          totalExponent, rationalExponent] at hresult'
-        have hbound :
-            totalExponent + 1 ≤
-              Int.ofNat fmt.ieeeMaxNormalExponent := by
-          have hboundRaw := hresult'.2.1
-          rw [ite_eq_left hcarryRawCast] at hboundRaw
-          simpa only [totalExponent, rationalExponent, Int.ofNat_eq_natCast] using
-            hboundRaw
-        rw [hnormalized] at hoverflow
-        exact (not_lt_of_ge hbound hoverflow).elim
-      have hpacked :
-          Model.ofFields fmt sign
-              (Int.toNat (totalExponent + 1 + Int.ofNat fmt.bias)) 0 =
-            result := by
-        have hresult' := hresult
-        simp only [Bool.or_eq_true, beq_iff_eq, hden, hnum, or_self, ↓reduceIte, hlow, decide_false,
-          Int.ofNat_eq_natCast, Bool.false_or, decide_eq_true_eq, pow2_eq_two_pow,
-            Option.ite_none_left_eq_some, not_lt,
-          Option.some.injEq, totalExponent, rationalExponent] at hresult'
-        have hpackedRaw := hresult'.2.2
-        have hcarryRawPow :
-            Numerics.roundQuotientEven
-                (num <<< ((fmt.fracWidth : Int) -
-                  Numerics.RationalBinary.floorLog2 num den).toNat) den =
-              2 ^ (fmt.fracWidth + 1) := by
-          simpa only [Int.ofNat_eq_natCast, Model.pow2_eq_two_pow] using
-            hcarryRaw
-        simpa only [Nat.sub_self, totalExponent, rationalExponent,
-          Int.ofNat_eq_natCast, Model.pow2_eq_two_pow,
-          ite_eq_left hcarryRawPow] using hpackedRaw
-      have hieee :
-          Model.ieeeRoundRatScaled fmt sign num den exponent hfmt =
-            Model.ofFields fmt sign
-              (Int.toNat (totalExponent + 1 + Int.ofNat fmt.bias)) 0 := by
-        unfold Model.ieeeRoundRatScaled
-        have hoverflow' :
-            ¬Int.ofNat fmt.ieeeMaxNormalExponent <
-              Numerics.RationalBinary.floorLog2 num den + exponent + 1 := by
-          simpa only [hnormalized, totalExponent, rationalExponent] using
-            hoverflow
-        have hcarryBool :
-            (Numerics.roundQuotientEven
-                (num <<< (Int.ofNat fmt.fracWidth -
-                  Numerics.RationalBinary.floorLog2 num den).toNat) den ==
-              Model.pow2 (fmt.fracWidth + 1)) = true :=
-          beq_iff_eq.mpr hcarryRaw
-        have hcarryBoolPow :
-            (Numerics.roundQuotientEven
-                (num <<< (Int.ofNat fmt.fracWidth -
-                  Numerics.RationalBinary.floorLog2 num den).toNat) den ==
-              2 ^ (fmt.fracWidth + 1)) = true := by
-          simpa only [Model.pow2_eq_two_pow] using hcarryBool
-        simp only [hdenBool, hnumBool, Bool.false_eq_true, ite_false, hhigh',
-          hnotUnder', hnotSub']
-        rw [hscaleRaw]
-        simp only [hcarryBoolPow, ite_true, hoverflow', ite_false,
-          Model.pow2_eq_two_pow, Nat.sub_self, totalExponent,
-          rationalExponent]
-      rw [Model.roundRatScaled, dite_eq_left hfmt]
-      exact hpacked.symm.trans hieee.symm
+  dsimp only [rationalExponent, totalExponent] at hlow hhigh
+  simp only [hdenBool, hnumBool, Bool.false_or, Bool.false_eq_true, ite_false,
+    hlow, hhigh, decide_false] at hresult
+  simp only [Option.ite_none_left_eq_some, not_lt, Option.some.injEq] at hresult
+  rw [Model.roundRatScaled, dite_eq_left hfmt]
+  unfold Model.ieeeRoundRatScaled
+  simp only [hdenBool, hnumBool, Bool.false_eq_true, ite_false, hhigh',
+    hnotUnder', hnotSub']
+  rw [hscaleRaw]
+  rw [ite_eq_right (not_lt_of_ge hresult.1)]
+  exact hresult.2.symm
 
 /--
 When numerator scaling is a nonnegative left shift, a successful normal quotient agrees with
@@ -372,7 +230,7 @@ theorem normalSpec_eq_roundRatScaled_of_some
   have hnumBool : (num == 0) = false := by
     simp [hnum]
   exact quotientRoundingCarryCases (fmt := fmt) (hfmt := hfmt) (sign := sign) (num := num)
-    (den := den) (exponent := exponent) (result := result) (hresult := hresult) (hden := hden)
-    (hnum := hnum) hlow hhigh hscaleRaw hhigh' hnotUnder' hnotSub' hdenBool hnumBool
+    (den := den) (exponent := exponent) (result := result) (hresult := hresult)
+    hlow hhigh hscaleRaw hhigh' hnotUnder' hnotSub' hdenBool hnumBool
 
 end FloatLib.Floats.Formats.BinaryInterchange.Model.FiniteQuotientRound
