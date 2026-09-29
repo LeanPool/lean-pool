@@ -204,7 +204,7 @@ theorem rationalIdeleClassEquivBaseFixed_coe
         E (RelativeIdeleGroup.classInclusion ℚ E c))
   exact Eq.trans h0 (Eq.trans h1 (Eq.trans h2 (Eq.trans h3 h4)))
 
-private noncomputable instance
+noncomputable instance
     (K : ClosedSubgroup
       (SeparableClosure ℚ ≃ₐ[ℚ] SeparableClosure ℚ))
     [hfinite : Finite

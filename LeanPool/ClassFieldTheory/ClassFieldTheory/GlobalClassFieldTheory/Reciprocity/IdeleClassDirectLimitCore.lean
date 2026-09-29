@@ -109,10 +109,10 @@ noncomputable instance rationalFiniteGaloisIdeleClassMulDistribMulAction
       (RelativeIdeleGroup.ClassGroup ℚ E) :=
   rationalAbsoluteGaloisIdeleClassAction E
 
-private instance
-    (E : FiniteGaloisIntermediateField ℚ (SeparableClosure ℚ)) :
-    Monoid (RelativeIdeleGroup.ClassGroup ℚ E) :=
-  inferInstance
+noncomputable instance rationalFiniteGaloisClassGroupMonoidFamily :
+    ∀ E : FiniteGaloisIntermediateField ℚ (SeparableClosure ℚ),
+      Monoid (RelativeIdeleGroup.ClassGroup ℚ E) :=
+  fun _ => inferInstance
 
 private noncomputable instance :
     ∀ E : FiniteGaloisIntermediateField ℚ (SeparableClosure ℚ),
@@ -270,22 +270,12 @@ theorem
         ((AlgEquiv.restrictNormalHom F σ).toAlgHom.comp
           (IntermediateField.inclusion h))
         (a : RelativeAdeleRing ℚ E)
-  induction (a : RelativeAdeleRing ℚ E) using
-      TensorProduct.inductionOn with
-  | tmul y x =>
-      simp only [RelativeIdeleGroup.adeleEmbedding,
-        RelativeIdeleGroup.scalarEmbedding_tmul,
-        RelativeIdeleGroup.conjugation_tmul]
-      congr 1
-  | add x y hx hy =>
-      let f := RelativeIdeleGroup.adeleEmbedding (IntermediateField.inclusion h)
-      let g := RelativeIdeleGroup.conjugation ℚ F (AlgEquiv.restrictNormalHom F σ)
-      let k := RelativeIdeleGroup.adeleEmbedding
-        ((AlgEquiv.restrictNormalHom F σ).toAlgHom.comp
-          (IntermediateField.inclusion h))
-      exact
-        ((congrArg g (map_add f x y)).trans (map_add g (f x) (f y))).trans
-          ((congrArg₂ (· + ·) hx hy).trans (map_add k x y).symm)
+  exact congrArg (fun f => f (a : RelativeAdeleRing ℚ E))
+    (Algebra.TensorProduct.map_id_comp
+      (S := NumberField.AdeleRing (𝓞 ℚ) ℚ)
+      (A := NumberField.AdeleRing (𝓞 ℚ) ℚ)
+      (AlgEquiv.restrictNormalHom F σ).toAlgHom
+      (IntermediateField.inclusion h)).symm
 
 /-- The equivariant scalar-extension transition map in the
 finite-Galois idele-class system. -/
@@ -401,8 +391,11 @@ noncomputable abbrev rationalIdeleClassDirectLimit :=
 /-- The multiplicative structure on the rational absolute idele-class
 direct limit supplied by Mathlib's directed-limit construction. -/
 noncomputable instance rationalIdeleClassDirectLimitMonoid :
-    Monoid rationalIdeleClassDirectLimit :=
-  DirectLimit.instMonoid
+    Monoid rationalIdeleClassDirectLimit := by
+  letI : ∀ E : FiniteGaloisIntermediateField ℚ (SeparableClosure ℚ),
+      Monoid (RelativeIdeleGroup.ClassGroup ℚ E) :=
+    rationalFiniteGaloisClassGroupMonoidFamily
+  exact DirectLimit.instMonoid
 
 theorem rationalIdeleClassDirectLimit_mk_apply
     {E F : FiniteGaloisIntermediateField ℚ (SeparableClosure ℚ)}
