@@ -1,0 +1,273 @@
+[
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle001",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch001",
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch016",
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch004"
+    ],
+    "code_lines": 9637,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle002",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch002",
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch014"
+    ],
+    "code_lines": 8995,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle003",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch003",
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch012"
+    ],
+    "code_lines": 9216,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle004",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch005",
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch027"
+    ],
+    "code_lines": 9724,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle005",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch006",
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch028"
+    ],
+    "code_lines": 9719,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle006",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch007",
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch023"
+    ],
+    "code_lines": 9512,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle007",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch008",
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch026"
+    ],
+    "code_lines": 9283,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle008",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch009",
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch024"
+    ],
+    "code_lines": 9402,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle009",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch010",
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch029"
+    ],
+    "code_lines": 9387,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle010",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch011",
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch013"
+    ],
+    "code_lines": 8377,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle011",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch015",
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch019"
+    ],
+    "code_lines": 9266,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle012",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch017",
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch021"
+    ],
+    "code_lines": 9573,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle013",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch018",
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch044"
+    ],
+    "code_lines": 8778,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle014",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch020"
+    ],
+    "code_lines": 7447,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle015",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch022"
+    ],
+    "code_lines": 7039,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle016",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch025"
+    ],
+    "code_lines": 8083,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle017",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch030"
+    ],
+    "code_lines": 7300,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle018",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch031"
+    ],
+    "code_lines": 7183,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle019",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch032"
+    ],
+    "code_lines": 8424,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle020",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch033",
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch043"
+    ],
+    "code_lines": 8785,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle021",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch034"
+    ],
+    "code_lines": 8843,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle022",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch035"
+    ],
+    "code_lines": 4459,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle023",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch036"
+    ],
+    "code_lines": 6005,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle024",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch037"
+    ],
+    "code_lines": 5752,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle025",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch038"
+    ],
+    "code_lines": 6201,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle026",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch039"
+    ],
+    "code_lines": 5923,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle027",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch040"
+    ],
+    "code_lines": 5983,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle028",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch041"
+    ],
+    "code_lines": 5600,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle029",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch042"
+    ],
+    "code_lines": 6132,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle030",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Reconstruction"
+    ],
+    "code_lines": 6542,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle031",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch045"
+    ],
+    "code_lines": 4796,
+    "valid_size": true
+  },
+  {
+    "module": "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle032",
+    "sources": [
+      "LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Batch046"
+    ],
+    "code_lines": 8011,
+    "valid_size": true
+  }
+]
