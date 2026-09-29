@@ -1,0 +1,307 @@
+/-
+Copyright (c) 2026 Dawid Trela. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Dawid Trela
+-/
+module
+
+public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.E24KC2ProofHelpers
+
+/-! KC6R4 explicit terminal-certificate subtree. No adaptive search. -/
+
+@[expose] public section
+
+noncomputable section
+
+namespace GerverSofa
+namespace PartE
+
+namespace CertificateCells257a1a1faa
+
+-- Base-four digits encode LL, LH, HL, HH subdivisions of the named root.
+abbrev thetaBelowCell1111 : AngleCell :=
+  childLH (childLH (childLH (childLH e24ThetaBelowRoot)))
+abbrev thetaBelowCell11113311 : AngleCell :=
+  childLH (childLH (childHH (childHH thetaBelowCell1111)))
+abbrev thetaBelowCell111133113101 : AngleCell :=
+  childLH (childLL (childLH (childHH thetaBelowCell11113311)))
+abbrev thetaBelowCell1111331131010200 : AngleCell :=
+  childLL (childLL (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010201 : AngleCell :=
+  childLH (childLL (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010202 : AngleCell :=
+  childHL (childLL (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010203 : AngleCell :=
+  childHH (childLL (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010210 : AngleCell :=
+  childLL (childLH (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010211 : AngleCell :=
+  childLH (childLH (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010212 : AngleCell :=
+  childHL (childLH (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010213 : AngleCell :=
+  childHH (childLH (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010220 : AngleCell :=
+  childLL (childHL (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010221 : AngleCell :=
+  childLH (childHL (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010222 : AngleCell :=
+  childHL (childHL (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010223 : AngleCell :=
+  childHH (childHL (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010230 : AngleCell :=
+  childLL (childHH (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010231 : AngleCell :=
+  childLH (childHH (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010232 : AngleCell :=
+  childHL (childHH (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010233 : AngleCell :=
+  childHH (childHH (childHL (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010300 : AngleCell :=
+  childLL (childLL (childHH (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010301 : AngleCell :=
+  childLH (childLL (childHH (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010302 : AngleCell :=
+  childHL (childLL (childHH (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010303 : AngleCell :=
+  childHH (childLL (childHH (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010310 : AngleCell :=
+  childLL (childLH (childHH (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010311 : AngleCell :=
+  childLH (childLH (childHH (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010312 : AngleCell :=
+  childHL (childLH (childHH (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010313 : AngleCell :=
+  childHH (childLH (childHH (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010320 : AngleCell :=
+  childLL (childHL (childHH (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010321 : AngleCell :=
+  childLH (childHL (childHH (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010322 : AngleCell :=
+  childHL (childHL (childHH (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010323 : AngleCell :=
+  childHH (childHL (childHH (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010330 : AngleCell :=
+  childLL (childHH (childHH (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010331 : AngleCell :=
+  childLH (childHH (childHH (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010332 : AngleCell :=
+  childHL (childHH (childHH (childLL thetaBelowCell111133113101)))
+abbrev thetaBelowCell1111331131010333 : AngleCell :=
+  childHH (childHH (childHH (childLL thetaBelowCell111133113101)))
+
+end CertificateCells257a1a1faa
+
+open CertificateCells257a1a1faa
+theorem cover_subtree_596b54980499 :
+    adaptiveCoverCheck 4 (childHL (childLL thetaBelowCell111133113101)) = true := by
+  exact adaptiveCoverCheck_succ_of_children 3 (childHL (childLL thetaBelowCell111133113101))
+    (by
+      exact adaptiveCoverCheck_succ_of_children 2 (childLL (childHL (childLL
+        thetaBelowCell111133113101)))
+        (by
+          have h : (thetaBelowCell1111331131010200).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010200 h)
+        (by
+          have h : (thetaBelowCell1111331131010201).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010201 h)
+        (by
+          have h : (thetaBelowCell1111331131010202).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010202 h)
+        (by
+          have h : (thetaBelowCell1111331131010203).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010203 h))
+    (by
+      exact adaptiveCoverCheck_succ_of_children 2 (childLH (childHL (childLL
+        thetaBelowCell111133113101)))
+        (by
+          have h : (thetaBelowCell1111331131010210).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010210 h)
+        (by
+          have h : (thetaBelowCell1111331131010211).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010211 h)
+        (by
+          have h : (thetaBelowCell1111331131010212).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010212 h)
+        (by
+          have h : (thetaBelowCell1111331131010213).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010213 h))
+    (by
+      exact adaptiveCoverCheck_succ_of_children 2 (childHL (childHL (childLL
+        thetaBelowCell111133113101)))
+        (by
+          have h : (thetaBelowCell1111331131010220).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010220 h)
+        (by
+          have h : (thetaBelowCell1111331131010221).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010221 h)
+        (by
+          have h : (thetaBelowCell1111331131010222).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010222 h)
+        (by
+          have h : (thetaBelowCell1111331131010223).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010223 h))
+    (by
+      exact adaptiveCoverCheck_succ_of_children 2 (childHH (childHL (childLL
+        thetaBelowCell111133113101)))
+        (by
+          have h : (thetaBelowCell1111331131010230).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010230 h)
+        (by
+          have h : (thetaBelowCell1111331131010231).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010231 h)
+        (by
+          have h : (thetaBelowCell1111331131010232).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010232 h)
+        (by
+          have h : (thetaBelowCell1111331131010233).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010233 h))
+
+theorem cover_subtree_e230aaf0d2f3 :
+    adaptiveCoverCheck 4 (childHH (childLL thetaBelowCell111133113101)) = true := by
+  exact adaptiveCoverCheck_succ_of_children 3 (childHH (childLL thetaBelowCell111133113101))
+    (by
+      exact adaptiveCoverCheck_succ_of_children 2 (childLL (childHH (childLL
+        thetaBelowCell111133113101)))
+        (by
+          have h : (thetaBelowCell1111331131010300).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010300 h)
+        (by
+          have h : (thetaBelowCell1111331131010301).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010301 h)
+        (by
+          have h : (thetaBelowCell1111331131010302).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010302 h)
+        (by
+          have h : (thetaBelowCell1111331131010303).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010303 h))
+    (by
+      exact adaptiveCoverCheck_succ_of_children 2 (childLH (childHH (childLL
+        thetaBelowCell111133113101)))
+        (by
+          have h : (thetaBelowCell1111331131010310).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010310 h)
+        (by
+          have h : (thetaBelowCell1111331131010311).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010311 h)
+        (by
+          have h : (thetaBelowCell1111331131010312).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010312 h)
+        (by
+          have h : (thetaBelowCell1111331131010313).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010313 h))
+    (by
+      exact adaptiveCoverCheck_succ_of_children 2 (childHL (childHH (childLL
+        thetaBelowCell111133113101)))
+        (by
+          have h : (thetaBelowCell1111331131010320).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010320 h)
+        (by
+          have h : (thetaBelowCell1111331131010321).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010321 h)
+        (by
+          have h : (thetaBelowCell1111331131010322).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010322 h)
+        (by
+          have h : (thetaBelowCell1111331131010323).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010323 h))
+    (by
+      exact adaptiveCoverCheck_succ_of_children 2 (childHH (childHH (childLL
+        thetaBelowCell111133113101)))
+        (by
+          have h : (thetaBelowCell1111331131010330).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010330 h)
+        (by
+          have h : (thetaBelowCell1111331131010331).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010331 h)
+        (by
+          have h : (thetaBelowCell1111331131010332).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010332 h)
+        (by
+          have h : (thetaBelowCell1111331131010333).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131010333 h))
+
+theorem e24KC2ThetaBelowLeaf111133113_c1_c0_c1_c0 :
+    adaptiveCoverCheck 5 (childLL thetaBelowCell111133113101) = true := by
+  exact adaptiveCoverCheck_succ_of_children 4 (childLL thetaBelowCell111133113101)
+    (by
+      exact adaptiveCoverCheck_succ_of_children 3 (childLL (childLL thetaBelowCell111133113101))
+        (by
+          have h : ((childLL (childLL (childLL thetaBelowCell111133113101)))).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 3 (childLL (childLL (childLL
+            thetaBelowCell111133113101))) h)
+        (by
+          have h : ((childLH (childLL (childLL thetaBelowCell111133113101)))).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 3 (childLH (childLL (childLL
+            thetaBelowCell111133113101))) h)
+        (by
+          have h : ((childHL (childLL (childLL thetaBelowCell111133113101)))).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 3 (childHL (childLL (childLL
+            thetaBelowCell111133113101))) h)
+        (by
+          have h : ((childHH (childLL (childLL thetaBelowCell111133113101)))).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 3 (childHH (childLL (childLL
+            thetaBelowCell111133113101))) h))
+    (by
+      exact adaptiveCoverCheck_succ_of_children 3 (childLH (childLL thetaBelowCell111133113101))
+        (by
+          have h : ((childLL (childLH (childLL thetaBelowCell111133113101)))).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 3 (childLL (childLH (childLL
+            thetaBelowCell111133113101))) h)
+        (by
+          have h : ((childLH (childLH (childLL thetaBelowCell111133113101)))).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 3 (childLH (childLH (childLL
+            thetaBelowCell111133113101))) h)
+        (by
+          have h : ((childHL (childLH (childLL thetaBelowCell111133113101)))).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 3 (childHL (childLH (childLL
+            thetaBelowCell111133113101))) h)
+        (by
+          have h : ((childHH (childLH (childLL thetaBelowCell111133113101)))).rejected = true := by
+            decide +kernel
+          exact adaptiveCoverCheck_true_of_rejected 3 (childHH (childLH (childLL
+            thetaBelowCell111133113101))) h))
+    cover_subtree_596b54980499
+    cover_subtree_e230aaf0d2f3
+
+end PartE
+end GerverSofa
