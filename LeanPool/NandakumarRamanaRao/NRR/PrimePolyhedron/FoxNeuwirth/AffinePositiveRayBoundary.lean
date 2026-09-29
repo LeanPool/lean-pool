@@ -2282,47 +2282,6 @@ def RayBoundaryTheorem : Prop :=
   ∀ {p : Nat} (hp : Nat.Prime p) (V : VertexMap p),
     GeneralPosition hp V → Nonempty (RayBoundaryCertificate hp V)
 
-/-- Construct the finite positive-ray boundary certificate from the local general-position
-hypotheses.  If the deviation-zero line misses the simplex, or if its constant nonzero mean is
-negative, no facet meets the open positive ray.  Otherwise the lower and upper feasible endpoints
-are exactly the two positive-ray facets and have opposite cofactor signs. -/
-noncomputable def rayBoundaryCertificate
-    (hp : Nat.Prime p) (V : VertexMap p)
-    (hgp : GeneralPosition hp V) : RayBoundaryCertificate hp V := by
-  classical
-  by_cases hzero : ∃ w : StandardSimplex p,
-      ∀ q : Fin (p - 1), deviation hp (affineValue V w) q = 0
-  · let w₀ : StandardSimplex p := Classical.choose hzero
-    have hw₀ : ∀ q : Fin (p - 1),
-        deviation hp (affineValue V w₀) q = 0 := Classical.choose_spec hzero
-    by_cases hlowerMean : 0 < mean p
-        (affineValue V (lowerEndpointSimplexPoint hp V hgp.facetRegular w₀))
-    · exact RayBoundaryCertificate.pair
-        (lowerEndpointIndex hp V hgp.facetRegular w₀)
-        (upperEndpointIndex hp V hgp.facetRegular w₀)
-        (lowerEndpointIndex_ne_upperEndpointIndex hp V hgp.facetRegular w₀)
-        (lowerEndpointIndex_pos hp V hgp.facetRegular w₀)
-        (upperEndpointIndex_neg hp V hgp.facetRegular w₀)
-        (facetHasPositiveRayIntersection_iff_eq_lower_or_upper
-          hp V hgp.facetRegular hgp.avoidsCodimTwo hgp.avoidsOrigin
-          w₀ hw₀ hlowerMean)
-    · exact RayBoundaryCertificate.empty (fun k hfacet => by
-        rcases facetHasPositiveRayIntersection_endpoint_classification
-            hp V hgp.facetRegular hgp.avoidsCodimTwo w₀ hw₀ k hfacet with
-          hLower | hUpper
-        · exact hlowerMean hLower.2
-        · have hlowerMean' : 0 < mean p
-              (affineValue V
-                (lowerEndpointSimplexPoint hp V hgp.facetRegular w₀)) :=
-            (lowerEndpoint_mean_pos_iff_upperEndpoint_mean_pos
-              hp V hgp.facetRegular hgp.avoidsOrigin w₀ hw₀).2 hUpper.2
-          exact hlowerMean hlowerMean')
-  · exact RayBoundaryCertificate.empty (fun k hfacet => by
-      rcases hfacet with ⟨u, huInterior, huDeviation, huMean⟩
-      apply hzero
-      exact ⟨fullSimplexOfFacet hp k u,
-        fullSimplexOfFacet_deviation_eq_zero hp V k u huDeviation⟩)
-
 /-- Construct the finite positive-ray boundary certificate from the weaker
 positive-ray-relative general-position hypotheses. -/
 noncomputable def rayBoundaryCertificateOfPositiveRayGeneralPosition
@@ -2363,6 +2322,15 @@ noncomputable def rayBoundaryCertificateOfPositiveRayGeneralPosition
       apply hzero
       exact ⟨fullSimplexOfFacet hp k u,
         fullSimplexOfFacet_deviation_eq_zero hp V k u huDeviation⟩)
+
+/-- Construct the finite positive-ray boundary certificate from the local general-position
+hypotheses.  If the deviation-zero line misses the simplex, or if its constant nonzero mean is
+negative, no facet meets the open positive ray.  Otherwise the lower and upper feasible endpoints
+are exactly the two positive-ray facets and have opposite cofactor signs. -/
+noncomputable def rayBoundaryCertificate
+    (hp : Nat.Prime p) (V : VertexMap p)
+    (hgp : GeneralPosition hp V) : RayBoundaryCertificate hp V :=
+  rayBoundaryCertificateOfPositiveRayGeneralPosition hp V hgp.toPositiveRayGeneralPosition
 
 /-- The local affine positive-ray boundary theorem. -/
 theorem rayBoundaryTheorem : RayBoundaryTheorem := by

@@ -472,15 +472,25 @@ theorem endpointInterpolant_regular
       (endpointInterpolant hp N L s a) (endpointTopCell hp N L q₀ eta) hvertex]
   exact hregular prismCell omitted
 
+/-- Strong skeleton transversality: no deviation-zero point lies on the boundary of a refined top
+simplex, without imposing a sign condition on the common coordinate mean. -/
+def DeviationSkeletonFree
+    (hp : Nat.Prime p) (N : Nat) (F : ContinuousCoordinateMap p) : Prop :=
+  ∀ (q : TopCell hp N) (w : StandardSimplex (p - 1)),
+    (∀ r : Fin (p - 1),
+      value hp N F q w (ReferenceAffineOrbitCount.coordinateLabel hp r) =
+        value hp N F q w (ReferenceAffineOrbitCount.lastLabel hp)) →
+    StandardSimplex.IsInterior w
+
 /-- Endpoint skeleton transversality inherited from prism codimension-two avoidance. -/
-theorem endpointInterpolant_skeletonFree
+theorem endpointInterpolant_deviationSkeletonFree
     (hp : Nat.Prime p) (N L : Nat) (s : EndpointSide)
     (a : Assignment hp N L)
     (hcodim : ∀ q : PrismCell hp N L,
       AvoidsCodimTwoDeviationZero hp (localVertexMap hp N L a q)) :
-    PositiveRaySkeletonFree hp (N + L)
+    DeviationSkeletonFree hp (N + L)
       (endpointInterpolant hp N L s a) := by
-  intro q w hdev hmean
+  intro q w hdev
   obtain ⟨q₀, eta, rfl⟩ := endpointTopCell_surjective hp N L q
   by_contra hnot
   simp only [StandardSimplex.IsInterior, not_forall] at hnot
@@ -532,6 +542,17 @@ theorem endpointInterpolant_skeletonFree
     exact hi0
   exact hcodim prismCell full omitted (omitted.succAbove i')
     (Fin.succAbove_ne omitted i').symm hfullDev ⟨hzero1, hzero2⟩
+
+/-- Endpoint skeleton transversality inherited from prism codimension-two avoidance. -/
+theorem endpointInterpolant_skeletonFree
+    (hp : Nat.Prime p) (N L : Nat) (s : EndpointSide)
+    (a : Assignment hp N L)
+    (hcodim : ∀ q : PrismCell hp N L,
+      AvoidsCodimTwoDeviationZero hp (localVertexMap hp N L a q)) :
+    PositiveRaySkeletonFree hp (N + L)
+      (endpointInterpolant hp N L s a) := by
+  intro q w hdev _
+  exact endpointInterpolant_deviationSkeletonFree hp N L s a hcodim q w hdev
 
 /-- Quantitative endpoint closeness needed for the stored zero-free straight-line field. -/
 def EndpointStraightLineSafe
