@@ -31,6 +31,7 @@ open Function Set Filter Topology
 /-- A bounded operator is strictly singular when it is not bounded below after precomposition
 with any bounded-below embedding of an infinite-dimensional Banach space.
 Blueprint label: `def:strictly-singular`. -/
+@[expose]
 def IsStrictlySingular
     {𝕜 X Y : Type*} [NontriviallyNormedField 𝕜]
     [NormedAddCommGroup X] [NormedSpace 𝕜 X]
