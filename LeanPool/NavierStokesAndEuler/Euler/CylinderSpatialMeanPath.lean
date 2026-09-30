@@ -49,7 +49,7 @@ local instance instCylinderSpatialMeanPath6 : NormedSpace ℝ (C(K,CylinderL2 P 
     C(K,SpatialL2 V)) := inferInstance
 
 /-- Path mean, given by `(mean P).compLeftContinuous ℝ K`. -/
-def pathMean : C(K,CylinderL2 P V) →L[ℝ] C(K,SpatialL2 V) :=
+@[expose] def pathMean : C(K,CylinderL2 P V) →L[ℝ] C(K,SpatialL2 V) :=
   (mean P).compLeftContinuous ℝ K
 
 omit [CompactSpace K] in

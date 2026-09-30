@@ -26,7 +26,7 @@ open MeasureTheory EulerSobolev EulerLiftedGradientSpace EulerMetricTransport
 open scoped ContDiff ENNReal Topology
 
 /-- Assemble the four actual cylinder-velocity components as a bounded linear map. -/
-def velocityMap (L : Fin 4 → Vector3 →L[ℝ] ℝ) : Vector3 →L[ℝ] Domain 4 :=
+@[expose] def velocityMap (L : Fin 4 → Vector3 →L[ℝ] ℝ) : Vector3 →L[ℝ] Domain 4 :=
   (EuclideanSpace.equiv (𝕜 := ℝ) (ι := Fin 4)).symm.toContinuousLinearMap.comp
       (ContinuousLinearMap.pi L)
 

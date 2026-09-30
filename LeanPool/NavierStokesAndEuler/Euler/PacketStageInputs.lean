@@ -116,7 +116,7 @@ variable {q : ℕ} {B : ℝ} {S : Scales (q : ℝ) B} {n : ℕ} (P : Stage S n)
 
 /-- Joined input, bundling `parent`, `label`, `low`, `normal` and the required compatibility
 proofs. -/
-def joinedInput : EulerPacketInitial.Input (referencePlane (P.joinedNormal hn)) where
+@[expose] def joinedInput : EulerPacketInitial.Input (referencePlane (P.joinedNormal hn)) where
   parent := P.restrictedParent
   label := P.restrictedState.labels
   low := P.restrictedLow
@@ -192,7 +192,7 @@ variable {q : ℕ} {B : ℝ} {S : Scales (q : ℝ) B} (P : Stage S 0)
 
 /-- Forward input, bundling `parent`, `label`, `low`, `normal` and the required compatibility
 proofs. -/
-def forwardInput : GeometryForwardInput (referencePlane P.forwardNormal) where
+@[expose] def forwardInput : GeometryForwardInput (referencePlane P.forwardNormal) where
   parent := P.restrictedParent
   label := P.restrictedState.labels
   low := P.restrictedLow

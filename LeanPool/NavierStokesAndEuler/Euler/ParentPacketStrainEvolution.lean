@@ -36,7 +36,7 @@ def inverseDerivative : SmoothTimeField (Icc (0 : ℝ) G.T) Space EndSpace :=
 
 @[simp] theorem inverseDerivative_apply (t : Icc (0 : ℝ) G.T) (x : Space) :
     G.inverseDerivative.field t x =
-      -((G.inverse.field t x).comp ((G.first.field t x).comp (G.inverse.field t x))) := rfl
+      -((G.inverse.field t x).comp ((G.first.field t x).comp (G.inverse.field t x))) := by rfl
 
 theorem inverse_time : SmoothTimeField.TimeDerivative G.T G.T_pos.le G.inverse G.inverseDerivative
     := by

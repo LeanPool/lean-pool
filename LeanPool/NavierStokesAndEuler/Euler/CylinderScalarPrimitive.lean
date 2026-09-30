@@ -125,7 +125,7 @@ local instance instCylinderScalarPrimitive4 : NormedSpace ℝ C(K,CylinderL2 per
     inferInstance
 
 /-- Path primitive, given by `(primitive period).compLeftContinuous ℝ K`. -/
-def pathPrimitive : C(K,CylinderL2 period ℝ) →L[ℝ] C(K,CylinderL2 period ℝ) :=
+@[expose] def pathPrimitive : C(K,CylinderL2 period ℝ) →L[ℝ] C(K,CylinderL2 period ℝ) :=
   (primitive period).compLeftContinuous ℝ K
 
 theorem pathPrimitive_norm : ‖pathPrimitive (K := K) period‖ ≤ period := by

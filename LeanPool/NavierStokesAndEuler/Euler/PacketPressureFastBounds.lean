@@ -98,6 +98,7 @@ variable (D) {raw : VectorField} (G : Field P D.T raw)
 
 /-- Physical covector, given by `(D.FInv.field t (Y t x)).adjoint (raw (t,(Y t x,k*⟪D.m₀,Y t
 x⟫_ℝ)))`. -/
+@[expose]
 def physicalCovector (_G : Field P D.T raw) (k : ℝ) (Y : Icc (0 : ℝ) D.T → Space → Space)
     (t : Icc (0 : ℝ) D.T) (x : Space) : Space :=
   (D.FInv.field t (Y t x)).adjoint (raw (t,(Y t x,k*⟪D.m₀,Y t x⟫_ℝ)))

@@ -51,7 +51,7 @@ synthesis. -/
 local instance instSourceCylinderForward2 : NormedRing (Space →ᵇ U →L[ℝ] U) := inferInstance
 
 /-- Actual homogeneous evolution from the source Gram generator. -/
-def evolution (S : Set Space) (hS : MeasurableSet S) :=
+@[expose] def evolution (S : Set Space) (hS : MeasurableSet S) :=
   constructedEvolution period S hS T hT (sourceGenerator Q Q₁ c hc hQ)
 
 /-- The source coefficient automatically has the translated regularity needed by the solver. -/

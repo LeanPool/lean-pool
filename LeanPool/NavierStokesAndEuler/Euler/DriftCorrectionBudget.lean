@@ -39,6 +39,7 @@ structure Budget {q : ℕ} {T : ℝ} (hq : 6 ≤ q + 1)
     (velocityMap (velocityComponents D.κ D.direction)) (D.approximation t) ≤ drift
 
 /-- Restricting the time interval preserves both actual norm bounds and all constants. -/
+@[expose]
 def Budget.restrict {q : ℕ} {T S : ℝ} {hq : 6 ≤ q + 1}
     {D : CorrectionData period (q + 1) (Icc (0 : ℝ) S)}
     {N : ℕ} {R : C(Icc (0 : ℝ) S, ℝ)}

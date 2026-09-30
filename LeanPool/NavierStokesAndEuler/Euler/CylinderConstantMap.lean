@@ -26,7 +26,7 @@ variable (period : ℝ) [Fact (0 < period)]
   [NormedAddCommGroup F] [NormedSpace ℝ F] [NormedAddCommGroup G] [NormedSpace ℝ G]
 
 /-- Map, given by `L.compLpL 2 (liftMeasure period)`. -/
-def map (L : E →L[ℝ] F) : CylinderL2 period E →L[ℝ] CylinderL2 period F :=
+@[expose] def map (L : E →L[ℝ] F) : CylinderL2 period E →L[ℝ] CylinderL2 period F :=
   L.compLpL 2 (liftMeasure period)
 
 theorem map_ae (L : E →L[ℝ] F) (u : CylinderL2 period E) :

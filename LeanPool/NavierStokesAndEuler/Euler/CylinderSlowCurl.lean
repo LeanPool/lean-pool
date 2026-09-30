@@ -43,7 +43,7 @@ synthesis. -/
 local instance instPacketCurlCoordinates2 : NormedSpace ℝ (Space →L[ℝ] Space) := inferInstance
 
 /-- The coefficient of one genuine spatial derivative in the slow curl. -/
-def curlCoefficient (i : Fin 3) : (Space →L[ℝ] Space) →L[ℝ] (Space →L[ℝ] Space) :=
+@[expose] def curlCoefficient (i : Fin 3) : (Space →L[ℝ] Space) →L[ℝ] (Space →L[ℝ] Space) :=
   crossOperator.comp ((ContinuousLinearMap.apply ℝ Space (EuclideanSpace.single i 1)).comp
     (ContinuousLinearMap.adjoint.toContinuousLinearEquiv.toContinuousLinearMap
       : (Space →L[ℝ] Space) →L[ℝ] (Space →L[ℝ] Space)))
@@ -104,7 +104,7 @@ local instance instPacketCurlCoordinates4 : NormedSpace ℝ (Space →ᵇ Space 
 
 /-- Curl coefficient path, given by `((curlCoefficient i).compLeftContinuousBounded
 Space).compLeftContinuous ℝ K`. -/
-def curlCoefficientPath (i : Fin 3) :
+@[expose] def curlCoefficientPath (i : Fin 3) :
     C(K,Space →ᵇ Space →L[ℝ] Space) →L[ℝ] C(K,Space →ᵇ Space →L[ℝ] Space) :=
   ((curlCoefficient i).compLeftContinuousBounded Space).compLeftContinuous ℝ K
 
@@ -267,7 +267,7 @@ theorem path_ae (t : K) :
   exact Finset.sum_congr rfl (fun i _ => ht i)
 
 /-- Field, given by `pointField P (path P G p) (path_orbit P G hG p hp) t`. -/
-def field (t : K) : LiftDomain P → Space :=
+@[expose] def field (t : K) : LiftDomain P → Space :=
   pointField P (path P G p) (path_orbit P G hG p hp) t
 
 /-- The reconstructed L² path is exactly the classical curl used in the packet. -/

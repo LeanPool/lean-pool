@@ -44,6 +44,7 @@ theorem initialPrimitive_pathLp (f : C(Icc (0 : ℝ) T, E)) :
   apply ContinuousMap.ext
   intro t
   rw [initialPrimitive_apply,initialRealPrimitive_eq_integral]
+  rw [EulerContinuousTimeIntegral.integral_apply]
   change (∫ s in (0 : ℝ)..(t : ℝ), zeroExtension T (pathLp T hT f) s) =
     ∫ s in (0 : ℝ)..(t : ℝ), extendPath T hT f s
   rw [intervalIntegral.integral_of_le t.property.1,intervalIntegral.integral_of_le t.property.1]

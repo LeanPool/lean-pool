@@ -28,7 +28,7 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteS
 
 /-- The unforced Euler momentum residual, with space-time derivative and the
 canonical real gradient. -/
-def momentumResidual (u : ℝ × E → E) (p : ℝ × E → ℝ) (z : ℝ × E) : E :=
+@[expose] def momentumResidual (u : ℝ × E → E) (p : ℝ × E → ℝ) (z : ℝ × E) : E :=
   fderiv ℝ u z (1, u z) + gradient (fun x => p (z.1, x)) z.2
 
 omit [CompleteSpace E] in

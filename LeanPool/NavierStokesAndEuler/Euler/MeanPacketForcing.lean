@@ -139,7 +139,8 @@ theorem hasFDerivAt_value (A : SmoothFamily μ P V) (a : P) :
 
 theorem fderiv_value (A : SmoothFamily μ P V) :
     fderiv ℝ A.value = fun a => derivativeBundling μ (A.derivative.value a) :=
-  funext (fun a => (A.hasFDerivAt_value a).fderiv)
+  funext (fun a => by
+    simpa only [derivativeBundling_apply] using (A.hasFDerivAt_value a).fderiv)
 
 end SmoothFamily
 
@@ -407,7 +408,7 @@ namespace Forcing
 variable {D : Data} {raw : VectorField} (G : Forcing D raw)
 
 /-- The genuine Bochner L² class of the prescribed forcing. -/
-def lp : TimeLp D.T L2 := pathLp D.T D.T_pos.le G.path
+@[expose] def lp : TimeLp D.T L2 := pathLp D.T D.T_pos.le G.path
 
 theorem lp_rep : (G.lp : ℝ → L2) =ᵐ[timeMeasure D.T] extendPath D.T D.T_pos.le G.path :=
   pathLp_ae D.T D.T_pos.le G.path

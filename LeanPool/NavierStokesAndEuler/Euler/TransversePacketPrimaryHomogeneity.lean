@@ -24,6 +24,7 @@ variable {P : ℝ} [Fact (0 < P)]
   {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U] {D : Data U}
 
 /-- Smul, bundling `value`, `orbit`, `mean_zero`. -/
+@[expose]
 def smul (Y : InitialData P D) (a : ℝ) : InitialData P D where
   value := a • Y.value
   orbit := by simpa only [Submodule.coe_smul_of_tower,map_smul] using Y.orbit.const_smul a

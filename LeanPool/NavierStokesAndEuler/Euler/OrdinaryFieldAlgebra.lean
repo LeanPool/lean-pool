@@ -31,7 +31,7 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
 
 /-- Sum field, bundling `field`, `smooth`, `integrable`, `have` and the required compatibility
 proofs. -/
-def sumField {ι : Type*} (I : Finset ι) (A : ι → SmoothL2Field V) : SmoothL2Field V where
+@[expose] def sumField {ι : Type*} (I : Finset ι) (A : ι → SmoothL2Field V) : SmoothL2Field V where
   field x := ∑ i ∈ I, (A i).field x
   smooth := ContDiff.sum (fun i _ => (A i).smooth)
   integrable n := by
@@ -41,7 +41,8 @@ def sumField {ι : Type*} (I : Finset ι) (A : ι → SmoothL2Field V) : SmoothL
       (iteratedFDeriv_fun_sum_apply (fun i _ => (A i).smooth.contDiffAt.of_le (by simp))).symm))
 
 @[simp] theorem sumField_field {ι : Type*} (I : Finset ι) (A : ι → SmoothL2Field V) (x : Space) :
-    (sumField I A).field x = ∑ i ∈ I, (A i).field x := rfl
+    (sumField I A).field x = ∑ i ∈ I, (A i).field x := by
+  rfl
 
 theorem toLp_sumField {ι : Type*} (I : Finset ι) (A : ι → SmoothL2Field V) :
     (sumField I A).toLp = ∑ i ∈ I, (A i).toLp := by
@@ -65,10 +66,12 @@ theorem wordField_sum {ι : Type*} (I : Finset ι) (A : ι → SmoothL2Field V)
   simp only [_root_.sum_apply]
 
 /-- Field neg, given by `mapField (-(ContinuousLinearMap.id ℝ V)) A`. -/
+@[expose]
 def fieldNeg (A : SmoothL2Field V) : SmoothL2Field V := mapField (-(ContinuousLinearMap.id ℝ V)) A
 
 @[simp] theorem fieldNeg_field (A : SmoothL2Field V) (x : Space) :
-    (fieldNeg A).field x = -A.field x := rfl
+    (fieldNeg A).field x = -A.field x := by
+  rfl
 
 /-- Field sub, given by `addField A (fieldNeg B)`. -/
 @[expose] def fieldSub (A B : SmoothL2Field V) : SmoothL2Field V := addField A (fieldNeg B)

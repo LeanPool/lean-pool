@@ -59,21 +59,25 @@ def Budget.sourceSize (B : Budget period hT A) (q : ℕ) (hq : 6 ≤ q) : ℝ :=
     (B.correctionSize period) ((8/B.initialRadius)*B.correctionSize period)
 
 /-- The factor in the correction bound after removing the common delta. -/
+@[expose]
 def Budget.baseCorrectionSize (B : Budget period hT A) : ℝ := metricAmplification B.metric.c/2
 
 /-- An explicit source constant involving only the prescribed norm budgets
 and the reciprocal initial radius; it is independent of delta. -/
+@[expose]
 def Budget.sourceCost (B : Budget period hT A) (q : ℕ) (hq : 6 ≤ q) : ℝ :=
   let S := (B.spatial q hq).full
   sourceBound period S.B0 S.B1 S.A0 S.A2 1
     (B.baseCorrectionSize period) ((8/B.initialRadius)*B.baseCorrectionSize period)
 
 /-- Pressure cost, given by `2*(B.spatial q hq).full.M*B.sourceCost period q hq`. -/
+@[expose]
 def Budget.pressureCost (B : Budget period hT A) (q : ℕ) (hq : 6 ≤ q) : ℝ :=
   2*(B.spatial q hq).full.M*B.sourceCost period q hq
 
 /-- Time derivative cost, given by `(1+2*(B.spatial q hq).full.M*(448*(B.spatial q
 hq).full.B+1))*B.sourceCost period q hq`. -/
+@[expose]
 def Budget.timeDerivativeCost (B : Budget period hT A) (q : ℕ) (hq : 6 ≤ q) : ℝ :=
   (1+2*(B.spatial q hq).full.M*(448*(B.spatial q hq).full.B+1))*B.sourceCost period q hq
 

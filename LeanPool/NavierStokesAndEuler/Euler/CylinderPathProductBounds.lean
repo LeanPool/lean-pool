@@ -359,7 +359,7 @@ variable (P : ℝ) [Fact (0 < P)] {K : Type*} [TopologicalSpace K] [CompactSpace
 
 /-- Bilinear term, given by `pathMap P (B (basisVector i)) (scalarProductPath P (component i)
 (component_norm i) p q hp hq)`. -/
-def bilinearTerm (i : Fin 3) : C(K,LiftL2 P) :=
+@[expose] def bilinearTerm (i : Fin 3) : C(K,LiftL2 P) :=
   pathMap P (B (basisVector i))
     (scalarProductPath P (component i) (component_norm i) p q hp hq)
 

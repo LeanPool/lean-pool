@@ -45,6 +45,7 @@ open Set InnerProductSpace ContinuousLinearMap EulerSmoothLimit EulerSpatialCuto
 open scoped ContDiff
 
 /-- Forward initialized global shear cost as an element of `ℝ`. -/
+@[expose]
 def forwardInitializedGlobalShearCost (R H0 C : ℝ) : ℝ :=
   ‖coordinateEquiv.symm.toContinuousLinearMap‖*
       (sobolevEmbeddingConstant period 3*fixedVelocityGradeCost R H0 1*(4*R))*C +

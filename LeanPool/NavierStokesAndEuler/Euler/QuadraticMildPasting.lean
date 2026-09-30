@@ -36,7 +36,7 @@ open MeasureTheory Set EulerCylinderSobolevSpace EulerSobolevHeat EulerQuadratic
 open scoped Topology
 
 /-- A translated compact time window inside the prescribed coefficient interval. -/
-def timeWindow {S : ℝ} (a T : ℝ) (ha : 0 ≤ a) (haT : a + T ≤ S) :
+@[expose] def timeWindow {S : ℝ} (a T : ℝ) (ha : 0 ≤ a) (haT : a + T ≤ S) :
     C(Icc (0 : ℝ) T, Icc (0 : ℝ) S) where
   toFun t := ⟨a+t.val, by linarith [t.property.1], by linarith [t.property.2]⟩
   continuous_toFun := (continuous_const.add continuous_subtype_val).subtype_mk _
@@ -111,7 +111,7 @@ variable {X Y : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
   [NormedAddCommGroup Y] [NormedSpace ℝ Y]
 
 /-- The actual nonlinear forcing evaluated along a solution on a translated compact time window. -/
-def windowSource {S : ℝ} (C : Coefficients (Icc (0 : ℝ) S) X Y)
+@[expose] def windowSource {S : ℝ} (C : Coefficients (Icc (0 : ℝ) S) X Y)
     (a T : ℝ) (ha : 0 ≤ a) (haT : a + T ≤ S) (u : C(Icc (0 : ℝ) T, X)) : C(Icc (0 : ℝ) T, Y) :=
   ⟨fun t => C.apply (timeWindow a T ha haT t) (u t),
     C.continuous.comp ((timeWindow a T ha haT).continuous.prodMk u.continuous)⟩

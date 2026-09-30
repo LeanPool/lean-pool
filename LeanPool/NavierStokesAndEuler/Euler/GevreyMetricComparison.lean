@@ -34,6 +34,7 @@ abbrev BaseWord (s : ℕ) := Σ n : Fin (s + 1), Fin n.val → Fin 4
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- The finite family of actual strong derivatives indexed by all base Sobolev words. -/
+@[expose]
 def baseWordValues {s : ℕ} {f : LiftL2 period} (J : SpatialJet period standardDirection s f) :
     BaseWord s → LiftL2 period := fun w => J.word w.2
 

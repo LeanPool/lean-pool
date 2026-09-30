@@ -23,7 +23,7 @@ open scoped Topology
 variable {E : Type*} [NormedAddCommGroup E]
 
 /-- The literal adjacent-interval pasting of two actual clamped paths. -/
-def glueFunction (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b)
+@[expose] def glueFunction (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b)
     (u : C(Icc (0 : ℝ) a, E)) (v : C(Icc (0 : ℝ) b, E)) (t : ℝ) : E :=
   if t ≤ a then extendPath a ha u t else extendPath b hb v (t-a)
 

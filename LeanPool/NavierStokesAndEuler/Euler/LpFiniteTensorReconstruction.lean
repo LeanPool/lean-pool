@@ -57,6 +57,7 @@ theorem tupleLp_ae (u : ι → Lp V 2 μ) :
 end Tuple
 
 /-- Coordinate directions in the ordinary spatial domain. -/
+@[expose]
 def direction (i : Fin 3) : Space := EuclideanSpace.single i 1
 
 /-- Tensor coordinates, given by `ContinuousLinearMap.pi (fun w => (ContinuousLinearMap.id ℝ

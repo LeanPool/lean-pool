@@ -66,6 +66,7 @@ theorem physicalTensor_memLp (n : ℕ) (t : Icc (0 : ℝ) T) :
         w t)
 
 /-- Physical tensor value, constructed using `physicalTensorLp`. -/
+@[expose]
 def physicalTensorValue (n : ℕ) (t : Icc (0 : ℝ) T) :
     Lp (Vector3 [×n]→L[ℝ] Vector3) 2 (volume : Measure Vector3) :=
   physicalTensorLp P k m (A.pointField t) (A.pointField_smooth t) n

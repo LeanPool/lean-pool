@@ -296,6 +296,7 @@ theorem coverPath_smooth (t : K) :
   exact he ▸ hc
 
 /-- Of path, bundling `field`, `smooth`, `jet`, `jet_eq`. -/
+@[expose]
 def ofPath : SmoothTimeField K LiftTangent Space where
   field := coverPath P p hp
   smooth := coverPath_smooth P p hp
@@ -303,7 +304,7 @@ def ofPath : SmoothTimeField K LiftTangent Space where
   jet_eq := coverJet_eq P p hp
 
 @[simp] theorem ofPath_apply (t : K) (x : LiftTangent) :
-    (ofPath P p hp).field t x = pointField P p hp t (coveringMap P x) := rfl
+    (ofPath P p hp).field t x = pointField P p hp t (coveringMap P x) := by rfl
 
 theorem ofPath_jet_norm_le (n : ℕ) (C : ℝ) (hC : 0 ≤ C)
     (hb : ∀ (t : K) (x : LiftTangent),
@@ -354,6 +355,7 @@ local instance instPacketFieldSmoothTimeField4 (n : ℕ) : NormedSpace ℝ
     (LiftTangent →ᵇ (LiftTangent [×n]→L[ℝ] Space)) := inferInstance
 
 /-- To smooth time field, given by `ofPath P G.path G.orbit`. -/
+@[expose]
 def toSmoothTimeField (G : Field P T raw) : SmoothTimeField (Icc (0 : ℝ) T) LiftTangent Space :=
   ofPath P G.path G.orbit
 
@@ -429,11 +431,13 @@ local instance instCorrectionSmoothTimeField4 (n : ℕ) : NormedSpace ℝ
     (LiftTangent →ᵇ (LiftTangent [×n]→L[ℝ] Vector3)) := inferInstance
 
 /-- Correction coefficient, given by `(B.fieldTower P).toSmoothTimeField`. -/
+@[expose]
 def Budget.correctionCoefficient (B : Budget P hT A) :
     SmoothTimeField (Icc (0 : ℝ) T) LiftTangent Vector3 :=
   (B.fieldTower P).toSmoothTimeField
 
 /-- Correction derivative coefficient, given by `(B.timeDerivativeTower P).toSmoothTimeField`. -/
+@[expose]
 def Budget.correctionDerivativeCoefficient (B : Budget P hT A) :
     SmoothTimeField (Icc (0 : ℝ) T) LiftTangent Vector3 :=
   (B.timeDerivativeTower P).toSmoothTimeField
@@ -487,23 +491,27 @@ variable (P : ℝ) [Fact (0 < P)] {T : ℝ} {hT : 0 < T} {A : Data P T}
   (B : Budget P hT A) {raw raw_t : VectorField}
 
 /-- Packet coefficient, given by `G.toSmoothTimeField.add (B.correctionCoefficient P)`. -/
+@[expose]
 def Budget.packetCoefficient (G : Field P T raw) :
     SmoothTimeField (Icc (0 : ℝ) T) LiftTangent Space :=
   G.toSmoothTimeField.add (B.correctionCoefficient P)
 
 /-- Packet derivative coefficient, given by `H.toSmoothTimeField.add
 (B.correctionDerivativeCoefficient P)`. -/
+@[expose]
 def Budget.packetDerivativeCoefficient (H : Field P T raw_t) :
     SmoothTimeField (Icc (0 : ℝ) T) LiftTangent Space :=
   H.toSmoothTimeField.add (B.correctionDerivativeCoefficient P)
 
 /-- Lifted packet coefficient, given by `lift (B.packetCoefficient P G) A.κ A.direction`. -/
+@[expose]
 def Budget.liftedPacketCoefficient (G : Field P T raw) :
     SmoothTimeField (Icc (0 : ℝ) T) LiftTangent LiftTangent :=
   lift (B.packetCoefficient P G) A.κ A.direction
 
 /-- Lifted packet derivative coefficient, given by `lift (B.packetDerivativeCoefficient P H) A.κ
 A.direction`. -/
+@[expose]
 def Budget.liftedPacketDerivativeCoefficient (H : Field P T raw_t) :
     SmoothTimeField (Icc (0 : ℝ) T) LiftTangent LiftTangent :=
   lift (B.packetDerivativeCoefficient P H) A.κ A.direction

@@ -37,6 +37,7 @@ variable (period : ℝ) [Fact (0 < period)]
 variable {T : ℝ} {hT : 0 < T} {A : Data period T}
 
 /-- The actual common continuous L² path, defined from the base finite correction. -/
+@[expose]
 def FiniteFamily.commonPath (F : FiniteFamily period hT A) : C(Icc (0 : ℝ) T, LiftL2 period) :=
   (valueOperator period 7).compLeftContinuous ℝ (Icc (0 : ℝ) T) (F.solution 6 le_rfl)
 
@@ -153,12 +154,13 @@ variable (period : ℝ) [Fact (0 < period)]
 variable {T : ℝ} {hT : 0 < T} {A : Data period T}
 
 /-- The actual continuous nonlinear raw source of each finite correction. -/
+@[expose]
 def FiniteFamily.rawSourcePath (F : FiniteFamily period hT A) (q : ℕ) (hq : 6 ≤ q) :
     C(Icc (0 : ℝ) T, SobolevSpace period q) :=
   rawPath period hq (A.atOrder period q) (F.solution q hq)
 
 /-- The actual signed coercive pressure of each finite correction. -/
-def FiniteFamily.signedPressurePath (F : FiniteFamily period hT A) (q : ℕ) (hq : 6 ≤ q) :
+@[expose] def FiniteFamily.signedPressurePath (F : FiniteFamily period hT A) (q : ℕ) (hq : 6 ≤ q) :
     C(Icc (0 : ℝ) T, SobolevSpace period q) :=
   pressurePath period hq (A.atOrder period q) (F.solution q hq)
 
@@ -210,6 +212,7 @@ theorem FiniteFamily.signedPressurePath_value_base (F : FiniteFamily period hT A
     (fun n hn ih => (F.signedPressurePath_value_succ period C n hn t).trans ih) q hq
 
 /-- The actual common signed correction pressure is a continuous L² path. -/
+@[expose]
 def FiniteFamily.commonPressure (F : FiniteFamily period hT A) : C(Icc (0 : ℝ) T, LiftL2 period) :=
   (valueOperator period 6).compLeftContinuous ℝ (Icc (0 : ℝ) T) (F.signedPressurePath period 6
       le_rfl)

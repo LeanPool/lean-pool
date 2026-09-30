@@ -23,7 +23,7 @@ open scoped ContDiff ENNReal NNReal Topology SchwartzMap
 
 
 /-- Euclidean coordinate zero is the angle; coordinates one through three are spatial. -/
-noncomputable def coordinateLinearEquiv : Domain 4 ≃ₗ[ℝ] LiftTangent where
+@[expose] noncomputable def coordinateLinearEquiv : Domain 4 ≃ₗ[ℝ] LiftTangent where
   toFun z := (WithLp.toLp 2 (fun i : Fin 3 => z i.succ), z 0)
   invFun p := WithLp.toLp 2 (Fin.cons p.2 (fun i => p.1 i))
   left_inv z := by
@@ -46,7 +46,7 @@ noncomputable def coordinateLinearEquiv : Domain 4 ≃ₗ[ℝ] LiftTangent where
     · simp
 
 /-- The coordinate isomorphism, continuous in both directions. -/
-noncomputable def coordinateEquiv : Domain 4 ≃L[ℝ] LiftTangent :=
+@[expose] noncomputable def coordinateEquiv : Domain 4 ≃L[ℝ] LiftTangent :=
   coordinateLinearEquiv.toContinuousLinearEquiv
 
 @[simp] theorem coordinateEquiv_apply (z : Domain 4) :

@@ -35,6 +35,7 @@ variable (P : ℝ) [Fact (0 < P)] (M : EulerMeanPacketProvider.Data)
 /-- Source packet pullback field as an element of `Field P M.T (fun z => (sourceOperators P M D
 I).inverseFrame z (fieldSum (N+1) κ (assembledVelocity N (sourceProfiles P M D I Iprimary))
 z))`. -/
+@[expose]
 def sourcePacketPullbackField (N : ℕ) (κ : ℝ) :
     Field P M.T (fun z => (sourceOperators P M D I).inverseFrame z
       (fieldSum (N+1) κ (assembledVelocity N (sourceProfiles P M D I Iprimary)) z)) := by
@@ -68,7 +69,7 @@ def sourcePacketPullbackField (N : ℕ) (κ : ℝ) :
 theorem sourcePacketPullbackField_path (N : ℕ) (κ : ℝ) :
     (sourcePacketPullbackField P M D hT I Iprimary N κ).path =
       ∑ i ∈ range N, ((sourcePairField P M D hT I Iprimary κ (i+1)).path +
-        κ^(i+1) • (sourceMeanPullbackField P M D hT I Iprimary (i+1)).path) := rfl
+        κ^(i+1) • (sourceMeanPullbackField P M D hT I Iprimary (i+1)).path) := by rfl
 
 theorem sourcePacketPullbackField_mem (A : SourceCoefficientAgreement M D)
     (N : ℕ) (κ : ℝ) (t : Icc (0 : ℝ) M.T)

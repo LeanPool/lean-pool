@@ -102,6 +102,7 @@ variable {D : Data U} {ι : Type*} [Fintype ι] {q : ℕ} (L : Budget D ι q)
 @[expose] def commonCost : ℝ := L.velocityCost+L.derivativeCost
 
 /-- Enlarge radius as an element of `Budget D ι q`. -/
+@[expose]
 def enlargeRadius (R' : ℝ) (hR : L.R ≤ R') : Budget D ι q :=
   { L with
     R := R'

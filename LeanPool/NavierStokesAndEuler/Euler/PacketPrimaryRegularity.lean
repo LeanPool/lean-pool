@@ -27,6 +27,7 @@ open Set MeasureTheory EulerSmoothLimit EulerPacketPointJets EulerPacketProfileR
 variable {P T : ℝ} [Fact (0 < P)]
 
 /-- Change time as an element of `ProfileRegularity P T' hT' S a`. -/
+@[expose]
 def ProfileRegularity.changeTime {T' : ℝ} {hT : 0 ≤ T} {S : Set Space} {a : Profile}
     (G : ProfileRegularity P T hT S a) (h : T = T') (hT' : 0 ≤ T') :
     ProfileRegularity P T' hT' S a := by
@@ -38,6 +39,7 @@ variable {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U] [CompleteS
 
 /-- Primary, bundling `high`, `mean`, `corrector`, `pressure` and the required compatibility
 proofs. -/
+@[expose]
 def ProfileRegularity.primary (G : EulerTransversePacketProvider.Forcing P D raw)
     (I : EulerTransversePacketProvider.InitialData P D) (O : Operators)
     (hcorrector : O.curlCorrector = D.curlCorrector P) :
@@ -66,6 +68,7 @@ def ProfileRegularity.primary (G : EulerTransversePacketProvider.Forcing P D raw
   mean_angle _ _ _ := rfl
 
 /-- Zero forcing is an actual supported smooth cylinder path with zero angular integral. -/
+@[expose]
 def homogeneousForcing (D : EulerTransversePacketProvider.Data U) :
     EulerTransversePacketProvider.Forcing P D (0 : VectorField) :=
   (Field.zero P D.T).transverseForcingOfRaw D (fun _ _ _ _ => rfl) (fun _ _ => by simp)
@@ -79,6 +82,7 @@ def homogeneousForcing (D : EulerTransversePacketProvider.Data U) :
 
 /-- Homogeneous primary regularity, given by `ProfileRegularity.primary (homogeneousForcing D) I
 O hcorrector`. -/
+@[expose]
 def homogeneousPrimaryRegularity (D : EulerTransversePacketProvider.Data U)
     (I : EulerTransversePacketProvider.InitialData P D) (O : Operators)
     (hcorrector : O.curlCorrector = D.curlCorrector P) :

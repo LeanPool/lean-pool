@@ -79,6 +79,7 @@ variable (P : ParentFrame D τ)
 /-- Sigma, given by `Real.sqrt (normalizedTilt (P.B τ) (P.m τ) (P.v τ))`. -/
 @[expose] def sigma : ℝ := Real.sqrt (normalizedTilt (P.B τ) (P.m τ) (P.v τ))
 /-- Shear, given by `primaryShear P.c P.m P.v τ`. -/
+@[expose]
 def shear : ℝ := primaryShear P.c P.m P.v τ
 /-- Epsilon, given by `Real.sqrt (P.a/P.shear)`. -/
 @[expose] def epsilon : ℝ := Real.sqrt (P.a/P.shear)
@@ -86,6 +87,7 @@ def shear : ℝ := primaryShear P.c P.m P.v τ
 @[expose] def horizon : ℝ := P.a*(D.T-τ)/P.epsilon
 /-- Ray scale, given by `activationRayScale (D.deformationEquiv ⟨τ,hτ.le,hτT.le⟩ 0) (cross (unit
 (P.m τ)) (unit (P.v τ)))`. -/
+@[expose]
 def rayScale (hτ : 0 < τ) (hτT : τ < D.T) : ℝ :=
   activationRayScale (D.deformationEquiv ⟨τ,hτ.le,hτT.le⟩ 0)
     (cross (unit (P.m τ)) (unit (P.v τ)))

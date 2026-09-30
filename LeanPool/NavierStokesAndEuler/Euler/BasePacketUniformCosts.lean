@@ -195,6 +195,10 @@ theorem firstPacket_uniform_primitives (δ : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 
       frequencyConstant*X^frequencyPower := by
   let X := firstParameterSize T δ hchild
   obtain ⟨hX,hK,hTi,h2,hd,hhX⟩ := firstParameterSize_bounds T δ hchild hT hδ hh
+  have hK' : (L).K ≤ X := by
+    simpa only [packetBase_label_constant] using hK
+  have hL : (H).L ≤ X := by
+    simpa only [packetBase_boundary_zero] using (zero_le_one.trans hX)
   have hr := (L).shortForward_radius_primitives H firstNormal firstNormal_unit firstFrame support
       compact
     initialCoefficientCost initialCoefficientCost_nonneg
@@ -202,8 +206,8 @@ theorem firstPacket_uniform_primitives (δ : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 
     (packetBase_short T hTB) (Metric.ball 0 (1/2 : ℝ)) Metric.isOpen_ball.measurableSet
     Metric.isOpen_ball subset_halfBall
     (fun x hx => le_of_lt (by simpa only [Metric.mem_ball,dist_zero_right] using hx))
-    T⁻¹ (hTB.trans initialTime_le_one) le_rfl δ firstCoordinate X hK hTi h2
-    (zero_le_one.trans hX) hd (by simpa only [firstCoordinate_norm] using hX)
+    T⁻¹ (hTB.trans initialTime_le_one) le_rfl δ firstCoordinate X hK' hTi h2
+    hL hd (by simpa only [firstCoordinate_norm] using hX)
   have hSX : X ≤ sourceEnvelope X :=
     (inputEnvelope_bounds X X hX le_rfl).2.1.trans
       (EulerPacketSourceRadius.le_sourceRadiusEnvelope _

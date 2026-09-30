@@ -38,6 +38,7 @@ def packetInverseCoefficient : MatrixCoefficient D.T
 
 /-- Piola pair raw, defined pointwise by `D.FInv.field (D.clamp z.1) z.2.1 (κ^p • raw z+κ^(p+1)
 • D.curlCorrector P raw z)`. -/
+@[expose]
 def piolaPairRaw (κ : ℝ) (raw : VectorField) (p : ℕ) : VectorField := fun z =>
   D.FInv.field (D.clamp z.1) z.2.1 (κ^p • raw z+κ^(p+1) • D.curlCorrector P raw z)
 

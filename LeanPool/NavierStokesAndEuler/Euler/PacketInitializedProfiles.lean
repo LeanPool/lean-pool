@@ -41,6 +41,7 @@ variable (M : EulerMeanPacketProvider.Data)
     (joinedTerminalPrimary period M D τ hτ hτT B (initialData D δ hδ (α • ξ) hs))
 
 /-- Initialized profile witness, constructed using `joinedSourceProfileWitness`. -/
+@[expose]
 def initializedProfileWitness (p : ℕ) :
     ProfileRegularity period M.T M.T_pos.le D.support (initializedProfiles M D τ hτ hτT B δ hδ ξ hs
         α p) :=

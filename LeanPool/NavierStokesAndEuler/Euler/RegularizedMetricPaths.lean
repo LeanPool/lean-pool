@@ -29,7 +29,7 @@ open scoped Topology
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- A genuine continuous path of L² multipliers from the given actual smooth coefficient family. -/
-def metricOperatorPath (T : ℝ) (K : Icc (0 : ℝ) T → SmoothCoefficient period)
+@[expose] def metricOperatorPath (T : ℝ) (K : Icc (0 : ℝ) T → SmoothCoefficient period)
     (hK : Continuous (fun t => (K t).operator)) : C(Icc (0 : ℝ) T, LiftL2 period →L[ℝ] LiftL2
         period) :=
   ⟨fun t => (K t).operator, hK⟩

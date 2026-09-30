@@ -69,6 +69,7 @@ theorem inverse_guard :
 
 /-- Source normal budget, bundling `Rc`, `C`, `Ri`, `Rc_nonneg` and the required compatibility
 proofs. -/
+@[expose]
 def sourceNormalBudget (q : ℕ) : EulerTransversePacketJoin.NormalBudget D q (radius R C C₁) where
   Rc := R
   C := amplitude C C₁

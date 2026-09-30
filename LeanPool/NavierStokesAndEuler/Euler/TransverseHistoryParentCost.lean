@@ -21,6 +21,7 @@ namespace EulerTransverseHistoryBounds
 open EulerPacketParentMeanCoercivity
 
 /-- Scalar transport, given by `1+((2*(c⁻¹)^2*q^2*q1+c⁻¹*q1)*T+c⁻¹*q)`. -/
+@[expose]
 def scalarTransport (T c q q1 : ℝ) : ℝ :=
   1+((2*(c⁻¹)^2*q^2*q1+c⁻¹*q1)*T+c⁻¹*q)
 

@@ -26,7 +26,7 @@ open scoped Topology ENNReal
 variable {A : SmoothL2Field Space} (L : FiniteLifespan A)
 
 /-- Endpoint filter, given by `Filter.comap (fun t : L.Time => (t : ℝ)) (𝓝[<] L.duration)`. -/
-def endpointFilter : Filter L.Time :=
+@[expose] def endpointFilter : Filter L.Time :=
   Filter.comap (fun t : L.Time => (t : ℝ)) (𝓝[<] L.duration)
 
 theorem endpointFilter_eq_atTop : L.endpointFilter=(atTop : Filter L.Time) :=

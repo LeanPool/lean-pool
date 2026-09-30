@@ -513,13 +513,13 @@ local instance instForwardPathDistribSMul : DistribSMul ℝ C(K, α →ᵇ U →
   inferInstance
 
 /-- The actual projected-forcing coefficient field. -/
-def leftInversePath (c : ℝ) (hc : 0 < c) (Q : C(K, α →ᵇ U →L[ℝ] E))
+@[expose] def leftInversePath (c : ℝ) (hc : 0 < c) (Q : C(K, α →ᵇ U →L[ℝ] E))
     (hQ : ∀ t x v, c * ‖v‖ ^ 2 ≤ ‖Q t x v‖ ^ 2) : C(K,α →ᵇ E →L[ℝ] U) :=
   pathCompositionMap (α := α) (K := K) (U := E) (E := U) (F := U)
     (inversePath c hc Q hQ) (pathAdjointMap (α := α) (K := K) (U := U) (E := E) Q)
 
 /-- The actual ordinary coefficient in source equation (12). -/
-def generatorPath (c : ℝ) (hc : 0 < c) (Q Q₁ : C(K, α →ᵇ U →L[ℝ] E))
+@[expose] def generatorPath (c : ℝ) (hc : 0 < c) (Q Q₁ : C(K, α →ᵇ U →L[ℝ] E))
     (hQ : ∀ t x v, c * ‖v‖ ^ 2 ≤ ‖Q t x v‖ ^ 2) : C(K,α →ᵇ U →L[ℝ] U) :=
   (-2 : ℝ) • pathCompositionMap (α := α) (K := K) (U := U) (E := E) (F := U)
     (leftInversePath c hc Q hQ) Q₁

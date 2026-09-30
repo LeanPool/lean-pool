@@ -165,7 +165,7 @@ namespace Scales
 variable {K}
 
 /-- Compactness supplies the single grade-independent upper scale. -/
-def ofGrowth [CompactSpace K] (g : C(K, ℝ)) (hg : ∀ t, 0 < g t) : Scales K where
+@[expose] def ofGrowth [CompactSpace K] (g : C(K, ℝ)) (hg : ∀ t, 0 < g t) : Scales K where
   growth := g
   growth_pos := hg
   H0 := max 1 ‖g‖

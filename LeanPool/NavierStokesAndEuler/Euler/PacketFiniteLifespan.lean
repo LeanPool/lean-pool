@@ -125,7 +125,7 @@ open Set Filter EulerSmoothLimit EulerLpTranslation EulerLpTranslation.SmoothL2F
 open scoped Topology
 
 /-- Initial datum, given by `Stage.initialDataLimit packets le_rfl le_rfl`. -/
-def initialDatum : SmoothL2Field Space := Stage.initialDataLimit packets le_rfl le_rfl
+@[expose] def initialDatum : SmoothL2Field Space := Stage.initialDataLimit packets le_rfl le_rfl
 
 theorem initialDatum_Hm (s : ℕ) :
     Tendsto (fun n => derivativeSum s

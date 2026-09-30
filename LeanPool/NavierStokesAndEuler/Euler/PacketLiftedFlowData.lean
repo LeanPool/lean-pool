@@ -269,6 +269,7 @@ variable (P : ℝ) [Fact (0 < P)] {T : ℝ} {hT : 0 < T} {A : EulerAllOrderCorre
   (B : Budget P hT A) {raw raw_t : VectorField}
 
 /-- Physical flow data as an element of `EulerPhysicalGraphFlowBounds.Data P T`. -/
+@[expose]
 def Budget.physicalFlowData (G : Field P T raw) (H : Field P T raw_t)
     (hGfield : A.approximation = G.toFieldTower) (htime : TimeDerivative hT.le G H)
     (k R Rt ρ C0 Cn Ch Ev Et : ℝ)
@@ -484,6 +485,7 @@ open Set InnerProductSpace ContinuousLinearMap EulerSmoothLimit EulerSpatialCuto
 open scoped ContDiff
 
 /-- Initialized global shear cost as an element of `ℝ`. -/
+@[expose]
 def initializedGlobalShearCost (R H0 C : ℝ) : ℝ :=
   ‖coordinateEquiv.symm.toContinuousLinearMap‖*
       (sobolevEmbeddingConstant period 3*fixedVelocityGradeCost R H0 1*(4*R))*C +
@@ -628,6 +630,7 @@ open EulerSmoothLimit EulerPacketTerminalDatum EulerPacketProfileRecursion
   EulerParameterWordGevrey
 
 /-- Coordinate cost, given by `‖coordinateEquiv.symm.toContinuousLinearMap‖`. -/
+@[expose]
 def coordinateCost : ℝ := ‖coordinateEquiv.symm.toContinuousLinearMap‖
 
 /-- Physical envelope, given by `3*X*((1+18*X^2*X)*(9*X^2*(X+coordinateCost*2*S)+2))`. -/
@@ -651,6 +654,7 @@ def hessianEnvelope (X : ℝ) : ℝ :=
     (fixedVelocityGradeCost X X 1+fixedVelocityGradeCost X X 2+1)
 
 /-- Radius envelope, given by `1+coordinateCost*(4*X+4*inverseRadiusEnvelope X)`. -/
+@[expose]
 def radiusEnvelope (X : ℝ) : ℝ := 1+coordinateCost*(4*X+4*inverseRadiusEnvelope X)
 
 /-- Velocity input envelope, given by `liftedInputConstant period*(velocity X X X+normal X X
@@ -658,6 +662,7 @@ X)`. -/
 @[expose]
 def velocityInputEnvelope (X : ℝ) : ℝ := liftedInputConstant period*(velocity X X X+normal X X X)
 /-- Error input envelope, given by `2*liftedInputConstant period*outputEnvelope period X`. -/
+@[expose]
 def errorInputEnvelope (X : ℝ) : ℝ := 2*liftedInputConstant period*outputEnvelope period X
 /-- Time input envelope, given by `2*liftedInputConstant period*(timeEnvelope X+outputEnvelope
 period X)`. -/
@@ -666,6 +671,7 @@ def timeInputEnvelope (X : ℝ) : ℝ := 2*liftedInputConstant period*(timeEnvel
     period X)
 /-- Weighted error envelope, given by `(1+9*X)*physicalEnvelope X (4*inverseRadiusEnvelope
 X)*sobolevEmbeddingConstant period 3 * outputEnvelope period X`. -/
+@[expose]
 def weightedErrorEnvelope (X : ℝ) : ℝ :=
   (1+9*X)*physicalEnvelope X (4*inverseRadiusEnvelope X)*sobolevEmbeddingConstant period 3 *
     outputEnvelope period X

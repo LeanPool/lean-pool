@@ -30,6 +30,7 @@ open Set MeasureTheory InnerProductSpace ContinuousLinearMap EulerSmoothLimit
 open scoped ContDiff Topology
 
 /-- Word count, given by `∑ n ∈ range (m+1), (3 : ℝ)^n`. -/
+@[expose]
 def wordCount (m : ℕ) : ℝ := ∑ n ∈ range (m+1), (3 : ℝ)^n
 
 theorem wordCount_nonneg (m : ℕ) : 0 ≤ wordCount m := sum_nonneg (fun _ _ => by positivity)

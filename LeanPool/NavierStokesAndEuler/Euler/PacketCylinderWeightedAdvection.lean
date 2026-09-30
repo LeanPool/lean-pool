@@ -29,13 +29,13 @@ open scoped ContDiff
 
 /-- Product profile ratio, given by `⟨fun t => g t*h t/b t,(g.continuous.mul h.continuous).div
 b.continuous (fun t => (hb t).ne')⟩`. -/
-def productProfileRatio {K : Type*} [TopologicalSpace K]
+@[expose] def productProfileRatio {K : Type*} [TopologicalSpace K]
     (g h b : C(K, ℝ)) (hb : ∀ t, 0 < b t) : C(K,ℝ) :=
   ⟨fun t => g t*h t/b t,(g.continuous.mul h.continuous).div b.continuous (fun t => (hb t).ne')⟩
 
 @[simp] theorem productProfileRatio_apply {K : Type*} [TopologicalSpace K]
     (g h b : C(K, ℝ)) (hb : ∀ t, 0 < b t) (t : K) :
-    productProfileRatio g h b hb t = g t*h t/b t := rfl
+    productProfileRatio g h b hb t = g t*h t/b t := by rfl
 
 theorem productProfileRatio_abs_le {K : Type*} [TopologicalSpace K]
     (g h b : C(K, ℝ)) (hg : ∀ t, 0 ≤ g t) (hh : ∀ t, 0 ≤ h t)

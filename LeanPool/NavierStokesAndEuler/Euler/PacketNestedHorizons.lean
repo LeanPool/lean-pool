@@ -29,7 +29,7 @@ open Finset Real EulerScale EulerPacketScaleGeometry EulerPacketSourceScales
   scaleSequence J X (n+1)/sqrt (β n*a n*previousShear J X n)
 
 /-- Activation time, given by `∑ i ∈ range n, stepLength J X a β i`. -/
-def activationTime (J : ℕ) (X : ℝ) (a β : ℕ → ℝ) (n : ℕ) : ℝ :=
+@[expose] def activationTime (J : ℕ) (X : ℝ) (a β : ℕ → ℝ) (n : ℕ) : ℝ :=
   ∑ i ∈ range n, stepLength J X a β i
 
 /-- Horizon time, given by `activationTime J X a β n+2*timeWidth J X n`. -/

@@ -116,7 +116,7 @@ variable (FInv : C(Icc (0 : ℝ) T, L2 →L[ℝ] L2))
     HasDerivWithinAt (extendPath T hT F) (F₁ t) (Icc (0 : ℝ) T) t)
 
 /-- An explicit positive coercivity constant from the proved mean transport bound. -/
-def fixedMeanCoercivity : ℝ := (meanTransportCost T FInv F F₁)⁻¹^2 / 2
+@[expose] def fixedMeanCoercivity : ℝ := (meanTransportCost T FInv F F₁)⁻¹^2 / 2
 
 include hT in
 /-- The fixed-space coercivity constant is positive. -/

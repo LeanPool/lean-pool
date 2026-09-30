@@ -28,6 +28,7 @@ variable (P : ℝ) [Fact (0 < P)] (M : EulerMeanPacketProvider.Data)
 
 /-- Joined source operators, bundling `interval`, `period`, `inverseFrame`, `strain` and the
 required compatibility proofs. -/
+@[expose]
 def joinedSourceOperators : Operators where
   interval := Icc (0 : ℝ) M.T
   period := P

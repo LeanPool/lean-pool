@@ -134,9 +134,12 @@ theorem initializedNormalizedDerivativeField_bound (N : ℕ) (hN : 1 ≤ N) (k :
   have hh := (ha.add hb).ofRawEq
     (initializedNormalizedDerivativeField M D hTime τ hτ hτT B δ hδ ξ hs α N k)
     (fun _ _ _ => smul_add _ _ _)
-  convert hh using 1
+  have hR : 0 ≤ 4*L.R := by
+    have := L.radius_bounds.1
+    linarith
+  apply hh.mono_amplitude hR
   dsimp [EulerTransversePacketJoin.NormalBudget.blockAmplitude]
-  ring
+  ring_nf; exact le_rfl
 
 end EulerPacketTerminalDatum
 
@@ -798,10 +801,10 @@ namespace GeometryJoinedChoice
 variable (F : GeometryJoinedChoice I S k hk nextEll hnext hnext1)
 
 /-- Parent, given by `I.parent.child F.flow k I.normal F.graph nextEll hnext hnext1`. -/
-def parent : Parent := I.parent.child F.flow k I.normal F.graph nextEll hnext hnext1
+@[expose] def parent : Parent := I.parent.child F.flow k I.normal F.graph nextEll hnext hnext1
 
 /-- State, constructed using `S.joinedChild`. -/
-def state (hSym : ∀ x, -x ∈ I.support ↔ x ∈ I.support) : SmoothState F.parent :=
+@[expose] def state (hSym : ∀ x, -x ∈ I.support ↔ x ∈ I.support) : SmoothState F.parent :=
   S.joinedChild I.low I.normal I.normal_unit I.coordinates I.support I.support_compact hSym
     I.geometry.δ I.delta_pos I.terminal I.cutoff_support I.alpha (truncation k) F.hn k hk.four
     I.historyTime I.history_pos I.history_lt F.Q F.flow F.coefficient F.graph nextEll hnext hnext1

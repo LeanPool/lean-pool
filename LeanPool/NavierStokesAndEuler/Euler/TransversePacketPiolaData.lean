@@ -27,6 +27,7 @@ open EulerSmoothLimit EulerPacketPiola EulerPacketPeriodicPotential EulerPacketC
 open scoped ContDiff
 
 /-- Normal, given by `(F y).symm.toContinuousLinearMap.adjoint m₀`. -/
+@[expose]
 def normal (F : Space → Space ≃L[ℝ] Space) (m₀ : Space) (y : Space) : Space :=
   (F y).symm.toContinuousLinearMap.adjoint m₀
 
@@ -43,7 +44,7 @@ theorem normal_ne_zero (F : Space → Space ≃L[ℝ] Space) (m₀ : Space) (hm�
 variable (P : ℝ) [Fact (0 < P)]
 
 /-- Corrector, given by `liftedSlowCurl P F (field P (normal F m₀) A)`. -/
-def corrector (F : Space → Space ≃L[ℝ] Space) (m₀ : Space) (A : LiftDomain P → Space) :
+@[expose] def corrector (F : Space → Space ≃L[ℝ] Space) (m₀ : Space) (A : LiftDomain P → Space) :
     LiftDomain P → Space := liftedSlowCurl P F (field P (normal F m₀) A)
 
 variable (κ : ℝ) (m₀ : Space) (Ξ : Space → Space) (A : LiftDomain P → Space)
@@ -99,7 +100,7 @@ variable {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U]
 
 /-- Deformation equiv, given by `ContinuousLinearEquiv.equivOfInverse (D.F.field t x)
 (D.FInv.field t x) (D.inverse_left t x) (D.inverse_right t x)`. -/
-def deformationEquiv (t : Icc (0 : ℝ) D.T) (x : Space) : Space ≃L[ℝ] Space :=
+@[expose] def deformationEquiv (t : Icc (0 : ℝ) D.T) (x : Space) : Space ≃L[ℝ] Space :=
   ContinuousLinearEquiv.equivOfInverse (D.F.field t x) (D.FInv.field t x)
     (D.inverse_left t x) (D.inverse_right t x)
 

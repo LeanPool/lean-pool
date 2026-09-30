@@ -69,19 +69,21 @@ namespace EulerGraphInvariantFlow
 open Set InnerProductSpace ContinuousLinearMap EulerLiftedGradientSpace EulerMetricTransport
 
 /-- Graph linear, given by `(ContinuousLinearMap.id ℝ Vector3).prod (k • toDual ℝ Vector3 m)`. -/
-def graphLinear (k : ℝ) (m : Vector3) : Vector3 →L[ℝ] LiftTangent :=
+@[expose] def graphLinear (k : ℝ) (m : Vector3) : Vector3 →L[ℝ] LiftTangent :=
   (ContinuousLinearMap.id ℝ Vector3).prod (k • toDual ℝ Vector3 m)
 
 @[simp] theorem graphLinear_apply (k : ℝ) (m x : Vector3) :
-    graphLinear k m x = (x,k*inner ℝ m x) := rfl
+    graphLinear k m x = (x,k*inner ℝ m x) := by
+  rfl
 
 /-- Graph constraint, given by `snd ℝ Vector3 ℝ - k • (toDual ℝ Vector3 m).comp (fst ℝ Vector3
 ℝ)`. -/
-def graphConstraint (k : ℝ) (m : Vector3) : LiftTangent →L[ℝ] ℝ :=
+@[expose] def graphConstraint (k : ℝ) (m : Vector3) : LiftTangent →L[ℝ] ℝ :=
   snd ℝ Vector3 ℝ - k • (toDual ℝ Vector3 m).comp (fst ℝ Vector3 ℝ)
 
 @[simp] theorem graphConstraint_apply (k : ℝ) (m : Vector3) (z : LiftTangent) :
-    graphConstraint k m z = z.2-k*inner ℝ m z.1 := rfl
+    graphConstraint k m z = z.2-k*inner ℝ m z.1 := by
+  rfl
 
 theorem graphConstraint_graph (k : ℝ) (m x : Vector3) :
     graphConstraint k m (graphLinear k m x)=0 := by simp
@@ -226,11 +228,12 @@ variable (k : ℝ) (m : Vector3) (T : ℝ) (hT : 0 ≤ T)
   (A : SmoothTimeField (Icc (0 : ℝ) T) LiftTangent LiftTangent)
 
 /-- Graph coefficient, given by `(A.precompLinear (graphLinear k m)).map (fst ℝ Vector3 ℝ)`. -/
-def graphCoefficient : SmoothTimeField (Icc (0 : ℝ) T) Vector3 Vector3 :=
+@[expose] def graphCoefficient : SmoothTimeField (Icc (0 : ℝ) T) Vector3 Vector3 :=
   (A.precompLinear (graphLinear k m)).map (fst ℝ Vector3 ℝ)
 
 @[simp] theorem graphCoefficient_apply (t : Icc (0 : ℝ) T) (x : Vector3) :
-    (graphCoefficient k m T A).field t x = (A.field t (graphLinear k m x)).1 := rfl
+    (graphCoefficient k m T A).field t x = (A.field t (graphLinear k m x)).1 := by
+  rfl
 
 theorem graphCoefficient_timeDerivative
     (A₁ : SmoothTimeField (Icc (0 : ℝ) T) LiftTangent LiftTangent)
@@ -339,11 +342,12 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 /-- Scaled coefficient, given by `(A.precompLinear (ell⁻¹ • ContinuousLinearMap.id ℝ E)).map
 (ell • ContinuousLinearMap.id ℝ E)`. -/
-def scaledCoefficient : SmoothTimeField (Icc (0 : ℝ) T) E E :=
+@[expose] def scaledCoefficient : SmoothTimeField (Icc (0 : ℝ) T) E E :=
   (A.precompLinear (ell⁻¹ • ContinuousLinearMap.id ℝ E)).map (ell • ContinuousLinearMap.id ℝ E)
 
 @[simp] theorem scaledCoefficient_apply (t : Icc (0 : ℝ) T) (x : E) :
-    (scaledCoefficient T A ell).field t x = ell • A.field t (ell⁻¹ • x) := rfl
+    (scaledCoefficient T A ell).field t x = ell • A.field t (ell⁻¹ • x) := by
+  rfl
 
 theorem scaledCoefficient_timeDerivative
     (A₁ : SmoothTimeField (Icc (0 : ℝ) T) E E)
@@ -490,12 +494,13 @@ theorem graph_materialAcceleration_eq (t : Icc (0 : ℝ) T) (x : Vector3) :
   rfl
 
 /-- Physical coefficient, given by `scaledCoefficient T (graphCoefficient k m T A) ell`. -/
-def physicalCoefficient (ell : ℝ) : SmoothTimeField (Icc (0 : ℝ) T) Vector3 Vector3 :=
+@[expose] def physicalCoefficient (ell : ℝ) : SmoothTimeField (Icc (0 : ℝ) T) Vector3 Vector3 :=
   scaledCoefficient T (graphCoefficient k m T A) ell
 
 @[simp] theorem physicalCoefficient_apply (ell : ℝ) (t : Icc (0 : ℝ) T) (x : Vector3) :
     (physicalCoefficient k m T A ell).field t x = ell • (A.field t (graphLinear k m (ell⁻¹ • x))).1
-        := rfl
+        := by
+  rfl
 
 theorem physicalCoefficient_timeDerivative (ell : ℝ)
     (htime : SmoothTimeField.TimeDerivative T hT A A₁) :
@@ -1631,6 +1636,7 @@ theorem acceleration_cylinder_bound (t : Icc (0 : ℝ) T) (n : ℕ) :
     G.small G.sup_bound G.integrable G.lp_bound G.integrable_time G.lp_bound_time n t
 
 /-- Displacement field, constructed using `physicalField`. -/
+@[expose]
 def displacementField (k : ℝ) (m : Vector3) (ell : ℝ) (hell : 0 < ell) (t : Icc (0 : ℝ) T) :
     SmoothL2Field Vector3 :=
   physicalField P (displacement T G.time_nonneg G.A t)
@@ -1642,6 +1648,7 @@ def displacementField (k : ℝ) (m : Vector3) (ell : ℝ) (hell : 0 < ell) (t : 
     ell hell (fst ℝ Vector3 ℝ)
 
 /-- Velocity field, constructed using `physicalField`. -/
+@[expose]
 def velocityField (k : ℝ) (m : Vector3) (ell : ℝ) (hell : 0 < ell) (t : Icc (0 : ℝ) T) :
     SmoothL2Field Vector3 :=
   physicalField P (materialVelocity T G.time_nonneg G.A t) (G.velocity_periodic t)
@@ -1651,6 +1658,7 @@ def velocityField (k : ℝ) (m : Vector3) (ell : ℝ) (hell : 0 < ell) (t : Icc 
     ell hell (fst ℝ Vector3 ℝ)
 
 /-- Acceleration field L², constructed using `physicalField`. -/
+@[expose]
 def accelerationFieldL2 (k : ℝ) (m : Vector3) (ell : ℝ) (hell : 0 < ell) (t : Icc (0 : ℝ) T) :
     SmoothL2Field Vector3 :=
   physicalField P (materialAcceleration T G.time_nonneg G.A G.A₁ t)

@@ -101,7 +101,7 @@ open Set EulerSmoothLimit EulerLpTranslation EulerLpTranslation.SmoothL2Field
 /-- Scalar-pressure Euler on the closed interval `[0,T]`, with the ordinary
 all-order spatial and strong time regularity. No pressure-force path or
 pressure norm is prescribed. The maximal solution itself is on `[0,T*)`. -/
-def HasScalarEulerEvolution (A : SmoothL2Field Space) (T : ℝ) : Prop :=
+@[expose] def HasScalarEulerEvolution (A : SmoothL2Field Space) (T : ℝ) : Prop :=
   ∃ hT : 0 < T, ∃ u : Icc (0 : ℝ) T → SmoothL2Field Space,
     IsSmoothScalarEuler (hT := hT.le) u ∧ u ⟨0,le_rfl,hT.le⟩=A
 

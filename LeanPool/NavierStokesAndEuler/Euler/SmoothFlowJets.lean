@@ -65,12 +65,12 @@ def jetPath (n : ℕ) (x : E) : C(Icc (0 : ℝ) T,E [×n]→L[ℝ] E) :=
 
 /-- Velocity jet path, given by `tensorPathMap n (iteratedFDeriv ℝ n (velocityFamily T hT A)
 x)`. -/
-def velocityJetPath (n : ℕ) (x : E) : C(Icc (0 : ℝ) T,E [×n]→L[ℝ] E) :=
+@[expose] def velocityJetPath (n : ℕ) (x : E) : C(Icc (0 : ℝ) T,E [×n]→L[ℝ] E) :=
   tensorPathMap n (iteratedFDeriv ℝ n (velocityFamily T hT A) x)
 
 /-- Displacement jet path, given by `tensorPathMap n (iteratedFDeriv ℝ n (displacementFamily T
 hT A) x)`. -/
-def displacementJetPath (n : ℕ) (x : E) : C(Icc (0 : ℝ) T,E [×n]→L[ℝ] E) :=
+@[expose] def displacementJetPath (n : ℕ) (x : E) : C(Icc (0 : ℝ) T,E [×n]→L[ℝ] E) :=
   tensorPathMap n (iteratedFDeriv ℝ n (displacementFamily T hT A) x)
 
 theorem jetPath_apply (n : ℕ) (x : E) (t : Icc (0 : ℝ) T) :

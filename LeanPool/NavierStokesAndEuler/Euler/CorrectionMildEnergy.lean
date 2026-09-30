@@ -37,6 +37,7 @@ open scoped Topology
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- The actual continuous scalar right-hand side of the nonlinear correction energy estimate. -/
+@[expose]
 def correctionRhs {q : ℕ} {T : ℝ} {hq : 6 ≤ q + 1}
     {D : CorrectionData period (q + 1) (Icc (0 : ℝ) T)} {N : ℕ} {R : C(Icc (0 : ℝ) T, ℝ)}
     (S : SpatialBudget period hq D N R) (hN : N + 6 ≤ q + 1) {hT : 0 ≤ T} (K : MetricBudget period

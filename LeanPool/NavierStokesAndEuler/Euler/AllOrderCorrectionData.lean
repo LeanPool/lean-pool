@@ -113,6 +113,7 @@ theorem Data.lower_atOrder {T : ℝ} (A : Data period T) (q : ℕ) :
 
 /-- A single actual inverse-metric budget applies to every finite realization of the same
 coefficient field. -/
+@[expose]
 def Data.metricBudget {T : ℝ} (A : Data period T) (hT : 0 ≤ T)
     (K : MetricBudget period T hT (A.atOrder period 1)) (q : ℕ) :
     MetricBudget period T hT (A.atOrder period (q+1)) where

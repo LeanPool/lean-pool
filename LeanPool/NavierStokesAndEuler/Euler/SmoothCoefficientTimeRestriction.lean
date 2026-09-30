@@ -53,7 +53,7 @@ local instance instSmoothCoefficientTimeRestriction4 (n : ℕ) : NormedSpace ℝ
 namespace SmoothCoefficientPath
 
 /-- Actual time precomposition, including every spatial jet. -/
-def comp (A : SmoothCoefficientPath K V) (φ : C(L, K)) : SmoothCoefficientPath L V where
+@[expose] def comp (A : SmoothCoefficientPath K V) (φ : C(L, K)) : SmoothCoefficientPath L V where
   field := A.field.comp φ
   smooth t := A.smooth (φ t)
   jet n := (A.jet n).comp φ
@@ -123,7 +123,7 @@ continuous_subtype_val.subtype_mk _⟩`. -/
   ContinuousMap.compCLM ℝ V (initialInclusion S τ hτS)
 
 /-- Tail path, given by `ContinuousMap.compCLM ℝ V (tailInclusion S τ hτ)`. -/
-def tailPath (S τ : ℝ) (hτ : 0 ≤ τ) : C(Icc (0 : ℝ) S,V) →L[ℝ] C(Icc (0 : ℝ) (S-τ),V) :=
+@[expose] def tailPath (S τ : ℝ) (hτ : 0 ≤ τ) : C(Icc (0 : ℝ) S,V) →L[ℝ] C(Icc (0 : ℝ) (S-τ),V) :=
   ContinuousMap.compCLM ℝ V (tailInclusion S τ hτ)
 
 theorem initialPath_norm (S τ : ℝ) (hτS : τ ≤ S) : ‖initialPath (V := V) S τ hτS‖ ≤ 1 := by

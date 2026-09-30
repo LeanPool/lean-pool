@@ -149,6 +149,7 @@ variable (M : EulerMeanPacketProvider.Data)
   (N : ℕ) (hN : 1 ≤ N) (k : ℝ) (hk : 4 ≤ k)
 
 /-- Initialized metric budget, constructed using `sourceMetricBudgetOfFields`. -/
+@[expose]
 def initializedMetricBudget (q : ℕ) :
     MetricBudget period D.T D.T_pos.le
       ((initializedCorrectionData M D hTime τ hτ hτT B δ hδ ξ hs α Cagree N hN k hk).atOrder period
@@ -182,6 +183,7 @@ variable
 
 /-- All four field estimates and all coefficient estimates are actual
 properties of the initialized source data at this finite Sobolev order. -/
+@[expose]
 def initializedSpatialBudget (q : ℕ) (hq : 6 ≤ q) :
     SpatialBudget period (by omega : 6 ≤ (q+1)+1)
       ((initializedCorrectionData M D hTime τ hτ hτT B δ hδ ξ hs α Cagree N hN k hk).atOrder period
@@ -230,6 +232,7 @@ def initializedSpatialBudget (q : ℕ) (hq : 6 ≤ q) :
     X hcoef hX hNX ((q+1)+1) (q-4) (by omega) (ρ t) (hρ t) (hpacket t) t
 
 /-- The small drift envelope is kept separate from the full background. -/
+@[expose]
 def initializedDriftBudget (q : ℕ) (hq : 6 ≤ q) :
     EulerDriftCorrectionBudget.Budget period (by omega : 6 ≤ (q+1)+1)
       ((initializedCorrectionData M D hTime τ hτ hτT B δ hδ ξ hs α Cagree N hN k hk).atOrder period
@@ -256,7 +259,7 @@ theorem initializedDriftBudget_growth (q : ℕ) (hq : 6 ≤ q) :
           period D.T_pos.le
         (initializedMetricBudget M D hTime τ hτ hτT B δ hδ ξ hs α Cagree N hN k hk 0) (q+1)) =
       growthCoefficient D period Kc (2*velocity L.R S.H0 BC.multiplierCost)
-        (12*velocity L.R S.H0 BC.multiplierCost*(4*L.R)) := rfl
+        (12*velocity L.R S.H0 BC.multiplierCost*(4*L.R)) := by rfl
 
 end EulerPacketTerminalDatum
 
@@ -342,6 +345,7 @@ variable {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U]
   (Kc : CorrectionCoefficientBudget D P)
 
 /-- Growth, given by `growthCoefficient D P Kc (2*velocity R H C) (12*velocity R H C*(4*R))`. -/
+@[expose]
 def growth (R H C : ℝ) : ℝ :=
   growthCoefficient D P Kc (2*velocity R H C) (12*velocity R H C*(4*R))
 

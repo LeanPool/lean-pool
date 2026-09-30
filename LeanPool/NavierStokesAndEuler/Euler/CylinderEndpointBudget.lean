@@ -86,7 +86,7 @@ theorem radius_bounds : 1 ≤ L.R ∧ sobolevCoefficientRadius ι L.Rc ≤ L.R :
 /-- Coordinate cost, given by `T⁻¹+traceCost T`. -/
 @[expose] def coordinateCost (_L : EndpointBudget D ι q) : ℝ := T⁻¹+traceCost T
 /-- Velocity cost, given by `3*sobolevCoefficientAmplitude ι q L.Rc L.C₀*L.coordinateCost`. -/
-def velocityCost : ℝ := 3*sobolevCoefficientAmplitude ι q L.Rc L.C₀*L.coordinateCost
+@[expose] def velocityCost : ℝ := 3*sobolevCoefficientAmplitude ι q L.Rc L.C₀*L.coordinateCost
 /-- Derivative cost, given by `3*sobolevCoefficientAmplitude ι q L.Rc L.C₁*L.coordinateCost +
 3*sobolevCoefficientAmplitude ι q L.Rc L.C₀`. -/
 @[expose] def derivativeCost : ℝ := 3*sobolevCoefficientAmplitude ι q L.Rc L.C₁*L.coordinateCost +

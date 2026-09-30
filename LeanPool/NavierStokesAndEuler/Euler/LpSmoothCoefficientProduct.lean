@@ -64,7 +64,7 @@ theorem product_memLp (A : SmoothCoefficientPath K (V →L[ℝ] W)) (t : K)
       _)
 
 /-- Product, bundling `field`, `smooth`, `integrable`. -/
-def product (A : SmoothCoefficientPath K (V →L[ℝ] W)) (t : K)
+@[expose] def product (A : SmoothCoefficientPath K (V →L[ℝ] W)) (t : K)
     (f : SmoothL2Field V) : SmoothL2Field W where
   field x := A.field t x (f.field x)
   smooth := (A.smooth t).clm_apply f.smooth

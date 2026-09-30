@@ -298,7 +298,7 @@ local instance shiftedTransportSpace (q : ℕ) : NormedSpace ℝ (SobolevSpace p
     inferInstance
 
 /-- The shifted actual H⁶ pressure sum stops one derivative below the velocity cutoff. -/
-def shiftedPressureNorm {s : ℕ} (N : ℕ) (ρ : ℝ) (p : SobolevSpace period s) : ℝ :=
+@[expose] def shiftedPressureNorm {s : ℕ} (N : ℕ) (ρ : ℝ) (p : SobolevSpace period s) : ℝ :=
   ∑ n ∈ Finset.range (N+1), ((n+1 : ℕ) : ℝ)*weight ρ (n+1)*blockNorm period (toJet period p) 6 n
 
 /-- Continuity on the genuine Sobolev domain of the shifted pressure norm. -/

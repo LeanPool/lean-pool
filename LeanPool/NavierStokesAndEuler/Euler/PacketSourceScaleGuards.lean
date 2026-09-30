@@ -133,7 +133,7 @@ theorem actualGoodCost_le (J : ℕ) (hJ : 1 ≤ J) (X : ℝ)
     (mul_nonneg (exp_pos _).le (exp_pos _).le)
 
 /-- Actual extra time, given by `2*sqrt (a*previousShear J X n)*timeWidth J X (n+1)`. -/
-def actualExtraTime (J : ℕ) (X a : ℝ) (n : ℕ) : ℝ :=
+@[expose] def actualExtraTime (J : ℕ) (X a : ℝ) (n : ℕ) : ℝ :=
   2*sqrt (a*previousShear J X n)*timeWidth J X (n+1)
 
 theorem actualExtraTime_small (J D : ℕ) (hJ : 3 ≤ J) (C c X δ : ℝ)
@@ -199,7 +199,7 @@ theorem scaleSequence_ge_initial (J : ℕ) (hJ : 1 ≤ J) (X : ℝ) (hX : 0 ≤ 
 @[expose] def targetTime (J : ℕ) (X β : ℝ) (n : ℕ) : ℝ := scaleSequence J X (n+1)/sqrt β
 
 /-- Horizon, given by `targetTime J X β n+actualExtraTime J X a n`. -/
-def horizon (J : ℕ) (X a β : ℝ) (n : ℕ) : ℝ := targetTime J X β n+actualExtraTime J X a n
+@[expose] def horizon (J : ℕ) (X a β : ℝ) (n : ℕ) : ℝ := targetTime J X β n+actualExtraTime J X a n
 
 /-- Stage guards data, collecting `epsilon_pos`, `epsilon_small`, `sigma_pos`, `sigma_small`,
 `reciprocal_pos`, `reciprocal_small` and their compatibility conditions. -/

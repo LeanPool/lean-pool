@@ -25,10 +25,13 @@ open EulerParameterWordGevrey EulerCoefficientJetPressureBounds
   EulerPacketCorrectionCoefficients EulerPolynomialCost EulerCylinderPathProduct
 
 /-- Metric envelope, given by `correctionMetricEnvelope X X`. -/
+@[expose]
 def metricEnvelope (X : ℝ) : ℝ := correctionMetricEnvelope X X
 /-- Linear envelope, given by `correctionLinearEnvelope X X X`. -/
+@[expose]
 def linearEnvelope (X : ℝ) : ℝ := correctionLinearEnvelope X X X
 /-- Quadratic envelope, given by `correctionQuadraticEnvelope X X X`. -/
+@[expose]
 def quadraticEnvelope (X : ℝ) : ℝ := correctionQuadraticEnvelope X X X
 /-- Radius envelope, given by `1+(1+metricEnvelope X)*(64*X)+64*X`. -/
 @[expose] def radiusEnvelope (X : ℝ) : ℝ := 1+(1+metricEnvelope X)*(64*X)+64*X
@@ -38,6 +41,7 @@ def quadraticEnvelope (X : ℝ) : ℝ := correctionQuadraticEnvelope X X X
   1+pressureCost ((1+X)^2)⁻¹ (metricEnvelope X) 5 +
     pressureCost ((1+X)^2)⁻¹ (metricEnvelope X) 6
 /-- Multiplier envelope, given by `3*sobolevCoefficientAmplitude (Fin 4) 6 X X`. -/
+@[expose]
 def multiplierEnvelope (X : ℝ) : ℝ := 3*sobolevCoefficientAmplitude (Fin 4) 6 X X
 /-- Term envelope, given by `2*(1+multiplierEnvelope X+9*productBlockConstant
 P*multiplierEnvelope X)`. -/

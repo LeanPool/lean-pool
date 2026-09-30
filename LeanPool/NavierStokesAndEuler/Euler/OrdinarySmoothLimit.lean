@@ -32,6 +32,7 @@ local instance instOrdinarySmoothLimit1 : Fact (0 < (1 : ℝ)) := ⟨by norm_num
 variable {T : ℝ}
 
 /-- Jet path, given by `⟨fun t => (A t).jetLp n,hA n⟩`. -/
+@[expose]
 def jetPath (A : Icc (0 : ℝ) T → SmoothL2Field Space)
     (hA : ∀ n, Continuous (fun t => (A t).jetLp n)) (n : ℕ) :
     C(Icc (0 : ℝ) T,Lp (Space [×n]→L[ℝ] Space) 2 (volume : Measure Space)) :=

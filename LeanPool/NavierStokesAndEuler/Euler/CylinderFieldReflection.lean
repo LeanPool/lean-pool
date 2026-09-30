@@ -33,7 +33,7 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
 
 /-- Reflection, given by `Lp.compMeasurePreservingₗᵢ ℝ (fun x : LiftDomain P => -x)
 (EulerCylinderReflection.measurePreserving_reflection P)`. -/
-def reflection : CylinderL2 P V →ₗᵢ[ℝ] CylinderL2 P V :=
+@[expose] def reflection : CylinderL2 P V →ₗᵢ[ℝ] CylinderL2 P V :=
   Lp.compMeasurePreservingₗᵢ ℝ (fun x : LiftDomain P => -x)
     (EulerCylinderReflection.measurePreserving_reflection P)
 
@@ -73,7 +73,7 @@ theorem representative_of_reflection (u : CylinderL2 P V) (f : LiftDomain P → 
 variable {K : Type*} [TopologicalSpace K] [CompactSpace K]
 
 /-- Path reflection, given by `(reflection P).toContinuousLinearMap.compLeftContinuous ℝ K`. -/
-def pathReflection : C(K,CylinderL2 P V) →L[ℝ] C(K,CylinderL2 P V) :=
+@[expose] def pathReflection : C(K,CylinderL2 P V) →L[ℝ] C(K,CylinderL2 P V) :=
   (reflection P).toContinuousLinearMap.compLeftContinuous ℝ K
 
 omit [CompactSpace K] in
@@ -123,7 +123,7 @@ theorem reflection_mem (u : Supported P V S hS) :
   exact hx ((hSym x.1).mp hn)
 
 /-- Supported reflection as an element of `Supported P V S hS →L[ℝ] Supported P V S hS`. -/
-def supportedReflection : Supported P V S hS →L[ℝ] Supported P V S hS :=
+@[expose] def supportedReflection : Supported P V S hS →L[ℝ] Supported P V S hS :=
   ((reflection P).toContinuousLinearMap.comp (Supported P V S hS).subtypeL).codRestrict
     (Supported P V S hS) (reflection_mem P S hS hSym)
 
@@ -135,7 +135,7 @@ variable {K : Type*} [TopologicalSpace K] [CompactSpace K]
 
 /-- Supported path reflection, given by `(supportedReflection P S hS hSym).compLeftContinuous ℝ
 K`. -/
-def supportedPathReflection : C(K,Supported P V S hS) →L[ℝ] C(K,Supported P V S hS) :=
+@[expose] def supportedPathReflection : C(K,Supported P V S hS) →L[ℝ] C(K,Supported P V S hS) :=
   (supportedReflection P S hS hSym).compLeftContinuous ℝ K
 
 omit [CompactSpace K] in

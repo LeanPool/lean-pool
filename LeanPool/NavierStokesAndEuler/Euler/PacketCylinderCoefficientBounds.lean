@@ -62,7 +62,7 @@ namespace VectorCoefficient
 variable {T : ℝ} {raw : VectorField} (N : VectorCoefficient T raw)
 
 /-- Normal matrix, bundling `path`, `orbit`, `raw_eq`. -/
-def normalMatrix : MatrixCoefficient T (fun z => normalComponentMap (raw z)) where
+@[expose] def normalMatrix : MatrixCoefficient T (fun z => normalComponentMap (raw z)) where
   path := normalComponentPath N.path
   orbit := normalComponentPath_orbit N.path N.orbit
   raw_eq t x θ := by rw [N.raw_eq]; rfl

@@ -239,6 +239,7 @@ variable {n : ℕ}
 
 /-- Partition coefficient, given by `(c.compAlongOrderedFinpartitionL ℝ Vector3 Vector3
 Vector3).flipMultilinear (fun i => iteratedFDeriv ℝ (c.partSize i) (Y t) x)`. -/
+@[expose]
 def partitionCoefficient (c : OrderedFinpartition n) (t : K) (x : Vector3) :
     Tensor c.length →L[ℝ] Tensor n :=
   (c.compAlongOrderedFinpartitionL ℝ Vector3 Vector3 Vector3).flipMultilinear
@@ -1286,6 +1287,7 @@ namespace SmoothState
 variable {A : Parent} (S : SmoothState A)
 
 /-- Restrict time, bundling `evolution`, `regularity`, `labels`, `odd`. -/
+@[expose]
 def restrictTime (T : ℝ) (hT : 0 < T) (hTA : T ≤ A.T) :
     SmoothState (A.restrictTime T hT hTA) where
   evolution := S.evolution.restrictTime T hT hTA

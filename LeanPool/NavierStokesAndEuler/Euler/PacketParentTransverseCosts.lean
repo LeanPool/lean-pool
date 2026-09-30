@@ -30,9 +30,10 @@ open EulerParameterWordGevrey EulerTransverseGevreyInverse
   EulerSourceCylinderForwardSobolev EulerLinearDuhamel EulerPacketParentMeanCoercivity
 
 /-- Curvature amplitude, given by `27*C^2*C₂`. -/
-def curvatureAmplitude (C C₂ : ℝ) : ℝ := 27*C^2*C₂
+@[expose] def curvatureAmplitude (C C₂ : ℝ) : ℝ := 27*C^2*C₂
 
 /-- History cost, constructed using `inverseBlockCost`. -/
+@[expose]
 def historyCost (q : ℕ) (T R C C₁ C₂ : ℝ) : ℝ :=
   inverseBlockCost (Fin 4) q (inverseEnvelope C C₁) R
     (formCost T C C₁ (curvatureAmplitude C C₂))
@@ -40,6 +41,7 @@ def historyCost (q : ℕ) (T R C C₁ C₂ : ℝ) : ℝ :=
 
 /-- Acceleration cost, given by `inverseBlockCost (Fin 4) q (gramInverseEnvelope C) R (3*C^2)
 (accelerationBlockAmplitude (Fin 4) q R C C₁ 1 V)`. -/
+@[expose]
 def accelerationCost (q : ℕ) (R C C₁ V : ℝ) : ℝ :=
   inverseBlockCost (Fin 4) q (gramInverseEnvelope C) R (3*C^2)
     (accelerationBlockAmplitude (Fin 4) q R C C₁ 1 V)
@@ -49,6 +51,7 @@ def accelerationCost (q : ℕ) (R C C₁ V : ℝ) : ℝ :=
   2*(1+gramInverseEnvelope C*(3*C^2+2))*(R+1)
 
 /-- Forward cost, constructed using `forwardSobolevCost`. -/
+@[expose]
 def forwardCost (q : ℕ) (S Ti R C C₁ Cp : ℝ) : ℝ :=
   forwardSobolevCost (Fin 4) q S Cp (Ti+2)
     (EulerSourceCylinderForwardSobolev.forcingCost (Fin 4) q (inverseRadius R C) C)

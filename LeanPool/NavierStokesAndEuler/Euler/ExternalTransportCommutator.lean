@@ -258,7 +258,7 @@ open scoped ContDiff ENNReal Topology
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- The sum of H⁵ norms of the four actual first derivatives. -/
-def gradientFiveNorm {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
+@[expose] def gradientFiveNorm {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
     (f : LiftDomain period → F) : ℝ :=
   ∑ i : Fin 4, liftSobolevNorm period 5 (fieldDerivative period (standardDirection i) f)
 
@@ -607,8 +607,8 @@ theorem transportCommutator_eq_sum {n : ℕ} (w : Fin n → Fin 4)
   rfl
 
 /-- Sum of the actual H⁶ norms of all external transport commutators at one order. -/
-def transportCommutatorNorm (n : ℕ) (b : LiftDomain period → Domain 4) (e : LiftDomain period →
-    Vector3) : ℝ :=
+@[expose] def transportCommutatorNorm (n : ℕ) (b : LiftDomain period → Domain 4)
+    (e : LiftDomain period → Vector3) : ℝ :=
   ∑ w : Fin n → Fin 4, liftSobolevNorm period 6 (transportCommutator period w b e)
 
 /-- Positivity allows monotonicity of the coefficient sequence in the genuine commutator

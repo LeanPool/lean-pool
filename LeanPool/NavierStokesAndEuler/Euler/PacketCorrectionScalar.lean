@@ -25,6 +25,7 @@ open Set
 @[expose] def delta (X : ℝ) : ℝ := Real.exp (-Real.sqrt X)
 
 /-- Residual, given by `2*Real.exp (-(7/10)*X*Real.log k)`. -/
+@[expose]
 def residual (k X : ℝ) : ℝ := 2*Real.exp (-(7/10)*X*Real.log k)
 
 /-- Initial radius, given by `1/(1+8*R+4*M*Rc+Rc)`. -/
@@ -90,6 +91,7 @@ theorem radius_decay (C T D ρ0 k X : ℝ) (hk : 0 < k)
 
 /-- Radius, given by `⟨fun t => ρ0-2*C*(D/k+delta X)*t.val, continuous_const.sub
 (continuous_const.mul continuous_subtype_val)⟩`. -/
+@[expose]
 def radius (T C D ρ0 k X : ℝ) : C(Icc (0 : ℝ) T,ℝ) :=
   ⟨fun t => ρ0-2*C*(D/k+delta X)*t.val,
     continuous_const.sub (continuous_const.mul continuous_subtype_val)⟩

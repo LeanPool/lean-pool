@@ -102,7 +102,7 @@ theorem knownJets_eq_pieces (O : Operators) (p : ℕ) (hp : 2 ≤ p)
 variable {P T : ℝ} [Fact (0 < P)] {O : Operators} {p : ℕ} {a : ℕ → Profile}
 
 /-- Each masked component remains an actual field from the strict prefix. -/
-def PrefixFields.piece (F : PrefixFields P T p a) (k : KnownPiece) (i : ℕ) :
+@[expose] def PrefixFields.piece (F : PrefixFields P T p a) (k : KnownPiece) (i : ℕ) :
     Field P T (k.raw p a i) := by
   by_cases hi : k.active p i
   · cases k with
@@ -116,6 +116,7 @@ def PrefixFields.piece (F : PrefixFields P T p a) (k : KnownPiece) (i : ℕ) :
   · exact (Field.zero P T).congr (fun _ _ _ => by simp only [KnownPiece.raw, hi, ite_false])
 
 /-- Piece jet, given by `SpatialJetField.ofField O.interval (F.piece k i)`. -/
+@[expose]
 def PrefixFields.pieceJet (F : PrefixFields P T p a) (O : Operators) (k : KnownPiece) (i : ℕ) :
     SpatialJetField P T (fun z => k.jet O p a z i) :=
   SpatialJetField.ofField O.interval (F.piece k i)

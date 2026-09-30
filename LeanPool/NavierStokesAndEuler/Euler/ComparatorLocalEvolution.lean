@@ -494,6 +494,7 @@ variable {u₀ : Space → Space} {v : Space → ℝ → Space} {p : Space → �
 
 /-- Actual ordinary smooth-L² velocity slices recovered from a common compact
 vorticity support. The fields are definitionally the Comparator velocity. -/
+@[expose]
 def recoveredVelocity (h : EulerExistenceAndSmoothnessR3 u₀ v p)
     (T : ℝ) (K : Set Space) (hK : IsCompact K)
     (hsupport : ∀ t ∈ Icc (0 : ℝ) T, tsupport (vectorCurl (v · t)) ⊆ K) :
@@ -508,7 +509,7 @@ def recoveredVelocity (h : EulerExistenceAndSmoothnessR3 u₀ v p)
     (T : ℝ) (K : Set Space) (hK : IsCompact K)
     (hsupport : ∀ t ∈ Icc (0 : ℝ) T, tsupport (vectorCurl (v · t)) ⊆ K)
     (t : Icc (0 : ℝ) T) :
-    (recoveredVelocity h T K hK hsupport t).field = (v · (t : ℝ)) := rfl
+    (recoveredVelocity h T K hK hsupport t).field = (v · (t : ℝ)) := by rfl
 
 /-- All genuine spatial L² tensor norms are uniformly bounded on the common
 compact-vorticity interval. No time regularity of these norms is assumed. -/

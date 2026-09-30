@@ -74,6 +74,7 @@ theorem extra_le_requiredRadius (extra : ℝ) : extra ≤ requiredRadius L extra
 
 /-- Enlarge for primary, given by `L.enlargeRadius (requiredRadius L extra) (le_requiredRadius L
 extra)`. -/
+@[expose]
 def enlargeForPrimary (extra : ℝ) : EulerTransversePacketJoin.Budget D τ hτ hτT B ι q :=
   L.enlargeRadius (requiredRadius L extra) (le_requiredRadius L extra)
 

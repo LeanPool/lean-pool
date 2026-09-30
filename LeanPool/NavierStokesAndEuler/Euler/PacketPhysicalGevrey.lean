@@ -95,6 +95,7 @@ variable (X Y : Icc (0 : ℝ) D.T → Space → Space)
   (hdet : ∀ t x, (operatorMatrix (D.F.field t x)).det = 1)
 
 /-- Physical reconstruction, given by `graphReconstruction D P κ k e t (Y t x)`. -/
+@[expose]
 def physicalReconstruction (t : Icc (0 : ℝ) D.T) (x : Space) : Space :=
   graphReconstruction D P κ k e t (Y t x)
 

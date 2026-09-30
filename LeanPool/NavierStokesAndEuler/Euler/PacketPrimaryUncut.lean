@@ -95,6 +95,7 @@ variable {D : Data U} (τ : ℝ) (hτ : 0 < τ) (hτT : τ < D.T)
 
 /-- Uncut velocity, given by `physical D ⟨0,le_rfl,D.T_pos.le⟩ x (B.coefficients.labelCoordinate
 x ξ ⟨0,le_rfl,hτ.le⟩) t`. -/
+@[expose]
 def uncutVelocity (t : ℝ) (x : Space) : Space :=
   physical D ⟨0,le_rfl,D.T_pos.le⟩ x
     (B.coefficients.labelCoordinate x ξ ⟨0,le_rfl,hτ.le⟩) t

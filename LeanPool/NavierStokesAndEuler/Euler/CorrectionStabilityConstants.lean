@@ -34,7 +34,7 @@ def lowerConstant (period : ℝ) [Fact (0 < period)] (q : ℕ) (A0 A2 Z R : ℝ)
   (Kt+2*Kx*V+4*Kx^2/c^2+2*Kb*L+1)/c^2
 
 /-- The fixed coefficient of the squared viscosity difference. -/
-def defectConstant (Kb R : ℝ) : ℝ := (Kb*(4*R))^2
+@[expose] def defectConstant (Kb R : ℝ) : ℝ := (Kb*(4*R))^2
 
 variable (period : ℝ) [Fact (0 < period)]
 

@@ -38,6 +38,7 @@ D) (initialData D δ hδ (α • ξ) hs)`. -/
 
 /-- Forward initialized profile witness, given by `sourceProfileWitness period M D hTime
 (InitialData.zero period D) (initialData D δ hδ (α • ξ) hs) p`. -/
+@[expose]
 def forwardInitializedProfileWitness (p : ℕ) :
     ProfileRegularity period M.T M.T_pos.le D.support (forwardInitializedProfiles M D δ hδ ξ hs α
         p) :=

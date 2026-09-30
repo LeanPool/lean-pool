@@ -24,7 +24,7 @@ open Set EulerSmoothLimit EulerMeanCoefficients EulerMeanScalarPressure
 variable {D : Data} {raw : VectorField} (G : Forcing D raw)
 
 /-- Scalar gradient, defined pointwise by `gradient (fun x => G.scalar (z.1,(x,z.2.2))) z.2.1`. -/
-def scalarGradient : VectorField := fun z =>
+@[expose] def scalarGradient : VectorField := fun z =>
   gradient (fun x => G.scalar (z.1,(x,z.2.2))) z.2.1
 
 theorem scalarGradient_eq (t : Icc (0 : ℝ) D.T) (x : Space) (θ : ℝ) :

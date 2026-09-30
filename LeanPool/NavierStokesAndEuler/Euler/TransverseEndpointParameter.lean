@@ -76,7 +76,7 @@ theorem fixedFrame_energy (u v : zeroTraceDerivatives (U := U) T hT) :
   rfl
 
 /-- Fixed endpoint correction as an element of `V →L[ℝ] zeroTraceDerivatives (U := U) T hT`. -/
-def fixedEndpointCorrection (L : V →L[ℝ] TimeLp T E) :
+@[expose] def fixedEndpointCorrection (L : V →L[ℝ] TimeLp T E) :
     V →L[ℝ] zeroTraceDerivatives (U := U) T hT :=
   (coerciveInverse (fixedFrameOperator T hT Q Q₁ H) (fixedCoercivity T Q Q₁ c)
     (fixedCoercivity_pos T hT Q Q₁ c hc)
@@ -85,7 +85,7 @@ def fixedEndpointCorrection (L : V →L[ℝ] TimeLp T E) :
 
 /-- Fixed endpoint derivative, given by `L - (fixedFrameDerivative T hT Q Q₁).comp
 (fixedEndpointCorrection T hT Q Q₁ H c hc hQ hd K hK hH hsmall L)`. -/
-def fixedEndpointDerivative (L : V →L[ℝ] TimeLp T E) : V →L[ℝ] TimeLp T E :=
+@[expose] def fixedEndpointDerivative (L : V →L[ℝ] TimeLp T E) : V →L[ℝ] TimeLp T E :=
   L - (fixedFrameDerivative T hT Q Q₁).comp
     (fixedEndpointCorrection T hT Q Q₁ H c hc hQ hd K hK hH hsmall L)
 

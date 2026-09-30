@@ -45,11 +45,12 @@ theorem familyValuePath_apply (q : ℕ) {I : Type*} (T : ℝ)
 
 omit [Fact (0 < period)] in
 /-- The actual factorial Gevrey weight along a continuous radius path. -/
-def gevreyWeightPath (T : ℝ) (ρ : C(Icc (0 : ℝ) T, ℝ)) (n : ℕ) : C(Icc (0 : ℝ) T, ℝ) :=
+@[expose] def gevreyWeightPath (T : ℝ) (ρ : C(Icc (0 : ℝ) T, ℝ)) (n : ℕ) : C(Icc (0 : ℝ) T, ℝ) :=
   ⟨fun t => weight (ρ t) n, (ρ.continuous.pow n).div_const ((n.factorial : ℝ)^2)⟩
 
 omit [Fact (0 < period)] in
 /-- The actual radius-loss weight along the same radius path. -/
+@[expose]
 def gevreyLossWeightPath (T : ℝ) (ρ : C(Icc (0 : ℝ) T, ℝ)) (n : ℕ) : C(Icc (0 : ℝ) T, ℝ) :=
   (n : ℝ) • gevreyWeightPath T ρ n
 

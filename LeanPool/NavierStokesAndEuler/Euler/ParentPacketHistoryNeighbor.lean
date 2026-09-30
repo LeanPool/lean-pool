@@ -83,6 +83,7 @@ theorem initial_curvature_derivative_norm :
 
 /-- The coefficient of the label scale in the actual history difference
 bound.  All zeroth norms belong to the restricted source coefficients. -/
+@[expose]
 def initialHistoryDifferenceScaleCost : ℝ :=
   let D := (G.transverseData m hm R S hS).initial τ hτ hτT.le
   let B := G.historyOn H m hm R S hS τ hτ hτT

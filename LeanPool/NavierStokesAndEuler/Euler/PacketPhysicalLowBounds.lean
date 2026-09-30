@@ -28,6 +28,7 @@ open InnerProductSpace ContinuousLinearMap EulerSmoothLimit EulerPeriodicProfile
 abbrev Matrix := Space →L[ℝ] Space
 
 /-- Shear term, given by `(amp*slope) • rankOne ℝ w r`. -/
+@[expose]
 def shearTerm (amp slope : ℝ) (r w : Space) : Matrix :=
   (amp*slope) • rankOne ℝ w r
 

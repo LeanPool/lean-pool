@@ -592,6 +592,7 @@ open scoped Topology NNReal
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- The actual spatial Laplacian evaluated as a bounded map from Hq to L², q≥2. -/
+@[expose]
 def laplacianEvaluation (q : ℕ) (hq : 2 ≤ q) : SobolevSpace period q →L[ℝ] LiftL2 period :=
   ∑ i : Fin 4, wordOperator period (⟨⟨2, Nat.lt_succ_of_le hq⟩, fun _ : Fin 2 => i⟩ : SobolevWord q)
 

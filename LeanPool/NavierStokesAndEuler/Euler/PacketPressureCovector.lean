@@ -43,7 +43,7 @@ def covectorGrades (N : ℕ) (m : Space) (a : ℕ → Profile) : ℕ → VectorF
     (fun i => pressureGradient (a i).highPressure)
 
 /-- Gradient linear, bundling `toFun`, `map_add`, `map_smul`. -/
-def gradientLinear : ScalarJet →ₗ[ℝ] Space where
+@[expose] def gradientLinear : ScalarJet →ₗ[ℝ] Space where
   toFun J := (toDual ℝ Space).symm (J.2.comp spatialInjection)
   map_add' J K := by simp [add_comp]
   map_smul' c J := by simp [smul_comp]

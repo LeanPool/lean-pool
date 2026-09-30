@@ -43,21 +43,21 @@ variable {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U]
   (D : Data U)
 
 /-- Coordinate, defined pointwise by `k • rawInverse D z (W z)`. -/
-def coordinate (k : ℝ) (W : VectorField) : VectorField :=
+@[expose] def coordinate (k : ℝ) (W : VectorField) : VectorField :=
   fun z => k • rawInverse D z (W z)
 
 /-- Inverse time, given by `D.inverseDerivative (D.clamp z.1) z.2.1`. -/
-def inverseTime (z : Domain) : Space →L[ℝ] Space :=
+@[expose] def inverseTime (z : Domain) : Space →L[ℝ] Space :=
   D.inverseDerivative (D.clamp z.1) z.2.1
 
 /-- Inverse time coefficient, bundling `path`, `orbit`, `raw_eq`. -/
-def inverseTimeCoefficient : MatrixCoefficient D.T (inverseTime D) where
+@[expose] def inverseTimeCoefficient : MatrixCoefficient D.T (inverseTime D) where
   path := D.inverseDerivative
   orbit := D.inverseDerivative_orbit
   raw_eq t x θ := by simp only [inverseTime,Data.clamp_coe]
 
 /-- Coordinate time, defined pointwise by `k • (inverseTime D z (W z) + rawInverse D z (Wt z))`. -/
-def coordinateTime (k : ℝ) (W Wt : VectorField) : VectorField :=
+@[expose] def coordinateTime (k : ℝ) (W Wt : VectorField) : VectorField :=
   fun z => k • (inverseTime D z (W z) + rawInverse D z (Wt z))
 
 theorem coordinateTime_formula (k : ℝ) (W Wt : VectorField) (z : Domain) :
@@ -106,12 +106,12 @@ variable {P : ℝ} [Fact (0 < P)] {W Wt : VectorField}
   (G : Field P D.T W) (Gt : Field P D.T Wt)
 
 /-- Coordinate field, given by `((inverseCoefficient D).multiply G).smul k`. -/
-def coordinateField (k : ℝ) : Field P D.T (coordinate D k W) :=
+@[expose] def coordinateField (k : ℝ) : Field P D.T (coordinate D k W) :=
   ((inverseCoefficient D).multiply G).smul k
 
 /-- Coordinate time field, given by `(((inverseTimeCoefficient D).multiply G).add
 ((inverseCoefficient D).multiply Gt)).smul k`. -/
-def coordinateTimeField (k : ℝ) : Field P D.T (coordinateTime D k W Wt) :=
+@[expose] def coordinateTimeField (k : ℝ) : Field P D.T (coordinateTime D k W Wt) :=
   (((inverseTimeCoefficient D).multiply G).add ((inverseCoefficient D).multiply Gt)).smul k
 
 theorem coordinateField_time (k : ℝ) (hW : TimeDerivative D.T_pos.le G Gt) :
@@ -186,7 +186,7 @@ variable {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U]
   (D : Data U)
 
 /-- Transport, given by `fderiv ℝ (fun y => Z (z.1,y)) z.2 (κ • Z z,⟪D.m₀,Z z⟫_ℝ)`. -/
-def transport (κ : ℝ) (Z : VectorField) (z : Domain) : Space :=
+@[expose] def transport (κ : ℝ) (Z : VectorField) (z : Domain) : Space :=
   fderiv ℝ (fun y => Z (z.1,y)) z.2 (κ • Z z,⟪D.m₀,Z z⟫_ℝ)
 
 /-- Algebraic, given by `∑ i : Fin 3, (Z z) i • rawQuadratic D κ i z (Z z)`. -/

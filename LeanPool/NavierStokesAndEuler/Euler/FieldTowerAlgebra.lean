@@ -24,6 +24,7 @@ open Set MeasureTheory EulerLiftedGradientSpace EulerCylinderSobolevSpace
 variable {P T : ℝ} [Fact (0 < P)] (A B : EulerAllOrderCorrectionData.FieldTower P T)
 
 /-- Add, bundling `field`, `realization`, `value_eq`. -/
+@[expose]
 def add : EulerAllOrderCorrectionData.FieldTower P T where
   field := A.field+B.field
   realization q := A.realization q+B.realization q

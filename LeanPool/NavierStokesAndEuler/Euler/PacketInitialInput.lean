@@ -357,13 +357,13 @@ variable (M : EulerMeanPacketProvider.Data)
 
 /-- Initialized initial high, given by `scale M.ℓ (fun x => EulerPacketInitial.high N k⁻¹ 0
 (initializedProfiles M D τ hτ hτT B δ hδ ξ hs α) (0,(x,k*inner ℝ D.m₀ x)))`. -/
-def initializedInitialHigh (N : ℕ) (k : ℝ) : Space → Space :=
+@[expose] def initializedInitialHigh (N : ℕ) (k : ℝ) : Space → Space :=
   scale M.ℓ (fun x => EulerPacketInitial.high N k⁻¹ 0
     (initializedProfiles M D τ hτ hτT B δ hδ ξ hs α) (0,(x,k*inner ℝ D.m₀ x)))
 
 /-- Initialized initial mean, given by `scale M.ℓ (fun x => EulerPacketInitial.mean N k⁻¹ 0
 (initializedProfiles M D τ hτ hτT B δ hδ ξ hs α) (0,(x,k*inner ℝ D.m₀ x)))`. -/
-def initializedInitialMean (N : ℕ) (k : ℝ) : Space → Space :=
+@[expose] def initializedInitialMean (N : ℕ) (k : ℝ) : Space → Space :=
   scale M.ℓ (fun x => EulerPacketInitial.mean N k⁻¹ 0
     (initializedProfiles M D τ hτ hτT B δ hδ ξ hs α) (0,(x,k*inner ℝ D.m₀ x)))
 
@@ -1157,7 +1157,7 @@ variable (M : EulerMeanPacketProvider.Data)
   (δ : ℝ) (hδ : 0 < δ) (ξ : U) (hs : tsupport innerCutoff ⊆ D.support) (α : ℝ)
 
 /-- Initialized initial high field, bundling `field`, `smooth`, `let`, `integrable`. -/
-def initializedInitialHighField (N : ℕ) (k : ℝ) : SmoothL2Field Space where
+@[expose] def initializedInitialHighField (N : ℕ) (k : ℝ) : SmoothL2Field Space where
   field := initializedInitialHigh M D τ hτ hτT B δ hδ ξ hs α N k
   smooth := by
     let G := EulerPacketInitial.highField
@@ -1167,7 +1167,7 @@ def initializedInitialHighField (N : ℕ) (k : ℝ) : SmoothL2Field Space where
   integrable n := initializedInitialHigh_memLp M D hTime τ hτ hτT B δ hδ ξ hs α N n k
 
 /-- Initialized initial mean field, bundling `field`, `smooth`, `let`, `integrable`. -/
-def initializedInitialMeanField (N : ℕ) (k : ℝ) : SmoothL2Field Space where
+@[expose] def initializedInitialMeanField (N : ℕ) (k : ℝ) : SmoothL2Field Space where
   field := initializedInitialMean M D τ hτ hτT B δ hδ ξ hs α N k
   smooth := by
     let G := EulerPacketInitial.meanField
@@ -1264,37 +1264,39 @@ abbrev history : HistoryData (A.data.initial A.historyTime A.history_pos A.histo
     A.historyTime A.history_pos A.history_lt
 
 /-- Parameter size, constructed using `A.label.geometryParameterSize`. -/
-def parameterSize : ℝ := A.label.geometryParameterSize A.low A.normal A.normal_unit A.coordinates
+@[expose] def parameterSize : ℝ :=
+  A.label.geometryParameterSize A.low A.normal A.normal_unit A.coordinates
   A.support A.support_compact A.historyTime A.history_pos A.history_lt A.frame A.geometry
   A.historyTime⁻¹ A.parent.T⁻¹ A.terminal
 
 /-- Alpha, given by `A.geometry.primaryAmplitude A.halfBall`. -/
-def alpha : ℝ := A.geometry.primaryAmplitude A.halfBall
+@[expose] def alpha : ℝ := A.geometry.primaryAmplitude A.halfBall
 
 theorem alpha_pos : 0 < A.alpha := A.geometry.primaryAmplitude_pos A.halfBall A.delta_pos
     A.child_pos
 
 /-- Frequency guard, given by `frequencyConstant*A.parameterSize^frequencyPower ≤ smallPower k`. -/
-def frequencyGuard (k : ℝ) : Prop := frequencyConstant*A.parameterSize^frequencyPower ≤ smallPower k
+@[expose] def frequencyGuard (k : ℝ) : Prop :=
+  frequencyConstant*A.parameterSize^frequencyPower ≤ smallPower k
 
 /-- High, constructed using `initializedInitialHigh`. -/
-def high (k : ℝ) : Space → Space :=
+@[expose] def high (k : ℝ) : Space → Space :=
   initializedInitialHigh A.meanData A.data A.historyTime A.history_pos A.history_lt A.history
     A.geometry.δ A.delta_pos A.terminal A.cutoff_support A.alpha (truncation k) k
 
 /-- Mean, constructed using `initializedInitialMean`. -/
-def mean (k : ℝ) : Space → Space :=
+@[expose] def mean (k : ℝ) : Space → Space :=
   initializedInitialMean A.meanData A.data A.historyTime A.history_pos A.history_lt A.history
     A.geometry.δ A.delta_pos A.terminal A.cutoff_support A.alpha (truncation k) k
 
 /-- High field, constructed using `initializedInitialHighField`. -/
-def highField (k : ℝ) : SmoothL2Field Space :=
+@[expose] def highField (k : ℝ) : SmoothL2Field Space :=
   initializedInitialHighField A.meanData A.data rfl A.historyTime A.history_pos A.history_lt
       A.history
     A.geometry.δ A.delta_pos A.terminal A.cutoff_support A.alpha (truncation k) k
 
 /-- Mean field, constructed using `initializedInitialMeanField`. -/
-def meanField (k : ℝ) : SmoothL2Field Space :=
+@[expose] def meanField (k : ℝ) : SmoothL2Field Space :=
   initializedInitialMeanField A.meanData A.data rfl A.historyTime A.history_pos A.history_lt
       A.history
     A.geometry.δ A.delta_pos A.terminal A.cutoff_support A.alpha (truncation k) k

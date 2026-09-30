@@ -63,6 +63,7 @@ variable (p : ScalarField) (q : C(Icc (0 : ℝ) T, CylinderL2 P ℝ))
 
 /-- Angular gradient field as an element of `Field P T (fun z => (pressureJet p z).2
 angleDirection • m)`. -/
+@[expose]
 def angularGradientField (m : Space) :
     Field P T (fun z => (pressureJet p z).2 angleDirection • m) :=
   (((scalarEmbeddingField p q hq he).derivative 0).map

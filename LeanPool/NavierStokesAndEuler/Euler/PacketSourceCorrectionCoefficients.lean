@@ -41,29 +41,29 @@ variable {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U]
   D.FInv.field (D.clamp z.1) z.2.1
 
 /-- Frame coefficient, bundling `path`, `orbit`, `raw_eq`. -/
-def frameCoefficient : MatrixCoefficient D.T (rawFrame D) where
+@[expose] def frameCoefficient : MatrixCoefficient D.T (rawFrame D) where
   path := D.F.field
   orbit := D.F.translation_contDiff
   raw_eq t x θ := by simp only [rawFrame,EulerTransversePacketProvider.Data.clamp_coe]
 
 /-- Frame time coefficient, bundling `path`, `orbit`, `raw_eq`. -/
-def frameTimeCoefficient : MatrixCoefficient D.T (rawFrameTime D) where
+@[expose] def frameTimeCoefficient : MatrixCoefficient D.T (rawFrameTime D) where
   path := D.F₁.field
   orbit := D.F₁.translation_contDiff
   raw_eq t x θ := by simp only [rawFrameTime,EulerTransversePacketProvider.Data.clamp_coe]
 
 /-- Inverse coefficient, bundling `path`, `orbit`, `raw_eq`. -/
-def inverseCoefficient : MatrixCoefficient D.T (rawInverse D) where
+@[expose] def inverseCoefficient : MatrixCoefficient D.T (rawInverse D) where
   path := D.FInv.field
   orbit := D.FInv.translation_contDiff
   raw_eq t x θ := by simp only [rawInverse,EulerTransversePacketProvider.Data.clamp_coe]
 
 /-- Raw metric, given by `(rawInverse D z).comp (rawInverse D z).adjoint`. -/
-def rawMetric (z : Domain) : Space →L[ℝ] Space :=
+@[expose] def rawMetric (z : Domain) : Space →L[ℝ] Space :=
   (rawInverse D z).comp (rawInverse D z).adjoint
 
 /-- Raw inverse metric, given by `(rawFrame D z).adjoint.comp (rawFrame D z)`. -/
-def rawInverseMetric (z : Domain) : Space →L[ℝ] Space :=
+@[expose] def rawInverseMetric (z : Domain) : Space →L[ℝ] Space :=
   (rawFrame D z).adjoint.comp (rawFrame D z)
 
 /-- Raw linear, given by `(2 : ℝ) • (rawInverse D z).comp (rawFrameTime D z)`. -/
@@ -78,12 +78,12 @@ def rawInverseMetric (z : Domain) : Space →L[ℝ] Space :=
       (EuclideanSpace.single i 1))
 
 /-- Metric coefficient, given by `(inverseCoefficient D).comp (inverseCoefficient D).adjoint`. -/
-def metricCoefficient : MatrixCoefficient D.T (rawMetric D) :=
+@[expose] def metricCoefficient : MatrixCoefficient D.T (rawMetric D) :=
   (inverseCoefficient D).comp (inverseCoefficient D).adjoint
 
 /-- Inverse metric coefficient, given by `(frameCoefficient D).adjoint.comp (frameCoefficient
 D)`. -/
-def inverseMetricCoefficient : MatrixCoefficient D.T (rawInverseMetric D) :=
+@[expose] def inverseMetricCoefficient : MatrixCoefficient D.T (rawInverseMetric D) :=
   (frameCoefficient D).adjoint.comp (frameCoefficient D)
 
 /-- Linear coefficient, given by `((inverseCoefficient D).comp (frameTimeCoefficient D)).smul
@@ -93,21 +93,22 @@ def inverseMetricCoefficient : MatrixCoefficient D.T (rawInverseMetric D) :=
 
 /-- Quadratic coefficient, given by `((inverseCoefficient D).comp ((frameCoefficient
 D).spatialDerivative (EuclideanSpace.single i 1))).smul κ`. -/
+@[expose]
 def quadraticCoefficient (κ : ℝ) (i : Fin 3) : MatrixCoefficient D.T (rawQuadratic D κ i) :=
   ((inverseCoefficient D).comp
     ((frameCoefficient D).spatialDerivative (EuclideanSpace.single i 1))).smul κ
 
 @[simp] theorem metricCoefficient_apply (t : Icc (0 : ℝ) D.T) (x : Space) :
     (metricCoefficient D).path t x =
-      (D.FInv.field t x).comp (D.FInv.field t x).adjoint := rfl
+      (D.FInv.field t x).comp (D.FInv.field t x).adjoint := by rfl
 
 @[simp] theorem inverseMetricCoefficient_apply (t : Icc (0 : ℝ) D.T) (x : Space) :
     (inverseMetricCoefficient D).path t x =
-      (D.F.field t x).adjoint.comp (D.F.field t x) := rfl
+      (D.F.field t x).adjoint.comp (D.F.field t x) := by rfl
 
 @[simp] theorem linearCoefficient_apply (t : Icc (0 : ℝ) D.T) (x : Space) :
     (linearCoefficient D).path t x =
-      (2 : ℝ) • (D.FInv.field t x).comp (D.F₁.field t x) := rfl
+      (2 : ℝ) • (D.FInv.field t x).comp (D.F₁.field t x) := by rfl
 
 theorem quadraticCoefficient_apply (κ : ℝ) (i : Fin 3)
     (t : Icc (0 : ℝ) D.T) (x : Space) :
@@ -123,15 +124,15 @@ theorem quadraticCoefficient_apply (κ : ℝ) (i : Fin 3)
 variable (P : ℝ) [Fact (0 < P)]
 
 /-- Metric tower, given by `(metricCoefficient D).toCoefficientTower P`. -/
-def metricTower : CoefficientTower P D.T :=
+@[expose] def metricTower : CoefficientTower P D.T :=
   (metricCoefficient D).toCoefficientTower P
 
 /-- Inverse metric tower, given by `(inverseMetricCoefficient D).toCoefficientTower P`. -/
-def inverseMetricTower : CoefficientTower P D.T :=
+@[expose] def inverseMetricTower : CoefficientTower P D.T :=
   (inverseMetricCoefficient D).toCoefficientTower P
 
 /-- Linear tower, given by `(linearCoefficient D).toCoefficientTower P`. -/
-def linearTower : CoefficientTower P D.T :=
+@[expose] def linearTower : CoefficientTower P D.T :=
   (linearCoefficient D).toCoefficientTower P
 
 /-- Quadratic tower, given by `(quadraticCoefficient D κ i).toCoefficientTower P`. -/
@@ -140,15 +141,15 @@ def linearTower : CoefficientTower P D.T :=
 
 @[simp] theorem metricTower_apply (t : Icc (0 : ℝ) D.T) (x : LiftDomain P) :
     ((metricTower D P).coefficient t).coefficient x =
-      (D.FInv.field t x.1).comp (D.FInv.field t x.1).adjoint := rfl
+      (D.FInv.field t x.1).comp (D.FInv.field t x.1).adjoint := by rfl
 
 @[simp] theorem inverseMetricTower_apply (t : Icc (0 : ℝ) D.T) (x : LiftDomain P) :
     ((inverseMetricTower D P).coefficient t).coefficient x =
-      (D.F.field t x.1).adjoint.comp (D.F.field t x.1) := rfl
+      (D.F.field t x.1).adjoint.comp (D.F.field t x.1) := by rfl
 
 @[simp] theorem linearTower_apply (t : Icc (0 : ℝ) D.T) (x : LiftDomain P) :
     ((linearTower D P).coefficient t).coefficient x =
-      (2 : ℝ) • (D.FInv.field t x.1).comp (D.F₁.field t x.1) := rfl
+      (2 : ℝ) • (D.FInv.field t x.1).comp (D.F₁.field t x.1) := by rfl
 
 theorem quadraticTower_apply (κ : ℝ) (i : Fin 3)
     (t : Icc (0 : ℝ) D.T) (x : LiftDomain P) :

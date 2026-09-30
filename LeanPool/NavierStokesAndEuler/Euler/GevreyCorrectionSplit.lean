@@ -48,7 +48,7 @@ theorem algebraicAt_eq {s : ℕ} (hs : 6 ≤ s)
     algebraicAt period hs C (truncateOperator period s u) (truncateOperator period s v) =
       algebraicBilinear period hs C u v := by
   rw [algebraicBilinear_apply]
-  rfl
+  simp only [algebraicAt, coordinateProduct_apply]
 
 /-- The order-zero background transport is exactly e·D z_a in the mild solver. -/
 theorem backgroundDrift_eq {s : ℕ} (hs : 6 ≤ s)

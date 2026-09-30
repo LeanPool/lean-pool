@@ -31,6 +31,7 @@ variable {P : ℝ} [Fact (0 < P)]
 
 /-- This primary is constructed from the terminal history and its genuine
 forward continuation, including its actual pressure and slow curl. -/
+@[expose]
 def profileRegularity : ProfileRegularity P D.T D.T_pos.le D.support
     (primaryProfile O (vector τ hτ hτT B Y) (scalar τ hτ hτT B Y)) where
   high := vectorField τ hτ hτT B Y

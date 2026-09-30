@@ -81,7 +81,7 @@ def meanTransportEquiv
   continuous_invFun := (meanBackward T hT FInv F F₁ hInv).continuous
 
 /-- Explicit polynomial transport cost for the mean fixed-space formulation. -/
-def meanTransportCost : ℝ :=
+@[expose] def meanTransportCost : ℝ :=
   transportCost T (solenoidalFrame T F) (solenoidalFrame T F₁) (meanFrameCoercivity T FInv)
 
 include hT in

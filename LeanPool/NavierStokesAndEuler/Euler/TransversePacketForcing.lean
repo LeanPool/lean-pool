@@ -53,7 +53,7 @@ structure InitialData (D : Data U) where
   mean_zero : average P (value : CylinderL2 P U) = 0
 
 /-- Zero, bundling `value`, `orbit`, `mean_zero`. -/
-def InitialData.zero (D : Data U) : InitialData P D where
+@[expose] def InitialData.zero (D : Data U) : InitialData P D where
   value := 0
   orbit := by
     simpa only [Submodule.coe_zero, map_zero] using

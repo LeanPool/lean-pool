@@ -55,6 +55,7 @@ variable {K E : Type*} [TopologicalSpace K] [NormedAddCommGroup E]
   (hY : Continuous (Function.uncurry Y)) (hdet : ∀ t x, (F t x).det = 1)
 
 /-- Inverse path, given by `(⟨Function.uncurry Y,hY⟩ : C(K × Vector3,Vector3)).curry`. -/
+@[expose]
 def inversePath : C(K,C(Vector3,Vector3)) :=
   (⟨Function.uncurry Y,hY⟩ : C(K × Vector3,Vector3)).curry
 

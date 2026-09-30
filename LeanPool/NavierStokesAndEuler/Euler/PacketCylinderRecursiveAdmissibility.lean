@@ -121,7 +121,7 @@ open Set MeasureTheory EulerSmoothLimit EulerPacketPointJets EulerPacketProfileR
 variable {P T : ℝ} [Fact (0 < P)]
 
 /-- Change time, given by `h ▸ G`. -/
-def Field.changeTime {raw : VectorField} {T' : ℝ} (G : Field P T raw) (h : T = T') :
+@[expose] def Field.changeTime {raw : VectorField} {T' : ℝ} (G : Field P T raw) (h : T = T') :
     Field P T' raw := h ▸ G
 
 theorem Field.changeTime_derivative {raw raw_t : VectorField} {T' : ℝ}

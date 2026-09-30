@@ -43,12 +43,12 @@ theorem field_ext {A B : SmoothL2Field V} (h : A.field = B.field) : A = B := by
 
 /-- Word field as an element of `{n : ℕ} → (Fin n → Fin 3) → SmoothL2Field V | 0, _ => A | _+1,
 w => (wordField A (Fin.tail w)).directionalField (axis (w 0))`. -/
-def wordField (A : SmoothL2Field V) : {n : ℕ} → (Fin n → Fin 3) → SmoothL2Field V
+@[expose] def wordField (A : SmoothL2Field V) : {n : ℕ} → (Fin n → Fin 3) → SmoothL2Field V
   | 0, _ => A
   | _+1, w => (wordField A (Fin.tail w)).directionalField (axis (w 0))
 
 @[simp] theorem wordField_zero (A : SmoothL2Field V) (w : Fin 0 → Fin 3) :
-    wordField A w = A := rfl
+    wordField A w = A := by rfl
 
 @[simp] theorem wordField_cons (A : SmoothL2Field V) {n : ℕ}
     (w : Fin n → Fin 3) (i : Fin 3) :
@@ -113,7 +113,7 @@ def wordSize (s : ℕ) (A : SmoothL2Field V) : ℝ :=
   ∑ n ∈ range (s+1), ∑ w : Fin n → Fin 3, ‖(wordField A w).toLp‖^2
 
 /-- Word bound, given by `∀ n ≤ s, ∀ w : Fin n → Fin 3, ‖(wordField A w).toLp‖ ≤ M`. -/
-def WordBound (s : ℕ) (M : ℝ) (A : SmoothL2Field V) : Prop :=
+@[expose] def WordBound (s : ℕ) (M : ℝ) (A : SmoothL2Field V) : Prop :=
   ∀ n ≤ s, ∀ w : Fin n → Fin 3, ‖(wordField A w).toLp‖ ≤ M
 
 theorem wordEnergy_nonneg (s : ℕ) (A : SmoothL2Field V) : 0 ≤ wordEnergy s A :=

@@ -220,7 +220,7 @@ def baseMetricJet {q : ℕ} (hq : 6 ≤ q + 1) {T : ℝ}
   EulerH6Pressure.CoefficientJet.restrict (D.metric.jet t) 6 hq
 
 /-- The actual metric budget determines its concrete continuous L² multiplier path. -/
-def MetricBudget.operatorPath {q : ℕ} {T : ℝ} {hT : 0 ≤ T}
+@[expose] def MetricBudget.operatorPath {q : ℕ} {T : ℝ} {hT : 0 ≤ T}
     {D : CorrectionData period (q + 1) (Icc (0 : ℝ) T)} (K : MetricBudget period T hT D) :
     C(Icc (0 : ℝ) T, LiftL2 period →L[ℝ] LiftL2 period) := metricOperatorPath period T K.metric
         K.continuous
@@ -243,7 +243,7 @@ theorem SpatialBudget.base_bound {q : ℕ} {T : ℝ} {hq : 6 ≤ q + 1}
   exact S.metric_base t r hr
 
 /-- The fixed constant part of the actual metric-growth majorant. -/
-def MetricBudget.growth0 {q : ℕ} {T : ℝ} {hT : 0 ≤ T}
+@[expose] def MetricBudget.growth0 {q : ℕ} {T : ℝ} {hT : 0 ≤ T}
     {D : CorrectionData period (q + 1) (Icc (0 : ℝ) T)} (K : MetricBudget period T hT D) (B0 : ℝ) :
         ℝ
         :=
@@ -251,11 +251,12 @@ def MetricBudget.growth0 {q : ℕ} {T : ℝ} {hT : 0 ≤ T}
       period 6*B0
 
 /-- The fixed linear part of the actual metric-growth majorant. -/
-def MetricBudget.growth1 {q : ℕ} {T : ℝ} {hT : 0 ≤ T}
+@[expose] def MetricBudget.growth1 {q : ℕ} {T : ℝ} {hT : 0 ≤ T}
     {D : CorrectionData period (q + 1) (Icc (0 : ℝ) T)} (K : MetricBudget period T hT D) : ℝ :=
   growthBudgetSlope K.c K.first*sobolevEmbeddingConstant period 6*metricAmplification K.c
 
 /-- The fixed coefficient multiplying the actual forcing norm. -/
+@[expose]
 def MetricBudget.multiplier {q : ℕ} {T : ℝ} {hT : 0 ≤ T}
     {D : CorrectionData period (q + 1) (Icc (0 : ℝ) T)} (K : MetricBudget period T hT D) : ℝ :=
         K.bound/K.c

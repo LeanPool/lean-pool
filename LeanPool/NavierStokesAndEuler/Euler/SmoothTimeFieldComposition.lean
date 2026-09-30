@@ -33,7 +33,7 @@ namespace EulerBoundedFieldPullback
 variable {E V : Type*} [NormedAddCommGroup E] [NormedAddCommGroup V]
 
 /-- Pullback, constructed using `BoundedContinuousFunction.ofNormedAddCommGroup`. -/
-def pullback (A : E →ᵇ V) (d : E →ᵇ E) : E →ᵇ V :=
+@[expose] def pullback (A : E →ᵇ V) (d : E →ᵇ E) : E →ᵇ V :=
   BoundedContinuousFunction.ofNormedAddCommGroup (fun x => A (x+d x))
     (A.continuous.comp (continuous_id.add d.continuous)) ‖A‖
     (fun x => A.norm_coe_le_norm (x+d x))

@@ -108,7 +108,7 @@ theorem supported_smul (r : ℝ) (A : α →ᵇ E →L[ℝ] F) :
   rfl
 
 /-- The literal linear dependence of the supported multiplier on its coefficient. -/
-def supportedLinear : (α →ᵇ E →L[ℝ] F) →ₗ[ℝ]
+@[expose] def supportedLinear : (α →ᵇ E →L[ℝ] F) →ₗ[ℝ]
     (supportedSpace (V := E) μ S hS →L[ℝ] supportedSpace (V := F) μ S hS) where
   toFun := supported μ S hS
   map_add' := supported_add μ S hS

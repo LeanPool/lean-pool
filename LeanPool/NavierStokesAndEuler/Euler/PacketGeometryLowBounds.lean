@@ -96,10 +96,12 @@ variable {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U] [CompleteS
 
 /-- Low geometry, given by `A.geometryData {x | ‖x‖ ≤ (1/2 : ℝ)} (by norm_num) (fun _ hx =>
 hx.trans hball)`. -/
+@[expose]
 def lowGeometry : PhysicalGeometryData {x : Space // ‖x‖ ≤ (1/2 : ℝ)} :=
   A.geometryData {x | ‖x‖ ≤ (1/2 : ℝ)} (by norm_num) (fun _ hx => hx.trans hball)
 
 /-- Primary amplitude, given by `(A.lowGeometry hball).amplitude`. -/
+@[expose]
 def primaryAmplitude : ℝ := (A.lowGeometry hball).amplitude
 
 theorem primaryAmplitude_nonneg : 0 ≤ A.primaryAmplitude hball :=

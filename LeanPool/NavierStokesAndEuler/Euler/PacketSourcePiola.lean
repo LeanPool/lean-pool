@@ -102,6 +102,7 @@ variable (P : ℝ) [Fact (0 < P)] (M : EulerMeanPacketProvider.Data)
   (I Iprimary : EulerTransversePacketProvider.InitialData P D)
 
 /-- Source time, given by `⟨t,by rw [← hT]; exact t.property⟩`. -/
+@[expose]
 def sourceTime (t : Icc (0 : ℝ) M.T) : Icc (0 : ℝ) D.T :=
   ⟨t,by rw [← hT]; exact t.property⟩
 

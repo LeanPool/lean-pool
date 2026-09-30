@@ -56,7 +56,7 @@ variable {A : Parent} (S : SmoothState A) (H : LowBounds A)
     G hG k (mul_inv_cancel₀ (by linarith : k ≠ 0)) hgraph nextEll hnext hnext1 labels
 
 /-- Joined child, constructed using `S.packetChild`. -/
-def joinedChild (τ : ℝ) (hτ : 0 < τ) (hτT : τ < A.T)
+@[expose] def joinedChild (τ : ℝ) (hτ : 0 < τ) (hτT : τ < A.T)
     (Q : Budget period A.T_pos
       (initializedCorrectionData (A.meanData H) (A.transverseData m hm J support hSupport)
         rfl τ hτ hτT (A.historyOn H m hm J support hSupport τ hτ hτT) δ hδ ξ hs α

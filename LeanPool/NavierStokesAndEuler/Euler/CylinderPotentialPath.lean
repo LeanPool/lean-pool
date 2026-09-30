@@ -83,7 +83,7 @@ local instance instCylinderAngleWordBounds4 : NormedSpace ℝ (C(K,LiftL2 P) →
     inferInstance
 
 /-- Path primitive, given by `(primitive P).compLeftContinuous ℝ K`. -/
-def pathPrimitive : C(K,LiftL2 P) →L[ℝ] C(K,LiftL2 P) :=
+@[expose] def pathPrimitive : C(K,LiftL2 P) →L[ℝ] C(K,LiftL2 P) :=
   (primitive P).compLeftContinuous ℝ K
 
 omit [CompactSpace K] in
@@ -243,7 +243,7 @@ theorem potentialPath_orbit :
 
 /-- Potential field, given by `pointField P (potentialPath P B p) (potentialPath_orbit P B hB p
 hp) t`. -/
-def potentialField (t : K) : LiftDomain P → Space :=
+@[expose] def potentialField (t : K) : LiftDomain P → Space :=
   pointField P (potentialPath P B p) (potentialPath_orbit P B hB p hp) t
 
 theorem potentialPath_ae (t : K) :

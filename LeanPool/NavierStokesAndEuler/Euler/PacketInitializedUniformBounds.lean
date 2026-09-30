@@ -57,6 +57,7 @@ variable (M : EulerMeanPacketProvider.Data)
   (hdet : ∀ t x, (EulerPacketPiola.operatorMatrix (D.F.field t x)).det = 1)
 
 /-- Initialized uniform budget used in packet initialized uniform budget. -/
+@[expose]
 def initializedUniformBudget : EulerAllOrderDriftCorrection.Budget period D.T_pos
     (initializedCorrectionData M D hTime τ hτ hτT B δ hδ ξ hs α Cagree
       (truncation k) (truncation_bounds k (by linarith)).1 k hk) := by
@@ -83,14 +84,14 @@ def initializedUniformBudget : EulerAllOrderDriftCorrection.Budget period D.T_po
 
 theorem initializedUniformBudget_delta :
     (initializedUniformBudget M D hTime τ hτ hτT B δ hδ hδ1 ξ hs α hα L NB LM Cagree
-      W hW hprofile k hk hX hlog hfrequency Ξ hΞ hF hdet).delta=delta (expansion k) := rfl
+      W hW hprofile k hk hX hlog hfrequency Ξ hΞ hF hdet).delta=delta (expansion k) := by rfl
 
 theorem initializedUniformBudget_initialRadius :
     (initializedUniformBudget M D hTime τ hτ hτT B δ hδ hδ1 ξ hs α hα L NB LM Cagree
       W hW hprofile k hk hX hlog hfrequency Ξ hΞ hF hdet).initialRadius =
       initialRadius
         (initializedRadius LM L NB (joinedCoefficientBudget period M D hTime τ hτ hτT B NB) δ ξ)
-        (L.correctionCoefficients NB period).M (L.correctionCoefficients NB period).Rc := rfl
+        (L.correctionCoefficients NB period).M (L.correctionCoefficients NB period).Rc := by rfl
 
 end EulerPacketTerminalDatum
 

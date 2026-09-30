@@ -112,7 +112,7 @@ theorem history_hessian_norm (x : Space) :
 /-- Apply the manuscript's scalar stage bounds to the literal source
 coefficients. The remaining inputs are older-stage center data, the
 chosen normal, and scalar comparisons with explicit source costs. -/
-def geometryGuardsOfStage
+@[expose] def geometryGuardsOfStage
     (P : ParentFrame (G.transverseData m hm R S hS) τ)
     (p : Icc (0 : ℝ) G.T → Space → ℝ) (hp : ∀ t, ContDiff ℝ ∞ (p t))
     (hacc : ∀ t x, G.acceleration.field t x = -(gradient (p t) (G.position t x)))

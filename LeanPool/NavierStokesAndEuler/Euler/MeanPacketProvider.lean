@@ -118,7 +118,7 @@ variable (T : ℝ) (hT : 0 ≤ T)
   (hR : ContDiff ℝ ∞ (fun a : Space => pathTranslation T a (s.pressurePath c hc hLower fC)))
 
 /-- The concrete normalized scalar mean pressure, constructed by a radial integral. -/
-def pressureScalar (t : Icc (0 : ℝ) T) : Space → ℝ :=
+@[expose] def pressureScalar (t : Icc (0 : ℝ) T) : Space → ℝ :=
   radialPotential (fun x => (F.field t x).adjoint
     (pathRepresentative T (s.pressurePath c hc hLower fC) hR t x))
 
@@ -215,6 +215,7 @@ namespace Data
   D.FInv (D.clamp z.1) z.2.1
 
 /-- Strain, given by `D.M.field (D.clamp z.1) z.2.1`. -/
+@[expose]
 def strain (D : Data) (z : Domain) : Space →L[ℝ] Space :=
   D.M.field (D.clamp z.1) z.2.1
 

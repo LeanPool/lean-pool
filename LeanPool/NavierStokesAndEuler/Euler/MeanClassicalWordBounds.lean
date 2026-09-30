@@ -235,6 +235,7 @@ theorem classicalBaseSize_eq (directions : ι → Space) (q : ℕ) (u : L2) (hu 
 
 /-- Sum of actual classical Hq sizes of the external derivative fields.
 `representative_word` identifies those fields with derivatives of the original representative. -/
+@[expose]
 def classicalBlockSize (directions : ι → Space) (q : ℕ) (u : L2) (hu : SmoothOrbit u) (n : ℕ) : ℝ :=
   ∑ w : Fin n → ι, classicalBaseSize directions q (ordinaryWord directions u w)
     (ordinaryWord_smooth directions u hu w)

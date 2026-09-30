@@ -46,12 +46,14 @@ variable (M : EulerMeanPacketProvider.Data)
 
 /-- Forward initialized packet field, given by `sourcePacketPullbackField period M D hTime
 (InitialData.zero period D) (initialData D δ hδ (α • ξ) hs) N κ`. -/
+@[expose]
 def forwardInitializedPacketField (N : ℕ) (κ : ℝ) :=
   sourcePacketPullbackField period M D hTime (InitialData.zero period D)
     (initialData D δ hδ (α • ξ) hs) N κ
 
 /-- Forward initialized residual field, given by `sourceResidualField period M D hTime
 (InitialData.zero period D) (initialData D δ hδ (α • ξ) hs) Cagree N hN κ hκ`. -/
+@[expose]
 def forwardInitializedResidualField (Cagree : SourceCoefficientAgreement M D)
     (N : ℕ) (hN : 1 ≤ N) (κ : ℝ) (hκ : κ ≠ 0) :=
   sourceResidualField period M D hTime (InitialData.zero period D)
@@ -131,11 +133,13 @@ variable (M : EulerMeanPacketProvider.Data)
 
 /-- Forward initialized normalized field, given by `((forwardInitializedPacketField M D hTime δ
 hδ ξ hs α N k⁻¹).smul k).changeTime hTime`. -/
+@[expose]
 def forwardInitializedNormalizedField (N : ℕ) (k : ℝ) :=
   ((forwardInitializedPacketField M D hTime δ hδ ξ hs α N k⁻¹).smul k).changeTime hTime
 
 /-- Forward initialized normalized residual field used in packet forward initialized correction
 data. -/
+@[expose]
 def forwardInitializedNormalizedResidualField (Cagree : SourceCoefficientAgreement M D)
     (N : ℕ) (hN : 1 ≤ N) (k : ℝ) (hk : 4 ≤ k) :=
   (((sourceCoefficientData period M D (InitialData.zero period D) hTime).inverse.multiply

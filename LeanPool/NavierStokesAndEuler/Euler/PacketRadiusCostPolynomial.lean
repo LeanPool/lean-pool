@@ -94,6 +94,7 @@ abbrev coeffPoly (R C : Polynomial ℝ) : Polynomial ℝ := coefficientPolynomia
 
 /-- Strong envelope, given by `inverseBlockCost (Fin 4) 6 W W (3*W^2) (3*coeff W
 W*(endpointEnvelope W+6*coeff W W*(2*W+2)))`. -/
+@[expose]
 def strongEnvelope (W : ℝ) : ℝ :=
   inverseBlockCost (Fin 4) 6 W W (3*W^2)
     (3*coeff W W*(endpointEnvelope W+6*coeff W W*(2*W+2)))

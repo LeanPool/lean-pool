@@ -1119,7 +1119,7 @@ instance : Fintype SourceCost where
   complete c := by cases c <;> simp
 
 /-- Source cost spec used in packet source scale choice. -/
-def sourceCostSpec (C c : ℝ) (hC : 1 ≤ C) (A : ℕ) : SourceCost → CostSpec
+@[expose] def sourceCostSpec (C c : ℝ) (hC : 1 ≤ C) (A : ℕ) : SourceCost → CostSpec
   | .shear => {
       d := 2, B := 9, N := 7, a := 7, b := 1/2, c := 2,
       C := 128*(2*C)^(A+1), p := 2*(A+1), q := 2*(A+1),

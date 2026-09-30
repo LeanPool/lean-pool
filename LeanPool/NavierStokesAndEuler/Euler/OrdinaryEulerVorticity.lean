@@ -61,6 +61,7 @@ variable {T : ℝ} {hT : 0 ≤ T} (U : Evolution T hT)
 
 /-- Vorticity norm path, given by `⟨fun t => vorticityNorm (U.velocity
 t),vorticityNorm_continuous U.velocity U.velocity_continuous⟩`. -/
+@[expose]
 def vorticityNormPath : C(Icc (0 : ℝ) T,ℝ) :=
   ⟨fun t => vorticityNorm (U.velocity t),vorticityNorm_continuous U.velocity U.velocity_continuous⟩
 
@@ -76,6 +77,7 @@ theorem pointwise_vorticity_le (t : Icc (0 : ℝ) T) (x : Space) :
   (U.vorticityNormPath_le_iff t _).mp le_rfl x
 
 /-- Vorticity integral, given by `realIntegral T hT U.vorticityNormPath t`. -/
+@[expose]
 def vorticityIntegral (t : Icc (0 : ℝ) T) : ℝ := realIntegral T hT U.vorticityNormPath t
 
 theorem vorticityIntegral_nonneg (t : Icc (0 : ℝ) T) : 0 ≤ U.vorticityIntegral t :=

@@ -60,30 +60,36 @@ variable (G : Parent)
 @[expose] def zeroTime : Icc (0 : ℝ) G.T := ⟨0,le_rfl,G.T_pos.le⟩
 
 /-- Frame as an element of `SmoothTimeField (Icc (0 : ℝ) G.T) Space EndSpace`. -/
+@[expose]
 def frame : SmoothTimeField (Icc (0 : ℝ) G.T) Space EndSpace :=
   (SmoothTimeField.boundConstant (ContinuousLinearMap.id ℝ Space)).add
     (G.displacement.derivative.precompLinear (G.ell • ContinuousLinearMap.id ℝ Space))
 
 /-- First, given by `G.velocity.derivative.precompLinear (G.ell • ContinuousLinearMap.id ℝ
 Space)`. -/
+@[expose]
 def first : SmoothTimeField (Icc (0 : ℝ) G.T) Space EndSpace :=
   G.velocity.derivative.precompLinear (G.ell • ContinuousLinearMap.id ℝ Space)
 
 /-- Second, given by `G.acceleration.derivative.precompLinear (G.ell • ContinuousLinearMap.id ℝ
 Space)`. -/
+@[expose]
 def second : SmoothTimeField (Icc (0 : ℝ) G.T) Space EndSpace :=
   G.acceleration.derivative.precompLinear (G.ell • ContinuousLinearMap.id ℝ Space)
 
 /-- Inverse, given by `SmoothTimeField.bilinear cofactorBilinear G.frame G.frame`. -/
+@[expose]
 def inverse : SmoothTimeField (Icc (0 : ℝ) G.T) Space EndSpace :=
   SmoothTimeField.bilinear cofactorBilinear G.frame G.frame
 
 /-- Strain, given by `SmoothTimeField.bilinear (compL ℝ Space Space Space) G.first G.inverse`. -/
+@[expose]
 def strain : SmoothTimeField (Icc (0 : ℝ) G.T) Space EndSpace :=
   SmoothTimeField.bilinear (compL ℝ Space Space Space) G.first G.inverse
 
 /-- Curvature, given by `(SmoothTimeField.bilinear (compL ℝ Space Space Space) G.second
 G.inverse).map (-ContinuousLinearMap.id ℝ EndSpace)`. -/
+@[expose]
 def curvature : SmoothTimeField (Icc (0 : ℝ) G.T) Space EndSpace :=
   (SmoothTimeField.bilinear (compL ℝ Space Space Space) G.second G.inverse).map
     (-ContinuousLinearMap.id ℝ EndSpace)
@@ -157,6 +163,7 @@ theorem second_equation (t : Icc (0 : ℝ) G.T) (x v : Space) :
   rw [G.curvature_apply,neg_apply,comp_apply,G.inverse_left,neg_neg]
 
 /-- Initial strain, bundling `field`, `smooth`, `bounded`. -/
+@[expose]
 def initialStrain : BoundedSmoothField EndSpace where
   field := G.first.field G.zeroTime
   smooth := G.first.smooth G.zeroTime

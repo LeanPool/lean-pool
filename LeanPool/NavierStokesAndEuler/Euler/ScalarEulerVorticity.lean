@@ -486,7 +486,7 @@ variable {u₀ : Space → Space} {v : Space → ℝ → Space} {p : Space → �
 
 /-- The square-time parametrization is jointly smooth and uniformly supported,
 so all its spatial jets form continuous bounded time paths. -/
-def finiteEnergyTruncationSquareTimeField (R : ℝ) (hR : 0 < R) :
+@[expose] def finiteEnergyTruncationSquareTimeField (R : ℝ) (hR : 0 < R) :
     SmoothTimeField (Icc (0 : ℝ) 1) Space Space :=
   SmoothTimeField.ofContDiffOnCompactSupport (Icc (0 : ℝ) 1)
     (fun tx : ℝ × Space => finiteEnergyTruncation (fun y => v y (tx.1 ^ 2)) R tx.2)
@@ -495,6 +495,11 @@ def finiteEnergyTruncationSquareTimeField (R : ℝ) (hR : 0 < R) :
         (contDiff_snd.prodMk contDiff_fst)).contDiffOn
     (Metric.closedBall 0 (2 * R)) (isCompact_closedBall _ _)
     (fun t _ht => finiteEnergyTruncation_support (fun y => v y (t ^ 2)) R hR)
+
+@[simp] theorem finiteEnergyTruncationSquareTimeField_apply (R : ℝ) (hR : 0 < R)
+    (t : Icc (0 : ℝ) 1) (x : Space) :
+    (h.finiteEnergyTruncationSquareTimeField R hR).field t x =
+      finiteEnergyTruncation (fun y => v y ((t : ℝ) ^ 2)) R x := by rfl
 
 /-- Reparametrizing by square root recovers the exact physical-time
 truncation, while retaining continuity of every bounded spatial jet. -/
@@ -506,7 +511,8 @@ def finiteEnergyTruncationTimeField (R : ℝ) (hR : 0 < R) :
     (t : Icc (0 : ℝ) 1) (x : Space) :
     (h.finiteEnergyTruncationTimeField R hR).field t x =
       finiteEnergyTruncation (v · (t : ℝ)) R x := by
-  change finiteEnergyTruncation (fun y => v y ((Real.sqrt (t : ℝ)) ^ 2)) R x = _
+  simp only [finiteEnergyTruncationTimeField, SmoothTimeField.reparametrize_apply,
+    finiteEnergyTruncationSquareTimeField_apply, unitSqrtTime_apply]
   rw [Real.sq_sqrt t.property.1]
 
 theorem finiteEnergyTruncationTimeField_field (R : ℝ) (hR : 0 < R)

@@ -38,7 +38,8 @@ theorem kernelCurve_continuous (u : LiftL2 P) : Continuous (kernelCurve P u) :=
   continuous_id.smul ((translation_continuous P u).comp (angleShift_continuous P))
 
 /-- Kernel integral, given by `P⁻¹ • (∫ s in (0 : ℝ)..P, kernelCurve P u s)`. -/
-def kernelIntegral (u : LiftL2 P) : LiftL2 P := P⁻¹ • (∫ s in (0 : ℝ)..P, kernelCurve P u s)
+@[expose] def kernelIntegral (u : LiftL2 P) : LiftL2 P :=
+  P⁻¹ • (∫ s in (0 : ℝ)..P, kernelCurve P u s)
 
 theorem kernelIntegral_add (u v : LiftL2 P) :
     kernelIntegral P (u+v) = kernelIntegral P u+kernelIntegral P v := by
@@ -80,13 +81,13 @@ theorem kernelIntegral_norm (u : LiftL2 P) : ‖kernelIntegral P u‖ ≤ P*‖u
     _ = P*‖u‖ := by field_simp
 
 /-- Primitive linear, bundling `toFun`, `map_add`, `map_smul`. -/
-def primitiveLinear : LiftL2 P →ₗ[ℝ] LiftL2 P where
+@[expose] def primitiveLinear : LiftL2 P →ₗ[ℝ] LiftL2 P where
   toFun := kernelIntegral P
   map_add' := kernelIntegral_add P
   map_smul' := kernelIntegral_smul P
 
 /-- Primitive, given by `(primitiveLinear P).mkContinuous P (kernelIntegral_norm P)`. -/
-def primitive : LiftL2 P →L[ℝ] LiftL2 P :=
+@[expose] def primitive : LiftL2 P →L[ℝ] LiftL2 P :=
   (primitiveLinear P).mkContinuous P (kernelIntegral_norm P)
 
 @[simp] theorem primitive_apply (u : LiftL2 P) : primitive P u = kernelIntegral P u := by rfl

@@ -99,7 +99,7 @@ theorem frameSecond_derivative (t : ℝ) (ht : t ∈ Icc (0 : ℝ) D.T) (x : Spa
 
 /-- The genuine spatial-angular L² inverse data, with uniform coercivity
 derived from the actual inverse deformation. -/
-def coefficients : EulerCylinderDirichlet.Coefficients D.T U Space where
+@[expose] def coefficients : EulerCylinderDirichlet.Coefficients D.T U Space where
   time_pos := D.T_pos
   Q := D.frame.field
   Q₁ := D.frameDerivative.field

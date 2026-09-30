@@ -72,7 +72,7 @@ def flowData : EulerBoundedLipschitzFlow.Data E :=
   EulerSmoothBanachFlow.flowData T hT (reverseField A T hT1)
 
 /-- Backward flow homeomorphisms, clamped outside the chosen interval. -/
-def homeomorph (s : ℝ) : E ≃ₜ E :=
+@[expose] def homeomorph (s : ℝ) : E ≃ₜ E :=
   (flowData A T hT hT1).flowHomeomorph 0 (projIcc 0 T hT s)
 
 /-- The globally defined, endpoint-extended backward coefficient. -/

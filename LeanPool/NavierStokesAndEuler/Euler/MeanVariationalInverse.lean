@@ -218,7 +218,7 @@ variable (T : ℝ) (hT : 0 ≤ T)
   (hsmall : K * (T ^ 2 / 2) + B * T ≤ 1 / 2)
 
 /-- The mean forcing-to-displacement-derivative map is constructed by Lax--Milgram. -/
-def meanSolver : TimeLp T L2 →L[ℝ] meanDerivatives T hT FInv :=
+@[expose] def meanSolver : TimeLp T L2 →L[ℝ] meanDerivatives T hT FInv :=
   EulerMeanVariationalOperator.meanSolver (meanPrimitive T hT FInv) (meanTrace T hT FInv)
     (timeMultiplier T hT H) (M0+L • A) (T^2/2) T K B hK hB
     (meanPrimitive_norm_sq T hT FInv) (meanTrace_norm_sq T hT FInv)

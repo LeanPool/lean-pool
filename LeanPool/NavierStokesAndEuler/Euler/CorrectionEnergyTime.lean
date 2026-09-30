@@ -397,7 +397,7 @@ local instance correctionTimeGroup (q : ℕ) : NormedAddCommGroup (SobolevSpace 
 local instance correctionTimeSpace (q : ℕ) : NormedSpace ℝ (SobolevSpace period q) := inferInstance
 
 /-- The actual continuous background-plus-error velocity at the energy level. -/
-def velocityPath {q : ℕ} {T : ℝ} (D : CorrectionData period (q + 1) (Icc (0 : ℝ) T))
+@[expose] def velocityPath {q : ℕ} {T : ℝ} (D : CorrectionData period (q + 1) (Icc (0 : ℝ) T))
     (e : C(Icc (0 : ℝ) T, SobolevSpace period (q + 1))) : C(Icc (0 : ℝ) T, SobolevSpace period
         (q+1))
         :=
@@ -415,7 +415,7 @@ def lowerOrderPath {q : ℕ} (hq : 6 ≤ q + 1) {T : ℝ} (D : CorrectionData pe
     D.linear.operatorPath (fun i => (D.quadratic i).operatorPath) D.approximation D.residual e
 
 /-- The genuine full energy-order nonlinear raw time field, constructed using maximal regularity. -/
-def rawTime {q : ℕ} (hq : 6 ≤ q + 1) (T : ℝ) (hT : 0 ≤ T)
+@[expose] def rawTime {q : ℕ} (hq : 6 ≤ q + 1) (T : ℝ) (hT : 0 ≤ T)
     (D : CorrectionData period (q + 1) (Icc (0 : ℝ) T))
     (e : C(Icc (0 : ℝ) T, SobolevSpace period (q + 1))) (U : TimeLp T (SobolevSpace period (2 +
         q))) :
@@ -426,7 +426,7 @@ def rawTime {q : ℕ} (hq : 6 ≤ q + 1) (T : ℝ) (hT : 0 ≤ T)
     (reindexMaximalTime period q T U)
 
 /-- The actual full energy-order projected nonlinear forcing belongs to Bochner L² time. -/
-def sourceTime {q : ℕ} (hq : 6 ≤ q + 1) (T : ℝ) (hT : 0 ≤ T)
+@[expose] def sourceTime {q : ℕ} (hq : 6 ≤ q + 1) (T : ℝ) (hT : 0 ≤ T)
     (D : CorrectionData period (q + 1) (Icc (0 : ℝ) T))
     (e : C(Icc (0 : ℝ) T, SobolevSpace period (q + 1))) (U : TimeLp T (SobolevSpace period (2 +
         q))) :
@@ -435,7 +435,7 @@ def sourceTime {q : ℕ} (hq : 6 ≤ q + 1) (T : ℝ) (hT : 0 ≤ T)
     (rawTime period hq T hT D e U)
 
 /-- The actual signed coercive pressure has full energy-order Bochner regularity. -/
-def signedPressureTime {q : ℕ} (hq : 6 ≤ q + 1) (T : ℝ) (hT : 0 ≤ T)
+@[expose] def signedPressureTime {q : ℕ} (hq : 6 ≤ q + 1) (T : ℝ) (hT : 0 ≤ T)
     (D : CorrectionData period (q + 1) (Icc (0 : ℝ) T))
     (e : C(Icc (0 : ℝ) T, SobolevSpace period (q + 1))) (U : TimeLp T (SobolevSpace period (2 +
         q))) :
@@ -445,6 +445,7 @@ def signedPressureTime {q : ℕ} (hq : 6 ≤ q + 1) (T : ℝ) (hT : 0 ≤ T)
 
 /-- The actual limiting weighted word forcing constructed from the genuine correction time fields.
 -/
+@[expose]
 def weightedCorrectionForcing {q : ℕ} (hq : 6 ≤ q + 1) (T : ℝ) (hT : 0 ≤ T)
     (D : CorrectionData period (q + 1) (Icc (0 : ℝ) T))
     (hG : Continuous (fun t => (D.metric.coefficient t).operator))

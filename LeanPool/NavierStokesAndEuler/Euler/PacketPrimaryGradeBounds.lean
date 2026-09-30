@@ -474,6 +474,7 @@ theorem derivativeCost_nonneg : 0 ≤ H.derivativeCost := by
   positivity
 
 /-- Common cost, given by `H.velocityCost+H.derivativeCost`. -/
+@[expose]
 def commonCost : ℝ := H.velocityCost+H.derivativeCost
 /-- Pressure amplitude, given by `P*pressureCost (Fin 4) q N.Ri N.C N.C 0 H.commonCost`. -/
 @[expose] def pressureAmplitude : ℝ := P*pressureCost (Fin 4) q N.Ri N.C N.C 0 H.commonCost

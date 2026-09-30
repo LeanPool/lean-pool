@@ -47,7 +47,7 @@ open Set MeasureTheory InnerProductSpace ContinuousLinearMap EulerMeanSolenoidal
   EulerTimeLp EulerTerminalTimePrimitive EulerTimeLpBoundedMap
 
 /-- Reflection restricted to the actual ordinary solenoidal subspace. -/
-def solenoidalReflection : solenoidalSpace →ₗᵢ[ℝ] solenoidalSpace where
+@[expose] def solenoidalReflection : solenoidalSpace →ₗᵢ[ℝ] solenoidalSpace where
   toLinearMap := (reflection.toLinearMap.comp solenoidalSpace.subtype).codRestrict
     solenoidalSpace (fun u => reflection_solenoidal_mem u.property)
   norm_map' := fun u => reflection.norm_map (u : L2)
@@ -170,7 +170,7 @@ local instance instMeanOperatorReflection8 (T : ℝ) : InnerProductSpace ℝ (Ti
     := inferInstance
 
 /-- Reflection invariant, given by `∀ u, A (reflection u) = reflection (A u)`. -/
-def ReflectionInvariant (A : L2 →L[ℝ] L2) : Prop :=
+@[expose] def ReflectionInvariant (A : L2 →L[ℝ] L2) : Prop :=
   ∀ u, A (reflection u) = reflection (A u)
 
 theorem timeMultiplier_reflection (T : ℝ) (hT : 0 ≤ T)
@@ -413,7 +413,7 @@ namespace Data
 variable (D : Data)
 
 /-- The actual source coordinate solve as a bounded linear operator. -/
-def coordinateSolver : TimeLp D.T L2 →L[ℝ] TimeLp D.T solenoidalSpace :=
+@[expose] def coordinateSolver : TimeLp D.T L2 →L[ℝ] TimeLp D.T solenoidalSpace :=
   sourceCoordinateSolver D.T D.T_pos.le D.ℓ D.ℓ_pos D.F D.F₁ D.H D.M0 D.opInv
     D.Be D.Bc D.L D.r D.Be_nonneg D.Bc_nonneg D.L_lower D.r_nonneg D.r_le_quarter
     D.exterior_lower D.core_lower D.opInv_left D.opF_time D.K D.K_nonneg D.opInv_initial

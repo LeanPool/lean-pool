@@ -359,6 +359,7 @@ namespace Guards
 variable (A : Guards hτ hτT P H)
 
 /-- Source velocity, given by `uncutVelocity τ hτ hτT H A.terminal t x`. -/
+@[expose]
 def sourceVelocity (x : Space) (t : ℝ) : Space := uncutVelocity τ hτ hτT H A.terminal t x
 
 omit [CompleteSpace U] in
@@ -484,6 +485,7 @@ theorem error_le_scaled_error : P.totalError hτ hτT H A.CM A.CH A.radius ≤
 /-- Every new analytic component is the actual source field or the
 selected stationary/forward primary.  The parent input and scalar guard
 record contain none of this record's new-field conclusions. -/
+@[expose]
 def geometryData (Ω : Set Space) (h0 : 0 ∈ Ω) (hΩ : ∀ x ∈ Ω, ‖x‖ ≤ A.radius) :
     PhysicalGeometryData {x : Space // x ∈ Ω} where
   center := ⟨0,h0⟩
@@ -557,15 +559,15 @@ def geometryData (Ω : Set Space) (h0 : 0 ∈ Ω) (hΩ : ∀ x ∈ Ω, ‖x‖ �
 
 theorem geometryData_matrix (Ω : Set Space) (h0 : 0 ∈ Ω) (hΩ : ∀ x ∈ Ω, ‖x‖ ≤ A.radius)
     (x : {x : Space // x ∈ Ω}) (t : ℝ) :
-    (A.geometryData Ω h0 hΩ).M x t=D.M.field (D.clamp t) x := rfl
+    (A.geometryData Ω h0 hΩ).M x t=D.M.field (D.clamp t) x := by rfl
 
 theorem geometryData_ray (Ω : Set Space) (h0 : 0 ∈ Ω) (hΩ : ∀ x ∈ Ω, ‖x‖ ≤ A.radius)
     (x : {x : Space // x ∈ Ω}) (t : ℝ) :
-    (A.geometryData Ω h0 hΩ).r x t=D.normal.field (D.clamp t) x := rfl
+    (A.geometryData Ω h0 hΩ).r x t=D.normal.field (D.clamp t) x := by rfl
 
 theorem geometryData_velocity (Ω : Set Space) (h0 : 0 ∈ Ω) (hΩ : ∀ x ∈ Ω, ‖x‖ ≤ A.radius)
     (x : {x : Space // x ∈ Ω}) (t : ℝ) :
-    (A.geometryData Ω h0 hΩ).w x t=uncutVelocity τ hτ hτT H A.terminal t x := rfl
+    (A.geometryData Ω h0 hΩ).w x t=uncutVelocity τ hτ hτT H A.terminal t x := by rfl
 
 end Guards
 end EulerPacketSourceGeometry

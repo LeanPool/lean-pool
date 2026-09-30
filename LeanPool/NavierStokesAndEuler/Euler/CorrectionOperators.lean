@@ -29,7 +29,7 @@ variable {X Y : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
   [NormedAddCommGroup Y] [NormedSpace ℝ Y]
 
 /-- Postcompose an actual continuous bilinear map by an actual bounded operator. -/
-def postcompose (A : Y →L[ℝ] Y) (B : X →L[ℝ] X →L[ℝ] Y) : X →L[ℝ] X →L[ℝ] Y :=
+@[expose] def postcompose (A : Y →L[ℝ] Y) (B : X →L[ℝ] X →L[ℝ] Y) : X →L[ℝ] X →L[ℝ] Y :=
   (ContinuousLinearMap.compL ℝ X Y Y A).comp B
 
 @[simp] theorem postcompose_apply (A : Y →L[ℝ] Y) (B : X →L[ℝ] X →L[ℝ] Y) (u v : X) :
@@ -72,7 +72,7 @@ local instance sobolevBilinearGroup (q : ℕ) : SeminormedAddCommGroup
         inferInstance
 
 /-- The actual derivative-free coordinate product on the input Sobolev level. -/
-def coordinateProduct {q : ℕ} (hq : 6 ≤ q) (i : Fin 3) :
+@[expose] def coordinateProduct {q : ℕ} (hq : 6 ≤ q) (i : Fin 3) :
     SobolevSpace period (q+1) →L[ℝ] SobolevSpace period (q+1) →L[ℝ] SobolevSpace period q :=
   (productHqBilinear period hq (coordinate 3 i) (coordinate_norm_le 3 i)).bilinearComp
     (truncateOperator period q) (truncateOperator period q)
@@ -85,7 +85,7 @@ def coordinateProduct {q : ℕ} (hq : 6 ≤ q) (i : Fin 3) :
   simp only [coordinateProduct, ContinuousLinearMap.bilinearComp_apply, productHqBilinear_apply]
 
 /-- The actual order-zero quadratic coefficient terms, Σ Cᵢ(uᵢ v). -/
-def algebraicBilinear {q : ℕ} (hq : 6 ≤ q)
+@[expose] def algebraicBilinear {q : ℕ} (hq : 6 ≤ q)
     (C : Fin 3 → SobolevSpace period q →L[ℝ] SobolevSpace period q) :
     SobolevSpace period (q+1) →L[ℝ] SobolevSpace period (q+1) →L[ℝ] SobolevSpace period q :=
   ∑ i : Fin 3, postcompose (C i) (coordinateProduct period hq i)

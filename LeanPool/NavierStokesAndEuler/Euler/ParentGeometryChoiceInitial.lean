@@ -100,11 +100,11 @@ namespace GeometryForwardInput
 variable (I : GeometryForwardInput U)
 
 /-- High, constructed using `forwardInitializedInitialHigh`. -/
-def high (k : ℝ) : Space → Space := forwardInitializedInitialHigh I.meanData I.data
+@[expose] def high (k : ℝ) : Space → Space := forwardInitializedInitialHigh I.meanData I.data
   I.geometry.δ I.delta_pos I.geometry.initialCoordinate I.cutoff_support I.alpha (truncation k) k
 
 /-- Mean, constructed using `forwardInitializedInitialMean`. -/
-def mean (k : ℝ) : Space → Space := forwardInitializedInitialMean I.meanData I.data
+@[expose] def mean (k : ℝ) : Space → Space := forwardInitializedInitialMean I.meanData I.data
   I.geometry.δ I.delta_pos I.geometry.initialCoordinate I.cutoff_support I.alpha (truncation k) k
 
 /-- Exact initial, constructed using `scale`. -/

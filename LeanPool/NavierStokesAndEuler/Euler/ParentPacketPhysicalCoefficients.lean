@@ -98,7 +98,7 @@ theorem initialStrain_physical (x : Space) :
 
 /-- The source low-order hypotheses follow from the actual physical
 gradient at time zero and the actual physical pressure-force derivative. -/
-def lowBoundsOfPhysical (Be Bc L r K : ℝ)
+@[expose] def lowBoundsOfPhysical (Be Bc L r K : ℝ)
     (hBe : 0 ≤ Be) (hBc : 0 ≤ Bc) (hL : boundaryLocalizationC1 * Bc ≤ L)
     (hr : 0 ≤ r) (hrq : r ≤ 1 / 4) (hK : 0 ≤ K)
     (hexterior : ∀ x, r ≤ ‖x‖ → ∀ v : Space,

@@ -42,7 +42,7 @@ theorem embedding_translate (a : LiftTangent) (u : SpatialL2 V) :
   rfl
 
 /-- Mean, given by `P⁻¹ • (embedding P).adjoint`. -/
-def mean : CylinderL2 P V →L[ℝ] SpatialL2 V := P⁻¹ • (embedding P).adjoint
+@[expose] def mean : CylinderL2 P V →L[ℝ] SpatialL2 V := P⁻¹ • (embedding P).adjoint
 
 @[simp] theorem mean_apply (u : CylinderL2 P V) :
     mean P u = P⁻¹ • (embedding P).adjoint u := by rfl

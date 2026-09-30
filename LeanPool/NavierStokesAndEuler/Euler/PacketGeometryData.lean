@@ -33,6 +33,7 @@ namespace EulerPacketMovingFrame
 open Set Real EulerSmoothLimit EulerPacketGrowth
 
 /-- Primary amplitude, given by `δ*hchild/(‖r t‖*‖w t‖)`. -/
+@[expose]
 def primaryAmplitude (δ hchild : ℝ) (r w : ℝ → Space) (t : ℝ) : ℝ :=
   δ*hchild/(‖r t‖*‖w t‖)
 

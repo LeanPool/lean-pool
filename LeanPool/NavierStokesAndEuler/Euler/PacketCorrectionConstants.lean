@@ -20,10 +20,12 @@ namespace EulerPacketCorrectionConstants
 open EulerPacketCylinderField
 
 /-- Velocity, given by `C*(fixedVelocityGradeCost R H 1+fixedVelocityGradeCost R H 2+1)`. -/
+@[expose]
 def velocity (R H C : ℝ) : ℝ :=
   C*(fixedVelocityGradeCost R H 1+fixedVelocityGradeCost R H 2+1)
 
 /-- Normal, given by `C*(fixedVelocityGradeCost R H 2+2)`. -/
+@[expose]
 def normal (R H C : ℝ) : ℝ := C*(fixedVelocityGradeCost R H 2+2)
 
 /-- Drift, given by `2*(3*velocity R H C+normal R H C)`. -/

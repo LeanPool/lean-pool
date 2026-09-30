@@ -150,6 +150,7 @@ variable (A : EulerParentPacketFrames.Parent)
   (B : EulerAllOrderDriftCorrection.Budget P A.T_pos C)
 
 /-- Corrected packet velocity, constructed using `u`. -/
+@[expose]
 def correctedPacketVelocity (k : ℝ) (Y u : Icc (0 : ℝ) A.T → Space → Space)
     (t : Icc (0 : ℝ) A.T) (x : Space) : Space :=
   u t x + A.ell • (C.κ • A.frame.field t (A.ell⁻¹ • Y t x)
@@ -543,6 +544,7 @@ def frameEquiv (t : Icc (0 : ℝ) A.T) (x : Space) : Space ≃L[ℝ] Space :=
 /-- Packet lift, given by `(q.1,A.packetPosition q)`. -/
 def packetLift (q : ℝ × Space) : ℝ × Space := (q.1,A.packetPosition q)
 /-- Packet inverse lift, given by `(q.1,A.packetInverse Y q)`. -/
+@[expose]
 def packetInverseLift (Y : Icc (0 : ℝ) A.T → Space → Space) (q : ℝ × Space) : ℝ × Space :=
   (q.1,A.packetInverse Y q)
 

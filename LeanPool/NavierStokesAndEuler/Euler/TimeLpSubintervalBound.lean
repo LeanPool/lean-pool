@@ -52,6 +52,7 @@ theorem subinterval_forcing_bound (T : ℝ) (hT : 0 ≤ T) (s t : ℝ)
   exact h.trans_eq he
 
 /-- The actual continuous scalar right-hand side after an almost-everywhere forcing estimate. -/
+@[expose]
 def scalarEnergyRhs (T : ℝ) (a b k X Y F : C(Icc (0 : ℝ) T, ℝ)) : C(Icc (0 : ℝ) T, ℝ) :=
   a*X+b*Y+k*F
 

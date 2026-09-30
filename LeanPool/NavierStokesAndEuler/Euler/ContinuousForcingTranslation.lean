@@ -327,7 +327,7 @@ variable {K V : Type*} [TopologicalSpace K] [CompactSpace K]
   [NormedAddCommGroup V] [NormedSpace ℝ V]
 
 /-- Ordinary translation applied to every value of an actual continuous L² path. -/
-def translate (a : Space) (f : C(K, L2Space V)) : C(K,L2Space V) :=
+@[expose] def translate (a : Space) (f : C(K, L2Space V)) : C(K,L2Space V) :=
   (EulerLpTranslation.translation a).toContinuousLinearMap.compLeftContinuous ℝ K f
 
 omit [CompactSpace K] in
@@ -339,7 +339,7 @@ variable (A : K → SmoothL2Field V)
   (f : C(K, L2Space V)) (hf : ∀ t, f t = (A t).toLp)
 
 /-- The original ordinary spatial jet, as a genuine continuous L² path. -/
-def spatialJetPath (n : ℕ) : C(K,L2Space (Space [×n]→L[ℝ] V)) :=
+@[expose] def spatialJetPath (n : ℕ) : C(K,L2Space (Space [×n]→L[ℝ] V)) :=
   ⟨fun t => (A t).jetLp n, hA n⟩
 
 /-- The actual translation jets form a continuous path because they are

@@ -280,6 +280,7 @@ theorem difference_time_law (U V : Evolution T hT) :
 
 /-- Energy path, given by `⟨fun t => wordEnergy 3 (U.difference V t),wordEnergy_continuous _
 (U.difference_continuous V) 3⟩`. -/
+@[expose]
 def energyPath (U V : Evolution T hT) : C(Icc (0 : ℝ) T,ℝ) :=
   ⟨fun t => wordEnergy 3 (U.difference V t),wordEnergy_continuous _ (U.difference_continuous V) 3⟩
 

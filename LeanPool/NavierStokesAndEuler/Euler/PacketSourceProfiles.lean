@@ -91,6 +91,7 @@ variable (P : ℝ) [Fact (0 < P)] (M : EulerMeanPacketProvider.Data)
 
 /-- Source profile witness, given by `constructedProfileWitness M D hT I Iprimary
 (sourceCoefficientData P M D I hT) rfl rfl rfl p`. -/
+@[expose]
 def sourceProfileWitness (p : ℕ) :
     ProfileRegularity P M.T M.T_pos.le D.support (sourceProfiles P M D I Iprimary p) :=
   constructedProfileWitness M D hT I Iprimary (sourceCoefficientData P M D I hT) rfl rfl rfl p

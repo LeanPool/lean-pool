@@ -47,6 +47,7 @@ C₁ scaledBoundaryOperatorAmplitude L`. -/
 
 /-- Gram cost, given by `inverseBlockCost (Fin 4) q (gramInverseEnvelope C) R (3*C^2)
 (accelerationBlockAmplitude (Fin 4) q R C C₁ 1 V)`. -/
+@[expose]
 def gramCost (q : ℕ) (R C C₁ V : ℝ) : ℝ :=
   inverseBlockCost (Fin 4) q (gramInverseEnvelope C) R (3*C^2)
     (accelerationBlockAmplitude (Fin 4) q R C C₁ 1 V)
@@ -120,6 +121,7 @@ variable (D : EulerMeanPacketProvider.Data) (q : ℕ) (Ti R C C₁ C₂ : ℝ)
 
 /-- Source mean budget as an element of `EulerMeanPacketProvider.Budget D q (radius q D.T Ti R C
 C₁ C₂ D.L)`. -/
+@[expose]
 def sourceMeanBudget : EulerMeanPacketProvider.Budget D q (radius q D.T Ti R C C₁ C₂ D.L) := by
   have hR0 : 0 ≤ R := (by norm_num : (0 : ℝ) ≤ 1024).trans hR
   have hTi0 : 0 ≤ Ti := (inv_nonneg.mpr D.T_pos.le).trans hTi

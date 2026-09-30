@@ -77,6 +77,7 @@ theorem vector_homogeneous_time (t : Icc (0 : ℝ) D.T) (x : Space) (θ : ℝ) :
 end General
 
 /-- Uncut velocity, given by `physical D ⟨0,le_rfl,D.T_pos.le⟩ x ξ t`. -/
+@[expose]
 def uncutVelocity (ξ : U) (t : ℝ) (x : Space) : Space :=
   physical D ⟨0,le_rfl,D.T_pos.le⟩ x ξ t
 

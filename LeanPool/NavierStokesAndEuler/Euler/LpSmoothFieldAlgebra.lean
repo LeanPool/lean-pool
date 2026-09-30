@@ -62,7 +62,7 @@ theorem jetLp_mapField (L : V →L[ℝ] W) (A : SmoothL2Field V) (n : ℕ) :
     ((congrArg (jetPostcompose L n) h₃).symm.trans h₂.symm))
 
 /-- Add field, bundling `field`, `smooth`, `integrable`. -/
-def addField (A B : SmoothL2Field V) : SmoothL2Field V where
+@[expose] def addField (A B : SmoothL2Field V) : SmoothL2Field V where
   field := A.field+B.field
   smooth := A.smooth.add B.smooth
   integrable n := ((A.integrable n).add (B.integrable n)).ae_eq

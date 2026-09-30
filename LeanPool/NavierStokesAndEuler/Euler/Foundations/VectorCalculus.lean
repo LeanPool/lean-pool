@@ -145,6 +145,7 @@ theorem odd_curl_of_even (ψ : Fin 3 → Space → ℝ)
   ring
 
 /-- The vector potential `-x × (L x) / 3` in cyclic coordinates. -/
+@[expose]
 def linearPotential (L : Space →L[ℝ] Space) (i : Fin 3) (x : Space) : ℝ :=
   (-1 / 3 : ℝ) * (x (i + 1) * (L x) (i + 2) - x (i + 2) * (L x) (i + 1))
 

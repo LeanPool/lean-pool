@@ -443,6 +443,7 @@ open scoped ContDiff
 
 /-- Forcing block amplitude, given by `3*sobolevCoefficientAmplitude ι q Rc (T*derivativeCost T
 C₀ C₁)*Cf`. -/
+@[expose]
 def forcingBlockAmplitude (ι : Type*) [Fintype ι] (q : ℕ) (T Rc C₀ C₁ Cf : ℝ) : ℝ :=
   3*sobolevCoefficientAmplitude ι q Rc (T*derivativeCost T C₀ C₁)*Cf
 

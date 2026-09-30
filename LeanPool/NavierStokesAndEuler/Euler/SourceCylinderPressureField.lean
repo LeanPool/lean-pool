@@ -211,7 +211,7 @@ variable (period : ℝ) [Fact (0 < period)]
     (velocity_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀) t x
 
 /-- The reconstructed actual product-rule time derivative. -/
-def derivativeField (t : Icc (0 : ℝ) T) (x : LiftDomain period) : Space :=
+@[expose] def derivativeField (t : Icc (0 : ℝ) T) (x : LiftDomain period) : Space :=
   pointField period (includePath period S hS (velocityDerivative period S hS T hT Q Q₁ c hc hQ f
       a₀))
     (velocityDerivative_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀) t x
@@ -465,7 +465,7 @@ variable (period : ℝ) [Fact (0 < period)]
   (cm : ℝ) (hcm : 0 < cm) (hm : ∀ t x, cm ≤ ‖m.field t x‖ ^ 2)
 
 /-- A genuine supported scalar path representing the right side of ∂θπ in (11). -/
-def pressureSource : C(Icc (0 : ℝ) T,Supported period ℝ S hS) :=
+@[expose] def pressureSource : C(Icc (0 : ℝ) T,Supported period ℝ S hS) :=
   supportedMultiplierMap (K := Icc (0 : ℝ) T) (E := Space) (F := ℝ) period S hS
     (normalFunctional m cm hcm hm)
     (f - (2 : ℝ) • supportedMultiplierMap (K := Icc (0 : ℝ) T) (E := Space) (F := Space)
@@ -665,7 +665,7 @@ variable (P : ℝ) [Fact (0 < P)]
   (cm : ℝ) (hcm : 0 < cm) (hm : ∀ t x, cm ≤ ‖m.field t x‖ ^ 2)
 
 /-- The actual bounded angular inverse applied to the solved scalar source. -/
-def pressurePath : C(Icc (0 : ℝ) T,CylinderL2 P ℝ) :=
+@[expose] def pressurePath : C(Icc (0 : ℝ) T,CylinderL2 P ℝ) :=
   pathPrimitive P (includePath P S hS
     (pressureSource P S hS T hT Q Q₁ c hc hQ f a₀ M m cm hcm hm))
 
@@ -702,6 +702,7 @@ variable (P : ℝ) [Fact (0 < P)]
   (ha₀zero : average P (a₀ : CylinderL2 P U) = 0)
 
 /-- The literal normalized periodic pressure for the actual forward solution. -/
+@[expose]
 def pressureField (t : Icc (0 : ℝ) T) : LiftDomain P → ℝ :=
   classicalPrimitive P
     (normalResidual P S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ M m t)

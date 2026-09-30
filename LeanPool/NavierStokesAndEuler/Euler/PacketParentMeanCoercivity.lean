@@ -52,7 +52,7 @@ C*C₁)+gramInverseEnvelope C*C`. -/
   1+(2*(gramInverseEnvelope C)^2*C^2*C₁+gramInverseEnvelope C*C₁)+gramInverseEnvelope C*C
 
 /-- Inverse envelope, given by `2*(transportEnvelope C C₁)^2`. -/
-def inverseEnvelope (C C₁ : ℝ) : ℝ := 2*(transportEnvelope C C₁)^2
+@[expose] def inverseEnvelope (C C₁ : ℝ) : ℝ := 2*(transportEnvelope C C₁)^2
 
 theorem transportEnvelope_nonneg (C C₁ : ℝ) (hC : 0 ≤ C) (hC₁ : 0 ≤ C₁) :
     0 ≤ transportEnvelope C C₁ := by unfold transportEnvelope gramInverseEnvelope; positivity

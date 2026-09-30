@@ -38,6 +38,7 @@ local instance instPacketPrimaryFactorization2 : NormedSpace ℝ Space := inferI
 variable {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U]
 
 /-- Physical generator, bundling `toFun`, `continuous_toFun`, `have`, `have`. -/
+@[expose]
 def physicalGenerator (D : Data U) (x : Space) : C(Icc (0 : ℝ) D.T,Space →L[ℝ] Space) where
   toFun t := -(D.M.field t x)+(2/‖D.normal.field t x‖^2) •
     ((rankOne ℝ (D.normal.field t x) (D.normal.field t x)).comp (D.M.field t x))

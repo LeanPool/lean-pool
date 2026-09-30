@@ -118,6 +118,7 @@ variable {D τ hτ hτT B ι q} (L : Budget D τ hτ hτT B ι q)
 
 /-- Full profile, given by `EulerElapsedTimePathGluing.profile D.T τ hτ.le hτT.le L.g
 L.initial_one`. -/
+@[expose]
 def fullProfile : C(Icc (0 : ℝ) D.T,ℝ) :=
   EulerElapsedTimePathGluing.profile D.T τ hτ.le hτT.le L.g L.initial_one
 

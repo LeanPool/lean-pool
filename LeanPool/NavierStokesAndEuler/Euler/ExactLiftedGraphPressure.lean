@@ -106,6 +106,7 @@ theorem graphPressure_has_potential (k : ℝ) (hk : k * A.κ = 1) (t : Icc (0 : 
     (S.pressure.pointField_ae t) (S.pressure.pointField_smooth t)
 
 /-- Graph potential, given by `radialPotential (S.graphPressure k t)`. -/
+@[expose]
 def graphPotential (k : ℝ) (t : Icc (0 : ℝ) T) : Vector3 → ℝ :=
   radialPotential (S.graphPressure k t)
 

@@ -35,7 +35,7 @@ variable (P : ℝ) [Fact (0 < P)] {K : Type*} [TopologicalSpace K] [CompactSpace
   (i : Fin 4)
 
 /-- The continuous L² path for one factor times an actual spatial or angular derivative. -/
-def scalarDerivativeProductPath : C(K,LiftL2 P) :=
+@[expose] def scalarDerivativeProductPath : C(K,LiftL2 P) :=
   scalarProductPath P L hL p (derivativePath P q i) hp (derivativePath_orbit P q hq i)
 
 theorem scalarDerivativeProductPath_orbit :
@@ -105,7 +105,7 @@ variable (P : ℝ) [Fact (0 < P)] {K : Type*} [TopologicalSpace K] [CompactSpace
   (hq : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a q))
 
 /-- The actual path representing p·∇q, where the derivative is spatial and the angle is retained. -/
-def advectionPath : C(K,LiftL2 P) :=
+@[expose] def advectionPath : C(K,LiftL2 P) :=
   ∑ i : Fin 3, scalarDerivativeProductPath P (component i) (component_norm i) p q hp hq i.succ
 
 theorem advectionPath_orbit :

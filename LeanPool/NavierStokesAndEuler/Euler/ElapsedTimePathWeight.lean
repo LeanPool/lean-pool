@@ -37,6 +37,7 @@ variable (S τ : ℝ) (hτ0 : 0 ≤ τ) (hτS : τ ≤ S)
   (hg0 : g ⟨0, le_rfl, sub_nonneg.mpr hτS⟩ = 1)
 
 /-- The literal piecewise profile; no differentiability of it is required. -/
+@[expose]
 def profile : C(Icc (0 : ℝ) S,ℝ) :=
   join S τ hτ0 hτS (ContinuousMap.const _ 1) g hg0.symm
 

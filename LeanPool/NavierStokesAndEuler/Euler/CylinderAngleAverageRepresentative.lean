@@ -33,7 +33,7 @@ theorem average_full_translation (a : LiftDomain P) (u : LiftL2 P) :
   exact translations_commute P a (coveringMap P (0,s)) v
 
 /-- Sobolev average, given by `liftOperator P q (average P) (average_full_translation P)`. -/
-def sobolevAverage (q : ℕ) : SobolevSpace P q →L[ℝ] SobolevSpace P q :=
+@[expose] def sobolevAverage (q : ℕ) : SobolevSpace P q →L[ℝ] SobolevSpace P q :=
   liftOperator P q (average P) (average_full_translation P)
 
 @[simp] theorem value_sobolevAverage {q : ℕ} (u : SobolevSpace P q) :
@@ -60,10 +60,6 @@ theorem sobolevAverage_eq_integral {q : ℕ} (u : SobolevSpace P q) :
     ((sobolevAngleCurve_continuous P u).intervalIntegrable 0 P)]
   rw [average_eq_integral]
   congr 1
-  apply intervalIntegral.integral_congr
-  intro s _
-  simp only [angleCurve, value_sobolevTranslation, EulerCylinderAnglePrimitive.angleShift]
-  rfl
 
 theorem pointEvaluation_average_kernel (u : SobolevSpace P 3) (x : LiftDomain P) :
     pointEvaluation P x (sobolevAverage P 3 u) = P⁻¹ • (∫ s in (0 : ℝ)..P,

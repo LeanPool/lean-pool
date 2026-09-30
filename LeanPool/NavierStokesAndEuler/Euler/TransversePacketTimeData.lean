@@ -569,7 +569,7 @@ variable (m : SmoothCoefficientPath K Space) (m₁ : C(K, Space →ᵇ Space))
 
 /-- Potential time path, given by `potentialPathMap (timeNormalPath (normalFunctional m c hc hm)
 (columnPath m₁))`. -/
-def potentialTimePath : C(K,PotentialField) :=
+@[expose] def potentialTimePath : C(K,PotentialField) :=
   potentialPathMap (timeNormalPath (normalFunctional m c hc hm) (columnPath m₁))
 
 theorem potentialTimePath_apply (t : K) (y : Space) :
@@ -788,7 +788,7 @@ local instance instTransversePacketTimeData10 : NormedSpace ℝ C(Icc (0 : ℝ) 
     inferInstance
 
 /-- The derivative of the inverse is constructed from the original fields. -/
-def inverseDerivative : C(Icc (0 : ℝ) D.T,Space →ᵇ Space →L[ℝ] Space) :=
+@[expose] def inverseDerivative : C(Icc (0 : ℝ) D.T,Space →ᵇ Space →L[ℝ] Space) :=
   -pathCompositionMap (α := Space) (K := Icc (0 : ℝ) D.T)
     (E := Space) (F := Space) (U := Space) D.FInv.field D.M.field
 
@@ -912,7 +912,7 @@ theorem normalDerivative_bound (R CI CM : ℝ) (hR : 0 ≤ R) (hCI : 0 ≤ CI) (
     (D.inverseDerivative_bound R CI CM hR hCI hCM hI hM) n a
 
 /-- The actual time coefficient for the periodic-potential multiplier. -/
-def potentialDerivative : C(Icc (0 : ℝ) D.T,PotentialField) :=
+@[expose] def potentialDerivative : C(Icc (0 : ℝ) D.T,PotentialField) :=
   potentialTimePath D.normal D.normalDerivative D.normalLower D.normalLower_pos D.normal_lower
 
 theorem potentialDerivative_orbit : ContDiff ℝ ∞ (translateCoefficientPath D.potentialDerivative) :=

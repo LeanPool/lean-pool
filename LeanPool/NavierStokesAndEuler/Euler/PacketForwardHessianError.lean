@@ -596,6 +596,7 @@ open scoped ContDiff
 variable {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U] [CompleteSpace U]
 
 /-- Forward initialized pressure hessian cost, constructed using `fastHessianCost`. -/
+@[expose]
 def forwardInitializedPressureHessianCost {D : Data U} {q : ℕ} {R₀ : ℝ}
     (NB : EulerTransversePacketJoin.NormalBudget D q R₀) (R H0 Rc C : ℝ) : ℝ :=
   fastHessianCost (P := period) NB (4*R) (fixedVelocityGradeCost R H0 1) +

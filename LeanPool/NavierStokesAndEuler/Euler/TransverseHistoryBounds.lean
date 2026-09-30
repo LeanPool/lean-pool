@@ -344,7 +344,9 @@ theorem fixedAffineEndpoint_sub_norm_le (d a r : ℝ)
       P P₁ G hP hp hG d a r hD hD' hA hA' hr hr')
     (energyOperator_sub_norm_le T hT H G)
     (affineTrial_sub_norm_le T hT Q Q₁ P P₁)
-  exact h.trans_eq (by unfold endpointDifferenceCost; ring)
+  refine h.trans_eq ?_
+  simp only [endpointDifferenceCost]
+  ring
 
 variable (m n : Icc (0 : ℝ) T → E)
   (hm : ∀ t v, ⟪m t, Q t v⟫_ℝ = 0) (hn : ∀ t v, ⟪n t, P t v⟫_ℝ = 0)
@@ -707,6 +709,7 @@ theorem coordinateSlope_sub_norm_le (d a r : ℝ)
     (by unfold slopeDifferenceCost derivativeDistance; ring))
 
 /-- History cost, given by `q * traceCost T (2*c⁻¹*q*q₁) * slopeCost T d a r`. -/
+@[expose]
 def historyCost (T c q q₁ d a r : ℝ) : ℝ :=
   q * traceCost T (2*c⁻¹*q*q₁) * slopeCost T d a r
 

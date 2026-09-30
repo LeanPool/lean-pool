@@ -150,7 +150,7 @@ variable (P : ℝ) [Fact (0 < P)]
   (hA : ContDiff ℝ ∞ (translateCoefficientPath A))
 
 /-- Sobolev operator, given by `coefficientSobolevOperator P (coefficientJet P A hA q t)`. -/
-def sobolevOperator (q : ℕ) (t : K) : SobolevSpace P q →L[ℝ] SobolevSpace P q :=
+@[expose] def sobolevOperator (q : ℕ) (t : K) : SobolevSpace P q →L[ℝ] SobolevSpace P q :=
   coefficientSobolevOperator P (coefficientJet P A hA q t)
 
 @[simp] theorem sobolevOperator_value (q : ℕ) (t : K) (u : SobolevSpace P q) :
@@ -243,7 +243,7 @@ open Set EulerSmoothLimit EulerLiftedGradientSpace EulerCylinderSobolevSpace
 variable (P : ℝ) [Fact (0 < P)] {T : ℝ} {raw : Domain → Space →L[ℝ] Space}
 
 /-- To coefficient tower, bundling `coefficient`, `jet`, `continuous`. -/
-def toCoefficientTower (A : MatrixCoefficient T raw) :
+@[expose] def toCoefficientTower (A : MatrixCoefficient T raw) :
     EulerAllOrderCorrectionData.CoefficientTower P T where
   coefficient := smoothCoefficient P A.path A.orbit
   jet q t := coefficientJet P A.path A.orbit q t
@@ -251,7 +251,7 @@ def toCoefficientTower (A : MatrixCoefficient T raw) :
 
 @[simp] theorem toCoefficientTower_coefficient (A : MatrixCoefficient T raw)
     (t : Icc (0 : ℝ) T) (x : LiftDomain P) :
-    ((A.toCoefficientTower P).coefficient t).coefficient x = A.path t x.1 := rfl
+    ((A.toCoefficientTower P).coefficient t).coefficient x = A.path t x.1 := by rfl
 
 theorem toCoefficientTower_raw (A : MatrixCoefficient T raw)
     (t : Icc (0 : ℝ) T) (x : Space) (θ : ℝ) :

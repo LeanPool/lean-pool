@@ -290,6 +290,7 @@ def meanResult (O : Operators) (p : ℕ) (a : ℕ → Profile) : VectorField × 
 
 /-- Step, given by `let b := meanResult O p a let h := O.highSolve (highForce O p a)
 ⟨h.1,b.1,O.curlCorrector h.1,h.2,b.2⟩`. -/
+@[expose]
 def step (O : Operators) (p : ℕ) (a : ℕ → Profile) : Profile :=
   let b := meanResult O p a
   let h := O.highSolve (highForce O p a)

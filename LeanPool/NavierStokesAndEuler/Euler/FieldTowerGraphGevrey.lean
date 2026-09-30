@@ -89,6 +89,7 @@ local instance instFieldTowerGraphGevrey14 (n : ℕ) : NormedAddCommGroup C(Icc 
     Space)) := inferInstance
 
 /-- Zero graph field, bundling `field`, `smooth`, `integrable`. -/
+@[expose]
 def zeroGraphField (t : Icc (0 : ℝ) T) : SmoothL2Field Space where
   field := A.physicalPointField 1 0 t
   smooth := A.physicalPointField_smooth 1 0 t
@@ -96,6 +97,7 @@ def zeroGraphField (t : Icc (0 : ℝ) T) : SmoothL2Field Space where
 
 /-- Zero graph coefficient, given by `A.toSmoothTimeField.precompLinear (ContinuousLinearMap.inl
 ℝ Space ℝ)`. -/
+@[expose]
 def zeroGraphCoefficient : SmoothTimeField (Icc (0 : ℝ) T) Space Space :=
   A.toSmoothTimeField.precompLinear (ContinuousLinearMap.inl ℝ Space ℝ)
 

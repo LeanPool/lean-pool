@@ -29,7 +29,7 @@ open scoped ContDiff Topology
 variable (period : ℝ) [Fact (0 < period)]
 
 /-- A genuine derivative word followed by restriction to its prescribed target Sobolev level. -/
-def wordAtLevel {s : ℕ} (q n : ℕ) (w : Fin n → Fin 4) (h : n + q ≤ s) :
+@[expose] def wordAtLevel {s : ℕ} (q n : ℕ) (w : Fin n → Fin 4) (h : n + q ≤ s) :
     SobolevSpace period s →L[ℝ] SobolevSpace period q :=
   (wordBlock period q n w).comp (restrictOperator period (by omega : q+n ≤ s))
 

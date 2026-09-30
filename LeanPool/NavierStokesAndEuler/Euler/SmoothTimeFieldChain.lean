@@ -38,6 +38,7 @@ variable {K E V W : Type} [TopologicalSpace K] [CompactSpace K]
   [NormedAddCommGroup W] [NormedSpace ℝ W]
 
 /-- Apply field, given by `bilinear (ContinuousLinearMap.id ℝ (V →L[ℝ] W)) A B`. -/
+@[expose]
 def applyField (A : SmoothTimeField K E (V →L[ℝ] W)) (B : SmoothTimeField K E V) :
     SmoothTimeField K E W :=
   bilinear (ContinuousLinearMap.id ℝ (V →L[ℝ] W)) A B

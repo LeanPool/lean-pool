@@ -36,7 +36,7 @@ open Finset MeasureTheory EulerSmoothLimit
   ∑ n ∈ range (m+1), lpNorm (iteratedFDeriv ℝ n f) 2 volume
 
 /-- Jet polynomial, given by `∑ n ∈ range (m+1), R^n*(n.factorial : ℝ)^2`. -/
-def jetPolynomial (R : ℝ) (m : ℕ) : ℝ :=
+@[expose] def jetPolynomial (R : ℝ) (m : ℕ) : ℝ :=
   ∑ n ∈ range (m+1), R^n*(n.factorial : ℝ)^2
 
 theorem jetPolynomial_nonneg (R : ℝ) (hR : 0 ≤ R) (m : ℕ) :

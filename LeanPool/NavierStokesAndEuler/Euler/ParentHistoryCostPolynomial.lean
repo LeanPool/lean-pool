@@ -25,6 +25,7 @@ open EulerPacketParentLabelBounds EulerPacketParentMeanCoercivity
   EulerTransverseHistoryBounds EulerTransverseEndpointDifference EulerPolynomialCost
 
 /-- Label history envelope, constructed using `parentDifferenceEnvelope`. -/
+@[expose]
 def labelHistoryEnvelope (K Ti : ℝ) : ℝ :=
   parentDifferenceEnvelope Ti (frameAmplitude K) (gradientAmplitude K)
     (27*(frameAmplitude K)^2*gradientAmplitude K) (coefficientRadius K)

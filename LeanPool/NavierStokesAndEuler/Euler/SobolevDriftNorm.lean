@@ -35,7 +35,7 @@ def driftWordOperator {s : ℕ} (L : Vector3 →L[ℝ] Domain 4) (w : SobolevWor
   (L.compLpL 2 (liftMeasure period)).comp (wordOperator period w)
 
 /-- The exact sum of L² norms of drift derivatives at one total derivative order. -/
-def driftLevelNorm {s : ℕ} (n : ℕ) (L : Vector3 →L[ℝ] Domain 4)
+@[expose] def driftLevelNorm {s : ℕ} (n : ℕ) (L : Vector3 →L[ℝ] Domain 4)
     (u : SobolevSpace period s) : ℝ :=
   ∑ w : Fin n → Fin 4, ‖L.compLpL 2 (liftMeasure period) ((toJet period u).word w)‖
 

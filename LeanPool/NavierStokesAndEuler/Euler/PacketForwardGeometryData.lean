@@ -117,6 +117,7 @@ variable [CompleteSpace U]
 
 /-- Source velocity, given by `EulerPacketForwardFactorization.uncutVelocity D
 G.initialCoordinate t x`. -/
+@[expose]
 def sourceVelocity (x : Space) (t : ℝ) : Space :=
   EulerPacketForwardFactorization.uncutVelocity D G.initialCoordinate t x
 

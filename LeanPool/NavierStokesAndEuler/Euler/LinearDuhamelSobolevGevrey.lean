@@ -345,7 +345,7 @@ open Set ContinuousLinearMap EulerContinuousTimeIntegral EulerContinuousTimeWeig
 open scoped ContDiff
 
 /-- The once-enlarged coefficient amplitude for the frozen equation at fixed base order. -/
-def forwardSobolevAmplitude (ι : Type*) [Fintype ι] (q : ℕ) (T C CB Rc : ℝ) : ℝ :=
+@[expose] def forwardSobolevAmplitude (ι : Type*) [Fintype ι] (q : ℕ) (T C CB Rc : ℝ) : ℝ :=
   sobolevCoefficientAmplitude ι q Rc (frozenAmplitude T C CB)
 
 /-- A fixed polynomial cost for the source's forward Hq external-word estimate. -/

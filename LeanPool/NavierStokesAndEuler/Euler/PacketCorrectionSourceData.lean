@@ -147,7 +147,7 @@ variable {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U]
 
 /-- Correction data, bundling `κ`, `direction`, `scale_bound`, `direction_bound` and the
 required compatibility proofs. -/
-def correctionData (κ : ℝ) (hκ : |κ| ≤ 1)
+@[expose] def correctionData (κ : ℝ) (hκ : |κ| ≤ 1)
     (approximation residual : FieldTower P D.T) : Data P D.T where
   κ := κ
   direction := D.m₀
@@ -170,21 +170,21 @@ def correctionData (κ : ℝ) (hκ : |κ| ≤ 1)
 
 @[simp] theorem correctionDataOfFields_approximation (κ : ℝ) (hκ : |κ| ≤ 1)
     {z r : VectorField} (Z : Field P D.T z) (G : Field P D.T r) :
-    (correctionDataOfFields D P κ hκ Z G).approximation.field = Z.path := rfl
+    (correctionDataOfFields D P κ hκ Z G).approximation.field = Z.path := by rfl
 
 @[simp] theorem correctionDataOfFields_residual (κ : ℝ) (hκ : |κ| ≤ 1)
     {z r : VectorField} (Z : Field P D.T z) (G : Field P D.T r) :
-    (correctionDataOfFields D P κ hκ Z G).residual.field = G.path := rfl
+    (correctionDataOfFields D P κ hκ Z G).residual.field = G.path := by rfl
 
 @[simp] theorem correctionData_metric (κ : ℝ) (hκ : |κ| ≤ 1)
     (Z G : FieldTower P D.T) (t : Icc (0 : ℝ) D.T) (x : LiftDomain P) :
     (((correctionData D P κ hκ Z G).metric).coefficient t).coefficient x =
-      (D.FInv.field t x.1).comp (D.FInv.field t x.1).adjoint := rfl
+      (D.FInv.field t x.1).comp (D.FInv.field t x.1).adjoint := by rfl
 
 @[simp] theorem correctionData_linear (κ : ℝ) (hκ : |κ| ≤ 1)
     (Z G : FieldTower P D.T) (t : Icc (0 : ℝ) D.T) (x : LiftDomain P) :
     (((correctionData D P κ hκ Z G).linear).coefficient t).coefficient x =
-      (2 : ℝ) • (D.FInv.field t x.1).comp (D.F₁.field t x.1) := rfl
+      (2 : ℝ) • (D.FInv.field t x.1).comp (D.F₁.field t x.1) := by rfl
 
 theorem correctionData_quadratic (κ : ℝ) (hκ : |κ| ≤ 1)
     (Z G : FieldTower P D.T) (i : Fin 3) (t : Icc (0 : ℝ) D.T) (x : LiftDomain P) :

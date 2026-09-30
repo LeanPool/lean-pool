@@ -26,6 +26,7 @@ variable (period : ℝ) [Fact (0 < period)]
 variable {T : ℝ} {hT : 0 < T} {A : Data period T}
 
 /-- The fixed radius retained for the correction, its pressure, and its time derivative. -/
+@[expose]
 def Budget.reducedRadius (B : Budget period hT A) : ℝ := B.initialRadius/4
 
 /-- The actual target-error envelope converted from metric energy to the fixed H⁶ word norm. -/

@@ -2044,17 +2044,20 @@ variable {D : Data} {ι : Type*} [Fintype ι] {q : ℕ} {R : ℝ}
 
 /-- Velocity amplitude, given by `3*sobolevCoefficientAmplitude ι q E.Rc
 E.CF*coordinateTraceCost D.T`. -/
+@[expose]
 def velocityAmplitude : ℝ :=
   3*sobolevCoefficientAmplitude ι q E.Rc E.CF*coordinateTraceCost D.T
 
 /-- Derivative amplitude, given by `3*(sobolevCoefficientAmplitude ι q E.Rc
 E.CF₁*coordinateTraceCost D.T + sobolevCoefficientAmplitude ι q E.Rc E.CF)`. -/
+@[expose]
 def derivativeAmplitude : ℝ :=
   3*(sobolevCoefficientAmplitude ι q E.Rc E.CF₁*coordinateTraceCost D.T +
     sobolevCoefficientAmplitude ι q E.Rc E.CF)
 
 /-- Pressure amplitude, given by `E.Cf+3*sobolevCoefficientAmplitude ι q E.Rc E.CF +
 6*sobolevCoefficientAmplitude ι q E.Rc E.CF₁*coordinateTraceCost D.T`. -/
+@[expose]
 def pressureAmplitude : ℝ :=
   E.Cf+3*sobolevCoefficientAmplitude ι q E.Rc E.CF +
     6*sobolevCoefficientAmplitude ι q E.Rc E.CF₁*coordinateTraceCost D.T
@@ -2646,11 +2649,15 @@ theorem path_envelope_bounds (E : SobolevData D ι q R)
       (mul_le_mul_of_nonneg_left (hb n a) (Real.sqrt_nonneg D.T))
     have hm := mul_nonneg hA (majorant_nonneg R E.radius_nonneg d n)
     have hc := mul_le_mul_of_nonneg_right hCfT hm
-    exact h.trans (by nlinarith)
+    exact h.trans (hc.trans_eq (by ring))
   · intro n a
     have hm := mul_nonneg hA (majorant_nonneg R E.radius_nonneg d n)
     have hc := mul_le_mul_of_nonneg_right hCf1 hm
-    exact (hb n a).trans (by nlinarith)
+    calc
+      _ ≤ A * majorant R d n := hb n a
+      _ = 1 * (A * majorant R d n) := by ring
+      _ ≤ E.Cf * (A * majorant R d n) := hc
+      _ = A * (E.Cf * majorant R d n) := by ring
 
 end EulerMeanPacketProvider.SobolevData
 
@@ -2690,7 +2697,7 @@ variable {D : Data} {raw : VectorField} (G : Forcing D raw)
   (P : ℝ) [Fact (0 < P)]
 
 /-- Pressure force cylinder field, given by `G.pressureForceForcing.toCylinderField P`. -/
-def pressureForceCylinderField : EulerPacketCylinderField.Field P D.T G.pressureForce :=
+@[expose] def pressureForceCylinderField : EulerPacketCylinderField.Field P D.T G.pressureForce :=
   G.pressureForceForcing.toCylinderField P
 
 /-- This witness represents the literal spatial gradient encoded by the
@@ -2726,13 +2733,14 @@ namespace Budget
 variable {D : Data} {q : ℕ} {R : ℝ} (B : Budget D q R)
 
 /-- Velocity cost, given by `B.toSobolevData.velocityAmplitude`. -/
-def velocityCost : ℝ := B.toSobolevData.velocityAmplitude
+@[expose] def velocityCost : ℝ := B.toSobolevData.velocityAmplitude
 /-- Derivative cost, given by `B.toSobolevData.derivativeAmplitude`. -/
-def derivativeCost : ℝ := B.toSobolevData.derivativeAmplitude
+@[expose] def derivativeCost : ℝ := B.toSobolevData.derivativeAmplitude
 /-- Pressure force cost, given by `B.toSobolevData.pressureAmplitude`. -/
-def pressureForceCost : ℝ := B.toSobolevData.pressureAmplitude
+@[expose] def pressureForceCost : ℝ := B.toSobolevData.pressureAmplitude
 /-- Pressure gradient cost, given by `3*sobolevCoefficientAmplitude (Fin 4) q B.Rc
 B.CF*B.pressureForceCost`. -/
+@[expose]
 def pressureGradientCost : ℝ := 3*sobolevCoefficientAmplitude (Fin 4) q B.Rc
     B.CF*B.pressureForceCost
 

@@ -30,6 +30,7 @@ variable (P : ℝ) [Fact (0 < P)]
 
 /-- A fixed norm-one embedding lets the existing bounded H3 evaluation recover
 the genuine scalar field without making a new representative choice. -/
+@[expose]
 def scalarPointField (t : K) (x : LiftDomain P) : ℝ :=
   scalarProject (pointField P (pathMap P scalarEmbed p)
     (pathMap_orbit_contDiff P scalarEmbed p hp) t x)

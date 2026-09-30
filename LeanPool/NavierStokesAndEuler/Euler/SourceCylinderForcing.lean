@@ -47,7 +47,7 @@ variable (period : ℝ) [Fact (0 < period)]
   supportedMultiplierMap period S hS (sourceForcing Q c hc hQ) f
 
 /-- The actual physical velocity associated with the coordinate field. -/
-def physicalVelocity (u : C(K, Supported period U S hS)) : C(K,Supported period E S hS) :=
+@[expose] def physicalVelocity (u : C(K, Supported period U S hS)) : C(K,Supported period E S hS) :=
   supportedMultiplierMap period S hS Q.field u
 
 theorem projectedForcing_contDiff (f : C(K, Supported period E S hS))

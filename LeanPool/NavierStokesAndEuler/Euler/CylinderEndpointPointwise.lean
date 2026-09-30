@@ -139,6 +139,9 @@ theorem integral_translate (p : C(Icc (0 : ℝ) T, CylinderL2 P V)) (a : LiftTan
     integral T hT (pathTranslate P a p) = pathTranslate P a (integral T hT p) := by
   apply ContinuousMap.ext
   intro t
+  simp only [pathTranslate_apply, EulerContinuousTimeIntegral.integral_apply]
+  change (∫ s in (0 : ℝ)..(t : ℝ), translate P a (extendPath T hT p s)) =
+    translate P a (∫ s in (0 : ℝ)..(t : ℝ), extendPath T hT p s)
   exact (translate P a).intervalIntegral_comp_comm (extendPath T hT p)
 
 theorem integral_orbit_contDiff (p : C(Icc (0 : ℝ) T, CylinderL2 P V))

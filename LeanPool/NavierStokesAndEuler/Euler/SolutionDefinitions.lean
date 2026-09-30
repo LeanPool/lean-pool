@@ -137,7 +137,7 @@ structure EulerSobolevExistenceAndSmoothnessR3On (I : Set ℝ)
 
 /-- The ordinary curl of a velocity field, expressed through its spatial derivative.
 Indices in `Fin 3` are cyclic. -/
-noncomputable def vorticity (v : ℝ³ → ℝ³) (x : ℝ³) : ℝ³ :=
+@[expose] noncomputable def vorticity (v : ℝ³ → ℝ³) (x : ℝ³) : ℝ³ :=
   WithLp.toLp 2 (fun i : Fin 3 =>
     (fderiv ℝ v x (EuclideanSpace.single (i + 1) 1)) (i + 2) -
       (fderiv ℝ v x (EuclideanSpace.single (i + 2) 1)) (i + 1))

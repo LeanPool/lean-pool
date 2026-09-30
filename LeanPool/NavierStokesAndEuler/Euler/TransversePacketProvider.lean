@@ -47,7 +47,7 @@ variable {D : Data U} {raw : VectorField} (G : Forcing P D raw) (I : InitialData
     G.path_orbit I.orbit (D.clamp z.1) (z.2.1,(z.2.2 : AddCircle P))
 
 /-- Vector derivative as an element of `VectorField`. -/
-def vectorDerivative : VectorField := fun z =>
+@[expose] def vectorDerivative : VectorField := fun z =>
   derivativeField P D.support D.support_measurable D.support_compact D.T D.T_pos.le
     D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower G.path I.value
     G.path_orbit I.orbit (D.clamp z.1) (z.2.1,(z.2.2 : AddCircle P))

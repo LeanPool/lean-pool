@@ -66,7 +66,7 @@ variable {P T : ℝ} [Fact (0 < P)] {raw raw' : VectorField}
     (fun t x θ => by simp only [Pi.add_apply,G.raw_eq,H.raw_eq])
 
 /-- Neg, constructed using `ofLifted`. -/
-def neg (G : Field P T raw) : Field P T (-raw) :=
+@[expose] def neg (G : Field P T raw) : Field P T (-raw) :=
   ofLifted (-G.path) (by simpa only [map_neg] using G.orbit.neg)
     (fun t x => -pointField P G.path G.orbit t x)
     (fun t => (smoothField_continuous P _ (pointField_smooth P G.path G.orbit t)).neg)
@@ -76,7 +76,7 @@ def neg (G : Field P T raw) : Field P T (-raw) :=
     (fun t x θ => by simp only [Pi.neg_apply,G.raw_eq])
 
 /-- Sub, given by `(G.add H.neg).congr (fun t x θ => by simp only [sub_eq_add_neg])`. -/
-def sub (G : Field P T raw) (H : Field P T raw') : Field P T (raw-raw') :=
+@[expose] def sub (G : Field P T raw) (H : Field P T raw') : Field P T (raw-raw') :=
   (G.add H.neg).congr (fun t x θ => by simp only [sub_eq_add_neg])
 
 /-- Smul, constructed using `ofLifted`. -/

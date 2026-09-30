@@ -29,6 +29,7 @@ open scoped ContDiff
 
 /-- Word maximum, given by `(univ : Finset (Fin n → Fin 3)).sup' univ_nonempty (fun w =>
 ‖(wordField A w).toLp‖)`. -/
+@[expose]
 def wordMaximum (n : ℕ) (A : SmoothL2Field Space) : ℝ :=
   (univ : Finset (Fin n → Fin 3)).sup' univ_nonempty (fun w => ‖(wordField A w).toLp‖)
 

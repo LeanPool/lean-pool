@@ -73,7 +73,7 @@ typeclass synthesis. -/
 local instance instLpCylinderPaths8 : NormedSpace ℝ C(K,Supported period V S hS) := inferInstance
 
 /-- Inclusion of a supported path into the genuine ordinary L² path space. -/
-def includePath : C(K,Supported period V S hS) →L[ℝ] C(K,CylinderL2 period V) :=
+@[expose] def includePath : C(K,Supported period V S hS) →L[ℝ] C(K,CylinderL2 period V) :=
   (Supported period V S hS).subtypeL.compLeftContinuous ℝ K
 
 /-- Projection of each ordinary L² value to the fixed supported subspace. -/

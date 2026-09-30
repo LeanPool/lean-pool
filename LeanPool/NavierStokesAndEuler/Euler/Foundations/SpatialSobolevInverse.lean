@@ -447,7 +447,7 @@ namespace SpatialJet
 variable {period} {directions : Fin 4 → LiftTangent}
 
 /-- Construct a genuine pressure Sobolev jet at every finite order. -/
-def solvePressure {n : ℕ} {A : SmoothCoefficient period} {f : LiftL2 period}
+@[expose] def solvePressure {n : ℕ} {A : SmoothCoefficient period} {f : LiftL2 period}
     (K : CoefficientJet period directions n A) (κ : ℝ) (m : Vector3) (c : ℝ) (hc : 0 < c)
     (hpos : ∀ x v, c * ‖v‖ ^ 2 ≤ ⟪A.coefficient x v, v⟫_ℝ)
     (J : SpatialJet period directions n f) :

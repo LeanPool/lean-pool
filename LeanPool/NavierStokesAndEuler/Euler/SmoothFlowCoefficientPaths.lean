@@ -336,6 +336,7 @@ theorem forward_joint_contDiffAt_two
 
 omit [FiniteDimensional ℝ E] in
 /-- Time lift equiv, constructed using `ContinuousLinearEquiv.equivOfInverse`. -/
+@[expose]
 def timeLiftEquiv (J : E ≃L[ℝ] E) (v : E) : (ℝ × E) ≃L[ℝ] (ℝ × E) :=
   ContinuousLinearEquiv.equivOfInverse
     ((ContinuousLinearMap.fst ℝ ℝ E).prod
@@ -445,6 +446,7 @@ variable {X V : Type*} [TopologicalSpace X]
 
 /-- Bounded slice, given by `BoundedContinuousFunction.ofNormedAddCommGroup (fun x => f x t)
 ((ContinuousMap.evalCLM ℝ t).continuous.comp hf) C (hC t)`. -/
+@[expose]
 def boundedSlice (t : Icc (0 : ℝ) T) : X →ᵇ V :=
   BoundedContinuousFunction.ofNormedAddCommGroup (fun x => f x t)
     ((ContinuousMap.evalCLM ℝ t).continuous.comp hf) C (hC t)
@@ -468,6 +470,7 @@ theorem boundedSlice_lipschitz :
     dist_eq_norm, Subtype.dist_eq] using h
 
 /-- Bounded path, bundling `toFun`, `continuous_toFun`. -/
+@[expose]
 def boundedPath : C(Icc (0 : ℝ) T,X →ᵇ V) where
   toFun := boundedSlice T f hf C hC
   continuous_toFun := (boundedSlice_lipschitz T hT f q hf C D hC hD hq hd).continuous
@@ -537,6 +540,7 @@ theorem derivativeBound_nonneg (n : ℕ) : 0 ≤ D n :=
 
 /-- Of path family, bundling `field`, `smooth`, `change`, `jet` and the required compatibility
 proofs. -/
+@[expose]
 def ofPathFamily : SmoothTimeField (Icc (0 : ℝ) T) E V where
   field := boundedPath T hT f q hf.continuous (C 0) (D 0)
     (value_bound T f C hC) (derivativeBound_nonneg T hT q D hD 0)
@@ -550,7 +554,9 @@ def ofPathFamily : SmoothTimeField (Icc (0 : ℝ) T) E V where
     (derivativeBound_nonneg T hT q D hD n)
     (fun t x => by rw [jetFamily_apply T q hq]; exact hD n t x)
     (jetFamily_hasDerivWithinAt T hT f q hf hq hd n)
-  jet_eq n t x := jetFamily_apply T f hf n x t
+  jet_eq n t x := by
+    rw [boundedPath_apply, jetFamily_apply T f hf n x t]
+    congr 1
 
 @[simp] theorem ofPathFamily_apply (t : Icc (0 : ℝ) T) (x : E) :
     (ofPathFamily T hT f q hf hq hd C D hC hD).field t x = f x t := by rfl
@@ -645,6 +651,7 @@ theorem velocityFamily_jet_bound (n : ℕ) (t : Icc (0 : ℝ) T) (x : E) :
   materialVelocity_bound T hT A B R hB hR hsmall hb n t x
 
 /-- Displacement coefficient, constructed using `SmoothTimeField.ofPathFamily`. -/
+@[expose]
 def displacementCoefficient : SmoothTimeField (Icc (0 : ℝ) T) E E :=
   SmoothTimeField.ofPathFamily T hT
     (displacementFamily T hT A) (velocityFamily T hT A)
@@ -679,6 +686,7 @@ theorem accelerationFamily_jet_bound (n : ℕ) (t : Icc (0 : ℝ) T) (x : E) :
   exact materialAcceleration_bound T hT A A₁ B R B₁ R₁ hB hR hB₁ hR₁ hsmall hb hb₁ n t x
 
 /-- Velocity coefficient, constructed using `SmoothTimeField.ofPathFamily`. -/
+@[expose]
 def velocityCoefficient : SmoothTimeField (Icc (0 : ℝ) T) E E :=
   SmoothTimeField.ofPathFamily T hT
     (velocityFamily T hT A) (accelerationFamily T hT A A₁)

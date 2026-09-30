@@ -42,11 +42,11 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteS
   (-T)⁻¹ • initialTrace T hT
 
 /-- The constant part of the reconstruction. -/
-def valuePart (T : ℝ) (hT : 0 ≤ T) : TimeLp T E →L[ℝ] C(Icc (0 : ℝ) T, E) :=
+@[expose] def valuePart (T : ℝ) (hT : 0 ≤ T) : TimeLp T E →L[ℝ] C(Icc (0 : ℝ) T, E) :=
   (ContinuousLinearMap.const ℝ (Icc (0 : ℝ) T)).comp (mean T hT)
 
 /-- The mean-zero primitive part of the reconstruction. -/
-def derivativePart (T : ℝ) (hT : 0 ≤ T) : TimeLp T E →L[ℝ] C(Icc (0 : ℝ) T, E) :=
+@[expose] def derivativePart (T : ℝ) (hT : 0 ≤ T) : TimeLp T E →L[ℝ] C(Icc (0 : ℝ) T, E) :=
   terminalPrimitive T hT - (valuePart T hT).comp (primitiveTimeLp T hT)
 
 /-- One fixed bounded linear map from the value/derivative pair to its continuous representative. -/

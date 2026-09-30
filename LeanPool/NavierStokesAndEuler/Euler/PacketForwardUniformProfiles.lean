@@ -251,6 +251,7 @@ variable (P : ℝ) [Fact (0 < P)] (M : EulerMeanPacketProvider.Data)
 
 /-- Forward source primary witness, given by `(homogeneousPrimaryRegularity D Y (sourceOperators
 P M D (InitialData.zero P D)) rfl).changeTime hTime.symm M.T_pos.le`. -/
+@[expose]
 def forwardSourcePrimaryWitness :
     ProfileRegularity P M.T M.T_pos.le D.support
       (homogeneousPrimary D Y (sourceOperators P M D (InitialData.zero P D))) :=

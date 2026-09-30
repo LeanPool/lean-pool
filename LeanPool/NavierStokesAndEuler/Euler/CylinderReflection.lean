@@ -33,7 +33,7 @@ theorem measurePreserving_reflection :
     (Measure.measurePreserving_neg (volume : Measure (AddCircle period)))
 
 /-- Pullback by joint spatial and angular reflection, as an actual L² isometry. -/
-def reflection : LiftL2 period →ₗᵢ[ℝ] LiftL2 period :=
+@[expose] def reflection : LiftL2 period →ₗᵢ[ℝ] LiftL2 period :=
   Lp.compMeasurePreservingₗᵢ ℝ (fun x : LiftDomain period => -x) (measurePreserving_reflection
       period)
 

@@ -61,6 +61,7 @@ synthesis. -/
 local instance instPacketParentForwardBudget2 : NormedRing (Space →ᵇ U →L[ℝ] U) := inferInstance
 
 /-- Source forward budget as an element of `EulerTransversePacketForward.Budget D (Fin 4) q`. -/
+@[expose]
 def sourceForwardBudget (D : Data U) (q : ℕ) (R C C₁ Cp : ℝ)
     (hR : 0 ≤ R) (hC : 0 ≤ C) (hC₁ : 0 ≤ C₁) (hCp : 0 ≤ Cp)
     (hdet : ∀ t x, (operatorMatrix (D.F.field t x)).det = 1)

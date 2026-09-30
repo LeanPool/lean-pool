@@ -47,6 +47,7 @@ def correction : E →L[ℝ] S :=
   (projectedInverse S A c hc hA).comp (S.orthogonalProjectionOnto.comp A)
 
 /-- Subtract the solved zero-trace correction from any trial extension. -/
+@[expose]
 def stationaryPart : E →L[ℝ] E :=
   ContinuousLinearMap.id ℝ E - S.subtypeL.comp (correction S A c hc hA)
 
@@ -117,6 +118,7 @@ theorem stationaryPart_minimizes (hAs : A.IsSymmetric) (x : E) :
 variable [CompleteSpace E]
 
 /-- A prescribed bounded trial lift followed by the actual stationary projection. -/
+@[expose]
 def endpointExtension (L : U →L[ℝ] E) : U →L[ℝ] E :=
   (stationaryPart S A c hc hA).comp L
 
@@ -262,6 +264,7 @@ variable (K : ℝ) (hK : 0 ≤ K)
   (hsmall : K * (T ^ 2 / 2) ≤ 1 / 2)
 
 /-- Solve the zero-endpoint variation problem for an explicit terminal trial lift. -/
+@[expose]
 def endpointDerivative (L : U →L[ℝ] TimeLp T E) : U →L[ℝ] TimeLp T E :=
   endpointExtension (transverseDerivatives T hT m) (energyOperator T hT H)
     (1 / 2) (by norm_num) (energyOperator_coercive T hT H K hK hH hsmall) L

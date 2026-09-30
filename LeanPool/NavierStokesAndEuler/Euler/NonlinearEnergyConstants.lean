@@ -153,6 +153,7 @@ local instance boundTimeGroup (q : ℕ) : NormedAddCommGroup (SobolevSpace perio
 local instance boundTimeSpace (q : ℕ) : NormedSpace ℝ (SobolevSpace period q) := inferInstance
 
 /-- The explicit scalar majorant for the genuine seven-term nonlinear metric forcing. -/
+@[expose]
 def forcingPolynomial (B M B0 B1 A0 A2 residual cM Rc ρ X Y : ℝ) : ℝ :=
   sourceConstant B M*residual +
     ((sourceConstant B M*(productConstant period 3*B1+A0+2*A2*productConstant period
@@ -208,6 +209,7 @@ theorem correctionArray_bound {q : ℕ} (hq : 6 ≤ q + 1) {T : ℝ}
 
 /-- The literal polynomial majorant is continuous along the positive radius and actual continuous
 metric energies. -/
+@[expose]
 def forcingBoundPath {q : ℕ} (N : ℕ) (hN : N + 6 ≤ q + 1) (T : ℝ)
     (R : C(Icc (0 : ℝ) T, ℝ)) (hR : ∀ t, 0 < R t)
     (K : C(Icc (0 : ℝ) T, LiftL2 period →L[ℝ] LiftL2 period))

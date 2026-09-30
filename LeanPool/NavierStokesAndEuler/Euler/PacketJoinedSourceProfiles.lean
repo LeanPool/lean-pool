@@ -284,6 +284,7 @@ primary`. -/
 
 /-- Joined source profile witness, given by `joinedProfileWitness M D hT τ hτ hτT B
 (joinedSourceCoefficientData P M D τ hτ hτT B hT) rfl rfl rfl primary hprimary p`. -/
+@[expose]
 def joinedSourceProfileWitness (p : ℕ) :
     ProfileRegularity P M.T M.T_pos.le D.support (joinedSourceProfiles P M D τ hτ hτT B primary p)
         :=

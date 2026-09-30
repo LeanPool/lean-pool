@@ -150,6 +150,7 @@ theorem test_memLp (f : Test) : MemLp (f : Space → Space) 2 volume :=
   f.smooth.continuous.memLp_of_hasCompactSupport f.compact
 
 /-- Test value, given by `(test_memLp f).toLp (f : Space → Space)`. -/
+@[expose]
 def testValue (f : Test) : L2 := (test_memLp f).toLp (f : Space → Space)
 
 theorem testValue_ae (f : Test) : testValue f =ᵐ[volume] (f : Space → Space) :=

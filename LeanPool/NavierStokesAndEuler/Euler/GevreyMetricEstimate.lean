@@ -106,7 +106,7 @@ theorem metric_polynomial_conversion (S0 S1 S2 D R B a E Y X Z H : ℝ)
     _ = _ := by ring
 
 /-- A concrete pointwise velocity bound determined by the actual metric energy. -/
-def metricVelocityBound (c B X : ℝ) : NNReal :=
+@[expose] def metricVelocityBound (c B X : ℝ) : NNReal :=
   (sobolevEmbeddingConstant period 6*(B+metricAmplification c*X)).toNNReal
 
 /-- The actual background-plus-error velocity satisfies the fixed-order bound used by the metric PDE

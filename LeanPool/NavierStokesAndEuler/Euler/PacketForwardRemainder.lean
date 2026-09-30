@@ -121,6 +121,7 @@ theorem forwardInitializedPrimaryRemainder_physical_fderiv (N : ℕ) (hN : 1 ≤
 
 omit NB W LM WM BC hRc hcost hδ1 hα hR WP hgrowth in
 /-- The constant contains no packet frequency or derivative of the inverse flow. -/
+@[expose]
 def forwardInitializedRemainderDerivativeCost (R H0 : ℝ) : ℝ :=
   8*‖coordinateEquiv.symm.toContinuousLinearMap‖*sobolevEmbeddingConstant period 3 *
     R*(fixedVelocityGradeCost R H0 2+2)

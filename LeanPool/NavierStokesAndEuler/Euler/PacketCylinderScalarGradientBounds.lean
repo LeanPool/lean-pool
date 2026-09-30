@@ -103,7 +103,7 @@ variable {T : ℝ} (raw : ScalarField) (p : C(Icc (0 : ℝ) T, CylinderL2 P ℝ)
     raw (t, (x, θ)) = scalarPointField P p hp t (x, (θ : AddCircle P)))
 
 theorem scalarGradientField_path :
-    (scalarGradientField raw p hp he).path = scalarGradientPath p := rfl
+    (scalarGradientField raw p hp he).path = scalarGradientPath p := by rfl
 
 theorem scalarGradientField_block_bound (q n : ℕ) (a : LiftTangent) :
     block standardDirection q

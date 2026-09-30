@@ -231,7 +231,7 @@ open Real Filter EulerScale EulerBaseDatum EulerPacketLowConstants
 open scoped Topology
 
 /-- Geometry constant, given by `neighborStabilityConstant*frameConstant^2`. -/
-def geometryConstant : ℝ := neighborStabilityConstant*frameConstant^2
+@[expose] def geometryConstant : ℝ := neighborStabilityConstant*frameConstant^2
 
 theorem geometryConstant_one : 1 ≤ geometryConstant := by
   have hn : 1 ≤ neighborStabilityConstant := by

@@ -32,7 +32,7 @@ open scoped Topology
     exp (c*(scaleSequence J X n/((J-1+n : ℕ) : ℝ)^3))
 
 /-- Frequency cost spec, bundling `d`, `B`, `N`, `a` and the required compatibility proofs. -/
-def frequencyCostSpec (A C c : ℝ) (hA : 0 < A) (hC : 0 < C)
+@[expose] def frequencyCostSpec (A C c : ℝ) (hA : 0 < A) (hC : 0 < C)
     (p q N : ℕ) (θ : ℝ) (hθ : 0 < θ) : CostSpec where
   d := 1
   B := 3

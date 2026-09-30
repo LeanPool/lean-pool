@@ -42,6 +42,7 @@ variable (M : EulerMeanPacketProvider.Data)
     (initializedCorrectionData M D hTime τ hτ hτT B δ hδ ξ hs α Cagree N hN k hk))
 
 /-- Initialized exact physical velocity as an element of `Space`. -/
+@[expose]
 def initializedExactPhysicalVelocity (t : Icc (0 : ℝ) D.T) (Y : Space → Space) (x : Space) : Space
     :=
   k⁻¹ • D.F.field t (Y x)

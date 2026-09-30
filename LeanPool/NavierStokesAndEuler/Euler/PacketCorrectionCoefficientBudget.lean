@@ -170,6 +170,7 @@ open scoped ContDiff BoundedContinuousFunction
 
 /-- Normalized coefficient radius, given by `max 1 (sobolevCoefficientAmplitude (Fin 4) q Rc C)
 * sobolevCoefficientRadius (Fin 4) Rc`. -/
+@[expose]
 def normalizedCoefficientRadius (q : ℕ) (Rc C : ℝ) : ℝ :=
   max 1 (sobolevCoefficientAmplitude (Fin 4) q Rc C) * sobolevCoefficientRadius (Fin 4) Rc
 
@@ -469,6 +470,7 @@ include hR hC0 hC1 hCI hF hF1 hFI
 /-- All coefficient hypotheses of the correction energy estimate, derived
 from genuine source spatial jets.  The radius condition is the same one used
 by the projected inverse, rather than a separate cutoff-dependent restriction. -/
+@[expose]
 def correctionCoefficientBudget : CorrectionCoefficientBudget D P where
   Rc := correctionCoefficientRadius R CI
   M := correctionPressureEnvelope D.normalLower R CI

@@ -37,7 +37,7 @@ theorem angleCurve_continuous (u : CylinderL2 P V) : Continuous (angleCurve P u)
   (translate_continuous P u).comp (continuous_const.prodMk continuous_id)
 
 /-- Average integral, given by `P⁻¹ • (∫ s in (0 : ℝ)..P, angleCurve P u s)`. -/
-def averageIntegral (u : CylinderL2 P V) : CylinderL2 P V :=
+@[expose] def averageIntegral (u : CylinderL2 P V) : CylinderL2 P V :=
   P⁻¹ • (∫ s in (0 : ℝ)..P, angleCurve P u s)
 
 omit [CompleteSpace V] in
@@ -79,7 +79,7 @@ theorem averageIntegral_norm (u : CylinderL2 P V) : ‖averageIntegral P u‖ �
     _ = ‖u‖ := by field_simp
 
 /-- Average linear, bundling `toFun`, `map_add`, `map_smul`. -/
-def averageLinear : CylinderL2 P V →ₗ[ℝ] CylinderL2 P V where
+@[expose] def averageLinear : CylinderL2 P V →ₗ[ℝ] CylinderL2 P V where
   toFun := averageIntegral P
   map_add' := averageIntegral_add P
   map_smul' := averageIntegral_smul P
@@ -123,7 +123,7 @@ theorem average_translation (a : LiftTangent) (u : CylinderL2 P V) :
 variable {K : Type*} [TopologicalSpace K] [CompactSpace K]
 
 /-- Path average, given by `(average P).compLeftContinuous ℝ K`. -/
-def pathAverage : C(K,CylinderL2 P V) →L[ℝ] C(K,CylinderL2 P V) :=
+@[expose] def pathAverage : C(K,CylinderL2 P V) →L[ℝ] C(K,CylinderL2 P V) :=
   (average P).compLeftContinuous ℝ K
 
 omit [CompactSpace K] [CompleteSpace V] in
@@ -219,7 +219,7 @@ theorem average_mem (u : Supported P V S hS) :
 
 /-- Supported average, given by `((average P).comp (Supported P V S hS).subtypeL).codRestrict
 (Supported P V S hS) (average_mem P S hS)`. -/
-def supportedAverage : Supported P V S hS →L[ℝ] Supported P V S hS :=
+@[expose] def supportedAverage : Supported P V S hS →L[ℝ] Supported P V S hS :=
   ((average P).comp (Supported P V S hS).subtypeL).codRestrict
     (Supported P V S hS) (average_mem P S hS)
 

@@ -251,7 +251,7 @@ open Set EulerLiftedGradientSpace EulerCylinderSobolevSpace EulerGevreyMetricCom
   EulerWeightedCylinderEnergy EulerFiniteMetricEnergy EulerPacketWeights EulerBaseWordMetric
 
 /-- The literal inclusion of external words into a larger cutoff. -/
-def externalWordInclusion {N M : ℕ} (hNM : N ≤ M) (I : ExternalWord N) : ExternalWord M :=
+@[expose] def externalWordInclusion {N M : ℕ} (hNM : N ≤ M) (I : ExternalWord N) : ExternalWord M :=
   ⟨Fin.castLE (Nat.succ_le_succ hNM) I.1,I.2⟩
 
 /-- Increasing the cutoff does not identify distinct derivative words. -/

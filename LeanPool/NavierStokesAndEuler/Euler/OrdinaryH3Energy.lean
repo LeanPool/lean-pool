@@ -119,6 +119,7 @@ theorem differenceRhs_word_bound (U W P : SmoothL2Field Space) (M X : ℝ)
 
 /-- Energy production, given by `2*(∑ n ∈ range 4, ∑ w : Fin n → Fin 3, ⟪(wordField W
 w).toLp,(wordField Q w).toLp⟫_ℝ)`. -/
+@[expose]
 def energyProduction (W Q : SmoothL2Field Space) : ℝ :=
   2*(∑ n ∈ range 4, ∑ w : Fin n → Fin 3, ⟪(wordField W w).toLp,(wordField Q w).toLp⟫_ℝ)
 

@@ -50,7 +50,7 @@ variable {U E : Type*}
 
 /-- Displacement path, given by `terminalPrimitive T hT (velocityLp T hT Q Q₁ H c hc hQ hd K hK
 hH hsmall f)`. -/
-def displacementPath (f : TimeLp T E) : C(Icc (0 : ℝ) T,U) :=
+@[expose] def displacementPath (f : TimeLp T E) : C(Icc (0 : ℝ) T,U) :=
   terminalPrimitive T hT (velocityLp T hT Q Q₁ H c hc hQ hd K hK hH hsmall f)
 
 /-- Physical velocity path, given by `multiplier Q (velocityPath T hT Q Q₁ H c hc hQ hd K hK hH

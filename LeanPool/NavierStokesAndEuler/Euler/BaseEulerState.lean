@@ -203,6 +203,7 @@ def tower (T : ℝ) (A : Space →L[ℝ] Space) : CoefficientTower P T where
 
 /-- Data, bundling `κ`, `direction`, `scale_bound`, `direction_bound` and the required
 compatibility proofs. -/
+@[expose]
 def data {T : ℝ} (F R : FieldTower P T) : EulerAllOrderCorrectionData.Data P T where
   κ := 1
   direction := 0
@@ -313,6 +314,7 @@ variable {P} {T : ℝ} {raw : VectorField} (G : Field P T raw)
 def residual (ε : ℝ) := (G.smul ε).spatialTransport (G.smul ε)
 
 /-- Input, given by `data P (G.smul ε).toFieldTower (residual G ε).toFieldTower`. -/
+@[expose]
 def input (ε : ℝ) : Data P T :=
   data P (G.smul ε).toFieldTower (residual G ε).toFieldTower
 
@@ -663,6 +665,7 @@ theorem embeddedOrbit_smooth : ContDiff ℝ ∞ (fun a : LiftTangent => translat
   exact (embedding P).contDiff.comp (spatialOrbit_smooth u)
 
 /-- Field, constructed using `Field.ofLifted`. -/
+@[expose]
 def field : Field P T (fun z => u.field z.2.1) :=
   Field.ofLifted (ContinuousMap.const (Icc (0 : ℝ) T) (embedding P u.toLp))
     (constantPath_orbit_contDiff P _ (embeddedOrbit_smooth P u))
@@ -672,7 +675,8 @@ def field : Field P T (fun z => u.field z.2.1) :=
     (fun _ _ _ => rfl)
 
 @[simp] theorem field_path :
-    (field P T u).path=ContinuousMap.const (Icc (0 : ℝ) T) (embedding P u.toLp) := rfl
+    (field P T u).path=ContinuousMap.const (Icc (0 : ℝ) T) (embedding P u.toLp) := by
+  rfl
 
 theorem field_time (hT : 0 ≤ T) : TimeDerivative hT (field P T u) (Field.zero P T) := by
   intro t
@@ -845,8 +849,10 @@ open Set EulerSmoothLimit EulerLiftedGradientSpace EulerParameterWordGevrey
 variable (P : ℝ) [Fact (0 < P)]
 
 /-- Mixed radius, given by `sobolevCoefficientRadius (Fin 4) R`. -/
+@[expose]
 def mixedRadius (R : ℝ) : ℝ := sobolevCoefficientRadius (Fin 4) R
 /-- Mixed amplitude, given by `Real.sqrt P*sobolevCoefficientAmplitude (Fin 4) 6 R C`. -/
+@[expose]
 def mixedAmplitude (C R : ℝ) : ℝ := Real.sqrt P*sobolevCoefficientAmplitude (Fin 4) 6 R C
 
 theorem mixedRadius_nonneg (R : ℝ) (hR : 0 ≤ R) : 0 ≤ mixedRadius R :=
@@ -858,6 +864,7 @@ theorem mixedAmplitude_nonneg (C R : ℝ) (hC : 0 ≤ C) (hR : 0 ≤ R) : 0 ≤ 
 
 /-- Scales, given by `scale P _ _ _ (mixedAmplitude_nonneg P C R hC hR) (mixedRadius_nonneg R
 hR) (residualCost_pos P _ _ (mixedRadius_nonneg R hR))`. -/
+@[expose]
 def scales (C R : ℝ) (hC : 0 ≤ C) (hR : 0 ≤ R) :
     Scale P (mixedAmplitude P C R) (mixedRadius R)
       (residualCost P (mixedAmplitude P C R) (mixedRadius R)) :=
@@ -865,6 +872,7 @@ def scales (C R : ℝ) (hC : 0 ≤ C) (hR : 0 ≤ R) :
     (residualCost_pos P _ _ (mixedRadius_nonneg R hR))
 
 /-- Amplitude, given by `(scales P C R hC hR).value`. -/
+@[expose]
 def amplitude (C R : ℝ) (hC : 0 ≤ C) (hR : 0 ≤ R) : ℝ := (scales P C R hC hR).value
 
 theorem amplitude_pos (C R : ℝ) (hC : 0 ≤ C) (hR : 0 ≤ R) : 0 < amplitude P C R hC hR :=
@@ -877,9 +885,11 @@ variable (u : SmoothL2Field Space) (C R : ℝ) (hC : 0 ≤ C) (hR : 0 ≤ R)
   (hu : u.HasJetBound C R) (hdiv : ∀ x, divergence u.field x = 0)
 
 /-- Input data, given by `input (EulerStaticCylinder.field P 1 u) (amplitude P C R hC hR)`. -/
+@[expose]
 def inputData := input (EulerStaticCylinder.field P 1 u) (amplitude P C R hC hR)
 
 /-- Correction budget, constructed using `budget`. -/
+@[expose]
 def correctionBudget :
     Budget P (by norm_num : (0 : ℝ) < 1) (inputData P u C R hC hR) :=
   budget (EulerStaticCylinder.field P 1 u) (EulerStaticCylinder.field_wordBound P 1 u 6 C R hC hR
@@ -939,7 +949,8 @@ local instance instConstantEulerGraph4 : NormedSpace ℝ LiftTangent := inferIns
 def inclusion : (ℝ × Space) →L[ℝ] (ℝ × LiftTangent) :=
   (ContinuousLinearMap.id ℝ ℝ).prodMap (ContinuousLinearMap.inl ℝ Space ℝ)
 
-@[simp] theorem inclusion_apply (t : ℝ) (x : Space) : inclusion (t,x)=(t,(x,0)) := rfl
+@[simp] theorem inclusion_apply (t : ℝ) (x : Space) : inclusion (t,x)=(t,(x,0)) := by
+  rfl
 
 variable {P T : ℝ} [Fact (0 < P)] {hT : 0 < T} {F R : FieldTower P T}
   {B : Budget P hT (data P F R)} (S : ExactLiftedPacket P hT (data P F R) B)
@@ -1016,6 +1027,7 @@ theorem momentum (t : ℝ) (ht : t ∈ Ioo 0 T) (x : Space) :
   exact h
 
 /-- Field, bundling `field`, `smooth`, `integrable`. -/
+@[expose]
 def field (t : Icc (0 : ℝ) T) : SmoothL2Field Space where
   field := S.velocity.physicalPointField 1 0 t
   smooth := S.velocity.physicalPointField_smooth 1 0 t
@@ -1079,7 +1091,8 @@ def coordinates (ε : ℝ) : (ℝ × E) →L[ℝ] (ℝ × E) :=
 
 omit [CompleteSpace E] in
 @[simp] theorem coordinates_apply (ε : ℝ) (q : ℝ × E) :
-    coordinates ε q=(ε⁻¹*q.1,q.2) := rfl
+    coordinates ε q=(ε⁻¹*q.1,q.2) := by
+  rfl
 
 /-- Velocity, given by `ε⁻¹ • u (coordinates ε q)`. -/
 def velocity (ε : ℝ) (u : ℝ × E → E) (q : ℝ × E) : E :=
@@ -1304,6 +1317,7 @@ theorem localPressure_zero (t : ℝ) : localPressure P u C R hC hR hu hdiv (t,0)
   erw [EulerConstantEuler.pressure_zero,mul_zero]
 
 /-- Local field, constructed using `SmoothL2Field.mapField`. -/
+@[expose]
 def localField (t : Icc (0 : ℝ) (amplitude P C R hC hR)) : SmoothL2Field Space :=
   SmoothL2Field.mapField ((amplitude P C R hC hR)⁻¹ • ContinuousLinearMap.id ℝ Space)
     (EulerConstantEuler.field (exactPacket P u C R hC hR hu hdiv)
@@ -1439,6 +1453,7 @@ def unitVelocityCoefficient : SmoothTimeField (Icc (0 : ℝ) 1) Space Space :=
       (ContinuousLinearMap.inl ℝ Space ℝ)
 
 /-- Unit derivative coefficient as an element of `SmoothTimeField (Icc (0 : ℝ) 1) Space Space`. -/
+@[expose]
 def unitDerivativeCoefficient : SmoothTimeField (Icc (0 : ℝ) 1) Space Space :=
   ((correctionBudget P u C R hC hR hu hdiv).packetDerivativeCoefficient P
     ((Field.zero P 1).smul (amplitude P C R hC hR))).precompLinear
@@ -1588,13 +1603,16 @@ variable (u : SmoothL2Field Space) (C R : ℝ) (hC : 0 ≤ C) (hR : 0 ≤ R)
   (hu : u.HasJetBound C R) (hdiv : ∀ x, divergence u.field x = 0)
 
 theorem budget_retainedRadius :
-    (correctionBudget P u C R hC hR hu hdiv).reducedRadius P=retainedRadius R := rfl
+    (correctionBudget P u C R hC hR hu hdiv).reducedRadius P=retainedRadius R := by
+  rfl
 
 theorem budget_staticTimeCost (q : ℕ) (hq : 6 ≤ q) :
-    (correctionBudget P u C R hC hR hu hdiv).timeDerivativeCost P q hq=staticTimeCost P R := rfl
+    (correctionBudget P u C R hC hR hu hdiv).timeDerivativeCost P q hq=staticTimeCost P R := by
+  rfl
 
 theorem budget_staticPressureCost (q : ℕ) (hq : 6 ≤ q) :
-    (correctionBudget P u C R hC hR hu hdiv).pressureCost P q hq=staticPressureCost P R := rfl
+    (correctionBudget P u C R hC hR hu hdiv).pressureCost P q hq=staticPressureCost P R := by
+  rfl
 
 theorem correction_weighted (n : ℕ) (t : Icc (0 : ℝ) 1) :
     weightedNorm P 6 n (retainedRadius R)
@@ -1750,6 +1768,7 @@ local instance instStaticEulerGevrey6 (n : ℕ) : NormedSpace ℝ (Space →ᵇ 
     inferInstance
 
 /-- Cover radius, given by `‖coordinateEquiv.symm.toContinuousLinearMap‖*(retainedRadius R)⁻¹`. -/
+@[expose]
 def coverRadius (R : ℝ) : ℝ := ‖coordinateEquiv.symm.toContinuousLinearMap‖*(retainedRadius R)⁻¹
 
 /-- Output radius, given by `1+4*coverRadius R`. -/
@@ -2050,6 +2069,7 @@ variable (I : Input)
 
 /-- Displacement, given by `displacementCoefficient I.T I.T_pos.le I.field I.B I.R I.B_nonneg
 I.R_pos I.small I.bound`. -/
+@[expose]
 def displacement : SmoothTimeField (Icc (0 : ℝ) I.T) Space Space :=
   displacementCoefficient I.T I.T_pos.le I.field I.B I.R I.B_nonneg I.R_pos I.small I.bound
 
@@ -2064,7 +2084,8 @@ def acceleration : SmoothTimeField (Icc (0 : ℝ) I.T) Space Space :=
       I.derivative
 
 @[simp] theorem displacement_apply (t : Icc (0 : ℝ) I.T) (x : Space) :
-    I.displacement.field t x=(flowData I.T I.T_pos.le I.field).forward t x-x := rfl
+    I.displacement.field t x=(flowData I.T I.T_pos.le I.field).forward t x-x := by
+  rfl
 
 @[simp] theorem velocity_apply (t : Icc (0 : ℝ) I.T) (x : Space) :
     I.velocity.field t x=velocityFamily I.T I.T_pos.le I.field x t := by
@@ -2110,6 +2131,7 @@ theorem displacement_det (t : Icc (0 : ℝ) I.T) (x : Space) :
   exact forward_det_one I.T I.T_pos.le I.field I.divergence t x
 
 /-- Parent, bundling `T`, `T_pos`, `ell`, `ell_pos` and the required compatibility proofs. -/
+@[expose]
 def parent (ell : ℝ) (hell : 0 < ell) (hell1 : ell ≤ 1) : Parent where
   T := I.T
   T_pos := I.T_pos
@@ -2159,6 +2181,7 @@ theorem parent_velocity (ell : ℝ) (hell : 0 < ell) (hell1 : ell ≤ 1)
 end Input
 
 /-- Horizon, given by `min T (1/(8*(1+B*R)))`. -/
+@[expose]
 def horizon (T B R : ℝ) : ℝ := min T (1/(8*(1+B*R)))
 
 theorem horizon_pos (T B R : ℝ) (hT : 0 < T) (hB : 0 ≤ B) (hR : 0 ≤ R) :
@@ -2179,6 +2202,7 @@ theorem horizon_small (T B R : ℝ) (hT : 0 < T) (hB : 0 ≤ B) (hR : 0 ≤ R) :
 
 /-- Of interval, bundling `T`, `T_pos`, `field`, `derivative` and the required compatibility
 proofs. -/
+@[expose]
 def ofInterval (T : ℝ) (hT : 0 < T)
     (A A₁ : SmoothTimeField (Icc (0 : ℝ) T) Space Space)
     (htime : SmoothTimeField.TimeDerivative T hT.le A A₁)
@@ -2833,6 +2857,7 @@ variable (P : ℝ) [Fact (0 < P)]
 
 /-- Base time, given by `EulerBaseEulerParent.horizon (amplitude P C R hC hR)
 (outputVelocitySize P C R) (outputRadius R)`. -/
+@[expose]
 def baseTime (C R : ℝ) (hC : 0 ≤ C) (hR : 0 ≤ R) : ℝ :=
   EulerBaseEulerParent.horizon (amplitude P C R hC hR)
     (outputVelocitySize P C R) (outputRadius R)
@@ -2869,6 +2894,7 @@ variable (u : SmoothL2Field Space) (C R : ℝ) (hC : 0 ≤ C) (hR : 0 ≤ R)
   (hu : u.HasJetBound C R) (hdiv : ∀ x, divergence u.field x = 0)
 
 /-- Base input, constructed using `EulerBaseEulerParent.ofInterval`. -/
+@[expose]
 def baseInput : EulerBaseEulerParent.Input :=
   EulerBaseEulerParent.ofInterval (amplitude P C R hC hR) (amplitude_pos P C R hC hR)
     (velocityCoefficient P u C R hC hR hu hdiv)
@@ -2917,14 +2943,17 @@ def baseL2Data : EulerBaseEulerParent.L2Data (baseInput P u C R hC hR hu hdiv) w
 variable (ell : ℝ) (hell : 0 < ell) (hell1 : ell ≤ 1)
 
 /-- Base parent, given by `(baseInput P u C R hC hR hu hdiv).parent ell hell hell1`. -/
+@[expose]
 def baseParent : Parent := (baseInput P u C R hC hR hu hdiv).parent ell hell hell1
 
 /-- Base label data, given by `(baseL2Data P u C R hC hR hu hdiv).labelData ell hell hell1`. -/
+@[expose]
 def baseLabelData : LabelData (baseParent P u C R hC hR hu hdiv ell hell hell1) :=
   (baseL2Data P u C R hC hR hu hdiv).labelData ell hell hell1
 
 theorem baseLabelData_constant :
-    (baseLabelData P u C R hC hR hu hdiv ell hell hell1).K=baseLabelConstant P C R hC hR := rfl
+    (baseLabelData P u C R hC hR hu hdiv ell hell hell1).K=baseLabelConstant P C R hC hR := by
+  rfl
 
 include u hu hdiv ell hell hell1 in
 theorem baseLabelConstant_one : 1 ≤ baseLabelConstant P C R hC hR :=
@@ -3022,6 +3051,7 @@ theorem potential_support (L : Space →L[ℝ] Space) (i : Fin 3) :
   tsupport_mul_subset_left.trans outerCutoff_support
 
 /-- Velocity, given by `curl (potential L)`. -/
+@[expose]
 def velocity (L : Space →L[ℝ] Space) : Space → Space := curl (potential L)
 
 theorem velocity_smooth (L : Space →L[ℝ] Space) : ContDiff ℝ ∞ (velocity L) :=
@@ -3064,6 +3094,7 @@ theorem velocity_fderiv_plateau (L : Space →L[ℝ] Space)
   exact he.fderiv_eq.trans L.fderiv
 
 /-- Field, bundling `field`, `smooth`, `integrable`. -/
+@[expose]
 def field (L : Space →L[ℝ] Space) : SmoothL2Field Space where
   field := velocity L
   smooth := velocity_smooth L
@@ -3080,11 +3111,13 @@ theorem field_solenoidal (L : Space →L[ℝ] Space) :
 
 /-- Linear, given by `(EuclideanSpace.proj 1).smulRight (EuclideanSpace.single 0 1+β •
 EuclideanSpace.single 2 1)`. -/
+@[expose]
 def linear (β : ℝ) : Space →L[ℝ] Space :=
   (EuclideanSpace.proj 1).smulRight (EuclideanSpace.single 0 1+β • EuclideanSpace.single 2 1)
 
 @[simp] theorem linear_apply (β : ℝ) (x : Space) :
-    linear β x=x 1 • (EuclideanSpace.single 0 1+β • EuclideanSpace.single 2 1) := rfl
+    linear β x=x 1 • (EuclideanSpace.single 0 1+β • EuclideanSpace.single 2 1) := by
+  rfl
 
 theorem linear_trace (β : ℝ) : LinearMap.trace ℝ Space (linear β).toLinearMap=0 := by
   rw [← coordinateTrace_eq_linearTrace]
@@ -3525,6 +3558,7 @@ local instance instBaseEulerInput1 : Fact (0 < (1 : ℝ)) := ⟨zero_lt_one⟩
 
 /-- Solution time, given by `EulerStaticEuler.baseTime 1 uniformL2Amplitude 1024
 uniformL2Amplitude_nonneg (by norm_num)`. -/
+@[expose]
 def solutionTime : ℝ :=
   EulerStaticEuler.baseTime 1 uniformL2Amplitude 1024 uniformL2Amplitude_nonneg (by norm_num)
 
@@ -3533,6 +3567,7 @@ theorem solutionTime_pos : 0 < solutionTime :=
 
 /-- Solution label constant, given by `EulerStaticEuler.baseLabelConstant 1 uniformL2Amplitude
 1024 uniformL2Amplitude_nonneg (by norm_num)`. -/
+@[expose]
 def solutionLabelConstant : ℝ :=
   EulerStaticEuler.baseLabelConstant 1 uniformL2Amplitude 1024 uniformL2Amplitude_nonneg (by
       norm_num)
@@ -3540,12 +3575,14 @@ def solutionLabelConstant : ℝ :=
 variable (β : ℝ) (hβ : |β| ≤ 1) (ell : ℝ) (hell : 0 < ell) (hell1 : ell ≤ 1)
 
 /-- Solution parent, constructed using `EulerStaticEuler.baseParent`. -/
+@[expose]
 def solutionParent : Parent :=
   EulerStaticEuler.baseParent 1 (field (linear β)) uniformL2Amplitude 1024
     uniformL2Amplitude_nonneg (by norm_num) (field_uniform_jet β hβ)
     (velocity_divergence (linear β)) ell hell hell1
 
 /-- Solution label data, constructed using `EulerStaticEuler.baseLabelData`. -/
+@[expose]
 def solutionLabelData : LabelData (solutionParent β hβ ell hell hell1) :=
   EulerStaticEuler.baseLabelData 1 (field (linear β)) uniformL2Amplitude 1024
     uniformL2Amplitude_nonneg (by norm_num) (field_uniform_jet β hβ)
@@ -3563,10 +3600,12 @@ def solutionEvolution : Evolution (solutionParent β hβ ell hell hell1) :=
     uniformL2Amplitude_nonneg (by norm_num) (field_uniform_jet β hβ)
     (velocity_divergence (linear β)) ell hell hell1
 
-theorem solutionParent_time : (solutionParent β hβ ell hell hell1).T=solutionTime := rfl
+theorem solutionParent_time : (solutionParent β hβ ell hell hell1).T=solutionTime := by
+  rfl
 
 theorem solutionLabelData_constant :
-    (solutionLabelData β hβ ell hell hell1).K=solutionLabelConstant := rfl
+    (solutionLabelData β hβ ell hell hell1).K=solutionLabelConstant := by
+  rfl
 
 theorem solutionOddData : OddData (solutionParent β hβ ell hell hell1) :=
   EulerStaticEuler.baseOddData 1 (field (linear β)) uniformL2Amplitude 1024
@@ -3732,6 +3771,7 @@ open Set InnerProductSpace ContinuousLinearMap EulerSmoothLimit
   EulerParentPacketFrames EulerBaseEulerGuards EulerTransverseFrameCoordinates
 
 /-- Initial time, given by `guardTime solutionTime solutionLabelConstant`. -/
+@[expose]
 def initialTime : ℝ := guardTime solutionTime solutionLabelConstant
 
 theorem initialTime_pos : 0 < initialTime :=
@@ -3742,6 +3782,7 @@ theorem initialTime_le : initialTime ≤ solutionTime := guardTime_le _ _
 theorem initialTime_le_one : initialTime ≤ 1 := guardTime_le_one _ _
 
 /-- Initial coefficient cost, given by `coefficientCost solutionLabelConstant`. -/
+@[expose]
 def initialCoefficientCost : ℝ := coefficientCost solutionLabelConstant
 
 theorem initialCoefficientCost_nonneg : 0 ≤ initialCoefficientCost := coefficientCost_nonneg _
@@ -3756,11 +3797,13 @@ variable (β : ℝ) (hβ : |β| ≤ 1) (ell : ℝ) (hell : 0 < ell) (hell1 : ell
 
 /-- Initial parent, given by `(solutionParent β hβ ell hell hell1).restrictTime initialTime
 initialTime_pos initialTime_le`. -/
+@[expose]
 def initialParent : Parent :=
   (solutionParent β hβ ell hell hell1).restrictTime initialTime initialTime_pos initialTime_le
 
 /-- Initial label data, given by `(solutionLabelData β hβ ell hell hell1).restrictTime
 initialTime initialTime_pos initialTime_le`. -/
+@[expose]
 def initialLabelData : LabelData (initialParent β hβ ell hell hell1) :=
   (solutionLabelData β hβ ell hell hell1).restrictTime initialTime initialTime_pos initialTime_le
 
@@ -3782,22 +3825,53 @@ def initialSobolevData : SobolevData (initialEvolution β hβ ell hell hell1) :=
 theorem initialOddData : OddData (initialParent β hβ ell hell hell1) :=
   (solutionOddData β hβ ell hell hell1).restrictTime initialTime initialTime_pos initialTime_le
 
+theorem initialParent_from_label :
+    (solutionParent β hβ ell hell hell1).restrictTime
+      (guardTime (solutionParent β hβ ell hell hell1).T
+        (solutionLabelData β hβ ell hell hell1).K)
+      (guardTime_pos _ _ (solutionParent β hβ ell hell hell1).T_pos)
+      (guardTime_le _ _) = initialParent β hβ ell hell hell1 := by
+  simp only [initialParent, initialTime, solutionParent_time,
+    solutionLabelData_constant]
+
+private theorem lowBounds_cast_values {G H : Parent} (h : G = H)
+    (b : LowBounds G) :
+    (Eq.mp (congrArg LowBounds h) b).Be = b.Be ∧
+      (Eq.mp (congrArg LowBounds h) b).Bc = b.Bc ∧
+      (Eq.mp (congrArg LowBounds h) b).L = b.L ∧
+      (Eq.mp (congrArg LowBounds h) b).r = b.r ∧
+      (Eq.mp (congrArg LowBounds h) b).K = b.K := by
+  cases h
+  exact ⟨rfl, rfl, rfl, rfl, rfl⟩
+
 /-- Initial low bounds, given by `lowBounds (solutionLabelData β hβ ell hell hell1)`. -/
+@[expose]
 def initialLowBounds : LowBounds (initialParent β hβ ell hell hell1) :=
-  lowBounds (solutionLabelData β hβ ell hell hell1)
+  Eq.mp (congrArg LowBounds (initialParent_from_label β hβ ell hell hell1))
+    (lowBounds (solutionLabelData β hβ ell hell hell1))
 
 theorem initialLowBounds_values :
     (initialLowBounds β hβ ell hell hell1).Be=initialCoefficientCost ∧
     (initialLowBounds β hβ ell hell hell1).Bc=0 ∧
     (initialLowBounds β hβ ell hell hell1).L=0 ∧
     (initialLowBounds β hβ ell hell hell1).r=0 ∧
-    (initialLowBounds β hβ ell hell hell1).K=initialCoefficientCost :=
-  ⟨rfl,rfl,rfl,rfl,rfl⟩
+    (initialLowBounds β hβ ell hell hell1).K=initialCoefficientCost := by
+  have h := lowBounds_cast_values (initialParent_from_label β hβ ell hell hell1)
+    (lowBounds (solutionLabelData β hβ ell hell hell1))
+  rcases h with ⟨hBe, hBc, hL, hr, hK⟩
+  dsimp only [initialLowBounds]
+  rcases lowBounds_scalar_values (solutionLabelData β hβ ell hell hell1) with
+    ⟨vBe, vBc, vL, vr, vK⟩
+  rw [hBe, hBc, hL, hr, hK, vBe, vBc, vL, vr, vK]
+  simp only [solutionLabelData_constant, initialCoefficientCost]
+  exact ⟨True.intro, True.intro, True.intro, True.intro, True.intro⟩
 
-theorem initialParent_time : (initialParent β hβ ell hell hell1).T=initialTime := rfl
+theorem initialParent_time : (initialParent β hβ ell hell hell1).T=initialTime := by
+  rfl
 
 theorem initialLabelData_constant :
-    (initialLabelData β hβ ell hell hell1).K=solutionLabelConstant := rfl
+    (initialLabelData β hβ ell hell hell1).K=solutionLabelConstant := by
+  rfl
 
 theorem initial_velocity (x : Space) :
     (initialParent β hβ ell hell hell1).velocity.field ⟨0,le_rfl,initialTime_pos.le⟩ x =

@@ -74,6 +74,7 @@ local instance instPacketShortTimePhysicalGrowth2 : NormedRing (Space →ᵇ U �
 
 /-- A low strain bound on the H3 ball suffices for the entire source
 forward budget. The coordinate propagation cost is the polynomial 6 C³. -/
+@[expose]
 def shortPhysicalForwardBudget (q : ℕ) (R C C₁ CM : ℝ)
     (hR : 0 ≤ R) (hC : 0 ≤ C) (hC₁ : 0 ≤ C₁) (hCM : 0 ≤ CM)
     (hdet : ∀ t x, (operatorMatrix (D.F.field t x)).det = 1)
