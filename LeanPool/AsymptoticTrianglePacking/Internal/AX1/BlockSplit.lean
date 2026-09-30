@@ -92,8 +92,10 @@ theorem filter_div_eq_range {N a i : ℕ} (ha : 0 < a) :
       nlinarith only [h1, h2]
   · rintro ⟨hlo, hj, hhi⟩
     refine ⟨hj, ?_⟩
-    have h1 : i ≤ j / a := (Nat.le_div_iff_mul_le ha).mpr (by rwa [Nat.mul_comm] at hlo ⊢)
-    have h2 : j / a < i + 1 := (Nat.div_lt_iff_lt_mul ha).mpr (by rwa [Nat.mul_comm] at hhi ⊢)
+    have h1 : i ≤ j / a := (Nat.le_div_iff_mul_le ha).mpr (by
+      rw [Nat.mul_comm] at hlo ⊢; assumption)
+    have h2 : j / a < i + 1 := (Nat.div_lt_iff_lt_mul ha).mpr (by
+      rw [Nat.mul_comm] at hhi ⊢; assumption)
     omega
 
 /-- **A block has exactly `a` elements**, provided the whole of the interval `[i·a, (i+1)·a)` fits

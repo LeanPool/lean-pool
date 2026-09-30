@@ -225,7 +225,6 @@ public import LeanPool.ArtinWedderburn.SetProd
 public import LeanPool.AsymptoticTrianglePacking
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.BlockSplit
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.BoxAllocationSpec
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.BoxPlacementCount
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoarseCellCoupled
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapAX1
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapBlockCover
@@ -240,18 +239,14 @@ public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapPrune
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapRectPack
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapRegularCover
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapRegularFamily
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapRemoval
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapTripleDegrees
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapTripleShape
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.GridDesign
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.GridLineDesign
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.Reduction
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.TripleEdgesThree
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.YusterEdge
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.YusterEdgeType
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.YusterFracUpper
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.YusterNibbleApply
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.YusterSubBridge
 public import LeanPool.AsymptoticTrianglePacking.Internal.Assemble
 public import LeanPool.AsymptoticTrianglePacking.Internal.Assembly
 public import LeanPool.AsymptoticTrianglePacking.Internal.Basic
@@ -259,12 +254,10 @@ public import LeanPool.AsymptoticTrianglePacking.Internal.Conflict
 public import LeanPool.AsymptoticTrianglePacking.Internal.Covered
 public import LeanPool.AsymptoticTrianglePacking.Internal.CoveredExpectation
 public import LeanPool.AsymptoticTrianglePacking.Internal.Greedy
-public import LeanPool.AsymptoticTrianglePacking.Internal.Interface
 public import LeanPool.AsymptoticTrianglePacking.Internal.IterationSeq
 public import LeanPool.AsymptoticTrianglePacking.Internal.Measurable
 public import LeanPool.AsymptoticTrianglePacking.Internal.NearRegularNibble
 public import LeanPool.AsymptoticTrianglePacking.Internal.Prelude
-public import LeanPool.AsymptoticTrianglePacking.Internal.Regular
 public import LeanPool.AsymptoticTrianglePacking.Internal.RegularMost
 public import LeanPool.AsymptoticTrianglePacking.Internal.Round
 public import LeanPool.AsymptoticTrianglePacking.Internal.Survival
@@ -272,7 +265,6 @@ public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.CoverProb
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.CoverVariance
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.CoverWeight
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.CoverWeightMoments
-public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.CubeVariance
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.LossVariance
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.Pruning
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.SafeDegree
@@ -280,7 +272,6 @@ public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.Selection
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.SharpRound
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.SharpRoundAssembly
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.TightRound
-public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.TightRoundConcrete
 public import LeanPool.AsymptoticTrianglePacking.Internal.TightSchedule
 public import LeanPool.AsymptoticTrianglePacking.Internal.WeightedBoundedEdges
 public import LeanPool.AsymptoticTrianglePacking.Main

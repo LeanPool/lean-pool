@@ -59,13 +59,209 @@ public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.YusterEdge
 public import Mathlib.Algebra.Order.Ring.Star
 public import LeanPool.AsymptoticTrianglePacking.Internal.TightSchedule
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.SharpRoundAssembly
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.Reduction
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Tactic.ContinuousFunctionalCalculus
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.YusterSubBridge
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.YusterNibbleApply
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.YusterFracUpper
 public import Mathlib.Analysis.Convex.Cone.InnerDual
+
+
+/-! # YusterNibbleApply -/
+
+@[expose] public section
+
+open LeanPool.AsymptoticTrianglePacking.Internal
+
+open Finset SimpleGraph Hypergraph
+
+namespace Nibble.YusterE
+
+variable {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+
+/-- **Y5 (scaffold) — nibble ⇒ large triangle packing.** Assuming `NibbleTheorem`, there is a
+near-regularity tolerance `μ > 0` such that, whenever the edge-type triangle hypergraph is
+`(1±μ)`-nearly `d`-regular with codegree `≤ μd`, it has a matching (edge-disjoint triangle
+packing) of
+size `≥ (1-β)·|E(G)|/3`. Direct application of `NibbleTheorem` to `triangleHypergraphSub G`, using
+`card_EdgeV` to turn `Fintype.card (EdgeV G)` into `|E(G)| = |cliqueFinset 2|`. -/
+theorem nibble_gives_triangleSub_matching (hNibble : NibbleTheorem) {β : ℝ} (hβ : 0 < β) :
+    ∃ μ : ℝ, 0 < μ ∧ ∃ d₀ : ℝ, 0 < d₀ ∧ ∀ {d : ℝ}, 0 < d → d₀ ≤ d →
+      NearlyRegular (triangleHypergraphSub G) d μ →
+      CodegreeBounded (triangleHypergraphSub G) (μ * d) →
+      ∃ M : Finset (Finset (EdgeV G)), IsMatching (triangleHypergraphSub G) M ∧
+        (1 - β) * (((G.cliqueFinset 2).card : ℝ) / 3) ≤ (M.card : ℝ) := by
+  obtain ⟨μ, hμ, d₀, hd₀, hmain⟩ := hNibble 3 (by norm_num) β hβ
+  refine ⟨μ, hμ, d₀, hd₀, fun {d} hd hd0 hReg hCod => ?_⟩
+  obtain ⟨M, hM, hcard⟩ :=
+    hmain (triangleHypergraphSub G) d hd hd0 (triangleHypergraphSub_uniform G) hReg hCod
+  refine ⟨M, hM, ?_⟩
+  rwa [card_EdgeV] at hcard
+
+/-- **Y5 (majority) — nibble ⇒ large triangle packing, tolerating an exceptional edge set.** The
+`NibbleTheoremMost` version of `nibble_gives_triangleSub_matching`: assuming the majority interface,
+there are tolerances `μ, η > 0` such that whenever the edge-type triangle hypergraph is
+`NearlyRegularMost d μ η` (near-`d`-regular outside an `η`-fraction of edges) with codegree `≤
+μd`, it
+has an edge-disjoint triangle packing of size `≥ (1-β)·|E(G)|/3`. This is the version the
+Szemerédi+counting reconstruction (which yields `NearlyRegularMost`, not strict) feeds. -/
+theorem nibble_gives_triangleSub_matching_most (hNibble : NibbleTheoremMost) {β : ℝ} (hβ : 0 < β) :
+    ∃ μ : ℝ, 0 < μ ∧ ∃ η : ℝ, 0 < η ∧ ∃ d₀ : ℝ, 0 < d₀ ∧ ∀ {d : ℝ}, 0 < d → d₀ ≤ d →
+      NearlyRegularMost (triangleHypergraphSub G) d μ η →
+      CodegreeBounded (triangleHypergraphSub G) (μ * d) →
+      ∃ M : Finset (Finset (EdgeV G)), IsMatching (triangleHypergraphSub G) M ∧
+        (1 - β) * (((G.cliqueFinset 2).card : ℝ) / 3) ≤ (M.card : ℝ) := by
+  obtain ⟨μ, hμ, η, hη, d₀, hd₀, hmain⟩ := hNibble 3 (by norm_num) β hβ
+  refine ⟨μ, hμ, η, hη, d₀, hd₀, fun {d} hd hd0 hReg hCod => ?_⟩
+  obtain ⟨M, hM, hcard⟩ :=
+    hmain (triangleHypergraphSub G) d hd hd0 (triangleHypergraphSub_uniform G) hReg hCod
+  refine ⟨M, hM, ?_⟩
+  rwa [card_EdgeV] at hcard
+
+end Nibble.YusterE
+
+end
+
+
+
+/-! # YusterSubBridge -/
+
+@[expose] public section
+
+open LeanPool.AsymptoticTrianglePacking.Internal
+
+open Finset SimpleGraph Hypergraph
+
+namespace Nibble.YusterE
+
+variable {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+
+/-- **Sub ↦ E bridge.** A matching of the edge-vertex-type triangle hypergraph lower-bounds `nu3`:
+mapping each hyperedge `T` by the subtype embedding `EdgeV G ↪ Finset V` (`T ↦ T.map emb`) turns a
+matching of `triangleHypergraphSub G` into a matching of `triangleHypergraphE G` of the same
+cardinality (the embedding is injective — preserves card and disjointness — and recovers the
+original
+`2`-subsets of each triangle since they are all `2`-cliques). Then `nu3_ge`. -/
+theorem sub_matching_card_le_nu3 {M : Finset (Finset (EdgeV G))}
+    (hM : IsMatching (triangleHypergraphSub G) M) : M.card ≤ nu3 G := by
+  set emb : EdgeV G ↪ Finset V := Function.Embedding.subtype (· ∈ G.cliqueFinset 2) with hemb
+  -- each mapped hyperedge lands in triangleHypergraphE G
+  have hmem : ∀ T ∈ M, T.map emb ∈ triangleHypergraphE G := by
+    intro T hT
+    have hTsub := hM.subset hT
+    rw [triangleHypergraphSub, Finset.mem_image] at hTsub
+    obtain ⟨t, ht, rfl⟩ := hTsub
+    have hclique : G.IsNClique 3 t := (SimpleGraph.mem_cliqueFinset_iff).mp ht
+    have hall : ∀ x ∈ t.powersetCard 2, x ∈ G.cliqueFinset 2 :=
+      powersetCard_two_subset_cliqueFinset G hclique
+    have hrec : ((t.powersetCard 2).subtype (· ∈ G.cliqueFinset 2)).map emb = t.powersetCard 2 := by
+      rw [hemb]; exact Finset.subtype_map_of_mem hall
+    rw [hrec, triangleHypergraphE, Finset.mem_image]
+    exact ⟨t, ht, rfl⟩
+  -- the image matching of triangleHypergraphE
+  have hM' : IsMatching (triangleHypergraphE G) (M.image (fun T => T.map emb)) := by
+    refine ⟨?_, ?_⟩
+    · intro T' hT'
+      rw [Finset.mem_image] at hT'
+      obtain ⟨T, hT, rfl⟩ := hT'
+      exact hmem T hT
+    · intro a ha b hb hab
+      rw [Finset.mem_image] at ha hb
+      obtain ⟨T, hT, rfl⟩ := ha
+      obtain ⟨T', hT', rfl⟩ := hb
+      have hTT' : T ≠ T' := fun h => hab (by rw [h])
+      rw [Finset.disjoint_map]
+      exact hM.disjoint T hT T' hT' hTT'
+  have hcard : (M.image (fun T => T.map emb)).card = M.card :=
+    Finset.card_image_of_injective M (Finset.map_injective emb)
+  calc M.card = (M.image (fun T => T.map emb)).card := hcard.symm
+    _ ≤ nu3 G := nu3_ge G hM'
+
+/-- **`ν₃` lower bound from the nibble.** Assuming `NibbleTheorem` and the Y3
+near-regularity/codegree
+interface on `triangleHypergraphSub G`, the integral triangle-packing number satisfies
+`(1-β)·|E(G)|/3 ≤ ν₃ G`. Combines Y5 (`nibble_gives_triangleSub_matching`) with the Sub ↦
+`nu3` bridge.
+This is the quantitative half of Y6 (the other half is `ν₃* ≤` an upper bound). -/
+theorem nu3_ge_nibble (hNibble : NibbleTheorem) {β : ℝ} (hβ : 0 < β) :
+    ∃ μ : ℝ, 0 < μ ∧ ∃ d₀ : ℝ, 0 < d₀ ∧ ∀ {d : ℝ}, 0 < d → d₀ ≤ d →
+      NearlyRegular (triangleHypergraphSub G) d μ →
+      CodegreeBounded (triangleHypergraphSub G) (μ * d) →
+      (1 - β) * (((G.cliqueFinset 2).card : ℝ) / 3) ≤ (nu3 G : ℝ) := by
+  obtain ⟨μ, hμ, d₀, hd₀, hmain⟩ := nibble_gives_triangleSub_matching G hNibble hβ
+  refine ⟨μ, hμ, d₀, hd₀, fun {d} hd hd0 hReg hCod => ?_⟩
+  obtain ⟨M, hM, hcard⟩ := hmain hd hd0 hReg hCod
+  exact le_trans hcard (by exact_mod_cast sub_matching_card_le_nu3 G hM)
+
+end Nibble.YusterE
+
+end
+
+
+
+/-! # Reduction to duality and rounding -/
+
+@[expose] public section
+
+open Finset SimpleGraph Nibble.YusterE
+
+namespace Nibble.AX1
+
+variable {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+
+/-- PaperIII `edgesIn`: edges of `G` contained in a vertex set `t`. -/
+def edgesIn (t : Finset V) : Finset (Sym2 V) :=
+  G.edgeFinset.filter fun e => ∀ v ∈ e, v ∈ t
+
+/-- PaperIII `IsFracCover`: nonneg edge weights, total ≥ 1 inside each triangle. -/
+def IsFracCover (y : Sym2 V → ℝ) : Prop :=
+  (∀ e, 0 ≤ y e) ∧ ∀ t ∈ G.cliqueFinset 3, 1 ≤ ∑ e ∈ edgesIn G t, y e
+
+/-- PaperIII `τ₃*`: the fractional triangle-cover optimum (LP value). -/
+noncomputable def tau3Star : ℝ :=
+  sInf {x | ∃ y : Sym2 V → ℝ, IsFracCover G y ∧ x = ∑ e ∈ G.edgeFinset, y e}
+
+/-- **AX1 statement** (PaperIII Layer X, verbatim): the fractional–integral triangle-packing gap is
+`o(n²)`, uniformly over graphs, read cover-side (`τ₃* − ν₃`). -/
+def AX1Statement : Prop :=
+  ∀ ε : ℝ, 0 < ε → ∃ n₀ : ℕ,
+    ∀ (V : Type) [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj],
+      n₀ ≤ Fintype.card V →
+      tau3Star G - (nu3 G : ℝ) ≤ ε * (Fintype.card V : ℝ) ^ 2
+
+/-- **The strong-duality obligation** (Aristotle core `b3ee717f`): `τ₃* ≤ ν₃*` for every graph
+(the reverse of the proven weak duality; together they give `τ₃* = ν₃*`). -/
+def StrongDualityHyp : Prop :=
+  ∀ {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj],
+    tau3Star G ≤ nu3star G
+
+/-- **The unconditional nibble-gap obligation** (`NibbleTheoremMost` + `second-stage`
+near-regularity
+discharged
+for all large graphs): `ν₃* − ν₃ ≤ ε n²` uniformly. -/
+def NibbleGapHyp : Prop :=
+  ∀ ε : ℝ, 0 < ε → ∃ n₀ : ℕ,
+    ∀ (V : Type) [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj],
+      n₀ ≤ Fintype.card V →
+      nu3star G - (nu3 G : ℝ) ≤ ε * (Fintype.card V : ℝ) ^ 2
+
+/-- **AX1 REDUCTION.** AX1 follows from the two remaining obligations: cover-side strong duality
+(`τ₃* ≤ ν₃*`) and the unconditional nibble packing gap (`ν₃* − ν₃ ≤ ε n²`). The definitional bridges
+`Nibble.{nu3,nu3star} ↔ PaperIII.{nu3,nu3Star}` (already proven) make these the SAME `ν₃, ν₃*`
+as AX1's. -/
+theorem ax1_of_strongDuality_and_nibbleGap
+    (hdual : StrongDualityHyp) (hgap : NibbleGapHyp) : AX1Statement := by
+  intro ε hε
+  obtain ⟨n₀, hn₀⟩ := hgap ε hε
+  refine ⟨n₀, ?_⟩
+  intro V _ _ G _ hV
+  have hg := hn₀ V G hV
+  have hd := hdual G
+  -- τ₃* − ν₃ ≤ ν₃* − ν₃ ≤ ε n²
+  linarith
+
+end Nibble.AX1
+
+end
+
 
 
 

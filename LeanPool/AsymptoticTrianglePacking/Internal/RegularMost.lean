@@ -6,9 +6,99 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 
 module
 
-public import LeanPool.AsymptoticTrianglePacking.Internal.Regular
-public import LeanPool.AsymptoticTrianglePacking.Internal.Interface
 public import Mathlib.Tactic.Bound
+public import LeanPool.AsymptoticTrianglePacking.Internal.Basic
+public import Mathlib.Analysis.Normed.Ring.Basic
+
+
+/-!
+# LeanPool.AsymptoticTrianglePacking.Internal — Module A4 : near-regularity and codegree-bounded
+predicates
+
+Standalone, Mathlib-only. Foundation for the Rödl-nibble project.
+
+Content:
+* `NearlyRegular H d μ` — every vertex degree lies in `[(1-μ)d, (1+μ)d]`.
+* `CodegreeBounded H C` — every pair has codegree `≤ C`.
+* `sum_degree_bounds` — the degree sum is squeezed into `[(1-μ)d·|V|, (1+μ)d·|V|]`.
+  Combined with the handshake `∑ deg = r|H|` (module A2) this pins `|H|` to
+  `(1±μ)·|V|·d/r`, the estimate the nibble round consumes.
+
+Definitions (`degree`, `codegree`) come from `LeanPool.AsymptoticTrianglePacking.Internal.Basic`.
+Must be placeholder-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
+-/
+
+@[expose] public section
+
+open Finset
+
+namespace Hypergraph
+
+variable {V : Type*} [DecidableEq V]
+
+/-- `H` is `(1 ± μ)`-nearly `d`-regular: every degree lies in `[(1-μ)d, (1+μ)d]`. -/
+def NearlyRegular (H : Finset (Finset V)) (d μ : ℝ) : Prop :=
+  ∀ v : V, (1 - μ) * d ≤ (degree H v : ℝ) ∧ (degree H v : ℝ) ≤ (1 + μ) * d
+
+/-- `H` has codegree bounded by `C`: every distinct pair lies in at most `C` edges. -/
+def CodegreeBounded (H : Finset (Finset V)) (C : ℝ) : Prop :=
+  ∀ x y : V, x ≠ y → (codegree H x y : ℝ) ≤ C
+
+/-- **A4 — degree-sum squeeze.** If `H` is `(1±μ)`-nearly `d`-regular on a finite vertex type,
+then `∑_v degree v` lies in `[(1-μ)d·|V|, (1+μ)d·|V|]`. -/
+theorem sum_degree_bounds [Fintype V] {H : Finset (Finset V)} {d μ : ℝ}
+    (hReg : NearlyRegular H d μ) :
+    (1 - μ) * d * (Fintype.card V : ℝ) ≤ (∑ v : V, (degree H v : ℝ)) ∧
+    (∑ v : V, (degree H v : ℝ)) ≤ (1 + μ) * d * (Fintype.card V : ℝ) := by
+  classical
+  refine ⟨?_, ?_⟩
+  · calc (1 - μ) * d * (Fintype.card V : ℝ)
+        = ∑ _v : V, (1 - μ) * d := by
+          rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_comm]
+      _ ≤ ∑ v : V, (degree H v : ℝ) := Finset.sum_le_sum (fun v _ => (hReg v).1)
+  · calc ∑ v : V, (degree H v : ℝ)
+        ≤ ∑ _v : V, (1 + μ) * d := Finset.sum_le_sum (fun v _ => (hReg v).2)
+      _ = (1 + μ) * d * (Fintype.card V : ℝ) := by
+          rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_comm]
+
+end Hypergraph
+
+end
+
+
+
+/-!
+# Near-regular hypergraph nibble interface
+
+The interface records the finite matching statement established by the nibble construction:
+near-regular, low-codegree uniform hypergraphs have near-perfect matchings.
+
+Definitions come from `LeanPool.AsymptoticTrianglePacking.Internal.Basic` (`IsUniform`,
+`IsMatching`) and `LeanPool.AsymptoticTrianglePacking.Internal.Regular`
+(`NearlyRegular`, `CodegreeBounded`).
+-/
+
+@[expose] public section
+
+open Hypergraph
+
+namespace LeanPool.AsymptoticTrianglePacking.Internal
+
+/-- **T3 interface — the nibble theorem.** For `r ≥ 2` and any target `β > 0`, there is a
+near-regularity/codegree tolerance `μ > 0` such that every `r`-uniform hypergraph on a finite vertex
+set that is `(1±μ)`-nearly `d`-regular with codegree `≤ μd` has a matching covering at least a
+`(1-β)` fraction of the maximum possible (`|V|/r`). -/
+def NibbleTheorem : Prop :=
+  ∀ (r : ℕ), 2 ≤ r → ∀ (β : ℝ), 0 < β → ∃ μ : ℝ, 0 < μ ∧ ∃ d₀ : ℝ, 0 < d₀ ∧
+    ∀ {V : Type} [Fintype V] [DecidableEq V] (H : Finset (Finset V)) (d : ℝ), 0 < d → d₀ ≤ d →
+      IsUniform H r → NearlyRegular H d μ → CodegreeBounded H (μ * d) →
+      ∃ M : Finset (Finset V), IsMatching H M ∧
+        (1 - β) * ((Fintype.card V : ℝ) / r) ≤ (M.card : ℝ)
+
+end LeanPool.AsymptoticTrianglePacking.Internal
+
+end
+
 
 /-!
 # LeanPool.AsymptoticTrianglePacking.Internal — near-regularity for the majority of vertices, and
