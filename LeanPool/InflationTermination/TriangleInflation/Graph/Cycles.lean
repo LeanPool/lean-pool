@@ -185,8 +185,6 @@ theorem cycleBoundary_card_even (F : Finset (Fin m)) : Even (cycleBoundary m F).
       = (-1 : ℝ) ^ (cycleBoundary m F).card := by
     rw [← Finset.prod_filter, Finset.prod_const]
     congr 2
-    ext v
-    simp [mem_cycleBoundary]
   have h2 : (∏ v : Fin m, σ v * σ (cycleNext v)) = 1 := by
     rw [Finset.prod_mul_distrib, prod_cycleNext, ← Finset.prod_mul_distrib]
     exact Finset.prod_eq_one fun v _ => by by_cases h : v ∈ F <;> simp [hσ, h]
