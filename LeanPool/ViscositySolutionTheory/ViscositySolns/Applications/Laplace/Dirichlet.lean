@@ -46,20 +46,19 @@ namespace ViscositySolns
 /--
 **Existence for the harmonic Dirichlet problem** on a bounded open set with a
 uniform exterior sphere condition, with a boundary modulus of continuity that
-is uniform over Lipschitz data with a fixed constant.
+is uniform over Lipschitz data with a fixed constant. No size bound on the data is needed.
 -/
 theorem dirichlet_harmonic_modulus_of_uniformExteriorSphere {d : ℕ}
     {U : Set (EuclideanSpace ℝ (Fin d))} (hU : IsOpen U) (hUb : Bornology.IsBounded U)
-    (hext : UniformExteriorSphere U) (L : ℝ≥0) (M : ℝ) :
+    (hext : UniformExteriorSphere U) (L : ℝ≥0) :
     ∃ ϖ : ℝ → ℝ, Tendsto ϖ (𝓝[≥] 0) (𝓝 0) ∧
       ∀ g : EuclideanSpace ℝ (Fin d) → ℝ, LipschitzOnWith L g (closure U) →
-        (∀ x ∈ closure U, |g x| ≤ M) →
         ∃ h : EuclideanSpace ℝ (Fin d) → ℝ, ContinuousOn h (closure U) ∧
           ContDiffOn ℝ 2 h U ∧ (∀ x ∈ U, Δ h x = 0) ∧ (∀ x ∈ frontier U, h x = g x) ∧
           ∀ x₀ ∈ frontier U, ∀ x ∈ closure U, |h x - g x₀| ≤ ϖ ‖x - x₀‖ := by
   rcases Nat.eq_zero_or_pos d with rfl | hd
   · -- In dimension zero the space is a point, so the frontier is empty.
-    refine ⟨fun t => t, tendsto_id.mono_left nhdsWithin_le_nhds, fun g _ _ => ?_⟩
+    refine ⟨fun t => t, tendsto_id.mono_left nhdsWithin_le_nhds, fun g _ => ?_⟩
     refine ⟨fun _ => 0, continuousOn_const, contDiffOn_const, fun x _ => by simp, ?_, ?_⟩
     · simp
     · simp
@@ -70,7 +69,7 @@ theorem dirichlet_harmonic_modulus_of_uniformExteriorSphere {d : ℕ}
   obtain ⟨R, hR⟩ := hext.image_toPoint
   obtain ⟨K, hK, hbarrier⟩ :=
     exists_laplace_barrierPair_of_uniformExteriorSphereSq hCopen hCbdd hR (L : ℝ) L.2
-  refine ⟨fun t => K * Real.sqrt t, ?_, fun g hg _ => ?_⟩
+  refine ⟨fun t => K * Real.sqrt t, ?_, fun g hg => ?_⟩
   · have h : Tendsto (fun t => K * Real.sqrt t) (𝓝 0) (𝓝 (K * Real.sqrt 0)) :=
       tendsto_const_nhds.mul (Real.continuous_sqrt.tendsto 0)
     rw [Real.sqrt_zero, mul_zero] at h

@@ -11829,9 +11829,9 @@ projects:
         subsolutions agree for Hessian-continuous, symmetric-part-invariant operators.
     - declaration: ViscositySolns.dirichlet_harmonic_modulus_of_uniformExteriorSphere
       informal: On a bounded open subset of finite-dimensional Euclidean space with a uniform
-        exterior sphere condition, bounded Lipschitz data on its closure admit a continuous
+        exterior sphere condition, Lipschitz data on its closure admit a continuous
         extension that agrees on the boundary and is C² and harmonic in the domain, with a
-        boundary modulus uniform over data with fixed Lipschitz and size bounds.
+        boundary modulus depending only on the domain and Lipschitz constant.
     tags:
     - pde
     - viscosity-solutions

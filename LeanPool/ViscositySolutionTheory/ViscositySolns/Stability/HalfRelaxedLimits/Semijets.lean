@@ -109,15 +109,15 @@ theorem tailClosureSubjetGraph_lowerHalfRelaxedLimit_of_strictContact
   exact ⟨i, hiA, z, uᵢ i z, Jᵢ, hgraphC, hWmem⟩
 
 /--
-Let `ū x = upperHalfRelaxedLimit uᵢ l C x`. If
-`J ∈ Superjet C ū x` and `δ > 0`, then the graph point with the same value
+Let `upperLimit x = upperHalfRelaxedLimit uᵢ l C x`. If
+`J ∈ Superjet C upperLimit x` and `δ > 0`, then the graph point with the same value
 and gradient as `J` and Hessian `J.hessian + δ I` belongs to
 `TailClosureSuperjetGraph C uᵢ l`.
 
 The proof uses the superjet inequality with Hessian
 `J.hessian + (δ / 2) I` to obtain a compact set `K ⊆ C` on which the
 quadratic polynomial with Hessian `J.hessian + δ I` has strict maximum
-contact with `ū` at `x`.
+contact with `upperLimit` at `x`.
 -/
 theorem tailClosureSuperjetGraph_upperHalfRelaxedLimit_superjet_hessian_add_identity
     {uᵢ : ι -> Point n -> Real} {l : Filter ι}
@@ -183,15 +183,15 @@ theorem tailClosureSuperjetGraph_upperHalfRelaxedLimit_superjet_hessian_add_iden
   simpa [JAt, H, quadraticModelJetAt, ubar] using htail
 
 /--
-Let `u̲ x = lowerHalfRelaxedLimit uᵢ l C x`. If
-`J ∈ Subjet C u̲ x` and `δ > 0`, then the graph point with the same value
+Let `lowerLimit x = lowerHalfRelaxedLimit uᵢ l C x`. If
+`J ∈ Subjet C lowerLimit x` and `δ > 0`, then the graph point with the same value
 and gradient as `J` and Hessian `J.hessian - δ I` belongs to
 `TailClosureSubjetGraph C uᵢ l`.
 
 The proof uses the subjet inequality with Hessian
 `J.hessian - (δ / 2) I` to obtain a compact set `K ⊆ C` on which the
 quadratic polynomial with Hessian `J.hessian - δ I` has strict minimum
-contact with `u̲` at `x`.
+contact with `lowerLimit` at `x`.
 -/
 theorem tailClosureSubjetGraph_lowerHalfRelaxedLimit_subjet_hessian_sub_identity
     {uᵢ : ι -> Point n -> Real} {l : Filter ι}
@@ -257,8 +257,8 @@ theorem tailClosureSubjetGraph_lowerHalfRelaxedLimit_subjet_hessian_sub_identity
   simpa [JAt, H, quadraticModelJetAt, uunder] using htail
 
 /--
-Let `ū x = upperHalfRelaxedLimit uᵢ l C x`. If
-`J ∈ Superjet C ū x`, then `((x, ū x), J)` belongs to
+Let `upperLimit x = upperHalfRelaxedLimit uᵢ l C x`. If
+`J ∈ Superjet C upperLimit x`, then `((x, upperLimit x), J)` belongs to
 `TailClosureSuperjetGraph C uᵢ l`.
 -/
 theorem tailClosureSuperjetGraph_upperHalfRelaxedLimit_superjet
@@ -285,8 +285,8 @@ theorem tailClosureSuperjetGraph_upperHalfRelaxedLimit_superjet
       hxC hbddAbove hcobddBelow husc hδ hJ
 
 /--
-Let `u̲ x = lowerHalfRelaxedLimit uᵢ l C x`. If
-`J ∈ Subjet C u̲ x`, then `((x, u̲ x), J)` belongs to
+Let `lowerLimit x = lowerHalfRelaxedLimit uᵢ l C x`. If
+`J ∈ Subjet C lowerLimit x`, then `((x, lowerLimit x), J)` belongs to
 `TailClosureSubjetGraph C uᵢ l`.
 -/
 theorem tailClosureSubjetGraph_lowerHalfRelaxedLimit_subjet
@@ -316,12 +316,12 @@ theorem tailClosureSubjetGraph_lowerHalfRelaxedLimit_subjet
 Compact-contact neighborhood criterion for half-relaxed superjet
 approximation.
 
-Let `ū x = upperHalfRelaxedLimit uᵢ l C x`. Suppose that for every set of
-indices `A` with `A ∈ l` and every neighborhood `W` of `((x, ū x), J)`,
+Let `upperLimit x = upperHalfRelaxedLimit uᵢ l C x`. Suppose that for every set of
+indices `A` with `A ∈ l` and every neighborhood `W` of `((x, upperLimit x), J)`,
 there exist `i ∈ A`, `z ∈ K`, and a jet `Jᵢ` such that `K` is a relative
 neighborhood of `z` in `C`, `z` is a maximum point of `uᵢ i - φ` on `K`, `φ`
 has second-order expansion `Jᵢ` at `z` within `K`, and
-`((z, uᵢ i z), Jᵢ) ∈ W`. Then `((x, ū x), J)` belongs to the tail closure of
+`((z, uᵢ i z), Jᵢ) ∈ W`. Then `((x, upperLimit x), J)` belongs to the tail closure of
 the approximating superjet graphs on `C`.
 -/
 theorem tailClosureSuperjetGraph_upperHalfRelaxedLimit_of_forall_nhds_exists_isMaxOn
@@ -353,12 +353,12 @@ theorem tailClosureSuperjetGraph_upperHalfRelaxedLimit_of_forall_nhds_exists_isM
 /--
 Compact-contact neighborhood criterion for half-relaxed subjet approximation.
 
-Let `u̲ x = lowerHalfRelaxedLimit uᵢ l C x`. Suppose that for every set of
-indices `A` with `A ∈ l` and every neighborhood `W` of `((x, u̲ x), J)`,
+Let `lowerLimit x = lowerHalfRelaxedLimit uᵢ l C x`. Suppose that for every set of
+indices `A` with `A ∈ l` and every neighborhood `W` of `((x, lowerLimit x), J)`,
 there exist `i ∈ A`, `z ∈ K`, and a jet `Jᵢ` such that `K` is a relative
 neighborhood of `z` in `C`, `z` is a minimum point of `uᵢ i - φ` on `K`, `φ`
 has second-order expansion `Jᵢ` at `z` within `K`, and
-`((z, uᵢ i z), Jᵢ) ∈ W`. Then `((x, u̲ x), J)` belongs to the tail closure of
+`((z, uᵢ i z), Jᵢ) ∈ W`. Then `((x, lowerLimit x), J)` belongs to the tail closure of
 the approximating subjet graphs on `C`.
 -/
 theorem tailClosureSubjetGraph_lowerHalfRelaxedLimit_of_forall_nhds_exists_isMinOn

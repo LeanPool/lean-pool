@@ -30,13 +30,13 @@ variable {n : Nat} {ι : Type*}
 /--
 Abstract half-relaxed stability for subsolutions.
 
-Let `ū x = upperHalfRelaxedLimit uᵢ l C x`. If the set of indices `i` for
+Let `upperLimit x = upperHalfRelaxedLimit uᵢ l C x`. If the set of indices `i` for
 which `uᵢ i` is a viscosity subsolution of `F = 0` on `C` belongs to `l`,
-and if for every `x ∈ C` and every `J ∈ Superjet C ū x` the graph point
-`((x, ū x), J)` belongs to `TailClosureSuperjetGraph C uᵢ l`, then `ū`
+and if for every `x ∈ C` and every `J ∈ Superjet C upperLimit x` the graph point
+`((x, upperLimit x), J)` belongs to `TailClosureSuperjetGraph C uᵢ l`, then `upperLimit`
 is a viscosity subsolution of `F = 0` on `C`. The other hypotheses are the
 operator continuity and boundedness assumptions used to prove upper
-semicontinuity of `ū`.
+semicontinuity of `upperLimit`.
 -/
 theorem ViscositySubsolution.upperHalfRelaxedLimit_of_eventually_tailClosureSuperjetGraph
     {C : Set (Point n)} {F : Operator n} {uᵢ : ι -> Point n -> Real}
@@ -59,13 +59,13 @@ theorem ViscositySubsolution.upperHalfRelaxedLimit_of_eventually_tailClosureSupe
 /--
 Abstract half-relaxed stability for supersolutions.
 
-Let `u̲ x = lowerHalfRelaxedLimit uᵢ l C x`. If the set of indices `i` for
+Let `lowerLimit x = lowerHalfRelaxedLimit uᵢ l C x`. If the set of indices `i` for
 which `uᵢ i` is a viscosity supersolution of `F = 0` on `C` belongs to `l`,
-and if for every `x ∈ C` and every `J ∈ Subjet C u̲ x` the graph point
-`((x, u̲ x), J)` belongs to `TailClosureSubjetGraph C uᵢ l`, then `u̲` is a
+and if for every `x ∈ C` and every `J ∈ Subjet C lowerLimit x` the graph point
+`((x, lowerLimit x), J)` belongs to `TailClosureSubjetGraph C uᵢ l`, then `lowerLimit` is a
 viscosity supersolution of `F = 0` on `C`. The other hypotheses are the
 operator continuity and boundedness assumptions used to prove lower
-semicontinuity of `u̲`.
+semicontinuity of `lowerLimit`.
 -/
 theorem ViscositySupersolution.lowerHalfRelaxedLimit_of_eventually_tailClosureSubjetGraph
     {C : Set (Point n)} {F : Operator n} {uᵢ : ι -> Point n -> Real}
@@ -88,9 +88,9 @@ theorem ViscositySupersolution.lowerHalfRelaxedLimit_of_eventually_tailClosureSu
 /--
 Half-relaxed stability for subsolutions.
 
-Let `ū x = upperHalfRelaxedLimit uᵢ l C x`. If the set of indices `i` for
+Let `upperLimit x = upperHalfRelaxedLimit uᵢ l C x`. If the set of indices `i` for
 which `uᵢ i` is a viscosity subsolution of `F = 0` on `C` belongs to `l`,
-then `ū` is a viscosity subsolution of `F = 0` on `C`, under the operator
+then `upperLimit` is a viscosity subsolution of `F = 0` on `C`, under the operator
 continuity, local compactness, and boundedness hypotheses stated below.
 -/
 theorem ViscositySubsolution.upperHalfRelaxedLimit
@@ -113,9 +113,9 @@ theorem ViscositySubsolution.upperHalfRelaxedLimit
 /--
 Half-relaxed stability for supersolutions.
 
-Let `u̲ x = lowerHalfRelaxedLimit uᵢ l C x`. If the set of indices `i` for
+Let `lowerLimit x = lowerHalfRelaxedLimit uᵢ l C x`. If the set of indices `i` for
 which `uᵢ i` is a viscosity supersolution of `F = 0` on `C` belongs to `l`,
-then `u̲` is a viscosity supersolution of `F = 0` on `C`, under the operator
+then `lowerLimit` is a viscosity supersolution of `F = 0` on `C`, under the operator
 continuity, local compactness, and boundedness hypotheses stated below.
 -/
 theorem ViscositySupersolution.lowerHalfRelaxedLimit

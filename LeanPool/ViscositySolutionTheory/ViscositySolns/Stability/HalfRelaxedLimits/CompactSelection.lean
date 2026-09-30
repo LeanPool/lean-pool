@@ -540,15 +540,15 @@ theorem exists_isMinOn_mem_nhds_abs_lowerHalfRelaxedLimit_lt
   exact ⟨i, hiA, z, hzK, hzV, hKz, hmin, by simpa [hdecomp] using hsum⟩
 
 /--
-Let `ū x = upperHalfRelaxedLimit uᵢ l C x`. Assume that `φ` has strict
-maximum contact with `ū` at `x` on the compact set `K`, that `K ⊆ C`, and
+Let `upperLimit x = upperHalfRelaxedLimit uᵢ l C x`. Assume that `φ` has strict
+maximum contact with `upperLimit` at `x` on the compact set `K`, that `K ⊆ C`, and
 that `K` is a relative neighborhood of `x` in `C`. Let `JAt` be a function
 from points to jets such that `JAt` is continuous at `x` relative to `K`, and
 such that for every `y ∈ K`, the function `φ` has second-order expansion
 `JAt y` at `y` relative to `K`.
 
 Then for every `A ∈ l` and every neighborhood `W` of
-`((x, ū x), JAt x)`, there exist `i ∈ A`, `z ∈ K`, and the jet `JAt z`
+`((x, upperLimit x), JAt x)`, there exist `i ∈ A`, `z ∈ K`, and the jet `JAt z`
 such that `K ∈ nhdsWithin z C`, `z` maximizes `uᵢ i - φ` on `K`,
 `φ` has second-order expansion `JAt z` at `z` relative to `K`, and
 `((z, uᵢ i z), JAt z) ∈ W`.
@@ -608,15 +608,15 @@ theorem exists_isMaxOn_hasSecondOrderExpansionWithin_mem_nhds_upperHalfRelaxedLi
   exact ⟨i, hiA, z, hzK, JAt z, hKz, hmax, hφexp z hzK, hWmem⟩
 
 /--
-Let `u̲ x = lowerHalfRelaxedLimit uᵢ l C x`. Assume that `φ` has strict
-minimum contact with `u̲` at `x` on the compact set `K`, that `K ⊆ C`, and
+Let `lowerLimit x = lowerHalfRelaxedLimit uᵢ l C x`. Assume that `φ` has strict
+minimum contact with `lowerLimit` at `x` on the compact set `K`, that `K ⊆ C`, and
 that `K` is a relative neighborhood of `x` in `C`. Let `JAt` be a function
 from points to jets such that `JAt` is continuous at `x` relative to `K`, and
 such that for every `y ∈ K`, the function `φ` has second-order expansion
 `JAt y` at `y` relative to `K`.
 
 Then for every `A ∈ l` and every neighborhood `W` of
-`((x, u̲ x), JAt x)`, there exist `i ∈ A`, `z ∈ K`, and the jet `JAt z`
+`((x, lowerLimit x), JAt x)`, there exist `i ∈ A`, `z ∈ K`, and the jet `JAt z`
 such that `K ∈ nhdsWithin z C`, `z` minimizes `uᵢ i - φ` on `K`,
 `φ` has second-order expansion `JAt z` at `z` relative to `K`, and
 `((z, uᵢ i z), JAt z) ∈ W`.
