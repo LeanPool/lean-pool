@@ -652,7 +652,8 @@ theorem closedSuperjet_left_of_closedSuperjet_blockFunctionToPointFunction_sub
     simp [T, F, blockFunctionToPointFunction, pointLeft, pointRight, blockPointLeft,
       blockPointRight]
   change ((0, G 0), leftPointJet (n := n) J) ∈ closure (SuperjetGraph Set.univ G)
-  simpa [htarget] using hclosure
+  rw [htarget] at hclosure
+  exact hclosure
 
 /--
 Closed-subjet restriction to the right coordinate for a separated difference.
@@ -733,7 +734,8 @@ theorem closedSubjet_right_of_closedSuperjet_blockFunctionToPointFunction_sub
     simp [T, F, blockFunctionToPointFunction, pointLeft, pointRight, blockPointLeft,
       blockPointRight]
   change ((0, H 0), (rightPointJet (n := n) J).neg) ∈ closure (SubjetGraph Set.univ H)
-  simpa [htarget] using hclosure
+  rw [htarget] at hclosure
+  exact hclosure
 
 /--
 Separated closed semijets obtained from a selected block diagonal Hessian.
