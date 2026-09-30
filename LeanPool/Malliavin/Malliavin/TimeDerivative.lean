@@ -9,7 +9,6 @@ public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Independ
 public import LeanPool.Malliavin.Malliavin.WienerIntegral
 public import LeanPool.Malliavin.Malliavin.FubiniLift
 public import LeanPool.Malliavin.Malliavin.MalliavinDerivative
-public import Mathlib.Tactic.Recall
 
 /-!
 # The time derivative: from `H`-valued random variables to processes
