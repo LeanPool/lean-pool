@@ -18,6 +18,8 @@ printf '%s\n' "$@" | xargs -P "$jobs" -I{} \
 : > "$out"
 for file in "$@"; do
   slug="$(printf '%s' "$file" | tr '/' '_')_$(printf '%s' "$file" | cksum | cut -d' ' -f1)"
-  cat "$outdir/$slug.log" >> "$out"
+  # The first line is measure-one.sh's header; later header-shaped lines
+  # belong to Lean output and must not become new sections.
+  sed '1!s/^## / ## /' "$outdir/$slug.log" >> "$out"
 done
 rm -rf "$outdir"

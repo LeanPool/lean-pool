@@ -8,7 +8,6 @@ module
 public import LeanPool.Malliavin.Malliavin.TimeDerivative
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.ArctanDeriv
 public import Mathlib.Analysis.Calculus.Deriv.MeanValue
-public import Mathlib.Tactic.Recall
 
 /-!
 # Linear functionals in `𝔻₁,₂` and the derivative of a Brownian coordinate
