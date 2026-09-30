@@ -229,11 +229,11 @@ theorem isPrime_map_ratFunc (I : Ideal (MvPolynomial (Fin d) K)) [hI : I.IsPrime
           (Polynomial.C : MvPolynomial (Fin d) K →+* Polynomial (MvPolynomial (Fin d) K)) := by
       refine MvPolynomial.ringHom_ext (fun c ↦ ?_) (fun i ↦ ?_)
       · simp only [RingHom.comp_apply, MvPolynomial.map_C, RingEquiv.coe_toRingHom, e,
-          AlgEquiv.coe_ringEquiv, AlgEquiv.trans_apply,
+          AlgEquiv.coe_toRingEquiv, AlgEquiv.trans_apply,
           ← MvPolynomial.optionEquivRight_C, AlgEquiv.symm_apply_apply,
           MvPolynomial.optionEquivLeft_C]
       · simp only [RingHom.comp_apply, MvPolynomial.map_X, RingEquiv.coe_toRingHom, e,
-          AlgEquiv.coe_ringEquiv, AlgEquiv.trans_apply,
+          AlgEquiv.coe_toRingEquiv, AlgEquiv.trans_apply,
           ← MvPolynomial.optionEquivRight_X_some, AlgEquiv.symm_apply_apply,
           MvPolynomial.optionEquivLeft_X_some]
     exact congrArg (fun φ ↦ φ f) h
@@ -244,11 +244,11 @@ theorem isPrime_map_ratFunc (I : Ideal (MvPolynomial (Fin d) K)) [hI : I.IsPrime
           Polynomial.mapRingHom (MvPolynomial.C : K →+* MvPolynomial (Fin d) K) := by
       refine Polynomial.ringHom_ext (fun a ↦ ?_) ?_
       · simp only [RingHom.comp_apply, Polynomial.coe_mapRingHom, Polynomial.map_C,
-          RingEquiv.coe_toRingHom, e, AlgEquiv.coe_ringEquiv,
+          RingEquiv.coe_toRingHom, e, AlgEquiv.coe_toRingEquiv,
           AlgEquiv.trans_apply, ← MvPolynomial.optionEquivRight_C, AlgEquiv.symm_apply_apply,
           MvPolynomial.optionEquivLeft_C]
       · simp only [RingHom.comp_apply, Polynomial.coe_mapRingHom, Polynomial.map_X,
-          RingEquiv.coe_toRingHom, e, AlgEquiv.coe_ringEquiv,
+          RingEquiv.coe_toRingHom, e, AlgEquiv.coe_toRingEquiv,
           AlgEquiv.trans_apply, ← MvPolynomial.optionEquivRight_X_none, AlgEquiv.symm_apply_apply,
           MvPolynomial.optionEquivLeft_X_none]
     exact congrArg (fun φ ↦ φ c) h
