@@ -94,7 +94,7 @@ theorem not_isStrictlySingular_of_finiteDimensional_ker_of_isClosed_range
   have hS : ∃ K, AntilipschitzWith K S := by
     exact ⟨1, by
       simpa [S, Submodule.subtypeₗᵢ_toContinuousLinearMap] using
-        Z.subtypeₗᵢ.antilipschitz⟩
+        Z.subtypeₗᵢ.antilipschitzWith⟩
   have hASinjective : Function.Injective (A.comp S) := by
     intro x y hxy
     apply Subtype.ext
