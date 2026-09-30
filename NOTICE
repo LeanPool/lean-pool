@@ -199,6 +199,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
                                      https://github.com/epfl-lara/AutoformalizedProjects
   LeanPool/QuadraticIterates         https://github.com/MichaelStollBayreuth/QuadraticIterates
   LeanPool/QuantumParallelRepetition https://github.com/openai/ten-proofs
+  LeanPool/QuantumQuery              https://github.com/troyjlee/quantum-query-complexity
   LeanPool/Rado                      https://github.com/rkirov/jordan_pick
   LeanPool/RamanujanNagell           https://github.com/BarinderBanwait/ramanujan_nagell
   LeanPool/RearrangementNumber       https://github.com/vo-rodrigues/rr-equals-nonmeager-paper
