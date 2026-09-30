@@ -11831,7 +11831,7 @@ projects:
       informal: On a bounded open subset of finite-dimensional Euclidean space with a uniform
         exterior sphere condition, bounded Lipschitz data on its closure admit a continuous
         extension that agrees on the boundary and is C² and harmonic in the domain, with a
-        boundary modulus depending only on the domain and Lipschitz constant.
+        boundary modulus uniform over data with fixed Lipschitz and size bounds.
     tags:
     - pde
     - viscosity-solutions
