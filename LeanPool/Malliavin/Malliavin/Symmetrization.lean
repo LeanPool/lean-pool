@@ -6,7 +6,6 @@ Authors: lean-malliavin contributors
 module
 
 public import Mathlib.MeasureTheory.Function.L2Space
-public import Mathlib.Tactic.Recall
 
 /-!
 # Rung 1 (`symm`): the symmetrization operator

@@ -314,7 +314,7 @@ variable {R : Type*} [CommRing R]
 (in any commutative ring, for `I` prime). -/
 theorem ringKrullDim_quotient_add_one_le_of_lt {I J : Ideal R} [I.IsPrime] (h : I < J) :
     ringKrullDim (R ⧸ J) + 1 ≤ ringKrullDim (R ⧸ I) := by
-  obtain ⟨x, hxJ, hxI⟩ := SetLike.exists_of_lt h
+  obtain ⟨x, hxJ, hxI⟩ := IsConcreteLE.exists_of_lt h
   have hx : Ideal.Quotient.mk I x ∈ nonZeroDivisors (R ⧸ I) :=
     mem_nonZeroDivisors_of_ne_zero (by rwa [Ne, Ideal.Quotient.eq_zero_iff_mem])
   rw [ringKrullDim_eq_of_ringEquiv (DoubleQuot.quotQuotEquivQuotOfLE h.le).symm]

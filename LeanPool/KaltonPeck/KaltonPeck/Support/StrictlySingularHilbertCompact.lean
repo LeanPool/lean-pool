@@ -377,7 +377,7 @@ private theorem not_strictlySingular_of_uniform_orthogonal_tail
     exact hDinvD
   have hSanti : ∃ K, AntilipschitzWith K S :=
     ⟨1, by
-      simpa [S, Sli] using Sli.antilipschitz⟩
+      simpa [S, Sli] using Sli.antilipschitzWith⟩
   have hHSanti : ∃ K, AntilipschitzWith K (H.comp S) := by
     let c : ℝ := (‖L‖ + 1)⁻¹
     have hc : 0 < c := inv_pos.mpr (by positivity)

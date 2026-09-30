@@ -100,7 +100,7 @@ theorem IsStrictlySingular.exists_unit_mem_ker_norm_apply_lt
   have hsub : ∃ K, AntilipschitzWith K V.subtypeL :=
     ⟨1, by
       simpa [Submodule.subtypeₗᵢ_toContinuousLinearMap] using
-        V.subtypeₗᵢ.antilipschitz⟩
+        V.subtypeₗᵢ.antilipschitzWith⟩
   have hnot : ¬ ∃ K, AntilipschitzWith K (U.comp V.subtypeL) :=
     hU V hV V.subtypeL hsub
   obtain ⟨x, hxnorm, hxU⟩ :=
@@ -706,7 +706,7 @@ theorem IsStrictlySingular.add
   have hsub : ∃ K, AntilipschitzWith K M.subtypeL :=
     ⟨1, by
       simpa [Submodule.subtypeₗᵢ_toContinuousLinearMap] using
-        M.subtypeₗᵢ.antilipschitz⟩
+        M.subtypeₗᵢ.antilipschitzWith⟩
   let d : ℝ := ∑' n, ‖φt n‖ * ‖U (vt n)‖
   have hdc : d < c := by
     simpa [d, p, φt, vt] using htail

@@ -248,7 +248,14 @@ theorem freeGroup_finite_permutation_separator_proved
     Nonempty (FinitePermutationSeparator H g) := by
   classical
   let : DecidableEq α := Classical.decEq α
-  obtain ⟨S, hS⟩ := (Group.fg_iff_subgroup_fg H).mp (inferInstance : Group.FG H)
+  obtain ⟨Sset, hSset, hSfinite⟩ :=
+    (Subgroup.fg_iff H).mp ((Group.fg_iff_subgroup_fg H).mp
+      (inferInstance : Group.FG H))
+  let S : Finset (FreeGroup α) := hSfinite.toFinset
+  have hS : Subgroup.closure (S : Set (FreeGroup α)) = H := by
+    change Subgroup.closure ((hSfinite.toFinset : Finset (FreeGroup α)) : Set (FreeGroup α)) = H
+    rw [hSfinite.coe_toFinset]
+    exact hSset
   let A : Set (LeftCosetQuotient H) := coreStateSet H S g
   have hAfin : A.Finite := by
     exact coreStateSet_finite H S g

@@ -711,9 +711,12 @@ theorem Matrix.IsDiag.exists_cfc {U : Matrix.unitaryGroup d 𝕜} {M : Matrix d 
   congr; rotate_right
   · exact Matrix.inv_eq_right_inv U.2.1
   · exact Matrix.inv_eq_left_inv U.2.1
-  conv in Nat.cast (e _) =>
-    equals (RCLike.ofReal <| e x) => simp only [map_natCast]
-  rw [Matrix.cfc_diagonal]
+  have hdiag_cast :
+      (Matrix.diagonal (fun x : d => ((e x).val : 𝕜))) =
+        Matrix.diagonal (fun x : d => (((e x).val : ℝ) : 𝕜)) := by
+    exact congrArg (Matrix.diagonal : (d → 𝕜) → Matrix d d 𝕜)
+      (funext fun x => (RCLike.ofReal_natCast ((e x).val)).symm)
+  rw [hdiag_cast, Matrix.cfc_diagonal]
   congr
   ext i
   simp only [Matrix.diag_apply, Function.comp_apply, Nat.cast_inj, exists_apply_eq_apply,
