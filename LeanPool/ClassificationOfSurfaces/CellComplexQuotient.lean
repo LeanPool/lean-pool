@@ -234,7 +234,7 @@ theorem oneFacePresentation_occurrencePairingValid
 namespace BoundaryPairing
 
 /-- The generic polygon-side identification associated to an occurrence pairing. -/
-def identification {K : SurfaceCellComplex} (pairing : K.BoundaryPairing) :
+@[expose] def identification {K : SurfaceCellComplex} (pairing : K.BoundaryPairing) :
     PolygonGluing.Identification K.Face K.faceBoundaryLength where
   source := K.occurrenceSide pairing.source
   target := K.occurrenceSide pairing.target
@@ -258,6 +258,7 @@ theorem identification_direction {K : SurfaceCellComplex} (pairing : K.BoundaryP
 end BoundaryPairing
 
 /-- All side identifications compatible with a pairing-valid complex. -/
+@[expose]
 def polygonalIdentifications (K : SurfaceCellComplex) (_valid : K.OccurrencePairingValid) :
     Set (PolygonGluing.Identification K.Face K.faceBoundaryLength) :=
   Set.range BoundaryPairing.identification
@@ -307,7 +308,7 @@ theorem mem_polygonalIdentifications_iff_exists_occurrences
     rfl
 
 /-- The boundary occurrence at position `i` in a one-face word. -/
-def oneFaceOccurrence {Edge : Type} [Fintype Edge]
+@[expose] def oneFaceOccurrence {Edge : Type} [Fintype Edge]
     (word : List (SignedDart Edge)) (i : Fin word.length) :
     (oneFacePresentation Edge word).BoundaryOccurrence :=
   ⟨PUnit.unit, i⟩
@@ -510,6 +511,7 @@ abbrev PolygonalRealization (K : SurfaceCellComplex) (valid : K.OccurrencePairin
   PolygonGluing.Realization (K.polygonalIdentifications valid)
 
 /-- The quotient map from the polygonal disjoint union of `K`. -/
+@[expose]
 def polygonalMk (K : SurfaceCellComplex) (valid : K.OccurrencePairingValid) :
     K.PolygonalPreRealization → K.PolygonalRealization valid :=
   PolygonGluing.mk (K.polygonalIdentifications valid)

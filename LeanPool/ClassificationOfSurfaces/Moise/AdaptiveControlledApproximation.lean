@@ -181,7 +181,7 @@ namespace IntrinsicTwoComplex
 variable (K : IntrinsicTwoComplex) (U : Set K.realization)
 
 /-- The ambient open cover obtained from controlled neighborhoods in the open subspace `U`. -/
-noncomputable def controlledAdaptiveOpenCover (hU : IsOpen U)
+@[expose] noncomputable def controlledAdaptiveOpenCover (hU : IsOpen U)
     (f : U → Plane) (hf : Continuous f) (phi : U → ℝ)
     (hphi : StronglyPositiveOn Set.univ phi) : K.AdaptiveOpenCover U := by
   letI : LocallyCompactSpace U := hU.locallyCompactSpace

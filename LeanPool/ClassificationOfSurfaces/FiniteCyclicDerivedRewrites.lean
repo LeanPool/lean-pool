@@ -447,28 +447,28 @@ def source {n : ℕ} (a b : Fin n)
   Dyck.source a U ([.pos b] ++ V) (X ++ [.neg b] ++ Y)
 
 /-- The result of the first Dyck rewrite. -/
-@[reducible]
+@[expose, reducible]
 def afterFirst {n : ℕ} (a b : Fin n)
     (U V X Y : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
   Dyck.target a U ([.pos b] ++ V) (X ++ [.neg b] ++ Y)
 
 /-- A cyclic spelling of `afterFirst` exposing the two occurrences of `b`. -/
-@[reducible]
+@[expose, reducible]
 def secondSource {n : ℕ} (a b : Fin n)
     (U V X Y : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
   Dyck.source b (V ++ U) ([.neg a] ++ X) (Y ++ [.pos a])
 
 /-- The result of the second Dyck rewrite. -/
-@[reducible]
+@[expose, reducible]
 def afterSecond {n : ℕ} (a b : Fin n)
     (U V X Y : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
   Dyck.target b (V ++ U) ([.neg a] ++ X) (Y ++ [.pos a])
 
 /-- A cyclic spelling of `afterSecond` exposing `a⁻¹` before `a`. -/
-@[reducible]
+@[expose, reducible]
 def thirdSource {n : ℕ} (a b : Fin n)
     (U V X Y : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
@@ -476,7 +476,7 @@ def thirdSource {n : ℕ} (a b : Fin n)
 
 /-- The target spelling contains the handle `a b a⁻¹ b⁻¹`, followed cyclically by
 `Y X V U`. -/
-@[reducible]
+@[expose, reducible]
 def target {n : ℕ} (a b : Fin n)
     (U V X Y : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
@@ -676,7 +676,7 @@ def source {n : ℕ} (a b c : Fin n)
     (X ++ [.pos b, .pos c]) ([.neg b, .neg c] ++ Y)
 
 /-- The first alternate cross-cap rewrite. -/
-@[reducible]
+@[expose, reducible]
 def afterFirst {n : ℕ} (a b c : Fin n)
     (X Y : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
@@ -684,7 +684,7 @@ def afterFirst {n : ℕ} (a b c : Fin n)
     (X ++ [.pos b, .pos c]) ([.neg b, .neg c] ++ Y)
 
 /-- Rotate the first target to expose the two negative occurrences of `b`. -/
-@[reducible]
+@[expose, reducible]
 def secondSource {n : ℕ} (a b c : Fin n)
     (X Y : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
@@ -693,7 +693,7 @@ def secondSource {n : ℕ} (a b c : Fin n)
     (inverseWord X ++ [.pos a])
 
 /-- The result of rewriting the two negative occurrences of `b`. -/
-@[reducible]
+@[expose, reducible]
 def afterSecond {n : ℕ} (a b c : Fin n)
     (X Y : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
@@ -702,7 +702,7 @@ def afterSecond {n : ℕ} (a b c : Fin n)
     (inverseWord X ++ [.pos a])
 
 /-- Expose the two negative occurrences of `c`. -/
-@[reducible]
+@[expose, reducible]
 def thirdSource {n : ℕ} (a b c : Fin n)
     (X Y : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
@@ -711,7 +711,7 @@ def thirdSource {n : ℕ} (a b c : Fin n)
     ([.neg b, .neg b, .neg a] ++ X)
 
 /-- The result of rewriting the two negative occurrences of `c`. -/
-@[reducible]
+@[expose, reducible]
 def afterThird {n : ℕ} (a b c : Fin n)
     (X Y : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
@@ -720,7 +720,7 @@ def afterThird {n : ℕ} (a b c : Fin n)
     ([.neg b, .neg b, .neg a] ++ X)
 
 /-- Expose the remaining two occurrences of `a`. -/
-@[reducible]
+@[expose, reducible]
 def fourthSource {n : ℕ} (a b c : Fin n)
     (X Y : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
@@ -729,7 +729,7 @@ def fourthSource {n : ℕ} (a b c : Fin n)
     ([.neg c, .neg c] ++ inverseWord X)
 
 /-- The final spelling is cyclically `a a X c c b b Y`: three crosscaps. -/
-@[reducible]
+@[expose, reducible]
 def target {n : ℕ} (a b c : Fin n)
     (X Y : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
@@ -910,14 +910,14 @@ def source {n : ℕ} (a : Fin n)
   Dyck.oneFace (([.pos a] ++ H) ++ ([.neg a] ++ X ++ V))
 
 /-- Rotate the source to expose the negative occurrence of `a` first. -/
-@[reducible]
+@[expose, reducible]
 def rotatedSource {n : ℕ} (a : Fin n)
     (H X V : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
   Dyck.negativeSource a X V H
 
 /-- The target is cyclically `a H a⁻¹ V X`, so `V` has crossed the separating word `X`. -/
-@[reducible]
+@[expose, reducible]
 def target {n : ℕ} (a : Fin n)
     (H X V : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=

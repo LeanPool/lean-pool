@@ -38,6 +38,7 @@ deriving DecidableEq, Repr
 The orientable sphere is represented by the separate sphere branch, so an orientable polygonal
 normal form must have a handle or a boundary component; nonorientable forms must have at least one
 crosscap. -/
+@[expose]
 def NormalForm.IsEvalAdmissible : NormalForm → Prop
   | NormalForm.sphere => True
   | NormalForm.orientable handles boundaryComponents =>

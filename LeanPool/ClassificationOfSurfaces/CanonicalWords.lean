@@ -148,14 +148,14 @@ private theorem orientableBoundaryWords_eq_ofFn (p n : ℕ) :
   simp [orientableBoundaryLinearDart, orientableBoundaryBlock]
 
 /-- Position `k` in handle block `i` inside the full orientable boundary word. -/
-def orientableHandlePosition (p n : ℕ) (i : Fin p) (k : Fin 4) :
+@[expose] def orientableHandlePosition (p n : ℕ) (i : Fin p) (k : Fin 4) :
     Fin (orientableBoundaryWord p n).length :=
   ⟨i.val * 4 + k.val, by
     rw [orientableBoundaryWord_length]
     omega⟩
 
 /-- Position `k` in boundary block `j` inside the full orientable boundary word. -/
-def orientableBoundaryPosition (p n : ℕ) (j : Fin n) (k : Fin 3) :
+@[expose] def orientableBoundaryPosition (p n : ℕ) (j : Fin n) (k : Fin 3) :
     Fin (orientableBoundaryWord p n).length :=
   ⟨4 * p + j.val * 3 + k.val, by
     rw [orientableBoundaryWord_length]
@@ -273,14 +273,14 @@ private theorem nonOrientableBoundaryWords_eq_ofFn (p n : ℕ) :
   simp [nonOrientableBoundaryLinearDart, nonOrientableBoundaryBlock]
 
 /-- Position `k` in crosscap block `i` inside the full nonorientable boundary word. -/
-def nonOrientableCrosscapPosition (p n : ℕ) (i : Fin p) (k : Fin 2) :
+@[expose] def nonOrientableCrosscapPosition (p n : ℕ) (i : Fin p) (k : Fin 2) :
     Fin (nonOrientableBoundaryWord p n).length :=
   ⟨i.val * 2 + k.val, by
     rw [nonOrientableBoundaryWord_length]
     omega⟩
 
 /-- Position `k` in boundary block `j` inside the full nonorientable boundary word. -/
-def nonOrientableBoundaryPosition (p n : ℕ) (j : Fin n) (k : Fin 3) :
+@[expose] def nonOrientableBoundaryPosition (p n : ℕ) (j : Fin n) (k : Fin 3) :
     Fin (nonOrientableBoundaryWord p n).length :=
   ⟨2 * p + j.val * 3 + k.val, by
     rw [nonOrientableBoundaryWord_length]

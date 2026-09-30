@@ -29,7 +29,7 @@ namespace Moise
 namespace TriangleMesh
 
 /-- The canonical barycentric embedding of a finite plane triangle mesh realization. -/
-noncomputable def coordinateEmbed (M : TriangleMesh) :
+@[expose] noncomputable def coordinateEmbed (M : TriangleMesh) :
     GeometricRealization M.Vertex M.triangles → Plane :=
   fun x ↦ M.toPlaneComplex.baryEval x.1
 
@@ -71,7 +71,7 @@ theorem range_coordinateEmbed (M : TriangleMesh) :
     exact congrArg Subtype.val hy
 
 /-- Restrict the coordinate embedding to any plane region containing the mesh support. -/
-noncomputable def coordinateEmbedInto (M : TriangleMesh) (W : Set Plane)
+@[expose] noncomputable def coordinateEmbedInto (M : TriangleMesh) (W : Set Plane)
     (hW : M.toPlaneComplex.support ⊆ W) :
     GeometricRealization M.Vertex M.triangles → W :=
   fun x ↦ ⟨M.coordinateEmbed x, hW (by
@@ -99,7 +99,7 @@ theorem isCompact_closedRegion [Finite ι] : IsCompact (closedRegion J) := by
   exact isCompact_iUnion fun i ↦ (J i).isCompact_closedRegion
 
 /-- A positive radius of a ball containing every disk in the family. -/
-noncomputable def enclosingRadius : ℝ :=
+@[expose] noncomputable def enclosingRadius : ℝ :=
   max ((isCompact_closedRegion J).isBounded.subset_closedBall (0 : Plane)).choose 1
 
 theorem enclosingRadius_pos : 0 < enclosingRadius J :=

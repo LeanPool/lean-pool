@@ -117,7 +117,7 @@ theorem adaptiveFanVertexSource_mem_carrier (hU : IsOpen U)
   exact K.adaptiveFanVertex_mem_carrier U hU f p.2
 
 /-- The distinguished cone-center vertex of a fan triangle. -/
-noncomputable def adaptiveFanCenterVertex (hU : IsOpen U)
+@[expose] noncomputable def adaptiveFanCenterVertex (hU : IsOpen U)
     (f : K.AdaptiveFanFace U hU) :
     {p // p ∈ K.adaptiveFanFaceVertices U hU f} :=
   ⟨K.adaptiveFaceCenter U f.1, by

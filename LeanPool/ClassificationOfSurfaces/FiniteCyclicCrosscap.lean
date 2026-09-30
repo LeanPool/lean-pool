@@ -51,6 +51,7 @@ def target {n : ℕ} (a : Fin n)
   Dyck.oneFace ((X ++ [.pos a]) ++ ([.pos a] ++ inverseWord Y))
 
 /-- Split the source between the two occurrences of `a`. -/
+@[expose]
 def sourceCut {n : ℕ} (a : Fin n)
     (X Y : List (SignedDart (Fin n))) :
     P2Cut (source a X Y) where
@@ -67,6 +68,7 @@ def sourceCut {n : ℕ} (a : Fin n)
 
 /-- Split the target along the edge used to merge the first source child with the reverse of the
 second. -/
+@[expose]
 def targetCut {n : ℕ} (a : Fin n)
     (X Y : List (SignedDart (Fin n))) :
     P2Cut (target a X Y) where
@@ -155,6 +157,7 @@ theorem commonEdgeRelabeling_retainWord {n : ℕ} (a : Fin n)
             Equiv.swap_apply_of_ne_of_ne hcast (Fin.castSucc_ne_last e)]
 
 /-- Match the explicit face indices of the two canonical splits. -/
+@[expose]
 def commonFaceEquiv {n : ℕ} (a : Fin n)
     (X Y : List (SignedDart (Fin n))) :
     (P2.split (target a X Y) (targetCut a X Y)).Face ≃

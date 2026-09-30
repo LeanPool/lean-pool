@@ -76,6 +76,7 @@ theorem rotateHomeomorph_apply_val {n m : ℕ} (h : n = m) (k : ℕ)
     rfl
 
 /-- The `rotateIndex` declaration. -/
+@[expose]
 def rotateIndex {n : ℕ} (hn : 0 < n) (k : ℕ) (i : Fin n) : Fin n :=
   ⟨(i.val + k) % n, Nat.mod_lt _ hn⟩
 
@@ -190,6 +191,7 @@ theorem boundary_get_sideIndex (e : SignedPresentationIso P Q)
   exact htarget
 
 /-- The disk homeomorphism on a face selected by the cyclic boundary rotation. -/
+@[expose]
 noncomputable def faceHomeomorph (e : SignedPresentationIso P Q) (f : P.Face) :
     PolygonCell (P.boundary f).length ≃ₜ
       PolygonCell (Q.boundary (e.faceEquiv f)).length :=
@@ -197,6 +199,7 @@ noncomputable def faceHomeomorph (e : SignedPresentationIso P Q) (f : P.Face) :
 
 /-- A signed presentation isomorphism gives a facewise homeomorphism of polygonal
 pre-realizations. -/
+@[expose]
 noncomputable def preHomeomorph (e : SignedPresentationIso P Q) :
     P.PolygonalPreRealization ≃ₜ Q.PolygonalPreRealization :=
   (IsHomeomorph.sigmaMap e.faceEquiv.bijective
@@ -302,6 +305,7 @@ theorem mapOccurrence_edge (e : SignedPresentationIso P Q)
   rfl
 
 /-- A compatible source pairing transports to a compatible target pairing. -/
+@[expose]
 noncomputable def mapPairing (e : SignedPresentationIso P Q)
     (validQ : Q.IsSurfaceValid) (pairing : P.BoundaryPairing) :
     Q.BoundaryPairing where
@@ -364,6 +368,7 @@ noncomputable def rawOccurrenceEquiv (e : SignedPresentationIso P Q) :
     (Fin.castOrderIso (e.boundary_length_eq f)).toEquiv
 
 /-- The cyclic occurrence transport bundled as an equivalence. -/
+@[expose]
 noncomputable def occurrenceEquiv (e : SignedPresentationIso P Q)
     (validQ : Q.IsSurfaceValid) :
     P.BoundaryOccurrence ≃ Q.BoundaryOccurrence :=
@@ -411,6 +416,7 @@ theorem occurrenceEquiv_symm_edge
   rw [e.mapOccurrence_occurrenceEquiv_symm validQ]
 
 /-- Pull a compatible target pairing back through the occurrence equivalence. -/
+@[expose]
 noncomputable def comapPairing (e : SignedPresentationIso P Q)
     (validQ : Q.IsSurfaceValid) (pairing : Q.BoundaryPairing) :
     P.BoundaryPairing where

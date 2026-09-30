@@ -416,7 +416,7 @@ manifold-boundary stratum is exactly the model edge line.
 The forward half-disk implication is `ChartBoundaryInvariant`.  The reverse implication follows
 from the same invariance-of-domain layer: chart independence identifies a zero normal coordinate
 with the frontier of the half-space model. -/
-def MoiseChart.BoundaryFaithful {S : Type*} [TopologicalSpace S]
+@[expose] def MoiseChart.BoundaryFaithful {S : Type*} [TopologicalSpace S]
     [ChartedSpace (EuclideanHalfSpace 2) S] (c : MoiseChart S) : Prop :=
   (c.kind = ChartKind.disk →
     ∀ y ∈ c.domain, y ∉ (modelWithCornersEuclideanHalfSpace 2).boundary S) ∧

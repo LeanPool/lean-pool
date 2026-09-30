@@ -63,6 +63,7 @@ def target {n : ℕ} (a : Fin n)
   oneFace ((U ++ [.neg a]) ++ (X ++ [.pos a] ++ V))
 
 /-- The P2 cut of the source word. -/
+@[expose]
 def sourceCut {n : ℕ} (a : Fin n)
     (U V X : List (SignedDart (Fin n))) :
     P2Cut (source a U V X) where
@@ -78,6 +79,7 @@ def sourceCut {n : ℕ} (a : Fin n)
     exact List.IsRotated.refl _
 
 /-- The P2 cut of the cyclic target spelling. -/
+@[expose]
 def targetCut {n : ℕ} (a : Fin n)
     (U V X : List (SignedDart (Fin n))) :
     P2Cut (target a U V X) where
@@ -176,6 +178,7 @@ theorem commonEdgeRelabeling_retainWord {n : ℕ} (a : Fin n)
           exact commonEdgeRelabeling_castSucc_of_ne a e hda true
 
 /-- Match the explicit face indices of the two canonical splits. -/
+@[expose]
 def commonFaceEquiv {n : ℕ} (a : Fin n)
     (U V X : List (SignedDart (Fin n))) :
     (P2.split (target a U V X) (targetCut a U V X)).Face ≃

@@ -31,7 +31,7 @@ open SurfaceCellComplex
 namespace FaceMerge
 
 /-- The one-face presentation obtained after merging the displayed pair. -/
-@[reducible]
+@[expose, reducible]
 def target {n : ℕ}
     (U V : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
@@ -48,6 +48,7 @@ def source {n : ℕ}
       [.neg (P1.freshEdge n)] ++ P2.retainWord V]
 
 /-- The canonical cut of the concatenated target word between `U` and `V`. -/
+@[expose]
 def targetCut {n : ℕ}
     (U V : List (SignedDart (Fin n))) :
     P2Cut (target U V) where
@@ -327,6 +328,7 @@ theorem markedTargetCut_isNondegenerate {n : ℕ}
   constructor <;> simp [markedTargetCut]
 
 /-- The canonical cut of the first face of a contextual merge. -/
+@[expose]
 def targetCut {n : ℕ}
     (U V : List (SignedDart (Fin n)))
     (W : List (List (SignedDart (Fin n)))) :
@@ -351,7 +353,7 @@ theorem targetCut_right {n : ℕ}
   rfl
 
 /-- The canonical source for merging in context is the exact P2 split of the target. -/
-@[reducible]
+@[expose, reducible]
 def source {n : ℕ}
     (U V : List (SignedDart (Fin n)))
     (W : List (List (SignedDart (Fin n)))) :
@@ -359,6 +361,7 @@ def source {n : ℕ}
   P2.split (target U V W) (targetCut U V W)
 
 /-- Match the face positions of the expanded contextual source with the split marked target. -/
+@[expose]
 def markedMiddleFaceEquiv {n : ℕ}
     (U V : List (SignedDart (Fin n)))
     (W : List (List (SignedDart (Fin n)))) :
@@ -420,6 +423,7 @@ theorem markedMiddleFaceEquiv_rightFace {n : ℕ}
     (targetCut U V W).face.face
 
 /-- The child appended by the P2 split. -/
+@[expose]
 def rightFace {n : ℕ}
     (U V : List (SignedDart (Fin n)))
     (W : List (List (SignedDart (Fin n)))) :

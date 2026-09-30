@@ -341,6 +341,7 @@ theorem polygonalPreMap_respects
   | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
 
 /-- Descend the calibrated face maps through the cyclic polygonal quotient. -/
+@[expose]
 noncomputable def polygonalRealizationMap
     (valid : T.toFiniteCyclicPresentation.IsSurfaceValid) :
     T.toFiniteCyclicPresentation.PolygonalRealization valid → T.realization :=

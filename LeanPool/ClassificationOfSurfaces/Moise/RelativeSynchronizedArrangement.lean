@@ -40,7 +40,7 @@ theorem relativeSynchronizedArrangement_support (N : TriangleMesh)
   (arrangementMesh J).refineByLines_support _
 
 /-- A relative synchronized chamber belongs to the selected polygonal side. -/
-def IsSelectedRelativeSynchronizedTriangle (N : TriangleMesh)
+@[expose] def IsSelectedRelativeSynchronizedTriangle (N : TriangleMesh)
     (lines : List (Plane →ᵃ[ℝ] ℝ)) (p : ι → Prop)
     (t : Finset (relativeSynchronizedArrangement J N lines).Vertex) : Prop :=
   ∃ i, p i ∧

@@ -154,6 +154,7 @@ noncomputable def nonOrientableNormalizationResultOfRotated
 
 /-- Signed finished orientable word adapter, permitting independent orientation normalization of
 every handle and boundary-loop edge. -/
+@[expose]
 noncomputable def orientableNormalizationResultOfSignedRotated
     {k p n : ℕ}
     (sourceWord : List (SignedDart (Fin k)))
@@ -174,6 +175,7 @@ noncomputable def orientableNormalizationResultOfSignedRotated
 
 /-- Signed finished nonorientable word adapter, permitting independent orientation normalization
 of every crosscap and boundary-loop edge. -/
+@[expose]
 noncomputable def nonOrientableNormalizationResultOfSignedRotated
     {k p n : ℕ}
     (sourceWord : List (SignedDart (Fin k)))
@@ -210,6 +212,7 @@ structure CancellablePair {n : ℕ}
   rotated : word.IsRotated (inversePair edge negativeFirst ++ tail)
 
 /-- A one-face word has no cyclically adjacent inverse pair. -/
+@[expose]
 def IsPairReduced {n : ℕ}
     (word : List (SignedDart (Fin n))) : Prop :=
   IsEmpty (CancellablePair word)
@@ -619,6 +622,7 @@ noncomputable def normalizeConnected
 namespace Pairing
 
 /-- A signed dart with its orientation represented by a Boolean. -/
+@[expose]
 def dart {α : Type*} (a : α) : Bool → SignedDart α
   | false => .pos a
   | true => .neg a
@@ -789,6 +793,7 @@ inductive EdgePattern {n : ℕ}
 /-- Every edge name actually used by a residual word still has a surface multiplicity.  Unlike
 `IsSurfaceValid`, this predicate permits the ambient `Fin` type to contain already-grouped edge
 names which no longer occur in the residual word. -/
+@[expose]
 def HasValidUsedMultiplicities {n : ℕ}
     (word : List (SignedDart (Fin n))) : Prop :=
   ∀ a, a ∈ word.map edgeOfDart →
@@ -1982,6 +1987,7 @@ theorem edges_lowerAvoiding_map_restoreEdge {n : ℕ}
     simp [lowerAvoiding, edges]
 
 /-- Concatenate a sequence of extracted blocks into its exact signed boundary word. -/
+@[expose]
 def sequenceWord {n : ℕ} (blocks : List (ExtractedBlock n)) :
     List (SignedDart (Fin n)) :=
   (blocks.map word).flatten
@@ -2250,6 +2256,7 @@ theorem names_lowerAvoiding_map_restoreEdge {n : ℕ}
     simp [lowerAvoiding, names]
 
 /-- Concatenate a completed block sequence into its exact signed one-face word. -/
+@[expose]
 def sequenceWord {n : ℕ} (blocks : List (CompletedBlock n)) :
     List (SignedDart (Fin n)) :=
   (blocks.map word).flatten
@@ -4502,12 +4509,13 @@ end BoundaryPairContraction
 namespace BoundaryEnvelope
 
 /-- A one-face word before a fresh opposite carrier pair is introduced. -/
-@[reducible]
+@[expose, reducible]
 def source {n : ℕ} (word : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
   Dyck.oneFace word
 
 /-- The fresh carrier name in the enlarged edge type. -/
+@[expose]
 def carrier (n : ℕ) : Fin (n + 1) :=
   P1.freshEdge n
 
@@ -4518,7 +4526,7 @@ def carrier (n : ℕ) : Fin (n + 1) :=
     [.neg (carrier n)]
 
 /-- The `target` declaration. -/
-@[reducible]
+@[expose, reducible]
 def target {n : ℕ} (word : List (SignedDart (Fin n))) :
     FiniteCyclicPresentation :=
   Dyck.oneFace (targetWord word)
@@ -4880,11 +4888,13 @@ def inverse {n : ℕ} : ProtectedAtom n → ProtectedAtom n
       .completed block.inverse
 
 /-- Concatenate a protected atom sequence into its exact signed word. -/
+@[expose]
 def sequenceWord {n : ℕ} (atoms : List (ProtectedAtom n)) :
     List (SignedDart (Fin n)) :=
   (atoms.map word).flatten
 
 /-- Concatenate the distinct-name spines owned by a protected atom sequence. -/
+@[expose]
 def sequenceNames {n : ℕ} (atoms : List (ProtectedAtom n)) :
     List (Fin n) :=
   (atoms.map names).flatten
@@ -5228,6 +5238,7 @@ theorem rawBoundaryCount_map_ofProtectedAtom {n : ℕ}
             ProtectedAtom.rawBoundaryCount, ofProtectedAtom, ih]
 
 /-- Exact signed word represented by one marked token. -/
+@[expose]
 def word {n : ℕ} : ReductionToken n →
     List (SignedDart (Fin n))
   | .residual dart => [dart]
@@ -5235,6 +5246,7 @@ def word {n : ℕ} : ReductionToken n →
   | .completed block => block.word
 
 /-- Residual contribution of one marked token. -/
+@[expose]
 def residualWord {n : ℕ} : ReductionToken n →
     List (SignedDart (Fin n))
   | .residual dart => [dart]
@@ -5242,12 +5254,14 @@ def residualWord {n : ℕ} : ReductionToken n →
   | .completed _ => []
 
 /-- Edge names protected inside one extracted-block token. -/
+@[expose]
 def extractedEdges {n : ℕ} : ReductionToken n → List (Fin n)
   | .residual _ => []
   | .extracted block => block.edges
   | .completed block => block.edges
 
 /-- One occurrence of every protected edge name represented by a token. -/
+@[expose]
 def extractedNames {n : ℕ} : ReductionToken n → List (Fin n)
   | .residual _ => []
   | .extracted block => block.edges
@@ -5337,6 +5351,7 @@ theorem mem_extractedNames_iff_mem_extractedEdges {n : ℕ}
 /-- Structural grammar of marked execution states.  Extracted crosscaps and handles are promoted
 immediately to completed blocks; only a boundary singleton may remain in the intermediate
 `extracted` constructor. -/
+@[expose]
 def IsClassified {n : ℕ} : ReductionToken n → Prop
   | .residual _ => True
   | .extracted (.boundary _ _) => True
@@ -5344,6 +5359,7 @@ def IsClassified {n : ℕ} : ReductionToken n → Prop
   | .completed _ => True
 
 /-- Every token in a marked execution state obeys the classified-token grammar. -/
+@[expose]
 def AllClassified {n : ℕ}
     (tokens : List (ReductionToken n)) : Prop :=
   ∀ token ∈ tokens, token.IsClassified
@@ -5745,22 +5761,26 @@ theorem extractedNames_lowerAvoiding_map_restoreEdge {n : ℕ}
           a block _
 
 /-- Expand a marked word to the exact signed word on which normalization moves act. -/
+@[expose]
 def expand {n : ℕ} (tokens : List (ReductionToken n)) :
     List (SignedDart (Fin n)) :=
   (tokens.map word).flatten
 
 /-- Erase extracted blocks and retain only the darts still available to pairing reduction. -/
+@[expose]
 def residualDarts {n : ℕ} (tokens : List (ReductionToken n)) :
     List (SignedDart (Fin n)) :=
   (tokens.map residualWord).flatten
 
 /-- All edge names protected inside extracted block tokens. -/
+@[expose]
 def protectedEdges {n : ℕ} (tokens : List (ReductionToken n)) :
     List (Fin n) :=
   (tokens.map extractedEdges).flatten
 
 /-- Distinct-name spine of all protected tokens.  Each token contributes each of its edge names
 once, so global `Nodup` expresses disjoint ownership of protected names. -/
+@[expose]
 def protectedNames {n : ℕ} (tokens : List (ReductionToken n)) :
     List (Fin n) :=
   (tokens.map extractedNames).flatten

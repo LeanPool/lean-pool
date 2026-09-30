@@ -44,7 +44,7 @@ theorem standardFaceBoundary_mem_region (p : StandardFaceBoundary) :
 abbrev ClosedFace (f : K.Face) := stdSimplex ℝ {v // v ∈ K.faceVertices f}
 
 /-- Reindex native face coordinates by the chosen cyclic `Fin 3` ordering. -/
-noncomputable def faceReindexToStandard (f : K.Face) (x : K.ClosedFace f) :
+@[expose] noncomputable def faceReindexToStandard (f : K.Face) (x : K.ClosedFace f) :
     stdSimplex ℝ (Fin 3) := by
   refine ⟨fun i ↦ x (K.faceVertexEquiv f i), ?_, ?_⟩
   · exact fun i ↦ x.2.1 _
@@ -276,7 +276,7 @@ theorem faceEdgeSourcePoint_image_Icc (f : K.Face) (i : ZMod 3) :
   rfl
 
 /-- Native face-simplex points supported on cyclic edge `i`. -/
-def faceSide (f : K.Face) (i : ZMod 3) : Set (K.ClosedFace f) :=
+@[expose] def faceSide (f : K.Face) (i : ZMod 3) : Set (K.ClosedFace f) :=
   {x | ∀ v, v.1 ∉ (K.faceEdge f i).1 → x v = 0}
 
 private theorem eq_edgeFirst_or_edgeSecond (e : K.Edge) {v : K.Vertex}
@@ -389,7 +389,7 @@ theorem faceMap_mem_edgeCarrier_of_mem_faceSide (f : K.Face) (i : ZMod 3)
     (K.faceEdge_subset_faceVertices f i) x hx
 
 /-- Include edge-local simplex coordinates in any incident maximal face. -/
-noncomputable def edgeSimplexInFace (f : K.Face) (e : K.Edge)
+@[expose] noncomputable def edgeSimplexInFace (f : K.Face) (e : K.Edge)
     (hef : e.1 ⊆ K.faceVertices f)
     (z : stdSimplex ℝ {v // v ∈ e.1}) : K.ClosedFace f :=
   stdSimplex.map (fun v : {v // v ∈ e.1} ↦ ⟨v.1, hef v.2⟩) z

@@ -46,6 +46,7 @@ namespace OrientedEdge
   | neg e => e
 
 /-- Reverse an oriented edge. -/
+@[expose]
 def flip {α : Type*} : OrientedEdge α → OrientedEdge α
   | pos e => neg e
   | neg e => pos e
@@ -154,7 +155,7 @@ abbrev BoundaryPosition {S : Type*} [TopologicalSpace S]
 namespace BoundaryPosition
 
 /-- The oriented edge stored at a triangle-boundary position. -/
-def orientedEdge {S : Type*} [TopologicalSpace S] {T : FiniteSurfaceTriangulation S}
+@[expose] def orientedEdge {S : Type*} [TopologicalSpace S] {T : FiniteSurfaceTriangulation S}
     (o : T.BoundaryPosition) : OrientedEdge T.Edge :=
   (T.triangleBoundary o.1).get o.2
 
@@ -166,7 +167,7 @@ def orientedEdge {S : Type*} [TopologicalSpace S] {T : FiniteSurfaceTriangulatio
 end BoundaryPosition
 
 /-- Two triangles are adjacent when their stored boundaries share an unoriented edge. -/
-def TriangleAdjacent {S : Type*} [TopologicalSpace S]
+@[expose] def TriangleAdjacent {S : Type*} [TopologicalSpace S]
     (T : FiniteSurfaceTriangulation S) (f g : T.Triangle) : Prop :=
   ∃ df ∈ T.triangleBoundary f, ∃ dg ∈ T.triangleBoundary g, df.edge = dg.edge
 
@@ -198,7 +199,7 @@ namespace GeometricTriangulation
 variable {S : Type*} [TopologicalSpace S] (T : GeometricTriangulation S)
 
 /-- Forget the target-space homeomorphism and retain the intrinsic two-complex. -/
-@[reducible] def toIntrinsic : Moise.IntrinsicTwoComplex where
+@[expose, reducible] def toIntrinsic : Moise.IntrinsicTwoComplex where
   Vertex := T.Vertex
   faces := T.faces
   faces_card := T.faces_card
@@ -206,11 +207,13 @@ variable {S : Type*} [TopologicalSpace S] (T : GeometricTriangulation S)
 @[simp] theorem toIntrinsic_faces : T.toIntrinsic.faces = T.faces := rfl
 
 /-- Source vertex of an oriented geometric edge. -/
+@[expose]
 noncomputable def orientedEdgeSource : OrientedEdge T.Edge → T.Vertex
   | OrientedEdge.pos e => T.edgeSource e
   | OrientedEdge.neg e => T.edgeTarget e
 
 /-- Target vertex of an oriented geometric edge. -/
+@[expose]
 noncomputable def orientedEdgeTarget : OrientedEdge T.Edge → T.Vertex
   | OrientedEdge.pos e => T.edgeTarget e
   | OrientedEdge.neg e => T.edgeSource e
@@ -571,6 +574,7 @@ theorem moise_triangulation_explicit :
   nonempty_geometricTriangulation_iff_explicit.mp (moise_triangulation S)
 
 /-- The named geometric triangulation produced for a compact connected Eval surface. -/
+@[expose]
 noncomputable def compactEvalSurfaceGeometricTriangulation :
     GeometricTriangulation S :=
   Classical.choice (moise_triangulation S)

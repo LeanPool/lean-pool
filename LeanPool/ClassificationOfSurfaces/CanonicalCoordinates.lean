@@ -29,6 +29,7 @@ open Complex
 open SurfaceCellComplex
 
 /-- The point on occurrence `i` of the canonical orientable one-face presentation. -/
+@[expose]
 noncomputable def orientableOccurrencePoint (p n : ℕ)
     (i : Fin (orientableBoundaryWord p n).length) (t : unitInterval) :
     (orientableCellComplex p n).PolygonalPreRealization :=
@@ -260,6 +261,7 @@ theorem orientableCarrier_boundary_c_eqvGen
       (OrientableRel.c (p := p) t (Fin.rev j)))
 
 /-- The point on occurrence `i` of the canonical nonorientable one-face presentation. -/
+@[expose]
 noncomputable def nonOrientableOccurrencePoint (p n : ℕ)
     (i : Fin (nonOrientableBoundaryWord p n).length) (t : unitInterval) :
     (nonOrientableCellComplex p n).PolygonalPreRealization :=

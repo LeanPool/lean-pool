@@ -386,7 +386,7 @@ abbrev Face (faces : Finset (Finset Vertex)) :=
   {t : Finset Vertex // t ∈ faces}
 
 /-- The two-vertex faces occurring in a finite triangle family. -/
-def edges (faces : Finset (Finset Vertex)) : Finset (Finset Vertex) :=
+@[expose] def edges (faces : Finset (Finset Vertex)) : Finset (Finset Vertex) :=
   faces.biUnion fun t => t.powersetCard 2
 
 /-- Two listed triangles are dual-adjacent when they share a two-vertex face. -/
@@ -397,7 +397,7 @@ def edges (faces : Finset (Finset Vertex)) : Finset (Finset Vertex) :=
 
 Unlike `FaceAdjacent`, this relation remembers the vertex star in which the adjacency step
 occurs. -/
-def FaceAdjacentAtVertex (faces : Finset (Finset Vertex)) (v : Vertex)
+@[expose] def FaceAdjacentAtVertex (faces : Finset (Finset Vertex)) (v : Vertex)
     (f g : Face faces) : Prop :=
   ∃ e : Finset Vertex, e.card = 2 ∧ v ∈ e ∧ e ⊆ f.1 ∧ e ⊆ g.1
 
@@ -511,7 +511,7 @@ def IsVertexStarConnected (faces : Finset (Finset Vertex)) : Prop :=
 
 /-- Every pair of triangles incident to one vertex can be joined by a chain whose every adjacency
 step shares an edge containing that same vertex. -/
-def IsStrongVertexStarConnected (faces : Finset (Finset Vertex)) : Prop :=
+@[expose] def IsStrongVertexStarConnected (faces : Finset (Finset Vertex)) : Prop :=
   ∀ (v : Vertex) (f g : Face faces), v ∈ f.1 → v ∈ g.1 →
     Relation.ReflTransGen (FaceAdjacentAtVertex faces v) f g
 
@@ -815,7 +815,7 @@ theorem three_le_card_vertex [Nonempty S] : 3 ≤ Fintype.card T.Vertex := by
     _ = Fintype.card T.Vertex := Finset.card_univ
 
 /-- The edges of the triangulation: the 2-element subsets of its faces. -/
-def edges : Finset (Finset T.Vertex) :=
+@[expose] def edges : Finset (Finset T.Vertex) :=
   T.faces.biUnion fun t => t.powersetCard 2
 
 theorem card_of_mem_edges {e : Finset T.Vertex} (he : e ∈ T.edges) : e.card = 2 := by
@@ -841,11 +841,11 @@ theorem triangle_card (t : T.Triangle) : t.1.card = 3 :=
   T.faces_card t.1 t.2
 
 /-- The chosen first endpoint of an edge. -/
-noncomputable def edgeSource (e : T.Edge) : T.Vertex :=
+@[expose] noncomputable def edgeSource (e : T.Edge) : T.Vertex :=
   (Finset.card_eq_two.mp (T.edge_card e)).choose
 
 /-- The chosen second endpoint of an edge. -/
-noncomputable def edgeTarget (e : T.Edge) : T.Vertex :=
+@[expose] noncomputable def edgeTarget (e : T.Edge) : T.Vertex :=
   (Finset.card_eq_two.mp (T.edge_card e)).choose_spec.choose
 
 theorem edgeSource_ne_edgeTarget (e : T.Edge) : T.edgeSource e ≠ T.edgeTarget e :=

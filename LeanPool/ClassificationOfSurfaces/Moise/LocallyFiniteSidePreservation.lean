@@ -86,7 +86,7 @@ theorem mem_faceInSupport_of_graphReplacement_mem_facePolygonalCircle
   exact K.faceBoundaryLift_mem_faceInSupport f q'
 
 /-- Include the interval parametrization of an edge in the source one-skeleton. -/
-noncomputable def edgePathInOneSkeleton (e : K.Edge) (r : Set.Icc (0 : ℝ) 1) :
+@[expose] noncomputable def edgePathInOneSkeleton (e : K.Edge) (r : Set.Icc (0 : ℝ) 1) :
     oneSkeletonInSupport (K := K) :=
   ⟨edgePathInSupport (K := K) e r,
     Set.mem_iUnion.mpr ⟨e, by

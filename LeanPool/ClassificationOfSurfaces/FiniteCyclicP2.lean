@@ -61,6 +61,7 @@ namespace P2Cut
 
 The raw `P2Cut` structure also represents the exceptional empty-word-sphere conversion, for which
 both pieces are necessarily empty. -/
+@[expose]
 def IsNondegenerate {P : FiniteCyclicPresentation} (cut : P2Cut P) : Prop :=
   cut.left ≠ [] ∧ cut.right ≠ []
 
@@ -1295,10 +1296,12 @@ theorem split_isGallierValid
         split_isConnected P cut hempty.isConnected⟩
 
 /-- The zero-position P2 cut of Gallier--Xu's exceptional sphere presentation. -/
+@[expose]
 def emptyWordSphereCut : P2Cut emptyWordSphere :=
   P2Cut.canonical (.pos 0) 0
 
 /-- The last-position spelling of the same empty boundary cut. -/
+@[expose]
 def emptyWordSphereLastCut : P2Cut emptyWordSphere :=
   P2Cut.canonical (.pos 0) (Fin.last 0)
 
@@ -1328,6 +1331,7 @@ boundary pieces are nonempty. The sole degenerate case admitted here is Gallier-
 empty-word sphere, whose conversion to the ordinary-valid two-monogon presentation is also
 represented by the raw `P2.split` construction. This is a syntactic move relation and
 deliberately does not bundle source validity. -/
+@[expose]
 def P2Subdivision (P Q : FiniteCyclicPresentation) : Prop :=
   ∃ cut : P2Cut P,
     (cut.IsNondegenerate ∨ P.IsEmptyWordSphere) ∧

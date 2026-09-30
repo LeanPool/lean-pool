@@ -390,7 +390,7 @@ noncomputable abbrev ChartKind.patchComplex : ChartKind → PlaneComplex
 
 /-- The model-boundary condition appropriate to a chart kind.  A disk chart has no boundary
 stratum; in a half-disk chart it is the zero normal-coordinate line. -/
-def ChartKind.IsModelBoundary : (k : ChartKind) → Plane → Prop
+@[expose] def ChartKind.IsModelBoundary : (k : ChartKind) → Plane → Prop
   | .disk, _ => False
   | .halfDisk, p => p 0 = 0
 

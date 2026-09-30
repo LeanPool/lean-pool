@@ -103,13 +103,13 @@ region, or any local-finiteness data. -/
     (G.withApproximationControls vertexControl hvertex edgeControl hedge).map = G.map := rfl
 
 /-- Include an edge point into the whole support. -/
-def edgeToSupport (e : K.Edge) (p : K.edgeCarrier e) : K.support :=
+@[expose] def edgeToSupport (e : K.Edge) (p : K.edgeCarrier e) : K.support :=
   ⟨p.1, by
     apply Set.mem_iUnion.mpr
     exact ⟨K.edgeFace e, K.edgeCarrier_subset_faceCarrier e p.2⟩⟩
 
 /-- The image of a global vertex in chart coordinates. -/
-noncomputable def vertexImage (v : K.Vertex) : Plane :=
+@[expose] noncomputable def vertexImage (v : K.Vertex) : Plane :=
   G.map ⟨K.vertexPoint v, K.vertexPoint_mem_support v⟩
 
 /-- The image of an edge carrier in chart coordinates. -/
@@ -264,7 +264,7 @@ theorem edgePathInSupport_injective (e : K.Edge) :
   exact congrArg Subtype.val hrs
 
 /-- The charted embedded arc carried by one abstract edge. -/
-noncomputable def chartEdgePath (e : K.Edge) : Set.Icc (0 : ℝ) 1 → Plane :=
+@[expose] noncomputable def chartEdgePath (e : K.Edge) : Set.Icc (0 : ℝ) 1 → Plane :=
   G.map ∘ edgePathInSupport (K := K) e
 
 theorem continuous_chartEdgePath (e : K.Edge) : Continuous (G.chartEdgePath e) :=
@@ -2589,7 +2589,7 @@ end CentralPolygonalArc
 /-! ## Strongly-positive edge controls -/
 
 /-- The carrier of an abstract edge, included into the whole source support. -/
-def edgeInSupport (e : K.Edge) : Set K.support :=
+@[expose] def edgeInSupport (e : K.Edge) : Set K.support :=
   Set.range (edgeToSupport (K := K) e)
 
 theorem isCompact_edgeInSupport (e : K.Edge) :
@@ -2679,6 +2679,7 @@ noncomputable def ofIsOpenEmbedding (f : K.support → Plane)
 /-- Build a plane graph realization when the source image is closed in a specified open
 perturbation region.  Unlike `ofIsOpenEmbedding`, this permits the source image itself to have
 boundary, which is the form used on a Rado chart overlap. -/
+@[expose]
 noncomputable def ofEmbeddingInOpenRegion (V : Set Plane) (hV : IsOpen V)
     (f : K.support → Plane) (hf : _root_.Topology.IsEmbedding f)
     (hmem : ∀ p, f p ∈ V)
@@ -3257,7 +3258,7 @@ def IsPhiApproximation (phi : K.support → ℝ) (f : K.support → Plane) : Pro
   ∀ p, dist (f p) (G.map p) < phi p
 
 /-- The edge-mesh condition which converts setwise polygonal tubes into a pointwise control. -/
-def EdgeImagesControlled (phi : K.support → ℝ) : Prop :=
+@[expose] def EdgeImagesControlled (phi : K.support → ℝ) : Prop :=
   ∀ e : K.Edge, ∀ p ∈ edgeInSupport (K := K) e,
     2 * Metric.diam (G.edgeImage e) < phi p
 
@@ -3317,7 +3318,7 @@ theorem continuous_faceToSupport (f : K.Face) :
   exact K.faceMap_continuous f
 
 /-- A face carrier as a compact subset of the whole source support. -/
-def faceInSupport (f : K.Face) : Set K.support :=
+@[expose] def faceInSupport (f : K.Face) : Set K.support :=
   Set.range (faceToSupport (K := K) f)
 
 theorem isCompact_faceInSupport (f : K.Face) :

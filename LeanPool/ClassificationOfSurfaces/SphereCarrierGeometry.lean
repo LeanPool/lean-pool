@@ -37,7 +37,7 @@ open scoped ComplexConjugate
 namespace PolygonCell
 
 /-- Complex conjugation as a self-homeomorphism of an indexed polygon cell. -/
-noncomputable def conjHomeomorph (n : ℕ) : PolygonCell n ≃ₜ PolygonCell n where
+@[expose] noncomputable def conjHomeomorph (n : ℕ) : PolygonCell n ≃ₜ PolygonCell n where
   toFun z := ⟨conj z.val, by
     simpa only [Metric.mem_closedBall, Complex.dist_eq, sub_zero, Complex.norm_conj]
       using z.property⟩

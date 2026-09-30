@@ -538,6 +538,7 @@ end P1
 This is a syntactic move relation and deliberately does not bundle source validity. The
 preservation theorems below transport validity and connectivity when those hypotheses are
 available. -/
+@[expose]
 def P1Subdivision (P Q : FiniteCyclicPresentation) : Prop :=
   ∃ a : P.Edge, Nonempty (SignedPresentationIso (P1.expand P a) Q)
 

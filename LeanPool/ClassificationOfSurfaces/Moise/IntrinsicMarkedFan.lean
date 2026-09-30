@@ -40,7 +40,7 @@ structure EdgeMarking where
   second_mem : ∀ e : K.Edge, K.edgeSecondPoint e ∈ points
 
 /-- Enlarge any prescribed finite point set by all abstract edge endpoints. -/
-noncomputable def EdgeMarking.ofFinset (P : Finset K.realization) :
+@[expose] noncomputable def EdgeMarking.ofFinset (P : Finset K.realization) :
     K.EdgeMarking := by
   classical
   let first : Finset K.realization :=
@@ -1086,7 +1086,7 @@ theorem fanFirstVertex_ne_second (f : M.FanFace) :
     (K.faceEdge f.1 f.2.1) f.2.2 (congrArg Subtype.val h)
 
 /-- The affine barycentric realization of one marked fan triangle inside its parent face. -/
-noncomputable def fanFaceMap (f : M.FanFace) :
+@[expose] noncomputable def fanFaceMap (f : M.FanFace) :
     stdSimplex ℝ {p // p ∈ M.fanFaceVertices f} → K.realization := by
   classical
   intro x
@@ -2893,7 +2893,7 @@ theorem fanRelabel_extended_eq_iff
           extendFaceCoordinates_of_notMem _ _ hpg]
 
 /-- One marked fan face parametrized by the global used-vertex type. -/
-noncomputable def globalFanFaceMap (f : M.FanFace) :
+@[expose] noncomputable def globalFanFaceMap (f : M.FanFace) :
     stdSimplex ℝ {v // v ∈ M.globalFanFaceVertices f} → K.realization :=
   fun x ↦ M.fanFaceMap f (M.fanRelabelSimplex f x)
 

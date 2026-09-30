@@ -37,7 +37,7 @@ lemma partsColorEquiv_spec {triple center : Fin 4} (hne : triple ≠ center) :
 @[expose] noncomputable def partsTriangleB : R2 := (partsPoint 205).toR2
 
 /-- Third vertex of the canonical equilateral triangle in the Parts graph. -/
-noncomputable def partsTriangleC : R2 := (partsPoint 215).toR2
+@[expose] noncomputable def partsTriangleC : R2 := (partsPoint 215).toR2
 
 /-- The origin, adjacent to all three canonical triangle vertices. -/
 noncomputable def partsTriangleCenter : R2 := (partsPoint 0).toR2

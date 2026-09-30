@@ -268,7 +268,7 @@ theorem triangleCoords_nonneg_of_mem (T : M.Triangle) {p : Plane}
   · rw [M.triangleCoords_apply_of_notMem T hv p]
 
 /-- The barycentric-coordinate hyperplanes of all maximal triangles. -/
-noncomputable def coordinateLines : List (Plane →ᵃ[ℝ] ℝ) :=
+@[expose] noncomputable def coordinateLines : List (Plane →ᵃ[ℝ] ℝ) :=
   (Finset.univ : Finset M.Triangle).toList.flatMap fun t =>
     (Finset.univ : Finset (Fin 3)).toList.map (M.oppositeCoord t)
 

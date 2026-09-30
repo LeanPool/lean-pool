@@ -69,17 +69,17 @@ structure PartsGadgetCertificate where
   | some chunk => chunk[index % 64]?
 
 /-- Properness on every listed unit edge. -/
-def PartsGadgetProper (coloring : Fin 73 → Fin 4) : Prop :=
+@[expose] def PartsGadgetProper (coloring : Fin 73 → Fin 4) : Prop :=
   ∀ vertex neighbor, neighbor ∈ partsGadgetNeighbors vertex →
     coloring vertex ≠ coloring neighbor
 
 /-- Every listed sqrt-three triangle is non-monochromatic. -/
-def PartsGadgetNoMono (coloring : Fin 73 → Fin 4) : Prop :=
+@[expose] def PartsGadgetNoMono (coloring : Fin 73 → Fin 4) : Prop :=
   ∀ vertex pair, pair ∈ partsGadgetTriplePairs vertex →
     ¬(coloring vertex = coloring pair.1 ∧ coloring pair.1 = coloring pair.2)
 
 /-- The two constraints used by the second-stage checker. -/
-def PartsGadgetValid (coloring : Fin 73 → Fin 4) : Prop :=
+@[expose] def PartsGadgetValid (coloring : Fin 73 → Fin 4) : Prop :=
   PartsGadgetProper coloring ∧ PartsGadgetNoMono coloring
 
 /-- A coloring agrees with every assignment on a certificate path. -/

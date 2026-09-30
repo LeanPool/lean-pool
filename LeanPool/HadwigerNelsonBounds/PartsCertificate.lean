@@ -73,7 +73,7 @@ def PartsBlocks (path : List PartsAssignment) (vertex : Fin 481) (color : Fin 4)
   ∀ assignment ∈ path, coloring assignment.vertex = assignment.color
 
 /-- Properness for the exact unit edges recognized by the certificate. -/
-def PartsProper (coloring : Fin 481 → Fin 4) : Prop :=
+@[expose] def PartsProper (coloring : Fin 481 → Fin 4) : Prop :=
   ∀ ⦃v w : Fin 481⦄, partsAdjacent v w = true → coloring v ≠ coloring w
 
 /-- The four colors, as data for the executable checker. -/

@@ -65,6 +65,7 @@ theorem partsGadgetHardCertificates_verify (index : Fin 31) :
 /-- The case router covers every unblocked normalized color. -/
 theorem partsGadgetHardCaseTree_verifiesRouting :
     partsGadgetHardCaseTree.VerifiesRouting partsGadgetHardCertificates := by
-  decide
+  cbv
+  simp
 
 end HadwigerNelsonBounds
