@@ -247,7 +247,7 @@ variable {I : Ideal (MvPolynomial (Fin d) K)} {b v : Fin d → K}
 
 /-- Blueprint F04: the line lies on `I` iff every element of `I` restricts to zero. -/
 theorem lineIn_iff : LineIn I b v ↔ ∀ f ∈ I, lineRes b v f = 0 := by
-  simp only [LineIn, SetLike.le_def, mem_lineIdeal]
+  simp only [LineIn, IsConcreteLE.le_iff, mem_lineIdeal]
 
 /-- Blueprint F04: `LineIn I b v` unfolds to `I ≤ λ_{b,v}`. -/
 theorem LineIn.le (h : LineIn I b v) : I ≤ lineIdeal b v :=
