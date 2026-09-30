@@ -361,6 +361,59 @@ theorem crouzeixPalencia_of_smoothExhaustion_oriented_support_tendsto_polynomial
   · exact hsupport
   · exact hcompanion
 
+/-- A point of the numerical range supplies the same oriented carrier point
+at every stage whose boundary normals support the numerical range. -/
+theorem exists_oriented_point_of_numericalRange_support
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E] [Nontrivial E]
+    (A : E →L[ℂ] E) (Omega : ℕ → SmoothJordanDomain)
+    (hOmega : ∀ n, closure (numericalRange A) ⊆ (Omega n).carrier)
+    (hsupport : ∀ (n : ℕ) (t : ℝ), t ∈ Ioc (0 : ℝ) (2 * Real.pi) →
+      ∀ w ∈ numericalRange A,
+        ((starRingEnd ℂ) (-I * deriv (Omega n).boundaryParam t) *
+          (w - (Omega n).boundaryParam t)).re ≤ 0) :
+    ∃ c : ℂ, ∀ n, c ∈ (Omega n).carrier ∧ ∀ t : ℝ,
+      ((starRingEnd ℂ) (-I * deriv (Omega n).boundaryParam t) *
+        (c - (Omega n).boundaryParam t)).re ≤ 0 := by
+  obtain ⟨c, hc⟩ := nonempty_numericalRange A
+  refine ⟨c, fun n => ⟨hOmega n (subset_closure hc), ?_⟩⟩
+  apply canonicalNormal_support_all_of_Ioc
+  intro t ht
+  exact hsupport n t ht c hc
+
+/-- The oriented support point determines the same resolvent mass on each
+carrier; the choice of point is irrelevant to the integral identity. -/
+theorem contourIntegral_resolvent_eq_of_numericalRange_support
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]
+    [Nontrivial E] (A : E →L[ℂ] E) (Omega : ℕ → SmoothJordanDomain)
+    (hOmega : ∀ n, closure (numericalRange A) ⊆ (Omega n).carrier)
+    (hsupport : ∀ (n : ℕ) (t : ℝ), t ∈ Ioc (0 : ℝ) (2 * Real.pi) →
+      ∀ w ∈ numericalRange A,
+        ((starRingEnd ℂ) (-I * deriv (Omega n).boundaryParam t) *
+          (w - (Omega n).boundaryParam t)).re ≤ 0) (n : ℕ) :
+    contourIntegral (resolvent A) (Omega n).boundaryParam =
+      (2 * (Real.pi : ℂ) * I) • (1 : E →L[ℂ] E) := by
+  obtain ⟨c, horiented⟩ := exists_oriented_point_of_numericalRange_support A Omega hOmega hsupport
+  exact contourIntegral_resolvent_eq_two_pi_I_smul_one_of_oriented_convex_carrier
+    A (Omega n) c (horiented n).1 (horiented n).2 (hOmega n)
+
+/-- Supporting boundary normals give the polynomial Cauchy formula on every
+smooth carrier containing the closed numerical range. -/
+theorem polynomial_aeval_eq_contourIntegral_of_numericalRange_support
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]
+    [Nontrivial E] (A : E →L[ℂ] E) (Omega : ℕ → SmoothJordanDomain)
+    (hOmega : ∀ n, closure (numericalRange A) ⊆ (Omega n).carrier)
+    (hsupport : ∀ (n : ℕ) (t : ℝ), t ∈ Ioc (0 : ℝ) (2 * Real.pi) →
+      ∀ w ∈ numericalRange A,
+        ((starRingEnd ℂ) (-I * deriv (Omega n).boundaryParam t) *
+          (w - (Omega n).boundaryParam t)).re ≤ 0)
+    (p : Polynomial ℂ) (n : ℕ) :
+    Polynomial.aeval A p = (2 * (Real.pi : ℂ) * I)⁻¹ •
+      contourIntegral (fun z => Polynomial.eval z p • resolvent A z)
+        (Omega n).boundaryParam := by
+  exact polynomial_aeval_eq_normalized_contourIntegral_of_resolvent_mass
+    A (Omega n) (hOmega n)
+    (contourIntegral_resolvent_eq_of_numericalRange_support A Omega hOmega hsupport n) p
+
 /-- Numerical-range support automatically supplies the oriented carrier point
 at every stage of a smooth Jordan exhaustion. -/
 theorem crouzeix_palencia_of_smoothJordan_exhaustion_support_tendsto_polynomial_companions
@@ -385,30 +438,14 @@ theorem crouzeix_palencia_of_smoothJordan_exhaustion_support_tendsto_polynomial_
       (closure (numericalRange A)) := by
   rcases subsingleton_or_nontrivial E with hE | hE
   · let _ := hE
-    constructor
-    · exact spectrum_subset_closure_numericalRange A
-    · intro p
-      have hzero : Polynomial.aeval A p = 0 := Subsingleton.elim _ _
-      rw [hzero, norm_zero]
-      exact mul_nonneg (add_nonneg zero_le_one (Real.sqrt_nonneg 2))
-        (polynomialSupNorm_nonneg p (closure (numericalRange A)))
+    exact crouzeix_palencia_of_subsingleton A
   · let _ := hE
-    obtain ⟨x, hx⟩ : (Metric.sphere (0 : E) 1).Nonempty :=
-      NormedSpace.sphere_nonempty.mpr zero_le_one
-    have hxnorm : ‖x‖ = 1 := by
-      rw [Metric.mem_sphere, dist_zero_right] at hx
-      exact hx
-    let c : ℂ := ⟪x, A x⟫_ℂ
-    have hcW : c ∈ numericalRange A :=
-      (mem_numericalRange A c).mpr ⟨x, hxnorm, rfl⟩
+    obtain ⟨c, horiented⟩ :=
+      exists_oriented_point_of_numericalRange_support A Omega hOmega hsupport
     apply
       crouzeixPalencia_of_smoothExhaustion_oriented_support_tendsto_polynomial_companions
         A Omega K hanti hcompact hnonempty hinter hfrontier hOmega hsupport
-    · intro n
-      refine ⟨c, hOmega n (subset_closure hcW), ?_⟩
-      apply canonicalNormal_support_all_of_Ioc
-      intro t ht
-      exact hsupport n t ht c hcW
+    · exact fun n => ⟨c, (horiented n).1, (horiented n).2⟩
     · exact hcompanion
 
 /-- Full scalar-companion assembly over a realistic smooth Jordan exhaustion:
@@ -440,46 +477,12 @@ theorem crouzeix_palencia_of_smoothJordan_exhaustion_support_scalarCompanion_app
       (closure (numericalRange A)) := by
   rcases subsingleton_or_nontrivial E with hE | hE
   · let _ := hE
-    constructor
-    · exact spectrum_subset_closure_numericalRange A
-    · intro p
-      have hzero : Polynomial.aeval A p = 0 := Subsingleton.elim _ _
-      rw [hzero, norm_zero]
-      exact mul_nonneg (add_nonneg zero_le_one (Real.sqrt_nonneg 2))
-        (polynomialSupNorm_nonneg p (closure (numericalRange A)))
+    exact crouzeix_palencia_of_subsingleton A
   · let _ := hE
-    obtain ⟨x, hx⟩ : (Metric.sphere (0 : E) 1).Nonempty :=
-      NormedSpace.sphere_nonempty.mpr zero_le_one
-    have hxnorm : ‖x‖ = 1 := by
-      rw [Metric.mem_sphere, dist_zero_right] at hx
-      exact hx
-    let c : ℂ := ⟪x, A x⟫_ℂ
-    have hcW : c ∈ numericalRange A :=
-      (mem_numericalRange A c).mpr ⟨x, hxnorm, rfl⟩
-    have horiented : ∀ n, c ∈ (Omega n).carrier ∧ ∀ t : ℝ,
-        ((starRingEnd ℂ) (-I * deriv (Omega n).boundaryParam t) *
-          (c - (Omega n).boundaryParam t)).re ≤ 0 := by
-      intro n
-      refine ⟨hOmega n (subset_closure hcW), ?_⟩
-      apply canonicalNormal_support_all_of_Ioc
-      intro t ht
-      exact hsupport n t ht c hcW
-    have hmass : ∀ n,
-        contourIntegral (resolvent A) (Omega n).boundaryParam =
-          (2 * (Real.pi : ℂ) * I) • (1 : E →L[ℂ] E) := by
-      intro n
-      exact
-        contourIntegral_resolvent_eq_two_pi_I_smul_one_of_oriented_convex_carrier
-          A (Omega n) c (horiented n).1 (horiented n).2 (hOmega n)
-    have hCauchyP : ∀ (p : Polynomial ℂ) (n : ℕ),
-        Polynomial.aeval A p =
-          (2 * (Real.pi : ℂ) * I)⁻¹ •
-            contourIntegral
-              (fun z => Polynomial.eval z p • resolvent A z)
-              (Omega n).boundaryParam := by
-      intro p n
-      exact polynomial_aeval_eq_normalized_contourIntegral_of_resolvent_mass
-        A (Omega n) (hOmega n) (hmass n) p
+    obtain ⟨c, horiented⟩ :=
+      exists_oriented_point_of_numericalRange_support A Omega hOmega hsupport
+    have hCauchyP := polynomial_aeval_eq_contourIntegral_of_numericalRange_support
+      A Omega hOmega hsupport
     apply
       crouzeix_palencia_of_smoothJordan_exhaustion_cauchy_support_tendsto_polynomial_companions
         A Omega K hanti hcompact hnonempty hinter
@@ -583,30 +586,10 @@ theorem
       (closure (numericalRange A)) := by
   rcases subsingleton_or_nontrivial E with hE | hE
   · let _ := hE
-    constructor
-    · exact spectrum_subset_closure_numericalRange A
-    · intro p
-      have hzero : Polynomial.aeval A p = 0 := Subsingleton.elim _ _
-      rw [hzero, norm_zero]
-      exact mul_nonneg (add_nonneg zero_le_one (Real.sqrt_nonneg 2))
-        (polynomialSupNorm_nonneg p (closure (numericalRange A)))
+    exact crouzeix_palencia_of_subsingleton A
   · let _ := hE
-    obtain ⟨x, hx⟩ : (Metric.sphere (0 : E) 1).Nonempty :=
-      NormedSpace.sphere_nonempty.mpr zero_le_one
-    have hxnorm : ‖x‖ = 1 := by
-      rw [Metric.mem_sphere, dist_zero_right] at hx
-      exact hx
-    let c : ℂ := ⟪x, A x⟫_ℂ
-    have hcW : c ∈ numericalRange A :=
-      (mem_numericalRange A c).mpr ⟨x, hxnorm, rfl⟩
-    have horiented : ∀ n, c ∈ (Omega n).carrier ∧ ∀ t : ℝ,
-        ((starRingEnd ℂ) (-I * deriv (Omega n).boundaryParam t) *
-          (c - (Omega n).boundaryParam t)).re ≤ 0 := by
-      intro n
-      refine ⟨hOmega n (subset_closure hcW), ?_⟩
-      apply canonicalNormal_support_all_of_Ioc
-      intro t ht
-      exact hsupport n t ht c hcW
+    obtain ⟨c, horiented⟩ :=
+      exists_oriented_point_of_numericalRange_support A Omega hOmega hsupport
     have hkernel : ∀ (n : ℕ) (z : ℂ), z ∈ (Omega n).carrier →
         crouzeixScalarCauchyKernel (Omega n) z = 1 := by
       intro n
@@ -683,46 +666,14 @@ theorem
       (closure (numericalRange A)) := by
   rcases subsingleton_or_nontrivial E with hE | hE
   · let _ := hE
-    constructor
-    · exact spectrum_subset_closure_numericalRange A
-    · intro p
-      have hzero : Polynomial.aeval A p = 0 := Subsingleton.elim _ _
-      rw [hzero, norm_zero]
-      exact mul_nonneg (add_nonneg zero_le_one (Real.sqrt_nonneg 2))
-        (polynomialSupNorm_nonneg p (closure (numericalRange A)))
+    exact crouzeix_palencia_of_subsingleton A
   · let _ := hE
-    obtain ⟨x, hx⟩ : (Metric.sphere (0 : E) 1).Nonempty :=
-      NormedSpace.sphere_nonempty.mpr zero_le_one
-    have hxnorm : ‖x‖ = 1 := by
-      rw [Metric.mem_sphere, dist_zero_right] at hx
-      exact hx
-    let c : ℂ := ⟪x, A x⟫_ℂ
-    have hcW : c ∈ numericalRange A :=
-      (mem_numericalRange A c).mpr ⟨x, hxnorm, rfl⟩
-    have horiented : ∀ n, c ∈ (Omega n).carrier ∧ ∀ t : ℝ,
-        ((starRingEnd ℂ) (-I * deriv (Omega n).boundaryParam t) *
-          (c - (Omega n).boundaryParam t)).re ≤ 0 := by
-      intro n
-      refine ⟨hOmega n (subset_closure hcW), ?_⟩
-      apply canonicalNormal_support_all_of_Ioc
-      intro t ht
-      exact hsupport n t ht c hcW
-    have hmass : ∀ n,
-        contourIntegral (resolvent A) (Omega n).boundaryParam =
-          (2 * (Real.pi : ℂ) * I) • (1 : E →L[ℂ] E) := by
-      intro n
-      exact
-        contourIntegral_resolvent_eq_two_pi_I_smul_one_of_oriented_convex_carrier
-          A (Omega n) c (horiented n).1 (horiented n).2 (hOmega n)
-    have hCauchyP : ∀ (p : Polynomial ℂ) (n : ℕ),
-        Polynomial.aeval A p =
-          (2 * (Real.pi : ℂ) * I)⁻¹ •
-            contourIntegral
-              (fun z => Polynomial.eval z p • resolvent A z)
-              (Omega n).boundaryParam := by
-      intro p n
-      exact polynomial_aeval_eq_normalized_contourIntegral_of_resolvent_mass
-        A (Omega n) (hOmega n) (hmass n) p
+    obtain ⟨c, horiented⟩ :=
+      exists_oriented_point_of_numericalRange_support A Omega hOmega hsupport
+    have hmass := contourIntegral_resolvent_eq_of_numericalRange_support
+      A Omega hOmega hsupport
+    have hCauchyP := polynomial_aeval_eq_contourIntegral_of_numericalRange_support
+      A Omega hOmega hsupport
     apply
       crouzeix_palencia_of_smoothJordan_exhaustion_cauchy_support_tendsto_polynomial_companions
         A Omega K hanti hcompact hnonempty hinter
@@ -852,30 +803,10 @@ theorem
       (closure (numericalRange A)) := by
   rcases subsingleton_or_nontrivial E with hE | hE
   · let _ := hE
-    constructor
-    · exact spectrum_subset_closure_numericalRange A
-    · intro p
-      have hzero : Polynomial.aeval A p = 0 := Subsingleton.elim _ _
-      rw [hzero, norm_zero]
-      exact mul_nonneg (add_nonneg zero_le_one (Real.sqrt_nonneg 2))
-        (polynomialSupNorm_nonneg p (closure (numericalRange A)))
+    exact crouzeix_palencia_of_subsingleton A
   · let _ := hE
-    obtain ⟨x, hx⟩ : (Metric.sphere (0 : E) 1).Nonempty :=
-      NormedSpace.sphere_nonempty.mpr zero_le_one
-    have hxnorm : ‖x‖ = 1 := by
-      rw [Metric.mem_sphere, dist_zero_right] at hx
-      exact hx
-    let c : ℂ := ⟪x, A x⟫_ℂ
-    have hcW : c ∈ numericalRange A :=
-      (mem_numericalRange A c).mpr ⟨x, hxnorm, rfl⟩
-    have horiented : ∀ n, c ∈ (Omega n).carrier ∧ ∀ t : ℝ,
-        ((starRingEnd ℂ) (-I * deriv (Omega n).boundaryParam t) *
-          (c - (Omega n).boundaryParam t)).re ≤ 0 := by
-      intro n
-      refine ⟨hOmega n (subset_closure hcW), ?_⟩
-      apply canonicalNormal_support_all_of_Ioc
-      intro t ht
-      exact hsupport n t ht c hcW
+    obtain ⟨c, horiented⟩ :=
+      exists_oriented_point_of_numericalRange_support A Omega hOmega hsupport
     have hkernel : ∀ (n : ℕ) (z : ℂ), z ∈ (Omega n).carrier →
         crouzeixScalarCauchyKernel (Omega n) z = 1 := by
       intro n
@@ -950,13 +881,7 @@ theorem
       (closure (numericalRange A)) := by
   rcases subsingleton_or_nontrivial E with hE | hE
   · let _ := hE
-    constructor
-    · exact spectrum_subset_closure_numericalRange A
-    · intro p
-      have hzero : Polynomial.aeval A p = 0 := Subsingleton.elim _ _
-      rw [hzero, norm_zero]
-      exact mul_nonneg (add_nonneg zero_le_one (Real.sqrt_nonneg 2))
-        (polynomialSupNorm_nonneg p (closure (numericalRange A)))
+    exact crouzeix_palencia_of_subsingleton A
   · let _ := hE
     have hcompact : IsCompact (closure (numericalRange A)) := by
       have hbounded : Bornology.IsBounded (numericalRange A) :=

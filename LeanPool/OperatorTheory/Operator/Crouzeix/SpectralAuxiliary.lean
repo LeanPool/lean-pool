@@ -71,75 +71,10 @@ theorem crouzeixPolynomialAuxiliaryOperator_ball_eq_eval_zero_smul_one_of_spectr
     (hσ : spectrum ℂ A ⊆ Metric.ball (0 : ℂ) r) (p : Polynomial ℂ) :
     crouzeixPolynomialAuxiliaryOperator A (SmoothJordanDomain.ball 0 r hr) p =
       star (Polynomial.eval 0 p) • (1 : E →L[ℂ] E) := by
-  have hcont (q : Polynomial ℂ) :
-      CircleIntegrable (fun z => star (Polynomial.eval z q) • resolvent A z) 0 r :=
-    circleIntegrable_star_eval_smul_resolvent_of_spectrum_subset_ball A hr hσ q
-  have hresolvent :
-      (2 * (Real.pi : ℂ) * I)⁻¹ • circleIntegral (resolvent A) 0 r =
-        (1 : E →L[ℂ] E) :=
-    normalized_circleIntegral_resolvent_eq_one_of_spectrum_subset_ball A hr hσ
-  change (2 * (Real.pi : ℂ) * I)⁻¹ •
-      circleIntegral (fun z => star (Polynomial.eval z p) • resolvent A z) 0 r = _
-  -- Polynomial induction separates the constant Cauchy mode from the strictly
-  -- negative Laurent modes obtained by conjugating every positive monomial.
-  induction p using Polynomial.induction_on' with
-  | add p q hp hq =>
-      have hfun :
-          (fun z => star (Polynomial.eval z (p + q)) • resolvent A z) =
-            fun z => star (Polynomial.eval z p) • resolvent A z +
-              star (Polynomial.eval z q) • resolvent A z := by
-        funext z
-        rw [Polynomial.eval_add, star_add, add_smul]
-      rw [hfun, circleIntegral.integral_add (hcont p) (hcont q), smul_add, hp, hq,
-        Polynomial.eval_add, star_add, add_smul]
-  | monomial n a =>
-      obtain rfl | n := n
-      · have hfun :
-            (fun z => star (Polynomial.eval z (Polynomial.monomial 0 a)) • resolvent A z) =
-              fun z => star a • resolvent A z := by
-          funext z
-          rw [Polynomial.eval_monomial, pow_zero, mul_one]
-        rw [hfun, circleIntegral.integral_smul, smul_smul]
-        rw [show (2 * (Real.pi : ℂ) * I)⁻¹ * star a =
-            star a * (2 * (Real.pi : ℂ) * I)⁻¹ by ring]
-        rw [← smul_smul, hresolvent]
-        simp only [Polynomial.eval_monomial, pow_zero, mul_one]
-      · let m := n + 1
-        have hm : 0 < m := Nat.zero_lt_succ n
-        have hintegral :
-            circleIntegral
-                (fun z => star (Polynomial.eval z (Polynomial.monomial m a)) • resolvent A z)
-                0 r =
-              circleIntegral
-                (fun z => (star a * (r : ℂ) ^ (2 * m)) •
-                  (z⁻¹ ^ m • resolvent A z)) 0 r := by
-          apply circleIntegral.integral_congr hr.le
-          intro z hz
-          have hz' : z ∈ Metric.sphere (0 : ℂ) |r| := by
-            simpa only [abs_of_pos hr] using hz
-          rw [← range_circleMap] at hz'
-          obtain ⟨t, rfl⟩ := hz'
-          have hstar : star (circleMap 0 r t) =
-              ((r : ℂ) ^ 2) * (circleMap 0 r t)⁻¹ := by
-            change conj (circleMap 0 r t) = _
-            rw [conj_circleMap_zero, circleMap_zero_inv]
-            simp only [circleMap_zero, ofReal_neg, neg_mul, ofReal_inv]
-            field_simp [Complex.ofReal_ne_zero.mpr hr.ne']
-          change star (Polynomial.eval (circleMap 0 r t) (Polynomial.monomial m a)) •
-              resolvent A (circleMap 0 r t) =
-            (star a * (r : ℂ) ^ (2 * m)) •
-              ((circleMap 0 r t)⁻¹ ^ m • resolvent A (circleMap 0 r t))
-          rw [Polynomial.eval_monomial, star_mul, star_pow, hstar, mul_pow, smul_smul]
-          rw [← pow_mul]
-          congr 1
-          ring
-        rw [hintegral, circleIntegral.integral_smul, smul_smul]
-        rw [show (2 * (Real.pi : ℂ) * I)⁻¹ * (star a * (r : ℂ) ^ (2 * m)) =
-            (star a * (r : ℂ) ^ (2 * m)) * (2 * (Real.pi : ℂ) * I)⁻¹ by ring]
-        rw [← smul_smul,
-          normalized_circleIntegral_inv_pow_smul_resolvent_eq_zero_of_spectrum_subset_ball
-            A hr hσ m hm, smul_zero]
-        simp only [Polynomial.eval_monomial, m, zero_pow hm.ne', mul_zero, star_zero, zero_smul]
+  exact crouzeixPolynomialAuxiliaryOperator_ball_eq_eval_zero_of_circle_integrals
+    A hr (circleIntegrable_star_eval_smul_resolvent_of_spectrum_subset_ball A hr hσ)
+    (normalized_circleIntegral_resolvent_eq_one_of_spectrum_subset_ball A hr hσ)
+    (normalized_circleIntegral_inv_pow_smul_resolvent_eq_zero_of_spectrum_subset_ball A hr hσ) p
 
 /-- If the closure of the numerical range lies inside a centered open disk,
 the symmetrized Crouzeix--Palencia estimate can be written without an

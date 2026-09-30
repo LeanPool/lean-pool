@@ -9,6 +9,7 @@ module
 public import LeanPool.OperatorTheory.Operator.Crouzeix.ApproximationSupNorm
 public import LeanPool.OperatorTheory.Operator.Crouzeix.CompactThickeningApprox
 public import LeanPool.OperatorTheory.Operator.Crouzeix.PalenciaApproximation
+public import LeanPool.OperatorTheory.Operator.NumericalRange.Nonempty
 
 /-!
 # Crouzeix--Palencia assembly along compact exhaustions
@@ -35,6 +36,19 @@ universe u
 
 variable {E : Type u} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
   [CompleteSpace E]
+
+/-- On a subsingleton Hilbert space, every polynomial operator vanishes, so the
+Crouzeix–Palencia bound follows directly from nonnegativity. -/
+theorem crouzeix_palencia_of_subsingleton [Subsingleton E] (A : E →L[ℂ] E) :
+    IsKPolynomialSpectralSet A (1 + Real.sqrt 2)
+      (closure (numericalRange A)) := by
+  constructor
+  · exact spectrum_subset_closure_numericalRange A
+  · intro p
+    have hzero : Polynomial.aeval A p = 0 := Subsingleton.elim _ _
+    rw [hzero, norm_zero]
+    exact mul_nonneg (add_nonneg zero_le_one (Real.sqrt_nonneg 2))
+      (polynomialSupNorm_nonneg p (closure (numericalRange A)))
 
 /-- If a decreasing sequence of nonempty compact sets intersects to the
 closed numerical range and the sharp auxiliary bounds hold on every stage,
@@ -120,13 +134,7 @@ theorem crouzeix_palencia_of_compactThickening_tendsto_polynomial_companions
       (closure (numericalRange A)) := by
   rcases subsingleton_or_nontrivial E with hE | hE
   · let _ := hE
-    constructor
-    · exact spectrum_subset_closure_numericalRange A
-    · intro p
-      have hzero : Polynomial.aeval A p = 0 := Subsingleton.elim _ _
-      rw [hzero, norm_zero]
-      exact mul_nonneg (add_nonneg zero_le_one (Real.sqrt_nonneg 2))
-        (polynomialSupNorm_nonneg p (closure (numericalRange A)))
+    exact crouzeix_palencia_of_subsingleton A
   · let _ := hE
     have hcompact : IsCompact (closure (numericalRange A)) := by
       have hbounded : Bornology.IsBounded (numericalRange A) :=
@@ -166,13 +174,7 @@ theorem crouzeix_palencia_of_compactThickening_auxiliary_bounds
       (closure (numericalRange A)) := by
   rcases subsingleton_or_nontrivial E with hE | hE
   · let _ := hE
-    constructor
-    · exact spectrum_subset_closure_numericalRange A
-    · intro p
-      have hzero : Polynomial.aeval A p = 0 := Subsingleton.elim _ _
-      rw [hzero, norm_zero]
-      exact mul_nonneg (add_nonneg zero_le_one (Real.sqrt_nonneg 2))
-        (polynomialSupNorm_nonneg p (closure (numericalRange A)))
+    exact crouzeix_palencia_of_subsingleton A
   · let _ := hE
     have hcompact : IsCompact (closure (numericalRange A)) := by
       have hbounded : Bornology.IsBounded (numericalRange A) :=

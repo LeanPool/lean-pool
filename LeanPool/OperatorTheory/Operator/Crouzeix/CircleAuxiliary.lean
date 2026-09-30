@@ -33,25 +33,22 @@ universe u
 
 variable {E : Type u} [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]
 
-/-- For `‖A‖ < R`, the conjugate-polynomial auxiliary operator on the centered disk is the
-constant operator `star (p.eval 0) • 1`. -/
-theorem crouzeixPolynomialAuxiliaryOperator_ball_eq_eval_zero_smul_one
-    (A : E →L[ℂ] E) {R : ℝ} (hR : ‖A‖ < R) (p : Polynomial ℂ) :
-    crouzeixPolynomialAuxiliaryOperator A
-        (SmoothJordanDomain.ball 0 R ((norm_nonneg A).trans_lt hR)) p =
+omit [CompleteSpace E] in
+/-- Polynomial induction reduces the conjugate-circle auxiliary value to its constant
+resolvent mode and vanishing negative Laurent modes. Both norm and spectral
+circle-enclosure criteria supply these same analytic identities. -/
+theorem crouzeixPolynomialAuxiliaryOperator_ball_eq_eval_zero_of_circle_integrals
+    (A : E →L[ℂ] E) {R : ℝ} (hRpos : 0 < R)
+    (hcont : ∀ q : Polynomial ℂ,
+      CircleIntegrable (fun z => star (Polynomial.eval z q) • resolvent A z) 0 R)
+    (hmass : (2 * (Real.pi : ℂ) * I)⁻¹ • circleIntegral (resolvent A) 0 R =
+      (1 : E →L[ℂ] E))
+    (hnegative : ∀ m : ℕ, 0 < m →
+      (2 * (Real.pi : ℂ) * I)⁻¹ •
+        circleIntegral (fun z => z⁻¹ ^ m • resolvent A z) 0 R = 0)
+    (p : Polynomial ℂ) :
+    crouzeixPolynomialAuxiliaryOperator A (SmoothJordanDomain.ball 0 R hRpos) p =
       star (Polynomial.eval 0 p) • (1 : E →L[ℂ] E) := by
-  have hRpos : 0 < R := (norm_nonneg A).trans_lt hR
-  have hW : closure (numericalRange A) ⊆ Metric.ball (0 : ℂ) R := by
-    have hsub : numericalRange A ⊆ Metric.closedBall (0 : ℂ) ‖A‖ := fun z hz => by
-      rw [Metric.mem_closedBall, dist_zero_right]
-      exact norm_le_of_mem_numericalRange A hz
-    exact (closure_minimal hsub Metric.isClosed_closedBall).trans
-      (Metric.closedBall_subset_ball hR)
-  have hcont (q : Polynomial ℂ) :
-      CircleIntegrable (fun z => star (Polynomial.eval z q) • resolvent A z) 0 R := by
-    apply (circleIntegrable_iff R).mpr
-    exact crouzeixPolynomialAuxiliaryIntegrand_contourIntegrable A
-      (SmoothJordanDomain.ball 0 R hRpos) q hW
   change (2 * (Real.pi : ℂ) * I)⁻¹ •
       circleIntegral (fun z => star (Polynomial.eval z p) • resolvent A z) 0 R = _
   induction p using Polynomial.induction_on' with
@@ -74,7 +71,7 @@ theorem crouzeixPolynomialAuxiliaryOperator_ball_eq_eval_zero_smul_one
         rw [hfun, circleIntegral.integral_smul, smul_smul]
         rw [show (2 * (Real.pi : ℂ) * I)⁻¹ * star a =
             star a * (2 * (Real.pi : ℂ) * I)⁻¹ by ring]
-        rw [← smul_smul, normalized_circleIntegral_resolvent_eq_one A hR]
+        rw [← smul_smul, hmass]
         simp only [Polynomial.eval_monomial, pow_zero, mul_one]
       · let m := n + 1
         have hm : 0 < m := Nat.zero_lt_succ n
@@ -109,7 +106,31 @@ theorem crouzeixPolynomialAuxiliaryOperator_ball_eq_eval_zero_smul_one
         rw [show (2 * (Real.pi : ℂ) * I)⁻¹ * (star a * (R : ℂ) ^ (2 * m)) =
             (star a * (R : ℂ) ^ (2 * m)) * (2 * (Real.pi : ℂ) * I)⁻¹ by ring]
         rw [← smul_smul,
-          normalized_circleIntegral_inv_pow_smul_resolvent_eq_zero A hR m hm, smul_zero]
+          hnegative m hm, smul_zero]
         simp only [Polynomial.eval_monomial, m, zero_pow hm.ne', mul_zero, star_zero, zero_smul]
+
+
+/-- For `‖A‖ < R`, the conjugate-polynomial auxiliary operator on the centered disk is the
+constant operator `star (p.eval 0) • 1`. -/
+theorem crouzeixPolynomialAuxiliaryOperator_ball_eq_eval_zero_smul_one
+    (A : E →L[ℂ] E) {R : ℝ} (hR : ‖A‖ < R) (p : Polynomial ℂ) :
+    crouzeixPolynomialAuxiliaryOperator A
+        (SmoothJordanDomain.ball 0 R ((norm_nonneg A).trans_lt hR)) p =
+      star (Polynomial.eval 0 p) • (1 : E →L[ℂ] E) := by
+  have hRpos : 0 < R := (norm_nonneg A).trans_lt hR
+  have hW : closure (numericalRange A) ⊆ Metric.ball (0 : ℂ) R := by
+    have hsub : numericalRange A ⊆ Metric.closedBall (0 : ℂ) ‖A‖ := fun z hz => by
+      rw [Metric.mem_closedBall, dist_zero_right]
+      exact norm_le_of_mem_numericalRange A hz
+    exact (closure_minimal hsub Metric.isClosed_closedBall).trans
+      (Metric.closedBall_subset_ball hR)
+  have hcont (q : Polynomial ℂ) :
+      CircleIntegrable (fun z => star (Polynomial.eval z q) • resolvent A z) 0 R := by
+    apply (circleIntegrable_iff R).mpr
+    exact crouzeixPolynomialAuxiliaryIntegrand_contourIntegrable A
+      (SmoothJordanDomain.ball 0 R hRpos) q hW
+  exact crouzeixPolynomialAuxiliaryOperator_ball_eq_eval_zero_of_circle_integrals
+    A hRpos hcont (normalized_circleIntegral_resolvent_eq_one A hR)
+    (normalized_circleIntegral_inv_pow_smul_resolvent_eq_zero A hR) p
 
 /- Adapted for Lean Pool: module imports and compatibility with its pinned toolchain. -/

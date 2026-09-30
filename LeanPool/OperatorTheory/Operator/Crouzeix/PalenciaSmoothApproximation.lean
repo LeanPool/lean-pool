@@ -204,13 +204,7 @@ theorem
       (closure (numericalRange A)) := by
   rcases subsingleton_or_nontrivial E with hE | hE
   · let _ := hE
-    constructor
-    · exact spectrum_subset_closure_numericalRange A
-    · intro p
-      have hzero : Polynomial.aeval A p = 0 := Subsingleton.elim _ _
-      rw [hzero, norm_zero]
-      exact mul_nonneg (add_nonneg zero_le_one (Real.sqrt_nonneg 2))
-        (polynomialSupNorm_nonneg p (closure (numericalRange A)))
+    exact crouzeix_palencia_of_subsingleton A
   · let _ := hE
     let K : Set ℂ := closure (numericalRange A)
     have hKcompact : IsCompact K := by
