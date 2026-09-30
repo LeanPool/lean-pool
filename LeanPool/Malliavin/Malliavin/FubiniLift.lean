@@ -10,7 +10,6 @@ public import Mathlib.MeasureTheory.Function.L2Space
 public import Mathlib.MeasureTheory.Function.SimpleFuncDenseLp
 public import Mathlib.MeasureTheory.Integral.Prod
 public import Mathlib.Analysis.Normed.Operator.Extend
-public import Mathlib.Tactic.Recall
 
 /-!
 # The Fubini lift `L²(μ; L²(ν)) → L²(ν × μ)`

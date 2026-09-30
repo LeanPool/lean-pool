@@ -140,7 +140,7 @@ theorem quotDim_anti {I J : Ideal (MvPolynomial (Fin d) K)} (hIJ : I ≤ J) (hJ 
 surjection `P_d ⧸ I → P_d ⧸ J`, so `dim (P_d ⧸ J) + 1 ≤ dim (P_d ⧸ I)`. -/
 theorem quotDim_lt_of_lt {I J : Ideal (MvPolynomial (Fin d) K)} [I.IsPrime] [J.IsPrime]
     (hIJ : I < J) : quotDim J < quotDim I := by
-  obtain ⟨r, hrJ, hrI⟩ := SetLike.exists_of_lt hIJ
+  obtain ⟨r, hrJ, hrI⟩ := IsConcreteLE.exists_of_lt hIJ
   have hr : Ideal.Quotient.mk I r ∈ nonZeroDivisors (MvPolynomial (Fin d) K ⧸ I) :=
     mem_nonZeroDivisors_of_ne_zero (Ideal.Quotient.eq_zero_iff_mem.not.mpr hrI)
   have h := ringKrullDim_succ_le_of_surjective (Ideal.Quotient.factor hIJ.le)
