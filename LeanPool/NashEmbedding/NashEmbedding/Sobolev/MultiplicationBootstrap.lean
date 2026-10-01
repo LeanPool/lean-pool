@@ -820,7 +820,7 @@ theorem third_multiplication_theorem_seq
         · exact ha.mono ( by linarith );
         · exact MemSobolev.mono hb ( by linarith );
       · exact ha.mono ( by linarith );
-      · grind +suggestions
+      · exact hb.mono hkr
 
 theorem third_multiplication_theorem
     {n : Nat} (hn : 0 < n) {r : Real} (hr : 1 + (n : Real) / 2 < r)

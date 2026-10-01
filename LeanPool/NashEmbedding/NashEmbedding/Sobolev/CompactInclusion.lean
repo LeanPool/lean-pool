@@ -226,7 +226,11 @@ theorem compactInclusion_lp_weighted {s t : ℝ} (hst : s < t)
             * (‖(a (φ k) m)‖ ^ 2 + ‖(a_lim m)‖ ^ 2) * weight n (s - t) m := by
           intro m
           have h_second_sum : weight n s m = weight n t m * weight n (s - t) m := by
-            grind +suggestions;
+            calc
+              weight n s m = weight n (t + (s - t)) m := by
+                congr 1
+                ring
+              _ = weight n t m * weight n (s - t) m := (weight_mul t (s - t) m).symm
           rw [ h_second_sum ];
           have h_second_sum : ‖(a (φ k) m) - (a_lim m)‖ ^ 2 ≤ 2 * (‖(a (φ k) m)‖ ^ 2 + ‖(a_lim
               m)‖ ^ 2) := by
