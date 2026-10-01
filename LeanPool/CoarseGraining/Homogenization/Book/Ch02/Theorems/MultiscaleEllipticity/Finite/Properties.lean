@@ -79,7 +79,7 @@ theorem summable_geometricWeight_one_mul_maxDescendantBMatrixNormAtScale
     have hblock_le :
         maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) Apw ≤ C := by
       simpa [Apw, C] using
-        maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+        maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet
           (Q := Q) (a := Apw) hEll hData n
     exact hmatrix_le.trans hblock_le
 
@@ -119,7 +119,7 @@ theorem summable_geometricWeight_one_mul_maxDescendantSigmaStarInvMatrixNormAtSc
     have hblock_le :
         maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) Apw ≤ C := by
       simpa [Apw, C] using
-        maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+        maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet
           (Q := Q) (a := Apw) hEll hData n
     exact hmatrix_le.trans hblock_le
 

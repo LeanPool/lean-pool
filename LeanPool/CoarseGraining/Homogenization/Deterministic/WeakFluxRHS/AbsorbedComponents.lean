@@ -118,7 +118,7 @@ theorem weakFluxRHSLocalCoeff_le_parentHalfLambda_of_mem_descendantsAtDepth
         Real.rpow (3 : ℝ)
             (s * (Int.toNat (Q.scale - (Q.scale - (n : ℤ))) : ℝ)) *
           LambdaSq Q (s / 2) (.finite 2) a :=
-    multiscale_ellipticity_LambdaSq_two_le_rpow_s_of_mem_descendantsAtScale_of_half_of_isEllipticFieldOn_of_isSigmaCoarse
+    multiscale_ellipticity_LambdaSq_two_le_rpow_s_of_mem_descendantsAtScale_of_half
       (Q := Q) (R := R) (k := Q.scale - (n : ℤ)) a hs hRscale hEll hData hsum_half
   have htoNat :
       Int.toNat (Q.scale - (Q.scale - (n : ℤ))) = n := by

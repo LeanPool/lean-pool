@@ -175,7 +175,7 @@ theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadra
           (1 / 2 : ℝ) * blockVecDot X
             (blockMatVecMul (coarseBlockMatrix (openCubeSet R) a) X)) := by
   refine
-    coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_responseJ_blockQuadratic
+    coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic
       j Q a hEll ?_ ?_ X
   · intro p q
     exact magic_identity_responseJ_block_quadratic_coarseBlockMatrix_of_isSigmaCoarse

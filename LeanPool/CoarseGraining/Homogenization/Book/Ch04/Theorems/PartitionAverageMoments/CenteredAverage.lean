@@ -219,7 +219,7 @@ theorem integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_res
       simpa [hint] using hY0Lp
     simpa [Z, Y] using hYR
   have hsum :=
-    integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_descendantsAtScale_of_restrictionUnitRangeDependentLaw
+    integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_descendantsAtScale
       (Q := originCube d m) (k := n) (P := P)
       hPdep hp hK_nonneg Z hZ_local hZ_aemeas hZ_int hZ_mean hZ_bound
   let S : RegCoeffField d → ℝ :=

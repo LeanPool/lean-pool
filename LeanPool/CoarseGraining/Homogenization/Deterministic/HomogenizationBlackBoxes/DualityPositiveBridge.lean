@@ -76,7 +76,7 @@ Uniform scalar full-dual pairing bounds control the note-normalized vector
 genuine-dual negative Besov norm with the expected coordinate-cardinality
 factor.
 -/
-theorem cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul_of_forall_component_fullTest_pairing_le
+theorem cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul
     {d : ℕ} (Q : TriadicCube d) (t : ℝ) (F : Vec d → Vec d) {B : ℝ}
     (hB :
       ∀ (i : Fin d) (g : Vec d → ℝ),

@@ -735,7 +735,7 @@ theorem integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_polynomial_of_iIndepFu
 
 /-- Uniform real-exponent polynomial-moment Rosenthal corollary in the
 finite-sum form. -/
-theorem integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero
+theorem integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p K : ℝ}
     (hp : 2 ≤ p)

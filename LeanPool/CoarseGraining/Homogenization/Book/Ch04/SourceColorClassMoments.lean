@@ -77,7 +77,7 @@ theorem integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_uniform_descendantsAtS
       funext a
       simpa [Y] using (Finset.sum_attach (s := S) (f := fun R => X R a))
     have hRosenthal :=
-      _root_.Homogenization.IndependentSums.integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero
+      _root_.Homogenization.IndependentSums.integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun
         (μ := P) (X := Y) (s := S.attach) (p := p) (K := K)
         hS_attach hp hK_nonneg h_indep h_meas hLp_intY hXmeanY hKY
     change

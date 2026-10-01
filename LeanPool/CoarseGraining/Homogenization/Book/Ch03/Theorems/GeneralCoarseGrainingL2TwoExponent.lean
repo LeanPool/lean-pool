@@ -191,7 +191,7 @@ private theorem localizedCoarseResponse_le_twoExponentBound_public
         (Q := Q) (a := A) (s := r / 2) hr_half_pos hEll hData
     simpa [Real.rpow_one] using hsum
   exact
-    _root_.Homogenization.localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBoundTwoExponent_of_bddAbove_of_isEllipticFieldOn_of_summable
+    _root_.Homogenization.localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBoundTwoExponent
       Q A a0.matrix j u.grad g hr hr₂ hEll henergy_int
       hg₂.partialSeminorms_bddAbove
       (fun R hR => forceBesovRegularity_descendant_partialSeminorms_bddAbove hg₂ hR)
@@ -332,7 +332,7 @@ private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionCompar
       _ ≤ generalCoarseGrainingL2TwoExponentFluxDefectRHS C Q a a0 r r₂ j g w.u := by
         dsimp [C, A]
         exact
-          coarseGrainingL2FluxDefectBoundTwoExponent_publicCoeffField_le_dim_sq_mul_public_of_homogenizationErrorAtDepth_eq
+          coarseGrainingL2FluxDefectBoundTwoExponent_publicCoeffField_le_dim_sq_mul_public
             Cbase Q a a0 j w.u hCbase_nonneg hr hBsemi_nonneg hH_nonneg herror
       _ = C * generalCoarseGrainingL2TwoExponentFluxDefectRHS 1 Q a a0 r r₂ j g w.u :=
         generalCoarseGrainingL2TwoExponentFluxDefectRHS_eq_const_mul_one
@@ -438,7 +438,7 @@ private theorem generalCoarseGrainingL2TwoExponentTheory_of_coordinateBridge
   have hdual : ScalarSolutionComparisonDualityEstimateExponentLoss d Cdual := by
     dsimp [Cdual, CdualGenuine, Cpair]
     exact
-      (Homogenization.scalarSolutionComparisonGenuineDualityEstimateSharpLoss_of_dirichletBesov_of_coordinateBridgeSharpLoss_of_localizedPairing
+      (Homogenization.scalarSolutionComparisonGenuineDualityEstimateSharpLoss_of_dirichletBesov
         (d := d) (Cdir := Cdir) (Cbridge := Cbridge)
         hdir hbridge
         (localizedFluxDefectPositivePairingEstimate_standardOverlap d)).to_exponentLoss

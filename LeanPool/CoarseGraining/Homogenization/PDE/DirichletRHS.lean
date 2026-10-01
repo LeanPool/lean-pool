@@ -942,7 +942,7 @@ theorem gradToVectorL2_eq_zeroTraceDirichletRhsProblemSolution_of_potentialZeroT
     IsZeroTraceDirichletRhsWeakSolution.gradToVectorL2_eq_of_isEllipticFieldOn
       (U := U) (a := a) (u := u) (v := v) (g := g) hne hu hv hEll
 
-theorem exists_isZeroTraceDirichletRhsWeakSolution_of_gradient_firstVariation_eq_integral_of_isPotentialZeroTraceOn
+theorem exists_isZeroTraceDirichletRhsWeakSolution_of_gradient_firstVariation_eq_integral
     {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     {f g : Vec d → Vec d}
     (hfirst :
@@ -968,7 +968,7 @@ theorem exists_isZeroTraceDirichletRhsWeakSolution_of_firstVariation_eq_integral
     (hpot : IsPotentialZeroTraceOn U u.grad) :
     ∃ v : H10Function U, IsZeroTraceDirichletRhsWeakSolution a U v g := by
   exact
-    exists_isZeroTraceDirichletRhsWeakSolution_of_gradient_firstVariation_eq_integral_of_isPotentialZeroTraceOn
+    exists_isZeroTraceDirichletRhsWeakSolution_of_gradient_firstVariation_eq_integral
       (a := a) (U := U) (f := u.grad) (g := g) hfirst hpot
 
 end Homogenization

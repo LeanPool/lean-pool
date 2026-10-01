@@ -147,7 +147,7 @@ theorem cubeAverage_cubeProjection_succ_eq_cubeAverage_of_mem_descendantsAtDepth
             (cubeAverage_eq_descendantsAverage_cubeAverage_of_integrableOn
               (Q := R) (j := 1) (f := g) hg).symm
 
-theorem cubeAverage_mul_projection_projection_succ_eq_mul_projection_projection_of_mem_descendantsAtDepth_of_integrableOn
+theorem cubeAverage_mul_projection_projection_succ_eq_mul_projection_projection
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (f g : Vec d → ℝ)
     (hR : R ∈ descendantsAtDepth Q j)
     (hg : MeasureTheory.IntegrableOn g (cubeSet R) MeasureTheory.volume) :
@@ -341,7 +341,7 @@ theorem cubeAverage_mul_projection_succ_eq_add_cubeAverage_mul_projection_add_pr
     _ =
           cubeAverage R (fun x => f x * cubeProjection Q j g x) +
             cubeAverage R (fun x => cubeProjection Q (j + 1) g x * cubeProjectionResidual Q j f x) := by
-              rw [cubeAverage_mul_projection_projection_succ_eq_mul_projection_projection_of_mem_descendantsAtDepth_of_integrableOn
+              rw [cubeAverage_mul_projection_projection_succ_eq_mul_projection_projection
                 (Q := Q) (R := R) (j := j) (f := f) (g := g) hR hgInt,
                 ← cubeAverage_mul_projection_eq_mul_projection_projection_of_mem_descendantsAtDepth
                   (Q := Q) (R := R) (j := j) (p := p) (f := f) (g := g) hR hf hp,

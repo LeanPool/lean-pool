@@ -142,7 +142,7 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs
       Q a s t C uL2Sq k
       (fun ρ₁ ρ₂ x => matVecMul (a x) ((w ρ₁ ρ₂).toH1.grad x))
       (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1 x)
@@ -288,7 +288,7 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs
       Q a s t C uL2Sq k
       (fun ρ₁ ρ₂ x => matVecMul (a x) ((w ρ₁ ρ₂).toH1.grad x))
       (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1 x)
@@ -436,7 +436,7 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_coefficientBounds_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs
       Q a s t C uL2Sq k
       (fun ρ₁ ρ₂ x => matVecMul (a x) ((w ρ₁ ρ₂).toH1.grad x))
       (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1 x)
@@ -583,7 +583,7 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_coefficientBounds_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs
       Q a s t C uL2Sq k
       (fun ρ₁ ρ₂ x => matVecMul (a x) ((w ρ₁ ρ₂).toH1.grad x))
       (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1 x)

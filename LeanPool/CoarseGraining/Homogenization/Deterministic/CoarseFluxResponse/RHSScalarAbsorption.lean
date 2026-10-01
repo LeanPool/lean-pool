@@ -559,7 +559,7 @@ theorem matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_correctionBoun
 Poincare radicand absorption from separate energy and forcing budgets after
 multiplying by the constant-coefficient matrix norm.
 -/
-theorem matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_correctionBound_sq_of_component_bounds
+theorem matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_correctionBound_sq
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (s : ℝ)
     (g gradV : Vec d → Vec d) {Benergy Bforce : ℝ}
     (henergy :
@@ -616,7 +616,7 @@ theorem matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_correctionBoun
   exact
     matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_correctionBound_of_radicand_le_sq
       Q a a0 g gradV hs havg_nonneg hgBdd
-      (matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_correctionBound_sq_of_component_bounds
+      (matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_correctionBound_sq
         Q a a0 s g gradV henergy hforce hsum)
 
 /--
@@ -790,7 +790,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_constMatMul_grad_le_coarseFluxRespons
     cubeBesovNegativeVectorSeminormTwo_constMatMul_grad_le_coarseFluxResponseRHSPoincareCorrectionBound_of_h1DirichletRhsWeakSolutionOn_of_expanded_radicand_le_sq
       Q a a0 s g v hs hs_le hEll hweak hg hGlobalBdd
       hgrad_mem_desc hgrad_bdd
-      (matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_correctionBound_sq_of_component_bounds
+      (matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_correctionBound_sq
         Q a a0 s g v.grad henergy hforce hbudget)
 
 /--

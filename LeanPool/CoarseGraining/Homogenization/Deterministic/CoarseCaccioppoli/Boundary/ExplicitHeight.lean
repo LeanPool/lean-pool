@@ -436,7 +436,7 @@ theorem coarseCaccioppoli_boundary_qone_of_noteEstimate_of_localizedExplicitHeig
 only on the deterministic Chapter-3 radius sequence. This is the concrete
 iteration surface used when the local cutoff construction is only available for
 the consecutive pairs `(ρ_n, ρ_{n+1})`. -/
-theorem coarseCaccioppoli_boundary_qone_of_noteEstimate_on_radiusSequence_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_boundary_qone_of_noteEstimate_on_radiusSequence
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)

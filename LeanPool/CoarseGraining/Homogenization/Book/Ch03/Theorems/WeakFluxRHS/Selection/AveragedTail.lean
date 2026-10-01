@@ -345,7 +345,7 @@ theorem exists_neumannCorrectorSelector_fluxSeminormStepCorrectorEnergyLocalErro
       (Q := Q) (a := a) (u := u.toH1) (g := g) u.weakSolution
   have hQdesc : ∃ n : ℕ, Q ∈ descendantsAtDepth Q n := ⟨0, by simp⟩
   rcases
-      _root_.Homogenization.exists_correctorGradientSelector_fluxSeminormStepCorrectorEnergyLocalError_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+      _root_.Homogenization.exists_correctorGradientSelector_fluxSeminormStepCorrectorEnergyLocalError
         (Q := Q) (a := publicCoeffField Q a) (s := s)
         (lam := (a.coeffOn Q).lam) (Lam := (a.coeffOn Q).Lam)
         (u := (publicH1ToCubeSet u.toH1).grad) (g := g)

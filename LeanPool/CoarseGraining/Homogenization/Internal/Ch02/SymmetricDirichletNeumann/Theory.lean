@@ -269,20 +269,20 @@ theorem responseSymmetricDirichletNeumannTheory_of_isEllipticFieldOn
         Book.Ch02.coarseMatrices, hk, matTranspose]
   · constructor
     · have h :=
-        harmonicMeanCoeffField_le_sigmaStarCoarse_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+        harmonicMeanCoeffField_le_sigmaStarCoarse_of_isSymmetricCoeffField
           (U := Uset) (a := a.toCoeffField) R U.isDomain ha hEll hvol compat
       simpa [book_averagedSymmPartInv_eq_averagedSymmPartInv U a,
         averagedSymmPartInv_eq_volumeAverageMat_inv_of_isSymmetricCoeffField ha,
         book_sigmaStarCoarse_eq_sigmaStarCoarse U a] using h
     constructor
     · have h :=
-        sigmaStarCoarse_le_sigmaCoarse_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+        sigmaStarCoarse_le_sigmaCoarse_of_isSymmetricCoeffField_of_isEllipticFieldOn
           (U := Uset) (a := a.toCoeffField) R U.isDomain ha hEll hvol compat
           hA hS hK hSigma
       simpa [book_sigmaStarCoarse_eq_sigmaStarCoarse U a,
         book_sigmaCoarse_eq_sigmaCoarse U a] using h
     · have h :=
-        sigmaCoarse_le_volumeAverageMat_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+        sigmaCoarse_le_volumeAverageMat_of_isSymmetricCoeffField_of_isEllipticFieldOn
           (U := Uset) (a := a.toCoeffField) R U.isDomain ha hEll hvol compat
           hA hS hK hSigma
       simpa [book_sigmaCoarse_eq_sigmaCoarse U a, averageMat] using! h

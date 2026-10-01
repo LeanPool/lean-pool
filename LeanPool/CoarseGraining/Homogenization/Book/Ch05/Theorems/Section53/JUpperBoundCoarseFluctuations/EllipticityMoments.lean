@@ -256,7 +256,7 @@ private theorem descendantsAverage_restrictionResponseJObservableCubeSet_mono_to
     have hRscale : R.scale = n := scale_eq_of_mem_descendantsAtScale hRscaleMem
     have hkR : k ≤ R.scale := by simpa [hRscale] using hkn
     simpa [F, l, hRscale] using
-      Ch04.restrictionResponseJObservableCubeSet_le_descendantsAverage_cubeSet_of_aelocallyUniformlyEllipticField
+      Ch04.restrictionResponseJObservableCubeSet_le_descendantsAverage_cubeSet
         ha R hkR p q
   have hmono :
       descendantsAverage Q j F ≤

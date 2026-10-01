@@ -139,7 +139,7 @@ private theorem coarseSigmaStarInvBlockNorm_le_uniform_of_isEllipticFieldOn_of_o
   rw [hnorm_eq]
   exact hSInvNorm
 
-theorem maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+theorem maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a)
     (hData : OpenCubeDescendantDeterministicCoarseData Q a)
@@ -164,7 +164,7 @@ theorem maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_of_openCu
     coarseBBlockNorm_le_uniform_of_isEllipticFieldOn_of_openCubeDeterministicCoarseData
       (R := R) (a := a) hEllOpenR (hData _ hk R hR)
 
-theorem maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+theorem maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a)
     (hData : OpenCubeDescendantDeterministicCoarseData Q a)
@@ -189,7 +189,7 @@ theorem maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_of_
     coarseSigmaStarInvBlockNorm_le_uniform_of_isEllipticFieldOn_of_openCubeDeterministicCoarseData
       (R := R) (a := a) hEllOpenR (hData _ hk R hR)
 
-theorem maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+theorem maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hData : OpenCubeDescendantDeterministicCoarseData Q a)
@@ -213,7 +213,7 @@ theorem maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeS
     coarseBBlockNorm_le_uniform_of_isEllipticFieldOn_of_openCubeDeterministicCoarseData
       (R := R) (a := a) hEllR (hData _ hk R hR)
 
-theorem maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+theorem maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hData : OpenCubeDescendantDeterministicCoarseData Q a)
@@ -255,7 +255,7 @@ theorem summable_geometricWeightOne_maxDescendantBBlockNormAtScale_cubeSet
   · intro n
     have hbound :
         maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) a ≤ C :=
-      maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+      maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn
         (Q := Q) (a := a) hEll hData n
     refine Real.rpow_le_rpow ?_ hbound ?_
     · exact maxDescendantBBlockNormAtScale_nonneg Q
@@ -281,7 +281,7 @@ theorem summable_geometricWeightOne_maxDescendantSigmaStarInvNormAtScale_cubeSet
   · intro n
     have hbound :
         maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a ≤ C :=
-      maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+      maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn
         (Q := Q) (a := a) hEll hData n
     refine Real.rpow_le_rpow ?_ hbound ?_
     · exact maxDescendantSigmaStarInvNormAtScale_nonneg Q
@@ -307,7 +307,7 @@ theorem
   · intro n
     have hbound :
         maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) a ≤ C :=
-      maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+      maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet
         (Q := Q) (a := a) hEll hData n
     refine Real.rpow_le_rpow ?_ hbound ?_
     · exact maxDescendantBBlockNormAtScale_nonneg Q
@@ -334,7 +334,7 @@ theorem
   · intro n
     have hbound :
         maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a ≤ C :=
-      maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+      maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet
         (Q := Q) (a := a) hEll hData n
     refine Real.rpow_le_rpow ?_ hbound ?_
     · exact maxDescendantSigmaStarInvNormAtScale_nonneg Q
@@ -356,7 +356,7 @@ theorem summable_geometricWeightTwo_maxDescendantBBlockNormAtScale_cubeSet
       (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
   · intro n
     exact
-      (maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+      (maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn
         (Q := Q) (a := a) hEll hData n)
 
 theorem summable_geometricWeightTwo_maxDescendantSigmaStarInvNormAtScale_cubeSet
@@ -374,7 +374,7 @@ theorem summable_geometricWeightTwo_maxDescendantSigmaStarInvNormAtScale_cubeSet
       (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
   · intro n
     exact
-      (maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+      (maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn
         (Q := Q) (a := a) hEll hData n)
 
 theorem

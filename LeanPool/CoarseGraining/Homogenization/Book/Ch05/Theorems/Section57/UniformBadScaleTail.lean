@@ -367,7 +367,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoin
           (measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_soft_high_gammaInfinity_of_badPair_bound
             (d := d) (Cfluct := Cfluct) (Centry := Centry) (a := a)
             params hCfluct hCentry ha hhighRaw)
-          (measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_eq_zero_of_crudeA_one_gammaInfinity_of_badPair_zero
+          (measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_eq_zero
             (d := d) (Ccrude := Ccrude) params hCcrude hzeroRaw))
         (t := t) (αbad := αbad) (Den := Den)
         hP hStruct hInf hparams (q := q)

@@ -28,7 +28,7 @@ noncomputable section
 
 /-- Source-local centered descendants satisfy the real-exponent uniform
 Rosenthal bound after aggregation over all scale-color classes. -/
-theorem integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_uniform_descendantsAtScale_of_sourceUnitRangeDependentLaw
+theorem integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_uniform_descendantsAtScale
     {d : ℕ} {Q : TriadicCube d} {k : ℤ}
     {P : SourceCoeffLaw d} [IsProbabilityMeasure P] {p K : ℝ}
     (hP : SourceUnitRangeDependentLaw P)

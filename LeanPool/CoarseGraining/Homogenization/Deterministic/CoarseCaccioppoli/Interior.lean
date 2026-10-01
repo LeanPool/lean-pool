@@ -177,7 +177,7 @@ theorem coarseCaccioppoli_interior_qone_of_boundary_noteEstimate_of_radiusAgreem
 /-- Interior coarse Caccioppoli with the localized explicit height, transported
 from a boundary-style note estimate available only on the deterministic
 Chapter-3 radius sequence. -/
-theorem coarseCaccioppoli_interior_qone_of_boundary_noteEstimate_on_radiusSequence_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_interior_qone_of_boundary_noteEstimate_on_radiusSequence
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k : ℝ → ℝ → ℕ) {F G : ℝ → ℝ}
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -206,7 +206,7 @@ theorem coarseCaccioppoli_interior_qone_of_boundary_noteEstimate_on_radiusSequen
       G (1 / 3 : ℝ) ≤ coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
     unfold coarseCaccioppoliInteriorExplicitHeightBound
     exact
-      coarseCaccioppoli_boundary_qone_of_noteEstimate_on_radiusSequence_of_localizedExplicitHeightOfScaleChoice
+      coarseCaccioppoli_boundary_qone_of_noteEstimate_on_radiusSequence
         Q a s t C uL2Sq k hC hs ht hst hu hG_nonneg hG_bounded hscale hraw
   have hEq : F (1 / 3 : ℝ) = G (1 / 3 : ℝ) := by
     exact hagree (by norm_num) (by norm_num)

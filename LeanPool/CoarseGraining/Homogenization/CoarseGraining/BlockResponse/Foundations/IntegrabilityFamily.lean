@@ -185,7 +185,7 @@ theorem blockResponse_flux_memL2_of_lowerImage_isPotential_of_mem_responseSpace_
     blockResponse_flux_memL2_of_lowerImage_ae_eq_potential_of_mem_responseSpace_of_isEllipticFieldOn
       hX hLower Filter.EventuallyEq.rfl hEll
 
-theorem blockResponseIntegrabilityData_of_lowerImage_ae_eq_potential_of_mem_responseSpace_of_isEllipticFieldOn
+theorem blockResponseIntegrabilityData_of_lowerImage_ae_eq_potential_of_mem_responseSpace
     {d : ℕ} {a : CoeffField d} {U : Set (Vec d)} {X : BlockState d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {lam Lam : ℝ} (hX : BlockResponseSpace a U X)
@@ -212,7 +212,7 @@ theorem blockResponseIntegrabilityData_of_lowerImage_isPotential_of_mem_response
     (hEll : IsEllipticFieldOn lam Lam U a) :
     BlockResponseIntegrabilityData U a X := by
   exact
-    blockResponseIntegrabilityData_of_lowerImage_ae_eq_potential_of_mem_responseSpace_of_isEllipticFieldOn
+    blockResponseIntegrabilityData_of_lowerImage_ae_eq_potential_of_mem_responseSpace
       hX hLower Filter.EventuallyEq.rfl hEll
 
 theorem blockResponseIntegrabilityData_of_lowerImage_memVectorL2_of_mem_responseSpace_of_isEllipticFieldOn
@@ -289,7 +289,7 @@ theorem blockResponseIntegrand_integrableOn_of_mem_responseSpace_of_integrabilit
   rw [hrewrite] at hsum123
   exact hsum123
 
-theorem blockResponseIntegrand_integrableOn_of_lowerImage_memVectorL2_of_mem_responseSpace_of_isEllipticFieldOn
+theorem blockResponseIntegrand_integrableOn_of_lowerImage_memVectorL2_of_mem_responseSpace
     {d : ℕ} {a : CoeffField d} {U : Set (Vec d)} {X : BlockState d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {lam Lam : ℝ} (hX : BlockResponseSpace a U X)
@@ -314,7 +314,7 @@ theorem BlockJIntegrabilityData.of_lowerImageMemVectorL2Data_of_isEllipticFieldO
   refine ⟨?_⟩
   intro X hX
   exact
-    blockResponseIntegrand_integrableOn_of_lowerImage_memVectorL2_of_mem_responseSpace_of_isEllipticFieldOn
+    blockResponseIntegrand_integrableOn_of_lowerImage_memVectorL2_of_mem_responseSpace
       hX (hLower.lowerImage_memVectorL2 X hX) hEll P Q
 
 end

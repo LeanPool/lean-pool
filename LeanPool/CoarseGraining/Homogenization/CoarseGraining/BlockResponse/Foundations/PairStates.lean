@@ -217,7 +217,7 @@ theorem blockResponseIntegrabilityData_pair_half_of_isEllipticFieldOn
         isPotentialOn_add u.toH1.isPotentialOn (isPotentialOn_smul v.toH1.isPotentialOn (-1 : ℝ))
     exact isPotentialOn_smul hGradDiff (1 / 2 : ℝ)
   exact
-    blockResponseIntegrabilityData_of_lowerImage_ae_eq_potential_of_mem_responseSpace_of_isEllipticFieldOn
+    blockResponseIntegrabilityData_of_lowerImage_ae_eq_potential_of_mem_responseSpace
       (hX := by
         simpa [blockResponsePairHalfState] using!
           (blockResponse_pair_half_mem_responseSpace_of_isEllipticFieldOn (a := a) hEll u v))

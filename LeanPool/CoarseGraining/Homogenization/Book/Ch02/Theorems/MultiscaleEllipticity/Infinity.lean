@@ -63,7 +63,7 @@ theorem LambdaSqInfinity_valueSet_bddAbove {d : ℕ} [NeZero d]
               (a := a) Q hk
       _ ≤ C := by
           simpa [A, C] using
-            Homogenization.maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+            Homogenization.maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet
               (Q := Q) (a := A) hEll hData n
   have hMaxNonneg :
       0 ≤ maxDescendantBMatrixNormAtScale Q (Q.scale - (n : ℤ)) a :=
@@ -110,7 +110,7 @@ theorem lambdaSqInfinity_denominator_valueSet_bddAbove {d : ℕ} [NeZero d]
               (a := a) Q hk
       _ ≤ C := by
           simpa [A, C] using
-            Homogenization.maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+            Homogenization.maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet
               (Q := Q) (a := A) hEll hData n
   have hMaxNonneg :
       0 ≤ maxDescendantSigmaStarInvMatrixNormAtScale Q (Q.scale - (n : ℤ)) a :=

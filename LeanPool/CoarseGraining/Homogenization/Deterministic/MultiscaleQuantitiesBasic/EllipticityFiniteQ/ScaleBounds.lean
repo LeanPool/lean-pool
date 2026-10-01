@@ -16,7 +16,7 @@ namespace Homogenization
 
 noncomputable section
 
-theorem multiscale_ellipticity_lambdaSq_two_inv_le_of_mem_descendantsAtScale_of_half_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem multiscale_ellipticity_lambdaSq_two_inv_le_of_mem_descendantsAtScale_of_half
     {d : ℕ} [NeZero d] {Q R : TriadicCube d} {k : ℤ}
     (a : CoeffField d) {s : ℝ} {lam Lam : ℝ}
     (hs : 0 < s) (hR : R ∈ descendantsAtScale Q k)
@@ -37,11 +37,11 @@ theorem multiscale_ellipticity_lambdaSq_two_inv_le_of_mem_descendantsAtScale_of_
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a) (2 / 2)) := by
     simpa using hsum_half
   simpa using
-    multiscale_ellipticity_lambdaSq_finite_inv_le_of_mem_descendantsAtScale_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
+    multiscale_ellipticity_lambdaSq_finite_inv_le_of_mem_descendantsAtScale_of_lt
       (Q := Q) (R := R) (k := k) a (q := 2) (t := s / 2) (s := s)
       (lam := lam) (Lam := Lam) (by norm_num) hhalf hlt hR hEll hData hsum_half'
 
-theorem multiscale_ellipticity_lambdaSq_two_inv_le_rpow_s_of_mem_descendantsAtScale_of_half_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem multiscale_ellipticity_lambdaSq_two_inv_le_rpow_s_of_mem_descendantsAtScale
     {d : ℕ} [NeZero d] {Q R : TriadicCube d} {k : ℤ}
     (a : CoeffField d) {s : ℝ} {lam Lam : ℝ}
     (hs : 0 < s) (hR : R ∈ descendantsAtScale Q k)
@@ -99,7 +99,7 @@ theorem multiscale_ellipticity_lambdaSq_two_inv_le_rpow_s_of_mem_descendantsAtSc
 
 /-- Half-scale upper-ellipticity localization for the finite-`q = 2`
 multiscale coefficient. -/
-theorem multiscale_ellipticity_LambdaSq_two_le_rpow_s_of_mem_descendantsAtScale_of_half_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem multiscale_ellipticity_LambdaSq_two_le_rpow_s_of_mem_descendantsAtScale_of_half
     {d : ℕ} [NeZero d] {Q R : TriadicCube d} {k : ℤ}
     (a : CoeffField d) {s : ℝ} {lam Lam : ℝ}
     (hs : 0 < s) (hR : R ∈ descendantsAtScale Q k)

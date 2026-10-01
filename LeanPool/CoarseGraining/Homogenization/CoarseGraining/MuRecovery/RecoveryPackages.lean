@@ -362,7 +362,7 @@ theorem coarseBlockMatrix_lowerRight_eq_sigmaStarInvCoarse_of_mu_zero_right_eq_r
 `\mathcal J`, then the upper-left block of `\mathbf A_*^{-1}(U; a)` is the
 canonical `\sigma_*^{-1}(U; a)`, packaged directly from recovery data and
 ellipticity. -/
-theorem coarseStarredBlockMatrixInv_upperLeft_eq_sigmaStarInvCoarse_of_mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn
+theorem coarseStarredBlockMatrixInv_upperLeft_eq_sigmaStarInvCoarse
     (R : PotentialSolenoidalL2RecoveryData U)
     {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam U a)
     (hvol : 0 < (MeasureTheory.volume U).toReal)

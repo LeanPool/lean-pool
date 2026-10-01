@@ -272,7 +272,7 @@ theorem coarseCaccioppoli_boundary_preRecurrence_of_noteEstimate_of_absorptionCo
 
 /-- Explicit-height pre-recurrence from a note-shaped raw estimate, absorption,
 and the enlarged explicit-height cross-term square bound. -/
-theorem coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_noteEstimate_of_absorptionCondition_of_explicitCrossTermBound
+theorem coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_noteEstimate
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (h : ℝ → ℝ → ℝ) {F : ℝ → ℝ}
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)

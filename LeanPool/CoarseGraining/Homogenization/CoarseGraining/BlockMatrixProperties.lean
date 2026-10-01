@@ -775,7 +775,7 @@ theorem coarseStarredBlockMatrixInv_upperRight_eq_neg_sigmaStar_inv_mul_kappa_of
 
 /-- Public lower-left block formula for the reflected coarse matrix
 `\mathbf A_*^{-1}(U; a)`. -/
-theorem coarseStarredBlockMatrixInv_lowerLeft_eq_neg_transpose_kappa_mul_sigmaStar_inv_of_isCoarseBlockMatrix
+theorem coarseStarredBlockMatrixInv_lowerLeft_eq_neg_transpose_kappa_mul_sigmaStar_inv
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     {sigma sigmaStar kappa : Mat d}
     (hA : IsCoarseBlockMatrix U a (deterministicCoarseBlockMatrix U a))
@@ -842,7 +842,7 @@ theorem blockMatVecMul_coarseStarredBlockMatrixInv_snd_of_isCoarseBlockMatrix
         matVecMul (-((matTranspose kappa) * sigmaStar⁻¹)) p +
           matVecMul (bCoarse sigma sigmaStar kappa) q := by
       rw [blockMatVecMul_snd]
-      rw [coarseStarredBlockMatrixInv_lowerLeft_eq_neg_transpose_kappa_mul_sigmaStar_inv_of_isCoarseBlockMatrix
+      rw [coarseStarredBlockMatrixInv_lowerLeft_eq_neg_transpose_kappa_mul_sigmaStar_inv
           hA hS hK hSigma hdet,
         coarseStarredBlockMatrixInv_lowerRight_eq_bCoarse_of_isCoarseBlockMatrix
           hA hS hK hSigma hdet]

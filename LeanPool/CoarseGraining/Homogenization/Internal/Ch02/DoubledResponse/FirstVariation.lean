@@ -79,7 +79,7 @@ theorem first_variation_scalar_representatives_of_isEllipticFieldOn {d : ℕ}
           (pStar + p) (qStar + q) vStar z2) = 0 at hfirstStarPublic
     simpa [Homogenization.adjointCoeffField] using! hfirstStarPublic
   have hSplit :=
-    volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum_of_isEllipticFieldOn
+    volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum
       (a := a.toCoeffField) U.measurableSet hEll p pStar q qStar v w2 vStar z2
   have hBlockZero :
       volumeAverage (U : Set (Vec d))

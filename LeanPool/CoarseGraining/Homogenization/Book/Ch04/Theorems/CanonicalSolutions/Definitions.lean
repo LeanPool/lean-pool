@@ -361,7 +361,7 @@ canonical Ch4 Hilbert minimizer selected on the corresponding half-open cube.
 
 This is the bridge from the pointwise variational theorem used by Ch2
 extraction to the measurable Hilbert minimizer used by Ch4. -/
-theorem exists_isBlockMuAdmissible_cubeSet_and_hilbert_eq_canonicalAEEMuHilbertMinimizer_of_isDoubledMuMinimizer
+theorem exists_isBlockMuAdmissible_cubeSet_and_hilbert_eq_canonicalAEEMuHilbertMinimizer
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (k : ℕ)
     (a : {a : CoeffField d // AEEQuantitativeEllipticSlice (cubeSet Q) k a})
     (P0 : BlockVec d) (aQ : Ch02.CoeffOn (Ch02.cubeDomain Q))

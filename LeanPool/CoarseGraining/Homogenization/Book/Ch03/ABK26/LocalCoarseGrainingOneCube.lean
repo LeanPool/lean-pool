@@ -842,7 +842,7 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_of_me
 direct handoff for the finite-`p` aggregation: the legacy boundedness witness
 needed to expand the RHS is constructed from the strict source Sobolev
 carrier, and is not exposed as a public premise. -/
-theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_components_of_memCubeEuclideanFullWsp
+theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_components
     {d : ℕ} [NeZero d] {R : TriadicCube d}
     {a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain R)}
     {u : H1Function (openCubeSet R)} {g : Vec d → Vec d}

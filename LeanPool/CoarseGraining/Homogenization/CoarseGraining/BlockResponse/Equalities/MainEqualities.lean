@@ -58,7 +58,7 @@ theorem blockJ_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConver
       blockResponse_lowerImage_isPotential_of_mem_responseSpace_of_memVectorL2_of_hodgeConverseCriterion
         (hHodge := hHodge) hX hLowerL2
     rcases
-      volumeAverage_blockResponseIntegrand_eq_scalarResponse_sum_of_mem_responseSpace_of_lowerImage_isPotential_of_isEllipticFieldOn
+      volumeAverage_blockResponseIntegrand_eq_scalarResponse_sum_of_mem_responseSpace
         (a := a) hU hX hLowerPot hEll p pStar q qStar with
       ⟨u, v, hsplit⟩
     have hu :

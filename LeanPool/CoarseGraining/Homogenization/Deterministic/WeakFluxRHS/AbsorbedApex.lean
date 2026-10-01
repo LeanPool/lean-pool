@@ -114,7 +114,7 @@ theorem exists_localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_s
                 η * BU + η * BV + weakFluxRHSWeightedGlobalForceBase Q a g s η m) *
               (1 - Real.rpow (3 : ℝ) (-s))⁻¹)) := by
   rcases
-      exists_harmonicRemainderSelector_fluxSeminormStepAbsorbedLocalError_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+      exists_harmonicRemainderSelector_fluxSeminormStepAbsorbedLocalError
         (Q := Q) (a := a) (s := s) (η := η) (lam := lam) (Lam := Lam)
         (u := u) (g := g) hs hη hu_potential hu_residual hEll_desc
         hu_mem_desc hg_mem_desc hC_desc hData_desc hsum_desc hchildBdd

@@ -82,7 +82,7 @@ theorem integral_norm_sq_sub_h1WeakTest_scaledClosedCubeSet_eq_scaledOpenCubeSet
 
 /-- The quotient-Hessian pairing depends only on the open-inner scalar `L²`
 class of a smooth weak test. -/
-theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerOpenCube_eq_of_h1WeakTest_toScalarL2_eq_of_step_abs_le
+theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerOpenCube_eq
     {Q : TriadicCube d} {uQ : H1Function (openCubeSet Q)} {f : Vec d → ℝ}
     (h : WeakPoissonEquationOn (openCubeSet Q) uQ f)
     (hf : MemScalarL2 (openCubeSet Q) f)
@@ -186,7 +186,7 @@ noncomputable def openCubeInnerOpenCubeQuotientHessianSmoothTestFunctional
         pairing (rep (x + y)) = pairing ((rep x).add (rep y)) := by
       unfold pairing
       exact
-        h.neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerOpenCube_eq_of_h1WeakTest_toScalarL2_eq_of_step_abs_le
+        h.neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerOpenCube_eq
           hf hV hstep i j η hη_sub hinnerV θ hVν hν_nonneg hνσ hσ₁_lt_one
           hσ₂_nonneg hσ₂_lt_one hstep_abs
           (rep (x + y)) ((rep x).add (rep y)) (by
@@ -207,7 +207,7 @@ noncomputable def openCubeInnerOpenCubeQuotientHessianSmoothTestFunctional
         pairing (rep (c • x)) = pairing ((rep x).smul c) := by
       unfold pairing
       exact
-        h.neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerOpenCube_eq_of_h1WeakTest_toScalarL2_eq_of_step_abs_le
+        h.neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerOpenCube_eq
           hf hV hstep i j η hη_sub hinnerV θ hVν hν_nonneg hνσ hσ₁_lt_one
           hσ₂_nonneg hσ₂_lt_one hstep_abs
           (rep (c • x)) ((rep x).smul c) (by

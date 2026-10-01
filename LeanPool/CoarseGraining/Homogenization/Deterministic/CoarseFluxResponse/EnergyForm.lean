@@ -22,7 +22,7 @@ open scoped BigOperators MatrixOrder Pointwise
 
 /-- Single-cube response-control theorem for the actual flux defect measured
 against the natural `symmPart a0` energy form. -/
-theorem cubeAverageFluxDefect_energyForm_le_normalizedBlockResponseMax_mul_energyAverage_of_scalarCanonicalMaximizer
+theorem cubeAverageFluxDefect_energyForm_le_normalizedBlockResponseMax_mul_energyAverage
     {d : ℕ} [NeZero d] (R : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {lam Lam lam0 Lam0 : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet R) a)

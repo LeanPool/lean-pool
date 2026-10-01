@@ -363,7 +363,7 @@ Source labels `a.HM` and `l.union.bound`: full stochastic maximal lintegral
 bridge through the manuscript's finite convolution envelope, still with the
 terminal-normalization polynomial cost left as the explicit `terminalCost`.
 -/
-theorem lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_convolution_of_estimate_of_terminalWeak_le
+theorem lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_convolution
     {Ω : Type*} [MeasurableSpace Ω] {d : ℕ} {hc : HighContrastExponents d}
     (hm : HighCenteredMomentParameters d hc)
     (μ : MeasureTheory.Measure Ω) (Q : Homogenization.TriadicCube d) {N m : ℕ}
@@ -499,7 +499,7 @@ theorem lintegral_sup_Icc_descendantsAtDepth_weak_terminalCenteredFullBlockDevia
     simpa [wTerminal] using
       mul_le_mul_right (hweak j hj R hR) T
   have hconv :=
-    lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_convolution_of_estimate_of_terminalWeak_le
+    lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_convolution
       hm μ Q hNm hQ wTerminal X hHM T hwTerminal
   calc
     ∫⁻ ω, (Finset.Icc N m).sup

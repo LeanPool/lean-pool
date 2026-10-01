@@ -394,7 +394,7 @@ theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_pair_of_res
           intro R hR
           linarith [hRespDesc R hR p q]
 
-theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_responseJ_blockQuadratic
+theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hRespQ :
@@ -446,7 +446,7 @@ theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_
             (1 / 2 : ℝ) * blockVecDot X
               (blockMatVecMul (coarseBlockMatrix (openCubeSet R) a) X)) := by
             exact
-              coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_responseJ_blockQuadratic
+              coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic
                 j Q a hEll hRespQ hRespDesc X
     _ = (1 / 2 : ℝ) *
           blockVecDot X
@@ -478,7 +478,7 @@ theorem coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_b
           (1 / 2 : ℝ) * blockVecDot X
             (blockMatVecMul (coarseStarredBlockMatrixInv (openCubeSet R) a) X)) := by
   simpa [coarseStarredBlockMatrixInv_eq_blockReflect] using
-    coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_responseJ_blockQuadratic
+    coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic
       j Q a hEll hRespQ hRespDesc (X.2, X.1)
 
 theorem coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_responseJ_blockQuadratic
@@ -518,7 +518,7 @@ theorem coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_i
             rw [descendantsAverage_smul]
             rw [blockVecDot_blockMatVecMul_descendantsAverageBlockMat]
 
-theorem coarseStarredBlockMatrixInv_upperLeft_subadditive_openCubeSet_descendantsAtDepth_of_responseJ_blockQuadratic
+theorem coarseStarredBlockMatrixInv_upperLeft_subadditive_openCubeSet_descendantsAtDepth
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hRespQ :
@@ -544,7 +544,7 @@ theorem coarseStarredBlockMatrixInv_upperLeft_subadditive_openCubeSet_descendant
     coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_responseJ_blockQuadratic
       j Q a hEll hRespQ hRespDesc (p, 0)
 
-theorem coarseStarredBlockMatrixInv_lowerRight_subadditive_openCubeSet_descendantsAtDepth_of_responseJ_blockQuadratic
+theorem coarseStarredBlockMatrixInv_lowerRight_subadditive_openCubeSet_descendantsAtDepth
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hRespQ :

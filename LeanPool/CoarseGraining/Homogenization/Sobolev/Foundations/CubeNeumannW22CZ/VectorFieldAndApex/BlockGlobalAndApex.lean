@@ -622,7 +622,7 @@ theorem cubeFaceReflectionBlock_reflectedVectorField_energyIdentity_blockFold
         (3 : ℝ) ^ d *
           ∫ y in openCubeSet Q,
             F y * W.w.toH1Function.toFun y ∂MeasureTheory.volume :=
-    setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_mul_of_memScalarL2_three_pow
+    setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_mul
       Q hFopen huopen
   calc
     ∫ x in cubeFaceReflectionBlockSet Q,

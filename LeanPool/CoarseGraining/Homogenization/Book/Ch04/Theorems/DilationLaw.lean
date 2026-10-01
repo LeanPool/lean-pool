@@ -722,7 +722,7 @@ theorem restrictionResponseJObservableCubeSet_originCube_rescaleCoeffField_of_ae
           simp [Qsrc, Q]
 
 /-- Scalar response observables under the dilation defining `restrictionScaleNormalizedLaw`. -/
-theorem restrictionResponseJObservableCubeSet_originCube_dilateCoeffField_neg_nat_of_aelocallyUniformlyElliptic
+theorem restrictionResponseJObservableCubeSet_originCube_dilateCoeffField_neg_nat
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a) (k m : ℕ) (p q : Vec d) :
     restrictionResponseJObservableCubeSet (originCube d (m : ℤ)) p q

@@ -511,7 +511,7 @@ theorem canonicalResponseMatrixIdentities_of_isEllipticFieldOn
                   (Homogenization.sigmaStarInvCoarse (U : Set (Vec d)) a.toCoeffField)
                   (q + matVecMul
                     (Homogenization.kappaCoarse (U : Set (Vec d)) a.toCoeffField) p)) :=
-      magic_identity_responseJ_completed_square_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+      magic_identity_responseJ_completed_square_canonical_of_isEllipticFieldOn
         R U.isDomain hEll hvol compat hS hK hSigma p q
     calc
       responseJ U a p q =

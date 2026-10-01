@@ -165,7 +165,7 @@ private theorem le_of_rpow_q_div_two_le {A B q : ℝ} (hq : 0 < q)
           simpa [hmul] using (Real.rpow_mul hB (q / 2) (2 / q)).symm
     _ = B := by exact Real.rpow_one B
 
-theorem coarseBBlockNorm_rpow_q_div_two_le_LambdaSq_finite_rpow_q_div_two_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem coarseBBlockNorm_rpow_q_div_two_le_LambdaSq_finite_rpow_q_div_two
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) {s q : ℝ} {lam Lam : ℝ}
     (hs : 0 < s) (hq : 0 < q)
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
@@ -206,7 +206,7 @@ theorem coarseBBlockNorm_rpow_q_div_two_le_LambdaSq_finite_rpow_q_div_two_of_isE
         (multiscale_ellipticity_LambdaSq_finite_rpow_q_div_two_eq_tsum Q s q a hq
           (mul_nonneg hs.le hq.le))
 
-theorem coarseSigmaStarInvBlockNorm_rpow_q_div_two_le_lambdaSq_finite_rpow_neg_q_div_two_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem coarseSigmaStarInvBlockNorm_rpow_q_div_two_le_lambdaSq_finite_rpow_neg_q_div_two
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) {s q : ℝ} {lam Lam : ℝ}
     (hs : 0 < s) (hq : 0 < q)
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
@@ -260,7 +260,7 @@ theorem coarseBBlockNorm_le_LambdaSq_finite_of_isEllipticFieldOn_of_isSigmaCoars
   exact le_of_rpow_q_div_two_le hq
     (coarseBBlockNorm_nonneg Q a)
     (multiscale_ellipticity_LambdaSq_finite_nonneg Q s q a hq.le (mul_nonneg hs.le hq.le))
-    (coarseBBlockNorm_rpow_q_div_two_le_LambdaSq_finite_rpow_q_div_two_of_isEllipticFieldOn_of_isSigmaCoarse
+    (coarseBBlockNorm_rpow_q_div_two_le_LambdaSq_finite_rpow_q_div_two
       Q a hs hq hEll hData hsum)
 
 theorem coarseSigmaStarInvBlockNorm_le_lambdaSq_finite_inv_of_isEllipticFieldOn_of_isSigmaCoarse
@@ -274,7 +274,7 @@ theorem coarseSigmaStarInvBlockNorm_le_lambdaSq_finite_inv_of_isEllipticFieldOn_
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a) (q / 2))) :
     coarseSigmaStarInvBlockNorm Q a ≤ (lambdaSq Q s (.finite q) a)⁻¹ := by
   have hpow :=
-    coarseSigmaStarInvBlockNorm_rpow_q_div_two_le_lambdaSq_finite_rpow_neg_q_div_two_of_isEllipticFieldOn_of_isSigmaCoarse
+    coarseSigmaStarInvBlockNorm_rpow_q_div_two_le_lambdaSq_finite_rpow_neg_q_div_two
       Q a hs hq hEll hData hsum
   have hlambda_nonneg :
       0 ≤ lambdaSq Q s (.finite q) a := by
@@ -344,7 +344,7 @@ theorem multiscale_ellipticity_LambdaSq_finite_le_of_lt_of_isEllipticFieldOn_of_
     (multiscale_ellipticity_LambdaSq_finite_rpow_q_div_two_le_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
       Q a hq ht hts hEll hData hsum_t)
 
-theorem multiscale_ellipticity_lambdaSq_finite_rpow_neg_q_div_two_le_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem multiscale_ellipticity_lambdaSq_finite_rpow_neg_q_div_two_le_of_lt
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) {t s q : ℝ} {lam Lam : ℝ}
     (hq : 0 < q) (ht : 0 < t) (hts : t < s)
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
@@ -391,7 +391,7 @@ theorem multiscale_ellipticity_lambdaSq_finite_inv_le_of_lt_of_isEllipticFieldOn
     (lambdaSq Q s (.finite q) a)⁻¹ ≤ (lambdaSq Q t (.finite q) a)⁻¹ := by
   have hs : 0 < s := lt_trans ht hts
   have hpow :=
-    multiscale_ellipticity_lambdaSq_finite_rpow_neg_q_div_two_le_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
+    multiscale_ellipticity_lambdaSq_finite_rpow_neg_q_div_two_le_of_lt
       Q a hq ht hts hEll hData hsum_t
   have hpow' :
       Real.rpow ((lambdaSq Q s (.finite q) a)⁻¹) (q / 2) ≤

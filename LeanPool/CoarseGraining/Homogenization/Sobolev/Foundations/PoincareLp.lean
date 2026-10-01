@@ -277,7 +277,7 @@ private theorem setIntegral_intervalIntegral_norm_fderiv_mul_norm_sub_along_segm
       (f := fun t y => ‖fderiv ℝ u (segmentBlend x t y)‖ * ‖x - y‖)
       hprod_int').symm
 
-theorem intervalIntegral_setIntegral_norm_fderiv_mul_norm_sub_along_segment_le_rieszKernel_of_isOpenBoundedConvexDomain
+theorem intervalIntegral_setIntegral_norm_fderiv_mul_norm_sub_along_segment_le_rieszKernel
     {d : ℕ} [NeZero d] {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     {u : Vec d → ℝ} (huDiff : ContDiff ℝ (⊤ : ℕ∞) u) {x : Vec d} (hx : x ∈ U) :
     ∫ t in (0 : ℝ)..1, ∫ y in U,
@@ -363,7 +363,7 @@ theorem intervalIntegral_setIntegral_norm_fderiv_mul_norm_sub_along_segment_le_r
           ∫ z in U, ‖fderiv ℝ u z‖ * rieszKernel x z ∂MeasureTheory.volume := by
             simp [φ]
 
-theorem setIntegral_intervalIntegral_norm_fderiv_mul_norm_sub_along_segment_le_rieszKernel_of_isOpenBoundedConvexDomain
+theorem setIntegral_intervalIntegral_norm_fderiv_mul_norm_sub_along_segment_le_rieszKernel
     {d : ℕ} [NeZero d] {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     {u : Vec d → ℝ} (huDiff : ContDiff ℝ (⊤ : ℕ∞) u) {x : Vec d} (hx : x ∈ U) :
     ∫ y in U, ∫ t in (0 : ℝ)..1,
@@ -375,10 +375,10 @@ theorem setIntegral_intervalIntegral_norm_fderiv_mul_norm_sub_along_segment_le_r
   rw [setIntegral_intervalIntegral_norm_fderiv_mul_norm_sub_along_segment_swap
     hU.isSobolevRegularDomain huDiff x]
   exact
-    intervalIntegral_setIntegral_norm_fderiv_mul_norm_sub_along_segment_le_rieszKernel_of_isOpenBoundedConvexDomain
+    intervalIntegral_setIntegral_norm_fderiv_mul_norm_sub_along_segment_le_rieszKernel
       (d := d) hU huDiff hx
 
-theorem norm_sub_integralAverage_le_volumeAverage_integral_norm_fderiv_mul_rieszKernel_of_isOpenBoundedConvexDomain
+theorem norm_sub_integralAverage_le_volumeAverage_integral_norm_fderiv_mul_rieszKernel
     {d : ℕ} [NeZero d] {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : IsOpenBoundedConvexDomain U) {u : Vec d → ℝ}
     (hu : MeasureTheory.IntegrableOn u U) (huDiff : ContDiff ℝ (⊤ : ℕ∞) u)
@@ -402,7 +402,7 @@ theorem norm_sub_integralAverage_le_volumeAverage_integral_norm_fderiv_mul_riesz
         ((((2 * Classical.choose hU.isBoundedDomain) ^ d) / (d : ℝ)) *
           ∫ z in U, ‖fderiv ℝ u z‖ * rieszKernel x z ∂MeasureTheory.volume) := by
             exact mul_le_mul_of_nonneg_left
-              (setIntegral_intervalIntegral_norm_fderiv_mul_norm_sub_along_segment_le_rieszKernel_of_isOpenBoundedConvexDomain
+              (setIntegral_intervalIntegral_norm_fderiv_mul_norm_sub_along_segment_le_rieszKernel
                 (d := d) hU huDiff hx)
               hμinv_nonneg
 
@@ -561,7 +561,7 @@ theorem integral_rpow_norm_sub_integralAverage_le_bound_of_isOpenBoundedConvexDo
         ‖u x - integralAverage U u‖ ≤
           B * ∫ z in U, ‖fderiv ℝ u z‖ * rieszKernel x z ∂MeasureTheory.volume := by
       simpa [B, g, μU, mul_assoc] using
-        norm_sub_integralAverage_le_volumeAverage_integral_norm_fderiv_mul_rieszKernel_of_isOpenBoundedConvexDomain
+        norm_sub_integralAverage_le_volumeAverage_integral_norm_fderiv_mul_rieszKernel
           (d := d) hU hu huDiff hx hvol
     have hright_nonneg : 0 ≤
         B * ∫ y, g y * rieszKernel x y ∂μU := by

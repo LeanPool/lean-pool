@@ -174,7 +174,7 @@ private theorem maxDescendantBMatrixNormAtScale_le_uniform_of_uniformEllipticity
             F Q hk
     _ ≤ uniformUpperBlockConst d lam Lam := by
           simpa [uniformUpperBlockConst, A] using
-            maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+            maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet
               Q A hEll hData n
 
 private theorem maxDescendantSigmaStarInvMatrixNormAtScale_le_uniform_of_uniformEllipticity
@@ -206,7 +206,7 @@ private theorem maxDescendantSigmaStarInvMatrixNormAtScale_le_uniform_of_uniform
             F Q hk
     _ ≤ uniformLowerInvBlockConst d lam := by
           simpa [uniformLowerInvBlockConst, A] using
-            maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+            maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet
               Q A hEll hData n
 
 private theorem tsum_geometricWeight_one_mul_le_const

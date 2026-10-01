@@ -64,7 +64,7 @@ theorem basic_cg_identities_responseJ_zero_formula_canonical_of_isEllipticFieldO
     basic_cg_identities_responseJ_zero_formula_canonical_of_isSigmaCoarse
       U a hS hK hSigma hdet p
 
-theorem basic_cg_identities_responseJ_zero_formula_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem basic_cg_identities_responseJ_zero_formula_canonical_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -155,7 +155,7 @@ theorem magic_identity_responseJ_completed_square_canonical_of_isEllipticFieldOn
     magic_identity_responseJ_completed_square_canonical_of_isSigmaCoarse
       U a hS hK hSigma hdet p q
 
-theorem magic_identity_responseJ_completed_square_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem magic_identity_responseJ_completed_square_canonical_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -444,7 +444,7 @@ theorem magic_identity_mu_sub_vecDot_shifted_square_canonical_of_isEllipticField
     magic_identity_mu_sub_vecDot_shifted_square_canonical_of_isSigmaCoarse
       U a hA hS hK hSigma hdet p q
 
-theorem magic_identity_mu_sub_vecDot_shifted_square_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem magic_identity_mu_sub_vecDot_shifted_square_canonical_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -497,7 +497,7 @@ theorem magic_identity_responseJ_add_mu_sub_vecDot_canonical_of_isEllipticFieldO
     magic_identity_responseJ_add_mu_sub_vecDot_canonical_of_isSigmaCoarse
       U a hA hS hK hSigma hdet p q h
 
-theorem magic_identity_responseJ_add_mu_sub_vecDot_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem magic_identity_responseJ_add_mu_sub_vecDot_canonical_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)

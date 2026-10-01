@@ -27,7 +27,7 @@ states under IsBlockMuAdmissible.
 
 /-- The half-pair witness has block energy equal to one quarter of the sum of
 the primal and adjoint scalar variation energies. -/
-theorem blockEnergyAverage_blockResponsePairHalfState_eq_quarter_scalarVariationEnergySum_of_isEllipticFieldOn
+theorem blockEnergyAverage_blockResponsePairHalfState_eq_quarter_scalarVariationEnergySum
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -39,7 +39,7 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_quarter_scalarVariation
           volumeAverage U
             (scalarVariationEnergyIntegrand (Homogenization.adjointCoeffField a) v) := by
   have hsplit :=
-    volumeAverage_blockResponseIntegrand_pair_half_eq_scalarResponse_sum_of_isEllipticFieldOn_of_finiteMeasure
+    volumeAverage_blockResponseIntegrand_pair_half_eq_scalarResponse_sum
       (a := a) hU hEll (p := 0) (pStar := 0) (q := 0) (qStar := 0) u v
   have hleft :
       volumeAverage U
@@ -212,7 +212,7 @@ theorem scalarFirstVariation_zero_right_of_ae_eq_blockResponsePairHalfState_of_i
               ring_nf
     rw [hInt, MeasureTheory.integral_neg, horth, neg_zero, mul_zero]
   have hsplit :=
-    volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum_of_isEllipticFieldOn
+    volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum
       (a := a) hU hEll (0 : Vec d) (0 : Vec d) (0 : Vec d) q u w v zeroAdj
   have hsplit' :
       volumeAverage U
@@ -378,7 +378,7 @@ theorem scalarFirstVariation_neg_left_zero_of_ae_eq_blockResponsePairHalfState_o
               ring_nf
     rw [hInt, MeasureTheory.integral_neg, horth, neg_zero, mul_zero]
   have hsplit :=
-    volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum_of_isEllipticFieldOn
+    volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum
       (a := a) hU hEll (0 : Vec d) p (0 : Vec d) (0 : Vec d) u w v zeroAdj
   have hsplit' :
       volumeAverage U
@@ -555,7 +555,7 @@ theorem scalarFirstVariation_neg_left_right_of_ae_eq_blockResponsePairHalfState_
               ring_nf
     rw [hInt, MeasureTheory.integral_neg, horth, neg_zero, mul_zero]
   have hsplit :=
-    volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum_of_isEllipticFieldOn
+    volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum
       (a := a) hU hEll (0 : Vec d) p (0 : Vec d) q u w v zeroAdj
   have hsplit' :
       volumeAverage U

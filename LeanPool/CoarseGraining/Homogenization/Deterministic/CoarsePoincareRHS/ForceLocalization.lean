@@ -548,7 +548,7 @@ theorem coarsePoincareRHSLocalCoeff_le_parentHalfLambda_of_mem_descendantsAtDept
   have hRscale : R ∈ descendantsAtScale Q (Q.scale - (n : ℤ)) :=
     mem_descendantsAtScale_of_mem_descendantsAtDepth hR
   have hlambda :=
-    multiscale_ellipticity_lambdaSq_two_inv_le_rpow_s_of_mem_descendantsAtScale_of_half_of_isEllipticFieldOn_of_isSigmaCoarse
+    multiscale_ellipticity_lambdaSq_two_inv_le_rpow_s_of_mem_descendantsAtScale
       (Q := Q) (R := R) (k := Q.scale - (n : ℤ)) a hs hRscale hEll hData hsum_half
   have htoNat :
       Int.toNat (Q.scale - (Q.scale - (n : ℤ))) = n := by

@@ -364,7 +364,7 @@ theorem blockJ_eq_half_scalarResponse_sum_of_isEllipticFieldOn_of_isOpenBoundedC
       hConv hEll hvol p pStar q qStar u v
 
 /-- Explicitly named existential version of the previous theorem. -/
-theorem exists_scalarCanonicalMaximizers_blockJ_eq_half_scalarResponse_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem exists_scalarCanonicalMaximizers_blockJ_eq_half_scalarResponse_sum
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -511,7 +511,7 @@ theorem blockJ_note_form_eq_half_scalarResponse_sum_of_isEllipticFieldOn_of_isOp
       hConv hEll hvol p q h u v
 
 /-- Explicitly named existential version of the previous theorem. -/
-theorem exists_scalarCanonicalMaximizers_blockJ_note_form_eq_half_scalarResponse_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem exists_scalarCanonicalMaximizers_blockJ_note_form_eq_half_scalarResponse_sum
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)

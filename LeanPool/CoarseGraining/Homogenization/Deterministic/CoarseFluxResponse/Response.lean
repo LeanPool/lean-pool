@@ -85,7 +85,7 @@ theorem cubeAverageFluxResponseControl_of_descendantScalarCanonicalFluxDefectDat
           cubeAverage R (scalarVariationEnergyIntegrand a w) := by
     simpa [D, actualDefect, symmPart_eq_of_isSymm ha0symm,
       matTranspose, Matrix.IsSymm] using
-      (cubeAverageFluxDefect_energyForm_le_normalizedBlockResponseMax_mul_energyAverage_of_scalarCanonicalMaximizer
+      (cubeAverageFluxDefect_energyForm_le_normalizedBlockResponseMax_mul_energyAverage
         (R := R) (a := a) (a0 := a0) hEll ha0 w hv')
   have hnorm :
       vecNormSq D ≤ matNorm a0 * vecDot D (matVecMul a0⁻¹ D) :=

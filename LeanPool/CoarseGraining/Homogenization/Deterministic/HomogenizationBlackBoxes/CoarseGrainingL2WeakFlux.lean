@@ -149,7 +149,7 @@ coarse flux-defect `(a-a₀)∇u`.  The first bridge supplies that negative-Beso
 field conversion; the second compares the expanded weak-flux RHS with the
 manuscript coarse-graining RHS.
 -/
-theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_h1DirichletRhsWeakSolutionOn_of_constructed_harmonicRemainder_bounds_of_weakFluxBridges
+theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_h1DirichletRhsWeakSolutionOn
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)

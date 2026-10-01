@@ -357,7 +357,7 @@ theorem restrictionResponseJObservableCubeSet_le_descendantsAverage_of_aelocally
 /-- Pointwise response subadditivity on an arbitrary triadic cube for the Ch4
 scalar response observable, with the a.e. coefficient representative handled
 by the Chapter 2 coefficient family. -/
-theorem restrictionResponseJObservableCubeSet_le_descendantsAverage_cubeSet_of_aelocallyUniformlyEllipticField
+theorem restrictionResponseJObservableCubeSet_le_descendantsAverage_cubeSet
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a) (Q : TriadicCube d) {k : ℤ}
     (hk : k ≤ Q.scale) (p q : Vec d) :

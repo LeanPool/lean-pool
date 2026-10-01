@@ -232,7 +232,7 @@ theorem isBigO_psiSigma_sourceCenteredResponseJDescendantAverage
 
 /-- The real-exponent moment bound for the centered source `ResponseJ`
 partition average, reduced to the one-origin source partition endpoint. -/
-theorem integral_abs_sourceCenteredResponseJDescendantAverage_rpow_rpow_inv_le_of_sourceUnitRangeDependentLaw
+theorem integral_abs_sourceCenteredResponseJDescendantAverage_rpow_rpow_inv_le
     {d : ℕ} [NeZero d] {n m : ℤ} {P : SourceCoeffLaw d}
     [IsProbabilityMeasure P] {r : ℝ}
     (hn : 0 ≤ n) (hnm : n ≤ m)
@@ -265,7 +265,7 @@ theorem integral_abs_sourceCenteredResponseJDescendantAverage_rpow_rpow_inv_le_o
           ResponseJ (cubeSet (originCube d n)) p q a.1) :=
     isSourceLocalRandomVariable_ResponseJ_cubeSet (originCube d n) p q
   have hsource :=
-    integral_abs_sourceCenteredTranslatedDescendantAverage_rpow_rpow_inv_le_of_sourceUnitRangeDependentLaw
+    integral_abs_sourceCenteredTranslatedDescendantAverage_rpow_rpow_inv_le
       (P := P) (p := r) hn hnm hPstat hPdep
       (fun a : Source.Coarse.Carrier d =>
         ResponseJ (cubeSet (originCube d n)) p q a.1)

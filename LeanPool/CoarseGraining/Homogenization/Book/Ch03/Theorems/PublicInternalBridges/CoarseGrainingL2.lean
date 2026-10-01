@@ -155,7 +155,7 @@ private theorem coarseGraining_scalar_dimension_bound
 
 /-- Scale-separated flux-defect version of the public/internal coarse-graining
 RHS bridge. -/
-theorem coarseGrainingL2FluxDefectBoundTwoExponent_publicCoeffField_le_dim_sq_mul_public_of_homogenizationErrorAtDepth_eq
+theorem coarseGrainingL2FluxDefectBoundTwoExponent_publicCoeffField_le_dim_sq_mul_public
     {d : ℕ} [NeZero d] (C : ℝ) (Q : TriadicCube d)
     (a : CoeffFamily d) (a0 : ConstantCoeffMatrix d) {s t : ℝ} (j : ℕ)
     {g : Vec d → Vec d}

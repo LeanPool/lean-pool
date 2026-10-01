@@ -1057,7 +1057,7 @@ theorem summable_old_B_series_pointwiseCoeffField {d : ℕ} [NeZero d]
     have hbound :
         Homogenization.maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) A ≤ C := by
       simpa [A, C] using
-        Homogenization.maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+        Homogenization.maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet
           (Q := Q) (a := A) hEll hData n
     exact Real.rpow_le_rpow
       (Homogenization.maxDescendantBBlockNormAtScale_nonneg Q
@@ -1094,7 +1094,7 @@ theorem summable_old_sigmaStarInv_series_pointwiseCoeffField {d : ℕ} [NeZero d
     have hbound :
         Homogenization.maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) A ≤ C := by
       simpa [A, C] using
-        Homogenization.maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+        Homogenization.maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet
           (Q := Q) (a := A) hEll hData n
     exact Real.rpow_le_rpow
       (Homogenization.maxDescendantSigmaStarInvNormAtScale_nonneg Q

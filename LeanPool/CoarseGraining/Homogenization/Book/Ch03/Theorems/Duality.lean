@@ -139,7 +139,7 @@ private theorem fluxDefectDualityTheory_of_dirichletBesov_of_coordinateBridgeSha
     (hpair : LocalizedFluxDefectPositivePairingEstimate d Cpairing) :
     FluxDefectDualityTheory d :=
   fluxDefectDualityTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss
-    ((scalarSolutionComparisonGenuineDualityEstimateSharpLoss_of_dirichletBesov_of_coordinateBridgeSharpLoss_of_localizedPairing
+    ((scalarSolutionComparisonGenuineDualityEstimateSharpLoss_of_dirichletBesov
       hdir hbridge hpair).to_exponentLoss)
 
 /-- Public two-exponent duality package with the Dirichlet Besov theorem and

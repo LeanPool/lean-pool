@@ -772,7 +772,7 @@ theorem solution_diff_l2_le_dualityConstant_mul_fluxDefectBound_of_sameRhs_of_lo
 Scalar-background same-right-hand-side depth-zero duality bound from a direct
 one-cube negative Besov bound on the flux defect.
 -/
-theorem solution_diff_l2_le_dualityConstant_mul_cubeBesovNegativeFluxDefectBound_of_sameRhs_of_depth_zero_of_nonneg
+theorem solution_diff_l2_le_dualityConstant_mul_cubeBesovNegativeFluxDefectBound
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (sigma0 : ℝ)

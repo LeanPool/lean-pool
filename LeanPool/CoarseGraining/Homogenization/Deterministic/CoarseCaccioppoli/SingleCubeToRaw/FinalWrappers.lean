@@ -21,7 +21,7 @@ open scoped ENNReal
 
 /-- Boundary coarse Caccioppoli from the separated radius-indexed factor
 inputs, localized explicit height, and standard multiscale ellipticity data. -/
-theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeFactorInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeFactorInputs
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -75,7 +75,7 @@ theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeFactorInputs_of_mul
 
 /-- Boundary coarse Caccioppoli from primitive separated radius-indexed factor
 inputs, localized explicit height, and standard multiscale ellipticity data. -/
-theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeSeparatedFactorInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeSeparatedFactorInputs
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -131,7 +131,7 @@ theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeSeparatedFactorInpu
 
 /-- Boundary coarse Caccioppoli from canonical `LambdaSq` factor inputs,
 localized explicit height, and standard multiscale ellipticity data. -/
-theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalFactorInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalFactorInputs
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -186,7 +186,7 @@ theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalFactorInpu
 /-- Interior coarse Caccioppoli from the separated radius-indexed factor
 inputs, localized explicit height, radius agreement, and standard multiscale
 ellipticity data. -/
-theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeFactorInputs_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeFactorInputs
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
@@ -242,7 +242,7 @@ theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeFactorInputs_of_mul
 /-- Interior coarse Caccioppoli from primitive separated radius-indexed factor
 inputs, localized explicit height, radius agreement, and standard multiscale
 ellipticity data. -/
-theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeSeparatedFactorInputs_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeSeparatedFactorInputs
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
@@ -300,7 +300,7 @@ theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeSeparatedFactorInpu
 /-- Interior coarse Caccioppoli from canonical `LambdaSq` factor inputs,
 localized explicit height, radius agreement, and standard multiscale
 ellipticity data. -/
-theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalFactorInputs_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalFactorInputs
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
@@ -357,7 +357,7 @@ theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalFactorInpu
 analytic/cutoff inputs plus the two remaining canonical coefficient bounds.
 This is the narrowest current final theorem surface before constructing the
 actual Chapter 3 cutoff family. -/
-theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -404,7 +404,7 @@ theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalAnalyticIn
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalFactorInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalFactorInputs
       Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B U Xi D A1 AS
       hC hs ht hst hu hnonneg hbounded hscale
       (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analyticInputs_of_coefficientBounds
@@ -416,7 +416,7 @@ theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalAnalyticIn
 
 /-- Interior coarse Caccioppoli from the split canonical interface, transported
 across the radius agreement used for the centered interior quantity. -/
-theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_coefficientBounds_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
@@ -464,7 +464,7 @@ theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticIn
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalFactorInputs_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalFactorInputs
       Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B U Xi D A1 AS
       hC hs ht hst hu hagree hG_nonneg hG_bounded hscale
       (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analyticInputs_of_coefficientBounds
@@ -478,7 +478,7 @@ theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticIn
 canonical coefficient bounds, localized explicit height, and the standard
 multiscale ellipticity data.  This packages the cutoff-generated vector field
 `ξ = ∇η` and its canonical `L^∞`/derivative bounds automatically. -/
-theorem coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_coefficientBounds
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -587,7 +587,7 @@ theorem coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_coefficientBoun
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs
       Q a s t C uL2Sq k flux u g
       (fun ρ₁ ρ₂ => scalarCutoffGradientField (η ρ₁ ρ₂))
       energy Acirc1 AcircS
@@ -609,7 +609,7 @@ theorem coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_coefficientBoun
 /-- Interior coarse Caccioppoli from a quantitative cutoff family, the split
 canonical coefficient bounds, localized explicit height, radius agreement, and
 the standard multiscale ellipticity data. -/
-theorem coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_coefficientBounds_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_coefficientBounds
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
@@ -719,7 +719,7 @@ theorem coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_coefficientBoun
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_coefficientBounds_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs
       Q a s t C uL2Sq k flux u g
       (fun ρ₁ ρ₂ => scalarCutoffGradientField (η ρ₁ ρ₂))
       energy Acirc1 AcircS

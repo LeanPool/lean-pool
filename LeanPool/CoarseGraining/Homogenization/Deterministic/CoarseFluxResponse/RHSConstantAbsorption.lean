@@ -27,7 +27,7 @@ this leaf exposes the same hooks with a caller-supplied nonnegative multiplier.
 open scoped BigOperators ENNReal
 
 /-- Weak-flux radicand component budgets closing into `C * correctionBound`. -/
-theorem coarseFluxResponseRHSWeakFluxExpandedRadicand_zero_le_const_mul_correctionBound_sq_of_component_bounds
+theorem coarseFluxResponseRHSWeakFluxExpandedRadicand_zero_le_const_mul_correctionBound_sq
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (C s : ℝ)
     (g gradV : Vec d → Vec d) {BU BV Benergy BUtail BVtail Bforce : ℝ}
     (henergy :
@@ -102,7 +102,7 @@ theorem coarseFluxResponseRHSWeakFluxExpandedBound_le_const_mul_correctionBound_
       C * coarseFluxResponseRHSWeakFluxCorrectionBound Q a s g :=
   coarseFluxResponseRHSWeakFluxExpandedBound_le_const_mul_correctionBound_of_radicand_le_sq
     Q a g gradV 0 hC_nonneg hs havg_nonneg hBU_nonneg hBV_nonneg hgBdd
-    (coarseFluxResponseRHSWeakFluxExpandedRadicand_zero_le_const_mul_correctionBound_sq_of_component_bounds
+    (coarseFluxResponseRHSWeakFluxExpandedRadicand_zero_le_const_mul_correctionBound_sq
       Q a C s g gradV henergy hBU hBV hforce hsum)
 
 /--

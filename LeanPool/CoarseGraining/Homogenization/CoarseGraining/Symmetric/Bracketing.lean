@@ -51,7 +51,7 @@ theorem averagedSymmPartPlusCorrection_eq_volumeAverageMat_of_isSymmetricCoeffFi
 Symmetric harmonic-mean lower bound:
 `(average_U a^{-1})^{-1} ≤ sigmaStarCoarse(U; a)`.
 -/
-theorem harmonicMeanCoeffField_le_sigmaStarCoarse_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem harmonicMeanCoeffField_le_sigmaStarCoarse_of_isSymmetricCoeffField
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U) (hConv : IsOpenBoundedConvexDomain U)
     {a : CoeffField d} {lam Lam : ℝ}
@@ -73,7 +73,7 @@ theorem harmonicMeanCoeffField_le_sigmaStarCoarse_of_isSymmetricCoeffField_of_is
 The middle Dirichlet--Neumann ordering `sigmaStarCoarse(U; a) ≤
 sigmaCoarse(U; a)`, repackaged on the symmetric theorem surface.
 -/
-theorem sigmaStarCoarse_le_sigmaCoarse_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem sigmaStarCoarse_le_sigmaCoarse_of_isSymmetricCoeffField_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U) (hConv : IsOpenBoundedConvexDomain U)
     {a : CoeffField d} {lam Lam : ℝ}
@@ -100,7 +100,7 @@ theorem sigmaStarCoarse_le_sigmaCoarse_of_isSymmetricCoeffField_of_isEllipticFie
 Symmetric arithmetic-mean upper bound:
 `sigmaCoarse(U; a) ≤ average_U a`.
 -/
-theorem sigmaCoarse_le_volumeAverageMat_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem sigmaCoarse_le_volumeAverageMat_of_isSymmetricCoeffField_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U) (hConv : IsOpenBoundedConvexDomain U)
     {a : CoeffField d} {lam Lam : ℝ}

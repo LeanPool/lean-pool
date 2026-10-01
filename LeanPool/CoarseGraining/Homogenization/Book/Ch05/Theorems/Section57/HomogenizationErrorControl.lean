@@ -249,7 +249,7 @@ theorem limitNormalizedJProbeSum_le_four_normalizedProbeSum_of_aelocallyUniforml
 
 /-- One-cube bridge from the Chapter 2 normalized block-response maximum to the
 Section 5.7 finite normalized probe sum. -/
-theorem normalizedBlockResponseMax_scalarMatrix_le_limitNormalizedJNormalizedProbeSum_of_aelocallyUniformlyEllipticField
+theorem normalizedBlockResponseMax_scalarMatrix_le_limitNormalizedJNormalizedProbeSum
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hΓ : GammaSigmaCoarseGrainedEllipticity P hP hStruct)
@@ -381,7 +381,7 @@ theorem maxDescendantNormalizedBlockResponseAtScale_originCube_scalarMatrix_le_l
         R ∈ descendantsAtScale (originCube d ((m : ℕ) : ℤ)) ((n : ℕ) : ℤ) := by
       simpa [D] using hR
     have hone :=
-      normalizedBlockResponseMax_scalarMatrix_le_limitNormalizedJNormalizedProbeSum_of_aelocallyUniformlyEllipticField
+      normalizedBlockResponseMax_scalarMatrix_le_limitNormalizedJNormalizedProbeSum
         hP hStruct hΓ ha R
     have hloc :=
       limitNormalizedJNormalizedProbeSum_le_localizedLimitNormalizedJNormalizedProbeSumMax

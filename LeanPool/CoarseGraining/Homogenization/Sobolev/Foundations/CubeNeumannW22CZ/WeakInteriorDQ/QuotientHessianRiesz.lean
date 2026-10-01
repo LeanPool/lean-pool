@@ -301,7 +301,7 @@ theorem openCubeInnerOpenCubeQuotientHessianRieszRep_hasWeakPartialDerivOn_forwa
       simpa [ψ, xsub, S, Submodule.subtype] using
         h1WeakTestScalarL2Representative_toScalarL2 xsub
     have hpair :=
-      h.neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerOpenCube_eq_of_h1WeakTest_toScalarL2_eq_of_step_abs_le
+      h.neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerOpenCube_eq
         hf hV hstep i j η hη_sub hinnerV θ hVν hν_nonneg hνσ hσ₁_lt_one
         hσ₂_nonneg hσ₂_lt_one hstep_abs ψ φTest hψ_eq
     change

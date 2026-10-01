@@ -57,7 +57,7 @@ theorem memVectorL2_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVecto
 
 /-- Scalar reflected energy on the centered parent cube is `3^d` copies of
 the original cube energy. -/
-theorem setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sq_of_memScalarL2_three_pow
+theorem setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sq
     {F : Vec d → ℝ}
     (hF : MemScalarL2 (openCubeSet (originCube d m)) F) :
     ∫ x in openCubeSet (originCube d (m + 1)),

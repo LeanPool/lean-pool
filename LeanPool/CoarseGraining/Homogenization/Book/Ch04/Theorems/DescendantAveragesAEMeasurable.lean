@@ -135,7 +135,7 @@ private theorem inv_mul_const_sum_sqrt_scale_le
             rw [div_eq_mul_inv]
             ring
 
-theorem isBigO_gammaSigma_finsetSum_descendantsAtScaleScaleColorClass_of_restrictionUnitRangeDependentLaw_aemeasurable
+theorem isBigO_gammaSigma_finsetSum_descendantsAtScaleScaleColorClass
     {d : ℕ} {Q : TriadicCube d} {k : ℤ} {c : ScaleColor d k}
     {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P] {σ K : ℝ}
     (hP : RestrictionUnitRangeDependentLaw P)
@@ -295,7 +295,7 @@ theorem isBigO_gammaSigma_restrictionDescendantAverage_of_restrictionUnitRangeDe
           (gammaSigmaIndependentSumConst σ * Real.sqrt (classCount c) * K) := by
     intro c hc
     have hcolor :=
-      isBigO_gammaSigma_finsetSum_descendantsAtScaleScaleColorClass_of_restrictionUnitRangeDependentLaw_aemeasurable
+      isBigO_gammaSigma_finsetSum_descendantsAtScaleScaleColorClass
         (Q := Q) (k := k) (c := c) (P := P) hP hσ₀ hσ₂ hK X
         (fun R hR => hX_local R (mem_descendantsAtScaleScaleColorClass_iff.mp hR).1)
         (fun R hR => hX_aemeas R (mem_descendantsAtScaleScaleColorClass_iff.mp hR).1)

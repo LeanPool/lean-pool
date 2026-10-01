@@ -453,7 +453,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCo
 Descendant-cube full-seminorm recurrence from parent potential/solenoidal
 weak-flux data.  This is the local iteration-facing version of the centered
 Neumann-corrector construction. -/
-theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepEnergy_of_parent_potential_solenoidal_h1CoerciveEstimate
+theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepEnergy
     [NeZero d] {P R : TriadicCube d} {n : ℕ} {lam Lam s : ℝ}
     {u g : Vec d → Vec d}
     (hs : 0 < s)
@@ -617,7 +617,7 @@ Descendant-cube coefficient-energy recurrence with the corrector term replaced
 by the short centered Besov product bound.  The harmonic seminorm boundedness is
 returned as an input to the packaged step because the harmonic remainder is
 created by the local Neumann construction. -/
-theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepShortTerm_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepShortTerm
     [NeZero d] {P R : TriadicCube d} {n : ℕ} {lam Lam s : ℝ}
     {u g : Vec d → Vec d}
     (hs : 0 < s)
@@ -688,7 +688,7 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepShortTerm_of
 /--
 Descendant-cube recurrence with the short corrector product absorbed into
 quadratic `u`, harmonic, and forcing terms. -/
-theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedShortTerm_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedShortTerm
     [NeZero d] {P R : TriadicCube d} {n : ℕ} {lam Lam s η : ℝ}
     {u g : Vec d → Vec d}
     (hs : 0 < s) (hη : 0 < η)
@@ -762,7 +762,7 @@ PDE-facing full-seminorm local recurrence interface for the weak-flux RHS lane.
 
 This is the one-cube recurrence after constructing the centered Neumann
 corrector from an `H¹` RHS weak solution. -/
-theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepEnergy_of_h1DirichletRhsWeakSolutionOn
+theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepEnergy
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (g : Vec d → Vec d) (u : H1Function (cubeSet Q)) {s lam Lam : ℝ}
     (hs : 0 < s)
@@ -914,7 +914,7 @@ PDE-facing coefficient-energy recurrence with the corrector term replaced by
 the short centered Besov product bound.  As in the descendant-cube wrapper, the
 harmonic boundedness assumption is exposed after the harmonic remainder has
 been constructed. -/
-theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepShortTerm_of_h1DirichletRhsWeakSolutionOn_of_coarseData
+theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepShortTerm
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g : Vec d → Vec d) (u : H1Function (cubeSet Q)) {s lam Lam : ℝ}
     (hs : 0 < s)

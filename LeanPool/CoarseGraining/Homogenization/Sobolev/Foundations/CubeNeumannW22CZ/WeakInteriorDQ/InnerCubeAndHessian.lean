@@ -212,7 +212,7 @@ theorem abs_neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube
 
 /-- Open-cube version of the zero-seminorm well-definedness consequence for
 the quotient Hessian test functional. -/
-theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_eq_zero_of_l2_norm_zero_of_step_abs_le
+theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_eq_zero
     {Q : TriadicCube d} {uQ : H1Function (openCubeSet Q)} {f : Vec d → ℝ}
     (h : WeakPoissonEquationOn (openCubeSet Q) uQ f)
     (hf : MemScalarL2 (openCubeSet Q) f)

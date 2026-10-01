@@ -107,7 +107,7 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_cardInvSum
     cubeBesovDepthSeminorm Q 1 (2 : ℝ≥0∞) (fun x => u.grad x i) j ≤
       cubeBesovDepthWeight Q 1 j * (K * Bavg)
   exact
-    H.cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_of_descendantsAverage_volumeInvRpowHalf_hessianRow
+    H.cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul
       i j hC hK hBavg hfactor havg
 
 end HasWeakHessianOn

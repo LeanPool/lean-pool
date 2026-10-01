@@ -402,7 +402,7 @@ theorem openCubeInnerQuotientHessianSmoothTestReducedBound_le_originCubeParentRe
         (3 : ℝ) ^ d *
           ∫ y in openCubeSet Q, F y ^ 2 ∂MeasureTheory.volume := by
     simpa [Q, Qp, fP, pow_two] using
-      setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sq_of_memScalarL2_three_pow
+      setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sq
         (m := m) hFopen
   have hvalue_eq :
       ∫ x in openCubeSet Qp, uP.toFun x ^ 2 ∂MeasureTheory.volume =
@@ -420,7 +420,7 @@ theorem openCubeInnerQuotientHessianSmoothTestReducedBound_le_originCubeParentRe
             ∫ y in openCubeSet Q, W.w.toH1Function.toFun y ^ 2
               ∂MeasureTheory.volume := by
             simpa [Q, Qp, uPfun, pow_two] using
-              setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sq_of_memScalarL2_three_pow
+              setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sq
                 (m := m) hW
   have hgrad_coord_le :
       ∫ x in openCubeSet Qp, (uP.grad x i) ^ 2 ∂MeasureTheory.volume ≤

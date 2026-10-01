@@ -270,7 +270,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoin
 
 /-- Endpoint tail after discharging the lead, crude-bottom, and crude-top
 threshold side conditions by explicit ceilings. -/
-theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoint_tail_of_thresholds_and_prefactor_gap
+theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoint_tail
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Cfluct Ccrude Centry a : ℝ,

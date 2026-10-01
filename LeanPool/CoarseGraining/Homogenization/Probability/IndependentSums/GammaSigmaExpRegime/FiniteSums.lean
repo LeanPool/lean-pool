@@ -167,7 +167,7 @@ theorem mgf_finset_sum_le_exp_of_iIndepFun_of_gammaMomentGrowth_small_of_integra
 
 /-- Chernoff upper-tail estimate for finite independent sums of centered
 `Γ_σ` variables in the small-`λ` regime. -/
-theorem measureReal_upperTailEvent_finset_sum_le_exp_of_iIndepFun_of_gammaMomentGrowth_small_of_integral_eq_zero
+theorem measureReal_upperTailEvent_finset_sum_le_exp_of_iIndepFun
     [IsProbabilityMeasure μ]
     {ι : Type*} {X : ι → Ω → ℝ} {M : ι → ℝ} {s : Finset ι} {σ l a : ℝ}
     (h_indep : iIndepFun X μ)
@@ -240,7 +240,7 @@ theorem mgf_finset_sum_le_exp_card_mul_of_iIndepFun_of_gammaMomentGrowth_small_o
           rw [hsum]
 
 /-- Uniform-witness version of the finite-sum small-`λ` Chernoff estimate. -/
-theorem measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun_of_gammaMomentGrowth_small_of_integral_eq_zero
+theorem measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun
     [IsProbabilityMeasure μ]
     {ι : Type*} {X : ι → Ω → ℝ} {s : Finset ι} {σ M l a : ℝ}
     (h_indep : iIndepFun X μ)
@@ -252,7 +252,7 @@ theorem measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun_of_ga
     μ.real (upperTailEvent (fun ω => ∑ i ∈ s, X i ω) a) ≤
       Real.exp (-l * a + 2 * (s.card : ℝ) * (Real.exp 1 * M * l) ^ (2 : ℕ)) := by
   have hmain :=
-    measureReal_upperTailEvent_finset_sum_le_exp_of_iIndepFun_of_gammaMomentGrowth_small_of_integral_eq_zero
+    measureReal_upperTailEvent_finset_sum_le_exp_of_iIndepFun
       (μ := μ) (X := X) (M := fun _ : ι => M) (s := s) (σ := σ) (l := l) (a := a)
       h_indep h_meas hσ hl
       (fun _ _ => hM)
@@ -357,7 +357,7 @@ theorem isBigOWith_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_z
               field_simp [hM_pos.ne', hsqrtR_pos.ne']
               norm_num
     have htail :=
-      measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun_of_gammaMomentGrowth_small_of_integral_eq_zero
+      measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun
         (μ := μ) (X := X) (s := s) (σ := σ) (M := M) (l := l)
         (a := A * Real.sqrt R * K * t)
         h_indep h_meas hσ.le hM_pos.le hl_nonneg hl_small hXmean hXmom
@@ -764,7 +764,7 @@ theorem isBigOWith_gammaOne_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zer
     dsimp [l]
     positivity
   have htail :=
-    measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun_of_gammaMomentGrowth_small_of_integral_eq_zero
+    measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun
       (μ := μ) (X := X) (s := s) (σ := 1) (M := M) (l := l)
       (a := gammaOneExpRegimeConst * Real.sqrt R * K * t)
       h_indep h_meas le_rfl hM_nonneg hl_nonneg

@@ -194,7 +194,7 @@ theorem measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_isBigO_
   have hlL : l ≤ (1 / 2) * L ^ (σ - 1) := by
     rw [hlL_eq]
   have htail :=
-    measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one
+    measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_exp_neg
       (μ := μ) (X := X) (s := s) (σ := σ)
       (a := B * Real.sqrt R * t) (l := l) (L := L)
       h_indep h_meas h_int h_mean hσ₀ hσ₁ hX hl_nonneg hl_one hL_one hlL

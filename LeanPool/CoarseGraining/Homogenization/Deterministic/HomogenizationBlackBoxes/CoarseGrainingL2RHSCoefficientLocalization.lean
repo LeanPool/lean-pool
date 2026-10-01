@@ -761,7 +761,7 @@ theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_parent_coeff_mul
 Scalar §3.3 RHS comparison with the localized energy average and the
 scale-separated two-exponent forcing correction.
 -/
-theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBoundTwoExponent_of_bddAbove_of_isEllipticFieldOn_of_summable
+theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBoundTwoExponent
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s t : ℝ} (j : ℕ) (gradU g : Vec d → Vec d) {lam Lam : ℝ}
     (hs : 0 < s) (hst : s ≤ t)
@@ -831,7 +831,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBoundTw
 Scalar §3.3 RHS comparison with the localized energy average and the three
 forcing-correction coefficient localizations discharged internally.
 -/
-theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_bddAbove_of_isEllipticFieldOn_of_summable
+theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_bddAbove
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (gradU g : Vec d → Vec d) {lam Lam : ℝ}
     (hs : 0 < s)
@@ -919,7 +919,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse
       hdual Q a a0 sigma0 gradU gradV g j hs_pos hs_lt_one hsigma0 ha0eq hEll
       ha0 ha0symm hcomparison
     hdefect_bdd hRhs
-    (localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_bddAbove_of_isEllipticFieldOn_of_summable
+    (localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_bddAbove
       Q a a0 j gradU g hs_pos hEll henergy_int hgBdd hgBdd_desc
       hsumB hsumSigma)
 

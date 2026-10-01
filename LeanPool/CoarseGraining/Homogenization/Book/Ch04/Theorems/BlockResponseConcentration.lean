@@ -217,10 +217,10 @@ theorem blockJObservableCubeSetBlockVec_le_descendantsAverage_cubeSet_of_aelocal
   let R₂ : TriadicCube d → ℝ :=
     fun R => restrictionResponseJObservableCubeSet R (pStar + p) (qStar + q) (adjointReg a)
   have h1 :=
-    restrictionResponseJObservableCubeSet_le_descendantsAverage_cubeSet_of_aelocallyUniformlyEllipticField
+    restrictionResponseJObservableCubeSet_le_descendantsAverage_cubeSet
       (a := a) ha Q hk (p - pStar) (qStar - q)
   have h2 :=
-    restrictionResponseJObservableCubeSet_le_descendantsAverage_cubeSet_of_aelocallyUniformlyEllipticField
+    restrictionResponseJObservableCubeSet_le_descendantsAverage_cubeSet
       (a := adjointReg a) ha.adjointReg Q hk
       (pStar + p) (qStar + q)
   have hhalf_nonneg : 0 ≤ (1 / 2 : ℝ) := by norm_num
@@ -741,7 +741,7 @@ theorem isBigOWith_gammaSigma_blockJObservableCubeSetBlockVec_originCube_sub_int
         (gammaSigmaDescendantsAtScaleConst d n σ *
           (Real.sqrt ((descendantsAtScale Q n).card : ℝ) /
             ((descendantsAtScale Q n).card : ℝ)) * centerK) :=
-    isBigO_gammaSigma_restrictionCenteredDescendantAverageOnCube_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+    isBigO_gammaSigma_restrictionCenteredDescendantAverageOnCube
       (Q := Q) (n := n) (P := Pμ) hPμ hn hnQ hstat hdep X
       hX_local hX_cov hX0_aemeas hX_desc_aemeas hσ₀ hσ₂
       hcenterK_pos hcenter

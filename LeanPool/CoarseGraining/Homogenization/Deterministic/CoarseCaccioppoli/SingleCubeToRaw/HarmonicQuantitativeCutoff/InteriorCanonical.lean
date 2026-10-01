@@ -143,7 +143,7 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_coefficientBounds_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs
       Q a s t C uL2Sq k
       (fun ρ₁ ρ₂ x => matVecMul (a x) ((w ρ₁ ρ₂).toH1.grad x))
       (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1 x)
@@ -270,7 +270,7 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_coefficientBounds_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs
       Q a s t C uL2Sq k
       (fun ρ₁ ρ₂ x => matVecMul (a x) ((w ρ₁ ρ₂).toH1.grad x))
       (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1 x)
@@ -377,7 +377,7 @@ theorem
   have hs1 : s < 1 := by
     linarith
   refine
-    coarseCaccioppoli_interior_qone_of_boundary_noteEstimate_on_radiusSequence_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_boundary_noteEstimate_on_radiusSequence
       Q a s t C uL2Sq k hC hs ht hst hu hagree hG_nonneg hG_bounded hscale ?_
   intro n
   have hρ₁ := (coarseCaccioppoliRadiusSequence_mem_Icc n).1

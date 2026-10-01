@@ -505,7 +505,7 @@ theorem multiscale_ellipticity_lambdaSq_finite_inv_le_of_mem_descendantsAtScale 
           (lambdaSq Q s (.finite q) a)⁻¹ := by
       rw [hfactorEq]
 
-theorem multiscale_ellipticity_LambdaSq_finite_le_of_mem_descendantsAtScale_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem multiscale_ellipticity_LambdaSq_finite_le_of_mem_descendantsAtScale_of_lt
     {d : ℕ} [NeZero d] {Q R : TriadicCube d} {k : ℤ}
     (a : CoeffField d) {t s q : ℝ} {lam Lam : ℝ}
     (hq : 0 < q) (ht : 0 < t) (hts : t < s) (hR : R ∈ descendantsAtScale Q k)
@@ -544,7 +544,7 @@ theorem multiscale_ellipticity_LambdaSq_finite_le_of_mem_descendantsAtScale_of_l
               Q a hq ht hts hEll hData hsum_t
           · exact Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _
 
-theorem multiscale_ellipticity_lambdaSq_finite_inv_le_of_mem_descendantsAtScale_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem multiscale_ellipticity_lambdaSq_finite_inv_le_of_mem_descendantsAtScale_of_lt
     {d : ℕ} [NeZero d] {Q R : TriadicCube d} {k : ℤ}
     (a : CoeffField d) {t s q : ℝ} {lam Lam : ℝ}
     (hq : 0 < q) (ht : 0 < t) (hts : t < s) (hR : R ∈ descendantsAtScale Q k)

@@ -73,7 +73,7 @@ theorem abs_cubeAverage_le_descendantsAverage_of_local_abs_bounds
 
 /-- Descendant summation specialized to the Caccioppoli cutoff pairing.  The
 local estimates may come from any source, in particular from
-`abs_cubeAverage_vecDot_scalar_smul_le_singleCubeBoundaryNoteRhs_of_parentQuantitativeCutoff_on_descendant`. -/
+`abs_cubeAverage_vecDot_scalar_smul_le_singleCubeBoundaryNoteRhs`. -/
 theorem abs_cubeAverage_vecDot_scalar_smul_le_descendantsAverage_of_local_bounds
     {d : ℕ} (Q : TriadicCube d) (j : ℕ)
     (flux ξ : Vec d → Vec d) (u : Vec d → ℝ) (B : TriadicCube d → ℝ)
@@ -92,7 +92,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_descendantsAverage_of_local_bounds
 
 /-- If a cube lies outside the outer support of a quantitative cutoff, then
 the local cutoff-gradient flux pairing over that cube is zero. -/
-theorem cubeAverage_vecDot_scalar_smul_scalarCutoffGradientField_eq_zero_of_forall_notMem_scaledClosedCubeSet
+theorem cubeAverage_vecDot_scalar_smul_scalarCutoffGradientField_eq_zero
     {d : ℕ} {Q R : TriadicCube d} {ρ₁ ρ₂ : ℝ}
     (η : QuantitativeCubeCutoff Q ρ₁ ρ₂)
     (flux : Vec d → Vec d) (u : Vec d → ℝ)

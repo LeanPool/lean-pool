@@ -384,7 +384,7 @@ theorem exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_lowerIma
 states. Since `BlockResponseIntegrabilityData` supplies the flux `L²` control,
 this packages the lower-image promotion and half-pair reconstruction into one
 standalone theorem. -/
-theorem exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_integrabilityData_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_integrabilityData
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {X : BlockState d} (hConv : IsOpenBoundedConvexDomain U)
@@ -403,7 +403,7 @@ theorem exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_integrab
     exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_lowerImage_memVectorL2_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
       (a := a) hConv hX hLowerL2 hEll
 
-theorem volumeAverage_blockResponseIntegrand_eq_scalarResponse_sum_of_mem_responseSpace_of_lowerImage_isPotential_of_isEllipticFieldOn
+theorem volumeAverage_blockResponseIntegrand_eq_scalarResponse_sum_of_mem_responseSpace
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {X : BlockState d} {lam Lam : ℝ} (hU : MeasurableSet U)
     (hX : BlockResponseSpace a U X)

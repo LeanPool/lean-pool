@@ -231,7 +231,7 @@ theorem abs_cubeAverage_mul_projection_succ_projectionResidual_le_mul_cubeBesovC
           cubeLpNorm R q (cubeProjection Q (j + 1) g) *
             cubeBesovOscillation R (ENNReal.conjExponent q) f := by
       simpa [h, q] using
-        (abs_cubeAverage_mul_cubeProjectionResidual_le_mul_cubeLpNorm_cubeBesovOscillation_of_mem_descendantsAtDepth
+        (abs_cubeAverage_mul_cubeProjectionResidual_le_mul_cubeLpNorm_cubeBesovOscillation
         (Q := Q) (R := R) (j := j) (p := q) (f := cubeProjection Q (j + 1) g) (u := f)
           hR (hg R hR) hf' hq)
     simpa [hconj_q] using hlocal'

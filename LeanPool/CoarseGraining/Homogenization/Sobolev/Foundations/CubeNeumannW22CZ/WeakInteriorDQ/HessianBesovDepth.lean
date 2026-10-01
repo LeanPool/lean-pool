@@ -181,7 +181,7 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_descendantsAverage_v
 inputs explicit: a uniform bound `K` on
 `volume(R)^{-1/2} * PoincareConstant(R)`, and an `L²` descendant-average bound
 `B` on the restricted Hessian row. -/
-theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_of_descendantsAverage_volumeInvRpowHalf_hessianRow
+theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul
     (H : HasWeakHessianOn (openCubeSet Q) u) (i : Fin d) (j : ℕ)
     (hC :
       ∀ R ∈ descendantsAtDepth Q j, H1CoerciveEstimate (openCubeSet R))

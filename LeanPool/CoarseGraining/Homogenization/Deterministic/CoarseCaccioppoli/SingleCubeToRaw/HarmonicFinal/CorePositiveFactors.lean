@@ -489,7 +489,7 @@ theorem
     simp [Fintype.card_fin, Nat.pos_iff_ne_zero, NeZero.ne d]
   have hCeff_nonneg : 0 ≤ Ceff := (mul_pos hcard_pos hC).le
   exact
-    coarseCaccioppoli_boundary_qone_of_noteEstimate_on_radiusSequence_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_noteEstimate_on_radiusSequence
       Q a s t Ceff uL2Sq coarseCaccioppoliTriadicGapScale
       hCeff_nonneg hs ht hst hu
       (coarseCaccioppoliLocalizedEnergyRadiusProfile_nonneg Q hbase_nonneg)

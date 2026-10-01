@@ -391,7 +391,7 @@ theorem setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar
 
 /-- The reflected scalar cross pairing on the full reflection block, with the
 cell count normalized to `(3 : ℝ)^d`. -/
-theorem setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_mul_of_memScalarL2_three_pow
+theorem setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_mul
     {d : ℕ} {F U : Vec d → ℝ} (Q : TriadicCube d)
     (hF : MemScalarL2 (openCubeSet Q) F)
     (hU : MemScalarL2 (openCubeSet Q) U) :

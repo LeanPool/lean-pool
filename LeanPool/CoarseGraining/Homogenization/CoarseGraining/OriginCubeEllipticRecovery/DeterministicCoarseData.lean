@@ -86,7 +86,7 @@ Deterministic upper bound
 on the centered open cube, packaged directly from deterministic
 recovery-plus-ellipticity data.
 -/
-theorem bCoarse_le_averaged_symmPart_plus_correction_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
+theorem bCoarse_le_averaged_symmPart_plus_correction_openCubeSet_originCube
     {d : ℕ} [NeZero d] {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -155,7 +155,7 @@ Deterministic inverse-side harmonic-mean upper bound
 on the centered open cube, packaged directly from deterministic
 recovery-plus-ellipticity data.
 -/
-theorem sigmaStarInvCoarse_le_averaged_symmPart_inv_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
+theorem sigmaStarInvCoarse_le_averaged_symmPart_inv_openCubeSet_originCube
     {d : ℕ} [NeZero d] {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}

@@ -515,7 +515,7 @@ theorem cubeKBesovVectorDepthSeminorm_nonneg
     0 ≤ cubeKBesovVectorDepthSeminorm Q s F j :=
   Homogenization.cubeKBesovVectorDepthSeminorm_nonneg Q s F j
 
-theorem sqrt_cubeBesovOverlappingPositiveVectorDepthAverage_le_mul_cubeVectorKFunctional_of_forall_competitorValue
+theorem sqrt_cubeBesovOverlappingPositiveVectorDepthAverage_le_mul_cubeVectorKFunctional
     {d : ℕ} (Q : Cube d) (C : ℝ) (F : Vec d → Vec d) (j : ℕ)
     (hC : 0 ≤ C)
     (hcomp :
@@ -526,7 +526,7 @@ theorem sqrt_cubeBesovOverlappingPositiveVectorDepthAverage_le_mul_cubeVectorKFu
               (Real.rpow (3 : ℝ) (-(j : ℝ))) F G) :
     Real.sqrt (cubeBesovOverlappingPositiveVectorDepthAverage Q F j) ≤
       C * cubeVectorKFunctional Q (Real.rpow (3 : ℝ) (-(j : ℝ))) F :=
-  Homogenization.sqrt_cubeBesovOverlappingPositiveVectorDepthAverage_le_mul_cubeVectorKFunctional_of_forall_competitorValue
+  Homogenization.sqrt_cubeBesovOverlappingPositiveVectorDepthAverage_le_mul_cubeVectorKFunctional
     Q C F j hC hcomp
 
 theorem cubeBesovOverlappingPositiveVectorDepthSeminorm_le_mul_cubeKBesovVectorDepthSeminorm_of_forall_competitorValue

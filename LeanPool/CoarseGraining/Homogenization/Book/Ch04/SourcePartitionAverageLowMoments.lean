@@ -115,7 +115,7 @@ theorem integral_abs_sourceCenteredTranslatedDescendantAverage_le_of_sourceUnitR
               Real.sqrt ((descendantsAtScale (originCube d m) n).card : ℝ)) *
           (∫ a, |sourceCenteredObservable P X hX_int a| ^ (2 : ℝ) ∂P) ^ (2 : ℝ)⁻¹ := by
     simpa [hA_eq] using
-      (integral_abs_sourceCenteredTranslatedDescendantAverage_rpow_rpow_inv_le_of_sourceUnitRangeDependentLaw
+      (integral_abs_sourceCenteredTranslatedDescendantAverage_rpow_rpow_inv_le
         (P := P) (p := 2) hn hnm hPstat hPdep X hX_local hX_int (by norm_num) hX02_int)
   have hX0_l2_le_lξ :
       (∫ a, |sourceCenteredObservable P X hX_int a| ^ (2 : ℝ) ∂P) ^ (2 : ℝ)⁻¹ ≤

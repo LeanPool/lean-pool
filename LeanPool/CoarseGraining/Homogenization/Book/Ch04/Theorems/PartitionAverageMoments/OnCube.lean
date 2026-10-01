@@ -226,7 +226,7 @@ theorem integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_
       simpa [hint] using hY0Lp
     simpa [Z, Y] using hYR
   have hsum :=
-    integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_descendantsAtScale_of_restrictionUnitRangeDependentLaw
+    integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_descendantsAtScale
       (Q := Q) (k := n) (P := P)
       hPdep hp hK_nonneg Z hZ_local hZ_aemeas hZ_int hZ_mean hZ_bound
   have haverage : restrictionCenteredDescendantAverageOnCube P Q n X =ᵐ[P]
@@ -430,7 +430,7 @@ theorem integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_
         simp [ha])
     simpa [hint] using hZraw_bound R hR
   have hsum :=
-    integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_descendantsAtScale_of_restrictionUnitRangeDependentLaw
+    integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_descendantsAtScale
       (Q := Q) (k := n) (P := P)
       hPdep hp hK_nonneg Z
       (by intro R hR; exact hZ_local R (by simpa [D] using hR))

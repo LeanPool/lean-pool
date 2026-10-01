@@ -637,7 +637,7 @@ theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_i
 summands.  This is the completed-law version used by Chapter 4 local-test
 observables: independence is kept on the original local observables, while the
 proof applies the measurable-mk representatives internally. -/
-theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero_aemeasurable
+theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p : ℕ} {K : ℝ}
     (hp : 2 ≤ p)

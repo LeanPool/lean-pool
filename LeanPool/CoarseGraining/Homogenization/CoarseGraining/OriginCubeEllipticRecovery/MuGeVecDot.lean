@@ -334,7 +334,7 @@ theorem
   have hCouple :
       blockEnergyAverage U a Xpair = ResponseJ U 0 q0 a := by
     simpa [U, Xpair] using
-      blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_zero_of_pairingAverage_eq_zero_of_firstVariation_eq_zero
+      blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_zero
         (a := a) (measurableSet_openCubeSet (originCube d n)) hEll q0 u v hPair hfirst
   calc
     Mu (openCubeSet (originCube d n)) (0, q0) a = Mu U (0, q0) a := by rfl
@@ -478,7 +478,7 @@ theorem
   have hCouple :
       blockEnergyAverage U a Xpair = ResponseJ U p0 0 a := by
     simpa [U, Xpair] using
-      blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_left_zero_of_pairingAverage_eq_zero_of_firstVariation_neg_left_zero
+      blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_left_zero
         (a := a) hEll p0 u v hPair hfirst
   calc
     Mu (openCubeSet (originCube d n)) (p0, 0) a = Mu U (p0, 0) a := by rfl
@@ -575,7 +575,7 @@ theorem
   have hCouple :
       blockEnergyAverage U a Xpair = ResponseJ U p0 q0 a - (-vecDot p0 q0) := by
     simpa [U, Xpair] using
-      blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_sub_pairing_of_pairingAverage_eq_of_firstVariation_eq_zero
+      blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_sub_pairing
         (a := a) hEll p0 q0 u v (-vecDot p0 q0) hPair hfirst
   have hMu :
       Mu U (-p0, q0) a = ResponseJ U p0 q0 a + vecDot p0 q0 := by

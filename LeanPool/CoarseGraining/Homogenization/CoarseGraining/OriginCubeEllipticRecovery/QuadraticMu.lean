@@ -302,7 +302,7 @@ then the full mixed response identity
 `ResponseJ(U;p,q,a) = Mu(U;(-p,q),a) - p·q` upgrades directly to the public
 response-side block-quadratic package.
 -/
-theorem hasOriginCubeResponseJBlockQuadraticDataAtScale_of_hasQuadraticMu_of_responseJ_eq_mu_neg_left_sub_vecDot
+theorem hasOriginCubeResponseJBlockQuadraticDataAtScale_of_hasQuadraticMu
     {d : ℕ} {n m : ℤ} {lam Lam : ℝ} {a : CoeffField d}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d m)) a)
     (hQuadQ : HasQuadraticMu (openCubeSet (originCube d m)) a)
@@ -388,7 +388,7 @@ scale-`n` descendants, then the exact pure-flux identities
 `Mu(U; (0, q), a) = ResponseJ(U; 0, q, a)` upgrade directly to the public
 response-side `\sigma_*^{-1}` slice package.
 -/
-theorem hasOriginCubeResponseJPureFluxQuadraticDataAtScale_of_hasQuadraticMu_of_mu_zero_right_eq_responseJ_zero
+theorem hasOriginCubeResponseJPureFluxQuadraticDataAtScale_of_hasQuadraticMu
     {d : ℕ} {n m : ℤ} {lam Lam : ℝ} {a : CoeffField d}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d m)) a)
     (hQuadQ : HasQuadraticMu (openCubeSet (originCube d m)) a)
@@ -433,7 +433,7 @@ scale-`n` descendants, then the exact pure-gradient identities
 `Mu(U; (p, 0), a) = ResponseJ(U; p, 0, a)` upgrade directly to the public
 response-side `B` slice package.
 -/
-theorem hasOriginCubeResponseJPureGradientQuadraticDataAtScale_of_hasQuadraticMu_of_mu_left_zero_eq_responseJ_zero
+theorem hasOriginCubeResponseJPureGradientQuadraticDataAtScale_of_hasQuadraticMu
     {d : ℕ} {n m : ℤ} {lam Lam : ℝ} {a : CoeffField d}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d m)) a)
     (hQuadQ : HasQuadraticMu (openCubeSet (originCube d m)) a)

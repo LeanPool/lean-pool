@@ -60,7 +60,7 @@ private theorem cubeSet_descendant_eq_translate_origin_of_nonneg
             simp [hscaleR]
   exact hshift
 
-theorem isBigO_gammaSigma_restrictionCenteredDescendantAverageOnCube_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+theorem isBigO_gammaSigma_restrictionCenteredDescendantAverageOnCube
     {d : ℕ} {Q : TriadicCube d} {n : ℤ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
     {σ K : ℝ}
     (hP : RestrictionLawCarrier P)

@@ -174,7 +174,7 @@ theorem MuCorrectionSpaceRecoveryData.mu_zero_right_eq_responseJ_zero_of_isEllip
   have hCouple :
       blockEnergyAverage U a Xpair = ResponseJ U 0 q0 a := by
     simpa [Xpair] using
-      blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_zero_of_pairingAverage_eq_zero_of_firstVariation_eq_zero
+      blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_zero
         (a := a) hU.1 hEll q0 u v hPair hfirst
   calc
     Mu U (0, q0) a = blockEnergyAverage U a Xrec := hEnergyRec.symm
@@ -373,7 +373,7 @@ theorem MuCorrectionSpaceRecoveryData.mu_left_zero_eq_responseJ_zero_of_isEllipt
   have hCouple :
       blockEnergyAverage U a Xpair = ResponseJ U p0 0 a := by
     simpa [Xpair] using
-      blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_left_zero_of_pairingAverage_eq_zero_of_firstVariation_neg_left_zero
+      blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_left_zero
         (a := a) hEll p0 u v hPair hfirst
   calc
     Mu U (p0, 0) a = blockEnergyAverage U a Xrec := hEnergyRec.symm
@@ -489,7 +489,7 @@ theorem MuCorrectionSpaceRecoveryData.responseJ_eq_mu_neg_left_sub_vecDot_of_isE
   have hCouple :
       blockEnergyAverage U a Xpair = ResponseJ U p0 q0 a - (-vecDot p0 q0) := by
     simpa [Xpair] using
-      blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_sub_pairing_of_pairingAverage_eq_of_firstVariation_eq_zero
+      blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_sub_pairing
         (a := a) hEll p0 q0 u v (-vecDot p0 q0) hPair hfirst
   have hMu :
       Mu U (-p0, q0) a = ResponseJ U p0 q0 a + vecDot p0 q0 := by
@@ -556,7 +556,7 @@ theorem MuCorrectionSpaceRecoveryData.volumeAverage_blockResponseIntegrand_eq_sc
     R.recoveredField_lowerImage_isPotential_zero_right_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
       system hConv hEll hvol q0
   exact
-    volumeAverage_blockResponseIntegrand_eq_scalarResponse_sum_of_mem_responseSpace_of_lowerImage_isPotential_of_isEllipticFieldOn
+    volumeAverage_blockResponseIntegrand_eq_scalarResponse_sum_of_mem_responseSpace
       (a := a) hU.1 hResp hLower hEll p pStar q qStar
 
 /-- Convex-domain direct scalar-response splitting for a general recovered
@@ -594,7 +594,7 @@ theorem MuCorrectionSpaceRecoveryData.volumeAverage_blockResponseIntegrand_eq_sc
     R.recoveredField_lowerImage_isPotential_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
       system hConv hEll hvol P
   exact
-    volumeAverage_blockResponseIntegrand_eq_scalarResponse_sum_of_mem_responseSpace_of_lowerImage_isPotential_of_isEllipticFieldOn
+    volumeAverage_blockResponseIntegrand_eq_scalarResponse_sum_of_mem_responseSpace
       (a := a) hU.1 hResp hLower hEll p pStar q qStar
 
 end

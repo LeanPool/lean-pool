@@ -28,7 +28,7 @@ noncomputable section
 
 /-- The real-exponent moment of a centered source partition average is bounded
 using only the centered moment of its one origin observable. -/
-theorem integral_abs_sourceCenteredTranslatedDescendantAverage_rpow_rpow_inv_le_of_sourceUnitRangeDependentLaw
+theorem integral_abs_sourceCenteredTranslatedDescendantAverage_rpow_rpow_inv_le
     {d : ℕ} {n m : ℤ} {P : SourceCoeffLaw d} [IsProbabilityMeasure P] {p : ℝ}
     (hn : 0 ≤ n) (hnm : n ≤ m)
     (hPstat : SourceStationaryLaw P) (hPdep : SourceUnitRangeDependentLaw P)
@@ -121,7 +121,7 @@ theorem integral_abs_sourceCenteredTranslatedDescendantAverage_rpow_rpow_inv_le_
           (fun a => |sourceCenteredObservable P X hX_int a| ^ p) hX0p_meas)
     rw [hmoment_eq]
   have hsum :=
-    integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_uniform_descendantsAtScale_of_sourceUnitRangeDependentLaw
+    integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_uniform_descendantsAtScale
       (Q := originCube d m) (k := n) (P := P) hPdep hp
       (by positivity : 0 ≤ (∫ a, |sourceCenteredObservable P X hX_int a| ^ p ∂P) ^ p⁻¹)
       Z

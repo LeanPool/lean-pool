@@ -345,7 +345,7 @@ theorem canonicalScalarResponseGradientAverageCubeSet_eq_cubeAverageVec_canonica
     (Ch02.doubledMuTheory (Ch02.cubeDomain Q) aQ).minimizer_exists (-p, q)
   let Xold : BlockState d := { potential := X.potential, flux := X.flux }
   obtain ⟨hAdm, hHilbert⟩ :=
-    exists_isBlockMuAdmissible_cubeSet_and_hilbert_eq_canonicalAEEMuHilbertMinimizer_of_isDoubledMuMinimizer
+    exists_isBlockMuAdmissible_cubeSet_and_hilbert_eq_canonicalAEEMuHilbertMinimizer
       Q k aSlice (-p, q) aQ haQ hX
   have hRQ : cubeSet R ⊆ cubeSet Q :=
     cubeSet_subset_of_mem_descendantsAtDepth hR
@@ -543,7 +543,7 @@ theorem canonicalScalarResponseFluxAverageCubeSet_eq_cubeAverageVec_canonicalMax
     (Ch02.doubledMuTheory (Ch02.cubeDomain Q) aQ).minimizer_exists (-p, q)
   let Xold : BlockState d := { potential := X.potential, flux := X.flux }
   obtain ⟨hAdm, hHilbert⟩ :=
-    exists_isBlockMuAdmissible_cubeSet_and_hilbert_eq_canonicalAEEMuHilbertMinimizer_of_isDoubledMuMinimizer
+    exists_isBlockMuAdmissible_cubeSet_and_hilbert_eq_canonicalAEEMuHilbertMinimizer
       Q k aSlice (-p, q) aQ haQ hX
   have hRQ : cubeSet R ⊆ cubeSet Q :=
     cubeSet_subset_of_mem_descendantsAtDepth hR

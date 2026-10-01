@@ -505,7 +505,7 @@ theorem zeroTraceDirichletHarmonicRemainderRhoEnergyAverage_le_raw_lambdaInv_sq
             (cubeBesovPositiveVectorSeminormTwo Q s g) ^ 2) := by
           dsimp [N, L, G]
 
-theorem zeroTraceDirichletHarmonicRemainderScaledAveragedTail_le_of_selectors_corrector_energy_and_neumann_young_average_bounds
+theorem zeroTraceDirichletHarmonicRemainderScaledAveragedTail_le
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
     {g : Vec d → Vec d} (ρ : ZeroTraceDirichletCorrectorData Q a g)
     (s : ℝ) {BV Bρ BωNeg BωForce lam Lam : ℝ}

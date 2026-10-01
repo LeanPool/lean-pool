@@ -37,7 +37,7 @@ selection or deterministic bridge layers.
 
 noncomputable section
 
-theorem weakFluxRHSHarmonicRemainderScaledAveragedSeminormSq_le_four_mul_add_of_decomposition_and_neumann_tail
+theorem weakFluxRHSHarmonicRemainderScaledAveragedSeminormSq_le_four_mul_add
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
     {s : ℝ} {g u : Vec d → Vec d}
     (v : TriadicCube d → Vec d → Vec d)
@@ -200,7 +200,7 @@ theorem weakFluxRHSHarmonicRemainderScaledAveragedSeminormSq_le_four_mul_add_of_
 /-- Public forced-solution specialization of the harmonic-remainder `BV`
 closure: the original-gradient tail is supplied by the public coarse-Poincare
 RHS budget, so only the selected Neumann-corrector tail remains explicit. -/
-theorem forcedSolution_harmonicRemainderScaledAveragedSeminormSq_le_four_mul_add_of_decomposition_and_neumann_tail
+theorem forcedSolution_harmonicRemainderScaledAveragedSeminormSq_le_four_mul_add
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
     {s : ℝ} {g : Vec d → Vec d} (u : ForcedCubeSolution Q a g)
     (v : TriadicCube d → Vec d → Vec d)
@@ -226,7 +226,7 @@ theorem forcedSolution_harmonicRemainderScaledAveragedSeminormSq_le_four_mul_add
       weakFluxRHSHarmonicRemainderScaledAveragedSeminormSq Q s v n ≤
         4 * (forcedSolutionWeakFluxPoincareTailBudget Q a s u + Bω) := by
   refine
-    weakFluxRHSHarmonicRemainderScaledAveragedSeminormSq_le_four_mul_add_of_decomposition_and_neumann_tail
+    weakFluxRHSHarmonicRemainderScaledAveragedSeminormSq_le_four_mul_add
       (Q := Q) (a := publicCoeffField Q a) (s := s) (g := g)
       (u := forcedSolutionGradientField u) v ω
       (BU := forcedSolutionWeakFluxPoincareTailBudget Q a s u) (Bω := Bω)
@@ -330,7 +330,7 @@ theorem exists_harmonicRemainderSelector_localizedForcedSolutionPublicFlux_le_we
   have hv_tail :
       ∀ n : ℕ,
         weakFluxRHSHarmonicRemainderScaledAveragedSeminormSq Q s v n ≤ BV :=
-    forcedSolution_harmonicRemainderScaledAveragedSeminormSq_le_four_mul_add_of_decomposition_and_neumann_tail
+    forcedSolution_harmonicRemainderScaledAveragedSeminormSq_le_four_mul_add
       (Q := Q) (a := a) (s := s) (g := g) u v ω hs hs_lt hg hdecomp hω_tail
   simpa [BV] using hflux (fun k => hv_tail (m + k))
 

@@ -369,7 +369,7 @@ theorem scalarSolutionComparisonGenuineDualityEstimateSharpLoss_of_component_ful
       cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q t
           (fun x => matVecMul (scalarMatrix (d := d) sigma0) (w x)) ≤
         cubeBesovScaleWeight t Q * ((Fintype.card (Fin d) : ℝ) * B) :=
-    cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul_of_forall_component_fullTest_pairing_le
+    cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul
       Q t (fun x => matVecMul (scalarMatrix (d := d) sigma0) (w x))
       (B := B)
       (fun i g hg => by
@@ -379,7 +379,7 @@ theorem scalarSolutionComparisonGenuineDualityEstimateSharpLoss_of_component_ful
       cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q t
           (fun x => matVecMul (scalarMatrix (d := d) sigma0) (w x) + F x) ≤
         cubeBesovScaleWeight t Q * ((Fintype.card (Fin d) : ℝ) * B) :=
-    cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul_of_forall_component_fullTest_pairing_le
+    cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul
       Q t (fun x => matVecMul (scalarMatrix (d := d) sigma0) (w x) + F x)
       (B := B)
       (fun i g hg => by
@@ -438,7 +438,7 @@ Close the genuine-dual scalar solution-comparison estimate from the restored
 LaTeX argument, but using the honest low-exponent coordinate bridge with the
 sharp-boundary loss displayed.
 -/
-theorem scalarSolutionComparisonGenuineDualityEstimateSharpLoss_of_dirichletBesov_of_coordinateBridgeSharpLoss_of_localizedPairing
+theorem scalarSolutionComparisonGenuineDualityEstimateSharpLoss_of_dirichletBesov
     {d : ℕ} [NeZero d] {Cdir Cbridge Cpairing : ℝ}
     (hdir : DiscreteConstantCoefficientDirichletBesovFunctionSpacesUniform d Cdir)
     (hbridge : UnitFullDualCoordinateOverlappingBridgeSharpLoss d Cbridge)

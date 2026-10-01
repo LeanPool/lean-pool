@@ -76,7 +76,7 @@ theorem responseJ_eq_half_vecDot_sigmaCoarse_add_half_vecDot_sigmaStarInvCoarse_
 At the canonical symmetric coupling `q = sigmaStarCoarse p`, the response is
 one half of the gap between the two canonical coarse matrices.
 -/
-theorem responseJ_sigmaStarCoarse_mul_eq_half_gap_openCubeSet_of_triadicCube_of_hasOpenCubeEllipticRecoveryData_of_isSymmetricCoeffField
+theorem responseJ_sigmaStarCoarse_mul_eq_half_gap_openCubeSet_of_triadicCube
     {d : ℕ} [NeZero d] (Q : TriadicCube d)
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d Q.scale)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -102,7 +102,7 @@ theorem responseJ_sigmaStarCoarse_mul_eq_half_gap_openCubeSet_of_triadicCube_of_
 Centered origin-cube symmetric harmonic-mean lower bound:
 `(average_Q a^{-1})^{-1} ≤ sigmaStarCoarse(Q; a)`.
 -/
-theorem harmonicMeanCoeffField_le_sigmaStarCoarse_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData_of_isSymmetricCoeffField
+theorem harmonicMeanCoeffField_le_sigmaStarCoarse_openCubeSet_originCube
     {d : ℕ} [NeZero d] {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}

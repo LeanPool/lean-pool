@@ -76,7 +76,7 @@ theorem maxDescendantBMatrixNormCoeffFieldAtScale_eq_sup_upperLeft_of_aelocallyU
           exact finsetSupReal_eq_sup' (descendantsAtScale Q k)
             (descendantsAtScale_nonempty Q hk) _
 
-theorem maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_eq_sup_lowerRight_of_aelocallyUniformlyEllipticField
+theorem maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_eq_sup_lowerRight
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale) :
@@ -380,7 +380,7 @@ theorem lowerLargeScaleRaw_sum_le_base_add_positiveExcess_sum
       matrixNorm_smul_one_eq_of_nonneg hbase
     by_cases ha : Ch04.AELocallyUniformlyEllipticField a
     · have hraw_eq :=
-        maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_eq_sup_lowerRight_of_aelocallyUniformlyEllipticField
+        maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_eq_sup_lowerRight
           (a := a) ha Qm hnle
       simpa [raw, excess, hcenter, hraw_eq] using
         max_sup'_sub_base_le_sup'_max_sub_base

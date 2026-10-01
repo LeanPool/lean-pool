@@ -137,7 +137,7 @@ private theorem boundary_publicCoreEnergy_le_eighteen_pow_mul_publicRHS_of_scale
   simpa [CalphaQ, CcrossQ, CalphaInternalQ, CcrossInternalQ, CnoteQ, halpha, hcross]
     using And.intro hCnote hbound
 
-private theorem interior_centered_publicCoreEnergy_le_eighteen_pow_mul_publicRHS_of_scale_zero_standardExplicitBudgetSplit
+private theorem interior_centered_publicCoreEnergy_le_eighteen_pow_mul_publicRHS
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
     (u : CubeSolution Q a) {s t : ℝ}
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -398,7 +398,7 @@ theorem interior_centered_publicCoreEnergy_le_publicRHS_of_scale_zero_of_unitSta
     coarseCaccioppoliBoundaryStandardExplicitNoteConstantSplit
       Q (pointwiseCoeffFor Q a) s t CalphaInternal CcrossInternal
   have hexact :=
-    interior_centered_publicCoreEnergy_le_eighteen_pow_mul_publicRHS_of_scale_zero_standardExplicitBudgetSplit
+    interior_centered_publicCoreEnergy_le_eighteen_pow_mul_publicRHS
       (Q := Q) (a := a) u hs ht hst hQscale
   have hexact' :
       0 ≤ Cnote ∧

@@ -575,7 +575,7 @@ corrector flux, and constant-coefficient corrector-gradient components have
 been bounded by the manuscript RHS, the split theorem yields the desired
 coarse-flux-response bound for `(a - a₀)∇u`.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseRHSBound_of_split_component_bounds
+theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseRHSBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU gradW gradV g : Vec d → Vec d)
     {BdefectW BfluxV Ba0V : ℝ}
@@ -845,7 +845,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendant
       Q a a0 s gradU g j hdefectU_bdd ?_
   intro R hR
   exact
-    cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseRHSBound_of_split_component_bounds
+    cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseRHSBound
       R a a0 s gradU gradW gradV g
       (hgrad R hR)
       (hdefectW_mem R hR) (hfluxV_mem R hR) (ha0V_mem R hR)

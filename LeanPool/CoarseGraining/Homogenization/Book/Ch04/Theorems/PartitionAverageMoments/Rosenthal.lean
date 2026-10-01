@@ -85,7 +85,7 @@ theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_descendantsAtSc
       simpa [Y] using
         (Finset.sum_attach (s := S) (f := fun R => X R a))
     have hmain :=
-      integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero_aemeasurable
+      integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun
         (μ := P) (X := Y) (s := S.attach) (K := K)
         hS_attach hp hK_nonneg h_indep
         (fun R => hX_aemeas R.1 R.2) hLp_int' h_mean' hK'
@@ -253,7 +253,7 @@ private lemma rosenthal_scaleColor_cardinality_bounds
 
 /-- Rosenthal's `L^p` bound for sums over all descendants at a fixed scale,
 using the restriction-local and restriction-unit-range interfaces. -/
-theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_descendantsAtScale_of_restrictionUnitRangeDependentLaw
+theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_descendantsAtScale
     {d : ℕ} {Q : TriadicCube d} {k : ℤ}
     {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
     {p : ℕ} {K : ℝ}

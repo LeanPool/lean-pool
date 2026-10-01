@@ -111,7 +111,7 @@ theorem memVectorL2_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVecto
 
 /-- Scalar reflected-difference energy on the centered parent cube is `3^d`
 copies of the original difference energy. -/
-theorem setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sub_sq_of_memScalarL2_three_pow
+theorem setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sub_sq
     {F U : Vec d → ℝ}
     (hFU : MemScalarL2 (openCubeSet (originCube d m)) (fun x => F x - U x)) :
     ∫ x in openCubeSet (originCube d (m + 1)),
@@ -124,7 +124,7 @@ theorem setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScala
         ∫ y in openCubeSet (originCube d m),
           (F y - U y) * (F y - U y) ∂MeasureTheory.volume := by
   simpa using
-    setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sq_of_memScalarL2_three_pow
+    setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sq
       (m := m) (F := fun y => F y - U y) hFU
 
 /-- Vector reflected-difference energy on the centered parent cube is `3^d`
@@ -225,7 +225,7 @@ theorem tendsto_eLpNorm_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedS
     have hsq_eq :
         a ^ 2 = (3 : ℝ) ^ d * b ^ 2 := by
       have henergy :=
-        setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sub_sq_of_memScalarL2_three_pow
+        setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sub_sq
           (m := m) (F := F n) (U := U) (hFU n)
       rw [toReal_eLpNorm_two_sq_eq_integral_sq (hparent_mem n),
         toReal_eLpNorm_two_sq_eq_integral_sq (hFU n)]
@@ -267,7 +267,7 @@ theorem setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVecto
         ∫ y in openCubeSet (originCube d m),
           (G y j - H y j) * (G y j - H y j) ∂MeasureTheory.volume := by
   have hscalar :=
-    setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sub_sq_of_memScalarL2_three_pow
+    setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sub_sq
       (m := m) (F := fun y => G y j) (U := fun y => H y j) hGHj
   calc
     ∫ x in openCubeSet (originCube d (m + 1)),

@@ -102,7 +102,7 @@ theorem exists_quantitative_threshold_shiftedBadScaleEvent_quenchedProbeEnvelope
                 Real.exp (-(((3 : ℝ) ^ (q : ℝ) / Btail) ^ η)) := by
   obtain ⟨Cfluct, Ccrude, Centry, a,
       hCfluct, hCcrude, hCentry, ha, htail⟩ :=
-    measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoint_tail_of_thresholds_and_prefactor_gap
+    measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoint_tail
       (d := d) params
   refine ⟨Cfluct, Ccrude, Centry, a,
     hCfluct, hCcrude, hCentry, ha, ?_⟩

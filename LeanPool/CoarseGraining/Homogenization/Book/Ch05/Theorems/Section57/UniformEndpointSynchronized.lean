@@ -215,7 +215,7 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_soft_hig
 
 /-- Deterministic high-bottom fixed-pair cutoff at the uniform endpoint, with
 the raw endpoint crude bad-pair cutoff supplied externally. -/
-theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_eq_zero_of_crudeA_one_gammaInfinity_of_badPair_zero
+theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_eq_zero
     {d : ℕ} [NeZero d] {Ccrude : ℝ}
     (params : QuantitativeCoarseGrainedEllipticityParams d)
     (hCcrude : 0 < Ccrude)
