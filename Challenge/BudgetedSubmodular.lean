@@ -21,9 +21,10 @@ Estimated size: ~600 lines of Lean
 
 Informal statement:
 * `Challenge.BudgetedSubmodular.modifiedGreedy_approx` — For a monotone submodular set function F on
-  finite sets with F of the empty set equal to 0, positive costs and a budget B, the better of the
-  cost-benefit greedy set and the best single item that fits the budget has value at least (1 -
-  1/e)/2 times the value of every set whose total cost is at most B.
+  finite sets with F of the empty set equal to 0, positive costs, a budget B and a finite ground set
+  U, the better of the cost-benefit greedy set built from U and the best single item of U that fits
+  the budget has value at least (1 - 1/e)/2 times the value of every subset of U whose total cost is
+  at most B.
 -/
 
 public section
