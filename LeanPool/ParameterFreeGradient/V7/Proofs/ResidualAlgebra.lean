@@ -619,4 +619,114 @@ lemma norm_block (p : ℝ) (hp : 1 < p) (n : ℕ)
   rw [hindex, hden, hnorm]
   field_simp
 
+noncomputable def freeX (b : ScalarMatrix) (B : VectorSeq d) : VectorSeq d :=
+  fun k => Nat.rec (B 0)
+    (fun j previous => previous - weightedSum (j + 2) (b (j + 1)) B) k
+
+lemma freeX_recurrence (n : ℕ) (b : ScalarMatrix) (B : VectorSeq d) :
+    BelowXRecurrence n b B (freeX b B) := by
+  constructor
+  · rfl
+  · intro k hk
+    rfl
+
+lemma shifted_pairing_telescope (q : VectorSeq d) (g : Point d)
+    (j m : ℕ) :
+    (∑ l ∈ Finset.range m,
+      O3.pairing g (q (j + l) - q (j + l + 1))) =
+      O3.pairing g (q j - q (j + m)) := by
+  induction m with
+  | zero => simp [O3.pairing]
+  | succ m ih =>
+    rw [Finset.sum_range_succ, ih]
+    simp only [pairing_sub_right]
+    have hidx : j + (m + 1) = j + m + 1 := by omega
+    rw [hidx]
+    ring
+
+lemma dualP_pairing_path (n : ℕ) (hn : 1 ≤ n)
+    (u : ScalarSeq) (G q : VectorSeq d) :
+    (∑ k ∈ Finset.range n,
+      O3.pairing (dualP n u G k) (q k - q (k + 1))) =
+    (∑ k ∈ Finset.range n,
+      (1 / u (n - (k + 1))) *
+        O3.pairing (G (k + 1)) (q k - q (k + 1))) -
+    ∑ j ∈ Finset.range n,
+      (1 / u (n - (j + 1)) - 1 / u (n - j)) *
+        O3.pairing (G j) (q j - q n) := by
+  let delta : ScalarSeq := fun j =>
+    1 / u (n - (j + 1)) - 1 / u (n - j)
+  have hexpand :
+      (∑ k ∈ Finset.range n,
+        O3.pairing (dualP n u G k) (q k - q (k + 1))) =
+      (∑ k ∈ Finset.range n,
+        (1 / u (n - (k + 1))) *
+          O3.pairing (G (k + 1)) (q k - q (k + 1))) -
+      ∑ k ∈ Finset.range n,
+        ∑ j ∈ Finset.range (k + 1),
+          delta j * O3.pairing (G j) (q k - q (k + 1)) := by
+    rw [← Finset.sum_sub_distrib]
+    apply Finset.sum_congr rfl
+    intro k hk
+    rw [dualP, pairing_sub_left, pairing_smul_left,
+      pairing_weightedSum_left]
+  rw [hexpand]
+  congr 1
+  have htri := triangle_sum
+    (fun k j => delta j * O3.pairing (G j) (q k - q (k + 1))) (n - 1)
+  have hnsize : n - 1 + 1 = n := by omega
+  rw [hnsize] at htri
+  rw [← htri]
+  apply Finset.sum_congr rfl
+  intro j hj
+  have hjn : j < n := Finset.mem_range.mp hj
+  rw [← Finset.mul_sum]
+  have ht := shifted_pairing_telescope q (G j) j (n - j)
+  have hend : j + (n - j) = n := by omega
+  rw [hend] at ht
+  have hsize : n - 1 - j + 1 = n - j := by omega
+  rw [hsize]
+  rw [ht]
+
+lemma function_value_cancel (n : ℕ) (w F : ScalarSeq) :
+    w 0 * (F 0 - F n) -
+      (∑ k ∈ Finset.range n, (w (k + 1) - w k) * (F n - F k)) -
+      (∑ k ∈ Finset.range n, w (k + 1) * (F k - F (k + 1))) = 0 := by
+  have hdelta := sum_succ_sub n w
+  have hshift :
+      (∑ k ∈ Finset.range n, w (k + 1) * F (k + 1)) =
+      (∑ k ∈ Finset.range n, w k * F k) - w 0 * F 0 + w n * F n := by
+    let f : ℕ → ℝ := fun k => w k * F k
+    have h := Finset.sum_range_succ' f n
+    have h' := Finset.sum_range_succ f n
+    dsimp [f] at h h' ⊢
+    linarith
+  have hdeltaF :
+      (∑ k ∈ Finset.range n, (w (k + 1) - w k) * F k) =
+      (∑ k ∈ Finset.range n, w (k + 1) * F k) -
+        ∑ k ∈ Finset.range n, w k * F k := by
+    rw [← Finset.sum_sub_distrib]
+    apply Finset.sum_congr rfl
+    intro k hk
+    ring
+  have hlast :
+      (∑ k ∈ Finset.range n, w (k + 1) * (F k - F (k + 1))) =
+      (∑ k ∈ Finset.range n, w (k + 1) * F k) -
+        ∑ k ∈ Finset.range n, w (k + 1) * F (k + 1) := by
+    rw [← Finset.sum_sub_distrib]
+    apply Finset.sum_congr rfl
+    intro k hk
+    ring
+  have hmid :
+      (∑ k ∈ Finset.range n, (w (k + 1) - w k) * (F n - F k)) =
+      F n * (w n - w 0) -
+        ((∑ k ∈ Finset.range n, w (k + 1) * F k) -
+          ∑ k ∈ Finset.range n, w k * F k) := by
+    rw [← hdelta, ← hdeltaF]
+    rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
+    apply Finset.sum_congr rfl
+    intro k hk
+    ring
+  rw [hmid, hlast, hshift]
+  ring
 end V7.ResidualAlgebra
