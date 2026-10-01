@@ -194,7 +194,7 @@ challenges:
     status: open
     estimated_lines: 400
     statements:
-      - declaration: Challenge.TestingByBetting.ville_testing_by_betting
+      - declaration: Challenge.TestingByBetting.ville
         informal: >-
           Let X₁, X₂, … be real random variables adapted to a filtration (ℱₙ)
           on a probability space, with values in [-1, 1], such that the

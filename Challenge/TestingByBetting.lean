@@ -15,18 +15,18 @@ public import Mathlib.Probability.Process.Filtration
 
 Source: arxiv:2210.01948
 Proposed by: deadczarvc
-Open declarations: `Challenge.TestingByBetting.ville_testing_by_betting`
+Open declarations: `Challenge.TestingByBetting.ville`
 Tags: probability, martingales, sequential-testing, e-values
 MSC: 60G42, 62L10
 Estimated size: ~400 lines of Lean
 
 Informal statement:
-* `Challenge.TestingByBetting.ville_testing_by_betting` — Let X₁, X₂, … be real random variables
-  adapted to a filtration (ℱₙ) on a probability space, with values in [-1, 1], such that the
-  conditional expectation of Xₙ₊₁ given ℱₙ is at most 0 almost surely for every n. Let λ₁, λ₂, …
-  take values in [0, 1], with λₙ₊₁ measurable with respect to ℱₙ (predictable stakes), and let Wₙ =
-  ∏_{i < n} (1 + λᵢ₊₁ Xᵢ₊₁) be the wealth after n rounds (W₀ = 1). Then for every α > 0 the
-  probability that Wₙ ≥ 1/α for some n is at most α.
+* `Challenge.TestingByBetting.ville` — Let X₁, X₂, … be real random variables adapted to a
+  filtration (ℱₙ) on a probability space, with values in [-1, 1], such that the conditional
+  expectation of Xₙ₊₁ given ℱₙ is at most 0 almost surely for every n. Let λ₁, λ₂, … take values in
+  [0, 1], with λₙ₊₁ measurable with respect to ℱₙ (predictable stakes), and let Wₙ = ∏_{i < n} (1 +
+  λᵢ₊₁ Xᵢ₊₁) be the wealth after n rounds (W₀ = 1). Then for every α > 0 the probability that Wₙ ≥
+  1/α for some n is at most α.
 -/
 
 public section
@@ -38,7 +38,7 @@ namespace Challenge.TestingByBetting
 
 /-- Ville's inequality for testing by betting: under the null `E[Xₙ₊₁ | ℱₙ] ≤ 0`, the wealth of a
 bettor staking a predictable fraction `λₙ₊₁ ∈ [0, 1]` reaches `1/α` with probability at most `α`. -/
-theorem ville_testing_by_betting {Ω : Type*} {m0 : MeasurableSpace Ω}
+theorem ville {Ω : Type*} {m0 : MeasurableSpace Ω}
     (μ : Measure Ω) [IsProbabilityMeasure μ] (ℱ : Filtration ℕ m0)
     (X lam : ℕ → Ω → ℝ)
     (hX : Adapted ℱ X) (hXb : ∀ n ω, -1 ≤ X n ω ∧ X n ω ≤ 1)
