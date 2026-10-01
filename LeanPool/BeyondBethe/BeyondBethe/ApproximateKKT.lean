@@ -118,7 +118,7 @@ theorem abs_matrixCoordinate_le_of_sum_sq_le
 regularized maximizer.  The arithmetic hypothesis `4 g <= tau rho^2` is
 chosen so that every quantity can be selected rationally. -/
 theorem regularizedBetheMaximizer_coordinate_close_of_gap
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (hcard : 1 < Fintype.card ι)
     {τ g ρ : ℝ} (hτ : 0 < τ) (hρ : 0 ≤ ρ)
     (hscale : 4 * g ≤ τ * ρ ^ 2)
@@ -130,6 +130,7 @@ theorem regularizedBetheMaximizer_coordinate_close_of_gap
     (hgap : regularizedBetheObjective τ A X -
         regularizedBetheObjective τ A Y ≤ g)
     (i j : ι) : abs (X i j - Y i j) ≤ ρ := by
+  classical
   have hdist := regularizedBetheMaximizer_distance_sq_le_gap
     hcard hτ.le hX hY hmax
   have hsquares :
@@ -140,7 +141,7 @@ theorem regularizedBetheMaximizer_coordinate_close_of_gap
 /-- Objective accuracy plus a common interior floor controls the model error
 between the negative gradients at an approximate and an exact optimizer. -/
 theorem negativeGradient_close_of_objective_gap
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (hcard : 1 < Fintype.card ι)
     {τ g ρ δ : ℝ} (hτ : 0 < τ) (hτ1 : τ ≤ 1)
     (hρ : 0 ≤ ρ) (hδ : 0 < δ)
@@ -158,6 +159,7 @@ theorem negativeGradient_close_of_objective_gap
     (i j : ι) :
     abs (-regularizedBetheGradient τ A Y i j -
         -regularizedBetheGradient τ A X i j) ≤ 3 * ρ / δ := by
+  classical
   have hcoord := regularizedBetheMaximizer_coordinate_close_of_gap
     hcard hτ hρ hscale hX hY hmax hgap i j
   have hcoord' : abs (Y i j - X i j) ≤ ρ := by
@@ -177,7 +179,7 @@ an executable approximation to the negative gradient at the returned point
 `Y`.  Anchoring it produces explicit potentials; the signs and the derivative
 constant are incorporated in the displayed output potentials. -/
 theorem approximateLogKKT_of_objective_gap
-    {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
+    {ι : Type*} [Fintype ι] [Nonempty ι]
     (hcard : 1 < Fintype.card ι)
     {τ g ρ δ evaluationError : ℝ}
     (hτ : 0 < τ) (hτ1 : τ ≤ 1) (hρ : 0 ≤ ρ) (hδ : 0 < δ)
@@ -201,6 +203,7 @@ theorem approximateLogKKT_of_objective_gap
       (evaluationError + 4 * (evaluationError + 3 * ρ / δ)) τ A Y
       (fun i ↦ -anchoredRowPotential Gtilde j0 i + (2 + τ))
       (fun j ↦ -anchoredColumnPotential Gtilde i0 j0 j) := by
+  classical
   obtain ⟨R, C, hRC⟩ := exists_rowColumnPotentials_of_rectangle_identity
     (fun i j ↦ regularizedBetheGradient τ A X i j)
     (fun hik hjl ↦ regularizedGradient_rectangle_identity

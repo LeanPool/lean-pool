@@ -428,7 +428,7 @@ theorem machineMatchingInnerStep_bound {word state : List Bool}
         · rw [machineMatchingInnerNextSelected]
           cases hs : machineMatchingInnerSelectBit state with
           | nil =>
-              simpa [machineIfHead, Cobham.selectHead] using! hselected
+              simp [machineIfHead, Cobham.selectHead]
           | cons select rest =>
               cases select with
               | false =>

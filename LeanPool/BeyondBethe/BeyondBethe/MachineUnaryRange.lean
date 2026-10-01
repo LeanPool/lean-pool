@@ -252,7 +252,7 @@ theorem finRangeUnaryCode_length_le_bound (n : ℕ) :
   have heach : ∀ i ∈ List.finRange n,
       (finUnaryCode i).length ≤ n := by
     intro i _
-    simpa [finUnaryCode] using! i.isLt.le
+    simp [finUnaryCode]
   have hsum :
       ((List.finRange n).map fun i ↦ 2 * (finUnaryCode i).length + 2).sum ≤
         n * (2 * n + 2) := by

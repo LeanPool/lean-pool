@@ -59,8 +59,7 @@ theorem matrix_dimension_le_code_length {n : ℕ}
     calc
       _ = (machineMatrixRowsWord
           (rationalMatrixBinaryEncoding.encode ⟨n, A⟩)).length := by
-        simpa using! congrArg List.length
-          (machineMatrixRowsWord_encode A).symm
+        simp
       _ ≤ _ := by
         simpa only [machineMatrixRowsWord] using! machinePairSecond_length_le
           (rationalMatrixBinaryEncoding.encode ⟨n, A⟩)

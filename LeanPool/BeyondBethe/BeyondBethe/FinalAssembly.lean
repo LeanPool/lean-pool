@@ -184,11 +184,12 @@ theorem rationalSupportFactor_le_one
   · exact hB1 p.1 p.2
 
 theorem finset_prod_le_factor
-    {α : Type*} [DecidableEq α]
+    {α : Type*}
     {s : Finset α} {f : α → ℚ} {p : α}
     (hp : p ∈ s) (hpos : ∀ q ∈ s, 0 ≤ f q)
     (hone : ∀ q ∈ s, f q ≤ 1) :
     ∏ q ∈ s, f q ≤ f p := by
+  classical
   rw [← Finset.prod_erase_mul s f hp]
   have herase : ∏ q ∈ s.erase p, f q ≤ 1 :=
     Finset.prod_le_one₀

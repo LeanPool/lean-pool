@@ -177,7 +177,7 @@ theorem complementTM_rewind_and_flip (tm : TM n)
   -- Step 3: flip (1 step)
   have hne_flip : c_flip.state ≠ Sum.inr ComplementPhase.done := by rw [hst_flip]; nofun
   have hnostart_flip : c_flip.output.read ≠ Γ.start := by
-    simp [Tape.read, hhead_flip, hcells_flip, hcells_rw]
+    simp only [Tape.read, hhead_flip, hcells_flip, hcells_rw]
     exact hnostart 1 (by omega)
   have hne1 : c_halt.output.cells 1 ≠ Γ.start := hnostart 1 (by omega)
   have hstep3 : ∃ c_done, tm.complementTM.step c_flip = some c_done ∧

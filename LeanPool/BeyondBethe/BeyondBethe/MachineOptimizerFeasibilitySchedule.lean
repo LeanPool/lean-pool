@@ -311,7 +311,7 @@ theorem optimizerEllipsoidDimension_le_sourceLength {n : ℕ}
         (binaryListCode (binaryListCode rationalEntryBinaryCode) rows).length ≤
           word.length := by
       change rowsCode.length ≤ (pair n.bits rowsCode).length
-      simpa using! machinePairSecond_length_le (pair n.bits rowsCode)
+      simp
     have hcount : n ^ 2 = (rows.map List.length).sum := by
       simp only [rows, rationalMatrixRows, List.map_ofFn, List.sum_ofFn,
         Function.comp_apply, List.length_ofFn]

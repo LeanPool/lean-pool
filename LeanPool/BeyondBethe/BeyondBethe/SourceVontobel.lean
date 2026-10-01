@@ -59,12 +59,13 @@ private theorem tangent_coordinate_sq_div_complement_le
 
 /-- The Hessian inequality behind concavity of Vontobel's simplex entropy. -/
 theorem vontobel_tangent_hessian_nonpos
-    {ι : Type*} [DecidableEq ι] (s : Finset ι)
+    {ι : Type*} (s : Finset ι)
     (p v : ι → ℝ) (hp : ∀ i ∈ s, 0 < p i)
     (hplt : ∀ i ∈ s, p i < 1)
     (hpsum : ∑ i ∈ s, p i = 1) (hvsum : ∑ i ∈ s, v i = 0) :
     (∑ i ∈ s, v i ^ 2 / (1 - p i)) -
         ∑ i ∈ s, v i ^ 2 / p i ≤ 0 := by
+  classical
   have hcoord : ∀ i ∈ s,
       p i * (v i ^ 2 / (1 - p i)) ≤
         p i * ∑ j ∈ s.erase i, v j ^ 2 / p j := by
@@ -140,10 +141,11 @@ theorem probabilitySegment_sum
   ring
 
 theorem IsStrictProbabilityVector.lt_one_of_one_lt_card
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {p : ι → ℝ} (hp : IsStrictProbabilityVector p)
     (hcard : 1 < Fintype.card ι) (i : ι) :
     p i < 1 := by
+  classical
   obtain ⟨j, hji⟩ := Fintype.exists_ne_of_one_lt_card hcard i
   rw [← hp.1.sum_eq_one]
   calc
@@ -233,12 +235,13 @@ private theorem hasDerivAt_vontobelEntropyTerm_segment_deriv
 /-- Concavity along a segment whose second endpoint has full support.  This
 is the exact form first needed in the regularized-optimizer argument. -/
 theorem vontobelSimplexEntropy_segment_concave
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {p q : ι → ℝ} (hp : IsProbabilityVector p)
     (hq : IsStrictProbabilityVector q)
     (hcard : 1 < Fintype.card ι) :
     ConcaveOn ℝ (Set.Icc (0 : ℝ) 1)
       (fun t ↦ vontobelSimplexEntropy (probabilitySegment p q t)) := by
+  classical
   let f : ℝ → ℝ := fun t ↦
     vontobelSimplexEntropy (probabilitySegment p q t)
   let f' : ℝ → ℝ := fun t ↦ ∑ i,
@@ -292,7 +295,7 @@ theorem vontobelSimplexEntropy_segment_concave
 /-- Jensen form of Vontobel's entropy concavity when one endpoint has full
 support. -/
 theorem vontobelSimplexEntropy_segment_lower_of_right_strict
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {p q : ι → ℝ} (hp : IsProbabilityVector p)
     (hq : IsStrictProbabilityVector q)
     (hcard : 1 < Fintype.card ι)
@@ -300,6 +303,7 @@ theorem vontobelSimplexEntropy_segment_lower_of_right_strict
     (1 - t) * vontobelSimplexEntropy p +
         t * vontobelSimplexEntropy q ≤
       vontobelSimplexEntropy (probabilitySegment p q t) := by
+  classical
   have hc := (vontobelSimplexEntropy_segment_concave hp hq hcard).2
     (show (0 : ℝ) ∈ Set.Icc (0 : ℝ) 1 by simp)
     (show (1 : ℝ) ∈ Set.Icc (0 : ℝ) 1 by simp)
@@ -337,7 +341,7 @@ theorem uniformProbabilityVector_strict
 approximates the second endpoint by a full-support probability vector and
 passes to the boundary using continuity. -/
 theorem vontobelSimplexEntropy_segment_lower
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {p q : ι → ℝ} (hp : IsProbabilityVector p)
     (hq : IsProbabilityVector q)
     (hcard : 1 < Fintype.card ι)
@@ -345,6 +349,7 @@ theorem vontobelSimplexEntropy_segment_lower
     (1 - t) * vontobelSimplexEntropy p +
         t * vontobelSimplexEntropy q ≤
       vontobelSimplexEntropy (probabilitySegment p q t) := by
+  classical
   let : Nonempty ι := Fintype.card_pos_iff.mp (by omega)
   let u : ι → ℝ := uniformProbabilityVector ι
   let qs : ℝ → ι → ℝ := fun δ ↦ probabilitySegment q u δ
@@ -419,7 +424,7 @@ def betheMatrixSegment
 
 /-- Jensen inequality for the Bethe objective on the Birkhoff polytope. -/
 theorem betheObjective_segment_lower
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (hcard : 1 < Fintype.card ι)
     (A X Y : Matrix ι ι ℝ)
     (hX : IsDoublyStochastic X) (hY : IsDoublyStochastic Y)

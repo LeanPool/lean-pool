@@ -19,10 +19,11 @@ namespace BeyondBethe
 open MvPolynomial
 
 theorem prod_monomial
-    {σ ι : Type*} [DecidableEq ι]
+    {σ ι : Type*}
     (s : Finset ι) (e : ι → σ →₀ ℕ) (w : ι → ℝ) :
     ∏ i ∈ s, monomial (e i) (w i) =
       monomial (∑ i ∈ s, e i) (∏ i ∈ s, w i) := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>

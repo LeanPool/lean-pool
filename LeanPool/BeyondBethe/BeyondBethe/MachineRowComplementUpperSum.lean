@@ -574,7 +574,7 @@ theorem rawScheduledLogUpper_complement_width_le_query
       calc
         _ = (machineMatrixRowsWord
             (rationalMatrixBinaryEncoding.encode ⟨n, X⟩)).length := by
-          simpa using! congrArg List.length (machineMatrixRowsWord_encode X).symm
+          simp
         _ ≤ (rationalMatrixBinaryEncoding.encode ⟨n, X⟩).length := by
           simpa only [machineMatrixRowsWord] using! machinePairSecond_length_le
             (rationalMatrixBinaryEncoding.encode ⟨n, X⟩)

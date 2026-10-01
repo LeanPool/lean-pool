@@ -31,10 +31,11 @@ noncomputable def numericalObjectiveRange (n : ℕ) (m : ℝ) : ℝ :=
 /-- On a matrix with entries at most one, the Bethe objective is at most the
 total row entropy. -/
 theorem betheObjective_le_totalRowEntropy
-    {n : Type*} [Fintype n] [DecidableEq n]
+    {n : Type*} [Fintype n]
     {A X : Matrix n n ℝ} (hApos : Matrix.Positive A)
     (hAupper : ∀ i j, A i j ≤ 1) (hX : IsDoublyStochastic X) :
     betheObjective A X ≤ totalRowEntropy X := by
+  classical
   simp only [betheObjective, betheRowObjective, totalRowEntropy,
     shannonEntropy]
   apply Finset.sum_le_sum
@@ -53,11 +54,12 @@ theorem betheObjective_le_totalRowEntropy
 /-- A lower bound on the Bethe objective using only a common lower bound on
 the entries of the input matrix. -/
 theorem betheObjective_lower_of_entry_lower
-    {n : Type*} [Fintype n] [DecidableEq n]
+    {n : Type*} [Fintype n]
     {m : ℝ} (hm : 0 < m) {A X : Matrix n n ℝ}
     (hAlower : ∀ i j, m ≤ A i j) (hX : IsDoublyStochastic X) :
     Fintype.card n * Real.log m - Fintype.card n ≤
       betheObjective A X := by
+  classical
   simp only [betheObjective, betheRowObjective]
   calc
     Fintype.card n * Real.log m - Fintype.card n =

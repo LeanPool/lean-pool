@@ -87,7 +87,7 @@ theorem rationalStateAbsBound_zero_ball {d : ℕ} {R : ℚ}
         intro j _
         by_cases hij : i = j <;> simp [hij, abs_of_nonneg hR]
       _ = R := by
-        simpa using Fintype.sum_ite_eq i (fun _ : Fin d ↦ R)
+        simp
   have hsum :
       (∑ i : Fin d, ∑ j : Fin d, abs (if i = j then R else 0)) =
         ∑ _i : Fin d, R := by

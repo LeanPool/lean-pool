@@ -181,7 +181,7 @@ theorem roundedEllipsoidInflationFactor_den_dvd (d : ℕ) :
     exact_mod_cast hdenZ
   have hadd : (1 + roundedEllipsoidInflation d).den ∣
       (roundedEllipsoidInflation d).den := by
-    simpa using! Rat.add_den_dvd (1 : ℚ) (roundedEllipsoidInflation d)
+    simp
   exact hadd.trans hden
 
 theorem roundedEllipsoidInflationFactor_den_le {d : ℕ} (hd : 0 < d) :

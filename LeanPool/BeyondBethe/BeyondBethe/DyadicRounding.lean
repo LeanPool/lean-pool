@@ -96,7 +96,7 @@ theorem lt_dyadicFloor_add_mesh (p : ℕ) (q : ℚ) :
           1 / (2 : ℚ) ^ p =
         (((Int.floor (q * (2 : ℚ) ^ p) : ℤ) : ℚ) + 1) /
           (2 : ℚ) ^ p by rw [add_div]]
-  exact (lt_div_iff₀ hp).2 (by simpa [mul_comm] using hfloor)
+  exact (lt_div_iff₀ hp).2 (by simp)
 
 theorem dyadicFloor_error_nonneg (p : ℕ) (q : ℚ) :
     0 ≤ q - dyadicFloor p q := sub_nonneg.mpr (dyadicFloor_le p q)

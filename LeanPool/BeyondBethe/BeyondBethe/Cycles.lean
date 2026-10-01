@@ -524,12 +524,13 @@ encoding fiber has at most `2^m` assignments, the desired one-bit-per-cycle
 bound follows without any further probabilistic input. -/
 theorem coreEncoding_of_fiber_bound
     {Ω Y : Type*} [Fintype Ω] [Fintype Y]
-    [DecidableEq Ω] [DecidableEq Y]
+    [DecidableEq Y]
     {μ : Ω → ℝ} (hμ : IsProbabilityVector μ) (encode : Ω → Y)
     (m : ℕ)
     (hfiber : ∀ y, (Finset.univ.filter fun x ↦ encode x = y).card ≤ 2 ^ m) :
     shannonEntropy μ ≤
       shannonEntropy (pushforwardMass μ encode) + m * Real.log 2 := by
+  classical
   have h := entropy_le_pushforward_add_log_fiberBound hμ encode (2 ^ m)
     (Nat.one_le_pow m 2 (by norm_num)) hfiber
   rw [Nat.cast_pow, Nat.cast_ofNat, Real.log_pow] at h

@@ -162,7 +162,7 @@ theorem totalRowEntropy_segment_lower
 /-- Concavity of the entropy-regularized Bethe objective on the Birkhoff
 polytope. -/
 theorem regularizedBetheObjective_segment_lower
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (hcard : 1 < Fintype.card ι)
     {τ t : ℝ} (hτ : 0 ≤ τ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
     (A : Matrix ι ι ℝ) {X Y : Matrix ι ι ℝ}
@@ -170,6 +170,7 @@ theorem regularizedBetheObjective_segment_lower
     (1 - t) * regularizedBetheObjective τ A X +
         t * regularizedBetheObjective τ A Y ≤
       regularizedBetheObjective τ A (matrixSegment t X Y) := by
+  classical
   have hbethe := betheObjective_segment_lower hcard A X Y hX hY ht0 ht1
   have hsegment : betheMatrixSegment t X Y = matrixSegment t X Y := by
     ext i j
@@ -185,13 +186,14 @@ theorem regularizedBetheObjective_segment_lower
 /-- The one-dimensional restriction of the regularized objective to any
 Birkhoff segment is concave. -/
 theorem regularizedBetheObjective_line_concave
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (hcard : 1 < Fintype.card ι)
     {τ : ℝ} (hτ : 0 ≤ τ) (A : Matrix ι ι ℝ)
     {X Y : Matrix ι ι ℝ}
     (hX : IsDoublyStochastic X) (hY : IsDoublyStochastic Y) :
     ConcaveOn ℝ (Set.Icc (0 : ℝ) 1)
       (fun t ↦ regularizedBetheObjective τ A (matrixSegment t X Y)) := by
+  classical
   refine ⟨convex_Icc 0 1, ?_⟩
   intro x hx y hy a b ha hb hab
   have hsegX := matrixSegment_doublyStochastic hx.1 hx.2 hX hY
@@ -210,13 +212,14 @@ theorem regularizedBetheObjective_line_concave
 
 /-- First-order upper support inequality for the regularized objective. -/
 theorem regularizedBetheObjective_sub_le_gradient
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (hcard : 1 < Fintype.card ι)
     {τ : ℝ} (hτ : 0 ≤ τ) {A X Y : Matrix ι ι ℝ}
     (hX : IsDoublyStochastic X) (hY : IsDoublyStochastic Y)
     (hXint : ∀ i, IsInteriorProbabilityVector (X i)) :
     regularizedBetheObjective τ A Y - regularizedBetheObjective τ A X ≤
       ∑ i, ∑ j, regularizedBetheGradient τ A X i j * (Y i j - X i j) := by
+  classical
   have hderiv : HasDerivAt
       (fun t ↦ regularizedBetheObjective τ A (matrixSegment t X Y))
       (∑ i, ∑ j, regularizedBetheGradient τ A X i j *
@@ -247,7 +250,7 @@ theorem regularizedBetheObjective_sub_le_gradient
 /-- Exact logarithmic KKT equations are sufficient for global optimality of
 the regularized objective. -/
 theorem regularizedBetheObjective_le_of_logKKT
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (hcard : 1 < Fintype.card ι)
     {τ : ℝ} (hτ : 0 ≤ τ) {A X : Matrix ι ι ℝ}
     (hX : IsDoublyStochastic X)
@@ -256,6 +259,7 @@ theorem regularizedBetheObjective_le_of_logKKT
     ∀ Y, IsDoublyStochastic Y →
       regularizedBetheObjective τ A Y ≤
         regularizedBetheObjective τ A X := by
+  classical
   intro Y hY
   have hsupport := regularizedBetheObjective_sub_le_gradient
     (A := A) hcard hτ hX hY hXint
@@ -288,7 +292,7 @@ theorem regularizedBetheObjective_le_of_logKKT
 /-- The nearby KKT matrix makes the proposed interior doubly stochastic point
 an exact regularized optimizer. -/
 theorem nearbyKKTMatrix_exact_optimizer
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (hcard : 1 < Fintype.card ι)
     {τ : ℝ} (hτ : 0 ≤ τ) {X : Matrix ι ι ℝ}
     (hX : IsDoublyStochastic X)
@@ -297,6 +301,7 @@ theorem nearbyKKTMatrix_exact_optimizer
     ∀ Y, IsDoublyStochastic Y →
       regularizedBetheObjective τ (nearbyKKTMatrix τ X r c) Y ≤
         regularizedBetheObjective τ (nearbyKKTMatrix τ X r c) X := by
+  classical
   have hXpos : ∀ i j, 0 < X i j := fun i j ↦ (hXint i).2 j |>.1
   have hXlt : ∀ i j, X i j < 1 := fun i j ↦ (hXint i).2 j |>.2
   exact regularizedBetheObjective_le_of_logKKT hcard hτ hX hXint

@@ -246,10 +246,11 @@ theorem birkhoffAffineMap_interior
 /-- In a probability row with at least two coordinates, a common entry floor
 also gives the same floor for every complementary coordinate. -/
 theorem one_sub_entry_ge_of_common_floor
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (hcard : 1 < Fintype.card ι) {X : Matrix ι ι ℝ} {δ : ℝ}
     (hX : IsDoublyStochastic X) (hfloor : ∀ i j, δ ≤ X i j)
     (i j : ι) : δ ≤ 1 - X i j := by
+  classical
   obtain ⟨k, hkj⟩ := Fintype.exists_ne_of_one_lt_card hcard j
   have hkMem : k ∈ Finset.univ.erase j := by
     simp [hkj]

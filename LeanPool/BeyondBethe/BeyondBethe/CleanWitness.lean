@@ -793,7 +793,7 @@ theorem cleanWitness_outside_moment
         fun h ↦ h.elim l.ne_a hne
       have hlx : l ≠ x := Ne.symm hxl
       simp [f, l.ne_a, hlx])
-    simpa [f, l.ne_a] using hsingle
+    simp [l.ne_a]
   have hright :
       (∑ x : OutsideColumn a b,
         capacityWitnessMass ρ δa δb α (Sum.inr (Sum.inr x)) *
@@ -812,7 +812,7 @@ theorem cleanWitness_outside_moment
         fun h ↦ h.elim l.ne_b hne
       have hlx : l ≠ x := Ne.symm hxl
       simp [f, l.ne_b, hlx])
-    simpa [f, l.ne_b] using hsingle
+    simp [l.ne_b]
   rw [hleft, hright]
   exact capacityWitness_outside_marginal hρ hδsum l
 

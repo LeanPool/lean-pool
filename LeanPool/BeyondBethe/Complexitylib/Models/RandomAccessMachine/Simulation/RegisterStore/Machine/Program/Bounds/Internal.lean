@@ -1929,7 +1929,10 @@ private theorem initialInputLoopTime_le {m : ℕ}
             omega) (by
               simp only [List.length_cons] at hcount
               omega)
-          simp [initialInputLoopTime]
+          change
+            1 + TM.binarySuccTime address + 1 +
+              initialInputLoopTime tapes (address + 1) count rest ≤
+              (rest.length + 1 + 1) * (100 * (bound + 1) ^ 2)
           have hbody : 1 + TM.binarySuccTime address + 1 ≤
               100 * (bound + 1) ^ 2 := by nlinarith
           nlinarith
@@ -1939,7 +1942,11 @@ private theorem initialInputLoopTime_le {m : ℕ}
             omega) (by
               simp only [List.length_cons] at hcount
               omega)
-          simp [initialInputLoopTime]
+          change
+            1 + (rewindEntryEncodeRestoreTime (address, 1) + 1 +
+              TM.binarySuccTime count + 1 + TM.binarySuccTime address) + 1 +
+              initialInputLoopTime tapes (address + 1) (count + 1) rest ≤
+              (rest.length + 1 + 1) * (100 * (bound + 1) ^ 2)
           have hbody : 1 +
               (rewindEntryEncodeRestoreTime (address, 1) + 1 +
                 TM.binarySuccTime count + 1 + TM.binarySuccTime address) + 1 ≤

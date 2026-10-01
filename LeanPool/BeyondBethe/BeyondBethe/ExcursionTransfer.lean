@@ -44,7 +44,7 @@ theorem massOn_pos_of_nonempty
 
 /-- Exact entropy/KL decomposition behind paper (40). -/
 theorem transferCostOn_eq_entropy_add_KL
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     {s : Finset ι} (hs : s.Nonempty)
     {p u : ι → ℝ} (hp : ∀ i, 0 < p i) (hu : ∀ i, 0 < u i) :
     let ρ := massOn s p
@@ -53,6 +53,7 @@ theorem transferCostOn_eq_entropy_add_KL
     let uO : s → ℝ := fun i ↦ u i / W
     transferCostOn s p u =
       scaledConditionalEntropyOn s p + ρ * finiteKL pO uO - ρ * Real.log W := by
+  classical
   dsimp only
   have hρ : 0 < massOn s p := massOn_pos_of_nonempty hs hp
   have hW : 0 < massOn s u := massOn_pos_of_nonempty hs hu
@@ -91,10 +92,11 @@ theorem transferCostOn_eq_entropy_add_KL
   ring
 
 theorem normalizedOutside_isProbabilityVector
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     {s : Finset ι} (hs : s.Nonempty)
     {p : ι → ℝ} (hp : ∀ i, 0 < p i) :
     IsProbabilityVector (fun i : s ↦ p i / massOn s p) := by
+  classical
   have hρ : 0 < massOn s p := massOn_pos_of_nonempty hs hp
   constructor
   · intro i
@@ -111,12 +113,13 @@ theorem normalizedOutside_isProbabilityVector
 /-- Paper tail-transfer inequality (41), before substituting the entropy of
 the coarsened row.  The theorem includes the empty-set/zero-mass case. -/
 theorem scaledConditionalEntropyOn_sub_mass_le_transferCostOn
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (s : Finset ι) {p u : ι → ℝ}
     (hp : ∀ i, 0 < p i) (hu : ∀ i, 0 < u i)
     (hUsum : massOn s u ≤ Real.exp 1) :
     scaledConditionalEntropyOn s p - massOn s p ≤
       transferCostOn s p u := by
+  classical
   by_cases hs : s.Nonempty
   · have hρ : 0 < massOn s p := massOn_pos_of_nonempty hs hp
     have hW : 0 < massOn s u := massOn_pos_of_nonempty hs hu
@@ -147,12 +150,13 @@ noncomputable def coarsenedRowEntropy
   binaryEntropy (massOn outside p) + scaledConditionalEntropyOn outside p
 
 theorem coarsenedRowEntropy_sub_binary_sub_mass_le_transferCostOn
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (outside : Finset ι) {p u : ι → ℝ}
     (hp : ∀ i, 0 < p i) (hu : ∀ i, 0 < u i)
     (hUsum : massOn outside u ≤ Real.exp 1) :
     coarsenedRowEntropy outside p - binaryEntropy (massOn outside p) -
         massOn outside p ≤ transferCostOn outside p u := by
+  classical
   rw [coarsenedRowEntropy]
   convert scaledConditionalEntropyOn_sub_mass_le_transferCostOn outside hp hu hUsum using 1;
     ring

@@ -110,7 +110,7 @@ theorem totalRowEntropy_segment_quadratic
 
 /-- Strong-concavity form of the regularized Bethe segment inequality. -/
 theorem regularizedBetheObjective_segment_quadratic
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (hcard : 1 < Fintype.card ι)
     {τ t : ℝ} (hτ : 0 ≤ τ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
     (A : Matrix ι ι ℝ) {X Y : Matrix ι ι ℝ}
@@ -120,6 +120,7 @@ theorem regularizedBetheObjective_segment_quadratic
         τ * (((1 - t) * t / 2) *
           (∑ i, ∑ j, (X i j - Y i j) ^ 2)) ≤
       regularizedBetheObjective τ A (matrixSegment t X Y) := by
+  classical
   have hbethe := betheObjective_segment_lower hcard A X Y hX hY ht0 ht1
   have hsegment : betheMatrixSegment t X Y = matrixSegment t X Y := by
     ext i j
@@ -136,7 +137,7 @@ theorem regularizedBetheObjective_segment_quadratic
 /-- Objective suboptimality controls squared distance from any exact
 regularized maximizer.  The constant `τ/4` comes from the midpoint case. -/
 theorem regularizedBetheMaximizer_distance_sq_le_gap
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (hcard : 1 < Fintype.card ι)
     {τ : ℝ} (hτ : 0 ≤ τ) {A X Y : Matrix ι ι ℝ}
     (hX : IsDoublyStochastic X) (hY : IsDoublyStochastic Y)
@@ -146,6 +147,7 @@ theorem regularizedBetheMaximizer_distance_sq_le_gap
     (τ / 4) * (∑ i, ∑ j, (X i j - Y i j) ^ 2) ≤
       regularizedBetheObjective τ A X -
         regularizedBetheObjective τ A Y := by
+  classical
   have hmidDS := matrixSegment_doublyStochastic
     (show (0 : ℝ) ≤ 1 / 2 by norm_num)
     (show (1 / 2 : ℝ) ≤ 1 by norm_num) hX hY

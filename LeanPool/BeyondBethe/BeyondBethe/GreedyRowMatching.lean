@@ -143,7 +143,7 @@ theorem greedyRowMatchingList_isMaximal {n : ℕ}
           · have hecard := e.2
             have hepos : 0 < e.1.card := by omega
             obtain ⟨v, hv⟩ := Finset.card_pos.mp hepos
-            exact ⟨e, by simpa [heq],
+            exact ⟨e, by simp [heq],
               Finset.not_disjoint_iff.mpr ⟨v, hv, hv⟩⟩
           · obtain ⟨r, hr, her⟩ := ih.covered e he
             exact ⟨r, Finset.mem_insert_of_mem hr, her⟩
