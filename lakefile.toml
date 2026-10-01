@@ -30,3 +30,8 @@ name = "Challenge"
 # the check independent of the statement file.
 [[lean_lib]]
 name = "Solution"
+
+[[lean_exe]]
+name = "mk_all"
+root = "ProjectIndexes"
+srcDir = "scripts"

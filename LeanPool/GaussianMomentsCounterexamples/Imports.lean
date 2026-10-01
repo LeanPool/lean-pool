@@ -1,0 +1,27 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+module  -- shake: keep-all --deprecated_module: ignore
+
+-- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.GaussianMomentsCounterexamples
+public import LeanPool.GaussianMomentsCounterexamples.AlgebraicMoments
+public import LeanPool.GaussianMomentsCounterexamples.CoefficientContraction
+public import LeanPool.GaussianMomentsCounterexamples.CoefficientIdentities
+public import LeanPool.GaussianMomentsCounterexamples.ComplexContractions
+public import LeanPool.GaussianMomentsCounterexamples.Coordinates
+public import LeanPool.GaussianMomentsCounterexamples.CoordinatesProperties
+public import LeanPool.GaussianMomentsCounterexamples.Counterexamples
+public import LeanPool.GaussianMomentsCounterexamples.DimensionExtension
+public import LeanPool.GaussianMomentsCounterexamples.DimensionTwo
+public import LeanPool.GaussianMomentsCounterexamples.Discovery
+public import LeanPool.GaussianMomentsCounterexamples.GaussianBridge
+public import LeanPool.GaussianMomentsCounterexamples.GaussianMeasure
+public import LeanPool.GaussianMomentsCounterexamples.GaussianStein
+public import LeanPool.GaussianMomentsCounterexamples.GeneratingFunctions
+public import LeanPool.GaussianMomentsCounterexamples.MomentDetails
+public import LeanPool.GaussianMomentsCounterexamples.RadialMoments
+public import LeanPool.GaussianMomentsCounterexamples.RealCoefficients
+public import LeanPool.GaussianMomentsCounterexamples.RealMoments
