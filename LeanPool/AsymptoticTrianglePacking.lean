@@ -9,12 +9,12 @@ module
 public import LeanPool.AsymptoticTrianglePacking.Main
 
 /-!
-# Finite near-regular hypergraph rounding
+# Finite hypergraph rounding and the asymptotic triangle-packing gap
 
 Source: url:https://github.com/jtraverso/erdos-81-chordal-clique-partitions/tree/main/preprints/PAPER_III
 Authors: Juan Pablo Traverso Gianini, Aristotle
 Status: verified
-Main declarations: `LeanPool.AsymptoticTrianglePacking.nearRegularNibbleTheorem`
+Main declarations: `LeanPool.AsymptoticTrianglePacking.trianglePackingGap`
 Tags: hypergraph-matching, nibble-method, extremal-combinatorics
 MSC: 05C70, 05C35
 -/
