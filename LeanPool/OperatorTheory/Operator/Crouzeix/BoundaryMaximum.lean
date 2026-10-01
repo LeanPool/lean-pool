@@ -68,7 +68,7 @@ theorem polynomialSupNorm_closure_eq_frontier_of_isBounded
   rw [polynomialSupNorm_eq_of_isMaxOn_boundaryMaximum p hclosure
       (frontier_subset_closure hz) hmax,
     polynomialSupNorm_eq_of_isMaxOn_boundaryMaximum p hfrontier hz
-      (hmax.on_subset frontier_subset_closure)]
+      (hmax.of_subset frontier_subset_closure)]
 
 /-- For a bounded smooth Jordan carrier, polynomial sup norms on its closure
 and parametrized frontier agree exactly. -/
