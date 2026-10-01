@@ -42,7 +42,7 @@ instance : SetLike (OrderIdeal X) X where
     exact SetLike.ext' h
 
 /-- Order ideals of `X`, ordered by inclusion, form a **partial order**. -/
-instance : PartialOrder (OrderIdeal X) := .ofSetLike (OrderIdeal X) X
+instance : PartialOrder (OrderIdeal X) := .ofSetLike (OrderIdeal X)
 
 variable (J : OrderIdeal X)
 
@@ -975,7 +975,7 @@ theorem isClosed (J : ClosedOrderIdeal X) : IsClosed (J : Set X) :=
 
 /-- Closed order ideals form a partial order under inclusion. -/
 instance : PartialOrder (ClosedOrderIdeal X) :=
-  .ofSetLike (ClosedOrderIdeal X) X
+  .ofSetLike (ClosedOrderIdeal X)
 
 /-- The intersection of two closed order ideals is a closed order ideal. -/
 def inf (J₁ J₂ : ClosedOrderIdeal X) : ClosedOrderIdeal X where
