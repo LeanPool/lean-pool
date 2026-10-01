@@ -488,7 +488,7 @@ end DoubledPhaseRotation
 /-- Coordinatewise phase rotations on two real copies of a Hilbert space. -/
 noncomputable def basisDoubledRealRotation
     {G ι : Type*} [NormedAddCommGroup G] [InnerProductSpace ℝ G]
-    [Fintype ι] [DecidableEq ι]
+    [Fintype ι]
     (e : OrthonormalBasis ι ℝ G) (theta : ι → ℝ) :
     WithLp 2 (G × G) ≃ₗᵢ[ℝ] WithLp 2 (G × G) :=
   basisDoubledPhaseRotation e theta
@@ -496,7 +496,7 @@ noncomputable def basisDoubledRealRotation
 /-- The doubled real rotation on a basis vector. -/
 @[simp] theorem basisDoubledRealRotation_apply
     {G ι : Type*} [NormedAddCommGroup G] [InnerProductSpace ℝ G]
-    [Fintype ι] [DecidableEq ι]
+    [Fintype ι]
     (e : OrthonormalBasis ι ℝ G) (theta : ι → ℝ)
     (x : WithLp 2 (G × G)) :
     basisDoubledRealRotation e theta x = WithLp.toLp 2
@@ -509,7 +509,7 @@ noncomputable def basisDoubledRealRotation
 /-- Its action on the first summand. -/
 theorem basisDoubledRealRotation_apply_first
     {G ι : Type*} [NormedAddCommGroup G] [InnerProductSpace ℝ G]
-    [Fintype ι] [DecidableEq ι]
+    [Fintype ι]
     (e : OrthonormalBasis ι ℝ G) (theta : ι → ℝ) (i : ι) :
     basisDoubledRealRotation e theta (WithLp.toLp 2 (e i, 0)) =
       WithLp.toLp 2
@@ -527,7 +527,7 @@ theorem basisDoubledRealRotation_apply_first
 /-- Its action on the second summand. -/
 theorem basisDoubledRealRotation_apply_second
     {G ι : Type*} [NormedAddCommGroup G] [InnerProductSpace ℝ G]
-    [Fintype ι] [DecidableEq ι]
+    [Fintype ι]
     (e : OrthonormalBasis ι ℝ G) (theta : ι → ℝ) (i : ι) :
     basisDoubledRealRotation e theta (WithLp.toLp 2 (0, e i)) =
       WithLp.toLp 2
