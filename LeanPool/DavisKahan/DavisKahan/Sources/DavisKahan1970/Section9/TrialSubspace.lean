@@ -223,7 +223,7 @@ theorem recentered_residual_gram_from_affine_moments (ε : ℝ) :
   -- with nothing relating them; the off-diagonal entry is pure `ring`, the two
   -- diagonal entries each need one use of `h3`
   ext <;>
-    simp [orthogonalResidualGram, trialOne_tSqInner_trialOne,
+    simp only [orthogonalResidualGram, trialOne_tSqInner_trialOne,
       trialOne_tSqInner_trialTwo, trialTwo_tSqInner_trialTwo,
       trialOne_tInner_trialOne, trialOne_tInner_trialTwo,
       trialTwo_tInner_trialTwo, ritzLowCoefficient,

@@ -46,6 +46,7 @@ namespace TauCeti
 namespace DavisKahan1970
 
 open TauCeti.DavisKahan
+open TauCeti.DavisKahan.RealSpectralRestriction
 
 universe u v w
 
@@ -677,7 +678,7 @@ theorem theorem3_1_realization_ofSpectralMultiplicityAwayFromZero_real
           Submodule.map (modelInr ℝ A₀ A₁ : A₁ →ₗ[ℝ] WithLp 2 (A₀ × A₁))
             (LinearMap.ker ((cfc Real.cos Θ₁ : A₁ →L[ℝ] A₁) : A₁ →ₗ[ℝ] A₁)) :=
   theorem3_1_realization_ofNonzeroPartsUnitaryEquiv hΘ₀ hΘ₁ hspec₀ hspec₁
-    (TauCeti.DavisKahan.RealSpectralRestriction.operatorUnitaryEquiv_of_sameSpectralMultiplicity_real
+    (operatorUnitaryEquiv_of_sameSpectralMultiplicity_real
       _ _ hmult)
 
 /-! ### The printed ambient-dimension clause

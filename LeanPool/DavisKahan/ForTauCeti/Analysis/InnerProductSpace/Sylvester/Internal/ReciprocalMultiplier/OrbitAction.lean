@@ -138,9 +138,10 @@ noncomputable def basisDiagonalUnitary {G : Type*}
 @[simp]
 theorem basisDiagonalUnitary_apply_basis {G : Type*}
     [NormedAddCommGroup G] [InnerProductSpace 𝕜 G]
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (e : OrthonormalBasis ι 𝕜 G) (ζ : ι → unitary 𝕜) (i : ι) :
     basisDiagonalUnitary e ζ (e i) = (ζ i : 𝕜) • e i := by
+  classical
   rw [← e.repr_symm_single i]
   simp only [basisDiagonalUnitary, LinearIsometryEquiv.trans_apply,
     LinearIsometryEquiv.apply_symm_apply]
@@ -354,7 +355,7 @@ rotation arguments consume: they work coordinatewise in `e.repr` rather than thr
 map itself. -/
 @[simp] theorem basisDiagonalRealCoeffMap_repr
     {G ι : Type*} [NormedAddCommGroup G] [InnerProductSpace 𝕜 G]
-    [Fintype ι] [DecidableEq ι]
+    [Fintype ι]
     (e : OrthonormalBasis ι 𝕜 G) (c : ι → ℝ) (x : G) (i : ι) :
     e.repr (basisDiagonalRealCoeffMap e c x) i = ((c i : ℝ) : 𝕜) * e.repr x i := by
   classical
@@ -471,6 +472,7 @@ noncomputable def basisDoubledPhaseRotation
       (by nlinarith [Real.sin_sq_add_cos_sq (theta i)])
       (e.repr x.fst i) (e.repr x.snd i)
 
+omit [DecidableEq ι] in
 /-- The doubled phase rotation on a basis vector. -/
 @[simp] theorem basisDoubledPhaseRotation_apply
     (e : OrthonormalBasis ι 𝕜 G) (theta : ι → ℝ) (x : WithLp 2 (G × G)) :

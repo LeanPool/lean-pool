@@ -114,16 +114,23 @@ theorem
 
 end CompressionSpectrum
 
-section PathEnclosureData
+end DavisKahanExt
+end TauCeti
 
-variable {Hspace : Type v} [NormedAddCommGroup Hspace]
+namespace TauCeti.DavisKahan.Foundation.FiniteGapConfiguration
+
+open TauCeti.DavisKahanExt
+open TauCeti.DavisKahan
+open Set
+open scoped InnerProductSpace
+
+variable {Hspace : Type*} [NormedAddCommGroup Hspace]
   [InnerProductSpace ℂ Hspace] [CompleteSpace Hspace]
 
 /-- A finite-gap configuration, reduction of `A`, and off-diagonality of `K`
 provide all diagonal-spectrum placements and cross-block norm estimates needed
 for the sharp pathwise block-resolvent enclosure. -/
-theorem
-  _root_.TauCeti.DavisKahan.Foundation.FiniteGapConfiguration.exists_operatorPath_block_enclosureData
+theorem exists_operatorPath_block_enclosureData
     (A K : Hspace →L[ℂ] Hspace)
     (U : Submodule ℂ Hspace) [U.HasOrthogonalProjection]
     (hU : A.Reduces U) (hK : Submodule.IsOffDiagonal U K)
@@ -159,7 +166,7 @@ theorem
   · exact norm_operatorPath_subspaceBlockOperatorData_B10_le
       A K U hU t ht hpath
 
-end PathEnclosureData
-
-end DavisKahanExt
+end FiniteGapConfiguration
+end Foundation
+end DavisKahan
 end TauCeti

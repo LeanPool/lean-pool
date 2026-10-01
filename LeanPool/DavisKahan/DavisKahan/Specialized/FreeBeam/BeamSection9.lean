@@ -433,7 +433,7 @@ theorem exists_pos_eigenpair_beamOperator :
     TauCeti.exists_hasEigenvalue_eigenspace_not_le isCompactOperator_beamResolvent
       beamCoerciveFormData.resolvent_isSelfAdjoint
       beamQuadLp_mem_beamTrial_orthogonal beamQuadLp_ne_zero
-  obtain ⟨u, hu, hunot⟩ := SetLike.not_le_iff_exists.mp hnotle
+  obtain ⟨u, hu, hunot⟩ := IsConcreteLE.not_le_iff_exists.mp hnotle
   have hRu : beamCoerciveFormData.resolvent u = mu • u := Module.End.mem_eigenspace_iff.mp hu
   have hu0 : u ≠ 0 := fun h => hunot (h ▸ Submodule.zero_mem beamTrial)
   have hmu0 : mu ≠ 0 := by

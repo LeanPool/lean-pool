@@ -358,11 +358,10 @@ private theorem projection_sub_model_eq_matrix (θ : ℝ) :
     ext i
     fin_cases i <;>
       simp [uθ, e0, e1, Matrix.toLpLin_apply] <;>
-      (try simp only [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal,
-        mul_one]) <;>
+      simp [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal] <;>
       -- `ring` degrades to `ring_nf` and *succeeds*, so `first` would never
       -- reach the Pythagorean case; `ring1` fails properly
-      first
+      ring_nf; first
         | ring1
         | linear_combination (-1 : 𝕜) * hpy
   · simp only [LinearMap.sub_apply, projection, ContinuousLinearMap.coe_coe,
@@ -371,9 +370,7 @@ private theorem projection_sub_model_eq_matrix (θ : ℝ) :
     ext i
     fin_cases i <;>
       simp [uθ, e0, e1, Matrix.toLpLin_apply] <;>
-      (try simp only [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal,
-        mul_one])
-    ring1
+      simp [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal]; ring_nf
 
 private theorem sinThetaMap_model_eq_matrix (θ : ℝ) :
     sinThetaMap (modelSubspace (𝕜 := 𝕜))
@@ -395,11 +392,10 @@ private theorem sinThetaMap_model_eq_matrix (θ : ℝ) :
     ext i
     fin_cases i <;>
       simp [uθ, e0, e1, Matrix.toLpLin_apply] <;>
-      (try simp only [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal,
-        mul_one]) <;>
+      simp [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal] <;>
       -- `ring` degrades to `ring_nf` and *succeeds*, so `first` would never
       -- reach the Pythagorean case; `ring1` fails properly
-      first
+      ring_nf; first
         | ring1
         | linear_combination (-1 : 𝕜) * hpy
   · simp only [sinThetaMap, complementaryProjection, projection,
@@ -433,8 +429,9 @@ private theorem sinTwoAngleOperator_model_eq_matrix (θ : ℝ) :
     fin_cases i <;>
       simp [uθ, e0, e1, Matrix.toLpLin_apply,
         Real.sin_two_mul]
+    try simp [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal]
+    ring_nf
     try push_cast
-    try simp only [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal]
     ring1
   · simp only [sinTwoAngleOperator, complementaryProjection, projection,
       ContinuousLinearMap.coe_coe, LinearMap.comp_apply,
@@ -465,8 +462,9 @@ private theorem projection_sub_model_sq (θ : ℝ) :
   ext x i
   fin_cases i <;>
     simp [Matrix.toLpLin_apply] <;>
-    (try simp only [RCLike.algebraMap_eq_ofReal, Matrix.vecHead,
-      Matrix.vecTail, Function.comp_apply, Fin.succ_zero_eq_one]) <;>
+    simp [RCLike.algebraMap_eq_ofReal, Matrix.vecHead,
+      Matrix.vecTail, Function.comp_apply, Fin.succ_zero_eq_one] <;>
+    ring_nf <;>
     first
       | ring1
       | linear_combination (((Real.sin θ : 𝕜)) ^ 2 * x.ofLp 0) * hpy
@@ -492,8 +490,9 @@ private theorem modelSinThetaPerturbation_sq (a b θ : ℝ) :
   ext x i
   fin_cases i <;>
     simp [modelSinThetaPerturbation, Matrix.toLpLin_apply] <;>
-    (try simp only [RCLike.algebraMap_eq_ofReal, Matrix.vecHead,
-      Matrix.vecTail, Function.comp_apply, Fin.succ_zero_eq_one]) <;>
+    simp [RCLike.algebraMap_eq_ofReal, Matrix.vecHead,
+      Matrix.vecTail, Function.comp_apply, Fin.succ_zero_eq_one] <;>
+    ring_nf <;>
     first
       | ring1
       | linear_combination ((((b : 𝕜) - (a : 𝕜)) ^ 2 *
@@ -537,6 +536,7 @@ private theorem singularValues_sinThetaMap_model
     ext j <;> fin_cases j <;>
     simp [LinearMap.comp_apply, Matrix.toLpLin_apply,
       Matrix.vecHead, Matrix.vecTail, EuclideanSpace.basisFun_apply]
+  ring_nf
   try push_cast
   first
     | ring1
@@ -1622,7 +1622,8 @@ theorem modelGappedOperator_apply_uθ (a b θ : ℝ) :
   ext i
   fin_cases i <;>
     simp [uθ, vθ, e0, e1, Matrix.toLpLin_apply] <;>
-    (try simp only [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal]) <;>
+    simp [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal] <;>
+    ring_nf <;>
     first
       | ring1
       | linear_combination ((a : 𝕜) * (Real.cos θ : 𝕜)) * hpy
@@ -1663,7 +1664,8 @@ theorem modelRotatedOperator_apply_uθ (a b θ : ℝ) :
   ext i
   fin_cases i <;>
     simp [uθ, e0, e1, Matrix.toLpLin_apply] <;>
-    (try simp only [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal]) <;>
+    simp [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal] <;>
+    ring_nf <;>
     first
       | ring1
       | linear_combination ((a : 𝕜) * (Real.cos θ : 𝕜)) * hpy
@@ -1678,7 +1680,8 @@ theorem modelRotatedOperator_apply_vθ (a b θ : ℝ) :
   ext i
   fin_cases i <;>
     simp [vθ, e0, e1, Matrix.toLpLin_apply] <;>
-    (try simp only [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal]) <;>
+    simp [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal] <;>
+    ring_nf <;>
     first
       | ring1
       | linear_combination ((a : 𝕜) * (Real.cos θ : 𝕜)) * hpy
@@ -1702,7 +1705,8 @@ theorem modelRotatedOperator_sub_modelGappedOperator (a b θ : ℝ) :
   ext i j
   fin_cases i <;> fin_cases j <;>
     simp <;>
-    (try simp only [RCLike.algebraMap_eq_ofReal]) <;>
+    simp [RCLike.algebraMap_eq_ofReal] <;>
+    ring_nf <;>
     first
       | ring1
       | linear_combination ((a : 𝕜) * (Real.cos θ : 𝕜)) * hpy
@@ -1846,7 +1850,8 @@ theorem modelRotatedOffDiagonal_apply_uθ (r θ : ℝ) :
   ext i
   fin_cases i <;>
     simp [uθ, vθ, e0, e1, Matrix.toLpLin_apply, Real.sin_two_mul, Real.cos_two_mul'] <;>
-    (try simp only [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal]) <;>
+    simp [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal] <;>
+    ring_nf <;>
     (try push_cast) <;>
     first
       | ring1
@@ -1864,7 +1869,8 @@ theorem modelRotatedOffDiagonal_apply_vθ (r θ : ℝ) :
   ext i
   fin_cases i <;>
     simp [uθ, vθ, e0, e1, Matrix.toLpLin_apply, Real.sin_two_mul, Real.cos_two_mul'] <;>
-    (try simp only [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal]) <;>
+    simp [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal] <;>
+    ring_nf <;>
     (try push_cast) <;>
     first
       | ring1
@@ -1879,8 +1885,10 @@ private theorem modelRotatedOffDiagonal_sq (r θ : ℝ) :
   ext x i
   fin_cases i <;>
     simp [modelRotatedOffDiagonal, Matrix.toLpLin_apply] <;>
-    (try simp only [RCLike.algebraMap_eq_ofReal, Matrix.vecHead,
-      Matrix.vecTail, Function.comp_apply, Fin.succ_zero_eq_one]) <;>
+    simp [RCLike.algebraMap_eq_ofReal, Matrix.vecHead,
+      Matrix.vecTail, Function.comp_apply, Fin.succ_zero_eq_one] <;>
+    ring_nf <;>
+    simp only [mul_comm θ 2] <;>
     first
       | ring1
       | linear_combination ((r : 𝕜) ^ 2 * x.ofLp 0) * hpy
@@ -2286,7 +2294,8 @@ private theorem modelTanTwoThetaPerturbation_apply_uθ (a b θ : ℝ) :
   fin_cases i <;>
     simp [uθ, vθ, e0, e1, Matrix.toLpLin_apply, Real.sin_two_mul, Real.cos_two_mul',
       ← hh] <;>
-    (try simp only [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal]) <;>
+    simp [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal] <;>
+    ring_nf <;>
     (try push_cast) <;>
     first
       | ring1

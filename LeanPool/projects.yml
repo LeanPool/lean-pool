@@ -11873,9 +11873,6 @@ projects:
     branch: operator theory
     main_declarations:
     - RotationOfEigenvectors.sinTheta
-    - RotationOfEigenvectors.tanTheta
-    - RotationOfEigenvectors.sinTwoTheta_directed
-    - RotationOfEigenvectors.sinTwoTheta_ambient
     - RotationOfEigenvectors.tanTwoTheta
     main_results:
     - declaration: RotationOfEigenvectors.sinTheta

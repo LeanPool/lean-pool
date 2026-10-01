@@ -17,6 +17,7 @@ open TauCeti.DavisKahan.Angle
 
 
 open TauCeti.DavisKahan.Sylvester
+open TauCeti.DavisKahan.TanTheta
 
 /-!
 # Davis--Kahan Theorem 6.3 for an unbounded real self-adjoint operator
@@ -517,7 +518,7 @@ theorem le_re_inner_of_mem_orthogonal_realSelfAdjointSpectralSubspace_of_gap
       ofReal_mem_complexifySubmodule_iff]
     exact hyV
   have hC :=
-    _root_.TauCeti.DavisKahan.TanTheta.le_re_inner_of_mem_orthogonal_selfAdjointSpectralSubspace_of_gap
+    le_re_inner_of_mem_orthogonal_selfAdjointSpectralSubspace_of_gap
       Ac hAc hgapC (ofReal y) hyVC hydC
   -- Read the complex bound back on the real copy.
   have hact : Ac ⟨ofReal y, hydC⟩ = ofReal (A ⟨y, hy⟩) :=

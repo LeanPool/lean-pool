@@ -122,6 +122,8 @@ every unitary-invariant norm.
 namespace TauCeti
 namespace DavisKahan1970
 
+open TauCeti.DavisKahan.TanTwoTheta
+
 /-! ## The source norm scope: every unitarily invariant norm -/
 
 /-- The double-angle tangent scalar function `t ↦ 2t/(1 - t²)`. -/
@@ -156,7 +158,7 @@ configuration): membership of the off-diagonal perturbation in the ideal
 transports to any `tan 2Θ₀` representative, with
 `(b - a) · N(tan 2Θ₀) ≤ 2 · N(H)`. -/
 alias tanTwoTheta_principalBranch_finiteSubspace_idealFamily_rclike :=
-  DavisKahan.TanTwoTheta.tanTwoTheta0_offDiagonal_mem_and_gauge_le_of_finiteDimensional_invariantSubspace
+  tanTwoTheta0_offDiagonal_mem_and_gauge_le_of_finiteDimensional_invariantSubspace
 
 /-- The Ky Fan approximation-number root of the infinite-dimensional sharp
 form; holds for every `k` with no ideal hypothesis. -/
@@ -167,7 +169,7 @@ alias tanTwoTheta_principalBranch_finiteSubspace_kyFan_rclike :=
 in the double-angle tangents of the graph-coordinate approximation
 numbers. -/
 alias tanTwoTheta_doubleAngleTangent_finiteSubspace_kyFan_rclike :=
-  DavisKahan.TanTwoTheta.kyFan_doubleAngleTangent_offDiagonal_le_of_finiteDimensional_invariantSubspace
+  kyFan_doubleAngleTangent_offDiagonal_le_of_finiteDimensional_invariantSubspace
 
 /-- The Ky Fan variational bound for approximation-number prefixes: the
 infinite-dimensional max--min principle used alongside the compression

@@ -44,6 +44,7 @@ open TauCeti
 open TauCeti.DavisKahan
 open TauCeti.DavisKahan.ExactSinTheta
 open TauCeti.DavisKahan.Sylvester
+open TauCeti.DavisKahan1970
 open TauCeti.ApproximationNumber
 open scoped InnerProductSpace TauCeti.CompleteSubspace
 
@@ -588,7 +589,7 @@ theorem tanTwoTheta (N : SymmetricNormingFunction)
     unfold TauCeti.DavisKahan.ExactSinTheta.SymmetricNormingFunction.Mem at hRproj ⊢
     rwa [← hext]
   obtain ⟨hlt, T, htan, hmem, hbound⟩ :=
-    _root_.TauCeti.DavisKahan1970.tanTwoTheta_directed_unboundedResidual_reducing_symmetricNorming_rclike
+    tanTwoTheta_directed_unboundedResidual_reducing_symmetricNorming_rclike
       N.toSourceNorm V hA hUred (isOddFor_of_offDiagonal hoffdiag₀ hoffdiag₁)
       hVred hUa hUb (by linarith) hRblock
   have hseq : ∀ n, T.approximationNumber n = tanSeq (directedDoubleSine U V) n := by

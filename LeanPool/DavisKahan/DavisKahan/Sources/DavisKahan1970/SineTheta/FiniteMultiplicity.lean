@@ -154,10 +154,8 @@ theorem finiteMultiplicity_residual_identity (m : ℕ) (delta theta : ℝ) :
   ext x
   apply WithLp.ofLp_injective 2
   simp [finiteMultiplicityAmbientOperator, finiteMultiplicityTrialMap,
-    finiteMultiplicityTrialOperator, finiteMultiplicityResidual]
-  -- The two sides scale by the same real number but through different actions:
-  -- iterated real scalars on the left, one coerced product on the right.
-  rw [← map_mul, algebraMap_smul, smul_smul, mul_comm]
+    finiteMultiplicityTrialOperator, finiteMultiplicityResidual,
+    -map_mul, algebraMap_smul, smul_smul, mul_comm]
 
 /-- The exact projection removes the first block and leaves exactly the
 multiplicity-`m` sine block. -/

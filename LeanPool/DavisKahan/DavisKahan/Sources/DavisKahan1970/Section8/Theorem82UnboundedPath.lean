@@ -44,6 +44,7 @@ namespace Section8
 
 open DavisKahan
 open TauCeti.DavisKahan.Sylvester
+open DavisKahan.Foundation.RealComplexification
 
 noncomputable section
 
@@ -700,7 +701,7 @@ theorem theorem8_2_perturbationHalfGap_unbounded_real
     rw [realSpectrum_reducingRestriction_congr hsum hQredC.orthogonal
       ((TauCeti.DavisKahan1970.reducesSubspace_complexifyReal
         hQred).orthogonal)]
-    rw [DavisKahan.Foundation.RealComplexification.realSpectrum_reducingRestriction_complexifyReal_of_eq
+    rw [realSpectrum_reducingRestriction_complexifyReal_of_eq
       (DavisKahan.Foundation.RealComplexification.complexifySubmodule_orthogonal Q).symm
       hQred.orthogonal _]
     exact hQperp
@@ -787,7 +788,7 @@ theorem theorem8_2_residualHalfGap_unbounded_real
         hQredC.orthogonal) ⊆ bandExterior beta alpha delta := by
     rw [realSpectrum_reducingRestriction_congr hsum hQredC.orthogonal
       ((TauCeti.DavisKahan1970.reducesSubspace_complexifyReal hQred).orthogonal)]
-    rw [DavisKahan.Foundation.RealComplexification.realSpectrum_reducingRestriction_complexifyReal_of_eq
+    rw [realSpectrum_reducingRestriction_complexifyReal_of_eq
       (DavisKahan.Foundation.RealComplexification.complexifySubmodule_orthogonal Q).symm
       hQred.orthogonal _]
     exact hQperp

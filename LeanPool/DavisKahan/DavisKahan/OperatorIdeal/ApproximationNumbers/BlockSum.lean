@@ -48,6 +48,8 @@ namespace TauCeti
 namespace DavisKahan
 namespace ExactSinTheta
 
+open ContinuousLinearMap.HasMinMaxLowerBound
+
 open scoped InnerProductSpace BigOperators Topology
 
 noncomputable section
@@ -467,7 +469,7 @@ theorem min_le_approximationNumber_continuousOrthogonalBlockSum
         mul_pow μ ‖(WithLp.ofLp x).2‖ 2]
     exact le_of_sq_le_sq hsq (norm_nonneg _)
   have hfinal : m < (T.approximationNumber (i + j + 1) : ℝ) :=
-    (ContinuousLinearMap.HasMinMaxLowerBound.lt_approximationNumber_iff_exists_finiteDimensional_lowerBound
+    (lt_approximationNumber_iff_exists_finiteDimensional_lowerBound
       ContinuousLinearMap.HasMinMaxLowerBoundEverywhere.out
       T (i + j + 1) hm0).mpr ⟨μ, hmμ, _, hu, hlower⟩
   exact absurd hfinal (by rw [← hm]; exact lt_irrefl m)

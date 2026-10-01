@@ -67,6 +67,8 @@ is exactly the paper's own representative freedom for `tan 2Θ₀`.
 namespace TauCeti
 namespace DavisKahan1970
 
+open TauCeti.DavisKahan.TanTwoTheta
+
 open scoped InnerProductSpace
 open DavisKahan.ExactSinTheta
 
@@ -206,7 +208,7 @@ alias tanTwoTheta_branchFree_finiteDimensional_uiNorm_rclike :=
 /-- **The unrestricted `tan 2Θ` theorem, every Fan-dominant unitary-invariant
 ideal, arbitrary Hilbert space** with a finite-dimensional trial subspace. -/
 alias tanTwoTheta_branchFree_finiteSubspace_idealFamily_rclike :=
-  DavisKahan.TanTwoTheta.absTanTwoTheta_offDiagonal_mem_and_gauge_le_of_finiteDimensional_invariantSubspace
+  absTanTwoTheta_offDiagonal_mem_and_gauge_le_of_finiteDimensional_invariantSubspace
 
 /-! ## The arbitrary-trial-subspace layer
 

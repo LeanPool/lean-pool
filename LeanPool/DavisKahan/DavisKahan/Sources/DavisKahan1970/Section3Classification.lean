@@ -35,7 +35,8 @@ Each is a wrapper over two independently proved theorems and adds no mathematics
   separability; and
 * the spectral-multiplicity translation of its generic invariant --
   `TauCeti.sameSpectralMultiplicity_iff_operatorUnitaryEquiv_complex` over `ℂ`, and
-  `TauCeti.DavisKahan.RealSpectralRestriction.sameSpectralMultiplicity_iff_operatorUnitaryEquiv_real`
+  `TauCeti.DavisKahan.RealSpectralRestriction.
+  sameSpectralMultiplicity_iff_operatorUnitaryEquiv_real`
   over `ℝ` -- which is Hahn--Hellinger, and which Mathlib has for no scalar field.
 
 ## The angle operator is `genericCosineBlock`

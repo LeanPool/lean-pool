@@ -90,10 +90,22 @@ theorem restrictedSpectrum_nonempty_of_invariant
   rw [restrictedSpectrum_eq_realSpectrum_compressOperator A U hU]
   exact realSpectrum_nonempty_of_selfAdjoint (compressOperator U A) hcompress
 
+end DavisKahanExt
+end TauCeti
+
+namespace TauCeti.DavisKahan.Foundation.OrderedInternalGap
+
+open TauCeti.DavisKahanExt
+open TauCeti.DavisKahan
+open scoped InnerProductSpace
+
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
+  [CompleteSpace E]
+
 /-- For nontrivial complementary subspaces, an ordered internal gap supplies one
 of the two oriented restricted-spectrum half-line configurations with no extra
 set-theoretic hypotheses. -/
-theorem _root_.TauCeti.DavisKahan.Foundation.OrderedInternalGap.exists_oriented_halfLine_center_of_nontrivial
+theorem exists_oriented_halfLine_center_of_nontrivial
     (A : E →L[ℂ] E) (hA : A.IsSymmetric)
     (U : Submodule ℂ E) [U.HasOrthogonalProjection]
     [Nontrivial U] [Nontrivial Uᗮ]
@@ -116,5 +128,7 @@ theorem _root_.TauCeti.DavisKahan.Foundation.OrderedInternalGap.exists_oriented_
       (restrictedSpectrum_bddAbove_of_invariant A Uᗮ hUc)
       hordered
 
-end DavisKahanExt
+end OrderedInternalGap
+end Foundation
+end DavisKahan
 end TauCeti

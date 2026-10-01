@@ -467,7 +467,8 @@ theorem example4_2_competitor_kyFan_two
       4 * Real.sin (theta / 2) * Real.cos (delta / 2) := by
   rw [TauCeti.kyFanSum_eq_sum_fin, Fin.sum_univ_two,
     example4_2_competitor_singularValues h0 hlt hpi]
-  simp
+  simp only [Fin.isValue, Fin.coe_ofNat_eq_mod, Nat.zero_mod,
+    pairSingularValues_zero, Nat.mod_succ, pairSingularValues_one]
   rw [show (theta + delta) / 2 = theta / 2 + delta / 2 by ring,
     show (theta - delta) / 2 = theta / 2 - delta / 2 by ring,
     Real.sin_add, Real.sin_sub]

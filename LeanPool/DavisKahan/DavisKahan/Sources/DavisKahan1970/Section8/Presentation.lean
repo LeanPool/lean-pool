@@ -16,6 +16,7 @@ public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.Section8.The
 @[expose] public section
 
 open TauCeti.DavisKahan.Sylvester
+open TauCeti.DavisKahanExt.SpectralContinuationWitness
 
 /-!
 # Davis--Kahan 1970 Section 8: the production source surface
@@ -157,7 +158,7 @@ alias theorem8_selectedEndpoint_existsUnique_contractiveAngularOperator :=
 /-- The selected branch satisfies the witness-level a priori tangent bound once
 off-diagonality and the ordered form gap are supplied. -/
 alias theorem8_selectedBranch_tan_maximalAngle_le_div :=
-  TauCeti.DavisKahanExt.SpectralContinuationWitness.tan_maximalAngle_selectedSpectralSubspaces_le_div
+  tan_maximalAngle_selectedSpectralSubspaces_le_div
 
 
 end Section8

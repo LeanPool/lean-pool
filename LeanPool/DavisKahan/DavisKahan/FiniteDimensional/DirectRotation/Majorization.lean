@@ -420,6 +420,7 @@ theorem positive_affine_reverse_kyFanSum
     intro i
     rw [hAC]
     simp [br, b, hC.apply_eigenvectorBasis]
+    ring_nf
     -- the left carries an `ℕ`-smul and the right a scalar-field one
     match_scalars
     ring

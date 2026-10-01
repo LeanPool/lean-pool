@@ -42,9 +42,6 @@ universe v
 
 section DiagonalResolventData
 
-variable {Hspace : Type v} [NormedAddCommGroup Hspace]
-  [InnerProductSpace ℂ Hspace] [CompleteSpace Hspace]
-
 /-- Spectral inclusion in a set transfers a uniform distance bound on that set
 to the real spectrum. -/
 theorem spectralDistance_of_subset
@@ -57,13 +54,27 @@ theorem spectralDistance_of_subset
   intro lam hlam
   exact hsep lam (hT hlam)
 
+end DiagonalResolventData
+end DavisKahanExt
+end TauCeti
+
+namespace TauCeti.DavisKahan.Foundation.FiniteGapConfiguration
+
+open TauCeti.DavisKahanExt
+open TauCeti.DavisKahan
+open Set
+open scoped InnerProductSpace
+
+variable {Hspace : Type v} [NormedAddCommGroup Hspace]
+  [InnerProductSpace ℂ Hspace] [CompleteSpace Hspace]
+
 /-- A finite-gap configuration supplies both diagonal shifted inverses, their
 sharp inverse-distance bounds, and both pathwise cross-block norm estimates.
 
 The geometric assumptions `hsep0` and `hsep1` are deliberately stated on the
 interval and exterior sets themselves.  A later contour-geometry leaf can
 discharge them without reopening any operator theory. -/
-theorem _root_.TauCeti.DavisKahan.Foundation.FiniteGapConfiguration.exists_operatorPath_diagonalResolventData
+theorem exists_operatorPath_diagonalResolventData
     (A K : Hspace →L[ℂ] Hspace)
     (U : Submodule ℂ Hspace) [U.HasOrthogonalProjection]
     [CompleteSpace U] [CompleteSpace (Uᗮ : Submodule ℂ Hspace)]
@@ -99,7 +110,7 @@ theorem _root_.TauCeti.DavisKahan.Foundation.FiniteGapConfiguration.exists_opera
       (spectralDistance_of_subset Ht.A1 hspec1 z delta1 hsep1)
   exact ⟨hdiag0.1, hdiag0.2, hdiag1.1, hdiag1.2, hB01, hB10⟩
 
-end DiagonalResolventData
-
-end DavisKahanExt
+end FiniteGapConfiguration
+end Foundation
+end DavisKahan
 end TauCeti

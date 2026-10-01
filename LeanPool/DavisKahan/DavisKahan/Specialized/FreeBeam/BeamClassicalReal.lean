@@ -1325,7 +1325,7 @@ theorem exists_characteristic_mode_of_eigen {lam : ℝ} (hlam : 0 < lam)
       t hxt htI hzero
     have hu : u0 t = mode beta aR bR cR dR t := hm0 ⟨htI.1.le, htI.2⟩
     rw [h.1, h.2.1, h.2.2.1, h.2.2.2] at hu
-    simp [mode] at hu
+    simp only [mode, zero_mul, zero_add] at hu
     calc
       (((x : BeamL2) : ℝ → ℝ) t) = xfn t := by rw [hxfn]
       _ = u0 t := hxt

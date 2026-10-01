@@ -21,6 +21,7 @@ open TauCeti.DavisKahan.Angle
 
 
 open TauCeti.DavisKahan.Sylvester
+open TauCeti.DavisKahan.Section4.CosineDisplacementData
 
 /-!
 # Davis--Kahan 1970, Section 4 over a **real** Hilbert space
@@ -247,7 +248,7 @@ private theorem real_approximationNumber_direct_cosineCutoff_eq_sine
     rw [hSsq, hSsq]
     ring
   have h :=
-    TauCeti.DavisKahan.Section4.CosineDisplacementData.approximationNumber_direct_cosineCutoff_eq_sine
+    approximationNumber_direct_cosineCutoff_eq_sine
       D (S := complexify S) hSsqC n
   simpa only [approximationNumber_complexify] using h
 
