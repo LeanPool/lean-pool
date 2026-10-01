@@ -8839,6 +8839,9 @@ public import LeanPool.PLAcceleratedNesterovLean.MorseBott.TubularProjection
 public import LeanPool.PLAcceleratedNesterovLean.MorseBott.TubularProjection.Defs
 public import LeanPool.PLAcceleratedNesterovLean.MorseBott.TubularProjection.Derivative
 public import LeanPool.PLAcceleratedNesterovLean.MorseBott.TubularProjection.IFT
+public import LeanPool.ParallelPostulate
+public import LeanPool.ParallelPostulate.Geometry
+public import LeanPool.ParallelPostulate.Hilbert
 public import LeanPool.PartialCombinatoryAlgebras
 public import LeanPool.PartialCombinatoryAlgebras.Basic
 public import LeanPool.PartialCombinatoryAlgebras.CombinatoryAlgebra
