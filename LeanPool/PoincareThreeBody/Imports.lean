@@ -1,0 +1,73 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+module  -- shake: keep-all --deprecated_module: ignore
+
+-- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.PoincareThreeBody
+public import LeanPool.PoincareThreeBody.ActionFactorization
+public import LeanPool.PoincareThreeBody.ActionPoisson
+public import LeanPool.PoincareThreeBody.AlignedAverageBlowup
+public import LeanPool.PoincareThreeBody.Analytic
+public import LeanPool.PoincareThreeBody.AnalyticCompactParameterIntegral
+public import LeanPool.PoincareThreeBody.AnalyticDensity
+public import LeanPool.PoincareThreeBody.AnalyticMinors
+public import LeanPool.PoincareThreeBody.AnalyticNormalization
+public import LeanPool.PoincareThreeBody.AnalyticParameterIntegral
+public import LeanPool.PoincareThreeBody.Averaging
+public import LeanPool.PoincareThreeBody.CertifiedPoincareSet
+public import LeanPool.PoincareThreeBody.CoefficientNormalization
+public import LeanPool.PoincareThreeBody.CollisionBandAnalyticContinuation
+public import LeanPool.PoincareThreeBody.CollisionBandObstruction
+public import LeanPool.PoincareThreeBody.CollisionIntegralBlowup
+public import LeanPool.PoincareThreeBody.Core
+public import LeanPool.PoincareThreeBody.Delaunay
+public import LeanPool.PoincareThreeBody.DelaunayActions
+public import LeanPool.PoincareThreeBody.DelaunayAnchorChart
+public import LeanPool.PoincareThreeBody.DelaunayChart
+public import LeanPool.PoincareThreeBody.DelaunayFlow
+public import LeanPool.PoincareThreeBody.DelaunaySection
+public import LeanPool.PoincareThreeBody.DenseResonantObstruction
+public import LeanPool.PoincareThreeBody.DifferentialDependence
+public import LeanPool.PoincareThreeBody.DisturbingAverageAnalytic
+public import LeanPool.PoincareThreeBody.DisturbingCertificate
+public import LeanPool.PoincareThreeBody.DisturbingFunction
+public import LeanPool.PoincareThreeBody.DisturbingParameterAnalytic
+public import LeanPool.PoincareThreeBody.DisturbingRegularBound
+public import LeanPool.PoincareThreeBody.EnergyLeafObstruction
+public import LeanPool.PoincareThreeBody.GeneratingFunction
+public import LeanPool.PoincareThreeBody.GlobalEnergySection
+public import LeanPool.PoincareThreeBody.HamiltonianMixedPartials
+public import LeanPool.PoincareThreeBody.HomologicalEquation
+public import LeanPool.PoincareThreeBody.IrrationalTorusFlow
+public import LeanPool.PoincareThreeBody.JointBallFiberSeries
+public import LeanPool.PoincareThreeBody.JointEccentricAnomaly
+public import LeanPool.PoincareThreeBody.JointSlabIntegral
+public import LeanPool.PoincareThreeBody.KeplerFlow
+public import LeanPool.PoincareThreeBody.KeplerHamiltonian
+public import LeanPool.PoincareThreeBody.KeplerOrbit
+public import LeanPool.PoincareThreeBody.KeplerPhaseOrbit
+public import LeanPool.PoincareThreeBody.LeadingObstruction
+public import LeanPool.PoincareThreeBody.LocalEnergyLeaf
+public import LeanPool.PoincareThreeBody.MixedPartials
+public import LeanPool.PoincareThreeBody.NormalizationClosure
+public import LeanPool.PoincareThreeBody.NormalizationInduction
+public import LeanPool.PoincareThreeBody.OneTwoResonance
+public import LeanPool.PoincareThreeBody.OrbitHomologicalEquation
+public import LeanPool.PoincareThreeBody.ParameterDomainTopology
+public import LeanPool.PoincareThreeBody.ParameterizedAnalyticDivision
+public import LeanPool.PoincareThreeBody.Perturbation
+public import LeanPool.PoincareThreeBody.PoincareSet
+public import LeanPool.PoincareThreeBody.PoissonNormalization
+public import LeanPool.PoincareThreeBody.Polar
+public import LeanPool.PoincareThreeBody.Resonance
+public import LeanPool.PoincareThreeBody.ResonantActionObstruction
+public import LeanPool.PoincareThreeBody.ResonantAverageSeparation
+public import LeanPool.PoincareThreeBody.ResonantCollisionBoundary
+public import LeanPool.PoincareThreeBody.ResonantOrbit
+public import LeanPool.PoincareThreeBody.RotatingEllipse
+public import LeanPool.PoincareThreeBody.SafeAverageAnalytic
+public import LeanPool.PoincareThreeBody.SafeCollisionPhase
+public import LeanPool.PoincareThreeBody.ValidatedQuadrature
