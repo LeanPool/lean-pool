@@ -1,3 +1,5 @@
+module
+
 import Batteries.Tactic.Lint
 
 /- Run the same slow declaration linters as Batteries' runLinter, importing
@@ -5,7 +7,7 @@ all owned modules together. Filter by module identity so each declaration
 is covered exactly once even when one project imports another. -/
 open Lean Core Batteries.Tactic.Lint
 
-unsafe def main (args : List String) : IO UInt32 := do
+public unsafe def main (args : List String) : IO UInt32 := do
   if args.isEmpty then throw <| IO.userError "no modules to lint"
   let modules := args.toArray.map String.toName
   Lean.initSearchPath (← Lean.findSysroot)
