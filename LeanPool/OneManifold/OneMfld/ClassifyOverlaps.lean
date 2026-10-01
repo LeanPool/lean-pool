@@ -5,26 +5,26 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
-public import Mathlib.Tactic
-public import LeanPool.OneManifold.OneMfld.UnitInterval
-public import LeanPool.OneManifold.OneMfld.FiniteIntervalCharts
-public import LeanPool.OneManifold.OneMfld.IntervalCharts
-public import LeanPool.OneManifold.OneMfld.NiceCharts
-public import LeanPool.OneManifold.OneMfld.ClosureOverlap
-public import LeanPool.OneManifold.OneMfld.PartialHomeomorphHelpers
 public import LeanPool.OneManifold.OneMfld.Charts
-public import LeanPool.OneManifold.OneMfld.Outer
-public import LeanPool.OneManifold.OneMfld.TransitionMono
-public import LeanPool.OneManifold.OneMfld.Normalize
-public import LeanPool.OneManifold.OneMfld.GlueCore
-public import LeanPool.OneManifold.OneMfld.GlueBlocks
-public import LeanPool.OneManifold.OneMfld.GlueNNReal
-public import LeanPool.OneManifold.OneMfld.GlueUI
-public import LeanPool.OneManifold.OneMfld.TwoComponents
 public import LeanPool.OneManifold.OneMfld.CircleBlocks
 public import LeanPool.OneManifold.OneMfld.CircleGlue
-
+public import LeanPool.OneManifold.OneMfld.ClosureOverlap
+public import LeanPool.OneManifold.OneMfld.FiniteIntervalCharts
+public import LeanPool.OneManifold.OneMfld.GlueBlocks
+public import LeanPool.OneManifold.OneMfld.GlueCore
+public import LeanPool.OneManifold.OneMfld.GlueNNReal
+public import LeanPool.OneManifold.OneMfld.GlueUI
+public import LeanPool.OneManifold.OneMfld.IntervalCharts
+public import LeanPool.OneManifold.OneMfld.NiceCharts
+public import LeanPool.OneManifold.OneMfld.Normalize
+public import LeanPool.OneManifold.OneMfld.Outer
+public import LeanPool.OneManifold.OneMfld.PartialHomeomorphHelpers
+public import LeanPool.OneManifold.OneMfld.TransitionMono
+public import LeanPool.OneManifold.OneMfld.TwoComponents
+public import LeanPool.OneManifold.OneMfld.UnitInterval
+public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Tactic.Ext -- shake: keep
 
 /-!
 # ClassifyOverlaps
