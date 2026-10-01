@@ -27,6 +27,7 @@ from typing import Any
 import yaml
 
 from lean_pool import challenge
+from lean_pool.indexes import requires_project_roots, structure_errors
 from lean_pool.validation_cache import ValidationCache, pool_units
 
 # Derived from the challenge module so the pool gate and the axiom list
@@ -1194,6 +1195,16 @@ def _check_project_uniqueness(path: Path, projects: list[Any]) -> list[_QualityE
     return errors
 
 
+def _check_project_indexes(root: Path) -> list[_QualityError]:
+    """Enforce the generated pool index and each complete public project root."""
+    if not requires_project_roots(root):
+        return []
+    return [
+        _QualityError(path, 1, message + "; run `lake exe mk_all`")
+        for path, message in structure_errors(root)
+    ]
+
+
 def _check_project_entry_imports(
     root: Path, projects: list[Any]
 ) -> list[_QualityError]:
@@ -1202,6 +1213,16 @@ def _check_project_entry_imports(
     if not index_path.exists():
         return []
     imports = set(_parse_imports(index_path.read_text()))
+    if requires_project_roots(root):
+        # Each project root directly imports its registered entry and all sources.
+        imports = {
+            imported
+            for module in imports
+            if module.endswith(".Imports")
+            for path in [_module_to_path(root, module)]
+            if path.exists()
+            for imported in _parse_imports(path.read_text())
+        }
     entry_modules = {
         project["entry_module"]
         for project in projects
@@ -1879,6 +1900,7 @@ def run_checks(
 ) -> list[_QualityError]:
     """Run all deterministic quality checks."""
     checks = [
+        _check_project_indexes,
         _check_reachability,
         _check_headers,
         _check_forbidden_lean_text,

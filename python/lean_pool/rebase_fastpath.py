@@ -23,6 +23,8 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 from urllib.parse import urlencode
 
+from lean_pool.indexes import requires_project_roots, structure_errors
+
 ARTIFACT = "rebase-project-build"
 ARCHIVE = f"{ARTIFACT}.tar.gz"
 MANIFEST = "rebase-build-manifest.json"
@@ -233,6 +235,8 @@ def decision(
 
 def check_index(root: Path) -> bool:
     """Check the generated root without starting Lean or downloading Mathlib."""
+    if requires_project_roots(root):
+        return not structure_errors(root)
     pool = root / "LeanPool"
     modules = sorted(
         "LeanPool."
