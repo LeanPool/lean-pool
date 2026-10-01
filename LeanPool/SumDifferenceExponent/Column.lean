@@ -196,15 +196,6 @@ theorem Z_sub_Z_subset_representations (m : ℕ) :
     simp_rw [sub_mul]
     rw [Finset.sum_sub_distrib]
 
-theorem Z_sub_Z_card_le (m : ℕ) : (Z m - Z m).card ≤ 37 ^ m := by
-  calc
-    (Z m - Z m).card ≤ (differenceRepresentations m).card :=
-      Finset.card_le_card (Z_sub_Z_subset_representations m)
-    _ ≤ (Fintype.piFinset fun _ : Fin m => VDiff).card :=
-      Finset.card_image_le
-    _ = 37 ^ m := by
-      simp [Fintype.piFinset, VDiff_card_certificate]
-
 theorem differenceRepresentations_card_le (m : ℕ) :
     (differenceRepresentations m).card ≤ 37 ^ m := by
   calc
@@ -213,6 +204,10 @@ theorem differenceRepresentations_card_le (m : ℕ) :
       Finset.card_image_le
     _ = 37 ^ m := by
       simp [Fintype.piFinset, VDiff_card_certificate]
+
+theorem Z_sub_Z_card_le (m : ℕ) : (Z m - Z m).card ≤ 37 ^ m :=
+  (Finset.card_le_card (Z_sub_Z_subset_representations m)).trans
+    (differenceRepresentations_card_le m)
 
 theorem mem_ZNat_lt_pow
     {m z : ℕ} (hz : z ∈ ZNat m) :
