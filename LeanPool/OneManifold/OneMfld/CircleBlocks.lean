@@ -5,14 +5,21 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Algebra.Order.Star.Real
-public import Mathlib.Analysis.Normed.Order.Lattice
-public import Mathlib.Tactic
+public import Mathlib.Topology.Algebra.Group.Quotient
 public import Mathlib.Topology.Algebra.ProperAction.Basic
+public import Mathlib.Topology.Bornology.Real
 public import Mathlib.Topology.GDelta.MetrizableSpace
 public import Mathlib.Topology.Instances.AddCircle.Defs
+public import Mathlib.Topology.Instances.NNReal.Lemmas
 public import Mathlib.Topology.Instances.ZMultiples
-
+public import Mathlib.Topology.OpenPartialHomeomorph.Defs
+public import Mathlib.Topology.UniformSpace.Real
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Building blocks for the circle case
 
