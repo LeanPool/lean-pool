@@ -1438,8 +1438,8 @@ private theorem instructionCleanupResetBits_le
       have hdestinationWide := le_trans hdestination hboundWide
       have hvalueWide := le_trans hvalue hboundWide
       fin_cases slot <;>
-        simp [instructionCleanupResetBits, instructionCleanupValue,
-          instructionRemainingValue] <;>
+        simp only [instructionCleanupResetBits, instructionCleanupValue,
+          instructionRemainingValue, Fin.reduceFinMk, Fin.isValue, ge_iff_le] <;>
         (try split_ifs) <;> simp_all
   | add destination source₀ source₁ =>
       simp only [instructionResourceMagnitude] at hinstruction
@@ -1458,8 +1458,8 @@ private theorem instructionCleanupResetBits_le
             6 * (bound + 1) ^ 2 := by
         simpa [BinaryInstrOp.eval] using! hsmall _ hresult
       fin_cases slot <;>
-        simp [instructionCleanupResetBits, instructionCleanupValue,
-          instructionRemainingValue] <;>
+        simp only [instructionCleanupResetBits, instructionCleanupValue,
+          instructionRemainingValue, Fin.reduceFinMk, Fin.isValue, ge_iff_le] <;>
         (try split_ifs) <;> simp_all
   | sub destination source₀ source₁ =>
       simp only [instructionResourceMagnitude] at hinstruction
@@ -1478,8 +1478,8 @@ private theorem instructionCleanupResetBits_le
             6 * (bound + 1) ^ 2 := by
         simpa [BinaryInstrOp.eval] using! hsmall _ hresult
       fin_cases slot <;>
-        simp [instructionCleanupResetBits, instructionCleanupValue,
-          instructionRemainingValue] <;>
+        simp only [instructionCleanupResetBits, instructionCleanupValue,
+          instructionRemainingValue, Fin.reduceFinMk, Fin.isValue, ge_iff_le] <;>
         (try split_ifs) <;> simp_all
   | mul destination source₀ source₁ =>
       simp only [instructionResourceMagnitude] at hinstruction
@@ -1498,8 +1498,8 @@ private theorem instructionCleanupResetBits_le
             6 * (bound + 1) ^ 2 := by
         simpa [BinaryInstrOp.eval] using! hsmall _ hresult
       fin_cases slot <;>
-        simp [instructionCleanupResetBits, instructionCleanupValue,
-          instructionRemainingValue] <;>
+        simp only [instructionCleanupResetBits, instructionCleanupValue,
+          instructionRemainingValue, Fin.reduceFinMk, Fin.isValue, ge_iff_le] <;>
         (try split_ifs) <;> simp_all
   | load destination addressRegister =>
       simp only [instructionResourceMagnitude] at hinstruction
@@ -1510,8 +1510,8 @@ private theorem instructionCleanupResetBits_le
       have haddressWide := le_trans haddress hboundWide
       have hvalueWide := le_trans hvalue hboundWide
       fin_cases slot <;>
-        simp [instructionCleanupResetBits, instructionCleanupValue,
-          instructionRemainingValue] <;>
+        simp only [instructionCleanupResetBits, instructionCleanupValue,
+          instructionRemainingValue, Fin.reduceFinMk, Fin.isValue, ge_iff_le] <;>
         (try split_ifs) <;> simp_all
   | store addressRegister source =>
       simp only [instructionResourceMagnitude] at hinstruction
@@ -1520,8 +1520,8 @@ private theorem instructionCleanupResetBits_le
       have haddressWide := le_trans haddress hboundWide
       have hvalueWide := le_trans hvalue hboundWide
       fin_cases slot <;>
-        simp [instructionCleanupResetBits, instructionCleanupValue,
-          instructionRemainingValue] <;>
+        simp only [instructionCleanupResetBits, instructionCleanupValue,
+          instructionRemainingValue, Fin.reduceFinMk, Fin.isValue, ge_iff_le] <;>
         (try split_ifs) <;> simp_all
   | jz source target =>
       fin_cases slot <;>

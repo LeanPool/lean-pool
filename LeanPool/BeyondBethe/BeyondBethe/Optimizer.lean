@@ -396,10 +396,11 @@ theorem hasDerivAt_regularizedBetheObjective_line
 /-- A strictly positive finite matrix remains nonnegative under all
 sufficiently small affine perturbations. -/
 theorem eventually_linearMatrixPerturb_nonnegative
-    {n : Type*} [Fintype n]
+    {n : Type*} [Finite n]
     {X D : Matrix n n ℝ} (hXpos : ∀ i j, 0 < X i j) :
     ∀ᶠ t in 𝓝 (0 : ℝ), Matrix.Nonnegative (linearMatrixPerturb X D t) := by
   classical
+  let := Fintype.ofFinite n
   have hone : ∀ p : n × n,
       ∀ᶠ t in 𝓝 (0 : ℝ), 0 < linearMatrixPerturb X D t p.1 p.2 := by
     intro p

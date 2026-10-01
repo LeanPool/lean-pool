@@ -228,16 +228,16 @@ theorem exists_eval_ne_zero_of_mvPolynomial_ne_zero
 is stable or identically zero.  This is the finite-dimensional form of
 Hurwitz closure used in the preservation argument. -/
 theorem upperHalfPlaneStableOrZero_of_positive_ray
-    {σ : Type*} [Fintype σ]
+    {σ : Type*} [Finite σ]
     (p q : MvPolynomial σ ℂ)
     (hstable : ∀ t : ℝ, 0 < t →
       IsUpperHalfPlaneStable (p + MvPolynomial.C (t : ℂ) * q)) :
     p = 0 ∨ IsUpperHalfPlaneStable p := by
+  let := Fintype.ofFinite σ
   by_cases hp : p = 0
   · exact Or.inl hp
   right
-  intro z hz
-  intro hpz
+  intro z hz hpz
   obtain ⟨w, hw⟩ := exists_eval_ne_zero_of_mvPolynomial_ne_zero hp
   let v : σ → ℂ := fun i ↦ w i - z i
   let A : Polynomial ℂ := affineLinePolynomial p z v
@@ -291,10 +291,11 @@ theorem linearExtension_eval
 /-- The coefficient of a stable polynomial in a multiaffine variable is
 stable or zero.  It is obtained as a large-imaginary-value limit. -/
 theorem linearExtension_linearCoefficient_stableOrZero
-    {σ : Type*} [Fintype σ]
+    {σ : Type*} [Finite σ]
     {g f : MvPolynomial σ ℂ}
     (hstable : IsUpperHalfPlaneStable (linearExtension g f)) :
     f = 0 ∨ IsUpperHalfPlaneStable f := by
+  let := Fintype.ofFinite σ
   let q : MvPolynomial σ ℂ := MvPolynomial.C (-Complex.I) * g
   apply upperHalfPlaneStableOrZero_of_positive_ray f q
   intro t ht z hz
@@ -337,10 +338,11 @@ theorem linearExtension_linearCoefficient_stableOrZero
 polynomial allowed.  Here the boundary value is zero; translations give the
 usual general statement. -/
 theorem linearExtension_constantCoefficient_stableOrZero
-    {σ : Type*} [Fintype σ]
+    {σ : Type*} [Finite σ]
     {g f : MvPolynomial σ ℂ}
     (hstable : IsUpperHalfPlaneStable (linearExtension g f)) :
     g = 0 ∨ IsUpperHalfPlaneStable g := by
+  let := Fintype.ofFinite σ
   let q : MvPolynomial σ ℂ := MvPolynomial.C Complex.I * f
   apply upperHalfPlaneStableOrZero_of_positive_ray g q
   intro t ht z hz
@@ -408,12 +410,13 @@ theorem linearExtension_stable_iff_ratio
 
 /-- The elementary inverse-shift identity in the Lieb--Sokal proof. -/
 theorem inverseShiftExtension_stable
-    {σ : Type*} [Fintype σ]
+    {σ : Type*} [Finite σ]
     {f₀ f₁ : MvPolynomial σ ℂ}
     (hf : IsUpperHalfPlaneStable (linearExtension f₀ f₁)) :
     IsUpperHalfPlaneStable
       (linearExtension (-MvPolynomial.rename some f₁)
         (linearExtension f₀ f₁)) := by
+  let := Fintype.ofFinite σ
   intro z hz
   let y : ℂ := z none
   let u : Option σ → ℂ := z ∘ some
@@ -461,12 +464,13 @@ theorem inverseShiftExtension_stable
 /-- Coordinate form of the Lieb--Sokal lemma.  The proof uses only the ratio
 characterization above, the inverse shift, and boundary closure. -/
 theorem liebSokal_linear_contraction
-    {σ : Type*} [Fintype σ]
+    {σ : Type*} [Finite σ]
     (g : MvPolynomial (Option σ) ℂ) (f₀ f₁ : MvPolynomial σ ℂ)
     (hstable : IsUpperHalfPlaneStable
       (linearExtension g (linearExtension f₀ f₁))) :
     g - MvPolynomial.rename some f₁ = 0 ∨
       IsUpperHalfPlaneStable (g - MvPolynomial.rename some f₁) := by
+  let := Fintype.ofFinite σ
   have hfOr := linearExtension_linearCoefficient_stableOrZero hstable
   rcases hfOr with hfzero | hf
   · have hf₁zero : f₁ = 0 := by
@@ -594,11 +598,12 @@ theorem linearExtension_multiaffine
 /-- Specializing the adjoined variable to a real number preserves stability,
 again allowing the zero polynomial. -/
 theorem linearExtension_specialize_real_stableOrZero
-    {σ : Type*} [Fintype σ]
+    {σ : Type*} [Finite σ]
     {g f : MvPolynomial σ ℂ} (c : ℝ)
     (hstable : IsUpperHalfPlaneStable (linearExtension g f)) :
     g + MvPolynomial.C (c : ℂ) * f = 0 ∨
       IsUpperHalfPlaneStable (g + MvPolynomial.C (c : ℂ) * f) := by
+  let := Fintype.ofFinite σ
   have hshift : IsUpperHalfPlaneStable
       (linearExtension (g + MvPolynomial.C (c : ℂ) * f) f) := by
     intro z hz
@@ -626,7 +631,7 @@ theorem linearExtension_specialize_real_stableOrZero
 /-- Coordinate specialization in a polynomial whose selected variable has
 degree at most one. -/
 theorem option_specialize_real_stableOrZero
-    {σ : Type*} [Fintype σ]
+    {σ : Type*} [Finite σ]
     (p : MvPolynomial (Option σ) ℂ) (c : ℝ)
     (hdegree : p.degreeOf none ≤ 1)
     (hstable : IsUpperHalfPlaneStable p) :
@@ -635,6 +640,7 @@ theorem option_specialize_real_stableOrZero
       IsUpperHalfPlaneStable
         (optionConstantCoefficient p +
           MvPolynomial.C (c : ℂ) * optionLinearCoefficient p) := by
+  let := Fintype.ofFinite σ
   rw [option_eq_linearExtension p hdegree] at hstable
   exact linearExtension_specialize_real_stableOrZero c hstable
 
@@ -708,12 +714,13 @@ theorem coordinateReindex_multiaffine
   simp
 
 theorem coordinateSpecialization_stableOrZero
-    {σ : Type*} [Fintype σ]
+    {σ : Type*} [Finite σ]
     (p : MvPolynomial σ ℂ) (i : σ) (c : ℝ)
     (hmulti : IsComplexMultiaffine p)
     (hstable : IsUpperHalfPlaneStable p) :
     coordinateSpecialization p i c = 0 ∨
       IsUpperHalfPlaneStable (coordinateSpecialization p i c) := by
+  let := Fintype.ofFinite σ
   classical
   let p' := coordinateReindex p i
   have hdegree : p'.degreeOf none ≤ 1 :=

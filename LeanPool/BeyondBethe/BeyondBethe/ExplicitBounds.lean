@@ -149,9 +149,9 @@ theorem abs_negMulLog_sub_le_six_mul {x y : ℝ}
 /-- A product-log estimate on the same fixed interval. -/
 theorem abs_mul_log_sub_mul_log_le
     {x y s t : ℝ}
-    (hx : abs x ≤ 6 / 5) (hy : abs y ≤ 6 / 5)
+    (_hx : abs x ≤ 6 / 5) (hy : abs y ≤ 6 / 5)
     (hslo : (3 / 10 : ℝ) ≤ s) (hshi : s ≤ 3 / 2)
-    (htlo : (3 / 10 : ℝ) ≤ t) (hthi : t ≤ 3 / 2) :
+    (htlo : (3 / 10 : ℝ) ≤ t) (_hthi : t ≤ 3 / 2) :
     abs (x * Real.log s - y * Real.log t) ≤
       2 * abs (x - y) + 4 * abs (s - t) := by
   have hlogs := abs_log_le_two_of_mem hslo hshi
@@ -215,7 +215,7 @@ theorem abs_binaryEntropy_sub_half_le {p : ℝ}
 /-- The suffix error with a small suffix mass has an explicit square-root
 modulus around `(1/2,0)`. -/
 theorem abs_continuousSuffixError_near_zero
-    {u q r : ℝ} (hr0 : 0 ≤ r) (hr1 : r ≤ 1 / 10)
+    {u q r : ℝ} (_hr0 : 0 ≤ r) (hr1 : r ≤ 1 / 10)
     (hu : abs (u - 1 / 2) ≤ r) (hq : abs q ≤ r) :
     abs (continuousSuffixError u q -
         continuousSuffixError (1 / 2) 0) ≤
@@ -287,7 +287,7 @@ theorem abs_continuousSuffixError_near_zero
 /-- The nonsingular suffix terms are uniformly Lipschitz around
 `(1/2,1/2)`. -/
 theorem abs_continuousSuffixError_near_half
-    {u v q r : ℝ} (hr0 : 0 ≤ r) (hr1 : r ≤ 1 / 10)
+    {u v q r : ℝ} (_hr0 : 0 ≤ r) (hr1 : r ≤ 1 / 10)
     (hu : abs (u - 1 / 2) ≤ r)
     (hv : abs (v - 1 / 2) ≤ r) (hq : abs q ≤ r) :
     abs (continuousSuffixError u (v + q) -

@@ -294,7 +294,11 @@ theorem directedCertificatePrecision_error
   have hnR : (0 : ℝ) ≤ n := by positivity
   have hshift : 2 * (1 / 2 : ℝ) ^ 400 = (1 / 2 : ℝ) ^ 399 := by
     rw [show 400 = 399 + 1 by omega, pow_succ]
-    ring
+    calc
+      2 * ((1 / 2 : ℝ) ^ 399 * (1 / 2)) =
+          (1 / 2 : ℝ) ^ 399 * (2 * (1 / 2)) := by ac_rfl
+      _ = (1 / 2 : ℝ) ^ 399 := by
+        rw [show (2 : ℝ) * (1 / 2) = 1 by norm_num, mul_one]
   have hratioScaled :
       (n : ℝ) * ((n : ℝ) * (1 / 2 : ℝ) ^ n) *
           (1 / 2 : ℝ) ^ 399 ≤
@@ -308,10 +312,10 @@ theorem directedCertificatePrecision_error
         (n : ℝ) *
           ((n : ℝ) * (1 / 2 : ℝ) ^ n) *
             (1 / 2 : ℝ) ^ 399 := by
-      rw [← hshift]
-      ring
+      rw [← hshift, pow_two]
+      ac_rfl
     _ ≤ (n : ℝ) * 1 * (1 / 2 : ℝ) ^ 399 := hratioScaled
-    _ = (n : ℝ) * (1 / 2 : ℝ) ^ 399 := by ring
+    _ = (n : ℝ) * (1 / 2 : ℝ) ^ 399 := by simp only [mul_one]
     _ ≤ (n : ℝ) * (explicitLogEvaluationLoss : ℝ) :=
       mul_le_mul_of_nonneg_left hconst hnR
     _ = (explicitLogEvaluationLoss : ℝ) * n := by ring

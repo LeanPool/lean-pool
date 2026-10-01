@@ -469,8 +469,7 @@ private theorem binaryPredTM_borrow_terminal_one
           (List.replicate done true ++ BinaryPred.ripple [true]) ∧
         (c'.work idx).cells 0 = Γ.start ∧
         c'.output = out₀ := by
-  intro done
-  intro c hstate hinput hwork hcontent hcell0 hhead houtput
+  intro done c hstate hinput hwork hcontent hcell0 hhead houtput
   have hread : (c.work idx).read = Γ.one :=
     hcontent.binaryPred_read_cons hhead
   have hstep := binaryPredTM_step_one c hstate hread

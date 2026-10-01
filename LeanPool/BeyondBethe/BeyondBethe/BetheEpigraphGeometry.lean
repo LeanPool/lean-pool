@@ -655,7 +655,7 @@ theorem BetheEpigraphTarget_smoothed_inner_cross
 /-- A coordinatewise bound controls the Euclidean square norm with a
 square-root-free radius. -/
 theorem finiteNormSq_le_dimension_sq_of_abs_le
-    {d : ℕ} (hd : 0 < d) {C : ℝ} (hC : 0 ≤ C)
+    {d : ℕ} (hd : 0 < d) {C : ℝ} (_hC : 0 ≤ C)
     (x : Fin d → ℝ) (hx : ∀ i, abs (x i) ≤ C) :
     finiteNormSq x ≤ ((d : ℝ) * C) ^ 2 := by
   have hterm : ∀ i, x i ^ 2 ≤ C ^ 2 := by
@@ -700,7 +700,7 @@ ball centered at zero.  The center of the cross may depend on the exact
 optimizer, but the containing ball depends only on the rational height and
 radius supplied to the algorithm. -/
 theorem BetheEpigraphTarget_inner_cross_outer_zero
-    {m : ℕ} (hm : 0 < m)
+    {m : ℕ} (_hm : 0 < m)
     {τ : ℝ} {A : Matrix (Fin (m + 1)) (Fin (m + 1)) ℝ}
     {δ upper r : ℝ} (hδ : 0 ≤ δ) (hr : 0 ≤ r)
     (ycenter : Fin (m * m) → ℝ)

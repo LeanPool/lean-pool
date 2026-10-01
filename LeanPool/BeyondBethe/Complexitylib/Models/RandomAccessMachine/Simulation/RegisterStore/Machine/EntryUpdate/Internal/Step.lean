@@ -90,8 +90,7 @@ theorem entryUpdateIteration_internal
       exact ⟨processed ++ [entry], emitted ++ [(address, newValue)], true,
         resultCount, nextWork, nextOut, time, htime, hreach, hnextInv,
         hnextOutput⟩
-  ·
-    obtain ⟨nextWork, nextOut, time, htime, hreach, hnextInv,
+  · obtain ⟨nextWork, nextOut, time, htime, hreach, hnextInv,
         hnextOutput⟩ :=
       entryUpdateIteration_miss_internal tapes store address newValue
         processed emitted entry rest found resultCount initialWork work

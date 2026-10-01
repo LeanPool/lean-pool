@@ -2195,13 +2195,13 @@ private theorem read_inputBitStoreFrom_zero (input : List Bool) :
 private theorem read_programInitialStore (input : List Bool) (target : ℕ) :
     read (programInitialStore input) target = initRegs input target := by
   rw [programInitialStore, RegisterStore.read_write]
-  by_cases htarget : target = 0
-  · subst target
-    simp [initRegs]
-  · have hone : 1 ≤ target := Nat.one_le_iff_ne_zero.mpr htarget
-    simp [Function.update, htarget, read_inputBitStoreFrom, hone, initRegs]
-    rfl
-  exact inputBitStoreFrom_addressesNodup 1 input
+  · by_cases htarget : target = 0
+    · subst target
+      simp [initRegs]
+    · have hone : 1 ≤ target := Nat.one_le_iff_ne_zero.mpr htarget
+      simp [Function.update, htarget, read_inputBitStoreFrom, hone, initRegs]
+      rfl
+  · exact inputBitStoreFrom_addressesNodup 1 input
 
 theorem programInitialSnapshot_represents_internal (input : List Bool) :
     (programInitialSnapshot input).Represents (RAM.initCfg input) := by

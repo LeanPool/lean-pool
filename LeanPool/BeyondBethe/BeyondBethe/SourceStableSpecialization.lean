@@ -112,12 +112,14 @@ theorem sumOptionSpecialization_multiaffine
     (sumOptionReindex_multiaffine hp)
 
 theorem sumOptionSpecialization_stableOrZero
-    {κ τ : Type*} [Fintype κ] [Fintype τ]
+    {κ τ : Type*} [Finite κ] [Finite τ]
     (p : MvPolynomial (Option κ ⊕ τ) ℂ) (c : ℝ)
     (hmulti : IsComplexMultiaffine p)
     (hstable : IsUpperHalfPlaneStable p) :
     sumOptionSpecialization p c = 0 ∨
       IsUpperHalfPlaneStable (sumOptionSpecialization p c) := by
+  let := Fintype.ofFinite κ
+  let := Fintype.ofFinite τ
   exact option_specialize_real_stableOrZero (sumOptionReindex p) c
     (sumOptionReindex_multiaffine hmulti none)
     (sumOptionReindex_stable hstable)
@@ -191,7 +193,7 @@ theorem partialSpecialization_option
 /-- Specializing the recursively finite set of `PairVariables` to real values
 preserves upper-half-plane stability in the variables that remain. -/
 theorem pairVariables_partialSpecialization_stableOrZero :
-    ∀ (n : ℕ) {τ : Type*} [Fintype τ]
+    ∀ (n : ℕ) {τ : Type*} [Finite τ]
       (p : MvPolynomial (PairVariables n ⊕ τ) ℂ)
       (x : PairVariables n → ℝ),
       IsComplexMultiaffine p → IsUpperHalfPlaneStable p →
@@ -201,6 +203,7 @@ theorem pairVariables_partialSpecialization_stableOrZero :
   induction n with
   | zero =>
       intro τ _ p x hmulti hstable
+      let := Fintype.ofFinite τ
       right
       intro z hz
       rw [partialSpecialization_eval]
@@ -211,6 +214,7 @@ theorem pairVariables_partialSpecialization_stableOrZero :
       | inr i => exact hz i
   | succ n ih =>
       intro τ _ p x hmulti hstable
+      let := Fintype.ofFinite τ
       change MvPolynomial (Option (Option (PairVariables n)) ⊕ τ) ℂ at p
       change Option (Option (PairVariables n)) → ℝ at x
       change partialSpecialization p x = 0 ∨

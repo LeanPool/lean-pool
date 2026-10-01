@@ -220,7 +220,10 @@ private theorem compileAt_ifNonzero_correct
           { pc := pre.length + 1 + onNonzero.codeSize, regs := final } := by
     simp [Halted, hjmpInstr']
   rw [run_succ, logTimeUpto_succ]
-  simp [Halted, curInstr]
+  simp only [Halted, curInstr, List.length_append, List.length_cons,
+    lt_add_iff_pos_right, add_pos_iff, zero_lt_one, or_true, or_self,
+    getElem?_pos, Std.le_refl, List.getElem_append_right, tsub_self,
+    List.getElem_cons_zero, Option.getD_some, reduceCtorEq, ↓reduceIte]
   rw [step_jz_nonzero pre _ test _ store htest]
   rw [run_succ_step, hbranchRun.1]
   rw [hjmp']
@@ -309,7 +312,10 @@ theorem compileAt_correct_internal
       simp only [List.nil_append, List.cons_append, List.append_assoc]
         at hbranchRun ⊢
       rw [run_succ, logTimeUpto_succ]
-      simp [Halted, curInstr]
+      simp only [Halted, curInstr, List.length_append, List.length_cons,
+        lt_add_iff_pos_right, add_pos_iff, zero_lt_one, or_true, or_self,
+        getElem?_pos, Std.le_refl, List.getElem_append_right, tsub_self,
+        List.getElem_cons_zero, Option.getD_some, reduceCtorEq, ↓reduceIte]
       rw [step_jz_zero pre _ test _ store htest]
       rw [spaceUpto]
       simp [Halted, curInstr]
@@ -377,7 +383,10 @@ theorem compileAt_correct_internal
               { pc := pre.length + 1 + body.codeSize, regs := middle } := by
         simp [Halted, hjmpInstr']
       rw [run_succ, logTimeUpto_succ]
-      simp [Halted, curInstr]
+      simp only [Halted, curInstr, List.length_append, List.length_cons,
+        lt_add_iff_pos_right, add_pos_iff, zero_lt_one, or_true, or_self,
+        getElem?_pos, Std.le_refl, List.getElem_append_right, tsub_self,
+        List.getElem_cons_zero, Option.getD_some, reduceCtorEq, ↓reduceIte]
       rw [step_jz_nonzero pre _ test _ store htest]
       rw [show bodySteps + loopSteps + 1 = bodySteps + (loopSteps + 1) by omega]
       rw [run_add, hbodyRun.1]
