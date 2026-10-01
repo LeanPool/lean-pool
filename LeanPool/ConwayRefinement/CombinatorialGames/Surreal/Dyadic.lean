@@ -562,7 +562,6 @@ rational number.
 
 TODO: it should be possible to compute this value explicitly, given the finsets of `Dyadic`
 rationals corresponding to the left and right moves. -/
-@[no_expose]
 noncomputable def toDyadic (x : IGame) [Short x] [Numeric x] : Dyadic :=
   Classical.choose x.equiv_dyadic
 

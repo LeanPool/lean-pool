@@ -75,7 +75,6 @@ private theorem toIGame'_strictMono : StrictMono toIGame' := by
 termination_by a => a
 
 /-- The canonical map from `NatOrdinal` to `IGame`, sending `o` to `{Iio o | ∅}`. -/
-@[no_expose]
 def toIGame : NatOrdinal.{u} ↪o IGame.{u} :=
   .ofStrictMono NatOrdinal.toIGame' toIGame'_strictMono
 

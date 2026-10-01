@@ -139,7 +139,7 @@ theorem ind {motive : Surreal → Prop} (mk : ∀ y [Numeric y], motive (mk y)) 
     motive x := Quotient.ind (fun h ↦ @mk _ h.2) x
 
 /-- Choose an element of the equivalence class using the axiom of choice. -/
-@[no_expose] def out (x : Surreal) : IGame := (Quotient.out x).1
+def out (x : Surreal) : IGame := (Quotient.out x).1
 @[simp] instance (x : Surreal) : Numeric x.out := (Quotient.out x).2
 @[simp] theorem out_eq (x : Surreal) : mk x.out = x := Quotient.out_eq x
 

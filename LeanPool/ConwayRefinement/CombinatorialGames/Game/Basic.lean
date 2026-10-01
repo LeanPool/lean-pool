@@ -44,13 +44,13 @@ extra move for Left.
 In particular, note that a `ConwayGame` has no well-defined notion of left and right options.
 This means
 you should prefer `IGame` when analyzing specific games. -/
-def ConwayGame : Type (u + 1) :=
+@[expose] def ConwayGame : Type (u + 1) :=
   Antisymmetrization IGame (· ≤ ·)
 
 namespace ConwayGame
 
 /-- The quotient map from `IGame` into `ConwayGame`. -/
-def mk (x : IGame) : ConwayGame := Quotient.mk _ x
+@[expose] def mk (x : IGame) : ConwayGame := Quotient.mk _ x
 theorem mk_eq_mk {x y : IGame} : mk x = mk y ↔ x ≈ y := Quotient.eq
 
 alias ⟨_, mk_eq⟩ := mk_eq_mk
@@ -60,7 +60,7 @@ theorem ind {motive : ConwayGame → Prop} (mk : ∀ y, motive (mk y)) (x : Conw
   Quotient.ind mk x
 
 /-- Choose an element of the equivalence class using the axiom of choice. -/
-@[no_expose] def out (x : ConwayGame) : IGame := Quotient.out x
+def out (x : ConwayGame) : IGame := Quotient.out x
 @[simp] theorem out_eq (x : ConwayGame) : mk x.out = x := Quotient.out_eq x
 
 theorem mk_out_equiv (x : IGame) : (mk x).out ≈ x := Quotient.mk_out (s := AntisymmRel.setoid ..) x
@@ -90,12 +90,12 @@ private theorem ofSets_cases (s t : Set ConwayGame.{u}) [Small.{u} s] [Small.{u}
 
 instance : Zero ConwayGame := ⟨mk 0⟩
 instance : One ConwayGame := ⟨mk 1⟩
-instance : Add ConwayGame := ⟨Quotient.map₂ _ @add_congr⟩
-instance : Neg ConwayGame := ⟨Quotient.map _ @neg_congr⟩
+@[expose] instance : Add ConwayGame := ⟨Quotient.map₂ _ @add_congr⟩
+@[expose] instance : Neg ConwayGame := ⟨Quotient.map _ @neg_congr⟩
 instance : PartialOrder ConwayGame := inferInstanceAs (PartialOrder (Antisymmetrization ..))
 instance : Inhabited ConwayGame := ⟨0⟩
 
-instance : AddCommGroupWithOne ConwayGame where
+@[expose] instance : AddCommGroupWithOne ConwayGame where
   zero_add := by rintro ⟨x⟩; exact congr(mk $(zero_add _))
   add_zero := by rintro ⟨x⟩; exact congr(mk $(add_zero _))
   add_comm := by rintro ⟨x⟩ ⟨y⟩; exact congr(mk $(add_comm _ _))

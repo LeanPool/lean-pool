@@ -40,7 +40,7 @@ universe u
 variable {K : Type u} [Field K]
 
 /-- The Hahn-series ring `K((ℝ^{≤0}))`. -/
-def nonpos (K : Type u) [Field K] : Subring (HahnSeries ℝ K) where
+@[expose] def nonpos (K : Type u) [Field K] : Subring (HahnSeries ℝ K) where
   carrier := {x | x.support ⊆ Set.Iic 0}
   zero_mem' := by simp
   one_mem' := by
