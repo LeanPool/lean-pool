@@ -62,6 +62,13 @@ projects:
         source_ref: >-
           Phelps–Rodriguez conjecture; Tao's blog post, Conjecture 2; upstream
           Sendov/Conjecture.lean. The equality case is Rubinstein's 1968 theorem.
+      - declaration: SendovConjecture.sendov
+        informal: >-
+          The same statement in the Mathlib-only form of the upstream statement of record:
+          for every complex polynomial p of degree at least two such that every complex w
+          with p(w) = 0 has norm at most one, every zero a of p admits a root of the
+          derivative within distance at most one of a.
+        source_ref: Upstream Solution.lean, the declaration checked by the upstream comparator setup.
       - declaration: Sendov.rubinstein_one
         informal: >-
           If a polynomial of degree n at least two with all roots in the closed unit disk

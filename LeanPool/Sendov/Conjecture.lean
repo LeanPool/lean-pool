@@ -171,3 +171,36 @@ theorem sendov {n : ℕ} (hn : 2 ≤ n) {p : ℂ[X]} (hdeg : p.natDegree = n)
   simp [zero_pow (by omega : n - 1 ≠ 0)]
 
 end Sendov
+
+/-!
+## The statements of record
+
+Upstream states both theorems a second time, in the Mathlib-only form that its comparator
+configuration checks: the degree hypothesis is `2 ≤ p.natDegree` rather than a separate `n`,
+and the disk hypothesis quantifies over all of `ℂ` rather than over `Polynomial.roots`.  Each
+is a thin bridge to the theorem above; both differences are bookkeeping only, and the
+hypotheses here are the weaker pair, so these conclusions are the stronger claims.
+-/
+
+namespace SendovConjecture
+
+open Polynomial
+
+/-- **Sendov's conjecture**, in the Mathlib-only form of the upstream statement of record:
+proved by `Sendov.sendov`. -/
+theorem sendov {p : ℂ[X]} (hdeg : 2 ≤ p.natDegree)
+    (hzeroes : ∀ w : ℂ, p.eval w = 0 → ‖w‖ ≤ 1) {a : ℂ} (hpa : p.eval a = 0) :
+    ∃ ζ : ℂ, (derivative p).eval ζ = 0 ∧ ‖ζ - a‖ ≤ 1 :=
+  Sendov.sendov (n := p.natDegree) hdeg rfl (fun w hw => hzeroes w (mem_roots'.1 hw).2) hpa
+
+/-- **The Phelps–Rodriguez conjecture**, in the Mathlib-only form of the upstream statement
+of record: proved by `Sendov.phelps_rodriguez`. -/
+theorem phelps_rodriguez {p : ℂ[X]} (hdeg : 2 ≤ p.natDegree)
+    (hzeroes : ∀ w : ℂ, p.eval w = 0 → ‖w‖ ≤ 1) {a : ℂ} (hpa : p.eval a = 0) :
+    (∃ ζ : ℂ, (derivative p).eval ζ = 0 ∧ ‖ζ - a‖ < 1)
+      ∨ (‖a‖ = 1 ∧ ∃ c : ℂ, c ≠ 0 ∧
+          p = C c * (X ^ p.natDegree - C (a ^ p.natDegree))) :=
+  Sendov.phelps_rodriguez (n := p.natDegree) hdeg rfl
+    (fun w hw => hzeroes w (mem_roots'.1 hw).2) hpa
+
+end SendovConjecture
