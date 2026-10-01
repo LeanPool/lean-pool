@@ -18,6 +18,15 @@ Lean Pool uses deterministic CI for mechanical quality checks and LLM review for
 
 The Lean workflow runs on Lean, Lake, project metadata, quality-checker, and workflow changes. It restores and saves Lake caches and pulls Mathlib oleans with `lake exe cache get` when the cache is cold.
 
+Lean Pool uses one `public import LeanPool.<Project>.Imports` per project in
+`LeanPool.lean`. Each generated `LeanPool/<Project>/Imports.lean` publicly imports
+the original project entry module and every source under that project, exactly
+once and in sorted order. It contains only imports; keep mathematical declarations
+and project cards in the existing source files. Run `lake exe mk_all --module`
+after adding, removing or moving a source, and commit the project aggregate as
+well as the pool index. The quality linter and `mk_all --check` verify complete
+public coverage at both levels. The 10,000-line limit still applies to every file.
+
 The generated module-system indexes import every library file, so building them rejects any file missing a `module` header. Regenerate the indexes with `lake exe mk_all --module`. Package-level `requiresModuleSystem = true` also makes Lake warn when a legacy file imports Lean Pool.
 
 ### 2. Repository Quality Checker
