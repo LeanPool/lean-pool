@@ -53,4 +53,3 @@ public import LeanPool.NashEmbedding.NashEmbedding.Riemannian.Pullback
 public import LeanPool.NashEmbedding.NashEmbedding.Examples.FlatTorus
 public import LeanPool.NashEmbedding.NashEmbedding.Examples.Sphere
 public import LeanPool.NashEmbedding.NashEmbedding.Examples.Negative
-

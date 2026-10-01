@@ -11,4 +11,3 @@ public import LeanPool.NashEmbedding.NashEmbeddingTest.MollifierConvergence
 public import LeanPool.NashEmbedding.NashEmbeddingTest.NashCompact
 public import LeanPool.NashEmbedding.NashEmbeddingTest.NashTorus
 public import LeanPool.NashEmbedding.NashEmbeddingTest.RealizableMetrics
-
