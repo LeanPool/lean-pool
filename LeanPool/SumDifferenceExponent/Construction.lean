@@ -38,7 +38,7 @@ theorem index_sum_lt_scale
 theorem rowLabel_mod
     {l i : ℕ} (hi : i < rowScale l) :
     rowLabel l i % rowScale l = i := by
-  simp [rowLabel, Nat.add_mod, Nat.mod_eq_of_lt hi]
+  rw [rowLabel, Nat.add_mul_mod_self_left, Nat.mod_eq_of_lt hi]
 
 theorem rowLabel_sum_mod
     {l i j : ℕ} (hl : 0 < l)
@@ -47,7 +47,7 @@ theorem rowLabel_sum_mod
   have hij := index_sum_lt_scale hi hj
   have hi' : i < rowScale l := lt_trans hi (by simp [rowScale, hl])
   have hj' : j < rowScale l := lt_trans hj (by simp [rowScale, hl])
-  simp [Nat.add_mod, rowLabel_mod hi', rowLabel_mod hj',
+  simp only [Nat.add_mod, rowLabel_mod hi', rowLabel_mod hj',
     Nat.mod_eq_of_lt hij]
 
 theorem rowLabel_sum_injective
@@ -101,25 +101,35 @@ theorem cross_row_sum_injective (l : ℕ) (hl : 0 < l) :
   · apply Fin.ext
     omega
 
+private theorem rowLabel_le_bound {l i : ℕ} (hi : i ≤ 2 * l) :
+    rowLabel l i ≤ 2 * l + 16 * l ^ 3 := by
+  calc
+    rowLabel l i ≤ 2 * l + (4 * l) * (2 * l) ^ 2 :=
+      Nat.add_le_add hi (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hi 2))
+    _ = 2 * l + 16 * l ^ 3 := by ring
+
 theorem rowLabel_lt_base
     {l i : ℕ} (hl : 0 < l) (hi : i < 2 * l) :
     rowLabel l i < rowBase l := by
-  have hi' : i ≤ 2 * l := Nat.le_of_lt hi
-  have hsquare : i ^ 2 ≤ (2 * l) ^ 2 :=
-    Nat.pow_le_pow_left hi' 2
-  simp only [rowLabel, rowScale, rowBase]
-  nlinarith [Nat.zero_le i, Nat.zero_le l]
+  have hcube : l ≤ l ^ 3 := le_self_pow₀ (Nat.succ_le_of_lt hl) (by decide)
+  calc
+    rowLabel l i ≤ 2 * l + 16 * l ^ 3 := rowLabel_le_bound hi.le
+    _ ≤ 2 * l ^ 3 + 16 * l ^ 3 :=
+      Nat.add_le_add_right (Nat.mul_le_mul_left 2 hcube) _
+    _ ≤ 40 * l ^ 3 := by omega
+    _ < rowBase l := Nat.lt_succ_self _
 
 theorem rowLabel_sum_lt_base
     {l i j : ℕ} (hl : 0 < l)
     (hi : i < 2 * l) (hj : j < 2 * l) :
     rowLabel l i + rowLabel l j < rowBase l := by
-  have hi' : i ≤ 2 * l := Nat.le_of_lt hi
-  have hj' : j ≤ 2 * l := Nat.le_of_lt hj
-  have hi2 : i ^ 2 ≤ (2 * l) ^ 2 := Nat.pow_le_pow_left hi' 2
-  have hj2 : j ^ 2 ≤ (2 * l) ^ 2 := Nat.pow_le_pow_left hj' 2
-  simp only [rowLabel, rowScale, rowBase]
-  nlinarith [Nat.zero_le i, Nat.zero_le j, Nat.zero_le l]
+  have hcube : l ≤ l ^ 3 := le_self_pow₀ (Nat.succ_le_of_lt hl) (by decide)
+  calc
+    rowLabel l i + rowLabel l j ≤
+        (2 * l + 16 * l ^ 3) + (2 * l + 16 * l ^ 3) :=
+      Nat.add_le_add (rowLabel_le_bound hi.le) (rowLabel_le_bound hj.le)
+    _ ≤ 40 * l ^ 3 := by omega
+    _ < rowBase l := Nat.lt_succ_self _
 
 /-- The number of base-39 digits needed to make the sparse contributions negligible. -/
 def depth (l : ℕ) : ℕ := 28 * l
@@ -185,7 +195,7 @@ theorem sparseNat_card_le (l : ℕ) :
         ((Finset.range (2 * l)).product (ZNat (depth l))).card := by
       exact Finset.card_image_le
     _ = 2 * l * 12 ^ depth l := by
-      simp [ZNat_card]
+      simp only [Finset.product_eq_sprod, Finset.card_product, Finset.card_range, ZNat_card]
 
 theorem A_card_eq_ANat_card (l : ℕ) :
     (A l).card = (ANat l).card := by
@@ -258,7 +268,7 @@ theorem sumWitnessSet_card
     (l : ℕ) (hl : 0 < l) :
     (sumWitnessSet l).card = l ^ 2 * columnModulus l := by
   rw [sumWitnessSet, Finset.card_image_iff.mpr]
-  · simp [pow_two]
+  · simp only [Finset.card_univ, Fintype.card_prod, Fintype.card_fin, pow_two]
   · exact (Int.ofNat_injective.comp (sumWitnessValue_injective l hl)).injOn
 
 theorem sumWitnessSet_subset_add
@@ -458,7 +468,7 @@ theorem sparseDiffCover_card_le (l : ℕ) :
       Finset.card_image_le
     _ = (2 * l) ^ 2 *
         (differenceRepresentations (depth l)).card := by
-      simp [pow_two]
+      simp only [Finset.product_eq_sprod, Finset.card_product, Finset.card_range, pow_two]
     _ ≤ (2 * l) ^ 2 * 37 ^ depth l := by
       gcongr
       exact differenceRepresentations_card_le (depth l)
