@@ -5,9 +5,12 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Tactic
 public import LeanPool.OneManifold.OneMfld.PartialHomeomorphHelpers
-
+public import Mathlib.Topology.Bornology.Real
+public import Mathlib.Topology.Instances.NNReal.Lemmas
+public import Mathlib.Topology.OpenPartialHomeomorph.Defs
+public import Mathlib.Topology.Order.IntermediateValue
+public import Mathlib.Topology.UniformSpace.Real
 
 /-! Interval charts on a 1-manifold charted on `ℝ≥0`, and the `Overlap` relation.
 

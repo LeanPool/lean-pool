@@ -5,10 +5,10 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Tactic
 public import Mathlib.Topology.Connected.Basic
 public import Mathlib.Topology.OpenPartialHomeomorph.Defs
-
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.Have
 
 /-!
 # PartialHomeomorphHelpers
@@ -29,14 +29,7 @@ lemma partial_homeo_connected {X : Type*} {Y : Type*} [TopologicalSpace X] [Topo
 
 lemma partial_homeo_connected' {X : Type*} {Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
   (h : OpenPartialHomeomorph X Y) (conn : IsConnected h.target) : (IsConnected h.source) := by
-  have hst : h.symm.source = h.target := rfl
-  have hts : h.symm.target = h.source := rfl
-  have conn' : IsConnected h.symm.source := by
-    rw [hst]
-    exact conn
-  have h'' := partial_homeo_connected h.symm conn'
-  rw [←hts]
-  exact h''
+  exact partial_homeo_connected h.symm conn
 
 lemma partial_homeo_source_connected_iff_target_connected {X : Type*} {Y : Type*}
     [TopologicalSpace X] [TopologicalSpace Y]
