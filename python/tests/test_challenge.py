@@ -353,6 +353,28 @@ def test_axiom_audit_allows_sorry_only_for_registered_declarations() -> None:
     assert "Challenge.Widget.helper depends on `sorryAx`" in errors[0].message
 
 
+def test_axiom_audit_reads_a_list_lean_wrapped_over_several_lines() -> None:
+    """Past 120 columns Lean breaks the axiom list after each comma."""
+    declarations = [_declaration("Challenge.TestingByBetting.ville_testing_by_betting")]
+    # Verbatim `#print axioms` output from `lake env lean` (Lean 4.35.0-rc3).
+    output = (
+        "'Challenge.TestingByBetting.ville_testing_by_betting' "
+        "depends on axioms: [propext,\n"
+        " sorryAx,\n"
+        " Classical.choice,\n"
+        " Quot.sound]\n"
+    )
+
+    errors = _parse_axiom_output(
+        Path("/repo"),
+        declarations,
+        output,
+        {"Challenge.TestingByBetting.ville_testing_by_betting"},
+    )
+
+    assert errors == []
+
+
 def test_axiom_audit_requires_registered_statements_to_stay_open() -> None:
     """A statement proved in place is no longer the contract solvers took on."""
     declarations = [_declaration("Challenge.Widget.widget_exists")]

@@ -983,7 +983,9 @@ def _parse_axiom_output(
         {f"_root_.{declaration.name}": declaration for declaration in declarations}
     )
     # Names may contain `'` (e.g. `foo'`); see _axiom_audit_resolved comment.
-    pattern = re.compile(r"^'(.+?)' depends on axioms: \[(.*)\]$", re.MULTILINE)
+    # Past 120 columns Lean wraps the list after each comma, so the list may span
+    # lines: `[^\]]*` crosses newlines, and the split below strips the indents.
+    pattern = re.compile(r"^'(.+?)' depends on axioms: \[([^\]]*)\]", re.MULTILINE)
     seen: set[str] = set()
     for match in pattern.finditer(output):
         name = match.group(1)
