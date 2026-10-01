@@ -18,8 +18,8 @@ AGGREGATE_HEADER = (
     "Released under Apache 2.0 license as described in the file LICENSE.\n"
     "Authors: Lean Pool contributors\n-/\n" + MODULE_HEADER + GENERATED_MARKER
 )
-# Removed after the separate content migration has landed.
-REQUIRE_PROJECT_ROOTS = False
+# Production module-system packages must never revert to a flat index.
+REQUIRE_PROJECT_ROOTS = True
 
 
 def project_modules(root: Path) -> dict[str, list[str]]:
