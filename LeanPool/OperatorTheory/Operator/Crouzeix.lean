@@ -109,4 +109,3 @@ public import LeanPool.OperatorTheory.Operator.Crouzeix.SymmetrizedBound
 public import LeanPool.OperatorTheory.Operator.Crouzeix.VonNeumann
 
 /-! Supporting modules for Unitary dilation and the Crouzeix–Palencia bound. -/
-

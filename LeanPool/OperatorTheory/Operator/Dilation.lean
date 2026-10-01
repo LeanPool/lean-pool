@@ -10,4 +10,3 @@ public import LeanPool.OperatorTheory.Operator.Dilation.Halmos
 public import LeanPool.OperatorTheory.Operator.Dilation.Schaeffer
 
 /-! Supporting modules for Unitary dilation and the Crouzeix–Palencia bound. -/
-

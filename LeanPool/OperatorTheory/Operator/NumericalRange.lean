@@ -28,4 +28,3 @@ public import LeanPool.OperatorTheory.Operator.NumericalRange.RadiusSpectrum
 public import LeanPool.OperatorTheory.Operator.NumericalRange.Stability
 
 /-! Supporting modules for Unitary dilation and the Crouzeix–Palencia bound. -/
-

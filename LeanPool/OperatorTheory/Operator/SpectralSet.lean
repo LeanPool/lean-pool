@@ -11,4 +11,3 @@ public import LeanPool.OperatorTheory.Operator.SpectralSet.Normal
 public import LeanPool.OperatorTheory.Operator.SpectralSet.SpectrumInNR
 
 /-! Supporting modules for Unitary dilation and the Crouzeix–Palencia bound. -/
-

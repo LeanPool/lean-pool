@@ -6,7 +6,7 @@ resolution is mechanical rather than editorial:
 
 ``LeanPool.lean``
     The ``mk_all`` index is a sorted list of ``import LeanPool.X`` lines, one
-    per Lean file in the tree, so it is regenerated rather than merged --
+    per project aggregate after migration, regenerated rather than merged --
     and, because it is derived purely from the file tree, without needing a
     Lean toolchain.
 
@@ -32,6 +32,8 @@ from pathlib import Path
 import yaml
 
 from lean_pool.exposition.source_text import code_view
+from lean_pool.indexes import main as regenerate_indexes
+from lean_pool.indexes import render_project_indexes, requires_project_roots
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +65,8 @@ def _uses_module_system(source: str) -> bool:
 
 def render_index(root: Path) -> str:
     """Regenerate the ``mk_all`` index from the Lean files on disk."""
+    if requires_project_roots(root):
+        return render_project_indexes(root)[root / INDEX]
     pool = root / "LeanPool"
     modules = sorted(
         "LeanPool."
@@ -170,12 +174,17 @@ def merge_registry(base: str, ours: str, theirs: str) -> str:
 
 def resolvable(conflicts: list[str]) -> bool:
     """Whether every conflicted path is one this module can resolve."""
-    return bool(conflicts) and set(conflicts) <= RESOLVABLE
+    return bool(conflicts) and all(
+        path in RESOLVABLE or re.fullmatch(r"LeanPool/[^/]+/Imports\.lean", path)
+        for path in conflicts
+    )
 
 
 def _command_index(args: argparse.Namespace) -> int:
     """Rewrite the index from the working tree."""
     root = args.repo.resolve()
+    if requires_project_roots(root):
+        return regenerate_indexes(["--repo", str(root), "--lib", "LeanPool"])
     (root / INDEX).write_text(render_index(root), encoding="utf-8")
     logger.info("regenerated %s", INDEX)
     return 0
