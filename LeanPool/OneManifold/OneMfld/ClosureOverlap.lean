@@ -5,9 +5,9 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Tactic
 public import Mathlib.Topology.Connected.Basic
-
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.Push -- shake: keep
 
 /-!
 # ClosureOverlap

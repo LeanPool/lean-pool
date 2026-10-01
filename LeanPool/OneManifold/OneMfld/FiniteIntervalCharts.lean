@@ -5,10 +5,8 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Tactic
-public import LeanPool.OneManifold.OneMfld.IntervalCharts
 public import LeanPool.OneManifold.OneMfld.FinitelyCharted
-
+public import LeanPool.OneManifold.OneMfld.IntervalCharts
 
 /-!
 # FiniteIntervalCharts
