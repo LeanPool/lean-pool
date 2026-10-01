@@ -91,6 +91,15 @@ def cayleyMenger (D : Matrix (Fin (n + 1)) (Fin (n + 1)) ℝ) :
 
 /-! ### A reusable `4×4` cofactor expansion -/
 
+/-- Factoring each minor before the `4×4` expansion avoids normalizing its full polynomial. -/
+private theorem det_fin_three_factored {R : Type*} [CommRing R]
+    (M : Matrix (Fin 3) (Fin 3) R) :
+    M.det = M 0 0 * (M 1 1 * M 2 2 - M 1 2 * M 2 1)
+      - M 0 1 * (M 1 0 * M 2 2 - M 1 2 * M 2 0)
+      + M 0 2 * (M 1 0 * M 2 1 - M 1 1 * M 2 0) := by
+  rw [det_fin_three]
+  ring
+
 /-- Laplace cofactor expansion of a `4×4` determinant along the first row, fully
 reduced to entry products. Mathlib ships `det_fin_one`/`det_fin_two`/`det_fin_three`
 but not `_four`; this fills the gap, used for the `n = 2` Cayley–Menger determinant.
@@ -109,8 +118,10 @@ private theorem det_fin_four {R : Type*} [CommRing R] (M : Matrix (Fin 4) (Fin 4
     - M 0 3 * (M 1 0 * (M 2 1 * M 3 2 - M 2 2 * M 3 1)
                 - M 1 1 * (M 2 0 * M 3 2 - M 2 2 * M 3 0)
                 + M 1 2 * (M 2 0 * M 3 1 - M 2 1 * M 3 0)) := by
-  simp [det_succ_row_zero, Fin.sum_univ_succ, submatrix_apply, Fin.succAbove]
-  ring
+  rw [det_succ_row_zero]
+  simp only [Fin.sum_univ_four, det_fin_three_factored, submatrix_apply]
+  norm_num [Fin.succAbove]
+  simp only [sub_eq_add_neg]
 
 /-! ### `n = 1` : the segment -/
 
@@ -122,7 +133,7 @@ theorem cayleyMenger_det_segment (D : Matrix (Fin 2) (Fin 2) ℝ)
     (h00 : D 0 0 = 0) (h11 : D 1 1 = 0) (s01 : D 1 0 = D 0 1) :
     (cayleyMenger D).det = 2 * D 0 1 := by
   rw [det_fin_three]
-  rw [show cayleyMenger D 0 0 = 0 from rfl, show cayleyMenger D 0 1 = 1 from rfl,
+  simp only [show cayleyMenger D 0 0 = 0 from rfl, show cayleyMenger D 0 1 = 1 from rfl,
       show cayleyMenger D 0 2 = 1 from rfl, show cayleyMenger D 1 0 = 1 from rfl,
       show cayleyMenger D 1 1 = D 0 0 from rfl, show cayleyMenger D 1 2 = D 0 1 from rfl,
       show cayleyMenger D 2 0 = 1 from rfl, show cayleyMenger D 2 1 = D 1 0 from rfl,
@@ -146,7 +157,7 @@ theorem cayleyMenger_det_triangle (D : Matrix (Fin 3) (Fin 3) ℝ)
     (cayleyMenger D).det
       = -4 * (D 0 1 * D 0 2 - ((D 0 1 + D 0 2 - D 1 2) / 2) ^ 2) := by
   rw [det_fin_four]
-  rw [show cayleyMenger D 0 0 = 0 from rfl, show cayleyMenger D 0 1 = 1 from rfl,
+  simp only [show cayleyMenger D 0 0 = 0 from rfl, show cayleyMenger D 0 1 = 1 from rfl,
       show cayleyMenger D 0 2 = 1 from rfl, show cayleyMenger D 0 3 = 1 from rfl,
       show cayleyMenger D 1 0 = 1 from rfl, show cayleyMenger D 1 1 = D 0 0 from rfl,
       show cayleyMenger D 1 2 = D 0 1 from rfl, show cayleyMenger D 1 3 = D 0 2 from rfl,
@@ -183,9 +194,7 @@ theorem cayleyMenger_det_triangle_centeredGram (D : Matrix (Fin 3) (Fin 3) ℝ)
 
 /-- The inner product on `ℝ` (the real scalar field) is multiplication. -/
 private theorem real_scalar_inner (a b : ℝ) : ⟪a, b⟫ = a * b := by
-  rw [real_inner_eq_norm_mul_self_add_norm_mul_self_sub_norm_sub_mul_self_div_two]
-  simp only [Real.norm_eq_abs, abs_mul_abs_self]
-  ring
+  exact RCLike.inner_apply' a b
 
 /-- The inner product of two vectors of `EuclideanSpace ℝ (Fin 2)` is the dot product
 of their two coordinates. -/
