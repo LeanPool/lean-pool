@@ -58,6 +58,61 @@ challenges:
     msc:
       - "11R29"
       - "11R42"
+  - slug: budgeted-submodular-modified-greedy
+    title: Modified greedy for budgeted monotone submodular maximisation
+    summary: >-
+      Prove that for a monotone submodular set function with F(empty) = 0,
+      positive item costs and a budget, the better of two candidates - the
+      cost-benefit greedy set (repeatedly add, among the items that still fit,
+      one with the largest marginal gain per unit cost) and the best single item
+      that fits - has value at least (1 - 1/e)/2 times that of every set within
+      the budget. This is the classical guarantee of Khuller, Moss and Naor
+      (budgeted maximum coverage, 1999), recalled for monotone submodular
+      functions by Tang et al. (2021), who also closed a gap in the often-quoted
+      1 - 1/sqrt(e) and proved 0.405 for the same algorithm. It is
+      the standard model for choosing what fits a size limit - sensor
+      placement, summarisation, context selection for language-model agents.
+      Mathlib proves submodularity of matroid rank but has no general
+      submodular set functions and no greedy approximation results.
+      The estimate covers the Khuller-Moss-Naor prefix lemma (each greedy pick
+      closes a cost-proportional share of the gap to the optimum), the case
+      split at the first optimal item the greedy rejects for budget, and the
+      maximum with the best single item.
+    branch: combinatorial optimization
+    entry_module: Challenge.BudgetedSubmodular
+    proposers:
+      - Mikhail Nemerov
+    source:
+      title: Revisiting Modified Greedy Algorithm for Monotone Submodular Maximization with a Knapsack Constraint
+      authors:
+        - Jing Tang
+        - Xueyan Tang
+        - Andrew Lim
+        - Kai Han
+        - Chongshou Li
+        - Junsong Yuan
+      doi: "10.1145/3447386"
+      url: https://arxiv.org/abs/2008.05391
+    license: Apache-2.0
+    provenance: mix
+    status: open
+    estimated_lines: 600
+    statements:
+      - declaration: Challenge.BudgetedSubmodular.modifiedGreedy_approx
+        informal: >-
+          For a monotone submodular set function F on finite sets with F of the
+          empty set equal to 0, positive costs and a budget B, the better of the
+          cost-benefit greedy set and the best single item that fits the budget
+          has value at least (1 - 1/e)/2 times the value of every set whose
+          total cost is at most B.
+    tags:
+      - combinatorics
+      - optimization
+      - approximation-algorithms
+      - submodular-functions
+    msc:
+      - "90C27"
+      - "68W25"
   - slug: mazur-torsion-bound
     title: Mazur's bound on the torsion of an elliptic curve over the rationals
     summary: >-
