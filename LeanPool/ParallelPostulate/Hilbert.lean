@@ -21,7 +21,7 @@ holds in the first and fails in the second, so it is independent of the axioms o
 plane: `playfair_independent`. Both planes meet Archimedes' axiom and Dedekind's axiom, so it
 is independent of these axioms too: `playfair_independent_continuous`.
 
-Everything is in the namespace `Hilbert`.
+Everything is in the namespace `ParallelPostulate.Hilbert`.
 
 ## What is assumed, and what is not formalised
 

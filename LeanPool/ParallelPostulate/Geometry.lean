@@ -12,86 +12,44 @@ public import Mathlib.Geometry.Euclidean.Angle.Unoriented.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
-# The hyperbolic plane: a bound on the dimensions
+# Coordinate Euclidean and Klein geometry
 
-the three-dimensions section lays three dimensions `a`, `b`, `c` among the pairs of numbers, with
-the two
-constraints
+Coordinate infrastructure for the models in `Hilbert.lean`. The dimensions section develops
+lines over commutative rings and fields. The three-dimensions section proves Euclid's fifth
+postulate and its angle formulation over ordered fields and the real numbers, respectively.
+The bounded-plane sections use the domain `0 < 1 + κ * (x² + y²)`: nonnegative bounds give the
+whole affine plane, while negative bounds give Klein domains with infinitely many parallels.
 
-    a0 = b0        a1 = c0
+The real-coordinate development constructs projective motions, invariant angles and metric,
+Brioschi curvature, smooth-path distance, and Hilbert congruence constructions. Algebraic and
+incidence/order results retain their upstream field generality. The explicit leaning figure
+at bound `-1` has interior angles summing to less than `π`, yet its two lines do not meet.
 
-and proves the parallel postulate there. It takes every pair of numbers for a point of the
-plane. This file keeps the dimensions, the pairs and the two constraints, and makes one choice:
-a bound `κ`. The pair `(x, y)` is a point of the plane when
+## Scope
 
-    0 < 1 + κ (x² + y²) .
+* The model is a set of coordinate pairs with lines obtained by intersecting affine lines
+  with the domain. Its identification with other constructions of hyperbolic space is not
+  formalized. Pasch order, congruence, Archimedes continuity, and Dedekind continuity are
+  verified by the constructions in `Hilbert.lean`.
+* `kleinAngle` agrees with Mathlib's Euclidean angle at the origin under every bound, and
+  everywhere at bound zero. Its invariance and uniqueness under the projective motions are
+  proved. Degenerate rays use Mathlib's totalized angle convention.
+* `kleinMetric` is the coordinate bilinear form. Motion invariance uses Mathlib's actual
+  Fréchet derivatives. `gaussCurvature` is Brioschi's coordinate formula; its identification
+  with connection curvature or surface curvature is not formalized. The formula gives `κ`
+  throughout the domain and gives `-1` for the upper-half-plane metric.
+* `kleinDist` is the infimum of lengths of C1 paths on `[0, 1]`. Piecewise smooth paths and
+  its identification with Mathlib's Riemannian distance are not formalized. Its closed form
+  and relation to `apart` are proved for negative bounds.
+* The angle counterexample is proved at bound `-1`; its rescaling to other negative bounds
+  is not formalized. Positive bounds still have the whole affine coordinate plane; the
+  interpretation as a half sphere is not formalized.
+* Lean's division is totalized. `step_comm`, `apart_comm`, `apart_centre`, and `rot_apart`
+  have identical quotients on both sides even at zero denominators. `step_neg`, `apart_self`,
+  and `shift_axis` use division by zero at boundary points. Geometric model results supply
+  domain and nonzero-denominator hypotheses where they are needed.
 
-With `κ = 0`, or any `κ` that is not negative, every pair is a point. That is the plane of
-the three-dimensions section, with one parallel. With real numbers it is Euclid's plane, which is
-known. With `κ < 0`, through a point that is not on a line there are at least two different
-lines, and in fact infinitely many, that do not meet the line. With `κ = -1`, and the angles of
-Klein's model, Euclid's fifth postulate as he states it fails: two lines make interior angles
-that are together less than two right angles, and never meet.
-
-Checked with Lean `v4.35.0-rc3` and Mathlib at the matching tag (September 2026). Every theorem
-uses only Lean's standard axioms `propext`, `Classical.choice` and `Quot.sound`.
-
-## What is assumed, and what is not formalised
-
-* **The hyperbolic plane of the books is not defined in these files.** That the plane of a
-  negative bound, with real numbers, is a model of it is known (Beltrami 1868, Klein 1871).
-  The files prove, for the plane of any bound and any ordered field, the statements on
-  incidence and on order of Proposition H4, and they prove the statement on parallels. With the
-  real numbers and a negative bound it proves Hilbert's six axioms of congruence (Theorem H19):
-  a segment is measured by Klein's distance, `kleinDist`, an angle by `kleinAngle`, and two
-  segments, or two angles, are congruent when their measures are equal. Of Hilbert's axioms of
-  order, Proposition H4 has that of three points of a line at most one is between the two
-  others, and `between_trichotomy` that one of them is. The axioms of continuity are in
-  the continuity section of `Hilbert.lean`. With the fractions for numbers the plane does not meet
-  the axioms
-  of congruence. That is not formalised.
-* **`apart` and `kleinAngle` are numbers that the two motions of the file keep** (Theorems H9
-  and H13). `kleinAngle` is
-  the angle of Euclid, in Mathlib's sense, at `(0, 0)` under any bound, and at every pair under
-  the bound 0 (`kleinAngle_centre`, `kleinAngle_zero_bound`). The motions take every point of
-  the plane to `(0, 0)` (Theorem H15), and so `kleinAngle` is the only angle that the motions
-  keep and that is the angle of Euclid at `(0, 0)`: `kleinAngle_unique`. `kleinMetric` is the
-  metric of Klein's model as the books write it, and the two motions keep it: moved by the
-  derivative of a motion in Mathlib's sense, two directions have the metric they had before
-  (Theorem H16). `kleinAngle` is the angle of that metric: `kleinAngle_eq_metric`. Its
-  curvature is `κ` (Theorem H17). Under a negative bound, `apart` is `sinh² (√(-κ) d) / (-κ)`,
-  where `d` is the distance that the metric gives, `kleinDist` (Theorem H18). Theorem H14
-  measures its angles with `kleinAngle`.
-* **Klein's distance is the least length of a path.** The project defines its coordinate-metric
-distance directly: `kleinDist` is the infimum of the lengths of the paths between
-  two points: maps of `[0, 1]` into the plane with a continuous derivative. Paths with corners
-  are not admitted. They give the same infimum, since the bound below in the proof of
-  Theorem H18 holds for them too, but that is not formalised. Theorem H18 is proved for a
-  negative bound only.
-* **The curvature is Brioschi's formula.** The project defines its coordinate-metric curvature
-directly: `gaussCurvature` is Brioschi's formula, with Mathlib's derivatives along the
-  two axes. It gives the known curvature `-1` for the upper half plane of Poincaré:
-  `halfPlane_curvature`. That it is the curvature of the Levi-Civita connection, or Gauss's
-  curvature of a surface in space, is not formalised.
-* **Theorem H14 is proved for the bound `-1` only.** For another negative bound the figure
-  would be scaled, and that is not formalised. Example H10 keeps fractions for numbers, and
-  `kleinAngle` has real numbers, so Theorem H14 lays the same figure among the pairs of real
-  numbers: `realLeaningFigure`.
-* **A bound that is positive does not give the plane of the sphere.** Every pair is then a
-  point, and the points and lines are those of the three-dimensions section. Klein's metric still
-  has
-  the curvature `κ` there (Theorem H17): it is then the metric of a half sphere, seen from its
-  centre. That is not formalised.
-* **In Lean a division by zero gives zero.** Seven theorems cover cases in which a denominator
-  is zero. Four of them have the same quotient on both sides, so they hold whatever a division
-  by zero gives: `step_comm`, `apart_comm`, `apart_centre` and
-  `rot_apart`. Three hold at a division by zero because it gives zero: `step_neg` at a number
-  on the edge, `apart_self` at a pair on the edge, and `shift_axis` where `1 - κ a t = 0`. All
-  seven are meant where no division by zero is made. `kleinAngle` divides by zero when `A` or
-  `B` is `P`, and is then `π / 2`, as Mathlib's angle is with a zero vector. It is meant where
-  `A` and `B` are not `P`.
-* **That the plane is built from dimensions** is a reading, and is not in Lean. In these files
-  a plane is a set of pairs, and a dimension is any line among the pairs with a zero and a 1.
+The upstream labels H11 and H12 concern a larger project and are absent from this development.
 -/
 
 public section
@@ -106,7 +64,7 @@ is three dimensions `a`, `b`, `c` with the two constraints
 
     a0 = b0        a1 = c0
 
-so that `a` is the line that falls on the two others. `ThreeDimensions.lean` and the files of
+so that `a` is the line that falls on the two others. the three-dimensions section and the files of
 `HyperbolicPlane` both build on these, in the namespace `Pairs`.
 
 ## Contents
@@ -470,7 +428,7 @@ Checked with Lean `v4.35.0-rc3` and Mathlib at the matching tag (September 2026)
 uses only Lean's standard axioms `propext`, `Classical.choice` and `Quot.sound`.
 
 The dimensions, the cross product and the figure, with their small facts, are in
-`Basic.lean`, in the namespace `Pairs`. Some of the names below are there.
+the dimensions section, in the namespace `Pairs`. Some of the names below are there.
 
 ## Contents
 
@@ -1300,7 +1258,7 @@ infinitely many under a negative bound.
   `Between.not_left`, `Between.not_right`, `exists_beyond`, `crosses`, `pasch`
 * Theorem H5, the parallels under a negative bound: `hyperbolic_parallel_property`,
   `hyperbolic_two_parallels`, `hyperbolic_parallels`
-* Theorem H6, the plane of `ThreeDimensions.lean` from the same choice: `euclid_one_parallel`,
+* Theorem H6, the plane of the three-dimensions section from the same choice: `euclid_one_parallel`,
   `fifth_postulate_of_nonneg_bound`
 * Theorem H7, exactly when: `one_parallel_iff_bound`
 * three points on a line: `between_trichotomy`, `ne_of_side_ne_zero`, `IsLine.subset_plane`,
@@ -1716,7 +1674,7 @@ theorem quad_nonpos (α β γ : K) (hγ : 0 < γ) :
   have h5 : 0 ≤ (β ^ 2 - β + 1) * t :=
     mul_nonneg (by nlinarith [sq_nonneg (β - 1), sq_nonneg β]) (by linarith)
   have h6 : α ≤ α ^ 2 + 1 := by nlinarith [sq_nonneg (α - 1), sq_nonneg α]
-  nlinarith [h3, h4, h5, h6]
+  nlinarith only [h3, h4, h5, h6]
 
 theorem sq_add_sq_pos {v : K × K} (hv : v ≠ (0, 0)) : 0 < v.1 ^ 2 + v.2 ^ 2 := by
   by_contra h
@@ -1734,7 +1692,7 @@ theorem mem_plane {κ : K} {p : K × K} : p ∈ plane κ ↔ 0 < 1 + κ * (p.1 ^
   Iff.rfl
 
 /-- **With the bound 0, or any bound that is not negative, every pair is a point.** This is
-the plane of `ThreeDimensions.lean`. -/
+the plane of the three-dimensions section. -/
 theorem plane_eq_univ {κ : K} (hκ : 0 ≤ κ) : plane κ = Set.univ := by
   apply Set.eq_univ_of_forall
   intro p
@@ -2086,8 +2044,8 @@ theorem hyperbolic_parallel_property {κ : K} (hκ : κ < 0) {S : Set (K × K)}
   ⟨hyperbolic_two_parallels hκ hS hP hPS, hyperbolic_parallels hκ hS hP hPS⟩
 
 /-- **With the bound 0, or any bound that is not negative, the plane is that of
-`ThreeDimensions.lean`:** through a point that is not on a line there is one line that does not
-meet the line, and only one. -/
+the three-dimensions section:** through a point outside a line there is exactly one line
+that does not meet it. -/
 theorem euclid_one_parallel {κ : K} (hκ : 0 ≤ κ) {S : Set (K × K)} (hS : IsLine (plane κ) S)
     {P : K × K} (hPS : P ∉ S) : ∃! M, IsLine (plane κ) M ∧ P ∈ M ∧ M ∩ S = ∅ := by
   obtain ⟨L, hL, rfl, -⟩ := hS
@@ -2098,7 +2056,7 @@ theorem euclid_one_parallel {κ : K} (hκ : 0 ≤ κ) {S : Set (K × K)} (hS : I
   exact one_parallel_of_all_within (plane κ) L hL hP hPL
     (fun t => by rw [plane_eq_univ hκ]; trivial)
 
-/-- **Theorem E4 (`ThreeDimensions.lean`) holds in the plane of a bound that is not negative.** In a
+/-- **Theorem E4 holds in the plane of a bound that is not negative.** In a
 figure,
 let `b1` and `c1` lie on the left of `a`, and let the cross product of the directions of `b`
 and `c` be positive. Then `b` and `c` meet at a point of the plane, on the left of `a`. -/
@@ -4063,7 +4021,7 @@ With the real numbers and a negative bound, a segment is measured by Klein's dis
 angle by `kleinAngle`, and two segments, or two angles, are congruent when their measures are
 equal. This file proves Hilbert's six axioms of congruence, C1 to C6 (Theorem H19). It also
 proves C1, C3 and C6 with `apart` for the bound 0, and so for every bound that is not positive,
-for the Hilbert planes of `Hilbert/Model.lean`.
+for the Hilbert planes of `Hilbert.lean`.
 
 ## Contents
 
@@ -4966,9 +4924,9 @@ end HyperbolicPlane
 end ParallelPostulate
 
 /-!
-# The figure of `ThreeDimensions.lean` under the bound `-1`
+# The figure of the three-dimensions section under the bound `-1`
 
-Example H10 lays the figure of `ThreeDimensions.lean` in the plane of the bound `-1`, with
+Example H10 lays the figure of the three-dimensions section in the plane of the bound `-1`, with
 fractions for numbers: it meets the hypotheses of the postulate there, and its lines `b` and `c`
 meet only outside the plane. Theorem H14 lays the same figure among the pairs of real numbers,
 measures its two interior angles with `kleinAngle`, a right angle and the angle whose cosine is
@@ -4977,7 +4935,7 @@ measures its two interior angles with `kleinAngle`, a right angle and the angle 
 
 ## Contents
 
-* Example H10, the figure of `ThreeDimensions.lean` under the bound `-1`: `leaningFigure`,
+* Example H10, the figure of the three-dimensions section under the bound `-1`: `leaningFigure`,
   `leaningFigure_within`, `leaningFigure_values`, `leaningFigure_hypotheses`,
   `leaningFigure_numbers`, `leaningFigure_meets_beyond`, `leaningFigure_never_meets`,
   `leaningFigure_angles`
@@ -4993,7 +4951,7 @@ namespace HyperbolicPlane
 
 open Pairs
 
-/-! ## The figure of `ThreeDimensions.lean` under the bound -/
+/-! ## The figure of the three-dimensions section under the bound -/
 
 /-- A figure within the bound `-1`. `a` runs from `(0, 0)` to `(3/5, 0)`, `b` leaves `a0`
 straight up, and `c` leaves `a1` leaning toward `b`. -/
@@ -5017,7 +4975,7 @@ theorem leaningFigure_values :
       cross leaningFigure.b.dir leaningFigure.c.dir = 3 / 100 := by
   refine ⟨?_, ?_, ?_⟩ <;> norm_num [leaningFigure, Dim.side, Dim.dir, cross]
 
-/-- It meets the three hypotheses of Theorem E4 (`ThreeDimensions.lean`). -/
+/-- It meets the three hypotheses of Theorem E4 (the three-dimensions section). -/
 theorem leaningFigure_hypotheses :
     0 < leaningFigure.a.side leaningFigure.b.one ∧
       0 < leaningFigure.a.side leaningFigure.c.one ∧
@@ -5026,7 +4984,7 @@ theorem leaningFigure_hypotheses :
   rw [h1, h2, h3]
   norm_num
 
-/-- The two numbers at which Theorem E4 (`ThreeDimensions.lean`) has `b` and `c` meet are both
+/-- The two numbers at which Theorem E4 (the three-dimensions section) has `b` and `c` meet are both
 10. -/
 theorem leaningFigure_numbers :
     cross leaningFigure.a.dir leaningFigure.c.dir / cross leaningFigure.b.dir leaningFigure.c.dir
