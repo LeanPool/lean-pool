@@ -16,7 +16,7 @@ primality theorems impose no bound on factorisation length. This example by itse
 atomicity claim.
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace ConwayRefinement.Standalone.Hahn.NegativeMonomialExample
 

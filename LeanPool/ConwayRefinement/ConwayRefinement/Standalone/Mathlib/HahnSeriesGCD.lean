@@ -25,7 +25,7 @@ the theorems below establish the properties themselves.
   as [LM24].
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace ConwayRefinement.Standalone.Hahn
 

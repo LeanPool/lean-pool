@@ -35,7 +35,7 @@ omnific integer into irreducibles agree up to order and units.
 
 universe u
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace ConwayRefinement.Standalone.Oz
 

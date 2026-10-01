@@ -27,7 +27,7 @@ LM24, Example 9.2.8.
   integers*, Adv. Math. 442 (2024) 109513, cited as [LM24].
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace ConwayRefinement.Standalone.Oz.OneRowExample
 

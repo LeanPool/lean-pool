@@ -17,7 +17,7 @@ We define the canonical map `NatOrdinal → Surreal` in terms of the map `NatOrd
 
 open IGame Set Surreal
 
-@[expose] public noncomputable section
+public noncomputable section
 
 /-- Ordinal games are numeric. -/
 instance IGame.Numeric.toIGame (o : NatOrdinal) : Numeric o.toIGame := by

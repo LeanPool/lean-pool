@@ -23,7 +23,7 @@ principal graded ring or a chosen generating system.
 
 open Cardinal
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace ConwayRefinement.Standalone.HahnPolynomial
 

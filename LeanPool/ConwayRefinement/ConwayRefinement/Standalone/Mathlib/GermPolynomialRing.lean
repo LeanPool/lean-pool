@@ -31,7 +31,7 @@ The polynomial presentation proves Berarducci's factorisation conjecture as stat
   as [LM17].
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace ConwayRefinement.Standalone.GermPolynomial
 

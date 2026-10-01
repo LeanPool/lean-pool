@@ -23,7 +23,7 @@ Archimedean magnitude, then this germ ring is a polynomial algebra over `K`. Con
 four-factor refinement.
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace ConwayRefinement.Standalone.CompleteHahnGerm
 

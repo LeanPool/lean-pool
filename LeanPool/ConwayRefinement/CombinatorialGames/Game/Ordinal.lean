@@ -34,7 +34,7 @@ universe u
 
 open Set IGame
 
-@[expose] public noncomputable section
+public noncomputable section
 
 /-! ### Lemmas to upstream -/
 

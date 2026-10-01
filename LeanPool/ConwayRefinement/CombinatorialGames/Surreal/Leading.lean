@@ -18,7 +18,7 @@ We don't yet prove this characterization; rather, these functions are a key ingr
 the map from surreals into Hahn series.
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 namespace Surreal
 
 open ArchimedeanClass

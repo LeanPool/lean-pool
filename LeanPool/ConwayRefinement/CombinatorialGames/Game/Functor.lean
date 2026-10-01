@@ -40,7 +40,7 @@ functor.
 
 universe u
 
-@[expose] public section
+public section
 
 /-! ### ConwayGame Functor -/
 

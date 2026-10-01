@@ -35,7 +35,7 @@ the future:
 universe u
 open IGame
 
-@[expose] public section
+public section
 
 namespace Dyadic
 

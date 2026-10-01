@@ -16,7 +16,7 @@ These predicates state the finite-degree examples in `Examples/`.
 
 universe u
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace ConwayRefinement.Standalone.Oz
 

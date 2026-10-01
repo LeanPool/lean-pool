@@ -15,7 +15,7 @@ exactly `ω ^ ω`. It therefore lies exactly at the first limit excluded by the 
 finite-degree hypothesis. This statement makes no primality or nonprimality claim about it.
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace ConwayRefinement.Standalone.Oz.OmegaOmegaBoundaryExample
 

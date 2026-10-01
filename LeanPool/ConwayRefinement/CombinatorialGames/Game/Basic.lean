@@ -29,7 +29,7 @@ there exist `x₁ ≈ x₂` and `y₁ ≈ y₂` with `x₁ * y₁ ≉ x₂ * y�
 
 universe u
 
-@[expose] public noncomputable section
+public noncomputable section
 
 open IGame Set Pointwise
 

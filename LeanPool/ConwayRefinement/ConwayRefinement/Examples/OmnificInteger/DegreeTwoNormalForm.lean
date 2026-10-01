@@ -25,7 +25,7 @@ every universe `u`. Its support order type and primeness are stated in `DegreeTw
 
 universe u
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace Surreal.OmnificInteger.DegreeTwoExample
 

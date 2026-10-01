@@ -21,7 +21,7 @@ converging to zero, followed by the final constant term. The sibling statement `
 records its arithmetic properties using only Mathlib and CombinatorialGames.
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace Surreal.OmnificInteger.OneRowExample
 

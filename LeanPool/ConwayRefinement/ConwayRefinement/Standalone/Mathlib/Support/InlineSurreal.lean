@@ -25,7 +25,7 @@ The first-principles indexed-game statement remains in `InlineConwayRefinement`.
 Its proof bridges directly to the imported CombinatorialGames implementation.
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 universe u
 namespace ConwayRefinement.Standalone.InlineSurreal.Surreal
 

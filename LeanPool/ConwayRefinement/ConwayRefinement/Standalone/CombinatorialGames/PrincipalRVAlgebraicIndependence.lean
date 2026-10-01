@@ -55,7 +55,7 @@ series represent the same class exactly when their difference lies in `J_{ω^α}
 open Ordinal
 open scoped NatOrdinal
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace ConwayRefinement.Standalone.PrincipalRVAlgebraicIndependence
 

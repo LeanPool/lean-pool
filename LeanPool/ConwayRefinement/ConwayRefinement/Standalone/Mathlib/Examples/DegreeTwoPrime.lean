@@ -17,7 +17,7 @@ The coefficient-one series on the displayed two-dimensional support is prime in
 `-1 / (m + 1)`, and those row limits converge to zero.
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace ConwayRefinement.Standalone.Hahn.DegreeTwoExample
 

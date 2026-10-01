@@ -48,7 +48,7 @@ doubling every coefficient preserves the support but destroys reducedness.
 Proc. Amer. Math. Soc. 134 (2006), 1277–1287, cited as [PS06].
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace ConwayRefinement.Standalone.Oz.FinitePowerFamily
 

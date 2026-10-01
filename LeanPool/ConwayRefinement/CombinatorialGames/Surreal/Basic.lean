@@ -31,7 +31,7 @@ surreals are a field.
 
 universe u
 
-@[expose] public noncomputable section
+public noncomputable section
 
 /-! ### Simplicity theorem -/
 

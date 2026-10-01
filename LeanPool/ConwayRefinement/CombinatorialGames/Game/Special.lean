@@ -23,7 +23,7 @@ This file defines some simple yet notable combinatorial games:
 
 universe u
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace IGame
 

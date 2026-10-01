@@ -26,7 +26,7 @@ universe u
 
 open IGame
 
-@[expose] public noncomputable section
+public noncomputable section
 
 theorem exists_dyadic_btwn {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
     [Archimedean K] {x y : K} (h : x < y) : ∃ q : Dyadic, x < q.toRat ∧ q.toRat < y := by

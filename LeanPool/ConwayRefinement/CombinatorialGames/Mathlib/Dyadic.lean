@@ -17,7 +17,7 @@ A dyadic (rational) number is a rational number whose denominator is a power of 
 the `CommRing` structure, as well as proving some auxiliary theorems on them.
 -/
 
-@[expose] public section
+public section
 
 /-! ### For Mathlib -/
 

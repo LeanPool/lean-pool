@@ -38,7 +38,7 @@ Proc. Amer. Math. Soc. 134 (2006), 1277–1287, cited as [PS06].
 
 universe u
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace ConwayRefinement.Standalone.Oz.DegreeTwoExample
 
