@@ -82,7 +82,7 @@ private theorem untruncated_weighted_layercake
       (ae_of_all _ fun x => div_nonneg (norm_nonneg _) ha.le)
   have hlayer := lintegral_rpow_eq_lintegral_meas_lt_mul
     (sqWeightedMeasure f mu) hu_nonneg
-    ((hu.div_const a).mono' (withDensity_absolutelyContinuous mu _))
+    ((hu.div_const a).mono_ac (withDensity_absolutelyContinuous mu _))
     (p := p - 2) (by linarith)
   have hpow : p - 2 - 1 = p - 3 := by ring
   have hthreshold (t : Real) : {x | t < u x / a} = {x | a * t < u x} := by

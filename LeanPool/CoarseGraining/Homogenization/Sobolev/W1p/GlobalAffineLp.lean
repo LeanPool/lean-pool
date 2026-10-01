@@ -75,7 +75,7 @@ outward affine expansion. -/
 theorem Filter.EventuallyEq.comp_globalAffineExpansion {d : ℕ} {f g : Vec d → ℝ}
     (hfg : f =ᵐ[volume] g) (x0 : Vec d) {ε : ℝ} (hε : 0 ≤ ε) :
     f ∘ globalAffineExpansion x0 ε =ᵐ[volume] g ∘ globalAffineExpansion x0 ε :=
-  (quasiMeasurePreserving_globalAffineExpansion x0 hε).ae_eq hfg
+  (quasiMeasurePreserving_globalAffineExpansion x0 hε).ae_eq_comp hfg
 
 /-- Finite `Lᵖ` functions remain in `Lᵖ` after an outward affine expansion. -/
 theorem MemLp.comp_globalAffineExpansion {d : ℕ} {g : Vec d → ℝ} {p : ℝ≥0∞}

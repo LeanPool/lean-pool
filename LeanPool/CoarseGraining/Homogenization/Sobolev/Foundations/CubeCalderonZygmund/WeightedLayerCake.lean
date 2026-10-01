@@ -53,7 +53,7 @@ theorem lintegral_truncNorm_div_rpow_eq_weighted_layercake
     (MeasureTheory.withDensity_absolutelyContinuous μ _).ae_le hg_nonneg
   have h_layer := MeasureTheory.lintegral_rpow_eq_lintegral_meas_lt_mul
     (sqWeightedMeasure f μ) hg_nonneg_weighted
-    (hg_meas.mono' (MeasureTheory.withDensity_absolutelyContinuous μ _))
+    (hg_meas.mono_ac (MeasureTheory.withDensity_absolutelyContinuous μ _))
     (p := p - 2) (by linarith)
   have hpow : p - 2 - 1 = p - 3 := by ring
   have hthreshold (t : ℝ) :

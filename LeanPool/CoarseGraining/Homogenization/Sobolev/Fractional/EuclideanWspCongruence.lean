@@ -41,11 +41,11 @@ theorem cubeEuclideanWspKernel_congr_ae {d : ℕ} {Q : TriadicCube d}
   have hfst : (fun z : Vec d × Vec d => F z.1) =ᵐ[Gagliardo.gagliardoCubeMeasure Q]
       fun z => G z.1 := by
     rw [Gagliardo.gagliardoCubeMeasure]
-    exact Measure.quasiMeasurePreserving_fst.ae_eq hFG
+    exact Measure.quasiMeasurePreserving_fst.ae_eq_comp hFG
   have hsnd : (fun z : Vec d × Vec d => F z.2) =ᵐ[Gagliardo.gagliardoCubeMeasure Q]
       fun z => G z.2 := by
     rw [Gagliardo.gagliardoCubeMeasure]
-    exact Measure.quasiMeasurePreserving_snd.ae_eq hcube
+    exact Measure.quasiMeasurePreserving_snd.ae_eq_comp hcube
   filter_upwards [hfst, hsnd] with z hzfst hzsnd
   rw [cubeEuclideanWspKernel_apply, cubeEuclideanWspKernel_apply, hzfst, hzsnd]
 

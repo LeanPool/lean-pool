@@ -69,11 +69,11 @@ theorem gagliardoKernel_congr_ae {Q : TriadicCube d} {s : ℝ} {p : ℝ≥0∞}
   have h1 : (fun z : Vec d × Vec d => u z.1) =ᵐ[gagliardoCubeMeasure Q]
       fun z => v z.1 := by
     rw [gagliardoCubeMeasure]
-    exact Measure.quasiMeasurePreserving_fst.ae_eq hnorm
+    exact Measure.quasiMeasurePreserving_fst.ae_eq_comp hnorm
   have h2 : (fun z : Vec d × Vec d => u z.2) =ᵐ[gagliardoCubeMeasure Q]
       fun z => v z.2 := by
     rw [gagliardoCubeMeasure]
-    exact Measure.quasiMeasurePreserving_snd.ae_eq h
+    exact Measure.quasiMeasurePreserving_snd.ae_eq_comp h
   filter_upwards [h1, h2] with z hz1 hz2
   rw [gagliardoKernel_apply, gagliardoKernel_apply, hz1, hz2]
 
