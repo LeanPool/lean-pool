@@ -39,7 +39,7 @@ macro "alias!" doc:docComment Alias:ident Source:ident : command => `(
 public section
 
 $doc:docComment
-def $Alias : Type _ :=
+@[expose] def $Alias : Type _ :=
   $Source deriving Zero, One, Nontrivial, Inhabited, WellFoundedRelation
 
 namespace $Alias
@@ -58,11 +58,11 @@ noncomputable instance : ConditionallyCompleteLinearOrderBot $Alias :=
 theorem $(mkIdent `lt_wf) : @WellFounded $Alias (· < ·) := wellFounded_lt
 
 $(mkDocComment s!" The identity function between `{Source.getId}` and `{Alias.getId}`."):docComment
-@[match_pattern]
+@[expose, match_pattern]
 def $(mkIdent `of) : $Source ≃o $Alias := .refl _
 
 $(mkDocComment s!" The identity function between `{Alias.getId}` and `{Source.getId}`."):docComment
-@[match_pattern]
+@[expose, match_pattern]
 def $(mkIdent `val) : $Alias ≃o $Source := .refl _
 
 @[simp] theorem $(mkIdent `of_symm) : .symm $(mkOf Alias) = $(mkVal Alias) := rfl

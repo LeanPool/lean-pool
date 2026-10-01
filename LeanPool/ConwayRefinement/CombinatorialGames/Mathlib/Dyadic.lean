@@ -173,7 +173,7 @@ instance instSMulIntConway : SMul Int Dyadic where
   (coe_mul x y).trans (by simp)
 
 /-- The dyadic number ½. -/
-def half : Dyadic := (1 : Dyadic) >>> 1
+@[expose] def half : Dyadic := (1 : Dyadic) >>> 1
 
 @[simp, norm_cast] theorem coe_half : half.toRat = 2⁻¹ := (Rat.inv_def 2).symm
 @[simp] theorem num_half : half.num = 1 := rfl
@@ -348,7 +348,7 @@ theorem den_add_le_den_right {x y : Dyadic} (h : x.den ≤ y.den) : (x + y).den 
   exact den_mkRat_le _ y.den_ne_zero
 
 /-- Coercion as a `RingHom`. -/
-@[simps]
+@[expose, simps]
 def coeRingHom : Dyadic →+* ℚ where
   toFun := Dyadic.toRat
   map_zero' := rfl
