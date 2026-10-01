@@ -1,0 +1,72 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+module  -- shake: keep-all --deprecated_module: ignore
+
+-- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.LocalComplexGeometry
+public import LeanPool.LocalComplexGeometry.Algebra.NoetherianByRemainder
+public import LeanPool.LocalComplexGeometry.Analytic.ConstantRank
+public import LeanPool.LocalComplexGeometry.Analytic.ConstantRankLinear
+public import LeanPool.LocalComplexGeometry.Analytic.LevelSet
+public import LeanPool.LocalComplexGeometry.Analytic.LocalBiholomorph
+public import LeanPool.LocalComplexGeometry.Analytic.Rank
+public import LeanPool.LocalComplexGeometry.Analytic.Regularization
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.AnalyticSeries
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.Basic
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.EdgeCases
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.ExactOrder
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.Examples
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.Germs
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.L1Division
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.L1PolynomialEvaluation
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.L1PowerSeries
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.Main
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.NormalSum
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.NormalizedCoefficients
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.PreparationSequences
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.PreparationUniqueness
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.PublicExistence
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.WeightedCoefficientMap
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.WeightedEvaluation
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.WeightedGermEvaluation
+public import LeanPool.LocalComplexGeometry.ClassicalComplexWPT.WeightedSeries
+public import LeanPool.LocalComplexGeometry.FiniteProjection.Main
+public import LeanPool.LocalComplexGeometry.FiniteProjection.PreparedQuotient
+public import LeanPool.LocalComplexGeometry.Geometry.FiniteProjection
+public import LeanPool.LocalComplexGeometry.Germs.Basic
+public import LeanPool.LocalComplexGeometry.Germs.Coordinates
+public import LeanPool.LocalComplexGeometry.Germs.Representatives
+public import LeanPool.LocalComplexGeometry.Germs.Ring
+public import LeanPool.LocalComplexGeometry.Noetherian.Ruckert
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.Coordinates
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.DivisibilitySpecialization
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.DivisionRepresentatives
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.FiberCancellation
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.GenericFiber
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.IdealRepresentatives
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.Main
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.MinpolyResultant
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.OneVariable
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.PolynomialFibers
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.PolynomialRepresentativeOperations
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.PolynomialSpecialization
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.PreparedPrime
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.PreparedPrimeCore
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.PreparedRootLocality
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.PrimeBase
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.PrimeCancellation
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.PrimeInduction
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.QuotientPolynomialSpecialization
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.RadicalReduction
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.ResultantSpecialization
+public import LeanPool.LocalComplexGeometry.Nullstellensatz.ZeroSetGerms
+public import LeanPool.LocalComplexGeometry.Palomar
+public import LeanPool.LocalComplexGeometry.WPTBridge.Division
+public import LeanPool.LocalComplexGeometry.WPTBridge.DivisionCore
+public import LeanPool.LocalComplexGeometry.WPTBridge.DivisionUniqueness
+public import LeanPool.LocalComplexGeometry.WPTBridge.GermDivision
+public import LeanPool.LocalComplexGeometry.WPTBridge.Preparation
+public import LeanPool.LocalComplexGeometry.WPTBridge.PreparedAssociate

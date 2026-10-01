@@ -1,0 +1,54 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+module  -- shake: keep-all --deprecated_module: ignore
+
+-- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Applications
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Applications.Choquet
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Applications.General
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Applications.Meager
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Applications.RegularOpen
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Basic
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Basic.FinLists
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Basic.General
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Basic.InfLists
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Basic.InvLimitNat
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Basic.Meta
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Basic.MiscCat
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Game
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Game.BuildStrategies
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Game.GaleStewart
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Game.Games
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Game.Player
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Game.Strategies
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Game.Undetermined
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.BorelDeterminacy
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.BuildLevelwise
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.Covering
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.CoveringClosedGame
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.CoveringLim
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.One
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.One.Lift
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.One.PreLift
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.One.Strat
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.WinAsap
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.Zero
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.Zero.Lift
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.Zero.PreLift
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.Zero.Strat
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.Zero.TreeLift
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.QualityAliases
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree.BodyFunctor
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree.LenTreeHom
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree.PointedTrees
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree.RestrictTree
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree.TreeBody
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree.TreeExtensions
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree.TreeLim
+public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree.Trees

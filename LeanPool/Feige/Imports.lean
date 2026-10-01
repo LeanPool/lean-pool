@@ -1,0 +1,97 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+module  -- shake: keep-all --deprecated_module: ignore
+
+-- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.Feige
+public import LeanPool.Feige.AugmentedLatentSupport
+public import LeanPool.Feige.AugmentedParameterization
+public import LeanPool.Feige.AugmentedTwoPointKernel
+public import LeanPool.Feige.BooleanChain
+public import LeanPool.Feige.BoundaryNull
+public import LeanPool.Feige.Calibration
+public import LeanPool.Feige.ChainCalibration
+public import LeanPool.Feige.ChainFromBoolean
+public import LeanPool.Feige.ChainInsertion
+public import LeanPool.Feige.ChainMeasure
+public import LeanPool.Feige.ConditionalMainTheorem
+public import LeanPool.Feige.ConditionalProductKernel
+public import LeanPool.Feige.ConditionalTwoPointCalibration
+public import LeanPool.Feige.Constants
+public import LeanPool.Feige.ConvolutionLogConcave
+public import LeanPool.Feige.FiniteSignedExp
+public import LeanPool.Feige.GeometryBridge
+public import LeanPool.Feige.Grunbaum.Definitions
+public import LeanPool.Feige.Grunbaum.FinalBridge
+public import LeanPool.Feige.Grunbaum.Main
+public import LeanPool.Feige.Grunbaum.ProbabilityCore
+public import LeanPool.Feige.Grunbaum.Sharpness
+public import LeanPool.Feige.Grunbaum.SimplexCentroidCoordinates
+public import LeanPool.Feige.Grunbaum.StrictBoundaryBridge
+public import LeanPool.Feige.Grunbaum.TruncationConcavity
+public import LeanPool.Feige.GrunbaumImport
+public import LeanPool.Feige.GrunbaumSimplexProperty
+public import LeanPool.Feige.GrunbaumWeightedForm
+public import LeanPool.Feige.HighSetLaw
+public import LeanPool.Feige.IndependentCalibrationAssembly
+public import LeanPool.Feige.InsertionAlgebra
+public import LeanPool.Feige.InsertionAnalyticAssembly
+public import LeanPool.Feige.InsertionCommonDensity
+public import LeanPool.Feige.InsertionCommonLaw
+public import LeanPool.Feige.InsertionEdgeRealization
+public import LeanPool.Feige.InsertionExpectation
+public import LeanPool.Feige.InsertionK
+public import LeanPool.Feige.InsertionLastCoordinateLaw
+public import LeanPool.Feige.InsertionTerminalLaw
+public import LeanPool.Feige.KContinuity
+public import LeanPool.Feige.KStatistic
+public import LeanPool.Feige.KernelAveraging
+public import LeanPool.Feige.Lemma43
+public import LeanPool.Feige.Lemma43ArbitraryBase
+public import LeanPool.Feige.Lemma43Complete
+public import LeanPool.Feige.Lemma43Density
+public import LeanPool.Feige.Lemma43Endpoints
+public import LeanPool.Feige.Lemma43FiniteSigned
+public import LeanPool.Feige.Lemma43Insertion
+public import LeanPool.Feige.Lemma43Relations
+public import LeanPool.Feige.LikelihoodRatio
+public import LeanPool.Feige.MainTheorem
+public import LeanPool.Feige.MarginalLaw
+public import LeanPool.Feige.MeanOneAugmentedMixture
+public import LeanPool.Feige.MeanOneReduction
+public import LeanPool.Feige.MeasurableTwoPointKernel
+public import LeanPool.Feige.MixtureCalibration
+public import LeanPool.Feige.NNRealExponentialLaw
+public import LeanPool.Feige.NormalizedExponential
+public import LeanPool.Feige.NormalizedExponentialProbability
+public import LeanPool.Feige.OneSidedDensity
+public import LeanPool.Feige.OrderedTwoPointInduction
+public import LeanPool.Feige.PaperAssembly
+public import LeanPool.Feige.ProductSplit
+public import LeanPool.Feige.ProductTwoPointKernel
+public import LeanPool.Feige.RecursiveLatentProbability
+public import LeanPool.Feige.Reduction
+public import LeanPool.Feige.Sharpness
+public import LeanPool.Feige.SignedExpLaw
+public import LeanPool.Feige.SimplexExponentialIdentification
+public import LeanPool.Feige.SimplexExponentialLaw
+public import LeanPool.Feige.SimplexGeometry
+public import LeanPool.Feige.SimplexMeasure
+public import LeanPool.Feige.SteinIdentity
+public import LeanPool.Feige.StrictLocalInsertion
+public import LeanPool.Feige.TransferAlgebra
+public import LeanPool.Feige.TransferProbability
+public import LeanPool.Feige.TransferProbability23
+public import LeanPool.Feige.TransferStein
+public import LeanPool.Feige.TransferTestFunctions
+public import LeanPool.Feige.TranslationTP2
+public import LeanPool.Feige.TwoPoint
+public import LeanPool.Feige.TwoPointBoundary
+public import LeanPool.Feige.TwoPointInduction
+public import LeanPool.Feige.TwoPointMixture
+public import LeanPool.Feige.TwoPointProductLaw
+public import LeanPool.Feige.TwoPointReindex
+public import LeanPool.Feige.VlassisThomas.Main
