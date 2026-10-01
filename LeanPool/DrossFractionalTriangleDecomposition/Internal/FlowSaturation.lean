@@ -24,7 +24,8 @@ open SimpleGraph Finset
 
 variable {V : Type*} [DecidableEq V]
 
-private lemma card4_pairwise {a b c d : V} (h : ({a, b, c, d} : Finset V).card = 4) :
+/-- The four vertices of a four-element set are pairwise distinct. -/
+public lemma card4_pairwise {a b c d : V} (h : ({a, b, c, d} : Finset V).card = 4) :
     a ≠ b ∧ a ≠ c ∧ a ≠ d ∧ b ≠ c ∧ b ≠ d ∧ c ≠ d := by
   have hb3 : ({b, c, d} : Finset V).card ≤ 3 := by
     have h1 := Finset.card_insert_le b ({c, d} : Finset V)
