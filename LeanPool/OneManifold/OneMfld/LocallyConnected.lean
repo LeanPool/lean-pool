@@ -5,10 +5,14 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Analysis.InnerProductSpace.Basic
-public import Mathlib.Analysis.Normed.Order.Lattice
-public import Mathlib.Tactic
-
+public import Mathlib.Analysis.Convex.PathConnected
+public import Mathlib.Topology.Bornology.Real
+public import Mathlib.Topology.Instances.NNReal.Lemmas
+public import Mathlib.Topology.UniformSpace.Real
+import Mathlib.Tactic.FunProp -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-!
 # LocallyConnected

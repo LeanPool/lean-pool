@@ -5,10 +5,11 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Tactic
 public import LeanPool.OneManifold.OneMfld.GlueCore
 public import LeanPool.OneManifold.OneMfld.Normalize
-
+public import Mathlib.Topology.OpenPartialHomeomorph.Defs
+public import Mathlib.Topology.UniformSpace.Real
+import Mathlib.Tactic.Ext -- shake: keep
 
 /-! # Gluing two charts into an `ℝ≥0`-valued chart
 

@@ -5,13 +5,21 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Tactic
 public import LeanPool.OneManifold.OneMfld.Charts
-public import LeanPool.OneManifold.OneMfld.Normalize
-public import LeanPool.OneManifold.OneMfld.GlueBlocks
-public import LeanPool.OneManifold.OneMfld.TwoComponents
 public import LeanPool.OneManifold.OneMfld.CircleBlocks
-
+public import LeanPool.OneManifold.OneMfld.GlueBlocks
+public import LeanPool.OneManifold.OneMfld.Normalize
+public import LeanPool.OneManifold.OneMfld.TwoComponents
+public import Mathlib.Topology.Instances.AddCircle.Defs
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.IntervalCases -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.LinearCombination -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Push -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # The circle chart
 
@@ -118,46 +126,53 @@ private lemma circle_params {ρ ν σ μ : ℝ}
       g0 < kα * ν ∧
       1 + kα * ρ < g0 + kg ∧
       g0 + kg < 1 + kα * ν := by
-  have hνρ : 1/2 < ν - ρ := by linarith
-  have hμσ0 : 0 < μ - σ := by linarith
+  have hνρ : 1/2 < ν - ρ := by linarith only [hν3, hρ4]
+  have hνρ0 : 0 < ν - ρ := lt_trans (by norm_num) hνρ
+  have hνρ1 : ν - ρ < 1 := by linarith only [hν1, hρ0]
+  have hμσ0 : 0 < μ - σ := by linarith only [hμ3, hσ4]
   have hd1 : (1 - μ + σ)/(ν - ρ) < 1 := by
-    rw [div_lt_one (by linarith)]
-    linarith
+    rw [div_lt_one hνρ0]
+    linarith only [hν3, hρ4, hμ3, hσ4]
   have h23 : (2/3 : ℝ) < 1 := by norm_num
   obtain ⟨kα, hkα1, hkα2⟩ := exists_between (max_lt hd1 h23)
   have hkα23 : (2/3 : ℝ) < kα := lt_of_le_of_lt (le_max_right _ _) hkα1
   have hkαd : (1 - μ + σ)/(ν - ρ) < kα := lt_of_le_of_lt (le_max_left _ _) hkα1
-  have hkα0 : (0:ℝ) < kα := by linarith
-  have hnum : 0 < 1 - kα * (ν - ρ) := by
-    nlinarith [mul_pos (show (0:ℝ) < 1 - kα by linarith) (show (0:ℝ) < ν - ρ by linarith)]
+  have hkα0 : (0:ℝ) < kα := lt_trans (by norm_num) hkα23
+  have hnum : 0 < 1 - kα * (ν - ρ) :=
+    sub_pos.mpr ((mul_lt_mul_of_pos_left hνρ1 hkα0).trans (by simpa using hkα2))
   set kg := (1 - kα * (ν - ρ)) / (μ - σ) with hkgdef
   have hkg0 : 0 < kg := div_pos hnum hμσ0
   have hkgden : kg * (μ - σ) = 1 - kα * (ν - ρ) := div_mul_cancel₀ _ hμσ0.ne'
   have hkg1 : kg < 1 := by
     rw [hkgdef, div_lt_one hμσ0]
-    have := (div_lt_iff₀ (show (0:ℝ) < ν - ρ by linarith)).mp hkαd
-    linarith
+    have hden := (div_lt_iff₀ hνρ0).mp hkαd
+    linarith only [hden]
   set g0 := kα * ν - kg * σ with hg0def
   have hid1 : kg * σ + g0 = kα * ν := by rw [hg0def]; ring
   have hid2 : kg * μ + g0 = 1 + kα * ρ := by
     rw [hg0def]; linear_combination hkgden
-  have hP1 : (1/3 : ℝ) < kα * (ν - ρ) := by nlinarith
-  have hP2 : (1 / 4 : ℝ) < kα * (ν - ρ) * μ := by nlinarith
-  have hkey : σ < kα * (ν - ρ) * μ := by linarith
+  have hP1 : (1/3 : ℝ) < kα * (ν - ρ) := by
+    have hproduct := mul_lt_mul_of_pos_left hνρ hkα0
+    linarith only [hproduct, hkα23]
+  have hP2 : (1 / 4 : ℝ) < kα * (ν - ρ) * μ := by
+    nlinarith only [hP1, hμ3]
+  have hkey : σ < kα * (ν - ρ) * μ := hσ4.trans hP2
   have hc₁g0 : kα * ρ < g0 := by
     have h2 : kg * σ * (μ - σ) = σ * (1 - kα * (ν - ρ)) := by
       rw [← hkgden]; ring
     have h3 : kg * σ * (μ - σ) < kα * (ν - ρ) * (μ - σ) := by
-      rw [h2]; nlinarith
+      rw [h2]; nlinarith only [hkey]
     have h4 : kg * σ < kα * (ν - ρ) := lt_of_mul_lt_mul_right h3 hμσ0.le
-    rw [hg0def]; nlinarith
+    rw [hg0def]; linarith only [h4]
   have hg0d : g0 < kα * ν := by
     rw [hg0def]
-    nlinarith [mul_pos hkg0 hσ0]
+    exact sub_lt_self _ (mul_pos hkg0 hσ0)
   have h1c : 1 + kα * ρ < g0 + kg := by
-    nlinarith [hid2, mul_pos hkg0 (show (0:ℝ) < 1 - μ by linarith)]
+    linarith only [hid2, mul_pos hkg0 (sub_pos.mpr hμ1)]
   have hg1d : g0 + kg < 1 + kα * ν := by
-    nlinarith [hid1, mul_pos hkg0 hσ0]
+    calc
+      g0 + kg < g0 + 1 := by simpa only [add_comm] using add_lt_add_left hkg1 g0
+      _ < 1 + kα * ν := by linarith only [hg0d]
   exact ⟨kα, kg, g0, hkα0, hkα2, hkg0, hkg1, hid1, hid2, hc₁g0, hg0d, h1c, hg1d⟩
 
 /-- The target of a chart of the form `x ↦ coe (k * X x + d)` (with `X` landing onto

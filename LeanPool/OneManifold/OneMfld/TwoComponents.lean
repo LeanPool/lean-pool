@@ -5,11 +5,12 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Tactic
+public import LeanPool.OneManifold.OneMfld.GlueCore
 public import LeanPool.OneManifold.OneMfld.Outer
 public import LeanPool.OneManifold.OneMfld.TransitionMono
-public import LeanPool.OneManifold.OneMfld.GlueCore
-
+public import Mathlib.Order.BourbakiWitt
+public import Mathlib.Topology.OpenPartialHomeomorph.Defs
+public import Mathlib.Topology.UniformSpace.Real
 
 /-! # The two-component structure of a disconnected overlap
 

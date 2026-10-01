@@ -5,10 +5,8 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Tactic
 public import LeanPool.OneManifold.OneMfld.FiniteIntervalCharts
 public import LeanPool.OneManifold.OneMfld.Noncompact
-
 
 /-!
 # Compactness
@@ -25,10 +23,8 @@ variable
   [TopologicalSpace M]
 
 lemma clopen_in_r (s : Set NNReal) : (s ≠ ∅ ∧ s ≠ Set.univ) → ¬ IsClopen s := by
-  intro h12
-  by_contra h'
-  have h1 := isClopen_iff.mp h'
-  tauto
+  intro h12 hs
+  exact (isClopen_iff.mp hs).elim h12.1 h12.2
 
 lemma noncompact_nnreal : NoncompactSpace NNReal := by
   have := not_compactSpace_NNReal

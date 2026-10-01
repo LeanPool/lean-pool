@@ -5,16 +5,23 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Int.Star
-public import Mathlib.Tactic
-public import LeanPool.OneManifold.OneMfld.UnitInterval
+public import LeanPool.OneManifold.OneMfld.ClassifyOverlaps
+public import LeanPool.OneManifold.OneMfld.Compactness
 public import LeanPool.OneManifold.OneMfld.FiniteIntervalCharts
 public import LeanPool.OneManifold.OneMfld.IntervalCharts
 public import LeanPool.OneManifold.OneMfld.NiceCharts
-public import LeanPool.OneManifold.OneMfld.ClassifyOverlaps
-public import LeanPool.OneManifold.OneMfld.Compactness
-
+public import LeanPool.OneManifold.OneMfld.UnitInterval
+public import Mathlib.Tactic.Polynomial.Basic
+public import Mathlib.Tactic.ReduceModChar
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Data.Int.Star
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.Push -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.Tauto -- shake: keep
 
 /-!
 # Classification

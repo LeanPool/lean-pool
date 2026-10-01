@@ -5,10 +5,11 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Tactic
 public import Mathlib.Topology.Bornology.Real
+public import Mathlib.Topology.Instances.NNReal.Lemmas
+public import Mathlib.Topology.Order.IntermediateValue
+public import Mathlib.Topology.Order.MonotoneContinuity
 public import Mathlib.Topology.UniformSpace.Real
-
 
 /-! # Monotonicity of transition maps
 

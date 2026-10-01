@@ -5,12 +5,18 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Analysis.InnerProductSpace.Basic
-public import Mathlib.Analysis.Normed.Module.RCLike.Real
-public import Mathlib.Analysis.Normed.Order.Lattice
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.Tactic
-
+public import Mathlib.Topology.Connected.Basic
+public import Mathlib.Topology.MetricSpace.Pseudo.Defs
+public import Mathlib.Topology.Order.DenselyOrdered
+public import Mathlib.Topology.Order.IntermediateValue
+public import Mathlib.Topology.UniformSpace.Real
+import Mathlib.Order.CompletePartialOrder
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.Monotonicity.Lemmas
+import Mathlib.Tactic.Push -- shake: keep
 
 /-!
 # RealIntervals

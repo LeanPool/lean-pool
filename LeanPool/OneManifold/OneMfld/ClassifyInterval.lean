@@ -5,8 +5,9 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Topology.Instances.NNReal.Lemmas
-public import Mathlib.Topology.Order.IntermediateValue
+public import Mathlib.Topology.Bornology.Real
+public import Mathlib.Topology.UniformSpace.Real
+import Mathlib.Tactic.Ext -- shake: keep
 
 /-!
 # ClassifyInterval

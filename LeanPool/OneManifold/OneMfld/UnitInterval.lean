@@ -5,10 +5,7 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Tactic
-public import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
 public import Mathlib.Topology.UnitInterval
-
 
 /-!
 # UnitInterval

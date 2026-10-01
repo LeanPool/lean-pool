@@ -5,12 +5,18 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Tactic
+public import LeanPool.OneManifold.OneMfld.ClassifyInterval
 public import LeanPool.OneManifold.OneMfld.ClosureOverlap
 public import LeanPool.OneManifold.OneMfld.LocallyConnected
 public import LeanPool.OneManifold.OneMfld.PartialHomeomorphHelpers
-public import LeanPool.OneManifold.OneMfld.ClassifyInterval
-
+public import Mathlib.Topology.Instances.NNReal.Lemmas
+public import Mathlib.Topology.MetricSpace.ProperSpace.Real
+public import Mathlib.Topology.OpenPartialHomeomorph.Basic
+public import Mathlib.Topology.OpenPartialHomeomorph.Defs
+public import Mathlib.Topology.UniformSpace.Real
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.Push -- shake: keep
 
 /-! # The outer-overlap lemma
 

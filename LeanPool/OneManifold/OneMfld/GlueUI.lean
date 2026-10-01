@@ -5,11 +5,16 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Tactic
-public import Mathlib.Topology.OpenPartialHomeomorph.Constructions
-public import LeanPool.OneManifold.OneMfld.GlueCore
 public import LeanPool.OneManifold.OneMfld.GlueBlocks
-
+public import LeanPool.OneManifold.OneMfld.GlueCore
+public import Mathlib.Topology.OpenPartialHomeomorph.Constructions
+public import Mathlib.Topology.OpenPartialHomeomorph.Defs
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Push -- shake: keep
 
 /-! # Gluing two boundary charts onto the unit interval
 
