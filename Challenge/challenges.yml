@@ -157,3 +157,58 @@ challenges:
     msc:
       - "20C15"
       - "20D20"
+  - slug: ville-testing-by-betting
+    title: Ville's inequality for testing by betting
+    summary: >-
+      Prove the type-I error guarantee of testing by betting: if outcomes in
+      [-1, 1] have conditional mean at most 0 given the past, a bettor who
+      stakes a predictable fraction in [0, 1] of the current wealth reaches
+      wealth 1/alpha with probability at most alpha, at any time. The wealth
+      process is a nonnegative supermartingale started at 1, so this is
+      Ville's 1939 maximal inequality, the result behind e-processes,
+      confidence sequences and safe anytime-valid inference (Ramdas,
+      Grünwald, Vovk and Shafer, arXiv 2210.01948). Mathlib has Doob's maximal
+      inequality for nonnegative submartingales (MeasureTheory.maximal_ineq)
+      but no supermartingale (Ville) form and nothing on betting wealth
+      processes. A finite-horizon, finite-support special case — outcome laws
+      may depend on the past, stakes are predictable — is proved sorry-free
+      by first-step analysis in the proposer's notes; a measure-theoretic
+      Ville inequality exists in the third-party repository
+      Robby955/formal-martingales. The line estimate covers the supermartingale
+      property of the wealth process, optional stopping at the hitting time,
+      and the passage from finite to infinite horizon.
+    branch: probability
+    entry_module: Challenge.TestingByBetting
+    proposers:
+      - deadczarvc
+    source:
+      title: Game-theoretic statistics and safe anytime-valid inference
+      authors:
+        - Aaditya Ramdas
+        - Peter Grünwald
+        - Vladimir Vovk
+        - Glenn Shafer
+      arxiv: "2210.01948"
+    license: Apache-2.0
+    provenance: AI
+    status: open
+    estimated_lines: 400
+    statements:
+      - declaration: Challenge.TestingByBetting.ville_testing_by_betting
+        informal: >-
+          Let X₁, X₂, … be real random variables adapted to a filtration (ℱₙ)
+          on a probability space, with values in [-1, 1], such that the
+          conditional expectation of Xₙ₊₁ given ℱₙ is at most 0 almost surely
+          for every n. Let λ₁, λ₂, … take values in [0, 1], with λₙ₊₁
+          measurable with respect to ℱₙ (predictable stakes), and let
+          Wₙ = ∏_{i < n} (1 + λᵢ₊₁ Xᵢ₊₁) be the wealth after n rounds
+          (W₀ = 1). Then for every α > 0 the probability that Wₙ ≥ 1/α for
+          some n is at most α.
+    tags:
+      - probability
+      - martingales
+      - sequential-testing
+      - e-values
+    msc:
+      - "60G42"
+      - "62L10"
