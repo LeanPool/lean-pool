@@ -36,8 +36,23 @@ public theorem triEdges_card_of_isNClique (G : SimpleGraph V)
 
 variable [Fintype V]
 
+/-- Every edge of a graph triangle belongs to the graph. -/
+public theorem triEdges_subset_edgeFinset (G : SimpleGraph V) [DecidableRel G.Adj]
+    {t : Finset V} (ht : t ∈ G.cliqueFinset 3) : triEdges t ⊆ G.edgeFinset := by
+  rw [mem_cliqueFinset_iff] at ht
+  intro e he
+  unfold triEdges at he
+  rw [Finset.mem_filter] at he
+  obtain ⟨hmem, hdiag⟩ := he
+  induction e using Sym2.ind with
+  | _ a b =>
+    rw [Finset.mk_mem_sym2_iff] at hmem
+    rw [Sym2.mk_isDiag_iff] at hdiag
+    rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet]
+    exact ht.1 hmem.1 hmem.2 hdiag
+
 /-- Nonnegative weights on triangles which give every graph edge total weight one. -/
-public def FractionalTriangleDecomp (G : SimpleGraph V) [DecidableRel G.Adj] : Prop :=
+@[expose] public def FractionalTriangleDecomp (G : SimpleGraph V) [DecidableRel G.Adj] : Prop :=
   ∃ w : Finset V → ℝ, (∀ t, 0 ≤ w t) ∧
     ∀ e ∈ G.edgeFinset,
       (∑ t ∈ G.cliqueFinset 3, if e ∈ triEdges t then w t else 0) = 1
