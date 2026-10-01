@@ -7,7 +7,7 @@ module
 
 
 public import LeanPool.CoarseGraining.Homogenization.Multiscale.NormalizedNorms
-public import Mathlib.MeasureTheory.Measure.MeasureSpace
+public import Mathlib.Algebra.Order.Module.Field
 public import Mathlib.MeasureTheory.Measure.Restrict
 
 /-! # Projection Lp -/

@@ -9,7 +9,7 @@ module
 public import LeanPool.CoarseGraining.Homogenization.Ambient.Euclidean
 public import LeanPool.CoarseGraining.Homogenization.Geometry.Translation
 public import Mathlib.Analysis.Calculus.ContDiff.Operations
-public import Mathlib.Data.Real.Pointwise
+public import Mathlib.Basic.Real.Pointwise
 public import Mathlib.Topology.MetricSpace.Pseudo.Pi
 
 /-! # Euclidean -/

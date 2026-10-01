@@ -6,7 +6,7 @@ Authors: Scott Armstrong, Tuomo Kuusi
 module
 
 
-public import Mathlib.MeasureTheory.Measure.MeasureSpace
+public import Mathlib.Algebra.Order.Module.Field
 public import Mathlib.MeasureTheory.Measure.NullMeasurable
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 

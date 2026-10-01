@@ -7,7 +7,7 @@ module
 
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
 public import LeanPool.CoarseGraining.Homogenization.Geometry.TriadicPartition
 public import LeanPool.CoarseGraining.Homogenization.Book.Ch05.Theorems.Section53.JUpperBoundCoarseFluctuations.Basic

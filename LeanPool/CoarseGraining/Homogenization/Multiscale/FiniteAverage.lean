@@ -9,7 +9,7 @@ module
 public import Mathlib.Algebra.GroupWithZero.Action.Units
 public import Mathlib.Algebra.Module.BigOperators
 public import Mathlib.Algebra.Module.NatInt
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 
 /-! # Finite Average -/
 

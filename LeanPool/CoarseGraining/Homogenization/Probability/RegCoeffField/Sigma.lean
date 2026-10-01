@@ -8,7 +8,7 @@ module
 
 public import LeanPool.CoarseGraining.Homogenization.Probability.RegCoeffField
 public import Mathlib.MeasureTheory.MeasurableSpace.Prod
-public import Mathlib.MeasureTheory.Measure.MeasureSpace
+public import Mathlib.Algebra.Order.Module.Field
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 

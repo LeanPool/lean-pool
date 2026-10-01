@@ -9,7 +9,7 @@ module
 public import LeanPool.CoarseGraining.Homogenization.Besov.Localization
 public import LeanPool.CoarseGraining.Homogenization.Besov.Negative
 public import LeanPool.CoarseGraining.Homogenization.Besov.Positive
-public import Mathlib.Data.Real.ConjExponents
+public import Mathlib.Basic.Real.ConjExponents
 
 /-! # Definitions -/
 

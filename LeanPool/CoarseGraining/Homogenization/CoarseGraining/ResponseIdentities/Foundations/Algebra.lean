@@ -7,7 +7,7 @@ module
 
 
 public import LeanPool.CoarseGraining.Homogenization.CoarseGraining.BlockMatrixProperties
-public import Mathlib.Data.Real.Pointwise
+public import Mathlib.Basic.Real.Pointwise
 
 /-! # Algebra -/
 

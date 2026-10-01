@@ -10,7 +10,7 @@ public import LeanPool.CoarseGraining.Homogenization.Besov.Duality.WrapperCompar
 public import LeanPool.CoarseGraining.Homogenization.Multiscale.ProjectionConvergence
 public import Mathlib.MeasureTheory.Function.ContinuousMapDense
 public import Mathlib.MeasureTheory.Integral.DominatedConvergence
-public import Mathlib.MeasureTheory.Measure.MeasureSpace
+public import Mathlib.Algebra.Order.Module.Field
 public import Mathlib.Order.Filter.AtTopBot.Basic
 
 /-! # Projection Limit -/
