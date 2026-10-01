@@ -619,6 +619,7 @@ lemma norm_block (p : ℝ) (hp : 1 < p) (n : ℕ)
   rw [hindex, hden, hnorm]
   field_simp
 
+/-- The sequence starting at `B 0` and subtracting the next weighted sum at each step. -/
 noncomputable def freeX (b : ScalarMatrix) (B : VectorSeq d) : VectorSeq d :=
   fun k => Nat.rec (B 0)
     (fun j previous => previous - weightedSum (j + 2) (b (j + 1)) B) k
