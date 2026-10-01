@@ -191,7 +191,7 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_
             (sigmaStarCoarse (cubeSet Q) a)
             (kappaCoarse (cubeSet Q) a) := by
               symm
-              rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+              rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
                 (Q := Q) (a := a) hSQ hKQ hSigmaQ hdetQ]
   have hAvgEq :
       descendantsAverageMat Q j
@@ -219,7 +219,7 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_
             (sigmaStarCoarse (cubeSet R) a)
             (kappaCoarse (cubeSet R) a) := by
       symm
-      rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+      rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
         (Q := R) (a := a) hSR hKR hSigmaR hdetR]
     simpa using congrArg (fun M : Mat d => M i l) hcanonR
   have hLoewner :
@@ -244,7 +244,7 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_
             (bCoarse (sigmaCoarse (openCubeSet Q) a)
               (sigmaStarCoarse (openCubeSet Q) a)
               (kappaCoarse (openCubeSet Q) a)) p) := by
-            rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+            rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
               (Q := Q) (a := a) hSQ hKQ hSigmaQ hdetQ]
       _ ≤ (1 / 2 : ℝ) * vecDot p
             (matVecMul
@@ -268,7 +268,7 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_
       (bCoarse (sigmaCoarse (cubeSet Q) a)
         (sigmaStarCoarse (cubeSet Q) a)
         (kappaCoarse (cubeSet Q) a)).PosSemidef := by
-    rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+    rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
       (Q := Q) (a := a) hSQ hKQ hSigmaQ hdetQ]
     exact bCoarse_canonical_posSemidef_of_isSigmaCoarse hSQ hKQ hSigmaQ hdetQ
   have hAvgPSD :
@@ -299,7 +299,7 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_
               (sigmaStarCoarse (cubeSet R) a)
               (kappaCoarse (cubeSet R) a) := by
                 symm
-                rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+                rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
                   (Q := R) (a := a) hSR hKR hSigmaR hdetR]
     rw [← hcanonR]
     exact bCoarse_posSemidef_of_isSigmaCoarse hSR hSigmaR
@@ -341,7 +341,7 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_
               (sigmaStarCoarse (cubeSet R) a)
               (kappaCoarse (cubeSet R) a) := by
                 symm
-                rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+                rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
                   (Q := R) (a := a) hSR hKR hSigmaR hdetR]
     unfold coarseBBlockNorm
     rw [coarseBlockMatrix_cubeSet_eq_openCubeSet_of_triadicCube R a,

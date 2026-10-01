@@ -177,14 +177,14 @@ theorem limitNormalizedJProbeSum_le_four_normalizedProbeSum_of_aelocallyUniforml
             (fullBlockPlusProbe α β) a =
           fullBlockQuadratic M (fullBlockPlusProbe α β) := by
       simpa [M] using
-        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic_of_aelocallyUniformlyEllipticField
+        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic
           hP hStruct hΓ ha Q (fullBlockPlusProbe α β)
     have hscaled :
         limitNormalizedBlockJObservable hP hStruct Q
             ((1 / 2 : ℝ) • fullBlockPlusProbe α β) a =
           fullBlockQuadratic M ((1 / 2 : ℝ) • fullBlockPlusProbe α β) := by
       simpa [M] using
-        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic_of_aelocallyUniformlyEllipticField
+        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic
           hP hStruct hΓ ha Q ((1 / 2 : ℝ) • fullBlockPlusProbe α β)
     rw [hraw, hscaled, fullBlockQuadratic_vec_smul]
     ring
@@ -201,14 +201,14 @@ theorem limitNormalizedJProbeSum_le_four_normalizedProbeSum_of_aelocallyUniforml
             (fullBlockMinusProbe α β) a =
           fullBlockQuadratic M (fullBlockMinusProbe α β) := by
       simpa [M] using
-        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic_of_aelocallyUniformlyEllipticField
+        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic
           hP hStruct hΓ ha Q (fullBlockMinusProbe α β)
     have hscaled :
         limitNormalizedBlockJObservable hP hStruct Q
             ((1 / 2 : ℝ) • fullBlockMinusProbe α β) a =
           fullBlockQuadratic M ((1 / 2 : ℝ) • fullBlockMinusProbe α β) := by
       simpa [M] using
-        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic_of_aelocallyUniformlyEllipticField
+        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic
           hP hStruct hΓ ha Q ((1 / 2 : ℝ) • fullBlockMinusProbe α β)
     rw [hraw, hscaled, fullBlockQuadratic_vec_smul]
     ring

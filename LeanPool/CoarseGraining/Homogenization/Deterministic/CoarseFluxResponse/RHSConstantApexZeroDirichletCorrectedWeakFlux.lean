@@ -138,7 +138,7 @@ private theorem zeroTraceDirichletWeakFluxCoefficientComponent_bound
         Summable (fun m : ℕ =>
           geometricWeight (s / 2) 2 m *
             maxDescendantBBlockNormAtScale Q (Q.scale - (m : ℤ)) a) :=
-      summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+      summable_geometricWeightTwo_maxDescendantBBlockNormAtScale_cubeSet
         (Q := Q) (a := a) (s := s / 2) hs_half hEll hData
     simpa [Real.rpow_one] using hsum
   have hEllOpen : IsEllipticFieldOn lam Lam (openCubeSet Q) a :=
@@ -262,7 +262,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_grad_le_sqrt_correc
       Summable (fun m : ℕ =>
         geometricWeight s 2 m *
           maxDescendantBBlockNormAtScale Q (Q.scale - (m : ℤ)) a) :=
-    summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_geometricWeightTwo_maxDescendantBBlockNormAtScale_cubeSet
       (Q := Q) (a := a) s hs hEll hData
   have hcoeff :
       ∀ k : ℕ,

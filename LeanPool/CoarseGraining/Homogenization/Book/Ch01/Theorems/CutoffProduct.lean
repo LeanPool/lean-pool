@@ -57,7 +57,7 @@ theorem cutoffProductPositiveBesov_partial {d : ℕ}
         normalizedLpNorm Q ∞ ξ *
           cubeBesovPositiveScalarPartialSeminormTwo Q s N (cubeFluctuation Q u)) := by
   simpa [normalizedAverage, normalizedLpNorm] using!
-    Homogenization.cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms_of_contDiff_component_bound
+    Homogenization.cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms
       Q s N u ξ hB hu hξLp hξ hderiv
 
 /-- Depth zero of the scalar positive Besov seminorm of a fluctuation is the

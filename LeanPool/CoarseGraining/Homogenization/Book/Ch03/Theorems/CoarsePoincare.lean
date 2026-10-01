@@ -118,7 +118,7 @@ theorem coarsePoincareGradient_negativeBesov_le {d : ℕ} [NeZero d]
         Ch02.matrixNorm (sigmaStarInvCoarse (cubeSet R) A) =
           Ch02.coarseSigmaStarInvMatrixNorm R a := by
       simpa [A, U, aQ] using
-        (Ch02.coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField_of_mem_descendantsAtScale
+        (Ch02.coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField
           (a := a) (Q := Q) (R := R) (k := Q.scale - (j : ℤ)) hj hRscale).symm
     rw [henergy_R, hnorm_R] at hraw
     simpa [w] using hraw

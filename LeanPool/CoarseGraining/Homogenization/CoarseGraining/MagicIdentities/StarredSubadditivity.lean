@@ -738,7 +738,7 @@ theorem bCoarse_subadditive_cubeSet_originCube_descendantsAtDepth_of_isSigmaCoar
             (bCoarse (sigmaCoarse (openCubeSet (originCube d n)) a)
               (sigmaStarCoarse (openCubeSet (originCube d n)) a)
               (kappaCoarse (openCubeSet (originCube d n)) a)) p) := by
-                rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+                rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
                   (Q := originCube d n) (a := a) hSQ hKQ hSigmaQ hdetQ]
     _ ≤ descendantsAverage (originCube d n) j
           (fun R =>
@@ -762,7 +762,7 @@ theorem bCoarse_subadditive_cubeSet_originCube_descendantsAtDepth_of_isSigmaCoar
             refine Finset.sum_congr rfl ?_
             intro R hR
             rcases hDesc R hR with ⟨sigmaR, sigmaStarR, kappaR, hAR, hSR, hKR, hSigmaR, hdetR⟩
-            rw [← bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+            rw [← bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
               (Q := R) (a := a) hSR hKR hSigmaR hdetR]
 
 theorem bCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse

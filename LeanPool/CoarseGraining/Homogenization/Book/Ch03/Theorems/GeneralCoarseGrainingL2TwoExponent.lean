@@ -174,7 +174,7 @@ private theorem localizedCoarseResponse_le_twoExponentBound_public
         Summable (fun n : ℕ =>
           geometricWeight (r / 2) 2 n *
             maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) A) :=
-      summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+      summable_geometricWeightTwo_maxDescendantBBlockNormAtScale_cubeSet
         (Q := Q) (a := A) (s := r / 2) hr_half_pos hEll hData
     simpa [Real.rpow_one] using hsum
   have hsumSigma :
@@ -187,7 +187,7 @@ private theorem localizedCoarseResponse_le_twoExponentBound_public
         Summable (fun n : ℕ =>
           geometricWeight (r / 2) 2 n *
             maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) A) :=
-      summable_qtwo_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+      summable_geometricWeightTwo_maxDescendantSigmaStarInvNormAtScale_cubeSet
         (Q := Q) (a := A) (s := r / 2) hr_half_pos hEll hData
     simpa [Real.rpow_one] using hsum
   exact

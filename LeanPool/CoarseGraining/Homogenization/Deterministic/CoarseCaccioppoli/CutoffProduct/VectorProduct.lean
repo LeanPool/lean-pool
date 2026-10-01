@@ -399,7 +399,7 @@ theorem cubeBesovPositiveVectorPartialSeminormTwo_scalar_smul_le_cutoff_terms_of
                   (cubeLpNorm Q ∞ ξ) (fun j => cubeBesovPositiveScalarDepthSeminorm Q s v j)
                   (cubeLpNorm_nonneg Q ∞ ξ)]
 
-theorem cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms_of_contDiff_component_bound
+theorem cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N : ℕ) (u : Vec d → ℝ) (ξ : Vec d → Vec d)
     {B : ℝ} (hB : 0 ≤ B)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q))

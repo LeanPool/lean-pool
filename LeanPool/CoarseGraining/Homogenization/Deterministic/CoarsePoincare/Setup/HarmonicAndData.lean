@@ -52,7 +52,7 @@ theorem cubeAverageFlux_le_coarseBBlockNorm_mul_energyAverage_of_isEllipticField
         bCoarse (sigmaCoarse (openCubeSet R) a) (sigmaStarCoarse (openCubeSet R) a)
           (kappaCoarse (openCubeSet R) a) := by
     exact
-      bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+      bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
         (Q := R) hS hK hSigma hdet
   let hOpenR : IsOpenBoundedConvexDomain (openCubeSet R) :=
     isOpenBoundedConvexDomain_openCubeSet R
@@ -186,7 +186,7 @@ theorem cubeAverageFlux_le_matrixNorm_bCoarse_mul_energyAverage_of_isEllipticFie
         bCoarse (sigmaCoarse (openCubeSet R) a) (sigmaStarCoarse (openCubeSet R) a)
           (kappaCoarse (openCubeSet R) a) := by
     exact
-      bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+      bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
         (Q := R) hS hK hSigma hdet
   let hOpenR : IsOpenBoundedConvexDomain (openCubeSet R) :=
     isOpenBoundedConvexDomain_openCubeSet R

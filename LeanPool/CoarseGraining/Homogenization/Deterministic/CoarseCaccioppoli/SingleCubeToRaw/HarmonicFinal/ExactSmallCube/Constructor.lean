@@ -209,14 +209,14 @@ theorem
         geometricWeight s 1 n *
           Real.rpow (maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_geometricWeightOne_maxDescendantBBlockNormAtScale_cubeSet
       Q a s hs hEllCube hData
   have hSigmaSum_t :
       Summable (fun n : ℕ =>
         geometricWeight t 1 n *
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_geometricWeightOne_maxDescendantSigmaStarInvNormAtScale_cubeSet
       Q a t ht hEllCube hData
   let hconst :
       ∀ n : ℕ,
@@ -371,14 +371,14 @@ theorem
         geometricWeight s 1 n *
           Real.rpow (maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_geometricWeightOne_maxDescendantBBlockNormAtScale_cubeSet
       Q a s hs hEllCube hData
   have hSigmaSum_t :
       Summable (fun n : ℕ =>
         geometricWeight t 1 n *
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_geometricWeightOne_maxDescendantSigmaStarInvNormAtScale_cubeSet
       Q a t ht hEllCube hData
   have hconst :=
     faithfulWorkSmallCubeExactRawConstantBranchSplitAllRadii_of_closedCubeEllipticity_of_bufferedCutoffRadiusConst

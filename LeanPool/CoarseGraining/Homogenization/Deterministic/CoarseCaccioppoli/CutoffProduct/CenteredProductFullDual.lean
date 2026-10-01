@@ -57,7 +57,7 @@ theorem
               ((Fintype.card (Fin d) : ℝ) * Bcirc1))) +
         cubeLpNorm Q ∞ ξ * Bpos) := by
   have hpartial :=
-    cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms_of_contDiff_component_bound
+    cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms
       Q s N u ξ hB hu hξLp hξ hderiv
   have hraw :
       cubeL2ScalarPartialSeminormTwo Q (s - 1) N (cubeFluctuation Q u) ≤

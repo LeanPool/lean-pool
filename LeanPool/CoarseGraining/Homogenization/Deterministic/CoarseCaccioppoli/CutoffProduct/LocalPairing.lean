@@ -529,7 +529,7 @@ the quantitative derivative bound.  This is the direct Lean counterpart of
 the LaTeX bound
 `C 3^k Λ_1(R)^{1/2} |u_R| E_R`, before the local mean is bounded by the
 local `L²` norm. -/
-theorem abs_cubeAverage_vecDot_cubeAverage_scalar_smul_le_collapsed_sharp_note_terms_of_contDiff_component_bound
+theorem abs_cubeAverage_vecDot_cubeAverage_scalar_smul_le_collapsed_sharp_note_terms
     {d : ℕ} (Q : TriadicCube d) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (ξ : Vec d → Vec d) {Bu B Bg : ℝ}
     (hB : 0 ≤ B)

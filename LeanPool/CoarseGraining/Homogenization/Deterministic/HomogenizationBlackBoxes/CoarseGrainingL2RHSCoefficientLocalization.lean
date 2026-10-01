@@ -1074,7 +1074,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_coarseFlux
         Summable (fun n : ℕ =>
           geometricWeight (s / 2) 2 n *
             maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) a) :=
-      summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+      summable_geometricWeightTwo_maxDescendantBBlockNormAtScale_cubeSet
         (Q := Q) (a := a) (s := s / 2) hs_half hEll hData
     simpa [Real.rpow_one] using hsum
   have hsumSigma :
@@ -1087,7 +1087,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_coarseFlux
         Summable (fun n : ℕ =>
           geometricWeight (s / 2) 2 n *
             maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a) :=
-      summable_qtwo_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+      summable_geometricWeightTwo_maxDescendantSigmaStarInvNormAtScale_cubeSet
         (Q := Q) (a := a) (s := s / 2) hs_half hEll hData
     simpa [Real.rpow_one] using hsum
   have hdefect_bdd :

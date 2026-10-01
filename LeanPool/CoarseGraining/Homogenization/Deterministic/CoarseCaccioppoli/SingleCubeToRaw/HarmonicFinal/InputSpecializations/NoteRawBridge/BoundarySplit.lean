@@ -71,7 +71,7 @@ theorem
         geometricWeight t 1 n *
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_geometricWeightOne_maxDescendantSigmaStarInvNormAtScale_cubeSet
       Q a t ht hEllCube hData
   have hSigmaSum_one :
       Summable (fun n : ℕ =>
@@ -392,7 +392,7 @@ theorem
         geometricWeight t 1 n *
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_geometricWeightOne_maxDescendantSigmaStarInvNormAtScale_cubeSet
       Q a t ht hEllCube hData
   have hSigmaSum_one :
       Summable (fun n : ℕ =>

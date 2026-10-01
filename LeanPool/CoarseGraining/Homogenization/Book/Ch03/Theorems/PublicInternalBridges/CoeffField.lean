@@ -153,7 +153,7 @@ theorem publicCoeffField_summable_qtwo_maxDescendantBBlockNormAtScale
       geometricWeight s 2 n *
         maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ))
           (publicCoeffField Q a)) :=
-  _root_.Homogenization.summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+  _root_.Homogenization.summable_geometricWeightTwo_maxDescendantBBlockNormAtScale_cubeSet
     (Q := Q) (a := publicCoeffField Q a) s hs
     (publicCoeffField_isEllipticFieldOn_cubeSet Q a)
     (publicCoeffField_openCubeDescendantDeterministicCoarseData Q a)
@@ -178,7 +178,7 @@ theorem publicCoeffField_summable_qtwo_maxDescendantBBlockNormAtScale_descendant
       geometricWeight s 2 n *
         maxDescendantBBlockNormAtScale R (R.scale - (n : ℤ))
           (publicCoeffField Q a)) :=
-  _root_.Homogenization.summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+  _root_.Homogenization.summable_geometricWeightTwo_maxDescendantBBlockNormAtScale_cubeSet
     (Q := R) (a := publicCoeffField Q a) s hs
     (publicCoeffField_isEllipticFieldOn_descendant_cubeSet Q a hR)
     (publicCoeffField_openCubeDescendantDeterministicCoarseData_descendant Q a hR)

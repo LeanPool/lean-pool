@@ -680,7 +680,7 @@ theorem sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarC
   rw [sigmaStarInvCoarse_eq_inv_of_isSigmaStarCoarse hSCube,
     sigmaStarInvCoarse_eq_inv_of_isSigmaStarCoarse hS]
 
-theorem bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+theorem bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
     {d : ℕ} [NeZero d] (Q : TriadicCube d) {a : CoeffField d} {sigma sigmaStar kappa : Mat d}
     (hS : IsSigmaStarCoarse (openCubeSet Q) a sigmaStar)
     (hK : IsKappaCoarse (openCubeSet Q) a sigmaStar kappa)

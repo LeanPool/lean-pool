@@ -91,7 +91,7 @@ theorem
         geometricWeight s 1 n *
           Real.rpow (maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_geometricWeightOne_maxDescendantBBlockNormAtScale_cubeSet
       Q a s hs hEllCube hData
   intro n
   let ρ₁ : ℝ := coarseCaccioppoliRadiusSequence n
@@ -174,7 +174,7 @@ theorem
         geometricWeight s 1 m *
           Real.rpow (maxDescendantBBlockNormAtScale R (R.scale - (m : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_geometricWeightOne_maxDescendantBBlockNormAtScale_cubeSet
       R a s hs hEllR hDataR
   have hsum_one :
       Summable (fun m : ℕ =>
@@ -284,7 +284,7 @@ theorem
         geometricWeight s 1 n *
           Real.rpow (maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_geometricWeightOne_maxDescendantBBlockNormAtScale_cubeSet
       Q a s hs hEllCube hData
   intro ρ₁ ρ₂ hρ₁ hlt hρ₂
   let ρm : ℝ := coarseCaccioppoliBufferedCutoffRadius ρ₁ ρ₂
@@ -358,7 +358,7 @@ theorem
         geometricWeight s 1 m *
           Real.rpow (maxDescendantBBlockNormAtScale R (R.scale - (m : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_geometricWeightOne_maxDescendantBBlockNormAtScale_cubeSet
       R a s hs hEllR hDataR
   have hsum_one :
       Summable (fun m : ℕ =>

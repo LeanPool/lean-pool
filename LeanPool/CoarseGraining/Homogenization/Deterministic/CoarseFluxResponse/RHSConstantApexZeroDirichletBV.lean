@@ -317,7 +317,7 @@ theorem zeroTraceDirichletHarmonicRemainderRhoEnergyAverage_le_raw_lambdaInv_sq
         Summable (fun m : ℕ =>
           geometricWeight (s / 2) 2 m *
             maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (m : ℤ)) a) :=
-      summable_qtwo_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+      summable_geometricWeightTwo_maxDescendantSigmaStarInvNormAtScale_cubeSet
         (Q := Q) (a := a) (s := s / 2) hs_half hEll hData
     simpa using hsum
   have hlocal_lambda :

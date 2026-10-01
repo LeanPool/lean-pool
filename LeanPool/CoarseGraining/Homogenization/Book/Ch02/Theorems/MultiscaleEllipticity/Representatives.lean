@@ -278,7 +278,7 @@ theorem coarseBMatrixNorm_eq_matrixNorm_bCoarse_pointwiseCoeffField_of_mem_desce
           (Homogenization.sigmaStarCoarse (cubeSet R) A)
           (Homogenization.kappaCoarse (cubeSet R) A) := by
     symm
-    rw [Homogenization.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+    rw [Homogenization.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
       (Q := R) (a := A) hS hK hSigma hdet]
   calc
     coarseBMatrixNorm R a =
@@ -304,7 +304,7 @@ theorem coarseBMatrixNorm_eq_matrixNorm_bCoarse_pointwiseCoeffField_of_mem_desce
             (Homogenization.kappaCoarse (cubeSet R) A)) := by
           rw [hOpenCube]
 
-theorem coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField_of_mem_descendantsAtScale
+theorem coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField
     {d : ℕ} [NeZero d] (a : TriadicCoeffFamily d)
     {Q R : TriadicCube d} {k : ℤ}
     (hk : k ≤ Q.scale) (hR : R ∈ descendantsAtScale Q k) :
@@ -390,7 +390,7 @@ theorem coarseBBlockNorm_le_dim_mul_coarseBMatrixNorm_of_mem_descendantsAtScale
           (Homogenization.sigmaStarCoarse (cubeSet R) A)
           (Homogenization.kappaCoarse (cubeSet R) A) := by
     symm
-    rw [Homogenization.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+    rw [Homogenization.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
       (Q := R) (a := A) hS hK hSigma hdet]
   calc
     Homogenization.coarseBBlockNorm R A =
@@ -470,7 +470,7 @@ theorem coarseSigmaStarInvBlockNorm_le_dim_mul_coarseSigmaStarInvMatrixNorm_of_m
           matrixNorm (Homogenization.sigmaStarInvCoarse (cubeSet R) A) :=
           matNorm_le_dim_mul_matrixNorm _
     _ = (d : ℝ) * coarseSigmaStarInvMatrixNorm R a := by
-          rw [coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField_of_mem_descendantsAtScale
+          rw [coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField
             (a := a) hk hR]
 
 private theorem canonical_bCoarse_cubeSet_posSemidef
@@ -505,7 +505,7 @@ private theorem canonical_bCoarse_cubeSet_posSemidef
             (Homogenization.sigmaStarCoarse (cubeSet R) A)
             (Homogenization.kappaCoarse (cubeSet R) A) := by
               symm
-              rw [Homogenization.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+              rw [Homogenization.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
                 (Q := R) (a := A) hSR hKR hSigmaR hdetR]
   rw [← hcanonR]
   exact Homogenization.bCoarse_posSemidef_of_isSigmaCoarse hSR hSigmaR
@@ -574,7 +574,7 @@ theorem coarseBMatrixNorm_le_maxDescendantBMatrixNormAtScale
             (Homogenization.sigmaStarCoarse (cubeSet R) A)
             (Homogenization.kappaCoarse (cubeSet R) A) := by
       symm
-      rw [Homogenization.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+      rw [Homogenization.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
         (Q := R) (a := A) hSR hKR hSigmaR hdetR]
     simpa using congrArg (fun M : Mat d => M i l) hcanonR
   have hLoewner :
@@ -603,7 +603,7 @@ theorem coarseBMatrixNorm_le_maxDescendantBMatrixNormAtScale
               (Homogenization.sigmaCoarse (openCubeSet Q) A)
               (Homogenization.sigmaStarCoarse (openCubeSet Q) A)
               (Homogenization.kappaCoarse (openCubeSet Q) A)) p) := by
-            rw [Homogenization.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+            rw [Homogenization.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
               (Q := Q) (a := A) hSQ hKQ hSigmaQ hdetQ]
       _ ≤ (1 / 2 : ℝ) * vecDot p
             (matVecMul
@@ -630,7 +630,7 @@ theorem coarseBMatrixNorm_le_maxDescendantBMatrixNormAtScale
         (Homogenization.sigmaCoarse (cubeSet Q) A)
         (Homogenization.sigmaStarCoarse (cubeSet Q) A)
         (Homogenization.kappaCoarse (cubeSet Q) A)).PosSemidef := by
-    rw [Homogenization.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+    rw [Homogenization.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet
       (Q := Q) (a := A) hSQ hKQ hSigmaQ hdetQ]
     exact Homogenization.bCoarse_canonical_posSemidef_of_isSigmaCoarse
       hSQ hKQ hSigmaQ hdetQ
@@ -807,7 +807,7 @@ theorem coarseSigmaStarInvMatrixNorm_le_maxDescendantSigmaStarInvMatrixNormAtSca
       coarseSigmaStarInvMatrixNorm Q a =
         matrixNorm (Homogenization.sigmaStarInvCoarse (cubeSet Q) A) := by
     simpa [A] using
-      coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField_of_mem_descendantsAtScale
+      coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField
         (a := a) (Q := Q) (R := Q) (k := Q.scale) le_rfl hQQ
   have hterm_eq :
       ∀ R ∈ descendantsAtDepth Q j,
@@ -818,7 +818,7 @@ theorem coarseSigmaStarInvMatrixNorm_le_maxDescendantSigmaStarInvMatrixNormAtSca
       rw [descendantsAtScale_eq_descendantsAtDepth Q hk]
       simpa [j] using hR
     simpa [A] using
-      (coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField_of_mem_descendantsAtScale
+      (coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField
         (a := a) (Q := Q) (R := R) (k := k) hk hRk).symm
   calc
     coarseSigmaStarInvMatrixNorm Q a =

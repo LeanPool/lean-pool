@@ -231,7 +231,7 @@ theorem weakFluxRHSDepthWeight_mul_correctorEnergyErrorAverage_le_forceScale
         Summable (fun m : ℕ =>
           geometricWeight (s / 2) 2 m *
             maxDescendantBBlockNormAtScale Q (Q.scale - (m : ℤ)) a) :=
-      summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+      summable_geometricWeightTwo_maxDescendantBBlockNormAtScale_cubeSet
         (Q := Q) (a := a) (s := s / 2) hs_half hEll hData
     simpa [Real.rpow_one] using hsum
   have hsum_lambda_half :
@@ -243,7 +243,7 @@ theorem weakFluxRHSDepthWeight_mul_correctorEnergyErrorAverage_le_forceScale
         Summable (fun m : ℕ =>
           geometricWeight (s / 2) 2 m *
             maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (m : ℤ)) a) :=
-      summable_qtwo_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+      summable_geometricWeightTwo_maxDescendantSigmaStarInvNormAtScale_cubeSet
         (Q := Q) (a := a) (s := s / 2) hs_half hEll hData
     simpa using hsum
   have hlocal_lambda :
