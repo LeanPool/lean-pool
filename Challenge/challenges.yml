@@ -191,7 +191,11 @@ challenges:
       arxiv: "2210.01948"
     license: Apache-2.0
     provenance: AI
-    status: open
+    status: solved
+    solution:
+      module: Solution.TestingByBetting
+      authors:
+        - deadczarvc
     estimated_lines: 400
     statements:
       - declaration: Challenge.TestingByBetting.ville
