@@ -87,7 +87,8 @@ theorem abs_supportFunction_sub_le_hausdorffDist_mul_norm
       K.carrier L.carrier := by
       intro x hx;
       apply Metric.infDist_le_hausdorffDist_of_mem hx;
-      grind +suggestions;
+      exact Metric.hausdorffEDist_ne_top_of_nonempty_of_bounded
+        K.nonempty L.nonempty K.isCompact.isBounded L.isCompact.isBounded
     obtain ⟨ x, hx, hx' ⟩ := K.exists_supportPoint u;
     -- Since $L$ is compact and nonempty, there exists $y \in L$ such that $dist x y =
     -- Metric.infDist x L.carrier$.
@@ -102,12 +103,8 @@ theorem abs_supportFunction_sub_le_hausdorffDist_mul_norm
     -- Since $x \in L$, we have $\text{dist}(x, K) \leq \text{hausdorffDist}(L, K)$.
     have h_dist : Metric.infDist x K.carrier ≤ Metric.hausdorffDist L.carrier K.carrier := by
       apply Metric.infDist_le_hausdorffDist_of_mem hx;
-      have h_bounded : Bornology.IsBounded (L.carrier : Set E) ∧ Bornology.IsBounded (K.carrier
-        : Set E) := by
-        exact ⟨ L.isCompact.isBounded, K.isCompact.isBounded ⟩;
-      have h_nonempty : (L.carrier : Set E).Nonempty ∧ (K.carrier : Set E).Nonempty := by
-        exact ⟨ ⟨ x, hx ⟩, K.nonempty ⟩;
-      grind +suggestions;
+      exact Metric.hausdorffEDist_ne_top_of_nonempty_of_bounded
+        L.nonempty K.nonempty L.isCompact.isBounded K.isCompact.isBounded
     -- Since $K$ is compact and nonempty, there exists $y \in K$ such that $\text{dist}(x, y) =
     -- \text{infDist}(x, K)$.
     obtain ⟨ y, hy, hy' ⟩ : ∃ y ∈ K.carrier, dist x y = Metric.infDist x K.carrier := by
