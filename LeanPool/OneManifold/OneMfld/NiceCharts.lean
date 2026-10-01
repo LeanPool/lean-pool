@@ -5,12 +5,9 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Algebra.Order.Star.Real
-public import Mathlib.Geometry.Manifold.ChartedSpace
-public import Mathlib.Tactic
 public import LeanPool.OneManifold.OneMfld.LocallyConnected
 public import LeanPool.OneManifold.OneMfld.PartialHomeomorphHelpers
-
+public import Mathlib.Geometry.Manifold.ChartedSpace
 
 /-!
 # NiceCharts

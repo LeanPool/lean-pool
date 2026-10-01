@@ -5,10 +5,17 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Algebra.Order.Star.Real
-public import Mathlib.Tactic
 public import LeanPool.OneManifold.OneMfld.UnitInterval
-
+public import Mathlib.Basic.NNReal.Basic
+public import Mathlib.Topology.Instances.NNReal.Lemmas
+public import Mathlib.Topology.OpenPartialHomeomorph.Defs
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.Linarith.NNRealPreprocessor -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Building blocks for the H-H gluing
 
