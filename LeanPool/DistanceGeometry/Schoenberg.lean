@@ -63,8 +63,7 @@ theorem centeredGram_apply_eq_inner
   -- `‖x 0 - x i‖ = ‖x i - x 0‖`, etc.; `(x i - x 0) - (x j - x 0) = x i - x j`
   rw [norm_sub_rev (x 0) (x i), norm_sub_rev (x 0) (x j)]
   have hsub : (x i - x 0) - (x j - x 0) = x i - x j := by abel
-  rw [hsub]
-  ring
+  rw [hsub, pow_two, pow_two, pow_two]
 
 /-- The basepoint-centered Gram matrix is the Gram matrix of the recentred vectors. -/
 theorem centeredGram_eq_gram

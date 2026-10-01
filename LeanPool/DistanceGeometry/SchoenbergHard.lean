@@ -119,18 +119,11 @@ private theorem scatter_conjTranspose_mul_self (ι : {r : Fin n // p r} ↪ Fin 
       simp only [mul_ite, mul_one, mul_zero]
       rw [Finset.sum_ite_eq Finset.univ (ι ⟨r', hr'⟩)
         (fun x => if ι ⟨r, hr⟩ = x then (1 : ℝ) else 0)]
-      simp only [Finset.mem_univ, ite_true]
-      by_cases hrr' : r = r'
-      · subst hrr'; simp
-      · have hne : ι ⟨r, hr⟩ ≠ ι ⟨r', hr'⟩ := by
-          intro h
-          exact hrr' (congrArg Subtype.val (ι.injective h))
-        rw [ite_eq_right hne, ite_eq_right hrr']
+      simp only [Finset.mem_univ, ite_true, EmbeddingLike.apply_eq_iff_eq, Subtype.mk.injEq]
     · -- r in support, r' not: diagonal entry is 0, sum is 0
       have hrr' : r ≠ r' := fun h => hr' (h ▸ hr)
       simp [hr', hrr']
   · -- r not in support: everything 0
-    have : ∀ r', r ≠ r' ∨ ¬ p r := fun r' => Or.inr hr
     simp [hr]
 
 end Scatter
@@ -176,15 +169,7 @@ theorem exists_conjTranspose_mul_self_of_rank_le (hG : G.PosSemidef) (hrank : G.
       -- row `r` of `N` is zero because `s r = √0 = 0`
       have hμ0 : μ r = 0 := not_not.mp hr
       have hsr : s r = 0 := by rw [hs]; simp [hμ0]
-      have : N r j = 0 := by
-        rw [hN, mul_apply]
-        apply Finset.sum_eq_zero
-        intro x _
-        rw [diagonal_apply]
-        by_cases hrx : r = x
-        · subst hrx; simp [hsr]
-        · rw [ite_eq_right hrx]; ring
-      rw [this]
+      rw [hN, diagonal_mul, hsr, zero_mul]
   -- assemble: `(S*N)ᴴ * (S*N) = Nᴴ * (Sᴴ*S) * N = Nᴴ * N = G`
   rw [conjTranspose_mul, Matrix.mul_assoc, ← Matrix.mul_assoc Sᴴ S N, hSS, hdiagN, hNG]
 
