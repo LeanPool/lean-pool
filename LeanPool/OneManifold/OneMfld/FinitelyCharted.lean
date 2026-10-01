@@ -6,8 +6,6 @@ Authors: Jim Fowler, Dennis Sweeney
 module
 
 public import Mathlib.Geometry.Manifold.ChartedSpace
-public import Mathlib.Tactic
-
 
 /-!
 # FinitelyCharted
