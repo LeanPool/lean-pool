@@ -328,7 +328,7 @@ Source labels `a.HM` and `l.union.bound`: substitute both the one-block
 high-moment estimate and the deterministic terminal/weak-norm multiplier
 `terminalCost * 3^{-rho_M(m-j)}` into the scale-summed descendant union bridge.
 -/
-theorem lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_sum_of_estimate_of_terminalWeak_le
+theorem lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_sum_of_terminalWeak_le
     {Ω : Type*} [MeasurableSpace Ω] {d : ℕ} {hc : HighContrastExponents d}
     (hm : HighCenteredMomentParameters d hc)
     (μ : MeasureTheory.Measure Ω) (Q : Homogenization.TriadicCube d) {N m : ℕ}
@@ -386,7 +386,7 @@ theorem lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_conv
               (-(min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma)) *
                 ((m - N : ℕ) : ℝ)))) := by
   exact
-    (lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_sum_of_estimate_of_terminalWeak_le
+    (lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_sum_of_terminalWeak_le
       hm μ Q hQ w X hHM terminalCost hw).trans
       (sum_Icc_terminalWeak_highCenteredMomentEnvelope_le_convolution
         hm terminalCost hNm)

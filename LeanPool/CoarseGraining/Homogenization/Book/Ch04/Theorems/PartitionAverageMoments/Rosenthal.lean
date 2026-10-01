@@ -28,7 +28,7 @@ noncomputable section
 
 /-- Rosenthal's `L^p` bound on a single scale-color class of descendants under
 the restriction-unit-range and restriction-local-random-variable assumptions. -/
-theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_descendantsAtScaleScaleColorClass_of_restrictionUnitRangeDependentLaw
+theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_descendantsAtScaleScaleColorClass
     {d : ℕ} {Q : TriadicCube d} {k : ℤ} {c : ScaleColor d k}
     {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
     {p : ℕ} {K : ℝ}
@@ -341,7 +341,7 @@ theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_descendantsAtSc
                   (Real.sqrt ((descendantsAtScaleScaleColorClass Q k c).card : ℝ) * K)) := by
       intro c hc
       exact
-        integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_descendantsAtScaleScaleColorClass_of_restrictionUnitRangeDependentLaw
+        integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_descendantsAtScaleScaleColorClass
           (d := d) (Q := Q) (k := k) (c := c) hP hp hK_nonneg X
           (fun R hR => hX_local R (mem_descendantsAtScaleScaleColorClass_iff.mp hR).1)
           (fun R hR => hX_aemeas R (mem_descendantsAtScaleScaleColorClass_iff.mp hR).1)

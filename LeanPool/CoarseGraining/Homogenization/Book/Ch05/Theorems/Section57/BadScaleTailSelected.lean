@@ -592,7 +592,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_t
 
 /-- Uniform-in-`σ` version of
 `measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_tail_of_thresholds_and_prefactor_gap`. -/
-theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_tail_of_thresholds_and_prefactor_gap_uniformAnnealedExponent
+theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_tail
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Centry a : ℝ, 0 < Centry ∧ 0 < a ∧

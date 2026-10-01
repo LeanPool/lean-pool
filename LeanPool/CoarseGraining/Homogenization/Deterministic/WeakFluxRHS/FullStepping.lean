@@ -27,7 +27,7 @@ variable {d : ℕ} {Q : TriadicCube d} {a : CoeffField d} {g : Vec d → Vec d}
 local recurrence from `FluxStepping` into the one-step recurrence for the full
 `q = 2` negative seminorm, assuming the child full seminorms bound their finite
 partials. -/
-theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_harmonic_energy_of_childBddAbove
+theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_harmonic_energy
     (ω : MeanZeroNeumannCorrectorData Q a (fun x => g x - cubeAverageVec Q g))
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     (s : ℝ) (hs : 0 < s) (energy : Vec d → ℝ)
@@ -165,7 +165,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCo
     integrableOn_coefficientEnergyDensity_of_isEllipticFieldOn hEll
       w.toH1.grad_memVectorL2
   have hbase :=
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_harmonic_energy_of_childBddAbove
+    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_harmonic_energy
       (u := u) w s hs (coefficientEnergyDensity a (fun x => w.toH1.grad x))
       hEll hu_mem hg henergy_nonneg henergy_int hflux hsum huw hchildBdd
   have hsplit :=
@@ -499,14 +499,14 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepEnergy
   refine ⟨ω, w, huw, ?_⟩
   intro energy henergy_nonneg henergy_int hflux hsum hchildBdd
   exact
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_harmonic_energy_of_childBddAbove
+    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_harmonic_energy
       (u := u) w s hs energy hEllR hu_memR hg_memR
       henergy_nonneg henergy_int hflux hsum huw hchildBdd
 
 /--
 Descendant-cube local recurrence with the harmonic flux energy split into the
 original-field energy and the mean-zero Neumann-corrector energy. -/
-theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_of_parent_potential_solenoidal_h1CoerciveEstimate
+theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy
     [NeZero d] {P R : TriadicCube d} {n : ℕ} {lam Lam s : ℝ}
     {u g : Vec d → Vec d}
     (hs : 0 < s)
@@ -560,7 +560,7 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_
 /--
 Descendant-cube coefficient-energy recurrence with harmonic flux control
 supplied by deterministic coarse data. -/
-theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_of_coarseData
     [NeZero d] {P R : TriadicCube d} {n : ℕ} {lam Lam s : ℝ}
     {u g : Vec d → Vec d}
     (hs : 0 < s)
@@ -600,7 +600,7 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_
               (coefficientEnergyDensity a
                 (fun x => ω.toH1MeanZero.toH1Function.grad x)) := by
   rcases
-      exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_of_parent_potential_solenoidal_h1CoerciveEstimate
+      exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy
         (P := P) (R := R) (n := n) (a := a) (g := g) (u := u)
         (lam := lam) (Lam := Lam) (s := s)
         hs hu_potential hu_residual hR hEllR hu_memR hg_memR hC with
@@ -803,7 +803,7 @@ theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepEnerg
   refine ⟨ω, w, huw, ?_⟩
   intro energy henergy_nonneg henergy_int hflux hsum hchildBdd
   exact
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_harmonic_energy_of_childBddAbove
+    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_harmonic_energy
       (u := u.grad) w s hs energy hEll u.grad_memVectorL2 hg
       henergy_nonneg henergy_int hflux hsum huw hchildBdd
 
@@ -861,7 +861,7 @@ theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepCoeff
 /--
 PDE-facing coefficient-energy recurrence with harmonic flux control supplied by
 deterministic coarse data. -/
-theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_of_h1DirichletRhsWeakSolutionOn_of_coarseData
+theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g : Vec d → Vec d) (u : H1Function (cubeSet Q)) {s lam Lam : ℝ}
     (hs : 0 < s)
@@ -980,7 +980,7 @@ theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepShort
 /--
 PDE-facing recurrence with the short corrector product absorbed into quadratic
 `u`, harmonic, and forcing terms. -/
-theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedShortTerm_of_h1DirichletRhsWeakSolutionOn_of_coarseData
+theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedShortTerm
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g : Vec d → Vec d) (u : H1Function (cubeSet Q)) {s η lam Lam : ℝ}
     (hs : 0 < s) (hη : 0 < η)

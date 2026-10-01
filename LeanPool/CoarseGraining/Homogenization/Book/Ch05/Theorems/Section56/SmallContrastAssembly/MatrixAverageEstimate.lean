@@ -297,7 +297,7 @@ theorem fullBlockQuadratic_descendantsAverageNormalizedFluctuationMatrix_integra
           (2 : ℕ) ∂P) ^
         (1 / (2 : ℝ)) ≤ B := by
     have hraw :=
-      integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+      integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_ae_eq_local
         (d := d) (n := (child : ℤ)) (m := (parent : ℤ)) (P := P)
         (p := 2) (K := K) hP
         (by exact_mod_cast Nat.zero_le child)

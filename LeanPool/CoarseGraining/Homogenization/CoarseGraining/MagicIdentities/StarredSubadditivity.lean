@@ -47,7 +47,7 @@ theorem coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_b
           (1 / 2 : ℝ) * blockVecDot X
             (blockMatVecMul (coarseStarredBlockMatrixInv (openCubeSet R) a) X)) := by
   refine
-    coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_responseJ_blockQuadratic
+    coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic
       j Q a hEll ?_ ?_ X
   · intro p q
     exact magic_identity_responseJ_block_quadratic_coarseBlockMatrix_of_isSigmaCoarse
@@ -338,7 +338,7 @@ theorem coarseStarredBlockMatrixInv_subadditive_cubeSet_originCube_descendantsAt
             rw [descendantsAverage_smul]
             rw [blockVecDot_blockMatVecMul_descendantsAverageBlockMat]
 
-theorem coarseStarredBlockMatrixInv_upperLeft_subadditive_cubeSet_originCube_descendantsAtDepth_of_isSigmaCoarse
+theorem coarseStarredBlockMatrixInv_upperLeft_subadditive_cubeSet_originCube_descendantsAtDepth
     {d : ℕ} [NeZero d] (j : ℕ) (n : ℤ) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -368,7 +368,7 @@ theorem coarseStarredBlockMatrixInv_upperLeft_subadditive_cubeSet_originCube_des
     coarseStarredBlockMatrixInv_subadditive_cubeSet_originCube_descendantsAtDepth_blockQuadratic_of_isSigmaCoarse
       j n a hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc (p, 0)
 
-theorem coarseStarredBlockMatrixInv_lowerRight_subadditive_cubeSet_originCube_descendantsAtDepth_of_isSigmaCoarse
+theorem coarseStarredBlockMatrixInv_lowerRight_subadditive_cubeSet_originCube_descendantsAtDepth
     {d : ℕ} [NeZero d] (j : ℕ) (n : ℤ) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -563,7 +563,7 @@ theorem sigmaStarInvCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner
             rw [descendantsAverage_smul]
             rw [vecDot_matVecMul_descendantsAverageMat]
 
-theorem sigmaStarInvCoarse_subadditive_cubeSet_originCube_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
+theorem sigmaStarInvCoarse_subadditive_cubeSet_originCube_descendantsAtDepth_in_loewner_order
     {d : ℕ} [NeZero d] (j : ℕ) (n : ℤ) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}

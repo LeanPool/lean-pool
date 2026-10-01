@@ -383,7 +383,7 @@ theorem abs_integral_coord_mul_le_half_integral_vecNormSq_add_half_integral_sq_o
 
 /-- Version of the coordinatewise `L²` pairing bound localized by support:
 when the scalar test is supported in `S ⊆ V`, only the energy on `S` appears. -/
-theorem abs_integral_coord_mul_le_half_integral_subset_vecNormSq_add_half_integral_subset_sq_of_support_subset
+theorem abs_integral_coord_mul_le_half_integral_subset_vecNormSq_add_half_integral_subset_sq
     {S V : Set (Vec d)} {G : Vec d → Vec d} {φ : Vec d → ℝ}
     (hSV : S ⊆ V) (hφ_support : Function.support φ ⊆ S)
     (hG : MemVectorL2 V G) (hφS : MemScalarL2 S φ) (j : Fin d) :

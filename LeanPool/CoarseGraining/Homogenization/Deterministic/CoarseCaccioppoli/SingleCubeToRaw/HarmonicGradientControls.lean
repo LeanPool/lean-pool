@@ -296,7 +296,7 @@ theorem
     _root_.Homogenization.CoarseCaccioppoliBoundaryCanonicalScalarControlFactors
       Q a s C w (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1.grad x i) Acirc1 AcircS := by
   exact
-    _root_.Homogenization.CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_of_projectedPoincareCircBounds
+    _root_.Homogenization.CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors
       Q a s C w (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1.grad x i) Acirc1 AcircS hpos
       (_root_.Homogenization.CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_harmonicGradientComponent_of_fluxEnergyControls
         Q a s C w i Acirc1 AcircS hs1 hfluxEnergy hgrad hsum1 hsumS hproj hAcirc1
@@ -340,7 +340,7 @@ theorem
       (coarseCaccioppoliCanonicalGradientAcircOne Q a)
       (coarseCaccioppoliCanonicalGradientAcircOneSub Q a s) := by
   exact
-    _root_.Homogenization.CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_of_projectedPoincareCircBounds
+    _root_.Homogenization.CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors
       Q a s C w (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1.grad x i)
       (coarseCaccioppoliCanonicalGradientAcircOne Q a)
       (coarseCaccioppoliCanonicalGradientAcircOneSub Q a s)

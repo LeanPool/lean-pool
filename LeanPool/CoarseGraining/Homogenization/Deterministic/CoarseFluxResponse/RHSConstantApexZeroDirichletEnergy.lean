@@ -218,7 +218,7 @@ theorem matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_const_mu
 Poincare square-root absorption from the zero-trace energy envelope and the
 named Poincare scalar budget.
 -/
-theorem matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_const_mul_correctionBound_of_energy_le_envelope_of_zeroTraceDirichletPoincareScalarBudget
+theorem matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_const_mul_correctionBound
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {C s : ℝ} (g gradV : Vec d → Vec d)
     (hC_nonneg : 0 ≤ C) (hs : 0 < s)

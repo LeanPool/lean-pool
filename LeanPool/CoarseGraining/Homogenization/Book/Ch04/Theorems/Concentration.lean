@@ -789,7 +789,7 @@ theorem isBigO_gammaSigma_finsetAverage_of_iIndepFun_of_isBigO_of_integral_eq_ze
 
 /-- Generic heavy-tail concentration estimate for centered finite independent
 families under a weak-tail logarithmic constraint. -/
-theorem measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_log_constraint_rounded
+theorem measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_of_iIndepFun
     [IsProbabilityMeasure μ]
     {Ψ : ℝ → ℝ} {X : ι → Ω → ℝ} {s : Finset ι} {a l L CΨ M : ℝ}
     (h_indep : ProbabilityTheory.iIndepFun X μ)
@@ -808,7 +808,7 @@ theorem measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPs
       Real.exp (-l * a + (s.card : ℝ) * (l ^ (2 : ℕ) * (3 + M + CΨ))) +
         (s.card : ℝ) * (Ψ L)⁻¹ := by
   simpa using
-    IndependentSums.measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_log_constraint_rounded
+    IndependentSums.measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_of_iIndepFun
       (μ := μ) (Ψ := Ψ) (X := X) (s := s) (a := a) (l := l) (L := L)
       (CΨ := CΨ) (M := M)
       h_indep h_meas h_int h_mean hAdmissible hCΨ_nonneg hCΨ hX hl hl1 hL hM

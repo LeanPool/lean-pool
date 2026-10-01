@@ -106,7 +106,7 @@ theorem coarsePoincareGradient_negativeBesov_le {d : ℕ} [NeZero d]
       hData _ hj R hRscale
     let w : AHarmonicFunction A (cubeSet R) := uCube.restrictToSubcube hEll hR
     have hraw :=
-      cubeAverageGradient_le_matrixNorm_sigmaStarInv_mul_energyAverage_of_isEllipticFieldOn_of_deterministicCoarseData
+      cubeAverageGradient_le_matrixNorm_sigmaStarInv_mul_energyAverage
         (R := R) (a := A) hEllR hDataR w
     have henergy_R :
         cubeAverage R (scalarVariationEnergyIntegrand A w) =
@@ -290,7 +290,7 @@ theorem coarsePoincareFlux_negativeBesov_le {d : ℕ} [NeZero d]
       hData _ hj R hRscale
     let w : AHarmonicFunction A (cubeSet R) := uCube.restrictToSubcube hEll hR
     have hraw :=
-      cubeAverageFlux_le_matrixNorm_bCoarse_mul_energyAverage_of_isEllipticFieldOn_of_deterministicCoarseData
+      cubeAverageFlux_le_matrixNorm_bCoarse_mul_energyAverage_of_deterministicCoarseData
         (R := R) (a := A) hEllR hDataR w
     have hflux_R :
         cubeAverageVec R (fun x => matVecMul (A x) (w.toH1.grad x)) =

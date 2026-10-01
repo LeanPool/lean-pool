@@ -239,7 +239,7 @@ theorem integral_finsetSup_abs_restrictionCenteredDescendantAverageOnCube_pow_rp
         (hX_desc_aemeas Q hQ) hp_one hX0Lp_int
   · intro Q hQ
     exact
-      (integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw
+      (integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le
         (d := d) (Q := Q) (n := n) (P := P) (p := p) (K := K)
         hn (hparent_scale Q hQ) hPstat hPdep X
         (hX_local Q hQ) hX_cov hX0_aemeas (hX_desc_aemeas Q hQ)
@@ -253,7 +253,7 @@ local representatives on each descendant cube.  This is the form used by
 law-facing coarse-block fluctuation estimates, where the raw totalized
 observable is a.e.-equal to a local-test representative but is not itself
 definitionally local. -/
-theorem integral_finsetSup_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+theorem integral_finsetSup_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le
     {d : ℕ} {n : ℤ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
     {parents : Finset (TriadicCube d)} (hparents : parents.Nonempty)
     {p : ℕ} {K B : ℝ}
@@ -320,7 +320,7 @@ theorem integral_finsetSup_abs_restrictionCenteredDescendantAverageOnCube_pow_rp
         (hX_desc_aemeas Q hQ) hp_one hX0Lp_int
   · intro Q hQ
     exact
-      (integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+      (integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_of_ae_eq_local
         (d := d) (Q := Q) (n := n) (P := P) (p := p) (K := K)
         hP hn (hparent_scale Q hQ) hPstat hPdep X
         (hX_localRep Q hQ) hX_cov hX0_aemeas (hX_desc_aemeas Q hQ)
@@ -373,7 +373,7 @@ theorem integral_abs_restrictionCenteredDescendantAverage_le_of_restrictionUnitR
         (μ := P) (f := X0) hξ hX0c_aemeas (by simpa [X0] using hX0ξ_int)).trans
         (by simpa [X0] using hX0ξ)
   have havg_two :=
-    integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw
+    integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le
       (d := d) (n := n) (m := m) (P := P) (p := 2) (K := K)
       hn hnm hPstat hPdep X hX_local hX_cov hX0_aemeas hX_desc_aemeas
       (by norm_num) hK_nonneg (by simpa [X0] using hX0_two_int)

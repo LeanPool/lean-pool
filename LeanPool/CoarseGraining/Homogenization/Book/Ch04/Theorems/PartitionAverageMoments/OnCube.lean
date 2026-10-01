@@ -91,7 +91,7 @@ private theorem integral_abs_scaled_finsetSum_pow_rpow_inv_le_of_ae_eq
 
 /-- Centered polynomial-moment fluctuation bound for restriction-centered
 descendant averages over an arbitrary parent cube. -/
-theorem integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw
+theorem integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le
     {d : ℕ} {Q : TriadicCube d} {n : ℤ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
     {p : ℕ} {K : ℝ}
     (hn : 0 ≤ n) (hnQ : n ≤ Q.scale)
@@ -238,14 +238,14 @@ theorem integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_
       (by omega : 1 ≤ p) hc_nonneg hZ_aemeas hZ_int haverage hsum
 
 /-- Completed-local version of
-`integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw`.
+`integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le`.
 
 The raw observable is allowed to be only a.e.-equal, under the law, to local
 representatives on the finitely many descendant cubes.  This is the honest
 surface for totalized Ch4 observables such as coarse-block entries: stationarity
 and moment transfer use the raw translation-covariant observable, while
 unit-range independence is applied to the local representatives internally. -/
-theorem integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+theorem integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_of_ae_eq_local
     {d : ℕ} {Q : TriadicCube d} {n : ℤ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
     {p : ℕ} {K : ℝ}
     (hP : RestrictionLawCarrier P)

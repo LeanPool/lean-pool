@@ -40,7 +40,7 @@ theorem measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_exp_n
       Real.exp (-l * a + (s.card : ℝ) * (l ^ (2 : ℕ) * gammaSigmaHeavyTailRoundedConst σ)) +
         (s.card : ℝ) * Real.exp (-(L ^ σ)) := by
   have hmain :=
-    measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_log_constraint_rounded
+    measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_of_iIndepFun
       (μ := μ) (Ψ := gammaSigma σ) (X := X) (s := s) (a := a) (l := l) (L := L)
       (CΨ := gammaSigmaTailIntegralConst σ) (M := gammaSigmaLogControlConst σ)
       h_indep h_meas h_int h_mean
@@ -318,7 +318,7 @@ lemma smallRegime_heavyTail_union_le {σ R t : ℝ}
 
 /-- Small-regime one-sided heavy-tail concentration for centered independent
 unit-scale `O_{Γ_σ}` summands. -/
-theorem measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one_unit_smallRegime
+theorem measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_lt_one_unit_smallRegime
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ t : ℝ}
     (h_indep : iIndepFun X μ)

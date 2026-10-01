@@ -702,7 +702,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_le_sqrt_descendantsAverage_sq
 Localized flux-defect bridge with the existing descendant canonical response
 data package exposed directly.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_le_sqrt_descendantsAverage_sq_of_descendantScalarCanonicalFluxDefectData
+theorem localizedFluxDefectNegativeBesovAverageTwo_le_sqrt_descendantsAverage_sq
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (defect : Vec d → Vec d) (energy : Vec d → ℝ) (j : ℕ)
     {lam0 Lam0 : ℝ}
@@ -771,7 +771,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_le_localizedCoarseFluxRespons
       Q a a0 s defect energy j hs henergy_nonneg henergy_int hresp hpartialBdd hsum
 
 /-- Named response-average version with descendant scalar-canonical data. -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_le_localizedCoarseFluxResponseAverageBound_of_descendantScalarCanonicalFluxDefectData
+theorem localizedFluxDefectNegativeBesovAverageTwo_le_localizedCoarseFluxResponseAverageBound
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (defect : Vec d → Vec d) (energy : Vec d → ℝ) (j : ℕ)
     {lam0 Lam0 : ℝ}
@@ -797,7 +797,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_le_localizedCoarseFluxRespons
     localizedFluxDefectNegativeBesovAverageTwo Q s defect j ≤
       localizedCoarseFluxResponseAverageBound Q a a0 s j energy := by
   simpa [localizedCoarseFluxResponseAverageBound] using
-    localizedFluxDefectNegativeBesovAverageTwo_le_sqrt_descendantsAverage_sq_of_descendantScalarCanonicalFluxDefectData
+    localizedFluxDefectNegativeBesovAverageTwo_le_sqrt_descendantsAverage_sq
       Q a a0 s defect energy j hs ha0 ha0symm hdesc henergy_nonneg henergy_int
       hpartialBdd hsum
 

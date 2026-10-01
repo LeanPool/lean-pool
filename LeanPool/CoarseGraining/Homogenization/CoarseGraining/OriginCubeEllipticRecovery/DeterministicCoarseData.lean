@@ -591,7 +591,7 @@ If the coefficient field is self-adjoint, then the canonical coarse
 `\kappa(openCubeSet Q; a)` vanishes on any triadic open cube once translated
 origin-cube elliptic recovery data is available.
 -/
-theorem kappaCoarse_eq_zero_openCubeSet_of_triadicCube_of_hasOpenCubeEllipticRecoveryData_of_adjointCoeffField_eq
+theorem kappaCoarse_eq_zero_openCubeSet_of_hasOpenCubeEllipticRecoveryData_of_adjointCoeffField_eq
     {d : ℕ} [NeZero d] (Q : TriadicCube d)
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d Q.scale)))
     {lam Lam : ℝ} {a : CoeffField d}

@@ -261,7 +261,7 @@ theorem publicZeroTraceDirichletCorrectorData_sqrt_two_energyNorm_le_dirichletEn
 zero-trace corrector half has been discharged by the public zero-Dirichlet
 estimate.  The remaining explicit input is the homogeneous boundary-remainder
 energy bound. -/
-theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_zeroTraceCorrector_public_bound_and_harmonicRemainder_bound
+theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS
     {d : ℕ} [NeZero d] {C₀ C : ℝ}
     (hC₀_nonneg : 0 ≤ C₀)
     (hC₀_zero :
@@ -324,7 +324,7 @@ theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_public
             (dirichletBoundaryGradientField v)) :
     dirichletForcedSolutionEnergyNorm Q a v ≤
       dirichletEnergyWithRHSRHS C Q a s g v :=
-  dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_zeroTraceCorrector_public_bound_and_harmonicRemainder_bound
+  dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS
     (C₀ := C₀) (C := C) hC₀_nonneg hC₀_zero hC_absorb
     (Q := Q) (a := a) (s := s) (g := g) v
     (zeroTraceDirichletCorrectorData_publicCoeffField Q a
@@ -394,7 +394,7 @@ theorem exists_zeroTraceCorrector_harmonicRemainder_dirichletForcedSolutionEnerg
   refine ⟨ρ, w, hgrad, ?_⟩
   intro hharmonic
   exact
-    dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_zeroTraceCorrector_public_bound_and_harmonicRemainder_bound
+    dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS
       (C₀ := C₀) (C := C) hC₀_nonneg hC₀_zero hC_absorb
       (Q := Q) (a := a) (s := s) (g := g) v ρ w hgrad
       hs hs_lt hg hharmonic

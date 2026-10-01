@@ -119,7 +119,7 @@ theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerOpenCube
       Q ρ₁ φ ψ]
     exact hφψ_zero_open
   exact
-    h.neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_eq_of_l2_dist_zero_of_step_abs_le
+    h.neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_eq_of_l2_dist_zero
       hf hV hstep i j η hη_sub hinnerV θ hVν hν_nonneg hνσ hσ₁_lt_one
       hσ₂_nonneg hσ₂_lt_one hstep_abs
       φ.smooth ψ.smooth φ.compactSupport ψ.compactSupport

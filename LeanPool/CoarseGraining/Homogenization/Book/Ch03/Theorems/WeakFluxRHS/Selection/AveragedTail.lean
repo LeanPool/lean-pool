@@ -202,7 +202,7 @@ theorem exists_harmonicRemainderSelector_localizedForcedSolutionPublicFlux_le_we
   have hη : 0 < coarsePoincareRHSNoteEta s :=
     coarsePoincareRHSNoteEta_pos hs
   rcases
-      _root_.Homogenization.exists_harmonicRemainderSelector_fluxSeminormStepAbsorbedLocalError_with_decomposition_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+      _root_.Homogenization.exists_harmonicRemainderSelector_fluxSeminormStepAbsorbedLocalError_with_decomposition
         (Q := Q) (a := publicCoeffField Q a) (s := s)
         (η := coarsePoincareRHSNoteEta s)
         (lam := (a.coeffOn Q).lam) (Lam := (a.coeffOn Q).Lam)
@@ -254,7 +254,7 @@ theorem exists_harmonicRemainderSelector_localizedForcedSolutionPublicFlux_le_we
           hu_tail hv_tail
       simpa [weakFluxRHSAbsorbedLocalizedNoteBase] using hraw
     have hexpanded :=
-      _root_.Homogenization.localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_noteEnergySeminormsForce_of_noteBase
+      _root_.Homogenization.localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_noteBase
         Q (publicCoeffField Q a) (publicH1ToCubeSet u.toH1).grad g
         hs hs_le m havg_parent_nonneg
         (forcedSolutionWeakFluxPoincareTailBudget_nonneg u hs) hBV_nonneg hmain

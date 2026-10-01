@@ -50,7 +50,7 @@ theorem MuCorrectionSpaceRecoveryData.exists_blockResponsePairHalfState_ae_eq_re
     R.recoveredField_lowerImage_isPotential_zero_right_of_isEllipticFieldOn_of_hodgeConverseCriterion
       system hEll hHodge hvol q
   exact
-    exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_lowerImage_isPotential_of_isEllipticFieldOn
+    exists_blockResponsePairHalfState_ae_eq_of_lowerImage_isPotential_of_isEllipticFieldOn
       (a := a) hU.1 hResp hLower hEll
 
 /-- Hodge-packaged direct recovery-to-half-pair bridge for a general block
@@ -81,13 +81,13 @@ theorem MuCorrectionSpaceRecoveryData.exists_blockResponsePairHalfState_ae_eq_re
     R.recoveredField_lowerImage_isPotential_of_isEllipticFieldOn_of_hodgeConverseCriterion
       system hEll hHodge hvol P
   exact
-    exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_lowerImage_isPotential_of_isEllipticFieldOn
+    exists_blockResponsePairHalfState_ae_eq_of_lowerImage_isPotential_of_isEllipticFieldOn
       (a := a) hU.1 hResp hLower hEll
 
 /-- Recovery-to-response bridge for the pure-flux slice, proved without any
 coarse-matrix package. This is the sigma-free theorem needed before the
 canonical `sigma_*^{-1}` positivity layer. -/
-theorem MuCorrectionSpaceRecoveryData.mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem MuCorrectionSpaceRecoveryData.mu_zero_right_eq_responseJ_zero_of_hodgeConverseCriterion
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : MuCorrectionSpaceRecoveryData U)
@@ -182,7 +182,7 @@ theorem MuCorrectionSpaceRecoveryData.mu_zero_right_eq_responseJ_zero_of_isEllip
     _ = ResponseJ U 0 q0 a := hCouple
 
 /-- Packaged pure-flux recovery/response bridge on a Hodge domain. -/
-theorem PotentialSolenoidalL2RecoveryData.mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem PotentialSolenoidalL2RecoveryData.mu_zero_right_eq_responseJ_zero
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
@@ -199,12 +199,12 @@ theorem PotentialSolenoidalL2RecoveryData.mu_zero_right_eq_responseJ_zero_of_isE
   let system : MuOperatorSystemData U a :=
     R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll hvol
   exact
-    Rc.mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn_of_hodgeConverseCriterion
+    Rc.mu_zero_right_eq_responseJ_zero_of_hodgeConverseCriterion
         system hU hEll hHodge hvol.ne' compat.mu_eq_muCandidate q0
 
 /-- Preferred convex-domain wrapper for the packaged pure-flux
 recovery/response bridge. -/
-theorem PotentialSolenoidalL2RecoveryData.mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem PotentialSolenoidalL2RecoveryData.mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
@@ -216,7 +216,7 @@ theorem PotentialSolenoidalL2RecoveryData.mu_zero_right_eq_responseJ_zero_of_isE
         (R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll hvol))
     (q0 : Vec d) :
     Mu U (0, q0) a = ResponseJ U 0 q0 a :=
-  R.mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  R.mu_zero_right_eq_responseJ_zero
     hConv.isSobolevRegularDomain hEll
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat q0
@@ -251,12 +251,12 @@ theorem MuCorrectionSpaceRecoveryData.exists_blockResponsePairHalfState_ae_eq_re
     R.recoveredField_lowerImage_isPotential_zero_right_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
       system hConv hEll hvol q
   exact
-    exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_lowerImage_isPotential_of_isEllipticFieldOn
+    exists_blockResponsePairHalfState_ae_eq_of_lowerImage_isPotential_of_isEllipticFieldOn
       (a := a) hU.1 hResp hLower hEll
 
 /-- Convex-domain direct recovery-to-half-pair bridge for a general block
 datum. -/
-theorem MuCorrectionSpaceRecoveryData.exists_blockResponsePairHalfState_ae_eq_recoveredField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem MuCorrectionSpaceRecoveryData.exists_blockResponsePairHalfState_ae_eq_recoveredField
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : MuCorrectionSpaceRecoveryData U)
@@ -282,12 +282,12 @@ theorem MuCorrectionSpaceRecoveryData.exists_blockResponsePairHalfState_ae_eq_re
     R.recoveredField_lowerImage_isPotential_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
       system hConv hEll hvol P
   exact
-    exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_lowerImage_isPotential_of_isEllipticFieldOn
+    exists_blockResponsePairHalfState_ae_eq_of_lowerImage_isPotential_of_isEllipticFieldOn
       (a := a) hU.1 hResp hLower hEll
 
 /-- Recovery-to-response bridge for the pure-gradient slice, proved without any
 coarse-matrix package. -/
-theorem MuCorrectionSpaceRecoveryData.mu_left_zero_eq_responseJ_zero_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem MuCorrectionSpaceRecoveryData.mu_left_zero_eq_responseJ_zero_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : MuCorrectionSpaceRecoveryData U)
@@ -304,7 +304,7 @@ theorem MuCorrectionSpaceRecoveryData.mu_left_zero_eq_responseJ_zero_of_isEllipt
     Mu U (p0, 0) a = ResponseJ U p0 0 a := by
   let Xrec : BlockState d := R.recoveredField system (p0, 0)
   rcases
-      R.exists_blockResponsePairHalfState_ae_eq_recoveredField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+      R.exists_blockResponsePairHalfState_ae_eq_recoveredField
         system hConv hEll hvol (p0, 0) with
     ⟨u, v, hEq⟩
   have hAdm : IsBlockMuAdmissible U (p0, 0) Xrec := by
@@ -382,7 +382,7 @@ theorem MuCorrectionSpaceRecoveryData.mu_left_zero_eq_responseJ_zero_of_isEllipt
 
 /-- Packaged pure-gradient recovery/response bridge on a bounded open convex
 domain. -/
-theorem PotentialSolenoidalL2RecoveryData.mu_left_zero_eq_responseJ_zero_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem PotentialSolenoidalL2RecoveryData.mu_left_zero_eq_responseJ_zero_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
@@ -398,12 +398,12 @@ theorem PotentialSolenoidalL2RecoveryData.mu_left_zero_eq_responseJ_zero_of_isEl
   let system : MuOperatorSystemData U a :=
     R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll hvol
   exact
-    Rc.mu_left_zero_eq_responseJ_zero_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    Rc.mu_left_zero_eq_responseJ_zero_of_isOpenBoundedConvexDomain
       system hConv hEll hvol.ne' compat.mu_eq_muCandidate p0
 
 /-- Recovery-to-response bridge for the full mixed slice, proved without any
 coarse-matrix package. -/
-theorem MuCorrectionSpaceRecoveryData.responseJ_eq_mu_neg_left_sub_vecDot_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem MuCorrectionSpaceRecoveryData.responseJ_eq_mu_neg_left_sub_vecDot_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : MuCorrectionSpaceRecoveryData U)
@@ -420,7 +420,7 @@ theorem MuCorrectionSpaceRecoveryData.responseJ_eq_mu_neg_left_sub_vecDot_of_isE
     ResponseJ U p0 q0 a = Mu U (-p0, q0) a - vecDot p0 q0 := by
   let Xrec : BlockState d := R.recoveredField system (-p0, q0)
   rcases
-      R.exists_blockResponsePairHalfState_ae_eq_recoveredField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+      R.exists_blockResponsePairHalfState_ae_eq_recoveredField
         system hConv hEll hvol (-p0, q0) with
     ⟨u, v, hEq⟩
   have hAdm : IsBlockMuAdmissible U (-p0, q0) Xrec := by
@@ -502,7 +502,7 @@ theorem MuCorrectionSpaceRecoveryData.responseJ_eq_mu_neg_left_sub_vecDot_of_isE
 
 /-- Packaged full mixed recovery/response bridge on a bounded open convex
 domain. -/
-theorem PotentialSolenoidalL2RecoveryData.responseJ_eq_mu_neg_left_sub_vecDot_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem PotentialSolenoidalL2RecoveryData.responseJ_eq_mu_neg_left_sub_vecDot_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
@@ -518,7 +518,7 @@ theorem PotentialSolenoidalL2RecoveryData.responseJ_eq_mu_neg_left_sub_vecDot_of
   let system : MuOperatorSystemData U a :=
     R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll hvol
   exact
-    Rc.responseJ_eq_mu_neg_left_sub_vecDot_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    Rc.responseJ_eq_mu_neg_left_sub_vecDot_of_isEllipticFieldOn
       system hConv hEll hvol.ne' compat.mu_eq_muCandidate p0 q0
 
 /-- Convex-domain direct scalar-response splitting for the pure-flux recovered

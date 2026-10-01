@@ -56,7 +56,7 @@ theorem cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnParent_origin
       (f := fun x =>
         cubeCoordinateFoldReflectedScalar (originCube d m) F x * φ x)]
   exact
-    W.cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock_of_compactSupport_of_memLp_normalizedCubeMeasure
+    W.cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock
       hφ hφs hmean hF
 
 /-- If the reflected vector field has already been realized as the weak

@@ -271,7 +271,7 @@ theorem setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionScalar
 
 /-- Vector odd-reflected energy on the centered parent cube is `3^d` copies
 of the original cube energy. -/
-theorem setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_self_pairing_of_memVectorL2_three_pow
+theorem setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_self_pairing
     {d : ℕ} {m : ℤ} {G : Vec d → Vec d}
     (hG : MemVectorL2 (openCubeSet (originCube d m)) G) :
     ∫ x in openCubeSet (originCube d (m + 1)),

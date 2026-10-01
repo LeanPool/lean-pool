@@ -345,7 +345,7 @@ theorem mu_left_zero_eq_responseJ_zero_of_isEllipticFieldOn_of_isSigmaCoarse
 /-- If the pure-flux slice of `\mu` matches the pure-flux slice of
 `\mathcal J`, then the lower-right block of `\mathbf A(U; a)` is the canonical
 `\sigma_*^{-1}(U; a)`, packaged directly from recovery data and ellipticity. -/
-theorem coarseBlockMatrix_lowerRight_eq_sigmaStarInvCoarse_of_mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn
+theorem coarseBlockMatrix_lowerRight_eq_sigmaStarInvCoarse_of_isEllipticFieldOn
     (R : PotentialSolenoidalL2RecoveryData U)
     {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam U a)
     (hvol : 0 < (MeasureTheory.volume U).toReal)

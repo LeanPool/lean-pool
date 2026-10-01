@@ -220,7 +220,7 @@ theorem cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock_of_comp
 /-- Compact-test weak equation on the full all-coordinate reflection block,
 with the right-hand side given in the normalized cube `L²` measure used by the
 endpoint interfaces. -/
-theorem cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock_of_compactSupport_of_memLp_normalizedCubeMeasure
+theorem cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock
     (W : MeanZeroNeumannPoissonSolution Q F)
     {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
     (hφs : HasCompactSupport φ)
@@ -300,7 +300,7 @@ theorem cubeFaceReflectionBlock_reflectedVectorField_weakEquationOn_univ_of_comp
         ∫ x in cubeFaceReflectionBlockSet Q, forceBlock x
           ∂MeasureTheory.volume := by
     simpa [gradBlock, forceBlock] using
-      W.cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock_of_compactSupport_of_memLp_normalizedCubeMeasure
+      W.cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock
         hφ hφs hmean hF
   calc
     ∫ x, gradBlock x ∂MeasureTheory.volume
@@ -541,7 +541,7 @@ theorem cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock_h10
             ∫ x in U, fR x * ψ x ∂MeasureTheory.volume := by
     intro ψ hψ hψs _hψ_sub
     simpa [U, G, fR] using
-      W.cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock_of_compactSupport_of_memLp_normalizedCubeMeasure
+      W.cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock
         (by simpa using hψ) hψs hmean hF
   simpa [U, G, fR] using
     h10WeakEquationOn_of_contDiff_tests

@@ -333,7 +333,7 @@ theorem blockResponse_lowerImage_isPotential_of_mem_responseSpace_of_memVectorL2
 /-- Preferred convex-domain wrapper for promoting the lower image of a response
 state to a potential field. This is the Chapter-2-facing surface to use when
 the domain is a bounded open convex set. -/
-theorem blockResponse_lowerImage_isPotential_of_mem_responseSpace_of_memVectorL2_of_isOpenBoundedConvexDomain
+theorem blockResponse_lowerImage_isPotential_of_mem_responseSpace_of_isOpenBoundedConvexDomain
     {d : ℕ} {a : CoeffField d} {U : Set (Vec d)} {X : BlockState d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)

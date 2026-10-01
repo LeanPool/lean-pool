@@ -152,7 +152,7 @@ theorem branch_denominator_le_mixedBottomTailDenominator_pow_eta
 /-- High-top component rewritten with the corrected finite bad-scale exponent.
 The proof uses the same raw high-range estimate as the original high-top
 component and only changes the deterministic tail parameter. -/
-theorem measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_interpolated_kernel_of_badPair_bound
+theorem measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_interpolated_kernel
     {d : ℕ} [NeZero d] {σ Cfluct Centry a : ℝ}
     (hσ_pos : 0 < σ)
     (params : QuantitativeCoarseGrainedEllipticityParams d)

@@ -148,7 +148,7 @@ theorem lowerRight_matrixNorm_positiveExcess_finsetSup_momentRoot_le_of_restrict
         (∫ a, |entry i j a| ^ ξ ∂P) ^ (1 / (ξ : ℝ)) ≤ C := by
     intro i j
     have hroot :=
-      integral_finsetSup_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+      integral_finsetSup_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le
         (d := d) (n := n) (P := P) (parents := parents) hparents
         (p := ξ) (K := K) (B := B)
         hP hn hparent_scale hPstat hPdep

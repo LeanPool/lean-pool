@@ -322,7 +322,7 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_soft_max
 
 /-- Convert the synchronized mixed-bottom soft fixed-pair estimate into the
 weighted row estimate with the corrected finite exponent. -/
-theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_interpolated_weighted_row_of_soft_max_bound
+theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_interpolated_weighted_row
     {d : ℕ} [NeZero d] {σ Cfluct Ccrude Centry a : ℝ}
     (hσ_pos : 0 < σ)
     (params : QuantitativeCoarseGrainedEllipticityParams d)

@@ -476,7 +476,7 @@ theorem CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_harmoni
       Q a s C w (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1.grad x) i Acirc1 AcircS
       hs1 henergy_nonneg henergy_int hgrad hsum1 hsumS hproj hAcirc1 hAcircS
 
-theorem CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_of_projectedPoincareCircBounds
+theorem CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))
     (g : ℝ → ℝ → Vec d → ℝ) (Acirc1 AcircS : ℝ → ℝ → ℝ)
@@ -541,7 +541,7 @@ theorem CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactor
     CoarseCaccioppoliBoundaryCanonicalScalarControlFactors
       Q a s C w (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1.grad x i) Acirc1 AcircS := by
   exact
-    CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_of_projectedPoincareCircBounds
+    CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors
       Q a s C w (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1.grad x i) Acirc1 AcircS hpos
       (CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_harmonicGradientComponent
         Q a s C w i Acirc1 AcircS hs1 henergy_nonneg henergy_int hgrad hsum1 hsumS
@@ -909,7 +909,7 @@ theorem
       (k := k) (F := F) (w := w) (g := g)
       (Acirc1 := Acirc1) (AcircS := AcircS) (U := U) (A1 := A1) (AS := AS)
       hC hs ht hst hu hnonneg hbounded hscale hlower henergyAvg hgMem hfluxEnergy
-      (CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_of_projectedPoincareCircBounds
+      (CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors
         Q a s C w g Acirc1 AcircS hpositiveFactors hprojectedCirc)
       hU hA1 hAS hcoeff hEll hData hSigmaSum_t
 
@@ -998,7 +998,7 @@ theorem
       (Acirc1 := Acirc1) (AcircS := AcircS) (U := U) (A1 := A1) (AS := AS)
       hC hs ht hst hu hagree hG_nonneg hG_bounded hscale hlower henergyAvg
       hgMem hfluxEnergy
-      (CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_of_projectedPoincareCircBounds
+      (CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors
         Q a s C w g Acirc1 AcircS hpositiveFactors hprojectedCirc)
       hU hA1 hAS hcoeff hEll hData hSigmaSum_t
 

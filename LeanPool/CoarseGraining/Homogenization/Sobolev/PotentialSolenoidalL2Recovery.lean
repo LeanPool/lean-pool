@@ -386,7 +386,7 @@ private theorem toBlockL2OfComponents_blockFstCLM_blockSndCLM
   · simpa [blockField, blockFstCLM] using congrFun hfst i
   · simpa [blockField, blockSndCLM] using congrFun hsnd i
 
-theorem PotentialSolenoidalL2Data.mem_potentialZeroTrace_of_mem_blockPotentialZeroTraceSolenoidalZeroNormalTrace_ofSubmoduleClosures
+theorem PotentialSolenoidalL2Data.mem_potentialZeroTrace_of_blockClosure
     {d : ℕ} {U : Set (Vec d)} (X : BlockL2 U)
     (hX :
       X ∈ (PotentialSolenoidalL2Data.ofSubmoduleClosures U).blockPotentialZeroTraceSolenoidalZeroNormalTrace) :
@@ -410,7 +410,7 @@ theorem PotentialSolenoidalL2Data.mem_potentialZeroTrace_of_mem_blockPotentialZe
     exact hclosure (by simpa [M] using! hY)
   exact hclosure' hX
 
-theorem PotentialSolenoidalL2Data.mem_solenoidalZeroNormalTrace_of_mem_blockPotentialZeroTraceSolenoidalZeroNormalTrace_ofSubmoduleClosures
+theorem PotentialSolenoidalL2Data.mem_solenoidalZeroNormalTrace_of_blockClosure
     {d : ℕ} {U : Set (Vec d)} (X : BlockL2 U)
     (hX :
       X ∈ (PotentialSolenoidalL2Data.ofSubmoduleClosures U).blockPotentialZeroTraceSolenoidalZeroNormalTrace) :
@@ -542,11 +542,11 @@ theorem correctionFieldSubmoduleToBlockSubmodule_surjective_of_potentialZeroTrac
   let M : PotentialSolenoidalL2Data U := PotentialSolenoidalL2Data.ofSubmoduleClosures U
   have hpotMem : blockFstCLM (U := U) X ∈ M.potentialZeroTrace := by
     exact
-      PotentialSolenoidalL2Data.mem_potentialZeroTrace_of_mem_blockPotentialZeroTraceSolenoidalZeroNormalTrace_ofSubmoduleClosures
+      PotentialSolenoidalL2Data.mem_potentialZeroTrace_of_blockClosure
         (U := U) X X.2
   have hsolMem : blockSndCLM (U := U) X ∈ M.solenoidalZeroNormalTrace := by
     exact
-      PotentialSolenoidalL2Data.mem_solenoidalZeroNormalTrace_of_mem_blockPotentialZeroTraceSolenoidalZeroNormalTrace_ofSubmoduleClosures
+      PotentialSolenoidalL2Data.mem_solenoidalZeroNormalTrace_of_blockClosure
         (U := U) X X.2
   let F : correctionFieldSubmodule U :=
     ⟨blockField (blockFstCLM (U := U) X) (blockSndCLM (U := U) X),

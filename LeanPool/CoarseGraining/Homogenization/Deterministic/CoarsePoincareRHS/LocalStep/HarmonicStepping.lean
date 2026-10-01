@@ -291,7 +291,7 @@ theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_
                   (coefficientEnergyDensity a (fun x => ρ.toH10.toH1Function.grad x)) := by
               simp [C]
 
-theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_add_uCoeffEnergy_of_correctorCoeffEnergyBound
+theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_add_uCoeffEnergy
     (ρ : ZeroTraceDirichletCorrectorData Q a g)
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     {lam Lam : ℝ} (s : ℝ) (hs : 0 < s) (N : ℕ)

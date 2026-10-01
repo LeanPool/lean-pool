@@ -24,7 +24,7 @@ variable {μ : Measure Ω}
 
 /-- Large-regime one-sided heavy-tail concentration for centered independent
 unit-scale `O_{Γ_σ}` summands. -/
-theorem measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one_unit_largeRegime
+theorem measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_lt_one_unit_largeRegime
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ t : ℝ}
     (h_indep : iIndepFun X μ)
@@ -360,12 +360,12 @@ theorem isBigOWith_gammaSigma_finset_sum_unit_of_iIndepFun_of_isBigO_of_integral
   intro t ht
   by_cases hsmall : t ≤ (s.card : ℝ) ^ (σ / (2 * (2 - σ)))
   · simpa [mul_assoc, mul_left_comm, mul_comm] using
-      measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one_unit_smallRegime
+      measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_lt_one_unit_smallRegime
         (μ := μ) (X := X) (s := s) (σ := σ) (t := t)
         h_indep h_meas hs hσ₀ hσ₁ hX h_mean ht hsmall
   · have hlarge : (s.card : ℝ) ^ (σ / (2 * (2 - σ))) ≤ t := le_of_not_ge hsmall
     simpa [mul_assoc, mul_left_comm, mul_comm] using
-      measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one_unit_largeRegime
+      measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_lt_one_unit_largeRegime
         (μ := μ) (X := X) (s := s) (σ := σ) (t := t)
         h_indep h_meas hs hσ₀ hσ₁ hX h_mean ht hlarge
 

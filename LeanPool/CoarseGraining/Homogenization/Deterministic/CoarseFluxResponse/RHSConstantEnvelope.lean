@@ -111,7 +111,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_of_split_component_boun
 /--
 Constant-envelope version of the one-cube §3.2.4 split recomposition.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_const_mul_coarseFluxResponseRHSBound_of_split_component_bounds
+theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_const_mul_coarseFluxResponseRHSBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (C s : ℝ) (gradU gradW gradV g : Vec d → Vec d)
     {BdefectW BfluxV Ba0V : ℝ}
@@ -246,7 +246,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
 /--
 Descendant-localized split-component handoff to an arbitrary scalar envelope.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendantsAverage_bound_sq_of_descendant_split_component_bounds
+theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendantsAverage_bound_sq
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU gradW gradV : Vec d → Vec d) (j : ℕ)
     {BdefectW BfluxV Ba0V B : TriadicCube d → ℝ}
@@ -378,7 +378,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendant
       Real.sqrt
         (descendantsAverage Q j fun R =>
           (C * coarseFluxResponseRHSBound R a a0 s gradU g) ^ 2) :=
-  localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendantsAverage_bound_sq_of_descendant_split_component_bounds
+  localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendantsAverage_bound_sq
     Q a a0 s gradU gradW gradV j
     hgrad hdefectW_mem hfluxV_mem ha0V_mem
     hdefectU_bdd hdefectW_bdd hfluxV_bdd ha0V_bdd

@@ -163,7 +163,7 @@ theorem sigmaStarInvCoarse_posDef_of_isEllipticFieldOn_of_hodgeConverseCriterion
       ∀ q : Vec d, Mu U (0, q) a = ResponseJ U 0 q a := by
     intro q
     exact
-      Rc.mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn_of_hodgeConverseCriterion
+      Rc.mu_zero_right_eq_responseJ_zero_of_hodgeConverseCriterion
         system hU hEll hHodge hvol.ne' compat.mu_eq_muCandidate q
   have hSInvLower :
       IsSigmaStarInvCoarse U a (coarseBlockMatrix U a).lowerRight := by

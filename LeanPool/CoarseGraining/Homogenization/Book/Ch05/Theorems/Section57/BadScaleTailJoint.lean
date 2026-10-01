@@ -147,7 +147,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_c
           (Real.exp (-(A ^ η)) *
             weightedLinearExpKernelConst w (ρtop ^ τ)) := by
     simpa [K, N0, Hshift, S, b, L, ctop, τ, η, w, Dhigh, A, ρtop] using
-      measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_interpolated_kernel_of_badPair_bound
+      measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_interpolated_kernel
         (d := d) (σ := σ) (Cfluct := Cfluct) (Centry := Centry) (a := a)
         hσ_pos params hCfluct hCentry ha hhighRaw
         (t := t) (αbad := αbad) (Den := Den)
@@ -164,7 +164,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_c
         (d := d) (σ := σ) (Cfluct := Cfluct) (Ccrude := Ccrude)
         (Centry := Centry) (a := a)
         hσ_pos params
-        (measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_interpolated_weighted_row_of_soft_max_bound
+        (measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_interpolated_weighted_row
           (d := d) (σ := σ) (Cfluct := Cfluct) (Ccrude := Ccrude)
           (Centry := Centry) (a := a)
           hσ_pos params hCfluct hCcrude hCentry ha
@@ -317,7 +317,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_c
           (Real.exp (-(A ^ η)) *
             weightedLinearExpKernelConst w (ρtop ^ τ)) := by
     simpa [K, N0, Hshift, S, b, L, ctop, τ, η, w, Dhigh, A, ρtop] using
-      measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_interpolated_kernel_of_badPair_bound
+      measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_interpolated_kernel
         (d := d) (σ := σ) (Cfluct := Cfluct) (Centry := Centry) (a := a)
         hσ_pos params hCfluct hCentry ha hhighRaw
         (t := t) (αbad := αbad) (Den := Den)
@@ -334,7 +334,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_c
         (d := d) (σ := σ) (Cfluct := Cfluct) (Ccrude := Ccrude)
         (Centry := Centry) (a := a)
         hσ_pos params
-        (measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_interpolated_weighted_row_of_soft_max_bound
+        (measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_interpolated_weighted_row
           (d := d) (σ := σ) (Cfluct := Cfluct) (Ccrude := Ccrude)
           (Centry := Centry) (a := a)
           hσ_pos params hCfluct hCcrude hCentry ha

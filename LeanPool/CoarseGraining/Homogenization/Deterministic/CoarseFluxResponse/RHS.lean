@@ -490,7 +490,7 @@ The remaining hypotheses are the two correction estimates (`a∇v` and `a₀∇v
 and the scalar comparison which replaces the harmonic-response energy of `w`
 by the §3.2.4 homogeneous split bound.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseRHSSplitEnvelope_of_aHarmonicFunction_component_bounds
+theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseRHSSplitEnvelope
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) {lam Lam lam0 Lam0 : ℝ}
     (hs : 0 < s)

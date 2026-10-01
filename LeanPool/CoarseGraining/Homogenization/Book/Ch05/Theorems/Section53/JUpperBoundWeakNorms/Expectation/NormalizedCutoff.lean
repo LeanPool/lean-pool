@@ -818,7 +818,7 @@ theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpecte
 from the Section 5.2 `(P4)` integrability theorem and Ch4 stationarity.  The
 remaining inputs are exactly the two square-integrability facts for the scalar
 maximizer weak norms. -/
-theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpectedRHSAtScale_of_normalizedCutoff_of_P4
+theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpectedRHSAtScale_of_P4
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hstat : Ch04.RestrictionStationaryLaw P)
     (hStruct : Ch04.RestrictionStructuralLaw P)

@@ -449,7 +449,7 @@ theorem
 
 /-- Quantitative cutoff analytic inputs combine with the separated canonical
 coefficient algebra to produce the full canonical factor inputs. -/
-theorem CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_quantitativeCubeCutoff_of_coefficientBounds
+theorem CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_quantitativeCubeCutoff
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C uL2Sq : ℝ)
     (k h : ℝ → ℝ → ℝ) (F : ℝ → ℝ)
     (flux : ℝ → ℝ → Vec d → Vec d) (u g : ℝ → ℝ → Vec d → ℝ)
@@ -536,7 +536,7 @@ theorem CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_quan
       (coarseCaccioppoliQuantitativeCutoffHessianBound Q)
       A1 AS := by
   exact
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analyticInputs_of_coefficientBounds
+    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analyticInputs
       Q a s C uL2Sq k h F flux u g
       (fun ρ₁ ρ₂ => scalarCutoffGradientField (η ρ₁ ρ₂))
       energy Acirc1 AcircS
@@ -642,7 +642,7 @@ theorem
       (coarseCaccioppoliQuantitativeCutoffHessianBound Q)
       A1 AS := by
   exact
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analyticInputs_of_coefficientBounds
+    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analyticInputs
       Q a s C uL2Sq k h F
       (fun ρ₁ ρ₂ x => matVecMul (a x) ((w ρ₁ ρ₂).toH1.grad x))
       (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1 x)

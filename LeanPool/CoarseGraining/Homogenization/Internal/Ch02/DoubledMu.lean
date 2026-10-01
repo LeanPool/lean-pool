@@ -578,7 +578,7 @@ private theorem doubledMuMinimizer_neg_left_extracts_canonicalMaximizerGradient_
   have hSame : DoubledField.SameAE (U := U) X Xrec :=
     sameAE_of_isDoubledMuMinimizers U a R system compat (-p, q) hX hRecMin
   rcases
-      Rc.exists_blockResponsePairHalfState_ae_eq_recoveredField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+      Rc.exists_blockResponsePairHalfState_ae_eq_recoveredField
         system U.isDomain hEll hvol.ne' (-p, q) with
     ⟨u, v, hPairRec⟩
   have hAdm : IsBlockMuAdmissible (U : Set (Vec d)) (-p, q) XrecState := by

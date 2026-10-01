@@ -436,7 +436,7 @@ theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_scale_of_e
       (CoarseCaccioppoliBoundarySingleCubeBaseLocalization.of_scale_of_ellipticity
         Q a s t k h hs hs1 hscale helliptic)
 
-theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_scale_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_scale_of_isSigmaCoarse
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     {s t lam Lam : ℝ} (C uL2Sq : ℝ) (k h : ℝ → ℝ → ℝ)
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -504,7 +504,7 @@ theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_triadicGap
     CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization Q a s t C uL2Sq
       (fun ρ₁ ρ₂ => (k ρ₁ ρ₂ : ℝ)) h := by
   exact
-    CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_scale_of_isEllipticFieldOn_of_isSigmaCoarse
+    CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_scale_of_isSigmaCoarse
       Q a C uL2Sq (fun ρ₁ ρ₂ => (k ρ₁ ρ₂ : ℝ)) h
       hC hs ht hst
       (CoarseCaccioppoliBoundarySingleCubeScaleLocalization.of_triadicGapScaleChoice_of_height_lower_bounds
@@ -567,7 +567,7 @@ theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_triadicGap
 `of_triadicGapScaleChoice_of_localizedExplicitHeightOfScaleChoice_of_isEllipticFieldOn_of_isSigmaCoarse`.
 The resulting height is the real cast of a natural depth, which is the form
 needed by the small-cube proof. -/
-theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_triadicGapScaleChoice_of_integerizedLocalizedExplicitHeightOfScaleChoice_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_triadicGapScaleChoice
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     {s t lam Lam : ℝ} (C uL2Sq : ℝ) (k : ℝ → ℝ → ℕ)
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)

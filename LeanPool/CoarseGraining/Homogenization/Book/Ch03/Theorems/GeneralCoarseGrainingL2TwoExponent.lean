@@ -53,7 +53,7 @@ private theorem generalCoarseGrainingL2TwoExponentFluxDefectRHS_eq_const_mul_one
   unfold generalCoarseGrainingL2TwoExponentFluxDefectRHS
   ring
 
-private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss_of_localizedFluxDefectBridge
+private theorem generalCoarseGrainingL2TwoExponentTheory_of_localizedFluxDefectBridge
     {d : ℕ} [NeZero d] {Cproj C : ℝ}
     (hC_pos : 0 < C)
     (hproj : ScalarSolutionComparisonDualityEstimateExponentLoss d Cproj)
@@ -197,7 +197,7 @@ private theorem localizedCoarseResponse_le_twoExponentBound_public
       (fun R hR => forceBesovRegularity_descendant_partialSeminorms_bddAbove hg₂ hR)
       hsumB hsumSigma
 
-private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss_of_const_mul_descendantCoarseFluxResponseRHSBound_of_openCubeDescendantDeterministicCoarseData
+private theorem generalCoarseGrainingL2TwoExponentTheory_of_openCubeDescendantDeterministicCoarseData
     {d : ℕ} [NeZero d] {Cdual K : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimateExponentLoss d Cdual)
     (hK_nonneg : 0 ≤ K)
@@ -229,7 +229,7 @@ private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionCompar
       exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne d)
     exact mul_pos (sq_pos_of_pos hd_pos) hCbase_pos
   refine
-    generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss_of_localizedFluxDefectBridge
+    generalCoarseGrainingL2TwoExponentTheory_of_localizedFluxDefectBridge
       (Cproj := Cdual) (C := C) hC_pos hdual ?_
   intro Q a a0 s r r₂ j g ha0 w hs hr hrs hs_lt hr₂ hg₂
   let A : CoeffField d := publicCoeffField Q a
@@ -380,7 +380,7 @@ private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionCompar
       rw [generalCoarseGrainingL2TwoExponentFluxDefectRHS_eq_const_mul_one
         C Q a a0 r r₂ j g w.u]
 
-private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss_of_const_mul_descendantCoarseFluxResponseRHSBound
+private theorem generalCoarseGrainingL2TwoExponentTheory_of_const_mul_descendantCoarseFluxResponseRHSBound
     {d : ℕ} [NeZero d] {Cdual K : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimateExponentLoss d Cdual)
     (hK_nonneg : 0 ≤ K)
@@ -396,7 +396,7 @@ private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionCompar
               K * _root_.Homogenization.coarseFluxResponseRHSBound R
                 (publicCoeffField Q a) a0.matrix s w.u.grad g) :
     GeneralCoarseGrainingL2TwoExponentTheory d :=
-  generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss_of_const_mul_descendantCoarseFluxResponseRHSBound_of_openCubeDescendantDeterministicCoarseData
+  generalCoarseGrainingL2TwoExponentTheory_of_openCubeDescendantDeterministicCoarseData
     hdual hK_nonneg
     (fun Q a => publicCoeffField_openCubeDescendantDeterministicCoarseData Q a)
     hdescendantRHS
@@ -414,7 +414,7 @@ private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionCompar
       (ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg
         d 1)
   refine
-    generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss_of_const_mul_descendantCoarseFluxResponseRHSBound
+    generalCoarseGrainingL2TwoExponentTheory_of_const_mul_descendantCoarseFluxResponseRHSBound
       (Cdual := Cdual) (K := K) hdual hK_nonneg ?_
   intro Q a a0 s j g _ha0 w hs hs_lt hg R hR
   simpa [K] using

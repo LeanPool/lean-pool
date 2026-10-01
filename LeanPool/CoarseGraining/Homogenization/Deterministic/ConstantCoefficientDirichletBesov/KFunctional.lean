@@ -358,7 +358,7 @@ theorem sqrt_cubeBesovOverlappingPositiveVectorDepthAverage_le_mul_cubeVectorKFu
       (div_le_iff₀ hC_pos).1 hdiv_le
     simpa [A, t, mul_comm] using hA_le
 
-theorem cubeBesovOverlappingPositiveVectorDepthSeminorm_le_mul_cubeKBesovVectorDepthSeminorm_of_forall_competitorValue
+theorem cubeBesovOverlappingPositiveVectorDepthSeminorm_le_mul_cubeKBesovVectorDepthSeminorm
     {d : ℕ} (Q : TriadicCube d) (s C : ℝ) (F : Vec d → Vec d) (j : ℕ)
     (hC : 0 ≤ C)
     (hcomp :
@@ -587,7 +587,7 @@ theorem cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_mul_cubeKBesovVe
       C * cubeKBesovVectorPartialSeminormTwo Q s N F :=
   cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_mul_cubeKBesovVectorPartialSeminormTwo_of_forall_depthSeminorm_le
     Q s C N F hC fun j hj =>
-      cubeBesovOverlappingPositiveVectorDepthSeminorm_le_mul_cubeKBesovVectorDepthSeminorm_of_forall_competitorValue
+      cubeBesovOverlappingPositiveVectorDepthSeminorm_le_mul_cubeKBesovVectorDepthSeminorm
         Q s C F j hC (hcomp j hj)
 
 theorem cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_mul_cubeKBesovVectorPartialSeminormTwo_of_overlapPoincare

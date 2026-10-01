@@ -158,7 +158,7 @@ theorem sigmaCoarse_le_bCoarse_cubeSet_originCube_of_isEllipticFieldOn
       (volume_cubeSet_originCube_toReal_pos_recovery (d := d) n)
       compat hS hK hSigma
 
-theorem kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_openCubeSet_originCube_of_isEllipticFieldOn
+theorem kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_openCubeSet_originCube
     {d : ℕ} [NeZero d] {n : ℤ} (a : CoeffField d) {lam Lam : ℝ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)

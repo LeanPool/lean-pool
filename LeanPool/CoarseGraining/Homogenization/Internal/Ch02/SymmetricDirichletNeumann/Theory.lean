@@ -180,7 +180,7 @@ theorem responseSymmetricDirichletNeumannTheory_of_isEllipticFieldOn
     rw [hvx, hv0x, ← hNx, ← hDx]
   · intro p q
     have hOld :=
-      responseJ_eq_half_vecDot_sigmaCoarse_add_half_vecDot_sigmaStarInvCoarse_sub_dot_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+      responseJ_eq_half_vecDot_sigmaCoarse_add_half_vecDot_sigmaStarInvCoarse_sub_dot
         (U := Uset) (a := a.toCoeffField) R U.isDomain ha hEll hvol compat
         hA hS hK hSigma p q
     rw [book_responseJ_eq_ResponseJ U a p q, hOld, hDirValue p, hNeuValue q]

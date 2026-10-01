@@ -269,7 +269,7 @@ theorem blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isElli
     hU hEll hvol p pStar q qStar]
   rw [ScalarCanonicalMaximizer.responseJ_eq u, ScalarCanonicalMaximizer.responseJ_eq v]
 
-theorem blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_hodgeConverseCriterion
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -295,7 +295,7 @@ by
 
 /-- Preferred note-facing scalar-canonical lower-image-packaged equality on
 bounded open convex domains. -/
-theorem blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem blockJ_eq_half_scalarResponse_sum_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -360,7 +360,7 @@ theorem blockJ_eq_half_scalarResponse_sum_of_isEllipticFieldOn_of_isOpenBoundedC
     ⟨v⟩
   refine ⟨u, v, ?_⟩
   exact
-    blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    blockJ_eq_half_scalarResponse_sum_of_isOpenBoundedConvexDomain
       hConv hEll hvol p pStar q qStar u v
 
 /-- Explicitly named existential version of the previous theorem. -/
@@ -402,7 +402,7 @@ theorem exists_scalarCanonicalMaximizers_blockJ_eq_half_scalarResponse_sum
     ⟨v⟩
   refine ⟨u, v, ?_⟩
   exact
-    blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    blockJ_eq_half_scalarResponse_sum_of_isOpenBoundedConvexDomain
       hConv hEll hvol p pStar q qStar u v
 
 theorem blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn
@@ -426,7 +426,7 @@ theorem blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers
     hU hEll hvol p q h]
   rw [ScalarCanonicalMaximizer.responseJ_eq u, ScalarCanonicalMaximizer.responseJ_eq v]
 
-theorem blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem blockJ_note_form_eq_half_scalarResponse_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -450,7 +450,7 @@ by
 
 /-- Preferred note-facing scalar-canonical lower-image-packaged equality in
 the note form on bounded open convex domains. -/
-theorem blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem blockJ_note_form_eq_half_scalarResponse_sum_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -507,7 +507,7 @@ theorem blockJ_note_form_eq_half_scalarResponse_sum_of_isEllipticFieldOn_of_isOp
     ⟨v⟩
   refine ⟨u, v, ?_⟩
   exact
-    blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    blockJ_note_form_eq_half_scalarResponse_sum_of_isOpenBoundedConvexDomain
       hConv hEll hvol p q h u v
 
 /-- Explicitly named existential version of the previous theorem. -/
@@ -545,7 +545,7 @@ theorem exists_scalarCanonicalMaximizers_blockJ_note_form_eq_half_scalarResponse
     ⟨v⟩
   refine ⟨u, v, ?_⟩
   exact
-    blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    blockJ_note_form_eq_half_scalarResponse_sum_of_isOpenBoundedConvexDomain
       hConv hEll hvol p q h u v
 
 end BlockResponseLowerImageMemVectorL2Data

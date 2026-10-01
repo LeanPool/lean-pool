@@ -470,7 +470,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_boundaryRawEstimate_of_canonical_f
           Bcross * Real.sqrt (cubeAverage Q energy) := by
           ring
 
-theorem CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analyticInputs_of_coefficientBounds
+theorem CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analyticInputs
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C uL2Sq : ℝ)
     (k h : ℝ → ℝ → ℝ) (F : ℝ → ℝ)
     (flux : ℝ → ℝ → Vec d → Vec d) (u g : ℝ → ℝ → Vec d → ℝ)
@@ -495,7 +495,7 @@ theorem CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_anal
       hB_nonneg, hAcirc1_nonneg, hAcircS_nonneg, huBound, hξBound, hB, hAcirc1,
       hAcircS, hconst, hcentered⟩
 
-theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_rawCoefficientBounds
+theorem coarseCaccioppoli_boundary_noteRawEstimate_of_rawCoefficientBounds
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (h : ℝ → ℝ → ℝ) {F : ℝ → ℝ}
     (flux : ℝ → ℝ → Vec d → Vec d) (u g : ℝ → ℝ → Vec d → ℝ)

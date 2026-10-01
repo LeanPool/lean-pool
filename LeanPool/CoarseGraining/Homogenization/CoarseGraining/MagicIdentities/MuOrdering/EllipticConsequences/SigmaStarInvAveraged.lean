@@ -146,7 +146,7 @@ theorem sigmaStarInvCoarse_le_averaged_symmPart_inv_of_isEllipticFieldOn_of_hodg
       ∀ q : Vec d, Mu U (0, q) a = ResponseJ U 0 q a := by
     intro q
     exact
-      Rc.mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn_of_hodgeConverseCriterion
+      Rc.mu_zero_right_eq_responseJ_zero_of_hodgeConverseCriterion
         system hU hEll hHodge hvol.ne' compat.mu_eq_muCandidate q
   simpa [blockMatrixOfCoeff] using
     sigmaStarInvCoarse_le_average_blockMatrixOfCoeff_lowerRight_of_mu_zero_right_eq_responseJ_zero

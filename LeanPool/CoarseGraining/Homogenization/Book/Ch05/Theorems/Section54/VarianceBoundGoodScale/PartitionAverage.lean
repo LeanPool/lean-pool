@@ -767,7 +767,7 @@ private theorem aemeasurable_fullBlockNormalizedQuadraticObservable_descendants
 /-- Origin-cube partition-average moment estimate with a.e.-local descendant
 representatives.  This is the Section 5.4-local bridge from the exact-local
 Ch4 Rosenthal theorem to the totalized coarse-block observables used in Ch5. -/
-theorem integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+theorem integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_ae_eq_local
     {d : ℕ} {n m : ℤ} {P : Ch04.RestrictionCoeffLaw d} [IsProbabilityMeasure P]
     {p : ℕ} {K : ℝ}
     (hP : Ch04.RestrictionLawCarrier P)
@@ -798,7 +798,7 @@ theorem integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_res
             Real.sqrt ((descendantsAtScale (originCube d m) n).card : ℝ) * K) := by
   simpa [Ch04.restrictionCenteredDescendantAverage, Ch04.restrictionCenteredDescendantAverageOnCube]
     using
-      Ch04.integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+      Ch04.integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_of_ae_eq_local
         (d := d) (Q := originCube d m) (n := n) (P := P) (p := p) (K := K)
         hP hn (by simpa [originCube] using hnm) hPstat hPdep X
         hX_localRep hX_cov hX0_aemeas hX_desc_aemeas hp hK_nonneg
@@ -861,7 +861,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSq_restrictionCenteredDescenda
       aemeasurable_fullBlockNormalizedFluctuationOperatorNormSq_cubeSet
         hP hStruct center (originCube d n)
   simpa [X] using
-    integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+    integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_ae_eq_local
       (d := d) (n := n) (m := m) (P := P) (p := hP4.xi) (K := K)
       hP hn hnm hStruct.stationary hStruct.unit_range X hlocal
       (Ch04.isRestrictionTranslationCovariant_comp_toFun
@@ -924,7 +924,7 @@ theorem fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAver
       aemeasurable_fullBlockNormalizedQuadraticObservable_cubeSet
         hP hStruct center q (originCube d n)
   simpa [X] using
-    integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+    integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_ae_eq_local
       (d := d) (n := n) (m := m) (P := P) (p := hP4.xi) (K := K)
       hP hn hnm hStruct.stationary hStruct.unit_range X hlocal
       (Ch04.isRestrictionTranslationCovariant_comp_toFun

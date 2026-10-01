@@ -31,7 +31,7 @@ If the coefficient field is symmetric, then the canonical coarse coupling
 matrix `kappaCoarse` vanishes on any triadic open cube once translated
 origin-cube elliptic recovery data is available.
 -/
-theorem kappaCoarse_eq_zero_openCubeSet_of_triadicCube_of_hasOpenCubeEllipticRecoveryData_of_isSymmetricCoeffField
+theorem kappaCoarse_eq_zero_openCubeSet_of_triadicCube_of_isSymmetricCoeffField
     {d : ℕ} [NeZero d] (Q : TriadicCube d)
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d Q.scale)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -42,7 +42,7 @@ theorem kappaCoarse_eq_zero_openCubeSet_of_triadicCube_of_hasOpenCubeEllipticRec
     (ha : IsSymmetricCoeffField a) :
     kappaCoarse (openCubeSet Q) a = 0 := by
   exact
-    kappaCoarse_eq_zero_openCubeSet_of_triadicCube_of_hasOpenCubeEllipticRecoveryData_of_adjointCoeffField_eq
+    kappaCoarse_eq_zero_openCubeSet_of_hasOpenCubeEllipticRecoveryData_of_adjointCoeffField_eq
       Q R hRec (adjointCoeffField_eq_self_of_isSymmetricCoeffField ha)
 
 /--
@@ -122,7 +122,7 @@ theorem harmonicMeanCoeffField_le_sigmaStarCoarse_openCubeSet_originCube
 Centered origin-cube symmetric middle ordering:
 `sigmaStarCoarse(Q; a) ≤ sigmaCoarse(Q; a)`.
 -/
-theorem sigmaStarCoarse_le_sigmaCoarse_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData_of_isSymmetricCoeffField
+theorem sigmaStarCoarse_le_sigmaCoarse_openCubeSet_originCube_of_isSymmetricCoeffField
     {d : ℕ} [NeZero d] {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -151,7 +151,7 @@ theorem sigmaStarCoarse_le_sigmaCoarse_openCubeSet_originCube_of_hasOpenCubeElli
 Centered origin-cube symmetric arithmetic-mean upper bound:
 `sigmaCoarse(Q; a) ≤ average_Q a`.
 -/
-theorem sigmaCoarse_le_volumeAverageMat_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData_of_isSymmetricCoeffField
+theorem sigmaCoarse_le_volumeAverageMat_openCubeSet_originCube_of_isSymmetricCoeffField
     {d : ℕ} [NeZero d] {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}

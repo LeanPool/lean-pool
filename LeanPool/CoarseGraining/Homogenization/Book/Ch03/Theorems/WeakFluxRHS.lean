@@ -245,7 +245,7 @@ theorem forcedSolution_harmonicRemainderScaledAveragedSeminormSq_le_four_mul_add
 their Neumann correctors.  The harmonic-remainder `BV` tail is closed by the
 coarse-Poincare tail of the original solution plus the selected Neumann-corrector
 negative-Besov tail. -/
-theorem exists_harmonicRemainderSelector_localizedForcedSolutionPublicFlux_le_weakFluxExpandedRHS_of_selected_neumann_tail
+theorem exists_harmonicRemainderSelector_localizedForcedSolutionPublicFlux_le_weakFluxExpandedRHS
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
     {s : ℝ} {g : Vec d → Vec d} (u : ForcedCubeSolution Q a g)
     (m : ℕ) {Bω : ℝ}
@@ -363,7 +363,7 @@ theorem exists_harmonicRemainderSelector_scaleNormalizedForcedFlux_le_selectedNe
               (forcedSolutionFluxField Q a u) ≤
             forcedSolutionWeakFluxSelectedNeumannTailExpandedRHS Q a s u Bω) := by
   rcases
-      exists_harmonicRemainderSelector_localizedForcedSolutionPublicFlux_le_weakFluxExpandedRHS_of_selected_neumann_tail
+      exists_harmonicRemainderSelector_localizedForcedSolutionPublicFlux_le_weakFluxExpandedRHS
         (Q := Q) (a := a) (s := s) (g := g) u 0 hs hs_lt hg hBω_nonneg with
     ⟨v, ω, hdecomp, hflux⟩
   refine ⟨v, ω, hdecomp, ?_⟩
@@ -500,7 +500,7 @@ theorem selectedNeumannCorrectorAveragedTail_le_of_pointwise_tail
 
 /-- Public weak-flux bridge with the selected-Neumann tail accepted in the
 pointwise form often produced by local corrector estimates. -/
-theorem exists_harmonicRemainderSelector_scaleNormalizedForcedFlux_le_weakFluxWithRHSRHS_of_selectedNeumannPointwiseTail_of_expanded_bound
+theorem exists_harmonicRemainderSelector_scaleNormalizedForcedFlux_le_weakFluxWithRHSRHS
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
     {C s : ℝ} {g : Vec d → Vec d} (u : ForcedCubeSolution Q a g)
     {Bω : ℝ}
@@ -539,7 +539,7 @@ theorem exists_harmonicRemainderSelector_scaleNormalizedForcedFlux_le_weakFluxWi
 /-- Same public weak-flux bridge with the automatic boundedness part of the
 harmonic-remainder tail discharged from `H¹` membership.  The remaining input
 is only the scalar `BV` estimate for the constructed harmonic remainders. -/
-theorem localizedForcedSolutionPublicFlux_le_weakFluxExpandedRHS_of_harmonicRemainder_sq_bound_of_public_poincare_tail
+theorem localizedForcedSolutionPublicFlux_le_weakFluxExpandedRHS_of_harmonicRemainder_sq_bound
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
     {s : ℝ} {g : Vec d → Vec d} (u : ForcedCubeSolution Q a g)
     (m : ℕ) {BV : ℝ}
@@ -574,7 +574,7 @@ theorem localizedForcedSolutionPublicFlux_le_weakFluxExpandedRHS_of_harmonicRema
               ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 *
               (cubeBesovPositiveVectorSeminormTwo Q s g) ^ 2)) := by
   refine
-    localizedForcedSolutionPublicFlux_le_weakFluxExpandedRHS_of_constructed_harmonicRemainder_bounds_of_public_poincare_tail
+    localizedForcedSolutionPublicFlux_le_weakFluxExpandedRHS_of_public_poincare_tail
       (Q := Q) (a := a) (s := s) (g := g) u m
       (BV := BV) hs hs_lt hg hBV_nonneg ?_
   intro j R hR ω w hw

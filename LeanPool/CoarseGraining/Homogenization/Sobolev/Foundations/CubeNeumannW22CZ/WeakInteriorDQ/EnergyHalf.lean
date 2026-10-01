@@ -229,7 +229,7 @@ theorem abs_neg_integral_forwardDifferenceQuotient_mul_fderiv_le_of_inner_energy
       |∫ x in V, G x j * φ x ∂MeasureTheory.volume| ≤
         (1 / 2 : ℝ) * ∫ x in S, vecNormSq (G x) ∂MeasureTheory.volume +
           (1 / 2 : ℝ) * ∫ x in S, φ x ^ 2 ∂MeasureTheory.volume :=
-    abs_integral_coord_mul_le_half_integral_subset_vecNormSq_add_half_integral_subset_sq_of_support_subset
+    abs_integral_coord_mul_le_half_integral_subset_vecNormSq_add_half_integral_subset_sq
       (S := S) (V := V) (G := G) (φ := φ)
       hSV ((subset_tsupport φ).trans hφ_subS)
       (u.forwardDifferenceQuotientOn step i hV.isOpen hVU hVshift).grad_memVectorL2

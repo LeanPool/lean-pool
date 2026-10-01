@@ -83,7 +83,7 @@ theorem restrictionCovariant_map_eq_of_cubeTranslation
 
 /-- Centered polynomial-moment fluctuation bound for restriction-centered
 descendant averages of a translation-covariant cube observable. -/
-theorem integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw
+theorem integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le
     {d : ℕ} {n m : ℤ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
     {p : ℕ} {K : ℝ}
     (hn : 0 ≤ n) (hnm : n ≤ m)

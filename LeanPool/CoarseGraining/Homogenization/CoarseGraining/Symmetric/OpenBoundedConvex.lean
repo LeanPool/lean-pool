@@ -28,7 +28,7 @@ supplies this guard from the usual deterministic hypotheses.
 /--
 Open-bounded-convex wrapper for the symmetric split quadratic response formula.
 -/
-theorem responseJ_eq_half_vecDot_sigmaCoarse_add_half_vecDot_sigmaStarInvCoarse_sub_dot_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem responseJ_eq_half_vecDot_sigmaCoarse_add_half_vecDot_sigmaStarInvCoarse_sub_dot
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U) (hConv : IsOpenBoundedConvexDomain U)
     {a : CoeffField d} {lam Lam : ℝ}
@@ -89,7 +89,7 @@ theorem responseJ_completedSquare_of_isSymmetricCoeffField_of_isEllipticFieldOn_
 Open-bounded-convex wrapper for the canonical symmetric gap identity at
 `q = sigmaStarCoarse p`.
 -/
-theorem responseJ_sigmaStarCoarse_mul_eq_half_gap_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem responseJ_sigmaStarCoarse_mul_eq_half_gap_of_isSymmetricCoeffField_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U) (hConv : IsOpenBoundedConvexDomain U)
     {a : CoeffField d} {lam Lam : ℝ}

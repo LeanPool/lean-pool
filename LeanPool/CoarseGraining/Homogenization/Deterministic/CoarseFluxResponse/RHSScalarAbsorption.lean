@@ -833,7 +833,7 @@ theorem coarseFluxResponseRHSSplitEnvelope_le_two_mul_coarseFluxResponseRHSBound
 Split-component RHS flux-response estimate with the triangle constants
 absorbed into the factor `2`.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_coarseFluxResponseRHSBound_of_split_component_bounds
+theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_coarseFluxResponseRHSBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (gradU gradW gradV g : Vec d → Vec d)
     (hs : 0 < s)

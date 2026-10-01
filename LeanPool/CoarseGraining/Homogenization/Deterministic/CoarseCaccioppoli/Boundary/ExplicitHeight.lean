@@ -267,7 +267,7 @@ theorem coarseCaccioppoli_boundary_qone_of_noteEstimate_of_heightChoice_of_triad
 `h = max {k + 4, ceil(...)}` height formula, once the caller supplies a triadic
 scale choice `k(ρ₁, ρ₂)` and the remaining stronger triadic-scale cross-term
 estimate. -/
-theorem coarseCaccioppoli_boundary_qone_of_noteEstimate_of_explicitHeightOfScaleChoice_of_triadicGapScaleChoice
+theorem coarseCaccioppoli_boundary_qone_of_explicitHeightOfScaleChoice_of_triadicGapScaleChoice
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)

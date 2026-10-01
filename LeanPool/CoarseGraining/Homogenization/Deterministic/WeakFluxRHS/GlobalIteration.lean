@@ -224,7 +224,7 @@ theorem weakFluxRHSAveragedSeminormSq_iterate_le
   have hstep : ∀ j : ℕ, Rseq j ≤ γ * Rseq (j + 1) + Eseq j := by
     intro j
     simpa [Rseq, Eseq, γ, weakFluxRHSAveragedSeminormSq] using
-      descendantsAverage_sq_cubeBesovNegativeVectorSeminormTwo_flux_le_discount_next_add_error_of_localBound
+      descendantsAverage_sq_cubeBesovNegativeVectorSeminormTwo_flux_le_discount_next_add_error
         (Q := Q) (a := a) (s := s) (u := u) (j := j) (E := E)
         (hlocal j)
   simpa [Rseq, Eseq, γ, weakFluxRHSAveragedSeminormSq,
@@ -271,7 +271,7 @@ theorem weakFluxRHSScaledAveragedSeminormSq_iterate_le
           γ * weakFluxRHSAveragedSeminormSq Q a s u (j + 1) +
             descendantsAverage Q j E := by
       simpa [γ, weakFluxRHSAveragedSeminormSq] using
-        descendantsAverage_sq_cubeBesovNegativeVectorSeminormTwo_flux_le_discount_next_add_error_of_localBound
+        descendantsAverage_sq_cubeBesovNegativeVectorSeminormTwo_flux_le_discount_next_add_error
           (Q := Q) (a := a) (s := s) (u := u) (j := j) (E := E)
           (hlocal j)
     have hweight_nonneg : 0 ≤ coarsePoincareRHSDepthWeight s j := by

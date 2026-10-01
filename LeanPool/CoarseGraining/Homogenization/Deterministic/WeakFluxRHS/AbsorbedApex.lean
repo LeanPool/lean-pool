@@ -341,7 +341,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_a
               η * BU + η * BV + weakFluxRHSWeightedGlobalForceBase Q a g s η m) *
             (1 - Real.rpow (3 : ℝ) (-s))⁻¹)) := by
   rcases
-      exists_harmonicRemainderSelector_fluxSeminormStepAbsorbedLocalError_with_decomposition_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+      exists_harmonicRemainderSelector_fluxSeminormStepAbsorbedLocalError_with_decomposition
         (Q := Q) (a := a) (s := s) (η := η) (lam := lam) (Lam := Lam)
         (u := u) (g := g) hs hη hu_potential hu_residual hEll_desc
         hu_mem_desc hg_mem_desc hC_desc hData_desc hsum_desc hchildBdd
@@ -592,7 +592,7 @@ theorem exists_localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_s
 H¹ weak-solution wrapper whose selected harmonic-remainder tail is supplied by
 descendantwise squared bounds rather than an averaged tail hypothesis.
 -/
-theorem exists_localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_absorbedLocalizedBases_of_h1DirichletRhsWeakSolutionOn_of_descendant_scaled_harmonicRemainder_sq_bound
+theorem exists_localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s η : ℝ) (g : Vec d → Vec d) (u : H1Function (cubeSet Q))
     {lam Lam : ℝ}
@@ -804,7 +804,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_a
 /--
 H¹ weak-solution note-eta form of the constructed harmonic-remainder wrapper.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_absorbedLocalizedNoteBase_of_h1DirichletRhsWeakSolutionOn_of_constructed_harmonicRemainder_bounds
+theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s : ℝ) (g : Vec d → Vec d) (u : H1Function (cubeSet Q))
     {lam Lam : ℝ}

@@ -493,7 +493,7 @@ theorem maxDescendantSigmaStarInvNormAtScale_le_of_le_of_isEllipticFieldOn_of_is
     hData.of_mem_descendantsAtScale hlQ hR
   have hRle :
       coarseSigmaStarInvBlockNorm R a ≤ maxDescendantSigmaStarInvNormAtScale R k a :=
-    coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_isSigmaCoarse
+    coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_isSigmaCoarse
       (Q := R) (k := k) hkR a hEllR hDataR
   have hRQ :
       maxDescendantSigmaStarInvNormAtScale R k a ≤

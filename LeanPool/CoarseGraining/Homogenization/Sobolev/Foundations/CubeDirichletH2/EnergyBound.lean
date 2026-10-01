@@ -238,7 +238,7 @@ theorem openCubeInnerQuotientHessianSmoothTestReducedBound_le_originCubeParentRe
               ∫ y in openCubeSet Q, vecDot (G y) (G y)
                 ∂MeasureTheory.volume := by
               simpa [Q, Qp, G, GP] using
-                setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_self_pairing_of_memVectorL2_three_pow
+                setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_self_pairing
                   (m := m) hG
     exact hcoord.trans_eq hvec_eq
   have hlower :

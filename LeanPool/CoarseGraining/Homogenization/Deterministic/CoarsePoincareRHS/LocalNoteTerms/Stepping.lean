@@ -63,7 +63,7 @@ theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_
     ρ.coefficientEnergy_average_le_collapsed_note_term_centered_two_two
       s hs hmem hg hgradρ hBg hneg hpos
   exact
-    ρ.sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_add_uCoeffEnergy_of_correctorCoeffEnergyBound
+    ρ.sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_add_uCoeffEnergy
       (u := u) w s hs N hEll hu_mem hgrad hsum huw hρenergy
 
 

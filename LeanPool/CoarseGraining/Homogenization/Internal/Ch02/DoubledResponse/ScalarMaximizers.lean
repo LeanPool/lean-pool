@@ -368,7 +368,7 @@ theorem doubled_maximizer_sameAE_scalar_maximizers_of_isEllipticFieldOn {d : ℕ
         (a := a.toCoeffField) (X := blockStateOfDoubled X)
         hXmax.1.1.1.1 hXmax.1.1.2.1 hEll
   rcases
-    exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_lowerImage_memVectorL2_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_isOpenBoundedConvexDomain
       (a := a.toCoeffField) U.isDomain hOld hLowerL2 hEll with
     ⟨v, vStarOld, hhalf⟩
   let vStar : Solution U a.transpose := by

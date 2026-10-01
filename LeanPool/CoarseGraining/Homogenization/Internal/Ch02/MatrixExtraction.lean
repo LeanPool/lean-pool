@@ -205,17 +205,17 @@ theorem exists_oldCanonicalMatrixData_of_isOpenBoundedConvexDomain
   have hMuRespQ :
       ∀ q : Vec d, Mu U (0, q) a = ResponseJ U 0 q a := by
     intro q
-    exact R.mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    exact R.mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn
       hConv hEll hvol compat q
   have hMuRespP :
       ∀ p : Vec d, Mu U (p, 0) a = ResponseJ U p 0 a := by
     intro p
-    exact R.mu_left_zero_eq_responseJ_zero_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    exact R.mu_left_zero_eq_responseJ_zero_of_isEllipticFieldOn
       hConv hEll hvol compat p
   have hResp :
       ∀ p q : Vec d, ResponseJ U p q a = Mu U (-p, q) a - vecDot p q := by
     intro p q
-    exact R.responseJ_eq_mu_neg_left_sub_vecDot_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    exact R.responseJ_eq_mu_neg_left_sub_vecDot_of_isEllipticFieldOn
       hConv hEll hvol compat p q
   have hSInvLower :
       IsSigmaStarInvCoarse U a (coarseBlockMatrix U a).lowerRight :=

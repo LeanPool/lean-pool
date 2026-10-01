@@ -312,7 +312,7 @@ theorem exists_quantitative_threshold_shiftedBadScaleEvent_quenchedProbeEnvelope
                   P.real (badScaleEvent Hshift t αbad q) ≤
                     Real.exp (-(((3 : ℝ) ^ (q : ℝ) / Btail) ^ η)) := by
   obtain ⟨Centry, a, hCentry, ha, htailBase⟩ :=
-    measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_tail_of_thresholds_and_prefactor_gap_uniformAnnealedExponent
+    measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_tail
       (d := d) params
   refine ⟨Centry, a, hCentry, ha, ?_⟩
   intro σ hσ_pos

@@ -130,7 +130,7 @@ theorem jUpperWeakNormManuscriptExpectedRHSAtScale_le_youngManuscriptExpectedRHS
 /-- First Section 5.3 lemma with the Young-envelope additivity term, using the
 same normalized cutoff and P4 integrability inputs as the standard public
 surface. -/
-theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormYoungManuscriptExpectedRHSAtScale_of_normalizedCutoff_of_P4
+theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormYoungManuscriptExpectedRHSAtScale
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hstat : Ch04.RestrictionStationaryLaw P)
     (hStruct : Ch04.RestrictionStructuralLaw P)
@@ -176,7 +176,7 @@ theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormYoungManuscriptEx
         jUpperWeakNormManuscriptExpectedRHSAtScale P m k s t
           C Cosc scaleSep BφS BφT Cprod p q p0 q0 := by
     simpa [Q, j, C, Cosc, scaleSep, BφS, BφT, Cprod] using
-      expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpectedRHSAtScale_of_normalizedCutoff_of_P4
+      expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpectedRHSAtScale_of_P4
         hP hstat hStruct hP4 hk_nonneg hkm hs hs_lt_one ht hst p q p0 q0
         hGradSq hFluxSq
   have hm_nonneg : 0 ≤ m := le_trans hk_nonneg hkm

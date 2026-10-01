@@ -969,7 +969,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_energy_add_forcing_of_component_a
 Scale-sharp localized RHS comparison with an arbitrary nonnegative descendant
 coefficient envelope for the three forcing correction components.
 -/
-theorem localizedCoarseFluxResponseRHSBound_le_energy_add_coeffSum_mul_depthWeight_inv_mul_parent_of_pointwise_le_of_bddAbove
+theorem localizedCoarseFluxResponseRHSBound_le_energy_add_coeffSum_mul_depthWeight_inv_mul_parent
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (gradU g : Vec d → Vec d) {E C₁ C₂ C₃ : ℝ}
     (hC₁_nonneg : 0 ≤ C₁) (hC₂_nonneg : 0 ≤ C₂) (hC₃_nonneg : 0 ≤ C₃)
@@ -1082,7 +1082,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_energy_add_coeffSum_mul_depthWeig
 End-to-end localized comparison corridor with the scale-sharp forcing
 localization kept in the final scalar bound.
 -/
-theorem solution_diff_l2_le_dualityConstant_mul_energy_add_coeffSum_mul_depthWeight_inv_mul_parent_of_descendant_coarseFluxResponseRHSBound_of_pointwise_le_of_bddAbove
+theorem solution_diff_l2_le_dualityConstant_mul_energy_add_coeffSum_mul_depthWeight_inv_mul_parent
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -1152,7 +1152,7 @@ theorem solution_diff_l2_le_dualityConstant_mul_energy_add_coeffSum_mul_depthWei
           (C₁ + C₂ + C₃) *
             ((Real.rpow (3 : ℝ) (s * (j : ℝ)))⁻¹ *
               cubeBesovPositiveVectorSeminormTwo Q s g) :=
-          localizedCoarseFluxResponseRHSBound_le_energy_add_coeffSum_mul_depthWeight_inv_mul_parent_of_pointwise_le_of_bddAbove
+          localizedCoarseFluxResponseRHSBound_le_energy_add_coeffSum_mul_depthWeight_inv_mul_parent
             Q a (scalarMatrix (d := d) sigma0) j gradU g hC₁_nonneg hC₂_nonneg
             hC₃_nonneg hGlobalBdd hLocalBdd
             (fun R _ =>
@@ -1250,7 +1250,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_o
 §3.3 wrapper where the scalar RHS-average comparison is supplied by localized
 component-average bounds.
 -/
-theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_component_average_bounds
+theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_component_average_bounds
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)

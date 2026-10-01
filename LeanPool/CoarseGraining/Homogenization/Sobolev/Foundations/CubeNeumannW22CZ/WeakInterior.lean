@@ -300,7 +300,7 @@ theorem cubeFaceReflectionBlockFold_weakPoissonEquationOn
       (cubeCoordinateFoldReflectedScalar Q F) := by
   intro φ hφ hφs _hφ_sub
   simpa [WeakPoissonEquationOn] using
-    W.cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock_of_compactSupport_of_memLp_normalizedCubeMeasure
+    W.cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock
       hφ hφs hmean hF
 
 end MeanZeroNeumannPoissonSolution

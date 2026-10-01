@@ -234,7 +234,7 @@ theorem localizedForcedSolutionPublicFlux_le_weakFluxExpandedRHS_of_constructed_
     exact hvConstructed j R hR ω w
       (by simpa [forcedSolutionGradientField, publicH1ToCubeSet_grad] using hw)
   simpa [forcedSolutionGradientField, publicH1ToCubeSet_grad] using
-    _root_.Homogenization.localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_noteEnergySeminormsForce_of_h1DirichletRhsWeakSolutionOn_of_constructed_harmonicRemainder_bounds_of_cubeVectorBesovHRegularity
+    _root_.Homogenization.localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_cubeVectorBesovHRegularity
       (Q := Q) (a := publicCoeffField Q a) (s := s) (g := g)
       (u := publicH1ToCubeSet u.toH1)
       (lam := (a.coeffOn Q).lam) (Lam := (a.coeffOn Q).Lam)
@@ -248,7 +248,7 @@ theorem localizedForcedSolutionPublicFlux_le_weakFluxExpandedRHS_of_constructed_
 /-- Public forced-solution weak-flux bridge with the coarse-Poincare tail
 closed by the RHS Poincare theorem.  The harmonic-remainder tail remains the
 only theorem-specific input. -/
-theorem localizedForcedSolutionPublicFlux_le_weakFluxExpandedRHS_of_constructed_harmonicRemainder_bounds_of_public_poincare_tail
+theorem localizedForcedSolutionPublicFlux_le_weakFluxExpandedRHS_of_public_poincare_tail
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
     {s : ℝ} {g : Vec d → Vec d} (u : ForcedCubeSolution Q a g)
     (m : ℕ) {BV : ℝ}

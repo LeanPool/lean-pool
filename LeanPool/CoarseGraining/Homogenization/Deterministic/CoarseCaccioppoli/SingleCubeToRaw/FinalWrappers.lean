@@ -63,7 +63,7 @@ theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeFactorInputs
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity
       Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B
       hC hs ht hst hu hnonneg hbounded hscale
       (CoarseCaccioppoliBoundaryRadiusEnergyBridgeInputs.of_factorInputs
@@ -118,7 +118,7 @@ theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeSeparatedFactorInpu
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity
       Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B
       hC hs ht hst hu hnonneg hbounded hscale
       (CoarseCaccioppoliBoundaryRadiusEnergyBridgeInputs.of_separatedFactorInputs
@@ -173,7 +173,7 @@ theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalFactorInpu
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity
       Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B
       hC hs ht hst hu hnonneg hbounded hscale
       (CoarseCaccioppoliBoundaryRadiusEnergyBridgeInputs.of_canonicalFactorInputs
@@ -229,7 +229,7 @@ theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeFactorInputs
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
       Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B
       hC hs ht hst hu hagree hG_nonneg hG_bounded hscale
       (CoarseCaccioppoliBoundaryRadiusEnergyBridgeInputs.of_factorInputs
@@ -286,7 +286,7 @@ theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeSeparatedFactorInpu
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
       Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B
       hC hs ht hst hu hagree hG_nonneg hG_bounded hscale
       (CoarseCaccioppoliBoundaryRadiusEnergyBridgeInputs.of_separatedFactorInputs
@@ -343,7 +343,7 @@ theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalFactorInpu
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
       Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B
       hC hs ht hst hu hagree hG_nonneg hG_bounded hscale
       (CoarseCaccioppoliBoundaryRadiusEnergyBridgeInputs.of_canonicalFactorInputs
@@ -407,7 +407,7 @@ theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalAnalyticIn
     coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalFactorInputs
       Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B U Xi D A1 AS
       hC hs ht hst hu hnonneg hbounded hscale
-      (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analyticInputs_of_coefficientBounds
+      (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analyticInputs
         Q a s C uL2Sq
         (fun ρ₁ ρ₂ => (k ρ₁ ρ₂ : ℝ))
         (coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t C k)
@@ -467,7 +467,7 @@ theorem coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticIn
     coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalFactorInputs
       Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B U Xi D A1 AS
       hC hs ht hst hu hagree hG_nonneg hG_bounded hscale
-      (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analyticInputs_of_coefficientBounds
+      (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analyticInputs
         Q a s C uL2Sq
         (fun ρ₁ ρ₂ => (k ρ₁ ρ₂ : ℝ))
         (coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t C k)

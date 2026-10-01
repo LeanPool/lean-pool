@@ -104,7 +104,7 @@ theorem
   have hvol : (MeasureTheory.volume U).toReal ≠ 0 :=
     (volume_openCubeSet_originCube_toReal_pos (d := d) n).ne'
   simpa [U, system] using
-    (R.toMuCorrectionSpaceRecoveryData).exists_blockResponsePairHalfState_ae_eq_recoveredField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    (R.toMuCorrectionSpaceRecoveryData).exists_blockResponsePairHalfState_ae_eq_recoveredField
       (a := a) system hCube hEll hvol P
 
 theorem

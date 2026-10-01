@@ -393,7 +393,7 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_
           unfold maxDescendantBBlockNormAtScale
           rw [descendantsAtScale_eq_descendantsAtDepth Q hk]
 
-theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_isSigmaCoarse
     {d : ℕ} [NeZero d] (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale)
     (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)

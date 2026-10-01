@@ -144,7 +144,7 @@ theorem abs_cubeBesovPairing_le_note_rhs_mul_of_overlap_uniform_bound_two_two_of
     abs_cubeBesovPairing_le_note_rhs_mul_of_overlap_uniform_bound_two_two_of_nonneg
       Q s u g hs hu hB hnorm hmem
 
-theorem abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_overlap_uniform_component_bounds_two_one_of_nonneg
+theorem abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_nonneg
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u g : Vec d → Vec d) (B : Fin d → ℝ)
     (hs : 0 < s)
     (hu : ∀ i, MeasureTheory.MemLp (fun x => u x i) (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
@@ -182,7 +182,7 @@ theorem abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_overlap_uniform_compo
               Q s (fun x => u x i) (fun x => g x i) hs (hu i) (hB i)
               (hnorm i) (hmem i)
 
-theorem abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_overlap_uniform_component_bounds_two_one_of_memLp_parent
+theorem abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_memLp_parent
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u g : Vec d → Vec d) (B : Fin d → ℝ)
     (hs : 0 < s)
     (hu : ∀ i, MeasureTheory.MemLp (fun x => u x i) (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
@@ -202,7 +202,7 @@ theorem abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_overlap_uniform_compo
     exact CubeBesovDualLocalMemLpGlobal.of_memLp_parent
       (by simpa [cubeBesovConjExponent_two_eq_overlapBridge] using hg i)
   exact
-    abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_overlap_uniform_component_bounds_two_one_of_nonneg
+    abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_nonneg
       Q s u g B hs hu hB hnorm hmem
 
 theorem abs_cubeAverage_vecDot_le_sum_note_rhs_mul_of_overlap_uniform_component_bounds_two_two_of_nonneg
@@ -245,7 +245,7 @@ theorem abs_cubeAverage_vecDot_le_sum_note_rhs_mul_of_overlap_uniform_component_
               Q s (fun x => u x i) (fun x => g x i) hs (hu i) (hB i)
               (hnorm i) (hmem i)
 
-theorem abs_cubeAverage_vecDot_le_sum_note_rhs_mul_of_overlap_uniform_component_bounds_two_two_of_memLp_parent
+theorem abs_cubeAverage_vecDot_le_sum_note_rhs_mul_of_memLp_parent
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u g : Vec d → Vec d) (B : Fin d → ℝ)
     (hs : 0 < s)
     (hu : ∀ i, MeasureTheory.MemLp (fun x => u x i) (2 : ℝ≥0∞) (normalizedCubeMeasure Q))

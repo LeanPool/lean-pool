@@ -131,7 +131,7 @@ private theorem blockResponse_upper_sub_flux_eq_matVecMul_adjoint_potential_sub_
           (X.potential x - (blockMatVecMul (blockCoeffField a x) (X.eval x)).2) := by
       rfl
 
-theorem exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_lowerImage_isPotential_of_isEllipticFieldOn
+theorem exists_blockResponsePairHalfState_ae_eq_of_lowerImage_isPotential_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {X : BlockState d} {lam Lam : ℝ} (hU : MeasurableSet U)
     (hX : BlockResponseSpace a U X)
@@ -359,7 +359,7 @@ theorem exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_lowerIma
 lower image is known to be `L²`. This is the note-facing way to reconstruct the
 primal/adjoint harmonic half-pair from a block-response state without manually
 supplying a lower-image potential representative. -/
-theorem exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_lowerImage_memVectorL2_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {X : BlockState d} (hConv : IsOpenBoundedConvexDomain U)
@@ -374,10 +374,10 @@ theorem exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_lowerIma
   have hLower :
       IsPotentialOn U
         (fun x => (blockMatVecMul (blockCoeffField a x) (X.eval x)).2) :=
-    blockResponse_lowerImage_isPotential_of_mem_responseSpace_of_memVectorL2_of_isOpenBoundedConvexDomain
+    blockResponse_lowerImage_isPotential_of_mem_responseSpace_of_isOpenBoundedConvexDomain
       (U := U) hConv hX hLowerL2
   exact
-    exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_lowerImage_isPotential_of_isEllipticFieldOn
+    exists_blockResponsePairHalfState_ae_eq_of_lowerImage_isPotential_of_isEllipticFieldOn
       (a := a) hConv.isOpen.measurableSet hX hLower hEll
 
 /-- Preferred convex-domain reverse-inclusion wrapper for integrable response
@@ -400,7 +400,7 @@ theorem exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_integrab
     blockResponse_lowerImage_memVectorL2_of_flux_memVectorL2_of_mem_responseSpace_of_isEllipticFieldOn
       hX hInt.flux_memL2 hEll
   exact
-    exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_lowerImage_memVectorL2_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_isOpenBoundedConvexDomain
       (a := a) hConv hX hLowerL2 hEll
 
 theorem volumeAverage_blockResponseIntegrand_eq_scalarResponse_sum_of_mem_responseSpace

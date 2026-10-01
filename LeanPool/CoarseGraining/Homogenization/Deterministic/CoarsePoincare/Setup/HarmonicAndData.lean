@@ -19,7 +19,7 @@ noncomputable section
 
 open scoped BigOperators
 
-theorem cubeAverageFlux_le_coarseBBlockNorm_mul_energyAverage_of_isEllipticFieldOn_of_openCubeDeterministicCoarseData
+theorem cubeAverageFlux_le_coarseBBlockNorm_mul_energyAverage_of_openCubeDeterministicCoarseData
     {d : ℕ} [NeZero d] (R : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet R) a)
     {sigma sigmaStar kappa : Mat d}
@@ -150,7 +150,7 @@ theorem cubeAverageFlux_le_coarseBBlockNorm_mul_energyAverage_of_isEllipticField
     _ = coarseBBlockNorm R a * cubeAverage R (scalarVariationEnergyIntegrand a w) := by
           rw [hnorm_eq, henergy_eq]
 
-theorem cubeAverageFlux_le_matrixNorm_bCoarse_mul_energyAverage_of_isEllipticFieldOn_of_openCubeDeterministicCoarseData
+theorem cubeAverageFlux_le_matrixNorm_bCoarse_mul_energyAverage_of_openCubeDeterministicCoarseData
     {d : ℕ} [NeZero d] (R : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet R) a)
     {sigma sigmaStar kappa : Mat d}
@@ -275,7 +275,7 @@ theorem cubeAverageFlux_le_matrixNorm_bCoarse_mul_energyAverage_of_isEllipticFie
 Flux coarse-square estimate with the deterministic open-cube coarse witnesses
 packaged as `OpenCubeDeterministicCoarseData`.
 -/
-theorem cubeAverageFlux_le_coarseBBlockNorm_mul_energyAverage_of_isEllipticFieldOn_of_deterministicCoarseData
+theorem cubeAverageFlux_le_coarseBBlockNorm_mul_energyAverage_of_deterministicCoarseData
     {d : ℕ} [NeZero d] (R : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet R) a)
     (hData : OpenCubeDeterministicCoarseData R a)
@@ -284,10 +284,10 @@ theorem cubeAverageFlux_le_coarseBBlockNorm_mul_energyAverage_of_isEllipticField
       coarseBBlockNorm R a * cubeAverage R (scalarVariationEnergyIntegrand a w) := by
   rcases hData with ⟨sigma, sigmaStar, kappa, hA, hS, hK, hSigma, hdet⟩
   exact
-    cubeAverageFlux_le_coarseBBlockNorm_mul_energyAverage_of_isEllipticFieldOn_of_openCubeDeterministicCoarseData
+    cubeAverageFlux_le_coarseBBlockNorm_mul_energyAverage_of_openCubeDeterministicCoarseData
       (R := R) (a := a) hEll hA hS hK hSigma hdet w
 
-theorem cubeAverageFlux_le_matrixNorm_bCoarse_mul_energyAverage_of_isEllipticFieldOn_of_deterministicCoarseData
+theorem cubeAverageFlux_le_matrixNorm_bCoarse_mul_energyAverage_of_deterministicCoarseData
     {d : ℕ} [NeZero d] (R : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet R) a)
     (hData : OpenCubeDeterministicCoarseData R a)
@@ -299,10 +299,10 @@ theorem cubeAverageFlux_le_matrixNorm_bCoarse_mul_energyAverage_of_isEllipticFie
         cubeAverage R (scalarVariationEnergyIntegrand a w) := by
   rcases hData with ⟨sigma, sigmaStar, kappa, hA, hS, hK, hSigma, hdet⟩
   exact
-    cubeAverageFlux_le_matrixNorm_bCoarse_mul_energyAverage_of_isEllipticFieldOn_of_openCubeDeterministicCoarseData
+    cubeAverageFlux_le_matrixNorm_bCoarse_mul_energyAverage_of_openCubeDeterministicCoarseData
       (R := R) (a := a) hEll hA hS hK hSigma hdet w
 
-theorem cubeAverageGradient_le_coarseSigmaStarInvBlockNorm_mul_energyAverage_of_isEllipticFieldOn_of_openCubeDeterministicCoarseData
+theorem cubeAverageGradient_le_coarseSigmaStarInvBlockNorm_mul_energyAverage_of_isEllipticFieldOn
     {d : ℕ} [NeZero d] (R : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet R) a)
     {sigma sigmaStar kappa : Mat d}
@@ -462,7 +462,7 @@ theorem cubeAverageGradient_le_coarseSigmaStarInvBlockNorm_mul_energyAverage_of_
     _ = coarseSigmaStarInvBlockNorm R a * cubeAverage R (scalarVariationEnergyIntegrand a w) := by
       rw [hnorm_eq, henergy_eq]
 
-theorem cubeAverageGradient_le_matrixNorm_sigmaStarInv_mul_energyAverage_of_isEllipticFieldOn_of_openCubeDeterministicCoarseData
+theorem cubeAverageGradient_le_matrixNorm_sigmaStarInv_mul_energyAverage_of_isEllipticFieldOn
     {d : ℕ} [NeZero d] (R : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet R) a)
     {sigma sigmaStar kappa : Mat d}
@@ -615,7 +615,7 @@ theorem cubeAverageGradient_le_matrixNorm_sigmaStarInv_mul_energyAverage_of_isEl
 Gradient coarse-square estimate with the deterministic open-cube coarse
 witnesses packaged as `OpenCubeDeterministicCoarseData`.
 -/
-theorem cubeAverageGradient_le_coarseSigmaStarInvBlockNorm_mul_energyAverage_of_isEllipticFieldOn_of_deterministicCoarseData
+theorem cubeAverageGradient_le_coarseSigmaStarInvBlockNorm_mul_energyAverage
     {d : ℕ} [NeZero d] (R : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet R) a)
     (hData : OpenCubeDeterministicCoarseData R a)
@@ -624,10 +624,10 @@ theorem cubeAverageGradient_le_coarseSigmaStarInvBlockNorm_mul_energyAverage_of_
       coarseSigmaStarInvBlockNorm R a * cubeAverage R (scalarVariationEnergyIntegrand a w) := by
   rcases hData with ⟨sigma, sigmaStar, kappa, hA, hS, hK, hSigma, hdet⟩
   exact
-    cubeAverageGradient_le_coarseSigmaStarInvBlockNorm_mul_energyAverage_of_isEllipticFieldOn_of_openCubeDeterministicCoarseData
+    cubeAverageGradient_le_coarseSigmaStarInvBlockNorm_mul_energyAverage_of_isEllipticFieldOn
       (R := R) (a := a) hEll hA hS hK hSigma hdet w
 
-theorem cubeAverageGradient_le_matrixNorm_sigmaStarInv_mul_energyAverage_of_isEllipticFieldOn_of_deterministicCoarseData
+theorem cubeAverageGradient_le_matrixNorm_sigmaStarInv_mul_energyAverage
     {d : ℕ} [NeZero d] (R : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet R) a)
     (hData : OpenCubeDeterministicCoarseData R a)
@@ -637,7 +637,7 @@ theorem cubeAverageGradient_le_matrixNorm_sigmaStarInv_mul_energyAverage_of_isEl
         cubeAverage R (scalarVariationEnergyIntegrand a w) := by
   rcases hData with ⟨sigma, sigmaStar, kappa, hA, hS, hK, hSigma, hdet⟩
   exact
-    cubeAverageGradient_le_matrixNorm_sigmaStarInv_mul_energyAverage_of_isEllipticFieldOn_of_openCubeDeterministicCoarseData
+    cubeAverageGradient_le_matrixNorm_sigmaStarInv_mul_energyAverage_of_isEllipticFieldOn
       (R := R) (a := a) hEll hA hS hK hSigma hdet w
 
 theorem cubeAverageGradientEnergyControl_of_aHarmonicFunction {d : ℕ} [NeZero d]
@@ -660,7 +660,7 @@ theorem cubeAverageGradientEnergyControl_of_aHarmonicFunction {d : ℕ} [NeZero 
   have hDataR : OpenCubeDeterministicCoarseData R a := hData _ hj R hRscale
   let w : AHarmonicFunction a (cubeSet R) := u.restrictToSubcube hEll hR
   have hlocal :=
-    cubeAverageGradient_le_coarseSigmaStarInvBlockNorm_mul_energyAverage_of_isEllipticFieldOn_of_deterministicCoarseData
+    cubeAverageGradient_le_coarseSigmaStarInvBlockNorm_mul_energyAverage
       (R := R) (a := a) hEllR hDataR w
   have henergy_eq :
       cubeAverage R (scalarVariationEnergyIntegrand a w) =
@@ -730,7 +730,7 @@ theorem cubeAverageFluxEnergyControl_of_aHarmonicFunction
   have hDataR : OpenCubeDeterministicCoarseData R a := hData _ hj R hRscale
   let w : AHarmonicFunction a (cubeSet R) := u.restrictToSubcube hEll hR
   have hlocal :=
-    cubeAverageFlux_le_coarseBBlockNorm_mul_energyAverage_of_isEllipticFieldOn_of_deterministicCoarseData
+    cubeAverageFlux_le_coarseBBlockNorm_mul_energyAverage_of_deterministicCoarseData
       (R := R) (a := a) hEllR hDataR w
   have hflux_eq :
       cubeAverageVec R (fun x => matVecMul (a x) (w.toH1.grad x)) =

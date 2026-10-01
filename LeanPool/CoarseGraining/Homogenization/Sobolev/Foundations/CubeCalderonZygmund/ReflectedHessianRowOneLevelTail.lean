@@ -136,7 +136,7 @@ private theorem integral_sqNorm_reflectedHessianRow_parent_le
     _ = (3 : ℝ) ^ d *
         ∫ x in openCubeSet (originCube d m), vecDot (R x) (R x)
           ∂volume :=
-      setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_self_pairing_of_memVectorL2_three_pow
+      setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_self_pairing
         hR
     _ = (3 : ℝ) ^ d *
         ∫ x in openCubeSet (originCube d m),

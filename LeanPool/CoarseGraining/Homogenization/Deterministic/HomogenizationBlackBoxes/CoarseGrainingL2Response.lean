@@ -394,7 +394,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_o
 Bounded-positive-Besov version of the descendant component-envelope scalar
 comparison.
 -/
-theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_descendant_component_bounds_of_bddAbove
+theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (gradU g : Vec d → Vec d)
     (hs : 0 < s)
@@ -473,7 +473,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse
 §3.3 wrapper where the scalar RHS-average comparison is supplied by
 descendant component envelopes.
 -/
-theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_descendant_component_bounds
+theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_component_bounds
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -524,7 +524,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse
 Bounded-positive-Besov version of the descendant component-envelope §3.3
 wrapper.
 -/
-theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_descendant_component_bounds_of_bddAbove
+theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_component_bounds_of_bddAbove
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -565,7 +565,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse
           coarseGrainingL2FluxDefectForcingTerm Q a a0 s j g) :
     solutionComparisonNegativeBesovLhs Q s a a0 gradU gradV ≤
       coarseGrainingL2Rhs Cdual Q a a0 s j gradU g :=
-  solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_descendant_component_bounds
+  solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_component_bounds
     hdual Q a a0 sigma0 gradU gradV g j hs_pos hs_lt_one hsigma0 ha0eq hEll
     ha0 ha0symm hcomparison
     hdefect_bdd hRhs

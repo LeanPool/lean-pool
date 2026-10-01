@@ -255,7 +255,7 @@ theorem blockResponse_pair_half_averageFlux_eq_of_scalarCanonicalMaximizers_zero
 /-- Convex-domain wrapper for the zero-average-potential identity. The gradient
 basis-data packages are produced automatically from the Stage-6 canonical
 maximizer existence theorem. -/
-theorem blockResponse_pair_half_averagePotential_eq_zero_of_scalarCanonicalMaximizers_zero_right_of_isOpenBoundedConvexDomain
+theorem blockResponse_pair_half_averagePotential_eq_zero_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     {lam Lam : ℝ} {sigmaStar kappa : Mat d} {q : Vec d}
     (hConv : IsOpenBoundedConvexDomain U)
@@ -339,13 +339,13 @@ theorem
     ⟨v⟩
   refine ⟨u, v, ?_⟩
   exact
-    blockResponse_pair_half_averagePotential_eq_zero_of_scalarCanonicalMaximizers_zero_right_of_isOpenBoundedConvexDomain
+    blockResponse_pair_half_averagePotential_eq_zero_of_isOpenBoundedConvexDomain
       hConv hEll hvol u v hS hK hSAdj hKAdj hdet
 
 /-- Convex-domain wrapper for the average-flux identity. The flux basis-data
 packages are produced automatically from the Stage-6 canonical maximizer
 existence theorem. -/
-theorem blockResponse_pair_half_averageFlux_eq_of_scalarCanonicalMaximizers_zero_right_of_isOpenBoundedConvexDomain
+theorem blockResponse_pair_half_averageFlux_eq_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     {lam Lam : ℝ} {sigma sigmaStar kappa : Mat d} {q : Vec d}
     (hConv : IsOpenBoundedConvexDomain U)
@@ -433,7 +433,7 @@ theorem
     ⟨v⟩
   refine ⟨u, v, ?_⟩
   exact
-    blockResponse_pair_half_averageFlux_eq_of_scalarCanonicalMaximizers_zero_right_of_isOpenBoundedConvexDomain
+    blockResponse_pair_half_averageFlux_eq_of_isOpenBoundedConvexDomain
       hConv hEll hvol u v hS hK hSigma hSAdj hKAdj hSigmaAdj hdet
 
 theorem blockResponseIntegrand_integrableOn_pair_half_of_isEllipticFieldOn

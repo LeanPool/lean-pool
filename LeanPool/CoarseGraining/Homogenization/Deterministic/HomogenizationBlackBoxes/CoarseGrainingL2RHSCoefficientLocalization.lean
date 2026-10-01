@@ -870,7 +870,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_o
 §3.3 wrapper through descendant one-cube §3.2.4 RHS bounds, with the scalar
 RHS comparison closed from the coefficient-localization hypotheses.
 -/
-theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_bddAbove_of_isEllipticFieldOn_of_summable
+theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_bddAbove_of_isEllipticFieldOn_of_summable
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -928,7 +928,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse
 raw parent/descendant positive-Besov boundedness hypotheses from the note-facing
 `H^s` regularity package for the right-hand side.
 -/
-private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_cubeVectorBesovHRegularity_of_isEllipticFieldOn_of_summable
+private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_isEllipticFieldOn_of_summable
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -975,7 +975,7 @@ private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFlux
     exact cubeBesovPositiveVectorPartialSeminormTwo_bddAbove_of_parent_bddAbove
       s g hR hg.partialSeminorms_bddAbove
   exact
-      solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_bddAbove_of_isEllipticFieldOn_of_summable
+      solution_diff_l2_le_coarseGrainingL2Rhs_of_bddAbove_of_isEllipticFieldOn_of_summable
         hdual Q a a0 sigma0 gradU gradV g j hs_pos hs_lt_one hsigma0 ha0eq hEll ha0 ha0symm
         hcomparison henergy_int hdefect_bdd hRhs hg.partialSeminorms_bddAbove
         hgBdd_desc hsumB hsumSigma
@@ -985,7 +985,7 @@ Note-facing same-RHS §3.3 wrapper through descendant one-cube §3.2.4 RHS
 bounds.  The energy-density integrability input is derived from the `H¹`
 solution gradient and ellipticity.
 -/
-private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_coarseFluxResponseRHSBound_of_cubeVectorBesovHRegularity_of_isEllipticFieldOn_of_summable
+private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_cubeVectorBesovHRegularity_of_summable
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -1030,7 +1030,7 @@ private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_co
     integrableOn_coefficientEnergyDensity_of_isEllipticFieldOn hEll
       u.grad_memVectorL2
   exact
-      solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_cubeVectorBesovHRegularity_of_isEllipticFieldOn_of_summable
+      solution_diff_l2_le_coarseGrainingL2Rhs_of_isEllipticFieldOn_of_summable
         hdual Q a a0 sigma0 u.grad v.grad g j hs_pos hs_lt_one hsigma0 ha0eq hEll ha0 ha0symm
         (IsHomogenizationComparisonPairOn.of_sameRhs_h1Functions
           hEll ha0 u v g hu hv hzeroTrace)
@@ -1040,7 +1040,7 @@ private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_co
 Same-RHS §3.3 wrapper deriving the half-scale coefficient summability inputs
 from the descendant deterministic coarse-data package.
 -/
-theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_coarseFluxResponseRHSBound_of_cubeVectorBesovHRegularity_of_openCubeDescendantDeterministicCoarseData
+theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_openCubeDescendantDeterministicCoarseData
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -1122,7 +1122,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_coarseFlux
       (fluxDefect a a0 u.grad)
       (memLp_normalizedCubeMeasure_of_memVectorL2_cubeSet R hdefect_mem)
   exact
-      solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_coarseFluxResponseRHSBound_of_cubeVectorBesovHRegularity_of_isEllipticFieldOn_of_summable
+      solution_diff_l2_le_coarseGrainingL2Rhs_of_cubeVectorBesovHRegularity_of_summable
         hdual Q a a0 sigma0 u v g j hs_pos hs_lt_one hsigma0 ha0eq hEll ha0 ha0symm hu hv
         hzeroTrace hdefect_bdd hRhs hg hsumB hsumSigma
 

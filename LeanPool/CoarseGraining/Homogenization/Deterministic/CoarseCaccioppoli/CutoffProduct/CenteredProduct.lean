@@ -215,7 +215,7 @@ theorem cubeLpNorm_two_le_note_rhs_of_meanZero_dualFullVectorPoincareEstimate
     _ = ((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
           ((Fintype.card (Fin d) : ℝ) * Bcirc) := by ring
 
-theorem cubeL2ScalarPartialSeminormTwo_fluctuation_le_note_rhs_of_projectedDualMeanZeroVectorPoincareEstimate
+theorem cubeL2ScalarPartialSeminormTwo_fluctuation_le_note_rhs
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N : ℕ) (u : Vec d → ℝ)
     (G : Vec d → Vec d) {C Bcirc : ℝ}
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
@@ -861,7 +861,7 @@ theorem cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_note_v
         Real.sqrt ((1 - Real.rpow (3 : ℝ) (2 * (s - 1)))⁻¹) *
           (((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
             ((Fintype.card (Fin d) : ℝ) * Bcirc1)) :=
-    cubeL2ScalarPartialSeminormTwo_fluctuation_le_note_rhs_of_projectedDualMeanZeroVectorPoincareEstimate
+    cubeL2ScalarPartialSeminormTwo_fluctuation_le_note_rhs
       Q s N u G hu hproj hG hs1 hC hGcirc1
   have hpos :=
     CubeDescendantProjectedDualMeanZeroVectorPoincareEstimate.fluctuation_positiveScalarPartialSeminormTwo_le_note_rhs_of_component_bound

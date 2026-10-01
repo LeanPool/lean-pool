@@ -210,7 +210,7 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_zero
 /-- If the two scalar inputs are response maximizers, the half-pair witness has
 block energy equal to one half of the sum of the corresponding response
 values. -/
-theorem blockEnergyAverage_blockResponsePairHalfState_eq_half_responseJ_sum_of_isResponseMaximizer_of_isEllipticFieldOn
+theorem blockEnergyAverage_blockResponsePairHalfState_eq_half_responseJ_sum_of_isResponseMaximizer
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -247,7 +247,7 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_half_responseJ_sum_of_i
 
 /-- Scalar canonical maximizers feed the previous half-pair energy identity
 without extra bookkeeping. -/
-theorem blockEnergyAverage_blockResponsePairHalfState_eq_half_responseJ_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn
+theorem blockEnergyAverage_blockResponsePairHalfState_eq_half_responseJ_sum_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -262,7 +262,7 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_half_responseJ_sum_of_s
       (1 / 2 : ℝ) * ResponseJ U p q a +
         (1 / 2 : ℝ) * ResponseJ U p' q' (Homogenization.adjointCoeffField a) := by
   exact
-    blockEnergyAverage_blockResponsePairHalfState_eq_half_responseJ_sum_of_isResponseMaximizer_of_isEllipticFieldOn
+    blockEnergyAverage_blockResponsePairHalfState_eq_half_responseJ_sum_of_isResponseMaximizer
       (a := a) hU hEll p q p' q'
       (u := (u : AHarmonicFunction a U))
       (v := (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U))
@@ -305,7 +305,7 @@ theorem blockResponse_half_scalarResponse_sum_le_blockJ_of_isEllipticFieldOn
       (blockResponse_half_scalarResponse_sum_mem_blockJValueSet_of_isEllipticFieldOn_of_finiteMeasure
         (a := a) hU hEll p pStar q qStar u v)
 
-theorem blockResponse_half_responseJ_adjoint_sum_note_form_mem_blockJValueSet_of_isResponseMaximizer_of_isEllipticFieldOn
+theorem blockResponse_half_responseJ_adjoint_sum_note_form_mem_blockJValueSet
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -344,7 +344,7 @@ theorem blockResponse_half_responseJ_adjoint_sum_le_blockJ_of_isResponseMaximize
       (blockResponse_half_responseJ_adjoint_sum_mem_blockJValueSet_of_isResponseMaximizer
         (a := a) hU hEll p pStar q qStar u v hmax hmaxAdj)
 
-theorem blockResponse_half_responseJ_adjoint_sum_note_form_le_blockJ_of_isResponseMaximizer_of_isEllipticFieldOn
+theorem blockResponse_half_responseJ_adjoint_sum_note_form_le_blockJ_of_isResponseMaximizer
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -388,7 +388,7 @@ theorem blockResponse_half_responseJ_adjoint_sum_mem_blockJValueSet
       (v := (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U))
       u.isResponseMaximizer v.isResponseMaximizer
 
-theorem blockResponse_half_responseJ_adjoint_sum_note_form_mem_blockJValueSet_of_scalarCanonicalMaximizer_of_isEllipticFieldOn
+theorem blockResponse_half_responseJ_adjoint_sum_note_form_mem_blockJValueSet_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -401,7 +401,7 @@ theorem blockResponse_half_responseJ_adjoint_sum_note_form_mem_blockJValueSet_of
           ResponseJ U p (q + h) (Homogenization.adjointCoeffField a) ∈
       blockJValueSet U (p, h) (q, 0) a := by
   exact
-    blockResponse_half_responseJ_adjoint_sum_note_form_mem_blockJValueSet_of_isResponseMaximizer_of_isEllipticFieldOn
+    blockResponse_half_responseJ_adjoint_sum_note_form_mem_blockJValueSet
       (a := a) hU hEll p q h
       (u := (u : AHarmonicFunction a U))
       (v := (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U))
@@ -427,7 +427,7 @@ theorem blockResponse_half_responseJ_adjoint_sum_le_blockJ_of_scalarCanonicalMax
       (v := (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U))
       u.isResponseMaximizer v.isResponseMaximizer
 
-theorem blockResponse_half_responseJ_adjoint_sum_note_form_le_blockJ_of_scalarCanonicalMaximizer_of_isEllipticFieldOn
+theorem blockResponse_half_responseJ_adjoint_sum_note_form_le_blockJ_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -441,7 +441,7 @@ theorem blockResponse_half_responseJ_adjoint_sum_note_form_le_blockJ_of_scalarCa
           ResponseJ U p (q + h) (Homogenization.adjointCoeffField a) ≤
       BlockJ U (p, h) (q, 0) a := by
   exact
-    blockResponse_half_responseJ_adjoint_sum_note_form_le_blockJ_of_isResponseMaximizer_of_isEllipticFieldOn
+    blockResponse_half_responseJ_adjoint_sum_note_form_le_blockJ_of_isResponseMaximizer
       (a := a) hU hEll hvol p q h
       (u := (u : AHarmonicFunction a U))
       (v := (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U))
