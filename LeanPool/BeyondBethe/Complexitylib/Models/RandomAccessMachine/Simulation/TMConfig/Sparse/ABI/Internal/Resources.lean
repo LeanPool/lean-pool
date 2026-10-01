@@ -871,8 +871,7 @@ private theorem repairCaptured_fromStep_measured {tm : TM n}
       · convert! hrun using 1
         simp only [List.length_cons]
         ring
-      · simp [repairStore] at hrestStore ⊢
-        exact hrestStore
+      · simpa [repairStore] using hrestStore
 
 theorem repairCaptured_measured_internal {tm : TM n} {bound valueLimit : ℕ}
     {captured : List (ℕ × ℕ)} {store : Structured.Store}
@@ -902,8 +901,7 @@ theorem repairCaptured_measured_internal {tm : TM n} {bound valueLimit : ℕ}
   · convert! hrun using 1
     simp only [List.length_cons]
     ring
-  · simp [repairStore] at hrestStore ⊢
-    exact hrestStore
+  · simpa [repairStore] using hrestStore
 
 private theorem immWrites_envelopeChain {tm : TM n} {bound : ℕ}
     (writes : List (ℕ × ℕ)) {store : Structured.Store}

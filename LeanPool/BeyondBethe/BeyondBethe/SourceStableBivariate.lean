@@ -62,8 +62,7 @@ theorem bivariate_rayleigh_of_bistable
   have hden : (c : ℂ) + (a : ℂ) * Complex.I ≠ 0 := by
     intro hzero
     have hre := congrArg Complex.re hzero
-    simp at hre
-    exact hcpos.ne' hre
+    exact hcpos.ne' (by simpa using hre)
   have hyim : 0 < y.im := by simp [y]
   have hzim_formula : z.im = (b * c - a * d) / (c ^ 2 + a ^ 2) := by
     dsimp only [z]

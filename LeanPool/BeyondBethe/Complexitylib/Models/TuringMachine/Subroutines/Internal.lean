@@ -264,7 +264,7 @@ theorem rewindWorkTM_hoareTime (idx : Fin n) (B : ℕ) :
       { state := RewindPhase.moveLeft, input := inp, work := work, output := out }
       rfl hcell0 hnostart rfl
   have hread_mr : (c_mr.work idx).read ≠ Γ.start := by
-    simp [Tape.read, hhead_mr, hcells_mr]; exact hnostart 1 (by omega)
+    simpa [Tape.read, hhead_mr, hcells_mr] using hnostart 1 (by omega)
   obtain ⟨c_done, hreach_mr, hhalt, hhead_done⟩ :=
     rewindWorkTM_moveRight_to_done idx c_mr hst_mr hread_mr
   refine ⟨c_done, ((work idx).head + 1) + 1, ?_,
@@ -365,7 +365,7 @@ theorem rewindInputTM_hoareTime (B : ℕ) :
       { state := RewindPhase.moveLeft, input := inp, work := work, output := out }
       rfl hcell0 hnostart rfl
   have hread_mr : c_mr.input.read ≠ Γ.start := by
-    simp [Tape.read, hhead_mr, hcells_mr]; exact hnostart 1 (by omega)
+    simpa [Tape.read, hhead_mr, hcells_mr] using hnostart 1 (by omega)
   obtain ⟨c_done, hreach_mr, hhalt, hhead_done, _hcells_done⟩ :=
     rewindInputTM_moveRight_to_done (n := n) c_mr hst_mr hread_mr
   refine ⟨c_done, (inp.head + 1) + 1, ?_,
@@ -454,7 +454,7 @@ theorem rewindInputTM_hoareTime_frame {n : ℕ} (B_input : ℕ)
         exact tape_idle_preserve out hout_ns hout_h
     obtain ⟨c₁, hstep1', hst1, hh1, hcells1, hwork1, hout1⟩ := hstep1
     have hread1 : c₁.input.read ≠ Γ.start := by
-      simp [Tape.read, hh1, hcells1]; exact hnostart_c 1 (by omega)
+      simpa [Tape.read, hh1, hcells1] using hnostart_c 1 (by omega)
     have hstep2 : ∃ c₂,
         (rewindInputTM (n := n)).step c₁ = some c₂ ∧
         (rewindInputTM (n := n)).halted c₂ ∧
@@ -479,7 +479,7 @@ theorem rewindInputTM_hoareTime_frame {n : ℕ} (B_input : ℕ)
   | succ h ih =>
     intro c hstate hcell0_c hnostart_c hhead hwork_c hout_c
     have hread_ne : c.input.read ≠ Γ.start := by
-      simp [Tape.read, hhead]; exact hnostart_c (h + 1) (by omega)
+      simpa [Tape.read, hhead] using hnostart_c (h + 1) (by omega)
     have hstep : ∃ c₁,
         (rewindInputTM (n := n)).step c = some c₁ ∧
         c₁.state = RewindPhase.moveLeft ∧
@@ -627,7 +627,7 @@ theorem rewindWorkTM_hoareTime_frame {n : ℕ} (idx : Fin n) (B_tape : ℕ)
     obtain ⟨c₁, hstep1', hst1, hh1, hcells1, hinp1, hout1, hw1⟩ := hstep1
     -- Step 2: moveRight → done
     have hread1 : (c₁.work idx).read ≠ Γ.start := by
-      simp [Tape.read, hh1, hcells1]; exact hnostart_c 1 (by omega)
+      simpa [Tape.read, hh1, hcells1] using hnostart_c 1 (by omega)
     have hstep2 : ∃ c₂,
         (rewindWorkTM idx).step c₁ = some c₂ ∧
         (rewindWorkTM idx).halted c₂ ∧
@@ -655,7 +655,7 @@ theorem rewindWorkTM_hoareTime_frame {n : ℕ} (idx : Fin n) (B_tape : ℕ)
   | succ h ih =>
     intro c hstate hcell0_c hnostart_c hhead hinp_c hout_c hw_c
     have hread_ne : (c.work idx).read ≠ Γ.start := by
-      simp [Tape.read, hhead]; exact hnostart_c (h + 1) (by omega)
+      simpa [Tape.read, hhead] using hnostart_c (h + 1) (by omega)
     -- Step: moveLeft, read non-▷ → stay in moveLeft, move left
     have hstep : ∃ c₁,
         (rewindWorkTM idx).step c = some c₁ ∧

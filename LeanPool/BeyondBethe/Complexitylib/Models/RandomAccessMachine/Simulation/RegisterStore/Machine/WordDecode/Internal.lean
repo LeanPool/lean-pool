@@ -538,8 +538,7 @@ theorem payloadBitTM_reachesIn_frame_internal {n : ℕ}
              output := out₀ } : Cfg n (payloadBitTM sourceIdx targetIdx).Q),
     .step hstep .zero, rfl, rfl, ?_, ?_, ?_, rfl⟩
   · change (payloadBitWork sourceIdx targetIdx work₀ bit sourceIdx).HasBinarySuffix suffix
-    simp [payloadBitWork]
-    exact hsource.move_right_cons
+    simpa [payloadBitWork] using hsource.move_right_cons
   · change (payloadBitWork sourceIdx targetIdx work₀ bit targetIdx).HasBinaryPrefix
       (pre ++ [bit])
     simp [payloadBitWork, Ne.symm hindices]
@@ -627,8 +626,7 @@ theorem wordSeparatorTM_reachesIn_frame_internal {n : ℕ}
     hinput hwork houtput
   refine ⟨c', .step hstep .zero, rfl, rfl, ?_, ?_, rfl⟩
   · change (wordSeparatorWork sourceIdx work₀ sourceIdx).HasBinarySuffix bits
-    simp [wordSeparatorWork]
-    exact hsource.move_right_cons
+    simpa [wordSeparatorWork] using hsource.move_right_cons
   · intro i his
     change wordSeparatorWork sourceIdx work₀ i = work₀ i
     simp [wordSeparatorWork, his]

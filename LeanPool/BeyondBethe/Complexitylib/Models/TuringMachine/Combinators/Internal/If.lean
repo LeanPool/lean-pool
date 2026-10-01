@@ -343,7 +343,7 @@ theorem ifTM_check_step_else_full (tmTest tmThen tmElse : TM n)
       c'.output.head = 1 ∧
       c'.input = c.input ∧ c'.work = c.work := by
   have hne : c.state ≠ (ifTM tmTest tmThen tmElse).qhalt := by rw [hstate]; nofun
-  have hread_ne_one : c.output.read ≠ Γ.one := by simp [Tape.read, hhead]; exact hcell1
+  have hread_ne_one : c.output.read ≠ Γ.one := by simpa [Tape.read, hhead] using hcell1
   have hread_ne_start : c.output.read ≠ Γ.start := by
     simp only [Tape.read, hhead]; exact hnostart_out 1 (by omega)
   simp only [TM.step, ↓reduceIte, hstate, ifTM, hread_ne_one]

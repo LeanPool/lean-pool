@@ -259,7 +259,7 @@ theorem loopTM_check_continue (tmBody tmTest : TM n)
   have hne : c.state ≠ (loopTM tmBody tmTest).qhalt := by
     rw [hstate]; nofun
   have hread_ne : c.output.read ≠ Γ.one := by
-    simp [Tape.read, hhead]; exact hcell1
+    simpa [Tape.read, hhead] using hcell1
   have hread_ne_start : c.output.read ≠ Γ.start := by
     simp only [Tape.read, hhead]; exact hnostart 1 (by omega)
   simp only [TM.step, ↓reduceIte, hstate, loopTM, hread_ne]

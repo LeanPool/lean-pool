@@ -80,7 +80,7 @@ private lemma TM.toNTM_reachesIn_trace (tm : TM n) {c c' : Cfg n tm.Q} {t : ℕ}
     have hne := state_ne_qhalt_of_step hstep
     rw [tm.toNTM_trace_step _ ch hne]
     have : (tm.step c₀).get (by simp [TM.step, hne]) = c_mid := by
-      simp [TM.step, hne] at hstep ⊢; exact hstep
+      simpa [TM.step, hne] using hstep
     rw [this]; exact ih _
 
 /-- If a DTM halts within `t ≤ T` steps, then `toNTM.trace T` reaches the same
