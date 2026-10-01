@@ -231,7 +231,8 @@ private theorem compileAt_ifNonzero_correct
   rw [hbranchRun.2.1, hbranchRun.1]
   rw [show (1 : ℕ) = 0 + 1 from rfl, logTimeUpto_succ]
   rw [ite_eq_right hjmpHalt]
-  simp [stepLogCost, hjmpInstr', Instr.logCost]
+  simp only [stepLogCost, hjmpInstr', Instr.logCost,
+    zero_add, logTimeUpto_zero, add_zero, true_and]
   rw [spaceUpto]
   simp [Halted, curInstr]
   rw [step_jz_nonzero pre _ test _ store htest]
@@ -397,7 +398,7 @@ theorem compileAt_correct_internal
       rw [hbodyRun.2.1, hbodyRun.1]
       rw [logTimeUpto_succ, ite_eq_right hjmpHalt]
       rw [hjmp', hloopRun.2.1]
-      simp [stepLogCost, hjmpInstr', Instr.logCost]
+      simp only [stepLogCost, hjmpInstr', Instr.logCost, true_and]
       rw [spaceUpto]
       simp [Halted, curInstr]
       rw [step_jz_nonzero pre _ test _ store htest]

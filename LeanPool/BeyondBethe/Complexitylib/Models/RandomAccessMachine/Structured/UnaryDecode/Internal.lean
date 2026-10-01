@@ -283,7 +283,7 @@ private theorem truncated_measured {inputLength : ℕ} {store : Store}
       ∀ current, StoreBound inputLength current →
         StoreBound inputLength (op.exec current) := by
     intro op hop current hcurrent
-    simp at hop
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hop
     rcases hop with rfl | rfl
     · apply hcurrent.execBasic (.imm verdictReg 0) <;>
         simp [verdictReg, inputBase]
@@ -316,7 +316,7 @@ private theorem false_body_measured {rest : List Bool}
         ∀ current, StoreBound inputLength current →
           StoreBound inputLength (op.exec current) := by
       intro op hop current hcurrent
-      simp at hop
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hop
       rcases hop with rfl | rfl
       · apply hcurrent.execBasic (.imm verdictReg 1) <;>
           simp [verdictReg, inputBase]
