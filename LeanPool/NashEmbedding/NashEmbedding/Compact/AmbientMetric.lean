@@ -253,27 +253,11 @@ end Coordinates
 
 /-! ## The ambient metric -/
 
-section Main
-
-variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
-  {H : Type*} [TopologicalSpace H] {I : ModelWithCorners ℝ E H}
-  {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [IsManifold I ∞ M]
-  {E' : Type*} [NormedAddCommGroup E'] [InnerProductSpace ℝ E'] [FiniteDimensional ℝ E']
-
 /-- The Euclidean inner product of `E'` as a real bilinear form (over `ℝ` the conjugate
   linearity of `innerSL` is trivial). -/
 def innerBilin (E' : Type*) [NormedAddCommGroup E'] [InnerProductSpace ℝ E'] :
     E' →L[ℝ] E' →L[ℝ] ℝ :=
   innerSL ℝ
-
-/-- The ambient metric along `u` at `x`, as a bilinear form on `E'`:
-  `G x a b = g_x (P a) (P b) + ⟪(1 - L P) a, (1 - L P) b⟫` with `L = diff u x`, `P = pinv L`. -/
-def ambientMetric (g : ContMDiffRiemannianMetric I ∞ E (TangentSpace I : M → Type _))
-    (u : M → E') (x : M) : E' →L[ℝ] E' →L[ℝ] ℝ :=
-  let L : E →L[ℝ] E' := diff (I := I) u x
-  let P : E' →L[ℝ] E := pinv L
-  let R : E' →L[ℝ] E' := ContinuousLinearMap.id ℝ E' - L ∘L P
-  (metricAt g x).bilinearComp P P + (innerBilin E').bilinearComp R R
 
 theorem contDiff_clm_flip {A B C : Type*} [NormedAddCommGroup A] [NormedSpace ℝ A]
     [NormedAddCommGroup B] [NormedSpace ℝ B] [NormedAddCommGroup C] [NormedSpace ℝ C] :
@@ -282,6 +266,192 @@ theorem contDiff_clm_flip {A B C : Type*} [NormedAddCommGroup A] [NormedSpace �
     { map_add := fun f g => by ext b a; simp
       map_smul := fun c f => by ext b a; simp
       bound := ⟨1, one_pos, fun f => by simp⟩ }
+
+section GeneralMetric
+
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
+  {H : Type*} [TopologicalSpace H] {I : ModelWithCorners ℝ E H}
+  {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [IsManifold I ∞ M]
+
+/-- The ambient metric obtained by transporting the model space along `ll`. -/
+def ambientMetricOfEquiv {E' F : Type*} [NormedAddCommGroup E']
+    [InnerProductSpace ℝ E'] [FiniteDimensional ℝ E'] [NormedAddCommGroup F]
+    [InnerProductSpace ℝ F] [FiniteDimensional ℝ F] (ll : E ≃L[ℝ] F)
+    (g : ContMDiffRiemannianMetric I ∞ E (TangentSpace I : M → Type _))
+    (u : M → E') (x : M) : E' →L[ℝ] E' →L[ℝ] ℝ :=
+  let L : F →L[ℝ] E' := diff (I := I) u x ∘L (ll.symm : F →L[ℝ] E)
+  let P : E' →L[ℝ] F := pinv L
+  let R : E' →L[ℝ] E' := ContinuousLinearMap.id ℝ E' - L ∘L P
+  ((metricAt g x).bilinearComp (ll.symm : F →L[ℝ] E) (ll.symm : F →L[ℝ] E)).bilinearComp P P +
+    (innerBilin E').bilinearComp R R
+
+/-! ### The ambient metric for a manifold modelled on a general normed space
+
+  `exists_ambient_metric` (S3) assumes the model space `E` carries an inner product
+  (the pseudo-inverse of `du_x` is built from an adjoint).  Here `E` is only a
+  finite-dimensional normed space, so the construction is transported along a linear
+  isomorphism `ll : E ≃L[ℝ] F` with `F` Euclidean; `toEuclidean` provides such an `ll`. -/
+
+omit [FiniteDimensional ℝ E] [IsManifold I ∞ M] in
+/-- Smoothness of `x ↦ (f x).bilinearComp (p x) (q x)` (as `contMDiffAt_bilinearComp`, but
+  without an inner product on the model space `E`). -/
+theorem contMDiffAt_bilinearComp' {A B C A' B' : Type*} [NormedAddCommGroup A] [NormedSpace ℝ A]
+    [NormedAddCommGroup B] [NormedSpace ℝ B] [NormedAddCommGroup C] [NormedSpace ℝ C]
+    [NormedAddCommGroup A'] [NormedSpace ℝ A'] [NormedAddCommGroup B'] [NormedSpace ℝ B']
+    {f : M → A →L[ℝ] B →L[ℝ] C} {p : M → A' →L[ℝ] A} {q : M → B' →L[ℝ] B} {x₀ : M}
+    (hf : ContMDiffAt I 𝓘(ℝ, A →L[ℝ] B →L[ℝ] C) ∞ f x₀)
+    (hp : ContMDiffAt I 𝓘(ℝ, A' →L[ℝ] A) ∞ p x₀)
+    (hq : ContMDiffAt I 𝓘(ℝ, B' →L[ℝ] B) ∞ q x₀) :
+    ContMDiffAt I 𝓘(ℝ, A' →L[ℝ] B' →L[ℝ] C) ∞
+      (fun x => (f x).bilinearComp (p x) (q x)) x₀ :=
+  contDiff_clm_flip.comp_contMDiffAt
+    ((contDiff_clm_flip.comp_contMDiffAt (hf.clm_comp hp)).clm_comp hq)
+
+omit [FiniteDimensional ℝ E] in
+/-- **S3 for a general model space.**  Along a smooth immersion `u : M → E'` there is a
+  smooth family of positive-definite symmetric bilinear forms on `E'` pulling back to `g`.
+  Same statement as `exists_ambient_metric`, but the model space `E` of `M` is only assumed
+  to be a finite-dimensional normed space: the pseudo-inverse construction is transported
+  along a linear isomorphism `ll : E ≃L[ℝ] F` onto an inner-product space `F`. -/
+theorem exists_ambient_metric_of_equiv {E' F : Type*} [NormedAddCommGroup E']
+    [InnerProductSpace ℝ E'] [FiniteDimensional ℝ E'] [NormedAddCommGroup F]
+    [InnerProductSpace ℝ F] [FiniteDimensional ℝ F] (ll : E ≃L[ℝ] F)
+    (g : ContMDiffRiemannianMetric I ∞ E (TangentSpace I : M → Type _))
+    {u : M → E'} (hu : ContMDiff I 𝓘(ℝ, E') ∞ u)
+    (hinj : ∀ x, Injective (mfderiv I 𝓘(ℝ, E') u x)) :
+    ∃ G : M → (E' →L[ℝ] E' →L[ℝ] ℝ),
+      ContMDiff I 𝓘(ℝ, E' →L[ℝ] E' →L[ℝ] ℝ) ∞ G ∧
+      (∀ x a b, G x a b = G x b a) ∧
+      (∀ x a, a ≠ 0 → 0 < G x a a) ∧
+      (∀ x (v w : E), G x (diff (I := I) u x v) (diff (I := I) u x w) = metricAt g x v w) := by
+  classical
+  have hinj' : ∀ x, Injective (diff (I := I) u x) := hinj
+  set Lh : M → (F →L[ℝ] E') := fun x => diff (I := I) u x ∘L (ll.symm : F →L[ℝ] E) with hLhdef
+  have hLhinj : ∀ x, Injective (Lh x) := by
+    intro x a b hab
+    exact ll.symm.injective ((hinj' x) hab)
+  set P : M → (E' →L[ℝ] F) := fun x => pinv (Lh x) with hPdef
+  set gh : M → (F →L[ℝ] F →L[ℝ] ℝ) := fun x =>
+    (metricAt g x).bilinearComp (ll.symm : F →L[ℝ] E) (ll.symm : F →L[ℝ] E) with hghdef
+  have happ : ∀ (x : M) (a b : E'),
+      ambientMetricOfEquiv ll g u x a b =
+      metricAt g x (ll.symm (P x a)) (ll.symm (P x b)) +
+        inner ℝ (a - Lh x (P x a)) (b - Lh x (P x b)) := fun x a b => rfl
+  have hPL : ∀ (x : M) (v : E), P x (diff (I := I) u x v) = ll v := by
+    intro x v
+    have h := ContinuousLinearMap.ext_iff.1 (pinv_comp (hLhinj x)) (ll v)
+    simp only [ContinuousLinearMap.coe_comp, Function.comp_apply,
+      ContinuousLinearMap.id_apply] at h
+    have h2 : Lh x (ll v) = diff (I := I) u x v := by simp [hLhdef]
+    rw [h2] at h
+    exact h
+  refine ⟨ambientMetricOfEquiv ll g u, ?_, ?_, ?_, ?_⟩
+  · -- smoothness, in the tangent coordinates at each `x₀`
+    intro x₀
+    set Lt : M → E →L[ℝ] E' :=
+      inTangentCoordinates I 𝓘(ℝ, E') id u (mfderiv I 𝓘(ℝ, E') u) x₀ with hLtdef
+    set Lht : M → F →L[ℝ] E' := fun x => Lt x ∘L (ll.symm : F →L[ℝ] E) with hLhtdef
+    set gt : M → E →L[ℝ] E →L[ℝ] ℝ := fun x => (trivializationAt (E →L[ℝ] E →L[ℝ] ℝ)
+      (fun y => TangentSpace I y →L[ℝ] TangentSpace I y →L[ℝ] ℝ) x₀ ⟨x, g.inner x⟩).2 with hgtdef
+    set ght : M → F →L[ℝ] F →L[ℝ] ℝ := fun x =>
+      (gt x).bilinearComp (ll.symm : F →L[ℝ] E) (ll.symm : F →L[ℝ] E) with hghtdef
+    have hx₀ : x₀ ∈ (chartAt H x₀).source := mem_chart_source H x₀
+    obtain ⟨S₀, hS₀⟩ := tcoord_isInvertible (I := I) (x₀ := x₀) (x := x₀) hx₀
+    have hLt₀ : Lt x₀ = diff (I := I) u x₀ ∘L (S₀ : E →L[ℝ] E) := by
+      rw [hS₀, hLtdef]
+      exact inTangentCoordinates_mfderiv_eq hx₀
+    have hLht₀inj : Injective (Lht x₀) := by
+      intro a b hab
+      apply ll.symm.injective
+      apply S₀.injective
+      apply hinj' x₀
+      have h : (Lt x₀) (ll.symm a) = (Lt x₀) (ll.symm b) := hab
+      rw [hLt₀] at h
+      simpa using h
+    have hLhtm : ContMDiffAt I 𝓘(ℝ, F →L[ℝ] E') ∞ Lht x₀ :=
+      (contMDiffAt_inTangentCoordinates_mfderiv hu x₀).clm_comp contMDiffAt_const
+    have hPtm : ContMDiffAt I 𝓘(ℝ, E' →L[ℝ] F) ∞ (fun x => pinv (Lht x)) x₀ :=
+      (contDiffAt_pinv hLht₀inj).comp_contMDiffAt hLhtm
+    have hghtm : ContMDiffAt I 𝓘(ℝ, F →L[ℝ] F →L[ℝ] ℝ) ∞ ght x₀ :=
+      contMDiffAt_bilinearComp' (contMDiffAt_metric_trivialization g x₀) contMDiffAt_const
+        contMDiffAt_const
+    have hRm : ContMDiffAt I 𝓘(ℝ, E' →L[ℝ] E') ∞
+        (fun x => ContinuousLinearMap.id ℝ E' - Lht x ∘L pinv (Lht x)) x₀ :=
+      contMDiffAt_const.sub (hLhtm.clm_comp hPtm)
+    have hsmooth : ContMDiffAt I 𝓘(ℝ, E' →L[ℝ] E' →L[ℝ] ℝ) ∞
+        (fun x => (ght x).bilinearComp (pinv (Lht x)) (pinv (Lht x)) +
+          (innerBilin E').bilinearComp (ContinuousLinearMap.id ℝ E' - Lht x ∘L pinv (Lht x))
+            (ContinuousLinearMap.id ℝ E' - Lht x ∘L pinv (Lht x))) x₀ :=
+      (contMDiffAt_bilinearComp' hghtm hPtm hPtm).add
+        (contMDiffAt_bilinearComp' contMDiffAt_const hRm hRm)
+    refine hsmooth.congr_of_eventuallyEq ?_
+    filter_upwards [chart_source_mem_nhds H x₀] with x hx
+    obtain ⟨S, hS⟩ := tcoord_isInvertible (I := I) (x₀ := x₀) (x := x) hx
+    have hLtx : Lt x = diff (I := I) u x ∘L (S : E →L[ℝ] E) := by
+      rw [hS, hLtdef]
+      exact inTangentCoordinates_mfderiv_eq hx
+    set Sh : F ≃L[ℝ] F := (ll.symm.trans S).trans ll with hShdef
+    have hLhtx : Lht x = Lh x ∘L (Sh : F →L[ℝ] F) := by
+      ext a
+      simp [hLhtdef, hLtx, hLhdef, hShdef]
+    have hPt : pinv (Lht x) = (Sh.symm : F →L[ℝ] F) ∘L P x := by
+      rw [hLhtx]
+      exact pinv_comp_equiv (hLhinj x) Sh
+    have hLP : Lht x ∘L pinv (Lht x) = Lh x ∘L P x := by
+      rw [hPt, hLhtx]
+      ext a
+      simp
+    have hLPa : ∀ c : E', Lht x (pinv (Lht x) c) = Lh x (P x c) := fun c =>
+      ContinuousLinearMap.ext_iff.1 hLP c
+    have hgterm : ∀ a b : E', ght x (pinv (Lht x) a) (pinv (Lht x) b) =
+        metricAt g x (ll.symm (P x a)) (ll.symm (P x b)) := by
+      intro a b
+      have hmt := metric_trivialization_apply g hx
+        ((ll.symm : F →L[ℝ] E) (pinv (Lht x) a)) ((ll.symm : F →L[ℝ] E) (pinv (Lht x) b))
+      have hc : ∀ c : E', tcoord I x₀ x ((ll.symm : F →L[ℝ] E) (pinv (Lht x) c))
+          = ll.symm (P x c) := by
+        intro c
+        rw [hPt, ← hS]
+        simp [hShdef]
+      rw [hc, hc] at hmt
+      exact hmt
+    ext a b
+    rw [happ, ← hgterm, ← hLPa a, ← hLPa b]
+    rfl
+  · intro x a b
+    rw [happ, happ, real_inner_comm]
+    congr 1
+    exact g.symm x _ _
+  · intro x a ha
+    rw [happ]
+    rcases eq_or_ne (ll.symm (P x a)) 0 with h | h
+    · have hP0 : P x a = 0 := by
+        have := congrArg ll h
+        simpa using this
+      have hR : a - Lh x (P x a) = a := by simp [hP0]
+      have hpos : (0:ℝ) < inner ℝ a a := real_inner_self_pos.2 ha
+      rw [hR, h]
+      simpa using hpos
+    · have h1 : 0 < metricAt g x (ll.symm (P x a)) (ll.symm (P x a)) := g.pos x _ h
+      have h2 : (0:ℝ) ≤ inner ℝ (a - Lh x (P x a)) (a - Lh x (P x a)) := real_inner_self_nonneg
+      linarith
+  · intro x v w
+    rw [happ, hPL, hPL]
+    simp [hLhdef]
+
+end GeneralMetric
+
+section Main
+
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+  {H : Type*} [TopologicalSpace H] {I : ModelWithCorners ℝ E H}
+  {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [IsManifold I ∞ M]
+  {E' : Type*} [NormedAddCommGroup E'] [InnerProductSpace ℝ E'] [FiniteDimensional ℝ E']
+
+/-- The ambient metric along `u` at `x`, using the identity model-space equivalence. -/
+def ambientMetric (g : ContMDiffRiemannianMetric I ∞ E (TangentSpace I : M → Type _))
+    (u : M → E') (x : M) : E' →L[ℝ] E' →L[ℝ] ℝ :=
+  ambientMetricOfEquiv (ContinuousLinearEquiv.refl ℝ E) g u x
 
 omit [FiniteDimensional ℝ E] [IsManifold I ∞ M] in
 /-- Smoothness of `x ↦ (f x).flip`. -/
@@ -307,7 +477,8 @@ theorem contMDiffAt_bilinearComp {A B C A' B' : Type*} [NormedAddCommGroup A] [N
 
 /-- **L8 / S3.** Along a smooth immersion `u : M → E'`, there is a smooth family of
   positive-definite symmetric bilinear forms `G x` on `E'` pulling back to `g`:
-  `G x (du_x v) (du_x w) = g_x v w`.  (Witness: `ambientMetric g u`.) -/
+  `G x (du_x v) (du_x w) = g_x v w`.  This is the inner-product case of
+  `exists_ambient_metric_of_equiv`. -/
 theorem exists_ambient_metric (g : ContMDiffRiemannianMetric I ∞ E (TangentSpace I : M → Type _))
     {u : M → E'} (hu : ContMDiff I 𝓘(ℝ, E') ∞ u)
     (hinj : ∀ x, Injective (mfderiv I 𝓘(ℝ, E') u x)) :
@@ -316,106 +487,7 @@ theorem exists_ambient_metric (g : ContMDiffRiemannianMetric I ∞ E (TangentSpa
       (∀ x a b, G x a b = G x b a) ∧
       (∀ x a, a ≠ 0 → 0 < G x a a) ∧
       (∀ x (v w : E), G x (diff (I := I) u x v) (diff (I := I) u x w) = metricAt g x v w) := by
-  -- Witness `ambientMetric g u`.  Pullback: `pinv_comp` gives `P (L v) = v` and `R (L v) = 0`.
-  -- Symmetry: `g.symm` and `real_inner_comm`.  Positivity: with `a ≠ 0`,
-  -- `G x a a = metricAt g x (P a) (P a) + ‖R a‖²`; both terms are `≥ 0` (`g.pos`,
-  -- `real_inner_self_nonneg`); if both vanish then `P a = 0` (from `g.pos`) and
-  -- `R a = 0`, so `a = L (P a) + R a = 0`, contradiction.  Smoothness: it suffices to
-  -- prove `ContMDiffAt` at each `x₀`; on the chart at `x₀` rewrite, using L6', L6'', L5,
-  --   `diff u x = Lt x ∘L (tcoord x₀ x).inverse`, `pinv (diff u x) = tcoord x₀ x ∘L pinv (Lt x)`,
-  -- where `Lt x := inTangentCoordinates … x₀ x` is smooth (L6), and
-  --   `metricAt g x = (trivialized metric).bilinearComp (tcoord)⁻¹ (tcoord)⁻¹` (L7'),
-  -- so `ambientMetric g u x = (trivialized metric x).bilinearComp (pinv (Lt x)) (pinv (Lt x))
-  --   + (innerBilin E').bilinearComp (1 - Lt x ∘L pinv (Lt x)) (…)`, a smooth expression in
-  -- the smooth `Lt x` (L6), the smooth trivialized metric (L7), and `pinv` (L4,
-  -- `ContDiff.comp_contMDiff`);
-  -- conclude with `ContMDiffAt.congr_of_eventuallyEq` on the chart source.
-  have hinj' : ∀ x, Injective (diff (I := I) u x) := hinj
-  have happ : ∀ (x : M) (a b : E'), ambientMetric g u x a b =
-      metricAt g x (pinv (diff (I := I) u x) a) (pinv (diff (I := I) u x) b) +
-        inner ℝ (a - diff (I := I) u x (pinv (diff (I := I) u x) a))
-          (b - diff (I := I) u x (pinv (diff (I := I) u x) b)) := by
-    intro x a b
-    rfl
-  have hPL : ∀ (x : M) (v : E), pinv (diff (I := I) u x) (diff (I := I) u x v) = v := by
-    intro x v
-    have := ContinuousLinearMap.ext_iff.1 (pinv_comp (hinj' x)) v
-    simpa using this
-  refine ⟨ambientMetric g u, ?_, ?_, ?_, ?_⟩
-  · intro x₀
-    set Lt : M → E →L[ℝ] E' :=
-      inTangentCoordinates I 𝓘(ℝ, E') id u (mfderiv I 𝓘(ℝ, E') u) x₀ with hLtdef
-    set gt : M → E →L[ℝ] E →L[ℝ] ℝ := fun x => (trivializationAt (E →L[ℝ] E →L[ℝ] ℝ)
-      (fun y => TangentSpace I y →L[ℝ] TangentSpace I y →L[ℝ] ℝ) x₀ ⟨x, g.inner x⟩).2 with hgtdef
-    have hx₀ : x₀ ∈ (chartAt H x₀).source := mem_chart_source H x₀
-    obtain ⟨S₀, hS₀⟩ := tcoord_isInvertible (I := I) (x₀ := x₀) (x := x₀) hx₀
-    have hLt₀ : Lt x₀ = diff (I := I) u x₀ ∘L (S₀ : E →L[ℝ] E) := by
-      rw [hS₀, hLtdef]
-      exact inTangentCoordinates_mfderiv_eq hx₀
-    have hLtinj : Injective (Lt x₀) := by
-      rw [hLt₀]
-      exact (hinj' x₀).comp S₀.injective
-    have hLtm : ContMDiffAt I 𝓘(ℝ, E →L[ℝ] E') ∞ Lt x₀ :=
-      contMDiffAt_inTangentCoordinates_mfderiv hu x₀
-    have hPtm : ContMDiffAt I 𝓘(ℝ, E' →L[ℝ] E) ∞ (fun x => pinv (Lt x)) x₀ :=
-      (contDiffAt_pinv hLtinj).comp_contMDiffAt hLtm
-    have hgtm : ContMDiffAt I 𝓘(ℝ, E →L[ℝ] E →L[ℝ] ℝ) ∞ gt x₀ :=
-      contMDiffAt_metric_trivialization g x₀
-    have hRm : ContMDiffAt I 𝓘(ℝ, E' →L[ℝ] E') ∞
-        (fun x => ContinuousLinearMap.id ℝ E' - Lt x ∘L pinv (Lt x)) x₀ :=
-      contMDiffAt_const.sub (hLtm.clm_comp hPtm)
-    have hsmooth : ContMDiffAt I 𝓘(ℝ, E' →L[ℝ] E' →L[ℝ] ℝ) ∞
-        (fun x => (gt x).bilinearComp (pinv (Lt x)) (pinv (Lt x)) +
-          (innerBilin E').bilinearComp (ContinuousLinearMap.id ℝ E' - Lt x ∘L pinv (Lt x))
-            (ContinuousLinearMap.id ℝ E' - Lt x ∘L pinv (Lt x))) x₀ :=
-      (contMDiffAt_bilinearComp hgtm hPtm hPtm).add
-        (contMDiffAt_bilinearComp contMDiffAt_const hRm hRm)
-    refine hsmooth.congr_of_eventuallyEq ?_
-    filter_upwards [chart_source_mem_nhds H x₀] with x hx
-    obtain ⟨S, hS⟩ := tcoord_isInvertible (I := I) (x₀ := x₀) (x := x) hx
-    have hLtx : Lt x = diff (I := I) u x ∘L (S : E →L[ℝ] E) := by
-      rw [hS, hLtdef]
-      exact inTangentCoordinates_mfderiv_eq hx
-    have hPt : pinv (Lt x) = (S.symm : E →L[ℝ] E) ∘L pinv (diff (I := I) u x) := by
-      rw [hLtx]
-      exact pinv_comp_equiv (hinj' x) S
-    have hTP : ∀ a : E', tcoord I x₀ x (pinv (Lt x) a) = pinv (diff (I := I) u x) a := by
-      intro a
-      rw [hPt, ← hS]
-      simp
-    have hLP : Lt x ∘L pinv (Lt x) = diff (I := I) u x ∘L pinv (diff (I := I) u x) := by
-      rw [hPt, hLtx]
-      ext a
-      simp
-    ext a b
-    rw [happ, hLP]
-    congr 1
-    have hmt := metric_trivialization_apply g hx (pinv (Lt x) a) (pinv (Lt x) b)
-    rw [hTP, hTP] at hmt
-    exact hmt.symm
-  · intro x a b
-    rw [happ, happ, real_inner_comm]
-    congr 1
-    exact g.symm x _ _
-  · intro x a ha
-    rw [happ]
-    have h1 : 0 ≤ metricAt g x (pinv (diff (I := I) u x) a) (pinv (diff (I := I) u x) a) := by
-      rcases eq_or_ne (pinv (diff (I := I) u x) a) 0 with h | h
-      · simp [h]
-      · exact (g.pos x _ h).le
-    have h2 : 0 ≤ inner ℝ (a - diff (I := I) u x (pinv (diff (I := I) u x) a))
-        (a - diff (I := I) u x (pinv (diff (I := I) u x) a)) := real_inner_self_nonneg
-    rcases eq_or_ne (pinv (diff (I := I) u x) a) 0 with h | h
-    · have hR : a - diff (I := I) u x (pinv (diff (I := I) u x) a) = a := by simp [h]
-      have : (0:ℝ) < inner ℝ a a := real_inner_self_pos.2 ha
-      rw [hR]
-      simpa [h] using this
-    · have : 0 < metricAt g x (pinv (diff (I := I) u x) a) (pinv (diff (I := I) u x) a) :=
-        g.pos x _ h
-      linarith
-  · intro x v w
-    rw [happ, hPL, hPL]
-    simp
+  exact exists_ambient_metric_of_equiv (ContinuousLinearEquiv.refl ℝ E) g hu hinj
 
 end Main
 

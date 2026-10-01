@@ -15,7 +15,7 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Data.Pi.Interval
 public import Mathlib.Tactic
-public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Basic
+public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Limits
 
 /-!
 # Compact Inclusion of Weighted ℓ² Spaces
@@ -111,24 +111,15 @@ private theorem weightedSequence_subsequence {t : ℝ} (a : ℕ → (Fin n → �
   exact ⟨ this.choose_spec.2.choose, this.choose_spec.2.choose_spec.1, this.choose, fun m =>
       tendsto_pi_nhds.mp this.choose_spec.2.choose_spec.2 m ⟩;
 
-/-- A pointwise limit of sequences in the weighted unit ball retains Sobolev membership. -/
+/-- A pointwise limit of sequences in the weighted unit ball retains membership and its bound. -/
 private theorem memSobolev_pointwise_limit {t : ℝ} (a : ℕ → (Fin n → ℤ) → ℂ)
     (ha_mem : ∀ k, MemSobolev n t (a k))
     (ha_bdd : ∀ k, sobolevNormSq n t (a k) ≤ 1)
     (φ : ℕ → ℕ) (a_lim : (Fin n → ℤ) → ℂ)
     (ha_lim : ∀ m, Filter.Tendsto (fun k => a (φ k) m) Filter.atTop (nhds (a_lim m))) :
-    MemSobolev n t a_lim := by
-  -- By the dominated convergence theorem, we can interchange the limit and the sum.
-  have h_dominated : ∀ N : Finset ((Fin n) → ℤ), ∑ m ∈ N, weight n t m * ‖a_lim m‖ ^ 2 ≤ 1 := by
-    intro N
-    have h_dominated : ∀ k, ∑ m ∈ N, weight n t m * ‖a (φ k) m‖ ^ 2 ≤ 1 := by
-      exact fun k => le_trans ( Summable.sum_le_tsum ( N ) ( fun _ _ => mul_nonneg (
-          weight_nonneg _ _ ) ( sq_nonneg _ ) ) ( ha_mem _ ) ) ( ha_bdd _ );
-    exact le_of_tendsto_of_tendsto' ( tendsto_finsetSum _ fun m _ => Filter.Tendsto.mul (
-        tendsto_const_nhds ) ( Filter.Tendsto.pow ( Filter.Tendsto.norm ( ha_lim m ) ) 2 ) )
-        tendsto_const_nhds h_dominated;
-  exact summable_of_sum_le (c := 1)
-    (fun m => mul_nonneg (weight_nonneg _ _) (sq_nonneg _)) h_dominated
+    MemSobolev n t a_lim ∧ sobolevNormSq n t a_lim ≤ 1 := by
+  exact (memSobolev_of_tendsto_coeff (s := t) (v := fun k => a (φ k))
+    (a := a_lim) (M := 1) (fun k => ha_mem (φ k)) (fun k => ha_bdd (φ k)) ha_lim)
 
 /-
 **Compact inclusion of weighted ℓ² spaces (concrete version).**
@@ -152,7 +143,16 @@ theorem compactInclusion_lp_weighted {s t : ℝ} (hst : s < t)
   obtain ⟨φ, hφ_mono, a_lim⟩ := weightedSequence_subsequence a ha_mem ha_bdd
   obtain ⟨ a_lim, ha_lim ⟩ := a_lim;
   -- We show that `a_lim` belongs to `ℓ²_(t)` and that `‖a_lim - a(φ(k))‖²_(s)` tends to zero.
-  have ha_lim_mem := memSobolev_pointwise_limit a ha_mem ha_bdd φ a_lim ha_lim
+  obtain ⟨ha_lim_mem, ha_lim_bdd⟩ := memSobolev_pointwise_limit a ha_mem ha_bdd φ a_lim ha_lim
+  have hdiff_mem_t (k : ℕ) : MemSobolev n t (fun m => a (φ k) m - a_lim m) :=
+    (ha_mem (φ k)).sub ha_lim_mem
+  have hdiff_mem_s (k : ℕ) : MemSobolev n s (fun m => a (φ k) m - a_lim m) :=
+    (hdiff_mem_t k).mono hst.le
+  have hpair_mem_t (k : ℕ) : Summable (fun m =>
+      weight n t m * (‖a (φ k) m‖ ^ 2 + ‖a_lim m‖ ^ 2)) := by
+    have ha : Summable (fun m => weight n t m * ‖a (φ k) m‖ ^ 2) := ha_mem (φ k)
+    have hb : Summable (fun m => weight n t m * ‖a_lim m‖ ^ 2) := ha_lim_mem
+    simpa only [mul_add] using ha.add hb
   have ha_lim_conv : Filter.Tendsto (fun k => sobolevNormSq n s (fun m => (a (φ k) m) - (a_lim
       m))) Filter.atTop (nhds 0) := by
     -- For any ε > 0, choose a finite set F ⊂ ℤⁿ such that ∑_{m ∉ F} weight(s-t) m < ε.
@@ -190,29 +190,10 @@ theorem compactInclusion_lp_weighted {s t : ℝ} (hst : s < t)
             intro m hm
             rw [ite_eq_right hm]
             ring
-          · have h_summable : Summable (fun m => weight n s m * ‖(a (φ k) m) - (a_lim m)‖ ^ 2) := by
-              have h_summable : Summable (fun m => weight n t m * ‖(a (φ k) m) - (a_lim m)‖ ^ 2)
-                  := by
-                have h_summable : Summable (fun m => weight n t m * ‖a (φ k) m‖ ^ 2) ∧ Summable
-                    (fun m => weight n t m * ‖a_lim m‖ ^ 2) := by
-                  exact ⟨ ha_mem _, ha_lim_mem ⟩;
-                have h_summable : Summable (fun m => weight n t m * (‖a (φ k) m‖ ^ 2 + ‖a_lim m‖
-                    ^ 2)) := by
-                  simpa only [ mul_add ] using h_summable.1.add h_summable.2;
-                refine .of_nonneg_of_le ( fun m => mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg
-                    _ ) ) ( fun m => ?_ ) ( h_summable.mul_left 2 );
-                have h_triangle : ‖a (φ k) m - a_lim m‖ ^ 2 ≤ 2 * (‖a (φ k) m‖ ^ 2 + ‖a_lim m‖ ^
-                    2) := by
-                  nlinarith only [ norm_nonneg ( a ( φ k ) m - a_lim m ), norm_sub_le ( a ( φ k
-                      ) m ) ( a_lim m ), sq_nonneg ( ‖a ( φ k ) m‖ - ‖a_lim m‖ ) ];
-                nlinarith only [ h_triangle, weight_nonneg t m ];
-              refine .of_nonneg_of_le ( fun m => mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _
-                  ) ) ( fun m => mul_le_mul_of_nonneg_right ( weight_mono hst.le _ ) ( sq_nonneg
-                  _ ) ) h_summable;
-            exact Summable.of_nonneg_of_le ( fun m => mul_nonneg ( mul_nonneg ( weight_nonneg _
+          · exact Summable.of_nonneg_of_le ( fun m => mul_nonneg ( mul_nonneg ( weight_nonneg _
                 _ ) ( sq_nonneg _ ) ) ( by split_ifs <;> norm_num ) ) ( fun m =>
                 mul_le_of_le_one_right ( mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _ ) ) ( by
-                split_ifs <;> norm_num ) ) h_summable;
+                split_ifs <;> norm_num ) ) (hdiff_mem_s k)
         convert h_split using 2;
         rw [ tsum_eq_sum ];
         exacts [ Finset.sum_congr rfl fun x hx => by rw [ ite_eq_left hx, mul_one ], fun x hx =>
@@ -242,37 +223,13 @@ theorem compactInclusion_lp_weighted {s t : ℝ} (hst : s < t)
         rw [ ← tsum_mul_left ];
         refine Summable.tsum_le_tsum ?_ ?_ ?_;
         · intro m; specialize h_second_sum m; split_ifs <;> simp_all +decide [ mul_assoc ] ;
-        · have h_summable : Summable (fun m => weight n s m * ‖(a (φ k) m) - (a_lim m)‖ ^ 2) := by
-            have h_summable : Summable (fun m => weight n t m * ‖(a (φ k) m) - (a_lim m)‖ ^ 2) := by
-              have h_summable : Summable (fun m => weight n t m * ‖a (φ k) m‖ ^ 2) ∧ Summable
-                  (fun m => weight n t m * ‖a_lim m‖ ^ 2) := by
-                exact ⟨ ha_mem ( φ k ), ha_lim_mem ⟩;
-              have h_summable : Summable (fun m => weight n t m * (‖a (φ k) m‖ ^ 2 + ‖a_lim m‖ ^
-                  2)) := by
-                simpa only [ mul_add ] using h_summable.1.add h_summable.2;
-              refine .of_nonneg_of_le ( fun m => mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _
-                  ) ) ( fun m => ?_ ) ( h_summable.mul_left 2 );
-              have h_triangle : ‖a (φ k) m - a_lim m‖ ^ 2 ≤ 2 * (‖a (φ k) m‖ ^ 2 + ‖a_lim m‖ ^
-                  2) := by
-                nlinarith only [ norm_nonneg ( a ( φ k ) m - a_lim m ), norm_sub_le ( a ( φ k )
-                    m ) ( a_lim m ), sq_nonneg ( ‖a ( φ k ) m‖ - ‖a_lim m‖ ) ];
-              nlinarith only [ h_triangle, weight_nonneg t m ];
-            refine .of_nonneg_of_le ( fun m => mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _ )
-                ) ( fun m => ?_ ) h_summable;
-            exact mul_le_mul_of_nonneg_right ( weight_mono hst.le m ) ( sq_nonneg _ );
-          exact Summable.of_nonneg_of_le ( fun m => mul_nonneg ( mul_nonneg ( weight_nonneg _ _
+        · exact Summable.of_nonneg_of_le ( fun m => mul_nonneg ( mul_nonneg ( weight_nonneg _ _
               ) ( sq_nonneg _ ) ) ( by split_ifs <;> norm_num ) ) ( fun m =>
               mul_le_of_le_one_right ( mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _ ) ) ( by
-              split_ifs <;> norm_num ) ) h_summable;
-        · have h_summable : Summable (fun m => weight n t m * (‖(a (φ k) m)‖ ^ 2 + ‖(a_lim m)‖ ^
-            2)) := by
-            have h_summable : Summable (fun m => weight n t m * ‖(a (φ k) m)‖ ^ 2) ∧ Summable
-                (fun m => weight n t m * ‖(a_lim m)‖ ^ 2) := by
-              exact ⟨ ha_mem ( φ k ), ha_lim_mem ⟩;
-            simpa only [ mul_add ] using h_summable.1.add h_summable.2;
-          refine Summable.mul_left _ ?_;
-          refine Summable.of_nonneg_of_le ( fun m => ?_ ) ( fun m => ?_ ) ( h_summable.mul_right
-              ( ε / 4 ) );
+              split_ifs <;> norm_num ) ) (hdiff_mem_s k)
+        · refine Summable.mul_left _ ?_;
+          refine Summable.of_nonneg_of_le ( fun m => ?_ ) ( fun m => ?_ )
+              ( (hpair_mem_t k).mul_right ( ε / 4 ) );
           · exact mul_nonneg ( mul_nonneg ( mul_nonneg ( weight_nonneg _ _ ) ( by positivity ) )
               ( weight_nonneg _ _ ) ) ( by positivity );
           · split_ifs <;> simp_all +decide only [mul_zero, mul_one];
@@ -294,43 +251,20 @@ theorem compactInclusion_lp_weighted {s t : ℝ} (hst : s < t)
           · rw [mul_comm (ε / 4)]
             exact mul_le_mul_of_nonneg_left (hF m ‹_›).le
               (mul_nonneg (weight_nonneg _ _) (add_nonneg (sq_nonneg _) (sq_nonneg _)))
-        · have h_second_sum_bound : Summable (fun m => weight n t m * (‖(a (φ k) m)‖ ^ 2 +
-            ‖(a_lim m)‖ ^ 2)) := by
-            have h_second_sum_bound : Summable (fun m => weight n t m * ‖(a (φ k) m)‖ ^ 2) ∧
-                Summable (fun m => weight n t m * ‖(a_lim m)‖ ^ 2) := by
-              exact ⟨ ha_mem ( φ k ), ha_lim_mem ⟩;
-            simpa only [ mul_add ] using h_second_sum_bound.1.add h_second_sum_bound.2;
-          refine Summable.of_nonneg_of_le ( fun m => ?_ ) ( fun m => ?_ ) h_second_sum_bound;
+        · refine Summable.of_nonneg_of_le ( fun m => ?_ ) ( fun m => ?_ ) (hpair_mem_t k);
           · exact mul_nonneg ( mul_nonneg ( mul_nonneg ( weight_nonneg _ _ ) ( by positivity ) )
               ( weight_nonneg _ _ ) ) ( by positivity );
           · split_ifs <;> norm_num;
             · exact mul_nonneg ( weight_nonneg _ _ ) ( add_nonneg ( sq_nonneg _ ) ( sq_nonneg _ ) );
             · exact mul_le_of_le_one_right ( mul_nonneg ( weight_nonneg _ _ ) ( add_nonneg (
                 sq_nonneg _ ) ( sq_nonneg _ ) ) ) ( weight_le_one_of_nonpos ( by linarith ) _ );
-        · refine Summable.mul_left _ ?_;
-          have := ha_mem ( φ k );
-          convert this.add ha_lim_mem using 1
-          ext m; ring
+        · exact (hpair_mem_t k).mul_left _
       -- Since $\sum' m, weight n t m * (‖a (φ k) m‖ ^ 2 + ‖a_lim m‖ ^ 2) \leq 2$, we can
       -- bound the second sum.
       have h_second_sum_final : ∑' m, weight n t m * (‖a (φ k) m‖ ^ 2 + ‖a_lim m‖ ^ 2) ≤ 2 := by
         have h_second_sum_final : ∑' m, weight n t m * ‖a (φ k) m‖ ^ 2 ≤ 1 ∧ ∑' m, weight n t m
             * ‖a_lim m‖ ^ 2 ≤ 1 := by
-          apply And.intro;
-          · exact ha_bdd ( φ k );
-          · have h_second_sum_final : ∀ N : Finset ((Fin n) → ℤ), ∑ m ∈ N, weight n t m * ‖a_lim
-              m‖ ^ 2 ≤ 1 := by
-              intro N
-              have h_second_sum_final : ∀ k, ∑ m ∈ N, weight n t m * ‖a (φ k) m‖ ^ 2 ≤ 1 := by
-                intro k;
-                exact le_trans ( Summable.sum_le_tsum _ ( fun _ _ => mul_nonneg ( weight_nonneg
-                    _ _ ) ( sq_nonneg _ ) ) ( ha_mem _ ) ) ( ha_bdd _ );
-              exact le_of_tendsto_of_tendsto' ( tendsto_finsetSum _ fun m _ =>
-                  Filter.Tendsto.mul ( tendsto_const_nhds ) ( Filter.Tendsto.pow (
-                  Filter.Tendsto.norm ( ha_lim m ) ) 2 ) ) tendsto_const_nhds h_second_sum_final;
-            contrapose! h_second_sum_final;
-            have hsum : Summable (fun m => weight n t m * ‖a_lim m‖ ^ 2) := ha_lim_mem
-            exact (hsum.hasSum.eventually (lt_mem_nhds h_second_sum_final)).exists
+          exact ⟨ha_bdd (φ k), ha_lim_bdd⟩
         convert add_le_add h_second_sum_final.1 h_second_sum_final.2 using 1
         · rw [ ← Summable.tsum_add ]
           · congr; ext m; ring
