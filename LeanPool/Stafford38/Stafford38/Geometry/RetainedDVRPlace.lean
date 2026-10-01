@@ -187,7 +187,7 @@ theorem exists_retainedDVRPlace
       (RingHom.quotientKerEquivOfSurjective
         (f := residue A) residue_surjective)
   let targetResidue : (C ⧸ Q) ≃+* ResidueField RQ :=
-    (IsLocalization.AtPrime.equivQuotMaximalIdeal Q RQ).trans
+    (IsLocalization.AtPrime.equivQuotMaximalIdeal Q RQ).toRingEquiv.trans
       ((Ideal.quotEquivOfEq (@IsLocalRing.ker_residue RQ _ _).symm).trans
         (RingHom.quotientKerEquivOfSurjective
           (f := residue RQ) residue_surjective))

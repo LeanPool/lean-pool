@@ -280,12 +280,22 @@ theorem targetEquiv_intertwines_rightMul (n N : ℕ) (d : PresentedWeyl k (n + 1
     targetTotal0LinearEquivOrderAssociatedGraded k n N d (P.targetTotalMap 0 z) =
       (principalComponentOnPiece k (@orderWeight (n + 1)) e a : SymbolRing k (n + 1)) •
         targetTotal0LinearEquivOrderAssociatedGraded k n N d z := by
+  have hzero :
+      targetTotal0LinearEquivOrderAssociatedGraded k n N d
+          (P.targetTotalMap 0 (0 : (CanonicalComplex k n N d).TargetTotal 0)) =
+        (principalComponentOnPiece k (@orderWeight (n + 1)) e a : SymbolRing k (n + 1)) •
+          targetTotal0LinearEquivOrderAssociatedGraded k n N d 0 := by
+    rw [(P.targetTotalMap 0).map_zero,
+      (targetTotal0LinearEquivOrderAssociatedGraded k n N d).map_zero,
+      smul_zero]
   induction z using DirectSum.induction_on with
-  | zero => simp
+  | zero => exact hzero
   | of p y =>
     by_cases hp : 0 < p
     · have := zeroPage_target_subsingleton_of_pos k n N p d hp
-      simp [Subsingleton.elim y 0]
+      rw [Subsingleton.elim y 0,
+        (DirectSum.of ((CanonicalComplex k n N d).TargetPage 0) p).map_zero]
+      exact hzero
     · let m := (-p).toNat
       have hm : p = -(m : ℤ) := by dsimp [m]; omega
       obtain ⟨z, rfl⟩ := targetRepresentative_surjective k n N d p m hm y
@@ -361,12 +371,24 @@ theorem totalDrop_zero_intertwines_coordinate (n N : ℕ) (d : PresentedWeyl k (
         ((CanonicalComplex k n N d).totalDrop 0 z) =
       (MvPolynomial.X (.inl (0 : Fin (n + 1))) : SymbolRing k (n + 1)) •
         sourceTotal0LinearEquivOrderAssociatedGraded k n N d z := by
+  have hzero :
+      targetTotal0LinearEquivOrderAssociatedGraded k n N d
+          ((CanonicalComplex k n N d).totalDrop 0
+            (0 : (CanonicalComplex k n N d).SourceTotal 0)) =
+        (MvPolynomial.X (.inl (0 : Fin (n + 1))) : SymbolRing k (n + 1)) •
+          sourceTotal0LinearEquivOrderAssociatedGraded k n N d 0 := by
+    rw [((CanonicalComplex k n N d).totalDrop 0).map_zero,
+      (targetTotal0LinearEquivOrderAssociatedGraded k n N d).map_zero,
+      (sourceTotal0LinearEquivOrderAssociatedGraded k n N d).map_zero,
+      smul_zero]
   induction z using DirectSum.induction_on with
-  | zero => simp
+  | zero => exact hzero
   | of p y =>
     by_cases hp : 0 < p
     · have := zeroPage_source_subsingleton_of_pos k n N p d hp
-      simp [Subsingleton.elim y 0]
+      rw [Subsingleton.elim y 0,
+        (DirectSum.of ((CanonicalComplex k n N d).SourcePage 0) p).map_zero]
+      exact hzero
     · let m := (-p).toNat
       have hm : p = -(m : ℤ) := by dsimp [m]; omega
       obtain ⟨z, rfl⟩ := sourceRepresentative_surjective k n N d p m hm y

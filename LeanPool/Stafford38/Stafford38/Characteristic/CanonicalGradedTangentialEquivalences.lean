@@ -139,7 +139,8 @@ def zeroDropKernelEquiv :
             change oldCoordinateMap (k := k) n (Graded k n N d)
               (sourceGradedEquiv k n N d z.val) = 0
             rw [← gradedEquiv_drop]
-            simp only [LinearMap.mem_ker.mp z.property, map_zero])))
+            rw [LinearMap.mem_ker.mp z.property,
+              (targetGradedEquiv k n N d).map_zero])))
     (by
       constructor
       · intro a b hab
@@ -150,7 +151,8 @@ def zeroDropKernelEquiv :
           Subtype.ext ((sourceGradedEquiv k n N d).apply_symm_apply z)⟩
         apply LinearMap.mem_ker.mpr
         apply (targetGradedEquiv k n N d).injective
-        rw [gradedEquiv_drop, LinearEquiv.apply_symm_apply, map_zero]
+        rw [gradedEquiv_drop, LinearEquiv.apply_symm_apply,
+          (targetGradedEquiv k n N d).map_zero]
         exact LinearMap.mem_ker.mp z.property)
 
 theorem targetGradedEquiv_range :
