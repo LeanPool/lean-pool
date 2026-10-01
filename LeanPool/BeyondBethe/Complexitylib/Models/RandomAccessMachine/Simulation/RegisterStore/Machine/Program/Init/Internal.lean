@@ -1805,7 +1805,7 @@ private theorem initialAbiCleanup_hoareTime
   have htargetsContent : ∀ i, i ∈ initialCleanupTargets tapes →
       (W₅ i).HasBinaryContent (initialCleanupBits tapes length i) := by
     intro i hi
-    simp [initialCleanupTargets] at hi
+    simp only [initialCleanupTargets, List.mem_cons, List.not_mem_nil, or_false] at hi
     rcases hi with rfl | rfl
     · rw [hW₅Lhs]
       simpa [initialCleanupBits] using! hready.address.2.hasBinaryContent
@@ -1815,7 +1815,7 @@ private theorem initialAbiCleanup_hoareTime
   have htargetsStart : ∀ i, i ∈ initialCleanupTargets tapes →
       (W₅ i).cells 0 = Γ.start := by
     intro i hi
-    simp [initialCleanupTargets] at hi
+    simp only [initialCleanupTargets, List.mem_cons, List.not_mem_nil, or_false] at hi
     rcases hi with rfl | rfl
     · rw [hW₅Lhs]
       exact hready.address.1
@@ -1824,7 +1824,7 @@ private theorem initialAbiCleanup_hoareTime
   have htargetsHead : ∀ i, i ∈ initialCleanupTargets tapes →
       (W₅ i).head ≤ 1 := by
     intro i hi
-    simp [initialCleanupTargets] at hi
+    simp only [initialCleanupTargets, List.mem_cons, List.not_mem_nil, or_false] at hi
     rcases hi with rfl | rfl
     · rw [hW₅Lhs, hready.address.2.1]
     · rw [hW₅Rhs, hready.value.2.1]

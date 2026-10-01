@@ -57,7 +57,7 @@ private theorem setup_measured (bits : List Bool) :
   have hpreserve : ∀ op, op ∈ setupOps → ∀ store,
       StoreBound bits.length store → StoreBound bits.length (op.exec store) := by
     intro op hop store hstore
-    simp [setupOps] at hop
+    simp only [setupOps, List.mem_cons, List.not_mem_nil, or_false] at hop
     rcases hop with rfl | rfl | rfl | rfl | rfl
     · apply hstore.execBasic (.imm verdictReg 0) <;> simp [verdictReg, inputBase]
     · apply hstore.execBasic (.imm valueReg 0) <;> simp [valueReg, inputBase]

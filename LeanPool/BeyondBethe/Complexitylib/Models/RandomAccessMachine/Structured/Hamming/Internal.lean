@@ -362,7 +362,7 @@ private theorem setup_measured (bits : List Bool) :
       StoreBound bits.length current →
       StoreBound bits.length (op.exec current) := by
     intro op hop current hcurrent
-    simp [setupOps] at hop
+    simp only [setupOps, List.mem_cons, List.not_mem_nil, or_false] at hop
     rcases hop with rfl | rfl | rfl
     · apply hcurrent.execBasic (.imm countReg 0) <;> simp [countReg]
     · apply hcurrent.execBasic (.imm pointerReg inputBase)

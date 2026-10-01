@@ -218,7 +218,7 @@ theorem marshalConstants_measured_internal (tm : TM n) (x : List Bool) :
         (registerBound n (marshalBound n x.length + 1))
         (marshalBaseBound n x.length) (op.exec store) := by
     intro op hop store henvelope
-    simp [marshalConstants] at hop
+    simp only [marshalConstants, List.mem_cons, List.not_mem_nil, or_false] at hop
     rcases hop with rfl | rfl | rfl | rfl
     · apply henvelope.execBasic
       · exact lt_trans (scratch_range_internal n).1.2

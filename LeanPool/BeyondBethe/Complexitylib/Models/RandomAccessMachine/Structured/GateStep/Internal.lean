@@ -67,7 +67,7 @@ private theorem setup_measured (gate : CircuitCode.RawGate) (wires : List Bool) 
   have hpreserve : ∀ op, op ∈ UnaryDecode.setupOps → ∀ store,
       CursorEnvelope gate wires store → CursorEnvelope gate wires (op.exec store) := by
     intro op hop store hstore
-    simp [UnaryDecode.setupOps] at hop
+    simp only [UnaryDecode.setupOps, List.mem_cons, List.not_mem_nil, or_false] at hop
     rcases hop with rfl | rfl | rfl | rfl | rfl
     · apply hstore.execBasic (.imm UnaryDecode.verdictReg 0) <;>
         simp [cursorBound, inputBits, UnaryDecode.verdictReg,
