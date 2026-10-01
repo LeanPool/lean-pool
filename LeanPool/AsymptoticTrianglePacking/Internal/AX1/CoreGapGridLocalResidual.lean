@@ -216,6 +216,7 @@ variable {V : Type} [Fintype V] [DecidableEq V]
 
 /-- The support size `|A| + |B| + |C|` of a sub-triple: the localised replacement for `|V|` in the
 exceptional-edge clause of a design. -/
+@[expose]
 noncomputable def designSupport (A B C : Finset V) : ℝ := (#A : ℝ) + (#B : ℝ) + (#C : ℝ)
 
 /-- **A local sub-triple design.**  The shape of `Nibble.AX1.IsSubTripleShape` together with the
