@@ -27,7 +27,7 @@ public import Mathlib.Topology.Instances.ZMultiples
   the circle by a closed arc and its complementary open arc.
 -/
 
-@[expose] public section
+public section
 
 namespace OneMfld
 

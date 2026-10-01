@@ -21,7 +21,7 @@ public import Mathlib.Tactic.Ring
 
 open Finset
 
-@[expose] public section
+public section
 
 namespace Nibble.AX1.BoxCount
 
@@ -339,7 +339,7 @@ end
 
 open Finset
 
-@[expose] public section
+public section
 
 namespace Nibble.AX1
 
@@ -575,7 +575,7 @@ end
 
 /-! # Box placement hypergraph -/
 
-@[expose] public section
+public section
 
 open Finset
 
@@ -1282,7 +1282,7 @@ end
 
 /-! # Weighted nibble for box placement -/
 
-@[expose] public section
+public section
 
 open Finset
 
@@ -1663,7 +1663,7 @@ end
 
 /-! # Unconditional AX1 -/
 
-@[expose] public section
+public section
 
 namespace Nibble.AX1
 
@@ -1693,7 +1693,7 @@ The public statement records the finite near-regular hypergraph rounding interfa
 the nibble method. The underlying finite definitions are kept in the internal library.
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.AsymptoticTrianglePacking
 
@@ -1714,7 +1714,7 @@ The full development remains internal so that the public API is limited to stabl
 statements.
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.AsymptoticTrianglePacking
 
@@ -1733,7 +1733,7 @@ end
 Public entry point for the finite, ceiling-carrying near-regular hypergraph nibble theorem.
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.AsymptoticTrianglePacking
 

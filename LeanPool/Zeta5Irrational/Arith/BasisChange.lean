@@ -19,7 +19,7 @@ import Mathlib.Tactic.Ring.Basic
   `det [μ_X(D_N⁶ E_a E_b / D_K)] = det(C)² Δ_K` where `C` is the coefficient matrix.
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 
@@ -74,7 +74,7 @@ lemma μX_sum {ι : Type*} (K : ℕ) (s : Finset ι) (f : ι → ℚ[X]) :
   | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, μX_add, ih]
 
 /-- The coefficient matrix of a family of polynomials. -/
-noncomputable def coeffMat {h : ℕ} (E : Fin h → ℚ[X]) : Matrix (Fin h) (Fin h) ℚ :=
+@[expose] noncomputable def coeffMat {h : ℕ} (E : Fin h → ℚ[X]) : Matrix (Fin h) (Fin h) ℚ :=
   Matrix.of fun a k => (E a).coeff k
 
 lemma sum_coeffMat {h : ℕ} (E : Fin h → ℚ[X]) (hE : ∀ a, (E a).natDegree < h) (a : Fin h) :

@@ -14,7 +14,7 @@ public import Mathlib.Topology.Order.IntermediateValue
 Classification of connected open subsets of the nonnegative real numbers.
 -/
 
-@[expose] public section
+public section
 
 namespace OneMfld
 

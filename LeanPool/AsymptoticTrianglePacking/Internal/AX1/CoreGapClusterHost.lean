@@ -36,7 +36,7 @@ public import Mathlib.Algebra.Order.Ring.Star
 
 /-! # CoreGapBlowUp -/
 
-@[expose] public section
+public section
 
 open Finset SimpleGraph Hypergraph Nibble.YusterE
 
@@ -716,7 +716,7 @@ end
 
 /-! # YusterBridgeFrac -/
 
-@[expose] public section
+public section
 
 open Finset SimpleGraph Hypergraph
 
@@ -976,7 +976,7 @@ end
 
 /-! # CoreGapPackingSplit -/
 
-@[expose] public section
+public section
 
 open Finset SimpleGraph Hypergraph Nibble.YusterE
 
@@ -1118,7 +1118,7 @@ end
 
 /-! # CoreGapClusterHost -/
 
-@[expose] public section
+public section
 
 open Finset SimpleGraph Hypergraph Nibble.YusterE
 

@@ -49,7 +49,7 @@ public import Mathlib.Tactic.NormNum
 
 /-! # CellBoxAllocation -/
 
-@[expose] public section
+public section
 
 open Finset
 
@@ -119,7 +119,7 @@ end
 
 /-! # BoxAllocationSpec -/
 
-@[expose] public section
+public section
 
 open Finset
 
