@@ -5,7 +5,6 @@ Authors: Nima Anari
 -/
 module
 
-
 public import LeanPool.BeyondBethe.BeyondBethe.Permanent
 public import Mathlib.Algebra.Order.Ring.Pow
 public import Mathlib.Analysis.Complex.Exponential

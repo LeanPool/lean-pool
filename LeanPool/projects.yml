@@ -1,4 +1,70 @@
 projects:
+  - slug: parallel-postulate
+    title: Independence of Playfair's axiom via Euclidean and Klein models
+    summary: >-
+      Constructs Euclidean and Klein models of a synthetic Hilbert plane,
+      proving that Playfair's axiom is independent of incidence, Pasch order,
+      and congruence axioms, even with Archimedes and Dedekind continuity.
+      Develops reusable coordinate geometry over ordered fields, projective
+      motions, Klein angles and metric, smooth-path length and distance,
+      congruence constructions, and a coordinate curvature calculation.
+      Dedekind continuity replaces Hilbert's maximal completeness axiom;
+      their equivalence is not formalized. Curvature uses Brioschi's formula,
+      and distance uses C1 paths; no identification with Mathlib's Riemannian
+      distance or connection curvature is asserted.
+    branch: foundations of geometry
+    entry_module: LeanPool.ParallelPostulate
+    authors:
+      - Richard Sutton
+    source:
+      title: ParallelPostulate formalization by Richard Sutton
+      url: https://github.com/Richiesutie/ParallelPostulate/tree/8ee502804263194ae40babeca9773127f1e0a085
+      github_repo: Richiesutie/ParallelPostulate
+      commit: 8ee502804263194ae40babeca9773127f1e0a085
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - ParallelPostulate.Hilbert.playfair_independent_continuous
+    main_results:
+      - declaration: ParallelPostulate.Hilbert.playfair_independent_continuous
+        informal: >-
+          There exists a Hilbert plane satisfying Archimedes and Dedekind
+          continuity and Playfair's axiom, and there exists another satisfying
+          the same continuity axioms and the negation of Playfair's axiom.
+          The models use real coordinate planes with bounds zero and minus one.
+        source_ref: >-
+          Upstream Hilbert/Independence.lean. First publicly announced
+          2026-09-30 01:08:53 UTC at
+          https://leanprover.zulipchat.com/#narrow/channel/583339-AI-authored-projects/topic/Independence.20Parallel.20Postulate/near/627942879.
+          The author's follow-up discloses mostly AI-written proofs.
+          Pasch order and Dedekind continuity are the stated variants;
+          equivalence to plane separation and maximal completeness is not proved.
+      - declaration: ParallelPostulate.HyperbolicPlane.hyperbolic_parallels
+        informal: >-
+          Over any linearly ordered field, for every negative bound and every
+          line in the bounded coordinate plane, infinitely many distinct lines
+          pass through any point of the plane outside that line without meeting it.
+      - declaration: ParallelPostulate.HyperbolicPlane.kleinDist_eq_arsinh
+        informal: >-
+          For every negative real bound and every pair of points in its plane,
+          the infimum of C1-path lengths in Klein's coordinate metric equals
+          arsinh of the square root of minus the bound times apart, divided by
+          the square root of minus the bound.
+      - declaration: ParallelPostulate.HyperbolicPlane.kleinMetric_curvature
+        informal: >-
+          For every real bound, Brioschi's coordinate curvature formula applied
+          to the three coefficients of Klein's metric equals that bound at
+          every point of its coordinate plane.
+    tags:
+      - synthetic-geometry
+      - hyperbolic-geometry
+      - parallel-postulate
+      - klein-model
+    msc:
+      - 51F15
+      - 51M10
+      - 53A35
   - slug: moving-sofa
     title: Optimality of Gerver's sofa
     summary: >-
@@ -10337,11 +10403,12 @@ projects:
     - 68V20
     provenance: AI
   - slug: asymptotic-triangle-packing
-    title: Finite near-regular hypergraph rounding
+    title: Finite hypergraph rounding and the asymptotic triangle-packing gap
     summary: >-
       Formalizes a finite ceiling-carrying nibble theorem for uniform hypergraphs that are
-      near-regular outside a small exceptional set and have suitably bounded codegrees. The
-      result is a reusable rounding component for extremal-combinatorial applications.
+      near-regular outside a small exceptional set and have suitably bounded codegrees, and
+      derives the uniform subquadratic gap between fractional and integral triangle packing in
+      finite graphs, together with its fractional-cover formulation.
     branch: hypergraph matchings and extremal combinatorics
     entry_module: LeanPool.AsymptoticTrianglePacking
     authors:
@@ -10359,7 +10426,7 @@ projects:
     status: verified
     provenance: mix
     main_declarations:
-      - LeanPool.AsymptoticTrianglePacking.nearRegularNibbleTheorem
+      - LeanPool.AsymptoticTrianglePacking.trianglePackingGap
     main_results:
       - declaration: LeanPool.AsymptoticTrianglePacking.nearRegularNibbleTheorem
         informal: >-
@@ -10368,6 +10435,18 @@ projects:
           set, and a global degree ceiling admit a matching covering the prescribed fraction of
           their vertices.
         source_ref: Finite near-regular hypergraph nibble theorem used in the Paper III development.
+      - declaration: LeanPool.AsymptoticTrianglePacking.trianglePackingGap
+        informal: >-
+          For every positive error tolerance, all sufficiently large finite graphs have
+          fractional triangle-packing optimum at most their integral triangle-packing optimum
+          plus the error tolerance times the square of the number of vertices.
+        source_ref: Paper III AX1, fractional-integral triangle-packing gap.
+      - declaration: LeanPool.AsymptoticTrianglePacking.triangleCoverPackingGap
+        informal: >-
+          For every positive error tolerance, all sufficiently large finite graphs have
+          fractional triangle-cover optimum at most their integral triangle-packing optimum
+          plus the error tolerance times the square of the number of vertices.
+        source_ref: Paper III AX1, cover-side formulation.
     tags:
       - hypergraph-matching
       - nibble-method
@@ -11732,6 +11811,60 @@ projects:
     msc:
     - 46B03
     - 47A53
+  - slug: quantum-query-foundations
+    title: Adversary bounds and the polynomial method for quantum queries
+    summary: Develops finite quantum query algorithms, real adversary primal and dual programs, strong
+      duality, exact Boolean block composition, explicit constant-factor bounded-error query characterizations,
+      and degree bounds for output-probability polynomials. Query models include idle and blank sectors;
+      bounds count queries, not gate complexity or running time. Uniform algorithm extraction assumes
+      a supplied dual certificate.
+    branch: quantum query complexity
+    entry_module: LeanPool.QuantumQuery
+    authors:
+    - Troy Lee
+    source:
+      arxiv: 1011.3020v2
+      url: https://github.com/troyjlee/quantum-query-complexity/tree/517ba85eb211232771429804d8583e3f52b9d541
+      github_repo: troyjlee/quantum-query-complexity
+      commit: 517ba85eb211232771429804d8583e3f52b9d541
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - QuantumQueryComplexity.boundedErrorQQuery_characterized_by_advPM
+    main_results:
+    - declaration: QuantumQueryComplexity.advDual_eq_advPM
+      informal: For every total Boolean function on a finite Boolean input cube, the all-pairs real
+        adversary dual infimum equals the real symmetric primal supremum.
+    - declaration: QuantumQueryComplexity.advPM_composeFun_eq
+      informal: The negative-weight adversary value of total Boolean functions composed on disjoint
+        blocks equals the product of their adversary values, including constant functions and empty
+        index types.
+    - declaration: QuantumQueryComplexity.boundedErrorQQuery_characterized_by_advPM
+      informal: For a total Boolean function at error one third, quantum value-query complexity lies
+        between ADV±/36 and 2^14 ADV±. The value oracle swaps a blank answer with the queried letter
+        and includes an idle query index.
+    - declaration: QuantumQueryComplexity.xorQQuery_characterized_by_advPM
+      informal: For the Boolean XOR oracle with idle and blank sectors, query complexity at error one
+        third lies between ADV±/72 and 2^15 ADV±.
+    - declaration: QuantumQueryComplexity.qQueryOn_third_le_of_hasDualOn_uniform
+      informal: A supplied all-pairs real dual certificate of nonnegative cost c gives a finite quantum
+        algorithm using at most 8192(1+c) value queries at error one third, for any finite promise domain
+        and nonempty decidable output type.
+    - declaration: QuantumQueryComplexity.QAlg.exists_probability_polynomial
+      informal: Each output probability of a q-query value-oracle algorithm on Boolean inputs agrees
+        on the Boolean cube with a real polynomial of total degree at most 2q.
+    - declaration: QuantumQueryComplexity.exists_xor_probability_polynomial
+      informal: Each output probability of a q-query Boolean XOR algorithm agrees on the Boolean cube
+        with a real polynomial of total degree at most 2q.
+    tags:
+    - quantum-computing
+    - query-complexity
+    - adversary-method
+    - polynomial-method
+    msc:
+    - 68Q12
+    - 81P68
   - title: Beyond the Bethe approximation of the permanent
     summary: Constructs a deterministic polynomial-time approximation algorithm for the permanent of
       every nonnegative rational matrix, with exponential base strictly smaller than the square root

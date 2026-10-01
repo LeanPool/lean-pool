@@ -9,7 +9,6 @@ public import Mathlib.MeasureTheory.Function.Holder
 public import Mathlib.MeasureTheory.Measure.LogLikelihoodRatio
 public import Mathlib.Probability.Distributions.Gaussian.Fernique
 public import Mathlib.Probability.Moments.CovarianceBilinDual
-public import Mathlib.Tactic.Recall
 
 /-!
 # The Cameron--Martin space of a Gaussian measure

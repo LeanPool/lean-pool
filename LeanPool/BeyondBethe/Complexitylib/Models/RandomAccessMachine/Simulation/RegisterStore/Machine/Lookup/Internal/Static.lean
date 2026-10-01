@@ -12,7 +12,6 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.TuringMachine.Subroutine
 # Fixed-address sparse-register lookup -- proof internals
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -24,15 +23,6 @@ namespace RegisterStore
 namespace Machine
 
 variable {n : ℕ}
-
-private theorem phaseTransition_of_parked
-    {inp out : Tape} {work : Fin n → Tape}
-    (hinput : TM.Parked inp) (hwork : ∀ i, TM.Parked (work i))
-    (houtput : TM.Parked out) :
-    TM.transitionInput inp = inp ∧
-      (fun i => TM.transitionTape (work i)) = work ∧
-      TM.transitionTape out = out :=
-  TM.phaseTransition_of_parked hinput hwork houtput
 
 private theorem staticAddress_parked (address : ℕ) :
     TM.Parked
@@ -349,7 +339,7 @@ theorem entryLookupStatic_hoareTime_internal
     (TM.resetBinaryWorkTM tapes.querySource) hloaded
     (by
       rintro inp work out ⟨hinp, hlookup, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using hinput) hlookup.parked
         (by simpa [hout] using houtput)
@@ -363,7 +353,7 @@ theorem entryLookupStatic_hoareTime_internal
     (by
       rintro inp work out ⟨hinp, hwork, hout⟩
       subst work
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := loadedInitial) (out := out)
         (by simpa [hinp] using hinput) hloadedReady.scanner.parked
         (by simpa [hout] using houtput)

@@ -46,7 +46,7 @@ theorem exists_targetWitness_of_useful {m r : Nat}
     change Module.finrank F₂ ↑I₁ - Module.finrank F₂ ↑(affine m) =
       (Module.finrank F₂ ↑I₀ - Module.finrank F₂ ↑(affine m)) + 1 at huse
     omega
-  rw [SetLike.not_le_iff_exists] at hnot
+  rw [IsConcreteLE.not_le_iff_exists] at hnot
   rcases hnot with ⟨t, ht₁, ht₀⟩
   refine ⟨t, ht₁.2, ?_, ht₁.1⟩
   intro htold

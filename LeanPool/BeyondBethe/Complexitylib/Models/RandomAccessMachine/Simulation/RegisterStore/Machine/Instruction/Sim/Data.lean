@@ -12,7 +12,6 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.RandomAccessMachine.Simu
 # Uniform next-store buffering for data instructions
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -29,10 +28,6 @@ private theorem hasBinaryNat_parked {t : Tape} {value : ℕ}
     (h : t.HasBinaryNat value) : TM.Parked t := by
   refine ⟨by rw [h.2.1], ?_⟩
   exact Tape.HasBinaryContent.cells_ne_start h.2.2
-
-private theorem hasBinaryPrefix_parked {t : Tape} {bits : List Bool}
-    (h : t.HasBinaryPrefix bits) : TM.Parked t :=
-  TM.hasBinaryPrefix_parked h
 
 /-- Restrict the lifted clean lookup ABI to the original data-tape family. -/
 theorem instructionExecutionReady_baseLookup_internal
@@ -209,7 +204,7 @@ theorem finishBufferedDataTM_hoareTime_frame_internal
       (dataTime + 1 + TM.binarySuccTime pcValue) := by
   let out₀ := (Tape.init []).move Dir3.right
   have hout : TM.Parked out₀ :=
-    hasBinaryPrefix_parked Tape.init_nil_move_right_hasBinaryPrefix_nil
+    TM.hasBinaryPrefix_parked Tape.init_nil_move_right_hasBinaryPrefix_nil
   have hsucc : (TM.binarySuccTM tapes.liftedPC).HoareTime
       (fun inp work out =>
         inp = inp₀ ∧
@@ -461,7 +456,7 @@ theorem retargetBufferedDataKernel_hoareTime_frame_internal
       exact hready.control.pc
     have hparked : ∀ i, TM.Parked (work i) := by
       intro i
-      exact Fin.lastCases (hasBinaryPrefix_parked hbuffer)
+      exact Fin.lastCases (TM.hasBinaryPrefix_parked hbuffer)
         (fun j => hparkedBase j) i
     exact ⟨hinp, hbuffer, hpc, hcount, hsourceContent, hcleanup,
       hremaining, by
@@ -639,7 +634,7 @@ theorem executeInstructionTM_imm_hoareTime_frame
         exact houtcome.resultCount
       have hparked : ∀ i, TM.Parked (work i) := by
         intro i
-        exact Fin.lastCases (hasBinaryPrefix_parked hbuffer')
+        exact Fin.lastCases (TM.hasBinaryPrefix_parked hbuffer')
           (fun j => houtcome.ready.parked j) i
       have hsourceContent :
           (work tapes.liftedSource).HasBinaryContent

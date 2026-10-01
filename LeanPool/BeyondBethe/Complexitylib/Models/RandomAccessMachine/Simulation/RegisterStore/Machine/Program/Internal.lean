@@ -13,7 +13,6 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.TuringMachine.Combinator
 # Sparse RAM program controller -- proof internals
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -632,15 +631,6 @@ theorem instructionHaltOutput_eq_blank_of_ne_halt_internal
     simp_all [instructionHaltOutput, instructionHaltVerdict, TM.idleDir,
       Tape.writeAndMove, Tape.move, Tape.write, Tape.read, Tape.init]
 
-private theorem phaseTransition_of_parked
-    {inp out : Tape} {work : Fin n → Tape}
-    (hinput : TM.Parked inp) (hwork : ∀ i, TM.Parked (work i))
-    (houtput : TM.Parked out) :
-    TM.transitionInput inp = inp ∧
-      (fun i => TM.transitionTape (work i)) = work ∧
-      TM.transitionTape out = out :=
-  TM.phaseTransition_of_parked hinput hwork houtput
-
 /-- The loop's fixed three-step rewind/check tail preserves every tape exactly. -/
 theorem programLoop_rewind_check_internal (tmBody tmTest : TM n)
     (c : Complexity.Cfg n (TM.LoopQ tmBody.Q tmTest.Q))
@@ -850,7 +840,7 @@ private theorem dispatchHaltEmpty_hoareTime_frame
     (instructionHaltVerdictTM (.halt : Instr)) hreset'
     (by
       rintro inp work out ⟨hinp, hworkEq, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput)
         (by simpa [hworkEq] using!
@@ -1000,7 +990,7 @@ theorem dispatchHaltTM_hoareTime_frame_internal
           (dispatchHaltTM tapes program) hpred'
           (by
             rintro inp' work' out' ⟨hinp', hwork', hout'⟩
-            obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+            obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
               (inp := inp') (work := work') (out := out')
               (by simpa [hinp', hinp] using! hinput)
               (by
@@ -1093,7 +1083,7 @@ theorem programHaltTM_hoareTime_frame_internal
     (dispatchHaltTM tapes program) hcopy
     (by
       rintro inp work out ⟨hinp, hworkEq, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput)
         (by simpa [hworkEq, selectorWork, selectorTape] using! hselectorParked)

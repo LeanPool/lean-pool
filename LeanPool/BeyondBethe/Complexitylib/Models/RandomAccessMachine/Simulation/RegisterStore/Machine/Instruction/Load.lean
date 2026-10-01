@@ -13,7 +13,6 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.RandomAccessMachine.Simu
 # Indirect sparse-store load instructions -- proof internals
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -166,19 +165,6 @@ theorem scanner_updateQuery_of_indirect_internal
         ⟨by rw [hnat.2.1], hnat.2.hasBinaryContent.cells_ne_start⟩)
   · simpa only [finalWork, Function.update_of_ne hi] using! hscanner.parked i
 
-private theorem hasBinaryPrefix_parked {t : Tape} {bits : List Bool}
-    (h : t.HasBinaryPrefix bits) : TM.Parked t :=
-  TM.hasBinaryPrefix_parked h
-
-private theorem phaseTransition_of_parked
-    {inp out : Tape} {work : Fin n → Tape}
-    (hinput : TM.Parked inp) (hwork : ∀ i, TM.Parked (work i))
-    (houtput : TM.Parked out) :
-    TM.transitionInput inp = inp ∧
-      (fun i => TM.transitionTape (work i)) = work ∧
-      TM.transitionTape out = out :=
-  TM.phaseTransition_of_parked hinput hwork houtput
-
 /-- Both indirect lookups preserve the source count used by the final store update. -/
 private theorem indirectLoaded_resultCount
     (tapes : BinaryInstructionTapes n) (store : Store) (addressRegister : ℕ)
@@ -220,7 +206,7 @@ theorem indirectLoadInstructionTM_hoareTime_frame_internal
                 (RegisterStore.read store addressRegister))).flatMap
               Entry.encode))
       (indirectLoadInstructionTime tapes store destination addressRegister) := by
-  have houtputParked := hasBinaryPrefix_parked houtput
+  have houtputParked := TM.hasBinaryPrefix_parked houtput
   have haddress := entryLookupStatic_hoareTime_internal tapes.lhsLookup store
     addressRegister initialWork inp₀ out₀ hinitial hinput houtputParked
   have hloaded : (entryLookupLoadedTM tapes.indirectLoadLookup).HoareTime
@@ -371,7 +357,7 @@ theorem indirectLoadInstructionTM_hoareTime_frame_internal
       subst work
       have hparked := (scanner_updateQuery_of_indirect_internal tapes store destination
         loadedWork hloadedResult.scanner).parked
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := Function.update loadedWork
           tapes.update.entry.query
           ((Tape.init (destination.bits.map Γ.ofBool)).move Dir3.right))
@@ -388,7 +374,7 @@ theorem indirectLoadInstructionTM_hoareTime_frame_internal
     (by
       rintro inp work out ⟨hinp, ⟨addressWork, haddressResult,
         hloadedResult⟩, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput) hloadedResult.parked
         (by simpa [hout] using! houtputParked)
@@ -402,7 +388,7 @@ theorem indirectLoadInstructionTM_hoareTime_frame_internal
         (entryUpdateTM tapes.update))) haddress
     (by
       rintro inp work out ⟨hinp, haddressResult, hout⟩
-      obtain ⟨hi, hw, ho⟩ := phaseTransition_of_parked
+      obtain ⟨hi, hw, ho⟩ := TM.phaseTransition_of_parked
         (inp := inp) (work := work) (out := out)
         (by simpa [hinp] using! hinput) haddressResult.parked
         (by simpa [hout] using! houtputParked)

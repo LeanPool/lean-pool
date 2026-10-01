@@ -13,7 +13,6 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.RandomAccessMachine.Simu
 # Positive-tag sparse updates -- proof internals
 -/
 
-
 @[expose] public section
 
 namespace Complexity
@@ -22,10 +21,6 @@ namespace RegisterStore
 namespace Machine
 
 variable {n : ℕ}
-
-private theorem hasBinaryPrefix_parked {t : Tape} {bits : List Bool}
-    (h : t.HasBinaryPrefix bits) : TM.Parked t :=
-  TM.hasBinaryPrefix_parked h
 
 theorem taggedEntryUpdateTM_hoareTime_frame_internal
     (tapes : EntryUpdateTapes n) (overlay : Store) (address value : ℕ)
@@ -50,7 +45,7 @@ theorem taggedEntryUpdateTM_hoareTime_frame_internal
           (emittedBits ++
             (DenseOverlay.write overlay address value).flatMap Entry.encode))
       (taggedEntryUpdateTime tapes overlay address value) := by
-  have houtputParked := hasBinaryPrefix_parked houtput
+  have houtputParked := TM.hasBinaryPrefix_parked houtput
   have hsucc := TM.binarySuccTM_hoareTime_frame tapes.replacement value
     inp₀ initialWork out₀ hreplacement hinput.read_ne_start
     (fun i _ => (hready.parked i).read_ne_start)
