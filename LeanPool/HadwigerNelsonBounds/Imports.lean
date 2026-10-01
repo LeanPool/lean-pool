@@ -1,0 +1,78 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+module  -- shake: keep-all --deprecated_module: ignore
+
+-- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.HadwigerNelsonBounds
+public import LeanPool.HadwigerNelsonBounds.Basic
+public import LeanPool.HadwigerNelsonBounds.IsbellColoring
+public import LeanPool.HadwigerNelsonBounds.LatticeSeparation
+public import LeanPool.HadwigerNelsonBounds.PartsCanonicalTriangle
+public import LeanPool.HadwigerNelsonBounds.PartsCertificate
+public import LeanPool.HadwigerNelsonBounds.PartsCertificateData
+public import LeanPool.HadwigerNelsonBounds.PartsCertificateData0
+public import LeanPool.HadwigerNelsonBounds.PartsCertificateData1
+public import LeanPool.HadwigerNelsonBounds.PartsCertificateData2
+public import LeanPool.HadwigerNelsonBounds.PartsCertificateData3
+public import LeanPool.HadwigerNelsonBounds.PartsCertificateData4
+public import LeanPool.HadwigerNelsonBounds.PartsCertificateData5
+public import LeanPool.HadwigerNelsonBounds.PartsCertificateData6
+public import LeanPool.HadwigerNelsonBounds.PartsCoordinates
+public import LeanPool.HadwigerNelsonBounds.PartsFirstStage
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetCases
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetCertificate
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetData
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetEdgeVerification
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetEdgeVerification0
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetEdgeVerification1
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetEdgeVerification2
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetEdgeVerification3
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetEmbedding
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetEmbeddingCore
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetForcedPair
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardCasesData
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardCasesData0
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardCasesData1
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardCasesData2
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardCasesData3
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardCasesData4
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardCasesData5
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardCasesData6
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardVerification
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardVerification0
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardVerification1
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardVerification2
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardVerification3
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardVerification4
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardVerification5
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardVerification6
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetHardVerification7
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetMiddleData
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetMiddleData0
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetSymmetry
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetSymmetry0
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetSymmetry1
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetSymmetry2
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetSymmetry3
+public import LeanPool.HadwigerNelsonBounds.PartsGadgetVerification
+public import LeanPool.HadwigerNelsonBounds.PartsGeometry
+public import LeanPool.HadwigerNelsonBounds.PartsPermutationData0
+public import LeanPool.HadwigerNelsonBounds.PartsPermutationData1
+public import LeanPool.HadwigerNelsonBounds.PartsPermutationData2
+public import LeanPool.HadwigerNelsonBounds.PartsPermutationData3
+public import LeanPool.HadwigerNelsonBounds.PartsPermutationData4
+public import LeanPool.HadwigerNelsonBounds.PartsPermutationData5
+public import LeanPool.HadwigerNelsonBounds.PartsPermutations
+public import LeanPool.HadwigerNelsonBounds.PartsPlaneGeometry
+public import LeanPool.HadwigerNelsonBounds.PartsRootDecision
+public import LeanPool.HadwigerNelsonBounds.PartsRootDecisionCore
+public import LeanPool.HadwigerNelsonBounds.PartsRootDecisionData0
+public import LeanPool.HadwigerNelsonBounds.PartsRootDecisionData1
+public import LeanPool.HadwigerNelsonBounds.PartsRootDecisionData2
+public import LeanPool.HadwigerNelsonBounds.PartsRootDecisionData3
+public import LeanPool.HadwigerNelsonBounds.PartsSpindle
+public import LeanPool.HadwigerNelsonBounds.Voronoi
+public import LeanPool.HadwigerNelsonBounds.VoronoiQuadratic
