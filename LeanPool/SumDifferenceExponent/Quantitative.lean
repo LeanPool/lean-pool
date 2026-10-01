@@ -52,14 +52,12 @@ theorem quantitativeIndex_two_le : 2 ≤ quantitativeIndex := by
 theorem log_constant_lt_twenty_three :
     Real.log 2 + 2 * Real.log 12 < 23 := by
   have h2 : Real.log 2 < 1 := by
-    have h := Real.log_lt_sub_one_of_pos
+    simpa only [show (2 : ℝ) - 1 = 1 by norm_num] using Real.log_lt_sub_one_of_pos
       (by norm_num : (0 : ℝ) < 2) (by norm_num : (2 : ℝ) ≠ 1)
-    nlinarith
   have h12 : Real.log 12 < 11 := by
-    have h := Real.log_lt_sub_one_of_pos
+    simpa only [show (12 : ℝ) - 1 = 11 by norm_num] using Real.log_lt_sub_one_of_pos
       (by norm_num : (0 : ℝ) < 12) (by norm_num : (12 : ℝ) ≠ 1)
-    nlinarith
-  linarith
+  linarith only [h2, h12]
 
 theorem quantitative_denominator_gt :
     (quantitativePower : ℝ) / 2 <
@@ -77,7 +75,11 @@ theorem quantitative_denominator_gt :
   have hN : (0 : ℝ) < quantitativePower := by
     exact_mod_cast quantitativePower_pos
   have h12 : 0 < Real.log 12 := Real.log_pos (by norm_num)
-  nlinarith
+  calc
+    (quantitativePower : ℝ) / 2 = quantitativePower * (1 / 2 : ℝ) := by
+      rw [mul_one_div]
+    _ < quantitativePower * Real.log 2 := mul_lt_mul_of_pos_left h2 hN
+    _ < quantitativePower * Real.log 2 + Real.log 12 := lt_add_of_pos_right _ h12
 
 theorem forty_six_div_quantitativePower_lt :
     (46 : ℝ) / quantitativePower < (10 : ℝ) ^ (-999 : ℤ) := by
@@ -108,24 +110,23 @@ theorem exponentLower_quantitative :
   rw [ColumnConstruction.exponentLower_formula (by
     exact lt_of_lt_of_le (by norm_num) quantitativeIndex_two_le)]
   have hden := quantitative_denominator_gt
+  have hN : (0 : ℝ) < quantitativePower := by
+    exact_mod_cast quantitativePower_pos
   have hdenpos :
-      0 < Real.log (quantitativeIndex : ℝ) + Real.log 12 := by
-    have : (0 : ℝ) < quantitativePower := by
-      exact_mod_cast quantitativePower_pos
-    linarith
-  have hnumpos :
-      0 < Real.log 2 + 2 * Real.log 12 := by positivity
+      0 < Real.log (quantitativeIndex : ℝ) + Real.log 12 :=
+    lt_trans (div_pos hN (by norm_num)) hden
   have hfrac :
       (Real.log 2 + 2 * Real.log 12) /
           (Real.log (quantitativeIndex : ℝ) + Real.log 12) <
         (46 : ℝ) / quantitativePower := by
-    apply (div_lt_div_iff₀ hdenpos (by
-      exact_mod_cast quantitativePower_pos :
-        (0 : ℝ) < quantitativePower)).2
-    have hnum := log_constant_lt_twenty_three
-    nlinarith
-  have htiny := forty_six_div_quantitativePower_lt
-  linarith
+    calc
+      _ < 23 / (Real.log (quantitativeIndex : ℝ) + Real.log 12) :=
+        div_lt_div_of_pos_right log_constant_lt_twenty_three hdenpos
+      _ ≤ 23 / ((quantitativePower : ℝ) / 2) :=
+        div_le_div_of_nonneg_left (by norm_num) (div_pos hN (by norm_num)) hden.le
+      _ = (46 : ℝ) / quantitativePower := by
+        rw [div_div_eq_mul_div, show (23 : ℝ) * 2 = 46 by norm_num]
+  exact sub_lt_sub_left (lt_trans hfrac forty_six_div_quantitativePower_lt) 2
 
 theorem quantitative_example :
     2 - (10 : ℝ) ^ (-999 : ℤ) <
