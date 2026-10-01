@@ -85,47 +85,6 @@ theorem topIncidenceBoundary_orientedTopChain_eq_zero
   funext a
   exact actualTopBoundaryCoefficient_eq_zero_prime hp a
 
-/-- The two-term top incidence complex together with its distinguished prime cycle.  This is data,
-not an assumption: both the composite-zero identity and the top-cycle equation are theorems above.
--/
-structure PrimeTopIncidenceData (hp : Nat.Prime p) where
-  /-- The top chain and its identification with the canonical oriented chain. -/
-  topChainData : {chain : TopCellChain p (ZMod p) // chain = orientedTopChain p}
-  boundary_zero : topIncidenceBoundary topChainData.1 = 0
-  boundary_squared : zeroFacetBoundary (topIncidenceBoundary topChainData.1) =
-    (fun _ => (0 : ZMod p))
-
-namespace PrimeTopIncidenceData
-
-variable {hp : Nat.Prime p}
-
-/-- The oriented top chain of the prime incidence certificate. -/
-def topChain (D : PrimeTopIncidenceData hp) : TopCellChain p (ZMod p) :=
-  D.topChainData.1
-
-theorem topChain_eq (D : PrimeTopIncidenceData hp) : D.topChain = orientedTopChain p :=
-  D.topChainData.2
-
-end PrimeTopIncidenceData
-
-/-- Canonical top incidence data produced by the facet--shuffle calculation. -/
-noncomputable def primeTopIncidenceData
-    (hp : Nat.Prime p) : PrimeTopIncidenceData hp where
-  topChainData := ⟨orientedTopChain p, rfl⟩
-  boundary_zero := topIncidenceBoundary_orientedTopChain_eq_zero hp
-  boundary_squared := zeroFacetBoundary_comp_topIncidenceBoundary _
-
-@[simp] theorem primeTopIncidenceData_boundary
-    (hp : Nat.Prime p) :
-    topIncidenceBoundary (primeTopIncidenceData hp).topChain = 0 :=
-  (primeTopIncidenceData hp).boundary_zero
-
-/-- The finite-incidence-cycle interface used by the affine Stokes layer is exactly the nonzero
-part of the two-term top incidence complex. -/
-noncomputable def primeTopIncidenceFiniteCycle
-    (hp : Nat.Prime p) : FiniteIncidenceCycle (ZMod p) :=
-  primeActualFiniteIncidenceCycle hp
-
 end FoxNeuwirth
 
 end NRR

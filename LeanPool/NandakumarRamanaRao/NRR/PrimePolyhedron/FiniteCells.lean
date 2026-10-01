@@ -13,11 +13,10 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel
 
 /-!
-# Finite polyhedral cell data
+# Standard simplex barycentric coordinates
 
-This module records a finite collection of compact cells by continuous barycentric
-parameterizations.  The data are intentionally proof-carrying: later topology uses the
-specified face and relative-interior relations rather than an unverified geometric picture.
+This module defines standard simplex coordinates as nonnegative weights summing to one,
+with their induced topology and relative interior.
 -/
 
 @[expose] public section
@@ -51,92 +50,5 @@ def IsInterior {d : ℕ} (w : StandardSimplex d) : Prop :=
   ∀ i, 0 < w i
 
 end StandardSimplex
-
-/--
-A finite cell structure on a topological space.  Each cell is parameterized by a standard
-simplex of the declared dimension.  The relation `IsFace a b` means that the cell `a` is a
-face of `b`.
--/
-structure FiniteCellStructure (X : Type*) [TopologicalSpace X] where
-  /-- The finite index type of cells in the structure. -/
-  Cell : Type*
-  /-- An enumeration of all cells. -/
-  [cellFintype : Fintype Cell]
-  /-- Decidable equality of cell indices. -/
-  [cellDecidableEq : DecidableEq Cell]
-  /-- The dimension assigned to each cell. -/
-  dim : Cell → ℕ
-  /-- Parametrize each cell by the standard simplex of its assigned dimension. -/
-  param : ∀ c : Cell, StandardSimplex (dim c) → X
-  continuous_param : ∀ c, Continuous (param c)
-  isCompact_range : ∀ c, IsCompact (Set.range (param c))
-  cover : ∀ x : X, ∃ c w, param c w = x
-  /-- The relation expressing that one cell is a face of another. -/
-  IsFace : Cell → Cell → Prop
-  face_refl : ∀ c, IsFace c c
-  face_trans : ∀ {a b c}, IsFace a b → IsFace b c → IsFace a c
-  face_dim_le : ∀ {a b}, IsFace a b → dim a ≤ dim b
-  face_range_subset : ∀ {a b}, IsFace a b → Set.range (param a) ⊆ Set.range (param b)
-  relInterior_disjoint :
-    ∀ {a b}, a ≠ b →
-      Disjoint
-        {x | ∃ w, StandardSimplex.IsInterior w ∧ param a w = x}
-        {x | ∃ w, StandardSimplex.IsInterior w ∧ param b w = x}
-  relInterior_cover :
-    ∀ x : X, ∃ c w, StandardSimplex.IsInterior w ∧ param c w = x
-
-namespace FiniteCellStructure
-
-variable {X : Type*} [TopologicalSpace X]
-
-/-- Carrier of a cell. -/
-def carrier (P : FiniteCellStructure X) (c : P.Cell) : Set X :=
-  Set.range (P.param c)
-
-/-- Relative interior specified by strictly positive barycentric coordinates. -/
-def relInterior (P : FiniteCellStructure X) (c : P.Cell) : Set X :=
-  {x | ∃ w, StandardSimplex.IsInterior w ∧ P.param c w = x}
-
-@[simp] theorem mem_carrier_iff (P : FiniteCellStructure X) (c : P.Cell) (x : X) :
-    x ∈ P.carrier c ↔ ∃ w, P.param c w = x :=
-  Iff.rfl
-
-@[simp] theorem mem_relInterior_iff (P : FiniteCellStructure X) (c : P.Cell) (x : X) :
-    x ∈ P.relInterior c ↔
-      ∃ w, StandardSimplex.IsInterior w ∧ P.param c w = x :=
-  Iff.rfl
-
-theorem relInterior_subset_carrier (P : FiniteCellStructure X) (c : P.Cell) :
-    P.relInterior c ⊆ P.carrier c := by
-  rintro x ⟨w, hw, rfl⟩
-  exact ⟨w, rfl⟩
-
-theorem isCompact_carrier (P : FiniteCellStructure X) (c : P.Cell) :
-    IsCompact (P.carrier c) :=
-  P.isCompact_range c
-
-theorem carrier_cover (P : FiniteCellStructure X) :
-    ⋃ c : P.Cell, P.carrier c = Set.univ := by
-  ext x
-  constructor
-  · intro _
-    trivial
-  · intro _
-    obtain ⟨c, w, rfl⟩ := P.cover x
-    exact Set.mem_iUnion.2 ⟨c, ⟨w, rfl⟩⟩
-
-/-- Cells of a fixed dimension. -/
-def CellsOfDim (P : FiniteCellStructure X) (d : ℕ) :=
-  {c : P.Cell // P.dim c = d}
-
-noncomputable instance (P : FiniteCellStructure X) (d : ℕ) : Fintype (P.CellsOfDim d) := by
-  classical
-  letI : Fintype P.Cell := P.cellFintype
-  exact Fintype.ofFinset (Finset.univ.filter fun c => P.dim c = d) (by
-    intro x
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    rfl)
-
-end FiniteCellStructure
 
 end NRR

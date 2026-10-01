@@ -530,13 +530,57 @@ theorem refinedSidePrismMap_not_upperHorizontal
       simp only [sidePrismMap] at hi
       change (genericStaircaseIntervalPoint (p - 1) h' w).1 = 1 at hi
       exact (ne_of_lt ht.2) hi
-/-- The lower horizontal contribution is the negative of the refined lower endpoint count. -/
-theorem lowerHorizontalContribution_eq_neg_lowerEndpointRefinedCount
-    (hp : Nat.Prime p) (N L : Nat) (a : Assignment hp N L) :
-    lowerHorizontalContribution hp N L a =
-      -lowerEndpointRefinedCount hp N L a := by
+/-! ## Endpoint pairing for an arbitrary affine-facet weight -/
+
+/-- Restrict an arbitrary facet-map weight to the lower horizontal faces. -/
+noncomputable def weightedLowerMapWeight
+    (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p)
+    (tau : Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) : ZMod p := by
   classical
-  rw [lowerHorizontalContribution_eq_occurrence_sum]
+  exact if MapIsLowerHorizontal tau then W tau else 0
+
+/-- Restrict an arbitrary facet-map weight to the upper horizontal faces. -/
+noncomputable def weightedUpperMapWeight
+    (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p)
+    (tau : Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) : ZMod p := by
+  classical
+  exact if MapIsUpperHorizontal tau then W tau else 0
+
+/-- The occurrence sum of an arbitrary facet-map weight. -/
+noncomputable def weightedOccurrencePairing
+    (hp : Nat.Prime p) (N L : Nat)
+    (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p) : ZMod p :=
+  ∑ o : FacetOccurrence hp N L,
+    occurrenceCoefficient hp N L o * W (occurrenceFacetMap hp N L o)
+
+/-- The lower endpoint pairing of an arbitrary facet-map weight. -/
+noncomputable def weightedLowerEndpointPairing
+    (hp : Nat.Prime p) (N L : Nat)
+    (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p) : ZMod p :=
+  ∑ q : TopCell hp N,
+    ((PrimeOrbitCycle.orbitCycle hp).coefficient q.1 * subdivisionSign N q.2) *
+      ∑ eta : Fin L → Equiv.Perm (Fin p),
+        subdivisionSign L eta *
+          W (lowerEndpointMap (endpointSpatialMap hp N L q eta))
+
+/-- The upper endpoint pairing of an arbitrary facet-map weight. -/
+noncomputable def weightedUpperEndpointPairing
+    (hp : Nat.Prime p) (N L : Nat)
+    (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p) : ZMod p :=
+  ∑ q : TopCell hp N,
+    ((PrimeOrbitCycle.orbitCycle hp).coefficient q.1 * subdivisionSign N q.2) *
+      ∑ eta : Fin L → Equiv.Perm (Fin p),
+        subdivisionSign L eta *
+          W (upperEndpointMap (endpointSpatialMap hp N L q eta))
+
+/-- The lower occurrence sum of any weight is its negative lower endpoint pairing. -/
+theorem weightedOccurrencePairing_lower
+    (hp : Nat.Prime p) (N L : Nat)
+    (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p) :
+    weightedOccurrencePairing hp N L (weightedLowerMapWeight W) =
+      -weightedLowerEndpointPairing hp N L W := by
+  classical
+  unfold weightedOccurrencePairing
   rw [Fintype.sum_prod_type]
   simp only [occurrenceCoefficient, prismCoefficient, prismSign,
     Int.cast_mul, Int.cast_prod]
@@ -568,7 +612,7 @@ theorem lowerHorizontalContribution_eq_neg_lowerEndpointRefinedCount
       enter [2, orbit, 2, spatial, 2]
       change ∑ rho, iteratedSign (ZMod (p + 1)) L rho *
         ∑ j, SimplicialChain.faceSign j *
-          lowerHorizontalMapWeight hp N L a
+          weightedLowerMapWeight W
             (iteratedFacetMap p L
               (staircasePrismMap p (RefinedAffineMap.chart hp N orbit) spatial) rho j)
       rw [iterated_weighted_boundary
@@ -590,14 +634,14 @@ theorem lowerHorizontalContribution_eq_neg_lowerEndpointRefinedCount
           ∑ j : Fin (p + 2), SimplicialChain.faceSign j *
             ∑ eta : Fin L → Equiv.Perm (Fin (p + 1)),
               iteratedSign (ZMod (p + 1)) L eta *
-                lowerHorizontalMapWeight hp N L a
+                weightedLowerMapWeight W
                   (iteratedBoundaryMap p L
                     (staircasePrismMap p (RefinedAffineMap.chart hp N orbit) spatial) j eta)) =
         ∑ eta : Fin L → Equiv.Perm (Fin (p + 1)),
           iteratedSign (ZMod (p + 1)) L eta *
             ∑ spatial : Fin (p + 1), ((-1 : ZMod (p + 1)) ^ spatial.1) *
               ∑ j : Fin (p + 2), SimplicialChain.faceSign j *
-                lowerHorizontalMapWeight hp N L a
+                weightedLowerMapWeight W
                   (fun x => staircasePrismMap p
                     (RefinedAffineMap.chart hp N orbit) spatial
                     (cofacePoint p j (affineCompMap p L eta x))) by
@@ -611,26 +655,25 @@ theorem lowerHorizontalContribution_eq_neg_lowerEndpointRefinedCount
       enter [2, orbit, 2]
       enter [2, eta, 2]
       rw [staircase_weighted_boundary
-        (W := fun tau => lowerHorizontalMapWeight hp N L a
+        (W := fun tau => weightedLowerMapWeight W
           (fun x => tau (affineCompMap p L eta x)))]
-    simp only [lowerHorizontalMapWeight,
+    simp only [weightedLowerMapWeight,
       refinedSidePrismMap_not_lowerHorizontal hp N _ _ _ L _, ite_false]
     simp only [MapIsLowerHorizontal,
       lowerEndpointMap, upperEndpointMap]
     simp only [iteratedSign,  permSignCoeff]
     have hlower (sigma : Delta p → Realization (p + 1)) :
-        realizedFacetWeight hp N L a (lowerEndpointMap sigma) =
-          realizedFacetWeight hp N L a (fun x => (sigma x, ⟨0, by constructor <;> norm_num⟩)) := rfl
-    simp [lowerEndpointRefinedCount, endpointSpatialMap_succ, hlower,
-      subdivisionSign]
-    rfl
-/-- The upper horizontal contribution is the refined upper endpoint count. -/
-theorem upperHorizontalContribution_eq_upperEndpointRefinedCount
-    (hp : Nat.Prime p) (N L : Nat) (a : Assignment hp N L) :
-    upperHorizontalContribution hp N L a =
-      upperEndpointRefinedCount hp N L a := by
+        lowerEndpointMap sigma = fun x => (sigma x, 0) := rfl
+    simp [weightedLowerEndpointPairing, endpointSpatialMap_succ, subdivisionSign, hlower]
+
+/-- The upper occurrence sum of any weight is its upper endpoint pairing. -/
+theorem weightedOccurrencePairing_upper
+    (hp : Nat.Prime p) (N L : Nat)
+    (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p) :
+    weightedOccurrencePairing hp N L (weightedUpperMapWeight W) =
+      weightedUpperEndpointPairing hp N L W := by
   classical
-  rw [upperHorizontalContribution_eq_occurrence_sum]
+  unfold weightedOccurrencePairing
   rw [Fintype.sum_prod_type]
   simp only [occurrenceCoefficient, prismCoefficient, prismSign,
     Int.cast_mul, Int.cast_prod]
@@ -662,7 +705,7 @@ theorem upperHorizontalContribution_eq_upperEndpointRefinedCount
       enter [2, orbit, 2, spatial, 2]
       change ∑ rho, iteratedSign (ZMod (p + 1)) L rho *
         ∑ j, SimplicialChain.faceSign j *
-          upperHorizontalMapWeight hp N L a
+          weightedUpperMapWeight W
             (iteratedFacetMap p L
               (staircasePrismMap p (RefinedAffineMap.chart hp N orbit) spatial) rho j)
       rw [iterated_weighted_boundary
@@ -684,14 +727,14 @@ theorem upperHorizontalContribution_eq_upperEndpointRefinedCount
           ∑ j : Fin (p + 2), SimplicialChain.faceSign j *
             ∑ eta : Fin L → Equiv.Perm (Fin (p + 1)),
               iteratedSign (ZMod (p + 1)) L eta *
-                upperHorizontalMapWeight hp N L a
+                weightedUpperMapWeight W
                   (iteratedBoundaryMap p L
                     (staircasePrismMap p (RefinedAffineMap.chart hp N orbit) spatial) j eta)) =
         ∑ eta : Fin L → Equiv.Perm (Fin (p + 1)),
           iteratedSign (ZMod (p + 1)) L eta *
             ∑ spatial : Fin (p + 1), ((-1 : ZMod (p + 1)) ^ spatial.1) *
               ∑ j : Fin (p + 2), SimplicialChain.faceSign j *
-                upperHorizontalMapWeight hp N L a
+                weightedUpperMapWeight W
                   (fun x => staircasePrismMap p
                     (RefinedAffineMap.chart hp N orbit) spatial
                     (cofacePoint p j (affineCompMap p L eta x))) by
@@ -705,19 +748,38 @@ theorem upperHorizontalContribution_eq_upperEndpointRefinedCount
       enter [2, orbit, 2]
       enter [2, eta, 2]
       rw [staircase_weighted_boundary
-        (W := fun tau => upperHorizontalMapWeight hp N L a
+        (W := fun tau => weightedUpperMapWeight W
           (fun x => tau (affineCompMap p L eta x)))]
-    simp only [upperHorizontalMapWeight,
+    simp only [weightedUpperMapWeight,
       refinedSidePrismMap_not_upperHorizontal hp N _ _ _ L _, ite_false]
     simp only [ MapIsUpperHorizontal,
       lowerEndpointMap, upperEndpointMap]
     simp only [iteratedSign,  permSignCoeff]
     have hupper (sigma : Delta p → Realization (p + 1)) :
-        realizedFacetWeight hp N L a (upperEndpointMap sigma) =
-          realizedFacetWeight hp N L a (fun x => (sigma x, ⟨1, by constructor <;> norm_num⟩)) := rfl
-    simp [upperEndpointRefinedCount, endpointSpatialMap_succ, hupper,
-      subdivisionSign]
-    rfl
+        upperEndpointMap sigma = fun x => (sigma x, 1) := rfl
+    simp [weightedUpperEndpointPairing, endpointSpatialMap_succ, subdivisionSign, hupper]
+
+/-- The lower horizontal contribution is the negative of the refined lower endpoint count. -/
+theorem lowerHorizontalContribution_eq_neg_lowerEndpointRefinedCount
+    (hp : Nat.Prime p) (N L : Nat) (a : Assignment hp N L) :
+    lowerHorizontalContribution hp N L a =
+      -lowerEndpointRefinedCount hp N L a := by
+  rw [lowerHorizontalContribution_eq_occurrence_sum]
+  change weightedOccurrencePairing hp N L
+      (weightedLowerMapWeight (realizedFacetWeight hp N L a)) =
+    -weightedLowerEndpointPairing hp N L (realizedFacetWeight hp N L a)
+  exact weightedOccurrencePairing_lower hp N L (realizedFacetWeight hp N L a)
+
+/-- The upper horizontal contribution is the refined upper endpoint count. -/
+theorem upperHorizontalContribution_eq_upperEndpointRefinedCount
+    (hp : Nat.Prime p) (N L : Nat) (a : Assignment hp N L) :
+    upperHorizontalContribution hp N L a =
+      upperEndpointRefinedCount hp N L a := by
+  rw [upperHorizontalContribution_eq_occurrence_sum]
+  change weightedOccurrencePairing hp N L
+      (weightedUpperMapWeight (realizedFacetWeight hp N L a)) =
+    weightedUpperEndpointPairing hp N L (realizedFacetWeight hp N L a)
+  exact weightedOccurrencePairing_upper hp N L (realizedFacetWeight hp N L a)
 
 /-- Horizontal balance identifies the two refined endpoint counts represented by any compatible
 assignment. -/

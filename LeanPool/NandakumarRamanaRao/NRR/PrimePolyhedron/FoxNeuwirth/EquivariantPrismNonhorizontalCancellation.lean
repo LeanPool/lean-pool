@@ -2054,94 +2054,71 @@ theorem spatialSide_scaled_boundary
   apply Finset.sum_congr rfl
   intro r hr
   ring
-/-- The prime-orbit boundary pairing vanishes for each fixed refinement word. -/
-private theorem fixed_refined_side_cancels (N L n : ℕ) (hp : Nat.Prime (n + 1 + 1)) (a :
-  Assignment hp N L)
-  (eta : Fin L → Equiv.Perm (Fin (n + 1 + 1))) (h : Fin (n + 1)) (theta : Fin N → Equiv.Perm
-    (Fin (n + 1))) :
-  ∑ x,
-      ∑ x_1,
-        (PrimeOrbitCycle.orbitCycle hp).coefficient x * iteratedSign (ZMod (n + 1 + 1)) L eta *
-          (-1) ^ h.1 *
-          (SimplicialChain.faceSign x_1 *
+/-- A refined orbit face map is the realization of the corresponding restricted simplex. -/
+theorem iteratedBoundaryMap_eq_orbitFaceRealization
+    (n N : Nat) (hp : Nat.Prime (n + 1 + 1))
+    (theta : Fin N → Equiv.Perm (Fin (n + 1)))
+    (orbit : PrimeOrbitCycle.TopOrbit hp) (j : Fin (n + 1 + 1)) :
+    iteratedBoundaryMap n N
+      (ReferenceAffineOrbitCount.topRepr hp orbit).realizationContinuousMap j theta =
+      fun x => ((PrimeOrbitCycle.topRepresentative hp orbit).restrict
+        (FaceMap.delete j)).realizationPoint
+          (StandardSimplex.ofDelta (affineCompMap n N theta x)) := by
+  funext x
+  apply Realization.ext
+  intro c
+  simp only [Nat.add_one_sub_one, Simplex.realizationPoint_apply]
+  change (∑ i : Fin (n + 1 + 1),
+    if (ReferenceAffineOrbitCount.topRepr hp orbit) i = c then
+      (StandardSimplex.ofDelta
+        (SphereOddDegree.FiniteSimplex.map j.succAbove (affineCompMap n N theta x))) i else 0) = _
+  have hs := Fin.sum_univ_succAbove (fun i : Fin (n + 1 + 1) =>
+    if (ReferenceAffineOrbitCount.topRepr hp orbit) i = c then
+      (StandardSimplex.ofDelta
+        (SphereOddDegree.FiniteSimplex.map j.succAbove (affineCompMap n N theta x))) i else 0) j
+  rw [hs]
+  have hdeleted :
+      (StandardSimplex.ofDelta
+        (SphereOddDegree.FiniteSimplex.map j.succAbove (affineCompMap n N theta x))) j = 0 := by
+    change (cofacePoint n j (affineCompMap n N theta x)) j = 0
+    exact cofacePoint_apply_deleted n j (affineCompMap n N theta x)
+  simp only [hdeleted, ite_self, zero_add]
+  apply Finset.sum_congr rfl
+  intro i hi
+  change (if (ReferenceAffineOrbitCount.topRepr hp orbit) (j.succAbove i) = c then _ else 0) =
+    if (ReferenceAffineOrbitCount.topRepr hp orbit) (j.succAbove i) = c then _ else 0
+  by_cases hic : (ReferenceAffineOrbitCount.topRepr hp orbit) (j.succAbove i) = c
+  · rw [ite_eq_left hic, ite_eq_left hic]
+    change SphereOddDegree.FiniteSimplex.map (S := Real) j.succAbove
+      (affineCompMap n N theta x) (j.succAbove i) =
+        affineCompMap n N theta x i
+    rw [SphereOddDegree.FiniteSimplex.map_coe, FunOnFinite.linearMap_apply_apply]
+    exact Finset.sum_eq_single i (by
+      intro q hq hqi
+      have hsucc : j.succAbove q ≠ j.succAbove i := by
+        intro heq
+        exact hqi (Fin.succAbove_right_injective heq)
+      have hq' : j.succAbove q = j.succAbove i := by simpa using hq
+      exact (hsucc hq').elim) (by simp)
+  · rw [ite_eq_right hic, ite_eq_right hic]
+
+/-- Fixed-refinement prime-orbit boundary cancellation for any invariant face weight. -/
+theorem fixed_refined_orbit_pairing_cancels
+    (N L n : Nat) (hp : Nat.Prime (n + 1 + 1))
+    (W : Simplex (n + 1 + 1) n → ZMod (n + 1 + 1))
+    (hW : ∀ (g : PrimeSymmetry (n + 1 + 1))
+      (f : Simplex (n + 1 + 1) n), W (g • f) = W f)
+    (eta : Fin L → Equiv.Perm (Fin (n + 1 + 1)))
+    (h : Fin (n + 1)) (theta : Fin N → Equiv.Perm (Fin (n + 1))) :
+    (∑ orbit : PrimeOrbitCycle.TopOrbit hp,
+      ∑ j : Fin (n + 1 + 1),
+        (PrimeOrbitCycle.orbitCycle hp).coefficient orbit *
+          iteratedSign (ZMod (n + 1 + 1)) L eta * (-1) ^ h.1 *
+          (SimplicialChain.faceSign j *
             (iteratedSign (ZMod (n + 1 + 1)) N theta *
-              spatialSideWeight hp N L a eta h
-                (iteratedBoundaryMap n N (⇑(ReferenceAffineOrbitCount.topRepr hp
-                  x).realizationContinuousMap) x_1
-                  theta))) =
-    0 := by
-  classical
-  let W : Simplex (n + 1 + 1) n → ZMod (n + 1 + 1) := fun f =>
-    spatialSideWeight hp N L a eta h (fun x =>
-      f.realizationPoint
-        (StandardSimplex.ofDelta (affineCompMap n N theta x)))
-  have hW : ∀ (g : PrimeSymmetry (n + 1 + 1)) (f : Simplex (n + 1 + 1) n),
-      W (g • f) = W f := by
-    intro g f
-    dsimp [W, spatialSideWeight]
-    calc
-      _ = nonhorizontalMapWeight hp N L a
-          (translateFacetMap (n + 1 + 1) g (fun x =>
-            staircasePrismMap n (fun y => f.realizationPoint
-              (StandardSimplex.ofDelta (affineCompMap n N theta y))) h
-              (deltaCast (Nat.sub_add_cancel (Nat.zero_lt_succ n)).symm
-                (affineCompMap (n + 1) L eta x)))) := by
-            congr 1
-            funext x
-            apply Prod.ext
-            · simp only [translateFacetMap, staircasePrismMap]
-              exact realizationPoint_prime_smul_any (n + 1 + 1) g f _
-            · rfl
-      _ = _ := nonhorizontalMapWeight_smul hp N L a g _
+              W ((PrimeOrbitCycle.topRepresentative hp orbit).restrict
+                (FaceMap.delete j))))) = 0 := by
   have hz := orbit_boundary_pairing_eq_zero hp W hW
-  have hmap (orbit : PrimeOrbitCycle.TopOrbit hp) (j : Fin (n + 1 + 1)) :
-      spatialSideWeight hp N L a eta h
-          (iteratedBoundaryMap n N
-            (ReferenceAffineOrbitCount.topRepr hp orbit).realizationContinuousMap
-            j theta) =
-        W ((PrimeOrbitCycle.topRepresentative hp orbit).restrict
-          (FaceMap.delete j)) := by
-    congr 1
-    funext x
-    apply Realization.ext
-    intro c
-    simp? [ iteratedBoundaryMap, ReferenceAffineOrbitCount.topRepr,
-      Simplex.realizationContinuousMap, Simplex.realizationPoint,
-      Simplex.chartWeight, cofacePoint]
-    change (∑ i : Fin (n + 1 + 1),
-      if (ReferenceAffineOrbitCount.topRepr hp orbit) i = c then
-        (StandardSimplex.ofDelta
-          (SphereOddDegree.FiniteSimplex.map j.succAbove (affineCompMap n N theta x))) i else 0) = _
-    have hs := Fin.sum_univ_succAbove (fun i : Fin (n + 1 + 1) =>
-      if (ReferenceAffineOrbitCount.topRepr hp orbit) i = c then
-        (StandardSimplex.ofDelta
-          (SphereOddDegree.FiniteSimplex.map j.succAbove (affineCompMap n N theta x))) i else 0) j
-    rw [hs]
-    have hdeleted :
-        (StandardSimplex.ofDelta
-          (SphereOddDegree.FiniteSimplex.map j.succAbove (affineCompMap n N theta x))) j = 0 := by
-      change (cofacePoint n j (affineCompMap n N theta x)) j = 0
-      exact cofacePoint_apply_deleted n j (affineCompMap n N theta x)
-    simp only [hdeleted, ite_self, zero_add]
-    apply Finset.sum_congr rfl
-    intro i hi
-    change (if (ReferenceAffineOrbitCount.topRepr hp orbit) (j.succAbove i) = c then _ else 0) =
-      if (ReferenceAffineOrbitCount.topRepr hp orbit) (j.succAbove i) = c then _ else 0
-    by_cases hic : (ReferenceAffineOrbitCount.topRepr hp orbit) (j.succAbove i) = c
-    · rw [ite_eq_left hic, ite_eq_left hic]
-      change SphereOddDegree.FiniteSimplex.map (S := Real) j.succAbove
-        (affineCompMap n N theta x) (j.succAbove i) =
-          affineCompMap n N theta x i
-      rw [SphereOddDegree.FiniteSimplex.map_coe, FunOnFinite.linearMap_apply_apply]
-      exact Finset.sum_eq_single i (by
-        intro q hq hqi
-        have hsucc : j.succAbove q ≠ j.succAbove i := by
-          intro heq
-          exact hqi (Fin.succAbove_right_injective heq)
-        have hq' : j.succAbove q = j.succAbove i := by simpa using hq
-        exact (hsucc hq').elim) (by simp)
-    · rw [ite_eq_right hic, ite_eq_right hic]
-  simp_rw [hmap]
   calc
     _ = (iteratedSign (ZMod (n + 1 + 1)) L eta *
           ((-1 : ZMod (n + 1 + 1)) ^ h.1) *
@@ -2201,6 +2178,57 @@ private theorem fixed_refined_side_cancels (N L n : ℕ) (hp : Nat.Prime (n + 1 
               ring
     _ = 0 := by simp only [hz, mul_zero]
 
+
+/-- The prime-orbit boundary pairing vanishes for each fixed refinement word. -/
+private theorem fixed_refined_side_cancels (N L n : ℕ) (hp : Nat.Prime (n + 1 + 1)) (a :
+  Assignment hp N L)
+  (eta : Fin L → Equiv.Perm (Fin (n + 1 + 1))) (h : Fin (n + 1)) (theta : Fin N → Equiv.Perm
+    (Fin (n + 1))) :
+  ∑ x,
+      ∑ x_1,
+        (PrimeOrbitCycle.orbitCycle hp).coefficient x * iteratedSign (ZMod (n + 1 + 1)) L eta *
+          (-1) ^ h.1 *
+          (SimplicialChain.faceSign x_1 *
+            (iteratedSign (ZMod (n + 1 + 1)) N theta *
+              spatialSideWeight hp N L a eta h
+                (iteratedBoundaryMap n N (⇑(ReferenceAffineOrbitCount.topRepr hp
+                  x).realizationContinuousMap) x_1
+                  theta))) =
+    0 := by
+  classical
+  let W : Simplex (n + 1 + 1) n → ZMod (n + 1 + 1) := fun f =>
+    spatialSideWeight hp N L a eta h (fun x =>
+      f.realizationPoint
+        (StandardSimplex.ofDelta (affineCompMap n N theta x)))
+  have hW : ∀ (g : PrimeSymmetry (n + 1 + 1)) (f : Simplex (n + 1 + 1) n),
+      W (g • f) = W f := by
+    intro g f
+    dsimp [W, spatialSideWeight]
+    calc
+      _ = nonhorizontalMapWeight hp N L a
+          (translateFacetMap (n + 1 + 1) g (fun x =>
+            staircasePrismMap n (fun y => f.realizationPoint
+              (StandardSimplex.ofDelta (affineCompMap n N theta y))) h
+              (deltaCast (Nat.sub_add_cancel (Nat.zero_lt_succ n)).symm
+                (affineCompMap (n + 1) L eta x)))) := by
+            congr 1
+            funext x
+            apply Prod.ext
+            · simp only [translateFacetMap, staircasePrismMap]
+              exact realizationPoint_prime_smul_any (n + 1 + 1) g f _
+            · rfl
+      _ = _ := nonhorizontalMapWeight_smul hp N L a g _
+  have hmap (orbit : PrimeOrbitCycle.TopOrbit hp) (j : Fin (n + 1 + 1)) :
+      spatialSideWeight hp N L a eta h
+          (iteratedBoundaryMap n N
+            (ReferenceAffineOrbitCount.topRepr hp orbit).realizationContinuousMap
+            j theta) =
+        W ((PrimeOrbitCycle.topRepresentative hp orbit).restrict
+          (FaceMap.delete j)) := by
+    congr 1
+    exact iteratedBoundaryMap_eq_orbitFaceRealization n N hp theta orbit j
+  simp_rw [hmap]
+  exact fixed_refined_orbit_pairing_cancels N L n hp W hW eta h theta
 /-- The complete nonhorizontal refined-prism contribution vanishes. -/
 theorem nonhorizontalContribution_eq_zero_core
     (hp : Nat.Prime p) (N L : Nat)
