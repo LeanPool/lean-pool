@@ -102,9 +102,9 @@ theorem blankWorkTM_isTransducer_internal (idx : Fin n) :
   cases phase with
   | scanning =>
       simp only [blankWorkTM]
-      split <;> simp [idleDir] <;> split <;> decide
+      split <;> simp only [idleDir, ne_eq] <;> split <;> decide
   | done =>
-      simp [blankWorkTM, allIdle, idleDir]
+      simp only [blankWorkTM, allIdle, idleDir, ne_eq]
       split <;> decide
 
 theorem rewindWorkTM_isTransducer_internal (idx : Fin n) :
@@ -113,12 +113,12 @@ theorem rewindWorkTM_isTransducer_internal (idx : Fin n) :
   cases phase with
   | moveLeft =>
       simp only [rewindWorkTM]
-      split <;> simp [idleDir] <;> split <;> decide
+      split <;> simp only [idleDir, ne_eq] <;> split <;> decide
   | moveRight =>
-      simp [rewindWorkTM, idleDir]
+      simp only [rewindWorkTM, idleDir, ne_eq]
       split <;> decide
   | done =>
-      simp [rewindWorkTM, allIdle, idleDir]
+      simp only [rewindWorkTM, allIdle, idleDir, ne_eq]
       split <;> decide
 
 theorem clearWorkTM_isTransducer_internal (idx : Fin n) :
