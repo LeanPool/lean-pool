@@ -1,0 +1,70 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+module  -- shake: keep-all --deprecated_module: ignore
+
+-- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.PLAcceleratedNesterovLean
+public import LeanPool.PLAcceleratedNesterovLean.Convergence
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.Bootstrap
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.Bootstrap.Main
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.Bootstrap.Step1
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.Bootstrap.Step2
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.Coercivity
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.Coercivity.Core
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.Coercivity.Main
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.Coercivity.Step1
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.Coercivity.Step2
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.ConvergenceHelpers
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.CurvAbsorb
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.CurvAbsorb.Algebraic
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.CurvAbsorb.Assembly
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.GenLocalArgument
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LocalArgument
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LocalGeometry
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LocalGeometry.HessianBound
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LocalGeometry.Main
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LocalGeometry.SegmentEstimate
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LocalGeometry.Step1
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LocalGeometry.Step2
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LyapunovContraction
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LyapunovContraction.AuxVar
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LyapunovContraction.FlatCaseArithmetic
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LyapunovContraction.FlatCaseHelper
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LyapunovContraction.GenMain
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LyapunovContraction.Main
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LyapunovContraction.Step1
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LyapunovContraction.Step2
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.LyapunovContraction.Step3
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.MainTheoremInternal
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.MotionError
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.MotionError.Main
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.NesterovConvergence
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.PhaseSchedule
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.RateArithmetic
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.StateContraction
+public import LeanPool.PLAcceleratedNesterovLean.Convergence.StateContraction.AuxVarRecursion
+public import LeanPool.PLAcceleratedNesterovLean.Core
+public import LeanPool.PLAcceleratedNesterovLean.Core.Defs
+public import LeanPool.PLAcceleratedNesterovLean.Core.EmbeddedManifold
+public import LeanPool.PLAcceleratedNesterovLean.Core.NesterovScheme
+public import LeanPool.PLAcceleratedNesterovLean.Core.NesterovSeqGen
+public import LeanPool.PLAcceleratedNesterovLean.MainTheorem
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott.Bridge
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott.BridgeDefs
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott.Defs
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott.GradAlign
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott.HessianPL
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott.HessianPL.Basics
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott.HessianPL.Main
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott.IFTProof
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott.NormalHessianBound
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott.PLImpliesMB
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott.Submanifold
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott.TubularProjection
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott.TubularProjection.Defs
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott.TubularProjection.Derivative
+public import LeanPool.PLAcceleratedNesterovLean.MorseBott.TubularProjection.IFT
