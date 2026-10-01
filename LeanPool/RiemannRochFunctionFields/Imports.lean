@@ -1,0 +1,45 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+module  -- shake: keep-all --deprecated_module: ignore
+
+-- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.RiemannRochFunctionFields
+public import LeanPool.RiemannRochFunctionFields.AdeleSpace.Basic
+public import LeanPool.RiemannRochFunctionFields.AdeleSpace.FilterChain
+public import LeanPool.RiemannRochFunctionFields.Basic
+public import LeanPool.RiemannRochFunctionFields.CoordinateFree.AdeleSpace
+public import LeanPool.RiemannRochFunctionFields.CoordinateFree.Divisor
+public import LeanPool.RiemannRochFunctionFields.CoordinateFree.EllipticCurve
+public import LeanPool.RiemannRochFunctionFields.CoordinateFree.RiemannRoch
+public import LeanPool.RiemannRochFunctionFields.CoordinateFree.WeilDifferential
+public import LeanPool.RiemannRochFunctionFields.Divisor
+public import LeanPool.RiemannRochFunctionFields.EllipticCurve.ConcreteRegression
+public import LeanPool.RiemannRochFunctionFields.EllipticCurve.Dedekind
+public import LeanPool.RiemannRochFunctionFields.EllipticCurve.DegreeOneDictionary
+public import LeanPool.RiemannRochFunctionFields.EllipticCurve.GenusCounting
+public import LeanPool.RiemannRochFunctionFields.EllipticCurve.GenusOne
+public import LeanPool.RiemannRochFunctionFields.EllipticCurve.Infinity
+public import LeanPool.RiemannRochFunctionFields.EllipticCurve.Instances
+public import LeanPool.RiemannRochFunctionFields.EllipticCurve.PicTorsorCore
+public import LeanPool.RiemannRochFunctionFields.EllipticCurve.PlaceDictionary
+public import LeanPool.RiemannRochFunctionFields.FunctionField.Divisor
+public import LeanPool.RiemannRochFunctionFields.FundamentalIdentity
+public import LeanPool.RiemannRochFunctionFields.Genus
+public import LeanPool.RiemannRochFunctionFields.Genus.AdeleQuotient
+public import LeanPool.RiemannRochFunctionFields.Genus.Basic
+public import LeanPool.RiemannRochFunctionFields.Genus.Polar
+public import LeanPool.RiemannRochFunctionFields.Genus.Ramification
+public import LeanPool.RiemannRochFunctionFields.LinearKneser
+public import LeanPool.RiemannRochFunctionFields.LocalResidue
+public import LeanPool.RiemannRochFunctionFields.Place
+public import LeanPool.RiemannRochFunctionFields.PlaceEquiv
+public import LeanPool.RiemannRochFunctionFields.RRspace.Basic
+public import LeanPool.RiemannRochFunctionFields.RiemannRochTheorem.Basic
+public import LeanPool.RiemannRochFunctionFields.RiemannRochTheorem.Corollaries
+public import LeanPool.RiemannRochFunctionFields.RiemannRochTheorem.Regression
+public import LeanPool.RiemannRochFunctionFields.SeparableRelNorm
+public import LeanPool.RiemannRochFunctionFields.WeilDifferential
+public import LeanPool.RiemannRochFunctionFields.WeilDifferential.Basic
