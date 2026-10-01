@@ -43,17 +43,29 @@ def GenusFourRankOneAlternatives (c : CoreVertexCut.Data core) : Prop :=
 def GenusFourRankOneConditions (c : CoreVertexCut.Data core) : Prop :=
   c.Valid ∧ core.Connected ∧ c.GenusFourRankOneAlternatives
 
+/-- Finite checker for the three allowed factor configurations. -/
+def genusFourRankOneAlternativesCheck (c : CoreVertexCut.Data core) : Bool :=
+  (decide (c.leftGenus = 2) && decide (c.rightGenus = 2)) ||
+    (decide (c.leftGenus = 3) && c.rightTwoRegularCheck &&
+      decide (c.rightGenus = 1)) ||
+    (c.leftTwoRegularCheck && decide (c.leftGenus = 1) &&
+      decide (c.rightGenus = 3))
+
 /-- Kernel-cheap finite checker for the complete genus-four cut condition.
 Connectivity is supplied by local rooted spanning-tree data rather than the
 exponential all-cuts checker. -/
 def genusFourRankOneCheck (c : CoreVertexCut.Data core)
     (tree : SpanningTreeConnectivity.CertificateData core) : Bool :=
-  c.check && tree.check &&
-    ((decide (c.leftGenus = 2) && decide (c.rightGenus = 2)) ||
-      (decide (c.leftGenus = 3) && c.rightTwoRegularCheck &&
-        decide (c.rightGenus = 1)) ||
-      (c.leftTwoRegularCheck && decide (c.leftGenus = 1) &&
-        decide (c.rightGenus = 3)))
+  c.check && tree.check && c.genusFourRankOneAlternativesCheck
+
+/-- The finite Boolean alternatives match the three factor configurations. -/
+theorem genusFourRankOneAlternativesCheck_eq_true_iff
+    (c : CoreVertexCut.Data core) :
+    c.genusFourRankOneAlternativesCheck = true ↔
+      c.GenusFourRankOneAlternatives := by
+  simp only [genusFourRankOneAlternativesCheck, GenusFourRankOneAlternatives, Bool.and_eq_true,
+    Bool.or_eq_true, leftTwoRegularCheck_eq_true_iff,
+    rightTwoRegularCheck_eq_true_iff, decide_eq_true_eq, and_assoc, or_assoc]
 
 /-- The executable checker implements the cut, spanning-tree, and factor
 conditions exactly. -/
@@ -62,12 +74,9 @@ conditions exactly. -/
     (tree : SpanningTreeConnectivity.CertificateData core) :
     c.genusFourRankOneCheck tree = true ↔
       c.Valid ∧ tree.Valid ∧ c.GenusFourRankOneAlternatives := by
-  simp only [genusFourRankOneCheck, GenusFourRankOneAlternatives,
-    Bool.and_eq_true, Bool.or_eq_true, check_eq_true_iff,
+  simp only [genusFourRankOneCheck, Bool.and_eq_true, check_eq_true_iff,
     SpanningTreeConnectivity.CertificateData.check_eq_true_iff,
-    leftTwoRegularCheck_eq_true_iff, rightTwoRegularCheck_eq_true_iff,
-    decide_eq_true_eq]
-  tauto
+    genusFourRankOneAlternativesCheck_eq_true_iff]; tauto
 
 /-- Accepted cheap checker data imply the mathematical conditions used by
 the subdivision theorem. -/

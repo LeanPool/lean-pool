@@ -243,20 +243,20 @@ theorem reach_confined_right (hValid : cut.Valid) {u : Fin n} (hu : u ∈ cut.ri
           have heZ : e ∈ d.zeroSlotSet := (mem_edgeList _ e).mp he
           rcases hcase with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
           · have hy : d.core.head e ∈ cut.right := by
-              rcases Finset.decidableMem (d.core.head e) cut.left with hy | hy
-              · exact (cut.mem_right_iff _).mpr (Or.inr hy)
+              by_cases hy : d.core.head e ∈ cut.left
               · by_cases hyg : d.core.head e = cut.glue
                 · exact (cut.mem_right_iff _).mpr (Or.inl hyg)
                 · exact absurd (Or.inr ⟨hy, hyg, hxnotleft⟩) (hValid.2 e)
+              · exact (cut.mem_right_iff _).mpr (Or.inr hy)
             have heR : e ∈ rightZero d cut :=
               Finset.mem_inter.mpr ⟨heZ, (cut.mem_rightSlots e).mpr ⟨hxright, hy⟩⟩
             exact Or.inl (ih.tail ⟨e, (mem_edgeList _ e).mpr heR, Or.inl ⟨rfl, rfl⟩⟩)
           · have hy : d.core.tail e ∈ cut.right := by
-              rcases Finset.decidableMem (d.core.tail e) cut.left with hy | hy
-              · exact (cut.mem_right_iff _).mpr (Or.inr hy)
+              by_cases hy : d.core.tail e ∈ cut.left
               · by_cases hyg : d.core.tail e = cut.glue
                 · exact (cut.mem_right_iff _).mpr (Or.inl hyg)
                 · exact absurd (Or.inl ⟨hy, hyg, hxnotleft⟩) (hValid.2 e)
+              · exact (cut.mem_right_iff _).mpr (Or.inr hy)
             have heR : e ∈ rightZero d cut :=
               Finset.mem_inter.mpr ⟨heZ, (cut.mem_rightSlots e).mpr ⟨hy, hxright⟩⟩
             exact Or.inl (ih.tail ⟨e, (mem_edgeList _ e).mpr heR, Or.inr ⟨rfl, rfl⟩⟩)

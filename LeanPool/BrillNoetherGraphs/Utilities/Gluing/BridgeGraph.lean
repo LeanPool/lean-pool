@@ -101,10 +101,6 @@ theorem bridgeGraph_vertex_card
   -- `apply congrArg Multiset.card` can no longer unify its conclusion's
   -- universe metavariable against the goal; `congr 1` sidesteps that.
   congr 1
-  apply Multiset.filter_congr
-  intro e _he
-  rcases e with ⟨p, q⟩
-  simp
 /-- Edge multiplicities within the right factor are unchanged. -/
 @[simp] theorem num_edges_bridgeGraph_inr
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
@@ -119,10 +115,6 @@ theorem bridgeGraph_vertex_card
   -- `apply congrArg Multiset.card` can no longer unify its conclusion's
   -- universe metavariable against the goal; `congr 1` sidesteps that.
   congr 1
-  apply Multiset.filter_congr
-  intro e _he
-  rcases e with ⟨p, q⟩
-  simp
 /-- The bridge is the only edge between the two factors. -/
 @[simp] theorem num_edges_bridgeGraph_inl_inr
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
