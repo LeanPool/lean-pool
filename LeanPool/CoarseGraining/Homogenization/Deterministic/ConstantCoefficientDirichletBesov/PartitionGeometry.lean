@@ -682,9 +682,9 @@ theorem overlapTransitionFactor_nonneg {d : ℕ}
 theorem overlapTransitionFactor_le_one {d : ℕ}
     (Q S : TriadicCube d) (i : Fin d) (x : Vec d) :
     lowerOverlapTransition Q S i x * upperOverlapTransition Q S i x ≤ 1 :=
-  mul_le_one₀
-    (lowerOverlapTransition_le_one Q S i x)
+  (mul_le_of_le_one_left
     (upperOverlapTransition_nonneg Q S i x)
+    (lowerOverlapTransition_le_one Q S i x)).trans
     (upperOverlapTransition_le_one Q S i x)
 
 theorem fderiv_overlapTransitionFactor_eq_zero_of_lower_coord_le {d : ℕ}

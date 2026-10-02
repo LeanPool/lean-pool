@@ -69,9 +69,9 @@ theorem rawOverlapWeight_le_one {d : ℕ}
           (lowerOverlapTransition_nonneg Q S i x)
           (upperOverlapTransition_nonneg Q S i x))
       (fun i _ =>
-        mul_le_one₀
-          (lowerOverlapTransition_le_one Q S i x)
+        (mul_le_of_le_one_left
           (upperOverlapTransition_nonneg Q S i x)
+          (lowerOverlapTransition_le_one Q S i x)).trans
           (upperOverlapTransition_le_one Q S i x))
   · norm_num
 
