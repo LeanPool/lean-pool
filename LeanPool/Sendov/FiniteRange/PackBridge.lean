@@ -34,7 +34,7 @@ the numerical parameters `β` and `τ` have to be chosen, one per degree.
 * `Sendov.pevZ_rowZ_qrow`: the recurrence as one integer exponentiation.
 -/
 
-@[expose] public section
+public section
 
 namespace Sendov
 

@@ -38,7 +38,7 @@ Everything here is about `ℕ`; signed coefficients are handled downstream by sp
 * `Sendov.unpackN_npev`: `unpackN b p.length (npev p b) = p` for coefficients below `b`.
 -/
 
-@[expose] public section
+public section
 
 namespace Sendov
 
@@ -193,6 +193,7 @@ def pevZ : List ℤ → ℤ → ℤ
 
 /-- The balanced representative of `x` modulo `b`, lying in `(-b/2, b/2)` when `b` is
 positive and `x` is a balanced digit. -/
+@[expose]
 def bdig (b x : ℤ) : ℤ := if 2 * (x % b) < b then x % b else x % b - b
 
 /-- Recover the first `m` balanced digits of a packed `ℤ`-polynomial. -/

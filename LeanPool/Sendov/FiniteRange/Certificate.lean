@@ -29,7 +29,7 @@ Numerals beyond 90 digits cannot sit on one line; `Sendov.big` assembles them fr
 chunks.
 -/
 
-@[expose] public section
+public section
 
 namespace Sendov
 
