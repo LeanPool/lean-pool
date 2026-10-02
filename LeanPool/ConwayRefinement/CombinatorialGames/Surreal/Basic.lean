@@ -129,7 +129,7 @@ relation `x ≈ y ↔ x ≤ y ∧ y ≤ x`. In the quotient, the order becomes a
 namespace Surreal
 
 /-- The quotient map from the subtype of numeric `IGame`s into `ConwayGame`. -/
-def mk (x : IGame) [h : Numeric x] : Surreal := Quotient.mk _ ⟨x, h⟩
+@[expose] def mk (x : IGame) [h : Numeric x] : Surreal := Quotient.mk _ ⟨x, h⟩
 theorem mk_eq_mk {x y : IGame} [Numeric x] [Numeric y] : mk x = mk y ↔ x ≈ y := Quotient.eq
 
 alias ⟨_, mk_eq⟩ := mk_eq_mk
@@ -208,7 +208,7 @@ instance : Nontrivial Surreal :=
   ⟨_, _, zero_ne_one⟩
 
 /-- Casts a `Surreal` number into a `ConwayGame`. -/
-def toGame : Surreal ↪o ConwayGame where
+@[expose] def toGame : Surreal ↪o ConwayGame where
   toFun := Quotient.lift (fun x ↦ .mk x) fun _ _ ↦ ConwayGame.mk_eq
   inj' x y := by
     cases x; cases y;
@@ -229,7 +229,7 @@ theorem toGame_lt_iff {a b : Surreal} : toGame a < toGame b ↔ a < b := by simp
 theorem toGame_inj {a b : Surreal} : toGame a = toGame b ↔ a = b := by simp
 
 /-- `Surreal.toGame` as an `OrderAddMonoidHom` -/
-@[simps]
+@[expose, simps]
 def toGameAddHom : Surreal →+o ConwayGame where
   toFun := toGame
   map_zero' := rfl
