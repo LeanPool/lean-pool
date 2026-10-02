@@ -46,6 +46,7 @@ variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℂ F]
 
 /-- `f` is integrable along the parameterized curve `γ` over `[0, 2π]`: the integrand
 `t ↦ deriv γ t • f (γ t)` is interval integrable. -/
+@[expose]
 def ContourIntegrable (f : ℂ → F) (γ : ℝ → ℂ) : Prop :=
   IntervalIntegrable (fun t => deriv γ t • f (γ t)) volume 0 (2 * π)
 

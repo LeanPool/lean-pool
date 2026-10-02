@@ -59,6 +59,7 @@ theorem isBounded_numericalRange (A : E →L[ℂ] E) :
 /-- The numerical radius is the supremum of the moduli of points in the
 numerical range.  This definition also gives zero on an empty numerical
 range, as happens on a subsingleton space. -/
+@[expose]
 noncomputable def numericalRadius (A : E →L[ℂ] E) : ℝ :=
   ⨆ z ∈ numericalRange A, ‖z‖
 
