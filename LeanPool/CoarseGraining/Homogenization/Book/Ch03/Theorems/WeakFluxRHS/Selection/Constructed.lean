@@ -43,7 +43,8 @@ noncomputable def forcedSolutionWeakFluxSelectedNeumannTailExpandedRHS
         ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 *
         (cubeBesovPositiveVectorSeminormTwo Q s g) ^ 2)
 
-theorem forcedSolutionGradientField_coarsePoincareRHSSn_le_weakFluxPoincareTailBudget_publicCoeffField
+theorem
+  forcedSolutionGradientField_coarsePoincareRHSSn_le_weakFluxPoincareTailBudget_publicCoeffField
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
     {g : Vec d → Vec d} {s : ℝ}
     (u : ForcedCubeSolution Q a g) (hs : 0 < s) (hs_le : s ≤ 1)
@@ -56,7 +57,8 @@ theorem forcedSolutionGradientField_coarsePoincareRHSSn_le_weakFluxPoincareTailB
 
 /-- Public forced-solution specialization of the deterministic weak-flux
 localized apex, with the harmonic-remainder tail inputs still explicit. -/
-theorem localizedForcedSolutionPublicFlux_le_weakFluxExpandedRHS_of_constructed_harmonicRemainder_bounds
+theorem
+  localizedForcedSolutionPublicFlux_le_weakFluxExpandedRHS_of_constructed_harmonicRemainder_bounds
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
     {s : ℝ} {g : Vec d → Vec d} (u : ForcedCubeSolution Q a g)
     (m : ℕ) {BU BV : ℝ}

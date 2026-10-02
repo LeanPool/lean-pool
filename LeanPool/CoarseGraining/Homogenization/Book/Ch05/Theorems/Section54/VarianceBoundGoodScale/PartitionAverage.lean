@@ -630,7 +630,8 @@ private theorem aemeasurable_fullBlockNormalizedFluctuationOperatorNormSq_cubeSe
     normalizedFullBlockCLMLinearMap_apply, Function.comp_def] using
     hg.comp_aemeasurable hM
 
-theorem exists_isRestrictionLocalRandomVariable_ae_eq_fullBlockNormalizedFluctuationOperatorNormSq_cubeSet
+theorem
+  exists_isRestrictionLocalRandomVariable_ae_eq_fullBlockNormalizedFluctuationOperatorNormSq_cubeSet
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (Q : TriadicCube d) :
@@ -807,7 +808,8 @@ theorem integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_ae_
 /-- Rosenthal/partition-average estimate for the normalized full-block
 fluctuation observable, assuming only the origin-scale moment root that the
 good-scale scalar estimates will provide. -/
-theorem fullBlockNormalizedFluctuationOperatorNormSq_restrictionCenteredDescendantAverage_pow_rpow_inv_le
+theorem
+  fullBlockNormalizedFluctuationOperatorNormSq_restrictionCenteredDescendantAverage_pow_rpow_inv_le
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)

@@ -202,7 +202,8 @@ theorem blockJObservableCubeSetBlockVec_nonneg {d : ℕ}
         restrictionResponseJObservableCubeSet Q (pStar + p) (qStar + q) (adjointReg a)
   nlinarith
 
-theorem blockJObservableCubeSetBlockVec_le_descendantsAverage_cubeSet_of_aelocallyUniformlyEllipticField
+theorem
+  blockJObservableCubeSetBlockVec_le_descendantsAverage_cubeSet_of_aelocallyUniformlyEllipticField
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a) (Q : TriadicCube d) {k : ℤ}
     (hk : k ≤ Q.scale) (P Qv : BlockVec d) :
@@ -378,7 +379,8 @@ private theorem measurable_blockJQuadraticFullBlockMat {d : ℕ}
       (((measurable_fullBlockQuadraticCh04 (toFullBlockVec Qv)).comp measurable_fullBlockReflect).const_mul
         (1 / 2 : ℝ))).sub measurable_const
 
-theorem blockJObservableCubeSetBlockVec_eq_blockJQuadraticFullBlockMat_of_aelocallyUniformlyEllipticField
+theorem
+  blockJObservableCubeSetBlockVec_eq_blockJQuadraticFullBlockMat_of_aelocallyUniformlyEllipticField
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) (P Qv : BlockVec d) :

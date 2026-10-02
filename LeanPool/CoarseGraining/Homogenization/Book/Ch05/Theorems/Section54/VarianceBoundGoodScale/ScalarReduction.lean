@@ -199,7 +199,8 @@ theorem fullBlockNormalizedQuadraticObservable_positivePart_le_delta_add_centere
 `fullBlockNormalizedQuadraticObservable_positivePart_le_delta_add_centeredAverageOnCube_ae`.
 It is used for the non-unit plus/minus probes in the finite-dimensional
 upgrade. -/
-theorem fullBlockNormalizedQuadraticObservable_positivePart_base_le_error_add_centeredAverageOnCube_ae
+theorem
+  fullBlockNormalizedQuadraticObservable_positivePart_base_le_error_add_centeredAverageOnCube_ae
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (q : FullBlockVec d) (Q : TriadicCube d) {k : ℤ}
@@ -510,7 +511,8 @@ theorem dotProduct_le_normalizedAnnealedQuadratic_of_scalarChain
               one_le_sqrt_mul_inv_of_inv_le hcm_pos hcm_inv_le_ck_inv)
 
 /-- Good-scale upper bound for the mean of a normalized quadratic probe. -/
-theorem integral_origin_fullBlockNormalizedQuadraticObservable_le_base_add_delta_mul_dotProduct_of_good
+theorem
+  integral_origin_fullBlockNormalizedQuadraticObservable_le_base_add_delta_mul_dotProduct_of_good
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)

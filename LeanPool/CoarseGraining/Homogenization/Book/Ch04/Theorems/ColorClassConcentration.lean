@@ -32,7 +32,8 @@ noncomputable section
 
 /-- A single scale-color class of descendant cubes inherits `Gamma_sigma`
 concentration from uniformly controlled centered local summands. -/
-theorem isBigO_gammaSigma_finsetSum_descendantsAtScaleScaleColorClass_of_restrictionUnitRangeDependentLaw
+theorem
+  isBigO_gammaSigma_finsetSum_descendantsAtScaleScaleColorClass_of_restrictionUnitRangeDependentLaw
     {d : ℕ} {Q : TriadicCube d} {k : ℤ} {c : ScaleColor d k}
     {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P] {σ K : ℝ}
     (hP : RestrictionUnitRangeDependentLaw P)
@@ -95,7 +96,8 @@ theorem isBigO_gammaSigma_finsetSum_descendantsAtScaleScaleColorClass_of_restric
 
 /-- A single scale-color class of descendant cubes inherits `Psi_sigma`
 concentration from uniformly controlled centered local summands. -/
-theorem isBigO_psiSigma_finsetSum_descendantsAtScaleScaleColorClass_of_restrictionUnitRangeDependentLaw
+theorem
+  isBigO_psiSigma_finsetSum_descendantsAtScaleScaleColorClass_of_restrictionUnitRangeDependentLaw
     {d : ℕ} {Q : TriadicCube d} {k : ℤ} {c : ScaleColor d k}
     {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P] {σ K : ℝ}
     (hP : RestrictionUnitRangeDependentLaw P)

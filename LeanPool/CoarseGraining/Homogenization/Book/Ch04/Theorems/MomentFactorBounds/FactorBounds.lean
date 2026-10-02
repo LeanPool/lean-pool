@@ -32,7 +32,8 @@ namespace RestrictionLawCarrier
 /-- Lower-right finite-parent coarse-block fluctuation bound, stated directly
 against the law-facing Ch4 surface.  The proof owns all locality,
 measurability, covariance, and deterministic positive-excess domination. -/
-theorem lowerRight_matrixNorm_positiveExcess_finsetSup_momentRoot_le_of_restrictionUnitRangeDependentLaw
+theorem
+  lowerRight_matrixNorm_positiveExcess_finsetSup_momentRoot_le_of_restrictionUnitRangeDependentLaw
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     {parents : Finset (TriadicCube d)} (hparents : parents.Nonempty)
     {n : ℤ} {ξ : ℕ} {K B : ℝ}
@@ -513,7 +514,8 @@ theorem restrictionCenteredOriginObservable_upperLeft_entry_momentRoot_le_two_La
 
 /-- Unit-scale centered lower-right entries have their `L^ξ` roots controlled
 by the unit lower inverse multiscale ellipticity moment. -/
-theorem restrictionCenteredOriginObservable_lowerRight_entry_momentRoot_le_two_lambdaInvMomentAtScale
+theorem
+  restrictionCenteredOriginObservable_lowerRight_entry_momentRoot_le_two_lambdaInvMomentAtScale
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     {s : ℝ} {ξ : ℕ} (hs : 0 < s) (hξ : 1 ≤ ξ)
     (hLowerPowInt :

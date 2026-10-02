@@ -50,7 +50,8 @@ private theorem sqrt_two_mul_rpow_half_neg_three_halves {s : ℝ} (hs : 0 < s) :
 /-- Zero-boundary auxiliary Dirichlet correctors satisfy the public
 zero-Dirichlet energy bound at `t = s / 2`.  This is the `v₀` half of the
 Dirichlet energy consequence, separated from the boundary harmonic remainder. -/
-theorem zeroTraceDirichletCorrectorData_energyNorm_le_zeroDirichletEnergyWithRHSRHS_half_publicCoeffField
+theorem
+  zeroTraceDirichletCorrectorData_energyNorm_le_zeroDirichletEnergyWithRHSRHS_half_publicCoeffField
     {d : ℕ} [NeZero d] {C : ℝ}
     (hC_nonneg : 0 ≤ C)
     (hC_zero :
@@ -119,7 +120,8 @@ theorem publicZeroTraceDirichletCorrectorData_energyNorm_le_zeroDirichletEnergyW
 /-- Zero-boundary auxiliary Dirichlet correctors satisfy the zero-trace part of
 the public Dirichlet energy RHS after absorbing the half-scale normalization
 and the factor `sqrt 2` from the energy split. -/
-theorem zeroTraceDirichletCorrectorData_sqrt_two_energyNorm_le_dirichletEnergyFirstTerm_publicCoeffField
+theorem
+  zeroTraceDirichletCorrectorData_sqrt_two_energyNorm_le_dirichletEnergyFirstTerm_publicCoeffField
     {d : ℕ} [NeZero d] {C₀ C : ℝ}
     (hC₀_nonneg : 0 ≤ C₀)
     (hC₀_zero :

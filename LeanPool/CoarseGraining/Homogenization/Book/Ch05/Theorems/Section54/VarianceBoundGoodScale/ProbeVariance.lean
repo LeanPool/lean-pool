@@ -195,7 +195,8 @@ theorem integrable_fullBlockNormalizedQuadraticObservable_and_abs_sub_dotProduct
 /-- Convert the Section 5.4 Rosenthal root bound for a normalized quadratic
 probe descendant average into the L1 and L2 estimates used by the scalar
 variance reduction. -/
-theorem fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAverage_abs_and_sq_le_of_root
+theorem
+  fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAverage_abs_and_sq_le_of_root
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
@@ -257,7 +258,8 @@ theorem fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAver
 /-- Integrability of the L1 and L2 sizes of the normalized quadratic-probe
 descendant average, derived internally from the origin `L^ξ` moment supplied by
 `(P4)`. -/
-theorem fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAverage_abs_and_sq_integrable
+theorem
+  fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAverage_abs_and_sq_integrable
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
