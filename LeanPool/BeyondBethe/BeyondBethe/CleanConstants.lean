@@ -23,7 +23,7 @@ noncomputable def cleanCoreFunction (κ ρ : ℝ) : ℝ :=
   (1 - ρ) * Real.log ((2 * (Real.exp (-κ)) ^ 2) / (1 - ρ)) +
     ρ * Real.log (Real.exp (-κ)) - Real.negMulLog ρ - ρ
 
-/-- Separate the core contribution in (61) from its entropy-regularization
+/-- Separate the core contribution in (85) from its entropy-regularization
 loss. -/
 theorem cleanGainLowerBound_eq_core_sub_entropy
     {ι : Type*} [Fintype ι]
@@ -54,7 +54,7 @@ theorem cleanGainLowerBound_gt_of_core_and_entropy
   dsimp only [B] at hloss
   linarith
 
-/-- The outside entropy in (62) is at most `rho log(n/rho)`.  The subtype
+/-- The outside entropy following (85) is at most `rho log(n/rho)`.  The subtype
 cardinality argument is explicit: outside columns inject into all `n`
 columns. -/
 theorem outsidePairEntropy_le
@@ -109,7 +109,7 @@ theorem outsidePairEntropy_le
   rw [heq]
   exact hfinal
 
-/-- A deliberately slack version of the entropy estimate below (61).
+/-- A deliberately slack version of the entropy estimate below (85).
 The elementary bound `negMulLog rho <= 1-rho` is already enough once
 `rho < 1/10`; the sharper `1/e` in the paper is not needed here. -/
 theorem outsideEntropyBracket_lt_four_scale

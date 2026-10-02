@@ -106,7 +106,7 @@ theorem successfulCleanPair_count_ge_threeEighths
   linarith
 
 /-- Multiplying the successful-pair count by the uniform gain gives paper
-(68). -/
+(99). -/
 theorem matchingGain_ge_threeEighths
     {n successful γ matchingGain : ℝ}
     (hγ : 0 ≤ γ) (hsuccess : 3 * n / 8 ≤ successful)
@@ -114,7 +114,7 @@ theorem matchingGain_ge_threeEighths
     3 * γ / 8 * n ≤ matchingGain := by
   nlinarith
 
-/-- Rearrangement of the robust cycle-information inequality used in (66).
+/-- Rearrangement of the robust cycle-information inequality used in (97).
 The displayed definition of `cycleError` is kept as a hypothesis so this
 lemma remains the exact scalar accounting step. -/
 theorem longRow_count_le_cycleError
@@ -139,7 +139,7 @@ theorem longRow_count_le_cycleError
   exact le_of_mul_le_mul_left hscaled
     (div_pos hlog (by norm_num : (0 : ℝ) < 6))
 
-/-- The Markov step for expensive clean pairs after (67), abstracted from
+/-- The Markov step for expensive clean pairs after (98), abstracted from
 the graph indexing: cancel their common positive minimum cost. -/
 theorem failedPair_count_le_transferError
     {failed transferError n minCost totalCost : ℝ}

@@ -629,7 +629,7 @@ theorem badRow_count_le_slack
   exact hcost.trans hsum
 
 /-- Scalar assembly in paper Lemma 14.  The two hypotheses are respectively
-the entropy-score estimate (29) and the component accounting estimate (30). -/
+the entropy-score estimate (52) and the component accounting estimate (53). -/
 theorem robust_cycle_information_of_accounting
     {D G components N bad n ω : ℝ}
     (hω : 0 ≤ ω) (hG : G ≤ n)
@@ -715,7 +715,7 @@ theorem clean_pair_count
     exact_mod_cast hrows
   simpa [mul_comm] using hr
 
-/-- Markov-counting step used after (44): if every failed clean pair costs at
+/-- Markov-counting step used after (98): if every failed clean pair costs at
 least `a`, total cost `R` permits at most `R/a` failures. -/
 theorem costly_pair_count
     {failed : ℕ} {a R : ℝ} (ha : 0 < a)

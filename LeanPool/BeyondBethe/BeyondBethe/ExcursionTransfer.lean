@@ -110,7 +110,7 @@ theorem normalizedOutside_isProbabilityVector
         rw [← Finset.sum_div]
         exact div_self (by simpa only [massOn] using hρ.ne')
 
-/-- Paper tail-transfer inequality (41), before substituting the entropy of
+/-- Paper tail-transfer inequality (70), before substituting the entropy of
 the coarsened row.  The theorem includes the empty-set/zero-mass case. -/
 theorem scaledConditionalEntropyOn_sub_mass_le_transferCostOn
     {ι : Type*}

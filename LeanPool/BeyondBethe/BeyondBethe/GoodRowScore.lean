@@ -470,7 +470,7 @@ theorem entropy_sub_twoCoreCoarsenedEntropy_eq
     entropy_loss_merge_two (hp.positive a) (hp.positive b)]
   ring_nf
 
-/-- Paper inequality (28), now including both the entropy-coarsening identity
+/-- Paper inequality (48), now including both the entropy-coarsening identity
 and the exact permutation-pairing argument for the suffix score. -/
 theorem rowScore_sub_twoCoreCoarsenedEntropy_ge_Psi
     {n : ℕ} {p : Fin n → ℝ} (hp : IsStrictProbabilityVector p)

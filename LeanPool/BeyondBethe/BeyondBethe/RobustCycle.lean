@@ -605,7 +605,7 @@ theorem cycleGoodCount_add_cycleBadCount
     · exact Or.inl ⟨hi, hgood⟩
     · exact Or.inr ⟨hi, hbad⟩
 
-/-- Paper component accounting (30), now instantiated with the actual cycle
+/-- Paper component accounting (53), now instantiated with the actual cycle
 factors of the completed two-matching graph. -/
 theorem alternating_component_accounting
     {n : ℕ} {P : Matrix (Fin n) (Fin n) ℝ}

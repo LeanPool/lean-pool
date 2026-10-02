@@ -100,7 +100,7 @@ theorem productExcept_eq_twoCore
   exact (Finset.mul_prod_erase (Finset.univ.erase a) (fun j ↦ 1 - p j)
     (by simp [hab.symm])).symm
 
-/-- The two upper bounds (45)--(46) used in the leakage argument. -/
+/-- The two upper bounds (76)--(77) used in the leakage argument. -/
 theorem transferU_le_twoCore_ratio
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {τ : ℝ} (hτ : 0 ≤ τ) {p : ι → ℝ}
@@ -298,7 +298,7 @@ theorem coordinate_rpow_le_transferU
     (productExcept_le_one hp.1 j)
 
 /-- The three kinds of two-column sets used by the capacity witness in paper
-(53): the core set, a set using `a` and an outside column, or a set using `b`
+(80): the core set, a set using `a` and an outside column, or a set using `b`
 and an outside column. -/
 abbrev CapacityWitnessEdge (ι : Type*) := Unit ⊕ (ι ⊕ ι)
 
