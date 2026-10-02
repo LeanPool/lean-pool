@@ -145,7 +145,7 @@ def integerBinaryCode (z : ℤ) : List Bool :=
   rfl
 
 @[simp] theorem integerBinaryCode_ofNat (n : ℕ) :
-    integerBinaryCode (Int.ofNat n) = false :: n.bits := by
+    integerBinaryCode (n : ℤ) = false :: n.bits := by
   rfl
 
 @[simp] theorem integerBinaryCode_negSucc (n : ℕ) :
@@ -194,7 +194,7 @@ def integerNatCode (z : ℤ) : ℕ :=
   rfl
 
 @[simp] theorem integerNatCode_ofNat (n : ℕ) :
-    integerNatCode (Int.ofNat n) = 2 * n := by
+    integerNatCode (n : ℤ) = 2 * n := by
   rfl
 
 @[simp] theorem integerNatCode_negSucc (n : ℕ) :
