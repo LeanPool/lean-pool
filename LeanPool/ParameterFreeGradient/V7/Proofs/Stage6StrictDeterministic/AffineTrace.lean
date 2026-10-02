@@ -23,7 +23,7 @@ def causalQuery (method : StrictLocalMethod) (t : ℕ)
   if t = 0 then method.x0 else method.nextQuery trace
 
 /-- Chronological exact transcript generated against the affine oracle. -/
-noncomputable def affineTrace (method : StrictLocalMethod) (eps : ℝ) :
+@[expose] noncomputable def affineTrace (method : StrictLocalMethod) (eps : ℝ) :
     ℕ → StrictTranscript
   | 0 => []
   | n + 1 =>

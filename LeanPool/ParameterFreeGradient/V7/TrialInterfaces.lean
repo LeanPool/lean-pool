@@ -26,7 +26,8 @@ structure ObservableGuardCheck (d : ℕ) where
   yPair : Observation d
 
 /-- The point-based failure witness associated with an observation-based guard check. -/
-@[expose] def ObservableGuardCheck.failure (check : ObservableGuardCheck d) : ObservableGuardFailure d :=
+@[expose]
+def ObservableGuardCheck.failure (check : ObservableGuardCheck d) : ObservableGuardFailure d :=
   ⟨check.kind, check.xPair.point, check.yPair.point⟩
 
 /-- A trial terminates with gradient success, a failed scale guard, or an insufficient radius. -/

@@ -39,7 +39,7 @@ noncomputable def Program.action : PackedProgram d →
       Program.eval oracle fuel (next obs) (history ++ [obs])
 
 /-- The local trial induced by a family of initial finite query programs. -/
-noncomputable def programTrial
+@[expose] noncomputable def programTrial
     (initial : ℝ → ℝ → CachedPair d → PackedProgram d) : LocalTrial d where
   State := PackedProgram d
   initial := initial

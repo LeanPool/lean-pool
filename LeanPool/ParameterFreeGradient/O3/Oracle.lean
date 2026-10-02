@@ -30,11 +30,11 @@ abbrev OracleTrace (d : ℕ) := List (Observation d)
 def oracleCallCount (trace : OracleTrace d) : ℕ := trace.length
 
 /-- Every recorded observation is the exact answer returned at its point. -/
-def TraceExact (oracle : PairOracle d) (trace : OracleTrace d) : Prop :=
+@[expose] def TraceExact (oracle : PairOracle d) (trace : OracleTrace d) : Prop :=
   ∀ o ∈ trace, o = oracle.observe o.point
 
 /-- A point was actually queried in the given trace. -/
-def WasQueried (trace : OracleTrace d) (x : Vec d) : Prop :=
+@[expose] def WasQueried (trace : OracleTrace d) (x : Vec d) : Prop :=
   ∃ o ∈ trace, o.point = x
 
 theorem traceExact_nil (oracle : PairOracle d) :

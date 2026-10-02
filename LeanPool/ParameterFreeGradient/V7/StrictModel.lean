@@ -72,7 +72,7 @@ instance [MeasurableSpace Ω] : CoeFun (RandomizedStrictLocalMethod Ω)
     (fun _ => Ω → StrictLocalMethod) := ⟨RandomizedStrictLocalMethod.run⟩
 
 /-- Every transcript entry is the exact observation of the one-dimensional oracle. -/
-def StrictTranscriptExact (oracle : PairOracle 1) (trace : StrictTranscript) : Prop :=
+@[expose] def StrictTranscriptExact (oracle : PairOracle 1) (trace : StrictTranscript) : Prop :=
   TraceExact oracle trace
 
 /-- The transcript contains `N` queries, all with gradient magnitude above the target accuracy. -/
@@ -160,7 +160,7 @@ small-gradient point is reached. -/
     StrictSuccessThrough method oracle (traces N) N}
 
 /-- The exact transcript follows the strict method's causal query rule. -/
-def StrictRunConsistent (method : StrictLocalMethod) (oracle : PairOracle 1)
+@[expose] def StrictRunConsistent (method : StrictLocalMethod) (oracle : PairOracle 1)
     (trace : StrictTranscript) : Prop :=
   StrictTranscriptExact oracle trace ∧
   ∀ (t : ℕ) (ht : t < trace.length),

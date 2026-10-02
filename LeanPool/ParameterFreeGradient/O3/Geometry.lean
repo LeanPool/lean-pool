@@ -148,7 +148,7 @@ theorem abs_pairing_le_lpNorm_mul {p q : ℝ} (hpq : p.HolderConjugate q)
 /-- Exact unproved target of TeX Lemma `lem:puniform`.  Keeping this as a
 transparent proposition records the residual obligation without presenting it
 as a proved theorem. -/
-noncomputable def PUniformConvexityStatement : Prop :=
+@[expose] noncomputable def PUniformConvexityStatement : Prop :=
   ∀ (p : ℝ), 2 < p → ∀ (d : ℕ) (x y c : Point d),
     uniformRegularizer p c y ≥
       uniformRegularizer p c x + pairing (powerDualityMap p (x - c)) (y - x) +
@@ -156,7 +156,7 @@ noncomputable def PUniformConvexityStatement : Prop :=
 
 /-- Exact unproved target of TeX Lemma `lem:belowgeometry`.  This proposition
 preserves real `p` and arbitrary `d`; it is not a theorem or certificate. -/
-noncomputable def BelowGeometryStatement : Prop :=
+@[expose] noncomputable def BelowGeometryStatement : Prop :=
   ∀ (p : ℝ), 1 < p → p ≤ 2 → ∀ (d : ℕ) (x y : Point d),
     quadraticRegularizer p 0 y ≥
       quadraticRegularizer p 0 x + pairing (dualityMap p x) (y - x) +

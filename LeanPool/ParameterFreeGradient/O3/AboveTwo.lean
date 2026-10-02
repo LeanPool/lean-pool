@@ -31,7 +31,7 @@ open scoped BigOperators
 namespace O3
 
 /-- The genuine-real regime from TeX Section 3. -/
-def AboveTwoRegime (p : ℝ) : Prop := 2 < p
+@[expose] def AboveTwoRegime (p : ℝ) : Prop := 2 < p
 
 /-- The exact trial exponent `2(p-1)/(p+2)`. -/
 noncomputable def aboveAlpha (p : ℝ) : ℝ := 2 * (p - 1) / (p + 2)

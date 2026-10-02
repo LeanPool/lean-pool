@@ -110,11 +110,11 @@ not enough for the frozen theorem. -/
 
 /-- The coordinate gradient represents the Frechet derivative.  The ambient
 norm used by Mathlib for differentiability is immaterial in finite dimension. -/
-def IsCoordinateGradient {d : ℕ} (f : Vec d → ℝ) (grad : Vec d → Vec d) : Prop :=
+@[expose] def IsCoordinateGradient {d : ℕ} (f : Vec d → ℝ) (grad : Vec d → Vec d) : Prop :=
   ∀ x, DifferentiableAt ℝ f x ∧ ∀ h, fderiv ℝ f x h = pairing (grad x) h
 
 /-- The set of global minimizers of the objective function. -/
-def MinimizerSet {d : ℕ} (f : Vec d → ℝ) : Set (Vec d) :=
+@[expose] def MinimizerSet {d : ℕ} (f : Vec d → ℝ) : Set (Vec d) :=
   {x | ∀ y, f x ≤ f y}
 
 /-- The exact source-level `ℓ_p` distance to the nonempty minimizer set. -/
@@ -161,14 +161,17 @@ structure AdmissibleInstance (d : ℕ) (p : ℝ) where
   secant : SecantWitness p (conjugateExponent p) M0 grad x0 z0
 
 /-- The exact value-gradient oracle associated with an admissible instance. -/
-@[expose] def AdmissibleInstance.oracle {d : ℕ} {p : ℝ} (P : AdmissibleInstance d p) : PairOracle d :=
+@[expose]
+def AdmissibleInstance.oracle {d : ℕ} {p : ℝ} (P : AdmissibleInstance d p) : PairOracle d :=
   ⟨P.f, P.grad⟩
 
 /-- Extract the observable numerical inputs supplied to the method. -/
-@[expose] def AdmissibleInstance.methodInput {d : ℕ} {p : ℝ} (P : AdmissibleInstance d p) : MethodInput d :=
+@[expose]
+def AdmissibleInstance.methodInput {d : ℕ} {p : ℝ} (P : AdmissibleInstance d p) : MethodInput d :=
   ⟨p, P.eps, P.x0, P.z0, P.M0⟩
 
 /-- The primal-norm distance from the initial point to the minimizer set. -/
+@[expose]
 noncomputable def AdmissibleInstance.radius {d : ℕ} {p : ℝ} (P : AdmissibleInstance d p) : ℝ :=
   minimizerDistance p P.f P.x0
 

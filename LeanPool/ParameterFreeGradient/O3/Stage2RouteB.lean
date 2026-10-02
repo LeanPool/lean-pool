@@ -461,7 +461,7 @@ lemma fenchelYoung_lower {p : ℝ} (hp : 1 < p) {d : ℕ} (w y : Point d) :
 
 /-- Exact dual-exponent smoothness interface.  This is a reduction interface,
 not an assumed theorem in the target chain. -/
-noncomputable def ConjugateSmoothnessStatement : Prop :=
+@[expose] noncomputable def ConjugateSmoothnessStatement : Prop :=
   ∀ (p : ℝ), 1 < p → p ≤ 2 → ∀ (d : ℕ) (u v : Point d),
     squaredLpEnergy (conjugateExponent p) v ≤
       squaredLpEnergy (conjugateExponent p) u +
