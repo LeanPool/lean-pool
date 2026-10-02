@@ -9,9 +9,11 @@ module  -- shake: keep-all --deprecated_module: ignore
 public import LeanPool.PaperIVCliqueTree
 public import LeanPool.PaperIVCliqueTree.Basic
 public import LeanPool.PaperIVCliqueTree.Characterization
+public import LeanPool.PaperIVCliqueTree.Connector
 public import LeanPool.PaperIVCliqueTree.Counting
 public import LeanPool.PaperIVCliqueTree.Helly
 public import LeanPool.PaperIVCliqueTree.Maximal
 public import LeanPool.PaperIVCliqueTree.MaximalBridge
 public import LeanPool.PaperIVCliqueTree.PEO
 public import LeanPool.PaperIVCliqueTree.Separator
+public import LeanPool.PaperIVCliqueTree.TreeDecomposition

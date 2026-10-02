@@ -12436,6 +12436,8 @@ projects:
       counting results. Extracted as a reusable byproduct of the published Paper IV
       formalization of the chordal-graph case of Erdős problem #81; this library
       is not by itself a proof of that paper's partition bound.
+      An optional adapter joins forest roots through an empty connector bag,
+      yielding the existing tree-decomposition interface without increasing width.
     branch: graph theory
     entry_module: LeanPool.PaperIVCliqueTree
     authors:
@@ -12469,6 +12471,22 @@ projects:
         informal: >-
           The total bag size minus the total parent-child bag intersection size
           equals the number of graph vertices.
+      - declaration: SimpleGraph.CliqueTree.toTreeDecomposition
+        informal: >-
+          Every clique forest with a finite node type in Type converts to a tree
+          decomposition by adding one empty-bag connector joined to every root;
+          each original bag is preserved and the result is coherent.
+        source_ref: >-
+          Lean Pool interoperability follow-up to PR 577; the adapter is new
+          library code, not a declaration from the frozen Paper IV source.
+      - declaration: SimpleGraph.CliqueTree.toTreeDecomposition_width
+        informal: >-
+          The converted decomposition has width exactly the original maximum bag
+          cardinality minus one, with truncated natural subtraction.
+      - declaration: SimpleGraph.CliqueTree.treewidth_le_max_bag_card_sub_one
+        informal: >-
+          The treewidth defined in Utilities.Treewidth is at most the maximum
+          bag cardinality of a finite clique forest minus one.
     tags:
       - graph-theory
       - chordal-graphs
