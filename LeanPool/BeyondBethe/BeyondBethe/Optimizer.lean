@@ -613,7 +613,7 @@ theorem exists_logKKT_of_regularizedBetheMaximizer
   linarith
 
 theorem positiveMatrix_hasPerfectMatching
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*}
     {A : Matrix ι ι ℝ} (hA : Matrix.Positive A) :
     Matrix.HasPerfectMatching A := by
   refine ⟨Equiv.refl ι, ?_⟩
