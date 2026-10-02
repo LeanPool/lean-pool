@@ -481,9 +481,10 @@ theorem cubeCoordinateFold_eq_cubeLowerFaceReflection_of_mem_neighbor {d : ℕ}
   by_cases hji : j = i
   · subst j
     have hLower : x i < cubeLowerFaceCoord Q i := by
-      have hxi := (hx i).2
-      simp [cubeLowerFaceNeighbor, coordIndexShift,
-        translateCube, cubeScaleFactor] at hxi
+      have hxi :
+          x i < (↑(Q.index i) + -1 + (2 : ℝ)⁻¹) * 3 ^ Q.scale := by
+        simpa [cubeLowerFaceNeighbor, coordIndexShift, translateCube,
+          cubeScaleFactor] using (hx i).2
       have hface :
           (↑(Q.index i) + -1 + (2 : ℝ)⁻¹) * 3 ^ Q.scale =
             cubeLowerFaceCoord Q i := by
@@ -513,12 +514,13 @@ theorem cubeCoordinateFold_eq_cubeUpperFaceReflection_of_mem_neighbor {d : ℕ}
   by_cases hji : j = i
   · subst j
     have hnotLower : ¬ x i < cubeLowerFaceCoord Q i := by
-      have hxi := (hx i).1
+      have hxi :
+          (↑(Q.index i) + 1 - (2 : ℝ)⁻¹) * 3 ^ Q.scale < x i := by
+        simpa [cubeUpperFaceNeighbor, coordIndexShift, translateCube,
+          cubeScaleFactor] using (hx i).1
       have hscale : 0 < (3 : ℝ) ^ Q.scale := by
         simpa [cubeScaleFactor] using
           (zpow_pos (show (0 : ℝ) < 3 by norm_num) Q.scale)
-      simp [cubeUpperFaceNeighbor, coordIndexShift, translateCube,
-        cubeScaleFactor] at hxi
       have hface :
           (↑(Q.index i) + 1 - (2 : ℝ)⁻¹) * 3 ^ Q.scale =
             cubeUpperFaceCoord Q i := by
@@ -534,9 +536,10 @@ theorem cubeCoordinateFold_eq_cubeUpperFaceReflection_of_mem_neighbor {d : ℕ}
       rw [not_lt]
       exact le_trans hLowerUpper.le hxi.le
     have hnotUpper : ¬ x i < cubeUpperFaceCoord Q i := by
-      have hxi := (hx i).1
-      simp [cubeUpperFaceNeighbor, coordIndexShift, translateCube,
-        cubeScaleFactor] at hxi
+      have hxi :
+          (↑(Q.index i) + 1 - (2 : ℝ)⁻¹) * 3 ^ Q.scale < x i := by
+        simpa [cubeUpperFaceNeighbor, coordIndexShift, translateCube,
+          cubeScaleFactor] using (hx i).1
       have hface :
           (↑(Q.index i) + 1 - (2 : ℝ)⁻¹) * 3 ^ Q.scale =
             cubeUpperFaceCoord Q i := by
@@ -578,9 +581,10 @@ theorem cubeCoordinateFoldSign_of_mem_cubeLowerFaceNeighbor {d : ℕ}
   by_cases hji : j = i
   · subst j
     have hLower : x i < cubeLowerFaceCoord Q i := by
-      have hxi := (hx i).2
-      simp [cubeLowerFaceNeighbor, coordIndexShift,
-        translateCube, cubeScaleFactor] at hxi
+      have hxi :
+          x i < (↑(Q.index i) + -1 + (2 : ℝ)⁻¹) * 3 ^ Q.scale := by
+        simpa [cubeLowerFaceNeighbor, coordIndexShift, translateCube,
+          cubeScaleFactor] using (hx i).2
       have hface :
           (↑(Q.index i) + -1 + (2 : ℝ)⁻¹) * 3 ^ Q.scale =
             cubeLowerFaceCoord Q i := by
@@ -608,12 +612,13 @@ theorem cubeCoordinateFoldSign_of_mem_cubeUpperFaceNeighbor {d : ℕ}
   by_cases hji : j = i
   · subst j
     have hnotLower : ¬ x i < cubeLowerFaceCoord Q i := by
-      have hxi := (hx i).1
+      have hxi :
+          (↑(Q.index i) + 1 - (2 : ℝ)⁻¹) * 3 ^ Q.scale < x i := by
+        simpa [cubeUpperFaceNeighbor, coordIndexShift, translateCube,
+          cubeScaleFactor] using (hx i).1
       have hscale : 0 < (3 : ℝ) ^ Q.scale := by
         simpa [cubeScaleFactor] using
           (zpow_pos (show (0 : ℝ) < 3 by norm_num) Q.scale)
-      simp [cubeUpperFaceNeighbor, coordIndexShift, translateCube,
-        cubeScaleFactor] at hxi
       have hface :
           (↑(Q.index i) + 1 - (2 : ℝ)⁻¹) * 3 ^ Q.scale =
             cubeUpperFaceCoord Q i := by
@@ -629,9 +634,10 @@ theorem cubeCoordinateFoldSign_of_mem_cubeUpperFaceNeighbor {d : ℕ}
       rw [not_lt]
       exact le_trans hLowerUpper.le hxi.le
     have hnotUpper : ¬ x i < cubeUpperFaceCoord Q i := by
-      have hxi := (hx i).1
-      simp [cubeUpperFaceNeighbor, coordIndexShift, translateCube,
-        cubeScaleFactor] at hxi
+      have hxi :
+          (↑(Q.index i) + 1 - (2 : ℝ)⁻¹) * 3 ^ Q.scale < x i := by
+        simpa [cubeUpperFaceNeighbor, coordIndexShift, translateCube,
+          cubeScaleFactor] using (hx i).1
       have hface :
           (↑(Q.index i) + 1 - (2 : ℝ)⁻¹) * 3 ^ Q.scale =
             cubeUpperFaceCoord Q i := by
