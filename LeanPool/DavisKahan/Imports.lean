@@ -132,6 +132,7 @@ public import LeanPool.DavisKahan.DavisKahan.Geometry.Halmos.GenericPosition
 public import LeanPool.DavisKahan.DavisKahan.Geometry.Halmos.GenericReconstruction
 public import LeanPool.DavisKahan.DavisKahan.Geometry.Halmos.GenericRotationPredicates
 public import LeanPool.DavisKahan.DavisKahan.Geometry.Halmos.Realization
+public import LeanPool.DavisKahan.DavisKahan.Geometry.Halmos.TwoProjectionAlgebra
 public import LeanPool.DavisKahan.DavisKahan.Geometry.Halmos.TwoProjections
 public import LeanPool.DavisKahan.DavisKahan.Geometry.Halmos.UnitaryEquivalence
 public import LeanPool.DavisKahan.DavisKahan.Geometry.Polar

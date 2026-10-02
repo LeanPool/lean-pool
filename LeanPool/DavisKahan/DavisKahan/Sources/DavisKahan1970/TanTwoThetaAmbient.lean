@@ -5,6 +5,8 @@ Authors: Jon Crall, Claude Opus 5
 -/
 module
 
+public import LeanPool.DavisKahan.DavisKahan.Geometry.Halmos.TwoProjectionAlgebra
+
 public import LeanPool.DavisKahan.DavisKahan.Geometry.Angle.TanAngleFunctionalCalculus
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.AmbientBlockVocabulary
 public import LeanPool.DavisKahan.DavisKahan.InfiniteDimensional.TanTwoTheta.CanonicalTangentBridge
@@ -177,6 +179,8 @@ open point.
 namespace TauCeti
 namespace DavisKahan1970
 
+open TauCeti.DavisKahan.TwoProjectionAlgebra
+
 open TauCeti.DavisKahanExt
 open TauCeti.DavisKahan
 open TauCeti.DavisKahan.ExactSinTheta
@@ -208,44 +212,6 @@ private theorem two_comm' (T : E →L[ℂ] E) : T * 2 = 2 * T := by
 private theorem two_star' : star (2 : E →L[ℂ] E) = 2 := by
   rw [two_eq_one_add_one', star_add, star_one]
 
-/-! ### Two-projection algebra reused at the doubled angle
-
-The single-angle module proves the two facts the representative needs about a
-pair of idempotents; the three helpers below are the small consequences the
-doubled angle uses, restated for an abstract ring so that the
-projection-specific rewriting happens once. -/
-
-section ProjectionAlgebra
-
-variable {A : Type*} [Ring A] {p D : A}
-
-private theorem sq_eq_sub' (hkey : D * p + p * D + D * D = D) :
-    D * D = D - D * p - p * D := by
-  have h : D * D = D - (D * p + p * D) := eq_sub_of_add_eq' hkey
-  rw [h]
-  abel
-
-private theorem proj_sq' (hp : p * p = p) (hkey : D * p + p * D + D * D = D) :
-    p * (D * D) = -(p * D * p) := by
-  have e1 : p * (D * p) = p * D * p := (mul_assoc p D p).symm
-  have e2 : p * (p * D) = p * D := by rw [← mul_assoc, hp]
-  rw [sq_eq_sub' hkey, mul_sub, mul_sub, e1, e2]
-  abel
-
-private theorem sq_proj' (hp : p * p = p) (hkey : D * p + p * D + D * D = D) :
-    D * D * p = -(p * D * p) := by
-  have e3 : D * p * p = D * p := by rw [mul_assoc, hp]
-  rw [sq_eq_sub' hkey, sub_mul, sub_mul, e3]
-  abel
-
-/-- The projection commutes with `sin²Θ`. -/
-private theorem proj_comm_sq' (hp : p * p = p)
-    (hkey : D * p + p * D + D * D = D) :
-    p * (D * D) = D * D * p := by
-  rw [proj_sq' hp hkey, sq_proj' hp hkey]
-
-end ProjectionAlgebra
-
 /-! ### Inverses in a ring -/
 
 section RingInverse
@@ -255,17 +221,6 @@ variable {A : Type*} [Ring A]
 private theorem inverse_comm' {a x : A} (ha : IsUnit a) (h : x * a = a * x) :
     x * Ring.inverse a = Ring.inverse a * x :=
   TauCeti.ringInverse_semiconj ha ha h
-
-private theorem star_inverse' [StarRing A] {a : A} (ha : IsUnit a) :
-    star (Ring.inverse a) = Ring.inverse (star a) := by
-  have hstar : IsUnit (star a) := ha.star
-  have h1 : star a * Ring.inverse (star a) = 1 := Ring.mul_inverse_cancel _ hstar
-  have h2 : star (Ring.inverse a) * star a = 1 := by
-    rw [← star_mul, Ring.mul_inverse_cancel a ha, star_one]
-  calc star (Ring.inverse a)
-      = star (Ring.inverse a) * (star a * Ring.inverse (star a)) := by rw [h1, mul_one]
-    _ = (star (Ring.inverse a) * star a) * Ring.inverse (star a) := by rw [mul_assoc]
-    _ = Ring.inverse (star a) := by rw [h2, one_mul]
 
 end RingInverse
 
@@ -654,7 +609,7 @@ private theorem doubleSecant_comm_starProjection :
       U.starProjection * doubleSecant U V :=
   (inverse_comm' (hinv)
     (by
-      have h := proj_comm_sq' (starProjection_idem' U)
+      have h := projection_commutes_difference_square (starProjection_idem' U)
         (projectorDifference_anticommutator (U := U) (V := V))
       have hp2 : U.starProjection *
             (2 * (projectorDifference U V * projectorDifference U V)) =
@@ -681,10 +636,11 @@ private theorem doubleSecant_comm_starProjection_compl :
   rw [h, doubleSecant_comm_starProjection hinv]
   noncomm_ring
 
+omit hinv in
 private theorem doubleSecant_selfAdjoint :
     star (doubleSecant U V) = doubleSecant U V := by
   rw [doubleSecant,
-    star_inverse' (hinv)]
+    ← Ring.inverse_star]
   congr 1
   rw [star_sub, star_one, star_mul, two_star', star_mul,
     isSelfAdjoint_projectorDifference.star_eq, two_comm']
@@ -810,7 +766,7 @@ theorem isSelfAdjoint_tanTwoBlockRepresentative :
     rw [star_mul, star_mul, star_sub, star_one, hp.star_eq, hD.star_eq]
     noncomm_ring
   rw [IsSelfAdjoint, tanTwoBlockRepresentative_eq hinv, star_mul, two_star',
-    star_mul, doubleSecant_selfAdjoint hinv, star_add, hcross, hcross', add_comm,
+    star_mul, doubleSecant_selfAdjoint (U := U) (V := V), star_add, hcross, hcross', add_comm,
     add_mul, mul_add, ← doubleSecant_comm_lower hinv, ← doubleSecant_comm_upper hinv,
     two_comm']
 
@@ -984,7 +940,7 @@ private theorem graph_sq_p (hpp : p * p = p) (hQQ : Q * Q = Q)
   have hpDp : p * D * p = R * p - p := by
     have hexp : p * D * p = p * Q * p - p * p * p := by rw [hD]; noncomm_ring
     rw [hexp, graph_pQp hpp hpY hsYp hRp hQ, hpp, hpp]
-  rw [sq_proj' hpp hkey, hpDp]
+  rw [difference_square_mul_projection hpp hkey, hpDp]
   noncomm_ring
 
 private theorem graph_secant_p (hpp : p * p = p) (hQQ : Q * Q = Q)
@@ -1449,7 +1405,7 @@ theorem tanTwoTheta_ambient_bounded_branchFree_kyFan_complex_of_corner
   have hKsa : IsSelfAdjoint
       (2 * (projectorDifference U V * doubleSecant U V)) := by
     rw [IsSelfAdjoint, star_mul, star_mul, two_star',
-      doubleSecant_selfAdjoint hinv,
+      doubleSecant_selfAdjoint (U := U) (V := V),
       isSelfAdjoint_projectorDifference.star_eq,
       ← doubleSecant_comm_projectorDifference hinv, two_comm']
   have h₀ : ∀ j : ℕ,

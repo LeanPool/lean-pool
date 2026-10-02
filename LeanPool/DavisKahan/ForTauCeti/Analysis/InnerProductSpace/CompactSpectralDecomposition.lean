@@ -202,7 +202,7 @@ theorem hasEigenvalue_ofReal_pos_iff_exists_approximationNumber_eq
 
 /-- A fixed orthonormal basis of a positive eigenspace.  Naming this choice separately makes
 repeated occurrences of the same eigenvalue use definitionally the same basis. -/
-noncomputable def positiveEigenspaceBasis
+private noncomputable def positiveEigenspaceBasis
     (hAc : IsCompactOperator A) (hAs : IsSelfAdjoint A)
     (μ : ℝ) (hμ : 0 < μ) :
     OrthonormalBasis (Fin (finrank 𝕜 (eigenspace A.toLinearMap ((μ : ℝ) : 𝕜)))) 𝕜
@@ -216,7 +216,7 @@ noncomputable def positiveEigenspaceBasis
 
 /-- The `j`th vector of the fixed positive eigenspace basis, coerced to the ambient space.
 It is defined as zero beyond the finite multiplicity so its result type does not depend on `μ`. -/
-noncomputable def positiveEigenspaceVector
+private noncomputable def positiveEigenspaceVector
     (hAc : IsCompactOperator A) (hAs : IsSelfAdjoint A)
     (μ : ℝ) (hμ : 0 < μ) (j : ℕ) : E :=
   if hj : j < finrank 𝕜 (eigenspace A.toLinearMap ((μ : ℝ) : 𝕜)) then
@@ -300,7 +300,25 @@ noncomputable def positiveApproximationEigenvector
     simpa only [N, M, W] using finrank_eigenSpan_Ici hAc hAs hn
   have hi : n - M < finrank 𝕜 W :=
     positiveApproximation_index_lt hAc hAs hApos n hn
-  exact positiveEigenspaceVector hAc hAs μ hn (n - M)
+  exact if hj : n - M < finrank 𝕜 W then
+    let basis : OrthonormalBasis (Fin (finrank 𝕜 W)) 𝕜 W := by
+      letI : FiniteDimensional 𝕜 (eigenSpan A (Set.Ici μ)) :=
+        finiteDimensional_eigenSpan hAc hAs hn fun s hs => hs
+      letI : FiniteDimensional 𝕜 W :=
+        Submodule.finiteDimensional_of_le
+          (eigenspace_le_eigenSpan A (Set.mem_Ici.mpr (le_refl μ)))
+      exact stdOrthonormalBasis 𝕜 _
+    ((basis ⟨n - M, hj⟩ : W) : E)
+  else 0
+
+private theorem positiveApproximationEigenvector_eq_fixedVector
+    (hAc : IsCompactOperator A) (hAs : IsSelfAdjoint A)
+    (hApos : ∀ x, 0 ≤ RCLike.re ⟪A x, x⟫_𝕜)
+    (n : ℕ) (hn : 0 < A.approximationNumber n) :
+    positiveApproximationEigenvector hAc hAs hApos n hn =
+      positiveEigenspaceVector hAc hAs (A.approximationNumber n) hn
+        (n - finrank 𝕜 (eigenSpan A (Set.Ioi (A.approximationNumber n)))) := by
+  rfl
 
 /-- The selected vector lies in the eigenspace at the corresponding approximation value. -/
 theorem positiveApproximationEigenvector_mem_eigenspace
@@ -310,7 +328,7 @@ theorem positiveApproximationEigenvector_mem_eigenspace
     positiveApproximationEigenvector hAc hAs hApos n hn ∈
       eigenspace A.toLinearMap (((A.approximationNumber n : ℝ) : 𝕜)) := by
   classical
-  unfold positiveApproximationEigenvector
+  simp only [positiveApproximationEigenvector_eq_fixedVector]
   exact positiveEigenspaceVector_mem hAc hAs _ _ _
     (positiveApproximation_index_lt hAc hAs hApos n hn)
 
@@ -322,7 +340,7 @@ theorem norm_positiveApproximationEigenvector
     ‖positiveApproximationEigenvector hAc hAs hApos n hn‖ = 1 := by
   classical
   let μ := A.approximationNumber n
-  unfold positiveApproximationEigenvector
+  simp only [positiveApproximationEigenvector_eq_fixedVector]
   exact norm_positiveEigenspaceVector hAc hAs _ _ _
     (positiveApproximation_index_lt hAc hAs hApos n hn)
 
@@ -345,7 +363,7 @@ theorem orthonormal_positiveApproximationEigenvector
     let ν := A.approximationNumber m
     by_cases hμν : μ = ν
     · dsimp only [μ, ν] at hμν
-      unfold positiveApproximationEigenvector
+      simp only [positiveApproximationEigenvector_eq_fixedVector]
       simp only [hμν]
       have hMn : finrank 𝕜 (eigenSpan A (Set.Ioi ν)) ≤ n := by
         by_contra h

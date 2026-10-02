@@ -29,18 +29,15 @@ variable {F : Type*} [NormedAddCommGroup F] [InnerProductSpace 𝕜 F]
 variable {G : Type*} [NormedAddCommGroup G] [InnerProductSpace 𝕜 G]
   [FiniteDimensional 𝕜 G]
 
-/-- Product-coordinate form of the zero extension, `(x,y) ↦ (0,A x)`. -/
-noncomputable def zeroExtensionProd (A : E →ₗ[𝕜] F) :
-    (E × F) →ₗ[𝕜] (E × F) where
-  toFun z := (0, A z.1)
-  map_add' x y := by ext <;> simp
-  map_smul' c x := by ext <;> simp
-
 /-- Zero extension of a rectangular map to a square endomorphism. -/
 noncomputable def zeroExtension (A : E →ₗ[𝕜] F) :
     WithLp 2 (E × F) →ₗ[𝕜] WithLp 2 (E × F) :=
+  let productExtension : (E × F) →ₗ[𝕜] (E × F) :=
+    { toFun := fun z => (0, A z.1)
+      map_add' := fun x y => by ext <;> simp
+      map_smul' := fun c x => by ext <;> simp }
   (WithLp.linearEquiv 2 𝕜 (E × F)).symm.toLinearMap ∘ₗ
-    zeroExtensionProd A ∘ₗ
+    productExtension ∘ₗ
       (WithLp.linearEquiv 2 𝕜 (E × F)).toLinearMap
 
 omit [FiniteDimensional 𝕜 E] [FiniteDimensional 𝕜 F] in
