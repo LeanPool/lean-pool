@@ -11,10 +11,10 @@ public import LeanPool.TuttePath.PathInduction
 -- Modified for Lean Pool: module integration, public visibility, and import paths.
 
 /-!
-Tutte's path theorem, with its approved statement and checked corank induction.
+Tutte's path theorem for finite matroids, proved by corank induction.
 
-The authoritative source is Baker–Jin–Lorscheid, arXiv:2601.02582, label `thm:path-theorem`.
-All vocabulary is implemented in `TutteFormalization.Definitions`.
+Source: Baker–Jin–Lorscheid, arXiv:2601.02582v2, Theorem 1.8 (`thm:path-theorem`).
+Definitions appear in `LeanPool.TuttePath.Definitions`.
 Structural dependencies are proved in the imported project modules.
 -/
 

@@ -12,9 +12,8 @@ public meta import Lean.Elab.Tactic.NormCast
 -- Modified for Lean Pool: module integration, public visibility, and import paths.
 
 /-!
-Finite-flat rank tools for BG-01, PT-02 and PT-06.
-These helpers reuse the pinned rank/closure API without changing the approved
-definitions. Natural ranks are an internal arithmetic interface to finite `eRk`.
+Finite-flat rank tools using Mathlib's rank and closure API.
+Natural ranks are an internal arithmetic interface to finite `eRk`.
 The structural lemmas do not depend on the path theorem.
 -/
 
@@ -24,7 +23,7 @@ namespace TutteFormalization
 
 variable {α : Type*} {M : Matroid α} [M.Finite] {F G H : Set α}
 
-/-- PD-002: Mathlib already infers finiteness after arbitrary contraction. -/
+/-- Mathlib infers finiteness after arbitrary contraction. -/
 theorem contraction_finite (M : Matroid α) [M.Finite] (F : Set α) :
     (M.contract F).Finite := inferInstance
 
@@ -42,7 +41,7 @@ theorem natRank_closure (M : Matroid α) (F : Set α) :
     natRank M (M.closure F) = natRank M F := by
   simp only [natRank, M.eRk_closure_eq]
 
-/-- BG-01: reuse the verified submodular rank inequality, converting finite ranks. -/
+/-- Convert Mathlib's submodular rank inequality to finite natural ranks. -/
 theorem natRank_submodular (M : Matroid α) [M.Finite] (F G : Set α) :
     natRank M (F ∩ G) + natRank M (M.closure (F ∪ G)) ≤
       natRank M F + natRank M G := by
@@ -113,7 +112,7 @@ theorem isHyperplane_of_natRank (hH : M.IsFlat H)
       natRank_lt_of_flat_ssubset hH hG (hHG.ssubset_of_ne (Ne.symm heq))
     exact flat_eq_of_subset_of_natRank_le hG M.ground_isFlat hG.subset_ground (by omega)
 
-/-- PT-02 / PD-003: strict containment below a hyperplane gives the upper rank bound. -/
+/-- Strict containment below a hyperplane gives the upper rank bound. -/
 theorem hyperplane_inter_eq_of_corankTwo (hF : CorankTwo M F)
     {X Y : Set α} (hX : IsHyperplane M X) (hY : IsHyperplane M Y)
     (hXY : X ≠ Y) (hFX : F ⊆ X) (hFY : F ⊆ Y) : X ∩ Y = F := by

@@ -11,7 +11,7 @@ public import LeanPool.TuttePath.FlatRank
 
 /-!
 Finite rank compatibility for contraction. The pinned API defines contraction by
-dual deletion; its verified dual and restriction rank formulas therefore suffice
+dual deletion; its dual and restriction rank formulas therefore suffice
 to derive the paper's contraction rank formula without adding an assumption.
 -/
 
