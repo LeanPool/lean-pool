@@ -98,6 +98,7 @@ private theorem exponent_strictAnti_lex :
 abbrev Index := WithTop (Lex (ℕ × ℕ))
 
 /-- The exponent sequence of the concrete Conway normal form. -/
+@[expose]
 def exponentAtIndex : Index → Surreal.{u}
   | ⊤ => 0
   | (p : Lex (ℕ × ℕ)) => (exponent (ofLex p).1 (ofLex p).2 : ℝ)

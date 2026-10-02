@@ -48,6 +48,7 @@ theorem mem_normalFormOmnificIntegers_iff (x : SurrealHahnSeries.{u}) :
 
 /-- A ring equivalence from surreal numbers to surreal Hahn series identifies Conway's
 cut-defined omnific integers with the normal-form subring `omnificIntegers`. -/
+@[expose]
 def NormalFormIdentifiesOmnificIntegers : Prop :=
   ∃ e : Surreal.{u} ≃+* SurrealHahnSeries.{u},
     ∀ x : Surreal.{u}, IsConwayOmnificInteger x ↔ e x ∈ omnificIntegers

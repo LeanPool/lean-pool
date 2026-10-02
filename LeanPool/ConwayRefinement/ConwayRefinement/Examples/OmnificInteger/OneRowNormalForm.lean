@@ -46,6 +46,7 @@ private theorem exponent_strictAnti : StrictAnti exponent := by
 abbrev Index := WithTop ℕ
 
 /-- The exponent at an index of the displayed normal form. -/
+@[expose]
 def exponentAtIndex : Index → Surreal
   | ⊤ => 0
   | (n : ℕ) => (exponent n : ℝ)

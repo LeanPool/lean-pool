@@ -89,6 +89,7 @@ theorem typeLT_finiteLex (n : ℕ) :
       congr 2
 
 /-- The contraction factor separating consecutive lexicographic blocks. -/
+@[expose]
 def scale : ℝ := 1 / 3
 
 @[simp]
