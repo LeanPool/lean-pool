@@ -46,6 +46,7 @@ universe u
 /-- The sharp boundary invariant for the scalar Crouzeix companion: at every
 frontier point, the conjugate point value plus the lower-degree phase contour
 is bounded by the polynomial frontier sup norm. -/
+@[expose]
 def CrouzeixBoundaryPhaseContractive
     (Omega : SmoothJordanDomain) (p : Polynomial ℂ) : Prop :=
   ∀ xi ∈ frontier Omega.carrier,
