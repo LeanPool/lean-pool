@@ -12427,6 +12427,56 @@ projects:
       - 30C15
       - 30C10
       - 12D10
+  - slug: paper-iv-clique-trees
+    title: Clique trees and separators of chordal graphs
+    summary: >-
+      Develops rooted clique forests with the running-intersection property, constructs
+      them from perfect elimination orders of finite chordal graphs, characterizes
+      chordality by their existence, and obtains maximal-clique, separator, and
+      counting results. Extracted as a reusable byproduct of the published Paper IV
+      formalization of the chordal-graph case of Erdős problem #81; this library
+      is not by itself a proof of that paper's partition bound.
+    branch: graph theory
+    entry_module: LeanPool.PaperIVCliqueTree
+    authors:
+      - Juan Pablo Traverso Gianini
+    source:
+      title: 'Clique partitions with rooted simplicial defect: quantitative stability and sharp eventual bounds'
+      authors:
+        - Juan Pablo Traverso Gianini
+      url: https://github.com/jtraverso/erdos-81-chordal-clique-partitions
+      github_repo: jtraverso/erdos-81-chordal-clique-partitions
+      commit: ff2019f56a50cf300a6531c9f8d4a8fb1a541e3d
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - SimpleGraph.isChordal_iff_nonempty_cliqueTree
+    main_results:
+      - declaration: SimpleGraph.IsChordal.exists_isPEO
+        informal: Every finite chordal graph admits a perfect elimination order.
+      - declaration: SimpleGraph.isChordal_iff_nonempty_cliqueTree
+        informal: A finite graph is chordal if and only if it has a rooted clique tree.
+      - declaration: SimpleGraph.IsChordal.exists_maximalCliqueTree_card_le
+        informal: >-
+          A nonempty finite chordal graph has a clique tree whose distinct bags are
+          precisely its maximal cliques, with no more bags than vertices.
+      - declaration: SimpleGraph.CliqueTree.exists_parent_eq_of_isMinimalSeparator
+        informal: >-
+          In a clique tree, each minimal separator of two reachable vertices is
+          the intersection of two adjacent bags.
+      - declaration: SimpleGraph.CliqueTree.card_eq_sum_card_bag_sub_sum_card_inter
+        informal: >-
+          The total bag size minus the total parent-child bag intersection size
+          equals the number of graph vertices.
+    tags:
+      - graph-theory
+      - chordal-graphs
+      - clique-trees
+      - perfect-elimination-orders
+      - separators
+    msc:
+      - 05C75
   - slug: viscosity-solution-theory
     title: Viscosity solutions, Aleksandrov differentiability and harmonic Dirichlet problems
     summary: Develops second-order semijets, smooth test-function equivalence, Jensen contact sets,
