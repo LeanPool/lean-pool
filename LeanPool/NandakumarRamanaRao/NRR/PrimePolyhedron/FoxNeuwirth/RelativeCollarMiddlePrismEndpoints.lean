@@ -187,7 +187,7 @@ theorem lowerBoundaryPairing_eq_split
             subdivisionSign L eta *
               W (lowerFacet hp N L (endpointTopCell hp N L q eta)) := by
   classical
-  unfold lowerBoundaryCoefficient lowerEndpointPairing
+  unfold lowerBoundaryCoefficient lowerEndpointPairing weightedLowerEndpointPairing
   simp_rw [Finset.sum_mul]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
@@ -224,7 +224,7 @@ theorem upperBoundaryPairing_eq_split
             subdivisionSign L eta *
               W (upperFacet hp N L (endpointTopCell hp N L q eta)) := by
   classical
-  unfold upperBoundaryCoefficient upperEndpointPairing
+  unfold upperBoundaryCoefficient upperEndpointPairing weightedUpperEndpointPairing
   simp_rw [Finset.sum_mul]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
