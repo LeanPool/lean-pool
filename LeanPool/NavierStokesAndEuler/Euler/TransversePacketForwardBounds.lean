@@ -221,6 +221,40 @@ local instance instTransversePacketForwardBounds1 : NormedRing (U →L[ℝ] U) :
 synthesis. -/
 local instance instTransversePacketForwardBounds2 : NormedRing (Space →ᵇ U →L[ℝ] U) := inferInstance
 
+omit [CompleteSpace U] in
+theorem normalize_path_orbit {D : Data U} {raw : VectorField} (G : Forcing P D raw)
+    (g : C(Icc (0 : ℝ) D.T, ℝ)) (hg : ∀ t, 0 < g t) :
+    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a
+      (includePath P D.support D.support_measurable (normalize g hg G.path))) := by
+  rw [include_normalize]
+  exact normalize_orbit_contDiff P g hg _ G.path_orbit
+
+/-- The forward velocity divided by g is the normalized velocity of the normalized forcing. -/
+theorem normalized_velocityPath_eq {D : Data U} {raw : VectorField} (G : Forcing P D raw)
+    (I : InitialData P D) (g : C(Icc (0 : ℝ) D.T, ℝ)) (hg : ∀ t, 0 < g t) :
+    normalize g hg (includePath P D.support D.support_measurable (G.velocityPath I)) =
+      includePath P D.support D.support_measurable
+        (normalizedVelocity P D.T D.T_pos.le D.support D.support_measurable
+          D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower g hg
+          (normalize g hg G.path) I.value) := by
+  have he := normalized_full_velocity_eq P D.support D.support_measurable D.T D.T_pos.le
+    D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower g hg
+    (normalize g hg G.path) I.value
+  rwa [weight_normalize] at he
+
+/-- The time derivative divided by g is the normalized derivative of the normalized forcing. -/
+theorem normalized_derivativePath_eq {D : Data U} {raw : VectorField} (G : Forcing P D raw)
+    (I : InitialData P D) (g : C(Icc (0 : ℝ) D.T, ℝ)) (hg : ∀ t, 0 < g t) :
+    normalize g hg (includePath P D.support D.support_measurable (G.derivativePath I)) =
+      includePath P D.support D.support_measurable
+        (normalizedVelocityDerivative P D.support D.support_measurable D.T D.T_pos.le
+          D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower
+          (normalize g hg G.path) I.value g hg) := by
+  have he := normalized_full_velocityDerivative_eq P D.support D.support_measurable D.T D.T_pos.le
+    D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower
+    (normalize g hg G.path) I.value g hg
+  rwa [weight_normalize] at he
+
 variable
   {D : Data U} {raw : VectorField} (G : Forcing P D raw) (I : InitialData P D)
   (g : C(Icc (0 : ℝ) D.T, ℝ)) (hg : ∀ t, 0 < g t)
@@ -263,20 +297,11 @@ theorem source_velocity_normalized_bound
     block directions q (fun a => pathTranslate P a
       (normalize g hg (includePath P D.support D.support_measurable (G.velocityPath I)))) n 0 ≤
         (3*sobolevCoefficientAmplitude ι q Rc C₀)*majorant R (d+1) n := by
-  have he := normalized_full_velocity_eq P D.support D.support_measurable D.T D.T_pos.le
-    D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower g hg
-    (normalize g hg G.path) I.value
-  rw [weight_normalize] at he
-  change block directions q (fun a => pathTranslate P a
-    (normalize g hg (includePath P D.support D.support_measurable
-      (velocity P D.support D.support_measurable D.T D.T_pos.le
-        D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower G.path I.value)))) n
-            0 ≤ _
-  rw [he]
+  rw [G.normalized_velocityPath_eq I g hg]
   exact physical_forward_block_bound P D.T D.T_pos.le D.support D.support_measurable
     D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower g hg
     (normalize g hg G.path) I.value directions hdir q Ω hΩ D.support_compact hΩo hsub hΩball hg0
-    (normalize_orbit_contDiff P g hg _ G.path_orbit) I.orbit C A Cf Rc C₀ C₁ Ri R
+    (G.normalize_path_orbit g hg) I.orbit C A Cf Rc C₀ C₁ Ri R
     hC hA hCf hRc hC₀ hC₁ hRi
     (fun j => D.frame_spatial_bound j _ (hbF j))
     (fun j => D.frameDerivative_spatial_bound j _ (hbF₁ j))
@@ -287,20 +312,11 @@ theorem source_derivative_normalized_bound (hRone : 1 ≤ R) (n : ℕ) :
     block directions q (fun a => pathTranslate P a
       (normalize g hg (includePath P D.support D.support_measurable (G.derivativePath I)))) n 0 ≤
         physicalCost ι q Ri C₀ C₁ Cf 1*majorant R (d+1) n := by
-  have he := normalized_full_velocityDerivative_eq P D.support D.support_measurable D.T D.T_pos.le
-    D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower
-    (normalize g hg G.path) I.value g hg
-  rw [weight_normalize] at he
-  change block directions q (fun a => pathTranslate P a
-    (normalize g hg (includePath P D.support D.support_measurable
-      (velocityDerivative P D.support D.support_measurable D.T D.T_pos.le
-        D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower G.path I.value)))) n
-            0 ≤ _
-  rw [he]
+  rw [G.normalized_derivativePath_eq I g hg]
   exact derivative_forward_block_bound P D.T D.T_pos.le D.support D.support_measurable
     D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower g hg
     (normalize g hg G.path) I.value directions hdir q Ω hΩ D.support_compact hΩo hsub hΩball hg0
-    (normalize_orbit_contDiff P g hg _ G.path_orbit) I.orbit C A Cf Rc C₀ C₁ Ri R
+    (G.normalize_path_orbit g hg) I.orbit C A Cf Rc C₀ C₁ Ri R
     hC hA hCf hRc hC₀ hC₁ hRi
     (fun j => D.frame_spatial_bound j _ (hbF j))
     (fun j => D.frameDerivative_spatial_bound j _ (hbF₁ j))

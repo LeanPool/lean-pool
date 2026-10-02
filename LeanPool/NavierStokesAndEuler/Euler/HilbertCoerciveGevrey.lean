@@ -64,7 +64,7 @@ theorem derivative_recurrence
     simp [B]
   have hpositive (j : ℕ) :
       iteratedFDeriv ℝ (j+1) B x = iteratedFDeriv ℝ (j+1) A x := by
-    change iteratedFDeriv ℝ (j+1) (A - fun _ => A x) x = _
+    change iteratedFDeriv ℝ (j+1) (A - fun _ : P => A x) x = _
     rw [iteratedFDeriv_sub_apply (hA.contDiffAt.of_le (by simp)) contDiffAt_const]
     simp only [iteratedFDeriv_succ_const, Pi.zero_apply, sub_zero]
   have hprod := norm_iteratedFDeriv_clm_apply hB hu x (n := n) (by simp)

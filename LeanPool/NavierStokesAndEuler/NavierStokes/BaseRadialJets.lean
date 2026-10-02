@@ -81,8 +81,8 @@ theorem bandInput_deriv_Z (h Q : ℝ) (p : Slow) :
   have hd' : HasDerivAt (fun t : ℝ => bandInput h Q (p.1, (p.2.1 + t, p.2.2)))
       (0, (0, Q ^ CoordinateAlgebra.D h)) 0 := by
     have hdZ := ((hasDerivAt_id 0).const_add p.2.1).const_mul (Q ^ CoordinateAlgebra.D h)
-    have hfull := (hasDerivAt_const 0 (1 - Q * p.2.2)).prodMk
-      ((hasDerivAt_const 0 (Q * p.1 ^ 2 / 2)).prodMk hdZ)
+    have hinner := (hasDerivAt_const 0 (Q * p.1 ^ 2 / 2)).prodMk hdZ
+    have hfull := (hasDerivAt_const 0 (1 - Q * p.2.2)).prodMk hinner
     simpa only [bandInput, mul_one, id_eq] using hfull
   simpa only [add_zero] using hd.unique hd'
 

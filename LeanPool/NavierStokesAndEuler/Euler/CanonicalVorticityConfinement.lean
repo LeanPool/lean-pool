@@ -256,17 +256,17 @@ theorem strain_symmetric_along_label (x : Space)
       HasDerivWithinAt G (H r) (Icc 0 A.T) r := by
     simpa only [G,H,SmoothTimeField.realField,extendPath,
       projIcc_of_mem A.T_pos.le hr] using A.first_time ⟨r,hr⟩ x
+  have hS0 : S 0 = A.strain.field A.zeroTime x :=
+    congrArg (fun s => A.strain.field s x) (projIcc_left A.T_pos.le)
+  have hSt : S t = A.strain.field t x :=
+    congrArg (fun s => A.strain.field s x) (projIcc_val A.T_pos.le t)
   have hh := strain_symmetric_of_frame_wronskian F G H B S J A.T A.T_pos hF hG
     (fun r _ v => A.second_equation (projIcc 0 A.T A.T_pos.le r) x v)
     (fun r _ => E.curvature_symmetric (projIcc 0 A.T A.T_pos.le r) x)
     (fun r _ v => A.strain_equation (projIcc 0 A.T A.T_pos.le r) x v)
     (fun r _ v => A.inverse_right (projIcc 0 A.T A.T_pos.le r) x v)
-    (by
-      intro v w
-      simpa only [S,Parent.zeroTime,projIcc_of_mem A.T_pos.le (show (0 : ℝ) ∈ Icc 0 A.T from
-        ⟨le_rfl,A.T_pos.le⟩)] using hzero v w) t t.property
-  intro v w
-  simpa only [S,projIcc_of_mem A.T_pos.le t.property] using hh v w
+    (by rw [hS0]; exact hzero) t t.property
+  rwa [hSt] at hh
 
 /-- This statement needs only the actual parent Euler evolution, with no
 additional Sobolev regularity or support hypotheses. -/
@@ -616,10 +616,11 @@ theorem joinedNext_initial_support {n : ℕ} (P : Stage S n) (hn : n ≠ 0)
     (hq : requiredExponent ≤ q) (hB : commonThreshold gradientConstant hessianConstant ≤ B)
     (hP : tsupport (fun x => P.state.evolution.velocity (0, x)) ⊆ Metric.closedBall 0 2) :
     tsupport (fun x => (P.joinedNext hn hq hB).state.evolution.velocity (0, x)) ⊆
-      Metric.closedBall 0 2 :=
-  GeometryJoinedChoice.initial_support (P.joinedInput hn hq hB) P.restrictedState
-    (frequency S.J S.X n) (S.normal_frequency n) (supportScale S.J S.X (n+1))
-    (S.support_pos (n+1)) (S.support_one (n+1)) (P.chooseJoined hn hq hB) symmetric hP
+      Metric.closedBall 0 2 := by
+  rw [P.joinedNext_initial_velocity hn hq hB]
+  have h := (P.joinedInput hn hq hB).initial_support (frequency S.J S.X n)
+  exact (tsupport_add _ _).trans
+    (union_subset hP ((tsupport_add _ _).trans (union_subset h.1 h.2)))
 
 theorem successor_initial_support {n : ℕ} (P : Stage S n)
     (hq : requiredExponent ≤ q) (hB : commonThreshold gradientConstant hessianConstant ≤ B)

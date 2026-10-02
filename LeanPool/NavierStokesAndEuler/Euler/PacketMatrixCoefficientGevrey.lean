@@ -54,8 +54,8 @@ theorem comp_bound (A : MatrixCoefficient T a) (B : MatrixCoefficient T b)
     ‖iteratedFDeriv ℝ n (translateCoefficientPath (A.comp B).path) x‖ ≤
       (3*C*D)*majorant R 0 n := by
   have he : translateCoefficientPath (A.comp B).path =
-      fun v => pathCompositionMap (translateCoefficientPath A.path v) (translateCoefficientPath
-          B.path v) := by
+      fun v => pathCompositionMap (α := Space) (K := Icc (0 : ℝ) T) (U := Space) (E := Space)
+        (F := Space) (translateCoefficientPath A.path v) (translateCoefficientPath B.path v) := by
     funext v
     apply ContinuousMap.ext
     intro t

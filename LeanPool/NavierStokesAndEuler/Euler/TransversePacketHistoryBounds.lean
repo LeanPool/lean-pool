@@ -159,34 +159,27 @@ theorem physicalDerivative_block_bound (hT1 : T ≤ 1)
     D.time_pos.le hRc hC₀ hC₁ hCH hCf hRweak
   let v := D.velocityPath P (pathLp T D.time_pos.le f)
   let a := D.accelerationPath P f
-  have hv : ContDiff ℝ ∞ (fun b => pathTranslate P b v) :=
-    D.velocityPath_orbit_contDiff P hQ hQ₁ hH f hf
-  have ha : ContDiff ℝ ∞ (fun b => pathTranslate P b a) :=
-    D.accelerationPath_orbit_contDiff P hQ hQ₁ hH f hf
-  have hbv (k) : block directions q (fun b => pathTranslate P b v) k 0 ≤
-      traceCost T*majorant R (d+3) k := by
-    have hb := D.continuousVelocity_block_bound P directions hdir q hQ hQ₁ hH
-      Rc C₀ C₁ CH Cf R hRc hC₀ hC₁ hCH hCf hbQ hbQ₁ hbH hRweak hRstrong hT1 f hf d hfb k 0
-    exact hb.trans (mul_le_mul_of_nonneg_left
-      (majorant_mono_shift R hR1 (d+2) (d+3) k (by omega)) (traceCost_nonneg T D.time_pos.le))
-  have hba (k) : block directions q (fun b => pathTranslate P b a) k 0 ≤
-      1*majorant R (d+3) k := by
-    simpa only [one_mul] using D.accelerationPath_block_bound P directions hdir q hQ hQ₁ hH
-      Rc C₀ C₁ CH Cf R hRc hC₀ hC₁ hCH hCf hbQ hbQ₁ hbH hRweak hRstrong hT1 hRuniform f hf d hfb k 0
+  have hv := D.velocityPath_orbit_contDiff P hQ hQ₁ hH f hf
+  have ha := D.accelerationPath_orbit_contDiff P hQ hQ₁ hH f hf
   have h₁ := product_orbit_block_bound P D.Q₁ hQ₁ directions hdir q v hv
-    Rc C₁ R (traceCost T) hRc hC₁ (traceCost_nonneg T D.time_pos.le) hRcR hbQ₁ (d+3) hbv n
+    Rc C₁ R (traceCost T) hRc hC₁ (traceCost_nonneg T D.time_pos.le) hRcR hbQ₁ (d+3)
+    (fun k => (D.continuousVelocity_block_bound P directions hdir q hQ hQ₁ hH
+      Rc C₀ C₁ CH Cf R hRc hC₀ hC₁ hCH hCf hbQ hbQ₁ hbH hRweak hRstrong hT1 f hf d hfb k 0).trans
+      (mul_le_mul_of_nonneg_left (majorant_mono_shift R hR1 (d+2) (d+3) k (by omega))
+        (traceCost_nonneg T D.time_pos.le))) n
   have h₂ := product_orbit_block_bound P D.Q hQ directions hdir q a ha
-    Rc C₀ R 1 hRc hC₀ zero_le_one hRcR hbQ (d+3) hba n
-  have he : D.physicalDerivative P f = fullMultiplierMap P D.Q₁ v+fullMultiplierMap P D.Q a := by
+    Rc C₀ R 1 hRc hC₀ zero_le_one hRcR hbQ (d+3)
+    (fun k => (D.accelerationPath_block_bound P directions hdir q hQ hQ₁ hH Rc C₀ C₁ CH Cf R
+      hRc hC₀ hC₁ hCH hCf hbQ hbQ₁ hbH hRweak hRstrong hT1 hRuniform f hf d hfb k 0).trans_eq
+      (one_mul _).symm) n
+  have he : D.physicalDerivative P f =
+      fullMultiplierMap (K := Icc (0 : ℝ) T) (E := U) (F := E) P D.Q₁ v +
+        fullMultiplierMap (K := Icc (0 : ℝ) T) (E := U) (F := E) P D.Q a := by
     apply ContinuousMap.ext
     intro t
     rfl
-  have he' : (fun b => pathTranslate P b (D.physicalDerivative P f)) =
-      fun b => pathTranslate P b (fullMultiplierMap P D.Q₁ v) +
-        pathTranslate P b (fullMultiplierMap P D.Q a) := by
-    funext b
-    rw [he,map_add]
-  rw [he']
+  rw [he]
+  simp only [map_add]
   exact (block_add_le directions q _ _ (product_orbit_contDiff P D.Q₁ hQ₁ v hv)
     (product_orbit_contDiff P D.Q hQ a ha) n 0).trans
       (by simpa only [mul_one,add_mul] using add_le_add h₁ h₂)

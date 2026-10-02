@@ -121,9 +121,6 @@ theorem velocityLp_orbit_contDiff (f : TimeLp T (CylinderL2 P E))
     (hf : ContDiff ℝ ∞ (fun a => timeLift T (translate P a).toContinuousLinearMap f)) :
     ContDiff ℝ ∞ (fun a => timeLift T (translate P a).toContinuousLinearMap (D.velocityLp P f)) :=
         by
-  let g : LiftTangent → TimeLp T (CylinderL2 P E) :=
-    fun a => timeLift T (translate P a).toContinuousLinearMap f
-  change ContDiff ℝ ∞ g at hf
   have hs := EulerTransverseFixedEvolution.velocityLp_contDiff
     (X := LiftTangent) (U := CylinderL2 P U) (E := CylinderL2 P E) (n := ∞) T D.time_pos.le
     (fun a : LiftTangent => (D.shifted a.1).frame P)
@@ -134,18 +131,16 @@ theorem velocityLp_orbit_contDiff (f : TimeLp T (CylinderL2 P E))
     D.potential D.potential_nonneg (fun a => (D.shifted a.1).hessian_upper P) D.small
     (D.frameOrbit_contDiff P hQ) (D.frameDerivativeOrbit_contDiff P hQ₁) (D.hessianOrbit_contDiff P
         hH)
-    g hf
+    (fun a => timeLift T (translate (V := E) P a).toContinuousLinearMap f) hf
   convert hs using 1
   funext a
-  exact (D.velocityLp_translation P a f).symm
+  refine (D.velocityLp_translation P a f).symm.trans (DFunLike.congr_fun ?_ _)
+  rfl
 
 theorem accelerationLp_orbit_contDiff (f : TimeLp T (CylinderL2 P E))
     (hf : ContDiff ℝ ∞ (fun a => timeLift T (translate P a).toContinuousLinearMap f)) :
     ContDiff ℝ ∞ (fun a => timeLift T (translate P a).toContinuousLinearMap (D.accelerationLp P f))
         := by
-  let g : LiftTangent → TimeLp T (CylinderL2 P E) :=
-    fun a => timeLift T (translate P a).toContinuousLinearMap f
-  change ContDiff ℝ ∞ g at hf
   have hs := EulerTransverseFixedEvolution.accelerationLp_contDiff
     (X := LiftTangent) (U := CylinderL2 P U) (E := CylinderL2 P E) (n := ∞) T D.time_pos.le
     (fun a : LiftTangent => (D.shifted a.1).frame P)
@@ -156,10 +151,11 @@ theorem accelerationLp_orbit_contDiff (f : TimeLp T (CylinderL2 P E))
     D.potential D.potential_nonneg (fun a => (D.shifted a.1).hessian_upper P) D.small
     (D.frameOrbit_contDiff P hQ) (D.frameDerivativeOrbit_contDiff P hQ₁) (D.hessianOrbit_contDiff P
         hH)
-    g hf
+    (fun a => timeLift T (translate (V := E) P a).toContinuousLinearMap f) hf
   convert hs using 1
   funext a
-  exact (D.accelerationLp_translation P a f).symm
+  refine (D.accelerationLp_translation P a f).symm.trans (DFunLike.congr_fun ?_ _)
+  rfl
 
 theorem velocityPath_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
     (hf : ContDiff ℝ ∞ (fun a => pathTranslate P a f)) :
@@ -178,7 +174,9 @@ theorem velocityPath_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
   funext a
   apply ContinuousMap.ext
   intro t
-  exact (D.continuousVelocity_translation P a f t).symm
+  refine (D.continuousVelocity_translation P a f t).symm.trans (DFunLike.congr_fun ?_ t)
+  refine DFunLike.congr_fun ?_ _
+  rfl
 
 theorem accelerationPath_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
     (hf : ContDiff ℝ ∞ (fun a => pathTranslate P a f)) :
@@ -197,7 +195,8 @@ theorem accelerationPath_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
   funext a
   apply ContinuousMap.ext
   intro t
-  exact (D.accelerationPath_translation P a f t).symm
+  refine (D.accelerationPath_translation P a f t).symm.trans (DFunLike.congr_fun ?_ t)
+  rfl
 
 theorem physicalVelocity_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
     (hf : ContDiff ℝ ∞ (fun a => pathTranslate P a f)) :
@@ -216,7 +215,8 @@ theorem physicalVelocity_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
   funext a
   apply ContinuousMap.ext
   intro t
-  exact (D.physicalVelocity_translation P a f t).symm
+  refine (D.physicalVelocity_translation P a f t).symm.trans (DFunLike.congr_fun ?_ t)
+  rfl
 
 theorem physicalDerivative_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
     (hf : ContDiff ℝ ∞ (fun a => pathTranslate P a f)) :
@@ -235,6 +235,7 @@ theorem physicalDerivative_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E
   funext a
   apply ContinuousMap.ext
   intro t
-  exact (D.physicalDerivative_translation P a f t).symm
+  refine (D.physicalDerivative_translation P a f t).symm.trans (DFunLike.congr_fun ?_ t)
+  rfl
 
 end EulerCylinderDirichlet.Coefficients

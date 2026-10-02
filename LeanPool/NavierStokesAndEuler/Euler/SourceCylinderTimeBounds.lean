@@ -117,11 +117,7 @@ theorem coordinateRhs_block_bound
     (4*Ri) (18*Ri*C₀*C₁) R Da (by positivity) (by positivity) hDa hR hbB d hba n
   have hsecond := projectedForcing_block_bound P S hS Q c hc hQ directions hd q f hf
     Rc C₀ Ri R Df hRc hC₀ hDf hRi hR hbQ d hbf n
-  have hsum := block_add_le directions q
-    (fun b : LiftTangent => pathTranslate P b (includePath P S hS
-      (supportedMultiplierMap P S hS B a)))
-    (fun b : LiftTangent => pathTranslate P b (includePath P S hS
-      (projectedForcing P S hS Q c hc hQ f)))
+  have hsum := block_add_le directions q _ _
     (supported_product_orbit_contDiff P B hB S hS a ha)
     (projectedForcing_contDiff P S hS Q c hc hQ f hf) n 0
   have hbound := hsum.trans (add_le_add hfirst hsecond)
@@ -173,11 +169,7 @@ theorem physicalRhs_block_bound
   have hsecond := product_orbit_block_bound P Q.field Q.translation_contDiff directions hd q
     (includePath P S hS (coordinateRhs P S hS Q Q₁ c hc hQ f a)) hcoord
     (4*Ri) C₀ R (coordinateCost ι q Ri C₀ C₁ Df Da) (by positivity) hC₀ hcost hR hq d hbcoord n
-  have hsum := block_add_le directions q
-    (fun b : LiftTangent => pathTranslate P b (includePath P S hS (supportedMultiplierMap P S hS
-        Q₁.field a)))
-    (fun b : LiftTangent => pathTranslate P b (includePath P S hS
-      (supportedMultiplierMap P S hS Q.field (coordinateRhs P S hS Q Q₁ c hc hQ f a))))
+  have hsum := block_add_le directions q _ _
     (supported_product_orbit_contDiff P Q₁.field Q₁.translation_contDiff S hS a ha)
     (supported_product_orbit_contDiff P Q.field Q.translation_contDiff S hS _ hcoord) n 0
   have hbound := hsum.trans (add_le_add hfirst hsecond)

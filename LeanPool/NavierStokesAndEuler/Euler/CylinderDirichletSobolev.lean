@@ -233,15 +233,7 @@ theorem velocityLp_block_bound (f : TimeLp T (CylinderL2 P E))
     block directions q (fun b => timeLift T (translate P b).toContinuousLinearMap (D.velocityLp P
         f)) n a ≤
       majorant R (d+1) n := by
-  let g : LiftTangent → TimeLp T (CylinderL2 P E) :=
-    fun b => timeLift T (translate P b).toContinuousLinearMap f
-  change ContDiff ℝ ∞ g at hf
-  have he : (fun b : LiftTangent => (D.shifted b.1).velocityLp P
-      (timeLift T (translate P b).toContinuousLinearMap f)) =
-      fun b => timeLift T (translate P b).toContinuousLinearMap (D.velocityLp P f) :=
-    funext (fun b => D.velocityLp_translation P b f)
-  rw [← he]
-  apply EulerTransverseFixedSobolev.velocityLp_block_gevrey directions hdir q T D.time_pos.le
+  have hs := EulerTransverseFixedSobolev.velocityLp_block_gevrey directions hdir q T D.time_pos.le
     (fun b : LiftTangent => (D.shifted b.1).frame P)
     (fun b : LiftTangent => (D.shifted b.1).frameDerivative P)
     (fun b : LiftTangent => (D.shifted b.1).hessian P)
@@ -254,10 +246,12 @@ theorem velocityLp_block_bound (f : TimeLp T (CylinderL2 P E))
     (fun k b => D.frameOrbit_bound P hQ k _ (hbQ k) b)
     (fun k b => D.frameDerivativeOrbit_bound P hQ₁ k _ (hbQ₁ k) b)
     (fun k b => D.hessianOrbit_bound P hH k _ (hbH k) b) hR
-    g hf d _ n a
-  intro k b
-  rw [time_block_constant P directions q T f hf k b]
-  exact hfb k
+    (fun b => timeLift T (translate (V := E) P b).toContinuousLinearMap f) hf d
+    (fun k b => (time_block_constant P directions q T f hf k b).trans_le (hfb k)) n a
+  convert hs using 2
+  funext b
+  refine (D.velocityLp_translation P b f).symm.trans (DFunLike.congr_fun ?_ _)
+  rfl
 
 /-- For source intervals of length at most one, continuous forcing embeds
 with no extra amplitude, and the same history estimate applies. -/

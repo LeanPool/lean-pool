@@ -115,13 +115,7 @@ theorem accelerationLp_block_bound (f : TimeLp T (CylinderL2 P E))
     (n : ℕ) (a : LiftTangent) :
     block directions q (fun b => timeLift T (translate P b).toContinuousLinearMap
       (D.accelerationLp P f)) n a ≤ majorant R (d+2) n := by
-  let g : LiftTangent → TimeLp T (CylinderL2 P E) :=
-    fun b => timeLift T (translate P b).toContinuousLinearMap f
-  change ContDiff ℝ ∞ g at hf
-  have he : (fun b : LiftTangent => (D.shifted b.1).accelerationLp P
-      (timeLift T (translate P b).toContinuousLinearMap f)) =
-      fun b => timeLift T (translate P b).toContinuousLinearMap (D.accelerationLp P f) :=
-    funext (fun b => D.accelerationLp_translation P b f)
+  have he := funext fun b : LiftTangent => D.accelerationLp_translation P b f
   rw [← he]
   apply EulerFixedEvolutionSobolev.accelerationLp_block_gevrey directions hdir q T D.time_pos.le
     (fun b : LiftTangent => (D.shifted b.1).frame P)
@@ -136,7 +130,7 @@ theorem accelerationLp_block_bound (f : TimeLp T (CylinderL2 P E))
     (fun k b => D.frameOrbit_bound P hQ k _ (hbQ k) b)
     (fun k b => D.frameDerivativeOrbit_bound P hQ₁ k _ (hbQ₁ k) b)
     (fun k b => D.hessianOrbit_bound P hH k _ (hbH k) b) hRweak hRstrong
-    g hf d _ n a
+    _ hf d _ n a
   intro k b
   rw [time_block_constant P directions q T f hf k b]
   exact hfb k

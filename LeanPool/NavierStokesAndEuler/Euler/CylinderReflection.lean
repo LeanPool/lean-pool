@@ -126,6 +126,7 @@ theorem liftedGradient_reflected (κ : ℝ) (m : Vector3) (φ : LiftDomain perio
     rw [localLift_reflected]
     simpa [Function.comp_def] using hh.fderiv
   ext i
-  simp [liftedGradient, hder, add_comm]
+  simp only [liftedGradient, hder, neg_apply, mul_neg, PiLp.neg_apply, neg_add_rev]
+  exact add_comm _ _
 
 end EulerCylinderReflection

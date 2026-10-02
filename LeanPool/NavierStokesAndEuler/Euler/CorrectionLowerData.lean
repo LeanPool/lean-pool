@@ -193,9 +193,10 @@ def rawPath {q : ℕ} (hq : 6 ≤ q) {T : ℝ} (D : CorrectionData period q (Icc
 /-- The actual projected nonlinear mild forcing along the continuous solution. -/
 def forcingPath {q : ℕ} (hq : 6 ≤ q) {T : ℝ} (D : CorrectionData period q (Icc (0 : ℝ) T))
     (e : C(Icc (0 : ℝ) T, SobolevSpace period (q + 1))) : C(Icc (0 : ℝ) T, SobolevSpace period q) :=
-  ⟨fun t => (D.coefficients period hq).apply t (e t),
-    ((D.coefficients period hq).projection.continuous.clm_apply (rawPath period hq D
-        e).continuous).neg⟩
+  ⟨fun t => (D.coefficients period hq).apply t (e t), by
+    refine Continuous.neg (Continuous.clm_apply ?_ ?_)
+    · exact (D.coefficients period hq).projection.continuous
+    · exact (rawPath period hq D e).continuous⟩
 
 /-- The actual signed coercive pressure along the continuous solution is continuous. -/
 def pressurePath {q : ℕ} (hq : 6 ≤ q) {T : ℝ} (D : CorrectionData period q (Icc (0 : ℝ) T))

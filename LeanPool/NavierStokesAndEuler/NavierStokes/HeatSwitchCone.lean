@@ -216,9 +216,10 @@ theorem parameterJet_contDiff {f : Raw → ℝ} (hf : ContDiff ℝ ∞ f) :
 theorem radialJet_hasDerivAt {f : Raw → ℝ} (hf : ContDiff ℝ ∞ f)
     (v : Control) (p : Point) :
     HasDerivAt (fun y => value f (v, (y, p.2))) (radialJet f (v, p)) p.1 := by
+  have h2 : HasDerivAt (fun y => (y, p.2) : ℝ → Point) (1, 0) p.1 :=
+    (hasDerivAt_id p.1).prodMk (hasDerivAt_const p.1 p.2)
   have hg : HasDerivAt (fun y => ((v.1, v.2.1), (y, p.2)) : ℝ → Raw)
-      ((0, 0), (1, 0)) p.1 :=
-    (hasDerivAt_const _ _).prodMk ((hasDerivAt_id _).prodMk (hasDerivAt_const _ _))
+      ((0, 0), (1, 0)) p.1 := (hasDerivAt_const p.1 (v.1, v.2.1)).prodMk h2
   exact ((hf.differentiable (by simp) _).hasFDerivAt.comp_hasDerivAt _ hg)
 
 theorem parameterJet_hasDerivWithinAt {f : Raw → ℝ} (hf : ContDiff ℝ ∞ f)
@@ -226,10 +227,12 @@ theorem parameterJet_hasDerivWithinAt {f : Raw → ℝ} (hf : ContDiff ℝ ∞ f
     (hc : HasDerivWithinAt c dc s eta) (delta y : ℝ) :
     HasDerivWithinAt (fun t => f ((delta, c t), (y, t)))
       (parameterJet f ((delta, (c eta, dc)), (y, eta))) s eta := by
+  have h1 : HasDerivWithinAt (fun t => (delta, c t) : ℝ → ℝ × Coeff) (0, dc) s eta :=
+    (hasDerivWithinAt_const eta s delta).prodMk hc
+  have h2 : HasDerivWithinAt (fun t => (y, t) : ℝ → Point) (0, 1) s eta :=
+    (hasDerivWithinAt_const eta s y).prodMk (hasDerivWithinAt_id eta s)
   have hg : HasDerivWithinAt (fun t => ((delta, c t), (y, t)) : ℝ → Raw)
-      ((0, dc), (0, 1)) s eta :=
-    ((hasDerivWithinAt_const _ _ _).prodMk hc).prodMk
-      ((hasDerivWithinAt_const _ _ _).prodMk (hasDerivWithinAt_id _ _))
+      ((0, dc), (0, 1)) s eta := h1.prodMk h2
   exact ((hf.differentiable (by simp) _).hasFDerivAt.comp_hasDerivWithinAt _ hg)
 
 theorem radialJet_zero {f : Raw → ℝ} {g : Point → ℝ}
@@ -693,8 +696,9 @@ theorem observations_estimate (F : Profile) {anchor left : ℝ}
     ∃ r L : ℝ, 0 < r ∧ 0 ≤ L ∧ ∀ v : Control, ‖v‖ ≤ r →
       ∀ p ∈ OutgoingCone.trueWindow F.data, (v, p) ∈ regular F ∧
         ‖observations F (v, p) - observations F (0, p)‖ ≤ L * ‖v‖ := by
-  apply compact_control_estimate (isCompact_Icc.prod isCompact_Icc)
-    ((convex_Icc _ _).prod (convex_Icc _ _)) (regular_isOpen F)
+  have hs : IsCompact (OutgoingCone.trueWindow F.data) := isCompact_Icc.prod isCompact_Icc
+  have hc : Convex ℝ (OutgoingCone.trueWindow F.data) := (convex_Icc _ _).prod (convex_Icc _ _)
+  apply compact_control_estimate hs hc (regular_isOpen F)
   · rintro ⟨v, p⟩ ⟨hv, hp⟩
     have hv' : v = 0 := hv
     subst v
@@ -1094,7 +1098,7 @@ theorem preserves_true_cone (F : Profile) {anchor left : ℝ}
     (OutgoingEntranceCone.parameter_square_le_one (abs_le.mpr hp.2))
   have hL1 : CoordinateAlgebra.L F.data.h p.2 ≤ 1 := by
     unfold CoordinateAlgebra.L
-    nlinarith [mul_nonneg F.data.h_pos.le (sq_nonneg p.2)]
+    linarith only [mul_nonneg F.data.h_pos.le (sq_nonneg p.2)]
   have hscale : 0 < stressScale F XR w.coefficients p :=
     div_pos (mul_pos (mul_pos w.radius_pos (Real.exp_pos _)) hqpos) hL
   have hlow : XR * k * m ≤ stressScale F XR w.coefficients p := by
@@ -1119,11 +1123,11 @@ theorem preserves_true_cone (F : Profile) {anchor left : ℝ}
     hB.trans (mul_le_mul_of_nonneg_left hc hscale.le)
   have hP : 2 < normalP F XR w.coefficients p := by
     dsimp [B] at hpc
-    nlinarith [sq_nonneg T]
+    linarith only [hpc, hT, sq_nonneg T]
   have hvc : normalV F XR w.coefficients p < normalP F XR w.coefficients p := by
     have hvT' := (le_abs_self _).trans hvT
     dsimp [B] at hpc
-    nlinarith [sq_nonneg T]
+    linarith only [hvT', hpc, sq_nonneg T]
   have hquad : 4 * sourceC F XR w.coefficients p * normalV F XR w.coefficients p <
       stressScale F XR w.coefficients p * leadingGap F XR w.coefficients p := by
     have hpT : sourceC F XR w.coefficients p * normalV F XR w.coefficients p ≤ T ^ 2 := by
@@ -1132,7 +1136,7 @@ theorem preserves_true_cone (F : Profile) {anchor left : ℝ}
       simpa only [pow_two] using hh
     have hgap := hB.trans (mul_le_mul_of_nonneg_left hg hscale.le)
     dsimp [B] at hgap
-    nlinarith
+    linarith only [hpT, hgap, hT]
   refine ⟨hqpos, harpos, hvpos, hP, ?_⟩
   exact ConeAlgebra.finite_amplitude_cone hscale hP hvc hquad
 

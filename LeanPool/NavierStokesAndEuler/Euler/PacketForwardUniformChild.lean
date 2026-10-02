@@ -257,14 +257,14 @@ theorem forward_uniform_flow_and_shear :
     W S.H0 hδ hW S.H0_pos.le hH0
   have five := EulerPacketInitializedCost.forward_five_costs_bound LM L NB BC δ ξ
     W S.H0 hδ hW S.H0_pos.le hH0
-  let Q := forwardUniformBudget M D hTime δ hδ hδ1 ξ hs α hα
+  have hweighted := forwardUniformBudget_weighted M D hTime δ hδ hδ1 ξ hs α hα
+    L NB LM Cagree W hW hprofile k hk hX hlog hold X hXs hF hdet
+  set Q := forwardUniformBudget M D hTime δ hδ hδ1 ξ hs α hα
     L NB LM Cagree W hW hprofile k hk hX hlog hold X hXs hF hdet
   let Cw := EulerPacketInitializedCost.weightSize W
   let ρ0 := Q.initialRadius
   have hρ : 0 < ρ0 := Q.radius_pos
   have hCw : 0 < Cw := EulerPacketInitializedCost.weightSize_pos W hW0
-  have hweighted := forwardUniformBudget_weighted M D hTime δ hδ hδ1 ξ hs α hα
-    L NB LM Cagree W hW hprofile k hk hX hlog hold X hXs hF hdet
   let C0 := velocity L'.R S.H0 BC.multiplierCost
   let Cn := normal L'.R S.H0 BC.multiplierCost
   let Ch := 6*N'.blockAmplitude *
@@ -355,7 +355,9 @@ theorem forward_uniform_flow_and_shear :
   have hroot2 : 2 ≤ k^(1/4 : ℝ) := by linarith
   have hvErr := physical_error_le_inverse_quarter Kv Kerr k hk1 hKv_k hKerr_k hdelta hroot2
   have hpErr := physical_error_le_inverse_quarter Kp Kerr k hk1 hKp_k hKerr_k hdelta hroot2
-  refine ⟨hn,Q,G,rfl,rfl,rfl,rfl,?_,hweighted,?_,?_⟩
+  have hA : G.A = Q.liftedPacketCoefficient period V := rfl
+  have hA₁ : G.A₁ = Q.liftedPacketDerivativeCoefficient period Vt := rfl
+  refine ⟨_,Q,G,rfl,rfl,hA,hA₁,?_,hweighted,?_,?_⟩
   · intro t z
     change graphConstraint k D.m₀
       (EulerMetricTransport.transportDirection k⁻¹ D.m₀ ((Q.packetCoefficient period V).field t
@@ -365,10 +367,10 @@ theorem forward_uniform_flow_and_shear :
     constructor
     · have h := forwardInitializedExactPhysicalVelocity_global_gradient_error M D hTime δ hδ ξ hs α
         L' N' wj M' wm BC hrc hcost hδ1 hα hterminal wp S hgrowth
-        Cagree (truncation k) hn k hk Q hbase t (Y t) x (hYd t x)
+        Cagree (truncation k) _ k hk Q hbase t (Y t) x (hYd t x)
       exact (h.trans (add_le_add le_rfl (hcorrection t x).1)).trans hvErr
     · have h := forwardInitializedExactPhysicalPressure_hessian_error M D hTime δ hδ ξ hs α
-        Cagree (truncation k) hn k hk Q X Y hXd hXY hY L' N' wj M' wm BC hrc hcost
+        Cagree (truncation k) _ k hk Q X Y hXd hXY hY L' N' wj M' wm BC hrc hcost
         hδ1 hα hterminal wp S hgrowth hbase hdet t x
       exact (h.trans (add_le_add le_rfl (hcorrection t x).2)).trans hpErr
   · intro ell hell hell1 t

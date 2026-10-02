@@ -315,7 +315,7 @@ theorem select_history_coordinate
     m m₁ hne hdm hm hRange R hR (C.labelHessian 0) hHs
     B.potential B.potential_nonneg (C.labelHessian_upper 0) B.small M hRay
     h CM CH ε hh hLayer hCM hCH hε hM hHnorm p q hp hq hpq hεsmall hB hBpp
-  let L := activationTrial D.T D.T_pos.le m m₁ hne R.toContinuousLinearMap h
+  extract_lets L u η v w at hY
   have hL : ∀ Z t, ⟪D.normal.field t 0,initialPrimitive D.T D.T_pos.le (L Z) t⟫_ℝ=0 :=
     activationTrial_tangent D.T D.T_pos.le m m₁ hne R.toContinuousLinearMap hdm h
   have hLT : ∀ Z, initialPrimitive D.T D.T_pos.le (L Z) ⟨D.T,D.T_pos.le,le_rfl⟩=R Z :=
@@ -323,27 +323,22 @@ theorem select_history_coordinate
   obtain ⟨ξ,hξ⟩ := D.frame_range ⟨D.T,D.T_pos.le,le_rfl⟩ 0 (R Y) (hR Y)
   have ht : initialRealPrimitive D.T (L Y) D.T =
       D.frame.field ⟨D.T,D.T_pos.le,le_rfl⟩ 0 ξ := (hLT Y).trans hξ.symm
-  have hw := history_eq_stationary_of_terminal B 0 L hL Y ξ ht ⟨D.T,D.T_pos.le,le_rfl⟩
+  have hw : B.coefficients.labelVelocity 0 ξ ⟨D.T,D.T_pos.le,le_rfl⟩ = w D.T := by
+    rw [history_eq_stationary_of_terminal B 0 L hL Y ξ ht ⟨D.T,D.T_pos.le,le_rfl⟩]
+    simp only [stationaryCorrectedVelocity,stationaryDerivative,w,v,η,u,C,m,M,
+      extendPath,projIcc_of_mem D.T_pos.le (show D.T ∈ Icc (0 : ℝ) D.T from ⟨D.T_pos.le,le_rfl⟩)]
+    rfl
   rcases hY with ⟨_,_,_,_,_,hwq,hwpl,hwpu,hsize⟩
   have hqv : ⟪B.coefficients.labelVelocity 0 ξ ⟨D.T,D.T_pos.le,le_rfl⟩,R q⟫_ℝ=1 := by
     rw [hw]
-    convert! hwq using 1
-    simp only [stationaryCorrectedVelocity,stationaryDerivative,L,C,m,M,
-      extendPath,projIcc_of_mem D.T_pos.le (show D.T ∈ Icc (0 : ℝ) D.T from ⟨D.T_pos.le,le_rfl⟩)]
-    rfl
+    exact hwq
   have hpl : -8*(activationConstant CM CH+1) ≤
       ⟪B.coefficients.labelVelocity 0 ξ ⟨D.T,D.T_pos.le,le_rfl⟩,R p⟫_ℝ := by
     rw [hw]
-    convert! hwpl using 1
-    simp only [stationaryCorrectedVelocity,stationaryDerivative,L,C,m,M,
-      extendPath,projIcc_of_mem D.T_pos.le (show D.T ∈ Icc (0 : ℝ) D.T from ⟨D.T_pos.le,le_rfl⟩)]
-    rfl
+    exact hwpl
   have hpu : ⟪B.coefficients.labelVelocity 0 ξ ⟨D.T,D.T_pos.le,le_rfl⟩,R p⟫_ℝ ≤ 0 := by
     rw [hw]
-    convert! hwpu using 1
-    simp only [stationaryCorrectedVelocity,stationaryDerivative,L,C,m,M,
-      extendPath,projIcc_of_mem D.T_pos.le (show D.T ∈ Icc (0 : ℝ) D.T from ⟨D.T_pos.le,le_rfl⟩)]
-    rfl
+    exact hwpu
   have hnonzero : ξ ≠ 0 := by
     intro hz
     rw [hz,map_zero,ContinuousMap.zero_apply,inner_zero_left] at hqv
@@ -531,8 +526,8 @@ theorem exists_activated_primary
     exact hqξ
   have hplo' : -(8*(activationConstant CM CH+1)) ≤
       ⟪B.coefficients.labelVelocity 0 ξ ⟨τ,hτ.le,le_rfl⟩,unit (m τ)⟫_ℝ := by
-    convert! hplo using 1
-    ring
+    rw [← neg_mul]
+    exact hplo
   have hvinit := activation_scaled_velocity (a := a) hε hplo' hphi hpw hqw
   refine ⟨hvinit.1,hvinit.2.1,?_,hvinit.2.2.1,hvinit.2.2.2⟩
   apply hξnorm.trans

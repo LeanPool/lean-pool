@@ -57,8 +57,7 @@ theorem frame_apply (θ : ℝ) (v : Space) :
     frame θ v = pack (Real.cos θ * v 0 - Real.sin θ * v 1)
       (Real.sin θ * v 0 + Real.cos θ * v 1) (v 2) := by
   ext i
-  fin_cases i <;> simp [frame, horizontal, connection, vertical, packDerivative,
-    pack, coordinateVector] <;> ring
+  fin_cases i <;> simp [frame, horizontal, connection, vertical] <;> ring
 
 theorem connection_apply (v : Space) : connection v = pack (-v 1) (v 0) 0 := by
   simp [connection, packDerivative_apply]
@@ -207,7 +206,9 @@ theorem second_chain {f : Space → E} {g : Space → Space} {q : Space}
   rw [show fderiv ℝ ((fderiv ℝ f) ∘ g) q =
       (fderiv ℝ (fderiv ℝ f) (g q)).comp (fderiv ℝ g q) from
     (hD.hasFDerivAt.comp q hgD.hasFDerivAt).fderiv]
-  simp [dCoord, hessian, add_comm]
+  rw [add_apply, ContinuousLinearMap.comp_apply, ContinuousLinearMap.flip_apply,
+    ContinuousLinearMap.comp_apply, add_comm]
+  rfl
 
 theorem dCoord_chart_zero (q : Space) :
     dCoord 0 chart q = pack (Real.cos (q 1)) (Real.sin (q 1)) 0 := by
@@ -290,9 +291,11 @@ theorem hasFDerivAt_frameField (q : Space) :
     (projection 1).hasFDerivAt
   convert! ((h1.cos.smul_const horizontal).add (h1.sin.smul_const connection)).add_const
     vertical using 1
-  ext v w i
-  fin_cases i <;> simp [ frame_apply, horizontal, connection, packDerivative,
-    pack, coordinateVector] <;> ring
+  rw [frame_connection]
+  ext v : 1
+  simp only [ContinuousLinearMap.smulRight_apply, add_apply, smul_apply, smul_eq_mul,
+    AxisymmetricFields.projection_apply]
+  module
 
 /-- Cartesian representation of cylindrical vector components. -/
 noncomputable def encode (w : Space → Space) (q : Space) : Space := frame (q 1) (w q)

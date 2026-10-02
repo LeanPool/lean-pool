@@ -56,7 +56,8 @@ theorem wordPath_weight (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTrans
     funext (fun a => translate_weight P g a p)
   unfold wordPath
   rw [he]
-  exact wordDerivative_comp_clm EulerCylinderSobolev.standardDirection (weight g)
+  exact wordDerivative_comp_clm (E := C(K, LiftL2 P)) (F := C(K, LiftL2 P))
+    EulerCylinderSobolev.standardDirection (weight g)
     (fun a : LiftTangent => pathTranslate P a p) hp w 0
 
 theorem derivativePath_weight (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))

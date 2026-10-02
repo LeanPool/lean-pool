@@ -187,8 +187,7 @@ theorem close_integral_energy_estimate
   have hFp (t : ℝ) : 0 < F t := by dsimp [F]; positivity
   have hFbase (t : ℝ) (ht : 0 ≤ t) : 2 * r ≤ F t := by
     have he : 1 ≤ exp (3 * C * t) := one_le_exp_iff.mpr (by positivity)
-    dsimp [F]
-    nlinarith
+    exact le_mul_of_one_le_right (mul_pos two_pos hr).le he
   have hbound : ∀ t ∈ Icc 0 S, X t ≤ F t := by
     apply image_le_of_liminf_slope_right_lt_deriv_boundary hcont
       (fun t ht r hr => liminf_slope_le_of_integral X A 0 S hS hAcont hint t ht r hr)
@@ -205,11 +204,12 @@ theorem close_integral_energy_estimate
       have hFΔ := hFle t htc
       have hFr := hFbase t ht.1
       rw [hXF] at hmain hlossY
-      have hFsq : (F t) ^ 2 ≤ F t := by nlinarith
+      have hFsq : (F t) ^ 2 ≤ F t :=
+        pow_le_of_le_one hFt.le (by linarith only [hFΔ, hΔ1]) two_ne_zero
       have hCsq := mul_le_mul_of_nonneg_left hFsq hC.le
       have hCr := mul_le_mul_of_nonneg_left hFr hC.le
       have hpos := mul_pos hC hFt
-      nlinarith
+      linarith only [hmain, hlossY, hCsq, hCr, hpos]
   intro t ht
   exact ⟨hbound t ht, (hbound t ht).trans (hFle t ht)⟩
 

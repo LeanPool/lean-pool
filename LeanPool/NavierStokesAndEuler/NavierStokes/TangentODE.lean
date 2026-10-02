@@ -264,7 +264,10 @@ theorem continuousOn_projectedOperator {s : Set ℝ}
   have houter : ContinuousOn (fun t =>
       ((innerSL ℝ (n t)).comp (K t) - innerSL ℝ (n' t)).smulRight
         ((⟪n t, n t⟫_ℝ)⁻¹ • n t)) s :=
-    isBoundedBilinearMap_smulRight.continuous.comp_continuousOn (hlin.prodMk hnorm)
+    Continuous.comp_continuousOn
+      (g := fun p : (H →L[ℝ] ℝ) × H => p.1.smulRight p.2)
+      (f := fun t => ((innerSL ℝ (n t)).comp (K t) - innerSL ℝ (n' t), (⟪n t, n t⟫_ℝ)⁻¹ • n t))
+      isBoundedBilinearMap_smulRight.continuous (hlin.prodMk hnorm)
   exact (hK.neg.add houter).sub (hδ.smul continuousOn_const)
 
 theorem continuousOn_projectedForcing {s : Set ℝ}

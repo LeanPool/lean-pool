@@ -88,12 +88,16 @@ theorem partial_correction_bootstrap {q : ℕ} (hq : 6 ≤ q) (S : ℝ) (hS : 0 
     gcongr
   have he := correction_mild_divergenceFree period hq ν hν hT hTS
     (lowerData period D KG KL KQ hGq hLq hQq) e hsol
+  -- Only the two forcing integrands are compared, not the whole Duhamel formula.
   have ht := EulerDriftCorrectionBootstrap.correction_mild_bootstrap period hq T hT Dt
     (fun t => KG (f t)) (fun t => KL (f t)) (fun i t => KQ i (f t))
     (hGq.comp f.continuous) (hLq.comp f.continuous) (fun i => (hQq i).comp f.continuous)
     (hG.comp f.continuous) N hN Rt Rd Bt Kt C Δ ρ0 hC hΔ hΔ1 hρ0
     hdecayT hscale hsmallT (fun t => hR (f t)) (fun _ => rfl) ν hν hν1 e
-    (fun t => hsol t) (fun t => hz (f t)) he
+    (fun t => (hsol t).trans (congrArg (fun F : ℝ → SobolevSpace period q =>
+      heatOperator period (q+1) (2*ν*t.val).toNNReal 0 +
+        ∫ r in (0 : ℝ)..t.val, heatKernel period q ν hν r (F r)) (funext fun _ => by rfl)))
+    (fun t => hz (f t)) he
   exact ht
 
 end EulerDriftPartialCorrectionBootstrap

@@ -254,10 +254,8 @@ theorem pathComposition_contDiff (A : P → C(K, α →ᵇ E →L[ℝ] F))
     (B : P → C(K, α →ᵇ U →L[ℝ] E)) {n : ℕ∞ω} (hA : ContDiff ℝ n A) (hB : ContDiff ℝ n B) :
     ContDiff ℝ n (fun y =>
       pathCompositionMap (α := α) (K := K) (U := U) (E := E) (F := F) (A y) (B y)) :=
-  ((ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := n)
-    (E := C(K,α →ᵇ E →L[ℝ] F))
-    (F := C(K,α →ᵇ U →L[ℝ] E) →L[ℝ] C(K,α →ᵇ U →L[ℝ] F))
-    (pathCompositionMap (α := α) (K := K) (U := U) (E := E) (F := F))).comp hA).clm_apply hB
+  (pathCompositionMap (α := α) (K := K) (U := U) (E := E)
+    (F := F)).isBoundedBilinearMap.contDiff.comp₂ hA hB
 
 /-- The actual field product has the same factorial convolution bound. -/
 theorem pathComposition_bound (A : P → C(K, α →ᵇ E →L[ℝ] F))

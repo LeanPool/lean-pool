@@ -45,9 +45,11 @@ theorem coordinates_weight_eq :
     coordinates period S hS T hT Q Q₁ c hc hQ (weight g f) a₀ =
       weight g (normalizedCoordinates period T hT S hS Q Q₁ c hc hQ g hg f a₀) := by
   change (evolution period T hT Q Q₁ c hc hQ S hS).solution
-      (supportedMultiplierMap period S hS (sourceForcing Q c hc hQ) (weight g f)) a₀ =
+      (supportedMultiplierMap (K := Icc (0 : ℝ) T) (E := E) (F := U) period S hS
+        (sourceForcing Q c hc hQ) (weight g f)) a₀ =
     weight g (normalize g hg ((evolution period T hT Q Q₁ c hc hQ S hS).solution
-      (weight g (supportedMultiplierMap period S hS (sourceForcing Q c hc hQ) f)) a₀))
+      (weight g (supportedMultiplierMap (K := Icc (0 : ℝ) T) (E := E) (F := U) period S hS
+        (sourceForcing Q c hc hQ) f)) a₀))
   exact (congrArg ((evolution period T hT Q Q₁ c hc hQ S hS).solution · a₀)
     (supportedMultiplier_weight period S hS g (sourceForcing Q c hc hQ) f)).trans
       (weight_normalize (E := Supported period U S hS) g hg _).symm
@@ -56,12 +58,12 @@ theorem coordinates_weight_eq :
 theorem velocity_weight_eq :
     velocity period S hS T hT Q Q₁ c hc hQ (weight g f) a₀ =
       weight g (normalizedVelocity period T hT S hS Q Q₁ c hc hQ g hg f a₀) := by
-  change supportedMultiplierMap period S hS Q.field
+  change supportedMultiplierMap (K := Icc (0 : ℝ) T) (E := U) (F := E) period S hS Q.field
       (coordinates period S hS T hT Q Q₁ c hc hQ (weight g f) a₀) =
-    weight g (supportedMultiplierMap period S hS Q.field
+    weight g (supportedMultiplierMap (K := Icc (0 : ℝ) T) (E := U) (F := E) period S hS Q.field
       (normalizedCoordinates period T hT S hS Q Q₁ c hc hQ g hg f a₀))
-  exact (congrArg (supportedMultiplierMap period S hS Q.field)
-    (coordinates_weight_eq period S hS T hT Q Q₁ c hc hQ g hg f a₀)).trans
+  exact (congrArg (supportedMultiplierMap (K := Icc (0 : ℝ) T) (E := U) (F := E) period S hS
+      Q.field) (coordinates_weight_eq period S hS T hT Q Q₁ c hc hQ g hg f a₀)).trans
       (supportedMultiplier_weight period S hS g Q.field _)
 
 /-- Therefore the proved fixed-radius bound is literally the normalized

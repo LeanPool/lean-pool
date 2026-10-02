@@ -85,12 +85,23 @@ theorem partial_correction_bootstrap {q : ℕ} (hq : 6 ≤ q) (S : ℝ) (hS : 0 
     gcongr
   have he := correction_mild_divergenceFree period hq ν hν hT hTS
     (lowerData period D KG KL KQ hGq hLq hQq) e hsol
+  have hL : lowerData period Dt (fun t => KG (f t)) (fun t => KL (f t)) (fun i t => KQ i (f t))
+      (hGq.comp f.continuous) (hLq.comp f.continuous) (fun i => (hQq i).comp f.continuous) =
+      (lowerData period D KG KL KQ hGq hLq hQq).comp period f := rfl
+  -- The mild equation is transported under the integral by rewriting the forcing explicitly;
+  -- comparing the two Duhamel formulas as a whole unfolds the Sobolev operations instead.
   have ht := correction_mild_bootstrap period hq T hT Dt
     (fun t => KG (f t)) (fun t => KL (f t)) (fun i t => KQ i (f t))
     (hGq.comp f.continuous) (hLq.comp f.continuous) (fun i => (hQq i).comp f.continuous)
     (hG.comp f.continuous) N hN Rt Rd Bt Kt C Δ ρ0 hC hΔ hΔ1 hρ0
     hdecayT hscale hsmallT (fun t => hR (f t)) (fun _ => rfl) ν hν hν1 e
-    (fun t => hsol t) (fun t => hz (f t)) he
+    (fun t => (hsol t).trans (congrArg
+      (fun F : ℝ → SobolevSpace period q => heatOperator period (q+1) (2*ν*t.val).toNNReal 0 +
+        ∫ r in (0 : ℝ)..t.val, heatKernel period q ν hν r (F r))
+      (funext fun x => by
+        simp only [extendPath, forcingPath, ContinuousMap.coe_mk, hL,
+          CorrectionData.comp_source]
+        rfl))) (fun t => hz (f t)) he
   exact ht
 
 end EulerPartialCorrectionBootstrap

@@ -222,7 +222,9 @@ theorem A1_high_parameters_irrelevant (h r eta : K) (b : BaseJet K)
     (A1 h r eta b).mulVec (parameterJetVector phi u k p q₄ q₅) =
       (A1 h r eta b).mulVec (parameterJetVector phi u k p q₄' q₅') := by
   ext i
-  fin_cases i <;> simp [A1, parameterJetVector, Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
+  simp only [Matrix.mulVec, dotProduct, Fin.sum_univ_six,
+    A1_shape h r eta b i 4 (Or.inr le_rfl), A1_shape h r eta b i 5 (Or.inr (by decide)),
+    zero_mul, add_zero, parameterJetVector, Fin.isValue, Matrix.cons_val]
 
 /-- Direct multiplication of the displayed matrices reproduces the expanded
 right sides, with the pressure radial derivative explicitly substituted. -/
@@ -846,22 +848,25 @@ theorem coefficient0_parity (h lam C : ℂ) (F : CoefficientData) :
   intro r z i j
   simp only [coefficient0, neg_sq, Complex.ofReal_neg]
   fin_cases i <;> fin_cases j <;>
-    simp only [A0, mul_neg, neg_mul, axialValue, even_two, Even.neg_pow, neg_add_rev, Fin.zero_eta,
-      Fin.isValue, Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero,
-      Matrix.cons_val_fin_one, paritySign, Nat.ofNat_pos, ite_true, mul_one, mul_zero, Fin.mk_one,
-      Matrix.cons_val_one, Nat.one_lt_ofNat, Fin.reduceFinMk, Matrix.cons_val, Nat.reduceLT,
-      Nat.lt_add_one, lt_self_iff_false, neg_neg, one_mul, ite_false]
+    simp only [paritySign, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue,
+      Nat.ofNat_pos, ite_true, Nat.one_lt_ofNat, Nat.reduceLT, Nat.lt_add_one,
+      lt_self_iff_false, ite_false] <;>
+    simp only [A0, ↓Matrix.of_apply, ↓Matrix.cons_val', ↓Matrix.cons_val_zero,
+      ↓Matrix.cons_val_one, ↓Matrix.cons_val, ↓Matrix.cons_val_fin_one] <;>
+    simp only [mul_neg, neg_mul, axialValue, even_two, Even.neg_pow, neg_add_rev, mul_one,
+      mul_zero, neg_neg, one_mul]
 
 theorem coefficient1_parity (h : ℂ) (F : CoefficientData) :
     CoefficientParity (coefficient1 h F) := by
   intro r z i j
   simp only [coefficient1, neg_sq, Complex.ofReal_neg]
   fin_cases i <;> fin_cases j <;>
-    simp only [A1, neg_mul, even_two, Even.neg_pow, Fin.zero_eta, Fin.isValue, Matrix.of_apply,
-      Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_fin_one, paritySign, Nat.ofNat_pos,
-      ite_true, mul_one, mul_zero, Fin.mk_one, Matrix.cons_val_one, Nat.one_lt_ofNat,
-      Fin.reduceFinMk, Matrix.cons_val, Nat.reduceLT, Nat.lt_add_one, lt_self_iff_false, mul_neg,
-      neg_neg, one_mul, ite_false]
+    simp only [paritySign, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue,
+      Nat.ofNat_pos, ite_true, Nat.one_lt_ofNat, Nat.reduceLT, Nat.lt_add_one,
+      lt_self_iff_false, ite_false] <;>
+    simp only [A1, ↓Matrix.of_apply, ↓Matrix.cons_val', ↓Matrix.cons_val_zero,
+      ↓Matrix.cons_val_one, ↓Matrix.cons_val, ↓Matrix.cons_val_fin_one] <;>
+    simp only [neg_mul, even_two, Even.neg_pow, mul_one, mul_zero, mul_neg, neg_neg, one_mul]
 
 theorem sourceField_parity (h C : ℂ) (F : CoefficientData) :
     ForcingParity (sourceField h C F) := by

@@ -49,22 +49,23 @@ include h
 theorem forwardInitial_eq_smul : (forwardInitial τ hτ hτT B Z).value =
     a • (forwardInitial τ hτ hτT B Y).value := by
   apply Subtype.ext
-  change B.coefficients.endpointCoordinate P (Z.value : CylinderL2 P U) ⟨τ,hτ.le,le_rfl⟩ =
-    a • B.coefficients.endpointCoordinate P (Y.value : CylinderL2 P U) ⟨τ,hτ.le,le_rfl⟩
   have he : (Z.value : CylinderL2 P U) = a • (Y.value : CylinderL2 P U) := congrArg Subtype.val h
+  rw [Submodule.coe_smul_of_tower]
+  simp only [forwardInitial, EulerTransversePacketEndpoint.terminalInitial,
+    EulerTransversePacketEndpoint.coordinatePath, endpointData]
   rw [he,map_smul,ContinuousMap.smul_apply]
 
 theorem pastVelocity_eq_smul : pastVelocity τ hτ hτT B Z = a • pastVelocity τ hτ hτT B Y := by
-  change B.coefficients.endpointVelocity P (Z.value : CylinderL2 P U) =
-    a • B.coefficients.endpointVelocity P (Y.value : CylinderL2 P U)
   have he : (Z.value : CylinderL2 P U) = a • (Y.value : CylinderL2 P U) := congrArg Subtype.val h
+  simp only [pastVelocity, EulerTransversePacketEndpoint.velocityPath, endpointData]
   rw [he,map_smul]
+  rfl
 
 theorem pastDerivative_eq_smul : pastDerivative τ hτ hτT B Z = a • pastDerivative τ hτ hτT B Y := by
-  change B.coefficients.endpointDerivative P (Z.value : CylinderL2 P U) =
-    a • B.coefficients.endpointDerivative P (Y.value : CylinderL2 P U)
   have he : (Z.value : CylinderL2 P U) = a • (Y.value : CylinderL2 P U) := congrArg Subtype.val h
+  simp only [pastDerivative, EulerTransversePacketEndpoint.derivativePath, endpointData]
   rw [he,map_smul]
+  rfl
 
 theorem futureVelocity_eq_smul : futureVelocity τ hτ hτT B Z = a • futureVelocity τ hτ hτT B Y := by
   unfold futureVelocity

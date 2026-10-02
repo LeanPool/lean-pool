@@ -67,8 +67,8 @@ theorem derivative_recurrence
     rw [norm_iteratedFDeriv_zero]
     simp [C]
   have hpositive (j : ℕ) : iteratedFDeriv ℝ (j+1) C x = iteratedFDeriv ℝ (j+1) B x := by
-    change iteratedFDeriv ℝ (j+1) (B - fun _ => B x) x = _
-    rw [iteratedFDeriv_sub_apply (hB.contDiffAt.of_le (by simp)) contDiffAt_const]
+    have hCB : C = B - fun _ => B x := rfl
+    rw [hCB, iteratedFDeriv_sub_apply (hB.contDiffAt.of_le (by simp)) contDiffAt_const]
     simp only [iteratedFDeriv_succ_const, Pi.zero_apply, sub_zero]
   have hprod := norm_iteratedFDeriv_clm_apply hC hu x (n := n) (by simp)
   rw [sum_range_succ'] at hprod

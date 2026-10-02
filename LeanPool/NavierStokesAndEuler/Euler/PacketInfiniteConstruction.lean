@@ -169,16 +169,34 @@ frame, with the guards' shear, spike and `badRatio`. -/
 
 theorem joinedNext_time : (P.joinedNext hn hq hB).time=P.nextTime := rfl
 
+/-- The definition body carries the abstracted `CompleteSpace` instance proof, whereas a
+statement elaborates the instance itself; comparing the two at this level is immediate. -/
+theorem joinedState_eq :
+    P.joinedState hn hq hB = GeometryJoinedChoice.state I P.restrictedState k hk ell
+      (S.support_pos (n+1)) (S.support_one (n+1)) F symmetric := rfl
+
+theorem joinedNext_velocity :
+    (P.joinedNext hn hq hB).state.evolution.velocity =
+      (GeometryJoinedChoice.state I P.restrictedState k hk ell
+        (S.support_pos (n+1)) (S.support_one (n+1)) F symmetric).evolution.velocity := by
+  rw [← P.joinedState_eq hn hq hB]
+  rfl
+
+theorem restrictedState_velocity :
+    P.restrictedState.evolution.velocity = P.state.evolution.velocity := rfl
+
 theorem joinedNext_initial_increment :
     (fun x => (P.joinedNext hn hq hB).state.evolution.velocity (0,x) -
-      P.state.evolution.velocity (0,x)) = (I).high k+(I).mean k :=
-  GeometryJoinedChoice.initial_increment_eq I P.restrictedState k hk ell
+      P.state.evolution.velocity (0,x)) = (I).high k+(I).mean k := by
+  rw [P.joinedNext_velocity hn hq hB, ← P.restrictedState_velocity]
+  exact GeometryJoinedChoice.initial_increment_eq I P.restrictedState k hk ell
     (S.support_pos (n+1)) (S.support_one (n+1)) F symmetric
 
 theorem joinedNext_initial_velocity :
     (fun x => (P.joinedNext hn hq hB).state.evolution.velocity (0,x)) =
-      (fun x => P.state.evolution.velocity (0,x))+((I).high k+(I).mean k) :=
-  GeometryJoinedChoice.state_velocity_initial I P.restrictedState k hk ell
+      (fun x => P.state.evolution.velocity (0,x))+((I).high k+(I).mean k) := by
+  rw [P.joinedNext_velocity hn hq hB, ← P.restrictedState_velocity]
+  exact GeometryJoinedChoice.state_velocity_initial I P.restrictedState k hk ell
     (S.support_pos (n+1)) (S.support_one (n+1)) F symmetric
 
 end EulerPacketInduction.Stage

@@ -320,9 +320,8 @@ theorem GlobalBandJets.liftedTorusAverage {ε S : ℕ → ℝ} {α : ℝ}
     (hjets : GlobalBandJets ε S α f) (hf : ∀ n, ContDiff ℝ ∞ (f n)) :
     GlobalBandJets ε S α (fun n => liftedTorusAverage (f n)) := by
   have hinner := hjets.affineAverage hf eraseAuxX norm_eraseAuxX_le auxX zero_le_one
-  have houter := hinner.affineAverage
-    (fun n => affineAverage_contDiff eraseAuxX auxX 0 1 (hf n))
-    eraseAuxY norm_eraseAuxY_le auxY zero_le_one
+  have hcd := fun n => affineAverage_contDiff (eraseAuxX (P := P)) auxX 0 1 (hf n)
+  have houter := hinner.affineAverage hcd eraseAuxY norm_eraseAuxY_le auxY zero_le_one
   simpa only [liftedTorusAverage_eq_affine] using houter
 
 end Torus

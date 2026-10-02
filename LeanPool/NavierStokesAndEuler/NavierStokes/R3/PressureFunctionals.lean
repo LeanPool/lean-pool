@@ -326,7 +326,7 @@ open ProblemStatement Comparison HarmonicTestFunctionals PressureTestBounds
 theorem integrable_l2_pair {W : Space → ℝ} (hW : MemLp W 2) (ψ : ComplexTest) :
     Integrable (fun x : Space => (W x : ℂ) * ψ x) := by
   have hprod : Integrable (fun x : Space => ‖W x‖ * ‖ψ x‖) :=
-    hW.norm.integrable_mul (ψ.memLp 2).norm
+    hW.norm.integrable_mul (ψ.memLp 2 volume).norm
   apply hprod.mono'
   · exact (Complex.continuous_ofReal.comp_aestronglyMeasurable hW.aestronglyMeasurable).mul
       ψ.continuous.aestronglyMeasurable
@@ -412,7 +412,7 @@ def l2PairLinear (W : Space → ℝ) (hW : MemLp W 2) : ComplexTest →ₗ[ℂ] 
 def l1PairLinear (g : Space → ℝ) (hg : Integrable g) : ComplexTest →ₗ[ℂ] ℂ :=
   integralPairLinear g testValueLinear (integrable_l1_pair hg)
 
-@[simp] theorem l2PairLinear_apply (W : Space → ℝ) (hW : MemLp W 2) (ψ : ComplexTest) :
+@[simp] theorem l2PairLinear_apply (W : Space → ℝ) (hW : MemLp W 2 volume) (ψ : ComplexTest) :
     l2PairLinear W hW ψ = ∫ x : Space, (W x : ℂ) * ψ x := rfl
 
 @[simp] theorem l1PairLinear_apply (g : Space → ℝ) (hg : Integrable g) (ψ : ComplexTest) :
@@ -567,7 +567,7 @@ def averagedPressureDifference (W0 W1 : Space → ℝ)
 
 @[simp] theorem averagedPressureDifference_apply (W0 W1 : Space → ℝ)
     (G : Fin 3 → Fin 3 → Space → ℝ)
-    (hW0 : MemLp W0 2) (hW1 : MemLp W1 2)
+    (hW0 : MemLp W0 2 volume) (hW1 : MemLp W1 2 volume)
     (hG : ∀ i j : Fin 3, Integrable (G i j)) (k : Fin 3) (ψ : ComplexTest) :
     averagedPressureDifference W0 W1 G hW0 hW1 hG k ψ =
       averagedPressureDifferenceValue W0 W1 G k ψ := by
@@ -579,7 +579,7 @@ def averagedPressureDifference (W0 W1 : Space → ℝ)
 /-- The actual complex-linear functional satisfies a uniform `H³` estimate. -/
 theorem averagedPressureDifference_bound {W0 W1 : Space → ℝ}
     {G : Fin 3 → Fin 3 → Space → ℝ}
-    (hW0 : MemLp W0 2) (hW1 : MemLp W1 2)
+    (hW0 : MemLp W0 2 volume) (hW1 : MemLp W1 2 volume)
     (hG : ∀ i j : Fin 3, Integrable (G i j)) (k : Fin 3) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ ψ : ComplexTest,
       ‖averagedPressureDifference W0 W1 G hW0 hW1 hG k ψ‖ ≤

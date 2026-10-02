@@ -783,7 +783,11 @@ theorem exists_geometryJoinedChoice
     I.historyTime I.history_pos I.history_lt J I.geometry.δ I.delta_pos I.delta_le_one
     I.terminal I.cutoff_support I.alpha I.alpha_pos (profileEnvelope I.parameterSize) hp.1 hp.2.1
     k hk (hp.2.2.trans hfrequency) hK hell nextEll hnext hnext1
-  refine ⟨⟨hn,Q,G,hgraph,hG,LC,hLC,hdisplacement,?_⟩⟩
+  refine ⟨⟨hn,Q,G,hgraph,?_,LC,hLC,hdisplacement,?_⟩⟩
+  -- Unfold the `Input` abbreviations so that the goals match `hG` and `herror` syntactically.
+  all_goals dsimp only [EulerPacketInitial.Input.meanData, EulerPacketInitial.Input.data,
+    EulerPacketInitial.Input.history]
+  · exact hG
   intro t x
   constructor
   · simp only [← hterminal]

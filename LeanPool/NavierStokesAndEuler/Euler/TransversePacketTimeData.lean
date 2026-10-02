@@ -462,8 +462,10 @@ theorem potentialTimeCoefficient_apply (t : K) (y : Space) :
     have h := hm t y
     rw [hz, norm_zero, zero_pow (by decide : 2 ≠ 0)] at h
     linarith
-  exact normalTimeMap_potential (m.field t y) (m₁.field t y)
-    (normalFunctional m c hc hm t y) hn (normalFunctional_apply m c hc hm t y)
+  -- The left side is unfolded once by `rfl` rather than at every unification attempt.
+  refine Eq.trans ?_ (normalTimeMap_potential (m.field t y) (m₁.field t y)
+    (normalFunctional m c hc hm t y) hn (normalFunctional_apply m c hc hm t y))
+  rfl
 
 theorem potentialTimeCoefficient_translation :
     translateCoefficientPath (potentialTimeCoefficient m m₁ c hc hm) =
@@ -579,8 +581,10 @@ theorem potentialTimePath_apply (t : K) (y : Space) :
     have h := hm t y
     rw [hz, norm_zero, zero_pow (by decide : 2 ≠ 0)] at h
     linarith
-  exact normalTimeMap_potential (m.field t y) (m₁ t y)
-    (normalFunctional m c hc hm t y) hn (normalFunctional_apply m c hc hm t y)
+  -- The left side is unfolded once by `rfl` rather than at every unification attempt.
+  refine Eq.trans ?_ (normalTimeMap_potential (m.field t y) (m₁ t y)
+    (normalFunctional m c hc hm t y) hn (normalFunctional_apply m c hc hm t y))
+  rfl
 
 theorem potentialTimePath_translation :
     translateCoefficientPath (potentialTimePath m m₁ c hc hm) = fun a =>
