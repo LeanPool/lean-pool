@@ -21,14 +21,15 @@ open MvPolynomial
 /-- The multivariate linear polynomial whose variable coefficients are `u`; coefficient
 positivity is a separate hypothesis. -/
 noncomputable def positiveLinearPolynomial
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (u : ι → ℝ) : MvPolynomial ι ℝ :=
   ∑ j, monomial (Finsupp.single j 1) (u j)
 
 theorem positiveLinearPolynomial_nonnegativeCoefficients
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {u : ι → ℝ} (hu : ∀ i, 0 ≤ u i) :
     HasNonnegativeCoefficients (positiveLinearPolynomial u) := by
+  classical
   intro d
   rw [positiveLinearPolynomial, coeff_sum]
   apply Finset.sum_nonneg
@@ -39,9 +40,10 @@ theorem positiveLinearPolynomial_nonnegativeCoefficients
   · exact le_rfl
 
 theorem positiveLinearPolynomial_isRealStable
-    {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
+    {ι : Type*} [Fintype ι] [Nonempty ι]
     {u : ι → ℝ} (hu : ∀ i, 0 < u i) :
     IsRealStable (positiveLinearPolynomial u) := by
+  classical
   intro z hz
   rw [positiveLinearPolynomial, eval₂_sum]
   simp only [eval₂_monomial]
@@ -135,17 +137,19 @@ theorem pairBilinearForm_eq_offDiag
   ring
 
 theorem pairPolynomial_eval_eq_quadraticForm
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (u v x : ι → ℝ) :
     (pairPolynomial u v).eval x = pairQuadraticForm u v x := by
+  classical
   rw [pairPolynomial_eval, pairQuadraticForm_eq_offDiag]
 
 theorem pairPolynomial_eval₂_complex
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (u v : ι → ℝ) (z : ι → ℂ) :
     (pairPolynomial u v).eval₂ (algebraMap ℝ ℂ) z =
       ∑ e ∈ (Finset.univ : Finset ι).offDiag,
         ((u e.1 * v e.2 : ℝ) : ℂ) * z e.1 * z e.2 := by
+  classical
   rw [pairPolynomial, eval₂_sum]
   apply Finset.sum_congr rfl
   intro e _
@@ -157,11 +161,12 @@ theorem pairPolynomial_eval₂_complex
     exact pow_add (z a) b c
 
 theorem pairPolynomial_eval₂_complex_re
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (u v : ι → ℝ) (z : ι → ℂ) :
     ((pairPolynomial u v).eval₂ (algebraMap ℝ ℂ) z).re =
       pairQuadraticForm u v (fun i ↦ (z i).re) -
         pairQuadraticForm u v (fun i ↦ (z i).im) := by
+  classical
   rw [pairPolynomial_eval₂_complex]
   simp only [Complex.ofReal_mul, Complex.re_sum, Complex.mul_re, Complex.ofReal_re,
     Complex.ofReal_im, mul_zero, sub_zero, Complex.mul_im, zero_mul, add_zero,
@@ -169,10 +174,11 @@ theorem pairPolynomial_eval₂_complex_re
   rw [pairQuadraticForm_eq_offDiag, pairQuadraticForm_eq_offDiag]
 
 theorem pairPolynomial_eval₂_complex_im
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (u v : ι → ℝ) (z : ι → ℂ) :
     ((pairPolynomial u v).eval₂ (algebraMap ℝ ℂ) z).im =
       pairBilinearForm u v (fun i ↦ (z i).re) (fun i ↦ (z i).im) := by
+  classical
   rw [pairPolynomial_eval₂_complex]
   simp only [Complex.ofReal_mul, Complex.im_sum, Complex.mul_im, Complex.mul_re,
     Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero, zero_mul, add_zero]
@@ -279,10 +285,11 @@ for the polynomial used in the paper without importing an eigenvalue or
 inertia theorem: the hyperplane orthogonal to `u` already witnesses that the
 quadratic form has at most one positive direction. -/
 theorem pairPolynomial_isRealStable_of_pos
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {u v : ι → ℝ} (hcard : 2 ≤ Fintype.card ι)
     (hu : ∀ i, 0 < u i) (hv : ∀ i, 0 < v i) :
     IsRealStable (pairPolynomial u v) := by
+  classical
   have hnonempty : Nonempty ι := Fintype.card_pos_iff.mp (by omega)
   intro z hz hzero
   let x : ι → ℝ := fun i ↦ (z i).re

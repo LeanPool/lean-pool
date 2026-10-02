@@ -137,8 +137,7 @@ noncomputable def columnSelector
 
 /-- The factored form of the column selector used for its stability proof. -/
 noncomputable def columnSelectorProduct
-    (κ ι : Type*) [Fintype κ] [DecidableEq κ]
-    [Fintype ι] [DecidableEq ι] : MvPolynomial (κ × ι) ℝ :=
+    (κ ι : Type*) [Fintype κ] [Fintype ι] : MvPolynomial (κ × ι) ℝ :=
   ∏ j : ι, ∑ c : κ, X (c, j)
 
 theorem columnSelector_eq_product
@@ -350,7 +349,7 @@ theorem coefficientInnerProduct_cluster_selector_eq_permanent
 ordered off-diagonal pairs.  The two orientations of `{j,k}` contribute the
 two terms in its coefficient. -/
 noncomputable def pairPolynomial
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (u v : ι → ℝ) : MvPolynomial ι ℝ :=
   ∑ e ∈ (Finset.univ : Finset ι).offDiag,
     monomial (Finsupp.single e.1 1 + Finsupp.single e.2 1)
@@ -369,7 +368,7 @@ theorem single_add_single_one_eq_iff
 /-- The coefficient of `z_j z_k` is the combined weight of the two internal
 assignments, exactly as stated below paper (9). -/
 theorem pairPolynomial_coeff_two
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (u v : ι → ℝ) {j k : ι} (hjk : j ≠ k) :
     (pairPolynomial u v).coeff
       (Finsupp.single j 1 + Finsupp.single k 1) =
@@ -409,11 +408,12 @@ theorem pairPolynomial_coeff_two
 
 /-- Evaluation of the pair polynomial in the ordered-pair form. -/
 theorem pairPolynomial_eval
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (u v z : ι → ℝ) :
     (pairPolynomial u v).eval z =
       ∑ e ∈ (Finset.univ : Finset ι).offDiag,
         u e.1 * v e.2 * z e.1 * z e.2 := by
+  classical
   rw [pairPolynomial, eval_sum]
   apply Finset.sum_congr rfl
   intro e _
@@ -425,9 +425,10 @@ theorem pairPolynomial_eval
     exact pow_add (z a) b c
 
 theorem pairPolynomial_nonnegativeCoefficients
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {u v : ι → ℝ} (hu : ∀ i, 0 ≤ u i) (hv : ∀ i, 0 ≤ v i) :
     HasNonnegativeCoefficients (pairPolynomial u v) := by
+  classical
   intro d
   rw [pairPolynomial, coeff_sum]
   apply Finset.sum_nonneg
@@ -438,9 +439,10 @@ theorem pairPolynomial_nonnegativeCoefficients
   · exact le_rfl
 
 theorem pairPolynomial_isHomogeneous
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (u v : ι → ℝ) :
     (pairPolynomial u v).IsHomogeneous 2 := by
+  classical
   rw [pairPolynomial]
   apply MvPolynomial.IsHomogeneous.sum
   intro e he
@@ -448,9 +450,10 @@ theorem pairPolynomial_isHomogeneous
   simp [map_add, Finsupp.degree_single]
 
 theorem pairPolynomial_isMultiaffine
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (u v : ι → ℝ) :
     IsMultiaffine (pairPolynomial u v) := by
+  classical
   intro i
   rw [pairPolynomial]
   refine (degreeOf_sum_le i _ _).trans (Finset.sup_le ?_)
