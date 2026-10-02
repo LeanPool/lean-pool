@@ -189,6 +189,7 @@ private theorem posPart_mem_of_absClosed (M : Submodule ℝ X)
   exact M.smul_mem _ (M.add_mem hx (h x hx))
 
 /-- Build a `VectorSublattice` from a submodule closed under `|·|`. -/
+@[expose]
 def ofAbsClosed (M : Submodule ℝ X)
     (h : ∀ x : X, x ∈ M → |x| ∈ M) : VectorSublattice X where
   toSubmodule := M

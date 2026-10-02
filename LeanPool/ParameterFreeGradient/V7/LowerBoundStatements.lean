@@ -60,6 +60,7 @@ def IsOneLipschitz (p : ℝ) (f : Point d → ℝ) : Prop :=
   ∀ x y, |f x - f y| ≤ lpNorm p (x - y)
 
 /-- The primal and dual transformations preserve their norms and mutual pairing. -/
+@[expose]
 def SignedLpSymmetry (p : ℝ) (Q Qdual : Point d → Point d) : Prop :=
   (∀ x, lpNorm p (Q x) = lpNorm p x) ∧
   (∀ s, lpNorm (conjugateExponent p) (Qdual s) =

@@ -225,6 +225,7 @@ def EuclideanScaleTraceStopsAtFailure (inst : PositiveInstance 2 d x0)
       report.trace = euclideanPlannedTrace inst phaseA phaseB)
 
 /-- The linked Euclidean phases, guard schedule, and chronological trial report contract. -/
+@[expose]
 def EuclideanTrialOperationalContract (x0 : Point d) (M D : ℝ)
     (inst : PositiveInstance 2 d x0) (report : TrialReport d)
     (phaseA : EuclideanGapData d m) (phaseB : OGMGData d n) : Prop :=

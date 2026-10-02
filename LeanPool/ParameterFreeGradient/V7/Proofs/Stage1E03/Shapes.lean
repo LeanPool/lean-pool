@@ -98,6 +98,7 @@ theorem phaseAGuardsFrom_succ (inst : PositiveInstance 2 d x0)
   simp [phaseAGuardsFrom]
 
 /-- The report records precisely the first failed guard after a prefix of accepted guards. -/
+@[expose]
 def FailureLedger (p M : ℝ) (report : TrialReport d)
     (failed : ObservableGuardCheck d) : Prop :=
   report.outcome = .scale failed ∧
@@ -106,6 +107,7 @@ def FailureLedger (p M : ℝ) (report : TrialReport d)
   ¬ CheckHolds p M failed
 
 /-- Every observation used in a checked guard occurs in the report's trace. -/
+@[expose]
 def GuardPairsInTrace (report : TrialReport d) : Prop :=
   ∀ check ∈ report.checkedGuards,
     check.xPair ∈ report.trace ∧ check.yPair ∈ report.trace

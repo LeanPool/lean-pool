@@ -46,6 +46,7 @@ structure TrialReport (d : ℕ) where
   outcome : TrialOutcome d
 
 /-- The number of new oracle observations recorded by the trial. -/
+@[expose]
 def TrialReport.calls (report : TrialReport d) : ℕ := report.trace.length
 
 /-- An observation retained for reuse without another oracle call. -/

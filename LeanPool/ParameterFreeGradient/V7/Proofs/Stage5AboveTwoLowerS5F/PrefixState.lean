@@ -112,6 +112,7 @@ noncomputable def advance (P : PrefixParameters p d T) (t : ℕ)
       [(stepOracle P t state).observe (stepQuery P t state)] }
 
 /-- The recursively generated resisting prefix state. -/
+@[expose]
 noncomputable def prefixState (P : PrefixParameters p d T) :
     ℕ → ResistingPrefixState d
   | 0 => initialState d

@@ -39,6 +39,7 @@ variable {X : Type u} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
   [VectorLattice X]
 
 /-- Unbounded-order convergence, defined using BanLat's `OrderConvergesTo`. -/
+@[expose]
 def UOConvergesTo {ι : Type v} [Preorder ι] (f : ι → X) (x : X) : Prop :=
   ∀ a : X, 0 ≤ a → OrderConvergesTo (fun i ↦ |f i - x| ⊓ a) 0
 
@@ -49,6 +50,7 @@ def orderAdherence (A : Set X) : Set X :=
     ∃ f : ι → X, (∀ i, f i ∈ A) ∧ OrderConvergesTo f x}
 
 /-- The unbounded-order adherence of a set. -/
+@[expose]
 def uoAdherence (A : Set X) : Set X :=
   {x | ∃ (ι : Type u) (_ : Preorder ι) (_ : IsDirected ι (· ≤ ·)) (_ : Nonempty ι),
     ∃ f : ι → X, (∀ i, f i ∈ A) ∧ UOConvergesTo f x}
@@ -432,6 +434,7 @@ def IsCompleteFor (p : X → ℝ) : Prop :=
       ∃ x, ∀ ε > 0, ∃ N, ∀ n ≥ N, p (f n - x) < ε
 
 /-- Fatou's property for a specified lattice norm. -/
+@[expose]
 def HasFatouProperty (p : X → ℝ) : Prop :=
   ∀ {ι : Type u} [Preorder ι] [IsDirected ι (· ≤ ·)] [Nonempty ι]
     (f : ι → X) (x : X), Monotone f → (∀ i, 0 ≤ f i) →
