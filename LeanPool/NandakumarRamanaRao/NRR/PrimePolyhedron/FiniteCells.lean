@@ -26,6 +26,7 @@ namespace NRR
 open scoped BigOperators
 
 /-- Barycentric coordinates of the standard `d`-simplex. -/
+@[expose]
 def StandardSimplex (d : ℕ) :=
   {w : Fin (d + 1) → ℝ // (∀ i, 0 ≤ w i) ∧ ∑ i, w i = 1}
 
