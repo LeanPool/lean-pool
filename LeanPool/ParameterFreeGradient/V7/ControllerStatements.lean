@@ -106,6 +106,7 @@ structure ControllerVisit where
   (reports.drop i).head? = some report
 
 /-- The initial visit and successive controller transitions agree with their trial reports. -/
+@[expose]
 def ControllerPath (G Ma Da : ℝ) (visits : List ControllerVisit)
     (reports : List (TrialReport d)) : Prop :=
   visits.length = reports.length ∧

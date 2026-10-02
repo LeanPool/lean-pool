@@ -258,6 +258,7 @@ noncomputable def AboveLowerOutsideGradientStatement : Prop :=
       lpNorm p x < 4
 
 /-- Source carrier for `prop:above-lower-base-gradient` (L07). -/
+@[expose]
 noncomputable def AboveLowerBaseGradientStatement : Prop :=
   ∀ (p : ℝ), 2 < p → ∀ (d T : ℕ) (data : LowerObjectiveData p d T),
     LowerObjectiveAssumptions data →

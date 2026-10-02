@@ -347,6 +347,7 @@ structure BelowTrialWitness (p : ℝ) (d : ℕ) where
   phaseTwoCenter : Point d
 
 /-- The horizon, normalization, phase execution, and report requirements of a below-two trial. -/
+@[expose]
 def BelowTrialOperationalContract (p eps M D : ℝ) (x0 : Point d)
     (cached : CachedPair d) (oracle : PairOracle d)
     (report : TrialReport d) (w : BelowTrialWitness p d) : Prop :=

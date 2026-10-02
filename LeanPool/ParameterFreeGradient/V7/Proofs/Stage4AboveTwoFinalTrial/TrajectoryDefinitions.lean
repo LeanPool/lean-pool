@@ -22,6 +22,7 @@ namespace V7.Stage4AboveTwoFinalTrial
 /-- The primal phase error budget `1 / p`. -/
 noncomputable def etaF (p : ℝ) : ℝ := 1 / p
 /-- The dual phase error budget determined by the normalized accuracy. -/
+@[expose]
 noncomputable def etaD (p eps M D : ℝ) : ℝ :=
   delta eps M D ^ conjugateExponent p / conjugateExponent p
 /-- The ceiling of the primal horizon required by the above-two gap bound. -/
