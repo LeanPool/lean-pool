@@ -42,12 +42,17 @@ Section 3. It credits Michael Elliott for the unpublished weak Fatou example
 previously announced by Anthony Wickstead. These mathematical and formalization
 credits are retained independently of the authors of this implementation.
 
-The AI provenance classification is an evidence-based inference: the main
-repository records phase-specific agent instructions and a completed phase-II
-proof pass; BanLat explicitly describes human-directed development in which
-language models write much of the Lean implementation. No particular model or
-precise human/AI fraction is claimed. The Lean Pool port and proof repairs were
-performed with Codex.
+The paper's acknowledgments explicitly attribute the Lean verification to AI
+systems, with human direction and review. The AI provenance classification
+reflects that first-party account of the main proofs; the imported BanLat
+prerequisites retain their authorship credit. The Lean Pool port and proof
+repairs were performed with Codex.
+
+For the solid-set tower result, Paper Theorem 2.6 specifies a generating set
+of cardinality kappa. The Lean endpoint additionally proves that the minimum
+solid generator number is exactly kappa. That exact-minimum conclusion is a
+strengthening proved by the formalization, rather than part of the paper's
+stated theorem.
 
 `gao_counterexample` states the order-complete `C(K)` construction with a
 norm-closed separable sublattice whose only order-closed vector-sublattice

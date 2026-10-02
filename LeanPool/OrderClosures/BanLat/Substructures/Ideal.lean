@@ -51,10 +51,6 @@ theorem solid {x y : X} (hx : x ∈ J) (hy0 : 0 ≤ y) (hyx : y ≤ x) :
     y ∈ J :=
   J.solid' hx hy0 hyx
 
-/-- Every order ideal is a vector sublattice. -/
-def toVectorSublattice' : VectorSublattice X :=
-  J.toVectorSublattice
-
 /-- An order ideal is closed under `⊔`. -/
 theorem sup_mem {x y : X} (hx : x ∈ J) (hy : y ∈ J) :
     x ⊔ y ∈ J :=

@@ -251,12 +251,8 @@ end LLexpr
 namespace IsVecLatHom
 
 /-- Bundle an `IsVecLatHom` proof into a `VecLatHom`. -/
-def mk' (f : X → Y) (vlh : IsVecLatHom f) : VecLatHom X Y where
-  toFun := f
-  map_add' := vlh.map_add
-  map_smul' := vlh.map_smul
-  map_sup' := vlh.map_sup'
-  map_inf' := vlh.map_inf'
+def mk' (f : X → Y) (vlh : IsVecLatHom f) : VecLatHom X Y :=
+  VecLatHom.ofIsVecLatHom f vlh
 
 /-- Evaluation of `mk'` agrees with the underlying function. -/
 @[simp]

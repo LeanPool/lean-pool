@@ -178,9 +178,9 @@ private theorem disjointification_step_one {x : E} {u : ℕ → E}
 one disjoint sequence and a `k`-disjoint remainder, up to an arbitrarily small
 positive multiple of the bound. -/
 private theorem disjointification_step_two {x : E} {u : ℕ → E} {k : ℕ}
-    (hk : 1 < k) (hu_interval : ∀ n, u n ∈ Set.Icc (0 : E) x)
+    (hu_interval : ∀ n, u n ∈ Set.Icc (0 : E) x)
     (hu_disj : IsKDisjointSeq (k + 1) u) {eps : ℝ}
-    (heps0 : 0 < eps) (heps1 : eps < 1) :
+    (heps0 : 0 < eps) :
     ∃ w y : ℕ → E,
       IsKDisjointSeq k w ∧
       Pairwise (fun n m => IsVLDisjoint (y n) (y m)) ∧
@@ -188,7 +188,6 @@ private theorem disjointification_step_two {x : E} {u : ℕ → E} {k : ℕ}
       (∀ n, y n ∈ Set.Icc (0 : E) x) ∧
       ∀ n, y n + w n ≤ u n ∧ u n ≤ y n + w n + eps • x := by
   classical
-  have _hk_pos : 0 < k := by omega
   let pref : ℕ → E := fun n => ∑ i ∈ Finset.range n, u i
   let inv : ℝ := eps⁻¹
   let y : ℕ → E := fun n => (u n - inv • pref n - eps • x)⁺
@@ -399,12 +398,11 @@ private theorem split_isKDisjointSeq {x : E} :
           have hx : 0 ≤ x := (hu_interval n).1.trans (hu_interval n).2
           have hepsx : 0 ≤ eps • x := smul_nonneg (le_of_lt heps0) hx
           simp [hepsx]
-      · have hk_two : 1 < k.succ.succ := by omega
-        have heps_half_pos : 0 < eps / 2 := by
+      · have heps_half_pos : 0 < eps / 2 := by
           positivity
         have heps_half_lt : eps / 2 < 1 := by linarith
         obtain ⟨w, y0, hw_disj, hy0_disj, hw_interval, hy0_interval, hwy⟩ :=
-          disjointification_step_two hk_two hu_interval hu_disj heps_half_pos heps_half_lt
+          disjointification_step_two hu_interval hu_disj heps_half_pos
         obtain ⟨yr, hyr_disj, hyr_interval, hyr_approx⟩ :=
           ih (by omega) hw_interval hw_disj heps_half_pos heps_half_lt
         let y : Fin (k.succ.succ) → ℕ → E := Fin.cons y0 yr

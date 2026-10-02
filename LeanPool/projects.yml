@@ -12235,7 +12235,11 @@ projects:
           kappa whose order-adherence tower has a proper step at every
           stage below xi. The witness and cardinal/ordinal parameters
           are lifted one universe in Lean.
-        source_ref: Paper Theorem 2.6; explicit infinite-cardinal hypothesis.
+        source_ref: >-
+          Paper Theorem 2.6, with its explicit infinite-cardinal hypothesis.
+          Lean strengthens the stated size-kappa generating-set conclusion
+          to minimum solid generator number exactly kappa; this exact-minimum
+          conclusion is proved in the formalization, not stated in the paper.
       - declaration: OrderClosures.exists_weaklyFatou_not_equivalent_fatou
         informal: >-
           There is a real vector lattice with a complete lattice norm p

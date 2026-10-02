@@ -51,9 +51,6 @@ variable (B : Band X)
 
 /-! ### A band is an ideal and a vector sublattice -/
 
-/-- Every band is an order ideal. -/
-def toOrderIdeal' : OrderIdeal X := B.toOrderIdeal
-
 /-! ### Closure under suprema -/
 
 /-- A band is closed under suprema: if a subset of the band has a supremum in
