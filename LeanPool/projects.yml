@@ -11980,6 +11980,11 @@ projects:
         flat and lying outside a modular cut are joined by a finite Tutte path all of whose vertices
         contain that flat and avoid the cut. Consecutive vertices are distinct hyperplanes with
         indecomposable corank-two intersection; repeated nonconsecutive vertices are permitted.
+    - declaration: TutteFormalization.path_theorem_of_indecomposable
+      informal: In any finite matroid, two hyperplanes containing an indecomposable flat F and
+        lying outside a modular cut are joined by a Tutte path whose vertices contain F and avoid
+        the cut. This strengthens the cited path theorem by requiring only connectedness of the
+        contraction by F; properness of F follows from containment in an endpoint hyperplane.
     - declaration: TutteFormalization.exists_indecomposable_complement
       informal: If an indecomposable flat S and a flat U span the ground, every indecomposable flat
         T contained in both extends inside S to an indecomposable flat R spanning the ground with U,

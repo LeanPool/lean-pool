@@ -20,14 +20,23 @@ Structural dependencies are proved in the imported project modules.
 
 namespace TutteFormalization
 
+/-- The stronger path theorem: connectedness of the contraction by `F` suffices.
+Properness of `F` follows from containment in the endpoint hyperplane. -/
+theorem path_theorem_of_indecomposable {α : Type*} (M : Matroid α) [M.Finite]
+    (Γ : Set (Set α)) (hΓ : ModularCut M Γ) (F : Set α) (hF : Indecomposable M F)
+    (X Y : Set α) (hX : IsHyperplane M X) (hY : IsHyperplane M Y)
+    (hFX : F ⊆ X) (hFY : F ⊆ Y) (hXoff : X ∉ Γ) (hYoff : Y ∉ Γ) :
+    ∃ p : TuttePath M, p.origin = X ∧ p.terminus = Y ∧ p.On F ∧ p.Off Γ :=
+  path_theorem_induction M Γ hΓ F hF X Y hX hY hFX hFY hXoff hYoff
+
 /-- `thm:path-theorem`, the two-endpoints-off-cut BJL formulation.
-The public type is unchanged from the approved independent specification. -/
+A source-faithful specialization of `path_theorem_of_indecomposable`. -/
 theorem path_theorem {α : Type*} (M : Matroid α) [M.Finite]
-    (hM : Connected M) (Γ : Set (Set α)) (hΓ : ModularCut M Γ)
-    (F : Set α) (hF : Indecomposable M F) (hFproper : F ≠ M.E)
+    (_hM : Connected M) (Γ : Set (Set α)) (hΓ : ModularCut M Γ)
+    (F : Set α) (hF : Indecomposable M F) (_hFproper : F ≠ M.E)
     (X Y : Set α) (hX : IsHyperplane M X) (hY : IsHyperplane M Y)
     (hFX : F ⊆ X) (hFY : F ⊆ Y) (hXoff : X ∉ Γ) (hYoff : Y ∉ Γ) :
     ∃ p : TuttePath M, p.origin = X ∧ p.terminus = Y ∧ p.On F ∧ p.Off Γ := by
-  exact path_theorem_induction M hM Γ hΓ F hF hFproper X Y hX hY hFX hFY hXoff hYoff
+  exact path_theorem_of_indecomposable M Γ hΓ F hF X Y hX hY hFX hFY hXoff hYoff
 
 end TutteFormalization

@@ -15,8 +15,8 @@ public target, so none of its dependencies can rely on that target. -/
 namespace TutteFormalization
 
 theorem path_theorem_induction {α : Type*} (M : Matroid α) [M.Finite]
-    (_hM : Connected M) (Γ : Set (Set α)) (hΓ : ModularCut M Γ)
-    (F : Set α) (hF : Indecomposable M F) (hFproper : F ≠ M.E)
+    (Γ : Set (Set α)) (hΓ : ModularCut M Γ)
+    (F : Set α) (hF : Indecomposable M F)
     (X Y : Set α) (hX : IsHyperplane M X) (hY : IsHyperplane M Y)
     (hFX : F ⊆ X) (hFY : F ⊆ Y) (hXoff : X ∉ Γ) (hYoff : Y ∉ Γ) :
     ∃ p : TuttePath M, p.origin = X ∧ p.terminus = Y ∧ p.On F ∧ p.Off Γ := by
@@ -51,14 +51,11 @@ theorem path_theorem_induction {α : Type*} (M : Matroid α) [M.Finite]
     have recurse (P Z : Set α) (hP : Indecomposable M P) (hFP : F ⊂ P)
         (hPX : P ⊆ X) (hZ : IsHyperplane M Z) (hPZ : P ⊆ Z) (hZoff : Z ∉ Γ) :
         ∃ p : TuttePath M, p.origin = X ∧ p.terminus = Z ∧ p.On F ∧ p.Off Γ := by
-      have hPproper : P ≠ M.E := by
-        intro heq
-        exact hX.2.1 (Set.Subset.antisymm hX.1.subset_ground (heq ▸ hPX))
       have hPr := natRank_lt_of_flat_ssubset hF.1 hP.1 hFP
       have hPE := natRank_mono (M := M) hP.1.subset_ground
       have hdec : natRank M M.E - natRank M P < n := by omega
       obtain ⟨p, hpX, hpZ, hpOn, hpOff⟩ := ih (natRank M M.E - natRank M P) hdec
-        P hP hPproper X Z hX hZ hPX hPZ hXoff hZoff rfl
+        P hP X Z hX hZ hPX hPZ hXoff hZoff rfl
       exact ⟨p, hpX, hpZ, hpOn.mono hFP.subset, hpOff⟩
     by_cases hVY : V ⊆ Y
     · exact recurse V Y hV hFV' hVX hY hVY hYoff
