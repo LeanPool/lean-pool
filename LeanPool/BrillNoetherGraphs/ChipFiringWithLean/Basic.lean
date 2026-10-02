@@ -1089,6 +1089,7 @@ theorem legal_set_union (G : CFGraph) {D : CFDiv G} {S T : Finset G.V}
 set of vertices disjoint from $q$ puts some vertex of that set into debt.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 3.4. -/
+@[expose]
 def qReduced (G : CFGraph) (q : G.V) (D : CFDiv G) : Prop :=
   qEffective q D ∧
   ∀ S : Finset G.V, q ∉ S → S.Nonempty → ¬ legalSet G D S

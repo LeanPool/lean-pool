@@ -329,6 +329,7 @@ properties. -/
 
 /-- The valley $\ell \mapsto s(a,\ell) + t(\ell,b)$ whose minimum computes the
 slipface product at `(a,b)`. -/
+@[expose]
 noncomputable def SlipValley (s t : SlipFace) (a b : ℤ) : Valley where
   f := fun l => s a l + t l b
   rises := by
@@ -356,6 +357,7 @@ In Lean, `starFunction s t a b` is this integer value, while `s ⋆ t` is the re
 `SlipFace`.
 See *Definition 3.7 (`defn:sfAlgebra`) of
 [An extended Demazure product](https://arxiv.org/abs/2206.14227).* -/
+@[expose]
 noncomputable def starFunction (s t : SlipFace) : ℤ → ℤ → ℤ :=
   fun a b => (SlipValley s t a b).min
 
@@ -623,6 +625,7 @@ lemma star_assoc (r s t : SlipFace) : r ⋆ s ⋆ t = r ⋆ (s ⋆ t) := by
     omega
 
 /-- The identity slipface, given by the positive part of `a - b`. -/
+@[expose]
 def id : SlipFace := {
     func := fun a b => max (a - b) 0,
     χ := 0,
@@ -777,6 +780,7 @@ $$
 $$
 See *Definition 3.7* (`defn:sfAlgebra`) of
 [An extended Demazure product](https://arxiv.org/abs/2206.14227). -/
+@[expose]
 noncomputable def leftResidualFunction (s t : SlipFace) : ℤ → ℤ → ℤ :=
   fun a b => s a (leftResidualWitness s t a b) - t.dual b (leftResidualWitness s t a b)
 

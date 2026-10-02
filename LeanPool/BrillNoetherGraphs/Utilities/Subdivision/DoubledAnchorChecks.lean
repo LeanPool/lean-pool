@@ -76,6 +76,7 @@ def dominatesMarkCheck (certificate : CertificateData m n p) (mark : Fin n)
 
 /-- The target coefficient at a core vertex after removing `mult` chips at the
 anchor.  At `mult = 1` this is `targetCoefficient`, syntactically. -/
+@[expose]
 def multTargetCoefficient (certificate : CertificateData m n p) (mult : ℤ)
     (anchor vertex : Fin n) : ℤ :=
   certificate.divisor vertex - if vertex = anchor then mult else 0

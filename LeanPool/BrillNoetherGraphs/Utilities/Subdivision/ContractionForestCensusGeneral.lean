@@ -350,6 +350,7 @@ theorem card_image_le_card_image_unionStep_succ (rep : Fin n → Fin n) (u v : F
 /-! ## Folding over a list of edges: union-find, and its correctness -/
 
 /-- Union-find over a list of edge slots, applied in order. -/
+@[expose]
 def foldRep (l : List (Fin p)) : Fin n → Fin n :=
   l.foldl (fun rep e => unionStep rep (core.tail e) (core.head e)) id
 

@@ -48,6 +48,7 @@ open Finset
 
 /-- Boolean universal quantification over `Fin k`, implemented as a list fold
 rather than a proof-producing `Decidable` computation. -/
+@[expose]
 def allFin {k : ℕ} (test : Fin k → Bool) : Bool :=
   (List.ofFn test).all id
 

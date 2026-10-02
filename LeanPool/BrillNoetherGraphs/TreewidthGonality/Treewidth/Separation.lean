@@ -96,8 +96,8 @@ theorem separates_of_mem_anc {U : Finset V} (D : PartialDecomposition H U)
         refine huv.trans (ih (fun z hz => hU z (List.mem_cons_of_mem u hz))
           (fun z hz => hT z (List.mem_cons_of_mem u hz)))
   have hat : a ∉ D.bag t := hcon a p.start_mem_support
-  have hPa := mono a ha hat na hna h1
-  exact h2 ((step a b p hp hcon).mp hPa hnb)
+  have hPa := mono a ha hat na hna ((mem_below_iff D.isTree s t na).2 h1)
+  exact h2 ((mem_below_iff D.isTree s t nb).1 ((step a b p hp hcon).mp hPa hnb))
 
 /-! ### Lemma 4 -/
 

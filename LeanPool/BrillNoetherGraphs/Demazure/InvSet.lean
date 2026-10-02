@@ -692,6 +692,7 @@ end OfAspSet
 /-- ASP permutations are equivalent to abstract ASP inversion sets together
 with a shift parameter. *Theorem 2.13 (`thm:aspSetReconstruction`) of
 [An extended Demazure product](https://arxiv.org/abs/2206.14227).* -/
+@[expose]
 noncomputable def AspPermEquivAspSet :
   AspPerm ≃ AspSet × ℤ where
   toFun τ := (⟨invSet τ, AspSet_InvSet_of_AspPerm τ⟩, τ.χ)
