@@ -606,7 +606,7 @@ theorem rawRatRowsSupportProduct_eq_rationalSupportFloor {n : ℕ}
   intro p hp
   simp only [rationalSupportFactor]
 
-@[simp] theorem machineMatrixSupportProductCode_rationalSupportFloor {n : ℕ}
+theorem machineMatrixSupportProductCode_rationalSupportFloor {n : ℕ}
     (A : Matrix (Fin n) (Fin n) ℚ) :
     machineMatrixSupportProductCode
         (rationalMatrixBinaryEncoding.encode ⟨n, A⟩) =
