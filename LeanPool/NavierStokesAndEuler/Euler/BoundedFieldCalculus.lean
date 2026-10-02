@@ -10,6 +10,7 @@ public import LeanPool.NavierStokesAndEuler.Euler.ContinuousPathCalculus
 public import LeanPool.NavierStokesAndEuler.Euler.TransverseGramInverse
 import LeanPool.NavierStokesAndEuler.Euler.OperatorGevreyCalculus
 import Mathlib.Analysis.Calculus.ContDiff.Comp
+public import LeanPool.NavierStokesAndEuler.ForMathlib.BoundedContinuousFunctionShortcuts
 
 /-!
 # Actual bounded-field bilinear and adjoint calculus

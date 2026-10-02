@@ -11,6 +11,7 @@ public import LeanPool.NavierStokesAndEuler.Euler.MeanOrbitSobolev
 public import LeanPool.NavierStokesAndEuler.Euler.SobolevPointEvaluation
 import LeanPool.NavierStokesAndEuler.Euler.LpSmoothFieldJets
 import LeanPool.NavierStokesAndEuler.Euler.MeanSpatialEvaluation
+public import LeanPool.NavierStokesAndEuler.ForMathlib.BoundedContinuousFunctionShortcuts
 
 /-!
 # Actual bounded continuous representatives from smooth L² jets

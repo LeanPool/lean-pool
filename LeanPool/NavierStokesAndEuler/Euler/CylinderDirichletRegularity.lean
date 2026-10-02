@@ -104,8 +104,9 @@ theorem hessianOrbit_contDiff (hH : ContDiff ℝ ∞ (translateCoefficientPath D
     (hH.comp contDiff_fst)
 
 theorem accelerationLp_translation (a : LiftTangent) (f : TimeLp T (CylinderL2 P E)) :
-    (D.shifted a.1).accelerationLp P (timeLift T (translate P a).toContinuousLinearMap f) =
-      timeLift T (translate P a).toContinuousLinearMap (D.accelerationLp P f) :=
+    (D.shifted a.1).accelerationLp P
+        (timeLift T (translate (V := E) P a).toContinuousLinearMap f) =
+      timeLift T (translate (V := U) P a).toContinuousLinearMap (D.accelerationLp P f) :=
   D.accelerationLp_intertwines P (D.shifted a.1)
     (translate P a).toContinuousLinearMap (translate P a).toContinuousLinearMap
     (D.shifted_frame P a) (D.shifted_frameDerivative P a)
@@ -118,8 +119,9 @@ variable (hQ : ContDiff ℝ ∞ (translateCoefficientPath D.Q))
 include hQ hQ₁ hH
 
 theorem velocityLp_orbit_contDiff (f : TimeLp T (CylinderL2 P E))
-    (hf : ContDiff ℝ ∞ (fun a => timeLift T (translate P a).toContinuousLinearMap f)) :
-    ContDiff ℝ ∞ (fun a => timeLift T (translate P a).toContinuousLinearMap (D.velocityLp P f)) :=
+    (hf : ContDiff ℝ ∞ (fun a => timeLift T (translate (V := E) P a).toContinuousLinearMap f)) :
+    ContDiff ℝ ∞ (fun a =>
+      timeLift T (translate (V := U) P a).toContinuousLinearMap (D.velocityLp P f)) :=
         by
   have hs := EulerTransverseFixedEvolution.velocityLp_contDiff
     (X := LiftTangent) (U := CylinderL2 P U) (E := CylinderL2 P E) (n := ∞) T D.time_pos.le
@@ -138,8 +140,9 @@ theorem velocityLp_orbit_contDiff (f : TimeLp T (CylinderL2 P E))
   rfl
 
 theorem accelerationLp_orbit_contDiff (f : TimeLp T (CylinderL2 P E))
-    (hf : ContDiff ℝ ∞ (fun a => timeLift T (translate P a).toContinuousLinearMap f)) :
-    ContDiff ℝ ∞ (fun a => timeLift T (translate P a).toContinuousLinearMap (D.accelerationLp P f))
+    (hf : ContDiff ℝ ∞ (fun a => timeLift T (translate (V := E) P a).toContinuousLinearMap f)) :
+    ContDiff ℝ ∞ (fun a =>
+      timeLift T (translate (V := U) P a).toContinuousLinearMap (D.accelerationLp P f))
         := by
   have hs := EulerTransverseFixedEvolution.accelerationLp_contDiff
     (X := LiftTangent) (U := CylinderL2 P U) (E := CylinderL2 P E) (n := ∞) T D.time_pos.le

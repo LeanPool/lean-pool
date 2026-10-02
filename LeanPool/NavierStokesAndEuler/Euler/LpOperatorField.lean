@@ -10,6 +10,7 @@ public import LeanPool.NavierStokesAndEuler.Euler.LpSupportedSubspace
 public import Mathlib.Topology.ContinuousMap.Bounded.Normed
 public import Mathlib.Analysis.Normed.Operator.NormedSpace
 import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
+public import LeanPool.NavierStokesAndEuler.ForMathlib.BoundedContinuousFunctionShortcuts
 
 /-!
 # Rectangular coefficient fields acting on actual spatial L²

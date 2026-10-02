@@ -226,12 +226,13 @@ include hdir hQ hQ₁ hH hRc hC₀ hC₁ hCH hCf hbQ hbQ₁ hbH hR
 /-- Actual cylinder/time L² coordinate velocity: one shift at the original
 radius and fixed Sobolev order, from forcing bounds at the base translation. -/
 theorem velocityLp_block_bound (f : TimeLp T (CylinderL2 P E))
-    (hf : ContDiff ℝ ∞ (fun a => timeLift T (translate P a).toContinuousLinearMap f))
+    (hf : ContDiff ℝ ∞ (fun a => timeLift T (translate (V := E) P a).toContinuousLinearMap f))
     (d : ℕ) (hfb : ∀ n, block directions q
-      (fun a => timeLift T (translate P a).toContinuousLinearMap f) n 0 ≤ Cf * majorant R d n)
+      (fun a => timeLift T (translate (V := E) P a).toContinuousLinearMap f) n 0 ≤
+        Cf * majorant R d n)
     (n : ℕ) (a : LiftTangent) :
-    block directions q (fun b => timeLift T (translate P b).toContinuousLinearMap (D.velocityLp P
-        f)) n a ≤
+    block directions q (fun b =>
+        timeLift T (translate (V := U) P b).toContinuousLinearMap (D.velocityLp P f)) n a ≤
       majorant R (d+1) n := by
   have hs := EulerTransverseFixedSobolev.velocityLp_block_gevrey directions hdir q T D.time_pos.le
     (fun b : LiftTangent => (D.shifted b.1).frame P)
@@ -260,7 +261,7 @@ theorem continuous_velocityLp_block_bound (hT1 : T ≤ 1)
     (hf : ContDiff ℝ ∞ (fun a => pathTranslate P a f))
     (d : ℕ) (hfb : ∀ n, block directions q (fun a => pathTranslate P a f) n 0 ≤ Cf * majorant R d n)
     (n : ℕ) (a : LiftTangent) :
-    block directions q (fun b => timeLift T (translate P b).toContinuousLinearMap
+    block directions q (fun b => timeLift T (translate (V := U) P b).toContinuousLinearMap
       (D.velocityLp P (pathLp T D.time_pos.le f))) n a ≤ majorant R (d+1) n := by
   have hsqrt : Real.sqrt T ≤ 1 := by simpa using Real.sqrt_le_sqrt hT1
   apply D.velocityLp_block_bound P directions hdir q hQ hQ₁ hH Rc C₀ C₁ CH Cf R hRc

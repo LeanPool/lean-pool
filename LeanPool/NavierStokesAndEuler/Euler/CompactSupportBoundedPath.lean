@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import Mathlib.Topology.ContinuousMap.Bounded.Basic
+public import LeanPool.NavierStokesAndEuler.ForMathlib.BoundedContinuousFunctionShortcuts
 
 /-! Continuous families with a common compact spatial support give continuous paths in the
 space of bounded continuous functions, equipped with the uniform norm. -/

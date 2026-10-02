@@ -46,8 +46,8 @@ theorem fullOperatorMap_adjoint (Q : Space →ᵇ U →L[ℝ] E) :
   rfl
 
 theorem average_fullOperator_back (Q : Space →ᵇ U →L[ℝ] E) (u : CylinderL2 P U) :
-    fullOperatorMap P Q ((average P).adjoint u) =
-      (average P).adjoint (fullOperatorMap P Q u) := by
+    fullOperatorMap P Q ((average (V := U) P).adjoint u) =
+      (average (V := E) P).adjoint (fullOperatorMap P Q u) := by
   have hc (v : CylinderL2 P E) :
       average (V := U) P ((fullOperatorMap P Q).adjoint v) =
         (fullOperatorMap P Q).adjoint (average (V := E) P v) := by

@@ -12,6 +12,7 @@ import Mathlib.Analysis.Calculus.MeanValue
 public import Mathlib.Analysis.Normed.Module.Multilinear.Basic
 public import Mathlib.Topology.ContinuousMap.Bounded.Normed
 public import LeanPool.NavierStokesAndEuler.Euler.SmoothTimeField
+public import LeanPool.NavierStokesAndEuler.ForMathlib.BoundedContinuousFunctionShortcuts
 
 /-! Composition with identity plus a bounded smooth displacement preserves
 the actual continuous-time bounded spatial jets. The finite Faà di Bruno

@@ -11,6 +11,7 @@ public import LeanPool.NavierStokesAndEuler.ForMathlib.StronglyMeasurable
 public import LeanPool.NavierStokesAndEuler.Euler.MeanSolenoidalSpace
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 import Mathlib.Algebra.Order.Star.Real
+public import LeanPool.NavierStokesAndEuler.ForMathlib.BoundedContinuousFunctionShortcuts
 
 /-! Continuous matrix fields act as genuine bounded operators on ordinary R³ L². -/
 

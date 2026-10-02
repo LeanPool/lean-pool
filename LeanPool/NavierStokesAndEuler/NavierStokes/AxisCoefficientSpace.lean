@@ -14,6 +14,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Data.Finset.NatAntidiagonal
 import Mathlib.Data.Nat.Choose.Vandermonde
 import Mathlib.Tactic.FieldSimp
+public import LeanPool.NavierStokesAndEuler.ForMathlib.BoundedContinuousFunctionShortcuts
 
 /-!
 # A complete coefficient space with compatible actual derivatives
