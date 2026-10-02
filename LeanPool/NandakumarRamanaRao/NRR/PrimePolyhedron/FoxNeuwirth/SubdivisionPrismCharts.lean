@@ -54,7 +54,7 @@ def staircaseSpatial (p : Nat) (k : Fin p) (j : Fin (p + 1)) : Fin p :=
     staircaseTime k j = 1 := by simp [staircaseTime, Nat.not_le.mpr h]
 
 /-- Spatial barycentric coordinate induced by one staircase simplex. -/
-noncomputable def spatialWeight
+@[expose] noncomputable def spatialWeight
     (hp : Nat.Prime p) (k : Fin p) (w : StandardSimplex p)
     (i : Fin (p - 1 + 1)) : Real :=
   ∑ j : Fin (p + 1),

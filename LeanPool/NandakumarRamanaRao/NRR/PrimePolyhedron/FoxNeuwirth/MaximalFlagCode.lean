@@ -56,11 +56,11 @@ structure Code (p : Nat) where
   deriving Fintype, DecidableEq
 
 /-- Integer sign of a finite permutation. -/
-noncomputable def permSignInt {n : Nat} (sigma : Equiv.Perm (Fin n)) : Int :=
+@[expose] noncomputable def permSignInt {n : Nat} (sigma : Equiv.Perm (Fin n)) : Int :=
   ((Equiv.Perm.sign sigma : ℤˣ) : ℤ)
 
 /-- Canonical sign of a maximal-flag code. -/
-noncomputable def coefficient (z : Code p) : Int :=
+@[expose] noncomputable def coefficient (z : Code p) : Int :=
   permSignInt z.bottom * permSignInt z.removal
 
 /-- First bar-removal step; prime cardinality guarantees that `Fin (p - 1)` is nonempty. -/

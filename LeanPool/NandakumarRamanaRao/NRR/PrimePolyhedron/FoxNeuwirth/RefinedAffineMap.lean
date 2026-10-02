@@ -42,7 +42,7 @@ noncomputable instance (hp : Nat.Prime p) (N : Nat) : Fintype (TopCell hp N) := 
 noncomputable instance (hp : Nat.Prime p) (N : Nat) : DecidableEq (TopCell hp N) := inferInstance
 
 /-- Sign of an iterated barycentric-subdivision summand. -/
-noncomputable def subdivisionSign (N : Nat) (rho : RefinementWord p N) : ZMod p :=
+@[expose] noncomputable def subdivisionSign (N : Nat) (rho : RefinementWord p N) : ZMod p :=
   ∏ r : Fin N, ((Equiv.Perm.sign (rho r) : ℤ) : ZMod p)
 
 /-- Integer version of the subdivision sign. -/
@@ -53,7 +53,7 @@ noncomputable def subdivisionSignInt (N : Nat) (rho : RefinementWord p N) : Int 
 abbrev ContinuousCoordinateMap (p : Nat) := C(Realization p, Fin p → Real)
 
 /-- Refined chart attached to a top-orbit representative and a subdivision word. -/
-noncomputable def chart
+@[expose] noncomputable def chart
     (hp : Nat.Prime p) (N : Nat) (q : TopCell hp N) :
     C(Delta (p - 1), Realization p) :=
   (ReferenceAffineOrbitCount.topRepr hp q.1).refinedContinuousMap N q.2

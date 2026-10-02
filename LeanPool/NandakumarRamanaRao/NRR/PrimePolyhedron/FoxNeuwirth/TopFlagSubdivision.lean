@@ -61,7 +61,7 @@ def barDifferenceMatrix (s : Simplex p (p - 1)) :
   fun r k => barIndicator (s k.castSucc) r - barIndicator (s k.succ) r
 
 /-- Orientation of the order in which bars disappear along a maximal flag. -/
-def barRemovalDeterminant (s : Simplex p (p - 1)) : Int :=
+@[expose] def barRemovalDeterminant (s : Simplex p (p - 1)) : Int :=
   Matrix.det (barDifferenceMatrix s)
 
 /-- Canonical permutation orientation of a Fox--Neuwirth cell.
@@ -69,7 +69,7 @@ def barRemovalDeterminant (s : Simplex p (p - 1)) : Int :=
 This is the Mathlib permutation sign of the displayed rank.  It is the same parity orientation
 used by `BarredPermutation.orientationSign`, but using the library sign directly avoids carrying
 a second inversion-parity implementation into the subdivision determinant calculation. -/
-def permutationOrientationSign (c : BarredPermutation p) : Int :=
+@[expose] def permutationOrientationSign (c : BarredPermutation p) : Int :=
   ((Equiv.Perm.sign c.rank : ℤˣ) : ℤ)
 
 /-- Integral coefficient of a maximal flag in the subdivision chain. -/

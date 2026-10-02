@@ -78,7 +78,7 @@ def augmentedRowEquiv (hp : Nat.Prime p) : Fin p ≃ Fin (p - 1 + 1) :=
     (fun q => deviation hp (facetValue V k i) q) (augmentedRowEquiv hp r)
 
 /-- Facet determinant. -/
-noncomputable def facetDeterminant
+@[expose] noncomputable def facetDeterminant
     (hp : Nat.Prime p) (V : VertexMap p) (k : Fin (p + 1)) : Real :=
   Matrix.det (facetMatrix hp V k)
 

@@ -129,7 +129,7 @@ noncomputable def continuousMapAsSingularSimplex (X : TopCat.{0}) (n : ℕ)
 
 /-- The `π`-summand of barycentric subdivision of a singular simplex: precompose
 `σ : Δⁿ → X` with the affine subdivision simplex `a_π : Δⁿ → Δⁿ`. -/
-noncomputable def barycentricSubdivSimplex (X : TopCat.{0}) (n : ℕ)
+@[expose] noncomputable def barycentricSubdivSimplex (X : TopCat.{0}) (n : ℕ)
     (π : Equiv.Perm (Fin (n + 1))) (σ : singularSimplices X n) :
     singularSimplices X n :=
   continuousMapAsSingularSimplex X n
@@ -153,13 +153,13 @@ noncomputable abbrev singularChainGroup (R : Type) [CommRing R] (X : TopCat.{0})
   (((singularChainComplexFunctor (ModuleCat.{0} R)).obj (ModuleCat.of R R)).obj X).X n
 
 /-- The basis chain associated to a singular simplex. -/
-noncomputable def chainGenerator (R : Type) [CommRing R] (X : TopCat.{0}) (n : ℕ)
+@[expose] noncomputable def chainGenerator (R : Type) [CommRing R] (X : TopCat.{0}) (n : ℕ)
     (σ : singularSimplices X n) : singularChainGroup R X n :=
   ((Sigma.ι (fun (_ : singularSimplices X n) => ModuleCat.of R R) σ).hom (1 : R))
 
 /-- The sign of a finite permutation, interpreted in a coefficient ring. For
 `R = ℤ` this is `±1`; for `R = ZMod 2` both signs become `1`. -/
-noncomputable def permSignCoeff (R : Type) [CommRing R] {n : ℕ}
+@[expose] noncomputable def permSignCoeff (R : Type) [CommRing R] {n : ℕ}
     (π : Equiv.Perm (Fin (n + 1))) : R :=
   ((Equiv.Perm.sign π : ℤ) : R)
 

@@ -95,7 +95,7 @@ theorem continuous_globalValue
       ((continuous_apply c).comp continuous_subtype_val).mul continuous_const
 
 /-- Fixed difference-coordinate representation of the zero-sum/deviation part. -/
-noncomputable def deviation
+@[expose] noncomputable def deviation
     (hp : Nat.Prime p) (F : CoordinateAffineVertexMap p) :
     AffineVertexMap p (p - 1) where
   vertexValue c r :=

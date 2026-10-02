@@ -141,13 +141,13 @@ noncomputable def localSpatialWeight
       (S := Real) s.2)).1
 
 /-- Local value supplied by a compatible chart map. -/
-noncomputable def localVector
+@[expose] noncomputable def localVector
     (hp : Nat.Prime p) {N : Nat} (K : ChartMap hp N)
     (s : (Cells hp N).VertexSlot) : Fin p → Real :=
   K.value s.1.1 (localSpatialWeight hp N s)
 
 /-- Prime-decorated local value. -/
-noncomputable def decoratedVector
+@[expose] noncomputable def decoratedVector
     (hp : Nat.Prime p) {N : Nat} (K : ChartMap hp N)
     (s : CoverVertexSlot hp (Cells hp N)) : Fin p → Real :=
   s.1 • localVector hp K s.2

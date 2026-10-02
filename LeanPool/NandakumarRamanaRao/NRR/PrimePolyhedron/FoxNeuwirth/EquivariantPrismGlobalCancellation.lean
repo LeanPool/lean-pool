@@ -53,7 +53,7 @@ variable {p : Nat}
 
 /-- Positive-ray index of an oriented facet before multiplication by its alternating boundary
 sign. -/
-noncomputable def unsignedFacetIndex
+@[expose] noncomputable def unsignedFacetIndex
     (hp : Nat.Prime p) (V : VertexMap p) (k : Fin (p + 1)) : ZMod p :=
   if FacetHasPositiveRayIntersection hp V k then
     FoxNeuwirthOrderComplex.AffineVertexMap.determinantIndex
@@ -579,14 +579,14 @@ noncomputable def occurrenceCoefficient
     SimplicialChain.faceSign (R := ZMod p) (d := p - 1) (facetFaceIndex hp o.2)
 
 /-- Total signed boundary coefficient of one ordered global facet signature. -/
-noncomputable def signatureBoundaryCoefficient
+@[expose] noncomputable def signatureBoundaryCoefficient
     (hp : Nat.Prime p) (N L : Nat)
     (s : FacetSignature hp N L) : ZMod p :=
   ∑ o : FacetOccurrence hp N L,
     if facetSignature hp N L o = s then occurrenceCoefficient hp N L o else 0
 
 /-- Expanded global signed positive-ray boundary sum over all local facet occurrences. -/
-noncomputable def globalSignedFacetSum
+@[expose] noncomputable def globalSignedFacetSum
     (hp : Nat.Prime p) (N L : Nat)
     (a : Assignment hp N L) : ZMod p :=
   ∑ o : FacetOccurrence hp N L,
@@ -744,7 +744,7 @@ noncomputable instance isUpperHorizontalDecidable
   Classical.propDecidable _
 
 /-- Lower horizontal contribution to the global signed facet sum. -/
-noncomputable def lowerHorizontalContribution
+@[expose] noncomputable def lowerHorizontalContribution
     (hp : Nat.Prime p) (N L : Nat)
     (a : Assignment hp N L) : ZMod p :=
   ∑ s : FacetSignature hp N L,
@@ -753,7 +753,7 @@ noncomputable def lowerHorizontalContribution
     else 0
 
 /-- Upper horizontal contribution to the global signed facet sum. -/
-noncomputable def upperHorizontalContribution
+@[expose] noncomputable def upperHorizontalContribution
     (hp : Nat.Prime p) (N L : Nat)
     (a : Assignment hp N L) : ZMod p :=
   ∑ s : FacetSignature hp N L,
@@ -762,7 +762,7 @@ noncomputable def upperHorizontalContribution
     else 0
 
 /-- Contribution of every signature not wholly contained in either horizontal layer. -/
-noncomputable def nonhorizontalContribution
+@[expose] noncomputable def nonhorizontalContribution
     (hp : Nat.Prime p) (N L : Nat)
     (a : Assignment hp N L) : ZMod p :=
   ∑ s : FacetSignature hp N L,

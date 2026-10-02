@@ -16,7 +16,7 @@ variable {n : ℕ}
 
 /-- The linear functional taking the mean of a coordinate vector, with value zero in dimension zero.
 -/
-noncomputable def coordinateMean (n : ℕ) :
+@[expose] noncomputable def coordinateMean (n : ℕ) :
     (Fin n → ℝ) →ₗ[ℝ] ℝ where
   toFun v := (∑ i, v i) / (n : ℝ)
   map_add' u v := by

@@ -146,7 +146,7 @@ theorem cochainCoboundary_eval (R : Type) [CommRing R] (Z : TopCat.{0}) (n : ℕ
 /-- The **cochain degree cast** transporting a cochain along an equality of
 degrees `m = m'`. Needed because `(p+1)+q` and `(p+q)+1` are only
 propositionally equal. -/
-noncomputable def cochainCast {R : Type} [CommRing R] {Z : TopCat.{0}} {m m' : ℕ}
+@[expose] noncomputable def cochainCast {R : Type} [CommRing R] {Z : TopCat.{0}} {m m' : ℕ}
     (h : m = m') (φ : singularCochainGroup R Z m) : singularCochainGroup R Z m' :=
   (eqToHom (by rw [h]) :
       (((singularChainComplexFunctor (ModuleCat.{0} R)).obj (ModuleCat.of R R)).obj Z).X m'

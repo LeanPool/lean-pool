@@ -60,7 +60,7 @@ viewed as a point of the ambient simplex `Δ^n`. This uses Mathlib's existing
 `SphereOddDegree.FiniteSimplex.barycenter` and `SphereOddDegree.FiniteSimplex.map`, avoiding a hand
 proof that the
 coordinates are nonnegative and have total mass `1`. -/
-noncomputable def prefixBarycenter (n : ℕ) (π : Equiv.Perm (Fin (n + 1)))
+@[expose] noncomputable def prefixBarycenter (n : ℕ) (π : Equiv.Perm (Fin (n + 1)))
     (k : Fin (n + 1)) : Delta n :=
   SphereOddDegree.FiniteSimplex.map (S := ℝ) (prefixVertex n π k)
     (SphereOddDegree.FiniteSimplex.barycenter (X := Fin (k.val + 1)) (𝕜 := ℝ))
@@ -78,7 +78,7 @@ theorem prefixBarycenter_def (n : ℕ) (π : Equiv.Perm (Fin (n + 1)))
 /-- The coordinate function of the affine map attached to the permutation `π`.
 It is the convex combination of the prefix barycenters with weights given by
 `x`. -/
-noncomputable def affineSubdivMapFun (n : ℕ) (π : Equiv.Perm (Fin (n + 1)))
+@[expose] noncomputable def affineSubdivMapFun (n : ℕ) (π : Equiv.Perm (Fin (n + 1)))
     (x : Delta n) : Fin (n + 1) → ℝ :=
   fun j => ∑ k : Fin (n + 1), (x k) * (prefixBarycenter n π k j)
 

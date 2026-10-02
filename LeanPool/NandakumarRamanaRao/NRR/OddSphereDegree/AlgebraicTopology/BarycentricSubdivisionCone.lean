@@ -47,7 +47,7 @@ theorem coneTailFun_mem {k : ℕ} (x : Delta (k + 1))
     rw [← Finset.sum_div, h_sum, div_self (sub_ne_zero_of_ne (Ne.symm hx))]
 
 /-- The normalized base point of a cone simplex, choosing the first vertex at the apex. -/
-noncomputable def coneTail {k : ℕ} (x : Delta (k + 1)) : Delta k :=
+@[expose] noncomputable def coneTail {k : ℕ} (x : Delta (k + 1)) : Delta k :=
   if h : (x : Fin (k + 1 + 1) → ℝ) 0 = 1 then SphereOddDegree.FiniteSimplex.vertex (0 : Fin (k + 1))
   else ⟨coneTailFun x, coneTailFun_mem x h⟩
 

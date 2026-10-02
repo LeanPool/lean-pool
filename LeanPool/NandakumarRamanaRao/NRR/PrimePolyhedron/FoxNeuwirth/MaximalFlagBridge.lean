@@ -59,7 +59,7 @@ def retainedBars (z : Code p) (j : Fin p) : Finset (Fin (p - 1)) :=
   simp [retainedBars, removedBefore]
 
 /-- Zero-based block number at one stage, computed in the bottom singleton order. -/
-def stageBlock (z : Code p) (j : Fin p) (x : Fin p) : Nat :=
+@[expose] def stageBlock (z : Code p) (j : Fin p) (x : Fin p) : Nat :=
   ((retainedBars z j).filter fun r => r.1 < (z.bottom x).1).card
 
 /-- Lexicographic key used to order labels at a stage. -/
@@ -258,7 +258,7 @@ theorem retainedCut_lt_stageRank_iff
     omega
 
 /-- The stage cell represented by a maximal-flag code. -/
-noncomputable def stageCell (z : Code p) (j : Fin p) : BarredPermutation p where
+@[expose] noncomputable def stageCell (z : Code p) (j : Fin p) : BarredPermutation p where
   rank := stageRank z j
   bars := retainedBars z j
 

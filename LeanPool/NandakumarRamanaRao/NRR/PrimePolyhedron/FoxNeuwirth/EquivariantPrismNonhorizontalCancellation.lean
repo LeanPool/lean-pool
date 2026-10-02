@@ -58,7 +58,7 @@ variable {p : Nat}
 /-! ## Weighted boundary of iterated barycentric subdivision -/
 
 /-- Insert a zero barycentric coordinate at `k`. -/
-noncomputable def cofacePoint
+@[expose] noncomputable def cofacePoint
     (n : Nat) (k : Fin (n + 2)) (x : Delta n) : Delta (n + 1) :=
   SphereOddDegree.FiniteSimplex.map (S := Real) k.succAbove x
 

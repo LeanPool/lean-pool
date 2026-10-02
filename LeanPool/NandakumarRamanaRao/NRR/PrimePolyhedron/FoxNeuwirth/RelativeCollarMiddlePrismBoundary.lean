@@ -241,13 +241,13 @@ noncomputable def occurrencePairing
   weightedOccurrencePairing hp N L W
 
 /-- Lower endpoint pairing at the combined spatial level. -/
-noncomputable def lowerEndpointPairing
+@[expose] noncomputable def lowerEndpointPairing
     (hp : Nat.Prime p) (N L : Nat)
     (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p) : ZMod p :=
   weightedLowerEndpointPairing hp N L W
 
 /-- Upper endpoint pairing at the combined spatial level. -/
-noncomputable def upperEndpointPairing
+@[expose] noncomputable def upperEndpointPairing
     (hp : Nat.Prime p) (N L : Nat)
     (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p) : ZMod p :=
   weightedUpperEndpointPairing hp N L W
@@ -663,13 +663,13 @@ theorem occurrencePairing_eq_upper_sub_lower
 /-! ## Pointwise middle-prism collar -/
 
 /-- Lower boundary coefficient of one middle-prism facet orbit. -/
-noncomputable def lowerBoundaryCoefficient
+@[expose] noncomputable def lowerBoundaryCoefficient
     (hp : Nat.Prime p) (N L : Nat)
     (s : (Cells hp N L).Facet) : ZMod p :=
   lowerEndpointPairing hp N L (facetOrbitIndicator hp N L s)
 
 /-- Upper boundary coefficient of one middle-prism facet orbit. -/
-noncomputable def upperBoundaryCoefficient
+@[expose] noncomputable def upperBoundaryCoefficient
     (hp : Nat.Prime p) (N L : Nat)
     (s : (Cells hp N L).Facet) : ZMod p :=
   upperEndpointPairing hp N L (facetOrbitIndicator hp N L s)

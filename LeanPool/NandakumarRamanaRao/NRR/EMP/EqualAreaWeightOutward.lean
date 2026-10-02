@@ -105,7 +105,7 @@ lemma areaVec_nonneg
   simp [EMP.areaVec, PowerDiagram.areaVec, PowerDiagram.bodyCellArea]
 
 /-- Pairing of weights with the area-deviation vector. -/
-noncomputable def deviationPairing
+@[expose] noncomputable def deviationPairing
     (K : Geometry.ConvexBody Plane) (s : Fin n → Plane) (w : Fin n → Real) : Real :=
   ∑ i, w i * EMP.areaDeviation K s w i
 

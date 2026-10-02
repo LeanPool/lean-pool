@@ -352,7 +352,7 @@ theorem slabFacetMap_upperEndpointMap
 
 /-- Pair the spatial Fox--Neuwirth chain at level `N` with one stack quotient facet on a fixed mesh
 node. -/
-noncomputable def meshEndpointPairing
+@[expose] noncomputable def meshEndpointPairing
     (hp : Nat.Prime p) (N m : Nat) (hm : 0 < m)
     (s : (StackCells hp N m hm).Facet) (k : Fin (m + 1)) : ZMod p :=
   ∑ q : TopCell hp N,

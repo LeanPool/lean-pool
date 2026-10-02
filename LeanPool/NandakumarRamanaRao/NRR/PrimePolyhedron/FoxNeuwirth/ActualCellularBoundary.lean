@@ -216,7 +216,7 @@ noncomputable instance (a : BarredPermutation p) : DecidableEq (TopExtension a) 
   rw [topExtensionMultiplicity, Fintype.card_congr e, Fintype.card_coe]
 
 /-- Positions occupied by the first block inside a candidate top-cell order. -/
-noncomputable def firstBlockPositions
+@[expose] noncomputable def firstBlockPositions
     (hp : Nat.Prime p) (a : BarredPermutation p)
     (ha : a.dualDimension = p - 2)
     (c : BarredPermutation.TopCell p) : Finset (Fin p) :=

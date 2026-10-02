@@ -183,14 +183,14 @@ maps yields its front `p`-face and back `q`-face, the two tensor factors of the
 
 /-- The **front `p`-face of a singular `(p+q)`-simplex** `σ`, obtained by
 restricting `σ` along `frontFace p q`. -/
-noncomputable def frontSimplex (X : TopCat.{0}) (p q : ℕ)
+@[expose] noncomputable def frontSimplex (X : TopCat.{0}) (p q : ℕ)
     (σ : (TopCat.toSSet.obj X).obj (Opposite.op (⦋p + q⦌ : SimplexCategory))) :
     (TopCat.toSSet.obj X).obj (Opposite.op (⦋p⦌ : SimplexCategory)) :=
   (TopCat.toSSet.obj X).map (frontFace p q).op σ
 
 /-- The **back `q`-face of a singular `(p+q)`-simplex** `σ`, obtained by
 restricting `σ` along `backFace p q`. -/
-noncomputable def backSimplex (X : TopCat.{0}) (p q : ℕ)
+@[expose] noncomputable def backSimplex (X : TopCat.{0}) (p q : ℕ)
     (σ : (TopCat.toSSet.obj X).obj (Opposite.op (⦋p + q⦌ : SimplexCategory))) :
     (TopCat.toSSet.obj X).obj (Opposite.op (⦋q⦌ : SimplexCategory)) :=
   (TopCat.toSSet.obj X).map (backFace p q).op σ
