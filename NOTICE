@@ -236,6 +236,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/SyntheticEuclid4          https://github.com/ah1112/synthetic_euclid_4
   LeanPool/ThreeGap                  https://github.com/ElVec1o/five-distance-sharp
   LeanPool/Turan3                    https://github.com/ro-gut/turan3
+  LeanPool/TuttePath                 https://github.com/mbaker386/tutte-homotopy-lean
   LeanPool/UlmsTheorem               https://github.com/elanroth/UlmsTheorem
   LeanPool/UnconditionalSchauderBasis
                                      https://github.com/SmaniaD/UnconditionalSchauderBasis
