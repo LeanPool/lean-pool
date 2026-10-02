@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Qian Tang
 -/
 module
+public import LeanPool.Zeta32.Arith.Small.Binom
 public import LeanPool.Zeta32.Arith.Outer.Moments
 public import LeanPool.Zeta32.Arith.Outer.RankOne
 public import Mathlib.RingTheory.Polynomial.Pochhammer
@@ -33,48 +34,8 @@ noncomputable section
 
 /-! ## The polynomials `D m` -/
 
--- adapted from Li2Unified/Modular/Base/DecayQuotient.lean
-lemma D_succ (m : ℕ) : D (m+1) = D m * (X + C ((m:ℚ)+1)) := by
-  rw [D, Finset.prod_Icc_succ_top (by omega)]
-  push_cast
-  rfl
-
--- adapted from Li2Unified/Modular/Base/DecayQuotient.lean
-lemma D_eq_desc (m : ℕ) : D m = (descPochhammer ℚ m).comp (X + C (m:ℚ)) := by
-  induction m with
-  | zero => simp [D]
-  | succ m ih =>
-    rw [D_succ, ih, descPochhammer_succ_left, mul_comp, X_comp, comp_assoc]
-    have h : (X - 1 : ℚ[X]).comp (X + C ((m+1 : ℕ) : ℚ)) = X + C (m:ℚ) := by
-      rw [sub_comp, X_comp, one_comp]
-      push_cast
-      rw [map_add, map_one]
-      ring
-    rw [h, mul_comm]
-    push_cast
-    rfl
-
-lemma D_monic (m : ℕ) : (D m).Monic :=
-  monic_prod_of_monic _ _ fun _ _ => monic_X_add_C _
-
-lemma D_natDegree (m : ℕ) : (D m).natDegree = m := by
-  rw [D, natDegree_prod_of_monic _ _ (fun _ _ => monic_X_add_C _)]
-  simp only [natDegree_X_add_C, Finset.sum_const, Nat.card_Icc, smul_eq_mul, mul_one]
-  omega
-
--- adapted from Li2Unified/Modular/Base/DecayBinomial.lean
-lemma descPochhammer_eval_neg_one (k : ℕ) :
-    (descPochhammer ℚ k).eval (-1) = (-1 : ℚ)^k * (k.factorial : ℚ) := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    rw [descPochhammer_succ_eval, ih, Nat.factorial_succ]
-    push_cast
-    ring
-
-lemma D_eval_eq_prod (m : ℕ) (x : ℚ) : (D m).eval x = ∏ l ∈ Finset.Icc 1 m, (x + l) := by
-  rw [D, eval_prod]
-  simp
+export Zeta32.Arith.Small (D_succ D_eq_desc D_monic D_natDegree
+  descPochhammer_eval_neg_one D_eval_eq_prod)
 
 /-! ## The integer polynomial part -/
 
@@ -149,39 +110,19 @@ end Val
 
 -- adapted from Li2Unified/Modular/Base/DecayResidue.lean
 /-- Product of the differences from `j` to all other indices in `1`, …, `K`. -/
-def eraseProd (K j : ℕ) : ℚ := ∏ l ∈ (Finset.Icc 1 K).erase j, ((l:ℚ) - (j:ℚ))
+abbrev eraseProd (K j : ℕ) : ℚ := Zeta32.Arith.Small.eraseProd K j
 
 lemma eraseProd_base {j : ℕ} (hj : 1 ≤ j) :
-    eraseProd j j = (-1:ℚ)^(j-1) * ((j-1).factorial : ℚ) := by
-  have hs : (Finset.Icc 1 j).erase j = Finset.Icc 1 (j-1) := by
-    ext l; simp; omega
-  rw [eraseProd, hs]
-  have h := D_eval_eq_prod (j-1) (-(j:ℚ))
-  rw [D_eq_desc, eval_comp, eval_add, eval_X, eval_C] at h
-  have hc : -(j:ℚ) + ((j-1 : ℕ) : ℚ) = -1 := by
-    rw [Nat.cast_sub hj]; push_cast; ring
-  rw [hc, descPochhammer_eval_neg_one] at h
-  rw [h]
-  apply Finset.prod_congr rfl
-  intro l _
-  ring
+    eraseProd j j = (-1:ℚ)^(j-1) * ((j-1).factorial : ℚ) :=
+  Zeta32.Arith.Small.eraseProd_base hj
 
 lemma eraseProd_succ {K j : ℕ} (hjK : j ≤ K) :
-    eraseProd (K+1) j = eraseProd K j * (((K+1 : ℕ) : ℚ) - j) := by
-  have hs : (Finset.Icc 1 (K+1)).erase j = insert (K+1) ((Finset.Icc 1 K).erase j) := by
-    ext l; simp; omega
-  rw [eraseProd, hs, Finset.prod_insert (by simp), eraseProd, mul_comm]
+    eraseProd (K+1) j = eraseProd K j * (((K+1 : ℕ) : ℚ) - j) :=
+  Zeta32.Arith.Small.eraseProd_succ hjK
 
 lemma eraseProd_eq {K j : ℕ} (hj : 1 ≤ j) (hjK : j ≤ K) :
-    eraseProd K j = (-1:ℚ)^(j-1) * ((j-1).factorial : ℚ) * ((K-j).factorial : ℚ) := by
-  obtain ⟨t, rfl⟩ := Nat.exists_eq_add_of_le hjK
-  induction t with
-  | zero => simp [eraseProd_base hj]
-  | succ t ih =>
-    rw [← add_assoc, eraseProd_succ (by omega), ih (by omega)]
-    rw [show j + t + 1 - j = t + 1 by omega, show j + t - j = t by omega, Nat.factorial_succ]
-    push_cast
-    ring
+    eraseProd K j = (-1:ℚ)^(j-1) * ((j-1).factorial : ℚ) * ((K-j).factorial : ℚ) :=
+  Zeta32.Arith.Small.eraseProd_eq hj hjK
 
 lemma eraseProd_ne_zero {K j : ℕ} (hj : 1 ≤ j) (hjK : j ≤ K) : eraseProd K j ≠ 0 := by
   rw [eraseProd_eq hj hjK]
@@ -193,7 +134,7 @@ lemma eraseProd_ne_zero {K j : ℕ} (hj : 1 ≤ j) (hjK : j ≤ K) : eraseProd K
 def rs (n j : ℕ) : ℚ := (D n).eval (-(j:ℚ)) ^ 4 / eraseProd (5 * n) j
 
 lemma residue_eq (n k j : ℕ) : residue n k j = (-(j:ℚ))^k * rs n j := by
-  unfold residue rs eraseProd numerator
+  unfold residue rs eraseProd Zeta32.Arith.Small.eraseProd numerator
   rw [eval_mul, eval_pow, eval_pow, eval_X]
   ring
 

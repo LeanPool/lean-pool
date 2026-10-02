@@ -6,6 +6,8 @@ Authors: Qian Tang
 module
 public import LeanPool.Zeta32.Family
 public import LeanPool.Zeta32.Arith.Local.ValExtra
+public import LeanPool.Zeta32.Arith.Local.Binom
+public import LeanPool.Zeta5Irrational.Arith.BinomBasis
 public import Mathlib.Algebra.Group.ForwardDiff
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 
@@ -32,19 +34,19 @@ open Zeta32
 noncomputable section
 
 /-- binom(t,a)=descPochhammer a/a!. -/
-def binomPoly (a : ℕ) : ℚ[X] := C ((a.factorial : ℚ)⁻¹) * descPochhammer ℚ a
+abbrev binomPoly (a : ℕ) : ℚ[X] := Zeta5Irrational.bin a
 
-lemma binomPoly_eval_nat (a m : ℕ) : (binomPoly a).eval (m : ℚ) = (m.choose a : ℚ) := by
-  rw [binomPoly, eval_mul, eval_C, Nat.cast_choose_eq_descPochhammer_div, div_eq_inv_mul]
+lemma binomPoly_eval_nat (a m : ℕ) : (binomPoly a).eval (m : ℚ) = (m.choose a : ℚ) :=
+  Zeta5Irrational.bin_eval_nat a m
 
 lemma binomPoly_natDegree (a : ℕ) : (binomPoly a).natDegree = a := by
-  unfold binomPoly
+  unfold binomPoly Zeta5Irrational.bin
   rw [natDegree_C_mul (inv_ne_zero (by positivity)), descPochhammer_natDegree]
 
 lemma binomPoly_coeff_self (a : ℕ) : (binomPoly a).coeff a = (a.factorial : ℚ)⁻¹ := by
   have h := (monic_descPochhammer ℚ a).coeff_natDegree
   rw [descPochhammer_natDegree] at h
-  rw [binomPoly, coeff_C_mul, h, mul_one]
+  rw [binomPoly, Zeta5Irrational.bin, coeff_C_mul, h, mul_one]
 
 /-- Two rational polynomials agreeing on c+m for every natural m are equal. -/
 lemma eq_of_eval_shift_nat {p q : ℚ[X]} (c : ℚ)
@@ -56,17 +58,11 @@ lemma eq_of_eval_shift_nat {p q : ℚ[X]} (c : ℚ)
     rintro _ ⟨m, rfl⟩
     exact h m)
 
-lemma binomPoly_zero : binomPoly 0 = 1 := by simp [binomPoly]
+lemma binomPoly_zero : binomPoly 0 = 1 := Zeta5Irrational.bin_zero
 
 lemma binomPoly_succ_comp_add_one (k : ℕ) :
-    (binomPoly (k+1)).comp (X+1) = binomPoly (k+1) + binomPoly k := by
-  apply eq_of_eval_shift_nat 0
-  intro m
-  simp only [zero_add, eval_comp, eval_add, eval_X, eval_one]
-  have hm : (m : ℚ) + 1 = ((m+1 : ℕ) : ℚ) := by push_cast; ring
-  rw [hm, binomPoly_eval_nat, binomPoly_eval_nat, binomPoly_eval_nat, Nat.choose_succ_succ']
-  push_cast
-  ring
+    (binomPoly (k+1)).comp (X+1) = binomPoly (k+1) + binomPoly k :=
+  Zeta5Irrational.bin_comp_add_one k
 
 lemma binomPoly_eval_add_one (k : ℕ) (x : ℚ) :
     (binomPoly (k+1)).eval (x+1) = (binomPoly (k+1)).eval x + (binomPoly k).eval x := by
@@ -163,24 +159,13 @@ lemma newtonCoeff_VG (p : ℕ) [Fact p.Prime] {f : ℚ[X]} (c r : ℚ) (k : ℕ)
   simpa using hcoef.mul (hv i (by simp at hi; omega))
 
 lemma descPochhammer_eval_neg_one (k : ℕ) :
-    (descPochhammer ℚ k).eval (-1) = (-1 : ℚ)^k * (k.factorial : ℚ) := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    rw [descPochhammer_succ_eval, ih, Nat.factorial_succ]
-    push_cast
-    ring
+    (descPochhammer ℚ k).eval (-1) = (-1 : ℚ)^k * (k.factorial : ℚ) :=
+  Zeta32.Arith.Local.descPochhammer_eval_neg_one k
 
 /-- d/dx binom(x,k+1) at x=0 equals (-1)^k/(k+1). -/
 lemma binomPoly_derivative_eval_zero (k : ℕ) :
-    (derivative (binomPoly (k+1))).eval 0 = (-1 : ℚ)^k / ((k:ℚ)+1) := by
-  rw [binomPoly, derivative_C_mul, eval_mul, eval_C, descPochhammer_succ_left,
-    derivative_mul, derivative_X, one_mul, eval_add, eval_mul, eval_X, zero_mul, add_zero,
-    eval_comp, eval_sub, eval_X, eval_one, zero_sub, descPochhammer_eval_neg_one,
-    Nat.factorial_succ]
-  have hf : (k.factorial : ℚ) ≠ 0 := by positivity
-  push_cast
-  field_simp
+    (derivative (binomPoly (k+1))).eval 0 = (-1 : ℚ)^k / ((k:ℚ)+1) :=
+  Zeta5Irrational.bin_derivative_eval_zero k
 
 lemma binomPoly_derivative_eval_zero_zero : (derivative (binomPoly 0)).eval 0 = 0 := by
   simp [binomPoly_zero]
@@ -250,7 +235,8 @@ lemma D_monic (m : ℕ) : (D m).Monic := by
 
 lemma desc_eq_C_mul_binomPoly (m : ℕ) :
     descPochhammer ℚ m = C (m.factorial : ℚ) * binomPoly m := by
-  rw [binomPoly, ← mul_assoc, ← C_mul, mul_inv_cancel₀ (by positivity), C_1, one_mul]
+  rw [binomPoly, Zeta5Irrational.bin, ← mul_assoc, ← C_mul,
+    mul_inv_cancel₀ (by positivity), C_1, one_mul]
 
 /-- binom(t+n,n). -/
 def shiftBinom (n : ℕ) : ℚ[X] := (binomPoly n).comp (X + C (n:ℚ))

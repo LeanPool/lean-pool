@@ -166,7 +166,7 @@ lemma continuous_inv_max {a : ℝ} (ha : 0 < a) : Continuous fun s : ℝ => (max
   (continuous_id.max continuous_const).inv₀ fun _s => (lt_max_of_lt_right ha).ne'
 
 -- adapted from Li2Unified/Modular/Positive/Packed/P184.lean
-lemma Ltr_eq_max {a b : ℝ} (_ha : 0 < a) (hab : a ≤ b) (r : ℝ) :
+lemma Ltr_eq_max {a b : ℝ} (hab : a ≤ b) (r : ℝ) :
     Ltr a b r = (1 / 2) * ∫ s in a..b, (Real.exp (-s) - Real.exp (-s * r ^ 2)) * (max s a)⁻¹ := by
   unfold Ltr
   congr 1
@@ -177,7 +177,7 @@ lemma Ltr_eq_max {a b : ℝ} (_ha : 0 < a) (hab : a ≤ b) (r : ℝ) :
 
 -- adapted from Li2Unified/Modular/Positive/Packed/P185.lean
 lemma continuous_Ltr {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) : Continuous fun r => Ltr a b r := by
-  simp_rw [Ltr_eq_max ha hab]
+  simp_rw [Ltr_eq_max hab]
   have hinv := continuous_inv_max ha
   refine continuous_const.mul (continuous_parametric_intervalIntegral_of_continuous'
     (f := fun r s => (Real.exp (-s) - Real.exp (-s * r ^ 2)) * (max s a)⁻¹) ?_ a b)

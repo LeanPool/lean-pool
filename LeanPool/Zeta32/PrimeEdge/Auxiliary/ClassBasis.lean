@@ -114,7 +114,7 @@ theorem coeffMat_det_unit_of_independent {h p : ℕ} [hp : Fact p.Prime]
   set Mz : Matrix (Fin h) (Fin h) ℤ := fun a k => (Ez a).coeff k with hMz
   have hQ : coeffMat (fun a => (Ez a).map (Int.castRingHom ℚ)) = Mz.map (Int.castRingHom ℚ) := by
     ext a k
-    simp [coeffMat, hMz, coeff_map, Matrix.map, Matrix.of_apply]
+    simp [coeffMat, Zeta5Irrational.coeffMat, hMz, coeff_map, Matrix.map, Matrix.of_apply]
   have hdetQ : (coeffMat fun a => (Ez a).map (Int.castRingHom ℚ)).det = (Mz.det : ℚ) := by
     rw [hQ, ← RingHom.mapMatrix_apply, ← RingHom.map_det]
     simp

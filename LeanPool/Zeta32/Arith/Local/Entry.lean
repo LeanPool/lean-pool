@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Qian Tang, Moritz Firsching
 -/
 module
+public import LeanPool.Zeta5Irrational.Arith.CoefficientMatrix
 public import LeanPool.Zeta32.Arith.Local.PoleFun
 public import LeanPool.Zeta32.Arith.Local.Binom
 
@@ -118,26 +119,23 @@ lemma Lfun_C_mul (r : ℚ) (n : ℕ) (c : ℚ) (A : ℚ[X]) : Lfun r n (C c * A)
 /-! ### Change of basis -/
 
 /-- The coefficient matrix of a family of polynomials. -/
-noncomputable def coeffMat {h : ℕ} (E : Fin h → ℚ[X]) : Matrix (Fin h) (Fin h) ℚ :=
-  Matrix.of fun a k => (E a).coeff k
+noncomputable abbrev coeffMat {h : ℕ} (E : Fin h → ℚ[X]) :
+    Matrix (Fin h) (Fin h) ℚ := Zeta5Irrational.coeffMat E
 
--- adapted from mo271/Zeta5@f19a196:Apery/Arith/BasisChange.lean
-lemma sum_coeffMat {h : ℕ} (E : Fin h → ℚ[X]) (hE : ∀ a, (E a).natDegree < h) (a : Fin h) :
-    E a = ∑ k : Fin h, C (coeffMat E a k) * X ^ (k : ℕ) := by
-  conv_lhs => rw [as_sum_range' (E a) h (hE a)]
-  rw [Finset.sum_range (fun k => monomial k ((E a).coeff k))]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  rw [coeffMat, Matrix.of_apply, C_mul_X_pow_eq_monomial]
+lemma sum_coeffMat {h : ℕ} (E : Fin h → ℚ[X])
+    (hE : ∀ a, (E a).natDegree < h) (a : Fin h) :
+    E a = ∑ k : Fin h, C (coeffMat E a k) * X ^ (k : ℕ) :=
+  Zeta5Irrational.sum_coeffMat E hE a
 
 lemma det_coeffMat {h : ℕ} (E : Fin h → ℚ[X]) (hmon : ∀ i, (E i).Monic)
     (hdeg : ∀ i, (E i).natDegree = i) : (coeffMat E).det = 1 := by
   rw [Matrix.det_of_isLowerTriangular]
   · refine Finset.prod_eq_one fun i _ => ?_
-    rw [coeffMat, Matrix.of_apply]
+    rw [coeffMat, Zeta5Irrational.coeffMat, Matrix.of_apply]
     have := (hmon i).leadingCoeff
     rwa [leadingCoeff, hdeg i] at this
   · intro i j hij
-    rw [coeffMat, Matrix.of_apply]
+    rw [coeffMat, Zeta5Irrational.coeffMat, Matrix.of_apply]
     apply coeff_eq_zero_of_natDegree_lt
     rw [hdeg i]
     exact hij

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Qian Tang, Moritz Firsching
 -/
 module
+public import LeanPool.Zeta5Irrational.Arith.CoefficientMatrix
 public import LeanPool.Zeta32.Arith.Small.Bern
 
 /-! the proof notes, §7: the unitriangular change `t^i ↦ i!·binom(t,i)` gives
@@ -90,17 +91,13 @@ theorem Ufun_entry (r : ℚ) (n k : ℕ) :
 /-! ### Gram basis change -/
 
 /-- Coefficient matrix of a finite family of polynomials. -/
-def coeffMat {h : ℕ} (E : Fin h → ℚ[X]) : Matrix (Fin h) (Fin h) ℚ :=
-  fun a k => (E a).coeff k
+noncomputable abbrev coeffMat {h : ℕ} (E : Fin h → ℚ[X]) :
+    Matrix (Fin h) (Fin h) ℚ := Zeta5Irrational.coeffMat E
 
 lemma sum_coeffMat {h : ℕ} (E : Fin h → ℚ[X])
     (hE : ∀ a, (E a).natDegree < h) (a : Fin h) :
-    E a = ∑ k : Fin h, C (coeffMat E a k) * X^(k:ℕ) := by
-  conv_lhs => rw [as_sum_range' (E a) h (hE a)]
-  rw [Finset.sum_range (fun k => monomial k ((E a).coeff k))]
-  apply Finset.sum_congr rfl
-  intro k _
-  exact C_mul_X_pow_eq_monomial.symm
+    E a = ∑ k : Fin h, C (coeffMat E a k) * X ^ (k : ℕ) :=
+  Zeta5Irrational.sum_coeffMat E hE a
 
 /-- Hankel matrix obtained by applying `Ufun` to shifted copies of `R`. -/
 def hankelFor (r : ℚ) (n h : ℕ) (R : ℚ[X]) : Matrix (Fin h) (Fin h) ℚ[X] :=

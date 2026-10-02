@@ -66,7 +66,7 @@ theorem mass_rhoC (ha : 0 < a) {c : ℝ} (hc : 0 < c) :
   field_simp
   ring
 
-theorem ae_good (_ha : 0 < a) :
+theorem ae_good :
     ∀ᵐ t ∂(volume.restrict (Ioo (-a) a)), t ≠ 0 ∧ |t| < a := by
   filter_upwards [ae_restrict_of_ae ae_ne_zero, ae_restrict_mem measurableSet_Ioo] with t ht htI
   exact ⟨ht, abs_lt.mpr htI⟩
@@ -88,7 +88,7 @@ theorem fubini_rhoA (ha : 0 < a) (φ : ℝ → ℝ) (hφm : Measurable φ)
     have h1 : Measurable fun p : ℝ × ℝ => φ p.1 := hφm.comp measurable_fst
     have h2 : Measurable fun p : ℝ × ℝ => gtil p.2 := measurable_gtil.comp measurable_snd
     exact h1.mul (h2.mul (measurable_rhoC a))
-  have hgood := ae_good ha
+  have hgood := ae_good (a := a)
   have hinner : ∀ t, t ≠ 0 → |t| < a → Integrable (fun c => F t c) ν ∧
       ∫ c, F t c ∂ν = φ t * rhoA a t := by
     intro t ht hta

@@ -28,19 +28,18 @@ open Zeta32
 noncomputable section
 
 /-- `B` on polynomials: `t^e ↦ B'_e`. -/
-def Bf (f : ℚ[X]) : ℚ := f.sum fun e a => a * bernoulli' e
+abbrev Bf (f : ℚ[X]) : ℚ := Zeta32.Arith.Local.Lbp f
 
-lemma Bf_add (f g : ℚ[X]) : Bf (f + g) = Bf f + Bf g := by
-  unfold Bf
-  exact Polynomial.sum_add_index _ _ _ (fun _ => by simp) (fun _ _ _ => by ring)
+lemma Bf_add (f g : ℚ[X]) : Bf (f + g) = Bf f + Bf g :=
+  Zeta32.Arith.Local.Lbp_add f g
 
 lemma Bf_C_mul (c : ℚ) (f : ℚ[X]) : Bf (C c * f) = c * Bf f := by
-  unfold Bf
+  unfold Bf Zeta32.Arith.Local.Lbp
   rw [← smul_eq_C_mul, Polynomial.sum_smul_index _ _ _ (fun _ => by simp),
     Polynomial.sum, Polynomial.sum, Finset.mul_sum]
   exact Finset.sum_congr rfl fun k _ => by ring
 
-lemma Bf_zero : Bf 0 = 0 := by simp [Bf]
+lemma Bf_zero : Bf 0 = 0 := by simp [Bf, Zeta32.Arith.Local.Lbp]
 
 lemma Bf_sum {ι : Type*} (s : Finset ι) (f : ι → ℚ[X]) :
     Bf (∑ i ∈ s, f i) = ∑ i ∈ s, Bf (f i) := by
@@ -49,14 +48,12 @@ lemma Bf_sum {ι : Type*} (s : Finset ι) (f : ι → ℚ[X]) :
   | empty => simp [Bf_zero]
   | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, Bf_add, ih]
 
-lemma Bf_monomial (e : ℕ) (a : ℚ) : Bf (monomial e a) = a * bernoulli' e := by
-  unfold Bf
-  rw [Polynomial.sum_monomial_index]
-  simp
+lemma Bf_monomial (e : ℕ) (a : ℚ) : Bf (monomial e a) = a * bernoulli' e :=
+  Zeta32.Arith.Local.Lbp_monomial e a
 
 lemma Bf_eq_sum_range (f : ℚ[X]) {d : ℕ} (hd : f.natDegree ≤ d) :
     Bf f = ∑ k ∈ Finset.range (d+1), f.coeff k * bernoulli' k := by
-  unfold Bf
+  unfold Bf Zeta32.Arith.Local.Lbp
   exact Polynomial.sum_over_range' _ (fun _ => by simp) _ (by omega)
 
 lemma Bf_X_add_one_pow (m : ℕ) : Bf ((X + 1 : ℚ[X]) ^ m) = bernoulli' m + m := by

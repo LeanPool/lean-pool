@@ -109,7 +109,7 @@ lemma ncoef_VG (p : ℕ) [Fact p.Prime] (a : ℕ → ℚ) (ha : ∀ k, VG p (a k
 lemma X_pow_GV (p : ℕ) [Fact p.Prime] (i : ℕ) : GV p ((X : ℚ[X])^i) 0 := by
   simpa using (GV.X (p := p)).pow i
 
-lemma Nb_eval_VG (p : ℕ) [Fact p.Prime] (a : ℕ → ℚ) {k t : ℕ} (_hkt : k ≤ t)
+lemma Nb_eval_VG (p : ℕ) [Fact p.Prime] (a : ℕ → ℚ) {k t : ℕ}
     (hd : ∀ s < k, VG p (a t - a s) 1) : VG p ((Nb a k).eval (a t)) (k:ℚ) := by
   rw [Nb, eval_prod]
   have h := VG.prod (p := p) (Finset.range k) (f := fun s => (X - C (a s)).eval (a t))
@@ -316,9 +316,9 @@ theorem rank_one_GV (W : Matrix (Fin h) (Fin h) ℚ[X]) (hW : ∀ a b, GV p (W a
         intro t ht
         have ht' := Finset.mem_range.mp ht
         by_cases hkt : (k:ℕ) ≤ t ∧ (l:ℕ) ≤ t
-        · have hk := Nb_eval_VG p (node c) hkt.1 fun s hs =>
+        · have hk := Nb_eval_VG p (node c) (k := k) (t := t) fun s hs =>
             hsep c s t (by have := k.isLt; omega) ht' (by omega)
-          have hl := Nb_eval_VG p (node c) hkt.2 fun s hs =>
+          have hl := Nb_eval_VG p (node c) (k := l) (t := t) fun s hs =>
             hsep c s t (by have := l.isLt; omega) ht' (by omega)
           refine ((hγ c t ht').mul (GV.C (hk.mul hl))).mono ?_
           have m1 := hmono c k t hkt.1 ht'
@@ -400,9 +400,9 @@ theorem rank_one_GV_rows (d : Fin h → ℚ) (hd : ∀ a, VG p (d a) 0)
         intro t ht
         have ht' := Finset.mem_range.mp ht
         by_cases hkt : (k:ℕ) ≤ t ∧ (l:ℕ) ≤ t
-        · have hk := Nb_eval_VG p (node c) hkt.1 fun s hs =>
+        · have hk := Nb_eval_VG p (node c) (k := k) (t := t) fun s hs =>
             hsep c s t (by have := k.isLt; omega) ht' (by omega)
-          have hl := Nb_eval_VG p (node c) hkt.2 fun s hs =>
+          have hl := Nb_eval_VG p (node c) (k := l) (t := t) fun s hs =>
             hsep c s t (by have := l.isLt; omega) ht' (by omega)
           refine ((hγ c t ht').mul (GV.C (hk.mul hl))).mono ?_
           have m1 := hmono c k t hkt.1 ht'
