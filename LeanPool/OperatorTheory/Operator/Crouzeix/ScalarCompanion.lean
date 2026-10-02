@@ -53,7 +53,7 @@ open Complex Filter MeasureTheory Set spectrum
 open scoped Interval Real
 
 /-- The scalar Cauchy companion of `p` on a smooth Jordan domain. -/
-noncomputable def crouzeixPolynomialScalarCompanion
+@[expose] noncomputable def crouzeixPolynomialScalarCompanion
     (Omega : SmoothJordanDomain) (p : Polynomial ℂ) (z : ℂ) : ℂ :=
   (2 * (Real.pi : ℂ) * I)⁻¹ *
     contourIntegral
