@@ -24,11 +24,11 @@ namespace V7
   (1 / (2 * (p - 1))) * (lpNorm p x) ^ (2 : ℕ)
 
 /-- The conjugate scaled squared norm potential for the below-two geometry. -/
-noncomputable def belowHstar (p : ℝ) (s : Point d) : ℝ :=
+@[expose] noncomputable def belowHstar (p : ℝ) (s : Point d) : ℝ :=
   ((p - 1) / 2) * (lpNorm (conjugateExponent p) s) ^ (2 : ℕ)
 
 /-- The scaled duality map giving the gradient of the below-two conjugate potential. -/
-noncomputable def belowMirrorMap (p : ℝ) (s : Point d) : Point d :=
+@[expose] noncomputable def belowMirrorMap (p : ℝ) (s : Point d) : Point d :=
   (p - 1) • O3.dualityMap (conjugateExponent p) s
 
 /-- The Bregman difference of a function and its specified gradient, based at `y`. -/
@@ -41,7 +41,7 @@ noncomputable def belowMirrorMap (p : ℝ) (s : Point d) : Point d :=
   sSup {r : ℝ | ∃ x : Point d, r = pairing s x - F x}
 
 /-- Source carrier for `lem:belowgeometry` (B02). -/
-noncomputable def BelowGeometryStatement : Prop :=
+@[expose] noncomputable def BelowGeometryStatement : Prop :=
   ∀ (p : ℝ), 1 < p → p < 2 → ∀ (d : ℕ),
     (∀ x y : Point d,
       belowH p y ≥ belowH p x +

@@ -79,7 +79,7 @@ geometry. -/
     ∑ k ∈ Finset.range n, ((dw k) ^ (2 : ℕ) / u k) ^ (aboveErrorPower p)
 
 /-- Quadratic trial weights meet the error budget and have the stated terminal growth. -/
-noncomputable def AboveWeightErrorBalanceStatement : Prop :=
+@[expose] noncomputable def AboveWeightErrorBalanceStatement : Prop :=
   ∀ (p : ℝ), 2 < p → ∀ (n : ℕ), 1 ≤ n → ∀ (eta : ℝ), 0 < eta →
     let gamma := aboveGamma p eta n
     let u : ScalarSeq := fun k =>

@@ -61,7 +61,7 @@ lemma hasFDerivAt_lpPower {r : ℝ} (hr : 1 < r) (x : Point d) :
   ring
 
 /-- The explicit coordinate gradient of the power smoothing kernel. -/
-noncomputable def kernelGradientVector (r theta : ℝ) (x : Point d) : Point d :=
+@[expose] noncomputable def kernelGradientVector (r theta : ℝ) (x : Point d) : Point d :=
   (4 * theta * (O3.lpPower r x) ^ (2 * theta / r - 1)) •
     O3.powerDualityMap r x
 

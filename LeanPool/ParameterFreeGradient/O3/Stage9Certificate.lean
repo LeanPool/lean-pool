@@ -38,7 +38,7 @@ vector representation. -/
 
 /-- The source interpolation remainder
 `I_ij = psi_i - psi_j - <g_j,v_i-v_j>`. -/
-def ogmgI (psi : ℕ → ℝ) (pairTerm : ℕ → ℕ → ℝ) (i j : ℕ) : ℝ :=
+@[expose] def ogmgI (psi : ℕ → ℝ) (pairTerm : ℕ → ℕ → ℝ) (i j : ℕ) : ℝ :=
   psi i - psi j - pairTerm i j
 
 /-- `delta_i = kappa_(i+1) - kappa_i`. -/

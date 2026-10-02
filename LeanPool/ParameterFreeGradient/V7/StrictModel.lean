@@ -93,18 +93,18 @@ def StrictFiniteOutputFails (method : StrictLocalMethod) (oracle : PairOracle 1)
   |oracle.gradient (method.output N trace) 0| ≤ method.eps
 
 /-- The constant bounds every gradient difference and is the least such bound. -/
-def ExactGradientLipschitzConstant (oracle : PairOracle 1) (L : ℝ) : Prop :=
+@[expose] def ExactGradientLipschitzConstant (oracle : PairOracle 1) (L : ℝ) : Prop :=
   (∀ x y, |oracle.gradient x 0 - oracle.gradient y 0| ≤ L * |x 0 - y 0|) ∧
   ∀ L' : ℝ,
     (∀ x y, |oracle.gradient x 0 - oracle.gradient y 0| ≤ L' * |x 0 - y 0|) →
     L ≤ L'
 
 /-- The one-dimensional objective tends above every bound outside a sufficiently large interval. -/
-def IsCoerciveReal (f : StrictPoint → ℝ) : Prop :=
+@[expose] def IsCoerciveReal (f : StrictPoint → ℝ) : Prop :=
   ∀ B : ℝ, ∃ R : ℝ, 0 ≤ R ∧ ∀ x, R ≤ |x 0| → B ≤ f x
 
 /-- The specified point is a global minimizer and is the only point attaining its value. -/
-def UniqueMinimizer (f : StrictPoint → ℝ) (xstar : StrictPoint) : Prop :=
+@[expose] def UniqueMinimizer (f : StrictPoint → ℝ) (xstar : StrictPoint) : Prop :=
   (∀ x, f xstar ≤ f x) ∧ ∀ x, f x = f xstar → x = xstar
 
 /-- The affine--quadratic--affine family from `thm:impossibility`. -/
@@ -126,7 +126,7 @@ def UniqueMinimizer (f : StrictPoint → ℝ) (xstar : StrictPoint) : Prop :=
 
 /-- The hard-family oracle has the required convexity, minimizer, and exact normalization
 properties. -/
-def StrictHardInstance (eps : ℝ) (x0 : StrictPoint) (H L R : ℝ)
+@[expose] def StrictHardInstance (eps : ℝ) (x0 : StrictPoint) (H L R : ℝ)
     (oracle : PairOracle 1) (xstar : StrictPoint) : Prop :=
   0 < H ∧
   oracle.value = strictHardFamily eps x0 H ∧

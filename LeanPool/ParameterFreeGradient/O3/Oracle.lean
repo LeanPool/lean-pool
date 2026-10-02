@@ -71,7 +71,7 @@ structure GuardCheck where
   margin : ℝ
 
 /-- The guard's inequality holds exactly when its signed margin is nonnegative. -/
-def GuardCheck.Holds (check : GuardCheck) : Prop := 0 ≤ check.margin
+@[expose] def GuardCheck.Holds (check : GuardCheck) : Prop := 0 ≤ check.margin
 
 /-- Margin for `f(y) ≤ f(x) + linear + (M/2) * stepSq`. -/
 noncomputable def upperModelGuard (fx fy linear stepSq M : ℝ) : GuardCheck :=

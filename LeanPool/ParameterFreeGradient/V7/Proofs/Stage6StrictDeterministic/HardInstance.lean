@@ -23,7 +23,7 @@ namespace V7.Stage6StrictDeterministic
     gradient := strictHardDerivative eps x0 H }
 
 /-- The minimizer located a distance `2 * H` to the right of the initial point. -/
-def hardMinimizer (x0 : StrictPoint) (H : ℝ) : StrictPoint :=
+@[expose] def hardMinimizer (x0 : StrictPoint) (H : ℝ) : StrictPoint :=
   fun _ ↦ x0 0 + 2 * H
 
 theorem strictPoint_ext {x y : StrictPoint} (h : x 0 = y 0) : x = y := by
