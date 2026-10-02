@@ -67,7 +67,7 @@ theorem IsChordal.exists_simplicial_in_finset (hG : G.IsChordal) (S : Finset V)
       (G.induce (S : Set V)).neighborSet z := hvb
   exact hz ha' hb' (by simp [Subtype.ext_iff, hab])
 
-private theorem exists_peo_aux [Finite V] (hG : G.IsChordal) :
+private theorem exists_peo_aux (hG : G.IsChordal) :
     ∀ (n : ℕ) (S : Finset V), S.card = n → ∃ f : V → ℕ, Set.InjOn f S ∧
       ∀ v ∈ S, G.IsClique {u | u ∈ S ∧ f v < f u ∧ G.Adj v u} := by
   classical
