@@ -129,6 +129,7 @@ theorem zClosePairs_wf (s t u v : ℕ) :
 /-- The survivor predicate of the `z`-gluing: no `z`-label
 survives, and a `G`-label survives iff it lies in one of the two
 `x`-blocks. -/
+@[expose]
 def pcSurvPred (s t u v : ℕ) :
     Fin (u + v) ⊕ Fin ((s + u) + (t + v)) → Prop :=
   Sum.elim (fun _ => False)
@@ -150,6 +151,7 @@ theorem pcSurv_iff (s t u v : ℕ)
 /-- The surviving `G`-labels of the `z`-gluing, identified with
 the `(s + t)`-boundary: first `x`-block by value, second by
 offset. -/
+@[expose]
 def pcSurvValEquiv (s t u v : ℕ) :
     {x : Fin (u + v) ⊕ Fin ((s + u) + (t + v)) //
       pcSurvPred s t u v x} ≃ Fin (s + t) where
@@ -195,6 +197,7 @@ def pcSurvValEquiv (s t u v : ℕ) :
         omega)
 
 /-- The survivor identification of the `z`-gluing. -/
+@[expose]
 noncomputable def pcSurvEquiv (s t u v : ℕ) :
     Fragment.FoldSurviving (Fin (u + v) ⊕ Fin ((s + u) + (t + v)))
       (zClosePairs s t u v) ≃ Fin (s + t) :=
@@ -206,6 +209,7 @@ noncomputable def pcSurvEquiv (s t u v : ℕ) :
 /-- **Partial closure**: glue every open end of `z` into the
 matching `z`-block end of the test fragment `G`; the surviving
 `x`-block ends form the `(s + t)`-boundary. -/
+@[expose]
 noncomputable def partialClose {s t u v : ℕ}
     (z : Fragment (Fin (u + v)))
     (G : Fragment (Fin ((s + u) + (t + v)))) :

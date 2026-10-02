@@ -139,6 +139,7 @@ theorem boundaryFlag_mem_boundaryFlags {F : EdgeSubset W} {a : α}
   · exact hbd
 
 /-- All participating flags are internal (no boundary flags). -/
+@[expose]
 def allInternal (F : EdgeSubset W) : Prop := F.boundaryFlags = ∅
 
 /-- When all flags are internal, a participating flag is internal. -/

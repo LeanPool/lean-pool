@@ -115,6 +115,7 @@ theorem symMulDesc_act
 
 /-- The descended symmetric multiplication as a map of
 modules. -/
+@[expose]
 noncomputable def symMulMod
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

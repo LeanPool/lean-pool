@@ -165,6 +165,7 @@ noncomputable def shiftUnitHom :
 /-- The inverse of the shift-unit isomorphism: tensor with the
 algebra unit, which is odd in the shifted unit module.  The even
 component carries a sign, forced by the odd-odd Koszul relator. -/
+@[expose]
 noncomputable def shiftUnitInv :
     shift M ⟶ (shift S.unitMod).tensor M where
   evenMap := -tmulOO (shift S.unitMod) M S.one

@@ -46,6 +46,7 @@ variable {α : Type}
 
 open scoped Classical in
 /-- **RS21's tensor `t′_h`, in coordinates.** -/
+@[expose]
 noncomputable def tPrime [LinearOrder α] [Fintype α] {W : Fragment α}
     (F : EdgeSubset W) {k ℓ : ℕ}
     (h : MixedFunctional k ℓ) (κ : F.RelTransitionSystem)
@@ -68,6 +69,7 @@ open scoped Classical in
 /-- **RS21's tensor at given arc directions.**  The chain
 orientation fixes the vertex signs; the arc directions fix which
 legs carry `f` and which carry `g`. -/
+@[expose]
 noncomputable def tPrimeD [Fintype α] {W : Fragment α}
     (F : EdgeSubset W) {k ℓ : ℕ}
     (h : MixedFunctional k ℓ) (κ : F.RelTransitionSystem)
@@ -167,6 +169,7 @@ theorem card_usedLabel_eq [LinearOrder α] [Fintype α] {W : Fragment α}
   omega
 
 /-- **RS21's normalised tensor `t_h`, in coordinates.** -/
+@[expose]
 noncomputable def tFull [LinearOrder α] [Fintype α] {W : Fragment α}
     (F : EdgeSubset W) {k ℓ : ℕ}
     (h : MixedFunctional k ℓ) (κ : F.RelTransitionSystem)
@@ -190,6 +193,7 @@ theorem card_usedLab_eq [Fintype α] {W : Fragment α}
 /-- **RS21's normalised tensor at given arc directions.**  The
 directions enter twice: through the matching's sign and through the
 dual basis. -/
+@[expose]
 noncomputable def tFullD [LinearOrder α] [Fintype α] {W : Fragment α}
     (F : EdgeSubset W) {k ℓ : ℕ}
     (h : MixedFunctional k ℓ) (κ : F.RelTransitionSystem)
@@ -1828,6 +1832,7 @@ invariance under reversing a trail.
 
 open Classical in
 /-- **The fragment's tensor**: `Σ_H t_h(F,H,ω_H,κ_H)`. -/
+@[expose]
 noncomputable def _root_.RS.tensorSum [LinearOrder α] [Fintype α]
     (V : Fragment α) {k ℓ : ℕ}
     (h : MixedFunctional k ℓ) (x : GenBoundaryState k ℓ α) : ℂ :=

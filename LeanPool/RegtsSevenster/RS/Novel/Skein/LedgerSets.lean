@@ -105,6 +105,7 @@ theorem mem_pairSet {p : α × α} {i : α} :
   rw [Finset.mem_insert, Finset.mem_singleton]
 
 /-- The symmetric-difference fold of a list of label pairs. -/
+@[expose]
 noncomputable def pairFold (L : List (α × α)) : Finset α :=
   L.foldr (fun p E => symmU (pairSet p) E) ∅
 

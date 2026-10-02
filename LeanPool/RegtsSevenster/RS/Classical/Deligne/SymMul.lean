@@ -248,6 +248,7 @@ section SlotEmbed
 /-- The bridge carrying a left-block slot into the concatenated
 power: reassociate the right block onto the slot context and
 concatenate the contexts. -/
+@[expose]
 noncomputable def midConcatFst
     [Category.{v} D] [MonoidalCategory D] (A : D) (X : D)
     (a b n : ℕ) :
@@ -260,6 +261,7 @@ noncomputable def midConcatFst
 /-- The bridge carrying a right-block slot into the concatenated
 power: reassociate the left block onto the slot's lower context and
 concatenate. -/
+@[expose]
 noncomputable def midConcatSnd
     [Category.{v} D] [MonoidalCategory D] (A : D) (X : D)
     (m a b : ℕ) :

@@ -35,6 +35,7 @@ noncomputable def flipColours (f : α → Fin (2 * ℓ))
 
 /-- The accumulated port-sign product of a flip sequence, at the
 evolving colours. -/
+@[expose]
 noncomputable def flipSignProd (f : α → Fin (2 * ℓ)) :
     List (α × α) → ℤ
   | [] => 1
@@ -43,6 +44,7 @@ noncomputable def flipSignProd (f : α → Fin (2 * ℓ)) :
         flipSignProd (flipColours f p) L
 
 /-- The label instances of a flip sequence. -/
+@[expose]
 def flipLabels (L : List (α × α)) : List α :=
   L.flatMap (fun p => [p.1, p.2])
 

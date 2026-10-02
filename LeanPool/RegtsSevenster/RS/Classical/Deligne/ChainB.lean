@@ -248,6 +248,7 @@ section Colimit
 
 /-- **The algebra of the splitting chain**: the colimit of the
 symmetric stages along the seed transitions. -/
+@[expose]
 noncomputable def chainB
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

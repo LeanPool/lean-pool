@@ -227,6 +227,7 @@ abbrev UsedLab {W : Fragment α}
 
 open Classical in
 /-- Undo the dual basis against a given set of arc directions. -/
+@[expose]
 noncomputable def untwistD {W : Fragment α}
     {k ℓ : ℕ} (F : EdgeSubset W)
     (tl : UsedLab F → Bool) (x : GenBoundaryState k ℓ α) :
@@ -277,6 +278,7 @@ noncomputable def untwist [LinearOrder α] {W : Fragment α}
 open Classical in
 /-- **The dual basis's weight**: the partner signs at the legs the
 trail leaves. -/
+@[expose]
 noncomputable def dualWeight [LinearOrder α] {W : Fragment α}
     [Fintype α] {k ℓ : ℕ}
     (F : EdgeSubset W) (κ : F.RelTransitionSystem)

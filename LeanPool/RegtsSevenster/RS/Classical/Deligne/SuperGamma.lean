@@ -293,6 +293,7 @@ The hypothesis `hα` is not a formal consequence of `(ho, hβ)`: it
 pins down the compatibility of the chosen trivialization with the
 associator, and holds for the standard odd line of super vector
 spaces (hence in `Ind SmallSuperVect`). -/
+@[expose]
 def superGammaAlgebra [Category.{u'} D] [MonoidalCategory D] [BraidedCategory D]
     [Preadditive D] [MonoidalPreadditive D] [CategoryTheory.Linear ℂ D]
     [MonoidalLinear ℂ D] (R : D) [MonObj R] [IsCommMonObj R]

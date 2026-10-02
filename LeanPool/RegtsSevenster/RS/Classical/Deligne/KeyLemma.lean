@@ -103,6 +103,7 @@ noncomputable def ModDualityDatum.pairMod
 
 /-- The copairing of a duality datum, as a module map from the
 regular module. -/
+@[expose]
 noncomputable def ModDualityDatum.copairMod
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Limits.HasCoequalizers D]

@@ -49,6 +49,7 @@ noncomputable def freeMixTwistIso
 
 /-- **The odd twist of a dévissage state**: the counts change
 places and the remainder gains a line factor. -/
+@[expose]
 noncomputable def twistState
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

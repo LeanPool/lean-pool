@@ -93,6 +93,7 @@ theorem stdObj_odd (pq : ℕ × ℕ) :
 
 /-- Componentwise linear equivalences assemble to an isomorphism
 of super vector spaces. -/
+@[expose]
 def isoOfEquivs {V W : SuperVect} (e : V.even ≃ₗ[ℂ] W.even)
     (o : V.odd ≃ₗ[ℂ] W.odd) : V ≅ W where
   hom := ⟨e.toLinearMap, o.toLinearMap⟩
@@ -480,6 +481,7 @@ instance : smallSuperInclusion.IsEquivalence := {}
 
 /-- **The small-model equivalence**: the small model is equivalent
 to `SuperVect`. -/
+@[expose]
 def smallSuperEquiv : SmallSuperVect ≌ SuperVect :=
   smallSuperInclusion.asEquivalence
 
@@ -504,6 +506,7 @@ def sEven : SmallSuperVect := (1, 0)
 
 /-- The odd generator of the small model: the odd line
 `(0, 1)`. -/
+@[expose]
 def sOdd : SmallSuperVect := (0, 1)
 
 /-- Any two subsingleton ℂ-modules are linearly equivalent by the

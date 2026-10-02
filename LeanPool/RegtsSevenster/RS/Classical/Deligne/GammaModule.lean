@@ -294,6 +294,7 @@ coherence isomorphisms that identify the sources in
 `RS.gammaAlgebra`: the left unitor for even-even and even-odd, the
 right unitor for odd-even, and the square trivialisation `L.sq` of
 the odd line for odd-odd. -/
+@[expose]
 noncomputable def gammaModule (D : Type u) [Category.{v} D]
     [MonoidalCategory D] [SymmetricCategory D] [Preadditive D]
     [MonoidalPreadditive D] [Linear ℂ D] [MonoidalLinear ℂ D]

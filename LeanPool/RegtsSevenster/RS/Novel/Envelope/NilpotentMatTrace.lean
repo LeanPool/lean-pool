@@ -259,6 +259,7 @@ noncomputable def AtomResolution.w (A : AtomResolution f M)
 /-! ### The matrix elements -/
 
 /-- The matrix element of an endomorphism at a pair of atoms. -/
+@[expose]
 noncomputable def AtomResolution.t (A : AtomResolution f M)
     (φ : End M) (p q : A.κ) : A.S p ⟶ A.S q :=
   ⟨(A.e p.1 p.2).f ≫ (φ p.1 q.1).f ≫ (A.e q.1 q.2).f, by

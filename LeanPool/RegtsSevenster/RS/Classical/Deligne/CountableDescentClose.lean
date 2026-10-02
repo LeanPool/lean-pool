@@ -119,7 +119,7 @@ variable {C : Type v}
 
 /-- The cocone of the chosen presentation of an ind-object, with the
 ind-object itself as its point. -/
-@[simps! pt]
+@[expose, simps! pt]
 noncomputable def presCocone [SmallCategory C]
     (A : Ind C) : Cocone (presDiagram A) :=
   Cocone.mk A

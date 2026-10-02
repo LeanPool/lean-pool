@@ -107,6 +107,7 @@ theorem pathSign_of_allInternal [LinearOrder α] {W : Fragment α}
 
 /-- Canonical transition data: a relative system with a
 path-canonical orientation. -/
+@[expose]
 def CanonData [LinearOrder α] {W : Fragment α}
     (F : EdgeSubset W) : Type :=
   (κ : F.RelTransitionSystem) × {o : κ.Orientation // PathCanonical o}

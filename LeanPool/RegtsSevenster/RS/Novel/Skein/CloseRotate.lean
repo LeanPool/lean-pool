@@ -82,6 +82,7 @@ theorem transposeEquiv_symm_high (n p : ℕ) (j : ℕ) (hj : j < n)
 
 /-- The `m`-block: the low labels of `F` against the low labels
 of `K`, top pair first. -/
+@[expose]
 def mBlock (m n p : ℕ) :
     List (((Fin (m + n) ⊕ Fin (n + p)) ⊕ Fin (m + p)) ×
       ((Fin (m + n) ⊕ Fin (n + p)) ⊕ Fin (m + p))) :=
@@ -681,6 +682,7 @@ noncomputable def rotMR (m n p : ℕ) :
           List.Perm.refl _)).symm)
 
 /-- The transported boundary equivalence of the right side. -/
+@[expose]
 noncomputable def rotSigma (m n p : ℕ) :
     (Fin (m + n) ⊕
       Fragment.FoldSurviving (Fin (m + p) ⊕ Fin (p + n))

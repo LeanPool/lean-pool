@@ -339,6 +339,7 @@ noncomputable def modTensor
   coequalizer (modTensorLegM A M N) (modTensorLegN A M N)
 
 /-- The projection onto the tensor product of modules. -/
+@[expose]
 noncomputable def modTensorπ
     [Category.{v} D] [MonoidalCategory D] (A : D) [MonObj A]
     [BraidedCategory D] (M : Mod D A) (N : Mod D A) [HasCoequalizers D] :

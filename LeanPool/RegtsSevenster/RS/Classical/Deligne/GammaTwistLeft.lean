@@ -83,6 +83,7 @@ variable {D : Type u}
 /-- **The left odd cap**: contract the two leading legs of a doubly
 twisted object against the square trivialisation of the odd
 line. -/
+@[expose]
 def OddLine.capL [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D]
     (L : OddLine D) (Z : D) :

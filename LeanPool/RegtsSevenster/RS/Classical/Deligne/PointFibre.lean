@@ -216,6 +216,7 @@ variable {M N Q : S.Mod.{u, u, u, u}}
 The morphism is tensored with the residue module and the result is
 read in the coordinates that `RS.toSuperVect` installs on the two
 components. -/
+@[expose]
 noncomputable def superVectHom
     [FiniteDimensional ℂ (M.tensor (pointMod P)).even]
     [FiniteDimensional ℂ (M.tensor (pointMod P)).odd]
@@ -342,6 +343,7 @@ variable {S : SuperCommAlgebra.{u, u}} (P : SuperPoint S) {E : Type u₂}
 tensored with the residue module of the point and packaged as a
 super vector space; each morphism is conjugated through the
 coordinate equivalences. -/
+@[expose]
 noncomputable def superVectFunctor
     [Category.{v₂} E] (G : E ⥤ S.Mod.{u, u, u, u})
     (hE : ∀ X, FiniteDimensional ℂ ((G.obj X).tensor (pointMod P)).even)

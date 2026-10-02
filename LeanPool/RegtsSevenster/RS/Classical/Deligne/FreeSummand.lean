@@ -153,6 +153,7 @@ section Line
 variable {D : Type u}
 
 /-- Whiskering an object twice by the line returns the object. -/
+@[expose]
 noncomputable def OddLine.rot
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] (L : OddLine D)

@@ -1501,6 +1501,7 @@ original state.  Unlike the separated factor `−1`, it depends on
 the boundary state (only through those two signs), and the
 transform additionally `∂`-relabels the state at the two chain-end
 labels. -/
+@[expose]
 noncomputable def twoPathNonSepFactor (ℓ : ℕ)
     (c₁ c₂ : Fin (2 * ℓ)) : ℂ :=
   -(((oddPartnerSign ℓ c₁ * oddPartnerSign ℓ c₂ : ℤ) : ℂ))

@@ -47,6 +47,7 @@ open Fragment Equiv
 
 /-- The fragment one stage down: glue the top interface pair, then
 relabel. -/
+@[expose]
 noncomputable def stepFragment (n : ℕ)
     (V : Fragment (Fin (0 + (n + 1)) ⊕ Fin ((n + 1) + 0))) :
     Fragment (Fin (0 + n) ⊕ Fin (n + 0)) :=

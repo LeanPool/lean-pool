@@ -40,10 +40,12 @@ theorem karoubi_obj_ext {D : Type u} [Category.{v} D] {X : D}
 /-! ### The embedded strands -/
 
 /-- The embedded `n`-strand object of the corner category. -/
+@[expose]
 noncomputable def strandK (n : ℕ) : Karoubi (SkeinObj f) :=
   (toKaroubi (SkeinObj f)).obj (SkeinObj.mk n)
 
 /-- The embedded `n`-strand object of the envelope. -/
+@[expose]
 noncomputable def envStrand (n : ℕ) : Env f :=
   (toKaroubi (Mat_ (Karoubi (SkeinObj f)))).obj
     ((Mat_.embedding (Karoubi (SkeinObj f))).obj (strandK f n))

@@ -61,6 +61,7 @@ variable {A A' B C D : Type*}
 again bilinear.  This is the shape in which a lift out of a tensor
 product is fed into a second lift: the value of the outer lift is
 itself a linear map. -/
+@[expose]
 noncomputable def bicomp
     [AddCommGroup A] [Module ℂ A] [AddCommGroup A'] [Module ℂ A']
     [AddCommGroup B] [Module ℂ B] [AddCommGroup C] [Module ℂ C]
@@ -82,6 +83,7 @@ theorem bicomp_apply
 argument is the one held back: `(a', d) ↦ (a ↦ f (g a a') d)`.
 This is the shape needed when the inner lift is taken in the
 second factor of a tensor product. -/
+@[expose]
 noncomputable def bicompFlip
     [AddCommGroup A] [Module ℂ A] [AddCommGroup A'] [Module ℂ A']
     [AddCommGroup B] [Module ℂ B] [AddCommGroup C] [Module ℂ C]
@@ -879,6 +881,7 @@ theorem leftUnitorHom_oddMap_tmulOE (u : S.odd) (m : M.even) :
 
 /-- The inverse of the left unitor: tensor with the algebra
 unit. -/
+@[expose]
 noncomputable def leftUnitorInv : M ⟶ S.unitMod.tensor M where
   evenMap := tmulEE S.unitMod M S.one
   oddMap := tmulEO S.unitMod M S.one
@@ -1022,6 +1025,7 @@ theorem rightUnitorHom_oddMap_tmulOE (m : M.odd) (x : S.even) :
 
 /-- The inverse of the right unitor: tensor with the algebra unit
 on the right. -/
+@[expose]
 noncomputable def rightUnitorInv : M ⟶ M.tensor S.unitMod where
   evenMap := (tmulEE M S.unitMod).flip S.one
   oddMap := (tmulOE M S.unitMod).flip S.one

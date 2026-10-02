@@ -169,6 +169,7 @@ theorem glueMatch_val_of_mem (m : W.Flag → W.Flag)
 
 /-- Extend a surviving-flag orientation to all of `W.Flag`:
 through the subtype on surviving flags, `false` elsewhere. -/
+@[expose]
 noncomputable def unglueIsOut
     (b : SurvivingFlag W i j → Bool) (f : W.Flag) : Bool :=
   if h : f ≠ W.boundaryFlag i ∧ f ≠ W.boundaryFlag j then
@@ -1007,6 +1008,7 @@ theorem unglueClosed_glueClosed_match
 
 /-- **Unglue an orientation (closed case)**: through the subtype,
 `false` junk at the two glued boundary flags. -/
+@[expose]
 noncomputable def unglueOrientationClosed
     (κ' : (Fg).RelTransitionSystem) (o' : κ'.Orientation) :
     (RelTransitionSystem.unglueClosed hclosed b s' hc' hc
@@ -1042,6 +1044,7 @@ noncomputable def unglueOrientationClosed
 /-- **Glue an orientation (closed case)**: through `Subtype.val`.
 Unconditional: the closed glued pairing agrees with the
 `W`-pairing on surviving flags. -/
+@[expose]
 noncomputable def glueOrientationClosed
     (κ : (Fl).RelTransitionSystem) (o : κ.Orientation) :
     (RelTransitionSystem.glueClosed hclosed b s' hc' hc

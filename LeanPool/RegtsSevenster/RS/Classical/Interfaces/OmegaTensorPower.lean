@@ -156,6 +156,7 @@ noncomputable def omegaPow (n : ℕ) :
 /-- Conjugation of an endomorphism by an isomorphism:
 `e.hom ≫ f ≫ e.inv`, transporting `f : End Y` to `End X`
 via `e : X ≅ Y`. -/
+@[expose]
 def isoConj {C : Type*} [Category C] {X Y : C} (e : X ≅ Y)
     (f : End Y) : End X :=
   e.hom ≫ f ≫ e.inv

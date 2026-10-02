@@ -131,9 +131,11 @@ theorem cutErase_closed : CutClosed W (cutErase W C f₀) := by
     exact hg.2.1 (by rw [← W.pairing_invol g, h, W.pairing_invol])
 
 /-- The glued labels of the step, as labels of the explosion. -/
+@[expose]
 def stepLabelI : {f : W.Flag // f ∈ C} := ⟨f₀, h₀⟩
 
 /-- The partner label of the step. -/
+@[expose]
 def stepLabelJ : {f : W.Flag // f ∈ C} :=
   ⟨W.pairing f₀, hC f₀ h₀⟩
 
@@ -143,6 +145,7 @@ theorem stepLabel_ne : stepLabelI W C f₀ h₀ ≠
   W.pairing_ne f₀ (congrArg Subtype.val h).symm
 
 /-- The surviving labels of the step are the shrunken cut set. -/
+@[expose]
 def stepLabelEquiv :
     {f : W.Flag // f ∈ cutErase W C f₀} ≃
       Fragment.SurvivingLabel {f : W.Flag // f ∈ C}

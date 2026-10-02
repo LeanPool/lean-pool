@@ -34,6 +34,7 @@ variable {S : SuperCommAlgebra.{u, u'}}
 /-- **The residue module of a complex point**: the complex numbers
 in even degree and zero in odd degree, with the even part of the
 algebra acting through the point. -/
+@[expose]
 noncomputable def pointMod (P : SuperPoint S) :
     S.Mod.{u, u', w, w} where
   even := ULift.{w} ℂ

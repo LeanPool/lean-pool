@@ -339,6 +339,7 @@ end Rotation
 section OddLineFree
 
 /-- A module twisted on the right by the odd line. -/
+@[expose]
 noncomputable def modLine
     [SmallCategory C] [MonoidalCategory C] [SymmetricCategory C] [Abelian C]
     (𝔹 : Ind C) [MonObj 𝔹] (L : OddLine (Ind C))

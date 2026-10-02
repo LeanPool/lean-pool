@@ -58,6 +58,7 @@ lemma actRight_restrictMod
 the carrier of the unrestricted module.  All statements of this
 development use this spelling, so that goals remain type-correct
 at the instances transparency level. -/
+@[expose]
 noncomputable def restrictπ
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D] (A : D) [MonObj A] (B : D) [MonObj B] (φ : A ⟶ B)
@@ -349,6 +350,7 @@ theorem whiskerLeft_unitSlot_baseChangeAct
 
 /-- The projection of the new-base tensor, retyped at the
 induced-module carrier. -/
+@[expose]
 noncomputable def bcπ
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]
@@ -588,6 +590,7 @@ theorem collapseHom_collapseInv
     (whiskerLeft_unitSlot_baseChangeAct A B φ N)) _
 
 /-- **The change-of-rings collapse**, packaged. -/
+@[expose]
 noncomputable def collapseIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]
@@ -666,6 +669,7 @@ theorem restrictMod_baseChange_eq
 /-- **The projection formula**: the relative tensor over the new
 base of two base changes is the base change of the relative
 tensor. -/
+@[expose]
 noncomputable def projFormula
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

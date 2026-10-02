@@ -331,6 +331,7 @@ section Iterate
 
 /-- **The family, pushed back to the base.**  A choice at the
 composition determines one at every stage, by ungluing. -/
+@[expose]
 noncomputable def pushData : (n : ℕ) →
     (V : Fragment (Fin (0 + n) ⊕ Fin (n + 0))) →
     DataFamily (glueInterface 0 n 0 V) → DataFamily V

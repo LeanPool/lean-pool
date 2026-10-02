@@ -211,6 +211,7 @@ variable {F : EdgeSubset W} {κ : F.RelTransitionSystem}
   {a b c d : W.Flag} {S : Finset W.Flag}
 
 /-- The `∂`-flip of a core odd colouring on the segment edges. -/
+@[expose]
 noncomputable def segFlipColouring (hSpair : ∀ f ∈ S, W.pairing f ∈ S) {ℓ : ℕ}
     (φ : F.CoreOddColouring ℓ) : F.CoreOddColouring ℓ :=
   ⟨fun g => if g.val ∈ S then oddPartner ℓ (φ.val g) else φ.val g,

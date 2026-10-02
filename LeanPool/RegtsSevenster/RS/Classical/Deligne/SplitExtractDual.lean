@@ -262,6 +262,7 @@ section Complement
 
 /-- **The dual complement carrier**: the kernel of the dual
 split idempotent. -/
+@[expose]
 noncomputable def splitComplDual
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [HasCoequalizers D] (A : D) [MonObj A] [IsCommMonObj A]
@@ -277,6 +278,7 @@ noncomputable def splitComplDual
 
 /-- The action of the algebra descends to the dual
 complement. -/
+@[expose]
 noncomputable def splitComplActDual
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasCoequalizers D] (A : D)
@@ -418,7 +420,7 @@ theorem splitComplActDual_mul
     (kernel.ι (splitIdemDual A B φ v w d hv hw))).mp hι
 
 /-- The dual complement, as a module over the algebra. -/
-@[implicit_reducible]
+@[expose, implicit_reducible]
 noncomputable def splitComplModObjDual
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasCoequalizers D] (A : D)
@@ -436,6 +438,7 @@ noncomputable def splitComplModObjDual
   mul_smul := splitComplActDual_mul A B φ v w d hv hw
 
 /-- The dual complement, bundled. -/
+@[expose]
 noncomputable def splitComplModDual
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasCoequalizers D] (A : D)
@@ -452,6 +455,7 @@ noncomputable def splitComplModDual
 
 /-- The projection onto the dual complement: the complementary
 idempotent, corestricted to the kernel. -/
+@[expose]
 noncomputable def splitComplProjDual
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [HasCoequalizers D] (A : D) [MonObj A] [IsCommMonObj A]

@@ -93,6 +93,7 @@ theorem pointMod_actOO (u : S.odd)
 /-- **The multiplication of the residue module**, on even parts:
 the residue module is a copy of ℂ in even degree, and this is the
 multiplication of ℂ. -/
+@[expose]
 noncomputable def pointMulLin :
     (pointMod P : S.Mod.{u, u, u, u}).even →ₗ[ℂ]
       (pointMod P : S.Mod.{u, u, u, u}).even →ₗ[ℂ]
@@ -177,6 +178,7 @@ noncomputable def pointMulHom :
 
 /-- **The unit of the residue module**: the point itself, read as a
 morphism from the algebra. -/
+@[expose]
 noncomputable def pointUnitHom :
     (S.unitMod : S.Mod.{u, u, u, u}) ⟶ pointMod P where
   evenMap := (ULift.moduleEquiv (R := ℂ) (M := ℂ)).symm.toLinearMap ∘ₗ

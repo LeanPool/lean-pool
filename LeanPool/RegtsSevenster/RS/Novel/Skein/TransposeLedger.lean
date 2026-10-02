@@ -68,6 +68,7 @@ square's vertex; the `oddPartnerSign` commutation and the colour
 re-routing contribute `+1` each, so `T` is constant — independent
 of the boundary state, the `∂`-data at the four re-paired ends,
 and the transition system. -/
+@[expose]
 noncomputable def twoPathTransformFactor : ℂ := -1
 
 /-- The factor unfolded. -/
@@ -288,6 +289,7 @@ theorem cBnd :
 
 /-- The functional supported on the colour set `{0, 5, 2, 7}` (the
 odd-list set of the original summand). -/
+@[expose]
 noncomputable def cFunctional : MixedFunctional 0 4 :=
   fun _ s => if s = ({0, 5, 2, 7} : Finset (Fin (2 * 4))) then 1
     else 0

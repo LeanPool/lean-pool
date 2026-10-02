@@ -53,6 +53,7 @@ variable {A E₁ E₂ F₁ F₂ : Type*}
 blocks acting on the two factors of a product separately.  The four
 action blocks of a biproduct of super modules are the four instances
 of this construction. -/
+@[expose]
 def prodAct [AddCommGroup A] [Module ℂ A] [AddCommGroup E₁] [Module ℂ E₁]
     [AddCommGroup E₂] [Module ℂ E₂] [AddCommGroup F₁] [Module ℂ F₁]
     [AddCommGroup F₂] [Module ℂ F₂]

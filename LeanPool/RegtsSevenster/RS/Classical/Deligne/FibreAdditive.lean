@@ -37,6 +37,7 @@ variable {D : Type u}
 
 /-- **The fibre functor over an algebra**: base change, then
 realize. -/
+@[expose]
 noncomputable def fibreFun
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [Linear ℂ D]

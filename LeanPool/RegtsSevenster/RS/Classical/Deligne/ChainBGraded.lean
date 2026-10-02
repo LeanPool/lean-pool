@@ -350,6 +350,7 @@ noncomputable def chainBdegMul
     (chainBdegMulStage_delta_right A M M' d p₀ q₀ r₀ s₀)
 
 /-- Transport of a graded component along offset equalities. -/
+@[expose]
 noncomputable def chainBdegCast
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

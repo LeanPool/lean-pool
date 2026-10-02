@@ -33,6 +33,7 @@ universe v u
 variable {D : Type u}
 
 /-- The twist of a module by an object on the left, bundled. -/
+@[expose]
 noncomputable def tensorLeftMod
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] (A : D)
     [MonObj A]

@@ -33,6 +33,7 @@ attribute [local instance]
   hasBinaryBiproducts_of_finite_biproducts
 
 /-- **Base change on morphisms of modules.** -/
+@[expose]
 noncomputable def baseChangeMapMod
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

@@ -38,11 +38,13 @@ variable {R : ℕ} (f : EdgeRankParameter R)
 
 /-- The even component of a SuperVect endomorphism, viewed as a
 module endomorphism. -/
+@[expose]
 def evenComponent (W : SuperVect) (g : End W) :
     Module.End ℂ W.even :=
   (g : SuperVect.Hom W W).evenMap
 
 /-- The odd component of a SuperVect endomorphism. -/
+@[expose]
 def oddComponent (W : SuperVect) (g : End W) :
     Module.End ℂ W.odd :=
   (g : SuperVect.Hom W W).oddMap

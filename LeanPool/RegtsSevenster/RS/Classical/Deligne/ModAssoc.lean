@@ -435,6 +435,7 @@ theorem modTensorAssocInv_assocHom
 /-- **The associator isomorphism of the tensor product of
 modules** (Deligne 2002, §2.3): the relative tensor is associative
 up to the descended ambient associator. -/
+@[expose]
 noncomputable def modTensorAssocIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]
@@ -534,6 +535,7 @@ theorem modTensorAssocInv_act
     Category.id_comp]
 
 /-- The associator as a morphism of bundled modules. -/
+@[expose]
 noncomputable def modTensorAssocModHom
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]
@@ -547,6 +549,7 @@ noncomputable def modTensorAssocModHom
     (modTensorAssocHom_act A M N P)
 
 /-- The inverse associator as a morphism of bundled modules. -/
+@[expose]
 noncomputable def modTensorAssocModInv
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]
@@ -561,6 +564,7 @@ noncomputable def modTensorAssocModInv
 
 /-- **The associator of the tensor product of modules, as an
 isomorphism of bundled modules.** -/
+@[expose]
 noncomputable def modTensorAssocModIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

@@ -117,6 +117,7 @@ theorem powMulDesc_act
   simpa only [Category.assoc] using h
 
 /-- The descended power multiplication as a map of modules. -/
+@[expose]
 noncomputable def powMulMod
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
@@ -150,6 +151,7 @@ theorem actLeft_modPowOne_inv
         simp only [Iso.hom_inv_id, Category.comp_id]
 
 /-- A module maps into the singleton stage of its power tower. -/
+@[expose]
 noncomputable def toModPowModZero
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
@@ -190,6 +192,7 @@ noncomputable def powChainMul
 
 /-- **The seed of the power chain**: the copairing lands in the
 bottom stage. -/
+@[expose]
 noncomputable def powSeed
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
@@ -202,6 +205,7 @@ noncomputable def powSeed
     modTensorMap A (toModPowModZero A M) (toModPowModZero A M')
 
 /-- An arity transport of module powers, as a map of modules. -/
+@[expose]
 noncomputable def modPowCastMod
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
@@ -214,6 +218,7 @@ noncomputable def modPowCastMod
 
 /-- The braiding of the module tensor product, as a map of
 modules. -/
+@[expose]
 noncomputable def modTensorSwapMod
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

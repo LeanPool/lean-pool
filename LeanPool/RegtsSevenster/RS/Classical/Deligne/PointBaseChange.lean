@@ -134,6 +134,7 @@ noncomputable def oddBiproductEquiv {J : Type} [Fintype J]
 /-! ## Tensoring on the right -/
 
 /-- **Tensoring on the right by a fixed module**, as a functor. -/
+@[expose]
 noncomputable def tensorRightFunctor (N : S.Mod.{u, u, u, u}) :
     S.Mod.{u, u, u, u} ⥤ S.Mod.{u, u, u, u} where
   obj M := M.tensor N
@@ -364,6 +365,7 @@ the space of coordinate vectors of its dimension.  The two
 equivalences `RS.toSuperVectEvenEquiv` and `RS.toSuperVectOddEquiv`
 identify the components of the base change with the components of
 this super vector space. -/
+@[expose]
 noncomputable def toSuperVect (P : SuperPoint S)
     (M : S.Mod.{u, u, u, u})
     :
