@@ -108,7 +108,8 @@ private theorem eLpNorm_basisVec_apply_eq_gradCoordToScalarL2_norm
             ((hf1.continuous_fderiv (by simp)).clm_apply continuous_const).aestronglyMeasurable]
     _ = ENNReal.toReal (MeasureTheory.eLpNorm dg 2 (volumeMeasureOn U)) := by
           rw [← MeasureTheory.eLpNorm_restrict_eq_of_support_subset
-            ((hf1.continuous_fderiv (by simp)).clm_apply continuous_const).aestronglyMeasurable hsupport]
+            ((hf1.continuous_fderiv (by simp)).clm_apply continuous_const).aestronglyMeasurable
+              hsupport]
     _ = ENNReal.toReal (MeasureTheory.eLpNorm (fun x => u.grad x i) 2 (volumeMeasureOn U)) := by
           simp [u, dg, H1Function.ofContDiff]
     _ = ‖u.gradCoordToScalarL2 i‖ := by
@@ -231,7 +232,8 @@ theorem valueL2Norm_le_sobolevConst_mul_gradientCoordL2NormSum_ofContDiff
         (by
           have hd' : (2 : NNReal) < d := by
             exact_mod_cast hd
-          simpa [Homogenization.Vec, Module.finrank_fintype_fun_eq_card, Fintype.card_fin] using hd')
+          simpa [Homogenization.Vec, Module.finrank_fintype_fun_eq_card, Fintype.card_fin]
+            using hd')
         hBounded.isBounded)
   have hvalue :
       ‖u.toScalarL2‖ = ENNReal.toReal (MeasureTheory.eLpNorm f 2 MeasureTheory.volume) := by
@@ -241,11 +243,14 @@ theorem valueL2Norm_le_sobolevConst_mul_gradientCoordL2NormSum_ofContDiff
       _ = ENNReal.toReal (MeasureTheory.eLpNorm f 2 (volumeMeasureOn U)) := by
         simp [u, H1Function.ofContDiff]
       _ = ENNReal.toReal (MeasureTheory.eLpNorm f 2 MeasureTheory.volume) := by
-        rw [MeasureTheory.eLpNorm_restrict_eq_of_support_subset hf.continuous.aestronglyMeasurable hsupp]
+        rw [MeasureTheory.eLpNorm_restrict_eq_of_support_subset
+          hf.continuous.aestronglyMeasurable hsupp]
   calc
     ‖u.toScalarL2‖ = ENNReal.toReal (MeasureTheory.eLpNorm f 2 MeasureTheory.volume) := hvalue
-    _ ≤ ENNReal.toReal ((C : ℝ≥0∞) * MeasureTheory.eLpNorm (fderiv ℝ f) 2 MeasureTheory.volume) := by
-          exact ENNReal.toReal_mono (ENNReal.mul_ne_top (by simp) hfderiv_mem.eLpNorm_lt_top.ne) hsob
+    _ ≤ ENNReal.toReal ((C : ℝ≥0∞) *
+      MeasureTheory.eLpNorm (fderiv ℝ f) 2 MeasureTheory.volume) := by
+          exact ENNReal.toReal_mono (ENNReal.mul_ne_top (by simp) hfderiv_mem.eLpNorm_lt_top.ne)
+            hsob
     _ = (C : ℝ) * ENNReal.toReal (MeasureTheory.eLpNorm (fderiv ℝ f) 2 MeasureTheory.volume) := by
           rw [ENNReal.toReal_mul]
           simp

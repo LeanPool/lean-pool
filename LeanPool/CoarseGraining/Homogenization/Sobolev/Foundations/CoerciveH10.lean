@@ -56,16 +56,20 @@ theorem tendsto_approxH1_toScalarL2
       simp [v, approxH1, H1Function.toScalarL2, Homogenization.toScalarL2, H1Function.ofContDiff]
     have hedist :
         edist v.toScalarL2 u.toH1Function.toScalarL2 =
-          MeasureTheory.eLpNorm (fun x => u.approx n x - u.toH1Function x) 2 (volumeMeasureOn U) := by
+          MeasureTheory.eLpNorm (fun x => u.approx n x - u.toH1Function x) 2
+            (volumeMeasureOn U) := by
       calc
         edist v.toScalarL2 u.toH1Function.toScalarL2
-          = MeasureTheory.eLpNorm (u.approx n - u.toH1Function.toFun) 2 (volumeMeasureOn U) := hedist0
-        _ = MeasureTheory.eLpNorm (fun x => u.approx n x - u.toH1Function x) 2 (volumeMeasureOn U) := by
+          = MeasureTheory.eLpNorm (u.approx n - u.toH1Function.toFun) 2
+            (volumeMeasureOn U) := hedist0
+        _ = MeasureTheory.eLpNorm (fun x => u.approx n x - u.toH1Function x) 2
+          (volumeMeasureOn U) := by
             rfl
     rw [MeasureTheory.Lp.dist_edist, hedist]
   rw [hdist]
   exact (ENNReal.tendsto_toReal_zero_iff
-    (fun n => (approx_memL2_sub_toH1_memL2 (hU := hU) (u := u) n).eLpNorm_lt_top.ne)).2 u.tendsto_approx
+    (fun n =>
+      (approx_memL2_sub_toH1_memL2 (hU := hU) (u := u) n).eLpNorm_lt_top.ne)).2 u.tendsto_approx
 
 theorem tendsto_approxH1_gradCoordToScalarL2
     (hU : IsOpen U) (u : H10Function U) (i : Fin d) :
@@ -73,7 +77,8 @@ theorem tendsto_approxH1_gradCoordToScalarL2
       (nhds (u.toH1Function.gradCoordToScalarL2 i)) := by
   rw [tendsto_iff_dist_tendsto_zero]
   have hdist :
-      (fun n => dist ((approxH1 hU u n).gradCoordToScalarL2 i) (u.toH1Function.gradCoordToScalarL2 i)) =
+      (fun n => dist ((approxH1 hU u n).gradCoordToScalarL2 i)
+        (u.toH1Function.gradCoordToScalarL2 i)) =
         fun n =>
           ENNReal.toReal
             (MeasureTheory.eLpNorm
