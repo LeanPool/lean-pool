@@ -11894,3 +11894,65 @@ projects:
       commit: 264445c93b78554c408e99e4e7f663693b4e91ab
     license: Apache-2.0
     status: verified
+  - slug: lean-operator-theory
+    title: Unitary dilation and the Crouzeix–Palencia bound
+    summary: Proves unitary power dilation for Hilbert-space contractions, von Neumann’s polynomial inequality,
+      and the Crouzeix–Palencia polynomial spectral-set estimate for the closed numerical range.
+    branch: operator theory
+    entry_module: LeanPool.OperatorTheory
+    authors:
+    - Ezzeri Esa
+    source:
+      url: https://github.com/savarin/lean-operator-theory
+      github_repo: savarin/lean-operator-theory
+      commit: 6f90bb7e6b056b54f56005e0416d77d6d7c2a478
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - PalomarCrouzeixPalencia.crouzeix_palencia
+    main_results:
+    - declaration: PalomarCrouzeixPalencia.exists_unitary_power_dilation
+      informal: Every contraction on a complex Hilbert space admits a unitary power dilation.
+    - declaration: PalomarCrouzeixPalencia.vonNeumann_inequality
+      informal: Polynomial evaluation on a contraction is bounded by the polynomial supremum on the closed
+        unit disk.
+    - declaration: PalomarCrouzeixPalencia.crouzeix_palencia
+      informal: The closure of the numerical range is a polynomial spectral set with constant 1 + √2.
+    tags:
+    - operator-theory
+    - functional-analysis
+    - spectral-theory
+    msc:
+    - 47A12
+    - 47A20
+    - 47A25
+  - slug: nrr-aak
+    title: Equal-area and equal-perimeter convex partitions
+    summary: Formalizes the Akopyan–Avvakumov–Karasev theorem that every planar convex body can be partitioned
+      into any prescribed positive number of convex pieces with equal area and equal perimeter. Area
+      is Lebesgue measure and perimeter is Hausdorff measure of the boundary.
+    branch: convex geometry
+    main_declarations:
+    - HumanVerification.equalAreaEqualPerimeterPartition
+    main_results:
+    - declaration: HumanVerification.equalAreaEqualPerimeterPartition
+      informal: Every compact convex planar set with nonempty interior admits a convex partition into
+        any positive number of pieces whose areas and perimeters are all equal.
+    tags:
+    - convex-geometry
+    - equivariant-topology
+    - partitions
+    msc:
+    - 52A10
+    - 55M20
+    provenance: mix
+    entry_module: LeanPool.NandakumarRamanaRao
+    authors:
+    - Arseniy Akopyan
+    source:
+      url: https://github.com/akopjan/nrr-aak
+      github_repo: akopjan/nrr-aak
+      commit: 9e57be63320f29cbb8d2da7c4a8ad6afdef681eb
+    license: Apache-2.0
+    status: verified

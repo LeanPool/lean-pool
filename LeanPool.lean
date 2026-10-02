@@ -167,6 +167,7 @@ public import LeanPool.MoserLatticeColorings.Imports
 public import LeanPool.MovingSofa.Imports
 public import LeanPool.MulticolorTriangleRamsey.Imports
 public import LeanPool.NagataFactoriality.Imports
+public import LeanPool.NandakumarRamanaRao.Imports
 public import LeanPool.NashWilliams.Imports
 public import LeanPool.NaslundCounterexample.Imports
 public import LeanPool.NavierStokesAndEuler.Imports
@@ -179,6 +180,7 @@ public import LeanPool.OSforGFF.Imports
 public import LeanPool.OddPrimeValuationDistribution.Imports
 public import LeanPool.Odlyzko.Imports
 public import LeanPool.OneManifold.Imports
+public import LeanPool.OperatorTheory.Imports
 public import LeanPool.OrderPQ.Imports
 public import LeanPool.PCFTheory.Imports
 public import LeanPool.PDL.Imports
