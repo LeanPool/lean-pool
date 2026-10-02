@@ -247,10 +247,20 @@ private theorem iterated_inv {bit : Bool} {rest : List Bool}
     have hacc := hinv.acc_le
     omega
   · exact iterated_bound hinv
-  · cases bit <;>
-      simp [iterated, advanced, branched, loaded, Basic.exec, lengthReg,
-        countReg, pointerReg, oneReg, scratchReg]
-    all_goals
+  · cases bit
+    · simp only [iterated, Basic.exec, advanced, branched, Bool.false_eq_true, ↓reduceIte,
+        loaded, scratchReg, pointerReg, ne_eq, Nat.reduceEqDiff, not_false_eq_true,
+        Function.update_of_ne, oneReg, lengthReg, OfNat.zero_ne_ofNat, Nat.succ_ne_self,
+        Function.update_self]
+      have hlength : store 0 = (Bool.false :: rest).length := by
+        simpa [lengthReg] using hinv.length_eq
+      have hone : store 3 = 1 := by simpa [oneReg] using hinv.one_eq
+      rw [hlength, hone]
+      simp
+    · simp only [iterated, Basic.exec, advanced, branched, ↓reduceIte, loaded, scratchReg,
+        pointerReg, countReg, ne_eq, OfNat.one_ne_ofNat, not_false_eq_true,
+        Function.update_of_ne, oneReg, Nat.reduceEqDiff, OfNat.ofNat_ne_one, lengthReg,
+        OfNat.zero_ne_ofNat, zero_ne_one, Nat.succ_ne_self, Function.update_self]
       have hlength : store 0 = (Bool.false :: rest).length := by
         simpa [lengthReg] using hinv.length_eq
       have hone : store 3 = 1 := by simpa [oneReg] using hinv.one_eq
@@ -263,18 +273,37 @@ private theorem iterated_inv {bit : Bool} {rest : List Bool}
       have hcount : store 1 = acc := by simpa [countReg] using hinv.count_eq
       have hone : store 3 = 1 := by simpa [oneReg] using hinv.one_eq
       simp [hcount, hone]
-  · cases bit <;>
-      simp [iterated, advanced, branched, loaded, Basic.exec, lengthReg,
-        countReg, pointerReg, oneReg, scratchReg, inputBase]
-    all_goals
+  · cases bit
+    · simp only [iterated, Basic.exec, advanced, branched, Bool.false_eq_true, ↓reduceIte,
+        loaded, scratchReg, pointerReg, ne_eq, Nat.reduceEqDiff, not_false_eq_true,
+        Function.update_of_ne, oneReg, lengthReg, OfNat.zero_ne_ofNat, Nat.succ_ne_self,
+        OfNat.ofNat_ne_zero, Function.update_self, inputBase]
       have hpointer : store 2 = 5 + consumed := by
         simpa [pointerReg, inputBase] using hinv.pointer_eq
       have hone : store 3 = 1 := by simpa [oneReg] using hinv.one_eq
       rw [hpointer, hone]
       omega
-  · cases bit <;>
-      simp [iterated, advanced, branched, loaded, Basic.exec, lengthReg,
-        countReg, pointerReg, oneReg, scratchReg] <;> exact hinv.one_eq
+    · simp only [iterated, Basic.exec, advanced, branched, ↓reduceIte, loaded, scratchReg,
+        pointerReg, countReg, ne_eq, OfNat.one_ne_ofNat, not_false_eq_true,
+        Function.update_of_ne, oneReg, Nat.reduceEqDiff, OfNat.ofNat_ne_one, lengthReg,
+        OfNat.zero_ne_ofNat, zero_ne_one, Nat.succ_ne_self, OfNat.ofNat_ne_zero,
+        Function.update_self, inputBase]
+      have hpointer : store 2 = 5 + consumed := by
+        simpa [pointerReg, inputBase] using hinv.pointer_eq
+      have hone : store 3 = 1 := by simpa [oneReg] using hinv.one_eq
+      rw [hpointer, hone]
+      omega
+  · cases bit
+    · simp only [iterated, Basic.exec, advanced, branched, Bool.false_eq_true, ↓reduceIte,
+        loaded, scratchReg, pointerReg, ne_eq, Nat.reduceEqDiff, not_false_eq_true,
+        Function.update_of_ne, oneReg, lengthReg, OfNat.zero_ne_ofNat, Nat.succ_ne_self,
+        OfNat.ofNat_ne_zero]
+      exact hinv.one_eq
+    · simp only [iterated, Basic.exec, advanced, branched, ↓reduceIte, loaded, scratchReg,
+        pointerReg, countReg, ne_eq, OfNat.one_ne_ofNat, not_false_eq_true,
+        Function.update_of_ne, oneReg, Nat.reduceEqDiff, OfNat.ofNat_ne_one, lengthReg,
+        OfNat.zero_ne_ofNat, zero_ne_one, Nat.succ_ne_self, OfNat.ofNat_ne_zero]
+      exact hinv.one_eq
   · intro offset
     rw [iterated_high bit store _ (by simp [inputBase]; omega)]
     have hinput := hinv.input_eq (offset + 1)
