@@ -1,0 +1,169 @@
+/-
+Copyright (c) 2026 Terence Tao. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Terence Tao
+-/
+module
+
+public import LeanPool.Sendov.FiniteRange.Certificate
+
+/-!
+# The batch 26 to 27
+
+`Sendov.R_le_batch` bounds every `R n α` for `26 ≤ n ≤ 27` by the elementary part and
+moment at `n₀ = 26` together with the prefactor at `n₁ = 27`, so one moment and one
+certificate serve all 2 degrees.  The certificate has degree 24, set by `n₀` rather
+than `n₁`.
+
+Feasibility at `n₀` is proved rather than assumed: for `n ≥ 36` it follows from
+`0 ≤ α ≤ 17`, since `A - c²` increases with `n`.  This matters because feasibility propagates
+*upward* in `n`, so it could not be inherited from the hypothesis at `n`.
+
+The moment numerator `Nmomc` is checked against the packed recurrence
+(`Sendov.pev_wsum_eq_of_packed`), and the numerator `Sendov.batchP 26 27 11 Lc Nmomc` of
+`1 - bound` is certified positive on `[0, 13]` by its Bernstein coefficients `Bc`
+(`Sendov.pev_pos_of_bern`).  Every closed computation is evaluated by the kernel.
+-/
+
+@[expose] public section
+
+namespace Sendov
+
+namespace Batch26To27
+
+/-- The common denominator `L` of the moment weights: `j + 4 ∣ L` for every `j < 2k + 1`. -/
+def Lc : ℤ := 26771144400
+
+/-- The base `β` at which polynomials in `α` are packed: it exceeds twice the absolute value
+of every coefficient of `Nmomc` and of the weighted row sum `wsum Lc 0 (qrow …)`. -/
+def betac : ℤ := 1783830525058754873813927954496295998259201
+
+/-- The base `τ` at which the recurrence rows, evaluated at `betac`, are packed into a single
+integer exponentiation: it exceeds twice the absolute value of every row entry. -/
+def tauc : ℤ :=
+  big [
+    778260972397757154046902387437813567395673071696864805128522088736582576223961868661485569,
+    363725916770869697860848704958482952833508425805004937470898243688742697829762944276107615,
+    116064666882493340972549121546218645558444611887271837237540852012659310936267952963001977,
+    552914826848712197074012846676359735870753167933984550834912923876156995604766769165987975,
+    15707284432511082017882091873937231501792437802894038023374955974821214509770321538498329,
+    600670400896829921018947925643314402315832165322391344751325424403921339329436943427897029,
+    902026569777020494419501512315474114759944056031563655751368519541489944629007560751816588,
+    905502702984285254895257424679429717404024747860957388879014385939099599783170944462854881,
+    309716289928856064417592548457359521565936815601030204593660862605647240515808652303969306,
+    576534885990336144360077173687905062225767049125796030021289925520567730007414463075240289,
+    365061783293733182169624688960662814475857067626280716303739779684800711427637917201246110,
+    934749261204812851534059341575157575252934491445215643696886058144930715361287076189918238,
+    383979303436925169405700243168630263285364965916563320840867533638639188195556282390771540,
+    983278865403601836924469699299185781558512016310985120648696496903050071375094251993160525,
+    339816950931912560529278042932005772751405963580738343515971252578375924231322508638209932,
+    514096201907298946352897748420557318295560941193237193481474904479676507235935263934128419,
+    23426572919250358783308645088]
+
+/-- The moment numerator at `n₀ = 26`, `k = 11`. -/
+def Nmomc : List ℤ := [
+  387230540361328125000000000000,
+  1801421059826953125000000000000,
+  3904034368858593750000000000000,
+  5235740547776268750000000000000,
+  4871336229481255875000000000000,
+  3345092202866735673000000000000,
+  1764975677650708972680000000000,
+  739008187884024802920000000000,
+  254413431645839068505760000000,
+  76379200780785652242028800000,
+  23390602747025993261119180800,
+  15823934861267894578878025728,
+  1286548783877635655383412736,
+  80855955782052201389506560,
+  3865275530870070676930560,
+  140238044038251091722240,
+  3855363400170394877952,
+  79769530465684291584,
+  1222691757773291520,
+  13471923877969920,
+  100958947246080,
+  461050478592,
+  968884224]
+
+/-- Bernstein coefficients of `13 ^ 24 * batchP 26 27 11 Lc Nmomc` on `[0, 13]`. -/
+def Bc : List ℤ := [
+  9892979088435691294921875000000000000000,
+  754925764449992274369140625000000000000000,
+  27027012351606211680785156250000000000000000,
+  603270960139777066863913687500000000000000000,
+  9411278182636378341347343753750000000000000000,
+  109032621210373532622718187251260000000000000000,
+  973069333020025847004426590500165800000000000000,
+  6849510502704890050622252952699665400000000000000,
+  38624662291986176847658095360634452986400000000000,
+  176233287393664902151137836968320681381216000000000,
+  653890210585043892616590829816098150083939328000000,
+  1957499075808453005007953640314342662771634442240000,
+  4644114096048661812531176604893372473618418350080000,
+  8563400484935774711173049717893368711968952268800000,
+  12071432877976296359404786675866681736660604620800000,
+  12869258773989966004582189340415595916763725107200000,
+  10463087924939557738270989709666328600913779804160000,
+  7012406177697489102558832661043149311003215083520000,
+  4772824728130378487410757642493825279747016089600000,
+  3720608220649412946148819306232520372973416345600000,
+  2673991701219691307620389430293422852383272806400000,
+  1398939711917984778216022394350837654047533967360000,
+  465064564798924941632467044065147317138949406720000,
+  84656088653535208110292992000000000000000000000000,
+  5947691788511158204366848000000000000000000000000]
+
+lemma c_lo {α : ℝ} (hα : 0 ≤ α) : c 26 α = (150 + 19 * α - 2 * α ^ 2) / (50 * (3 + α)) := by
+  have h3 : (3 : ℝ) + α ≠ 0 := (three_add_pos hα).ne'
+  rw [c, M]
+  push_cast
+  field_simp
+  ring
+
+/-- `c` is nonnegative at `n₀` on the batch's `α`-range.  This replaces feasibility at `n₀`,
+which for `n₀ < 36` does not follow from `α ≤ 17`. -/
+lemma c_lo_nonneg {α : ℝ} (hα : 0 ≤ α) (hU : α ≤ 13) : 0 ≤ c 26 α := by
+  have h3 : (0 : ℝ) < 3 + α := three_add_pos hα
+  rw [c_lo hα]
+  apply div_nonneg _ (by positivity)
+  nlinarith [mul_nonneg hα (sub_nonneg.2 hU), sq_nonneg α]
+
+theorem pev_Nmomc (α : ℝ) :
+    pev Nmomc α = pev (wsum Lc 0 (qrow (gg0 26) (gg1 26) (gg2 26) 11)) α :=
+  pev_wsum_eq_of_packed (gg0 26) (gg1 26) (gg2 26) 11 34 Lc betac tauc Nmomc
+    (by decide +kernel) (by decide +kernel)
+    (rowZ_bound (gg0 26) (gg1 26) (gg2 26) 11 3 betac tauc (by decide +kernel)
+      (by simp) (by simp) (by simp) (by decide +kernel))
+    (by decide +kernel)
+    (wsum_bound (gg0 26) (gg1 26) (gg2 26) 11 Lc betac (by decide +kernel) (by decide +kernel))
+    (by decide +kernel)
+    (wsum_length_le Lc _ 0
+      (qrow_entry_length_le (gg0 26) (gg1 26) (gg2 26) 3 (by simp) (by simp) (by simp) 11))
+    (by decide +kernel) α
+
+theorem integral_lo (α : ℝ) (hα : 0 ≤ α) :
+    (∫ t in (0 : ℝ)..1, t ^ 3 * Q 26 α t ^ 11)
+      = pev Nmomc α / ((Lc : ℝ) * (2 * M 26 * (3 + α)) ^ 11) :=
+  integral_moment_packed 26 11 (by norm_num) α hα Lc (by decide +kernel) Nmomc
+    (by decide +kernel) (pev_Nmomc α)
+
+/-- The certificate: `batchP 26 27 11 Lc Nmomc` is positive on `[0, 13]`. -/
+lemma P_pos {α : ℝ} (hα : 0 ≤ α) (hU : (1 : ℝ) * α ≤ 13) :
+    0 < pev (batchP 26 27 11 Lc Nmomc) α :=
+  pev_pos_of_bern _ Bc 13 1 24 (by norm_num) (by norm_num) (by decide +kernel)
+    (by decide +kernel) (by decide +kernel) hα (by exact_mod_cast hU)
+
+/-- **The batch `26 ≤ n ≤ 27`.** -/
+theorem finite_range {n : ℕ} (h0 : 26 ≤ n) (h1 : n ≤ 27) {α : ℝ}
+    (hα : 0 ≤ α) (_hα' : α ≤ 17) (hfeas : c n α ^ 2 ≤ A n α) : R n α < 1 := by
+  have h2α : 2 * α ≤ (27 : ℝ) - 1 := by
+    exact_mod_cast two_alpha_le_of_le (by omega) h1 hfeas
+  refine lt_of_le_of_lt (R_le_batch (n₀ := 26) (n := n) (n₁ := 27) (by norm_num) h0 h1 hα
+    (c_lo_nonneg hα (by linarith)) hfeas) ?_
+  exact batch_lt_one (by norm_num) (by norm_num) (by norm_num) Lc (by decide +kernel) Nmomc hα
+    (integral_lo α hα) (P_pos hα (by linarith))
+
+end Batch26To27
+
+end Sendov
