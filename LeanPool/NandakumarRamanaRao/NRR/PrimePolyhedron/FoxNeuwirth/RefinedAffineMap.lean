@@ -64,14 +64,14 @@ noncomputable def vertex
   chart hp N q (SphereOddDegree.FiniteSimplex.vertex (S := Real) i)
 
 /-- Vertex samples of a continuous coordinate map on one refined simplex. -/
-noncomputable def vertexValue
+@[expose] noncomputable def vertexValue
     (hp : Nat.Prime p) (N : Nat)
     (F : ContinuousCoordinateMap p) (q : TopCell hp N)
     (i : Fin (p - 1 + 1)) (j : Fin p) : Real :=
   F (vertex hp N q i) j
 
 /-- Affine interpolation of the sampled full coordinate vector. -/
-noncomputable def value
+@[expose] noncomputable def value
     (hp : Nat.Prime p) (N : Nat)
     (F : ContinuousCoordinateMap p) (q : TopCell hp N)
     (w : StandardSimplex (p - 1)) : Fin p → Real :=
@@ -94,7 +94,7 @@ noncomputable def augmentedMatrix
     (fun k => deviationVertexValue hp N F q i k) r
 
 /-- Refined-simplex determinant. -/
-noncomputable def determinant
+@[expose] noncomputable def determinant
     (hp : Nat.Prime p) (N : Nat)
     (F : ContinuousCoordinateMap p) (q : TopCell hp N) : Real :=
   Matrix.det (augmentedMatrix hp N F q)
@@ -117,7 +117,7 @@ noncomputable instance hasPositiveInteriorZeroDecidable
   Classical.propDecidable _
 
 /-- Signed local positive-ray index on one refined simplex. -/
-noncomputable def localIndex
+@[expose] noncomputable def localIndex
     (hp : Nat.Prime p) (N : Nat)
     (F : ContinuousCoordinateMap p) (q : TopCell hp N) : ZMod p :=
   if HasPositiveInteriorZero hp N F q then
@@ -130,7 +130,7 @@ noncomputable def coefficient
   (PrimeOrbitCycle.orbitCycle hp).coefficient q.1 * subdivisionSign N q.2
 
 /-- Refined positive orbit count. -/
-noncomputable def zeroCount
+@[expose] noncomputable def zeroCount
     (hp : Nat.Prime p) (N : Nat) (F : ContinuousCoordinateMap p) : ZMod p :=
   ∑ q : TopCell hp N, coefficient hp N q * localIndex hp N F q
 

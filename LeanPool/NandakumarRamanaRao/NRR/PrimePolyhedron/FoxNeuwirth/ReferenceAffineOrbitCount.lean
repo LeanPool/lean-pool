@@ -1709,7 +1709,7 @@ theorem card_selectedOrbit
   exact Nat.card_congr e
 
 /-- The local zero index of the reference map on each selected orbit representative. -/
-noncomputable def referenceIndex
+@[expose] noncomputable def referenceIndex
     (hp : Nat.Prime p) : PrimeOrbitCycle.TopOrbit hp → ZMod p :=
   fun q => (referenceMap hp).localZeroIndex (topRepr hp q)
 

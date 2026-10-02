@@ -648,21 +648,21 @@ noncomputable def baseFacetVertex
   vertex_succ_side d k q i
 
 /-- Weighted pairing with the triangulated boundary simplex opposite the cone apex. -/
-noncomputable def baseFacetPairing
+@[expose] noncomputable def baseFacetPairing
     (R : Type) [CommRing R]
     (d : Nat)
     (W : (Fin (d + 1) → Delta d × Set.Icc (0 : Real) 1) → R) : R :=
   ∑ q : Cell d, coefficient R d q * W (baseFacetVertex d q)
 
 /-- The lower coarse boundary contribution. -/
-noncomputable def lowerPairing
+@[expose] noncomputable def lowerPairing
     (R : Type) [CommRing R]
     (d : Nat)
     (W : (Fin (d + 1) → Delta d × Set.Icc (0 : Real) 1) → R) : R :=
   -W (lowerBoundaryVertex d)
 
 /-- The upper barycentric-subdivision boundary contribution. -/
-noncomputable def upperPairing
+@[expose] noncomputable def upperPairing
     (R : Type) [CommRing R]
     (d : Nat)
     (W : (Fin (d + 1) → Delta d × Set.Icc (0 : Real) 1) → R) : R :=
@@ -670,7 +670,7 @@ noncomputable def upperPairing
     permSignCoeff R pi * W (upperBoundaryVertex d pi)
 
 /-- Recursive side-boundary contribution in positive dimension. -/
-noncomputable def sidePairing
+@[expose] noncomputable def sidePairing
     (R : Type) [CommRing R]
     (d : Nat)
     (W : (Fin (d + 2) → Delta (d + 1) × Set.Icc (0 : Real) 1) → R) : R :=

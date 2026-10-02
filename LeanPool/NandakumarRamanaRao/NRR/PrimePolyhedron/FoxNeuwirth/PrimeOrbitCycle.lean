@@ -215,7 +215,7 @@ noncomputable def topRepresentative
     (G := PrimeSymmetry p) (coveringCycle hp) q
 
 /-- Canonical representative of a facet orbit. -/
-noncomputable def facetRepresentative
+@[expose] noncomputable def facetRepresentative
     (hp : Nat.Prime p) (q : FacetOrbit hp) :
     (coveringCycle hp).Facet :=
   FiniteIncidenceCycle.facetRepresentative

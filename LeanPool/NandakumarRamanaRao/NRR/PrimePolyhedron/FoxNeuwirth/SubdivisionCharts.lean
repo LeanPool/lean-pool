@@ -43,7 +43,7 @@ def toDelta (w : StandardSimplex d) : Delta d :=
   ⟨w.1, w.2⟩
 
 /-- Conversion back from the topological standard simplex. -/
-def ofDelta (w : Delta d) : StandardSimplex d :=
+@[expose] def ofDelta (w : Delta d) : StandardSimplex d :=
   ⟨w.1, w.2⟩
 
 @[simp] theorem ofDelta_toDelta (w : StandardSimplex d) : ofDelta (toDelta w) = w := rfl
@@ -61,7 +61,7 @@ end StandardSimplex
 namespace Simplex
 
 /-- Coordinate weight of a point in the affine chart of a strict chain. -/
-noncomputable def chartWeight
+@[expose] noncomputable def chartWeight
     (s : Simplex p d) (w : StandardSimplex d) (c : BarredPermutation p) : Real :=
   ∑ i : Fin (d + 1), if s i = c then w i else 0
 

@@ -55,7 +55,7 @@ namespace StableRegularApproximation
 
 /-- The stable count is the existing refined count; stability is supplied by the additional
 transversality field, not by changing the numerical definition. -/
-noncomputable def zeroCount
+@[expose] noncomputable def zeroCount
     {hp : Nat.Prime p} {F : ContinuousCoordinateMap p}
     (A : StableRegularApproximation hp F) : ZMod p :=
   A.toRegularApproximation.zeroCount

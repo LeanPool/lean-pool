@@ -57,7 +57,7 @@ noncomputable def localWeight
   exact w
 
 /-- Local recursive-cylinder point represented by a global source barycentric coordinate. -/
-noncomputable def localPoint
+@[expose] noncomputable def localPoint
     (hp : Nat.Prime p) (q : RelativeSubdivisionCylinderCombinatorics.Cell (p - 1)) (w : Delta p) :
     Delta (p - 1) × Set.Icc (0 : Real) 1 :=
   RelativeSubdivisionCylinderCombinatorics.chart (p - 1) q (localWeight hp w)

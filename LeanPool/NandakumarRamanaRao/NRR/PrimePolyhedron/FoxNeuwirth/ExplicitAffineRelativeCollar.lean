@@ -167,7 +167,7 @@ def alternatingSign (k : Fin (p + 1)) : ZMod p :=
   (-1 : ZMod p) ^ k.1
 
 /-- Total signed incidence coefficient of one ordered prime-orbit facet. -/
-noncomputable def facetIncidence (s : C.Facet) : ZMod p :=
+@[expose] noncomputable def facetIncidence (s : C.Facet) : ZMod p :=
   ∑ o : C.FacetOccurrence,
     if C.facetClass o = s then C.coefficient o.1 * alternatingSign o.2 else 0
 

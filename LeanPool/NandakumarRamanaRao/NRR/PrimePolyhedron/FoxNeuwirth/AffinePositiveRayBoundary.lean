@@ -46,7 +46,7 @@ structure VertexMap (p : Nat) where
 namespace VertexMap
 
 /-- Full affine interpolation. -/
-noncomputable def affineValue
+@[expose] noncomputable def affineValue
     (V : VertexMap p) (w : StandardSimplex p) : Fin p → Real :=
   fun r => ∑ i : Fin (p + 1), w i * V.value i r
 
@@ -71,7 +71,7 @@ def augmentedRowEquiv (hp : Nat.Prime p) : Fin p ≃ Fin (p - 1 + 1) :=
   (Fin.castOrderIso (Nat.sub_add_cancel hp.pos).symm).toEquiv
 
 /-- Augmented deviation matrix of an oriented facet. -/
-noncomputable def facetMatrix
+@[expose] noncomputable def facetMatrix
     (hp : Nat.Prime p) (V : VertexMap p) (k : Fin (p + 1)) :
     Matrix (Fin p) (Fin p) Real :=
   fun r i => Fin.lastCases (1 : Real)
@@ -89,7 +89,7 @@ def facetCoordinateIndex (i : Fin p) : Fin ((p - 1) + 1) :=
   Fin.castLE (by omega) i
 
 /-- Full-coordinate affine interpolation on a facet. -/
-noncomputable def facetAffineValue
+@[expose] noncomputable def facetAffineValue
     (V : VertexMap p) (k : Fin (p + 1))
     (w : StandardSimplex (p - 1)) : Fin p → Real :=
   fun r => ∑ i : Fin p, w (facetCoordinateIndex i) * facetValue V k i r

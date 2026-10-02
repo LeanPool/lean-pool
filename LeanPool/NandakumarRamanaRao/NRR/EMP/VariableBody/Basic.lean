@@ -39,7 +39,7 @@ noncomputable def solidBody
   C.toGeometryConvexBody hA
 
 /-- The **restricted power cell** of site `i` inside the variable body `C`, as a set. -/
-def cellSet
+@[expose] def cellSet
     {K : Geometry.ConvexBody Plane} {A : ℝ} {n : ℕ}
     (hA : 0 < A) (C : BodySpace K A)
     (s : Config n) (w : Fin n → ℝ) (i : Fin n) :

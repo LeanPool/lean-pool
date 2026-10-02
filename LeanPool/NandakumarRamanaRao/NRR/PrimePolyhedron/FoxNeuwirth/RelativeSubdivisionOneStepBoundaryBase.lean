@@ -76,7 +76,7 @@ noncomputable def endpointBasePairing
     else 0
 
 /-- Recursive spatial-side part of the cone-base pairing. -/
-noncomputable def sideBasePairing
+@[expose] noncomputable def sideBasePairing
     (hp : Nat.Prime p) (N : Nat)
     (W : (RelativeSubdivisionOneStepCells.cellSystem hp N).Facet → ZMod p) : ZMod p :=
   ∑ q : RelativeSubdivisionOneStepCells.Cell hp N,

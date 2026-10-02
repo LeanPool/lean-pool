@@ -65,7 +65,7 @@ def faceSign (k : Fin (d + 2)) : R :=
   (-1 : R) ^ k.1
 
 /-- Coefficient contributed by one simplex and one deleted vertex. -/
-def faceContribution
+@[expose] def faceContribution
     (chain : SimplicialChain R p (d + 1))
     (target : Simplex p d)
     (source : Simplex p (d + 1))

@@ -75,7 +75,7 @@ noncomputable def orbitCoefficient (q : TopOrbit (G := G) C) : R :=
 
 /-- Incidence from a facet orbit to a top orbit, obtained by summing the covering incidences over
 that top orbit. -/
-noncomputable def orbitIncidence
+@[expose] noncomputable def orbitIncidence
     (qf : FacetOrbit (G := G) C) (qt : TopOrbit (G := G) C) : R := by
   classical
   exact ∑ c : qt.orbit, C.incidence (facetRepresentative (G := G) C qf) c

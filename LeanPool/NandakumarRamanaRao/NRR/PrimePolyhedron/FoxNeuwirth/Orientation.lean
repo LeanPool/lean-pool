@@ -66,7 +66,7 @@ theorem orientationSign_eq_one_or_neg_one (c : BarredPermutation p) :
   · simp [h]
 
 /-- Sign comparing the chosen orientation before and after relabelling. -/
-def orientationTransport
+@[expose] def orientationTransport
     (sigma : Equiv.Perm (Fin p)) (c : BarredPermutation p) : Int :=
   (c.relabel sigma).orientationSign * c.orientationSign
 

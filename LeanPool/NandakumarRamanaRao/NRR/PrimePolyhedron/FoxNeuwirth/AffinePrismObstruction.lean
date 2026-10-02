@@ -73,7 +73,7 @@ noncomputable def value
 
 
 /-- Global piecewise-affine coordinate map on the barycentric realization. -/
-noncomputable def globalValue
+@[expose] noncomputable def globalValue
     (F : CoordinateAffineVertexMap p)
     (x : Realization p) : Fin p → Real :=
   fun i => ∑ c : BarredPermutation p, x c * F.vertexValue c i
@@ -103,7 +103,7 @@ noncomputable def deviation
       F.vertexValue c (ReferenceAffineOrbitCount.lastLabel hp)
 
 /-- Mean of the affine coordinate vector. -/
-noncomputable def mean
+@[expose] noncomputable def mean
     (p : Nat)
     (F : CoordinateAffineVertexMap p)
     (s : Simplex p (p - 1))
@@ -141,7 +141,7 @@ noncomputable instance hasPositiveInteriorZeroDecidable
   Classical.propDecidable _
 
 /-- Signed local contribution of a positive deviation zero. -/
-noncomputable def positiveLocalZeroIndex
+@[expose] noncomputable def positiveLocalZeroIndex
     (hp : Nat.Prime p)
     (F : CoordinateAffineVertexMap p)
     (s : Simplex p (p - 1)) : ZMod p :=
@@ -247,7 +247,7 @@ namespace AffinePrismObstruction
 open CoordinateAffineVertexMap
 
 /-- Positive local-index cochain on the S4 top-orbit representatives. -/
-noncomputable def positiveIndex
+@[expose] noncomputable def positiveIndex
     (hp : Nat.Prime p)
     (F : CoordinateAffineVertexMap p) :
     PrimeOrbitCycle.TopOrbit hp → ZMod p :=

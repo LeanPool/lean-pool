@@ -854,13 +854,13 @@ theorem sideBasePairing_eq_zero
 /-! ## Pointwise collar boundary -/
 
 /-- Lower boundary coefficient of one quotient facet. -/
-noncomputable def lowerBoundaryCoefficient
+@[expose] noncomputable def lowerBoundaryCoefficient
     (hp : Nat.Prime p) (N : Nat)
     (s : (RelativeSubdivisionOneStepCells.cellSystem hp N).Facet) : ZMod p :=
   RelativeSubdivisionOneStepBoundaryBase.lowerEndpointPairing hp N (quotientIndicator s)
 
 /-- Upper boundary coefficient of one quotient facet. -/
-noncomputable def upperBoundaryCoefficient
+@[expose] noncomputable def upperBoundaryCoefficient
     (hp : Nat.Prime p) (N : Nat)
     (s : (RelativeSubdivisionOneStepCells.cellSystem hp N).Facet) : ZMod p :=
   RelativeSubdivisionOneStepBoundaryBase.upperEndpointPairing hp N (quotientIndicator s)

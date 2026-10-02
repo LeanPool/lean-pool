@@ -73,11 +73,11 @@ def permutationOrientationSign (c : BarredPermutation p) : Int :=
   ((Equiv.Perm.sign c.rank : ℤˣ) : ℤ)
 
 /-- Integral coefficient of a maximal flag in the subdivision chain. -/
-def integralCoefficient (s : Simplex p (p - 1)) : Int :=
+@[expose] def integralCoefficient (s : Simplex p (p - 1)) : Int :=
   permutationOrientationSign (s 0) * barRemovalDeterminant s
 
 /-- The concrete top-flag subdivision chain over `ZMod p`. -/
-def chain : SimplicialChain (ZMod p) p (p - 1) :=
+@[expose] def chain : SimplicialChain (ZMod p) p (p - 1) :=
   fun s => (integralCoefficient s : ZMod p)
 
 @[simp] theorem chain_apply (s : Simplex p (p - 1)) :
@@ -93,7 +93,7 @@ noncomputable def boundary (hp : Nat.Prime p) :
   exact SimplicialChain.boundary (d := p - 2) (hdim ▸ chain)
 
 /-- Contribution obtained by deleting one fixed position from a maximal flag. -/
-noncomputable def deletionCoefficient
+@[expose] noncomputable def deletionCoefficient
     (hp : Nat.Prime p)
     (target : Simplex p (p - 2))
     (k : Fin ((p - 2) + 2)) : ZMod p := by

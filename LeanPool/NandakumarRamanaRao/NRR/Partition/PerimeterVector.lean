@@ -41,7 +41,7 @@ variable {K : Body} {n : ℕ}
 
 /-- The **perimeter vector** of a convex partition: the `i`-th entry is the perimeter of the
 `i`-th piece. -/
-noncomputable def perimeterVec (P : ConvexPartition K n) : Fin n → ℝ :=
+@[expose] noncomputable def perimeterVec (P : ConvexPartition K n) : Fin n → ℝ :=
   fun i => perimeter (P.piece i)
 
 /-- The **total perimeter** of a convex partition: the sum of the piece perimeters. -/

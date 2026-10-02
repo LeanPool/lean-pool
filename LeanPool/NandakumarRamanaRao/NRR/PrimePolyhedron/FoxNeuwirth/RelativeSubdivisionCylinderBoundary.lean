@@ -59,7 +59,7 @@ noncomputable def facetTuple
   deleteTuple (RelativeSubdivisionCylinderCombinatorics.vertex d q) j
 
 /-- Alternating weighted boundary of the complete recursive cylinder chain. -/
-noncomputable def fullBoundaryPairing
+@[expose] noncomputable def fullBoundaryPairing
     (R : Type) [CommRing R] (d : Nat)
     (W : (Fin (d + 1) → Delta d × Set.Icc (0 : Real) 1) → R) : R :=
   ∑ q : RelativeSubdivisionCylinderCombinatorics.Cell d,
@@ -68,7 +68,7 @@ noncomputable def fullBoundaryPairing
         SimplicialChain.faceSign j * W (facetTuple d q j)
 
 /-- Weighted cone-base chain. -/
-noncomputable def basePairing
+@[expose] noncomputable def basePairing
     (R : Type) [CommRing R] (d : Nat)
     (W : (Fin (d + 1) → Delta d × Set.Icc (0 : Real) 1) → R) : R :=
   ∑ q : RelativeSubdivisionCylinderCombinatorics.Cell d,
