@@ -41,7 +41,7 @@ def refl (G : CFGraph.{u}) : CFGraphIso G G where
   map_num_edges := by simp
 
 /-- The inverse of a graph isomorphism. -/
-def symm (φ : CFGraphIso G H) : CFGraphIso H G where
+@[expose] def symm (φ : CFGraphIso G H) : CFGraphIso H G where
   vertexEquiv := φ.vertexEquiv.symm
   map_num_edges := by
     intro x y
@@ -49,7 +49,7 @@ def symm (φ : CFGraphIso G H) : CFGraphIso H G where
       (φ.map_num_edges (φ.vertexEquiv.symm x) (φ.vertexEquiv.symm y)).symm
 
 /-- The composite of graph isomorphisms. -/
-def trans (φ : CFGraphIso G H) (ψ : CFGraphIso H K) : CFGraphIso G K where
+@[expose] def trans (φ : CFGraphIso G H) (ψ : CFGraphIso H K) : CFGraphIso G K where
   vertexEquiv := φ.vertexEquiv.trans ψ.vertexEquiv
   map_num_edges := by
     intro x y
@@ -58,7 +58,7 @@ def trans (φ : CFGraphIso G H) (ψ : CFGraphIso H K) : CFGraphIso G K where
 
 /-- Relabel an integer-valued vertex function along a graph isomorphism.
 This is used for both divisors and firing scripts. -/
-def mapDiv (φ : CFGraphIso G H) : CFDiv G ≃+ CFDiv H :=
+@[expose] def mapDiv (φ : CFGraphIso G H) : CFDiv G ≃+ CFDiv H :=
   AddEquiv.arrowCongr φ.vertexEquiv (AddEquiv.refl ℤ)
 
 /-- Relabeling a firing script is the same additive equivalence as relabeling

@@ -186,7 +186,7 @@ theorem mem_compOf_self {H : SimpleGraph V} {X R : Finset V} {v : V} (hv : v ∈
   (mem_compOf_iff H X R v v).mpr ⟨hv, SimpleGraph.Reachable.refl v⟩
 
 /-- A set of vertices outside `X` closed under `awayGraph`-adjacency. -/
-def IsClosedAway (H : SimpleGraph V) (X R : Finset V) : Prop :=
+@[expose] def IsClosedAway (H : SimpleGraph V) (X R : Finset V) : Prop :=
   (∀ v ∈ R, v ∉ X) ∧ ∀ a ∈ R, ∀ b, (awayGraph H X).Adj a b → b ∈ R
 
 /-- Inside a closed set, `compOf` really is a component.

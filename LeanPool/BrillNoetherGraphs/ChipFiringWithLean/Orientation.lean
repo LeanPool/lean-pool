@@ -366,7 +366,7 @@ private lemma is_source_of_unique_source {G : CFGraph} (O : CFOrientation G) {q 
 
 /-- The proposition `acyclicWithUniqueSource G O q` means that $\mathcal{O}$ is acyclic
 and every source of $\mathcal{O}$ is equal to $q$. -/
-def acyclicWithUniqueSource (G : CFGraph) (O : CFOrientation G) (q : G.V) : Prop :=
+@[expose] def acyclicWithUniqueSource (G : CFGraph) (O : CFOrientation G) (q : G.V) : Prop :=
   isAcyclic G O ∧ ∀ w, isSource G O w → w = q
 
 /-- In an acyclic orientation with unique source $q$, the vertex $q$ is a source. -/

@@ -494,7 +494,7 @@ def pathValue (potential : Fin n → ℤ) (edge : Fin p)
 
 /-- Extend an integral core potential over every subdivided slot by the
 canonical convex interpolation from `SubdivisionArithmetic`. -/
-def interpolatedScript (potential : Fin n → ℤ) : firingScript spec.graph
+@[expose] def interpolatedScript (potential : Fin n → ℤ) : firingScript spec.graph
   | Sum.inl vertex => potential vertex
   | Sum.inr interior =>
       spec.pathValue potential interior.1 (interior.2.val + 1)

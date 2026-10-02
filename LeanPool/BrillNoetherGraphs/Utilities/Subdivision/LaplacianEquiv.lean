@@ -305,20 +305,20 @@ namespace LaplacianEquiv.Examples
 abbrev PairVertex := Fin 2
 
 /-- Two vertices joined by two parallel edges. -/
-def parallelPair : CFGraph where
+@[expose] def parallelPair : CFGraph where
   V := PairVertex
   edges := Multiset.ofList [(0, 1), (0, 1)]
   loopless := by decide
 
 /-- The same parallel pair with both endpoint labels exchanged. -/
-def relabeledParallelPair : CFGraph where
+@[expose] def relabeledParallelPair : CFGraph where
   V := PairVertex
   edges := Multiset.ofList [(1, 0), (1, 0)]
   loopless := by decide
 
 /-- Swapping the two labels preserves every Laplacian entry, including the
 off-diagonal multiplicity two. -/
-def parallelPairEquiv : LaplacianEquiv parallelPair relabeledParallelPair where
+@[expose] def parallelPairEquiv : LaplacianEquiv parallelPair relabeledParallelPair where
   toEquiv := Equiv.swap (0 : PairVertex) (1 : PairVertex)
   num_edges_eq := by decide
 
