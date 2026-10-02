@@ -10471,7 +10471,9 @@ projects:
       authors:
         - François Dross
       doi: 10.1137/15M1014310
+      url: https://github.com/jtraverso/erdos-81-chordal-clique-partitions/tree/fda11feb4fa56c7f2005ac368c2a840e201dc6bd/preprints/PAPER_III/05_formalization/lean_v1.4_freeze/Ax2
       github_repo: jtraverso/erdos-81-chordal-clique-partitions
+      commit: fda11feb4fa56c7f2005ac368c2a840e201dc6bd
     license: Apache-2.0
     status: verified
     provenance: mix
