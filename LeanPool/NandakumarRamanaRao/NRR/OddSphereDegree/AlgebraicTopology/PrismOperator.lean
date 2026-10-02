@@ -51,7 +51,7 @@ noncomputable def edge : Δ[1] ⟶ TopCat.toSSet.obj unitI :=
     ((unitI.toSSetObjEquiv (Opposite.op (SimplexCategory.mk 1))).symm edgeCM)
 
 /-- The const-valued simplicial map onto the `j`-th vertex of `Δ[1]`. -/
-noncomputable def vtx (Z : SSet.{0}) (j : Fin 2) : Z ⟶ Δ[1] :=
+@[expose] noncomputable def vtx (Z : SSet.{0}) (j : Fin 2) : Z ⟶ Δ[1] :=
   SSet.const (SSet.stdSimplex.obj₀Equiv.symm j)
 
 /-- A `ContinuousMap.Homotopy` between `f.hom` and `g.hom`, repackaged as a

@@ -85,14 +85,14 @@ namespace SphereOddDegree.AlexanderWhitney
 /-- The **front `p`-face inclusion** `⦋p⦌ ⟶ ⦋p+q⦌` in `SimplexCategory`,
 sending vertex `i` to `i` — the inclusion of the initial segment `{0,…,p}`
 of `{0,…,p+q}`. -/
-def frontFace (p q : ℕ) : (⦋p⦌ : SimplexCategory) ⟶ ⦋p + q⦌ :=
+@[expose] def frontFace (p q : ℕ) : (⦋p⦌ : SimplexCategory) ⟶ ⦋p + q⦌ :=
   SimplexCategory.mkHom ⟨fun i => Fin.castLE (by lia) i, fun a b h => by
     simpa [Fin.castLE] using h⟩
 
 /-- The **back `q`-face inclusion** `⦋q⦌ ⟶ ⦋p+q⦌` in `SimplexCategory`,
 sending vertex `i` to `i + p` — the inclusion of the final segment `{p,…,p+q}`
 of `{0,…,p+q}`. -/
-def backFace (p q : ℕ) : (⦋q⦌ : SimplexCategory) ⟶ ⦋p + q⦌ :=
+@[expose] def backFace (p q : ℕ) : (⦋q⦌ : SimplexCategory) ⟶ ⦋p + q⦌ :=
   SimplexCategory.mkHom ⟨fun i => ⟨i.val + p, by have := i.isLt; lia⟩, fun a b h => by
     simp only [Fin.mk_le_mk]; exact Nat.add_le_add_right h p⟩
 
