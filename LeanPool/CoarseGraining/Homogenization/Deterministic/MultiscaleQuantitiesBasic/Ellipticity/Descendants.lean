@@ -156,7 +156,8 @@ theorem multiscale_ellipticity_LambdaSq_one_rpow_half_le_of_mem_descendantsAtSca
           (Q := Q) (R := R) (k := k) (l := R.scale - (n : ℤ)) a hR hl)
     have hrpow :
         Real.rpow (maxDescendantBBlockNormAtScale R (R.scale - (n : ℤ)) a) (1 / 2 : ℝ) ≤
-          Real.rpow (maxDescendantBBlockNormAtScale Q (Q.scale - ((n + h : ℕ) : ℤ)) a) (1 / 2 : ℝ) := by
+          Real.rpow (maxDescendantBBlockNormAtScale Q
+            (Q.scale - ((n + h : ℕ) : ℤ)) a) (1 / 2 : ℝ) := by
       refine Real.rpow_le_rpow
         (maxDescendantBBlockNormAtScale_nonneg R
           (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a)
@@ -687,7 +688,8 @@ theorem thetaRatio_rpow_half_le_of_mem_descendantsAtScale {d : ℕ}
     Real.rpow (LambdaSq R s (.finite 1) a) (1 / 2 : ℝ) *
         Real.rpow (lambdaSq R t (.finite 1) a) (-1 / 2 : ℝ) ≤
       (Real.rpow (3 : ℝ) (s * (h : ℝ)) * Real.rpow (LambdaSq Q s (.finite 1) a) (1 / 2 : ℝ)) *
-        (Real.rpow (3 : ℝ) (t * (h : ℝ)) * Real.rpow (lambdaSq Q t (.finite 1) a) (-1 / 2 : ℝ)) := by
+        (Real.rpow (3 : ℝ) (t * (h : ℝ)) *
+          Real.rpow (lambdaSq Q t (.finite 1) a) (-1 / 2 : ℝ)) := by
       exact mul_le_mul hLambda hlambda hlambdaRNonneg
         (mul_nonneg (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _) hLambdaQNonneg)
     _ =
@@ -706,7 +708,8 @@ theorem thetaRatio_rpow_half_le_of_mem_descendantsAtScale {d : ℕ}
             ring
       calc
         (Real.rpow (3 : ℝ) (s * (h : ℝ)) * Real.rpow (LambdaSq Q s (.finite 1) a) (1 / 2 : ℝ)) *
-            (Real.rpow (3 : ℝ) (t * (h : ℝ)) * Real.rpow (lambdaSq Q t (.finite 1) a) (-1 / 2 : ℝ)) =
+            (Real.rpow (3 : ℝ) (t * (h : ℝ)) *
+              Real.rpow (lambdaSq Q t (.finite 1) a) (-1 / 2 : ℝ)) =
           (Real.rpow (3 : ℝ) (s * (h : ℝ)) * Real.rpow (3 : ℝ) (t * (h : ℝ))) *
             (Real.rpow (LambdaSq Q s (.finite 1) a) (1 / 2 : ℝ) *
               Real.rpow (lambdaSq Q t (.finite 1) a) (-1 / 2 : ℝ)) := by
@@ -841,7 +844,8 @@ theorem thetaRatio_descendantsAtScale_le {d : ℕ}
         ThetaRatio Q s t a := by
   unfold finsetSsup
   have hne :
-      ((fun R => ThetaRatio R s t a) '' (↑(descendantsAtScale Q k) : Set (TriadicCube d))).Nonempty := by
+      ((fun R => ThetaRatio R s t a) ''
+        (↑(descendantsAtScale Q k) : Set (TriadicCube d))).Nonempty := by
     rcases descendantsAtScale_nonempty Q hk with ⟨R, hR⟩
     exact ⟨ThetaRatio R s t a, ⟨R, hR, rfl⟩⟩
   refine csSup_le hne ?_

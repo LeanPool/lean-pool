@@ -165,13 +165,15 @@ theorem maxDescendantBBlockNormAtScale_le_of_mem_descendantsAtScale {d : ℕ}
     maxDescendantBBlockNormAtScale R l a ≤ maxDescendantBBlockNormAtScale Q l a := by
   unfold maxDescendantBBlockNormAtScale finsetSsup
   have hne :
-      ((fun S => coarseBBlockNorm S a) '' (↑(descendantsAtScale R l) : Set (TriadicCube d))).Nonempty := by
+      ((fun S => coarseBBlockNorm S a) ''
+        (↑(descendantsAtScale R l) : Set (TriadicCube d))).Nonempty := by
     rcases descendantsAtScale_nonempty R hl with ⟨S, hS⟩
     exact ⟨coarseBBlockNorm S a, ⟨S, hS, rfl⟩⟩
   refine csSup_le hne ?_
   rintro x ⟨S, hS, rfl⟩
   have hBdd :
-      BddAbove ((fun T => coarseBBlockNorm T a) '' (↑(descendantsAtScale Q l) : Set (TriadicCube d))) := by
+      BddAbove ((fun T => coarseBBlockNorm T a) ''
+        (↑(descendantsAtScale Q l) : Set (TriadicCube d))) := by
     exact ((Set.toFinite _).image (fun T => coarseBBlockNorm T a)).bddAbove
   exact le_csSup hBdd ⟨S, mem_descendantsAtScale_trans hR hS, rfl⟩
 
@@ -181,14 +183,16 @@ theorem maxDescendantSigmaStarInvNormAtScale_le_of_mem_descendantsAtScale {d : �
     maxDescendantSigmaStarInvNormAtScale R l a ≤ maxDescendantSigmaStarInvNormAtScale Q l a := by
   unfold maxDescendantSigmaStarInvNormAtScale finsetSsup
   have hne :
-      ((fun S => coarseSigmaStarInvBlockNorm S a) '' (↑(descendantsAtScale R l) : Set (TriadicCube d))).Nonempty := by
+      ((fun S => coarseSigmaStarInvBlockNorm S a) ''
+        (↑(descendantsAtScale R l) : Set (TriadicCube d))).Nonempty := by
     rcases descendantsAtScale_nonempty R hl with ⟨S, hS⟩
     exact ⟨coarseSigmaStarInvBlockNorm S a, ⟨S, hS, rfl⟩⟩
   refine csSup_le hne ?_
   rintro x ⟨S, hS, rfl⟩
   have hBdd :
       BddAbove
-        ((fun T => coarseSigmaStarInvBlockNorm T a) '' (↑(descendantsAtScale Q l) : Set (TriadicCube d))) := by
+        ((fun T => coarseSigmaStarInvBlockNorm T a) ''
+          (↑(descendantsAtScale Q l) : Set (TriadicCube d))) := by
     exact ((Set.toFinite _).image (fun T => coarseSigmaStarInvBlockNorm T a)).bddAbove
   exact le_csSup hBdd ⟨S, mem_descendantsAtScale_trans hR hS, rfl⟩
 

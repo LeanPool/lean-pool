@@ -55,7 +55,8 @@ theorem geometricWeight_mul_sqrt_coarseSigmaStarInvBlockNorm_le {d : ℕ}
     {Q R : TriadicCube d} {k : ℤ} (a : CoeffField d) (s q : ℝ) (n : ℕ)
     (hsq : 0 ≤ s * q) (hR : R ∈ descendantsAtScale Q k) :
     geometricWeight s q n * Real.rpow (coarseSigmaStarInvBlockNorm R a) (1 / 2 : ℝ) ≤
-      geometricWeight s q n * Real.rpow (maxDescendantSigmaStarInvNormAtScale Q k a) (1 / 2 : ℝ) := by
+      geometricWeight s q n *
+        Real.rpow (maxDescendantSigmaStarInvNormAtScale Q k a) (1 / 2 : ℝ) := by
   exact mul_le_mul_of_nonneg_left
     (sqrt_coarseSigmaStarInvBlockNorm_le_sqrt_maxDescendantSigmaStarInvNormAtScale a hR)
     (geometricWeight_nonneg n hsq)
@@ -98,7 +99,8 @@ theorem weighted_sqrt_coarseBBlockNorm_le_LambdaSqFinite_one_series {d : ℕ}
     intro n
     refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs)) ?_
     refine Real.rpow_nonneg ?_ _
-    exact maxDescendantBBlockNormAtScale_nonneg Q (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+    exact maxDescendantBBlockNormAtScale_nonneg Q
+      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
   have hsingleton :
       ∑ n ∈ ({N} : Finset ℕ),
         geometricWeight s 1 n *
@@ -183,7 +185,8 @@ theorem weighted_sqrt_coarseBBlockNorm_le_LambdaSq_one_rpow_half {d : ℕ}
     intro n
     refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs)) ?_
     refine Real.rpow_nonneg ?_ _
-    exact maxDescendantBBlockNormAtScale_nonneg Q (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+    exact maxDescendantBBlockNormAtScale_nonneg Q
+      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
   have hseries_nonneg :
       0 ≤
         ∑' n : ℕ,
@@ -295,7 +298,8 @@ theorem geometricDiscount_mul_sqrt_coarseBBlockNorm_le_LambdaSq_one_rpow_half {d
     intro n
     refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs)) ?_
     refine Real.rpow_nonneg ?_ _
-    exact maxDescendantBBlockNormAtScale_nonneg Q (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+    exact maxDescendantBBlockNormAtScale_nonneg Q
+      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
   have hseries_nonneg :
       0 ≤
         ∑' n : ℕ,
