@@ -361,7 +361,7 @@ private theorem marshalLoopOps_envelopeChain (n : ℕ) (x : List Bool)
       sourceAddressed := by
     apply henvelope.execBasic
     · exact lt_trans (scratch_range_internal n).2.2.2.2.1.2 hindexControl
-    · simp [Structured.Internal.Basic.writeValue, hstate, hzero]
+    · simp only [Structured.Internal.Basic.writeValue, hstate, hzero, add_zero]
       exact le_trans hcursorLength
         (le_trans (show x.length ≤ marshalBaseBound n x.length by
           have := inputLength_succ_le_marshalBaseBound n x.length

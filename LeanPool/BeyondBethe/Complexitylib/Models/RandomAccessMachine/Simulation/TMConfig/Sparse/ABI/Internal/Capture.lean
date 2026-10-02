@@ -35,8 +35,8 @@ theorem initRegs_bool_of_pos_internal (x : List Bool) {reg : ℕ}
 
 theorem captureRegs_positive_internal (n : ℕ) {reg : ℕ}
     (hmem : reg ∈ captureRegs n) : 0 < reg := by
-  simp [captureRegs, zeroReg, oneReg, tapeCountReg, stateScratchReg,
-    addressReg, valueReg] at hmem
+  simp only [captureRegs, zeroReg, oneReg, tapeCountReg, stateScratchReg, addressReg, valueReg,
+    List.mem_cons, List.not_mem_nil, or_false] at hmem
   rcases hmem with h | h | h | h | h | h <;> omega
 
 /-- If the selected leaf executes, the generated capture tree executes that

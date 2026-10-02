@@ -250,8 +250,8 @@ theorem marshalLoopOps_invariant_internal (n : ℕ) (x : List Bool)
       simp [stateReg, cellBase] at hdata
     have hregFree : reg ∉ captureRegs n := by
       intro hmem
-      simp [captureRegs, zeroReg, oneReg, tapeCountReg, stateScratchReg,
-        addressReg, valueReg] at hmem
+      simp only [captureRegs, zeroReg, oneReg, tapeCountReg, stateScratchReg, addressReg,
+        valueReg, List.mem_cons, List.not_mem_nil, or_false] at hmem
       rcases hmem with h | h | h | h | h | h <;>
         rw [h] at hdata <;> simp [cellBase] at hdata <;> omega
     have hregDestination :

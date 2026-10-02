@@ -651,7 +651,8 @@ private theorem bufferedCleanup_copyPhase
     · subst i
       simpa [hcopiedBuffer] using
         instructionCleanupPrefixTape_parked nextBits
-    · simp [copiedWork, hiSource, hiBuffer]
+    · simp only [ne_eq, hiSource, not_false_eq_true, Function.update_of_ne, hiBuffer,
+      copiedWork]
       exact hrewoundParked i
   exact ⟨hcopy, hcopiedBuffer, hcopiedSource, hcopiedParked⟩
 

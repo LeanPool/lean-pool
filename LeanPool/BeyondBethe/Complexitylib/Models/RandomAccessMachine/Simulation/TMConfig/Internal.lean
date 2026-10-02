@@ -34,8 +34,8 @@ theorem fieldReg_cell_internal (tape : Fin (n + 2))
     (position : Fin (bound + 1)) :
     fieldReg (cellField tape position) =
       1 + (n + 2) + tape.val * (bound + 1) + position.val := by
-  simp [fieldReg, cellField, fieldEquiv, finProdFinEquiv, Nat.mul_comm]
-  simp [finSumFinEquiv]
+  simp only [fieldReg, fieldEquiv, finProdFinEquiv, Nat.mul_comm, cellField]
+  simp only [finSumFinEquiv]
   change 1 + (n + 2 + (position.val + tape.val * (bound + 1))) = _
   omega
 

@@ -67,7 +67,8 @@ theorem rawEllipsoidDimension_width_le_direction_word {d : ℕ}
     rawRatWidth (rawEllipsoidDimension d) ≤
       (rationalDirectionUpdateCanonicalWord b).length := by
   have hsmall : rawRatWidth (rawEllipsoidDimension d) ≤ d + 1 := by
-    simp [rawEllipsoidDimension, RawRat.ofNat, rawRatWidth]
+    simp only [rawRatWidth, rawEllipsoidDimension, RawRat.ofNat, Int.natAbs_natCast,
+      Nat.size_one, sup_le_iff, le_add_iff_nonneg_left, zero_le, and_true]
     rw [Nat.size_le]
     have h := @Nat.lt_two_pow_self (d + 1)
     omega

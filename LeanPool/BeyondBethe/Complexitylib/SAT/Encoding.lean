@@ -79,7 +79,7 @@ def encode (n : Nat) : List Bool := List.replicate n true
 /-- Every bit in a unary encoding is `true`. -/
 theorem encode_all_true (n : Nat) : ∀ b ∈ encode n, b = true := by
   intro b hb
-  simp [encode, List.mem_replicate] at hb
+  simp only [encode, List.mem_replicate, ne_eq] at hb
   exact hb.2
 
 end Unary

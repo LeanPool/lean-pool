@@ -235,8 +235,28 @@ theorem betheFloorCut_entry_code_length_le {m : ℕ}
       simp [hb, rationalEntryBinaryCode, integerBinaryCode]
   · by_cases ha : a = i <;>
       simp [ha, rationalEntryBinaryCode, integerBinaryCode]
-  · by_cases ha : a = i <;> by_cases hb : b = j <;>
-      simp [ha, hb, rationalEntryBinaryCode, integerBinaryCode]; decide
+  · by_cases ha : a = i
+    · by_cases hb : b = j
+      · simp only [rationalEntryBinaryCode, integerBinaryCode, ha, hb,
+        explicitBetheFloorCutBaseEntry_upperLeft, and_self, ↓reduceIte, Rat.neg_num,
+        Rat.num_ofNat, Int.reduceNeg, Rat.neg_den, Rat.den_ofNat, Nat.one_bits,
+        pair_length, List.length_cons, List.length_nil, zero_add, Order.add_one_le_iff]; decide
+      · simp only [rationalEntryBinaryCode, integerBinaryCode, ha,
+        explicitBetheFloorCutBaseEntry_upperLeft, hb, and_false, ↓reduceIte,
+        Rat.num_ofNat, integerBinaryRec_zero, Rat.den_ofNat, Nat.one_bits, pair_length,
+        List.length_cons, List.length_nil, zero_add, mul_one, Nat.reduceAdd,
+        Nat.reduceLeDiff]
+    · by_cases hb : b = j
+      · simp only [rationalEntryBinaryCode, integerBinaryCode, hb,
+        explicitBetheFloorCutBaseEntry_upperLeft, ha, and_true, ↓reduceIte,
+        Rat.num_ofNat, integerBinaryRec_zero, Rat.den_ofNat, Nat.one_bits, pair_length,
+        List.length_cons, List.length_nil, zero_add, mul_one, Nat.reduceAdd,
+        Nat.reduceLeDiff]
+      · simp only [rationalEntryBinaryCode, integerBinaryCode,
+        explicitBetheFloorCutBaseEntry_upperLeft, ha, hb, and_self, ↓reduceIte,
+        Rat.num_ofNat, integerBinaryRec_zero, Rat.den_ofNat, Nat.one_bits, pair_length,
+        List.length_cons, List.length_nil, zero_add, mul_one, Nat.reduceAdd,
+        Nat.reduceLeDiff]
 
 theorem betheFloorCut_base_code_length_le_bound {m : ℕ}
     (i j : Fin (m + 1)) :

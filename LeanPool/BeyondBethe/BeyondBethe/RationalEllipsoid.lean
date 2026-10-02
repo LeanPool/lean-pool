@@ -281,7 +281,7 @@ theorem rationalEllipsoid_volumeFactor_le_exp_neg {d : ℕ} (hd : 0 < d) :
       exact_mod_cast hq
     simpa only [α] using hc
   have hdR : (1 : ℝ) ≤ d := by exact_mod_cast hd
-  have hx0 : 0 ≤ x := by simp [x]; positivity
+  have hx0 : 0 ≤ x := by simp only [Nat.ofNat_pos, mul_nonneg_iff_of_pos_left, x]; positivity
   have hy0 : 0 < y := div_pos hα0 (by positivity)
   have hA : (rationalEllipsoidPerpScale d : ℝ) = 1 + x := by
     simp [rationalEllipsoidPerpScale, x, α]

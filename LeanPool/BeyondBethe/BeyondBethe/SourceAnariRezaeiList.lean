@@ -204,8 +204,10 @@ private theorem anariRezaeiListPhi_le_log_two_fuel
       rcases p with _ | ⟨b, p⟩
       · have ha : a = 1 := by simpa using hsum
         subst a
-        simp [anariRezaeiListPhi, anariRezaeiRightScore,
-          anariRezaeiComplementScore]
+        simp only [anariRezaeiListPhi, anariRezaeiRightScore, List.sum_cons, List.sum_nil,
+          add_zero, Real.log_one, mul_zero, List.reverse_cons, List.reverse_nil,
+          List.nil_append, anariRezaeiComplementScore, List.map_cons, sub_self,
+          Real.log_zero, List.map_nil, ge_iff_le]
         exact Real.log_nonneg (by norm_num)
       rcases p with _ | ⟨c, p⟩
       · apply anariRezaeiListPhi_two_le

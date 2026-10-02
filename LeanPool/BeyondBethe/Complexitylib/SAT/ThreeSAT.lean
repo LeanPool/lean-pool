@@ -54,7 +54,8 @@ theorem decode3?_sound {z : List Bool} {φ : CNF}
       simp [decode3?, hdecode] at h
   | some ψ =>
       by_cases h3 : ψ.Is3CNF
-      · simp [decode3?, hdecode, h3] at h
+      · simp only [decode3?, hdecode, Option.bind_eq_bind, Option.bind_some, h3, ↓reduceIte,
+        Option.some.injEq] at h
         subst φ
         exact ⟨decode?_sound hdecode, h3⟩
       · simp [decode3?, hdecode, h3] at h

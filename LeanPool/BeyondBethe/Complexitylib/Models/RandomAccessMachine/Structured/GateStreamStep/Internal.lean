@@ -634,9 +634,10 @@ private theorem parsed_of_decoder_state {gateStart base : ℕ}
     · simp [wireCountMetaReg, UnaryDecode.inputBase]
     · simp [wireCountMetaReg, savedInput0Reg]
   · rw [hmeta gateStartReg]
-    · simp [headerStore, headerOps, setupStore, setupOps, Basic.execList,
-        Basic.exec, gateStartReg, UnaryDecode.pointerReg,
-        UnaryDecode.remainingReg]
+    · simp only [headerStore, headerOps, UnaryDecode.pointerReg, UnaryDecode.remainingReg,
+      setupStore, setupOps, gateStartReg, Basic.execList, Basic.exec, ne_eq,
+      Nat.reduceEqDiff, not_false_eq_true, Function.update_of_ne, Function.update_self,
+      add_zero, Function.update_idem, Nat.succ_ne_self]
       exact hready.pointer_eq
     · simp [gateStartReg, UnaryDecode.inputBase]
     · simp [gateStartReg, savedInput0Reg]

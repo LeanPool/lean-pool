@@ -541,7 +541,7 @@ theorem payloadBitTM_reachesIn_frame_internal {n : ℕ}
     simpa [payloadBitWork] using hsource.move_right_cons
   · change (payloadBitWork sourceIdx targetIdx work₀ bit targetIdx).HasBinaryPrefix
       (pre ++ [bit])
-    simp [payloadBitWork, Ne.symm hindices]
+    simp only [payloadBitWork, Ne.symm hindices, ↓reduceIte, Γw.toΓ]
     cases bit with
     | false =>
         simpa [Γw.ofBool, Γ.ofBool, Γw.toΓ] using

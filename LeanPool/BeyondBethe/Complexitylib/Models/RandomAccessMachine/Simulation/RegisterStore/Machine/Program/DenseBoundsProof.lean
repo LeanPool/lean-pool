@@ -1914,8 +1914,9 @@ private theorem denseProgramInitTime_le_quadratic {m : ℕ}
   have hentries : ∀ entry ∈ denseProgramInitialStore input,
       entry.1.bits.length ≤ bound ∧ entry.2.bits.length ≤ bound := by
     intro entry hentry
-    simp [denseProgramInitialStore, DenseOverlay.Snapshot.initial,
-      DenseOverlay.write, RegisterStore.write] at hentry
+    simp only [denseProgramInitialStore, DenseOverlay.Snapshot.initial, DenseOverlay.write,
+      write, Nat.add_eq_zero_iff, List.length_eq_zero_iff, one_ne_zero, and_false,
+      ↓reduceIte, List.mem_cons, List.not_mem_nil, or_false] at hentry
     subst entry
     exact ⟨by simp, htagBits⟩
   have habi := denseInitialAbiInstallTime_le tapes
