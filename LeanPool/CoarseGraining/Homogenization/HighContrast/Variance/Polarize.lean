@@ -49,11 +49,15 @@ theorem integrable_blockMatEntry_coarse [NeZero d]
       (fun a => blockMatEntry (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) α β) L := by
     cases α with
     | inl i => cases β with
-      | inl j => exact hP.aemeasurable_coarseBlockMatrix_upperLeft_apply_cubeSet (originCube d m) i j
-      | inr j => exact hP.aemeasurable_coarseBlockMatrix_upperRight_apply_cubeSet (originCube d m) i j
+      | inl j => exact
+        hP.aemeasurable_coarseBlockMatrix_upperLeft_apply_cubeSet (originCube d m) i j
+      | inr j => exact
+        hP.aemeasurable_coarseBlockMatrix_upperRight_apply_cubeSet (originCube d m) i j
     | inr i => cases β with
-      | inl j => exact hP.aemeasurable_coarseBlockMatrix_lowerLeft_apply_cubeSet (originCube d m) i j
-      | inr j => exact hP.aemeasurable_coarseBlockMatrix_lowerRight_apply_cubeSet (originCube d m) i j
+      | inl j => exact
+        hP.aemeasurable_coarseBlockMatrix_lowerLeft_apply_cubeSet (originCube d m) i j
+      | inr j => exact
+        hP.aemeasurable_coarseBlockMatrix_lowerRight_apply_cubeSet (originCube d m) i j
   -- abbreviations for the three `M²` bounds
   set Ms : ℝ := Θ * vecNormSq (blockBasis α + blockBasis β).1
       + vecNormSq (blockBasis α + blockBasis β).2 with hMsdef
@@ -123,14 +127,16 @@ theorem centered_quadratic_second_moment [NeZero d] (hd : 3 ≤ d) :
           (toFullBlockMat (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun)
             - toFullBlockMat (annealedBlockMatrixAtScale L m))) w)) ^ 2
         = (blockVecDot w
-              (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) w) - c) ^ 2 := by
+              (blockMatVecMul
+                (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) w) - c) ^ 2 := by
     intro a
     rw [blockVecDot_blockMatVecMul_ofFullBlockMat_sub, hcdef]
   calc (∫ a, (blockVecDot w (blockMatVecMul (ofFullBlockMat
           (toFullBlockMat (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun)
             - toFullBlockMat (annealedBlockMatrixAtScale L m))) w)) ^ 2 ∂L)
       = ∫ a, (blockVecDot w
-            (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) w) - c) ^ 2 ∂L := by
+            (blockMatVecMul
+              (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) w) - c) ^ 2 ∂L := by
         exact integral_congr_ae (Filter.Eventually.of_forall hpt)
     _ = Var[fun a => blockVecDot w
             (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) w); L] := by

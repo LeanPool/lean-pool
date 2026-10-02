@@ -49,7 +49,8 @@ theorem blockResponse_pair_half_averagePotential_eq_zero_of_scalarCanonicalMaxim
         (fun x =>
           (blockResponsePairHalfState a
             (u : AHarmonicFunction a U)
-            (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U)).potential x i)) = 0 := by
+            (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U)).potential x i)) =
+      0 := by
   ext i
   have hu_int :
       MeasureTheory.IntegrableOn (fun x => (u : AHarmonicFunction a U).toH1.grad x i) U := by
@@ -58,7 +59,8 @@ theorem blockResponse_pair_half_averagePotential_eq_zero_of_scalarCanonicalMaxim
         (by norm_num : (1 : ENNReal) ≤ 2)
   have hv_int :
       MeasureTheory.IntegrableOn
-        (fun x => (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U).toH1.grad x i) U := by
+        (fun x => (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U).toH1.grad x i)
+        U := by
     simpa [MeasureTheory.IntegrableOn] using
       ((v : AHarmonicFunction (Homogenization.adjointCoeffField a) U).toH1.grad_memL2 i).integrable
         (by norm_num : (1 : ENNReal) ≤ 2)
@@ -96,7 +98,8 @@ theorem blockResponse_pair_half_averagePotential_eq_zero_of_scalarCanonicalMaxim
           (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U)).potential x i) =
         (1 / 2 : ℝ) •
           ((fun x => (u : AHarmonicFunction a U).toH1.grad x i) +
-            fun x => (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U).toH1.grad x i) := by
+            fun x =>
+              (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U).toH1.grad x i) := by
     funext x
     rfl
   rw [hsplit, volumeAverage_smul U (1 / 2 : ℝ), volumeAverage_add hu_int hv_int, hu_avg, hv_avg]
@@ -125,7 +128,8 @@ theorem
         (fun x =>
           (blockResponsePairHalfState a
             (u : AHarmonicFunction a U)
-            (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U)).potential x i)) = 0 := by
+            (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U)).potential x i)) =
+      0 := by
   exact
     blockResponse_pair_half_averagePotential_eq_zero_of_scalarCanonicalMaximizers_zero_right
       (u := u) (v := v) hS hK hSAdj hKAdj hdet hInt hIntAdj basisGrad.grad basisGradAdj.grad
@@ -215,7 +219,8 @@ theorem blockResponse_pair_half_averageFlux_eq_of_scalarCanonicalMaximizers_zero
           ((fun x => matVecMul (a x) ((u : AHarmonicFunction a U).toH1.grad x) i) -
             fun x =>
               matVecMul (matTranspose (a x))
-                ((v : AHarmonicFunction (Homogenization.adjointCoeffField a) U).toH1.grad x) i) := by
+                ((v : AHarmonicFunction (Homogenization.adjointCoeffField a) U).toH1.grad x)
+                i) := by
     funext x
     rfl
   rw [hsplit, volumeAverage_smul U (1 / 2 : ℝ), volumeAverage_sub hu_int hv_int, hu_avg, hv_avg]
@@ -272,7 +277,8 @@ theorem blockResponse_pair_half_averagePotential_eq_zero_of_isOpenBoundedConvexD
         (fun x =>
           (blockResponsePairHalfState a
             (u : AHarmonicFunction a U)
-            (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U)).potential x i)) = 0 := by
+            (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U)).potential x i)) =
+      0 := by
   classical
   let : MeasureTheory.IsFiniteMeasure (volumeMeasureOn U) := by
     simpa [volumeMeasureOn] using hConv.isFiniteMeasure_restrict_volume
@@ -319,7 +325,8 @@ theorem
             (fun x =>
               (blockResponsePairHalfState a
                 (u : AHarmonicFunction a U)
-                (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U)).potential x i)) = 0 := by
+                (v : AHarmonicFunction (Homogenization.adjointCoeffField a) U)).potential x i)) =
+      0 := by
   classical
   let : MeasureTheory.IsFiniteMeasure (volumeMeasureOn U) := by
     simpa [volumeMeasureOn] using hConv.isFiniteMeasure_restrict_volume

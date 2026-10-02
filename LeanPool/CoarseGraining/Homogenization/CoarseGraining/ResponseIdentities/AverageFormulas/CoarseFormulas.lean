@@ -155,14 +155,17 @@ theorem responseJ_zero_eq_half_bCoarse_of_isSigmaCoarse {d : ℕ} {U : Set (Vec 
   have hb :
       vecDot p (matVecMul (bCoarse sigma sigmaStar kappa) p) =
         vecDot p (matVecMul sigma p) +
-          vecDot p (matVecMul (matTranspose kappa) (matVecMul sigmaStar⁻¹ (matVecMul kappa p))) := by
+          vecDot p (matVecMul (matTranspose kappa)
+            (matVecMul sigmaStar⁻¹ (matVecMul kappa p))) := by
     unfold bCoarse
     calc
       vecDot p (matVecMul (sigma + matTranspose kappa * sigmaStar⁻¹ * kappa) p)
-        = vecDot p (matVecMul sigma p + matVecMul (matTranspose kappa * sigmaStar⁻¹ * kappa) p) := by
+        = vecDot p (matVecMul sigma p +
+          matVecMul (matTranspose kappa * sigmaStar⁻¹ * kappa) p) := by
             rw [add_matVecMul]
       _ = vecDot p (matVecMul sigma p) +
-            vecDot p (matVecMul (matTranspose kappa) (matVecMul sigmaStar⁻¹ (matVecMul kappa p))) := by
+            vecDot p (matVecMul (matTranspose kappa)
+              (matVecMul sigmaStar⁻¹ (matVecMul kappa p))) := by
             rw [vecDot_add_right, matVecMul_mul, matVecMul_mul]
   rw [hb]
   linarith
@@ -389,10 +392,12 @@ theorem basic_cg_identities_responseJ_formula_deterministicCoarseBlockMatrix_of_
           vecDot q (matVecMul sigmaStar⁻¹ (matVecMul kappa p)) +
           (1 / 2 : ℝ) * vecDot p (matVecMul (bCoarse sigma sigmaStar kappa) p) := by
       exact basic_cg_identities_responseJ_formula_of_isSigmaCoarse U a hS hK hSigma p q
-    _ = (1 / 2 : ℝ) * vecDot q (matVecMul (blockMatrixOfDeterministicData sigma sigmaStar kappa).lowerRight q) -
+    _ = (1 / 2 : ℝ) * vecDot q
+          (matVecMul (blockMatrixOfDeterministicData sigma sigmaStar kappa).lowerRight q) -
           vecDot p q -
           vecDot q (matVecMul (blockMatrixOfDeterministicData sigma sigmaStar kappa).lowerLeft p) +
-          (1 / 2 : ℝ) * vecDot p (matVecMul (blockMatrixOfDeterministicData sigma sigmaStar kappa).upperLeft p) := by
+          (1 / 2 : ℝ) * vecDot p
+          (matVecMul (blockMatrixOfDeterministicData sigma sigmaStar kappa).upperLeft p) := by
       simp [blockMatrixOfDeterministicData, sub_eq_add_neg, matVecMul_mul,
         neg_matVecMul, vecDot_neg_right, add_assoc]
 
