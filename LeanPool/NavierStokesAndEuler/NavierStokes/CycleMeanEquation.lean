@@ -344,9 +344,8 @@ theorem next_oscillation_periodic
   have hux := hu n i x hx θ
   change u.oscillation n (x, θ + LiftedMeanResidual.period) i = u.oscillation n (x, θ) i at hux
   rw [hux]
-  congr 1
-  · congr 1
-    exact Finset.sum_congr rfl (fun l _ => block_oscillation_periodic _ _ n i x hx θ)
+  refine congrArg₂ (· + ·) (congrArg (_ + ·) ?_) ?_
+  · exact Finset.sum_congr rfl (fun l _ => block_oscillation_periodic _ _ n i x hx θ)
   · exact Finset.sum_congr rfl (fun l _ => block_oscillation_periodic _ _ n i x hx θ)
 
 omit H in
@@ -359,9 +358,8 @@ theorem next_pressure_periodic
     (p.particularBlock v c u l).oscillatoryPressure n (x, θ + _)) + (∑ l ∈ v.labels n,
     (p.signedBlock v c u l).oscillatoryPressure n (x, θ + _)) = _
   rw [hu n x hx θ]
-  congr 1
-  · congr 1
-    exact Finset.sum_congr rfl (fun l _ => block_pressure_periodic _ _ n x hx θ)
+  refine congrArg₂ (· + ·) (congrArg (_ + ·) ?_) ?_
+  · exact Finset.sum_congr rfl (fun l _ => block_pressure_periodic _ _ n x hx θ)
   · exact Finset.sum_congr rfl (fun l _ => block_pressure_periodic _ _ n x hx θ)
 
 theorem next_oscillation_mean_zero

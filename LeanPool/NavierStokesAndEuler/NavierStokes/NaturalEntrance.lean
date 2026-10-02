@@ -277,7 +277,7 @@ theorem sourceJets_sub_bound {ε : ℝ} (hε : 0 < ε) (x y : CoefficientPair ε
     rw [← map_sub]
     exact ((AxisOperators.average window hε).le_opNorm _).trans
       ((mul_le_mul_of_nonneg_right (AxisOperators.norm_average_le window hε) (norm_nonneg _)).trans
-        (by simpa using hsnd))
+        ((one_mul _).trans_le hsnd))
   have hb (A B : AxisCoefficientSpace.AxisSpace window ε) (k m : ℕ)
       (hAB : ‖A - B‖ ≤ N) (hc : AxisEvaluation.jetBound ε 5 k m ≤ sourceJetConstant ε) :
       ‖AxisEvaluation.mixedSeries window ε A k m p -
