@@ -45,7 +45,8 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_of_descendant_hessia
       ∀ R (hR : R ∈ descendantsAtDepth Q j),
         ((cubeVolume R)⁻¹ + 1) * (hC R hR).fixedValue *
             ‖((H.restrict (isOpen_openCubeSet R)
-                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖ ≤
+                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                  i).gradToVectorL2‖ ≤
           A) :
     cubeBesovDepthSeminorm Q 1 (2 : ℝ≥0∞) (fun x => u.grad x i) j ≤
       cubeBesovDepthWeight Q 1 j * A := by
@@ -73,14 +74,16 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_descendantsAverage_s
             (if hR : R ∈ descendantsAtDepth Q j then
               ((cubeVolume R)⁻¹ + 1) * (hC R hR).fixedValue *
                 ‖((H.restrict (isOpen_openCubeSet R)
-                    (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+                    (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                      i).gradToVectorL2‖
             else
               0) ^ 2)) ^ (1 / 2 : ℝ) := by
   let A : TriadicCube d → ℝ := fun R =>
     if hR : R ∈ descendantsAtDepth Q j then
       ((cubeVolume R)⁻¹ + 1) * (hC R hR).fixedValue *
         ‖((H.restrict (isOpen_openCubeSet R)
-            (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+            (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+              i).gradToVectorL2‖
     else
       0
   have hA_eval :
@@ -88,18 +91,21 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_descendantsAverage_s
         A R =
           ((cubeVolume R)⁻¹ + 1) * (hC R hR).fixedValue *
             ‖((H.restrict (isOpen_openCubeSet R)
-                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖ := by
+                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                  i).gradToVectorL2‖ := by
     intro R hR
     change
       (if hR' : R ∈ descendantsAtDepth Q j then
         ((cubeVolume R)⁻¹ + 1) * (hC R hR').fixedValue *
           ‖((H.restrict (isOpen_openCubeSet R)
-              (openCubeSet_subset_of_mem_descendantsAtDepth hR')).gradCoordH1Function i).gradToVectorL2‖
+              (openCubeSet_subset_of_mem_descendantsAtDepth hR')).gradCoordH1Function
+                i).gradToVectorL2‖
       else
         0) =
         ((cubeVolume R)⁻¹ + 1) * (hC R hR).fixedValue *
           ‖((H.restrict (isOpen_openCubeSet R)
-              (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+              (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                i).gradToVectorL2‖
     rw [dite_eq_left hR]
   refine
     cubeBesovDepthSeminorm_two_le_depthWeight_mul_descendantsAverage_sq_rpow_half
@@ -134,14 +140,16 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_descendantsAverage_v
             (if hR : R ∈ descendantsAtDepth Q j then
               ((cubeVolume R)⁻¹) ^ (1 / 2 : ℝ) * (hC R hR).fixedValue *
                 ‖((H.restrict (isOpen_openCubeSet R)
-                    (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+                    (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                      i).gradToVectorL2‖
             else
               0) ^ 2)) ^ (1 / 2 : ℝ) := by
   let A : TriadicCube d → ℝ := fun R =>
     if hR : R ∈ descendantsAtDepth Q j then
       ((cubeVolume R)⁻¹) ^ (1 / 2 : ℝ) * (hC R hR).fixedValue *
         ‖((H.restrict (isOpen_openCubeSet R)
-            (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+            (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+              i).gradToVectorL2‖
     else
       0
   have hA_eval :
@@ -149,18 +157,21 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_descendantsAverage_v
         A R =
           ((cubeVolume R)⁻¹) ^ (1 / 2 : ℝ) * (hC R hR).fixedValue *
             ‖((H.restrict (isOpen_openCubeSet R)
-                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖ := by
+                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                  i).gradToVectorL2‖ := by
     intro R hR
     change
       (if hR' : R ∈ descendantsAtDepth Q j then
         ((cubeVolume R)⁻¹) ^ (1 / 2 : ℝ) * (hC R hR').fixedValue *
           ‖((H.restrict (isOpen_openCubeSet R)
-              (openCubeSet_subset_of_mem_descendantsAtDepth hR')).gradCoordH1Function i).gradToVectorL2‖
+              (openCubeSet_subset_of_mem_descendantsAtDepth hR')).gradCoordH1Function
+                i).gradToVectorL2‖
       else
         0) =
         ((cubeVolume R)⁻¹) ^ (1 / 2 : ℝ) * (hC R hR).fixedValue *
           ‖((H.restrict (isOpen_openCubeSet R)
-              (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+              (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                i).gradToVectorL2‖
     rw [dite_eq_left hR]
   refine
     cubeBesovDepthSeminorm_two_le_depthWeight_mul_descendantsAverage_sq_rpow_half
@@ -194,7 +205,8 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul
         (fun R =>
           (if hR : R ∈ descendantsAtDepth Q j then
             ‖((H.restrict (isOpen_openCubeSet R)
-                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                  i).gradToVectorL2‖
           else
             0) ^ 2) ≤ B ^ 2) :
     cubeBesovDepthSeminorm Q 1 (2 : ℝ≥0∞) (fun x => u.grad x i) j ≤
@@ -214,16 +226,19 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul
       ∀ R (hR : R ∈ descendantsAtDepth Q j),
         Row R =
           ‖((H.restrict (isOpen_openCubeSet R)
-              (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖ := by
+              (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                i).gradToVectorL2‖ := by
     intro R hR
     change
       (if hR' : R ∈ descendantsAtDepth Q j then
         ‖((H.restrict (isOpen_openCubeSet R)
-            (openCubeSet_subset_of_mem_descendantsAtDepth hR')).gradCoordH1Function i).gradToVectorL2‖
+            (openCubeSet_subset_of_mem_descendantsAtDepth hR')).gradCoordH1Function
+              i).gradToVectorL2‖
       else
         0) =
         ‖((H.restrict (isOpen_openCubeSet R)
-            (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+            (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+              i).gradToVectorL2‖
     rw [dite_eq_left hR]
   have hP_eval :
       ∀ R (hR : R ∈ descendantsAtDepth Q j),
@@ -331,7 +346,8 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_of_descend
         (fun R =>
           (if hR : R ∈ descendantsAtDepth Q j then
             ‖((H.restrict (isOpen_openCubeSet R)
-                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                  i).gradToVectorL2‖
           else
             0) ^ 2) ≤ B ^ 2) :
     cubeBesovDepthSeminorm Q 1 (2 : ℝ≥0∞) (fun x => u.grad x i) j ≤
@@ -351,16 +367,19 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_of_descend
       ∀ R (hR : R ∈ descendantsAtDepth Q j),
         Row R =
           ‖((H.restrict (isOpen_openCubeSet R)
-              (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖ := by
+              (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                i).gradToVectorL2‖ := by
     intro R hR
     change
       (if hR' : R ∈ descendantsAtDepth Q j then
         ‖((H.restrict (isOpen_openCubeSet R)
-            (openCubeSet_subset_of_mem_descendantsAtDepth hR')).gradCoordH1Function i).gradToVectorL2‖
+            (openCubeSet_subset_of_mem_descendantsAtDepth hR')).gradCoordH1Function
+              i).gradToVectorL2‖
       else
         0) =
         ‖((H.restrict (isOpen_openCubeSet R)
-            (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+            (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+              i).gradToVectorL2‖
     rw [dite_eq_left hR]
   have hP_eval :
       ∀ R (hR : R ∈ descendantsAtDepth Q j),
@@ -479,7 +498,8 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_global_hes
         (fun R =>
           (if hR : R ∈ descendantsAtDepth Q j then
             ‖((H.restrict (isOpen_openCubeSet R)
-                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                  i).gradToVectorL2‖
           else
             0) ^ 2) ≤ B ^ 2 := by
     have hstep :
@@ -487,7 +507,8 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_global_hes
           (fun R =>
             (if hR : R ∈ descendantsAtDepth Q j then
               ‖((H.restrict (isOpen_openCubeSet R)
-                  (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+                  (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                    i).gradToVectorL2‖
             else
               0) ^ 2) ≤
           descendantsAverage Q j (fun _R => B ^ 2) := by
@@ -498,7 +519,8 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_global_hes
         (by
           change
             ‖((H.restrict (isOpen_openCubeSet R)
-                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖ ≤
+                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                  i).gradToVectorL2‖ ≤
               ‖(H.gradCoordH1Function i).gradToVectorL2‖
           exact H.restrict_gradCoordH1Function_gradToVectorL2_norm_le
               (isOpen_openCubeSet R)
