@@ -186,6 +186,7 @@ theorem RelTransitionSystem.internalWalk_injOn_periodic
 /-! ### 3. walkPermPeriodic -/
 
 /-- The walk permutation restricted to periodic flags. -/
+@[expose]
 noncomputable def RelTransitionSystem.walkPermPeriodic
     (κ : F.RelTransitionSystem) :
     Equiv.Perm {f : W.Flag // f ∈ κ.periodicFlags} :=

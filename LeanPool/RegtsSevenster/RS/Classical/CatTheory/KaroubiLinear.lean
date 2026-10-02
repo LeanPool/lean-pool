@@ -30,7 +30,6 @@ def karoubiHomAddHom {C : Type*} [Category C] [Preadditive C]
   map_add' _ _ := rfl
 
 /-- Scaling a Karoubi morphism through its underlying morphism. -/
-@[expose]
 noncomputable instance karoubiHomSMul {C : Type*} [Category C]
     [Preadditive C] [Linear ℂ C] (P Q : Karoubi C) :
     SMul ℂ (P ⟶ Q) where
@@ -57,6 +56,7 @@ noncomputable instance karoubiLinear {C : Type*} [Category C]
     rw [Linear.comp_smul]
 
 /-- The underlying-morphism map is complex linear. -/
+@[expose]
 noncomputable def karoubiHomLinearMap {C : Type*} [Category C]
     [Preadditive C] [Linear ℂ C] (P Q : Karoubi C) :
     (P ⟶ Q) →ₗ[ℂ] (P.X ⟶ Q.X) where

@@ -569,6 +569,7 @@ def whiskerRight [Category.{v} A] [MonoidalCategory A] [Preadditive A]
 /-- The even component of the associator: each of the four parity
 blocks re-associates through `A`'s associator and is routed to the
 matching block of the right-nested product. -/
+@[expose]
 def assocEven [Category.{v} A] [MonoidalCategory A] [Preadditive A]
     [MonoidalPreadditive A] [HasBinaryBiproducts A]
     (X Y Z : Doubled A) :
@@ -701,6 +702,7 @@ theorem isZero_tensorZero [Category.{v} A] [MonoidalCategory A] [Preadditive A]
 
 /-- Collapse of a unit block against a zero block, in the shape of
 the left unitor components. -/
+@[expose]
 def leftUnitorComp [Category.{v} A] [MonoidalCategory A] [Preadditive A]
     [MonoidalPreadditive A] [HasBinaryBiproducts A] [HasZeroObject A]
     (M M' : A) :
@@ -715,6 +717,7 @@ def leftUnitorComp [Category.{v} A] [MonoidalCategory A] [Preadditive A]
 
 /-- Collapse of a unit block against a zero block, in the shape of
 the even right unitor component. -/
+@[expose]
 def rightUnitorComp [Category.{v} A] [MonoidalCategory A] [Preadditive A]
     [MonoidalPreadditive A] [HasBinaryBiproducts A] [HasZeroObject A]
     (M M' : A) :
@@ -1338,6 +1341,7 @@ instance [Category.{v} A] [Preadditive A] [HasZeroObject A]
 
 /-- The even embedding is monoidal up to isomorphism: the graded
 tensor of two even objects collapses to the even tensor. -/
+@[expose]
 def evenEmbedTensorIso [Category.{v} A] [MonoidalCategory A] [Preadditive A]
     [MonoidalPreadditive A] [HasBinaryBiproducts A] [HasZeroObject A]
     (X Y : A) :
@@ -1361,6 +1365,7 @@ theorem evenEmbedTensorIso_braided
     simp
 
 /-- The unit comparison of the even embedding: definitional. -/
+@[expose]
 def evenEmbedUnitIso [Category.{v} A] [MonoidalCategory A] [Preadditive A]
     [MonoidalPreadditive A] [HasBinaryBiproducts A] [HasZeroObject A] :
     𝟙_ (Doubled A) ≅ evenEmbed.obj (𝟙_ A) :=
@@ -1523,6 +1528,7 @@ section Kernels
 
 /-- The componentwise kernel fork of a morphism of
 super-objects. -/
+@[expose]
 def kernelFork [Category.{v} A] [Preadditive A] [HasKernels A]
     {X Y : Doubled A} (f : X ⟶ Y) : KernelFork f :=
   KernelFork.ofι
@@ -1561,6 +1567,7 @@ section Cokernels
 
 /-- The componentwise cokernel cofork of a morphism of
 super-objects. -/
+@[expose]
 def cokernelCofork [Category.{v} A] [Preadditive A] [HasCokernels A]
     {X Y : Doubled A} (f : X ⟶ Y) :
     CokernelCofork f :=

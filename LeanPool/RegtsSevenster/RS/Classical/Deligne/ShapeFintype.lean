@@ -54,6 +54,7 @@ instance (n : ℕ) : DecidableEq (Shape n) := fun μ ν =>
 
 /-- Young diagrams of size `n` correspond to partitions of `n`,
 by reading off the row lengths. -/
+@[expose]
 noncomputable def shapeEquivPartition (n : ℕ) :
     Shape n ≃ Nat.Partition n where
   toFun μ :=

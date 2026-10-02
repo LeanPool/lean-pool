@@ -26,6 +26,7 @@ namespace RS
 /-- A boundary state over an arbitrary label type: one colour per
 label, even (`Sum.inl`) when the boundary edge is outside the
 Eulerian subset and odd (`Sum.inr`) when it participates. -/
+@[expose]
 def GenBoundaryState (k ℓ : ℕ) (α : Type) : Type :=
   α → (Fin k ⊕ Fin (2 * ℓ))
 

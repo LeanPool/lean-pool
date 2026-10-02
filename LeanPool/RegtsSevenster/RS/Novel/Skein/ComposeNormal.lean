@@ -70,6 +70,7 @@ theorem interfacePairs_wf (s t u : ℕ) :
     exact hkm (Fin.ext (by omega)).symm
 
 /-- Left labels below the interface. -/
+@[expose]
 def finLtEquiv (s t : ℕ) : {a : Fin (s + t) // a.val < s} ≃ Fin s where
   toFun a := ⟨a.val.val, a.prop⟩
   invFun a := ⟨⟨a.val, by have := a.isLt; omega⟩, by
@@ -79,6 +80,7 @@ def finLtEquiv (s t : ℕ) : {a : Fin (s + t) // a.val < s} ≃ Fin s where
   right_inv a := Fin.ext rfl
 
 /-- Right labels beyond the interface. -/
+@[expose]
 def finGeEquiv (t u : ℕ) : {b : Fin (t + u) // ¬ b.val < t} ≃ Fin u where
   toFun b := ⟨b.val.val - t, by
     have h1 := b.val.isLt
@@ -96,6 +98,7 @@ def finGeEquiv (t u : ℕ) : {b : Fin (t + u) // ¬ b.val < t} ≃ Fin u where
     omega)
 
 /-- The survival predicate of the interface gluing. -/
+@[expose]
 def interfaceSurvPred (s t u : ℕ) : Fin (s + t) ⊕ Fin (t + u) → Prop :=
   Sum.elim (fun a => a.val < s) (fun b => ¬ b.val < t)
 
@@ -149,6 +152,7 @@ theorem interfaceSurv_iff (s t u : ℕ) (x : Fin (s + t) ⊕ Fin (t + u)) :
 
 /-- The labels surviving the interface gluing: left labels below
 `s` and right labels beyond `t`. -/
+@[expose]
 noncomputable def interfaceSurvEquiv (s t u : ℕ) :
     Fragment.FoldSurviving (Fin (s + t) ⊕ Fin (t + u))
       (interfacePairs s t u) ≃ Fin s ⊕ Fin u :=

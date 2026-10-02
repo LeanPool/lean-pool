@@ -226,6 +226,7 @@ theorem convAlong_smul_right
 
 /-- Prefixed convolution packaged as a ℂ-bilinear map on hom
 ℂ-modules. -/
+@[expose]
 def convAlongHom [Category.{u'} D] [MonoidalCategory D] [Preadditive D]
     [MonoidalPreadditive D] (R : D) [MonObj R] [CategoryTheory.Linear ℂ D]
     [MonoidalLinear ℂ D]

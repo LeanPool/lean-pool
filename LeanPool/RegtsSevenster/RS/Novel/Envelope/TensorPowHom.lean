@@ -33,6 +33,7 @@ variable {A : Type u}
 
 /-- **The tensor power of an endomorphism**: `powHom X g n` acts by
 `g` on each of the `n` factors of `X ^ ⊗ n`. -/
+@[expose]
 noncomputable def powHom [Category.{v} A] [MonoidalCategory A]
     (X : A) (g : End X) :
     (n : ℕ) → End (tensorPow A X n)

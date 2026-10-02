@@ -55,14 +55,17 @@ variable {α : Type}
 
 /-- **The union is Eulerian**: at every point exactly one of the two
 matchings' arcs leaves it. -/
+@[expose]
 def Alternating (M N : DirMatching α) : Prop :=
   ∀ a, N.tail a = !M.tail a
 
 /-- The rotation of an Eulerian union: follow the arc that leaves. -/
+@[expose]
 def rot (M N : DirMatching α) (a : α) : α :=
   if M.tail a then M.edge a else N.edge a
 
 /-- The step backwards: follow the arc that enters. -/
+@[expose]
 def rotInv (M N : DirMatching α) (a : α) : α :=
   if M.tail a then N.edge a else M.edge a
 
@@ -105,6 +108,7 @@ theorem rot_rotInv (h : Alternating M N) (a : α) :
       M.edge_invol]
 
 /-- **The rotation of an Eulerian union**, as a permutation. -/
+@[expose]
 def rotPerm (M N : DirMatching α) (h : Alternating M N) :
     Equiv.Perm α where
   toFun := M.rot N
@@ -506,6 +510,7 @@ gluing closes.
 
 /-- **The interface matching**: each label of one side paired with
 the same label of the other. -/
+@[expose]
 def interfaceMatching (γ : Type) : DirMatching (γ ⊕ γ) where
   edge := Sum.swap
   edge_invol x := by rcases x with a | a <;> rfl
@@ -531,6 +536,7 @@ even size it is that one transported along the order isomorphism.
 -/
 
 /-- Transport a directed matching along an equivalence. -/
+@[expose]
 def map {β : Type} (e : α ≃ β) (M : DirMatching α) : DirMatching β where
   edge b := e (M.edge (e.symm b))
   edge_invol b := by simp [M.edge_invol]
@@ -680,6 +686,7 @@ composes any carrier with the transposition of that arc's two ends.
 
 /-- **Reverse the direction of one arc**, leaving the pairing
 alone. -/
+@[expose]
 def reverseArc [DecidableEq α] (M : DirMatching α) (a : α) :
     DirMatching α where
   edge := M.edge
@@ -871,6 +878,7 @@ fixed-point-freeness of both pairings.
 -/
 
 /-- The pairing of a matching, as a permutation. -/
+@[expose]
 def edgePerm (M : DirMatching α) : Equiv.Perm α where
   toFun := M.edge
   invFun := M.edge
@@ -1239,6 +1247,7 @@ iterated.
 
 /-- The interface matching restricted to the labels surviving the
 identification of one of its own arcs. -/
+@[expose]
 def restrict (N : DirMatching α) {i j : α} (hN : N.edge i = j) :
     DirMatching (Surviving i j) where
   edge x := ⟨N.edge x.val, by

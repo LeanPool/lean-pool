@@ -55,6 +55,7 @@ variable {D : Type u}
 /-- The *convolution product* of two morphisms into a monoid
 object, taken at arbitrary sources: tensor the two morphisms and
 multiply. -/
+@[expose]
 noncomputable def gmul [Category.{v} D] [MonoidalCategory D] {R : D} [MonObj R]
     {X Y : D} (a : X ⟶ R) (b : Y ⟶ R) :
     X ⊗ Y ⟶ R :=
@@ -181,6 +182,7 @@ transported along a chosen morphism `s` from the intended source
 into the tensor product of the two given sources.  The four graded
 multiplication blocks of `RS.gammaAlgebra` are the four instances
 of this construction. -/
+@[expose]
 noncomputable def gmulLin
     [Category.{v} D] [MonoidalCategory D] {R : D} [MonObj R] [Preadditive D]
     [MonoidalPreadditive D] [Linear ℂ D] [MonoidalLinear ℂ D]

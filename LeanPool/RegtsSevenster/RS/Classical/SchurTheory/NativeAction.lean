@@ -52,6 +52,7 @@ instance [Group G] (S : Submodule (MonoidAlgebra ℂ G) (MonoidAlgebra ℂ G)) :
 
 /-- The native representation of a submodule of the regular
 module. -/
+@[expose]
 noncomputable def rhoS
     [Group G] (S : Submodule (MonoidAlgebra ℂ G) (MonoidAlgebra ℂ G)) :
     Representation ℂ G (subCarrier S) :=

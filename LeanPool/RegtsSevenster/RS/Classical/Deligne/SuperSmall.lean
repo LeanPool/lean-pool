@@ -76,6 +76,7 @@ namespace SuperVect
 `Fin p → ℂ` in even degree and `Fin q → ℂ` in odd degree.  Every
 super vector space is isomorphic to exactly one standard object,
 which is the entire content of the small model below. -/
+@[expose]
 def stdObj (pq : ℕ × ℕ) : SuperVect where
   even := Fin pq.1 → ℂ
   odd := Fin pq.2 → ℂ

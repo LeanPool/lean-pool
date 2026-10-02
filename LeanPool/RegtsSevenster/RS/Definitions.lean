@@ -49,12 +49,14 @@ Definition 5: reordering the odd colours multiplies the vertex value by the
 sign of the permutation, realized as `(−1)` to the inversion count. -/
 
 /-- The number of inversions of a list over a linear order. -/
+@[expose]
 def inversions {α : Type} [LinearOrder α] : List α → ℕ
   | [] => 0
   | a :: l => (l.filter (fun b => b < a)).length + inversions l
 
 /-- The sorting sign of a list: `(−1)` to the number of
 inversions. -/
+@[expose]
 def sortSign {α : Type} [LinearOrder α] (l : List α) : ℤ :=
   (-1) ^ inversions l
 
@@ -125,6 +127,7 @@ theorem pairing_boundaryFlag_comm (W : Fragment α) {i j : α}
 
 /-- The closed fragment with no flags, no vertices, and a given
 number of free circles. -/
+@[expose]
 def circlesOnly (c : ℕ) : Fragment Empty where
   Flag := Empty
   Vertex := Empty
@@ -225,6 +228,7 @@ theorem survivingFlag_attach_ne {W : Fragment α} {i j : α}
 which is supplied together with the equation identifying it.  Taking
 the value as a parameter is what lets every proof below reason by
 cases on it, so `glueAttach` itself is never unfolded. -/
+@[expose]
 def glueAttachOn (W : Fragment α) (i j : α) (f : SurvivingFlag W i j) :
     ∀ s : W.Vertex ⊕ α, W.attach f.val = s →
       W.Vertex ⊕ SurvivingLabel α i j
@@ -235,6 +239,7 @@ def glueAttachOn (W : Fragment α) (i j : α) (f : SurvivingFlag W i j) :
 
 /-- The attachment map after gluing at `{i, j}`: unchanged, with the
 label type restricted to the surviving labels. -/
+@[expose]
 def glueAttach (W : Fragment α) (i j : α) (f : SurvivingFlag W i j) :
     W.Vertex ⊕ SurvivingLabel α i j :=
   glueAttachOn W i j f (W.attach f.val) rfl
@@ -340,6 +345,7 @@ section Glue
 variable (W : Fragment α) (i j : α)
 
 /-- The boundary flag of a surviving label survives the glue. -/
+@[expose]
 def glueBoundaryFlag (ℓ : SurvivingLabel α i j) : SurvivingFlag W i j :=
   ⟨W.boundaryFlag ℓ.val,
     fun h => ℓ.prop.1 (W.boundaryFlag_injective h),
@@ -427,6 +433,7 @@ are determined by `W` alone; only the pairing and the circle count
 tell the closed and open glues apart.  Naming that common part gives
 the two glues a single shape, so any fact about a glue that does not
 mention its pairing is proved once. -/
+@[expose]
 def glueWith (p : SurvivingFlag W i j → SurvivingFlag W i j)
     (hinvol : ∀ f, p (p f) = f) (hne : ∀ f, p f ≠ f) (c : ℕ) :
     Fragment (SurvivingLabel α i j) where
@@ -443,6 +450,7 @@ def glueWith (p : SurvivingFlag W i j → SurvivingFlag W i j)
 
 /-- Gluing the boundary labels `i ≠ j` when their flags bound a
 common edge: the edge closes into a free circle. -/
+@[expose]
 def gluePairClosed (hclosed : W.pairing (W.boundaryFlag i) = W.boundaryFlag j) :
     Fragment (SurvivingLabel α i j) :=
   glueWith W i j
@@ -458,6 +466,7 @@ def gluePairClosed (hclosed : W.pairing (W.boundaryFlag i) = W.boundaryFlag j) :
 
 /-- Gluing the boundary labels `i ≠ j` when their flags bound
 distinct edges: the two edges are unified by rewiring. -/
+@[expose]
 def gluePairOpen (hij : i ≠ j)
     (hopen : W.pairing (W.boundaryFlag i) ≠ W.boundaryFlag j) :
     Fragment (SurvivingLabel α i j) :=
@@ -512,6 +521,7 @@ of `Fin` indices. Composition is what the connection pairing evaluates. -/
 /-! ### Removing a point -/
 
 /-- Removing one point from `Fin (n + 1)` leaves `Fin n`. -/
+@[expose]
 noncomputable def finRemoveEquiv {n : ℕ} (a : Fin (n + 1)) :
     {x : Fin (n + 1) // x ≠ a} ≃ Fin n where
   toFun x := ((finSuccEquiv' a) x.val).get (by
@@ -529,6 +539,7 @@ noncomputable def finRemoveEquiv {n : ℕ} (a : Fin (n + 1)) :
 
 /-- Removing `inl a` and `inr b` from a sum splits into the two
 one-point removals. -/
+@[expose]
 def sumRemoveSplitEquiv {A B : Type} (a : A) (b : B) :
     {x : A ⊕ B // x ≠ Sum.inl a ∧ x ≠ Sum.inr b} ≃
       {x : A // x ≠ a} ⊕ {y : B // y ≠ b} where
@@ -571,6 +582,7 @@ noncomputable def interfaceStepEquiv (s t u : ℕ) :
 /-- Glue the `t` interface labels of a fragment over
 `Fin (s + t) ⊕ Fin (t + u)`: the pairs `(inl (s + k), inr k)` for
 `k < t`, glued top pair first. -/
+@[expose]
 noncomputable def glueInterface (s : ℕ) :
     (t : ℕ) → (u : ℕ) → Fragment (Fin (s + t) ⊕ Fin (t + u)) →
       Fragment (Fin s ⊕ Fin u)
@@ -583,6 +595,7 @@ noncomputable def glueInterface (s : ℕ) :
 
 /-- Composition of fragments: glue the last `t` labels of `F` to the
 first `t` labels of `G`, in order. -/
+@[expose]
 noncomputable def Fragment.compose {s t u : ℕ}
     (F : Fragment (Fin (s + t))) (G : Fragment (Fin (t + u))) :
     Fragment (Fin (s + u)) :=
@@ -604,12 +617,14 @@ abbrev ClosedFragment : Type 1 := Fragment (Fin 0)
 
 /-- The full closure of two `t`-fragments: compose them as a
 `(0 + t)`- and a `(t + 0)`-fragment. -/
+@[expose]
 noncomputable def pairClose {t : ℕ} (F G : Fragment (Fin t)) :
     ClosedFragment :=
   (F.relabel (finCongr (by omega : t = 0 + t))).compose
     (G.relabel (finCongr (by omega : t = t + 0)))
 
 /-- The connection pairing of a parameter at arity `t`. -/
+@[expose]
 noncomputable def connectionPairing (f : ClosedFragment → ℂ) (t : ℕ)
     (F G : Fragment (Fin t)) : ℂ :=
   f (pairClose F G)
@@ -623,11 +638,13 @@ noncomputable def connectionMap (f : ClosedFragment → ℂ) (t : ℕ) :
 
 /-- The edge-rank hypothesis `H2`: the connection pairing at every
 arity has rank at most `R ^ t`. -/
+@[expose]
 def EdgeRankBounded (f : ClosedFragment → ℂ) (R : ℕ) : Prop :=
   ∀ t : ℕ, Module.rank ℂ (LinearMap.range (connectionMap f t)) ≤
     (R : Cardinal) ^ t
 
 /-- The empty closed fragment. -/
+@[expose]
 noncomputable def emptyClosedFragment : ClosedFragment :=
   (Fragment.circlesOnly 0).relabel (Equiv.equivOfIsEmpty Empty (Fin 0))
 
@@ -732,6 +749,7 @@ theorem TransitionSystem.walk_injOn {F : EdgeSubset W}
 
 /-- The walk permutation of a transition system: the walk map as a
 permutation of the participating flags. -/
+@[expose]
 noncomputable def TransitionSystem.walkPerm {F : EdgeSubset W}
     (κ : TransitionSystem F) : Equiv.Perm {f : W.Flag // f ∈ F.flags} :=
   Equiv.ofBijective
@@ -1035,6 +1053,7 @@ def RegtsSevensterStatementTotal : Prop :=
 /-- **THE CONVERSE STATEMENT**: every mixed partition function is
 an edge-rank-bounded parameter with base `max 1 (k + 2ℓ)`
 (Regts–Sevenster, arXiv:1807.04494, Theorem 6). -/
+@[expose]
 def RegtsSevensterConverseStatement : Prop :=
   ∀ (k ℓ : ℕ) (h : MixedFunctional k ℓ),
     ∃ g : EdgeRankParameter (max 1 (k + 2 * ℓ)),
@@ -1162,6 +1181,7 @@ def tensorUnit : SuperVect where
 first factor and *minus* `TensorProduct.comm` on the second.
 Stated over bare modules so that instances of it at compound
 objects have syntactically reduced types. -/
+@[expose]
 def koszulEvenAux (A B C D : Type*)
     [AddCommGroup A] [Module ℂ A] [AddCommGroup B] [Module ℂ B]
     [AddCommGroup C] [Module ℂ C] [AddCommGroup D] [Module ℂ D] :
@@ -1350,6 +1370,7 @@ def rightUnitor (V : SuperVect) :
 `(a, b, c, d) ↦ (a, c, d, b)`.  All field proofs hold by `rfl`
 because the permutation is a definitional reshuffling of product
 components. -/
+@[expose]
 def prod4Perm (A B C D : Type*)
     [AddCommGroup A] [Module ℂ A] [AddCommGroup B] [Module ℂ B]
     [AddCommGroup C] [Module ℂ C] [AddCommGroup D] [Module ℂ D] :
@@ -1369,6 +1390,7 @@ modules so that instances of it at compound objects have
 syntactically reduced types; the even and odd components of the
 SuperVect associator are its instantiations with the two `C`-slots
 in the two orders. -/
+@[expose]
 def assocAux (A₁ A₂ B₁ B₂ C₁ C₂ : Type*)
     [AddCommGroup A₁] [Module ℂ A₁] [AddCommGroup A₂] [Module ℂ A₂]
     [AddCommGroup B₁] [Module ℂ B₁] [AddCommGroup B₂] [Module ℂ B₂]
@@ -2403,6 +2425,7 @@ variable {C : Type u}
 /-- **`Y` is a subquotient of `Z`**: a quotient of a subobject of
 `Z`.  This is the relation Deligne's tensor-generation hypothesis is
 stated with. -/
+@[expose]
 def IsSubquotientOf [Category.{v} C]
     (Y Z : C) : Prop :=
   ∃ (S : C) (i : S ⟶ Z) (p : S ⟶ Y), Mono i ∧ Epi p
@@ -2419,6 +2442,7 @@ theorem isSubquotientOf_of_retract [Category.{v} C]
 no strictly increasing chain of `k + 2` subobjects; equivalently,
 every chain `0 = Y₀ < ⋯ < Y_ℓ = Y` has `ℓ ≤ k`, so the composition
 length of `Y` is at most `k`. -/
+@[expose]
 def LengthLE [Category.{v} C]
     (Y : C) (k : ℕ) : Prop :=
   ∀ f : Fin (k + 2) → Subobject Y, ¬ StrictMono f
@@ -2430,6 +2454,7 @@ section
 variable (A : Type u)
 
 /-- The unit's endomorphisms are the scalars. -/
+@[expose]
 def HasScalarUnit [Category.{v} A]
     [Preadditive A] [Linear ℂ A] [MonoidalCategory A] : Prop :=
   Function.Bijective
@@ -2442,12 +2467,14 @@ section
 variable (A : Type u)
 
 /-- Iterated tensor power of an object. -/
+@[expose]
 def tensorPow [Category.{v} A] [MonoidalCategory A]
     (X : A) : ℕ → A
   | 0 => 𝟙_ A
   | n + 1 => tensorObj (tensorPow X n) X
 
 /-- A mixed tensor power of `X`: `X ^ ⊗ a ⊗ (Xᘁ) ^ ⊗ b`. -/
+@[expose]
 def mixedPow [Category.{v} A] [MonoidalCategory A]
     [RigidCategory A] (X : A) (a b : ℕ) : A :=
   tensorPow A X a ⊗ tensorPow A (Xᘁ) b
@@ -2456,6 +2483,7 @@ def mixedPow [Category.{v} A] [MonoidalCategory A]
 hypothesis: every object is a subquotient of a finite biproduct of
 mixed tensor powers of `X` — a quotient of a subobject of such a
 biproduct. -/
+@[expose]
 def TensorGeneratedBy [Category.{v} A] [MonoidalCategory A]
     [Preadditive A] [HasFiniteBiproducts A] [RigidCategory A] (X : A) : Prop :=
   ∀ Y : A, ∃ (k : ℕ) (ab : Fin k → ℕ × ℕ),
@@ -2463,6 +2491,7 @@ def TensorGeneratedBy [Category.{v} A] [MonoidalCategory A]
 
 /-- Every object has moderate tensor-power growth, measured by
 composition length. -/
+@[expose]
 def ModerateLengthGrowth [Category.{v} A] [MonoidalCategory A] : Prop :=
   ∀ Y : A, ∃ C c : ℕ, ∀ N : ℕ, LengthLE (tensorPow A Y N) (C * c ^ N)
 
@@ -2529,6 +2558,7 @@ category with ℂ-bilinear tensor product, scalar unit endomorphisms,
 a finite tensor generator and moderate growth of the lengths of its
 tensor powers admits an exact faithful ℂ-linear symmetric monoidal
 fibre functor to finite-dimensional super vector spaces. -/
+@[expose]
 def DeligneTheoremStatement : Prop :=
   ∀ (A : Type u) [Category.{v} A] [Abelian A] [Linear ℂ A]
     [MonoidalCategory A] [SymmetricCategory A]

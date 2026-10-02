@@ -254,6 +254,7 @@ section Braided
 
 /-- The braiding on `C ⊛⥤ V`, inherited from the Day-convolution
 braiding of the underlying functors. -/
+@[expose]
 def dayFunctorBraiding
     [Category.{v₁} C] {V : Type u₂} [Category.{v₂} V] [MonoidalCategory C]
     [MonoidalCategory V]

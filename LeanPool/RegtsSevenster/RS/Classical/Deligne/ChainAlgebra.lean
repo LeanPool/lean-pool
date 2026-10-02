@@ -45,6 +45,7 @@ universe v u
 variable {E : Type u}
 
 /-- Transport of a chain object along an equality of indices. -/
+@[expose]
 def chainCast [Category.{v} E] (B : ℕ → E)
     {a b : ℕ} (h : a = b) : B a ⟶ B b :=
   eqToHom (congrArg B h)
@@ -65,18 +66,21 @@ theorem chainCast_trans [Category.{v} E] (B : ℕ → E)
 
 /-- The chain diagram over the `v`-small copy of `ℕ`, the shape at
 which the receiving category is assumed to have colimits. -/
+@[expose]
 noncomputable def chainDiagram
     [Category.{v} E] (B : ℕ → E) (δ : ∀ n, B n ⟶ B (n + 1)) :
     SmallNat.{v} ⥤ E :=
   smallNatEquiv.inverse ⋙ chainFunctor B δ
 
 /-- The colimit object of the chain. -/
+@[expose]
 noncomputable def chainColimit
     [Category.{v} E] (B : ℕ → E) (δ : ∀ n, B n ⟶ B (n + 1))
     [HasColimitsOfShape SmallNat.{v} E] : E :=
   colimit (chainDiagram B δ)
 
 /-- The stage inclusion into the chain colimit. -/
+@[expose]
 noncomputable def chainColimitι
     [Category.{v} E] (B : ℕ → E) (δ : ∀ n, B n ⟶ B (n + 1))
     [HasColimitsOfShape SmallNat.{v} E]

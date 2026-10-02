@@ -55,6 +55,7 @@ private lemma equiv_zero {M N : Type*} [AddCommMonoid M] [Module ℂ M]
 
 /-- The standard copairing as an even morphism
 `𝟙 ⟶ stdSuperPair ⊗ stdSuperPair`. -/
+@[expose]
 noncomputable def stdCopair (k ℓ : ℕ) :
     SuperVect.Hom SuperVect.tensorUnit
       (SuperVect.tensorObj (stdSuperPair k ℓ) (stdSuperPair k ℓ)) := by

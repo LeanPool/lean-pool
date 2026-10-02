@@ -51,6 +51,7 @@ noncomputable def splitSeed
 
 /-- The transition of the local splitting chain: multiplication
 by the seed. -/
+@[expose]
 noncomputable def splitDelta
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
@@ -78,6 +79,7 @@ noncomputable def splitMu
 
 /-- The stage units of the local splitting chain: the powers of
 the point. -/
+@[expose]
 noncomputable def splitUnitStage
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

@@ -34,6 +34,7 @@ noncomputable def connectionRank (f : ClosedFragment → ℂ) (t : ℕ) : ℕ :=
 
 /-- A mixed functional represents the parameter on every closed
 fragment, including those with free circles. -/
+@[expose]
 def MixedFunctional.Represents {k ℓ : ℕ} (h : MixedFunctional k ℓ)
     (f : ClosedFragment → ℂ) : Prop :=
   ∀ W, f W = mixedPartition h W

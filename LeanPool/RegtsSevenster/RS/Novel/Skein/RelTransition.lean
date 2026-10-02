@@ -182,6 +182,7 @@ theorem mem_internalFlags_of {F : EdgeSubset W} {f : W.Flag}
 
 open scoped Classical in
 /-- Every `TransitionSystem` is a `RelTransitionSystem`. -/
+@[expose]
 def TransitionSystem.toRelTransitionSystem {F : EdgeSubset W}
     (κ : F.TransitionSystem) : F.RelTransitionSystem where
   match_ := κ.match_
@@ -198,6 +199,7 @@ def TransitionSystem.toRelTransitionSystem {F : EdgeSubset W}
 
 /-- The walk map on flags via a relative transition: follow pairing
 then matching. -/
+@[expose]
 noncomputable def RelTransitionSystem.internalWalk {F : EdgeSubset W}
     (κ : F.RelTransitionSystem) (f : W.Flag) : W.Flag :=
   κ.match_ (W.pairing f)
@@ -254,6 +256,7 @@ theorem RelTransitionSystem.internalWalk_injOn_of_allInternal
 
 /-- The walk permutation on internal flags, when all flags are
 internal. -/
+@[expose]
 noncomputable def RelTransitionSystem.walkPermInternal
     {F : EdgeSubset W} (κ : F.RelTransitionSystem)
     (hall : F.allInternal) :
@@ -267,6 +270,7 @@ noncomputable def RelTransitionSystem.walkPermInternal
           (congrArg Subtype.val h))))
 
 /-- The internal circuit count when all flags are internal. -/
+@[expose]
 noncomputable def RelTransitionSystem.internalCircuitCount
     {F : EdgeSubset W} (κ : F.RelTransitionSystem)
     (hall : F.allInternal) : ℕ :=

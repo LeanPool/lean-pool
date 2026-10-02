@@ -40,6 +40,7 @@ open Finset Equiv MonoidAlgebra
 
 /-- The colour space: all colourings of `n` sites in `p` colours,
 the basis of the `n`-th tensor power of `ℂ^p`. -/
+@[expose]
 def colourSpace (n p : ℕ) : Type := Fin n → Fin p
 
 /-- The colour space is finite. -/

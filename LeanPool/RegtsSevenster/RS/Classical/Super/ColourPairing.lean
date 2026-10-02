@@ -27,6 +27,7 @@ namespace RS
 
 /-- The single-position form entry: Kronecker on even colours,
 the symplectic matrix on odd colours, zero on mixed. -/
+@[expose]
 def colourFormEntry (k ℓ : ℕ) :
     (Fin k ⊕ Fin (2 * ℓ)) → (Fin k ⊕ Fin (2 * ℓ)) → ℂ
   | Sum.inl i, Sum.inl j => if i = j then 1 else 0

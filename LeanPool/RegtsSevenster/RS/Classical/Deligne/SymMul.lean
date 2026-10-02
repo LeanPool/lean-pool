@@ -194,6 +194,7 @@ end CastTransport
 section ModCast
 
 /-- Transport of a module power along an equality of arities. -/
+@[expose]
 noncomputable def modPowCast
     [Category.{v} D] [MonoidalCategory D] [BraidedCategory D] (A : D)
     [MonObj A] (X : D) [ModObj A X] [Preadditive D] [HasFiniteBiproducts D]
@@ -1079,6 +1080,7 @@ noncomputable def symPowOne
       Category.id_comp, Iso.inv_hom_id]
 
 /-- Transport of a symmetric power along an equality of arities. -/
+@[expose]
 noncomputable def symPowCast
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] (A : D)
     [MonObj A] (X : D) [ModObj A X] [Preadditive D] [HasFiniteBiproducts D]

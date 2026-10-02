@@ -66,6 +66,7 @@ theorem det_hookColOp (p ℓ : ℕ) : (hookColOp p ℓ).det = 1 := by
   · omega
 
 /-- The Jacobi–Trudi matrix of a row-length list. -/
+@[expose]
 noncomputable def jtMatrix (t : ℕ → ℂ) (rows : List ℕ) :
     Matrix (Fin rows.length) (Fin rows.length) ℂ :=
   Matrix.of fun i j : Fin rows.length =>

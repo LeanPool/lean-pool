@@ -34,11 +34,13 @@ open scoped BigOperators
 
 /-- The standard super vector space with even dimension `k` and
 odd dimension `2ℓ`. -/
+@[expose]
 noncomputable def stdSuperPair (k ℓ : ℕ) : SuperVect where
   even := Fin k → ℂ
   odd := Fin (2 * ℓ) → ℂ
 
 /-- The standard even basis vectors `e i`. -/
+@[expose]
 noncomputable def stdE (k : ℕ) (i : Fin k) : Fin k → ℂ :=
   Pi.single i 1
 

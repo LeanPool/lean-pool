@@ -46,6 +46,7 @@ unitor, and each further step of the recursion is the middle-four
 interchange `tensorμ`, inverted by `tensorδ`.  It is the
 distribution isomorphism `tensorPowDistrib`, under the shuffle's
 own name. -/
+@[expose]
 noncomputable def plainShuffle
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     (X Y : D) (n : ℕ) :

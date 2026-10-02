@@ -66,6 +66,7 @@ end MixedColouring
 /-- **The colouring model** of the `d`-th tensor power of the
 standard super space: functions on mixed colourings, graded by
 the parity of the odd support. -/
+@[expose]
 noncomputable def colourPower (k ℓ d : ℕ) : SuperVect where
   even := {c : MixedColouring k ℓ d // c.IsEven} → ℂ
   odd := {c : MixedColouring k ℓ d // ¬ c.IsEven} → ℂ
@@ -80,6 +81,7 @@ structure SuperLinearEquiv (V W : SuperVect) where
 
 /-- The tensor product of function spaces on finite types is the
 function space on the product. -/
+@[expose]
 noncomputable def funTensorFun (ι κ : Type) [Fintype ι]
     [Fintype κ] :
     ((ι → ℂ) ⊗[ℂ] (κ → ℂ)) ≃ₗ[ℂ] (ι × κ → ℂ) :=
@@ -91,6 +93,7 @@ noncomputable def funTensorFun (ι κ : Type) [Fintype ι]
 
 /-- The iterated monoidal power of a super vector space, new
 factors on the right. -/
+@[expose]
 noncomputable def superPow (V : SuperVect) : ℕ → SuperVect
   | 0 => SuperVect.tensorUnit
   | d + 1 => SuperVect.tensorObj (superPow V d) V
@@ -135,6 +138,7 @@ theorem isEven_succ_right {k ℓ d : ℕ}
 end MixedColouring
 
 /-- Splitting a colouring at its last position. -/
+@[expose]
 noncomputable def colouringSplit (k ℓ d : ℕ) :
     MixedColouring k ℓ (d + 1) ≃
       MixedColouring k ℓ d × (Fin k ⊕ Fin (2 * ℓ)) where
@@ -173,6 +177,7 @@ def subtypeProdFst {A X : Type} (Q : A → Prop) :
 /-- The even colourings of `d + 1` positions split by the last
 colour: an even colour on an even tail, or an odd colour on an
 odd tail. -/
+@[expose]
 noncomputable def evenSplitEquiv (k ℓ d : ℕ) :
     {c : MixedColouring k ℓ (d + 1) // c.IsEven} ≃
       ({c : MixedColouring k ℓ d // c.IsEven} × Fin k) ⊕
@@ -203,6 +208,7 @@ noncomputable def evenSplitEquiv (k ℓ d : ℕ) :
 /-- The odd colourings of `d + 1` positions split by the last
 colour: an even colour on an odd tail, or an odd colour on an
 even tail. -/
+@[expose]
 noncomputable def oddSplitEquiv (k ℓ d : ℕ) :
     {c : MixedColouring k ℓ (d + 1) // ¬ c.IsEven} ≃
       ({c : MixedColouring k ℓ d // ¬ c.IsEven} × Fin k) ⊕

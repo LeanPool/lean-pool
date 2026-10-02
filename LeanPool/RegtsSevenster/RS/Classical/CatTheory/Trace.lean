@@ -381,6 +381,7 @@ theorem catDim_unit [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C]
   monoidal
 
 /-- **The trace as a ℂ-linear map** into the scalar monoid. -/
+@[expose]
 def catTraceLin [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C]
     [Preadditive C] [Linear ℂ C] [MonoidalPreadditive C]
     [MonoidalLinear ℂ C] [RigidCategory C]

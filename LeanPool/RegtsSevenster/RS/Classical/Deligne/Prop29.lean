@@ -48,6 +48,7 @@ variable {D}
 
 /-- The mixed sum of `p` copies of the unit and `q` copies of the
 line. -/
+@[expose]
 noncomputable def OddLine.mix
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [HasFiniteBiproducts D]
@@ -68,6 +69,7 @@ theorem OddLine.isZero_mix_zero
 /-- **Locally mixed**: after base change to some nonzero
 commutative algebra, the object becomes a sum of copies of the
 unit and the line. -/
+@[expose]
 def OddLine.LocallyMixed
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [HasFiniteBiproducts D]

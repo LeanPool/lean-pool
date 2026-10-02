@@ -25,6 +25,7 @@ variable {n k : ℕ}
 
 open scoped Classical in
 /-- The fibre size of a pair colouring over a pair colour. -/
+@[expose]
 noncomputable def pairFibre (p : Fin n → Fin k × Fin k)
     (c : Fin k × Fin k) : ℕ :=
   (Finset.univ.filter (fun i => p i = c)).card

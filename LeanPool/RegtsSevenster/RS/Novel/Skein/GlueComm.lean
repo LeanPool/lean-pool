@@ -36,6 +36,7 @@ variable {α : Type}
 /-- The swap equivalence between nested surviving-label subtypes:
 removing `{i, j}` then `{k, l}` is the same as removing `{k, l}`
 then `{i, j}`. -/
+@[expose]
 def swapLabelEquiv {i j k l : α}
     (hik : i ≠ k) (hil : i ≠ l) (hjk : j ≠ k) (hjl : j ≠ l) :
     SurvivingLabel (SurvivingLabel α i j) ⟨k, hik.symm, hjk.symm⟩ ⟨l, hil.symm,

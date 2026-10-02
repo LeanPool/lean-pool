@@ -50,6 +50,7 @@ def refl (W : Fragment α) : Equiv W W where
   circles_eq := rfl
 
 /-- The inverse equivalence. -/
+@[expose]
 def symm (e : Equiv W₁ W₂) : Equiv W₂ W₁ where
   flagEquiv := e.flagEquiv.symm
   vertexEquiv := e.vertexEquiv.symm

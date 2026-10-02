@@ -27,6 +27,7 @@ open Finset LinearMap
 variable {G V : Type*}
 
 /-- Irreducibility, spelled invariant-submodule-theoretically. -/
+@[expose]
 def IsIrredRep [Group G] [AddCommGroup V] [Module ℂ V]
     (ρ : Representation ℂ G V) : Prop :=
   Nontrivial V ∧

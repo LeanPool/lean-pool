@@ -28,6 +28,7 @@ noncomputable section
 abbrev Tot (V : SuperVect) : Type := V.even × V.odd
 
 /-- The total linear map of a morphism of super vector spaces. -/
+@[expose]
 def tot {V W : SuperVect} (f : V ⟶ W) : Tot V →ₗ[ℂ] Tot W :=
   LinearMap.prodMap (SuperVect.Hom.evenMap f) (SuperVect.Hom.oddMap f)
 

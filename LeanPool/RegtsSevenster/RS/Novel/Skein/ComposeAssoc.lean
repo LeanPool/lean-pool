@@ -470,6 +470,7 @@ noncomputable def glueListPullRelabelTrans {α β γ : Type} (W : Fragment α)
       (Fragment.Equiv.relabelTrans _ _ _))
 
 /-- Transport the two closure casts across a normalized right-hand fragment. -/
+@[expose]
 noncomputable def pairCloseAmbientEquiv {n : ℕ} (F G : Fragment (Fin n))
     {α : Type} {N : Fragment α} {e : α ≃ Fin n} (E : G.Equiv (N.relabel e)) :=
   (Fragment.relabelDisjUnionLeft F
@@ -495,6 +496,7 @@ noncomputable def pairCloseAmbientEquiv {n : ℕ} (F G : Fragment (Fin n))
 flatten the two-stage survivors, pass through the embedded and
 relabelled fold equivalences, and read off the outer boundary
 identification. -/
+@[expose]
 noncomputable def lhsLabelEquiv (s t u v : ℕ) :
     Fragment.FoldSurviving
         ((Fin (s + t) ⊕ Fin (t + u)) ⊕ Fin (u + v))
@@ -604,6 +606,7 @@ theorem rhs_ground_eq (s t u v : ℕ) :
 /-- The associativity bridge: survivors of the ambient
 `u`-interface pairs are survivors of the right-embedded pairs in
 the right-associated ambient. -/
+@[expose]
 noncomputable def rhsBridgeEquiv (s t u v : ℕ) :
     Fragment.FoldSurviving
         ((Fin (s + t) ⊕ Fin (t + u)) ⊕ Fin (u + v))
@@ -860,6 +863,7 @@ noncomputable def rhsQs3 (s t u v : ℕ) :=
 
 /-- The composed label identification of the right
 association. -/
+@[expose]
 noncomputable def rhsLabelEquiv (s t u v : ℕ) :
     Fragment.FoldSurviving
         ((Fin (s + t) ⊕ Fin (t + u)) ⊕ Fin (u + v))

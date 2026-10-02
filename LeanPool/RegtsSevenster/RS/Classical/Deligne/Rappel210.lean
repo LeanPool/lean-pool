@@ -38,6 +38,7 @@ theorem freeModMap_lin [Category.{v} D] [MonoidalCategory D] (A : D) [MonObj A]
     ← associator_inv_naturality_right_assoc]
 
 /-- The free module on a morphism. -/
+@[expose]
 noncomputable def freeModMap
     [Category.{v} D] [MonoidalCategory D] (A : D) [MonObj A]
     {V W : D} (f : V ⟶ W) :

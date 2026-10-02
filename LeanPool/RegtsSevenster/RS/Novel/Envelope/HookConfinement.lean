@@ -53,6 +53,7 @@ namespace PermTower
 variable {E : ℕ → Type u}
 
 /-- A shape is alive in a tower when its idempotent is not killed. -/
+@[expose]
 def Alive [∀ n, Ring (E n)] [∀ n, Algebra ℂ (E n)] {A : ℝ}
     (T : PermTower E A) (P : SchurPackage.{u})
     (μ : YoungDiagram) : Prop :=

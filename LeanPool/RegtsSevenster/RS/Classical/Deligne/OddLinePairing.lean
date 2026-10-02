@@ -149,7 +149,7 @@ theorem OddLine.coevaluation_evaluation
 
 /-- **The odd line is self-dual**: the square trivialisation is
 an exact pairing of the line with itself. -/
-@[implicit_reducible]
+@[expose, implicit_reducible]
 noncomputable def OddLine.exactPairing
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] (L : OddLine D) :

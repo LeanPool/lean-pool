@@ -26,6 +26,7 @@ namespace RS
 open Finset
 
 /-- The staircase exponents of a diagram over its own row count. -/
+@[expose]
 noncomputable def eStair (μ : YoungDiagram)
     (i : Fin μ.rowLens.length) : ℕ :=
   μ.rowLens.get i + ((μ.rowLens.length - 1) - (i : ℕ))

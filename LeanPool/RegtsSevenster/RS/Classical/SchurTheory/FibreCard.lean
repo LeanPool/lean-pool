@@ -24,6 +24,7 @@ open Finset
 variable {n N : ℕ}
 
 /-- The size of the fibre of a colouring over a colour. -/
+@[expose]
 noncomputable def fibreCard (f : Fin n → Fin N) (j : Fin N) : ℕ := by
   classical
   exact (Finset.univ.filter (fun i => f i = j)).card

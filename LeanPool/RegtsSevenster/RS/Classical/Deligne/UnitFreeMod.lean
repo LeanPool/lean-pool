@@ -38,6 +38,7 @@ section UnitFree
 
 /-- **The trivial module on `V` is the free module on `V` over
 the tensor unit**, through the inverse left unitor. -/
+@[expose]
 noncomputable def unitFreeIso [Category.{v} D] [MonoidalCategory D] (V : D) :
     unitMod V ≅ freeMod (𝟙_ D) V :=
   (freeModUnitBase V).symm

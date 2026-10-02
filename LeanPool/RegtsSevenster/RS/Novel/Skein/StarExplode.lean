@@ -55,6 +55,7 @@ theorem CutClosed.pairing_mem {W : ClosedFragment}
 /-- **The explosion at a cut set**: sever each cut flag's edge,
 the freed half-edge becoming a pendant boundary edge labelled by
 the cut flag itself. -/
+@[expose]
 def explodeAt (W : ClosedFragment) (C : Finset W.Flag)
     (hC : CutClosed W C) : Fragment {f : W.Flag // f ∈ C} where
   Flag := W.Flag ⊕ {f : W.Flag // f ∈ C}

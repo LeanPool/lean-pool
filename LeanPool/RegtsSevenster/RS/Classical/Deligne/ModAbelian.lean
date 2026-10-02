@@ -100,18 +100,21 @@ theorem neg_lin [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     whiskerLeft_neg, Preadditive.neg_comp]
 
 /-- The sum of two module maps. -/
+@[expose]
 def homAdd [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     [MonoidalPreadditive D] {A : D} [MonObj A] {M : Mod D A} {N : Mod D A}
     (f g : M ⟶ N) : M ⟶ N :=
   Mod.Hom.mk' (f.hom + g.hom) (by exact add_lin f g)
 
 /-- The zero module map. -/
+@[expose]
 def homZero [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     [MonoidalPreadditive D] {A : D} [MonObj A] {M : Mod D A} {N : Mod D A} :
     M ⟶ N :=
   Mod.Hom.mk' 0 (by exact zero_lin)
 
 /-- The negative of a module map. -/
+@[expose]
 def homNeg [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     [MonoidalPreadditive D] {A : D} [MonObj A] {M : Mod D A} {N : Mod D A}
     (f : M ⟶ N) : M ⟶ N :=
@@ -538,7 +541,7 @@ theorem kerAct_mul [Category.{v} D] [MonoidalCategory D] [Preadditive D]
 
 /-- The module structure on the kernel of the underlying
 morphism. -/
-@[implicit_reducible]
+@[expose, implicit_reducible]
 noncomputable def kerModObj
     [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     [MonoidalPreadditive D] [HasKernels D] (A : D) [MonObj A] {M : Mod D A}
@@ -548,6 +551,7 @@ noncomputable def kerModObj
   mul_smul := kerAct_mul A f
 
 /-- **The kernel of a module map**, bundled. -/
+@[expose]
 noncomputable def kerMod [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     [MonoidalPreadditive D] [HasKernels D] (A : D) [MonObj A] {M : Mod D A}
     {N : Mod D A} (f : M ⟶ N) : Mod D A :=
@@ -555,6 +559,7 @@ noncomputable def kerMod [Category.{v} D] [MonoidalCategory D] [Preadditive D]
   ⟨kernel f.hom⟩
 
 /-- The inclusion of the kernel of a module map. -/
+@[expose]
 noncomputable def kerIncl [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     [MonoidalPreadditive D] [HasKernels D] (A : D) [MonObj A] {M : Mod D A}
     {N : Mod D A} (f : M ⟶ N) : kerMod A f ⟶ M :=
@@ -732,7 +737,7 @@ theorem cokerAct_mul [Category.{v} D] [MonoidalCategory D] [Preadditive D]
 
 /-- The module structure on the cokernel of the underlying
 morphism. -/
-@[implicit_reducible]
+@[expose, implicit_reducible]
 noncomputable def cokerModObj
     [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     [MonoidalPreadditive D] [HasCokernels D]
@@ -744,6 +749,7 @@ noncomputable def cokerModObj
   mul_smul := cokerAct_mul A f
 
 /-- **The cokernel of a module map**, bundled. -/
+@[expose]
 noncomputable def cokerMod [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     [MonoidalPreadditive D] [HasCokernels D]
     [∀ Z : D, PreservesColimitsOfShape WalkingParallelPair (tensorLeft Z)]
@@ -752,6 +758,7 @@ noncomputable def cokerMod [Category.{v} D] [MonoidalCategory D] [Preadditive D]
   ⟨cokernel f.hom⟩
 
 /-- The projection onto the cokernel of a module map. -/
+@[expose]
 noncomputable def cokerProj
     [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     [MonoidalPreadditive D] [HasCokernels D]
@@ -1418,6 +1425,7 @@ theorem exists_quotient_of_epi_biprod [Category.{v} E] [Abelian E]
 
 /-- **The direct sum of a list of indices**, formed by iterated
 binary biproducts from a family of objects. -/
+@[expose]
 noncomputable def idxSum [Category.{v} E] [Abelian E]
     {J : Type w} (S : J → E) : List J → E
   | [] => 0

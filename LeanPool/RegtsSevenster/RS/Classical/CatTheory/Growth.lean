@@ -36,6 +36,7 @@ variable (A : Type u)
 
 /-- Every object has moderate tensor-power growth, measured by
 endomorphism dimensions. -/
+@[expose]
 def ModerateEndGrowth [Category.{v} A] [MonoidalCategory A]
     [Preadditive A] [Linear ℂ A] : Prop :=
   ∀ Y : A, ∃ C c : ℕ, ∀ N : ℕ,

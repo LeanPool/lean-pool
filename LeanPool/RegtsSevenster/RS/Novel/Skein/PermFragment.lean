@@ -24,6 +24,7 @@ namespace RS
 
 /-- The permutation fragment of `σ`: strand `k` joins incoming
 label `k` to outgoing label `t + σ k`. -/
+@[expose]
 def permFragment {t : ℕ} (σ : Equiv.Perm (Fin t)) :
     Fragment (Fin (t + t)) where
   Flag := Fin t × Bool

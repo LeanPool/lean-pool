@@ -331,6 +331,7 @@ targets they consume.  Everything below them is untouched.
 -/
 
 /-- The transposition of the top two slots. -/
+@[expose]
 noncomputable def topSwap : Perm (Fin (n + 2)) :=
   Equiv.swap (Fin.castSucc (Fin.last n)) (Fin.last (n + 1))
 

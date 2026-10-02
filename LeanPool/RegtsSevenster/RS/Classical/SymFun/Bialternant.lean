@@ -31,6 +31,7 @@ open Finset MvPolynomial Equiv
 variable {k : ℕ}
 
 /-- The alternant matrix of variable powers. -/
+@[expose]
 noncomputable def powMat (v : Fin k → ℕ) :
     Matrix (Fin k) (Fin k) (MvPolynomial (Fin k) ℂ) :=
   Matrix.of fun i j => X j ^ (v i + ((k - 1) - (i : ℕ)))
@@ -43,6 +44,7 @@ noncomputable def hMat (v : Fin k → ℕ) :
 
 /-- The Jacobi–Trudi matrix of complete homogeneous
 polynomials. -/
+@[expose]
 noncomputable def jtMat (v : Fin k → ℕ) :
     Matrix (Fin k) (Fin k) (MvPolynomial (Fin k) ℂ) :=
   Matrix.of fun i j => hSubZ Finset.univ

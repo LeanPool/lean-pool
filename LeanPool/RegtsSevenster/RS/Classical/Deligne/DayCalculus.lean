@@ -114,6 +114,7 @@ def dayCoyonedaCorepresentableBy [SmallCategory D] [MonoidalCategory D]
 /-- Day convolution of corepresentables: the Day tensor of the
 corepresentable functors at `a` and `b` is the corepresentable functor
 at `a ⊗ b`. -/
+@[expose]
 def dayCoyonedaIso [SmallCategory D] [MonoidalCategory D]
     (a b : D) :
     DayFunctor.mk (coyoneda.obj (Opposite.op a)) ⊗
@@ -126,6 +127,7 @@ def dayCoyonedaIso [SmallCategory D] [MonoidalCategory D]
 determined by an element of `F.functor.obj (𝟙_ D)`, via the universal
 property of the unit as a left Kan extension along
 `fromPUnit (𝟙_ D)`. -/
+@[expose]
 def dayUnitCorepresentableBy [SmallCategory D] [MonoidalCategory D] :
     (dayEvaluation (𝟙_ D)).CorepresentableBy (𝟙_ (D ⊛⥤ Type v)) where
   homEquiv {F} :=
@@ -144,6 +146,7 @@ def dayUnitCorepresentableBy [SmallCategory D] [MonoidalCategory D] :
 variable (D) in
 /-- The Day unit is the corepresentable functor at the monoidal unit of
 `D`. -/
+@[expose]
 def dayUnitIso [SmallCategory D] [MonoidalCategory D] :
     𝟙_ (MonoidalCategory.DayFunctor D (Type v)) ≅
       DayFunctor.mk (coyoneda.obj (Opposite.op (𝟙_ D))) :=

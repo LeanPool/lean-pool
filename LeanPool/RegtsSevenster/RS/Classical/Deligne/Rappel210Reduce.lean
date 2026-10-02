@@ -79,12 +79,14 @@ noncomputable def unitName
 
 /-- The middle object of the unit-form extension: the pullback of
 the internal-hom epimorphism along the name of the identity. -/
+@[expose]
 noncomputable def unitFormMid
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] [Abelian D]
     (S : ShortComplex D) [HasRightDual S.X₃] : D :=
   pullback (((S.X₃)ᘁ) ◁ S.g) (unitName S.X₃)
 
 /-- The inclusion of the unit-form extension. -/
+@[expose]
 noncomputable def unitFormIn
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] [Abelian D]
     [MonoidalPreadditive D] (S : ShortComplex D) [HasRightDual S.X₃] :
@@ -96,6 +98,7 @@ noncomputable def unitFormIn
 /-- **The unit-form extension**: the given sequence, internally
 hommed and pulled back along the name of the identity, now with
 unit quotient. -/
+@[expose]
 noncomputable def unitForm
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] [Abelian D]
     [MonoidalPreadditive D] (S : ShortComplex D) [HasRightDual S.X₃] :

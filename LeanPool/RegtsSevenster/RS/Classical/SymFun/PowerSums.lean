@@ -41,6 +41,7 @@ power sums, via the Newton recursion
 
 /-- Integer-indexed extension of `newtonH`, vanishing in negative
 degrees — the form entering the Jacobi–Trudi determinant. -/
+@[expose]
 noncomputable def newtonHZ (t : ℕ → ℂ) (n : ℤ) : ℂ :=
   if 0 ≤ n then newtonH t n.toNat else 0
 
@@ -52,6 +53,7 @@ the Jacobi–Trudi determinant `det (h_{rows i − i + j})_{i,j}`. -/
 
 /-- The Schur specialization of a Young diagram: `schurDet` on its
 row-length list. -/
+@[expose]
 noncomputable def diagramSchur (μ : YoungDiagram) (t : ℕ → ℂ) : ℂ :=
   schurDet t μ.rowLens
 

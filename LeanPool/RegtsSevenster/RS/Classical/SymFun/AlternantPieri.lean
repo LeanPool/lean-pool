@@ -31,6 +31,7 @@ open Finset MvPolynomial Equiv
 variable {k : ℕ}
 
 /-- The plain power alternant of an exponent vector. -/
+@[expose]
 noncomputable def altDet {k : ℕ} (e : Fin k → ℕ) :
     MvPolynomial (Fin k) ℂ :=
   (Matrix.of fun i j : Fin k =>

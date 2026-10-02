@@ -44,6 +44,7 @@ section Components
 variable {A : Type u}
 
 /-- The even-component functor `X ↦ X.even`. -/
+@[expose]
 def evenFunctor [Category.{v} A] : Doubled A ⥤ A where
   obj X := X.even
   map f := evenHom f
@@ -51,6 +52,7 @@ def evenFunctor [Category.{v} A] : Doubled A ⥤ A where
   map_comp _ _ := rfl
 
 /-- The odd-component functor `X ↦ X.odd`. -/
+@[expose]
 def oddFunctor [Category.{v} A] : Doubled A ⥤ A where
   obj X := X.odd
   map f := oddHom f

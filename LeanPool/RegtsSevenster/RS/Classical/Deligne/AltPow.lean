@@ -56,6 +56,7 @@ section Antisymmetriser
 
 /-- **The antisymmetriser** `(1/n!) • ∑ σ, sign σ • σ` of the
 symmetric-group algebra. -/
+@[expose]
 noncomputable def antisymmetriser (n : ℕ) : SymGroupAlgebra n :=
   ((n.factorial : ℂ))⁻¹ •
     ∑ σ : Equiv.Perm (Fin n),

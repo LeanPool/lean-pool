@@ -24,6 +24,7 @@ namespace RS
 open Finset MvPolynomial Equiv
 
 /-- The staircase exponent vector of a diagram in `k` variables. -/
+@[expose]
 noncomputable def eVec (nu : YoungDiagram) (k : ℕ) : Fin k → ℕ :=
   fun i => nu.rowLen i + ((k - 1) - (i : ℕ))
 

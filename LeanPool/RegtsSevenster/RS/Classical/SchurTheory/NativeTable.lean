@@ -33,16 +33,19 @@ noncomputable def nChar
   (rhoS S).character g
 
 /-- The dimension of a submodule of the regular module. -/
+@[expose]
 noncomputable def nDim
     [Group G] (S : Submodule (MonoidAlgebra ℂ G) (MonoidAlgebra ℂ G)) : ℕ :=
   Module.finrank ℂ (subCarrier S)
 
 /-- The normalized projector coefficient. -/
+@[expose]
 noncomputable def nCoeff [Group G] [Fintype G]
     (S : Submodule (MonoidAlgebra ℂ G) (MonoidAlgebra ℂ G)) : G → ℂ :=
   fun g => ((nDim S : ℂ) / (Fintype.card G : ℂ)) * nChar S g⁻¹
 
 /-- The normalized projector. -/
+@[expose]
 noncomputable def nProjector [Group G] [Fintype G]
     (S : Submodule (MonoidAlgebra ℂ G) (MonoidAlgebra ℂ G)) :
     MonoidAlgebra ℂ G :=
