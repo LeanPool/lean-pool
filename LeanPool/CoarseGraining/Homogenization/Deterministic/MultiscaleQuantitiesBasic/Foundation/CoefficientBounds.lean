@@ -125,7 +125,8 @@ theorem homogenizationErrorOnCube_eq {d : ℕ}
 @[simp] theorem homogenizationErrorOnCube_infinity_one_eq_tsum {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (a : CoeffField d) (a0 : Mat d) :
     HomogenizationErrorOnCube Q s .infinity (.finite 1) a a0 =
-      ∑' l : ℕ, geometricWeight s 1 l * scaleResponseAtScale Q (Q.scale - (l : ℤ)) .infinity a a0 := by
+      ∑' l : ℕ, geometricWeight s 1 l *
+        scaleResponseAtScale Q (Q.scale - (l : ℤ)) .infinity a a0 := by
   rw [homogenizationErrorOnCube_infinity_one_eq, homogenizationErrorFinite_infinity_one_eq_tsum]
 
 @[simp] theorem homogenizationErrorOnCube_infinity_one_formula {d : ℕ}
@@ -480,7 +481,8 @@ theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_i
       coarseSigmaStarInvBlockNorm Q a = matNorm (sigmaStarInvCoarse (cubeSet Q) a) := by
     unfold coarseSigmaStarInvBlockNorm
     rw [coarseBlockMatrix_cubeSet_eq_openCubeSet_of_triadicCube Q a,
-      coarseBlockMatrix_lowerRight_eq_sigmaStar_inv_of_isCoarseBlockMatrix hAQ hSQ hKQ hSigmaQ hdetQ,
+      coarseBlockMatrix_lowerRight_eq_sigmaStar_inv_of_isCoarseBlockMatrix
+        hAQ hSQ hKQ hSigmaQ hdetQ,
       hcanonQsig]
   have hterm_eq :
       ∀ R ∈ descendantsAtDepth Q j,
@@ -499,12 +501,14 @@ theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_i
             (Q := R) (a := a) hSR]
     unfold coarseSigmaStarInvBlockNorm
     rw [coarseBlockMatrix_cubeSet_eq_openCubeSet_of_triadicCube R a,
-      coarseBlockMatrix_lowerRight_eq_sigmaStar_inv_of_isCoarseBlockMatrix hAR hSR hKR hSigmaR hdetR,
+      coarseBlockMatrix_lowerRight_eq_sigmaStar_inv_of_isCoarseBlockMatrix
+        hAR hSR hKR hSigmaR hdetR,
       hcanonRsig]
   have himage :
       (fun R => matNorm (sigmaStarInvCoarse (cubeSet R) a)) ''
         (↑(descendantsAtDepth Q j) : Set (TriadicCube d)) =
-        (fun R => coarseSigmaStarInvBlockNorm R a) '' (↑(descendantsAtDepth Q j) : Set (TriadicCube d)) := by
+        (fun R => coarseSigmaStarInvBlockNorm R a) ''
+          (↑(descendantsAtDepth Q j) : Set (TriadicCube d)) := by
     ext x
     constructor
     · rintro ⟨R, hR, rfl⟩
@@ -515,7 +519,8 @@ theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_i
     coarseSigmaStarInvBlockNorm Q a = matNorm (sigmaStarInvCoarse (cubeSet Q) a) := hParentEq
     _ ≤ matNorm (descendantsAverageMat Q j (fun R => sigmaStarInvCoarse (cubeSet R) a)) := by
           exact matNorm_le_of_matLoewnerLE_of_posSemidef hParentPSD hAvgPSD hLoewner
-    _ ≤ finsetSsup (descendantsAtDepth Q j) (fun R => matNorm (sigmaStarInvCoarse (cubeSet R) a)) := by
+    _ ≤ finsetSsup (descendantsAtDepth Q j)
+          (fun R => matNorm (sigmaStarInvCoarse (cubeSet R) a)) := by
           exact matNorm_descendantsAverageMat_le_finsetSsup_matNorm Q j
             (fun R => sigmaStarInvCoarse (cubeSet R) a)
     _ = finsetSsup (descendantsAtDepth Q j) (fun R => coarseSigmaStarInvBlockNorm R a) := by
@@ -565,7 +570,8 @@ theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_i
   unfold maxDescendantSigmaStarInvNormAtScale finsetSsup
   rw [descendantsAtScale_self]
   have himage :
-      ((fun R => coarseSigmaStarInvBlockNorm R a) '' (↑({Q} : Finset (TriadicCube d)) : Set (TriadicCube d))) =
+      ((fun R => coarseSigmaStarInvBlockNorm R a) ''
+        (↑({Q} : Finset (TriadicCube d)) : Set (TriadicCube d))) =
         ({coarseSigmaStarInvBlockNorm Q a} : Set ℝ) := by
     ext x
     simp
@@ -578,7 +584,8 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale {d : ℕ}
     coarseBBlockNorm R a ≤ maxDescendantBBlockNormAtScale Q k a := by
   unfold maxDescendantBBlockNormAtScale finsetSsup
   have hBdd :
-      BddAbove ((fun S => coarseBBlockNorm S a) '' (↑(descendantsAtScale Q k) : Set (TriadicCube d))) := by
+      BddAbove ((fun S => coarseBBlockNorm S a) ''
+        (↑(descendantsAtScale Q k) : Set (TriadicCube d))) := by
     exact ((Set.toFinite _).image (fun S => coarseBBlockNorm S a)).bddAbove
   exact le_csSup hBdd ⟨R, hR, rfl⟩
 
@@ -589,7 +596,8 @@ theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale {d :
   unfold maxDescendantSigmaStarInvNormAtScale finsetSsup
   have hBdd :
       BddAbove
-        ((fun S => coarseSigmaStarInvBlockNorm S a) '' (↑(descendantsAtScale Q k) : Set (TriadicCube d))) := by
+        ((fun S => coarseSigmaStarInvBlockNorm S a) ''
+          (↑(descendantsAtScale Q k) : Set (TriadicCube d))) := by
     exact ((Set.toFinite _).image (fun S => coarseSigmaStarInvBlockNorm S a)).bddAbove
   exact le_csSup hBdd ⟨R, hR, rfl⟩
 
