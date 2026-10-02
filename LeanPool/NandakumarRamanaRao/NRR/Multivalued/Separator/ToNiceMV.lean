@@ -38,6 +38,7 @@ variable {X : Type*} [MetricSpace X] [Nonempty X]
 
 /-- The nice multivalued function attached to a top–bottom separator: its scalar observable is the
 signed distance to the carrier, so its zero set is exactly the carrier. -/
+@[expose]
 noncomputable def toNiceMV
     (S : TopBottomSeparator X) :
     NiceMV X where

@@ -71,6 +71,7 @@ instance : Fintype EndpointSide where
 namespace EndpointSide
 
 /-- Numerical time attached to an endpoint side. -/
+@[expose]
 def time : EndpointSide → Real
   | lower => 0
   | upper => 1

@@ -51,6 +51,7 @@ open SubdivisionPrismCharts
 variable {p : Nat}
 
 /-- The unrefined staircase chart over one fixed spatially refined top simplex. -/
+@[expose]
 noncomputable def basePrismChart
     (hp : Nat.Prime p) (N : Nat) (q : BasePrismCell hp N) :
     C(Delta p, Realization p × Set.Icc (0 : Real) 1) where

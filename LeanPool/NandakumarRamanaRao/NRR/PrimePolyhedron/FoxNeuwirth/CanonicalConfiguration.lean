@@ -54,6 +54,7 @@ theorem canonicalPoint_injective (c : BarredPermutation p) :
   exact_mod_cast hy
 
 /-- Concrete configuration representing the stratum symbol. -/
+@[expose]
 noncomputable def canonicalConfig (c : BarredPermutation p) : Config p :=
   ⟨c.canonicalPoint, c.canonicalPoint_injective⟩
 

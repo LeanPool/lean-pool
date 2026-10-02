@@ -410,6 +410,7 @@ theorem site_injective (x : Realization p) :
     exact (ne_of_lt hs) he
 
 /-- The order-complex realization maps to the labelled configuration space. -/
+@[expose]
 noncomputable def toConfig (x : Realization p) : Config p :=
   ⟨x.site, x.site_injective⟩
 

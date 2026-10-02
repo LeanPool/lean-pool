@@ -135,6 +135,7 @@ theorem scale_zeroSet
 /-- Reflect a nice multivalued function through interval negation: `reflect` negates both the
 observable and the interval coordinate. It preserves the zero relation under `SignedInterval.neg`,
 so it reverses the sign convention without changing the represented zero relation. -/
+@[expose]
 def reflect
     (φ : NiceMV X) :
     NiceMV X :=

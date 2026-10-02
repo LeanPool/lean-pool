@@ -218,6 +218,7 @@ theorem site_injective (z : FoxNeuwirthTopCellModelPoint p) :
   exact_mod_cast hy
 
 /-- Embedded labelled configuration. -/
+@[expose]
 noncomputable def toConfig
     (z : FoxNeuwirthTopCellModelPoint p) : Config p :=
   ⟨z.site, z.site_injective⟩

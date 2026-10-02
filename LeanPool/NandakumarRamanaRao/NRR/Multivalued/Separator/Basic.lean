@@ -31,12 +31,14 @@ namespace NRR
 
 /-- The bottom boundary: points of `X × SignedInterval` whose interval coordinate is the left
 endpoint `-1`. -/
+@[expose]
 def signedBottom (X : Type*) :
     Set (X × SignedInterval) :=
   {z | z.2 = SignedInterval.left}
 
 /-- The top boundary: points of `X × SignedInterval` whose interval coordinate is the right
 endpoint `1`. -/
+@[expose]
 def signedTop (X : Type*) :
     Set (X × SignedInterval) :=
   {z | z.2 = SignedInterval.right}

@@ -94,6 +94,7 @@ theorem preconnected_univ : IsPreconnected (Set.univ : Set SignedInterval) :=
 theorem connectedSpace : ConnectedSpace SignedInterval := inferInstance
 
 /-- The vertical embedding `y ↦ (x, y)` used to build separator fibers. -/
+@[expose]
 def vertical (X : Type*) (x : X) : SignedInterval → X × SignedInterval :=
   fun y => (x, y)
 
