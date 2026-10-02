@@ -268,9 +268,8 @@ theorem of_abs {f : X → Y} (lin : IsLinearMap ℝ f) (abs : ∀ x : X, f |x|
   = |f x|) : IsVecLatHom f :=
   VecLatHom.isVecLatHom (VecLatHom.ofAbs (IsLinearMap.mk' f lin) abs)
 
-/-- A positive linear map that preserves disjointness is a vector lattice homomorphism. -/
+/-- A linear map that preserves disjointness is a vector lattice homomorphism. -/
 theorem of_disjoint {f : X → Y} (lin : IsLinearMap ℝ f)
-    (_pos : ∀ x : X, 0 ≤ x → 0 ≤ f x)
     (disj : ∀ x y : X, x ⊓ y = 0 → f x ⊓ f y = 0) : IsVecLatHom f := by
   have fNeg : ∀ x : X, f (-x) = -f x := fun x => by
     have h := lin.map_smul (-1 : ℝ) x; rwa [neg_one_smul, neg_one_smul] at h

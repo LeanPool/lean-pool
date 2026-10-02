@@ -69,18 +69,6 @@ private lemma finset_sum_increments_le_bound {x : E} {u : ℕ → E}
     _ ≤ x := hle N
 
 omit [VectorLattice E] in
-private lemma isVLDisjoint_finset_sum_local {ι : Type*} {s : Finset ι} {x : E}
-    {f : ι → E} (h : ∀ i ∈ s, IsVLDisjoint x (f i)) :
-    IsVLDisjoint x (∑ i ∈ s, f i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa using isVLDisjoint_zero_right x
-  | insert a s ha ih =>
-      rw [Finset.sum_insert ha]
-      refine (h a (Finset.mem_insert_self a s)).add_right ?_
-      exact ih (fun i hi => h i (Finset.mem_insert_of_mem hi))
-
-omit [VectorLattice E] in
 private lemma sum_range_mono_of_nonneg {f : ℕ → E} (hf : ∀ n, 0 ≤ f n) :
     Monotone fun n => ∑ i ∈ Finset.range n, f i := by
   intro n m hnm
@@ -128,7 +116,7 @@ private theorem disjointification_step_one {x : E} {u : ℕ → E}
       rw [abs_of_nonneg ha0, abs_of_nonneg (hv_nonneg n)]
       exact ha_le n hn
     have hdisj_sum : IsVLDisjoint a (∑ n ∈ s, r n) :=
-      isVLDisjoint_finset_sum_local hdisj_each
+      isVLDisjoint_finset_sum hdisj_each
     have hmeet_zero : a ⊓ (∑ n ∈ s, r n) = 0 :=
       inf_eq_zero_of_isVLDisjoint ha0 (Finset.sum_nonneg (fun n _ => hr_nonneg n))
         hdisj_sum
@@ -263,7 +251,7 @@ private theorem disjointification_step_two {x : E} {u : ℕ → E} {k : ℕ}
         rwa [inf_comm] at hinf
       exact isVLDisjoint_of_inf_eq_zero hbi_zero
     have hb_disj_pref : IsVLDisjoint b (pref n0) := by
-      simpa [pref] using isVLDisjoint_finset_sum_local hb_disj_u_before
+      simpa [pref] using isVLDisjoint_finset_sum hb_disj_u_before
     have hb_disj_invpref : IsVLDisjoint b (inv • pref n0) := hb_disj_pref.smul_right inv
     have ha_disj_invpref : IsVLDisjoint a (inv • pref n0) := by
       refine hb_disj_invpref.mono_left ?_

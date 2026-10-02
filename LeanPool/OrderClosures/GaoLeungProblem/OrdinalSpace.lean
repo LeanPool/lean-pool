@@ -424,6 +424,126 @@ theorem CNFListLT.eq_dropLast_of_length_eq
   exact ⟨x, y, by simp [hl], by simpa [hdrop] using hm,
     by simpa [hdrop] using hstep⟩
 
+/-- A cofinal tail of a CNF-extension chain has one common prefix. -/
+private theorem exists_chain_CNF_prefix
+    (ξ : Ordinal.{u}) (Z : Set (GaoIndex ξ)) (ζ : GaoIndex ξ)
+    (hchain : ∀ ⦃η⦄, η ∈ Z → ∀ ⦃η'⦄, η' ∈ Z →
+      cnfExtensionLE η.1 η'.1 ∨ cnfExtensionLE η'.1 η.1)
+    (habove : ∃ η : GaoIndex ξ, η ∈ Z ∧ ζ.1 < η.1) :
+    ∃ η₀ ∈ Z, ζ.1 < η₀.1 ∧ ∃ pre : List (Ordinal.{u} × Ordinal.{u}),
+      ∀ η ∈ Z, η₀.1 ≤ η.1 → ∃ δ d,
+        Ordinal.CNF Ordinal.omega0 η.1 = pre ++ [(δ, d)] := by
+  classical
+  let U : GaoIndex ξ → Prop := fun η ↦ η ∈ Z ∧ ζ.1 < η.1
+  have hU : ∃ η, U η := habove
+  obtain ⟨η₀, hη₀U, hη₀min⟩ := exists_minimalFor_of_wellFoundedLT U
+    (fun η : GaoIndex ξ ↦ (Ordinal.CNF Ordinal.omega0 η.1).length) hU
+  have hη₀Z : η₀ ∈ Z := hη₀U.1
+  let V : Set (GaoIndex ξ) := {η | η ∈ Z ∧ η₀.1 ≤ η.1}
+  have hη₀V : η₀ ∈ V := ⟨hη₀Z, le_rfl⟩
+  have hrelV : ∀ η ∈ V, cnfExtensionLE η₀.1 η.1 := by
+    intro η hηV
+    rcases hchain hη₀Z hηV.1 with h | h
+    · exact h
+    · exact Or.inl (le_antisymm hηV.2
+        (cnfExtensionLE_partialOrder_and_subrelation.2 h))
+  have hlenV : ∀ η ∈ V,
+      (Ordinal.CNF Ordinal.omega0 η.1).length =
+        (Ordinal.CNF Ordinal.omega0 η₀.1).length := by
+    intro η hηV
+    rcases hrelV η hηV with heq | hlt
+    · rw [heq]
+    · have hle : (Ordinal.CNF Ordinal.omega0 η.1).length ≤
+          (Ordinal.CNF Ordinal.omega0 η₀.1).length := by
+        rcases cnfExtensionLT_iff_CNFListLT.mp hlt with
+          ⟨pre, tail, x, y, hη₀cnf, hηcnf, _⟩
+        rw [hη₀cnf, hηcnf]
+        simp only [List.length_append, List.length_cons, List.length_nil]
+        omega
+      exact le_antisymm hle
+        (hη₀min ⟨hηV.1, hη₀U.2.trans_le hηV.2⟩ hle)
+  let pre := (Ordinal.CNF Ordinal.omega0 η₀.1).dropLast
+  have hη₀ne : Ordinal.CNF Ordinal.omega0 η₀.1 ≠ [] := by
+    have hη₀pos : 0 < η₀.1 :=
+      (zero_le : (0 : Ordinal) ≤ ζ.1).trans_lt hη₀U.2
+    intro h
+    have hfold := Ordinal.CNF.foldr Ordinal.omega0 η₀.1
+    rw [h] at hfold
+    exact hη₀pos.ne' hfold.symm
+  have hcnfV : ∀ η ∈ V, ∃ δ d,
+      Ordinal.CNF Ordinal.omega0 η.1 = pre ++ [(δ, d)] := by
+    intro η hηV
+    rcases hrelV η hηV with heq | hlt
+    · have hsub : η₀ = η := Subtype.ext heq
+      subst η
+      let p := (Ordinal.CNF Ordinal.omega0 η₀.1).getLast hη₀ne
+      refine ⟨p.1, p.2, ?_⟩
+      simpa only [pre, p] using (List.dropLast_append_getLast hη₀ne).symm
+    · obtain ⟨x, y, _, hηcnf, _⟩ :=
+        CNFListLT.eq_dropLast_of_length_eq
+          (cnfExtensionLT_iff_CNFListLT.mp hlt) (hlenV η hηV)
+      exact ⟨y.1, y.2, hηcnf⟩
+  exact ⟨η₀, hη₀Z, hη₀U.2, pre, fun η hηZ hle => hcnfV η ⟨hηZ, hle⟩⟩
+
+/-- Removing a common CNF prefix leaves exactly its final monomial. -/
+private theorem cnf_residual_of_common_prefix {η : Ordinal.{u}}
+    (pre : List (Ordinal.{u} × Ordinal.{u})) (δ d : Ordinal.{u})
+    (hηcnf : Ordinal.CNF Ordinal.omega0 η = pre ++ [(δ, d)]) :
+    Ordinal.CNF Ordinal.omega0 (η - cnfValue pre) = [(δ, d)] ∧
+      cnfValue pre + (η - cnfValue pre) = η := by
+  have hηeq : (cnfValue pre) + cnfValue [(δ, d)] = η := by
+    rw [← Ordinal.CNF.foldr Ordinal.omega0 η]
+    change (cnfValue pre) + cnfValue [(δ, d)] = cnfValue (Ordinal.CNF Ordinal.omega0 η)
+    rw [hηcnf, cnfValue_append]
+  have hρle : (cnfValue pre) ≤ η := hηeq ▸ le_self_add
+  have hsub : η - (cnfValue pre) = cnfValue [(δ, d)] :=
+    Ordinal.sub_eq_of_add_eq hηeq
+  constructor
+  · rw [hsub]
+    apply CNF_cnfValue
+    · simp
+    · intro p hp
+      exact Ordinal.CNF.snd_pos (by
+        rw [hηcnf]
+        exact List.mem_append_right _ hp)
+    · intro p hp
+      exact Ordinal.CNF.snd_lt Ordinal.one_lt_omega0 (by
+        rw [hηcnf]
+        exact List.mem_append_right _ hp)
+  · exact Ordinal.add_sub_cancel_of_le hρle
+
+/-- Subtraction preserves the supremum of a cofinal ordinal-chain tail when its prefix
+can be recovered by addition. -/
+private theorem chain_subtraction_isLUB
+    {ξ : Ordinal.{u}} {Z : Set (GaoIndex ξ)} {α η₀ : GaoIndex ξ} (ρ : Ordinal.{u})
+    (hchain : ∀ ⦃η⦄, η ∈ Z → ∀ ⦃η'⦄, η' ∈ Z →
+      cnfExtensionLE η.1 η'.1 ∨ cnfExtensionLE η'.1 η.1)
+    (hsup : IsLUB ((fun η : GaoIndex ξ ↦ η.1) '' Z) α.1) (hη₀Z : η₀ ∈ Z)
+    (hrecover : ∀ η ∈ Z, η₀.1 ≤ η.1 → ρ + (η.1 - ρ) = η.1) :
+    IsLUB ((fun η : GaoIndex ξ ↦ η.1 - ρ) '' {η | η ∈ Z ∧ η₀.1 ≤ η.1})
+      (α.1 - ρ) := by
+  have hρaddη₀ := hrecover η₀ hη₀Z le_rfl
+  have hρleη₀ : ρ ≤ η₀.1 := hρaddη₀ ▸ le_self_add
+  have hρleα := hρleη₀.trans (hsup.1 ⟨η₀, hη₀Z, rfl⟩)
+  have hρadda : ρ + (α.1 - ρ) = α.1 := Ordinal.add_sub_cancel_of_le hρleα
+  constructor
+  · rintro _ ⟨η, hηV, rfl⟩
+    rw [Ordinal.sub_le, hρadda]
+    exact hsup.1 ⟨η, hηV.1, rfl⟩
+  · intro b hb
+    rw [Ordinal.sub_le]
+    apply hsup.2
+    rintro _ ⟨η, hηZ, rfl⟩
+    rcases hchain hηZ hη₀Z with hηη₀ | hη₀η
+    · calc
+        η.1 ≤ η₀.1 := cnfExtensionLE_partialOrder_and_subrelation.2 hηη₀
+        _ = ρ + (η₀.1 - ρ) := hρaddη₀.symm
+        _ ≤ ρ + b := add_le_add_right (hb ⟨η₀, ⟨hη₀Z, le_rfl⟩, rfl⟩) ρ
+    · have hle := cnfExtensionLE_partialOrder_and_subrelation.2 hη₀η
+      calc
+        η.1 = ρ + (η.1 - ρ) := (hrecover η hηZ hle).symm
+        _ ≤ ρ + b := add_le_add_right (hb ⟨η, ⟨hηZ, hle⟩, rfl⟩) ρ
+
 /-- Proves that the ordinary supremum of a nonempty extension chain remains
 above every member in `cnfExtensionLE`; used by `ordinalProjection_chain_iSup`. -/
 theorem cnfExtensionLE_chain_lub
@@ -451,89 +571,27 @@ theorem cnfExtensionLE_chain_lub
       rintro _ ⟨η, hηZ, rfl⟩
       exact le_of_not_gt fun hζη ↦ h ⟨η, hηZ, hζη⟩)
     exact (not_le_of_gt hζα) hαζle
-  obtain ⟨η₀, hη₀U, hη₀min⟩ :=
-    exists_minimalFor_of_wellFoundedLT U
-      (fun η : GaoIndex ξ ↦ (Ordinal.CNF Ordinal.omega0 η.1).length) hU
-  have hζη₀ : cnfExtensionLT ζ.1 η₀.1 := by
-    rcases hchain hζZ hη₀U.1 with h | h
-    · rcases h with heq | hlt
-      · exact (hη₀U.2.ne' heq.symm).elim
-      · exact hlt
-    · exact (not_le_of_gt hη₀U.2
-        (cnfExtensionLE_partialOrder_and_subrelation.2 h)).elim
+  obtain ⟨η₀, hη₀Z, hζη₀_lt, pre, hcommon⟩ :=
+    exists_chain_CNF_prefix ξ Z ζ hchain hU
   let V : Set (GaoIndex ξ) := {η | η ∈ Z ∧ η₀.1 ≤ η.1}
-  have hη₀V : η₀ ∈ V := ⟨hη₀U.1, le_rfl⟩
-  have hrelV : ∀ η ∈ V, cnfExtensionLE η₀.1 η.1 := by
-    intro η hηV
-    rcases hchain hη₀U.1 hηV.1 with h | h
-    · exact h
-    · have hOrd := cnfExtensionLE_partialOrder_and_subrelation.2 h
-      have heq : η₀.1 = η.1 := le_antisymm hηV.2 hOrd
-      exact Or.inl heq
-  have hlenV : ∀ η ∈ V,
-      (Ordinal.CNF Ordinal.omega0 η.1).length =
-        (Ordinal.CNF Ordinal.omega0 η₀.1).length := by
-    intro η hηV
-    rcases hrelV η hηV with heq | hlt
-    · rw [heq]
-    · have hle : (Ordinal.CNF Ordinal.omega0 η.1).length ≤
-          (Ordinal.CNF Ordinal.omega0 η₀.1).length := by
-        rcases cnfExtensionLT_iff_CNFListLT.mp hlt with
-          ⟨pre, tail, x, y, hη₀cnf, hηcnf, _⟩
-        rw [hη₀cnf, hηcnf]
-        simp only [List.length_append, List.length_cons, List.length_nil]
-        omega
-      have hηU : U η := ⟨hηV.1, hη₀U.2.trans_le hηV.2⟩
-      exact le_antisymm hle (hη₀min hηU hle)
-  let pre := (Ordinal.CNF Ordinal.omega0 η₀.1).dropLast
-  have hη₀ne : Ordinal.CNF Ordinal.omega0 η₀.1 ≠ [] := by
-    have hη₀pos : 0 < η₀.1 := (zero_le : (0 : Ordinal) ≤ ζ.1).trans_lt hη₀U.2
-    intro h
-    have := Ordinal.CNF.foldr Ordinal.omega0 η₀.1
-    rw [h] at this
-    exact hη₀pos.ne' this.symm
-  have hcnfV : ∀ η ∈ V, ∃ γ d,
-      Ordinal.CNF Ordinal.omega0 η.1 = pre ++ [(γ, d)] := by
-    intro η hηV
-    rcases hrelV η hηV with heq | hlt
-    · have hsub : η₀ = η := Subtype.ext heq
-      subst η
-      let p := (Ordinal.CNF Ordinal.omega0 η₀.1).getLast hη₀ne
-      refine ⟨p.1, p.2, ?_⟩
-      simpa only [pre, p] using (List.dropLast_append_getLast hη₀ne).symm
-    · obtain ⟨x, y, _, hηcnf, _⟩ :=
-        CNFListLT.eq_dropLast_of_length_eq
-          (cnfExtensionLT_iff_CNFListLT.mp hlt) (hlenV η hηV)
-      obtain ⟨γ, d⟩ := y
-      exact ⟨γ, d, hηcnf⟩
+  have hη₀V : η₀ ∈ V := ⟨hη₀Z, le_rfl⟩
+  have hcnfV : ∀ η ∈ V, ∃ δ d,
+      Ordinal.CNF Ordinal.omega0 η.1 = pre ++ [(δ, d)] :=
+    fun η hηV => hcommon η hηV.1 hηV.2
+  have hζη₀ : cnfExtensionLT ζ.1 η₀.1 := by
+    rcases hchain hζZ hη₀Z with h | h
+    · rcases h with heq | hlt
+      · exact (hζη₀_lt.ne' heq.symm).elim
+      · exact hlt
+    · exact (not_le_of_gt hζη₀_lt
+        (cnfExtensionLE_partialOrder_and_subrelation.2 h)).elim
   let ρ : Ordinal.{u} := cnfValue pre
   have residual_of_common : ∀ (η : GaoIndex ξ) (γ d : Ordinal.{u}),
       Ordinal.CNF Ordinal.omega0 η.1 = pre ++ [(γ, d)] →
       Ordinal.CNF Ordinal.omega0 (η.1 - ρ) = [(γ, d)] ∧
         ρ + (η.1 - ρ) = η.1 := by
-    intro η γ d hηcnf
-    have hηeq : ρ + cnfValue [(γ, d)] = η.1 := by
-      rw [← Ordinal.CNF.foldr Ordinal.omega0 η.1]
-      change ρ + cnfValue [(γ, d)] = cnfValue (Ordinal.CNF Ordinal.omega0 η.1)
-      rw [hηcnf, cnfValue_append]
-    have hρle : ρ ≤ η.1 := hηeq ▸ le_self_add
-    have hsub : η.1 - ρ = cnfValue [(γ, d)] :=
-      Ordinal.sub_eq_of_add_eq hηeq
-    constructor
-    · rw [hsub]
-      apply CNF_cnfValue
-      · simp
-      · intro p hp
-        have hpη : p ∈ Ordinal.CNF Ordinal.omega0 η.1 := by
-          rw [hηcnf]
-          exact List.mem_append_right _ hp
-        exact Ordinal.CNF.snd_pos hpη
-      · intro p hp
-        have hpη : p ∈ Ordinal.CNF Ordinal.omega0 η.1 := by
-          rw [hηcnf]
-          exact List.mem_append_right _ hp
-        exact Ordinal.CNF.snd_lt Ordinal.one_lt_omega0 hpη
-    · exact Ordinal.add_sub_cancel_of_le hρle
+    intro η δ d hηcnf
+    exact cnf_residual_of_common_prefix pre δ d hηcnf
   let Q : Set (Ordinal.{u}) :=
     (fun η : GaoIndex ξ ↦ η.1 - ρ) '' V
   have hQne : Q.Nonempty := ⟨η₀.1 - ρ, ⟨η₀, hη₀V, rfl⟩⟩
@@ -548,33 +606,15 @@ theorem cnfExtensionLE_chain_lub
   have hρaddη₀ : ρ + (η₀.1 - ρ) = η₀.1 :=
     (residual_of_common η₀ β c hη₀cnf).2
   have hρleη₀ : ρ ≤ η₀.1 := hρaddη₀ ▸ le_self_add
-  have hη₀αle : η₀.1 ≤ α.1 := hsup.1 ⟨η₀, hη₀U.1, rfl⟩
+  have hη₀αle : η₀.1 ≤ α.1 := hsup.1 ⟨η₀, hη₀Z, rfl⟩
   have hρleα : ρ ≤ α.1 := hρleη₀.trans hη₀αle
   let a : Ordinal.{u} := α.1 - ρ
   have hρadda : ρ + a = α.1 := Ordinal.add_sub_cancel_of_le hρleα
   have hlubQ : IsLUB Q a := by
-    constructor
-    · rintro q ⟨η, hηV, rfl⟩
-      rw [Ordinal.sub_le]
-      rw [hρadda]
-      exact hsup.1 ⟨η, hηV.1, rfl⟩
-    · intro b hb
-      rw [Ordinal.sub_le]
-      apply hsup.2
-      rintro _ ⟨η, hηZ, rfl⟩
-      rcases hchain hηZ hη₀U.1 with hηη₀ | hη₀η
-      · have hηleη₀ := cnfExtensionLE_partialOrder_and_subrelation.2 hηη₀
-        calc
-          η.1 ≤ η₀.1 := hηleη₀
-          _ = ρ + (η₀.1 - ρ) := hρaddη₀.symm
-          _ ≤ ρ + b := add_le_add_right (hb ⟨η₀, hη₀V, rfl⟩) ρ
-      · have hη₀leη := cnfExtensionLE_partialOrder_and_subrelation.2 hη₀η
-        have hηV : η ∈ V := ⟨hηZ, hη₀leη⟩
-        obtain ⟨γ', d', hηcnf⟩ := hcnfV η hηV
-        have hρaddη := (residual_of_common η γ' d' hηcnf).2
-        calc
-          η.1 = ρ + (η.1 - ρ) := hρaddη.symm
-          _ ≤ ρ + b := add_le_add_right (hb ⟨η, hηV, rfl⟩) ρ
+    apply chain_subtraction_isLUB ρ hchain hsup hη₀Z
+    intro η hηZ hle
+    obtain ⟨δ, d, hηcnf⟩ := hcnfV η ⟨hηZ, hle⟩
+    exact (residual_of_common η δ d hηcnf).2
   have haQ : a ∉ Q := by
     rintro ⟨η, hηV, hηsub⟩
     obtain ⟨γ', d', hηcnf⟩ := hcnfV η hηV
@@ -638,79 +678,20 @@ theorem leastCNFExponent_chain_lub_le
       rintro _ ⟨η, hηZ, rfl⟩
       exact le_of_not_gt fun hζη ↦ h ⟨η, hηZ, hζη⟩)
     exact (not_le_of_gt hζα) hαζ
-  obtain ⟨η₀, hη₀U, hη₀min⟩ := exists_minimalFor_of_wellFoundedLT U
-    (fun η : GaoIndex ξ ↦ (Ordinal.CNF Ordinal.omega0 η.1).length) hU
-  have hη₀Z : η₀ ∈ Z := hη₀U.1
+  obtain ⟨η₀, hη₀Z, _hζη₀_lt, pre, hcommon⟩ :=
+    exists_chain_CNF_prefix ξ Z ζ hchain hU
   let V : Set (GaoIndex ξ) := {η | η ∈ Z ∧ η₀.1 ≤ η.1}
   have hη₀V : η₀ ∈ V := ⟨hη₀Z, le_rfl⟩
-  have hrelV : ∀ η ∈ V, cnfExtensionLE η₀.1 η.1 := by
-    intro η hηV
-    rcases hchain hη₀Z hηV.1 with h | h
-    · exact h
-    · exact Or.inl (le_antisymm hηV.2
-        (cnfExtensionLE_partialOrder_and_subrelation.2 h))
-  have hlenV : ∀ η ∈ V,
-      (Ordinal.CNF Ordinal.omega0 η.1).length =
-        (Ordinal.CNF Ordinal.omega0 η₀.1).length := by
-    intro η hηV
-    rcases hrelV η hηV with heq | hlt
-    · rw [heq]
-    · have hle : (Ordinal.CNF Ordinal.omega0 η.1).length ≤
-          (Ordinal.CNF Ordinal.omega0 η₀.1).length := by
-        rcases cnfExtensionLT_iff_CNFListLT.mp hlt with
-          ⟨pre, tail, x, y, hη₀cnf, hηcnf, _⟩
-        rw [hη₀cnf, hηcnf]
-        simp only [List.length_append, List.length_cons, List.length_nil]
-        omega
-      exact le_antisymm hle
-        (hη₀min ⟨hηV.1, hη₀U.2.trans_le hηV.2⟩ hle)
-  let pre := (Ordinal.CNF Ordinal.omega0 η₀.1).dropLast
-  have hη₀ne : Ordinal.CNF Ordinal.omega0 η₀.1 ≠ [] := by
-    have hη₀pos : 0 < η₀.1 :=
-      (zero_le : (0 : Ordinal) ≤ ζ.1).trans_lt hη₀U.2
-    intro h
-    have hfold := Ordinal.CNF.foldr Ordinal.omega0 η₀.1
-    rw [h] at hfold
-    exact hη₀pos.ne' hfold.symm
   have hcnfV : ∀ η ∈ V, ∃ δ d,
-      Ordinal.CNF Ordinal.omega0 η.1 = pre ++ [(δ, d)] := by
-    intro η hηV
-    rcases hrelV η hηV with heq | hlt
-    · have hsub : η₀ = η := Subtype.ext heq
-      subst η
-      let p := (Ordinal.CNF Ordinal.omega0 η₀.1).getLast hη₀ne
-      refine ⟨p.1, p.2, ?_⟩
-      simpa only [pre, p] using (List.dropLast_append_getLast hη₀ne).symm
-    · obtain ⟨x, y, _, hηcnf, _⟩ :=
-        CNFListLT.eq_dropLast_of_length_eq
-          (cnfExtensionLT_iff_CNFListLT.mp hlt) (hlenV η hηV)
-      exact ⟨y.1, y.2, hηcnf⟩
+      Ordinal.CNF Ordinal.omega0 η.1 = pre ++ [(δ, d)] :=
+    fun η hηV => hcommon η hηV.1 hηV.2
   let ρ : Ordinal.{u} := cnfValue pre
   have residual_of_common : ∀ (η : GaoIndex ξ) (δ d : Ordinal.{u}),
       Ordinal.CNF Ordinal.omega0 η.1 = pre ++ [(δ, d)] →
       Ordinal.CNF Ordinal.omega0 (η.1 - ρ) = [(δ, d)] ∧
         ρ + (η.1 - ρ) = η.1 := by
     intro η δ d hηcnf
-    have hηeq : ρ + cnfValue [(δ, d)] = η.1 := by
-      rw [← Ordinal.CNF.foldr Ordinal.omega0 η.1]
-      change ρ + cnfValue [(δ, d)] = cnfValue (Ordinal.CNF Ordinal.omega0 η.1)
-      rw [hηcnf, cnfValue_append]
-    have hρle : ρ ≤ η.1 := hηeq ▸ le_self_add
-    have hsub : η.1 - ρ = cnfValue [(δ, d)] :=
-      Ordinal.sub_eq_of_add_eq hηeq
-    constructor
-    · rw [hsub]
-      apply CNF_cnfValue
-      · simp
-      · intro p hp
-        exact Ordinal.CNF.snd_pos (by
-          rw [hηcnf]
-          exact List.mem_append_right _ hp)
-      · intro p hp
-        exact Ordinal.CNF.snd_lt Ordinal.one_lt_omega0 (by
-          rw [hηcnf]
-          exact List.mem_append_right _ hp)
-    · exact Ordinal.add_sub_cancel_of_le hρle
+    exact cnf_residual_of_common_prefix pre δ d hηcnf
   let Q : Set (Ordinal.{u}) := (fun η : GaoIndex ξ ↦ η.1 - ρ) '' V
   have hQne : Q.Nonempty := ⟨η₀.1 - ρ, ⟨η₀, hη₀V, rfl⟩⟩
   have hsingleQ : ∀ q ∈ Q, ∃ δ d,
@@ -727,26 +708,10 @@ theorem leastCNFExponent_chain_lub_le
   let a : Ordinal.{u} := α.1 - ρ
   have hρadda : ρ + a = α.1 := Ordinal.add_sub_cancel_of_le hρleα
   have hlubQ : IsLUB Q a := by
-    constructor
-    · rintro _ ⟨η, hηV, rfl⟩
-      rw [Ordinal.sub_le, hρadda]
-      exact hsup.1 ⟨η, hηV.1, rfl⟩
-    · intro b hb
-      rw [Ordinal.sub_le]
-      apply hsup.2
-      rintro _ ⟨η, hηZ, rfl⟩
-      rcases hchain hηZ hη₀Z with hηη₀ | hη₀η
-      · calc
-          η.1 ≤ η₀.1 := cnfExtensionLE_partialOrder_and_subrelation.2 hηη₀
-          _ = ρ + (η₀.1 - ρ) := hρaddη₀.symm
-          _ ≤ ρ + b := add_le_add_right (hb ⟨η₀, hη₀V, rfl⟩) ρ
-      · have hηV : η ∈ V := ⟨hηZ,
-          cnfExtensionLE_partialOrder_and_subrelation.2 hη₀η⟩
-        obtain ⟨δ, d, hηcnf⟩ := hcnfV η hηV
-        have hρaddη := (residual_of_common η δ d hηcnf).2
-        calc
-          η.1 = ρ + (η.1 - ρ) := hρaddη.symm
-          _ ≤ ρ + b := add_le_add_right (hb ⟨η, hηV, rfl⟩) ρ
+    apply chain_subtraction_isLUB ρ hchain hsup hη₀Z
+    intro η hηZ hle
+    obtain ⟨δ, d, hηcnf⟩ := hcnfV η ⟨hηZ, hle⟩
+    exact (residual_of_common η δ d hηcnf).2
   obtain ⟨Γ, D, hacnf⟩ := cnf_eq_singleton_of_isLUB Q a hQne
     (fun q hq ↦ let ⟨δ, d, h, _⟩ := hsingleQ q hq; ⟨δ, d, h⟩) hlubQ
   have hpowUpper : Ordinal.omega0 ^ γ ∈ upperBounds Q := by

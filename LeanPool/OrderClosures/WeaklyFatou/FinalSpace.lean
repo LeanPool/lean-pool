@@ -569,11 +569,9 @@ theorem finalSpace_not_equivalent_fatou :
     induction k with
     | zero => exact hball
     | succ k ih => exact orderAdherence_mono ih
-  have hsolidq : LatticeOrderedAddCommGroup.IsSolid (unitBallFor q) := by
-    intro y hy z hzy
-    exact (q.solid hzy).trans hy
   have hscale :=
-    (iteratedOrderAdherence_mono_and_scale hsolidq hsolidq hC).2.2 n
+    (iteratedOrderAdherence_mono_and_scale
+      (A := unitBallFor q) (B := unitBallFor q) hC).2.2 n
   have hz := hitermono n (finalLargeVector_properties n).1
   rw [hscale, fatou_iterated_unitBall q hq n hn] at hz
   rcases hz with ⟨y, hy, hyz⟩

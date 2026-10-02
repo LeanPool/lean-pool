@@ -380,7 +380,7 @@ private noncomputable def disjointEmbedding
     fun _ _ ha hc ↦ disjointSup_add hx hb hxb ha hc
   let T : (P →ᵇ ℝ) →ₗ[ℝ] X := Positive.extension htau_nonneg htau_add
   apply IsVecLatHom.mk' T
-  apply IsVecLatHom.of_disjoint T.isLinear (Positive.extension_positive htau_nonneg htau_add)
+  apply IsVecLatHom.of_disjoint T.isLinear
   intro a c hac
   have ha : 0 ≤ a := hac ▸ inf_le_left
   have hc : 0 ≤ c := hac ▸ inf_le_right

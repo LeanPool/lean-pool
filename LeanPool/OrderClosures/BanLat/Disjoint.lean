@@ -153,9 +153,9 @@ theorem abs_add_of_isVLDisjoint {x y : X} (h : IsVLDisjoint x y) :
     _ = (x⁺ + x⁻) + (y⁺ + y⁻) := by abel
     _ = |x| + |y| := by rw [posPart_add_negPart, posPart_add_negPart]
 
-/-- If `x, y ≥ 0` and `x ⊥ y` then `|x ⊔ y| = |x| ⊔ |y|`. -/
+/-- Absolute value preserves the supremum of nonnegative elements. -/
 theorem abs_sup_of_isVLDisjoint {x y : X} (hx : 0 ≤ x) (hy : 0 ≤ y)
-    (_ : IsVLDisjoint x y) : |x ⊔ y| = |x| ⊔ |y| := by
+    : |x ⊔ y| = |x| ⊔ |y| := by
   rw [abs_of_nonneg (le_sup_of_le_left hx), abs_of_nonneg hx, abs_of_nonneg hy]
 
 /-- The positive and negative parts of an element are disjoint. -/
@@ -285,7 +285,8 @@ theorem isVLDisjoint_sub_inf (x y : X) :
 
 /-! ### Finite disjoint sums -/
 
-private lemma isVLDisjoint_finset_sum {ι : Type*} {s : Finset ι} {x : X} {f : ι → X}
+/-- A sum of elements disjoint from a fixed element remains disjoint from it. -/
+lemma isVLDisjoint_finset_sum {ι : Type*} {s : Finset ι} {x : X} {f : ι → X}
     (h : ∀ i ∈ s, IsVLDisjoint x (f i)) : IsVLDisjoint x (∑ i ∈ s, f i) := by
   classical
   induction s using Finset.induction_on with
@@ -409,7 +410,8 @@ theorem isVLDisjoint_posPart_sub_smul (x y : X) {lam : ℝ} (hlam : 0 < lam) :
 
 /-! ### Finite disjoint families with scalars -/
 
-private lemma abs_sum_finset {ι : Type*} (s : Finset ι) (x : ι → X) (α : ι → ℝ)
+/-- Absolute value distributes over a scaled finite disjoint family. -/
+lemma abs_sum_finset {ι : Type*} (s : Finset ι) (x : ι → X) (α : ι → ℝ)
     (hdisj : (s : Set ι).Pairwise fun i j => IsVLDisjoint (x i) (x j)) :
     |∑ i ∈ s, α i • x i| = ∑ i ∈ s, |α i| • |x i| := by
   classical
@@ -491,10 +493,10 @@ def IsMaximalDisjoint (Λ : Set X) : Prop :=
   Maximal IsDisjointSet Λ
 
 omit [VectorLattice X] in
-/-- A pairwise disjoint family of strictly positive elements is maximal iff
+/-- A pairwise disjoint family of nonzero elements is maximal iff
 the only element disjoint from every member of the family is `0`. -/
 theorem isMaximalDisjoint_iff_forall_eq_zero {Λ : Set X}
-    (_hpos : ∀ x ∈ Λ, 0 < x) (hdis : IsDisjointSet Λ) :
+    (hdis : IsDisjointSet Λ) :
     IsMaximalDisjoint Λ ↔ ∀ x : X, (∀ a ∈ Λ, IsVLDisjoint x a) → x = 0 := by
   refine ⟨?_, ?_⟩
   · intro hmax x hx

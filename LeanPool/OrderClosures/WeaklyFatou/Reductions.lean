@@ -34,8 +34,7 @@ variable {X : Type u} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
 
 /-- Paper Lemma `lem:order-basic`. -/
 theorem iteratedOrderAdherence_mono_and_scale
-    {A B : Set X} (_hA : LatticeOrderedAddCommGroup.IsSolid A)
-    (_hB : LatticeOrderedAddCommGroup.IsSolid B) {c : ℝ} (hc : 0 < c) :
+    {A B : Set X} {c : ℝ} (hc : 0 < c) :
     (A ⊆ B → ∀ m, iteratedOrderAdherence A m ⊆ iteratedOrderAdherence B m) ∧
       (orderAdherence (scaleSet c A) = scaleSet c (orderAdherence A) ∧
         ∀ m, iteratedOrderAdherence (scaleSet c A) m =
@@ -126,7 +125,8 @@ theorem weakFatou_iterated_unitBall
       · have hm1 : 1 ≤ m := Nat.one_le_iff_ne_zero.mpr hm0
         have hpowpos : 0 < K ^ m := pow_pos hKpos m
         have hscale :=
-          (iteratedOrderAdherence_mono_and_scale hsolid hsolid hpowpos).2.1
+          (iteratedOrderAdherence_mono_and_scale
+            (A := unitBallFor p) (B := unitBallFor p) hpowpos).2.1
         intro x hx
         change x ∈ orderAdherence (iteratedOrderAdherence (unitBallFor p) m) at hx
         have hxscaled : x ∈ orderAdherence (scaleSet (K ^ m) (unitBallFor p)) :=
@@ -342,7 +342,7 @@ theorem weakFatou_of_weakNakano_norm
 theorem separable_weakSequentialNakano_implies_weakNakano
     {Y : Type u} [NormedAddCommGroup Y] [Lattice Y] [IsOrderedAddMonoid Y]
     [NormedVectorLattice Y] [TopologicalSpace.SeparableSpace Y]
-    {K : ℝ} (_hK : 1 ≤ K)
+    {K : ℝ}
     (hseq : IsWeakSequentialNakanoConstant (X := Y) norm K) :
     IsWeakNakanoConstant (X := Y) norm K ∧
       HasWeakFatouProperty (norm : Y → ℝ) K := by

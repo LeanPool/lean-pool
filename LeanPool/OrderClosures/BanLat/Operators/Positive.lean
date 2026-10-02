@@ -127,7 +127,7 @@ omit [VectorLattice X] [VectorLattice Y] [IsVLArchimedean Y] in
 private lemma tau_mono
     (hτ_nn : ∀ x, 0 ≤ x → 0 ≤ τ x)
     (hτ_add : ∀ x y, 0 ≤ x → 0 ≤ y → τ (x + y) = τ x + τ y)
-    {a b : X} (ha : 0 ≤ a) (_hb : 0 ≤ b) (hab : a ≤ b) :
+    {a b : X} (ha : 0 ≤ a) (hab : a ≤ b) :
     τ a ≤ τ b := by
   have hd : 0 ≤ b - a := sub_nonneg.mpr hab
   have : τ b = τ a + τ (b - a) := by
@@ -157,7 +157,7 @@ private lemma tau_real_smul
     rw [← tau_nsmul hτ_add m (smul_nonneg hr hx),
         ← tau_nsmul hτ_add k hx]
     exact tau_mono hτ_nn hτ_add (nsmul_nonneg hx k)
-      (nsmul_nonneg (smul_nonneg hr hx) m) <| by
+      <| by
       rw [hmrx, ← Nat.cast_smul_eq_nsmul ℝ k x]
       exact smul_le_smul_of_nonneg_right hk_le hx
   have hhi : m • τ (r • x) ≤ (k + 1) • τ x := by
@@ -165,7 +165,7 @@ private lemma tau_real_smul
         ← tau_nsmul hτ_add (k + 1) hx]
     exact tau_mono hτ_nn hτ_add
       (nsmul_nonneg (smul_nonneg hr hx) m)
-      (nsmul_nonneg hx (k + 1)) <| by
+      <| by
       rw [hmrx, ← Nat.cast_smul_eq_nsmul ℝ (k + 1) x]
       exact smul_le_smul_of_nonneg_right (by push_cast; exact hmr_lt.le) hx
   have hlo' : k • τ x ≤ m • (r • τ x) := by
@@ -205,10 +205,9 @@ private lemma negPart_smul_nonneg {r : ℝ} (hr : 0 ≤ r) (x : X) :
   change (-(r • x)) ⊔ 0 = r • ((-x) ⊔ 0)
   rw [← smul_neg, ← smul_zero r, ← nonneg_smul_sup (-x) 0 r hr, smul_zero]
 
-omit [IsOrderedAddMonoid Y] [VectorLattice X] [VectorLattice Y]
+omit [Lattice Y] [IsOrderedAddMonoid Y] [VectorLattice X] [VectorLattice Y]
   [IsVLArchimedean Y] in
 lemma extFun_add
-    (_hτ_nn : ∀ x, 0 ≤ x → 0 ≤ τ x)
     (hτ_add : ∀ x y, 0 ≤ x → 0 ≤ y → τ (x + y) = τ x + τ y)
     (x y : X) :
     τ (x + y)⁺ - τ (x + y)⁻ = (τ x⁺ - τ x⁻) + (τ y⁺ - τ y⁻) := by
@@ -268,7 +267,7 @@ extends to a unique positive linear operator when the codomain is Archimedean.
 The extension satisfies `T x = τ x⁺ − τ x⁻`. -/
 noncomputable def extension : X →ₗ[ℝ] Y :=
   { toFun := fun x => τ x⁺ - τ x⁻
-    map_add' := extFun_add hτ_nn hτ_add
+    map_add' := extFun_add hτ_add
     map_smul' := fun r x => by
       simp only [RingHom.id_apply]
       exact extFun_smul hτ_nn hτ_add r x }
@@ -286,9 +285,8 @@ theorem extension_positive : Positive (extension hτ_nn hτ_add) :=
   fun x hx => by
     rw [extension_nonneg hτ_nn hτ_add hx]; exact hτ_nn _ hx
 
-/-- The positive linear extension is the unique positive operator
-extending τ on nonneg elements. -/
-theorem extension_unique {f : X →ₗ[ℝ] Y} (_hf : Positive f)
+/-- The extension is the unique linear operator extending τ on nonnegative elements. -/
+theorem extension_unique {f : X →ₗ[ℝ] Y}
     (hext : ∀ x, 0 ≤ x → f x = τ x) :
     f = extension hτ_nn hτ_add := by
   ext x
