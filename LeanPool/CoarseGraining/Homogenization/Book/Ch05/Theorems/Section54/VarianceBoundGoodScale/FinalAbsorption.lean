@@ -36,7 +36,7 @@ private theorem widetildeThetaAtScale_zero_nonneg
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP4 : QuantitativeCoarseGrainedEllipticity P) :
     0 ≤ widetildeThetaAtScale P 0 hP4 := by
-  simp [widetildeThetaAtScale, Ch04.widetildeThetaAtScale]
+  simp only [widetildeThetaAtScale, Ch04.widetildeThetaAtScale]
   exact mul_nonneg
     (Ch04.LambdaMomentAtScale_nonneg P 0 hP4.xi hP4.sUpper_pos)
     (Ch04.lambdaInvMomentAtScale_nonneg P 0 hP4.xi hP4.sLower_pos)
@@ -117,7 +117,7 @@ theorem pairProbeRefinedDescendantAverageK_eq_geometric
   rw [Section52.section52_descendantsAtScale_originCube_int_zero_card_inv d hj_nonneg]
   rw [Section52.section52_descendantsAtScale_originCube_int_zero_card_rpow d hP4.xi hj_nonneg]
   rw [Section52.section52_descendantsAtScale_originCube_int_zero_card_sqrt d hj_nonneg]
-  simp [widetildeThetaAtScale]
+  simp only [Int.toNat_natCast, neg_mul, Real.rpow_eq_pow, widetildeThetaAtScale]
   have h3 : 0 < (3 : ℝ) := by norm_num
   have hLp_pow :
       Real.rpow (3 : ℝ) (-((d : ℝ) * (j : ℝ))) *

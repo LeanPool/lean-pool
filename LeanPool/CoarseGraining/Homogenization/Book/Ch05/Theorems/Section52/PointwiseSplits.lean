@@ -194,7 +194,7 @@ theorem LambdaSqCoeffField_originCube_finite_one_le_two_upperSmallSqrtTail_sq_ad
         (fun n => section52LargeScaleWeight_nonneg m hs.le n)
         (fun n => by
           by_cases hn : n ≤ (m : ℤ)
-          · simp [H, hn]
+          · simp only [hn, ↓reduceIte, H]
             exact maxDescendantBMatrixNormCoeffFieldAtScale_nonneg_of_le Q a hn
           · simp [H, hn])
         (section52LargeScaleWeight_sum_le_one hs m)
@@ -300,7 +300,7 @@ theorem LambdaSqCoeffField_originCube_finite_one_le_upperSmallSqrtTail_sq_div_ad
         (fun n => section52LargeScaleWeight_nonneg m hs.le n)
         (fun n => by
           by_cases hn : n ≤ (m : ℤ)
-          · simp [H, hn]
+          · simp only [hn, ↓reduceIte, H]
             exact maxDescendantBMatrixNormCoeffFieldAtScale_nonneg_of_le Q a hn
           · simp [H, hn])
     have hleft :
@@ -463,7 +463,7 @@ theorem lambdaSqCoeffField_originCube_finite_one_inv_le_two_lowerSmallSqrtTail_s
         (fun n => section52LargeScaleWeight_nonneg m hs.le n)
         (fun n => by
           by_cases hn : n ≤ (m : ℤ)
-          · simp [H, hn]
+          · simp only [hn, ↓reduceIte, H]
             exact maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_nonneg_of_le
               Q a hn
           · simp [H, hn])
@@ -573,7 +573,7 @@ theorem lambdaSqCoeffField_originCube_finite_one_inv_le_lowerSmallSqrtTail_sq_di
         (fun n => section52LargeScaleWeight_nonneg m hs.le n)
         (fun n => by
           by_cases hn : n ≤ (m : ℤ)
-          · simp [H, hn]
+          · simp only [hn, ↓reduceIte, H]
             exact maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_nonneg_of_le
               Q a hn
           · simp [H, hn])
