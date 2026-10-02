@@ -189,16 +189,14 @@ theorem facetOrbitIndicator_occurrence
 /-- Keep only lower-horizontal affine facet maps. -/
 noncomputable def lowerMapWeight
     (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p)
-    (tau : Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) : ZMod p := by
-  classical
-  exact if MapIsLowerHorizontal tau then W tau else 0
+    (tau : Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) : ZMod p :=
+  weightedLowerMapWeight W tau
 
 /-- Keep only upper-horizontal affine facet maps. -/
 noncomputable def upperMapWeight
     (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p)
-    (tau : Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) : ZMod p := by
-  classical
-  exact if MapIsUpperHorizontal tau then W tau else 0
+    (tau : Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) : ZMod p :=
+  weightedUpperMapWeight W tau
 
 /-- Keep only nonhorizontal affine facet maps. -/
 noncomputable def sideMapWeight
@@ -226,6 +224,7 @@ theorem lower_add_upper_add_side
     lowerMapWeight W tau + upperMapWeight W tau + sideMapWeight W tau = W tau := by
   classical
   unfold lowerMapWeight upperMapWeight sideMapWeight
+    weightedLowerMapWeight weightedUpperMapWeight
   by_cases hl : MapIsLowerHorizontal tau
   · have hu : ¬ MapIsUpperHorizontal tau := by
       intro h
@@ -239,28 +238,19 @@ theorem lower_add_upper_add_side
 noncomputable def occurrencePairing
     (hp : Nat.Prime p) (N L : Nat)
     (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p) : ZMod p :=
-  ∑ o : EquivariantPrismGlobalCancellation.FacetOccurrence hp N L,
-    occurrenceCoefficient hp N L o * W (occurrenceFacetMap hp N L o)
+  weightedOccurrencePairing hp N L W
 
 /-- Lower endpoint pairing at the combined spatial level. -/
 noncomputable def lowerEndpointPairing
     (hp : Nat.Prime p) (N L : Nat)
     (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p) : ZMod p :=
-  ∑ q : TopCell hp N,
-    ((PrimeOrbitCycle.orbitCycle hp).coefficient q.1 * subdivisionSign N q.2) *
-      ∑ eta : Fin L → Equiv.Perm (Fin p),
-        subdivisionSign L eta *
-          W (lowerEndpointMap (endpointSpatialMap hp N L q eta))
+  weightedLowerEndpointPairing hp N L W
 
 /-- Upper endpoint pairing at the combined spatial level. -/
 noncomputable def upperEndpointPairing
     (hp : Nat.Prime p) (N L : Nat)
     (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p) : ZMod p :=
-  ∑ q : TopCell hp N,
-    ((PrimeOrbitCycle.orbitCycle hp).coefficient q.1 * subdivisionSign N q.2) *
-      ∑ eta : Fin L → Equiv.Perm (Fin p),
-        subdivisionSign L eta *
-          W (upperEndpointMap (endpointSpatialMap hp N L q eta))
+  weightedUpperEndpointPairing hp N L W
 
 /-- Lower-horizontal part of the arbitrary weighted occurrence pairing. -/
 theorem occurrencePairing_lower
@@ -313,15 +303,8 @@ noncomputable def arbitrarySpatialSideWeight
     {n : Nat} (hp : Nat.Prime (n + 1)) (L : Nat)
     (V : (Delta n → Realization (n + 1) × Set.Icc (0 : Real) 1) → ZMod (n + 1))
     (eta : Fin L → Equiv.Perm (Fin (n + 1))) (h : Fin n)
-    (tau : Delta (n - 1) → Realization (n + 1)) : ZMod (n + 1) := by
-  have hn : 0 < n := Nat.pos_of_ne_zero (by
-    intro hn0
-    subst n
-    exact Fin.elim0 h)
-  let h' : Fin ((n - 1) + 1) := Fin.cast (by omega) h
-  exact V (fun x =>
-    staircasePrismMap (n - 1) tau h'
-      (deltaCast (Nat.sub_add_cancel hn).symm (affineCompMap n L eta x)))
+    (tau : Delta (n - 1) → Realization (n + 1)) : ZMod (n + 1) :=
+  genericSpatialSideWeight hp L V eta h tau
 
 /-- A side simplex of a refined chart is the arbitrary side weight of its iterated spatial facet. -/
 theorem refined_side_eq_arbitrarySpatialSideWeight
@@ -348,25 +331,7 @@ theorem refined_side_eq_arbitrarySpatialSideWeight
       arbitrarySpatialSideWeight hp L V eta h
         (iteratedFacetMap (n - 1) N baseSimplex spatial'
           (Fin.cast hd.symm r)) := by
-  cases n with
-  | zero => exact Fin.elim0 h
-  | succ n =>
-      dsimp only
-      rw [refined_chart_eq_affineCompMap]
-      simp only [Nat.add_one_sub_one, Nat.succ_eq_add_one, Nat.reduceAdd, deltaCast_rfl,
-        Equiv.cast_refl, Equiv.refl_trans, Equiv.trans_refl, Fin.cast_eq_self]
-      have hspatial :
-          (fun k =>
-            ((Equiv.cast (congrArg Fin (show n + 1 - 1 + 2 = n + 1 + 1 by omega))).trans
-              (spatial k)).trans
-              (Equiv.cast (congrArg Fin
-                (show n + 1 + 1 = n + 1 - 1 + 2 by omega)))) = spatial := by
-        funext k
-        apply Equiv.ext
-        intro i
-        rfl
-      change V _ = V _
-      congr 1
+  exact refined_side_eq_genericSpatialSideWeight hp N L V orbit spatial eta r h
 
 /-- Successor-dimensional arbitrary-weight side bridge, with transports normalized. -/
 theorem refined_side_eq_arbitrarySpatialSideWeight_succ
@@ -478,7 +443,7 @@ private theorem fixed_refined_side_pairing_cancels (N L n : ℕ) (hp : Nat.Prime
   have hVsimplex : ∀ (g : PrimeSymmetry (n + 1 + 1)) (f : Simplex (n + 1 + 1) n),
       Vsimplex (g • f) = Vsimplex f := by
     intro g f
-    dsimp [Vsimplex, arbitrarySpatialSideWeight]
+    dsimp [Vsimplex, arbitrarySpatialSideWeight, genericSpatialSideWeight]
     calc
       _ = sideMapWeight W
           (translateFacetMap (n + 1 + 1) g (fun x =>
@@ -516,7 +481,7 @@ theorem occurrencePairing_side_eq_zero
   have hpdim : p = (p - 1) + 1 := (Nat.sub_add_cancel hp.pos).symm
   generalize hn : p - 1 = n at hpdim ⊢
   subst p
-  unfold occurrencePairing
+  unfold occurrencePairing weightedOccurrencePairing
   rw [Fintype.sum_prod_type]
   simp only [occurrenceCoefficient, prismCoefficient, prismSign,
     Int.cast_mul, Int.cast_prod]
@@ -686,7 +651,7 @@ theorem occurrencePairing_eq_upper_sub_lower
       occurrencePairing hp N L (lowerMapWeight W) +
         occurrencePairing hp N L (upperMapWeight W) +
           occurrencePairing hp N L (sideMapWeight W) := by
-    unfold occurrencePairing
+    unfold occurrencePairing weightedOccurrencePairing
     rw [← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
     apply Finset.sum_congr rfl
     intro o ho

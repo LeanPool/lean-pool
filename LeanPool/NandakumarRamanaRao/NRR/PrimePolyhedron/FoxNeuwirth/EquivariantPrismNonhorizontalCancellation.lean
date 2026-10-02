@@ -1922,9 +1922,12 @@ theorem realizationPoint_prime_smul_any
       (if s i = c.relabel (PrimeSymmetry.toPerm p g).symm then w i else 0)
     rw [ite_eq_right h, ite_eq_right h']
 
-/-- Weight of a staircase side simplex built over a spatial facet. -/
-noncomputable def spatialSideWeight
-    (hp : Nat.Prime (n + 1)) (N L : Nat) (a : Assignment hp N L)
+/-! ## Shared spatial-side bridge -/
+
+/-- Weight of a staircase side simplex for any affine-facet weight. -/
+noncomputable def genericSpatialSideWeight
+    {n : Nat} (hp : Nat.Prime (n + 1)) (L : Nat)
+    (V : (Delta n → Realization (n + 1) × Set.Icc (0 : Real) 1) → ZMod (n + 1))
     (eta : Fin L → Equiv.Perm (Fin (n + 1))) (h : Fin n)
     (tau : Delta (n - 1) → Realization (n + 1)) : ZMod (n + 1) := by
   have hn : 0 < n := Nat.pos_of_ne_zero (by
@@ -1932,9 +1935,51 @@ noncomputable def spatialSideWeight
     subst n
     exact Fin.elim0 h)
   let h' : Fin ((n - 1) + 1) := Fin.cast (by omega) h
-  exact nonhorizontalMapWeight hp N L a (fun x =>
+  exact V (fun x =>
     staircasePrismMap (n - 1) tau h'
       (deltaCast (Nat.sub_add_cancel hn).symm (affineCompMap n L eta x)))
+
+/-- A refined-chart side simplex is the generic weight of its spatial facet. -/
+theorem refined_side_eq_genericSpatialSideWeight
+    {n : Nat} (hp : Nat.Prime (n + 1)) (N L : Nat)
+    (V : (Delta n → Realization (n + 1) × Set.Icc (0 : Real) 1) → ZMod (n + 1))
+    (orbit : PrimeOrbitCycle.TopOrbit hp)
+    (spatial : RefinementWord (n + 1) N)
+    (eta : Fin L → Equiv.Perm (Fin (n + 1)))
+    (r : Fin (n + 1)) (h : Fin n) :
+    let hn : 0 < n := Nat.pos_of_ne_zero (by
+      intro hn0
+      subst n
+      exact Fin.elim0 h)
+    let hd : n - 1 + 2 = n + 1 := by omega
+    let spatial' : Fin N → Equiv.Perm (Fin (n - 1 + 2)) := fun k =>
+      (Equiv.cast (congrArg Fin hd)).trans (spatial k) |>.trans
+        (Equiv.cast (congrArg Fin hd.symm))
+    let baseSimplex : Delta (n - 1 + 1) → Realization (n + 1) := fun x =>
+      (ReferenceAffineOrbitCount.topRepr hp orbit).realizationContinuousMap
+        (deltaCast ((Nat.sub_add_cancel hn).trans (Nat.add_sub_cancel n 1).symm) x)
+    V (fun x =>
+      sidePrismMap n (RefinedAffineMap.chart hp N (orbit, spatial)) r h
+        (affineCompMap n L eta x)) =
+      genericSpatialSideWeight hp L V eta h
+        (iteratedFacetMap (n - 1) N baseSimplex spatial'
+          (Fin.cast hd.symm r)) := by
+  cases n with
+  | zero => exact Fin.elim0 h
+  | succ n =>
+      dsimp only
+      rw [refined_chart_eq_affineCompMap]
+      simp only [Nat.add_one_sub_one, Nat.succ_eq_add_one, Nat.reduceAdd, deltaCast_rfl,
+        Equiv.cast_refl, Equiv.refl_trans, Equiv.trans_refl, Fin.cast_eq_self]
+      change V _ = V _
+      congr 1
+
+/-- Weight of a staircase side simplex built over a spatial facet. -/
+noncomputable def spatialSideWeight
+    (hp : Nat.Prime (n + 1)) (N L : Nat) (a : Assignment hp N L)
+    (eta : Fin L → Equiv.Perm (Fin (n + 1))) (h : Fin n)
+    (tau : Delta (n - 1) → Realization (n + 1)) : ZMod (n + 1) :=
+  genericSpatialSideWeight hp L (nonhorizontalMapWeight hp N L a) eta h tau
 
 /-- A side simplex of a refined chart is the side weight of its iterated spatial facet. -/
 theorem refined_side_eq_spatialSideWeight
@@ -1960,24 +2005,8 @@ theorem refined_side_eq_spatialSideWeight
       spatialSideWeight hp N L a eta h
         (iteratedFacetMap (n - 1) N baseSimplex spatial'
           (Fin.cast hd.symm r)) := by
-  cases n with
-  | zero => exact Fin.elim0 h
-  | succ n =>
-      dsimp only
-      rw [refined_chart_eq_affineCompMap]
-      simp? [spatialSideWeight, sidePrismMap, deltaCast, Equiv.cast]
-      have hspatial :
-          (fun k =>
-            ((Equiv.cast (congrArg Fin (show n + 1 - 1 + 2 = n + 1 + 1 by omega))).trans
-              (spatial k)).trans
-              (Equiv.cast (congrArg Fin
-                (show n + 1 + 1 = n + 1 - 1 + 2 by omega)))) = spatial := by
-        funext k
-        apply Equiv.ext
-        intro i
-        rfl
-      change nonhorizontalMapWeight hp N L a _ = nonhorizontalMapWeight hp N L a _
-      congr 1
+  exact refined_side_eq_genericSpatialSideWeight hp N L
+    (nonhorizontalMapWeight hp N L a) orbit spatial eta r h
 
 /-- Successor-dimensional form of the refined side bridge, with transports normalized. -/
 theorem refined_side_eq_spatialSideWeight_succ
@@ -2203,7 +2232,7 @@ private theorem fixed_refined_side_cancels (N L n : ℕ) (hp : Nat.Prime (n + 1 
   have hW : ∀ (g : PrimeSymmetry (n + 1 + 1)) (f : Simplex (n + 1 + 1) n),
       W (g • f) = W f := by
     intro g f
-    dsimp [W, spatialSideWeight]
+    dsimp [W, spatialSideWeight, genericSpatialSideWeight]
     calc
       _ = nonhorizontalMapWeight hp N L a
           (translateFacetMap (n + 1 + 1) g (fun x =>
