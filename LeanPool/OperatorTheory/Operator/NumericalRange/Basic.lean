@@ -28,7 +28,7 @@ while `σ(A) = {i}`, breaking the spectrum inclusion that later layers need.
 No completeness assumption on `E` is needed.
 -/
 
-@[expose] public section
+public section
 
 open scoped InnerProductSpace
 

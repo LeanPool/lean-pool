@@ -23,7 +23,7 @@ Its role is the reusable affine geometry needed by such approximation
 arguments.
 -/
 
-@[expose] public section
+public section
 
 open Complex Metric Set
 open scoped ContDiff

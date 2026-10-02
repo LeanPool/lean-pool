@@ -37,7 +37,7 @@ contours of the Crouzeix–Palencia argument — become available.
   for integrands with a primitive).
 -/
 
-@[expose] public section
+public section
 
 open scoped Real Interval
 open MeasureTheory Set

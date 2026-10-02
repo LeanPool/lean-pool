@@ -47,7 +47,7 @@ asserted here; those are the remaining analytic inputs.
   sharp interior reduction in terms of the explicit regularized values.
 -/
 
-@[expose] public section
+public section
 
 open Complex Filter MeasureTheory Set
 open scoped Interval Real

@@ -20,7 +20,7 @@ abstract separating hyperplanes be converted to the angle-indexed support
 halfspaces used by the smooth support-curve construction.
 -/
 
-@[expose] public section
+public section
 
 open Complex
 

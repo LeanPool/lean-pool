@@ -24,7 +24,7 @@ the later global argument identifying the curve with the frontier of its
 support envelope.
 -/
 
-@[expose] public section
+public section
 
 open Complex Set
 open scoped ContDiff

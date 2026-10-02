@@ -23,7 +23,7 @@ These estimates are the quantitative input for constructing a smooth convex
 support curve around a polygon.
 -/
 
-@[expose] public section
+public section
 
 open Complex Set
 open scoped ContDiff

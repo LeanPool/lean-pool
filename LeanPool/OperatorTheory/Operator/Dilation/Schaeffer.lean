@@ -23,7 +23,7 @@ The negative sites stay zero, so the system component at site zero evolves as
 the resulting power-compression identity.
 -/
 
-@[expose] public section
+public section
 
 open scoped ENNReal InnerProductSpace
 

@@ -17,7 +17,7 @@ Defines `polynomialSupNorm`, `IsKPolynomialSpectralSet`, and `IsPolynomialSpectr
 These are *polynomial* spectral sets (norm bound on `Polynomial.aeval`).
 -/
 
-@[expose] public section
+public section
 
 open scoped Polynomial
 

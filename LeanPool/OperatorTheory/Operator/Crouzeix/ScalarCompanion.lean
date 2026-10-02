@@ -47,7 +47,7 @@ Plemelj boundary-value argument.
   `analyticOn_crouzeixPolynomialScalarCompanion` -- their interior forms.
 -/
 
-@[expose] public section
+public section
 
 open Complex Filter MeasureTheory Set spectrum
 open scoped Interval Real

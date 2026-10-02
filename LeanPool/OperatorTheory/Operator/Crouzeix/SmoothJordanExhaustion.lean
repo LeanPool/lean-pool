@@ -23,7 +23,7 @@ derives contour mass and winding from oriented numerical-range support, and
 packages scalar-companion approximation into the sharp exhaustion limit.
 -/
 
-@[expose] public section
+public section
 
 open Complex Filter MeasureTheory Set
 open scoped InnerProductSpace Interval Real

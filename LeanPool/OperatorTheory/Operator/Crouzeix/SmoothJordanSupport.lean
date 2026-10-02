@@ -46,7 +46,7 @@ therefore fixes the normal sign on the full frontier.
   trace and its reversal that has the supporting-normal sign.
 -/
 
-@[expose] public section
+public section
 
 open Complex Set
 open scoped Real

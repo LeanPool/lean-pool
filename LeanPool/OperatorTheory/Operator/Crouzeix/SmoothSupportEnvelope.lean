@@ -19,7 +19,7 @@ the original convex hull lies in that interior with the explicit rounding
 margin.
 -/
 
-@[expose] public section
+public section
 
 open Complex Metric Set
 open scoped ComplexConjugate

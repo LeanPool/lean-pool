@@ -36,7 +36,7 @@ phase step as its phase hypothesis.
   -- the L4.2 assembly from the remaining positive-degree phase step.
 -/
 
-@[expose] public section
+public section
 
 open Complex Filter Set
 open scoped InnerProductSpace Interval Real

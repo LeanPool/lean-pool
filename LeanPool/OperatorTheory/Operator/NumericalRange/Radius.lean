@@ -29,7 +29,7 @@ the complex polarization identity to the quadratic form
 `x ↦ ⟪x, A x⟫_ℂ`.
 -/
 
-@[expose] public section
+public section
 
 open Complex
 open scoped InnerProductSpace

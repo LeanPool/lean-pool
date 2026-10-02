@@ -28,7 +28,7 @@ assembly.
   open-stage frontier lies in the compact control set at the same radius.
 -/
 
-@[expose] public section
+public section
 
 open Metric Set
 

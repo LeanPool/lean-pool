@@ -19,7 +19,7 @@ approximation problem, culminating in the exact polynomial
 Crouzeix--Palencia theorem.
 -/
 
-@[expose] public section
+public section
 
 open Complex Metric Set
 open scoped ContDiff InnerProductSpace

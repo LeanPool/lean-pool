@@ -23,7 +23,7 @@ disk.  An interior point supplies a small disk, and a homothety expands it to
 unit radius.
 -/
 
-@[expose] public section
+public section
 
 open Complex Metric Set
 open scoped InnerProductSpace

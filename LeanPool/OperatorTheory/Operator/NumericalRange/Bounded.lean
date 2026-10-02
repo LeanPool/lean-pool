@@ -28,7 +28,7 @@ No completeness assumption on `E` is needed. (Recreated in run-003; the original
 recovered after the accidental deletion.)
 -/
 
-@[expose] public section
+public section
 
 open scoped InnerProductSpace
 

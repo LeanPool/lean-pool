@@ -39,7 +39,7 @@ those two geometric facts rather than assuming the contraction itself.
   -- the sharp invariant from unit mass and oriented support alone.
 -/
 
-@[expose] public section
+public section
 
 open Complex MeasureTheory Polynomial Set
 open scoped ComplexConjugate Interval Real

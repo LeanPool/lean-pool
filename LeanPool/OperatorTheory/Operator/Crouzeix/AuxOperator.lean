@@ -50,7 +50,7 @@ theorem from which those identities follow directly.
   the packaged bounded auxiliary-operator construction.
 -/
 
-@[expose] public section
+public section
 
 open Complex Set spectrum
 open scoped InnerProductSpace Real Interval

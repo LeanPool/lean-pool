@@ -24,7 +24,7 @@ bounded by `1/(n+1)`.  The first bound gives strict nesting; the second makes
 the intersection exactly `K`.
 -/
 
-@[expose] public section
+public section
 
 open Complex Metric Set
 open scoped InnerProductSpace

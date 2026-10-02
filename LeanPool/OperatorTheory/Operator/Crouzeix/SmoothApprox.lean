@@ -31,7 +31,7 @@ convex sets, `Ball.Pointwise` identifies closures of metric thickenings,
 supplies the smooth regular circle parametrization API.
 -/
 
-@[expose] public section
+public section
 
 open Complex Metric Set
 open scoped ContDiff
