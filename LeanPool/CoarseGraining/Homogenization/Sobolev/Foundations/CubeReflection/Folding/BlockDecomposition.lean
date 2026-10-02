@@ -232,8 +232,7 @@ theorem disjoint_cubeFaceReflectionCellCoordSet_of_ne {d : ℕ}
     have hxB' :
         cubeLowerFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i := by
-      simp [cubeFaceReflectionCellCoordSet] at hxB
-      exact hxB
+      simpa [cubeFaceReflectionCellCoordSet] using hxB
     linarith
   · have hxA' :
         cubeLowerFaceCoord Q i - cubeScaleFactor Q < x i ∧
@@ -242,14 +241,12 @@ theorem disjoint_cubeFaceReflectionCellCoordSet_of_ne {d : ℕ}
     have hxB' :
         cubeUpperFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i + cubeScaleFactor Q := by
-      simp [cubeFaceReflectionCellCoordSet] at hxB
-      exact hxB
+      simpa [cubeFaceReflectionCellCoordSet] using hxB
     linarith
   · have hxA' :
         cubeLowerFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i := by
-      simp [cubeFaceReflectionCellCoordSet] at hxA
-      exact hxA
+      simpa [cubeFaceReflectionCellCoordSet] using hxA
     have hxB' :
         cubeLowerFaceCoord Q i - cubeScaleFactor Q < x i ∧
           x i < cubeLowerFaceCoord Q i := by
@@ -259,19 +256,16 @@ theorem disjoint_cubeFaceReflectionCellCoordSet_of_ne {d : ℕ}
   · have hxA' :
         cubeLowerFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i := by
-      simp [cubeFaceReflectionCellCoordSet] at hxA
-      exact hxA
+      simpa [cubeFaceReflectionCellCoordSet] using hxA
     have hxB' :
         cubeUpperFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i + cubeScaleFactor Q := by
-      simp [cubeFaceReflectionCellCoordSet] at hxB
-      exact hxB
+      simpa [cubeFaceReflectionCellCoordSet] using hxB
     linarith
   · have hxA' :
         cubeUpperFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i + cubeScaleFactor Q := by
-      simp [cubeFaceReflectionCellCoordSet] at hxA
-      exact hxA
+      simpa [cubeFaceReflectionCellCoordSet] using hxA
     have hxB' :
         cubeLowerFaceCoord Q i - cubeScaleFactor Q < x i ∧
           x i < cubeLowerFaceCoord Q i := by
@@ -280,13 +274,11 @@ theorem disjoint_cubeFaceReflectionCellCoordSet_of_ne {d : ℕ}
   · have hxA' :
         cubeUpperFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i + cubeScaleFactor Q := by
-      simp [cubeFaceReflectionCellCoordSet] at hxA
-      exact hxA
+      simpa [cubeFaceReflectionCellCoordSet] using hxA
     have hxB' :
         cubeLowerFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i := by
-      simp [cubeFaceReflectionCellCoordSet] at hxB
-      exact hxB
+      simpa [cubeFaceReflectionCellCoordSet] using hxB
     linarith
   · exact (hab rfl).elim
 
