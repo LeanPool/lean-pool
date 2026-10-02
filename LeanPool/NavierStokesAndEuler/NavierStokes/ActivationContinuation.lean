@@ -599,11 +599,11 @@ variable {D : RadialDomain} (P : Profiles D)
 theorem average_error_bound {F : ProfileHistories.Field} (hF : ContDiffOn ℝ ∞ F D.carrier)
     {p : Point} (hp : p ∈ D.carrier) {Λ b B : ℝ}
     (hbound : ∀ t ∈ Icc (0 : ℝ) 1, |Λ * (F (t * p.1, p.2) - b)| ≤ B) :
-    |Λ * (average F p - b)| ≤ B := by
+    |Λ * (ProfileHistories.average F p - b)| ≤ B := by
   have hi : IntervalIntegrable (fun t : ℝ => F (t * p.1, p.2)) volume 0 1 := by
     apply ContinuousOn.intervalIntegrable_of_Icc zero_le_one
     exact hF.continuousOn.comp (by fun_prop) (fun t ht => D.scale_mem p hp t ht)
-  have he : Λ * (average F p - b) =
+  have he : Λ * (ProfileHistories.average F p - b) =
       ∫ t in (0 : ℝ)..1, Λ * (F (t * p.1, p.2) - b) := by
     rw [intervalIntegral.integral_const_mul, intervalIntegral.integral_sub hi
       intervalIntegrable_const, intervalIntegral.integral_const]
@@ -622,7 +622,7 @@ theorem average_error_bound {F : ProfileHistories.Field} (hF : ContDiffOn ℝ �
 noncomputable def qJets (j σ h Λ φ : ℝ) (p : Point) : Fin 5 → ℝ :=
   ![φ, Λ * (P.U p - NaturalAxisData.U j p.2),
     Λ * (P.Ubar p - NaturalAxisData.U j p.2),
-    Λ * (average (parameterPartial P.U) p - 4),
+    Λ * (ProfileHistories.average (parameterPartial P.U) p - 4),
     parameterPartial P.f p / P.f p - Λ * realGradient h j σ p.2]
 
 /-- N jets as an element of `Fin 5 → ℝ`. -/
@@ -630,7 +630,7 @@ noncomputable def nJets (j Λ : ℝ) (p : Point) : Fin 5 → ℝ :=
   ![Λ * (P.U p - NaturalAxisData.U j p.2),
     Λ * (parameterPartial P.U p - 4),
     Λ * (P.Ubar p - NaturalAxisData.U j p.2),
-    Λ * (average (parameterPartial P.U) p - 4),
+    Λ * (ProfileHistories.average (parameterPartial P.U) p - 4),
     Λ * (p.1 * radialPartial P.U p)]
 
 /-- Pressure jets, given by `![1 / Λ, P.pressure p - P.pressure0 p.2, parameterPartial
@@ -680,7 +680,7 @@ theorem qJets_bound (h j σ : ℝ) {Λ B φ : ℝ} (hB : 0 ≤ B) {p : Point}
     (hφ : |φ| ≤ B)
     (hu : |Λ * (P.U p - NaturalAxisData.U j p.2)| ≤ B)
     (hv : |Λ * (P.Ubar p - NaturalAxisData.U j p.2)| ≤ B)
-    (hvη : |Λ * (average (parameterPartial P.U) p - 4)| ≤ B)
+    (hvη : |Λ * (ProfileHistories.average (parameterPartial P.U) p - 4)| ≤ B)
     (hfη : |parameterPartial P.f p / P.f p - Λ * realGradient h j σ p.2| ≤ B) :
     qJets P j σ h Λ φ p ∈ Metric.closedBall (0 : Fin 5 → ℝ) B := by
   rw [Metric.mem_closedBall, dist_zero_right, pi_norm_le_iff_of_nonneg hB]
@@ -697,7 +697,7 @@ theorem nJets_bound (j : ℝ) {Λ B : ℝ} (hB : 0 ≤ B) {p : Point}
     (hu : |Λ * (P.U p - NaturalAxisData.U j p.2)| ≤ B)
     (huη : |Λ * (parameterPartial P.U p - 4)| ≤ B)
     (hv : |Λ * (P.Ubar p - NaturalAxisData.U j p.2)| ≤ B)
-    (hvη : |Λ * (average (parameterPartial P.U) p - 4)| ≤ B)
+    (hvη : |Λ * (ProfileHistories.average (parameterPartial P.U) p - 4)| ≤ B)
     (huX : |Λ * (p.1 * radialPartial P.U p)| ≤ B) :
     nJets P j Λ p ∈ Metric.closedBall (0 : Fin 5 → ℝ) B := by
   rw [Metric.mem_closedBall, dist_zero_right, pi_norm_le_iff_of_nonneg hB]
@@ -720,13 +720,13 @@ open NaturalAxisBridge NaturalProfile ReferencePath
 
 theorem radialPartial_natural {F : ProfileHistories.Field} {p : Point}
     (hF : ContDiffAt ℝ ∞ F p) : radialPartial F p = partialY F p := by
-  have hd := (hF.differentiableAt (by simp)).hasFDerivAt.comp_hasDerivAt p.1
+  have hd := (hF.differentiableAt (by simp)).hasFDerivAt.comp_hasDerivAt (F := ℝ × ℝ) p.1
     ((hasDerivAt_id p.1).prodMk (hasDerivAt_const p.1 p.2))
   exact hd.deriv.symm
 
 theorem parameterPartial_natural {F : ProfileHistories.Field} {p : Point}
     (hF : ContDiffAt ℝ ∞ F p) : parameterPartial F p = partialEta F p := by
-  have hd := (hF.differentiableAt (by simp)).hasFDerivAt.comp_hasDerivAt p.2
+  have hd := (hF.differentiableAt (by simp)).hasFDerivAt.comp_hasDerivAt (F := ℝ × ℝ) p.2
     ((hasDerivAt_const p.2 p.1).prodMk (hasDerivAt_id p.2))
   exact hd.deriv.symm
 
@@ -1191,7 +1191,7 @@ theorem normalized_history_bounds {D : RadialDomain} (P : Profiles D)
     (hUη : ∀ p ∈ holdRegion, |Λ * (parameterPartial P.U p - 4)| ≤ B)
     {p : Point} (hp : p ∈ holdRegion) (hpD : p ∈ D.carrier) :
     |Λ * (P.Ubar p - NaturalAxisData.U j p.2)| ≤ B ∧
-      |Λ * (average (parameterPartial P.U) p - 4)| ≤ B := by
+      |Λ * (ProfileHistories.average (parameterPartial P.U) p - 4)| ≤ B := by
   constructor
   · exact average_error_bound P.U_smooth hpD (fun t ht => hU (t * p.1, p.2) (holdRegion_scale hp
       ht))
@@ -1209,7 +1209,7 @@ theorem sourceQ_uniform_threshold {h j σ : ℝ} {P0 : ℝ → ℝ}
         (1 / 8 : ℝ) ≤ φ → φ ≤ B → |e| ≤ K / Λ →
         |Λ * (P.U p - NaturalAxisData.U j p.2)| ≤ B →
         |Λ * (P.Ubar p - NaturalAxisData.U j p.2)| ≤ B →
-        |Λ * (average (parameterPartial P.U) p - 4)| ≤ B →
+        |Λ * (ProfileHistories.average (parameterPartial P.U) p - 4)| ≤ B →
         |parameterPartial P.f p / P.f p - Λ * realGradient h j σ p.2| ≤ B →
         p.1 * radialPartial P.f p / P.f p = θ * Y *
           (NaturalEntrance.sourceJets v.epsilon_pos (NaturalEntrance.referencePair v) (Y, p.2) 1 +
@@ -1288,7 +1288,7 @@ theorem exists_reference_bounds {h j σ ν : ℝ} {P0 : ℝ → ℝ}
   have hB0 : 0 ≤ B := by linarith
   have hhistory (p : Point) (hp : p ∈ holdRegion) :
       |Λ * (P.Ubar p - NaturalAxisData.U j p.2)| ≤ B ∧
-      |Λ * (average (parameterPartial P.U) p - 4)| ≤ B :=
+      |Λ * (ProfileHistories.average (parameterPartial P.U) p - 4)| ≤ B :=
     normalized_history_bounds P hJ.axial_value hJ.axial_parameter hp
       (reference_mem E.profile hΛ hp.1.1 hp.2)
   have hsourceq (p : Point) (hp : p ∈ holdRegion) :
@@ -1689,7 +1689,7 @@ theorem actual_hold_source_threshold {h j σ B : ℝ}
       p.2 ∈ Icc (-1 : ℝ) 1 → ReferenceBounds.logSlope P p = 3 / 5 →
       |Λ * (P.U p - NaturalAxisData.U j p.2)| ≤ B →
       |Λ * (P.Ubar p - NaturalAxisData.U j p.2)| ≤ B →
-      |Λ * (average (parameterPartial P.U) p - 4)| ≤ B →
+      |Λ * (ProfileHistories.average (parameterPartial P.U) p - 4)| ≤ B →
       |parameterPartial P.f p / P.f p - Λ * realGradient h j σ p.2| ≤ B →
       (5 / 4 : ℝ) < ReferenceBounds.sourceQ P h p := by
   obtain ⟨M, hM, hb⟩ := holdModel_uniform_lower hsmall hσ B
@@ -2369,7 +2369,7 @@ theorem ordered_reference_preparation {h j σ ν : ℝ} {P0 : ℝ → ℝ}
           p.2 ∈ Icc (-1 : ℝ) 1 → ReferenceBounds.logSlope P p = 3 / 5 →
           |Λ * (P.U p - NaturalAxisData.U j p.2)| ≤ B + 2 →
           |Λ * (P.Ubar p - NaturalAxisData.U j p.2)| ≤ B + 2 →
-          |Λ * (average (parameterPartial P.U) p - 4)| ≤ B + 2 →
+          |Λ * (ProfileHistories.average (parameterPartial P.U) p - 4)| ≤ B + 2 →
           |parameterPartial P.f p / P.f p - Λ * realGradient h j σ p.2| ≤ B + 2 →
           (5 / 4 : ℝ) < ReferenceBounds.sourceQ P h p) ∧
         ∃ C0 K : ℝ, 1 ≤ C0 ∧ 0 < K ∧
@@ -2440,7 +2440,7 @@ theorem nearby_source_jets {D E : RadialDomain} (P : Profiles D) (Q : Profiles E
     {p : Point} (hp : p ∈ ReferenceBounds.holdRegion) (hpD : p ∈ D.carrier) :
     |Λ * (P.U p - NaturalAxisData.U j p.2)| ≤ B + 2 ∧
     |Λ * (P.Ubar p - NaturalAxisData.U j p.2)| ≤ B + 2 ∧
-    |Λ * (average (parameterPartial P.U) p - 4)| ≤ B + 2 ∧
+    |Λ * (ProfileHistories.average (parameterPartial P.U) p - 4)| ≤ B + 2 ∧
     |parameterPartial P.f p / P.f p - Λ * realGradient h j σ p.2| ≤ B + 2 := by
   obtain ⟨hU, hUη⟩ := nearby_axial_bounds P Q hΛ hj hu huη
   have hh := ReferenceBounds.normalized_history_bounds P hU hUη hp hpD
@@ -3054,7 +3054,7 @@ structure ComparableRamp {h j σ Λ C B K : ℝ} {P0 : ℝ → ℝ}
   source_jets : ∀ p ∈ ReferenceBounds.holdRegion,
     |Λ * (r.profiles.U p - NaturalAxisData.U j p.2)| ≤ B + 2 ∧
     |Λ * (r.profiles.Ubar p - NaturalAxisData.U j p.2)| ≤ B + 2 ∧
-    |Λ * (average (parameterPartial r.profiles.U) p - 4)| ≤ B + 2 ∧
+    |Λ * (ProfileHistories.average (parameterPartial r.profiles.U) p - 4)| ≤ B + 2 ∧
     |parameterPartial r.profiles.f p / r.profiles.f p - Λ * realGradient h j σ p.2| ≤ B + 2
 
 theorem log_control_mono {J K : Set ℝ} (R : TransitionRamp.StockReference J)
@@ -3283,7 +3283,7 @@ noncomputable def HoldSourceControl (h j σ Λ B : ℝ) : Prop :=
     p.2 ∈ Icc (-1 : ℝ) 1 → ReferenceBounds.logSlope P p = 3 / 5 →
     |Λ * (P.U p - NaturalAxisData.U j p.2)| ≤ B →
     |Λ * (P.Ubar p - NaturalAxisData.U j p.2)| ≤ B →
-    |Λ * (average (parameterPartial P.U) p - 4)| ≤ B →
+    |Λ * (ProfileHistories.average (parameterPartial P.U) p - 4)| ≤ B →
     |parameterPartial P.f p / P.f p - Λ * realGradient h j σ p.2| ≤ B →
     (5 / 4 : ℝ) < ReferenceBounds.sourceQ P h p
 

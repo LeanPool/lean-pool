@@ -40,7 +40,8 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E
   (T : ℝ) (hT : 0 ≤ T)
 
 theorem initialPrimitive_pathLp (f : C(Icc (0 : ℝ) T, E)) :
-    initialPrimitive T hT (pathLp T hT f) = EulerContinuousTimeIntegral.integral T hT f := by
+    initialPrimitive (E := E) T hT (pathLp T hT f) =
+      EulerContinuousTimeIntegral.integral (E := E) T hT f := by
   apply ContinuousMap.ext
   intro t
   rw [initialPrimitive_apply,initialRealPrimitive_eq_integral]
@@ -54,8 +55,8 @@ theorem initialPrimitive_pathLp (f : C(Icc (0 : ℝ) T, E)) :
       fun s hs => ⟨hs.1.le,hs.2.trans t.property.2⟩) he
 
 theorem initialTrace_pathLp (f : C(Icc (0 : ℝ) T, E)) :
-    initialTrace T hT (pathLp T hT f) =
-      -EulerContinuousTimeIntegral.integral T hT f ⟨T,hT,le_rfl⟩ := by
+    initialTrace (E := E) T hT (pathLp T hT f) =
+      -EulerContinuousTimeIntegral.integral (E := E) T hT f ⟨T,hT,le_rfl⟩ := by
   have he := initialPrimitive_eq_terminal_sub T hT (pathLp T hT f) ⟨T,hT,le_rfl⟩
   rw [initialPrimitive_pathLp,terminalPrimitive_terminal,zero_sub] at he
   simpa only [neg_neg] using congrArg Neg.neg he.symm
@@ -64,7 +65,7 @@ theorem primitive_eq_path (p q : C(Icc (0 : ℝ) T, E))
     (hd : ∀ t : Icc (0 : ℝ) T,
       HasDerivWithinAt (extendPath T hT p) (q t) (Icc (0 : ℝ) T) t)
     (hzero : p ⟨0,le_rfl,hT⟩ = 0) :
-    initialPrimitive T hT (pathLp T hT q) = p := by
+    initialPrimitive (E := E) T hT (pathLp T hT q) = p := by
   rw [initialPrimitive_pathLp]
   apply ContinuousMap.ext
   intro t
@@ -76,7 +77,7 @@ theorem initialTrace_eq_zero (p q : C(Icc (0 : ℝ) T, E))
     (hd : ∀ t : Icc (0 : ℝ) T,
       HasDerivWithinAt (extendPath T hT p) (q t) (Icc (0 : ℝ) T) t)
     (hzero : p ⟨0,le_rfl,hT⟩ = 0) (hterminal : p ⟨T,hT,le_rfl⟩ = 0) :
-    initialTrace T hT (pathLp T hT q) = 0 := by
+    initialTrace (E := E) T hT (pathLp T hT q) = 0 := by
   have he := initialPrimitive_eq_terminal_sub T hT (pathLp T hT q) ⟨T,hT,le_rfl⟩
   rw [primitive_eq_path T hT p q hd hzero,hterminal,terminalPrimitive_terminal,zero_sub] at he
   exact neg_eq_zero.mp he.symm
@@ -85,15 +86,15 @@ theorem primitiveTimeLp_eq_pathLp (p q : C(Icc (0 : ℝ) T, E))
     (hd : ∀ t : Icc (0 : ℝ) T,
       HasDerivWithinAt (extendPath T hT p) (q t) (Icc (0 : ℝ) T) t)
     (hzero : p ⟨0,le_rfl,hT⟩ = 0) (hterminal : p ⟨T,hT,le_rfl⟩ = 0) :
-    primitiveTimeLp T hT (pathLp T hT q) = pathLp T hT p := by
-  have hc : terminalPrimitive T hT (pathLp T hT q) = p := by
+    primitiveTimeLp (E := E) T hT (pathLp T hT q) = pathLp T hT p := by
+  have hc : terminalPrimitive (E := E) T hT (pathLp T hT q) = p := by
     apply ContinuousMap.ext
     intro t
     have he := initialPrimitive_eq_terminal_sub T hT (pathLp T hT q) t
     rw [primitive_eq_path T hT p q hd hzero,initialTrace_eq_zero T hT p q hd hzero hterminal,
       sub_zero] at he
     exact he.symm
-  change pathLp T hT (terminalPrimitive T hT (pathLp T hT q)) = pathLp T hT p
+  change pathLp T hT (terminalPrimitive (E := E) T hT (pathLp T hT q)) = pathLp T hT p
   rw [hc]
 
 omit [CompleteSpace E] [NormedSpace ℝ E] in
@@ -158,12 +159,12 @@ theorem zero_of_energy_equation (T : ℝ) (hT : 0 ≤ T) (hTpos : 0 < T)
   let pu := pathLp T hT u
   let pp := pathLp T hT p
   let pq := pathLp T hT q
-  have htrace : initialTrace T hT pu = 0 :=
+  have htrace : initialTrace (E := E) T hT pu = 0 :=
     initialTrace_eq_zero T hT p u hp hzero hterminal
-  have hprimitive : primitiveTimeLp T hT pu = pp :=
+  have hprimitive : primitiveTimeLp (E := E) T hT pu = pp :=
     primitiveTimeLp_eq_pathLp T hT p u hp hzero hterminal
-  have hinitial : initialPrimitiveTimeLp T hT pu = pp := by
-    change pathLp T hT (initialPrimitive T hT pu) = pp
+  have hinitial : initialPrimitiveTimeLp (E := E) T hT pu = pp := by
+    change pathLp T hT (initialPrimitive (E := E) T hT pu) = pp
     rw [primitive_eq_path T hT p u hp hzero]
   have hparts : ⟪pu,pu⟫_ℝ = -⟪pq,pp⟫_ℝ := by
     have hh := pathLp_inner_zero_trace T hT u q hu pu htrace
@@ -193,7 +194,7 @@ theorem zero_of_energy_equation (T : ℝ) (hT : 0 ≤ T) (hTpos : 0 < T)
     exact (pow_eq_zero_iff two_ne_zero).mp (le_antisymm hsq (sq_nonneg _))
   have hpzero : p = 0 := by
     rw [← primitive_eq_path T hT p u hp hzero]
-    change initialPrimitive T hT pu = 0
+    change initialPrimitive (E := E) T hT pu = 0
     rw [hpu,map_zero]
   refine ⟨hpzero,?_⟩
   apply pathLp_injective T hT hTpos
@@ -389,11 +390,12 @@ theorem displacement_terminal (hTpos : 0 < T) (Y : U) :
     displacement T hT Q Q₁ H c hc hQ hd K hK hH hsmall Y ⟨T,hT,le_rfl⟩ = Y := by
   let r := fixedEndpointCorrection T hT Q Q₁ H c hc hQ hd K hK hH hsmall
     (affineTrial T hT Q Q₁) Y
-  have hr : initialTrace T hT (r : TimeLp T U) = 0 := r.property
-  change initialPrimitive T hT (constantFieldOperator T hT (T⁻¹ • Y)-(r : TimeLp T U)) _ = Y
+  have hr : initialTrace (E := U) T hT (r : TimeLp T U) = 0 := r.property
+  change initialPrimitive (E := U) T hT
+    (constantFieldOperator (E := U) T hT (T⁻¹ • Y)-(r : TimeLp T U)) _ = Y
   rw [map_sub,ContinuousMap.sub_apply,initialPrimitive_constantFieldOperator,
     initialPrimitive_eq_terminal_sub,terminalPrimitive_terminal]
-  change T • (T⁻¹ • Y)-(0-initialTrace T hT (r : TimeLp T U)) = Y
+  change T • (T⁻¹ • Y)-(0-initialTrace (E := U) T hT (r : TimeLp T U)) = Y
   rw [hr,sub_self,sub_zero,smul_smul,mul_inv_cancel₀ hTpos.ne',one_smul]
 
 variable (Q₂ : C(Icc (0 : ℝ) T, U →L[ℝ] E)) (hTpos : 0 < T)

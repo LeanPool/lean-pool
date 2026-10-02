@@ -103,15 +103,15 @@ theorem coordinate_derivWithin (k : ℝ) (W Wt : VectorField)
 section Fields
 
 variable {P : ℝ} [Fact (0 < P)] {W Wt : VectorField}
-  (G : Field P D.T W) (Gt : Field P D.T Wt)
+  (G : EulerPacketCylinderField.Field P D.T W) (Gt : EulerPacketCylinderField.Field P D.T Wt)
 
 /-- Coordinate field, given by `((inverseCoefficient D).multiply G).smul k`. -/
-def coordinateField (k : ℝ) : Field P D.T (coordinate D k W) :=
+def coordinateField (k : ℝ) : EulerPacketCylinderField.Field P D.T (coordinate D k W) :=
   ((inverseCoefficient D).multiply G).smul k
 
 /-- Coordinate time field, given by `(((inverseTimeCoefficient D).multiply G).add
 ((inverseCoefficient D).multiply Gt)).smul k`. -/
-def coordinateTimeField (k : ℝ) : Field P D.T (coordinateTime D k W Wt) :=
+def coordinateTimeField (k : ℝ) : EulerPacketCylinderField.Field P D.T (coordinateTime D k W Wt) :=
   (((inverseTimeCoefficient D).multiply G).add ((inverseCoefficient D).multiply Gt)).smul k
 
 theorem coordinateField_time (k : ℝ) (hW : TimeDerivative D.T_pos.le G Gt) :
@@ -261,7 +261,7 @@ theorem coordinatePressure_eq_lifted (k : ℝ) (hk : k ≠ 0) (p : ScalarField)
 section Fields
 
 variable {P : ℝ} [Fact (0 < P)] {W Wt : VectorField}
-  (G : Field P D.T W) (Gt : Field P D.T Wt)
+  (G : EulerPacketCylinderField.Field P D.T W) (Gt : EulerPacketCylinderField.Field P D.T Wt)
 
 theorem normalized_linear (k : ℝ) (hW : TimeDerivative D.T_pos.le G Gt)
     (t : Icc (0 : ℝ) D.T) (x : Space) (θ : ℝ) :

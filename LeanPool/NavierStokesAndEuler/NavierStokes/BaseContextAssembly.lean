@@ -120,7 +120,7 @@ theorem AngularData.corrected_amplitude {a : LinearWaveBounds.WaveCoefficients (
     (c : CorrectionState.Context D) (n : ℕ) :
     Invariant ((0 : D), 1)
       ((a.corrected (HarmonicWaveInteraction.productStrip s) (directions c) ψ).amplitude n) :=
-  corrected_amplitude_invariant ψ ha.radius (directions_radial_invariant c)
+  corrected_amplitude_invariant (d := directions c) ψ ha.radius (directions_radial_invariant c)
     (fun _ => Invariant.const _) ha.phase ha.amplitude ha.cutoff n
 
 theorem AngularData.corrected_pressure {a : LinearWaveBounds.WaveCoefficients (D × ℝ)}
@@ -128,7 +128,7 @@ theorem AngularData.corrected_pressure {a : LinearWaveBounds.WaveCoefficients (D
     (c : CorrectionState.Context D) (n : ℕ) :
     Invariant ((0 : D), 1)
       ((a.corrected (HarmonicWaveInteraction.productStrip s) (directions c) ψ).pressure n) :=
-  corrected_pressure_invariant ψ ha.pressure ha.cutoff n
+  corrected_pressure_invariant (d := directions c) ψ ha.pressure ha.cutoff n
 
 section InvariantOperators
 

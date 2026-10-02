@@ -367,7 +367,7 @@ theorem native_radialDiv_slow_on (r : ReconstructionData) (ε fast : ℕ → ℝ
       IntegratedMeanBalances.radialDivergence e (fun q => F n (q, x.2.1)) x.1 := by
   have hdiff := ((hF n).contDiffAt ((slowDomain_open hU).mem_nhds hx)).differentiableAt
     (by simp)
-  have hd := hdiff.hasFDerivAt.comp_hasDerivAt x.1
+  have hd := hdiff.hasFDerivAt.comp_hasDerivAt (f := fun q : ℝ => (q, (x.2.1, x.2.2))) x.1
     ((hasDerivAt_id x.1).prodMk (hasDerivAt_const x.1 (x.2.1, x.2.2)))
   have hdr : deriv (fun q => F n (q, x.2.1)) x.1 =
       fderiv ℝ (liftSlow F n) x (1, (0, 0)) := hd.deriv
@@ -375,7 +375,8 @@ theorem native_radialDiv_slow_on (r : ReconstructionData) (ε fast : ℕ → ℝ
     have hin : HasDerivAt (fun q : ℝ => x + q • (0, (0, r.radialDirection)))
         (0, (0, r.radialDirection)) 0 := by
       have he := (hasDerivAt_const (0 : ℝ) x).fun_add
-        ((hasDerivAt_id (0 : ℝ)).smul_const (0, (0, r.radialDirection)))
+        ((hasDerivAt_id (0 : ℝ)).smul_const (F := PressureStream.Lift S)
+          (0, (0, r.radialDirection)))
       simp only [Prod.smul_mk, smul_eq_mul, mul_zero, smul_zero, hasDerivAt_const_add_iff, id_eq,
           one_smul, zero_add] at he ⊢
       exact he

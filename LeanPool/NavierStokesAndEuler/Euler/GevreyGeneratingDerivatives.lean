@@ -592,7 +592,7 @@ theorem derivativeSum_comp_id_add_le (f : E → E) (g : E → F) (N : ℕ)
     derivativeSum (g ∘ (id+f)) N z x ≤
       EulerGevreyFlowBootstrap.rationalRate B R z (derivativeSum f N z x) := by
   have hsum := mul_le_mul_of_nonneg_left (derivativeSum_id_add_le f N z x hf hz) hR
-  have he := derivativeSum_comp_le (id+f) g N z B R x hz hB hR
+  have he := derivativeSum_comp_le (id (α := E) + f) g N z B R x hz hB hR
     (contDiffAt_id.add hf) hg
     (by simpa only [Pi.add_apply, id_eq] using hgj) (hsum.trans_lt hsmall)
   exact he.trans (rational_fraction_mono B _ _ hB hsum hsmall)

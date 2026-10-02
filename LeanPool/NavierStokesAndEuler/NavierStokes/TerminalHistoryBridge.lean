@@ -897,7 +897,7 @@ theorem radialLift_partialX {XR : ℝ} (hXR : 0 < XR) {G : (ℝ × ℝ) → ℝ}
   have hg := (hG.contDiffAt (HeatSwitchHistoryDerivatives.interiorDomain.isOpen.mem_nhds
     (show logPoint XR p ∈ HeatSwitchHistoryDerivatives.interiorDomain.carrier from
       ⟨mem_univ _,hη⟩))).differentiableAt (by simp)
-  have hd := hg.hasFDerivAt.comp_hasDerivAt p.1
+  have hd := hg.hasFDerivAt.comp_hasDerivAt (F := ℝ × ℝ) p.1
     ((log_radius_hasDerivAt hXR hp).prodMk (hasDerivAt_const p.1 p.2))
   have hh := LeadingStress.partialX_hasDerivAt ((radialLift_contDiffAt hXR hG hp
       hη).differentiableAt (by
@@ -914,10 +914,10 @@ theorem radialLift_partialEta {XR : ℝ} (hXR : 0 < XR) {G : (ℝ × ℝ) → �
   have hg := (hG.contDiffAt (HeatSwitchHistoryDerivatives.interiorDomain.isOpen.mem_nhds
     (show logPoint XR p ∈ HeatSwitchHistoryDerivatives.interiorDomain.carrier from
       ⟨mem_univ _,hη⟩))).differentiableAt (by simp)
-  have hd := hg.hasFDerivAt.comp_hasDerivAt p.2
+  have hd := hg.hasFDerivAt.comp_hasDerivAt (F := ℝ × ℝ) p.2
     ((hasDerivAt_const p.2 (Real.log (p.1/XR))).prodMk (hasDerivAt_id p.2))
   have hh := ((radialLift_contDiffAt hXR hG hp hη).differentiableAt (by
-      simp)).hasFDerivAt.comp_hasDerivAt p.2
+      simp)).hasFDerivAt.comp_hasDerivAt (F := ℝ × ℝ) p.2
     ((hasDerivAt_const p.2 p.1).prodMk (hasDerivAt_id p.2))
   have he := hh.unique hd
   simpa only [SimilarityProfile.partialEta,parameterPartial] using he

@@ -81,7 +81,8 @@ theorem physicalGrowth_of_geometry
     have hM : G.M ξ r=D.M.field sr x := by rw [← he]; exact hstrain ξ sr
     have hm : G.r ξ r=D.normal.field sr x := by rw [← he]; exact hnormal ξ sr
     rw [hM,hm]
-    have hd := (hw sr).scomp r ((hasDerivAt_id r).sub_const G.t₀).hasDerivWithinAt hmap
+    have hd := (hw sr).scomp (h := fun x => id x - G.t₀) r
+      ((hasDerivAt_id r).sub_const G.t₀).hasDerivWithinAt hmap
     simpa only [one_smul,Function.comp_def,id_eq,physicalRhs,u,sr] using hd
   have htan : ⟪G.r ξ G.t₀,u G.t₀⟫_ℝ=0 := by
     have hm := hnormal ξ ⟨0,le_rfl,D.T_pos.le⟩

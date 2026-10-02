@@ -38,13 +38,15 @@ open ProfileHistories NaturalAxisCoefficients NaturalAxisBridge NaturalProfile N
 theorem parameter_deriv {F : ProfileHistories.Field} {p : Point} (hF : ContDiffAt ℝ ∞ F p) :
     HasDerivAt (fun η => F (p.1, η)) (parameterPartial F p) p.2 := by
   simpa only [parameterPartial, Function.comp_def, id_eq, Prod.eta] using
-    (hF.differentiableAt (by simp)).hasFDerivAt.comp_hasDerivAt p.2
+    (hF.differentiableAt (by simp)).hasFDerivAt.comp_hasDerivAt (F := ℝ × ℝ)
+      (f := fun η => (p.1, η)) p.2
       ((hasDerivAt_const p.2 p.1).prodMk (hasDerivAt_id p.2))
 
 theorem radial_deriv {F : ProfileHistories.Field} {p : Point} (hF : ContDiffAt ℝ ∞ F p) :
     HasDerivAt (fun X => F (X, p.2)) (radialPartial F p) p.1 := by
   simpa only [radialPartial, Function.comp_def, id_eq, Prod.eta] using
-    (hF.differentiableAt (by simp)).hasFDerivAt.comp_hasDerivAt p.1
+    (hF.differentiableAt (by simp)).hasFDerivAt.comp_hasDerivAt (F := ℝ × ℝ)
+      (f := fun X => (X, p.2)) p.1
       ((hasDerivAt_id p.1).prodMk (hasDerivAt_const p.1 p.2))
 
 theorem parameterPartial_eq_partialEta {F : ProfileHistories.Field} {p : Point} (hF : ContDiffAt ℝ

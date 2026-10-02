@@ -84,11 +84,11 @@ theorem WordBound.weighted {q d : ℕ} {R A : ℝ} (hG : G.WordBound q R A d)
   intro n
   have he : (fun a : LiftTangent =>
         pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (G.weighted hT g).path) =
-      weight g ∘ (fun a : LiftTangent =>
+      weight (E := LiftL2 P) g ∘ (fun a : LiftTangent =>
         pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a G.path) :=
     funext (fun a => translate_weight P g a G.path)
   rw [he]
-  have h := block_comp_clm_le standardDirection q (weight g)
+  have h := block_comp_clm_le standardDirection q (weight (E := LiftL2 P) g)
     (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a G.path)
     G.orbit n 0
   have hn := h.trans (mul_le_mul_of_nonneg_right (weight_norm_of_pointwise g C hC hg)

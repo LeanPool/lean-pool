@@ -63,8 +63,8 @@ def zeroTraceMap (A : U →L[ℝ] V) :
     zeroTraceDerivatives (U := U) T hT →L[ℝ] zeroTraceDerivatives (U := V) T hT :=
   ((timeLift T A).comp (zeroTraceDerivatives (U := U) T hT).subtypeL).codRestrict
     (zeroTraceDerivatives (U := V) T hT) (fun u => by
-      change initialTrace T hT (timeLift T A (u : TimeLp T U)) = 0
-      have hu : initialTrace T hT (u : TimeLp T U) = 0 := u.property
+      change initialTrace (E := V) T hT (timeLift T A (u : TimeLp T U)) = 0
+      have hu : initialTrace (E := U) T hT (u : TimeLp T U) = 0 := u.property
       rw [initialTrace_timeLift,hu,map_zero])
 
 @[simp] theorem zeroTraceMap_coe (A : U →L[ℝ] V) (u : zeroTraceDerivatives (U := U) T hT) :
@@ -93,9 +93,9 @@ theorem productDerivative_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
     (hQR₁ : ∀ t u, R₁ t (A u) = B (Q₁ t u)) (u : TimeLp T U) :
     productDerivative T hT R R₁ (timeLift T A u) = timeLift T B (productDerivative T hT Q Q₁ u) :=
         by
-  change timeMultiplier T hT R₁ (primitiveTimeLp T hT (timeLift T A u)) +
+  change timeMultiplier T hT R₁ (primitiveTimeLp (E := V) T hT (timeLift T A u)) +
       timeMultiplier T hT R (timeLift T A u) =
-    timeLift T B (timeMultiplier T hT Q₁ (primitiveTimeLp T hT u)+timeMultiplier T hT Q u)
+    timeLift T B (timeMultiplier T hT Q₁ (primitiveTimeLp (E := U) T hT u)+timeMultiplier T hT Q u)
   rw [primitiveTimeLp_timeLift,timeMultiplier_intertwines T hT A B Q₁ R₁ hQR₁,
     timeMultiplier_intertwines T hT A B Q R hQR,map_add]
 
@@ -114,7 +114,7 @@ theorem fixedPrimitive_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
     (hQR₁ : ∀ t u, R₁ t (A u) = B (Q₁ t u)) (u : zeroTraceDerivatives (U := U) T hT) :
     fixedFramePrimitive T hT R R₁ (zeroTraceMap T hT A u) =
       timeLift T B (fixedFramePrimitive T hT Q Q₁ u) := by
-  change primitiveTimeLp T hT (fixedFrameDerivative T hT R R₁ (zeroTraceMap T hT A u)) = _
+  change primitiveTimeLp (E := F) T hT (fixedFrameDerivative T hT R R₁ (zeroTraceMap T hT A u)) = _
   rw [fixedDerivative_intertwines T hT A B Q Q₁ R R₁ hQR hQR₁,
     primitiveTimeLp_timeLift]
   rfl
@@ -220,10 +220,10 @@ theorem gramSolver_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
   have he := gramOperator_intertwines T hT A B Q R hQR hRQ
     (gramSolver T hT Q c hc hQ f)
   change gramOperator T hT R (timeLift T A (gramSolver T hT Q c hc hQ f)) =
-    timeLift T A (gramOperator T hT Q (coerciveInverse (gramOperator T hT Q) c hc
+    timeLift T A (gramOperator T hT Q (coerciveInverse (gramOperator (U := U) (E := E) T hT Q) c hc
       (gramOperator_coercive T hT Q c hQ) f)) at he
   rw [operator_inverse_apply] at he
-  have hi := inverse_operator_apply (gramOperator T hT R) d hd
+  have hi := inverse_operator_apply (gramOperator (U := V) (E := F) T hT R) d hd
     (gramOperator_coercive T hT R d hR) (timeLift T A (gramSolver T hT Q c hc hQ f))
   rw [he] at hi
   exact hi
@@ -277,7 +277,7 @@ subsequent forward solve. -/
 theorem velocityPath_intertwines (f : TimeLp T E) (t : Icc (0 : ℝ) T) :
     velocityPath T hT R R₁ J d hd hR hRtime L hL hJ hsmall' (timeLift T B f) t =
       A (velocityPath T hT Q Q₁ H c hc hQ hQtime K hK hH hsmall f t) := by
-  change reconstruction T hT
+  change reconstruction (E := V) T hT
     (velocityLp T hT R R₁ J d hd hR hRtime L hL hJ hsmall' (timeLift T B f),
       accelerationLp T hT R R₁ J d hd hR hRtime L hL hJ hsmall' (timeLift T B f)) t = _
   rw [velocityLp_intertwines T hT A B Q Q₁ R R₁ H J c hc hQ d hd hR hQtime hRtime

@@ -287,7 +287,8 @@ theorem deficitDensity_contDiffAt {h : ℝ} {f : ℝ → ℝ} {p : ℝ × ℝ} {
     (hh : 0 < h) (hf : ContDiff ℝ ∞ f) (hν : 0 < p.1) (hv : 0 < v) :
     ContDiffAt ℝ ∞ (fun z : (ℝ × ℝ) × ℝ => deficitDensity h f z.1 z.2) (p, v) := by
   have ha : ContDiffAt ℝ ∞ (fun z : (ℝ × ℝ) × ℝ => 2 * z.1.1 / z.2) (p, v) :=
-    (contDiffAt_const.mul contDiffAt_fst.fst).div contDiffAt_snd hv.ne'
+    (contDiffAt_const.mul contDiffAt_fst.fst :
+      ContDiffAt ℝ ∞ (fun z : (ℝ × ℝ) × ℝ => 2 * z.1.1) (p, v)).div contDiffAt_snd hv.ne'
   have hH : ContDiffAt ℝ ∞ (RadialHeatProfile.profile (1 + h)) (2 * p.1 / v) :=
     (RadialHeatProfile.profile_contDiffOn (by linarith)).contDiffAt
       (Ici_mem_nhds (by positivity : 0 < 2 * p.1 / v))
@@ -295,7 +296,7 @@ theorem deficitDensity_contDiffAt {h : ℝ} {f : ℝ → ℝ} {p : ℝ × ℝ} {
     contDiffAt_snd.rpow_const_of_ne hv.ne'
   have hy : ContDiffAt ℝ ∞ (fun z : (ℝ × ℝ) × ℝ => z.1.2 + Real.log z.2) (p, v) :=
     contDiffAt_fst.snd.add (contDiffAt_snd.log hv.ne')
-  exact (hw.mul ((hH.comp (p, v) ha).pow 2)).mul
+  exact (hw.mul ((hH.comp (f := fun z : (ℝ × ℝ) × ℝ => 2 * z.1.1 / z.2) (p, v) ha).pow 2)).mul
     (contDiffAt_const.sub ((hf.contDiffAt.comp (p, v) hy).pow 2))
 
 theorem compactDeficit_integrand_smooth {h B : ℝ} {f : ℝ → ℝ}
@@ -354,15 +355,15 @@ theorem parameterPartial_hasDerivAt {G : (ℝ × ℝ) → ℝ} {p : ℝ × ℝ}
     (hG : DifferentiableAt ℝ G p) :
     HasDerivAt (fun y => G (p.1, y)) (ProfileHistories.parameterPartial G p) p.2 := by
   simpa only [ProfileHistories.parameterPartial, Function.comp_def, id_eq, Prod.eta] using
-    hG.hasFDerivAt.comp_hasDerivAt p.2
+    hG.hasFDerivAt.comp_hasDerivAt (F := ℝ × ℝ) (f := fun y => (p.1, id y)) p.2
       ((hasDerivAt_const p.2 p.1).prodMk (hasDerivAt_id p.2))
 
 theorem deficitDensity_hasDerivAt_y (h ν v y : ℝ) {f : ℝ → ℝ}
     (hf : DifferentiableAt ℝ f (y + Real.log v)) :
     HasDerivAt (fun u => deficitDensity h f (ν, u) v)
       (-2 * taperDerivativeDensity h f (ν, y) v) y := by
-  have hd := (((hf.hasDerivAt.comp y ((hasDerivAt_id y).add_const (Real.log v))).pow 2).const_sub
-      1).const_mul
+  have hd := (((hf.hasDerivAt.comp (h := fun y => id y + Real.log v) y
+      ((hasDerivAt_id y).add_const (Real.log v))).pow 2).const_sub 1).const_mul
     (heatDensity h ν v)
   convert! hd using 1
   simp only [taperDerivativeDensity, Function.comp_apply, id_eq, mul_one, pow_one,
@@ -675,7 +676,7 @@ theorem canonicalPressure_partialZ (C : ℝ) {h Y : ℝ} {f : ℝ → ℝ}
       (TerminalStress.swirlCoefficient C h f)) p =
       logScaleDerivative h p * axialPressureIntegral C h f p := by
   have hP := (canonicalPressure_contDiffAt C hh hh1 ht hs hf hb hplateau).differentiableAt (by simp)
-  have hd := hP.hasFDerivAt.comp_hasDerivAt p.2.2
+  have hd := hP.hasFDerivAt.comp_hasDerivAt (F := ℝ × ℝ × ℝ) p.2.2
     ((hasDerivAt_const p.2.2 p.1).prodMk
       ((hasDerivAt_const p.2.2 p.2.1).prodMk (hasDerivAt_id p.2.2)))
   have hd' : HasDerivAt (fun z => TerminalStress.canonicalPressure
@@ -728,8 +729,8 @@ theorem taperDerivativeIntegral_bound {h Y : ℝ} {f : ℝ → ℝ} {p : ℝ × 
   let K : ℝ → ℝ := RadialHeatProfile.spatialProfile (1 + h) p.1
   have hd (v : ℝ) (hv : v ∈ Ici (1 : ℝ)) : HasDerivAt g (dg v) v := by
     have hvp : 0 < v := zero_lt_one.trans_le hv
-    have he := (hf.differentiable (by simp) (p.2 + Real.log v)).hasDerivAt.comp v
-      ((Real.hasDerivAt_log hvp.ne').const_add p.2)
+    have he := (hf.differentiable (by simp) (p.2 + Real.log v)).hasDerivAt.comp
+      (h := fun y => p.2 + Real.log y) v ((Real.hasDerivAt_log hvp.ne').const_add p.2)
     convert! he using 1
   have hdpos (v : ℝ) (hv : v ∈ Ioi (1 : ℝ)) : 0 ≤ dg v :=
     div_nonneg (hmono _) (zero_lt_one.trans hv).le
@@ -873,7 +874,7 @@ theorem outgoingTaper_contDiff (d : OutgoingTail.TailData) (y0 : ℝ) :
 
 theorem outgoingTaper_deriv (d : OutgoingTail.TailData) (y0 y : ℝ) :
     deriv (outgoingTaper d y0) y = OutgoingTail.tailShapeDeriv d (y - y0) := by
-  have h := ((OutgoingTail.tailShape_hasDerivAt d (y - y0)).comp y
+  have h := ((OutgoingTail.tailShape_hasDerivAt d (y - y0)).comp (h := fun x => id x - y0) y
     ((hasDerivAt_id y).sub_const y0)).deriv
   simp only [mul_one] at h
   exact h
@@ -1174,7 +1175,7 @@ theorem axialBackwardStress_bound {C h t z r R Y : ℝ} {f : ℝ → ℝ}
   have hcont : ContinuousOn g (Ioi 0) := by
     intro s hs
     exact (((canonicalPressure_partialZ_contDiffAt C (p := (t, (s, z))) hh hh1 ht hs hf hb
-        hplateau).comp s
+        hplateau).comp (f := fun x : ℝ => (t, id x, z)) s
       (contDiffAt_const.prodMk (contDiffAt_id.prodMk
           contDiffAt_const))).continuousAt).continuousWithinAt
   have hi : IntegrableOn g (Ioi (r ^ 2 / 2)) := integrableOn_Ioi_of_eventually_zero ha hcont (by
@@ -1567,12 +1568,13 @@ theorem axialBackwardStress_divergence {C h t z r R Y : ℝ} {f : ℝ → ℝ}
   have hc : ContinuousOn g (Ioi ((r / 2) ^ 2 / 2)) := by
     intro s hs
     exact (((canonicalPressure_partialZ_contDiffAt C (p := (t, (s, z))) hh hh1 ht
-      (ha.trans hs) hf hb hplateau).comp s
+      (ha.trans hs) hf hb hplateau).comp (f := fun x : ℝ => (t, id x, z)) s
         (contDiffAt_const.prodMk (contDiffAt_id.prodMk
             contDiffAt_const))).continuousAt).continuousWithinAt
   have hd := (TerminalStress.neg_tailIntegral_hasDerivAt hab hi hc).fun_neg
   simp only [neg_neg] at hd
-  have hdr := hd.comp r (RadialHeatProfile.radiusSquared_hasDerivAt r)
+  have hdr := hd.comp (h := fun r : ℝ => r ^ 2 / 2) r
+    (RadialHeatProfile.radiusSquared_hasDerivAt r)
   have hquot := hdr.fun_div (hasDerivAt_id r) hr.ne'
   change HasDerivAt (axialBackwardStress C h f t z) _ r at hquot
   rw [hquot.deriv]

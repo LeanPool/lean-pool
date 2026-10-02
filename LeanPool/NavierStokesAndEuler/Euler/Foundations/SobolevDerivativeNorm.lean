@@ -97,8 +97,8 @@ theorem besselWeight_three_le_pure_three (d : ℕ) (ξ : Domain d) :
 
 theorem sobolevNorm_three_le_pure_derivatives (d : ℕ) (f : 𝓢(Domain d, ℂ)) :
     sobolevNorm d 3 f ≤ ((d : ℝ) + 1) ^ 2 *
-      (‖f.toLp 2‖ + (2 * Real.pi) ^ (-3 : ℤ) *
-        ∑ i : Fin d, ‖(directional d 3 (EuclideanSpace.single i 1) f).toLp 2‖) := by
+      (‖(f.toLp 2 :)‖ + (2 * Real.pi) ^ (-3 : ℤ) *
+        ∑ i : Fin d, ‖((directional d 3 (EuclideanSpace.single i 1) f).toLp 2 :)‖) := by
   let g : Option (Fin d) → 𝓢(Domain d, ℂ) := fun i => match i with
     | none => schwartzFourier f
     | some i => ((2 * Real.pi) ^ (-3 : ℤ) : ℝ) •
@@ -122,13 +122,13 @@ theorem sobolevNorm_three_le_pure_derivatives (d : ℕ) (f : 𝓢(Domain d, ℂ)
       (norm_nonneg (schwartzFourier f ξ))]
   have h := normLp_le_sum d (weightedFourier d 3 f) g (((d : ℝ) + 1) ^ 2)
     (sq_nonneg _) hpoint
-  have hnorm : ∑ i, ‖(g i).toLp 2‖ = ‖f.toLp 2‖ +
+  have hnorm : ∑ i, ‖(g i).toLp 2 volume‖ = ‖f.toLp 2 volume‖ +
       (2 * Real.pi) ^ (-3 : ℤ) * ∑ i : Fin d,
-        ‖(directional d 3 (EuclideanSpace.single i 1) f).toLp 2‖ := by
+        ‖(directional d 3 (EuclideanSpace.single i 1) f).toLp 2 volume‖ := by
     rw [Fintype.sum_option]
     simp only [g]
-    change ‖(𝓕 f).toLp 2‖ + ∑ i,
-      ‖SchwartzMap.toLpCLM ℝ ℂ 2 volume (((2 * Real.pi) ^ (-3 : ℤ)) •
+    change ‖(𝓕 f).toLp 2 volume‖ + ∑ i,
+      ‖SchwartzMap.toLpCLM (E := Domain d) ℝ ℂ 2 volume (((2 * Real.pi) ^ (-3 : ℤ)) •
         𝓕 (directional d 3 (EuclideanSpace.single i 1) f))‖ = _
     simp only [map_smul, norm_smul,
       Real.norm_of_nonneg (by positivity : 0 ≤ (2 * Real.pi) ^ (-3 : ℤ)),
@@ -139,8 +139,8 @@ theorem sobolevNorm_three_le_pure_derivatives (d : ℕ) (f : 𝓢(Domain d, ℂ)
 /-- Four-dimensional Sobolev embedding stated solely with actual L² derivative norms. -/
 theorem pointwise_le_L2_third_derivatives (f : 𝓢(Domain 4, ℂ)) (x : Domain 4) :
     ‖f x‖ ≤ embeddingConstant 4 3 (by norm_num) * 25 *
-      (‖f.toLp 2‖ + (2 * Real.pi) ^ (-3 : ℤ) *
-        ∑ i : Fin 4, ‖(directional 4 3 (EuclideanSpace.single i 1) f).toLp 2‖) := by
+      (‖(f.toLp 2 :)‖ + (2 * Real.pi) ^ (-3 : ℤ) *
+        ∑ i : Fin 4, ‖((directional 4 3 (EuclideanSpace.single i 1) f).toLp 2 :)‖) := by
   have hA := norm_apply_le_sobolevNorm 4 3 (by norm_num) f x
   have hB := mul_le_mul_of_nonneg_left (sobolevNorm_three_le_pure_derivatives 4 f)
     (show 0 ≤ embeddingConstant 4 3 (by norm_num) from norm_nonneg _)

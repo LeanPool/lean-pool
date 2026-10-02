@@ -32,7 +32,7 @@ variable {V : Type u} [NormedAddCommGroup V] [NormedSpace ℝ V]
 
 theorem derivativeMap_translation (D : L2Space (Space →L[ℝ] V)) (a : Space) :
     derivativeMap volume (translation a D) =
-      (translation a).toContinuousLinearMap.comp (derivativeMap volume D) := by
+      (translation (V := V) a).toContinuousLinearMap.comp (derivativeMap volume D) := by
   apply ContinuousLinearMap.ext
   intro v
   apply Lp.ext
@@ -132,7 +132,7 @@ private theorem norm_iteratedFDeriv_translation_aux (n : ℕ) :
   induction n with
   | zero =>
     intro V _ _ A a
-    rw [norm_iteratedFDeriv_zero, (translation a).norm_map, A.norm_jetLp_zero]
+    rw [norm_iteratedFDeriv_zero, (translation (V := V) a).norm_map, A.norm_jetLp_zero]
   | succ n ih =>
     intro V _ _ A a
     rw [← norm_iteratedFDeriv_fderiv, A.translation_fderiv]

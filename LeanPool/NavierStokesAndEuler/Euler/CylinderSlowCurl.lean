@@ -44,7 +44,8 @@ local instance instPacketCurlCoordinates2 : NormedSpace ℝ (Space →L[ℝ] Spa
 
 /-- The coefficient of one genuine spatial derivative in the slow curl. -/
 def curlCoefficient (i : Fin 3) : (Space →L[ℝ] Space) →L[ℝ] (Space →L[ℝ] Space) :=
-  crossOperator.comp ((ContinuousLinearMap.apply ℝ Space (EuclideanSpace.single i 1)).comp
+  crossOperator.comp ((ContinuousLinearMap.apply (E := EuclideanSpace ℝ (Fin 3)) ℝ Space
+      (EuclideanSpace.single i 1)).comp
     (ContinuousLinearMap.adjoint.toContinuousLinearEquiv.toContinuousLinearMap
       : (Space →L[ℝ] Space) →L[ℝ] (Space →L[ℝ] Space)))
 
@@ -134,8 +135,10 @@ theorem curlCoefficientPath_norm (i : Fin 3) : ‖curlCoefficientPath (K := K) i
 omit [CompactSpace K] in
 theorem curlCoefficientPath_translation (i : Fin 3)
     (G : C(K, Space →ᵇ Space →L[ℝ] Space)) (a : Space) :
-    translateCoefficientPath (curlCoefficientPath (K := K) i G) a =
-      curlCoefficientPath (K := K) i (translateCoefficientPath G a) := by
+    translateCoefficientPath (K := K) (V := Space →L[ℝ] Space)
+        (curlCoefficientPath (K := K) i G) a =
+      curlCoefficientPath (K := K) i
+        (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) G a) := by
   apply ContinuousMap.ext
   intro t
   apply BoundedContinuousFunction.ext
@@ -143,25 +146,34 @@ theorem curlCoefficientPath_translation (i : Fin 3)
   rfl
 
 theorem curlCoefficientPath_orbit (i : Fin 3) (G : C(K, Space →ᵇ Space →L[ℝ] Space))
-    (hG : ContDiff ℝ ∞ (translateCoefficientPath G)) :
-    ContDiff ℝ ∞ (translateCoefficientPath (curlCoefficientPath (K := K) i G)) := by
-  have he : translateCoefficientPath (curlCoefficientPath (K := K) i G) =
-      fun a => curlCoefficientPath (K := K) i (translateCoefficientPath G a) :=
+    (hG : ContDiff ℝ ∞ (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) G)) :
+    ContDiff ℝ ∞ (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space)
+      (curlCoefficientPath (K := K) i G)) := by
+  have he : translateCoefficientPath (K := K) (V := Space →L[ℝ] Space)
+        (curlCoefficientPath (K := K) i G) =
+      fun a => curlCoefficientPath (K := K) i
+        (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) G a) :=
     funext (curlCoefficientPath_translation i G)
   rw [he]
-  exact (curlCoefficientPath i).contDiff.comp hG
+  exact (curlCoefficientPath (K := K) i).contDiff.comp hG
 
 theorem curlCoefficientPath_bound (i : Fin 3) (G : C(K, Space →ᵇ Space →L[ℝ] Space))
-    (hG : ContDiff ℝ ∞ (translateCoefficientPath G)) (n : ℕ) (C : ℝ)
-    (hb : ∀ a, ‖iteratedFDeriv ℝ n (translateCoefficientPath G) a‖ ≤ C) (a : Space) :
-    ‖iteratedFDeriv ℝ n (translateCoefficientPath (curlCoefficientPath (K := K) i G)) a‖ ≤ C := by
-  have he : translateCoefficientPath (curlCoefficientPath (K := K) i G) =
-      fun a => curlCoefficientPath (K := K) i (translateCoefficientPath G a) :=
+    (hG : ContDiff ℝ ∞ (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) G))
+    (n : ℕ) (C : ℝ)
+    (hb : ∀ a, ‖iteratedFDeriv ℝ n
+      (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) G) a‖ ≤ C) (a : Space) :
+    ‖iteratedFDeriv ℝ n (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space)
+      (curlCoefficientPath (K := K) i G)) a‖ ≤ C := by
+  have he : translateCoefficientPath (K := K) (V := Space →L[ℝ] Space)
+        (curlCoefficientPath (K := K) i G) =
+      fun a => curlCoefficientPath (K := K) i
+        (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) G a) :=
     funext (curlCoefficientPath_translation i G)
   rw [he]
   have h := (curlCoefficientPath (K := K) i).norm_iteratedFDeriv_comp_left
     (hG.contDiffAt (x := a)) (n := n) (by simp)
-  exact h.trans ((mul_le_mul_of_nonneg_right (curlCoefficientPath_norm i) (norm_nonneg _)).trans
+  exact h.trans ((mul_le_mul_of_nonneg_right (curlCoefficientPath_norm (K := K) i)
+      (norm_nonneg _)).trans
     (by simpa only [one_mul] using hb a))
 
 end EulerPacketPiola
@@ -225,7 +237,7 @@ local instance instCylinderSlowCurl12 : NormedSpace ℝ C(K,LiftL2 P) := inferIn
 
 variable
   (G : C(K, Space →ᵇ Space →L[ℝ] Space))
-  (hG : ContDiff ℝ ∞ (translateCoefficientPath G))
+  (hG : ContDiff ℝ ∞ (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) G))
   (p : C(K, LiftL2 P))
   (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
 

@@ -308,7 +308,7 @@ theorem glue_word_bound (S τ : ℝ) (hτ0 : 0 ≤ τ) (hτS : τ ≤ S)
     (hf : ContDiff ℝ ∞ f) (n : ℕ) (x : X) :
     wordSum directions (fun y => gluePath S τ hτ0 hτS (f y)) n x ≤
       wordSum directions f n x := by
-  have h := wordSum_comp_clm_le directions (glueOperator S τ hτ0 hτS) f hf n x
+  have h := wordSum_comp_clm_le directions (glueOperator (E := E) S τ hτ0 hτS) f hf n x
   exact h.trans ((mul_le_mul_of_nonneg_right
     (glueOperator_norm_le_one S τ hτ0 hτS) (wordSum_nonneg directions f n x)).trans_eq (one_mul _))
 
@@ -318,7 +318,7 @@ theorem glue_block_bound (S τ : ℝ) (hτ0 : 0 ≤ τ) (hτS : τ ≤ S)
     (hf : ContDiff ℝ ∞ f) (n : ℕ) (x : X) :
     block directions q (fun y => gluePath S τ hτ0 hτS (f y)) n x ≤
       block directions q f n x := by
-  have h := block_comp_clm_le directions q (glueOperator S τ hτ0 hτS) f hf n x
+  have h := block_comp_clm_le directions q (glueOperator (E := E) S τ hτ0 hτS) f hf n x
   exact h.trans ((mul_le_mul_of_nonneg_right
     (glueOperator_norm_le_one S τ hτ0 hτS) (block_nonneg directions q f n x)).trans_eq (one_mul _))
 
@@ -488,7 +488,7 @@ theorem shiftPath_initial (S τ : ℝ) (hτS : τ ≤ S) (u : C(Icc (0 : ℝ) (S
 theorem shiftPath_block_bound [Fintype ι] (S τ : ℝ) (directions : ι → X) (q : ℕ)
     (f : X → C(Icc (0 : ℝ) (S - τ), E)) (hf : ContDiff ℝ ∞ f) (n : ℕ) (x : X) :
     block directions q (fun y => shiftPath (E := E) S τ (f y)) n x ≤ block directions q f n x := by
-  have h := block_comp_clm_le directions q (shiftPath S τ) f hf n x
+  have h := block_comp_clm_le directions q (shiftPath (E := E) S τ) f hf n x
   exact h.trans ((mul_le_mul_of_nonneg_right (shiftPath_norm_le_one S τ)
     (block_nonneg directions q f n x)).trans_eq (one_mul _))
 

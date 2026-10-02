@@ -301,7 +301,7 @@ theorem baseVariance_deriv_hasDerivAt_zero : HasDerivAt (deriv baseVariance) 1 0
   have hout : HasDerivAt logSlope (1 / 2) (2 * (0 : ℝ)) := by
     simpa only [mul_zero] using logSlope_hasDerivAt_zero
   have h := ((baseVariance_hasDerivAt_zero.add_const 1).const_mul 2).mul
-    ((hout.comp 0 ((hasDerivAt_id 0).const_mul 2)).sub
+    ((hout.comp 0 ((hasDerivAt_id (0 : ℝ)).const_mul 2)).sub
       logSlope_hasDerivAt_zero)
   convert! h using 1
   norm_num [Function.comp_def, baseVariance_zero, logSlope_zero]
@@ -697,8 +697,8 @@ theorem scaledRoot_hasDerivAt (d p μ : ℝ) :
       unfold scaledRoot signedRoot
       field_simp
     rw [heq]
-    have h := (((signedRoot_contDiff.differentiable (by simp) (μ * p)).hasDerivAt).comp μ
-      ((hasDerivAt_id μ).mul_const p)).const_mul (d / p)
+    have h := (((signedRoot_contDiff.differentiable (by simp) (μ * p)).hasDerivAt).comp
+      (h := fun x => id x * p) μ ((hasDerivAt_id μ).mul_const p)).const_mul (d / p)
     convert! h using 1
     field_simp
 
@@ -1892,9 +1892,9 @@ theorem phase_hasDerivAt_X
     HasDerivAt (fun r => A (phasePoint n r η))
       (partialX A (phasePoint n X η) +
         (n / X) * partialTheta A (phasePoint n X η)) X := by
-  have hg := (hasDerivAt_id X).prodMk
+  have hg := (hasDerivAt_id X).prodMk (G := ℝ × ℝ)
     ((hasDerivAt_const X η).prodMk ((Real.hasDerivAt_log hX).const_mul n))
-  have hc := hA.hasFDerivAt.comp_hasDerivAt X hg
+  have hc := hA.hasFDerivAt.comp_hasDerivAt (f := fun x => (id x, η, n * Real.log x)) X hg
   have hv : (1, (0, n * X⁻¹)) =
       (1, 0, 0) + (n / X) • ((0, 0, 1) : PhasePoint) := by
     ext <;> simp [div_eq_mul_inv]
@@ -1907,7 +1907,7 @@ theorem phase_hasDerivAt_eta
     (hA : DifferentiableAt ℝ A (phasePoint n X η)) :
     HasDerivAt (fun e => A (phasePoint n X e))
       (partialEta A (phasePoint n X η)) η := by
-  have hg := (hasDerivAt_const η X).prodMk
+  have hg := (hasDerivAt_const η X).prodMk (G := ℝ × ℝ)
     ((hasDerivAt_id η).prodMk (hasDerivAt_const η (n * Real.log X)))
   exact hA.hasFDerivAt.comp_hasDerivAt η hg
 
@@ -2128,10 +2128,10 @@ theorem etaJet_eq_iteratedDeriv
     rw [show iteratedDeriv k (fun e => F (ε, X, e, θ)) =
       (fun e => etaJet k F (ε, X, e, θ)) from funext ih]
     have hd := ((etaJet_contDiff F hF k).differentiable (by simp) (ε, X, η, θ)).hasFDerivAt
-    have hg := (hasDerivAt_const η ε).prodMk
+    have hg := (hasDerivAt_const η ε).prodMk (G := ℝ × ℝ × ℝ)
       ((hasDerivAt_const η X).prodMk
         ((hasDerivAt_id η).prodMk (hasDerivAt_const η θ)))
-    exact (hd.comp_hasDerivAt η hg).deriv
+    exact (hd.comp_hasDerivAt (f := fun x => (ε, X, id x, θ)) η hg).deriv
 
 /-- A smooth periodic family varies by `C_k/n` in each fixed η derivative,
 uniformly on compact radius/parameter sets and all angles. The constant is
@@ -2785,9 +2785,10 @@ theorem theta_derivative_asRadialPrimitive
     (Q : RadialParameter × ℝ → ℝ) (hQ : ContDiff ℝ ∞ Q) (X η θ : ℝ) :
     HasDerivAt (fun s => Q ((X, η), s))
       (RadialModulation.partialTheta (asRadialPrimitive Q) (X, η, θ)) θ := by
-  have hg := (hasDerivAt_const θ X).prodMk ((hasDerivAt_const θ η).prodMk (hasDerivAt_id θ))
+  have hg := (hasDerivAt_const θ X).prodMk (G := ℝ × ℝ)
+    ((hasDerivAt_const θ η).prodMk (hasDerivAt_id θ))
   exact (((asRadialPrimitive_contDiff Q hQ).differentiable (by
-      simp) (X, η, θ)).hasFDerivAt).comp_hasDerivAt θ hg
+      simp) (X, η, θ)).hasFDerivAt).comp_hasDerivAt (f := fun x => (X, η, id x)) θ hg
 
 /-- The prescribed loop derivatives are established for the constructed
 primitives, including the sign change from `C = -b_L`. -/
@@ -2825,10 +2826,10 @@ theorem realized_shears_exact
   have hprim := r.primitives_smooth E ha hm hp₂ hE
   have hθ := realized_primitive_theta r E ha hm hp₂ hE X η (n * Real.log X) hp
   have hEr : DifferentiableAt ℝ (fun x => E (x, η)) X :=
-    (hE.differentiable (by simp) (X, η)).comp X
+    (hE.differentiable (by simp) (X, η)).comp (f := fun x => (id x, η)) X
       (differentiableAt_id.prodMk (differentiableAt_const η))
   have hUr : DifferentiableAt ℝ (fun x => U (x, η)) X :=
-    (hU.differentiable (by simp) (X, η)).comp X
+    (hU.differentiable (by simp) (X, η)).comp (f := fun x => (id x, η)) X
       (differentiableAt_id.prodMk (differentiableAt_const η))
   constructor
   · apply RadialModulation.angular_shear_exact _ _ n X η _ hn hX hE0 hEr

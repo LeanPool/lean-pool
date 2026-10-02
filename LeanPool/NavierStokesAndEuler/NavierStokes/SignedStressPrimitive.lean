@@ -111,7 +111,7 @@ theorem cutoff_hasDerivAt (P : Patch) (r : ℝ) : HasDerivAt (cutoff P) (density
   have hs := TransportPrimitive.pastIntegral_contDiff (M := 0) (v := (0 : ℝ))
     (densityLift_contDiff P) (densityLift_supported P)
   have hd := ((hs.differentiable (by simp)) (r, 0)).hasFDerivAt.comp_hasDerivAt r
-    ((hasDerivAt_id r).prodMk (hasDerivAt_const r (0 : ℝ)))
+    ((hasDerivAt_id r).prodMk (G := ℝ) (hasDerivAt_const r (0 : ℝ)))
   have ht := TransportPrimitive.transport_pastIntegral (M := 0) (v := (0 : ℝ))
     (densityLift_contDiff P) (densityLift_supported P) (r, 0)
   simp only [TransportPrimitive.fixedDeriv, zero_smul, densityLift] at ht
@@ -357,7 +357,7 @@ theorem primitive_hasDerivAt (P : Patch) (e : ℕ) {F : ℝ × E → ℝ}
     HasDerivAt (fun t => primitive P e F (t, p)) (r ^ e * adjusted P e F (r, p)) r := by
   have hp := primitive_contDiff P e hF hs
   have hd := ((hp.differentiable (by simp)) (r, p)).hasFDerivAt.comp_hasDerivAt r
-    ((hasDerivAt_id r).prodMk (hasDerivAt_const r p))
+    ((hasDerivAt_id r).prodMk (G := E) (hasDerivAt_const r p))
   have ht := TransportPrimitive.transport_compactIntegral (M := 0) (v := (0 : E))
     (cutoff_contDiff P) (weightedSource_contDiff e hF) (weightedSource_supported e hs) (r, p)
   simp only [TransportPrimitive.fixedDeriv, zero_smul, cutoff_deriv,

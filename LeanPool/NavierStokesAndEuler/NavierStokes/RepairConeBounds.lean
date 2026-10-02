@@ -239,7 +239,7 @@ theorem radialJet_hasDerivAt {f : Raw → ℝ} (hf : ContDiff ℝ ∞ f)
     (v : Control) (p : Point) :
     HasDerivAt (fun y => value f (v, (y, p.2))) (radialJet f (v, p)) p.1 := by
   have hg : HasDerivAt (fun y => (v.1, (y, p.2)) : ℝ → Raw) (0, (1, 0)) p.1 :=
-    (hasDerivAt_const _ _).prodMk ((hasDerivAt_id _).prodMk (hasDerivAt_const _ _))
+    (hasDerivAt_const _ _).prodMk ((hasDerivAt_id p.1).prodMk (hasDerivAt_const _ _))
   exact (hf.differentiable (by simp) _).hasFDerivAt.comp_hasDerivAt _ hg
 
 theorem parameterJet_hasDerivAt {f : Raw → ℝ} (hf : ContDiff ℝ ∞ f)
@@ -813,7 +813,7 @@ theorem observations_contDiffOn (F : Profile) : ContDiffOn ℝ ∞ (observations
 theorem model_estimate (F : Profile) :
     ∃ r L : ℝ, 0 < r ∧ 0 ≤ L ∧ ∀ v : Control, ‖v‖ ≤ r → ∀ p ∈ window,
       (v, p) ∈ regular F ∧ ‖observations F (v, p) - observations F (0, p)‖ ≤ L * ‖v‖ := by
-  apply HeatSwitchCone.compact_control_estimate (isCompact_Icc.prod isCompact_Icc)
+  apply HeatSwitchCone.compact_control_estimate (B := Point) (isCompact_Icc.prod isCompact_Icc)
     ((convex_Icc _ _).prod (convex_Icc _ _)) (regular_isOpen F)
   · rintro ⟨v, p⟩ ⟨hv, hp⟩
     have hv' : v = 0 := hv
@@ -1181,8 +1181,10 @@ theorem physical_log_shears {D : ProfileHistories.RadialDomain}
       ActivationContinuation.shearB P (chart R p) =
         -2 * deriv (fun y => P.U (R * Real.exp y, p.2)) p.1 / P.E (chart R p) := by
   have hc := (Real.hasDerivAt_exp p.1).const_mul R
-  have hfd := (ProfileHistories.radialPartial_hasDerivAt D P.f_smooth hp).comp p.1 hc
-  have hud := (ProfileHistories.radialPartial_hasDerivAt D P.U_smooth hp).comp p.1 hc
+  have hfd := (ProfileHistories.radialPartial_hasDerivAt D P.f_smooth hp).comp
+    (h := fun y => R * Real.exp y) p.1 hc
+  have hud := (ProfileHistories.radialPartial_hasDerivAt D P.U_smooth hp).comp
+    (h := fun y => R * Real.exp y) p.1 hc
   have hr := (((hasDerivAt_id p.1).div_const 2).exp).const_mul (Real.sqrt (2 * R))
   dsimp only [chart, Function.comp_def, id_eq] at hfd hud hr
   have he : (fun y => P.E (R * Real.exp y, p.2)) =

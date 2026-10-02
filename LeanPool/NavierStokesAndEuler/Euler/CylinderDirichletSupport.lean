@@ -40,7 +40,7 @@ theorem spatialCutoff_norm : ‖spatialCutoff (V := V) P S hS‖ ≤ 1 := by
       S hS) u
 
 theorem spatialCutoff_fix (u : CylinderL2 P V) :
-    u ∈ Supported P V S hS ↔ spatialCutoff P S hS u = u :=
+    u ∈ Supported P V S hS ↔ spatialCutoff (V := V) P S hS u = u :=
   (mem_supportedSpace_iff (liftMeasure P) (spatialSet P S) (spatialSet_measurable P S hS) u).trans
       eq_comm
 
@@ -74,20 +74,22 @@ variable (P : ℝ) [Fact (0 < P)] {T : ℝ} {U E : Type*}
 
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem frame_cutoff (t : Icc (0 : ℝ) T) (u : CylinderL2 P U) :
-    D.frame P t (spatialCutoff P S hS u) = spatialCutoff P S hS (D.frame P t u) :=
+    D.frame P t (spatialCutoff (V := U) P S hS u) =
+      spatialCutoff (V := E) P S hS (D.frame P t u) :=
   EulerLpOperatorField.full_cutoff (liftMeasure P) (spatialSet P S)
     (spatialSet_measurable P S hS) (fieldLift (W := U →L[ℝ] E) P (D.Q t)) u
 
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem frameDerivative_cutoff (t : Icc (0 : ℝ) T) (u : CylinderL2 P U) :
-    D.frameDerivative P t (spatialCutoff P S hS u) = spatialCutoff P S hS (D.frameDerivative P t u)
-        :=
+    D.frameDerivative P t (spatialCutoff (V := U) P S hS u) =
+      spatialCutoff (V := E) P S hS (D.frameDerivative P t u) :=
   EulerLpOperatorField.full_cutoff (liftMeasure P) (spatialSet P S)
     (spatialSet_measurable P S hS) (fieldLift (W := U →L[ℝ] E) P (D.Q₁ t)) u
 
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem hessian_cutoff (t : Icc (0 : ℝ) T) (u : CylinderL2 P E) :
-    D.hessian P t (spatialCutoff P S hS u) = spatialCutoff P S hS (D.hessian P t u) :=
+    D.hessian P t (spatialCutoff (V := E) P S hS u) =
+      spatialCutoff (V := E) P S hS (D.hessian P t u) :=
   EulerLpOperatorField.full_cutoff (liftMeasure P) (spatialSet P S)
     (spatialSet_measurable P S hS) (fieldLift (W := E →L[ℝ] E) P (D.H t)) u
 
@@ -110,17 +112,17 @@ theorem frameDerivative_cutoff_back (t : Icc (0 : ℝ) T) (u : CylinderL2 P U) :
   exact D.frameDerivative_cutoff P S hS t u
 
 theorem velocityLp_cutoff (f : TimeLp T (CylinderL2 P E)) :
-    D.velocityLp P (timeLift T (spatialCutoff P S hS) f) =
-      timeLift T (spatialCutoff P S hS) (D.velocityLp P f) :=
-  D.velocityLp_intertwines P D (spatialCutoff P S hS) (spatialCutoff P S hS)
+    D.velocityLp P (timeLift T (spatialCutoff (V := E) P S hS) f) =
+      timeLift T (spatialCutoff (V := U) P S hS) (D.velocityLp P f) :=
+  D.velocityLp_intertwines P D (spatialCutoff (V := U) P S hS) (spatialCutoff (V := E) P S hS)
     (D.frame_cutoff P S hS) (D.frameDerivative_cutoff P S hS)
     (D.frame_cutoff_back P S hS) (D.frameDerivative_cutoff_back P S hS)
     (D.hessian_cutoff P S hS) f
 
 theorem velocityPath_cutoff (f : TimeLp T (CylinderL2 P E)) (t : Icc (0 : ℝ) T) :
-    D.velocityPath P (timeLift T (spatialCutoff P S hS) f) t =
-      spatialCutoff P S hS (D.velocityPath P f t) :=
-  D.velocityPath_intertwines P D (spatialCutoff P S hS) (spatialCutoff P S hS)
+    D.velocityPath P (timeLift T (spatialCutoff (V := E) P S hS) f) t =
+      spatialCutoff (V := U) P S hS (D.velocityPath P f t) :=
+  D.velocityPath_intertwines P D (spatialCutoff (V := U) P S hS) (spatialCutoff (V := E) P S hS)
     (D.frame_cutoff P S hS) (D.frameDerivative_cutoff P S hS)
     (D.frame_cutoff_back P S hS) (D.frameDerivative_cutoff_back P S hS)
     (D.hessian_cutoff P S hS) f t

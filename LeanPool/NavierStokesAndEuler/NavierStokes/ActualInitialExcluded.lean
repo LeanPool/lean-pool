@@ -1397,7 +1397,7 @@ theorem gaussianRate_pos (B N0 : ℕ) : 0 < gaussianRate B N0 :=
 
 theorem nativeEnvelope_gaussian (l : SignedLabel B N0) {v : ℝ}
     (hv : v ∈ Icc 0 ((ActualPrimary.phases B N0 0).L l.2)) :
-    pulseEnvelope l v ≤ Real.exp (-gaussianRate B N0 *
+    ActualPrimaryBounds.pulseEnvelope l v ≤ Real.exp (-gaussianRate B N0 *
       (v / ((ActualPrimary.phases B N0 0).L l.2) - 1 / 2) ^ 2 *
         ((ActualPrimary.phases B N0 0).L l.2)) := by
   have hl := ActualGaussianCoverage.prepared_lambda_lower ActualPrimary.certificate
@@ -1474,7 +1474,7 @@ theorem periodizedGaussian_all_gains (a β : ℝ) :
     · have hf : nativeGaussian l (copyPoint l n k x) ≠ 0 := by
         intro hz
         exact hx (by simp only [copied, ite_eq_left hn, hz, smul_zero])
-      exact nativeGaussian_core l _ hf
+      exact nativeGaussian_core l (copyPoint l n k x) hf
     · exact (hx (by simp only [copied, ite_eq_right hn])).elim
   · exact copiedGaussian_all_gains a β
 
@@ -1705,7 +1705,7 @@ theorem periodizedGaussian_eq (l : SignedLabel B N0) (n : ℕ) {x : Native}
     · have hg : nativeGaussian l (copyPoint l n k y) ≠ 0 := by
         intro hz
         exact hy (by simp only [copied, ite_eq_left hn, hz, smul_zero])
-      exact nativeGaussian_core l _ hg
+      exact nativeGaussian_core l (copyPoint l n k y) hg
     · exact (hy (by simp only [copied, ite_eq_right hn])).elim
   by_cases hn : near l n
   · by_cases hc : ∃ k, x ∈ (copyCells l).carrier n k
@@ -1765,7 +1765,8 @@ theorem gaussianCoefficient_all_gains (β : ℝ) (i : Fin 3) (j : ℤ) :
 theorem gaussianCoefficient_zero (l : SignedLabel B N0) (n : ℕ) (i : Fin 3) (j : ℤ)
     {x : Point} (hx : x ∉ labelCarrier l n) :
     ErrorHarmonics.conjugatePair 1 (fun y => chartGaussian l n (y, 0) i) j x = 0 := by
-  have hz : chartGaussian l n (x, 0) = 0 := (chartGaussian_zero_germ l n hx).eq_of_nhds
+  have hz : chartGaussian l n (x, 0) = 0 :=
+    (chartGaussian_zero_germ l n (x := (x, 0)) hx).eq_of_nhds
   simp only [ParticularWaveAssembly.pair_apply, hz, Pi.zero_apply, zero_div]
   split_ifs <;> simp
 

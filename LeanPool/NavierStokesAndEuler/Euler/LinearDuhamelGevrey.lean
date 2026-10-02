@@ -145,13 +145,13 @@ local instance instLinearDuhamelGevrey8 : NormedSpace ℝ (C(Icc (0 : ℝ) T,E) 
 theorem weightedSolution_contDiff {n : ℕ∞ω} (hB : ContDiff ℝ n B)
     (hf : ContDiff ℝ n f) (ha₀ : ContDiff ℝ n a₀) :
     ContDiff ℝ n (fun x => (U x).weightedSolution g hg (f x) (a₀ x)) := by
-  have hw : ContDiff ℝ n (fun x => weight g (f x)) := by
+  have hw : ContDiff ℝ n (fun x => weight (E := E) g (f x)) := by
     change ContDiff ℝ n ((weight (E := E) g) ∘ f)
     exact (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := n)
       (E := C(Icc (0 : ℝ) T,E)) (F := C(Icc (0 : ℝ) T,E)) (weight g)).comp hf
-  have hs := solution_contDiff T hT B U (fun x => weight g (f x)) a₀ hB hw ha₀
+  have hs := solution_contDiff T hT B U (fun x => weight (E := E) g (f x)) a₀ hB hw ha₀
   change ContDiff ℝ n ((normalize (E := E) g hg) ∘
-    (fun x => (U x).solution (weight g (f x)) (a₀ x)))
+    (fun x => (U x).solution (weight (E := E) g (f x)) (a₀ x)))
   exact (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := n)
     (E := C(Icc (0 : ℝ) T,E)) (F := C(Icc (0 : ℝ) T,E)) (normalize g hg)).comp hs
 
@@ -164,7 +164,7 @@ theorem weightedSolution_derivative_recurrence
     (x : P) (n : ℕ) :
     ‖iteratedFDeriv ℝ n (fun y => (U y).weightedSolution g hg (f y) (a₀ y)) x‖ ≤
       C*‖iteratedFDeriv ℝ n a₀ x‖ + (C*T) *
-        (‖iteratedFDeriv ℝ n f x‖ + ∑ j ∈ range n,
+        (‖iteratedFDeriv ℝ n f x‖ + ∑ j ∈ Finset.range n,
           (n.choose (j+1) : ℝ) * ‖iteratedFDeriv ℝ (j+1) (fun y => multiplier (B y)) x‖ *
             ‖iteratedFDeriv ℝ (n-(j+1))
               (fun y => (U y).weightedSolution g hg (f y) (a₀ y)) x‖) := by
@@ -219,7 +219,7 @@ theorem weightedSolution_gevrey
   apply triangular_inverse_majorant M Rc R hM hRc hR d
     (fun k => majorant R d k) (fun k => ‖iteratedFDeriv ℝ k u x‖) (fun _ => le_rfl) _ n
   intro k
-  let S : ℝ := ∑ j ∈ range k, (k.choose (j+1) : ℝ) * Rc^(j+1) *
+  let S : ℝ := ∑ j ∈ Finset.range k, (k.choose (j+1) : ℝ) * Rc^(j+1) *
     ((j+1).factorial : ℝ)^2 * ‖iteratedFDeriv ℝ (k-(j+1)) u x‖
   have hS : 0 ≤ S := by dsimp [S]; positivity
   have hmajor : 0 ≤ majorant R d k := majorant_nonneg R hR0 d k
@@ -233,7 +233,7 @@ theorem weightedSolution_gevrey
       (x := x) hB.contDiffAt (n := j+1) (by simp)
     exact hl.trans ((mul_le_mul_of_nonneg_right coefficientMap_norm (norm_nonneg _)).trans
       (by simpa only [one_mul] using hcoeff j x))
-  have hsum : (∑ j ∈ range k, (k.choose (j+1) : ℝ) *
+  have hsum : (∑ j ∈ Finset.range k, (k.choose (j+1) : ℝ) *
       ‖iteratedFDeriv ℝ (j+1) (fun y => multiplier (B y)) x‖ *
       ‖iteratedFDeriv ℝ (k-(j+1)) u x‖) ≤ CB*S := by
     dsimp [S]

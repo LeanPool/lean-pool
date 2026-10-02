@@ -728,7 +728,9 @@ theorem physicalMoments_hasFDerivAt_zero (P : Patch) (b A G : ℝ) (hb : GoodExp
   have hp : physicalMoments P b A G = fun c => physicalEquiv A G hA (normalizedMap P b c) :=
     funext (physicalMoments_eq P b A G hA)
   rw [hp]
-  exact (physicalEquiv A G hA).hasFDerivAt.comp 0 hd
+  exact (physicalEquiv A G hA).hasFDerivAt.comp (f := normalizedMap P b)
+    (f' := (linearEquiv P b hb).toContinuousLinearMap)
+    (g' := (physicalEquiv A G hA).toContinuousLinearMap) 0 hd
 
 theorem physicalDensity_zero_outside (P : Patch) (b A G : ℝ) (c : Coeff) {x : ℝ}
     (hx : x ∉ Ioo P.left P.right) : physicalDensity P b A G c x = 0 := by
@@ -857,8 +859,8 @@ theorem physicalU_family_contDiffOn (P : Patch) {S : Set ℝ} {A G : ℝ → ℝ
     (hA : ContDiffOn ℝ ∞ A S) (hG : ContDiffOn ℝ ∞ G S) (hc : ContDiffOn ℝ ∞ c S) :
     ContDiffOn ℝ ∞ (fun z : ℝ × ℝ => physicalU P (A z.1) (G z.1) (c z.1) z.2) (S ×ˢ univ) :=
   (hG.comp contDiffOn_fst (fun _ hz => hz.1)).add
-    ((hA.comp contDiffOn_fst (fun _ hz => hz.1)).mul (correction_family_contDiffOn P.leftHalf
-        hc.fst))
+    ((hA.comp contDiffOn_fst (fun _ hz => hz.1)).mul
+      (correction_family_contDiffOn (c := fun p => (c p).1) P.leftHalf hc.fst))
 
 theorem physicalE_family_contDiffOn (P : Patch) (b : ℝ) {S : Set ℝ} {A : ℝ → ℝ} {c : ℝ → Coeff}
     (hA : ContDiffOn ℝ ∞ A S) (hc : ContDiffOn ℝ ∞ c S) :

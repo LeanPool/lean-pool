@@ -1921,8 +1921,12 @@ theorem nativePhase_normal (l : SlotColoring.Label) (gap i : ℕ) {Q : ℝ} (hQ 
       gap) k y).1.1)
     _ _ _ _ _ = _
   rw [he]
-  rw [PhaseCalculus.phaseNormal_formula _ _ _ _ _ _ _ (Real.rpow_pos_of_pos hQ _).ne' hF hG,
-    PhaseCalculus.phaseNormal_formula _ _ _ _ _ _ _ (Real.rpow_pos_of_pos hQ _).ne' hF hG]
+  rw [PhaseCalculus.phaseNormal_formula _ _ _ _ _ _
+      (slotCoordinates (slotGeometry sys vectors_det l gap) k x)
+      (Real.rpow_pos_of_pos hQ _).ne' hF hG,
+    PhaseCalculus.phaseNormal_formula _ _ _ _ _ _
+      ((x.1.1, x.1.2.1), (theta, ((slotGeometry sys vectors_det l gap).coordinates k x.1.2.2).2))
+      (Real.rpow_pos_of_pos hQ _).ne' hF hG]
   rfl
 
 theorem periodicPhase_differentiableAt (l : SlotColoring.Label) (gap : ℕ)
@@ -1937,7 +1941,9 @@ theorem periodicPhase_differentiableAt (l : SlotColoring.Label) (gap : ℕ)
         (slotGeometry sys vectors_det l gap) (clockWindow sys l.1).cutoff y.1.2.2))) x :=
     (differentiableAt_fst.fst.prodMk differentiableAt_fst.snd.fst).prodMk
       (differentiableAt_snd.prodMk (hc.differentiableAt.comp x differentiableAt_fst.snd.snd))
-  exact (PrimaryMaterialDefect.differentiableAt_phase epsilon p pz x0 F G _ hF hG).comp x hchi
+  exact (PrimaryMaterialDefect.differentiableAt_phase epsilon p pz x0 F G
+    ((x.1.1, x.1.2.1), (x.2, PeriodicPhaseAssembly.periodicClock
+      (slotGeometry sys vectors_det l gap) (clockWindow sys l.1).cutoff x.1.2.2)) hF hG).comp x hchi
 
 theorem periodicPhase_normal_germ (hh : 0 ≤ h) {l : SlotColoring.Label} (hl : 4 ≤ l.1)
     (gap i : ℕ) {Q : ℝ} (hQ : 0 < Q) (p pz x0 : ℝ) (F G : Slow → ℝ)

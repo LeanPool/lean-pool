@@ -83,12 +83,14 @@ theorem frameMultiplier_adjoint_translate (a : Space)
           (timeMultiplier T hT (solenoidalFrame T F)) f) := by
   apply eq_of_translated_pairing T a
   intro v
-  exact (adjoint_inner_left (timeMultiplier T hT (solenoidalFrame T (translatePath T a F)))
+  exact (adjoint_inner_left (𝕜 := ℝ) (E := TimeLp T solenoidalSpace) (F := TimeLp T L2)
+      (timeMultiplier T hT (solenoidalFrame T (translatePath T a F)))
       (timeSolenoidalTranslation T a v) (timeTranslation T a f)).trans
     ((congrArg (fun z : TimeLp T L2 => ⟪timeTranslation T a f,z⟫_ℝ)
         (frameMultiplier_translate T hT a F v)).trans
       (((timeTranslation T a).inner_map_map f (timeMultiplier T hT (solenoidalFrame T F) v)).trans
-        ((adjoint_inner_left (timeMultiplier T hT (solenoidalFrame T F)) v f).symm.trans
+        ((adjoint_inner_left (𝕜 := ℝ) (E := TimeLp T solenoidalSpace) (F := TimeLp T L2)
+            (timeMultiplier T hT (solenoidalFrame T F)) v f).symm.trans
           ((timeSolenoidalTranslation T a).inner_map_map
             (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace) (F := TimeLp T L2)
               (timeMultiplier T hT (solenoidalFrame T F)) f) v).symm)))
@@ -113,17 +115,20 @@ theorem gramSolver_translate (a : Space)
     gramSolver T hT (solenoidalFrame T (translatePath T a F)) c hc
         (translatedFrame_lower T F c hF a) (timeSolenoidalTranslation T a g) =
       timeSolenoidalTranslation T a (gramSolver T hT (solenoidalFrame T F) c hc hF g) := by
-  apply (coerciveEquiv (gramOperator T hT (solenoidalFrame T (translatePath T a F))) c hc
+  apply (coerciveEquiv (E := TimeLp T solenoidalSpace)
+    (gramOperator T hT (solenoidalFrame T (translatePath T a F))) c hc
     (gramOperator_coercive T hT (solenoidalFrame T (translatePath T a F)) c
       (translatedFrame_lower T F c hF a))).injective
   simp only [coerciveEquiv_apply]
-  have hl := operator_inverse_apply (gramOperator T hT (solenoidalFrame T (translatePath T a F)))
+  have hl := operator_inverse_apply (E := TimeLp T solenoidalSpace)
+    (gramOperator T hT (solenoidalFrame T (translatePath T a F)))
     c hc (gramOperator_coercive T hT (solenoidalFrame T (translatePath T a F)) c
       (translatedFrame_lower T F c hF a)) (timeSolenoidalTranslation T a g)
   have hr := (gramOperator_translate T hT a F (gramSolver T hT (solenoidalFrame T F) c hc hF
       g)).trans
     (congrArg (timeSolenoidalTranslation T a)
-      (operator_inverse_apply (gramOperator T hT (solenoidalFrame T F)) c hc
+      (operator_inverse_apply (E := TimeLp T solenoidalSpace)
+        (gramOperator T hT (solenoidalFrame T F)) c hc
         (gramOperator_coercive T hT (solenoidalFrame T F) c hF) g))
   exact hl.trans hr.symm
 

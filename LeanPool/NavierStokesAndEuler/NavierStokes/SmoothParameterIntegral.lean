@@ -79,7 +79,8 @@ theorem hasFDerivAt_integral_jet
     filter_upwards [hbound] with t ht
     intro y hy
     simpa only [LinearIsometryEquiv.norm_map] using ht y hy
-  have hi := hasFDerivAt_integral_of_dominated_of_fderiv_le (Metric.ball_mem_nhds _ hε)
+  have hi := hasFDerivAt_integral_of_dominated_of_fderiv_le
+    (F' := fun y t => curry (jet F (k + 1) y t)) (Metric.ball_mem_nhds _ hε)
     (Filter.Eventually.of_forall (h_meas k)) (integrable_jet h_meas h_dom k x)
     hm hnorm hb hd
   have hc : (∫ t, curry (jet F (k + 1) x t) ∂μ) =
@@ -178,7 +179,8 @@ theorem hasFDerivAt_integral_jetOn (hs : IsOpen s)
   have hm_near : ∀ᶠ y in 𝓝 x, AEStronglyMeasurable (jet F k y) μ := by
     filter_upwards [hs.mem_nhds hx] with y hy
     exact h_meas k y hy
-  have hi := hasFDerivAt_integral_of_dominated_of_fderiv_le (Metric.ball_mem_nhds _ hε) hm_near
+  have hi := hasFDerivAt_integral_of_dominated_of_fderiv_le
+    (F' := fun y t => curry (jet F (k + 1) y t)) (Metric.ball_mem_nhds _ hε) hm_near
     (integrable_jetOn h_meas h_dom k hx) hm hnorm hb hd
   have hcomm : (∫ t, curry (jet F (k + 1) x t) ∂μ) =
       curry (∫ t, jet F (k + 1) x t ∂μ) := by
@@ -243,7 +245,7 @@ theorem contDiffOn_integral_Ioc_of_continuous_jet (hs : IsOpen s)
     exact h_smooth t ⟨ht.1.le, ht.2⟩
   · intro k x hx
     have hc : ContinuousOn (jet F k x) (Icc a b) :=
-      (h_jet k).comp (continuous_const.prodMk continuous_id).continuousOn
+      (h_jet k).comp (f := fun t => (x, t)) (continuous_const.prodMk continuous_id).continuousOn
         (fun t ht => ⟨hx, ht⟩)
     exact (hc.mono Ioc_subset_Icc_self).aestronglyMeasurable measurableSet_Ioc
   · intro k x hx

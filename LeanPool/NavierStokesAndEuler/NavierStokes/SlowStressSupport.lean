@@ -684,9 +684,9 @@ theorem pressure_weighted_identity {q : JointProfile} (hq : ContDiff ℝ ∞ q) 
     simp
   have hi := intervalIntegral.integral_mul_deriv_eq_deriv_mul_of_hasDerivAt
     (a := (0 : ℝ)) (b := B)
-    (u := fun R : ℝ => R ^ 2 / 2) (u' := fun R => R)
+    (u := fun R : ℝ => R ^ (2 : ℕ) / 2) (u' := fun R => R)
     (v := fun R => ProfileHistories.primitive q (R, eta)) (v' := fun R => q (R, eta))
-    ((continuous_id.pow 2).div_const 2).continuousOn hPc.continuousOn
+    (((continuous_id (X := ℝ)).pow 2).div_const 2).continuousOn hPc.continuousOn
     (fun R _ => hpow R) (fun R _ => primitive_hasDerivAt hq (R, eta))
     (continuous_id.intervalIntegrable 0 B) (hqc.intervalIntegrable 0 B)
   have he : (fun R => R ^ 2 / 2 * q (R, eta)) =
@@ -965,8 +965,8 @@ theorem jointRowDensity_integrableOn {S : Set ℝ} {n : ℕ}
     IntegrableOn (fun R => rowDensity n (slice u eta) (slice e eta)
       (fun r => omega (r, eta)) R i) (Ioi 0) := by
   apply positive_integrableOn_of_compact (B := B)
-  · exact (hd i).comp (continuous_id.prodMk continuous_const).continuousOn
-      (fun R hR => ⟨mem_univ _, heta⟩)
+  · exact (hd i).comp (f := fun R => (R, eta))
+      (continuous_id.prodMk continuous_const).continuousOn (fun R hR => ⟨mem_univ _, heta⟩)
   · intro R hR
     exact congrFun (hs eta heta R hR) i
 
@@ -1905,7 +1905,7 @@ theorem interior_weighted_jets {S K : Set ℝ} (hS : IsOpen S) (hK : IsCompact K
   have hcj : ContinuousOn (iteratedFDeriv ℝ k f) (Icc a b ×ˢ K) := by
     intro w hw
     have hh := hf.contDiffAt ((isOpen_univ.prod hS).mem_nhds ⟨mem_univ _, hKS hw.2⟩)
-    exact (hh.iteratedFDeriv_right (m := 0) (by
+    exact (hh.iteratedFDeriv_right (m := 0) (i := k) (by
       simp only [zero_add]
       exact_mod_cast (le_top : (k : ℕ∞) ≤ ⊤))).continuousAt.continuousWithinAt
   have hcz : ContinuousOn (fun w : ℝ × ℝ => zeta w.1) (Icc a b ×ˢ K) :=

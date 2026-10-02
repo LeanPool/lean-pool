@@ -62,10 +62,10 @@ theorem weightedForcing_norm (hg₀ : g ⟨0, le_rfl, hT⟩ = 1) (C : ℝ) (hC :
     ‖U.weightedForcing g hg‖ ≤ C*T := by
   apply opNorm_le_bound _ (mul_nonneg hC hT)
   intro f
-  apply normalize_norm_le g hg (U.forcingOperator (weight g f)) (C*T*‖f‖)
+  apply normalize_norm_le g hg (U.forcingOperator (weight (E := E) g f)) (C*T*‖f‖)
     (mul_nonneg (mul_nonneg hC hT) (norm_nonneg f))
   intro t
-  have hp := U.forcingOperator_profile_bound (weight g f) g hg hg₀ C ‖f‖ hC hU
+  have hp := U.forcingOperator_profile_bound (weight (E := E) g f) g hg hg₀ C ‖f‖ hC hU
     (fun s => (weight_pointwise_bound g (fun s => (hg s).le) f s).trans_eq (mul_comm _ _)) t
   have ht := mul_le_mul_of_nonneg_right t.property.2
     (mul_nonneg (mul_nonneg hC (hg t).le) (norm_nonneg f))
@@ -73,7 +73,7 @@ theorem weightedForcing_norm (hg₀ : g ⟨0, le_rfl, hT⟩ = 1) (C : ℝ) (hC :
 
 /-- The normalized constructed path, with normalized forcing as input. -/
 def weightedSolution (f : C(Icc (0 : ℝ) T, E)) (a₀ : E) : C(Icc (0 : ℝ) T,E) :=
-  normalize g hg (U.solution (weight g f) a₀)
+  normalize (E := E) g hg (U.solution (weight (E := E) g f) a₀)
 
 /-- The normalized solution is still exactly the two actual data maps. -/
 theorem weightedSolution_eq (f : C(Icc (0 : ℝ) T, E)) (a₀ : E) :
@@ -103,18 +103,19 @@ theorem frozen_solution (f : C(Icc (0 : ℝ) T, E)) (a₀ : E) :
 theorem weighted_frozen_solution (f : C(Icc (0 : ℝ) T, E)) (a₀ : E) :
     V.weightedSolution g hg f a₀ = U.weightedInitial g hg a₀ +
       U.weightedForcing g hg (f + multiplier (D-B) (V.weightedSolution g hg f a₀)) := by
-  have he := U.frozen_solution V (weight g f) a₀
-  have hw : weight g (f + multiplier (D-B) (V.weightedSolution g hg f a₀)) =
-      weight g f + multiplier (D-B) (V.solution (weight g f) a₀) := by
+  have he := U.frozen_solution V (weight (E := E) g f) a₀
+  have hw : weight (E := E) g (f + multiplier (D-B) (V.weightedSolution g hg f a₀)) =
+      weight (E := E) g f + multiplier (D-B) (V.solution (weight (E := E) g f) a₀) := by
     rw [map_add, weight_multiplier]
-    change _ + multiplier (D-B) (weight g (normalize g hg (V.solution (weight g f) a₀))) = _
+    change _ + multiplier (D-B) (weight (E := E) g
+      (normalize (E := E) g hg (V.solution (weight (E := E) g f) a₀))) = _
     rw [weight_normalize]
-  change normalize g hg (V.solution (weight g f) a₀) =
-    normalize g hg (U.initialOperator a₀) +
-      normalize g hg (U.forcingOperator (weight g (f + multiplier (D-B) (V.weightedSolution g hg f
-          a₀))))
+  change normalize (E := E) g hg (V.solution (weight (E := E) g f) a₀) =
+    normalize (E := E) g hg (U.initialOperator a₀) +
+      normalize (E := E) g hg (U.forcingOperator (weight (E := E) g
+        (f + multiplier (D-B) (V.weightedSolution g hg f a₀))))
   rw [hw]
-  simpa only [map_add] using congrArg (normalize g hg) he
+  simpa only [map_add] using congrArg (normalize (E := E) g hg) he
 
 end Evolution
 

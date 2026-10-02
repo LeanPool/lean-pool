@@ -547,7 +547,7 @@ theorem spatialProfile_hasDerivAt_time {a τ s : ℝ} (ha : 1 < a) (hτ : 0 < τ
     HasDerivAt (fun τ => spatialProfile a τ s)
       (2 * s ^ (spatialExponent a - 1) * profileJet a 1 (2 * τ / s)) τ := by
   have hz : 0 < 2 * τ / s := by positivity
-  have hd := ((profile_hasDerivAt ha hz).comp τ
+  have hd := ((profile_hasDerivAt ha hz).comp (h := fun τ => 2 * id τ / s) τ
     (((hasDerivAt_id τ).const_mul 2).div_const s)).const_mul (s ^ spatialExponent a)
   simp only [Function.comp_def, id_eq] at hd
   convert! hd using 1
@@ -608,13 +608,14 @@ theorem radiusSquared_hasDerivAt (r : ℝ) :
 theorem radialProfile_hasDerivAt_radius {a τ r : ℝ} (ha : 1 < a) (hτ : 0 < τ) (hr : 0 < r) :
     HasDerivAt (radialProfile a τ) (radialFirst a τ r) r := by
   have hs : 0 < r ^ 2 / 2 := by positivity
-  exact (spatialProfile_hasDerivAt_s ha hτ hs).comp r (radiusSquared_hasDerivAt r)
+  exact (spatialProfile_hasDerivAt_s ha hτ hs).comp (h := fun r : ℝ => r ^ 2 / 2) r
+    (radiusSquared_hasDerivAt r)
 
 theorem radialFirst_hasDerivAt_radius {a τ r : ℝ} (ha : 1 < a) (hτ : 0 < τ) (hr : 0 < r) :
     HasDerivAt (radialFirst a τ) (radialSecond a τ r) r := by
   have hs : 0 < r ^ 2 / 2 := by positivity
-  have hd := ((spatialFirst_hasDerivAt_s ha hτ hs).comp r (radiusSquared_hasDerivAt r)).mul
-    (hasDerivAt_id r)
+  have hd := ((spatialFirst_hasDerivAt_s ha hτ hs).comp (h := fun r : ℝ => r ^ 2 / 2) r
+    (radiusSquared_hasDerivAt r)).mul (hasDerivAt_id r)
   convert! hd using 1
   dsimp only [radialSecond, Function.comp_apply, id]
   ring
@@ -689,7 +690,7 @@ theorem spatialProfile_joint_contDiffOn {a : ℝ} (ha : 1 < a) :
     contDiffOn_fst.rpow_const_of_ne (fun p hp => hp.1.ne')
   have hz : ContDiffOn ℝ ∞ (fun p : ℝ × ℝ => 2 * p.2 / p.1)
       {p | 0 < p.1 ∧ 0 ≤ p.2} :=
-    (contDiffOn_const.mul contDiffOn_snd).div contDiffOn_fst (fun p hp => hp.1.ne')
+    ContDiffOn.div (contDiffOn_const.mul contDiffOn_snd) contDiffOn_fst (fun p hp => hp.1.ne')
   exact hp.mul ((profile_contDiffOn ha).comp hz (by
     intro p hp
     change 0 ≤ 2 * p.2 / p.1

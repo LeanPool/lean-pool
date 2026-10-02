@@ -115,7 +115,7 @@ theorem frameApply_translation_gevrey (F : C(Icc (0 : ℝ) T, L2 →L[ℝ] L2))
   have hQ : ContDiff ℝ ∞ Q := contDiff_solenoidalFrame T (fun b => translatePath T b F) hF
   have hbQ : ∀ k b, ‖iteratedFDeriv ℝ k Q b‖ ≤ CF*majorant R 0 k :=
     solenoidalFrame_bound T (fun b => translatePath T b F) hF R CF hR hCF 0 hFb
-  have hp := clm_apply_bound (fun b => timeMultiplier T hT (Q b))
+  have hp := clm_apply_bound (fun b => timeMultiplier (E := solenoidalSpace) (F := L2) T hT (Q b))
     (fun b => timeSolenoidalTranslation T b v) (contDiff_timeMultiplier T hT Q hQ) hv
     R CF Cv hR hCF hCv 0 d (timeMultiplier_bound T hT Q hQ R CF hR hCF 0 hbQ) hvb n a
   have hp' : ‖iteratedFDeriv ℝ n (fun b : Space =>

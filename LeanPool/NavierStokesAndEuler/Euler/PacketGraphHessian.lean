@@ -51,7 +51,7 @@ theorem angularDerivative_contDiff {q : LiftTangent → ℝ} (hq : ContDiff ℝ 
 theorem angularDerivative_eq_deriv {q : LiftTangent → ℝ} {z : LiftTangent}
     (hq : DifferentiableAt ℝ q z) :
     angularDerivative q z = deriv (fun θ => q (z.1,θ)) z.2 := by
-  exact ((hq.hasFDerivAt.comp_hasDerivAt z.2
+  exact ((hq.hasFDerivAt.comp_hasDerivAt (F := LiftTangent) (f := fun θ => (z.1, id θ)) z.2
     ((hasDerivAt_const z.2 z.1).prodMk (hasDerivAt_id z.2))).deriv).symm
 
 theorem angularSecond_eq_deriv {q : LiftTangent → ℝ} (hq : ContDiff ℝ ∞ q)
@@ -136,16 +136,17 @@ theorem hessian_physical {q : LiftTangent → ℝ} (hq : ContDiff ℝ ∞ q)
     ((angularDerivative_contDiff hq).differentiable (by simp) z).hasFDerivAt
   have ha : HasFDerivAt a
       (((fderiv ℝ (angularDerivative q) z).comp (graphMap k m)).comp (J x)) x := by
-    convert! hang.comp x hgraph using 1
+    convert! hang.comp (f := fun y => graphMap k m (Y y)) x hgraph using 1
   have hn : DifferentiableAt ℝ n x :=
-    (adjoint.differentiableAt.comp x hJ).clm_apply (differentiableAt_const m)
+    ((adjoint (𝕜 := ℝ) (E := Space) (F := Space)).differentiableAt.comp x hJ).clm_apply
+      (differentiableAt_const m)
   have hsp : DifferentiableAt ℝ (spatialGradient q) z :=
     (spatialGradient_contDiff hq).differentiable (by simp) z
   have hspg : DifferentiableAt ℝ (fun y => spatialGradient q (graphMap k m (Y y))) x := by
-    have hcomp := hsp.comp x hgraph.differentiableAt
+    have hcomp := hsp.comp (f := fun y => graphMap k m (Y y)) x hgraph.differentiableAt
     exact hcomp
   have hs : DifferentiableAt ℝ (slowForce q k m Y J) x :=
-    (adjoint.differentiableAt.comp x hJ).clm_apply hspg
+    ((adjoint (𝕜 := ℝ) (E := Space) (F := Space)).differentiableAt.comp x hJ).clm_apply hspg
   have hg : gradient (fun y => k⁻¹^2 * q (graphMap k m (Y y))) =
       fun y => k⁻¹^2 • slowForce q k m Y J y + k⁻¹ • (a y • n y) := by
     funext y

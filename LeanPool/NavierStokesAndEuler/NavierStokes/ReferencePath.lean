@@ -69,16 +69,16 @@ theorem slopeCutoff_zero {δ t : ℝ} (hδ : 0 < δ) (ht : 2 * δ ≤ t) : slope
     ((le_div_iff₀ hδ).2 (by linarith)), sub_self]
 
 /-- Damped slope, defined pointwise by `slopeCutoff δ p.1 * radialPartial G p`. -/
-def dampedSlope (δ : ℝ) (G : Field) : Field :=
+def dampedSlope (δ : ℝ) (G : ProfileHistories.Field) : ProfileHistories.Field :=
   fun p => slopeCutoff δ p.1 * radialPartial G p
 
 /-- The prescribed continuation, defined by an actual integral of the
 same-time natural derivative. -/
-def continuation (δ : ℝ) (G : Field) : Field :=
+def continuation (δ : ℝ) (G : ProfileHistories.Field) : ProfileHistories.Field :=
   fun p => G (0, p.2) + primitive (dampedSlope δ G) p
 
 theorem dampedSlope_smooth {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ) (hδT : 2 * δ < T)
-    {J : Set ℝ} (hJ : IsOpen J) {G : Field}
+    {J : Set ℝ} (hJ : IsOpen J) {G : ProfileHistories.Field}
     (hG : ContDiffOn ℝ ∞ G (earlyStrip T hT J hJ).carrier) :
     ContDiffOn ℝ ∞ (dampedSlope δ G) (fullStrip J hJ).carrier := by
   intro p hp
@@ -93,7 +93,7 @@ theorem dampedSlope_smooth {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ) (hδT : 2 * 
     exact (contDiffAt_const.congr_of_eventuallyEq heq).contDiffWithinAt
 
 theorem continuation_smooth {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ) (hδT : 2 * δ < T)
-    {J : Set ℝ} (hJ : IsOpen J) {G : Field}
+    {J : Set ℝ} (hJ : IsOpen J) {G : ProfileHistories.Field}
     (hG : ContDiffOn ℝ ∞ G (earlyStrip T hT J hJ).carrier) :
     ContDiffOn ℝ ∞ (continuation δ G) (fullStrip J hJ).carrier := by
   apply ContDiffOn.add _ (primitive_smooth (fullStrip J hJ) (dampedSlope_smooth hT hδ hδT hJ hG))
@@ -103,7 +103,7 @@ theorem continuation_smooth {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ) (hδT : 2 *
     (contDiffAt_const.prodMk contDiffAt_snd)).contDiffWithinAt
 
 theorem continuation_hasDerivAt {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ) (hδT : 2 * δ < T)
-    {J : Set ℝ} (hJ : IsOpen J) {G : Field}
+    {J : Set ℝ} (hJ : IsOpen J) {G : ProfileHistories.Field}
     (hG : ContDiffOn ℝ ∞ G (earlyStrip T hT J hJ).carrier)
     {p : Point} (hp : p.2 ∈ J) :
     HasDerivAt (fun t => continuation δ G (t, p.2))
@@ -114,7 +114,7 @@ theorem continuation_hasDerivAt {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ) (hδT :
   exact hd
 
 theorem continuation_eq_natural {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ) (hδT : 2 * δ < T)
-    {J : Set ℝ} (hJ : IsOpen J) {G : Field}
+    {J : Set ℝ} (hJ : IsOpen J) {G : ProfileHistories.Field}
     (hG : ContDiffOn ℝ ∞ G (earlyStrip T hT J hJ).carrier)
     {p : Point} (hp : p.2 ∈ J) (ht : p.1 ≤ δ) : continuation δ G p = G p := by
   have hd : ∀ t ∈ uIcc 0 p.1,
@@ -133,7 +133,7 @@ theorem continuation_eq_natural {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ) (hδT :
   ring
 
 theorem continuation_frozen {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ) (hδT : 2 * δ < T)
-    {J : Set ℝ} (hJ : IsOpen J) {G : Field}
+    {J : Set ℝ} (hJ : IsOpen J) {G : ProfileHistories.Field}
     (hG : ContDiffOn ℝ ∞ G (earlyStrip T hT J hJ).carrier)
     {p : Point} (hp : p.2 ∈ J) (ht : 2 * δ ≤ p.1) :
     continuation δ G p = continuation δ G (2 * δ, p.2) := by
@@ -182,11 +182,12 @@ theorem masterDomain_open (T : ℝ) {J : Set ℝ} (hJ : IsOpen J) : IsOpen (mast
     (hJ.preimage continuous_snd)
 
 /-- The rescaled transition on a fixed parameter interval, smooth even at δ=0. -/
-def master (G : Field) (p : MasterPoint) : ℝ :=
+def master (G : ProfileHistories.Field) (p : MasterPoint) : ℝ :=
   G (0, p.2) + p.1.1 * p.1.2 *
     ∫ v in (0 : ℝ)..1, slopeCutoff 1 (p.1.2 * v) * radialPartial G (p.1.1 * (p.1.2 * v), p.2)
 
-theorem master_at_zero (G : Field) (u η : ℝ) : master G ((0, u), η) = G (0, η) := by
+theorem master_at_zero (G : ProfileHistories.Field) (u η : ℝ) :
+    master G ((0, u), η) = G (0, η) := by
   simp [master]
 
 theorem slopeCutoff_scaled {δ : ℝ} (hδ : δ ≠ 0) (u : ℝ) :
@@ -195,7 +196,7 @@ theorem slopeCutoff_scaled {δ : ℝ} (hδ : δ ≠ 0) (u : ℝ) :
   congr 2
   field_simp
 
-theorem continuation_rescaled (G : Field) {δ : ℝ} (hδ : δ ≠ 0) (u η : ℝ) :
+theorem continuation_rescaled (G : ProfileHistories.Field) {δ : ℝ} (hδ : δ ≠ 0) (u η : ℝ) :
     continuation δ G (δ * u, η) = master G ((δ, u), η) := by
   unfold continuation master
   rw [primitive_eq_mul_average]
@@ -205,15 +206,17 @@ theorem continuation_rescaled (G : Field) {δ : ℝ} (hδ : δ ≠ 0) (u η : �
   change slopeCutoff δ (v * (δ * u)) * radialPartial G (v * (δ * u), η) = _
   rw [show v * (δ * u) = δ * (u * v) by ring, slopeCutoff_scaled hδ]
 
-theorem master_smooth {T : ℝ} (hT : 0 < T) {J : Set ℝ} (hJ : IsOpen J) {G : Field}
+theorem master_smooth {T : ℝ} (hT : 0 < T) {J : Set ℝ} (hJ : IsOpen J) {G : ProfileHistories.Field}
     (hG : ContDiffOn ℝ ∞ G (earlyStrip T hT J hJ).carrier) :
     ContDiffOn ℝ ∞ (master G) (masterDomain T J) := by
   apply ContDiffOn.add
   · intro p hp
     exact ((hG.contDiffAt ((earlyStrip T hT J hJ).isOpen.mem_nhds
       (show (0, p.2) ∈ (earlyStrip T hT J hJ).carrier from ⟨hT, hp.2⟩))).comp p
-        (contDiffAt_const.prodMk contDiffAt_snd)).contDiffWithinAt
-  · apply ContDiffOn.mul (contDiffOn_fst.fst.mul contDiffOn_fst.snd)
+        ((contDiffAt_const (𝕜 := ℝ) (E := MasterPoint) (F := ℝ)).prodMk
+          contDiffAt_snd)).contDiffWithinAt
+  · apply ContDiffOn.mul
+      ((contDiffOn_fst (𝕜 := ℝ) (E := ℝ × ℝ) (F := ℝ)).fst.mul contDiffOn_fst.snd)
     apply compact_integral_smooth (masterDomain_open T hJ)
     intro p hp v hv
     have hbound : |p.1.1 * (p.1.2 * v)| ≤ |p.1.1 * p.1.2| := by
@@ -224,9 +227,10 @@ theorem master_smooth {T : ℝ} (hT : 0 < T) {J : Set ℝ} (hJ : IsOpen J) {G : 
     have hd := (radialPartial_smooth (earlyStrip T hT J hJ) hG).contDiffAt
       ((earlyStrip T hT J hJ).isOpen.mem_nhds hpv)
     exact ((slopeCutoff_smooth 1).contDiffAt.comp (p, v)
-      (contDiffAt_fst.fst.snd.mul contDiffAt_snd)).mul
-        (hd.comp (p, v) ((contDiffAt_fst.fst.fst.mul
-          (contDiffAt_fst.fst.snd.mul contDiffAt_snd)).prodMk contDiffAt_fst.snd))
+      ((contDiffAt_fst (𝕜 := ℝ) (E := MasterPoint) (F := ℝ)).fst.snd.mul contDiffAt_snd)).mul
+        (hd.comp (p, v) (((contDiffAt_fst (𝕜 := ℝ) (E := MasterPoint) (F := ℝ)).fst.fst.mul
+          ((contDiffAt_fst (𝕜 := ℝ) (E := MasterPoint) (F := ℝ)).fst.snd.mul contDiffAt_snd)).prodMk
+            (contDiffAt_fst (𝕜 := ℝ) (E := MasterPoint) (F := ℝ)).snd))
 
 /-- The master representation covers the entire hold by saturating its
 rescaled time at two. This does not change the natural slope's evaluation point. -/
@@ -236,7 +240,7 @@ theorem holdTime_mem {δ t : ℝ} (hδ : 0 < δ) (ht : 0 ≤ t) : holdTime δ t 
   exact ⟨le_min (div_nonneg ht hδ.le) (by norm_num), min_le_right _ _⟩
 
 theorem continuation_eq_master_hold {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ) (hδT : 2 * δ < T)
-    {J : Set ℝ} (hJ : IsOpen J) {G : Field}
+    {J : Set ℝ} (hJ : IsOpen J) {G : ProfileHistories.Field}
     (hG : ContDiffOn ℝ ∞ G (earlyStrip T hT J hJ).carrier)
     {t η : ℝ} (hη : η ∈ J) (_ : 0 ≤ t) :
     continuation δ G (t, η) = master G ((δ, holdTime δ t), η) := by
@@ -305,11 +309,11 @@ theorem master_parameter_jet_close {T : ℝ} (hT : 0 < T) {J : Set ℝ} (hJ : Is
   simpa only [Real.dist_eq, hz] using hdist _ hx _ hy hdxy
 
 /-- Transformed master, given by `Φ (master G p, G (0, p.2))`. -/
-def transformedMaster (Φ : ℝ × ℝ → ℝ) (G : Field) (p : MasterPoint) : ℝ :=
+def transformedMaster (Φ : ℝ × ℝ → ℝ) (G : ProfileHistories.Field) (p : MasterPoint) : ℝ :=
   Φ (master G p, G (0, p.2))
 
 theorem transformedMaster_smooth {T : ℝ} (hT : 0 < T) {J : Set ℝ} (hJ : IsOpen J)
-    {G : Field} (hG : ContDiffOn ℝ ∞ G (earlyStrip T hT J hJ).carrier)
+    {G : ProfileHistories.Field} (hG : ContDiffOn ℝ ∞ G (earlyStrip T hT J hJ).carrier)
     {Φ : ℝ × ℝ → ℝ} (hΦ : ContDiff ℝ ∞ Φ) :
     ContDiffOn ℝ ∞ (transformedMaster Φ G) (masterDomain T J) := by
   apply hΦ.comp_contDiffOn
@@ -323,7 +327,7 @@ theorem transformedMaster_smooth {T : ℝ} (hT : 0 < T) {J : Set ℝ} (hJ : IsOp
 endpoint converge uniformly on the whole nonnegative-time hold. Applying Φ
 to x, exp x, x-b, or exp(x-b) gives field, log-field, and relative-field jets. -/
 theorem continuation_parameter_jet_close {T : ℝ} (hT : 0 < T) {J : Set ℝ} (hJ : IsOpen J)
-    {G : Field} (hG : ContDiffOn ℝ ∞ G (earlyStrip T hT J hJ).carrier)
+    {G : ProfileHistories.Field} (hG : ContDiffOn ℝ ∞ G (earlyStrip T hT J hJ).carrier)
     {Φ : ℝ × ℝ → ℝ} (hΦ : ContDiff ℝ ∞ Φ)
     {K : Set ℝ} (hK : IsCompact K) (hKJ : K ⊆ J) (k : ℕ)
     {ε : ℝ} (hε : 0 < ε) :
@@ -374,9 +378,9 @@ structure Input where
   scale : ℝ
   scale_pos : 0 < scale
   /-- F of `Input`, of type `Field`. -/
-  f : Field
+  f : ProfileHistories.Field
   /-- U of `Input`, of type `Field`. -/
-  U : Field
+  U : ProfileHistories.Field
   f_smooth : ContDiffOn ℝ ∞ f (NaturalProfile.domain scale)
   U_smooth : ContDiffOn ℝ ∞ U (NaturalProfile.domain scale)
   positive : ∀ p ∈ NaturalProfile.domain scale, 0 ≤ scale * p.1 →
@@ -412,9 +416,9 @@ def fromLog (p : Point) : Point := (N.endpoint * Real.exp p.1, p.2)
 /-- Log time, given by `Real.log (X / N.endpoint)`. -/
 def logTime (X : ℝ) : ℝ := Real.log (X / N.endpoint)
 /-- Log F, defined pointwise by `Real.log (N.f (N.fromLog p))`. -/
-def logF : Field := fun p => Real.log (N.f (N.fromLog p))
+def logF : ProfileHistories.Field := fun p => Real.log (N.f (N.fromLog p))
 /-- Log U, defined pointwise by `N.U (N.fromLog p)`. -/
-def logU : Field := fun p => N.U (N.fromLog p)
+def logU : ProfileHistories.Field := fun p => N.U (N.fromLog p)
 
 theorem fromLog_smooth : ContDiff ℝ ∞ N.fromLog :=
   (contDiff_const.mul contDiff_fst.exp).prodMk contDiff_snd
@@ -504,12 +508,12 @@ theorem natural_mem_of_le_endpoint {p : Point} (hp : p ∈ N.radialDomain.carrie
 
 /-- Ref F, defined pointwise by `if p.1 ≤ N.endpoint then N.f p else Real.exp (continuation δ
 N.logF (N.logTime p.1, p.2))`. -/
-def refF (δ : ℝ) : Field := fun p => if p.1 ≤ N.endpoint then N.f p else
+def refF (δ : ℝ) : ProfileHistories.Field := fun p => if p.1 ≤ N.endpoint then N.f p else
   Real.exp (continuation δ N.logF (N.logTime p.1, p.2))
 
 /-- Ref U, defined pointwise by `if p.1 ≤ N.endpoint then N.U p else continuation δ N.logU
 (N.logTime p.1, p.2)`. -/
-def refU (δ : ℝ) : Field := fun p => if p.1 ≤ N.endpoint then N.U p else
+def refU (δ : ℝ) : ProfileHistories.Field := fun p => if p.1 ≤ N.endpoint then N.U p else
   continuation δ N.logU (N.logTime p.1, p.2)
 
 theorem refF_eq_natural_initial (δ : ℝ) {p : Point} (hp : p.1 ≤ N.endpoint) :
@@ -692,7 +696,8 @@ theorem refU_hasDerivAt {δ : ℝ} (hδ : 0 < δ) (hδT : 2 * δ < rampLimit)
   filter_upwards [Ioi_mem_nhds hX] with X hXX
   exact N.refU_eq_logtime hδ hδT hη hXX
 
-theorem natural_logtime_deriv {F : Field} (hF : ContDiffOn ℝ ∞ F (NaturalProfile.domain N.scale))
+theorem natural_logtime_deriv {F : ProfileHistories.Field}
+    (hF : ContDiffOn ℝ ∞ F (NaturalProfile.domain N.scale))
     {p : Point} (hp : p ∈ (earlyStrip rampLimit rampLimit_pos parameterInterval
         parameterInterval_open).carrier) :
     HasDerivAt (fun t => F (N.fromLog (t, p.2)))
@@ -700,7 +705,7 @@ theorem natural_logtime_deriv {F : Field} (hF : ContDiffOn ℝ ∞ F (NaturalPro
   have hf := (hF.contDiffAt ((NaturalProfile.domain_isOpen N.scale).mem_nhds (N.fromLog_mem
       hp))).differentiableAt (by
       simp)
-  have hs := hf.hasFDerivAt.comp_hasDerivAt (N.fromLog p).1
+  have hs := hf.hasFDerivAt.comp_hasDerivAt (F := Point) (N.fromLog p).1
     ((hasDerivAt_id (N.fromLog p).1).prodMk (hasDerivAt_const (N.fromLog p).1 p.2))
   have hd := hs.comp p.1 ((Real.hasDerivAt_exp p.1).const_mul N.endpoint)
   simpa only [fromLog, radialPartial, Function.comp_def, id_eq, mul_comm] using hd

@@ -247,7 +247,7 @@ theorem transport_eq_zero_along_trajectory
   · exact hω.comp (continuousOn_id.prodMk hX) (fun r hr => ⟨hr, mem_univ _⟩)
   · exact hB
   · intro r hr
-    have h := (hωdiff r hr).hasFDerivAt.comp_hasDerivAt r
+    have h := (hωdiff r hr).hasFDerivAt.comp_hasDerivAt (F := ℝ × E) r
       ((hasDerivAt_id r).prodMk (hXderiv r hr))
     simpa only [Function.comp_def, id_eq, hmaterial r hr] using h
   · exact hzero

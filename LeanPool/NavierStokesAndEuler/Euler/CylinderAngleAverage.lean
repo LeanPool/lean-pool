@@ -86,13 +86,13 @@ def averageLinear : CylinderL2 P V →ₗ[ℝ] CylinderL2 P V where
 
 /-- The Bochner average of genuine angular translations. -/
 def average : CylinderL2 P V →L[ℝ] CylinderL2 P V :=
-  (averageLinear P).mkContinuous 1 (fun u => by
+  (averageLinear (V := V) P).mkContinuous 1 (fun u => by
     change ‖averageIntegral P u‖ ≤ (1 : ℝ)*‖u‖
     simpa only [one_mul] using averageIntegral_norm P u)
 
 omit [CompleteSpace V] in
 @[simp] theorem average_apply (u : CylinderL2 P V) :
-    average P u = averageIntegral P u := rfl
+    average (V := V) P u = averageIntegral P u := rfl
 
 omit [CompleteSpace V] in
 theorem average_norm : ‖average (V := V) P‖ ≤ 1 :=
@@ -107,7 +107,7 @@ theorem average_translation (a : LiftTangent) (u : CylinderL2 P V) :
     translate (V := V) P a (P⁻¹ • (∫ s in (0 : ℝ)..P, angleCurve P u s))
   rw [map_smul]
   change P⁻¹ • _ = P⁻¹ • (translate (V := V) P a).toContinuousLinearMap _
-  rw [← (translate P a).toContinuousLinearMap.intervalIntegral_comp_comm
+  rw [← (translate (V := V) P a).toContinuousLinearMap.intervalIntegral_comp_comm
     ((angleCurve_continuous P u).intervalIntegrable 0 P)]
   congr 1
   apply intervalIntegral.integral_congr
@@ -223,7 +223,8 @@ def supportedAverage : Supported P V S hS →L[ℝ] Supported P V S hS :=
     (Supported P V S hS) (average_mem P S hS)
 
 @[simp] theorem supportedAverage_coe (u : Supported P V S hS) :
-    (supportedAverage P S hS u : CylinderL2 P V) = average P (u : CylinderL2 P V) := rfl
+    (supportedAverage (V := V) P S hS u : CylinderL2 P V) =
+      average (V := V) P (u : CylinderL2 P V) := rfl
 
 theorem supportedAverage_norm : ‖supportedAverage (V := V) P S hS‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one

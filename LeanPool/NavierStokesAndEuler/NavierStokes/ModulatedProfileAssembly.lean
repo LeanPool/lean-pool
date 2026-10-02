@@ -231,10 +231,10 @@ theorem target_contains : Icc (-1 : ℝ) 1 ⊆ d.target := d.window.unit_subset
 theorem target_subset : d.target ⊆ d.parameters := d.window.target_subset
 
 /-- Parameterized, given by `f (p.1, d.window.parameterMap p.2)`. -/
-noncomputable def parameterized (f : Field) (p : Point) : ℝ :=
+noncomputable def parameterized (f : ProfileHistories.Field) (p : Point) : ℝ :=
   f (p.1, d.window.parameterMap p.2)
 
-theorem parameterized_smooth {f : Field} (hf : ContDiffOn ℝ ∞ f W.domain.carrier) :
+theorem parameterized_smooth {f : ProfileHistories.Field} (hf : ContDiffOn ℝ ∞ f W.domain.carrier) :
     ContDiffOn ℝ ∞ (d.parameterized f) (Ici 0 ×ˢ (univ : Set ℝ)) := by
   apply hf.comp (contDiff_fst.prodMk
     (d.window.parameterMap_contDiff.comp contDiff_snd)).contDiffOn
@@ -243,28 +243,29 @@ theorem parameterized_smooth {f : Field} (hf : ContDiffOn ℝ ∞ f W.domain.car
 
 /-- Extended, given by `ParametricRadialExtension.halfPlaneExtension (d.parameterized f)
 (d.parameterized_smooth hf)`. -/
-noncomputable def extended (f : Field) (hf : ContDiffOn ℝ ∞ f W.domain.carrier) : Field :=
+noncomputable def extended (f : ProfileHistories.Field)
+    (hf : ContDiffOn ℝ ∞ f W.domain.carrier) : ProfileHistories.Field :=
   ParametricRadialExtension.halfPlaneExtension (d.parameterized f) (d.parameterized_smooth hf)
 
-theorem extended_smooth (f : Field) (hf : ContDiffOn ℝ ∞ f W.domain.carrier) :
+theorem extended_smooth (f : ProfileHistories.Field) (hf : ContDiffOn ℝ ∞ f W.domain.carrier) :
     ContDiff ℝ ∞ (d.extended f hf) := ParametricRadialExtension.halfPlaneExtension_contDiff _
 
-theorem extended_eq (f : Field) (hf : ContDiffOn ℝ ∞ f W.domain.carrier)
+theorem extended_eq (f : ProfileHistories.Field) (hf : ContDiffOn ℝ ∞ f W.domain.carrier)
     {p : Point} (hX : 0 ≤ p.1) (heta : |p.2| ≤ d.window.inner) :
     d.extended f hf p = f p := by
   rw [extended, ParametricRadialExtension.halfPlaneExtension_eq _ hX]
   simp only [parameterized, d.window.parameterMap_eq heta, Prod.eta]
 
-theorem extended_germ (f : Field) (hf : ContDiffOn ℝ ∞ f W.domain.carrier)
+theorem extended_germ (f : ProfileHistories.Field) (hf : ContDiffOn ℝ ∞ f W.domain.carrier)
     {p : Point} (hX : 0 < p.1) (heta : p.2 ∈ d.target) :
     d.extended f hf =ᶠ[𝓝 p] f := by
   filter_upwards [(isOpen_Ioi.prod d.target_open).mem_nhds ⟨hX, heta⟩] with q hq
   exact d.extended_eq f hf hq.1.le (abs_lt.mpr hq.2).le
 
 /-- F, given by `d.extended W.profiles.f W.profiles.f_smooth`. -/
-noncomputable def f : Field := d.extended W.profiles.f W.profiles.f_smooth
+noncomputable def f : ProfileHistories.Field := d.extended W.profiles.f W.profiles.f_smooth
 /-- U, given by `d.extended W.profiles.U W.profiles.U_smooth`. -/
-noncomputable def U : Field := d.extended W.profiles.U W.profiles.U_smooth
+noncomputable def U : ProfileHistories.Field := d.extended W.profiles.U W.profiles.U_smooth
 
 theorem f_smooth : ContDiff ℝ ∞ d.f := d.extended_smooth _ _
 theorem U_smooth : ContDiff ℝ ∞ d.U := d.extended_smooth _ _
@@ -391,7 +392,7 @@ theorem nominal_patch_fields {F : OutgoingProfile.Profile} (W : NominalProfile.W
 /-- The original nominal profile plus a supported difference. Its axis
 pressure is retained literally. -/
 noncomputable def transplantProfiles {D D' : RadialDomain} (Q : Profiles D)
-    (R : Profiles D') (f U : Field) (hf : ContDiff ℝ ∞ f) (hU : ContDiff ℝ ∞ U)
+    (R : Profiles D') (f U : ProfileHistories.Field) (hf : ContDiff ℝ ∞ f) (hU : ContDiff ℝ ∞ U)
     (S : Set ℝ) (hS : IsOpen S)
     (hD : (restrictDomain D S hS).carrier ⊆ D'.carrier) :
     Profiles (restrictDomain D S hS) where
@@ -405,7 +406,7 @@ noncomputable def transplantProfiles {D D' : RadialDomain} (Q : Profiles D)
   pressure0_smooth := fun _ hp => Q.pressure0_smooth _ hp.1
 
 theorem transplantProfiles_fields {D D' : RadialDomain} (Q : Profiles D)
-    (R : Profiles D') (f U : Field) (hf : ContDiff ℝ ∞ f) (hU : ContDiff ℝ ∞ U)
+    (R : Profiles D') (f U : ProfileHistories.Field) (hf : ContDiff ℝ ∞ f) (hU : ContDiff ℝ ∞ U)
     (S : Set ℝ) (hS : IsOpen S) (hD : (restrictDomain D S hS).carrier ⊆ D'.carrier)
     {p : Point} (hfp : f p = Q.f p) (hUp : U p = Q.U p) :
     (transplantProfiles Q R f U hf hU S hS hD).f p = R.f p ∧
@@ -449,13 +450,13 @@ structure LoopData {F : OutgoingProfile.Profile} (W : NominalProfile.Witness F) 
   after_initial : 4 / W.axis.scale < modulation.left
   before_repair : modulation.right < (repairPatch W).left
   /-- A of `LoopData`, of type `Field`. -/
-  a : Field
+  a : ProfileHistories.Field
   /-- M of `LoopData`, of type `Field`. -/
-  m : Field
+  m : ProfileHistories.Field
   /-- P₁ of `LoopData`, of type `Field`. -/
-  p₁ : Field
+  p₁ : ProfileHistories.Field
   /-- P₂ of `LoopData`, of type `Field`. -/
-  p₂ : Field
+  p₂ : ProfileHistories.Field
   a_smooth : ContDiff ℝ ∞ a
   m_smooth : ContDiff ℝ ∞ m
   p₁_smooth : ContDiff ℝ ∞ p₁
@@ -532,7 +533,7 @@ abbrev Realization := ParametricModulation.TrueConeRealization d.a d.m d.p₁ d.
   (modulationRegion d.modulation d.etaRadius) (boundaryRegion d.modulation d.etaRadius)
 
 /-- Angular auxiliary, given by `d.parameter.E (d.modulation.left / 2)`. -/
-noncomputable def angularAux : Field := d.parameter.E (d.modulation.left / 2)
+noncomputable def angularAux : ProfileHistories.Field := d.parameter.E (d.modulation.left / 2)
 
 theorem angularAux_smooth : ContDiff ℝ ∞ d.angularAux :=
   d.parameter.E_smooth (half_pos d.modulation.left_pos)
@@ -560,7 +561,7 @@ theorem domain_nonnegative {p : Point} (hX : 0 ≤ p.1) (heta : p.2 ∈ d.parame
 
 /-- Output F, constructed using `AnnularAuxiliary.transplant`. -/
 noncomputable def outputF (r : d.Realization) (N : ℕ)
-    (c : ℝ → ModulatedHistories.Coeff) : Field :=
+    (c : ℝ → ModulatedHistories.Coeff) : ProfileHistories.Field :=
   AnnularAuxiliary.transplant W.profiles.f d.parameter.f
     (ModulatedHistories.applyRepairF (repairPatch W)
       (ReservedPatches.xAmplitude F W.controls.radius) c
@@ -568,7 +569,7 @@ noncomputable def outputF (r : d.Realization) (N : ℕ)
 
 /-- Output U, constructed using `AnnularAuxiliary.transplant`. -/
 noncomputable def outputU (r : d.Realization) (N : ℕ)
-    (c : ℝ → ModulatedHistories.Coeff) : Field :=
+    (c : ℝ → ModulatedHistories.Coeff) : ProfileHistories.Field :=
   AnnularAuxiliary.transplant W.profiles.U d.parameter.U
     (ModulatedHistories.applyRepairU (repairPatch W)
       (ReservedPatches.xAmplitude F W.controls.radius) c
@@ -870,8 +871,8 @@ end Witness
 /-! ## Construction of the loop inputs from actual nominal cone bounds -/
 
 theorem exists_smooth_extension {K O : Set Point} (hK : IsCompact K) (hO : IsOpen O)
-    (hKO : K ⊆ O) (f : Field) (hf : ContDiffOn ℝ ∞ f O) :
-    ∃ g : Field, ContDiff ℝ ∞ g ∧ EqOn g f K := by
+    (hKO : K ⊆ O) (f : ProfileHistories.Field) (hf : ContDiffOn ℝ ∞ f O) :
+    ∃ g : ProfileHistories.Field, ContDiff ℝ ∞ g ∧ EqOn g f K := by
   obtain ⟨chi⟩ := ParametricModulation.exists_compactCutoff K O hK hO hKO
   refine ⟨fun p => chi.value p * f p, contDiff_iff_contDiffAt.mpr ?_, ?_⟩
   · intro p

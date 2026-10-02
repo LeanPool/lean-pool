@@ -123,7 +123,7 @@ theorem potential_norm_le (J : TimeLp T E →L[ℝ] TimeLp T E) (hJ : ‖J‖ �
     (H : C(Icc (0 : ℝ) T, E →L[ℝ] E)) :
     ‖(adjoint (𝕜 := ℝ) (E := TimeLp T E) (F := TimeLp T E) J).comp
       ((timeMultiplier T hT H).comp J)‖ ≤ T ^ 2 * ‖H‖ := by
-  have hi := (opNorm_comp_le (timeMultiplier T hT H) J).trans
+  have hi := (opNorm_comp_le (timeMultiplier (E := E) (F := E) T hT H) J).trans
     (mul_le_mul (timeMultiplier_norm T hT H) hJ (by positivity) (by positivity))
   apply ((opNorm_comp_le _ _).trans (mul_le_mul
     (by simpa only [LinearIsometryEquiv.norm_map] using hJ) hi (norm_nonneg _) hT)).trans_eq

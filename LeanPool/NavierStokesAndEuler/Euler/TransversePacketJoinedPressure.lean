@@ -84,7 +84,8 @@ theorem pressurePath_eq_source : pressurePath τ hτ hτT B G =
       intro x
       apply ContinuousLinearMap.ext
       intro v
-      erw [normalFunctional_apply,normalFunctional_apply]
+      erw [normalFunctional_apply,
+        normalFunctional_apply D.normal D.normalLower D.normalLower_pos D.normal_lower t x v]
       change ⟪D.normal.field (tailInclusion D.T τ hτ.le tf) x,v⟫_ℝ/
         ‖D.normal.field (tailInclusion D.T τ hτ.le tf) x‖^2 = _
       rw [he]

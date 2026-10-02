@@ -98,7 +98,7 @@ theorem baseSize_inverse_bound (directions : ι → P)
           directional directions f i y-directional directions A i y (u y)
         apply eq_sub_iff_add_eq.mpr
         have hd := congrFun (directional_bilinear directions
-          ((ContinuousLinearMap.apply ℝ E).flip) A u hA hu i) y
+          ((ContinuousLinearMap.apply (E := E) ℝ E).flip) A u hA hu i) y
         have he := congrArg (fun g : P → E => directional directions g i y) (funext heq)
         exact hd.symm.trans he
       have h := ih (directional directions u i) fᵢ (directional_contDiff directions u hu i) hfᵢ

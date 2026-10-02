@@ -45,7 +45,8 @@ theorem gramSolution_contDiff (T : ℝ) (hT : 0 ≤ T)
     (c : ℝ) (hc : 0 < c) (hLower : ∀ x t v, c * ‖v‖ ^ 2 ≤ ‖Q x t v‖ ^ 2)
     (f : P → TimeLp T U) {n : ℕ∞ω} (hQ : ContDiff ℝ n Q) (hf : ContDiff ℝ n f) :
     ContDiff ℝ n (fun x => gramSolver T hT (Q x) c hc (hLower x) (f x)) :=
-  contDiff_coerciveSolution_variable (fun x => gramOperator T hT (Q x)) (fun _ => c)
+  contDiff_coerciveSolution_variable (fun x => gramOperator (U := U) (E := E) T hT (Q x))
+    (fun _ => c)
     (fun _ => hc) (fun x => gramOperator_coercive T hT (Q x) c (hLower x)) f
     (gramOperator_contDiff T hT Q hQ) hf
 
@@ -78,7 +79,8 @@ theorem gramSolution_gevrey (T : ℝ) (hT : 0 ≤ T)
       ‖iteratedFDeriv ℝ (j+1) (fun z => gramOperator T hT (Q z)) y‖ ≤
         (3*C^2)*(Rc^(j+1)*((j+1).factorial : ℝ)^2) := by
     simpa only [majorant, Nat.add_zero] using gramOperator_bound T hT Q hQ Rc C hRc hC hbQ (j+1) y
-  exact coerciveSolution_gevrey_amplitudes (fun y => gramOperator T hT (Q y)) (fun _ => c)
+  exact coerciveSolution_gevrey_amplitudes (fun y => gramOperator (U := U) (E := E) T hT (Q y))
+    (fun _ => c)
     (fun _ => hc) (fun y => gramOperator_coercive T hT (Q y) c (hLower y)) f
     (gramOperator_contDiff T hT Q hQ) hf c⁻¹ (3*C^2) D (gramCost c C D) Rc R
     (by positivity) hD hM hMC hMD hRc hR (fun _ => le_rfl) hb d hbf n x

@@ -75,8 +75,8 @@ variable {X E F : Type*} [MeasurableSpace X]
 include hA hC in
 theorem apply_memLp (u : Lp E 2 μ) : MemLp (fun x => A x (u x)) 2 μ := by
   apply (Lp.memLp u).of_le_mul (c := C)
-  · exact (continuous_fst.clm_apply continuous_snd).comp_aestronglyMeasurable
-      (hA.prodMk (Lp.aestronglyMeasurable u))
+  · exact ((continuous_fst.clm_apply continuous_snd).comp_aestronglyMeasurable
+      (hA.prodMk (Lp.aestronglyMeasurable u)) :)
   · exact Eventually.of_forall (fun x => ((A x).le_opNorm (u x)).trans
       (mul_le_mul_of_nonneg_right (hC x) (norm_nonneg (u x))))
 
@@ -295,7 +295,8 @@ def partitionPath (c : OrderedFinpartition n) :
   continuous_toFun := operator_path_continuous volume (partitionBound D c) (partitionCoefficient Y
       c)
     (fun t => partitionCoefficient_aestronglyMeasurable Y hJ c t)
-    (fun _ => (partitionCoefficient_continuous Y hJ c).comp (continuous_id.prodMk continuous_const))
+    (fun _ => ((partitionCoefficient_continuous Y hJ c).comp
+      (continuous_id.prodMk continuous_const) :))
     (partitionCoefficient_bound Y D hD hB c) _ (pulledJetPath Y hmp u c.length).continuous
 
 theorem partitionPath_ae (g : K → Vector3 → Vector3)
@@ -1079,7 +1080,9 @@ theorem joinedCorrectionParity (τ : ℝ) (hτ : 0 < τ) (hτT : τ < A.T)
     (O.meanEvenData H) hSym O.frame_even O.strain_even
     _ (A.sourceAgreement m hm R S hS H) N hN k hk
   intro t x
-  exact O.curvature_even (initialInclusion A.T τ hτT.le t) x
+  exact (O.curvature_even (initialInclusion A.T τ hτT.le t) x :
+    (A.curvature.field (initialInclusion A.T τ hτT.le t) : Space → Space →L[ℝ] Space) (-x) =
+      (A.curvature.field (initialInclusion A.T τ hτT.le t) : Space → Space →L[ℝ] Space) x)
 
 omit hSym [CompleteSpace U] in
 theorem childOfPacket {P : ℝ} [Fact (0 < P)] {C : EulerAllOrderCorrectionData.Data P A.T}

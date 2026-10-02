@@ -357,7 +357,7 @@ theorem localized_directional_L2_le (n : ℕ) (i : Fin 4) (f : LiftDomain period
     (hf : ∀ x, ContDiff ℝ ∞ (localFieldLift period f x))
     (hfL2 : ∀ j ≤ n, ∀ w : Fin j → Fin 4,
       MemLp (iteratedFieldDerivative period w f) 2 (liftMeasure period)) (x : LiftDomain period) :
-    ‖(directional 4 n (EuclideanSpace.single i 1) (localized period f hf x)).toLp 2‖ ≤
+    ‖((directional 4 n (EuclideanSpace.single i 1) (localized period f hf x)).toLp 2 :)‖ ≤
       (bumpCoefficient period n : ℝ) * (6 : ℝ) ^ (1/2 : ℝ) * liftSobolevNorm period n f := by
   let q := totalMagnitude period n f
   have hq : MemLp q 2 (liftMeasure period) := totalMagnitude_memLp period n f hfL2
@@ -419,7 +419,7 @@ theorem cylinder_pointwise_le_H3 (f : LiftDomain period → ℂ)
     (liftSobolevNorm_mono period (show 0 ≤ 3 by omega) f)
     (mul_nonneg (bumpCoefficient period 0).coe_nonneg (Real.rpow_nonneg (by norm_num) _)))
   have hthird : (∑ i : Fin 4,
-      ‖(directional 4 3 (EuclideanSpace.single i 1) (localized period f hf x)).toLp 2‖) ≤
+      ‖(directional 4 3 (EuclideanSpace.single i 1) (localized period f hf x)).toLp 2 volume‖) ≤
         4 * ((bumpCoefficient period 3 : ℝ) * (6 : ℝ) ^ (1/2 : ℝ) * liftSobolevNorm period 3 f) :=
             by
     simpa using Finset.sum_le_sum (fun i (_ : i ∈ (Finset.univ : Finset (Fin 4))) =>

@@ -421,8 +421,8 @@ theorem slowRadial_smooth (Q : RadialParameter × ℝ → ℝ) (hQ : ContDiff �
 theorem slowRadial_eq_deriv (Q : RadialParameter × ℝ → ℝ) (hQ : ContDiff ℝ ∞ Q)
     (X η θ : ℝ) :
     slowRadial Q ((X, η), θ) = deriv (fun x => Q ((x, η), θ)) X := by
-  have hg := (hasDerivAt_id X).prodMk
-    ((hasDerivAt_const X η).prodMk (hasDerivAt_const X θ))
+  have hg := (hasDerivAt_id X).prodMk (G := ℝ × ℝ)
+    ((hasDerivAt_const X η).prodMk (G := ℝ) (hasDerivAt_const X θ))
   exact (((asRadialPrimitive_contDiff Q hQ).differentiable (by simp)
     (X, η, θ)).hasFDerivAt.comp_hasDerivAt X hg).deriv.symm
 
@@ -812,7 +812,7 @@ theorem radialDerivative_smooth (E : RadialParameter → ℝ) (hE : ContDiff ℝ
   have heq : radialDerivative E = fun p => fderiv ℝ E p (1, 0) := by
     funext p
     exact ((hE.differentiable (by simp) p).hasFDerivAt.comp_hasDerivAt p.1
-      ((hasDerivAt_id p.1).prodMk (hasDerivAt_const p.1 p.2))).deriv
+      ((hasDerivAt_id p.1).prodMk (G := ℝ) (hasDerivAt_const p.1 p.2))).deriv
   rw [heq]
   exact (hE.fderiv_right (by simp)).clm_apply contDiff_const
 
@@ -1009,7 +1009,7 @@ theorem profileHistory_eq_row {D : RadialDomain} (P : Profiles D)
 /-- Localization preserves the uniform field-value estimate, including at
 all points outside the modulation window. -/
 theorem fields_uniform_bound (W : ModulatedHistories.Window)
-    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
+    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : ProfileHistories.Field)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m) (hp₂ : ContDiff ℝ ∞ p₂)
     (hf : ContDiff ℝ ∞ f) (hE : ContDiff ℝ ∞ E) (hU : ContDiff ℝ ∞ U)
     (J : Set ℝ) (hJ : IsCompact J) :
@@ -1040,7 +1040,8 @@ theorem fields_uniform_bound (W : ModulatedHistories.Window)
 /-- Each actual localized profile history has the constructed integral
 difference; the pressure constant is retained exactly. -/
 theorem profileHistory_difference {D D' : RadialDomain}
-    (W : ModulatedHistories.Window) (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
+    (W : ModulatedHistories.Window) (r : TrueConeRealization a m p₁ p₂ K B)
+    (f E U : ProfileHistories.Field)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m) (hp₂ : ContDiff ℝ ∞ p₂)
     (hf : ContDiff ℝ ∞ f) (hE : ContDiff ℝ ∞ E) (hU : ContDiff ℝ ∞ U)
     (n : ℝ) (P : Profiles D) (Q : Profiles D')
@@ -1059,7 +1060,8 @@ theorem profileHistory_difference {D D' : RadialDomain}
 /-- Actual localized history values and their first parameter derivatives
 have one frequency-independent `C/n` bound. -/
 theorem profileHistory_uniform_bound {D D' : RadialDomain}
-    (W : ModulatedHistories.Window) (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
+    (W : ModulatedHistories.Window) (r : TrueConeRealization a m p₁ p₂ K B)
+    (f E U : ProfileHistories.Field)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m) (hp₂ : ContDiff ℝ ∞ p₂)
     (hf : ContDiff ℝ ∞ f) (hE : ContDiff ℝ ∞ E) (hU : ContDiff ℝ ∞ U)
     (P : ℝ → Profiles D) (Q : Profiles D')
@@ -1092,7 +1094,8 @@ theorem profileHistory_uniform_bound {D D' : RadialDomain}
 /-- The actual stocks of the localized modulation have a uniform `C/n`
 bound, derived from its actual axis-integrated histories. -/
 theorem profile_stocks_rate {D D' : RadialDomain}
-    (W : ModulatedHistories.Window) (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
+    (W : ModulatedHistories.Window) (r : TrueConeRealization a m p₁ p₂ K B)
+    (f E U : ProfileHistories.Field)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m) (hp₂ : ContDiff ℝ ∞ p₂)
     (hf : ContDiff ℝ ∞ f) (hE : ContDiff ℝ ∞ E) (hU : ContDiff ℝ ∞ U)
     (P : ℝ → Profiles D) (Q : Profiles D')
@@ -1128,7 +1131,7 @@ theorem profile_stocks_rate {D D' : RadialDomain}
     have hb := hHb n hn p (hX p hp).le (hTJ p hp) (hTD hp) (hTD' hp) row
     exact ⟨hb.1.trans hHbound, hb.2.trans hHbound⟩
 
-theorem splice_eventuallyEq (W : ModulatedHistories.Window) (base actual : Field)
+theorem splice_eventuallyEq (W : ModulatedHistories.Window) (base actual : ProfileHistories.Field)
     {p : Point} (hp : p.1 ∈ Icc W.left W.right)
     (hleft : p.1 = W.left → actual =ᶠ[𝓝 p] base)
     (hright : p.1 = W.right → actual =ᶠ[𝓝 p] base) :
@@ -1147,7 +1150,7 @@ theorem splice_eventuallyEq (W : ModulatedHistories.Window) (base actual : Field
 /-- The endpoint collars make the localized functions locally equal to
 the raw modulated functions even at both endpoints of the closed window. -/
 theorem raw_agreement (W : ModulatedHistories.Window)
-    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
+    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : ProfileHistories.Field)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m) (hBK : B ⊆ K)
     (J : Set ℝ) (hends : ∀ η ∈ J, (W.left, η) ∈ B ∧ (W.right, η) ∈ B)
     (n : ℝ) {p : Point} (hp : p.1 ∈ Icc W.left W.right) (hη : p.2 ∈ J) :
@@ -1183,7 +1186,7 @@ theorem raw_agreement (W : ModulatedHistories.Window)
 /-- The actual localized physical fields agree locally with the raw
 realized fields, including at the boundary collars. -/
 theorem physical_profile_germs {D : RadialDomain} (W : ModulatedHistories.Window)
-    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
+    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : ProfileHistories.Field)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m) (hBK : B ⊆ K)
     (J : Set ℝ) (hends : ∀ η ∈ J, (W.left, η) ∈ B ∧ (W.right, η) ∈ B)
     (n : ℝ) (P : Profiles D)
@@ -1207,7 +1210,7 @@ theorem physical_profile_germs {D : RadialDomain} (W : ModulatedHistories.Window
 /-- Both shears of the actual localized physical profiles equal the
 already estimated realized shears, including at the boundary collars. -/
 theorem physical_shears_match {D : RadialDomain} (W : ModulatedHistories.Window)
-    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
+    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : ProfileHistories.Field)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m) (hBK : B ⊆ K)
     (J : Set ℝ) (hends : ∀ η ∈ J, (W.left, η) ∈ B ∧ (W.right, η) ∈ B)
     (n : ℝ) (P : Profiles D)
@@ -1229,7 +1232,8 @@ theorem physical_shears_match {D : RadialDomain} (W : ModulatedHistories.Window)
 their actual axis-integrated stresses, in the true cone throughout the
 closed modulation window. All error bounds are derived in this theorem. -/
 theorem profiles_trueCone {D D' : RadialDomain}
-    (W : ModulatedHistories.Window) (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
+    (W : ModulatedHistories.Window) (r : TrueConeRealization a m p₁ p₂ K B)
+    (f E U : ProfileHistories.Field)
     (hK : IsCompact K) (hKW : ∀ p ∈ K, p.1 ∈ Icc W.left W.right)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m)
     (hp₁ : ContDiff ℝ ∞ p₁) (hp₂ : ContDiff ℝ ∞ p₂)
@@ -1293,7 +1297,7 @@ theorem profiles_trueCone {D D' : RadialDomain}
   · exact hv.2.trans hCv
 
 theorem after_window_agreement (W : ModulatedHistories.Window)
-    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
+    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : ProfileHistories.Field)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m) (hp₂ : ContDiff ℝ ∞ p₂)
     (hf : ContDiff ℝ ∞ f) (hE : ContDiff ℝ ∞ E) (hU : ContDiff ℝ ∞ U)
     (hBK : B ⊆ K) (J : Set ℝ)
@@ -1320,7 +1324,7 @@ theorem after_window_agreement (W : ModulatedHistories.Window)
       exact (hmatch n q hq).2
 
 theorem physical_after_window_agreement {D : RadialDomain} (W : ModulatedHistories.Window)
-    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
+    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : ProfileHistories.Field)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m) (hp₂ : ContDiff ℝ ∞ p₂)
     (hf : ContDiff ℝ ∞ f) (hE : ContDiff ℝ ∞ E) (hU : ContDiff ℝ ∞ U)
     (hBK : B ⊆ K) (J : Set ℝ)
@@ -1341,7 +1345,7 @@ theorem physical_after_window_agreement {D : RadialDomain} (W : ModulatedHistori
 /-- The localized `Profiles` family used by the cone theorems is actually
 constructed from the modulation and one common axis-pressure function. -/
 theorem exists_profile_family (W : ModulatedHistories.Window)
-    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field) (P0 : ℝ → ℝ)
+    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : ProfileHistories.Field) (P0 : ℝ → ℝ)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m) (hp₂ : ContDiff ℝ ∞ p₂)
     (hf : ContDiff ℝ ∞ f) (hE : ContDiff ℝ ∞ E) (hU : ContDiff ℝ ∞ U)
     (hP0 : ContDiff ℝ ∞ P0) (J : Set ℝ) (hBK : B ⊆ K)
@@ -1464,7 +1468,8 @@ theorem shears_unchanged_outside {D D' : RadialDomain} (P : Profiles D) (Q : Pro
   exact ⟨hEg.eq_of_nhds, hUg.eq_of_nhds,
     shears_eq_of_radial_eventuallyEq (p := p) (E := P.E) (U := P.U) (F := Q.E) (V := Q.U) hEg hUg⟩
 
-theorem radialDerivative_add (F G : Field) (hF : ContDiff ℝ ∞ F) (hG : ContDiff ℝ ∞ G)
+theorem radialDerivative_add (F G : ProfileHistories.Field) (hF : ContDiff ℝ ∞ F)
+    (hG : ContDiff ℝ ∞ G)
     (p : Point) : radialDerivative (fun q => F q + G q) p = radialDerivative F p + radialDerivative
         G p := by
   exact deriv_fun_add
@@ -1480,7 +1485,7 @@ theorem field_difference_identities {D D' : RadialDomain} (P : Profiles D) (Q : 
     (hA : ContDiff ℝ ∞ A) (hc : ContDiff ℝ ∞ c)
     (hf : P.f = ModulatedHistories.applyRepairF patch A c Q.f)
     (hU : P.U = ModulatedHistories.applyRepairU patch A c Q.U)
-    (E U : Field) (hE : ContDiff ℝ ∞ E) (hUs : ContDiff ℝ ∞ U)
+    (E U : ProfileHistories.Field) (hE : ContDiff ℝ ∞ E) (hUs : ContDiff ℝ ∞ U)
     {p : Point} (hp : 0 < p.1) (hbaseE : Q.E =ᶠ[𝓝 p] E) (hbaseU : Q.U =ᶠ[𝓝 p] U) :
     P.E p - E p = ModulatedHistories.editE patch A c p ∧
       radialDerivative P.E p - radialDerivative E p = radialDerivative (ModulatedHistories.editE
@@ -1523,7 +1528,7 @@ theorem field_C1_bound (patch : FiveProfileMoments.Patch) (J : Set ℝ) (hJ : Is
       ∀ {D D' : RadialDomain} (P : Profiles D) (Q : Profiles D'),
       P.f = ModulatedHistories.applyRepairF patch A c Q.f →
       P.U = ModulatedHistories.applyRepairU patch A c Q.U →
-      ∀ E U : Field, ContDiff ℝ ∞ E → ContDiff ℝ ∞ U → ∀ p : Point,
+      ∀ E U : ProfileHistories.Field, ContDiff ℝ ∞ E → ContDiff ℝ ∞ U → ∀ p : Point,
       0 < p.1 → p.2 ∈ J → Q.E =ᶠ[𝓝 p] E → Q.U =ᶠ[𝓝 p] U →
       |P.E p - E p| ≤ C * ε ∧
         |radialDerivative P.E p - radialDerivative E p| ≤ C * ε ∧
@@ -1541,7 +1546,7 @@ theorem field_C1_bound (patch : FiveProfileMoments.Patch) (J : Set ℝ) (hJ : Is
 /-- A later repair preserves the already realized shears on the entire
 closed modulation window, including both endpoint collars. -/
 theorem window_shears_match {D D' : RadialDomain} (W : ModulatedHistories.Window)
-    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
+    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : ProfileHistories.Field)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m) (hBK : B ⊆ K)
     (J : Set ℝ) (hends : ∀ η ∈ J, (W.left, η) ∈ B ∧ (W.right, η) ∈ B)
     (n : ℝ) (Q : Profiles D) (P : Profiles D')
@@ -1567,7 +1572,7 @@ theorem window_shears_match {D D' : RadialDomain} (W : ModulatedHistories.Window
 inside, and after the repair. The two contributions are the modulation
 error and the coefficient size of this same physical repair. -/
 theorem profile_data_bound (W : ModulatedHistories.Window)
-    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
+    (r : TrueConeRealization a m p₁ p₂ K B) (f E U : ProfileHistories.Field)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m) (hp₂ : ContDiff ℝ ∞ p₂)
     (hf : ContDiff ℝ ∞ f) (hE : ContDiff ℝ ∞ E) (hU : ContDiff ℝ ∞ U)
     (patch : FiveProfileMoments.Patch) (hgap : W.right < patch.left)
@@ -1643,7 +1648,8 @@ theorem profile_data_bound (W : ModulatedHistories.Window)
 /-- Uniform stock estimates for a family of actual repaired profiles,
 using only the proved coefficient size of the moment solver. -/
 theorem profile_stocks_rate {D D' : RadialDomain}
-    (W : ModulatedHistories.Window) (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
+    (W : ModulatedHistories.Window) (r : TrueConeRealization a m p₁ p₂ K B)
+    (f E U : ProfileHistories.Field)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m) (hp₂ : ContDiff ℝ ∞ p₂)
     (hf : ContDiff ℝ ∞ f) (hE : ContDiff ℝ ∞ E) (hU : ContDiff ℝ ∞ U)
     (patch : FiveProfileMoments.Patch) (hgap : W.right < patch.left)
@@ -1710,7 +1716,8 @@ theorem profile_stocks_rate {D D' : RadialDomain}
 cone for one finite frequency threshold. The coefficient input is the
 quantitative output of the actual moment solver. -/
 theorem profiles_trueCone {D D' : RadialDomain}
-    (W : ModulatedHistories.Window) (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
+    (W : ModulatedHistories.Window) (r : TrueConeRealization a m p₁ p₂ K B)
+    (f E U : ProfileHistories.Field)
     (hK : IsCompact K) (hKW : ∀ p ∈ K, p.1 ∈ Icc W.left W.right)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m)
     (hp₁ : ContDiff ℝ ∞ p₁) (hp₂ : ContDiff ℝ ∞ p₂)
@@ -1816,7 +1823,8 @@ one finite integer frequency with the true cone throughout the loop and
 following nominal patch. All five histories are restored exactly after
 the repair, and every radial germ outside its support is unchanged. -/
 theorem exists_with_moment_repair {D D' : RadialDomain}
-    (W : ModulatedHistories.Window) (r : TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
+    (W : ModulatedHistories.Window) (r : TrueConeRealization a m p₁ p₂ K B)
+    (f E U : ProfileHistories.Field)
     (hK : IsCompact K) (hKW : ∀ p ∈ K, p.1 ∈ Icc W.left W.right)
     (ha : ContDiff ℝ ∞ a) (hm : ContDiff ℝ ∞ m)
     (hp₁ : ContDiff ℝ ∞ p₁) (hp₂ : ContDiff ℝ ∞ p₂)

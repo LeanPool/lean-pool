@@ -35,7 +35,7 @@ theorem source_frame_time (F : ℝ × Space → Space →L[ℝ] Space)
       (fun s => extendPath D.T D.T_pos.le D.F.field s x) := by
     filter_upwards [Icc_mem_nhds ht.1 ht.2] with s hs
     simpa only [extendPath,projIcc_of_mem D.T_pos.le hs] using hmatch ⟨s,hs⟩ x
-  have hf := hF.comp_hasDerivAt t
+  have hf := hF.comp_hasDerivAt (F := ℝ × Space) (f := fun s => (s, x)) t
     ((hasDerivAt_id t).prodMk (hasDerivAt_const t x))
   have hd := (D.frame_time t ⟨ht.1.le,ht.2.le⟩ x).hasDerivAt (Icc_mem_nhds ht.1 ht.2)
   simpa only [extendPath,projIcc_of_mem D.T_pos.le ⟨ht.1.le,ht.2.le⟩] using

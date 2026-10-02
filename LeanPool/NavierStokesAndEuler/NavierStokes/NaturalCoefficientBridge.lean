@@ -39,14 +39,14 @@ theorem partialX_eq_slice {f : InnerProfile} {w : InnerPoint}
     (hf : DifferentiableAt ℝ f w) :
     partialX f w = deriv (fun x => f (x, w.2)) w.1 := by
   symm
-  exact (hf.hasFDerivAt.comp_hasDerivAt w.1
+  exact (hf.hasFDerivAt.comp_hasDerivAt (F := InnerPoint) w.1
     ((hasDerivAt_id w.1).prodMk (hasDerivAt_const w.1 w.2))).deriv
 
 theorem partialEta_eq_slice {f : InnerProfile} {w : InnerPoint}
     (hf : DifferentiableAt ℝ f w) :
     partialEta f w = deriv (fun η => f (w.1, η)) w.2 := by
   symm
-  exact (hf.hasFDerivAt.comp_hasDerivAt w.2
+  exact (hf.hasFDerivAt.comp_hasDerivAt (F := InnerPoint) w.2
     ((hasDerivAt_const w.2 w.1).prodMk (hasDerivAt_id w.2))).deriv
 
 theorem secondX_eq_slice {f : InnerProfile} {w : InnerPoint}

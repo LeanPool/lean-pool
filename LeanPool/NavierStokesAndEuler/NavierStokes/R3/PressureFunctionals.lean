@@ -345,7 +345,7 @@ theorem norm_l2_pair_le {W : Space → ℝ} (hW : MemLp W 2) (ψ : ComplexTest) 
         (f := fun x => ‖W x‖) (g := fun x => ‖ψ x‖) Real.HolderConjugate.two_two
         (Filter.Eventually.of_forall fun _ => norm_nonneg _)
         (Filter.Eventually.of_forall fun _ => norm_nonneg _)
-        (by simpa using hW.norm) (by simpa using (ψ.memLp 2).norm)
+        (by simpa using hW.norm) (by simpa using (ψ.memLp 2 volume).norm)
       simpa only [Real.rpow_two, ← Real.sqrt_eq_rpow, l2Sq] using h
 
 /-- An `L¹` coefficient may be paired with any Schwartz test. -/
@@ -415,7 +415,7 @@ def l1PairLinear (g : Space → ℝ) (hg : Integrable g) : ComplexTest →ₗ[�
 @[simp] theorem l2PairLinear_apply (W : Space → ℝ) (hW : MemLp W 2 volume) (ψ : ComplexTest) :
     l2PairLinear W hW ψ = ∫ x : Space, (W x : ℂ) * ψ x := rfl
 
-@[simp] theorem l1PairLinear_apply (g : Space → ℝ) (hg : Integrable g) (ψ : ComplexTest) :
+@[simp] theorem l1PairLinear_apply (g : Space → ℝ) (hg : Integrable g volume) (ψ : ComplexTest) :
     l1PairLinear g hg ψ = ∫ x : Space, (g x : ℂ) * ψ x := rfl
 
 /-- The coefficients are the two time averages of velocity and the time average
@@ -549,7 +549,7 @@ def pressurePairLinear (i j : Fin 3) (g : Space → ℝ) (hg : Integrable g) :
     (integrable_l1_riesz_pair hg i j)
 
 @[simp] theorem pressurePairLinear_apply (i j : Fin 3) (g : Space → ℝ)
-    (hg : Integrable g) (ψ : ComplexTest) :
+    (hg : Integrable g volume) (ψ : ComplexTest) :
     pressurePairLinear i j g hg ψ = pressurePair i j g ψ := rfl
 
 /-- The averaged pressure-gradient difference determined by the stated

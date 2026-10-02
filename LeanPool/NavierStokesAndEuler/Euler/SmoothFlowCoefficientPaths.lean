@@ -89,7 +89,7 @@ theorem spatialDerivative_apply (hf : ContDiff ℝ ∞ f) (x : E) (t : Icc (0 : 
 theorem timeSlice_hasFDerivAt (hf : ContDiff ℝ ∞ f) (t : ℝ) (x : E) :
     HasFDerivAt (timeSlice T hT f t) (spatialDerivative T f x (projIcc 0 T hT t)) x := by
   rw [spatialDerivative_apply T f hf]
-  exact (((ContinuousMap.evalCLM ℝ (projIcc 0 T hT t)).contDiff.comp hf).differentiable
+  exact (((ContinuousMap.evalCLM (M := V) ℝ (projIcc 0 T hT t)).contDiff.comp hf).differentiable
     (by simp) x).hasFDerivAt
 
 /-- Joint derivative, given by `(ContinuousLinearMap.toSpanSingleton ℝ (timeSlice T hT q t
@@ -212,7 +212,7 @@ theorem velocityFamily_time_derivative_interior
     (Icc_mem_nhds ht.1 ht.2)
   have hd := SmoothTimeField.realField_hasFDerivAt T hT A A₁ htime t ht
     (extendPath T hT (pathFamily T hT A x) t)
-  have h := hd.comp_hasDerivAt t ((hasDerivAt_id t).prodMk hf)
+  have h := hd.comp_hasDerivAt (F := ℝ × E) t ((hasDerivAt_id t).prodMk hf)
   convert h using 1
   · rfl
   · simp only [SmoothTimeField.jointDerivative, ContinuousLinearMap.coprod_apply,
@@ -318,9 +318,9 @@ theorem forward_jointDerivative_contDiffAt_one
     (t,x) hq
   let L : ((ℝ →L[ℝ] E) × (E →L[ℝ] E)) →L[ℝ] ((ℝ × E) →L[ℝ] E) :=
     (ContinuousLinearMap.coprodEquivL (𝕜 := ℝ) (E := ℝ) (F := E) (G := E) ℝ).toContinuousLinearMap
-  exact (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := 1)
+  exact ((ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := 1)
     (E := (ℝ →L[ℝ] E) × (E →L[ℝ] E)) (F := (ℝ × E) →L[ℝ] E) L).contDiffAt.comp
-    (t,x) (hs.prodMk hJ)
+    (t,x) (hs.prodMk hJ) :)
 
 theorem forward_joint_contDiffAt_two
     (htime : SmoothTimeField.TimeDerivative T hT A A₁)
@@ -543,7 +543,7 @@ def ofPathFamily : SmoothTimeField (Icc (0 : ℝ) T) E V where
     (value_bound T q D hD) hd
   smooth t := by
     change ContDiff ℝ ∞ (fun x => f x t)
-    exact (ContinuousMap.evalCLM ℝ t).contDiff.comp hf
+    exact (ContinuousMap.evalCLM (M := V) ℝ t).contDiff.comp hf
   jet n := boundedPath T hT (jetFamily T f n) (jetFamily T q n)
     (jetFamily_contDiff T f hf n).continuous (C n) (D n)
     (fun t x => by rw [jetFamily_apply T f hf]; exact hC n t x)

@@ -421,7 +421,7 @@ noncomputable def cutoffLift {rho : ℝ} {U : Set ℂ} {S : Set ℝ}
       simp only [coreCutoff, neg_sq]
     rw [hcut]
     by_cases hR : stop ≤ R ^ 2 / 2
-    · rw [coreCutoff_zero his hR, zero_mul, zero_mul]
+    · rw [coreCutoff_zero his (w := (R, eta)) hR, zero_mul, zero_mul]
     · have hr := radialLift_mem hrho ((lt_of_not_ge hR).trans hsrho)
       congr 1
       dsimp only [radialLift]
@@ -1239,12 +1239,14 @@ theorem xProfile_contDiffAt {S : Set ℝ} (hS : IsOpen S) (f : EvenProfile S)
 theorem partialX_hasDerivAt {f : Field} {w : ℝ × ℝ} (hf : DifferentiableAt ℝ f w) :
     HasDerivAt (fun X => f (X, w.2)) (SimilarityProfile.partialX f w) w.1 := by
   simpa only [SimilarityProfile.partialX, Function.comp_def, id_eq, Prod.eta] using
-    hf.hasFDerivAt.comp_hasDerivAt w.1 ((hasDerivAt_id w.1).prodMk (hasDerivAt_const w.1 w.2))
+    hf.hasFDerivAt.comp_hasDerivAt (F := ℝ × ℝ) w.1
+      ((hasDerivAt_id w.1).prodMk (hasDerivAt_const w.1 w.2))
 
 theorem partialEta_hasDerivAt {f : Field} {w : ℝ × ℝ} (hf : DifferentiableAt ℝ f w) :
     HasDerivAt (fun eta => f (w.1, eta)) (SimilarityProfile.partialEta f w) w.2 := by
   simpa only [SimilarityProfile.partialEta, Function.comp_def, id_eq, Prod.eta] using
-    hf.hasFDerivAt.comp_hasDerivAt w.2 ((hasDerivAt_const w.2 w.1).prodMk (hasDerivAt_id w.2))
+    hf.hasFDerivAt.comp_hasDerivAt (F := ℝ × ℝ) w.2
+      ((hasDerivAt_const w.2 w.1).prodMk (hasDerivAt_id w.2))
 
 theorem xProfile_partialEta {S : Set ℝ} (hS : IsOpen S) (f : EvenProfile S)
     {w : ℝ × ℝ} (hX : 0 < w.1) (heta : w.2 ∈ S) :

@@ -39,7 +39,7 @@ private theorem pathMap_timeWeight
       weight (K := K) (E := CylinderL2 P F) g (pathMap (K := K) P L p) := by
   apply ContinuousMap.ext
   intro t
-  exact (map P L).map_smul (g t) (p t)
+  exact (EulerCylinderConstantMap.map P L).map_smul (g t) (p t)
 
 variable (p : C(K, CylinderL2 P ℝ))
   (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := ℝ) P a p))
@@ -54,7 +54,7 @@ theorem scalarWeightedOrbit (g : C(K, ℝ)) :
         (fun a : LiftTangent => pathTranslate (K := K) (V := ℝ) P a p) :=
     funext (fun a => translate_weight P g a p)
   rw [he]
-  exact (weight g).contDiff.comp hp
+  exact (weight (K := K) (E := CylinderL2 P ℝ) g).contDiff.comp hp
 
 include hp in
 theorem scalarGradientPath_weight (g : C(K, ℝ)) :

@@ -79,7 +79,8 @@ theorem forcing_bound (T : ℝ) (hT : 0 ≤ T)
   have hw : ContDiff ℝ ∞ w := (contDiff_timeMultiplier T hT Q₁ hQ₁).clm_apply hv
   have hbw (j : ℕ) (y : P) : ‖iteratedFDeriv ℝ j w y‖ ≤ (3*C₁*V)*majorant R d j := by
     simpa only [Nat.zero_add] using clm_apply_bound
-      (fun z => timeMultiplier T hT (Q₁ z)) v (contDiff_timeMultiplier T hT Q₁ hQ₁) hv
+      (fun z => timeMultiplier (E := U) (F := E) T hT (Q₁ z)) v
+      (contDiff_timeMultiplier T hT Q₁ hQ₁) hv
       R C₁ V hR hC₁ hV 0 d (timeMultiplier_bound T hT Q₁ hQ₁ R C₁ hR hC₁ 0 hbQ₁) hbv j y
   have hb2w (j : ℕ) (y : P) :
       ‖iteratedFDeriv ℝ j (fun z => (2 : ℝ) • w z) y‖ ≤ (6*C₁*V)*majorant R d j := by
@@ -98,7 +99,8 @@ theorem forcing_bound (T : ℝ) (hT : 0 ≤ T)
     (fun y => adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT (Q y)))
     r hAdj hr R C₀ (F+6*C₁*V)
     hR hC₀ (by positivity) 0 d
-    (adjoint_bound (fun y => timeMultiplier T hT (Q y)) (contDiff_timeMultiplier T hT Q hQ)
+    (adjoint_bound (fun y => timeMultiplier (E := U) (F := E) T hT (Q y))
+      (contDiff_timeMultiplier T hT Q hQ)
       R C₀ hR hC₀ 0 (timeMultiplier_bound T hT Q hQ R C₀ hR hC₀ 0 hbQ)) hbr n x
   simp only [Nat.zero_add] at h
   convert h using 1

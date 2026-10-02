@@ -56,9 +56,9 @@ variable (T : ℝ) (hT : 0 ≤ T)
 
 include hd in
 theorem fixedFrameDerivative_trace_zero (v : zeroTraceDerivatives (U := U) T hT) :
-    initialTrace T hT (fixedFrameDerivative T hT Q Q₁ v) = 0 := by
-  have hv : initialTrace T hT (v : TimeLp T U) = 0 := v.property
-  change initialTrace T hT (productDerivative T hT Q Q₁ (v : TimeLp T U)) = 0
+    initialTrace (E := E) T hT (fixedFrameDerivative T hT Q Q₁ v) = 0 := by
+  have hv : initialTrace (E := U) T hT (v : TimeLp T U) = 0 := v.property
+  change initialTrace (E := E) T hT (productDerivative T hT Q Q₁ (v : TimeLp T U)) = 0
   rw [initialTrace_productDerivative T hT Q Q₁ hd, hv, map_zero]
 
 include hd in
@@ -77,8 +77,8 @@ theorem fixedFrame_energy (u v : zeroTraceDerivatives (U := U) T hT) :
 /-- Fixed endpoint correction as an element of `V →L[ℝ] zeroTraceDerivatives (U := U) T hT`. -/
 def fixedEndpointCorrection (L : V →L[ℝ] TimeLp T E) :
     V →L[ℝ] zeroTraceDerivatives (U := U) T hT :=
-  (coerciveInverse (fixedFrameOperator T hT Q Q₁ H) (fixedCoercivity T Q Q₁ c)
-    (fixedCoercivity_pos T hT Q Q₁ c hc)
+  (coerciveInverse (E := zeroTraceDerivatives (U := U) T hT) (fixedFrameOperator T hT Q Q₁ H)
+    (fixedCoercivity T Q Q₁ c) (fixedCoercivity_pos T hT Q Q₁ c hc)
     (fixedFrameOperator_coercive T hT Q Q₁ H c hc hQ hd K hK hH hsmall)).comp
       ((adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
         (fixedFrameDerivative T hT Q Q₁)).comp ((energyOperator T hT H).comp L))
@@ -97,8 +97,8 @@ theorem fixedEndpointCorrection_equation (L : V →L[ℝ] TimeLp T E) (Y : V)
         ⟪energyOperator T hT H (L Y), fixedFrameDerivative T hT Q Q₁ v⟫_ℝ := by
   rw [fixedFrame_energy T hT Q Q₁ H hd]
   change ⟪fixedFrameOperator T hT Q Q₁ H
-    (coerciveInverse (fixedFrameOperator T hT Q Q₁ H) (fixedCoercivity T Q Q₁ c)
-      (fixedCoercivity_pos T hT Q Q₁ c hc)
+    (coerciveInverse (E := zeroTraceDerivatives (U := U) T hT) (fixedFrameOperator T hT Q Q₁ H)
+      (fixedCoercivity T Q Q₁ c) (fixedCoercivity_pos T hT Q Q₁ c hc)
       (fixedFrameOperator_coercive T hT Q Q₁ H c hc hQ hd K hK hH hsmall)
       (adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
         (fixedFrameDerivative T hT Q Q₁) (energyOperator T hT H (L Y)))), v⟫_ℝ = _
@@ -227,7 +227,7 @@ theorem contDiff_fixedEndpointCorrection
     ContDiff ℝ n (fun x => fixedEndpointCorrection T hT (Q x) (Q₁ x) (H x)
       c hc (hLower x) (hd x) K hK (hPotential x) hsmall (L x)) := by
   have hA := contDiff_fixedFrameOperator T hT Q Q₁ H hQ hQ₁ hH
-  have hi := contDiff_coerciveInverse_variable
+  have hi := contDiff_coerciveInverse_variable (E := zeroTraceDerivatives (U := U) T hT)
     (fun x => fixedFrameOperator T hT (Q x) (Q₁ x) (H x))
     (fun x => fixedCoercivity T (Q x) (Q₁ x) c)
     (fun x => fixedCoercivity_pos T hT (Q x) (Q₁ x) c hc)

@@ -58,14 +58,15 @@ variable {P : ℝ} [Fact (0 < P)]
 /-- Scalar field, given by `scalarEmbeddingField (G.scalar I) (G.pressurePath I)
 (G.pressurePath_orbit I) (G.scalar_eq_pointField I)`. -/
 def scalarField (G : Forcing P D raw) (I : InitialData P D) :
-    Field P D.T (fun z => scalarEmbed (G.scalar I z)) :=
+    EulerPacketCylinderField.Field P D.T (fun z => scalarEmbed (G.scalar I z)) :=
   scalarEmbeddingField (G.scalar I) (G.pressurePath I)
     (G.pressurePath_orbit I) (G.scalar_eq_pointField I)
 
 /-- Angular field, constructed using `EulerPacketPressure.angularGradientField`. -/
 def angularField (G : Forcing P D raw) (I : InitialData P D) :
-    Field P D.T (fun z => (EulerPacketPointJets.pressureJet (G.scalar I) z).2
-      EulerPacketPointJets.angleDirection • D.m₀) :=
+    EulerPacketCylinderField.Field P D.T
+      (fun z => (EulerPacketPointJets.pressureJet (G.scalar I) z).2
+        EulerPacketPointJets.angleDirection • D.m₀) :=
   EulerPacketPressure.angularGradientField P (G.scalar I) (G.pressurePath I)
     (G.pressurePath_orbit I) (G.scalar_eq_pointField I) D.m₀
 
@@ -79,7 +80,7 @@ theorem scalar_grade_bound_pred (C : ℝ) (W : GradeGuards (P := P) L N C)
     (c : ℝ) (hc : 0 < c) (d e : ℕ) (hroom : d + 3 ≤ e)
     (hforce : ∀ n, block standardDirection 6
       (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
-        (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+        (normalize (E := CylinderL2 P Space) L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
           (c * C) * majorant L.R d n)
     (hinitial : ∀ n, block standardDirection 6
       (fun a => translate (V := U) P a (I.value : CylinderL2 P U)) n 0 ≤
@@ -103,7 +104,7 @@ theorem angular_grade_bound (C : ℝ) (W : GradeGuards (P := P) L N C)
     (c : ℝ) (hc : 0 < c) (d e : ℕ) (hroom : d + 3 ≤ e)
     (hforce : ∀ n, block standardDirection 6
       (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
-        (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+        (normalize (E := CylinderL2 P Space) L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
           (c * C) * majorant L.R d n)
     (hinitial : ∀ n, block standardDirection 6
       (fun a => translate (V := U) P a (I.value : CylinderL2 P U)) n 0 ≤
@@ -122,7 +123,7 @@ theorem scalar_grade_bound (C : ℝ) (W : GradeGuards (P := P) L N C)
     (c : ℝ) (hc : 0 < c) (d e : ℕ) (hroom : d + 3 ≤ e)
     (hforce : ∀ n, block standardDirection 6
       (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
-        (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+        (normalize (E := CylinderL2 P Space) L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
           (c * C) * majorant L.R d n)
     (hinitial : ∀ n, block standardDirection 6
       (fun a => translate (V := U) P a (I.value : CylinderL2 P U)) n 0 ≤
@@ -134,7 +135,7 @@ theorem scalar_grade_bound (C : ℝ) (W : GradeGuards (P := P) L N C)
 
 theorem forced_scalar_and_angular_grade_bound
     (W : GradeGuards (P := P) L N 1)
-    (G : Forcing P D raw) (F : Field P D.T raw) (c : ℝ) (hc : 0 < c)
+    (G : Forcing P D raw) (F : EulerPacketCylinderField.Field P D.T raw) (c : ℝ) (hc : 0 < c)
     (p : ℕ) (hp : 2 ≤ p)
     (hforce : (F.normalized D.T_pos.le (c • L.g)
       (smul_profile_pos L.g L.positive c hc)).WordBound 6 L.R 1 (highForceShift p)) :
@@ -169,7 +170,7 @@ theorem primary_scalar_and_angular_grade_bound
   let G := EulerPacketForwardPrimary.forcing (P := P) D
   have hf (n : ℕ) : block standardDirection 6
       (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
-        (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+        (normalize (E := CylinderL2 P Space) L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
           (α*C)*majorant L.R 0 n := by
     have hh : HistoryData.forcingPath G = 0 := by
       unfold HistoryData.forcingPath
@@ -343,7 +344,8 @@ theorem forwardInitializedPressureBudget_exists (p : ℕ) :
       funext z
       simp [pressureJet_zero]
     let Q := (Field.zero period M.T).congr (fun _ _ _ => congrFun hb0 _)
-    let A : Field period M.T (fun z => (pressureJet (a 0).highPressure z).2 angleDirection • D.m₀)
+    let A : EulerPacketCylinderField.Field period M.T
+        (fun z => (pressureJet (a 0).highPressure z).2 angleDirection • D.m₀)
         :=
       (Field.zero period M.T).congr (fun _ _ _ => congrFun han _)
     refine ⟨⟨Q,A,?_,?_⟩⟩
@@ -376,7 +378,8 @@ theorem forwardInitializedPressureBudget_exists (p : ℕ) :
     have he : (a 1).highPressure=scalar D (initialData D δ hδ (α • ξ) hs) := by
       simp only [a,forwardInitializedProfiles,sourceProfiles,profiles_one]
       rfl
-    let A : Field period M.T (fun z => (pressureJet (a 1).highPressure z).2 angleDirection • D.m₀)
+    let A : EulerPacketCylinderField.Field period M.T
+        (fun z => (pressureJet (a 1).highPressure z).2 angleDirection • D.m₀)
         :=
       ((EulerTransversePacketForward.angularField (forcing D) (initialData D δ hδ (α • ξ)
           hs)).changeTime hTime.symm).congr
@@ -408,9 +411,10 @@ theorem forwardInitializedPressureBudget_exists (p : ℕ) :
     C BC rfl rfl hRc hcost S hp G hG hc₀ hB₁ hA
     (α*meanScale S.H0 p) (S.gradeFactor_pos α hα p)
     (S.high_timeProfile_eq hTime L.g α hgrowth p)
-  let Q' : Field period M.T (pressureGradient (a p).meanPressure) :=
+  let Q' : EulerPacketCylinderField.Field period M.T (pressureGradient (a p).meanPressure) :=
     Q.congr (fun _ _ _ => by rw [he])
-  let A' : Field period M.T (fun z => (pressureJet (a p).highPressure z).2 angleDirection • D.m₀) :=
+  let A' : EulerPacketCylinderField.Field period M.T
+      (fun z => (pressureJet (a p).highPressure z).2 angleDirection • D.m₀) :=
     A.congr (fun _ _ _ => by rw [he])
   exact ⟨⟨Q',A',hQ.of_path_eq _ rfl,hAb.of_path_eq _ rfl⟩⟩
 
@@ -535,7 +539,8 @@ def forwardInitializedPressureBudget (p : ℕ) :=
 /-- Forward initialized angular pressure field as an element of `Field period D.T (fun z =>
 forwardInitializedAngularPressure D δ hδ ξ hs α z • D.m₀)`. -/
 def forwardInitializedAngularPressureField :
-    Field period D.T (fun z => forwardInitializedAngularPressure D δ hδ ξ hs α z • D.m₀) :=
+    EulerPacketCylinderField.Field period D.T
+      (fun z => forwardInitializedAngularPressure D δ hδ ξ hs α z • D.m₀) :=
   (((forwardInitializedPressureBudget M D hTime δ hδ ξ hs α
     L NB W LM WM BC hRc hcost hδ1 hα hR WP S hgrowth 1).angular).changeTime hTime).congr
       (fun _ _ _ => by rw [forwardInitializedProfiles_one_highPressure]; rfl)
@@ -560,7 +565,8 @@ theorem forwardInitializedAngularPressure_bound :
 /-- Forward initialized covector remainder field as an element of `Field period D.T
 (forwardInitializedCovectorRemainder M D δ hδ ξ hs α N κ)`. -/
 def forwardInitializedCovectorRemainderField (N : ℕ) (hN : 1 ≤ N) (κ : ℝ) :
-    Field period D.T (forwardInitializedCovectorRemainder M D δ hδ ξ hs α N κ) :=
+    EulerPacketCylinderField.Field period D.T
+      (forwardInitializedCovectorRemainder M D δ hδ ξ hs α N κ) :=
   (covectorRemainderField M.T_pos D.m₀
     (fun i (_ : i ≤ N) => forwardInitializedProfileWitness M D hTime δ hδ ξ hs α i)
     (fun i (_ : i ≤ N) => forwardInitializedPressureBudget M D hTime δ hδ ξ hs α
@@ -627,7 +633,8 @@ theorem forwardInitializedAngularPressure_smooth (t : ℝ) :
 
 theorem forwardInitializedAngularPressure_second (t : Icc (0 : ℝ) D.T) (z : LiftTangent) :
     angularDerivative (fun w => forwardInitializedAngularPressure D δ hδ ξ hs α (t,w)) z =
-      EulerPacketForwardShear.pressureCoefficient D ξ α t z.1 * deriv (profile δ) z.2 := by
+      EulerPacketForwardShear.pressureCoefficient D ξ α t z.1 *
+        deriv (EulerPeriodicProfile.profile δ) z.2 := by
   have hq := pressure_smooth D (initialData D δ hδ (α • ξ) hs) t
   simp only [forwardInitializedAngularPressure,pressureJet_angle]
   change angularDerivative (angularDerivative (fun w =>
@@ -661,7 +668,7 @@ theorem forwardInitializedPressure_hessian_bound (N : ℕ) (hN : 1 ≤ N) (k : �
     ‖fderiv ℝ (gradient (fun y => forwardInitializedPressure M D δ hδ ξ hs α N k⁻¹
         (t,(Y t y,k*⟪D.m₀,Y t y⟫_ℝ)))) x -
       (EulerPacketForwardShear.pressureCoefficient D ξ α t (Y t x) *
-        deriv (profile δ) (k*⟪D.m₀,Y t x⟫_ℝ)) •
+        deriv (EulerPeriodicProfile.profile δ) (k*⟪D.m₀,Y t x⟫_ℝ)) •
       rankOne (E := Space) (F := Space) ℝ (D.normal.field t (Y t x))
         (D.normal.field t (Y t x))‖ ≤
         forwardInitializedPressureHessianCost NB L.R S.H0 L.Rc L.C₀/k := by
@@ -682,7 +689,7 @@ theorem forwardInitializedPressure_hessian_bound (N : ℕ) (hN : 1 ≤ N) (k : �
     (ha.differentiable (by simp) _)
   have hsecond : angularDerivative a (graphMap k D.m₀ (Y t x)) =
       EulerPacketForwardShear.pressureCoefficient D ξ α t (Y t x) *
-        deriv (profile δ) (k*⟪D.m₀,Y t x⟫_ℝ) :=
+        deriv (EulerPeriodicProfile.profile δ) (k*⟪D.m₀,Y t x⟫_ℝ) :=
     forwardInitializedAngularPressure_second D δ hδ ξ hs α t _
   have hn : transportedNormal D.m₀ J x = D.normal.field t (Y t x) := rfl
   rw [hsecond,hn] at hf

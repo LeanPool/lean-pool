@@ -138,8 +138,8 @@ theorem timeMultiplier_quadratic_upper (T : ℝ) (hT : 0 ≤ T)
     (hH : ∀ t w, ⟪H t w, w⟫_ℝ ≤ K * ‖w‖ ^ 2) (u : TimeLp T W) :
     ⟪timeMultiplier T hT H u, u⟫_ℝ ≤ K * ‖u‖ ^ 2 := by
   rw [← real_inner_self_eq_norm_sq, L2.inner_def, L2.inner_def, ← integral_const_mul]
-  apply integral_mono_ae (L2.integrable_inner (timeMultiplier T hT H u) u)
-    ((L2.integrable_inner u u).const_mul K)
+  apply integral_mono_ae (L2.integrable_inner (𝕜 := ℝ) (timeMultiplier T hT H u) u)
+    ((L2.integrable_inner (𝕜 := ℝ) u u).const_mul K)
   filter_upwards [timeMultiplier_ae T hT H u] with t ht
   rw [ht, real_inner_self_eq_norm_sq]
   exact hH (projIcc 0 T hT t) (u t)

@@ -41,13 +41,14 @@ theorem fastForce_hasFDerivAt (a : LiftTangent → ℝ) (k : ℝ) (hk : k ≠ 0)
     (ha : DifferentiableAt ℝ a (graphMap k m (Y x))) :
     HasFDerivAt (fastForce a k m Y J)
       (angularDerivative a (graphMap k m (Y x)) •
-        rankOne ℝ (transportedNormal m J x) (transportedNormal m J x) +
+        rankOne ℝ (E := Space) (F := Space) (transportedNormal m J x) (transportedNormal m J x) +
           fastHessianRemainder a k m Y J x) x := by
   have hgraph : HasFDerivAt (fun y => graphMap k m (Y y)) ((graphMap k m).comp (J x)) x :=
     (graphMap k m).hasFDerivAt.comp x hY
-  have hcomp := ha.hasFDerivAt.comp x hgraph
+  have hcomp := ha.hasFDerivAt.comp (f := fun y => graphMap k m (Y y)) x hgraph
   have hn : DifferentiableAt ℝ (transportedNormal m J) x :=
-    (adjoint.differentiableAt.comp x hJ).clm_apply (differentiableAt_const m)
+    ((adjoint (𝕜 := ℝ) (E := Space) (F := Space)).differentiableAt.comp x hJ).clm_apply
+      (differentiableAt_const m)
   convert! (hcomp.smul hn.hasFDerivAt).const_smul k⁻¹ using 1
   apply ContinuousLinearMap.ext
   intro v

@@ -86,11 +86,11 @@ def fixedMeanDerivative : TimeLp T solenoidalSpace →L[ℝ] TimeLp T L2 :=
 
 /-- Actual physical displacement on the fixed coordinate space. -/
 def fixedMeanPrimitive : TimeLp T solenoidalSpace →L[ℝ] TimeLp T L2 :=
-  (primitiveTimeLp T hT).comp (fixedMeanDerivative T hT F F₁)
+  (primitiveTimeLp (E := L2) T hT).comp (fixedMeanDerivative T hT F F₁)
 
 /-- Actual physical initial trace on the fixed coordinate space. -/
 def fixedMeanTrace : TimeLp T solenoidalSpace →L[ℝ] L2 :=
-  (initialTrace T hT).comp (fixedMeanDerivative T hT F F₁)
+  (initialTrace (E := L2) T hT).comp (fixedMeanDerivative T hT F F₁)
 
 /-- The full original mean form as an operator on one fixed Hilbert space. -/
 def fixedMeanOperator : TimeLp T solenoidalSpace →L[ℝ] TimeLp T solenoidalSpace :=
@@ -107,8 +107,8 @@ theorem fixedMeanOperator_inner (u v : TimeLp T solenoidalSpace) :
   exact (transportedOperator_inner (fixedMeanDerivative T hT F F₁)
     (meanOperator (primitiveTimeLp T hT) (initialTrace T hT) (timeMultiplier T hT H) (M0+L • A)) u
         v).trans
-      (meanOperator_inner (primitiveTimeLp T hT) (initialTrace T hT)
-        (timeMultiplier T hT H) (M0+L • A)
+      (meanOperator_inner (primitiveTimeLp (E := L2) T hT) (initialTrace (E := L2) T hT)
+        (timeMultiplier (E := L2) (F := L2) T hT H) (M0+L • A)
         (fixedMeanDerivative T hT F F₁ u) (fixedMeanDerivative T hT F F₁ v))
 
 variable (FInv : C(Icc (0 : ℝ) T, L2 →L[ℝ] L2))
@@ -233,16 +233,17 @@ theorem fixedMeanSolver_eq_mean
       at hu
   change ⟪fixedMeanDerivative T hT F F₁ (meanBackward T hT FInv F F₁ hInv u),
       fixedMeanDerivative T hT F F₁ v⟫_ℝ -
-    ⟪timeMultiplier T hT H (primitiveTimeLp T hT
+    ⟪timeMultiplier T hT H (primitiveTimeLp (E := L2) T hT
       (fixedMeanDerivative T hT F F₁ (meanBackward T hT FInv F F₁ hInv u))), fixedMeanPrimitive T
           hT F F₁ v⟫_ℝ +
-    ⟪(M0+L • A) (initialTrace T hT
+    ⟪(M0+L • A) (initialTrace (E := L2) T hT
       (fixedMeanDerivative T hT F F₁ (meanBackward T hT FInv F F₁ hInv u))), fixedMeanTrace T hT F
           F₁ v⟫_ℝ = _
   have heq := congrArg (fun w : TimeLp T L2 =>
     ⟪w, fixedMeanDerivative T hT F F₁ v⟫_ℝ -
-      ⟪timeMultiplier T hT H (primitiveTimeLp T hT w), fixedMeanPrimitive T hT F F₁ v⟫_ℝ +
-      ⟪(M0+L • A) (initialTrace T hT w), fixedMeanTrace T hT F F₁ v⟫_ℝ) hu
+      ⟪timeMultiplier T hT H (primitiveTimeLp (E := L2) T hT w),
+        fixedMeanPrimitive T hT F F₁ v⟫_ℝ +
+      ⟪(M0+L • A) (initialTrace (E := L2) T hT w), fixedMeanTrace T hT F F₁ v⟫_ℝ) hu
   apply heq.trans
   simpa only [u, fixedMeanDerivative, fixedMeanPrimitive, fixedMeanTrace, meanPrimitive,
     meanTrace, comp_apply, Submodule.subtypeL_apply, meanTestMap_coe,

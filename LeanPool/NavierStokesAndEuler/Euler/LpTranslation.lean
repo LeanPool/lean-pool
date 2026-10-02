@@ -69,7 +69,7 @@ theorem translation_norm_le (a : Space) :
 theorem translation_hasFDerivAt_all (u : L2Space V) (D : Space →L[ℝ] L2Space V)
     (h : HasFDerivAt (fun a : Space => translation (V := V) a u) D 0) (a : Space) :
     HasFDerivAt (fun b : Space => translation (V := V) b u)
-      ((translation a).toContinuousLinearMap.comp D) a :=
+      ((translation (V := V) a).toContinuousLinearMap.comp D) a :=
   EulerIsometricAction.hasFDerivAt_all (P := Space) (E := L2Space V) translation translation_add
     u D h a
 
@@ -82,8 +82,8 @@ theorem translation_orbits_tendstoUniformly {ι : Type*} {l : Filter ι}
 theorem translation_derivatives_tendstoUniformly {ι : Type*} {l : Filter ι}
     (D : ι → Space →L[ℝ] L2Space V) (D₀ : Space →L[ℝ] L2Space V)
     (hD : Tendsto D l (𝓝 D₀)) :
-    TendstoUniformly (fun n a => (translation a).toContinuousLinearMap.comp (D n))
-      (fun a => (translation a).toContinuousLinearMap.comp D₀) l :=
+    TendstoUniformly (fun n a => (translation (V := V) a).toContinuousLinearMap.comp (D n))
+      (fun a => (translation (V := V) a).toContinuousLinearMap.comp D₀) l :=
   EulerIsometricAction.derivatives_tendstoUniformly (P := Space) (E := L2Space V) translation
     D D₀ hD
 

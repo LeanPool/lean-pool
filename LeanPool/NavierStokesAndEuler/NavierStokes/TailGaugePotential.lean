@@ -51,7 +51,7 @@ theorem radial_slice_hasDerivAt {K : Point → ℝ} {p : Point}
     (hK : DifferentiableAt ℝ K p) :
     HasDerivAt (fun s => K (p.1, (s, p.2.2))) (AxisymmetricFields.partialS K p) p.2.1 := by
   simpa only [AxisymmetricFields.partialS, Prod.eta, Function.comp_def, one_smul, id_eq] using
-    hK.hasFDerivAt.comp_hasDerivAt p.2.1
+    hK.hasFDerivAt.comp_hasDerivAt (F := Point) (f := fun s => (p.1, (id s, p.2.2))) p.2.1
       ((hasDerivAt_const p.2.1 p.1).prodMk
         ((hasDerivAt_id p.2.1).prodMk (hasDerivAt_const p.2.1 p.2.2)))
 
@@ -175,7 +175,8 @@ theorem extendedHeatCoefficient_smoothAt (C : ℝ) {h : ℝ} (hh : 0 < h)
       (2 * (1 - p.1) / p.2.1) :=
     (HeatProfileExtension.extension_contDiff (show 1 < 1 + h by linarith)).contDiffAt
   have hg : ContDiffAt ℝ ∞ (fun q : Point => 2 * (1 - q.1) / q.2.1) p :=
-    (contDiffAt_const.mul (contDiffAt_const.sub contDiffAt_fst)).div contDiffAt_snd.fst hs.ne'
+    (contDiffAt_const.mul (contDiffAt_const.sub
+      (contDiffAt_fst (𝕜 := ℝ) (E := ℝ) (F := ℝ × ℝ)))).div contDiffAt_snd.fst hs.ne'
   exact (contDiffAt_const.mul
     ((contDiffAt_snd.fst.rpow_const_of_ne hs.ne').mul (he.comp p hg))).div
       ((contDiffAt_const.mul contDiffAt_snd.fst).sqrt (by positivity))
@@ -245,7 +246,8 @@ theorem heatPrimitive_hasDerivAt (C : ℝ) {h : ℝ} (hh : 0 < h)
     linarith
   have hd := ProfileHistories.primitive_hasDerivAt shiftedRadialDomain (shiftedHeat_smooth C hh) hp
   simpa only [heatPrimitive, shiftedHeat, extendedHeatCoefficient, Function.comp_def,
-    sub_add_cancel, mul_one, id_eq] using (hd.comp s ((hasDerivAt_id s).sub_const 1)).fun_neg
+    sub_add_cancel, mul_one, id_eq] using
+      (hd.comp (h := fun x => id x - 1) s ((hasDerivAt_id s).sub_const 1)).fun_neg
 
 /-- Heat potential, defined pointwise by `heatPrimitive C h (AxisymmetricFields.profilePoint w.1
 w.2) • coordinateVector 2`. -/

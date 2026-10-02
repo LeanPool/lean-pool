@@ -281,8 +281,8 @@ theorem mixedSeries_hasDerivAt_Y (I : Window) {ε : ℝ} (hε : 0 < ε)
     HasDerivAt (fun y => mixedSeries I ε A k m (y, η))
       (mixedSeries I ε A (k + 1) m (Y, η)) Y := by
   have hd := mixedSeries_hasFDerivAt I hε A k m (p := (Y, η)) ⟨hY, hη⟩
-  simpa [linearForm, Function.comp_def] using hd.comp_hasDerivAt Y
-    ((hasDerivAt_id Y).prodMk (hasDerivAt_const Y η))
+  simpa [linearForm, Function.comp_def] using hd.comp_hasDerivAt (F := ℝ × ℝ)
+    (f := fun x : ℝ => (id x, η)) Y ((hasDerivAt_id Y).prodMk (hasDerivAt_const Y η))
 
 theorem mixedSeries_hasDerivAt_eta (I : Window) {ε : ℝ} (hε : 0 < ε)
     (A : AxisSpace I ε) (k m : ℕ) {Y η : ℝ}

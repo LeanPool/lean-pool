@@ -120,7 +120,7 @@ theorem velocity_joint_continuous :
 
 theorem curve_continuous (x : E) :
     Continuous (fun s => homeomorph A T hT hT1 s x) :=
-  (homeomorph_joint_continuous A T hT hT1).comp
+  (homeomorph_joint_continuous A T hT hT1).comp (f := fun s => (id s, x))
     (continuous_id.prodMk continuous_const)
 
 theorem speed_continuous (x : E) :

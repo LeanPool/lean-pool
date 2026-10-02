@@ -383,7 +383,7 @@ theorem scaledProfile_contDiffOn {a : ℝ} (ha : 1 < a) :
     ContDiffOn ℝ ∞ (fun p : ℝ × ℝ => scaledProfile a p.1 p.2)
       (Ioi 0 ×ˢ (univ : Set ℝ)) := by
   exact (extension_contDiff ha).comp_contDiffOn
-    ((contDiffOn_const.mul contDiffOn_snd).div contDiffOn_fst
+    (((contDiffOn_const (𝕜 := ℝ) (E := ℝ × ℝ) (F := ℝ)).mul contDiffOn_snd).div contDiffOn_fst
       (fun p hp => (show 0 < p.1 from hp.1).ne'))
 
 theorem scaledProfile_eq_profile (a : ℝ) {X ν : ℝ} (hX : 0 < X) (hν : 0 ≤ ν) :
@@ -433,7 +433,8 @@ theorem physicalProfile_contDiffOn {a : ℝ} (ha : 1 < a) :
     ContDiffOn ℝ ∞ (fun p : ℝ × ℝ => physicalProfile a p.1 p.2)
       (Ioi 0 ×ˢ (univ : Set ℝ)) := by
   exact (extension_contDiff ha).comp_contDiffOn
-    ((contDiffOn_const.mul (contDiffOn_const.sub (contDiffOn_snd.pow 2))).div contDiffOn_fst
+    (((contDiffOn_const (𝕜 := ℝ) (E := ℝ × ℝ) (F := ℝ)).mul
+      (contDiffOn_const.sub (contDiffOn_snd.pow 2))).div contDiffOn_fst
       (fun p hp => (show 0 < p.1 from hp.1).ne'))
 
 theorem physicalProfile_eq_profile (a : ℝ) {X η : ℝ} (hX : 0 < X)

@@ -464,8 +464,8 @@ noncomputable def coefficientPoint (L : Label B N0) (n : ℕ) (x : FullPoint) : 
 
 theorem coefficientPoint_smooth (L : Label B N0) (n : ℕ) :
     ContDiff ℝ ∞ (coefficientPoint L n) :=
-  ((nativeSlow_smooth L).comp ((toAbsolute_smooth n).comp contDiff_fst)).prodMk
-    (((toAbsolute_smooth n).comp contDiff_fst).snd)
+  ((nativeSlow_smooth L).comp ((toAbsolute_smooth n).comp (contDiff_fst (F := ℝ)))).prodMk
+    (((toAbsolute_smooth n).comp (contDiff_fst (F := ℝ))).snd)
 
 /-- Native phase, constructed using `PhaseCalculus.phase`. -/
 noncomputable def nativePhase (j : Fin 2) (L : Label B N0) : PhaseCalculus.Slot → ℝ :=
@@ -735,7 +735,8 @@ theorem slow_radial_derivative (j : Fin 2) (L : Label B N0) (n : ℕ)
     along ((PrimaryResidualClass.directions (commonContext B)).radialField n)
       (fun y => a * f (copyPoint j L n k y).1) x =
       a * radialScale L n * PhaseCalculus.slowR f (copyPoint j L n k x).1 := by
-  have hd := ((hf.hasFDerivAt.comp x (copyPoint_hasFDerivAt j L n k x).fst).const_mul a).fderiv
+  have hd := ((hf.hasFDerivAt.comp (f := fun y => (copyPoint j L n k y).1) x
+    (copyPoint_hasFDerivAt j L n k x).fst).const_mul a).fderiv
   simp only [Function.comp_def] at hd
   have hr := congrArg Prod.fst (slotLinear_radial j L n x)
   change (copyLinear j L n ((PrimaryResidualClass.directions (commonContext B)).radialField n x)).1
@@ -1080,7 +1081,7 @@ theorem pressure_smooth (j : Fin 2) (L : Label B N0) (n : ℕ) :
 
 theorem cutoff_smooth (j : Fin 2) (L : Label B N0) (n : ℕ) :
     ContDiff ℝ ∞ (chartCutoff j L n) :=
-  (periodicGaussian_smooth j L).comp (((toAbsolute_smooth n).comp contDiff_fst).snd)
+  (periodicGaussian_smooth j L).comp (((toAbsolute_smooth n).comp (contDiff_fst (F := ℝ))).snd)
 
 theorem phase_smooth (j : Fin 2) (L : Label B N0) (n : ℕ) :
     ContDiffOn ℝ ∞ ((chartCoefficients j L).phase n) ActualPrimaryCoherence.positiveRadialChart :=
@@ -1167,7 +1168,7 @@ theorem exactOn (U : LocalSignedRequest.SlowRegion (2 * h))
   · intro x hx
     change fderiv ℝ (fun y : FullPoint => y.1.1) x
       ((PrimaryResidualClass.directions (commonContext B)).radialField n x) = 1
-    rw [(hasFDerivAt_fst.fst (x := x)).fderiv]
+    rw [((hasFDerivAt_fst (𝕜 := ℝ) (E := LocalSignedRequest.Point) (F := ℝ)).fst (x := x)).fderiv]
     simp [LinearWaveBounds.GraphDirections.radialField, PrimaryResidualClass.directions,
       commonContext, CommonBaseContext.context, CommonBaseContext.operators,
       CorrectionState.graphOperators, CommonBaseContext.reconstruction]

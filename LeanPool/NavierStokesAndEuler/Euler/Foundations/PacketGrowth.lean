@@ -613,7 +613,7 @@ theorem hasDerivAt_riccatiRoot (ε t : ℝ) :
   have hqpos : 0 < 2 / (1 + (1 - ε * t) ^ 4) := by positivity
   have hq : HasDerivAt (fun s => 2 / (1 + (1 - ε * s) ^ 4))
       (8 * ε * (1 - ε * t) ^ 3 / (1 + (1 - ε * t) ^ 4) ^ 2) t := by
-    apply ((hasDerivAt_const t 2).div ((hy.fun_pow 4).const_add 1) hdne).congr_deriv
+    apply ((hasDerivAt_const t (2 : ℝ)).div ((hy.fun_pow 4).const_add 1) hdne).congr_deriv
     dsimp
     field_simp
     ring
@@ -795,8 +795,8 @@ theorem hasDerivAt_inverted_logderivative
   have hy : HasDerivAt (fun s : ℝ => 1 - ε * s) (-ε) t := by
     simpa using ((hasDerivAt_id t).const_mul ε).const_sub 1
   have hDne : 1 + (1 - ε * t) ^ 4 ≠ 0 := ne_of_gt (by positivity)
-  have hd := (((inversion_second_derivative hflux).comp t hy).const_mul (-ε)).div
-    (hf.comp t hy) hfpos
+  have hd := (((inversion_second_derivative hflux).comp (h := fun s : ℝ => 1 - ε * s) t
+    hy).const_mul (-ε)).div (hf.comp (h := fun s : ℝ => 1 - ε * s) t hy) hfpos
   apply hd.congr_deriv
   dsimp [invertedRiccati]
   field_simp
@@ -876,8 +876,8 @@ theorem invertedScalar_equations
     HasDerivAt (fun z => (1 + z ^ 4) * invertedScalarDeriv ε V V₁ z)
       ((2 / ε ^ 2 - 2 * y ^ 2) * invertedScalar ε V y) y := by
   have harg := (hasDerivAt_inv hy).div_const ε
-  have h0 := hV.comp y harg
-  have h1 := (equation30_second_derivative hflux).comp y harg
+  have h0 := hV.comp (h := fun z : ℝ => z⁻¹ / ε) y harg
+  have h1 := (equation30_second_derivative hflux).comp (h := fun z : ℝ => z⁻¹ / ε) y harg
   have h2 := (hasDerivAt_id y).fun_pow 2
   have h3 := ((hasDerivAt_id y).fun_pow 3).const_mul ε
   have h4 := ((hasDerivAt_id y).fun_pow 4).const_add 1
@@ -1155,7 +1155,7 @@ theorem equation30_zero_slope_prefix_upper
   have hsum : ∀ t ∈ Icc 0 1,
       U t + (1 + (ε ^ 2 * t ^ 2) ^ 2) * U₁ t ≤ exp (3 * t) := by
     apply image_le_of_deriv_right_lt_deriv_boundary
-      (f := fun t => U t + (1 + (ε ^ 2 * t ^ 2) ^ 2) * U₁ t)
+      (f := (fun t => U t + (1 + (ε ^ 2 * t ^ 2) ^ 2) * U₁ t :))
       (f' := fun t => U₁ t + 2 * (1 - ε ^ 2 * (ε ^ 2 * t ^ 2)) * U t)
       (B := fun t => exp (3 * t)) (B' := fun t => 3 * exp (3 * t))
       (fun t ht => ((hU t ht).add (hfluxU t ht)).continuousAt.continuousWithinAt)

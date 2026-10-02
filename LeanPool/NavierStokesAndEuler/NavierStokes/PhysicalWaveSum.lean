@@ -375,7 +375,7 @@ theorem labelRegion_locallyFinite (D : ℝ) :
       {z : PositiveParam | z.2 ∈ tsupport (SquaredPartition.physicalSlowMask D n k.1)} := by
     simpa only [inter_univ] using SquaredPartition.locallyFinite_pair_inter (hg n)
       (fun _ => locallyFinite_of_finite (fun _ : Bool => (univ : Set PositiveParam)))
-  exact SquaredPartition.locallyFinite_pair_inter hb hs
+  exact (SquaredPartition.locallyFinite_pair_inter hb hs :)
 
 /-- Band label: an abbreviation for `{L : Label // 4 ≤ L.1}`. -/
 abbrev BandLabel := {L : Label // 4 ≤ L.1}

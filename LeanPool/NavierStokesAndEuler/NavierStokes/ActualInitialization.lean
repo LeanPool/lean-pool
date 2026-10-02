@@ -1328,7 +1328,8 @@ theorem primary_velocity_zero_outside_source {B N0 : ℕ} (l : Index B N0) (n : 
   have hs := (primaryPiece l).velocity_tsupport_subset_tangent n
   have hc := closure_minimal (cut_amplitude_source_support l n)
     ((labelCarrier_closed l n).preimage continuous_fst)
-  exact (notMem_tsupport_iff_eventuallyEq.mp (fun ht => hx (hc (hs ht)))).eq_of_nhds
+  exact (notMem_tsupport_iff_eventuallyEq.mp
+    (fun ht => hx (hc (a := (x, theta)) (hs ht)))).eq_of_nhds
 
 theorem primary_pressure_zero_outside_source {B N0 : ℕ} (l : Index B N0) (n : ℕ)
     {x : Point} (hx : x ∉ labelCarrier l n) (theta : ℝ) :
@@ -1336,7 +1337,7 @@ theorem primary_pressure_zero_outside_source {B N0 : ℕ} (l : Index B N0) (n : 
   rw [(primaryBlock_represents l).2]
   have hp : (primaryPiece l).exactCoefficients.pressure n (x,theta) = 0 := by
     by_contra hn
-    exact hx (cut_pressure_source_support l n hn)
+    exact hx (cut_pressure_source_support l n (a := (x, theta)) hn)
   simp only [PrimaryPiece.pressure, HarmonicCalculus.mode, hp, zero_mul, Complex.zero_re]
 
 theorem gaussian_velocity_zero_outside_source {B N0 : ℕ} (l : Index B N0) (n : ℕ)

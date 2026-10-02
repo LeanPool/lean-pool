@@ -80,7 +80,7 @@ def freeze (G : Field P T raw) (t : Icc (0 : ℝ) T) :
             pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a G.path) :=
         funext (freezePath_translate t G.path)
       rw [he]
-      exact (freezePath t).contDiff.comp G.orbit)
+      exact (freezePath (E := CylinderL2 P Vector3) t).contDiff.comp G.orbit)
     (fun _ => pointField P G.path G.orbit t)
     (fun _ => EulerMetricTransport.smoothField_continuous P _ (pointField_smooth P G.path G.orbit
         t))
@@ -218,51 +218,51 @@ variable {P T : ℝ} [Fact (0 < P)] {hT : 0 ≤ T} {N : ℕ}
 /-- High grade field, given by `Field.assembleFamily N _ _ (fun i hi => (G i hi).high.freeze t)
 (fun i hi => (G i hi).corrector.freeze t) n`. -/
 def highGradeField (G : ∀ i, i ≤ N → ProfileRegularity P T hT support (a i))
-    (t : Icc (0 : ℝ) T) (n : ℕ) : Field P T (highGrade N t a n) :=
+    (t : Icc (0 : ℝ) T) (n : ℕ) : EulerPacketCylinderField.Field P T (highGrade N t a n) :=
   Field.assembleFamily N _ _ (fun i hi => (G i hi).high.freeze t)
     (fun i hi => (G i hi).corrector.freeze t) n
 
 /-- Mean grade field, given by `Field.truncateFamily N _ (fun i hi => (G i hi).mean.freeze t)
 n`. -/
 def meanGradeField (G : ∀ i, i ≤ N → ProfileRegularity P T hT support (a i))
-    (t : Icc (0 : ℝ) T) (n : ℕ) : Field P T (meanGrade N t a n) :=
+    (t : Icc (0 : ℝ) T) (n : ℕ) : EulerPacketCylinderField.Field P T (meanGrade N t a n) :=
   Field.truncateFamily N _ (fun i hi => (G i hi).mean.freeze t) n
 
 /-- High field, given by `Field.evaluateFamily (N+1) κ _ (highGradeField G t)`. -/
 def highField (G : ∀ i, i ≤ N → ProfileRegularity P T hT support (a i))
-    (t : Icc (0 : ℝ) T) (κ : ℝ) : Field P T (high N κ t a) :=
+    (t : Icc (0 : ℝ) T) (κ : ℝ) : EulerPacketCylinderField.Field P T (high N κ t a) :=
   Field.evaluateFamily (N+1) κ _ (highGradeField G t)
 
 /-- Mean field, given by `Field.evaluateFamily (N+1) κ _ (meanGradeField G t)`. -/
 def meanField (G : ∀ i, i ≤ N → ProfileRegularity P T hT support (a i))
-    (t : Icc (0 : ℝ) T) (κ : ℝ) : Field P T (mean N κ t a) :=
+    (t : Icc (0 : ℝ) T) (κ : ℝ) : EulerPacketCylinderField.Field P T (mean N κ t a) :=
   Field.evaluateFamily (N+1) κ _ (meanGradeField G t)
 
 theorem high_zero_outside (G : ∀ i, i ≤ N → ProfileRegularity P T hT support (a i))
     (t : Icc (0 : ℝ) T) (κ s : ℝ) (x : Space) (hx : x ∉ support) (θ : ℝ) :
     high N κ t a (s,(x,θ)) = 0 := by
   rw [high_eq]
-  change (∑ i ∈ range (N+1), κ^i • (a i).high (t,(x,θ))) +
-    κ • (∑ i ∈ range (N+1), κ^i • (a i).corrector (t,(x,θ))) = 0
-  have hh : (∑ i ∈ range (N+1), κ^i • (a i).high (t,(x,θ))) = 0 := by
+  change (∑ i ∈ Finset.range (N+1), κ^i • (a i).high (t,(x,θ))) +
+    κ • (∑ i ∈ Finset.range (N+1), κ^i • (a i).corrector (t,(x,θ))) = 0
+  have hh : (∑ i ∈ Finset.range (N+1), κ^i • (a i).high (t,(x,θ))) = 0 := by
     apply sum_eq_zero
     intro i hi
-    rw [(G i (by have := mem_range.mp hi; omega)).high_zero t x hx θ,smul_zero]
-  have hc : (∑ i ∈ range (N+1), κ^i • (a i).corrector (t,(x,θ))) = 0 := by
+    rw [(G i (by have := Finset.mem_range.mp hi; omega)).high_zero t x hx θ,smul_zero]
+  have hc : (∑ i ∈ Finset.range (N+1), κ^i • (a i).corrector (t,(x,θ))) = 0 := by
     apply sum_eq_zero
     intro i hi
-    rw [(G i (by have := mem_range.mp hi; omega)).corrector_zero t x hx θ,smul_zero]
+    rw [(G i (by have := Finset.mem_range.mp hi; omega)).corrector_zero t x hx θ,smul_zero]
   rw [hh,hc,smul_zero,add_zero]
 
 theorem mean_angle (G : ∀ i, i ≤ N → ProfileRegularity P T hT support (a i))
     (t : Icc (0 : ℝ) T) (κ s : ℝ) (x : Space) (θ : ℝ) :
     mean N κ t a (s,(x,θ)) = mean N κ t a (s,(x,0)) := by
   rw [mean_eq]
-  change (∑ i ∈ range (N+1), κ^i • (a i).mean (t,(x,θ))) =
-    ∑ i ∈ range (N+1), κ^i • (a i).mean (t,(x,0))
+  change (∑ i ∈ Finset.range (N+1), κ^i • (a i).mean (t,(x,θ))) =
+    ∑ i ∈ Finset.range (N+1), κ^i • (a i).mean (t,(x,0))
   apply sum_congr rfl
   intro i hi
-  rw [(G i (by have := mem_range.mp hi; omega)).mean_angle t x θ]
+  rw [(G i (by have := Finset.mem_range.mp hi; omega)).mean_angle t x θ]
 
 theorem mean_zero_outside (t : ℝ) (κ s : ℝ) (a : ℕ → Profile)
     (K : Set Space)
@@ -270,9 +270,9 @@ theorem mean_zero_outside (t : ℝ) (κ s : ℝ) (a : ℕ → Profile)
     (x : Space) (hx : x ∉ K) (θ : ℝ) :
     mean N κ t a (s,(x,θ)) = 0 := by
   rw [mean_eq]
-  change (∑ i ∈ range (N+1), κ^i • (a i).mean (t,(x,θ))) = 0
+  change (∑ i ∈ Finset.range (N+1), κ^i • (a i).mean (t,(x,θ))) = 0
   apply sum_eq_zero
   intro i hi
-  rw [hmean i (by have := mem_range.mp hi; omega) x hx θ,smul_zero]
+  rw [hmean i (by have := Finset.mem_range.mp hi; omega) x hx θ,smul_zero]
 
 end EulerPacketInitial

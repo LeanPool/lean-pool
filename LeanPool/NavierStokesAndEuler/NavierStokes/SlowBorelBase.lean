@@ -888,7 +888,7 @@ theorem hasDerivAt_physicalProfile_s {a : ℕ → ℕ} (ha : StrictMono a) {h : 
       (physicalProfile a h (b - 1) (fun j => SimilarityProfile.partialX (f j)) p) p.2.1 := by
   have hq := SimilarityProfile.q_pos hh hh1 hp
   have hx : HasDerivAt (fun s => s / SimilarityProfile.q h p)
-      (1 / SimilarityProfile.q h p) p.2.1 := (hasDerivAt_id _).div_const _
+      (1 / SimilarityProfile.q h p) p.2.1 := (hasDerivAt_id p.2.1).div_const _
   have hc := (hasDerivAt_slowSum_X ha h hf hq (SimilarityProfile.X h p)
     (SimilarityProfile.eta h p)).comp p.2.1 hx
   have hm := hc.const_mul (SimilarityProfile.q h p ^ b)
@@ -907,7 +907,7 @@ theorem partialS_physicalProfile {a : ℕ → ℕ} (ha : StrictMono a) {h : ℝ}
     AxisymmetricFields.partialS (physicalProfile a h b f) p =
       physicalProfile a h (b - 1) (fun j => SimilarityProfile.partialX (f j)) p := by
   have hd := ((physicalProfile_smoothAt ha hh hh1 hf b hp).differentiableAt (by simp)).hasFDerivAt
-  have hc := hd.comp_hasDerivAt p.2.1 ((hasDerivAt_const p.2.1 p.1).prodMk
+  have hc := hd.comp_hasDerivAt (F := Chart) p.2.1 ((hasDerivAt_const p.2.1 p.1).prodMk
     ((hasDerivAt_id p.2.1).prodMk (hasDerivAt_const p.2.1 p.2.2)))
   exact hc.unique (hasDerivAt_physicalProfile_s ha hh hh1 hf b hp)
 

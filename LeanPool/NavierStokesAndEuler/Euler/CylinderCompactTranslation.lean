@@ -144,7 +144,7 @@ theorem hasFDerivAt_zero (A : CompactField P V) :
 
 theorem derivativeMap_translation (D : CylinderL2 P (LiftTangent →L[ℝ] V)) (a : LiftTangent) :
     derivativeMap (liftMeasure P) (translate P a D) =
-      (translate P a).toContinuousLinearMap.comp (derivativeMap (liftMeasure P) D) := by
+      (translate (V := V) P a).toContinuousLinearMap.comp (derivativeMap (liftMeasure P) D) := by
   apply ContinuousLinearMap.ext
   intro v
   apply Lp.ext
@@ -161,7 +161,7 @@ theorem translation_hasFDerivAt (A : CompactField P V) (a : LiftTangent) :
     HasFDerivAt (fun b : LiftTangent => translate (V := V) P b A.toLp)
       (derivativeMap (liftMeasure P) (translate P a A.derivative.toLp)) a := by
   rw [derivativeMap_translation]
-  exact EulerIsometricAction.hasFDerivAt_all (translate P) (translate_add P)
+  exact EulerIsometricAction.hasFDerivAt_all (translate (V := V) P) (translate_add (V := V) P)
     A.toLp _ A.hasFDerivAt_zero a
 
 theorem translation_fderiv (A : CompactField P V) :

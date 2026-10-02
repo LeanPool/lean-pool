@@ -65,6 +65,7 @@ theorem apply_memLp (A : α →ᵇ (E →L[ℝ] F)) (u : Lp E 2 μ) :
     MemLp (fun x => A x (u x)) 2 μ := by
   apply (Lp.memLp u).of_le_mul (c := ‖A‖)
   · exact (continuous_fst.clm_apply continuous_snd).comp_aestronglyMeasurable
+      (f := fun x => (A x, u x))
       (A.continuous.aestronglyMeasurable.prodMk (Lp.aestronglyMeasurable u))
   · exact Filter.Eventually.of_forall (fun x => ((A x).le_opNorm (u x)).trans
       (mul_le_mul_of_nonneg_right (A.norm_coe_le_norm x) (norm_nonneg _)))

@@ -615,7 +615,7 @@ theorem stripClosedField_contDiffOn {f : ℝ × X → V}
     (hb : ∀ n : ℕ, ∃ C : ℝ, ∀ z ∈ openStrip, ‖iteratedFDeriv ℝ n f z‖ ≤ C) :
     ContDiffOn ℝ ∞ (closedField openStrip f) closedStrip := by
   simpa only [closure_openStrip] using
-    closedField_contDiffOn openStrip_isOpen openStrip_convex hf hb
+    closedField_contDiffOn (openStrip_isOpen (X := X)) (openStrip_convex (X := X)) hf hb
 
 private theorem closedInterval_subset_closure_openInterval :
     Icc (-1 : ℝ) 1 ⊆ closure (Ioo (-1 : ℝ) 1) := by

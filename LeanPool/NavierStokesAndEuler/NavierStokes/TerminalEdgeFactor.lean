@@ -500,7 +500,7 @@ noncomputable def angularFactor (C : ℝ) (d : TailData) (y0 : ℝ) (y : EdgePar
 theorem angularFactor_contDiff (C : ℝ) (d : TailData) (y0 : ℝ) :
     ContDiff ℝ ∞ (angularFactor C d y0) :=
   (boundaryCoefficient_contDiff C d y0).add
-    (((contDiff_snd.pow 3).div ((radius_contDiff d y0).pow 2)
+    ((((contDiff_snd (𝕜 := ℝ) (E := EdgeParam) (F := ℝ)).pow 3).div ((radius_contDiff d y0).pow 2)
       (fun y => (sq_pos_of_pos (radius_pos d y0 y)).ne')).mul
         ((ParametricFlatFactor.factor_contDiff (by norm_num : (0 : ℝ) < 4) 3
           (timeCoefficient_contDiff C d y0)).add
@@ -821,7 +821,9 @@ theorem profileRadius_square (y0 x : ℝ) :
   ring
 
 theorem profileZ_contDiff (y0 : ℝ) : ContDiff ℝ ∞ (profileZ y0) :=
-  (contDiff_const.mul (contDiff_const.sub (contDiff_fst.pow 2))).div
+  ((contDiff_const (𝕜 := ℝ) (E := ℝ × ℝ) (F := ℝ)).mul
+    ((contDiff_const (𝕜 := ℝ) (E := ℝ × ℝ) (F := ℝ)).sub
+      ((contDiff_fst (𝕜 := ℝ) (E := ℝ) (F := ℝ)).pow 2))).div
     ((profileS_contDiff y0).comp contDiff_snd) (fun y => (profileS_pos y0 y.2).ne')
 
 theorem profileZ_nonneg (y0 : ℝ) {y : ℝ × ℝ} (hη : y.1 ^ 2 ≤ 1) :
@@ -870,7 +872,8 @@ theorem profileCarrier_pos {C : ℝ} (hC : 0 < C) (d : TailData) (y0 : ℝ)
 noncomputable def profileChi (d : TailData) (η : ℝ) : ℝ := 2 * η / profileL d η
 
 theorem profileChi_contDiff (d : TailData) : ContDiff ℝ ∞ (profileChi d) :=
-  (contDiff_const.mul contDiff_id).div (profileL_contDiff d) (fun η => (profileL_pos d η).ne')
+  ((contDiff_const (𝕜 := ℝ) (E := ℝ) (F := ℝ)).mul contDiff_id).div (profileL_contDiff d)
+    (fun η => (profileL_pos d η).ne')
 
 /-- Profile boundary coefficient, given by `(2 * profileCarrier C d y0 y / profileRadius y0 y.2)
 * taperSlopeFactor d y.2`. -/
@@ -930,7 +933,8 @@ noncomputable def profileAngularStress (C : ℝ) (d : TailData) (y0 : ℝ) (y : 
 theorem profileAngularFactor_contDiff (C : ℝ) (d : TailData) (y0 : ℝ) :
     ContDiff ℝ ∞ (profileAngularFactor C d y0) :=
   (profileBoundaryCoefficient_contDiff C d y0).add
-    (((contDiff_snd.pow 3).div (((profileRadius_contDiff y0).comp contDiff_snd).pow 2)
+    ((((contDiff_snd (𝕜 := ℝ) (E := ℝ) (F := ℝ)).pow 3).div
+      (((profileRadius_contDiff y0).comp (contDiff_snd (𝕜 := ℝ) (E := ℝ) (F := ℝ))).pow 2)
       (fun y => (sq_pos_of_pos (profileRadius_pos y0 y.2)).ne')).mul
       ((ParametricFlatFactor.factor_contDiff (by norm_num : (0 : ℝ) < 4) 3
         (profileTimeCoefficient_contDiff C d y0)).add
@@ -1587,7 +1591,7 @@ theorem profileS_hasDerivAt (y0 x : ℝ) : HasDerivAt (profileS y0) (-profileS y
 
 theorem profileZ_hasDerivAt (y0 η x : ℝ) :
     HasDerivAt (fun u => profileZ y0 (η, u)) (profileZ y0 (η, x)) x := by
-  convert! (hasDerivAt_const x (2 * (1 - η ^ 2))).div
+  convert! (hasDerivAt_const (𝕜 := ℝ) (F := ℝ) x (2 * (1 - η ^ 2))).div
     (profileS_hasDerivAt y0 x) (profileS_pos y0 x).ne' using 1
   unfold profileZ
   dsimp only

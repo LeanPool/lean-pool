@@ -185,8 +185,8 @@ theorem averagedDrop_small_on_second_ramp (c : Parameters) {y : ℝ}
 noncomputable def shapeGradient (η : ℝ) : ℝ := 2 * η / (1 + η ^ 2)
 
 theorem shapeGradient_contDiff : ContDiff ℝ ∞ shapeGradient :=
-  (contDiff_const.mul contDiff_id).div (contDiff_const.add (contDiff_id.pow 2))
-    (fun η => by positivity)
+  ((contDiff_const (𝕜 := ℝ) (E := ℝ) (F := ℝ)).mul contDiff_id).div
+    (contDiff_const.add (contDiff_id.pow 2)) (fun η => by positivity)
 
 theorem parameter_square_le_one {η : ℝ} (hη : |η| ≤ 1) : η ^ 2 ≤ 1 := by
   have h := sq_le_sq₀ (abs_nonneg η) (by norm_num : (0 : ℝ) ≤ 1) |>.mpr hη
@@ -212,8 +212,8 @@ theorem abs_shapeGradient_le (η : ℝ) : |shapeGradient η| ≤ 2 * |η| := by
 theorem dropCoefficient_hasDerivAt {m y : ℝ} (hm : 0 < m) (hy : 0 < y) :
     HasDerivAt (dropCoefficient m)
       (-(4 * deriv sigma (Real.log y / m) / (m * y))) y := by
-  have hd := ((sigma_contDiff.differentiable (by simp) (Real.log y / m)).hasDerivAt.comp y
-    ((Real.hasDerivAt_log hy.ne').div_const m)).const_sub 1
+  have hd := ((sigma_contDiff.differentiable (by simp) (Real.log y / m)).hasDerivAt.comp
+    (h := fun t : ℝ => Real.log t / m) y ((Real.hasDerivAt_log hy.ne').div_const m)).const_sub 1
   have he : dropCoefficient m =ᶠ[𝓝 y] (fun t => 4 * (1 - sigma (Real.log t / m))) := by
     filter_upwards [Ioi_mem_nhds hy] with t ht
     exact dropCoefficient_eq hm ht
@@ -257,11 +257,11 @@ noncomputable def transportW (c : Parameters) (h y η : ℝ) : ℝ :=
 
 /-- Angular rate, given by `1 + slope c.dropLength c.lam y`. -/
 noncomputable def angularRate (c : Parameters) (y : ℝ) : ℝ :=
-  1 + slope c.dropLength c.lam y
+  1 + OutgoingSchedule.slope c.dropLength c.lam y
 
 /-- Angular source as an element of `ℝ`. -/
 noncomputable def angularSource (c : Parameters) (h η y : ℝ) : ℝ :=
-  -slope c.dropLength c.lam y * transportW c h y η -
+  -OutgoingSchedule.slope c.dropLength c.lam y * transportW c h y η -
     h * (1 - 2 * dropCoefficient c.m y * η ^ 2) +
       (D h + d η * dropCoefficient c.m y) * η * shapeGradient η
 
@@ -341,13 +341,13 @@ theorem angularRate_bounds (c : Parameters) (y : ℝ) :
   constructor <;> linarith [c.lam_lt]
 
 theorem slope_nonneg_before_dropEnd (c : Parameters) {y : ℝ}
-    (hy : y ≤ c.dropLength + 1) : 0 ≤ slope c.dropLength c.lam y := by
+    (hy : y ≤ c.dropLength + 1) : 0 ≤ OutgoingSchedule.slope c.dropLength c.lam y := by
   simp only [OutgoingSchedule.slope, sigma_zero (show y - (c.dropLength + 1) ≤ 0 by linarith),
     mul_zero, sub_zero]
   exact mul_nonneg (by norm_num) (sub_nonneg.mpr (sigma_le_one y))
 
 theorem slope_nonpos_after_first_ramp (c : Parameters) {y : ℝ}
-    (hy : 1 ≤ y) : slope c.dropLength c.lam y ≤ 0 := by
+    (hy : 1 ≤ y) : OutgoingSchedule.slope c.dropLength c.lam y ≤ 0 := by
   simp only [OutgoingSchedule.slope, sigma_one hy, sub_self, mul_zero, zero_sub]
   exact neg_nonpos.mpr (mul_nonneg c.lam_pos.le (sigma_nonneg _))
 
@@ -371,7 +371,7 @@ theorem transportW_second_ramp (c : Parameters) {h y η : ℝ} (hh : 0 ≤ h)
 theorem angularSource_lower (c : Parameters) {h η y : ℝ} (hh : 0 ≤ h)
     (hh1 : h ≤ 1 / 100) (_hy : 0 ≤ y) (hη : |η| ≤ 1) :
     (49 / 100) * η ^ 2 - h ≤ angularSource c h η y := by
-  have hlW : 0 ≤ -slope c.dropLength c.lam y * transportW c h y η := by
+  have hlW : 0 ≤ -OutgoingSchedule.slope c.dropLength c.lam y * transportW c h y η := by
     by_cases hy1 : y ≤ 1
     · have hW : transportW c h y η ≤ 0 := by
         rw [transportW, averagedDrop_early c hy1]
@@ -469,10 +469,10 @@ theorem linearLag_lower_barrier {r b : ℝ → ℝ} (hr : Continuous r) (hb : Co
     _ ≤ _ := mul_le_mul_of_nonneg_left (add_le_add hq hi) (Real.exp_pos _).le
 
 theorem slope_integral_upper (c : Parameters) {y : ℝ} (hy : 0 ≤ y) :
-    OutgoingSchedule.primitive (slope c.dropLength c.lam) y ≤ 3 / 5 := by
+    OutgoingSchedule.primitive (OutgoingSchedule.slope c.dropLength c.lam) y ≤ 3 / 5 := by
   have hc := (slope_contDiff c.dropLength c.lam).continuous
   have hlocal : ∀ z : ℝ, 0 ≤ z → z ≤ 1 →
-      (∫ t in (0 : ℝ)..z, slope c.dropLength c.lam t) ≤ 3 / 5 := by
+      (∫ t in (0 : ℝ)..z, OutgoingSchedule.slope c.dropLength c.lam t) ≤ 3 / 5 := by
     intro z hz hz1
     have hi := intervalIntegral.integral_mono_on (μ := volume) hz
       (hc.intervalIntegrable 0 z) (continuous_const.intervalIntegrable 0 z)
@@ -489,12 +489,12 @@ theorem slope_integral_upper (c : Parameters) {y : ℝ} (hy : 0 ≤ y) :
     have hadd := intervalIntegral.integral_add_adjacent_intervals (μ := volume)
       (hc.intervalIntegrable 0 1) (hc.intervalIntegrable 1 y)
     have h0 := hlocal 1 (by norm_num) le_rfl
-    change (∫ t in (0 : ℝ)..y, slope c.dropLength c.lam t) ≤ 3 / 5
+    change (∫ t in (0 : ℝ)..y, OutgoingSchedule.slope c.dropLength c.lam t) ≤ 3 / 5
     linarith
 
 theorem angularRate_primitive (c : Parameters) (y : ℝ) :
     OutgoingSchedule.primitive (angularRate c) y =
-      y + OutgoingSchedule.primitive (slope c.dropLength c.lam) y := by
+      y + OutgoingSchedule.primitive (OutgoingSchedule.slope c.dropLength c.lam) y := by
   unfold OutgoingSchedule.primitive angularRate
   rw [intervalIntegral.integral_add (continuous_const.intervalIntegrable 0 y)
     ((slope_contDiff c.dropLength c.lam).continuous.intervalIntegrable 0 y)]
@@ -591,14 +591,14 @@ theorem clockEnergy_initial (c : Parameters) : clockEnergy c 0 = c.P ^ 2 := by
 
 theorem clockEnergy_hasDerivAt (c : Parameters) (y : ℝ) :
     HasDerivAt (clockEnergy c)
-      ((2 * slope c.dropLength c.lam y - 1) * clockEnergy c y) y := by
+      ((2 * OutgoingSchedule.slope c.dropLength c.lam y - 1) * clockEnergy c y) y := by
   convert! (radialAmplitude_hasDerivAt c.P c.dropLength c.lam y).pow 2 using 1
   simp only [clockEnergy]
   ring
 
 theorem weightedClockEnergy_hasDerivAt (c : Parameters) (y : ℝ) :
     HasDerivAt (weightedClockEnergy c)
-      (2 * slope c.dropLength c.lam y * weightedClockEnergy c y) y := by
+      (2 * OutgoingSchedule.slope c.dropLength c.lam y * weightedClockEnergy c y) y := by
   convert! (Real.hasDerivAt_exp y).mul (clockEnergy_hasDerivAt c y) using 1
   simp only [weightedClockEnergy]
   ring
@@ -1079,7 +1079,7 @@ noncomputable def directionRatio (v : TailData) (y η : ℝ) : ℝ :=
 
 /-- Radial A, given by `2 - 2 * slope c.dropLength c.lam y`. -/
 noncomputable def radialA (c : Parameters) (y : ℝ) : ℝ :=
-  2 - 2 * slope c.dropLength c.lam y
+  2 - 2 * OutgoingSchedule.slope c.dropLength c.lam y
 
 theorem shear_is_actual (c : Parameters) (amp : ℝ → ℝ) {y : ℝ}
     (hy : y < c.pulseStart) (η : ℝ) :
@@ -1517,7 +1517,7 @@ theorem canonical_E_parameter_ratio {v : TailData} {K : ℝ}
 theorem canonical_H_radial_ratio {v : TailData} {K : ℝ}
     (w : UniformAngularReset.ResetWitness v K) {y : ℝ} (hy : y < v.core.endpoint) (η : ℝ) :
     OutgoingHistories.dY (OutgoingHistories.H w) (y, η) /
-      OutgoingHistories.H w (y, η) = slope v.core.dropLength v.core.lam y := by
+      OutgoingHistories.H w (y, η) = OutgoingSchedule.slope v.core.dropLength v.core.lam y := by
   have he : (fun t => OutgoingHistories.H w (t, η)) =ᶠ[𝓝 y]
       (fun t => Real.exp (t / 2) * (radialAmplitude v.core.P v.core.dropLength v.core.lam t * shape
           η)) := by
@@ -1528,7 +1528,7 @@ theorem canonical_H_radial_ratio {v : TailData} {K : ℝ}
   have hd' := hd.congr_of_eventuallyEq he
   have hx := (OutgoingHistories.dY_hasDerivAt (OutgoingHistories.H_smooth w) (y, η)).unique hd'
   have hp : OutgoingHistories.dY (OutgoingHistories.H w) (y, η) =
-      slope v.core.dropLength v.core.lam y * OutgoingHistories.H w (y, η) := by
+      OutgoingSchedule.slope v.core.dropLength v.core.lam y * OutgoingHistories.H w (y, η) := by
     rw [hx, OutgoingHistories.H, OutgoingHistories.E_before w η hy.le]
     simp only [angular, id_eq]
     ring
@@ -1712,7 +1712,8 @@ theorem radialA_bounds (c : Parameters) (y : ℝ) : (4 / 5 : ℝ) ≤ radialA c 
 
 theorem radialA_upper_lam (c : Parameters) {y : ℝ} (hy : 1 ≤ y) :
     radialA c y ≤ 2 + 2 * c.lam := by
-  have hs : slope c.dropLength c.lam y = -c.lam * sigma (y - (c.dropLength + 1)) := by
+  have hs : OutgoingSchedule.slope c.dropLength c.lam y =
+      -c.lam * sigma (y - (c.dropLength + 1)) := by
     simp [OutgoingSchedule.slope, sigma_one hy]
   unfold radialA
   rw [hs]

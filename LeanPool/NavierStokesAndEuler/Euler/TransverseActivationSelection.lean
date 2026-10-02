@@ -253,18 +253,19 @@ omit [CompleteSpace E] in
 continuous_subtype_val).smul P.continuous⟩`. -/
 def trialFrame : C(Icc (0 : ℝ) T, U →L[ℝ] E) :=
   ⟨fun t => ramp T L t • P t,
-    ((ramp_continuous T L).comp continuous_subtype_val).smul P.continuous⟩
+    ((ramp_continuous T L).comp continuous_subtype_val).smul (X := U →L[ℝ] E) P.continuous⟩
 
 /-- Trial frame derivative as an element of `C(Icc (0 : ℝ) T, U →L[ℝ] E)`. -/
 def trialFrameDerivative : C(Icc (0 : ℝ) T, U →L[ℝ] E) :=
   ⟨fun t => rampDerivative T L t • P t + ramp T L t • P₁ t,
-    (((rampDerivative_continuous T L).comp continuous_subtype_val).smul P.continuous).add
-      (((ramp_continuous T L).comp continuous_subtype_val).smul P₁.continuous)⟩
+    (((rampDerivative_continuous T L).comp continuous_subtype_val).smul (X := U →L[ℝ] E)
+      P.continuous).add
+      (((ramp_continuous T L).comp continuous_subtype_val).smul (X := U →L[ℝ] E) P₁.continuous)⟩
 
 /-- Trial derivative, given by `(pathLpOperator T hT).comp (operatorEvaluation T
 (trialFrameDerivative T L P P₁))`. -/
 def trialDerivative : U →L[ℝ] TimeLp T E :=
-  (pathLpOperator T hT).comp (operatorEvaluation T (trialFrameDerivative T L P P₁))
+  (pathLpOperator (E := E) T hT).comp (operatorEvaluation T (trialFrameDerivative T L P P₁))
 
 variable (hd : ∀ t : Icc (0 : ℝ) T,
   HasDerivWithinAt (extendPath T hT P) (P₁ t) (Icc (0 : ℝ) T) t)
@@ -272,7 +273,7 @@ variable (hd : ∀ t : Icc (0 : ℝ) T,
 include hd in
 omit [CompleteSpace E] in
 theorem trialFrame_hasDerivWithinAt (t : Icc (0 : ℝ) T) :
-    HasDerivWithinAt (extendPath T hT (trialFrame T L P))
+    HasDerivWithinAt (extendPath (Y := U →L[ℝ] E) T hT (trialFrame T L P))
       (trialFrameDerivative T L P P₁ t) (Icc (0 : ℝ) T) t := by
   have hs := (ramp_hasDerivAt T L t).hasDerivWithinAt.smul (hd t)
   have hs' : HasDerivWithinAt (fun s => ramp T L s • extendPath T hT P s)
@@ -289,7 +290,7 @@ omit [CompleteSpace E] in
 /-- The trial derivative is the actual derivative of its explicit ramp-times-projection path. -/
 theorem trialDerivative_realizes (Y : U) :
     ∀ᵐ t ∂timeMeasure T,
-      HasDerivAt (fun s => extendPath T hT (trialFrame T L P) s Y)
+      HasDerivAt (fun s => extendPath (Y := U →L[ℝ] E) T hT (trialFrame T L P) s Y)
         (trialDerivative T hT L P P₁ Y t) t := by
   have hmem : ∀ᵐ t ∂timeMeasure T, t ∈ Ioo (0 : ℝ) T := by
     change ∀ᵐ t ∂volume.restrict (Icc (0 : ℝ) T), t ∈ Ioo (0 : ℝ) T
@@ -309,11 +310,11 @@ theorem trialDerivative_realizes (Y : U) :
 include hd in
 /-- Integrating the constructed L² derivative gives the prescribed trial at every time. -/
 theorem initialPrimitive_trialDerivative (Y : U) (t : Icc (0 : ℝ) T) :
-    initialPrimitive T hT (trialDerivative T hT L P P₁ Y) t = ramp T L t • P t Y := by
-  let η : ℝ → E := fun s => extendPath T hT (trialFrame T L P) s Y
+    initialPrimitive (E := E) T hT (trialDerivative T hT L P P₁ Y) t = ramp T L t • P t Y := by
+  let η : ℝ → E := fun s => extendPath (Y := U →L[ℝ] E) T hT (trialFrame T L P) s Y
   have hη : AbsolutelyContinuousOnInterval η 0 T :=
     clm_apply_absolutelyContinuous
-      (operatorPath_absolutelyContinuous T hT (trialFrame T L P)
+      (operatorPath_absolutelyContinuous (E := U) (F := E) T hT (trialFrame T L P)
         (trialFrameDerivative T L P P₁) (trialFrame_hasDerivWithinAt T hT L P P₁ hd))
       ((LipschitzWith.const Y).lipschitzOnWith.absolutelyContinuousOnInterval)
   have hηd := trialDerivative_realizes T hT L P P₁ hd Y
@@ -331,9 +332,9 @@ theorem initialPrimitive_trialDerivative (Y : U) (t : Icc (0 : ℝ) T) :
 
 include hd in
 theorem initialPrimitiveTimeLp_trialDerivative (Y : U) :
-    initialPrimitiveTimeLp T hT (trialDerivative T hT L P P₁ Y) =
+    initialPrimitiveTimeLp (E := E) T hT (trialDerivative T hT L P P₁ Y) =
       pathLp T hT (operatorEvaluation T (trialFrame T L P) Y) := by
-  change pathLp T hT (initialPrimitive T hT (trialDerivative T hT L P P₁ Y)) = _
+  change pathLp T hT (initialPrimitive (E := E) T hT (trialDerivative T hT L P P₁ Y)) = _
   apply congrArg (pathLp T hT)
   ext t
   exact initialPrimitive_trialDerivative T hT L P P₁ hd Y t
@@ -410,7 +411,7 @@ include hd in
 /-- The corresponding physical displacement cost retains the inverse layer width. -/
 theorem trialDisplacement_norm_sq_le (hL : 0 < L) (hLT : 1 ≤ L * T)
     (hP : ∀ t, ‖P t‖ ≤ 1) (Y : U) :
-    ‖initialPrimitiveTimeLp T hT (trialDerivative T hT L P P₁ Y)‖ ^ 2 ≤
+    ‖initialPrimitiveTimeLp (E := E) T hT (trialDerivative T hT L P P₁ Y)‖ ^ 2 ≤
       (2 / L) * ‖Y‖ ^ 2 := by
   rw [initialPrimitiveTimeLp_trialDerivative T hT L P P₁ hd, pathLp_norm_sq]
   have hv := ((ramp_continuous T L).pow 2).intervalIntegrable (μ := volume) 0 T
@@ -573,7 +574,8 @@ theorem normalProjection_continuous {α : Type*} [TopologicalSpace α]
   have hr : Continuous (fun a => rankOne ℝ (E := E) (F := E) (f a) (f a)) :=
     R.continuous₂.comp₂ hf hf
   exact continuous_const.sub
-    (((hf.norm.pow 2).inv₀ (fun a => pow_ne_zero 2 (norm_ne_zero_iff.mpr (hne a)))).smul hr)
+    (((hf.norm.pow 2).inv₀ (fun a => pow_ne_zero 2 (norm_ne_zero_iff.mpr (hne a)))).smul
+      (X := E →L[ℝ] E) hr)
 
 theorem normalProjectionDerivative_continuous {α : Type*} [TopologicalSpace α]
     {f g : α → E} (hf : Continuous f) (hg : Continuous g) (hne : ∀ a, f a ≠ 0) :
@@ -589,7 +591,7 @@ theorem normalProjectionDerivative_continuous {α : Type*} [TopologicalSpace α]
   have hi := (hf.norm.pow 2).inv₀ hn
   have hq := ((hf.inner hg).const_mul 2).neg.div ((hf.norm.pow 2).pow 2)
     (fun a => pow_ne_zero 2 (hn a))
-  exact ((hq.smul h0).add (hi.smul (h1.add h2))).neg
+  exact ((hq.smul (X := E →L[ℝ] E) h0).add (hi.smul (X := E →L[ℝ] E) (h1.add h2))).neg
 
 /-- The bound is independent of the length of the ray. -/
 theorem normalProjectionDerivative_norm_le (m m₁ : E) (hm : m ≠ 0) :
@@ -705,7 +707,7 @@ variable (hd : ∀ t : Icc (0 : ℝ) T,
 
 include hd in
 theorem projectionPath_hasDerivWithinAt (t : Icc (0 : ℝ) T) :
-    HasDerivWithinAt (extendPath T hT (projectionPath T m hne R))
+    HasDerivWithinAt (extendPath (Y := U →L[ℝ] E) T hT (projectionPath T m hne R))
       (projectionDerivativePath T m m₁ hne R t) (Icc (0 : ℝ) T) t := by
   have hm : extendPath T hT m t ≠ 0 := by
     simpa only [extendPath, projIcc_of_mem hT t.property] using hne t
@@ -745,7 +747,7 @@ def activationTrial (h : ℝ) : U →L[ℝ] TimeLp T E :=
 
 include hd in
 theorem activationTrial_primitive (h : ℝ) (Y : U) (t : Icc (0 : ℝ) T) :
-    initialPrimitive T hT (activationTrial T hT m m₁ hne R h Y) t =
+    initialPrimitive (E := E) T hT (activationTrial T hT m m₁ hne R h Y) t =
       ramp T h t • normalProjection (m t) (R Y) :=
   initialPrimitive_trialDerivative T hT h (projectionPath T m hne R)
     (projectionDerivativePath T m m₁ hne R)
@@ -753,14 +755,14 @@ theorem activationTrial_primitive (h : ℝ) (Y : U) (t : Icc (0 : ℝ) T) :
 
 include hd in
 theorem activationTrial_tangent (h : ℝ) (Y : U) (t : Icc (0 : ℝ) T) :
-    ⟪m t, initialPrimitive T hT (activationTrial T hT m m₁ hne R h Y) t⟫_ℝ = 0 := by
+    ⟪m t, initialPrimitive (E := E) T hT (activationTrial T hT m m₁ hne R h Y) t⟫_ℝ = 0 := by
   rw [activationTrial_primitive T hT m m₁ hne R hd, real_inner_smul_right,
     normalProjection_tangent (m t) (hne t), mul_zero]
 
 include hd in
 theorem activationTrial_terminal (h : ℝ) (hLayer : 1 ≤ h * T)
     (hR : ∀ Y, ⟪m ⟨T, hT, le_rfl⟩, R Y⟫_ℝ = 0) (Y : U) :
-    initialPrimitive T hT (activationTrial T hT m m₁ hne R h Y) ⟨T, hT, le_rfl⟩ = R Y := by
+    initialPrimitive (E := E) T hT (activationTrial T hT m m₁ hne R h Y) ⟨T, hT, le_rfl⟩ = R Y := by
   rw [activationTrial_primitive T hT m m₁ hne R hd, ramp_terminal hLayer,
     one_smul, normalProjection_fixed _ _ (hR Y)]
 
@@ -805,10 +807,10 @@ theorem activation_endpoint_norm
     (projectionPath_hasDerivWithinAt T hT m m₁ hne R hd) hh hLayer hproj Y
   change ‖activationTrial T hT m m₁ hne R h Y‖ ^ 2 ≤
     (4 * h + 4 * (4 * (CM * h)) ^ 2 / h) * ‖Y‖ ^ 2 at hD
-  change ‖initialPrimitiveTimeLp T hT (activationTrial T hT m m₁ hne R h Y)‖ ^ 2 ≤
+  change ‖initialPrimitiveTimeLp (E := E) T hT (activationTrial T hT m m₁ hne R h Y)‖ ^ 2 ≤
     (2 / h) * ‖Y‖ ^ 2 at hη
   let u := activationTrial T hT m m₁ hne R h Y
-  let η := initialPrimitiveTimeLp T hT u
+  let η := initialPrimitiveTimeLp (E := E) T hT u
   have hp : -⟪timeMultiplier T hT H η, η⟫_ℝ ≤ CH * h ^ 2 * ‖η‖ ^ 2 := by
     exact (neg_le_abs _).trans ((potential_abs_bound T hT H η).trans
       (mul_le_mul_of_nonneg_right hHnorm (sq_nonneg _)))
@@ -934,9 +936,9 @@ theorem select_actual_activation
   let η := initialRealPrimitive T u
   let v := physicalVelocityPath T hT.le Q Q₁ c hc hQ H u
   let w := fun t => v t - extendPath T hT.le M t (η t)
-  have hLt : ∀ Z t, ⟪m t, initialPrimitive T hT.le (L Z) t⟫_ℝ = 0 :=
+  have hLt : ∀ Z t, ⟪m t, initialPrimitive (E := E) T hT.le (L Z) t⟫_ℝ = 0 :=
     activationTrial_tangent T hT.le m m₁ hne R.toContinuousLinearMap hdm h
-  have hLT : ∀ Z, initialPrimitive T hT.le (L Z) ⟨T, hT.le, le_rfl⟩ = R Z :=
+  have hLT : ∀ Z, initialPrimitive (E := E) T hT.le (L Z) ⟨T, hT.le, le_rfl⟩ = R Z :=
     activationTrial_terminal T hT.le m m₁ hne R.toContinuousLinearMap hdm h hLayer hR
   have hηT : η T = R Y :=
     (endpointDisplacement_terminal T hT.le (fun t => m t) H K hK hH hsmall L Y).trans (hLT Y)

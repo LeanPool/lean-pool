@@ -253,9 +253,10 @@ theorem radiusPoint_contDiff (t z : ℝ) : ContDiff ℝ ∞ (fun r => radiusPoin
 theorem radialSlice_hasDerivAt {G : PhysicalProfile} {t r z : ℝ}
     (hG : DifferentiableAt ℝ G (radiusPoint t r z)) :
     HasDerivAt (radialSlice G t z) (r * partialS G (radiusPoint t r z)) r := by
-  have hc := (hasDerivAt_const r t).prodMk
+  have hc := (hasDerivAt_const r t).prodMk (G := ℝ × ℝ)
     ((RadialHeatProfile.radiusSquared_hasDerivAt r).prodMk (hasDerivAt_const r z))
-  have hd := hG.hasFDerivAt.comp_hasDerivAt r hc
+  have hd := hG.hasFDerivAt.comp_hasDerivAt (F := PhysicalPoint)
+    (f := fun s => radiusPoint t s z) r hc
   apply hd.congr_deriv
   rw [show (0, (r, 0)) = r • ((0, (1, 0)) : PhysicalPoint) by ext <;> simp, map_smul]
   rfl
@@ -263,7 +264,8 @@ theorem radialSlice_hasDerivAt {G : PhysicalProfile} {t r z : ℝ}
 theorem timeSlice_hasDerivAt {G : PhysicalProfile} {p : PhysicalPoint}
     (hG : DifferentiableAt ℝ G p) :
     HasDerivAt (fun t => G (t, p.2)) (partialT G p) p.1 :=
-  hG.hasFDerivAt.comp_hasDerivAt p.1 ((hasDerivAt_id p.1).prodMk (hasDerivAt_const p.1 p.2))
+  hG.hasFDerivAt.comp_hasDerivAt (F := PhysicalPoint) (f := fun t => (t, p.2)) p.1
+    ((hasDerivAt_id p.1).prodMk (hasDerivAt_const p.1 p.2))
 
 theorem partialS_contDiffAt {G : PhysicalProfile} {p : PhysicalPoint} {m n : WithTop ℕ∞}
     (hG : ContDiffAt ℝ n G p) (hmn : m + 1 ≤ n) : ContDiffAt ℝ m (partialS G) p :=
@@ -326,7 +328,7 @@ theorem flattening_time_hasDerivAt {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
       (deriv f (Real.log (SimilarityProfile.X h p)) /
         (SimilarityProfile.q h p * CoordinateAlgebra.L h (SimilarityProfile.eta h p))) p.1 := by
   have hXpos : 0 < SimilarityProfile.X h p := div_pos hs (SimilarityProfile.q_pos hh hh1 ht)
-  have hd := hf.hasDerivAt.comp p.1
+  have hd := hf.hasDerivAt.comp (h := fun t => Real.log (SimilarityProfile.X h (t, p.2))) p.1
     ((SimilarityProfile.X_hasDerivAt_time hh hh1 ht).log hXpos.ne')
   apply hd.congr_deriv
   unfold CoordinateAlgebra.xTime
@@ -505,8 +507,9 @@ theorem canonicalPressure_partialS {F : PhysicalProfile} {p : PhysicalPoint} {a 
     (hp : DifferentiableAt ℝ (canonicalPressure F) p) :
     partialS (canonicalPressure F) p = F p ^ 2 := by
   have hd := neg_tailIntegral_hasDerivAt ha hi hc
-  have hp' := hp.hasFDerivAt.comp_hasDerivAt p.2.1
-    ((hasDerivAt_const p.2.1 p.1).prodMk
+  have hp' := hp.hasFDerivAt.comp_hasDerivAt (F := PhysicalPoint)
+    (f := fun s => (p.1, (s, p.2.2))) p.2.1
+    ((hasDerivAt_const p.2.1 p.1).prodMk (G := ℝ × ℝ)
       ((hasDerivAt_id p.2.1).prodMk (hasDerivAt_const p.2.1 p.2.2)))
   exact hp'.unique hd
 

@@ -72,26 +72,28 @@ theorem slicedJet_fieldSum (s : Set ℝ) (M : ℕ) (κ : ℝ) (u : ℕ → Domai
     (ht : ∀ n ≤ M, DifferentiableWithinAt ℝ (fun t => u n (t, z.2)) s z.1)
     (hx : ∀ n ≤ M, DifferentiableAt ℝ (fun y => u n (z.1, y)) z.2) :
     slicedJet s (fieldSum M κ u) z=evaluate M κ (fun n => slicedJet s (u n) z) := by
-  have htime := HasDerivWithinAt.fun_sum (u := range (M+1))
-    (fun n hn => ((ht n (by have h := mem_range.mp hn; omega)).hasDerivWithinAt).const_smul (κ^n))
-  have hspace := HasFDerivAt.fun_sum (u := range (M+1))
-    (fun n hn => ((hx n (by have h := mem_range.mp hn; omega)).hasFDerivAt).const_smul (κ^n))
+  have htime := HasDerivWithinAt.fun_sum (u := Finset.range (M+1))
+    (fun n hn => ((ht n (by have h := Finset.mem_range.mp hn; omega)).hasDerivWithinAt).const_smul
+      (κ^n))
+  have hspace := HasFDerivAt.fun_sum (u := Finset.range (M+1))
+    (fun n hn => ((hx n (by have h := Finset.mem_range.mp hn; omega)).hasFDerivAt).const_smul (κ^n))
   have hdt : derivWithin (fun t => fieldSum M κ u (t,z.2)) s z.1 =
-      ∑ n ∈ range (M+1), κ^n • derivWithin (fun t => u n (t,z.2)) s z.1 := htime.derivWithin hs
+      ∑ n ∈ Finset.range (M+1), κ^n • derivWithin (fun t => u n (t,z.2)) s z.1 :=
+    htime.derivWithin hs
   have hdx : fderiv ℝ (fun y => fieldSum M κ u (z.1,y)) z.2 =
-      ∑ n ∈ range (M+1), κ^n • fderiv ℝ (fun y => u n (z.1,y)) z.2 := hspace.fderiv
+      ∑ n ∈ Finset.range (M+1), κ^n • fderiv ℝ (fun y => u n (z.1,y)) z.2 := hspace.fderiv
   apply Prod.ext
-  · change (∑ n ∈ range (M+1), κ^n • u n z) =
-      (AddMonoidHom.fst E (Domain →L[ℝ] E)) (∑ n ∈ range (M+1), κ^n • slicedJet s (u n) z)
+  · change (∑ n ∈ Finset.range (M+1), κ^n • u n z) =
+      (AddMonoidHom.fst E (Domain →L[ℝ] E)) (∑ n ∈ Finset.range (M+1), κ^n • slicedJet s (u n) z)
     rw [map_sum]
     rfl
   · change joinDerivative _ _ =
-      (AddMonoidHom.snd E (Domain →L[ℝ] E)) (∑ n ∈ range (M+1), κ^n • slicedJet s (u n) z)
+      (AddMonoidHom.snd E (Domain →L[ℝ] E)) (∑ n ∈ Finset.range (M+1), κ^n • slicedJet s (u n) z)
     rw [hdt, hdx, map_sum]
     change joinDerivative
-      (∑ n ∈ range (M+1), κ^n • derivWithin (fun t => u n (t,z.2)) s z.1)
-      (∑ n ∈ range (M+1), κ^n • fderiv ℝ (fun y => u n (z.1,y)) z.2) =
-      ∑ n ∈ range (M+1), κ^n • joinDerivative
+      (∑ n ∈ Finset.range (M+1), κ^n • derivWithin (fun t => u n (t,z.2)) s z.1)
+      (∑ n ∈ Finset.range (M+1), κ^n • fderiv ℝ (fun y => u n (z.1,y)) z.2) =
+      ∑ n ∈ Finset.range (M+1), κ^n • joinDerivative
         (derivWithin (fun t => u n (t,z.2)) s z.1) (fderiv ℝ (fun y => u n (z.1,y)) z.2)
     apply ContinuousLinearMap.ext
     intro h

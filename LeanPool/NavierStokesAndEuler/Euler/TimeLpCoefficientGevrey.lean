@@ -99,10 +99,10 @@ theorem productDerivative_bound
       (T*D+C) * majorant R d n := by
   have hMB := contDiff_timeMultiplier T hT B hB
   have hright := clm_comp_const_right_bound
-    (fun y => timeMultiplier T hT (B y)) (primitiveTimeLp (E := E) T hT)
+    (fun y => timeMultiplier (E := E) (F := F) T hT (B y)) (primitiveTimeLp (E := E) T hT)
     hMB R D hR hD d (timeMultiplier_bound T hT B hB R D hR hD d hb)
   have hsum := add_bound
-    (fun y => (timeMultiplier T hT (B y)).comp (primitiveTimeLp T hT))
+    (fun y => (timeMultiplier T hT (B y)).comp (primitiveTimeLp (E := E) T hT))
     (fun y => timeMultiplier T hT (A y))
     (hMB.clm_comp contDiff_const) (contDiff_timeMultiplier T hT A hA)
     R (‖primitiveTimeLp (E := E) T hT‖*D) C d hright

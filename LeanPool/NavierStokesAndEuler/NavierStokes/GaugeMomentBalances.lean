@@ -408,7 +408,7 @@ theorem radialPartial_smooth {F : ℝ × S → ℝ} (hF : ContDiff ℝ ∞ F) :
 
 theorem radialPartial_eq_deriv {F : ℝ × S → ℝ} (hF : ContDiff ℝ ∞ F) (R : ℝ) (s : S) :
     radialPartial F (R, s) = deriv (fun q => F (q, s)) R := by
-  have hd := ((hF.differentiable (by simp)) (R, s)).hasFDerivAt.comp_hasDerivAt R
+  have hd := ((hF.differentiable (by simp)) (R, s)).hasFDerivAt.comp_hasDerivAt (F := ℝ × S) R
     ((hasDerivAt_id R).prodMk (hasDerivAt_const R s))
   exact hd.deriv.symm
 
@@ -658,9 +658,10 @@ theorem integrated_angular_along {a b : ℝ} (ε : ℝ) (z t : S)
     {v radialFlux axialFlux virtualFlux : (ℝ × S → ℝ)}
     (hv : RadialShell a b v) (hr : RadialShell a b radialFlux)
     (hz : RadialShell a b axialFlux) (hT : RadialShell a b virtualFlux)
-    (hmass : radialMoment 2 v = 0) (p : S) :
-    radialMoment 2 (angularBalanceAlong ε z t v radialFlux axialFlux virtualFlux) p =
-      ε * fderiv ℝ (radialMoment 2 axialFlux) p z := by
+    (hmass : IntegratedMeanBalances.radialMoment 2 v = 0) (p : S) :
+    IntegratedMeanBalances.radialMoment 2
+        (angularBalanceAlong ε z t v radialFlux axialFlux virtualFlux) p =
+      ε * fderiv ℝ (IntegratedMeanBalances.radialMoment 2 axialFlux) p z := by
   have halg := moment_balance_algebra 2 (-ε) ε (ε ^ 2)
     (fun r => parameterPartial t v (r, p))
     (radialDivergence 2 (fun r => radialFlux (r, p)))
@@ -682,9 +683,10 @@ theorem integrated_angular_along {a b : ℝ} (ε : ℝ) (z t : S)
   rw [halg, moment_angular_divergence (hr.slice_smooth p) (hr.slice_compact p),
     moment_angular_divergence (hT.slice_smooth p) (hT.slice_compact p),
     moment_angular_viscosity (hv.slice_smooth p) (hv.slice_compact p)]
-  change (-ε) * radialMoment 2 (parameterPartial t v) p + 0 +
-    ε * radialMoment 2 (parameterPartial z axialFlux) p -
-    ε * (0 + ε ^ 2 * radialMoment 2 (parameterPartial z (parameterPartial z v)) p) - 0 = _
+  change (-ε) * IntegratedMeanBalances.radialMoment 2 (parameterPartial t v) p + 0 +
+    ε * IntegratedMeanBalances.radialMoment 2 (parameterPartial z axialFlux) p -
+    ε * (0 + ε ^ 2 *
+      IntegratedMeanBalances.radialMoment 2 (parameterPartial z (parameterPartial z v)) p) - 0 = _
   rw [ht, hzz, ← hd]
   ring
 
@@ -693,9 +695,10 @@ theorem integrated_axial_along {a b : ℝ} (ε : ℝ) (z t : S)
     (hγ : RadialShell a b γ) (hr : RadialShell a b radialFlux)
     (hz : RadialShell a b axialFlux)
     (hT : RadialShell a b virtualFlux)
-    (hmass : radialMoment 1 γ = 0) (p : S) :
-    radialMoment 1 (axialBalanceAlong ε z t γ radialFlux axialFlux virtualFlux) p =
-      ε * fderiv ℝ (radialMoment 1 axialFlux) p z := by
+    (hmass : IntegratedMeanBalances.radialMoment 1 γ = 0) (p : S) :
+    IntegratedMeanBalances.radialMoment 1
+        (axialBalanceAlong ε z t γ radialFlux axialFlux virtualFlux) p =
+      ε * fderiv ℝ (IntegratedMeanBalances.radialMoment 1 axialFlux) p z := by
   have halg := moment_balance_algebra 1 (-ε) ε (ε ^ 2)
     (fun r => parameterPartial t γ (r, p))
     (radialDivergence 1 (fun r => radialFlux (r, p)))
@@ -723,9 +726,10 @@ theorem integrated_axial_along {a b : ℝ} (ε : ℝ) (z t : S)
   rw [halg, moment_axial_divergence (hr.slice_smooth p) (hr.slice_compact p),
     moment_axial_divergence (hT.slice_smooth p) (hT.slice_compact p),
     moment_axial_viscosity (hγ.slice_smooth p) (hγ.slice_compact p)]
-  change (-ε) * radialMoment 1 (parameterPartial t γ) p + 0 +
-    ε * radialMoment 1 (parameterPartial z axialFlux) p -
-    ε * (0 + ε ^ 2 * radialMoment 1 (parameterPartial z (parameterPartial z γ)) p) - 0 = _
+  change (-ε) * IntegratedMeanBalances.radialMoment 1 (parameterPartial t γ) p + 0 +
+    ε * IntegratedMeanBalances.radialMoment 1 (parameterPartial z axialFlux) p -
+    ε * (0 + ε ^ 2 *
+      IntegratedMeanBalances.radialMoment 1 (parameterPartial z (parameterPartial z γ)) p) - 0 = _
   rw [ht, hzz, ← hd]
   ring
 
@@ -1175,7 +1179,7 @@ theorem state_axial_bump_improvedClass (P : Patch) {cL cR : ℝ}
     MeanClass
       (WeightedRadialPrimitive.logStripData P.a P.b cL cR P.a_pos hcL hcR ε slow hε hε1 hslow)
       (α + 1) (fun n => bumpCorrection P 1 (meanBar (u.axialResidual c) n)) := by
-  have hC := hP.map ((ContinuousLinearMap.lsmul ℝ ℝ) (pressureCoefficient r))
+  have hC := hP.map ((ContinuousLinearMap.lsmul (E := ℝ) ℝ ℝ) (pressureCoefficient r))
   have hD : UnweightedClass (slowStripData ε slow hε hε1 hslow) α (axialDebtPotential r c u) := by
     have h := hZ.add hC
     simp only [ContinuousLinearMap.lsmul_apply, smul_eq_mul] at h ⊢
@@ -1645,7 +1649,7 @@ theorem LocalField.radialMoment_smooth {a b : ℝ} {U : Set S} (hU : IsOpen U)
   have hm := PhysicalMeanDomain.liftedPressureMass_contDiffOn hU hsm hsp
   have hi : ContDiffOn ℝ ∞ (fun s : S => ((0 : ℝ), (s, (0 : Plane)))) U :=
     contDiffOn_const.prodMk (contDiffOn_id.prodMk contDiffOn_const)
-  exact hm.comp hi (fun s hs => hs)
+  exact (hm.comp hi (fun s hs => hs) :)
 
 theorem LocalField.radialMoment_add {a b : ℝ} {U : Set S} (hU : IsOpen U)
     {f g : ScalarField (PressureStream.Lift S)} (hf : LocalField a b U f)
@@ -2006,7 +2010,7 @@ theorem pressureCoefficient_unweighted {coord : ℝ} (U : SlowRegion coord)
       (fun n x => pressureCoefficient g n x.2.1) := by
   have hq := qPower_unweighted U P.a P.b cL cR P.a_pos hcL hcR ε L hε hεone hL 1
   simp only [Real.rpow_one] at hq
-  have hc := hq.map ((ContinuousLinearMap.lsmul ℝ ℝ)
+  have hc := hq.map ((ContinuousLinearMap.lsmul (E := ℝ) ℝ ℝ)
     (basePressureCoefficient g.radial.inner g.radial.outer g.radial.inner_lt_outer))
   apply MeanIncrementBounds.class_congr hc
   intro n x hx

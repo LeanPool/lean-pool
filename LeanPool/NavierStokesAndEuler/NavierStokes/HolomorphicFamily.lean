@@ -156,8 +156,8 @@ theorem kernelPath_apply (c : ℂ) (σ : ℝ) {z : ℂ} (hz : z ∈ ball c σ) (
 /-- Fixed-contour evaluation, defined for every continuous outer-disk input. -/
 noncomputable def cauchyValue (c : ℂ) {σ : ℝ} (hσ : 0 < σ)
     (V : ℝ → C(Disk c σ, E)) (p : ℝ × ℂ) : E :=
-  (2 * Real.pi * I : ℂ)⁻¹ • angleIntegral
-    (pathAction (E := E) (kernelPath c σ p.2) (sampleCircle c hσ (V p.1)))
+  (2 * Real.pi * I : ℂ)⁻¹ • angleIntegral (E := E)
+    (pathAction (E := E) (kernelPath c σ p.2) (sampleCircle (E := E) c hσ (V p.1)))
 
 /-- Joint smoothness of the actual Cauchy integral follows from bounded
 bilinearity and supremum-norm smoothness of its two contour inputs. -/
@@ -169,14 +169,15 @@ theorem contDiffOn_cauchyValue (c : ℂ) {σ : ℝ} (hσ : 0 < σ)
   have hv : ContDiffOn ℝ ∞ (fun p : ℝ × ℂ => V p.1) (S ×ˢ ball c σ) :=
     hV.comp contDiffOn_fst (fun p hp => hp.1)
   have hs : ContDiffOn ℝ ∞
-      (fun p : ℝ × ℂ => sampleCircle c hσ (V p.1)) (S ×ˢ ball c σ) :=
+      (fun p : ℝ × ℂ => sampleCircle (E := E) c hσ (V p.1)) (S ×ˢ ball c σ) :=
     (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := ∞)
       (E := C(Disk c σ, E)) (F := C(Angles, E)) (sampleCircle c hσ)).comp_contDiffOn hv
   have hpa : ContDiff ℝ ∞ (pathAction (E := E)) :=
     ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := ∞) (E := C(Angles, ℂ))
       (F := C(Angles, E) →L[ℝ] C(Angles, E)) (pathAction (E := E))
   have hp : ContDiffOn ℝ ∞
-      (fun p : ℝ × ℂ => pathAction (E := E) (kernelPath c σ p.2) (sampleCircle c hσ (V p.1)))
+      (fun p : ℝ × ℂ => pathAction (E := E) (kernelPath c σ p.2)
+        (sampleCircle (E := E) c hσ (V p.1)))
       (S ×ˢ ball c σ) :=
     (hpa.comp_contDiffOn hk).clm_apply hs
   exact ((ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := ∞)
@@ -205,13 +206,14 @@ theorem cauchyValue_eq (c : ℂ) {σ : ℝ} (hσ : 0 < σ)
   rw [← hC.two_pi_i_inv_smul_circleIntegral_sub_inv_smul hz]
   apply congrArg (fun v : E => (2 * Real.pi * I : ℂ)⁻¹ • v)
   change (∫ θ in (0 : ℝ)..(2 * Real.pi), angleExtend
-      (pathAction (E := E) (kernelPath c σ z) (sampleCircle c hσ (V r))) θ) =
+      (pathAction (E := E) (kernelPath c σ z) (sampleCircle (E := E) c hσ (V r))) θ) =
     ∫ θ in (0 : ℝ)..(2 * Real.pi), deriv (circleMap c σ) θ •
       ((circleMap c σ θ - z)⁻¹ • F r (circleMap c σ θ))
   apply intervalIntegral.integral_congr
   intro θ hθ
   rw [uIcc_of_le Real.two_pi_pos.le] at hθ
-  have he : angleExtend (pathAction (E := E) (kernelPath c σ z) (sampleCircle c hσ (V r))) θ =
+  have he : angleExtend (pathAction (E := E) (kernelPath c σ z)
+      (sampleCircle (E := E) c hσ (V r))) θ =
       kernelPath c σ z ⟨θ, hθ⟩ • V r (circleInput c hσ ⟨θ, hθ⟩) := by
     rw [angleExtend, projIcc_of_mem Real.two_pi_pos.le hθ]
     rfl
@@ -263,10 +265,10 @@ theorem hasDerivAt_parameter (c : ℂ) {σ : ℝ} {S : Set ℝ} (hS : IsOpen S)
     HasDerivAt (fun s => F s z) (deriv V r z) r := by
   have hdV : HasDerivAt V (deriv V r) r :=
     ((hV r hr).contDiffAt (hS.mem_nhds hr)).differentiableAt (by simp) |>.hasDerivAt
-  have heval : HasFDerivAt (ContinuousMap.evalCLM ℝ z)
-      (ContinuousMap.evalCLM ℝ z) (V r) :=
+  have heval : HasFDerivAt (ContinuousMap.evalCLM ℝ (M := E) z)
+      (ContinuousMap.evalCLM ℝ (M := E) z) (V r) :=
     ContinuousLinearMap.hasFDerivAt (𝕜 := ℝ)
-      (E := C(Disk c σ, E)) (F := E) (ContinuousMap.evalCLM ℝ z)
+      (E := C(Disk c σ, E)) (F := E) (ContinuousMap.evalCLM ℝ (M := E) z)
   apply (heval.comp_hasDerivAt r hdV).congr_of_eventuallyEq
   filter_upwards [hS.mem_nhds hr] with s hs
   exact (hvalues s hs z).symm
@@ -276,7 +278,7 @@ theorem hasDerivAt_complex (c : ℂ) {ρ σ : ℝ} (hgap : ρ < σ)
     (v : C(Disk c σ, E)) (F : ℂ → E)
     (hF : DifferentiableOn ℂ F (ball c σ))
     (hvalues : ∀ z : Disk c σ, v z = F z) (z : Disk c ρ) :
-    HasDerivAt F (derivativeCLM c hgap v z) z := by
+    HasDerivAt F (derivativeCLM (E := E) c hgap v z) z := by
   rw [derivativeCLM_apply_of_eq c hgap v F (diffContOnCl_of_values c v F hF hvalues) hvalues]
   exact (hF.differentiableAt (isOpen_ball.mem_nhds (z.2.trans_lt hgap))).hasDerivAt
 
@@ -290,10 +292,10 @@ theorem hasFDerivAt_joint (c : ℂ) {ρ σ : ℝ} (hσ : 0 < σ) (hgap : ρ < σ
     {r : ℝ} (hr : r ∈ S) (z : Disk c ρ) :
     HasFDerivAt (fun p : ℝ × ℂ => F p.1 p.2)
       (jointDerivative (deriv V r ⟨z, closedBall_subset_closedBall hgap.le z.2⟩)
-        (derivativeCLM c hgap (V r) z)) (r, (z : ℂ)) := by
+        (derivativeCLM (E := E) c hgap (V r) z)) (r, (z : ℂ)) := by
   let g : ℝ × ℂ → E := fun p => F p.1 p.2
   let a := deriv V r ⟨z, closedBall_subset_closedBall hgap.le z.2⟩
-  let b := derivativeCLM c hgap (V r) z
+  let b := derivativeCLM (E := E) c hgap (V r) z
   let D := fderiv ℝ g (r, (z : ℂ))
   have hz : (z : ℂ) ∈ ball c σ := z.2.trans_lt hgap
   have hg : HasFDerivAt g D (r, (z : ℂ)) :=
@@ -333,8 +335,8 @@ omit [CompleteSpace E] in
 /-- The Cauchy partial has the expected inverse-gap bound. -/
 theorem norm_complex_partial_le (c : ℂ) {ρ σ : ℝ} (hgap : ρ < σ)
     (v : C(Disk c σ, E)) (z : Disk c ρ) :
-    ‖derivativeCLM c hgap v z‖ ≤ (σ - ρ)⁻¹ * ‖v‖ := by
-  exact ((derivativeCLM c hgap v).norm_coe_le_norm z).trans
+    ‖derivativeCLM (E := E) c hgap v z‖ ≤ (σ - ρ)⁻¹ * ‖v‖ := by
+  exact ((derivativeCLM (E := E) c hgap v).norm_coe_le_norm z).trans
     (((derivativeCLM (E := E) c hgap).le_opNorm v).trans
       (mul_le_mul_of_nonneg_right (norm_derivativeCLM_le c hgap) (norm_nonneg v)))
 
@@ -351,11 +353,11 @@ theorem differentiableAt_of_evaluations {K : Type*} [TopologicalSpace K] [Compac
   have hL : Lc.restrictScalars ℝ = L := by
     ext v x
     let T := fderiv ℂ (fun w => G w x) z
-    have hEvalMap : HasFDerivAt (ContinuousMap.evalCLM ℝ x)
-        (ContinuousMap.evalCLM ℝ x) (G z) :=
+    have hEvalMap : HasFDerivAt (ContinuousMap.evalCLM ℝ (M := E) x)
+        (ContinuousMap.evalCLM ℝ (M := E) x) (G z) :=
       ContinuousLinearMap.hasFDerivAt (𝕜 := ℝ) (E := C(K, E)) (F := E)
-        (ContinuousMap.evalCLM ℝ x)
-    have hreal : HasFDerivAt (fun w => G w x) ((ContinuousMap.evalCLM ℝ x).comp L) z :=
+        (ContinuousMap.evalCLM ℝ (M := E) x)
+    have hreal : HasFDerivAt (fun w => G w x) ((ContinuousMap.evalCLM ℝ (M := E) x).comp L) z :=
       HasFDerivAt.comp (𝕜 := ℝ) (E := ℂ) (F := C(K, E)) (G := E) z hEvalMap hG.hasFDerivAt
     have hc : HasFDerivAt (fun w => G w x) (T.restrictScalars ℝ) z :=
       (heval x).hasFDerivAt.restrictScalars ℝ

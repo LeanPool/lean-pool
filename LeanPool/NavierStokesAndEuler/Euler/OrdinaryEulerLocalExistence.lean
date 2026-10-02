@@ -532,7 +532,7 @@ theorem exists_smooth (A : SmoothL2Field Space) (hA : A.toLp ∈ solenoidalSpace
     ⟨fun t => S.advection (u t) (u t),
       (S.advection.continuous.comp (huc.comp continuous_subtype_val)).clm_apply
         (huc.comp continuous_subtype_val)⟩
-  let z : C(Icc (0 : ℝ) T,L2) := -integral T hT a
+  let z : C(Icc (0 : ℝ) T,L2) := -EulerContinuousTimeIntegral.integral (E := L2) T hT a
   let v : Icc (0 : ℝ) T → SmoothL2Field Space := fun t => addField A (S.field (z t))
   have hv : ∀ t, (v t).toLp=u t := by
     intro t
@@ -541,8 +541,8 @@ theorem exists_smooth (A : SmoothL2Field Space) (hA : A.toLp ∈ solenoidalSpace
       (fun s => by
         change HasDerivWithinAt u (-S.op (S.advection (u s) (u s))) _ _
         exact (hu (s : ℝ)).hasDerivWithinAt) t
-    have hi : integral T hT ((-S.op).compLeftContinuous ℝ (Icc (0 : ℝ) T) a) t =
-        S.op (z t) := by
+    have hi : EulerContinuousTimeIntegral.integral (E := L2) T hT
+        ((-S.op).compLeftContinuous ℝ (Icc (0 : ℝ) T) a) t = S.op (z t) := by
       change (∫ r in (0 : ℝ)..(t : ℝ), (-S.op) (extendPath T hT a r))=S.op (z t)
       rw [(-S.op).intervalIntegral_comp_comm
         ((extendPath_continuous T hT a).intervalIntegrable 0 t)]
@@ -551,7 +551,7 @@ theorem exists_smooth (A : SmoothL2Field Space) (hA : A.toLp ∈ solenoidalSpace
     have he' := he.trans (congrArg₂ (fun x y : L2 => x + y) hu0 hi)
     simpa only [v,toLp_addField,field_toLp] using he'.symm
   have hvcont : ∀ n, Continuous (fun t => (v t).jetLp n) :=
-    fun n => continuous_jetLp_addField _ _ (fun _ => continuous_const)
+    fun n => continuous_jetLp_addField (V := Space) _ _ (fun _ => continuous_const)
       (S.field_jet_continuous z z.continuous) n
   have hv0 : v ⟨0,le_rfl,hT⟩=A := by
     apply smoothField_eq_of_toLp_eq
@@ -1081,7 +1081,7 @@ theorem forced_linear_zero_bound (T C E : ℝ) (hC : 1 ≤ C)
     (hd : ∀ t ∈ Icc 0 T, HasDerivWithinAt X (X' t) (Icc 0 T) t)
     (hb : ∀ t ∈ Icc 0 T, X' t ≤ C * X t + E ^ 2)
     (t : ℝ) (ht : t ∈ Icc 0 T) : X t ≤ E^2*Real.exp (C*T) := by
-  have hh := linear_stability_within (fun r => X r+E^2) X' C T
+  have hh := linear_stability_within (fun r => X r+E^(2 : ℕ)) X' C T
     (hX.add continuousOn_const)
     (fun r hr => (hd r ⟨hr.1,hr.2.le⟩).add_const _)
     (fun r hr => (hb r ⟨hr.1,hr.2.le⟩).trans (by nlinarith [sq_nonneg E])) t ht
@@ -1459,7 +1459,7 @@ def derivativePath : C(Icc (0 : ℝ) T,L2) := fieldPath U.derivative U.derivativ
 
 theorem integral_equation (t : Icc (0 : ℝ) T) :
     (U.velocity t).toLp=(U.velocity ⟨0,le_rfl,hT⟩).toLp +
-      integral T hT U.derivativePath t := by
+      EulerContinuousTimeIntegral.integral (E := L2) T hT U.derivativePath t := by
   have h := eq_initial_add_integral T hT U.derivativePath
     (fun r => (U.velocity (projIcc 0 T hT r)).toLp) U.l2_time t
   simpa only [projIcc_of_mem hT t.property,
@@ -1501,10 +1501,12 @@ theorem regularized_derivative_convergence (M : ℝ)
 theorem regularized_integral_equation (M : ℝ)
     (hM : ∀ n t, WordBound 4 M ((U n).velocity t)) (t : Icc (0 : ℝ) T) :
     (L.field t).toLp=(L.field ⟨0,le_rfl,hT⟩).toLp +
-      integral T hT (projectedRhsPath L.field L.field_continuous) t := by
+      EulerContinuousTimeIntegral.integral (E := L2) T hT
+        (projectedRhsPath L.field L.field_continuous) t := by
   have hi := (ContinuousMap.evalCLM ℝ t).continuous.tendsto
-    (integral T hT (projectedRhsPath L.field L.field_continuous)) |>.comp
-      (((integral (E := L2) T hT).continuous.tendsto _).comp
+    (EulerContinuousTimeIntegral.integral (E := L2) T hT
+      (projectedRhsPath L.field L.field_continuous)) |>.comp
+      (((EulerContinuousTimeIntegral.integral (E := L2) T hT).continuous.tendsto _).comp
         (L.regularized_derivative_convergence M hM))
   have hs := (L.toLp_convergence ⟨0,le_rfl,hT⟩).add hi
   exact tendsto_nhds_unique (L.toLp_convergence t)
@@ -1516,7 +1518,8 @@ theorem regularized_time (M : ℝ) (hM : ∀ n t, WordBound 4 M ((U n).velocity 
       (projectedRhs (L.field t)).toLp (Icc (0 : ℝ) T) t := by
   have he : (fun r => (L.field (projIcc 0 T hT r)).toLp) =
       fun r => (L.field ⟨0,le_rfl,hT⟩).toLp +
-        extendPath T hT (integral T hT (projectedRhsPath L.field L.field_continuous)) r := by
+        extendPath T hT (EulerContinuousTimeIntegral.integral (E := L2) T hT
+          (projectedRhsPath L.field L.field_continuous)) r := by
     funext r
     exact L.regularized_integral_equation M hM (projIcc 0 T hT r)
   rw [he]

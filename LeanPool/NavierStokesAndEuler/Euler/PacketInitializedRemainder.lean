@@ -64,7 +64,8 @@ def initializedPrimaryRemainder (N : ℕ) (κ : ℝ) : VectorField :=
 /-- Initialized primary remainder field as an element of `Field period D.T
 (initializedPrimaryRemainder M D τ hτ hτT B δ hδ ξ hs α N κ)`. -/
 def initializedPrimaryRemainderField (N : ℕ) (hN : 1 ≤ N) (κ : ℝ) :
-    Field period D.T (initializedPrimaryRemainder M D τ hτ hτT B δ hδ ξ hs α N κ) :=
+    EulerPacketCylinderField.Field period D.T
+      (initializedPrimaryRemainder M D τ hτ hτT B δ hδ ξ hs α N κ) :=
   ((ProfileRegularity.primaryRemainderField M.T_pos
     (fun i (_ : i ≤ N) => initializedProfileWitness M D hTime τ hτ hτT B δ hδ ξ hs α i)
     hN (initializedProfiles_zero M D τ hτ hτT B δ hδ ξ hs α)
@@ -80,7 +81,8 @@ theorem initializedVelocity_gradient_split (N : ℕ) (hN : 1 ≤ N) (k : ℝ) (h
     (hY : DifferentiableAt ℝ Y (X 0)) (hleft : ∀ y, Y (X y) = y) :
     fderiv ℝ (fun y => initializedVelocity M D τ hτ hτT B δ hδ ξ hs α N k⁻¹
       (t,(Y y,k*inner ℝ D.m₀ (Y y)))) (X 0) =
-      (α/δ) • rankOne ℝ (canonicalVelocity τ hτ hτT B ξ hs t 0) (D.normal.field t 0) +
+      (α/δ) • rankOne ℝ (E := Space) (F := Space) (canonicalVelocity τ hτ hτT B ξ hs t 0)
+        (D.normal.field t 0) +
       fderiv ℝ (fun y => initializedPrimaryRemainder M D τ hτ hτT B δ hδ ξ hs α N k⁻¹
         (t,(Y y,k*inner ℝ D.m₀ (Y y)))) (X 0) := by
   let V := vectorField τ hτ hτT B (initialData D δ hδ (α • ξ) hs)
@@ -200,7 +202,8 @@ theorem initializedVelocity_gradient_error (N : ℕ) (hN : 1 ≤ N)
     (hY : DifferentiableAt ℝ Y (X 0)) (hleft : ∀ y, Y (X y) = y) :
     ‖fderiv ℝ (fun y => initializedVelocity M D τ hτ hτT B δ hδ ξ hs α N k⁻¹
       (t,(Y y,k*inner ℝ D.m₀ (Y y)))) (X 0) -
-      (α/δ) • rankOne ℝ (canonicalVelocity τ hτ hτT B ξ hs t 0) (D.normal.field t 0)‖ ≤
+      (α/δ) • rankOne ℝ (E := Space) (F := Space) (canonicalVelocity τ hτ hτT B ξ hs t 0)
+        (D.normal.field t 0)‖ ≤
       (initializedRemainderDerivativeCost L.R S.H0/k)*‖D.FInv.field t 0‖ := by
   have hk0 : k ≠ 0 := by linarith
   rw [initializedVelocity_gradient_split M D hTime τ hτ hτT B δ hδ ξ hs α

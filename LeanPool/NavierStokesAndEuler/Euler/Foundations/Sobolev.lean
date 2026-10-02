@@ -47,7 +47,7 @@ noncomputable def sobolevNorm (d : ℕ) (s : ℝ) (f : 𝓢(Domain d, F)) : ℝ 
 /-- Fourier inversion bounds a Schwartz function pointwise by the L¹ norm of its transform. -/
 theorem norm_apply_le_fourier_L1 (d : ℕ) (f : 𝓢(Domain d, F)) (x : Domain d) :
     ‖f x‖ ≤ ‖(schwartzFourier f).toLp 1‖ := by
-  change ‖f x‖ ≤ ‖(𝓕 f).toLp 1‖
+  change ‖f x‖ ≤ ‖(𝓕 f).toLp 1 volume‖
   have h := SchwartzMap.norm_fourier_apply_le_toLp_one (𝓕 f) (-x)
   have he : ‖f x‖ = ‖𝓕 (𝓕 f) (-x)‖ := by
     change ‖f x‖ = ‖(𝓕⁻ (𝓕 f)) x‖
@@ -187,7 +187,7 @@ noncomputable def complexify (q : ℕ) :
 /-- Coordinatewise isometric complexification of a real Schwartz vector field. -/
 noncomputable def complexifySchwartz (d q : ℕ) (f : 𝓢(Domain d, Domain q)) :
     𝓢(Domain d, EuclideanSpace ℂ (Fin q)) :=
-  SchwartzMap.postcompCLM (complexify q).toContinuousLinearMap f
+  SchwartzMap.postcompCLM (E := Domain d) (complexify q).toContinuousLinearMap f
 
 /-- The usual Fourier Hˢ norm of a real vector field, via isometric complexification. -/
 noncomputable def realSobolevNorm (d q : ℕ) (s : ℝ) (f : 𝓢(Domain d, Domain q)) : ℝ :=

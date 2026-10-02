@@ -51,7 +51,7 @@ theorem negativeCrossPotential_smooth (u : Space → Space)
     ContDiff ℝ ∞ (negativeCrossPotential u i) := by
   have hc (j : Fin 3) : ContDiff ℝ ∞ (fun x : Space => x j) :=
     (EuclideanSpace.proj j : Space →L[ℝ] ℝ).contDiff
-  exact ((hc _).mul ((hc _).comp hu)).sub ((hc _).mul ((hc _).comp hu))
+  exact ((hc (i + 2)).mul ((hc (i + 1)).comp hu)).sub ((hc (i + 1)).mul ((hc (i + 2)).comp hu))
 
 theorem partialDerivative_negativeCrossPotential
     (u : Space → Space) (hu : Differentiable ℝ u) (i j : Fin 3) (x : Space) :
@@ -113,7 +113,8 @@ theorem radialIntegrand_parameterDerivative
   have hin : HasFDerivAt (fun y : Space => (y, t))
       (ContinuousLinearMap.inl ℝ Space ℝ) x :=
     (hasFDerivAt_id (𝕜 := ℝ) x).prodMk (hasFDerivAt_const (𝕜 := ℝ) t x)
-  have hpartial := ((hf.differentiable (by simp)) (x, t)).hasFDerivAt.comp x hin
+  have hpartial := ((hf.differentiable (by simp)) (x, t)).hasFDerivAt.comp
+    (f := fun y : Space => (y, t)) x hin
   have hscaled := (((hu.differentiable (by simp)) (t • x)).hasFDerivAt.comp x
     ((hasFDerivAt_id (𝕜 := ℝ) x).const_smul t)).const_smul t
   have he : t • ((fderiv ℝ u (t • x)).comp (t • ContinuousLinearMap.id ℝ Space)) =
@@ -163,8 +164,8 @@ theorem radialAverage_radial_identity
     (radialDerivative_continuous u hu x).clm_apply continuous_const
   have htime (t : ℝ) : HasDerivAt (fun r : ℝ => r ^ 2 • u (r • x))
       ((2 * t) • u (t • x) + t ^ 2 • fderiv ℝ u (t • x) x) t := by
-    have hspace := ((hu.differentiable (by simp)) (t • x)).hasFDerivAt.comp_hasDerivAt t
-      ((hasDerivAt_id t).smul_const x)
+    have hspace := ((hu.differentiable (by simp)) (t • x)).hasFDerivAt.comp_hasDerivAt
+      (f := fun y => id y • x) t ((hasDerivAt_id t).smul_const x)
     convert! ((hasDerivAt_id t).pow 2).smul hspace using 1
     simp [Function.comp_apply, add_comm]
   have hv2 : Continuous (fun t : ℝ => (2 * t) • u (t • x)) := by
@@ -367,7 +368,7 @@ theorem potentialTruncation_energy_bound
   refine ⟨hw, ?_⟩
   calc
     (∫ x : Space, ‖potentialTruncation u χ x‖ ^ 2) ≤
-        ∫ x : Space, 2 * ‖u x‖ ^ 2 + 288 * C ^ 2 * ‖radialAverage u x‖ ^ 2 :=
+        ∫ x : Space, 2 * ‖u x‖ ^ (2 : ℕ) + 288 * C ^ (2 : ℕ) * ‖radialAverage u x‖ ^ (2 : ℕ) :=
       integral_mono hwi ((hui.const_mul 2).add (hBi.const_mul (288 * C ^ 2))) hp
     _ = 2 * (∫ x : Space, ‖u x‖ ^ 2) +
         288 * C ^ 2 * (∫ x : Space, ‖radialAverage u x‖ ^ 2) := by

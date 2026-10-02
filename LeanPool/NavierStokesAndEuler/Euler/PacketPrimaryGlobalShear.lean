@@ -47,7 +47,7 @@ theorem graph_vector_hasFDerivAt (q : LiftTangent → Space) (k : ℝ) (hk : k �
         slowGraphDerivative q k m Y J x) x := by
   have hg : HasFDerivAt (fun y => graphMap k m (Y y)) ((graphMap k m).comp J) x :=
     (graphMap k m).hasFDerivAt.comp x hY
-  convert! (hq.hasFDerivAt.comp x hg).const_smul k⁻¹ using 1
+  convert! (hq.hasFDerivAt.comp (f := fun y => graphMap k m (Y y)) x hg).const_smul k⁻¹ using 1
   apply ContinuousLinearMap.ext
   intro v
   simp only [slowGraphDerivative,add_apply,smul_apply,comp_apply,rankOne_apply,
@@ -87,7 +87,7 @@ theorem scaled_terminal_angular_fderiv (a : ℝ) (t : Icc (0 : ℝ) D.T) (z : Li
   have hq : DifferentiableAt ℝ q z :=
     ((vectorField τ hτ hτT B (initialData D δ hδ (a • ξ) hs)).raw_smooth t).differentiable (by
         simp) z
-  have hv := (hq.hasFDerivAt.comp_hasDerivAt z.2
+  have hv := (hq.hasFDerivAt.comp_hasDerivAt (F := LiftTangent) (f := fun x => (z.1, id x)) z.2
     ((hasDerivAt_const z.2 z.1).prodMk (hasDerivAt_id z.2))).deriv
   change deriv (fun θ => q (z.1,θ)) z.2 = _ at hv
   have hd' : deriv (fun θ => a • (profile δ θ • canonicalVelocity τ hτ hτT B ξ hs t z.1)) z.2 =

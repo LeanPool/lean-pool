@@ -75,13 +75,13 @@ theorem coordinates_injective (b : Module.Basis ι ℝ E) (n : ℕ) :
 n).toLinearMap.leftInverse).toContinuousLinearMap`. -/
 def reassembly (b : Module.Basis ι ℝ E) (n : ℕ) :
     ((Fin n → ι) → V) →L[ℝ] (E [×n]→L[ℝ] V) :=
-  ((coordinates (V := V) b n).toLinearMap.leftInverse).toContinuousLinearMap
+  ((coordinates (V := V) b n).toLinearMap.leftInverse).toContinuousLinearMap (𝕜 := ℝ)
 
 omit [FiniteDimensional ℝ E] in
 theorem reassembly_coordinates (b : Module.Basis ι ℝ E) (n : ℕ) (A : E [×n]→L[ℝ] V) :
     reassembly (V := V) b n (coordinates (V := V) b n A) = A :=
   LinearMap.leftInverse_apply_of_inj
-    (LinearMap.ker_eq_bot.mpr (coordinates_injective b n)) A
+    (LinearMap.ker_eq_bot.mpr (coordinates_injective (V := V) b n)) A
 
 /-- Tuple bounded as an element of `(j → (X →ᵇ V)) →L[ℝ] (X →ᵇ (j → V))`. -/
 def tupleBounded {j : Type*} [Fintype j] :
@@ -105,7 +105,7 @@ def coordinatePath (b : Module.Basis ι ℝ E) (n : ℕ)
     (tupleBounded (X := X) (V := V) (j := Fin n → ι) (fun w => u w t))
   continuous_toFun :=
     ((reassembly (V := V) b n).compLeftContinuousBounded X).continuous.comp
-      ((tupleBounded (X := X) (V := V)).continuous.comp
+      ((tupleBounded (X := X) (V := V) (j := Fin n → ι)).continuous.comp
         (continuous_pi (fun w => (u w).continuous)))
 
 omit [CompactSpace K] [FiniteDimensional ℝ E] in

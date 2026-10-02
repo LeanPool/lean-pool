@@ -45,11 +45,11 @@ theorem weighted_orbit
     ContDiff ℝ ∞ (fun a : LiftTangent =>
       pathTranslate (K := K) (V := Vector3) P a (weight g p : C(K, CylinderL2 P _))) := by
   have he : (fun a : LiftTangent =>
-      pathTranslate (K := K) (V := Vector3) P a (weight g p : C(K, CylinderL2 P _))) =
+      pathTranslate (K := K) (V := Vector3) P a (weight (E := CylinderL2 P Vector3) g p)) =
       fun a => weight (E := CylinderL2 P Vector3) g (pathTranslate (K := K) (V := Vector3) P a p) :=
     funext (fun a => translate_weight P g a p)
   rw [he]
-  exact (weight g).contDiff.comp hp
+  exact (weight (E := CylinderL2 P Vector3) g).contDiff.comp hp
 
 /-- The entire spatial/angular word commutes with a time-only scalar factor. -/
 theorem wordPath_weight
@@ -105,13 +105,14 @@ theorem potentialPath_normalize (hg : ∀ t, 0 < g t) :
 
 /-- The bound applies to the literal quotient Q/g, without any extrema or derivative of g. -/
 theorem normalized_potentialPath_block_bound (hg : ∀ t, 0 < g t)
-    (hB : ContDiff ℝ ∞ (translateCoefficientPath B))
+    (hB : ContDiff ℝ ∞ (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) B))
     (hp : ContDiff ℝ ∞ (fun a : LiftTangent =>
       pathTranslate (K := K) (V := Vector3) P a (normalize g hg p : C(K, CylinderL2 P _))))
     {ι : Type*} [Fintype ι] (directions : ι → LiftTangent) (hd : ∀ i, ‖directions i‖ ≤ 1)
     (q : ℕ) (Rc C R D : ℝ) (hRc : 0 ≤ Rc) (hC : 0 ≤ C) (hD : 0 ≤ D)
     (hR : sobolevCoefficientRadius ι Rc ≤ R)
-    (hbB : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath B) a‖ ≤ C*majorant Rc 0 n)
+    (hbB : ∀ n a, ‖iteratedFDeriv ℝ n
+      (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) B) a‖ ≤ C*majorant Rc 0 n)
     (d : ℕ) (hbp : ∀ n, block directions q
       (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a
         (normalize g hg p : C(K, CylinderL2 P _))) n 0 ≤ D*majorant R d n)

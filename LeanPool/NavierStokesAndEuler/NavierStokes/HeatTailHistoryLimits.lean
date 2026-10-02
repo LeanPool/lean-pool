@@ -678,7 +678,8 @@ theorem heatH_hasDerivAt {h X : ℝ} (hh : 0 < h) (D η : ℝ) (hX : 0 < X) :
   have ha : 1 < 1 + h := by linarith
   have hz : HasDerivAt (fun x : ℝ => 2 * (1 - η ^ 2) / x)
       (-(2 * (1 - η ^ 2)) / X ^ 2) X := by
-    convert! (hasDerivAt_const X (2 * (1 - η ^ 2))).div (hasDerivAt_id X) hX.ne' using 1
+    convert! (hasDerivAt_const X (2 * (1 - η ^ 2))).div (𝕜 := ℝ) (𝕜' := ℝ)
+      (hasDerivAt_id X) hX.ne' using 1
     simp only [id_eq]
     ring
   have hf := (((HeatProfileExtension.extension_contDiff ha).differentiable (by simp))

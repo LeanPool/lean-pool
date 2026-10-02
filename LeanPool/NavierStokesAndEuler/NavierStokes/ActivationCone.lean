@@ -32,11 +32,12 @@ open scoped Topology ContDiff
 open ConeAlgebra StressActivation ProfileHistories
 
 /-- Actual smooth factor in the reciprocal angular-field ratio. -/
-noncomputable def inverseRelativeError (L : Field) (q : ActivationBounds.ScaledPoint) : ℝ :=
+noncomputable def inverseRelativeError (L : ProfileHistories.Field)
+    (q : ActivationBounds.ScaledPoint) : ℝ :=
   -ActivationBounds.controlledErrorFactor L q *
     meanExp (-ActivationBounds.scaledDistance q * ActivationBounds.controlledErrorFactor L q)
 
-theorem inverseRelativeError_smooth {J : Set ℝ} (hJ : IsOpen J) {L : Field}
+theorem inverseRelativeError_smooth {J : Set ℝ} (hJ : IsOpen J) {L : ProfileHistories.Field}
     (hL : ContDiffOn ℝ ∞ L (logDomain J hJ).carrier) :
     ContDiffOn ℝ ∞ (inverseRelativeError L) (ActivationBounds.scaledDomain J) :=
   (ActivationBounds.controlledErrorFactor_smooth hJ hL).neg.mul
@@ -45,7 +46,7 @@ theorem inverseRelativeError_smooth {J : Set ℝ} (hJ : IsOpen J) {L : Field}
         (ActivationBounds.controlledErrorFactor_smooth hJ hL)))
 
 theorem inverse_relative_scaled_factor {T : ℝ} (hT : T ≠ 0) (κ : ℝ)
-    {J : Set ℝ} (hJ : IsOpen J) {L : Field}
+    {J : Set ℝ} (hJ : IsOpen J) {L : ProfileHistories.Field}
     (hL : ContDiffOn ℝ ∞ L (logDomain J hJ).carrier) (u : ℝ) {η : ℝ} (hη : η ∈ J) :
     referenceAngular L (T * u, η) / activatedAngular T κ L (T * u, η) - 1 =
       ActivationBounds.scaledDistance ((κ, T), (u, η)) * inverseRelativeError L ((κ, T), (u, η)) :=
@@ -61,7 +62,7 @@ theorem inverse_relative_scaled_factor {T : ℝ} (hT : T ≠ 0) (κ : ℝ)
 /-- All fixed parameter jets of this actual ratio have uniform `C*y*ea`
 bounds as the ramp width and retained damping tend to zero. -/
 theorem inverse_relative_uniform_jets {J K : Set ℝ} (hJ : IsOpen J) (hK : IsCompact K)
-    (hKJ : K ⊆ J) {L : Field} (hL : ContDiffOn ℝ ∞ L (logDomain J hJ).carrier)
+    (hKJ : K ⊆ J) {L : ProfileHistories.Field} (hL : ContDiffOn ℝ ∞ L (logDomain J hJ).carrier)
     (T0 : ℝ) (n : ℕ) :
     ∃ M : ℝ, 0 ≤ M ∧ ∀ T ∈ Ioc (0 : ℝ) T0, ∀ κ ∈ Icc (0 : ℝ) 1,
       ∀ y ∈ Icc (0 : ℝ) T, ∀ η ∈ K,
@@ -194,8 +195,8 @@ theorem activation_uniform_collar {m : ℝ} (hm : 0 < m) :
 /-- Uniform conversion of proved comparison estimates into a complete
 initial ramp and a first true-cone collar. The constants are chosen before
 the retained damping parameter. -/
-theorem uniform_ramp_from_comparison {K : Set ℝ} {r : Field}
-    {P J v : ℝ → ℝ → Field} {c B C T0 : ℝ}
+theorem uniform_ramp_from_comparison {K : Set ℝ} {r : ProfileHistories.Field}
+    {P J v : ℝ → ℝ → ProfileHistories.Field} {c B C T0 : ℝ}
     (hc : 0 < c) (hB : 0 ≤ B) (hC : 0 ≤ C) (hT0 : 0 < T0)
     (href : ∀ y ∈ Icc (0 : ℝ) T0, ∀ η ∈ K, 2 + c ≤ r (y, η) ∧ r (y, η) ≤ B)
     (herr : ∀ T ∈ Ioc (0 : ℝ) T0, ∀ κ ∈ Ioo (0 : ℝ) 1,
@@ -446,7 +447,7 @@ theorem cone_comparison_from_stock_bounds {κ A B z p q R M : ℝ}
 /-- The genuine derivative-defined shear size has the cancellation form used
 in the error transport. -/
 theorem shearSize_eq (T : ℝ) {κ X0 : ℝ} (hκ : κ ∈ Ioc (0 : ℝ) 1) (hX0 : 0 < X0)
-    {J : Set ℝ} (hJ : IsOpen J) {L U : Field}
+    {J : Set ℝ} (hJ : IsOpen J) {L U : ProfileHistories.Field}
     (hL : ContDiffOn ℝ ∞ L (logDomain J hJ).carrier)
     (hU : ContDiffOn ℝ ∞ U (logDomain J hJ).carrier) (y : ℝ) {η : ℝ} (hη : η ∈ J)
     (hA : referenceP1 L (y, η) ≠ 0) :
@@ -460,44 +461,44 @@ theorem shearSize_eq (T : ℝ) {κ X0 : ℝ} (hκ : κ ∈ Ioc (0 : ℝ) 1) (hX0
 /-- Activated stock one, given by `ActivationStocks.logViewOne h X0 (activatedAngular T κ L)
 (logHistory X0 initial (activatedAngular T κ L) (controlled T κ U))`. -/
 noncomputable def activatedStockOne (h X0 : ℝ) (initial : HistoryRow → ℝ → ℝ)
-    (L U : Field) (T κ : ℝ) : Field :=
+    (L U : ProfileHistories.Field) (T κ : ℝ) : ProfileHistories.Field :=
   ActivationStocks.logViewOne h X0 (activatedAngular T κ L)
     (logHistory X0 initial (activatedAngular T κ L) (controlled T κ U))
 
 /-- Activated stock two, constructed using `ActivationStocks.logViewTwo`. -/
 noncomputable def activatedStockTwo (h X0 : ℝ) (initial : HistoryRow → ℝ → ℝ)
-    (L U : Field) (T κ : ℝ) : Field :=
+    (L U : ProfileHistories.Field) (T κ : ℝ) : ProfileHistories.Field :=
   ActivationStocks.logViewTwo h X0 (activatedAngular T κ L) (controlled T κ U)
     (logHistory X0 initial (activatedAngular T κ L) (controlled T κ U))
 
 /-- Activated projection, defined pointwise by `stockProjection (activatedStockOne h X0 initial
 L U T κ p) (activatedStockTwo h X0 initial L U T κ p) (shearSlope T κ X0 L U p)`. -/
 noncomputable def activatedProjection (h X0 : ℝ) (initial : HistoryRow → ℝ → ℝ)
-    (L U : Field) (T κ : ℝ) : Field := fun p =>
+    (L U : ProfileHistories.Field) (T κ : ℝ) : ProfileHistories.Field := fun p =>
   stockProjection (activatedStockOne h X0 initial L U T κ p)
     (activatedStockTwo h X0 initial L U T κ p) (shearSlope T κ X0 L U p)
 
 /-- Activated cross, defined pointwise by `stockCross (activatedStockOne h X0 initial L U T κ p)
 (activatedStockTwo h X0 initial L U T κ p) (shearSlope T κ X0 L U p)`. -/
 noncomputable def activatedCross (h X0 : ℝ) (initial : HistoryRow → ℝ → ℝ)
-    (L U : Field) (T κ : ℝ) : Field := fun p =>
+    (L U : ProfileHistories.Field) (T κ : ℝ) : ProfileHistories.Field := fun p =>
   stockCross (activatedStockOne h X0 initial L U T κ p)
     (activatedStockTwo h X0 initial L U T κ p) (shearSlope T κ X0 L U p)
 
 /-- Activated stress as an element of `ℝ × ℝ`. -/
 noncomputable def activatedStress (h X0 : ℝ) (initial : HistoryRow → ℝ → ℝ)
-    (L U : Field) (T κ : ℝ) (p : Point) : ℝ × ℝ :=
+    (L U : ProfileHistories.Field) (T κ : ℝ) (p : Point) : ℝ × ℝ :=
   (activatedAngular T κ L p * (activatedStockOne h X0 initial L U T κ p - actualP1 T κ L p),
     activatedAngular T κ L p * (activatedStockTwo h X0 initial L U T κ p - actualP2 T κ X0 L U p))
 
 theorem reference_coordinates_smooth {X0 : ℝ} (hX0 : 0 < X0)
-    {J : Set ℝ} (hJ : IsOpen J) {L U : Field}
+    {J : Set ℝ} (hJ : IsOpen J) {L U : ProfileHistories.Field}
     (hL : ContDiffOn ℝ ∞ L (logDomain J hJ).carrier)
     (hU : ContDiffOn ℝ ∞ U (logDomain J hJ).carrier) :
     ContDiffOn ℝ ∞ (referenceP1 L) (logDomain J hJ).carrier ∧
       ContDiffOn ℝ ∞ (referenceP2 X0 L U) (logDomain J hJ).carrier := by
   have hs : ContDiff ℝ ∞ (fun p : Point => Real.sqrt (2 * radius X0 p.1)) :=
-    (contDiff_const.mul (contDiff_const.mul (Real.contDiff_exp.comp contDiff_fst))).sqrt
+    (contDiff_const.mul (contDiff_const.mul (Real.contDiff_exp.comp (contDiff_fst (F := ℝ))))).sqrt
       (fun p => (mul_pos (by norm_num : (0 : ℝ) < 2) (mul_pos hX0 (Real.exp_pos p.1))).ne')
   refine ⟨contDiffOn_const.mul (radialPartial_smooth (logDomain J hJ) hL), ?_⟩
   exact (contDiffOn_const.mul (radialPartial_smooth (logDomain J hJ) hU)).div
@@ -509,7 +510,7 @@ theorem reference_coordinates_smooth {X0 : ℝ} (hX0 : 0 < X0)
 the flat activation. Its inner-edge value is the positive reference direction. -/
 theorem exists_actual_stress_direction (h : ℝ) {X0 : ℝ} (hX0 : 0 < X0)
     (initial : HistoryRow → ℝ → ℝ) {J K : Set ℝ} (hJ : IsOpen J) (hKJ : K ⊆ J)
-    {L U : Field} (hL : ContDiffOn ℝ ∞ L (logDomain J hJ).carrier)
+    {L U : ProfileHistories.Field} (hL : ContDiffOn ℝ ∞ L (logDomain J hJ).carrier)
     (hU : ContDiffOn ℝ ∞ U (logDomain J hJ).carrier)
     (hi : ∀ r, ContDiffOn ℝ ∞ (initial r) J)
     (hcoef : ∀ η ∈ J, NaturalAxisData.L h η ≠ 0) {T0 : ℝ}
@@ -539,9 +540,11 @@ theorem exists_actual_stress_direction (h : ℝ) {X0 : ℝ} (hX0 : 0 < X0)
     · exact (ActivationBounds.controlledValue_smooth hJ hL).exp
     · exact ActivationBounds.rescale_smooth hJ ha
     · exact ActivationBounds.rescale_smooth hJ hb
-    · exact (contDiff_const.sub ((contDiff_const.sub contDiff_fst.fst).mul
-        (OutgoingSchedule.sigma_contDiff.comp (contDiff_snd.fst.div_const 1)))).contDiffOn
-    · exact (contDiff_fst.snd.mul contDiff_snd.fst).contDiffOn
+    · exact (contDiff_const.sub ((contDiff_const.sub
+        (contDiff_fst (𝕜 := ℝ) (E := ℝ × ℝ) (F := Point)).fst).mul
+          (OutgoingSchedule.sigma_contDiff.comp
+            ((contDiff_snd (𝕜 := ℝ) (E := ℝ × ℝ) (F := Point)).fst.div_const 1)))).contDiffOn
+    · exact ((contDiff_fst (𝕜 := ℝ) (E := ℝ × ℝ) (F := Point)).snd.mul contDiff_snd.fst).contDiffOn
     · exact hdA
     · exact hdB
     · exact inverseRelativeError_smooth hJ hL
@@ -588,7 +591,7 @@ the constructed reciprocal-field factor. Uniform stock estimates are
 obtained internally from their proved smooth factors. -/
 theorem actual_comparisons (h : ℝ) {X0 : ℝ} (hX0 : 0 < X0)
     (initial : HistoryRow → ℝ → ℝ) {J K : Set ℝ} (hJ : IsOpen J)
-    (hK : IsCompact K) (hKJ : K ⊆ J) {L U : Field}
+    (hK : IsCompact K) (hKJ : K ⊆ J) {L U : ProfileHistories.Field}
     (hL : ContDiffOn ℝ ∞ L (logDomain J hJ).carrier)
     (hU : ContDiffOn ℝ ∞ U (logDomain J hJ).carrier)
     (hi : ∀ r, ContDiffOn ℝ ∞ (initial r) J)
@@ -659,12 +662,12 @@ theorem actual_comparisons (h : ℝ) {X0 : ℝ} (hX0 : 0 < X0)
 /-- A strict initial reference margin persists on one common radial collar.
 The collar is obtained from actual uniform continuity on a compact set. -/
 theorem compact_reference_collar {K : Set ℝ} (hK : IsCompact K)
-    {T c : ℝ} (hT : 0 < T) (hc : 0 < c) {r : Field}
+    {T c : ℝ} (hT : 0 < T) (hc : 0 < c) {r : ProfileHistories.Field}
     (hr : ContinuousOn r (Icc (0 : ℝ) T ×ˢ K))
     (hzero : ∀ η ∈ K, 2 + 2 * c ≤ r (0, η)) :
     ∃ τ : ℝ, 0 < τ ∧ τ ≤ T ∧ ∀ y ∈ Icc (0 : ℝ) τ, ∀ η ∈ K,
       2 + c < r (y, η) := by
-  have hu := (isCompact_Icc.prod hK).uniformContinuousOn_of_continuous hr
+  have hu := ((isCompact_Icc (a := (0 : ℝ)) (b := T)).prod hK).uniformContinuousOn_of_continuous hr
   obtain ⟨δ, hδ, hδprop⟩ := Metric.uniformContinuousOn_iff.mp hu c hc
   refine ⟨min T (δ / 2), lt_min hT (by positivity), min_le_left _ _, ?_⟩
   intro y hy η hη
@@ -681,7 +684,7 @@ theorem compact_reference_collar {K : Set ℝ} (hK : IsCompact K)
 /-- Compact reference data provide all fixed bounds needed by the algebraic
 error transport and a genuine common initial cone collar. -/
 theorem compact_reference_bounds {K : Set ℝ} (hK : IsCompact K)
-    {T c : ℝ} (hT : 0 < T) (hc : 0 < c) {A B : Field}
+    {T c : ℝ} (hT : 0 < T) (hc : 0 < c) {A B : ProfileHistories.Field}
     (hA : ContinuousOn A (Icc (0 : ℝ) T ×ˢ K))
     (hB : ContinuousOn B (Icc (0 : ℝ) T ×ˢ K))
     (hApos : ∀ p ∈ Icc (0 : ℝ) T ×ˢ K, 0 < A p)
@@ -698,7 +701,8 @@ theorem compact_reference_bounds {K : Set ℝ} (hK : IsCompact K)
   have hR : ContinuousOn (fun p => A p + B p ^ 2 / A p) D := hA.add ((hB.pow 2).div hA hne)
   obtain ⟨τ, hτ, hτT, hcollar⟩ := compact_reference_collar hK hT hc hR hzero
   obtain ⟨α, hα, hαbound⟩ := UniformCone.positive_uniform_margin hD hA hApos
-  let g : Field := fun p => |B p| + |B p / A p| + |B p ^ 2 / A p| + |A p + B p ^ 2 / A p|
+  let g : ProfileHistories.Field := fun p =>
+    |B p| + |B p / A p| + |B p ^ 2 / A p| + |A p + B p ^ 2 / A p|
   have hg : ContinuousOn g D :=
     ((hB.abs.add ((hB.div hA hne).abs)).add (((hB.pow 2).div hA hne).abs)).add hR.abs
   obtain ⟨M, hM⟩ := (hD.image_of_continuousOn hg).bddAbove
@@ -717,9 +721,10 @@ theorem compact_reference_bounds {K : Set ℝ} (hK : IsCompact K)
   · linarith [abs_nonneg (B (y, η)), abs_nonneg (B (y, η) / A (y, η)),
       abs_nonneg (A (y, η) + B (y, η) ^ 2 / A (y, η))]
 
-private theorem radialPartial_eq_partialY {F : Field} {p : Point}
+private theorem radialPartial_eq_partialY {F : ProfileHistories.Field} {p : Point}
     (hF : ContDiffAt ℝ ∞ F p) : radialPartial F p = NaturalAxisBridge.partialY F p := by
-  have hd := (hF.differentiableAt (by simp)).hasFDerivAt.comp_hasDerivAt p.1
+  have hd := (hF.differentiableAt (by simp)).hasFDerivAt.comp_hasDerivAt (F := ℝ × ℝ)
+    (f := fun x : ℝ => (id x, p.2)) p.1
     ((hasDerivAt_id p.1).prodMk (hasDerivAt_const p.1 p.2))
   exact hd.deriv.symm
 
@@ -783,7 +788,7 @@ theorem referenceP2_smooth {δ : ℝ} (hδ : 0 < δ) (hδlim : 2 * δ < rampLimi
     ContDiffOn ℝ ∞ (referenceP2 N.endpoint (FromReference.refLog N δ) (FromReference.refAxial N δ))
       (logDomain parameterInterval parameterInterval_open).carrier := by
   have hs : ContDiff ℝ ∞ (fun p : Point => Real.sqrt (2 * radius N.endpoint p.1)) :=
-    (contDiff_const.mul (contDiff_const.mul (Real.contDiff_exp.comp contDiff_fst))).sqrt
+    (contDiff_const.mul (contDiff_const.mul (Real.contDiff_exp.comp (contDiff_fst (F := ℝ))))).sqrt
       (fun p => (mul_pos (by
           norm_num : (0 : ℝ) < 2) (mul_pos N.endpoint_pos (Real.exp_pos p.1))).ne')
   have he : ContDiffOn ℝ ∞ (referenceAngular (FromReference.refLog N δ))

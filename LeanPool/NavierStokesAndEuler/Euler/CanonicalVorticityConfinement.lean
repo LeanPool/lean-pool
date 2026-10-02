@@ -74,10 +74,14 @@ theorem frame_wronskian_constant
   let q : ℝ → ℝ := fun r => ⟪G r v, F r w⟫_ℝ - ⟪F r v, G r w⟫_ℝ
   have hd (r : ℝ) (hr : r ∈ Icc 0 T) :
       HasDerivWithinAt q 0 (Icc 0 T) r := by
-    have hfv := (ContinuousLinearMap.apply ℝ E v).hasFDerivAt.comp_hasDerivWithinAt r (hF r hr)
-    have hfw := (ContinuousLinearMap.apply ℝ E w).hasFDerivAt.comp_hasDerivWithinAt r (hF r hr)
-    have hgv := (ContinuousLinearMap.apply ℝ E v).hasFDerivAt.comp_hasDerivWithinAt r (hG r hr)
-    have hgw := (ContinuousLinearMap.apply ℝ E w).hasFDerivAt.comp_hasDerivWithinAt r (hG r hr)
+    have hfv := (ContinuousLinearMap.apply (E := E) ℝ E v).hasFDerivAt.comp_hasDerivWithinAt r
+      (hF r hr)
+    have hfw := (ContinuousLinearMap.apply (E := E) ℝ E w).hasFDerivAt.comp_hasDerivWithinAt r
+      (hF r hr)
+    have hgv := (ContinuousLinearMap.apply (E := E) ℝ E v).hasFDerivAt.comp_hasDerivWithinAt r
+      (hG r hr)
+    have hgw := (ContinuousLinearMap.apply (E := E) ℝ E w).hasFDerivAt.comp_hasDerivWithinAt r
+      (hG r hr)
     have hh := (hgv.inner ℝ hfw).sub (hfv.inner ℝ hgw)
     convert! hh using 1
     change 0 = (⟪G r v, G r w⟫_ℝ + ⟪H r v, F r w⟫_ℝ) -
@@ -400,7 +404,7 @@ theorem stages_displacement_norm_le_partial_sum (n : ℕ) :
     ∀ (t : Icc (0 : ℝ) (stages S hq hB n).parent.T) (x : Space),
       ‖(stages S hq hB n).parent.displacement.field t x‖ ≤
         ‖(stages S hq hB 0).parent.displacement.field‖ +
-          ∑ i ∈ range n, (frequency S.J S.X i)^(-(1/4 : ℝ)) := by
+          ∑ i ∈ Finset.range n, (frequency S.J S.X i)^(-(1/4 : ℝ)) := by
   induction n with
   | zero =>
     intro t x
@@ -507,7 +511,7 @@ variable {Time : Type*} (H : ℕ → Time → Prop)
 
 include hbase hnest hstep hsmall in
 theorem stage_displacement_le_partial_sum (n : ℕ) (t : Time) (ht : H n t) (x : E) :
-    ‖X n t x - x‖ ≤ M + ∑ i ∈ range n, δ i := by
+    ‖X n t x - x‖ ≤ M + ∑ i ∈ Finset.range n, δ i := by
   induction n generalizing x with
   | zero => simpa using hbase t ht x
   | succ n ih =>
@@ -517,7 +521,7 @@ theorem stage_displacement_le_partial_sum (n : ℕ) (t : Time) (ht : H n t) (x :
 
 include hbase hnest hstep hsmall in
 theorem stage_displacement_le_of_partial_sums {C : ℝ}
-    (hC : ∀ n, ∑ i ∈ range n, δ i ≤ C)
+    (hC : ∀ n, ∑ i ∈ Finset.range n, δ i ≤ C)
     (n : ℕ) (t : Time) (ht : H n t) (x : E) :
     ‖X n t x - x‖ ≤ M + C := by
   exact (stage_displacement_le_partial_sum H X Y M δ hbase hnest hstep hsmall n t ht x).trans
@@ -525,7 +529,7 @@ theorem stage_displacement_le_of_partial_sums {C : ℝ}
 
 include hbase hnest hstep hsmall in
 theorem stage_mapsTo_closedBall_of_partial_sums {C : ℝ}
-    (hC : ∀ n, ∑ i ∈ range n, δ i ≤ C)
+    (hC : ∀ n, ∑ i ∈ Finset.range n, δ i ≤ C)
     (R : ℝ) (n : ℕ) (t : Time) (ht : H n t) :
     MapsTo (X n t) (Metric.closedBall 0 R) (Metric.closedBall 0 (R + M + C)) := by
   intro x hx
@@ -542,7 +546,7 @@ theorem stage_displacement_le_tsum (hδ : Summable δ) (hδ0 : ∀ n, 0 ≤ δ n
     (n : ℕ) (t : Time) (ht : H n t) (x : E) :
     ‖X n t x - x‖ ≤ M + ∑' i, δ i := by
   exact (stage_displacement_le_partial_sum H X Y M δ hbase hnest hstep hsmall n t ht x).trans
-    (add_le_add le_rfl (hδ.sum_le_tsum (range n) (fun i _ => hδ0 i)))
+    (add_le_add le_rfl (hδ.sum_le_tsum (Finset.range n) (fun i _ => hδ0 i)))
 
 include hbase hnest hstep hsmall in
 theorem stage_mapsTo_closedBall (hδ : Summable δ) (hδ0 : ∀ n, 0 ≤ δ n)
@@ -834,7 +838,8 @@ theorem curl_tendsto_of_initial_h3 (U : Evolution T hT) (V : ℕ → Evolution T
     { toFun := curlMatrix
       map_add' := curlMatrix_add
       map_smul' := curlMatrix_smul }
-  have hcurl := (C.toContinuousLinearMap.continuous.tendsto
+  have hcurl := ((LinearMap.toContinuousLinearMap (𝕜 := ℝ) (E := Space →L[ℝ] Space)
+    (F' := Space) C).continuous.tendsto
     (fderiv ℝ (U.velocity t).field x)).comp hgrad
   change Tendsto (fun n => curlMatrix (fderiv ℝ ((V n).velocity t).field x)) atTop
     (𝓝 (curlMatrix (fderiv ℝ (U.velocity t).field x))) at hcurl

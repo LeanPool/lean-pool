@@ -32,7 +32,7 @@ variable {X : Type*} [TopologicalSpace X]
 private theorem continuousOn_max {K : Set X} {f g : X → ℝ}
     (hf : ContinuousOn f K) (hg : ContinuousOn g K) :
     ContinuousOn (fun x => max (f x) (g x)) K :=
-  continuous_max.comp_continuousOn (hf.prodMk hg)
+  (continuous_max.comp_continuousOn (hf.prodMk hg) :)
 
 /-- The positive minimum of a continuous positive function on a compact set.
 This also covers the empty parameter set. -/
@@ -233,7 +233,7 @@ theorem compact_trueCone_margins {K : Set X} (hK : IsCompact K)
     ∃ ε : ℝ, 0 < ε ∧ ∀ x ∈ K,
       ε ≤ v x - 2 ∧ ε ≤ P x - 2 ∧ ε ≤ coneBound (P x) (J x) - v x := by
   have hbound : ContinuousOn (fun x => coneBound (P x) (J x)) K :=
-    continuous_coneBound.comp_continuousOn (hP.prodMk (hJ.prodMk hv))
+    (continuous_coneBound.comp_continuousOn (hP.prodMk (hJ.prodMk hv)) :)
   obtain ⟨εv, hεv, hboundv⟩ := positive_uniform_margin hK (hv.sub continuousOn_const)
     (fun x hx => sub_pos.mpr (hcone x hx).1)
   obtain ⟨εP, hεP, hboundP⟩ := positive_uniform_margin hK (hP.sub continuousOn_const)

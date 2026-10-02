@@ -1465,7 +1465,7 @@ theorem continuousOn_integral_norm_cube {T : ℝ} {u : VelocityField}
     (hsupp : ∀ t ∈ Icc (0 : ℝ) T, tsupport (fun x : Space => u (t, x)) ⊆ K) :
     ContinuousOn (fun t => ∫ x : Space, ‖u (t, x)‖ ^ 3) (Icc (0 : ℝ) T) := by
   apply CompactTimeIntegral.continuousOn_integral
-    (F := fun z : SpaceTime => ‖u z‖ ^ 3) hK (hu.norm.pow 3)
+    (F := (fun z : SpaceTime => ‖u z‖ ^ 3 :)) hK (hu.norm.pow 3)
   intro t ht x hx
   have hzero : u (t, x) = 0 :=
     image_eq_zero_of_notMem_tsupport (f := fun y : Space => u (t, y))
@@ -1542,7 +1542,7 @@ theorem uniformFiniteEnergy_of_compact_slab {T : ℝ} {u : VelocityField}
   have hcont : ContinuousOn (fun t => ∫ x : Space, ‖u (t, x)‖ ^ 2)
       (Icc (0 : ℝ) T) := by
     apply CompactTimeIntegral.continuousOn_integral
-      (F := fun z : SpaceTime => ‖u z‖ ^ 2) hK (hu.continuousOn.norm.pow 2)
+      (F := (fun z : SpaceTime => ‖u z‖ ^ 2 :)) hK (hu.continuousOn.norm.pow 2)
     intro t ht x hx
     have hzero : u (t, x) = 0 :=
       image_eq_zero_of_notMem_tsupport (f := fun y : Space => u (t, y))
@@ -1606,7 +1606,7 @@ theorem classical_uniqueness_on_Icc {T : ℝ} (hT : 0 < T)
       AEStronglyMeasurable (fun x => v (t, x)) volume :=
     fun t ht => (spatial_smooth hv ht).continuous.aestronglyMeasurable
   have hew := uniformFiniteEnergy_sub hum hvm heu hev
-  obtain ⟨M, hM0, hM⟩ := uniformFiniteEnergy_lpNorm_two_bound
+  obtain ⟨M, hM0, hM⟩ := uniformFiniteEnergy_lpNorm_two_bound (u := fun z => u z - v z)
     (fun t ht => (hum t ht).sub (hvm t ht)) hew
   obtain ⟨U, hU0, hU⟩ := CompactComparisonBounds.exists_lpNorm_three_bound
     hu.continuousOn hK hsupp

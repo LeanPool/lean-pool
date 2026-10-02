@@ -51,7 +51,8 @@ theorem orbitDerivative_translation (u : LiftL2 period) (hu : SmoothOrbit period
     (v a : LiftTangent) :
     translate (V := Vector3) period a (orbitDerivative period u v) =
       fderiv ℝ (fun b : LiftTangent => translate (V := Vector3) period b u) a v := by
-  have h := EulerIsometricAction.hasFDerivAt_all (translate period) (translate_add period) u
+  have h := EulerIsometricAction.hasFDerivAt_all (translate (V := Vector3) period)
+    (translate_add (V := Vector3) period) u
     (fderiv ℝ (fun b : LiftTangent => translate (V := Vector3) period b u) 0)
     ((hu.differentiable (by simp) (0 : LiftTangent)).hasFDerivAt) a
   exact (congrArg (fun D : LiftTangent →L[ℝ] LiftL2 period => D v) h.fderiv).symm

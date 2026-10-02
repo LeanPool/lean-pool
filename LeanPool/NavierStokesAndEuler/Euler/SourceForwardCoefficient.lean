@@ -139,7 +139,8 @@ def gramFieldUnit : (α →ᵇ U →L[ℝ] U)ˣ where
 
 /-- Actual pointwise inversion equals the Banach-algebra inverse. -/
 theorem inverseField_eq_ringInverse : inverseField Q c hc hQ = Ring.inverse (gramField Q) :=
-  (Ring.inverse_unit (M₀ := α →ᵇ U →L[ℝ] U) (gramFieldUnit Q c hc hQ)).symm
+  (Ring.inverse_unit (M₀ := α →ᵇ U →L[ℝ] U)
+    (gramFieldUnit (α := α) (U := U) (E := E) Q c hc hQ)).symm
 
 section Paths
 
@@ -179,7 +180,8 @@ def inversePath (Qp : C(K, α →ᵇ U →L[ℝ] E))
     rw [heq,continuous_iff_continuousAt]
     intro t
     exact ContinuousAt.comp (g := Ring.inverse) (f := fun t => gramField (Qp t))
-      (NormedRing.inverse_continuousAt (gramFieldUnit (Qp t) c hc (hLower t)))
+      (NormedRing.inverse_continuousAt
+        (gramFieldUnit (α := α) (U := U) (E := E) (Qp t) c hc (hLower t)))
       (gramPath Qp).continuous.continuousAt
 
 @[simp] theorem inversePath_apply (Qp : C(K, α →ᵇ U →L[ℝ] E))
@@ -211,7 +213,8 @@ def gramPathUnit (Qp : C(K, α →ᵇ U →L[ℝ] E))
 theorem inversePath_eq_ringInverse (Qp : C(K, α →ᵇ U →L[ℝ] E))
     (hLower : ∀ t x v, c * ‖v‖ ^ 2 ≤ ‖Qp t x v‖ ^ 2) :
     inversePath c hc Qp hLower = Ring.inverse (gramPath Qp) :=
-  (Ring.inverse_unit (M₀ := C(K,α →ᵇ U →L[ℝ] U)) (gramPathUnit c hc Qp hLower)).symm
+  (Ring.inverse_unit (M₀ := C(K,α →ᵇ U →L[ℝ] U))
+    (gramPathUnit (α := α) (U := U) (E := E) (K := K) c hc Qp hLower)).symm
 
 variable {P : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]
 
@@ -220,7 +223,7 @@ theorem gramPath_contDiff (A : P → C(K, α →ᵇ U →L[ℝ] E)) {n : ℕ∞�
     ContDiff ℝ n (fun a => gramPath (A a)) :=
   pathComposition_contDiff
     (fun a => pathAdjointMap (α := α) (K := K) (U := U) (E := E) (A a)) A
-    ((pathAdjointMap (α := α) (K := K) (U := U) (E := E)).contDiff.comp hA) hA
+    ((pathAdjointMap (α := α) (K := K) (U := U) (E := E)).contDiff.comp hA :) hA
 
 /-- The constant identity coefficient path. -/
 def identityPath : C(K, α →ᵇ U →L[ℝ] U) :=
@@ -391,7 +394,7 @@ theorem gramPath_bound (Q : P → C(K, α →ᵇ U →L[ℝ] E)) (hQ : ContDiff 
     ‖iteratedFDeriv ℝ n (fun y => gramPath (Q y)) x‖ ≤ (3*C^2)*majorant R 0 n := by
   have hAdj := (pathAdjointMap (α := α) (K := K) (U := U) (E := E)).contDiff.comp hQ
   have hAdjBound := contraction_bound (pathAdjointMap (α := α) (K := K) (U := U) (E := E))
-    pathAdjointMap_norm Q hQ R C hR hC 0 hbQ
+    (pathAdjointMap_norm (α := α) (K := K) (U := U) (E := E)) Q hQ R C hR hC 0 hbQ
   have h := pathComposition_bound
     (fun y => pathAdjointMap (α := α) (K := K) (U := U) (E := E) (Q y)) Q hAdj hQ
     R C C hR hC hC 0 0 hAdjBound hbQ n x
@@ -462,7 +465,8 @@ theorem inversePath_gevrey (Q : P → C(K, α →ᵇ U →L[ℝ] E))
     (R : ℝ) (hR : 2 * gramCost c C 1 * (Rc + 1) ≤ R) (n : ℕ) (x : P) :
     ‖iteratedFDeriv ℝ n (fun y => inversePath c hc (Q y) (hLower y)) x‖ ≤ majorant R 1 n :=
   bilinear_inverse_gevrey (pathCompositionMap (α := α) (K := K) (U := U) (E := U) (F := U))
-    pathCompositionMap_norm (fun y => gramPath (Q y))
+    (pathCompositionMap_norm (α := α) (K := K) (U := U) (E := U) (F := U))
+    (fun y => gramPath (Q y))
     (fun y => inversePath c hc (Q y) (hLower y)) identityPath (gramPath_contDiff Q hQ)
     (inversePath_contDiff c hc Q hLower hQ)
     (fun y => pathComposition_gramPath_inversePath c hc (Q y) (hLower y))
@@ -586,12 +590,15 @@ def generatorPath (c : ℝ) (hc : 0 < c) (Q Q₁ : C(K, α →ᵇ U →L[ℝ] E)
 
 @[simp] theorem leftInversePath_apply (c : ℝ) (hc : 0 < c) (Q : C(K, α →ᵇ U →L[ℝ] E))
     (hQ : ∀ t x v, c * ‖v‖ ^ 2 ≤ ‖Q t x v‖ ^ 2) (t : K) (x : α) :
-    leftInversePath c hc Q hQ t x = (gramInverse (Q t x) c hc (hQ t x)).comp (Q t x).adjoint := rfl
+    leftInversePath c hc Q hQ t x =
+      (gramInverse (Q t x) c hc (hQ t x)).comp
+        (adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t x)) := rfl
 
 @[simp] theorem generatorPath_apply (c : ℝ) (hc : 0 < c) (Q Q₁ : C(K, α →ᵇ U →L[ℝ] E))
     (hQ : ∀ t x v, c * ‖v‖ ^ 2 ≤ ‖Q t x v‖ ^ 2) (t : K) (x : α) :
     generatorPath c hc Q Q₁ hQ t x =
-      (-2 : ℝ) • (gramInverse (Q t x) c hc (hQ t x)).comp ((Q t x).adjoint.comp (Q₁ t x)) := rfl
+      (-2 : ℝ) • (gramInverse (Q t x) c hc (hQ t x)).comp
+        ((adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t x)).comp (Q₁ t x)) := rfl
 
 variable {P : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]
 
@@ -599,8 +606,8 @@ variable {P : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]
 theorem leftInversePath_contDiff (c : ℝ) (hc : 0 < c) (Q : P → C(K, α →ᵇ U →L[ℝ] E))
     (hQ : ∀ y t x v, c * ‖v‖ ^ 2 ≤ ‖Q y t x v‖ ^ 2) {n : ℕ∞ω} (hQr : ContDiff ℝ n Q) :
     ContDiff ℝ n (fun y => leftInversePath c hc (Q y) (hQ y)) :=
-  pathComposition_contDiff _ _ (inversePath_contDiff c hc Q hQ hQr) ((pathAdjointMap (α := α) (K :=
-      K) (U := U) (E := E)).contDiff.comp hQr)
+  (pathComposition_contDiff _ _ (inversePath_contDiff c hc Q hQ hQr)
+    ((pathAdjointMap (α := α) (K := K) (U := U) (E := E)).contDiff.comp hQr) :)
 
 /-- Genuine parameter regularity of the actual source generator. -/
 theorem generatorPath_contDiff (c : ℝ) (hc : 0 < c) (Q Q₁ : P → C(K, α →ᵇ U →L[ℝ] E))
@@ -627,12 +634,12 @@ theorem leftInversePath_bound (n : ℕ) (x : P) :
   have hbQ' (j : ℕ) (y : P) : ‖iteratedFDeriv ℝ j Q y‖ ≤ C₀*majorant (4*Ri) 0 j :=
     (hbQ j y).trans (mul_le_mul_of_nonneg_left (majorant_radius_mono Rc (4*Ri) hRc hbase 0 j) hC₀)
   have hbAdj := contraction_bound (pathAdjointMap (α := α) (K := K) (U := U) (E := E))
-    pathAdjointMap_norm Q hQr (4*Ri) C₀ hrad hC₀ 0 hbQ'
+    (pathAdjointMap_norm (α := α) (K := K) (U := U) (E := E)) Q hQr (4*Ri) C₀ hrad hC₀ 0 hbQ'
   exact pathComposition_bound (fun y => inversePath c hc (Q y) (hQ y))
     (fun y => pathAdjointMap (α := α) (K := K) (U := U) (E := E) (Q y))
     (inversePath_contDiff c hc Q hQ hQr)
-    ((pathAdjointMap (α := α) (K := K) (U := U) (E := E)).contDiff.comp hQr) (4*Ri) Ri C₀ hrad hi
-        hC₀ 0 0
+    ((pathAdjointMap (α := α) (K := K) (U := U) (E := E)).contDiff.comp hQr :) (4*Ri) Ri C₀ hrad
+        hi hC₀ 0 0
     (EulerBoundedFieldGramInverse.inversePath_coefficient_bound Q c hc hQ hQr Rc C₀ hRc hC₀ hbQ Ri
         hi hRi)
     hbAdj n x

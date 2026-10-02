@@ -947,7 +947,7 @@ theorem chart_cut_amplitude_uniform :
     (fun l : SignedLabel B N0 => fun y => CurlClassBounds.complexify
         (ActualPrimary.attachedRawVelocity l.1 l.2 y))
     hs l n (ActualSignedGeometry.meanEquiv.symm x.1) x.2
-  rw [periodized_velocity_eq l n hx x.2] at he
+  rw [periodized_velocity_eq l n (x := ActualSignedGeometry.meanEquiv.symm x.1) hx x.2] at he
   simp only [ActualSignedGeometry.meanEquiv.apply_symm_apply,
     LinearWaveBounds.WaveCoefficients.withCutoff] at he ⊢
   exact he
@@ -969,7 +969,7 @@ theorem chart_cut_pressure_uniform :
     (fun l : SignedLabel B N0 => ActualPrimary.attachedRawPressure l.1 l.2)
     (fun l y => ActualPrimary.attachedRawPressure_core l.1 l.2 y)
     l n (ActualSignedGeometry.meanEquiv.symm x.1) x.2
-  rw [periodized_pressure_eq l n hx x.2] at he
+  rw [periodized_pressure_eq l n (x := ActualSignedGeometry.meanEquiv.symm x.1) hx x.2] at he
   simp only [ActualSignedGeometry.meanEquiv.apply_symm_apply,
     LinearWaveBounds.WaveCoefficients.withCutoff] at he ⊢
   exact he
@@ -1710,7 +1710,7 @@ theorem cut_amplitude_eq (l : SignedLabel B N0) (n : ℕ) {x : ActualPrimary.Ful
     (fun l : SignedLabel B N0 => fun y => CurlClassBounds.complexify
         (ActualPrimary.attachedRawVelocity l.1 l.2 y))
     hs l n (ActualSignedGeometry.meanEquiv.symm x.1) x.2
-  rw [periodized_velocity_eq l n hx x.2] at he
+  rw [periodized_velocity_eq l n (x := ActualSignedGeometry.meanEquiv.symm x.1) hx x.2] at he
   simp only [ActualSignedGeometry.meanEquiv.apply_symm_apply,
     cutCoefficients, LinearWaveBounds.WaveCoefficients.withCutoff] at he ⊢
   exact he.symm
@@ -1724,7 +1724,7 @@ theorem cut_pressure_eq (l : SignedLabel B N0) (n : ℕ) {x : ActualPrimary.Full
     (fun l : SignedLabel B N0 => ActualPrimary.attachedRawPressure l.1 l.2)
     (fun l y => ActualPrimary.attachedRawPressure_core l.1 l.2 y)
     l n (ActualSignedGeometry.meanEquiv.symm x.1) x.2
-  rw [periodized_pressure_eq l n hx x.2] at he
+  rw [periodized_pressure_eq l n (x := ActualSignedGeometry.meanEquiv.symm x.1) hx x.2] at he
   simp only [ActualSignedGeometry.meanEquiv.apply_symm_apply,
     cutCoefficients, LinearWaveBounds.WaveCoefficients.withCutoff] at he ⊢
   exact he.symm

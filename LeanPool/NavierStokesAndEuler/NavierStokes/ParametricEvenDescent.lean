@@ -68,15 +68,15 @@ noncomputable def planeDerivative (F : Plane → E) (q : Plane) : Plane →L[ℝ
 omit [CompleteSpace E] in
 theorem parameterPartial_eq_fderiv {F : Plane → E} (hF : ContDiff ℝ ∞ F) (q : Plane) :
     parameterPartial F q = fderiv ℝ F q (1, 0) := by
-  have h := ((contDiff_infty_iff_fderiv.mp hF).1 q).hasFDerivAt.comp_hasDerivAt q.1
-    ((hasDerivAt_id q.1).prodMk (hasDerivAt_const q.1 q.2))
+  have h := ((contDiff_infty_iff_fderiv.mp hF).1 q).hasFDerivAt.comp_hasDerivAt (F := Plane)
+    (f := fun p => (p, q.2)) q.1 ((hasDerivAt_id q.1).prodMk (hasDerivAt_const q.1 q.2))
   exact h.deriv
 
 omit [CompleteSpace E] in
 theorem radialPartial_eq_fderiv {F : Plane → E} (hF : ContDiff ℝ ∞ F) (q : Plane) :
     radialPartial F q = fderiv ℝ F q (0, 1) := by
-  have h := ((contDiff_infty_iff_fderiv.mp hF).1 q).hasFDerivAt.comp_hasDerivAt q.2
-    ((hasDerivAt_const q.2 q.1).prodMk (hasDerivAt_id q.2))
+  have h := ((contDiff_infty_iff_fderiv.mp hF).1 q).hasFDerivAt.comp_hasDerivAt (F := Plane)
+    (f := fun r => (q.1, r)) q.2 ((hasDerivAt_const q.2 q.1).prodMk (hasDerivAt_id q.2))
   exact h.deriv
 
 omit [CompleteSpace E] in
@@ -144,8 +144,10 @@ theorem even_radialReduce {F : Plane → E} (hEven : EvenRadial F) :
 omit [CompleteSpace E] in
 theorem contDiff_planeDerivative {F : Plane → E} (hF : ContDiff ℝ ∞ F) :
     ContDiff ℝ ∞ (planeDerivative F) :=
-  (contDiff_const.smulRight (contDiff_parameterPartial hF)).add
-    (contDiff_const.smulRight (contDiff_radialReduce hF))
+  (contDiff_const.smulRight (𝕜 := ℝ) (E := Plane) (F := Plane) (G := E)
+    (contDiff_parameterPartial hF)).add
+    (contDiff_const.smulRight (𝕜 := ℝ) (E := Plane) (F := Plane) (G := E)
+      (contDiff_radialReduce hF))
 
 omit [CompleteSpace E] in
 theorem even_planeDerivative {F : Plane → E} (hEven : EvenRadial F) :

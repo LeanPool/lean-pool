@@ -325,7 +325,7 @@ theorem coordinateQ_hasDerivAt_tau {a τ z : ℝ}
     HasDerivAt (fun t => coordinateQ a (t, z))
       (1 / scalarSlope a z (coordinateQ a (τ, z))) τ := by
   have hd := ((coordinateQ_smooth ha ha1 (p := (τ, z)) hτ).differentiableAt (by simp)).hasFDerivAt
-  have hc := hd.comp_hasDerivAt τ ((hasDerivAt_id τ).prodMk (hasDerivAt_const τ z))
+  have hc := hd.comp_hasDerivAt (F := ℝ × ℝ) τ ((hasDerivAt_id τ).prodMk (hasDerivAt_const τ z))
   rw [coordinateQ_fderiv_apply ha ha1 hτ] at hc
   simpa only [Function.comp_def, id_eq, Prod.fst, Prod.snd, mul_zero, add_zero] using hc
 
@@ -335,7 +335,7 @@ theorem coordinateQ_hasDerivAt_z {a τ z : ℝ}
       (2 * z * coordinateQ a (τ, z) ^ a /
         scalarSlope a z (coordinateQ a (τ, z))) z := by
   have hd := ((coordinateQ_smooth ha ha1 (p := (τ, z)) hτ).differentiableAt (by simp)).hasFDerivAt
-  have hc := hd.comp_hasDerivAt z ((hasDerivAt_const z τ).prodMk (hasDerivAt_id z))
+  have hc := hd.comp_hasDerivAt (F := ℝ × ℝ) z ((hasDerivAt_const z τ).prodMk (hasDerivAt_id z))
   rw [coordinateQ_fderiv_apply ha ha1 hτ] at hc
   simpa only [Function.comp_def, id_eq, Prod.fst, Prod.snd, mul_one, zero_add] using hc
 

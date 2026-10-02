@@ -385,14 +385,16 @@ def spaceRestriction (V : Type*) [NormedAddCommGroup V] [NormedSpace ℝ V] :
 theorem space_fderiv_eq_full {f : SpaceTime → V} {z : SpaceTime}
     (hf : DifferentiableAt ℝ f z) :
     fderiv ℝ (fun y : Space => f (z.1, y)) z.2 = spaceRestriction V (fderiv ℝ f z) :=
-  (hf.hasFDerivAt.comp z.2 (hasFDerivAt_prodMk_right z.1 z.2)).fderiv
+  (hf.hasFDerivAt.comp (f := fun y : Space => (z.1, y)) z.2
+    (hasFDerivAt_prodMk_right z.1 z.2)).fderiv
 
 theorem temporalDerivative_eq_full {f : VelocityField} {z : SpaceTime}
     (hf : DifferentiableAt ℝ f z) :
     temporalDerivative f z.1 z.2 = fderiv ℝ f z (1, 0) := by
   have h : fderiv ℝ (fun t : ℝ => f (t, z.2)) z.1 =
       (fderiv ℝ f z).comp (ContinuousLinearMap.inl ℝ ℝ Space) :=
-    (hf.hasFDerivAt.comp z.1 (hasFDerivAt_prodMk_left (𝕜 := ℝ) z.1 z.2)).fderiv
+    (hf.hasFDerivAt.comp (f := fun t : ℝ => (t, z.2)) z.1
+      (hasFDerivAt_prodMk_left (𝕜 := ℝ) z.1 z.2)).fderiv
   exact congrArg (fun L : ℝ →L[ℝ] Space => L 1) h
 
 variable {l : Filter SpaceTime} {q : SpaceTime → ℝ} {U : Set SpaceTime}
@@ -417,7 +419,8 @@ theorem AllJetsFlat.temporalDerivative {f : VelocityField} (hf : AllJetsFlat l q
     (hU : IsOpen U) (hl : ∀ᶠ z in l, z ∈ U) (hs : ContDiffOn ℝ ∞ f U) :
     AllJetsFlat l q (fun z => temporalDerivative f z.1 z.2) := by
   have hfull : ContDiffOn ℝ ∞ (_root_.fderiv ℝ f) U := hs.fderiv_of_isOpen hU (by simp)
-  apply (hf.fderiv.linear_map (ContinuousLinearMap.apply ℝ Space (1, 0)) hU hl hfull).congr_on hU hl
+  apply (hf.fderiv.linear_map (ContinuousLinearMap.apply ℝ Space (E := SpaceTime) (1, 0))
+    hU hl hfull).congr_on hU hl
   intro z hz
   exact (temporalDerivative_eq_full
     ((hs.contDiffAt (hU.mem_nhds hz)).differentiableAt (by simp))).symm
@@ -432,7 +435,8 @@ theorem AllJetsFlat.pressureGradient {p : PressureField} (hp : AllJetsFlat l q p
   · intro i _
     exact (hD.clm_apply contDiffOn_const).smul contDiffOn_const
   · intro i _
-    have hi := hflatD.linear_map (ContinuousLinearMap.apply ℝ ℝ (coordinateVector i)) hU hl hD
+    have hi := hflatD.linear_map
+      (ContinuousLinearMap.apply ℝ ℝ (E := Space) (coordinateVector i)) hU hl hD
     exact hi.linear_map ((ContinuousLinearMap.id ℝ ℝ).smulRight (coordinateVector i))
       hU hl (hD.clm_apply contDiffOn_const)
 
@@ -447,25 +451,26 @@ theorem AllJetsFlat.spatialLaplacian {f : VelocityField} (hf : AllJetsFlat l q f
     exact (ResidualRegularity.contDiffOn_space_fderiv hU
       (hD.clm_apply contDiffOn_const) (m := ∞) (by simp)).clm_apply contDiffOn_const
   · intro i _
-    have hi := hflatD.linear_map (ContinuousLinearMap.apply ℝ Space (coordinateVector i)) hU hl hD
+    have hi := hflatD.linear_map
+      (ContinuousLinearMap.apply ℝ Space (E := Space) (coordinateVector i)) hU hl hD
     have his : ContDiffOn ℝ ∞
         (fun z => spatialDerivative f z.1 z.2 (coordinateVector i)) U :=
       hD.clm_apply contDiffOn_const
     exact (hi.space_fderiv hU hl his).linear_map
-      (ContinuousLinearMap.apply ℝ Space (coordinateVector i)) hU hl
+      (ContinuousLinearMap.apply ℝ Space (E := Space) (coordinateVector i)) hU hl
       (ResidualRegularity.contDiffOn_space_fderiv hU his (m := ∞) (by simp))
 
 theorem spatialSlice_differentiable {f : SpaceTime → V}
     (hU : IsOpen U) (hf : ContDiffOn ℝ ∞ f U) {z : SpaceTime} (hz : z ∈ U) :
     DifferentiableAt ℝ (fun y : Space => f (z.1, y)) z.2 :=
-  ((hf.contDiffAt (hU.mem_nhds hz)).differentiableAt (by simp)).comp z.2
-    (hasFDerivAt_prodMk_right z.1 z.2).differentiableAt
+  ((hf.contDiffAt (hU.mem_nhds hz)).differentiableAt (by simp)).comp
+    (f := fun y : Space => (z.1, y)) z.2 (hasFDerivAt_prodMk_right z.1 z.2).differentiableAt
 
 theorem timeSlice_differentiable {f : SpaceTime → V}
     (hU : IsOpen U) (hf : ContDiffOn ℝ ∞ f U) {z : SpaceTime} (hz : z ∈ U) :
     DifferentiableAt ℝ (fun t : ℝ => f (t, z.2)) z.1 :=
-  ((hf.contDiffAt (hU.mem_nhds hz)).differentiableAt (by simp)).comp z.1
-    (hasFDerivAt_prodMk_left z.1 z.2).differentiableAt
+  ((hf.contDiffAt (hU.mem_nhds hz)).differentiableAt (by simp)).comp
+    (f := fun t : ℝ => (t, z.2)) z.1 (hasFDerivAt_prodMk_left z.1 z.2).differentiableAt
 
 /-- Local version of the Laplacian additivity used in `ResidualCalculus`.
 Only smoothness on the open domain is needed, not on an entire spatial slice. -/
@@ -667,19 +672,20 @@ theorem norm_iteratedFDeriv_spatialCurl_le {U : Set SpaceTime} {A : VelocityFiel
 
 /-- Time jet, given by `ContinuousLinearMap.apply ℝ Space (1, 0)`. -/
 def timeJet : (SpaceTime →L[ℝ] Space) →L[ℝ] Space :=
-  ContinuousLinearMap.apply ℝ Space (1, 0)
+  ContinuousLinearMap.apply ℝ Space (E := SpaceTime) (1, 0)
 
 /-- Laplace jet as an element of `(SpaceTime →L[ℝ] SpaceTime →L[ℝ] Space) →L[ℝ] Space`. -/
 def laplaceJet : (SpaceTime →L[ℝ] SpaceTime →L[ℝ] Space) →L[ℝ] Space :=
   ∑ i : Fin 3,
-    (ContinuousLinearMap.apply ℝ Space (0, coordinateVector i)).comp
-      (ContinuousLinearMap.apply ℝ (SpaceTime →L[ℝ] Space) (0, coordinateVector i))
+    (ContinuousLinearMap.apply ℝ Space (E := ℝ × Space) (0, coordinateVector i)).comp
+      (ContinuousLinearMap.apply ℝ (SpaceTime →L[ℝ] Space) (E := SpaceTime)
+        (0, coordinateVector i))
 
 /-- Pressure jet as an element of `(SpaceTime →L[ℝ] ℝ) →L[ℝ] Space`. -/
 def pressureJet : (SpaceTime →L[ℝ] ℝ) →L[ℝ] Space :=
   ∑ i : Fin 3,
     ((ContinuousLinearMap.id ℝ ℝ).smulRight (coordinateVector i)).comp
-      (ContinuousLinearMap.apply ℝ ℝ (0, coordinateVector i))
+      (ContinuousLinearMap.apply ℝ ℝ (E := SpaceTime) (0, coordinateVector i))
 
 @[simp] theorem laplaceJet_apply (L : SpaceTime →L[ℝ] SpaceTime →L[ℝ] Space) :
     laplaceJet L = ∑ i : Fin 3, L (0, coordinateVector i) (0, coordinateVector i) := by
@@ -704,14 +710,15 @@ theorem spatialLaplacian_eq_full {U : Set SpaceTime} {w : VelocityField}
     rfl
   have hD : ContDiffOn ℝ ∞ (fderiv ℝ w) U := hw.fderiv_of_isOpen hU (by simp)
   have hfirst : HasFDerivAt (fun y : SpaceTime => fderiv ℝ w y (0, coordinateVector i))
-      ((ContinuousLinearMap.apply ℝ Space (0, coordinateVector i)).comp
+      ((ContinuousLinearMap.apply ℝ Space (E := SpaceTime) (0, coordinateVector i)).comp
         (fderiv ℝ (fderiv ℝ w) z)) z := by
     let ev : (SpaceTime →L[ℝ] Space) →L[ℝ] Space :=
-      ContinuousLinearMap.apply ℝ Space (0, coordinateVector i)
+      ContinuousLinearMap.apply ℝ Space (E := SpaceTime) (0, coordinateVector i)
     change HasFDerivAt (ev ∘ fderiv ℝ w) (ev.comp (fderiv ℝ (fderiv ℝ w) z)) z
-    exact ev.hasFDerivAt.comp z
+    exact ev.hasFDerivAt.comp (f := fderiv ℝ w) z
       ((hD.contDiffAt (hU.mem_nhds hz)).differentiableAt (by simp)).hasFDerivAt
-  have hslice := hfirst.comp z.2 (hasFDerivAt_prodMk_right (𝕜 := ℝ) z.1 z.2)
+  have hslice := hfirst.comp (f := fun y : Space => (z.1, y)) z.2
+    (hasFDerivAt_prodMk_right (𝕜 := ℝ) z.1 z.2)
   rw [ResidualRegularity.space_fderiv_congr heq]
   simpa only [Function.comp_def, ContinuousLinearMap.comp_apply,
     ContinuousLinearMap.apply_apply, ContinuousLinearMap.inr_apply] using

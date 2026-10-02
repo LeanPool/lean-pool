@@ -413,7 +413,8 @@ theorem squareIntegrableAtTime_sub {u v : VelocityField} {t : ℝ}
     (hv_meas : AEStronglyMeasurable (fun x : Space => v (t, x)) volume)
     (hu : SquareIntegrableAtTime u t) (hv : SquareIntegrableAtTime v t) :
     SquareIntegrableAtTime (fun z => u z - v z) t := by
-  exact (squareIntegrableAtTime_iff_memLp (hu_meas.sub hv_meas)).2
+  exact (squareIntegrableAtTime_iff_memLp (u := fun z => u z - v z) (t := t)
+      (hu_meas.sub hv_meas)).2
     (((squareIntegrableAtTime_iff_memLp hu_meas).1 hu).sub
       ((squareIntegrableAtTime_iff_memLp hv_meas).1 hv))
 
@@ -427,7 +428,7 @@ theorem l2Sq_sub_le {E : Type*} [NormedAddCommGroup E] {f g : Space → E}
   have hfg_sq := (memLp_two_iff_integrable_sq_norm (hf.sub hg).aestronglyMeasurable).1 (hf.sub hg)
   calc
     l2Sq (fun x => f x - g x) ≤
-        ∫ x : Space, 2 * (‖f x‖ ^ 2 + ‖g x‖ ^ 2) :=
+        ∫ x : Space, 2 * (‖f x‖ ^ (2 : ℕ) + ‖g x‖ ^ (2 : ℕ)) :=
       integral_mono hfg_sq ((hf_sq.add hg_sq).const_mul 2)
         (fun x => norm_sub_sq_le_twice (f x) (g x))
     _ = 2 * (l2Sq f + l2Sq g) := by
@@ -525,7 +526,7 @@ theorem tensorDiff_norm_integral_le {u v : VelocityField} {t : ℝ}
   have hv_sq := (memLp_two_iff_integrable_sq_norm hv.aestronglyMeasurable).1 hv
   calc
     (∫ x : Space, ‖tensorDiff u v t i j x‖) ≤
-        ∫ x : Space, ‖u (t, x)‖ ^ 2 + ‖v (t, x)‖ ^ 2 :=
+        ∫ x : Space, ‖u (t, x)‖ ^ (2 : ℕ) + ‖v (t, x)‖ ^ (2 : ℕ) :=
       integral_mono (tensorDiff_integrable hu hv i j).norm (hu_sq.add hv_sq)
         (tensorDiff_norm_le u v t i j)
     _ = _ := integral_add hu_sq hv_sq

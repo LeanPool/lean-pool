@@ -51,7 +51,7 @@ def restrictionLinear (c : ℂ) {ρ σ : ℝ} (h : ρ ≤ σ) :
   map_smul' a f := by ext z; rfl
 
 theorem norm_restrictionLinear_le (c : ℂ) {ρ σ : ℝ} (h : ρ ≤ σ)
-    (f : C(Disk c σ, E)) : ‖restrictionLinear c h f‖ ≤ ‖f‖ := by
+    (f : C(Disk c σ, E)) : ‖restrictionLinear (E := E) c h f‖ ≤ ‖f‖ := by
   apply (ContinuousMap.norm_le _ (norm_nonneg f)).2
   intro z
   exact f.norm_coe_le_norm _
@@ -60,17 +60,17 @@ theorem norm_restrictionLinear_le (c : ℂ) {ρ σ : ℝ} (h : ρ ≤ σ)
 intro f simpa only [one_mul] using norm_restrictionLinear_le c h f)`. -/
 def restrictionCLM (c : ℂ) {ρ σ : ℝ} (h : ρ ≤ σ) :
     C(Disk c σ, E) →L[ℂ] C(Disk c ρ, E) :=
-  (restrictionLinear c h).mkContinuous 1 (by
+  (restrictionLinear (E := E) c h).mkContinuous 1 (by
     intro f
     simpa only [one_mul] using norm_restrictionLinear_le c h f)
 
 @[simp] theorem restrictionCLM_apply (c : ℂ) {ρ σ : ℝ} (h : ρ ≤ σ)
     (f : C(Disk c σ, E)) (z : Disk c ρ) :
-    restrictionCLM c h f z = f ⟨z.1, closedBall_subset_closedBall h z.2⟩ := rfl
+    restrictionCLM (E := E) c h f z = f ⟨z.1, closedBall_subset_closedBall h z.2⟩ := rfl
 
 theorem restrictionCLM_comp (c : ℂ) {r ρ σ : ℝ} (h₁ : r ≤ ρ) (h₂ : ρ ≤ σ) :
-    (restrictionCLM (E := E) c h₁).comp (restrictionCLM c h₂) =
-      restrictionCLM c (h₁.trans h₂) := by
+    (restrictionCLM (E := E) c h₁).comp (restrictionCLM (E := E) c h₂) =
+      restrictionCLM (E := E) c (h₁.trans h₂) := by
   ext f z
   rfl
 
@@ -192,14 +192,14 @@ theorem norm_restrictionCLM_le (c : ℂ) {ρ σ : ℝ} (h : ρ ≤ σ) :
     ‖restrictionCLM (E := E) c h‖ ≤ 1 := by
   apply ContinuousLinearMap.opNorm_le_bound _ zero_le_one
   intro f
-  change ‖restrictionLinear c h f‖ ≤ 1 * ‖f‖
+  change ‖restrictionLinear (E := E) c h f‖ ≤ 1 * ‖f‖
   simpa only [one_mul] using norm_restrictionLinear_le c h f
 
 variable [CompleteSpace E]
 
 theorem derivativeCLM_apply_integral (c : ℂ) {ρ σ : ℝ} (hgap : ρ < σ)
     (f : C(Disk c σ, E)) (z : Disk c ρ) :
-    derivativeCLM c hgap f z = (2 * Real.pi * I : ℂ)⁻¹ •
+    derivativeCLM (E := E) c hgap f z = (2 * Real.pi * I : ℂ)⁻¹ •
       ∫ θ : ℝ in (0)..(2 * Real.pi),
         weight (σ - ρ) θ • f (sample c hgap θ z) := by
   change cauchyMap c hgap f z = _
@@ -207,7 +207,7 @@ theorem derivativeCLM_apply_integral (c : ℂ) {ρ σ : ℝ} (hgap : ρ < σ)
   congr 1
   have hi : IntervalIntegrable (integrand c hgap f) volume 0 (2 * Real.pi) :=
     (continuous_integrand c hgap f).intervalIntegrable _ _
-  exact ((ContinuousMap.evalCLM ℂ z).intervalIntegral_comp_comm
+  exact ((ContinuousMap.evalCLM (M := E) ℂ z).intervalIntegral_comp_comm
     hi).symm
 
 theorem ball_subset_outer (c : ℂ) {ρ σ : ℝ} (z : Disk c ρ) :
@@ -235,7 +235,7 @@ theorem derivativeCLM_apply_of_eq (c : ℂ) {ρ σ : ℝ} (hgap : ρ < σ)
     (f : C(Disk c σ, E)) (F : ℂ → E)
     (hF : DiffContOnCl ℂ F (ball c σ))
     (hvalues : ∀ w : Disk c σ, f w = F w) (z : Disk c ρ) :
-    derivativeCLM c hgap f z = deriv F z := by
+    derivativeCLM (E := E) c hgap f z = deriv F z := by
   have hci := DiffContOnCl.deriv_eq_smul_circleIntegral
     (sub_pos.mpr hgap) (hF.mono (ball_subset_outer c z))
   have hfactor : (2 * (Real.pi : ℂ) * I) ≠ 0 := by simp [Real.pi_ne_zero]
@@ -270,12 +270,12 @@ omit [NormedSpace ℂ E] [CompleteSpace E] in
 continuity on its closure. No smoothness of the derivative is assumed. -/
 theorem derivativeCLM_apply_of_diffContOnCl (c : ℂ) {ρ σ : ℝ} (hgap : ρ < σ)
     (F : ℂ → E) (hF : DiffContOnCl ℂ F (ball c σ)) (z : Disk c ρ) :
-    derivativeCLM c hgap (ofContinuousOn c σ F hF.continuousOn_ball) z = deriv F z :=
+    derivativeCLM (E := E) c hgap (ofContinuousOn c σ F hF.continuousOn_ball) z = deriv F z :=
   derivativeCLM_apply_of_eq c hgap _ F hF (fun _ => rfl) z
 
 theorem derivativeCLM_apply_of_differentiableOn (c : ℂ) {ρ σ : ℝ} (hgap : ρ < σ)
     (F : ℂ → E) (hF : DifferentiableOn ℂ F (closedBall c σ)) (z : Disk c ρ) :
-    derivativeCLM c hgap (ofContinuousOn c σ F hF.continuousOn) z = deriv F z :=
+    derivativeCLM (E := E) c hgap (ofContinuousOn c σ F hF.continuousOn) z = deriv F z :=
   derivativeCLM_apply_of_eq c hgap _ F
     (DiffContOnCl.mk_ball (hF.mono ball_subset_closedBall) hF.continuousOn) (fun _ => rfl) z
 
@@ -285,10 +285,10 @@ theorem restrict_derivativeCLM_of_eq (c : ℂ) {r ρ σ : ℝ}
     (hr : r ≤ ρ) (hgap : ρ < σ) (f : C(Disk c σ, E)) (F : ℂ → E)
     (hF : DiffContOnCl ℂ F (ball c σ))
     (hvalues : ∀ w : Disk c σ, f w = F w) :
-    restrictionCLM c hr (derivativeCLM c hgap f) =
-      derivativeCLM c (hr.trans_lt hgap) f := by
+    restrictionCLM (E := E) c hr (derivativeCLM (E := E) c hgap f) =
+      derivativeCLM (E := E) c (hr.trans_lt hgap) f := by
   ext z
-  change derivativeCLM c hgap f (inclusion c hr z) = _
+  change derivativeCLM (E := E) c hgap f (inclusion c hr z) = _
   calc
     _ = deriv F z := derivativeCLM_apply_of_eq c hgap f F hF hvalues (inclusion c hr z)
     _ = _ := (derivativeCLM_apply_of_eq c (hr.trans_lt hgap) f F hF hvalues z).symm
@@ -299,11 +299,11 @@ theorem derivativeCLM_restrict_of_eq (c : ℂ) {r ρ σ : ℝ}
     (hgap : r < ρ) (houter : ρ ≤ σ) (f : C(Disk c σ, E)) (F : ℂ → E)
     (hF : DiffContOnCl ℂ F (ball c σ))
     (hvalues : ∀ w : Disk c σ, f w = F w) :
-    derivativeCLM c hgap (restrictionCLM c houter f) =
-      derivativeCLM c (hgap.trans_le houter) f := by
+    derivativeCLM (E := E) c hgap (restrictionCLM (E := E) c houter f) =
+      derivativeCLM (E := E) c (hgap.trans_le houter) f := by
   ext z
   calc
-    _ = deriv F z := derivativeCLM_apply_of_eq c hgap (restrictionCLM c houter f) F
+    _ = deriv F z := derivativeCLM_apply_of_eq c hgap (restrictionCLM (E := E) c houter f) F
       (hF.mono (ball_subset_ball houter))
       (fun w => hvalues (inclusion c houter w)) z
     _ = _ := (derivativeCLM_apply_of_eq c (hgap.trans_le houter) f F hF hvalues z).symm
@@ -311,14 +311,14 @@ theorem derivativeCLM_restrict_of_eq (c : ℂ) {r ρ σ : ℝ}
 omit [CompleteSpace E] in
 theorem continuous_derivative_path {X : Type*} [TopologicalSpace X]
     (c : ℂ) {ρ σ : ℝ} (hgap : ρ < σ) {f : X → C(Disk c σ, E)} (hf : Continuous f) :
-    Continuous (fun x => derivativeCLM c hgap (f x)) :=
-  (derivativeCLM c hgap).continuous.comp hf
+    Continuous (fun x => derivativeCLM (E := E) c hgap (f x)) :=
+  (derivativeCLM (E := E) c hgap).continuous.comp hf
 
 omit [CompleteSpace E] in
 theorem contDiff_derivative_path {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
     (c : ℂ) {ρ σ : ℝ} (hgap : ρ < σ) {n : WithTop ℕ∞}
     {f : X → C(Disk c σ, E)} (hf : ContDiff ℝ n f) :
-    ContDiff ℝ n (fun x => derivativeCLM c hgap (f x)) :=
-  ((derivativeCLM c hgap).restrictScalars ℝ).contDiff.comp hf
+    ContDiff ℝ n (fun x => derivativeCLM (E := E) c hgap (f x)) :=
+  ((derivativeCLM (E := E) c hgap).restrictScalars ℝ).contDiff.comp hf
 
 end NavierStokes.CauchyRestriction

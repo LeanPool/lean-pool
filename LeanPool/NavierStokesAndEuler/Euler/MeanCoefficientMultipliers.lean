@@ -132,8 +132,8 @@ theorem multiplier_quadratic_upper (A : Field) (K : ℝ)
     ⟪multiplier A u, u⟫_ℝ ≤ K * ‖u‖^2 := by
   rw [← real_inner_self_eq_norm_sq, MeasureTheory.L2.inner_def, MeasureTheory.L2.inner_def,
     ← integral_const_mul]
-  apply integral_mono_ae (MeasureTheory.L2.integrable_inner (multiplier A u) u)
-    ((MeasureTheory.L2.integrable_inner u u).const_mul K)
+  apply integral_mono_ae (MeasureTheory.L2.integrable_inner (𝕜 := ℝ) (multiplier A u) u)
+    ((MeasureTheory.L2.integrable_inner (𝕜 := ℝ) u u).const_mul K)
   filter_upwards [multiplier_ae A u] with x hx
   rw [hx, real_inner_self_eq_norm_sq]
   exact hA x (u x)

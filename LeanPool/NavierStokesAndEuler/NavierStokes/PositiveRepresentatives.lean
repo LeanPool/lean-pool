@@ -330,8 +330,9 @@ theorem stableInner_smoothAt {h : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1 / 2)
     {p : Slow} (hp : p ∈ stableDomain h) : ContDiffAt ℝ ∞ (stableInner h) p := by
   have hq := stableQ_smoothAt hh hh1 hp
   have hpos := (stableQ_spec hp).1
-  exact ((contDiffAt_fst.pow 2).div (contDiffAt_const.mul hq) (by positivity)).prodMk
-    (contDiffAt_snd.fst.div (hq.rpow_const_of_ne hpos.ne')
+  exact (((contDiffAt_fst (𝕜 := ℝ) (E := ℝ) (F := ℝ × ℝ)).pow 2).div (contDiffAt_const.mul hq)
+    (by positivity)).prodMk
+    ((contDiffAt_snd (𝕜 := ℝ) (E := ℝ) (F := ℝ × ℝ)).fst.div (hq.rpow_const_of_ne hpos.ne')
       (Real.rpow_pos_of_pos hpos _).ne')
 
 theorem positiveTime_mem_stableDomain {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
@@ -611,7 +612,7 @@ theorem compact_jet_bound {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     ∃ C : ℝ, 0 < C ∧ ∀ p ∈ K, ‖iteratedFDeriv ℝ n f p‖ ≤ C := by
   have hc : ContinuousOn (iteratedFDeriv ℝ n f) K := by
     intro p hp
-    apply ((hf p hp).iteratedFDeriv_right (m := 0) ?_).continuousAt.continuousWithinAt
+    apply ((hf p hp).iteratedFDeriv_right (m := 0) (i := n) ?_).continuousAt.continuousWithinAt
     simpa only [zero_add] using
       (ENat.natCast_lt_of_coe_top_le_withTop le_rfl n).le
   obtain ⟨C, hC, hb⟩ := (hK.image_of_continuousOn hc).isBounded.exists_pos_norm_le

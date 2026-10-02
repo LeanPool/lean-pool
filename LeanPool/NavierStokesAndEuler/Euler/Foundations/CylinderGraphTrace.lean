@@ -338,7 +338,9 @@ theorem graph_memLp_and_energy_bound (f : LiftDomain period → F)
   simp only [Pi.add_apply] at hbound
   rw [integral_add (hfint.integral_prod_left.const_mul (2 / period))
     (hdint.integral_prod_left.const_mul (2 * period)), integral_const_mul, integral_const_mul,
-    integral_integral hfint, integral_integral hdint] at hbound
+    integral_integral (f := fun x s => ‖f (x, s)‖ ^ 2) hfint,
+    integral_integral (f := fun x s => ‖fieldDerivative period (0, 1) f (x, s)‖ ^ 2)
+      hdint] at hbound
   exact hbound
 
 end EulerCylinderGraphTrace

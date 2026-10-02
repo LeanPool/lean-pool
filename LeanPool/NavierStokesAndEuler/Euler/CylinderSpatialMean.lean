@@ -67,7 +67,7 @@ theorem mean_embedding (u : SpatialL2 V) :
 omit [CompleteSpace V] in
 theorem cylinder_translation_inner (a : LiftTangent) (u v : CylinderL2 P V) :
     inner ℝ (translate (V := V) P a u) v = inner ℝ u (translate (V := V) P (-a) v) := by
-  have h := (translate P a).inner_map_map u (translate (V := V) P (-a) v)
+  have h := (translate (V := V) P a).inner_map_map u (translate (V := V) P (-a) v)
   rw [translate_add, add_neg_cancel, translate_zero] at h
   exact h
 
@@ -75,7 +75,7 @@ omit [Fact (0 < P)] [CompleteSpace V] in
 theorem spatial_translation_inner (a : Space) (u v : SpatialL2 V) :
     inner ℝ (EulerLpTranslation.translation (V := V) a u) v =
       inner ℝ u (EulerLpTranslation.translation (V := V) (-a) v) := by
-  have h := (EulerLpTranslation.translation a).inner_map_map u
+  have h := (EulerLpTranslation.translation (V := V) a).inner_map_map u
     (EulerLpTranslation.translation (V := V) (-a) v)
   rw [EulerLpTranslation.translation_add, add_neg_cancel, EulerLpTranslation.translation_zero] at h
   exact h

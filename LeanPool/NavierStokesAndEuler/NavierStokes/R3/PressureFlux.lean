@@ -766,7 +766,7 @@ theorem timeAverage_norm_integral_le {E : Type*} [NormedAddCommGroup E]
       integral_mono hF.integral_prod_right.norm hF.integral_norm_prod_right
         (fun x => norm_integral_le_integral_norm (fun t => a t • f (t, x)))
     _ = ∫ t in Icc 0 T, ∫ x : Space, ‖a t • f (t, x)‖ :=
-      (integral_integral_swap hF.norm).symm
+      (integral_integral_swap (f := fun t x => ‖a t • f (t, x)‖) hF.norm).symm
     _ ≤ ∫ t in Icc 0 T, ‖a t‖ * M := by
       apply integral_mono_ae hF.integral_norm_prod_left (ha.norm.integrableOn_Icc.mul_const M)
       filter_upwards [ae_restrict_mem measurableSet_Icc] with t ht
@@ -784,7 +784,7 @@ theorem integral_timeAverage_eq {E : Type*} [NormedAddCommGroup E]
       ∫ t in Icc 0 T, a t • (∫ x : Space, f (t, x)) := by
   have hF := timeAverage_integrand_integrable ha hf hslice hbound
   change (∫ x : Space, ∫ t in Icc 0 T, a t • f (t, x)) = _
-  rw [← integral_integral_swap hF]
+  rw [← integral_integral_swap (f := fun t x => a t • f (t, x)) hF]
   simp only [integral_smul]
 
 /-- Cauchy--Schwarz for a Bochner integral over a finite measure space. -/
@@ -856,7 +856,7 @@ theorem l2Sq_timeIntegral_le {E : Type*} [NormedAddCommGroup E]
       simpa only [Prod.swap_prod_mk] using norm_integral_sq_le_measure_mul_integral_sq hxtwo
     _ = ((volume : Measure ℝ).restrict (Icc 0 T)).real univ *
         ∫ t in Icc 0 T, ∫ x : Space, ‖f (t, x)‖ ^ 2 := by
-      rw [integral_const_mul, ← integral_integral_swap hsq]
+      rw [integral_const_mul, ← integral_integral_swap (f := fun t x => ‖f (t, x)‖ ^ 2) hsq]
 
 /-- Squared norm integrability of the weighted joint field follows from a
 uniform spatial square-integral bound. -/
@@ -886,7 +886,8 @@ theorem timeAverage_memLp_two {E : Type*} [NormedAddCommGroup E]
     (hslice : ∀ t ∈ Icc 0 T, Integrable (fun x : Space => ‖f (t, x)‖ ^ 2))
     (hbound : ∀ t ∈ Icc 0 T, (∫ x : Space, ‖f (t, x)‖ ^ 2) ≤ M) :
     MemLp (timeAverage T a f) 2 volume :=
-  memLp_two_timeIntegral (aestronglyMeasurable_slab (continuousOn_time_weight ha hf))
+  memLp_two_timeIntegral (E := E) (T := T) (f := fun z : SpaceTime => a z.1 • f z)
+    (aestronglyMeasurable_slab (continuousOn_time_weight ha hf))
     (timeAverage_integrand_integrable_sq_norm ha hf hslice hbound)
 
 /-- A quantitative square-integral estimate using only the time weight and
@@ -984,7 +985,8 @@ theorem timeAverage_difference_component_memLp_two {T : ℝ} {a : ℝ → ℝ}
   obtain ⟨M, _, hM⟩ :=
     uniformFiniteEnergy_difference_component_l2Sq_bound hu_cont hv_cont hu hv k
   exact timeAverage_memLp_two ha
-    ((EuclideanSpace.proj k : Space →L[ℝ] ℝ).continuous.comp_continuousOn (hu_cont.sub hv_cont))
+    ((EuclideanSpace.proj k : Space →L[ℝ] ℝ).continuous.comp_continuousOn (f := u - v)
+      (hu_cont.sub hv_cont))
     (fun t ht => (hM t ht).1) (fun t ht => (hM t ht).2)
 
 /-- Each nonlinear tensor component is jointly continuous on the slab. -/
@@ -1025,12 +1027,12 @@ theorem l2_inner_integrable_and_norm_integral_le {E : Type*} [NormedAddCommGroup
   have hpoint (x : Space) : ‖⟪f x, g x⟫_ℝ‖ ≤ ‖f x‖ ^ 2 + ‖g x‖ ^ 2 := by
     apply (norm_inner_le_norm (f x) (g x)).trans
     nlinarith [sq_nonneg (‖f x‖ - ‖g x‖), mul_nonneg (norm_nonneg (f x)) (norm_nonneg (g x))]
-  have hint := (hf_sq.add hg_sq).mono'
-    (hf.aestronglyMeasurable.inner hg.aestronglyMeasurable)
+  have hint := (hf_sq.add hg_sq).mono' (β := ℝ)
+    (hf.aestronglyMeasurable.inner (𝕜 := ℝ) (E := E) hg.aestronglyMeasurable)
     (Filter.Eventually.of_forall hpoint)
   refine ⟨hint, ?_⟩
   calc
-    (∫ x : Space, ‖⟪f x, g x⟫_ℝ‖) ≤ ∫ x : Space, ‖f x‖ ^ 2 + ‖g x‖ ^ 2 :=
+    (∫ x : Space, ‖⟪f x, g x⟫_ℝ‖) ≤ ∫ x : Space, ‖f x‖ ^ (2 : ℕ) + ‖g x‖ ^ (2 : ℕ) :=
       integral_mono hint.norm (hf_sq.add hg_sq) hpoint
     _ = l2Sq f + l2Sq g := integral_add hf_sq hg_sq
 
@@ -1149,7 +1151,7 @@ theorem l2_complex_mul_integrable_and_norm_integral_le {f : Space → ℝ} {ψ :
   have hint := (hf_sq.add hψ_sq).mono' hmeas (Filter.Eventually.of_forall hpoint)
   refine ⟨hint, ?_⟩
   calc
-    (∫ x : Space, ‖(f x : ℂ) * ψ x‖) ≤ ∫ x : Space, ‖f x‖ ^ 2 + ‖ψ x‖ ^ 2 :=
+    (∫ x : Space, ‖(f x : ℂ) * ψ x‖) ≤ ∫ x : Space, ‖f x‖ ^ (2 : ℕ) + ‖ψ x‖ ^ (2 : ℕ) :=
       integral_mono hint.norm (hf_sq.add hψ_sq) hpoint
     _ = l2Sq f + l2Sq ψ := integral_add hf_sq hψ_sq
 
@@ -1301,12 +1303,12 @@ theorem velocityAverage_pairing {T : ℝ} {u v : VelocityField} {p q : PressureF
   obtain ⟨M, _, hM⟩ := uniformFiniteEnergy_difference_component_l2Sq_bound
     H.smooth_u.continuousOn H.smooth_v.continuousOn H.energy_u H.energy_v k
   have hf : ContinuousOn (fun z => (u - v) z k) (Comparison.slab 0 T) :=
-    (EuclideanSpace.proj k : Space →L[ℝ] ℝ).continuous.comp_continuousOn
+    (EuclideanSpace.proj k : Space →L[ℝ] ℝ).continuous.comp_continuousOn (f := u - v)
       (H.smooth_u.continuousOn.sub H.smooth_v.continuousOn)
   have h := timeAverage_complex_pairing_of_memLp_two
     (f := fun z => (u - v) z k) (ψ := (realTest ψ hψ hcψ : Space → ℂ)) ha hf
     (fun t ht => (hM t ht).1) (fun t ht => (hM t ht).2)
-    (realTest ψ hψ hcψ).continuous ((realTest ψ hψ hcψ).memLp 2)
+    (realTest ψ hψ hcψ).continuous ((realTest ψ hψ hcψ).memLp 2 volume)
   apply Complex.ofReal_injective
   simpa only [velocityAverage, realTest_apply, ← Complex.ofReal_mul, integral_complex_ofReal] using
       h
@@ -2994,7 +2996,7 @@ theorem cutoff_commutator_bound {R : ℝ} (hR : 0 < R) {w : Space → Space}
     (ComparisonCutoffs.cutoff_smooth R).continuous.measurable
     (ComparisonCutoffs.cutoff_mem_Icc R) (cutoff_lipschitz hR) hg
     (rTest R hR w hw) (fluxTest R hR w hw)
-    (fluxTest_eq_multiplier_rTest R hR w hw) ((rTest R hR w hw).memLp 4)
+    (fluxTest_eq_multiplier_rTest R hR w hw) ((rTest R hR w hw).memLp 4 volume)
   have hH := Comparison.rieszCommutatorConstant_pos.le
   have hD := (ComparisonCutoffs.derivativeConstant_pos 1).le
   have hm : 0 ≤ max (2 * ComparisonCutoffs.derivativeConstant 1) 1 :=

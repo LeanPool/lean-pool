@@ -78,7 +78,8 @@ theorem futureVelocity_eq_smul : futureVelocity τ hτ hτT B Z = a • futureVe
       apply Subtype.ext
       change (0 : CylinderL2 P Space) = a • 0
       exact (smul_zero a).symm) (forwardInitial_eq_smul τ hτ hτT B Y Z a h)]
-  exact (includePath P D.support D.support_measurable).map_smul a _
+  exact (includePath (K := Icc (0 : ℝ) (D.T - τ)) (V := Vector3) P D.support
+    D.support_measurable).map_smul a _
 
 theorem futureDerivative_eq_smul : futureDerivative τ hτ hτT B Z = a • futureDerivative τ hτ hτT B
     Y := by
@@ -92,7 +93,8 @@ theorem futureDerivative_eq_smul : futureDerivative τ hτ hτT B Z = a • futu
       apply Subtype.ext
       change (0 : CylinderL2 P Space) = a • 0
       exact (smul_zero a).symm) (forwardInitial_eq_smul τ hτ hτT B Y Z a h)]
-  exact (includePath P D.support D.support_measurable).map_smul a _
+  exact (includePath (K := Icc (0 : ℝ) (D.T - τ)) (V := Vector3) P D.support
+    D.support_measurable).map_smul a _
 
 theorem velocityPath_eq_smul : velocityPath τ hτ hτT B Z = a • velocityPath τ hτ hτT B Y := by
   apply ContinuousMap.ext

@@ -62,7 +62,7 @@ local instance instPositiveAxisExistence3 : NormedSpace ℂ (Matrix (Fin 6) (Fin
 section DifferentialEquation
 
 variable {R : ℝ} (hR : 0 ≤ R) {U : Set ℂ} (hU : IsOpen U)
-  {A₀ A₁ : Coeff} {f W : Field}
+  {A₀ A₁ : Coeff} {f W : VolterraAnalyticBounds.Field}
   (hW : IsSymmetricIntegralSolution R U A₀ A₁ f W)
   (hdata : SmoothCoefficientData R U A₀ A₁ f)
 
@@ -131,7 +131,7 @@ noncomputable def matrixOperator : Matrix (Fin 6) (Fin 6) ℂ →L[ℂ] (Vec →
     matrixOperator A v = A.mulVec v := rfl
 
 @[simp] theorem matrixOperator_toMatrix (A : Matrix (Fin 6) (Fin 6) ℂ) :
-    LinearMap.toMatrix' (matrixOperator A).toLinearMap = A :=
+    LinearMap.toMatrix' (R := ℂ) (m := Fin 6) (n := Fin 6) (matrixOperator A).toLinearMap = A :=
   LinearMap.toMatrix'_toLin' A
 
 /-- Packaging the actual radial matrix coefficient in the compact path space. -/
@@ -139,7 +139,8 @@ noncomputable def matrixPath (R : ℝ) (A : Coeff) : ℂ → SymmetricCoefficien
   CompactSmoothFamily.family (Icc (-R) R) (fun p : ℂ × ℝ => matrixOperator (A p.2 p.1))
 
 /-- Packaging the actual forcing in the compact path space. -/
-noncomputable def forcingPath (R : ℝ) (f : Field) : ℂ → SymmetricPath R Vec :=
+noncomputable def forcingPath (R : ℝ) (f : VolterraAnalyticBounds.Field) :
+    ℂ → SymmetricPath R Vec :=
   CompactSmoothFamily.family (Icc (-R) R) (fun p : ℂ × ℝ => f p.2 p.1)
 
 theorem matrixPath_apply {R : ℝ} {A : Coeff} {z : ℂ}
@@ -147,7 +148,7 @@ theorem matrixPath_apply {R : ℝ} {A : Coeff} {z : ℂ}
     matrixPath R A z r = matrixOperator (A r z) :=
   CompactSmoothFamily.family_apply _ _ _ (matrixOperator.continuous.comp hA) r
 
-theorem forcingPath_apply {R : ℝ} {f : Field} {z : ℂ}
+theorem forcingPath_apply {R : ℝ} {f : VolterraAnalyticBounds.Field} {z : ℂ}
     (hf : Continuous (fun r : Icc (-R) R => f r z)) (r : Icc (-R) R) :
     forcingPath R f z r = f r z :=
   CompactSmoothFamily.family_apply _ _ _ hf r
@@ -159,7 +160,7 @@ theorem raw_matrixPath {R : ℝ} (hR : 0 ≤ R) {A : Coeff} {z : ℂ}
   unfold symmetricRawCoefficient
   rw [matrixPath_apply hA, matrixOperator_toMatrix, projIcc_of_mem (by linarith) hr]
 
-theorem raw_forcingPath {R : ℝ} (hR : 0 ≤ R) {f : Field} {z : ℂ}
+theorem raw_forcingPath {R : ℝ} (hR : 0 ≤ R) {f : VolterraAnalyticBounds.Field} {z : ℂ}
     (hf : Continuous (fun r : Icc (-R) R => f r z))
     {r : ℝ} (hr : r ∈ Icc (-R) R) :
     symmetricRawField hR (forcingPath R f) r z = f r z := by
@@ -185,7 +186,7 @@ theorem scaled_mem_symmetricInterval {R r t : ℝ} (hr : r ∈ Icc (-R) R)
     _ ≤ R := abs_le.mpr hr
 
 theorem solution_change_data {R : ℝ} {U : Set ℂ}
-    {A₀ A₁ B₀ B₁ : Coeff} {f g W : Field}
+    {A₀ A₁ B₀ B₁ : Coeff} {f g W : VolterraAnalyticBounds.Field}
     (h : IsSymmetricIntegralSolution R U A₀ A₁ f W)
     (h₀ : ∀ r ∈ Icc (-R) R, ∀ z ∈ U, A₀ r z = B₀ r z)
     (h₁ : ∀ r ∈ Icc (-R) R, ∀ z ∈ U, A₁ r z = B₁ r z)
@@ -201,7 +202,8 @@ theorem solution_change_data {R : ℝ} {U : Set ℂ}
 
 /-- Smoothness and parameter holomorphy of the given coefficients. These
 are hypotheses only on input functions. -/
-structure SmoothHolomorphicSystem (T : ℝ) (U : Set ℂ) (A₀ A₁ : Coeff) (f : Field) : Prop where
+structure SmoothHolomorphicSystem (T : ℝ) (U : Set ℂ) (A₀ A₁ : Coeff)
+    (f : VolterraAnalyticBounds.Field) : Prop where
   smooth : SmoothCoefficientData T U A₀ A₁ f
   zeroth_holomorphic : ∀ r ∈ radialDomain T, DifferentiableOn ℂ (A₀ r) U
   first_holomorphic : ∀ r ∈ radialDomain T, DifferentiableOn ℂ (A₁ r) U
@@ -216,7 +218,8 @@ theorem symmetricInterval_subset_radialDomain {R T : ℝ} (hRT : R < T) :
 theorem radialDomain_mono {R T : ℝ} (hRT : R ≤ T) : radialDomain R ⊆ radialDomain T :=
   Metric.ball_subset_ball hRT
 
-theorem SmoothHolomorphicSystem.restrict {R T : ℝ} {U : Set ℂ} {A₀ A₁ : Coeff} {f : Field}
+theorem SmoothHolomorphicSystem.restrict {R T : ℝ} {U : Set ℂ} {A₀ A₁ : Coeff}
+    {f : VolterraAnalyticBounds.Field}
     (h : SmoothHolomorphicSystem T U A₀ A₁ f) (hRT : R ≤ T) :
     SmoothHolomorphicSystem R U A₀ A₁ f := by
   let hs : radialDomain R ×ˢ U ⊆ radialDomain T ×ˢ U :=
@@ -251,7 +254,7 @@ theorem matrixPath_holomorphic {R T : ℝ} (hRT : R < T) {U : Set ℂ} (hU : IsO
       (hhol r (symmetricInterval_subset_radialDomain hRT hr))
 
 theorem forcingPath_holomorphic {R T : ℝ} (hRT : R < T) {U : Set ℂ} (hU : IsOpen U)
-    {f : Field}
+    {f : VolterraAnalyticBounds.Field}
     (hf : ∀ i, ContDiffOn ℝ ∞ (fun p : ℝ × ℂ => f p.1 p.2 i) (radialDomain T ×ˢ U))
     (hhol : ∀ r ∈ radialDomain T, DifferentiableOn ℂ (f r) U) :
     DifferentiableOn ℂ (forcingPath R f) U := by
@@ -272,7 +275,8 @@ theorem matrix_slice_continuous {R T : ℝ} (hRT : R < T) {U : Set ℂ} {A : Coe
   exact hs.continuousOn.comp_continuous (continuous_subtype_val.prodMk continuous_const)
     (fun r => ⟨symmetricInterval_subset_radialDomain hRT r.2, hz⟩)
 
-theorem forcing_slice_continuous {R T : ℝ} (hRT : R < T) {U : Set ℂ} {f : Field}
+theorem forcing_slice_continuous {R T : ℝ} (hRT : R < T) {U : Set ℂ}
+    {f : VolterraAnalyticBounds.Field}
     (hf : ∀ i, ContDiffOn ℝ ∞ (fun p : ℝ × ℂ => f p.1 p.2 i) (radialDomain T ×ˢ U))
     {z : ℂ} (hz : z ∈ U) : Continuous (fun r : Icc (-R) R => f r z) := by
   have hs : ContDiffOn ℝ ∞ (fun p : ℝ × ℂ => f p.1 p.2) (radialDomain T ×ˢ U) :=
@@ -281,11 +285,12 @@ theorem forcing_slice_continuous {R T : ℝ} (hRT : R < T) {U : Set ℂ} {f : Fi
     (fun r => ⟨symmetricInterval_subset_radialDomain hRT r.2, hz⟩)
 
 /-- The actual canonical solution for raw matrix coefficients. -/
-noncomputable def assembledSolution {R : ℝ} (hR : 0 ≤ R) (A₀ A₁ : Coeff) (f : Field) : Field :=
+noncomputable def assembledSolution {R : ℝ} (hR : 0 ≤ R) (A₀ A₁ : Coeff)
+    (f : VolterraAnalyticBounds.Field) : VolterraAnalyticBounds.Field :=
   symmetricSolution hR (matrixPath R A₀) (matrixPath R A₁) (forcingPath R f)
 
 theorem assembledSolution_spec {R T : ℝ} (hR : 0 ≤ R) (hRT : R < T)
-    {U : Set ℂ} (hU : IsOpen U) {A₀ A₁ : Coeff} {f : Field}
+    {U : Set ℂ} (hU : IsOpen U) {A₀ A₁ : Coeff} {f : VolterraAnalyticBounds.Field}
     (hdata : SmoothHolomorphicSystem T U A₀ A₁ f) (hshape : DerivativeShape A₁) :
     IsSymmetricIntegralSolution R U A₀ A₁ f (assembledSolution hR A₀ A₁ f) := by
   have h := symmetricSolution_spec hR hU
@@ -299,7 +304,7 @@ theorem assembledSolution_spec {R T : ℝ} (hR : 0 ≤ R) (hRT : R < T)
     (fun r hr z hz => raw_forcingPath hR (forcing_slice_continuous hRT hdata.smooth.forcing hz) hr)
 
 theorem assembledSolution_parity {R T : ℝ} (hR : 0 ≤ R) (hRT : R < T)
-    {U : Set ℂ} (hU : IsOpen U) {A₀ A₁ : Coeff} {f : Field}
+    {U : Set ℂ} (hU : IsOpen U) {A₀ A₁ : Coeff} {f : VolterraAnalyticBounds.Field}
     (hdata : SmoothHolomorphicSystem T U A₀ A₁ f) (hshape : DerivativeShape A₁)
     (hp₀ : CoefficientParity A₀) (hp₁ : CoefficientParity A₁) (hpf : ForcingParity f)
     {r : ℝ} (hr : r ∈ Icc (-R) R) {z : ℂ} (hz : z ∈ U) :
@@ -331,7 +336,8 @@ theorem assembledSolution_parity {R T : ℝ} (hR : 0 ≤ R) (hRT : R < T)
 /-- The disk-valued radial bootstrap and the Cauchy integral combine to
 give joint real smoothness, rather than merely separate smoothness. -/
 theorem solution_jointly_smooth {R : ℝ} (hR : 0 ≤ R) {U : Set ℂ} (hU : IsOpen U)
-    {A₀ A₁ : Coeff} {f W : Field} (hW : IsSymmetricIntegralSolution R U A₀ A₁ f W)
+    {A₀ A₁ : Coeff} {f W : VolterraAnalyticBounds.Field}
+    (hW : IsSymmetricIntegralSolution R U A₀ A₁ f W)
     (hdata : SmoothCoefficientData R U A₀ A₁ f) :
     ContDiffOn ℝ ∞ (fun p : ℝ × ℂ => W p.1 p.2) (radialDomain R ×ˢ U) := by
   apply contDiffOn_pi.mpr
@@ -412,7 +418,7 @@ theorem LowerInputRegularity.system {T : ℝ} {U : Set ℂ} (hU : IsOpen U)
 
 /-- The concrete series solution for the explicit positive-order matrices. -/
 noncomputable def positiveSolution {R : ℝ} (hR : 0 ≤ R) (h lam C : ℂ)
-    (F : CoefficientData) : Field :=
+    (F : CoefficientData) : VolterraAnalyticBounds.Field :=
   symmetricSolution hR (matrixPath R (coefficient0 h lam C F))
     (matrixPath R (coefficient1 h F)) (forcingPath R (sourceField h C F))
 
@@ -462,17 +468,18 @@ theorem realParameterDomain_isOpen {U : Set ℂ} (hU : IsOpen U) :
     IsOpen (realParameterDomain U) := hU.preimage Complex.continuous_ofReal
 
 /-- Real radial component, given by `(W p.2 (p.1 : ℂ) i).re`. -/
-noncomputable def realRadialComponent (W : Field) (i : Fin 6) (p : ℝ × ℝ) : ℝ :=
+noncomputable def realRadialComponent (W : VolterraAnalyticBounds.Field) (i : Fin 6)
+    (p : ℝ × ℝ) : ℝ :=
   (W p.2 (p.1 : ℂ) i).re
 
 /-- Actual profiles, with the physical coordinate order `(X,eta)`. -/
-noncomputable def xProfile (W : Field) (i : Fin 6) (p : ℝ × ℝ) : ℝ :=
+noncomputable def xProfile (W : VolterraAnalyticBounds.Field) (i : Fin 6) (p : ℝ × ℝ) : ℝ :=
   ParametricEvenDescent.descend (realRadialComponent W i) (p.2, p.1)
 
-@[simp] theorem xProfile_apply (W : Field) (i : Fin 6) (X eta : ℝ) :
+@[simp] theorem xProfile_apply (W : VolterraAnalyticBounds.Field) (i : Fin 6) (X eta : ℝ) :
     xProfile W i (X, eta) = (W (Real.sqrt X) (eta : ℂ) i).re := rfl
 
-theorem realRadialComponent_smooth {R : ℝ} {U : Set ℂ} {W : Field}
+theorem realRadialComponent_smooth {R : ℝ} {U : Set ℂ} {W : VolterraAnalyticBounds.Field}
     (hW : ContDiffOn ℝ ∞ (fun p : ℝ × ℂ => W p.1 p.2) (radialDomain R ×ˢ U))
     (i : Fin 6) :
     ContDiffOn ℝ ∞ (realRadialComponent W i) (realParameterDomain U ×ˢ Ioo (-R) R) := by
@@ -482,7 +489,7 @@ theorem realRadialComponent_smooth {R : ℝ} {U : Set ℂ} {W : Field}
   intro p hp
   exact ⟨by simpa [radialDomain, Real.ball_eq_Ioo] using hp.2, hp.1⟩
 
-theorem realRadialComponent_even {R : ℝ} {U : Set ℂ} {W : Field}
+theorem realRadialComponent_even {R : ℝ} {U : Set ℂ} {W : VolterraAnalyticBounds.Field}
     (hparity : ∀ r ∈ Icc (-R) R, ∀ z ∈ U, W (-r) z = parityVec (W r z))
     (i : Fin 6) (hi : i.val < 4) :
     ∀ eta ∈ realParameterDomain U, ∀ r ∈ Ioo (-R) R,
@@ -490,7 +497,8 @@ theorem realRadialComponent_even {R : ℝ} {U : Set ℂ} {W : Field}
   intro eta heta r hr
   exact congrArg Complex.re (first_components_even hparity i hi heta r hr)
 
-theorem xProfile_smooth {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsOpen U) {W : Field}
+theorem xProfile_smooth {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsOpen U)
+    {W : VolterraAnalyticBounds.Field}
     (hW : ContDiffOn ℝ ∞ (fun p : ℝ × ℂ => W p.1 p.2) (radialDomain R ×ˢ U))
     (hparity : ∀ r ∈ Icc (-R) R, ∀ z ∈ U, W (-r) z = parityVec (W r z))
     (i : Fin 6) (hi : i.val < 4) :
@@ -500,18 +508,18 @@ theorem xProfile_smooth {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsOpen U) {W 
     (realRadialComponent_even hparity i hi)
   exact hs.comp (contDiff_snd.prodMk contDiff_fst).contDiffOn (fun p hp => ⟨hp.2, hp.1⟩)
 
-theorem xProfile_square {R : ℝ} {U : Set ℂ} {W : Field}
+theorem xProfile_square {R : ℝ} {U : Set ℂ} {W : VolterraAnalyticBounds.Field}
     (hparity : ∀ r ∈ Icc (-R) R, ∀ z ∈ U, W (-r) z = parityVec (W r z))
     (i : Fin 6) (hi : i.val < 4) {eta r : ℝ} (heta : eta ∈ realParameterDomain U)
     (hr : r ∈ Ioo (-R) R) : xProfile W i (r ^ 2, eta) = (W r (eta : ℂ) i).re :=
   ParametricEvenDescent.descend_square_local (realRadialComponent_even hparity i hi) heta hr
 
-theorem xProfile_axis_zero {U : Set ℂ} {W : Field}
+theorem xProfile_axis_zero {U : Set ℂ} {W : VolterraAnalyticBounds.Field}
     (haxis : ∀ z ∈ U, W 0 z = 0) (i : Fin 6) {eta : ℝ}
     (heta : eta ∈ realParameterDomain U) : xProfile W i (0, eta) = 0 := by
   simp only [xProfile_apply, Real.sqrt_zero, haxis _ heta, Pi.zero_apply, Complex.zero_re]
 
-theorem xProfile_axis_jet {R : ℝ} (hR : 0 < R) {U : Set ℂ} {W : Field}
+theorem xProfile_axis_jet {R : ℝ} (hR : 0 < R) {U : Set ℂ} {W : VolterraAnalyticBounds.Field}
     (hW : ContDiffOn ℝ ∞ (fun p : ℝ × ℂ => W p.1 p.2) (radialDomain R ×ˢ U))
     (hparity : ∀ r ∈ Icc (-R) R, ∀ z ∈ U, W (-r) z = parityVec (W r z))
     (i : Fin 6) (hi : i.val < 4) {eta : ℝ} (heta : eta ∈ realParameterDomain U) (n : ℕ) :
@@ -573,7 +581,7 @@ theorem square_mem_Ico {R r : ℝ} (hr : r ∈ Ioo (-R) R) :
 def RealSixSystem (R : ℝ) (J : Set ℝ) (h lam C : ℝ) (G : RealCoefficientData)
     (w : RealField) : Prop :=
   ∀ r ∈ Ioo (-R) R, r ≠ 0 → ∀ eta ∈ J, ∀ i,
-    deriv (fun s => w s eta i) r + (diagonal i : ℝ) / r * w r eta i =
+    deriv (fun s => w s eta i) r + (PositiveAxisSystem.diagonal i : ℝ) / r * w r eta i =
       matrixRHS h lam C r eta (realBase G (r ^ 2, eta)) (realSource G (r ^ 2, eta))
         (w r eta) (fun j => deriv (fun v => w r v j) eta) i
 
@@ -630,7 +638,7 @@ theorem RealSixSystem.first_derivative {R : ℝ} {J : Set ℝ} {h lam C : ℝ}
   · simpa [PositiveAxisSystem.diagonal, hrows.2] using hw r hr hr0 eta heta 1
 
 theorem xProfile_contDiffAt {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsOpen U)
-    {W : Field}
+    {W : VolterraAnalyticBounds.Field}
     (hW : ContDiffOn ℝ ∞ (fun p : ℝ × ℂ => W p.1 p.2) (radialDomain R ×ˢ U))
     (hparity : ∀ r ∈ Icc (-R) R, ∀ z ∈ U, W (-r) z = parityVec (W r z))
     (i : Fin 6) (hi : i.val < 4) {r eta : ℝ}
@@ -644,7 +652,7 @@ theorem xProfile_contDiffAt {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsOpen U)
 /-- The last two Volterra components are the actual radial derivatives of
 the first two descended profiles; they are not independent jet variables. -/
 theorem xProfile_vector_eq {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsOpen U)
-    {W : Field}
+    {W : VolterraAnalyticBounds.Field}
     (hW : ContDiffOn ℝ ∞ (fun p : ℝ × ℂ => W p.1 p.2) (radialDomain R ×ˢ U))
     (hparity : ∀ r ∈ Icc (-R) R, ∀ z ∈ U, W (-r) z = parityVec (W r z))
     {h lam C : ℝ} {G : RealCoefficientData}
@@ -681,7 +689,7 @@ theorem xProfile_vector_eq {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsOpen U)
 
 /-- The recovered profiles solve the true differentiated system. -/
 theorem xProfiles_system {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsOpen U)
-    {W : Field}
+    {W : VolterraAnalyticBounds.Field}
     (hW : ContDiffOn ℝ ∞ (fun p : ℝ × ℂ => W p.1 p.2) (radialDomain R ×ˢ U))
     (hparity : ∀ r ∈ Icc (-R) R, ∀ z ∈ U, W (-r) z = parityVec (W r z))
     {h lam C : ℝ} {G : RealCoefficientData}
@@ -703,7 +711,8 @@ theorem xProfiles_system {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsOpen U)
     apply Filter.EventuallyEq.deriv_eq
     filter_upwards [(realParameterDomain_isOpen hU).mem_nhds heta] with v hv
     exact congrFun (xProfile_vector_eq hR hU hW hparity heq hr hr0 hv) i
-  change (fun i => deriv (fun s => PV s eta i) r + (diagonal i : ℝ) / r * PV r eta i) =
+  change (fun i => deriv (fun s => PV s eta i) r +
+      (PositiveAxisSystem.diagonal i : ℝ) / r * PV r eta i) =
     matrixRHS h lam C r eta (realBase G (r ^ 2, eta)) (realSource G (r ^ 2, eta))
       (PV r eta) (fun i => deriv (fun z => PV r z i) eta)
   funext i
@@ -836,7 +845,8 @@ section Uniqueness
 
 /-- A competing solution is given by actual holomorphic continuous paths
 on the positive and reflected negative radial intervals. -/
-def SidePathSolution {R : ℝ} (hR : 0 ≤ R) (U : Set ℂ) (A₀ A₁ : Coeff) (f : Field)
+def SidePathSolution {R : ℝ} (hR : 0 ≤ R) (U : Set ℂ) (A₀ A₁ : Coeff)
+    (f : VolterraAnalyticBounds.Field)
     (V : Bool → ℂ → NilpotentVolterra.Path R) : Prop :=
   (∀ b, DifferentiableOn ℂ (V b) U) ∧
   ∀ b z, z ∈ U → V b z = NilpotentVolterra.pathInverse hR exponent
@@ -844,8 +854,9 @@ def SidePathSolution {R : ℝ} (hR : 0 ≤ R) (U : Set ℂ) (A₀ A₁ : Coeff) 
       (sideData hR b (matrixPath R A₁)) (sideData hR b (forcingPath R f)) (V b) z)
 
 /-- Candidate lift, constructed using `glue`. -/
-noncomputable def candidateLift {R : ℝ} (hR : 0 ≤ R) (A₀ A₁ : Coeff) (f : Field)
-    (V : Bool → ℂ → NilpotentVolterra.Path R) : Field :=
+noncomputable def candidateLift {R : ℝ} (hR : 0 ≤ R) (A₀ A₁ : Coeff)
+    (f : VolterraAnalyticBounds.Field)
+    (V : Bool → ℂ → NilpotentVolterra.Path R) : VolterraAnalyticBounds.Field :=
   glue
     (NilpotentVolterra.liftedField hR (sideData hR false (matrixPath R A₀))
       (sideData hR false (matrixPath R A₁)) (sideData hR false (forcingPath R f)) (V false))
@@ -855,7 +866,7 @@ noncomputable def candidateLift {R : ℝ} (hR : 0 ≤ R) (A₀ A₁ : Coeff) (f 
 /-- Actual uniqueness in the holomorphic continuous-path class. It is
 deduced from the decaying Volterra-word majorant, with no norm smallness. -/
 theorem assembledSolution_unique {R T : ℝ} (hR : 0 ≤ R) (hRT : R < T)
-    {U : Set ℂ} (hU : IsOpen U) {A₀ A₁ : Coeff} {f : Field}
+    {U : Set ℂ} (hU : IsOpen U) {A₀ A₁ : Coeff} {f : VolterraAnalyticBounds.Field}
     (hdata : SmoothHolomorphicSystem T U A₀ A₁ f) (hshape : DerivativeShape A₁)
     {V : Bool → ℂ → NilpotentVolterra.Path R} (hV : SidePathSolution hR U A₀ A₁ f V)
     (r : ℝ) {z : ℂ} (hz : z ∈ U) :
@@ -893,7 +904,7 @@ field, its physical squared-radius profiles, and their exact equations and
 axis jets. Uniqueness is stated separately below. -/
 structure IsPositiveOrderSolution (R : ℝ) (U : Set ℂ) (h C : ℝ) (n : ℕ)
     (phi u beta : ℕ → InnerProfile) (omegaQuotient : InnerProfile)
-    (F : CoefficientData) (W : Field) : Prop where
+    (F : CoefficientData) (W : VolterraAnalyticBounds.Field) : Prop where
   integral : IsSymmetricIntegralSolution R U
     (coefficient0 (h : ℂ) ((slowPower h n : ℝ) : ℂ) (C : ℂ) F)
     (coefficient1 (h : ℂ) F) (sourceField (h : ℂ) (C : ℂ) F) W
@@ -922,7 +933,8 @@ theorem exists_positive_order_solution {R T : ℝ} (hR : 0 < R) (hRT : R < T)
     (phi u beta : ℕ → InnerProfile) (omegaQuotient : InnerProfile)
     {F : CoefficientData} (hF : LowerInputRegularity T U (h : ℂ) F)
     (hreal : RealCompatible R U F (lowerHistoryData h n phi u beta omegaQuotient)) :
-    ∃ W : Field, IsPositiveOrderSolution R U h C n phi u beta omegaQuotient F W := by
+    ∃ W : VolterraAnalyticBounds.Field,
+      IsPositiveOrderSolution R U h C n phi u beta omegaQuotient F W := by
   let W := positiveSolution hR.le (h : ℂ) ((slowPower h n : ℝ) : ℂ) (C : ℂ) F
   have hi := positiveSolution_spec hR.le hRT hU ((slowPower h n : ℝ) : ℂ) (C : ℂ) hF
   have hs := positiveSolution_jointly_smooth hR.le hRT hU ((slowPower h n : ℝ) : ℂ) (C : ℂ) hF
@@ -1197,11 +1209,13 @@ theorem omegaDivX_smooth_extension_at_axis (h : ℝ) (U v : ℕ → InnerProfile
 
 theorem partialX_analytic {v : InnerProfile} {w : InnerPoint}
     (hv : AnalyticAt ℝ v w) : AnalyticAt ℝ (partialX v) w :=
-  ((ContinuousLinearMap.apply ℝ ℝ ((1, 0) : InnerPoint)).analyticAt _).comp hv.fderiv
+  ((ContinuousLinearMap.apply ℝ ℝ (E := InnerPoint) ((1, 0) : InnerPoint)).analyticAt _).comp
+    hv.fderiv
 
 theorem partialEta_analytic {v : InnerProfile} {w : InnerPoint}
     (hv : AnalyticAt ℝ v w) : AnalyticAt ℝ (partialEta v) w :=
-  ((ContinuousLinearMap.apply ℝ ℝ ((0, 1) : InnerPoint)).analyticAt _).comp hv.fderiv
+  ((ContinuousLinearMap.apply ℝ ℝ (E := InnerPoint) ((0, 1) : InnerPoint)).analyticAt _).comp
+    hv.fderiv
 
 theorem T_analytic (h b : ℝ) {v : InnerProfile} {w : InnerPoint}
     (hv : AnalyticAt ℝ v w) (hL : L h w.2 ≠ 0) : AnalyticAt ℝ (T h b v) w := by
@@ -2175,7 +2189,7 @@ theorem radialDerivative_value {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsOpen
       (SimilarityProfile.partialX (profile F) (X, eta) : ℂ) := by
   have hb := BoundaryAxisJets.axisJet_eq_ordinary_full hR hU F.2.smooth F.2.even 1 hX heta
   have hd := ((profile_contDiffAt hR hU F hX heta).differentiableAt (by
-      simp)).hasFDerivAt.comp_hasDerivAt X
+      simp)).hasFDerivAt.comp_hasDerivAt (F := ℝ × ℝ) X
     ((hasDerivAt_id X).prodMk (hasDerivAt_const X eta))
   change HasDerivAt (fun Y => profile F (Y, eta)) (SimilarityProfile.partialX (profile F) (X, eta))
       X at hd
@@ -3053,7 +3067,8 @@ theorem average_from_equation {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsOpen 
       HasDerivAt (fun Z => profile F (Z, eta)) (SimilarityProfile.partialX (profile F) (Y, eta)) Y
           := by
     exact ((profile_contDiffAt hR hU F ⟨hY.1, lt_trans hY.2 hX.2⟩ heta).differentiableAt
-      (by simp)).hasFDerivAt.comp_hasDerivAt Y ((hasDerivAt_id Y).prodMk (hasDerivAt_const Y eta))
+      (by simp)).hasFDerivAt.comp_hasDerivAt (F := ℝ × ℝ) Y
+        ((hasDerivAt_id Y).prodMk (hasDerivAt_const Y eta))
   have hi : IntervalIntegrable (fun Y => profile u (Y, eta)) MeasureTheory.volume 0 X := by
     apply ContinuousOn.intervalIntegrable
     simpa only [uIcc_of_le hX.1.le] using hc u

@@ -180,7 +180,7 @@ theorem slot_material (l : SlotColoring.Label) (p pz x0 : ℝ) (b F G : Slow →
     rw [ActualSignedGeometry.slot_coordinates_radial, ActualSignedGeometry.slot_coordinates_angular,
       ActualSignedGeometry.slot_coordinates_axial, slot_coordinates_temporal]
     rfl
-  rw [he, LinearWaveResidual.materialPhaseDefect_slot_formula _ _ _ _ _ _ _ _
+  rw [he, LinearWaveResidual.materialPhaseDefect_slot_formula _ _ _ _ _ _ _ (chi x)
     (ChartScales.epsilon_pos h l.1).ne' hx hF hG]
   rfl
 

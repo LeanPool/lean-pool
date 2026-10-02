@@ -95,6 +95,6 @@ theorem pathMap_orbit_contDiff (L : E →L[ℝ] F) (u : C(K, CylinderL2 period E
       (fun a => pathMap (K := K) period L (pathTranslate (K := K) (V := E) period a u)) :=
     funext (fun a => (pathMap_translation period L a u).symm)
   rw [he]
-  exact (pathMap period L).contDiff.comp hu
+  exact (pathMap (K := K) period L).contDiff.comp hu
 
 end EulerCylinderConstantMap

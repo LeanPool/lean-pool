@@ -33,7 +33,7 @@ variable (P : ℝ) [Fact (0 < P)] {V : Type*}
 theorem reflection_adjoint :
     adjoint (𝕜 := ℝ) (E := CylinderL2 P V) (F := CylinderL2 P V)
       (reflection (V := V) P).toContinuousLinearMap =
-    (reflection P).toContinuousLinearMap := by
+    (reflection (V := V) P).toContinuousLinearMap := by
   apply ContinuousLinearMap.ext
   intro u
   apply ext_inner_right ℝ
@@ -65,7 +65,7 @@ theorem continuousVelocity_reflection (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (
     D.velocityPath P (pathLp T D.time_pos.le (pathReflection (K := Icc (0 : ℝ) T) (V := E) P f)) t =
       reflection (V := U) P (D.velocityPath P (pathLp T D.time_pos.le f) t) := by
   apply D.continuousVelocity_intertwines P D
-    (reflection P).toContinuousLinearMap (reflection P).toContinuousLinearMap
+    (reflection (V := U) P).toContinuousLinearMap (reflection (V := E) P).toContinuousLinearMap
     (fun s u => (reflection_fullOperator P (D.Q s) (hQ s) u).symm)
     (fun s u => (reflection_fullOperator P (D.Q₁ s) (hQ₁ s) u).symm)
     _ _ (fun s u => (reflection_fullOperator P (D.H s) (hH s) u).symm) f t
@@ -80,7 +80,7 @@ theorem accelerationPath_reflection (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t 
     D.accelerationPath P (pathReflection (K := Icc (0 : ℝ) T) (V := E) P f) t =
       reflection (V := U) P (D.accelerationPath P f t) := by
   apply D.accelerationPath_intertwines P D
-    (reflection P).toContinuousLinearMap (reflection P).toContinuousLinearMap
+    (reflection (V := U) P).toContinuousLinearMap (reflection (V := E) P).toContinuousLinearMap
     (fun s u => (reflection_fullOperator P (D.Q s) (hQ s) u).symm)
     (fun s u => (reflection_fullOperator P (D.Q₁ s) (hQ₁ s) u).symm)
     _ _ (fun s u => (reflection_fullOperator P (D.H s) (hH s) u).symm) f t

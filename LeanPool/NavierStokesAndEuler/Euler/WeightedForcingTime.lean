@@ -47,18 +47,19 @@ theorem familyNorm_lipschitz : LipschitzWith ‖(familyHilbertMap : (I → H) �
 
 /-- The actual scalar finite-family norm represented in Bochner L² time. -/
 def familyNormTime (T : ℝ) (u : TimeLp T (I → H)) : TimeLp T ℝ :=
-  familyNorm_lipschitz.compLp (by simp [familyNorm, familySquaredNorm]) u
+  (familyNorm_lipschitz (I := I) (H := H)).compLp (by simp [familyNorm, familySquaredNorm]) u
 
 /-- This scalar Bochner element is the literal family forcing norm almost everywhere. -/
 theorem familyNormTime_ae (T : ℝ) (u : TimeLp T (I → H)) :
     (familyNormTime T u : ℝ → ℝ) =ᵐ[timeMeasure T] fun t => familyNorm (u t) :=
-  familyNorm_lipschitz.coeFn_compLp (by simp [familyNorm, familySquaredNorm]) u
+  (familyNorm_lipschitz (I := I) (H := H)).coeFn_compLp
+    (by simp [familyNorm, familySquaredNorm]) u
 
 /-- Strong L²-time forcing convergence gives strong convergence of its actual finite-family norm. -/
 theorem familyNormTime_tendsto (T : ℝ) (u : ℕ → TimeLp T (I → H)) (v : TimeLp T (I → H))
     (hu : Filter.Tendsto u Filter.atTop (𝓝 v)) :
     Filter.Tendsto (fun n => familyNormTime T (u n)) Filter.atTop (𝓝 (familyNormTime T v)) :=
-  (familyNorm_lipschitz.continuous_compLp (by
+  ((familyNorm_lipschitz (I := I) (H := H)).continuous_compLp (by
       simp [familyNorm, familySquaredNorm])).continuousAt.tendsto.comp hu
 
 /-- Weighted time integrals of actual family forcing norms pass through strong L² approximations. -/

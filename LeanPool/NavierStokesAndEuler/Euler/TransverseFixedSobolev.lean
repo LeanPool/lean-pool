@@ -89,7 +89,7 @@ theorem fixedFrameDerivative_bound (T : ℝ) (hT : 0 ≤ T)
     ‖iteratedFDeriv ℝ n (fun y => fixedFrameDerivative T hT (Q y) (Q₁ y)) x‖ ≤
       derivativeCost T C₀ C₁ * majorant R 0 n := by
   have hb := clm_comp_const_right_bound
-    (fun y => productDerivative T hT (Q y) (Q₁ y))
+    (fun y => productDerivative (E := U) (F := E) T hT (Q y) (Q₁ y))
     (zeroTraceDerivatives (U := U) T hT).subtypeL
     (contDiff_productDerivative T hT Q Q₁ hQ hQ₁)
     R (derivativeCost T C₀ C₁) hR (by unfold derivativeCost; positivity) 0
@@ -115,7 +115,7 @@ theorem fixedFramePrimitive_bound (T : ℝ) (hT : 0 ≤ T)
     ‖iteratedFDeriv ℝ n (fun y => fixedFramePrimitive T hT (Q y) (Q₁ y)) x‖ ≤
       (T * derivativeCost T C₀ C₁) * majorant R 0 n := by
   have hb := clm_comp_const_left_bound (primitiveTimeLp (E := E) T hT)
-    (fun y => fixedFrameDerivative T hT (Q y) (Q₁ y))
+    (fun y => fixedFrameDerivative (U := U) (E := E) T hT (Q y) (Q₁ y))
     (contDiff_fixedFrameDerivative T hT Q Q₁ hQ hQ₁)
     R (derivativeCost T C₀ C₁) hR (by unfold derivativeCost; positivity) 0
     (fixedFrameDerivative_bound T hT Q Q₁ hQ hQ₁ R C₀ C₁ hR hC₀ hC₁ hbQ hbQ₁) n x
@@ -129,8 +129,8 @@ theorem dirichletOperator_bound (T : ℝ) (hT : 0 ≤ T)
     (R CH : ℝ) (hR : 0 ≤ R) (hCH : 0 ≤ CH)
     (hbH : ∀ n x, ‖iteratedFDeriv ℝ n H x‖ ≤ CH * majorant R 0 n)
     (n : ℕ) (x : P) :
-    ‖iteratedFDeriv ℝ n (fun y => dirichletOperator (primitiveTimeLp T hT)
-      (timeMultiplier T hT (H y))) x‖ ≤ (1+T^2*CH) * majorant R 0 n := by
+    ‖iteratedFDeriv ℝ n (fun y => dirichletOperator (primitiveTimeLp (E := E) T hT)
+      (timeMultiplier (E := E) (F := E) T hT (H y))) x‖ ≤ (1+T^2*CH) * majorant R 0 n := by
   let J : TimeLp T E →L[ℝ] TimeLp T E := primitiveTimeLp T hT
   have hJ : ‖J‖ ≤ T := primitive_norm_le_time (E := E) T hT
   have hright (k : ℕ) (y : P) :
@@ -173,7 +173,8 @@ theorem fixedFrameOperator_bound (T : ℝ) (hT : 0 ≤ T)
     ‖iteratedFDeriv ℝ n (fun y => fixedFrameOperator T hT (Q y) (Q₁ y) (H y)) x‖ ≤
       formCost T C₀ C₁ CH * majorant R 0 n := by
   let D := fun y => fixedFrameDerivative T hT (Q y) (Q₁ y)
-  let A := fun y => dirichletOperator (primitiveTimeLp T hT) (timeMultiplier T hT (H y))
+  let A := fun y => dirichletOperator (primitiveTimeLp (E := E) T hT)
+    (timeMultiplier (E := E) (F := E) T hT (H y))
   have hD : ContDiff ℝ ∞ D := contDiff_fixedFrameDerivative T hT Q Q₁ hQ hQ₁
   have hA : ContDiff ℝ ∞ A := contDiff_const.sub
     (contDiff_const.clm_comp ((contDiff_timeMultiplier T hT H hH).clm_comp contDiff_const))
@@ -428,7 +429,7 @@ theorem transverseVelocity_gevrey
   have hR0 : 0 ≤ R := hRc.trans hRcR
   have hbQR (j : ℕ) (y : P) : ‖iteratedFDeriv ℝ j Q y‖ ≤ C₀*majorant R 0 j :=
     (hbQ j y).trans (mul_le_mul_of_nonneg_left (majorant_radius_mono Rc R hRc hRcR 0 j) hC₀)
-  have h := clm_apply_bound (fun y => timeMultiplier T hT (Q y)) v
+  have h := clm_apply_bound (fun y => timeMultiplier (E := U) (F := E) T hT (Q y)) v
     (contDiff_timeMultiplier T hT Q hQ) hv R C₀ 1 hR0 hC₀ zero_le_one 0 (d+1)
     (timeMultiplier_bound T hT Q hQ R C₀ hR0 hC₀ 0 hbQR)
     (by simpa only [one_mul] using hb) n x
@@ -504,7 +505,7 @@ theorem forcingOperator_bound (T : ℝ) (hT : 0 ≤ T)
       (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
       (fixedFramePrimitive T hT (Q y) (Q₁ y)))
     Rc (T*derivativeCost T C₀ C₁) 0
-    (adjoint_bound (fun y => fixedFramePrimitive T hT (Q y) (Q₁ y))
+    (adjoint_bound (fun y => fixedFramePrimitive (U := U) (E := E) T hT (Q y) (Q₁ y))
       (contDiff_fixedFramePrimitive T hT Q Q₁ hQ hQ₁)
       Rc (T*derivativeCost T C₀ C₁) hRc (by unfold derivativeCost; positivity) 0
       (fixedFramePrimitive_bound T hT Q Q₁ hQ hQ₁ Rc C₀ C₁ hRc hC₀ hC₁ hbQ hbQ₁)) n x

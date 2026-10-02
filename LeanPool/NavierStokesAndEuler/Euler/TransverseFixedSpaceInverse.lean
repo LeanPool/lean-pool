@@ -50,7 +50,8 @@ def fixedFrameOperator :
     zeroTraceDerivatives (U := U) T hT →L[ℝ] zeroTraceDerivatives (U := U) T hT :=
   (adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
       (fixedFrameDerivative T hT Q Q₁)).comp
-    ((dirichletOperator (primitiveTimeLp T hT) (timeMultiplier T hT H)).comp
+    ((dirichletOperator (V := TimeLp T E) (W := TimeLp T E) (primitiveTimeLp (E := E) T hT)
+        (timeMultiplier (E := E) (F := E) T hT H)).comp
       (fixedFrameDerivative T hT Q Q₁))
 
 /-- The transported operator has exactly the source displacement form. -/
@@ -61,8 +62,8 @@ theorem fixedFrameOperator_inner (u v : zeroTraceDerivatives (U := U) T hT) :
         fixedFramePrimitive T hT Q Q₁ v⟫_ℝ := by
   change ⟪adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
     (fixedFrameDerivative T hT Q Q₁)
-    (dirichletOperator (primitiveTimeLp T hT) (timeMultiplier T hT H)
-      (fixedFrameDerivative T hT Q Q₁ u)), v⟫_ℝ = _
+    (dirichletOperator (V := TimeLp T E) (W := TimeLp T E) (primitiveTimeLp (E := E) T hT)
+      (timeMultiplier (E := E) (F := E) T hT H) (fixedFrameDerivative T hT Q Q₁ u)), v⟫_ℝ = _
   rw [adjoint_inner_left, dirichletOperator_inner]
   rfl
 
@@ -87,9 +88,11 @@ include hc hQ hd K hK hH hsmall in
 theorem fixedFrameOperator_coercive (v : zeroTraceDerivatives (U := U) T hT) :
     fixedCoercivity T Q Q₁ c * ‖v‖^2 ≤ ⟪fixedFrameOperator T hT Q Q₁ H v, v⟫_ℝ := by
   have hlow := productDerivative_norm_sq_lower T hT Q Q₁ c hc hQ hd (v : TimeLp T U)
-  have hphys := dirichletOperator_coercive (primitiveTimeLp T hT) (timeMultiplier T hT H)
-    (T^2/2) K hK (primitiveTimeLp_norm_sq_le T hT)
-    (timeMultiplier_quadratic_upper T hT H K hH) hsmall (fixedFrameDerivative T hT Q Q₁ v)
+  have hphys := dirichletOperator_coercive (V := TimeLp T E) (W := TimeLp T E)
+    (primitiveTimeLp (E := E) T hT) (timeMultiplier (E := E) (F := E) T hT H)
+    (T^2/2) K hK (primitiveTimeLp_norm_sq_le (E := E) T hT)
+    (timeMultiplier_quadratic_upper (W := E) T hT H K hH) hsmall
+    (fixedFrameDerivative T hT Q Q₁ v)
   calc
     fixedCoercivity T Q Q₁ c * ‖v‖^2 =
         (1/2 : ℝ) * ((transportCost T Q Q₁ c)⁻¹ ^ 2 * ‖v‖^2) := by
@@ -100,14 +103,14 @@ theorem fixedFrameOperator_coercive (v : zeroTraceDerivatives (U := U) T hT) :
     _ ≤ ⟪fixedFrameOperator T hT Q Q₁ H v, v⟫_ℝ := by
       change _ ≤ ⟪adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
         (fixedFrameDerivative T hT Q Q₁)
-        (dirichletOperator (primitiveTimeLp T hT) (timeMultiplier T hT H)
-          (fixedFrameDerivative T hT Q Q₁ v)), v⟫_ℝ
+        (dirichletOperator (V := TimeLp T E) (W := TimeLp T E) (primitiveTimeLp (E := E) T hT)
+          (timeMultiplier (E := E) (F := E) T hT H) (fixedFrameDerivative T hT Q Q₁ v)), v⟫_ℝ
       rw [adjoint_inner_left]
       exact hphys
 
 /-- The genuine fixed-space inverse, constructed from the transported coercive form. -/
 def fixedFrameSolver : TimeLp T E →L[ℝ] zeroTraceDerivatives (U := U) T hT :=
-  (coerciveInverse (fixedFrameOperator T hT Q Q₁ H) (fixedCoercivity T Q Q₁ c)
+  (coerciveInverse (fixedFrameOperator (U := U) (E := E) T hT Q Q₁ H) (fixedCoercivity T Q Q₁ c)
     (fixedCoercivity_pos T hT Q Q₁ c hc)
     (fixedFrameOperator_coercive T hT Q Q₁ H c hc hQ hd K hK hH hsmall)).comp
       (-(adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
@@ -122,8 +125,8 @@ theorem fixedFrameSolver_weak (f : TimeLp T E) (v : zeroTraceDerivatives (U := U
   dsimp only
   rw [← fixedFrameOperator_inner]
   change ⟪fixedFrameOperator T hT Q Q₁ H
-    (coerciveInverse (fixedFrameOperator T hT Q Q₁ H) (fixedCoercivity T Q Q₁ c)
-      (fixedCoercivity_pos T hT Q Q₁ c hc)
+    (coerciveInverse (fixedFrameOperator (U := U) (E := E) T hT Q Q₁ H)
+      (fixedCoercivity T Q Q₁ c) (fixedCoercivity_pos T hT Q Q₁ c hc)
       (fixedFrameOperator_coercive T hT Q Q₁ H c hc hQ hd K hK hH hsmall)
       (-(adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
         (fixedFramePrimitive T hT Q Q₁) f))), v⟫_ℝ = _
@@ -136,8 +139,8 @@ theorem fixedFrameSolver_unique (f : TimeLp T E) (u : zeroTraceDerivatives (U :=
         ⟪timeMultiplier T hT H (fixedFramePrimitive T hT Q Q₁ u),
           fixedFramePrimitive T hT Q Q₁ v⟫_ℝ = -⟪f, fixedFramePrimitive T hT Q Q₁ v⟫_ℝ) :
     u = fixedFrameSolver T hT Q Q₁ H c hc hQ hd K hK hH hsmall f := by
-  apply (coerciveEquiv (fixedFrameOperator T hT Q Q₁ H) (fixedCoercivity T Q Q₁ c)
-    (fixedCoercivity_pos T hT Q Q₁ c hc)
+  apply (coerciveEquiv (fixedFrameOperator (U := U) (E := E) T hT Q Q₁ H)
+    (fixedCoercivity T Q Q₁ c) (fixedCoercivity_pos T hT Q Q₁ c hc)
     (fixedFrameOperator_coercive T hT Q Q₁ H c hc hQ hd K hK hH hsmall)).injective
   simp only [coerciveEquiv_apply]
   apply ext_inner_right ℝ

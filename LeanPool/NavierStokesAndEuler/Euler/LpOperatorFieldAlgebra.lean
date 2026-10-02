@@ -98,8 +98,8 @@ theorem full_quadratic_upper (A : α →ᵇ E →L[ℝ] E) (C : ℝ)
     (hA : ∀ x v, ⟪A x v, v⟫_ℝ ≤ C * ‖v‖ ^ 2) (u : Lp E 2 μ) :
     ⟪full μ A u,u⟫_ℝ ≤ C*‖u‖^2 := by
   rw [← real_inner_self_eq_norm_sq,L2.inner_def,L2.inner_def,← integral_const_mul]
-  apply integral_mono_ae (L2.integrable_inner (full μ A u) u)
-    ((L2.integrable_inner u u).const_mul C)
+  apply integral_mono_ae (L2.integrable_inner (𝕜 := ℝ) (full μ A u) u)
+    ((L2.integrable_inner (𝕜 := ℝ) u u).const_mul C)
   filter_upwards [full_ae μ A u] with x hx
   rw [hx,real_inner_self_eq_norm_sq]
   exact hA x (u x)

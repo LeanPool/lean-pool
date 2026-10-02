@@ -254,15 +254,15 @@ def terminalPrimitive (T : ℝ) (hT : 0 ≤ T) : TimeLp T E →L[ℝ] C(Icc (0 :
 
 /-- Evaluation is the actual integral representative. -/
 @[simp] theorem terminalPrimitive_apply (T : ℝ) (hT : 0 ≤ T) (u : TimeLp T E)
-    (t : Icc (0 : ℝ) T) : terminalPrimitive T hT u t = realPrimitive T u t := rfl
+    (t : Icc (0 : ℝ) T) : terminalPrimitive (E := E) T hT u t = realPrimitive T u t := rfl
 
 /-- The bounded primitive has exactly zero terminal trace. -/
 theorem terminalPrimitive_terminal (T : ℝ) (hT : 0 ≤ T) (u : TimeLp T E) :
-    terminalPrimitive T hT u ⟨T, hT, le_rfl⟩ = 0 := realPrimitive_terminal T u
+    terminalPrimitive (E := E) T hT u ⟨T, hT, le_rfl⟩ = 0 := realPrimitive_terminal T u
 
 /-- The sharp pointwise squared trace estimate for the bounded primitive. -/
 theorem terminalPrimitive_apply_norm_sq_le (T : ℝ) (hT : 0 ≤ T) (u : TimeLp T E)
-    (t : Icc (0 : ℝ) T) : ‖terminalPrimitive T hT u t‖^2 ≤ (T-t.val)*‖u‖^2 :=
+    (t : Icc (0 : ℝ) T) : ‖terminalPrimitive (E := E) T hT u t‖^2 ≤ (T-t.val)*‖u‖^2 :=
   realPrimitive_norm_sq_le T u t t.property
 
 /-- Evaluation at any interval point is a continuous linear map of the derivative. -/
@@ -279,9 +279,10 @@ def primitiveTimeLp (T : ℝ) (hT : 0 ≤ T) : TimeLp T E →L[ℝ] TimeLp T E :
 
 /-- The Bochner primitive is represented by the same continuous real-time function. -/
 theorem primitiveTimeLp_ae (T : ℝ) (hT : 0 ≤ T) (u : TimeLp T E) :
-    (primitiveTimeLp T hT u : ℝ → E) =ᵐ[timeMeasure T] realPrimitive T u := by
-  change (pathLp T hT (terminalPrimitive T hT u) : ℝ → E) =ᵐ[timeMeasure T] realPrimitive T u
-  filter_upwards [pathLp_ae T hT (terminalPrimitive T hT u),
+    (primitiveTimeLp (E := E) T hT u : ℝ → E) =ᵐ[timeMeasure T] realPrimitive T u := by
+  change (pathLp T hT (terminalPrimitive (E := E) T hT u) : ℝ → E) =ᵐ[timeMeasure T]
+    realPrimitive T u
+  filter_upwards [pathLp_ae T hT (terminalPrimitive (E := E) T hT u),
     ae_restrict_mem measurableSet_Icc] with t ht hmem
   rw [ht]
   change realPrimitive T u (projIcc 0 T hT t) = realPrimitive T u t
@@ -290,7 +291,8 @@ theorem primitiveTimeLp_ae (T : ℝ) (hT : 0 ≤ T) (u : TimeLp T E) :
 /-- The primitive's increments within the interval are literal integrals of its L² derivative. -/
 theorem terminalPrimitive_increment (T : ℝ) (hT : 0 ≤ T) (u : TimeLp T E)
     (s t : Icc (0 : ℝ) T) :
-    terminalPrimitive T hT u t-terminalPrimitive T hT u s = ∫ r in s.val..t.val, u r := by
+    terminalPrimitive (E := E) T hT u t-terminalPrimitive (E := E) T hT u s =
+      ∫ r in s.val..t.val, u r := by
   rw [terminalPrimitive_apply, terminalPrimitive_apply, realPrimitive_increment]
   apply intervalIntegral.integral_congr
   intro r hr
@@ -300,13 +302,13 @@ theorem terminalPrimitive_increment (T : ℝ) (hT : 0 ≤ T) (u : TimeLp T E)
 
 /-- The explicit initial trace is the negative total integral of the derivative. -/
 theorem initialTrace_eq_integral (T : ℝ) (hT : 0 ≤ T) (u : TimeLp T E) :
-    initialTrace T hT u = -(∫ t in 0..T, u t) :=
+    initialTrace (E := E) T hT u = -(∫ t in 0..T, u t) :=
   realPrimitive_eq_neg_integral T u 0 ⟨le_rfl, hT⟩
 
 /-- The initial trace has the exact squared energy estimate from the source. -/
 theorem initialTrace_norm_sq_le (T : ℝ) (hT : 0 ≤ T) (u : TimeLp T E) :
-    ‖initialTrace T hT u‖^2 ≤ T*‖u‖^2 := by
-  change ‖terminalPrimitive T hT u ⟨0, le_rfl, hT⟩‖^2 ≤ T*‖u‖^2
+    ‖initialTrace (E := E) T hT u‖^2 ≤ T*‖u‖^2 := by
+  change ‖terminalPrimitive (E := E) T hT u ⟨0, le_rfl, hT⟩‖^2 ≤ T*‖u‖^2
   simpa only [sub_zero] using terminalPrimitive_apply_norm_sq_le T hT u ⟨0, le_rfl, hT⟩
 
 /-- The operator norm of terminal integration is bounded by the square root of the interval length.
@@ -349,9 +351,9 @@ theorem realPrimitive_poincare (T : ℝ) (hT : 0 ≤ T) (u : TimeLp T E) :
 
 /-- The sharp source Poincaré constant for the genuine bounded Bochner primitive. -/
 theorem primitiveTimeLp_norm_sq_le (T : ℝ) (hT : 0 ≤ T) (u : TimeLp T E) :
-    ‖primitiveTimeLp T hT u‖^2 ≤ T^2/2*‖u‖^2 := by
+    ‖primitiveTimeLp (E := E) T hT u‖^2 ≤ T^2/2*‖u‖^2 := by
   rw [norm_sq_eq_integral]
-  have he : (∫ t, ‖(primitiveTimeLp T hT u : ℝ → E) t‖^2 ∂timeMeasure T) =
+  have he : (∫ t, ‖(primitiveTimeLp (E := E) T hT u : ℝ → E) t‖^2 ∂timeMeasure T) =
       ∫ t in 0..T, ‖realPrimitive T u t‖^2 := by
     rw [intervalIntegral.integral_of_le hT, ← integral_Icc_eq_integral_Ioc]
     exact integral_congr_ae ((primitiveTimeLp_ae T hT u).mono

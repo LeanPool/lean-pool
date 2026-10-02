@@ -395,7 +395,7 @@ theorem partialX_fromRadius {F : InnerProfile} {w : InnerPoint} (hX : 0 < w.1)
       partialX F (Real.sqrt (2 * w.1), w.2) / Real.sqrt (2 * w.1) := by
   have hs := (Real.hasDerivAt_sqrt (show 2 * w.1 ≠ 0 by positivity)).comp w.1
     ((hasDerivAt_id w.1).const_mul 2)
-  have hd := hF.hasFDerivAt.comp_hasDerivAt w.1
+  have hd := hF.hasFDerivAt.comp_hasDerivAt (F := InnerPoint) w.1
     (hs.prodMk (hasDerivAt_const w.1 w.2))
   have hc : DifferentiableAt ℝ (fromRadius F) w :=
     hF.comp w ((((differentiableAt_const (2 : ℝ)).fun_mul differentiableAt_fst).sqrt
@@ -678,7 +678,8 @@ theorem partialX_toRadius {f : InnerProfile} {w : InnerPoint}
   have hs : HasDerivAt (fun r : ℝ => r ^ 2 / 2) w.1 w.1 := by
     convert! ((hasDerivAt_id w.1).pow 2).div_const 2 using 1
     simp
-  have hd := hf.hasFDerivAt.comp_hasDerivAt w.1 (hs.prodMk (hasDerivAt_const w.1 w.2))
+  have hd := hf.hasFDerivAt.comp_hasDerivAt (F := InnerPoint) w.1
+    (hs.prodMk (hasDerivAt_const w.1 w.2))
   have he := (LeadingStress.partialX_hasDerivAt (toRadius_differentiableAt hf)).unique hd
   simpa only [SimilarityProfile.fderiv_inner_apply, mul_zero, zero_mul, add_zero,
     radiusPoint, mul_comm] using he
@@ -1518,7 +1519,8 @@ theorem normalized_axial_viscosity {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
   have hE2 : ContDiffAt ℝ 2 E (SimilarityProfile.inner h p) := by
     rw [hip]
     exact hE.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
-  rw [axialOp2_radial_eq_Z2 isOpen_Ioo h (-CoordinateAlgebra.A h) hF hFE hR heta hL]
+  rw [axialOp2_radial_eq_Z2 isOpen_Ioo h (-CoordinateAlgebra.A h) hF hFE (w := (R, eta))
+    hR heta hL]
   have hfun : RenormalizedHeatMoment.uTheta h E (eta ^ 2) R =
       fun z => pullback h (-CoordinateAlgebra.A h) E (p.1, (p.2.1, z)) :=
     funext (RenormalizedHeatMoment.uTheta_eq_similarity_pullback h E (eta ^ 2) R)

@@ -57,7 +57,7 @@ def reassembly (n : ℕ) :
 private theorem reassembly_coordinates (n : ℕ) (A : E [×n]→L[ℝ] V) :
     reassembly (E := E) (V := V) n (coordinates (E := E) (V := V) n A) = A :=
   LinearMap.leftInverse_apply_of_inj
-    (LinearMap.ker_eq_bot.mpr (coordinates_injective n)) A
+    (LinearMap.ker_eq_bot.mpr (coordinates_injective (E := E) (V := V) n)) A
 
 /-- Tensor path, bundling `toFun`, `continuous_toFun`. -/
 def tensorPath (n : ℕ) (A : E [×n]→L[ℝ] C(K, V)) : C(K, E [×n]→L[ℝ] V) where
@@ -124,7 +124,7 @@ theorem tensorPath_iteratedFDeriv (f : E → C(K, V)) (hf : ContDiff ℝ ∞ f)
       iteratedFDeriv ℝ n (fun y => f y t) x := by
   change tensorPath n (iteratedFDeriv ℝ n f x) t = _
   rw [tensorPath_eq]
-  exact ((ContinuousMap.evalCLM ℝ t).iteratedFDeriv_comp_left hf.contDiffAt
+  exact ((ContinuousMap.evalCLM (M := V) ℝ t).iteratedFDeriv_comp_left hf.contDiffAt
     (show (n : ℕ∞) ≤ ∞ by simp)).symm
 
 end EulerFinitePathTensor

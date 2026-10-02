@@ -244,7 +244,7 @@ theorem partialS_eq_deriv_slice {F : Profile} {p : ProfilePoint}
     (hF : DifferentiableAt ℝ F p) :
     partialS F p = deriv (fun s => F (p.1, (s, p.2.2))) p.2.1 := by
   symm
-  exact (hF.hasFDerivAt.comp_hasDerivAt p.2.1
+  exact (hF.hasFDerivAt.comp_hasDerivAt (F := ProfilePoint) (f := fun s => (p.1, (s, p.2.2))) p.2.1
     ((hasDerivAt_const p.2.1 p.1).prodMk
       ((hasDerivAt_id p.2.1).prodMk (hasDerivAt_const p.2.1 p.2.2)))).deriv
 
@@ -279,7 +279,7 @@ theorem meridionalPotential_partialS {h Λ : ℝ} {V : ℝ × ℝ → ℝ}
       (p.2.1 / physicalQ h p) (contDiffAt_id.prodMk contDiffAt_const)).differentiableAt (by simp)
   rw [partialS_eq_deriv_slice
     ((meridionalPotential_contDiffAt hh hh1 hV hp).differentiableAt (by simp))]
-  have hd := (hVs.hasDerivAt.comp p.2.1
+  have hd := (hVs.hasDerivAt.comp (h := fun s => s / physicalQ h p) p.2.1
     ((hasDerivAt_id p.2.1).div_const (physicalQ h p))).const_mul
       (physicalQ h p ^ (-NaturalAxisData.A h))
   convert! hd.deriv using 1
@@ -294,7 +294,7 @@ theorem swirlPotential_partialS {h Λ : ℝ} {f : ℝ × ℝ → ℝ}
       -(physicalQ h p ^ (-h) / physicalQ h p) * f (similarityPoint h p) := by
   rw [partialS_eq_deriv_slice
     ((swirlPotential_contDiffAt hh hh1 hf hp).differentiableAt (by simp))]
-  have hd := ((radialPrimitive_hasDerivAt hf hp.2).comp p.2.1
+  have hd := ((radialPrimitive_hasDerivAt hf hp.2).comp (h := fun s => s / physicalQ h p) p.2.1
     ((hasDerivAt_id p.2.1).div_const (physicalQ h p))).const_mul
       (-(physicalQ h p ^ (-h)))
   convert! hd.deriv using 1

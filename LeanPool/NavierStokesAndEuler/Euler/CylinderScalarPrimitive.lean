@@ -155,7 +155,7 @@ theorem pathPrimitive_orbit_contDiff (u : C(K, CylinderL2 period ℝ))
       (fun a => pathPrimitive (K := K) period (pathTranslate (K := K) (V := ℝ) period a u)) :=
     funext (fun a => (pathPrimitive_translation period a u).symm)
   rw [he]
-  exact (pathPrimitive period).contDiff.comp hu
+  exact (pathPrimitive (K := K) period).contDiff.comp hu
 
 theorem pathPrimitive_block_le {ι : Type*} [Fintype ι] (directions : ι → LiftTangent) (q : ℕ)
     (u : C(K, CylinderL2 period ℝ))
