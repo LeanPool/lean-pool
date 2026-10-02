@@ -67,6 +67,7 @@ lemma hSize_smul (c : ℝ) (h : (Fin n → ℝ) → Matrix (Fin n) (Fin n) ℝ) 
 /-! ## Gram matrices -/
 
 /-- The Gram matrix `∂ᵢu · ∂ⱼu` of a map. -/
+@[expose]
 def gramMetric (u : (Fin n → ℝ) → (Fin N → ℝ)) : (Fin n → ℝ) → Matrix (Fin n) (Fin n) ℝ :=
   fun x i j => pderiv i u x ⬝ᵥ pderiv j u x
 
