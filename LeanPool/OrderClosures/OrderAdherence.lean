@@ -43,6 +43,7 @@ def UOConvergesTo {ι : Type v} [Preorder ι] (f : ι → X) (x : X) : Prop :=
   ∀ a : X, 0 ≤ a → OrderConvergesTo (fun i ↦ |f i - x| ⊓ a) 0
 
 /-- The order adherence of a set: limits of order-convergent nets in the set. -/
+@[expose]
 def orderAdherence (A : Set X) : Set X :=
   {x | ∃ (ι : Type u) (_ : Preorder ι) (_ : IsDirected ι (· ≤ ·)) (_ : Nonempty ι),
     ∃ f : ι → X, (∀ i, f i ∈ A) ∧ OrderConvergesTo f x}
@@ -53,6 +54,7 @@ def uoAdherence (A : Set X) : Set X :=
     ∃ f : ι → X, (∀ i, f i ∈ A) ∧ UOConvergesTo f x}
 
 /-- A set is order closed when it contains the order limits of all its nets. -/
+@[expose]
 def IsOrderClosed (A : Set X) : Prop := orderAdherence A ⊆ A
 
 /-- A set is unbounded-order closed when it contains the uo-limits of all its nets. -/
@@ -63,11 +65,13 @@ def orderClosure (A : Set X) : Set X :=
   ⋂₀ {B : Set X | A ⊆ B ∧ IsOrderClosed B}
 
 /-- The paper's directed-supremum description of the positive part of order adherence. -/
+@[expose]
 def directedPositiveAdherence (A : Set X) : Set X :=
   {x | 0 ≤ x ∧ ∃ B : Set X,
     B ⊆ A ∩ {y | 0 ≤ y} ∧ B.Nonempty ∧ DirectedOn (· ≤ ·) B ∧ IsLUB B x}
 
 /-- For a solid set, order adherence is the solid hull of its directed positive suprema. -/
+@[expose]
 def solidOrderAdherence (A : Set X) : Set X :=
   LatticeOrderedAddCommGroup.solidClosure (directedPositiveAdherence A)
 
@@ -373,10 +377,12 @@ noncomputable def solidGeneratorNumber (S : Set X) : Cardinal :=
   sInf {κ : Cardinal | ∃ A : Set X, Cardinal.mk A = κ ∧ solidHull A = S}
 
 /-- Scalar dilation of a set. -/
+@[expose]
 def scaleSet (a : ℝ) (A : Set X) [SMul ℝ X] : Set X :=
   (fun x ↦ a • x) '' A
 
 /-- A set-theoretic unit ball for a specified real-valued norm. -/
+@[expose]
 def unitBallFor (p : X → ℝ) : Set X := {x | p x ≤ 1}
 
 end Solidity
@@ -384,6 +390,7 @@ end Solidity
 section CompletenessAndNorms
 
 /-- Order completeness, stated without installing a second lattice instance. -/
+@[expose]
 def IsOrderComplete (X : Type u) [Preorder X] : Prop :=
   ∀ A : Set X, A.Nonempty → BddAbove A → ∃ x, IsLUB A x
 
@@ -431,6 +438,7 @@ def HasFatouProperty (p : X → ℝ) : Prop :=
       IsLUB (Set.range f) x → IsLUB (p '' Set.range f) (p x)
 
 /-- Weak Fatou property with constant `K` for a specified lattice norm. -/
+@[expose]
 def HasWeakFatouProperty (p : X → ℝ) (K : ℝ) : Prop :=
   1 ≤ K ∧ ∀ {ι : Type u} [Preorder ι] [IsDirected ι (· ≤ ·)] [Nonempty ι]
     (f : ι → X) (x : X), Monotone f → (∀ i, 0 ≤ f i) →
@@ -441,6 +449,7 @@ def EquivalentNorms (p q : X → ℝ) : Prop :=
   ∃ c C : ℝ, 0 < c ∧ 0 < C ∧ ∀ x, c * p x ≤ q x ∧ q x ≤ C * p x
 
 /-- The ambient norm as a paper lattice norm. -/
+@[expose]
 noncomputable def ambientLatticeNorm
     {Y : Type u} [NormedAddCommGroup Y] [Lattice Y] [IsOrderedAddMonoid Y]
     [NormedVectorLattice Y] : PaperLatticeNorm Y where

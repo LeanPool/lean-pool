@@ -1063,6 +1063,7 @@ theorem isClosed_sum {J₁ J₂ : OrderIdeal X}
 
 /-- The sum of two closed order ideals of a Banach lattice is again a closed
 order ideal. -/
+@[expose]
 def sup (J₁ J₂ : ClosedOrderIdeal X) : ClosedOrderIdeal X where
   toOrderIdeal := OrderIdeal.sum J₁.toOrderIdeal J₂.toOrderIdeal
   isClosed' := isClosed_sum J₁.isClosed J₂.isClosed

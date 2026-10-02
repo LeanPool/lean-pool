@@ -97,6 +97,7 @@ noncomputable def OneDimensionalInteriorLpTransferStatement : Prop :=
 
 /-- Source carrier for `thm:impossibility`; its deterministic, randomized,
 expectation, and all-`p` clauses remain separate conjuncts. -/
+@[expose]
 noncomputable def ScaleIdentificationImpossibilityStatement : Prop :=
   DeterministicFiniteHorizonImpossibilityStatement ∧
   RandomizedFiniteHorizonImpossibilityStatement ∧

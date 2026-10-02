@@ -55,6 +55,7 @@ noncomputable instance regularOpenCompleteBooleanAlgebra
 
 /-- Regards a clopen set as a regular open element; used to turn finite
 cylinders into Boolean-algebra generators. -/
+@[expose]
 def regularOpenOfClopen {X : Type u} [TopologicalSpace X]
     (s : Set X) (hs : IsClopen s) : RegularOpen X := by
   let U : TopologicalSpace.Opens X := ⟨s, hs.2⟩

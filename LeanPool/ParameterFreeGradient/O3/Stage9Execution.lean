@@ -72,6 +72,7 @@ structure OGMGExecutionState (d : ℕ) where
   previousV : Vec d
 
 /-- One literal source step. -/
+@[expose]
 noncomputable def ogmgExecutionStep (cfg : OGMGExecutionConfig d) (i : ℕ)
     (state : OGMGExecutionState d) : OGMGExecutionState d :=
   let v := state.current - cfg.M⁻¹ • (cfg.oracle.observe state.current).gradient

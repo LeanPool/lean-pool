@@ -33,6 +33,7 @@ noncomputable def dormantOracle (d : ℕ) : PairOracle d :=
 
 /-- Nonrecursive concrete kernel data used to formulate and select minimizers.
 Its dormant `smooth` field is never used in the infimal cost. -/
+@[expose]
 noncomputable def repairKernelBase (p : ℝ) (d : ℕ) :
     SmoothingKernelData p d :=
   { phi := lowerKernelPhi (kernelR0 p d) (repairTheta p d)

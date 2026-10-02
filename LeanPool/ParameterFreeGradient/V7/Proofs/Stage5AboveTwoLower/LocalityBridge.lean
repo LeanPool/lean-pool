@@ -55,6 +55,7 @@ def LocalSmoothingNeighborhoodStability (kernel : SmoothingKernelData p d) : Pro
 
 /-- Smoothing a convex one-Lipschitz objective produces an oracle with the exact coordinate
 gradient. -/
+@[expose]
 def SmoothingCoordinateGradientCore (kernel : SmoothingKernelData p d) : Prop :=
   ∀ (chi : ℝ), 0 < chi → ∀ ell : Point d → ℝ,
     O3.IsConvexObjective ell → IsOneLipschitz p ell →

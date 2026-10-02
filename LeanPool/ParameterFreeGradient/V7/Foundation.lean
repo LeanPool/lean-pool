@@ -65,6 +65,7 @@ def WasQueried (trace : List (Observation d)) (x : Point d) : Prop :=
   ∃ obs ∈ trace, obs.point = x
 
 /-- The point was queried at the specified chronological trace index. -/
+@[expose]
 def QueriedAt (trace : List (Observation d)) (k : ℕ) (x : Point d) : Prop :=
   ∃ obs, (trace.drop k).head? = some obs ∧ obs.point = x
 

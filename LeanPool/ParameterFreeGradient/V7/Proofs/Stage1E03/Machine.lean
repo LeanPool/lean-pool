@@ -156,6 +156,7 @@ minimizer. -/
       state.cumulativeGradient)
 
 /-- One OGM-G state update using the observed gradient and prescribed momentum coefficients. -/
+@[expose]
 noncomputable def ogmgStep (n : ℕ) (M : ℝ) (i : ℕ)
     (state : O3.OGMGExecutionState d) (oi : Observation d) :
     O3.OGMGExecutionState d :=
