@@ -62,12 +62,13 @@ theorem multiplicativeKKT_eq_row_column_transfer
   field_simp [ne_of_gt (complementProduct_pos (hXint i))]
 
 theorem pairPolynomial_eval_of_row_column_scaling
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {a b u v c z : ι → ℝ} {R S : ℝ}
     (ha : ∀ j, a j = R * c j * u j)
     (hb : ∀ j, b j = S * c j * v j) :
     (pairPolynomial a b).eval z =
       (R * S) * (pairPolynomial u v).eval (fun j ↦ c j * z j) := by
+  classical
   rw [pairPolynomial_eval, pairPolynomial_eval]
   rw [Finset.mul_sum]
   apply Finset.sum_congr rfl
@@ -76,7 +77,7 @@ theorem pairPolynomial_eval_of_row_column_scaling
   ring
 
 theorem pairPolynomial_capacity_of_row_column_scaling
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {a b u v c α : ι → ℝ} {R S : ℝ}
     (ha0 : ∀ j, 0 ≤ a j) (hb0 : ∀ j, 0 ≤ b j)
     (hu0 : ∀ j, 0 ≤ u j) (hv0 : ∀ j, 0 ≤ v j)
@@ -86,6 +87,7 @@ theorem pairPolynomial_capacity_of_row_column_scaling
     polynomialCapacity α (pairPolynomial a b) =
       ((R * S) * realMonomial c α) *
         polynomialCapacity α (pairPolynomial u v) := by
+  classical
   apply polynomialCapacity_eq_of_positive_diagonal_rescaling
     (pairPolynomial_nonnegativeCoefficients ha0 hb0)
     (pairPolynomial_nonnegativeCoefficients hu0 hv0)
