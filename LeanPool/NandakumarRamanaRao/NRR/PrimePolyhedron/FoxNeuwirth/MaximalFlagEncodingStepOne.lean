@@ -306,6 +306,7 @@ noncomputable def codeEquivEncodedSimplex
     exact toSimplex_encodedSimplexToCode hp s
 
 /-- The classification statement for Step 1: every maximal strict flag is encoded. -/
+@[expose]
 def EveryMaximalFlagEncoded (hp : Nat.Prime p) : Prop :=
   Function.Surjective (toSimplex hp : Code p → Simplex p (p - 1))
 

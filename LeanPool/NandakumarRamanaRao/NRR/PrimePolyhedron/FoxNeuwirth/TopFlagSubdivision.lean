@@ -116,6 +116,7 @@ theorem boundary_apply_eq_sum_deletionCoefficient
   rw [Finset.sum_comm]
 
 /-- Internal deletion positions, including deletion of the bottom vertex, cancel locally. -/
+@[expose]
 def InternalCancellation (hp : Nat.Prime p) : Prop :=
   ∀ (target : Simplex p (p - 2)) (k : Fin ((p - 2) + 2)),
     k.1 < p - 1 → deletionCoefficient hp target k = 0
@@ -182,6 +183,7 @@ theorem integralCoefficient_eq_of_init_eq_of_final_top
 
 /-- The exact internal combinatorics: every nonterminal deleted face has total signed
 extension coefficient zero.  This is a finite rank-two interval statement for ordered partitions. -/
+@[expose]
 def RankTwoCancellationTheorem : Prop :=
   ∀ {p : Nat} (hp : Nat.Prime p), InternalCancellation hp
 

@@ -207,6 +207,7 @@ theorem maximalIndex_eq (hp : Nat.Prime p) : p - 1 + 1 = p := by
   omega
 
 /-- Cast a maximal-simplex index to a label index. -/
+@[expose]
 def maximalIndexCast (hp : Nat.Prime p)
     (i : Fin (p - 1 + 1)) : Fin p :=
   Fin.cast (maximalIndex_eq hp) i

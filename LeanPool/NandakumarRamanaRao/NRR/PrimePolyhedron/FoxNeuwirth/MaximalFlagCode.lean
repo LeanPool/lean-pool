@@ -71,11 +71,13 @@ def firstRemovalStep (hp : Nat.Prime p) : Fin (p - 1) :=
     omega⟩
 
 /-- Bottom vertex index in a maximal flag. -/
+@[expose]
 def bottomDeletionIndex (hp : Nat.Prime p) : Fin p :=
   ⟨0, hp.pos⟩
 
 /-- Reindexing equivalence `Fin (p - 1 + 1) ≃ Fin p`, used to view a bar-adjacent position as a
 bottom label position. -/
+@[expose]
 def ePp (hp : Nat.Prime p) : Fin (p - 1 + 1) ≃ Fin p :=
   finCongr (by have := hp.two_le; omega)
 
@@ -263,6 +265,7 @@ def deleteFace (hp : Nat.Prime p) (k : Fin (p - 1 + 1)) :
     simpa using hab
 
 /-- Bottom-partner flag codes represent the same simplex face after the bottom deletion. -/
+@[expose]
 def BottomFaceCompatibility (hp : Nat.Prime p)
     (toSimplex : Code p → Simplex p (p - 1)) : Prop :=
   ∀ z,
@@ -272,6 +275,7 @@ def BottomFaceCompatibility (hp : Nat.Prime p)
       (deleteFace hp (Fin.cast (by have := hp.two_le; omega) (bottomDeletionIndex hp)))
 
 /-- Removal-partner flag codes represent the same simplex face at the chosen internal deletion. -/
+@[expose]
 def RemovalFaceCompatibility (hp : Nat.Prime p)
     (toSimplex : Code p → Simplex p (p - 1)) : Prop :=
   ∀ (i : Fin (p - 2)) (z : Code p),
