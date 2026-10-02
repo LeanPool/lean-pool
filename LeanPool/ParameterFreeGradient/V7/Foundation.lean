@@ -88,7 +88,7 @@ def Executes (method : O3.FirstOrderMethod d) (input : MethodInput d)
     run.returned = oldRun.returned ∧ run.trace = oldRun.queries
 
 /-- A supplied nondegenerate secant relation; discovery is outside the count. -/
-def SecantInitialization (input : MethodInput d) (oracle : PairOracle d) : Prop :=
+@[expose] def SecantInitialization (input : MethodInput d) (oracle : PairOracle d) : Prop :=
   input.z0 ≠ input.x0 ∧
   oracle.gradient input.z0 ≠ oracle.gradient input.x0 ∧
   input.M0 =

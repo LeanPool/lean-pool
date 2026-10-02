@@ -66,7 +66,7 @@ lemma hasFDerivAt_lpPower {r : ℝ} (hr : 1 < r) (x : Point d) :
     O3.powerDualityMap r x
 
 /-- The kernel gradient represented as a continuous linear functional. -/
-noncomputable def kernelFDeriv (r theta : ℝ) (x : Point d) :
+@[expose] noncomputable def kernelFDeriv (r theta : ℝ) (x : Point d) :
     Point d →L[ℝ] ℝ := pairingCLM (kernelGradientVector r theta x)
 
 lemma hasFDerivAt_lowerKernelPhi_of_ne_zero {r theta : ℝ}

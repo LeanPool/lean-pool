@@ -180,7 +180,7 @@ noncomputable def AdmissibleInstance.radius {d : ℕ} {p : ℝ} (P : AdmissibleI
     (P : AdmissibleInstance d p) : ℝ := P.L * P.radius / P.eps
 
 /-- The condition quantity truncated below at one. -/
-noncomputable def AdmissibleInstance.conditionBar {d : ℕ} {p : ℝ}
+@[expose] noncomputable def AdmissibleInstance.conditionBar {d : ℕ} {p : ℝ}
     (P : AdmissibleInstance d p) : ℝ := max 1 P.condition
 
 /-- The returned point's gradient satisfies the prescribed dual-norm tolerance. -/

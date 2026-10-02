@@ -22,7 +22,7 @@ namespace V7
 
 /-- U04--U07: `eps` is fixed before the method; the hard transition length
 and objective are existential only after the finite transcript/output map. -/
-noncomputable def DeterministicFiniteHorizonImpossibilityStatement : Prop :=
+@[expose] noncomputable def DeterministicFiniteHorizonImpossibilityStatement : Prop :=
   ∀ (p eps : ℝ), 1 < p → 0 < eps →
     ∀ (method : StrictLocalMethod), method.eps = eps →
     ∀ (N : ℕ), 0 < N →

@@ -85,7 +85,7 @@ structure BelowPrimalData (p : ℝ) (d n : ℕ) where
   trace : List (Observation d)
 
 /-- The prescribed below-two weights, initial state, and primal update recurrences. -/
-def BelowPrimalDynamics (data : BelowPrimalData p d n) : Prop :=
+@[expose] def BelowPrimalDynamics (data : BelowPrimalData p d n) : Prop :=
   1 ≤ n ∧ data.u 0 = 1 / 4 ∧ data.u n = data.u (n - 1) ∧
   data.dw n = 0 ∧
   (∀ k < n, data.u k = (((k : ℝ) + 1) ^ (2 : ℕ)) / 4 ∧

@@ -69,7 +69,7 @@ named carrier's mathematical conclusions. -/
 
 /-- U03/U13/U14/U19: source carrier for `lem:anchor`, keeping raw `M0`,
 accepted `Ma`, and `Da` distinct. -/
-noncomputable def AnchorStatement : Prop :=
+@[expose] noncomputable def AnchorStatement : Prop :=
   ∀ (p : ℝ), 1 < p → ∀ (d : ℕ) (input : MethodInput d)
     (inst : PositiveInstance p d input.x0),
     input.p = p → 0 < input.eps → SecantInitialization input inst.oracle →

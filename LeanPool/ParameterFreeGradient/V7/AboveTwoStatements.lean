@@ -121,7 +121,7 @@ phase. -/
   ∀ k < n, (∑ i ∈ Finset.range (k + 2), b (k + 1) i) = 0
 
 /-- Source carrier for `lem:above-pointwise` (A05). -/
-noncomputable def AbovePointwiseResidualIdentityStatement : Prop :=
+@[expose] noncomputable def AbovePointwiseResidualIdentityStatement : Prop :=
   ∀ (p : ℝ), 2 < p → ∀ (d n : ℕ), 1 ≤ n → ∀ (u dw : ScalarSeq)
     (alpha c b : ScalarMatrix) (Omega : Point d → ℝ),
     AboveCoefficientAssumptions n u dw alpha c b → EvenIncrement Omega →

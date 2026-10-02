@@ -28,7 +28,7 @@ namespace V7
   O3.IsCoordinateGradient oracle.value oracle.gradient
 
 /-- The set of global minimizers of the oracle's value function. -/
-def MinimizerSet (oracle : PairOracle d) : Set (Point d) :=
+@[expose] def MinimizerSet (oracle : PairOracle d) : Set (Point d) :=
   O3.MinimizerSet oracle.value
 
 /-- The `ℓp` distance from the initial point to the objective's minimizer set. -/
