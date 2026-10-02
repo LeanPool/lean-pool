@@ -24,10 +24,12 @@ open Geometry
 variable {p : ℕ}
 
 /-- Strictly negative coordinate orthant. -/
+@[expose]
 def negativeOrthant (p : ℕ) : Set (Fin p → ℝ) :=
   {v | ∀ i, v i < 0}
 
 /-- Strictly positive coordinate orthant. -/
+@[expose]
 def positiveOrthant (p : ℕ) : Set (Fin p → ℝ) :=
   {v | ∀ i, 0 < v i}
 

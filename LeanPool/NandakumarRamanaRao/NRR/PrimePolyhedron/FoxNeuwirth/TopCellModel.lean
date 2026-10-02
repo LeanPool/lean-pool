@@ -40,6 +40,7 @@ abbrev FoxNeuwirthTopCell (p : ℕ) := BarredPermutation.TopCell p
 namespace FoxNeuwirthTopCell
 
 /-- The identity order with no bars. -/
+@[expose]
 def identity (p : ℕ) : FoxNeuwirthTopCell p :=
   ⟨⟨1, ∅⟩, rfl⟩
 
