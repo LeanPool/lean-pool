@@ -30,7 +30,8 @@ The mathematical argument adapts Fauzan's polynomial method; novelty as an
 informal mathematical result has not been independently established.
 
 The import reuses the existing prime number theorem in `LeanPool.MooreBound`.
-The upstream notice below lists original upstream paths, including the replaced PNT copy.
+The upstream notice below lists original paths, including the replaced PNT copy and
+Andréief proof now shared with `LeanPool.Zeta5Irrational`.
 All listed source licenses are Apache-2.0 and remain available in the pinned upstream tree.
 
 ## Preserved upstream attribution notice

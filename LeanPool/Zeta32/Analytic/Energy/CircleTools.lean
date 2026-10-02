@@ -5,7 +5,11 @@ Authors: Qian Tang, Moritz Firsching
 -/
 module
 public import Mathlib.Analysis.SpecialFunctions.Integrals.PosLog
-public import Mathlib.Tactic
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Tactic.Ring
 
 /-! Circle logarithmic integrals and the finite signed-energy algebra.
 Everything in this file is copied from the Li₂(1/2) formalization (same toolchain), with

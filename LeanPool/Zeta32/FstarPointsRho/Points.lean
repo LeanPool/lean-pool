@@ -7,9 +7,10 @@ module
 public import LeanPool.Zeta32.FstarPointsRho.Basic
 
 /-! The fifteen lower bounds `Rlow k ≤ ρ_{a₋}(x_{k+1})`, one declaration per point.
-Data (`sl ≤ s ≤ sh`, `P`, `m`) generated and checked exactly by `tools/b2_numerics.py`; every
-side goal is a
-small `norm_num` on rationals. `U₁ ≤ 211761/100000`, `U₅ ≥ 266853/50000`. -/
+The upstream comments attribute the data (`sl ≤ s ≤ sh`, `P`, `m`) to
+`tools/b2_numerics.py`, which is not distributed upstream. The exact inputs and a replacement
+rational reproduction procedure are documented in `CertificateReproduction.lean`. Each
+side goal is a small `norm_num` on rationals. `U₁ ≤ 211761/100000`, `U₅ ≥ 266853/50000`. -/
 
 @[expose] public section
 

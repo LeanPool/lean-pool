@@ -7,7 +7,13 @@ module
 public import LeanPool.Zeta32.Interfaces
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 public import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
-public import Mathlib.Tactic
+public import Mathlib.Tactic.Convert
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.FunProp
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Tactic.Ring
 
 /-! The logistic density `ρ(y) = (π/2) sech²(πy)` on the line `t = 1/2 + i y`, its
 derivative, the kernel `w = 2rρ + iρ'` of `Interfaces.lean`, and integrability of

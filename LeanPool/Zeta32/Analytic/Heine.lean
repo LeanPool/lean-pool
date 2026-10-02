@@ -5,7 +5,7 @@ Authors: Qian Tang
 -/
 module
 public import LeanPool.Zeta32.Analytic.Logistic
-public import LeanPool.Zeta32.Analytic.Contour.Andreief
+public import LeanPool.Zeta5Irrational.Andreief
 
 /-! the proof notes, §5.2: Heine determinant integral and absolute-value bound.
 
@@ -66,7 +66,7 @@ theorem heine_identity (r : ℚ) (n : ℕ) :
       Matrix.of fun i k => ∫ y, heineF n i y * heineG r n k y := by
     ext i k
     simp only [Matrix.of_apply, heineF_mul_heineG, logistic_representation]
-  rw [hent, Contour.Andreief.andreief (μ := volume) _ _ (fun i k => by
+  rw [hent, Zeta5Irrational.AndreiefGeneral.andreief (μ := volume) _ _ (fun i k => by
     simp_rw [heineF_mul_heineG]; exact logistic_integrable_entry r n _)]
   rfl
 

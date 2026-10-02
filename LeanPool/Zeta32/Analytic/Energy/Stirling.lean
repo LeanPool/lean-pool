@@ -7,7 +7,12 @@ module
 public import LeanPool.Zeta32.Family
 public import Mathlib.Analysis.SpecialFunctions.Stirling
 public import Mathlib.Analysis.SumIntegralComparisons
-public import Mathlib.Tactic
+public import Mathlib.Tactic.Convert
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Tactic.Ring
 public import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-! Factorial bounds for `S_n = (5n)!/(n!)⁴` and `F_n = ∏_{i<3n} (i!)²`

@@ -6,7 +6,8 @@ Authors: Qian Tang, Moritz Firsching
 module
 public import LeanPool.Zeta32.Interfaces
 public import Mathlib.LinearAlgebra.Lagrange
-public import Mathlib.Tactic
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.Linarith
 
 /-! Partial fractions for `t^k R_n(t) = X^k D_n^4 / D_{5n}` with the `polynomialPart` and
 `residue` of `Zeta32/Family.lean`.

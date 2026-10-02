@@ -7,7 +7,6 @@ module  -- shake: keep-all --deprecated_module: ignore
 
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.Zeta32
-public import LeanPool.Zeta32.Analytic.Contour.Andreief
 public import LeanPool.Zeta32.Analytic.Contour.Kernel
 public import LeanPool.Zeta32.Analytic.Contour.Moments
 public import LeanPool.Zeta32.Analytic.Contour.PartialFractions
@@ -65,6 +64,7 @@ public import LeanPool.Zeta32.Arith.Sum.PNT.PrimeWeightedAbel
 public import LeanPool.Zeta32.Arith.Sum.Pieces
 public import LeanPool.Zeta32.Arith.Sum.Windows
 public import LeanPool.Zeta32.Assembly
+public import LeanPool.Zeta32.CertificateReproduction
 public import LeanPool.Zeta32.Criterion
 public import LeanPool.Zeta32.Family
 public import LeanPool.Zeta32.Final

@@ -6,7 +6,12 @@ Authors: Qian Tang
 module
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.Analysis.SumIntegralComparisons
-public import Mathlib.Tactic
+public import Mathlib.Tactic.Convert
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Tactic.Ring
 
 /-! `∫₀^b log|u + ix| du` and the sum–integral comparison of the proof notes (5′).
 -- adapted from Li2Unified/Modular/Base/LogNormIntegral.lean, LogNormMonotone.lean,
