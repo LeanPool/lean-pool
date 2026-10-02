@@ -815,7 +815,7 @@ theorem rationalMatrixAddRows_semantics {n : ℕ}
   rw [rationalMatrixAddRows_semantics delta A]
   rfl
 
-@[simp] theorem machineMatrixAddDeltaEntries_rational {n : ℕ}
+theorem machineMatrixAddDeltaEntries_rational {n : ℕ}
     (delta : ℚ) (A : Matrix (Fin n) (Fin n) ℚ) :
     machineMatrixAddDeltaEntries
         (pair (rawRatBinaryCode (rawRatOfRat delta))
