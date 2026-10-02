@@ -185,7 +185,8 @@ private theorem coupledWeakForm_aux {P : BlockVec d}
   have hvsgL2 : MemVectorL2 (openCubeSet (originCube d m)) vstar.grad := vstar.grad_memVectorL2
   have hφgL2 : MemVectorL2 (openCubeSet (originCube d m)) φ.grad := φ.grad_memVectorL2
   have hφsgL2 : MemVectorL2 (openCubeSet (originCube d m)) φstar.grad := φstar.grad_memVectorL2
-  have hAvL2 : MemVectorL2 (openCubeSet (originCube d m)) Av := memVectorL2_matVecMul_of_isEllipticFieldOn hEllO hvgL2
+  have hAvL2 : MemVectorL2 (openCubeSet (originCube d m)) Av :=
+    memVectorL2_matVecMul_of_isEllipticFieldOn hEllO hvgL2
   have hAsL2 : MemVectorL2 (openCubeSet (originCube d m)) As := by
     have heq : As = fun x => matVecMul (symmPart (a x)) (vstar.grad x) -
         matVecMul (skewPart (a x)) (vstar.grad x) := by
@@ -195,24 +196,33 @@ private theorem coupledWeakForm_aux {P : BlockVec d}
       (memVectorL2_matVecMul_skewPart_of_isEllipticFieldOn hEllO hvsgL2)
   have hfL2 : MemVectorL2 (openCubeSet (originCube d m)) hf := hAvL2.add hAsL2
   have hjfL2 : MemVectorL2 (openCubeSet (originCube d m)) jf := hAvL2.sub hAsL2
-  have hαgL2 : MemVectorL2 (openCubeSet (originCube d m)) αg := (hφgL2.add hφsgL2).const_smul (1 / 2 : ℝ)
-  have hβgL2 : MemVectorL2 (openCubeSet (originCube d m)) βg := (hφgL2.sub hφsgL2).const_smul (1 / 2 : ℝ)
+  have hαgL2 : MemVectorL2 (openCubeSet (originCube d m)) αg :=
+    (hφgL2.add hφsgL2).const_smul (1 / 2 : ℝ)
+  have hβgL2 : MemVectorL2 (openCubeSet (originCube d m)) βg :=
+    (hφgL2.sub hφsgL2).const_smul (1 / 2 : ℝ)
   have hZfluxL2 : MemVectorL2 (openCubeSet (originCube d m)) Z.flux := by
-    have h := (memVectorL2_const (U := (openCubeSet (originCube d m))) P.2).add hAdmO.fluxCorrection_memL2
+    have h :=
+      (memVectorL2_const (U := (openCubeSet (originCube d m))) P.2).add
+        hAdmO.fluxCorrection_memL2
     have heq : ((fun _ : Vec d => P.2) + fun x => Z.flux x - P.2) = Z.flux := by
       funext x; simp only [Pi.add_apply]; abel
     rwa [heq] at h
   -- integrability shortcuts
-  have hInt : ∀ {f g : Vec d → Vec d}, MemVectorL2 (openCubeSet (originCube d m)) f → MemVectorL2 (openCubeSet (originCube d m)) g →
+  have hInt : ∀ {f g : Vec d → Vec d},
+      MemVectorL2 (openCubeSet (originCube d m)) f →
+      MemVectorL2 (openCubeSet (originCube d m)) g →
       MeasureTheory.IntegrableOn (fun x => vecDot (f x) (g x)) (openCubeSet (originCube d m)) :=
     fun hf hg => integrableOn_vecDot_of_memVectorL2 hf hg
   -- α as an H¹₀ competitor (via the trace hypothesis)
   obtain ⟨w0, hw0⟩ := hMemSum
   set α10 : H10Function (openCubeSet (originCube d m)) := (1 / 2 : ℝ) • w0 with hα10
-  have hα10grad_ae : α10.toH1Function.grad =ᵐ[volumeMeasureOn (openCubeSet (originCube d m))] αg := by
+  have hα10grad_ae :
+      α10.toH1Function.grad =ᵐ[volumeMeasureOn (openCubeSet (originCube d m))] αg := by
     have hgrad_w0 : w0.toH1Function.grad =ᵐ[volume.restrict (openCubeSet (originCube d m))]
         (fun x => φ.grad x + φstar.grad x) := by
-      have htoFun : w0.toH1Function.toFun =ᵐ[volume.restrict (openCubeSet (originCube d m))] (φ + φstar).toFun := by
+      have htoFun :
+          w0.toH1Function.toFun =ᵐ[volume.restrict (openCubeSet (originCube d m))]
+            (φ + φstar).toFun := by
         rw [hw0]
         exact MeasureTheory.ae_of_all _ (fun x => rfl)
       have := h1grad_ae_eq_of_toFun_ae_eq (isOpen_openCubeSet _) htoFun
@@ -242,9 +252,12 @@ private theorem coupledWeakForm_aux {P : BlockVec d}
   -- ∫ ∇β·j = ∫ ∇β·q
   have hIjf : ∫ x in (openCubeSet (originCube d m)), vecDot (βg x) (jf x) ∂volume =
       ∫ x in (openCubeSet (originCube d m)), vecDot (βg x) P.2 ∂volume := by
-    have hjf_flux : (fun x => vecDot (βg x) (jf x)) =ᵐ[volume.restrict (openCubeSet (originCube d m))]
+    have hjf_flux : (fun x => vecDot (βg x) (jf x))
+        =ᵐ[volume.restrict (openCubeSet (originCube d m))]
         (fun x => vecDot (βg x) (Z.flux x)) := by
-      have hmemU : ∀ᵐ x ∂volume.restrict (openCubeSet (originCube d m)), x ∈ (openCubeSet (originCube d m)) :=
+      have hmemU :
+          ∀ᵐ x ∂volume.restrict (openCubeSet (originCube d m)),
+            x ∈ (openCubeSet (originCube d m)) :=
         MeasureTheory.ae_restrict_mem (measurableSet_openCubeSet _)
       filter_upwards [hmemU] with x hx
       show vecDot (βg x) (jf x) = vecDot (βg x) (Z.flux x)
@@ -266,7 +279,8 @@ private theorem coupledWeakForm_aux {P : BlockVec d}
       rw [sub_eq_add_neg, vecDot_add_left, vecDot_neg_left, ← sub_eq_add_neg]
     rw [hexp] at hadm
     have hsub := MeasureTheory.integral_sub
-      (hInt hZfluxL2 hβgL2) (hInt (memVectorL2_const (U := (openCubeSet (originCube d m))) P.2) hβgL2)
+      (hInt hZfluxL2 hβgL2)
+      (hInt (memVectorL2_const (U := (openCubeSet (originCube d m))) P.2) hβgL2)
     rw [hsub] at hadm
     have : ∫ x in (openCubeSet (originCube d m)), vecDot (Z.flux x) (βg x) ∂volume =
         ∫ x in (openCubeSet (originCube d m)), vecDot P.2 (βg x) ∂volume := by linarith [hadm]
@@ -307,7 +321,8 @@ private theorem coupledWeakForm_aux {P : BlockVec d}
       show φ.grad x = αg x + βg x
       rw [hαg, hβg]; module
     rw [MeasureTheory.integral_congr_ae hφ]
-    rw [MeasureTheory.integral_add (hInt hαgL2 (memVectorL2_const (U := (openCubeSet (originCube d m))) P.2))
+    rw [MeasureTheory.integral_add
+        (hInt hαgL2 (memVectorL2_const (U := (openCubeSet (originCube d m))) P.2))
         (hInt hβgL2 (memVectorL2_const (U := (openCubeSet (originCube d m))) P.2))]
     rw [hIαq, zero_add]
   rw [hLHS, hRHS]
