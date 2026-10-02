@@ -5,6 +5,8 @@ Authors: Yuma Mizuno
 -/
 module
 
+public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FiniteValuationSums
+
 
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.DedekindPlaceOrder
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.WronskianChangeParameter
@@ -86,17 +88,13 @@ private theorem coe_sum_int_finset
     {ι : Type*} (s : Finset ι) (g : ι → ℤ) :
     (((∑ i ∈ s, g i : ℤ) : ℤ) : WithTop ℤ) =
       ∑ i ∈ s, ((g i : ℤ) : WithTop ℤ) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | @insert a s ha ih => simp [ha, ih, WithTop.coe_add]
+  exact FiniteValuationSums.integer_sum_coercion s g
 
 private theorem coe_sum_int
     {ι : Type*} [Fintype ι] (g : ι → ℤ) :
     (((∑ i, g i : ℤ) : ℤ) : WithTop ℤ) =
       ∑ i, ((g i : ℤ) : WithTop ℤ) := by
-  classical
-  exact coe_sum_int_finset Finset.univ g
+  exact FiniteValuationSums.integer_sum_coercion_univ g
 
 section DVR
 

@@ -5,6 +5,8 @@ Authors: Yuma Mizuno
 -/
 module
 
+public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FiniteValuationSums
+
 
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.LocalAuxiliaryWronskian
 public import Mathlib.Algebra.Order.Group.Int.Sum
@@ -301,19 +303,13 @@ private theorem caseI_addVal_prod {ι : Type*}
     (s : Finset ι) (g : ι → LaurentSeries K) :
     HahnSeries.addVal ℤ K (∏ i ∈ s, g i) =
       ∑ i ∈ s, HahnSeries.addVal ℤ K (g i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | @insert a s ha ih => simp [ha, ih, AddValuation.map_mul]
+  exact FiniteValuationSums.laurent_product_valuation s g
 
 private theorem caseI_coe_sum_int_finset {ι : Type*}
     (s : Finset ι) (g : ι → ℤ) :
     (((∑ i ∈ s, g i : ℤ) : ℤ) : WithTop ℤ) =
       ∑ i ∈ s, ((g i : ℤ) : WithTop ℤ) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | @insert a s ha ih => simp [ha, ih, WithTop.coe_add]
+  exact FiniteValuationSums.integer_sum_coercion s g
 
 /-- The determinant bound in which only pole columns pay a derivative-order
 cost; regular columns contribute a nonnegative order. -/

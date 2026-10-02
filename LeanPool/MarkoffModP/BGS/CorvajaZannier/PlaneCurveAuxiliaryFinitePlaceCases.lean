@@ -78,24 +78,8 @@ theorem finiteExtensionFinitePlace_exists_local_lift_of_orderTop_nonnegative
     IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain
       (FunctionField.ringOfIntegers K L) q.ne_bot
       (FiniteExtensionFinitePlaceLocalRing K L q)
-  by_cases hx0 : x = 0
-  · exact ⟨0, by simp [hx0]⟩
-  have horder : 0 ≤ finitePlaceOrder
-      (IsDiscreteValuationRing.maximalIdeal
-        (FiniteExtensionFinitePlaceLocalRing K L q)) x := by
-    simpa only [finiteExtensionFinitePlaceLocalOrderTop,
-      finitePlaceOrderTop_eq_coe _ _ hx0, WithTop.coe_nonneg] using hx
-  have hval :
-      (IsDiscreteValuationRing.maximalIdeal
-        (FiniteExtensionFinitePlaceLocalRing K L q)).valuation L x ≤ 1 := by
-    rw [valuation_eq_exp_neg_finitePlaceOrder _ x hx0]
-    simpa only [← WithZero.exp_zero] using
-      (WithZero.exp_le_exp.mpr (by omega :
-        -finitePlaceOrder
-          (IsDiscreteValuationRing.maximalIdeal
-            (FiniteExtensionFinitePlaceLocalRing K L q)) x ≤ 0))
-  obtain ⟨x₀, hx₀⟩ := IsDiscreteValuationRing.exists_lift_of_le_one hval
-  exact ⟨x₀, hx₀.symm⟩
+  exact finitePlaceOrderTop_exists_lift_of_nonnegative
+    (R := FiniteExtensionFinitePlaceLocalRing K L q) x hx
 
 variable {C : Type*} [Field C] [Algebra C L]
 

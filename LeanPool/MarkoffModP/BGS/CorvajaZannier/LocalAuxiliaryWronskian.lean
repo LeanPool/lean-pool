@@ -5,6 +5,8 @@ Authors: Yuma Mizuno
 -/
 module
 
+public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FiniteValuationSums
+
 
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.AuxiliaryFamily
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.LocalWronskian
@@ -124,25 +126,18 @@ private theorem indexed_addVal_prod {ι : Type*}
     (s : Finset ι) (g : ι → LaurentSeries K) :
     HahnSeries.addVal ℤ K (∏ i ∈ s, g i) =
       ∑ i ∈ s, HahnSeries.addVal ℤ K (g i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | @insert a s ha ih => simp [ha, ih, AddValuation.map_mul]
+  exact FiniteValuationSums.laurent_product_valuation s g
 
 private theorem indexed_coe_sum_int_finset {ι : Type*}
     (s : Finset ι) (g : ι → ℤ) :
     (((∑ i ∈ s, g i : ℤ) : ℤ) : WithTop ℤ) =
       ∑ i ∈ s, ((g i : ℤ) : WithTop ℤ) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | @insert a s ha ih => simp [ha, ih, WithTop.coe_add]
+  exact FiniteValuationSums.integer_sum_coercion s g
 
 private theorem indexed_coe_sum_int {ι : Type*} [Fintype ι] (g : ι → ℤ) :
     (((∑ i, g i : ℤ) : ℤ) : WithTop ℤ) =
       ∑ i, ((g i : ℤ) : WithTop ℤ) := by
-  classical
-  exact indexed_coe_sum_int_finset Finset.univ g
+  exact FiniteValuationSums.integer_sum_coercion_univ g
 
 /-- The indexed ordinary Wronskian has order at least the sum of its column
 orders minus the sum of its row derivative orders. -/

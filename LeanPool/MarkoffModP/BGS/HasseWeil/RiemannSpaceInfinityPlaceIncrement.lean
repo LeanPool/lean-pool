@@ -26,29 +26,6 @@ open IsDedekindDomain
 noncomputable section
 
 
-private theorem finite_and_finrank_le_of_residue_map
-    {k E F : Type*} [Field k] [AddCommGroup E] [Module k E]
-    [AddCommGroup F] [Module k F] [Module.Finite k F]
-    (S T : Submodule k E) [Module.Finite k S] (hST : S ≤ T)
-    (f : T →ₗ[k] F) (hker : f.ker = Submodule.comap T.subtype S) :
-    Module.Finite k T ∧ Module.finrank k T ≤ Module.finrank k S + Module.finrank k F := by
-  let : Module.Finite k f.range := inferInstance
-  let : Module.Finite k f.ker := by
-    rw [hker]
-    exact Module.Finite.equiv (Submodule.comapSubtypeEquivOfLe hST).symm
-  let : Module.Finite k (T ⧸ f.ker) :=
-    Module.Finite.equiv f.quotKerEquivRange.symm
-  let hTFinite : Module.Finite k T := Module.Finite.of_submodule_quotient f.ker
-  have hkerRank : Module.finrank k f.ker = Module.finrank k S := by
-    rw [hker]
-    exact (Submodule.comapSubtypeEquivOfLe hST).finrank_eq
-  refine ⟨hTFinite, ?_⟩
-  calc
-    Module.finrank k T = Module.finrank k f.range + Module.finrank k f.ker :=
-      f.finrank_range_add_finrank_ker.symm
-    _ ≤ Module.finrank k F + Module.finrank k S :=
-      Nat.add_le_add f.range.finrank_le (le_of_eq hkerRank)
-    _ = Module.finrank k S + Module.finrank k F := Nat.add_comm _ _
 
 section InfinityPlace
 
@@ -158,8 +135,6 @@ theorem finiteExtensionRiemannSpace_infinityPlace_increment
   let A := RatFuncInfinityIntegralClosure K L
   let R := FiniteExtensionInfinityPlaceLocalRing K L P
   let Q : FiniteExtensionPlace K L := .inr P
-  let S := finiteExtensionRiemannSpace K L D
-  let T := finiteExtensionRiemannSpace K L (D + Finsupp.single Q 1)
   let : Algebra (RatFuncInfinityIntegralClosure K L)
       (RatFuncInfinityIntegralClosure K L) :=
     Algebra.id (RatFuncInfinityIntegralClosure K L)
@@ -212,33 +187,19 @@ theorem finiteExtensionRiemannSpace_infinityPlace_increment
   have hm : (m : ℤ) = D Q := by
     exact Int.toNat_of_nonneg (hD Q)
   let a : L := πL ^ (m + 1)
-  have hregular : ∀ x : T, ∃ r : R,
-      a * x.1 = algebraMap R L r := by
-    intro x
-    apply finiteExtensionInfinityPlace_exists_local_lift_of_orderTop_nonnegative
-      (K := K) (L := L) P (a * x.1)
-    by_cases hx0 : x.1 = 0
-    · simp only [hx0, mul_zero, finiteExtensionInfinityPlaceLocalOrderTop]
-      erw [finitePlaceOrderTop_zero]
-      exact le_top
-    · have hxmem := (mem_finiteExtensionRiemannSpace (K := K) (L := L)).mp x.2
-      rcases hxmem with hxmem | ⟨_, hxorders⟩
-      · exact (hx0 hxmem).elim
-      · have hxQ := hxorders Q
-        simp only [Finsupp.add_apply, Finsupp.single_eq_same] at hxQ
-        rw [finiteExtensionInfinityPlaceLocalOrderTop_mul,
-          show a = πL ^ (m + 1) by rfl,
-          finiteExtensionInfinityPlaceLocalOrderTop_pow,
-          hπOrder,
-          finiteExtensionInfinityPlaceLocalOrderTop_eq_globalOrder P x.1 hx0,
+  have hscaleOrder (x : L) (hx0 : x ≠ 0) :
+      finitePlaceOrderTop (IsDiscreteValuationRing.maximalIdeal R) (a * x) =
+        ((D Q + 1 + finiteExtensionPrincipalDivisor K L x Q : ℤ) : WithTop ℤ) := by
+    change finiteExtensionInfinityPlaceLocalOrderTop (K := K) (L := L) P (a * x) = _
+    rw [finiteExtensionInfinityPlaceLocalOrderTop_mul,
+      show a = πL ^ (m + 1) by rfl,
+      finiteExtensionInfinityPlaceLocalOrderTop_pow, hπOrder,
+          finiteExtensionInfinityPlaceLocalOrderTop_eq_globalOrder P x hx0,
           ← finiteExtensionPrincipalDivisor_inr_eq_infinityPlaceOrder
-            (K := K) (L := L) x.1 P]
-        rw [show (m + 1) • (1 : WithTop ℤ) =
-          ((m + 1 : ℕ) : WithTop ℤ) by simp]
-        exact_mod_cast (show 0 ≤ (m : ℤ) + 1 +
-          finiteExtensionPrincipalDivisor K L x.1 Q by
-            rw [hm]
-            omega)
+            (K := K) (L := L) x P]
+    rw [show (m + 1) • (1 : WithTop ℤ) = ((m + 1 : ℕ) : WithTop ℤ) by simp]
+    exact_mod_cast (show (m : ℤ) + 1 + finiteExtensionPrincipalDivisor K L x Q =
+        D Q + 1 + finiteExtensionPrincipalDivisor K L x Q by rw [hm])
   have hResidueRank : Module.finrank K (IsLocalRing.ResidueField R) =
       finiteExtensionPlaceDegree K L (.inr P) := by
     change Module.finrank K
@@ -250,82 +211,6 @@ theorem finiteExtensionRiemannSpace_infinityPlace_increment
         (infinityIncrementResidueFieldAlgEquiv K L P).toLinearEquiv.finrank_eq
       _ = finiteExtensionPlaceDegree K L (.inr P) :=
         (finiteExtensionInfinityPlace_degree_eq_finrank_residueField K L P).symm
-  let f := localLeadingResidueLinearMap (K := K) (R := R) (L := L)
-    T a hregular
-  have hST : S ≤ T := by
-    apply finiteExtensionRiemannSpace_mono
-    intro v
-    classical
-    by_cases hv : v = Q <;> simp [hv]
-  have hkerPoint (x : T) : f x = 0 ↔ x.1 ∈ S := by
-    rw [localLeadingResidueLinearMap_eq_zero_iff
-      (K := K) (R := R) (L := L) T a hregular,
-      localNormalizedLift_mem_maximalIdeal_iff]
-    constructor
-    · intro haxOrder
-      change (1 : WithTop ℤ) ≤
-        finiteExtensionInfinityPlaceLocalOrderTop (K := K) (L := L) P (a * x.1) at haxOrder
-      by_cases hx0 : x.1 = 0
-      · simp [hx0]
-      · have hxQ :
-            0 ≤ finiteExtensionPrincipalDivisor K L x.1 Q + D Q := by
-          rw [finiteExtensionInfinityPlaceLocalOrderTop_mul,
-            show a = πL ^ (m + 1) by rfl,
-            finiteExtensionInfinityPlaceLocalOrderTop_pow,
-            hπOrder,
-            finiteExtensionInfinityPlaceLocalOrderTop_eq_globalOrder P x.1 hx0,
-            ← finiteExtensionPrincipalDivisor_inr_eq_infinityPlaceOrder
-              (K := K) (L := L) x.1 P] at haxOrder
-          rw [show (m + 1) • (1 : WithTop ℤ) =
-            ((m + 1 : ℕ) : WithTop ℤ) by simp] at haxOrder
-          have haxOrderInt : 1 ≤ (m : ℤ) + 1 +
-              finiteExtensionPrincipalDivisor K L x.1 Q := by
-            exact_mod_cast haxOrder
-          rw [← hm]
-          omega
-        rw [mem_finiteExtensionRiemannSpace]
-        refine Or.inr ⟨hx0, ?_⟩
-        intro v
-        by_cases hv : v = Q
-        · simpa [hv] using hxQ
-        · have hxmem :=
-            (mem_finiteExtensionRiemannSpace (K := K) (L := L)).mp x.2
-          rcases hxmem with hxmem | ⟨_, hxorders⟩
-          · exact (hx0 hxmem).elim
-          · have hxv := hxorders v
-            simp only [Finsupp.add_apply,
-              Finsupp.single_eq_of_ne hv] at hxv
-            simpa using hxv
-    · intro hxS
-      by_cases hx0 : x.1 = 0
-      · simp [hx0, finitePlaceOrderTop]
-      · have hxmem :=
-          (mem_finiteExtensionRiemannSpace (K := K) (L := L)).mp hxS
-        rcases hxmem with hxmem | ⟨_, hxorders⟩
-        · exact (hx0 hxmem).elim
-        · have hxQ := hxorders Q
-          have haxOrder :
-              (1 : WithTop ℤ) ≤
-                finiteExtensionInfinityPlaceLocalOrderTop
-                  (K := K) (L := L) P (a * x.1) := by
-            rw [finiteExtensionInfinityPlaceLocalOrderTop_mul,
-              show a = πL ^ (m + 1) by rfl,
-              finiteExtensionInfinityPlaceLocalOrderTop_pow,
-              hπOrder,
-              finiteExtensionInfinityPlaceLocalOrderTop_eq_globalOrder P x.1 hx0,
-              ← finiteExtensionPrincipalDivisor_inr_eq_infinityPlaceOrder
-                (K := K) (L := L) x.1 P]
-            rw [show (m + 1) • (1 : WithTop ℤ) =
-              ((m + 1 : ℕ) : WithTop ℤ) by simp]
-            exact_mod_cast (show 1 ≤ (m : ℤ) + 1 +
-              finiteExtensionPrincipalDivisor K L x.1 Q by
-                rw [hm]
-                omega)
-          exact haxOrder
-  have hker : f.ker = Submodule.comap T.subtype S := by
-    ext x
-    rw [LinearMap.mem_ker, Submodule.mem_comap]
-    exact hkerPoint x
   let : Finite (IsLocalRing.ResidueField R) := by
     let : Finite P.1.ResidueField :=
       finiteExtensionInfinityPlace_residueField_finite (K := K) (L := L) P
@@ -336,7 +221,8 @@ theorem finiteExtensionRiemannSpace_infinityPlace_increment
       (infinityIncrementResidueFieldAlgEquiv K L P).injective
   let : Module.Finite K (IsLocalRing.ResidueField R) :=
     Module.Finite.of_finite
-  have hbound := finite_and_finrank_le_of_residue_map S T hST f hker
+  have hbound := finiteExtensionRiemannSpace_increment_of_local_order
+    K L (R := R) D Q a hscaleOrder
   refine ⟨hbound.1, ?_⟩
   rw [← hResidueRank]
   exact hbound.2

@@ -789,24 +789,8 @@ theorem finiteExtensionInfinityPlace_exists_local_lift_of_orderTop_nonnegative
       (RatFuncInfinityIntegralClosure K L)
       (primeOverHeightOne (ratFuncInfinityPlace K) P).ne_bot
       (FiniteExtensionInfinityPlaceLocalRing K L P)
-  by_cases hx0 : x = 0
-  · exact ⟨0, by simp [hx0]⟩
-  have horder : 0 ≤ finitePlaceOrder
-      (IsDiscreteValuationRing.maximalIdeal
-        (FiniteExtensionInfinityPlaceLocalRing K L P)) x := by
-    simpa only [finiteExtensionInfinityPlaceLocalOrderTop,
-      finitePlaceOrderTop_eq_coe _ _ hx0, WithTop.coe_nonneg] using hx
-  have hval :
-      (IsDiscreteValuationRing.maximalIdeal
-        (FiniteExtensionInfinityPlaceLocalRing K L P)).valuation L x ≤ 1 := by
-    rw [valuation_eq_exp_neg_finitePlaceOrder _ x hx0]
-    simpa only [← WithZero.exp_zero] using
-      (WithZero.exp_le_exp.mpr (by omega :
-        -finitePlaceOrder
-          (IsDiscreteValuationRing.maximalIdeal
-            (FiniteExtensionInfinityPlaceLocalRing K L P)) x ≤ 0))
-  obtain ⟨x₀, hx₀⟩ := IsDiscreteValuationRing.exists_lift_of_le_one hval
-  exact ⟨x₀, hx₀.symm⟩
+  exact finitePlaceOrderTop_exists_lift_of_nonnegative
+    (R := FiniteExtensionInfinityPlaceLocalRing K L P) x hx
 
 omit [DecidableEq K] in
 theorem finiteExtensionInfinityPlace_auxiliaryFamily_caseII_of_scaled_preserves

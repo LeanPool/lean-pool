@@ -67,6 +67,7 @@ public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FiniteExtensionProductForm
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FiniteExtensionResidueSurjectivity
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FiniteFunctionFieldDegree
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FinitePlaceCompletion
+public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FiniteValuationSums
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FrobeniusSubfield
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FrobeniusWronskian
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FunctionFieldProductFormula
@@ -287,6 +288,7 @@ public import LeanPool.MarkoffModP.BGS.HasseWeil.GeneralBivariateAffineHasseWeil
 public import LeanPool.MarkoffModP.BGS.HasseWeil.GeneralFiniteExtensionRiemannLower
 public import LeanPool.MarkoffModP.BGS.HasseWeil.GeneralSquareFieldStepanovCount
 public import LeanPool.MarkoffModP.BGS.HasseWeil.GeneralSquareFieldStepanovCountAutomatic
+public import LeanPool.MarkoffModP.BGS.HasseWeil.HeightOneValuationTransport
 public import LeanPool.MarkoffModP.BGS.HasseWeil.IdealMultiplicityMap
 public import LeanPool.MarkoffModP.BGS.HasseWeil.LinearFunctionalGluing
 public import LeanPool.MarkoffModP.BGS.HasseWeil.LocalPoleCumulativeQuotient
@@ -343,6 +345,7 @@ public import LeanPool.MarkoffModP.BGS.HasseWeil.RiemannSpaceConstants
 public import LeanPool.MarkoffModP.BGS.HasseWeil.RiemannSpaceEffectiveIncrement
 public import LeanPool.MarkoffModP.BGS.HasseWeil.RiemannSpaceFinitePlaceIncrement
 public import LeanPool.MarkoffModP.BGS.HasseWeil.RiemannSpaceInfinityPlaceIncrement
+public import LeanPool.MarkoffModP.BGS.HasseWeil.RiemannSpaceResidueIncrement
 public import LeanPool.MarkoffModP.BGS.HasseWeil.SpectralFromAsymptotic
 public import LeanPool.MarkoffModP.BGS.HasseWeil.SquareExtensionAffinePlaces
 public import LeanPool.MarkoffModP.BGS.HasseWeil.SquareFieldResidue
