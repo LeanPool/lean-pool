@@ -7,6 +7,8 @@ module
 
 public import LeanPool.TuttePath.DiamondRanks
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-! The source `prop:indecomposable-diamond` construction. -/
 @[expose] public section
 

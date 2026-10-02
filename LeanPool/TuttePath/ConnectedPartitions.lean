@@ -8,6 +8,8 @@ module
 public import LeanPool.TuttePath.SeparationRank
 public import LeanPool.TuttePath.ContractionFlats
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-! Connectivity background in additive-partition form. This verifies the
 needed conclusions without claiming to audit the source's cocircuit proof. -/
 @[expose] public section

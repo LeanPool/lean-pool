@@ -8,6 +8,8 @@ module
 public import LeanPool.TuttePath.IndecomposableComplement
 public import LeanPool.TuttePath.PathOperations
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-! The corank induction of `thm:path-theorem`. This file does not import the
 public target, so none of its dependencies can rely on that target. -/
 @[expose] public section

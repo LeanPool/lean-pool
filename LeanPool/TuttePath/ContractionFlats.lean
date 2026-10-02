@@ -7,6 +7,8 @@ module
 
 public import LeanPool.TuttePath.ContractionRank
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-!
 BG-01 interval transport of flats and hyperplanes across contraction by a flat.
 These statements implement the background correspondence used in lem:separation.

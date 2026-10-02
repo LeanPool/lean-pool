@@ -7,6 +7,8 @@ module
 
 public import LeanPool.TuttePath.FlatRank
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-!
 Finite rank compatibility for contraction. The pinned API defines contraction by
 dual deletion; its verified dual and restriction rank formulas therefore suffice

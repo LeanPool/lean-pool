@@ -7,6 +7,8 @@ module
 
 public import LeanPool.TuttePath.HyperplaneTools
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-!
 Additive-rank partitions and their restrictions, the elementary direct-sum
 background used in `lem:separation`. These lemmas use the actual partition and

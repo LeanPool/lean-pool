@@ -8,6 +8,8 @@ module
 public import LeanPool.TuttePath.PathRanks
 public import Mathlib.Data.Fin.Tuple.Basic
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-!
 The concrete path operations used by the source induction, PT-01/PT-02/PT-04/PT-09.
 The protected finite-sequence representation is unchanged. Appending one vertex

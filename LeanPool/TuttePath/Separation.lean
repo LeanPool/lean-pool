@@ -7,6 +7,8 @@ module
 
 public import LeanPool.TuttePath.ConnectedPartitions
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-! `lem:separation` in its literal set-theoretic form. Direct-sum background
 is expanded using rank partitions; the source cocircuit criterion is not audited. -/
 @[expose] public section

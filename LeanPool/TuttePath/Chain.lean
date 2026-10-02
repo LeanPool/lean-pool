@@ -7,6 +7,8 @@ module
 
 public import LeanPool.TuttePath.IndecomposableStep
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-! The rank-selection consequence of `cor:indecomposable-chain`, obtained by
 literally repeating the downward step. This is the chain interface needed below. -/
 @[expose] public section

@@ -8,6 +8,8 @@ module
 public import LeanPool.TuttePath.Chain
 public import LeanPool.TuttePath.PathRanks
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-! Explicit rank calculations used in the source Diamond construction. -/
 @[expose] public section
 

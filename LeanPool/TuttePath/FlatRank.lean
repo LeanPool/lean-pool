@@ -9,6 +9,8 @@ public import LeanPool.TuttePath.Definitions
 public meta import Lean.Elab.Tactic.Omega
 public meta import Lean.Elab.Tactic.NormCast
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-!
 Finite-flat rank tools for BG-01, PT-02 and PT-06.
 These helpers reuse the pinned rank/closure API without changing the approved

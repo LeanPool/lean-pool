@@ -7,6 +7,8 @@ module
 
 public import LeanPool.TuttePath.FlatRank
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-!
 ST-05: the relative complement construction in `lem:flat-complement`.
 The recursion is the paper's simultaneous adjoining of an element to S and T;

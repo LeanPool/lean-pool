@@ -9,6 +9,8 @@ public import LeanPool.TuttePath.Separation
 public import LeanPool.TuttePath.RelativeComplement
 public import Mathlib.Data.Set.Finite.Lemmas
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-! `prop:indecomposable-step`: the source maximal-intersection construction. -/
 @[expose] public section
 

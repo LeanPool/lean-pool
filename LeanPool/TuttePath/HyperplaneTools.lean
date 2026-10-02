@@ -7,6 +7,8 @@ module
 
 public import LeanPool.TuttePath.ContractionRank
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-!
 BG-01 hyperplane separation follows the source's basis construction.
 ST-02's modular-cut rule is then proved using the exact rank equality.

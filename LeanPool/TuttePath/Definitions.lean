@@ -8,6 +8,8 @@ module
 public import Mathlib.Combinatorics.Matroid.Minor.Contract
 public import Mathlib.Combinatorics.Matroid.Rank.ENat
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-!
 Source vocabulary for Baker–Jin–Lorscheid, arXiv:2601.02582, Sections 1 and 4.
 We reuse Mathlib flats, closure, contraction and `eRk`. In the finite-ground-set

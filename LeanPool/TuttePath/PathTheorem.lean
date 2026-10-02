@@ -8,6 +8,8 @@ module
 public import LeanPool.TuttePath.Definitions
 public import LeanPool.TuttePath.PathInduction
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-!
 Tutte's path theorem, with its approved statement and checked corank induction.
 

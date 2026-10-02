@@ -7,6 +7,8 @@ module
 
 public import LeanPool.TuttePath.Diamond
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-! `prop:indecomposable-complement`: minimal-rank crossing cover and corank induction. -/
 @[expose] public section
 

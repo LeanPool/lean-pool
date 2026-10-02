@@ -7,6 +7,8 @@ module
 
 public import LeanPool.TuttePath.FlatRank
 
+-- Modified for Lean Pool: module integration, public visibility, and import paths.
+
 /-!
 Local rank arguments in the path proof, PT-02 and PT-05/PT-06.
 PD-003 and PD-004 were supplied by external review as clarifications, not gaps.
