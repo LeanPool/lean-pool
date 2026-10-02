@@ -478,7 +478,8 @@ def blockPotentialSolenoidalSubmodule (U : Set (Vec d)) : Submodule ℝ (BlockL2
       apply MeasureTheory.Lp.ext
       filter_upwards
           [coeFn_toBlockL2OfComponents h0 h0,
-           MeasureTheory.Lp.coeFn_zero (E := BlockVec d) (p := (2 : ENNReal)) (μ := volumeMeasureOn U)]
+           MeasureTheory.Lp.coeFn_zero (E := BlockVec d) (p := (2 : ENNReal))
+             (μ := volumeMeasureOn U)]
         with x h hzero
       rw [h, hzero]
       simp [blockField]
@@ -514,7 +515,8 @@ def blockPotentialZeroTraceSolenoidalZeroNormalTraceSubmodule
       apply MeasureTheory.Lp.ext
       filter_upwards
           [coeFn_toBlockL2OfComponents h0 h0,
-           MeasureTheory.Lp.coeFn_zero (E := BlockVec d) (p := (2 : ENNReal)) (μ := volumeMeasureOn U)]
+           MeasureTheory.Lp.coeFn_zero (E := BlockVec d) (p := (2 : ENNReal))
+             (μ := volumeMeasureOn U)]
         with x h hzero
       rw [h, hzero]
       simp [blockField]
@@ -570,7 +572,8 @@ noncomputable def ofSubmoduleClosures (U : Set (Vec d)) : PotentialSolenoidalL2D
     (blockPotentialZeroTraceSolenoidalZeroNormalTraceSubmodule U).closure
   mem_potential := by
     intro f hf hpot
-    change toVectorL2 hf ∈ closure ((potentialSubmodule U : Submodule ℝ (VectorL2 U)) : Set (VectorL2 U))
+    change toVectorL2 hf ∈
+      closure ((potentialSubmodule U : Submodule ℝ (VectorL2 U)) : Set (VectorL2 U))
     exact subset_closure ⟨f, hf, rfl, hpot⟩
   mem_potentialZeroTrace := by
     intro f hf hpot
@@ -579,7 +582,8 @@ noncomputable def ofSubmoduleClosures (U : Set (Vec d)) : PotentialSolenoidalL2D
     exact subset_closure ⟨f, hf, rfl, hpot⟩
   mem_solenoidal := by
     intro g hg hsol
-    change toVectorL2 hg ∈ closure ((solenoidalSubmodule U : Submodule ℝ (VectorL2 U)) : Set (VectorL2 U))
+    change toVectorL2 hg ∈
+      closure ((solenoidalSubmodule U : Submodule ℝ (VectorL2 U)) : Set (VectorL2 U))
     exact subset_closure ⟨g, hg, rfl, hsol⟩
   mem_solenoidalZeroNormalTrace := by
     intro g hg hsol
@@ -611,7 +615,8 @@ noncomputable def ofSubmoduleClosures (U : Set (Vec d)) : PotentialSolenoidalL2D
   blockPotentialZeroTraceSolenoidalZeroNormalTrace_le_blockPotentialSolenoidal := by
     exact Submodule.closure_le.mpr <| by
       intro X hX
-      change X ∈ closure ((blockPotentialSolenoidalSubmodule U : Submodule ℝ (BlockL2 U)) : Set (BlockL2 U))
+      change X ∈
+        closure ((blockPotentialSolenoidalSubmodule U : Submodule ℝ (BlockL2 U)) : Set (BlockL2 U))
       exact subset_closure
         (blockPotentialZeroTraceSolenoidalZeroNormalTraceSubmodule_le_blockPotentialSolenoidalSubmodule hX)
 
