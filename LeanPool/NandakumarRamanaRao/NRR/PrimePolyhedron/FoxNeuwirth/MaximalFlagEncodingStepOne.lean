@@ -265,6 +265,7 @@ theorem toSimplex_injective (hp : Nat.Prime p) :
     simpa [toSimplex_apply, stageCell_last hp] using hlast
 
 /-- Maximal strict flags produced by the explicit stage construction. -/
+@[expose]
 def EncodedSimplex (hp : Nat.Prime p) :=
   {s : Simplex p (p - 1) // s ∈ Set.range (toSimplex hp)}
 

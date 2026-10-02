@@ -163,6 +163,7 @@ noncomputable def facetLeftSize
   omega
 
 /-- Labels in the first ordered block, expressed directly by their rank before the unique bar. -/
+@[expose]
 def FirstBlockLabel
     (hp : Nat.Prime p) (a : BarredPermutation p)
     (ha : a.dualDimension = p - 2) :=
@@ -197,6 +198,7 @@ noncomputable def firstBlockEquivFin
   rw [Fintype.card_congr (firstBlockEquivFin hp a ha), Fintype.card_fin]
 
 /-- Top-cell extensions as a finite subtype. -/
+@[expose]
 def TopExtension (a : BarredPermutation p) :=
   {c : BarredPermutation.TopCell p // a.IsFacet (c : BarredPermutation p)}
 
