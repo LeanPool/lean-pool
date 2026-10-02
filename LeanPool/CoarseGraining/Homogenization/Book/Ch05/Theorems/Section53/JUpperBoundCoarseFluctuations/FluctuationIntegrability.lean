@@ -422,7 +422,7 @@ theorem memLp_two_restrictionResponseJObservableCubeSet_originCube_from_P4
   have hLR :
       MemLp (fun a : RegCoeffField d => vecDot q (matVecMul (M a).lowerRight q))
         (2 : ENNReal) P := by
-    simp [vecDot, matVecMul]
+    simp only [vecDot, matVecMul]
     refine memLp_finsetSum (s := (Finset.univ : Finset (Fin d))) ?_
     intro i _hi
     have hinner :
@@ -435,7 +435,7 @@ theorem memLp_two_restrictionResponseJObservableCubeSet_originCube_from_P4
   have hLL :
       MemLp (fun a : RegCoeffField d => vecDot q (matVecMul (M a).lowerLeft p))
         (2 : ENNReal) P := by
-    simp [vecDot, matVecMul]
+    simp only [vecDot, matVecMul]
     refine memLp_finsetSum (s := (Finset.univ : Finset (Fin d))) ?_
     intro i _hi
     have hinner :
@@ -448,7 +448,7 @@ theorem memLp_two_restrictionResponseJObservableCubeSet_originCube_from_P4
   have hUL :
       MemLp (fun a : RegCoeffField d => vecDot p (matVecMul (M a).upperLeft p))
         (2 : ENNReal) P := by
-    simp [vecDot, matVecMul]
+    simp only [vecDot, matVecMul]
     refine memLp_finsetSum (s := (Finset.univ : Finset (Fin d))) ?_
     intro i _hi
     have hinner :
