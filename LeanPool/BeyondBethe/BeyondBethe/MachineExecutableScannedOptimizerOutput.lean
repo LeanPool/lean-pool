@@ -268,7 +268,7 @@ theorem machineExecutableOptimizerMatrixCode_mem_FP :
     machineMatrixDimensionUnary_encode]
   simp
 
-@[simp] theorem machineExecutableOptimizerMatrixSeed_encode
+theorem machineExecutableOptimizerMatrixSeed_encode
     {m : ℕ} (A : Matrix (Fin (m + 1)) (Fin (m + 1)) ℚ)
     (y : Fin (m * m) → ℚ)
     (hpoint : machineExecutableOptimizerBasePointCode
