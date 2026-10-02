@@ -147,7 +147,7 @@ theorem two_mul_cycleFactors_card_le
     simpa using hle
   omega
 
-/-- Paper Lemma 9 in the exact coarsened-row form needed for equation (39). -/
+/-- Paper Lemma 10 in the exact coarsened-row form needed for the displayed identity. -/
 theorem twoMatching_entropy_le_halfBits_add_coarsenedRows
     {n : ℕ} {μ : Equiv.Perm (Fin n) → ℝ}
     {P : Matrix (Fin n) (Fin n) ℝ}
@@ -238,7 +238,7 @@ theorem twoMatching_coreTransferCost_normalized_le
 /-- The preceding transfer estimate with every probabilistic, slack, and
 optimization quantity instantiated for the Gibbs distribution of a positive
 matrix.  Apart from the logarithmic KKT equations, all inputs to paper
-Lemmas 16 and 17 are discharged here. -/
+Lemmas 17 and 18 are discharged here. -/
 theorem gibbs_twoMatching_coreTransferCost_normalized_le
     {n : ℕ} (hn : 0 < n)
     (A : Matrix (Fin n) (Fin n) ℝ) (hA : Matrix.Positive A)

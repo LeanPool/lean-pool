@@ -385,7 +385,7 @@ theorem rowClusterPolynomial_eq_rename_injectionPolynomial
         (fun k ↦ Finsupp.single (f k) 1) Finset.univ
   rw [hexp]
 
-/-- The full cluster product `p` in paper equation (10). -/
+/-- The full cluster product `p` in the manuscript. -/
 noncomputable def rowClusterProduct
     {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) (C : RowClustering n) :
     MvPolynomial (C.Cluster × Fin n) ℝ :=
@@ -463,7 +463,7 @@ theorem rowClusterProduct_isRealStable_of_factors
   intro c _
   exact hstable c z hz
 
-/- Paper equation (12), now for the actual product of cluster factors rather
+/- The coefficient identity, now for the actual product of cluster factors rather
 than for its selector-compatible truncation.  Independent cluster choices
 that collide at a column disappear from the coefficient pairing; the
 remaining choices are exactly permutations. -/

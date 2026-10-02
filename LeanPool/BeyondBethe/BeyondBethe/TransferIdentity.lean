@@ -61,7 +61,7 @@ theorem rowScore_eq_rowCorrection_add_betheEntropyContribution
   rw [rowScore, rowCorrection, betheEntropyContribution]
   ring
 
-/-- The upper-bound algebra in paper Lemma 16.  The hypotheses name exactly
+/-- The upper-bound algebra in paper Lemma 17.  The hypotheses name exactly
 the three analytic/optimization inputs used in the paper: regularized
 suboptimality, the size of the entropy regularizer, and the exact slack
 decomposition. -/
@@ -156,7 +156,7 @@ theorem log_one_div_transferU
     Real.log_mul hpPow.ne' hcomp.ne', Real.log_rpow (hp.2 j).1]
   ring
 
-/-- Paper Lemma 16, the exact global transfer identity, assuming the KKT
+/-- Paper Lemma 17, the exact global transfer identity, assuming the KKT
 equations.  No optimization theorem or analytic approximation is used in
 this algebraic step. -/
 theorem global_transfer_identity_of_logKKT
@@ -275,7 +275,7 @@ theorem global_transfer_identity_of_logKKT
   rw [hcancel, hphiX, hlogAP, htransferCost]
   linarith
 
-/-- Paper Lemma 16 in its upper-bound form, with the KKT and slack inputs
+/-- Paper Lemma 17 in its upper-bound form, with the KKT and slack inputs
 kept explicit. -/
 theorem global_transfer_upper_of_logKKT_and_slack
     {n : ℕ} {τ ξ E gibbsEntropy divergence slack : ℝ}

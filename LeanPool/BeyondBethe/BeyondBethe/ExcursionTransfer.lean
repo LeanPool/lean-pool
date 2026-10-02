@@ -42,7 +42,7 @@ theorem massOn_pos_of_nonempty
   rw [massOn]
   exact Finset.sum_pos (fun i _ ↦ hp i) hs
 
-/-- Exact entropy/KL decomposition behind paper (40). -/
+/-- Exact entropy/KL decomposition behind the manuscript. -/
 theorem transferCostOn_eq_entropy_add_KL
     {ι : Type*}
     {s : Finset ι} (hs : s.Nonempty)
@@ -183,9 +183,9 @@ noncomputable def coreTransferCost
     (outside : ι → Finset ι) (P U : Matrix ι ι ℝ) : ℝ :=
   ∑ i, transferCostOn (Finset.univ \ outside i) (P i) (U i)
 
-/-- Equation (39) from the global transfer upper bound and the cycle-encoding
-entropy estimate.  This is the exact bridge between paper Lemmas 13, 16, and
-17. -/
+/-- The global transfer inequality from the global transfer upper bound and the cycle-encoding
+entropy estimate.  This is the exact bridge between paper Lemmas 14, 17, and
+18. -/
 theorem transfer_before_tail_of_global_and_encoding
     {n : ℕ} {P U : Matrix (Fin n) (Fin n) ℝ}
     (outside : Fin n → Finset (Fin n))
@@ -220,7 +220,7 @@ theorem massOn_le_sum_univ
   exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
     (fun i _ _ ↦ hu i)
 
-/-- Paper Lemma 17, first inequality, in its graph-independent form.  The
+/-- Paper Lemma 18, first inequality, in its graph-independent form.  The
 encoding supplies `coarsenedRowEntropy`; this theorem performs the complete
 excursion-entropy cancellation. -/
 theorem coreTransferCost_le_of_entropy_bound
@@ -257,7 +257,7 @@ theorem coreTransferCost_le_of_entropy_bound
   linarith
 
 /-- The graph-independent cancellation specialized to the transfer matrix
-`U` from paper (37).  Thus the only remaining input from the cycle encoding
+`U` from the manuscript.  Thus the only remaining input from the cycle encoding
 is the entropy bound `hbefore`. -/
 theorem coreTransferCost_le_for_transferU
     {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -287,7 +287,7 @@ theorem binaryEntropy_mono_to_half
   exact Real.binEntropy_strictMonoOn.monotoneOn hρ hη hρη
 
 /-- The good-row/bad-row aggregation in the second conclusion of paper
-Lemma 17.  We deliberately retain the paper's slightly loose bad-row term:
+Lemma 18.  We deliberately retain the paper's slightly loose bad-row term:
 every row receives the good-row allowance, and each bad row receives an
 additional `1 + log 2`. -/
 theorem sum_binaryEntropy_add_mass_le_good_bad
@@ -347,7 +347,7 @@ theorem sum_binaryEntropy_add_mass_le_good_bad
   rw [← Finset.sum_sdiff (Finset.subset_univ good)]
   linarith
 
-/-- Both conclusions of paper Lemma 17, specialized to the paper's transfer
+/-- Both conclusions of paper Lemma 18, specialized to the paper's transfer
 matrix and normalized by the number of rows.  The cycle encoding appears only
 through `hbefore`, and the good-row geometry only through `hgood`. -/
 theorem coreTransferCost_normalized_le_for_transferU

@@ -258,6 +258,10 @@ public import LeanPool.BeyondBethe.BeyondBethe.NumericalWitness
 public import LeanPool.BeyondBethe.BeyondBethe.FinalAssembly
 public import LeanPool.BeyondBethe.BeyondBethe.Main
 
-/-! # Beyond Bethe -/
+/-! # Beyond Bethe
+
+Numbered manuscript references use arXiv:2608.28031v2:
+https://arxiv.org/html/2608.28031v2.
+-/
 
 @[expose] public section

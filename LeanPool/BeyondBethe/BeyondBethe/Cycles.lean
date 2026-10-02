@@ -17,7 +17,7 @@ public import Mathlib.Tactic
 
 namespace BeyondBethe
 
-/-- The Riemann-sum error `e(a,x)` from paper (27).  Lean's conventions
+/-- The Riemann-sum error `e(a,x)` from the manuscript.  Lean's conventions
 `a / 0 = 0` and `log 1 = 0` make the displayed formula agree with the paper's
 boundary convention `e(a,0)=a`. -/
 noncomputable def suffixError (a x : ℝ) : ℝ :=
@@ -110,7 +110,7 @@ theorem suffixError_nonneg {a x : ℝ} (ha : 0 ≤ a) (hx : 0 ≤ x) :
     linarith
 
 /-- For fixed nonnegative `a`, the Riemann-sum error is nonincreasing in the
-suffix mass, as asserted in paper Lemma 11. -/
+suffix mass, as asserted in paper Lemma 12. -/
 theorem suffixError_anti {a x y : ℝ}
     (ha : 0 ≤ a) (hx : 0 ≤ x) (hxy : x ≤ y) :
     suffixError a y ≤ suffixError a x := by
@@ -172,7 +172,7 @@ theorem listSuffixScore_identity (p : List ℝ)
       simp only [List.sum_cons]
       ring
 
-/-- Paper Lemma 11 in ordered-list form. -/
+/-- Paper Lemma 12 in ordered-list form. -/
 theorem listSuffixScore_eq_neg_one_add_errors (p : List ℝ)
     (hp : ∀ x ∈ p, 0 ≤ x) (hsum : p.sum = 1) :
     listSuffixScore p = -1 + listSuffixErrorSum p := by
@@ -213,7 +213,7 @@ theorem fixed_order_suffixScore_ge_neg_one
   · rw [List.sum_ofFn]
     exact (Equiv.sum_comp π p).trans hp.sum_eq_one
 
-/-- The coarse part of paper Lemma 12: every row has suffix score at least
+/-- The coarse part of paper Lemma 13: every row has suffix score at least
 `-1`. -/
 theorem rowT_ge_neg_one
     {n : ℕ} {p : Fin n → ℝ} (hp : IsProbabilityVector p) :
@@ -252,7 +252,7 @@ noncomputable def badRows
   classical
   exact Finset.univ.filter fun i ↦ ¬ IsGoodRow eta (P i)
 
-/-- Paper (22): a good row has two heavy coordinates and little mass outside
+/-- A good row has two heavy coordinates and little mass outside
 them. -/
 theorem goodRow_heavy_coordinates
     {n : ℕ} {eta : ℝ} {p : Fin n → ℝ}
@@ -519,7 +519,7 @@ theorem exists_heavyCompletion_twoMatchings
   · exact Or.inl (hk.symm.trans h)
   · exact Or.inr (hk.symm.trans h)
 
-/-- Entropic core of paper Lemma 9.  Once the graph argument proves that each
+/-- Entropic core of paper Lemma 10.  Once the graph argument proves that each
 encoding fiber has at most `2^m` assignments, the desired one-bit-per-cycle
 bound follows without any further probabilistic input. -/
 theorem coreEncoding_of_fiber_bound
@@ -536,7 +536,7 @@ theorem coreEncoding_of_fiber_bound
   rw [Nat.cast_pow, Nat.cast_ofNat, Real.log_pow] at h
   simpa [Nat.cast_ofNat] using h
 
-/-- Paper Lemma 9 for a completed two-regular bipartite multigraph presented
+/-- Paper Lemma 10 for a completed two-regular bipartite multigraph presented
 as the union of two perfect matchings.  The nontrivial cycles of the
 alternating row permutation are exactly the components with at least two
 rows; doubled one-row components contribute no bit. -/
@@ -593,7 +593,7 @@ theorem bad_row_deficit_lower
   rw [fourthRoot_pow_four hd0] at hpow
   exact hpow
 
-/-- Summed form of paper (21): bad rows consume the row-deficit part of the
+/-- Summed row-deficit bound: bad rows consume the row-deficit part of the
 Bethe slack. -/
 theorem badRow_count_mul_le_sum_deficit
     (hrow : AnariRezaeiRowInequality)
@@ -628,7 +628,7 @@ theorem badRow_count_le_slack
   apply (le_div_iff₀ (pow_pos (div_pos heta (by norm_num)) 4)).2
   exact hcost.trans hsum
 
-/-- Scalar assembly in paper Lemma 13.  The two hypotheses are respectively
+/-- Scalar assembly in paper Lemma 14.  The two hypotheses are respectively
 the entropy-score estimate (29) and the component accounting estimate (30). -/
 theorem robust_cycle_information_of_accounting
     {D G components N bad n ω : ℝ}
@@ -652,7 +652,7 @@ def nontrivialComponentCount (k : ℕ) : ℕ :=
 def longComponentGoodRows (k g : ℕ) : ℕ :=
   if 3 ≤ k then g else 0
 
-/-- The component-by-component inequality behind paper (30).  It includes
+/-- The component-by-component inequality used in the cycle-information bound.  It includes
 one-row doubled components explicitly: such a component must contain no good
 row and contributes no ambiguity bit. -/
 theorem component_accounting

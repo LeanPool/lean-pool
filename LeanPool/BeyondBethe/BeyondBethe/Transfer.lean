@@ -71,7 +71,7 @@ theorem coordinate_le_sqrt_secondMoment
   exact (Real.le_sqrt (hp i) (secondMoment_nonneg p)).2 hs2
 
 /-- Finite-dimensional monotonicity of `ell_p` norms in the exact form used
-in the proof of paper Lemma 15. -/
+in the proof of paper Lemma 16. -/
 theorem sum_pow_le_sqrt_secondMoment_pow
     {ι : Type*} [Fintype ι]
     {p : ι → ℝ} (hp : ∀ i, 0 ≤ p i) {k : ℕ} (hk : 2 ≤ k) :
@@ -108,7 +108,7 @@ theorem complementProduct_pos
   exact Finset.prod_pos fun i _ ↦ sub_pos.mpr (hp.2 i).2
 
 /-- The logarithmic estimate at the heart of the row-sum bound in paper
-Lemma 15. -/
+Lemma 16. -/
 theorem neg_log_complementProduct_le
     {ι : Type*} [Fintype ι]
     {p : ι → ℝ} (hp : IsInteriorProbabilityVector p) :
@@ -189,7 +189,7 @@ theorem neg_log_complementProduct_le
   exact hseriesBound.trans hlogBound
 
 /-- Exponentiating the preceding logarithmic estimate yields the product
-bound used in paper Lemma 15. -/
+bound used in paper Lemma 16. -/
 theorem exp_neg_one_mul_one_sub_secondMoment_le_complementProduct
     {ι : Type*} [Fintype ι]
     {p : ι → ℝ} (hp : IsInteriorProbabilityVector p) :
@@ -267,7 +267,7 @@ theorem complementProduct_eq_mul_productExcept
   exact (Finset.mul_prod_erase Finset.univ (fun k ↦ 1 - p k)
     (Finset.mem_univ j)).symm
 
-/-- Transfer coordinate `U_j` from paper (37). -/
+/-- Transfer coordinate `U_j` from the manuscript. -/
 noncomputable def transferU
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (τ : ℝ) (p : ι → ℝ) (j : ι) : ℝ :=
@@ -302,7 +302,7 @@ theorem transferU_eq_div_complementProduct
   rw [transferU, complementProduct_eq_mul_productExcept p j]
   field_simp [(sub_pos.mpr (hp.2 j).2).ne', (productExcept_pos hp j).ne']
 
-/-- The full row-sum conclusion of paper Lemma 15. -/
+/-- The full row-sum conclusion of paper Lemma 16. -/
 theorem sum_transferU_le_exp_one
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {τ : ℝ} (hτ : 0 ≤ τ) {p : ι → ℝ}

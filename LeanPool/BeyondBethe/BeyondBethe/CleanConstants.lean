@@ -17,7 +17,7 @@ open scoped BigOperators Topology
 
 namespace BeyondBethe
 
-/-- The first line of paper (61), with `negMulLog` encoding the convention
+/-- The clean-pair gain lower bound in the manuscript, with `negMulLog` encoding the convention
 `0 log 0 = 0`. -/
 noncomputable def cleanCoreFunction (κ ρ : ℝ) : ℝ :=
   (1 - ρ) * Real.log ((2 * (Real.exp (-κ)) ^ 2) / (1 - ρ)) +
@@ -204,7 +204,7 @@ theorem cleanCore_uniform_rectangle : ∃ ε : ℝ, 0 < ε ∧ ∀ κ ρ : ℝ,
     max_lt_iff]
   exact ⟨hκ, hρ⟩
 
-/-- The upper envelope `bar rho_kappa` from paper (51). -/
+/-- The upper envelope `bar rho_kappa` from the manuscript. -/
 noncomputable def leakageEnvelope (κ : ℝ) : ℝ :=
   2 * (Real.exp κ - 1)
 
@@ -269,7 +269,7 @@ def CleanPairGainGuarantee (κ₀ ξ₀ γ₀ : ℝ) : Prop :=
       fourCoreTransferCost τ X r s a b ≤ κ₀ →
       γ₀ ≤ Real.log (pairGain A X r s)
 
-/-- Paper Lemma 19: rational absolute constants exist for which every clean
+/-- Paper Lemma 20: rational absolute constants exist for which every clean
 pair of small local transfer cost has a uniform positive logarithmic gain.
 The graph-theoretic word "clean" is used earlier in the paper only to supply
 the two distinct rows and columns appearing in this analytic statement. -/

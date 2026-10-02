@@ -49,7 +49,7 @@ theorem rescaled_polynomial_ratio_eq
     ne_of_gt (realMonomial_pos hz α)]
 
 /-- Capacity is covariant under a positive scalar and a positive diagonal
-change of variables.  This is the exact rescaling used in paper Lemma 18. -/
+change of variables.  This is the exact rescaling used in paper Lemma 19. -/
 theorem polynomialCapacity_eq_of_positive_diagonal_rescaling
     {σ : Type*} [Fintype σ]
     {p q : MvPolynomial σ ℝ} {α c : σ → ℝ} {scale : ℝ}

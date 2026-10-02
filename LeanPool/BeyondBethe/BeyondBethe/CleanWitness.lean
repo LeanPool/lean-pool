@@ -313,7 +313,7 @@ theorem cleanWitnessCoefficient_right_lower
   have h₂ := mul_le_mul_of_nonneg_right hvb (hu l.1)
   nlinarith
 
-/-- Paper (57): the expected log coefficient of the clean witness.  The
+/-- The expected log coefficient of the clean witness.  The
 proof keeps the two outside families separate and then uses
 `delta_a + delta_b = rho`; this is exactly where their normalizing factors
 cancel. -/
@@ -424,7 +424,7 @@ theorem cleanWitness_expectedLogCoefficient_lower
     capacityWitnessMass]
   linarith
 
-/-- Paper (58): exact entropy of the clean witness in the positive-leakage
+/-- Exact entropy of the clean witness in the positive-leakage
 case. -/
 theorem shannonEntropy_capacityWitnessMass
     {ι : Type*} [Fintype ι]
@@ -495,7 +495,7 @@ theorem shannonEntropy_capacityWitnessMass
   linear_combination
     -(∑ l, α l * Real.log (α l)) * hδsum
 
-/-- Summed form of paper (56). -/
+/-- Summed outside-coordinate bound. -/
 theorem sum_alpha_log_pairTransfer_lower
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {a b : ι} {τ ρ : ℝ} (hτ : 0 ≤ τ)
@@ -554,7 +554,7 @@ theorem sum_alpha_log_pairTransfer_lower
       intro l _
       exact mul_le_mul_of_nonneg_left (hterm l) (hα l).le
 
-/-- The quantitative lower bound used in paper (59) already holds for the
+/-- The quantitative lower bound used in the manuscript already holds for the
 explicit sparse entropy certificate itself.  Keeping this stronger form
 visible is what permits the numerical algorithm to evaluate the witness
 directly, without optimizing a capacity. -/
@@ -609,7 +609,7 @@ theorem cleanWitness_capacity_theta_lower
     linarith
   simpa only [θ] using hlower
 
-/-- Paper (59), separated from its particular transfer-vector
+/-- The capacity lower bound, separated from its particular transfer-vector
 instantiation.  This theorem composes the explicit witness bound with the
 one-sided entropy certificate for polynomial capacity. -/
 theorem cleanWitness_capacity_theta_bound_of_certificate
@@ -645,7 +645,7 @@ theorem cleanWitness_capacity_theta_bound_of_certificate
     hδsum hα hαsum hu hv hua hub hva hvb houtside).trans hcertUpper
 
 /-- The sparse-witness capacity is bounded by the capacity of the full pair
-polynomial.  This is the omitted subpolynomial step in paper Lemma 19. -/
+polynomial.  This is the omitted subpolynomial step in paper Lemma 20. -/
 theorem cleanWitnessCapacity_le_pairPolynomialCapacity
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {a b : ι} (hab : a ≠ b) {u v α : ι → ℝ}
@@ -682,7 +682,7 @@ theorem cleanWitnessEntropyCertificate_le_log_pairPolynomialCapacity
     hab hu hv (α := α)
   exact hfinite.trans (Real.log_le_log hfinitePos hcap)
 
-/-- Paper (59) for the full pair polynomial. -/
+/-- The capacity lower bound for the full pair polynomial. -/
 theorem cleanWitness_capacity_theta_bound
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {a b : ι} (hab : a ≠ b)
@@ -816,7 +816,7 @@ theorem cleanWitness_outside_moment
   rw [hleft, hright]
   exact capacityWitness_outside_marginal hρ hδsum l
 
-/-- The distribution in paper (52) has the claimed mean exponent vector. -/
+/-- The distribution in the manuscript has the claimed mean exponent vector. -/
 theorem cleanWitness_moment
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {a b : ι} (hab : a ≠ b)
@@ -909,7 +909,7 @@ theorem cleanWitness_pairAlpha_isProbabilityVector
   · exact capacityWitness_sum hρ hδsum
       (sum_outsideColumn_eq_outsideMassTwo _ _ _)
 
-/-- The capacity portion of paper Lemma 19, through displayed equation (59),
+/-- The capacity portion of paper Lemma 20, through the displayed identity,
 for the actual transfer vectors and pair marginals. -/
 theorem pairTransfer_capacity_theta_bound
     {ι : Type*} [Fintype ι] [DecidableEq ι]

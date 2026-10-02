@@ -508,7 +508,7 @@ theorem successfulCleanCycles_count_ge_threeEighths
     hclean hfailed hpartition
 
 /-- Pointwise form: every successful clean factor receives the uniform gain
-from Lemma 19. -/
+from Lemma 20. -/
 theorem successfulCleanCycle_gain
     {n : ℕ} {κ₀ ξ₀ γ₀ ell ξ τ η : ℝ}
     (hgain : CleanPairGainGuarantee κ₀ ξ₀ γ₀)
@@ -1365,7 +1365,7 @@ theorem exp_betheObjective_add_maximumMatchingGain_le_permanent
   exact exp_betheObjective_add_rowMatchingWeight_le_permanent
     stableCoefficient hM hcard hA hX hXpos hpositive
 
-/-- Positive-matrix form of Proposition 20.  Vontobel's concavity theorem,
+/-- Positive-matrix form of Proposition 21.  Vontobel's concavity theorem,
 the sharp row inequality, and the upper Bethe bound are proved internally. -/
 theorem positiveMatrix_logApproximation
     (stableCoefficient : AnariOveisGharanStableCoefficient.{0})

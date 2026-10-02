@@ -18,7 +18,7 @@ open scoped BigOperators
 
 namespace BeyondBethe
 
-/-- The right-hand side of paper (61), before the final uniform choice of
+/-- The clean-pair gain lower bound in the manuscript, before the final uniform choice of
 constants. -/
 noncomputable def cleanGainLowerBound
     {ι : Type*} [Fintype ι]
@@ -46,7 +46,7 @@ theorem isEmpty_outsideColumn_of_pairAlpha_outsideMass_eq_zero
     add_pos ((hXint r).2 l.1).1 ((hXint s).2 l.1).1
   linarith
 
-/-- At zero leakage the limiting witness mentioned in paper (52) is the
+/-- At zero leakage the limiting witness mentioned in the manuscript is the
 point mass on the core pair, and it has the required exponent moment. -/
 theorem cleanWitness_pairAlpha_zero
     {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -129,7 +129,7 @@ theorem pairTransferPolynomialCapacity_pos
   dsimp only [α, Ur, Us] at hcap ⊢
   exact (Real.exp_pos _).trans_le (hexp.trans hcap)
 
-/-- Positive-leakage branch of paper Lemma 19 through equation (61).  Every
+/-- Positive-leakage branch of paper Lemma 20 through the displayed identity.  Every
 factor in the pair factorization and every boundary-sensitive logarithm is
 accounted for explicitly. -/
 theorem log_pairGain_ge_cleanGainLowerBound_of_positiveLeakage
@@ -246,7 +246,7 @@ theorem log_pairGain_ge_cleanGainLowerBound_of_positiveLeakage
   dsimp only [cleanGainLowerBound, α, ρ, δa, δb, Ur, Us, cap] at *
   linarith
 
-/-- Zero-leakage branch of paper Lemma 19.  This formalizes the manuscript's
+/-- Zero-leakage branch of paper Lemma 20.  This formalizes the manuscript's
 "limiting distribution concentrated on `{a,b}`" directly, without a limit
 argument. -/
 theorem log_pairGain_ge_core_of_zeroLeakage

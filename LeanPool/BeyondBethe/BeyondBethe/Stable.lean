@@ -88,7 +88,7 @@ noncomputable def realMonomial
     {σ : Type*} [Fintype σ] (z α : σ → ℝ) : ℝ :=
   ∏ i, (z i) ^ (α i)
 
-/-- Capacity from paper (4). -/
+/-- Capacity from the manuscript. -/
 noncomputable def polynomialCapacity
     {σ : Type*} [Fintype σ]
     (α : σ → ℝ) (p : MvPolynomial σ ℝ) : ℝ :=
@@ -96,7 +96,7 @@ noncomputable def polynomialCapacity
     (∀ i, 0 < z i) ∧
       v = p.eval z / realMonomial z α}
 
-/-- Same-squarefree-monomial coefficient pairing used in paper Theorem 3. -/
+/-- Same-squarefree-monomial coefficient pairing used in paper Theorem 4. -/
 noncomputable def coefficientInnerProduct
     {σ : Type*} (p q : MvPolynomial σ ℝ) : ℝ := by
   classical

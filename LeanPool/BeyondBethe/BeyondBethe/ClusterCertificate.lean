@@ -344,7 +344,7 @@ theorem clusterCertificateValue_le_permanent
       ring
     _ ≤ Matrix.permanent A := hraw
 
-/-- Paper Theorem 5 in an equivalent cluster presentation of a row matching.
+/-- Paper Theorem 6 in an equivalent cluster presentation of a row matching.
 The product contains one Bethe singleton factor for every unmatched row and
 one pair-capacity factor for every matched pair. -/
 theorem pairedLowerCertificate_for_clustering

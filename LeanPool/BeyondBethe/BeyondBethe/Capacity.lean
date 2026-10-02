@@ -88,7 +88,7 @@ theorem averaged_log_natMonomial
       intro j _
       rw [exponentMoment, Finset.sum_mul]
 
-/-- The certificate-producing direction of paper Lemma 4, for a strictly
+/-- The certificate-producing direction of paper Lemma 5, for a strictly
 positive feasible distribution.  Unlike the reverse equality, this direction
 uses only finite log-sum and has no convex-duality dependency. -/
 theorem entropyCapacityCertificate_le_log_ratio

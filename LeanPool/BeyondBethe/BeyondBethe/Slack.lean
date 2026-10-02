@@ -18,13 +18,13 @@ open scoped BigOperators
 
 namespace BeyondBethe
 
-/-- Row score `s(p)=H(p)+T(p)` from paper (24). -/
+/-- Row score `s(p)=H(p)+T(p)` from the manuscript. -/
 noncomputable def rowScore
     {m : ℕ} (p : Fin m → ℝ) : ℝ :=
   shannonEntropy p + rowT p
 
 /-- Direct cancellation between the Bethe objective and the row corrections.
-This is the algebraic core of paper Lemma 10. -/
+This is the algebraic core of paper Lemma 11. -/
 theorem bethe_add_rowCorrection_eq_logWeight_add_rowScore
     {m : ℕ} (A P : Matrix (Fin m) (Fin m) ℝ) :
     betheObjective A P + ∑ i, rowCorrection (P i) =
@@ -89,7 +89,7 @@ theorem gibbsSequentialDivergence_nonneg
     (gibbsProbability_pos A hA)
     (assignmentMarginal_strictProbabilityVector A hA)
 
-/-- Paper Lemma 6 (exact sequential identity), with every probability and
+/-- Paper Lemma 7 (exact sequential identity), with every probability and
 normalization assertion discharged. -/
 theorem gibbs_exact_sequential_identity
     {m : ℕ} (A : Matrix (Fin m) (Fin m) ℝ)
@@ -104,7 +104,7 @@ theorem gibbs_exact_sequential_identity
     A (assignmentMarginal A)
   linarith
 
-/-- Entropy form of the sequential divergence, paper Lemma 10, derived from
+/-- Entropy form of the sequential divergence, paper Lemma 11, derived from
 the Gibbs entropy identity and the exact sequential identity. -/
 theorem entropy_form_of_sequential_identity
     {m : ℕ} (A P : Matrix (Fin m) (Fin m) ℝ)
@@ -126,7 +126,7 @@ noncomputable def betheSlack (n : ℕ) (logBethe logPermanent : ℝ) : ℝ :=
 def betheSuboptimality (logBethe objectiveValue : ℝ) : ℝ :=
   logBethe - objectiveValue
 
-/-- Paper Lemma 7 is an exact algebraic consequence of Lemma 6.  This version
+/-- Paper Lemma 8 is an exact algebraic consequence of Lemma 7.  This version
 separates that closed algebra from the probabilistic proof of the sequential
 identity. -/
 theorem slack_decomposition_of_sequential_identity

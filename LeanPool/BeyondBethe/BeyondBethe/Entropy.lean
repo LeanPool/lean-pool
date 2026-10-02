@@ -155,7 +155,7 @@ theorem binaryEntropy_symm (t : ℝ) :
   ring_nf
 
 /-- Exact entropy loss when two positive atoms of masses `u` and `v` are
-merged.  This is the scalar identity used in paper (26). -/
+merged.  This is the scalar identity used in the manuscript. -/
 theorem entropy_loss_merge_two {u v : ℝ} (hu : 0 < u) (hv : 0 < v) :
     Real.negMulLog u + Real.negMulLog v - Real.negMulLog (u + v) =
       (u + v) * binaryEntropy (u / (u + v)) := by
@@ -269,7 +269,7 @@ theorem log_sum_inequality_nonnegative
   exact hstrict.trans (Real.log_le_log hsupportPos hsumLe)
 
 /-- Entropy bound for a nonnegative vector of total mass `ρ`.  This is the
-scaled form used for the outside mass in paper (60). -/
+scaled form used for the outside mass in the manuscript. -/
 theorem shannonEntropy_of_mass_le
     {ι : Type*} [Fintype ι] [Nonempty ι]
     {α : ι → ℝ} {ρ : ℝ}
@@ -724,7 +724,7 @@ theorem fiber_entropy_bound
           (-pushforwardMass μ f y * Real.log (pushforwardMass μ f y)))
 
 /-- Generic finite-fiber encoding inequality.  This is the entropy-theoretic
-part of paper Lemma 9, independent of the cycle combinatorics used to bound
+part of paper Lemma 10, independent of the cycle combinatorics used to bound
 the fibers. -/
 theorem entropy_le_pushforward_add_log_fiberBound
     {α β : Type*} [Fintype α] [Fintype β]
@@ -858,16 +858,16 @@ theorem suffixMass_pos {m : ℕ} {p : Fin m → ℝ}
     0 < suffixMass p π j :=
   hj.trans_le (le_suffixMass hp π j)
 
-/-- The averaged suffix score `T(p)` from paper (13). -/
+/-- The averaged suffix score `T(p)` from the manuscript. -/
 noncomputable def rowT {m : ℕ} (p : Fin m → ℝ) : ℝ :=
   uniformAverage fun π : Equiv.Perm (Fin m) ↦
     ∑ j, p j * Real.log (suffixMass p π j)
 
-/-- The one-row correction `g(p)` from paper (14). -/
+/-- The one-row correction `g(p)` from the manuscript. -/
 noncomputable def rowCorrection {m : ℕ} (p : Fin m → ℝ) : ℝ :=
   rowT p - ∑ j, (1 - p j) * Real.log (1 - p j)
 
-/-- Deficit from the sharp one-row inequality, paper (15). -/
+/-- Deficit from the sharp one-row inequality. -/
 noncomputable def rowDeficit {m : ℕ} (p : Fin m → ℝ) : ℝ :=
   Real.log 2 / 2 - rowCorrection p
 

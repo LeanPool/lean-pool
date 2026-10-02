@@ -264,7 +264,7 @@ theorem cycleSignature_injective_on_encoding_fiber
   · exact hneRep ((hsigc'.mpr hτf).trans hτf.symm)
   · exact hneRep (hσg.trans hτg.symm)
 
-/-- Graph-specific fiber bound in paper Lemma 9.  A completed two-regular
+/-- Graph-specific fiber bound in paper Lemma 10.  A completed two-regular
 bipartite multigraph is written as the union of perfect matchings `f` and `g`;
 its components with at least two rows are the nontrivial cycles of
 `alternatingRowPerm f g`. -/

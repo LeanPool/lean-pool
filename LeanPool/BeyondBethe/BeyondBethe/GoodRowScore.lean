@@ -67,7 +67,7 @@ theorem continuous_binaryEntropy : Continuous binaryEntropy := by
   apply Continuous.congr Real.binEntropy_continuous
   exact fun t ↦ (binaryEntropy_eq_realBinEntropy t).symm
 
-/-- The scalar lower bound `Psi` in paper (28). -/
+/-- The scalar lower bound `Psi` in the manuscript. -/
 noncomputable def goodRowPsi (u v q : ℝ) : ℝ :=
   (1 - q) * binaryEntropy (u / (1 - q)) - 1 +
     (1 / 2) *
@@ -99,7 +99,7 @@ theorem continuousAt_continuousGoodRowPsi_half_half_zero :
   fun_prop (disch := norm_num)
 
 /-- Exact domain-qualified continuity statement used in the compactness
-argument for paper Lemma 12. -/
+argument for paper Lemma 13. -/
 theorem continuousWithinAt_goodRowPsi_half_half_zero :
     ContinuousWithinAt
       (fun z : ℝ × (ℝ × ℝ) ↦ goodRowPsi z.1 z.2.1 z.2.2)
@@ -395,7 +395,7 @@ theorem average_suffixError_core_lower
           suffixError (p a) (strictRightMass p π a)) :=
       uniformAverage_mono hpoint
 
-/-- Averaged two-core suffix-error estimate in paper (28), separated from
+/-- Averaged two-core suffix-error estimate in the manuscript, separated from
 the entropy coarsening identity. -/
 theorem rowT_ge_two_core_suffix_bound
     {n : ℕ} {p : Fin n → ℝ} (hp : IsProbabilityVector p)
@@ -659,7 +659,7 @@ theorem goodRowBall_nonempty (η : ℝ) :
     rw [Metric.mem_closedBall, dist_self]
     exact goodRowRadius_nonneg η⟩
 
-/-- A monotone modulus for the compactness step in paper Lemma 12.  We use
+/-- A monotone modulus for the compactness step in paper Lemma 13.  We use
 absolute deviation rather than only its positive part; this is slightly
 stronger and gives the same score bound. -/
 noncomputable def goodRowOmega (η : ℝ) : ℝ :=
@@ -731,7 +731,7 @@ theorem tendsto_goodRowOmega_zero :
   rw [Real.dist_eq, sub_zero, abs_of_nonneg (goodRowOmega_nonneg η)]
   exact hωle.trans_lt (half_lt_self hε)
 
-/-- Paper Lemma 12.  A row within `η` in `L¹` of a half--half vector admits
+/-- Paper Lemma 13.  A row within `η` in `L¹` of a half--half vector admits
 two core coordinates such that its averaged sequential score exceeds the
 entropy of the corresponding two-core coarsening by
 `(log 2)/2 - goodRowOmega η`.  The modulus is monotone and tends to zero by

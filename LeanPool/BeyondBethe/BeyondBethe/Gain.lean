@@ -19,7 +19,7 @@ open scoped BigOperators
 
 namespace BeyondBethe
 
-/-- The row factor `ζ_i` from paper (47). -/
+/-- The row factor `ζ_i` from the manuscript. -/
 noncomputable def rowZeta
     {ι : Type*} [Fintype ι] (τ : ℝ) (p : ι → ℝ) : ℝ :=
   ∏ j, (p j) ^ (τ * p j)
@@ -135,7 +135,7 @@ theorem transferU_le_twoCore_ratio
   rw [transferU]
   exact div_le_div₀ (hp.1.nonnegative a) hnum hdenPos hdenLower
 
-/-- Scalar form of the leakage argument in paper (49)--(51). -/
+/-- Scalar form of the leakage argument in the manuscript. -/
 theorem leakage_le_inv_sub_one
     {u xa xb t Ua Ub : ℝ}
     (hu : 0 < u) (hu1 : u ≤ 1)
@@ -171,7 +171,7 @@ theorem leakage_le_inv_sub_one
     t ≤ (1 - u) / u := (le_div_iff₀ hu).2 (by simpa [mul_comm] using hutle)
     _ = u⁻¹ - 1 := by field_simp
 
-/-- Paper (47): two large core transfer coordinates force small mass outside
+/-- Two large core transfer coordinates force small mass outside
 the two core columns. -/
 theorem outsideMassTwo_le_inv_sub_one
     {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -251,7 +251,7 @@ theorem outsideMassTwo_pairAlpha
   rw [outsideMassTwo, outsideMassTwo, outsideMassTwo]
   simp_rw [pairAlpha, Finset.sum_add_distrib]
 
-/-- Paper (48): a small four-entry transfer cost forces small two-row
+/-- A small four-entry transfer cost forces small two-row
 leakage. -/
 theorem pairOutsideMass_le_exp
     {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -287,7 +287,7 @@ theorem productExcept_le_one
     linarith [hp.nonnegative k]
 
 /-- The denominator in `U_ij` is at most one, giving the first inequality in
-paper (56). -/
+the manuscript. -/
 theorem coordinate_rpow_le_transferU
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {τ : ℝ} {p : ι → ℝ} (hp : IsInteriorProbabilityVector p) (j : ι) :
@@ -371,7 +371,7 @@ theorem capacityWitness_coreB_marginal
   field_simp
   nlinarith
 
-/-- Convexity estimate used in paper (56). -/
+/-- Convexity estimate used in the manuscript. -/
 theorem two_neg_tau_mul_add_rpow_le
     {x y τ : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) (hτ : 0 ≤ τ) :
     (2 : ℝ) ^ (-τ) * (x + y) ^ (1 + τ) ≤
@@ -400,7 +400,7 @@ theorem two_neg_tau_mul_add_rpow_le
   rw [hleft] at hscaled
   nlinarith
 
-/-- Paper (56), including both the denominator estimate and the convexity
+/-- The outside-coordinate bound, including both the denominator estimate and the convexity
 step. -/
 theorem pairTransferSum_lower
     {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -414,7 +414,7 @@ theorem pairTransferSum_lower
       (add_le_add (coordinate_rpow_le_transferU hp j)
         (coordinate_rpow_le_transferU hq j))
 
-/-- Exact cancellation of the two core deficit terms in paper (59)--(61). -/
+/-- Exact cancellation of the two core deficit terms in the manuscript. -/
 theorem core_entropy_cancellation
     {δa δb ρ : ℝ} (hδa : 0 < δa) (hδb : 0 < δb)
     (hρ : 0 < ρ) (hsum : δa + δb = ρ) :
@@ -425,7 +425,7 @@ theorem core_entropy_cancellation
   rw [← hsum]
   ring
 
-/-- Elementary outside-coordinate bound used below paper (61). -/
+/-- Elementary outside-coordinate bound used in the manuscript. -/
 theorem neg_alpha_le_one_sub_mul_log
     {α : ℝ} (hα1 : α < 1) :
     -α ≤ (1 - α) * Real.log (1 - α) := by

@@ -231,7 +231,7 @@ theorem log_permutationWeight
   intro j _
   exact (hA (σ j) j).ne'
 
-/-- Entropy identity for the Gibbs law, used in paper Lemma 10. -/
+/-- Entropy identity for the Gibbs law, used in paper Lemma 11. -/
 theorem gibbsEntropy_identity
     {n : Type*} [Fintype n] [DecidableEq n]
     (A : Matrix n n ℝ) (hA : ∀ i j, 0 < A i j) :

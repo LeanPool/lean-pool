@@ -17,7 +17,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 namespace BeyondBethe
 
-/-- The improvement in the positive-matrix dichotomy (paper (46)). -/
+/-- The improvement in the positive-matrix dichotomy. -/
 noncomputable def epsilonPlus (δ ξ γ : ℝ) : ℝ :=
   min (δ - ξ) (3 * γ / 8 - ξ)
 
@@ -27,7 +27,8 @@ theorem epsilonPlus_pos {δ ξ γ : ℝ}
   rw [epsilonPlus, lt_min_iff]
   exact ⟨sub_pos.mpr hδ, sub_pos.mpr hγ⟩
 
-/-- The two cases in Proposition 20 combine to the exponent in (45). -/
+/-- The two cases in Proposition 21 combine to the exponent in the positive-matrix approximation
+bound. -/
 theorem positiveDichotomy_exponent
     {n : ℕ} {r δ ξ γ : ℝ}
     (h : r ≤ (Real.log 2 / 2 - δ + ξ) * n ∨
@@ -43,7 +44,7 @@ theorem positiveDichotomy_exponent
     have hmin : min (δ - ξ) (3 * γ / 8 - ξ) ≤ 3 * γ / 8 - ξ := min_le_right _ _
     linarith
 
-/-- Paper (65): in the far case, Bethe slack pays for the logarithmic gap;
+/-- In the far case, Bethe slack pays for the logarithmic gap;
 the paired gain can only help. -/
 theorem farCase_logGap
     {n : ℕ} {logPermanent logBethe objective gain δ ξ : ℝ}
@@ -55,7 +56,7 @@ theorem farCase_logGap
   rw [betheSlack] at hslack
   nlinarith
 
-/-- Paper (69): in the near case, the matching gain subtracts directly from
+/-- In the near case, the matching gain subtracts directly from
 the upper half of the Bethe sandwich. -/
 theorem nearCase_logGap
     {n : ℕ} {logPermanent logBethe objective gain γ ξ : ℝ}
@@ -149,7 +150,7 @@ theorem failedPair_count_le_transferError
   exact le_of_mul_le_mul_right (hfailed.trans htotal) hmin
 
 /-- Exponentiating the logarithmic bound uses exactly the base appearing in
-paper Proposition 20. -/
+paper Proposition 21. -/
 theorem exp_logTwoHalf_sub (ε : ℝ) :
     Real.exp (Real.log 2 / 2 - ε) =
       Real.sqrt 2 * Real.exp (-ε) := by
@@ -174,7 +175,7 @@ theorem logGap_implies_positive_approximation
   rw [hleft, hright] at hexp
   exact (div_le_iff₀ hL).mp hexp
 
-/-- Exact scalar assembly of paper Proposition 20.  The disjunction consists
+/-- Exact scalar assembly of paper Proposition 21.  The disjunction consists
 of the far-slack and near-tight estimates proved in the two structural cases. -/
 theorem positiveDichotomy_approximation
     {n : ℕ} {L per δ ξ γ : ℝ}
@@ -250,7 +251,7 @@ theorem improvedBase_lt_sqrtTwo {ε : ℝ} (hε : 0 < ε) :
     simpa only [Real.exp_zero] using Real.exp_lt_exp.mpr (neg_neg_of_pos hε)
   nlinarith [mul_lt_mul_of_pos_left hexp hsqrt]
 
-/-- The final base (paper (59)). -/
+/-- The final base. -/
 noncomputable def finalBase (ε : ℝ) : ℝ :=
   Real.sqrt 2 * Real.exp (-ε / 2)
 

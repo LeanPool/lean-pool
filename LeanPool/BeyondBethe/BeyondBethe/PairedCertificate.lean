@@ -322,7 +322,7 @@ theorem sum_coeff_expandedClusterPolynomial_eq_permanent
     simp [eval_monomial, one, Matrix.permanent]
   exact hevalCoeffs.symm.trans hevalPerm
 
-/- Paper equation (12): the same-monomial coefficient pairing of the
+/- The same-monomial coefficient pairing of the
 expanded cluster polynomial and the column selector is exactly the
 permanent.  This proof is purely finite and does not use real stability. -/
 theorem coefficientInnerProduct_cluster_selector_eq_permanent
@@ -345,7 +345,7 @@ theorem coefficientInnerProduct_cluster_selector_eq_permanent
     norm_num
   simp [hmem, hcoeff]
 
-/-- The two-row polynomial `Q_{rs}` from paper (9), written as a sum over
+/-- The two-row polynomial `Q_{rs}` from the manuscript, written as a sum over
 ordered off-diagonal pairs.  The two orientations of `{j,k}` contribute the
 two terms in its coefficient. -/
 noncomputable def pairPolynomial
@@ -366,7 +366,7 @@ theorem single_add_single_one_eq_iff
   simp [hab, hjk]
 
 /-- The coefficient of `z_j z_k` is the combined weight of the two internal
-assignments, exactly as stated below paper (9). -/
+assignments, exactly as stated in the manuscript. -/
 theorem pairPolynomial_coeff_two
     {ι : Type*} [Fintype ι]
     (u v : ι → ℝ) {j k : ι} (hjk : j ≠ k) :
@@ -477,7 +477,7 @@ def pairHessian
     {ι : Type*} [DecidableEq ι] (u v : ι → ℝ) : Matrix ι ι ℝ :=
   fun i j ↦ if i = j then 0 else u i * v j + v i * u j
 
-/-- Paper equation (11), the exact rank-two-minus-diagonal Hessian identity. -/
+/-- The exact rank-two-minus-diagonal Hessian identity. -/
 theorem pairHessian_eq
     {ι : Type*} [DecidableEq ι] (u v : ι → ℝ) :
     pairHessian u v =

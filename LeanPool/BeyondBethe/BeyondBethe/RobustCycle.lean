@@ -333,7 +333,7 @@ theorem coordinateEncoding_score_ge_neg_one
     exact coreOutcome_entropy_le (hP i) (f i) (g i)
   linarith
 
-/-- Paper Lemma 9 with the joint encoding entropy replaced by the sum of its
+/-- Paper Lemma 10 with the joint encoding entropy replaced by the sum of its
 coordinate entropies. -/
 theorem twoMatching_coreEncoding_sum_coordinates
     {n : ℕ} {μ : Equiv.Perm (Fin n) → ℝ}
@@ -443,7 +443,7 @@ theorem sum_coordinateEncoding_score_lower
   rw [hpartition]
   linarith
 
-/-- The graph-indexed entropy-score inequality (paper (29)). -/
+/-- The graph-indexed entropy-score inequality. -/
 theorem divergence_ge_good_bad_cycleScore
     {n : ℕ} {μ : Equiv.Perm (Fin n) → ℝ}
     {P : Matrix (Fin n) (Fin n) ℝ}
@@ -667,7 +667,7 @@ theorem alternating_component_accounting
     exact_mod_cast hbadSum
   linarith
 
-/-- Full graph-indexed robust cycle-information inequality, paper Lemma 13. -/
+/-- Full graph-indexed robust cycle-information inequality, paper Lemma 14. -/
 theorem robust_cycle_information_twoMatchings
     {n : ℕ} {μ : Equiv.Perm (Fin n) → ℝ}
     {P : Matrix (Fin n) (Fin n) ℝ}
@@ -693,7 +693,7 @@ theorem robust_cycle_information_twoMatchings
   exact robust_cycle_information_of_accounting
     (goodRowOmega_nonneg η) hG hscore haccount
 
-/-- The exact graph-indexed form of paper (31): after discarding bad rows
+/-- The graph-indexed cycle-information estimate: after discarding bad rows
 and good rows in long components, the remaining rows occur in vertex-disjoint
 clean two-row components. -/
 theorem alternating_cleanCycle_count
@@ -764,7 +764,7 @@ theorem alternating_cleanCycle_count
     omega
   simpa [h] using hfinal
 
-/-- Paper Lemma 13 for the Gibbs law of a positive matrix, with the completed
+/-- Paper Lemma 14 for the Gibbs law of a positive matrix, with the completed
 heavy graph and its two perfect matchings constructed rather than assumed. -/
 theorem exists_gibbs_robust_cycle_information
     {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ)

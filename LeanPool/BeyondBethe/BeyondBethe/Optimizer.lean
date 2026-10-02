@@ -590,7 +590,7 @@ theorem exists_rowColumnPotentials_of_rectangle_identity
   dsimp [r, c]
   linarith
 
-/-- The logarithmic KKT factorization in paper Lemma 14. -/
+/-- The logarithmic KKT factorization in paper Lemma 15. -/
 theorem exists_logKKT_of_regularizedBetheMaximizer
     {ι : Type*} [Fintype ι] [Nonempty ι]
     {τ : ℝ} {A X : Matrix ι ι ℝ}
@@ -693,7 +693,7 @@ theorem regularizedDifference_le_betheSuboptimality_add_budget
     betheSuboptimality]
   linarith
 
-/-- Paper Lemma 14, in the form consumed by the later transfer argument.
+/-- Paper Lemma 15, in the form consumed by the later transfer argument.
 Existence, interiority, near-optimality, and the logarithmic KKT equations are
 all proved; the only imported hypothesis is Vontobel's concavity theorem. -/
 theorem exists_regularizedOptimizer_with_logKKT

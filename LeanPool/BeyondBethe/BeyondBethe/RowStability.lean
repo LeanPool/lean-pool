@@ -519,7 +519,7 @@ noncomputable def orderingMoment
   uniformAverage (fun π : Equiv.Perm (Fin n) ↦
     (p i + strictLeftMass p π i) * (p i + strictRightMass p π i))
 
-/-- Paper (31): the exact prefix--suffix moment identity. -/
+/-- The exact prefix--suffix moment identity. -/
 theorem orderingMoment_eq
     {n : ℕ} {p : Fin n → ℝ} (hp : IsProbabilityVector p) (i : Fin n) :
     orderingMoment p i =
@@ -839,7 +839,7 @@ theorem rowT_le_cubic_bound
       rw [sum_mul_orderingMoment_eq hp.1]
       ring
 
-/-- The separable function `F` in paper (35). -/
+/-- The separable function `F` in the manuscript. -/
 noncomputable def rowStabilityF (x : ℝ) : ℝ :=
   -(1 - x) * Real.log (1 - x) + x ^ 2 / 2 + x ^ 3 / 3
 
@@ -1320,7 +1320,7 @@ theorem tailSeparableDefect_eq_sum_gap
   intro j _
   by_cases hja : j = a <;> simp [hja]; ring
 
-/-- Paper (34): the row deficit dominates a separable defect. -/
+/-- The row deficit dominates a separable defect. -/
 theorem rowDeficit_ge_separable
     {n : ℕ} {p : Fin n → ℝ} (hp : IsStrictProbabilityVector p) :
     rowStabilityC - ∑ i, rowStabilityF (p i) ≤ rowDeficit p := by
@@ -1331,7 +1331,7 @@ theorem rowDeficit_ge_separable
   linarith
 
 /-- In the variable `u = 2a-1`, this is the separable row defect
-`C-F(a)-F(1-a)` from the proof of paper Lemma 8. -/
+`C-F(a)-F(1-a)` from the proof of paper Lemma 9. -/
 noncomputable def bernoulliExcess (u : ℝ) : ℝ :=
   (1 + u) / 2 * Real.log (1 + u) +
     (1 - u) / 2 * Real.log (1 - u) - u ^ 2 / 2
@@ -1389,7 +1389,7 @@ theorem hasDerivAt_correctedBernoulliExcess
   convert! h using 1
   rw [Real.artanh_eq_half_log (by exact ⟨huLeft.le, huRight.le⟩)]
 
-/-- Quartic separation from the half--half equality case, paper (37). -/
+/-- Quartic separation from the half--half equality case. -/
 theorem bernoulliExcess_quartic
     {u : ℝ} (hu0 : 0 ≤ u) (hu1 : u < 1) :
     u ^ 4 / 12 ≤ bernoulliExcess u := by
@@ -1428,7 +1428,7 @@ theorem row_defect_eq_bernoulliExcess
     Real.log_mul (by norm_num : (2 : ℝ) ≠ 0) h1a.ne']
   ring
 
-/-- Paper (37), in the original largest-coordinate variable. -/
+/-- In the original largest-coordinate variable. -/
 theorem row_defect_quartic
     {a : ℝ} (haHalf : 1 / 2 ≤ a) (ha1 : a < 1) :
     4 / 3 * (a - 1 / 2) ^ 4 ≤
@@ -1818,7 +1818,7 @@ theorem above_half_distance_le_rowDeficit
     hbHalf]
   linarith
 
-/-- A fully explicit, strict-support version of paper Lemma 8.  The sharp
+/-- A fully explicit, strict-support version of paper Lemma 9.  The sharp
 one-row inequality is kept as an explicit argument for modularity and is
 proved in `SourceAnariRezaeiList`; all stability and compactness arguments are
 discharged here with the concrete constant `3074`.  Strict support is exactly

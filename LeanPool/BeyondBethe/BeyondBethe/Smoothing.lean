@@ -19,7 +19,7 @@ open scoped BigOperators
 
 namespace BeyondBethe
 
-/-- The smoothing level from paper (48), written for an abstract matrix order
+/-- The smoothing level from the manuscript, written for an abstract matrix order
 `n`. -/
 noncomputable def smoothingDelta (n : ℕ) (m χ : ℝ) : ℝ :=
   min (1 / (2 * n)) (χ * m ^ n / (4 * Nat.factorial n))
@@ -143,7 +143,7 @@ theorem permanent_add_uniform_sub_le
     _ = Nat.factorial (Fintype.card n) * ((1 + δ) ^ Fintype.card n - 1) := by
           rw [Finset.sum_const, Finset.card_univ, Fintype.card_perm, nsmul_eq_mul]
 
-/-- The quantitative form used in paper Lemma 21 once `δ ≤ 1/(2n)` has
+/-- The quantitative form used in paper Lemma 22 once `δ ≤ 1/(2n)` has
 been imposed. -/
 theorem permanent_add_uniform_sub_le_two_mul
     {n : Type*} [Fintype n] [DecidableEq n]
@@ -158,7 +158,7 @@ theorem permanent_add_uniform_sub_le_two_mul
     (one_add_pow_sub_one_le_two_mul hδ hhalf)
     (Nat.cast_nonneg _)
 
-/-- The mathematical comparison in paper Lemma 21.  The statement isolates
+/-- The mathematical comparison in paper Lemma 22.  The statement isolates
 the two inequalities imposed on the chosen smoothing scale `δ`; the paper's
 explicit minimum satisfies both. -/
 theorem smoothing_comparison
@@ -219,7 +219,7 @@ theorem smoothing_comparison
   dsimp [N] at hdiff' hmatched' ⊢
   linarith
 
-/-- Paper Lemma 21 with its explicit smoothing level.  This is the exact
+/-- Paper Lemma 22 with its explicit smoothing level.  This is the exact
 real-inequality content; rational bit length and construction time belong to
 the algorithmic layer. -/
 theorem smoothing_comparison_explicit

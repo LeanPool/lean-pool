@@ -22,7 +22,7 @@ namespace BeyondBethe
 
 open MvPolynomial
 
-/-- Multiplicative form of the KKT equations (paper (35)). -/
+/-- Multiplicative form of the KKT equations. -/
 def HasMultiplicativeKKT
     {ι : Type*}
     (τ : ℝ) (A X : Matrix ι ι ℝ) (r c : ι → ℝ) : Prop :=
@@ -123,7 +123,7 @@ theorem singletonCoordinate_factorization
     _ = r ^ x * c ^ x * x ^ (τ * x) * (1 - x) := by
       rw [hcompPow]
 
-/-- Paper (44), stated first for the explicit singleton product `S_i`. -/
+/-- The singleton scaling identity, stated first for the explicit singleton product `S_i`. -/
 theorem singletonProductValue_factorized_of_multiplicativeKKT
     {n : ℕ} {τ : ℝ} {A X : Matrix (Fin n) (Fin n) ℝ}
     {r c : Fin n → ℝ}
@@ -162,14 +162,14 @@ theorem realMonomial_pairAlpha
   intro j _
   exact Real.rpow_add (hc j) (X r j) (X s j)
 
-/-- The gain ratio `Gamma_rs` from paper (10), using the explicit singleton
-products from paper (7). -/
+/-- The gain ratio `Gamma_rs` from the manuscript, using the explicit singleton
+products from the manuscript. -/
 noncomputable def pairGain
     {n : ℕ} (A X : Matrix (Fin n) (Fin n) ℝ) (r s : Fin n) : ℝ :=
   pairCertificateValue A X r s /
     (singletonProductValue A X r * singletonProductValue A X s)
 
-/-- Paper Lemma 18.  Every KKT scaling and every capacity change of variables
+/-- Paper Lemma 19.  Every KKT scaling and every capacity change of variables
 is canceled explicitly. -/
 theorem pairGain_factorization
     {n : ℕ} {τ : ℝ} {A X : Matrix (Fin n) (Fin n) ℝ}

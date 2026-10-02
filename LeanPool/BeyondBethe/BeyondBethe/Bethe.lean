@@ -31,7 +31,7 @@ def BetheAdmissible
     {n : Type*} [Fintype n] (A X : Matrix n n ℝ) : Prop :=
   IsDoublyStochastic X ∧ ∀ i j, A i j = 0 → X i j = 0
 
-/-- Bethe objective (paper (2)), using `negMulLog` for the continuous
+/-- Bethe objective, using `negMulLog` for the continuous
 `-x log x` term. -/
 noncomputable def betheRowObjective
     {n : Type*} [Fintype n] (A X : Matrix n n ℝ) (i : n) : ℝ := by
@@ -103,7 +103,7 @@ def VontobelBetheConcavity : Prop :=
       ConcaveOn ℝ {X : Matrix n n ℝ | IsDoublyStochastic X}
         (betheObjective A)
 
-/-- Row-entropy regularization from paper (34). -/
+/-- Row-entropy regularization from the manuscript. -/
 noncomputable def regularizedBetheObjective
     {n : Type*} [Fintype n]
     (τ : ℝ) (A X : Matrix n n ℝ) : ℝ :=
@@ -111,7 +111,7 @@ noncomputable def regularizedBetheObjective
 
 /-- Comparing a regularized maximizer with any unregularized competitor loses
 at most `τ n log n` in the Bethe objective.  This is the quantitative part of
-paper Lemma 14 that does not use KKT or boundary analysis. -/
+paper Lemma 15 that does not use KKT or boundary analysis. -/
 theorem regularized_near_bethe
     {n : Type*} [Fintype n] [Nonempty n]
     {τ : ℝ} (hτ : 0 ≤ τ) (A X Y : Matrix n n ℝ)
