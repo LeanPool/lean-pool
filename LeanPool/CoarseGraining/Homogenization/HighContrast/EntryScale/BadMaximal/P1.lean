@@ -92,7 +92,8 @@ theorem maximal_mul_le_min_one_mul_add_badEventTruncation_mul
       mul_le_mul_of_nonneg_right hsplit hJ_nonneg
     _ = min (M ω) 1 * J + badEventTruncation M ω * J := by ring
 
-/-- The bad-event truncation of an a.e. strongly measurable observable is a.e. strongly measurable. -/
+/-- The bad-event truncation of an a.e. strongly measurable observable
+is a.e. strongly measurable. -/
 theorem aestronglyMeasurable_badEventTruncation
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {M : Ω → ℝ}
     (hM : AEStronglyMeasurable M μ) :
@@ -284,7 +285,9 @@ private lemma Matrix.IsHermitian.isometry_cfcAux_l2
           have hstep : -hA.cfcAux f + hA.cfcAux g = -(hA.cfcAux f - hA.cfcAux g) := by abel
           rw [hstep, l2OpMatrixNormNeg]
     _ = ‖hA.cfcAux (f - g)‖ := by rw [map_sub]
-    _ = ‖f - g‖ := by simpa only [Matrix.IsHermitian.cfcAux_apply, RCLike.ofReal_real_eq_id, ContinuousMap.coe_sub, CompTriple.comp_eq, Unitary.conjStarAlgAut_apply, u] using hnorm
+    _ = ‖f - g‖ := by
+      simpa only [Matrix.IsHermitian.cfcAux_apply, RCLike.ofReal_real_eq_id,
+        ContinuousMap.coe_sub, CompTriple.comp_eq, Unitary.conjStarAlgAut_apply, u] using hnorm
     _ = dist f g := (dist_eq_norm _ _).symm
 
 private noncomputable local instance fullBlockMat_isometricContinuousFunctionalCalculus
@@ -328,7 +331,8 @@ theorem fullBlockOperatorNorm_posPart_le {d : ℕ}
       rfl
     have hM_eq :
         M = Unitary.conjStarAlgAut ℝ _ hHerm.eigenvectorUnitary D := by
-      simpa only [Unitary.conjStarAlgAut_apply, RCLike.ofReal_real_eq_id, CompTriple.comp_eq] using hHerm.spectral_theorem
+      simpa only [Unitary.conjStarAlgAut_apply, RCLike.ofReal_real_eq_id,
+        CompTriple.comp_eq] using hHerm.spectral_theorem
     have hunit_pos :
         ‖Unitary.conjStarAlgAut ℝ _ hHerm.eigenvectorUnitary Dpos‖ =
           ‖Dpos‖ := by
@@ -455,7 +459,8 @@ private theorem measurable_fullBlockOperatorNorm_posPart {d : ℕ} :
               (𝕜 := ℝ) (A := Homogenization.FullBlockMat d)
               (p := IsSelfAdjoint) M' hy hM'_self
           have hy_bound : ‖y‖ ≤ ‖M‖ + 1 := hy_norm.trans hM'_norm
-          simpa only [Metric.mem_closedBall, dist_eq_norm, sub_zero, Real.norm_eq_abs, ge_iff_le] using hy_bound)
+          simpa only [Metric.mem_closedBall, dist_eq_norm, sub_zero, Real.norm_eq_abs,
+            ge_iff_le] using hy_bound)
         (ha' := by
           intro M hM
           exact hM)
@@ -509,7 +514,8 @@ private theorem measurable_fullBlockOperatorNorm_posPart {d : ℕ} :
     · simp only [hM, Set.piecewise_eq_of_mem]
     · have hnot : ¬ IsSelfAdjoint M := by
         simpa only [Set.mem_ofPred_eq, selfAdjointSet] using hM
-      simp only [fullBlockOperatorNorm, hM, not_false_eq_true, Set.piecewise_eq_of_notMem, CFC.posPart_eq_zero_of_not_isSelfAdjoint hnot, map_zero, norm_zero]
+      simp only [fullBlockOperatorNorm, hM, not_false_eq_true, Set.piecewise_eq_of_notMem,
+        CFC.posPart_eq_zero_of_not_isSelfAdjoint hnot, map_zero, norm_zero]
   simpa only [hpw_eq] using hpw_meas
 
 end L2OperatorNorm
@@ -584,7 +590,9 @@ private theorem fullBlockQuadratic_le_fullBlockOperatorNorm_mul_dotProduct
   have hinner :
       inner ℝ X Y =
         Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic M x := by
-    simp only [PiLp.inner_apply, RCLike.inner_apply, conj_trivial, mul_comm, Fintype.sum_sum_type, Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic, dotProduct, X, Y]
+    simp only [PiLp.inner_apply, RCLike.inner_apply, conj_trivial, mul_comm, Fintype.sum_sum_type,
+      Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic, dotProduct, X,
+      Y]
   have hnormY :
       ‖Y‖ ≤ fullBlockOperatorNorm M * ‖X‖ := by
     simpa only [fullBlockOperatorNorm, hY] using
@@ -620,7 +628,8 @@ private theorem fullBlockQuadratic_le_posPart_of_isSymm
       0 ≤
         Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic
           (M⁺ - M) x := by
-    simpa only [Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic, star_trivial]
+    simpa only [Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic,
+      star_trivial]
       using hdiff.dotProduct_mulVec_nonneg x
   have hsub :=
     Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic_sub
@@ -677,7 +686,8 @@ theorem upperLeft_posSemidef_of_isSymmetricBlockMat_of_blockPosDef
     A.upperLeft.PosSemidef := by
   refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg ?_ ?_
   · ext i j
-    simp only [Matrix.conjTranspose, RCLike.star_def, Matrix.map_apply, Matrix.transpose_apply, conj_trivial]
+    simp only [Matrix.conjTranspose, RCLike.star_def, Matrix.map_apply, Matrix.transpose_apply,
+      conj_trivial]
     simpa only [Homogenization.blockMatEntry] using hSymm (Sum.inl j) (Sum.inl i)
   · intro x
     by_cases hx : x = 0
@@ -686,7 +696,9 @@ theorem upperLeft_posSemidef_of_isSymmetricBlockMat_of_blockPosDef
         intro hzero
         exact hx (congrArg Prod.fst hzero)
       have hquad := (hPos ((x, 0) : Homogenization.BlockVec d) hX).le
-      simpa only [star_trivial, ge_iff_le, Homogenization.blockVecDot, Homogenization.blockMatVecMul, Homogenization.matVecMul_zero, add_zero, Homogenization.vecDot_zero_left]
+      simpa only [star_trivial, ge_iff_le, Homogenization.blockVecDot,
+        Homogenization.blockMatVecMul, Homogenization.matVecMul_zero, add_zero,
+        Homogenization.vecDot_zero_left]
         using! hquad
 
 theorem lowerRight_posSemidef_of_isSymmetricBlockMat_of_blockPosDef
@@ -696,7 +708,8 @@ theorem lowerRight_posSemidef_of_isSymmetricBlockMat_of_blockPosDef
     A.lowerRight.PosSemidef := by
   refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg ?_ ?_
   · ext i j
-    simp only [Matrix.conjTranspose, RCLike.star_def, Matrix.map_apply, Matrix.transpose_apply, conj_trivial]
+    simp only [Matrix.conjTranspose, RCLike.star_def, Matrix.map_apply, Matrix.transpose_apply,
+      conj_trivial]
     simpa only [Homogenization.blockMatEntry] using hSymm (Sum.inr j) (Sum.inr i)
   · intro x
     by_cases hx : x = 0
@@ -705,7 +718,9 @@ theorem lowerRight_posSemidef_of_isSymmetricBlockMat_of_blockPosDef
         intro hzero
         exact hx (congrArg Prod.snd hzero)
       have hquad := (hPos ((0, x) : Homogenization.BlockVec d) hX).le
-      simpa only [star_trivial, ge_iff_le, Homogenization.blockVecDot, Homogenization.blockMatVecMul, Homogenization.matVecMul_zero, zero_add, Homogenization.vecDot_zero_left]
+      simpa only [star_trivial, ge_iff_le, Homogenization.blockVecDot,
+        Homogenization.blockMatVecMul, Homogenization.matVecMul_zero, zero_add,
+        Homogenization.vecDot_zero_left]
         using! hquad
 
 theorem scalar_one_posSemidef_of_nonneg
@@ -719,7 +734,9 @@ theorem vecDot_matVecMul_smul_one
         (Homogenization.matVecMul (c • (1 : Homogenization.Mat d)) x) =
       c * Homogenization.vecDot x x := by
   classical
-  simp only [Homogenization.vecDot, Homogenization.matVecMul, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, mul_comm, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte, mul_left_comm, Finset.mul_sum]
+  simp only [Homogenization.vecDot, Homogenization.matVecMul, Matrix.smul_apply, Matrix.one_apply,
+    smul_eq_mul, mul_ite, mul_one, mul_zero, mul_comm, Finset.sum_ite_eq, Finset.mem_univ,
+    ↓reduceIte, mul_left_comm, Finset.mul_sum]
 
 theorem coarseBlockMatrix_cubeSet_symm_of_aelocallyUniformlyEllipticField
     {d : ℕ} [NeZero d] (Q : Homogenization.TriadicCube d)
@@ -796,12 +813,14 @@ theorem fullBlockNormalizedQuadraticObservable_upperLift_eq
     | inl i =>
         dsimp [D]
         rw [Matrix.mulVec_diagonal]
-        simp only [Homogenization.Book.Ch04.scalarFullBlockInvSqrtDiag, Homogenization.toFullBlockVec, Pi.smul_apply, smul_eq_mul, b, xu]
+        simp only [Homogenization.Book.Ch04.scalarFullBlockInvSqrtDiag,
+          Homogenization.toFullBlockVec, Pi.smul_apply, smul_eq_mul, b, xu]
         field_simp [ne_of_gt (Real.sqrt_pos.mpr (by simpa only [b] using hb))]
     | inr i =>
         dsimp [D]
         rw [Matrix.mulVec_diagonal]
-        simp only [Homogenization.Book.Ch04.scalarFullBlockInvSqrtDiag, Homogenization.toFullBlockVec, Pi.zero_apply, mul_zero, xu]
+        simp only [Homogenization.Book.Ch04.scalarFullBlockInvSqrtDiag,
+          Homogenization.toFullBlockVec, Pi.zero_apply, mul_zero, xu]
   calc
     Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
         hP hStruct (m : ℤ) xu (Homogenization.cubeSet Q) a =
@@ -825,7 +844,8 @@ theorem fullBlockNormalizedQuadraticObservable_upperLift_eq
         Homogenization.vecDot e
           (Homogenization.matVecMul
             (Homogenization.coarseBlockMatrix (Homogenization.cubeSet Q) a).upperLeft e) := by
-          simp only [Homogenization.blockVecDot, Homogenization.blockMatVecMul, Homogenization.matVecMul_zero, add_zero, Homogenization.vecDot_zero_left, A]
+          simp only [Homogenization.blockVecDot, Homogenization.blockMatVecMul,
+            Homogenization.matVecMul_zero, add_zero, Homogenization.vecDot_zero_left, A]
 
 theorem fullBlockNormalizedQuadraticObservable_lowerLift_eq
     {d : ℕ} [NeZero d] {P : Homogenization.Book.Ch04.RestrictionCoeffLaw d}
@@ -862,11 +882,13 @@ theorem fullBlockNormalizedQuadraticObservable_lowerLift_eq
     | inl i =>
         dsimp [D]
         rw [Matrix.mulVec_diagonal]
-        simp only [Homogenization.Book.Ch04.scalarFullBlockInvSqrtDiag, Homogenization.toFullBlockVec, Pi.zero_apply, mul_zero, xl]
+        simp only [Homogenization.Book.Ch04.scalarFullBlockInvSqrtDiag,
+          Homogenization.toFullBlockVec, Pi.zero_apply, mul_zero, xl]
     | inr i =>
         dsimp [D]
         rw [Matrix.mulVec_diagonal]
-        simp only [Homogenization.Book.Ch04.scalarFullBlockInvSqrtDiag, Homogenization.toFullBlockVec, Pi.smul_apply, smul_eq_mul, c, xl]
+        simp only [Homogenization.Book.Ch04.scalarFullBlockInvSqrtDiag,
+          Homogenization.toFullBlockVec, Pi.smul_apply, smul_eq_mul, c, xl]
         field_simp [ne_of_gt (Real.sqrt_pos.mpr (by simpa only [c] using hc))]
   calc
     Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
@@ -891,7 +913,8 @@ theorem fullBlockNormalizedQuadraticObservable_lowerLift_eq
         Homogenization.vecDot e
           (Homogenization.matVecMul
             (Homogenization.coarseBlockMatrix (Homogenization.cubeSet Q) a).lowerRight e) := by
-          simp only [Homogenization.blockVecDot, Homogenization.blockMatVecMul, Homogenization.matVecMul_zero, zero_add, Homogenization.vecDot_zero_left, A]
+          simp only [Homogenization.blockVecDot, Homogenization.blockMatVecMul,
+            Homogenization.matVecMul_zero, zero_add, Homogenization.vecDot_zero_left, A]
 
 theorem upperLift_dotProduct_eq
     {d : ℕ} {b : ℝ} (hb : 0 ≤ b) (e : Homogenization.Vec d) :
@@ -904,7 +927,8 @@ theorem upperLift_dotProduct_eq
         Homogenization.blockVecDot ((Real.sqrt b) • e, 0) ((Real.sqrt b) • e, 0) := by
         exact Homogenization.dotProduct_toFullBlockVec _ _
     _ = Homogenization.vecNormSq ((Real.sqrt b) • e) := by
-        simp only [Homogenization.blockVecDot, Homogenization.vecDot_zero_left, add_zero, Homogenization.vecNormSq]
+        simp only [Homogenization.blockVecDot, Homogenization.vecDot_zero_left, add_zero,
+          Homogenization.vecNormSq]
     _ = b * Homogenization.vecDot e e := by
         rw [Homogenization.vecNormSq_smul, Real.sq_sqrt hb]
         simp only [Homogenization.vecNormSq]
@@ -921,7 +945,8 @@ theorem lowerLift_dotProduct_eq
           (0, (Real.sqrt c)⁻¹ • e) := by
         exact Homogenization.dotProduct_toFullBlockVec _ _
     _ = Homogenization.vecNormSq ((Real.sqrt c)⁻¹ • e) := by
-        simp only [Homogenization.blockVecDot, Homogenization.vecDot_zero_left, zero_add, Homogenization.vecNormSq]
+        simp only [Homogenization.blockVecDot, Homogenization.vecDot_zero_left, zero_add,
+          Homogenization.vecNormSq]
     _ = c⁻¹ * Homogenization.vecDot e e := by
         rw [Homogenization.vecNormSq_smul]
         have hsqrt_sq : (Real.sqrt c) ^ 2 = c := Real.sq_sqrt hc
