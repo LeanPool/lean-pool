@@ -38,6 +38,7 @@ namespace FoxNeuwirthOrderComplex
 noncomputable section
 
 /-- Dimension-increasing proper face relation used by the order complex. -/
+@[expose]
 def ProperFace (a b : BarredPermutation p) : Prop :=
   a.IsFace b ∧ a.dualDimension < b.dualDimension
 
@@ -183,6 +184,7 @@ end Simplex
 
 /-- A barycentric weight has chain support when every two distinct nonzero coordinates are
 comparable by the proper-face relation. -/
+@[expose]
 def ChainSupported (weight : BarredPermutation p → ℝ) : Prop :=
   ∀ ⦃a b : BarredPermutation p⦄,
     weight a ≠ 0 → weight b ≠ 0 → a ≠ b →
@@ -193,6 +195,7 @@ def ChainSupported (weight : BarredPermutation p → ℝ) : Prop :=
 Using coordinates indexed by all barred permutations identifies shared faces automatically: a
 point belongs to a simplex precisely when its nonzero coordinate support is contained in the
 corresponding strict chain. -/
+@[expose]
 def Realization (p : Nat) :=
   {weight : BarredPermutation p → ℝ //
     (∀ c, 0 ≤ weight c) ∧

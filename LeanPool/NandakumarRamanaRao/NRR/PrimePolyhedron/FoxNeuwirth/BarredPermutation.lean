@@ -152,6 +152,7 @@ theorem relabel_mul
 `a.IsFace b` means that the stratum symbol `a` is a refinement of `b`: ordered blocks of `a` may
 be merged, but never reordered, and the vertical order inside every block of `a` is preserved.
 The final conjunct records the corresponding dual-dimension inequality explicitly. -/
+@[expose]
 def IsFace (a b : BarredPermutation p) : Prop :=
   (∀ i j, a.blockIndex i ≤ a.blockIndex j →
       b.blockIndex i ≤ b.blockIndex j) ∧
@@ -193,6 +194,7 @@ theorem isFace_relabel
     exact h.2.1 (σ.symm i) (σ.symm j) hij
 
 /-- Codimension-one face relation. -/
+@[expose]
 def IsFacet (a b : BarredPermutation p) : Prop :=
   a.IsFace b ∧ a.dualDimension + 1 = b.dualDimension
 

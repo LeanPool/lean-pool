@@ -25,6 +25,7 @@ variable {p : ℕ}
 namespace BarredPermutation
 
 /-- Top-dimensional dual Fox--Neuwirth symbols. -/
+@[expose]
 def TopCell (p : ℕ) := {c : BarredPermutation p // c.IsTop}
 
 namespace TopCell

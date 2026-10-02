@@ -28,6 +28,7 @@ namespace FoxNeuwirth
 
 
 /-- A shuffle is encoded by the positions occupied by the first block. -/
+@[expose]
 def ShuffleIndex (p k : ℕ) :=
   {s : Finset (Fin p) // s.card = k}
 

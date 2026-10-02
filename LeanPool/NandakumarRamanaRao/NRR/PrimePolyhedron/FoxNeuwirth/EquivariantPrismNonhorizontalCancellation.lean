@@ -1239,6 +1239,7 @@ def mapVertexSignature
     (tau (SphereOddDegree.FiniteSimplex.vertex (S := Real) (facetCoordinateIndex i)))
 
 /-- Prime translation of an affine facet map. -/
+@[expose]
 def translateFacetMap
     (p : Nat) (g : PrimeSymmetry p)
     (tau : Delta (p - 1) -> Realization p × Set.Icc (0 : Real) 1) :
