@@ -26,6 +26,7 @@ open ArchimedeanClass
 /-! ### Leading coefficient -/
 
 /-- The leading coefficient of a surreal's Hahn series. -/
+@[expose]
 def leadingCoeff (x : Surreal) : ℝ :=
   stdPart (x / ω^ x.wlog)
 
