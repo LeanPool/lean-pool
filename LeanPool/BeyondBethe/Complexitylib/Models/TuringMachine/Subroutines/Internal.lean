@@ -782,7 +782,8 @@ private theorem blankWorkTM_loop {n : ℕ} (idx : Fin n) (x : List Bool) :
               by_cases hik : i < k
               · have hblanki := hblank_prefix i hik
                 have hne : i + 1 ≠ k + 1 := by omega
-                simp [c1, Tape.writeAndMove, Tape.move_cells, Tape.write, hhead]
+                simp only [Tape.writeAndMove, Tape.write, hhead, Nat.add_eq_zero_iff,
+                  one_ne_zero, and_false, ↓reduceIte, Γw.toΓ, Tape.move_cells, c1]
                 rw [Function.update_of_ne hne]
                 exact hblanki
               · have hik_eq : i = k := by omega
@@ -791,13 +792,15 @@ private theorem blankWorkTM_loop {n : ℕ} (idx : Fin n) (x : List Bool) :
             · intro i hi hix
               have hcell := hdata i (by omega) hix
               have hne : i + 1 ≠ k + 1 := by omega
-              simp [c1, Tape.writeAndMove, Tape.move_cells, Tape.write, hhead]
+              simp only [Tape.writeAndMove, Tape.write, hhead, Nat.add_eq_zero_iff,
+                one_ne_zero, and_false, ↓reduceIte, Γw.toΓ, Tape.move_cells, c1]
               rw [Function.update_of_ne hne]
               exact hcell
             · intro i hi
               have hcell := hblank_tail i hi
               have hne : i + 1 ≠ k + 1 := by omega
-              simp [c1, Tape.writeAndMove, Tape.move_cells, Tape.write, hhead]
+              simp only [Tape.writeAndMove, Tape.write, hhead, Nat.add_eq_zero_iff,
+                one_ne_zero, and_false, ↓reduceIte, Γw.toΓ, Tape.move_cells, c1]
               rw [Function.update_of_ne hne]
               exact hcell
         | true =>
@@ -819,7 +822,8 @@ private theorem blankWorkTM_loop {n : ℕ} (idx : Fin n) (x : List Bool) :
               by_cases hik : i < k
               · have hblanki := hblank_prefix i hik
                 have hne : i + 1 ≠ k + 1 := by omega
-                simp [c1, Tape.writeAndMove, Tape.move_cells, Tape.write, hhead]
+                simp only [Tape.writeAndMove, Tape.write, hhead, Nat.add_eq_zero_iff,
+                  one_ne_zero, and_false, ↓reduceIte, Γw.toΓ, Tape.move_cells, c1]
                 rw [Function.update_of_ne hne]
                 exact hblanki
               · have hik_eq : i = k := by omega
@@ -828,13 +832,15 @@ private theorem blankWorkTM_loop {n : ℕ} (idx : Fin n) (x : List Bool) :
             · intro i hi hix
               have hcell := hdata i (by omega) hix
               have hne : i + 1 ≠ k + 1 := by omega
-              simp [c1, Tape.writeAndMove, Tape.move_cells, Tape.write, hhead]
+              simp only [Tape.writeAndMove, Tape.write, hhead, Nat.add_eq_zero_iff,
+                one_ne_zero, and_false, ↓reduceIte, Γw.toΓ, Tape.move_cells, c1]
               rw [Function.update_of_ne hne]
               exact hcell
             · intro i hi
               have hcell := hblank_tail i hi
               have hne : i + 1 ≠ k + 1 := by omega
-              simp [c1, Tape.writeAndMove, Tape.move_cells, Tape.write, hhead]
+              simp only [Tape.writeAndMove, Tape.write, hhead, Nat.add_eq_zero_iff,
+                one_ne_zero, and_false, ↓reduceIte, Γw.toΓ, Tape.move_cells, c1]
               rw [Function.update_of_ne hne]
               exact hcell
       obtain ⟨c1, hstep1, hstate1, hhead1, hcell01, hblank_prefix1,
@@ -1015,7 +1021,8 @@ private theorem blankWorkTM_loop_frame {n : ℕ}
             by_cases hik : i < k
             · have hblanki := hblank_prefix i hik
               have hne : i + 1 ≠ k + 1 := by omega
-              simp [c1, Tape.writeAndMove, Tape.move_cells, Tape.write, hhead]
+              simp only [Tape.writeAndMove, Tape.write, hhead, Nat.add_eq_zero_iff,
+                one_ne_zero, and_false, ↓reduceIte, Γw.toΓ, Tape.move_cells, c1]
               rw [Function.update_of_ne hne]
               exact hblanki
             · have hik_eq : i = k := by omega
@@ -1026,14 +1033,16 @@ private theorem blankWorkTM_loop_frame {n : ℕ}
             intro i _ hix
             have hcell := hdata i (by omega) hix
             have hne : i + 1 ≠ k + 1 := by omega
-            simp [c1, Tape.writeAndMove, Tape.move_cells, Tape.write, hhead]
+            simp only [Tape.writeAndMove, Tape.write, hhead, Nat.add_eq_zero_iff,
+              one_ne_zero, and_false, ↓reduceIte, Γw.toΓ, Tape.move_cells, c1]
             rw [Function.update_of_ne hne]
             exact hcell
           have hblank_tail1 : ∀ i, x.length ≤ i → (c1.work idx).cells (i + 1) = Γ.blank := by
             intro i hi
             have hcell := hblank_tail i hi
             have hne : i + 1 ≠ k + 1 := by omega
-            simp [c1, Tape.writeAndMove, Tape.move_cells, Tape.write, hhead]
+            simp only [Tape.writeAndMove, Tape.write, hhead, Nat.add_eq_zero_iff,
+              one_ne_zero, and_false, ↓reduceIte, Γw.toΓ, Tape.move_cells, c1]
             rw [Function.update_of_ne hne]
             exact hcell
           have hrem1 : rem = x.length - (k + 1) := by omega
@@ -1071,7 +1080,8 @@ private theorem blankWorkTM_loop_frame {n : ℕ}
             by_cases hik : i < k
             · have hblanki := hblank_prefix i hik
               have hne : i + 1 ≠ k + 1 := by omega
-              simp [c1, Tape.writeAndMove, Tape.move_cells, Tape.write, hhead]
+              simp only [Tape.writeAndMove, Tape.write, hhead, Nat.add_eq_zero_iff,
+                one_ne_zero, and_false, ↓reduceIte, Γw.toΓ, Tape.move_cells, c1]
               rw [Function.update_of_ne hne]
               exact hblanki
             · have hik_eq : i = k := by omega
@@ -1082,14 +1092,16 @@ private theorem blankWorkTM_loop_frame {n : ℕ}
             intro i _ hix
             have hcell := hdata i (by omega) hix
             have hne : i + 1 ≠ k + 1 := by omega
-            simp [c1, Tape.writeAndMove, Tape.move_cells, Tape.write, hhead]
+            simp only [Tape.writeAndMove, Tape.write, hhead, Nat.add_eq_zero_iff,
+              one_ne_zero, and_false, ↓reduceIte, Γw.toΓ, Tape.move_cells, c1]
             rw [Function.update_of_ne hne]
             exact hcell
           have hblank_tail1 : ∀ i, x.length ≤ i → (c1.work idx).cells (i + 1) = Γ.blank := by
             intro i hi
             have hcell := hblank_tail i hi
             have hne : i + 1 ≠ k + 1 := by omega
-            simp [c1, Tape.writeAndMove, Tape.move_cells, Tape.write, hhead]
+            simp only [Tape.writeAndMove, Tape.write, hhead, Nat.add_eq_zero_iff,
+              one_ne_zero, and_false, ↓reduceIte, Γw.toΓ, Tape.move_cells, c1]
             rw [Function.update_of_ne hne]
             exact hcell
           have hrem1 : rem = x.length - (k + 1) := by omega
