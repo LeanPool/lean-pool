@@ -189,7 +189,8 @@ theorem zero_of_energy_equation (T : ℝ) (hT : 0 ≤ T) (hTpos : 0 < T)
   rw [henergy] at hnorm
   have hpu : pu = 0 := by
     apply norm_eq_zero.mp
-    nlinarith [norm_nonneg pu]
+    have hsq : ‖pu‖ ^ 2 ≤ 0 := by linarith only [hnorm]
+    exact (pow_eq_zero_iff two_ne_zero).mp (le_antisymm hsq (sq_nonneg _))
   have hpzero : p = 0 := by
     rw [← primitive_eq_path T hT p u hp hzero]
     change initialPrimitive T hT pu = 0

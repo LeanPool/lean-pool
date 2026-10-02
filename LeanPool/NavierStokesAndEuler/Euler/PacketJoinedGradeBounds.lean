@@ -199,9 +199,10 @@ theorem velocity_unit_bound (n : ℕ) :
   have hp := (L.past_velocity_bound G directions hdir d hforce n).trans
     (mul_le_mul_of_nonneg_left
       (majorant_mono_shift L.R L.radius_bounds.1 (d+2) (d+3) n (by omega)) ha)
-  exact hb.trans (by
-    simpa only [velocityCost,add_mul] using
-      add_le_add hp (L.future_velocity_bound G directions hdir d hforce n))
+  unfold fullProfile velocityPath
+  refine le_trans (by with_reducible exact hb) ?_
+  simpa only [velocityCost,add_mul] using
+    add_le_add hp (L.future_velocity_bound G directions hdir d hforce n)
 
 /-- The entire actual A_t/g. The profile itself is never differentiated. -/
 theorem derivative_unit_bound (n : ℕ) :
@@ -209,12 +210,14 @@ theorem derivative_unit_bound (n : ℕ) :
       (normalize L.fullProfile L.fullProfile_pos (derivativePath τ hτ hτT B G))) n 0 ≤
         L.derivativeCost*majorant L.R (d+3) n := by
   have hb := normalized_join_block P D.T τ hτ.le hτT.le L.g L.positive L.initial_one
-    (pastDerivative τ hτ hτT B G) (futureDerivative τ hτ hτT B G) (derivative_match τ hτ hτT B G)
+    (pastDerivative τ hτ hτT B G) (futureDerivative τ hτ hτT B G)
+    (by with_reducible exact derivative_match τ hτ hτT B G)
     (pastDerivative_orbit τ hτ hτT B G) (futureDerivative_orbit τ hτ hτT B G) directions q n 0
-  exact hb.trans (by
-    simpa only [derivativeCost,add_mul] using
-      add_le_add (L.past_derivative_bound G directions hdir d hforce n)
-        (L.future_derivative_bound G directions hdir d hforce n))
+  unfold fullProfile derivativePath
+  refine le_trans (by with_reducible exact hb) ?_
+  simpa only [derivativeCost,add_mul] using
+    add_le_add (L.past_derivative_bound G directions hdir d hforce n)
+      (L.future_derivative_bound G directions hdir d hforce n)
 
 end EulerTransversePacketJoin.Budget
 

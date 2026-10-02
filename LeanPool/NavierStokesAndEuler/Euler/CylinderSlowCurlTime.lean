@@ -78,8 +78,10 @@ theorem path_hasDerivWithinAt (t : Icc (0 : ℝ) T) :
       (hcoeff i) (derivativePath P p i.succ) (derivativePath P f i.succ)
       (wordPath_hasDerivWithinAt P T hT p f hp hf hd (fun _ : Fin 1 => i.succ)) t
   have h := HasDerivWithinAt.fun_sum (u := Finset.univ) (fun i _ => hterm i)
-  convert h using 1 <;> try rfl
-  simp [derivative, path, Finset.sum_add_distrib]
+  have he : derivative P T G G₁ p f t = ∑ i, (term P G₁ p i t + term P G f i t) := by
+    simp [derivative, path, Finset.sum_add_distrib]
+  rw [he]
+  exact h
 
 include hGt hd in
 /-- The reconstructed classical curl has the derivative of the actual L² construction. -/

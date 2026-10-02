@@ -1231,8 +1231,9 @@ theorem reference_slices (l : Label B N0) (j : ℤ) (p : Parameter)
     Continuous (fun s : Icc (0 : ℝ) (reference l).length =>
       ((reference l).tangent j).linearData.coefficient (p, (xi, s))) ∧
     Continuous (fun s : Icc (0 : ℝ) (reference l).length =>
-      ((reference l).tangent j).linearData.forcingMap (p, (xi, s))) :=
-  frame_slices (ActualPrimary.phases B N0 l.1) l.2 j (ActualSignedGeometry.swapParameter p) hp
+      ((reference l).tangent j).linearData.forcingMap (p, (xi, s))) := by
+  apply frame_slices (ActualPrimary.phases B N0 l.1) l.2 j
+    (ActualSignedGeometry.swapParameter p) hp
 
 theorem normalWeight_ne (l : Label B N0) (j : ℤ) (hj : j ≠ 0) (n : ℕ) :
     PhysicalParticularWave.normalWeight (ChartScales.Q n) (ChartScales.Q (reference l).band)
@@ -1258,7 +1259,7 @@ theorem canonical_slices (l : Label B N0) (j : ℤ) (hj : j ≠ 0) (n : ℕ) (p 
     Continuous (fun s : Icc (0 : ℝ) ((canonicalParameters l).length n) =>
       ((canonicalParameters l).tangent j n).linearData.forcingMap (p, (xi, s))) := by
   obtain ⟨hA, hB⟩ := reference_slices l j _ hp xi
-  exact transported_slices ((reference l).tangent j) _ _ _ _ _ _
+  apply transported_slices ((reference l).tangent j) _ _ _ _ _ _
     (PhysicalParticularWave.ratioPower_pos (ChartScales.Q_pos n) (ChartScales.Q_pos _) _)
     (normalWeight_ne l j hj n) p xi hA hB
 
@@ -1294,8 +1295,9 @@ theorem actual_copy_slices (x : CorrectionStep.CycleState (Label B N0)) (l : Lab
           ((p, Y), s)) ∧
     Continuous (fun s : Icc (0 : ℝ) ((parameters x l).length n) =>
       ((parameters x l).tangent j n).linearData.forcingMap
-        (p, ((((parameters x l).geometry n).coordinates k Y).1, s))) :=
-  actual_slices x l hfrequency j hj n p hp _
+        (p, ((((parameters x l).geometry n).coordinates k Y).1, s))) := by
+  simp only [LinearData.coefficientAlong]
+  exact actual_slices x l hfrequency j hj n p hp _
 
 end Actual
 

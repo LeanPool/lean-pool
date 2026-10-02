@@ -189,9 +189,12 @@ theorem curl_linearPotential (L : Space →L[ℝ] Space) (x : Space) :
   rw [← coordinateTrace_eq_linearTrace]
   ext i
   fin_cases i <;>
-    simp [curl_apply, partialDerivative_linearPotential, coordinateTrace,
-      Fin.sum_univ_three, PiLp.sub_apply, PiLp.smul_apply,
-      smul_eq_mul, hL] <;> ring
+    simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue, curl_apply, zero_add,
+      partialDerivative_linearPotential, Fin.reduceAdd, ne_eq, zero_ne_one, one_ne_zero,
+      not_false_eq_true, PiLp.single_eq_of_ne, hL, Fin.sum_univ_three, zero_mul,
+      PiLp.single_eq_same, one_mul, neg_sub, Fin.reduceEq, coordinateTrace, add_apply,
+      ContinuousLinearMap.comp_apply, ContinuousLinearMap.apply_apply, PiLp.proj_apply,
+      PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul] <;> ring
 
 theorem curl_linearPotential_of_trace_zero (L : Space →L[ℝ] Space)
     (hL : LinearMap.trace ℝ Space L.toLinearMap = 0) (x : Space) :

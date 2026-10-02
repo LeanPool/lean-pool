@@ -234,6 +234,7 @@ theorem transport_shifted_weighted_bound (q N : ℕ) (ρ : ℝ) (hρ : 0 < ρ)
           (fun l => wordSobolevNorm_nonneg period 6 l b) (fun l => wordSobolevNorm_nonneg period 6
               l e))
         (productConstant_nonneg period q)
-      simpa only [mul_assoc, mul_left_comm, mul_comm] using h
+      refine h.trans_eq ?_
+      ring
 
 end EulerH6Nonlinear

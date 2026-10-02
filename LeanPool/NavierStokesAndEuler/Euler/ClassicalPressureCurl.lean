@@ -42,8 +42,14 @@ theorem fieldDerivative_mul (a : LiftTangent) (f g : LiftDomain period → ℝ)
       fieldDerivative period a f x * g x + f x * fieldDerivative period a g x := by
   have h := ((((hf x).differentiable (by simp)) 0).hasFDerivAt.mul
     (((hg x).differentiable (by simp)) 0).hasFDerivAt).fderiv
-  have he := congrArg (fun L : LiftTangent →L[ℝ] ℝ => L a) h
-  simpa +unfoldPartialApp [fieldDerivative, localFieldLift, Pi.mul_def, mul_comm, add_comm] using he
+  have h0 (k : LiftDomain period → ℝ) : localFieldLift period k x 0 = k x := by
+    simp only [localFieldLift, Prod.fst_zero, Prod.snd_zero, AddCircle.coe_zero, add_zero,
+      Prod.mk.eta]
+  have hmul : localFieldLift period (fun y => f y * g y) x =
+      localFieldLift period f x * localFieldLift period g x := rfl
+  unfold fieldDerivative
+  rw [hmul, h, add_apply, smul_apply, smul_apply, h0 f, h0 g, smul_eq_mul, smul_eq_mul]
+  ring
 
 /-- A smooth scalar field times a compact smooth scalar field is integrable. -/
 theorem scalar_product_integrable (f g : LiftDomain period → ℝ)

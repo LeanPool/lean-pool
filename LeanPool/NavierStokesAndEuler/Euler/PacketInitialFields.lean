@@ -59,7 +59,8 @@ variable {P T : ℝ} [Fact (0 < P)] {raw : VectorField}
 
 theorem freezePath_translate (t : Icc (0 : ℝ) T) (p : C(Icc (0 : ℝ) T, LiftL2 P))
     (a : LiftTangent) :
-    pathTranslate P a (freezePath t p) = freezePath t (pathTranslate P a p) := by
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (freezePath t p) =
+      freezePath t (pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a p) := by
   apply ContinuousMap.ext
   intro s
   rfl
@@ -87,16 +88,18 @@ theorem WordBound.freeze {G : Field P T raw} {q d : ℕ} {R A : ℝ}
     (hG : G.WordBound q R A d) (t : Icc (0 : ℝ) T) :
     (G.freeze t).WordBound q R A d := by
   intro n
-  have he : (fun a : LiftTangent => pathTranslate P a (G.freeze t).path) =
-      freezePath t ∘ (fun a : LiftTangent => pathTranslate P a G.path) :=
+  have he : (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (G.freeze t).path) =
+      freezePath t ∘ (fun a : LiftTangent =>
+        pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a G.path) :=
     funext (freezePath_translate t G.path)
   rw [he]
   have hb := block_comp_clm_le standardDirection q
     (freezePath (E := LiftL2 P) t)
-    (fun a : LiftTangent => pathTranslate P a G.path) G.orbit n 0
-  have hp : 0 ≤ block standardDirection q
-      (fun a : LiftTangent => pathTranslate P a G.path) n 0 :=
-    block_nonneg standardDirection q (fun a : LiftTangent => pathTranslate P a G.path) n 0
+    (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a G.path)
+    G.orbit n 0
+  have hp := block_nonneg standardDirection q
+    (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a G.path) n 0
   have hn : ‖freezePath (E := LiftL2 P) t‖ ≤ 1 := freezePath_norm t
   have hm := mul_le_mul_of_nonneg_right hn hp
   rw [one_mul] at hm
@@ -198,8 +201,10 @@ theorem packet_split (N : ℕ) (κ t : ℝ) (a : ℕ → Profile) :
   funext z
   have he := congrFun (evaluate_assemble N κ (fun i => (a i).high+(a i).mean)
     (fun i => (a i).corrector)) (t,z.2)
-  simpa only [timeSlice,fieldSum,evaluate,assembledVelocity,Finset.sum_apply,Pi.add_apply,
-    Pi.smul_apply,smul_add,sum_add_distrib,add_assoc,add_comm,add_left_comm] using he
+  simp only [evaluate, Finset.sum_apply, Pi.add_apply, Pi.smul_apply, smul_add,
+    sum_add_distrib] at he
+  simp only [timeSlice, fieldSum, evaluate, assembledVelocity, Pi.add_apply, Pi.smul_apply]
+  exact he.trans (add_right_comm _ _ _)
 
 variable {P T : ℝ} [Fact (0 < P)] {hT : 0 ≤ T} {N : ℕ}
   {a : ℕ → Profile} {support : Set Space}

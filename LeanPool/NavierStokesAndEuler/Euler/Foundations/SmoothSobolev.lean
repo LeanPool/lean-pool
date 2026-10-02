@@ -122,7 +122,7 @@ theorem sobolevNorm_two_le_pure_derivatives (d : ℕ) (f : 𝓢(Domain d, F)) :
     rw [Fintype.sum_option]
     simp only [g]
     change ‖(𝓕 f).toLp 2‖ + ∑ i,
-      ‖SchwartzMap.toLpCLM ℝ F 2 volume (((2 * Real.pi) ^ (-2 : ℤ)) •
+      ‖SchwartzMap.toLpCLM ℝ (E := Domain d) F 2 volume (((2 * Real.pi) ^ (-2 : ℤ)) •
         𝓕 (pureDerivative d 2 (EuclideanSpace.single i 1) f))‖ = _
     simp only [map_smul, norm_smul,
       Real.norm_of_nonneg (by positivity : 0 ≤ (2 * Real.pi) ^ (-2 : ℤ)),
@@ -354,12 +354,21 @@ theorem coordinateDerivative_tensor_bound (j : ℕ) (i : Fin 3) (f : Domain 3 �
   rw [norm_iteratedFDeriv_fderiv] at hA
   exact hA.trans hB
 
+/-- A continuous map out of a second-countable space is a.e. strongly measurable. Asking for
+second countability of the domain keeps instance search away from the codomain. -/
+theorem aestronglyMeasurable_of_continuous_of_secondCountable {α β : Type*} [TopologicalSpace α]
+    [MeasurableSpace α] [OpensMeasurableSpace α] [SecondCountableTopology α]
+    [TopologicalSpace β] [TopologicalSpace.PseudoMetrizableSpace β] {g : α → β} {μ : Measure α}
+    (hg : Continuous g) : AEStronglyMeasurable g μ :=
+  hg.aestronglyMeasurable
+
 omit [CompleteSpace F] in
 theorem coordinateDerivative_tensor_memLp {j : ℕ} (i : Fin 3) (f : Domain 3 → F)
     (hf : ContDiff ℝ ∞ f) (hfL2 : MemLp (iteratedFDeriv ℝ (j + 1) f) 2 volume) :
-    MemLp (iteratedFDeriv ℝ j (coordinateDerivative i f)) 2 volume :=
-  hfL2.of_le ((coordinateDerivative_smooth i f hf).continuous_iteratedFDeriv (by
-      simp)).aestronglyMeasurable
+    MemLp (iteratedFDeriv ℝ j (coordinateDerivative i f)) 2 volume := by
+  have hc : Continuous (iteratedFDeriv ℝ j (coordinateDerivative i f)) :=
+    (coordinateDerivative_smooth i f hf).continuous_iteratedFDeriv (by simp)
+  exact hfL2.of_le (aestronglyMeasurable_of_continuous_of_secondCountable hc)
     (Filter.Eventually.of_forall (coordinateDerivative_tensor_bound j i f hf))
 
 omit [CompleteSpace F] in
@@ -434,7 +443,7 @@ theorem complexification_tensor_memLp (q j : ℕ) (f : Domain 3 → Domain q)
     MemLp (iteratedFDeriv ℝ j (complexify q ∘ f)) 2 volume := by
   have hc : Continuous (iteratedFDeriv ℝ j (complexify q ∘ f)) :=
     ((complexify q).contDiff.comp hf).continuous_iteratedFDeriv (by simp)
-  apply hfL2.of_le hc.aestronglyMeasurable
+  apply hfL2.of_le (aestronglyMeasurable_of_continuous_of_secondCountable hc)
   filter_upwards [] with x
   exact (complexification_tensor_norm q j f hf x).le
 
@@ -444,10 +453,11 @@ theorem complexification_sobolevNorm (q s : ℕ) (f : Domain 3 → Domain q)
   apply Finset.sum_congr rfl
   intro j _
   congr 1
+  have hj : (j : ℕ∞ω) ≤ (∞ : ℕ∞ω) := by simp
   exact eLpNorm_congr_norm_ae
-    (((complexify q).contDiff.comp hf).continuous_iteratedFDeriv
-      (by simp : (j : ℕ∞ω) ≤ (∞ : ℕ∞ω))).aestronglyMeasurable
-    (hf.continuous_iteratedFDeriv (by simp : (j : ℕ∞ω) ≤ (∞ : ℕ∞ω))).aestronglyMeasurable
+    (aestronglyMeasurable_of_continuous_of_secondCountable
+      (((complexify q).contDiff.comp hf).continuous_iteratedFDeriv hj))
+    (aestronglyMeasurable_of_continuous_of_secondCountable (hf.continuous_iteratedFDeriv hj))
     (Filter.Eventually.of_forall (complexification_tensor_norm q j f hf))
 
 /-- Real vector-valued H³ to C¹ on R³, for general smooth functions with actual L² derivatives. -/

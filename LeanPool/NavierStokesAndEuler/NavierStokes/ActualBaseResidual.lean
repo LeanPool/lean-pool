@@ -359,14 +359,16 @@ theorem axisymmetric_components (b f u : AxisymmetricFields.Profile) (t : ℝ) (
     AxisymmetricResidual.velocity b f u (t, AxisymmetricResidual.pack (q 0) 0 (q 2)) := by
   have hp0 : AxisymmetricFields.profilePoint t (AxisymmetricResidual.pack (q 0) 0 (q 2)) =
       (t, ((q 0)^2 / 2, q 2)) := by
-    simp [AxisymmetricFields.profilePoint, AxisymmetricFields.radialEnergy]
+    simp only [AxisymmetricFields.profilePoint, AxisymmetricFields.radialEnergy,
+      AxisymmetricResidual.pack_zero, AxisymmetricResidual.pack_one,
+      AxisymmetricResidual.pack_two, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+      add_zero]
   simp only [AxisymmetricResidual.velocity, AxisymmetricResidual.componentX,
     AxisymmetricResidual.componentY, AxisymmetricResidual.lift, profilePoint_chart, hp0]
   rw [CylindricalResidual.frame_apply]
-  ext i
-  fin_cases i <;> simp [CylindricalResidual.chart, AxisymmetricResidual.pack,
-    ProblemStatement.coordinateVector,
-    Real.cos_neg, Real.sin_neg]
+  simp only [CylindricalResidual.chart, AxisymmetricResidual.pack_zero,
+    AxisymmetricResidual.pack_one, AxisymmetricResidual.pack_two, Real.cos_neg, Real.sin_neg]
+  congr 1
   · linear_combination -(q 0 * b (t, ((q 0)^2 / 2, q 2))) * Real.cos_sq_add_sin_sq (q 1)
   · linear_combination (q 0 * f (t, ((q 0)^2 / 2, q 2))) * Real.cos_sq_add_sin_sq (q 1)
 
@@ -399,13 +401,16 @@ theorem profileAtScale_hasFDerivAt (h Q : ℝ) (x : Point) :
       (hz.const_mul (Q ^ CoordinateAlgebra.D h)))
   convert! hd using 1
   · funext y
-    apply Prod.ext
-    · simp [profileAtScale]
-    · simp [profileAtScale, pow_two]
-      ring
-  · ext
-    all_goals simp [profileJacobian, smul_eq_mul]
-    all_goals ring
+    refine Prod.ext rfl (Prod.ext ?_ rfl)
+    change Q * y.1 ^ 2 / 2 = 1 / 2 * (Q * (y.1 * y.1))
+    ring
+  · refine ContinuousLinearMap.ext fun d => ?_
+    rw [profileJacobian_apply]
+    simp only [neg_mul, ContinuousLinearMap.comp_id, one_div, id_eq, smul_add,
+      ContinuousLinearMap.prod_apply, neg_apply, smul_apply, ContinuousLinearMap.comp_apply,
+      ContinuousLinearMap.coe_snd', ContinuousLinearMap.coe_fst', smul_eq_mul, add_apply,
+      Prod.mk.injEq, true_and, and_true]
+    ring
 
 /-- A direct derivative calculation for the normalized stress profile. -/
 theorem normalized_profile_radialDiv
@@ -460,10 +465,9 @@ theorem tangentialStressForce_components (theta axial : AxisymmetricFields.Profi
       Real.sqrt_sq_eq_abs, abs_of_pos hr]
   simp only [SlowResidualMatching.tangentialStressForce, hsqrt, profilePoint_chart]
   rw [CylindricalResidual.frame_apply]
-  ext i
-  fin_cases i <;> simp [CylindricalResidual.chart, AxisymmetricResidual.pack,
-    ProblemStatement.coordinateVector,
-    Real.cos_neg, Real.sin_neg]
+  simp only [CylindricalResidual.chart, AxisymmetricResidual.pack_zero,
+    AxisymmetricResidual.pack_one, AxisymmetricResidual.pack_two, Real.cos_neg, Real.sin_neg]
+  congr 1
   · field_simp [hr.ne']
     ring
   · field_simp [hr.ne']

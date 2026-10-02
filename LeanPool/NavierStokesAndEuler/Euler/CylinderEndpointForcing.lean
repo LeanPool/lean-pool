@@ -210,11 +210,10 @@ theorem endpointForcing_apply (Y : CylinderL2 P U) (t : Icc (0 : ℝ) T) :
 /-- Equality of the genuinely constructed corrections, not a new solution assumption. -/
 theorem endpointCorrection_eq_forced (Y : CylinderL2 P U) :
     D.endpointCorrection P Y = D.coordinateSolver P (pathLp T D.time_pos.le (D.endpointForcing P
-        Y)) :=
-  correction_eq_forced T D.time_pos.le (D.frame P) (D.frameDerivative P) (D.frameSecond P)
-    (D.hessian P) (D.frame_derivative P) (D.frame_second_derivative P) (D.frame_equation P)
-    D.lower D.lower_pos (D.frame_lower P) D.potential D.potential_nonneg
-    (D.hessian_upper P) D.small Y
+        Y)) := by
+  apply correction_eq_forced (Q₂ := D.frameSecond P)
+  · exact D.frame_second_derivative P
+  · exact D.frame_equation P
 
 theorem endpointSlope_eq_const_sub (Y : CylinderL2 P U) :
     D.endpointSlope P Y = constantFieldOperator T D.time_pos.le (T⁻¹ • Y) -
@@ -289,7 +288,8 @@ theorem endpointVelocity_eq_forced (Y : CylinderL2 P U) :
   change D.frame P t (D.endpointCoordinate P Y t) =
     D.frame P t (T⁻¹ • Y)-D.frame P t
       (D.velocityPath P (pathLp T D.time_pos.le (D.endpointForcing P Y)) t)
-  rw [D.endpointCoordinate_eq_const_sub P Y t,map_sub]
+  rw [D.endpointCoordinate_eq_const_sub P Y t]
+  exact map_sub _ _ _
 
 theorem endpointDerivative_eq_forced (Y : CylinderL2 P U) :
     D.endpointDerivative P Y =
@@ -302,8 +302,8 @@ theorem endpointDerivative_eq_forced (Y : CylinderL2 P U) :
     D.frameDerivative P t (T⁻¹ • Y)-(D.frameDerivative P t
       (D.velocityPath P (pathLp T D.time_pos.le (D.endpointForcing P Y)) t) +
         D.frame P t (D.accelerationPath P (D.endpointForcing P Y) t))
-  rw [D.endpointCoordinate_eq_const_sub P Y t,D.endpointAcceleration_eq_forced P Y,
-    ContinuousMap.neg_apply,map_sub,map_neg]
+  rw [D.endpointCoordinate_eq_const_sub P Y t,D.endpointAcceleration_eq_forced P Y]
+  simp only [ContinuousMap.neg_apply,map_sub,map_neg]
   abel
 
 end EulerCylinderDirichlet.Coefficients

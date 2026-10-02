@@ -93,6 +93,8 @@ theorem fieldFDeriv_memLp_of_coordinates (f : LiftDomain period → F)
     memLp_finsetSum _ (fun i _ => (hD i).norm)
   have hc : Continuous (fieldFDeriv period f) := smoothField_continuous period _
       (fieldFDeriv_smooth period f hf)
+  have : SecondCountableTopologyEither (LiftDomain period) (LiftTangent →L[ℝ] F) :=
+    secondCountableTopologyEither_of_left _ _
   apply hsum.of_le hc.aestronglyMeasurable
   filter_upwards [] with x
   rw [Real.norm_of_nonneg (Finset.sum_nonneg (fun _ _ => norm_nonneg _))]

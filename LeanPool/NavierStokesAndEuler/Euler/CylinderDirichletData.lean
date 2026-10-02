@@ -170,57 +170,69 @@ def physicalDerivative (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) : C(Icc (0 : ℝ
     D.potential D.potential_nonneg (D.hessian_upper P) D.small f
 
 theorem displacement_initial (f : TimeLp T (CylinderL2 P E)) :
-    D.displacementPath P f ⟨0,le_rfl,D.time_pos.le⟩ = 0 :=
-  EulerTransverseFixedEvolution.displacementPath_initial T D.time_pos.le
-    (D.frame P) (D.frameDerivative P) (D.hessian P)
-    D.lower D.lower_pos (D.frame_lower P) (D.frame_derivative P)
-    D.potential D.potential_nonneg (D.hessian_upper P) D.small f
+    D.displacementPath P f ⟨0,le_rfl,D.time_pos.le⟩ = 0 := by
+  unfold displacementPath
+  with_reducible
+    exact EulerTransverseFixedEvolution.displacementPath_initial T D.time_pos.le
+      (D.frame P) (D.frameDerivative P) (D.hessian P)
+      D.lower D.lower_pos (D.frame_lower P) (D.frame_derivative P)
+      D.potential D.potential_nonneg (D.hessian_upper P) D.small f
 
 theorem displacement_terminal (f : TimeLp T (CylinderL2 P E)) :
-    D.displacementPath P f ⟨T,D.time_pos.le,le_rfl⟩ = 0 :=
-  EulerTransverseFixedEvolution.displacementPath_terminal T D.time_pos.le
-    (D.frame P) (D.frameDerivative P) (D.hessian P)
-    D.lower D.lower_pos (D.frame_lower P) (D.frame_derivative P)
-    D.potential D.potential_nonneg (D.hessian_upper P) D.small f
+    D.displacementPath P f ⟨T,D.time_pos.le,le_rfl⟩ = 0 := by
+  unfold displacementPath
+  with_reducible
+    exact EulerTransverseFixedEvolution.displacementPath_terminal T D.time_pos.le
+      (D.frame P) (D.frameDerivative P) (D.hessian P)
+      D.lower D.lower_pos (D.frame_lower P) (D.frame_derivative P)
+      D.potential D.potential_nonneg (D.hessian_upper P) D.small f
 
 theorem velocity_hasDerivWithinAt (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : Icc (0 : ℝ) T) :
     HasDerivWithinAt (extendPath T D.time_pos.le (D.velocityPath P (pathLp T D.time_pos.le f)))
-      (D.accelerationPath P f t) (Icc (0 : ℝ) T) t :=
-  EulerTransverseFixedEvolution.velocityPath_hasDerivWithinAt T D.time_pos.le
-    (D.frame P) (D.frameDerivative P) (D.hessian P)
-    D.lower D.lower_pos (D.frame_lower P) (D.frame_derivative P)
-    D.potential D.potential_nonneg (D.hessian_upper P) D.small
-    (D.frameSecond P) (D.frame_second_derivative P) (D.frame_equation P) D.time_pos f t
+      (D.accelerationPath P f t) (Icc (0 : ℝ) T) t := by
+  unfold velocityPath accelerationPath
+  with_reducible
+    exact EulerTransverseFixedEvolution.velocityPath_hasDerivWithinAt T D.time_pos.le
+      (D.frame P) (D.frameDerivative P) (D.hessian P)
+      D.lower D.lower_pos (D.frame_lower P) (D.frame_derivative P)
+      D.potential D.potential_nonneg (D.hessian_upper P) D.small
+      (D.frameSecond P) (D.frame_second_derivative P) (D.frame_equation P) D.time_pos f t
 
 theorem displacement_hasDerivWithinAt (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : Icc (0 : ℝ) T) :
     HasDerivWithinAt (extendPath T D.time_pos.le (D.displacementPath P (pathLp T D.time_pos.le f)))
-      (D.velocityPath P (pathLp T D.time_pos.le f) t) (Icc (0 : ℝ) T) t :=
-  EulerTransverseFixedEvolution.displacementPath_hasDerivWithinAt T D.time_pos.le
-    (D.frame P) (D.frameDerivative P) (D.hessian P)
-    D.lower D.lower_pos (D.frame_lower P) (D.frame_derivative P)
-    D.potential D.potential_nonneg (D.hessian_upper P) D.small
-    (D.frameSecond P) (D.frame_second_derivative P) (D.frame_equation P) D.time_pos f t
+      (D.velocityPath P (pathLp T D.time_pos.le f) t) (Icc (0 : ℝ) T) t := by
+  unfold displacementPath velocityPath
+  with_reducible
+    exact EulerTransverseFixedEvolution.displacementPath_hasDerivWithinAt T D.time_pos.le
+      (D.frame P) (D.frameDerivative P) (D.hessian P)
+      D.lower D.lower_pos (D.frame_lower P) (D.frame_derivative P)
+      D.potential D.potential_nonneg (D.hessian_upper P) D.small
+      (D.frameSecond P) (D.frame_second_derivative P) (D.frame_equation P) D.time_pos f t
 
 theorem physicalVelocity_hasDerivWithinAt (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : Icc (0 : ℝ) T)
     :
     HasDerivWithinAt (extendPath T D.time_pos.le (D.physicalVelocity P f))
-      (D.physicalDerivative P f t) (Icc (0 : ℝ) T) t :=
-  EulerTransverseFixedEvolution.physicalVelocityPath_hasDerivWithinAt T D.time_pos.le
-    (D.frame P) (D.frameDerivative P) (D.hessian P)
-    D.lower D.lower_pos (D.frame_lower P) (D.frame_derivative P)
-    D.potential D.potential_nonneg (D.hessian_upper P) D.small
-    (D.frameSecond P) (D.frame_second_derivative P) (D.frame_equation P) D.time_pos f t
+      (D.physicalDerivative P f t) (Icc (0 : ℝ) T) t := by
+  unfold physicalVelocity physicalDerivative
+  with_reducible
+    exact EulerTransverseFixedEvolution.physicalVelocityPath_hasDerivWithinAt T D.time_pos.le
+      (D.frame P) (D.frameDerivative P) (D.hessian P)
+      D.lower D.lower_pos (D.frame_lower P) (D.frame_derivative P)
+      D.potential D.potential_nonneg (D.hessian_upper P) D.small
+      (D.frameSecond P) (D.frame_second_derivative P) (D.frame_equation P) D.time_pos f t
 
 /-- The exact projected equation (10), now as an equality of actual spatial -
 angular L² fields at every time. -/
 theorem projected_equation (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : Icc (0 : ℝ) T) :
     gram (D.frame P t) (D.accelerationPath P f t) =
       (D.frame P t).adjoint (f t-(2 : ℝ) • D.frameDerivative P t
-        (D.velocityPath P (pathLp T D.time_pos.le f) t)) :=
-  EulerTransverseFixedEvolution.classicalAcceleration_equation T D.time_pos.le
-    (D.frame P) (D.frameDerivative P) (D.hessian P)
-    D.lower D.lower_pos (D.frame_lower P) (D.frame_derivative P)
-    D.potential D.potential_nonneg (D.hessian_upper P) D.small f t
+        (D.velocityPath P (pathLp T D.time_pos.le f) t)) := by
+  unfold accelerationPath velocityPath
+  with_reducible
+    exact EulerTransverseFixedEvolution.classicalAcceleration_equation T D.time_pos.le
+      (D.frame P) (D.frameDerivative P) (D.hessian P)
+      D.lower D.lower_pos (D.frame_lower P) (D.frame_derivative P)
+      D.potential D.potential_nonneg (D.hessian_upper P) D.small f t
 
 end Coefficients
 end EulerCylinderDirichlet

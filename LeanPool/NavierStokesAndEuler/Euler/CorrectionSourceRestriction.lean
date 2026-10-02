@@ -65,6 +65,11 @@ theorem truncate_rawSource {q : ℕ} (hq : 6 ≤ q) {T : ℝ}
   rw [correctionData_rawSource_split period (lowerData period D KG KL KQ hG hL hQ) hq]
   exact congrArg₂ (fun x y : SobolevSpace period q => x+y) ht hf
 
+theorem restrictOperator_succ_eq_truncate {q : ℕ} (h : q ≤ q + 1)
+    (u : SobolevSpace period (q + 1)) :
+    restrictOperator period h u = truncateOperator period q u := by
+  rw [← truncate_restrictOperator period (le_refl (q + 1)) u, restrictOperator_self]
+
 /-- The actual projected nonlinear mild source commutes exactly with Sobolev restriction. -/
 theorem truncate_source {q : ℕ} (hq : 6 ≤ q) {T : ℝ}
     (D : CorrectionData period (q + 1) (Icc (0 : ℝ) T))
@@ -88,9 +93,7 @@ theorem truncate_source {q : ℕ} (hq : 6 ≤ q) {T : ℝ}
   have hp := restrict_projectedSource period (by omega : q ≤ q+1) (D.metric.jet t) (KG t)
     D.κ D.direction D.coercivity D.coercivity_pos (D.metric_pos t) (D.rawSource period (by
         omega : 6 ≤ q+1) t u)
-  exact (congrArg Neg.neg hp).trans
-    (congrArg (fun v => -projectedSourceOperator period (KG t) D.κ D.direction D.coercivity
-        D.coercivity_pos (D.metric_pos t) v)
-      (truncate_rawSource period hq D KG KL KQ hG hL hQ t u))
+  rw [restrictOperator_succ_eq_truncate, restrictOperator_succ_eq_truncate] at hp
+  rw [hp, truncate_rawSource period hq D KG KL KQ hG hL hQ t u]
 
 end EulerCorrectionSourceRestriction

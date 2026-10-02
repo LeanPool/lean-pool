@@ -37,13 +37,14 @@ theorem endpointForcing_odd (t : Icc (0 : ℝ) T) :
     reflection P (D.endpointForcing P Y t) = -D.endpointForcing P Y t := by
   change reflection P ((2 : ℝ) • fullOperatorMap P (D.Q₁ t) (T⁻¹ • Y)) =
     -((2 : ℝ) • fullOperatorMap P (D.Q₁ t) (T⁻¹ • Y))
-  rw [map_smul,reflection_fullOperator P (D.Q₁ t) (hQ₁ t),map_smul,hY,smul_neg,map_neg,smul_neg]
+  simp only [map_smul, reflection_fullOperator P (D.Q₁ t) (hQ₁ t), hY, smul_neg, map_neg]
 
 include hQ hQ₁ hH hY
 
 theorem endpointCoordinate_odd (t : Icc (0 : ℝ) T) :
     reflection P (D.endpointCoordinate P Y t) = -D.endpointCoordinate P Y t := by
-  rw [D.endpointCoordinate_eq_const_sub P Y t,map_sub,map_smul,hY,smul_neg,
+  rw [D.endpointCoordinate_eq_const_sub P Y t]
+  simp only [map_sub, map_smul, hY, smul_neg,
     D.velocityPath_odd P hQ hQ₁ hH (D.endpointForcing P Y) (D.endpointForcing_odd P hQ₁ Y hY) t]
   module
 
@@ -62,9 +63,9 @@ theorem endpointDerivative_odd (t : Icc (0 : ℝ) T) :
     reflection P (D.endpointDerivative P Y t) = -D.endpointDerivative P Y t := by
   change reflection P (fullOperatorMap P (D.Q₁ t) (D.endpointCoordinate P Y t) +
     fullOperatorMap P (D.Q t) (D.endpointAcceleration P Y t)) = _
-  rw [map_add,reflection_fullOperator P (D.Q₁ t) (hQ₁ t),reflection_fullOperator P (D.Q t) (hQ t),
-    D.endpointCoordinate_odd P hQ hQ₁ hH Y hY t,D.endpointAcceleration_odd P hQ hQ₁ hH Y hY t,
-    map_neg,map_neg]
+  simp only [map_add, reflection_fullOperator P (D.Q₁ t) (hQ₁ t),
+    reflection_fullOperator P (D.Q t) (hQ t), D.endpointCoordinate_odd P hQ hQ₁ hH Y hY t,
+    D.endpointAcceleration_odd P hQ hQ₁ hH Y hY t, map_neg]
   exact (neg_add _ _).symm
 
 end EulerCylinderDirichlet.Coefficients

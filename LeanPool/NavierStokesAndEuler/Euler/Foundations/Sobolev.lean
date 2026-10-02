@@ -124,8 +124,8 @@ theorem sobolevNorm_lineDeriv_le (d : ℕ) (s : ℝ) (f : 𝓢(Domain d, F)) (m 
     sobolevNorm d s (schwartzDerivative m f) ≤ (2 * Real.pi * ‖m‖) * sobolevNorm d (s + 1) f := by
   unfold sobolevNorm
   apply Lp.norm_le_mul_norm_of_ae_le_mul
-  filter_upwards [(weightedFourier d s (schwartzDerivative m f)).coeFn_toLp 2,
-    (weightedFourier d (s + 1) f).coeFn_toLp 2] with ξ hd hf
+  filter_upwards [(weightedFourier d s (schwartzDerivative m f)).coeFn_toLp 2 volume,
+    (weightedFourier d (s + 1) f).coeFn_toLp 2 volume] with ξ hd hf
   rw [hd, hf]
   exact weightedFourier_lineDeriv_norm_le d s f m ξ
 

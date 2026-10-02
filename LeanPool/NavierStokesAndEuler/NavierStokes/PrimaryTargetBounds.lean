@@ -1077,7 +1077,9 @@ theorem primary_ratio_error (i : ι) {p : Slow} (hp : p ∈ D.carrier i)
   have hprof := reference_profile_bounds (one_div_pos.mpr (zero_lt_one.trans_le hM))
     (a.ratio_bound i).1 (a.ratio_bound i).2 (a.magnitude_bound hr hu.le huM hv')
   have hH : |PrimaryODE.referenceProfile (a.c0 i) u (a.length i) v| ≤ eigenBound M :=
-    hprof.1.trans (by unfold eigenBound; nlinarith [show 0 ≤ M by linarith])
+    hprof.1.trans (by
+      unfold eigenBound
+      exact mul_le_mul_of_nonneg_left (by norm_num) (zero_le_one.trans hM))
   have hgeom := tangent_ratio_error hB (a.unit i) hsmall hnormal
     (r := PrimaryODE.transversePrimary hlength.le (a.frame i)
       (fun z => PrimaryPulseBounds.referenceP (a.lam i) u (a.length i) z.2) p v /
@@ -1119,19 +1121,20 @@ theorem primary_ratio_error (i : ι) {p : Slow} (hp : p ∈ D.carrier i)
           (phaseConstant M / D.scale i) / a.B i ≤ geometricRatioConstant M u / D.scale i := by
     calc
       _ ≤ (2*(1+3*M)+4*(3*M+eigenBound M)) * (phaseConstant M / D.scale i) / a.B i :=
-        div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right (by linarith) hph) hB.le
+        div_le_div_of_nonneg_right
+          (mul_le_mul_of_nonneg_right (by linarith only [hs, hH]) hph) hB.le
       _ ≤ (2*(1+3*M)+4*(3*M+eigenBound M)) * (phaseConstant M / D.scale i) / normalLower M u :=
         div_le_div_of_nonneg_left (mul_nonneg hcoef hph) (normalLower_pos hM) hBmin
       _ = _ := by unfold geometricRatioConstant; ring
   have hconeNonneg : 0 ≤ GrowingMode.coneConstant gap (modalConstant M u) := by
     unfold GrowingMode.coneConstant
-    exact div_nonneg (mul_nonneg (by norm_num) (by linarith [herrors.2.1])) hgap.le
+    exact div_nonneg (mul_nonneg (by norm_num) (by linarith only [herrors.2.1])) hgap.le
   have hratiobound := hprimary.2.2.2
   change |PrimaryODE.transversePrimary _ _ _ _ _ / PrimaryODE.radialPrimary _ _ _ _ _ -
     PrimaryODE.referenceProfile (a.c0 i) u (a.length i) v| ≤ _ at hratiobound
   have hratiobound' := hratiobound.trans (mul_le_mul_of_nonneg_right
     (show 4 * |PrimaryODE.referenceProfile (a.c0 i) u (a.length i) v| ≤ 4 * eigenBound M by
-        linarith)
+        linarith only [hH])
     (div_nonneg hconeNonneg hS.le))
   exact (add_le_add hgeometric hratiobound').trans_eq (by unfold ratioConstant; ring)
 
@@ -1168,12 +1171,12 @@ theorem primary_center_error (i : ι) (j : Fin 2) (hsign : a.sigma i = phaseSign
     apply hmodel.trans
     calc
       _ ≤ (M+1) * (u*|v-a.length i/2|/a.length i) :=
-        mul_le_mul_of_nonneg_right (by linarith [(a.ratio_bound i).2]) (by positivity)
+        mul_le_mul_of_nonneg_right (by linarith only [(a.ratio_bound i).2]) (by positivity)
       _ = _ := by ring
   have hratioL : ratioConstant M u gap / D.scale i ≤
       ((2*r0*ChartScales.Tg) * ratioConstant M u gap) / a.length i := by
     apply (div_le_div_iff₀ hS hlength).mpr
-    nlinarith [mul_le_mul_of_nonneg_left hslotL (ratioConstant_nonneg (u := u) hM hgap)]
+    linarith only [mul_le_mul_of_nonneg_left hslotL (ratioConstant_nonneg (u := u) hM hgap)]
   have hcomponent := (PiLp.norm_apply_le
     (pulseRatio (a.frame i) (a.lam i) u (a.length i) p v -
       modelVector (a.c0 i) (phaseSign j*u) (a.K i)) k)
@@ -1749,10 +1752,23 @@ theorem exists_actual_bounds (hcone : LeadingStressWeights.FullTrueCone v)
       mul_le_mul_of_nonneg_left (hcb p hp) (mul_nonneg hil.le (Real.sqrt_nonneg _))
     _ ≤ _ := hbound.weights j
 
+theorem primaryCovariance_comp_index {ι κ : Type*} {Q : Type} (e : κ → ι)
+    (pref : Fin 2 → ι → ℝ)
+    (d : Fin 2 → ι → PrimaryODE.FrameData Q) (lam u len : Fin 2 → ι → ℝ) (n : κ) (p : Q) :
+    PrimaryPulseBounds.primaryCovariance (fun c i => pref c (e i)) (fun c i => d c (e i))
+        (fun c i => lam c (e i)) (fun c i => u c (e i)) (fun c i => len c (e i)) n p =
+      PrimaryPulseBounds.primaryCovariance pref d lam u len (e n) p := rfl
+
 theorem restricted_covariance (vr vt : TorusInverse.Plane) (N : ℕ) (hN : a.N ≤ N)
     (L : Index W N) (p : Slow) :
     preparedCovariance H v (a.restrict N hN) vr vt L p =
-      preparedCovariance H v a vr vt (earlierIndex hN L) p := rfl
+      preparedCovariance H v a vr vt (earlierIndex hN L) p := by
+  unfold preparedCovariance familyCovariance
+  exact primaryCovariance_comp_index (earlierIndex hN)
+    (fun j i => PartitionedCovariance.nativePrefactor vr vt r0 *
+      ChartScales.timeCoefficient F.data.h ((family H v a j).band i) * (family H v a j).length i)
+    (fun j => (family H v a j).frame) (fun j => (family H v a j).lam) (fun _ _ => a.u)
+    (fun j => (family H v a j).length) L p
 
 /-- A single final band threshold suffices.  Restriction retains the
 original representative, carrier and phase on each surviving label. -/

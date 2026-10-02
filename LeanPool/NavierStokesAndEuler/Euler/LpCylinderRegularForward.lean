@@ -160,11 +160,13 @@ theorem weighted_solution_translation (a : LiftTangent) (ha : shiftedSet a.1 K �
     (g : C(Icc (0 : ℝ) T, ℝ)) (hg : ∀ t, 0 < g t)
     (f : C(Icc (0 : ℝ) T, Supported period V K hK))
     (a₀ : Supported period V K hK) :
-    includePath period Ω hΩ (W.weightedSolution g hg
-      (translatedForcing period Ω hΩ (includePath period K hK f) a)
+    includePath (K := Icc (0 : ℝ) T) (V := V) period Ω hΩ (W.weightedSolution g hg
+      (translatedForcing period Ω hΩ
+        (includePath (K := Icc (0 : ℝ) T) (V := V) period K hK f) a)
       (translatedData period Ω hΩ (a₀ : CylinderL2 period V) a)) =
-      pathTranslate period a
-        (includePath period K hK (U.weightedSolution g hg f a₀)) := by
+      pathTranslate (K := Icc (0 : ℝ) T) (V := V) period a
+        (includePath (K := Icc (0 : ℝ) T) (V := V) period K hK
+          (U.weightedSolution g hg f a₀)) := by
   let L : Supported period V K hK →L[ℝ] Supported period V Ω hΩ :=
     (EulerLpCylinderTranslation.intoLarger period a K Ω hK hΩ ha).toContinuousLinearMap
   have hL : ∀ t u, liftedOperatorPath period Ω hΩ T
@@ -177,7 +179,7 @@ theorem weighted_solution_translation (a : LiftTangent) (ha : shiftedSet a.1 K �
   have he := Evolution.weightedSolution_map
     (E := Supported period V K hK) (F := Supported period V Ω hΩ)
     U W L hL g hg f a₀
-  change includePath period Ω hΩ (W.weightedSolution g hg
+  change includePath (K := Icc (0 : ℝ) T) (V := V) period Ω hΩ (W.weightedSolution g hg
     (L.compLeftContinuous ℝ (Icc (0 : ℝ) T) f) (L a₀)) = _
   rw [he]
   apply ContinuousMap.ext
@@ -193,11 +195,14 @@ theorem weighted_solution_translation_eventually
     (g : C(Icc (0 : ℝ) T,ℝ)) (hg : ∀ t, 0 < g t)
     (f : C(Icc (0 : ℝ) T,Supported period V K hK))
     (a₀ : Supported period V K hK) :
-    (fun a : LiftTangent => includePath period Ω hΩ ((W a).weightedSolution g hg
-      (translatedForcing period Ω hΩ (includePath period K hK f) a)
-      (translatedData period Ω hΩ (a₀ : CylinderL2 period V) a))) =ᶠ[𝓝 0]
-      (fun a => pathTranslate period a
-        (includePath period K hK (U.weightedSolution g hg f a₀))) := by
+    (fun a : LiftTangent =>
+      includePath (K := Icc (0 : ℝ) T) (V := V) period Ω hΩ ((W a).weightedSolution g hg
+        (translatedForcing period Ω hΩ
+          (includePath (K := Icc (0 : ℝ) T) (V := V) period K hK f) a)
+        (translatedData period Ω hΩ (a₀ : CylinderL2 period V) a))) =ᶠ[𝓝 0]
+      (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := V) period a
+        (includePath (K := Icc (0 : ℝ) T) (V := V) period K hK
+          (U.weightedSolution g hg f a₀))) := by
   obtain ⟨δ,hδ,hmargin⟩ := compact_support_mixed_margin K Ω hKc hΩo hsub
   filter_upwards [Metric.ball_mem_nhds (0 : LiftTangent) hδ] with a ha
   exact weighted_solution_translation period T hT K Ω hK hΩ B U a
@@ -321,11 +326,13 @@ theorem solutionFamily_translation_eventually
     (g : C(Icc (0 : ℝ) T, ℝ)) (hg : ∀ t, 0 < g t)
     (f : C(Icc (0 : ℝ) T, Supported period V K hK))
     (a₀ : Supported period V K hK) :
-    (fun a : LiftTangent => includePath period Ω hΩ
-      (solutionFamily period T hT Ω hΩ B g hg (includePath period K hK f) (a₀ : CylinderL2 period
-          V) a)) =ᶠ[𝓝 0]
-      (fun a => pathTranslate period a (includePath period K hK
-        ((constructedEvolution period K hK T hT B).weightedSolution g hg f a₀))) :=
+    (fun a : LiftTangent => includePath (K := Icc (0 : ℝ) T) (V := V) period Ω hΩ
+      (solutionFamily period T hT Ω hΩ B g hg
+        (includePath (K := Icc (0 : ℝ) T) (V := V) period K hK f)
+        (a₀ : CylinderL2 period V) a)) =ᶠ[𝓝 0]
+      (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := V) period a
+        (includePath (K := Icc (0 : ℝ) T) (V := V) period K hK
+          ((constructedEvolution period K hK T hT B).weightedSolution g hg f a₀))) :=
   weighted_solution_translation_eventually period T hT K Ω hK hΩ B
     (constructedEvolution period K hK T hT B) hKc hΩo hsub
     (evolutionFamily period T hT Ω hΩ B) g hg f a₀
@@ -337,16 +344,21 @@ theorem source_solution_contDiff
     (K : Set Space) (hK : MeasurableSet K) (hKc : IsCompact K) (hΩo : IsOpen Ω) (hsub : K ⊆ Ω)
     (g : C(Icc (0 : ℝ) T, ℝ)) (hg : ∀ t, 0 < g t)
     (f : C(Icc (0 : ℝ) T, Supported period V K hK)) (a₀ : Supported period V K hK)
-    (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a (includePath period K hK f)))
+    (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := V) period a
+      (includePath (K := Icc (0 : ℝ) T) (V := V) period K hK f)))
     (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate period a (a₀ : CylinderL2 period V))) :
-    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a (includePath period K hK
-      ((constructedEvolution period K hK T hT B).weightedSolution g hg f a₀))) := by
+    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := V) period a
+      (includePath (K := Icc (0 : ℝ) T) (V := V) period K hK
+        ((constructedEvolution period K hK T hT B).weightedSolution g hg f a₀))) := by
   apply pathOrbit_contDiff_of_zero
-  have hu := solutionFamily_contDiff period T hT Ω hΩ B hB g hg (includePath period K hK f)
+  have hu := solutionFamily_contDiff period T hT Ω hΩ B hB g hg
+    (includePath (K := Icc (0 : ℝ) T) (V := V) period K hK f)
     (a₀ : CylinderL2 period V) hf ha₀
-  have hi : ContDiff ℝ ∞ (fun a : LiftTangent => includePath period Ω hΩ
-      (solutionFamily period T hT Ω hΩ B g hg (includePath period K hK f) (a₀ : CylinderL2 period
-          V) a)) :=
+  have hi : ContDiff ℝ ∞ (fun a : LiftTangent =>
+      includePath (K := Icc (0 : ℝ) T) (V := V) period Ω hΩ
+        (solutionFamily period T hT Ω hΩ B g hg
+          (includePath (K := Icc (0 : ℝ) T) (V := V) period K hK f)
+          (a₀ : CylinderL2 period V) a)) :=
     (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := ∞)
       (E := C(Icc (0 : ℝ) T,Supported period V Ω hΩ))
       (F := C(Icc (0 : ℝ) T,CylinderL2 period V)) (includePath period Ω hΩ)).comp hu

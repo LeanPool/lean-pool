@@ -753,10 +753,12 @@ theorem correctionForcing_metric {s : ℕ} (hs : 6 ≤ s) {A : SmoothCoefficient
     (energyNorm_nonneg period N (by omega : N+6 ≤ s+1) ρ hρ KM e)
     (weightedNorm_le_energy period N (by omega : N+6 ≤ s+1) ρ hρ KM e cM hcM hKM)
     (weightedLoss_le_energy period N (by omega : N+6 ≤ s+1) ρ hρ KM e cM hcM hKM) h
-  simpa only [EulerDriftEnergyConstants.forcingPolynomial,
-    EulerNonlinearEnergyConstants.linearCoefficient,
-        EulerNonlinearEnergyConstants.quadraticCoefficient,
-    EulerNonlinearEnergyConstants.lossCoefficient, mul_assoc, mul_left_comm, mul_comm] using hconv
+  unfold EulerDriftEnergyConstants.forcingPolynomial
+    EulerNonlinearEnergyConstants.linearCoefficient
+    EulerNonlinearEnergyConstants.quadraticCoefficient
+    EulerNonlinearEnergyConstants.lossCoefficient
+  rw [mul_right_comm (lossConstant period M)]
+  exact hconv
 
 end EulerDriftMetricForcing
 

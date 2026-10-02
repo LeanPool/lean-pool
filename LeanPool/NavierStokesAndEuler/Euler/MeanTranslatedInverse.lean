@@ -102,10 +102,9 @@ theorem translatedMeanSolver_covariance (a : Space) (f : TimeLp T L2) :
           (-(fixedMeanPrimitive T hT F F₁).adjoint f)) := by
   have hforce := (congrArg (fun z : TimeLp T solenoidalSpace => -z)
     (fixedMeanPrimitive_adjoint_translate T hT a F F₁ f)).trans
-      ((timeSolenoidalTranslation T a).map_neg ((fixedMeanPrimitive T hT F F₁).adjoint f)).symm
+      ((timeSolenoidalTranslation T a).map_neg _).symm
   exact (congrArg (translatedMeanInverse T hT F F₁ H M0 A L c hc hcoercive a) hforce).trans
-    (translatedMeanInverse_covariance T hT F F₁ H M0 A L c hc hcoercive a
-      (-(fixedMeanPrimitive T hT F F₁).adjoint f))
+    (translatedMeanInverse_covariance T hT F F₁ H M0 A L c hc hcoercive a _)
 
 /-- Uniform coercivity gives a uniform inverse norm for the actual translated family. -/
 theorem translatedMeanInverse_norm (a : Space) :
@@ -122,23 +121,13 @@ theorem solution_translation_contDiff (f : TimeLp T L2) {n : ℕ∞ω}
     ContDiff ℝ n (fun a : Space => timeSolenoidalTranslation T a
       (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hcoercive
         (-(fixedMeanPrimitive T hT F F₁).adjoint f))) := by
-  have hAdj : ContDiff ℝ n (fun a : Space => (translatedMeanPrimitive T hT a F F₁).adjoint) :=
-    (realAdjoint (U := TimeLp T solenoidalSpace) (E := TimeLp T L2)).contDiff.comp hJ
-  have hforce : ContDiff ℝ n (fun a : Space =>
-      -(translatedMeanPrimitive T hT a F F₁).adjoint (timeTranslation T a f)) :=
-    (hAdj.clm_apply hf).neg
+  have hAdj := (realAdjoint (U := TimeLp T solenoidalSpace) (E := TimeLp T L2)).contDiff.comp hJ
   have hsol := contDiff_coerciveSolution_variable
     (fun a : Space => translatedMeanOperator T hT a F F₁ H M0 A L) (fun _ => c) (fun _ => hc)
-    (fun a => translatedMeanOperator_coercive T hT a F F₁ H M0 A L c hcoercive)
-    (fun a : Space => -(translatedMeanPrimitive T hT a F F₁).adjoint (timeTranslation T a f)) hO
-        hforce
-  have heq : (fun a : Space => translatedMeanSolver T hT F F₁ H M0 A L c hc hcoercive a
-      (timeTranslation T a f)) =
-      (fun a : Space => timeSolenoidalTranslation T a
-        (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hcoercive
-          (-(fixedMeanPrimitive T hT F F₁).adjoint f))) :=
-    funext (fun a => translatedMeanSolver_covariance T hT F F₁ H M0 A L c hc hcoercive a f)
-  exact Eq.mp (congrArg (fun g : Space → TimeLp T solenoidalSpace => ContDiff ℝ n g) heq) hsol
+    (fun a => translatedMeanOperator_coercive T hT a F F₁ H M0 A L c hcoercive) _ hO
+    (hAdj.clm_apply hf).neg
+  exact Eq.mp (congrArg (fun g : Space → TimeLp T solenoidalSpace => ContDiff ℝ n g)
+    (funext fun a => translatedMeanSolver_covariance T hT F F₁ H M0 A L c hc hcoercive a f)) hsol
 
 end EulerMeanTranslatedInverse
 

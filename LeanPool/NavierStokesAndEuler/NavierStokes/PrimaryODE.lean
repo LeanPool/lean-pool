@@ -537,11 +537,11 @@ theorem primary_bounds (hab : a ≤ b) (d : FrameData Q) (P : Q × ℝ → ℝ)
     (h := d.eigenvector (p, v)) hzpos hr.le hrhalf hzcone
   refine ⟨?_, ?_, ?_, hxratio⟩
   · change 0 < primary hab d P p v 0 + primary hab d P p v 1
-    linarith
+    linarith only [hxlo, hzpos]
   · change _ ≤ primary hab d P p v 0 + primary hab d P p v 1
-    nlinarith
+    linarith only [hxlo, hzlo]
   · change primary hab d P p v 0 + primary hab d P p v 1 ≤ _
-    nlinarith
+    linarith only [hxhi, hzhi]
 
 end Primary
 

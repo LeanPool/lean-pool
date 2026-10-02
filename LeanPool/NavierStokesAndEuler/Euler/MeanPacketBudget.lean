@@ -455,6 +455,14 @@ theorem forcingAmplitude_nonneg (T CF CF₁ Cf : ℝ)
     (hT : 0 ≤ T) (hCF : 0 ≤ CF) (hCF₁ : 0 ≤ CF₁) (hCf : 0 ≤ Cf) :
     0 ≤ forcingAmplitude T CF CF₁ Cf := by unfold forcingAmplitude; positivity
 
+theorem contDiff_operatorAdjoint {P U E : Type*}
+    [NormedAddCommGroup P] [NormedSpace ℝ P]
+    [NormedAddCommGroup U] [InnerProductSpace ℝ U] [CompleteSpace U]
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
+    {n : ℕ∞ω} {A : P → U →L[ℝ] E} (hA : ContDiff ℝ n A) :
+    ContDiff ℝ n (fun x => adjoint (𝕜 := ℝ) (E := U) (F := E) (A x)) :=
+  (realAdjoint (U := U) (E := E)).contDiff.comp hA
+
 variable (T : ℝ) (hT : 0 ≤ T)
   (F F₁ H : C(Icc (0 : ℝ) T, L2 →L[ℝ] L2)) (M0 A : L2 →L[ℝ] L2) (L c : ℝ)
   (hc : 0 < c)
@@ -508,10 +516,7 @@ theorem solution_translation_gevrey
   have hJ : ContDiff ℝ ∞ (fun a : Space => translatedMeanPrimitive T hT a F F₁) :=
     contDiff_fixedMeanPrimitive T hT (fun a => translatePath T a F) (fun a => translatePath T a F₁)
         hF hF₁
-  have hG : ContDiff ℝ ∞ (fun a : Space =>
-      -(translatedMeanPrimitive T hT a F F₁).adjoint (timeTranslation T a f)) :=
-    (((realAdjoint (U := TimeLp T solenoidalSpace) (E := TimeLp T L2)).contDiff.comp hJ).clm_apply
-        hf).neg
+  have hG := ((contDiff_operatorAdjoint hJ).clm_apply hf).neg
   have hOb (j a) : ‖iteratedFDeriv ℝ (j+1)
       (fun b : Space => translatedMeanOperator T hT b F F₁ H M0 A L) a‖ ≤
       operatorAmplitude T CF CF₁ CH CM CA L*(Rc^(j+1)*((j+1).factorial : ℝ)^2) := by
@@ -520,27 +525,19 @@ theorem solution_translation_gevrey
       (fun a => translateOperator a M0) (fun a => translateOperator a A) L hF hF₁ hH hM0 hA
       Rc CF CF₁ CH CM CA hRc hCF hCF₁ hCH hCM hCA hFb hF₁b hHb hMb hAb (j+1) a
     simpa only [translatedMeanOperator, operatorAmplitude, majorant, Nat.add_zero] using h
-  have hGb (k a) : ‖iteratedFDeriv ℝ k (fun b : Space =>
-      -(translatedMeanPrimitive T hT b F F₁).adjoint (timeTranslation T b f)) a‖ ≤
-      forcingAmplitude T CF CF₁ Cf*majorant R d k :=
+  have hGb (k a) :=
     fixedMeanForcing_bound T hT (fun a => translatePath T a F) (fun a => translatePath T a F₁)
       (fun a => timeTranslation T a f) hF hF₁ hf R CF CF₁ Cf hR0 hCF hCF₁ hCf d hFbr hF₁br hfb k a
   have hout := coerciveSolution_gevrey_amplitudes
     (fun a : Space => translatedMeanOperator T hT a F F₁ H M0 A L) (fun _ => c) (fun _ => hc)
-    (fun a => translatedMeanOperator_coercive T hT a F F₁ H M0 A L c hcoercive)
-    (fun a : Space => -(translatedMeanPrimitive T hT a F F₁).adjoint (timeTranslation T a f)) hO hG
+    (fun a => translatedMeanOperator_coercive T hT a F F₁ H M0 A L c hcoercive) _ hO hG
     c⁻¹ (operatorAmplitude T CF CF₁ CH CM CA L) (forcingAmplitude T CF CF₁ Cf) M Rc R
     (operatorAmplitude_nonneg T CF CF₁ CH CM CA L hT hCH hCM hCA)
     (forcingAmplitude_nonneg T CF CF₁ Cf hT hCF hCF₁ hCf) hM hMC hMD hRc hR (fun _ => le_rfl)
     hOb d hGb n x
-  have heq : (fun a : Space => translatedMeanSolver T hT F F₁ H M0 A L c hc hcoercive a
-      (timeTranslation T a f)) =
-      (fun a : Space => timeSolenoidalTranslation T a
-        (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hcoercive
-          (-(fixedMeanPrimitive T hT F F₁).adjoint f))) :=
-    funext (fun a => translatedMeanSolver_covariance T hT F F₁ H M0 A L c hc hcoercive a f)
   exact (congrArg (fun g : Space → TimeLp T solenoidalSpace => ‖iteratedFDeriv ℝ n g x‖)
-      heq.symm).trans_le hout
+    (funext fun a =>
+      translatedMeanSolver_covariance T hT F F₁ H M0 A L c hc hcoercive a f).symm).trans_le hout
 
 end EulerMeanTranslatedGevrey
 
@@ -682,9 +679,6 @@ theorem solution_translation_block_gevrey
         (-(fixedMeanPrimitive T hT F F₁).adjoint f))) n x ≤ majorant R (d+1) n := by
   let O := fun a : Space => translatedMeanOperator T hT a F F₁ H M0 A L
   let J := fun a : Space => -(translatedMeanPrimitive T hT a F F₁).adjoint
-  let u := fun a : Space => timeSolenoidalTranslation T a
-    (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hcoercive
-      (-(fixedMeanPrimitive T hT F F₁).adjoint f))
   let g := fun a : Space => J a (timeTranslation T a f)
   have hO : ContDiff ℝ ∞ O :=
     contDiff_fixedMeanOperator T hT (fun a => translatePath T a F) (fun a => translatePath T a F₁)
@@ -694,17 +688,13 @@ theorem solution_translation_block_gevrey
   have hJ0 : ContDiff ℝ ∞ (fun a : Space => translatedMeanPrimitive T hT a F F₁) :=
     contDiff_fixedMeanPrimitive T hT (fun a => translatePath T a F) (fun a => translatePath T a F₁)
         hF hF₁
-  have hJ : ContDiff ℝ ∞ J :=
-    ((realAdjoint (U := TimeLp T solenoidalSpace) (E := TimeLp T L2)).contDiff.comp hJ0).neg
-  have hu : ContDiff ℝ ∞ u := solution_translation_contDiff T hT F F₁ H M0 A L c hc hcoercive f hO
-      hJ0 hf
+  have hJ : ContDiff ℝ ∞ J := (contDiff_operatorAdjoint hJ0).neg
+  have hu := solution_translation_contDiff T hT F F₁ H M0 A L c hc hcoercive f hO hJ0 hf
   have hg : ContDiff ℝ ∞ g := hJ.clm_apply hf
-  have heq (a : Space) : O a (u a) = g a := by
-    dsimp only [u]
-    exact (congrArg (O a)
-      (translatedMeanSolver_covariance T hT F F₁ H M0 A L c hc hcoercive a f).symm).trans
-        (operator_inverse_apply (O a) c hc
-          (translatedMeanOperator_coercive T hT a F F₁ H M0 A L c hcoercive) _)
+  have heq (a : Space) := (congrArg (O a)
+    (translatedMeanSolver_covariance T hT F F₁ H M0 A L c hc hcoercive a f).symm).trans
+      (operator_inverse_apply (O a) c hc
+        (translatedMeanOperator_coercive T hT a F F₁ H M0 A L c hcoercive) (g a))
   have hOb (k a) : ‖iteratedFDeriv ℝ k O a‖ ≤ operatorAmplitude T CF CF₁ CH CM CA L*majorant Rc 0 k
       :=
     fixedMeanOperator_bound T hT (fun a => translatePath T a F)
@@ -731,7 +721,7 @@ theorem solution_translation_block_gevrey
       k :=
     block_clm_apply_gevrey directions q J (fun a => timeTranslation T a f) hJ hf
       (sobolevCoefficientRadius ι Rc) R _ Cf hr₀ hrR hJA0 hCf hbJ d hfb k a
-  apply block_inverse_gevrey directions q O u g hO hu hg heq
+  apply block_inverse_gevrey directions q O _ g hO hu hg heq
     (translatedMeanInverse T hT F F₁ H M0 A L c hc hcoercive)
     (fun a v => inverse_operator_apply (O a) c hc
       (translatedMeanOperator_coercive T hT a F F₁ H M0 A L c hcoercive) v)

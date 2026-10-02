@@ -230,7 +230,9 @@ theorem Budget.liftedPacketDerivativeCoefficient_L2_bound (H : Field P T raw_t)
     _ = (2*(Ch+Ce))*(liftedInputRadius R ρ)^n*(n.factorial : ℝ)^2 := by ring
     _ ≤ _ := mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_right
-        (by nlinarith [liftedInputConstant_one_le P] : 2*(Ch+Ce) ≤ 2*liftedInputConstant P*(Ch+Ce))
+        (mul_le_mul_of_nonneg_right
+          (le_mul_of_one_le_right zero_le_two (liftedInputConstant_one_le P))
+          (add_nonneg hCh hCe) : 2*(Ch+Ce) ≤ 2*liftedInputConstant P*(Ch+Ce))
         (pow_nonneg (liftedInputRadius_pos R ρ hR hρ).le n)) (sq_nonneg _)
 
 end EulerAllOrderDriftCorrection
@@ -428,8 +430,10 @@ theorem Budget.physical_gradient_hessian_of_weighted (k ρ Cw d : ℝ)
     (inv_nonneg.mpr hρ.le) hdet hFb hpword X Y hX hYd hXY hk hki 1 t x
   let H := (1+9*CF)*physicalFixedCost D R CF ρ⁻¹ 1
   have hc := physicalFixedCost_nonneg D R CF ρ⁻¹ 1 hR hCF (inv_nonneg.mpr hρ.le)
-  have hcv : physicalFixedCost D R CF ρ⁻¹ 1 ≤ H := by dsimp [H]; nlinarith
-  have hcp : 9*CF*physicalFixedCost D R CF ρ⁻¹ 1 ≤ H := by dsimp [H]; nlinarith
+  have hcv : physicalFixedCost D R CF ρ⁻¹ 1 ≤ H :=
+    le_mul_of_one_le_left hc (le_add_of_nonneg_right (mul_nonneg (by norm_num) hCF))
+  have hcp : 9*CF*physicalFixedCost D R CF ρ⁻¹ 1 ≤ H :=
+    mul_le_mul_of_nonneg_right (le_add_of_nonneg_left zero_le_one) hc
   have absorb (v c : ℝ) (hvc : v ≤ c*(Cpt*d)*k) (hcH : c ≤ H) :
       v ≤ weightedPhysicalGradientCost D P R CF ρ Cw*k*d := by
     apply hvc.trans
@@ -520,7 +524,7 @@ theorem initializedPrimary_global_bound :
   simp only [mul_one] at hb
   have ha : S.H0^2 ≤ 3*S.H0^(2*1) := by
     norm_num only [Nat.mul_one]
-    nlinarith [sq_nonneg S.H0]
+    exact le_mul_of_one_le_left (sq_nonneg S.H0) (by norm_num)
   have hc := (hb.mono_amplitude (zero_le_one.trans L.radius_bounds.1) ha).fixed_velocity_grade
     (n := 1) (zero_le_one.trans L.radius_bounds.1) S.H0_pos.le
   exact (hc.changeTime hTime).ofRawEq _

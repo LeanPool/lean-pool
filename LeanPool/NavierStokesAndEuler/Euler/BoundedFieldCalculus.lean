@@ -237,7 +237,7 @@ theorem pathCompositionMap_norm : ‖pathCompositionMap (α := α) (K := K) (U :
     ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
   intro A
-  rw [one_mul]
+  simp only [one_mul]
   apply opNorm_le_bound _ (norm_nonneg A)
   intro B
   apply (ContinuousMap.norm_le _ (mul_nonneg (norm_nonneg A) (norm_nonneg B))).2

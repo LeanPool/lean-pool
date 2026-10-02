@@ -101,18 +101,21 @@ theorem triangular_ray_kernel_bound
     simpa only [Real.norm_eq_abs] using norm_sub_le q (2 * β * d * n)
   simp only [abs_mul, abs_of_nonneg hβ, abs_of_nonneg hd, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2),
     abs_of_nonneg (sq_nonneg d)] at h1 h2 h3
-  have hcol1 : 1 ≤ 4 * Θ ^ 2 := by nlinarith
-  have hcol2 : d + 1 ≤ 4 * Θ ^ 2 := by nlinarith
+  have hΘ2 : 1 ≤ Θ ^ 2 := one_le_pow₀ hΘ
+  have hΘle : Θ ≤ Θ ^ 2 := le_self_pow₀ hΘ two_ne_zero
+  have hcol1 : 1 ≤ 4 * Θ ^ 2 := by linarith only [hΘ2]
+  have hcol2 : d + 1 ≤ 4 * Θ ^ 2 := by linarith only [hΘ2, hΘle, hdΘ]
   have hβd2 : β * d ^ 2 ≤ Θ ^ 2 :=
     (mul_le_mul_of_nonneg_right hβupper (sq_nonneg d)).trans (by simpa using hd2)
   have hβd : β * d ≤ Θ :=
     (mul_le_mul_of_nonneg_right hβupper hd).trans (by simpa using hdΘ)
-  have hcol3 : β * d ^ 2 + 2 * β * d + 1 ≤ 4 * Θ ^ 2 := by nlinarith
+  have hcol3 : β * d ^ 2 + 2 * β * d + 1 ≤ 4 * Θ ^ 2 := by
+    linarith only [hΘ2, hΘle, hβd2, hβd]
   have hp := mul_le_mul_of_nonneg_right hcol1 (abs_nonneg p)
   have hq := mul_le_mul_of_nonneg_right hcol2 (abs_nonneg q)
   have hn := mul_le_mul_of_nonneg_right hcol3 (abs_nonneg n)
   unfold norm3
-  linarith
+  linarith only [h1, h2, h3, hp, hq, hn]
 
 /-- The exact triangular ray equations imply a polynomial Duhamel bound. -/
 theorem triangular_ray_forced_bound

@@ -43,14 +43,14 @@ variable [NormedAddCommGroup U] [NormedSpace ℝ U]
 
 /-- Multiplication by the actual product field is composition on L². -/
 theorem full_comp (A : α →ᵇ E →L[ℝ] F) (B : α →ᵇ U →L[ℝ] E) :
-    full μ (compositionMap A B) = (full μ A).comp (full μ B) := by
+    full μ (compositionMap (α := α) (U := U) (E := E) (F := F) A B) =
+      (full μ A).comp (full μ B) := by
   apply ContinuousLinearMap.ext
   intro u
   apply Lp.ext
-  filter_upwards [full_ae μ (compositionMap A B) u,
+  filter_upwards [full_ae μ (compositionMap (α := α) (U := U) (E := E) (F := F) A B) u,
     full_ae μ A (full μ B u),full_ae μ B u] with x hab ha hb
-  change full μ (compositionMap A B) u x = full μ A (full μ B u) x
-  rw [hab,ha,hb]
+  rw [ContinuousLinearMap.comp_apply,hab,ha,hb]
   rfl
 
 theorem full_neg (A : α →ᵇ E →L[ℝ] F) : full μ (-A) = -full μ A :=
@@ -62,7 +62,7 @@ theorem full_eq_neg_comp (C : α →ᵇ U →L[ℝ] F)
     (A : α →ᵇ E →L[ℝ] F) (B : α →ᵇ U →L[ℝ] E)
     (hC : ∀ x u, C x u = -(A x (B x u))) :
     full μ C = -(full μ A).comp (full μ B) := by
-  have hc : C = -compositionMap A B := by
+  have hc : C = -compositionMap (α := α) (U := U) (E := E) (F := F) A B := by
     apply BoundedContinuousFunction.ext
     intro x
     apply ContinuousLinearMap.ext
@@ -122,14 +122,15 @@ variable [CompleteSpace E] [CompleteSpace F]
 
 /-- The L² adjoint is multiplication by the pointwise adjoint field. -/
 theorem full_adjoint (A : α →ᵇ E →L[ℝ] F) :
-    (full μ A).adjoint = full μ (adjointMap A) := by
+    (full μ A).adjoint = full μ (adjointMap (α := α) (U := E) (E := F) A) := by
   apply ContinuousLinearMap.ext
   intro u
   apply ext_inner_right ℝ
   intro v
   rw [adjoint_inner_left,L2.inner_def,L2.inner_def]
   apply integral_congr_ae
-  filter_upwards [full_ae μ A v,full_ae μ (adjointMap A) u] with x ha hadj
+  filter_upwards [full_ae μ A v,
+    full_ae μ (adjointMap (α := α) (U := E) (E := F) A) u] with x ha hadj
   rw [ha,hadj,adjointMap_apply,adjoint_inner_left]
 
 end Hilbert

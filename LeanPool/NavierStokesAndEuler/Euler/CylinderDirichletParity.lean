@@ -96,8 +96,7 @@ theorem accelerationPath_neg (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : Icc (
   change gramInverse (D.frame P t) D.lower D.lower_pos (D.frame_lower P t)
     ((D.frame P t).adjoint (-f t-(2 : ℝ) • D.frameDerivative P t
       (D.velocityPath P (pathLp T D.time_pos.le (-f)) t))) = _
-  rw [hn,map_neg,ContinuousMap.neg_apply,map_neg,smul_neg,neg_sub_neg,← neg_sub]
-  simp only [map_neg]
+  simp only [hn, map_neg, ContinuousMap.neg_apply, smul_neg, ← neg_sub']
   rfl
 
 theorem velocityPath_odd (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
@@ -129,8 +128,9 @@ theorem physicalDerivative_odd (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
     reflection P (D.physicalDerivative P f t) = -(D.physicalDerivative P f t) := by
   change reflection P (fullOperatorMap P (D.Q₁ t) (D.velocityPath P (pathLp T D.time_pos.le f) t) +
     fullOperatorMap P (D.Q t) (D.accelerationPath P f t)) = _
-  rw [map_add,reflection_fullOperator P (D.Q₁ t) (hQ₁ t),reflection_fullOperator P (D.Q t) (hQ t),
-    D.velocityPath_odd P hQ hQ₁ hH f hf t,D.accelerationPath_odd P hQ hQ₁ hH f hf t,map_neg,map_neg]
+  simp only [map_add, reflection_fullOperator P (D.Q₁ t) (hQ₁ t),
+    reflection_fullOperator P (D.Q t) (hQ t), D.velocityPath_odd P hQ hQ₁ hH f hf t,
+    D.accelerationPath_odd P hQ hQ₁ hH f hf t, map_neg]
   exact (neg_add _ _).symm
 
 end EulerCylinderDirichlet.Coefficients

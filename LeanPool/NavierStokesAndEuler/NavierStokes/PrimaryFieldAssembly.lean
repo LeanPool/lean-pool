@@ -557,7 +557,10 @@ noncomputable def sourceMatrix : Mat2 :=
     (fun j _ => A.length j) () A.point
 
 theorem sourceMatrix_eq : A.sourceMatrix = A.pairData.matrix := by
-  exact primaryCovariance_eq_canonicalPairMatrix _ _ _ _ _ () A.domain A.point A.point_mem
+  exact primaryCovariance_eq_canonicalPairMatrix
+    (fun j (_ : Unit) => nativePrefactor vr vt sys.radius * A.stretch j * A.length j)
+    (fun j _ => A.frame j) (fun j _ => A.lam j) (fun j _ => A.rate j)
+    (fun j _ => A.length j) () A.domain A.point A.point_mem
     A.length_pos A.coefficient_continuous A.kinematics vr vt sys.radius A.stretch
     (fun _ => rfl)
 

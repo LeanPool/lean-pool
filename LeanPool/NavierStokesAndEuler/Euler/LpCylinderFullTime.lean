@@ -59,18 +59,21 @@ variable
 include hA
 
 theorem fullPath_hasDerivWithinAt (t : Icc (0 : ℝ) T) :
-    HasDerivWithinAt (extendPath T hT (fullPathMap P A))
-      (fullPathMap P A₁ t) (Icc (0 : ℝ) T) t := by
+    HasDerivWithinAt
+      (extendPath T hT (fullPathMap (K := Icc (0 : ℝ) T) (E := E) (F := F) P A))
+      (fullPathMap (K := Icc (0 : ℝ) T) (E := E) (F := F) P A₁ t) (Icc (0 : ℝ) T) t := by
   have hfield := EulerBoundedFieldTimeDerivative.hasDerivWithinAt T hT A A₁ hA t t.property
   have hlinear : HasFDerivAt
-      (fun B : Space →ᵇ E →L[ℝ] F => fullOperatorMap P B)
-      (fullOperatorMap P) (extendPath T hT A t) :=
-    (fullOperatorMap P).hasFDerivAt
+      (fun B : Space →ᵇ E →L[ℝ] F => fullOperatorMap (E := E) (F := F) P B)
+      (fullOperatorMap (E := E) (F := F) P) (extendPath T hT A t) :=
+    (fullOperatorMap (E := E) (F := F) P).hasFDerivAt
   have hd := hlinear.comp_hasDerivWithinAt (t : ℝ) hfield
-  change HasDerivWithinAt (fun s => fullOperatorMap P (A (projIcc 0 T hT s)))
-    (fullOperatorMap P (A₁ t)) (Icc (0 : ℝ) T) t
-  change HasDerivWithinAt (fun s => fullOperatorMap P (A (projIcc 0 T hT s)))
-    (fullOperatorMap P (A₁ (projIcc 0 T hT t))) (Icc (0 : ℝ) T) t at hd
+  change HasDerivWithinAt
+    (fun s => fullOperatorMap (E := E) (F := F) P (A (projIcc 0 T hT s)))
+    (fullOperatorMap (E := E) (F := F) P (A₁ t)) (Icc (0 : ℝ) T) t
+  change HasDerivWithinAt
+    (fun s => fullOperatorMap (E := E) (F := F) P (A (projIcc 0 T hT s)))
+    (fullOperatorMap (E := E) (F := F) P (A₁ (projIcc 0 T hT t))) (Icc (0 : ℝ) T) t at hd
   rwa [projIcc_of_mem hT t.property] at hd
 
 theorem fullProduct_hasDerivWithinAt
@@ -78,18 +81,23 @@ theorem fullProduct_hasDerivWithinAt
     (hu : ∀ t : Icc (0 : ℝ) T,
       HasDerivWithinAt (extendPath T hT u) (u₁ t) (Icc (0 : ℝ) T) t)
     (t : Icc (0 : ℝ) T) :
-    HasDerivWithinAt (extendPath T hT (fullMultiplierMap P A u))
-      (fullMultiplierMap P A₁ u t + fullMultiplierMap P A u₁ t)
+    HasDerivWithinAt
+      (extendPath T hT (fullMultiplierMap (K := Icc (0 : ℝ) T) (E := E) (F := F) P A u))
+      (fullMultiplierMap (K := Icc (0 : ℝ) T) (E := E) (F := F) P A₁ u t +
+        fullMultiplierMap (K := Icc (0 : ℝ) T) (E := E) (F := F) P A u₁ t)
       (Icc (0 : ℝ) T) t := by
   have hd := (fullPath_hasDerivWithinAt P T hT A A₁ hA t).clm_apply (hu t)
   change HasDerivWithinAt
-    (fun s => fullOperatorMap P (A (projIcc 0 T hT s)) (u (projIcc 0 T hT s)))
-    (fullOperatorMap P (A₁ t) (u t) + fullOperatorMap P (A t) (u₁ t))
+    (fun s => fullOperatorMap (E := E) (F := F) P (A (projIcc 0 T hT s))
+      (u (projIcc 0 T hT s)))
+    (fullOperatorMap (E := E) (F := F) P (A₁ t) (u t) +
+      fullOperatorMap (E := E) (F := F) P (A t) (u₁ t))
     (Icc (0 : ℝ) T) t
   change HasDerivWithinAt
-    (fun s => fullOperatorMap P (A (projIcc 0 T hT s)) (u (projIcc 0 T hT s)))
-    (fullOperatorMap P (A₁ t) (u (projIcc 0 T hT t)) +
-      fullOperatorMap P (A (projIcc 0 T hT t)) (u₁ t))
+    (fun s => fullOperatorMap (E := E) (F := F) P (A (projIcc 0 T hT s))
+      (u (projIcc 0 T hT s)))
+    (fullOperatorMap (E := E) (F := F) P (A₁ t) (u (projIcc 0 T hT t)) +
+      fullOperatorMap (E := E) (F := F) P (A (projIcc 0 T hT t)) (u₁ t))
     (Icc (0 : ℝ) T) t at hd
   rwa [projIcc_of_mem hT t.property] at hd
 

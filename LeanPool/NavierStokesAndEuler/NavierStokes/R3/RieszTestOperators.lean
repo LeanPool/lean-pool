@@ -58,7 +58,7 @@ theorem norm_rieszTest_pairing_le (i j : Fin 3) (ψ φ : ComplexTest) :
   let Fψ : ComplexTest := FourierTransform.fourierCLE ℂ ComplexTest ψ
   let Fφ : ComplexTest := FourierTransform.fourierCLE ℂ ComplexTest φ
   have hprod : Integrable (fun ξ : Space => ‖Fψ ξ‖ * ‖Fφ ξ‖) :=
-    (Fψ.memLp 2).norm.integrable_mul (Fφ.memLp 2).norm
+    (Fψ.memLp 2 volume).norm.integrable_mul (Fφ.memLp 2 volume).norm
   rw [rieszTest_pairing_fourier_conj]
   change ‖∫ ξ : Space, (rieszSymbol i j ξ : ℂ) * Fψ ξ * conj (Fφ ξ)‖ ≤ _
   calc
@@ -76,7 +76,8 @@ theorem norm_rieszTest_pairing_le (i j : Fin 3) (ψ φ : ComplexTest) :
       have h := integral_mul_norm_le_Lp_mul_Lq
         (μ := (volume : Measure Space)) (f := (Fψ : Space → ℂ))
         (g := (Fφ : Space → ℂ)) Real.HolderConjugate.two_two
-        (by simpa using Fψ.memLp 2) (by simpa using Fφ.memLp 2)
+        (by rw [ENNReal.ofReal_ofNat]; exact Fψ.memLp 2 volume)
+        (by rw [ENNReal.ofReal_ofNat]; exact Fφ.memLp 2 volume)
       have hψ : (∫ ξ : Space, ‖Fψ ξ‖ ^ 2) = ∫ x : Space, ‖ψ x‖ ^ 2 :=
         SchwartzParseval.integral_norm_sq_fourier ψ
       have hφ : (∫ ξ : Space, ‖Fφ ξ‖ ^ 2) = ∫ x : Space, ‖φ x‖ ^ 2 :=

@@ -68,15 +68,18 @@ theorem forcing_unit_bound (n : ℕ) :
     block directions q (fun a : LiftTangent => pathTranslate P a (D.endpointForcing P Y)) n 0 ≤
       endpointForcingCost ι q T L.Rc L.C₁*majorant L.R d n := by
   let Z := ContinuousMap.const (Icc (0 : ℝ) T) (T⁻¹ • Y)
-  have hz : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a Z) :=
+  have hz : ContDiff ℝ ∞ (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := U) P a Z) :=
     endpointConstant_orbit_contDiff P Y hY
   have hp := product_orbit_block_bound P D.Q₁ L.frameDerivative_smooth directions hdir q Z hz
     L.Rc L.C₁ L.R T⁻¹ L.Rc_nonneg L.C₁_nonneg (inv_nonneg.mpr D.time_pos.le)
     L.radius_bounds.2 L.frameDerivative_bound d (L.constant_unit_bound P directions Y hY d hYb) n
   have hs := block_smul_le directions q (2 : ℝ)
-    (fun a : LiftTangent => pathTranslate P a (fullMultiplierMap P D.Q₁ Z))
+    (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a
+      (fullMultiplierMap (K := Icc (0 : ℝ) T) (E := U) (F := E) P D.Q₁ Z))
     (product_orbit_contDiff P D.Q₁ L.frameDerivative_smooth Z hz) n 0
-  have he : D.endpointForcing P Y = (2 : ℝ) • fullMultiplierMap P D.Q₁ Z := rfl
+  have he : D.endpointForcing P Y =
+      (2 : ℝ) • fullMultiplierMap (K := Icc (0 : ℝ) T) (E := U) (F := E) P D.Q₁ Z := rfl
   rw [he]
   simp only [map_smul]
   apply (hs.trans (mul_le_mul_of_nonneg_left hp (abs_nonneg (2 : ℝ)))).trans_eq
@@ -134,8 +137,10 @@ theorem acceleration_unit_bound (n : ℕ) :
 theorem velocity_unit_bound (n : ℕ) :
     block directions q (fun a : LiftTangent => pathTranslate P a (D.endpointVelocity P Y)) n 0 ≤
       L.velocityCost*majorant L.R (d+2) n := by
-  change block directions q (fun a : LiftTangent => pathTranslate P a
-    (fullMultiplierMap P D.Q (D.endpointCoordinate P Y))) n 0 ≤ _
+  change block directions q (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a
+      (fullMultiplierMap (K := Icc (0 : ℝ) T) (E := U) (F := E) P D.Q
+        (D.endpointCoordinate P Y))) n 0 ≤ _
   exact product_orbit_block_bound P D.Q L.frame_smooth directions hdir q (D.endpointCoordinate P Y)
     (D.endpointCoordinate_orbit_contDiff P L.frame_smooth L.frameDerivative_smooth L.hessian_smooth
         Y hY)
@@ -166,8 +171,11 @@ theorem derivative_unit_bound (n : ℕ) :
   have h₂ := product_orbit_block_bound P D.Q L.frame_smooth directions hdir q
     (D.endpointAcceleration P Y) ha L.Rc L.C₀ L.R 1 L.Rc_nonneg L.C₀_nonneg
     zero_le_one L.radius_bounds.2 L.frame_bound (d+3) hba n
-  have he : D.endpointDerivative P Y = fullMultiplierMap P D.Q₁ (D.endpointCoordinate P Y) +
-      fullMultiplierMap P D.Q (D.endpointAcceleration P Y) := rfl
+  have he : D.endpointDerivative P Y =
+      fullMultiplierMap (K := Icc (0 : ℝ) T) (E := U) (F := E) P D.Q₁
+        (D.endpointCoordinate P Y) +
+      fullMultiplierMap (K := Icc (0 : ℝ) T) (E := U) (F := E) P D.Q
+        (D.endpointAcceleration P Y) := rfl
   rw [he]
   simp only [map_add]
   exact (block_add_le directions q _ _

@@ -52,21 +52,21 @@ theorem source_numerator_pos (ξ : U) (hξ : ‖ξ‖ = 1) (x : Space)
     1/2 ≤ ⟪(G.transverseData m hm R S hS).normal.field t x,
       G.strain.field t x (EulerPacketForwardFactorization.uncutVelocity
         (G.transverseData m hm R S hS) ξ t x)⟫_ℝ := by
+  have ht : (⟨0, le_rfl, (G.transverseData m hm R S hS).T_pos.le⟩ :
+      Icc (0 : ℝ) (G.transverseData m hm R S hS).T) = G.zeroTime := rfl
   apply uncut_numerator_pos (G.transverseData m hm R S hS) ξ x
     (fun s => G.curvature.field s x) (coefficientCost L.K) (coefficientCost L.K)
     (coefficientCost_nonneg L.K) (coefficientCost_nonneg L.K)
     (fun s => strain_norm L s x) (fun s => curvature_norm L s x)
     (fun s => G.strain_within s x) _ _ _ hshort hsmall t
-  · change ‖(G.transverseData m hm R S hS).normal.field G.zeroTime x‖=1
-    rw [source_normal_initial m hm R S hS]
+  · rw [ht, source_normal_initial m hm R S hS]
     exact hm
-  · change ‖(G.transverseData m hm R S hS).frame.field G.zeroTime x ξ‖=1
-    rw [source_frame_initial m hm R S hS]
+  · rw [ht, source_frame_initial m hm R S hS]
     exact (R.norm_map ξ).trans hξ
-  · change ⟪(G.transverseData m hm R S hS).normal.field G.zeroTime x,
-      G.strain.field G.zeroTime x ((G.transverseData m hm R S hS).frame.field G.zeroTime x ξ)⟫_ℝ=1
-    rw [source_normal_initial m hm R S hS,source_frame_initial m hm R S hS]
-    rw [G.strain_apply,comp_apply,G.inverse_initial]
+  · have hM : (G.transverseData m hm R S hS).M.field G.zeroTime x =
+        G.strain.field G.zeroTime x := rfl
+    rw [ht, source_normal_initial m hm R S hS, source_frame_initial m hm R S hS, hM,
+      G.strain_apply, comp_apply, G.inverse_initial]
     exact h0
 
 theorem source_numerator_pos_on (T : ℝ) (hT : 0 < T) (hTG : T ≤ G.T)

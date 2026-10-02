@@ -72,7 +72,7 @@ def derivative (A : SmoothL2Field V) : SmoothL2Field (Space →L[ℝ] V) where
   smooth := A.smooth.fderiv_right (m := ∞) (by simp)
   integrable n := (A.integrable (n+1)).congr_norm
     ((A.smooth.fderiv_right (m := ∞) (by
-        simp)).continuous_iteratedFDeriv (by simp)).aestronglyMeasurable
+        simp)).continuous_iteratedFDeriv (m := n) (by simp)).aestronglyMeasurable
     (Eventually.of_forall (fun x => norm_iteratedFDeriv_fderiv.symm))
 
 theorem translation_hasFDerivAt (A : SmoothL2Field V) (a : Space) :

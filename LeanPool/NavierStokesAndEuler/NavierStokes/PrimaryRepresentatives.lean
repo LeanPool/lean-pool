@@ -458,34 +458,37 @@ noncomputable def referenceCompact (h a b : ℝ) : Set Slow := closure (activeRe
 theorem activeReference_subset_box {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h < 1 / 2)
     (ha : 0 < a) (hab : a ≤ b) : activeReference h a b ⊆ referenceBox a b := by
   rintro p ⟨hR, hT, q, hq, he, hX⟩
-  have hq0 : 0 < q := by linarith [hq.1]
+  have hq0 : 0 < q := one_half_pos.trans_le hq.1
   have hb : 0 < b := ha.trans_le hab
   have hp : 0 < q ^ (2 * h) := Real.rpow_pos_of_pos hq0 _
   have hfactor : q ^ (2 * h) * (q ^ (1 - 2 * h) - p.2.1 ^ 2) = p.2.2 := by
     rw [← SimilarityCoordinates.forwardScalar_factor hq0]
     exact he
-  have hZ : p.2.1 ^ 2 ≤ q ^ (1 - 2 * h) := by nlinarith
+  have hZ : p.2.1 ^ 2 ≤ q ^ (1 - 2 * h) :=
+    sub_nonneg.mp ((mul_nonneg_iff_of_pos_left hp).mp (hT.trans_eq hfactor.symm))
   have hqpow : q ^ (1 - 2 * h) ≤ 2 := by
     calc
       q ^ (1 - 2 * h) ≤ (2 : ℝ) ^ (1 - 2 * h) :=
-        Real.rpow_le_rpow hq0.le hq.2 (by linarith)
+        Real.rpow_le_rpow hq0.le hq.2 (by linarith only [hh1])
       _ ≤ (2 : ℝ) ^ (1 : ℝ) :=
-        Real.rpow_le_rpow_of_exponent_le (by norm_num) (by linarith)
+        Real.rpow_le_rpow_of_exponent_le one_le_two (by linarith only [hh])
       _ = 2 := Real.rpow_one _
-  have hRlo := (le_div_iff₀ (show 0 < 2 * q by positivity)).mp hX.1
-  have hRhi := (div_le_iff₀ (show 0 < 2 * q by positivity)).mp hX.2
-  have hRlower : a ≤ p.1 ^ 2 := by nlinarith [hq.1]
-  have hRupper : p.1 ^ 2 ≤ 4 * b := by nlinarith [hq.2]
-  have hsa := Real.sq_sqrt ha.le
-  have hsb := Real.sq_sqrt hb.le
-  have hTq : p.2.2 ≤ q := by
-    dsimp [SimilarityCoordinates.forwardScalar] at he
-    nlinarith [sq_nonneg p.2.1]
-  refine ⟨⟨?_, ?_⟩, ⟨⟨?_, ?_⟩, ⟨hT, hTq.trans hq.2⟩⟩⟩
-  · nlinarith [Real.sqrt_nonneg a]
-  · nlinarith [Real.sqrt_nonneg b]
-  · nlinarith
-  · nlinarith
+  have hRlo := (le_div_iff₀ (mul_pos two_pos hq0)).mp hX.1
+  have hRhi := (div_le_iff₀ (mul_pos two_pos hq0)).mp hX.2
+  have hRlower : a ≤ p.1 ^ 2 :=
+    (le_mul_of_one_le_right ha.le (by linarith only [hq.1])).trans hRlo
+  have hRupper : p.1 ^ 2 ≤ 4 * b :=
+    hRhi.trans ((mul_le_mul_of_nonneg_left (show 2 * q ≤ 4 by linarith only [hq.2])
+      hb.le).trans_eq (mul_comm b 4))
+  have hTq : p.2.2 ≤ q :=
+    he.symm.trans_le (sub_le_self q (mul_nonneg (sq_nonneg p.2.1) hp.le))
+  have hZbox : p.2.1 ^ 2 ≤ 2 ^ 2 := (hZ.trans hqpow).trans (by norm_num)
+  have hRbox : p.1 ^ 2 ≤ (2 * Real.sqrt b) ^ 2 := by
+    rw [mul_pow, Real.sq_sqrt hb.le]
+    exact hRupper.trans_eq (by norm_num)
+  exact ⟨⟨Real.sqrt_le_iff.mpr ⟨hR, hRlower⟩,
+      (sq_le_sq₀ hR (mul_nonneg zero_le_two (Real.sqrt_nonneg b))).mp hRbox⟩,
+    ⟨abs_le_of_sq_le_sq' hZbox zero_le_two, ⟨hT, hTq.trans hq.2⟩⟩⟩
 
 theorem referenceCompact_subset_box {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h < 1 / 2)
     (ha : 0 < a) (hab : a ≤ b) : referenceCompact h a b ⊆ referenceBox a b :=

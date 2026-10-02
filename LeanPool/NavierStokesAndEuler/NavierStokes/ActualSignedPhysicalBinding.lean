@@ -952,7 +952,9 @@ theorem dynamicCoefficients_eq (l : Label B N0)
     (ActualPeriodizedSignedRealization.nativeUnit (primary l) (layout l) (nativeViews l) l.2 k) = _
   unfold ActualPeriodizedSignedRealization.coefficientsWith nativeCoefficients
   rw [nativeView_base, nativeView_target]
-  congr 1
+  with_reducible congr 1
+  · rfl
+  · rfl
   · funext n x
     simp only [nativeViews_map]
     rfl

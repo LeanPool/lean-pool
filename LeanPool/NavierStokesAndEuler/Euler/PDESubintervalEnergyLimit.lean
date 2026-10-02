@@ -137,8 +137,8 @@ theorem weighted_sobolev_energy_integral {α β : Type*} [Fintype α] [Fintype �
           u)) +
       (((K u).bound : ℝ) / c) * weightedForcingSum (ρ u) order (fun i j => forcing i j u) := by
     simp only [Ψ, A, w, w', F, Q, weightedMetricSum, weightedMetricLoss, weightedForcingSum,
-      familyMetricNorm, add_mul, Finset.sum_add_distrib, Finset.mul_sum]
-    simp only [mul_comm, mul_left_comm, mul_assoc]
+      familyMetricNorm, Finset.mul_sum, ← Finset.sum_add_distrib]
+    exact Finset.sum_congr rfl fun i _ => by ring
   simpa only [halg, w, Q, a, weightedMetricSum, familyMetricNorm] using hsum
 
 end EulerWeightedSobolevEnergy

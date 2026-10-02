@@ -87,7 +87,7 @@ theorem close_energy_estimate
   have hFbase (t : ℝ) (ht : 0 ≤ t) : 2 * r ≤ F t := by
     have he : 1 ≤ exp (3 * C * t) := one_le_exp_iff.mpr (by positivity)
     dsimp [F]
-    nlinarith
+    exact le_mul_of_one_le_right (by linarith only [hr]) he
   have hbound : ∀ t ∈ Icc 0 S, X t ≤ F t := by
     apply image_le_of_deriv_right_lt_deriv_boundary hcont
       (fun t ht => (hder t ht).hasDerivWithinAt)
@@ -104,7 +104,9 @@ theorem close_energy_estimate
       have hFΔ := hFle t htc
       have hFr := hFbase t ht.1
       rw [hXF] at hmain hlossY
-      have hFsq : (F t) ^ 2 ≤ F t := by nlinarith
+      have hFsq : (F t) ^ 2 ≤ F t := by
+        rw [sq]
+        exact mul_le_of_le_one_right hFt.le (by linarith only [hFΔ, hΔ1])
       have hCsq := mul_le_mul_of_nonneg_left hFsq hC.le
       have hCr := mul_le_mul_of_nonneg_left hFr hC.le
       have hpos := mul_pos hC hFt

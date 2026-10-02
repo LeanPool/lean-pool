@@ -134,17 +134,19 @@ theorem fixedFrameSolver_intertwines
     (hsmall : K*(T^2/2) ≤ 1/2) (hsmall' : L*(T^2/2) ≤ 1/2)
     (hQR : ∀ t u, R t (A u) = B (Q t u))
     (hQR₁ : ∀ t u, R₁ t (A u) = B (Q₁ t u))
-    (hRQ : ∀ t v, Q t (A.adjoint v) = B.adjoint (R t v))
-    (hRQ₁ : ∀ t v, Q₁ t (A.adjoint v) = B.adjoint (R₁ t v))
+    (hRQ : ∀ t v, Q t (adjoint (𝕜 := ℝ) (E := U) (F := V) A v) =
+      adjoint (𝕜 := ℝ) (E := E) (F := F) B (R t v))
+    (hRQ₁ : ∀ t v, Q₁ t (adjoint (𝕜 := ℝ) (E := U) (F := V) A v) =
+      adjoint (𝕜 := ℝ) (E := E) (F := F) B (R₁ t v))
     (hHJ : ∀ t u, J t (B u) = B (H t u)) (f : TimeLp T E) :
     zeroTraceMap T hT A (fixedFrameSolver T hT Q Q₁ H c hc hQ hQtime K hK hH hsmall f) =
       fixedFrameSolver T hT R R₁ J d hd hR hRtime L hL hJ hsmall' (timeLift T B f) := by
   apply fixedFrameSolver_unique T hT R R₁ J d hd hR hRtime L hL hJ hsmall'
   intro v
   have hw := fixedFrameSolver_weak T hT Q Q₁ H c hc hQ hQtime K hK hH hsmall f
-    (zeroTraceMap T hT A.adjoint v)
-  rw [fixedDerivative_intertwines T hT A.adjoint B.adjoint R R₁ Q Q₁ hRQ hRQ₁,
-    fixedPrimitive_intertwines T hT A.adjoint B.adjoint R R₁ Q Q₁ hRQ hRQ₁] at hw
+    (zeroTraceMap T hT (adjoint (𝕜 := ℝ) (E := U) (F := V) A) v)
+  rw [fixedDerivative_intertwines T hT _ _ R R₁ Q Q₁ hRQ hRQ₁,
+    fixedPrimitive_intertwines T hT _ _ R R₁ Q Q₁ hRQ hRQ₁] at hw
   simp only [← timeLift_adjoint,adjoint_inner_right] at hw
   rw [fixedDerivative_intertwines T hT A B Q Q₁ R R₁ hQR hQR₁,
     fixedPrimitive_intertwines T hT A B Q Q₁ R R₁ hQR hQR₁,
@@ -179,22 +181,27 @@ variable {U V E F : Type*}
 /-- The backward test intertwiner gives the actual adjoint-multiplier identity. -/
 theorem adjointMultiplier_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
     (Q : C(Icc (0 : ℝ) T, U →L[ℝ] E)) (R : C(Icc (0 : ℝ) T, V →L[ℝ] F))
-    (hRQ : ∀ t v, Q t (A.adjoint v) = B.adjoint (R t v)) (f : TimeLp T E) :
-    (timeMultiplier T hT R).adjoint (timeLift T B f) =
-      timeLift T A ((timeMultiplier T hT Q).adjoint f) := by
+    (hRQ : ∀ t v, Q t (adjoint (𝕜 := ℝ) (E := U) (F := V) A v) =
+      adjoint (𝕜 := ℝ) (E := E) (F := F) B (R t v)) (f : TimeLp T E) :
+    adjoint (𝕜 := ℝ) (E := TimeLp T V) (F := TimeLp T F) (timeMultiplier T hT R)
+        (timeLift T B f) =
+      timeLift T A
+        (adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT Q) f) := by
   apply ext_inner_right ℝ
   intro v
   rw [adjoint_inner_left,← adjoint_inner_right, timeLift_adjoint,
-    ← timeMultiplier_intertwines T hT A.adjoint B.adjoint R Q hRQ,
+    ← timeMultiplier_intertwines T hT _ _ R Q hRQ,
     ← adjoint_inner_left,← timeLift_adjoint,adjoint_inner_right]
 
 /-- The true Gram operator commutes with compatible rectangular intertwiners. -/
 theorem gramOperator_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
     (Q : C(Icc (0 : ℝ) T, U →L[ℝ] E)) (R : C(Icc (0 : ℝ) T, V →L[ℝ] F))
     (hQR : ∀ t u, R t (A u) = B (Q t u))
-    (hRQ : ∀ t v, Q t (A.adjoint v) = B.adjoint (R t v)) (u : TimeLp T U) :
+    (hRQ : ∀ t v, Q t (adjoint (𝕜 := ℝ) (E := U) (F := V) A v) =
+      adjoint (𝕜 := ℝ) (E := E) (F := F) B (R t v)) (u : TimeLp T U) :
     gramOperator T hT R (timeLift T A u) = timeLift T A (gramOperator T hT Q u) := by
-  change (timeMultiplier T hT R).adjoint (timeMultiplier T hT R (timeLift T A u)) = _
+  change adjoint (𝕜 := ℝ) (E := TimeLp T V) (F := TimeLp T F) (timeMultiplier T hT R)
+    (timeMultiplier T hT R (timeLift T A u)) = _
   rw [timeMultiplier_intertwines T hT A B Q R hQR,
     adjointMultiplier_intertwines T hT A B Q R hRQ]
   rfl
@@ -206,7 +213,8 @@ theorem gramSolver_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
     (c : ℝ) (hc : 0 < c) (hQ : ∀ t u, c * ‖u‖ ^ 2 ≤ ‖Q t u‖ ^ 2)
     (d : ℝ) (hd : 0 < d) (hR : ∀ t v, d * ‖v‖ ^ 2 ≤ ‖R t v‖ ^ 2)
     (hQR : ∀ t u, R t (A u) = B (Q t u))
-    (hRQ : ∀ t v, Q t (A.adjoint v) = B.adjoint (R t v)) (f : TimeLp T U) :
+    (hRQ : ∀ t v, Q t (adjoint (𝕜 := ℝ) (E := U) (F := V) A v) =
+      adjoint (𝕜 := ℝ) (E := E) (F := F) B (R t v)) (f : TimeLp T U) :
     gramSolver T hT R d hd hR (timeLift T A f) =
       timeLift T A (gramSolver T hT Q c hc hQ f) := by
   have he := gramOperator_intertwines T hT A B Q R hQR hRQ
@@ -232,8 +240,10 @@ variable (A : U →L[ℝ] V) (B : E →L[ℝ] F)
   (hsmall : K * (T ^ 2 / 2) ≤ 1 / 2) (hsmall' : L * (T ^ 2 / 2) ≤ 1 / 2)
   (hQR : ∀ t u, R t (A u) = B (Q t u))
   (hQR₁ : ∀ t u, R₁ t (A u) = B (Q₁ t u))
-  (hRQ : ∀ t v, Q t (A.adjoint v) = B.adjoint (R t v))
-  (hRQ₁ : ∀ t v, Q₁ t (A.adjoint v) = B.adjoint (R₁ t v))
+  (hRQ : ∀ t v, Q t (adjoint (𝕜 := ℝ) (E := U) (F := V) A v) =
+    adjoint (𝕜 := ℝ) (E := E) (F := F) B (R t v))
+  (hRQ₁ : ∀ t v, Q₁ t (adjoint (𝕜 := ℝ) (E := U) (F := V) A v) =
+    adjoint (𝕜 := ℝ) (E := E) (F := F) B (R₁ t v))
   (hHJ : ∀ t u, J t (B u) = B (H t u))
 
 include hQR hQR₁ hRQ hRQ₁ hHJ in
@@ -250,9 +260,10 @@ include hQR hQR₁ hRQ hRQ₁ hHJ in
 theorem accelerationLp_intertwines (f : TimeLp T E) :
     accelerationLp T hT R R₁ J d hd hR hRtime L hL hJ hsmall' (timeLift T B f) =
       timeLift T A (accelerationLp T hT Q Q₁ H c hc hQ hQtime K hK hH hsmall f) := by
-  change gramSolver T hT R d hd hR ((timeMultiplier T hT R).adjoint
-    (timeLift T B f-(2 : ℝ) • timeMultiplier T hT R₁
-      (velocityLp T hT R R₁ J d hd hR hRtime L hL hJ hsmall' (timeLift T B f)))) = _
+  change gramSolver T hT R d hd hR
+    (adjoint (𝕜 := ℝ) (E := TimeLp T V) (F := TimeLp T F) (timeMultiplier T hT R)
+      (timeLift T B f-(2 : ℝ) • timeMultiplier T hT R₁
+        (velocityLp T hT R R₁ J d hd hR hRtime L hL hJ hsmall' (timeLift T B f)))) = _
   rw [velocityLp_intertwines T hT A B Q Q₁ R R₁ H J c hc hQ d hd hR hQtime hRtime
     K L hK hL hH hJ hsmall hsmall' hQR hQR₁ hRQ hRQ₁ hHJ,
     timeMultiplier_intertwines T hT A B Q₁ R₁ hQR₁,
@@ -303,8 +314,10 @@ variable {U V E F : Type*}
 
 theorem adjoint_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
     (Q : U →L[ℝ] E) (R : V →L[ℝ] F)
-    (hback : ∀ v, Q (A.adjoint v) = B.adjoint (R v)) (f : E) :
-    R.adjoint (B f) = A (Q.adjoint f) := by
+    (hback : ∀ v, Q (adjoint (𝕜 := ℝ) (E := U) (F := V) A v) =
+      adjoint (𝕜 := ℝ) (E := E) (F := F) B (R v)) (f : E) :
+    adjoint (𝕜 := ℝ) (E := V) (F := F) R (B f) =
+      A (adjoint (𝕜 := ℝ) (E := U) (F := E) Q f) := by
   apply ext_inner_right ℝ
   intro v
   rw [adjoint_inner_left,← adjoint_inner_right,← hback,
@@ -313,9 +326,10 @@ theorem adjoint_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
 theorem gram_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
     (Q : U →L[ℝ] E) (R : V →L[ℝ] F)
     (hforward : ∀ u, R (A u) = B (Q u))
-    (hback : ∀ v, Q (A.adjoint v) = B.adjoint (R v)) (u : U) :
+    (hback : ∀ v, Q (adjoint (𝕜 := ℝ) (E := U) (F := V) A v) =
+      adjoint (𝕜 := ℝ) (E := E) (F := F) B (R v)) (u : U) :
     gram R (A u) = A (gram Q u) := by
-  change R.adjoint (R (A u)) = _
+  change adjoint (𝕜 := ℝ) (E := V) (F := F) R (R (A u)) = _
   rw [hforward,adjoint_intertwines A B Q R hback]
   rfl
 
@@ -324,7 +338,8 @@ theorem gramInverse_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
     (c : ℝ) (hc : 0 < c) (hQ : ∀ u, c * ‖u‖ ^ 2 ≤ ‖Q u‖ ^ 2)
     (d : ℝ) (hd : 0 < d) (hR : ∀ v, d * ‖v‖ ^ 2 ≤ ‖R v‖ ^ 2)
     (hforward : ∀ u, R (A u) = B (Q u))
-    (hback : ∀ v, Q (A.adjoint v) = B.adjoint (R v)) (f : U) :
+    (hback : ∀ v, Q (adjoint (𝕜 := ℝ) (E := U) (F := V) A v) =
+      adjoint (𝕜 := ℝ) (E := E) (F := F) B (R v)) (f : U) :
     gramInverse R d hd hR (A f) = A (gramInverse Q c hc hQ f) := by
   have he := gram_intertwines A B Q R hforward hback (gramInverse Q c hc hQ f)
   rw [gram_inverse_apply] at he
@@ -340,9 +355,12 @@ theorem acceleration_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
     (d : ℝ) (hd : 0 < d) (hR : ∀ v, d * ‖v‖ ^ 2 ≤ ‖R v‖ ^ 2)
     (hforward : ∀ u, R (A u) = B (Q u))
     (hforward₁ : ∀ u, R₁ (A u) = B (Q₁ u))
-    (hback : ∀ v, Q (A.adjoint v) = B.adjoint (R v)) (f : E) (v : U) :
-    gramInverse R d hd hR (R.adjoint (B f-(2 : ℝ) • R₁ (A v))) =
-      A (gramInverse Q c hc hQ (Q.adjoint (f-(2 : ℝ) • Q₁ v))) := by
+    (hback : ∀ v, Q (adjoint (𝕜 := ℝ) (E := U) (F := V) A v) =
+      adjoint (𝕜 := ℝ) (E := E) (F := F) B (R v)) (f : E) (v : U) :
+    gramInverse R d hd hR
+        (adjoint (𝕜 := ℝ) (E := V) (F := F) R (B f-(2 : ℝ) • R₁ (A v))) =
+      A (gramInverse Q c hc hQ
+        (adjoint (𝕜 := ℝ) (E := U) (F := E) Q (f-(2 : ℝ) • Q₁ v))) := by
   rw [hforward₁,← map_smul,← map_sub,adjoint_intertwines A B Q R hback,
     gramInverse_intertwines A B Q R c hc hQ d hd hR hforward hback]
 
@@ -378,8 +396,11 @@ variable (P : ℝ) [Fact (0 < P)] {T : ℝ} {U V E F : Type*}
   (B : CylinderL2 P E →L[ℝ] CylinderL2 P F)
   (hQ : ∀ t u, G.frame P t (A u) = B (D.frame P t u))
   (hQ₁ : ∀ t u, G.frameDerivative P t (A u) = B (D.frameDerivative P t u))
-  (hback : ∀ t v, D.frame P t (A.adjoint v) = B.adjoint (G.frame P t v))
-  (hback₁ : ∀ t v, D.frameDerivative P t (A.adjoint v) = B.adjoint (G.frameDerivative P t v))
+  (hback : ∀ t v, D.frame P t (adjoint (𝕜 := ℝ) (E := CylinderL2 P U) (F := CylinderL2 P V) A v) =
+    adjoint (𝕜 := ℝ) (E := CylinderL2 P E) (F := CylinderL2 P F) B (G.frame P t v))
+  (hback₁ : ∀ t v,
+    D.frameDerivative P t (adjoint (𝕜 := ℝ) (E := CylinderL2 P U) (F := CylinderL2 P V) A v) =
+      adjoint (𝕜 := ℝ) (E := CylinderL2 P E) (F := CylinderL2 P F) B (G.frameDerivative P t v))
   (hH : ∀ t u, G.hessian P t (B u) = B (D.hessian P t u))
 
 include hQ hQ₁ hback hback₁ hH
@@ -421,8 +442,10 @@ theorem accelerationPath_intertwines (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t
     G.accelerationPath P (B.compLeftContinuous ℝ (Icc (0 : ℝ) T) f) t =
       A (D.accelerationPath P f t) := by
   change gramInverse (G.frame P t) G.lower G.lower_pos (G.frame_lower P t)
-    ((G.frame P t).adjoint (B (f t)-(2 : ℝ) • G.frameDerivative P t
-      (G.velocityPath P (pathLp T G.time_pos.le (B.compLeftContinuous ℝ (Icc (0 : ℝ) T) f)) t))) = _
+    (adjoint (𝕜 := ℝ) (E := CylinderL2 P V) (F := CylinderL2 P F) (G.frame P t)
+      (B (f t)-(2 : ℝ) • G.frameDerivative P t
+        (G.velocityPath P (pathLp T G.time_pos.le (B.compLeftContinuous ℝ (Icc (0 : ℝ) T) f))
+          t))) = _
   rw [continuousVelocity_intertwines P D G A B hQ hQ₁ hback hback₁ hH]
   exact EulerGramNaturality.acceleration_intertwines A B
     (D.frame P t) (D.frameDerivative P t) (G.frame P t) (G.frameDerivative P t)

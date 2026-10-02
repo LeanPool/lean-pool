@@ -65,7 +65,8 @@ def curlTensor : GradientTensor →L[ℝ] L2 :=
 theorem curlTensor_apply (G : GradientTensor) :
     curlTensor G = ∑ i : Fin 3,
       (coordinateL2 i (i+2) (G (i+1)) - coordinateL2 i (i+1) (G (i+2))) := by
-  simp [curlTensor]
+  simp only [curlTensor, Finset.sum_sub_distrib, sub_apply, sum_apply,
+    ContinuousLinearMap.comp_apply, PiLp.proj_apply]
 
 /-- A fixed universal contraction bound; sharpness is not needed for localization. -/
 theorem curlTensor_norm_le (G : GradientTensor) : ‖curlTensor G‖ ≤ 6 * ‖G‖ := by
@@ -171,6 +172,7 @@ theorem directional_integration_by_parts (f g : Test) (i : Fin 3) :
       -∫ x, ⟪(f : Space → Space) x, vectorPartial (g : Space → Space) i x⟫_ℝ := by
   have h := integral_bilinear_fderiv_right_eq_neg_left_of_integrable
     (μ := (volume : Measure Space)) (B := innerSL ℝ) (v := EuclideanSpace.single i 1)
+    (f := (f : Space → Space)) (g := (g : Space → Space))
     (test_inner_integrable (partialTest f i) g)
     (test_inner_integrable f (partialTest g i)) (test_inner_integrable f g)
     (fun x _ => (f.smooth.differentiable (by simp)).differentiableAt)

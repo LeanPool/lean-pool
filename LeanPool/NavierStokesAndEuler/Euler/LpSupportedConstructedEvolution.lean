@@ -106,19 +106,19 @@ theorem operatorPath_hasDerivWithinAt (T : ℝ) (hT : 0 ≤ T)
     HasDerivWithinAt (extendPath T hT (operatorPath μ S hS T A))
       (operatorPath μ S hS T A' t) (Icc (0 : ℝ) T) t := by
   have hfield := EulerBoundedFieldTimeDerivative.hasDerivWithinAt T hT A A' hpoint t t.property
-  have hlinear : HasFDerivAt (fun A : Field (α := α) (V := V) => operatorMap μ S hS A)
-      (operatorMap μ S hS) (extendPath (Y := Field (α := α) (V := V)) T hT A t) :=
+  have hlinear : HasFDerivAt (fun A : Field (α := α) (V := V) => operatorMap (V := V) μ S hS A)
+      (operatorMap (V := V) μ S hS) (extendPath (Y := Field (α := α) (V := V)) T hT A t) :=
     ContinuousLinearMap.hasFDerivAt (𝕜 := ℝ) (E := Field (α := α) (V := V))
       (F := supportedSpace (V := V) μ S hS →L[ℝ] supportedSpace (V := V) μ S hS)
-      (operatorMap μ S hS)
+      (operatorMap (V := V) μ S hS)
   have hd : HasDerivWithinAt
-      (fun s => operatorMap μ S hS (extendPath (Y := Field (α := α) (V := V)) T hT A s))
-      (operatorMap μ S hS (extendPath (Y := Field (α := α) (V := V)) T hT A' t))
+      (fun s => operatorMap (V := V) μ S hS (extendPath (Y := Field (α := α) (V := V)) T hT A s))
+      (operatorMap (V := V) μ S hS (extendPath (Y := Field (α := α) (V := V)) T hT A' t))
       (Icc (0 : ℝ) T) t := hlinear.comp_hasDerivWithinAt (t : ℝ) hfield
-  change HasDerivWithinAt (fun s => operatorMap μ S hS (A (projIcc 0 T hT s)))
-    (operatorMap μ S hS (A' t)) (Icc (0 : ℝ) T) t
-  change HasDerivWithinAt (fun s => operatorMap μ S hS (A (projIcc 0 T hT s)))
-    (operatorMap μ S hS (A' (projIcc 0 T hT t))) (Icc (0 : ℝ) T) t at hd
+  change HasDerivWithinAt (fun s => operatorMap (V := V) μ S hS (A (projIcc 0 T hT s)))
+    (operatorMap (V := V) μ S hS (A' t)) (Icc (0 : ℝ) T) t
+  change HasDerivWithinAt (fun s => operatorMap (V := V) μ S hS (A (projIcc 0 T hT s)))
+    (operatorMap (V := V) μ S hS (A' (projIcc 0 T hT t))) (Icc (0 : ℝ) T) t at hd
   rwa [projIcc_of_mem hT t.property] at hd
 
 variable (T : ℝ) (hT : 0 ≤ T)

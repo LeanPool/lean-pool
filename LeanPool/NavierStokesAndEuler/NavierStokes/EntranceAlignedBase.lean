@@ -2158,22 +2158,21 @@ private theorem shear_size_mul {a c : ℝ} (ha : a ≠ 0) :
     a * (a * (1 + (c / a) ^ 2)) = a ^ 2 + c ^ 2 := by
   field_simp
 
+private theorem shear_size_gap {a c : ℝ} (ha : 0 < a) (hv : 2 < a * (1 + (c / a) ^ 2)) :
+    2 * a < a ^ 2 + (-c) ^ 2 := by
+  rw [neg_sq, ← shear_size_mul ha.ne', mul_comm 2 a]
+  exact mul_lt_mul_of_pos_left hv ha
+
 theorem referenceCone_of_trueCone {F p₁ p₂ a c : ℝ} (hF : 0 < F)
     (h : TrueConeLoop.InTrueCone p₁ p₂ a c) :
-    PrimaryRepresentatives.ReferenceCone F (F • !₂[-a, -c]) := by
-  apply PrimaryRepresentatives.referenceCone_of_shear_coordinates hF h.1
-  have he := shear_size_mul (c := c) h.1.ne'
-  have hm := mul_lt_mul_of_pos_left h.2.1 h.1
-  nlinarith
+    PrimaryRepresentatives.ReferenceCone F (F • !₂[-a, -c]) :=
+  PrimaryRepresentatives.referenceCone_of_shear_coordinates hF h.1 (shear_size_gap h.1 h.2.1)
 
 /-- The square of the actual unstable eigenvector slope. -/
 theorem c0_sq_signedShear {F a c : ℝ} (hF : 0 < F) (ha : 0 < a)
     (hv : 2 < a * (1 + (c / a) ^ 2)) :
     PrimaryRepresentatives.c0 F (F • !₂[-a, -c]) ^ 2 = (a * (1 + (c / a) ^ 2) - 2) / 2 := by
-  have ho : 2 * a < a ^ 2 + (-c) ^ 2 := by
-    have he := shear_size_mul (c := c) ha.ne'
-    have hm := mul_lt_mul_of_pos_left hv ha
-    nlinarith
+  have ho : 2 * a < a ^ 2 + (-c) ^ 2 := shear_size_gap ha hv
   have hr := PrimaryRepresentatives.referenceCone_of_shear_coordinates hF ha ho
   have hn0 : ‖F • !₂[-a, -c]‖ ≠ 0 := norm_ne_zero_iff.mpr hr.shear_ne_zero
   have hn : ‖F • !₂[-a, -c]‖ ^ 2 = F ^ 2 * (a ^ 2 + c ^ 2) := by
@@ -2190,7 +2189,8 @@ theorem c0_sq_signedShear {F a c : ℝ} (hF : 0 < F) (ha : 0 < a)
   change -((2 * F * (F * -a)) / ‖F • !₂[-a, -c]‖ + ‖F • !₂[-a, -c]‖) /
       ((2 * F * (F * -a)) / ‖F • !₂[-a, -c]‖) = _
   field_simp [hF.ne', ha.ne', hn0]
-  nlinarith [hn]
+  rw [hn]
+  ring
 
 /-- Projection of the actual stress coordinates onto the normal. -/
 theorem stress_inner_normal (F τ p₁ p₂ a c : ℝ) (ha : a ≠ 0) :
@@ -2228,6 +2228,12 @@ private theorem cancel_signed_scale (q k j d : ℝ) (hk : k ≠ 0) :
     q * (k * j) / (k * d) = k * (q * j) / (k * d) := by ring
     _ = _ := mul_div_mul_left _ _ hk
 
+private theorem abs_slope_mul_lt {s v j d : ℝ} (hs : s ^ 2 = (v - 2) / 2) (hd : 0 < d)
+    (hquad : (v - 2) * j ^ 2 < 2 * d ^ 2) : |s * j| < d := by
+  refine abs_lt_of_sq_lt_sq ?_ hd.le
+  rw [mul_pow, hs, div_mul_eq_mul_div, div_lt_iff₀ two_pos]
+  exact hquad.trans_eq (mul_comm 2 _)
+
 /-- The true profile cone implies both primary cones, without assuming
 an eigenvector or target-cone inequality. -/
 theorem spectral_cones_of_trueCone {F τ p₁ p₂ a c : ℝ} (hF : 0 < F) (hτ : 0 < τ)
@@ -2240,15 +2246,9 @@ theorem spectral_cones_of_trueCone {F τ p₁ p₂ a c : ℝ} (hF : 0 < F) (hτ 
   have hk : 0 < τ * F * a / ‖F • !₂[-a, -c]‖ :=
     div_pos (mul_pos (mul_pos hτ hF) h.1) hn
   have hd : 0 < p₁ + p₂ * (c / a) - a * (1 + (c / a) ^ 2) := sub_pos.mpr hq.1
-  have hc := c0_sq_signedShear hF h.1 h.2.1
-  have hsq : (PrimaryRepresentatives.c0 F (F • !₂[-a, -c]) * (p₂ - p₁ * (c / a))) ^ 2 <
-      (p₁ + p₂ * (c / a) - a * (1 + (c / a) ^ 2)) ^ 2 := by
-    rw [mul_pow, hc]
-    nlinarith [hq.2]
   have habs : |PrimaryRepresentatives.c0 F (F • !₂[-a, -c]) * (p₂ - p₁ * (c / a))| <
-      p₁ + p₂ * (c / a) - a * (1 + (c / a) ^ 2) := by
-    nlinarith [sq_abs (PrimaryRepresentatives.c0 F (F • !₂[-a, -c]) * (p₂ - p₁ * (c / a))),
-      abs_nonneg (PrimaryRepresentatives.c0 F (F • !₂[-a, -c]) * (p₂ - p₁ * (c / a)))]
+      p₁ + p₂ * (c / a) - a * (1 + (c / a) ^ 2) :=
+    abs_slope_mul_lt (c0_sq_signedShear hF h.1 h.2.1) hd hq.2
   refine ⟨hr, ⟨?_, ?_⟩⟩
   · rw [stress_inner_normal F τ p₁ p₂ a c h.1.ne']
     exact mul_neg_of_neg_of_pos (neg_neg_of_pos hk) hd
@@ -2271,10 +2271,7 @@ theorem targetCone_of_signedShear {F a c : ℝ} (hF : 0 < F) (ha : 0 < a)
     (hquad : (a * (1 + (c / a) ^ 2) - 2) * (a * T 1 - c * T 0) ^ 2 <
       2 * (a * T 0 + c * T 1) ^ 2) :
     PrimaryRepresentatives.TargetCone F (F • !₂[-a, -c]) T := by
-  have ho : 2 * a < a ^ 2 + (-c) ^ 2 := by
-    have he := shear_size_mul (c := c) ha.ne'
-    have hm := mul_lt_mul_of_pos_left hv ha
-    nlinarith
+  have ho : 2 * a < a ^ 2 + (-c) ^ 2 := shear_size_gap ha hv
   have hr := PrimaryRepresentatives.referenceCone_of_shear_coordinates hF ha ho
   have hk : 0 < F / ‖F • !₂[-a, -c]‖ :=
     div_pos hF (norm_pos_iff.mpr hr.shear_ne_zero)
@@ -2287,14 +2284,9 @@ theorem targetCone_of_signedShear {F a c : ℝ} (hF : 0 < F) (ha : 0 < a)
     simp [PrimaryRepresentatives.transverseDirection, PrimaryRepresentatives.normalDirection,
       MovingFrameODE.quarterTurn, PiLp.inner_apply, Fin.sum_univ_two]
     ring
-  have hsq : (PrimaryRepresentatives.c0 F (F • !₂[-a, -c]) * (a * T 1 - c * T 0)) ^ 2 <
-      (a * T 0 + c * T 1) ^ 2 := by
-    rw [mul_pow, c0_sq_signedShear hF ha hv]
-    nlinarith only [hquad]
   have habs : |PrimaryRepresentatives.c0 F (F • !₂[-a, -c]) * (a * T 1 - c * T 0)| <
-      a * T 0 + c * T 1 := by
-    nlinarith [sq_abs (PrimaryRepresentatives.c0 F (F • !₂[-a, -c]) * (a * T 1 - c * T 0)),
-      abs_nonneg (PrimaryRepresentatives.c0 F (F • !₂[-a, -c]) * (a * T 1 - c * T 0))]
+      a * T 0 + c * T 1 :=
+    abs_slope_mul_lt (c0_sq_signedShear hF ha hv) hin hquad
   constructor
   · rw [hN]
     exact mul_neg_of_neg_of_pos (neg_neg_of_pos hk) hin
@@ -2319,8 +2311,8 @@ theorem targetCone_of_tilt {F a c : ℝ} (hF : 0 < F) (ha : 0 < a)
   · rw [hi]
     exact mul_pos (mul_pos ha hT) hin
   · rw [hi, ht]
-    have hm := mul_pos (sq_pos_of_pos (mul_pos ha hT)) hgap
-    nlinarith only [hm]
+    refine sub_pos.mp ((mul_pos (sq_pos_of_pos (mul_pos ha hT)) hgap).trans_eq ?_)
+    ring
 
 /-! ## The actual profile histories and stresses -/
 

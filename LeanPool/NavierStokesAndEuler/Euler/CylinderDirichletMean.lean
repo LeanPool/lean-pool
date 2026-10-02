@@ -40,31 +40,19 @@ variable (P : ℝ) [Fact (0 < P)] {U E : Type*}
   [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
 
 theorem fullOperatorMap_adjoint (Q : Space →ᵇ U →L[ℝ] E) :
-    (fullOperatorMap P Q).adjoint = fullOperatorMap P (adjointMap Q) := by
-  change (EulerLpOperatorField.full (liftMeasure P) (fieldLift P Q)).adjoint = _
-  rw [EulerLpOperatorField.full_adjoint]
+    (fullOperatorMap (E := U) (F := E) P Q).adjoint =
+      fullOperatorMap (E := E) (F := U) P (adjointMap (α := Space) (U := U) (E := E) Q) := by
+  rw [fullOperatorMap_apply, EulerLpOperatorField.full_adjoint]
   rfl
 
 theorem average_fullOperator_back (Q : Space →ᵇ U →L[ℝ] E) (u : CylinderL2 P U) :
-    fullOperatorMap P Q ((average (V := U) P).adjoint u) =
-      (average (V := E) P).adjoint (fullOperatorMap P Q u) := by
-  have hc (v : CylinderL2 P E) :
-      average (V := U) P ((fullOperatorMap P Q).adjoint v) =
-        (fullOperatorMap P Q).adjoint (average (V := E) P v) := by
-    rw [fullOperatorMap_adjoint]
-    exact average_fullOperator P (adjointMap Q) v
+    fullOperatorMap (E := U) (F := E) P Q ((average (V := U) P).adjoint u) =
+      (average (V := E) P).adjoint (fullOperatorMap (E := U) (F := E) P Q u) := by
   apply ext_inner_right ℝ
   intro v
-  calc
-    ⟪fullOperatorMap P Q ((average (V := U) P).adjoint u),v⟫_ℝ =
-        ⟪(average (V := U) P).adjoint u,(fullOperatorMap P Q).adjoint v⟫_ℝ :=
-      (adjoint_inner_right (fullOperatorMap P Q) _ _).symm
-    _ = ⟪u,average (V := U) P ((fullOperatorMap P Q).adjoint v)⟫_ℝ := adjoint_inner_left _ _ _
-    _ = ⟪u,(fullOperatorMap P Q).adjoint (average (V := E) P v)⟫_ℝ :=
-      congrArg (inner ℝ u) (hc v)
-    _ = ⟪fullOperatorMap P Q u,average (V := E) P v⟫_ℝ := adjoint_inner_right _ _ _
-    _ = ⟪(average (V := E) P).adjoint (fullOperatorMap P Q u),v⟫_ℝ :=
-      (adjoint_inner_left _ _ _).symm
+  have hc := average_fullOperator P (adjointMap (α := Space) (U := U) (E := E) Q) v
+  rw [← fullOperatorMap_adjoint] at hc
+  rw [adjoint_inner_left, ← adjoint_inner_right, adjoint_inner_left, hc, adjoint_inner_right]
 
 end EulerLpCylinderRectangular
 
@@ -80,7 +68,8 @@ variable (P : ℝ) [Fact (0 < P)] {T : ℝ} {U E : Type*}
   (D : Coefficients T U E)
 
 theorem velocityPath_average (f : TimeLp T (CylinderL2 P E)) (t : Icc (0 : ℝ) T) :
-    D.velocityPath P (timeLift T (average P) f) t = average P (D.velocityPath P f t) :=
+    D.velocityPath P (timeLift T (average (V := E) P) f) t =
+      average (V := U) P (D.velocityPath P f t) :=
   D.velocityPath_intertwines P D (average P) (average P)
     (fun t u => (average_fullOperator P (D.Q t) u).symm)
     (fun t u => (average_fullOperator P (D.Q₁ t) u).symm)
@@ -151,7 +140,7 @@ private theorem averagedPath_zero : pathAverage P f = 0 := by
 include hf in
 theorem velocityPath_mean_zero (t : Icc (0 : ℝ) T) :
     average P (D.velocityPath P (pathLp T D.time_pos.le f) t) = 0 := by
-  have hz : timeLift T (average P) (pathLp T D.time_pos.le f) = 0 := by
+  have hz : timeLift T (average (V := E) P) (pathLp T D.time_pos.le f) = 0 := by
     rw [← pathLp_timeLift]
     change pathLp T D.time_pos.le (pathAverage P f) = 0
     rw [averagedPath_zero P f hf]

@@ -117,12 +117,13 @@ variable {P : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]
 theorem contDiff_compose (A : P → C(K, E →L[ℝ] F)) (B : P → C(K, U →L[ℝ] E))
     {n : ℕ∞ω} (hA : ContDiff ℝ n A) (hB : ContDiff ℝ n B) :
     ContDiff ℝ n (fun x => compose (A x) (B x)) := by
-  have hLift : ContDiff ℝ n (fun x => compositionLift (U := U) (A x)) :=
+  have hLift : ContDiff ℝ n
+      (fun x => compositionLift (K := K) (U := U) (E := E) (F := F) (A x)) :=
     ContDiff.comp (g := compositionLift (K := K) (U := U) (E := E) (F := F)) (f := A)
       (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := n)
         (E := C(K,E →L[ℝ] F)) (F := C(K,(U →L[ℝ] E) →L[ℝ] U →L[ℝ] F))
         (compositionLift (K := K) (U := U) (E := E) (F := F))) hA
-  exact contDiff_apply (fun x => compositionLift (U := U) (A x)) B hLift hB
+  exact contDiff_apply _ B hLift hB
 
 /-- Pointwise composition has the same fixed factorial product constant. -/
 theorem compose_bound (A : P → C(K, E →L[ℝ] F)) (B : P → C(K, U →L[ℝ] E))
@@ -133,15 +134,15 @@ theorem compose_bound (A : P → C(K, E →L[ℝ] F)) (B : P → C(K, U →L[ℝ
     (n : ℕ) (x : P) :
     ‖iteratedFDeriv ℝ n (fun y => compose (A y) (B y)) x‖ ≤
       (3*C*D)*majorant R (c+d) n := by
-  have hLift : ContDiff ℝ ∞ (fun x => compositionLift (U := U) (A x)) :=
+  have hLift : ContDiff ℝ ∞
+      (fun x => compositionLift (K := K) (U := U) (E := E) (F := F) (A x)) :=
     ContDiff.comp (g := compositionLift (K := K) (U := U) (E := E) (F := F)) (f := A)
       (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := ∞)
         (E := C(K,E →L[ℝ] F)) (F := C(K,(U →L[ℝ] E) →L[ℝ] U →L[ℝ] F))
         (compositionLift (K := K) (U := U) (E := E) (F := F))) hA
   have hbLift := contraction_bound (compositionLift (K := K) (U := U) (E := E) (F := F))
     compositionLift_norm A hA R C hR hC c hbA
-  exact apply_bound (fun y => compositionLift (U := U) (A y)) B hLift hB
-    R C D hR hC hD c d hbLift hbB n x
+  exact apply_bound _ B hLift hB R C D hR hC hD c d hbLift hbB n x
 
 end Normed
 

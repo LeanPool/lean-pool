@@ -140,14 +140,14 @@ theorem packetBase_sign_short :
 theorem packetBase_strain_bound (t : Icc (0 : ℝ) T) (x : Space) :
     ‖(packetBaseParent β hβ ell hell hell1 T hT hTB).strain.field t x‖ ≤ initialCoefficientCost :=
         by
-  change ‖((initialParent β hβ ell hell hell1).restrictTime T hT hTB).strain.field t x‖ ≤ _
+  unfold packetBaseParent
   erw [Parent.restrictTime_strain]
   exact initial_strain_bound β hβ ell hell hell1 _ x
 
 theorem packetBase_curvature_bound (t : Icc (0 : ℝ) T) (x : Space) :
     ‖(packetBaseParent β hβ ell hell hell1 T hT hTB).curvature.field t x‖ ≤ initialCoefficientCost
         := by
-  change ‖((initialParent β hβ ell hell hell1).restrictTime T hT hTB).curvature.field t x‖ ≤ _
+  unfold packetBaseParent
   erw [Parent.restrictTime_curvature]
   exact initial_curvature_bound β hβ ell hell hell1 _ x
 

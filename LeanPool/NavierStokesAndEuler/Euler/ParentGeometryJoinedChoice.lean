@@ -267,14 +267,14 @@ theorem initialized_uniform_flow_and_shear :
     W S.H0 hδ hW S.H0_pos.le hH0
   have five := EulerPacketInitializedCost.initialized_five_costs_bound LM L NB BC δ ξ
     W S.H0 hδ hW S.H0_pos.le hH0
-  let Q := initializedUniformBudget M D hTime τ hτ hτT B δ hδ hδ1 ξ hs α hα
+  have hweighted := initializedUniformBudget_weighted M D hTime τ hτ hτT B δ hδ hδ1 ξ hs α hα
+    L NB LM Cagree W hW hprofile k hk hX hlog hold X hXs hF hdet
+  set Q := initializedUniformBudget M D hTime τ hτ hτT B δ hδ hδ1 ξ hs α hα
     L NB LM Cagree W hW hprofile k hk hX hlog hold X hXs hF hdet
   let Cw := EulerPacketInitializedCost.weightSize W
   let ρ0 := Q.initialRadius
   have hρ : 0 < ρ0 := Q.radius_pos
   have hCw : 0 < Cw := EulerPacketInitializedCost.weightSize_pos W hW0
-  have hweighted := initializedUniformBudget_weighted M D hTime τ hτ hτT B δ hδ hδ1 ξ hs α hα
-    L NB LM Cagree W hW hprofile k hk hX hlog hold X hXs hF hdet
   let C0 := velocity L'.R S.H0 BC.multiplierCost
   let Cn := normal L'.R S.H0 BC.multiplierCost
   let Ch := 6*N'.blockAmplitude *
@@ -365,7 +365,7 @@ theorem initialized_uniform_flow_and_shear :
   have hroot2 : 2 ≤ k^(1/4 : ℝ) := by linarith
   have hvErr := physical_error_le_inverse_quarter Kv Kerr k hk1 hKv_k hKerr_k hdelta hroot2
   have hpErr := physical_error_le_inverse_quarter Kp Kerr k hk1 hKp_k hKerr_k hdelta hroot2
-  refine ⟨hn,Q,G,rfl,rfl,rfl,rfl,?_,hweighted,?_,?_⟩
+  refine ⟨_,Q,G,rfl,rfl,rfl,rfl,?_,hweighted,?_,?_⟩
   · intro t z
     change graphConstraint k D.m₀
       (EulerMetricTransport.transportDirection k⁻¹ D.m₀ ((Q.packetCoefficient period V).field t
