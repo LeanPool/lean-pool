@@ -55,6 +55,7 @@ variable {W : Fragment α} {i j : α}
 /-- In the open case, the W-partner of boundary flag `i` is a
 surviving flag (it is neither `boundaryFlag i` nor
 `boundaryFlag j`). -/
+@[expose]
 def partnerSurvI
     (hopen : W.pairing (W.boundaryFlag i) ≠ W.boundaryFlag j) :
     SurvivingFlag W i j :=
@@ -64,6 +65,7 @@ def partnerSurvI
 
 /-- In the open case, the W-partner of boundary flag `j` is a
 surviving flag. -/
+@[expose]
 def partnerSurvJ
     (hopen : W.pairing (W.boundaryFlag i) ≠ W.boundaryFlag j) :
     SurvivingFlag W i j :=

@@ -40,6 +40,7 @@ noncomputable def toColour (n : ℕ)
 
 /-- Extending a colour-model endomorphism by one position:
 conjugation of the whisker through the step equivalence. -/
+@[expose]
 noncomputable def colourExtend (n : ℕ)
     (T : colourPower k ℓ n ⟶ colourPower k ℓ n) :
     colourPower k ℓ (n + 1) ⟶ colourPower k ℓ (n + 1) where

@@ -37,6 +37,7 @@ private theorem ma_smul_apply {G : Type*} (r : ℂ)
 universe u
 
 /-- The first-factor embedding of `S_n` into `S_n × S_n`. -/
+@[expose]
 noncomputable def extFstHom (n : ℕ) :
     Equiv.Perm (Fin n) →*
       Equiv.Perm (Fin n) × Equiv.Perm (Fin n) where
@@ -45,6 +46,7 @@ noncomputable def extFstHom (n : ℕ) :
   map_mul' σ σ' := by rw [Prod.mk_mul_mk, one_mul]
 
 /-- The second-factor embedding of `S_n` into `S_n × S_n`. -/
+@[expose]
 noncomputable def extSndHom (n : ℕ) :
     Equiv.Perm (Fin n) →*
       Equiv.Perm (Fin n) × Equiv.Perm (Fin n) where
@@ -53,6 +55,7 @@ noncomputable def extSndHom (n : ℕ) :
   map_mul' τ τ' := by rw [Prod.mk_mul_mk, one_mul]
 
 /-- The diagonal embedding of `S_n` into `S_n × S_n`. -/
+@[expose]
 noncomputable def diagHom (n : ℕ) :
     Equiv.Perm (Fin n) →*
       Equiv.Perm (Fin n) × Equiv.Perm (Fin n) where

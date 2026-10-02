@@ -850,6 +850,7 @@ private theorem rhsQs1_wf (s t u v : ℕ) :
 
 /-- The outer interface pairs, pulled into the right-embedded
 fold survivors. -/
+@[expose]
 noncomputable def rhsQs2 (s t u v : ℕ) :=
   Fragment.mapPairs
     (Fragment.inrFoldEquiv (α := Fin (s + t))
@@ -858,6 +859,7 @@ noncomputable def rhsQs2 (s t u v : ℕ) :=
 
 /-- The outer interface pairs, pulled across the associativity
 bridge. -/
+@[expose]
 noncomputable def rhsQs3 (s t u v : ℕ) :=
   Fragment.mapPairs (rhsBridgeEquiv s t u v).symm
     (rhsQs2 s t u v)

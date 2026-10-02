@@ -44,6 +44,7 @@ variable {D : Type u}
 
 /-- The unit word: the empty product of units in an ambient
 power. -/
+@[expose]
 noncomputable def unitWord [Category.{v} D] [MonoidalCategory D]
     (A : D) [MonObj A] :
     (n : ℕ) → (𝟙_ D ⟶ tensorPow D A n)
@@ -56,6 +57,7 @@ noncomputable def unitWord [Category.{v} D] [MonoidalCategory D]
 
 /-- Insert the monoid unit into every letter of an ambient
 power. -/
+@[expose]
 noncomputable def freeUnitPow [Category.{v} D] [MonoidalCategory D]
     (A : D) [MonObj A] (V : D) :
     (n : ℕ) → (tensorPow D V n ⟶ tensorPow D (A ⊗ V) n)

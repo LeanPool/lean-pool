@@ -36,6 +36,7 @@ variable {D : Type u}
 section StageCast
 
 /-- Transport of a chain stage along an equality of arities. -/
+@[expose]
 noncomputable def chainStageCast
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

@@ -329,6 +329,7 @@ noncomputable def colourPowerStep (k ℓ d : ℕ) :
 /-- **The colouring model of the iterated power**: the `d`-th
 monoidal power of the standard super space is the colouring
 model. -/
+@[expose]
 noncomputable def colourPowerEquiv (k ℓ : ℕ) : (d : ℕ) →
     SuperLinearEquiv (superPow (stdSuperPair k ℓ) d)
       (colourPower k ℓ d)

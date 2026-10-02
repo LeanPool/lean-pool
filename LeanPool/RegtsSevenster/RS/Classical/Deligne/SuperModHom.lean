@@ -57,6 +57,7 @@ def Hom.id (M : S.Mod) : Hom M M where
   map_actOO _ _ := rfl
 
 /-- Composition of morphisms of super modules. -/
+@[expose]
 def Hom.comp {M N P : S.Mod} (f : Hom M N) (g : Hom N P) :
     Hom M P where
   evenMap := g.evenMap.comp f.evenMap

@@ -122,7 +122,7 @@ theorem pairAlg_diagEmbed
           ((σ, σ) : Equiv.Perm (Fin n) × Equiv.Perm (Fin n))
           (1 : ℂ) := by
       change MonoidAlgebra.mapDomain _ (MonoidAlgebra.single σ 1) = _
-      exact MonoidAlgebra.mapDomain_single
+      exact MonoidAlgebra.mapDomain_single (R := ℂ)
     rw [hd, pairAlg_single, diagAlg_single]
   exact DFunLike.congr_fun hext x
 

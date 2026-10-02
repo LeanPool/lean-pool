@@ -93,6 +93,7 @@ def adjSign {k ℓ d : ℕ} (c : MixedColouring k ℓ d)
 
 /-- The Koszul-signed adjacent position swap on the colouring
 model. -/
+@[expose]
 noncomputable def colourSwap (k ℓ : ℕ) :
     (n : ℕ) → (i : ℕ) → i + 2 ≤ n →
       (colourPower k ℓ n ⟶ colourPower k ℓ n) :=

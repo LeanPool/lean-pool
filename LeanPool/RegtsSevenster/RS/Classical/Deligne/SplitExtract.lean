@@ -94,6 +94,7 @@ section Coeval
 
 /-- A base-linear insertion, bundled as a module morphism into
 the restricted regular module. -/
+@[expose]
 noncomputable def insHom
     [Category.{v} D] [MonoidalCategory D] (A : D) [MonObj A] {M' : Mod D A}
     (B : D) [MonObj B] (φ : A ⟶ B) [IsMonHom φ] (w : M'.X ⟶ B)

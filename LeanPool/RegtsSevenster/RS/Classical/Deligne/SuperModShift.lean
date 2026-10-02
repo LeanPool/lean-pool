@@ -31,6 +31,7 @@ namespace SuperCommAlgebra.Mod
 variable {S : SuperCommAlgebra.{u, u'}}
 
 /-- **The parity shift** of a super module. -/
+@[expose]
 def shift (M : S.Mod) : S.Mod where
   even := M.odd
   odd := M.even

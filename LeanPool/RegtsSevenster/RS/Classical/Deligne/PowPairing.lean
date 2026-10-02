@@ -193,6 +193,7 @@ the step.
 section PairStep
 
 /-- The generic recursion step of the power pairing. -/
+@[expose]
 noncomputable def pairStep
     [Category.{v} D] [MonoidalCategory D] [BraidedCategory D]
     [HasCoequalizers D]

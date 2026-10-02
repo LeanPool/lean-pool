@@ -155,6 +155,7 @@ collapses to a single one.
 
 /-- **The dual of one leg's colour**: itself on an even colour, the
 partner on an odd one. -/
+@[expose]
 noncomputable def dualLeg {k ℓ : ℕ} :
     (Fin k ⊕ Fin (2 * ℓ)) → (Fin k ⊕ Fin (2 * ℓ))
   | Sum.inl a => Sum.inl a
@@ -202,6 +203,7 @@ theorem superForm_eq_zero_of_ne_dualState {k ℓ t : ℕ}
 
 /-- **One leg's form against its own dual**: `1` on an even colour,
 and on an odd one the negated dual sign — RS21's `⟨f_c, g_c⟩`. -/
+@[expose]
 noncomputable def legSelf {k ℓ : ℕ} :
     (Fin k ⊕ Fin (2 * ℓ)) → ℂ
   | Sum.inl _ => 1

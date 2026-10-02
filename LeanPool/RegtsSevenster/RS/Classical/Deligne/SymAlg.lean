@@ -477,6 +477,7 @@ noncomputable def modPowZero
   modPowTriv A X (by omega)
 
 /-- **The singleton module power is the module.** -/
+@[expose]
 noncomputable def modPowOne
     [Category.{v} D] [MonoidalCategory D] [BraidedCategory D] (A : D)
     [MonObj A] (X : D) [ModObj A X] [Preadditive D] [HasFiniteBiproducts D]

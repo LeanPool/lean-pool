@@ -46,6 +46,7 @@ noncomputable def symplecticJ (ℓ : ℕ) (c d : Fin (2 * ℓ)) : ℂ :=
 
 /-- **The super form on one leg**: the identity on the even
 colours, `J` on the odd ones, zero across. -/
+@[expose]
 noncomputable def superLeg {k ℓ : ℕ} :
     (Fin k ⊕ Fin (2 * ℓ)) → (Fin k ⊕ Fin (2 * ℓ)) → ℂ
   | Sum.inl a, Sum.inl b => if a = b then 1 else 0

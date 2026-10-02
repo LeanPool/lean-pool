@@ -73,11 +73,13 @@ theorem relInFlagsAt_coe {κ₀ : F.RelTransitionSystem}
 /-! ## The odd-colour pair at an internal flag -/
 
 /-- The flag's own odd colour. -/
+@[expose]
 noncomputable def pairA (φ : F.CoreOddColouring ℓ)
     (f : {f : W.Flag // f ∈ F.internalFlags}) : Fin (2 * ℓ) :=
   φ.val ⟨f.val, F.internalFlags_subset_coreFlags f.prop⟩
 
 /-- The odd colour opposite the flag's transition partner. -/
+@[expose]
 noncomputable def pairB {κ₀ : F.RelTransitionSystem}
     (φ : F.CoreOddColouring ℓ)
     (f : {f : W.Flag // f ∈ F.internalFlags}) : Fin (2 * ℓ) :=

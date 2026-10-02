@@ -149,6 +149,7 @@ noncomputable def chainDelta
     chainMul A M M' k 0
 
 /-- The stage units of the splitting chain. -/
+@[expose]
 noncomputable def chainUnitStage
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

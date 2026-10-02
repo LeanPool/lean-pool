@@ -969,6 +969,7 @@ lemma modTensorAct_map [Category.{v} D] [MonoidalCategory D] (A : D) [MonObj A]
   rw [reassoc_of% hpre]
 
 /-- Functoriality, as a morphism of bundled modules. -/
+@[expose]
 noncomputable def modTensorMapMod
     [Category.{v} D] [MonoidalCategory D] (A : D) [MonObj A]
     [BraidedCategory D] {M : Mod D A} {M' : Mod D A} {N : Mod D A}

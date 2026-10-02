@@ -31,6 +31,7 @@ variable {D : Type u}
 
 /-- **The sandwich tower**: iterate tensoring with the pair
 `M ⊗ M'` on the left. -/
+@[expose]
 noncomputable def sandwichTower
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]
