@@ -394,6 +394,7 @@ theorem stageCell_properFace
     omega
 
 /-- Cast a maximal-simplex vertex index to the stage index `Fin p`. -/
+@[expose]
 def stageIndex (hp : Nat.Prime p) (i : Fin (p - 1 + 1)) : Fin p :=
   FoxNeuwirthChain.maximalIndexCast hp i
 

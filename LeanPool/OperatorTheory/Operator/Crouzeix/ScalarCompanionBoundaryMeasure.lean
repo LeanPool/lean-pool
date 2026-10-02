@@ -47,6 +47,7 @@ open scoped ComplexConjugate Interval Real
 /-- The real scalar double-layer density based at `xi`.  At the (measure-zero)
 parameter values where the boundary trace equals `xi`, Mathlib's inverse at
 zero makes this definition zero. -/
+@[expose]
 noncomputable def crouzeixBoundaryDoubleLayerDensity
     (Omega : SmoothJordanDomain) (xi : ℂ) (t : ℝ) : ℝ :=
   (deriv Omega.boundaryParam t *

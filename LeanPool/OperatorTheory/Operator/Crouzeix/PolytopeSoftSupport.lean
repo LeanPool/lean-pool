@@ -29,17 +29,20 @@ open Complex Set
 open scoped ContDiff
 
 /-- The real support of `z` in the unit direction of angle `theta`. -/
+@[expose]
 noncomputable def polytopeDirectionalValue (z : ℂ) (theta : ℝ) : ℝ :=
   z.re * Real.cos theta + z.im * Real.sin theta
 
 /-- The exponential partition sum used to smooth the support function of a
 finite point set. -/
+@[expose]
 noncomputable def polytopeSoftPartition
     (u : Finset ℂ) (delta theta : ℝ) : ℝ :=
   ∑ z ∈ u, Real.exp (polytopeDirectionalValue z theta / delta)
 
 /-- The unnormalized log-sum-exp smoothing of the finite directional support
 function. -/
+@[expose]
 noncomputable def polytopeSoftSupport
     (u : Finset ℂ) (delta theta : ℝ) : ℝ :=
   delta * Real.log (polytopeSoftPartition u delta theta)

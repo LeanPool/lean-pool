@@ -51,6 +51,7 @@ noncomputable instance (hp : Nat.Prime p) (N : Nat) : DecidableEq (Cell hp N) :=
 
 /-- Reinterpret a `Delta p` coordinate as the domain `Delta ((p - 1) + 1)` of the local cylinder.
 Primality gives `0 < p`, hence `(p - 1) + 1 = p`. -/
+@[expose]
 noncomputable def localWeight
     (hp : Nat.Prime p) (w : Delta p) : Delta ((p - 1) + 1) := by
   rw [Nat.sub_add_cancel hp.pos]

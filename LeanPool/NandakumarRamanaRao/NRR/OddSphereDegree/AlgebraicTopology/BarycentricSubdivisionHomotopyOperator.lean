@@ -114,6 +114,7 @@ theorem homotopyFromUniversal_generator (R : Type) [CommRing R] (X : TopCat.{0})
 /-! ## 4. The universal homotopy chain `T_n(ι_n)` -/
 
 /-- The recursively coned universal chain witnessing homotopy to barycentric subdivision. -/
+@[expose]
 noncomputable def barycentricHomotopyUniversal (R : Type) [CommRing R] (n : ℕ) :
     singularChainGroup R (TopCat.of (Delta n)) (n + 1) :=
   match n with
@@ -137,6 +138,7 @@ noncomputable def barycentricHomotopyUniversal (R : Type) [CommRing R] (n : ℕ)
 /-! ## 5. The degree-wise homotopy operator -/
 
 /-- The degree-raising chain homotopy map induced by the universal subdivision chain. -/
+@[expose]
 noncomputable def barycentricSubdivisionHomotopyLinearMap (R : Type) [CommRing R]
     (X : TopCat.{0}) (n : ℕ) :
     singularChainGroup R X n ⟶ singularChainGroup R X (n + 1) :=

@@ -87,6 +87,7 @@ namespace NRR.Geometry.ConvexBody
 open MeasureTheory
 
 /-- **Area** of a planar convex body: the (real‑valued) Lebesgue measure of its carrier. -/
+@[expose]
 noncomputable def area (K : ConvexBody Plane) : ℝ :=
   (volume (K : Set Plane)).toReal
 

@@ -71,6 +71,7 @@ noncomputable def polytopeSoftSupportSecond
 
 /-- A strictly rounded support function, obtained by adding a positive
 constant to the soft support. -/
+@[expose]
 noncomputable def polytopeRoundedSupport
     (u : Finset ℂ) (delta rho theta : ℝ) : ℝ :=
   polytopeSoftSupport u delta theta + rho
