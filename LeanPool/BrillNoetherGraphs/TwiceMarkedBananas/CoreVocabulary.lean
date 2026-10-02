@@ -63,6 +63,7 @@ def numEdges (G : CFGraph) (x y : G.V) : ℕ :=
   Multiset.card (G.edges.filter fun e => e = (x, y) ∨ e = (y, x))
 
 /-- Connectivity in cut form. -/
+@[expose]
 def graphConnected (G : CFGraph) : Prop :=
   ∀ S : Finset G.V, (∃ x y : G.V, x ∈ S ∧ y ∉ S) →
     ∃ x ∈ S, ∃ y ∉ S, numEdges G x y > 0
@@ -130,10 +131,12 @@ def effOfDegree (G : CFGraph) (d : ℤ) : Set (CFDiv G) :=
   {E | effective E ∧ deg E = d}
 
 /-- Baker--Norine rank at least `r`, in subtraction-test form. -/
+@[expose]
 def rankGeq (G : CFGraph) (D : CFDiv G) (r : ℤ) : Prop :=
   ∀ E ∈ effOfDegree G r, winnable G (D - E)
 
 /-- Exact rank as adjacent lower-bound tests. -/
+@[expose]
 def rankEq (G : CFGraph) (D : CFDiv G) (r : ℤ) : Prop :=
   rankGeq G D r ∧ ¬ rankGeq G D (r + 1)
 

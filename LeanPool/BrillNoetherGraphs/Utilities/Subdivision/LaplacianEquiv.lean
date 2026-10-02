@@ -68,10 +68,12 @@ def symm (equivalence : LaplacianEquiv G H) : LaplacianEquiv H G where
         (equivalence.toEquiv.symm x) (equivalence.toEquiv.symm y)).symm
 
 /-- Transport a divisor forward along the vertex equivalence. -/
+@[expose]
 def mapDiv (equivalence : LaplacianEquiv G H) (D : CFDiv G) : CFDiv H :=
   fun y => D (equivalence.toEquiv.symm y)
 
 /-- Transport a firing script forward along the vertex equivalence. -/
+@[expose]
 def mapScript (equivalence : LaplacianEquiv G H)
     (script : firingScript G) : firingScript H :=
   fun y => script (equivalence.toEquiv.symm y)

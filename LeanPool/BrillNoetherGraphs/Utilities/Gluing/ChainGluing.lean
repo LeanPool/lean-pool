@@ -63,6 +63,7 @@ namespace MarkedGraph
 /-- Glue the right mark of `M` to the left mark of `N`.  The result keeps the
 left mark of `M` and the right mark of `N`, which is the marking the Demazure
 composition theorem produces. -/
+@[expose]
 def wedge (M N : MarkedGraph.{u}) : MarkedGraph.{u} where
   graph := vertexWedge M.graph N.graph M.right N.left
   left := Sum.inl M.left

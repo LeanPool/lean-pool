@@ -270,6 +270,7 @@ structure Conditions (n deg : ℕ) (M : ℕ → ℕ → ℕ) : Prop where
 /-- The strict-upper-triangular row list of `M`: `rowsOf M i len` lists the
 rows of vertices `i, …, i + len - 1`, each row recording the multiplicities to
 the strictly later vertices in that range. -/
+@[expose]
 def rowsOf (M : ℕ → ℕ → ℕ) : ℕ → ℕ → List (List ℕ)
   | _, 0 => []
   | i, len + 1 =>

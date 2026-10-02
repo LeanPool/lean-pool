@@ -65,6 +65,7 @@ with no edges between them.
 
 This is equivalent to saying that there is a path between any two vertices, but the
 partition formulation is more convenient in this repository. -/
+@[expose]
 def graphConnected (G : CFGraph) : Prop :=
   ∀ S : Finset G.V, (∃ (v w : G.V), v ∈ S ∧ w ∉ S) →
     (∃ v ∈ S, ∃ w ∉ S, numEdges G v w > 0)

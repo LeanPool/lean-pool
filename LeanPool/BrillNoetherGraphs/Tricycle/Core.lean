@@ -131,6 +131,7 @@ theorem slot_classification (e : Fin 15) :
 
 /-- A subdivision `H` of the minimal tricycle, at an arbitrary positive length
 vector. -/
+@[expose]
 def tricycleSpec (length : Fin 15 → ℕ) (hpos : ∀ e, 0 < length e) : Spec 7 15 :=
   Spec.ofCore tricycleCore (by omega) tricycleCore_loopless length hpos
 

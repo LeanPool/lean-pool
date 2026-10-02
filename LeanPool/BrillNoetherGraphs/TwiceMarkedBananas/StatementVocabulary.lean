@@ -501,6 +501,7 @@ def effectiveDegreeOneTwistResidues
 
 open Classical in
 /-- Correction term in Lemma 4.10. -/
+@[expose]
 noncomputable def invTauCorrection (M : TwiceMarked) (D : CFDiv M.graph) : ℤ :=
   if (∃ b : ℤ, linearEquiv M.graph (degreeTwistInt M D 0 b) 0) ∧
       linearEquiv M.graph (oneChip M.u + oneChip M.v)
