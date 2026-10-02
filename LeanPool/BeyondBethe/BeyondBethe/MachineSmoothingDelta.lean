@@ -342,7 +342,7 @@ theorem machineSmoothingDeltaCode_encode {n : ℕ}
     rw [ite_eq_right h, min_eq_right hright]
     simp [rawRatRowsSupportProduct_eq_rationalSupportFloor]
 
-@[simp] theorem machineSmoothingDeltaCode_rational {n : ℕ}
+theorem machineSmoothingDeltaCode_rational {n : ℕ}
     (A : Matrix (Fin n) (Fin n) ℚ) (χ : ℚ) :
     machineSmoothingDeltaCode
         (pair (rawRatBinaryCode (rawRatOfRat χ))
