@@ -22,6 +22,7 @@ namespace RS
 open CategoryTheory CategoryTheory.Idempotents
 
 /-- The underlying-morphism map is additive. -/
+@[expose]
 def karoubiHomAddHom {C : Type*} [Category C] [Preadditive C]
     (P Q : Karoubi C) : (P ⟶ Q) →+ (P.X ⟶ Q.X) where
   toFun g := g.f
@@ -29,6 +30,7 @@ def karoubiHomAddHom {C : Type*} [Category C] [Preadditive C]
   map_add' _ _ := rfl
 
 /-- Scaling a Karoubi morphism through its underlying morphism. -/
+@[expose]
 noncomputable instance karoubiHomSMul {C : Type*} [Category C]
     [Preadditive C] [Linear ℂ C] (P Q : Karoubi C) :
     SMul ℂ (P ⟶ Q) where

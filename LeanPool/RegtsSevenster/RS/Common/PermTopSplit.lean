@@ -32,6 +32,7 @@ open Equiv
 variable {n : ℕ}
 
 /-- Where a permutation sends the top slot. -/
+@[expose]
 def topImage (σ : Perm (Fin (n + 1))) : Fin (n + 1) := σ (Fin.last n)
 
 /-- The identity leaves the top slot alone. -/

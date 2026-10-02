@@ -766,6 +766,7 @@ free-circle factor `(k − 2ℓ)^circles` times the sum over Eulerian subsets. -
 
 /-- The data of a `(k, 2ℓ)` mixed vertex functional: a value for
 each multiset of even colours and set of odd colours. -/
+@[expose]
 def MixedFunctional (k ℓ : ℕ) : Type :=
   Multiset (Fin k) → Finset (Fin (2 * ℓ)) → ℂ
 
@@ -840,6 +841,7 @@ theorem EdgeSubset.pairing_not_mem (F : EdgeSubset W) {f : W.Flag}
 
 /-- Even colourings of the non-participating edges: pairing-constant
 colours on the flags outside the subset. -/
+@[expose]
 def EdgeSubset.EvenColouring (F : EdgeSubset W) (k : ℕ) : Type :=
   {ψ : {f : W.Flag // f ∉ F.flags} → Fin k //
     ∀ f : {f : W.Flag // f ∉ F.flags},
@@ -847,6 +849,7 @@ def EdgeSubset.EvenColouring (F : EdgeSubset W) (k : ℕ) : Type :=
 
 /-- Odd colourings of the participating edges: pairing-constant
 colours on the flags of the subset. -/
+@[expose]
 def EdgeSubset.OddColouring (F : EdgeSubset W) (ℓ : ℕ) : Type :=
   {φ : {f : W.Flag // f ∈ F.flags} → Fin (2 * ℓ) //
     ∀ f : {f : W.Flag // f ∈ F.flags},
@@ -1086,20 +1089,20 @@ structure Hom (V W : SuperVect) where
   oddMap : V.odd →ₗ[ℂ] W.odd
 
 /-- The identity morphism on a super vector space. -/
-@[simp]
-@[expose]
+@[simp, expose]
 def Hom.id (V : SuperVect) : Hom V V where
   evenMap := LinearMap.id
   oddMap := LinearMap.id
 
 /-- Composition of super-vector-space morphisms. -/
-@[simp]
+@[simp, expose]
 def Hom.comp {V W X : SuperVect} (g : Hom W X) (f : Hom V W) : Hom V X where
   evenMap := g.evenMap.comp f.evenMap
   oddMap := g.oddMap.comp f.oddMap
 
 /-- Super vector spaces and grading-preserving maps form a
 category. -/
+@[expose]
 instance instCategoryStruct : CategoryStruct SuperVect where
   Hom := Hom
   id := Hom.id
@@ -1123,6 +1126,7 @@ instance instCategory : Category SuperVect where
 /-- The graded tensor product of two super vector spaces.  The even
 component is `(V.even ⊗ W.even) × (V.odd ⊗ W.odd)` and the odd
 component is `(V.even ⊗ W.odd) × (V.odd ⊗ W.even)`. -/
+@[expose]
 def tensorObj (V W : SuperVect) : SuperVect where
   even := (V.even ⊗[ℂ] W.even) × (V.odd ⊗[ℂ] W.odd)
   odd := (V.even ⊗[ℂ] W.odd) × (V.odd ⊗[ℂ] W.even)
@@ -1169,6 +1173,7 @@ def koszulEvenAux (A B C D : Type*)
 
 /-- Module-level odd Koszul block: swaps the two summands and
 applies `TensorProduct.comm` on each (no sign). -/
+@[expose]
 def koszulOddAux (A B C D : Type*)
     [AddCommGroup A] [Module ℂ A] [AddCommGroup B] [Module ℂ B]
     [AddCommGroup C] [Module ℂ C] [AddCommGroup D] [Module ℂ D] :
@@ -1180,6 +1185,7 @@ def koszulOddAux (A B C D : Type*)
 /-- The even component of the Koszul braiding: applies
 `TensorProduct.comm` on the even⊗even block and
 *minus* `TensorProduct.comm` on the odd⊗odd block. -/
+@[expose]
 def koszulBraidingEven (V W : SuperVect) :
     (V.even ⊗[ℂ] W.even) × (V.odd ⊗[ℂ] W.odd) →ₗ[ℂ]
     (W.even ⊗[ℂ] V.even) × (W.odd ⊗[ℂ] V.odd) :=
@@ -1188,6 +1194,7 @@ def koszulBraidingEven (V W : SuperVect) :
 /-- The odd component of the Koszul braiding: swaps the two
 blocks and applies `TensorProduct.comm` on each (no sign,
 since even⊗odd and odd⊗even contribute (−1)^(0·1) = 1). -/
+@[expose]
 def koszulBraidingOdd (V W : SuperVect) :
     (V.even ⊗[ℂ] W.odd) × (V.odd ⊗[ℂ] W.even) →ₗ[ℂ]
     (W.even ⊗[ℂ] V.odd) × (W.odd ⊗[ℂ] V.even) :=
@@ -1196,6 +1203,7 @@ def koszulBraidingOdd (V W : SuperVect) :
 /-- The Koszul braiding morphism `V ⊗ W → W ⊗ V` in SuperVect,
 carrying the sign (−1)^(p·q) on the swap of homogeneous elements
 of parity p and q. -/
+@[expose]
 def koszulBraiding (V W : SuperVect) :
     Hom (tensorObj V W) (tensorObj W V) := by
   refine ⟨?_, ?_⟩
@@ -1240,6 +1248,7 @@ theorem koszulBraidingOdd_pair (V W : SuperVect)
 /-! ### Koszul braiding as a categorical isomorphism -/
 
 /-- The Koszul braiding as an isomorphism in SuperVect. -/
+@[expose]
 def koszulBraidingIso (V W : SuperVect) :
     tensorObj V W ≅ tensorObj W V where
   hom := koszulBraiding V W
@@ -1250,6 +1259,7 @@ def koszulBraidingIso (V W : SuperVect) :
 /-! ### Left and right unitors -/
 
 /-- The left unitor isomorphism `𝟙_ ⊗ V ≅ V`. -/
+@[expose]
 def leftUnitor (V : SuperVect) :
     tensorObj tensorUnit V ≅ V where
   hom := by
@@ -1292,6 +1302,7 @@ def leftUnitor (V : SuperVect) :
       apply LinearMap.ext; intro x; simp
 
 /-- The right unitor isomorphism `V ⊗ 𝟙_ ≅ V`. -/
+@[expose]
 def rightUnitor (V : SuperVect) :
     tensorObj V tensorUnit ≅ V where
   hom := by
@@ -1386,6 +1397,7 @@ def assocAux (A₁ A₂ B₁ B₂ C₁ C₂ : Type*)
   s1 ≪≫ₗ s2 ≪≫ₗ s3 ≪≫ₗ s4
 
 /-- The even component of the associator equivalence. -/
+@[expose]
 def assocEvenEquiv (V W X : SuperVect) :
     ((((V.even ⊗[ℂ] W.even) × (V.odd ⊗[ℂ] W.odd)) ⊗[ℂ] X.even) ×
     (((V.even ⊗[ℂ] W.odd) × (V.odd ⊗[ℂ] W.even)) ⊗[ℂ] X.odd)) ≃ₗ[ℂ]
@@ -1395,6 +1407,7 @@ def assocEvenEquiv (V W X : SuperVect) :
 
 /-- The odd component of the associator equivalence: `assocAux`
 with the roles of the two `X`-slots swapped. -/
+@[expose]
 def assocOddEquiv (V W X : SuperVect) :
     ((((V.even ⊗[ℂ] W.even) × (V.odd ⊗[ℂ] W.odd)) ⊗[ℂ] X.odd) ×
     (((V.even ⊗[ℂ] W.odd) × (V.odd ⊗[ℂ] W.even)) ⊗[ℂ] X.even)) ≃ₗ[ℂ]
@@ -1405,6 +1418,7 @@ def assocOddEquiv (V W X : SuperVect) :
 /-- The associator isomorphism `(V ⊗ W) ⊗ X ≅ V ⊗ (W ⊗ X)` in SuperVect.
 Distributes tensor over products, reassociates each block, and
 permutes the summands back into the canonical grading order. -/
+@[expose]
 def associator (V W X : SuperVect) :
     tensorObj (tensorObj V W) X ≅ tensorObj V (tensorObj W X) where
   hom := by
@@ -1965,6 +1979,7 @@ theorem koszulBraiding_oddMap (V W : SuperVect) :
 
 /-- The monoidal category structure on SuperVect: graded tensor
 product, ℂ unit, standard associator/unitors. -/
+@[expose]
 instance instMonoidalCategoryStruct : MonoidalCategoryStruct SuperVect where
   tensorObj := tensorObj
   whiskerLeft := fun (X : SuperVect) {Y₁ : SuperVect} {Y₂ : SuperVect}
@@ -2278,6 +2293,7 @@ instance {V W : SuperVect} : SMul ℤ (V ⟶ W) :=
 
 /-- The components of a morphism determine it; the additive and
 module structures are pulled back componentwise. -/
+@[expose]
 def homComponents {V W : SuperVect} (f : V ⟶ W) :
     (V.even →ₗ[ℂ] W.even) × (V.odd →ₗ[ℂ] W.odd) :=
   (f.evenMap, f.oddMap)
