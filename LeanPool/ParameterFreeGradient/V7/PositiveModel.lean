@@ -32,6 +32,7 @@ namespace V7
   O3.MinimizerSet oracle.value
 
 /-- The `ℓp` distance from the initial point to the objective's minimizer set. -/
+@[expose]
 noncomputable def minimizerDistance (p : ℝ) (oracle : PairOracle d)
     (x0 : Point d) : ℝ :=
   O3.minimizerDistance p oracle.value x0

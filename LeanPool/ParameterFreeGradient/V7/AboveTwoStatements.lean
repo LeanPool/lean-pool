@@ -164,6 +164,7 @@ structure AbovePrimalPhaseData (p : ℝ) (d n : ℕ) where
   trace : List (Observation d)
 
 /-- The above-two primal coefficient conditions, initial state, and step recurrences. -/
+@[expose]
 def AbovePrimalPhaseDynamics (data : AbovePrimalPhaseData p d n) : Prop :=
   1 ≤ n ∧ AboveCoefficientAssumptions n data.u data.dw data.alpha data.c data.b ∧
   data.s 0 = 0 ∧ data.v 0 = 0 ∧ data.x 0 = 0 ∧

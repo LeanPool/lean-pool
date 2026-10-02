@@ -98,6 +98,7 @@ noncomputable def euclideanEstimateConstant {d : ℕ}
   euclideanEstimateFunction P M k (euclideanEstimateMinimizer P M k)
 
 /-- The upper-model guard between the estimate query and the next accelerated iterate. -/
+@[expose]
 noncomputable def euclideanEstimateGuard {d : ℕ}
     (P : AdmissibleInstance d 2) (M : ℝ) (k : ℕ) : GuardCheck :=
   let atY := euclideanEstimateObservation P M k
@@ -108,6 +109,7 @@ noncomputable def euclideanEstimateGuard {d : ℕ}
     ((lpNorm 2 (xNext - atY.point)) ^ (2 : ℕ)) M
 
 /-- Every Euclidean upper-model guard before the given horizon is accepted. -/
+@[expose]
 def EuclideanEstimateAccepted {d : ℕ}
     (P : AdmissibleInstance d 2) (M : ℝ) (m : ℕ) : Prop :=
   ∀ k, k < m → (euclideanEstimateGuard P M k).Holds

@@ -251,6 +251,7 @@ theorem finiteDataOGMGTrace_final_iterate_queried {d n : ℕ}
   exact ⟨last, List.mem_finRange last, rfl⟩
 
 /-- Scalar denominator step used at the end of the guarded Euclidean-gap proof. -/
+@[expose]
 noncomputable def EuclideanGapScalarStatement : Prop :=
   ∀ (M D fGap A : ℝ) (m : ℕ),
     0 < M → 0 ≤ D → 1 ≤ m →

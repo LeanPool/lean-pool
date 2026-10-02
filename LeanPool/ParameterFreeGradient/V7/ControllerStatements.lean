@@ -44,6 +44,7 @@ structure AnchorRunData (d : ℕ) where
       lpNorm (conjugateExponent p) g
 
 /-- The candidate anchor achieves the required decrease from the initial point. -/
+@[expose]
 def AnchorTest (oracle : PairOracle d) (x0 : Point d) (G D : ℝ)
     (y : Point d) : Prop :=
   oracle.value y ≤ oracle.value x0 - G * D / 2

@@ -74,6 +74,7 @@ structure GuardCheck where
 @[expose] def GuardCheck.Holds (check : GuardCheck) : Prop := 0 ≤ check.margin
 
 /-- Margin for `f(y) ≤ f(x) + linear + (M/2) * stepSq`. -/
+@[expose]
 noncomputable def upperModelGuard (fx fy linear stepSq M : ℝ) : GuardCheck :=
   { kind := .upperModel
     margin := fx + linear + (M / 2) * stepSq - fy }

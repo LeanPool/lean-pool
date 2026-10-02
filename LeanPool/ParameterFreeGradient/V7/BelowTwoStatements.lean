@@ -215,6 +215,7 @@ identity. -/
   ∀ k ≤ n, A k = B k
 
 /-- Source carrier for `lem:below-identity` (B06--B07). -/
+@[expose]
 noncomputable def BelowPointwiseResidualIdentityStatement : Prop :=
   ∀ (p : ℝ), 1 < p → p < 2 → ∀ (d n : ℕ), 1 ≤ n →
     ∀ (u dw : ScalarSeq) (alpha c b : ScalarMatrix)
