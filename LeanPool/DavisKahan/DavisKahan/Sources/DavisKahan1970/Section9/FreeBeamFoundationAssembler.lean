@@ -63,19 +63,16 @@ structure BeamFoundationCompletionData where
     ⟪traceModel.freeFourthAmbient x, (y : H)⟫_ℂ =
       ⟪(x : H), traceModel.freeFourthAmbient y⟫_ℂ
   selfAdjoint :
-    _root_.IsSelfAdjoint (traceModel.toPartialMapOfGraphNorm free_dense
-      graphConstant_pos graph_lower_bound)
+    _root_.IsSelfAdjoint (traceModel.toPartialMapOfGraphNorm)
   graph_compact :
     Abstract.SequentiallyCompactGraphEmbedding
-      (traceModel.toPartialMapOfGraphNorm free_dense
-        graphConstant_pos graph_lower_bound)
+      (traceModel.toPartialMapOfGraphNorm)
   /-- An isometric identification of the affine kernel with complex two-dimensional Euclidean
   space. -/
   affineKernelEquiv :
     EuclideanSpace ℂ (Fin 2) ≃ₗᵢ[ℂ]
       partialMapKernel
-        (traceModel.toPartialMapOfGraphNorm free_dense
-          graphConstant_pos graph_lower_bound)
+        (traceModel.toPartialMapOfGraphNorm)
   /-- Localization and minimality data for the first positive characteristic root. -/
   rootLocalization : PositiveRootLocalization
   /-- The first positive spectral value, equal to the fourth power of the localized root. -/
@@ -83,12 +80,10 @@ structure BeamFoundationCompletionData where
   firstPositiveSpectralValue_eq :
     firstPositiveSpectralValue = rootLocalization.firstPositiveRoot ^ 4
   spectrum_nonnegative :
-    TauCeti.LinearPMap.realSpectrum (traceModel.toPartialMapOfGraphNorm
-      free_dense graphConstant_pos graph_lower_bound) ⊆ Set.Ici 0
+    TauCeti.LinearPMap.realSpectrum (traceModel.toPartialMapOfGraphNorm) ⊆ Set.Ici 0
   positive_spectrum_characterization : ∀ lambda : ℝ,
     lambda ∈ TauCeti.LinearPMap.realSpectrum
-      (traceModel.toPartialMapOfGraphNorm free_dense
-        graphConstant_pos graph_lower_bound) →
+      (traceModel.toPartialMapOfGraphNorm) →
     0 < lambda →
     ∃ beta : ℝ, 0 < beta ∧ characteristic beta = 0 ∧ lambda = beta ^ 4
 

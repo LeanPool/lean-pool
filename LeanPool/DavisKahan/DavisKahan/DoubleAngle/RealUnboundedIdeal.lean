@@ -288,23 +288,7 @@ theorem sinTwoTheta_reflectionResidual_block_gauge_real
     (Uᗮ.map (V.reflection.toLinearEquiv : E →ₗ[ℝ] E)) F₁ hF₁iso hFproj hraw.1
   -- contract the rectangular block to the ambient one
   have hF₁adjF₁ : F₁.adjoint ∘L F₁ = ContinuousLinearMap.id ℝ Uc := by
-    have hUcadj : Uc.subtypeL.adjoint ∘L Uc.subtypeL = ContinuousLinearMap.id ℝ Uc := by
-      ext v
-      rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.id_apply,
-        Submodule.adjoint_subtypeL, Submodule.subtypeL_apply]
-      exact congrArg (fun z : Uc => (z : E))
-        (Submodule.orthogonalProjectionOnto_mem_subspace_eq_self v)
-    have hJJ : (J ∘L J : E →L[ℝ] E) = ContinuousLinearMap.id ℝ E :=
-      Submodule.reflectionOperator_involutive V
-    calc F₁.adjoint ∘L F₁
-        = (Uc.subtypeL.adjoint ∘L J.adjoint) ∘L (J ∘L Uc.subtypeL) := by
-          rw [hF₁, ContinuousLinearMap.adjoint_comp]
-      _ = Uc.subtypeL.adjoint ∘L (J ∘L J) ∘L Uc.subtypeL := by
-          rw [hJ, adjoint_reflectionOperator V]
-          rfl
-      _ = Uc.subtypeL.adjoint ∘L Uc.subtypeL := by
-          rw [hJJ, ContinuousLinearMap.id_comp]
-      _ = ContinuousLinearMap.id ℝ Uc := hUcadj
+    simpa only [hF₁, hJ] using reflectedSubtype_adjoint_comp V Uc
   have hPF : (Uᗮ.map (V.reflection.toLinearEquiv : E →ₗ[ℝ] E)).starProjection ∘L F₁
       = F₁ := by
     rw [← hFproj, ContinuousLinearMap.comp_assoc, hF₁adjF₁,
@@ -487,23 +471,7 @@ theorem sinTwoTheta_reflectionResidual_block_gauge_reducing_real
     (Uᗮ.map (V.reflection.toLinearEquiv : E →ₗ[ℝ] E)) F₁ hF₁iso hFproj hraw.1
   -- contract the rectangular block to the ambient one
   have hF₁adjF₁ : F₁.adjoint ∘L F₁ = ContinuousLinearMap.id ℝ Uc := by
-    have hUcadj : Uc.subtypeL.adjoint ∘L Uc.subtypeL = ContinuousLinearMap.id ℝ Uc := by
-      ext v
-      rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.id_apply,
-        Submodule.adjoint_subtypeL, Submodule.subtypeL_apply]
-      exact congrArg (fun z : Uc => (z : E))
-        (Submodule.orthogonalProjectionOnto_mem_subspace_eq_self v)
-    have hJJ : (J ∘L J : E →L[ℝ] E) = ContinuousLinearMap.id ℝ E :=
-      Submodule.reflectionOperator_involutive V
-    calc F₁.adjoint ∘L F₁
-        = (Uc.subtypeL.adjoint ∘L J.adjoint) ∘L (J ∘L Uc.subtypeL) := by
-          rw [hF₁, ContinuousLinearMap.adjoint_comp]
-      _ = Uc.subtypeL.adjoint ∘L (J ∘L J) ∘L Uc.subtypeL := by
-          rw [hJ, adjoint_reflectionOperator V]
-          rfl
-      _ = Uc.subtypeL.adjoint ∘L Uc.subtypeL := by
-          rw [hJJ, ContinuousLinearMap.id_comp]
-      _ = ContinuousLinearMap.id ℝ Uc := hUcadj
+    simpa only [hF₁, hJ] using reflectedSubtype_adjoint_comp V Uc
   have hPF : (Uᗮ.map (V.reflection.toLinearEquiv : E →ₗ[ℝ] E)).starProjection ∘L F₁
       = F₁ := by
     rw [← hFproj, ContinuousLinearMap.comp_assoc, hF₁adjF₁,

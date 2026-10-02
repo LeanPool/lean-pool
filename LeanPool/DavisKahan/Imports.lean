@@ -691,6 +691,7 @@ public import LeanPool.DavisKahan.DavisKahan.TanTheta.Spectrum
 public import LeanPool.DavisKahan.DavisKahan.TanTheta.Theorem63DirectedAngleBridge
 public import LeanPool.DavisKahan.DavisKahan.TanTheta.Theorem63FiniteSource
 public import LeanPool.DavisKahan.DavisKahan.TanTheta.Theorem63InfiniteTrial
+public import LeanPool.DavisKahan.DavisKahan.TanTheta.Theorem63InfiniteTrialData
 public import LeanPool.DavisKahan.DavisKahan.TanTheta.Theorem63TrialData
 public import LeanPool.DavisKahan.DavisKahan.TanTheta.Theorem63Unbounded
 public import LeanPool.DavisKahan.DavisKahan.TanTheta.Theorem63UnboundedCompression

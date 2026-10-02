@@ -156,11 +156,10 @@ theorem isClosed_graph_rangeInverse
   · rfl
   · exact hzinv
 
-/-- Unbounded inverse of a bounded injective self-adjoint operator, as a
-partial map.  Density and graph closedness are the two lemmas below. -/
+/-- Unbounded inverse of a bounded injective operator, as a partial map.
+Self-adjointness is used separately to prove density and symmetry. -/
 noncomputable def inversePartialMap
     (R : H →L[𝕜] H)
-    (_hR : IsSelfAdjoint R)
     (hinj : Function.Injective R) :
     H →ₗ.[𝕜] H where
   domain := inverseDomain R
@@ -170,7 +169,7 @@ noncomputable def inversePartialMap
 self-adjoint bounded operator is dense. -/
 theorem inversePartialMap_dense
     (R : H →L[𝕜] H) (hR : IsSelfAdjoint R) (hinj : Function.Injective R) :
-    Dense (((inversePartialMap R hR hinj).domain : Submodule 𝕜 H) : Set H) := by
+    Dense (((inversePartialMap R hinj).domain : Submodule 𝕜 H) : Set H) := by
   have hadj : ContinuousLinearMap.adjoint R = R := by
     rw [← ContinuousLinearMap.star_eq_adjoint]
     exact hR.star_eq
@@ -178,16 +177,17 @@ theorem inversePartialMap_dense
   simpa [inversePartialMap, inverseDomain, DenseRange, LinearMap.coe_range]
     using hdense
 
+omit [CompleteSpace H] in
 /-- The constructed inverse has a closed graph. -/
 theorem inversePartialMap_isClosed
-    (R : H →L[𝕜] H) (hR : IsSelfAdjoint R) (hinj : Function.Injective R) :
-    (inversePartialMap R hR hinj).IsClosed := by
+    (R : H →L[𝕜] H) (hinj : Function.Injective R) :
+    (inversePartialMap R hinj).IsClosed := by
   have h := isClosed_graph_rangeInverse R hinj
-  change IsClosed ((inversePartialMap R hR hinj).graph : Set (H × H))
-  have hgraph : ((inversePartialMap R hR hinj).graph : Set (H × H)) =
+  change IsClosed ((inversePartialMap R hinj).graph : Set (H × H))
+  have hgraph : ((inversePartialMap R hinj).graph : Set (H × H)) =
       Set.range fun x : (inverseDomain R) => ((x : H), rangeInverse R hinj x) := by
     ext q
-    change q ∈ (inversePartialMap R hR hinj).graph ↔ _
+    change q ∈ (inversePartialMap R hinj).graph ↔ _
     rw [LinearPMap.mem_graph_iff]
     constructor
     · rintro ⟨x, hx, hy⟩; exact ⟨x, Prod.ext hx hy⟩
@@ -196,78 +196,81 @@ theorem inversePartialMap_isClosed
   rw [hgraph]
   exact h
 
+omit [CompleteSpace H] in
 /-- The domain of the constructed inverse is the range of `R`. -/
 @[simp] theorem inversePartialMap_domain
-    (R : H →L[𝕜] H) (hR : IsSelfAdjoint R)
+    (R : H →L[𝕜] H)
     (hinj : Function.Injective R) :
-    (inversePartialMap R hR hinj).domain = inverseDomain R := rfl
+    (inversePartialMap R hinj).domain = inverseDomain R := rfl
 
+omit [CompleteSpace H] in
 /-- The constructed inverse undoes `R`; this is the defining property of the unbounded inverse
 of a bounded injective operator. -/
 @[simp] theorem inversePartialMap_apply
-    (R : H →L[𝕜] H) (hR : IsSelfAdjoint R)
+    (R : H →L[𝕜] H)
     (hinj : Function.Injective R)
-    (x : (inversePartialMap R hR hinj).domain) :
-    (inversePartialMap R hR hinj) x =
+    (x : (inversePartialMap R hinj).domain) :
+    (inversePartialMap R hinj) x =
       rangeInverse R hinj x := rfl
 
+omit [CompleteSpace H] in
 /-- `R` is a right inverse of the unbounded inverse on its domain. -/
 @[simp] theorem inversePartialMap_apply_R
-    (R : H →L[𝕜] H) (hR : IsSelfAdjoint R)
+    (R : H →L[𝕜] H)
     (hinj : Function.Injective R) (x : H) :
-    (inversePartialMap R hR hinj)
+    (inversePartialMap R hinj)
       ⟨R x, LinearMap.mem_range_self R.toLinearMap x⟩ = x := by
   exact rangeInverse_mk_apply R hinj x
 
+omit [CompleteSpace H] in
 /-- `R` recovers every vector in the inverse domain. -/
 theorem R_inversePartialMap_apply
-    (R : H →L[𝕜] H) (hR : IsSelfAdjoint R)
+    (R : H →L[𝕜] H)
     (hinj : Function.Injective R)
-    (x : (inversePartialMap R hR hinj).domain) :
-    R ((inversePartialMap R hR hinj) x) = (x : H) := by
+    (x : (inversePartialMap R hinj).domain) :
+    R ((inversePartialMap R hinj) x) = (x : H) := by
   exact apply_rangeInverse R hinj x
 
 /-- The inverse of a bounded self-adjoint injective map is symmetric. -/
 theorem inversePartialMap_isSymmetric
     (R : H →L[𝕜] H) (hR : IsSelfAdjoint R)
     (hinj : Function.Injective R) :
-    TauCeti.LinearPMap.IsSymmetric (inversePartialMap R hR hinj) := by
+    TauCeti.LinearPMap.IsSymmetric (inversePartialMap R hinj) := by
   intro x y
   calc
-    ⟪(inversePartialMap R hR hinj) x, (y : H)⟫_𝕜 =
-        ⟪(inversePartialMap R hR hinj) x,
-          R ((inversePartialMap R hR hinj) y)⟫_𝕜 := by
+    ⟪(inversePartialMap R hinj) x, (y : H)⟫_𝕜 =
+        ⟪(inversePartialMap R hinj) x,
+          R ((inversePartialMap R hinj) y)⟫_𝕜 := by
             -- `IsSymmetric` presents the domain as `.domain`, which is only
             -- definitionally the `.domain` the rewrite lemma is stated for; `rw` will not
             -- match across that, so close the step by a congruence `exact` instead.
             exact congrArg₂ (inner 𝕜) rfl
-              (R_inversePartialMap_apply R hR hinj y).symm
-    _ = ⟪R ((inversePartialMap R hR hinj) x),
-          (inversePartialMap R hR hinj) y⟫_𝕜 := by
+              (R_inversePartialMap_apply R hinj y).symm
+    _ = ⟪R ((inversePartialMap R hinj) x),
+          (inversePartialMap R hinj) y⟫_𝕜 := by
             exact (hR.isSymmetric _ _).symm
     _ = ⟪(x : H),
-          (inversePartialMap R hR hinj) y⟫_𝕜 := by
-            exact congrArg₂ (inner 𝕜) (R_inversePartialMap_apply R hR hinj x) rfl
+          (inversePartialMap R hinj) y⟫_𝕜 := by
+            exact congrArg₂ (inner 𝕜) (R_inversePartialMap_apply R hinj x) rfl
 
+omit [CompleteSpace H] in
 /-- Positivity passes from `R` to its unbounded inverse. -/
 theorem inversePartialMap_nonnegative
-    (R : H →L[𝕜] H) (hR : IsSelfAdjoint R)
-    (hinj : Function.Injective R)
+    (R : H →L[𝕜] H) (hinj : Function.Injective R)
     (hRpos : ∀ y : H, 0 ≤ RCLike.re ⟪R y, y⟫_𝕜)
-    (x : (inversePartialMap R hR hinj).domain) :
+    (x : (inversePartialMap R hinj).domain) :
     0 ≤ RCLike.re
-      ⟪(inversePartialMap R hR hinj) x, (x : H)⟫_𝕜 := by
-  rw [← R_inversePartialMap_apply R hR hinj x]
+      ⟪(inversePartialMap R hinj) x, (x : H)⟫_𝕜 := by
+  rw [← R_inversePartialMap_apply R hinj x]
   rw [inner_re_symm]
-  exact hRpos ((inversePartialMap R hR hinj) x)
+  exact hRpos ((inversePartialMap R hinj) x)
 
 /-- Surjectivity of `1 + R⁻¹` follows from bounded coercivity of `1 + R`. -/
 theorem inversePartialMap_one_add_surjective
-    (R : H →L[𝕜] H) (hR : IsSelfAdjoint R)
-    (hinj : Function.Injective R)
+    (R : H →L[𝕜] H) (hinj : Function.Injective R)
     (hRpos : ∀ y : H, 0 ≤ RCLike.re ⟪R y, y⟫_𝕜) :
-    ∀ h : H, ∃ x : (inversePartialMap R hR hinj).domain,
-      (inversePartialMap R hR hinj) x + (x : H) = h := by
+    ∀ h : H, ∃ x : (inversePartialMap R hinj).domain,
+      (inversePartialMap R hinj) x + (x : H) = h := by
   have hunit : IsUnit (1 + R) := by
     apply ContinuousLinearMap.isUnit_of_coercive one_pos
     intro z
@@ -276,14 +279,14 @@ theorem inversePartialMap_one_add_surjective
     nlinarith [hRpos z]
   intro h
   let y : H := Ring.inverse (1 + R) h
-  let x : (inversePartialMap R hR hinj).domain :=
+  let x : (inversePartialMap R hinj).domain :=
     ⟨R y, LinearMap.mem_range_self R.toLinearMap y⟩
   refine ⟨x, ?_⟩
   have hmul : (1 + R) * Ring.inverse (1 + R) = 1 :=
     Ring.mul_inverse_cancel (1 + R) hunit
   have happ := DFunLike.congr_fun hmul h
   change y + R y = h at happ
-  change (inversePartialMap R hR hinj)
+  change (inversePartialMap R hinj)
       ⟨R y, LinearMap.mem_range_self R.toLinearMap y⟩ + R y = h
   rw [inversePartialMap_apply_R]
   exact happ
@@ -294,11 +297,11 @@ theorem inversePartialMap_isSelfAdjoint
     (R : H →L[𝕜] H) (hR : IsSelfAdjoint R)
     (hinj : Function.Injective R)
     (hRpos : ∀ y : H, 0 ≤ RCLike.re ⟪R y, y⟫_𝕜) :
-    _root_.IsSelfAdjoint (inversePartialMap R hR hinj) := by
+    _root_.IsSelfAdjoint (inversePartialMap R hinj) := by
   apply DavisKahanExt.PartialMap.isSelfAdjoint_of_nonnegative_one_add_surjective
   · exact inversePartialMap_isSymmetric R hR hinj
-  · exact inversePartialMap_nonnegative R hR hinj hRpos
-  · exact inversePartialMap_one_add_surjective R hR hinj hRpos
+  · exact inversePartialMap_nonnegative R hinj hRpos
+  · exact inversePartialMap_one_add_surjective R hinj hRpos
 
 end
 

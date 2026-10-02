@@ -207,6 +207,30 @@ theorem adjoint_reflectionOperator (V : Submodule 𝕜 H)
   rw [hform, IsSelfAdjoint, star_sub, star_smul, star_ofNat, hP.star_eq,
     star_one]
 
+omit [CompleteSpace G] in
+/-- Reflected subspace inclusions are isometries at the operator level. -/
+theorem reflectedSubtype_adjoint_comp
+    (V W : Submodule 𝕜 H) [V.HasOrthogonalProjection]
+    [W.HasOrthogonalProjection] [CompleteSpace W] :
+    (V.reflectionOperator ∘L W.subtypeL).adjoint ∘L
+        (V.reflectionOperator ∘L W.subtypeL) = ContinuousLinearMap.id 𝕜 W := by
+  have hW : W.subtypeL.adjoint ∘L W.subtypeL = ContinuousLinearMap.id 𝕜 W := by
+    ext v
+    rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.id_apply,
+      Submodule.adjoint_subtypeL, Submodule.subtypeL_apply]
+    exact congrArg (fun z : W => (z : H))
+      (Submodule.orthogonalProjectionOnto_mem_subspace_eq_self v)
+  rw [ContinuousLinearMap.adjoint_comp, adjoint_reflectionOperator]
+  calc
+    (W.subtypeL.adjoint ∘L V.reflectionOperator) ∘L
+        (V.reflectionOperator ∘L W.subtypeL) =
+        W.subtypeL.adjoint ∘L (V.reflectionOperator ∘L V.reflectionOperator) ∘L
+          W.subtypeL := rfl
+    _ = W.subtypeL.adjoint ∘L W.subtypeL := by
+      rw [Submodule.reflectionOperator_involutive, ContinuousLinearMap.id_comp]
+    _ = ContinuousLinearMap.id 𝕜 W := hW
+
+
 end ScalarGeneric
 
 variable {H : Type v}

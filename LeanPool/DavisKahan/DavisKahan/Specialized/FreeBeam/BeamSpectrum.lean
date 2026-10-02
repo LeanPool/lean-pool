@@ -244,7 +244,6 @@ theorem beamOperator_affine_mem_and_zero (a b : ℂ) :
   have hshift : beamShiftedFormData.shiftedOperator ⟨affineLp a b, hmem⟩
       = affineLp a b := by
     have := Abstract.inversePartialMap_apply_R beamCoerciveFormData.resolvent
-      beamCoerciveFormData.resolvent_isSelfAdjoint
       beamCoerciveFormData.resolvent_injective (affineLp a b)
     have hsub : (⟨beamCoerciveFormData.resolvent (affineLp a b),
         LinearMap.mem_range_self _ (affineLp a b)⟩ :
@@ -839,7 +838,6 @@ theorem exists_beamOperator_apply_of_beamResolvent_smul {mu : ℂ} (hmu : mu ≠
   have hshift : beamShiftedFormData.shiftedOperator ⟨u, humem⟩
       = mu⁻¹ • u := by
     have happ := Abstract.inversePartialMap_apply_R R
-      beamCoerciveFormData.resolvent_isSelfAdjoint
       beamCoerciveFormData.resolvent_injective (mu⁻¹ • u)
     have hsub : (⟨R (mu⁻¹ • u), LinearMap.mem_range_self _ _⟩ :
         beamShiftedFormData.shiftedOperator.domain) = ⟨u, humem⟩ := Subtype.ext hRmu
@@ -1006,7 +1004,6 @@ theorem exists_eigenvector_of_mem_realSpectrum_beamOperator {lam : ℝ}
     intro x
     have hxdom : (x : BeamL2) ∈ beamOperator.domain := x.2
     have hz := Abstract.R_inversePartialMap_apply R
-      beamCoerciveFormData.resolvent_isSelfAdjoint
       beamCoerciveFormData.resolvent_injective x
     set z : BeamL2 := beamShiftedFormData.shiftedOperator x with hzdef
     have hRz : R z = (x : BeamL2) := hz
@@ -1037,7 +1034,6 @@ theorem exists_eigenvector_of_mem_realSpectrum_beamOperator {lam : ℝ}
     have hshifted : beamShiftedFormData.shiftedOperator ⟨(R * S) y, hmem⟩
         = S y := by
       have happ := Abstract.inversePartialMap_apply_R R
-        beamCoerciveFormData.resolvent_isSelfAdjoint
         beamCoerciveFormData.resolvent_injective (S y)
       have hsub : (⟨R (S y), LinearMap.mem_range_self _ _⟩ :
           beamShiftedFormData.shiftedOperator.domain) = ⟨(R * S) y, hmem⟩ :=
