@@ -41,14 +41,6 @@ theorem stage5_of_verified : Stage5Obligation.{u} := by
   obtain ⟨E, hEV, hfin⟩ :=
     DivisorialVisibleFrameStage5.stage5_exists_coefficientField A p V hAV hp hsurj
   refine ⟨E, hEV, ?_⟩
-  let scratch : Algebra E V.toSubring :=
-    (DivisorialVisibleFrameStage5.coeffHom E V hEV).toAlgebra
-  let lane : Algebra E V.toSubring := (coeffHom E V hEV).toAlgebra
-  have heq : scratch = lane := by
-    apply Algebra.algebra_ext
-    intro z
-    rfl
-  cases heq
   exact hfin
 
 theorem divisorialVisibleFrameExistence : DivisorialVisibleFrameExistence.{u} := by

@@ -63,7 +63,7 @@ def chartAffineCoordinateEquiv {m : ℕ} (chart : Fin (m + 1)) :
 /-- Affine power-series coordinates obtained by deleting the normalized
 projective chart coordinate.  Since that coordinate is exactly one, no
 power-series division is needed. -/
-def completedChartAffineArc [CharZero k]
+def completedChartAffineArc
     {m : ℕ} (hm : 0 < m) (I : Ideal (MvPolynomial (Fin m) k))
     (W : CompletedProjectiveBoundaryChart k m hm I) :
     Fin m → PowerSeries k :=
@@ -76,7 +76,7 @@ def projectiveFirstJet {ι : Type v} (q : ι → PowerSeries k) : ι → k :=
 /-- The actual uniformizer residue vector of the affine chart arc is exactly
 the dehomogenized projective first jet. -/
 theorem completedChart_uniformizerResidueFrame_eq_dehomogenizedFirstJet
-    [CharZero k] {m r : ℕ} (hm : 0 < m)
+    {m r : ℕ} (hm : 0 < m)
     (I : Ideal (MvPolynomial (Fin m) k))
     (W : CompletedProjectiveBoundaryChart k m hm I)
     (D : Fin r → Derivation k k k) (i : Fin m) :

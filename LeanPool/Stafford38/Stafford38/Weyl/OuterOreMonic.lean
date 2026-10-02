@@ -108,9 +108,7 @@ theorem presentedNestedNormalForm_eq_mapRange (n : ℕ)
 /-- The PBW exponent combining outer momentum and coordinate powers with transverse exponents. -/
 def pairExponent (n a p : ℕ) (m : PhaseVar n →₀ ℕ) :
     PhaseVar (n + 1) →₀ ℕ :=
-  Finsupp.single (.inr (0 : Fin (n + 1))) p +
-    Finsupp.single (.inl (0 : Fin (n + 1))) a +
-    Finsupp.mapDomain oldIndex m
+  extendPhaseExponent n a p m
 
 @[simp]
 theorem mapDomain_oldIndex_newCoordinate (n : ℕ)
@@ -151,7 +149,7 @@ theorem coeff_flattenPairSymbols_monomial (n a p a' p' : ℕ)
               Finsupp.single (.inl (0 : Fin (n + 1))) a) ≤
             pairExponent n a p m := by
         intro i
-        simp only [pairExponent, Finsupp.add_apply]
+        simp only [pairExponent, extendPhaseExponent, Finsupp.add_apply]
         omega
       rw [ite_eq_left hle]
       have hsub :
@@ -159,7 +157,7 @@ theorem coeff_flattenPairSymbols_monomial (n a p a' p' : ℕ)
             (Finsupp.single (.inr (0 : Fin (n + 1))) p +
               Finsupp.single (.inl (0 : Fin (n + 1))) a)) =
             Finsupp.mapDomain oldIndex m := by
-        rw [pairExponent]
+        rw [pairExponent, extendPhaseExponent]
         exact add_tsub_cancel_left _ _
       rw [hsub, MvPolynomial.coeff_rename_mapDomain oldIndex oldIndex_injective]
       simp
@@ -169,7 +167,7 @@ theorem coeff_flattenPairSymbols_monomial (n a p a' p' : ℕ)
             pairExponent n a p m)
       · rw [ite_eq_left hle]
         have haa : a' ≤ a := by
-          simpa [pairExponent, Finsupp.single_apply] using
+          simpa [pairExponent, extendPhaseExponent, Finsupp.single_apply] using
             hle (.inl (0 : Fin (n + 1)))
         have hz : (MvPolynomial.rename oldIndex r).coeff ((pairExponent n a p m) -
               (Finsupp.single (.inr (0 : Fin (n + 1))) p +
@@ -177,7 +175,7 @@ theorem coeff_flattenPairSymbols_monomial (n a p a' p' : ℕ)
           apply MvPolynomial.coeff_rename_eq_zero
           intro u hu
           have hnew := DFunLike.congr_fun hu (.inl (0 : Fin (n + 1)))
-          simp [pairExponent] at hnew
+          simp [pairExponent, extendPhaseExponent] at hnew
           omega
         rw [hz]
         simp [ha]
@@ -189,7 +187,7 @@ theorem coeff_flattenPairSymbols_monomial (n a p a' p' : ℕ)
           pairExponent n a p m)
     · rw [ite_eq_left hle]
       have hpp : p' ≤ p := by
-        simpa [pairExponent, Finsupp.single_apply] using
+        simpa [pairExponent, extendPhaseExponent, Finsupp.single_apply] using
           hle (.inr (0 : Fin (n + 1)))
       have hz : (MvPolynomial.rename oldIndex r).coeff ((pairExponent n a p m) -
             (Finsupp.single (.inr (0 : Fin (n + 1))) p' +
@@ -197,7 +195,7 @@ theorem coeff_flattenPairSymbols_monomial (n a p a' p' : ℕ)
         apply MvPolynomial.coeff_rename_eq_zero
         intro u hu
         have hnew := DFunLike.congr_fun hu (.inr (0 : Fin (n + 1)))
-        simp [pairExponent] at hnew
+        simp [pairExponent, extendPhaseExponent] at hnew
         omega
       rw [hz]
       simp [hp]
@@ -249,13 +247,13 @@ theorem degree_pairExponent (n a p : ℕ)
     (m : PhaseVar n →₀ ℕ) :
     (pairExponent n a p m).degree =
       p + a + (Finsupp.mapDomain oldIndex m).degree := by
-  simp [pairExponent]
+  simp [pairExponent, extendPhaseExponent]
 
 @[simp]
 theorem pairExponent_newMomentum (n a p : ℕ)
     (m : PhaseVar n →₀ ℕ) :
     pairExponent n a p m (.inr (0 : Fin (n + 1))) = p := by
-  simp [pairExponent]
+  simp [pairExponent, extendPhaseExponent]
 
 theorem nested_coeff_eq_zero_of_outer_exponent_gt (n N : ℕ)
     {d : PresentedWeyl k (n + 1)}
@@ -281,7 +279,7 @@ theorem nested_coeff_eq_one_at_bound (n N : ℕ)
   · subst a
     by_cases hm : m = 0
     · subst m
-      simpa [pairExponent] using hd.2
+      simpa [pairExponent, extendPhaseExponent] using hd.2
     · have hmap : Finsupp.mapDomain oldIndex m ≠ 0 := by
         exact (Finsupp.mapDomain_injective oldIndex_injective).ne hm
       have hdegree : N < (pairExponent n 0 N m).degree := by

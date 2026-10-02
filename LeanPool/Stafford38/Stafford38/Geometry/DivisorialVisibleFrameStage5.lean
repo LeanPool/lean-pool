@@ -6,7 +6,7 @@ Authors: Christopher Albert
 
 module
 
-public import LeanPool.Stafford38.Stafford38.Geometry.NormalizationHeightOne
+public import LeanPool.Stafford38.Stafford38.Geometry.DivisorialVisibleFrameCore
 
 
 /-!
@@ -27,7 +27,7 @@ namespace Stafford38.Geometry.DivisorialVisibleFrameStage5
 def coeffHom {k K : Type u} [Field k] [Field K] [Algebra k K]
     (E : IntermediateField k K) (V : ValuationSubring K)
     (hEV : ∀ z : E, (z : K) ∈ V.toSubring) : E →+* V.toSubring :=
-  RingHom.codRestrict (IntermediateField.val E).toRingHom V.toSubring hEV
+  Stafford38.Geometry.LaneC.coeffHom E V hEV
 
 private theorem integral_image {R S T : Type*} [CommRing R] [Ring S] [Ring T]
     [Algebra R S] [Algebra R T] (f : S →ₐ[R] T) {x : S} (hx : IsIntegral R x) :

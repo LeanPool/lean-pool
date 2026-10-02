@@ -177,7 +177,7 @@ theorem completedBoundaryChart_residueFrame_linearIndependent
 /-- The stored generic tangent inclusion gives the exact numerical bound by
 the number of supplied nonposition columns. -/
 theorem completedBoundaryChart_genericTangent_finrank_le
-    {k : Type u} [Field k] [CharZero k]
+    {k : Type u} [Field k]
     {m : ℕ} (hm : 0 < m)
     (I : Ideal (MvPolynomial (Fin m) k))
     (W : CompletedProjectiveBoundaryChart k m hm I) :
