@@ -136,6 +136,7 @@ theorem RelTransitionSystem.periodicFlag_step
 
 open scoped Classical in
 /-- The finset of periodic flags. -/
+@[expose]
 noncomputable def RelTransitionSystem.periodicFlags
     (κ : F.RelTransitionSystem) : Finset W.Flag :=
   F.internalFlags.filter (fun f =>
@@ -200,6 +201,7 @@ noncomputable def RelTransitionSystem.walkPermPeriodic
 
 /-- The open circuit count: half the orbit count of the walk on
 periodic flags. -/
+@[expose]
 noncomputable def RelTransitionSystem.openCircuitCount
     (κ : F.RelTransitionSystem) : ℕ :=
   (κ.walkPermPeriodic.cycleType.card +

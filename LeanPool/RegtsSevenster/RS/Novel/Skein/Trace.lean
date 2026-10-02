@@ -26,6 +26,7 @@ namespace RS
 
 /-- The trace of a `(t + t)`-fragment under a parameter: the value
 of its strand closure. -/
+@[expose]
 noncomputable def fragTrace (f : ClosedFragment → ℂ) {t : ℕ}
     (F : Fragment (Fin (t + t))) : ℂ :=
   f (pairClose F (strandBundle t))

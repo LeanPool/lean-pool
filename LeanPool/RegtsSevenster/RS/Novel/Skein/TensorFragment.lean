@@ -103,6 +103,7 @@ theorem interleaveEquiv_symm_high_right (s t u v : ℕ) (l : Fin v) :
 
 /-- The tensor product of fragments: disjoint union with
 interleaved boundary. -/
+@[expose]
 noncomputable def tensorFragment {s t u v : ℕ}
     (x : Fragment (Fin (s + t))) (z : Fragment (Fin (u + v))) :
     Fragment (Fin ((s + u) + (t + v))) :=

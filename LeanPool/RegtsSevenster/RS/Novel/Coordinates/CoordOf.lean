@@ -25,6 +25,7 @@ namespace RS
 variable {k ℓ : ℕ}
 
 /-- The coordinate of a model vector at a colouring. -/
+@[expose]
 noncomputable def coordOf {n : ℕ}
     (v : (superPow (stdSuperPair k ℓ) n).even)
     (c : MixedColouring k ℓ n) : ℂ :=

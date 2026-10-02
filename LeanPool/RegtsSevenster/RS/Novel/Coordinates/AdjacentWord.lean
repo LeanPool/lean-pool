@@ -35,6 +35,7 @@ namespace RS
 open Equiv
 
 /-- The adjacent transposition at position `i`: swaps `i` and `i + 1`. -/
+@[expose]
 def adjTrans {n : ℕ} (i : Fin n) : Equiv.Perm (Fin (n + 1)) :=
   Equiv.swap i.castSucc i.succ
 

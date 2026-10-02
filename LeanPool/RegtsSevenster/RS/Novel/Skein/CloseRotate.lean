@@ -100,6 +100,7 @@ def pBlock (m n p : ℕ) :
 
 /-- The `n`-block: the high labels of `F` against the low labels
 of `H`, top pair first — the embedded composition interface. -/
+@[expose]
 def nBlock (m n p : ℕ) :
     List (((Fin (m + n) ⊕ Fin (n + p)) ⊕ Fin (m + p)) ×
       ((Fin (m + n) ⊕ Fin (n + p)) ⊕ Fin (m + p))) :=
@@ -296,6 +297,7 @@ theorem liftPairs_append {α : Type} (ps : List (α × α)) :
       (liftPairs_append ps qs₁ qs₂ _)
 
 /-- The high half of a full-closure interface list. -/
+@[expose]
 def ipHigh (m p : ℕ) :
     List ((Fin (0 + (m + p)) ⊕ Fin (m + p + 0)) ×
       (Fin (0 + (m + p)) ⊕ Fin (m + p + 0))) :=
@@ -304,6 +306,7 @@ def ipHigh (m p : ℕ) :
      Sum.inr ⟨m + ℓ.val, by have := ℓ.isLt; omega⟩))
 
 /-- The low half of a full-closure interface list. -/
+@[expose]
 def ipLow (m p : ℕ) :
     List ((Fin (0 + (m + p)) ⊕ Fin (m + p + 0)) ×
       (Fin (0 + (m + p)) ⊕ Fin (m + p + 0))) :=

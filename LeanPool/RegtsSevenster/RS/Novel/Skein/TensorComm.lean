@@ -23,6 +23,7 @@ public section
 namespace RS
 
 /-- The block swap of interleaved boundaries. -/
+@[expose]
 noncomputable def tensorSwapEquiv (s t u v : ℕ) :
     Fin ((u + s) + (v + t)) ≃ Fin ((s + u) + (t + v)) :=
   (interleaveEquiv u v s t).symm.trans

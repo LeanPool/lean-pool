@@ -143,6 +143,7 @@ theorem omegaPow_hom_inv :
 /-- **The iterated tensorator**: the `n`-th monoidal power of the
 strand image is isomorphic to `ω.obj (SkeinObj.mk n)`, built by
 iterating the tensorator `μ`/`δ`. -/
+@[expose]
 noncomputable def omegaPow (n : ℕ) :
     superPow (strandImage f P) n ≅ P.ω.obj (SkeinObj.mk n) where
   hom := omegaPowHom f P n

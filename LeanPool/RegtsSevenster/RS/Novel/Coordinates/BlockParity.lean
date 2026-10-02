@@ -28,6 +28,7 @@ variable {k ℓ : ℕ}
 
 /-- The vertex corresponding to the v-th block of the sorted
 colouring: applying the vertex enumeration to the block index. -/
+@[expose]
 noncomputable def blockVertex (W : ClosedFragment)
     (v : Fin (degList (starAssignEnum W)).length) : W.Vertex :=
   (Fintype.equivFin W.Vertex).symm

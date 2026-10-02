@@ -28,6 +28,7 @@ namespace RS
 
 /-- Extension of a boundary state on the surviving labels to the
 full label type, prescribing the two glued ends. -/
+@[expose]
 noncomputable def GenBoundaryState.extendPair {k ℓ : ℕ} {α : Type}
     (i j : α)
     (st : GenBoundaryState k ℓ (Fragment.SurvivingLabel α i j))

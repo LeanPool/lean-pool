@@ -86,6 +86,7 @@ theorem MixedColouring.not_isEven_comp {k ℓ d : ℕ}
 
 /-- The Koszul sign of swapping two positions of a colouring:
 `−1` when both are odd. -/
+@[expose]
 def adjSign {k ℓ d : ℕ} (c : MixedColouring k ℓ d)
     (a b : Fin d) : ℂ :=
   if (c a).isRight ∧ (c b).isRight then -1 else 1

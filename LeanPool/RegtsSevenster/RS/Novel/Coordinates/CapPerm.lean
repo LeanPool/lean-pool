@@ -24,6 +24,7 @@ open CategoryTheory MonoidalCategory
 open Functor.LaxMonoidal Functor.OplaxMonoidal
 
 /-- The peel rotation as a permutation of the source arity. -/
+@[expose]
 def capPeelPerm (m : ℕ) :
     _root_.Equiv.Perm (Fin ((m + 1) + (m + 1))) :=
   (capPeelRotation m).trans (finCongr

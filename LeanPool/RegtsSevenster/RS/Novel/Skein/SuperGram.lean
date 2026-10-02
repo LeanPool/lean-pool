@@ -73,6 +73,7 @@ noncomputable def oddCount {k ℓ t : ℕ}
 
 /-- **The fragment tensor's normalising root**: a fourth root of
 unity, one quarter turn for every two odd legs. -/
+@[expose]
 noncomputable def stateTwist {k ℓ t : ℕ}
     (x : GenBoundaryState k ℓ (Fin t)) : ℂ :=
   Complex.I ^ (oddCount x / 2)

@@ -28,6 +28,7 @@ variable {α : Type} {ℓ : ℕ}
 
 open scoped Classical in
 /-- The colour relabel of one flip. -/
+@[expose]
 noncomputable def flipColours (f : α → Fin (2 * ℓ))
     (p : α × α) : α → Fin (2 * ℓ) :=
   fun a => if a = p.1 ∨ a = p.2 then oddPartner ℓ (f a) else f a

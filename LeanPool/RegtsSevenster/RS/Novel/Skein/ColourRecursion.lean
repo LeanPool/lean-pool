@@ -109,6 +109,7 @@ variable (n : ℕ)
   (V : Fragment (Fin (0 + (n + 1)) ⊕ Fin ((n + 1) + 0)))
 
 /-- The stage's family, pulled back along the relabel. -/
+@[expose]
 noncomputable def stepDataGlued (𝒟 : DataFamily (stepFragment n V)) :
     DataFamily (V.gluePair (cutL n) (cutR n) (cutL_ne_cutR n)) :=
   relabelDataDown (stepIso n) 𝒟
@@ -132,6 +133,7 @@ theorem gluePair_eq_open (hop : V.pairing (V.boundaryFlag (cutL n))
 /-- **One stage of the composition, on the data.**  The family is
 chosen at the composition and pushed back: along the relabel, then
 across the glue. -/
+@[expose]
 noncomputable def stepDataDown (𝒟 : DataFamily (stepFragment n V)) :
     DataFamily V :=
   if hcl : V.pairing (V.boundaryFlag (cutL n))

@@ -63,6 +63,7 @@ noncomputable def diagHom (n : ℕ) :
 /-- **The external product**: the product of the two one-sided
 images of a pair of group-algebra elements in the group algebra of
 `S_n × S_n`. -/
+@[expose]
 noncomputable def extProd {n : ℕ} (x y : SymGroupAlgebra n) :
     MonoidAlgebra ℂ (Equiv.Perm (Fin n) × Equiv.Perm (Fin n)) :=
   MonoidAlgebra.mapDomainAlgHom ℂ ℂ (extFstHom n) x *

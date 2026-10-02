@@ -27,6 +27,7 @@ variable {k ℓ : ℕ}
 /-- Count of inversions of `σ` restricted to odd-coloured positions:
 pairs `(a, b)` with `a < b`, `σ a > σ b`, and both `c (σ a)` and
 `c (σ b)` odd-coloured. -/
+@[expose]
 def oddInversions {k ℓ n : ℕ} (σ : _root_.Equiv.Perm (Fin n))
     (c : MixedColouring k ℓ n) : ℕ :=
   (univ.filter (fun p : Fin n × Fin n =>

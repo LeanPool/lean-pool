@@ -93,6 +93,7 @@ open Classical in
 whose drop is closed under the rewire the base's data are the unglue
 of the glued fragment's; elsewhere any choice serves, the summand
 vanishing there. -/
+@[expose]
 noncomputable def unglueDataOpen
     [LinearOrder L] {V : Fragment L} {i : L} {j : L} (hij : i ≠ j)
     (hopen : V.pairing (V.boundaryFlag i) ≠ V.boundaryFlag j)
@@ -197,6 +198,7 @@ open Classical in
 /-- **The glued fragment's data at a closed cut, read on the base.**
 Here no agreement is needed: a closed subset's drop is always closed
 under the glued pairing, the two cut flags being partners. -/
+@[expose]
 noncomputable def unglueDataClosed
     [LinearOrder L] {V : Fragment L} {i : L} {j : L} (hij : i ≠ j)
     (hclosed : V.pairing (V.boundaryFlag i) = V.boundaryFlag j)

@@ -38,6 +38,7 @@ namespace RS
 /-- **The symplectic matrix** `J = [[0, I], [-I, 0]]` in
 coordinates: `J c d` is `1` when `d = c + ℓ`, `-1` when
 `c = d + ℓ`, and `0` otherwise. -/
+@[expose]
 noncomputable def symplecticJ (ℓ : ℕ) (c d : Fin (2 * ℓ)) : ℂ :=
   if d.val = c.val + ℓ then 1
   else if c.val = d.val + ℓ then -1
@@ -80,6 +81,7 @@ fixes the convention.
 /-- The symplectic dual of a colour: the partner colour with the
 partner sign.  This is RS21's `g_c` written in the basis of the
 `f`'s. -/
+@[expose]
 noncomputable def dualSign (ℓ : ℕ) (c : Fin (2 * ℓ)) : ℂ :=
   ((oddPartnerSign ℓ c : ℤ) : ℂ)
 

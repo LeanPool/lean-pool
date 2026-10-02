@@ -66,6 +66,7 @@ variable {W : Fragment α}
 open scoped Classical in
 /-- The internal flags of an edge subset: participating flags attached
 to a vertex. -/
+@[expose]
 noncomputable def internalFlags (F : EdgeSubset W) : Finset W.Flag :=
   F.flags.filter (fun f => ∃ v : W.Vertex, W.attach f = Sum.inl v)
 
@@ -80,6 +81,7 @@ theorem mem_internalFlags_iff {f : W.Flag} {F : EdgeSubset W} :
 open scoped Classical in
 /-- The boundary flags of an edge subset: participating flags attached
 to a boundary label. -/
+@[expose]
 noncomputable def boundaryFlags (F : EdgeSubset W) : Finset W.Flag :=
   F.flags.filter (fun f => ∃ i : α, W.attach f = Sum.inr i)
 
@@ -350,6 +352,7 @@ structure RelTransitionSystem.Orientation {F : EdgeSubset W}
 /-- Follow the chain from a flag: apply pairing, check if boundary;
 if internal, apply matching and recurse.  Returns `none` if the fuel
 runs out. -/
+@[expose]
 noncomputable def traceChain {F : EdgeSubset W}
     (κ : F.RelTransitionSystem) : ℕ → W.Flag → Option W.Flag
   | 0, _ => none

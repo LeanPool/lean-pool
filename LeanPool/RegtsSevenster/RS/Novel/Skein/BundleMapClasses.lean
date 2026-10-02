@@ -133,6 +133,7 @@ theorem outMapEquiv_natAdd {n m : ℕ} (e : Fin n ≃ Fin m)
   exact finSumFinEquiv_apply_right (e k)
 
 /-- The sum of two label equivalences, on concatenated blocks. -/
+@[expose]
 def tensorMapEquiv {n₁ m₁ n₂ m₂ : ℕ}
     (e₁ : Fin n₁ ≃ Fin m₁) (e₂ : Fin n₂ ≃ Fin m₂) :
     Fin (n₁ + n₂) ≃ Fin (m₁ + m₂) :=

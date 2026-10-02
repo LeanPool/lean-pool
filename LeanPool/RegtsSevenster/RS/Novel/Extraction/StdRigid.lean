@@ -27,11 +27,13 @@ open CategoryTheory
 open scoped TensorProduct
 
 /-- The even copairing element `Σ e_i ⊗ e_i`. -/
+@[expose]
 noncomputable def stdCopairEvenElem (k : ℕ) :
     (Fin k → ℂ) ⊗[ℂ] (Fin k → ℂ) :=
   ∑ i, stdE k i ⊗ₜ[ℂ] stdE k i
 
 /-- The odd copairing element `Σ f_i ⊗ g_i`. -/
+@[expose]
 noncomputable def stdCopairOddElem (ℓ : ℕ) :
     (Fin (2 * ℓ) → ℂ) ⊗[ℂ] (Fin (2 * ℓ) → ℂ) :=
   ∑ i, stdF ℓ i ⊗ₜ[ℂ] stdG ℓ i

@@ -62,6 +62,7 @@ theorem boundaryLabel_boundaryFlag {W : Fragment α}
 
 /-- The label a subset's chain carries a used label to; the identity on
 unused ones. -/
+@[expose]
 noncomputable def chordInv {W : Fragment α}
     (F : EdgeSubset W) (κ : F.RelTransitionSystem)
     (i : α) : α :=

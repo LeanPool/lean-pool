@@ -31,6 +31,7 @@ variable (e : stdSuperPair k ℓ ⟶ P.ω.obj (SkeinObj.mk 1))
 variable (e' : P.ω.obj (SkeinObj.mk 1) ⟶ stdSuperPair k ℓ)
 
 /-- The master summand of a colouring. -/
+@[expose]
 noncomputable def masterSummand (W : ClosedFragment)
     (c : MixedColouring k ℓ (edgeCount W + edgeCount W)) :
     ℂ :=

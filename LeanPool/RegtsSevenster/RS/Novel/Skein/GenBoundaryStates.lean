@@ -75,6 +75,7 @@ end GenHelpers
 
 /-- The even-colouring boundary constraint over a general label
 type. -/
+@[expose]
 def genEvenBoundaryMatch {k ℓ : ℕ} {α : Type} {W : Fragment α}
     (F : EdgeSubset W) (st : GenBoundaryState k ℓ α)
     (hbnd : genBoundarySubsetMatches W F.flags st)

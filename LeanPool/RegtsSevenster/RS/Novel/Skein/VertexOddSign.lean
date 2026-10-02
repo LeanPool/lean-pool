@@ -126,6 +126,7 @@ theorem evalOdd_flatMap_rev (hM : MixedFunctional k ℓ)
 
 /-- The odd-pairing sign an incoming flag carries, extended by one
 off the core. -/
+@[expose]
 noncomputable def inSign (φ : F.CoreOddColouring ℓ)
     (g : W.Flag) : ℤ :=
   if hg : g ∈ F.coreFlags then oddPartnerSign ℓ (φ.val ⟨g, hg⟩)

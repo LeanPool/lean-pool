@@ -118,6 +118,7 @@ noncomputable def starUnion :
   (explodeAt W Finset.univ (fullCut_closed W)).relabel (starEnum W)
 
 /-- The straight matching pairs `i ↔ m + i`. -/
+@[expose]
 def matchPairs (m : ℕ) : List (Fin (m + m) × Fin (m + m)) :=
   (List.finRange m).map (fun j => (Fin.castAdd m j, Fin.natAdd m j))
 

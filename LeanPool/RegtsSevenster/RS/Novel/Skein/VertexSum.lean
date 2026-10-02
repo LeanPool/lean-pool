@@ -37,6 +37,7 @@ variable {α : Type}
 open scoped Classical in
 /-- **The vertex sum**: over colourings extending the boundary
 state, the product of the functional's vertex values. -/
+@[expose]
 noncomputable def vertexSum {W : Fragment α}
     (F : EdgeSubset W) {k ℓ : ℕ}
     (h : MixedFunctional k ℓ) (st : GenBoundaryState k ℓ α)

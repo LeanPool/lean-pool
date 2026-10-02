@@ -83,6 +83,7 @@ four sums puts the pairing in that form.
 
 open Classical in
 /-- A fragment tensor's term at one subset. -/
+@[expose]
 noncomputable def tensorTermAt {α : Type} [LinearOrder α]
     [Fintype α] (V : Fragment α) {k ℓ : ℕ} (h : MixedFunctional k ℓ)
     (s : Finset V.Flag) (x : GenBoundaryState k ℓ α) : ℂ :=
@@ -1501,6 +1502,7 @@ glue applies; elsewhere the value is junk the identity never reads.
 
 open Classical in
 /-- **The upward glue of a data family, at an open cut.** -/
+@[expose]
 noncomputable def glueDataOpen {α : Type} [LinearOrder α]
     {V : Fragment α} {i j : α} (hij : i ≠ j)
     (hopen : V.pairing (V.boundaryFlag i) ≠ V.boundaryFlag j)
@@ -1567,6 +1569,7 @@ open Classical in
 /-- **One stage of the upward lift.**  The mirror of
 `stepDataDown`: dispatch on whether the stage's cut closes, glue the
 family across it, and relabel up. -/
+@[expose]
 noncomputable def stepDataUp (n : ℕ)
     (V : Fragment (Fin (0 + (n + 1)) ⊕ Fin ((n + 1) + 0)))
     (b : Bool) (𝒟 : DataFamily V) :

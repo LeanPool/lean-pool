@@ -30,6 +30,7 @@ namespace RS
 /-- The `z`-gluing pairs: `z`'s high block against the last block
 of `G`, then `z`'s low block against the second block of `G`
 (top pair first within each block). -/
+@[expose]
 noncomputable def zClosePairs (s t u v : ℕ) :
     List ((Fin (u + v) ⊕ Fin ((s + u) + (t + v))) ×
       (Fin (u + v) ⊕ Fin ((s + u) + (t + v)))) :=

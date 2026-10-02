@@ -30,6 +30,7 @@ variable {α : Type}
 /-! ### Well-formedness of pair lists -/
 
 /-- All 2n components of a list of pairs are pairwise distinct. -/
+@[expose]
 def PairsWF (ps : List (α × α)) : Prop :=
   (ps.flatMap (fun p => [p.1, p.2])).Nodup
 
@@ -310,6 +311,7 @@ noncomputable def glueListCongr {α : Type}
 /-! ### Relabelling commutes with the fold -/
 
 /-- Map a pair list through an equivalence. -/
+@[expose]
 def mapPairs (e : α ≃ β) (ps : List (α × α)) : List (β × β) :=
   ps.map (Prod.map e e)
 
@@ -1140,6 +1142,7 @@ noncomputable def glueListAppend (W : Fragment α)
 
 /-- Embed a pair list into the left summand of a disjoint
 union. -/
+@[expose]
 def inlPairs (ps : List (α × α)) :
     List ((α ⊕ β) × (α ⊕ β)) :=
   ps.map (Prod.map Sum.inl Sum.inl)
@@ -1216,6 +1219,7 @@ def inlFoldEquiv (ps : List (α × α)) :
 
 /-- Embed a pair list into the right summand of a disjoint
 union. -/
+@[expose]
 def inrPairs (qs : List (β × β)) :
     List ((α ⊕ β) × (α ⊕ β)) :=
   qs.map (Prod.map Sum.inr Sum.inr)

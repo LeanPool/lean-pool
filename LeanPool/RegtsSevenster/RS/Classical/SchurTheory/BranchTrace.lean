@@ -26,6 +26,7 @@ open Finset
 
 open scoped Classical in
 /-- The mixed restriction pairing. -/
+@[expose]
 noncomputable def restrPairing (lam mu : YoungDiagram)
     (h : lam.card ≤ mu.card) : ℂ :=
   ∑ σ : Equiv.Perm (Fin lam.card),

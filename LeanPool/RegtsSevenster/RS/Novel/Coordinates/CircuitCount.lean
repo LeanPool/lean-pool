@@ -33,6 +33,7 @@ variable {β : Type}
 
 /-- The orbit count of a permutation: number of non-trivial cycles
 plus number of fixed points. -/
+@[expose]
 noncomputable def orbitCount [Fintype β] [DecidableEq β]
     (π : Perm β) : ℕ :=
   π.cycleType.card + Fintype.card (Function.fixedPoints π)

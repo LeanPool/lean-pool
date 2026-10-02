@@ -77,6 +77,7 @@ theorem permFragment_one (t : ℕ) :
 
 /-- The label re-indexing that fixes incoming labels and permutes
 outgoing labels by `σ`. -/
+@[expose]
 def permHighEquiv {t : ℕ} (σ : Equiv.Perm (Fin t)) :
     Fin (t + t) ≃ Fin (t + t) where
   toFun ℓ :=

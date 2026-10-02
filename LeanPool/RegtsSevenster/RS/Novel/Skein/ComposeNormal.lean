@@ -23,6 +23,7 @@ public section
 namespace RS
 
 /-- The interface pairs glued by `glueInterface`, top pair first. -/
+@[expose]
 def interfacePairs (s t u : ℕ) :
     List ((Fin (s + t) ⊕ Fin (t + u)) × (Fin (s + t) ⊕ Fin (t + u))) :=
   (List.finRange t).reverse.map (fun k =>

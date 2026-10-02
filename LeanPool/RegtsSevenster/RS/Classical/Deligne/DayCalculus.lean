@@ -55,6 +55,7 @@ def dayEvaluation [SmallCategory D] [MonoidalCategory D]
 
 /-- The corepresentable Day functor at `c` corepresents evaluation at
 `c`: the Yoneda lemma, read through the `DayFunctor` synonym. -/
+@[expose]
 def coyonedaDayCorepresentableBy [SmallCategory D] [MonoidalCategory D]
     (c : D) :
     (dayEvaluation c).CorepresentableBy
@@ -79,6 +80,7 @@ external product of the two corepresentables, which is definitionally
 the corepresentable of the product category at `(a, b)`, so the Yoneda
 lemma evaluates.  This is the co-Yoneda computation for Day
 convolution. -/
+@[expose]
 def dayCoyonedaCorepresentableBy [SmallCategory D] [MonoidalCategory D]
     (a b : D) :
     (dayEvaluation (a ⊗ b)).CorepresentableBy

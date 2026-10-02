@@ -77,6 +77,7 @@ theorem sum_jtComp (μ : YoungDiagram)
 
 open scoped Classical in
 /-- **The Jacobi–Trudi virtual character** of shape `μ`. -/
+@[expose]
 noncomputable def jtChar (μ : YoungDiagram)
     (π : Equiv.Perm (Fin μ.card)) : ℂ :=
   ∑ σ : Equiv.Perm (Fin μ.rowLens.length),

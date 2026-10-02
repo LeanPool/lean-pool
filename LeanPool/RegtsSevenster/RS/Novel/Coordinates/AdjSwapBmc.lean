@@ -26,6 +26,7 @@ namespace RS
 open CategoryTheory MonoidalCategory
 
 /-- The adjacent swap as a label equivalence. -/
+@[expose]
 def adjSwapEquiv (n i : ℕ) (h : i + 2 ≤ n) : Fin n ≃ Fin n :=
   _root_.Equiv.swap ⟨i, by omega⟩ ⟨i + 1, by omega⟩
 

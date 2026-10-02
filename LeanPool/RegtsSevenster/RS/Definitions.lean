@@ -138,6 +138,7 @@ def circlesOnly (c : ℕ) : Fragment Empty where
   circles := c
 
 /-- Transport a fragment along an equivalence of label types. -/
+@[expose]
 def relabel (W : Fragment α) (e : α ≃ β) : Fragment β where
   Flag := W.Flag
   Vertex := W.Vertex
@@ -158,6 +159,7 @@ def relabel (W : Fragment α) (e : α ≃ β) : Fragment β where
   circles := W.circles
 
 /-- Disjoint union of fragments, over the sum of the label types. -/
+@[expose]
 def disjUnion (W₁ : Fragment α) (W₂ : Fragment β) :
     Fragment (α ⊕ β) where
   Flag := W₁.Flag ⊕ W₂.Flag
@@ -259,6 +261,7 @@ variable {W : Fragment α} {i j : α}
 /-- The rewired pairing for an *open* glue (the two glued flags do
 not bound a common edge): the far ends of the two glued edges become
 partners; all other flags keep their partners. -/
+@[expose]
 def rewire (hopen : W.pairing (W.boundaryFlag i) ≠ W.boundaryFlag j)
     (f : SurvivingFlag W i j) : SurvivingFlag W i j :=
   if hfi : W.pairing f.val = W.boundaryFlag i then
@@ -464,6 +467,7 @@ def gluePairOpen (hij : i ≠ j)
 /-- Gluing a pair of distinct boundary labels: the two half-edges at
 `i` and `j` are joined.  If they bound a common edge it closes into a
 free circle; otherwise their edges are unified end to end. -/
+@[expose]
 def gluePair (hij : i ≠ j) : Fragment (SurvivingLabel α i j) :=
   if hclosed : W.pairing (W.boundaryFlag i) = W.boundaryFlag j then
     gluePairClosed W i j hclosed
@@ -544,6 +548,7 @@ def sumRemoveSplitEquiv {A B : Type} (a : A) (b : B) :
     | Sum.inr _ => rfl
 
 /-- Removing label `t` from `Fin (t + 1 + u)` leaves `Fin (t + u)`. -/
+@[expose]
 noncomputable def rightRemoveEquiv (t u : ℕ) :
     {x : Fin (t + 1 + u) // x ≠ ⟨t, by omega⟩} ≃ Fin (t + u) :=
   Equiv.trans
@@ -553,6 +558,7 @@ noncomputable def rightRemoveEquiv (t u : ℕ) :
 
 /-- The label re-indexing after gluing the top interface pair:
 removing the last label on the left and label `t` on the right. -/
+@[expose]
 noncomputable def interfaceStepEquiv (s t u : ℕ) :
     {x : Fin (s + t + 1) ⊕ Fin (t + 1 + u) //
       x ≠ Sum.inl ⟨s + t, Nat.lt_succ_self _⟩ ∧
@@ -610,6 +616,7 @@ noncomputable def connectionPairing (f : ClosedFragment → ℂ) (t : ℕ)
 
 /-- The curried connection pairing as a linear map from the free
 module on `t`-fragments to the function space. -/
+@[expose]
 noncomputable def connectionMap (f : ClosedFragment → ℂ) (t : ℕ) :
     (Fragment (Fin t) →₀ ℂ) →ₗ[ℂ] (Fragment (Fin t) → ℂ) :=
   Finsupp.lift _ ℂ _ (fun F G => connectionPairing f t F G)
@@ -663,12 +670,14 @@ variable {W : Fragment α}
 
 /-- The degree of a vertex within an edge subset: the number of
 participating flags attached to it. -/
+@[expose]
 noncomputable def deg (F : EdgeSubset W) (v : W.Vertex) : ℕ :=
   letI := Classical.decEq (W.Vertex ⊕ α)
   (F.flags.filter (fun f => W.attach f = Sum.inl v)).card
 
 /-- An edge subset is Eulerian when every vertex has even degree
 within it. -/
+@[expose]
 def Eulerian (F : EdgeSubset W) : Prop :=
   ∀ v : W.Vertex, Even (F.deg v)
 
@@ -693,6 +702,7 @@ structure TransitionSystem (F : EdgeSubset W) where
 
 /-- The walk map of a transition system: follow the edge to the
 partner flag, then the matching at its vertex. -/
+@[expose]
 def TransitionSystem.walk {F : EdgeSubset W} (κ : TransitionSystem F)
     (f : W.Flag) : W.Flag :=
   κ.match_ (W.pairing f)
@@ -734,6 +744,7 @@ noncomputable def TransitionSystem.walkPerm {F : EdgeSubset W}
 of `n` edges carries two walk-cycles of length `n` when `n ≥ 2` and
 two walk fixed points when `n = 1`, so the count is half the total
 number of orbits. -/
+@[expose]
 noncomputable def TransitionSystem.circuitCount {F : EdgeSubset W}
     (κ : TransitionSystem F) : ℕ :=
   (κ.walkPerm.cycleType.card +
@@ -761,6 +772,7 @@ def MixedFunctional (k ℓ : ℕ) : Type :=
 /-- The alternating evaluation of a mixed functional on an ordered
 list of odd colours: zero on repetitions, otherwise the sorting
 sign times the value on the underlying set. -/
+@[expose]
 def MixedFunctional.evalOdd {k ℓ : ℕ} (h : MixedFunctional k ℓ)
     (μ : Multiset (Fin k)) (w : List (Fin (2 * ℓ))) : ℂ :=
   if w.Nodup then (sortSign w : ℂ) * h μ w.toFinset else 0
@@ -768,12 +780,14 @@ def MixedFunctional.evalOdd {k ℓ : ℕ} (h : MixedFunctional k ℓ)
 /-- The odd-colour index pairing of the standard symplectic basis:
 the partner of colour `c` is `c + ℓ` when `c < ℓ` and `c − ℓ`
 otherwise. -/
+@[expose]
 def oddPartner (ℓ : ℕ) (c : Fin (2 * ℓ)) : Fin (2 * ℓ) :=
   if h : c.val < ℓ then ⟨c.val + ℓ, by omega⟩
   else ⟨c.val - ℓ, by omega⟩
 
 /-- The sign of the odd-colour pairing: `g_c = −f_{c+ℓ}` for
 `c < ℓ` and `g_c = f_{c−ℓ}` otherwise. -/
+@[expose]
 def oddPartnerSign (ℓ : ℕ) (c : Fin (2 * ℓ)) : ℤ :=
   if c.val < ℓ then -1 else 1
 
@@ -804,6 +818,7 @@ noncomputable def Fragment.flagOrder {α : Type} (W : Fragment α) :
 
 /-- The incoming participating flags at a vertex, in the fixed flag
 order. -/
+@[expose]
 noncomputable def EdgeSubset.inFlagsAt {α : Type} {W : Fragment α}
     (F : EdgeSubset W) {κ : F.TransitionSystem}
     (o : κ.Orientation) (v : W.Vertex) : List W.Flag :=
@@ -854,6 +869,7 @@ noncomputable instance EdgeSubset.OddColouring.instFintype
 open Classical in
 /-- The even-colour multiset at a vertex: the colours of the
 non-participating flags attached to it. -/
+@[expose]
 noncomputable def EdgeSubset.evenColoursAt (F : EdgeSubset W) {k : ℕ}
     (ψ : F.EvenColouring k) (v : W.Vertex) : Multiset (Fin k) :=
   ((Finset.univ.filter
@@ -873,6 +889,7 @@ open Classical in
 /-- The odd pair contributed by an incoming participating flag: its
 edge colour followed by the partner index of its matched outgoing
 flag's edge colour. -/
+@[expose]
 noncomputable def EdgeSubset.oddPairFn (F : EdgeSubset W) {ℓ : ℕ}
     (κ : F.TransitionSystem) (φ : F.OddColouring ℓ)
     (f : {f : W.Flag // f ∈ F.flags}) : List (Fin (2 * ℓ)) :=
@@ -881,6 +898,7 @@ noncomputable def EdgeSubset.oddPairFn (F : EdgeSubset W) {ℓ : ℕ}
 open Classical in
 /-- The odd-pairing sign contributed by an incoming participating
 flag: the partner sign of its matched outgoing flag's colour. -/
+@[expose]
 noncomputable def EdgeSubset.oddSignFn (F : EdgeSubset W) {ℓ : ℕ}
     (κ : F.TransitionSystem) (φ : F.OddColouring ℓ)
     (f : {f : W.Flag // f ∈ F.flags}) : ℤ :=
@@ -889,6 +907,7 @@ noncomputable def EdgeSubset.oddSignFn (F : EdgeSubset W) {ℓ : ℕ}
 open Classical in
 /-- The odd-colour list at a vertex: the odd pairs of the incoming
 flags in the fixed order. -/
+@[expose]
 noncomputable def EdgeSubset.oddListAt (F : EdgeSubset W) {ℓ : ℕ}
     {κ : F.TransitionSystem} (o : κ.Orientation)
     (φ : F.OddColouring ℓ) (v : W.Vertex) : List (Fin (2 * ℓ)) :=
@@ -898,6 +917,7 @@ noncomputable def EdgeSubset.oddListAt (F : EdgeSubset W) {ℓ : ℕ}
 open Classical in
 /-- The odd-pairing sign at a vertex: the product of the partner
 signs of the outgoing colours. -/
+@[expose]
 noncomputable def EdgeSubset.oddSignAt (F : EdgeSubset W) {ℓ : ℕ}
     {κ : F.TransitionSystem} (o : κ.Orientation)
     (φ : F.OddColouring ℓ) (v : W.Vertex) : ℤ :=
@@ -908,6 +928,7 @@ open Classical in
 /-- The Definition 5 summand of an Eulerian edge subset with chosen
 transition system and orientation: the circuit sign times the
 colouring sum of the vertex values. -/
+@[expose]
 noncomputable def EdgeSubset.mixedSummand (F : EdgeSubset W)
     {k ℓ : ℕ} (h : MixedFunctional k ℓ)
     {κ : F.TransitionSystem} (o : κ.Orientation) : ℂ :=
@@ -922,6 +943,7 @@ open Classical in
 choice of transition system and orientation, zero when none
 exists.  (Every Eulerian subset admits one; the value is
 independent of the choice by the Eulerian-independence input.) -/
+@[expose]
 noncomputable def EdgeSubset.mixedValue (F : EdgeSubset W)
     {k ℓ : ℕ} (h : MixedFunctional k ℓ) : ℂ :=
   if hne : Nonempty ((κ : F.TransitionSystem) × κ.Orientation) then
@@ -934,6 +956,7 @@ open Classical in
 /-- **The mixed partition function** (Regts–Sevenster Definition 5)
 of a fragment: the free-circle factor times the sum over Eulerian
 edge subsets of their circuit-signed colouring sums. -/
+@[expose]
 noncomputable def mixedPartition {α : Type} {k ℓ : ℕ}
     (h : MixedFunctional k ℓ) (W : Fragment α) : ℂ :=
   ((k : ℂ) - 2 * ℓ) ^ W.circles *
@@ -1064,6 +1087,7 @@ structure Hom (V W : SuperVect) where
 
 /-- The identity morphism on a super vector space. -/
 @[simp]
+@[expose]
 def Hom.id (V : SuperVect) : Hom V V where
   evenMap := LinearMap.id
   oddMap := LinearMap.id
@@ -1105,6 +1129,7 @@ def tensorObj (V W : SuperVect) : SuperVect where
 
 /-- The tensor product of two grading-preserving maps acts
 component-wise on each tensor block. -/
+@[expose]
 def tensorHom {V₁ V₂ W₁ W₂ : SuperVect}
     (f : Hom V₁ V₂) (g : Hom W₁ W₂) :
     Hom (tensorObj V₁ W₁) (tensorObj V₂ W₂) := by

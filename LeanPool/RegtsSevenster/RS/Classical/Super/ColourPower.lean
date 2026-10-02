@@ -46,11 +46,13 @@ instance (k ℓ d : ℕ) : DecidableEq (MixedColouring k ℓ d) :=
   inferInstanceAs (DecidableEq (Fin d → Fin k ⊕ Fin (2 * ℓ)))
 
 /-- The odd positions of a colouring. -/
+@[expose]
 def oddSet {k ℓ d : ℕ} (c : MixedColouring k ℓ d) :
     Finset (Fin d) :=
   Finset.univ.filter (fun i => (c i).isRight)
 
 /-- A colouring is even when its odd support has even size. -/
+@[expose]
 def IsEven {k ℓ d : ℕ} (c : MixedColouring k ℓ d) : Prop :=
   Even c.oddSet.card
 
@@ -98,6 +100,7 @@ noncomputable def superPow (V : SuperVect) : ℕ → SuperVect
 namespace MixedColouring
 
 /-- The tail of a colouring: the first `d` positions. -/
+@[expose]
 def tail {k ℓ d : ℕ} (c : MixedColouring k ℓ (d + 1)) :
     MixedColouring k ℓ d :=
   fun i => c i.castSucc
@@ -238,6 +241,7 @@ noncomputable def oddSplitEquiv (k ℓ d : ℕ) :
 namespace SuperLinearEquiv
 
 /-- The identity super linear equivalence. -/
+@[expose]
 noncomputable def refl (V : SuperVect) : SuperLinearEquiv V V :=
   ⟨LinearEquiv.refl ℂ _, LinearEquiv.refl ℂ _⟩
 
@@ -248,6 +252,7 @@ noncomputable def trans {U V W : SuperVect}
   ⟨e.evenEquiv.trans e'.evenEquiv, e.oddEquiv.trans e'.oddEquiv⟩
 
 /-- The tensor of super linear equivalences. -/
+@[expose]
 noncomputable def tensorCongr {V V' W W' : SuperVect}
     (e : SuperLinearEquiv V V') (e' : SuperLinearEquiv W W') :
     SuperLinearEquiv (SuperVect.tensorObj V W)
@@ -290,6 +295,7 @@ noncomputable def colourPowerZero (k ℓ : ℕ) :
 
 /-- The step of the recursion: tensoring the colouring model with
 the standard space extends the colourings by one position. -/
+@[expose]
 noncomputable def colourPowerStep (k ℓ d : ℕ) :
     SuperLinearEquiv
       (SuperVect.tensorObj (colourPower k ℓ d) (stdSuperPair k ℓ))

@@ -26,6 +26,7 @@ open Finset LinearMap
 variable {G : Type*}
 
 /-- The character of a submodule of the regular module. -/
+@[expose]
 noncomputable def nChar
     [Group G] (S : Submodule (MonoidAlgebra ℂ G) (MonoidAlgebra ℂ G))
     (g : G) : ℂ :=

@@ -87,6 +87,7 @@ noncomputable def disjUnionShuffle {α β γ : Type}
 
 /-- The closure pairs of `z` against `z'`, over the pair of
 `(u + v)`-boundaries: high block, then low block. -/
+@[expose]
 def innerClosePairs (u v : ℕ) :
     List ((Fin (u + v) ⊕ Fin (u + v)) ×
       (Fin (u + v) ⊕ Fin (u + v))) :=

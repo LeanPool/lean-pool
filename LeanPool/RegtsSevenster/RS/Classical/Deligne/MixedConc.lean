@@ -489,6 +489,7 @@ noncomputable def blockEmbedSndHom (a b : ℕ) :
 /-- **The block embedding of group algebras**: the `ℂ`-bilinear
 extension of `blockEmbed`, carrying a pair of group-algebra elements
 to the product of their one-sided embeddings. -/
+@[expose]
 noncomputable def blockAlgEmbed {a b : ℕ} (x : SymGroupAlgebra a)
     (y : SymGroupAlgebra b) : SymGroupAlgebra (a + b) :=
   MonoidAlgebra.mapDomainAlgHom ℂ ℂ (blockEmbedFstHom a b) x *

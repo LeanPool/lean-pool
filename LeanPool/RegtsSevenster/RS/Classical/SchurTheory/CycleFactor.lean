@@ -26,6 +26,7 @@ open Finset Equiv Equiv.Perm
 /-- The completed cycle-type product of a prospective power-sum
 sequence: the product over the full cycle type, fixed points
 included. -/
+@[expose]
 noncomputable def cycleProd (t : ℕ → ℂ) {n : ℕ}
     (π : Equiv.Perm (Fin n)) : ℂ :=
   (π.cycleType.map t).prod * t 1 ^ (n - π.cycleType.sum)

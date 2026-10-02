@@ -26,6 +26,7 @@ variable {k ℓ : ℕ}
 
 /-- The canonical colouring: sorted even colours, then sorted
 odd colours. -/
+@[expose]
 noncomputable def canonColouring (μm : Multiset (Fin k))
     (F : Finset (Fin (2 * ℓ))) :
     MixedColouring k ℓ (μm.card + F.card) := fun i =>

@@ -71,6 +71,7 @@ def ChordPairCross [LinearOrder γ]
   (x < u ∧ u < y ∧ y < w) ∨ (u < x ∧ x < w ∧ w < y)
 
 /-- A point lies strictly inside a chord. -/
+@[expose]
 def InsideChord [LinearOrder γ]
     (x y p : γ) : Prop := x < p ∧ p < y
 

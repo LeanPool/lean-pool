@@ -41,6 +41,7 @@ variable {α : Type}
 
 /-- A used label whose trail is a single edge: its entry edge is
 another used label's flag. -/
+@[expose]
 def IsThroughLabel {W : Fragment α}
     (F : EdgeSubset W) (i : α) : Prop :=
   W.pairing (W.boundaryFlag i) ∈ F.boundaryFlags
@@ -242,6 +243,7 @@ noncomputable def untwistD {W : Fragment α}
 open Classical in
 /-- The dual basis's weight against a given set of arc
 directions. -/
+@[expose]
 noncomputable def dualWeightD {W : Fragment α}
     [Fintype α] {k ℓ : ℕ}
     (F : EdgeSubset W) (tl : UsedLab F → Bool)

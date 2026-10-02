@@ -32,6 +32,7 @@ variable {α : Type} {W : Fragment α}
 /-- In-flags at a vertex for a boundary-relative orientation: the
 participating flags attached to the vertex and marked incoming, in
 the fixed enumeration order. -/
+@[expose]
 noncomputable def EdgeSubset.relInFlagsAt (F : EdgeSubset W)
     {κ : F.RelTransitionSystem} (o : κ.Orientation)
     (v : W.Vertex) : List W.Flag :=

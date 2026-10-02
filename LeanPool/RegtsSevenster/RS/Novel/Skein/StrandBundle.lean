@@ -24,6 +24,7 @@ namespace RS
 
 /-- The bundle of `t` parallel strands: strand `k` joins label `k`
 to label `t + k`. -/
+@[expose]
 def strandBundle (t : ℕ) : Fragment (Fin (t + t)) where
   Flag := Fin t × Bool
   Vertex := Empty

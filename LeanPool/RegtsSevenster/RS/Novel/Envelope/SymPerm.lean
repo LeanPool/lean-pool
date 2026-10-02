@@ -44,6 +44,7 @@ variable {A : Type u}
 /-- **The top transposition**: braid the last two factors of
 `X ^ ⊗ (n + 2)`.  Reassociating exposes the last two tensorands, the
 braiding exchanges them, and the associator is undone. -/
+@[expose]
 noncomputable def swapTop
     [Category.{v} A] [MonoidalCategory A] [SymmetricCategory A]
     (X : A) (n : ℕ) :

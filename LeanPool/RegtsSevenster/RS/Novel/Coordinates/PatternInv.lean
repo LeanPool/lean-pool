@@ -27,6 +27,7 @@ variable {k ℓ : ℕ}
 open Classical in
 /-- The pattern inversion count of an edge subset: inverted sort
 pairs of participating slots. -/
+@[expose]
 noncomputable def patternOddInv (W : ClosedFragment)
     (F : EdgeSubset W) : ℕ :=
   (Finset.univ.filter

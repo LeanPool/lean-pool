@@ -119,6 +119,7 @@ theorem internal_surviving (i j : α) {F : EdgeSubset W}
 /-- Extend a surviving-flag self-map to all of `W.Flag`:
 apply it through the subtype on surviving flags, identity
 elsewhere. -/
+@[expose]
 noncomputable def unglueMatch
     (m : SurvivingFlag W i j → SurvivingFlag W i j)
     (f : W.Flag) : W.Flag :=

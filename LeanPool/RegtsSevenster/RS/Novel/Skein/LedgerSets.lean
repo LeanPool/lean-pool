@@ -258,6 +258,7 @@ variable {W : Fragment α} {F : EdgeSubset W}
 /-- The status difference of two systems: the labels whose
 high-status differs — the potential of the canonical route's
 accumulated relabel. -/
+@[expose]
 noncomputable def statusDiff [LinearOrder α]
     (κ κ' : F.RelTransitionSystem) : Finset α :=
   symmU (highSet κ) (highSet κ')

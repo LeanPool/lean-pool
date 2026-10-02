@@ -29,6 +29,7 @@ noncomputable def fibreCard (f : Fin n → Fin N) (j : Fin N) : ℕ := by
   exact (Finset.univ.filter (fun i => f i = j)).card
 
 /-- The content of a colouring: the multiset of its values. -/
+@[expose]
 def content (f : Fin n → Fin N) : Sym (Fin N) n :=
   ⟨Finset.univ.val.map f, by
     rw [Multiset.card_map]

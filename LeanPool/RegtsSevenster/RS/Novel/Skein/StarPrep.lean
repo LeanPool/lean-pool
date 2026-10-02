@@ -139,6 +139,7 @@ noncomputable def strandBundleTranspose (m : ℕ) :
 /-! ### The interface split of a full closure -/
 
 /-- The high-block interface pairs of a full `(m + m)`-closure. -/
+@[expose]
 def highCross (m : ℕ) :
     List ((Fin (0 + (m + m)) ⊕ Fin ((m + m) + 0)) ×
       (Fin (0 + (m + m)) ⊕ Fin ((m + m) + 0))) :=

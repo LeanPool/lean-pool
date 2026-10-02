@@ -528,6 +528,7 @@ RS21 colours a through-edge once, so a state whose two legs there
 disagree carries no colouring at all and both tensors vanish at it.
 The pairing therefore sees only the agreeing states, and it is this
 value, not the bare product of vertex sums, that it computes. -/
+@[expose]
 noncomputable def pairAgreeValue {t : ℕ} {W₁ W₂ : Fragment (Fin t)}
     (F₁ : EdgeSubset W₁) (F₂ : EdgeSubset W₂) {k ℓ : ℕ}
     (h : MixedFunctional k ℓ) {κ₁ : F₁.RelTransitionSystem}
