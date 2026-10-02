@@ -46,6 +46,7 @@ variable {n : ℕ}
 
 /-- Evaluation of a formal lattice-linear expression at an `n`-tuple of vectors
 in a vector lattice. -/
+@[expose]
 def eval {X : Type*} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
     [VectorLattice X] (x : Fin n → X) : LLexpr n → X
   | .zero => 0

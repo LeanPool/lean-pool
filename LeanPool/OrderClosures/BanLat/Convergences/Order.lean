@@ -25,6 +25,7 @@ variable {X : Type u} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
 
 /-- A net `u` **order converges** to `x` if its tails are eventually controlled
 by a separate decreasing regulator net with greatest lower bound zero. -/
+@[expose]
 def OrderConvergesTo {ι : Type v} [Preorder ι] (u : ι → X) (x : X) : Prop :=
   ∃ (κ : Type u) (_ : Preorder κ) (_ : IsDirected κ (· ≤ ·)) (_ : Nonempty κ),
     ∃ r : κ → X,
