@@ -23,6 +23,7 @@ namespace O3
 
 /-- Runtime-only anchor configuration reconstructed after the counted query at
 `x0`.  This definition has no proof-side problem parameters. -/
+@[expose]
 noncomputable def anchorPrefixConfig (input : MethodInput d)
     (f0 : ℝ) (g0 : Vec d) (G : ℝ) : AnchorConfig d :=
   { q := conjugateExponent input.p

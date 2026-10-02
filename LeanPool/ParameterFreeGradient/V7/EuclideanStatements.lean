@@ -182,6 +182,7 @@ noncomputable def FiniteDataOGMGStatement : Prop :=
   [inst.oracle.observe (phaseB.v n)]
 
 /-- A guard check formed from the exact oracle observations at its two points. -/
+@[expose]
 def exactGuardCheck (kind : ObservableGuardKind) (oracle : PairOracle d)
     (x y : Point d) : ObservableGuardCheck d :=
   ⟨kind, oracle.observe x, oracle.observe y⟩

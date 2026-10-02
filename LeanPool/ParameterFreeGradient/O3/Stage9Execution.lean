@@ -256,6 +256,7 @@ noncomputable def ogmgNewIterates (cfg : OGMGExecutionConfig d) : Fin cfg.horizo
   fun i => (ogmgState cfg (i.val + 1)).current
 
 /-- The final extra query is at exactly `v_n`. -/
+@[expose]
 noncomputable def ogmgTerminalObservation (cfg : OGMGExecutionConfig d) : Observation d :=
   cfg.oracle.observe (ogmgV cfg cfg.horizon)
 

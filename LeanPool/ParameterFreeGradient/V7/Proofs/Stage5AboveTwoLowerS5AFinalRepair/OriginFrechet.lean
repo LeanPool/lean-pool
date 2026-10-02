@@ -71,6 +71,7 @@ lemma norm_le_lpNorm {s : ℝ} (hs : 1 ≤ s) {d : ℕ} (x : Point d) :
 
 /-- Explicit finite-dimensional comparison constant between the ambient
 product norm and the literal `ell_s` norm. -/
+@[expose]
 noncomputable def lpAmbientConstant (s : ℝ) (d : ℕ) : ℝ :=
   ↑(NNReal.rpow (d : NNReal)
     (1 / ENNReal.ofReal s).toReal)

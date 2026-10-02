@@ -47,6 +47,7 @@ namespace V7
     (lpNorm 2 (oracle.gradient xi - oracle.gradient xj)) ^ (2 : ℕ) / (2 * M) ≥ 0
 
 /-- The terminal gradient step achieves the decrease predicted by the smoothness estimate. -/
+@[expose]
 noncomputable def TerminalDescentGuard (M : ℝ) (oracle : PairOracle d)
     (u v : Point d) : Prop :=
   oracle.value v ≤ oracle.value u -

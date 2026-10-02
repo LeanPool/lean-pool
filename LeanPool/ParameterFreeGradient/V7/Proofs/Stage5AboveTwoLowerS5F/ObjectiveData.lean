@@ -127,6 +127,7 @@ lemma coordinateGradient_const_mul (f : Point d → ℝ) (g : Point d → Point 
   exact (O3.Stage2RouteD.pairing_smul_left c (g x) h).symm
 
 /-- The normalized completed resisting data viewed as objective data. -/
+@[expose]
 noncomputable def unitObjectiveData (p : ℝ) (d T : ℕ)
     (algorithm : DeterministicExactPairAlgorithm d) (hT : 1 ≤ T) (hTd : T ≤ d) :
     LowerObjectiveData p d T :=

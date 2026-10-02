@@ -22,6 +22,7 @@ noncomputable local instance machinePropDecidable (q : Prop) : Decidable q :=
   Classical.propDecidable q
 
 /-- The observed physical gradient rescaled into normalized trial coordinates. -/
+@[expose]
 noncomputable def normalizedGradient (M D : ℝ) (obs : Observation d) : Point d :=
   (1 / (M * D)) • obs.gradient
 
@@ -42,6 +43,7 @@ noncomputable def checkHolds (p M : ℝ) (check : ObservableGuardCheck d) : Prop
 
 /-- The form actually evaluated by the machine, written directly from the two
 returned exact pairs. -/
+@[expose]
 noncomputable def cocoPairHolds (p M : ℝ) (before after : Observation d) : Prop :=
   before.value - after.value -
       pairing after.gradient (before.point - after.point) ≥
@@ -112,6 +114,7 @@ noncomputable def phaseOneProgram (p eps M D : ℝ) (x0 : Point d) (n k : ℕ)
           else .finish guardsNext (.scale check)
 
 /-- The complete below-two local trial initialized with the cached starting observation. -/
+@[expose]
 noncomputable def belowLocalTrial (p eps : ℝ) (x0 : Point d) (n : ℕ) :
     LocalTrial d :=
   programTrial fun M D cached =>

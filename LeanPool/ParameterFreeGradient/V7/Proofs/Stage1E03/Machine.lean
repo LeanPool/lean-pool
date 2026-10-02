@@ -22,6 +22,7 @@ noncomputable local instance e03PropDecidable (q : Prop) : Decidable q :=
   Classical.propDecidable q
 
 /-- The selected observable inequality evaluated solely from its recorded observations. -/
+@[expose]
 noncomputable def CheckHolds (p M : ℝ) (check : ObservableGuardCheck d) : Prop :=
   match check.kind with
   | .upperModel =>

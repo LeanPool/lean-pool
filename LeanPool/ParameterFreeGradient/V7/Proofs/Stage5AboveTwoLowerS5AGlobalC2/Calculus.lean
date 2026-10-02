@@ -19,6 +19,7 @@ namespace V7.Stage5AboveTwoLower.S5AGlobalC2
 open S5ARepair
 
 /-- The derivative of the kernel's Fréchet derivative, obtained from its Hessian. -/
+@[expose]
 noncomputable def kernelFDerivDerivative (r theta : ℝ) (x : Point d) :
     Point d →L[ℝ] (Point d →L[ℝ] ℝ) :=
   (ContinuousLinearMap.compL ℝ (Point d) (Point d) (Point d →L[ℝ] ℝ))

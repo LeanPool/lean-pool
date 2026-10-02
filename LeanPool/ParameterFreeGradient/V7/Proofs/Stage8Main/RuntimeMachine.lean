@@ -67,6 +67,7 @@ structure RuntimeControllerState (d : ℕ) where
   ⟨0, 0, [], []⟩
 
 /-- The current dyadic smoothness estimate. -/
+@[expose]
 noncomputable def RuntimeControllerState.M (data : RuntimeData d)
     (state : RuntimeControllerState d) : ℝ :=
   (2 : ℝ) ^ state.scaleEpoch * data.Ma
@@ -132,6 +133,7 @@ inductive CurrentMethodState (d : ℕ) where
       (observations : List (Observation d))
 
 /-- The first action of the current local trial, embedded in the global method state. -/
+@[expose]
 noncomputable def startLocalAction (data : RuntimeData d)
     (state : RuntimeControllerState d) : O3.Action d (CurrentMethodState d) :=
   let trial := runtimeTrial data state

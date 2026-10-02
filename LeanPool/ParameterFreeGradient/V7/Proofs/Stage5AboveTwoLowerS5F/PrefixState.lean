@@ -58,6 +58,7 @@ def priorSigma (P : PrefixParameters p d T) (state : ResistingPrefixState d)
   state.sigmaPrefix.getD s (firstCoordinate P)
 
 /-- The next algorithm query, with the first query fixed at the origin. -/
+@[expose]
 noncomputable def stepQuery (P : PrefixParameters p d T) (t : ℕ)
     (state : ResistingPrefixState d) : Point d :=
   if t = 0 then 0 else P.algorithm.nextQuery 0 state.obsPrefix

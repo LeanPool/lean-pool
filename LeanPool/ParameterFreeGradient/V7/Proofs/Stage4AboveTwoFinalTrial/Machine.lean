@@ -81,6 +81,7 @@ noncomputable def phaseOneProgram (p eps M D eta₁ eta₂ : ℝ)
           else .finish guardsNext (.scale check)
 
 /-- The complete above-two local trial with its primal and dual horizons. -/
+@[expose]
 noncomputable def aboveLocalTrial (p eps : ℝ) (x0 : Point d)
     (nf nd : ℕ) : LocalTrial d :=
   programTrial fun M D cached =>

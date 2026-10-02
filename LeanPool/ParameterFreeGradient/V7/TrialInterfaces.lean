@@ -121,6 +121,7 @@ def TrialOutcomeExhaustive (report : TrialReport d) : Prop :=
   ∃ x, report.outcome = .radius x
 
 /-- The numbers of consecutive guard checks and calls agree with the terminal outcome. -/
+@[expose]
 def TrialReport.consecutiveGuardAccounting (report : TrialReport d) : Prop :=
   match report.outcome with
   | .success _ => report.checkedGuards.length + 1 = report.calls

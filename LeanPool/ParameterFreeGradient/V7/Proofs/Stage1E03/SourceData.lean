@@ -20,6 +20,7 @@ namespace V7
 namespace Stage1E03
 
 /-- The literal recursive estimate state driven by an arbitrary value-gradient oracle. -/
+@[expose]
 noncomputable def sourceEstimateState (oracle : PairOracle d) (M : ℝ)
     (x0 : Point d) : ℕ → O3.EuclideanEstimateState d
   | 0 => ⟨x0, 0⟩
@@ -28,6 +29,7 @@ noncomputable def sourceEstimateState (oracle : PairOracle d) (M : ℝ)
         (oracle.observe (estimateQuery M x0 k (sourceEstimateState oracle M x0 k)))
 
 /-- The quadratic potential minimizer associated with the source estimate state. -/
+@[expose]
 noncomputable def sourceEstimateMinimizer (oracle : PairOracle d) (M : ℝ)
     (x0 : Point d) (k : ℕ) : Point d :=
   O3.Stage8EuclideanMinimizer.euclideanPsiMinimizer M x0
