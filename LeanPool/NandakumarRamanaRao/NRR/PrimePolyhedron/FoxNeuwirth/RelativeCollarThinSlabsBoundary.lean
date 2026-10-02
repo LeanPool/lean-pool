@@ -270,7 +270,7 @@ theorem facetIncidence_eq_sum_slabOccurrencePairing
         occurrencePairing hp N 0 (slabFacetOrbitIndicator hp N m hm s r) := by
   classical
   unfold RelativeAffineCellSystem.facetIncidence
-    RelativeCollarMiddlePrismBoundary.occurrencePairing
+    RelativeCollarMiddlePrismBoundary.occurrencePairing weightedOccurrencePairing
   change
     (∑ x : (Fin m × (BaseCells hp N).Cell) × Fin (p + 1),
       if (StackCells hp N m hm).facetClass x = s then
