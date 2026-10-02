@@ -78,6 +78,7 @@ theorem wedgeAddDivisor_transmissionTwist_sameLeft
 
 /-- The factor-rank inequality for one transmission row when both marks lie
 on the left factor.  `ell` records chip transfer across the gluing vertex. -/
+@[expose]
 def WedgeSameLeftTransmissionRowProfile
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (D : CFDiv G) (E : CFDiv H) (p q : G.V)
@@ -177,6 +178,7 @@ theorem wedgeAddDivisor_transmissionTwist_sameRight
 
 /-- The factor-rank inequality for one transmission row when both marks lie
 on the right factor. -/
+@[expose]
 def WedgeSameRightTransmissionRowProfile
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (D : CFDiv G) (E : CFDiv H) (p q : H.V)

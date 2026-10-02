@@ -617,6 +617,7 @@ theorem prin_const_script (G : CFGraph.{u}) (c : ℤ) :
   simp [prin]
 
 /-- Add a constant to a firing script.  This changes no principal divisor. -/
+@[expose]
 def shiftScript (G : CFGraph.{u}) (σ : firingScript G) (c : ℤ) :
     firingScript G := fun v => σ v + c
 

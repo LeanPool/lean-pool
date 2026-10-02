@@ -126,6 +126,7 @@ theorem wedgeAddDivisor_transmissionTwist
 
 /-- The profile inequality attached to a single transmission row of a wedge.
 The `ell` coordinate is the chip transfer across the identified vertex. -/
+@[expose]
 def WedgeTransmissionRowProfile
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (D : CFDiv G) (E : CFDiv H) (u : G.V) (v : H.V)

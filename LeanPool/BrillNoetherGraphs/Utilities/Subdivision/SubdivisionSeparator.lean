@@ -167,6 +167,7 @@ def interiorOffsetOfPosition (edge : Fin p)
     omega⟩
 
 /-- Predecessor of a positive path position. -/
+@[expose]
 def previousPathPosition (edge : Fin p)
     (position : spec.PathPosition edge) (hPositive : 0 < position.val) :
     spec.PathPosition edge :=
@@ -175,6 +176,7 @@ def previousPathPosition (edge : Fin p)
     omega⟩
 
 /-- Successor of a position strictly before the head. -/
+@[expose]
 def nextPathPosition (edge : Fin p)
     (position : spec.PathPosition edge)
     (hBeforeHead : position.val < spec.length edge) :

@@ -344,6 +344,7 @@ def specReindex {n p n' p' : ℕ} (spec : Spec n p)
   length_pos := fun edge => spec.length_pos _
 
 /-- Reindexing is a relabeling, hence preserves the subdivided graph. -/
+@[expose]
 def specReindexRelabeling {n p n' p' : ℕ} (spec : Spec n p)
     (vertexEquiv : Fin n ≃ Fin n') (slotEquiv : Fin p ≃ Fin p')
     (hn : 0 < n') :

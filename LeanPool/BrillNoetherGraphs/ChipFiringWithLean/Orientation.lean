@@ -201,6 +201,7 @@ def outdeg (G : CFGraph) (O : CFOrientation G) (v : G.V) : ℕ :=
   Multiset.card (O.directedEdges.filter (fun e => e.fst = v))
 
 /-- A vertex is a source if it has no incoming edges. -/
+@[expose]
 def isSource (G : CFGraph) (O : CFOrientation G) (v : G.V) : Prop :=
   indeg G O v = 0
 

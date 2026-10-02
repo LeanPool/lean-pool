@@ -440,6 +440,7 @@ def effective {G : CFGraph} (D : CFDiv G) : Prop :=
 
 
 /-- The submonoid of effective divisors is denoted `Eff G`. -/
+@[expose]
 def Eff (G : CFGraph) : AddSubmonoid (CFDiv G) :=
   { carrier := {D : CFDiv G | effective D},
     zero_mem' := by

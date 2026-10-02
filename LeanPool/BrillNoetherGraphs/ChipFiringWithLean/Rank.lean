@@ -63,6 +63,7 @@ lemma maximal_unwinnable_preserved (G : CFGraph) (D1 D2 : CFDiv G) :
 
 This is used to define `rankGeq`: the relation $r(D) \ge k$ means that $D-E$ is
 winnable for every effective divisor $E$ of degree $k$. -/
+@[expose]
 def effOfDegree (G : CFGraph) (k : ℤ) : Set (CFDiv G) :=
   {E | effective E ∧ CFDiv.degree E = k}
 
