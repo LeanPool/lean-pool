@@ -90,7 +90,7 @@ theorem mem_functionFieldNormalClosureConstantRestriction_ker_iff
     apply Subtype.ext
     exact hg c
 
-omit [DecidableEq (RatFunc K)] in
+omit [Fintype K] [DecidableEq (RatFunc K)] in
 omit [DecidableEq K] in
 /-- Every automorphism of the algebraic constant field extends to an
 automorphism of the normal closure over `K(t)`.
@@ -101,10 +101,11 @@ it is fixed by every automorphism of the normal closure over `K(t)`, so the
 Galois fixed-field theorem puts it in `K(t)`.  The rational function field has
 no elements algebraic over `K` except `K` itself.  Thus the image has trivial
 fixed field and is the full constant-field Galois group. -/
-theorem functionFieldNormalClosureConstantRestriction_surjective :
+theorem functionFieldNormalClosureConstantRestriction_surjective [Finite K] :
     Function.Surjective
       (functionFieldNormalClosureConstantRestriction K L) := by
   classical
+  let : Fintype K := Fintype.ofFinite K
   let N := FunctionFieldNormalClosure K L
   let C := FunctionFieldNormalClosureConstantField K L
   let rho := functionFieldNormalClosureConstantRestriction K L

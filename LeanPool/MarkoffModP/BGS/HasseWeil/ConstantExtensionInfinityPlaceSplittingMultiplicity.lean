@@ -1273,9 +1273,10 @@ theorem exactConstantExtensionConstantQuotient_action_on_infinityNormalization :
           (ExactConstantExtension C N S)) :
         ExactConstantExtension C N S) := rfl
 
-omit [DecidableEq C] [DecidableEq S] [DecidableEq (RatFunc S)] in
+omit [Fintype C] [DecidableEq C] [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Every infinity place is unramified in an exact extension of constants. -/
 theorem exactConstantExtensionInfinityPlace_ramificationIdx_eq_one
+    [Finite C]
     (Q : letI : Field (ExactConstantExtension C N S) :=
           exactConstantExtensionField C N S hExact
         letI : Algebra (RatFunc C) (ExactConstantExtension C N S) :=
@@ -1298,6 +1299,7 @@ theorem exactConstantExtensionInfinityPlace_ramificationIdx_eq_one
       exactConstantExtensionBaseTower C (RatFunc C) N S
     infinityPlaceRelativeRamificationIdx C N
       (ExactConstantExtension C N S) Q = 1 := by
+  let : Fintype C := Fintype.ofFinite C
   let : Field (ExactConstantExtension C N S) :=
     exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) (ExactConstantExtension C N S) :=

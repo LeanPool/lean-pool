@@ -176,6 +176,9 @@ separable function field is finite-dimensional. -/
 noncomputable instance functionFieldConstantField_finiteDimensional [Finite K] :
     FiniteDimensional K (FunctionFieldConstantField K N) := by
   classical
+  let : Algebra K[X] N := functionFieldConstantPolynomialAlgebra K N
+  let : SMul K[X] N := Algebra.toSMul
+  let : Module K[X] N := Algebra.toModule
   let p : HeightOneSpectrum K[X] := Polynomial.idealX K
   obtain ⟨Q, hQprime, hQcomap⟩ :=
     Ideal.exists_ideal_over_prime_of_isIntegral_of_isDomain

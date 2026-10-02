@@ -40,14 +40,17 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
 local instance : Algebra C N := bridgeBaseConstantAlgebra C N
 local instance : IsScalarTower C (RatFunc C) N := IsScalarTower.of_algebraMap_eq' rfl
 
+omit [Fintype C] in
 /-- Constant extension preserves genus for the induced rational-function-field algebra. -/
 private theorem exactConstantExtension_genus_eq_for_ratFunc
+    [Finite C]
     (hExact : algebraicClosure C N = (⊥ : IntermediateField C N)) :
     let E := ExactConstantExtension C N S
     let : Field E := exactConstantExtensionField C N S hExact
     let : Algebra (RatFunc S) E := ratFuncExactConstantExtensionAlgebra C S N hExact
     @MarkoffRiemannRoch.FunctionField.genus S E _ _ (bridgeBaseConstantAlgebra S E) =
       MarkoffRiemannRoch.FunctionField.genus C N := by
+  let : Fintype C := Fintype.ofFinite C
   intro E fieldStructure rationalAlgebra
   have hConstantAlgebra : (Algebra.TensorProduct.leftAlgebra : Algebra S E) =
       bridgeBaseConstantAlgebra S E := by
@@ -197,10 +200,11 @@ private local instance genericGaloisTowerRationalConstantTowerN :
 private local instance genericGaloisTowerTopSeparable : Algebra.IsSeparable (RatFunc C) N :=
   (isGalois_iff.mp (inferInstance : IsGalois (RatFunc C) N)).1
 
-omit [DecidableEq C] [DecidableEq (RatFunc C)] in
+omit [Fintype C] [DecidableEq C] [DecidableEq (RatFunc C)] in
 /-- A finite Galois function-field tower over exact finite constants satisfies the
 square-field error bound after a sufficiently divisible even constant extension. -/
 private theorem exactConstantExtensionClosedPlaceError_le_galoisTowerConstants
+    [Finite C]
     (hExactM : algebraicClosure C M = (⊥ : IntermediateField C M))
     (hExactN : algebraicClosure C N = (⊥ : IntermediateField C N))
     (n : ℕ) (hn : 0 < n) :
@@ -218,6 +222,7 @@ private theorem exactConstantExtensionClosedPlaceError_le_galoisTowerConstants
       2 * (D : ℝ) ^ 2 + 2 * (D : ℝ) ^ 3 +
         (D : ℝ) ^ 2 * (2 * g + 1) * (Nat.card C : ℝ) ^ (H * n) := by
   classical
+  let : Fintype C := Fintype.ofFinite C
   intro g H D p charP primeP neBig Cbig fintypeBig
   have hH : 0 < H := by positivity
   have hD : 0 < D := Module.finrank_pos

@@ -280,11 +280,12 @@ private theorem exists_presentedFinitePlace_of_under_rational :
   rw [← hDownstairs, hUnderTower]
   exact hBase
 
-omit [DecidableEq S] [DecidableEq (RatFunc S)] in
+omit [Fintype C] [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Every actual top finite place over a rational finite place of `C(X)` has
 ambient degree `[S : C]`, provided the constant-extension degree is divisible
 by the original Galois degree. -/
 theorem exactConstantExtensionFinitePlace_degree_eq_finrank_of_under_rational
+    [Finite C]
     (hDegreeDiv : Module.finrank (RatFunc C) N ∣ Module.finrank C S) :
     letI : Field (ExactConstantExtension C N S) :=
       exactConstantExtensionField C N S hExact
@@ -311,6 +312,7 @@ theorem exactConstantExtensionFinitePlace_degree_eq_finrank_of_under_rational
     finiteExtensionPlaceDegree C (ExactConstantExtension C N S) (.inl Q) =
       Module.finrank C S := by
   classical
+  let : Fintype C := Fintype.ofFinite C
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=

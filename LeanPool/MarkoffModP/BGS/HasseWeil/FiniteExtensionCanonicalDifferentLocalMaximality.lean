@@ -171,21 +171,11 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
-local instance detectionConstantAlgebra : Algebra K L :=
-  RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
-    (algebraMap K (RatFunc K)))
-
-local instance detectionConstantTower : IsScalarTower K (RatFunc K) L :=
-  IsScalarTower.of_algebraMap_eq' rfl
-
 local instance (priority := 10) detectionPolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
 
 local instance detectionPolynomialTower : IsScalarTower K[X] (RatFunc K) L :=
-  IsScalarTower.of_algebraMap_eq' rfl
-
-local instance detectionConstantPolynomialTower : IsScalarTower K K[X] L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
 local instance detectionFiniteClosureModuleFinite :
@@ -251,8 +241,22 @@ theorem finiteExtensionFiberLift_mem_adeleFilt_of_supported
     (hz : ∀ q, finiteExtensionUnderPlaceChart K L q = p →
       MarkoffRiemannRoch.FunctionField.Chart.placeValuation K L q z ≤
         WithZero.exp (Btop q)) :
+    letI : Algebra K L :=
+      RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+        (algebraMap K (RatFunc K)))
+    letI : IsScalarTower K (RatFunc K) L :=
+      IsScalarTower.of_algebraMap_eq' rfl
+    letI : IsScalarTower K K[X] L :=
+      IsScalarTower.of_algebraMap_eq' rfl
     (finiteExtensionFiberLift K L z b).1 ∈
       MarkoffRiemannRoch.FunctionField.Chart.adeleFilt K L Btop := by
+  let : Algebra K L :=
+    RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+      (algebraMap K (RatFunc K)))
+  let : IsScalarTower K (RatFunc K) L :=
+    IsScalarTower.of_algebraMap_eq' rfl
+  let : IsScalarTower K K[X] L :=
+    IsScalarTower.of_algebraMap_eq' rfl
   intro q
   by_cases hq : finiteExtensionUnderPlaceChart K L q = p
   · change MarkoffRiemannRoch.FunctionField.Chart.placeValuation K L q
@@ -277,11 +281,25 @@ theorem finiteExtensionFiberLift_normalized_trace
     (haAway : ∀ v ≠ p, a.1 v = 0)
     (x : RatFunc K) (hx : x = a.1 p) (hx0 : x ≠ 0)
     (z : L) (hzTrace : Algebra.trace (RatFunc K) L z = x) :
+    letI : Algebra K L :=
+      RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+        (algebraMap K (RatFunc K)))
+    letI : IsScalarTower K (RatFunc K) L :=
+      IsScalarTower.of_algebraMap_eq' rfl
+    letI : IsScalarTower K K[X] L :=
+      IsScalarTower.of_algebraMap_eq' rfl
     let b := x⁻¹ • a
     (b.1 p = 1) ∧
       (∀ v ≠ p, b.1 v = 0) ∧
       ω.toFun (finiteExtensionFiberTrace K L
         (finiteExtensionFiberLift K L z b)) ≠ 0 := by
+  let : Algebra K L :=
+    RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+      (algebraMap K (RatFunc K)))
+  let : IsScalarTower K (RatFunc K) L :=
+    IsScalarTower.of_algebraMap_eq' rfl
+  let : IsScalarTower K K[X] L :=
+    IsScalarTower.of_algebraMap_eq' rfl
   dsimp only
   have hbp : (x⁻¹ • a).1 p = 1 := by
     change x⁻¹ * a.1 p = 1
@@ -312,9 +330,23 @@ theorem finiteExtensionFiberCotrace_detects_finite_excess
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L)))
           (finiteExtensionPlaceEquivChart K L (.inl q₀)) <
         Btop (finiteExtensionPlaceEquivChart K L (.inl q₀))) :
+    letI : Algebra K L :=
+      RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+        (algebraMap K (RatFunc K)))
+    letI : IsScalarTower K (RatFunc K) L :=
+      IsScalarTower.of_algebraMap_eq' rfl
+    letI : IsScalarTower K K[X] L :=
+      IsScalarTower.of_algebraMap_eq' rfl
     ∃ β : finiteExtensionFiberConstantAdeleSubmodule K L,
       β.1 ∈ MarkoffRiemannRoch.FunctionField.Chart.adeleFilt K L Btop ∧
       ω.toFun (finiteExtensionFiberTrace K L β) ≠ 0 := by
+  let : Algebra K L :=
+    RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+      (algebraMap K (RatFunc K)))
+  let : IsScalarTower K (RatFunc K) L :=
+    IsScalarTower.of_algebraMap_eq' rfl
+  let : IsScalarTower K K[X] L :=
+    IsScalarTower.of_algebraMap_eq' rfl
   classical
   let e := HeightOneSpectrum.equivOfRingEquiv
     (ratFuncFiniteBaseRingEquivChart K)
@@ -433,9 +465,23 @@ theorem finiteExtensionFiberCotrace_detects_infinity_excess
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L)))
           (finiteExtensionPlaceEquivChart K L (.inr P₀)) <
         Btop (finiteExtensionPlaceEquivChart K L (.inr P₀))) :
+    letI : Algebra K L :=
+      RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+        (algebraMap K (RatFunc K)))
+    letI : IsScalarTower K (RatFunc K) L :=
+      IsScalarTower.of_algebraMap_eq' rfl
+    letI : IsScalarTower K K[X] L :=
+      IsScalarTower.of_algebraMap_eq' rfl
     ∃ β : finiteExtensionFiberConstantAdeleSubmodule K L,
       β.1 ∈ MarkoffRiemannRoch.FunctionField.Chart.adeleFilt K L Btop ∧
       ω.toFun (finiteExtensionFiberTrace K L β) ≠ 0 := by
+  let : Algebra K L :=
+    RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+      (algebraMap K (RatFunc K)))
+  let : IsScalarTower K (RatFunc K) L :=
+    IsScalarTower.of_algebraMap_eq' rfl
+  let : IsScalarTower K K[X] L :=
+    IsScalarTower.of_algebraMap_eq' rfl
   classical
   let pInf := ratFuncInfinityPlace K
   let e := HeightOneSpectrum.equivOfRingEquiv
@@ -649,9 +695,23 @@ theorem finiteExtensionFiberCotrace_detects_not_le
       finiteExtensionDivisorEquivChart K L
         (finiteExtensionCanonicalDifferentDivisor K L
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L))) :
+    letI : Algebra K L :=
+      RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+        (algebraMap K (RatFunc K)))
+    letI : IsScalarTower K (RatFunc K) L :=
+      IsScalarTower.of_algebraMap_eq' rfl
+    letI : IsScalarTower K K[X] L :=
+      IsScalarTower.of_algebraMap_eq' rfl
     ∃ β : finiteExtensionFiberConstantAdeleSubmodule K L,
       β.1 ∈ MarkoffRiemannRoch.FunctionField.Chart.adeleFilt K L Btop ∧
       ω.toFun (finiteExtensionFiberTrace K L β) ≠ 0 := by
+  let : Algebra K L :=
+    RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+      (algebraMap K (RatFunc K)))
+  let : IsScalarTower K (RatFunc K) L :=
+    IsScalarTower.of_algebraMap_eq' rfl
+  let : IsScalarTower K K[X] L :=
+    IsScalarTower.of_algebraMap_eq' rfl
   classical
   have hB' : ∃ q : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K L,
       (finiteExtensionDivisorEquivChart K L
@@ -679,6 +739,12 @@ theorem finiteExtensionFiberCotrace_detects_not_le
       K L ω hω hdiv Btop P
     simpa only [hQq] using hq
 
+section
+
+local instance detectionConstantAlgebra : Algebra K L :=
+  RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+    (algebraMap K (RatFunc K)))
+
 omit [DecidableEq K] [Fintype K] in
 /-- The trace-different divisor is exactly the maximal vanishing divisor of
 the Weil functional obtained by gluing cotrace to zero.  This is the direct
@@ -686,10 +752,24 @@ local-maximality conclusion of Stichtenoth, Theorem 3.4.6, Step (b1), and does
 not assume a Riemann--Hurwitz degree identity. -/
 theorem finiteExtensionCanonicalDifferent_isCanonical_of_cotrace
     [MarkoffRiemannRoch.FunctionField.IsFullConstantField K L] :
+    letI : Algebra K L :=
+      RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+        (algebraMap K (RatFunc K)))
+    letI : IsScalarTower K (RatFunc K) L :=
+      IsScalarTower.of_algebraMap_eq' rfl
+    letI : IsScalarTower K K[X] L :=
+      IsScalarTower.of_algebraMap_eq' rfl
     MarkoffRiemannRoch.FunctionField.Chart.IsCanonical K L
       (finiteExtensionDivisorEquivChart K L
         (finiteExtensionCanonicalDifferentDivisor K L
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L))) := by
+  let : Algebra K L :=
+    RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+      (algebraMap K (RatFunc K)))
+  let : IsScalarTower K (RatFunc K) L :=
+    IsScalarTower.of_algebraMap_eq' rfl
+  let : IsScalarTower K K[X] L :=
+    IsScalarTower.of_algebraMap_eq' rfl
   classical
   obtain ⟨ωBase, hωBase, hdivBase⟩ :=
     ratFuncCanonicalInfinityDivisor_isCanonical K
@@ -764,11 +844,25 @@ theorem finiteExtensionCanonicalDifferent_isCanonical_of_cotrace
 canonicality theorem, with no degree premise. -/
 theorem finiteExtension_genus_le_canonicalDifferent_finrank_of_cotrace
     [MarkoffRiemannRoch.FunctionField.IsFullConstantField K L] :
+    letI : Algebra K L :=
+      RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+        (algebraMap K (RatFunc K)))
+    letI : IsScalarTower K (RatFunc K) L :=
+      IsScalarTower.of_algebraMap_eq' rfl
+    letI : IsScalarTower K K[X] L :=
+      IsScalarTower.of_algebraMap_eq' rfl
     MarkoffRiemannRoch.FunctionField.Chart.genus K L ≤
       Module.finrank K
         (finiteExtensionRiemannSpace K L
           (finiteExtensionCanonicalDifferentDivisor K L
             (finiteExtensionFiniteDifferentIdeal_ne_bot K L))) := by
+  let : Algebra K L :=
+    RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+      (algebraMap K (RatFunc K)))
+  let : IsScalarTower K (RatFunc K) L :=
+    IsScalarTower.of_algebraMap_eq' rfl
+  let : IsScalarTower K K[X] L :=
+    IsScalarTower.of_algebraMap_eq' rfl
   have hcanonical := finiteExtensionCanonicalDifferent_isCanonical_of_cotrace K L
   have hcharacterization :=
     (finiteExtensionCanonicalDifferent_isCanonical_iff_degree_finrank K L).mp
@@ -785,11 +879,27 @@ theorem finiteExtension_genus_le_budget_of_cotrace
         (finiteExtensionCanonicalDifferentDivisor K L
           (finiteExtensionFiniteDifferentIdeal_ne_bot K L)) ≤
       2 * (budget : ℤ) - 2) :
+    letI : Algebra K L :=
+      RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+        (algebraMap K (RatFunc K)))
+    letI : IsScalarTower K (RatFunc K) L :=
+      IsScalarTower.of_algebraMap_eq' rfl
+    letI : IsScalarTower K K[X] L :=
+      IsScalarTower.of_algebraMap_eq' rfl
     MarkoffRiemannRoch.FunctionField.genus K L ≤ budget := by
+  let : Algebra K L :=
+    RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+      (algebraMap K (RatFunc K)))
+  let : IsScalarTower K (RatFunc K) L :=
+    IsScalarTower.of_algebraMap_eq' rfl
+  let : IsScalarTower K K[X] L :=
+    IsScalarTower.of_algebraMap_eq' rfl
   exact finiteExtension_genus_le_budget_of_canonicalDifferent_isCanonical
     K L budget
       (finiteExtensionCanonicalDifferent_isCanonical_of_cotrace K L)
       hdegree
+
+end
 
 end
 

@@ -419,6 +419,12 @@ private theorem normalization_finite_and_torsionFree
     let : Module R₂ B := Algebra.toModule
     Module.Finite R₂ B ∧ Module.IsTorsionFree R₂ B := by
   intro L R₂ B field polynomial normalization scalar module
+  let : Algebra C R₂ :=
+    RingHom.toAlgebra ((algebraMap C[X] R₂).comp (algebraMap C C[X]))
+  let : SMul C R₂ := Algebra.toSMul
+  let : Module C R₂ := Algebra.toModule
+  let : Module.Free C R₂ := Module.Free.of_divisionRing C R₂
+  let : Module.Flat C R₂ := Module.Flat.of_free
   let : IsDomain R₂ := inferInstance
   let : IsDomain B := inferInstance
   let : Algebra R₂ (S ⊗[C] R₂) :=

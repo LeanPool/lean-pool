@@ -373,12 +373,13 @@ theorem exactConstantExtensionPresentedUpstairsInfinityPlaceEquiv_apply
 
 include hExact
 
-omit [DecidableEq C] [DecidableEq S] in
+omit [Fintype C] [DecidableEq C] [DecidableEq S] in
 /-- Every downstairs infinity place has the standard gcd number of presented
 reciprocal-normalization places above it.  This removes the selected-prime
 index from the infinity splitting theorem and makes it ready for global
 fiberwise summation. -/
-theorem exactConstantExtensionPresentedInfinityPlaceFiber_natCard_eq_gcd_of_downstairs :
+theorem exactConstantExtensionPresentedInfinityPlaceFiber_natCard_eq_gcd_of_downstairs
+    [Finite C] :
     letI : DecidableEq C := infinityBridgeDecidableEqConstants C
     letI : DecidableEq (RatFunc C) :=
       infinityBridgeDecidableEqRatFuncConstants C
@@ -391,6 +392,7 @@ theorem exactConstantExtensionPresentedInfinityPlaceFiber_natCard_eq_gcd_of_down
           C S N q.1 q.2 = P} =
         Nat.gcd (Module.finrank C S)
           (finiteExtensionPlaceDegree C N (.inr P)) := by
+  let : Fintype C := Fintype.ofFinite C
   let : DecidableEq C := infinityBridgeDecidableEqConstants C
   let : DecidableEq (RatFunc C) :=
     infinityBridgeDecidableEqRatFuncConstants C

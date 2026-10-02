@@ -189,7 +189,7 @@ theorem planeCurvePropositionTwo_swapped_of_poweredImageIndexBound
 /-- The two orientations combine to the actual minimum/maximum degree form
 needed by the plane-curve endpoint. -/
 theorem planeCurvePropositionTwo_of_poweredImageIndexBound
-    {K : Type*} [Field K] [Fintype K] [DecidableEq K]
+    {K : Type*} [Field K] [Finite K] [DecidableEq K]
     {p : ℕ} [Fact p.Prime] [CharP K p]
     {f : MvPolynomial (Fin 2) K} (hf : Irreducible f)
     (habsolute : Irreducible
@@ -213,6 +213,7 @@ theorem planeCurvePropositionTwo_of_poweredImageIndexBound
       p (2 * MvPolynomial.degreeOf 0 f * MvPolynomial.degreeOf 1 f)
       (planeCurveExhaustiveTorsionGcdWeightedDegree
         hf hpartialSecond m n : ℝ) := by
+  let : Fintype K := Fintype.ofFinite K
   have hcardK : MvPolynomial.degreeOf 1 f < Fintype.card K :=
     planeCurve_degreeOf_second_lt_card_of_twelve_mul_degrees_lt_char
       hpartialFirst hpartialSecond hlarge

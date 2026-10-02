@@ -52,6 +52,10 @@ local instance generalSquareFieldConstantTower :
     IsScalarTower S (RatFunc S) L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+local instance generalSquareFieldInfinityAlgebra :
+    Algebra (RatFuncInfinityIntegers S) L :=
+  Algebra.ofSubsemiring (RatFuncInfinityIntegers S)
+
 local instance generalSquareFieldInfinityModuleFinite :
     Module.Finite (RatFuncInfinityIntegers S)
       (RatFuncInfinityIntegralClosure S L) :=
@@ -96,7 +100,7 @@ theorem rationalInfinityPlace_card_le_finrank :
       apply Finset.sum_le_sum
       intro P _
       exact Right.one_le_mul
-        (Ideal.ramificationIdx_pos P.1 (RatFuncInfinityIntegers S))
+        (P.1.ramificationIdx_pos (RatFuncInfinityIntegers S))
         (Ideal.inertiaDeg_pos P.1 (RatFuncInfinityIntegers S))
     _ = Module.finrank (RatFunc S) L :=
       finiteExtensionInfinity_sum_ramification_inertia_eq_finrank S L

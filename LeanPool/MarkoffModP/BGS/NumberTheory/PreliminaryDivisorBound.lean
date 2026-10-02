@@ -453,26 +453,38 @@ private theorem sum_preliminaryPrimePenalty_le (n : ℕ) :
   rw [← hsumEq]
   exact hle.trans htotal
 
+private theorem pow_mul_le_pow_mul_of_exponent_le
+    (base factor lower upper : ℕ)
+    (hbase : 0 < base) (hexponent : lower ≤ upper) :
+    base ^ lower * factor ≤ base ^ upper * factor :=
+  Nat.mul_le_mul_right factor (Nat.pow_le_pow_right hbase hexponent)
+
 /-- The divisor function satisfies the uniform elementary estimate
 `τ(n)^10 ≤ 2^447 n`. -/
 theorem card_divisors_pow_ten_le_preliminary_constant_mul
     (n : ℕ) (hn : n ≠ 0) :
     n.divisors.card ^ 10 ≤ 2 ^ 447 * n := by
   rw [Nat.card_divisors hn, ← Finset.prod_pow]
-  calc
-    (∏ p ∈ n.primeFactors, (n.factorization p + 1) ^ 10) ≤
+  have hstep :
+      (∏ p ∈ n.primeFactors, (n.factorization p + 1) ^ 10) ≤
         ∏ p ∈ n.primeFactors,
           (2 ^ preliminaryPrimePenalty p * p ^ n.factorization p) :=
-      Finset.prod_le_prod
-        (fun p hp ↦ factorization_succ_pow_ten_le
-          (Nat.prime_of_mem_primeFactors hp))
-    _ = 2 ^ (∑ p ∈ n.primeFactors, preliminaryPrimePenalty p) * n := by
-      rw [Finset.prod_mul_distrib,
-        Finset.prod_pow_eq_pow_sum,
-        ← Nat.prod_primeFactors_pow_factorization hn]
-    _ ≤ 2 ^ 447 * n :=
-      Nat.mul_le_mul_right n <|
-        Nat.pow_le_pow_right (by norm_num)
-          (sum_preliminaryPrimePenalty_le n)
+    Finset.prod_le_prod
+      (fun p hp ↦ factorization_succ_pow_ten_le
+        (Nat.prime_of_mem_primeFactors hp))
+  have hproduct :
+      (∏ p ∈ n.primeFactors,
+        (2 ^ preliminaryPrimePenalty p * p ^ n.factorization p)) =
+          2 ^ (∑ p ∈ n.primeFactors, preliminaryPrimePenalty p) * n := by
+    rw [Finset.prod_mul_distrib,
+      Finset.prod_pow_eq_pow_sum,
+      ← Nat.prod_primeFactors_pow_factorization hn]
+  have hbound :
+      2 ^ (∑ p ∈ n.primeFactors, preliminaryPrimePenalty p) * n ≤
+        2 ^ 447 * n :=
+    pow_mul_le_pow_mul_of_exponent_le
+      2 n (∑ p ∈ n.primeFactors, preliminaryPrimePenalty p) 447
+      Nat.zero_lt_two (sum_preliminaryPrimePenalty_le n)
+  exact hstep.trans (hproduct.le.trans hbound)
 
 end BGS.NumberTheory

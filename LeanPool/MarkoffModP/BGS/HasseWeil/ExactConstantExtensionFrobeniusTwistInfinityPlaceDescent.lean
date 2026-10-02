@@ -466,10 +466,12 @@ section ExactConstantExtensionInfinityDegree
 variable (hExact : algebraicClosure C N =
   (⊥ : IntermediateField C N))
 
-omit [DecidableEq C] [DecidableEq (RatFunc C)] [DecidableEq S] [DecidableEq (RatFunc S)] in
+omit [Fintype C] [DecidableEq C] [DecidableEq (RatFunc C)] [DecidableEq S]
+  [DecidableEq (RatFunc S)] in
 /-- Every infinity place of the exact constant extension, viewed over the
 original constants `C`, has degree divisible by `[S : C]`. -/
 theorem exactConstantExtensionInfinityPlace_finrank_constants_dvd_degree
+    [Finite C]
     (Q :
       letI : DecidableEq C := infinityBridgeDecidableEqConstants C
       letI : DecidableEq (RatFunc C) :=
@@ -494,6 +496,7 @@ theorem exactConstantExtensionInfinityPlace_finrank_constants_dvd_degree
       exactConstantExtensionBaseAlgebra C (RatFunc C) N S
     Module.finrank C S ∣ finiteExtensionPlaceDegree C
       (ExactConstantExtension C N S) (.inr Q) := by
+  let : Fintype C := Fintype.ofFinite C
   let : DecidableEq C := infinityBridgeDecidableEqConstants C
   let : DecidableEq (RatFunc C) :=
     infinityBridgeDecidableEqRatFuncConstants C
@@ -735,7 +738,7 @@ theorem frobeniusTwistField_infinityPlace_ramificationIdx_eq_one
             calc
               algebraMap S A ((frob ^ k) s - s) =
                   algebraMap S A ((frob ^ k) s) - algebraMap S A s :=
-                map_sub (algebraMap S A) _ _
+                (algebraMap S A).map_sub _ _
               _ = algebraMap S A ((frob ^ k) s) - a := rfl
               _ = tau • a - a := congrArg (fun z : A => z - a) haction.symm
           exact heq.symm ▸ hmem

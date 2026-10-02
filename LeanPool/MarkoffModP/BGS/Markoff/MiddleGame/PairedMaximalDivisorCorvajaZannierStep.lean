@@ -192,7 +192,7 @@ The Corvaja--Zannier estimate is supplied by the in-repository general
 bidegree-`(2,2)` theorem and right-inversion pairing. -/
 theorem exists_left_element_escaping_nonparabolic_maximalOrders
     (p : ℕ) [Fact p.Prime]
-    (E : Type) [Field E] [Fintype E] [CharP E p]
+    (E : Type) [Field E] [Finite E] [CharP E p]
     (alpha beta : E) (Hleft : Subgroup Eˣ)
     (rightSubgroup : ℕ → Subgroup Eˣ)
     (hrightOrder :
@@ -214,6 +214,7 @@ theorem exists_left_element_escaping_nonparabolic_maximalOrders
           ((hright : Eˣ) ^ 2) ≠ 1 →
             weightedSplitTorusTrace alpha beta hleft ≠
               splitTorusTrace hright := by
+  let : Fintype E := Fintype.ofFinite E
   classical
   let orders := middleGameMaximalOrders p (Nat.card Hleft)
   let bound : ℕ → ℝ :=

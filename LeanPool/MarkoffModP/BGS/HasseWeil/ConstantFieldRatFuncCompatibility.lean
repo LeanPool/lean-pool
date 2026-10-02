@@ -369,7 +369,7 @@ theorem separable_planeCurveFunctionFieldBaseChange_over_ratFunc
     (hf : Irreducible f)
     (hfE : Irreducible (MvPolynomial.map (algebraMap K E) f))
     (hpartialSecond : MvPolynomial.pderiv 1 f ≠ 0)
-    [Algebra.IsAlgebraic K E] [Fintype K] [Finite E] :
+    [Algebra.IsAlgebraic K E] [Finite K] [Finite E] :
     letI : IsDomain (PlaneCurveCoordinateRing f) :=
       planeCurveCoordinateRing_isDomain hf
     letI : IsDomain (PlaneCurveCoordinateRing
@@ -381,6 +381,7 @@ theorem separable_planeCurveFunctionFieldBaseChange_over_ratFunc
     Algebra.IsSeparable (RatFunc K)
       (PlaneCurveFunctionField
         (MvPolynomial.map (algebraMap K E) f)) := by
+  let : Fintype K := Fintype.ofFinite K
   let : IsDomain (PlaneCurveCoordinateRing f) :=
     planeCurveCoordinateRing_isDomain hf
   let : IsDomain (PlaneCurveCoordinateRing

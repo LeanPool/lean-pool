@@ -234,11 +234,11 @@ theorem onePointStepanovFirstRestrictionMap_injective_of_linearIndependent
   change onePointStepanovFirstRestrictionMap K L f g s (c - d) = 0
   rw [map_sub, hcd, sub_self]
 
-omit [DecidableEq K] in
+omit [Fintype K] [DecidableEq K] in
 /-- The mixed-order Stepanov-grid criterion proves injectivity of the first
 restriction. -/
 theorem onePointStepanovFirstRestrictionMap_injective_of_grid
-    {α β : Type*} [Fintype α] [Fintype β]
+    [Finite K] {α β : Type*} [Finite α] [Finite β]
     (P : FiniteExtensionPlace K L)
     (f : α → L) (g : β → L) (d : α → ℕ) (e : β → ℕ) (s : ℕ)
     (hf : ∀ i, f i ≠ 0) (hg : ∀ j, g j ≠ 0)
@@ -249,6 +249,9 @@ theorem onePointStepanovFirstRestrictionMap_injective_of_grid
     (hd : Function.Injective d) (he : Function.Injective e)
     (hdigit : ∀ i, d i < s) :
     Function.Injective (onePointStepanovFirstRestrictionMap K L f g s) := by
+  let : Fintype K := Fintype.ofFinite K
+  let : Fintype α := Fintype.ofFinite α
+  let : Fintype β := Fintype.ofFinite β
   apply onePointStepanovFirstRestrictionMap_injective_of_linearIndependent
   exact onePointStepanovGrid_linearIndependent K L P f g d e s
     hf hg hfOrder hgOrder hd he hdigit

@@ -14,6 +14,7 @@ public import LeanPool.MarkoffModP.BGS.CorvajaZannier.DedekindPerfectResidueCase
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FiniteExtensionCanonicalDifferentDivisor
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FiniteExtensionExceptionalSupport
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.TorsionExhaustiveGcdDivisorBound
+public import Mathlib.RingTheory.QuasiFinite.Weakly
 public import Mathlib.Tactic
 
 /-!
@@ -952,11 +953,37 @@ theorem finiteExtensionInfinityPlace_residueField_finite [Finite K]
   let : P.1.LiesOver p := by
     simpa [p] using Ideal.primesOver.liesOver
       (ratFuncInfinityPlace K).asIdeal P
-  let hLocalAlg := Localization.AtPrime.algebraOfLiesOver p P.1
-  have : IsScalarTower (RatFuncInfinityIntegers K) (Localization.AtPrime p)
-      (Localization.AtPrime P.1) := inferInstance
+  let : Algebra (Localization.AtPrime p) (Localization.AtPrime P.1) :=
+    Localization.AtPrime.algebraOfLiesOver p P.1
+  let : CommRing (RatFuncInfinityIntegralClosure K L) :=
+    Subalgebra.toCommRing (integralClosure (RatFuncInfinityIntegers K) L)
+  let : Algebra (RatFuncInfinityIntegers K)
+      (RatFuncInfinityIntegralClosure K L) :=
+    SubalgebraClass.toAlgebra (integralClosure (RatFuncInfinityIntegers K) L)
+  let : Algebra (RatFuncInfinityIntegers K) (Localization.AtPrime P.1) :=
+    RingHom.toAlgebra
+      ((algebraMap (RatFuncInfinityIntegralClosure K L)
+        (Localization.AtPrime P.1)).comp
+        (algebraMap (RatFuncInfinityIntegers K)
+          (RatFuncInfinityIntegralClosure K L)))
+  let : SMul (RatFuncInfinityIntegers K) (Localization.AtPrime p) :=
+    Algebra.toSMul
+  let : SMul (Localization.AtPrime p) (Localization.AtPrime P.1) :=
+    Algebra.toSMul
+  let : SMul (RatFuncInfinityIntegers K) (Localization.AtPrime P.1) :=
+    Algebra.toSMul
+  let : IsScalarTower (RatFuncInfinityIntegers K) (Localization.AtPrime p)
+      (Localization.AtPrime P.1) :=
+    by
+      refine IsScalarTower.of_algebraMap_eq
+        (R := RatFuncInfinityIntegers K)
+        (S := Localization.AtPrime p)
+        (A := Localization.AtPrime P.1) (fun x => ?_)
+      simp only [RingHom.algebraMap_toAlgebra, RingHom.comp_apply,
+        Localization.localRingHom_to_map]
   let : Algebra.QuasiFiniteAt (RatFuncInfinityIntegers K) P.1 := inferInstance
-  let : Module.Finite p.ResidueField P.1.ResidueField := inferInstance
+  let : Module.Finite p.ResidueField P.1.ResidueField :=
+    Algebra.WeaklyQuasiFiniteAt.finite_residueField p P.1
   exact Module.finite_of_finite p.ResidueField
 
 omit [DecidableEq K] in

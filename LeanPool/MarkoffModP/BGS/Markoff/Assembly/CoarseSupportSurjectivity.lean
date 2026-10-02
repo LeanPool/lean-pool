@@ -25,6 +25,22 @@ namespace BGS.Markoff
 
 open BGS.NumberTheory
 
+private theorem pow_lt_pow_right_symbolic
+    (base lower upper : ℕ)
+    (hbase : 1 < base) (hexponent : lower < upper) :
+    base ^ lower < base ^ upper :=
+  Nat.pow_lt_pow_right hbase hexponent
+
+private theorem pow_le_pow_right_symbolic
+    (base lower upper : ℕ)
+    (hbase : 0 < base) (hexponent : lower ≤ upper) :
+    base ^ lower ≤ base ^ upper :=
+  Nat.pow_le_pow_right hbase hexponent
+
+private theorem factor_coefficient_symbolic (a b c d : ℕ) :
+    a * (b * c * d) = b * (a * c * d) := by
+  ring
+
 /-- The exact open cutoff supplied by the Euler-seven obstruction and the
 joint tenth moment for the two neighboring divisor counts. -/
 def coarseSupportStrongApproximationOpenCutoff : ℕ :=
@@ -38,8 +54,8 @@ private theorem twoPow756_lt_coarseSupportStrongApproximationOpenCutoff :
     2 ^ 756 < coarseSupportStrongApproximationOpenCutoff := by
   calc
     2 ^ 756 < 2 ^ 1701 :=
-      Nat.pow_lt_pow_right (by norm_num) (by norm_num)
-    _ = 1 * 2 ^ 1701 * 1 := by ring
+      pow_lt_pow_right_symbolic 2 756 1701 (by norm_num) (by norm_num)
+    _ = 1 * 2 ^ 1701 * 1 := by simp only [Nat.one_mul, Nat.mul_one]
     _ ≤ 35721 ^ 5 * 2 ^ 1701 * 262145 ^ 4 := by
       gcongr <;> norm_num
 
@@ -57,7 +73,7 @@ theorem preliminary_35721_mul_divisorSum_pow_eight_lt
   have hpLarge : 794039 ≤ p := by
     have hsmall : 794039 < 2 ^ 20 := by norm_num
     have hpowers : 2 ^ 20 ≤ 2 ^ 756 :=
-      Nat.pow_le_pow_right (by norm_num) (by norm_num)
+      pow_le_pow_right_symbolic 2 20 756 (by norm_num) (by norm_num)
     omega
   have hmoment : T ^ 10 ≤ D * p := by
     simpa [T, D] using
@@ -95,7 +111,9 @@ theorem preliminary_35721_mul_divisorSum_pow_eight_lt
       rw [show (1716 : ℕ) = 429 * 4 by norm_num, pow_mul]]
     rw [show (1716 : ℕ) = 15 + 1701 by norm_num, pow_add]
     unfold coarseSupportStrongApproximationOpenCutoff
-    ring
+    generalize hpower : 2 ^ 1701 = power
+    exact factor_coefficient_symbolic
+      (35721 ^ 5) (2 ^ 15) power (262145 ^ 4)
   have hcutoffUpper : p ≤ coarseSupportStrongApproximationOpenCutoff := by
     rw [hfactor] at hcancel
     have hcancel' :

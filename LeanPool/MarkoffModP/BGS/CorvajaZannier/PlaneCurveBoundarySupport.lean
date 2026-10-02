@@ -535,11 +535,40 @@ private theorem probe_finiteExtensionPlaceDegree_inr_eq_finrank_residue
     finiteExtensionPlaceDegree K L (.inr P) =
       Module.finrank K P.1.ResidueField := by
   let p := (ratFuncInfinityPlace K).asIdeal
-  let hLocalAlg := Localization.AtPrime.algebraOfLiesOver p P.1
-  have : IsScalarTower (RatFuncInfinityIntegers K) (Localization.AtPrime p)
-      (Localization.AtPrime P.1) := inferInstance
+  let : P.1.LiesOver p := by
+    simpa [p] using Ideal.primesOver.liesOver
+      (ratFuncInfinityPlace K).asIdeal P
+  let : Algebra (Localization.AtPrime p) (Localization.AtPrime P.1) :=
+    Localization.AtPrime.algebraOfLiesOver p P.1
+  let : CommRing (RatFuncInfinityIntegralClosure K L) :=
+    Subalgebra.toCommRing (integralClosure (RatFuncInfinityIntegers K) L)
+  let : Algebra (RatFuncInfinityIntegers K)
+      (RatFuncInfinityIntegralClosure K L) :=
+    SubalgebraClass.toAlgebra (integralClosure (RatFuncInfinityIntegers K) L)
+  let : Algebra (RatFuncInfinityIntegers K) (Localization.AtPrime P.1) :=
+    RingHom.toAlgebra
+      ((algebraMap (RatFuncInfinityIntegralClosure K L)
+        (Localization.AtPrime P.1)).comp
+        (algebraMap (RatFuncInfinityIntegers K)
+          (RatFuncInfinityIntegralClosure K L)))
+  let : SMul (RatFuncInfinityIntegers K) (Localization.AtPrime p) :=
+    Algebra.toSMul
+  let : SMul (Localization.AtPrime p) (Localization.AtPrime P.1) :=
+    Algebra.toSMul
+  let : SMul (RatFuncInfinityIntegers K) (Localization.AtPrime P.1) :=
+    Algebra.toSMul
+  let : IsScalarTower (RatFuncInfinityIntegers K) (Localization.AtPrime p)
+      (Localization.AtPrime P.1) :=
+    by
+      refine IsScalarTower.of_algebraMap_eq
+        (R := RatFuncInfinityIntegers K)
+        (S := Localization.AtPrime p)
+        (A := Localization.AtPrime P.1) (fun x => ?_)
+      simp only [RingHom.algebraMap_toAlgebra, RingHom.comp_apply,
+        Localization.localRingHom_to_map]
   let : Algebra p.ResidueField P.1.ResidueField :=
     IsLocalRing.ResidueField.instAlgebra
+  let : Module p.ResidueField P.1.ResidueField := Algebra.toModule
   let : IsScalarTower K p.ResidueField P.1.ResidueField := inferInstance
   rw [finiteExtensionPlaceDegree, Ideal.inertiaDeg_eq p P.1]
   have hbase : Module.finrank K p.ResidueField = 1 :=

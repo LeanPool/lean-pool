@@ -127,8 +127,27 @@ private theorem neighboringDivisorSum_dominant_constant
     (neighboringDivisorSumSplit + 1) ^ 10 * 2 ^ 447 * (p + 1) ≤
       neighboringDivisorSumSplit ^ 10 *
         neighboringDivisorSumMomentConstant * p := by
-  norm_num [neighboringDivisorSumSplit, neighboringDivisorSumMomentConstant] at *
-  omega
+  let R := neighboringDivisorSumSplit
+  let K := 2 ^ 447
+  let D := neighboringDivisorSumMomentConstant
+  let P := 794039
+  have hground : (R + 1) ^ 10 * K * (P + 1) ≤ R ^ 10 * D * P := by
+    decide +kernel
+  have hlinear : P * (p + 1) ≤ (P + 1) * p := by
+    dsimp [P]
+    omega
+  have hcombined :
+      P * ((R + 1) ^ 10 * K * (p + 1)) ≤
+        P * (R ^ 10 * D * p) := by
+    calc
+      P * ((R + 1) ^ 10 * K * (p + 1)) =
+          ((R + 1) ^ 10 * K) * (P * (p + 1)) := by ac_rfl
+      _ ≤ ((R + 1) ^ 10 * K) * ((P + 1) * p) :=
+        Nat.mul_le_mul_left _ hlinear
+      _ = ((R + 1) ^ 10 * K * (P + 1)) * p := by ac_rfl
+      _ ≤ (R ^ 10 * D * P) * p := Nat.mul_le_mul_right _ hground
+      _ = P * (R ^ 10 * D * p) := by ac_rfl
+  exact Nat.le_of_mul_le_mul_left hcombined (by decide : 0 < P)
 
 /-- Square-root form of the joint product moment. -/
 theorem card_divisors_pred_mul_card_divisors_succ_pow_five_le
@@ -169,10 +188,10 @@ theorem card_divisors_pred_add_card_divisors_succ_pow_ten_le
   let D := neighboringDivisorSumMomentConstant
   have hpTwo : 2 < p := by omega
   have hminus : a ^ 10 ≤ K * (p - 1) := by
-    simpa [a, K] using
+    simpa only [a, K] using
       card_divisors_pow_ten_le_preliminary_constant_mul (p - 1) (by omega)
   have hplus : b ^ 10 ≤ K * (p + 1) := by
-    simpa [b, K] using
+    simpa only [b, K] using
       card_divisors_pow_ten_le_preliminary_constant_mul (p + 1) (by omega)
   have hminusCommon : a ^ 10 ≤ K * (p + 1) :=
     hminus.trans (Nat.mul_le_mul_left K (by omega))
@@ -185,7 +204,7 @@ theorem card_divisors_pred_add_card_divisors_succ_pow_ten_le
   have hRpowPos : 0 < R ^ 10 := pow_pos hRPos 10
   have hdominant :
       (R + 1) ^ 10 * K * (p + 1) ≤ R ^ 10 * D * p := by
-    simpa [R, K, D] using neighboringDivisorSum_dominant_constant hpLarge
+    exact neighboringDivisorSum_dominant_constant hpLarge
   rcases le_total a b with hab | hba
   · by_cases hfar : R * a ≤ b
     · have hlinear : R * (a + b) ≤ (R + 1) * b := by
@@ -201,7 +220,8 @@ theorem card_divisors_pred_add_card_divisors_succ_pow_ten_le
           _ = (R + 1) ^ 10 * b ^ 10 := by ring
           _ ≤ (R + 1) ^ 10 * (K * (p + 1)) :=
             Nat.mul_le_mul_left _ hplus
-          _ = (R + 1) ^ 10 * K * (p + 1) := by ring
+          _ = (R + 1) ^ 10 * K * (p + 1) := by
+            exact (mul_assoc ((R + 1) ^ 10) K (p + 1)).symm
           _ ≤ R ^ 10 * (D * p) := by
             simpa only [Nat.mul_assoc] using hdominant
       exact nat_le_of_pos_mul_le_mul_left
@@ -238,7 +258,8 @@ theorem card_divisors_pred_add_card_divisors_succ_pow_ten_le
           _ = (R + 1) ^ 10 * a ^ 10 := by ring
           _ ≤ (R + 1) ^ 10 * (K * (p + 1)) :=
             Nat.mul_le_mul_left _ hminusCommon
-          _ = (R + 1) ^ 10 * K * (p + 1) := by ring
+          _ = (R + 1) ^ 10 * K * (p + 1) := by
+            exact (mul_assoc ((R + 1) ^ 10) K (p + 1)).symm
           _ ≤ R ^ 10 * (D * p) := by
             simpa only [Nat.mul_assoc] using hdominant
       exact nat_le_of_pos_mul_le_mul_left

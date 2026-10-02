@@ -624,7 +624,7 @@ theorem intermediateFrobeniusTwistField_finitePlace_ramificationIdx_eq_one
             calc
               algebraMap S A ((frob ^ k) s - s) =
                   algebraMap S A ((frob ^ k) s) - algebraMap S A s :=
-                map_sub (algebraMap S A) _ _
+                (algebraMap S A).map_sub _ _
               _ = algebraMap S A ((frob ^ k) s) - a := rfl
               _ = tau • a - a := congrArg (fun z : A => z - a) haction.symm
           exact heq.symm ▸ hmem
@@ -826,10 +826,12 @@ private theorem exists_presentedFinitePlace_of_under_intermediate_rational :
     finitePlaceUnder_intermediate_original C S N hExact L Q]
   exact hBase
 
-omit [FiniteDimensional L N] [DecidableEq S] [DecidableEq (RatFunc S)] in
+omit [Fintype C] [FiniteDimensional L N] [DecidableEq S]
+  [DecidableEq (RatFunc S)] in
 /-- Every top finite place over a rational finite place of `L` has absolute
 degree `[S : C]` when `[N : L]` divides the constant-extension degree. -/
 theorem exactConstantExtensionFinitePlace_degree_eq_finrank_of_under_intermediate_rational
+    [Finite C]
     (hDegreeDiv : Module.finrank L N ∣ Module.finrank C S) :
     letI : Field (ExactConstantExtension C N S) :=
       exactConstantExtensionField C N S hExact
@@ -858,6 +860,7 @@ theorem exactConstantExtensionFinitePlace_degree_eq_finrank_of_under_intermediat
         finiteExtensionPlaceDegree C (ExactConstantExtension C N S) (.inl Q) =
           Module.finrank C S := by
   classical
+  let : Fintype C := Fintype.ofFinite C
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=

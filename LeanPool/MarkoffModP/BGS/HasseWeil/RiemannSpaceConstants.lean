@@ -43,6 +43,10 @@ local instance regularConstantTower : IsScalarTower K (RatFunc K) L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
 local instance regularInfinityNonempty : Nonempty (FiniteExtensionInfinityPlace K L) := by
+  let : Algebra (RatFuncInfinityIntegers K) L :=
+    Algebra.ofSubsemiring (RatFuncInfinityIntegers K)
+  let : SMul (RatFuncInfinityIntegers K) L := Algebra.toSMul
+  let : Module (RatFuncInfinityIntegers K) L := Algebra.toModule
   let _ : Algebra.IsIntegral (RatFuncInfinityIntegers K)
       (RatFuncInfinityIntegralClosure K L) :=
     IsIntegralClosure.isIntegral_algebra (RatFuncInfinityIntegers K) L

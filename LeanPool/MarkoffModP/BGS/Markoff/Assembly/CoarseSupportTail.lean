@@ -24,6 +24,21 @@ namespace BGS.Markoff
 
 open BGS.NumberTheory
 
+private theorem lt_of_le_small_power_lt
+    (base lower upper value bound : ℕ)
+    (hbase : 1 < base)
+    (hsmall : value ≤ base ^ lower)
+    (hindex : lower < upper)
+    (hbound : base ^ upper < bound) :
+    value < bound :=
+  hsmall.trans_lt ((Nat.pow_lt_pow_right hbase hindex).trans hbound)
+
+private theorem pow_mul_le_pow_mul_of_exponent_le
+    (base factor lower upper : ℕ)
+    (hbase : 0 < base) (hexponent : lower ≤ upper) :
+    base ^ lower * factor ≤ base ^ upper * factor :=
+  Nat.mul_le_mul_right factor (Nat.pow_le_pow_right hbase hexponent)
+
 theorem twentyFour_support_margin :
     24 ^ 15 * 2 ^ 687 < 2 ^ 756 := by
   have hbase : 24 ^ 5 < 2 ^ 23 := by norm_num
@@ -66,11 +81,9 @@ theorem cageCoefficient_support_margin :
 theorem seven_le_of_twoPow756_lt
     {p : ℕ} (hp : 2 ^ 756 < p) :
     7 ≤ p := by
-  have hseven : 7 < 2 ^ 756 := by
-    calc
-      7 < 2 ^ 3 := by norm_num
-      _ ≤ 2 ^ 756 :=
-        Nat.pow_le_pow_right (by norm_num) (by norm_num)
+  have hseven : 7 < p :=
+    lt_of_le_small_power_lt 2 3 756 7 p
+      (by norm_num) (by norm_num) (by norm_num) hp
   omega
 
 /-- The linear-tail theorem at the unified clean support cutoff. -/
@@ -89,13 +102,17 @@ theorem sixtyEight_mul_square_lt_rpow_one_div_three_of_tenthMoment
     (hmoment : T ^ 10 ≤ 2 ^ 458 * p) :
     ((68 * T ^ 2 : ℕ) : ℝ) < (p : ℝ) ^ (1 / 3 : ℝ) := by
   let Q : ℕ := 68 ^ 15 * 2 ^ 1374
-  have hQ : Q < p ^ 2 := by
-    simpa [Q] using hpCoefficient
+  have hQ : Q < p ^ 2 := hpCoefficient
   have hpPos : 0 < p := by
     by_contra hpNot
     have hpZero : p = 0 := Nat.eq_zero_of_not_pos hpNot
     subst p
-    simp [Q] at hQ
+    have hQPos : 0 < Q := by
+      dsimp only [Q]
+      exact Nat.mul_pos
+        (pow_pos (by norm_num : 0 < (68 : ℕ)) 15)
+        (pow_pos (by norm_num : 0 < (2 : ℕ)) 1374)
+    omega
   have h68 : (68 ^ 15) ^ 2 = 68 ^ 30 := by
     rw [← pow_mul]
   have hTwoLeft : (2 ^ 458) ^ 6 = 2 ^ 2748 := by
@@ -108,7 +125,7 @@ theorem sixtyEight_mul_square_lt_rpow_one_div_three_of_tenthMoment
       _ ≤ 68 ^ 30 * (2 ^ 458 * p) ^ 6 := by gcongr
       _ = (68 ^ 30 * (2 ^ 458) ^ 6) * p ^ 6 := by
         rw [mul_pow]
-        ring
+        simp only [Nat.mul_assoc]
       _ = ((68 ^ 15) ^ 2 * (2 ^ 1374) ^ 2) * p ^ 6 := by
         rw [h68, hTwoLeft, hTwoRight]
       _ = Q ^ 2 * p ^ 6 := by
@@ -150,15 +167,12 @@ theorem preliminary_sixtyEight_mul_divisorSum_sq_lt_rpow_one_div_three_of_twoPow
     calc
       ((p - 1).divisors.card + (p + 1).divisors.card) ^ 10 ≤
           2 ^ 457 * p := by
-        simpa [preliminaryDivisorMomentConstant] using
-          preliminary_divisor_sum_pow_ten_le hpTwo
-      _ ≤ 2 ^ 458 * p := by
-        apply Nat.mul_le_mul_right
-        calc
-          2 ^ 457 = 2 ^ 457 * 1 := by simp
-          _ ≤ 2 ^ 457 * 2 := Nat.mul_le_mul_left _ (by norm_num)
-          _ = 2 ^ (457 + 1) := (pow_succ 2 457).symm
-          _ = 2 ^ 458 := by norm_num
+        have hmoment := preliminary_divisor_sum_pow_ten_le hpTwo
+        rw [preliminaryDivisorMomentConstant_eq] at hmoment
+        exact hmoment
+      _ ≤ 2 ^ 458 * p :=
+        pow_mul_le_pow_mul_of_exponent_le 2 p 457 458
+          Nat.zero_lt_two (by norm_num)
 
 /-- The cage coefficient times the squared divisor sum is below `sqrt p`. -/
 theorem cageCoefficient_mul_square_lt_sqrt_of_tenthMoment
@@ -167,13 +181,17 @@ theorem cageCoefficient_mul_square_lt_sqrt_of_tenthMoment
     (hmoment : T ^ 10 ≤ 2 ^ 458 * p) :
     ((100522 * T ^ 2 : ℕ) : ℝ) < Real.sqrt (p : ℝ) := by
   let Q : ℕ := 100522 ^ 10 * 2 ^ 916
-  have hQ : Q < p ^ 3 := by
-    simpa [Q] using hpCoefficient
+  have hQ : Q < p ^ 3 := hpCoefficient
   have hpPos : 0 < p := by
     by_contra hpNot
     have hpZero : p = 0 := Nat.eq_zero_of_not_pos hpNot
     subst p
-    simp [Q] at hQ
+    have hQPos : 0 < Q := by
+      dsimp only [Q]
+      exact Nat.mul_pos
+        (pow_pos (by norm_num : 0 < (100522 : ℕ)) 10)
+        (pow_pos (by norm_num : 0 < (2 : ℕ)) 916)
+    omega
   have hTwo : (2 ^ 458) ^ 2 = 2 ^ 916 := by
     rw [← pow_mul]
   have hpowNat : (100522 * T ^ 2) ^ 10 < p ^ 5 := by
@@ -183,7 +201,7 @@ theorem cageCoefficient_mul_square_lt_sqrt_of_tenthMoment
       _ ≤ 100522 ^ 10 * (2 ^ 458 * p) ^ 2 := by gcongr
       _ = (100522 ^ 10 * (2 ^ 458) ^ 2) * p ^ 2 := by
         rw [mul_pow]
-        ring
+        simp only [Nat.mul_assoc]
       _ = Q * p ^ 2 := by rw [hTwo]
       _ < p ^ 3 * p ^ 2 :=
         Nat.mul_lt_mul_of_pos_right hQ (pow_pos hpPos 2)
@@ -222,15 +240,12 @@ theorem preliminary_cageCoefficient_mul_divisorSum_sq_lt_sqrt_of_twoPow756
     calc
       ((p - 1).divisors.card + (p + 1).divisors.card) ^ 10 ≤
           2 ^ 457 * p := by
-        simpa [preliminaryDivisorMomentConstant] using
-          preliminary_divisor_sum_pow_ten_le hpTwo
-      _ ≤ 2 ^ 458 * p := by
-        apply Nat.mul_le_mul_right
-        calc
-          2 ^ 457 = 2 ^ 457 * 1 := by simp
-          _ ≤ 2 ^ 457 * 2 := Nat.mul_le_mul_left _ (by norm_num)
-          _ = 2 ^ (457 + 1) := (pow_succ 2 457).symm
-          _ = 2 ^ 458 := by norm_num
+        have hmoment := preliminary_divisor_sum_pow_ten_le hpTwo
+        rw [preliminaryDivisorMomentConstant_eq] at hmoment
+        exact hmoment
+      _ ≤ 2 ^ 458 * p :=
+        pow_mul_le_pow_mul_of_exponent_le 2 p 457 458
+          Nat.zero_lt_two (by norm_num)
 
 /-- Primitive trace inclusion--exclusion above the unified support cutoff. -/
 theorem coarse_endgamePrimitiveTrace_explicitInequality
@@ -313,13 +328,8 @@ theorem coarse_four_lt_rpow_five_div_six
   have hpOneNat : 1 < p := by omega
   have hpOne : (1 : ℝ) < p := by exact_mod_cast hpOneNat
   have hpowNat : 4 ^ 6 < p := by
-    calc
-      4 ^ 6 < 2 ^ 756 := by
-        calc
-          4 ^ 6 = 2 ^ 12 := by norm_num
-          _ < 2 ^ 756 :=
-            Nat.pow_lt_pow_right (by norm_num) (by norm_num)
-      _ < p := hp
+    exact lt_of_le_small_power_lt 2 12 756 (4 ^ 6) p
+      (by norm_num) (by norm_num) (by norm_num) hp
   have hpowReal : (4 : ℝ) ^ 6 < (p : ℝ) := by
     exact_mod_cast hpowNat
   have hrootPow :
@@ -371,13 +381,8 @@ theorem coarse_halfOrderThreshold
   have hpPos : 0 < p := Nat.zero_lt_of_lt hp
   have hpRealPos : (0 : ℝ) < p := by exact_mod_cast hpPos
   have hthreePowNat : 3 ^ 6 < p := by
-    calc
-      3 ^ 6 < 2 ^ 756 := by
-        calc
-          3 ^ 6 < 2 ^ 12 := by norm_num
-          _ < 2 ^ 756 :=
-            Nat.pow_lt_pow_right (by norm_num) (by norm_num)
-      _ < p := hp
+    exact lt_of_le_small_power_lt 2 12 756 (3 ^ 6) p
+      (by norm_num) (by norm_num) (by norm_num) hp
   have hthreePowReal : (3 : ℝ) ^ 6 < (p : ℝ) := by
     exact_mod_cast hthreePowNat
   have hrootPow :

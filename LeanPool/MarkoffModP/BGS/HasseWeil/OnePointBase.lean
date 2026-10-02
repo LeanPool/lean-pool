@@ -146,7 +146,7 @@ theorem finiteExtensionOnePointRiemannSpace_zero_moduleFinite
     let r : R := lift x - lift y
     have hrResidue : IsLocalRing.residue R r = 0 := by
       dsimp only [r]
-      rw [map_sub]
+      rw [(IsLocalRing.residue R).map_sub]
       exact sub_eq_zero.mpr hxy
     have hrMem : r ∈ IsLocalRing.maximalIdeal R :=
       (IsLocalRing.residue_eq_zero_iff r).mp hrResidue

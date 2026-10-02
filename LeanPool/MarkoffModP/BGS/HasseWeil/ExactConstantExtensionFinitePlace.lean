@@ -363,7 +363,7 @@ theorem exactConstantExtensionFinitePlace_stabilizerRestriction_ker_eq_inertia
 
 section FiniteConstants
 
-variable [Fintype C] [DecidableEq C] [DecidableEq (RatFunc C)]
+variable [Finite C] [DecidableEq C] [DecidableEq (RatFunc C)]
 
 /-- The decomposition-group cardinality required by Frobenius-coset
 averaging, specialized to the exact constant extension. -/
@@ -400,6 +400,7 @@ theorem exactConstantExtensionFinitePlace_decompositionGroup_card
               (finitePlaceDecompositionGroup C L
                 (ExactConstantExtension C N S) Q).subtype).ker *
           Nat.card (S ≃ₐ[C] S) := by
+  let : Fintype C := Fintype.ofFinite C
   let : Field (ExactConstantExtension C N S) :=
     exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) (ExactConstantExtension C N S) :=

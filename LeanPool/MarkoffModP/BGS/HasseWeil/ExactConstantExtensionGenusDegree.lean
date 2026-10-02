@@ -58,6 +58,7 @@ local instance genusDegreeConstantPolynomialTower :
     IsScalarTower K K[X] L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+omit [Finite K] in
 /-- Cotrace canonicality gives the Riemann--Hurwitz equality for the weighted
 finite and infinite trace-different degrees. -/
 theorem finiteExtension_totalDifferentDegree_eq_two_finrank_add_two_genus_sub_two
@@ -73,6 +74,7 @@ theorem finiteExtension_totalDifferentDegree_eq_two_finrank_add_two_genus_sub_tw
   exact MarkoffRiemannRoch.FunctionField.Chart.deg_canonical K L
     (finiteExtensionCanonicalDifferent_isCanonical_of_cotrace K L)
 
+omit [Finite K] in
 /-- The same Riemann--Hurwitz identity stated with the intrinsic genus.  This
 form no longer remembers which compatible polynomial chart was installed. -/
 theorem finiteExtension_totalDifferentDegree_eq_two_finrank_add_two_genus_sub_two_intrinsic
@@ -108,6 +110,7 @@ local instance compatibleGenusDegreeConstantTower :
 
 variable [IsScalarTower K K[X] L]
 
+omit [Finite K] in
 /-- Riemann--Hurwitz for any polynomial chart whose action is compatible
 with the fixed rational-function-field action.  This is the same statement
 as `finiteExtension_totalDifferentDegree_eq_two_finrank_add_two_genus_sub_two`,

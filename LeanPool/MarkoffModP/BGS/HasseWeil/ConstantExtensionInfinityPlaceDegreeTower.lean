@@ -327,10 +327,12 @@ theorem exactConstantExtensionPresentedInfinityPlace_relativeInertiaDeg_eq_div_g
   exact eq_div_gcd_of_mul_eq_mul_div_gcd r d _ hd
     (hTower.symm.trans hTop)
 
-omit [DecidableEq C] [DecidableEq S] [DecidableEq (RatFunc C)] [DecidableEq (RatFunc S)] in
+omit [Fintype C] [DecidableEq C] [DecidableEq S]
+    [DecidableEq (RatFunc C)] [DecidableEq (RatFunc S)] in
 /-- A downstairs infinity place of degree `d` has exactly
 `gcd([S : C], d)` places above it in an exact extension of constants. -/
 theorem exactConstantExtensionInfinityPlace_fiber_card_eq_gcd
+    [Finite C]
     (q : ExactConstantExtensionPresentedInfinityPlace C S N) :
     letI : DecidableEq C := infinityBridgeDecidableEqConstants C
     letI : DecidableEq (RatFunc C) :=
@@ -370,6 +372,7 @@ theorem exactConstantExtensionInfinityPlace_fiber_card_eq_gcd
         (finiteExtensionPlaceDegree C N
           (.inr (exactConstantExtensionDownstairsInfinityPlace
             C S N q.1 q.2))) := by
+  let : Fintype C := Fintype.ofFinite C
   let : DecidableEq C := infinityBridgeDecidableEqConstants C
   let : DecidableEq (RatFunc C) :=
     infinityBridgeDecidableEqRatFuncConstants C
@@ -518,11 +521,13 @@ noncomputable def exactConstantExtensionPresentedInfinityPlaceFiberEquiv :
 
 include hExact
 
-omit [DecidableEq C] [DecidableEq S] [DecidableEq (RatFunc C)] [DecidableEq (RatFunc S)] in
+omit [Fintype C] [DecidableEq C] [DecidableEq S]
+    [DecidableEq (RatFunc C)] [DecidableEq (RatFunc S)] in
 /-- The presented reciprocal infinity fiber itself has the standard gcd
 cardinality.  This is the presentation-level exhaustiveness form of the
 constant-extension splitting law at infinity. -/
 theorem exactConstantExtensionPresentedInfinityPlaceFiber_natCard_eq_gcd
+    [Finite C]
     (q : ExactConstantExtensionPresentedInfinityPlace C S N) :
     letI : DecidableEq C := infinityBridgeDecidableEqConstants C
     letI : DecidableEq (RatFunc C) :=
@@ -539,6 +544,7 @@ theorem exactConstantExtensionPresentedInfinityPlaceFiber_natCard_eq_gcd
         (finiteExtensionPlaceDegree C N
           (.inr (exactConstantExtensionDownstairsInfinityPlace
             C S N q.1 q.2))) := by
+  let : Fintype C := Fintype.ofFinite C
   let : DecidableEq C := infinityBridgeDecidableEqConstants C
   let : DecidableEq (RatFunc C) :=
     infinityBridgeDecidableEqRatFuncConstants C

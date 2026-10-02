@@ -54,8 +54,10 @@ private theorem propositionTwoAuxiliaryBound_of_zero_parameter
     norm_num [hh0]
     linarith
 
+omit [Fintype K] in
 /-- Proposition 2 in the orientation `(u,v)=(x^m,y^n)`. -/
 theorem planeCurvePropositionTwo_natural_of_auxiliaryBounds
+    [Finite K]
     {f : MvPolynomial (Fin 2) K} (hf : Irreducible f)
     (hpartialFirst : MvPolynomial.pderiv 0 f ≠ 0)
     (hpartialSecond : MvPolynomial.pderiv 1 f ≠ 0)
@@ -93,6 +95,7 @@ theorem planeCurvePropositionTwo_natural_of_auxiliaryBounds
       (m * MvPolynomial.degreeOf 1 f) p Chi
       (planeCurveExhaustiveTorsionGcdWeightedDegree
         hf hpartialSecond m n : ℝ) := by
+  let : Fintype K := Fintype.ofFinite K
   let : IsDomain (PlaneCurveCoordinateRing f) :=
     planeCurveCoordinateRing_isDomain hf
   let : DecidableEq (RatFunc K) := Classical.decEq _

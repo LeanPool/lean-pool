@@ -78,7 +78,7 @@ variable (A K₀ : Type*) {L : Type u} {B : Type*}
 variable [CommRing A] [Field K₀] [CommRing B] [Field L]
 variable [Algebra A K₀] [Algebra B L] [Algebra A B] [Algebra K₀ L] [Algebra A L]
 variable [IsScalarTower A K₀ L] [IsScalarTower A B L]
-variable [IsDomain A] [IsFractionRing A K₀]
+variable [IsFractionRing A K₀]
 variable [FiniteDimensional K₀ L] [Algebra.IsSeparable K₀ L]
 variable [IsIntegralClosure B A L] [IsFractionRing B L] [IsIntegrallyClosed A]
 variable [IsDedekindDomain B]
@@ -89,6 +89,7 @@ namespace HeightOneSpectrum
 
 omit [IsIntegrallyClosed A] [Module.IsTorsionFree A B] in
 theorem algebraMap_mem_pow_of_mem_under_pow
+    [IsDomain A]
     (q : HeightOneSpectrum B) (c : A) (n : ℕ)
     (hc : c ∈ (q.under A).asIdeal ^ n) :
     algebraMap A B c ∈ q.asIdeal ^ n := by
@@ -104,6 +105,7 @@ theorem algebraMap_mem_pow_of_mem_under_pow
 omit [IsIntegralClosure B A L] in
 omit [IsIntegrallyClosed A] in
 theorem natCast_le_count_spanSingleton_algebraMap_of_mem_under_pow
+    [IsDomain A]
     (q : HeightOneSpectrum B) (c : A) (n : ℕ) (hc0 : c ≠ 0)
     (hc : c ∈ (q.under A).asIdeal ^ n) :
     (n : ℤ) ≤ FractionalIdeal.count L q
@@ -134,6 +136,7 @@ namespace BGS.HasseWeil
 
 omit [Algebra.IsIntegral A B] in
 theorem count_dual_one_eq_neg_different_multiplicity
+    [IsDomain A]
     (q : HeightOneSpectrum B) :
     FractionalIdeal.count L q
       (FractionalIdeal.dual A K₀ (1 : FractionalIdeal B⁰ L)) =
@@ -153,6 +156,7 @@ theorem count_dual_one_eq_neg_different_multiplicity
 
 omit [Algebra.IsIntegral A B] in
 theorem mem_dual_one_iff_different_multiplicity_le_count
+    [IsDomain A]
     {x : L} (hx : x ≠ 0) :
     x ∈ FractionalIdeal.dual A K₀ (1 : FractionalIdeal B⁰ L) ↔
       ∀ q : HeightOneSpectrum B,
@@ -166,6 +170,7 @@ theorem mem_dual_one_iff_different_multiplicity_le_count
 
 omit [Algebra.IsIntegral A B] in
 theorem trace_mem_algebraMap_range_of_different_multiplicity_le_count
+    [IsDomain A]
     {z : L} (hz : z ≠ 0)
     (hcount : ∀ q : HeightOneSpectrum B,
       -(multiplicity q.asIdeal (differentIdeal A B) : ℤ) ≤
@@ -181,7 +186,8 @@ theorem trace_mem_algebraMap_range_of_different_multiplicity_le_count
 
 omit [Algebra A L] [IsScalarTower A B L] [IsIntegralClosure B A L] [IsIntegrallyClosed A]
   [Algebra.IsIntegral A B] in
-theorem finite_badDifferentCount_set (hdiff : differentIdeal A B ≠ ⊥) (y : L) :
+theorem finite_badDifferentCount_set [IsDomain A]
+    (hdiff : differentIdeal A B ≠ ⊥) (y : L) :
     Set.Finite {q : HeightOneSpectrum B |
       ¬ (-(multiplicity q.asIdeal (differentIdeal A B) : ℤ) ≤
         FractionalIdeal.count L q (FractionalIdeal.spanSingleton B⁰ y))} := by

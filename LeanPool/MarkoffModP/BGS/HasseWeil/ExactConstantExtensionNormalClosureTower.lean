@@ -44,8 +44,11 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra (RatFunc C) N] [FiniteDimensional (RatFunc C) N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
-local instance : Algebra C N := bridgeBaseConstantAlgebra C N
-local instance : IsScalarTower C (RatFunc C) N := IsScalarTower.of_algebraMap_eq' rfl
+local instance normalClosureTowerBaseConstantAlgebra : Algebra C N :=
+  bridgeBaseConstantAlgebra C N
+local instance normalClosureTowerBaseConstantTower :
+    IsScalarTower C (RatFunc C) N :=
+  IsScalarTower.of_algebraMap_eq' rfl
 
 private theorem exactConstantExtensionClosedPlaceExtensionCount_one_eq_baseCount
     (hExact : algebraicClosure C N = (⊥ : IntermediateField C N)) :

@@ -377,18 +377,8 @@ def atPrimeResidueAlgEquiv
     AlgEquiv.ofBijective
       (IsScalarTower.toAlgHom K (B ⧸ q) q.ResidueField)
       (Ideal.bijective_algebraMap_quotient_residueField q)
-  let e : (B ⧸ q) ≃+* IsLocalRing.ResidueField R :=
-    IsLocalization.AtPrime.equivQuotMaximalIdeal q R
   let e₂ : (B ⧸ q) ≃ₐ[K] IsLocalRing.ResidueField R :=
-    { e with
-      commutes' := by
-        intro c
-        change (IsLocalization.AtPrime.equivQuotMaximalIdeal q R)
-            (Ideal.Quotient.mk q (algebraMap K B c)) =
-          IsLocalRing.residue R (algebraMap K R c)
-        rw [IsLocalization.AtPrime.equivQuotMaximalIdeal_apply_mk,
-          IsScalarTower.algebraMap_apply K B R]
-        rfl }
+    (IsLocalization.AtPrime.equivQuotMaximalIdeal q R).restrictScalars K
   exact e₁.symm.trans e₂
 
 /-! ## A selected normalization place above each closed affine centre -/

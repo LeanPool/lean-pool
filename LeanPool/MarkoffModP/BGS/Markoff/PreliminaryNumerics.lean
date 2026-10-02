@@ -23,6 +23,39 @@ inside Lean.
 
 namespace BGS.Markoff
 
+private theorem power_le_power_symbolic
+    (base lower upper : ℕ) (hbase : 0 < base) (hexponent : lower ≤ upper) :
+    base ^ lower ≤ base ^ upper :=
+  Nat.pow_le_pow_right hbase hexponent
+
+private theorem power_nine_plus_four_four_eight (base : ℕ) :
+    base ^ (9 + 448) = base ^ 457 :=
+  congrArg (base ^ ·) (by omega)
+
+private theorem power_succ_447 (base : ℕ) :
+    base ^ 447 * base = base ^ 448 := by
+  calc
+    base ^ 447 * base = base ^ (447 + 1) := (pow_succ base 447).symm
+    _ = base ^ 448 := congrArg (base ^ ·) (by omega)
+
+private theorem power_four_five_seven_eight (base : ℕ) :
+    (base ^ 457) ^ 8 = base ^ 3656 := by
+  calc
+    (base ^ 457) ^ 8 = base ^ (457 * 8) := (pow_mul base 457 8).symm
+    _ = base ^ 3656 := congrArg (base ^ ·) (by omega)
+
+private theorem power_four_five_seven_six_le_7332
+    (base : ℕ) (hbase : 0 < base) :
+    (base ^ 457) ^ 6 ≤ base ^ 7332 := by
+  have hpower : (base ^ 457) ^ 6 = base ^ 2742 := by
+    calc
+      (base ^ 457) ^ 6 = base ^ (457 * 6) := (pow_mul base 457 6).symm
+      _ = base ^ 2742 := congrArg (base ^ ·) (by omega)
+  have hlarge : base ^ 2742 ≤ base ^ 7332 :=
+    power_le_power_symbolic base 2742 7332 hbase (by omega)
+  rw [hpower]
+  exact hlarge
+
 /-- The simultaneous tenth-moment constant for the divisor counts of `p - 1`
 and `p + 1`. -/
 def preliminaryDivisorMomentConstant : ℕ := 2 ^ 457
@@ -90,17 +123,19 @@ theorem preliminary_divisor_sum_pow_ten_le
       have hsum : p - 1 + (p + 1) = 2 * p := by omega
       have hpow : 2 ^ 9 * 2 ^ 447 * 2 = 2 ^ 457 := by
         have h447 : 2 ^ 447 * 2 = 2 ^ 448 := by
-          simpa only [Nat.reduceAdd] using (pow_succ 2 447).symm
+          exact power_succ_447 2
         calc
-          2 ^ 9 * 2 ^ 447 * 2 = 2 ^ 9 * (2 ^ 447 * 2) := by ring
+          2 ^ 9 * 2 ^ 447 * 2 = 2 ^ 9 * (2 ^ 447 * 2) := by ac_rfl
           _ = 2 ^ 9 * 2 ^ 448 := by rw [h447]
           _ = 2 ^ (9 + 448) := (pow_add 2 9 448).symm
-          _ = 2 ^ 457 := by norm_num
+          _ = 2 ^ 457 := power_nine_plus_four_four_eight 2
       calc
         2 ^ 9 * (2 ^ 447 * (p - 1) + 2 ^ 447 * (p + 1)) =
-            2 ^ 9 * 2 ^ 447 * (p - 1 + (p + 1)) := by ring
+            2 ^ 9 * 2 ^ 447 * (p - 1 + (p + 1)) := by
+              simp only [← mul_add, Nat.mul_assoc]
         _ = 2 ^ 9 * 2 ^ 447 * (2 * p) := by rw [hsum]
-        _ = (2 ^ 9 * 2 ^ 447 * 2) * p := by ring
+        _ = (2 ^ 9 * 2 ^ 447 * 2) * p := by
+          exact (Nat.mul_assoc (2 ^ 9 * 2 ^ 447) 2 p).symm
         _ = 2 ^ 457 * p := by rw [hpow]
 
 private theorem preliminary_moment_pow_eight_le_cutoff_sq :
@@ -108,9 +143,9 @@ private theorem preliminary_moment_pow_eight_le_cutoff_sq :
       (2 ^ 1833 * (48 ^ 3 + 1) ^ 10) ^ 2 := by
   rw [preliminaryDivisorMomentConstant_eq]
   calc
-    (2 ^ 457) ^ 8 = 2 ^ 3656 := by
-      simpa only [Nat.reduceMul] using (pow_mul 2 457 8).symm
-    _ ≤ 2 ^ 3666 := Nat.pow_le_pow_right (by omega) (by omega)
+    (2 ^ 457) ^ 8 = 2 ^ 3656 := power_four_five_seven_eight 2
+    _ ≤ 2 ^ 3666 :=
+      power_le_power_symbolic 2 3656 3666 (by norm_num) (by norm_num)
     _ = (2 ^ 1833) ^ 2 := by
       rw [show (3666 : ℕ) = 1833 * 2 by norm_num, pow_mul]
     _ ≤ (2 ^ 1833 * (48 ^ 3 + 1) ^ 10) ^ 2 := by
@@ -121,12 +156,7 @@ private theorem preliminary_middle_coefficient_le_cutoff_pow_four :
     48 ^ 60 * preliminaryDivisorMomentConstant ^ 6 ≤
       (2 ^ 1833 * (48 ^ 3 + 1) ^ 10) ^ 4 := by
   rw [preliminaryDivisorMomentConstant_eq]
-  have htwo : (2 ^ 457) ^ 6 ≤ 2 ^ 7332 := by
-    calc
-      (2 ^ 457) ^ 6 = 2 ^ 2742 := by
-        exact (pow_mul 2 457 6).symm.trans
-          (congrArg (2 ^ ·) (by omega))
-      _ ≤ 2 ^ 7332 := Nat.pow_le_pow_right (by omega) (by omega)
+  have htwo := power_four_five_seven_six_le_7332 2 Nat.zero_lt_two
   have hbase : 48 ^ 60 ≤ (48 ^ 3 + 1) ^ 40 := by
     calc
       48 ^ 60 = (48 ^ 3) ^ 20 := by
@@ -135,7 +165,7 @@ private theorem preliminary_middle_coefficient_le_cutoff_pow_four :
       _ ≤ (48 ^ 3 + 1) ^ 40 :=
         Nat.pow_le_pow_right (by positivity) (by norm_num)
   calc
-    48 ^ 60 * (2 ^ 457) ^ 6 = (2 ^ 457) ^ 6 * 48 ^ 60 := by ring
+    48 ^ 60 * (2 ^ 457) ^ 6 = (2 ^ 457) ^ 6 * 48 ^ 60 := by ac_rfl
     _ ≤ 2 ^ 7332 * (48 ^ 3 + 1) ^ 40 := Nat.mul_le_mul htwo hbase
     _ = (2 ^ 1833 * (48 ^ 3 + 1) ^ 10) ^ 4 := by
       rw [mul_pow, ← pow_mul, ← pow_mul]
@@ -144,12 +174,7 @@ private theorem preliminary_endgame_coefficient_le_cutoff_pow_four :
     68 ^ 30 * preliminaryDivisorMomentConstant ^ 6 ≤
       (2 ^ 1833 * (48 ^ 3 + 1) ^ 10) ^ 4 := by
   rw [preliminaryDivisorMomentConstant_eq]
-  have htwo : (2 ^ 457) ^ 6 ≤ 2 ^ 7332 := by
-    calc
-      (2 ^ 457) ^ 6 = 2 ^ 2742 := by
-        exact (pow_mul 2 457 6).symm.trans
-          (congrArg (2 ^ ·) (by omega))
-      _ ≤ 2 ^ 7332 := Nat.pow_le_pow_right (by omega) (by omega)
+  have htwo := power_four_five_seven_six_le_7332 2 Nat.zero_lt_two
   have hbase : 68 ^ 30 ≤ (48 ^ 3 + 1) ^ 40 := by
     calc
       68 ^ 30 ≤ (48 ^ 3 + 1) ^ 30 :=
@@ -157,7 +182,7 @@ private theorem preliminary_endgame_coefficient_le_cutoff_pow_four :
       _ ≤ (48 ^ 3 + 1) ^ 40 :=
         Nat.pow_le_pow_right (by positivity) (by norm_num)
   calc
-    68 ^ 30 * (2 ^ 457) ^ 6 = (2 ^ 457) ^ 6 * 68 ^ 30 := by ring
+    68 ^ 30 * (2 ^ 457) ^ 6 = (2 ^ 457) ^ 6 * 68 ^ 30 := by ac_rfl
     _ ≤ 2 ^ 7332 * (48 ^ 3 + 1) ^ 40 := Nat.mul_le_mul htwo hbase
     _ = (2 ^ 1833 * (48 ^ 3 + 1) ^ 10) ^ 4 := by
       rw [mul_pow, ← pow_mul, ← pow_mul]

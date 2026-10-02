@@ -571,7 +571,7 @@ theorem frobeniusTwistField_finitePlace_ramificationIdx_eq_one
             calc
               algebraMap S A ((frob ^ k) s - s) =
                   algebraMap S A ((frob ^ k) s) - algebraMap S A s :=
-                map_sub (algebraMap S A) _ _
+                (algebraMap S A).map_sub _ _
               _ = algebraMap S A ((frob ^ k) s) - a := rfl
               _ = tau • a - a := congrArg (fun z : A => z - a) haction.symm
           exact heq.symm ▸ hmem

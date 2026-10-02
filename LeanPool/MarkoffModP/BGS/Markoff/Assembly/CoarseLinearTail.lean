@@ -23,6 +23,13 @@ namespace BGS.Markoff
 
 open BGS.NumberTheory
 
+private theorem mul_pow_reassociate
+    (coefficient base value exponent : ℕ) :
+    coefficient * (base * value) ^ exponent =
+      (coefficient * base ^ exponent) * value ^ exponent := by
+  rw [mul_pow]
+  ring
+
 /-- A tenth-moment estimate and the clean coefficient threshold
 `24^15 * 2^687 < p` imply `24*T < p^(1/6)`.
 
@@ -52,8 +59,7 @@ theorem twentyFour_mul_lt_rpow_one_div_six_of_tenthMoment
       (24 * T) ^ 60 = 24 ^ 60 * (T ^ 10) ^ 6 := by ring
       _ ≤ 24 ^ 60 * (2 ^ 458 * p) ^ 6 := by gcongr
       _ = (24 ^ 60 * (2 ^ 458) ^ 6) * p ^ 6 := by
-        rw [mul_pow]
-        exact (mul_assoc _ _ _).symm
+        exact mul_pow_reassociate (24 ^ 60) (2 ^ 458) p 6
       _ = ((24 ^ 15) ^ 4 * (2 ^ 687) ^ 4) * p ^ 6 := by
         rw [h24, hTwoLeft, hTwoRight]
       _ = Q ^ 4 * p ^ 6 := by

@@ -24,6 +24,22 @@ namespace BGS.Markoff
 
 open BGS.NumberTheory
 
+private theorem weighted_pow_lt_pow_right_symbolic
+    (base lower upper : ℕ)
+    (hbase : 1 < base) (hexponent : lower < upper) :
+    base ^ lower < base ^ upper :=
+  Nat.pow_lt_pow_right hbase hexponent
+
+private theorem weighted_pow_le_pow_right_symbolic
+    (base lower upper : ℕ)
+    (hbase : 0 < base) (hexponent : lower ≤ upper) :
+    base ^ lower ≤ base ^ upper :=
+  Nat.pow_le_pow_right hbase hexponent
+
+private theorem factor_coefficient_symbolic (a b c d : ℕ) :
+    a * (b * c * d) = b * (a * c * d) := by
+  ring
+
 /-- Open cutoff supplied by the weighted twentieth moment and the Euler-seven
 obstruction. -/
 def weightedCoarseSupportStrongApproximationOpenCutoff : ℕ :=
@@ -37,8 +53,9 @@ private theorem twoPow756_lt_weightedCoarseSupportStrongApproximationOpenCutoff 
     2 ^ 756 < weightedCoarseSupportStrongApproximationOpenCutoff := by
   calc
     2 ^ 756 < 2 ^ 1547 :=
-      Nat.pow_lt_pow_right (by norm_num) (by norm_num)
-    _ = 1 * 2 ^ 1547 * 1 := by ring
+      weighted_pow_lt_pow_right_symbolic 2 756 1547
+        (by norm_num) (by norm_num)
+    _ = 1 * 2 ^ 1547 * 1 := by simp only [Nat.one_mul, Nat.mul_one]
     _ ≤ 35721 ^ 5 * 2 ^ 1547 * 32769 ^ 2 := by
       gcongr <;> norm_num
 
@@ -56,7 +73,8 @@ theorem weighted_35721_mul_divisorSum_pow_eight_lt
   have hpLarge : 794039 ≤ p := by
     have hsmall : 794039 < 2 ^ 20 := by norm_num
     have hpowers : 2 ^ 20 ≤ 2 ^ 756 :=
-      Nat.pow_le_pow_right (by norm_num) (by norm_num)
+      weighted_pow_le_pow_right_symbolic 2 20 756
+        (by norm_num) (by norm_num)
     omega
   have hmoment : T ^ 20 ≤ D * p ^ 2 := by
     simpa [T, D] using
@@ -93,7 +111,9 @@ theorem weighted_35721_mul_divisorSum_pow_eight_lt
       rw [show (1562 : ℕ) = 781 * 2 by norm_num, pow_mul]]
     rw [show (1562 : ℕ) = 15 + 1547 by norm_num, pow_add]
     unfold weightedCoarseSupportStrongApproximationOpenCutoff
-    ring
+    generalize hpower : 2 ^ 1547 = power
+    exact factor_coefficient_symbolic
+      (35721 ^ 5) (2 ^ 15) power (32769 ^ 2)
   have hcutoffUpper :
       p ≤ weightedCoarseSupportStrongApproximationOpenCutoff := by
     rw [hfactor] at hcancel

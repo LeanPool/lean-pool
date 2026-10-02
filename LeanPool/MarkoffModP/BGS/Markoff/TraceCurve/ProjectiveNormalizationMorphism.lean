@@ -83,10 +83,13 @@ theorem weightedSplitTraceRawPrincipalOpenSquare
         (weightedSplitTraceAffineNormalizationRingHom alpha beta d e) := by
   apply DFunLike.ext _ _
   intro r
-  simp [integralClosureAwayMap, weightedSplitTraceAffineLaurentRingHom,
+  simpa [integralClosureAwayMap, weightedSplitTraceAffineLaurentRingHom,
     weightedSplitTraceAffineNormalizationAwayRingHom,
-    weightedSplitTraceAffineNormalizationRingHom]
-  exact IsScalarTower.algebraMap_apply _ _ _ r
+    weightedSplitTraceAffineNormalizationRingHom] using
+    (IsScalarTower.algebraMap_apply
+      (WeightedSplitTraceAffineCoordinateRing alpha beta d e)
+      (WeightedSplitTraceAffineNormalizationRing alpha beta d e)
+      (WeightedSplitTraceAffineNormalizationLaurentOpenRing alpha beta d e) r)
 
 /-- Ring-level affine-chart square for the normalization map. -/
 theorem weightedSplitTraceAffineNormalizationRingSquare

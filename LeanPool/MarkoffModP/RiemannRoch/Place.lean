@@ -8,6 +8,8 @@ module
 
 public import LeanPool.MarkoffModP.RiemannRoch.Divisor
 public import LeanPool.MarkoffModP.RiemannRoch.SeparableRelNorm
+public import Mathlib.Algebra.GroupWithZero.Equiv
+public import Mathlib.Algebra.Order.Hom.MonoidWithZero
 public import Mathlib.NumberTheory.FunctionField
 public import Mathlib.RingTheory.Jacobson.Ring
 public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
@@ -252,14 +254,18 @@ noncomputable def normalization (v : Place k K) :
 /-- The normalized `ℤᵐ⁰`-valued valuation associated to a coordinate-free place. -/
 noncomputable def valuation (v : Place k K) : Valuation K ℤᵐ⁰ :=
   v.toValuationSubring.valuation.restrict.map
-    v.normalization.toMonoidWithZeroHom v.normalization.toOrderIso.monotone
+    (OrderMonoidWithZeroHomClass.toOrderMonoidWithZeroHom v.normalization)
 
 /-- The normalized valuation is equivalent to the canonical valuation of the valuation
 subring. -/
 theorem valuation_isEquiv_canonical (v : Place k K) :
     v.valuation.IsEquiv v.toValuationSubring.valuation := by
+  let normalizationHom :
+      ValueGroup₀ (.ofClass v.toValuationSubring.valuation) →*₀o ℤᵐ⁰ :=
+    OrderMonoidWithZeroHomClass.toOrderMonoidWithZeroHom v.normalization
+  have hinjective : Function.Injective normalizationHom := v.normalization.injective
   exact (Valuation.isEquiv_map_self_of_strictMono
-    v.normalization.toMonoidWithZeroHom v.normalization.strictMono).trans
+    normalizationHom hinjective).trans
       v.toValuationSubring.valuation.isEquiv_restrict.symm
 
 /-- Recovering the valuation subring from the normalized valuation gives the original place. -/

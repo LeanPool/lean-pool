@@ -304,8 +304,33 @@ theorem exists_finitePlace_riemann_lower_budget :
       0 < finiteExtensionPoleDivisor K L x (.inr P) := by
     intro P
     dsimp only [x]
-    rw [finiteExtensionPoleDivisor_ratFuncX_inr_eq_ramificationIdx]
-    exact_mod_cast P.1.ramificationIdx_pos (RatFuncInfinityIntegers K)
+    let : CommRing (RatFuncInfinityIntegralClosure K L) :=
+      Subalgebra.toCommRing (integralClosure (RatFuncInfinityIntegers K) L)
+    let : Algebra (RatFuncInfinityIntegers K)
+        (RatFuncInfinityIntegralClosure K L) :=
+      SubalgebraClass.toAlgebra (integralClosure (RatFuncInfinityIntegers K) L)
+    let : Algebra (RatFuncInfinityIntegers K) L :=
+      Algebra.ofSubsemiring (RatFuncInfinityIntegers K)
+    let : SMul (RatFuncInfinityIntegers K) L := Algebra.toSMul
+    let : Module (RatFuncInfinityIntegers K) L := Algebra.toModule
+    let : IsDedekindDomain (RatFuncInfinityIntegralClosure K L) :=
+      IsIntegralClosure.isDedekindDomain
+        (RatFuncInfinityIntegers K) (RatFunc K) L
+        (RatFuncInfinityIntegralClosure K L)
+    let : Fintype (FiniteExtensionInfinityPlace K L) :=
+      Set.Finite.fintype
+        (IsDedekindDomain.primesOver_finite
+          (ratFuncInfinityPlace K).asIdeal
+          (RatFuncInfinityIntegralClosure K L))
+    have hmem : (.inr P : FiniteExtensionPlace K L) ∈
+        (finiteExtensionPoleDivisor K L
+          (algebraMap (RatFunc K) L RatFunc.X)).support := by
+      rw [finiteExtensionPoleDivisor_ratFuncX_support]
+      exact Finset.mem_map.mpr ⟨P, Finset.mem_univ P, rfl⟩
+    have hne := Finsupp.mem_support_iff.mp hmem
+    have hnonneg := finiteExtensionPoleDivisor_effective K L
+      (algebraMap (RatFunc K) L RatFunc.X) (.inr P)
+    omega
   simpa only [g] using
     finitePlace_riemann_lower_of_primitive K L x y hx0 hy0 rfl
       hprimitive (finiteExtensionHeight_ratFuncX_eq_finrank K L) hxInfinity

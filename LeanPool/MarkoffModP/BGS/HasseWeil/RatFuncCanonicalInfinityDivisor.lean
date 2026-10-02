@@ -83,7 +83,7 @@ private theorem inertiaDegree_le_fractionField_finrank
   let Q : p.primesOver S := ⟨q, inferInstance, inferInstance⟩
   calc
     q.inertiaDeg R ≤ q.ramificationIdx R * q.inertiaDeg R :=
-      Nat.le_mul_of_pos_left _ (Ideal.ramificationIdx_pos q R)
+      Nat.le_mul_of_pos_left _ (q.ramificationIdx_pos R)
     _ ≤ ∑ Q : p.primesOver S, Q.1.ramificationIdx R * Q.1.inertiaDeg R :=
       Finset.single_le_sum
         (f := fun Q : p.primesOver S => Q.1.ramificationIdx R * Q.1.inertiaDeg R)

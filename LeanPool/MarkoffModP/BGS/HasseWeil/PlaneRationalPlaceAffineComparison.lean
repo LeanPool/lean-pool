@@ -153,14 +153,6 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
   [DecidableEq (RatFunc K)]
 
-local instance rationalComparisonConstantAlgebra : Algebra K L :=
-  RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
-    (algebraMap K (RatFunc K)))
-
-local instance rationalComparisonConstantScalarTower :
-    IsScalarTower K (RatFunc K) L :=
-  IsScalarTower.of_algebraMap_eq' rfl
-
 local instance (priority := 10) rationalComparisonPolynomialAlgebra :
     Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
@@ -195,6 +187,14 @@ local instance rationalComparisonFiniteClosureFractionRing :
     IsFractionRing (RatFuncFiniteIntegralClosure K L) L :=
   IsIntegralClosure.isFractionRing_of_finite_extension K[X] (RatFunc K) L
     (RatFuncFiniteIntegralClosure K L)
+
+local instance rationalComparisonConstantAlgebra : Algebra K L :=
+  RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+    (algebraMap K (RatFunc K)))
+
+local instance rationalComparisonConstantScalarTower :
+    IsScalarTower K (RatFunc K) L :=
+  IsScalarTower.of_algebraMap_eq' rfl
 
 local instance rationalComparisonFiniteClosureConstantAlgebra :
     Algebra K (RatFuncFiniteIntegralClosure K L) :=
@@ -274,7 +274,7 @@ theorem rationalBasePlace_primesOver_card_le_finrank
       apply Finset.sum_le_sum
       intro Q _
       exact Nat.one_le_of_lt (Nat.mul_pos
-        (Ideal.ramificationIdx_pos Q.1 K[X]) (Ideal.inertiaDeg_pos Q.1 K[X]))
+        (Ideal.ramificationIdx_pos K[X] Q.1) (Ideal.inertiaDeg_pos Q.1 K[X]))
     _ = Module.finrank K[X] (RatFuncFiniteIntegralClosure K L) :=
       Ideal.sum_ramification_inertia_eq_finrank P.1.asIdeal
         (RatFuncFiniteIntegralClosure K L)
@@ -494,7 +494,19 @@ theorem rationalFinitePlaceBaseCoordinate_residue
       algebraMap K[X] V (Polynomial.C c) := by
     intro c
     exact (IsScalarTower.algebraMap_apply K K[X] V c).symm
-  simp only [map_sub] at hzero
+  have hmapInner :
+      algebraMap K[X] V (Polynomial.X - Polynomial.C a) =
+        algebraMap K[X] V Polynomial.X -
+          algebraMap K[X] V (Polynomial.C a) :=
+    (algebraMap K[X] V).map_sub _ _
+  have hmapOuter :
+      algebraMap V m.ResidueField
+          (algebraMap K[X] V Polynomial.X -
+            algebraMap K[X] V (Polynomial.C a)) =
+        algebraMap V m.ResidueField (algebraMap K[X] V Polynomial.X) -
+          algebraMap V m.ResidueField (algebraMap K[X] V (Polynomial.C a)) :=
+    (algebraMap V m.ResidueField).map_sub _ _
+  rw [hmapInner, hmapOuter] at hzero
   rw [← htower a,
     ← IsScalarTower.algebraMap_apply K V m.ResidueField a] at hzero
   exact (sub_eq_zero.mp hzero).symm
@@ -1365,9 +1377,11 @@ private theorem valuationSubring_eq_dominating_of_centered_hom
     ValuationSubring.eq_of_le_of_ne_top W hWD hD
   exact hWVeq.symm.trans hWDeq
 
+omit [Fintype K] in
 /-- At a good rational finite place, the normalization valuation ring is
 the unique valuation ring dominating its smooth affine residue center. -/
 theorem planeCurveGoodRationalFinitePlace_valuationSubring_eq_dominating
+    [Finite K]
     (hf : Irreducible f)
     (hpartialSecond : MvPolynomial.pderiv 1 f ≠ 0) :
     let := planeCurveCoordinateRing_isDomain hf
@@ -1393,6 +1407,7 @@ theorem planeCurveGoodRationalFinitePlace_valuationSubring_eq_dominating
         dominatingValuationSubring
           (affinePlaneCurvePointMaximalIdeal f
             (planeCurveGoodRationalFinitePlaceCenter hf hpartialSecond Q)) := by
+  let : Fintype K := Fintype.ofFinite K
   intro model1 hx model3 model4 model5 model6 model7 model8
   classical
   let A := PlaneCurveCoordinateRing f
@@ -1471,10 +1486,12 @@ theorem planeCurveGoodRationalFinitePlace_valuationSubring_eq_dominating
   exact valuationSubring_eq_dominating_of_centered_hom m V φ hφE hcenter hV
     r0 hr0mem hr0map
 
+omit [Fintype K] in
 /-- The residue-center map is injective on the good rational finite
 places: smoothness makes the local DVR, hence the dominating valuation ring,
 unique. -/
 theorem planeCurveGoodRationalFinitePlaceCenter_injective
+    [Finite K]
     (hf : Irreducible f)
     (hpartialSecond : MvPolynomial.pderiv 1 f ≠ 0) :
     letI := planeCurveCoordinateRing_isDomain hf
@@ -1494,6 +1511,7 @@ theorem planeCurveGoodRationalFinitePlaceCenter_injective
     letI : DecidableEq (RatFunc K) := Classical.decEq _
     Function.Injective
       (planeCurveGoodRationalFinitePlaceCenter hf hpartialSecond) := by
+  let : Fintype K := Fintype.ofFinite K
   classical
   let : IsDomain (PlaneCurveCoordinateRing f) :=
     planeCurveCoordinateRing_isDomain hf
@@ -1534,11 +1552,13 @@ theorem planeCurveGoodRationalFinitePlaceCenter_injective
       (planeCurveGoodRationalFinitePlace_valuationSubring_eq_dominating
         hf hpartialSecond R).symm
 
+omit [Fintype K] in
 /-- Plane-curve specialization of the bad-fiber estimate.  Rational finite
 places over a base fiber where either the second-coordinate leading
 coefficient vanishes or the second-coordinate derivative has a common root
 are controlled only by the bidegree. -/
 theorem planeCurveExceptionalRationalFinitePlace_card_le
+    [Finite K]
     {firstDegree secondDegree : ℕ}
     (hdegree : BGS.External.HasBidegreeAtMost f firstDegree secondDegree)
     (hf : Irreducible f)
@@ -1564,6 +1584,7 @@ theorem planeCurveExceptionalRationalFinitePlace_card_le
       (secondCoordinateAffineExceptionalPolynomial f)) ≤
       (firstDegree + (2 * secondDegree - 1) * firstDegree) *
         secondDegree := by
+  let : Fintype K := Fintype.ofFinite K
   classical
   let : IsDomain (PlaneCurveCoordinateRing f) :=
     planeCurveCoordinateRing_isDomain hf

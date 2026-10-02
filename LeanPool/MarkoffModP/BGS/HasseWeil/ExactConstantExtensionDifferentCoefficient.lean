@@ -83,23 +83,6 @@ local instance exactConstantDifferentCoefficientBaseConstantTower :
     IsScalarTower C (RatFunc C) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
-local instance (priority := 10)
-    exactConstantDifferentCoefficientBasePolynomialAlgebra : Algebra C[X] N :=
-  RingHom.toAlgebra ((algebraMap (RatFunc C) N).comp
-    (algebraMap C[X] (RatFunc C)))
-
-local instance exactConstantDifferentCoefficientBasePolynomialTower :
-    IsScalarTower C[X] (RatFunc C) N :=
-  IsScalarTower.of_algebraMap_eq' rfl
-
-local instance exactConstantDifferentCoefficientBaseConstantPolynomialTower :
-    IsScalarTower C C[X] N :=
-  IsScalarTower.of_algebraMap_eq' rfl
-
-local instance exactConstantDifferentCoefficientTargetPolynomialAlgebra :
-    Algebra S[X] (ExactConstantExtension C N S) :=
-  constantExtensionTensorPolynomialAlgebra C S N
-
 @[reducible] private noncomputable def
     exactConstantDifferentCoefficientCanonicalFractionRingAlgebra
     (R : Type*) [CommRing R] [IsDomain R] :
@@ -169,10 +152,19 @@ private theorem finiteNormalization_differentIdeal_eq_map
     letI : IsDedekindDomain (integralClosure k[X] T) := hDedekind
     letI : Module.IsTorsionFree k[X] (integralClosure k[X] T) :=
       hTorsionFree
+    letI : IsDedekindDomain (RatFuncFiniteIntegralClosure k T) := by
+      subst a
+      exact hDedekind
+    letI : Module.IsTorsionFree k[X] (RatFuncFiniteIntegralClosure k T) := by
+      subst a
+      exact hTorsionFree
     let e := integralClosureAlgEquivRatFuncFiniteOfEq k T a h
     differentIdeal k[X] (RatFuncFiniteIntegralClosure k T) =
       Ideal.map e (differentIdeal k[X] (integralClosure k[X] T)) := by
   subst a
+  let : IsDedekindDomain (RatFuncFiniteIntegralClosure k T) := hDedekind
+  let : Module.IsTorsionFree k[X] (RatFuncFiniteIntegralClosure k T) :=
+    hTorsionFree
   dsimp only
   change differentIdeal k[X] (RatFuncFiniteIntegralClosure k T) =
     Ideal.map (AlgEquiv.refl :
@@ -218,8 +210,12 @@ then invokes unramifiedness of exact constant extensions. -/
 theorem exactConstantExtensionPresentedFinitePlace_ramificationIdx_eq_one
     (hExact : algebraicClosure C N =
       (⊥ : IntermediateField C N))
-    (q : HeightOneSpectrum
-      (integralClosure S[X] (ExactConstantExtension C N S))) :
+    (q : letI : Algebra C[X] N := ratFuncInducedPolynomialAlgebra C N;
+      letI : Algebra S[X] (ExactConstantExtension C N S) :=
+        bridgeTargetPolynomialAlgebra C S N;
+      HeightOneSpectrum
+        (integralClosure S[X] (ExactConstantExtension C N S))) :
+    letI : Algebra C[X] N := ratFuncInducedPolynomialAlgebra C N
     let E := ExactConstantExtension C N S
     letI : Field E := exactConstantExtensionField C N S hExact
     letI : Algebra (RatFunc C) E :=
@@ -235,6 +231,8 @@ theorem exactConstantExtensionPresentedFinitePlace_ramificationIdx_eq_one
     q.asIdeal.ramificationIdx R2 = 1 := by
   dsimp only
   let E := ExactConstantExtension C N S
+  let : Algebra C[X] N := ratFuncInducedPolynomialAlgebra C N
+  let : IsScalarTower C C[X] N := IsScalarTower.of_algebraMap_eq' rfl
   let : Field E := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) E :=
     exactConstantExtensionBaseAlgebra C (RatFunc C) N S
@@ -670,8 +668,12 @@ private theorem different_ne_bot_of_fraction_fields
 private theorem exactConstantExtension_presented_totalDifferentMultiplicity_eq_finite
     (hExact : algebraicClosure C N =
       (⊥ : IntermediateField C N))
-    (q : HeightOneSpectrum
-      (integralClosure S[X] (ExactConstantExtension C N S))) :
+    (q : letI : Algebra C[X] N := ratFuncInducedPolynomialAlgebra C N;
+      letI : Algebra S[X] (ExactConstantExtension C N S) :=
+        bridgeTargetPolynomialAlgebra C S N;
+      HeightOneSpectrum
+        (integralClosure S[X] (ExactConstantExtension C N S))) :
+    letI : Algebra C[X] N := ratFuncInducedPolynomialAlgebra C N
     let E := ExactConstantExtension C N S
     let : Field E := exactConstantExtensionField C N S hExact
     let : Algebra (RatFunc C) E :=
@@ -712,6 +714,7 @@ private theorem exactConstantExtension_presented_totalDifferentMultiplicity_eq_f
           C S N hExact (.inl q)) := by
   intro E model1 model2 model3 model4 model5 model6 model7 model8 model9
     model10 model11 model12 model13 model14 model15
+  let : Algebra C[X] N := ratFuncInducedPolynomialAlgebra C N
   let : Algebra S[X] (RatFunc S) :=
     inferInstance
   let : IsFractionRing S[X] (RatFunc S) :=
@@ -764,6 +767,22 @@ private theorem exactConstantExtension_presented_totalDifferentMultiplicity_eq_f
   have hAlgebra : ratFuncInducedPolynomialAlgebra S E = a :=
     ratFuncInducedPolynomialAlgebra_eq S E a
       (ratFuncToExactConstantExtension_algebraMap C S N hExact)
+  let : IsDedekindDomain (RatFuncFiniteIntegralClosure S E) := by
+    let : Algebra S[X] E := ratFuncInducedPolynomialAlgebra S E
+    let : SMul S[X] E := Algebra.toSMul
+    let : Module S[X] E := Algebra.toModule
+    let : IsScalarTower S[X] (RatFunc S) E :=
+      IsScalarTower.of_algebraMap_eq' rfl
+    exact IsIntegralClosure.isDedekindDomain S[X] (RatFunc S) E _
+  let : Module.IsTorsionFree S[X] (RatFuncFiniteIntegralClosure S E) := by
+    let : Algebra S[X] E := ratFuncInducedPolynomialAlgebra S E
+    let : SMul S[X] E := Algebra.toSMul
+    let : Module S[X] E := Algebra.toModule
+    let : IsScalarTower S[X] (RatFunc S) E :=
+      IsScalarTower.of_algebraMap_eq' rfl
+    let : Module.IsTorsionFree S[X] E :=
+      Module.IsTorsionFree.trans_faithfulSMul S[X] (RatFunc S) E
+    exact IsIntegralClosure.isTorsionFree S[X] E
   let e := integralClosureAlgEquivRatFuncFiniteOfEq
     S E a hAlgebra
   have hDifferent :
@@ -816,6 +835,7 @@ private theorem exactConstantExtension_presented_totalDifferentMultiplicity_eq_i
     (hExact : algebraicClosure C N =
       (⊥ : IntermediateField C N))
     (q : ExactConstantExtensionPresentedInfinityPlace C S N) :
+    letI : Algebra C[X] N := ratFuncInducedPolynomialAlgebra C N
     let E := ExactConstantExtension C N S
     let : Field E := exactConstantExtensionField C N S hExact
     let : Algebra (RatFunc C) E :=
@@ -856,6 +876,7 @@ private theorem exactConstantExtension_presented_totalDifferentMultiplicity_eq_i
           C S N hExact (.inr q)) := by
   intro E model1 model2 model3 model4 model5 model6 model7 model8 model9
     model10 model11 model12 model13 model14 model15
+  let : Algebra C[X] N := ratFuncInducedPolynomialAlgebra C N
   rw [exactConstantExtensionPresentedUpstairsPlaceEquiv_apply]
   simp only [exactConstantExtensionPresentedUpstairsPlace,
     exactConstantExtensionPresentedDownstairsPlace,
@@ -970,6 +991,7 @@ theorem exactConstantExtension_presented_totalDifferentMultiplicity_eq
     (hExact : algebraicClosure C N =
       (⊥ : IntermediateField C N))
     (q : ExactConstantExtensionPresentedPlace C S N) :
+    letI : Algebra C[X] N := ratFuncInducedPolynomialAlgebra C N
     let E := ExactConstantExtension C N S
     let : Field E := exactConstantExtensionField C N S hExact
     let : Algebra (RatFunc C) E :=
@@ -1008,6 +1030,7 @@ theorem exactConstantExtension_presented_totalDifferentMultiplicity_eq
       finiteExtensionTotalDifferentEffectiveDivisor C N
         (exactConstantExtensionPresentedDownstairsPlace
           C S N hExact q) := by
+  let : Algebra C[X] N := ratFuncInducedPolynomialAlgebra C N
   cases q with
   | inl q =>
     exact exactConstantExtension_presented_totalDifferentMultiplicity_eq_finite
@@ -1016,9 +1039,11 @@ theorem exactConstantExtension_presented_totalDifferentMultiplicity_eq
     exact exactConstantExtension_presented_totalDifferentMultiplicity_eq_infinity
       C S N hExact q
 
+omit [Fintype C] in
 /-- Exact finite extension of the full constant field preserves intrinsic
 function-field genus. -/
 theorem exactConstantExtension_genus_eq
+    [Finite C]
     (hExact : algebraicClosure C N =
       (⊥ : IntermediateField C N)) :
     let E := ExactConstantExtension C N S
@@ -1027,7 +1052,12 @@ theorem exactConstantExtension_genus_eq
       ratFuncExactConstantExtensionAlgebra C S N hExact
     MarkoffRiemannRoch.FunctionField.genus S E = MarkoffRiemannRoch.FunctionField.genus C N := by
   dsimp only
+  let : Fintype C := Fintype.ofFinite C
   let E := ExactConstantExtension C N S
+  let : Algebra C[X] N := ratFuncInducedPolynomialAlgebra C N
+  let : IsScalarTower C C[X] N := IsScalarTower.of_algebraMap_eq' rfl
+  let : IsScalarTower C[X] (RatFunc C) N :=
+    IsScalarTower.of_algebraMap_eq' rfl
   let : Field E := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) E :=
     exactConstantExtensionBaseAlgebra C (RatFunc C) N S

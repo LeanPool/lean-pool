@@ -24,6 +24,12 @@ constant is still `2^796`.
 
 namespace BGS.NumberTheory
 
+private theorem pow_mul_square_rearrange
+    (base core : ℕ) :
+    base ^ 816 * core ^ 2 = base ^ 814 * (base * core) ^ 2 := by
+  rw [show (816 : ℕ) = 814 + 2 by norm_num, pow_add, mul_pow]
+  ring
+
 /-- The product of the two neighboring divisor counts has only one weighted
 prime-penalty factor in its twentieth moment. -/
 theorem card_divisors_pred_mul_card_divisors_succ_pow_twenty_le
@@ -55,11 +61,9 @@ theorem card_divisors_pred_mul_card_divisors_succ_pow_twenty_le
       Nat.mul_le_mul_left _ hmoment
     _ = 2 ^ 816 * core ^ 2 := by
       rw [show (816 : ℕ) = 20 + 796 by norm_num, pow_add]
-      ring
+      exact (mul_assoc (2 ^ 20) (2 ^ 796) (core ^ 2)).symm
     _ = 2 ^ 814 * (2 * core) ^ 2 := by
-      rw [show (816 : ℕ) = 814 + 2 by norm_num, pow_add]
-      norm_num
-      ring
+      exact pow_mul_square_rearrange 2 core
     _ = 2 ^ 814 * (p ^ 2 - 1) ^ 2 := by rw [htwiceCore]
 
 /-- Square-root form of the weighted joint product moment. -/
@@ -124,10 +128,12 @@ private theorem neighboringDivisorSumWeighted_dominant_constant
         P ^ 2 * (R ^ 20 * D * p ^ 2) := by
     calc
       P ^ 2 * ((R + 1) ^ 20 * K * (p + 1) ^ 2) =
-          ((R + 1) ^ 20 * K) * (P ^ 2 * (p + 1) ^ 2) := by ring
+          ((R + 1) ^ 20 * K) * (P ^ 2 * (p + 1) ^ 2) := by
+        exact mul_left_comm (P ^ 2) ((R + 1) ^ 20 * K) ((p + 1) ^ 2)
       _ ≤ ((R + 1) ^ 20 * K) * ((P + 1) ^ 2 * p ^ 2) :=
         Nat.mul_le_mul_left _ hratio
-      _ = ((R + 1) ^ 20 * K * (P + 1) ^ 2) * p ^ 2 := by ring
+      _ = ((R + 1) ^ 20 * K * (P + 1) ^ 2) * p ^ 2 := by
+        exact (mul_assoc ((R + 1) ^ 20 * K) ((P + 1) ^ 2) (p ^ 2)).symm
       _ ≤ (R ^ 20 * D * P ^ 2) * p ^ 2 :=
         Nat.mul_le_mul_right _ hground
       _ = P ^ 2 * (R ^ 20 * D * p ^ 2) := by ring
@@ -152,28 +158,26 @@ theorem card_divisors_pred_add_card_divisors_succ_pow_twenty_le
   let D := neighboringDivisorSumWeightedMomentConstant
   have hpTwo : 2 < p := by omega
   have hminus : a ^ 20 ≤ K * (p - 1) ^ 2 := by
-    simpa [a, K] using
+    simpa only [a, K] using
       card_divisors_pow_twenty_le_weighted_constant_mul_sq
         (p - 1) (by omega)
   have hplus : b ^ 20 ≤ K * (p + 1) ^ 2 := by
-    simpa [b, K] using
+    simpa only [b, K] using
       card_divisors_pow_twenty_le_weighted_constant_mul_sq
         (p + 1) (by omega)
   have hminusCommon : a ^ 20 ≤ K * (p + 1) ^ 2 :=
     hminus.trans (Nat.mul_le_mul_left K
       (Nat.pow_le_pow_left (by omega) 2))
   have hproductTen : (a * b) ^ 10 ≤ 2 ^ 407 * p ^ 2 := by
-    simpa [a, b] using
-      card_divisors_pred_mul_card_divisors_succ_pow_ten_weighted_le hp hpTwo
+    exact card_divisors_pred_mul_card_divisors_succ_pow_ten_weighted_le hp hpTwo
   have hbalanced : (R + 1) ^ 20 * 2 ^ 407 ≤ D := by
-    simpa [R, D] using neighboringDivisorSumWeighted_balanced_constant
+    exact neighboringDivisorSumWeighted_balanced_constant
   have hRPos : 0 < R := by
     norm_num [R, neighboringDivisorSumWeightedSplit]
   have hRpowPos : 0 < R ^ 20 := pow_pos hRPos 20
   have hdominant :
       (R + 1) ^ 20 * K * (p + 1) ^ 2 ≤ R ^ 20 * D * p ^ 2 := by
-    simpa [R, K, D] using
-      neighboringDivisorSumWeighted_dominant_constant hpLarge
+    exact neighboringDivisorSumWeighted_dominant_constant hpLarge
   rcases le_total a b with hab | hba
   · by_cases hfar : R * a ≤ b
     · have hlinear : R * (a + b) ≤ (R + 1) * b := by
@@ -190,7 +194,8 @@ theorem card_divisors_pred_add_card_divisors_succ_pow_twenty_le
           _ = (R + 1) ^ 20 * b ^ 20 := by ring
           _ ≤ (R + 1) ^ 20 * (K * (p + 1) ^ 2) :=
             Nat.mul_le_mul_left _ hplus
-          _ = (R + 1) ^ 20 * K * (p + 1) ^ 2 := by ring
+          _ = (R + 1) ^ 20 * K * (p + 1) ^ 2 := by
+            exact (mul_assoc ((R + 1) ^ 20) K ((p + 1) ^ 2)).symm
           _ ≤ R ^ 20 * (D * p ^ 2) := by
             simpa only [Nat.mul_assoc] using hdominant
       exact nat_le_of_pos_mul_le_mul_left_weighted
@@ -210,7 +215,8 @@ theorem card_divisors_pred_add_card_divisors_succ_pow_twenty_le
           Nat.mul_le_mul_left _ (Nat.pow_le_pow_left haa 10)
         _ ≤ (R + 1) ^ 20 * (2 ^ 407 * p ^ 2) :=
           Nat.mul_le_mul_left _ hproductTen
-        _ = ((R + 1) ^ 20 * 2 ^ 407) * p ^ 2 := by ring
+        _ = ((R + 1) ^ 20 * 2 ^ 407) * p ^ 2 := by
+          exact (mul_assoc ((R + 1) ^ 20) (2 ^ 407) (p ^ 2)).symm
         _ ≤ D * p ^ 2 := Nat.mul_le_mul_right (p ^ 2) hbalanced
   · by_cases hfar : R * b ≤ a
     · have hlinear : R * (a + b) ≤ (R + 1) * a := by
@@ -228,7 +234,8 @@ theorem card_divisors_pred_add_card_divisors_succ_pow_twenty_le
           _ = (R + 1) ^ 20 * a ^ 20 := by ring
           _ ≤ (R + 1) ^ 20 * (K * (p + 1) ^ 2) :=
             Nat.mul_le_mul_left _ hminusCommon
-          _ = (R + 1) ^ 20 * K * (p + 1) ^ 2 := by ring
+          _ = (R + 1) ^ 20 * K * (p + 1) ^ 2 := by
+            exact (mul_assoc ((R + 1) ^ 20) K ((p + 1) ^ 2)).symm
           _ ≤ R ^ 20 * (D * p ^ 2) := by
             simpa only [Nat.mul_assoc] using hdominant
       exact nat_le_of_pos_mul_le_mul_left_weighted
@@ -249,7 +256,8 @@ theorem card_divisors_pred_add_card_divisors_succ_pow_twenty_le
           Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hbb 10)
         _ ≤ (R + 1) ^ 20 * (2 ^ 407 * p ^ 2) :=
           Nat.mul_le_mul_left _ hproductTen
-        _ = ((R + 1) ^ 20 * 2 ^ 407) * p ^ 2 := by ring
+        _ = ((R + 1) ^ 20 * 2 ^ 407) * p ^ 2 := by
+          exact (mul_assoc ((R + 1) ^ 20) (2 ^ 407) (p ^ 2)).symm
         _ ≤ D * p ^ 2 := Nat.mul_le_mul_right (p ^ 2) hbalanced
 
 end BGS.NumberTheory

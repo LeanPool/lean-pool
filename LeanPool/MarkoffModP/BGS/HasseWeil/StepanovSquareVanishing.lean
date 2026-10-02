@@ -268,7 +268,7 @@ theorem onePointStepanovFirstRestrictionMap_eq_zero_or_principalDivisor_pos_at_f
   let eResidue :
       (RatFuncFiniteIntegralClosure K L ⧸ q.asIdeal) ≃+*
         IsLocalRing.ResidueField R :=
-    IsLocalization.AtPrime.equivQuotMaximalIdeal q.asIdeal R
+    (IsLocalization.AtPrime.equivQuotMaximalIdeal q.asIdeal R).toRingEquiv
   let eQuotientResidue :
       (RatFuncFiniteIntegralClosure K L ⧸ q.asIdeal) ≃+*
         q.asIdeal.ResidueField :=

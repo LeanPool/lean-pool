@@ -239,7 +239,7 @@ theorem succ_mem_onePointPoleOrderSemigroup_iff_lt
     rw [heq]
     exact hxSucc
   · intro hstrict
-    obtain ⟨x, hxSucc, hxNot⟩ := SetLike.exists_of_lt hstrict
+    obtain ⟨x, hxSucc, hxNot⟩ := IsConcreteLE.exists_of_lt hstrict
     obtain ⟨hx0, hxP⟩ :=
       onePointRiemannSpace_order_eq_neg_succ_of_mem_not_mem K L P n hxSucc hxNot
     rcases (mem_finiteExtensionOnePointRiemannSpace_iff K L P (n + 1) x).mp

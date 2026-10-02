@@ -67,10 +67,12 @@ private theorem sum_union_add_weight_le_sum_add_sum
 variable {K : Type*} [Field K] [Fintype K] [DecidableEq K]
   [DecidableEq (RatFunc K)]
 
+omit [Fintype K] in
 /-- If an irreducible plane curve contains the affine origin, then the
 zero/pole boundary of positive powers of its two coordinate functions saves
 one degree compared with the disjoint-support estimate. -/
 theorem planeCurve_propositionTwoExceptionalPlaces_weightedDegree_add_one_le
+    [Finite K]
     {f : MvPolynomial (Fin 2) K} (hf : Irreducible f)
     (hpartialFirst : MvPolynomial.pderiv 0 f ≠ 0)
     (hpartialSecond : MvPolynomial.pderiv 1 f ≠ 0)
@@ -89,6 +91,7 @@ theorem planeCurve_propositionTwoExceptionalPlaces_weightedDegree_add_one_le
         ((planeCurveFunction f 0) ^ m) ((planeCurveFunction f 1) ^ n),
         finiteExtensionPlaceDegree K (PlaneCurveFunctionField f) w) + 1 ≤
       2 * (MvPolynomial.degreeOf 0 f + MvPolynomial.degreeOf 1 f) := by
+  let : Fintype K := Fintype.ofFinite K
   classical
   let : IsDomain (PlaneCurveCoordinateRing f) :=
     planeCurveCoordinateRing_isDomain hf

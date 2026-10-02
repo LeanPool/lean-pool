@@ -411,8 +411,8 @@ whose constant algebra is definitionally this restriction. -/
   RingHom.toAlgebra
     ((algebraMap (RatFunc K) F).comp (algebraMap K (RatFunc K)))
 
-omit [DecidableEq K] [DecidableEq (RatFunc K)] in
-private theorem originalMultiplicationCanonicalRatFunc_X :
+omit [Fintype K] [DecidableEq K] [DecidableEq (RatFunc K)] in
+private theorem originalMultiplicationCanonicalRatFunc_X [Finite K] :
     let : Algebra K F := functionFieldCanonicalConstantAlgebra K F
     let : IsScalarTower K (RatFunc K) F := IsScalarTower.of_algebraMap_eq' rfl
     ∀ (hExact : algebraicClosure K F = (⊥ : IntermediateField K F)),
@@ -421,6 +421,7 @@ private theorem originalMultiplicationCanonicalRatFunc_X :
           (FunctionFieldNormalClosureConstantField K F) F hExact RatFunc.X) =
         algebraMap (RatFunc K) (FunctionFieldNormalClosure K F) RatFunc.X := by
   intro model1 model2 hExact
+  let : Fintype K := Fintype.ofFinite K
   let C := FunctionFieldNormalClosureConstantField K F
   let : Algebra K[X] F :=
     RingHom.toAlgebra
