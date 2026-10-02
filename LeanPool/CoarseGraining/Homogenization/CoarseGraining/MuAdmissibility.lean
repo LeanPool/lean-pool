@@ -177,7 +177,8 @@ theorem toHilbertBlockL2OfBlockField_eq_blockVecToHilbertBlockL2Const_add
           rw [← hcorr]
           rfl
     _ = ((⇑(blockVecToHilbertBlockL2Const (U := U) P) : Vec d → HilbertBlockVec d) +
-          (⇑(hX.toCorrectionFieldDataOfAdmissible).toHilbertBlockL2 : Vec d → HilbertBlockVec d)) x := by
+          (⇑(hX.toCorrectionFieldDataOfAdmissible).toHilbertBlockL2 : Vec d →
+            HilbertBlockVec d)) x := by
           rfl
     _ =
         (blockVecToHilbertBlockL2Const (U := U) P +
@@ -355,7 +356,8 @@ theorem average_pairing_openCubeSet_originCube
       (fun x => vecDot (X.potential x) (X.flux x)) = vecDot P.1 P.2 := by
   have hpotZero :
       (fun i =>
-        ∫ x in openCubeSet (originCube d n), (X.potential x - P.1) i ∂MeasureTheory.volume) = 0 := by
+        ∫ x in openCubeSet (originCube d n),
+          (X.potential x - P.1) i ∂MeasureTheory.volume) = 0 := by
     simpa [sub_eq_add_neg] using
       (IsPotentialZeroTraceOn.integral_eq_zero_openCubeSet_originCube
         (d := d) (n := n) (f := fun x => X.potential x - P.1) hX.isPotentialZeroTrace)
@@ -399,7 +401,8 @@ theorem blockEnergyAverage_ge_vecDot_openCubeSet_originCube_of_isEllipticFieldOn
     vecDot P.1 P.2 ≤ blockEnergyAverage (openCubeSet (originCube d n)) a X := by
   have hpotZero :
       (fun i =>
-        ∫ x in openCubeSet (originCube d n), (X.potential x - P.1) i ∂MeasureTheory.volume) = 0 := by
+        ∫ x in openCubeSet (originCube d n),
+          (X.potential x - P.1) i ∂MeasureTheory.volume) = 0 := by
     simpa [sub_eq_add_neg] using
       (IsPotentialZeroTraceOn.integral_eq_zero_openCubeSet_originCube
         (d := d) (n := n) (f := fun x => X.potential x - P.1) hX.isPotentialZeroTrace)
