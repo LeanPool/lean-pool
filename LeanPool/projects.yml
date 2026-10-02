@@ -11865,6 +11865,528 @@ projects:
     msc:
     - 68Q12
     - 81P68
+  - title: Conway refinement for omnific integers
+    summary: 'Proves multiplicative refinement for omnific integers: every equality ab = cd admits a
+      two-by-two factor refinement. Develops factorization and refinement of generalized power-series
+      integer parts and connects these to surreal-number and standalone Mathlib formulations.'
+    branch: ordered algebra
+    main_declarations:
+    - ConwayRefinement.Palomar.conwayRefinement
+    main_results:
+    - declaration: ConwayRefinement.Palomar.conwayRefinement
+      informal: If four omnific integers satisfy ab = cd, there are omnific integers e, f, g, h with
+        a = ef, b = gh, c = eg, and d = fh, including degenerate cases.
+    tags:
+    - surreal-numbers
+    - ordered-algebra
+    - factorization
+    msc:
+    - 06A05
+    - 13F25
+    provenance: AI
+    slug: conway-refinement
+    entry_module: LeanPool.ConwayRefinement
+    authors:
+    - Dan Abramov
+    source:
+      url: https://github.com/gaearon/conway-refinement
+      github_repo: gaearon/conway-refinement
+      commit: 264445c93b78554c408e99e4e7f663693b4e91ab
+    license: Apache-2.0
+    status: verified
+  - slug: lean-operator-theory
+    title: Unitary dilation and the Crouzeix–Palencia bound
+    summary: Proves unitary power dilation for Hilbert-space contractions, von Neumann’s polynomial inequality,
+      and the Crouzeix–Palencia polynomial spectral-set estimate for the closed numerical range.
+    branch: operator theory
+    entry_module: LeanPool.OperatorTheory
+    authors:
+    - Ezzeri Esa
+    source:
+      url: https://github.com/savarin/lean-operator-theory
+      github_repo: savarin/lean-operator-theory
+      commit: 6f90bb7e6b056b54f56005e0416d77d6d7c2a478
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - PalomarCrouzeixPalencia.crouzeix_palencia
+    main_results:
+    - declaration: PalomarCrouzeixPalencia.exists_unitary_power_dilation
+      informal: Every contraction on a complex Hilbert space admits a unitary power dilation.
+    - declaration: PalomarCrouzeixPalencia.vonNeumann_inequality
+      informal: Polynomial evaluation on a contraction is bounded by the polynomial supremum on the closed
+        unit disk.
+    - declaration: PalomarCrouzeixPalencia.crouzeix_palencia
+      informal: The closure of the numerical range is a polynomial spectral set with constant 1 + √2.
+    tags:
+    - operator-theory
+    - functional-analysis
+    - spectral-theory
+    msc:
+    - 47A12
+    - 47A20
+    - 47A25
+  - slug: nrr-aak
+    title: Equal-area and equal-perimeter convex partitions
+    summary: Formalizes the Akopyan–Avvakumov–Karasev theorem that every planar convex body can be partitioned
+      into any prescribed positive number of convex pieces with equal area and equal perimeter. Area
+      is Lebesgue measure and perimeter is Hausdorff measure of the boundary.
+    branch: convex geometry
+    main_declarations:
+    - HumanVerification.equalAreaEqualPerimeterPartition
+    main_results:
+    - declaration: HumanVerification.equalAreaEqualPerimeterPartition
+      informal: Every compact convex planar set with nonempty interior admits a convex partition into
+        any positive number of pieces whose areas and perimeters are all equal.
+    tags:
+    - convex-geometry
+    - equivariant-topology
+    - partitions
+    msc:
+    - 52A10
+    - 55M20
+    provenance: mix
+    entry_module: LeanPool.NandakumarRamanaRao
+    authors:
+    - Arseniy Akopyan
+    source:
+      url: https://github.com/akopjan/nrr-aak
+      github_repo: akopjan/nrr-aak
+      commit: 9e57be63320f29cbb8d2da7c4a8ad6afdef681eb
+    license: Apache-2.0
+    status: verified
+  - slug: brill-noether-graphs
+    title: Brill–Noether theory and gonality of finite graphs
+    summary: Formalizes Brill–Noether existence through genus five, chains of marked banana graphs and
+      loops, the treewidth lower bound for gonality, and a tricycle example whose gonality drops under
+      regular subdivision. Includes divisor and transmission infrastructure and the Demazure-product
+      support used by vertex gluing.
+    branch: combinatorics and tropical geometry
+    main_declarations:
+    - Highlights.brill_noether_existence_through_five
+    main_results:
+    - declaration: Highlights.brill_noether_existence_through_five
+      informal: Every finite connected loopless multigraph of genus g at most five has,
+        for integers r and d, a divisor of degree d and rank at least r whenever
+        (r + 1) * (g - d + r) ≤ g.
+    - declaration: Highlights.treewidth_le_gonality
+      informal: On a finite connected loopless multigraph, for every natural number k,
+        any degree-k divisor of rank at least one bounds the treewidth by k; this is the
+        witness formulation of the treewidth lower bound for divisorial gonality.
+    - declaration: Highlights.gonality_drops_under_regular_subdivision
+      informal: There is a graph whose divisorial gonality strictly decreases under a regular subdivision.
+    tags:
+    - brill-noether-theory
+    - graph-theory
+    - chip-firing
+    - tropical-geometry
+    msc:
+    - 14T15
+    - 05C50
+    provenance: AI
+    entry_module: LeanPool.BrillNoetherGraphs
+    authors:
+    - Nathan Pflueger
+    source:
+      url: https://github.com/npflueger/brill-noether-graphs
+      github_repo: npflueger/brill-noether-graphs
+      commit: ce62dd82fd499fcec9b5a4110a5312befd6e96e2
+    license: Apache-2.0
+    status: verified
+  - slug: regts-sevenster
+    title: A proof of the Regts–Sevenster conjecture, formalized
+    summary: A Lean 4 proof of the Regts–Sevenster conjecture. A complex-valued graph
+      parameter, normalized at the empty graph and invariant under isomorphism, has
+      exponentially bounded edge-connection rank if and only if it is a mixed partition
+      function. For a natural rank base R, a representing model can be chosen with k
+      even and 2ℓ odd colours satisfying k + 2ℓ ≤ R. The development also proves the
+      even connection-rank growth limit, minimum total colour dimension, minimal parity
+      formulas and prescribed-dimension criterion. Schrijver's factorial argument supplies
+      nilpotent-trace vanishing; semisimplicity and Deligne's fibre-functor theorem
+      give the model; a polynomial commutant estimate gives the sharp colour budget.
+      Deligne's theorem and the required symmetric-group character theory are proved
+      within the development. The appendix's trace-zeta results give rationality and
+      degree bounds, with an independent proof of nilpotent-trace vanishing. The theorems
+      of record use only propext, Classical.choice and Quot.sound, checked by pinned
+      audits.
+    branch: algebraic graph theory
+    entry_module: LeanPool.RegtsSevenster
+    authors:
+    - William Whistler
+    source:
+      url: https://github.com/willwhistler/regts-sevenster
+      github_repo: willwhistler/regts-sevenster
+      commit: bb0a60543d48afac3f36938104b5c85c7c0396c7
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - RS.regts_sevenster_characterisation
+    main_results:
+    - declaration: RS.regts_sevenster_characterisation
+      informal: Normalized isomorphism-invariant complex graph parameters with exponentially
+        bounded edge-connection ranks are precisely mixed partition functions.
+    - declaration: RS.regts_sevenster_total
+      informal: A natural rank bound R admits a representing mixed model with total
+        color dimension at most R.
+    - declaration: RS.deligne_theorem
+      informal: The development proves its stated Deligne fiber-functor theorem for
+        the symmetric tensor categories used in the representation.
+    tags:
+    - graph-parameters
+    - tensor-categories
+    - partition-functions
+    msc:
+    - 05C50
+    - 18M20
+  - slug: nashembedding
+    title: Nash's smooth isometric embedding theorem
+    summary: 'A Lean 4 / Mathlib formalization of Nash''s C^∞ isometric embedding theorem
+      for closed manifolds: every compact smooth manifold without boundary, equipped
+      with a smooth Riemannian metric, admits a smooth injective map into some Euclidean
+      space ℝ^q whose differential pulls the Euclidean inner product back to the given
+      metric. The proof formalized is Günther''s (1989), which replaces the Nash-Moser
+      iteration by an elliptic fixed-point argument, following the presentation in A.
+      J. Wassermann''s Cambridge Part III lecture notes as the primary source. The development
+      has two layers. The first proves the theorem for the flat torus: a self-contained
+      Sobolev toolkit on 𝕋ⁿ (weighted ℓ² Sobolev spaces on ℤⁿ, Rellich compactness,
+      the Sobolev sup bound, three multiplication theorems, mollifiers, periodization,
+      Fourier inversion and Parseval), the approximation of smooth metrics by realizable
+      ones, Günther''s perturbation theorem proved by a contraction in Hˢ, and their
+      assembly into the statement that every smooth 2π-periodic positive-definite matrix
+      field on ℝⁿ is the pullback metric of a smooth periodic immersion that is injective
+      modulo 2πℤⁿ. The second layer reduces the closed-manifold case to the torus: a
+      Whitney embedding from Mathlib is extended to the ambient space, the metric is
+      extended by a pseudo-inverse construction, cut off, symmetrized and periodized,
+      and the torus theorem is applied. No bound on the embedding dimension is claimed.
+      Concrete instances (round spheres of every dimension, products of spheres, the
+      flat torus 𝕊¹ × 𝕊¹) are derived, and the flat-torus instance is shown to reproduce
+      the torus theorem''s conclusion, tying the two layers together. Nothing here is
+      claimed to be new.'
+    branch: differential geometry
+    entry_module: LeanPool.NashEmbedding
+    authors:
+    - David Wiygul
+    source:
+      url: https://github.com/langlerangle/nashembedding
+      github_repo: langlerangle/nashembedding
+      commit: 515a8245c51c952db59d81ef840a146ed853e4ea
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - NashEmbeddingTheorem.nash_isometric_embedding
+    main_results:
+    - declaration: NashEmbeddingTheorem.nash_isometric_embedding
+      informal: Every compact smooth boundaryless manifold with a smooth Riemannian
+        metric admits a smooth isometric embedding in some finite-dimensional Euclidean
+        space.
+    tags:
+    - differential-geometry
+    - isometric-embedding
+    - sobolev-spaces
+    msc:
+    - 53C24
+  - slug: tutte-path
+    title: Tutte’s path theorem for matroids
+    summary: Proves the modular-cut path theorem for finite matroids, with reusable rank-partition,
+      hyperplane-separation, relative-complement, indecomposable-cover, and diamond constructions.
+    branch: matroid theory
+    entry_module: LeanPool.TuttePath
+    authors:
+    - Tutte formalization contributors
+    source:
+      arxiv: 2601.02582
+      url: https://github.com/mbaker386/tutte-homotopy-lean
+      github_repo: mbaker386/tutte-homotopy-lean
+      commit: ab33c23369865b5fbd30b7a19710a527aa7ebab6
+    license: Apache-2.0
+    status: verified
+    provenance: mix
+    main_declarations:
+    - TutteFormalization.path_theorem
+    main_results:
+    - declaration: TutteFormalization.path_theorem
+      informal: In a finite connected matroid, any two hyperplanes containing a proper indecomposable
+        flat and lying outside a modular cut are joined by a finite Tutte path all of whose vertices
+        contain that flat and avoid the cut. Consecutive vertices are distinct hyperplanes with
+        indecomposable corank-two intersection; repeated nonconsecutive vertices are permitted.
+    - declaration: TutteFormalization.path_theorem_of_indecomposable
+      informal: In any finite matroid, two hyperplanes containing an indecomposable flat F and
+        lying outside a modular cut are joined by a Tutte path whose vertices contain F and avoid
+        the cut. This strengthens the cited path theorem by requiring only connectedness of the
+        contraction by F; properness of F follows from containment in an endpoint hyperplane.
+    - declaration: TutteFormalization.exists_indecomposable_complement
+      informal: If an indecomposable flat S and a flat U span the ground, every indecomposable flat
+        T contained in both extends inside S to an indecomposable flat R spanning the ground with U,
+        with corank R equal to rank U minus rank T.
+    - declaration: TutteFormalization.exists_relative_complement
+      informal: For nested flats T contained in S, there is a flat U containing T whose intersection
+        with S is T, whose join with S is the ground, and whose corank equals rank S minus rank T.
+    tags:
+    - matroids
+    - combinatorics
+    - modular-cuts
+    msc:
+    - 05B35
+  - slug: parameter_free_gradient_p
+    title: Parameter-Free Gradient Minimization in l_p Geometry
+    summary: Exact value-gradient query-complexity results for convex differentiable objectives
+      on finite-dimensional real l_p spaces with attained minima and a positive global primal-to-dual
+      Lipschitz-gradient bound. For finite real p > 1, the development proves strict-local scale-identification
+      impossibility at LR/epsilon = 4 and a deterministic method family with three post-secant-initialization
+      query-rate regimes. For p > 2 it also proves deterministic known-parameter upper and lower
+      query exponents p/(p+2), with explicit horizon and dimension restrictions on the lower bound.
+    branch: optimization
+    entry_module: LeanPool.ParameterFreeGradient
+    authors:
+    - Yuning Yang
+    source:
+      url: https://github.com/yuningyang19/parameter_free_gradient_p
+      github_repo: yuningyang19/parameter_free_gradient_p
+      commit: f71215fa936fe01aff8a765c62b399e131df963b
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - V7.main
+    main_results:
+    - declaration: V7.scaleIdentificationImpossibility
+      informal: For finite real p > 1 and positive epsilon, measurable strict-local exact value-gradient
+        methods satisfy scale-identification lower bounds on convex smooth one-dimensional objectives
+        with unique minimizers, even at LR/epsilon = 4. The result includes deterministic and
+        randomized finite-horizon statements and infinite worst-case expected queried-or-returned
+        hitting time.
+    - declaration: V7.knownParameterAboveTwoOptimality
+      informal: For finite real p > 2 and convex differentiable objectives with attained minima
+        and a positive global primal-to-dual Lipschitz-gradient bound, deterministic known-parameter
+        exact value-gradient methods have upper query exponent p/(p+2). The matching lower exponent
+        concerns the first T queries, requires d >= 2 and 1 <= T <= d, and retains the explicit
+        min(p, log d) dependence.
+    - declaration: V7.main
+      informal: For convex differentiable objectives with attained minima and positive global
+        L-Lipschitz gradients from l_p to its dual, one deterministic family works for every finite
+        real p > 1 and positive epsilon after supplied nondegenerate secant initialization with
+        0 < M0 <= L. It returns a queried point with dual gradient norm at most epsilon. Writing
+        R for distance to the minimizer set, the post-initialization oracle-call bound has polynomial
+        dependence on max(1, LR/epsilon) with exponent 1/2 for 1 < p < 2 and p = 2, and p/(p+2)
+        for p > 2, plus additive log(e + L/M0) calibration cost. Constants depend only on p, with
+        a universal constant at p = 2; discovering the secant pair is outside the count.
+    tags:
+    - optimization
+    - oracle-complexity
+    - gradient-methods
+    msc:
+    - 90C25
+  - slug: order-closures
+    title: Order closure, order adherence and Fatou norms
+    summary: >-
+      Formalizes order and unbounded-order adherence in vector lattices,
+      the Gao-Leung characterization of order-continuous norms on
+      sigma-order-complete Banach lattices, and the Solovay/Stone-space
+      construction of order-complete C(K) spaces with arbitrarily large
+      density and norm-closed separable sublattices whose only order-closed
+      vector-sublattice extension is the whole C(K) space. Constructs solid
+      sets with a prescribed infinite number kappa of solid generators whose
+      adherence towers are strict below any ordinal at most kappa's
+      successor cardinal. Constructs a complete weakly Fatou lattice norm
+      with constant 2 that is not equivalent to any Fatou lattice norm.
+      Includes reusable vector-lattice, net-convergence, sublattice,
+      seminorm, Boolean-algebra and transfinite-iteration infrastructure.
+    branch: functional analysis
+    entry_module: LeanPool.OrderClosures
+    authors:
+      - Antonio Avilés
+      - Mitchell A. Taylor
+      - Pedro Tradacete
+      - David Muñoz-Lahoz
+    source:
+      title: Order closure, order adherence and Fatou norms
+      arxiv: '2609.06689'
+      url: https://github.com/pedrotradacete/OrderClosures/tree/6189ba7134f6975e7d8e4c8c093a9869d03a769c
+      github_repo: pedrotradacete/OrderClosures
+      commit: 6189ba7134f6975e7d8e4c8c093a9869d03a769c
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - OrderClosures.exists_weaklyFatou_not_equivalent_fatou
+    main_results:
+      - declaration: OrderClosures.gaoLeung_orderContinuous_characterization
+        informal: >-
+          For a sigma-order-complete Banach lattice X, the following are
+          equivalent: every vector sublattice has order-closed order
+          adherence; every vector sublattice has equal order and
+          unbounded-order adherence; and the norm of X is order continuous.
+        source_ref: Paper Theorem 1.1, recalling Gao-Leung Theorem 2.7.
+      - declaration: OrderClosures.gao_counterexample
+        informal: >-
+          For every cardinal kappa there is a compact Hausdorff space K
+          such that C(K, R) is order complete and has density at least
+          kappa, with a norm-closed separable vector sublattice Y whose
+          only order-closed vector-sublattice extension is all of C(K, R).
+        source_ref: Paper Proposition 2.1, via the Solovay Boolean algebra.
+      - declaration: OrderClosures.solid_sets_require_arbitrarily_many_iterations
+        informal: >-
+          For every infinite cardinal kappa and ordinal xi at most the
+          initial ordinal of kappa's successor cardinal, there is a
+          vector lattice and a solid set with solid generator number
+          kappa whose order-adherence tower has a proper step at every
+          stage below xi. The witness and cardinal/ordinal parameters
+          are lifted one universe in Lean.
+        source_ref: >-
+          Paper Theorem 2.6, with its explicit infinite-cardinal hypothesis.
+          Lean strengthens the stated size-kappa generating-set conclusion
+          to minimum solid generator number exactly kappa; this exact-minimum
+          conclusion is proved in the formalization, not stated in the paper.
+      - declaration: OrderClosures.exists_weaklyFatou_not_equivalent_fatou
+        informal: >-
+          There is a real vector lattice with a complete lattice norm p
+          satisfying the weak Fatou property with constant 2, such that
+          no lattice norm q with the Fatou property is equivalent to p.
+          Norms, completeness and equivalence are represented explicitly
+          by PaperLatticeNorm, IsCompleteFor and EquivalentNorms.
+        source_ref: >-
+          Paper Theorem 3.1; self-contained construction of the result
+          previously announced by Anthony Wickstead and credited to
+          Michael Elliott. The paper credits Jaume de Dios Pont for an
+          earlier Lean formalization of this result.
+    tags:
+      - banach-lattices
+      - order-convergence
+      - fatou-norms
+      - transfinite-constructions
+    msc:
+      - 46B42
+      - 46A40
+      - 46A19
+  - slug: sendov-conjecture
+    title: Sendov's conjecture and the Phelps–Rodriguez conjecture
+    summary: >-
+      Proves Sendov's conjecture in full generality: if every zero of a complex polynomial of
+      degree at least two lies in the closed unit disk, then every zero has a critical point
+      within distance one. Also proves the Phelps–Rodriguez strengthening, with strict
+      inequality unless the zero lies on the unit circle and the polynomial is a scalar
+      multiple of z^n - a^n, and recovers Rubinstein's boundary theorem. Formalizes Tao's
+      digestion of Lech Mazur's proof: the problem is reduced to a numerical inequality in the
+      degree and one real parameter, settled by exact rational Bernstein certificates for
+      degrees up to one hundred and by an analytic large-degree reduction beyond. Includes the
+      top case of Maclaurin's inequality and multiset AM–GM, a defect inequality on the closed
+      unit disk, a sharp bound on log(sinh h / h), kernel-checked polynomial certificate
+      infrastructure, and a packed-exponentiation bridge for exact moment integrals.
+    branch: complex analysis
+    entry_module: LeanPool.Sendov
+    authors:
+      - Terence Tao
+    source:
+      title: Sendov's conjecture in Lean
+      url: https://github.com/teorth/sendov/tree/1ddea92d89f951a0a7cbbffa6c267cf7e6640b1d
+      github_repo: teorth/sendov
+      commit: 1ddea92d89f951a0a7cbbffa6c267cf7e6640b1d
+      announcement_url: https://terrytao.wordpress.com/2026/08/12/a-digestion-of-the-proof-of-sendovs-conjecture/
+      announced_at: '2026-08-12T23:10:54Z'
+      mathematical_source: >-
+        T. Tao, A digestion of the proof of Sendov's conjecture, blog post, 12 August 2026,
+        digesting Lech Mazur's AI-assisted proof; the boundary case follows Q. Tang and
+        T. Zhang, arXiv:2508.10341, equation (5.1) and Remark 5.1.
+      prior_formalization: >-
+        Lech Mazur's earlier Lean formalization of Sendov's conjecture at ProofAtlas
+        (https://www.proofatlas.ai/formalizations/sendov-conjecture/), which the upstream
+        README credits with priority for both the proof and the first formalization. The
+        present development shares no code with it and additionally states the
+        Phelps–Rodriguez equality classification.
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    provenance_note: >-
+      The upstream README states that essentially all Lean source was written by Claude Opus 5
+      in Claude Code under the direction and review of Terence Tao, who set the targets,
+      supplied the informal proof and staged plans, and made the mathematical decisions.
+    main_declarations:
+      - Sendov.sendov
+      - Sendov.phelps_rodriguez
+    main_results:
+      - declaration: Sendov.sendov
+        informal: >-
+          For every natural number n at least two and every complex polynomial p of degree n
+          all of whose roots have norm at most one, every root a of p admits a root of the
+          derivative of p within distance at most one of a.
+        source_ref: >-
+          Sendov's conjecture (1962); Tao's blog post of 12 August 2026, Conjecture 1, following
+          Mazur's proof; upstream Sendov/Conjecture.lean. First publicly announced
+          2026-08-12 23:10:54 UTC in that post, with the Lean repository completed the same day.
+      - declaration: Sendov.phelps_rodriguez
+        informal: >-
+          Under the same hypotheses, either some root of the derivative lies at distance
+          strictly less than one from a, or a has norm one and p equals a nonzero scalar
+          multiple of X^n - a^n.
+        source_ref: >-
+          Phelps–Rodriguez conjecture; Tao's blog post, Conjecture 2; upstream
+          Sendov/Conjecture.lean. The equality case is Rubinstein's 1968 theorem.
+      - declaration: SendovConjecture.sendov
+        informal: >-
+          The same statement in the Mathlib-only form of the upstream statement of record:
+          for every complex polynomial p of degree at least two such that every complex w
+          with p(w) = 0 has norm at most one, every zero a of p admits a root of the
+          derivative within distance at most one of a.
+        source_ref: Upstream Solution.lean, the declaration checked by the upstream comparator setup.
+      - declaration: Sendov.rubinstein_one
+        informal: >-
+          If a polynomial of degree n at least two with all roots in the closed unit disk
+          vanishes at one, then either its derivative has a root within distance strictly less
+          than one of the point one, or the polynomial equals its leading coefficient times
+          X^n - 1.
+        source_ref: >-
+          Rubinstein's theorem; Tang–Zhang arXiv:2508.10341, equation (5.1) and Remark 5.1,
+          run to equality; upstream Sendov/Boundary.lean.
+      - declaration: Sendov.stat_lt_one
+        informal: >-
+          For every degree n at least five and every real parameter alpha between zero and
+          seventeen satisfying the feasibility constraint c^2 ≤ A, the quantity R n alpha of
+          the blog post's equation stat is strictly less than one.
+        source_ref: >-
+          Equation (stat) of Tao's blog post; degrees five to one hundred by Bernstein
+          certificates (upstream Sendov/FiniteRange), degrees at least 101 by the analytic
+          reduction (upstream Sendov/LargeDegree).
+      - declaration: Multiset.esymm_card_pred_le
+        informal: >-
+          For a nonempty multiset of nonnegative reals of cardinality m, the (m-1)-st
+          elementary symmetric function is at most m times the (m-1)-st power of the mean.
+        source_ref: Maclaurin's inequality, top case; upstream Sendov/Analytic/Maclaurin.lean.
+      - declaration: Multiset.prod_le_mean_pow
+        informal: >-
+          The product of a multiset of nonnegative reals is at most the mean raised to the
+          cardinality.
+        source_ref: Multiset AM–GM inequality; upstream Sendov/Analytic/Maclaurin.lean.
+      - declaration: Sendov.defect
+        informal: >-
+          For a multiset of complex numbers in the closed unit disk, the product of the norms
+          times the sum of the norms of 1/z minus the conjugate of z is at most one minus the
+          square of that product.
+        source_ref: The defect lemma; upstream Sendov/Analytic/Defect.lean.
+      - declaration: Sendov.log_sinh_div_le
+        informal: >-
+          For every positive real h, the logarithm of sinh h divided by h is at most the
+          square root of h^2 + 9 minus three.
+        source_ref: Upstream Sendov/Common/Sinh.lean; the crux of the beta-bound step.
+      - declaration: Sendov.pev_pos_of_bern
+        informal: >-
+          If the Bernstein expansion of an integer coefficient list on an interval from zero
+          to p/q equals p^d times a polynomial P and every Bernstein coefficient is positive,
+          then P is positive on that interval.
+        source_ref: >-
+          Lean Pool port infrastructure replacing the upstream per-certificate ring identities;
+          LeanPool/Sendov/FiniteRange/Certificate.lean.
+    tags:
+      - sendov-conjecture
+      - polynomial-zeros
+      - critical-points
+      - bernstein-certificates
+    msc:
+      - 30C15
+      - 30C10
+      - 12D10
   - slug: stafford38-formal
     title: Stafford 3.8
     summary: Lean formalization of Stafford's Conjecture 3.8 for every characteristic-zero

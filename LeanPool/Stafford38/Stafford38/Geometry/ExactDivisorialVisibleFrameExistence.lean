@@ -315,18 +315,21 @@ def retainedDataOfValuation
       coordinate_eq := coordinate_eq
       place := place }
 
-/-- The stage-assembly place, its normalized projective column, and the
-Kähler image together discharge the exact residual.  The element `t` below
-is a separately chosen DVR uniformizer; the retained parameter remains the
-selected affine coordinate and may have higher order. -/
-theorem exactDivisorialVisibleFrameExistence :
-    ExactDivisorialVisibleFrameExistence.{u} := by
-  intro k _ _ _ n N d hn hdisjoint P hP htrans
-  let i : Fin (n + 1) := ⟨0, Nat.zero_lt_succ n⟩
+/-- A transcendental coordinate with a polynomial inverse yields a normalized visible frame. -/
+theorem normalizedVisibleFrame_of_coordinate_inverse
+    {k : Type u} [Field k] [CharZero k]
+    {m : ℕ} (hm : 0 < m)
+    (P : PrimeSpectrum (MvPolynomial (Fin m) k))
+    (hunit : ∃ g : MvPolynomial (Fin m) k,
+      MvPolynomial.X ⟨0, hm⟩ * g - 1 ∈ P.asIdeal)
+    (htrans : Transcendental k
+      (componentCoordinate P ⟨0, hm⟩)) :
+    HasNormalizedCompatibleVisibleFrame P hm := by
+  let i : Fin m := ⟨0, hm⟩
   let K := ComponentFractionField P
   obtain ⟨E, V, hEV, hVdvr, hxV, htransE, hxm, hEfin, hkaehler, halgAll⟩ :=
     Stafford38.Geometry.LaneC.divisorialVisibleFrameExistence
-      k K (n + 1) (componentCoordinate P) i
+      k K m (componentCoordinate P) i
         (componentCoordinate_adjoin_eq_top P) htrans
   let : IsLocalRing V.toSubring := hVdvr.toIsLocalRing
   let : Algebra E V.toSubring :=
@@ -351,7 +354,7 @@ theorem exactDivisorialVisibleFrameExistence :
   obtain ⟨chart, qraw, scale, hscale, hchartRaw, hqraw⟩ :=
     exists_normalized_projective_lift V (componentProjectivePoint P)
       ⟨0, by simp [componentProjectivePoint]⟩
-  let q : Fin (n + 1 + 1) → V.toSubring := fun a =>
+  let q : Fin (m + 1) → V.toSubring := fun a =>
     ⟨qraw a, (qraw a).property⟩
   have hchart : q chart = 1 := by
     apply Subtype.ext
@@ -371,14 +374,9 @@ theorem exactDivisorialVisibleFrameExistence :
     change (q (Fin.succ i) : K) = (q 0 : K) * componentCoordinate P i
     rw [hq, hq]
     simp [componentProjectivePoint]
-  have hBP :
-      reducedOrderBaseIdeal k
-          (canonicalRightIdeal (presentedCoordinate k n) d N) ≤ P.asIdeal :=
-    hP.1.2
   have hq0nonunit : ¬ IsUnit (q 0) :=
-    normalizedComponentProjectivePoint_zero_nonunit
-      (canonicalRightIdeal (presentedCoordinate k n) d N) i hdisjoint P hBP
-      W q scale hq
+    normalizedComponentProjectivePoint_zero_nonunit_of_polynomial_inverse
+      P i hunit W q scale hq
   have halg := halgAll scale q hq ⟨chart, hchart⟩ hq0nonunit
   have hchart_ne : chart ≠ 0 := by
     intro hzero
@@ -399,12 +397,11 @@ theorem exactDivisorialVisibleFrameExistence :
       hq0factor, hparameterFactor, hu₁, hq1factor⟩ :=
     exists_uniformizer_strict_orderGap t ht (q 0) xV
       (q (Fin.succ i)) hq0 hxV_ne hq0max hxm hratioV
-  let Q : Fin (n + 1) → V.toSubring := fun j => q (Fin.succ j)
+  let Q : Fin m → V.toSubring := fun j => q (Fin.succ j)
   have hQj₀ : Q j₀ = 1 := hchart
   have hq0frame : q 0 = t ^ a * (u₀ : V.toSubring) := by
     simpa [mul_comm] using hq0factor
-  have hq1frame :
-      q (Fin.succ i) = t ^ (a + e) * (u₁ : V.toSubring) := by
+  have hq1frame : q (Fin.succ i) = t ^ (a + e) * (u₁ : V.toSubring) := by
     simpa [hb, mul_comm] using hq1factor
   obtain ⟨D, hD0, hD1, hDt, hDu, hDw, hDQ, hDa, hDe, hDj, hDW⟩ :=
     exists_visibleDivisorFrame_of_kaehler_image
@@ -416,14 +413,27 @@ theorem exactDivisorialVisibleFrameExistence :
   refine ⟨W, Fin.succ j₀, q, scale, hscale, hchart, hq0, hq, ?_, ?_⟩
   · apply Subtype.ext
     have hv := congrArg Subtype.val hratioV
-    change (q (Fin.succ ⟨0, Nat.zero_lt_succ n⟩) : K) =
-      (q 0 : K) * componentCoordinate P ⟨0, Nat.zero_lt_succ n⟩ at hv
+    change (q (Fin.succ ⟨0, hm⟩) : K) =
+      (q 0 : K) * componentCoordinate P ⟨0, hm⟩ at hv
     calc
-      (q (Fin.succ ⟨0, Nat.zero_lt_succ n⟩) : K) =
-          (q 0 : K) * componentCoordinate P ⟨0, Nat.zero_lt_succ n⟩ := hv
+      (q (Fin.succ ⟨0, hm⟩) : K) =
+          (q 0 : K) * componentCoordinate P ⟨0, hm⟩ := hv
       _ = (q 0 : K) * (W.place.parameter : K) := by
         rw [W.parameter_eq_coordinate]
   · exact ⟨D, hD0, hD1, fun j => by rw [hDQ]⟩
+
+
+/-- The stage-assembly place, its normalized projective column, and the
+Kähler image together discharge the exact residual.  The element `t` below
+is a separately chosen DVR uniformizer; the retained parameter remains the
+selected affine coordinate and may have higher order. -/
+theorem exactDivisorialVisibleFrameExistence :
+    ExactDivisorialVisibleFrameExistence.{u} := by
+  intro k _ _ _ n N d hn hdisjoint P hP htrans
+  exact normalizedVisibleFrame_of_coordinate_inverse (Nat.zero_lt_succ n) P
+    (exists_componentCoordinate_polynomial_inverse
+      (canonicalRightIdeal (presentedCoordinate k n) d N)
+      ⟨0, Nat.zero_lt_succ n⟩ hdisjoint P hP.1.2) htrans
 
 /-- Trust-zero production of the exact higher-dimensional visible-frame
 input used by the terminal lane-C consumer. -/
