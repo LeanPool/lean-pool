@@ -103,7 +103,7 @@ theorem anchorAccepted_radius {d : ℕ} {p : ℝ} (hp : 1 < p)
   G / anchorScale M₀ epoch
 
 /-- Exact gradient-ray point queried at one dyadic scale. -/
-noncomputable def anchorProbePoint {d : ℕ} (q : ℝ) (x₀ g₀ : Vec d)
+@[expose] noncomputable def anchorProbePoint {d : ℕ} (q : ℝ) (x₀ g₀ : Vec d)
     (G M₀ : ℝ) (epoch : ℕ) : Vec d :=
   x₀ - anchorRadius G M₀ epoch • anchorNormingVector q g₀
 

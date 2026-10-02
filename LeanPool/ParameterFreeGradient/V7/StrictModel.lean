@@ -76,13 +76,13 @@ instance [MeasurableSpace Ω] : CoeFun (RandomizedStrictLocalMethod Ω)
   TraceExact oracle trace
 
 /-- The transcript contains `N` queries, all with gradient magnitude above the target accuracy. -/
-def StrictAllFirstNQueriesFail (eps : ℝ) (oracle : PairOracle 1)
+@[expose] def StrictAllFirstNQueriesFail (eps : ℝ) (oracle : PairOracle 1)
     (trace : StrictTranscript) (N : ℕ) : Prop :=
   trace.length = N ∧
   ∀ obs ∈ trace, eps < |oracle.gradient obs.point 0|
 
 /-- The method's finite-budget output has gradient magnitude above its target accuracy. -/
-def StrictFiniteOutputFails (method : StrictLocalMethod) (oracle : PairOracle 1)
+@[expose] def StrictFiniteOutputFails (method : StrictLocalMethod) (oracle : PairOracle 1)
     (trace : StrictTranscript) (N : ℕ) : Prop :=
   method.eps < |oracle.gradient (method.output N trace) 0|
 

@@ -104,7 +104,7 @@ geometry. -/
 
 /-- The weight, increment, matrix recurrence, row-sum, and support conditions for an above-two
 phase. -/
-def AboveCoefficientAssumptions (n : ℕ) (u dw : ScalarSeq)
+@[expose] def AboveCoefficientAssumptions (n : ℕ) (u dw : ScalarSeq)
     (alpha c b : ScalarMatrix) : Prop :=
   0 < u 0 ∧ u n = u (n - 1) ∧ dw n = 0 ∧ c 0 0 = 1 ∧ b 0 0 = -1 ∧
   (∀ k < n, 0 < u k ∧ u k ≤ u (k + 1) ∧

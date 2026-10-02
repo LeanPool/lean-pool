@@ -102,7 +102,7 @@ def BelowPrimalDynamics (data : BelowPrimalData p d n) : Prop :=
       (data.dw k / data.u (k + 1)) • (data.v (k + 1) - data.v k)
 
 /-- The below-two primal dynamics, convex gradient oracle, minimizer, guards, and exact trace. -/
-def BelowPrimalAssumptions (data : BelowPrimalData p d n) : Prop :=
+@[expose] def BelowPrimalAssumptions (data : BelowPrimalData p d n) : Prop :=
   BelowPrimalDynamics data ∧
   O3.IsConvexObjective data.oracle.value ∧
   O3.IsCoordinateGradient data.oracle.value data.oracle.gradient ∧
@@ -130,7 +130,7 @@ def BelowPrimalAssumptions (data : BelowPrimalData p d n) : Prop :=
   ∀ k ≤ n, QueriedAt data.trace k (data.x k)
 
 /-- Source carrier for `lem:below-primal` (B04--B05). -/
-noncomputable def BelowPrimalStatement : Prop :=
+@[expose] noncomputable def BelowPrimalStatement : Prop :=
   ∀ (p : ℝ), 1 < p → p < 2 → ∀ (d n : ℕ) (data : BelowPrimalData p d n),
     BelowPrimalAssumptions data →
     data.oracle.value (data.x n) - data.fstar ≤ belowH p data.z / data.u n

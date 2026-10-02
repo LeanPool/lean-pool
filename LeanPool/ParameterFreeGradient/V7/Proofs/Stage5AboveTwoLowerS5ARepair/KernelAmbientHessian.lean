@@ -17,7 +17,7 @@ public section
 namespace V7.Stage5AboveTwoLower.S5ARepair
 
 /-- One coordinate of the explicit kernel Hessian as a continuous linear functional. -/
-noncomputable def kernelHessianCoord (r theta : ℝ) (x : Point d) (i : Fin d) :
+@[expose] noncomputable def kernelHessianCoord (r theta : ℝ) (x : Point d) (i : Fin d) :
     Point d →L[ℝ] ℝ :=
   (4 * theta * O3.Experimental.scalarJ r (x i)) •
       ((2 * theta / r - 1) *
