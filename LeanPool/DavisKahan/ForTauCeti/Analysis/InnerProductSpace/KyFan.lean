@@ -450,9 +450,9 @@ private theorem exists_orthonormal_re_sum_inner_map_eq_square (A : E →ₗ[𝕜
 /-- **The Ky Fan `k`-sum** of an operator: the sum of its `k` largest singular
 values.  `kyFanSum 1 A = ‖A‖`, `kyFanSum (finrank 𝕜 E) A` is the trace norm.
 
-`@[expose]`: the defining sum is the working form throughout the Ky Fan and
-unitarily-invariant-norm development, so the body must stay visible to the
-kernel for the `rfl`-level rewrites below. -/
+The enclosing exposed public section keeps the defining sum visible across
+module boundaries for the `rfl`-level rewrites in the Ky Fan and
+unitarily-invariant-norm development. -/
 noncomputable def kyFanSum (k : ℕ) (A : E →ₗ[𝕜] F) : ℝ :=
   ∑ i : Fin k, A.singularValues (i : ℕ)
 
