@@ -97,6 +97,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimension
 
 /-- `w : M → ℝᵠ` pulls the Euclidean metric back to `g`:
   `g_x(v, v') = ⟨dw_x v, dw_x v'⟩` for all `x` and tangent vectors `v, v'`. -/
+@[expose]
 def PullsBackEuclidean (g : ContMDiffRiemannianMetric I ∞ E (TangentSpace I : M → Type _))
     {q : ℕ} (w : M → EuclideanSpace ℝ (Fin q)) : Prop :=
   ∀ (x : M) (v v' : TangentSpace I x),
