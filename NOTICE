@@ -182,6 +182,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Odlyzko                   https://github.com/ImperialCollegeLondon/FLT
   LeanPool/OneManifold               https://github.com/sweeneyde/1mfld
   LeanPool/OperatorTheory            https://github.com/savarin/lean-operator-theory
+  LeanPool/OrderClosures             https://github.com/pedrotradacete/OrderClosures
   LeanPool/OrderPQ                   https://github.com/wupr/order-p-q
   LeanPool/PDL                       https://github.com/m4lvin/lean4-pdl
   LeanPool/PFR                       https://github.com/teorth/pfr
