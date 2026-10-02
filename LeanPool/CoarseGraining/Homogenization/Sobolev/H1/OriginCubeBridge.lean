@@ -77,7 +77,8 @@ private theorem tendsto_precomp_sub_diagonalShift {d : ℕ} (x : Vec d) (ε₀ :
   intro i
   simpa [diagonalShift] using tendsto_const_nhds.sub hε
 
-/-- Integrals against inward translates of a continuous compactly supported test function converge to the unshifted integral for an L² function. -/
+/-- Integrals against inward translates of a continuous compactly supported
+test function converge to the unshifted integral for an L² function. -/
 theorem tendsto_setIntegral_mul_precomp_subRight_of_memL2On
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (MeasureTheory.volume.restrict U)]
     {f ψ : Vec d → ℝ} (hfL2 : MemL2On U f) (hψ_cont : Continuous ψ)
@@ -142,7 +143,8 @@ noncomputable def toCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
     H1Function (cubeSet (originCube d n)) := by
   let Uo : Set (Vec d) := openCubeSet (originCube d n)
   let Uc : Set (Vec d) := cubeSet (originCube d n)
-  haveI : Fact (MeasureTheory.volume Uc < ⊤) := ⟨by exact volume_cubeSet_originCube_lt_top (d := d) n⟩
+  haveI : Fact (MeasureTheory.volume Uc < ⊤) :=
+    ⟨by exact volume_cubeSet_originCube_lt_top (d := d) n⟩
   haveI : MeasureTheory.IsFiniteMeasure (MeasureTheory.volume.restrict Uc) := inferInstance
   have hu_memL2 : MemL2On Uc u.toFun := by
     simpa [MemL2On, Uo, Uc,
@@ -408,7 +410,8 @@ noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
       exact hcompact.uniformContinuous_of_continuous hcont
     obtain ⟨εpush, hεpush_pos, hpush⟩ :=
       HasCompactSupport.exists_pos_forall_precomp_subRight_tsupport_subset_openCubeSet_originCube
-        (d := d) (n := n) (φ := u.approx m) (u.approx_hasCompactSupport m) (u.approx_support_subset m)
+        (d := d) (n := n) (φ := u.approx m) (u.approx_hasCompactSupport m)
+          (u.approx_support_subset m)
     obtain ⟨δfun, hδfun_pos, hδfun⟩ :=
       (Metric.uniformContinuous_iff_le.mp happrox_uc) η hη
     let δgrad : Fin d → ℝ := fun i =>
@@ -513,7 +516,8 @@ noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
     simpa [v, H1Function.restrict, μo, Uo, Uc] using
       (MeasureTheory.eLpNorm_mono_measure
         (fun x => u.approx m x - u.toH1Function.toFun x)
-        (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume (openCubeSet_subset_cubeSet _)))
+        (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume
+          (openCubeSet_subset_cubeSet _)))
   have horigGradRestrict :
       ∀ i : Fin d,
         Filter.Tendsto
@@ -535,7 +539,8 @@ noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
     simpa [v, H1Function.restrict, μo, Uo, Uc] using
       (MeasureTheory.eLpNorm_mono_measure
         (fun x => (fderiv ℝ (u.approx m) x) (basisVec i) - u.toH1Function.grad x i)
-        (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume (openCubeSet_subset_cubeSet _)))
+        (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume
+          (openCubeSet_subset_cubeSet _)))
   have hμo_univ_lt_top : μo Set.univ < ⊤ := by
     simpa [μo] using volume_openCubeSet_originCube_lt_top (d := d) n
   have hshiftApprox :
@@ -576,7 +581,8 @@ noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
               rw [hpow_eq, ← ENNReal.ofReal_mul]
               positivity
     have hbase : Filter.Tendsto (fun m : ℕ => (1 : ℝ) / ((m : ℝ) + 1)) Filter.atTop (𝓝 0) := by
-      have hdenCast : Filter.Tendsto (fun m : ℕ => (((m + 1 : ℕ) : ℝ))) Filter.atTop Filter.atTop := by
+      have hdenCast :
+        Filter.Tendsto (fun m : ℕ => (((m + 1 : ℕ) : ℝ))) Filter.atTop Filter.atTop := by
         exact (tendsto_natCast_atTop_atTop (R := ℝ)).comp (Filter.tendsto_add_atTop_nat 1)
       have hden : Filter.Tendsto (fun m : ℕ => (m : ℝ) + 1) Filter.atTop Filter.atTop := by
         convert hdenCast using 1
@@ -643,7 +649,8 @@ noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
               rw [hpow_eq, ← ENNReal.ofReal_mul]
               positivity
     have hbase : Filter.Tendsto (fun m : ℕ => (1 : ℝ) / ((m : ℝ) + 1)) Filter.atTop (𝓝 0) := by
-      have hdenCast : Filter.Tendsto (fun m : ℕ => (((m + 1 : ℕ) : ℝ))) Filter.atTop Filter.atTop := by
+      have hdenCast :
+        Filter.Tendsto (fun m : ℕ => (((m + 1 : ℕ) : ℝ))) Filter.atTop Filter.atTop := by
         exact (tendsto_natCast_atTop_atTop (R := ℝ)).comp (Filter.tendsto_add_atTop_nat 1)
       have hden : Filter.Tendsto (fun m : ℕ => (m : ℝ) + 1) Filter.atTop Filter.atTop := by
         convert hdenCast using 1
@@ -728,7 +735,8 @@ noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
           have hcontShift :
               Continuous
                 (fun x : Vec d =>
-                  (fderiv ℝ (u.approx m) (x - diagonalShift (d := d) (εShift m))) (basisVec i)) := by
+                  (fderiv ℝ (u.approx m) (x - diagonalShift (d := d) (εShift m)))
+                    (basisVec i)) := by
             have hbase :
                 Continuous (fun x : Vec d => (fderiv ℝ (u.approx m) x) (basisVec i)) := by
               simpa using
