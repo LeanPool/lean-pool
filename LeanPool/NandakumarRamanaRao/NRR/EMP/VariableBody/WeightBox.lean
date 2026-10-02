@@ -63,6 +63,7 @@ noncomputable instance instCompactSpace : CompactSpace (WeightBox n M) :=
   isCompact_iff_compactSpace.mp isCompact_setOf
 
 /-- The coordinate projection of the weight box as a bundled continuous map. -/
+@[expose]
 def valContinuous (n : ℕ) (M : ℝ) : C(WeightBox n M, Fin n → ℝ) :=
   ⟨fun w => (w : Fin n → ℝ), continuous_subtype_val⟩
 

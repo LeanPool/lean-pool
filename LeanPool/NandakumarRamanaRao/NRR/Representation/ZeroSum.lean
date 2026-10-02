@@ -31,6 +31,7 @@ variable {n : ℕ}
 
 /-- **Zero-sum real-valued target type.** A function `Fin n → ℝ` whose coordinates sum to
 zero. -/
+@[expose]
 def ZeroSum (n : ℕ) : Type :=
   {v : Fin n → ℝ // ∑ i, v i = 0}
 
@@ -88,8 +89,7 @@ theorem ZeroSum.relabel_mul (σ τ : Equiv.Perm (Fin n)) (v : ZeroSum n) :
       ZeroSum.relabel σ (ZeroSum.relabel τ v) := by
   apply ZeroSum.ext
   intro i
-  simp [ZeroSum.relabel_apply]
-  rfl
+  simp
 
 /-- The `Sₙ`-action `σ • v := ZeroSum.relabel σ v` on the zero-sum target type, by relabelling
 via precomposition with `σ.symm` (matching the `Config` action convention). -/

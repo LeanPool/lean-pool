@@ -127,6 +127,7 @@ theorem inter_upperClosedHalfspace_isCompact
 /-- The cut of a convex body `K` by the closed lower halfspace `{x | inner ℝ u x ≤ t}`, as a
 `ConvexBody`. Solidity is **not** automatic, so the nonempty-interior hypothesis `hInt` is
 required explicitly. -/
+@[expose]
 def cutLowerClosed
     (K : ConvexBody E) (u : E) (t : ℝ)
     (hInt : (interior ((K : Set E) ∩ lowerClosedHalfspace u t)).Nonempty) :
@@ -139,6 +140,7 @@ def cutLowerClosed
 /-- The cut of a convex body `K` by the closed upper halfspace `{x | t ≤ inner ℝ u x}`, as a
 `ConvexBody`. Solidity is **not** automatic, so the nonempty-interior hypothesis `hInt` is
 required explicitly. -/
+@[expose]
 def cutUpperClosed
     (K : ConvexBody E) (u : E) (t : ℝ)
     (hInt : (interior ((K : Set E) ∩ upperClosedHalfspace u t)).Nonempty) :
