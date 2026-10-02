@@ -26,7 +26,6 @@ GLOBAL_INPUTS = (
     "scripts/nolints-style.txt",
     "scripts/ci/lint-project.lean",
     "python/lean_pool/quality.py",
-    "python/lean_pool/challenge.py",
     "python/lean_pool/validation_cache.py",
     "python/pyproject.toml",
     "python/uv.lock",
@@ -63,17 +62,16 @@ def source_inventory(root: Path, modules: list[str]) -> set[Path]:
                 path = root / (imported.replace(".", "/") + ".lean")
                 if path.is_file():
                     paths.add(path)
-                elif imported.split(".")[0] in {"LeanPool", "Challenge", "Solution"}:
+                elif imported.split(".")[0] == "LeanPool":
                     raise ValueError(f"missing imported source: {imported}")
     except (OSError, ValueError, KeyError, TypeError):
         LOGGER.warning(
             "%s: missing import inventory; hashing all local sources", modules[0]
         )
-        for library in ("LeanPool", "Challenge", "Solution"):
-            paths.update((root / library).rglob("*.lean"))
-            index = root / f"{library}.lean"
-            if index.exists():
-                paths.add(index)
+        paths.update((root / "LeanPool").rglob("*.lean"))
+        index = root / "LeanPool.lean"
+        if index.exists():
+            paths.add(index)
     return paths
 
 
