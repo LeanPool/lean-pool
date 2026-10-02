@@ -327,7 +327,10 @@ theorem sharpBoundaryDepthTailTerm_le_kernelBase_add {d : ℕ} [NeZero d]
     sharpBoundaryKernelRatio
   have hA : 0 ≤ cubeBesovPositiveVectorDepthAverage Q u m :=
     cubeBesovPositiveVectorDepthAverage_nonneg Q u m
-  simp [mul_pow, descendantsAtDepth_card, Fintype.card_fin, Real.sq_sqrt, hA]
+  simp only [Nat.cast_add, Real.rpow_eq_pow, Nat.cast_pow, Nat.cast_ofNat,
+    add_tsub_cancel_left, Nat.cast_mul, Fintype.card_fin, descendantsAtDepth_card,
+    mul_pow, Nat.ofNat_nonneg, pow_nonneg, Real.sqrt_div, hA, Real.sq_sqrt,
+    ge_iff_le]
   rw [Real.sq_sqrt (by positivity)]
   rw [Real.sq_sqrt (by positivity)]
   have hweight_mn :

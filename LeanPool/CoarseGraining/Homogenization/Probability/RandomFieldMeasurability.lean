@@ -214,7 +214,10 @@ theorem localFiniteTestObservable_symmCoeffField {d : ℕ} {ι : Type}
   unfold localFiniteTestObservable
   apply MeasureTheory.integral_congr_ae
   filter_upwards with x
-  simp [Finset.product_eq_sprod, Finset.sum_product]
+  simp only [Fintype.univ_bool, Finset.product_eq_sprod, one_div,
+    Finset.sum_product, Finset.mem_singleton, Bool.true_eq_false,
+    not_false_eq_true, Finset.sum_insert, ↓reduceIte, Finset.sum_singleton,
+    Bool.false_eq_true]
   refine Finset.sum_congr rfl ?_
   intro k hk
   change vecDot (e' k) (matVecMul (symmPart (a x)) (e k)) * φ k x =
@@ -234,7 +237,10 @@ theorem localFiniteTestObservable_skewCoeffField {d : ℕ} {ι : Type}
   unfold localFiniteTestObservable
   apply MeasureTheory.integral_congr_ae
   filter_upwards with x
-  simp [Finset.product_eq_sprod, Finset.sum_product]
+  simp only [Fintype.univ_bool, Finset.product_eq_sprod, one_div,
+    neg_mul, mul_ite, mul_neg, Finset.sum_product, Finset.mem_singleton,
+    Bool.true_eq_false, not_false_eq_true, Finset.sum_insert, ↓reduceIte,
+    Finset.sum_singleton, Bool.false_eq_true]
   refine Finset.sum_congr rfl ?_
   intro k hk
   change vecDot (e' k) (matVecMul (skewPart (a x)) (e k)) * φ k x =
@@ -419,7 +425,7 @@ theorem pairwise_areUnitSeparated_cubeSet_subtype_descendantsAtScaleScaleColorCl
       apply hRS
       exact Subtype.ext h)
 
-theorem areUnitSeparated_biUnion_right {d : ℕ} {ι : Type*} [DecidableEq ι] {U : Set (Vec d)}
+theorem areUnitSeparated_biUnion_right {d : ℕ} {ι : Type*} {U : Set (Vec d)}
     {V : ι → Set (Vec d)} {s : Finset ι}
     (h : ∀ i ∈ s, AreUnitSeparated U (V i)) :
     AreUnitSeparated U (⋃ i ∈ s, V i) := by
@@ -429,7 +435,7 @@ theorem areUnitSeparated_biUnion_right {d : ℕ} {ι : Type*} [DecidableEq ι] {
   exact h i hi hx hyi
 
 theorem measurableSet_biInter_restrictionSigma_biUnion {d : ℕ} {ι : Type*}
-    [DecidableEq ι] {U : ι → Set (Vec d)} {f : ι → Set (CoeffField d)}
+    {U : ι → Set (Vec d)} {f : ι → Set (CoeffField d)}
     {s : Finset ι}
     (hf : ∀ i ∈ s, @MeasurableSet (CoeffField d) (RestrictionSigma (U i)) (f i)) :
     @MeasurableSet (CoeffField d) (RestrictionSigma (⋃ i ∈ s, U i)) (⋂ i ∈ s, f i) := by
@@ -455,14 +461,14 @@ theorem measurableSet_biInter_restrictionSigma_biUnion {d : ℕ} {ι : Type*}
       simpa [Finset.set_biInter_insert, hi] using hi_meas.inter hs_meas
 
 theorem iIndep_restrictionSigma_of_isRestrictionUnitRangeDependent {d : ℕ} {ι : Type*}
-    [DecidableEq ι] {P : MeasureTheory.Measure (CoeffField d)}
+    {P : MeasureTheory.Measure (CoeffField d)}
     [MeasureTheory.IsProbabilityMeasure P] {U : ι → Set (Vec d)}
     (hP : IsRestrictionUnitRangeDependent P)
     (hsep : Pairwise fun i j => AreUnitSeparated (U i) (U j)) :
     ProbabilityTheory.iIndep (fun i => RestrictionSigma (U i)) P := by
+  classical
   rw [ProbabilityTheory.iIndep_iff]
   intro s f hf
-  classical
   induction s using Finset.induction_on with
   | empty =>
       simp
