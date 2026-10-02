@@ -536,6 +536,7 @@ inclusions. -/
 
 /-- The colimit unit: the bottom-stage unit followed by the stage
 inclusion. -/
+@[expose]
 noncomputable def chainColimitUnit
     [Category.{v} E] (B : ℕ → E) (δ : ∀ n, B n ⟶ B (n + 1))
     [HasColimitsOfShape SmallNat.{v} E] [MonoidalCategory E]

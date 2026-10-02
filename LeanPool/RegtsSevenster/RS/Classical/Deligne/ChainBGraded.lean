@@ -35,6 +35,7 @@ variable {D : Type u}
 /-- **The shifted graded component**: the colimit of the
 two-index stages along the line through the starting bidegree,
 climbing both arities by the seed transition. -/
+@[expose]
 noncomputable def chainBdeg
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
@@ -49,6 +50,7 @@ noncomputable def chainBdeg
     (fun k => chainDelta2 A M M' d (p₀ + k) (q₀ + k))
 
 /-- The stage insertion of a shifted graded component. -/
+@[expose]
 noncomputable def chainBdegι
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

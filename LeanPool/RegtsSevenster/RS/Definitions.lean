@@ -829,7 +829,7 @@ structure EdgeSubset.TransitionSystem.Orientation {α : Type}
 transported from an enumeration.  Used only to enumerate vertex
 pairings; the evaluated summands are independent of the choice
 because pair blocks move by even permutations. -/
-@[instance_reducible]
+@[expose, instance_reducible]
 noncomputable def Fragment.flagOrder {α : Type} (W : Fragment α) :
     LinearOrder W.Flag :=
   LinearOrder.lift' (Fintype.equivFin W.Flag)

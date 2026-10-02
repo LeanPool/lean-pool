@@ -90,6 +90,7 @@ theorem relabel_boundaryFlag_apply (a : α) :
 
 /-- Transport of an edge subset along a relabel: the flags and the
 pairing are untouched. -/
+@[expose]
 def EdgeSubset.relabelUp (F : EdgeSubset W) : EdgeSubset (W.relabel ee) where
   flags := F.flags
   pairing_mem := fun f hf => F.pairing_mem f hf

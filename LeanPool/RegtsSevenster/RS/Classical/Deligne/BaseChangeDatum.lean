@@ -145,6 +145,7 @@ section Unit
 
 /-- **The unit of the base-change structure**: the base change of
 the regular module is the regular module over the new base. -/
+@[expose]
 noncomputable def baseChangeUnitIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

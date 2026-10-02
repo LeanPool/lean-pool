@@ -52,6 +52,7 @@ theorem ker_le_ker_traceFunctional (f : ClosedFragment → ℂ) (t : ℕ) :
   rfl
 
 /-- The trace descends to the Hom space. -/
+@[expose]
 noncomputable def HomSpace.traceMap (f : ClosedFragment → ℂ) (t : ℕ) :
     HomSpace f (t + t) →ₗ[ℂ] ℂ :=
   Submodule.liftQ _ (traceFunctional f t)

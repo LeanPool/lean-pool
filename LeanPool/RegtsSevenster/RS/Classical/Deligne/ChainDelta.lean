@@ -110,6 +110,7 @@ theorem actLeft_symPowOne_inv
 
 /-- A module maps into the singleton stage of its symmetric-power
 tower. -/
+@[expose]
 noncomputable def toSymPowModZero
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
@@ -122,6 +123,7 @@ noncomputable def toSymPowModZero
 
 /-- **The seed of the splitting chain**: the copairing lands in
 the bottom stage. -/
+@[expose]
 noncomputable def chainSeed
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

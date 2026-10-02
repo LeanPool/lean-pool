@@ -30,6 +30,7 @@ variable {α : Type}
 namespace EdgeSubset
 
 /-- Two systems induce the same boundary pairing. -/
+@[expose]
 def SamePairing {W : Fragment α} {F : EdgeSubset W}
     (κ κ' : F.RelTransitionSystem) : Prop :=
   ∀ (δ : W.Flag) (hδ : δ ∈ F.boundaryFlags),

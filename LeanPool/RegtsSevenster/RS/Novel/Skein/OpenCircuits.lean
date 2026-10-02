@@ -477,6 +477,7 @@ theorem pairing_mem_periodicFlags (κ : F.RelTransitionSystem)
   · rw [hrev n le_rfl, Nat.sub_self, iterWalk_zero]
 
 /-- The edge-pairing reversal on periodic flags. -/
+@[expose]
 noncomputable def revPerm (κ : F.RelTransitionSystem) :
     Equiv.Perm {f : W.Flag // f ∈ κ.periodicFlags} :=
   Function.Involutive.toPerm

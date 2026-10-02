@@ -981,6 +981,7 @@ noncomputable def modTensorMapMod
   Mod.Hom.mk' (modTensorMap A f g) (modTensorAct_map A f g)
 
 /-- The relative tensor product of two module isomorphisms. -/
+@[expose]
 noncomputable def modTensorMapIso
     [Category.{v} D] [MonoidalCategory D] (A : D) [MonObj A]
     [BraidedCategory D] {M : Mod D A} {M' : Mod D A} {N : Mod D A}

@@ -116,6 +116,7 @@ noncomputable def regPairFold
 
 /-- **The tensor pairing**: cross through the descended
 interchange, pair coordinatewise, and fold. -/
+@[expose]
 noncomputable def tensorPair
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]
@@ -219,6 +220,7 @@ theorem tensorCopair_linear
 /-- **The tensor product of duality data** (Deligne 1.15, tensor
 part): dual pairs tensor, with the crossed coordinatewise pairing
 and copairing. -/
+@[expose]
 noncomputable def tensorDatum
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

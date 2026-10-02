@@ -87,6 +87,7 @@ module on `V` with a module `M` is the twist of `M` by `V`.  The
 free module is the twisted regular module, the twist shuffle
 collects both twists in front, and the regular module is the unit
 of the relative tensor. -/
+@[expose]
 noncomputable def freeTensorTwistIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

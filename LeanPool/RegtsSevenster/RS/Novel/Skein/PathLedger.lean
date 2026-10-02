@@ -442,6 +442,7 @@ variable {F : EdgeSubset W}
 /-- Membership on the boundary chain of `β`: the flag appears on
 the walk from `β` (on either side of an edge) before the chain
 exits. -/
+@[expose]
 def OnBoundaryChain (κ : F.RelTransitionSystem) (β f : W.Flag) :
     Prop :=
   ∃ k t : ℕ, t ≤ k ∧
@@ -884,6 +885,7 @@ variable {F : EdgeSubset W} {κ : F.RelTransitionSystem}
 
 /-- The flags of the walk orbit through `g`, on both sides of each
 visited edge. -/
+@[expose]
 def OrbitFlag (κ : F.RelTransitionSystem) (g f : W.Flag) : Prop :=
   ∃ m, f = iterWalk κ g m ∨ f = W.pairing (iterWalk κ g m)
 
@@ -1023,6 +1025,7 @@ end EdgeSubset
 square on a localized configuration flips the circuit-count parity
 (the splice merges two circuits, Δ = −1, or splits one component,
 Δ = +1).  Discharged in `SeparatedParity.lean`. -/
+@[expose]
 def SeparatedCountParity : Prop :=
   ∀ {α : Type} {W : Fragment α} {F : EdgeSubset W}
     {κ : F.RelTransitionSystem} {a b c d : W.Flag} {v : W.Vertex}
