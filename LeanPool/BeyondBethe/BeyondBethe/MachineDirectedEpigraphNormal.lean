@@ -73,7 +73,7 @@ theorem ofFn_directedEpigraphNormal {m : ℕ}
         (epigraphNormal (directedAffineGradientVector tau A y p)))
   rw [machineBinaryListSnoc_encode, ofFn_directedEpigraphNormal]
 
-@[simp] theorem machineDirectedEpigraphNormalVectorCode_encode_oracleNormal
+theorem machineDirectedEpigraphNormalVectorCode_encode_oracleNormal
     {m : ℕ} (tau : ℚ)
     (A : Matrix (Fin (m + 1)) (Fin (m + 1)) ℚ)
     (y : Fin (m * m) → ℚ) (p : ℕ) :
