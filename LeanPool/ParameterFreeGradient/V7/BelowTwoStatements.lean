@@ -306,6 +306,7 @@ noncomputable def BelowTerminalGradientStatement : Prop :=
 
 /-- Source carrier for `lem:below-guard-scaling` (B12), including the exact
 argument orientation in both normalized and physical Bregman remainders. -/
+@[expose]
 noncomputable def BelowGuardScalingStatement : Prop :=
   ∀ (p M D : ℝ), 1 < p → 0 < M → 0 < D → ∀ (d : ℕ)
     (oracle : PairOracle d) (c x y : Point d),

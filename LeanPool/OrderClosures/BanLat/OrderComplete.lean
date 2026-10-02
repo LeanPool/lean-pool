@@ -225,7 +225,7 @@ instance (priority := 100) ConditionallyCompleteLattice.toSigmaConditionallyComp
 
 /-- Build a `SigmaConditionallyCompleteLattice` structure from a hypothesis
 that every countable non-empty bounded above set has a least upper bound. -/
-@[reducible]
+@[expose, reducible]
 noncomputable def sigmaConditionallyCompleteLatticeOfHasCountableLUB
     {X : Type*} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
     (hLUB : ∀ {S : Set X}, S.Countable → S.Nonempty → BddAbove S →
@@ -324,7 +324,7 @@ lemma exists_isLUB_pos_countable_set_of_pos_seq
 /-- On a lattice-ordered additive commutative group, a `SigmaConditionallyCompleteLattice` structure
 exists provided every increasing bounded above sequence of positive elements
 has a least upper bound. -/
-@[reducible]
+@[expose, reducible]
 noncomputable def sigmaConditionallyCompleteLatticeOfPosSeq
     (X : Type*) [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
     (H : ∀ {u : ℕ → X}, Monotone u → (∀ n, 0 ≤ u n) →

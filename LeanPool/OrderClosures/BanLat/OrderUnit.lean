@@ -32,6 +32,7 @@ def WeakOrderUnit (e : X) : Prop :=
 /-- An element `e` of a vector lattice is a **strong order unit** if it is
 non-negative and every element of `X` is dominated, in absolute value, by some
 non-negative real multiple of `e`. -/
+@[expose]
 def StrongOrderUnit (e : X) : Prop :=
   0 ≤ e ∧ ∀ x : X, ∃ c : ℝ, 0 ≤ c ∧ |x| ≤ c • e
 

@@ -22,6 +22,7 @@ open Stage5AboveTwoLower.S5ARepair
 /-- The exact local kernel inequality needed by the primal envelope route.
 It is stated only on the unit `ell_p` ball, matching the frozen Hessian
 control and the already proved strict interiority of all minimizers. -/
+@[expose]
 def KernelCocoerciveOnUnit (p M : ℝ) (gradPhi : Point d → Point d) : Prop :=
   ∀ u w : Point d, lpNorm p u ≤ 1 → lpNorm p w ≤ 1 →
     (lpNorm (conjugateExponent p) (gradPhi u - gradPhi w)) ^ (2 : ℕ) ≤

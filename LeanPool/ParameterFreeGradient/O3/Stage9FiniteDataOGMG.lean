@@ -192,6 +192,7 @@ theorem stage9Actual_certificate_audit_n3
 
 /-- Exact source-level proposition carrier.  The oracle and all method data
 precede the proof-only lower bound; no certificate is supplied by the caller. -/
+@[expose]
 def FiniteDataOGMGStatement : Prop :=
   ∀ (d : ℕ) (oracle : PairOracle d) (U : Vec d) (M fstar : ℝ) (n : ℕ),
     0 < M → 1 ≤ n →

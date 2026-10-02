@@ -44,6 +44,7 @@ convolution: equality of the original objectives on the closed smoothing ball
 must make the two smoothed value functions equal on a neighbourhood of the
 centre.  The strict boundary inequality of the kernel is what supplies the
 required interior slack. -/
+@[expose]
 def LocalSmoothingNeighborhoodStability (kernel : SmoothingKernelData p d) : Prop :=
   ∀ (chi : ℝ), 0 < chi → ∀ ell₁ ell₂ : Point d → ℝ,
     O3.IsConvexObjective ell₁ → IsOneLipschitz p ell₁ →

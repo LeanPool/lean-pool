@@ -89,6 +89,7 @@ noncomputable def InfiniteWorstCaseExpectedHittingTimeStatement : Prop :=
 
 /-- U10: the real-line obstruction applies for every fixed interior exponent
 because the one-dimensional `ell_p` and `ell_q` norms are absolute value. -/
+@[expose]
 noncomputable def OneDimensionalInteriorLpTransferStatement : Prop :=
   ∀ (p : ℝ), 1 < p →
     (∀ x : StrictPoint, lpNorm p x = |x 0|) ∧
