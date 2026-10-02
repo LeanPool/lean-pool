@@ -116,7 +116,7 @@ theorem machineSmoothedMatrixCode_mem_FP :
   simp only [rationalMatrixAddDeltaSemantic, smoothedRationalMatrix]
   rw [rawRationalSmoothingDelta_value]
 
-@[simp] theorem machineSmoothedMatrixCode_rational {n : ℕ}
+theorem machineSmoothedMatrixCode_rational {n : ℕ}
     (A : Matrix (Fin n) (Fin n) ℚ) (χ : ℚ) :
     machineSmoothedMatrixCode
         (pair (rawRatBinaryCode (rawRatOfRat χ))
