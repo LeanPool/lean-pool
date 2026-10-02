@@ -319,7 +319,7 @@ theorem emitBitsTM_isTransducer (w : List Bool) :
   intro k iHead wHeads oHead
   by_cases h : k.val < w.length
   · simp [emitBitsTM, h]
-  · simp [emitBitsTM, h, allIdle, idleDir]
+  · simp only [emitBitsTM, Fin.zero_eta, idleDir, allIdle, h, ↓reduceDIte, ne_eq]
     split <;> decide
 
 /-- **`emitBitsTM` Hoare specification.** Appends the word `w` to the output

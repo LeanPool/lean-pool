@@ -610,7 +610,7 @@ theorem trace_succ (tm : NTM n) (T : ℕ)
       tm.trace T (fun i => choices ⟨i.val + 1, by omega⟩)
         (tm.trace 1 (fun _ => choices ⟨0, by omega⟩) c) := by
   by_cases hhalt : c.state = tm.qhalt
-  · simp [NTM.trace, hhalt]
+  · simp only [trace, hhalt, ↓reduceIte]
     exact (tm.trace_halted T (fun i => choices ⟨i.val + 1, by omega⟩) hhalt).symm
   · simp [NTM.trace, hhalt]
 

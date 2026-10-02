@@ -455,8 +455,9 @@ theorem machineDyadicFloorMatrixStep_semantics {d : ℕ}
       apply List.ext_getElem
       · simp [dyadicFloorMatrixRowsPrefix, rationalMatrixRows]
       · intro r hrLeft hrRight
-        simp [dyadicFloorMatrixRowsPrefix, rationalMatrixRows,
-          List.map_ofFn]
+        simp only [dyadicFloorMatrixRowsPrefix, rationalMatrixRows, List.map_take,
+          List.map_ofFn, List.getElem_take, List.getElem_ofFn, Function.comp_apply,
+          List.ofFn_inj]
         funext j
         rfl
     rw [hprefixEq]
@@ -541,7 +542,8 @@ theorem dyadicFloorMatrixRowsPrefix_all {d : ℕ}
   apply List.ext_getElem
   · simp [dyadicFloorMatrixRowsPrefix, rationalMatrixRows]
   · intro i hiLeft hiRight
-    simp [dyadicFloorMatrixRowsPrefix, rationalMatrixRows, List.map_ofFn]
+    simp only [dyadicFloorMatrixRowsPrefix, rationalMatrixRows, List.map_take, List.map_ofFn,
+      List.getElem_take, List.getElem_ofFn, Function.comp_apply, List.ofFn_inj]
     funext j
     rfl
 

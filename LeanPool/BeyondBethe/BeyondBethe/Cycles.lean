@@ -681,7 +681,9 @@ theorem component_accounting
       have hkcases : k c = 1 ∨ k c = 2 := by omega
       rcases hkcases with hk1 | hk2eq
       · have hgzero := hone c hk1
-        simp [longComponentGoodRows, nontrivialComponentCount, hk1, hgzero]
+        simp only [longComponentGoodRows, hk1, Nat.not_ofNat_le_one, ↓reduceIte,
+          CharP.cast_eq_zero, zero_div, zero_sub, hgzero, nontrivialComponentCount,
+          sub_self, Left.neg_nonpos_iff, ge_iff_le]
         positivity
       · have hk2 : 2 ≤ k c := by omega
         simp only [longComponentGoodRows, ite_eq_right hk3,

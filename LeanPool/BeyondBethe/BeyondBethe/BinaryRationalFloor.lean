@@ -47,14 +47,16 @@ theorem binaryRatFloor_eq_floor (q : ℚ) :
   | negSucc n =>
       have hden : 0 < q.den := q.den_pos
       by_cases hrem : (n + 1) % q.den = 0
-      · simp [hrem]
+      · simp only [Int.negSucc_not_nonneg, ↓reduceIte, Int.natAbs_negSucc, Nat.succ_eq_add_one,
+        hrem, Int.natCast_ediv, Nat.cast_add, Nat.cast_one]
         have hdvdNat : q.den ∣ n + 1 := Nat.dvd_of_mod_eq_zero hrem
         have hdvdInt : (q.den : ℤ) ∣ ((n + 1 : ℕ) : ℤ) := by
           exact_mod_cast hdvdNat
         have hrepr : Int.negSucc n = -((n + 1 : ℕ) : ℤ) := by omega
         rw [hrepr, Int.neg_ediv_of_dvd hdvdInt]
         norm_num
-      · simp [hrem]
+      · simp only [Int.negSucc_not_nonneg, ↓reduceIte, Int.natAbs_negSucc, Nat.succ_eq_add_one,
+        hrem, Nat.cast_add, Int.natCast_ediv, Nat.cast_one, neg_add_rev, Int.reduceNeg]
         have hndvdNat : ¬q.den ∣ n + 1 := by
           rwa [Nat.dvd_iff_mod_eq_zero]
         have hndvdInt : ¬(q.den : ℤ) ∣ ((n + 1 : ℕ) : ℤ) := by

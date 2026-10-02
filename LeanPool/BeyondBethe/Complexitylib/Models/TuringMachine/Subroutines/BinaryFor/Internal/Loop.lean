@@ -184,7 +184,7 @@ theorem IsTransducer.binaryForTM_internal {body : TM n}
           split <;> decide
   | inr q =>
       by_cases hq : q = (binaryForIterationTM body counterIdx).qhalt
-      · simp [binaryForTM, hq, allReadBack, idleDir]
+      · simp only [binaryForTM, idleDir, allReadBack, Prod.mk.eta, hq, ↓reduceIte, ne_eq]
         split <;> decide
       · simpa [binaryForTM, hq] using hiteration q iHead wHeads oHead
 

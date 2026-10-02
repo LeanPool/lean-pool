@@ -122,12 +122,14 @@ private theorem copyWorkOutput_loop {n : ℕ}
             (idleDir c.output.read) }
       have hstep : (copyWorkToWorkTM src dst).step c = some c1 := by
         cases hbit : bit
-        · simp [TM.step, hstate, copyWorkToWorkTM, hsrcRead, hbit, bit, c1,
-            Γ.ofBool, Γw.ofBool, Γw.toΓ, readBackWrite]
+        · simp only [copyWorkToWorkTM, readBackWrite, step, hstate, reduceCtorEq, ↓reduceIte,
+          hsrcRead, Γ.ofBool, hbit, Γw.toΓ, Γw.ofBool, Option.some.injEq,
+          Cfg.mk.injEq, and_true, true_and, bit, c1]
           funext i
           by_cases hi : i = dst <;> simp [hi]
-        · simp [TM.step, hstate, copyWorkToWorkTM, hsrcRead, hbit, bit, c1,
-            Γ.ofBool, Γw.ofBool, Γw.toΓ, readBackWrite]
+        · simp only [copyWorkToWorkTM, readBackWrite, step, hstate, reduceCtorEq, ↓reduceIte,
+          hsrcRead, Γ.ofBool, hbit, Γw.toΓ, Γw.ofBool, Option.some.injEq,
+          Cfg.mk.injEq, and_true, true_and, bit, c1]
           funext i
           by_cases hi : i = dst <;> simp [hi]
       have hsrcCells1 : (c1.work src).cells = source.cells := by

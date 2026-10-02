@@ -177,10 +177,9 @@ theorem machineIntegerNatCodeBits_encode (z : ℤ) :
         integerNatCode, machineBinaryAddBits_pair_natBits,
         two_mul]
   | negSucc n =>
-      simp [machineIntegerNatCodeBits, integerBinaryCode,
-        machineIntegerOddCodeBits, machineIntegerEvenCodeBits,
-        machineIntegerMagnitudeWord, integerNatCode,
-        machineBinaryAddBits_pair_natBits, two_mul]
+      simp only [machineIntegerNatCodeBits, integerBinaryCode, machineIntegerOddCodeBits,
+        machineIntegerEvenCodeBits, machineIntegerMagnitudeWord, List.tail_cons,
+        machineBinaryAddBits_pair_natBits, machineIfHead_true, integerNatCode, two_mul]
       rw [show ([true] : List Bool) = (1 : ℕ).bits by rfl,
         machineBinaryAddBits_pair_natBits]
 
