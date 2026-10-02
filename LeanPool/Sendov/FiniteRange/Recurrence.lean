@@ -234,12 +234,15 @@ with integer coefficients,
   `g₂ = 6(n-1) + (2(n-1) - 12) α - 4 α²`. -/
 
 /-- `D` itself, as an integer polynomial in `α`. -/
+@[expose]
 def gg0 (n : ℕ) : List ℤ := [6 * ((n : ℤ) - 1), 2 * ((n : ℤ) - 1)]
 
 /-- `-2 D c`, as an integer polynomial in `α`. -/
+@[expose]
 def gg1 (n : ℕ) : List ℤ := [-12 * ((n : ℤ) - 1), 12 - 2 * ((n : ℤ) - 1), 4]
 
 /-- `D A`, as an integer polynomial in `α`. -/
+@[expose]
 def gg2 (n : ℕ) : List ℤ := [6 * ((n : ℤ) - 1), 2 * ((n : ℤ) - 1) - 12, -4]
 
 @[simp] lemma gg0_length (n : ℕ) : (gg0 n).length = 2 := rfl

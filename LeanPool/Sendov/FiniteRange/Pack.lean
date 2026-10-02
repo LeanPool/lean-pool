@@ -44,6 +44,7 @@ namespace Sendov
 
 /-- Evaluate a dense `ℕ`-polynomial (lowest degree first) at `b`, by Horner's rule.  This is
 the packing map: `npev p b` is the single natural number representing `p`. -/
+@[expose]
 def npev : List ℕ → ℕ → ℕ
   | [], _ => 0
   | a :: p, b => a + b * npev p b
@@ -54,6 +55,7 @@ def npev : List ℕ → ℕ → ℕ
     npev (a :: p) b = a + b * npev p b := rfl
 
 /-- Recover the first `m` coefficients of a packed polynomial. -/
+@[expose]
 def unpackN (b : ℕ) : ℕ → ℕ → List ℕ
   | 0, _ => []
   | m + 1, x => (x % b) :: unpackN b m (x / b)
@@ -182,6 +184,7 @@ of `x % b` taken in `(-b/2, b/2)` rather than `[0, b)`.  The overflow condition 
 `2 * |c| < b`. -/
 
 /-- Evaluate a dense `ℤ`-polynomial at an integer.  This is the signed packing map. -/
+@[expose]
 def pevZ : List ℤ → ℤ → ℤ
   | [], _ => 0
   | a :: p, b => a + b * pevZ p b
@@ -197,6 +200,7 @@ positive and `x` is a balanced digit. -/
 def bdig (b x : ℤ) : ℤ := if 2 * (x % b) < b then x % b else x % b - b
 
 /-- Recover the first `m` balanced digits of a packed `ℤ`-polynomial. -/
+@[expose]
 def unpackZ (b : ℤ) : ℕ → ℤ → List ℤ
   | 0, _ => []
   | m + 1, x => bdig b x :: unpackZ b m ((x - bdig b x) / b)
