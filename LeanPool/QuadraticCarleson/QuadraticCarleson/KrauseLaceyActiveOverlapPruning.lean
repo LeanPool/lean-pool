@@ -5,7 +5,6 @@ Authors: Anastasios Fragkos
 -/
 module
 
-
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.KrauseLaceyActiveCarlesonPacking
 
 /-!
@@ -118,6 +117,19 @@ theorem volume_highOverlap_le
   change (M + 1 : ℝ≥0∞) ≤ (overlapCount A x : ℝ≥0∞)
   exact_mod_cast (show M + 1 ≤ overlapCount A x by omega)
 
+theorem volume_active_highOverlap_le_of_geometry
+    {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ)
+    (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
+      J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
+    (N : Finset RealInterval) (hN : N ⊆ geometricIntervals S f I₀ k₀ s scale)
+    (K : RealInterval) (hsub : ∀ I ∈ N, I.carrier ⊆ K.carrier) (M : ℕ) :
+    volume {x | M < overlapCount (activeBadIntervals S f I₀ k₀ s scale N) x} ≤
+      ENNReal.ofReal ((1 + (2 : ℝ) ^ s) * K.length) / (M + 1 : ℝ≥0∞) := by
+  apply (volume_highOverlap_le _ M).trans
+  exact ENNReal.div_le_div_right (ENNReal.ofReal_le_ofReal
+    (sum_activeBadIntervals_length_le_of_geometry f I₀ k₀ s scale hlam N hN K hsub)) _
+
 theorem volume_active_highOverlap_le
     {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
     (scale : RealInterval → ℤ)
@@ -127,16 +139,16 @@ theorem volume_active_highOverlap_le
     (K : RealInterval) (hsub : ∀ I ∈ N, I.carrier ⊆ K.carrier) (M : ℕ) :
     volume {x | M < overlapCount (activeBadIntervals S f I₀ k₀ s scale N) x} ≤
       ENNReal.ofReal ((1 + (2 : ℝ) ^ s) * K.length) / (M + 1 : ℝ≥0∞) := by
-  apply (volume_highOverlap_le _ M).trans
-  exact ENNReal.div_le_div_right (ENNReal.ofReal_le_ofReal
-    (sum_activeBadIntervals_length_le f I₀ k₀ s scale hlam N hN K hsub)) _
+  exact volume_active_highOverlap_le_of_geometry
+    f I₀ k₀ s scale hlam N
+    (hN.trans (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale)) K hsub M
 
 /-- Outside the actual high-overlap exceptional set, pruning leaves
 every fixed weighted operator sum unchanged. -/
-theorem sum_weighted_localizedBadPiece_eq_pruned_of_lowOverlap
+theorem sum_weighted_localizedBadPiece_eq_pruned_of_lowOverlap_of_geometry
     (S : Finset RealInterval) (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
     (scale : RealInterval → ℤ) (N : Finset RealInterval)
-    (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale)
+    (hN : N ⊆ geometricIntervals S f I₀ k₀ s scale)
     (M : ℕ) (c : RealInterval → ℂ) (x : ℝ)
     (hx : overlapCount (activeBadIntervals S f I₀ k₀ s scale N) x ≤ M) :
     (∑ I ∈ N, c I * krauseLaceyLocalizedPiece 1 (scale I) I
@@ -151,6 +163,21 @@ theorem sum_weighted_localizedBadPiece_eq_pruned_of_lowOverlap
   have hnot : x ∉ I.carrier := fun hxI ↦ hn (Finset.mem_filter.mpr ⟨hI, x, hxI, hx⟩)
   rw [krauseLaceyLocalizedPiece_eq_zero_of_notMem 1 (scale I) I _
     (Finset.mem_filter.mp (hN (Finset.mem_filter.mp hI).1)).2.1 hnot, mul_zero]
+
+theorem sum_weighted_localizedBadPiece_eq_pruned_of_lowOverlap
+    (S : Finset RealInterval) (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ) (N : Finset RealInterval)
+    (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale)
+    (M : ℕ) (c : RealInterval → ℂ) (x : ℝ)
+    (hx : overlapCount (activeBadIntervals S f I₀ k₀ s scale N) x ≤ M) :
+    (∑ I ∈ N, c I * krauseLaceyLocalizedPiece 1 (scale I) I
+      (badScaleInput S f I₀ k₀ (scale I + 2 - s)) x) =
+    ∑ I ∈ overlapPrunedFamily (activeBadIntervals S f I₀ k₀ s scale N) M,
+      c I * krauseLaceyLocalizedPiece 1 (scale I) I
+        (badScaleInput S f I₀ k₀ (scale I + 2 - s)) x := by
+  exact sum_weighted_localizedBadPiece_eq_pruned_of_lowOverlap_of_geometry
+    S f I₀ k₀ s scale N
+    (hN.trans (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale)) M c x hx
 
 /-- The actual pruned family's maximal-prefix bound now has no assumed
 overlap estimate: the concrete pruning construction supplies it. -/
@@ -174,7 +201,6 @@ theorem eLpNorm_prunedActivePrefixMaximal_le
       ((activeBadIntervals_subset S f I₀ k₀ s scale N).trans hN)) L M
   exact Filter.Eventually.of_forall (overlapCount_overlapPrunedFamily_le _ M
     (fun I hI J hJ hne ↦ hlam (hAS hI) (hAS hJ) hne))
-
 
 end KrauseLaceyBadScale
 end QuadraticCarleson

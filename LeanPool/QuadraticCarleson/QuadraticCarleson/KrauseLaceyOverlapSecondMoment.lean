@@ -5,7 +5,6 @@ Authors: Anastasios Fragkos
 -/
 module
 
-
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.KrauseLaceyActiveExponentialPruning
 
 /-!
@@ -101,6 +100,36 @@ theorem lintegral_overlapCount_sq_le
 
 /-- The discarded family's counting-function second moment is
 exponentially small for the concrete canonical active family. -/
+theorem lintegral_active_removed_overlap_sq_le_of_geometry
+    {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ : ℤ) (s : ℕ)
+    (scale : RealInterval → ℤ)
+    (hlam : Set.Pairwise (↑S : Set RealInterval) fun I J ↦
+      I.carrier ⊆ J.carrier ∨ J.carrier ⊆ I.carrier ∨ Disjoint I.carrier J.carrier)
+    (N : Finset RealInterval) (hN : N ⊆ geometricIntervals S f I₀ k₀ s scale)
+    (K : RealInterval) (hsub : ∀ I ∈ N, I.carrier ⊆ K.carrier) :
+    (∫⁻ x, (overlapCount (activeBadIntervals S f I₀ k₀ s scale N \
+      overlapPrunedFamily (activeBadIntervals S f I₀ k₀ s scale N)
+        (activeExponentialCutoff s)) x : ℝ≥0∞) ^ 2) ≤
+      2 * ENNReal.ofReal (1 + (2 : ℝ) ^ (s : ℤ)) ^ 2 *
+        ((1 / 2 : ℝ≥0∞) ^ (8 * (s + 1)) * ENNReal.ofReal K.length) := by
+  let A := activeBadIntervals S f I₀ k₀ s scale N
+  let R := A \ overlapPrunedFamily A (activeExponentialCutoff s)
+  have hRS : R ⊆ S := Finset.sdiff_subset.trans
+    ((activeBadIntervals_subset S f I₀ k₀ s scale N).trans
+      (hN.trans (geometricIntervals_subset S f I₀ k₀ s scale)))
+  have hb := lintegral_overlapCount_sq_le R (1 + (2 : ℝ) ^ (s : ℤ)) (by positivity)
+    (fun I hI J hJ hne ↦ hlam (hRS hI) (hRS hJ) hne)
+    (local_length_packing_mono Finset.sdiff_subset
+      (sum_activeBadIntervals_descendants_length_le_of_geometry f I₀ k₀ s scale hlam N hN))
+  apply hb.trans
+  calc
+    _ ≤ (2 * ENNReal.ofReal (1 + (2 : ℝ) ^ (s : ℤ))) *
+        (ENNReal.ofReal (1 + (2 : ℝ) ^ (s : ℤ)) *
+          ((1 / 2 : ℝ≥0∞) ^ (8 * (s + 1)) * ENNReal.ofReal K.length)) :=
+      mul_le_mul_right (ofReal_sum_active_removed_length_le_of_geometry f I₀ k₀ s scale
+        hlam N hN K hsub) _
+    _ = _ := by rw [pow_two]; simp only [mul_assoc]
+
 theorem lintegral_active_removed_overlap_sq_le
     {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ : ℤ) (s : ℕ)
     (scale : RealInterval → ℤ)
@@ -113,24 +142,9 @@ theorem lintegral_active_removed_overlap_sq_le
         (activeExponentialCutoff s)) x : ℝ≥0∞) ^ 2) ≤
       2 * ENNReal.ofReal (1 + (2 : ℝ) ^ (s : ℤ)) ^ 2 *
         ((1 / 2 : ℝ≥0∞) ^ (8 * (s + 1)) * ENNReal.ofReal K.length) := by
-  let A := activeBadIntervals S f I₀ k₀ s scale N
-  let R := A \ overlapPrunedFamily A (activeExponentialCutoff s)
-  have hRS : R ⊆ S := Finset.sdiff_subset.trans
-    ((activeBadIntervals_subset S f I₀ k₀ s scale N).trans
-      (hN.trans (nonstandardIntervals_subset S f I₀ k₀ s scale)))
-  have hb := lintegral_overlapCount_sq_le R (1 + (2 : ℝ) ^ (s : ℤ)) (by positivity)
-    (fun I hI J hJ hne ↦ hlam (hRS hI) (hRS hJ) hne)
-    (local_length_packing_mono Finset.sdiff_subset
-      (sum_activeBadIntervals_descendants_length_le f I₀ k₀ s scale hlam N hN))
-  apply hb.trans
-  calc
-    _ ≤ (2 * ENNReal.ofReal (1 + (2 : ℝ) ^ (s : ℤ))) *
-        (ENNReal.ofReal (1 + (2 : ℝ) ^ (s : ℤ)) *
-          ((1 / 2 : ℝ≥0∞) ^ (8 * (s + 1)) * ENNReal.ofReal K.length)) :=
-      mul_le_mul_right (ofReal_sum_active_removed_length_le f I₀ k₀ s scale
-        hlam N hN K hsub) _
-    _ = _ := by rw [pow_two]; simp only [mul_assoc]
-
+  exact lintegral_active_removed_overlap_sq_le_of_geometry
+    f I₀ k₀ s scale hlam N
+    (hN.trans (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale)) K hsub
 
 end KrauseLaceyBadScale
 end QuadraticCarleson

@@ -5,7 +5,6 @@ Authors: Anastasios Fragkos
 -/
 module
 
-
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.KrauseLaceyOverlapSecondMoment
 
 /-!
@@ -38,13 +37,13 @@ theorem badPieceUniformBound_nonneg (f : ℝ → ℂ) (I₀ : RealInterval) :
   exact mul_nonneg (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg)
     (intervalL1Average_nonneg f I₀)
 
-theorem norm_localizedBadPiece_le_uniform
+theorem norm_localizedBadPiece_le_uniform_of_geometry
     {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)
     (I₀ : RealInterval) (k₀ s : ℤ) (scale : RealInterval → ℤ)
     (hlam : Set.Pairwise (↑S : Set RealInterval) fun I J ↦
       I.carrier ⊆ J.carrier ∨ J.carrier ⊆ I.carrier ∨ Disjoint I.carrier J.carrier)
     (hsub : ∀ I ∈ S, I.carrier ⊆ I₀.carrier)
-    {I : RealInterval} (hI : I ∈ nonstandardIntervals S f I₀ k₀ s scale) (x : ℝ) :
+    {I : RealInterval} (hI : I ∈ geometricIntervals S f I₀ k₀ s scale) (x : ℝ) :
     ‖krauseLaceyLocalizedPiece 1 (scale I) I
       (badScaleInput S f I₀ k₀ (scale I + 2 - s)) x‖ ≤ badPieceUniformBound f I₀ := by
   let b := badScaleInput S f I₀ k₀ (scale I + 2 - s)
@@ -72,13 +71,25 @@ theorem norm_localizedBadPiece_le_uniform
       unfold badPieceUniformBound
       field_simp; ring
 
-theorem badLengthTailMaximal_le_uniform_mul_overlapCount
+theorem norm_localizedBadPiece_le_uniform
     {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)
     (I₀ : RealInterval) (k₀ s : ℤ) (scale : RealInterval → ℤ)
     (hlam : Set.Pairwise (↑S : Set RealInterval) fun I J ↦
       I.carrier ⊆ J.carrier ∨ J.carrier ⊆ I.carrier ∨ Disjoint I.carrier J.carrier)
     (hsub : ∀ I ∈ S, I.carrier ⊆ I₀.carrier)
-    (N : Finset RealInterval) (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale) (x : ℝ) :
+    {I : RealInterval} (hI : I ∈ nonstandardIntervals S f I₀ k₀ s scale) (x : ℝ) :
+    ‖krauseLaceyLocalizedPiece 1 (scale I) I
+      (badScaleInput S f I₀ k₀ (scale I + 2 - s)) x‖ ≤ badPieceUniformBound f I₀ := by
+  exact norm_localizedBadPiece_le_uniform_of_geometry
+    hf I₀ k₀ s scale hlam hsub (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale hI) x
+
+theorem badLengthTailMaximal_le_uniform_mul_overlapCount_of_geometry
+    {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)
+    (I₀ : RealInterval) (k₀ s : ℤ) (scale : RealInterval → ℤ)
+    (hlam : Set.Pairwise (↑S : Set RealInterval) fun I J ↦
+      I.carrier ⊆ J.carrier ∨ J.carrier ⊆ I.carrier ∨ Disjoint I.carrier J.carrier)
+    (hsub : ∀ I ∈ S, I.carrier ⊆ I₀.carrier)
+    (N : Finset RealInterval) (hN : N ⊆ geometricIntervals S f I₀ k₀ s scale) (x : ℝ) :
     badLengthTailMaximal S f I₀ k₀ s scale N x ≤
       badPieceUniformBound f I₀ * overlapCount N x := by
   apply ciSup_le
@@ -93,7 +104,7 @@ theorem badLengthTailMaximal_le_uniform_mul_overlapCount
       by_cases hx : x ∈ I.carrier
       · rw [ite_eq_left hx]
         split_ifs
-        · exact norm_localizedBadPiece_le_uniform hf I₀ k₀ s scale hlam hsub (hN hI) x
+        · exact norm_localizedBadPiece_le_uniform_of_geometry hf I₀ k₀ s scale hlam hsub (hN hI) x
         · simpa only [norm_zero] using badPieceUniformBound_nonneg f I₀
       · rw [ite_eq_right hx, krauseLaceyLocalizedPiece_eq_zero_of_notMem 1 (scale I) I _
           (Finset.mem_filter.mp (hN hI)).2.1 hx]
@@ -102,15 +113,28 @@ theorem badLengthTailMaximal_le_uniform_mul_overlapCount
       rw [← Finset.sum_filter]
       simp only [Finset.sum_const, nsmul_eq_mul, overlapCount, mul_comm]
 
+theorem badLengthTailMaximal_le_uniform_mul_overlapCount
+    {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)
+    (I₀ : RealInterval) (k₀ s : ℤ) (scale : RealInterval → ℤ)
+    (hlam : Set.Pairwise (↑S : Set RealInterval) fun I J ↦
+      I.carrier ⊆ J.carrier ∨ J.carrier ⊆ I.carrier ∨ Disjoint I.carrier J.carrier)
+    (hsub : ∀ I ∈ S, I.carrier ⊆ I₀.carrier)
+    (N : Finset RealInterval) (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale) (x : ℝ) :
+    badLengthTailMaximal S f I₀ k₀ s scale N x ≤
+      badPieceUniformBound f I₀ * overlapCount N x := by
+  exact badLengthTailMaximal_le_uniform_mul_overlapCount_of_geometry
+    hf I₀ k₀ s scale hlam hsub N
+    (hN.trans (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale)) x
+
 /-- This squared extended `L²` estimate concerns the actual all-threshold
 maximal action of the removed intervals, not a formal counting operator. -/
-theorem eLpNorm_removed_badLengthTailMaximal_sq_le
+theorem eLpNorm_removed_badLengthTailMaximal_sq_le_of_geometry
     {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)
     (I₀ : RealInterval) (k₀ : ℤ) (s : ℕ) (scale : RealInterval → ℤ)
     (hlam : Set.Pairwise (↑S : Set RealInterval) fun I J ↦
       I.carrier ⊆ J.carrier ∨ J.carrier ⊆ I.carrier ∨ Disjoint I.carrier J.carrier)
     (hsub : ∀ I ∈ S, I.carrier ⊆ I₀.carrier)
-    (N : Finset RealInterval) (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale) :
+    (N : Finset RealInterval) (hN : N ⊆ geometricIntervals S f I₀ k₀ s scale) :
     eLpNorm (badLengthTailMaximal S f I₀ k₀ s scale
       (activeBadIntervals S f I₀ k₀ s scale N \
         overlapPrunedFamily (activeBadIntervals S f I₀ k₀ s scale N)
@@ -120,7 +144,7 @@ theorem eLpNorm_removed_badLengthTailMaximal_sq_le
           ((1 / 2 : ℝ≥0∞) ^ (8 * (s + 1)) * ENNReal.ofReal I₀.length)) := by
   let R := activeBadIntervals S f I₀ k₀ s scale N \
     overlapPrunedFamily (activeBadIntervals S f I₀ k₀ s scale N) (activeExponentialCutoff s)
-  have hR : R ⊆ nonstandardIntervals S f I₀ k₀ s scale :=
+  have hR : R ⊆ geometricIntervals S f I₀ k₀ s scale :=
     Finset.sdiff_subset.trans ((activeBadIntervals_subset S f I₀ k₀ s scale N).trans hN)
   have heq : eLpNorm (badLengthTailMaximal S f I₀ k₀ s scale R) 2 volume ^ 2 =
       ∫⁻ x, ‖badLengthTailMaximal S f I₀ k₀ s scale R x‖ₑ ^ 2 := by
@@ -135,20 +159,38 @@ theorem eLpNorm_removed_badLengthTailMaximal_sq_le
         (overlapCount R x : ℝ≥0∞) ^ 2 := by
       apply lintegral_mono
       intro x
-      have hpoint := badLengthTailMaximal_le_uniform_mul_overlapCount hf I₀ k₀ s scale
+      have hpoint := badLengthTailMaximal_le_uniform_mul_overlapCount_of_geometry hf I₀ k₀ s scale
         hlam hsub R hR x
       have he : ‖badLengthTailMaximal S f I₀ k₀ s scale R x‖ₑ ≤
           ENNReal.ofReal (badPieceUniformBound f I₀) * (overlapCount R x : ℝ≥0∞) := by
-        rw [Real.enorm_of_nonneg (badLengthTailMaximal_nonneg f I₀ k₀ s scale hlam R hR x),
+        rw [Real.enorm_of_nonneg (badLengthTailMaximal_nonneg_of_geometry
+          f I₀ k₀ s scale hlam R hR x),
           ← ENNReal.ofReal_natCast, ← ENNReal.ofReal_mul (badPieceUniformBound_nonneg f I₀)]
         exact ENNReal.ofReal_le_ofReal hpoint
       simpa only [mul_pow] using pow_le_pow_left' he 2
     _ = ENNReal.ofReal (badPieceUniformBound f I₀) ^ 2 *
         (∫⁻ x, (overlapCount R x : ℝ≥0∞) ^ 2) := by
       rw [lintegral_const_mul _ ((measurable_overlapCount_cast R).pow_const 2)]
-    _ ≤ _ := mul_le_mul_right (lintegral_active_removed_overlap_sq_le f I₀ k₀ s scale
-      hlam N hN I₀ (fun I hI ↦ hsub I (nonstandardIntervals_subset S f I₀ k₀ s scale (hN hI)))) _
+    _ ≤ _ := mul_le_mul_right (lintegral_active_removed_overlap_sq_le_of_geometry f I₀ k₀ s scale
+      hlam N hN I₀ (fun I hI ↦ hsub I (geometricIntervals_subset S f I₀ k₀ s scale (hN hI)))) _
 
+theorem eLpNorm_removed_badLengthTailMaximal_sq_le
+    {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)
+    (I₀ : RealInterval) (k₀ : ℤ) (s : ℕ) (scale : RealInterval → ℤ)
+    (hlam : Set.Pairwise (↑S : Set RealInterval) fun I J ↦
+      I.carrier ⊆ J.carrier ∨ J.carrier ⊆ I.carrier ∨ Disjoint I.carrier J.carrier)
+    (hsub : ∀ I ∈ S, I.carrier ⊆ I₀.carrier)
+    (N : Finset RealInterval) (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale) :
+    eLpNorm (badLengthTailMaximal S f I₀ k₀ s scale
+      (activeBadIntervals S f I₀ k₀ s scale N \
+        overlapPrunedFamily (activeBadIntervals S f I₀ k₀ s scale N)
+          (activeExponentialCutoff s))) 2 volume ^ 2 ≤
+      ENNReal.ofReal (badPieceUniformBound f I₀) ^ 2 *
+        (2 * ENNReal.ofReal (1 + (2 : ℝ) ^ (s : ℤ)) ^ 2 *
+          ((1 / 2 : ℝ≥0∞) ^ (8 * (s + 1)) * ENNReal.ofReal I₀.length)) := by
+  exact eLpNorm_removed_badLengthTailMaximal_sq_le_of_geometry
+    hf I₀ k₀ s scale hlam hsub N
+    (hN.trans (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale))
 
 end KrauseLaceyBadScale
 end QuadraticCarleson

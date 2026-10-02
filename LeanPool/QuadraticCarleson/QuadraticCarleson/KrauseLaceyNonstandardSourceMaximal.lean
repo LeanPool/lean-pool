@@ -5,7 +5,6 @@ Authors: Anastasios Fragkos
 -/
 module
 
-
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.KrauseLaceyNonstandardPhysicalL2
 
 /-!
@@ -33,10 +32,10 @@ noncomputable def nonstandardSourceTailMaximal
     (scale : RealInterval → ℤ) (N : Finset RealInterval) (x : ℝ) : ℝ :=
   ⨆ ell : {ell : ℤ // k₀ + s ≤ ell}, ‖badLengthTailAction S f I₀ k₀ s scale N ell.1 x‖
 
-theorem badLengthTailAction_eq_at_max_lower_endpoint
+theorem badLengthTailAction_eq_at_max_lower_endpoint_of_geometry
     (S : Finset RealInterval) (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
     (scale : RealInterval → ℤ) (N : Finset RealInterval)
-    (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale) (ell : ℤ) (x : ℝ) :
+    (hN : N ⊆ geometricIntervals S f I₀ k₀ s scale) (ell : ℤ) (x : ℝ) :
     badLengthTailAction S f I₀ k₀ s scale N ell x =
       badLengthTailAction S f I₀ k₀ s scale N (max ell (k₀ + s)) x := by
   by_cases he : k₀ + s ≤ ell
@@ -53,6 +52,40 @@ theorem badLengthTailAction_eq_at_max_lower_endpoint
     (zpow_le_zpow_right₀ (by norm_num) (le_of_not_ge he)).trans hbase
   rw [ite_eq_left hbase, ite_eq_left hell]
 
+theorem badLengthTailAction_eq_at_max_lower_endpoint
+    (S : Finset RealInterval) (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ) (N : Finset RealInterval)
+    (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale) (ell : ℤ) (x : ℝ) :
+    badLengthTailAction S f I₀ k₀ s scale N ell x =
+      badLengthTailAction S f I₀ k₀ s scale N (max ell (k₀ + s)) x := by
+  exact badLengthTailAction_eq_at_max_lower_endpoint_of_geometry
+    S f I₀ k₀ s scale N
+    (hN.trans (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale)) ell x
+
+theorem nonstandardSourceTailMaximal_eq_badLengthTailMaximal_of_geometry
+    {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ)
+    (hlam : Set.Pairwise (↑S : Set RealInterval) fun I J ↦
+      I.carrier ⊆ J.carrier ∨ J.carrier ⊆ I.carrier ∨ Disjoint I.carrier J.carrier)
+    (N : Finset RealInterval) (hN : N ⊆ geometricIntervals S f I₀ k₀ s scale) (x : ℝ) :
+    nonstandardSourceTailMaximal S f I₀ k₀ s scale N x =
+      badLengthTailMaximal S f I₀ k₀ s scale N x := by
+  have hb : BddAbove (Set.range fun ell : ℤ ↦ ‖badLengthTailAction S f I₀ k₀ s scale N ell x‖) := by
+    refine ⟨2 * badSubcollectionPrefixMaximal S f I₀ k₀ s scale N N.card x, ?_⟩
+    rintro _ ⟨ell, rfl⟩
+    exact norm_badLengthTailAction_le_prefix_of_geometry f I₀ k₀ s scale hlam N hN ell x
+  have hbr : BddAbove (Set.range fun ell : {ell : ℤ // k₀ + s ≤ ell} ↦
+      ‖badLengthTailAction S f I₀ k₀ s scale N ell.1 x‖) := by
+    refine ⟨2 * badSubcollectionPrefixMaximal S f I₀ k₀ s scale N N.card x, ?_⟩
+    rintro _ ⟨ell, rfl⟩
+    exact norm_badLengthTailAction_le_prefix_of_geometry f I₀ k₀ s scale hlam N hN ell.1 x
+  apply le_antisymm
+  · exact ciSup_le fun ell ↦ le_ciSup hb ell.1
+  · apply ciSup_le
+    intro ell
+    rw [badLengthTailAction_eq_at_max_lower_endpoint_of_geometry S f I₀ k₀ s scale N hN ell x]
+    exact le_ciSup hbr ⟨max ell (k₀ + s), le_max_right _ _⟩
+
 theorem nonstandardSourceTailMaximal_eq_badLengthTailMaximal
     {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
     (scale : RealInterval → ℤ)
@@ -61,21 +94,9 @@ theorem nonstandardSourceTailMaximal_eq_badLengthTailMaximal
     (N : Finset RealInterval) (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale) (x : ℝ) :
     nonstandardSourceTailMaximal S f I₀ k₀ s scale N x =
       badLengthTailMaximal S f I₀ k₀ s scale N x := by
-  have hb : BddAbove (Set.range fun ell : ℤ ↦ ‖badLengthTailAction S f I₀ k₀ s scale N ell x‖) := by
-    refine ⟨2 * badSubcollectionPrefixMaximal S f I₀ k₀ s scale N N.card x, ?_⟩
-    rintro _ ⟨ell, rfl⟩
-    exact norm_badLengthTailAction_le_prefix f I₀ k₀ s scale hlam N hN ell x
-  have hbr : BddAbove (Set.range fun ell : {ell : ℤ // k₀ + s ≤ ell} ↦
-      ‖badLengthTailAction S f I₀ k₀ s scale N ell.1 x‖) := by
-    refine ⟨2 * badSubcollectionPrefixMaximal S f I₀ k₀ s scale N N.card x, ?_⟩
-    rintro _ ⟨ell, rfl⟩
-    exact norm_badLengthTailAction_le_prefix f I₀ k₀ s scale hlam N hN ell.1 x
-  apply le_antisymm
-  · exact ciSup_le fun ell ↦ le_ciSup hb ell.1
-  · apply ciSup_le
-    intro ell
-    rw [badLengthTailAction_eq_at_max_lower_endpoint S f I₀ k₀ s scale N hN ell x]
-    exact le_ciSup hbr ⟨max ell (k₀ + s), le_max_right _ _⟩
+  exact nonstandardSourceTailMaximal_eq_badLengthTailMaximal_of_geometry
+    f I₀ k₀ s scale hlam N
+    (hN.trans (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale)) x
 
 /-- The complete bound with exactly the source's physical suffix
 orientation and lower endpoint. -/
@@ -95,7 +116,6 @@ theorem eLpNorm_nonstandardSourceTailMaximal_le
     (nonstandardSourceTailMaximal_eq_badLengthTailMaximal f I₀ k₀ s scale hlam N hN)
   rw [he]
   exact eLpNorm_nonstandard_badLengthTailMaximal_le hf I₀ k₀ s hk₀ scale hlam hparent hsub N hN
-
 
 end KrauseLaceyBadScale
 end QuadraticCarleson

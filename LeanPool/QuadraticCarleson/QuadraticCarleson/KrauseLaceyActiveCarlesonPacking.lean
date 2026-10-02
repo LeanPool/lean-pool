@@ -43,19 +43,19 @@ theorem eq_of_common_subinterval_of_length_eq
 
 /-- All active intervals above the grouped base scale satisfy the exact
 local `2^s` packing estimate, uniformly over arbitrary subcollections. -/
-theorem sum_active_aboveBase_length_le
+theorem sum_active_aboveBase_length_le_of_geometry
     {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
     (scale : RealInterval → ℤ)
     (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
       J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
-    (N : Finset RealInterval) (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale)
+    (N : Finset RealInterval) (hN : N ⊆ geometricIntervals S f I₀ k₀ s scale)
     (hactive : ∀ I ∈ N, ∃ x, intervalBadInput S f I₀ k₀ s scale I x ≠ 0)
     (hbase : ∀ I ∈ N, k₀ < scale I + 2 - s)
     (K : RealInterval) (hsub : ∀ I ∈ N, I.carrier ⊆ K.carrier) :
     (∑ I ∈ N, I.length) ≤ (2 : ℝ) ^ s * K.length := by
   let : Nonempty RealInterval := ⟨I₀⟩
   have hex (I : RealInterval) (hI : I ∈ N) :=
-    exists_chargedCell_of_active_above_base f I₀ k₀ s scale hlam (hN hI)
+    exists_chargedCell_of_active_above_base_of_geometry f I₀ k₀ s scale hlam (hN hI)
       (hbase I hI) (hactive I hI)
   choose! cell hcell hinside hlength using hex
   let C := (stoppingChildren S f 0 I₀).filter fun J ↦ J.carrier ⊆ K.carrier
@@ -67,8 +67,8 @@ theorem sum_active_aboveBase_length_le
     intro I hI J hJ heq
     have hlen : I.length = J.length := by rw [hlength I hI, hlength J hJ, heq]
     exact eq_of_common_subinterval_of_length_eq hlam
-      (nonstandardIntervals_subset S f I₀ k₀ s scale (hN hI))
-      (nonstandardIntervals_subset S f I₀ k₀ s scale (hN hJ)) hlen
+      (geometricIntervals_subset S f I₀ k₀ s scale (hN hI))
+      (geometricIntervals_subset S f I₀ k₀ s scale (hN hJ)) hlen
       (hinside I hI) (heq ▸ hinside J hJ)
   have hmap : N.image cell ⊆ C := by
     intro J hJ
@@ -83,15 +83,29 @@ theorem sum_active_aboveBase_length_le
       (sum_intervalLength_le_of_disjoint C K hCS
         (fun J hJ ↦ (Finset.mem_filter.mp hJ).2)) (by positivity)
 
-/-- The base-scale pieces have one fixed parent length, so laminarity
-alone makes them disjoint. Tiny stopping cells are not charged their
-parent's length in this exceptional grouped scale. -/
-theorem sum_baseScale_length_le
+
+theorem sum_active_aboveBase_length_le
     {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
     (scale : RealInterval → ℤ)
     (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
       J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
     (N : Finset RealInterval) (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale)
+    (hactive : ∀ I ∈ N, ∃ x, intervalBadInput S f I₀ k₀ s scale I x ≠ 0)
+    (hbase : ∀ I ∈ N, k₀ < scale I + 2 - s)
+    (K : RealInterval) (hsub : ∀ I ∈ N, I.carrier ⊆ K.carrier) :
+    (∑ I ∈ N, I.length) ≤ (2 : ℝ) ^ s * K.length := by
+  exact sum_active_aboveBase_length_le_of_geometry f I₀ k₀ s scale hlam N
+    (hN.trans (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale)) hactive hbase K hsub
+
+/-- The base-scale pieces have one fixed parent length, so laminarity
+alone makes them disjoint. Tiny stopping cells are not charged their
+parent's length in this exceptional grouped scale. -/
+theorem sum_baseScale_length_le_of_geometry
+    {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ)
+    (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
+      J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
+    (N : Finset RealInterval) (hN : N ⊆ geometricIntervals S f I₀ k₀ s scale)
     (hbase : ∀ I ∈ N, scale I + 2 - s ≤ k₀)
     (K : RealInterval) (hsub : ∀ I ∈ N, I.carrier ⊆ K.carrier) :
     (∑ I ∈ N, I.length) ≤ K.length := by
@@ -101,32 +115,45 @@ theorem sum_baseScale_length_le
   have hj := (Finset.mem_filter.mp (hN hJ)).2
   have hidx : scale I = scale J := by have := hbase I hI; have := hbase J hJ; omega
   have hlen : I.length = J.length := by rw [hi.1, hj.1, hidx]
-  have hNS := nonstandardIntervals_subset S f I₀ k₀ s scale
+  have hNS := geometricIntervals_subset S f I₀ k₀ s scale
   rcases hlam (hNS (hN hI)) (hNS (hN hJ)) hne with hsub | hsub | hd
   · exact (hne (interval_eq_of_carrier_subset_of_length_le hsub hlen.ge)).elim
   · exact (hne (interval_eq_of_carrier_subset_of_length_le hsub hlen.le).symm).elim
   · exact hd
 
-/-- The genuine active family is Carleson with constant `1 + 2^s`.
-Neither a packing estimate nor an operator bound is an input. -/
-theorem sum_activeBadIntervals_length_le
+
+theorem sum_baseScale_length_le
     {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
     (scale : RealInterval → ℤ)
     (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
       J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
     (N : Finset RealInterval) (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale)
+    (hbase : ∀ I ∈ N, scale I + 2 - s ≤ k₀)
+    (K : RealInterval) (hsub : ∀ I ∈ N, I.carrier ⊆ K.carrier) :
+    (∑ I ∈ N, I.length) ≤ K.length := by
+  exact sum_baseScale_length_le_of_geometry f I₀ k₀ s scale hlam N
+    (hN.trans (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale)) hbase K hsub
+
+/-- The genuine active family is Carleson with constant `1 + 2^s`.
+Neither a packing estimate nor an operator bound is an input. -/
+theorem sum_activeBadIntervals_length_le_of_geometry
+    {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ)
+    (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
+      J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
+    (N : Finset RealInterval) (hN : N ⊆ geometricIntervals S f I₀ k₀ s scale)
     (K : RealInterval) (hsub : ∀ I ∈ N, I.carrier ⊆ K.carrier) :
     (∑ I ∈ activeBadIntervals S f I₀ k₀ s scale N, I.length) ≤
       (1 + (2 : ℝ) ^ s) * K.length := by
   let A := activeBadIntervals S f I₀ k₀ s scale N
   have hAN := activeBadIntervals_subset S f I₀ k₀ s scale N
-  have hfar := sum_active_aboveBase_length_le f I₀ k₀ s scale hlam
+  have hfar := sum_active_aboveBase_length_le_of_geometry f I₀ k₀ s scale hlam
     (A.filter fun I ↦ k₀ < scale I + 2 - s)
     ((Finset.filter_subset _ A).trans (hAN.trans hN))
     (fun I hI ↦ (Finset.mem_filter.mp (Finset.mem_filter.mp hI).1).2)
     (fun I hI ↦ (Finset.mem_filter.mp hI).2) K
     (fun I hI ↦ hsub I (hAN (Finset.mem_filter.mp hI).1))
-  have hnear := sum_baseScale_length_le f I₀ k₀ s scale hlam
+  have hnear := sum_baseScale_length_le_of_geometry f I₀ k₀ s scale hlam
     (A.filter fun I ↦ ¬ k₀ < scale I + 2 - s)
     ((Finset.filter_subset _ A).trans (hAN.trans hN))
     (fun I hI ↦ le_of_not_gt (Finset.mem_filter.mp hI).2) K
@@ -136,13 +163,26 @@ theorem sum_activeBadIntervals_length_le
   dsimp only [A] at heq
   linarith
 
-/-- Local Carleson packing in the form used by overlap pruning. -/
-theorem sum_activeBadIntervals_descendants_length_le
+
+theorem sum_activeBadIntervals_length_le
     {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
     (scale : RealInterval → ℤ)
     (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
       J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
     (N : Finset RealInterval) (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale)
+    (K : RealInterval) (hsub : ∀ I ∈ N, I.carrier ⊆ K.carrier) :
+    (∑ I ∈ activeBadIntervals S f I₀ k₀ s scale N, I.length) ≤
+      (1 + (2 : ℝ) ^ s) * K.length := by
+  exact sum_activeBadIntervals_length_le_of_geometry f I₀ k₀ s scale hlam N
+    (hN.trans (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale)) K hsub
+
+/-- Local Carleson packing in the form used by overlap pruning. -/
+theorem sum_activeBadIntervals_descendants_length_le_of_geometry
+    {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ)
+    (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
+      J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
+    (N : Finset RealInterval) (hN : N ⊆ geometricIntervals S f I₀ k₀ s scale)
     (K : RealInterval) :
     (∑ I ∈ (activeBadIntervals S f I₀ k₀ s scale N).filter
       (fun I ↦ I.carrier ⊆ K.carrier), I.length) ≤ (1 + (2 : ℝ) ^ s) * K.length := by
@@ -152,8 +192,21 @@ theorem sum_activeBadIntervals_descendants_length_le
     ext I
     simp only [activeBadIntervals, Finset.mem_filter, and_assoc, and_left_comm, and_comm]
   rw [heq]
-  exact sum_activeBadIntervals_length_le f I₀ k₀ s scale hlam _
+  exact sum_activeBadIntervals_length_le_of_geometry f I₀ k₀ s scale hlam _
     ((Finset.filter_subset _ N).trans hN) K (fun I hI ↦ (Finset.mem_filter.mp hI).2)
+
+
+theorem sum_activeBadIntervals_descendants_length_le
+    {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ)
+    (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
+      J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
+    (N : Finset RealInterval) (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale)
+    (K : RealInterval) :
+    (∑ I ∈ (activeBadIntervals S f I₀ k₀ s scale N).filter
+      (fun I ↦ I.carrier ⊆ K.carrier), I.length) ≤ (1 + (2 : ℝ) ^ s) * K.length := by
+  exact sum_activeBadIntervals_descendants_length_le_of_geometry f I₀ k₀ s scale hlam N
+    (hN.trans (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale)) K
 
 
 end KrauseLaceyBadScale

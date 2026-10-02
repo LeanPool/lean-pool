@@ -5,7 +5,6 @@ Authors: Anastasios Fragkos
 -/
 module
 
-
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.KrauseLaceyPhysicalTailPrefix
 
 /-!
@@ -40,6 +39,22 @@ noncomputable def badLengthTailMaximal
     (scale : RealInterval → ℤ) (N : Finset RealInterval) (x : ℝ) : ℝ :=
   ⨆ ell : ℤ, ‖badLengthTailAction S f I₀ k₀ s scale N ell x‖
 
+theorem norm_badLengthTailAction_le_prefix_of_geometry
+    {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ)
+    (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
+      J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
+    (N : Finset RealInterval) (hN : N ⊆ geometricIntervals S f I₀ k₀ s scale)
+    (ell : ℤ) (x : ℝ) :
+    ‖badLengthTailAction S f I₀ k₀ s scale N ell x‖ ≤
+      2 * badSubcollectionPrefixMaximal S f I₀ k₀ s scale N N.card x := by
+  have hNS := hN.trans (geometricIntervals_subset S f I₀ k₀ s scale)
+  apply norm_lengthTail_le_two_generationPrefixNormMax N
+    (fun I hI J hJ hne ↦ hlam (hNS hI) (hNS hJ) hne) _ ((2 : ℝ) ^ ell) x
+  intro I hI hxI
+  exact krauseLaceyLocalizedPiece_eq_zero_of_notMem 1 (scale I) I _
+    (Finset.mem_filter.mp (hN hI)).2.1 hxI
+
 theorem norm_badLengthTailAction_le_prefix
     {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
     (scale : RealInterval → ℤ)
@@ -49,12 +64,19 @@ theorem norm_badLengthTailAction_le_prefix
     (ell : ℤ) (x : ℝ) :
     ‖badLengthTailAction S f I₀ k₀ s scale N ell x‖ ≤
       2 * badSubcollectionPrefixMaximal S f I₀ k₀ s scale N N.card x := by
-  have hNS := hN.trans (nonstandardIntervals_subset S f I₀ k₀ s scale)
-  apply norm_lengthTail_le_two_generationPrefixNormMax N
-    (fun I hI J hJ hne ↦ hlam (hNS hI) (hNS hJ) hne) _ ((2 : ℝ) ^ ell) x
-  intro I hI hxI
-  exact krauseLaceyLocalizedPiece_eq_zero_of_notMem 1 (scale I) I _
-    (Finset.mem_filter.mp (hN hI)).2.1 hxI
+  exact norm_badLengthTailAction_le_prefix_of_geometry
+    f I₀ k₀ s scale hlam N
+    (hN.trans (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale)) ell x
+
+theorem badLengthTailMaximal_le_prefix_of_geometry
+    {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ)
+    (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
+      J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
+    (N : Finset RealInterval) (hN : N ⊆ geometricIntervals S f I₀ k₀ s scale) (x : ℝ) :
+    badLengthTailMaximal S f I₀ k₀ s scale N x ≤
+      2 * badSubcollectionPrefixMaximal S f I₀ k₀ s scale N N.card x :=
+  ciSup_le fun ell ↦ norm_badLengthTailAction_le_prefix_of_geometry f I₀ k₀ s scale hlam N hN ell x
 
 theorem badLengthTailMaximal_le_prefix
     {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
@@ -63,8 +85,24 @@ theorem badLengthTailMaximal_le_prefix
       J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
     (N : Finset RealInterval) (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale) (x : ℝ) :
     badLengthTailMaximal S f I₀ k₀ s scale N x ≤
-      2 * badSubcollectionPrefixMaximal S f I₀ k₀ s scale N N.card x :=
-  ciSup_le fun ell ↦ norm_badLengthTailAction_le_prefix f I₀ k₀ s scale hlam N hN ell x
+      2 * badSubcollectionPrefixMaximal S f I₀ k₀ s scale N N.card x  := by
+  exact badLengthTailMaximal_le_prefix_of_geometry
+    f I₀ k₀ s scale hlam N
+    (hN.trans (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale)) x
+
+theorem badLengthTailMaximal_nonneg_of_geometry
+    {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ)
+    (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
+      J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
+    (N : Finset RealInterval) (hN : N ⊆ geometricIntervals S f I₀ k₀ s scale) (x : ℝ) :
+    0 ≤ badLengthTailMaximal S f I₀ k₀ s scale N x := by
+  have hb : BddAbove (Set.range (fun ell : ℤ ↦
+      ‖badLengthTailAction S f I₀ k₀ s scale N ell x‖)) :=
+    ⟨2 * badSubcollectionPrefixMaximal S f I₀ k₀ s scale N N.card x, by
+      rintro _ ⟨ell, rfl⟩
+      exact norm_badLengthTailAction_le_prefix_of_geometry f I₀ k₀ s scale hlam N hN ell x⟩
+  exact (norm_nonneg _).trans (le_ciSup hb (0 : ℤ))
 
 theorem badLengthTailMaximal_nonneg
     {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
@@ -73,12 +111,9 @@ theorem badLengthTailMaximal_nonneg
       J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
     (N : Finset RealInterval) (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale) (x : ℝ) :
     0 ≤ badLengthTailMaximal S f I₀ k₀ s scale N x := by
-  have hb : BddAbove (Set.range (fun ell : ℤ ↦
-      ‖badLengthTailAction S f I₀ k₀ s scale N ell x‖)) :=
-    ⟨2 * badSubcollectionPrefixMaximal S f I₀ k₀ s scale N N.card x, by
-      rintro _ ⟨ell, rfl⟩
-      exact norm_badLengthTailAction_le_prefix f I₀ k₀ s scale hlam N hN ell x⟩
-  exact (norm_nonneg _).trans (le_ciSup hb (0 : ℤ))
+  exact badLengthTailMaximal_nonneg_of_geometry
+    f I₀ k₀ s scale hlam N
+    (hN.trans (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale)) x
 
 theorem aemeasurable_badLengthTailMaximal
     (S : Finset RealInterval) {f : ℝ → ℂ} (hf : Integrable f)
@@ -97,10 +132,10 @@ theorem aemeasurable_badLengthTailMaximal
   · simp only [ite_eq_right he]
     exact aestronglyMeasurable_const
 
-theorem badLengthTailMaximal_eq_pruned_of_lowOverlap
+theorem badLengthTailMaximal_eq_pruned_of_lowOverlap_of_geometry
     (S : Finset RealInterval) (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
     (scale : RealInterval → ℤ) (N : Finset RealInterval)
-    (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale) (M : ℕ) (x : ℝ)
+    (hN : N ⊆ geometricIntervals S f I₀ k₀ s scale) (M : ℕ) (x : ℝ)
     (hx : overlapCount (activeBadIntervals S f I₀ k₀ s scale N) x ≤ M) :
     badLengthTailMaximal S f I₀ k₀ s scale N x =
       badLengthTailMaximal S f I₀ k₀ s scale
@@ -109,8 +144,20 @@ theorem badLengthTailMaximal_eq_pruned_of_lowOverlap
   intro ell
   congr 1
   simpa only [badLengthTailAction, ite_mul, one_mul, zero_mul] using
-    sum_weighted_localizedBadPiece_eq_pruned_of_lowOverlap S f I₀ k₀ s scale N hN M
+    sum_weighted_localizedBadPiece_eq_pruned_of_lowOverlap_of_geometry S f I₀ k₀ s scale N hN M
       (fun I ↦ if (2 : ℝ) ^ ell ≤ I.length then 1 else 0) x hx
+
+theorem badLengthTailMaximal_eq_pruned_of_lowOverlap
+    (S : Finset RealInterval) (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ) (N : Finset RealInterval)
+    (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale) (M : ℕ) (x : ℝ)
+    (hx : overlapCount (activeBadIntervals S f I₀ k₀ s scale N) x ≤ M) :
+    badLengthTailMaximal S f I₀ k₀ s scale N x =
+      badLengthTailMaximal S f I₀ k₀ s scale
+        (overlapPrunedFamily (activeBadIntervals S f I₀ k₀ s scale N) M) x := by
+  exact badLengthTailMaximal_eq_pruned_of_lowOverlap_of_geometry
+    S f I₀ k₀ s scale N
+    (hN.trans (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale)) M x hx
 
 /-- The actual physical maximal operator of the concretely pruned family
 inherits the proved prefix estimate with the precise factor two. -/
@@ -148,7 +195,6 @@ theorem eLpNorm_pruned_badLengthTailMaximal_le
     ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
   exact mul_le_mul_right (eLpNorm_prunedActivePrefixMaximal_le hf I₀ k₀ s hk₀ hs scale
     hlam hparent hsub N hN P.card M) _
-
 
 end KrauseLaceyBadScale
 end QuadraticCarleson

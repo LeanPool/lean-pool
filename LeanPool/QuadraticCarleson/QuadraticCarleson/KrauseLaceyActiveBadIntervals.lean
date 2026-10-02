@@ -5,7 +5,6 @@ Authors: Anastasios Fragkos
 -/
 module
 
-
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.KrauseLaceyNonstandardOverlapPrefix
 
 /-!
@@ -122,14 +121,34 @@ theorem exists_badScaleCell_subset_of_active
   · exact h
   · exact (Set.disjoint_left.mp hd (I.centralThird_subset_carrier hi.1) hxJ).elim
 
-/-- Above the grouped base scale, activity charges the full parent
-length to a literal contained stopping cell with the exact `2^s` ratio. -/
-theorem exists_chargedCell_of_active_above_base
+/-- Classifier-independent intervals with the length and grouped-base geometry. -/
+noncomputable def geometricIntervals
+    (S : Finset RealInterval) (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ) : Finset RealInterval :=
+  (goodCollection S f 0 I₀).filter fun I ↦
+    I.length = (2 : ℝ) ^ (scale I + 2) ∧ k₀ ≤ scale I + 2 - s
+
+theorem geometricIntervals_subset
+    (S : Finset RealInterval) (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ) : geometricIntervals S f I₀ k₀ s scale ⊆ S := by
+  intro I hI
+  exact (Finset.mem_filter.mp (Finset.mem_filter.mp hI).1).1
+
+theorem nonstandardIntervals_subset_geometric
+    (S : Finset RealInterval) (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ) :
+    nonstandardIntervals S f I₀ k₀ s scale ⊆ geometricIntervals S f I₀ k₀ s scale := by
+  intro I hI
+  have h := Finset.mem_filter.mp hI
+  exact Finset.mem_filter.mpr ⟨h.1, h.2.1, h.2.2.1⟩
+
+/-- Activity above the grouped base scale charges a contained stopping cell. -/
+theorem exists_chargedCell_of_active_above_base_of_geometry
     {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
     (scale : RealInterval → ℤ)
     (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
       J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
-    {I : RealInterval} (hI : I ∈ nonstandardIntervals S f I₀ k₀ s scale)
+    {I : RealInterval} (hI : I ∈ geometricIntervals S f I₀ k₀ s scale)
     (hbase : k₀ < scale I + 2 - s)
     (hactive : ∃ x, intervalBadInput S f I₀ k₀ s scale I x ≠ 0) :
     ∃ J ∈ stoppingChildren S f 0 I₀,
@@ -148,6 +167,18 @@ theorem exists_chargedCell_of_active_above_base
   congr 1
   ring
 
+theorem exists_chargedCell_of_active_above_base
+    {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
+    (scale : RealInterval → ℤ)
+    (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
+      J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
+    {I : RealInterval} (hI : I ∈ nonstandardIntervals S f I₀ k₀ s scale)
+    (hbase : k₀ < scale I + 2 - s)
+    (hactive : ∃ x, intervalBadInput S f I₀ k₀ s scale I x ≠ 0) :
+    ∃ J ∈ stoppingChildren S f 0 I₀,
+      J.carrier ⊆ I.carrier ∧ I.length = (2 : ℝ) ^ s * J.length := by
+  exact exists_chargedCell_of_active_above_base_of_geometry f I₀ k₀ s scale hlam
+    (nonstandardIntervals_subset_geometric S f I₀ k₀ s scale hI) hbase hactive
 
 end KrauseLaceyBadScale
 end QuadraticCarleson
