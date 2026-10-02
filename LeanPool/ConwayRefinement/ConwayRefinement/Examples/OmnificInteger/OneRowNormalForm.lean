@@ -28,6 +28,7 @@ namespace Surreal.OmnificInteger.OneRowExample
 open Set
 
 /-- The `n`-th positive exponent in Conway's one-row normal form. -/
+@[expose]
 def exponent (n : ℕ) : ℝ :=
   1 / (n + 1 : ℝ)
 
@@ -69,6 +70,7 @@ private theorem exponentAtIndex_strictAnti : StrictAnti exponentAtIndex := by
           exact_mod_cast exponent_strictAnti (WithTop.coe_lt_coe.mp hpq)
 
 /-- The coefficient function supported on the displayed exponents. -/
+@[expose]
 def coefficient (i : Surreal) : ℝ :=
   by
     classical
@@ -95,6 +97,7 @@ theorem wellFoundedOn_support_coefficient :
   exact exponentAtIndex_strictAnti.lt_iff_gt
 
 /-- Conway's coefficient-one normal form `1 + Σ n, ω ^ (1 / (n + 1))`. -/
+@[expose]
 def normalForm : SurrealHahnSeries :=
   SurrealHahnSeries.mk coefficient small_support_coefficient
     wellFoundedOn_support_coefficient

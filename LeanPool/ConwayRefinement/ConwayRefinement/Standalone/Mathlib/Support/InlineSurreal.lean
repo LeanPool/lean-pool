@@ -30,6 +30,7 @@ universe u
 namespace ConwayRefinement.Standalone.InlineSurreal.Surreal
 
 /-- The singleton Conway cut `{x - 1 | x + 1}`. -/
+@[expose]
 def singletonIntegerCut (x : _root_.Surreal.{u}) : _root_.Surreal.{u} :=
   !{{x - 1} | {x + 1}}' (by
     simp only [Set.mem_singleton_iff]
@@ -37,10 +38,12 @@ def singletonIntegerCut (x : _root_.Surreal.{u}) : _root_.Surreal.{u} :=
     simp [sub_eq_add_neg])
 
 /-- Conway's cut equation defining an omnific integer. -/
+@[expose]
 def IsConwayOmnificInteger (x : _root_.Surreal.{u}) : Prop :=
   x = singletonIntegerCut x
 
 /-- Conway's refinement conjecture for the concretely defined surreal numbers. -/
+@[expose]
 def ConwayConjecture : Prop :=
   ∀ a b c d : _root_.Surreal.{u},
     IsConwayOmnificInteger a → IsConwayOmnificInteger b →
