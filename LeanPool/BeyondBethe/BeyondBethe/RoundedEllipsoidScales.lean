@@ -211,8 +211,7 @@ theorem abs_det_div_coarseDenominator_le_meshTarget {d : ℕ}
       dsimp only [Q]
       rw [roundedEllipsoidInflation, roundedInverseCoefficient,
         roundedEllipsoidCoarseDenominator]
-      field_simp [Nat.ne_of_gt hd, hM.ne']
-     ; ring
+      field_simp [Nat.ne_of_gt hd, hM.ne']; ring
     rw [heq]
 
 theorem determinantFreeRoundedMeshTarget_le {d : ℕ} (hd : 0 < d)
