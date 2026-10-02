@@ -132,7 +132,8 @@ theorem gridPhase_summed_sq_le_of_realization [NeZero d] {Θ : ℝ} (hΘ : 1 ≤
   simp_rw [hcorreq, ← hcoarse]
   -- per-phase `≤ 2 M²`
   have hle2 : ∀ σ : Fin d → Fin N,
-      |blockVecDot P (blockMatVecMul (coarseBlockMatrix U (corridorField ℓ (gridPhase ℓ N σ) a')) P) -
+      |blockVecDot P
+        (blockMatVecMul (coarseBlockMatrix U (corridorField ℓ (gridPhase ℓ N σ) a')) P) -
           blockVecDot P (blockMatVecMul (coarseBlockMatrix U a') P)| ≤ 2 * Msq := by
     intro σ
     have hEllφ : IsEllipticFieldOn 1 Θ U (corridorField ℓ (gridPhase ℓ N σ) a') :=
@@ -165,7 +166,8 @@ theorem gridPhase_summed_sq_le_of_realization [NeZero d] {Θ : ℝ} (hΘ : 1 ≤
     blockVecDot_coarseBlockMatrix_cube_le hEll' P
   -- M2-core per phase (single minimizer `Z` for `a'`)
   have hcore : ∀ σ : Fin d → Fin N,
-      |blockVecDot P (blockMatVecMul (coarseBlockMatrix U (corridorField ℓ (gridPhase ℓ N σ) a')) P) -
+      |blockVecDot P
+        (blockMatVecMul (coarseBlockMatrix U (corridorField ℓ (gridPhase ℓ N σ) a')) P) -
           blockVecDot P (blockMatVecMul (coarseBlockMatrix U a') P)|
         ≤ 48 * Θ * c * ∫ x in corridorSet ℓ (gridPhase ℓ N σ) ∩ U, G x := fun σ =>
     abs_phaseObservable_sub_le_of_minimizer hΘ P hEll' hZadm hZresp hZeng
@@ -212,7 +214,8 @@ theorem gridPhase_summed_sq_le_of_realization [NeZero d] {Θ : ℝ} (hΘ : 1 ≤
     exact mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg h1 (by norm_num)) hΘpos.le) h2)
       (by positivity)
   have hkey : ∀ σ : Fin d → Fin N,
-      |blockVecDot P (blockMatVecMul (coarseBlockMatrix U (corridorField ℓ (gridPhase ℓ N σ) a')) P) -
+      |blockVecDot P
+        (blockMatVecMul (coarseBlockMatrix U (corridorField ℓ (gridPhase ℓ N σ) a')) P) -
           blockVecDot P (blockMatVecMul (coarseBlockMatrix U a') P)| ^ 2
         ≤ 2 * Msq * (48 * Θ * c) * ∫ x in corridorSet ℓ (gridPhase ℓ N σ) ∩ U, G x := by
     intro σ
@@ -272,7 +275,8 @@ theorem exists_gridPhase_meanSq_le [NeZero d] {Θ : ℝ} (hΘ : 1 ≤ Θ)
                     (coarseBlockMatrix (cubeSet (originCube d m))
                       (corridorField ℓ (gridPhase ℓ N σ) a.toFun)) P) -
                 blockVecDot P
-                  (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)| ^ 2 ∂L ≤
+                    (blockMatVecMul
+                      (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)| ^ 2 ∂L ≤
           Cd * Θ * ℓ⁻¹ * (Θ * vecNormSq P.1 + vecNormSq P.2) ^ 2 := by
   classical
   have : IsProbabilityMeasure L := hP.isProbability
@@ -287,13 +291,15 @@ theorem exists_gridPhase_meanSq_le [NeZero d] {Θ : ℝ} (hΘ : 1 ≤ Θ)
       (∀ σ : Fin d → Fin N,
           |blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m))
                 (corridorField ℓ (gridPhase ℓ N σ) a.toFun)) P) -
-              blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)|
+              blockVecDot P
+                (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)|
             ≤ 2 * Msq) ∧
       (∑ σ : Fin d → Fin N,
           |blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m))
                 (corridorField ℓ (gridPhase ℓ N σ) a.toFun)) P) -
               blockVecDot P
-                (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)| ^ 2 ≤ B) := by
+                  (blockMatVecMul
+                    (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)| ^ 2 ≤ B) := by
     filter_upwards [hell] with a ha
     exact gridPhase_summed_sq_le_of_realization hΘ hℓ hN P
       (fun i j => a.entry_measurable i j) ha
@@ -302,7 +308,8 @@ theorem exists_gridPhase_meanSq_le [NeZero d] {Θ : ℝ} (hΘ : 1 ≤ Θ)
       Integrable (fun a =>
         |blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m))
               (corridorField ℓ (gridPhase ℓ N σ) a.toFun)) P) -
-            blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)| ^ 2)
+            blockVecDot P
+              (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)| ^ 2)
         L := by
     intro σ
     have hFφ := aestronglyMeasurable_phaseObservable hP m ℓ (gridPhase ℓ N σ) P
@@ -310,18 +317,21 @@ theorem exists_gridPhase_meanSq_le [NeZero d] {Θ : ℝ} (hΘ : 1 ≤ Θ)
     have hmeas : AEStronglyMeasurable (fun a =>
         |blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m))
               (corridorField ℓ (gridPhase ℓ N σ) a.toFun)) P) -
-            blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)| ^ 2)
+            blockVecDot P
+              (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)| ^ 2)
         L := by
       have h2 : AEStronglyMeasurable (fun a =>
           (blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m))
                 (corridorField ℓ (gridPhase ℓ N σ) a.toFun)) P) -
-              blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)) ^ 2)
+              blockVecDot P
+                (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)) ^ 2)
           L := by simpa [pow_two] using! (hFφ.sub hF).mul (hFφ.sub hF)
       simpa [sq_abs] using h2
     refine (integrable_const (4 * Msq ^ 2)).mono' hmeas ?_
     filter_upwards [hAE] with a ha
     have h1 := ha.1 σ
-    have h0 := abs_nonneg (blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m))
+    have h0 := abs_nonneg (blockVecDot P
+      (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m))
       (corridorField ℓ (gridPhase ℓ N σ) a.toFun)) P) -
         blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P))
     rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
@@ -330,7 +340,8 @@ theorem exists_gridPhase_meanSq_le [NeZero d] {Θ : ℝ} (hΘ : 1 ≤ Θ)
   have hsum : ∑ σ : Fin d → Fin N,
       ∫ a, |blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m))
             (corridorField ℓ (gridPhase ℓ N σ) a.toFun)) P) -
-          blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)| ^ 2 ∂L
+          blockVecDot P
+            (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)| ^ 2 ∂L
         ≤ B := by
     rw [← integral_finsetSum _ (fun σ _ => hInt σ)]
     calc ∫ a, ∑ σ : Fin d → Fin N,
@@ -358,7 +369,8 @@ theorem exists_gridPhase_meanSq_le [NeZero d] {Θ : ℝ} (hΘ : 1 ≤ Θ)
     (show (∑ σ : Fin d → Fin N,
         ∫ a, |blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m))
               (corridorField ℓ (gridPhase ℓ N σ) a.toFun)) P) -
-            blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)| ^ 2 ∂L)
+            blockVecDot P
+              (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)| ^ 2 ∂L)
         ≤ ∑ _σ : Fin d → Fin N, B / (N : ℝ) ^ d from by rw [hgsum]; exact hsum)
   refine ⟨σ, hσuniv, ?_⟩
   have hBdiv : B / (N : ℝ) ^ d = 576 * (d : ℝ) * Θ * ℓ⁻¹ * Msq ^ 2 := by
