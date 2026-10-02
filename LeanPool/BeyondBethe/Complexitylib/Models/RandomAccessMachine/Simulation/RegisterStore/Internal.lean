@@ -76,16 +76,21 @@ private theorem mem_addresses_write (store : Store) (address value target : ℕ)
   | nil =>
     by_cases hvalue : value = 0
     · simp [write, hvalue] at htarget
-    · simp [write, hvalue] at htarget
+    · simp only [write, hvalue, ↓reduceIte, List.map_cons, List.map_nil,
+          List.mem_cons, List.not_mem_nil, or_false] at htarget
       exact Or.inl htarget
   | cons entry rest ih =>
     rcases entry with ⟨storedAddress, storedValue⟩
     by_cases haddress : address = storedAddress
     · subst address
       by_cases hvalue : value = 0
-      · simp [write, hvalue] at htarget ⊢
+      · simp only [write, hvalue, ↓reduceIte, List.map_cons, List.mem_cons,
+          List.mem_map, Prod.exists, exists_and_right, exists_eq_right,
+          or_self_left] at htarget ⊢
         exact Or.inr htarget
-      · simp [write, hvalue] at htarget ⊢
+      · simp only [write, hvalue, ↓reduceIte, List.map_cons, List.mem_cons,
+          List.mem_map, Prod.exists, exists_and_right, exists_eq_right,
+          or_self_left] at htarget ⊢
         rcases htarget with htarget | htarget
         · exact Or.inl htarget
         · exact Or.inr htarget
