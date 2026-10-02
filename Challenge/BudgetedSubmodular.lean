@@ -44,13 +44,20 @@ structure MonoSubmodular (F : Finset ι → ℝ) : Prop where
 noncomputable def fits (c : ι → ℝ) (B : ℝ) (U G : Finset ι) : Finset ι :=
   (U \ G).filter fun x => ∑ y ∈ G, c y + c x ≤ B
 
+/-- When some item fits, one of them has the largest gain per unit cost. A named theorem rather
+than a proof inside `greedyStep`: Lean moves a nested proof into a private auxiliary lemma whose
+name carries the module, which no solution module could reproduce. -/
+theorem exists_best (F : Finset ι → ℝ) (c : ι → ℝ) (B : ℝ) (U G : Finset ι)
+    (h : (fits c B U G).Nonempty) :
+    ∃ x ∈ fits c B U G, ∀ y ∈ fits c B U G,
+      (F (insert y G) - F G) / c y ≤ (F (insert x G) - F G) / c x :=
+  (fits c B U G).exists_max_image _ h
+
 /-- One greedy step: add an item of `fits` with the largest gain per unit cost (ties broken
 arbitrarily); keep `G` when nothing fits. -/
 noncomputable def greedyStep (F : Finset ι → ℝ) (c : ι → ℝ) (B : ℝ) (U G : Finset ι) :
     Finset ι :=
-  if h : (fits c B U G).Nonempty then
-    insert (Classical.choose
-      ((fits c B U G).exists_max_image (fun x => (F (insert x G) - F G) / c x) h)) G
+  if h : (fits c B U G).Nonempty then insert (Classical.choose (exists_best F c B U G h)) G
   else G
 
 /-- The greedy run on the ground set `U`: `U.card` steps from the empty set. -/
