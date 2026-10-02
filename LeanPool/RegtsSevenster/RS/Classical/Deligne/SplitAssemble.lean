@@ -35,6 +35,7 @@ variable {D : Type u}
 
 /-- **The base entry on the carrier**: the base algebra enters
 the degree-zero component at the bottom stage. -/
+@[expose]
 noncomputable def splitOfBase
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

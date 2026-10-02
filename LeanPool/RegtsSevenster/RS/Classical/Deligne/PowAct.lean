@@ -1042,6 +1042,7 @@ section SymAct
 
 /-- **The monoid action on the symmetric power**, through the
 section and the descended action. -/
+@[expose]
 noncomputable def symPowAct
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] (A : D)
     [MonObj A] (X : D) [ModObj A X] [Preadditive D] [HasFiniteBiproducts D]

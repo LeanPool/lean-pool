@@ -1067,6 +1067,7 @@ theorem symPowIdem_one
   rfl
 
 /-- **The singleton symmetric power is the module.** -/
+@[expose]
 noncomputable def symPowOne
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] (A : D)
     [MonObj A] (X : D) [ModObj A X] [Preadditive D] [HasFiniteBiproducts D]

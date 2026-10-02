@@ -28,6 +28,7 @@ variable {k ℓ : ℕ}
 open Classical in
 /-- The participating edges whose representative flag is
 incoming. -/
+@[expose]
 noncomputable def inRepCount (W : ClosedFragment)
     (F : EdgeSubset W) {κ : F.TransitionSystem}
     (o : κ.Orientation) : ℕ :=

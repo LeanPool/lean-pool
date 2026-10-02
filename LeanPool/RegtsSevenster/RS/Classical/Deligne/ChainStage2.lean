@@ -1023,6 +1023,7 @@ section Chain2Delta
 
 /-- **The two-index chain transition**: multiplication by the
 seed, which raises both arities by one. -/
+@[expose]
 noncomputable def chainDelta2
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

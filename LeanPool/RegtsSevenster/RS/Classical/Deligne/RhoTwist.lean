@@ -56,6 +56,7 @@ noncomputable def rhoEvenOdd
 
 /-- **The odd part of a twist by the odd line** is the even part
 of the object. -/
+@[expose]
 noncomputable def rhoOddOdd
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [CategoryTheory.Linear ℂ D]

@@ -64,6 +64,7 @@ theorem parameter_masterSummand (W : ClosedFragment)
 
 open Classical in
 /-- The flag pattern of a colouring: the flags at odd slots. -/
+@[expose]
 noncomputable def colourFlags (W : ClosedFragment)
     (c : MixedColouring k ℓ (edgeCount W + edgeCount W)) :
     Finset W.Flag :=
@@ -85,6 +86,7 @@ theorem masterSum_partition (W : ClosedFragment) :
   (Finset.sum_fiberwise _ _ _).symm
 
 /-- Parity purity: cap-paired slots share parity. -/
+@[expose]
 def PairPure {m : ℕ} (c : MixedColouring k ℓ (m + m)) :
     Prop :=
   ∀ i : Fin m,

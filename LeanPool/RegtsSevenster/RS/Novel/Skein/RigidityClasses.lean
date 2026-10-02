@@ -65,10 +65,12 @@ noncomputable def coevFrag : Fragment (Fin (0 + 2)) :=
 variable {R : ℕ} (f : EdgeRankParameter R)
 
 /-- The evaluation class. -/
+@[expose]
 noncomputable def evClass : HomSpace f.val (2 + 0) :=
   HomSpace.ofFragment f.val evFrag
 
 /-- The coevaluation class. -/
+@[expose]
 noncomputable def coevClass : HomSpace f.val (0 + 2) :=
   HomSpace.ofFragment f.val coevFrag
 

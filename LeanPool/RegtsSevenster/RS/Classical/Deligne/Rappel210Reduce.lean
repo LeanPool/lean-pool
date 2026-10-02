@@ -71,6 +71,7 @@ section Reduction
 
 /-- The name of the identity: the coevaluation, braided into the
 evaluation source. -/
+@[expose]
 noncomputable def unitName
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     (X : D) [HasRightDual X] :

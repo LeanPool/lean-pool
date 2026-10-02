@@ -135,6 +135,7 @@ end Antisymmetriser
 section AltPow
 
 /-- The antisymmetriser acting on the module power. -/
+@[expose]
 noncomputable def altPowIdem
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] (A : D)
     [MonObj A] (X : D) [ModObj A X] [Preadditive D] [HasFiniteBiproducts D]

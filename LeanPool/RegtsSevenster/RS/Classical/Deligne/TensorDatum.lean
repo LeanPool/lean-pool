@@ -107,6 +107,7 @@ end InterchangeDesc
 section Datum
 
 /-- The fold of the doubled regular module onto the base. -/
+@[expose]
 noncomputable def regPairFold
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D] (A : D) [MonObj A] [IsCommMonObj A] :
@@ -130,6 +131,7 @@ noncomputable def tensorPair
     modTensorMap A d₁.pairMod d₂.pairMod ≫ regPairFold A
 
 /-- The unfolding of the base into the doubled regular module. -/
+@[expose]
 noncomputable def regPairUnfold
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D] (A : D) [MonObj A] [IsCommMonObj A] :
@@ -138,6 +140,7 @@ noncomputable def regPairUnfold
 
 /-- **The tensor copairing**: unfold the unit, insert both
 copairings, and regroup through the descended interchange. -/
+@[expose]
 noncomputable def tensorCopair
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

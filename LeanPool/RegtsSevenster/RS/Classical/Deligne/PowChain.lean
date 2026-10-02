@@ -226,6 +226,7 @@ noncomputable def modTensorSwapMod
 position of the nested pairing — the new factor joins the
 `M`-power at the front and the `M'`-power at the back, so the
 peel of the nested pairing removes exactly the inserted pair. -/
+@[expose]
 noncomputable def powDelta
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

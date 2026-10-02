@@ -134,6 +134,7 @@ noncomputable def chainSeed
     modTensorMap A (toSymPowModZero A M') (toSymPowModZero A M)
 
 /-- **The chain transition**: multiplication by the seed. -/
+@[expose]
 noncomputable def chainDelta
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

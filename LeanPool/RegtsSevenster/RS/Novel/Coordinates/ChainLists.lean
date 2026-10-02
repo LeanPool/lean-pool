@@ -54,6 +54,7 @@ theorem partnerMem_of_partEdge {W : ClosedFragment}
 open Classical in
 /-- **The edge-interleaved enumeration**: each participating edge
 contributes its representative then its partner. -/
+@[expose]
 noncomputable def edgePairList (W : ClosedFragment)
     (F : EdgeSubset W) : List {f : W.Flag // f ∈ F.flags} :=
   ((partEdges W F).attachWith (· ∈ edgeIndexSet W F)
@@ -68,6 +69,7 @@ noncomputable def edgePairList (W : ClosedFragment)
 open Classical in
 /-- **The oriented enumeration**: each participating edge
 contributes its incoming then its outgoing flag. -/
+@[expose]
 noncomputable def orientedPairList (W : ClosedFragment)
     (F : EdgeSubset W) {κ : F.TransitionSystem}
     (o : κ.Orientation) : List {f : W.Flag // f ∈ F.flags} :=
@@ -93,6 +95,7 @@ noncomputable def orientedPairList (W : ClosedFragment)
 open Classical in
 /-- **The matched enumeration**: each participating edge
 contributes its incoming flag then that flag's match. -/
+@[expose]
 noncomputable def matchedPairList (W : ClosedFragment)
     (F : EdgeSubset W) {κ : F.TransitionSystem}
     (o : κ.Orientation) : List {f : W.Flag // f ∈ F.flags} :=
@@ -118,6 +121,7 @@ noncomputable def matchedPairList (W : ClosedFragment)
 open Classical in
 /-- **The global pair enumeration**: the vertex pair
 enumerations in block order. -/
+@[expose]
 noncomputable def globalPairList (W : ClosedFragment)
     (F : EdgeSubset W) {κ : F.TransitionSystem}
     (o : κ.Orientation) : List {f : W.Flag // f ∈ F.flags} :=

@@ -31,6 +31,7 @@ variable {D : Type u}
 
 /-- **The scalar-based copairing power**: the base acts on the
 chain unit. -/
+@[expose]
 noncomputable def powCopairA
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

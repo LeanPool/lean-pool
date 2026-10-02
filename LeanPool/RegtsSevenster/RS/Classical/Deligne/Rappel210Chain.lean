@@ -43,6 +43,7 @@ noncomputable def splitStage
 
 /-- The seed of the local splitting chain: the point, in the
 singleton power. -/
+@[expose]
 noncomputable def splitSeed
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [HasFiniteBiproducts D] [HasCoequalizers D] [Linear ℂ D]

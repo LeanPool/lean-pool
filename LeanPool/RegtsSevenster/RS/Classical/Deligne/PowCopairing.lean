@@ -43,6 +43,7 @@ section Braided
 /-- **The copairing unit**: the copairing of the datum evaluated
 at the unit of the base.  The seed of the chain units of the Key
 Lemma. -/
+@[expose]
 noncomputable def copairUnit
     [Category.{v} D] [MonoidalCategory D] [BraidedCategory D]
     [HasCoequalizers D]

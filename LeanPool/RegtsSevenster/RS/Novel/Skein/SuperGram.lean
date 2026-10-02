@@ -67,6 +67,7 @@ factor depends on the boundary state alone.
 -/
 
 /-- The number of legs a boundary state colours oddly. -/
+@[expose]
 noncomputable def oddCount {k ℓ t : ℕ}
     (x : GenBoundaryState k ℓ (Fin t)) : ℕ :=
   (Finset.univ.filter (fun i => ∃ c, x i = Sum.inr c)).card

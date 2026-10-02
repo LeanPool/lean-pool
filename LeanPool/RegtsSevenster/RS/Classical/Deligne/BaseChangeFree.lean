@@ -130,6 +130,7 @@ lemma modTensorπ_baseChangeFreeHom
   modTensorπ_desc A (restrictRegular φ) (freeMod A V) _ _
 
 /-- The inverse comparison map: insert the unit of `A`. -/
+@[expose]
 noncomputable def baseChangeFreeInv
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D] (A : D) [MonObj A] (B : D) [MonObj B] (φ : A ⟶ B)

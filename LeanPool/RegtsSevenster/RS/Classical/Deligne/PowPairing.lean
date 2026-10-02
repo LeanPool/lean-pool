@@ -41,6 +41,7 @@ section Braided
 section PairRaw
 
 /-- The datum's pairing evaluated on the raw tensor product. -/
+@[expose]
 noncomputable def pairRaw
     [Category.{v} D] [MonoidalCategory D] [BraidedCategory D]
     [HasCoequalizers D]

@@ -199,6 +199,7 @@ noncomputable def splitCoevalDualMod
 
 /-- **The dual split idempotent** on the base change of the dual
 module: evaluate, then coevaluate. -/
+@[expose]
 noncomputable def splitIdemDual
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D] (A : D) [MonObj A] [IsCommMonObj A] {M : Mod D A}

@@ -101,6 +101,7 @@ theorem chainCast_line
 
 /-- **The stagewise multiplication of two lines**: the two-index
 stage multiplication, transported onto the sum line. -/
+@[expose]
 noncomputable def chainBdegMulStage
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

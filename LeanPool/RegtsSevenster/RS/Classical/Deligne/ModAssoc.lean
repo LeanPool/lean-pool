@@ -118,6 +118,7 @@ theorem modTensor_condition_left
 
 /-- The cover of the associator: reassociate and project through
 both tensor products of the right-nested side. -/
+@[expose]
 noncomputable def modTensorAssocCover
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]
@@ -250,6 +251,7 @@ theorem modTensorπ_assocHom
 
 /-- The cover of the inverse associator: reassociate backwards and
 project through both tensor products of the left-nested side. -/
+@[expose]
 noncomputable def modTensorAssocInvCover
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

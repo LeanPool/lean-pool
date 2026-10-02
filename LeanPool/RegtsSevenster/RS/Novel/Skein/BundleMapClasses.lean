@@ -314,6 +314,7 @@ theorem inTransport_finCongr {n m u : ℕ} (h : n = m) :
 variable {R : ℕ} (f : EdgeRankParameter R)
 
 /-- The bundle-map class. -/
+@[expose]
 noncomputable def bundleMapClass {n m : ℕ} (e : Fin n ≃ Fin m) :
     HomSpace f.val (n + m) :=
   HomSpace.ofFragment f.val (bundleMap e)

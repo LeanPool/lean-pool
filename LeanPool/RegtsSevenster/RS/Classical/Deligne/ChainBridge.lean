@@ -107,6 +107,7 @@ end SlotComm
 /-- **The stage projection**: a power stage maps to the matching
 splitting-chain stage by swapping the pair into copairing order
 and projecting both slots onto the symmetric powers. -/
+@[expose]
 noncomputable def projStage
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

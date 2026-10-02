@@ -31,6 +31,7 @@ variable {D : Type u}
 
 /-- **The split idempotent** on the base change: evaluate, then
 coevaluate. -/
+@[expose]
 noncomputable def splitIdem
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D] (A : D) [MonObj A] [IsCommMonObj A] {M : Mod D A}

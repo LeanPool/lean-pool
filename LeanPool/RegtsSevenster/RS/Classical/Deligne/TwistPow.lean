@@ -75,6 +75,7 @@ noncomputable def powMergeModIso
 /-- **The twisted power identification**: the relative powers of
 a twisted module are the twist of the powers by the tensor powers
 of the twisting object. -/
+@[expose]
 noncomputable def twistPowModIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

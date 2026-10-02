@@ -82,6 +82,7 @@ theorem restrictπ_cond
 
 /-- The cover of the collapse: act the middle base into the
 module and project. -/
+@[expose]
 noncomputable def collapseCover
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D] (A : D) [MonObj A] (B : D) [MonObj B] (φ : A ⟶ B)

@@ -66,6 +66,7 @@ private theorem flatMap_congr' {γ δ : Type*} (l : List γ)
 open Classical in
 /-- The flag list underlying the odd list at a vertex: the
 incoming flags in the fixed order, each followed by its match. -/
+@[expose]
 noncomputable def pairFlagList (o : κ.Orientation)
     (v : W.Vertex) : List {f : W.Flag // f ∈ F.flags} :=
   ((F.inFlagsAt o v).attachWith (· ∈ F.flags)

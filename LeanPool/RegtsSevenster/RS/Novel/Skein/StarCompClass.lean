@@ -27,6 +27,7 @@ namespace RS
 variable {R : ℕ} (f : EdgeRankParameter R)
 
 /-- The star-union class as a `(0, 2m)`-morphism. -/
+@[expose]
 noncomputable def starClass (W : ClosedFragment) :
     HomSpace f.val (0 + (edgeCount W + edgeCount W)) :=
   HomSpace.ofFragment f.val
