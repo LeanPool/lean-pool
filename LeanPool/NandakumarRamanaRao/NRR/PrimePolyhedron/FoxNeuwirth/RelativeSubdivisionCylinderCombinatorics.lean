@@ -51,11 +51,13 @@ noncomputable instance cellFintype : (d : Nat) → Fintype (Cell d)
       infer_instance
 
 /-- The cell coned from the coarse lower simplex. -/
+@[expose]
 def lowerCell : (d : Nat) → Cell d
   | 0 => Sum.inl ()
   | _ + 1 => Sum.inl ()
 
 /-- The cell coned from one top barycentric simplex. -/
+@[expose]
 def upperCell : (d : Nat) → Equiv.Perm (Fin (d + 1)) → Cell d
   | 0, pi => Sum.inr pi
   | _ + 1, pi => Sum.inr (Sum.inl pi)
@@ -69,11 +71,13 @@ noncomputable def apex (d : Nat) : Delta d × Set.Icc (0 : Real) 1 :=
   (deltaBarycenter d, ⟨(1 : Real) / 2, by constructor <;> norm_num⟩)
 
 /-- Coarse lower-boundary vertex. -/
+@[expose]
 noncomputable def lowerBoundaryVertex
     (d : Nat) (i : Fin (d + 1)) : Delta d × Set.Icc (0 : Real) 1 :=
   (SphereOddDegree.FiniteSimplex.vertex (S := Real) i, ⟨0, by norm_num⟩)
 
 /-- Barycentric upper-boundary vertex. -/
+@[expose]
 noncomputable def upperBoundaryVertex
     (d : Nat) (pi : Equiv.Perm (Fin (d + 1))) (i : Fin (d + 1)) :
     Delta d × Set.Icc (0 : Real) 1 :=
@@ -626,6 +630,7 @@ open SphereOddDegree.AffineBarycentricSubdivision
       -((-1 : R) ^ k.1) * coefficient R d q := rfl
 
 /-- Ordered vertex signature of the cone-base facet. -/
+@[expose]
 noncomputable def baseFacetVertex
     (d : Nat) (q : Cell d) (i : Fin (d + 1)) :
     Delta d × Set.Icc (0 : Real) 1 :=

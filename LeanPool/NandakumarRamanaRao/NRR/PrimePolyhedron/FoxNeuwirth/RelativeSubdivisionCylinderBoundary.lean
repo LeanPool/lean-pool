@@ -41,6 +41,7 @@ open EquivariantPrismStableRelativeBoundary.FiniteSimplexDoubleBoundary
 
 
 /-- Delete one entry from an ordered vertex tuple. -/
+@[expose]
 def deleteTuple
     {X : Type} {n : Nat} (v : Fin (n + 2) → X) (j : Fin (n + 2)) :
     Fin (n + 1) → X :=
@@ -53,6 +54,7 @@ def coneTuple
   Fin.cases a v
 
 /-- Ordered full facet of one recursive cylinder cell. -/
+@[expose]
 noncomputable def facetTuple
     (d : Nat) (q : RelativeSubdivisionCylinderCombinatorics.Cell d) (j : Fin (d + 2)) :
     Fin (d + 1) → Delta d × Set.Icc (0 : Real) 1 :=

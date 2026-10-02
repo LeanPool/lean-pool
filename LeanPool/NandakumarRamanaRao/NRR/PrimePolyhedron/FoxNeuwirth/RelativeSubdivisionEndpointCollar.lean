@@ -48,6 +48,7 @@ noncomputable def identityWitness
   collar := RelativeCollarThinSlabsEndpoints.endpointIdentifiedCollar hp N 1 (by omega)
 
 /-- One-step subdivision witness. -/
+@[expose]
 noncomputable def oneStepWitness
     (hp : Nat.Prime p) (N : Nat) : Witness hp N (N + 1) where
   commonLevel := N + 1
@@ -63,6 +64,7 @@ noncomputable def reverseWitness
   collar := reverseEndpointCollar C.collar
 
 /-- Compose two existential collar witnesses. -/
+@[expose]
 noncomputable def composeWitness
     {hp : Nat.Prime p} {N₀ Nmid N₁ : Nat}
     (C : Witness hp N₀ Nmid) (D : Witness hp Nmid N₁) :

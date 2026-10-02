@@ -40,12 +40,15 @@ namespace FoxNeuwirthOrderComplex
 namespace MaximalFlagCode
 
 /-- The first (bottom) stage index, in `Fin p`. -/
+@[expose]
 def firstStage (hp : Nat.Prime p) : Fin p := ⟨0, hp.pos⟩
 
 /-- The last (top) stage index, in `Fin p`. -/
+@[expose]
 def lastStage (hp : Nat.Prime p) : Fin p := ⟨p - 1, by have := hp.pos; omega⟩
 
 /-- Cast a stage index back to the arithmetic index used by a maximal simplex. -/
+@[expose]
 def simplexIndex (hp : Nat.Prime p) (j : Fin p) : Fin (p - 1 + 1) :=
   Fin.cast (FoxNeuwirthChain.maximalIndex_eq hp).symm j
 

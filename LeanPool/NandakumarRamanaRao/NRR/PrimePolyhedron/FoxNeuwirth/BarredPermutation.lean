@@ -83,6 +83,7 @@ instance isTopDecidable (c : BarredPermutation p) : Decidable c.IsTop := by
   c.bars = Finset.univ
 
 /-- Relabel a symbol by precomposition with `σ.symm`, matching `Config.relabel`. -/
+@[expose]
 def relabel (σ : Equiv.Perm (Fin p))
     (c : BarredPermutation p) : BarredPermutation p where
   rank := σ.symm.trans c.rank

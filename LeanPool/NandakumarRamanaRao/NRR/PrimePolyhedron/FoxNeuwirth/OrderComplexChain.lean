@@ -39,6 +39,7 @@ namespace FoxNeuwirthOrderComplex
 namespace FaceMap
 
 /-- The coface map that omits vertex `k`. -/
+@[expose]
 def delete (k : Fin (d + 2)) : FaceMap d (d + 1) where
   toFun := k.succAbove
   strictMono := (Fin.succAboveOrderEmb k).strictMono
@@ -61,6 +62,7 @@ section
 variable {R : Type*} [CommRing R]
 
 /-- The alternating sign of the face obtained by deleting vertex `k`. -/
+@[expose]
 def faceSign (k : Fin (d + 2)) : R :=
   (-1 : R) ^ k.1
 

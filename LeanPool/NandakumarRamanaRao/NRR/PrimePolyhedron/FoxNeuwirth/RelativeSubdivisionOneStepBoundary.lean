@@ -274,6 +274,7 @@ theorem facetIncidence_eq_localBase
   rw [NRR.FoxNeuwirthOrderComplex.RelativeSubdivisionCylinderBoundary.fullBoundaryPairing_eq_base]
 
 /-- Quotient-facet Kronecker delta. -/
+@[expose]
 noncomputable def quotientIndicator {hp : Nat.Prime p}
     (s t : (RelativeSubdivisionOneStepCells.cellSystem hp N).Facet) : ZMod p :=
   if t = s then 1 else 0

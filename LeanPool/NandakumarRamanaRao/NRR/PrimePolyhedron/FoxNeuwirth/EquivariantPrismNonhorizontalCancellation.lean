@@ -118,6 +118,7 @@ theorem fin_succAbove_val {n : Nat} (k : Fin (n + 1)) (i : Fin n) :
       omega
 
 /-- Product of the orientation signs in an iterated subdivision word. -/
+@[expose]
 noncomputable def iteratedSign
     (R : Type) [CommRing R] (N : Nat)
     (rho : Fin N -> Equiv.Perm (Fin (n + 1))) : R :=
@@ -130,6 +131,7 @@ noncomputable def iteratedSign
   simp [iteratedSign]
 
 /-- The induced facet map of one simplex in an iterated subdivision. -/
+@[expose]
 noncomputable def iteratedFacetMap
     {X : Type} (n N : Nat) (sigma : Delta (n + 1) -> X)
     (rho : Fin N -> Equiv.Perm (Fin (n + 2)))
@@ -137,6 +139,7 @@ noncomputable def iteratedFacetMap
   fun x => sigma (affineCompMap (n + 1) N rho (cofacePoint n k x))
 
 /-- The iterated subdivision of an original boundary face. -/
+@[expose]
 noncomputable def iteratedBoundaryMap
     {X : Type} (n N : Nat) (sigma : Delta (n + 1) -> X)
     (k : Fin (n + 2))
@@ -489,6 +492,7 @@ theorem iterated_weighted_boundary
 /-! ## Staircase prism boundary -/
 
 /-- Generic staircase time coordinate for a spatial `n`-simplex. -/
+@[expose]
 def genericStaircaseTime
     (k : Fin (n + 1)) (j : Fin (n + 2)) : Fin 2 :=
   if j.1 <= k.1 then 0 else 1
@@ -534,6 +538,7 @@ noncomputable def genericStaircaseSpatialPoint
       _ = 1 := w.2.2
 
 /-- Interval barycentric point in the generic staircase simplex. -/
+@[expose]
 noncomputable def genericStaircaseIntervalPoint
     (n : Nat) (k : Fin (n + 1)) (w : Delta (n + 1)) : Set.Icc (0 : Real) 1 := by
   refine ⟨∑ j : Fin (n + 2),
@@ -554,6 +559,7 @@ noncomputable def genericStaircaseIntervalPoint
       _ = 1 := w.2.2
 
 /-- Generic staircase prism simplex over a spatial simplex map. -/
+@[expose]
 noncomputable def staircasePrismMap
     {X : Type} (n : Nat) (sigma : Delta n -> X) (k : Fin (n + 1)) :
     Delta (n + 1) -> X × Set.Icc (0 : Real) 1 :=
@@ -561,16 +567,19 @@ noncomputable def staircasePrismMap
     genericStaircaseIntervalPoint n k w)
 
 /-- Lower endpoint copy of a spatial simplex map. -/
+@[expose]
 def lowerEndpointMap
     {X : Type} (sigma : Delta n -> X) : Delta n -> X × Set.Icc (0 : Real) 1 :=
   fun x => (sigma x, ⟨0, by constructor <;> norm_num⟩)
 
 /-- Upper endpoint copy of a spatial simplex map. -/
+@[expose]
 def upperEndpointMap
     {X : Type} (sigma : Delta n -> X) : Delta n -> X × Set.Icc (0 : Real) 1 :=
   fun x => (sigma x, ⟨1, by constructor <;> norm_num⟩)
 
 /-- A side staircase simplex over an original spatial face. -/
+@[expose]
 noncomputable def sidePrismMap
     {X : Type} (n : Nat) (sigma : Delta n -> X)
     (r : Fin (n + 1)) (h : Fin n) :
@@ -1221,6 +1230,7 @@ noncomputable def occurrenceFacetMap
   simp [occurrenceFacetMap, SubdivisionPrismCharts.vertex]
 
 /-- Ordered cylinder vertices of an arbitrary affine facet map. -/
+@[expose]
 def mapVertexSignature
     (tau : Delta (p - 1) -> Realization p × Set.Icc (0 : Real) 1) :
     Fin p -> CylinderPoint p :=
@@ -1380,12 +1390,14 @@ theorem realizedFacetWeight_translateFacetMap
     rw [dite_eq_right hleft, dite_eq_right hright]
 
 /-- A facet map is lower horizontal when every one of its vertices has time zero. -/
+@[expose]
 def MapIsLowerHorizontal
     (tau : Delta (p - 1) -> Realization p × Set.Icc (0 : Real) 1) : Prop :=
   ∀ i : Fin p,
     (tau (SphereOddDegree.FiniteSimplex.vertex (S := Real) (facetCoordinateIndex i))).2.1 = 0
 
 /-- A facet map is upper horizontal when every one of its vertices has time one. -/
+@[expose]
 def MapIsUpperHorizontal
     (tau : Delta (p - 1) -> Realization p × Set.Icc (0 : Real) 1) : Prop :=
   ∀ i : Fin p,
@@ -1925,6 +1937,7 @@ theorem realizationPoint_prime_smul_any
 /-! ## Shared spatial-side bridge -/
 
 /-- Weight of a staircase side simplex for any affine-facet weight. -/
+@[expose]
 noncomputable def genericSpatialSideWeight
     {n : Nat} (hp : Nat.Prime (n + 1)) (L : Nat)
     (V : (Delta n → Realization (n + 1) × Set.Icc (0 : Real) 1) → ZMod (n + 1))

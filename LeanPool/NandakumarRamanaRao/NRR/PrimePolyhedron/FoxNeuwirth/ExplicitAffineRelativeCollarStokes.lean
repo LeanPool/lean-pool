@@ -285,6 +285,7 @@ def refinedVertexEquiv (hp : Nat.Prime p) :
   augmentedRowEquiv hp
 
 /-- The corresponding transported refined vertex index. -/
+@[expose]
 def refinedVertexIndex (hp : Nat.Prime p) (i : Fin p) :
     Fin (p - 1 + 1) :=
   refinedVertexEquiv hp i

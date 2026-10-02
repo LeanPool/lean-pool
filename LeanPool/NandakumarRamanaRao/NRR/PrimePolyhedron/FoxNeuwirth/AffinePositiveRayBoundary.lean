@@ -51,22 +51,26 @@ namespace VertexMap
   fun r => ∑ i : Fin (p + 1), w i * V.value i r
 
 /-- Fixed difference coordinate. -/
+@[expose]
 noncomputable def deviation
     (hp : Nat.Prime p) (y : Fin p → Real) (r : Fin (p - 1)) : Real :=
   y (FoxNeuwirthOrderComplex.ReferenceAffineOrbitCount.coordinateLabel hp r) -
     y (FoxNeuwirthOrderComplex.ReferenceAffineOrbitCount.lastLabel hp)
 
 /-- Mean coordinate. -/
+@[expose]
 noncomputable def mean (p : Nat) (y : Fin p → Real) : Real :=
   coordinateMean p y
 
 /-- Restriction to the facet omitting vertex `k`. -/
+@[expose]
 noncomputable def facetValue
     (V : VertexMap p) (k : Fin (p + 1)) (i : Fin p) : Fin p → Real :=
   V.value (k.succAbove i)
 
 /-- Reindex the `p` augmented rows as the `p - 1` deviation rows followed by the
 constant row. -/
+@[expose]
 def augmentedRowEquiv (hp : Nat.Prime p) : Fin p ≃ Fin (p - 1 + 1) :=
   (Fin.castOrderIso (Nat.sub_add_cancel hp.pos).symm).toEquiv
 
@@ -85,6 +89,7 @@ def augmentedRowEquiv (hp : Nat.Prime p) : Fin p ≃ Fin (p - 1 + 1) :=
 /-- Canonical embedding of the `p` facet-vertex indices into the coordinate type of
 `StandardSimplex (p - 1)`.  For positive `p` this is an equivalence; the inclusion form keeps
 `facetAffineValue` meaningful without adding a positivity hypothesis to its public API. -/
+@[expose]
 def facetCoordinateIndex (i : Fin p) : Fin ((p - 1) + 1) :=
   Fin.castLE (by omega) i
 
@@ -108,6 +113,7 @@ noncomputable instance facetHasPositiveRayIntersectionDecidable
   Classical.propDecidable _
 
 /-- Signed positive-ray intersection number of one oriented facet. -/
+@[expose]
 noncomputable def facetIndex
     (hp : Nat.Prime p) (V : VertexMap p) (k : Fin (p + 1)) : ZMod p :=
   if FacetHasPositiveRayIntersection hp V k then

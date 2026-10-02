@@ -41,6 +41,7 @@ open RefinedAffineMap
 variable {p : Nat}
 
 /-- Interpret a spatial refinement word on the definitionally different simplex-index type. -/
+@[expose]
 noncomputable def endpointRefinementWord
     (hp : Nat.Prime p) (L : Nat) (eta : RefinementWord p L) :
     Fin L → Equiv.Perm (Fin (p - 1 + 1)) := by
@@ -112,6 +113,7 @@ theorem endpoint_iterated_weighted_boundary
 
 /-- The spatial simplex obtained by applying the final `L` barycentric refinements to an already
 level-`N` refined top cell. -/
+@[expose]
 noncomputable def endpointSpatialMap
     (hp : Nat.Prime p) (N L : Nat)
     (q : TopCell hp N)

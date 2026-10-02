@@ -64,17 +64,20 @@ noncomputable def localWeight
   RelativeSubdivisionCylinderCombinatorics.chart (p - 1) q (localWeight hp w)
 
 /-- Lift a local cylinder point through one refined Fox--Neuwirth chart. -/
+@[expose]
 noncomputable def liftPoint
     (hp : Nat.Prime p) (N : Nat) (q : TopCell hp N)
     (z : Delta (p - 1) × Set.Icc (0 : Real) 1) : CylinderPoint p :=
   CylinderPoint.ofProd (RefinedAffineMap.chart hp N q z.1, z.2)
 
 /-- Affine chart of one global one-step subdivision-cylinder cell. -/
+@[expose]
 noncomputable def chart
     (hp : Nat.Prime p) (N : Nat) (q : Cell hp N) (w : Delta p) : CylinderPoint p :=
   liftPoint hp N q.1 (localPoint hp q.2 w)
 
 /-- Geometric vertices are defined by restriction of the global affine chart. -/
+@[expose]
 noncomputable def vertex
     (hp : Nat.Prime p) (N : Nat) (q : Cell hp N) (i : Fin (p + 1)) : CylinderPoint p :=
   chart hp N q (SphereOddDegree.FiniteSimplex.vertex (S := Real) i)
@@ -234,12 +237,14 @@ theorem vertex_orbit_injective
 
 /-- Coefficient of a lifted top cell: the refined orbit-cycle coefficient times the recursive
 one-step-cylinder orientation coefficient. -/
+@[expose]
 noncomputable def coefficient
     (hp : Nat.Prime p) (N : Nat) (q : Cell hp N) : ZMod p :=
   RefinedAffineMap.coefficient hp N q.1 *
     RelativeSubdivisionCylinderCombinatorics.Oriented.coefficient (ZMod p) (p - 1) q.2
 
 /-- Explicit finite affine one-step cylinder between refinement levels `N` and `N + 1`. -/
+@[expose]
 noncomputable def cellSystem
     (hp : Nat.Prime p) (N : Nat) :
     RelativeAffineCellSystem hp N (N + 1) (N + 1) 0 where

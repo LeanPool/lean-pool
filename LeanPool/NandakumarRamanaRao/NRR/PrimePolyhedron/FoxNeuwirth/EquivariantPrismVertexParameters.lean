@@ -57,10 +57,12 @@ structure CylinderPoint (p : Nat) where
 namespace CylinderPoint
 
 /-- Convert the product representation used by the homotopy and prism charts. -/
+@[expose]
 def ofProd (z : Realization p × Set.Icc (0 : Real) 1) : CylinderPoint p :=
   ⟨z.1, z.2⟩
 
 /-- Convert back to the product representation used by the homotopy. -/
+@[expose]
 def toProd (z : CylinderPoint p) : Realization p × Set.Icc (0 : Real) 1 :=
   (z.spatial, z.time)
 
@@ -291,6 +293,7 @@ theorem vectorValue_smul
   exact congrArg a hsite
 
 /-- Vector value attached to one local prism vertex occurrence. -/
+@[expose]
 noncomputable def localVertexValue
     (hp : Nat.Prime p) (N L : Nat)
     (a : Assignment hp N L) (q : PrismCell hp N L) (i : Fin (p + 1)) :

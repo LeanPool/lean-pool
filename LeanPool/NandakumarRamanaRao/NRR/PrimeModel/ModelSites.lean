@@ -46,6 +46,7 @@ def smulBodyPoint
   (z.1, g • z.2)
 
 /-- Action on a body/model-point/interval parameter, fixing body and interval. -/
+@[expose]
 def smulBodyPointInterval
     (M : PrimeConfigurationModel hp)
     (g : PrimeSymmetry p)

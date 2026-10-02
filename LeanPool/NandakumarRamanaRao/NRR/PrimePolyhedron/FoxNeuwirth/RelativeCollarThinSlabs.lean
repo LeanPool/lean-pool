@@ -44,6 +44,7 @@ open RelativeCollarMiddlePrism
 variable {p : Nat}
 
 /-- Affine rescaling of the unit interval onto slab `r` of a positive `m`-slab partition. -/
+@[expose]
 noncomputable def slabTime
     (m : Nat) (hm : 0 < m) (r : Fin m) (t : Set.Icc (0 : Real) 1) :
     Set.Icc (0 : Real) 1 := by
@@ -66,6 +67,7 @@ noncomputable def slabTime
   rfl
 
 /-- Embed one cylinder point into a specified thin time slab. -/
+@[expose]
 noncomputable def slabPoint
     (m : Nat) (hm : 0 < m) (r : Fin m) (z : CylinderPoint p) : CylinderPoint p where
   spatial := z.spatial

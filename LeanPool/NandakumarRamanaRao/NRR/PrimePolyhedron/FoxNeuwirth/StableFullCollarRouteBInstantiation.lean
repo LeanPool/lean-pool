@@ -66,6 +66,7 @@ noncomputable def routeBPerturbation
 
 /-- The full collar assignment obtained by replacing exactly the movable
 parameters with the selected Route B perturbation. -/
+@[expose]
 noncomputable def perturbedAssignment
     (hp : Nat.Prime p)
     (F0 F1 : ZeroFreeMap hp)

@@ -208,6 +208,7 @@ abbrev FacetOrbit (hp : Nat.Prime p) :=
   (orbitCycle hp).Facet
 
 /-- Canonical representative of a top orbit. -/
+@[expose]
 noncomputable def topRepresentative
     (hp : Nat.Prime p) (q : TopOrbit hp) :
     (coveringCycle hp).TopCell :=

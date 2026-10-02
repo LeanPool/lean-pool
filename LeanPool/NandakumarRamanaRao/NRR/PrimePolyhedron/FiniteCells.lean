@@ -46,6 +46,7 @@ instance (d : ℕ) : CoeFun (StandardSimplex d) (fun _ => Fin (d + 1) → ℝ) :
   w.2.2
 
 /-- The relative interior of the standard simplex. -/
+@[expose]
 def IsInterior {d : ℕ} (w : StandardSimplex d) : Prop :=
   ∀ i, 0 < w i
 

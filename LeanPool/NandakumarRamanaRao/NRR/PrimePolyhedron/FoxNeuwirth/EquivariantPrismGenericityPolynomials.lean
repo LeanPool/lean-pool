@@ -80,6 +80,7 @@ noncomputable def deviationPolynomial
     y (ReferenceAffineOrbitCount.lastLabel hp)
 
 /-- The real vertex map reconstructed on one refined prism simplex. -/
+@[expose]
 noncomputable def localVertexMap
     (hp : Nat.Prime p) (N L : Nat)
     (a : Assignment hp N L) (q : PrismCell hp N L) :
@@ -191,6 +192,7 @@ instance codimTwoFaceFintype (p : Nat) : Fintype (CodimTwoFace p) := inferInstan
 instance codimTwoFaceDecidableEq (p : Nat) : DecidableEq (CodimTwoFace p) := inferInstance
 
 /-- The second omission index, cast to the syntactic successor form needed by `Fin.succAbove`. -/
+@[expose]
 def secondOmissionIndex
     (hp : Nat.Prime p) (f : CodimTwoFace p) : Fin ((p - 1) + 1) :=
   Fin.cast (by have := hp.pos; omega) f.2

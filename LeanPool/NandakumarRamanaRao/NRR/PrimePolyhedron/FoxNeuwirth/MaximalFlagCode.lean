@@ -64,6 +64,7 @@ structure Code (p : Nat) where
   permSignInt z.bottom * permSignInt z.removal
 
 /-- First bar-removal step; prime cardinality guarantees that `Fin (p - 1)` is nonempty. -/
+@[expose]
 def firstRemovalStep (hp : Nat.Prime p) : Fin (p - 1) :=
   ⟨0, by
     have := hp.two_le
@@ -80,14 +81,17 @@ def ePp (hp : Nat.Prime p) : Fin (p - 1 + 1) ≃ Fin p :=
 
 /-- Reindexing equivalence `Fin (p - 2 + 1) ≃ Fin (p - 1)`, used to view an internal removal-step
 index as a bar position. -/
+@[expose]
 def eQ (hp : Nat.Prime p) : Fin (p - 2 + 1) ≃ Fin (p - 1) :=
   finCongr (by have := hp.two_le; omega)
 
 /-- Label occupying the position immediately before the first removed bar. -/
+@[expose]
 def firstCutLeftLabel (hp : Nat.Prime p) (z : Code p) : Fin p :=
   z.bottom.symm (ePp hp (z.removal (firstRemovalStep hp)).castSucc)
 
 /-- Label occupying the position immediately after the first removed bar. -/
+@[expose]
 def firstCutRightLabel (hp : Nat.Prime p) (z : Code p) : Fin p :=
   z.bottom.symm (ePp hp (z.removal (firstRemovalStep hp)).succ)
 
@@ -102,6 +106,7 @@ theorem firstCutLabels_ne
 
 /-- Pairing for deletion of the bottom vertex: swap the two labels which become identified after
 removing the first bar. -/
+@[expose]
 def bottomPartner (hp : Nat.Prime p) (z : Code p) : Code p where
   bottom :=
     (Equiv.swap (firstCutLeftLabel hp z) (firstCutRightLabel hp z)).trans z.bottom
@@ -247,6 +252,7 @@ theorem coefficient_removalPartner
 `MaximalFlagSourceCancellation`. -/
 
 /-- The order-preserving face map that deletes a chosen maximal-flag vertex. -/
+@[expose]
 def deleteFace (hp : Nat.Prime p) (k : Fin (p - 1 + 1)) :
     FaceMap (p - 2) (p - 1) where
   toFun i := k.succAbove (Fin.cast (by have := hp.two_le; omega) i)

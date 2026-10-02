@@ -49,10 +49,12 @@ open MaximalFlagCode TopFlagSubdivision PrimeOrbitCycle
     (stageIndex hp i).1 = i.1 := rfl
 
 /-- The fixed label omitted from the difference-coordinate model of the diagonal quotient. -/
+@[expose]
 def lastLabel (hp : Nat.Prime p) : Fin p :=
   ⟨p - 1, by have := hp.pos; omega⟩
 
 /-- Embed a target coordinate into the label set. -/
+@[expose]
 def coordinateLabel (hp : Nat.Prime p) (r : Fin (p - 1)) : Fin p :=
   ⟨r.1, by have := hp.two_le; omega⟩
 
@@ -93,6 +95,7 @@ theorem sum_if_one_zero_eq_card
   simp
 
 /-- Block-index vector modulo the diagonal, in the fixed difference coordinates. -/
+@[expose]
 def blockDifference
     (hp : Nat.Prime p) (c : BarredPermutation p) (r : Fin (p - 1)) : Int :=
   (c.blockIndex (coordinateLabel hp r) : Int) -
@@ -100,6 +103,7 @@ def blockDifference
 
 /-- Generic direction at a top-cell vertex.  In the final rank order its adjacent gaps are
 `1,2,...,p-1`. -/
+@[expose]
 def topDirection
     (hp : Nat.Prime p) (c : BarredPermutation p) (r : Fin (p - 1)) : Int :=
   (triangular (c.rank (coordinateLabel hp r)).1 : Int) -
@@ -117,6 +121,7 @@ def liftedVertexValue
     (c.blockIndex x : Real)
 
 /-- Piecewise-affine reference map with perturbation parameter `epsilon`. -/
+@[expose]
 noncomputable def mapAt
     (hp : Nat.Prime p) (epsilon : Real) : AffineVertexMap p (p - 1) where
   vertexValue c r :=
@@ -897,6 +902,7 @@ theorem determinant_sign_preserved
     (determinant_zero_ne_zero hp))).2 s
 
 /-- The chosen affine reference map is regular on every maximal simplex. -/
+@[expose]
 noncomputable def referenceMap
     (hp : Nat.Prime p) : AffineVertexMap p (p - 1) :=
   mapAt hp (epsilon hp)

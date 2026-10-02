@@ -40,6 +40,7 @@ open RefinedAffineMap
 variable {p : Nat}
 
 /-- The base facet occurrence of a coned top cell. -/
+@[expose]
 noncomputable def baseOccurrence
     (hp : Nat.Prime p) (N : Nat) (q : RelativeSubdivisionOneStepCells.Cell hp N) :
     (RelativeSubdivisionOneStepCells.cellSystem hp N).FacetOccurrence :=

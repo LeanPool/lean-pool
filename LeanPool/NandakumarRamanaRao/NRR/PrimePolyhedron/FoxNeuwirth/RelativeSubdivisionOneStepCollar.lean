@@ -153,6 +153,7 @@ theorem upperBoundaryPairing_eq
         simp
 
 /-- The genuine one-step affine collar from refinement level `N` to level `N+1`. -/
+@[expose]
 noncomputable def relativeCollar
     (hp : Nat.Prime p) (N : Nat) :
     FoxNeuwirthRelativeAffineCollar hp N (N + 1) (N + 1) 0 where
@@ -164,6 +165,7 @@ noncomputable def relativeCollar
   incidence_eq_boundary := RelativeSubdivisionOneStepBoundary.incidence_eq_boundary hp N
 
 /-- The one-step collar has exactly the independently refined Fox--Neuwirth endpoint chains. -/
+@[expose]
 noncomputable def endpointIdentifiedCollar
     (hp : Nat.Prime p) (N : Nat) :
     EndpointIdentifiedRelativeAffineCollar hp N (N + 1) (N + 1) 0 where

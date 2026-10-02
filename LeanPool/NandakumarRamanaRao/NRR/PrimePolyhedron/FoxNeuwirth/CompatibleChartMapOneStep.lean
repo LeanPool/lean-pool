@@ -133,6 +133,7 @@ noncomputable abbrev Cells (hp : Nat.Prime p) (N : Nat) :=
 
 /-- Spatial coordinate, in the current top-simplex chart, represented by one local cylinder
 vertex. -/
+@[expose]
 noncomputable def localSpatialWeight
     (hp : Nat.Prime p) (N : Nat)
     (s : (Cells hp N).VertexSlot) : StandardSimplex (p - 1) :=

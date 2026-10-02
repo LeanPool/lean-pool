@@ -65,6 +65,7 @@ structure CoordinateAffineVertexMap (p : Nat) where
 namespace CoordinateAffineVertexMap
 
 /-- Affine interpolation of the full coordinate vector on one maximal simplex. -/
+@[expose]
 noncomputable def value
     (F : CoordinateAffineVertexMap p)
     (s : Simplex p (p - 1))

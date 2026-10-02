@@ -306,6 +306,7 @@ theorem facetIncidence_eq_sum_slabOccurrencePairing
 /-! ## Mesh endpoint terms and telescoping -/
 
 /-- The `k`-th time node of the uniform `m`-slab mesh. -/
+@[expose]
 noncomputable def meshTime
     (m : Nat) (hm : 0 < m) (k : Fin (m + 1)) : Set.Icc (0 : Real) 1 := by
   refine ⟨(k.1 : Real) / (m : Real), ?_, ?_⟩
@@ -320,6 +321,7 @@ noncomputable def meshTime
   rfl
 
 /-- Place a spatial facet map on one node of the uniform time mesh. -/
+@[expose]
 noncomputable def meshEndpointMap
     (m : Nat) (hm : 0 < m) (k : Fin (m + 1))
     (sigma : Delta (p - 1) → Realization p) :

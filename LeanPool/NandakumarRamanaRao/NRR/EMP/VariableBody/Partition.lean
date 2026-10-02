@@ -125,6 +125,7 @@ structure Witness
 /-- The **canonical partition witness** at `z`, built from the existing variable-body partition and
 its canonical children. No partition proof is duplicated: every field reuses the corresponding
 `partition_*` fact. -/
+@[expose]
 noncomputable def witness
     (z : BodySpace K A × X) :
     Witness sites hA hn z where

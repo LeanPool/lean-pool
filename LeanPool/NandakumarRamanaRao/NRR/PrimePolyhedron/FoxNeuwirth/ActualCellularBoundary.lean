@@ -141,6 +141,7 @@ theorem bars_eq_singleton_facetBar
     (Finset.card_eq_one.mp (bars_card_eq_one_of_codimOne hp a ha))
 
 /-- Size of the first ordered block of a codimension-one cell. -/
+@[expose]
 noncomputable def facetLeftSize
     (hp : Nat.Prime p) (a : BarredPermutation p)
     (ha : a.dualDimension = p - 2) : Nat :=

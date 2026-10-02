@@ -82,11 +82,13 @@ structure ChartHomotopy
   zeroFree : forall q w t, value q w t ≠ 0
 
 /-- Prefix top cell of a chart after `k` additional subdivision stages. -/
+@[expose]
 noncomputable def ancestorTopCell
     (hp : Nat.Prime p) (N k : Nat) (q : TopCell hp (N + k)) : TopCell hp N :=
   (q.1, (splitRefinementWord N k q.2).1)
 
 /-- Tail subdivision word of a chart after splitting off its first `N` stages. -/
+@[expose]
 noncomputable def ancestorTail
     {hp : Nat.Prime p} (N k : Nat) (q : TopCell hp (N + k)) : RefinementWord p k :=
   (splitRefinementWord N k q.2).2
@@ -134,6 +136,7 @@ theorem continuous_ancestorWeight
       continuous_toDelta)
 
 /-- Further spatial refinement of a compatible chart map. -/
+@[expose]
 noncomputable def ChartMap.refine
     {hp : Nat.Prime p} {N : Nat} (K : ChartMap hp N) (k : Nat) :
     ChartMap hp (N + k) where
@@ -168,6 +171,7 @@ noncomputable def ChartHomotopy.refine
   zeroFree := by intro q w t; exact J.zeroFree _ _ _
 
 /-- The affine interpolation stored by one regular approximation, as a compatible chart map. -/
+@[expose]
 noncomputable def baseOriginalPLMap
     (hp : Nat.Prime p)
     {F : ContinuousCoordinateMap p}

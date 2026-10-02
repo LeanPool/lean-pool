@@ -62,6 +62,7 @@ noncomputable instance facetOrbitDecidableEq : DecidableEq (FacetOrbit (G := G) 
   Classical.decEq _
 
 /-- Canonical representative selected by `Quotient.out`. -/
+@[expose]
 noncomputable def topRepresentative (q : TopOrbit (G := G) C) : C.TopCell :=
   Quotient.out q
 

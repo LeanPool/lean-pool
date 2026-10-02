@@ -59,6 +59,7 @@ abbrev ContinuousCoordinateMap (p : Nat) := C(Realization p, Fin p → Real)
   (ReferenceAffineOrbitCount.topRepr hp q.1).refinedContinuousMap N q.2
 
 /-- Vertices of a refined top simplex. -/
+@[expose]
 noncomputable def vertex
     (hp : Nat.Prime p) (N : Nat) (q : TopCell hp N) (i : Fin (p - 1 + 1)) : Realization p :=
   chart hp N q (SphereOddDegree.FiniteSimplex.vertex (S := Real) i)
@@ -78,6 +79,7 @@ noncomputable def vertex
   fun j => ∑ i : Fin (p - 1 + 1), w i * vertexValue hp N F q i j
 
 /-- Difference-coordinate vertex samples. -/
+@[expose]
 noncomputable def deviationVertexValue
     (hp : Nat.Prime p) (N : Nat)
     (F : ContinuousCoordinateMap p) (q : TopCell hp N)
@@ -86,6 +88,7 @@ noncomputable def deviationVertexValue
     vertexValue hp N F q i (ReferenceAffineOrbitCount.lastLabel hp)
 
 /-- Augmented matrix controlling affine regularity on a refined simplex. -/
+@[expose]
 noncomputable def augmentedMatrix
     (hp : Nat.Prime p) (N : Nat)
     (F : ContinuousCoordinateMap p) (q : TopCell hp N) :
@@ -125,6 +128,7 @@ noncomputable instance hasPositiveInteriorZeroDecidable
   else 0
 
 /-- Coefficient of a refined top cell: original orbit-cycle coefficient times subdivision sign. -/
+@[expose]
 noncomputable def coefficient
     (hp : Nat.Prime p) (N : Nat) (q : TopCell hp N) : ZMod p :=
   (PrimeOrbitCycle.orbitCycle hp).coefficient q.1 * subdivisionSign N q.2
@@ -150,6 +154,7 @@ noncomputable def segment
   simp [segment]
 
 /-- A continuous map obtained from an original affine vertex map. -/
+@[expose]
 noncomputable def ofCoordinateAffineVertexMap
     (F : CoordinateAffineVertexMap p) : ContinuousCoordinateMap p where
   toFun := F.globalValue

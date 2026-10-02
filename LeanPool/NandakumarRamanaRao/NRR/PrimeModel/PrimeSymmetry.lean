@@ -25,6 +25,7 @@ variable {p : ℕ}
 
 /-- The permutation subgroup used for prime symmetry: all permutations for two labels and even
 permutations otherwise. -/
+@[expose]
 def primeSymmetrySubgroup (p : ℕ) :
     Subgroup (Equiv.Perm (Fin p)) := by
   classical

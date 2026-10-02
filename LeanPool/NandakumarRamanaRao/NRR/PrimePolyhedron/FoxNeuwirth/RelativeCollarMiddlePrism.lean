@@ -65,6 +65,7 @@ noncomputable def defaultPrismCell
   ((defaultTopCell hp N, ⟨0, hp.pos⟩), fun _ => Equiv.refl _)
 
 /-- The geometric cylinder vertex of one fully refined middle-prism cell. -/
+@[expose]
 noncomputable def vertex
     (hp : Nat.Prime p) (N L : Nat)
     (q : PrismCell hp N L) (i : Fin (p + 1)) : CylinderPoint p :=

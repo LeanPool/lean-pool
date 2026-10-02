@@ -42,6 +42,7 @@ namespace FoxNeuwirthOrderComplex
 namespace TopFlagSubdivision
 
 /-- Integer indicator of a bar position. -/
+@[expose]
 def barIndicator (c : BarredPermutation p) (r : Fin (p - 1)) : Int :=
   if r ∈ c.bars then 1 else 0
 
@@ -56,6 +57,7 @@ def barIndicator (c : BarredPermutation p) (r : Fin (p - 1)) : Int :=
   simp [barIndicator, hr]
 
 /-- Matrix of successive bar-removal vectors along a maximal strict flag. -/
+@[expose]
 def barDifferenceMatrix (s : Simplex p (p - 1)) :
     Matrix (Fin (p - 1)) (Fin (p - 1)) Int :=
   fun r k => barIndicator (s k.castSucc) r - barIndicator (s k.succ) r
@@ -85,6 +87,7 @@ a second inversion-parity implementation into the subdivision determinant calcul
   rfl
 
 /-- The actual simplicial boundary of the top-flag subdivision chain. -/
+@[expose]
 noncomputable def boundary (hp : Nat.Prime p) :
     SimplicialChain (ZMod p) p (p - 2) := by
   have hdim : p - 1 = (p - 2) + 1 := by

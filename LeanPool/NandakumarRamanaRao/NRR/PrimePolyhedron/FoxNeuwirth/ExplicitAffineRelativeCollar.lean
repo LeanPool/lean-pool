@@ -120,10 +120,12 @@ instance facetOccurrenceFintype : Fintype C.FacetOccurrence := inferInstance
 instance facetOccurrenceDecidableEq : DecidableEq C.FacetOccurrence := inferInstance
 
 /-- Geometric point at a local cell vertex occurrence. -/
+@[expose]
 def slotPoint (s : C.VertexSlot) : CylinderPoint p :=
   C.vertex s.1 s.2
 
 /-- Ordered geometric vertex tuple of the facet obtained by omitting `o.2`. -/
+@[expose]
 def facetSignature (o : C.FacetOccurrence) : Fin p → CylinderPoint p :=
   fun i => C.vertex o.1 (o.2.succAbove i)
 
@@ -163,6 +165,7 @@ noncomputable def facetClass (o : C.FacetOccurrence) : C.Facet :=
   Quotient.mk _ o
 
 /-- Alternating boundary sign attached to an omitted local vertex. -/
+@[expose]
 def alternatingSign (k : Fin (p + 1)) : ZMod p :=
   (-1 : ZMod p) ^ k.1
 
@@ -267,10 +270,12 @@ end FoxNeuwirthRelativeAffineCollar
 /-! ## Exact endpoint identification -/
 
 /-- Embed a realization point in the lower horizontal boundary of the cylinder. -/
+@[expose]
 def lowerCylinderPoint (x : Realization p) : CylinderPoint p :=
   ⟨x, ⟨0, by simp⟩⟩
 
 /-- Embed a realization point in the upper horizontal boundary of the cylinder. -/
+@[expose]
 def upperCylinderPoint (x : Realization p) : CylinderPoint p :=
   ⟨x, ⟨1, by simp⟩⟩
 
@@ -362,6 +367,7 @@ noncomputable instance coverVertexSlotFintype : Fintype (CoverVertexSlot hp C) :
 instance coverVertexSlotDecidableEq : DecidableEq (CoverVertexSlot hp C) := inferInstance
 
 /-- Geometric point represented by a decorated local occurrence. -/
+@[expose]
 def coverPoint (s : CoverVertexSlot hp C) : CylinderPoint p :=
   s.1 • C.slotPoint s.2
 

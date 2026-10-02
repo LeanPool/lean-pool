@@ -46,10 +46,12 @@ namespace FoxNeuwirthOrderComplex
 namespace MaximalFlagCode
 
 /-- Bars already removed before stage `j`. -/
+@[expose]
 def removedBefore (z : Code p) (j : Fin p) : Finset (Fin (p - 1)) :=
   Finset.univ.filter fun r => (z.removal.symm r).1 < j.1
 
 /-- Bars still present at stage `j`. -/
+@[expose]
 def retainedBars (z : Code p) (j : Fin p) : Finset (Fin (p - 1)) :=
   Finset.univ \ removedBefore z j
 
@@ -63,6 +65,7 @@ def retainedBars (z : Code p) (j : Fin p) : Finset (Fin (p - 1)) :=
   ((retainedBars z j).filter fun r => r.1 < (z.bottom x).1).card
 
 /-- Lexicographic key used to order labels at a stage. -/
+@[expose]
 def stageKey (z : Code p) (j : Fin p) (x : Fin p) : Nat ×ₗ Nat :=
   toLex (stageBlock z j x, (z.top x).1)
 

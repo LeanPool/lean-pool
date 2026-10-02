@@ -98,6 +98,7 @@ namespace FullCollarOriginMarginData
 
 /-- Every finite full-collar assignment which avoids the origin cellwise has a single positive
 coordinate margin valid on all cells. -/
+@[expose]
 noncomputable def ofFineFullCollarData
     {hp : Nat.Prime p}
     {F₀ F₁ : ZeroFreeMap hp}

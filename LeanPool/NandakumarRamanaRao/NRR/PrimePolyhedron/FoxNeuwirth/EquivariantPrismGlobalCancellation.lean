@@ -61,6 +61,7 @@ sign. -/
   else 0
 
 /-- Transport an omitted facet vertex to the face-index type used by the simplicial boundary. -/
+@[expose]
 def facetFaceIndex
     (hp : Nat.Prime p) (k : Fin (p + 1)) : Fin ((p - 1) + 2) :=
   Fin.cast (by have := hp.two_le; omega) k
@@ -129,6 +130,7 @@ theorem unsignedFacetIndex_eq_of_facetValue_eq
     rw [ite_eq_right hV, ite_eq_right hW]
 
 /-- Relabel every output coordinate vector of a local affine simplex by a prime symmetry. -/
+@[expose]
 noncomputable def primeSmulVertexMap
     (p : Nat) (g : PrimeSymmetry p) (V : VertexMap p) : VertexMap p where
   value i := g • V.value i
@@ -564,6 +566,7 @@ theorem signatureWeight_facetSignature
 /-- Coefficient of one fully refined prism simplex.  It combines the original orbit-cycle
 coefficient, the spatial barycentric-subdivision sign, the staircase sign, and the further prism
 subdivision sign. -/
+@[expose]
 noncomputable def prismCoefficient
     (hp : Nat.Prime p) (N L : Nat)
     (q : PrismCell hp N L) : ZMod p :=
@@ -572,6 +575,7 @@ noncomputable def prismCoefficient
       (prismSign q : ZMod p)
 
 /-- Signed incidence coefficient of one facet occurrence in the global refined prism chain. -/
+@[expose]
 noncomputable def occurrenceCoefficient
     (hp : Nat.Prime p) (N L : Nat)
     (o : FacetOccurrence hp N L) : ZMod p :=

@@ -210,6 +210,7 @@ structure AffineVertexMap (p d : Nat) where
 namespace AffineVertexMap
 
 /-- Affine extension of vertex values over one order-complex simplex. -/
+@[expose]
 noncomputable def value
     (f : AffineVertexMap p d)
     (s : Simplex p d)
@@ -218,6 +219,7 @@ noncomputable def value
 
 /-- Augmented affine matrix.  Its columns are the target values of the simplex vertices and its
 last row consists of ones. -/
+@[expose]
 def augmentedMatrix
     (f : AffineVertexMap p d) (s : Simplex p d) :
     Matrix (Fin (d + 1)) (Fin (d + 1)) ℝ :=

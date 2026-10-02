@@ -33,6 +33,7 @@ variable {p N₀ N₁ M L : Nat}
 variable {hp : Nat.Prime p}
 
 /-- Reflection of the realization cylinder in its interval coordinate. -/
+@[expose]
 def reflectPoint (z : CylinderPoint p) : CylinderPoint p :=
   ⟨z.spatial, ⟨1 - z.time.1, by constructor <;> linarith [z.time.2.1, z.time.2.2]⟩⟩
 

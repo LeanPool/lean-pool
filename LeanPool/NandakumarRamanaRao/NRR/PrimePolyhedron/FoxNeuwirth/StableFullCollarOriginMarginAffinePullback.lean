@@ -32,6 +32,7 @@ variable {p : Nat}
 
 /-- Concrete quantitative origin-margin data attached to the affine-pullback
 full collar. -/
+@[expose]
 noncomputable def fullCollarOriginMarginDataAffinePullback
     (hp : Nat.Prime p)
     (F₀ F₁ : ZeroFreeMap hp)

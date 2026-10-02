@@ -260,12 +260,14 @@ theorem affineCompMap_liftBoundaryRefinementWord
   exact affineCompMap_liftFaceRefinementWord n L j eta x
 
 /-- Split a refinement word of length `N + L` into its prefix and tail. -/
+@[expose]
 def splitRefinementWord
     (N L : Nat) (rho : RefinementWord p (N + L)) :
     RefinementWord p N × RefinementWord p L :=
   (fun i => rho (Fin.castAdd L i), fun i => rho (Fin.natAdd N i))
 
 /-- Concatenate two refinement words. -/
+@[expose]
 def appendRefinementWord
     (N L : Nat) (rho : RefinementWord p N) (eta : RefinementWord p L) :
     RefinementWord p (N + L) :=
@@ -350,6 +352,7 @@ theorem affineCompMap_append
     simp [splitRefinementWord, appendRefinementWord]
 
 /-- Reindex a horizontal endpoint simplex as a top cell at the combined refinement level. -/
+@[expose]
 noncomputable def endpointTopCell
     (hp : Nat.Prime p) (N L : Nat)
     (q : TopCell hp N) (eta : RefinementWord p L) :

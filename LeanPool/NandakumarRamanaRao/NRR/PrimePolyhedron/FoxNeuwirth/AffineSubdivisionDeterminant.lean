@@ -98,6 +98,7 @@ theorem det_stepVertexMatrix_ne_zero
   exact mul_ne_zero hsign hprod
 
 /-- Vertex matrix of an iterated affine subdivision simplex. -/
+@[expose]
 noncomputable def iterVertexMatrix
     (n N : Nat) (rho : Fin N → Equiv.Perm (Fin (n + 1))) :
     Matrix (Fin (n + 1)) (Fin (n + 1)) Real :=
