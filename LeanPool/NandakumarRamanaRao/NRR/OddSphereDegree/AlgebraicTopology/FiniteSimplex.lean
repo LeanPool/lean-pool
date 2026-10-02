@@ -25,7 +25,7 @@ open Set Convexity
 namespace SphereOddDegree
 
 /-- Nonnegative finite coordinate functions whose coordinates sum to one. -/
-def finiteSimplex (R X : Type*) [Semiring R] [PartialOrder R] [Fintype X] : Set (X → R) :=
+@[expose] def finiteSimplex (R X : Type*) [Semiring R] [PartialOrder R] [Fintype X] : Set (X → R) :=
   {f | (∀ x, 0 ≤ f x) ∧ ∑ x, f x = 1}
 
 namespace FiniteSimplex

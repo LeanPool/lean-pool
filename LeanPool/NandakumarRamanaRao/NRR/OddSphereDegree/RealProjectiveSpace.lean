@@ -81,7 +81,7 @@ abbrev RP (n : ℕ) : Type :=
   Quotient (AntipodalSetoid n)
 
 /-- The quotient projection `S^n -> RP n`. -/
-def proj (n : ℕ) : C(Sphere n, RP n) where
+@[expose] def proj (n : ℕ) : C(Sphere n, RP n) where
   toFun := Quotient.mk'
   continuous_toFun := continuous_quotient_mk'
 
@@ -219,7 +219,7 @@ Map on projective space induced by an odd sphere self-map.
 This is the formal version of the descent `f` to `bar f` along the quotient
 `S^n -> RP n`.
 -/
-def inducedOnRP
+@[expose] def inducedOnRP
   {n : ℕ}
   (f : C(Sphere n, Sphere n))
   (hf : IsOddMap f) :

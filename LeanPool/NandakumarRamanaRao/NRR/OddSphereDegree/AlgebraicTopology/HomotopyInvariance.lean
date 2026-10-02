@@ -36,7 +36,7 @@ topological half is built in `PrismOperator.lean` as `cylinder`).
 It is phrased as a `Prop` (using `Nonempty` of the chain-homotopy data) so it can
 be assumed cleanly as a hypothesis; this suffices for every homology-level
 *equality* below, which are propositions. -/
-def SingularPrismOperator : Prop :=
+@[expose] def SingularPrismOperator : Prop :=
   ∀ {X Y : TopCat.{0}} {f g : X ⟶ Y},
     ContinuousMap.Homotopy f.hom g.hom →
       Nonempty (Homotopy (singularChainℤ.map f) (singularChainℤ.map g))

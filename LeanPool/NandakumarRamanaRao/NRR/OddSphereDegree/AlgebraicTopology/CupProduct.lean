@@ -84,7 +84,7 @@ abbrev singularCochainGroup (R : Type) [CommRing R] (Z : TopCat.{0}) (p : ℕ) :
 
 /-- Evaluate a singular `p`-cochain `φ` on a singular `p`-simplex `τ`, i.e. on the
 basis chain `τ` (the image of `1 ∈ R` under the coproduct inclusion at `τ`). -/
-noncomputable def cochainEval {R : Type} [CommRing R] {Z : TopCat.{0}} (p : ℕ)
+@[expose] noncomputable def cochainEval {R : Type} [CommRing R] {Z : TopCat.{0}} (p : ℕ)
     (φ : singularCochainGroup R Z p) (τ : singularSimplices Z p) : R :=
   φ.hom ((Sigma.ι (fun (_ : singularSimplices Z p) => ModuleCat.of R R) τ).hom (1 : R))
 
@@ -275,7 +275,7 @@ noncomputable def cochainOne {R : Type} [CommRing R] {Z : TopCat.{0}} :
 /-- The `n`-th cup power `φ^{⌣ n} ∈ C^n(Z; R)` of a degree-one cochain
 `φ ∈ C^1(Z; R)`, defined by `φ^0 = 1` and `φ^{n+1} = φ^n ⌣ φ`. This is the
 cochain-level scaffolding for the powers `αⁿ` of a degree-one cohomology class. -/
-noncomputable def cochainPow {R : Type} [CommRing R] {Z : TopCat.{0}}
+@[expose] noncomputable def cochainPow {R : Type} [CommRing R] {Z : TopCat.{0}}
     (φ : singularCochainGroup R Z 1) : (n : ℕ) → singularCochainGroup R Z n
   | 0 => cochainOne
   | (n + 1) => cochainCup n 1 (cochainPow φ n) φ

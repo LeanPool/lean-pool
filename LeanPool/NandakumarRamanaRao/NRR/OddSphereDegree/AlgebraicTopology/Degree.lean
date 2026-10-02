@@ -148,7 +148,7 @@ theorem evalAtOneℤ_bijective : Function.Bijective evalAtOneℤ := by
 /-- Given an isomorphism `e : M ≅ ℤ` of `ℤ`-modules, the ring homomorphism
 `End M →+* ℤ` extracting the integer scalar by which an endomorphism acts:
 conjugate `End M` into `End ℤ = (ℤ →ₗ[ℤ] ℤ)` and evaluate at `1`. -/
-def degreeRingHomOfIso (M : ModuleCat.{0} ℤ) (e : M ≅ ModuleCat.of ℤ ℤ) :
+@[expose] def degreeRingHomOfIso (M : ModuleCat.{0} ℤ) (e : M ≅ ModuleCat.of ℤ ℤ) :
     End M →+* ℤ :=
   evalAtOneℤ.comp <|
     ((LinearEquiv.conjRingEquiv e.toLinearEquiv).toRingHom).comp
@@ -157,7 +157,7 @@ def degreeRingHomOfIso (M : ModuleCat.{0} ℤ) (e : M ≅ ModuleCat.of ℤ ℤ) 
 /-- `degreeRingHomOfIso` is in fact a ring isomorphism `End M ≃+* ℤ`: every
 component (the endomorphism-ring equivalence, the conjugation, and evaluation at
 `1`) is a bijection. -/
-def degreeRingEquivOfIso (M : ModuleCat.{0} ℤ) (e : M ≅ ModuleCat.of ℤ ℤ) :
+@[expose] def degreeRingEquivOfIso (M : ModuleCat.{0} ℤ) (e : M ≅ ModuleCat.of ℤ ℤ) :
     End M ≃+* ℤ :=
   ((ModuleCat.endRingEquiv M).trans (LinearEquiv.conjRingEquiv e.toLinearEquiv)).trans
     (RingEquiv.ofBijective evalAtOneℤ evalAtOneℤ_bijective)
