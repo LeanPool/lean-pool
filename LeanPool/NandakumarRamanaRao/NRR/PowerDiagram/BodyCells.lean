@@ -78,6 +78,7 @@ theorem bodyCellSet_isCompact (K : Geometry.ConvexBody Plane) (s : Fin n → Pla
 /-- **Bundled** restricted power cell, requiring explicit nonempty‑interior evidence `hInt`.
 The carrier is `bodyCellSet K s w i`; convexity and compactness are automatic, and solidity is
 exactly the supplied hypothesis. -/
+@[expose]
 noncomputable def bodyCellBody (K : Geometry.ConvexBody Plane) (s : Fin n → Plane) (w : Fin n → ℝ)
     (i : Fin n) (hInt : (interior (bodyCellSet K s w i)).Nonempty) :
     Geometry.ConvexBody Plane where

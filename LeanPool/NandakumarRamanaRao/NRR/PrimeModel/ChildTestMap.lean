@@ -58,6 +58,7 @@ theorem childTestMap_smul
   rw [M.child_smul hA C g x i]
 
 /-- The simultaneous child-zero set. -/
+@[expose]
 def allChildrenZeroSet
     (M : PrimeConfigurationModel hp)
     (hA : 0 < A)

@@ -155,6 +155,7 @@ end ZeroFreeHomotopy
 
 /-- A coordinate map obtained by freezing the parent-body/interval parameter in the child test
 map. -/
+@[expose]
 noncomputable def childMap
     {K : Geometry.ConvexBody Plane} {A : Real}
     (hp : Nat.Prime p) (hA : 0 < A)

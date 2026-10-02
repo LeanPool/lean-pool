@@ -45,6 +45,7 @@ variable {n : ℕ}
 normalized equal‑area weight `EMP.normalizedWeight K s.pts hn s.injective_pts`, bundled as a
 `Geometry.ConvexBody`. Nonempty interior is provided by
 `PowerDiagram.bodyCellSet_interior_nonempty_of_equalArea` (the existing theorem). -/
+@[expose]
 noncomputable def EMP.powerPartitionPiece
     (K : Geometry.ConvexBody Plane) (s : Config n) (hn : 0 < n)
     (hK : 0 < K.area) (i : Fin n) : Geometry.ConvexBody Plane :=

@@ -123,6 +123,7 @@ noncomputable instance (hp : Nat.Prime p) (N L : Nat) : DecidableEq (PrismCell h
   inferInstance
 
 /-- Refined prism chart into the realization cylinder. -/
+@[expose]
 noncomputable def chart
     (hp : Nat.Prime p) (N L : Nat) (q : PrismCell hp N L) :
     C(Delta p, Realization p × Set.Icc (0 : Real) 1) where

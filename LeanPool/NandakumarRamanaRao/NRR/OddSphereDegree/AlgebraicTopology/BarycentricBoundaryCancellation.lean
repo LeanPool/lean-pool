@@ -283,6 +283,7 @@ theorem lastFaceMap_injective (n : ℕ) : Function.Injective (lastFaceMap n) := 
 
 /-- The last-face decomposition equivalence
 `(Fin (n+2) × Perm (Fin (n+1))) ≃ Perm (Fin (n+2))`. -/
+@[expose]
 noncomputable def lastFaceEquiv (n : ℕ) :
     (Fin (n + 2) × Equiv.Perm (Fin (n + 1))) ≃ Equiv.Perm (Fin (n + 2)) :=
   Equiv.ofBijective (lastFaceMap n) (by
