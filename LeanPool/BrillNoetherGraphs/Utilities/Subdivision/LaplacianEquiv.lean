@@ -59,6 +59,7 @@ def trans {K : CFGraph.{w}} (first : LaplacianEquiv G H)
     rw [second.num_edges_eq, first.num_edges_eq]
 
 /-- Reverse an adjacency-preserving vertex equivalence. -/
+@[expose]
 def symm (equivalence : LaplacianEquiv G H) : LaplacianEquiv H G where
   toEquiv := equivalence.toEquiv.symm
   num_edges_eq := by

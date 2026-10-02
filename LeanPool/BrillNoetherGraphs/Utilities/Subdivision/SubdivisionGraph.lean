@@ -78,6 +78,7 @@ def coreVertex (vertex : Fin n) : spec.Vertex :=
   Sum.inl vertex
 
 /-- Injection of an edge-interior coordinate into the subdivision. -/
+@[expose]
 def interiorVertex (edge : Fin p) (offset : Fin (spec.length edge - 1)) :
     spec.Vertex :=
   Sum.inr ⟨edge, offset⟩

@@ -95,6 +95,7 @@ def canonical (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) :
 
 /-- The map from the concrete wedge vertex type into a presented ambient
 graph. -/
+@[expose]
 def map (P : VertexWedgePresentation K G H x y) :
     (vertexWedge G H x y).V → K.V :=
   Sum.elim P.leftMap (fun b => P.rightMap b.1)
@@ -134,6 +135,7 @@ theorem map_surjective (P : VertexWedgePresentation K G H x y) :
     · exact ⟨Sum.inr ⟨b, hby⟩, hb⟩
 
 /-- The vertex equivalence induced by a wedge presentation. -/
+@[expose]
 noncomputable def vertexEquiv (P : VertexWedgePresentation K G H x y) :
     (vertexWedge G H x y).V ≃ K.V :=
   Equiv.ofBijective P.map ⟨P.map_injective, P.map_surjective⟩
@@ -157,6 +159,7 @@ carried to the advertised ambient map. -/
 
 /-- A wedge presentation determines an isomorphism from the concrete wedge to
 the ambient graph. -/
+@[expose]
 noncomputable def graphIso (P : VertexWedgePresentation K G H x y) :
     CFGraphIso (vertexWedge G H x y) K where
   vertexEquiv := P.vertexEquiv

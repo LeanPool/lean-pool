@@ -172,6 +172,7 @@ lemma AspSet_InvSet_of_AspPerm (τ : AspPerm) : AspSet_prop (invSet τ) := by
   · exact τ.inset_finite
 
 /-- The abstract inversion set carried by an almost sign-preserving permutation. -/
+@[expose]
 def ofAspPerm (τ : AspPerm) : AspSet :=
   ⟨invSet τ, AspSet_InvSet_of_AspPerm τ⟩
 
@@ -645,6 +646,7 @@ theorem func_asp : isAsp (asps.recon χ) := by
 
 /-- Package the function reconstructed from an ASP set and a shift as an
 `AspPerm`. -/
+@[expose]
 noncomputable def toAspPerm : AspPerm :=
   ⟨asps.recon χ, by exact func_bijective asps χ, by exact func_asp asps χ⟩
 

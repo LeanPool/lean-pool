@@ -146,6 +146,7 @@ end Bramble
 
 /-- `H` with every vertex of `X` isolated.  Its connected components on `V \ X`
 are the components of `H − X`, but the construction never leaves the type `V`. -/
+@[expose]
 def awayGraph (H : SimpleGraph V) (X : Finset V) : SimpleGraph V where
   Adj a b := H.Adj a b ∧ a ∉ X ∧ b ∉ X
   symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.2, h.2.1⟩⟩

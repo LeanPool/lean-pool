@@ -30,6 +30,7 @@ universe u v
 
 /-- Map the vertices of the right factor into a wedge, sending its marked
 vertex to the marked vertex on the left. -/
+@[expose]
 def wedgeRightVertex (G : CFGraph.{u}) (H : CFGraph.{v})
     (x : G.V) (y : H.V) : H.V → Sum G.V { b : H.V // b ≠ y } :=
   fun b => if h : b = y then Sum.inl x else Sum.inr ⟨b, h⟩

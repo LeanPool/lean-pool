@@ -53,6 +53,7 @@ def intoMultiplicity (G : CFGraph) (C : Finset G.V) (v : G.V) : ℤ :=
 
 /-- A vertex outside `C` is on its boundary when it has a positive-multiplicity
 edge into `C`. -/
+@[expose]
 def IsBoundary (G : CFGraph) (C : Finset G.V) (v : G.V) : Prop :=
   ∃ x ∈ C, 0 < numEdges G v x
 
@@ -212,6 +213,7 @@ structure ExpansionCell (G : CFGraph) (R : Finset G.V) where
 
 /-- A transparent strong-separator certificate: every proper enlargement of
 `S` has a complementary cell with the exact tree/path cut data above. -/
+@[expose]
 def StrongSeparatorCertificate (G : CFGraph) (S : Finset G.V) : Prop :=
   ∀ R : Finset G.V, S ⊆ R → R.Nonempty → R ≠ Finset.univ →
     Nonempty (ExpansionCell G R)

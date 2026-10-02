@@ -47,6 +47,7 @@ Laplacian-preserving relabeling.  The quotient target is left unchanged.
 
 This is a change of names on source vertices, not a rank-transport claim
 through a contraction. -/
+@[expose]
 def precomposeLaplacianEquiv {G' : CFGraph.{w}}
     (c : GraphContractionCertificate G H) (equivalence : LaplacianEquiv G' G) :
     GraphContractionCertificate G' H where
@@ -61,6 +62,7 @@ def precomposeLaplacianEquiv {G' : CFGraph.{w}}
 /-- Reindex the target of a contraction certificate along a checked
 Laplacian-preserving relabeling.  This only changes the names of quotient
 vertices; it is not a claim that rank descends through a contraction. -/
+@[expose]
 def postcomposeLaplacianEquiv {H' : CFGraph.{w}}
     (c : GraphContractionCertificate G H) (equivalence : LaplacianEquiv H H') :
     GraphContractionCertificate G H' where
@@ -161,7 +163,6 @@ theorem valid_postcomposeLaplacianEquiv {H' : CFGraph.{w}}
             rw [h]
             exact (equivalence.toEquiv.apply_symm_apply b).symm
         simp only [postcomposeLaplacianEquiv_vertexMap, hx, hy]
-        rfl
 
 /-- Boolean replay of the finite quotient conditions. -/
 def check (c : GraphContractionCertificate G H) : Bool :=
@@ -178,10 +179,12 @@ def check (c : GraphContractionCertificate G H) : Bool :=
   exact and_congr (@decide_eq_true_eq (Function.Surjective c.vertexMap) _).to_iff Iff.rfl
 
 /-- Push a divisor forward by summing it over fibres. -/
+@[expose]
 def pushDiv (c : GraphContractionCertificate G H) (D : CFDiv G) : CFDiv H :=
   fun b => ∑ x : G.V, if c.vertexMap x = b then D x else 0
 
 /-- Pull a firing script back by composition with the quotient map. -/
+@[expose]
 def pullScript (c : GraphContractionCertificate G H)
     (tau : firingScript H) : firingScript G :=
   fun x => tau (c.vertexMap x)

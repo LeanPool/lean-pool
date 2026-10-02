@@ -262,6 +262,7 @@ def mul (σ τ : AspPerm) : AspPerm where
     exact Set.Finite.union (Set.Finite.union τ.asp h_pre) h_zero
 
 /-- The inverse permutation, with its inherited almost sign-preserving property. -/
+@[expose]
 noncomputable def inv (τ : AspPerm) : AspPerm where
   func := Function.invFun τ.func
   bijective := by

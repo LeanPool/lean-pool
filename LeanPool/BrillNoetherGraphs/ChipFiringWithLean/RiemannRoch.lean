@@ -225,6 +225,7 @@ of a graph.
 
 /-- The relation $\operatorname{gon}(G) \le k$: there exists a divisor of degree $k$
 with rank at least $1$. -/
+@[expose]
 def gonalityLeq (G : CFGraph) (k : ℤ) : Prop := ∃ D : CFDiv G, rank G D ≥ 1 ∧ CFDiv.degree D = k
 
 /-- The relation $\operatorname{gon}(G) \ge k$: no divisor of degree less than $k$
@@ -372,6 +373,7 @@ there exists a divisor of degree $d$ and rank at least $r$.
 This is an open problem, posed in slightly different form by Baker in
 [Specialization of linear systems from curves to graphs](https://doi.org/10.2140/ant.2008.2.613),
 Conjecture 3.9(1). -/
+@[expose]
 def brillNoetherConjecture {G : CFGraph} (_h_conn : graphConnected G) (r d : ℤ) : Prop :=
   let g := CFGraph.genus G
   let ρ := g - (r + 1) * (g - d + r)

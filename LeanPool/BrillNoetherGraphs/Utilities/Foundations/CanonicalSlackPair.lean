@@ -30,6 +30,7 @@ open Utilities
 /-- A specified divisor satisfying the slack-column near-rectangle conditions
 at the marked vertices: degree equal to the genus, rank at least one, and
 nonnegative rank after the two marked chips are removed. -/
+@[expose]
 def IsSlackNearRectangleDivisor
     (H : CFGraph) (x y : H.V) (D : CFDiv H) : Prop :=
   CFDiv.degree D = CFGraph.genus H ∧
