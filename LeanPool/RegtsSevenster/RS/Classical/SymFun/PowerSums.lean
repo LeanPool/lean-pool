@@ -32,7 +32,7 @@ namespace RS
 /-- The complete homogeneous sequence attached to a sequence of
 power sums, via the Newton recursion
 `(n+1) · h (n+1) = ∑_{i ≤ n} t (i+1) · h (n−i)`; `h 0 = 1`. -/
-noncomputable def newtonH (t : ℕ → ℂ) : ℕ → ℂ
+@[expose] noncomputable def newtonH (t : ℕ → ℂ) : ℕ → ℂ
   | 0 => 1
   | n + 1 =>
       ((n : ℂ) + 1)⁻¹ *
@@ -46,7 +46,7 @@ noncomputable def newtonHZ (t : ℕ → ℂ) (n : ℤ) : ℂ :=
 
 /-- The Schur specialization of a row-length list `rows`, defined as
 the Jacobi–Trudi determinant `det (h_{rows i − i + j})_{i,j}`. -/
-noncomputable def schurDet (t : ℕ → ℂ) (rows : List ℕ) : ℂ :=
+@[expose] noncomputable def schurDet (t : ℕ → ℂ) (rows : List ℕ) : ℂ :=
   Matrix.det <| Matrix.of fun i j : Fin rows.length =>
     newtonHZ t ((rows.get i : ℤ) + (j : ℤ) - (i : ℤ))
 

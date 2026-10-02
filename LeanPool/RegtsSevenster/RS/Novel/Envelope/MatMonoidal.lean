@@ -48,7 +48,7 @@ variable {C : Type u}
 
 /-- Tensor product of objects in `Mat_ C`: index by the product, with
 componentwise tensor in `C`. -/
-@[reducible] def matTensorObj [Category.{v} C] [MonoidalCategory C]
+@[expose, reducible] def matTensorObj [Category.{v} C] [MonoidalCategory C]
     (M N : Mat_ C) : Mat_ C :=
   ⟨M.ι × N.ι, fun p => M.X p.1 ⊗ N.X p.2⟩
 

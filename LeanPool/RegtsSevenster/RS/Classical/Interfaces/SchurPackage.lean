@@ -120,7 +120,7 @@ structure SchurPackage where
 namespace SchurPackage
 
 /-- The central idempotent of shape `μ`. -/
-noncomputable def e (P : SchurPackage) (μ : YoungDiagram) :
+@[expose] noncomputable def e (P : SchurPackage) (μ : YoungDiagram) :
     SymGroupAlgebra μ.card :=
   charIdempotent (P.dim μ) (P.char μ)
 
