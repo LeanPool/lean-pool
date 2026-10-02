@@ -233,6 +233,7 @@ public import LeanPool.ScottishBook155.Imports
 public import LeanPool.SelbergSieve4.Imports
 public import LeanPool.SemicircleCheck.Imports
 public import LeanPool.SemicircleLaw.Imports
+public import LeanPool.Sendov.Imports
 public import LeanPool.Sensitivity.Imports
 public import LeanPool.SetTheory.Imports
 public import LeanPool.SeveralComplexVariables.Imports
