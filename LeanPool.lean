@@ -191,6 +191,7 @@ public import LeanPool.PCFTheory.Imports
 public import LeanPool.PDL.Imports
 public import LeanPool.PFR.Imports
 public import LeanPool.PLAcceleratedNesterovLean.Imports
+public import LeanPool.PaperIVCliqueTree.Imports
 public import LeanPool.ParallelPostulate.Imports
 public import LeanPool.ParameterFreeGradient.Imports
 public import LeanPool.PartialCombinatoryAlgebras.Imports
