@@ -37,6 +37,7 @@ variable {n p : ℕ}
 
 /-- Cut connectedness for an ordered loopless core.  Edge slots, rather than
 endpoint pairs, are quantified so parallel edges are retained exactly. -/
+@[expose]
 def Connected (core : ExplicitPotential.Core n p) : Prop :=
   ∀ S : Finset (Fin n),
     (∃ v w : Fin n, v ∈ S ∧ w ∉ S) →

@@ -26,12 +26,14 @@ namespace Bananas
 open Utilities
 
 /-- The preferred row with compressed coordinate `x`. -/
+@[expose]
 def crossOneOffColumnPosition (n x : ℕ) : ℕ :=
   x + x / (n - 1)
 
 /-- A row strictly before the preferred row over `x`, chosen so that it is
 never a multiple of `n`.  At a multiple of `n-1` it is the exceptional
 `-1`-residue row; otherwise it is the preferred row itself. -/
+@[expose]
 def crossOneOffPredecessorPosition (n x : ℕ) : ℕ :=
   if x % (n - 1) = 0 then crossOneOffColumnPosition n x - 1
   else crossOneOffColumnPosition n x

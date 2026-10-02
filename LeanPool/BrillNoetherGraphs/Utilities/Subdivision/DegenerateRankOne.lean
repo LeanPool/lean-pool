@@ -255,6 +255,7 @@ theorem classEndpointContribution_eq_of_rep_id (certificate : CertificateData m 
 /-! ## Rep-invariance of the anchor potential -/
 
 /-- Two core vertices joined by one collapsed slot. -/
+@[expose]
 def ZeroLink (certificate : CertificateData m n p) (point : Fin m → ℤ)
     (u v : Fin n) : Prop :=
   ∃ e : Fin p, certificate.segmentNat point e = 0 ∧
@@ -263,6 +264,7 @@ def ZeroLink (certificate : CertificateData m n p) (point : Fin m → ℤ)
 
 /-- Joined by a chain of collapsed slots.  This is the relation a contraction
 census decides; `rep` is meant to be its component map. -/
+@[expose]
 def ZeroReach (certificate : CertificateData m n p) (point : Fin m → ℤ) :
     Fin n → Fin n → Prop :=
   Relation.ReflTransGen (certificate.ZeroLink point)

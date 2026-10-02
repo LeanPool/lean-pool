@@ -179,6 +179,7 @@ theorem fineOf_pathVertex (edge : Fin p) (position : spec.PathPosition edge) :
 
 /-- Push a coarse divisor forward along `fineOf`: the chips stay on the images
 of the coarse vertices and every other fine vertex carries none. -/
+@[expose]
 def embed (D : CFDiv spec.graph) : CFDiv (spec.scale N hN).graph :=
   fun y => ∑ x : spec.Vertex, if spec.fineOf N hN x = y then D x else 0
 
@@ -275,6 +276,7 @@ def finePosition (c : spec.Chip N) : (spec.scale N hN).PathPosition c.edge :=
     omega⟩
 
 /-- The fine vertex carrying the chip. -/
+@[expose]
 def fineVertex (c : spec.Chip N) : (spec.scale N hN).Vertex :=
   (spec.scale N hN).pathVertex c.edge (c.finePosition hN)
 
@@ -288,6 +290,7 @@ def coarseVertex (c : spec.Chip N) : spec.Vertex :=
   else spec.stepLeft c.edge ⟨c.step, c.step_lt⟩
 
 /-- The fine distance from the chip to the coarse vertex it is rounded to. -/
+@[expose]
 def distance (c : spec.Chip N) : ℕ :=
   if c.toRight then N - c.offset else c.offset
 
@@ -344,11 +347,13 @@ theorem fineVertex_not_mem_range (c : spec.Chip N) :
 end Chip
 
 /-- The fine divisor of a family of chips. -/
+@[expose]
 def fineChips {ι : Type*} [Fintype ι] (chips : ι → spec.Chip N) :
     CFDiv (spec.scale N hN).graph :=
   ∑ i, oneChip ((chips i).fineVertex hN)
 
 /-- The rounded coarse divisor of a family of chips. -/
+@[expose]
 def coarseChips {ι : Type*} [Fintype ι] (chips : ι → spec.Chip N) : CFDiv spec.graph :=
   ∑ i, oneChip (chips i).coarseVertex
 
@@ -403,19 +408,23 @@ theorem isStepSlope_roundedSlope (κ : Fin N)
 /-! ## The step inequality -/
 
 /-- The chips of a family lying in a given coarse step. -/
+@[expose]
 def stepChips {ι : Type*} [Fintype ι] (chips : ι → spec.Chip N) (step : spec.Step) :
     Finset ι :=
   Finset.univ.filter fun i => (chips i).coarseStep = step
 
 /-- The number of chips of a step rounded to its left end. -/
+@[expose]
 def leftCount {ι : Type*} [Fintype ι] (chips : ι → spec.Chip N) (step : spec.Step) : ℤ :=
   ((spec.stepChips N chips step).filter fun i => (chips i).toRight = false).card
 
 /-- The number of chips of a step rounded to its right end. -/
+@[expose]
 def rightCount {ι : Type*} [Fintype ι] (chips : ι → spec.Chip N) (step : spec.Step) : ℤ :=
   ((spec.stepChips N chips step).filter fun i => (chips i).toRight = true).card
 
 /-- The total signed rounding cost of the chips of a step. -/
+@[expose]
 def stepCost {ι : Type*} [Fintype ι] (chips : ι → spec.Chip N) (step : spec.Step) : ℤ :=
   ∑ i ∈ spec.stepChips N chips step, (chips i).signedCost
 

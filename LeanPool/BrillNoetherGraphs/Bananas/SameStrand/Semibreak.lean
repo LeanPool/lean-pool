@@ -43,6 +43,7 @@ def semibreakDivisor {g : ℕ} (B : Banana g)
 
 /-- A divisor represented by at most one selected interior chip per strand and none at the core
 vertices. -/
+@[expose]
 def IsSemibreak {g : ℕ} (B : Banana g) (E : CFDiv B.graph) : Prop :=
   ∃ chips : ∀ γ : Fin (g + 1), Option (Fin (B.length γ - 1)),
     E = semibreakDivisor B chips
@@ -856,6 +857,7 @@ theorem rank_semibreak_eq_zero {g : ℕ} (B : Banana g)
 
 /-- The divisor `a·L + b·R + E` occurring in the banana reduced-divisor
 normal form. -/
+@[expose]
 noncomputable def bananaNormalForm {g : ℕ} (B : Banana g) (a b : ℤ)
     (E : CFDiv B.graph) : CFDiv B.graph :=
   a • oneChip (leftEndpoint B) + b • oneChip (rightEndpoint B) + E

@@ -31,11 +31,13 @@ open Utilities
 
 /-- The largest natural number in the interval
 `b ≤ (n / (n - 1)) g`, for `1 < n`. -/
+@[expose]
 def crossOneOffCutoff (g n : ℕ) : ℕ := g + g / (n - 1)
 
 /-- A precise, uniform version of the paper's phrase "the first marked strand
 is sufficiently long relative to the genus".  The minimal integral threshold
 needed for the corrected block is `g + 1 + g / (n₁ - 1) ≤ n₀`. -/
+@[expose]
 def CrossOneOffLongEnough (g n₀ n₁ : ℕ) : Prop :=
   g + 1 + g / (n₁ - 1) ≤ n₀
 

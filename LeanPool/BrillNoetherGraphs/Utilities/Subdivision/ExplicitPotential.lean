@@ -147,6 +147,7 @@ end AffineForm
 namespace CertificateData
 
 /-- The potential rise from the tail to the head of one expanded edge. -/
+@[expose]
 def rise (certificate : CertificateData m n p) (anchor : Fin n)
     (edge : Fin p) : AffineForm m :=
   AffineForm.sub
@@ -170,11 +171,13 @@ def upperForm (certificate : CertificateData m n p) (anchor : Fin n)
     (certificate.rise anchor edge)
 
 /-- The target coefficient at a core vertex after removing the anchor chip. -/
+@[expose]
 def targetCoefficient (certificate : CertificateData m n p)
     (anchor vertex : Fin n) : ℤ :=
   certificate.divisor vertex - if vertex = anchor then 1 else 0
 
 /-- The conservative endpoint contribution checked before seeing any lengths. -/
+@[expose]
 def lowerEndpointContribution (certificate : CertificateData m n p)
     (anchor vertex : Fin n) : ℤ :=
   ∑ edge : Fin p,
@@ -283,6 +286,7 @@ theorem segmentNat_positive
   exact_mod_cast hPositive
 
 /-- Numerical core-potential rise at one integral length point. -/
+@[expose]
 def riseValue (certificate : CertificateData m n p) (anchor : Fin n)
     (point : Fin m → ℤ) (edge : Fin p) : ℤ :=
   (certificate.rise anchor edge).eval point
@@ -334,6 +338,7 @@ theorem interpolated_endpoint_bounds
   · simpa only [hCast] using hBounds.2
 
 /-- Actual interpolated endpoint contribution at a core vertex. -/
+@[expose]
 def endpointContribution (certificate : CertificateData m n p)
     (anchor : Fin n) (point : Fin m → ℤ) (vertex : Fin n) : ℤ :=
   ∑ edge : Fin p,

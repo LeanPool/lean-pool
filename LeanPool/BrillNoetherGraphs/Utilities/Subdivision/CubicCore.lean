@@ -23,6 +23,7 @@ namespace Utilities.Certificate.ExplicitPotential.Core
 open Finset
 
 /-- Incidence degree, counting every ordered slot endpoint. -/
+@[expose]
 def incidenceDegree {n p : ℕ} (core : ExplicitPotential.Core n p)
     (vertex : Fin n) : ℕ :=
   ∑ edge : Fin p,

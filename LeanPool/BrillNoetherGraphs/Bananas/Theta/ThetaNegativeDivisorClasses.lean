@@ -185,6 +185,7 @@ theorem rankDelta_path_pair_neg_of_mem_thetaExceptionalPositions
 
 /-- The advertised class-valued map of Theorem 3.4, restricted to its
 interior same-strand branch and written in raw path coordinates. -/
+@[expose]
 def thetaPairDivisorClass
     (B : Banana 2) (alpha : Fin 3) (i k : B.PathPosition alpha) :
     DivisorClass B.graph :=

@@ -27,6 +27,7 @@ open Utilities
 
 /-- The coordinate alternatives for k-general theta markings: nonrecurrent interior marks on
 distinct strands, or an allowed boundary pair on one strand. -/
+@[expose]
 def ThetaKGeneralCoordinates
     {k : ℕ} (B : Banana 2) (alpha beta : Fin 3)
     (i : B.PathPosition alpha) (j : B.PathPosition beta) : Prop :=

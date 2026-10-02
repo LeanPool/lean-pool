@@ -293,6 +293,7 @@ def seamTwist (C : CFDiv H) (x y : H.V) (m : ℤ) : CFDiv H :=
   C + m • seamDivisor x y
 
 /-- The displacement `t(f) = f x - f y` of a firing script. -/
+@[expose]
 def displacement (x y : H.V) (f : firingScript H) : ℤ := f x - f y
 
 /-- `t` is a displacement of the `m`-twist: some script puts the `m`-twist into

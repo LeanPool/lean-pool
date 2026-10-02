@@ -474,6 +474,7 @@ variable {n p : ℕ} {core : ExplicitPotential.Core n p}
 
 /-- Exact finite conditions which make the named factor a pointed rigid
 genus-one graph. -/
+@[expose]
 def LeftRigidConditions (c : CoreVertexCut.Data core) : Prop :=
   c.Valid ∧ core.Connected ∧ c.LeftTwoRegular ∧ c.leftGenus = 1
 

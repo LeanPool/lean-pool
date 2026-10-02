@@ -60,6 +60,7 @@ def chipAt (w : RichWitness) (a e i : ℕ) : ℤ :=
   simp [chipAt]
 
 /-- Chip coefficients at named points `1, …, s`, inclusive. -/
+@[expose]
 def chipPrefix (w : RichWitness) (a e s : ℕ) : ℤ :=
   (List.range (s + 1)).foldl (fun z i => z + w.chipAt a e i) 0
 
@@ -188,6 +189,7 @@ at the plan's own vertex.
 instead that `D − m·1_x` is winnable.  The two run through identical
 machinery; this coefficient is the only difference, exactly as in
 `rpfcheck.c`'s W5. -/
+@[expose]
 def w5MultResidual (w : RichWitness) (core : ExplicitPotential.Core n p)
     (mult : ℤ) (a v : ℕ) : ℤ :=
   w.divisorCore.getD v 0 - (if v == a then mult else 0) +

@@ -83,6 +83,7 @@ theorem nonempty_of_mem {B : Finset V} (hB : B ∈ 𝔅.members) : B.Nonempty :=
   exact Finset.coe_nonempty.mp h
 
 /-- A **hitting set** of a bramble meets every member. -/
+@[expose]
 def IsHittingSet (S : Finset V) : Prop :=
   ∀ B ∈ 𝔅.members, (B ∩ S).Nonempty
 

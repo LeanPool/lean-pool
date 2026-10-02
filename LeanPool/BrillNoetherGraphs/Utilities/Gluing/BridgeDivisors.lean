@@ -27,12 +27,14 @@ open Utilities
 universe u v
 
 /-- Extend a divisor on the left factor by zero on the right factor. -/
+@[expose]
 def liftLeftDivisor (G : CFGraph.{u}) (H : CFGraph.{v})
     (x : G.V) (y : H.V) (D : CFDiv G) :
     CFDiv (bridgeGraph G H x y) :=
   Sum.elim D (fun _ => 0)
 
 /-- Extend a divisor on the right factor by zero on the left factor. -/
+@[expose]
 def liftRightDivisor (G : CFGraph.{u}) (H : CFGraph.{v})
     (x : G.V) (y : H.V) (D : CFDiv H) :
     CFDiv (bridgeGraph G H x y) :=

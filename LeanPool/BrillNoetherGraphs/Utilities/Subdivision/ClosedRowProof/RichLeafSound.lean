@@ -479,6 +479,7 @@ theorem w4Residual_eq_chipSum (w : RichWitness) (a e i j : ℕ) :
 
 /-- The actual coefficient at a collapsed named-endpoint run: chips on the
 run plus outgoing slope minus incoming slope. -/
+@[expose]
 def w4Actual (chip : ℕ → ℤ) (incoming outgoing : ℤ) (i j : ℕ) : ℤ :=
   w4ChipSum chip i j + outgoing - incoming
 

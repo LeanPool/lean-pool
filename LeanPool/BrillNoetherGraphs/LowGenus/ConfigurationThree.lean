@@ -484,6 +484,7 @@ theorem not_incident_of_ne {center : Fin n} (hCenter : cfg.isCenter center = tru
 /-! ### The displayed divisor -/
 
 /-- The indicator of "the chip at `v` sits in the contracted class of `r`". -/
+@[expose]
 def chipInd (r v : Fin n) : ℤ := if d.rep v = d.rep r then 1 else 0
 
 theorem chipInd_nonneg (r v : Fin n) : 0 ≤ chipInd d r v := by

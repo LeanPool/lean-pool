@@ -29,6 +29,7 @@ namespace Utilities
 
 /-- The rank inequality attached to one lattice point `(a,b)` for a divisor
 representative and an ASP permutation. -/
+@[expose]
 def TransmissionInequality
     (G : CFGraph) (u v : G.V) (τ : AspPerm) (D : CFDiv G)
     (a b : ℤ) : Prop :=

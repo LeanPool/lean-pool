@@ -51,19 +51,23 @@ namespace Pseudocore
 variable {n : ℕ} (core : Pseudocore n)
 
 /-- Total number of semantic loop occurrences. -/
+@[expose]
 def loopCount : ℕ :=
   ∑ vertex : Fin n, core.loops vertex
 
 /-- Number of nonloop edge occurrences, counted in the strict upper triangle. -/
+@[expose]
 def nonloopEdgeCount : ℕ :=
   ∑ first : Fin n, ∑ second : Fin n,
     if first < second then core.multiplicity first second else 0
 
 /-- Total number of topological edge occurrences. -/
+@[expose]
 def edgeCount : ℕ :=
   core.loopCount + core.nonloopEdgeCount
 
 /-- Loop-aware valence: a loop contributes two and a nonloop occurrence one. -/
+@[expose]
 def valence (vertex : Fin n) : ℕ :=
   2 * core.loops vertex +
     ∑ neighbor : Fin n, core.multiplicity vertex neighbor
@@ -224,6 +228,7 @@ def markerVertex (marker : Fin core.loopCount) :
   Fin.natAdd n marker
 
 /-- Unordered edge multiplicity of an ordered-slot explicit-potential core. -/
+@[expose]
 def explicitCoreMultiplicity {vertexCount edgeCount : ℕ}
     (splitCore : ExplicitPotential.Core vertexCount edgeCount)
     (first second : Fin vertexCount) : ℕ :=
@@ -252,6 +257,7 @@ def markerMultiplicity (vertex : Fin n) : ℕ :=
     data.markerBase marker = vertex).card
 
 /-- Expected split multiplicity between two displayed split vertices. -/
+@[expose]
 def expectedMultiplicity
     (first second : Fin (n + core.loopCount)) : ℕ :=
   match (@finSumFinEquiv n core.loopCount).symm first,

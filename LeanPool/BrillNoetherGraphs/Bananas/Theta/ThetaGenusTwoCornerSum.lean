@@ -26,10 +26,12 @@ open Utilities
 
 /-- Rank plus one, the nonnegative multiplicity used throughout the paper's
 inclusion--exclusion formula. -/
+@[expose]
 noncomputable def rankPlusOne (G : CFGraph) (X : CFDiv G) : ℤ :=
   rank G X + 1
 
 /-- A fixed-degree twist with graph and marks as separate arguments. -/
+@[expose]
 def fixedDegreeTwist
     (G : CFGraph) (u v : G.V) (D : CFDiv G) (d b : ℤ) : CFDiv G :=
   D + (d - CFDiv.degree D + b) • oneChip u - b • oneChip v
@@ -88,6 +90,7 @@ theorem fixedDegreeTwist_one_eq_next_zero_add_v
 
 /-- The marked second difference with graph and marks kept as separate
 arguments, avoiding dependent coercions through the `TwiceMarked` bundle. -/
+@[expose]
 noncomputable def markedRankDelta
     (G : CFGraph) (u v : G.V) (X : CFDiv G) : ℤ :=
   rank G X - rank G (X - oneChip u) - rank G (X - oneChip v) +
@@ -669,6 +672,7 @@ noncomputable def genusTwoCornerWeight
 
 /-- The three degree slices which survive the genus-two specialization of
 the paper's general inclusion--exclusion formula. -/
+@[expose]
 noncomputable def threeDegreeTwistContribution
     (G : CFGraph) (u v : G.V) (D : CFDiv G) (b : ℤ) : ℤ :=
   markedRankDelta G u v (fixedDegreeTwist G u v D 0 b) *

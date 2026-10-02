@@ -46,6 +46,7 @@ def bananaOfLengths (g : ℕ) (length : Fin (g + 1) → ℕ)
 /-- The vertex at position `i` along strand `α`, measured from core vertex
 `0`.  `SubdivisionGraph.Spec` allows an individual slot to be stored in either
 orientation, so this deliberately reverses its coordinate when necessary. -/
+@[expose]
 def strandVertex {g : ℕ} (B : Banana g) (α : Fin (g + 1))
     (i : B.PathPosition α) : B.graph.V :=
   B.pathVertex α
@@ -55,6 +56,7 @@ def strandVertex {g : ℕ} (B : Banana g) (α : Fin (g + 1))
         omega⟩)
 
 /-- Reflection of a normalized strand coordinate about its midpoint. -/
+@[expose]
 def strandMirror {g : ℕ} (B : Banana g) (α : Fin (g + 1))
     (i : B.PathPosition α) : B.PathPosition α :=
   ⟨B.length α - i.val, by
@@ -62,8 +64,10 @@ def strandMirror {g : ℕ} (B : Banana g) (α : Fin (g + 1))
     omega⟩
 
 /-- The two multivalent vertices of a banana. -/
+@[expose]
 def leftEndpoint {g : ℕ} (B : Banana g) : B.graph.V := B.coreVertex 0
 /-- The right multivalent endpoint of the banana graph. -/
+@[expose]
 def rightEndpoint {g : ℕ} (B : Banana g) : B.graph.V := B.coreVertex 1
 
 /-- A graph with an ordered pair of marked vertices. -/
@@ -81,22 +85,26 @@ abbrev mark (G : CFGraph) (u v : G.V) : TwiceMarked := ⟨G, u, v⟩
 /-- Paper source: `def-Delt` (Definition 2.8), the function `Δ(D)`.
 
 The paper's second rank difference, relative to the two marks. -/
+@[expose]
 noncomputable def rankDelta (M : TwiceMarked) (D : CFDiv M.graph) : ℤ :=
   rank M.graph D - rank M.graph (D - oneChip M.u) -
     rank M.graph (D - oneChip M.v) +
       rank M.graph (D - oneChip M.u - oneChip M.v)
 
 /-- Paper source: `def-Twist` (Definition 2.7). -/
+@[expose]
 def twist (M : TwiceMarked) (D : CFDiv M.graph) (a b : ℤ) : CFDiv M.graph :=
   D + a • oneChip M.u + b • oneChip M.v
 
 /-- Paper source: `def-submod` (Definition 2.9).
 
 Submodularity of a divisor, including all of its marked twists. -/
+@[expose]
 def Submodular (M : TwiceMarked) (D : CFDiv M.graph) : Prop :=
   ∀ a b : ℤ, 0 ≤ rankDelta M (twist M D a b)
 
 /-- Every divisor is submodular for this marked graph. -/
+@[expose]
 def AllSubmodular (M : TwiceMarked) : Prop :=
   ∀ D : CFDiv M.graph, Submodular M D
 
@@ -122,6 +130,7 @@ instead of using a separate affine-permutation structure.  Note that the
 main library models the same notion by `AspPerm` together with
 `Utilities.SatisfiesTransmission`; the two presentations are not yet
 connected by any lemma. -/
+@[expose]
 def IsTransmissionPermutation (M : TwiceMarked) (D : CFDiv M.graph)
     (τ : ℤ → ℤ) : Prop :=
   Function.Bijective τ ∧ ∀ a b : ℤ,
@@ -139,10 +148,12 @@ The paper's `k`-inversions are `k`-equivalence classes of inversions, where
 `(a,b) ∼ (a',b')` iff `a - a' = b - b'` and `a ≡ a' (mod k)`.  Each class has
 a unique representative with `0 ≤ a < k`, and this set of representatives is
 what is recorded here. -/
+@[expose]
 def kInversions (k : ℕ) (τ : ℤ → ℤ) : Set (ℤ × ℤ) :=
   { p | p.1 < p.2 ∧ τ p.1 > τ p.2 ∧ 0 ≤ p.1 ∧ p.1 < k }
 
 /-- Paper source: `def-inv` (Definition 2.13), the number `inv_k(τ)`. -/
+@[expose]
 noncomputable def kInversionCount (k : ℕ) (τ : ℤ → ℤ) : ℕ :=
   (kInversions k τ).ncard
 
@@ -155,6 +166,7 @@ the count bound would be satisfied vacuously by a permutation with
 infinitely many `k`-inversions.  (Finiteness is in fact automatic here — see
 `kInversions_finite_of_isKAffine` — but only because of the other
 conjuncts.) -/
+@[expose]
 def KGeneralTransmission (M : TwiceMarked) (k : ℕ) : Prop :=
   TorsionWitness M k ∧ AllSubmodular M ∧
     ∀ D : CFDiv M.graph, ∃ τ : ℤ → ℤ,
@@ -171,6 +183,7 @@ the paper records as open outside small genus.  Building it into the
 definition would silently strengthen every hypothesis `BrillNoetherGeneral G`
 and, more importantly, weaken every conclusion of the form
 `¬ BrillNoetherGeneral G`. -/
+@[expose]
 def BrillNoetherGeneral (G : CFGraph) : Prop :=
   ∀ r d : ℤ, 0 ≤ r → BNExists G r d → 0 ≤ bnNumber G r d
 

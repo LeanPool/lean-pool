@@ -77,6 +77,7 @@ theorem repInvariant_of_pos (hpos : ∀ e : Fin p, 0 < d.length e)
 
 /-- Rise of a core potential along an oriented edge slot.  Verbatim the `Spec`
 definition; no `rep` appears. -/
+@[expose]
 def coreRise (potential : Fin n → ℤ) (e : Fin p) : ℤ :=
   potential (d.core.head e) - potential (d.core.tail e)
 

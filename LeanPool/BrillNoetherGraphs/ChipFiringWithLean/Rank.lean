@@ -43,6 +43,7 @@ lemma winnable_equiv_winnable (G : CFGraph) (D1 D2 : CFDiv G) :
 
 /-- A divisor is maximal unwinnable if it is unwinnable but adding a chip to any vertex
 makes it winnable. -/
+@[expose]
 def maximalUnwinnable (G : CFGraph) (D : CFDiv G) : Prop :=
   ¬winnable G D ∧ ∀ v : G.V, winnable G (D + oneChip v)
 

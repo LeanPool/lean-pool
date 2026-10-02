@@ -457,6 +457,7 @@ def breakSlopeFrom (initial : ℤ) : List (ℕ × ℤ) → ℕ → ℤ
 
 /-- The slope named by a break list at unit step `k`: the value of the last
 entry whose start is at most `k`, and `0` before every entry. -/
+@[expose]
 def breakSlope (breaks : List (ℕ × ℤ)) (k : ℕ) : ℤ := breakSlopeFrom 0 breaks k
 
 @[simp] theorem breakSlopeFrom_nil (initial : ℤ) (k : ℕ) :

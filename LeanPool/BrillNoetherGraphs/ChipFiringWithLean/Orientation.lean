@@ -875,6 +875,7 @@ See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 5.7.
 
 It is independent of orientation and equals
 $D(\mathcal{O}) + D(\overline{\mathcal{O}})$. -/
+@[expose]
 def canonicalDivisor (G : CFGraph) : CFDiv G :=
   fun v => (vertexDegree G v) - 2
 

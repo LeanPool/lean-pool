@@ -53,11 +53,13 @@ theorem IsKAffine.rawInverse {k : ℕ} {tau : ℤ → ℤ}
     apply_rawInverse_apply tau hBij]
 
 /-- Reflection in both the domain and range. -/
+@[expose]
 def rawAffineReflection (tau : ℤ → ℤ) : ℤ → ℤ :=
   fun n => -tau (-n)
 
 /-- The reflected inverse is the raw transmission permutation after swapping
 the two marks. -/
+@[expose]
 noncomputable def swapTransmissionPermutation
     (tau : ℤ → ℤ) : ℤ → ℤ :=
   rawAffineReflection (rawInverse tau)

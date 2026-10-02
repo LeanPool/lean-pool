@@ -33,9 +33,11 @@ def invSet (τ : ℤ → ℤ) : Set (ℤ × ℤ) :=
   {(i,j) : ℤ × ℤ | i < j ∧ τ j < τ i}
 
 /-- The indices at least `n` whose images lie strictly below `m`. -/
+@[expose]
 def southeastSet (τ : ℤ → ℤ) (m n : ℤ) : Set ℤ := { k : ℤ | n ≤ k ∧ τ k < m }
 
 /-- The indices strictly below `n` whose images lie at least at `m`. -/
+@[expose]
 def northwestSet (τ : ℤ → ℤ) (m n : ℤ) : Set ℤ := { k : ℤ | k < n ∧ m ≤ τ k }
 
 /-- Conjugation of an integer-valued function by the reflection `k ↦ -1-k`. -/
@@ -1606,6 +1608,7 @@ $\operatorname{Inv}(\alpha) \cap \operatorname{Inv}(\beta^{-1})$ is empty.
 
 *Definition 2.7 (`defn:reducedProduct`) of
 [An extended Demazure product](https://arxiv.org/abs/2206.14227).* -/
+@[expose]
 def ReducedProduct (α β : AspPerm) : Prop :=
   Disjoint (invSet α) (invSet (β⁻¹).func)
 
@@ -1746,6 +1749,7 @@ lemma sr_subset (τ α : AspPerm) (h_R : α ≤R τ) : (τ.sr α) '' invSet α �
   exact ⟨u_lt_v, τu_gt_τv⟩
 
 /-- Every intermediate-index sum of the two slipfaces is at least `n`. -/
+@[expose]
 def dprodValGe (α β : AspPerm) (a b n : ℤ) : Prop :=
   ∀ l : ℤ, α.s a l + β.s l b ≥ n
 
@@ -1755,6 +1759,7 @@ def leDprod (τ α β : AspPerm) : Prop :=
   ∀ a b : ℤ, dprodValGe α β a b (τ.s a b)
 
 /-- Some intermediate-index sum of the two slipfaces is at most `n`. -/
+@[expose]
 def dprodValLe (α β : AspPerm) (a b n : ℤ) : Prop :=
   ∃ l : ℤ, α.s a l + β.s l b ≤ n
 

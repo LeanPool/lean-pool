@@ -49,6 +49,7 @@ def paperCoordinateLeftCoefficient {g : ℕ} (B : Banana g)
   ∑ alpha : Fin (g + 1), if (p alpha).val = 0 then 0 else -1
 
 /-- One right-endpoint chip for every terminal coordinate. -/
+@[expose]
 def paperCoordinateRightCoefficient {g : ℕ} (B : Banana g)
     (p : ∀ alpha : Fin (g + 1), B.PathPosition alpha) : ℤ :=
   ∑ alpha : Fin (g + 1),

@@ -97,6 +97,7 @@ variable {U : Finset V}
 
 /-- The **width** of a partial decomposition, defined exactly as for
 `TreeDecomposition`. -/
+@[expose]
 def width (D : PartialDecomposition H U) : ℕ :=
   (Finset.univ.sup fun t : D.Node => (D.bag t).card) - 1
 

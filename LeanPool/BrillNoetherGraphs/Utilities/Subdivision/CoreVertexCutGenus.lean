@@ -60,6 +60,7 @@ def rightSlots (c : CoreVertexCut.Data core) : Finset (Fin p) :=
   Finset.univ.filter c.RightSlot
 
 /-- Executable number of ordered core slots in the named side. -/
+@[expose]
 def leftSlotCount (c : CoreVertexCut.Data core) : ℕ :=
   c.leftSlots.card
 
@@ -68,6 +69,7 @@ def rightSlotCount (c : CoreVertexCut.Data core) : ℕ :=
   c.rightSlots.card
 
 /-- Cyclomatic genus predicted from the named core side. -/
+@[expose]
 def leftGenus (c : CoreVertexCut.Data core) : ℤ :=
   (c.leftSlotCount : ℤ) - (c.left.card : ℤ) + 1
 

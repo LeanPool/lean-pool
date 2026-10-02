@@ -64,6 +64,7 @@ def KGeneralChainFactor.swapMarks (F : KGeneralChainFactor) :
 /-! ## Genus budgets from the right -/
 
 /-- The sum of the genera of a list of chain factors. -/
+@[expose]
 def chainFactorGenus (L : List KGeneralChainFactor) : ℤ :=
   (L.map fun F => CFGraph.genus F.marked.graph).sum
 
@@ -147,6 +148,7 @@ theorem chainSuffixBudget_iff_indexed (L : List KGeneralChainFactor) :
           simpa using h (i + 1) (by simp; omega)
 
 /-- The literal minimum hypothesis in Corollary 6.16(2), indexed from zero. -/
+@[expose]
 def ChainMinBudget (L : List KGeneralChainFactor) : Prop :=
   ∀ (i : ℕ) (hi : i < L.length),
     min (chainFactorGenus (L.take (i + 1)))
@@ -158,6 +160,7 @@ def ChainMinBudget (L : List KGeneralChainFactor) : Prop :=
 Before the cut, each prefix is no larger than the corresponding suffix;
 after the cut, each suffix is no larger than the corresponding prefix.  The
 maximal index used in the paper's proof has exactly this property. -/
+@[expose]
 def ChainDominatesAtSplit
   (left right : List KGeneralChainFactor) : Prop :=
   (∀ (i : ℕ) (_hi : i < left.length),

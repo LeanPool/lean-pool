@@ -36,6 +36,7 @@ variable {H : CFGraph.{uTwoEdgeRigidity}}
 
 /-- Total edge multiplicity crossing from `S` to its complement, counted at
 the endpoint in `S`. -/
+@[expose]
 def cutMultiplicity (H : CFGraph) (S : Finset H.V) : ℤ :=
   ∑ v ∈ S, outdegreeSet H S v
 

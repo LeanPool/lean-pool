@@ -854,6 +854,7 @@ def restrictRightWedgeScript (G : CFGraph.{u}) (H : CFGraph.{v})
       rw [wedgeRightVertex_unmarked G H x y b.1 b.2]
 
 /-- Add a prescribed integral number of chips at a vertex. -/
+@[expose]
 def chipShift (G : CFGraph.{u}) (D : CFDiv G) (v : G.V) (t : ℤ) : CFDiv G :=
   D + t • oneChip v
 

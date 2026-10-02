@@ -56,6 +56,7 @@ attribute [instance] CFGraph.instDecidableEq CFGraph.instFintype CFGraph.instNon
 
 When working with chip-firing graphs in this repository, prefer this function to the
 underlying multiset of edges. -/
+@[expose]
 def numEdges (G : CFGraph) (v w : G.V) : ℕ :=
   Multiset.card (G.edges.filter (fun e => e = (v, w) ∨ e = (w, v)))
 
@@ -69,6 +70,7 @@ def graphConnected (G : CFGraph) : Prop :=
     (∃ v ∈ S, ∃ w ∉ S, numEdges G v w > 0)
 
 /-- The genus of a graph is its cyclomatic number, $|E| - |V| + 1$. -/
+@[expose]
 def CFGraph.genus (G : CFGraph) : ℤ :=
   Multiset.card G.edges - Fintype.card G.V + 1
 
@@ -89,6 +91,7 @@ lemma num_edges_symmetric (G : CFGraph) (v w : G.V) :
   exact G.loopless v h_inE
 
 /-- The degree, or valence, of a vertex as an integer. -/
+@[expose]
 def vertexDegree (G : CFGraph) (v : G.V) : ℤ :=
   ∑ u : G.V, (numEdges G v u : ℤ)
 
@@ -116,6 +119,7 @@ See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 1.3. -/
 abbrev CFDiv (G : CFGraph) := G.V → ℤ
 
 /-- The divisor with one chip at a specified vertex $v_{\mathrm{chip}}$ and zero chips elsewhere. -/
+@[expose]
 def oneChip {G : CFGraph} (v_chip : G.V) : CFDiv G :=
   fun v => if v = v_chip then 1 else 0
 
@@ -147,6 +151,7 @@ def borrowingMove (G : CFGraph) (D : CFDiv G) (v : G.V) : CFDiv G :=
   fun w => if w = v then D v + vertexDegree G v else D w - numEdges G v w
 
 /-- The out-degree of `v` relative to `S`, counted with edge multiplicity. -/
+@[expose]
 def outdegreeSet (G : CFGraph) (S : Finset G.V) (v : G.V) : ℤ :=
   ∑ w ∈ (univ \ S), (numEdges G v w : ℤ)
 
@@ -219,6 +224,7 @@ def principalDivisors (G : CFGraph) : AddSubgroup (CFDiv G) :=
 /-- Two divisors are *linearly equivalent* if their difference is a principal divisor.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 1.8. -/
+@[expose]
 def linearEquiv (G : CFGraph) (D D' : CFDiv G) : Prop :=
   D' - D ∈ principalDivisors G
 
@@ -258,6 +264,7 @@ See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 2.2. -/
 abbrev firingScript (G : CFGraph) := G.V → ℤ
 
 /-- The firing script that fires exactly the vertices in `S`, once each. -/
+@[expose]
 def indicatorScript (G : CFGraph) (S : Finset G.V) : firingScript G :=
   fun v => if v ∈ S then 1 else 0
 
@@ -426,6 +433,7 @@ Equivalently, the players can collectively win the dollar game starting from pos
 Equivalently, it is at least $0$.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 1.13. -/
+@[expose]
 def effective {G : CFGraph} (D : CFDiv G) : Prop :=
   ∀ v : G.V, D v ≥ 0
 
@@ -454,6 +462,7 @@ lemma sub_eff_iff_geq {G : CFGraph} (D₁ D₂ : CFDiv G) : effective (D₁ - D�
 /-- A divisor is winnable if it is linearly equivalent to an effective divisor.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 1.14. -/
+@[expose]
 def winnable (G : CFGraph) (D : CFDiv G) : Prop :=
   ∃ D' ∈ Eff G, linearEquiv G D D'
 
@@ -473,6 +482,7 @@ Applying the Laplacian to a firing script produces the corresponding principal d
 /-- The degree of a divisor is the sum of its values over all vertices.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 1.4. -/
+@[expose]
 def CFDiv.degree {G : CFGraph} : CFDiv G →+ ℤ := {
   toFun := fun D => ∑ v, D v,
   map_zero' := by
@@ -674,6 +684,7 @@ debt concentrated on $S$ via firing moves.
 
 /-- A divisor is *$q$-effective* if it has a nonnegative number of chips at every vertex
 except possibly $q$. -/
+@[expose]
 def qEffective {G : CFGraph} (q : G.V) (D : CFDiv G) : Prop :=
   ∀ v : G.V, v ≠ q → D v ≥ 0
 
@@ -1292,6 +1303,7 @@ theorem q_reduced_unique (G : CFGraph) (q : G.V) (D₁ D₂ : CFDiv G) :
 
 /-- A vertex is *active* if there exists a firing script that leaves the divisor effective
 away from $q$, fires $q$ minimally, and fires this vertex strictly more than $q$. -/
+@[expose]
 def active (G : CFGraph) (q : G.V) (D : CFDiv G) (v : G.V) : Prop :=
   ∃ σ : firingScript G, qReducer G q σ ∧ qEffective q (D + prin G σ) ∧ σ q < σ v
 

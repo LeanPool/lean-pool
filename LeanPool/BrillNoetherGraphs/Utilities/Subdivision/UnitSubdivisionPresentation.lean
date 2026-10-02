@@ -50,10 +50,12 @@ noncomputable def edgeEquiv : G.edges ≃ Fin G.edges.card := by
   simpa using Fintype.equivFin G.edges
 
 /-- The actual multiset occurrence occupying an ordered edge slot. -/
+@[expose]
 noncomputable def edgeOccurrence (slot : Fin G.edges.card) : G.edges :=
   (edgeEquiv G).symm slot
 
 /-- The endpoint pair underlying an ordered edge slot. -/
+@[expose]
 noncomputable def edgeAt (slot : Fin G.edges.card) : G.V × G.V :=
   (edgeOccurrence G slot : G.V × G.V)
 

@@ -117,6 +117,7 @@ abbrev Vertex := d.Class ⊕ d.Interior
 abbrev Step := Σ e : Fin p, Fin (d.length e)
 
 /-- The class of a core vertex, as a vertex of the degenerate subdivision. -/
+@[expose]
 def coreVertex (v : Fin n) : d.Vertex := Sum.inl ⟨d.rep v, d.rep_idem v⟩
 
 /-- The interior vertex at zero-based offset `o` on a slot, corresponding to path position `o +
@@ -132,11 +133,13 @@ theorem coreVertex_eq_iff (u v : Fin n) :
   · intro h; rw [Sum.inl.injEq]; exact Subtype.ext h
 
 /-- The left vertex of a unit step, using the tail core class at the initial step. -/
+@[expose]
 def stepLeft (e : Fin p) (o : Fin (d.length e)) : d.Vertex :=
   if hzero : o.val = 0 then d.coreVertex (d.core.tail e)
   else d.interiorVertex e ⟨o.val - 1, by have := o.isLt; omega⟩
 
 /-- The right vertex of a unit step, using the head core class at the final step. -/
+@[expose]
 def stepRight (e : Fin p) (o : Fin (d.length e)) : d.Vertex :=
   if hlast : o.val + 1 = d.length e then d.coreVertex (d.core.head e)
   else d.interiorVertex e ⟨o.val, by have := o.isLt; omega⟩
@@ -193,6 +196,7 @@ abbrev PathPosition (e : Fin p) := Fin (d.length e + 1)
 
 /-- Decode a slot position as its tail, interior, or head vertex; a zero-length slot has a
 single contracted endpoint. -/
+@[expose]
 def pathVertex (e : Fin p) (k : d.PathPosition e) : d.Vertex :=
   if hzero : k.val = 0 then d.coreVertex (d.core.tail e)
   else if hlast : k.val = d.length e then d.coreVertex (d.core.head e)
@@ -631,6 +635,7 @@ theorem rep_eq_self_of_pos (hpos : ∀ e : Fin p, 0 < d.length e) (v : Fin n) :
 
 /-- A degenerate spec with strictly positive lengths *is* an ordinary
 subdivision spec on the same core and lengths. -/
+@[expose]
 def toSpec (hpos : ∀ e : Fin p, 0 < d.length e) : SubdivisionGraph.Spec n p where
   core := d.core
   length := d.length

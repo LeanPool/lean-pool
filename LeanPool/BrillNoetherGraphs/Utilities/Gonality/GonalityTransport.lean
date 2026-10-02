@@ -236,10 +236,12 @@ open Utilities.Certificate
 
 /-- `σ_k(G)` for an arbitrary finite loopless multigraph, built on the
 occurrence-safe unit subdivision presentation of `G`. -/
+@[expose]
 noncomputable def regularSubdivision (G : CFGraph) (k : ℕ) (hk : 0 < k) : CFGraph :=
   ((UnitSubdivisionPresentation.spec G).scale k hk).graph
 
 /-- `min_{k ≥ 1} dgon(σ_k(G))` for an arbitrary finite loopless multigraph. -/
+@[expose]
 noncomputable def regularSubdivisionGonality (G : CFGraph) : ℕ :=
   (UnitSubdivisionPresentation.spec G).regularSubdivisionGonality
 

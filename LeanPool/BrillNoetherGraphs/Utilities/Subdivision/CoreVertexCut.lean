@@ -54,6 +54,7 @@ def right (c : Data core) : Finset (Fin n) :=
 /-- A core slot whose two non-articulation endpoints lie on opposite sides.
 Both orientations are included, since slots are stored as ordered pairs while
 the graph is undirected. -/
+@[expose]
 def Crosses (c : Data core) (edge : Fin p) : Prop :=
   (core.tail edge ∈ c.left ∧ core.tail edge ≠ c.glue ∧
     core.head edge ∉ c.left) ∨
@@ -96,6 +97,7 @@ variable (spec : SubdivisionGraph.Spec n p)
 
 /-- The named factor in a subdivision.  An interior is admitted precisely
 when both endpoints of its original slot are admitted by the core cut. -/
+@[expose]
 noncomputable def leftVertices (c : Data spec.core) : Finset spec.Vertex := by
   classical
   exact Finset.univ.filter fun vertex =>
@@ -381,6 +383,7 @@ theorem satisfiesTransmission_map_wedgeAddDivisor_sameRight_of_profile
 
 /-- Accepted finite core data immediately yields a checked cut of any
 positive subdivision. -/
+@[expose]
 noncomputable def cutOfCheck (h : c.check = true) : OneVertexCut spec.graph :=
   c.toOneVertexCut spec (c.check_eq_true_iff.mp h)
 

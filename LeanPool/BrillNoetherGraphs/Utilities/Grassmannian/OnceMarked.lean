@@ -74,6 +74,7 @@ theorem youngDiagram_transpose_card (lambda : YoungDiagram) :
 /-- The finite pointed rank rows encoded by a Young diagram.  We deliberately
 retain every positive row.  Passing to the last row of each constant block is
 an optional certificate compression, not part of the semantic definition. -/
+@[expose]
 def onceMarkedCorners (lambda : YoungDiagram) : List Corner :=
   lambda.rowLens.zipIdx.map fun p =>
     ((p.2 : ℤ) - (p.1 : ℤ), 0, (p.2 : ℤ))
@@ -91,6 +92,7 @@ Pflueger--Solomon divisor census.  It is the pole-order inequality
 
 For a connected graph this is equivalent to the finite normalized predicate
 `OnceMarkedBNExists` below. -/
+@[expose]
 def OnceMarkedCensusContains (G : CFGraph) (u : G.V)
     (lambda : YoungDiagram) : Prop :=
   ∃ D : CFDiv G,
@@ -110,6 +112,7 @@ def OnceMarkedBNExists (G : CFGraph) (u : G.V)
 
 /-- Once-marked Brill--Noether existence for `(G,u)`: every Young diagram of
 size at most the genus occurs in its divisor census. -/
+@[expose]
 def OnceMarkedBNExistence (G : CFGraph) (u : G.V) : Prop :=
   ∀ lambda : YoungDiagram,
     (lambda.card : ℤ) ≤ CFGraph.genus G →

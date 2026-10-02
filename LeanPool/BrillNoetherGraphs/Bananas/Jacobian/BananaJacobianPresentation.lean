@@ -33,6 +33,7 @@ open Utilities.Certificate.SubdivisionGraph.Spec
 
 /-- The degree-zero divisor representing one unit of the `alpha`th coordinate
 in the paper's presentation. -/
+@[expose]
 def bananaCoordinateStep {g : ℕ} (B : Banana g) (alpha : Fin (g + 1)) :
     CFDiv B.graph :=
   oneChip (strandVertex B alpha ⟨1, by
@@ -40,6 +41,7 @@ def bananaCoordinateStep {g : ℕ} (B : Banana g) (alpha : Fin (g + 1)) :
     omega⟩) - oneChip (leftEndpoint B)
 
 /-- The free coordinate-vector map `tphi` in the proof of Proposition 2.14. -/
+@[expose]
 def bananaCoordinateDivisorHom {g : ℕ} (B : Banana g) :
     (Fin (g + 1) → ℤ) →+ CFDiv B.graph where
   toFun a := ∑ alpha : Fin (g + 1), a alpha • bananaCoordinateStep B alpha
@@ -98,6 +100,7 @@ def bananaCoordinateBasis {g : ℕ} (alpha : Fin (g + 1)) :
   simp [bananaCoordinateDivisorHom, bananaCoordinateBasis]
 
 /-- The displayed relation `n_0 e_0 - n_beta e_beta`. -/
+@[expose]
 def bananaStrandLengthRelation {g : ℕ} (B : Banana g)
     (beta : Fin (g + 1)) : Fin (g + 1) → ℤ :=
   (B.length 0 : ℤ) • bananaCoordinateBasis (0 : Fin (g + 1)) -

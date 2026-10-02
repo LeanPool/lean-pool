@@ -512,6 +512,7 @@ namespace CoverTree
 variable {m : ℕ}
 
 /-- Look up a cone in the cover table, returning an empty cone for an out-of-range index. -/
+@[expose]
 def coneAt (cones : List (List (AffineForm m))) (index : ℕ) :
     List (AffineForm m) :=
   cones.getD index []

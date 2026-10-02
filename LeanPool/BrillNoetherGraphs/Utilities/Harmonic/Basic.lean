@@ -193,6 +193,7 @@ def fibre (f : IndexedHarmonicData G H) (z : H.V) : CFDiv G :=
   fun x => if f.vertexMap x = z then f.localDegree x else 0
 
 /-- Pullback of an arbitrary target divisor using the local degrees. -/
+@[expose]
 def pullback (f : IndexedHarmonicData G H) (A : CFDiv H) : CFDiv G :=
   fun x => (f.localDegree x : ℤ) * A (f.vertexMap x)
 

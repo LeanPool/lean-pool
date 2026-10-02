@@ -1715,6 +1715,7 @@ $$
 $$
 
 In Lean this is written `sf.Δ a b`. -/
+@[expose]
 def Δ (a b : ℤ) : ℤ :=
   sf (a+1) b - sf a b - sf (a+1) (b+1) + sf a (b+1)
 
@@ -1849,6 +1850,7 @@ slipface.
   $\operatorname{Ess}(s) = \{ (a,b) \in \mathbb{Z}^2:
 s(a-1,b) < s(a,b) = s(a+1,b) \mbox{ and } s(a,b+1) < s(a,b) = s(a,b-1) \}.$
 -/
+@[expose]
 def ess : Set (ℤ × ℤ) := {(a, b) | sf (a-1) b < sf a b ∧ sf a b = sf (a+1) b
   ∧ sf a (b+1) < sf a b ∧ sf a b = sf a (b-1)}
 

@@ -326,6 +326,7 @@ theorem banana_genus {g : ℕ} (B : Banana g) :
   omega
 
 /-- The literal divisor consisting of one chip at each multivalent endpoint. -/
+@[expose]
 def endpointPencilDivisor {g : ℕ} (B : Banana g) : CFDiv B.graph :=
   oneChip (leftEndpoint B) + oneChip (rightEndpoint B)
 

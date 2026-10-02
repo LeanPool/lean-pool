@@ -149,6 +149,7 @@ theorem rawOffset_le_segmentNat
 
 /-- Tail-oriented numerical coordinate of a code in the concrete
 subdivision. -/
+@[expose]
 def coordinate (certificate : ExplicitPotential.CertificateData m n p)
     (code : Code m p) (point : Fin m → ℤ) : ℕ :=
   if code.fromHead then
@@ -180,6 +181,7 @@ def decodePosition (certificate : ExplicitPotential.CertificateData m n p)
     (code.coordinate_le_segmentNat certificate point hValid hBounds hCone)
 
 /-- The actual subdivision vertex named by an affine position code. -/
+@[expose]
 def decodeVertex (certificate : ExplicitPotential.CertificateData m n p)
     (code : Code m p) (point : Fin m → ℤ) (core_nonempty : 0 < n)
     {degree : ℤ} (hValid : certificate.Valid degree)

@@ -100,6 +100,7 @@ lemma M_spec : ∀ n : ℤ, v.f n ≥ v.f v.M ∧ (n > v.M → v.f n > v.f v.M) 
     simpa [M] using Finset.le_max' (v.floor v.min) n this
 
 /-- Shift every value of a valley downward by the constant `k`. -/
+@[expose]
 def shiftDown (k : ℤ) : Valley where
   f := fun n => v.f n - k
   rises := by

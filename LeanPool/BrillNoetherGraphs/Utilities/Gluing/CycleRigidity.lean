@@ -29,6 +29,7 @@ open Certificate
 /-! ## Two-regular connected graphs have no one-edge cuts -/
 
 /-- The contribution to the degree of `v` from vertices inside `S`. -/
+@[expose]
 def internalDegree (H : CFGraph) (S : Finset H.V) (v : H.V) : ℤ :=
   ∑ w ∈ S, (numEdges H v w : ℤ)
 

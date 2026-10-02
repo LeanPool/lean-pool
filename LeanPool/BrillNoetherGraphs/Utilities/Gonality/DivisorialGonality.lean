@@ -67,6 +67,7 @@ def gonalitySet (G : CFGraph) : Set ℕ :=
 
 /-- The **divisorial gonality** of `G`: the least degree of an effective divisor
 of rank at least one, as a natural number. -/
+@[expose]
 noncomputable def divisorialGonality (G : CFGraph) : ℕ :=
   sInf (gonalitySet G)
 

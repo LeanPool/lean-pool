@@ -42,10 +42,12 @@ open Finset
 variable {G : CFGraph}
 
 /-- The divisor class of `D` reaches `v` after one chip is removed. -/
+@[expose]
 def Reaches (G : CFGraph) (D : CFDiv G) (v : G.V) : Prop :=
   winnable G (D - oneChip v)
 
 /-- Total edge multiplicity from `v` into `C`, as an integer. -/
+@[expose]
 def intoMultiplicity (G : CFGraph) (C : Finset G.V) (v : G.V) : ℤ :=
   ∑ x ∈ C, (numEdges G v x : ℤ)
 

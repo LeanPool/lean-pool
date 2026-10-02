@@ -143,6 +143,7 @@ theorem rank_transmissionTwist_ge_of_corner
 abbrev Corner := ℤ × ℤ × ℤ
 
 /-- The rank bound that a corner transports to the lattice point `(a, b)`. -/
+@[expose]
 def cornerBound (c : Corner) (a b : ℤ) : ℤ :=
   c.2.2 - max 0 (c.1 - a) - max 0 (b - c.2.1)
 

@@ -36,6 +36,7 @@ def kInversionsBySecond (k : ℕ) (τ : ℤ → ℤ) : Set (ℤ × ℤ) :=
 /-- The effective degree-one members of the finite torsion orbit of `D`.
 This is the concrete `Fin k` model for the paper's set of effective classes
 in `T_D^1`. -/
+@[expose]
 def effectiveDegreeOneTwistResidues
     (M : TwiceMarked) (D : CFDiv M.graph) (k : ℕ) : Set (Fin k) :=
   {b | 0 ≤ rank M.graph (degreeTwistInt M D 1 b.val)}

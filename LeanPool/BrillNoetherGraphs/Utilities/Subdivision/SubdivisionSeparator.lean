@@ -36,6 +36,7 @@ variable {n p : ℕ} (spec : SubdivisionGraph.Spec n p)
 abbrev PathPosition (edge : Fin p) := Fin (spec.length edge + 1)
 
 /-- The vertex at a path position. -/
+@[expose]
 def pathVertex (edge : Fin p) (position : spec.PathPosition edge) :
     spec.Vertex :=
   if hzero : position.val = 0 then
@@ -51,11 +52,13 @@ def pathVertex (edge : Fin p) (position : spec.PathPosition edge) :
         omega⟩
 
 /-- Position of the left endpoint of a unit step. -/
+@[expose]
 def stepLeftPosition (edge : Fin p) (offset : Fin (spec.length edge)) :
     spec.PathPosition edge :=
   ⟨offset.val, by have := offset.isLt; omega⟩
 
 /-- Position of the right endpoint of a unit step. -/
+@[expose]
 def stepRightPosition (edge : Fin p) (offset : Fin (spec.length edge)) :
     spec.PathPosition edge :=
   ⟨offset.val + 1, by have := offset.isLt; omega⟩
@@ -149,6 +152,7 @@ theorem consecutive_num_edges_pos (edge : Fin p)
   simpa using spec.unitStep_num_edges_pos edge offset
 
 /-- A numerical path position is strictly internal to its edge. -/
+@[expose]
 def IsInteriorPosition (edge : Fin p) (position : spec.PathPosition edge) :
     Prop :=
   0 < position.val ∧ position.val < spec.length edge

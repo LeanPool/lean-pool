@@ -28,6 +28,7 @@ namespace Utilities
 
 /-- The marked normalization of the canonical complement appropriate to
 transmission duality. -/
+@[expose]
 def transmissionDualDivisor {G : CFGraph} (u v : G.V) (D : CFDiv G) : CFDiv G :=
   canonicalDivisor G - D + oneChip u + oneChip v
 

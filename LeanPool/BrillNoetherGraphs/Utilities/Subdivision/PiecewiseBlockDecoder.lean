@@ -66,6 +66,7 @@ def ofOrderedLast (ends : List ℕ) (hNonempty : 0 < ends.length)
     exact hk
 
 /-- The endpoint at a block index, defaulting to the total length. -/
+@[expose]
 def endAt (i : ℕ) : ℕ := b.ends.getD i L
 
 /-- The left endpoint of a block. -/

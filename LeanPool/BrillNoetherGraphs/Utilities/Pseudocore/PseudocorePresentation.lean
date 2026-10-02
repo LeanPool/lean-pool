@@ -87,6 +87,7 @@ def slotEnds {n p : ℕ} (core : Core n p) (vertex : Fin n) :
     if x.2 then core.head x.1 = vertex else core.tail x.1 = vertex
 
 /-- Core valence: the number of slot ends at a core vertex. -/
+@[expose]
 def slotValence {n p : ℕ} (core : Core n p) (vertex : Fin n) : ℕ :=
   (slotEnds core vertex).card
 

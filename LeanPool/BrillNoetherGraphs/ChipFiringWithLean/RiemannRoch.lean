@@ -260,6 +260,7 @@ private theorem one_le_of_gonality_leq {G : CFGraph} {k : ℤ} (h_gon : gonality
 
 /-- The *(divisorial) gonality* of a connected graph is the smallest degree of a divisor
 of rank at least one. -/
+@[expose]
 noncomputable def gonality {G : CFGraph} (_h_conn : graphConnected G) : ℤ :=
   sInf {k : ℤ | gonalityLeq G k}
 
