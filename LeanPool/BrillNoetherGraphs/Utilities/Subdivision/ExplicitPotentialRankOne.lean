@@ -290,6 +290,7 @@ namespace ExplicitPotential.CertificateData
 
 /-- The concrete subdivision specified by an integral point of a checked
 local cone. -/
+@[expose]
 def subdivisionSpec (certificate : ExplicitPotential.CertificateData m n p)
     (point : Fin m → ℤ) (core_nonempty : 0 < n)
     {degree : ℤ} (hValid : certificate.Valid degree)
@@ -438,6 +439,7 @@ theorem reaches_coreVertex
     (divisor - oneChip (spec.coreVertex anchor)) script
 
 /-- The embedded core vertices of a subdivision. -/
+@[expose]
 def coreVertices (spec : SubdivisionGraph.Spec n p) : Finset spec.graph.V :=
   Finset.univ.image spec.coreVertex
 

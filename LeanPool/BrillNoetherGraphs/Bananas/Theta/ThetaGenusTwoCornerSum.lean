@@ -115,6 +115,7 @@ theorem rankDelta_eq_rankPlusOne_inclusionExclusion
 
 /-- The divisor at the graph point `(tau b,b)` of a transmission
 permutation. -/
+@[expose]
 noncomputable def transmissionCorner
     (M : TwiceMarked) (D : CFDiv M.graph) (tau : ℤ → ℤ) (b : ℤ) :
     CFDiv M.graph :=

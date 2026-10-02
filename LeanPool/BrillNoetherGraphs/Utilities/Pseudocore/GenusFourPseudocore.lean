@@ -191,6 +191,7 @@ theorem vertexCount_pos_of_valid (hValid : core.Valid) : 0 < n := by
 
 /-- Number of edge slots after replacing each semantic loop by two parallel
 edges from its base vertex to a fresh marker. -/
+@[expose]
 def splitEdgeCount : ℕ :=
   core.nonloopEdgeCount + 2 * core.loopCount
 

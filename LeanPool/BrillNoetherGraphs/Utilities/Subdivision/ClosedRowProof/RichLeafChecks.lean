@@ -71,6 +71,7 @@ def tailCandidate (w : RichWitness) (a e s : ℕ) : ℤ :=
 
 /-- The W5 head candidate when precisely the last `s` named points have
 fallen into the head. -/
+@[expose]
 def headCandidate (w : RichWitness) (a e s : ℕ) : ℤ :=
   let k := (w.blockList a e).length
   (List.range (s + 1)).foldl (fun z t =>
@@ -94,6 +95,7 @@ def headContribution (w : RichWitness) (a e : ℕ) : ℤ :=
   minOver (w.headCandidate a e) ((w.plan a).tailSlack.getD e 0)
 
 /-- The constant residual of the W4 run from named point `i` through `j`. -/
+@[expose]
 def w4Residual (w : RichWitness) (a e i j : ℕ) : ℤ :=
   (List.range (j + 1 - i)).foldl (fun z t => z + w.chipAt a e (i + t)) 0 +
     (w.block a e j).lo - (w.block a e (i - 1)).hi

@@ -44,6 +44,7 @@ variable {m n p : ℕ}
 /-- Evaluation of a named point.  This is kept as an integer: W1 first proves
 nonnegativity, after which the lowerer may take `toNat` to obtain a path
 offset. -/
+@[expose]
 def pointValue (w : RichWitness) (x : List ℤ) (a e i : ℕ) : ℤ :=
   eval (w.point a e i) x
 

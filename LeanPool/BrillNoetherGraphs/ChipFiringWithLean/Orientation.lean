@@ -415,6 +415,7 @@ def ordiv (G : CFGraph) (O : CFOrientation G) : CFDiv G :=
 
 /-- The orientation divisor `ordiv G O` bundled as a $q$-effective divisor, using
 acyclicity to prove $q$-effectivity. -/
+@[expose]
 def orqed {G : CFGraph} (O : CFOrientation G) {q : G.V}
     (hO : acyclicWithUniqueSource G O q) : qEffectiveDivisor G q := {
       D := ordiv G O,

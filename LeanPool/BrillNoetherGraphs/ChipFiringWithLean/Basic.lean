@@ -484,7 +484,6 @@ Applying the Laplacian to a firing script produces the corresponding principal d
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 1.4. -/
 @[expose]
-@[expose]
 def CFDiv.degree {G : CFGraph} : CFDiv G →+ ℤ := {
   toFun := fun D => ∑ v, D v,
   map_zero' := by
