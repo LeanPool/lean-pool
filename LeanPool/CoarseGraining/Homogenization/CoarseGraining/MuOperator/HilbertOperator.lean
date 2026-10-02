@@ -193,7 +193,7 @@ noncomputable def fullEntriesToHilbertOperatorLinear (d : ℕ) :
     intro M N
     apply ContinuousLinearMap.ext
     intro X
-    simp [HilbertBlockVec.applyBlockMat_apply]
+    simp only [HilbertBlockVec.applyBlockMat_apply, add_apply]
     apply HilbertBlockVec.ext
     · apply HilbertVec.ext
       intro i
@@ -207,7 +207,7 @@ noncomputable def fullEntriesToHilbertOperatorLinear (d : ℕ) :
     intro c M
     apply ContinuousLinearMap.ext
     intro X
-    simp [HilbertBlockVec.applyBlockMat_apply]
+    simp only [HilbertBlockVec.applyBlockMat_apply, RingHom.id_apply, smul_apply]
     apply HilbertBlockVec.ext
     · apply HilbertVec.ext
       intro i

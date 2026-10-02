@@ -93,7 +93,8 @@ theorem cubeAverageFluxDefect_energyForm_le_normalizedBlockResponseMax_mul_energ
         rw [show D = matVecMul (symmPart a0) ξ by simpa using hsξ.symm]
         rw [hsplitT]
         ext i
-        simp [matVecMul, sub_eq_add_neg]
+        simp only [matVecMul, sub_eq_add_neg, Matrix.add_apply, Matrix.neg_apply,
+          Pi.sub_apply, Pi.neg_apply]
         have hsum :
             ∑ x, (symmPart a0 i x + -skewPart a0 i x) * ξ x =
               ∑ x, symmPart a0 i x * ξ x + ∑ x, (-skewPart a0 i x) * ξ x := by
@@ -125,7 +126,7 @@ theorem cubeAverageFluxDefect_energyForm_le_normalizedBlockResponseMax_mul_energ
         rw [show D = matVecMul (symmPart a0) ξ by simpa using hsξ.symm]
         rw [hsplit]
         ext i
-        simp [symmPart, skewPart, matVecMul, sub_eq_add_neg]
+        simp only [symmPart, skewPart, matVecMul, sub_eq_add_neg, Pi.add_apply]
         rw [← Finset.sum_add_distrib]
         refine Finset.sum_congr rfl ?_
         intro x hx
@@ -236,7 +237,8 @@ theorem cubeAverageFluxDefect_energyForm_le_normalizedBlockResponseMax_mul_energ
         _ = avgFlux i - matVecMul a0 avgGrad i := by
             rw [hA0avg]
     have hleft :
-        volumeAverage (cubeSet R) (fun x => vecDot (-matVecMul (matTranspose a0) ξ) (w.toH1.grad x)) -
+        volumeAverage (cubeSet R)
+          (fun x => vecDot (-matVecMul (matTranspose a0) ξ) (w.toH1.grad x)) -
             volumeAverage (cubeSet R) (fun x => vecDot (-ξ) (matVecMul (a x) (w.toH1.grad x))) =
           vecDot D ξ := by
       have hpair :=
@@ -244,7 +246,8 @@ theorem cubeAverageFluxDefect_energyForm_le_normalizedBlockResponseMax_mul_energ
           (cubeSet R) a (-ξ) (-matVecMul (matTranspose a0) ξ)
           (ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll) w
       calc
-        volumeAverage (cubeSet R) (fun x => vecDot (-matVecMul (matTranspose a0) ξ) (w.toH1.grad x)) -
+        volumeAverage (cubeSet R)
+          (fun x => vecDot (-matVecMul (matTranspose a0) ξ) (w.toH1.grad x)) -
             volumeAverage (cubeSet R) (fun x => vecDot (-ξ) (matVecMul (a x) (w.toH1.grad x))) =
             vecDot (-matVecMul (matTranspose a0) ξ) avgGrad - vecDot (-ξ) avgFlux := by
               simpa [avgGrad, avgFlux] using hpair
@@ -379,7 +382,8 @@ theorem descendantScalarCanonicalFluxDefectData_of_aHarmonicData {d : ℕ}
           (-matVecMul (matTranspose a0)
             (matVecMul ((symmPart a0)⁻¹)
               (cubeAverageVec R
-                (fun x => matVecMul (a x) (u.toH1.grad x) - matVecMul a0 (u.toH1.grad x))))) a) := by
+                (fun x => matVecMul (a x) (u.toH1.grad x) -
+                  matVecMul a0 (u.toH1.grad x))))) a) := by
     rcases hv with ⟨v⟩
     have hdefectavg :
         cubeAverageVec R

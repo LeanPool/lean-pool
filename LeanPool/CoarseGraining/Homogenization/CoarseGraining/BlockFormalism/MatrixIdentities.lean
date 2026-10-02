@@ -39,7 +39,7 @@ theorem blockMatVecMul_blockMatrixOfCoeff_snd {d : ℕ} (A : Mat d) (p q : Vec d
     (blockMatVecMul (blockMatrixOfCoeff A) (p, q)).2 =
       matVecMul ((symmPart A)⁻¹) (q - matVecMul (skewPart A) p) := by
   rw [blockMatVecMul, blockMatrixOfCoeff]
-  simp [sub_eq_add_neg, matVecMul_add, add_comm]
+  simp only [add_comm, sub_eq_add_neg, matVecMul_add, add_right_inj]
   rw [neg_matVecMul, matVecMul_neg, matVecMul_mul]
 
 theorem blockMatVecMul_blockMatrixOfCoeff_fst {d : ℕ} (A : Mat d) (p q : Vec d) :
@@ -55,7 +55,7 @@ theorem blockMatVecMul_blockMatrixOfCoeff_fst {d : ℕ} (A : Mat d) (p q : Vec d
         matVecMul (symmPart A) p + matVecMul (skewPart A) lower := by
     rw [← hsnd]
     rw [blockMatVecMul, blockMatrixOfCoeff]
-    simp [matTranspose_skewPart]
+    simp only [matTranspose_skewPart, neg_mul, neg_neg]
     rw [add_matVecMul, matVecMul_add]
     have hneg :
         matVecMul (skewPart A) (matVecMul (-((symmPart A)⁻¹ * skewPart A)) p) =
@@ -301,8 +301,10 @@ theorem blockMatrixOfCoeff_quadratic_eq {d : ℕ} (A : Mat d) (p q : Vec d) :
           - vecDot p (matVecMul (matTranspose k) (matVecMul sInv q))
           - vecDot q (matVecMul sInv kp)
           + vecDot q (matVecMul sInv q) := by
-            simp [blockVecDot, blockMatVecMul, blockMatrixOfCoeff, s, k, sInv, kp,
-              add_matVecMul, matVecMul_mul, vecDot_add_right, sub_eq_add_neg, Matrix.mul_assoc]
+            simp only [blockVecDot, blockMatVecMul, blockMatrixOfCoeff,
+              matTranspose_skewPart, neg_mul, Matrix.mul_assoc, neg_neg,
+              add_matVecMul, vecDot_add_right, matVecMul_mul, sub_eq_add_neg,
+              s, k, sInv, kp]
             rw [neg_matVecMul, neg_matVecMul, neg_matVecMul,
               vecDot_neg_right, vecDot_neg_right, vecDot_neg_right]
             simp
