@@ -48,8 +48,10 @@ section Forward
 variable {P : ParentFrame (A.transverseData m hm J support hSupport) 0} (G : ForwardGuards P)
     (hball : (1 / 2 : ℝ) ≤ G.radius)
 
-local notation "Geo" => ForwardGuards.lowGeometry G hball
-local notation "tNext" => PhysicalGeometryData.targetTime (ForwardGuards.lowGeometry G hball)
+-- The notations below are parenthesized so that no pretty-printing unexpander is generated
+-- for them; elaborating such an unexpander for a long application is expensive.
+local notation "Geo" => (ForwardGuards.lowGeometry G hball)
+local notation "tNext" => (PhysicalGeometryData.targetTime (ForwardGuards.lowGeometry G hball))
 
 variable (CM CH K error : ℝ) (hCM : 0 ≤ CM) (hK : 1 ≤ K) (he : 0 ≤ error)
   (hMK : CM ≤ K) (hHK : CM ^ 2 + CH ≤ K ^ 2)
@@ -75,9 +77,9 @@ def forwardTargetRenewal : ParentFrame DNext tNext :=
     hCM hK he hMK hHK hM hH G.δ hδ (G.primaryAmplitude hball) k
     G.initialCoordinate G.initialCoordinate_ne_zero hsource
 
-local notation "Q" => forwardTargetRenewal S T hTime m hm J support hSupport
+local notation "Q" => (forwardTargetRenewal S T hTime m hm J support hSupport
   mNext hmNext JNext supportNext hSupportNext G hball CM CH K error
-  hCM hK he hMK hHK hM hH hδ k hsource
+  hCM hK he hMK hHK hM hH hδ k hsource)
 
 /-- In particular, the new ray and primary are the old source's actual
 physical ray and primary at the target, not freely chosen frame vectors. -/
@@ -130,7 +132,8 @@ theorem forwardTargetRenewal_compression
   have H := forwardTargetRenewal_matches S T hTime m hm J support hSupport
     mNext hmNext JNext supportNext hSupportNext G hball CM CH K error
     hCM hK he hMK hHK hM hH hδ k hsource
-  exact H.activation_compression ht hT hmargin
+  have h := H.activation_compression ht hT hmargin
+  with_reducible exact h
 
 theorem forwardTargetRenewal_compression_of_error_le_one
     (hT : tNext < N.T) (herror : error ≤ 1) :
@@ -139,7 +142,8 @@ theorem forwardTargetRenewal_compression_of_error_le_one
   have H := forwardTargetRenewal_matches S T hTime m hm J support hSupport
     mNext hmNext JNext supportNext hSupportNext G hball CM CH K error
     hCM hK he hMK hHK hM hH hδ k hsource
-  exact H.activation_compression_of_error_le_one ((Geo).targetTime_pos le_rfl) hT herror
+  have h := H.activation_compression_of_error_le_one ((Geo).targetTime_pos le_rfl) hT herror
+  with_reducible exact h
 
 end Forward
 
@@ -151,8 +155,8 @@ variable (s : ℝ) (hs : 0 < s) (hsT : s < A.T)
   (G : Guards hs hsT P H) (hball : (1 / 2 : ℝ) ≤ G.radius)
   (hcut : tsupport innerCutoff ⊆ support)
 
-local notation "Geo" => Guards.lowGeometry G hball
-local notation "tNext" => PhysicalGeometryData.targetTime (Guards.lowGeometry G hball)
+local notation "Geo" => (Guards.lowGeometry G hball)
+local notation "tNext" => (PhysicalGeometryData.targetTime (Guards.lowGeometry G hball))
 
 variable (CM CH K error : ℝ) (hCM : 0 ≤ CM) (hK : 1 ≤ K) (he : 0 ≤ error)
   (hMK : CM ≤ K) (hHK : CM ^ 2 + CH ≤ K ^ 2)
@@ -177,9 +181,9 @@ def joinedTargetRenewal : ParentFrame DNext tNext :=
     hCM hK he hMK hHK hM hH G.δ hδ (G.primaryAmplitude hball) k
     s hs hsT H G.terminal G.terminal_properties.1 hcut hsource
 
-local notation "Q" => joinedTargetRenewal S T hTime m hm J support hSupport
+local notation "Q" => (joinedTargetRenewal S T hTime m hm J support hSupport
   mNext hmNext JNext supportNext hSupportNext s hs hsT H G hball hcut CM CH K error
-  hCM hK he hMK hHK hM hH hδ k hsource
+  hCM hK he hMK hHK hM hH hδ k hsource)
 
 theorem joinedTargetRenewal_matches : RenewalAtTarget Geo Q := by
   let t : Icc (0 : ℝ) A.T :=
@@ -232,7 +236,8 @@ theorem joinedTargetRenewal_compression
   have E := joinedTargetRenewal_matches S T hTime m hm J support hSupport
     mNext hmNext JNext supportNext hSupportNext s hs hsT H G hball hcut CM CH K error
     hCM hK he hMK hHK hM hH hδ k hsource
-  exact E.activation_compression ht hT hmargin
+  have h := E.activation_compression ht hT hmargin
+  with_reducible exact h
 
 theorem joinedTargetRenewal_compression_of_error_le_one
     (hT : tNext < N.T) (herror : error ≤ 1) :
@@ -241,7 +246,8 @@ theorem joinedTargetRenewal_compression_of_error_le_one
   have E := joinedTargetRenewal_matches S T hTime m hm J support hSupport
     mNext hmNext JNext supportNext hSupportNext s hs hsT H G hball hcut CM CH K error
     hCM hK he hMK hHK hM hH hδ k hsource
-  exact E.activation_compression_of_error_le_one ((Geo).targetTime_pos hs.le) hT herror
+  have h := E.activation_compression_of_error_le_one ((Geo).targetTime_pos hs.le) hT herror
+  with_reducible exact h
 
 end Joined
 end EulerParentPacketFrames.SmoothState

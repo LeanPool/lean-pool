@@ -256,7 +256,7 @@ theorem controlled_velocity_relative_error
     (hU0 : U 0 = -lam) (hV0 : V 0 = 1) (hZ0 : Z 0 = 1) (hZ₁0 : Z₁ 0 = lam) :
     ∀ t ∈ Icc 0 T,
       |V t - Z t| + |U t + Z₁ t| ≤ 160000000 * e * Θ ^ 29 * (1 + lam) * F t := by
-  have hσsq : σ ^ 2 ≤ 1 := by nlinarith only [hσ, hσsmall]
+  have hσsq : σ ^ 2 ≤ 1 := pow_le_one₀ hσ.le (hσsmall.trans (by norm_num))
   have hgeomSmall : 10000 * e * Θ ^ 5 ≤ 1 := by
     have hh := pow_le_pow_right₀ hΘ (show 5 ≤ 21 by decide)
     have hm := mul_le_mul_of_nonneg_left hh he

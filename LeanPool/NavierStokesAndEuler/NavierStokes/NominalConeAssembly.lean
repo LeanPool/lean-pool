@@ -67,18 +67,18 @@ theorem shape_axis_lower {h j eta ell theta : ℝ}
     calc
       _ ≤ |4 * eta| + |j| := abs_add_le _ _
       _ = 4 * |eta| + j := by rw [abs_mul, abs_of_pos hs.j_pos]; norm_num
-      _ ≤ _ := by linarith [hs.j_le]
+      _ ≤ _ := by linarith only [heta, hs.j_le]
   have hup : |eta * U j eta| ≤ 4001 / 1000 := by
     rw [abs_mul]
     exact (mul_le_mul heta hu (abs_nonneg _) (by norm_num)).trans_eq (by ring)
   have hterm : h * (1 - 2 * eta * U j eta) ≤ 4501 / 500000 := by
     have he : 1 - 2 * eta * U j eta ≤ 4501 / 500 := by
-      linarith [(abs_le.mp hup).1]
+      linarith only [(abs_le.mp hup).1]
     have h1 := mul_le_mul_of_nonneg_left he hs.h_pos.le
     have h2 := mul_le_mul_of_nonneg_right hs.h_le (by norm_num : (0 : ℝ) ≤ 4501 / 500)
-    linarith
+    linarith only [h1, h2]
   have hgabs : |OutgoingEntranceCone.shapeGradient eta| ≤ 2 :=
-    (OutgoingEntranceCone.abs_shapeGradient_le eta).trans (by linarith)
+    (OutgoingEntranceCone.abs_shapeGradient_le eta).trans (by linarith only [heta])
   have hget : 0 ≤ eta * OutgoingEntranceCone.shapeGradient eta :=
     (sq_nonneg eta).trans (OutgoingEntranceCone.eta_shapeGradient_bounds heta).1
   have hmain : 0 ≤ (D h + 4 * d eta) * (eta * OutgoingEntranceCone.shapeGradient eta) :=
@@ -88,7 +88,7 @@ theorem shape_axis_lower {h j eta ell theta : ℝ}
     (mul_le_of_le_one_left hs.j_pos.le hd1).trans hs.j_le
   have herr : -(1 / 500 : ℝ) ≤ d eta * j * OutgoingEntranceCone.shapeGradient eta := by
     have hm := mul_le_mul_of_nonneg_left (abs_le.mp hgabs).1 hdj
-    linarith
+    linarith only [hm, hdj1]
   have hid : H h j eta * OutgoingEntranceCone.shapeGradient eta =
       (D h + 4 * d eta) * (eta * OutgoingEntranceCone.shapeGradient eta) +
         d eta * j * OutgoingEntranceCone.shapeGradient eta := by
@@ -96,14 +96,14 @@ theorem shape_axis_lower {h j eta ell theta : ℝ}
     ring
   have hH : -(1 / 500 : ℝ) ≤ H h j eta * OutgoingEntranceCone.shapeGradient eta := by
     rw [hid]
-    linarith
+    linarith only [hmain, herr]
   have htheta : -(1 / 500 : ℝ) ≤ theta * H h j eta * OutgoingEntranceCone.shapeGradient eta := by
     have hm := mul_le_mul_of_nonneg_left hH ht.1
-    linarith [ht.2]
+    linarith only [hm, ht.2]
   have hW := neg_W_lower_bound hs hη
   have hbase : (2991 / 1000 : ℝ) * (11 / 20) ≤ -W h j eta * ell :=
-    mul_le_mul hW hl (by norm_num) (by linarith)
-  linarith
+    mul_le_mul hW hl (by norm_num) (by linarith only [hW])
+  linarith only [hbase, hterm, htheta]
 
 /-- Shape remainder as an element of `ℝ`. -/
 noncomputable def shapeRemainder (h j sigma eta theta ell : ℝ) (v : Fin 5 → ℝ) (t : ℝ) : ℝ :=
@@ -806,7 +806,7 @@ theorem actual_shape_source {eps X eta : ℝ}
   have he1 : eps ≤ 1 := heps1.trans (min_le_left _ _)
   have heL : A.scale * eps ≤ 1 := by
     have hh := (le_div_iff₀ A.scale_pos).mp (heps1.trans (min_le_right _ _))
-    linarith
+    linarith only [hh]
   let theta := OutgoingSchedule.sigma (Real.log (X / NominalProfile.Xi) / c.shapeTime)
   let g := deriv c.initialShape eta - A.scale * NaturalAxisCoefficients.realGradient
     F.data.h A.j A.preparation.sigma eta
@@ -817,10 +817,10 @@ theorem actual_shape_source {eps X eta : ℝ}
       (NaturalAxisCoefficients.original_interval_interior hη) hsmall]
     dsimp only [g, theta]
     ring
-  · exact hjets.1.trans (by unfold shapeConstant; linarith)
-  · exact hjets.2.1.trans (by unfold shapeConstant; linarith)
-  · exact hjets.2.2.trans (by unfold shapeConstant; linarith)
-  · exact hgrad.trans (by unfold shapeConstant; linarith)
+  · exact hjets.1.trans (by unfold shapeConstant; linarith only [heL, h1])
+  · exact hjets.2.1.trans (by unfold shapeConstant; linarith only [heL, h1])
+  · exact hjets.2.2.trans (by unfold shapeConstant; linarith only [heL, h0, h1])
+  · exact hgrad.trans (by unfold shapeConstant; linarith only [he1, h0, h1])
 
 /-- The actual shape interval satisfies the relaxed cone. The sole stock
 input is the incoming value at `Xi`, supplied by the same continuation

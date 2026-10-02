@@ -89,7 +89,7 @@ theorem historyVelocity_homogeneous {D : Data U} (B : HistoryData D)
       (2*⟪D.normal.field t x,D.M.field t x (D.frame.field t x a)⟫_ℝ/
         ‖D.normal.field t x‖^2) • D.normal.field t x
   simp only [inner_zero_right,zero_sub,neg_div,neg_smul] at hb
-  linear_combination (norm := module) hb
+  exact eq_neg_add_iff_add_eq.mpr ((add_comm _ _).trans (add_neg_eq_zero.mp hb))
 
 variable {D : Data U} (τ : ℝ) (hτ : 0 < τ) (hτT : τ < D.T)
   (B : HistoryData (D.initial τ hτ hτT.le)) (ξ : U)

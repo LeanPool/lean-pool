@@ -835,30 +835,37 @@ theorem prefixJetSize_bound {R r L B K C : ℝ} (hR : 0 ≤ R) (hr : 0 ≤ r) (h
     _ = L + r := by rw [add_mul, hRL, one_mul]
     _ ≤ L + 1 := add_le_add_right hr1 L
   obtain ⟨hM, hI, hJ, hS, hP⟩ := rows_jet_bounds hR hr hB hK hCpos hu hf n eta hub hfb
+  have h2 : 2 * (Real.sqrt R * r) ≤ 2 * (L + 1) := mul_le_mul_of_nonneg_left hrr zero_le_two
+  have hL2 : 0 ≤ 2 * (L + 1) := mul_nonneg zero_le_two (add_nonneg hL zero_le_one)
+  have hnB : 0 ≤ 2 ^ n * B := mul_nonneg (pow_nonneg zero_le_two n) hB
   have hI' : |iteratedDeriv n (rowI R f r) eta| ≤ (2 * (L + 1) * K) * r := by
     apply hI.trans
     calc
       _ = (2 * (Real.sqrt R * r) * (K / C)) * r := by ring
-      _ ≤ _ := by gcongr
+      _ ≤ _ := mul_le_mul_of_nonneg_right (mul_le_mul h2 hKCle hKC hL2) hr
   have hJ' : |iteratedDeriv n (rowJ R u f r) eta| ≤
       (2 * (L + 1) * (2 ^ n * B * K)) * r := by
     apply hJ.trans
     calc
       _ = (2 * (Real.sqrt R * r) * (2 ^ n * B * (K / C))) * r := by ring
-      _ ≤ _ := by gcongr
+      _ ≤ _ := mul_le_mul_of_nonneg_right (mul_le_mul h2
+          (mul_le_mul_of_nonneg_left hKCle hnB) (mul_nonneg hnB hKC) hL2) hr
   have hS' : |iteratedDeriv n (rowS R u f r) eta| ≤
       (2 ^ n * (B ^ 2 + L * K ^ 2)) * r := by
     apply hS.trans
     rw [hRL]
     calc
-      _ ≤ (2 ^ n * B ^ 2 + L * (2 ^ n * K ^ 2)) * r := by gcongr
+      _ ≤ (2 ^ n * B ^ 2 + L * (2 ^ n * K ^ 2)) * r :=
+        mul_le_mul_of_nonneg_right (add_le_add le_rfl (mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hKC hKCle 2)
+            (pow_nonneg zero_le_two n)) hL)) hr
       _ = _ := by ring
   have hP' : |iteratedDeriv n (rowP R f r) eta| ≤ (2 ^ n * L * K ^ 2) / C ^ 2 := by
     apply hP.trans_eq
     rw [← hRL, div_pow]
     ring
   dsimp [prefixJetSize, prefixCoefficient]
-  linarith
+  linarith only [hM, hI', hJ', hS', hP']
 
 theorem prefix_bound_tendsto (n : ℕ) (B K L T P : ℝ) :
     Tendsto (fun C : ℝ => prefixCoefficient n B K L * separation T C P +

@@ -65,16 +65,15 @@ theorem gramSolution_gevrey (T : ℝ) (hT : 0 ≤ T)
     ‖iteratedFDeriv ℝ n (fun y => gramSolver T hT (Q y) c hc (hLower y) (f y)) x‖ ≤
       majorant R (d+1) n := by
   have hci : 0 ≤ c⁻¹ := inv_nonneg.mpr hc.le
-  have hM : 1 ≤ gramCost c C D := by
-    unfold gramCost
-    have : 0 ≤ c⁻¹*(3*C^2+D+1) := by positivity
-    linarith
+  have hC2 : 0 ≤ 3*C^2 := mul_nonneg (by norm_num) (sq_nonneg C)
+  have hM : 1 ≤ gramCost c C D :=
+    le_add_of_nonneg_right (mul_nonneg hci (add_nonneg (add_nonneg hC2 hD) zero_le_one))
   have hMC : c⁻¹*(3*C^2) ≤ gramCost c C D := by
     unfold gramCost
-    nlinarith
+    linarith only [mul_nonneg hci (add_nonneg hD zero_le_one)]
   have hMD : c⁻¹*D ≤ gramCost c C D := by
     unfold gramCost
-    nlinarith [sq_nonneg C]
+    linarith only [mul_nonneg hci (add_nonneg hC2 zero_le_one)]
   have hb (j : ℕ) (y : P) :
       ‖iteratedFDeriv ℝ (j+1) (fun z => gramOperator T hT (Q z)) y‖ ≤
         (3*C^2)*(Rc^(j+1)*((j+1).factorial : ℝ)^2) := by

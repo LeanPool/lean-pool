@@ -202,9 +202,7 @@ theorem hasDerivAt_coerciveInverse (T : ℝ → E →L[ℝ] E) (c : ℝ) (hc : 0
     ext x
     exact coerciveEquiv_apply (T t) c hc (hT t) x
   have hui : (↑u⁻¹ : E →L[ℝ] E) = coerciveInverse (T t) c hc (hT t) := rfl
-  have hi := hasFDerivAt_ringInverse (𝕜 := ℝ) u
-  rw [hu] at hi
-  have hcomp := hi.comp_hasDerivAt t hder
+  have hcomp := (hasFDerivAt_ringInverse (𝕜 := ℝ) u).comp_hasDerivAt_of_eq t hder hu
   have hfun : (fun s => coerciveInverse (T s) c hc (hT s)) = Ring.inverse ∘ T := by
     funext s
     exact coerciveInverse_eq_ringInverse (T s) c hc (hT s)

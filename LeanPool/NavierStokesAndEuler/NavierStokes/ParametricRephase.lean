@@ -212,8 +212,7 @@ theorem parameterJet_contDiffOn (F : E × ℝ → V) (U : Set E) (hU : IsOpen U)
     ContDiffOn ℝ ∞ (parameterJet F k) (U ×ˢ univ) := by
   induction k with
   | zero =>
-      exact hF.continuousLinearMap_comp
-        ((continuousMultilinearCurryFin0 ℝ E V).symm : V →L[ℝ] E [×0]→L[ℝ] V)
+      exact (continuousMultilinearCurryFin0 ℝ E V).symm.contDiff.comp_contDiffOn hF
   | succ k ih =>
       intro z hz
       have hjet : ContDiffAt ℝ ∞ (parameterJet F k) z :=
@@ -224,9 +223,8 @@ theorem parameterJet_contDiffOn (F : E × ℝ → V) (U : Set E) (hU : IsOpen U)
       have hD : ContDiffAt ℝ ∞
           (fun w : E × ℝ => fderiv ℝ (fun p : E => parameterJet F k (p, w.2)) w.1) z :=
         hG.fderiv contDiffAt_fst (by simp)
-      exact (hD.continuousLinearMap_comp
-        ((continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (k + 1) => E) V).symm :
-          (E →L[ℝ] E [×k]→L[ℝ] V) →L[ℝ] E [×(k + 1)]→L[ℝ] V)).contDiffWithinAt
+      exact ((continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (k + 1) => E) V).symm.contDiff
+        |>.contDiffAt.comp z hD).contDiffWithinAt
 
 /-- Integration over a fixed compact interval preserves joint smoothness.
 All derivative domination is derived from compactness in the imported theorem. -/

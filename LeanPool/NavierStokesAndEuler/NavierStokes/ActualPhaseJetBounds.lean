@@ -354,10 +354,10 @@ theorem phaseLinear_bound {l : SignedLabel B N0} {n : ℕ}
     calc
       _ ≤ ‖nativeZ‖ * ‖ActualPrimaryBounds.slotLinear l n‖ :=
         ContinuousLinearMap.opNorm_comp_le _ _
-      _ ≤ 1 * (ActualPrimaryBounds.copyCost * ChartScales.S n) := by
-        gcongr
-        · exact nativeZ_norm
-        · simpa only [slow_eq_S hn.1] using ActualPrimaryBounds.slotLinear_bound hn
+      _ ≤ 1 * (ActualPrimaryBounds.copyCost * ChartScales.S n) :=
+        mul_le_mul nativeZ_norm
+          (by simpa only [slow_eq_S hn.1] using ActualPrimaryBounds.slotLinear_bound hn)
+          (norm_nonneg _) zero_le_one
       _ = _ := one_mul _
   have hd : |(ActualPrimary.phases B N0 l.1).phase.pz l.2 /
       ChartScales.epsilon ActualPrimary.h (BaseChartJets.cellBand l.2)| ≤
@@ -383,7 +383,7 @@ theorem phaseLinear_bound {l : SignedLabel B N0} {n : ℕ}
       · exact (norm_smul_le _ _).trans
           (mul_le_mul (by simpa only [Real.norm_eq_abs] using hd) hz
             (norm_nonneg _) (mul_nonneg hM0 (inv_nonneg.mpr he.le)))
-    _ ≤ _ := by nlinarith [mul_le_mul_of_nonneg_left hprod hM0]
+    _ ≤ _ := by linarith only [mul_le_mul_of_nonneg_left hprod hM0]
 
 theorem localPhase_positive_jets (m : ℕ) :
     ∃ C : ℝ, 1 ≤ C ∧ ∃ p : ℕ, ∀ n (i : CopyIndex B N0) x,

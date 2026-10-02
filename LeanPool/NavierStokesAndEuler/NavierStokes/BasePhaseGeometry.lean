@@ -241,14 +241,10 @@ theorem chart_scalar_factor_bounds {r0 h : ℝ} (hr0 : 0 < r0) (hh : 0 ≤ h)
     rw [hRsq]
     simpa only [mul_one] using mul_le_mul_of_nonneg_left hSc.2 (by positivity : 0 ≤ 2 * r0)
   constructor
-  · have hs := Real.sq_sqrt (show 0 ≤ 2 * r0 / ChartScales.Tg by positivity)
-    have hspos := Real.sqrt_nonneg (2 * r0 / ChartScales.Tg)
-    change Real.sqrt (2 * r0 / ChartScales.Tg) ≤ R
-    nlinarith
-  · have hs := Real.sq_sqrt (show 0 ≤ 2 * r0 by positivity)
-    have hspos := Real.sqrt_nonneg (2 * r0)
-    change R ≤ Real.sqrt (2 * r0)
-    nlinarith
+  · change Real.sqrt (2 * r0 / ChartScales.Tg) ≤ R
+    exact (Real.sqrt_le_sqrt hlow).trans_eq (Real.sqrt_sq hR)
+  · change R ≤ Real.sqrt (2 * r0)
+    exact (Real.sqrt_sq hR).symm.trans_le (Real.sqrt_le_sqrt hhigh)
 
 /-- Scalar lower, given by `kappa * PulseCovariance.PulseBounds.lowerMassConstant a B *
 Real.sqrt (2 * r0 / ChartScales.Tg)`. -/
@@ -972,11 +968,8 @@ theorem frame_errors_of_normal_close
   have hr := PhaseEstimates.radialSlope_uniform_bound hB hK hsmall hn hs
   let E := η + 8 * (1 + A) * δ / b
   have hE : 0 ≤ E := by dsimp [E]; positivity
-  have hηE : η ≤ E := by
-    have : 0 ≤ 8 * (1 + A) * δ / b := by positivity
-    dsimp [E]
-    linarith
-  have hfac : 8 * (1 + A) * δ / b ≤ E := by dsimp [E]; linarith
+  have hηE : η ≤ E := le_add_of_nonneg_right (by positivity)
+  have hfac : 8 * (1 + A) * δ / b ≤ E := le_add_of_nonneg_left hη
   have h0 : PrimaryODE.localFrame n 0 = MovingFrameODE.normalDirection n := by
     rw [PrimaryODE.localFrame_eq hne, MovingFrameODE.normalFrame_zero]
   have h1 : PrimaryODE.localFrame n 1 = MovingFrameODE.quarterTurn (MovingFrameODE.normalDirection
@@ -985,29 +978,33 @@ theorem frame_errors_of_normal_close
   have hKerr : ‖PrimaryODE.localFrame n 0 - K‖ ≤ E := by
     rw [h0]
     exact (PhaseEstimates.normalDirection_close hB hK hsmall hn).trans
-      ((scaled_div_mono hδ hb hbB (by norm_num : (0 : ℝ) ≤ 4) (by linarith)).trans hfac)
+      ((scaled_div_mono hδ hb hbB (by norm_num : (0 : ℝ) ≤ 4) (by linarith only [hA])).trans hfac)
   have hNerr : ‖PrimaryODE.localFrame n 1 - MovingFrameODE.quarterTurn K‖ ≤ E := by
     rw [h1]
     exact (PhaseEstimates.transverseDirection_close hB hK hsmall hn).trans
-      ((scaled_div_mono hδ hb hbB (by norm_num : (0 : ℝ) ≤ 4) (by linarith)).trans hfac)
+      ((scaled_div_mono hδ hb hbB (by norm_num : (0 : ℝ) ≤ 4) (by linarith only [hA])).trans hfac)
   have hrerr : |MovingFrameODE.radialSlope n - s| ≤ E :=
     (PhaseEstimates.radialSlope_close hB hK hsmall hn).trans
-      ((scaled_div_mono hδ hb hbB (by positivity) (by linarith [abs_nonneg s])).trans hfac)
+      ((scaled_div_mono hδ hb hbB (by positivity) (by linarith only [hs, abs_nonneg s])).trans
+        hfac)
   have hrderr : |PhaseEstimates.slopeDerivative n nDot| ≤ E :=
     (PhaseEstimates.slopeDerivative_bound hB hlow hnd).trans
       ((scaled_div_mono hδ hb hbB (by positivity)
-        (by linarith [abs_nonneg (MovingFrameODE.radialSlope n)])).trans hfac)
+        (by linarith only [hr, hA, abs_nonneg (MovingFrameODE.radialSlope n)])).trans hfac)
   have hωerr : |PhaseEstimates.angularVelocity n nDot| ≤ E :=
     (PhaseEstimates.angularVelocity_bound hB hlow hnd).trans
-      ((scaled_div_mono hδ hb hbB (by norm_num : (0 : ℝ) ≤ 4) (by linarith)).trans hfac)
+      ((scaled_div_mono hδ hb hbB (by norm_num : (0 : ℝ) ≤ 4) (by linarith only [hA])).trans hfac)
   have h := MovingFrameODE.frame_coefficients_close
     (B := PrimaryODE.localFrame n) (B0 := MovingFrameODE.frameOfUnit K hK)
     (g := g) (g0 := g0) (F := F) (F0 := F0) (ρ := MovingFrameODE.radialSlope n)
     (s := s) (ρ' := PhaseEstimates.slopeDerivative n nDot)
     (rot := PhaseEstimates.angularVelocity n nDot) (M := M + 2 + 2 * A) (η := E)
-    (by linarith) hE (hr.trans (by linarith)) (hs.trans (by linarith))
-    (hF0.trans (by linarith)) (hg0.trans (by linarith)) (by simpa using horth)
-    (hF.trans hηE) (hg.trans hηE) (by simpa using hKerr) (by simpa using hNerr) hrerr hrderr hωerr
+    (by linarith only [hM, hA]) hE (hr.trans (by linarith only [hM]))
+    (hs.trans (by linarith only [hM, hA])) (hF0.trans (by linarith only [hA]))
+    (hg0.trans (by linarith only [hA]))
+    (by simpa only [MovingFrameODE.frameOfUnit_zero] using horth)
+    (hF.trans hηE) (hg.trans hηE) (by simpa only [MovingFrameODE.frameOfUnit_zero] using hKerr)
+    (by simpa only [MovingFrameODE.frameOfUnit_one] using hNerr) hrerr hrderr hωerr
   simpa only [MovingFrameODE.frameOfUnit_one, E] using h
 
 theorem norm_pack_sq (x : ℝ) (w : Plane) :
@@ -1102,27 +1099,27 @@ theorem phase_errors_on_mesh
       PhaseEstimates.referenceNormal B sigma u L v K‖ ≤ normalConstant M / S ∧
     ‖PhaseCalculus.normalSlotDerivative ε (PhaseEstimates.roundedFrequency k target) pz F G q‖ ≤
       normalConstant M / S := by
-  have hS0 : 0 < S := by linarith
-  have hk0 : 0 < k := by linarith
-  have hM0 : 0 ≤ M := by linarith
-  have hM2 : M ≤ 2 * M := by linarith
+  have hS0 : 0 < S := by linarith only [hS]
+  have hk0 : 0 < k := by linarith only [hk]
+  have hM0 : 0 ≤ M := by linarith only [hM]
+  have hM2 : M ≤ 2 * M := by linarith only [hM0]
   have hd : ‖q - q0‖ ≤ 1 / (S / 2) ^ 3 := hdiameter.trans (by
     apply (div_le_div_iff₀ (pow_pos hS0 3) (pow_pos (half_pos hS0) 3)).2
-    linarith [pow_pos hS0 3])
+    linarith only [pow_pos hS0 3])
   have hL' : 1 / |L| ≤ (2 * M) / (S / 2) := hL.trans (by
     apply (div_le_div_iff₀ hS0 (half_pos hS0)).2
-    nlinarith)
+    linarith only [mul_nonneg hM0 hS0.le])
   have he := PhaseEstimates.actual_phase_estimates
     (v := v) (θ := θ) (localBase_mono hbase hM2) hq hq0 hd hR hR0 hg horth hfreq
-    (by linarith) (by linarith) hk hε (htarget.trans hM2) (hpz.trans hM2) (hB.trans hM2)
-    hsigma (hu.trans hM2) (hgi.trans hM2) hL' (by linarith [hv])
+    (by linarith only [hM]) (by linarith only [hS]) hk hε (htarget.trans hM2) (hpz.trans hM2)
+    (hB.trans hM2) hsigma (hu.trans hM2) (hgi.trans hM2) hL' (by linarith only [hv])
     (hRi.trans hM2) (hR0i.trans hM2)
   have hband := PhaseEstimates.phaseError_le_four_div (S := S / 2) (ε := ε) (k := k)
-    (half_pos hS0) (by linarith [sq_nonneg (S * ε)])
+    (half_pos hS0) (by linarith only [hε2, sq_nonneg (S * ε)])
     ((div_le_iff₀ hk0).2 (by
       have h := (div_le_iff₀ hk0).1 hk2
-      linarith [sq_nonneg S]))
-    (by linarith [mul_nonneg hε.le (sq_nonneg S)])
+      linarith only [h, sq_nonneg S]))
+    (by linarith only [hε1, mul_nonneg hε.le (sq_nonneg S)])
   have hc : 0 ≤ PhaseEstimates.phaseConstant (2 * M) := by
     unfold PhaseEstimates.phaseConstant
     positivity

@@ -594,7 +594,8 @@ theorem join_hasDerivWithinAt
   have hv' (s : ℝ) (hs : s ∈ Icc τ S) :
       HasDerivWithinAt (fun r => extendPath (S-τ) (sub_nonneg.mpr hτS) v (r-τ))
         (extendPath (S-τ) (sub_nonneg.mpr hτS) v' (s-τ)) (Icc τ S) s := by
-    have hd := (hv ⟨s-τ,hr hs⟩).scomp s ((hasDerivAt_id s).sub_const τ).hasDerivWithinAt hr
+    have hd := (hv ⟨s-τ,hr hs⟩).scomp (h := fun r : ℝ => r-τ) s
+      ((hasDerivAt_id s).sub_const τ).hasDerivWithinAt hr
     simpa only [one_smul,Function.comp_def,id_eq,extendPath,
       projIcc_of_mem (sub_nonneg.mpr hτS) (hr hs)] using hd
   have hd := glue_hasDerivWithinAt S τ hτ0 hτS (extendPath τ hτ0 u)

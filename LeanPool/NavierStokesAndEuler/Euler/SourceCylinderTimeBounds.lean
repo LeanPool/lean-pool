@@ -152,6 +152,7 @@ theorem physicalRhs_block_bound
       (includePath (K := K) (V := E) P S hS (physicalRhs P S hS Q Q₁ c hc hQ f a))) n 0 ≤
       physicalCost ι q Ri C₀ C₁ Df Da*majorant R d n := by
   obtain ⟨hi,hbase⟩ := inverseRadius_bounds c C₀ Rc Ri hc hRc hRi
+  have hi4 : 0 ≤ 4*Ri := mul_nonneg (by norm_num) hi
   have hq (j : ℕ) (b : Space) :
       ‖iteratedFDeriv ℝ j (translateCoefficientPath Q.field) b‖ ≤ C₀*majorant (4*Ri) 0 j :=
     (Q.norm_iteratedFDeriv_translation_le j _ (mul_nonneg hC₀ (majorant_nonneg Rc hRc 0 j)) (hbQ j)
@@ -166,20 +167,20 @@ theorem physicalRhs_block_bound
     unfold coordinateCost
     exact add_nonneg
       (mul_nonneg (mul_nonneg (by norm_num)
-        (sobolevCoefficientAmplitude_nonneg q (4*Ri) (18*Ri*C₀*C₁) (by
-            positivity) (by positivity))) hDa)
+        (sobolevCoefficientAmplitude_nonneg q (4*Ri) (18*Ri*C₀*C₁) hi4
+          (mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hi) hC₀) hC₁))) hDa)
       (mul_nonneg (mul_nonneg (by norm_num)
-        (sobolevCoefficientAmplitude_nonneg q (4*Ri) (3*Ri*C₀) (by
-            positivity) (by positivity))) hDf)
+        (sobolevCoefficientAmplitude_nonneg q (4*Ri) (3*Ri*C₀) hi4
+          (mul_nonneg (mul_nonneg (by norm_num) hi) hC₀))) hDf)
   have hcoord := coordinateRhs_contDiff P S hS Q Q₁ c hc hQ f a hf ha
   have hbcoord := coordinateRhs_block_bound P S hS Q Q₁ c hc hQ f a directions hd q hf ha
     Rc C₀ C₁ Ri R Df Da hRc hC₀ hC₁ hDf hDa hRi hR hbQ hbQ₁ d hbf hba
   have hfirst := product_orbit_block_bound P Q₁.field Q₁.translation_contDiff directions hd q
-    (includePath (K := K) (V := U) P S hS a) ha (4*Ri) C₁ R Da (by positivity) hC₁ hDa hR hq₁ d
+    (includePath (K := K) (V := U) P S hS a) ha (4*Ri) C₁ R Da hi4 hC₁ hDa hR hq₁ d
     hba n
   have hsecond := product_orbit_block_bound P Q.field Q.translation_contDiff directions hd q
     (includePath (K := K) (V := U) P S hS (coordinateRhs P S hS Q Q₁ c hc hQ f a)) hcoord
-    (4*Ri) C₀ R (coordinateCost ι q Ri C₀ C₁ Df Da) (by positivity) hC₀ hcost hR hq d hbcoord n
+    (4*Ri) C₀ R (coordinateCost ι q Ri C₀ C₁ Df Da) hi4 hC₀ hcost hR hq d hbcoord n
   have hsum := block_add_le directions q _ _
     (supported_product_orbit_contDiff P Q₁.field Q₁.translation_contDiff S hS a ha)
     (supported_product_orbit_contDiff P Q.field Q.translation_contDiff S hS _ hcoord) n 0

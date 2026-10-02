@@ -779,11 +779,10 @@ theorem residualDifference_jet_bound {U : Set SpaceTime}
   let C₁ : VelocityField := fun y => spaceRestriction Space (fderiv ℝ u y) (w y)
   let C₂ : VelocityField := fun y => spaceRestriction Space (fderiv ℝ w y) (u y)
   let C₃ : VelocityField := fun y => spaceRestriction Space (fderiv ℝ w y) (w y)
-  have hDu : ContDiffOn ℝ ∞ (fderiv ℝ u) U := hu.fderiv_of_isOpen hU (by simp)
-  have hDw : ContDiffOn ℝ ∞ (fderiv ℝ w) U := hw.fderiv_of_isOpen hU (by simp)
-  have hDDw : ContDiffOn ℝ ∞ (fderiv ℝ (fderiv ℝ w)) U :=
-    hDw.fderiv_of_isOpen hU (by simp)
-  have hDr : ContDiffOn ℝ ∞ (fderiv ℝ r) U := hr.fderiv_of_isOpen hU (by simp)
+  have hDu := hu.fderiv_of_isOpen (m := ∞) hU (by simp)
+  have hDw := hw.fderiv_of_isOpen (m := ∞) hU (by simp)
+  have hDDw := hDw.fderiv_of_isOpen (m := ∞) hU (by simp)
+  have hDr := hr.fderiv_of_isOpen (m := ∞) hU (by simp)
   have hTs : ContDiffOn ℝ ∞ T U := hDw.continuousLinearMap_comp timeJet
   have hLs : ContDiffOn ℝ ∞ L U := hDDw.continuousLinearMap_comp laplaceJet
   have hRs : ContDiffOn ℝ ∞ R U := hDr.continuousLinearMap_comp pressureJet
@@ -793,42 +792,24 @@ theorem residualDifference_jet_bound {U : Set SpaceTime}
     (hDw.continuousLinearMap_comp (spaceRestriction Space)).clm_apply hu
   have hC₃s : ContDiffOn ℝ ∞ C₃ U :=
     (hDw.continuousLinearMap_comp (spaceRestriction Space)).clm_apply hw
-  have hT : ‖iteratedFDeriv ℝ m T z‖ ≤ ‖timeJet‖ * W := by
-    apply (norm_jet_linear_map timeJet hU hDw hz m).trans
-    apply mul_le_mul_of_nonneg_left _ (norm_nonneg _)
-    rw [norm_iteratedFDeriv_fderiv]
-    exact hwBound (m + 1) (by omega)
-  have hL : ‖iteratedFDeriv ℝ m L z‖ ≤ ‖laplaceJet‖ * W := by
-    apply (norm_jet_linear_map laplaceJet hU hDDw hz m).trans
-    apply mul_le_mul_of_nonneg_left _ (norm_nonneg _)
-    rw [norm_iteratedFDeriv_fderiv, norm_iteratedFDeriv_fderiv]
-    exact hwBound (m + 1 + 1) (by omega)
-  have hR : ‖iteratedFDeriv ℝ m R z‖ ≤ ‖pressureJet‖ * P := by
-    apply (norm_jet_linear_map pressureJet hU hDr hz m).trans
-    apply mul_le_mul_of_nonneg_left _ (norm_nonneg _)
-    rw [norm_iteratedFDeriv_fderiv]
-    exact hrBound (m + 1) le_rfl
+  have hT := (norm_jet_linear_map_fderiv timeJet hU hw hz m).trans
+    (mul_le_mul_of_nonneg_left (hwBound (m + 1) (by omega)) (norm_nonneg _))
+  have hL := (norm_jet_linear_map_fderiv laplaceJet hU hDw hz m).trans
+    (mul_le_mul_of_nonneg_left (norm_iteratedFDeriv_fderiv.trans_le
+      (hwBound (m + 1 + 1) (by omega))) (norm_nonneg _))
+  have hR := (norm_jet_linear_map_fderiv pressureJet hU hr hz m).trans
+    (mul_le_mul_of_nonneg_left (hrBound (m + 1) le_rfl) (norm_nonneg _))
   have hu₀ : ∀ k : ℕ, k ≤ m → ‖iteratedFDeriv ℝ k u z‖ ≤ A :=
     fun k hk => huBound k (by omega)
   have hw₀ : ∀ k : ℕ, k ≤ m → ‖iteratedFDeriv ℝ k w z‖ ≤ W :=
     fun k hk => hwBound k (by omega)
-  have hu₁ : ∀ k : ℕ, k ≤ m → ‖iteratedFDeriv ℝ k (fderiv ℝ u) z‖ ≤ A := by
-    intro k hk
-    rw [norm_iteratedFDeriv_fderiv]
-    exact huBound (k + 1) (by omega)
-  have hw₁ : ∀ k : ℕ, k ≤ m → ‖iteratedFDeriv ℝ k (fderiv ℝ w) z‖ ≤ W := by
-    intro k hk
-    rw [norm_iteratedFDeriv_fderiv]
-    exact hwBound (k + 1) (by omega)
-  have hC₁ : ‖iteratedFDeriv ℝ m C₁ z‖ ≤
-      ‖spaceRestriction Space‖ * (2 : ℝ) ^ m * A * W :=
-    norm_jet_bilinear_bound (spaceRestriction Space) hU hDu hw hz m hu₁ hw₀
-  have hC₂ : ‖iteratedFDeriv ℝ m C₂ z‖ ≤
-      ‖spaceRestriction Space‖ * (2 : ℝ) ^ m * W * A :=
-    norm_jet_bilinear_bound (spaceRestriction Space) hU hDw hu hz m hw₁ hu₀
-  have hC₃ : ‖iteratedFDeriv ℝ m C₃ z‖ ≤
-      ‖spaceRestriction Space‖ * (2 : ℝ) ^ m * W * W :=
-    norm_jet_bilinear_bound (spaceRestriction Space) hU hDw hw hz m hw₁ hw₀
+  have hu₁ := fun (k : ℕ) (hk : k ≤ m) =>
+    norm_iteratedFDeriv_fderiv.trans_le (huBound (k + 1) (by omega))
+  have hw₁ := fun (k : ℕ) (hk : k ≤ m) =>
+    norm_iteratedFDeriv_fderiv.trans_le (hwBound (k + 1) (by omega))
+  have hC₁ := norm_jet_bilinear_bound (spaceRestriction Space) hU hDu hw hz m hu₁ hw₀
+  have hC₂ := norm_jet_bilinear_bound (spaceRestriction Space) hU hDw hu hz m hw₁ hu₀
+  have hC₃ := norm_jet_bilinear_bound (spaceRestriction Space) hU hDw hw hz m hw₁ hw₀
   have hTL := (norm_jet_sub_le hU hTs hLs hz m).trans (add_le_add hT hL)
   have hTLR := (norm_jet_add_le hU (hTs.sub hLs) hRs hz m).trans (add_le_add hTL hR)
   have h₁ := (norm_jet_add_le hU ((hTs.sub hLs).add hRs) hC₁s hz m).trans

@@ -83,8 +83,8 @@ theorem graph_residual_identity (κ k : ℝ) (hκ : k * κ = 1) (m : E)
     simp only [spaceTimeGraph_apply,real_inner_smul_right,← mul_assoc,hκ,one_mul]
   have ha : ((0 : ℝ),κ • z (spaceTimeGraph k m q)) = κ • (0,z (spaceTimeGraph k m q)) := by
     simp only [Prod.smul_mk,smul_zero]
-  rw [hv,graphVelocity_fderiv κ k m F z q DF Dz hF hz,
-    graphVelocity_fderiv κ k m F z q DF Dz hF hz,ht,hs,ha]
+  simp only [hv,graphVelocity_fderiv κ k m F z q DF Dz hF hz,ht,hs]
+  rw [ha]
   simp only [hA,map_smul,smul_apply,map_add,ContinuousLinearEquiv.coe_coe,
     ContinuousLinearEquiv.apply_symm_apply]
   module

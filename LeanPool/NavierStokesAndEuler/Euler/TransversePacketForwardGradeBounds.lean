@@ -93,13 +93,14 @@ theorem pair_amplitude_bound
     rw [ht] at hf
     have hfull : HistoryData.forcingPath G = 0 := by
       have he := congrArg (weight (E := CylinderL2 P Space) g) hf
-      rw [weight_normalize,map_zero] at he
-      exact he
+      exact (weight_normalize (E := CylinderL2 P Space) g hg _).symm.trans
+        (he.trans (weight (E := CylinderL2 P Space) g).map_zero)
     have hp : G.path = 0 := by
       have he := congrArg
           (projectPath (K := Icc (0 : ℝ) D.T) (V := Space) P D.support D.support_measurable) hfull
-      rw [project_include,map_zero] at he
-      exact he
+      exact (project_include P D.support D.support_measurable G.path).symm.trans
+        (he.trans (projectPath (K := Icc (0 : ℝ) D.T) (V := Space) P D.support
+          D.support_measurable).map_zero)
     have hinitial := value_zero_of_block_zero_bound directions q
       (fun a => translate (V := U) P a (I.value : CylinderL2 P U)) 0
       (by simpa only [hz,zero_mul] using hi 0)
@@ -116,7 +117,7 @@ theorem pair_amplitude_bound
     have hinput : HistoryData.forcingPath H = A⁻¹ • HistoryData.forcingPath G := by
       change includePath (K := Icc (0 : ℝ) D.T) (V := Space) P D.support D.support_measurable
           (A⁻¹ • G.path) = _
-      rw [map_smul]
+      exact ContinuousLinearMap.map_smul _ _ _
     have hH (j : ℕ) : block directions q (fun a =>
         pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
         (normalize (E := CylinderL2 P Space) g hg (HistoryData.forcingPath H))) j 0 ≤
@@ -126,7 +127,11 @@ theorem pair_amplitude_bound
           fun a => A⁻¹ • pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
               (normalize (E := CylinderL2 P Space) g hg (HistoryData.forcingPath G)) := by
         funext a
-        rw [hinput,map_smul,map_smul]
+        exact (congrArg (fun x => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
+            (normalize (E := CylinderL2 P Space) g hg x)) hinput).trans
+          ((congrArg (pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a)
+            ((normalize (E := CylinderL2 P Space) g hg).map_smul A⁻¹ _)).trans
+          ((pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a).map_smul A⁻¹ _))
       rw [he]
       simpa only [one_mul] using block_normalize_bound directions q
         (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
@@ -138,8 +143,7 @@ theorem pair_amplitude_bound
       have he : (fun a => translate (V := U) P a (J.value : CylinderL2 P U)) =
           fun a => A⁻¹ • translate (V := U) P a (I.value : CylinderL2 P U) := by
         funext a
-        change translate (V := U) P a (A⁻¹ • (I.value : CylinderL2 P U)) = _
-        rw [map_smul]
+        exact (translate (V := U) P a).map_smul A⁻¹ (I.value : CylinderL2 P U)
       rw [he]
       simpa only [one_mul] using block_normalize_bound directions q
         (fun a => translate (V := U) P a (I.value : CylinderL2 P U)) I.orbit A hApos R 1 d j 0
@@ -152,7 +156,11 @@ theorem pair_amplitude_bound
       (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
           (normalize (E := CylinderL2 P Vector3) g hg (S G I)))
       (normalize_orbit_contDiff P g hg (S H J) (hs H J)) A hA
-      (fun a => by rw [hrestore,map_smul,map_smul]) R C e n 0
+      (fun a => (congrArg (fun x => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+          (normalize (E := CylinderL2 P Vector3) g hg x)) hrestore).trans
+        ((congrArg (pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a)
+          ((normalize (E := CylinderL2 P Vector3) g hg).map_smul A _)).trans
+        ((pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a).map_smul A _))) R C e n 0
       (hunit H J hH hJ n)).trans_eq (by ring)
 
 end EulerTransversePacketProvider

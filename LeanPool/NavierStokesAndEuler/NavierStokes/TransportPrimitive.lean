@@ -951,6 +951,12 @@ theorem iteratedFDeriv_contDiff {f : ℝ × E → F} (hf : ContDiff ℝ ∞ f) (
     ContDiff ℝ ∞ (iteratedFDeriv ℝ n f) :=
   hf.iteratedFDeriv_right (by exact_mod_cast (le_top : (⊤ : ℕ∞) + (n : ℕ∞) ≤ ⊤))
 
+theorem linearIsometryEquiv_integral_comm {G G' : Type*} [NormedAddCommGroup G]
+    [NormedSpace ℝ G] [NormedAddCommGroup G'] [NormedSpace ℝ G'] (L : G ≃ₗᵢ[ℝ] G')
+    (μ : Measure ℝ) (g : ℝ → G) :
+    L (∫ u, g u ∂μ) = ∫ u, L (g u) ∂μ :=
+  (L.toContinuousLinearEquiv.integral_comp_comm g).symm
+
 /-- Every order of the actual multilinear Fréchet derivative commutes with I. -/
 theorem iteratedFDeriv_pastIntegral {a b M : ℝ} {v : E}
     {f : ℝ × E → F} (hf : ContDiff ℝ ∞ f) (hs : RadialAlias.RadiallySupported a b f)
@@ -961,7 +967,7 @@ theorem iteratedFDeriv_pastIntegral {a b M : ℝ} {v : E}
     let L := (continuousMultilinearCurryFin0 ℝ (ℝ × E) F).symm
     change L (∫ u in Iic (0 : ℝ), f (shift M v z u)) =
       ∫ u in Iic (0 : ℝ), L (f (shift M v z u))
-    exact (L.toContinuousLinearEquiv.integral_comp_comm _).symm
+    exact linearIsometryEquiv_integral_comm L _ _
   | succ n ih =>
     let L := (continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (n + 1) => ℝ × E) F).symm
     have heq : iteratedFDeriv ℝ n (pastIntegral M v f) =
@@ -970,11 +976,8 @@ theorem iteratedFDeriv_pastIntegral {a b M : ℝ} {v : E}
       ∫ u in Iic (0 : ℝ), L (fderiv ℝ (iteratedFDeriv ℝ n f) (shift M v z u))
     rw [heq, (pastIntegral_hasFDerivAt (iteratedFDeriv_contDiff hf n)
       (iteratedFDeriv_supported hs n) z).fderiv]
-    exact (L.toContinuousLinearEquiv.integral_comp_comm
-      (E := (ℝ × E) →L[ℝ] ContinuousMultilinearMap ℝ (fun _ : Fin n => ℝ × E) F)
-      (F := ContinuousMultilinearMap ℝ (fun _ : Fin (n + 1) => ℝ × E) F) (𝕜 := ℝ)
-      (μ := volume.restrict (Iic (0 : ℝ)))
-      (fun u : ℝ => fderiv ℝ (iteratedFDeriv ℝ n f) (shift M v z u))).symm
+    exact linearIsometryEquiv_integral_comm L (volume.restrict (Iic (0 : ℝ)))
+      (fun u : ℝ => fderiv ℝ (iteratedFDeriv ℝ n f) (shift M v z u))
 
 /-- Every order of the actual multilinear Fréchet derivative commutes with J. -/
 theorem iteratedFDeriv_totalIntegral {a b M : ℝ} {v : E}
@@ -985,7 +988,7 @@ theorem iteratedFDeriv_totalIntegral {a b M : ℝ} {v : E}
   | zero =>
     let L := (continuousMultilinearCurryFin0 ℝ (ℝ × E) F).symm
     change L (∫ u : ℝ, f (shift M v z u)) = ∫ u : ℝ, L (f (shift M v z u))
-    exact (L.toContinuousLinearEquiv.integral_comp_comm _).symm
+    exact linearIsometryEquiv_integral_comm L _ _
   | succ n ih =>
     let L := (continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (n + 1) => ℝ × E) F).symm
     have heq : iteratedFDeriv ℝ n (totalIntegral M v f) =
@@ -994,10 +997,8 @@ theorem iteratedFDeriv_totalIntegral {a b M : ℝ} {v : E}
       ∫ u : ℝ, L (fderiv ℝ (iteratedFDeriv ℝ n f) (shift M v z u))
     rw [heq, (totalIntegral_hasFDerivAt (iteratedFDeriv_contDiff hf n)
       (iteratedFDeriv_supported hs n) z).fderiv]
-    exact (L.toContinuousLinearEquiv.integral_comp_comm
-      (E := (ℝ × E) →L[ℝ] ContinuousMultilinearMap ℝ (fun _ : Fin n => ℝ × E) F)
-      (F := ContinuousMultilinearMap ℝ (fun _ : Fin (n + 1) => ℝ × E) F) (𝕜 := ℝ) (μ := volume)
-      (fun u : ℝ => fderiv ℝ (iteratedFDeriv ℝ n f) (shift M v z u))).symm
+    exact linearIsometryEquiv_integral_comm L volume
+      (fun u : ℝ => fderiv ℝ (iteratedFDeriv ℝ n f) (shift M v z u))
 
 theorem iteratedFDeriv_pastIntegral_norm_le {a b M C : ℝ} {v : E}
     {f : ℝ × E → F} (hab : a ≤ b) (hf : ContDiff ℝ ∞ f)

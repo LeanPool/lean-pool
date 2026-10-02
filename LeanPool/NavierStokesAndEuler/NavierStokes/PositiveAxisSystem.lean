@@ -890,162 +890,203 @@ theorem inverse_ell_analyticAt {h z : ℂ} (hL : ell h z ≠ 0) :
   change 1 - 2 * h * z ^ 2 ≠ 0 at hL
   exact (analyticAt_const.sub (analyticAt_const.mul (analyticAt_id.pow 2))).inv hL
 
+/- Closure rules at a point, stated with the instances of the statements below, so that the
+entrywise proofs unify syntactically instead of comparing instance paths at every step. -/
+private theorem pointContDiff_const {n : WithTop ℕ∞} {w : ℝ × ℂ} (c : ℂ) :
+    ContDiffAt ℝ n (fun _ : ℝ × ℂ => c) w := contDiffAt_const
+
+private theorem pointContDiff_add {n : WithTop ℕ∞} {w : ℝ × ℂ} {f g : ℝ × ℂ → ℂ}
+    (hf : ContDiffAt ℝ n f w) (hg : ContDiffAt ℝ n g w) :
+    ContDiffAt ℝ n (fun v => f v + g v) w := hf.add hg
+
+private theorem pointContDiff_sub {n : WithTop ℕ∞} {w : ℝ × ℂ} {f g : ℝ × ℂ → ℂ}
+    (hf : ContDiffAt ℝ n f w) (hg : ContDiffAt ℝ n g w) :
+    ContDiffAt ℝ n (fun v => f v - g v) w := hf.sub hg
+
+private theorem pointContDiff_mul {n : WithTop ℕ∞} {w : ℝ × ℂ} {f g : ℝ × ℂ → ℂ}
+    (hf : ContDiffAt ℝ n f w) (hg : ContDiffAt ℝ n g w) :
+    ContDiffAt ℝ n (fun v => f v * g v) w := hf.mul hg
+
+private theorem pointContDiff_neg {n : WithTop ℕ∞} {w : ℝ × ℂ} {f : ℝ × ℂ → ℂ}
+    (hf : ContDiffAt ℝ n f w) : ContDiffAt ℝ n (fun v => -f v) w := hf.neg
+
+private theorem pointContDiff_pow {n : WithTop ℕ∞} {w : ℝ × ℂ} {f : ℝ × ℂ → ℂ}
+    (hf : ContDiffAt ℝ n f w) (k : ℕ) : ContDiffAt ℝ n (fun v => f v ^ k) w := hf.pow k
+
 theorem coefficient0_contDiffAt_of_pullback {n : WithTop ℕ∞} {h lam C : ℂ} {F : CoefficientData}
     {w : ℝ × ℂ} (hF : ∀ i, ContDiffAt ℝ n (fun v : ℝ × ℂ => F i (v.1 ^ 2, v.2)) w)
     (hL : ell h w.2 ≠ 0) (i j : Fin 6) :
     ContDiffAt ℝ n (fun v : ℝ × ℂ => coefficient0 h lam C F v.1 v.2 i j) w := by
-  have hdata := hF
-  have hlinv := inverse_ell_contDiffAt (n := n) (w := w) hL
+  have hlinv : ContDiffAt ℝ n (fun v : ℝ × ℂ => (1 - 2 * h * v.2 ^ 2)⁻¹) w :=
+    inverse_ell_contDiffAt hL
   have hcoe : ContDiffAt ℝ n (fun v : ℝ × ℂ => (v.1 : ℂ)) w :=
     Complex.ofRealCLM.contDiff.contDiffAt.comp w contDiffAt_fst
+  have hsnd : ContDiffAt ℝ n (fun v : ℝ × ℂ => v.2) w := contDiffAt_snd
   fin_cases i <;>
     simp only [coefficient0, A0, Matrix.of_apply, Fin.zero_eta, Fin.isValue,
       Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_fin_one, Fin.mk_one,
       Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] <;>
-    (first | exact contDiffAt_const | skip) <;>
+    (first | with_reducible exact pointContDiff_const _ | skip) <;>
     fin_cases j <;>
     simp only [coefficientBase, Fin.isValue, ell, div_eq_mul_inv, axialValue,
         edge, neg_mul, neg_add_rev, Fin.zero_eta,
             Matrix.cons_val_zero, Fin.mk_one, Matrix.cons_val_one,
                 Fin.reduceFinMk, Matrix.cons_val] <;>
-    (repeat' first
-      | exact contDiffAt_const
-      | exact hdata _
-      | exact contDiffAt_snd
-      | exact hcoe
+    (with_reducible repeat' first
       | exact hlinv
-      | apply ContDiffAt.add
-      | apply ContDiffAt.sub
-      | apply ContDiffAt.mul
-      | apply ContDiffAt.neg)
+      | apply pointContDiff_mul
+      | apply pointContDiff_add
+      | apply pointContDiff_sub
+      | apply pointContDiff_neg
+      | apply pointContDiff_pow
+      | exact hF _
+      | exact pointContDiff_const _
+      | exact hsnd
+      | exact hcoe)
 
 theorem coefficient1_contDiffAt_of_pullback {n : WithTop ℕ∞} {h : ℂ} {F : CoefficientData}
     {w : ℝ × ℂ} (hF : ∀ i, ContDiffAt ℝ n (fun v : ℝ × ℂ => F i (v.1 ^ 2, v.2)) w)
     (hL : ell h w.2 ≠ 0) (i j : Fin 6) :
     ContDiffAt ℝ n (fun v : ℝ × ℂ => coefficient1 h F v.1 v.2 i j) w := by
-  have hdata := hF
-  have hlinv := inverse_ell_contDiffAt (n := n) (w := w) hL
+  have hlinv : ContDiffAt ℝ n (fun v : ℝ × ℂ => (1 - 2 * h * v.2 ^ 2)⁻¹) w :=
+    inverse_ell_contDiffAt hL
   have hcoe : ContDiffAt ℝ n (fun v : ℝ × ℂ => (v.1 : ℂ)) w :=
     Complex.ofRealCLM.contDiff.contDiffAt.comp w contDiffAt_fst
-  have hphi : ContDiffAt ℝ n (fun v : ℝ × ℂ =>
-      (v.1 : ℂ) ^ 2 * F 1 (v.1 ^ 2, v.2) + F 0 (v.1 ^ 2, v.2)) w :=
-    ((hcoe.pow 2).mul (hdata 1)).add (hdata 0)
-  have hu : ContDiffAt ℝ n (fun v : ℝ × ℂ =>
-      (v.1 : ℂ) ^ 2 * F 4 (v.1 ^ 2, v.2)) w := (hcoe.pow 2).mul (hdata 4)
-  have htransport : ContDiffAt ℝ n (fun v : ℝ × ℂ =>
-      dScale h * v.2 + (1 - v.2 ^ 2) * F 3 (v.1 ^ 2, v.2)) w :=
-    (contDiffAt_const.mul contDiffAt_snd).add
-      ((contDiffAt_const.sub (contDiffAt_snd.pow 2)).mul (hdata 3))
+  have hsnd : ContDiffAt ℝ n (fun v : ℝ × ℂ => v.2) w := contDiffAt_snd
   fin_cases i <;>
     simp only [coefficient1, A1, Matrix.of_apply, Fin.zero_eta, Fin.isValue,
       Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_fin_one, Fin.mk_one,
       Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] <;>
-    (first | exact contDiffAt_const | skip) <;>
+    (first | with_reducible exact pointContDiff_const _ | skip) <;>
     fin_cases j <;>
     simp only [edge, coefficientBase, Fin.isValue, ell, div_eq_mul_inv, neg_mul,
         Fin.zero_eta, Matrix.cons_val_zero,
             Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk,
                 Matrix.cons_val] <;>
-    (repeat' first
-      | exact contDiffAt_const
-      | exact hphi
-      | exact hu
-      | exact htransport
-      | exact hdata _
-      | exact contDiffAt_snd
-      | exact hcoe
+    (with_reducible repeat' first
       | exact hlinv
-      | apply ContDiffAt.add
-      | apply ContDiffAt.sub
-      | apply ContDiffAt.mul
-      | apply ContDiffAt.neg)
+      | apply pointContDiff_mul
+      | apply pointContDiff_add
+      | apply pointContDiff_sub
+      | apply pointContDiff_neg
+      | apply pointContDiff_pow
+      | exact hF _
+      | exact pointContDiff_const _
+      | exact hsnd
+      | exact hcoe)
 
 theorem sourceField_contDiffAt_of_pullback {n : WithTop ℕ∞} {h C : ℂ} {F : CoefficientData}
     {w : ℝ × ℂ} (hF : ∀ i, ContDiffAt ℝ n (fun v : ℝ × ℂ => F i (v.1 ^ 2, v.2)) w)
     (hL : ell h w.2 ≠ 0) (i : Fin 6) :
     ContDiffAt ℝ n (fun v : ℝ × ℂ => sourceField h C F v.1 v.2 i) w := by
-  have hdata := hF
-  have hlinv := inverse_ell_contDiffAt (n := n) (w := w) hL
+  have hlinv : ContDiffAt ℝ n (fun v : ℝ × ℂ => (1 - 2 * h * v.2 ^ 2)⁻¹) w :=
+    inverse_ell_contDiffAt hL
   have hcoe : ContDiffAt ℝ n (fun v : ℝ × ℂ => (v.1 : ℂ)) w :=
     Complex.ofRealCLM.contDiff.contDiffAt.comp w contDiffAt_fst
+  have hsnd : ContDiffAt ℝ n (fun v : ℝ × ℂ => v.2) w := contDiffAt_snd
   fin_cases i <;>
     simp only [sourceField, forcing, pressureSource, coefficientSource, Fin.isValue,
         div_eq_mul_inv, ell, Fin.zero_eta, Matrix.cons_val_zero, Fin.mk_one, Matrix.cons_val_one,
             Fin.reduceFinMk, Matrix.cons_val] <;>
-    (repeat' first
-      | exact contDiffAt_const
-      | exact hdata _
-      | exact contDiffAt_snd
-      | exact hcoe
+    (with_reducible repeat' first
       | exact hlinv
-      | apply ContDiffAt.add
-      | apply ContDiffAt.sub
-      | apply ContDiffAt.mul)
+      | apply pointContDiff_mul
+      | apply pointContDiff_add
+      | apply pointContDiff_sub
+      | apply pointContDiff_pow
+      | exact hF _
+      | exact pointContDiff_const _
+      | exact hsnd
+      | exact hcoe)
+
+private theorem pointAnalytic_add {z : ℂ} {f g : ℂ → ℂ} (hf : AnalyticAt ℂ f z)
+    (hg : AnalyticAt ℂ g z) : AnalyticAt ℂ (fun v => f v + g v) z := hf.fun_add hg
+
+private theorem pointAnalytic_sub {z : ℂ} {f g : ℂ → ℂ} (hf : AnalyticAt ℂ f z)
+    (hg : AnalyticAt ℂ g z) : AnalyticAt ℂ (fun v => f v - g v) z := hf.fun_sub hg
+
+private theorem pointAnalytic_mul {z : ℂ} {f g : ℂ → ℂ} (hf : AnalyticAt ℂ f z)
+    (hg : AnalyticAt ℂ g z) : AnalyticAt ℂ (fun v => f v * g v) z := hf.fun_mul hg
+
+private theorem pointAnalytic_neg {z : ℂ} {f : ℂ → ℂ} (hf : AnalyticAt ℂ f z) :
+    AnalyticAt ℂ (fun v => -f v) z := hf.fun_neg
+
+private theorem pointAnalytic_pow {z : ℂ} {f : ℂ → ℂ} (hf : AnalyticAt ℂ f z) (k : ℕ) :
+    AnalyticAt ℂ (fun v => f v ^ k) z := hf.fun_pow k
 
 theorem coefficient0_analyticAt {h lam C : ℂ} {F : CoefficientData} {r : ℝ} {z : ℂ}
     (hF : ∀ i, AnalyticAt ℂ (fun v => F i (r ^ 2, v)) z) (hL : ell h z ≠ 0) (i j : Fin 6) :
     AnalyticAt ℂ (fun v => coefficient0 h lam C F r v i j) z := by
-  have hlinv := inverse_ell_analyticAt hL
+  have hlinv : AnalyticAt ℂ (fun v => (1 - 2 * h * v ^ 2)⁻¹) z := inverse_ell_analyticAt hL
+  have hconst (c : ℂ) : AnalyticAt ℂ (fun _ : ℂ => c) z := analyticAt_const
+  have hid : AnalyticAt ℂ (fun v : ℂ => v) z := analyticAt_id
   fin_cases i <;>
     simp only [coefficient0, A0, Matrix.of_apply, Fin.zero_eta, Fin.isValue,
       Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_fin_one, Fin.mk_one,
       Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] <;>
-    (first | exact analyticAt_const | skip) <;>
+    (first | with_reducible exact hconst _ | skip) <;>
     fin_cases j <;>
     simp only [coefficientBase, Fin.isValue, ell, div_eq_mul_inv, axialValue,
         edge, neg_mul, neg_add_rev, Fin.zero_eta,
             Matrix.cons_val_zero, Fin.mk_one, Matrix.cons_val_one,
                 Fin.reduceFinMk, Matrix.cons_val] <;>
-    (repeat' first
-      | exact analyticAt_const
-      | exact hF _
-      | exact analyticAt_id
+    (with_reducible repeat' first
       | exact hlinv
-      | apply AnalyticAt.fun_add
-      | apply AnalyticAt.fun_sub
-      | apply AnalyticAt.fun_mul
-      | apply AnalyticAt.fun_neg)
+      | exact hconst _
+      | apply pointAnalytic_mul
+      | apply pointAnalytic_add
+      | apply pointAnalytic_sub
+      | apply pointAnalytic_neg
+      | apply pointAnalytic_pow
+      | exact hF _
+      | exact hid)
 
 theorem coefficient1_analyticAt {h : ℂ} {F : CoefficientData} {r : ℝ} {z : ℂ}
     (hF : ∀ i, AnalyticAt ℂ (fun v => F i (r ^ 2, v)) z) (hL : ell h z ≠ 0) (i j : Fin 6) :
     AnalyticAt ℂ (fun v => coefficient1 h F r v i j) z := by
-  have hlinv := inverse_ell_analyticAt hL
+  have hlinv : AnalyticAt ℂ (fun v => (1 - 2 * h * v ^ 2)⁻¹) z := inverse_ell_analyticAt hL
+  have hconst (c : ℂ) : AnalyticAt ℂ (fun _ : ℂ => c) z := analyticAt_const
+  have hid : AnalyticAt ℂ (fun v : ℂ => v) z := analyticAt_id
   fin_cases i <;>
     simp only [coefficient1, A1, Matrix.of_apply, Fin.zero_eta, Fin.isValue,
       Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_fin_one, Fin.mk_one,
       Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] <;>
-    (first | exact analyticAt_const | skip) <;>
+    (first | with_reducible exact hconst _ | skip) <;>
     fin_cases j <;>
     simp only [edge, coefficientBase, Fin.isValue, ell, div_eq_mul_inv, neg_mul,
         Fin.zero_eta, Matrix.cons_val_zero,
             Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk,
                 Matrix.cons_val] <;>
-    (repeat' first
-      | exact analyticAt_const
-      | exact hF _
-      | exact analyticAt_id
+    (with_reducible repeat' first
       | exact hlinv
-      | apply AnalyticAt.fun_add
-      | apply AnalyticAt.fun_sub
-      | apply AnalyticAt.fun_mul
-      | apply AnalyticAt.fun_neg)
+      | exact hconst _
+      | apply pointAnalytic_mul
+      | apply pointAnalytic_add
+      | apply pointAnalytic_sub
+      | apply pointAnalytic_neg
+      | apply pointAnalytic_pow
+      | exact hF _
+      | exact hid)
 
 theorem sourceField_analyticAt {h C : ℂ} {F : CoefficientData} {r : ℝ} {z : ℂ}
     (hF : ∀ i, AnalyticAt ℂ (fun v => F i (r ^ 2, v)) z) (hL : ell h z ≠ 0) (i : Fin 6) :
     AnalyticAt ℂ (fun v => sourceField h C F r v i) z := by
-  have hlinv := inverse_ell_analyticAt hL
+  have hlinv : AnalyticAt ℂ (fun v => (1 - 2 * h * v ^ 2)⁻¹) z := inverse_ell_analyticAt hL
+  have hconst (c : ℂ) : AnalyticAt ℂ (fun _ : ℂ => c) z := analyticAt_const
+  have hid : AnalyticAt ℂ (fun v : ℂ => v) z := analyticAt_id
   fin_cases i <;>
     simp only [sourceField, forcing, pressureSource, coefficientSource, Fin.isValue,
         div_eq_mul_inv, ell, Fin.zero_eta, Matrix.cons_val_zero, Fin.mk_one, Matrix.cons_val_one,
             Fin.reduceFinMk, Matrix.cons_val] <;>
-    (repeat' first
-      | exact analyticAt_const
-      | exact hF _
-      | exact analyticAt_id
+    (with_reducible repeat' first
       | exact hlinv
-      | apply AnalyticAt.fun_add
-      | apply AnalyticAt.fun_sub
-      | apply AnalyticAt.fun_mul)
+      | exact hconst _
+      | apply pointAnalytic_mul
+      | apply pointAnalytic_add
+      | apply pointAnalytic_sub
+      | apply pointAnalytic_pow
+      | exact hF _
+      | exact hid)
 
 
 /-- One-sided smooth X data suffice for a smooth signed square pullback. -/

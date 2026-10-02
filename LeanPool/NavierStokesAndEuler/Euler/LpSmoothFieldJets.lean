@@ -51,13 +51,10 @@ private theorem iteratedFDeriv_translation_ae_aux (n : ℕ) :
             translation (V := Space →L[ℝ] V) b A.derivative.toLp) a (Fin.init v))
           (v (Fin.last n)) := by
       rw [iteratedFDeriv_succ_apply_right, A.translation_fderiv]
-      change (iteratedFDeriv ℝ n
-        ((derivativeBundling (P := Space) (V := V) volume) ∘
-          fun b : Space => translation (V := Space →L[ℝ] V) b A.derivative.toLp) a
-            (Fin.init v)) (v (Fin.last n)) = _
-      rw [(derivativeBundling (P := Space) (V := V) volume).iteratedFDeriv_comp_left
-        (A.derivative.translation_contDiff.contDiffAt (x := a)) (by simp)]
-      rfl
+      exact (DFunLike.congr_fun (DFunLike.congr_fun
+        ((derivativeBundling (P := Space) (V := V) volume).iteratedFDeriv_comp_left
+          (A.derivative.translation_contDiff.contDiffAt (x := a)) (by simp)) (Fin.init v))
+        (v (Fin.last n)) :)
     rw [he]
     filter_upwards [derivativeMap_ae volume
       (iteratedFDeriv ℝ n (fun b : Space =>

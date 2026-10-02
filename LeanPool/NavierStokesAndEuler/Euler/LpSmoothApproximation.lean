@@ -182,7 +182,7 @@ theorem cutoffDerivativeLp_tendsto (f : Space → V) (hf : ContDiff ℝ ∞ f)
     rw [cutoffField_fderiv f hf]
     have he : cutoff n x • fderiv ℝ f x + (fderiv ℝ (cutoff n) x).smulRight (f x) - fderiv ℝ f x =
         (cutoff n x - 1) • fderiv ℝ f x + (fderiv ℝ (cutoff n) x).smulRight (f x) := by
-      rw [sub_smul, one_smul]
+      simp only [sub_smul, one_smul]
       abel
     rw [he]
     apply (norm_add_le _ _).trans

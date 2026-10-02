@@ -86,20 +86,20 @@ theorem true_cone_iff {P J v : ℝ} (hv : 2 < v) :
     have hid := square_difference P J v
     have hlt : rootTerm P J < P + J ^ 2 / 4 - v := by
       change v < P + J ^ 2 / 4 - rootTerm P J at hcone
-      linarith
+      linarith only [hcone]
     have hdiff := mul_pos (sub_pos.mpr hlt)
-      (show 0 < P + J ^ 2 / 4 - v + rootTerm P J by linarith)
-    linarith
+      (show 0 < P + J ^ 2 / 4 - v + rootTerm P J by linarith only [hlt, hr])
+    linarith only [hdiff, hsq, hid]
   · rintro ⟨hvP, hquad⟩
     have hP : 2 < P := lt_trans hv hvP
     refine ⟨hP, ?_⟩
     have hsq := rootTerm_sq (J := J) hP
-    have hr := rootTerm_nonneg P J
     have hid := square_difference P J v
-    have hpos : 0 < P + J ^ 2 / 4 - v := by linarith [sq_nonneg J]
-    have hlt : rootTerm P J < P + J ^ 2 / 4 - v := by nlinarith
+    have hpos : 0 < P + J ^ 2 / 4 - v := by linarith only [hvP, sq_nonneg J]
+    have hlt : rootTerm P J < P + J ^ 2 / 4 - v :=
+      lt_of_pow_lt_pow_left₀ 2 hpos.le (by linarith only [hsq, hid, hquad])
     change v < P + J ^ 2 / 4 - rootTerm P J
-    linarith
+    linarith only [hlt]
 
 /-- At and below two, P > 2 alone implies the relaxed root inequality. -/
 theorem relaxed_cone_of_le_two {P J v : ℝ} (hP : 2 < P) (hv : v ≤ 2) :

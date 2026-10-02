@@ -324,9 +324,9 @@ theorem transport_compact_finiteJets_fiber
   let KM := D * (1 + (2 : ℝ) ^ m * B) / d₀
   have hKM : 0 ≤ KM := div_nonneg (mul_nonneg hD (by positivity)) hd₀.le
   let K := L + R + KM
-  have hLK : L ≤ K := by dsimp [K]; linarith
-  have hRK : R ≤ K := by dsimp [K]; linarith
-  have hMK : KM ≤ K := by dsimp [K]; linarith
+  have hLK : L ≤ K := by dsimp only [K]; linarith only [hR, hKM]
+  have hRK : R ≤ K := by dsimp only [K]; linarith only [hL, hKM]
+  have hMK : KM ≤ K := by dsimp only [K]; linarith only [hL, hR]
   refine ⟨K, hL.trans hLK, ?_⟩
   intro M v f hf hs A hA s hsource z hz hzs j hj
   subst s
@@ -343,20 +343,22 @@ theorem transport_compact_finiteJets_fiber
   have hw : 0 ≤ logWeight cL cR a b p z.1 :=
     (weight_pos cL cR p (logPosition_mem ha hz)).le
   by_cases hzl : logPosition a z.1 ≤ ρ / 2
-  · rw [compact_jet_eq_past_on_left ha hl z (ha.trans hz.1) (by linarith) j,
-      TransportPrimitive.iteratedFDeriv_pastIntegral hf hs]
+  · rw [compact_jet_eq_past_on_left ha hl z (ha.trans hz.1)
+      (by linarith only [hzl, hρ]) j, TransportPrimitive.iteratedFDeriv_pastIntegral hf hs]
     have h := hbL j' M v (iteratedFDeriv ℝ j f)
       (TransportPrimitive.iteratedFDeriv_contDiff hf j).continuous
-      (TransportPrimitive.iteratedFDeriv_supported hs j) A hA z hz (hsource j hj) (by linarith)
+      (TransportPrimitive.iteratedFDeriv_supported hs j) A hA z hz (hsource j hj)
+      (by linarith only [hzl, hρL, hρ])
     exact h.trans (mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_right ((hLL j').trans hLK) hA) hw)
   · by_cases hzr : logLength a b - ρ / 2 ≤ logPosition a z.1
-    · rw [compact_jet_eq_neg_future_on_right ha hf.continuous hs hr z (ha.trans hz.1) (by
-        linarith) j,
+    · rw [compact_jet_eq_neg_future_on_right ha hf.continuous hs hr z (ha.trans hz.1)
+        (by linarith only [hzr, hρ]) j,
         norm_neg, TransportPrimitive.iteratedFDeriv_futureIntegral hf hs]
       have h := hbR j' M v (iteratedFDeriv ℝ j f)
         (TransportPrimitive.iteratedFDeriv_contDiff hf j).continuous
-        (TransportPrimitive.iteratedFDeriv_supported hs j) A hA z hz (hsource j hj) (by linarith)
+        (TransportPrimitive.iteratedFDeriv_supported hs j) A hA z hz (hsource j hj)
+        (by linarith only [hzr, hρL, hρ])
       exact h.trans (mul_le_mul_of_nonneg_right
         (mul_le_mul_of_nonneg_right ((hRR j').trans hRK) hA) hw)
     · have hwm : d₀ ≤ logWeight cL cR a b p z.1 :=
@@ -391,7 +393,9 @@ theorem transport_compact_finiteJets_fiber
               (mul_le_mul_of_nonneg_right (pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hj) hB)
               (mul_nonneg hD hA)) _
         _ = (D * (1 + (2 : ℝ) ^ m * B)) * A := by ring
-        _ = KM * A * d₀ := by dsimp [KM]; field_simp
+        _ = KM * A * d₀ := by
+          dsimp only [KM]
+          rw [div_mul_eq_mul_div, div_mul_cancel₀ _ hd₀.ne']
         _ ≤ KM * A * logWeight cL cR a b p z.1 :=
           mul_le_mul_of_nonneg_left hwm (mul_nonneg hKM hA)
         _ ≤ K * A * logWeight cL cR a b p z.1 :=
@@ -729,7 +733,8 @@ theorem iteratedFDeriv_affineAverage (L : D →L[ℝ] E) (hL : ‖L‖ ≤ 1)
         (iteratedFDeriv ℝ k f (L y + t • v)).compContinuousLinearMap (fun _ => L) :=
       funext fun t => MeanMomentBounds.iteratedFDeriv_affine L (t • v) hf k y
     rw [he]
-    exact hc.aestronglyMeasurable
+    exact (hc.stronglyMeasurable
+      (h := secondCountableTopologyEither_of_left _ _)).aestronglyMeasurable
   have hd : SmoothParameterIntegral.LocallyDominated g μ := by
     intro k y
     have hc : Continuous (fun q : D × ℝ => iteratedFDeriv ℝ k f (L q.1 + q.2 • v)) :=

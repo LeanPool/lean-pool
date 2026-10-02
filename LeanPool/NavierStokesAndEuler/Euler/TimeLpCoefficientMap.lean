@@ -113,7 +113,7 @@ theorem hasDerivAt_productDerivative
   have h := ((hasDerivAt_timeMultiplier T hT B B₁ x hB).clm_comp
     (hasDerivAt_const x (primitiveTimeLp (E := E) T hT))).add
       (hasDerivAt_timeMultiplier T hT A A₁ x hA)
-  convert h using 1 <;> first | rfl | simp only [comp_zero, add_zero]
+  exact h.congr_deriv (by simp only [comp_zero, add_zero])
 
 /-- Arbitrary-order parameter regularity of the genuine H¹ frame transport. -/
 theorem contDiff_productDerivative {P : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]

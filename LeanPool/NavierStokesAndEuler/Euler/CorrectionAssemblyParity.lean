@@ -627,8 +627,13 @@ theorem rawSource_oddReflection {q : ℕ} (hq : 6 ≤ q) {T : Type*} [Topologica
     (coefficient_oddReflection period (D.linear.jet t) hL (truncateOperator period q u)).trans
       (congrArg (coefficientSobolevOperator period (D.linear.jet t)) (truncate_oddReflection period
           u).symm)
-  exact linearized_source_equivariant (oddReflection period (q+1)) (oddReflection period q) F C
-    (D.approximation t) (D.residual t) hF hC hz hr e
+  -- The equivariance lemma is matched against `hF` and `hC` without unfolding `F`; the result is
+  -- then identified with the source.
+  have key := by
+    with_reducible_and_instances
+      exact linearized_source_equivariant (oddReflection period (q+1)) (oddReflection period q) F C
+        (D.approximation t) (D.residual t) hF hC hz hr e
+  exact key
 
 /-- The genuine correction pressure transforms by signed reflection,
 with its sign fixed by the actual pressure definition. -/

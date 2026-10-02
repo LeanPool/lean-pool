@@ -86,7 +86,7 @@ theorem accelerationLp_ae (f : TimeLp T E) :
   change w t = _ at hw
   change (adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT Q) w) t = _
     at hm
-  rw [ha,hm,hw,Pi.sub_apply,hs,Pi.smul_apply,hv]
+  simp only [ha,hm,hw,Pi.sub_apply,hs,Pi.smul_apply,hv]
   rfl
 
 theorem accelerationLp_equation (f : TimeLp T E) :

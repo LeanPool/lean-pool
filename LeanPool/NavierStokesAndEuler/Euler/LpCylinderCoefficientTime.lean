@@ -117,22 +117,10 @@ theorem supportedPath_hasDerivWithinAt (t : Icc (0 : ℝ) T) :
       (extendPath T hT (supportedPathMap (K := Icc (0 : ℝ) T) (E := E) (F := F) period S hS A))
       (supportedPathMap (K := Icc (0 : ℝ) T) (E := E) (F := F) period S hS A₁ t)
       (Icc (0 : ℝ) T) t := by
-  have hfield := EulerBoundedFieldTimeDerivative.hasDerivWithinAt T hT A A₁ hA t t.property
-  have hlinear : HasFDerivAt
-      (fun B : Space →ᵇ E →L[ℝ] F => supportedOperatorMap (E := E) (F := F) period S hS B)
-      (supportedOperatorMap (E := E) (F := F) period S hS) (extendPath T hT A t) :=
-    ContinuousLinearMap.hasFDerivAt (𝕜 := ℝ) (E := Space →ᵇ E →L[ℝ] F)
-      (F := Supported period E S hS →L[ℝ] Supported period F S hS)
-      (supportedOperatorMap period S hS)
-  have hd := hlinear.comp_hasDerivWithinAt (t : ℝ) hfield
-  change HasDerivWithinAt
-    (fun s => supportedOperatorMap (E := E) (F := F) period S hS (A (projIcc 0 T hT s)))
-    (supportedOperatorMap (E := E) (F := F) period S hS (A₁ t)) (Icc (0 : ℝ) T) t
-  change HasDerivWithinAt
-    (fun s => supportedOperatorMap (E := E) (F := F) period S hS (A (projIcc 0 T hT s)))
-    (supportedOperatorMap (E := E) (F := F) period S hS (A₁ (projIcc 0 T hT t)))
-    (Icc (0 : ℝ) T) t at hd
-  rwa [projIcc_of_mem hT t.property] at hd
+  have hd := (supportedOperatorMap (E := E) (F := F) period S hS).hasFDerivAt.comp_hasDerivWithinAt
+    (t : ℝ) (EulerBoundedFieldTimeDerivative.hasDerivWithinAt T hT A A₁ hA t t.property)
+  exact hd.congr_deriv (congrArg (supportedOperatorMap (E := E) (F := F) period S hS)
+    (congrArg A₁ (projIcc_val hT t)))
 
 include hA in
 /-- The product rule is a genuine within-time statement, including the interval endpoints. -/

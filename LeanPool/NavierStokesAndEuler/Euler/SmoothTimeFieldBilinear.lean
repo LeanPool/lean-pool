@@ -138,11 +138,7 @@ theorem exists_bilinear_jet (B : V →L[ℝ] W →L[ℝ] Z)
       (B.precompR E) A C.derivative
     obtain ⟨J₂,hJ₂⟩ := ih (V := E →L[ℝ] V) (W := W) (Z := E →L[ℝ] Z)
       (B.precompL E) A.derivative C
-    refine ⟨uncurryRightPath n (J₁+J₂), ?_⟩
-    intro t x
-    rw [uncurryRightPath_apply, ContinuousMap.add_apply, BoundedContinuousFunction.add_apply]
-    rw [hJ₁, hJ₂, iteratedFDeriv_succ_eq_comp_right]
-    apply congrArg (continuousMultilinearCurryRightEquiv' ℝ n E Z).symm
+    refine ⟨uncurryRightPath n (HAdd.hAdd J₁ J₂), fun t x => ?_⟩
     have hd : fderiv ℝ (fun y => B (A.field t y) (C.field t y)) =
         fun y => B.precompR E (A.field t y) (C.derivative.field t y) +
           B.precompL E (A.derivative.field t y) (C.field t y) := by
@@ -150,14 +146,14 @@ theorem exists_bilinear_jet (B : V →L[ℝ] W →L[ℝ] Z)
       rw [B.fderiv_of_bilinear ((A.smooth t).differentiable (by simp) y)
         ((C.smooth t).differentiable (by simp) y)]
       simp only [derivative, derivativeField_eq]
-    rw [hd]
-    exact (fun_iteratedFDeriv_add_apply
-      ((((B.precompR E).contDiff.comp (A.smooth t)).clm_apply (C.derivative.smooth
-          t)).contDiffAt.of_le (by
-          simp))
-      ((((B.precompL E).contDiff.comp (A.derivative.smooth t)).clm_apply (C.smooth
-          t)).contDiffAt.of_le (by
-          simp))).symm
+    simp only [uncurryRightPath_apply, ContinuousMap.add_apply, BoundedContinuousFunction.add_apply,
+      hJ₁, hJ₂, iteratedFDeriv_succ_eq_comp_right, Function.comp_apply, hd]
+    refine congrArg _ ?_
+    refine (fun_iteratedFDeriv_add_apply ?_ ?_).symm
+    · exact (((B.precompR E).contDiff.comp (A.smooth t)).clm_apply
+        (C.derivative.smooth t)).contDiffAt.of_le (by simp)
+    · exact (((B.precompL E).contDiff.comp (A.derivative.smooth t)).clm_apply
+        (C.smooth t)).contDiffAt.of_le (by simp)
 
 /-- Bilinear, bundling `field`, `smooth`, `jet`, `jet_eq`. -/
 def bilinear (B : V →L[ℝ] W →L[ℝ] Z)

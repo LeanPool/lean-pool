@@ -49,7 +49,8 @@ theorem solution_gevrey
     (d : ℕ) (hforce : ∀ n x, ‖iteratedFDeriv ℝ n f x‖ ≤ D * majorant R d n)
     (n : ℕ) (x : P) :
     ‖iteratedFDeriv ℝ n u x‖ ≤ majorant R (d+1) n := by
-  have hR0 : 0 ≤ R := by nlinarith
+  have hR0 : 0 ≤ R := (mul_nonneg (mul_nonneg zero_le_two (zero_le_one.trans hM))
+    (add_nonneg hRc zero_le_one)).trans hR
   apply triangular_inverse_majorant M Rc R hM hRc hR d
     (fun k => majorant R d k) (fun k => ‖iteratedFDeriv ℝ k u x‖) (fun _ => le_rfl) _ n
   intro k
@@ -77,6 +78,6 @@ theorem solution_gevrey
   have ha := mul_le_mul_of_nonneg_right hMC hS
   have hf' := mul_le_mul_of_nonneg_right hMD (majorant_nonneg R hR0 d k)
   change ‖iteratedFDeriv ℝ k u x‖ ≤ M*(majorant R d k+S)
-  nlinarith
+  linarith only [hb, ha, hf']
 
 end EulerBoundedInverseGevrey

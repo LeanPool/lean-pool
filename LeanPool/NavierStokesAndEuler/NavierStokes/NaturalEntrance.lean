@@ -956,33 +956,34 @@ theorem second_coordinate_large {Λ δ f n : ℝ}
     (hΛ : 1 ≤ Λ) (hδ : 0 < δ) (hf : 0 < f)
     (hsmall : 100 * Λ * f ≤ δ) (hn : δ / 2 < |n|) :
     (6 / 5 : ℝ) ^ 2 < ((4 / Λ) * n / (Real.sqrt (2 * (4 / Λ)) * f)) ^ 2 := by
-  have hΛpos : 0 < Λ := by linarith
+  have hΛpos : 0 < Λ := by linarith only [hΛ]
   have hX : 0 < 4 / Λ := by positivity
   have hprod : Λ * (4 / Λ) = 4 := by field_simp
   have hXupper : 4 / Λ ≤ 4 := by
     apply (div_le_iff₀ hΛpos).mpr
-    linarith
+    linarith only [hΛ]
   have hsqrt : Real.sqrt (2 * (4 / Λ)) ≤ 3 := by
     apply (Real.sqrt_le_iff).mpr
-    exact ⟨by norm_num, by linarith⟩
+    exact ⟨by norm_num, by linarith only [hXupper]⟩
   have hE : 0 < Real.sqrt (2 * (4 / Λ)) * f := by positivity
   have hEb : Λ * (Real.sqrt (2 * (4 / Λ)) * f) ≤ 3 * δ / 100 := by
     have hm := mul_le_mul_of_nonneg_right hsqrt hf.le
     have hm' := mul_le_mul_of_nonneg_left hm hΛpos.le
-    nlinarith
+    linarith only [hm', hsmall]
   have hn' : 2 * δ < Λ * ((4 / Λ) * |n|) := by
     rw [← mul_assoc, hprod]
-    linarith
+    linarith only [hn]
   have hlarge : (6 / 5 : ℝ) * (Real.sqrt (2 * (4 / Λ)) * f) < (4 / Λ) * |n| := by
     apply (mul_lt_mul_iff_of_pos_left hΛpos).mp
-    nlinarith
+    linarith only [hEb, hn', hδ]
   have habs : |(4 / Λ) * n / (Real.sqrt (2 * (4 / Λ)) * f)| =
       (4 / Λ) * |n| / (Real.sqrt (2 * (4 / Λ)) * f) := by
     rw [abs_div, abs_mul, abs_of_pos hX, abs_of_pos hE]
   have hr : (6 / 5 : ℝ) < |(4 / Λ) * n / (Real.sqrt (2 * (4 / Λ)) * f)| := by
     rw [habs]
     exact (lt_div_iff₀ hE).mpr hlarge
-  nlinarith [sq_abs ((4 / Λ) * n / (Real.sqrt (2 * (4 / Λ)) * f))]
+  have hsq := pow_lt_pow_left₀ hr (by norm_num) two_ne_zero
+  rwa [sq_abs] at hsq
 
 /-- A natural profile with its actual coefficient-space witness retained.
 The witness supplies all radial and parameter jet bounds needed by later

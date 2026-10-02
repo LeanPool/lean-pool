@@ -229,11 +229,14 @@ theorem endpointDisplacement_eq_affine_sub (Y : CylinderL2 P U) (t : Icc (0 : â„
   have hz : initialTrace T D.time_pos.le
       (D.velocityLp P (pathLp T D.time_pos.le (D.endpointForcing P Y))) = 0 :=
     (D.coordinateSolver P (pathLp T D.time_pos.le (D.endpointForcing P Y))).property
+  have hv : initialPrimitive T D.time_pos.le
+      (D.velocityLp P (pathLp T D.time_pos.le (D.endpointForcing P Y))) t =
+      D.displacementPath P (pathLp T D.time_pos.le (D.endpointForcing P Y)) t :=
+    (initialPrimitive_eq_terminal_sub T D.time_pos.le _ t).trans
+      ((congrArg (_ - Â·) hz).trans (sub_zero _))
   change initialPrimitive T D.time_pos.le (D.endpointSlope P Y) t = _
-  rw [D.endpointSlope_eq_const_sub P Y,map_sub,ContinuousMap.sub_apply,
-    initialPrimitive_constantFieldOperator,initialPrimitive_eq_terminal_sub,
-    hz,sub_zero]
-  rfl
+  simp only [D.endpointSlope_eq_const_sub P Y,ContinuousLinearMap.map_sub,ContinuousMap.sub_apply,
+    initialPrimitive_constantFieldOperator,hv]
 
 /-- Equality in continuous time follows from the true displacement
 derivative, including the endpoint derivatives. -/

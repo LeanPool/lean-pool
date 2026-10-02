@@ -105,12 +105,12 @@ theorem meanMomentum_full_weak
           solenoidalFrame T F ⟨0, le_rfl, hT⟩ (initialTrace (E := solenoidalSpace) T hT v)⟫_ℝ =
         -⟪f, timeMultiplier T hT (solenoidalFrame T F)
           (primitiveTimeLp (E := solenoidalSpace) T hT v)⟫_ℝ := by
-    linarith only [h, hk, hpot, hforce, hm, ha]
+    linear_combination h - hk + hpot - hm - ha - hforce
   simp only [meanPrimitive, comp_apply, Submodule.subtypeL_apply,
     productDerivative, add_apply, inner_add_right] at htest
   simp only [momentum, momentumForcing, meanBoundaryFlux, inner_add_left,
     inner_sub_left, adjoint_inner_left, add_apply, smul_apply, real_inner_smul_left]
-  linarith only [htest]
+  linear_combination htest
 
 /-- The weak mean solution has a genuine AC momentum representative whose initial
 value is derived from the original boundary form. -/

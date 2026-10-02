@@ -115,16 +115,13 @@ theorem compact_smooth_second_derivative_bound (f : LiftDomain period → W)
     (hfc : HasCompactSupport f) (hf : ∀ x, ContDiff ℝ ∞ (localFieldLift period f x)) :
     ∃ M : ℝ≥0, ∀ x y, ‖fderiv ℝ (fderiv ℝ (localFieldLift period f x)) y‖ ≤ M := by
   let F := fieldFDeriv period (fieldFDeriv period f)
-  have hFc : HasCompactSupport F := fieldFDeriv_compact period _ (fieldFDeriv_compact period f hfc)
-  have hFs : ∀ x, ContDiff ℝ ∞ (localFieldLift period F x) :=
-    fieldFDeriv_smooth period _ (fieldFDeriv_smooth period f hf)
+  have hFc := fieldFDeriv_compact period _ (fieldFDeriv_compact period f hfc)
+  have hFs := fieldFDeriv_smooth period _ (fieldFDeriv_smooth period f hf)
   have hFb := (hFc.isCompact_range (smoothField_continuous period F hFs)).isBounded
   obtain ⟨M, hM, hbound⟩ := hFb.exists_pos_norm_le
   refine ⟨⟨M, hM.le⟩, fun x y => ?_⟩
   have hBy := hbound (F (x.1 + y.1, x.2 + (y.2 : AddCircle period))) (Set.mem_range_self _)
-  change ‖fderiv ℝ (localFieldLift period (fieldFDeriv period f)
-    (x.1 + y.1, x.2 + (y.2 : AddCircle period))) 0‖ ≤ M at hBy
-  rw [fderiv_localFieldLift_shift, localFieldLift_fieldFDeriv] at hBy
+  rw [← localFieldLift_fieldFDeriv, ← fderiv_localFieldLift_shift]
   exact hBy
 
 end FieldCalculus

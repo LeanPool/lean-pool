@@ -250,7 +250,7 @@ theorem homogeneous_joint_jet_bound
     | zero =>
         rw [norm_iteratedFDeriv_zero, norm_smul, Real.norm_eq_abs, abs_of_pos (hP 0)]
         simp only [one_mul, zero_mul]
-        nlinarith [hP 0]
+        exact (mul_le_of_le_one_right (hP 0).le he).trans (le_mul_of_one_le_left (hP 0).le hcoef)
     | succ k =>
         rw [iteratedFDeriv_succ_const]
         simp only [Pi.zero_apply, norm_zero, one_mul, zero_mul]
@@ -266,7 +266,9 @@ theorem homogeneous_joint_jet_bound
     exact mul_nonneg (mul_nonneg (zero_le_one.trans hK')
       (pow_nonneg (zero_le_one.trans hS) _)) hp0.le
   have hExp' : Real.exp ((t * μ) * ((1 : ℝ) - 0)) ≤ K' := by
-    apply (Real.exp_le_exp.mpr (show (t * μ) * (1 - 0) ≤ μ * L by nlinarith [ht.2])).trans
+    apply (Real.exp_le_exp.mpr (show (t * μ) * (1 - 0) ≤ μ * L by
+      rw [sub_zero, mul_one, mul_comm]
+      exact mul_le_mul_of_nonneg_left ht.2 hμ)).trans
     exact hExp.trans hKK'
   have hh := WeightedODEJets.norm_iteratedFDeriv_odeFamily_le_polynomial
     (a := 0) (b := 1) zero_le_one O T hO hT hIT
@@ -274,7 +276,8 @@ theorem homogeneous_joint_jet_bound
     (JointODE.rescale 0 (fun _ : Q × ℝ => (0 : H)))
     hAr contDiffOn_const hfr hpoint (fun σ => t * rate (σ * t)) (fun σ => P (σ * t))
     (mul_nonneg ht.1 hμ) (fun σ => hP _) hweight henergy' hExp' hS hK' zero_le_one
-    (show (1 : ℝ) - 0 ≤ K' * S by nlinarith) (m + 1) N hAjet hxjet hfjet j hj
+    (show (1 : ℝ) - 0 ≤ K' * S by rw [sub_zero]; exact one_le_mul_of_one_le_of_one_le hK' hS)
+    (m + 1) N hAjet hxjet hfjet j hj
     ⟨1, zero_le_one, le_rfl⟩
   unfold JointODE.reparamSolution
   simpa only [one_mul, Nat.add_assoc] using hh

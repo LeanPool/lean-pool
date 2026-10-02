@@ -106,20 +106,24 @@ theorem source_size_le (J D : ℕ) (hJ : 2 ≤ J) (X : ℝ) (hX : 1 ≤ X)
   have hsmallpoly : ((J+n : ℕ) : ℝ)^20*(scaleSequence J X n)^20 ≤ F :=
     monomial_le_polynomialFactor J (by omega) X hX n 20 20 le_rfl (by decide)
   have hCpF : Cp ≤ (1120*(2*Cθ)^10)*(F*E) := by
+    have hc0 : (0 : ℝ) ≤ 2*Cθ := mul_nonneg zero_le_two (zero_le_one.trans hθ)
+    have hc10 : (0 : ℝ) ≤ 1120*(2*Cθ)^10 := mul_nonneg (by norm_num) (pow_nonneg hc0 10)
     calc
-      _ ≤ 560*(2*Cθ*((J+n : ℕ) : ℝ)^2*(scaleSequence J X n)^2)^10*(2*exp z) := by
-        apply hCp.trans
-        gcongr
+      _ ≤ 560*(2*Cθ*((J+n : ℕ) : ℝ)^2*(scaleSequence J X n)^2)^10*(2*exp z) :=
+        hCp.trans (mul_le_mul (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hΘ0 hΘbig 10)
+          (by norm_num)) hEibig hEi0 (mul_nonneg (by norm_num)
+          (pow_nonneg (mul_nonneg (mul_nonneg hc0 (sq_nonneg _)) (sq_nonneg _)) 10)))
       _ = (1120*(2*Cθ)^10)*(((J+n : ℕ) : ℝ)^20*(scaleSequence J X n)^20)*exp z := by
         simp only [mul_pow,← pow_mul]
         ring
-      _ ≤ (1120*(2*Cθ)^10)*F*E := by
-        gcongr
+      _ ≤ (1120*(2*Cθ)^10)*F*E :=
+        mul_le_mul (mul_le_mul_of_nonneg_left hsmallpoly hc10) hExp (exp_pos z).le
+          (mul_nonneg hc10 hF0)
       _ = _ := by ring
   have hsum : parameterSize K Ti TiTotal Cp B (spike J X n) ξ+shear J X n ≤
       boundConstant Cθ CB Cξ*(F*E) := by
     unfold parameterSize boundConstant
-    nlinarith only [hFE,hKF,hTiF,hTiTotalF,hBF,hξF,hDF,hhF,hCpF]
+    linarith only [hFE,hKF,hTiF,hTiTotalF,hBF,hξF,hDF,hhF,hCpF]
   apply hsum.trans_eq
   dsimp [F,E,z,parameterEnvelope,polynomialFactor,predecessorExponent]
   ring

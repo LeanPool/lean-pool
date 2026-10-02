@@ -73,24 +73,20 @@ theorem weight_upper {ε : ℝ} (hε : 0 < ε) (n m : ℕ) :
   have hchoose : ((n + m).choose m : ℝ) ≤ ((n : ℝ) + m) ^ m := by
     exact_mod_cast Nat.choose_le_pow (n + m) m
   have hnm : (n : ℝ) + m ≤ ((m : ℝ) + 1) * ((n : ℝ) + 1) := by
-    nlinarith [show (0 : ℝ) ≤ n by positivity, show (0 : ℝ) ≤ m by positivity,
-      mul_nonneg (show (0 : ℝ) ≤ n by positivity) (show (0 : ℝ) ≤ m by positivity)]
+    have h : (0 : ℝ) ≤ (m : ℝ) * n := mul_nonneg m.cast_nonneg n.cast_nonneg
+    linarith only [h]
   have hc : ((n + m).choose m : ℝ) ≤ ((m : ℝ) + 1) ^ m * ((n : ℝ) + 1) ^ m := by
     calc
       _ ≤ ((n : ℝ) + m) ^ m := hchoose
       _ ≤ (((m : ℝ) + 1) * ((n : ℝ) + 1)) ^ m := by gcongr
       _ = _ := mul_pow _ _ _
-  have hden : (1 : ℝ) ≤ ((n : ℝ) + 1) ^ 2 * ((m : ℝ) + 1) ^ 2 := by
-    have hn : (1 : ℝ) ≤ ((n : ℝ) + 1) ^ 2 := by nlinarith [show (0 : ℝ) ≤ n by positivity]
-    have hm : (1 : ℝ) ≤ ((m : ℝ) + 1) ^ 2 := by nlinarith [show (0 : ℝ) ≤ m by positivity]
-    nlinarith
+  have hden : (1 : ℝ) ≤ ((n : ℝ) + 1) ^ 2 * ((m : ℝ) + 1) ^ 2 :=
+    one_le_mul_of_one_le_of_one_le (one_le_pow₀ (le_add_of_nonneg_left n.cast_nonneg))
+      (one_le_pow₀ (le_add_of_nonneg_left m.cast_nonneg))
   unfold weight
   calc
-    _ ≤ (1 / 20 : ℝ) ^ n * (ε⁻¹) ^ m * (m.factorial : ℝ) * ((n + m).choose m : ℝ) := by
-      apply (div_le_iff₀ (by positivity)).mpr
-      have hn : 0 ≤ (1 / 20 : ℝ) ^ n * (ε⁻¹) ^ m * (m.factorial : ℝ) *
-          ((n + m).choose m : ℝ) := by positivity
-      nlinarith
+    _ ≤ (1 / 20 : ℝ) ^ n * (ε⁻¹) ^ m * (m.factorial : ℝ) * ((n + m).choose m : ℝ) :=
+      div_le_self (by positivity) hden
     _ ≤ _ := mul_le_mul_of_nonneg_left hc (by positivity)
 
 theorem polynomialJet_bound {R Y : ℝ} (hR : 1 ≤ R) (hY : |Y| ≤ R) (n k : ℕ) :

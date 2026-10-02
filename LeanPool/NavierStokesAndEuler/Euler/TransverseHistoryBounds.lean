@@ -284,18 +284,14 @@ theorem fixedInverse_sub_norm_le (d a r : ℝ)
   let B := fixedFrameOperator T hT P P₁ G
   have hres : R-S = R.comp ((B-A).comp S) :=
     coerciveInverse_resolvent _ _ _ _ _ _ _ _
-  have hR : ‖R‖ ≤ 2*r^2 := fixedInverse_norm_le T hT Q Q₁ H c hc hQ hd K hK hH hsmall r hr
-  have hS : ‖S‖ ≤ 2*r^2 := fixedInverse_norm_le T hT P P₁ G c hc hP hp K hK hG hsmall r hr'
-  have hAB : ‖B-A‖ ≤ 2*d*a*derivativeDistance T Q Q₁ P P₁ + d^2*(T^2*‖H-G‖) := by
-    exact (norm_sub_rev B A).trans_le
-      (fixedFrameOperator_sub_norm_le T hT Q Q₁ H P P₁ G d a hD hD' hA hA')
-  have hAB0 := (show 0 ≤ ‖B-A‖ by positivity).trans hAB
-  change ‖R-S‖ ≤ _
-  rw [hres]
-  apply ((opNorm_comp_le R ((B-A).comp S)).trans (mul_le_mul hR
+  have hR := fixedInverse_norm_le T hT Q Q₁ H c hc hQ hd K hK hH hsmall r hr
+  have hS := fixedInverse_norm_le T hT P P₁ G c hc hP hp K hK hG hsmall r hr'
+  have hAB := (norm_sub_rev B A).trans_le
+    (fixedFrameOperator_sub_norm_le T hT Q Q₁ H P P₁ G d a hD hD' hA hA')
+  have hAB0 := (norm_nonneg (B-A)).trans hAB
+  exact (congrArg (‖·‖) hres).trans_le (((opNorm_comp_le R ((B-A).comp S)).trans (mul_le_mul hR
     ((opNorm_comp_le (B-A) S).trans (mul_le_mul hAB hS (norm_nonneg S) hAB0))
-      (norm_nonneg ((B-A).comp S)) (by positivity))).trans_eq
-  ring
+      (norm_nonneg ((B-A).comp S)) (mul_nonneg zero_le_two (sq_nonneg r)))).trans_eq (by ring))
 
 /-- The polynomial sensitivity of an affine terminal-coordinate solve. -/
 def endpointDifferenceCost (d i a δd δa : ℝ) : ℝ :=
@@ -328,7 +324,7 @@ theorem fixedAffineEndpoint_sub_norm_le (d a r : ℝ)
         (affineTrial T hT P P₁)‖ ≤
       affineCost T * endpointDifferenceCost d (2*r^2) a
         (derivativeDistance T Q Q₁ P P₁) (T^2*‖H-G‖) := by
-  have hB0 : 0 ≤ affineCost T := by unfold affineCost; positivity
+  have hB0 : 0 ≤ affineCost T := mul_nonneg (add_nonneg zero_le_one hT) (abs_nonneg _)
   have h := EulerCoerciveEndpointBounds.endpointOperator_sub_norm_le
     (fixedFrameDerivative (U := U) (E := E) T hT Q Q₁) (fixedFrameDerivative T hT P P₁)
     (fixedInverse T hT Q Q₁ H c hc hQ hd K hK hH hsmall)
@@ -456,9 +452,12 @@ theorem generator_sub_norm_le (q r : ℝ)
       generatorDifferenceCost c q r ‖Q-P‖ ‖Q₁-P₁‖ := by
   have hq := (norm_nonneg Q).trans hQn
   have hr := (norm_nonneg Q₁).trans hQ₁n
-  have hcost : 0 ≤ generatorDifferenceCost c q r ‖Q-P‖ ‖Q₁-P₁‖ := by
-    unfold generatorDifferenceCost
-    positivity
+  have hcq : 0 ≤ 2*(c⁻¹)^2*q := mul_nonneg (mul_nonneg zero_le_two (sq_nonneg _)) hq
+  have hci : 0 ≤ 2*c⁻¹ := mul_nonneg zero_le_two (inv_nonneg.mpr hc.le)
+  have hcost : 0 ≤ generatorDifferenceCost c q r ‖Q-P‖ ‖Q₁-P₁‖ :=
+    add_nonneg (mul_nonneg (add_nonneg (mul_nonneg (mul_nonneg (mul_nonneg zero_le_four
+      (sq_nonneg _)) (sq_nonneg q)) hr) (mul_nonneg hci hr)) (norm_nonneg _))
+      (mul_nonneg (mul_nonneg hci hq) (norm_nonneg _))
   apply (ContinuousMap.norm_le _ hcost).2
   intro t
   have htQ : ‖Q t‖ ≤ q := (Q.norm_coe_le_norm t).trans hQn
@@ -469,7 +468,7 @@ theorem generator_sub_norm_le (q r : ℝ)
   have hI : ‖gramInverse (Q t) c hc (hQ t) - gramInverse (P t) c hc (hP t)‖ ≤
       2*(c⁻¹)^2*q*‖Q-P‖ :=
     (gramInverse_sub_norm_le (Q t) (P t) c hc (hQ t) (hP t) q htQ htP).trans
-      (mul_le_mul_of_nonneg_left hδQ (by positivity))
+      (mul_le_mul_of_nonneg_left hδQ hcq)
   have hprod : ‖(adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)).comp (Q₁ t)‖ ≤ q*r := by
     apply (opNorm_comp_le _ _).trans
     simp only [LinearIsometryEquiv.norm_map]
@@ -481,13 +480,13 @@ theorem generator_sub_norm_le (q r : ℝ)
     have had : ‖adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t) -
         adjoint (𝕜 := ℝ) (E := U) (F := E) (P t)‖ = ‖Q t-P t‖ := norm_adjoint_sub (Q t) (P t)
     simp only [had, LinearIsometryEquiv.norm_map]
-    exact add_le_add (mul_le_mul hδQ htQ₁ (by positivity) (by positivity))
+    exact add_le_add (mul_le_mul hδQ htQ₁ (norm_nonneg _) (norm_nonneg _))
       (mul_le_mul htP hδQ₁ (norm_nonneg _) hq)
   have htotal := (norm_comp_sub_le
     (gramInverse (Q t) c hc (hQ t)) (gramInverse (P t) c hc (hP t))
     ((adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)).comp (Q₁ t))
     ((adjoint (𝕜 := ℝ) (E := U) (F := E) (P t)).comp (P₁ t))).trans
-      (add_le_add (mul_le_mul hI hprod (norm_nonneg _) (by positivity))
+      (add_le_add (mul_le_mul hI hprod (norm_nonneg _) (mul_nonneg hcq (norm_nonneg _)))
         (mul_le_mul (gramInverse_norm (P t) c hc (hP t)) hprodδ
           (norm_nonneg _) (inv_nonneg.mpr hc.le)))
   change ‖(-2 : ℝ) • (gramInverse (Q t) c hc (hQ t)).comp
@@ -599,20 +598,20 @@ theorem transportedTrace_sub_norm_le (hTpos : 0 < T)
     ‖(multiplier Q).comp ((generatorTrace T hT B).comp S) -
       (multiplier P).comp ((generatorTrace T hT B').comp S')‖ ≤
       δq * traceCost T b * s + q * (2*(1+T)*δb*s + traceCost T b*δs) := by
-  have hq := (show 0 ≤ ‖P‖ by positivity).trans hP
+  have hq := (norm_nonneg P).trans hP
   have htrace := generatorTrace_norm_le T hT hTpos B b hB
   have htrace' := generatorTrace_norm_le T hT hTpos B' b hB'
-  have ht0 := (show 0 ≤ ‖generatorTrace T hT B‖ by positivity).trans htrace
+  have ht0 := (norm_nonneg _).trans htrace
   have hδt := (generatorTrace_sub_norm_le T hT hTpos B B').trans
-    (mul_le_mul_of_nonneg_left hδb (by positivity))
-  have hδt0 := (show 0 ≤ ‖generatorTrace T hT B - generatorTrace T hT B'‖ by positivity).trans hδt
+    (mul_le_mul_of_nonneg_left hδb (mul_nonneg zero_le_two (add_nonneg zero_le_one hT)))
+  have hδt0 := (norm_nonneg _).trans hδt
   have hs := (opNorm_comp_le (generatorTrace (U := U) T hT B) S).trans
     (mul_le_mul htrace hS (norm_nonneg _) ht0)
   have hds := (norm_comp_sub_le (generatorTrace (U := U) T hT B)
     (generatorTrace T hT B') S S').trans
     (add_le_add (mul_le_mul hδt hS (norm_nonneg _) hδt0)
       (mul_le_mul htrace' hδs (norm_nonneg _) ht0))
-  have hδq0 := (show 0 ≤ ‖Q-P‖ by positivity).trans hδq
+  have hδq0 := (norm_nonneg (Q-P)).trans hδq
   apply ((norm_comp_sub_le _ _ _ _).trans
     (add_le_add (mul_le_mul ((continuousMultiplier_sub_norm_le T Q P).trans hδq) hs
       (norm_nonneg _) hδq0)
@@ -688,6 +687,11 @@ variable (P P₁ : C(Icc (0 : ℝ) T, U →L[ℝ] E))
     HasDerivWithinAt (extendPath T hT P) (P₁ t) (Icc (0 : ℝ) T) t)
   (hG : ∀ t v, ⟪G t v, v⟫_ℝ ≤ K * ‖v‖ ^ 2)
 
+theorem slopeDifferenceCost_nonneg {T d a r δd δa : ℝ} (hT : 0 ≤ T) (hd : 0 ≤ d) (ha : 0 ≤ a)
+    (hr : 0 ≤ r) (hδd : 0 ≤ δd) (hδa : 0 ≤ δa) : 0 ≤ slopeDifferenceCost T d a r δd δa := by
+  unfold slopeDifferenceCost slopeCost endpointDifferenceCost affineCost
+  positivity
+
 theorem coordinateSlope_sub_norm_le (d a r : ℝ)
     (hD : T * ‖Q₁‖ + ‖Q‖ ≤ d) (hD' : T * ‖P₁‖ + ‖P‖ ≤ d)
     (hA : 1 + T ^ 2 * ‖H‖ ≤ a) (hA' : 1 + T ^ 2 * ‖G‖ ≤ a)
@@ -695,13 +699,12 @@ theorem coordinateSlope_sub_norm_le (d a r : ℝ)
     ‖coordinateSlope T hT Q Q₁ H c hc hQ hd K hK hH hsmall -
       coordinateSlope T hT P P₁ G c hc hP hp K hK hG hsmall‖ ≤
       slopeDifferenceCost T d a r (derivativeDistance T Q Q₁ P P₁) (T^2*‖H-G‖) := by
-  have hd0 : 0 ≤ d := (show 0 ≤ T*‖Q₁‖+‖Q‖ by positivity).trans hD
-  have ha0 : 0 ≤ a := (show 0 ≤ 1+T^2*‖H‖ by positivity).trans hA
+  have hd0 : 0 ≤ d := (add_nonneg (mul_nonneg hT (norm_nonneg Q₁)) (norm_nonneg Q)).trans hD
+  have ha0 : 0 ≤ a := (add_nonneg zero_le_one (mul_nonneg (sq_nonneg T) (norm_nonneg H))).trans hA
   have hr0 := (transportCost_pos T hT Q Q₁ c hc).le.trans hr
   have hδd := derivativeDistance_nonneg T hT Q Q₁ P P₁
-  apply opNorm_le_bound _ (by
-    unfold slopeDifferenceCost slopeCost endpointDifferenceCost affineCost
-    positivity)
+  apply opNorm_le_bound _ (slopeDifferenceCost_nonneg hT hd0 ha0 hr0 hδd
+    (mul_nonneg (sq_nonneg T) (norm_nonneg _)))
   intro ξ
   have hinv := norm_sub_le_initialProductDerivative T hT Q Q₁ c hc hQ hd P P₁
     (coordinateSlope T hT Q Q₁ H c hc hQ hd K hK hH hsmall ξ)
@@ -720,7 +723,8 @@ theorem coordinateSlope_sub_norm_le (d a r : ℝ)
       (coordinateSlope_norm_le T hT P P₁ G c hc hP hp K hK hG hsmall d a r hD' hA' hr')
           (norm_nonneg ξ))
   have hright := add_le_add hend (mul_le_mul_of_nonneg_left hprev hδd)
-  exact hinv.trans ((mul_le_mul hr hright (by positivity) hr0).trans_eq
+  exact hinv.trans ((mul_le_mul hr hright
+    (add_nonneg (norm_nonneg _) (mul_nonneg hδd (norm_nonneg _))) hr0).trans_eq
     (by unfold slopeDifferenceCost derivativeDistance; ring))
 
 /-- History cost, given by `q * traceCost T (2*c⁻¹*q*q₁) * slopeCost T d a r`. -/

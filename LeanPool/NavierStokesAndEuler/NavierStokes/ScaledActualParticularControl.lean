@@ -344,9 +344,10 @@ theorem frame_input_jets
   have hb0 : C0 ≤ B := by dsimp [B]; linarith
   have hb1 : C1 ≤ B := by dsimp [B]; linarith
   let C := B + 2^N * B * Cs
-  have hC : 0 ≤ C := by dsimp [C]; positivity
-  have hBC : B ≤ C := by dsimp [C]; exact le_add_of_nonneg_right (by positivity)
-  have hprodC : 2^N * B * Cs ≤ C := by dsimp [C]; linarith
+  have hP : 0 ≤ 2^N * B * Cs := mul_nonneg (mul_nonneg (pow_nonneg zero_le_two N) hB) hCs
+  have hC : 0 ≤ C := add_nonneg hB hP
+  have hBC : B ≤ C := le_add_of_nonneg_right hP
+  have hprodC : 2^N * B * Cs ≤ C := le_add_of_nonneg_left hB
   refine ⟨C, hC, q+ms, ?_⟩
   intro l n k x hx hχ hξ j hjN v hv
   have hz : (x,v) ∈ (frameDomain (D.slot V hV) χ).carrier (l,n) :=
@@ -393,9 +394,9 @@ theorem frame_input_jets
   have hen : 0 ≤ W l n v :=
     hW l n v
   have ht := WaveEnvelopeTransport.clm_apply_jet_bound_on hU hpSmooth hsSmooth hxs N
-    (show 0 ≤ B*s.growth n x.1^q by positivity)
+    (show 0 ≤ B*s.growth n x.1^q from mul_nonneg hB (pow_nonneg hG0 q))
     (show 0 ≤ Cs*s.growth n x.1^ms*(s.epsilon n^α*Real.sqrt (s.zeta x.1)) *
-      W l n v by positivity)
+      W l n v from mul_nonneg (mul_nonneg (mul_nonneg hCs (pow_nonneg hG0 ms)) hweight) hen)
     hpj (fun i hi => hCsj l n k x hx hξ v hv i hi) j hjN
   change ‖iteratedFDeriv ℝ j
     ((PrimaryCopyBridge.copyFrame (nativeFrame (d (l,n)) χ) (g l n) k).forcing
@@ -406,7 +407,8 @@ theorem frame_input_jets
           W l n v) := ht
     _ = (s.epsilon n^α*Real.sqrt (s.zeta x.1))*(2^N*B*Cs)*s.growth n x.1^(q+ms) *
         W l n v := by rw [pow_add]; ring
-    _ ≤ _ := by gcongr
+    _ ≤ _ := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_left hprodC hweight) (pow_nonneg hG0 _)) hen
 
 /-- Instantiation of the input bound for the selected actual phase. -/
 theorem selected_input_jets
@@ -721,6 +723,7 @@ noncomputable def referenceControl
     dsimp [K]
     linarith [F.one_le_M]
   · intro l n k x hx hcell v hv z
+    rw [copyFrame_coefficient, frameArgument_apply]
     exact selected_energy F (l,n) hcell.1.2.1 hv hj z
   · intro N
     obtain ⟨C,hC,m,hb⟩ := selected_input_jets s F χ g r hscale hsep hA hgeometry
@@ -1627,11 +1630,13 @@ theorem geometry_cost (clock : ActualSignedControl.PositiveScale Label)
     exact inv_anti₀ clock.lower_pos (clock.bounds l n).1
   have hU1 : (1+|(clock.value l n)⁻¹|)*H ≤ U := by
     dsimp [U,geometryFactor,H]
-    nlinarith [clock.upper_one, coveringBound_pos budget,
+    linarith only [coveringBound_pos budget,
+      mul_nonneg (coveringBound_pos budget).le (zero_le_one.trans clock.upper_one),
       mul_nonneg (coveringBound_pos budget).le (sub_nonneg.mpr hinv)]
   have hU2 : H*(1+|clock.value l n|) ≤ U := by
     dsimp [U,geometryFactor,H]
-    nlinarith [inv_pos.mpr clock.lower_pos, coveringBound_pos budget,
+    linarith only [coveringBound_pos budget,
+      mul_nonneg (coveringBound_pos budget).le (inv_pos.mpr clock.lower_pos).le,
       mul_nonneg (coveringBound_pos budget).le (sub_nonneg.mpr hrate)]
   have hcoord : ‖G.coordinateLinear‖ ≤ U*‖g.coordinateLinear‖ := by
     dsimp [G]
@@ -1667,20 +1672,19 @@ theorem geometry_cost (clock : ActualSignedControl.PositiveScale Label)
   have hcost := CommonCoverClass.one_le_argumentCost g
   have hc : ‖g.coordinateLinear‖ ≤ CommonCoverClass.argumentCost g := by
     unfold CommonCoverClass.argumentCost
-    nlinarith
+    linarith only [mul_nonneg hp0 (add_nonneg zero_le_one hc0)]
   have hp : ‖g.pointLinear‖ ≤ CommonCoverClass.argumentCost g := by
     unfold CommonCoverClass.argumentCost
-    nlinarith
+    linarith only [hc0, mul_nonneg hp0 hc0]
   have hcx := hcoord.trans (mul_le_mul_of_nonneg_left hc (zero_le_one.trans hU))
   have hpx := hpoint.trans (mul_le_mul_of_nonneg_left hp (zero_le_one.trans hU))
   have hB : 1 ≤ U*CommonCoverClass.argumentCost g := by
-    linarith [mul_nonneg (sub_nonneg.mpr hU) (sub_nonneg.mpr hcost)]
+    linarith only [mul_nonneg (sub_nonneg.mpr hU) (sub_nonneg.mpr hcost), hU, hcost]
   change 1+‖G.coordinateLinear‖+‖G.pointLinear‖*(1+‖G.coordinateLinear‖) ≤ _
   have hproduct := mul_le_mul hpx (add_le_add_right hcx 1)
-    (by
-        positivity : 0 ≤ 1+‖G.coordinateLinear‖) (by
-            positivity : 0 ≤ U*CommonCoverClass.argumentCost g)
-  linarith [sq_nonneg (U*CommonCoverClass.argumentCost g-1)]
+    (add_nonneg zero_le_one (norm_nonneg G.coordinateLinear))
+    (mul_nonneg (zero_le_one.trans hU) (zero_le_one.trans hcost))
+  linarith only [sq_nonneg (U*CommonCoverClass.argumentCost g-1), hproduct, hcx, hB]
 
 theorem geometry_cost_uniform (s : StripData P) (clock : ActualSignedControl.PositiveScale Label)
     (reference : Label → ℕ → Geometry) (gap : Label → ℕ → ℕ) (budget : ℕ)

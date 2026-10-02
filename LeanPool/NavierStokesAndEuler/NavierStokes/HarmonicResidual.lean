@@ -826,14 +826,11 @@ theorem linearResidual_sum {ι : Type*} (s : Finset ι) {U : Set D} (hU : IsOpen
   classical
   induction s using Finset.induction_on with
   | empty =>
-      have hzero (V : D → D) : along V (fun _ : D => (0 : ℂ)) = 0 := by
-        funext y
-        simp [along]
-      ext i
-      fin_cases i <;>
-        simp [LinearWaveResidual.linearResidual, LinearWaveResidual.transport,
-          LinearWaveResidual.gradient, cylindricalVectorLaplacian, cylindricalLaplacian,
-          hzero, along, angularGenerator]
+      have h := linearResidual_add hU ε R Vt hr hθ hz B 0 0 0 0 (fun _ => contDiffOn_const)
+        (fun _ => contDiffOn_const) contDiffOn_const contDiffOn_const hx
+      rw [add_zero, add_zero] at h
+      rw [Finset.sum_empty, Finset.sum_empty, Finset.sum_empty]
+      exact left_eq_add.mp h
   | @insert l s hl ih =>
       rw [Finset.sum_insert hl, Finset.sum_insert hl, Finset.sum_insert hl]
       have hlu := hu l (Finset.mem_insert_self l s)

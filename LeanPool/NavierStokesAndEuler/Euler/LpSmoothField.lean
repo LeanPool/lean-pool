@@ -55,8 +55,16 @@ structure SmoothL2Field (V : Type u) [NormedAddCommGroup V] [NormedSpace ℝ V] 
 
 namespace SmoothL2Field
 
+/-- A continuous function on `Space` is almost everywhere strongly measurable: the source is
+second countable, whatever the target. -/
+theorem aestronglyMeasurable_of_continuous {β : Type*} [TopologicalSpace β]
+    [TopologicalSpace.PseudoMetrizableSpace β] {f : Space → β} (hf : Continuous f) :
+    AEStronglyMeasurable f volume :=
+  haveI := secondCountableTopologyEither_of_left Space β
+  hf.aestronglyMeasurable
+
 theorem memLp (A : SmoothL2Field V) : MemLp A.field 2 volume :=
-  (A.integrable 0).congr_norm A.smooth.continuous.aestronglyMeasurable
+  (A.integrable 0).congr_norm (aestronglyMeasurable_of_continuous A.smooth.continuous)
     (Eventually.of_forall (fun _ => norm_iteratedFDeriv_zero))
 
 /-- To Lᵖ, given by `A.memLp.toLp A.field`. -/
@@ -73,8 +81,8 @@ def derivative (A : SmoothL2Field V) : SmoothL2Field (Space →L[ℝ] V) where
   field := fderiv ℝ A.field
   smooth := A.smooth.fderiv_right (m := ∞) (by simp)
   integrable n := (A.integrable (n+1)).congr_norm
-    ((A.smooth.fderiv_right (m := ∞) (by
-        simp)).continuous_iteratedFDeriv (m := n) (by simp)).aestronglyMeasurable
+    (aestronglyMeasurable_of_continuous ((A.smooth.fderiv_right (m := ∞) (by
+        simp)).continuous_iteratedFDeriv (m := n) (by simp)))
     (Eventually.of_forall (fun x => norm_iteratedFDeriv_fderiv.symm))
 
 theorem translation_hasFDerivAt (A : SmoothL2Field V) (a : Space) :

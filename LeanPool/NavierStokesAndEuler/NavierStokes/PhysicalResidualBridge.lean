@@ -283,8 +283,12 @@ theorem fderiv_map_apply (G : ScaledGraph) {p : SpaceTime}
     (hY.add hT))).prodMk (hP 1)
   change HasFDerivAt G.map _ p at hd
   rw [hd.fderiv]
-  ext <;> simp [ContinuousLinearMap.fst, GraphCalculus.radialSpeed,
-    smul_eq_mul] <;> ring_nf <;> simp
+  simp only [Fin.isValue, ContinuousLinearMap.fst, zero_sub, smul_neg,
+    ContinuousLinearMap.prod_apply, smul_apply, PhysicalGraphBounds.coordinateProjection_apply,
+    smul_eq_mul, neg_apply, ContinuousLinearMap.coe_mk', LinearMap.fst_apply, add_apply,
+    ContinuousLinearMap.smulRight_apply, neg_mul, GraphCalculus.radialSpeed]
+  ext <;> simp only [Fin.isValue, Prod.fst_add, Prod.smul_fst, Prod.snd_add, Prod.smul_snd,
+    smul_eq_mul] <;> ring
 
 theorem map_radial (G : ScaledGraph) {p : SpaceTime}
     (hr : G.radialScale * p.2 0 ≠ 0) :

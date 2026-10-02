@@ -357,17 +357,14 @@ theorem advection_velocity {B F U : Profile} {t : ℝ}
       (advectionAxial B U (profilePoint t x)) := by
   change (fderiv ℝ (fun y => velocity B F U (t, y)) x) (velocity B F U (t, x)) = _
   rw [(hasFDerivAt_velocity hB hF hU x).fderiv]
-  simp only [velocityJacobian, packDerivative_apply]
+  simp only [velocityJacobian, packDerivative_apply, lift, profilePoint, radialEnergy, velocity,
+    componentX, componentY, add_apply, neg_apply, smul_apply, sub_apply, projection_apply,
+    profileDerivative_apply, advectionRadial, advectionAngular, advectionAxial]
   ext i
-  fin_cases i <;> simp only [pack, Fin.isValue, lift, profilePoint, radialEnergy, neg_add_rev,
-      velocity, componentX,
-                    coordinateVector, componentY, add_apply, neg_apply, smul_apply,
-                        projection_apply, PiLp.add_apply, PiLp.smul_apply,
-                    ne_eq, one_ne_zero, not_false_eq_true, PiLp.single_eq_of_ne, smul_eq_mul,
-                        mul_zero, PiLp.single_eq_same, mul_one,
-                    zero_add, Fin.reduceEq, add_zero, profileDerivative_apply, zero_ne_one,
-                        sub_apply, Fin.zero_eta, advectionRadial,
-                    advectionAngular, advectionAxial, neg_mul] <;> ring
+  fin_cases i <;> simp only [pack, Fin.isValue, neg_add_rev, coordinateVector, PiLp.add_apply,
+    PiLp.smul_apply, ne_eq, one_ne_zero, not_false_eq_true, PiLp.single_eq_of_ne, smul_eq_mul,
+    mul_zero, PiLp.single_eq_same, mul_one, zero_add, Fin.reduceEq, add_zero, zero_ne_one,
+    Fin.zero_eta, neg_mul] <;> ring
 
 theorem divergence_velocity {B F U : Profile} {t : ℝ}
     (hB : SliceDifferentiable B t) (hF : SliceDifferentiable F t)

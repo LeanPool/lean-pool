@@ -169,8 +169,9 @@ def geometryFrameOfCenterExpansion (η : U) (hη : η ≠ 0)
       (fun r hr => ⟨hτ.trans hr.1,by simpa only [hTime] using hr.2⟩)
   velocity_equation t ht := by
     have ht0 : t ∈ Icc (0 : ℝ) G.T := ⟨hτ.trans ht.1,by simpa only [hTime] using ht.2⟩
-    exact (G.sourceVelocity_equation m hm R S hS η ⟨t,ht0⟩).mono
-      (fun r hr => ⟨hτ.trans hr.1,by simpa only [hTime] using hr.2⟩)
+    have h := G.sourceVelocity_equation m hm R S hS η ⟨t,ht0⟩
+    dsimp only at h
+    exact h.mono (fun r hr => ⟨hτ.trans hr.1,by simpa only [hTime] using hr.2⟩)
   ray_nonzero t ht := by
     have hm0 : m ≠ 0 := by intro h; simp [h] at hm
     exact G.sourceNormal_ne_zero m hm0 ⟨t,hτ.trans ht.1,by simpa only [hTime] using ht.2⟩

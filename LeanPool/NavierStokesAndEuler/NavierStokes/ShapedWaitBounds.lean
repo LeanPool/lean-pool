@@ -72,35 +72,34 @@ theorem angularSource_abs_bound (c : Parameters) {h y η : ℝ} (hh : 0 ≤ h)
   have hr := angularRate_bounds c y
   have hl : |slope c.dropLength c.lam y| ≤ 1 := by
     unfold angularRate at hr
-    exact abs_le.mpr ⟨by linarith, by linarith⟩
+    exact abs_le.mpr ⟨by linarith only [hr.1], by linarith only [hr.2]⟩
   have hW : |transportW c h y η| ≤ 3 :=
     abs_le.mpr ⟨(transportW_bounds c hh hh1 hy hη).1,
       (transportW_bounds c hh hh1 hy hη).2.trans (by norm_num)⟩
   have hk := dropCoefficient_bounds c.m y
   have hsq := parameter_square_le_one hη
-  have hd : 0 ≤ d η ∧ d η ≤ 1 := by unfold d; constructor <;> linarith [sq_nonneg η]
-  have hD : 0 ≤ D h ∧ D h ≤ 1 / 2 := by unfold D; constructor <;> linarith
+  have hd : 0 ≤ d η ∧ d η ≤ 1 := by unfold d; constructor <;> linarith only [hsq, sq_nonneg η]
+  have hD : 0 ≤ D h ∧ D h ≤ 1 / 2 := by unfold D; constructor <;> linarith only [hh, hh1]
   have hJ := eta_shapeGradient_bounds hη
   have hcoef : |1 - 2 * dropCoefficient c.m y * η ^ 2| ≤ 9 := by
     have hp := mul_le_mul hk.2 hsq (sq_nonneg η) (by norm_num : (0 : ℝ) ≤ 4)
     apply abs_le.mpr
-    constructor <;> linarith [mul_nonneg hk.1 (sq_nonneg η)]
+    constructor <;> linarith only [hp, mul_nonneg hk.1 (sq_nonneg η)]
   have hfirst : |-slope c.dropLength c.lam y * transportW c h y η| ≤ 3 := by
     rw [abs_mul, abs_neg]
     exact (mul_le_mul hl hW (abs_nonneg _) (by norm_num : (0 : ℝ) ≤ 1)).trans_eq (by ring)
   have hsecond : |h * (1 - 2 * dropCoefficient c.m y * η ^ 2)| ≤ 9 / 100 := by
     rw [abs_mul, abs_of_nonneg hh]
     have hb := mul_le_mul hh1 hcoef (abs_nonneg _) (by norm_num : (0 : ℝ) ≤ 1 / 100)
-    linarith
+    linarith only [hb]
   have hbase : 0 ≤ D h + d η * dropCoefficient c.m y ∧ D h + d η * dropCoefficient c.m y ≤ 9 / 2 :=
       by
     have hb := mul_le_mul hd.2 hk.2 hk.1 (by norm_num : (0 : ℝ) ≤ 1)
-    constructor <;> linarith [mul_nonneg hd.1 hk.1]
+    constructor <;> linarith only [hD.1, hD.2, hb, mul_nonneg hd.1 hk.1]
   have hthird : |(D h + d η * dropCoefficient c.m y) * η * shapeGradient η| ≤ 9 / 2 := by
-    rw [mul_assoc, abs_mul, abs_of_nonneg hbase.1, abs_of_nonneg (by
-        linarith [sq_nonneg η] : 0 ≤ η * shapeGradient η)]
-    exact (mul_le_mul hbase.2 hJ.2 (by
-        linarith [sq_nonneg η]) (by norm_num : (0 : ℝ) ≤ 9 / 2)).trans_eq (by ring)
+    have hJ0 : 0 ≤ η * shapeGradient η := (sq_nonneg η).trans hJ.1
+    rw [mul_assoc, abs_mul, abs_of_nonneg hbase.1, abs_of_nonneg hJ0]
+    exact (mul_le_mul hbase.2 hJ.2 hJ0 (by norm_num : (0 : ℝ) ≤ 9 / 2)).trans_eq (by ring)
   unfold angularSource
   have hs : |-slope c.dropLength c.lam y * transportW c h y η -
       h * (1 - 2 * dropCoefficient c.m y * η ^ 2) +
@@ -109,7 +108,7 @@ theorem angularSource_abs_bound (c : Parameters) {h y η : ℝ} (hh : 0 ≤ h)
         |h * (1 - 2 * dropCoefficient c.m y * η ^ 2)| +
           |(D h + d η * dropCoefficient c.m y) * η * shapeGradient η| :=
     (abs_add_le _ _).trans (add_le_add_left (abs_sub _ _) _)
-  linarith
+  linarith only [hs, hfirst, hsecond, hthird]
 
 theorem angularLag_abs_bound (c : Parameters) {h y η : ℝ} (hh : 0 ≤ h)
     (hh1 : h ≤ 1 / 100) (hy : 0 ≤ y) (hη : |η| ≤ 1) :
@@ -729,22 +728,22 @@ theorem angularSourceEta_abs_bound (c : Parameters) {h y η : ℝ} (hh : 0 ≤ h
   have hr := angularRate_bounds c y
   have hl : |slope c.dropLength c.lam y| ≤ 1 := by
     unfold angularRate at hr
-    exact abs_le.mpr ⟨by linarith, by linarith⟩
-  have hhabs : |h| ≤ 1 := by rw [abs_of_nonneg hh]; linarith
+    exact abs_le.mpr ⟨by linarith only [hr.1], by linarith only [hr.2]⟩
+  have hhabs : |h| ≤ 1 := by rw [abs_of_nonneg hh]; linarith only [hh1]
   have hk := dropCoefficient_bounds c.m y
   have hkabs : |dropCoefficient c.m y| ≤ 4 := by simpa only [abs_of_nonneg hk.1] using hk.2
   have hb := averagedDrop_bounds c hy
   have hbabs : |averagedDrop c y| ≤ 4 := by simpa only [abs_of_nonneg hb.1] using hb.2
   have hsq := parameter_square_le_one hη
-  have hJ : |shapeGradient η| ≤ 2 := (abs_shapeGradient_le η).trans (by linarith)
+  have hJ : |shapeGradient η| ≤ 2 := (abs_shapeGradient_le η).trans (by linarith only [hη])
   have hJ' := shapeGradient_deriv_bound hη
-  have hd : 0 ≤ d η ∧ d η ≤ 1 := by unfold d; constructor <;> linarith [sq_nonneg η]
+  have hd : 0 ≤ d η ∧ d η ≤ 1 := by unfold d; constructor <;> linarith only [hsq, sq_nonneg η]
   have hbase : |D h + d η * dropCoefficient c.m y| ≤ 5 := by
     have hmul := mul_le_mul hd.2 hk.2 hk.1 (by norm_num : (0 : ℝ) ≤ 1)
     have hn := mul_nonneg hd.1 hk.1
     unfold D
     apply abs_le.mpr
-    constructor <;> linarith
+    constructor <;> linarith only [hmul, hn, hh, hh1]
   have hfirst : |-4 * h * slope c.dropLength c.lam y * η * averagedDrop c y| ≤ 16 := by
     calc
       _ = 4 * |h| * |slope c.dropLength c.lam y| * |η| * |averagedDrop c y| := by
@@ -766,7 +765,7 @@ theorem angularSourceEta_abs_bound (c : Parameters) {h y η : ℝ} (hh : 0 ≤ h
     have hm : |η * deriv shapeGradient η| ≤ 2 := by
       rw [abs_mul]
       exact (mul_le_mul hη hJ' (abs_nonneg _) (by norm_num : (0 : ℝ) ≤ 1)).trans_eq (by ring)
-    exact (abs_add_le _ _).trans (by linarith)
+    exact (abs_add_le _ _).trans (by linarith only [hJ, hm])
   have hfourth : |(D h + d η * dropCoefficient c.m y) * (shapeGradient η + η * deriv shapeGradient
       η)| ≤ 20 := by
     rw [abs_mul]
@@ -781,7 +780,7 @@ theorem angularSourceEta_abs_bound (c : Parameters) {h y η : ℝ} (hh : 0 ≤ h
           |(D h + d η * dropCoefficient c.m y) * (shapeGradient η + η * deriv shapeGradient η)| :=
     (abs_add_le _ _).trans (add_le_add_left ((abs_sub _ _).trans (add_le_add_left (abs_add_le _ _)
         _)) _)
-  linarith
+  linarith only [hs, hfirst, hsecond, hthird, hfourth]
 
 theorem idealAngularLag_hasDerivAt (c : Parameters) (h η : ℝ) :
     HasDerivAt (idealAngularLag h) (angularSourceEta c h η 0 / (8 / 5)) η := by
@@ -974,7 +973,7 @@ theorem initialAxialDerivative_bound (v : TailData) {η : ℝ}
   have hend : v.core.holdStart ≤ v.core.endpoint := by
     have := v.core.pulseStart_ge_hold
     dsimp [Parameters.endpoint]
-    linarith [v.core.pulseLength_pos]
+    linarith only [this, v.core.pulseLength_pos]
   have hP := actual_pressure_bounds v htime hend hη
   have hE := angular_square_le_envelope v.core htime le_rfl hη
   have hbar := averagedEnergy_le_envelope v.core htime le_rfl hη
@@ -989,20 +988,21 @@ theorem initialAxialDerivative_bound (v : TailData) {η : ℝ}
       v.core.holdStart := by
     have he := mul_le_mul_of_nonneg_left hE (mul_nonneg pressureBound_pos.le (abs_nonneg η))
     have hh := mul_le_mul_of_nonneg_left hη (mul_nonneg pressureBound_pos.le hEnv)
-    linarith [hP.2.1]
+    linarith only [hP.2.1, he, hh]
   have hp2 : |deriv (pressureGradient v v.core.holdStart) η| ≤ pressureBound * energyEnvelope
       v.core.P v.core.holdStart :=
     hP.2.2.trans (mul_le_mul_of_nonneg_left hE pressureBound_pos.le)
   have hsq := parameter_square_le_one hη
-  have hd : 0 ≤ d η ∧ d η ≤ 1 := by unfold d; constructor <;> linarith [sq_nonneg η]
-  have hA : 0 ≤ 4 * A v.h ∧ 4 * A v.h ≤ 3 := by unfold A; constructor <;> linarith [v.h_pos]
-  have hJ : |shapeGradient η| ≤ 2 := (abs_shapeGradient_le η).trans (by linarith)
+  have hd : 0 ≤ d η ∧ d η ≤ 1 := by unfold d; constructor <;> linarith only [hsq, sq_nonneg η]
+  have hA : 0 ≤ 4 * A v.h ∧ 4 * A v.h ≤ 3 := by
+    unfold A; constructor <;> linarith only [v.h_pos, hh1]
+  have hJ : |shapeGradient η| ≤ 2 := (abs_shapeGradient_le η).trans (by linarith only [hη])
   have hJ' := shapeGradient_deriv_bound hη
   have hC : |2 * v.h * η + d η * shapeGradient η| ≤ 3 :=
-    (pressure_coefficient_bound v.h_pos.le hh1 hη).trans (by linarith)
+    (pressure_coefficient_bound v.h_pos.le hh1 hη).trans (by linarith only [hη])
   have hCp : |2 * v.h - 2 * η * shapeGradient η + d η * deriv shapeGradient η| ≤ 10 := by
     have hfirst : |2 * v.h| ≤ 2 := by
-        rw [abs_of_nonneg (by linarith [v.h_pos] : 0 ≤ 2 * v.h)]; linarith
+        rw [abs_of_nonneg (by linarith only [v.h_pos] : 0 ≤ 2 * v.h)]; linarith only [hh1]
     have hsecond : |2 * η * shapeGradient η| ≤ 4 := by
       calc
         _ = 2 * |η| * |shapeGradient η| := by simp only [abs_mul]; norm_num
@@ -1014,14 +1014,14 @@ theorem initialAxialDerivative_bound (v : TailData) {η : ℝ}
     have htri := (abs_add_le (2 * v.h - 2 * η * shapeGradient η) (d η * deriv shapeGradient
         η)).trans
       (add_le_add_left (abs_sub _ _) _)
-    linarith
+    linarith only [htri, hfirst, hsecond, hthird]
   have hg : |(12 * v.h * η ^ 2 + 6 * η ^ 2 - 2) * averagedDropSquare v.core v.core.holdStart| ≤ 256
       := by
     have hc : |12 * v.h * η ^ 2 + 6 * η ^ 2 - 2| ≤ 16 := by
       have hh := mul_le_mul hh1 hsq (sq_nonneg η) (by norm_num : (0 : ℝ) ≤ 1 / 100)
       have hh0 := mul_nonneg v.h_pos.le (sq_nonneg η)
       apply abs_le.mpr
-      constructor <;> linarith [sq_nonneg η]
+      constructor <;> linarith only [hh, hh0, hsq, sq_nonneg η]
     rw [abs_mul, abs_of_nonneg hK.1]
     exact (mul_le_mul hc hK.2 hK.1 (by norm_num : (0 : ℝ) ≤ 16)).trans_eq (by norm_num)
   have h1 : |(2 * v.h - 2 * η * shapeGradient η + d η * deriv shapeGradient η) *
@@ -1044,15 +1044,15 @@ theorem initialAxialDerivative_bound (v : TailData) {η : ℝ}
       3 * pressureBound * energyEnvelope v.core.P v.core.holdStart := by
     rw [abs_mul, abs_of_nonneg hA.1]
     have hm := mul_le_mul hA.2 hp0 (abs_nonneg _) (by norm_num : (0 : ℝ) ≤ 3)
-    linarith
+    linarith only [hm]
   have h4 : |(4 * A v.h + 2) * η * pressureGradient v v.core.holdStart η| ≤
       5 * pressureBound * energyEnvelope v.core.P v.core.holdStart := by
-    rw [abs_mul, abs_mul, abs_of_nonneg (by linarith : 0 ≤ 4 * A v.h + 2)]
+    rw [abs_mul, abs_mul, abs_of_nonneg (by linarith only [hA.1] : 0 ≤ 4 * A v.h + 2)]
     have hc : (4 * A v.h + 2) * |η| ≤ 5 := by
-      have hm := mul_le_mul_of_nonneg_left hη (by linarith : 0 ≤ 4 * A v.h + 2)
-      linarith
+      have hm := mul_le_mul_of_nonneg_left hη (by linarith only [hA.1] : 0 ≤ 4 * A v.h + 2)
+      linarith only [hm, hA.2]
     have hm := mul_le_mul hc hp1 (abs_nonneg _) (by norm_num : (0 : ℝ) ≤ 5)
-    linarith
+    linarith only [hm]
   have h5 : |d η * deriv (pressureGradient v v.core.holdStart) η| ≤
       pressureBound * energyEnvelope v.core.P v.core.holdStart := by
     rw [abs_mul, abs_of_nonneg hd.1]
@@ -1071,7 +1071,7 @@ theorem initialAxialDerivative_bound (v : TailData) {η : ℝ}
           _) _)) _)) _)) _)
   unfold initialAxialDerivativeBound
   rw [← holdStart_eq_entranceTime v.core]
-  linarith [mul_nonneg pressureBound_pos.le hEnv]
+  linarith only [hsum, hg, h1, h2, h3, h4, h5, hEnv, mul_nonneg pressureBound_pos.le hEnv]
 
 theorem weighted_bound_of_angular_square (c : Parameters) (η : ℝ) {t B z : ℝ}
     (ht : 0 ≤ t) (hB : 0 ≤ B)

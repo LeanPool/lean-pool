@@ -120,10 +120,7 @@ theorem contDiff_compose (A : P → C(K, E →L[ℝ] F)) (B : P → C(K, U →L[
     ContDiff ℝ n (fun x => compose (A x) (B x)) := by
   have hLift : ContDiff ℝ n
       (fun x => compositionLift (K := K) (U := U) (E := E) (F := F) (A x)) :=
-    ContDiff.comp (g := compositionLift (K := K) (U := U) (E := E) (F := F)) (f := A)
-      (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := n)
-        (E := C(K,E →L[ℝ] F)) (F := C(K,(U →L[ℝ] E) →L[ℝ] U →L[ℝ] F))
-        (compositionLift (K := K) (U := U) (E := E) (F := F))) hA
+    (compositionLift (K := K) (U := U) (E := E) (F := F)).contDiff.comp hA
   exact contDiff_apply _ B hLift hB
 
 /-- Pointwise composition has the same fixed factorial product constant. -/
@@ -137,10 +134,7 @@ theorem compose_bound (A : P → C(K, E →L[ℝ] F)) (B : P → C(K, U →L[ℝ
       (3*C*D)*majorant R (c+d) n := by
   have hLift : ContDiff ℝ ∞
       (fun x => compositionLift (K := K) (U := U) (E := E) (F := F) (A x)) :=
-    ContDiff.comp (g := compositionLift (K := K) (U := U) (E := E) (F := F)) (f := A)
-      (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := ∞)
-        (E := C(K,E →L[ℝ] F)) (F := C(K,(U →L[ℝ] E) →L[ℝ] U →L[ℝ] F))
-        (compositionLift (K := K) (U := U) (E := E) (F := F))) hA
+    (compositionLift (K := K) (U := U) (E := E) (F := F)).contDiff.comp hA
   have hbLift := contraction_bound (compositionLift (K := K) (U := U) (E := E) (F := F))
     compositionLift_norm A hA R C hR hC c hbA
   exact apply_bound _ B hLift hB R C D hR hC hD c d hbLift hbB n x
@@ -192,10 +186,7 @@ variable {P : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]
 
 theorem contDiff_adjoint (A : P → C(K, U →L[ℝ] E)) {n : ℕ∞ω} (hA : ContDiff ℝ n A) :
     ContDiff ℝ n (fun x => adjointMap (K := K) (U := U) (E := E) (A x)) :=
-  ContDiff.comp (g := adjointMap (K := K) (U := U) (E := E)) (f := A)
-    (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := n)
-      (E := C(K,U →L[ℝ] E)) (F := C(K,E →L[ℝ] U))
-      (adjointMap (K := K) (U := U) (E := E))) hA
+  (adjointMap (K := K) (U := U) (E := E)).contDiff.comp hA
 
 theorem adjoint_bound (A : P → C(K, U →L[ℝ] E)) (hA : ContDiff ℝ ∞ A)
     (R C : ℝ) (hR : 0 ≤ R) (hC : 0 ≤ C) (d : ℕ)

@@ -2856,13 +2856,15 @@ theorem solenoidal (H : Invariant σ x) (hN : ActualCarrierGeometry.geometricThr
 theorem good_carrier (x : CycleState (Index B N0)) (l : Index B N0) :
     SameCarrier (x.coefficients.blocks l) (goodBlock x l) := ⟨rfl,rfl,rfl⟩
 
+theorem reindex_real {D E : Type} [NormedAddCommGroup D] [NormedSpace ℝ D]
+    [NormedAddCommGroup E] [NormedSpace ℝ E] (e : D ≃ₗᵢ[ℝ] E)
+    {b : CorrectionState.HarmonicBlock E} (hb : ErrorHarmonics.RealBlock b) :
+    ErrorHarmonics.RealBlock (StateReindex.block e b) :=
+  ⟨fun n i j z => hb.1 n i j (e z), fun n j z => hb.2 n j (e z)⟩
+
 theorem good_real (x : CycleState (Index B N0)) (l : Index B N0) :
-    ErrorHarmonics.RealBlock (goodBlock x l) := by
-  constructor
-  · intro n i j z
-    exact (ParticularWaveAssembly.assembledBlock_real _ _ _ _ _ _).1 n i j (cycleAssoc z)
-  · intro n j z
-    exact (ParticularWaveAssembly.assembledBlock_real _ _ _ _ _ _).2 n j (cycleAssoc z)
+    ErrorHarmonics.RealBlock (goodBlock x l) :=
+  reindex_real cycleAssoc (ParticularWaveAssembly.assembledBlock_real _ _ _ _ _ _)
 
 theorem gaussian_eq_cycle (H : Invariant σ x) (l : Index B N0) :
     gaussianBlock x l = StateReindex.block cycleAssoc

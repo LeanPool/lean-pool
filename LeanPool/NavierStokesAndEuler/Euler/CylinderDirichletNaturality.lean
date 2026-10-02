@@ -97,7 +97,7 @@ theorem productDerivative_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
       timeMultiplier T hT R (timeLift T A u) =
     timeLift T B (timeMultiplier T hT Q₁ (primitiveTimeLp (E := U) T hT u)+timeMultiplier T hT Q u)
   rw [primitiveTimeLp_timeLift,timeMultiplier_intertwines T hT A B Q₁ R₁ hQR₁,
-    timeMultiplier_intertwines T hT A B Q R hQR,map_add]
+    timeMultiplier_intertwines T hT A B Q R hQR, (timeLift T B).map_add]
 
 omit [CompleteSpace E] [CompleteSpace F] in
 theorem fixedDerivative_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
@@ -145,10 +145,10 @@ theorem fixedFrameSolver_intertwines
   intro v
   have hw := fixedFrameSolver_weak T hT Q Q₁ H c hc hQ hQtime K hK hH hsmall f
     (zeroTraceMap T hT (adjoint (𝕜 := ℝ) (E := U) (F := V) A) v)
-  rw [fixedDerivative_intertwines T hT _ _ R R₁ Q Q₁ hRQ hRQ₁,
-    fixedPrimitive_intertwines T hT _ _ R R₁ Q Q₁ hRQ hRQ₁] at hw
-  simp only [← timeLift_adjoint,adjoint_inner_right] at hw
-  rw [fixedDerivative_intertwines T hT A B Q Q₁ R R₁ hQR hQR₁,
+  simp only [fixedDerivative_intertwines T hT _ _ R R₁ Q Q₁ hRQ hRQ₁,
+    fixedPrimitive_intertwines T hT _ _ R R₁ Q Q₁ hRQ hRQ₁, ← timeLift_adjoint,
+    adjoint_inner_right] at hw
+  simp only [fixedDerivative_intertwines T hT A B Q Q₁ R R₁ hQR hQR₁,
     fixedPrimitive_intertwines T hT A B Q Q₁ R R₁ hQR hQR₁,
     timeMultiplier_intertwines T hT B B H J hHJ]
   exact hw
@@ -189,9 +189,9 @@ theorem adjointMultiplier_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
         (adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT Q) f) := by
   apply ext_inner_right ℝ
   intro v
-  rw [adjoint_inner_left,← adjoint_inner_right, timeLift_adjoint,
-    ← timeMultiplier_intertwines T hT _ _ R Q hRQ,
-    ← adjoint_inner_left,← timeLift_adjoint,adjoint_inner_right]
+  have key := timeMultiplier_intertwines T hT _ _ R Q hRQ v
+  rw [← timeLift_adjoint, ← timeLift_adjoint] at key
+  rw [adjoint_inner_left, ← adjoint_inner_right, ← key, ← adjoint_inner_left, adjoint_inner_right]
 
 /-- The true Gram operator commutes with compatible rectangular intertwiners. -/
 theorem gramOperator_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
@@ -264,10 +264,11 @@ theorem accelerationLp_intertwines (f : TimeLp T E) :
     (adjoint (𝕜 := ℝ) (E := TimeLp T V) (F := TimeLp T F) (timeMultiplier T hT R)
       (timeLift T B f-(2 : ℝ) • timeMultiplier T hT R₁
         (velocityLp T hT R R₁ J d hd hR hRtime L hL hJ hsmall' (timeLift T B f)))) = _
-  rw [velocityLp_intertwines T hT A B Q Q₁ R R₁ H J c hc hQ d hd hR hQtime hRtime
+  simp only [velocityLp_intertwines T hT A B Q Q₁ R R₁ H J c hc hQ d hd hR hQtime hRtime
     K L hK hL hH hJ hsmall hsmall' hQR hQR₁ hRQ hRQ₁ hHJ,
     timeMultiplier_intertwines T hT A B Q₁ R₁ hQR₁,
-    ← map_smul,← map_sub,adjointMultiplier_intertwines T hT A B Q R hRQ,
+    ← (timeLift T B).map_smul, ← (timeLift T B).map_sub,
+    adjointMultiplier_intertwines T hT A B Q R hRQ,
     gramSolver_intertwines T hT A B Q R c hc hQ d hd hR hQR hRQ]
   rfl
 
@@ -280,7 +281,7 @@ theorem velocityPath_intertwines (f : TimeLp T E) (t : Icc (0 : ℝ) T) :
   change reconstruction (E := V) T hT
     (velocityLp T hT R R₁ J d hd hR hRtime L hL hJ hsmall' (timeLift T B f),
       accelerationLp T hT R R₁ J d hd hR hRtime L hL hJ hsmall' (timeLift T B f)) t = _
-  rw [velocityLp_intertwines T hT A B Q Q₁ R R₁ H J c hc hQ d hd hR hQtime hRtime
+  simp only [velocityLp_intertwines T hT A B Q Q₁ R R₁ H J c hc hQ d hd hR hQtime hRtime
     K L hK hL hH hJ hsmall hsmall' hQR hQR₁ hRQ hRQ₁ hHJ,
     accelerationLp_intertwines T hT A B Q Q₁ R R₁ H J c hc hQ d hd hR hQtime hRtime
     K L hK hL hH hJ hsmall hsmall' hQR hQR₁ hRQ hRQ₁ hHJ,
@@ -446,7 +447,7 @@ theorem accelerationPath_intertwines (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t
       (B (f t)-(2 : ℝ) • G.frameDerivative P t
         (G.velocityPath P (pathLp T G.time_pos.le (B.compLeftContinuous ℝ (Icc (0 : ℝ) T) f))
           t))) = _
-  rw [continuousVelocity_intertwines P D G A B hQ hQ₁ hback hback₁ hH]
+  simp only [continuousVelocity_intertwines P D G A B hQ hQ₁ hback hback₁ hH]
   exact EulerGramNaturality.acceleration_intertwines A B
     (D.frame P t) (D.frameDerivative P t) (G.frame P t) (G.frameDerivative P t)
     D.lower D.lower_pos (D.frame_lower P t) G.lower G.lower_pos (G.frame_lower P t)
@@ -457,7 +458,7 @@ theorem physicalVelocity_intertwines (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t
       B (D.physicalVelocity P f t) := by
   change G.frame P t
     (G.velocityPath P (pathLp T G.time_pos.le (B.compLeftContinuous ℝ (Icc (0 : ℝ) T) f)) t) = _
-  rw [continuousVelocity_intertwines P D G A B hQ hQ₁ hback hback₁ hH,hQ]
+  simp only [continuousVelocity_intertwines P D G A B hQ hQ₁ hback hback₁ hH, hQ]
   rfl
 
 theorem physicalDerivative_intertwines (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : Icc (0 : ℝ) T) :
@@ -466,8 +467,8 @@ theorem physicalDerivative_intertwines (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) 
   change G.frameDerivative P t
       (G.velocityPath P (pathLp T G.time_pos.le (B.compLeftContinuous ℝ (Icc (0 : ℝ) T) f)) t) +
     G.frame P t (G.accelerationPath P (B.compLeftContinuous ℝ (Icc (0 : ℝ) T) f) t) = _
-  rw [continuousVelocity_intertwines P D G A B hQ hQ₁ hback hback₁ hH,
-    accelerationPath_intertwines P D G A B hQ hQ₁ hback hback₁ hH,hQ₁,hQ,← map_add]
+  simp only [continuousVelocity_intertwines P D G A B hQ hQ₁ hback hback₁ hH,
+    accelerationPath_intertwines P D G A B hQ hQ₁ hback hback₁ hH, hQ₁, hQ, ← B.map_add]
   rfl
 
 end EulerCylinderDirichlet.Coefficients

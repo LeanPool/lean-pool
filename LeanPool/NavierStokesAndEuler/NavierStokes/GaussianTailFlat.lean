@@ -597,7 +597,7 @@ theorem error_gaussian_bound {s : StripData D} (g : SlotFamily s)
   have hPg : P n x ≤ Real.exp (-(c * g.lengthScale / 25) * ChartScales.S n) := by
     apply (hP n x hx).trans
     apply (Real.exp_le_exp.2 ?_).trans (gaussian_length_comparison hc.le (g.length_lower n))
-    linarith [mul_le_mul_of_nonneg_left hsq (mul_nonneg hc.le (g.length_pos n).le)]
+    linarith only [mul_le_mul_of_nonneg_left hsq (mul_nonneg hc.le (g.length_pos n).le)]
   have hslow0 : 0 ≤ s.slow n := zero_le_one.trans (s.one_le_slow n)
   have hK0 : 0 ≤ scales.boundConstant := zero_le_one.trans scales.constant_one_le
   have hslowp : s.slow n ^ p ≤
@@ -617,13 +617,15 @@ theorem error_gaussian_bound {s : StripData D} (g : SlotFamily s)
             Real.exp (-(c * g.lengthScale / 25) * ChartScales.S n) :=
         mul_le_mul_of_nonneg_left hPg (by positivity)
       _ ≤ (A * ChartScales.Q n ^ (scales.power * α) * s.slow n ^ p) * B *
-            Real.exp (-(c * g.lengthScale / 25) * ChartScales.S n) := by
-        gcongr
-        exact hweight x hx
+            Real.exp (-(c * g.lengthScale / 25) * ChartScales.S n) :=
+        mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (hweight x hx)
+          (mul_nonneg (mul_nonneg hA (Real.rpow_nonneg hQ.le _)) (pow_nonneg hslow0 p)))
+          (Real.exp_pos _).le
       _ ≤ (A * ChartScales.Q n ^ (scales.power * α) *
           (scales.boundConstant ^ p * (1 + ChartScales.S n) ^ (scales.degree * p))) * B *
-            Real.exp (-(c * g.lengthScale / 25) * ChartScales.S n) := by
-        gcongr
+            Real.exp (-(c * g.lengthScale / 25) * ChartScales.S n) :=
+        mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hslowp
+          (mul_nonneg hA (Real.rpow_nonneg hQ.le _))) hB) (Real.exp_pos _).le
       _ = _ := by ring
   calc
     _ ≤ majorant s (fun n x => Real.sqrt (s.zeta x) * P n x) α A p n x := hb n x hx j hj

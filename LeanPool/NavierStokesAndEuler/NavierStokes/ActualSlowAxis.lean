@@ -230,9 +230,22 @@ theorem verticalTerm_hasFDerivAt {c : ℕ → ℝ → ℝ} {z : ℂ} (m : ℕ)
   apply ContinuousLinearMap.ext
   intro w
   cases m with
-  | zero => simp [verticalX, verticalY, verticalTerm, complexLinearForm, mul_comm]
+  | zero =>
+    simp only [complexLinearForm, verticalX, CharP.cast_eq_zero, zero_add, verticalTerm, mul_comm,
+      pow_zero, one_mul, verticalY, ↓reduceIte, ContinuousLinearMap.smulRight_zero, add_zero,
+      ContinuousLinearMap.smulRight_apply, reCLM_apply, real_smul, Function.comp_apply,
+      ofRealCLM_apply, zero_tsub, mul_one, ContinuousLinearMap.toSpanSingleton_zero,
+      ContinuousLinearMap.restrictScalars_zero, ContinuousLinearMap.zero_comp, smul_zero,
+      imCLM_apply, ContinuousLinearMap.comp_smulₛₗ, RingHom.id_apply, one_smul, smul_apply,
+      ContinuousLinearMap.comp_apply]
   | succ m =>
-    simp [verticalX, verticalY, verticalTerm, complexLinearForm, pow_succ]
+    simp only [complexLinearForm, verticalX, Nat.cast_add, Nat.cast_one, verticalTerm, pow_succ,
+      verticalY, Nat.add_eq_zero_iff, one_ne_zero, and_false, ↓reduceIte, add_tsub_cancel_right,
+      add_apply, ContinuousLinearMap.smulRight_apply, reCLM_apply, real_smul, imCLM_apply,
+      Function.comp_apply, ofRealCLM_apply, coe_smul, ContinuousLinearMap.comp_smulₛₗ,
+      RingHom.id_apply, smul_apply, ContinuousLinearMap.comp_apply, smul_eq_mul,
+      ContinuousLinearMap.coe_restrictScalars', ContinuousLinearMap.toSpanSingleton_apply,
+      ofReal_mul, ofReal_add, ofReal_natCast, ofReal_one]
     ring
 
 theorem verticalTerm_bound {c : ℕ → ℝ → ℝ} {C a : ℝ} (hC : 0 ≤ C) (ha : 0 < a)
@@ -942,7 +955,7 @@ theorem radial_holomorphic {S : Set ℝ} {Ω : Set ℂ} (hS : IsOpen S) (hΩ : I
         hval (r + t) htr, hval r hr, Q, w'] using hb
     rw [dist_eq_norm]
     apply hn.trans_lt
-    simpa only [dist_eq_norm, norm_sub_rev] using ht
+    exact (dist_eq_norm_sub' _ _).symm.trans_lt ht
   have hQ : ∀ᶠ t in 𝓝[≠] (0 : ℝ), DifferentiableOn ℂ (Q t) (ball z σ) := by
     filter_upwards [hnear.filter_mono nhdsWithin_le_nhds] with t ht
     exact (((hhol (r + t) ht).sub (hhol r hr)).const_smul t⁻¹).mono

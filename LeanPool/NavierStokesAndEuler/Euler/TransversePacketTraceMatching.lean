@@ -304,6 +304,9 @@ theorem pressure_match : pastPressure τ hτ hτT B G ⟨τ,hτ.le,le_rfl⟩ =
       ((G.tail τ hτ.le hτT).path tf : CylinderL2 P Space) := forcing_match τ hτ hτT G
   have hv : pastVelocity τ hτ hτT B G th = futureVelocity τ hτ hτT B G tf :=
     velocity_match τ hτ hτT B G
-  rw [hN,hM,hforce,hv]
+  exact congrArg (fun x => primitive P x)
+    (congrArg₂ (fun N w => fullOperatorMap (E := Space) (F := ℝ) P N w) hN
+      (congrArg₂ (fun (f w : CylinderL2 P Space) => f - (2 : ℝ) • w) hforce
+        (congrArg₂ (fun M w => fullOperatorMap (E := Space) (F := Space) P M w) hM hv)))
 
 end EulerTransversePacketJoin

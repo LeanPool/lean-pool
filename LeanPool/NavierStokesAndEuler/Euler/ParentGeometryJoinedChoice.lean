@@ -295,12 +295,12 @@ theorem initialized_uniform_flow_and_shear :
   have hKerr_k : Kerr ≤ smallPower k := costs.2.2.2.2.2.1.trans hout
   have hKv_k : Kv ≤ smallPower k := costs.2.2.2.2.2.2.1.trans hout
   have hKp_k : Kp ≤ smallPower k := costs.2.2.2.2.2.2.2.trans hout
-  have hk0 : 0 < k := by linarith
-  have hk1 : 1 ≤ k := by linarith
+  have hk0 : 0 < k := by linarith only [hk]
+  have hk1 : 1 ≤ k := by linarith only [hk]
   have hn := (truncation_bounds k hk1).1
   have hT_k : D.T ≤ smallPower k := hW.total_time.trans
     (Real.one_le_rpow hk1 (by norm_num [theta]))
-  have hRv : 0 ≤ 4*L'.R := by have := L'.radius_bounds.1; linarith
+  have hRv : 0 ≤ 4*L'.R := by have := L'.radius_bounds.1; linarith only [this]
   have hρ' : 0 < ρ0/4 := by positivity
   have hRf : 0 < Rf := (liftedInputRadius_pos (4*L'.R) (ρ0/4) hRv hρ').trans_le (le_max_left _ _)
   have hC0 : 0 ≤ C0 := velocity_nonneg L'.R S.H0 BC.multiplierCost
@@ -364,7 +364,7 @@ theorem initialized_uniform_flow_and_shear :
     Q.physical_gradient_hessian_of_weighted D period X Y hXd hXY hY hdet
       L.Rc L.C₀ L.Rc_nonneg L.C₀_nonneg L.frame_bound k (ρ0/4) Cw (delta (expansion k))
       hk1 rfl rfl hρ' hCw.le (delta_pos _).le he hp t x
-  have hroot2 : 2 ≤ k^(1/4 : ℝ) := by linarith
+  have hroot2 : 2 ≤ k^(1/4 : ℝ) := by linarith only [hroot]
   have hvErr := physical_error_le_inverse_quarter Kv Kerr k hk1 hKv_k hKerr_k hdelta hroot2
   have hpErr := physical_error_le_inverse_quarter Kp Kerr k hk1 hKp_k hKerr_k hdelta hroot2
   refine ⟨_,Q,G,rfl,rfl,rfl,rfl,?_,hweighted,?_,?_⟩
@@ -508,15 +508,17 @@ theorem initialized_uniform_child_label_bounds (q : ℕ)
     initialized_uniform_flow_and_shear M D hTime τ hτ hτT B δ hδ hδ1 ξ hs α hα
       L NB LM Cagree W hW hprofile k hk hX hlog hfrequency hdelta hroot htrace
       X Y hXs hF hXY hY hdet
+  have he₁ : k ^ (-(1 / 2 : ℝ) + 1 / 4) = k ^ (-(1 / 4 : ℝ)) := by norm_num
+  have he₂ : ell⁻¹ * k ^ (1 + (1 / 4 : ℝ)) = ell⁻¹ * k ^ (5 / 4 : ℝ) := by norm_num
   have hcoarse (t : Icc (0 : ℝ) D.T) :=
-    EulerPhysicalChildFields.coarsen_graph_bounds k ell (by linarith) hell hinv
+    EulerPhysicalChildFields.coarsen_graph_bounds k ell (by linarith only [hk]) hell hinv
       (G.displacementField k D.m₀ ell hell t) (G.velocityField k D.m₀ ell hell t)
       (G.accelerationFieldL2 k D.m₀ ell hell t)
-      (by convert (hfields ell hell hell1 t).1 using 1 <;> norm_num)
-      (by convert (hfields ell hell hell1 t).2.1 using 1 <;> norm_num)
-      (by convert (hfields ell hell hell1 t).2.2.1 using 1; norm_num)
-      (by convert (hfields ell hell hell1 t).2.2.2.1 using 1 <;> norm_num)
-      (by convert (hfields ell hell hell1 t).2.2.2.2 using 1 <;> norm_num)
+      (by rw [he₁, he₂]; exact (hfields ell hell hell1 t).1)
+      (by rw [he₁, he₂]; exact (hfields ell hell hell1 t).2.1)
+      (by rw [he₂]; exact (hfields ell hell hell1 t).2.2.1)
+      (by rw [he₁, he₂]; exact (hfields ell hell hell1 t).2.2.2.1)
+      (by rw [he₁, he₂]; exact (hfields ell hell hell1 t).2.2.2.2)
   obtain ⟨E,hmatch,hlabel⟩ := EulerPhysicalChildFields.exists_source_child_fields
     G k D.m₀ hgraph ell hell Dp Vp Wp K hK hDp hVp hWp q hk69 hKk hbig hcost hcoarse
   refine ⟨hn,Q,G,E,hδQ,hρQ,hA,hA1,hgraph,hweighted,herror,hmatch,hlabel,?_⟩

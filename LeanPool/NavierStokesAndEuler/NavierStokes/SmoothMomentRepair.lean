@@ -84,7 +84,7 @@ theorem forward_hasFDerivAt (B : E ≃L[ℝ] E) (A : E →L[ℝ] E →L[ℝ] E) 
   apply Prod.ext
   · rfl
   · change B z.2 = B z.2 + z.1.1 0 + ((A 0) z.2 + (A z.2 + z.1.2 0) 0)
-    simp only [map_zero, zero_apply, add_zero]
+    simp only [ContinuousLinearMap.map_zero, zero_apply, add_zero]
 
 /-- A common open neighborhood supports an analytic solution in all coefficients and the debt. -/
 theorem exists_local_analytic_solver [CompleteSpace E]

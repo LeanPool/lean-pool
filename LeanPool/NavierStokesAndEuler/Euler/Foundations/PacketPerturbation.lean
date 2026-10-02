@@ -278,7 +278,7 @@ theorem equation30_kernel_bound
         (hfluxU r (hs.trans hr.1)) (hfluxV r (hs.trans hr.1))).2)
   constructor
   · have hb := hlin (D s * V₁ s) (-(D s * U₁ s))
-    have hfirst : D s * V₁ s * U s + -(D s * U₁ s) * V s = 1 := by linarith [hW]
+    have hfirst : D s * V₁ s * U s + -(D s * U₁ s) * V s = 1 := by linear_combination hW
     have hsecond : D s * V₁ s * U₁ s + -(D s * U₁ s) * V₁ s = 0 := by ring
     rw [hfirst, hsecond] at hb
     norm_num at hb
@@ -286,7 +286,7 @@ theorem equation30_kernel_bound
     congr 2 <;> dsimp [kernel11, kernel21, D] <;> ring
   · have hb := hlin (-(D s * V s)) (D s * U s)
     have hfirst : -(D s * V s) * U s + D s * U s * V s = 0 := by ring
-    have hsecond : -(D s * V s) * U₁ s + D s * U s * V₁ s = 1 := by linarith [hW]
+    have hsecond : -(D s * V s) * U₁ s + D s * U s * V₁ s = 1 := by linear_combination hW
     rw [hfirst, hsecond] at hb
     norm_num at hb
     convert! hb using 1
@@ -389,7 +389,8 @@ theorem equation30_forced_bound
   have hV₁c : ContinuousOn V₁ (Icc a b) :=
     fun t ht => (equation30_second_derivative (hfluxV t (ha.trans
         ht.1))).continuousAt.continuousWithinAt
-  have hDc : ContinuousOn D (Icc a b) := by fun_prop
+  have hDc : ContinuousOn D (Icc a b) :=
+    (continuous_const.add ((continuous_const.mul (continuous_pow 2)).pow 2)).continuousOn
   have hW : U a * (D a * V₁ a) - (D a * U₁ a) * V a = 1 := by
     have hw := flux_wronskian_constant
       (a := 0) (b := a) (D := D) (c := c)
@@ -469,7 +470,8 @@ theorem equation30_perturbed_bound
       ht.1)).continuousAt.continuousWithinAt
   have hYc : ContinuousOn Y (Icc a b) := fun t ht => (hY t ht).continuousAt.continuousWithinAt
   have hY₁c : ContinuousOn Y₁ (Icc a b) := continuousOn_of_flux
-    (D := fun s => 1 + (ε ^ 2 * s ^ 2) ^ 2) (by fun_prop)
+    (D := fun s => 1 + (ε ^ 2 * s ^ 2) ^ 2)
+    (continuous_const.add ((continuous_const.mul (continuous_pow 2)).pow 2)).continuousOn
     (fun t ht => (hfluxY t ht).continuousAt.continuousWithinAt)
     (fun _ _ => ne_of_gt (by positivity))
   have hNc := hYc.abs.add hY₁c.abs
@@ -591,13 +593,18 @@ theorem equation30_perturbed_difference_bound
     (intervalIntegrable_const : IntervalIntegrable
       (fun _ : ℝ => 40 * δ * Θ ^ 8 * (|Y a| + |Y₁ a|) / U a) MeasureTheory.volume a t) hpoint
   simp only [intervalIntegral.integral_const, smul_eq_mul] at hi
-  have hscaled := mul_le_mul_of_nonneg_left hi (show 0 ≤ 20 * Θ ^ 8 * U t by positivity)
-  have hduration : t - a ≤ Θ := by linarith [ht.2]
+  have hΘ0 : 0 ≤ Θ := zero_le_one.trans hΘ
+  have hUt : 0 ≤ U t := (hUp t (ha.trans ht.1)).le
+  have hscaled := mul_le_mul_of_nonneg_left hi
+    (show 0 ≤ 20 * Θ ^ 8 * U t from mul_nonneg (mul_nonneg (by norm_num) (pow_nonneg hΘ0 8)) hUt)
+  have hduration : t - a ≤ Θ := by linarith only [ht.2, hb, ha]
   have hlast : 20 * Θ ^ 8 * U t *
       ((t - a) * (40 * δ * Θ ^ 8 * (|Y a| + |Y₁ a|) / U a)) ≤
       800 * δ * Θ ^ 17 * (U t / U a) * (|Y a| + |Y₁ a|) := by
     have hm := mul_le_mul_of_nonneg_left hduration
-      (show 0 ≤ 800 * δ * Θ ^ 16 * (U t / U a) * (|Y a| + |Y₁ a|) by positivity)
+      (show 0 ≤ 800 * δ * Θ ^ 16 * (U t / U a) * (|Y a| + |Y₁ a|) from
+        mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hδ) (pow_nonneg hΘ0 16))
+          (div_nonneg hUt hUa.le)) (add_nonneg (abs_nonneg _) (abs_nonneg _)))
     convert! hm using 1 <;> ring
   exact (hforced t ht).trans (add_le_add le_rfl (hscaled.trans hlast))
 
@@ -631,10 +638,11 @@ theorem equation30_relative_error_order29
     ∀ t ∈ Icc 0 b,
       |Y t - Z t| + |Y₁ t - Z₁ t| ≤ 800 * e * Θ ^ 29 * (1 + lam) * U t := by
   have hΘ0 : 0 ≤ Θ := le_trans zero_le_one hΘ
-  have hδ : 0 ≤ e * Θ ^ 12 := by positivity
+  have hδ : 0 ≤ e * Θ ^ 12 := mul_nonneg he (pow_nonneg hΘ0 12)
   have hsmall' : 20 * Θ ^ 8 * (e * Θ ^ 12) * (b - 0) ≤ 1 / 2 := by
-    have hm := mul_le_mul_of_nonneg_left hb (show 0 ≤ 20 * e * Θ ^ 20 by positivity)
-    linarith
+    have hm := mul_le_mul_of_nonneg_left hb
+      (show 0 ≤ 20 * e * Θ ^ 20 from mul_nonneg (mul_nonneg (by norm_num) he) (pow_nonneg hΘ0 20))
+    linarith only [hm, hsmall]
   have hdiff := equation30_perturbed_difference_bound hε hεsmall hΘ
     (by norm_num : (0 : ℝ) ≤ 0) hb0 hb hδ hsmall'
     hU hV hfluxU hfluxV hU0 hU₁0 hV₁0 hY hfluxY hZ hfluxZ hfc hgc hforcing

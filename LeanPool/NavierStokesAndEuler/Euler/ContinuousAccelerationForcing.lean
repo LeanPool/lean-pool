@@ -69,14 +69,14 @@ theorem forcing_bound (Q Q₁ : P → C(K, U →L[ℝ] E)) (f : P → C(K, E)) (
       ‖iteratedFDeriv ℝ j (fun z => (2 : ℝ) • w z) y‖ ≤ (6*C₁*V)*majorant R d j := by
     rw [iteratedFDeriv_const_smul_apply' (hw.contDiffAt.of_le (by simp)), norm_smul]
     norm_num only [Real.norm_ofNat]
-    nlinarith [hbw j y]
+    linarith only [hbw j y]
   let r := fun y => f y - (2 : ℝ) • w y
   have hr : ContDiff ℝ ∞ r := hf.sub (hw.const_smul (2 : ℝ))
   have hbr := sub_bound f (fun y => (2 : ℝ) • w y) hf (hw.const_smul (2 : ℝ))
     R F (6*C₁*V) d hbf hb2w
   have h := apply_bound (fun y => adjointMap (K := K) (U := U) (E := E) (Q y)) r
     (contDiff_adjoint Q hQ) hr
-    R C₀ (F+6*C₁*V) hR hC₀ (by positivity) 0 d
+    R C₀ (F+6*C₁*V) hR hC₀ (add_nonneg hF (mul_nonneg (mul_nonneg (by norm_num) hC₁) hV)) 0 d
     (EulerContinuousPathComposition.adjoint_bound Q hQ R C₀ hR hC₀ 0 hbQ) hbr n x
   simp only [Nat.zero_add] at h
   convert h using 1

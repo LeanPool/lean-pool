@@ -283,8 +283,7 @@ theorem zero_of_projected_equation (T : ℝ) (hT : 0 ≤ T) (hTpos : 0 < T)
     rw [← adjoint_inner_left]
     have ha : adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t) (Q t (a t)) =
         adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t) ((-2 : ℝ) • Q₁ t (v t)) := heq t
-    rw [map_add,map_smul,ha,map_smul]
-    simp only [← add_smul]
+    simp only [ContinuousLinearMap.map_add,ContinuousLinearMap.map_smul,ha,← add_smul]
     norm_num
   have hphysical := zero_of_energy_equation T hT hTpos H K hK hH hsmall p u q hp hu
     (by change Q _ (z _) = 0; rw [hzero,map_zero])

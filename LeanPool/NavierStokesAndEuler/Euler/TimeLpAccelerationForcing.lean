@@ -86,7 +86,7 @@ theorem forcing_bound (T : ℝ) (hT : 0 ≤ T)
       ‖iteratedFDeriv ℝ j (fun z => (2 : ℝ) • w z) y‖ ≤ (6*C₁*V)*majorant R d j := by
     rw [iteratedFDeriv_const_smul_apply' (hw.contDiffAt.of_le (by simp)), norm_smul]
     norm_num only [Real.norm_ofNat]
-    nlinarith [hbw j y]
+    linarith only [hbw j y]
   let r := fun y => f y - (2 : ℝ) • w y
   have hr : ContDiff ℝ ∞ r := hf.sub (hw.const_smul (2 : ℝ))
   have hbr := sub_bound f (fun y => (2 : ℝ) • w y) hf (hw.const_smul (2 : ℝ))

@@ -112,7 +112,7 @@ theorem difference_transport_bound {q : ℕ} {T : Type*} [TopologicalSpace T]
   have hβ : (1/2 : ℝ)*K.firstBound*((|D.κ|+‖D.direction‖)*velocityBound period q Z R) ≤
       Kx*velocityBound period q Z R := by
     have hh := mul_le_mul_of_nonneg_right hprod hV
-    nlinarith
+    linarith
   exact mul_le_mul_of_nonneg_right hβ (sq_nonneg _)
 
 /-- The actual Sobolev Laplacian has the fixed metric heat bound obtained by integration by parts.

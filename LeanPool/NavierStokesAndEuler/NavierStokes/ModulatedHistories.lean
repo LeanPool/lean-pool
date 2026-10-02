@@ -1145,11 +1145,12 @@ theorem density_perturbation_jet_bound (f U df dU : ℝ → ℝ)
   change |iteratedDeriv n (fun e => ((fun e => densityAt X (f e + df e) (U e + dU e) - densityAt X
       (f e) (U e)) e) i) eta| ≤ _
   rw [heq]
-  have hK0 : 1 ≤ (1 + 2 * R) * (1 + H) := by nlinarith
-  have hK1 : 2 * R ≤ (1 + 2 * R) * (1 + H) := by nlinarith
-  have hK2 : (2 * R) * H ≤ (1 + 2 * R) * (1 + H) := by nlinarith
-  have hK3 : (1 + R) * H ≤ (1 + 2 * R) * (1 + H) := by nlinarith
-  have hK4 : H ≤ (1 + 2 * R) * (1 + H) := by nlinarith
+  have hRH := mul_nonneg hR hH
+  have hK0 : 1 ≤ (1 + 2 * R) * (1 + H) := by linarith only [hR, hH, hRH]
+  have hK1 : 2 * R ≤ (1 + 2 * R) * (1 + H) := by linarith only [hR, hH, hRH]
+  have hK2 : (2 * R) * H ≤ (1 + 2 * R) * (1 + H) := by linarith only [hR, hH, hRH]
+  have hK3 : (1 + R) * H ≤ (1 + 2 * R) * (1 + H) := by linarith only [hR, hH, hRH]
+  have hK4 : H ≤ (1 + 2 * R) * (1 + H) := by linarith only [hR, hH, hRH]
   fin_cases i
   · exact (hdUb n le_rfl).trans (by simpa only [one_mul] using mul_le_mul_of_nonneg_right hK0 heps)
   · have h := deriv_const_mul_bound hdf n eta (2 * X) eps (hdfb n le_rfl)

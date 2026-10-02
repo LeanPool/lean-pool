@@ -631,9 +631,12 @@ theorem navierStokesResidual_eq_stress_add_tails {S : Set ℝ} (hS : IsOpen S)
   generalize hrdef : Real.sqrt (2 * radialEnergy x) = r at *
   ext i
   fin_cases i <;>
-    simp [retainedRadialForce, truncationResidual, radialFluxExpansion,
-      angularExpansion, axialExpansion, AxisymmetricResidual.pack,
-      ProblemStatement.coordinateVector, profilePoint]
+    simp only [AxisymmetricResidual.pack, Fin.isValue, radialFluxExpansion, angularExpansion,
+      ProblemStatement.coordinateVector, axialExpansion, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk,
+      PiLp.add_apply, PiLp.smul_apply, PiLp.single_eq_same, smul_eq_mul, mul_one, ne_eq,
+      zero_ne_one, one_ne_zero, not_false_eq_true, PiLp.single_eq_of_ne, mul_zero, add_zero,
+      zero_add, Fin.reduceEq, mul_neg, neg_smul, neg_neg, retainedRadialForce, profilePoint,
+      zero_smul, truncationResidual, PiLp.neg_apply, neg_zero]
   all_goals field_simp [hr, hs.ne']
   all_goals ring_nf
 

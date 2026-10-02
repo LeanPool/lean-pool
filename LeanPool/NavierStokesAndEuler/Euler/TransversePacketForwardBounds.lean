@@ -74,9 +74,13 @@ theorem velocityDerivative_weight_eq :
     velocityDerivative P S hS T hT Q Q₁ c hc hQ
         (weight (K := Icc (0 : ℝ) T) (E := Supported P E S hS) g f) a₀ =
       weight (K := Icc (0 : ℝ) T) (E := Supported P E S hS) g
-        (normalizedVelocityDerivative P S hS T hT Q Q₁ c hc hQ f a₀ g hg) := by
-  rw [velocityDerivative_eq_physicalRhs,coordinates_weight_eq]
-  exact physicalRhs_weight P S hS Q Q₁ c hc hQ f _ g
+        (normalizedVelocityDerivative P S hS T hT Q Q₁ c hc hQ f a₀ g hg) :=
+  (velocityDerivative_eq_physicalRhs P S hS T hT Q Q₁ c hc hQ _ a₀).trans
+    ((congrArg (physicalRhs P S hS Q Q₁ c hc hQ
+      (weight (K := Icc (0 : ℝ) T) (E := Supported P E S hS) g f))
+    (coordinates_weight_eq P S hS T hT Q Q₁ c hc hQ g hg f a₀)).trans
+    (physicalRhs_weight P S hS Q Q₁ c hc hQ f
+      (normalizedCoordinates P T hT S hS Q Q₁ c hc hQ g hg f a₀) g))
 
 theorem normalized_full_velocityDerivative_eq :
     normalize (K := Icc (0 : ℝ) T) (E := CylinderL2 P E) g hg
@@ -255,11 +259,17 @@ theorem normalized_velocityPath_eq {D : Data U} {raw : VectorField} (G : Forcing
           D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower g hg
           (normalize (K := Icc (0 : ℝ) D.T)
             (E := Supported P Space D.support D.support_measurable) g hg G.path) I.value) := by
-  have he := normalized_full_velocity_eq P D.support D.support_measurable D.T D.T_pos.le
-    D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower g hg
-    (normalize (K := Icc (0 : ℝ) D.T)
-      (E := Supported P Space D.support D.support_measurable) g hg G.path) I.value
-  rwa [weight_normalize] at he
+  have hw := weight_normalize (K := Icc (0 : ℝ) D.T)
+    (E := Supported P Space D.support D.support_measurable) g hg G.path
+  exact (congrArg (fun p => normalize (K := Icc (0 : ℝ) D.T) (E := CylinderL2 P Space) g hg
+      (includePath (K := Icc (0 : ℝ) D.T) (V := Space) P D.support D.support_measurable
+        (velocity P D.support D.support_measurable D.T D.T_pos.le
+          D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower p I.value)))
+    hw.symm).trans
+    (normalized_full_velocity_eq P D.support D.support_measurable D.T D.T_pos.le
+      D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower g hg
+      (normalize (K := Icc (0 : ℝ) D.T)
+        (E := Supported P Space D.support D.support_measurable) g hg G.path) I.value)
 
 /-- The time derivative divided by g is the normalized derivative of the normalized forcing. -/
 theorem normalized_derivativePath_eq {D : Data U} {raw : VectorField} (G : Forcing P D raw)
@@ -272,11 +282,17 @@ theorem normalized_derivativePath_eq {D : Data U} {raw : VectorField} (G : Forci
           D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower
           (normalize (K := Icc (0 : ℝ) D.T)
             (E := Supported P Space D.support D.support_measurable) g hg G.path) I.value g hg) := by
-  have he := normalized_full_velocityDerivative_eq P D.support D.support_measurable D.T D.T_pos.le
-    D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower
-    (normalize (K := Icc (0 : ℝ) D.T)
-      (E := Supported P Space D.support D.support_measurable) g hg G.path) I.value g hg
-  rwa [weight_normalize] at he
+  have hw := weight_normalize (K := Icc (0 : ℝ) D.T)
+    (E := Supported P Space D.support D.support_measurable) g hg G.path
+  exact (congrArg (fun p => normalize (K := Icc (0 : ℝ) D.T) (E := CylinderL2 P Space) g hg
+      (includePath (K := Icc (0 : ℝ) D.T) (V := Space) P D.support D.support_measurable
+        (velocityDerivative P D.support D.support_measurable D.T D.T_pos.le
+          D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower p I.value)))
+    hw.symm).trans
+    (normalized_full_velocityDerivative_eq P D.support D.support_measurable D.T D.T_pos.le
+      D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower
+      (normalize (K := Icc (0 : ℝ) D.T)
+        (E := Supported P Space D.support D.support_measurable) g hg G.path) I.value g hg)
 
 variable
   {D : Data U} {raw : VectorField} (G : Forcing P D raw) (I : InitialData P D)

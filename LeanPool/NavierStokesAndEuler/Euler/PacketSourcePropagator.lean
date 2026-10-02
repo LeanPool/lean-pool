@@ -139,7 +139,8 @@ theorem physical_hasDerivWithinAt (s t : Icc (0 : ℝ) D.T) (x : Space) (v : U) 
       gramInverse (D.frame.field t x) D.frameLower D.frameLower_pos (D.frame_lower t x)
         (adjoint (𝕜 := ℝ) (E := U) (F := Space) (D.frame.field t x)
           (D.frameDerivative.field t x a))) = _
-    rw [map_smul,gram_inverse_apply,map_sub,map_zero,map_smul]
+    simp only [ContinuousLinearMap.map_smul, gram_inverse_apply, ContinuousLinearMap.map_sub,
+      ContinuousLinearMap.map_zero]
     module
   have hb := physical_velocity_balance (D.frame.field t x) (D.frameDerivative.field t x)
     (D.M.field t x) (D.normal.field t x) hnormal (D.frame_tangent t x) (D.frame_range t x)

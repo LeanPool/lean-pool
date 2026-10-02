@@ -504,18 +504,20 @@ theorem exists_global_derivative_bound {K : Set E} (hK : IsCompact K)
   have hdl' : d ≤ dl := min_le_left _ _
   have hdr' : d ≤ dr := (min_le_right _ _).trans (min_le_left _ _)
   have hdgap : d ≤ (b-a)/3 := (min_le_right _ _).trans (min_le_right _ _)
-  have hgap : 0 < b-a-d := by linarith
+  have hgap : 0 < b-a-d := by linarith only [hdgap, hab]
   have hleftSmooth : ∀ p ∈ K, ∀ x : ℝ, 0 < x → x ≤ d →
       ContDiffAt ℝ ∞ (leftChart a T) (p,x) := by
     intro p hp x hx hxd
-    have hh : (p,a+x) ∈ O := hKO ⟨hp,by change a ≤ a+x ∧ a+x ≤ b; constructor <;> linarith⟩
+    have hh : (p,a+x) ∈ O := hKO ⟨hp,by
+      change a ≤ a+x ∧ a+x ≤ b; constructor <;> linarith only [hx, hxd, hdgap, hab]⟩
     have hm : ContDiffAt ℝ ∞ (fun q : E × ℝ => (q.1,a+q.2)) (p,x) :=
       contDiffAt_fst.prodMk (contDiffAt_const.add contDiffAt_snd)
     exact (hT.contDiffAt (hO.mem_nhds hh)).comp (p,x) hm
   have hrightSmooth : ∀ p ∈ K, ∀ x : ℝ, 0 < x → x ≤ d →
       ContDiffAt ℝ ∞ (rightChart b T) (p,x) := by
     intro p hp x hx hxd
-    have hh : (p,b-x) ∈ O := hKO ⟨hp,by change a ≤ b-x ∧ b-x ≤ b; constructor <;> linarith⟩
+    have hh : (p,b-x) ∈ O := hKO ⟨hp,by
+      change a ≤ b-x ∧ b-x ≤ b; constructor <;> linarith only [hx, hxd, hdgap, hab]⟩
     have hm : ContDiffAt ℝ ∞ (fun q : E × ℝ => (q.1,b-q.2)) (p,x) :=
       contDiffAt_fst.prodMk (contDiffAt_const.sub contDiffAt_snd)
     exact (hT.contDiffAt (hO.mem_nhds hh)).comp (p,x) hm
@@ -526,7 +528,7 @@ theorem exists_global_derivative_bound {K : Set E} (hK : IsCompact K)
   have hmiddle : K ×ˢ Icc (a+d) (b-d) ⊆ O := by
     intro q hq
     apply hKO
-    exact ⟨hq.1,by constructor <;> linarith [hq.2.1,hq.2.2]⟩
+    exact ⟨hq.1,by constructor <;> linarith only [hq.2.1,hq.2.2,hd]⟩
   obtain ⟨CM,hCM,hM⟩ := compact_jets_bound hO hT (hK.prod isCompact_Icc) hmiddle n
   let AL := CL / FlatCutoff.edge 4 (b-a-d)
   let AR := CR / FlatCutoff.edge c (b-a-d)
@@ -535,10 +537,10 @@ theorem exists_global_derivative_bound {K : Set E} (hK : IsCompact K)
   have hAR : 0 < AR := div_pos hCR (FlatCutoff.edge_pos _ hgap)
   have hAM : 0 < AM := div_pos hCM (mul_pos (FlatCutoff.edge_pos _ hd) (FlatCutoff.edge_pos _ hd))
   let C := AL + AR + AM
-  have hC : 0 < C := by dsimp [C]; positivity
-  have hALC : AL ≤ C := by dsimp [C]; linarith
-  have hARC : AR ≤ C := by dsimp [C]; linarith
-  have hAMC : AM ≤ C := by dsimp [C]; linarith
+  have hC : 0 < C := add_pos (add_pos hAL hAR) hAM
+  have hALC : AL ≤ C := (le_add_of_nonneg_right hAR.le).trans (le_add_of_nonneg_right hAM.le)
+  have hARC : AR ≤ C := (le_add_of_nonneg_left hAL.le).trans (le_add_of_nonneg_right hAM.le)
+  have hAMC : AM ≤ C := le_add_of_nonneg_left (add_pos hAL hAR).le
   refine ⟨C,hC,NL+NR,?_⟩
   intro i hi p hp y hy
   have hmono (B : ℝ) (hB : B ≤ C) :
@@ -557,7 +559,7 @@ theorem exists_global_derivative_bound {K : Set E} (hK : IsCompact K)
       exact hh.trans ((right_bound_to_weight hc.le hCR.le hgap hy (by linarith)
         (Nat.le_add_left _ _)).trans (hmono AR hARC))
     · have hym : y ∈ Icc (a+d) (b-d) := by
-        constructor <;> linarith [lt_of_not_ge hleft,lt_of_not_ge hright]
+        constructor <;> linarith only [lt_of_not_ge hleft,lt_of_not_ge hright]
       exact (hM i hi (p,y) ⟨hp,hym⟩).trans
         ((interior_bound_to_weight hc.le hCM.le hd hy hym (NL+NR)).trans (hmono AM hAMC))
 

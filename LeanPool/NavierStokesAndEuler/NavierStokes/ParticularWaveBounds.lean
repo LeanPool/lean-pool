@@ -662,8 +662,8 @@ theorem forced_joint_jet_bound
   have hweight : ∀ σ, HasDerivAt (fun r => P (r * t))
       ((t * rate (σ * t)) * P (σ * t)) σ := by
     intro σ
-    convert! (hdP (σ * t)).comp σ ((hasDerivAt_id σ).mul_const t) using 1
-    ring
+    exact ((hdP (σ * t)).comp (h := fun r => r * t) σ
+      ((hasDerivAt_id σ).mul_const t)).congr_deriv (by ring)
   have henergy' : ∀ σ : Icc (0 : ℝ) 1, ∀ x : H,
       ⟪x, JointODE.rescale 0 A ((p, t), σ) x⟫_ℝ ≤
         ((t * rate (σ * t)) + t * μ) * ‖x‖ ^ 2 := by
@@ -679,12 +679,13 @@ theorem forced_joint_jet_bound
     have hσ : |(σ : ℝ)| ≤ 1 := by rw [abs_of_nonneg σ.2.1]; exact σ.2.2
     have hh := rescale_jet_bound (hU.prod hV) hA hσ
       (show timeLinear (σ : ℝ) (p, t) ∈ U ×ˢ V from ⟨hp, hI (hinside σ)⟩)
-      (show 0 ≤ K * S ^ m by positivity) hKS
+      (show 0 ≤ K * S ^ m from mul_nonneg (zero_le_one.trans hK)
+        (pow_nonneg (zero_le_one.trans hS) _)) hKS
       (show |t| ≤ K * S by rw [abs_of_nonneg ht.1]; exact ht.2.trans hslot) hk
       (fun i hi => hjets i hi _ (hinside σ))
     have hconst : (2 : ℝ) ^ N * K ^ 2 ≤ K' := by
       dsimp [K', rescaleConstant]
-      linarith
+      linarith only [hK]
     calc
       _ ≤ (2 : ℝ) ^ N * (K * S) * (K * S ^ m) := by
         simpa only [JointODE.rescale, JointODE.timeMap, JointODE.affineTime, sub_zero, zero_add]
@@ -696,8 +697,8 @@ theorem forced_joint_jet_bound
         w * K' * S ^ (m + 1) * P ((0 : ℝ) * t) := by
     intro k _
     simp only [iteratedFDeriv_fun_zero, Pi.zero_apply, norm_zero, zero_mul]
-    have hp0 := hP 0
-    positivity
+    exact mul_nonneg (mul_nonneg (mul_nonneg hw (zero_le_one.trans hK'))
+      (pow_nonneg (zero_le_one.trans hS) _)) (hP _).le
   have hfjet : ∀ k ≤ N, ∀ σ : Icc (0 : ℝ) 1,
       ‖iteratedFDeriv ℝ k (fun q => JointODE.rescale 0 f (q, σ)) (p, t)‖ ≤
         w * K' * S ^ (m + 1) * P ((σ : ℝ) * t) := by
@@ -706,12 +707,13 @@ theorem forced_joint_jet_bound
     have hp0 := hP ((σ : ℝ) * t)
     have hh := rescale_jet_bound (hU.prod hV) hf hσ
       (show timeLinear (σ : ℝ) (p, t) ∈ U ×ˢ V from ⟨hp, hI (hinside σ)⟩)
-      (show 0 ≤ w * K * S ^ m * P ((σ : ℝ) * t) by positivity) hKS
+      (show 0 ≤ w * K * S ^ m * P ((σ : ℝ) * t) from mul_nonneg (mul_nonneg
+        (mul_nonneg hw (zero_le_one.trans hK)) (pow_nonneg (zero_le_one.trans hS) _)) hp0.le) hKS
       (show |t| ≤ K * S by rw [abs_of_nonneg ht.1]; exact ht.2.trans hslot) hk
       (fun i hi => hfjets i hi _ (hinside σ))
     have hconst : (2 : ℝ) ^ N * K ^ 2 ≤ K' := by
       dsimp [K', rescaleConstant]
-      linarith
+      linarith only [hK]
     calc
       _ ≤ (2 : ℝ) ^ N * (K * S) * (w * K * S ^ m * P ((σ : ℝ) * t)) := by
         simpa only [JointODE.rescale, JointODE.timeMap, JointODE.affineTime, sub_zero, zero_add]
@@ -723,7 +725,8 @@ theorem forced_joint_jet_bound
         (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hconst hw)
           (pow_nonneg (zero_le_one.trans hS) _)) hp0.le
   have hExp' : Real.exp ((t * μ) * ((1 : ℝ) - 0)) ≤ K' := by
-    apply (Real.exp_le_exp.mpr (show (t * μ) * (1 - 0) ≤ μ * L by nlinarith [ht.2])).trans
+    apply (Real.exp_le_exp.mpr (show (t * μ) * (1 - 0) ≤ μ * L by
+      rw [sub_zero, mul_one, mul_comm]; exact mul_le_mul_of_nonneg_left ht.2 hμ)).trans
     exact hExp.trans hKK'
   have hh := WeightedODEJets.norm_iteratedFDeriv_odeFamily_le_polynomial
     (a := 0) (b := 1) zero_le_one O T hO hT hIT
@@ -731,7 +734,8 @@ theorem forced_joint_jet_bound
     (JointODE.rescale 0 f)
     hAr contDiffOn_const hfr hpoint (fun σ => t * rate (σ * t)) (fun σ => P (σ * t))
     (mul_nonneg ht.1 hμ) (fun σ => hP _) hweight henergy' hExp' hS hK' hw
-    (show (1 : ℝ) - 0 ≤ K' * S by nlinarith) (m + 1) N hAjet hxjet hfjet j hj
+    (show (1 : ℝ) - 0 ≤ K' * S by rw [sub_zero]; exact one_le_mul_of_one_le_of_one_le hK' hS)
+    (m + 1) N hAjet hxjet hfjet j hj
     ⟨1, zero_le_one, le_rfl⟩
   simp only [one_mul, Nat.add_assoc] at hh ⊢
   exact hh
@@ -1130,14 +1134,15 @@ theorem copySolve_waveClass
     _ ≤ (s.epsilon n ^ α * Real.sqrt (s.zeta p)) * B ^ (N + 1) *
         s.growth n p ^ ((m + 2) * (N + 1)) * W n ((g n).coordinates (copy n) p.2).2 *
         (K₀ ^ N * s.growth n p ^ (q * N)) := by
+      have hwB := mul_nonneg hw (pow_nonneg (zero_le_one.trans hB') (N + 1))
       apply mul_le_mul _ hcp
         (pow_nonneg (zero_le_one.trans (CommonCoverClass.one_le_argumentCost (g n))) _)
-        (by positivity)
+        (mul_nonneg (mul_nonneg hwB (pow_nonneg hG0 _)) hwp)
       apply mul_le_mul_of_nonneg_right _ hwp
       exact mul_le_mul
         (mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hB' (Nat.add_le_add_right hj 1)) hw)
         (pow_le_pow_right₀ hG (Nat.mul_le_mul_left _ (Nat.add_le_add_right hj 1)))
-        (pow_nonneg hG0 _) (by positivity)
+        (pow_nonneg hG0 _) hwB
     _ = _ := by unfold majorant; rw [pow_add]; ring
 
 end CopyClass
@@ -1837,7 +1842,10 @@ theorem copySolve_jet_bound_from_modal
   have hB : 1 ≤ B := one_le_mul_of_one_le_of_one_le (one_le_pow₀ (by norm_num))
     (one_le_pow₀ (hK.trans (le_rescaleConstant N K)))
   let M := w * B ^ (N + 1) * S ^ ((m + 2) * (N + 1)) * W (g.coordinates copy p.2).2
-  have hM : 0 ≤ M := by have := hW (g.coordinates copy p.2).2; dsimp [M]; positivity
+  have hM : 0 ≤ M := mul_nonneg (mul_nonneg (mul_nonneg hw (pow_nonneg (zero_le_one.trans hB) _))
+    (pow_nonneg (zero_le_one.trans hS) _)) (hW _).le
+  have hKSm : 0 ≤ K * S ^ m :=
+    mul_nonneg (zero_le_one.trans hK) (pow_nonneg (zero_le_one.trans hS) _)
   have huj : ∀ k ≤ N, ‖iteratedFDeriv ℝ k u (p, (g.coordinates copy p.2).2)‖ ≤ M := by
     intro k hk
     have hh := forced_joint_jet_bound hL hS hK hμ hw hslot hExp Ω I hΩ hI hLI A hA W rate hW hdW
@@ -1847,10 +1855,10 @@ theorem copySolve_jet_bound_from_modal
     exact mul_le_mul (mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hB (Nat.add_le_add_right hk 1))
         hw)
       (pow_le_pow_right₀ hS (Nat.mul_le_mul_left _ (Nat.add_le_add_right hk 1)))
-      (pow_nonneg (zero_le_one.trans hS) _) (by positivity)
+      (pow_nonneg (zero_le_one.trans hS) _) (mul_nonneg hw (pow_nonneg (zero_le_one.trans hB) _))
   have hamb := ambient_jet_bound frame hT hus hcols (show (p, (g.coordinates copy p.2).2) ∈ T from
       ⟨hp, heta⟩)
-    hM (show 0 ≤ K * S ^ m by positivity) hj huj (fun i k hk => hcj i k hk _ ⟨heta.1.le, heta.2.le⟩)
+    hM hKSm hj huj (fun i k hk => hcj i k hk _ ⟨heta.1.le, heta.2.le⟩)
   have haff := norm_jet_comp_affine hT hps (CommonCoverClass.currentLinear P g)
     (CommonCoverClass.currentArgument (P := P) g copy 0)
     (by rw [← CommonCoverClass.currentArgument_affine]; exact ⟨hp, heta⟩) j
@@ -1861,7 +1869,8 @@ theorem copySolve_jet_bound_from_modal
   apply haff.trans
   exact mul_le_mul hamb
     (pow_le_pow_left₀ (norm_nonneg _) (CommonCoverClass.norm_currentLinear_le (P := P) g) j)
-    (pow_nonneg (norm_nonneg _) _) (by unfold ambientJetConstant; positivity)
+    (pow_nonneg (norm_nonneg _) _) (mul_nonneg (mul_nonneg (mul_nonneg (pow_nonneg zero_le_two _)
+      (add_nonneg (norm_nonneg _) (norm_nonneg _))) hM) hKSm)
 
 end ActualModalCopy
 

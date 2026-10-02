@@ -1216,13 +1216,14 @@ theorem drop_cone_margins (v : TailData) {y η : ℝ}
       have hmul := (le_div_iff₀ (mul_pos (by norm_num) axialBound_pos)).mp he2
       calc
         _ = 4 * axialBound * dropSpeed v.core.m / coneFloor := by ring
-        _ ≤ 1 / 4 := (div_le_iff₀ coneFloor_pos).mpr (by linarith)
+        _ ≤ 1 / 4 := (div_le_iff₀ coneFloor_pos).mpr (by linarith only [hmul])
     exact (le_abs_self _).trans (hsw.trans hc)
   have hsq' : shear v.core y η ^ 2 ≤ 1 / 4 := by
     have he0 := (dropSpeed_pos v.core.m_pos).le
-    nlinarith
+    have hd2 : dropSpeed v.core.m ^ 2 ≤ (1 / 8) ^ 2 := pow_le_pow_left₀ he0 he1 2
+    linarith only [hsq, hd2]
   rw [radialA_drop v.core hy hy']
-  constructor <;> linarith
+  constructor <;> linarith only [hS, hsq']
 
 theorem linearLag_pos_after {r b : ℝ → ℝ} (hr : Continuous r) (hb : Continuous b)
     {q₀ a y : ℝ} (hay : a ≤ y) (ha : 0 < linearLag r b q₀ a)

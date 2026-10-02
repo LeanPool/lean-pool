@@ -235,7 +235,8 @@ theorem equation30_target_ideal_quantities
     rw [hPr, hQr, hr]
     convert! (ideal_frame_identities (ε := ε) (z := z) hyne).2 using 1
     ring
-  have hR := equation30_inverted_riccati_range hε hεsmall hV hflux hV0 hV₁0 y hy (by linarith)
+  have hR := equation30_inverted_riccati_range hε hεsmall hV hflux hV0 hV₁0 y hy
+    (by linarith only [hysmall])
   have hB := equation30_ideal_frame_bounds hε hεsmall hV hflux hV0 hV₁0 y hy hysmall
   have hA := ideal_frame_absolute_bounds hε.le hεsmall hy.le hysmall hR.1 hR.2
   have hJP : J₀ / P₀ = idealFrameDenominator ε y z := by rw [hJr, hPr]; field_simp
@@ -246,7 +247,7 @@ theorem equation30_target_ideal_quantities
     field_simp
   have hyinv : 1 ≤ y⁻¹ := by
     rw [← one_div]
-    exact (le_div_iff₀ hy).mpr (by linarith)
+    exact (le_div_iff₀ hy).mpr (by linarith only [hysmall])
   change 1 ≤ P₀ ∧ 1 / 2 ≤ J₀ / P₀ ∧ J₀ / P₀ ≤ 2 ∧ |S₀| ≤ 20 ∧
     |J₀ / sqrt (1 + P₀ ^ 2) - 1| ≤ _ ∧ |S₀ / (J₀ / P₀) - 1| ≤ _
   rw [hJP, hSr, hJroot]
@@ -405,18 +406,17 @@ theorem equation30_target_frame_renewal
     |S₀ / (J₀ / (ε ^ 2 * t ^ 2)) - 1| ≤ _ at hI
   rw [hPeq] at hI
   obtain ⟨hP₀, hJ₀lower, hJ₀upper, hS₀, hAideal, hBideal⟩ := hI
-  have hP₀pos : 0 < P₀ := by linarith
+  have hP₀pos : 0 < P₀ := zero_lt_one.trans_le hP₀
   have hJ₀pos : 0 < J₀ := by
     have hh := (le_div_iff₀ hP₀pos).mp hJ₀lower
     linarith only [hh, hP₀pos]
   have hJ₀abs : |J₀| ≤ 2 * P₀ := by
     rw [abs_of_pos hJ₀pos]
     exact (div_le_iff₀ hP₀pos).mp hJ₀upper
-  have hD₀ : 1 ≤ 1 + P₀ ^ 2 := by linarith [sq_nonneg P₀]
+  have hD₀ : 1 ≤ 1 + P₀ ^ 2 := le_add_of_nonneg_right (sq_nonneg P₀)
   have hroot : sqrt (1 + P₀ ^ 2) ≤ 2 * P₀ := by
-    have hh := sq_sqrt (by positivity : 0 ≤ 1 + P₀ ^ 2)
-    have hn := sqrt_nonneg (1 + P₀ ^ 2)
-    nlinarith only [hh, hn, hP₀]
+    have hsq := one_le_mul_of_one_le_of_one_le hP₀ hP₀
+    exact (sqrt_le_sqrt (by linarith only [hsq])).trans_eq (sqrt_sq (by linarith only [hP₀]))
   have hD₀eq : 1 + P₀ ^ 2 = 1 + (y⁻¹) ^ 4 := by dsimp [P₀]; ring
   have hDE' : |D - (1 + P₀ ^ 2)| ≤ dD := by rwa [hD₀eq]
   have ha := expansion_quotient_error hD hD₀ hE hDE' hEE hdE hJE hJ₀abs hroot hAideal

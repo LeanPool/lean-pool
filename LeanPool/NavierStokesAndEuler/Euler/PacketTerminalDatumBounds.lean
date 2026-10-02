@@ -101,9 +101,9 @@ private theorem norm_iteratedFDeriv_translation_aux (n : ℕ) :
       (A.derivative.translation_contDiff.contDiffAt (x := a)) (n := n) (by simp)
     have hi := ih (LiftTangent →L[ℝ] V) A.derivative K hK
       (A.derivative_support.trans hs) C (fun x => by
-        change ‖iteratedFDeriv ℝ n (localFieldLift P (fieldFDeriv P A.field) x) 0‖ ≤ C
-        rw [localFieldLift_fieldFDeriv,norm_iteratedFDeriv_fderiv]
-        exact hb x) a
+        have hbx := hb x
+        rw [← norm_iteratedFDeriv_fderiv,← localFieldLift_fieldFDeriv] at hbx
+        exact hbx) a
     exact hl.trans ((mul_le_mul_of_nonneg_right
       (derivativeBundling_norm_le_one (P := LiftTangent) (V := V) (liftMeasure P)) (norm_nonneg
           _)).trans

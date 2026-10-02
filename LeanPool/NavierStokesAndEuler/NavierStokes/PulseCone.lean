@@ -2380,30 +2380,31 @@ theorem derivativeCoefficient_nonneg (d : TailData) (eta : ℝ) :
 theorem derivativeCoefficient_le (d : TailData)
     (hsmall : d.core.lam ≤ 1 / 100000) (hh : d.h ≤ d.core.lam / 100000) (eta : ℝ) :
     derivativeCoefficient d eta ≤ 2001 / 1000 := by
-  have hb : (49999 / 100000 : ℝ) ≤ decay d.core := by dsimp [decay]; linarith
+  have hb : (49999 / 100000 : ℝ) ≤ decay d.core := by dsimp [decay]; linarith only [hsmall]
   have hb₂ := pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 49999 / 100000) hb 2
   have hbase : (1 / 2 : ℝ) ≤ (2001 / 1000) * decay d.core ^ 2 * (99999 / 100000) := by
-    linarith
+    linarith only [hb₂]
   have hg := geometricSource_nonneg d eta
-  have hD : 0 ≤ 1 / 2 - d.h := by linarith [d.h_lt_half]
+  have hD : 0 ≤ 1 / 2 - d.h := by linarith only [d.h_lt_half]
   have hA : (99999 / 100000) * d.core.lam + geometricSource d eta ≤ equilibriumNumerator d eta := by
     dsimp [equilibriumNumerator]
-    linarith
+    linarith only [hh]
   have hnum : d.core.lam * ((1 / 2 - d.h) + geometricSource d eta) * (1 - d.core.lam) ≤
       d.core.lam * (1 / 2 + geometricSource d eta) := by
-    have hm := mul_le_mul_of_nonneg_left (show 1 - d.core.lam ≤ 1 by linarith [d.core.lam_pos])
+    have hm := mul_le_mul_of_nonneg_left
+      (show 1 - d.core.lam ≤ 1 by linarith only [d.core.lam_pos])
       (mul_nonneg d.core.lam_pos.le (add_nonneg hD hg))
     have hh' := mul_le_mul_of_nonneg_left d.h_pos.le d.core.lam_pos.le
-    linarith
+    linarith only [hm, hh']
   have hbase' := mul_le_mul_of_nonneg_right hbase d.core.lam_pos.le
-  have hc : d.core.lam ≤ (2001 / 1000) * decay d.core ^ 2 := by linarith [d.core.lam_pos]
+  have hc : d.core.lam ≤ (2001 / 1000) * decay d.core ^ 2 := by linarith only [hb₂, hsmall]
   have hc' := mul_le_mul_of_nonneg_right hc hg
   have hA' := mul_le_mul_of_nonneg_left hA
     (show 0 ≤ (2001 / 1000) * decay d.core ^ 2 by positivity)
   unfold derivativeCoefficient
   apply (div_le_iff₀ (mul_pos (sq_pos_of_pos (decay_pos d.core)) (equilibriumNumerator_pos d
       eta))).mpr
-  linarith
+  linarith only [hnum, hbase', hc', hA']
 
 /-- Main direction as an element of `ℝ`. -/
 noncomputable def mainDirection (d : TailData) (amp : ℝ → ℝ) (eta y : ℝ) : ℝ :=
@@ -2482,11 +2483,11 @@ theorem perturbed_cone_margins {lam R C Z b v eps F M : ℝ}
     rw [sub_add_cancel] at h
     change |v - v₀| ≤ eps at hv
     change |v₀| ≤ M at hmain
-    linarith
+    linarith only [h, hv, hmain, heps']
   have hbabs : |b| ≤ F + 1 := by
     have h := abs_sub (b + R) R
     rw [add_sub_cancel_right, abs_of_nonneg hR] at h
-    linarith
+    linarith only [h, hb, hR', heps']
   have hcross : |b * v + R * v₀| ≤ eps * (M + F + 1) := by
     have he : b * v + R * v₀ = (b + R) * v - R * (v - v₀) := by ring
     rw [he]
@@ -2494,24 +2495,24 @@ theorem perturbed_cone_margins {lam R C Z b v eps F M : ℝ}
     rw [abs_mul, abs_mul, abs_of_nonneg hR]
     have h₁ := mul_le_mul hb hvabs (abs_nonneg v) heps
     have h₂ := mul_le_mul hR' hv (abs_nonneg _) hF
-    linarith
+    linarith only [h₁, h₂]
   have hdiff : |b - R| ≤ 2 * F + 1 := by
     have h := abs_sub b R
     rw [abs_of_nonneg hR] at h
-    linarith
+    linarith only [h, hbabs, hR']
   have hsq : b ^ 2 ≤ R ^ 2 + eps * (2 * F + 1) := by
     have hprod := mul_le_mul hb hdiff (abs_nonneg (b - R)) heps
     rw [← abs_mul] at hprod
     have he : (b + R) * (b - R) = b ^ 2 - R ^ 2 := by ring
     rw [he] at hprod
     have h := (abs_le.mp hprod).2
-    linarith
-  have ha : (2 : ℝ) ≤ 2 + 2 * lam := by linarith
+    linarith only [h]
+  have ha : (2 : ℝ) ≤ 2 + 2 * lam := by linarith only [hlam]
   have hdiv := div_le_div_of_nonneg_left (sq_nonneg b) (by norm_num : (0 : ℝ) < 2) ha
   have hvsq : v ^ 2 ≤ (M + 1) ^ 2 := by
-    have h := (sq_le_sq₀ (abs_nonneg v) (by linarith : 0 ≤ M + 1)).mpr hvabs
+    have h := (sq_le_sq₀ (abs_nonneg v) (by linarith only [hM] : 0 ≤ M + 1)).mpr hvabs
     simpa only [sq_abs] using h
-  have hvsq' := mul_le_mul_of_nonneg_left hvsq (show 0 ≤ 2 * lam by linarith)
+  have hvsq' := mul_le_mul_of_nonneg_left hvsq (show 0 ≤ 2 * lam by linarith only [hlam])
   have hideal := ideal_cross_bound hR hC hC' hZ
   change -R * v₀ ≤ -2 * R ^ 2 + (241 / 100) * R at hideal
   have hcross' := (abs_le.mp hcross).2
@@ -2714,12 +2715,12 @@ theorem axialHistoryError_bound (w : ResetWitness d K)
     ring
   have hAB : A + B / d.core.lam ≤ (A + B) / d.core.lam := by
     apply (le_div_iff₀ d.core.lam_pos).mpr
-    have hl : d.core.lam ≤ 1 := by linarith [d.core.lam_lt]
+    have hl : d.core.lam ≤ 1 := by linarith only [d.core.lam_lt]
     have hx := mul_le_mul_of_nonneg_left hl hA
     rw [add_mul, div_mul_cancel₀ _ d.core.lam_pos.ne']
     simpa only [mul_one] using add_le_add_left hx B
   have he : E w p ≤ energyConstant d.core.P d.core.m * d.core.lam ^ 30 := by
-    rw [E_before w eta (by dsimp [Parameters.endpoint]; linarith)]
+    rw [E_before w eta (by dsimp [Parameters.endpoint]; linarith only [hy'])]
     exact pulse_angular_small d.core hwait eta hy
   calc
     _ ≤ E w p * (A + B) / d.core.lam := by
@@ -2732,8 +2733,8 @@ theorem axialHistoryError_bound (w : ResetWitness d K)
           := by
         dsimp [axialErrorConstant, A, B]
         ring
-      rw [hc]
-      field_simp [d.core.lam_pos.ne']
+      rw [hc, eq_comm, eq_div_iff d.core.lam_pos.ne']
+      ring
 
 /-! ## Division by the angular lag near the equator -/
 
@@ -3220,10 +3221,11 @@ theorem actual_component_errors (w : ResetWitness d K)
         componentConstant d.core.P d.core.m A * coneRate d.core.lam ∧
       |directionRatio w amp (d.core.pulseStart + y, eta) - idealDirection d amp eta y| ≤
         componentConstant d.core.P d.core.m A * coneRate d.core.lam := by
-  have hlam_le : d.core.lam ≤ 1 := by linarith
-  have hh₁ : d.h ≤ 1 / 100 := by linarith
-  have hQlow := actual_Qs_pulse_lower w hwait (by linarith) hh₁ hnum ha heta hamp hamp' hy hy'
-  have hQerr := actual_Qs_pulse_error w hwait (by linarith) hh₁ ha heta hamp hamp' hy hy'
+  have hlam_le : d.core.lam ≤ 1 := by linarith only [hsmall]
+  have hh₁ : d.h ≤ 1 / 100 := by linarith only [hh, hsmall]
+  have hsmall' : d.core.lam ≤ 1 / 120 := by linarith only [hsmall]
+  have hQlow := actual_Qs_pulse_lower w hwait hsmall' hh₁ hnum ha heta hamp hamp' hy hy'
+  have hQerr := actual_Qs_pulse_error w hwait hsmall' hh₁ ha heta hamp hamp' hy hy'
   have hraw := directionRatio_error_bound w hwait hsmall hh ha heta hamp hamp' hy hy' hQlow hQerr
   have hr := raw_error_le_rate d.core.lam_pos hlam_le
     (angularErrorConstant_pos d.core.P_pos d.core.m).le
@@ -3239,14 +3241,14 @@ theorem actual_component_errors (w : ResetWitness d K)
   have hS := shearErrorConstant_pos d.core.P_pos d.core.m
   have hbig₁ : shearErrorConstant d.core.P d.core.m ≤ componentConstant d.core.P d.core.m A := by
     dsimp [componentConstant]
-    linarith
+    linarith only [hD, hM]
   have hbig₂ : directionErrorConstant d.core.P d.core.m A + directionMainErrorConstant d.core.P
       d.core.m ≤
       componentConstant d.core.P d.core.m A := by
     dsimp [componentConstant]
-    linarith
+    linarith only [hS]
   constructor
-  · exact (shearB_main_error w (by linarith) ha heta hamp hy hy').trans
+  · exact (shearB_main_error w hsmall' ha heta hamp hy hy').trans
       ((mul_le_mul_of_nonneg_left hparts.2.1 hS.le).trans
         (mul_le_mul_of_nonneg_right hbig₁ hparts.1))
   · have hdelta := mainDirection_ideal_error d hsmall hh heta hamp y

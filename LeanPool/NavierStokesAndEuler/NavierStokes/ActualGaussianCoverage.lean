@@ -201,7 +201,7 @@ theorem indexed_gaussian_tail_bound {s : StripData D} {K : ℕ → J → Set D}
   have hPg : W n i x ≤ Real.exp (-(c * ell / 25) * ChartScales.S n) := by
     apply (hW n i x hx hi).trans
     apply (Real.exp_le_exp.2 ?_).trans (gaussian_length_comparison hc.le (hLell n i))
-    nlinarith [mul_le_mul_of_nonneg_left hsq (mul_nonneg hc.le (hL n i).le)]
+    linarith only [mul_le_mul_of_nonneg_left hsq (mul_nonneg hc.le (hL n i).le)]
   have hslow0 : 0 ≤ s.slow n := zero_le_one.trans (s.one_le_slow n)
   have hK0 : 0 ≤ scales.boundConstant := zero_le_one.trans scales.constant_one_le
   have hslowp : s.slow n ^ p ≤

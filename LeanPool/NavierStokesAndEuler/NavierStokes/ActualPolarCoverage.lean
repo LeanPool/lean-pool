@@ -321,7 +321,9 @@ theorem cartesianPull_jet_bound {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1 / 2)
   obtain ⟨B, hB, hBj⟩ := polarLift_positiveJets (b := b) ha m
   obtain ⟨V, hV, hVj⟩ := rotationLift_jet_bound ha b m
   let A' : ℝ := (2 : ℝ) ^ m * V * ((m.factorial : ℝ) * A * B ^ m)
-  have hA' : 0 ≤ A' := by dsimp [A']; positivity
+  have hB0 : 0 ≤ B ^ m := pow_nonneg (zero_le_one.trans hB) m
+  have hA' : 0 ≤ A' := mul_nonneg (mul_nonneg (pow_nonneg zero_le_two m) (zero_le_one.trans hV))
+    (mul_nonneg (mul_nonneg (Nat.cast_nonneg _) hA) hB0)
   obtain ⟨C, hC, hb⟩ := PhysicalMeanJetBounds.common_stripped_physical_bound_local
     (E := Space) (b := b) hh hh1 ha Δ m (gain - degree) e A' hA'
   refine ⟨C, hC, ?_⟩
@@ -354,7 +356,8 @@ theorem cartesianPull_jet_bound {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1 / 2)
   rw [iteratedFDeriv_eq_of_eventuallyEq he' m]
   have hQ := ChartScales.Q_pos n
   have hS := ChartScales.S_pos (show 1 ≤ n by omega)
-  have hab : 0 ≤ A * ChartScales.Q n ^ gain * ChartScales.S n ^ e := by positivity
+  have hab : 0 ≤ A * ChartScales.Q n ^ gain * ChartScales.S n ^ e :=
+    mul_nonneg (mul_nonneg hA (Real.rpow_nonneg hQ.le _)) (Real.rpow_nonneg hS.le _)
   have hFjet : ∀ i ≤ m, ‖iteratedFDeriv ℝ i F' (polarGraph a h j n d w)‖ ≤
       A * ChartScales.Q n ^ gain * ChartScales.S n ^ e := by
     intro i hi
@@ -373,7 +376,7 @@ theorem cartesianPull_jet_bound {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1 / 2)
         (iteratedFDeriv ℝ i (fun x => r x (f x)) (commonLift h n d w)),
       Real.norm_of_nonneg (Real.rpow_pos_of_pos hQ _).le]
     have hp := clm_apply_jet_bound hr hf (commonLift h n d w) hi (zero_le_one.trans hV)
-      (by positivity : 0 ≤ (m.factorial : ℝ) *
+      (mul_nonneg (mul_nonneg (Nat.cast_nonneg _) hab) hB0 : 0 ≤ (m.factorial : ℝ) *
         (A * ChartScales.Q n ^ gain * ChartScales.S n ^ e) * B ^ m)
       (hVj j _ hx) hcomp
     calc

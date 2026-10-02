@@ -797,12 +797,12 @@ theorem amplitude_derivative_bound (d : TailData) {c : ℝ → Coeff}
       PulseAmplitude.linearTerm d.core eta := by
     have hm := mul_le_mul_of_nonneg_right ha (amplitude_pos d c eta).le
     have hbl := (abs_le.mp hb).1
-    linarith
-  have hid := amplitude_derivative_identity d hc eta (by linarith)
+    linarith only [hm, hbl, hr]
+  have hid := amplitude_derivative_identity d hc eta (by linarith only [hconst])
   have heq : (2 * PulseAmplitude.quadraticCoefficient d.core * amplitude d c eta +
       PulseAmplitude.linearTerm d.core eta) * deriv (amplitude d c) eta =
         -(deriv (PulseAmplitude.linearTerm d.core) eta * amplitude d c eta +
-          deriv (constantTerm d c) eta) := by linarith
+          deriv (constantTerm d c) eta) := by linear_combination hid
   have hbound : (2 * PulseAmplitude.quadraticCoefficient d.core * amplitude d c eta +
       PulseAmplitude.linearTerm d.core eta) * |deriv (amplitude d c) eta| ≤
         |deriv (PulseAmplitude.linearTerm d.core) eta| * amplitude d c eta +
@@ -811,16 +811,16 @@ theorem amplitude_derivative_bound (d : TailData) {c : ℝ → Coeff}
       _ = |(2 * PulseAmplitude.quadraticCoefficient d.core * amplitude d c eta +
           PulseAmplitude.linearTerm d.core eta) * deriv (amplitude d c) eta| := by
         rw [abs_mul, abs_of_nonneg (show 0 ≤ 2 * PulseAmplitude.quadraticCoefficient d.core *
-          amplitude d c eta + PulseAmplitude.linearTerm d.core eta by linarith)]
+          amplitude d c eta + PulseAmplitude.linearTerm d.core eta by linarith only [hden])]
       _ = |deriv (PulseAmplitude.linearTerm d.core) eta * amplitude d c eta +
           deriv (constantTerm d c) eta| := by rw [heq, abs_neg]
       _ ≤ |deriv (PulseAmplitude.linearTerm d.core) eta * amplitude d c eta| +
           |deriv (constantTerm d c) eta| := abs_add_le _ _
       _ = _ := by rw [abs_mul, abs_of_pos (amplitude_pos d c eta)]
   have hupper := mul_le_mul hdb hr'.le (amplitude_pos d c eta).le
-    (by linarith [h.scale_nonneg] : 0 ≤ 4 * e)
+    (by linarith only [h.scale_nonneg] : 0 ≤ 4 * e)
   have hlower := mul_le_mul_of_nonneg_right hden (abs_nonneg (deriv (amplitude d c) eta))
-  linarith [h.scale_nonneg]
+  linarith only [hbound, hupper, hdc, hlower, h.scale_nonneg]
 
 theorem energyPolynomial_strictMonoOn (d : TailData) (c : ℝ → Coeff) (eta e : ℝ)
     (heta : eta ^ 2 ≤ 1) (h : PulseAmplitude.EnergyErrorBounds d eta e)

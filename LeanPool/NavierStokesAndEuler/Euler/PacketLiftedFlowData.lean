@@ -788,13 +788,21 @@ theorem shearCost_le (R H C X : ℝ) (hR : 0 ≤ R) (hH : 0 ≤ H) (hC : 0 ≤ C
   have hg2 := fixedVelocityGradeCost_nonneg R H hR 2
   have hg1X := hg1.trans ha1
   have hg2X := hg2.trans ha2
-  have hrem : 0 ≤ initializedRemainderDerivativeCost R H := by
-    unfold initializedRemainderDerivativeCost
-    positivity
+  have h4 : (0 : ℝ) ≤ 4 := by norm_num
+  have h8 : 0 ≤ 8 * coordinateCost * sobolevEmbeddingConstant period 3 :=
+    mul_nonneg (mul_nonneg (by norm_num) hc) he
+  have hrem : 0 ≤ initializedRemainderDerivativeCost R H :=
+    mul_nonneg (mul_nonneg h8 hR) (add_nonneg hg2 zero_le_two)
   unfold initializedGlobalShearCost shearEnvelope
   rw [abs_of_nonneg hrem]
   unfold initializedRemainderDerivativeCost coordinateCost
-  gcongr
+  exact add_le_add
+    (mul_le_mul (mul_le_mul_of_nonneg_left (mul_le_mul (mul_le_mul_of_nonneg_left ha1 he)
+        (mul_le_mul_of_nonneg_left hRX h4) (mul_nonneg h4 hR) (mul_nonneg he hg1X)) hc)
+      hCX hC (mul_nonneg hc (mul_nonneg (mul_nonneg he hg1X) (mul_nonneg h4 hX))))
+    (mul_le_mul (mul_le_mul (mul_le_mul_of_nonneg_left hRX h8) (add_le_add ha2 le_rfl)
+        (add_nonneg hg2 zero_le_two) (mul_nonneg h8 hX))
+      hCX hC (mul_nonneg (mul_nonneg h8 hX) (add_nonneg hg2X zero_le_two)))
 
 theorem hessianCost_le {q : ℕ} {R₀ : ℝ}
     (N : EulerTransversePacketJoin.NormalBudget D q R₀)
@@ -811,14 +819,24 @@ theorem hessianCost_le {q : ℕ} {R₀ : ℝ}
   have hg2 := fixedVelocityGradeCost_nonneg R H hR 2
   have hg1X := hg1.trans ha1
   have hg2X := hg2.trans ha2
-  have hpp := physicalFixedCost_one_le D Rc C (4*R) X (4*X) hRc hC (by positivity)
-    hRcX hCX (by gcongr)
-  have hp0 := physicalFixedCost_nonneg D Rc C (4*R) 1 hRc hC (by positivity)
+  have h4 : (0 : ℝ) ≤ 4 := by norm_num
+  have h9 : (0 : ℝ) ≤ 9 := by norm_num
+  have h4R := mul_nonneg h4 hR
+  have h4RX := mul_le_mul_of_nonneg_left hRX h4
+  have hpp := physicalFixedCost_one_le D Rc C (4*R) X (4*X) hRc hC h4R hRcX hCX h4RX
+  have hp0 := physicalFixedCost_nonneg D Rc C (4*R) 1 hRc hC h4R
   have hpX := hp0.trans hpp
   have hNC0 := N.C_nonneg
   have hNR0 := N.Rc_nonneg
   unfold initializedPressureHessianCost fastHessianCost hessianEnvelope coordinateCost
-  gcongr
+  exact add_le_add
+    (mul_le_mul (mul_le_mul (mul_le_mul_of_nonneg_left ha1 he) (pow_le_pow_left₀ hNC0 hNC 2)
+        (sq_nonneg _) (mul_nonneg he hg1X))
+      (add_le_add hNR (mul_le_mul_of_nonneg_left h4RX hc))
+      (add_nonneg hNR0 (mul_nonneg hc h4R)) (mul_nonneg (mul_nonneg he hg1X) (sq_nonneg X)))
+    (mul_le_mul (mul_le_mul_of_nonneg_right (mul_le_mul (mul_le_mul_of_nonneg_left hCX h9) hpp
+        hp0 (mul_nonneg h9 hX)) he) (add_le_add ha2 le_rfl) (add_nonneg hg2 zero_le_two)
+      (mul_nonneg (mul_nonneg (mul_nonneg h9 hX) hpX) he))
 
 end EulerPacketPhysicalCost
 

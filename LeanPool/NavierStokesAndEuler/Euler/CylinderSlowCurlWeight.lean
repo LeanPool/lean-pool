@@ -108,8 +108,9 @@ theorem derivative_normalize :
       derivative P T G G₁ (normalize (E := LiftL2 P) g hg p)
         (normalize (E := LiftL2 P) g hg f) := by
   unfold derivative EulerContinuousTimeWeight.normalize
-  rw [map_add, path_weight P (reciprocal g hg) G₁ p hp,
-    path_weight P (reciprocal g hg) G f hf]
+  exact ((weight (E := LiftL2 P) (reciprocal g hg)).map_add _ _).trans
+    (congrArg₂ (· + ·) (path_weight P (reciprocal g hg) G₁ p hp).symm
+      (path_weight P (reciprocal g hg) G f hf).symm)
 
 include hp hf in
 theorem normalized_derivative_block_bound
@@ -236,8 +237,9 @@ theorem potentialDerivative_normalize (g : C(Icc (0 : ℝ) T, ℝ)) (hg : ∀ t,
       potentialDerivative P T B B₁ (normalize (E := LiftL2 P) g hg p)
         (normalize (E := LiftL2 P) g hg f) := by
   unfold potentialDerivative EulerContinuousTimeWeight.normalize
-  rw [map_add, potentialPath_weight P (reciprocal g hg) p B₁,
-    potentialPath_weight P (reciprocal g hg) f B]
+  exact ((weight (E := LiftL2 P) (reciprocal g hg)).map_add _ _).trans
+    (congrArg₂ (· + ·) (potentialPath_weight P (reciprocal g hg) p B₁).symm
+      (potentialPath_weight P (reciprocal g hg) f B).symm)
 
 include hB hB₁ hp hf in
 /-- Estimate Q_t/g from A/g and A_t/g, without differentiating the profile g. -/

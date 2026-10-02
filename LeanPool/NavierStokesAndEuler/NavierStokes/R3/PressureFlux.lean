@@ -1834,8 +1834,9 @@ theorem norm_fderiv_r_le_raw {φ : Space → ℝ} {w : Space → Space}
   calc
     ‖fderiv ℝ (r φ w) x‖ ≤ 8 * ‖fderiv ℝ (fun y => φ y ^ 5 * q y) x‖ := by
       rw [hr, fderiv_const_mul (a := fun y => φ y ^ 5 * q y) ((hdφ.pow 5).mul hdq) 8]
-      simpa using ContinuousLinearMap.opNorm_smul_le (8 : ℝ)
-        (fderiv ℝ (fun y => φ y ^ 5 * q y) x)
+      exact (ContinuousLinearMap.opNorm_smul_le (8 : ℝ)
+        (fderiv ℝ (fun y => φ y ^ 5 * q y) x)).trans_eq
+        (by rw [Real.norm_of_nonneg (by norm_num : (0 : ℝ) ≤ 8)])
     _ ≤ 8 * (φ x ^ 5 * ‖fderiv ℝ q x‖ +
         ‖q x‖ * ‖fderiv ℝ (fun y => φ y ^ 5) x‖) := by
       apply mul_le_mul_of_nonneg_left _ (by norm_num)
@@ -1846,7 +1847,7 @@ theorem norm_fderiv_r_le_raw {φ : Space → ℝ} {w : Space → Space}
         (‖fderiv ℝ φ x‖ * ‖w x‖) * (5 * φ x ^ 4 * ‖fderiv ℝ φ x‖)) := by
       apply mul_le_mul_of_nonneg_left _ (by norm_num)
       apply add_le_add (mul_le_mul_of_nonneg_left hDq (pow_nonneg hφ0 5))
-      exact mul_le_mul hq hpow (norm_nonneg _) (by positivity)
+      exact mul_le_mul hq hpow (norm_nonneg _) (mul_nonneg (norm_nonneg _) (norm_nonneg _))
     _ = _ := by ring
 
 /-- Only the weighted velocity derivative occurs in the pointwise bound. -/

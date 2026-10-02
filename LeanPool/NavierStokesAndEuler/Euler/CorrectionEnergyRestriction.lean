@@ -250,9 +250,11 @@ theorem weighted_sobolev_energy_majorized {α β : Type*} [Fintype α] [Fintype 
       (ρ' u / ρ u) * weightedMetricLoss (ρ u) order (K u).operator (fun i j => value period (e i j
           u)) +
       multiplier u * weightedForcingSum (ρ u) order (fun i j => forcing i j u) := by
-    simp only [Ψ, A, w, w', F, Q, weightedMetricSum, weightedMetricLoss, weightedForcingSum,
-      familyMetricNorm, add_mul, Finset.sum_add_distrib, Finset.mul_sum]
-    simp only [mul_comm, mul_left_comm, mul_assoc]
+    simp only [weightedMetricSum, weightedMetricLoss, weightedForcingSum, Finset.mul_sum,
+      ← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    simp only [Ψ, A, w, w', F, Q, a, familyMetricNorm]
+    ring
   simpa only [halg, w, Q, a, weightedMetricSum, familyMetricNorm] using hsum
 
 end EulerWeightedSobolevMajorant

@@ -146,12 +146,9 @@ omit [CompactSpace K] in
 theorem supportedPathMap_norm : ‖supportedPathMap (K := K) (E := E) (F := F) μ S hS‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
   intro A
-  rw [one_mul]
-  apply (ContinuousMap.norm_le _ (norm_nonneg A)).2
-  intro t
-  exact (supported_norm μ S hS (A t) ‖A t‖ (norm_nonneg _) (fun x _ => (A t).norm_coe_le_norm
-      x)).trans
-    (A.norm_coe_le_norm t)
+  refine (ContinuousMap.norm_le _ (mul_nonneg zero_le_one (norm_nonneg A))).2 fun t => ?_
+  exact ((supported_norm μ S hS (A t) ‖A t‖ (norm_nonneg _) (fun x _ => (A t).norm_coe_le_norm
+      x)).trans (A.norm_coe_le_norm t)).trans_eq (one_mul _).symm
 
 omit [CompactSpace K] in
 /-- Every-time pointwise lower frame bounds hold on the real L² frame path. -/
@@ -180,11 +177,8 @@ theorem supportedPath_hasDerivWithinAt
   have hfield := EulerBoundedFieldTimeDerivative.hasDerivWithinAt T hT A A' hpoint t t.property
   have hd := (supportedMap (E := E) (F := F) μ S hS).hasFDerivAt.comp_hasDerivWithinAt
     (t : ℝ) hfield
-  change HasDerivWithinAt (fun s => supportedMap (E := E) (F := F) μ S hS (A (projIcc 0 T hT s)))
-    (supportedMap (E := E) (F := F) μ S hS (A' t)) (Icc (0 : ℝ) T) t
-  change HasDerivWithinAt (fun s => supportedMap (E := E) (F := F) μ S hS (A (projIcc 0 T hT s)))
-    (supportedMap (E := E) (F := F) μ S hS (A' (projIcc 0 T hT t))) (Icc (0 : ℝ) T) t at hd
-  rwa [projIcc_of_mem hT t.property] at hd
+  exact hd.congr_deriv (congrArg (fun s => supportedMap (E := E) (F := F) μ S hS (A' s))
+    (projIcc_of_mem hT t.property))
 
 end Derivative
 
@@ -323,12 +317,11 @@ def fullOperatorMap : (Space →ᵇ E →L[ℝ] F) →L[ℝ]
 theorem fullOperatorMap_norm : ‖fullOperatorMap (E := E) (F := F) period‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
   intro A
-  rw [one_mul,fullOperatorMap_apply]
-  exact (EulerLpOperatorField.full_norm (liftMeasure period)
+  rw [fullOperatorMap_apply]
+  exact ((EulerLpOperatorField.full_norm (liftMeasure period)
       (fieldLift (W := E →L[ℝ] F) period A)).trans
-    ((fieldLift (W := E →L[ℝ] F) period).le_opNorm A |>.trans (by
-      simpa only [one_mul] using mul_le_mul_of_nonneg_right (fieldLift_norm (W := E →L[ℝ] F)
-          period) (norm_nonneg A)))
+    ((fieldLift (W := E →L[ℝ] F) period).le_opNorm A |>.trans
+      (mul_le_mul_of_nonneg_right (fieldLift_norm (W := E →L[ℝ] F) period) (norm_nonneg A))))
 
 /-- The same contraction uniformly along a compact time set. -/
 def fullPathMap : C(K,Space →ᵇ E →L[ℝ] F) →L[ℝ]
@@ -343,13 +336,10 @@ omit [CompactSpace K] in
 theorem fullPathMap_norm : ‖fullPathMap (K := K) (E := E) (F := F) period‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
   intro A
-  rw [one_mul]
-  apply (ContinuousMap.norm_le _ (norm_nonneg A)).2
-  intro t
+  refine (ContinuousMap.norm_le _ (mul_nonneg zero_le_one (norm_nonneg A))).2 fun t => ?_
   exact ((fullOperatorMap (E := E) (F := F) period).le_opNorm (A t)).trans
     ((mul_le_mul_of_nonneg_right (fullOperatorMap_norm (E := E) (F := F) period) (norm_nonneg (A
-        t))).trans
-      (by simpa only [one_mul] using A.norm_coe_le_norm t))
+        t))).trans (mul_le_mul_of_nonneg_left (A.norm_coe_le_norm t) zero_le_one))
 
 /-- The actual coefficient-to-multiplication map on continuous cylinder paths. -/
 def fullMultiplierMap : C(K,Space →ᵇ E →L[ℝ] F) →L[ℝ]
@@ -484,10 +474,9 @@ def supportedOperatorMap : (Space →ᵇ E →L[ℝ] F) →L[ℝ]
 theorem supportedOperatorMap_norm : ‖supportedOperatorMap (E := E) (F := F) period S hS‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
   intro A
-  rw [one_mul]
   exact (EulerLpOperatorField.supported_norm (liftMeasure period) (spatialSet period S)
     (spatialSet_measurable period S hS) (fieldLift (W := E →L[ℝ] F) period A) ‖A‖ (norm_nonneg A)
-    (fun x _ => A.norm_coe_le_norm x.1))
+    (fun x _ => A.norm_coe_le_norm x.1)).trans_eq (one_mul _).symm
 
 /-- Supported path map, given by `(supportedOperatorMap (E := E) (F := F) period S
 hS).compLeftContinuous ℝ K`. -/

@@ -61,7 +61,7 @@ def comp (A : MatrixCoefficient T a) (B : MatrixCoefficient T b) :
       rfl
     rw [he]
     exact pathComposition_contDiff _ _ A.orbit B.orbit
-  raw_eq t x θ := by rw [A.raw_eq,B.raw_eq]; rfl
+  raw_eq t x θ := by exact congrArg₂ ContinuousLinearMap.comp (A.raw_eq t x θ) (B.raw_eq t x θ)
 
 /-- Add, bundling `path`, `orbit`, `raw_eq`. -/
 def add (A : MatrixCoefficient T a) (B : MatrixCoefficient T b) :

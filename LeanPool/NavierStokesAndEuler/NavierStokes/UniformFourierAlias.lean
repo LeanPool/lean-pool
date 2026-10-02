@@ -519,17 +519,19 @@ theorem uniform_multiplierDerivative_bound {m : Frequency → ℂ} (hm : Polynom
   have hsum : 0 ≤ ∑ i : BasisIndex P, ‖parameterLift i‖ * CP i :=
     Finset.sum_nonneg (fun i _ => mul_nonneg (norm_nonneg (parameterLift i)) (hCP i))
   refine ⟨(∑ i : BasisIndex P, ‖parameterLift i‖ * CP i) +
-    ‖torusLiftX (P := P)‖ * CX + ‖torusLiftY (P := P)‖ * CY, by positivity, ?_⟩
+    ‖torusLiftX (P := P)‖ * CX + ‖torusLiftY (P := P)‖ * CY,
+    add_nonneg (add_nonneg hsum (mul_nonneg (norm_nonneg _) hCX))
+      (mul_nonneg (norm_nonneg _) hCY), ?_⟩
   intro z hz k
   apply (norm_multiplierTermDerivative_le m f k z).trans
   calc
     _ ≤ (∑ i : BasisIndex P, ‖parameterLift i‖ * (CP i * (weight k ^ 4)⁻¹)) +
         ‖torusLiftX (P := P)‖ * (CX * (weight k ^ 4)⁻¹) +
-        ‖torusLiftY (P := P)‖ * (CY * (weight k ^ 4)⁻¹) := by
-      gcongr with i
-      · exact hP i z.1 hz k
-      · exact hX z.1 hz k
-      · exact hY z.1 hz k
+        ‖torusLiftY (P := P)‖ * (CY * (weight k ^ 4)⁻¹) :=
+      add_le_add (add_le_add
+        (Finset.sum_le_sum fun i _ => mul_le_mul_of_nonneg_left (hP i z.1 hz k) (norm_nonneg _))
+        (mul_le_mul_of_nonneg_left (hX z.1 hz k) (norm_nonneg _)))
+        (mul_le_mul_of_nonneg_left (hY z.1 hz k) (norm_nonneg _))
     _ = _ := by simp only [← mul_assoc, ← Finset.sum_mul]; ring
 
 theorem hasFDerivAt_applyMultiplier {m : Frequency → ℂ} (hm : PolynomialGrowth m)

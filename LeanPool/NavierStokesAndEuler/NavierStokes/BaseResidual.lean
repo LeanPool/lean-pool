@@ -1572,7 +1572,11 @@ theorem stressForce_eq_scalars (theta axial : Chart → ℝ) {z : SpaceTime}
       AxisymmetricResidual.pack, AxisymmetricFields.profilePoint, coordinateVector,
       PiLp.single_apply, PiLp.add_apply, PiLp.smul_apply,
       smul_eq_mul, Fin.zero_eta, Fin.isValue, ↓reduceIte, one_mul, mul_one]
-  all_goals norm_num [Fin.ext_iff]
+  all_goals simp only [Fin.isValue, Nat.ofNat_nonneg, Real.sqrt_mul, zero_ne_one, one_ne_zero,
+    ↓reduceIte, mul_zero, add_zero, zero_add, mul_one, neg_add_rev, Fin.ext_iff, Nat.reduceAdd,
+    Fin.coe_ofNat_eq_mod, Nat.zero_mod, Nat.one_mod, Nat.mod_succ, OfNat.zero_ne_ofNat,
+    OfNat.one_ne_ofNat, OfNat.ofNat_ne_zero, OfNat.ofNat_ne_one, Fin.mk_one, Fin.reduceFinMk,
+    one_div, neg_mul, mul_neg, neg_neg]
   all_goals dsimp only [r] at hr hr2 ⊢
   all_goals simp only [Real.sqrt_mul (show (0 : ℝ) ≤ 2 by norm_num)] at hr hr2 ⊢
   all_goals field_simp [hr]
@@ -1604,7 +1608,13 @@ theorem stressForce_sub {theta axial theta' axial' : Chart → ℝ} {z : SpaceTi
     LeadingStress.radialDivergence, SimilarityProfile.partialS,
     fderiv_fun_sub ht ht', fderiv_fun_sub ha ha', sub_apply]
   ext i
-  fin_cases i <;> simp [AxisymmetricResidual.pack, coordinateVector] <;> ring
+  fin_cases i <;>
+    simp only [AxisymmetricResidual.pack, Fin.isValue, Nat.ofNat_nonneg, Real.sqrt_mul,
+      coordinateVector, one_mul, neg_add_rev, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk,
+      PiLp.add_apply, PiLp.smul_apply, PiLp.single_eq_same, smul_eq_mul, mul_one, ne_eq,
+      zero_ne_one, one_ne_zero, not_false_eq_true, PiLp.single_eq_of_ne, mul_zero, add_zero,
+      zero_add, Fin.reduceEq, PiLp.sub_apply] <;>
+    ring
 
 theorem scalarConst_rate {l : Filter SpaceTime} {q : SpaceTime → ℝ}
     {F : SpaceTime → ℝ} {U : Set SpaceTime} {M : ℕ} {r : ℝ}
@@ -2364,13 +2374,14 @@ theorem weighted_slowSum_bound {a : ℕ → ℕ} {h : ℝ} (hh : 0 < h)
   obtain ⟨Cz, hCz, Nz, hzb⟩ := hweight.finite hz hd m
   let L := ContinuousLinearMap.lsmul ℝ ℝ (E := V)
   let B := ‖L‖ * 2 ^ m * (Cs * C1 + Cz * Cg)
-  have hB : 0 ≤ B := by dsimp [B]; positivity
-  refine ⟨B + 1, by positivity, N1 + Nz, fun q hq hq1 w hw => ?_⟩
+  have hB : 0 ≤ B := mul_nonneg (mul_nonneg (norm_nonneg _) (pow_nonneg zero_le_two m))
+    (add_nonneg (mul_nonneg hCs.le hC1.le) (mul_nonneg hCz.le hCg.le))
+  refine ⟨B + 1, add_pos_of_nonneg_of_pos hB one_pos, N1 + Nz, fun q hq hq1 w hw => ?_⟩
   let D := (delta w)⁻¹ ^ (N1 + Nz)
   have hdw := hd w hw
   have hdp : 0 < delta w := hdw.1
   have hzw := hz w hw
-  have hD : 0 ≤ D := by dsimp [D]; positivity
+  have hD : 0 ≤ D := pow_nonneg (inv_nonneg.mpr hdp.le) _
   have hi : 1 ≤ (delta w)⁻¹ := (one_le_inv₀ (hd w hw).1).mpr (hd w hw).2
   have hN1 : (delta w)⁻¹ ^ N1 ≤ D := pow_le_pow_right₀ hi (Nat.le_add_right _ _)
   have hNz : (delta w)⁻¹ ^ Nz ≤ D := pow_le_pow_right₀ hi (Nat.le_add_left _ _)
@@ -2412,7 +2423,7 @@ theorem weighted_slowSum_bound {a : ℕ → ℕ} {h : ℝ} (hh : 0 < h)
         simpa only [scaleMap_apply, mul_one] using hec) m).self_of_nhds
   rw [hj]
   have hpow : q ^ (2 * h) ≤ q ^ h :=
-    Real.rpow_le_rpow_of_exponent_ge hq hq1 (by linarith)
+    Real.rpow_le_rpow_of_exponent_ge hq hq1 (by linarith only [hh])
   calc
     _ ≤ ‖blownJet m F (q, w)‖ + ‖blownJet m G (q, w)‖ := blown_add_bound hF hG hq w m
     _ ≤ ‖L‖ * 2 ^ m * (Cs * q ^ (2 * h)) * (C1 * zeta w * D) +
@@ -2420,8 +2431,8 @@ theorem weighted_slowSum_bound {a : ℕ → ℕ} {h : ℝ} (hh : 0 < h)
     _ = B * q ^ (2 * h) * zeta w * D := by dsimp [B]; ring
     _ ≤ (B + 1) * q ^ h * zeta w * D := by
       exact mul_le_mul_of_nonneg_right
-        (mul_le_mul_of_nonneg_right (mul_le_mul (by linarith) hpow
-          (Real.rpow_nonneg hq.le _) (by positivity)) hzw) hD
+        (mul_le_mul_of_nonneg_right (mul_le_mul (le_add_of_nonneg_right zero_le_one) hpow
+          (Real.rpow_nonneg hq.le _) (add_nonneg hB zero_le_one)) hzw) hD
     _ = _ := rfl
 
 end WeightedSum

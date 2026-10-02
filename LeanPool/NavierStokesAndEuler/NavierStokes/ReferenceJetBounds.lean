@@ -241,7 +241,7 @@ theorem natural_amplitude_bounds (hσ : 0 < σ) (hΛ : 0 < Λ) (hC : 0 < C)
       d.coefficients 0 1 := by
     calc
       _ = |(parameterPartial F.family.f p / F.family.f p - Λ * realGradient h j σ p.2) +
-          Λ * realGradient h j σ p.2| := by ring_nf
+          Λ * realGradient h j σ p.2| := (congrArg abs (sub_add_cancel _ _)).symm
       _ ≤ |parameterPartial F.family.f p / F.family.f p - Λ * realGradient h j σ p.2| +
           |Λ * realGradient h j σ p.2| := abs_add_le _ _
       _ ≤ 8 * jetConstant d.coefficients 0 1 + Λ * G := by
@@ -258,13 +258,15 @@ theorem natural_amplitude_bounds (hσ : 0 < σ) (hΛ : 0 < Λ) (hC : 0 < C)
   constructor
   · apply hf0.trans
     have hb := mul_le_mul_of_nonneg_left
-      (show (1 : ℝ) ≤ 1 + Λ * G + 8 * jetConstant d.coefficients 0 1 by
-        nlinarith [mul_nonneg hΛ.le hG]) hbase
+      (show (1 : ℝ) ≤ 1 + Λ * G + 8 * jetConstant d.coefficients 0 1 from
+        le_add_of_le_of_nonneg (le_add_of_nonneg_right (mul_nonneg hΛ.le hG))
+          (mul_nonneg (by norm_num) hE1)) hbase
     simpa only [mul_one, amplitudeConstant, mul_div_assoc, div_mul_eq_mul_div, mul_assoc] using hb
   · apply hfη.trans
     have hb := mul_le_mul_of_nonneg_left
       (show Λ * G + 8 * jetConstant d.coefficients 0 1 ≤
-        1 + Λ * G + 8 * jetConstant d.coefficients 0 1 by linarith) hbase
+        1 + Λ * G + 8 * jetConstant d.coefficients 0 1 from
+        add_le_add (le_add_of_nonneg_left zero_le_one) le_rfl) hbase
     simpa only [amplitudeConstant, mul_div_assoc, div_mul_eq_mul_div, mul_assoc] using hb
 
 end Natural

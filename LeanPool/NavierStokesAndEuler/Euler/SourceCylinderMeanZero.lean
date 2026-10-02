@@ -132,8 +132,8 @@ theorem solution_average_zero (f : C(Icc (0 : ℝ) T, Supported P V S hS))
     exact hf
   have he := solution_average P S hS T hT B U f a₀
   have hz : U.solution 0 0 = 0 := by
-    rw [U.solution_eq_operators, map_zero, map_zero, add_zero]
-  rw [hfp, ha₀, hz] at he
+    simp only [U.solution_eq_operators, map_zero, add_zero]
+  simp only [hfp, ha₀, hz] at he
   exact congrArg (fun p : C(Icc (0 : ℝ) T,Supported P V S hS) => p t) he
 
 /-- The same theorem in the ordinary cylinder L² space used by the classical representatives. -/

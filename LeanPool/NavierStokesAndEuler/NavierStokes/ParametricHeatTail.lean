@@ -240,13 +240,14 @@ theorem correctionJet_hasDerivWithinAt {h K ν X : ℝ} (hh : 0 < h)
   cases n with
   | zero =>
       have hd := (((RadialHeatProfile.profile_hasDerivWithinAt (a := 1 + h)
-        (by linarith) hz).comp ν hi hmap).sub_const 1).const_mul (switch K X)
+        (by linarith) hz).comp (h := fun u : ℝ => 2 * u / X) ν hi hmap).sub_const 1).const_mul
+          (switch K X)
       convert! hd using 1
       simp only [correctionJet]
       ring
   | succ n =>
       have hd := ((RadialHeatProfile.profileJet_hasDerivWithinAt (a := 1 + h)
-        (by linarith) (n + 1) hz).comp ν hi hmap).const_mul
+        (by linarith) (n + 1) hz).comp (h := fun u : ℝ => 2 * u / X) ν hi hmap).const_mul
           (switch K X * (2 / X) ^ (n + 1))
       convert! hd using 1
       simp only [correctionJet, pow_succ]

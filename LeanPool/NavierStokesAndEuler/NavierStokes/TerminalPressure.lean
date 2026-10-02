@@ -1141,7 +1141,8 @@ theorem axialBackwardStress_bound {C h t z r R Y : ℝ} {f : ℝ → ℝ}
     (1 - f (Real.log (SimilarityProfile.X h p)))
   have ha : 0 < r ^ 2 / 2 := by positivity
   have hRpos : 0 < R := hr.trans_le hrR
-  have hS : r ^ 2 / 2 ≤ R ^ 2 / 2 := by nlinarith
+  have hS : r ^ 2 / 2 ≤ R ^ 2 / 2 :=
+    div_le_div_of_nonneg_right (pow_le_pow_left₀ hr.le hrR 2) zero_le_two
   have hq : 0 < SimilarityProfile.q h p := SimilarityProfile.q_pos hh hh1 ht
   have hmonof : Monotone f := monotone_of_deriv_nonneg (hf.differentiable (by simp)) hmono
   have hpoint (s : ℝ) (hs : r ^ 2 / 2 ≤ s) : |g s| ≤ B := by
@@ -1153,7 +1154,7 @@ theorem axialBackwardStress_bound {C h t z r R Y : ℝ} {f : ℝ → ℝ}
       TerminalStress.physicalHeat C (1 + h) p at hK
     have hK0 := (physicalHeat_pos (p := (t, (s, z))) hC hh ht hsp).le
     have hKsq : TerminalStress.physicalHeat C (1 + h) (t, (s, z)) ^ 2 ≤
-        TerminalStress.physicalHeat C (1 + h) p ^ 2 := by nlinarith
+        TerminalStress.physicalHeat C (1 + h) p ^ 2 := pow_le_pow_left₀ hK0 hK 2
     have hlog : Real.log (SimilarityProfile.X h p) ≤ Real.log (SimilarityProfile.X h (t, (s, z)))
         := by
       apply Real.log_le_log (div_pos ha hq)
@@ -1220,22 +1221,32 @@ theorem heatAmplitude_annulus_lower {C h t r R Λ : ℝ}
   have hτ : 0 < 1 - t := sub_pos.mpr ht
   have ha : 0 < r ^ 2 / 2 := by positivity
   have hb : 0 < R ^ 2 / 2 := by positivity
-  have hab : r ^ 2 / 2 ≤ R ^ 2 / 2 := by nlinarith
+  have hab : r ^ 2 / 2 ≤ R ^ 2 / 2 :=
+    div_le_div_of_nonneg_right (pow_le_pow_left₀ hr.le hrR 2) zero_le_two
   have hΛp : 0 < Λ := zero_lt_one.trans_le hΛ
   have hpow : Λ ^ (-amplitudeExponent h) * (r ^ 2 / 2) ^ (-amplitudeExponent h) ≤
       (R ^ 2 / 2) ^ (-amplitudeExponent h) := by
     rw [← Real.mul_rpow hΛp.le ha.le]
-    exact Real.rpow_le_rpow_of_nonpos hb (by linarith) (by dsimp [amplitudeExponent]; linarith)
+    exact Real.rpow_le_rpow_of_nonpos hb (by linarith only [hRΛ])
+      (by dsimp [amplitudeExponent]; linarith only [hh])
   have harg : 2 * (1 - t) / (R ^ 2 / 2) ≤ 2 * (1 - t) / (r ^ 2 / 2) :=
     div_le_div_of_nonneg_left (by positivity) ha hab
   have hH := heatProfile_antitoneOn hh (div_pos (by
       positivity) hb) (div_pos (by positivity) ha) harg
-  have hHa := (RadialHeatProfile.profile_pos (a := 1 + h) (by linarith)
+  have hHa := (RadialHeatProfile.profile_pos (a := 1 + h) (by linarith only [hh])
     (show 0 ≤ 2 * (1 - t) / (r ^ 2 / 2) by positivity)).le
   have he := mul_le_mul hpow hH hHa (Real.rpow_nonneg hb.le _)
   have heC := mul_le_mul_of_nonneg_left he hC.le
-  simpa only [TerminalStress.heatAmplitude, RadialHeatProfile.radialProfile_source_formula,
-    amplitudeExponent, mul_assoc, mul_left_comm, mul_comm] using heC
+  calc Λ ^ (-amplitudeExponent h) * TerminalStress.heatAmplitude C (1 + h) t r
+      = C * (Λ ^ (-amplitudeExponent h) * (r ^ 2 / 2) ^ (-amplitudeExponent h) *
+          RadialHeatProfile.profile (1 + h) (2 * (1 - t) / (r ^ 2 / 2))) := by
+        rw [TerminalStress.heatAmplitude, RadialHeatProfile.radialProfile_source_formula]
+        unfold amplitudeExponent
+        ring
+    _ ≤ _ := heC
+    _ = _ := by
+        rw [TerminalStress.heatAmplitude, RadialHeatProfile.radialProfile_source_formula]
+        rfl
 
 theorem timeDenominator_le_q {h t z : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2) (ht : t < 1) :
     TerminalStress.timeDenominator h t z ≤ SimilarityProfile.q h (t, (0, z)) := by

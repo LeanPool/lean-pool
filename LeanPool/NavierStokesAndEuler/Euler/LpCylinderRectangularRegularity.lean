@@ -164,12 +164,8 @@ theorem mixedMultiplier_eq_comp : mixedMultiplier period A =
   rfl
 
 include hA in
-theorem mixedMultiplier_contDiff : ContDiff ℝ ∞ (mixedMultiplier period A) := by
-  rw [mixedMultiplier_eq_comp]
-  exact (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := ∞)
-    (E := C(K,Space →ᵇ E →L[ℝ] F))
-    (F := C(K,CylinderL2 period E) →L[ℝ] C(K,CylinderL2 period F))
-    (fullMultiplierMap period)).comp (hA.comp (ContinuousLinearMap.fst ℝ Space ℝ).contDiff)
+theorem mixedMultiplier_contDiff : ContDiff ℝ ∞ (mixedMultiplier period A) :=
+  (fullMultiplierMap (K := K) (E := E) (F := F) period).contDiff.comp (hA.comp contDiff_fst)
 
 include hA in
 /-- The genuine mixed multiplier jets have exactly the bounded-field coefficient bound. -/
@@ -191,7 +187,6 @@ theorem mixedMultiplier_bound (n : ℕ) (C : ℝ)
     (G := C(K,CylinderL2 period E) →L[ℝ] C(K,CylinderL2 period F))
     (fullMultiplierMap period)
     ((hA.comp (ContinuousLinearMap.fst ℝ Space ℝ).contDiff).contDiffAt (x := a)) (n := n) (by simp)
-  rw [mixedMultiplier_eq_comp]
   exact hleft.trans ((mul_le_mul_of_nonneg_right (fullMultiplierMap_norm period)
     (norm_nonneg _)).trans (by simpa only [one_mul] using hright))
 

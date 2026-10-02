@@ -67,12 +67,35 @@ theorem formula_mono {F V R Hist Ei Hi CM CH F' V' R' Hist' Ei' Hi' CM' CH' : �
   have hV0 := hV.trans hVV
   have hR0 := hR.trans hRR
   have hH0 := hHist.trans hHH
-  have hE0 := hEi.trans hEE
   have hI0 := hHi.trans hII
-  have hM0 := hCM.trans hMM
   have hC0 := hCH.trans hCC
   unfold formula
-  gcongr
+  have hF2 : F^2 ≤ F'^2 := pow_le_pow_left₀ hF hFF 2
+  have h27 : 27*F^2 ≤ 27*F'^2 := mul_le_mul_of_nonneg_left hF2 (by norm_num)
+  have h27' : 0 ≤ 27*F'^2 := mul_nonneg (by norm_num) (sq_nonneg F')
+  have hA : 5+64*CM^2+2*CH ≤ 5+64*CM'^2+2*CH' :=
+    add_le_add (add_le_add_right (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hCM hMM 2)
+      (by norm_num)) 5) (mul_le_mul_of_nonneg_left hCC (by norm_num))
+  have hA0 : 0 ≤ 5+64*CM'^2+2*CH' :=
+    add_nonneg (add_nonneg (by norm_num) (mul_nonneg (by norm_num) (sq_nonneg CM')))
+      (mul_nonneg (by norm_num) hC0)
+  have hB : 1+3*F^2 ≤ 1+3*F'^2 :=
+    add_le_add_right (mul_le_mul_of_nonneg_left hF2 (by norm_num)) 1
+  have hB0 : 0 ≤ 1+3*F'^2 := add_nonneg zero_le_one (mul_nonneg (by norm_num) (sq_nonneg F'))
+  have hH16 : 0 ≤ 16*Hist' := mul_nonneg (by norm_num) hH0
+  refine add_le_add (add_le_add ?_ ?_) ?_
+  · exact mul_le_mul (mul_le_mul h27 hVV hV h27') hRR hR (mul_nonneg h27' hV0)
+  · exact mul_le_mul (mul_le_mul (mul_le_mul h27 hRR hR h27') (add_le_add_right hFF 1)
+      (add_nonneg zero_le_one hF) (mul_nonneg h27' hR0)) hEE hEi
+      (mul_nonneg (mul_nonneg h27' hR0) (add_nonneg zero_le_one hF0))
+  · have hA0' : 0 ≤ 5+64*CM^2+2*CH :=
+      add_nonneg (add_nonneg (by norm_num) (mul_nonneg (by norm_num) (sq_nonneg CM)))
+        (mul_nonneg (by norm_num) hCH)
+    have hB0' : 0 ≤ 1+3*F^2 := add_nonneg zero_le_one (mul_nonneg (by norm_num) (sq_nonneg F))
+    exact mul_le_mul (mul_le_mul (mul_le_mul (mul_le_mul
+      (mul_le_mul_of_nonneg_left hHH (by norm_num)) hA hA0' hH16) hB hB0' (mul_nonneg hH16 hA0))
+      hII hHi (mul_nonneg (mul_nonneg hH16 hA0) hB0)) hEE hEi
+      (mul_nonneg (mul_nonneg (mul_nonneg hH16 hA0) hB0) hI0)
 
 theorem envelope_power (K Ti Ei Hi CM CH : ℝ)
     (hK : 0 ≤ K) (hTi : 0 ≤ Ti) (hEi : 0 ≤ Ei) (hHi : 0 ≤ Hi)

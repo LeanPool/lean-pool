@@ -511,7 +511,7 @@ theorem weightedCorrectionForcing_ae {q : ℕ} (hq : 6 ≤ q + 1) (T : ℝ) (hT 
     with t hweight hraw hvel hVU hF hP
   change weightedForcingTime T hT _ (forcingFamilyTime period energyLength energyWord
       (energyLength_le hN) T hT A G U F P) t = _
-  rw [hweight]
+  refine hweight.trans ?_
   apply Finset.sum_congr rfl
   intro I _
   apply congrArg (fun v : BaseWord 6 → LiftL2 period => EulerPacketWeights.weight (R (projIcc 0 T

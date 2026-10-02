@@ -316,8 +316,8 @@ theorem fixedMeanOperator_bound
       (9*(T*CF₁+CF)^2*baseAmplitude (primitiveTimeLp (E := L2) T hT)
         (initialTrace (E := L2) T hT) CH (CM+|L| *CA))*majorant r 0 n := hb
   exact hb'.trans (mul_le_mul_of_nonneg_right
-    (mul_le_mul_of_nonneg_left (baseAmplitude_time_bound T hT CH (CM+|L| *CA) hCH hC0) (by
-        positivity))
+    (mul_le_mul_of_nonneg_left (baseAmplitude_time_bound T hT CH (CM+|L| *CA) hCH hC0)
+      (mul_nonneg (by norm_num) (sq_nonneg _)))
     (majorant_nonneg r hr 0 n))
 
 /-- The actual force pullback preserves the forcing shift and has explicit polynomial amplitude. -/

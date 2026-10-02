@@ -110,13 +110,16 @@ omit [CompleteSpace U] [CompleteSpace E] in
 theorem fixedFrameDerivative_sub_norm_le (A A₁ B B₁ : C(Icc (0 : ℝ) T, U →L[ℝ] E)) :
     ‖fixedFrameDerivative T hT A A₁ - fixedFrameDerivative T hT B B₁‖ ≤
       T * ‖A₁-B₁‖ + ‖A-B‖ := by
-  change ‖(productDerivative T hT A A₁).comp _ - (productDerivative T hT B B₁).comp _‖ ≤ _
-  rw [← sub_comp]
+  have he : fixedFrameDerivative T hT A A₁ - fixedFrameDerivative T hT B B₁ =
+      (productDerivative T hT A A₁ - productDerivative T hT B B₁).comp
+        (zeroTraceDerivatives (U := U) T hT).subtypeL :=
+    (sub_comp _ _ _).symm
+  rw [he]
   apply (opNorm_comp_le _ _).trans
   have h := mul_le_mul
     (product_sub_norm_le T hT (primitiveTimeLp T hT) (primitive_norm_le_time T hT) A A₁ B B₁)
-    (zeroTraceDerivatives (U := U) T hT).norm_subtypeL_le
-    (by positivity) (by positivity)
+    (zeroTraceDerivatives (U := U) T hT).norm_subtypeL_le (norm_nonneg _)
+    (add_nonneg (mul_nonneg hT (norm_nonneg _)) (norm_nonneg _))
   simpa only [mul_one, productDerivative] using h
 
 theorem potential_norm_le (J : TimeLp T E →L[ℝ] TimeLp T E) (hJ : ‖J‖ ≤ T)
@@ -138,20 +141,16 @@ theorem dirichlet_sub_norm_le (J : TimeLp T E →L[ℝ] TimeLp T E) (hJ : ‖J�
     (H H' : C(Icc (0 : ℝ) T, E →L[ℝ] E)) :
     ‖dirichletOperator J (timeMultiplier T hT H) -
       dirichletOperator J (timeMultiplier T hT H')‖ ≤ T ^ 2 * ‖H-H'‖ := by
+  have hm : timeMultiplier T hT (H-H') = timeMultiplier T hT H - timeMultiplier T hT H' :=
+    (coefficientMap (E := E) (F := E) T hT).map_sub H H'
   have he : dirichletOperator J (timeMultiplier T hT H) -
       dirichletOperator J (timeMultiplier T hT H') =
       -((adjoint (𝕜 := ℝ) (E := TimeLp T E) (F := TimeLp T E) J).comp
-        ((timeMultiplier T hT (H-H')).comp J)) := by
-    change (ContinuousLinearMap.id ℝ _ -
-        (adjoint (𝕜 := ℝ) (E := TimeLp T E) (F := TimeLp T E) J).comp
-          ((coefficientMap (E := E) (F := E) T hT H).comp J)) -
-      (ContinuousLinearMap.id ℝ _ -
-        (adjoint (𝕜 := ℝ) (E := TimeLp T E) (F := TimeLp T E) J).comp
-          ((coefficientMap (E := E) (F := E) T hT H').comp J)) = _
-    change _ = -((adjoint (𝕜 := ℝ) (E := TimeLp T E) (F := TimeLp T E) J).comp
-      ((coefficientMap (E := E) (F := E) T hT (H-H')).comp J))
-    rw [map_sub, sub_comp, comp_sub]
-    abel
+        ((timeMultiplier T hT (H-H')).comp J)) :=
+    (sub_sub_sub_cancel_left _ _ _).trans ((neg_sub _ _).symm.trans (congrArg Neg.neg
+      ((comp_sub _ _ _).symm.trans (congrArg (adjoint (𝕜 := ℝ) (E := TimeLp T E)
+        (F := TimeLp T E) J).comp ((sub_comp _ _ _).symm.trans
+          (congrArg (ContinuousLinearMap.comp · J) hm.symm))))))
   rw [he, norm_neg]
   exact potential_norm_le T hT J hJ (H-H')
 

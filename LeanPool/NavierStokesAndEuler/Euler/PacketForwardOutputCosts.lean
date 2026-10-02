@@ -251,7 +251,8 @@ theorem forward_output_costs (W H0 : ℝ) (hδ : 0 < δ)
     simp only [physicalInputRadius,max_self,liftedInputRadius]
     change 1+coordinateCost*(4*R+ρ⁻¹) ≤ 1+coordinateCost*(4*Z+4*inverseRadiusEnvelope Z)
     have hc : 0 ≤ coordinateCost := norm_nonneg _
-    gcongr
+    exact add_le_add le_rfl (mul_le_mul_of_nonneg_left
+      (add_le_add (mul_le_mul_of_nonneg_left hRZ (by norm_num)) hρinv) hc)
   have hv := velocity_mono hR0 hH0 hC0 hRZ hHZ hCZ
   have ha1 := gradeCost_mono R H0 Z hR0 hH0 hRZ hHZ 1
   have ha2 := gradeCost_mono R H0 Z hR0 hH0 hRZ hHZ 2
@@ -268,7 +269,9 @@ theorem forward_output_costs (W H0 : ℝ) (hδ : 0 < δ)
   have hb0 := NB.blockAmplitude_nonneg
   have hbZ := hb0.trans hb
   have ht : 6*NB.blockAmplitude*(fixedVelocityGradeCost R H0 1+fixedVelocityGradeCost R H0 2+1) ≤
-      timeEnvelope Z := by unfold timeEnvelope; gcongr
+      timeEnvelope Z :=
+    mul_le_mul (mul_le_mul_of_nonneg_left hb (by norm_num)) (add_le_add (add_le_add ha1 ha2) le_rfl)
+      (add_nonneg (add_nonneg hg1 hg2) zero_le_one) (mul_nonneg (by norm_num) hbZ)
   have hat : 2*liftedInputConstant period*(6*NB.blockAmplitude *
       (fixedVelocityGradeCost R H0 1+fixedVelocityGradeCost R H0 2+1) +
       EulerPacketInitializedCost.weightSize W) ≤ timeInputEnvelope Z := by
@@ -290,8 +293,10 @@ theorem forward_output_costs (W H0 : ℝ) (hδ : 0 < δ)
         unfold weightedPhysicalGradientCost EulerPacketInitializedCost.weightSize
         ring
       _ ≤ ((1+9*Z)*physicalEnvelope Z (4*inverseRadiusEnvelope Z) *
-          EulerCylinderSobolevSpace.sobolevEmbeddingConstant period 3)*outputEnvelope period Z := by
-              gcongr
+          EulerCylinderSobolevSpace.sobolevEmbeddingConstant period 3)*outputEnvelope period Z :=
+        mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right (mul_le_mul
+          (add_le_add le_rfl (mul_le_mul_of_nonneg_left hLC (by norm_num))) hphys hphys0
+          (by positivity)) he) ho
       _ = _ := rfl
   have hshear := shearCost_le R H0 NB.C Z hR0 hH0 NB.C_nonneg hRZ hHZ hNC
   have hhess := hessianCost_le D NB R H0 L.Rc L.C₀ Z hR0 hH0 L.Rc_nonneg L.C₀_nonneg

@@ -5801,14 +5801,15 @@ theorem finish_mean_stages {σ κ : ℝ}
       ((p.next v c u).axialResidual c -
         fun n x => temporalAliasState p.gauge p.timeExponent p.commonIndex c signedState n (x,0) 2)
             := by
-  have hH : 9 / 10 ≤ 1 + σ - 2 * κ := by linarith
-  have hκ : 2 * κ ≤ 9 / 10 := by linarith
-  have hβ : 1 + (σ + 1 / 10) ≤ (1 + σ - 2 * κ) + 1 - 2 * κ := by linarith
+  have hH : 9 / 10 ≤ 1 + σ - 2 * κ := by linarith only [hσ, hκsmall]
+  have hκ : 2 * κ ≤ 9 / 10 := by linarith only [hκsmall]
+  have hβ : 1 + (σ + 1 / 10) ≤ (1 + σ - 2 * κ) + 1 - 2 * κ := by linarith only [hκsmall]
   obtain ⟨hi, hp, htCum, htSmooth, htSupport, htTheta, htAxial⟩ :=
     gaugeTemporalStage_constructed U p.gauge ha hd hcL hcR ε L hε hεone hL hell
       hh hscale p.commonIndex gap hgap p.axial c signedState ho.epsilon_eq hv hfast rfl
       hH hκ hβ ho hb hsigned hop hbase hm hms hW hWs hθ hz hpθ hpz hsθ hsz hcθ hcz
-      (hbarθ.mono_exponent (by linarith)) (hbarz.mono_exponent (by linarith))
+      (hbarθ.mono_exponent (by linarith only [hκsmall]))
+      (hbarz.mono_exponent (by linarith only [hκsmall]))
   have hiSmooth := gaugeTemporalIncrement_smooth U p.gauge ha hd hell p.timeExponent p.commonIndex
       p.axial
     c signedState hθ hz hpθ hpz hsz
@@ -5848,7 +5849,7 @@ theorem finish_mean_stages {σ κ : ℝ}
     ε L hε hεone hL hell p.axial c temporalState hg hop hbase htSmooth
     ⟨htSupport.radial, htSupport.angular, htSupport.axial⟩ htW htWs hV hG
     ho hb htCum.velocity hrInc hH (show 1 + (σ + 1 / 10) ≤ (1 + σ - 2 * κ) + 9 / 10 - 2 * κ by
-        linarith)
+        linarith only [hκsmall])
   exact ⟨⟨hrCum.velocity, hrCum.pressure⟩, hrDebt, hrTheta, hrAxial⟩
 
 end CycleParameters
@@ -8610,14 +8611,15 @@ theorem meanStages_constructed {σ κ : ℝ}
     MeanClass stageStrip (1 + (σ + 1 / 10))
       ((rankStageState g r axial c temporalState).axialResidual c -
         fun n x => temporalAliasState g h index c signedState n (x,0) 2) := by
-  have hH : 9 / 10 ≤ 1 + σ - 2 * κ := by linarith
-  have hκ : 2 * κ ≤ 9 / 10 := by linarith
-  have hβ : 1 + (σ + 1 / 10) ≤ (1 + σ - 2 * κ) + 1 - 2 * κ := by linarith
+  have hH : 9 / 10 ≤ 1 + σ - 2 * κ := by linarith only [hσ, hκsmall]
+  have hκ : 2 * κ ≤ 9 / 10 := by linarith only [hκsmall]
+  have hβ : 1 + (σ + 1 / 10) ≤ (1 + σ - 2 * κ) + 1 - 2 * κ := by linarith only [hκsmall]
   obtain ⟨hi, hp, htCum, htSmooth, htSupport, htTheta, htAxial⟩ :=
     gaugeTemporalStage_constructed U g ha hd hcL hcR ε L hε hεone hL hell
       hh hscale index gap hgap axial c signedState ho.epsilon_eq hv hfast hfixed
       hH hκ hβ ho hb hsigned hop hbase hm hms hW hWs hθ hz hpθ hpz hsθ hsz hcθ hcz
-      (hbarθ.mono_exponent (by linarith)) (hbarz.mono_exponent (by linarith))
+      (hbarθ.mono_exponent (by linarith only [hκsmall]))
+      (hbarz.mono_exponent (by linarith only [hκsmall]))
   have hiSmooth := gaugeTemporalIncrement_smooth U g ha hd hell h index axial
     c signedState hθ hz hpθ hpz hsz
   have hiSupport : GaugeSupportedTriple g.radial.inner g.radial.outer (qLength coord) U.carrier
@@ -8654,7 +8656,7 @@ theorem meanStages_constructed {σ κ : ℝ}
     ε L hε hεone hL hell axial c temporalState hg hop hbase htSmooth
     ⟨htSupport.radial, htSupport.angular, htSupport.axial⟩ htW htWs hV hG
     ho hb htCum.velocity hrInc hH (show 1 + (σ + 1 / 10) ≤ (1 + σ - 2 * κ) + 9 / 10 - 2 * κ by
-        linarith)
+        linarith only [hκsmall])
   have hpressure : MeanClass stageStrip (1 + σ - 2 * κ)
       ((rankStageState g r axial c temporalState).pressure - u.pressure) := by
     apply class_congr (hp.add hrPressure)
@@ -9125,9 +9127,10 @@ theorem fourStage_mean_gain
     c u w₁ q₁ e₁ H.operators.regular H.base.smooth H₀.mean.regular
     (fun i j => MeanStateRegularity.MovingField.regular (H₀.covariance i j)) HX₁
     (hs.symm ▸ hc) (hs.symm ▸ hX₁class) hfixed (hs.symm ▸ hb) (hs.symm ▸ hu)
-    (show 9/10 ≤ (1+σ)-κ by linarith) le_rfl
-    (hs.symm ▸ hθ.mono_exponent (by linarith)) (hs.symm ▸ hz.mono_exponent (by linarith))
-    (fun i => (hd i).mono_exponent (by linarith))
+    (show 9/10 ≤ (1+σ)-κ by linarith only [hσ, hκsmall]) le_rfl
+    (hs.symm ▸ hθ.mono_exponent (by linarith only [hσ, hκ, hκsmall]))
+    (hs.symm ▸ hz.mono_exponent (by linarith only [hσ, hκ, hκsmall]))
+    (fun i => (hd i).mono_exponent (by linarith only [hσ, hκ, hκsmall]))
   rw [hs] at hfirst
   obtain ⟨hp₁, hu₁, hθ₁, hz₁, hd₁⟩ := hfirst
   have H₁ := H.waveStage G.gauge w₁ q₁ e₁ hX₁
@@ -9168,7 +9171,8 @@ theorem fourStage_mean_gain
   rw [hs] at hmean
   obtain ⟨hi, hr, hpmean, hcum, hdebt, htheta, haxial⟩ := hmean
   refine ⟨hi, hr, ?_, hcum, hdebt, htheta, haxial⟩
-  apply class_congr (((hp₁.mono_exponent (by linarith)).add hp₂).add hpmean)
+  apply class_congr (((hp₁.mono_exponent (by linarith only [hσ, hκ, hκsmall])).add hp₂).add
+    hpmean)
   intro n x hx
   change (rankStageState G.gauge r axial c (temporalStageState G.gauge h index axial c
       u₂)).pressure n x -
@@ -9698,7 +9702,7 @@ theorem mean_gain_from_waves
     rw [halabels]
     funext n x i
     exact hrep.velocity n x i
-  have hcov := assembledCovarianceIncrement_mem (show (1:ℝ)/2 ≤ 1/2+σ by linarith)
+  have hcov := assembledCovarianceIncrement_mem (show (1:ℝ)/2 ≤ 1/2+σ by linarith only [hσ])
     a.labels a.label a.injective a.level a.window a.window_continuous a.auxiliary
     v.blocks ((ofGeometry G h index axial particular signed r).particularBlock v c u)
         v.residualBand hband.velocityPressure
@@ -10235,7 +10239,7 @@ theorem waveStages_residual_gain {P : ι → ℕ → CyclePoint → ℝ} {σ κ 
       (fun l => HarmonicResidual.residualBlock c (p.afterSigned v c u) (p.finalBlock v c u l)
         ((p.nextCoefficients v c u).gaussian l) (v.aliasCoefficients l)) ∧
       (∀ l, HarmonicWaveInteraction.ModeSolenoidal p.strip c (p.finalBlock v c u l)) := by
-  have hκhalf : κ ≤ 1/2 := by linarith
+  have hκhalf : κ ≤ 1/2 := by linarith only [hκsmall]
   have hpart0 l := p.particularBlock_zero v c u l
   have hsigned0 l := (p.signed l).exactBlock_zero p.strip (p.signedRequest v c u)
   have hpartc l := p.particular_carrier v c u l
@@ -10250,12 +10254,14 @@ theorem waveStages_residual_gain {P : ι → ℕ → CyclePoint → ℝ} {σ κ 
     hNormal hFreq hAng hzpart hP0 hP1 hpold hppart v.gaussian
     (fun l => (p.particularGaussianBlock v c u l).velocity) v.aliasCoefficients v.aliasCoefficients
     (fun _ _ _ => by rw [sub_self]; exact HarmonicResidual.band_zero _)
-    (fun i j hj => (hlinearP i j hj).mono_exponent (show 1/2+σ+1/10 ≤ 1+σ-3*κ by linarith))
-    (by linarith) (by linarith) (by linarith)
+    (fun i j hj => (hlinearP i j hj).mono_exponent
+      (show 1/2+σ+1/10 ≤ 1+σ-3*κ by linarith only [hκsmall]))
+    (by linarith only [hσ, hκsmall]) (by linarith only [hσ, hκsmall])
+    (by linarith only [hσ, hκsmall])
   have hbefore : ∀ i j, UniformWaveClass p.strip P (1/2)
       (fun l n x => (p.beforeSignedBlock v c u l).velocity n i j x) := by
     intro i j
-    exact (hold i j).add ((hpart i j).mono_exponent (by linarith))
+    exact (hold i j).add ((hpart i j).mono_exponent (by linarith only [hσ, hκsmall]))
   have hbzero l : HarmonicWaveInteraction.ZeroMode (p.beforeSignedBlock v c u l) :=
     HarmonicStructurePreservation.zeroMode_addBlock (hzero l) (hpart0 l)
   have hbband l : (p.beforeSignedBlock v c u l).BandLimited v.residualBand := by
@@ -10291,8 +10297,9 @@ theorem waveStages_residual_gain {P : ι → ℕ → CyclePoint → ℝ} {σ κ 
     (fun l => (p.signedGaussianBlock v c u l).velocity) v.aliasCoefficients v.aliasCoefficients
     (fun _ _ _ => by rw [sub_self]; exact HarmonicResidual.band_zero _)
     (fun i j hj => (hfirst i j hj).add ((hlinearS i j hj).mono_exponent
-      (show 1/2+σ+1/10 ≤ 1+σ-4*κ by linarith)))
-    (by linarith) (by linarith) (by linarith)
+      (show 1/2+σ+1/10 ≤ 1+σ-4*κ by linarith only [hκsmall])))
+    (by linarith only [hσ, hκsmall]) (by linarith only [hσ, hκsmall])
+    (by linarith only [hσ, hκsmall])
   refine ⟨hsecond, ?_⟩
   intro l
   exact HarmonicStructurePreservation.modeSolenoidal_addBlock (hbsame l).frequency (hbsame l).phase

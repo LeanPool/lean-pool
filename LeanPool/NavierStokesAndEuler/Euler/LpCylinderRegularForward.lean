@@ -174,14 +174,13 @@ theorem weighted_solution_translation (a : LiftTangent) (ha : shiftedSet a.1 K �
         L (liftedOperatorPath period K hK T B t u) := by
     intro t u
     exact EulerLpCylinderCoefficients.operator_intertwines period K hK Ω hΩ a ha (B t) u
-  rw [translatedForcing_eq_intoLarger period Ω hΩ K hK f a ha,
-    translatedData_eq_intoLarger period Ω hΩ K hK a₀ a ha]
   have he := Evolution.weightedSolution_map
     (E := Supported period V K hK) (F := Supported period V Ω hΩ)
     U W L hL g hg f a₀
-  change includePath (K := Icc (0 : ℝ) T) (V := V) period Ω hΩ (W.weightedSolution g hg
-    (L.compLeftContinuous ℝ (Icc (0 : ℝ) T) f) (L a₀)) = _
-  rw [he]
+  refine (congrArg (includePath (K := Icc (0 : ℝ) T) (V := V) period Ω hΩ)
+    ((congrArg₂ (W.weightedSolution g hg)
+      (translatedForcing_eq_intoLarger period Ω hΩ K hK f a ha)
+      (translatedData_eq_intoLarger period Ω hΩ K hK a₀ a ha)).trans he)).trans ?_
   apply ContinuousMap.ext
   intro t
   rfl

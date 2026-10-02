@@ -2684,16 +2684,17 @@ theorem quadratic_root_bracket {a b c r : ℝ}
   · by_contra h
     have hrl : r ≤ 9 / 10 := le_of_not_gt h
     have hs : r ^ 2 ≤ (9 / 10 : ℝ) ^ 2 := by
-      linarith [mul_nonneg (show 0 ≤ 9 / 10 - r by linarith) (show 0 ≤ 9 / 10 + r by linarith)]
+      linarith only [mul_nonneg (show 0 ≤ 9 / 10 - r by linarith only [hrl])
+        (show 0 ≤ 9 / 10 + r by linarith only [hr])]
     have haR := mul_le_mul_of_nonneg_right ha' (sq_nonneg r)
     have hbR := mul_le_mul_of_nonneg_right hbu hr.le
-    linarith
+    linarith only [hs, haR, hbR, hrl, heq, hc']
   · by_contra h
     have hru : 6 / 5 ≤ r := le_of_not_gt h
-    have hs := mul_nonneg (show 0 ≤ r - 6 / 5 by linarith) hr.le
+    have hs := mul_nonneg (show 0 ≤ r - 6 / 5 by linarith only [hru]) hr.le
     have haR := mul_le_mul_of_nonneg_right ha (sq_nonneg r)
     have hbR := mul_le_mul_of_nonneg_right hbl hr.le
-    linarith
+    linarith only [hs, haR, hbR, hru, heq, hc]
 
 theorem amplitude_derivative_identity (d : OutgoingTail.TailData) (eta : ℝ)
     (hc : constantTerm d eta < -(1 / 5)) :
@@ -2988,12 +2989,12 @@ theorem amplitude_derivative_bound_of_error (d : OutgoingTail.TailData) (eta e :
       by
     have hm := mul_le_mul_of_nonneg_right ha (amplitude_pos d eta).le
     have hbl := (abs_le.mp hb).1
-    linarith
-  have hid := amplitude_derivative_identity d eta (by linarith)
+    linarith only [hm, hbl, hr]
+  have hid := amplitude_derivative_identity d eta (by linarith only [hc])
   have heq : (2 * quadraticCoefficient d.core * amplitude d eta + linearTerm d.core eta) *
       deriv (amplitude d) eta =
         -(deriv (linearTerm d.core) eta * amplitude d eta + deriv (constantTerm d) eta) := by
-            linarith
+            linarith only [hid]
   have hbound : (2 * quadraticCoefficient d.core * amplitude d eta + linearTerm d.core eta) *
       |deriv (amplitude d) eta| ≤
         |deriv (linearTerm d.core) eta| * amplitude d eta + |deriv (constantTerm d) eta| := by
@@ -3001,16 +3002,16 @@ theorem amplitude_derivative_bound_of_error (d : OutgoingTail.TailData) (eta e :
       _ = |(2 * quadraticCoefficient d.core * amplitude d eta + linearTerm d.core eta) *
           deriv (amplitude d) eta| := by
         rw [abs_mul, abs_of_nonneg (show 0 ≤ 2 * quadraticCoefficient d.core *
-          amplitude d eta + linearTerm d.core eta by linarith)]
+          amplitude d eta + linearTerm d.core eta by linarith only [hden])]
       _ = |deriv (linearTerm d.core) eta * amplitude d eta + deriv (constantTerm d) eta| := by
         rw [heq, abs_neg]
       _ ≤ |deriv (linearTerm d.core) eta * amplitude d eta| + |deriv (constantTerm d) eta| :=
           abs_add_le _ _
       _ = _ := by rw [abs_mul, abs_of_pos (amplitude_pos d eta)]
   have hupper := mul_le_mul hdb hr'.le (amplitude_pos d eta).le
-    (by linarith [h.scale_nonneg] : 0 ≤ 4 * e)
+    (by linarith only [h.scale_nonneg] : 0 ≤ 4 * e)
   have hlower := mul_le_mul_of_nonneg_right hden (abs_nonneg (deriv (amplitude d) eta))
-  linarith [h.scale_nonneg]
+  linarith only [hupper, hlower, hbound, hdc, h.scale_nonneg]
 
 theorem logarithmicRate_tendsto_zero : Tendsto logarithmicRate (𝓝[>] (0 : ℝ)) (𝓝 0) := by
   have hid : Tendsto (fun x : ℝ => x) (𝓝[>] (0 : ℝ)) (𝓝 0) :=

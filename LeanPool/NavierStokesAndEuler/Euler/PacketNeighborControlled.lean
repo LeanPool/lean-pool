@@ -80,9 +80,10 @@ theorem velocity_difference_bound
     rw [hg, abs_neg]
     dsimp [f]
     linarith only [herror t ht]
-  have hδ : 0 ≤ e*Θ^12 := by positivity
+  have hδ : 0 ≤ e*Θ^12 := mul_nonneg he (pow_nonneg (zero_le_one.trans hΘ) 12)
   have hs : 20*Θ^8*(e*Θ^12)*(T-0) ≤ 1/2 := by
-    have hm := mul_le_mul_of_nonneg_left hT (show 0 ≤ 20*e*Θ^20 by positivity)
+    have hm := mul_le_mul_of_nonneg_left hT (show 0 ≤ 20*e*Θ^20 from
+      mul_nonneg (mul_nonneg (by norm_num) he) (pow_nonneg (zero_le_one.trans hΘ) 20))
     linarith only [hsmall, hm]
   have hh := equation30_perturbed_difference_bound hσ hσsmall hΘ (by norm_num : (0:ℝ) ≤ 0)
     hT0 hT hδ hs hF hG hfluxF hfluxG hF0 hF₁0 hG₁0 hY hfluxY hZ hfluxZ hfc hgc hforcing
@@ -258,7 +259,7 @@ theorem controlled_neighbor_relative_error_within
     ∀ t ∈ Icc 0 T,
       |V t-Z t|+|U t+Z₁ t| ≤ 400000000*e*Θ^29*(1+lam)*F t := by
   have hΘ0 : 0 ≤ Θ := by linarith only [hΘ]
-  have hσ2 : σ^2 ≤ 1 := by nlinarith only [hσ, hσsmall]
+  have hσ2 : σ^2 ≤ 1 := pow_le_one₀ hσ.le (by linarith only [hσsmall])
   have hgeom : 10000*e*Θ^5 ≤ 1 := by
     have hh := mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hΘ (by decide : 5 ≤ 21)) he
     linarith only [hsmall, hh, mul_nonneg he (pow_nonneg hΘ0 21)]
@@ -278,13 +279,13 @@ theorem controlled_neighbor_relative_error_within
   obtain ⟨hU₁c, hV₁c⟩ := continuousOn_velocity_rhs (ε := ε) hAc hCc hPc hQc hNc hUc hVc hNne
   have hs : 40*(200000*e)*Θ^21 ≤ 1 := by linarith only [hsmall]
   have herror := velocity_difference_bound_within hσ hσsmall hΘ hT0 hT
-    (show 0 ≤ 200000*e by positivity) hs hF hG hfluxF hfluxG hF0 hF₁0 hG₁0
+    (mul_nonneg (by norm_num) he) hs hF hG hfluxF hfluxG hF0 hF₁0 hG₁0
     hU hV hU₁c hV₁c hZ hfluxZ (fun t ht => (hcontrol t ht).2 (U t) (V t))
   have hcoef : 20*e*Θ^8+800*(200000*e)*Θ^29*(1+lam+e) ≤ 400000000*e*Θ^29*(1+lam) := by
     have h1 := mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hΘ (by decide : 8 ≤ 29))
-      (show 0 ≤ 20*e by positivity)
+      (show 0 ≤ 20*e from mul_nonneg (by norm_num) he)
     have h2 := mul_le_mul_of_nonneg_left (show 1+lam+e ≤ 2*(1+lam) by linarith only [he1, hlam])
-      (show 0 ≤ 160000000*e*Θ^29 by positivity)
+      (show 0 ≤ 160000000*e*Θ^29 from mul_nonneg (mul_nonneg (by norm_num) he) (pow_nonneg hΘ0 29))
     linarith only [h1, h2, mul_nonneg (mul_nonneg he (pow_nonneg hΘ0 29)) hlam,
       mul_nonneg he (pow_nonneg hΘ0 29)]
   intro t ht
@@ -292,8 +293,8 @@ theorem controlled_neighbor_relative_error_within
     (by rw [hF₁0]) t ht.1).le
   have hh := herror t ht
   rw [hZ0, hZ₁0] at hh
-  have hb := neighbor_initial_error_bound hΘ (show 0 ≤ 200000*e by
-      positivity) hlam hFp hvelocityInitial hh
+  have hb := neighbor_initial_error_bound hΘ (mul_nonneg (by norm_num) he) hlam hFp
+    hvelocityInitial hh
   exact hb.trans (mul_le_mul_of_nonneg_right hcoef hFp)
 
 /-- Neighbor stability constant, given by `1000000000*exp 6`. -/
@@ -339,7 +340,7 @@ theorem controlled_neighbor_stage_references_within
       (∀ t ∈ Icc 0 T, |V t-Z t|+|U t+Z₁ t| ≤ 400000000*e*Θ^29*(1+lam)*F t) ∧
       (∀ t ∈ Icc 1 T, 0 < V t ∧ |V t/Z t-1| ≤ neighborStabilityConstant*e*Θ^29 ∧
         |U t/V t+Z₁ t/Z t| ≤ 10*(neighborStabilityConstant*e*Θ^29)) := by
-  have hσ2 : σ^2 ≤ 1 := by nlinarith only [hσ, hσsmall]
+  have hσ2 : σ^2 ≤ 1 := pow_le_one₀ hσ.le (by linarith only [hσsmall])
   obtain ⟨F, F₁, G, G₁, hF0, hF₁0, _, hG₁0, hF, hG, hfluxF, hfluxG⟩ :=
     equation30_exists_fundamental_system (sq_nonneg σ) hσ2
   obtain ⟨Z, Z₁, hZ0, hZ₁0, hZ, hfluxZ⟩ := equation30_exists_global (sq_nonneg σ) hσ2 1 lam
@@ -357,11 +358,12 @@ theorem controlled_neighbor_stage_references_within
   refine ⟨F, F₁, Z, Z₁, hF0, hF₁0, hZ0, hZ₁0, hF, hZ, hfluxF, hfluxZ, herror, ?_⟩
   intro t ht
   let δ := 400000000*e*Θ^29
-  have hδ : 0 ≤ δ := by dsimp [δ]; positivity
+  have hδ : 0 ≤ δ := mul_nonneg (mul_nonneg (by norm_num) he) (pow_nonneg hΘ0 29)
   have hs : 4*exp 6*δ ≤ 1 := by
     have hm := mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hΘ (by decide : 29 ≤ 40))
-      (show 0 ≤ neighborStabilityConstant*e by positivity [neighborStabilityConstant])
-    have hn : 0 ≤ neighborStabilityConstant*e*Θ^40 := by positivity [neighborStabilityConstant]
+      (mul_nonneg ((by norm_num : (0 : ℝ) ≤ 1000000000).trans hK) he)
+    have hn : 0 ≤ neighborStabilityConstant*e*Θ^40 :=
+      mul_nonneg (mul_nonneg ((by norm_num : (0 : ℝ) ≤ 1000000000).trans hK) he) (pow_nonneg hΘ0 40)
     dsimp [δ]
     unfold neighborStabilityConstant at hm hn hsmall
     linarith only [hm, hn, hsmall]

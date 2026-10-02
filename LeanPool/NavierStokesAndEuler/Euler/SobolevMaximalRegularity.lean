@@ -155,7 +155,7 @@ theorem heat_gradient_energy_bound (u : ℝ → SobolevSpace period 3)
   have hc := neg_le_abs ⟪laplacianEvaluation period 3 (by norm_num) (u t), value period f⟫_ℝ
   have hy := viscosity_young ν ‖laplacianEvaluation period 3 (by
       norm_num) (u t)‖ ‖value period f‖ hν
-  nlinarith
+  linarith only [hb, hc, hy]
 
 end EulerHeatGradientEnergy
 
@@ -599,15 +599,9 @@ theorem first_derivative_difference (T : ℝ) (hT : 0 ≤ T) (ν : ℝ)
     funext s
     exact map_sub ((valueOperator period 2).comp (derivativeOperator period 2 i))
       (u (projIcc 0 T hT s)) (v (projIcc 0 T hT s))
-  have hr : value period (derivativeOperator period 0 i
-        (ν • laplacianOperator period 1 (extendPath T hT (u-v) t) + extendPath T hT (f-g) t)) =
-      value period (derivativeOperator period 0 i
-        (ν • laplacianOperator period 1 (extendPath T hT u t) + extendPath T hT f t)) -
-      value period (derivativeOperator period 0 i
-        (ν • laplacianOperator period 1 (extendPath T hT v t) + extendPath T hT g t)) := by
-    exact linear_heat_rhs_sub ((valueOperator period 0).comp (derivativeOperator period 0 i))
-      (laplacianOperator period 1) ν (u (projIcc 0 T hT t)) (v (projIcc 0 T hT t))
-      (f (projIcc 0 T hT t)) (g (projIcc 0 T hT t))
+  have hr := linear_heat_rhs_sub ((valueOperator period 0).comp (derivativeOperator period 0 i))
+    (laplacianOperator period 1) ν (u (projIcc 0 T hT t)) (v (projIcc 0 T hT t))
+    (f (projIcc 0 T hT t)) (g (projIcc 0 T hT t))
   exact (h.congr_deriv hr.symm).congr_of_eventuallyEq (Filter.Eventually.of_forall (congrFun he))
 
 /-- Restrict a regularized path to its actual H¹ topology. -/

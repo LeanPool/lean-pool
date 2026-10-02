@@ -91,11 +91,10 @@ theorem endpointDisplacement_terminal (Y : CylinderL2 P U) :
   change initialPrimitive T D.time_pos.le
     (constantFieldOperator T D.time_pos.le (T⁻¹ • Y) -
       (D.endpointCorrection P Y : TimeLp T (CylinderL2 P U))) _ = Y
-  rw [map_sub,ContinuousMap.sub_apply,initialPrimitive_constantFieldOperator,
-    initialPrimitive_eq_terminal_sub,terminalPrimitive_terminal]
-  change T • (T⁻¹ • Y)-(0-initialTrace T D.time_pos.le
-    (D.endpointCorrection P Y : TimeLp T (CylinderL2 P U))) = Y
-  rw [hr,sub_self,sub_zero,smul_smul,mul_inv_cancel₀ D.time_pos.ne',one_smul]
+  simp only [ContinuousLinearMap.map_sub,ContinuousMap.sub_apply,
+    initialPrimitive_constantFieldOperator]
+  simp only [initialPrimitive_eq_terminal_sub,terminalPrimitive_terminal,hr,sub_self,sub_zero,
+    smul_smul,mul_inv_cancel₀ D.time_pos.ne',one_smul]
 
 theorem endpointCoordinate_eq (Y : CylinderL2 P U) (t : Icc (0 : ℝ) T) :
     D.endpointCoordinate P Y t =
@@ -179,6 +178,6 @@ theorem endpoint_projected_equation (Y : CylinderL2 P U) (t : Icc (0 : ℝ) T) :
   change gram (D.frame P t) ((-2 : ℝ) • gramInverse (D.frame P t) D.lower D.lower_pos
     (D.frame_lower P t) (adjoint (𝕜 := ℝ) (E := CylinderL2 P U) (F := CylinderL2 P E) (D.frame P t)
       (D.frameDerivative P t (D.endpointCoordinate P Y t)))) = _
-  rw [map_smul,gram_inverse_apply,map_smul]
+  simp only [ContinuousLinearMap.map_smul,gram_inverse_apply]
 
 end EulerCylinderDirichlet.Coefficients

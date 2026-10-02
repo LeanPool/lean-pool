@@ -103,12 +103,8 @@ theorem operator_intertwines (Ω : Set Space) (hΩ : MeasurableSet Ω)
       (full_ae (liftMeasure period) (fieldLift (W := V →L[ℝ] V) period A)
         (u : CylinderL2 period V))]
     with x hl hu hr hA
-  change (full (liftMeasure period) (fieldLift (W := V →L[ℝ] V) period (translated A a.1))
-    (translate (V := V) period a (u : CylinderL2 period V))) x =
-      (translate (V := V) period a (full (liftMeasure period)
-        (fieldLift (W := V →L[ℝ] V) period A) (u : CylinderL2 period V))) x
-  rw [hl,hu,hr,hA]
-  rfl
+  exact hl.trans ((congrArg (fieldLift (W := V →L[ℝ] V) period (translated A a.1) x) hu).trans
+    (hA.symm.trans hr.symm))
 
 variable (T : ℝ)
 
@@ -149,7 +145,12 @@ def liftedOperatorPathLinear : C(Icc (0 : ℝ) T,Space →ᵇ V →L[ℝ] V) →
 /-- Lifting spatial coefficient paths to actual cylinder operators is a linear contraction. -/
 def liftedOperatorPathMap : C(Icc (0 : ℝ) T,Space →ᵇ V →L[ℝ] V) →L[ℝ]
     C(Icc (0 : ℝ) T,Supported period V S hS →L[ℝ] Supported period V S hS) :=
-  (liftedOperatorPathLinear period S hS T).mkContinuous 1 (fun A => by
+  -- The domain norm instance is given through the cached ring instance, as inferred before;
+  -- naming it spares a costly unification with the coefficient type still unknown.
+  @LinearMap.mkContinuous _ _ C(Icc (0 : ℝ) T, Space →ᵇ V →L[ℝ] V) _ _ _
+    (@ContinuousMap.instSeminormedAddCommGroup _ _ _ _ (instLpCylinderCoefficients2
+      (V := V)).toNonUnitalNormedRing.toNonUnitalSeminormedRing.toSeminormedAddCommGroup)
+    _ _ _ _ (liftedOperatorPathLinear (V := V) period S hS T) 1 (fun A => by
     change ‖liftedOperatorPath period S hS T A‖ ≤ 1*‖A‖
     exact (liftedOperatorPath_norm period S hS T A).trans_eq (one_mul ‖A‖).symm)
 

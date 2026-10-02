@@ -279,8 +279,9 @@ theorem trialFrame_hasDerivWithinAt (t : Icc (0 : ℝ) T) :
   have hs' : HasDerivWithinAt (fun s => ramp T L s • extendPath T hT P s)
       (trialFrameDerivative T L P P₁ t) (Icc (0 : ℝ) T) t := by
     convert! hs using 1
+    rw [add_comm]
     simp only [trialFrameDerivative, ContinuousMap.coe_mk,
-      extendPath, projIcc_of_mem hT t.property, add_comm]
+      extendPath, projIcc_of_mem hT t.property]
   apply hs'.congr_of_mem _ t.property
   intro s hs
   simp only [extendPath, projIcc_of_mem hT hs, trialFrame, ContinuousMap.coe_mk]
@@ -534,18 +535,15 @@ theorem normalProjection_hasDerivAt {m : ℝ → E} {m₁ : E} {t : ℝ}
       (normalProjectionDerivative (m t) m₁) t := by
   have hr : HasDerivAt (fun s => rankOne ℝ (E := E) (F := E) (m s) (m s))
       (rankOne ℝ (E := E) (F := E) m₁ (m t) + rankOne ℝ (E := E) (F := E) (m t) m₁) t := by
-    convert! ContinuousLinearMap.hasDerivAt_of_bilinear
-      (B := (rankOne ℝ : E →L[ℝ] E →L[ℝ] E →L[ℝ] E)) (fun _ => hd) (fun _ => hd) using 1
-    ext v
-    change ⟪m t, v⟫_ℝ • m₁ + ⟪m₁, v⟫_ℝ • m t =
-      ⟪m₁, v⟫_ℝ • m t + ⟪m t, v⟫_ℝ • m₁
-    exact add_comm _ _
+    rw [add_comm]
+    exact ContinuousLinearMap.hasDerivAt_of_bilinear
+      (B := (rankOne ℝ : E →L[ℝ] E →L[ℝ] E →L[ℝ] E)) (fun _ => hd) (fun _ => hd)
   have hi := hd.norm_sq.inv (pow_ne_zero 2 (norm_ne_zero_iff.mpr hm))
   change HasDerivAt (fun s => ContinuousLinearMap.id ℝ E -
       (‖m s‖ ^ 2)⁻¹ • rankOne ℝ (E := E) (F := E) (m s) (m s))
     (normalProjectionDerivative (m t) m₁) t
   convert! (hi.smul hr).const_sub (ContinuousLinearMap.id ℝ E) using 1
-  simp only [normalProjectionDerivative, Pi.inv_apply, add_comm]
+  exact congrArg Neg.neg (add_comm _ _)
 
 theorem normalProjection_hasDerivWithinAt {m : ℝ → E} {m₁ : E} {t : ℝ} {S : Set ℝ}
     (hd : HasDerivWithinAt m m₁ S t) (hm : m t ≠ 0) :
@@ -553,19 +551,16 @@ theorem normalProjection_hasDerivWithinAt {m : ℝ → E} {m₁ : E} {t : ℝ} {
       (normalProjectionDerivative (m t) m₁) S t := by
   have hr : HasDerivWithinAt (fun s => rankOne ℝ (E := E) (F := E) (m s) (m s))
       (rankOne ℝ (E := E) (F := E) m₁ (m t) + rankOne ℝ (E := E) (F := E) (m t) m₁) S t := by
-    convert! ContinuousLinearMap.hasDerivWithinAt_of_bilinear
-      (B := (rankOne ℝ : E →L[ℝ] E →L[ℝ] E →L[ℝ] E)) hd hd using 1
-    ext v
-    change ⟪m t, v⟫_ℝ • m₁ + ⟪m₁, v⟫_ℝ • m t =
-      ⟪m₁, v⟫_ℝ • m t + ⟪m t, v⟫_ℝ • m₁
-    exact add_comm _ _
+    rw [add_comm]
+    exact ContinuousLinearMap.hasDerivWithinAt_of_bilinear
+      (B := (rankOne ℝ : E →L[ℝ] E →L[ℝ] E →L[ℝ] E)) hd hd
   have hi := hd.norm_sq.inv (pow_ne_zero 2 (norm_ne_zero_iff.mpr hm))
   change HasDerivWithinAt
     (fun s => ContinuousLinearMap.id ℝ E -
       (‖m s‖ ^ 2)⁻¹ • rankOne ℝ (E := E) (F := E) (m s) (m s))
     (normalProjectionDerivative (m t) m₁) S t
   convert! (hi.smul hr).const_sub (ContinuousLinearMap.id ℝ E) using 1
-  simp only [normalProjectionDerivative, Pi.inv_apply, add_comm]
+  exact congrArg Neg.neg (add_comm _ _)
 
 theorem normalProjection_continuous {α : Type*} [TopologicalSpace α]
     {f : α → E} (hf : Continuous f) (hne : ∀ a, f a ≠ 0) :
@@ -931,7 +926,7 @@ theorem select_actual_activation
   obtain ⟨yp, yq, hwq, hwpl, hwpu, hY⟩ :=
     select_endpoint_hilbert Λ B p q (activationConstant CM CH) ε h hΛ hp hq hpq
       hC hε hh hεsmall hΛnorm hB hBpp
-  let Y := yp • p + yq • q
+  set Y := yp • p + yq • q
   let u := endpointDerivative T hT.le (fun t => m t) H K hK hH hsmall L Y
   let η := initialRealPrimitive T u
   let v := physicalVelocityPath T hT.le Q Q₁ c hc hQ H u
@@ -954,7 +949,7 @@ theorem select_actual_activation
   have hwt : ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := V) (F := E) R.toContinuousLinearMap
       (w T) = Λ Y - B Y - (h * ⟪p, Y⟫_ℝ) • q := by
     dsimp only [w]
-    rw [map_sub, hvt, hηT]
+    rw [ContinuousLinearMap.map_sub, hvt, hηT]
     simp only [B, terminalPerturbation, sub_apply, comp_apply, smul_apply, rankOne_apply,
       smul_smul, extendPath, projIcc_of_mem hT.le (show T ∈ Icc (0 : ℝ) T from ⟨hT.le, le_rfl⟩)]
     abel

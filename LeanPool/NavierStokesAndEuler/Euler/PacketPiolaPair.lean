@@ -299,7 +299,8 @@ theorem curl_pullbackCovector (Ξ Q : Space → Space) (hΞ : ContDiff ℝ 2 Ξ)
       (EuclideanSpace.single (i + 1) 1) (EuclideanSpace.single (i + 2) 1)
     rw [hs, sub_self]
   change vectorCurl (fun y => adjoint (𝕜 := ℝ) (E := Space) (F := Space) (fderiv ℝ Ξ y) (Q y)) x = _
-  rw [vectorCurl_eq_matrix _ x hp.differentiableAt, hp.fderiv, curlMatrix_add, hzero, add_zero]
+  simp only [vectorCurl_eq_matrix _ x hp.differentiableAt, hp.fderiv, curlMatrix_add, hzero,
+    add_zero]
 
 /-- The source's slow transformed curl `d × Q`, with `d=F⁻ᵀ ∇`. -/
 def transformedCurl (F : Space → Space ≃L[ℝ] Space) (Q : Space → Space) (x : Space) : Space :=
@@ -419,7 +420,7 @@ theorem coveringCurl_pullback (κ : ℝ) (m : Space) (Ξ : Space → Space)
       ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space)
         (fderiv ℝ Ξ w.1) (q w)) z).comp
       (EulerGraphPullback.liftedDirection κ m)) = _
-  rw [hp.fderiv, ContinuousLinearMap.add_comp, curlMatrix_add, hzero, add_zero]
+  simp only [hp.fderiv, ContinuousLinearMap.add_comp, curlMatrix_add, hzero, add_zero]
   rfl
 
 /-- Unit determinant transforms the full slow-plus-angular curl by the inverse Jacobian. -/

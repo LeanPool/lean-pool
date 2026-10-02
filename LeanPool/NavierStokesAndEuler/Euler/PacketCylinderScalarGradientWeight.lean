@@ -61,11 +61,10 @@ theorem scalarGradientPath_weight (g : C(K, ℝ)) :
     scalarGradientPath (weight (K := K) (E := CylinderL2 P ℝ) g p) =
       weight (K := K) (E := LiftL2 P) g (scalarGradientPath p) := by
   unfold scalarGradientPath
-  rw [map_sum]
-  apply sum_congr rfl
-  intro i _
-  rw [pathMap_timeWeight,derivativePath_weight P g (pathMap (K := K) P scalarEmbed p)
-    (pathMap_orbit_contDiff P scalarEmbed p hp) i.succ,pathMap_timeWeight]
+  refine (sum_congr rfl fun i _ => ?_).trans (map_sum (weight (K := K) (E := LiftL2 P) g) _ _).symm
+  have hd := (congrArg (derivativePath P · i.succ) (pathMap_timeWeight scalarEmbed g p)).trans
+    (derivativePath_weight P g _ (pathMap_orbit_contDiff P scalarEmbed p hp) i.succ)
+  exact (congrArg (pathMap (K := K) P (gradientComponent i)) hd).trans (pathMap_timeWeight _ g _)
 
 include hp in
 theorem scalarGradientPath_normalize (g : C(K, ℝ)) (hg : ∀ t, 0 < g t) :

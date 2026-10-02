@@ -302,11 +302,9 @@ theorem numerator_derivative_bound (δ : ℝ) (hδ : 0 ≤ δ) (hδ1 : δ ≤ 1)
 theorem profile_gevrey (δ : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) (n : ℕ) (t : ℝ) :
     |iteratedDeriv n (profile δ) t| ≤
       (100 * (δ ^ 2)⁻¹) * majorant (40 * (δ ^ 2)⁻¹) 0 n := by
-  have hA : 1 ≤ (δ ^ 2)⁻¹ := by
-    apply (one_le_inv₀ (sq_pos_of_pos hδ)).2
-    nlinarith
-  have hB : 1 ≤ 40 * (δ ^ 2)⁻¹ := by linarith
-  have hBi : 0 ≤ 40 * (δ ^ 2)⁻¹ := by linarith
+  have hA : 1 ≤ (δ ^ 2)⁻¹ := (one_le_inv₀ (sq_pos_of_pos hδ)).2 (pow_le_one₀ hδ.le hδ1)
+  have hB : 1 ≤ 40 * (δ ^ 2)⁻¹ := by linarith only [hA]
+  have hBi : 0 ≤ 40 * (δ ^ 2)⁻¹ := zero_le_one.trans hB
   have hAi : 0 ≤ (δ ^ 2)⁻¹ := by positivity
   cases n with
   | zero =>
@@ -316,18 +314,16 @@ theorem profile_gevrey (δ : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) (n : ℕ) (t 
     have hm := neg_pi_div_two_lt_arctan (sin t / (1 + δ - cos t))
     rw [abs_le]
     dsimp [profile]
-    constructor <;> linarith [pi_le_four]
+    constructor <;> linarith only [hp, hm, hA, pi_le_four]
   | succ n =>
     have hn (k : ℕ) (x : ℝ) : ‖iteratedFDeriv ℝ k (numerator δ) x‖ ≤
         3 * majorant (40 * (δ ^ 2)⁻¹) 0 k := by
       rw [norm_iteratedFDeriv_eq_norm_iteratedDeriv, Real.norm_eq_abs]
       have hp : 1 ≤ (40 * (δ ^ 2)⁻¹) ^ k := one_le_pow₀ hB
-      have hf : (1 : ℝ) ≤ (k.factorial : ℝ) ^ 2 := by
-        have hh : (1 : ℝ) ≤ k.factorial := by exact_mod_cast Nat.factorial_pos k
-        nlinarith
+      have hf : (1 : ℝ) ≤ (k.factorial : ℝ) ^ 2 :=
+        one_le_pow₀ (by exact_mod_cast Nat.factorial_pos k)
       have hb := numerator_derivative_bound δ hδ.le hδ1 k x
-      dsimp [majorant]
-      nlinarith
+      exact hb.trans (le_mul_of_one_le_right (by norm_num) (one_le_mul_of_one_le_of_one_le hp hf))
     have hi (k : ℕ) (x : ℝ) : ‖iteratedFDeriv ℝ k (fun t => (denominator δ t)⁻¹) x‖ ≤
         (10 * (δ ^ 2)⁻¹) * majorant (40 * (δ ^ 2)⁻¹) 0 k := by
       simpa only [norm_iteratedFDeriv_eq_norm_iteratedDeriv, Real.norm_eq_abs] using
@@ -351,7 +347,7 @@ theorem profile_gevrey (δ : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) (n : ℕ) (t 
         (90 * (δ ^ 2)⁻¹) * majorant (40 * (δ ^ 2)⁻¹) 0 n := by
       simpa only [norm_iteratedFDeriv_eq_norm_iteratedDeriv, Real.norm_eq_abs,
         show (3 : ℝ) * 3 * (10 * (δ ^ 2)⁻¹) = 90 * (δ ^ 2)⁻¹ by ring] using hp
-    exact hp'.trans (mul_le_mul (by linarith) hm (majorant_nonneg _ hBi _ _)
-      (by positivity))
+    exact hp'.trans (mul_le_mul (mul_le_mul_of_nonneg_right (by norm_num) hAi) hm
+      (majorant_nonneg _ hBi _ _) (by positivity))
 
 end EulerPeriodicProfile

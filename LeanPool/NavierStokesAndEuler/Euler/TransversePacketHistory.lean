@@ -84,11 +84,11 @@ theorem coordinate_equation_ae (t : Icc (0 : ℝ) T) :
   change Q a x = D.Q t x.1 (a x) at hq
   change Qa r x = ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := U) (F := E) (D.Q t x.1) (r x) at hr
   change Q₁ v x = D.Q₁ t x.1 (v x) at hq₁
-  rw [hl,hq,hr] at hp
   change r x = f t x-((2 : ℝ) • Q₁ v) x at hsub
   change ((2 : ℝ) • Q₁ v) x = (2 : ℝ) • (Q₁ v x) at hsmul
-  rw [hsub,hsmul,hq₁] at hp
-  exact hp
+  let B := ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := U) (F := E) (D.Q t x.1)
+  exact (congrArg B hq).symm.trans (hl.symm.trans (hp.trans (hr.trans (congrArg B
+    (hsub.trans (congrArg (f t x - ·) (hsmul.trans (congrArg ((2 : ℝ) • ·) hq₁))))))))
 
 theorem physicalVelocity_ae (t : Icc (0 : ℝ) T) :
     D.physicalVelocity P f t =ᵐ[liftMeasure P] fun x =>

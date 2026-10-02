@@ -928,12 +928,11 @@ variable (Cagree : SourceCoefficientAgreement M D)
   (hF : ∀ t x, fderiv ℝ (Ξ t) x = D.F.field t x)
   (hdet : ∀ t x, (EulerPacketPiola.operatorMatrix (D.F.field t x)).det = 1)
 
-local notation "Q" => initializedUniformBudget M D hTime τ hτ hτT B δ hδ hδ1 ξ hs α hα
-  L NB LM Cagree W hW hprofile k hk hX hlog hfrequency Ξ hΞ hF hdet
-
 theorem initializedUniformBudget_initial (s : ℕ) :
     scale M.ℓ (initializedExactPhysicalVelocity M D hTime τ hτ hτT B δ hδ ξ hs α
-      Cagree (truncation k) (truncation_bounds k (by linarith)).1 k hk Q
+      Cagree (truncation k) (truncation_bounds k (by linarith)).1 k hk
+      (initializedUniformBudget M D hTime τ hτ hτT B δ hδ hδ1 ξ hs α hα
+        L NB LM Cagree W hW hprofile k hk hX hlog hfrequency Ξ hΞ hF hdet)
       ⟨0,le_rfl,D.T_pos.le⟩ id) =
       initializedInitialHigh M D τ hτ hτT B δ hδ ξ hs α (truncation k) k +
       initializedInitialMean M D τ hτ hτT B δ hδ ξ hs α (truncation k) k ∧
@@ -942,7 +941,9 @@ theorem initializedUniformBudget_initial (s : ℕ) :
     derivativeSum s (initializedInitialMean M D τ hτ hτT B δ hδ ξ hs α (truncation k) k) ≤
       (M.ℓ⁻¹)^s/k^2*EulerPacketInitialCost.envelope s (EulerPacketInitializedCost.envelope W) :=
   ⟨initializedExactPhysicalVelocity_initial_split M D hTime τ hτ hτT B δ hδ ξ hs α
-    Cagree (truncation k) (truncation_bounds k (by linarith)).1 k hk Q,
+    Cagree (truncation k) (truncation_bounds k (by linarith)).1 k hk
+    (initializedUniformBudget M D hTime τ hτ hτT B δ hδ hδ1 ξ hs α hα
+      L NB LM Cagree W hW hprofile k hk hX hlog hfrequency Ξ hΞ hF hdet),
    initialized_uniform_initial_bounds M D hTime τ hτ hτT B δ hδ hδ1 ξ hs α hα
     L NB LM W hW hprofile k hk hfrequency s⟩
 

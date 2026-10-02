@@ -259,9 +259,9 @@ theorem initial_coordinate_green (hTpos : 0 < T)
         ⟪initialMomentumForcing T hT Q Q₁ H u t, initialCoordinates T hT Q c hc hQ v t⟫_ℝ +
         ⟪momentumPath T hT Q Q₁ H u t,
           initialCoordinateDerivative T hT Q Q₁ c hc hQ v t⟫_ℝ :=
-      by simpa only [φ, add_comm] using (hpd.inner ℝ hξd).deriv
-    rw [hφd, hf, hp', hHu, hηu, hηv, hv, ← hη]
-    simp only [inner_add_right, inner_sub_left, adjoint_inner_left]
+      (hpd.inner ℝ hξd).deriv.trans (add_comm _ _)
+    simp only [hφd, hf, hp', hHu, hηu, hηv, hv, ← hη, inner_add_right, inner_sub_left,
+      adjoint_inner_left]
     ring
   calc
     ⟪energyOperator T hT H u, v⟫_ℝ =

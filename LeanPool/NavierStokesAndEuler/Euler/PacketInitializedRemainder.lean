@@ -191,7 +191,11 @@ theorem initializedPrimaryRemainder_physical_fderiv_inv (N : ℕ) (hN : 1 ≤ N)
     _ ≤ ((‖coordinateEquiv.symm.toContinuousLinearMap‖*2*k)*(sobolevEmbeddingConstant period 3 *
         ((fixedVelocityGradeCost L.R S.H0 2+2)/k^2)*(4*L.R)))*‖fderiv ℝ Y x‖ :=
       mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hf hb) (norm_nonneg _)
-    _ = _ := by unfold initializedRemainderDerivativeCost; field_simp; ring
+    _ = _ := by
+      have key (a e c r d : ℝ) :
+          ((a*2*k)*(e*((c+2)/k^2)*(4*r)))*d = (8*a*e*r*(c+2)/k)*d := by
+        linear_combination (8*a*e*r*(c+2)*k⁻¹*d) * mul_inv_cancel₀ hk0
+      exact key _ _ _ _ _
 
 /-- The finite packet's actual center gradient differs from its exact
 primary shear by O(1/k), with the genuine inverse frame norm. -/

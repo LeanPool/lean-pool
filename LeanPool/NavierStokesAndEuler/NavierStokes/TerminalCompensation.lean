@@ -276,16 +276,34 @@ noncomputable def quadraticBilin (P : Patch) : Coeff →ₗ[ℝ] Coeff →ₗ[�
           (1 / 2) * ∑ j, squareMoment P 0 j * c j * d j, 0]
       map_add' := fun d e => by
         ext i
-        fin_cases i <;> simp [Pi.add_apply, Fin.sum_univ_three] <;> ring
+        fin_cases i <;>
+          simp only [Pi.add_apply, Fin.sum_univ_three, Fin.isValue, Fin.zero_eta, Fin.mk_one,
+            Fin.reduceFinMk, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
+            add_zero] <;>
+          ring
       map_smul' := fun r d => by
         ext i
-        fin_cases i <;> simp [Pi.smul_apply, smul_eq_mul, Fin.sum_univ_three] <;> ring }
+        fin_cases i <;>
+          simp only [Pi.smul_apply, smul_eq_mul, Fin.sum_univ_three, Fin.isValue, Fin.zero_eta,
+            Fin.mk_one, Fin.reduceFinMk, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
+            RingHom.id_apply, mul_zero] <;>
+          ring }
   map_add' c d := by
     ext e i
-    fin_cases i <;> simp [Pi.add_apply, Fin.sum_univ_three] <;> ring
+    fin_cases i <;>
+      simp only [Pi.add_apply, Fin.sum_univ_three, Fin.isValue, Fin.zero_eta, Fin.mk_one,
+        Fin.reduceFinMk, LinearMap.coe_comp, LinearMap.coe_mk, AddHom.coe_mk, LinearMap.coe_single,
+        comp_apply, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, LinearMap.coe_add,
+        add_zero] <;>
+      ring
   map_smul' r c := by
     ext e i
-    fin_cases i <;> simp [Pi.smul_apply, smul_eq_mul, Fin.sum_univ_three] <;> ring
+    fin_cases i <;>
+      simp only [Pi.smul_apply, smul_eq_mul, Fin.sum_univ_three, Fin.isValue, Fin.zero_eta,
+        Fin.mk_one, Fin.reduceFinMk, LinearMap.coe_comp, LinearMap.coe_mk, AddHom.coe_mk,
+        LinearMap.coe_single, comp_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
+        Matrix.cons_val, RingHom.id_apply, LinearMap.coe_smul, mul_zero] <;>
+      ring
 
 /-- Quadratic continuous linear map, constructed using `LinearMap.toContinuousLinearMap`. -/
 noncomputable def quadraticCLM (P : Patch) : Coeff →L[ℝ] Coeff →L[ℝ] Coeff :=
@@ -428,14 +446,14 @@ theorem exists_normalized_compensation (P : Patch) (lam : ℝ) (hlam : 0 ≤ lam
   let β : ℝ := ‖B.symm.toContinuousLinearMap‖ + 1
   let K : ℝ := ‖A‖ + 1
   let r : ℝ := 1 / (4 * β * K)
-  have hβ : 0 < β := by dsimp [β]; positivity
-  have hK : 0 < K := by dsimp [K]; positivity
-  have hr : 0 < r := by dsimp [r]; positivity
+  have hβ : 0 < β := add_pos_of_nonneg_of_pos (norm_nonneg _) one_pos
+  have hK : 0 < K := add_pos_of_nonneg_of_pos (norm_nonneg _) one_pos
+  have hr : 0 < r := one_div_pos.mpr (mul_pos (mul_pos four_pos hβ) hK)
   have hinv : ∀ v, ‖B.symm v‖ ≤ β * ‖v‖ := by
     intro v
     exact (B.symm.toContinuousLinearMap.le_opNorm v).trans
-      (mul_le_mul_of_nonneg_right (by dsimp [β]; linarith) (norm_nonneg v))
-  have hA : ‖A‖ ≤ K := by dsimp [K]; linarith
+      (mul_le_mul_of_nonneg_right (le_add_of_nonneg_right zero_le_one) (norm_nonneg v))
+  have hA : ‖A‖ ≤ K := le_add_of_nonneg_right zero_le_one
   have hsmall : 4 * β * K * r ≤ 1 := by dsimp [r]; field_simp ; rfl
   obtain ⟨g, hg, hgeq, hglip⟩ := UniformAngularReset.exists_smooth_solver_on_ball
     B A β K r hβ hK.le hr hinv hA hsmall
@@ -443,12 +461,14 @@ theorem exists_normalized_compensation (P : Patch) (lam : ℝ) (hlam : 0 ≤ lam
   obtain ⟨m, hm, hmin⟩ := baseProfile_lower_bound P lam
   let C : ℝ := (1 + D) * (2 * β)
   let ε : ℝ := min (r / (4 * β)) (m / (2 * C))
-  have hC : 0 < C := mul_pos (by linarith) (by positivity)
+  have hβ2 : 0 < 2 * β := mul_pos two_pos hβ
+  have hC : 0 < C := mul_pos (add_pos one_pos hD) hβ2
   have hε : 0 < ε := lt_min (div_pos hr (by positivity)) (div_pos hm (by positivity))
   have hsub : Metric.ball (0 : Coeff) ε ⊆ Metric.ball 0 (r / (4 * β)) :=
     Metric.ball_subset_ball (min_le_left _ _)
-  have hC₀ : 2 * β ≤ C := by dsimp [C]; nlinarith
-  have hC₁ : D * (2 * β) ≤ C := by dsimp [C]; nlinarith
+  have hC₀ : 2 * β ≤ C := le_mul_of_one_le_left hβ2.le (le_add_of_nonneg_right hD.le)
+  have hC₁ : D * (2 * β) ≤ C :=
+    mul_le_mul_of_nonneg_right (le_add_of_nonneg_left zero_le_one) hβ2.le
   have hzero : g 0 = 0 := by
     have hz := (hgeq 0 (Metric.mem_ball_self (div_pos hr (by positivity)))).2
     simpa only [norm_zero, mul_zero, norm_le_zero_iff] using hz
@@ -463,7 +483,7 @@ theorem exists_normalized_compensation (P : Patch) (lam : ℝ) (hlam : 0 ≤ lam
   rw [momentMap_identity] at heq
   refine ⟨heq, hnorm.trans (mul_le_mul_of_nonneg_right hC₀ (norm_nonneg d)), ?_, ?_⟩
   · apply le_trans _ hC₀
-    apply norm_fderiv_le_of_lip' ℝ (by positivity : 0 ≤ 2 * β)
+    apply norm_fderiv_le_of_lip' ℝ hβ2.le
     filter_upwards [Metric.isOpen_ball.mem_nhds (hsub hd)] with e he
     exact hglip e he d (hsub hd)
   · intro x
@@ -479,7 +499,7 @@ theorem exists_normalized_compensation (P : Patch) (lam : ℝ) (hlam : 0 ≤ lam
       have hcancel : C * (m / (2 * C)) = m / 2 := by field_simp
       rwa [hcancel] at ht
     have hlow := neg_abs_le (correction P (g d) x)
-    linarith
+    linarith only [hbase, hval, hsize, hlow, hm]
 
 /-- Evaluation of the finite bump combination is an actual bounded linear map. -/
 noncomputable def correctionCLM (P : Patch) (x : ℝ) : Coeff →L[ℝ] ℝ :=
@@ -626,8 +646,11 @@ noncomputable def amplitudeDebt (a : ℝ) (v : Coeff) : Coeff := -(amplitudeFact
 theorem normalizedDebt_eq (R a : ℝ) (d : Coeff) :
     normalizedDebt R a d = amplitudeDebt a (scaledDebt R d) := by
   ext i
-  fin_cases i <;> simp [normalizedDebt, normalizationFactors, amplitudeDebt, amplitudeFactors,
-    scaledDebt, div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc]
+  fin_cases i <;>
+    simp only [normalizedDebt, normalizationFactors, amplitudeDebt, amplitudeFactors, scaledDebt,
+      Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue, Pi.neg_apply, Pi.mul_apply,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, neg_inj] <;>
+    ring
 
 theorem amplitudeFactors_contDiffOn {U : Set ℝ} {a : ℝ → ℝ}
     (ha : ContDiffOn ℝ ∞ a U) (hpos : ∀ η ∈ U, 0 < a η) :
@@ -719,11 +742,11 @@ theorem exists_uniform_parameter_compensation (P : Patch) (lam : ℝ) (hlam : 0 
   let T : ℝ := D * B + D * (J * B)
   let C : ℝ := 1 + B + T
   have hB : 0 < B := mul_pos hC₀ hD
-  have hT : 0 < T := by dsimp [T]; positivity
-  have hC : 0 < C := by dsimp [C]; positivity
-  have hBC : B ≤ C := by dsimp [C]; linarith
-  have hTC : T ≤ C := by dsimp [C]; linarith
-  have hDBC : D * B ≤ C := by dsimp [T] at hTC; nlinarith [mul_pos hD (mul_pos hJ hB)]
+  have hT : 0 < T := add_pos (mul_pos hD hB) (mul_pos hD (mul_pos hJ hB))
+  have hC : 0 < C := add_pos (add_pos one_pos hB) hT
+  have hBC : B ≤ C := by dsimp [C]; linarith only [hT]
+  have hTC : T ≤ C := by dsimp [C]; linarith only [hB]
+  have hDBC : D * B ≤ C := (le_add_of_nonneg_right (mul_pos hD (mul_pos hJ hB)).le).trans hTC
   refine ⟨ε₀ / D, C, div_pos hε₀ hD, hC, ?_⟩
   intro v hv
   let d : ℝ → Coeff := fun η => amplitudeDebt (a η) v
@@ -1031,12 +1054,12 @@ theorem patch_heat_disjoint (P : Patch) (lam q K a h ν : ℝ)
       intro hx
       have hl := (div_lt_iff₀ (mul_pos hq hK)).mp hx.2
       have hp := mul_le_mul_of_nonneg_right hpatch hK.le
-      nlinarith
+      linarith only [hl, hp, not_le.mp hXK]
     rw [physicalProfile_eq_clean_outside P lam (q * K) a c X hout, sub_self, zero_mul]
 
 theorem square_change_add_of_disjoint (b p t : ℝ) (hpt : p * t = 0) :
     (b + p + t) ^ 2 - b ^ 2 = ((b + p) ^ 2 - b ^ 2) + ((b + t) ^ 2 - b ^ 2) := by
-  nlinarith
+  linear_combination 2 * hpt
 
 /-- The constructed physical profile is jointly smooth in the parameter and
 positive radius, whenever the amplitude and solved coefficients are smooth. -/

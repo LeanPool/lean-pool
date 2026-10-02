@@ -180,7 +180,9 @@ def geometryGuardsOfStage
   have hhistory := historyLabelDifferenceCost_nonneg (G.historyOn H m hm R S hS τ hτ hτT)
   have hcost : 0 ≤ P.neighborCost hτ hτT (G.historyOn H m hm R S hS τ hτ hτT) CM CH := by
     unfold ParentFrame.neighborCost
-    positivity
+    exact add_nonneg (add_nonneg (norm_nonneg _) (div_nonneg
+      (mul_nonneg zero_le_three (norm_nonneg _)) (mul_pos hray hepsPos).le))
+      (div_nonneg (mul_nonneg (mul_nonneg zero_le_two hhistory) hterminal) hepsPos.le)
   have herror0 : 0 ≤ P.totalError hτ hτT (G.historyOn H m hm R S hS τ hτ hτT) CM CH ρ :=
     add_nonneg P.error_nonneg (mul_nonneg hcost hρ)
   have hcoef :

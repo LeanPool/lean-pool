@@ -101,16 +101,10 @@ theorem jetLp_derivative (A : SmoothL2Field V) (n : ℕ) :
       (continuousMultilinearCurryRightEquiv' ℝ n Space
           V).toContinuousLinearEquiv.toContinuousLinearMap.compLpL
         (α := Space) 2 volume (A.jetLp (n+1)) := by
-  let L : (Space [×(n+1)]→L[ℝ] V) →L[ℝ] (Space [×n]→L[ℝ] (Space →L[ℝ] V)) :=
-    (continuousMultilinearCurryRightEquiv' ℝ n Space
-        V).toContinuousLinearEquiv.toContinuousLinearMap
-  apply Lp.ext
-  filter_upwards [A.derivative.jetLp_ae n,
-    ContinuousLinearMap.coeFn_compLpL (𝕜 := ℝ) (𝕜' := ℝ)
-      (E := Space [×(n+1)]→L[ℝ] V) (F := Space [×n]→L[ℝ] (Space →L[ℝ] V))
-      (σ := RingHom.id ℝ) L (A.jetLp (n+1)),
-    A.jetLp_ae (n+1)] with x h₁ h₂ h₃
-  rw [h₁, h₂, h₃, iteratedFDeriv_succ_eq_comp_right]
+  refine Lp.ext (.trans ?_ (coeFn_compLpL _ _).symm)
+  filter_upwards [A.derivative.jetLp_ae n, A.jetLp_ae (n+1)] with x h₁ h₃
+  refine h₁.trans (.trans ?_ (congrArg _ h₃).symm)
+  rw [iteratedFDeriv_succ_eq_comp_right]
   exact ((continuousMultilinearCurryRightEquiv' ℝ n Space V).apply_symm_apply _).symm
 
 /-- Directional field, given by `mapField (ContinuousLinearMap.apply ℝ V v) A.derivative`. -/
@@ -163,12 +157,8 @@ theorem continuous_jetLp_addField (A B : K → SmoothL2Field V)
 theorem continuous_jetLp_derivative (A : K → SmoothL2Field V)
     (hA : ∀ n, Continuous (fun t => (A t).jetLp n)) (n : ℕ) :
     Continuous (fun t => (A t).derivative.jetLp n) := by
-  have he : (fun t => (A t).derivative.jetLp n) =
-      fun t => (continuousMultilinearCurryRightEquiv' ℝ n Space
-          V).toContinuousLinearEquiv.toContinuousLinearMap.compLpL
-        (α := Space) 2 volume ((A t).jetLp (n+1)) := funext (fun t => jetLp_derivative (A t) n)
-  rw [he]
-  exact ContinuousLinearMap.continuous _ |>.comp (hA (n+1))
+  exact ((ContinuousLinearMap.continuous _).comp (hA (n+1))).congr
+    (fun t => (jetLp_derivative (A t) n).symm)
 
 theorem continuous_jetLp_directionalField (A : K → SmoothL2Field V)
     (hA : ∀ n, Continuous (fun t => (A t).jetLp n)) (v : Space) (n : ℕ) :

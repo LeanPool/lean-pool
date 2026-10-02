@@ -97,13 +97,10 @@ def derivative (A : SmoothFamily μ P V) : SmoothFamily μ P (P →L[ℝ] V) whe
       V).toContinuousLinearEquiv.toContinuousLinearMap.compLpL
     2 μ (A.jet (n+1) a)
   jet_ae n a := by
-    let L : (P [×(n+1)]→L[ℝ] V) →L[ℝ] (P [×n]→L[ℝ] (P →L[ℝ] V)) :=
-      (continuousMultilinearCurryRightEquiv' ℝ n P V).toContinuousLinearEquiv.toContinuousLinearMap
-    filter_upwards [ContinuousLinearMap.coeFn_compLpL (𝕜 := ℝ) (𝕜' := ℝ)
-      (E := P [×(n+1)]→L[ℝ] V) (F := P [×n]→L[ℝ] (P →L[ℝ] V))
-      (σ := RingHom.id ℝ) L (A.jet (n+1) a), A.jet_ae (n+1) a] with x hx hj
-    rw [hx, hj, iteratedFDeriv_succ_eq_comp_right]
-    exact (continuousMultilinearCurryRightEquiv' ℝ n P V).apply_symm_apply _
+    refine Filter.EventuallyEq.trans (ContinuousLinearMap.coeFn_compLpL _ _) ?_
+    filter_upwards [A.jet_ae (n+1) a] with x hj
+    exact (congrArg _ (hj.trans iteratedFDeriv_succ_eq_comp_right)).trans
+      ((continuousMultilinearCurryRightEquiv' ℝ n P V).apply_symm_apply _)
   bound n := A.bound (n+1)
   bounded n := (A.bounded (n+1)).mono (fun x hx a => by
     simpa only [norm_iteratedFDeriv_fderiv] using hx a)

@@ -361,12 +361,6 @@ theorem coerciveSolution_reflection (c : ℝ) (hc : 0 < c)
       (-adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT F F₁) (timeReflection T f)) := by
   apply (coerciveEquiv (fixedMeanOperator T hT F F₁ H M0 A L) c hc hO).injective
   simp only [coerciveEquiv_apply]
-  change fixedMeanOperator T hT F F₁ H M0 A L (timeSolenoidalReflection T
-    (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hO
-      (-adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT F F₁) f))) =
-    fixedMeanOperator T hT F F₁ H M0 A L
-      (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hO
-        (-adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT F F₁) (timeReflection T f)))
   exact (fixedMeanOperator_reflection T hT F F₁ H M0 A L hF hF₁ hH hM0 hA _).trans
     ((congrArg (timeSolenoidalReflection T)
       (operator_inverse_apply (fixedMeanOperator T hT F F₁ H M0 A L) c hc hO _)).trans

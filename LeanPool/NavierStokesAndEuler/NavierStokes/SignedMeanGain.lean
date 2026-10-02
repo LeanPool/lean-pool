@@ -1098,7 +1098,7 @@ theorem signed_mean_gain_of_cross
   have hSi : TensorClass G.strip (1 + σ - κ) (crossTensor f a) := by
     intro i j
     rw [hSeq]
-    exact Class.sub (hXi i j) ((hEi i j).mono_exponent (by linarith))
+    exact Class.sub (hXi i j) ((hEi i j).mono_exponent (by linarith only [hσ, hκ, hκsmall]))
   have hactual : covarianceIncrement u.oscillation (tangentField f a + curlField f a) =
       crossTensor f a + remainderTensor f a := by
     rw [hold]
@@ -1134,13 +1134,13 @@ theorem signed_mean_gain_of_cross
       (fun i j => (hactualClass i j).smooth)
       (fun n => (H.pressure_smooth n).mono G.strip_subset) hp.smooth
     rw [H.operators_eq] at heq
-    exact class_congr (hh.add ((ho.dz hp).mono_exponent (by linarith))) heq
+    exact class_congr (hh.add ((ho.dz hp).mono_exponent (by linarith only [hσ, hκ, hκsmall]))) heq
   have hRestθ : MeanClass G.strip (1 + σ + 17 / 100)
       (thetaRemainderField G (crossTensor f a) (remainderTensor f a)) := by
     apply MemClass.add
     · convert! thetaCovarianceChange_mem ho hEi using 1
       ring
-    · exact (ho.dz (hSi 2 1)).mono_exponent (by linarith)
+    · exact (ho.dz (hSi 2 1)).mono_exponent (by linarith only [hσ, hκ, hκsmall])
   have hRestz : MeanClass G.strip (1 + σ + 17 / 100)
       (axialRemainderField G (crossTensor f a) (remainderTensor f a)
         (pressureChange G.gauge c u (tangentField f a + curlField f a) q gaussian)) := by
@@ -1148,8 +1148,8 @@ theorem signed_mean_gain_of_cross
     · apply MemClass.add
       · convert! axialCovarianceChange_mem ho hEi using 1
         ring
-      · exact (ho.dz (hSi 2 2)).mono_exponent (by linarith)
-    · exact (ho.dz hp).mono_exponent (by linarith)
+      · exact (ho.dz (hSi 2 2)).mono_exponent (by linarith only [hσ, hκ, hκsmall])
+    · exact (ho.dz hp).mono_exponent (by linarith only [hσ, hκ, hκsmall])
   have hRestθs : SmoothOn G.domain (thetaRemainderField G (crossTensor f a) (remainderTensor f a))
       :=
     (MovingField.covariance_flux_smooth hEc).1.add
@@ -1169,16 +1169,18 @@ theorem signed_mean_gain_of_cross
   have hbar := averaged_residual_decomposition G c u (tangentField f a + curlField f a)
     q gaussian H (crossTensor f a) (remainderTensor f a) hS hEc hactual hcrossθ hcrossz
   refine ⟨?_, ?_, ?_, ?_⟩
-  · apply class_congr ((hθ.mono_exponent (by linarith)).add htchange)
+  · apply class_congr ((hθ.mono_exponent (by linarith only [hσ, hκ, hκsmall])).add htchange)
     intro n x _
     simp only [Pi.sub_apply]
     ring
-  · apply class_congr ((hz.mono_exponent (by linarith)).add hzchange)
+  · apply class_congr ((hz.mono_exponent (by linarith only [hσ, hκ, hκsmall])).add hzchange)
     intro n x _
     simp only [Pi.sub_apply]
     ring
-  · exact class_congr ((hbθ.mono_exponent (by linarith)).add (G.average_mem hRestθs hRestθ)) hbar.1
-  · exact class_congr ((hbz.mono_exponent (by linarith)).add (G.average_mem hRestzs hRestz)) hbar.2
+  · exact class_congr ((hbθ.mono_exponent (by linarith only [hσ, hκ, hκsmall])).add
+      (G.average_mem hRestθs hRestθ)) hbar.1
+  · exact class_congr ((hbz.mono_exponent (by linarith only [hσ, hκ, hκsmall])).add
+      (G.average_mem hRestzs hRestz)) hbar.2
 
 /-! ## A shared native construction, before any signed output is known -/
 

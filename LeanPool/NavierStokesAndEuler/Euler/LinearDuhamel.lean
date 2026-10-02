@@ -71,24 +71,16 @@ theorem backward_eq_inverse (t : Icc (0 : ℝ) T) :
 theorem backward_derivative (t : Icc (0 : ℝ) T) :
     HasDerivWithinAt (extendPath T hT U.backward)
       (-((U.backward t).comp (B t))) (Icc (0 : ℝ) T) t := by
-  have hi := hasFDerivAt_ringInverse (𝕜 := ℝ) (U.unit t)
-  change HasFDerivAt Ring.inverse
-    (-ContinuousLinearMap.mulLeftRight ℝ (E →L[ℝ] E) (U.backward t) (U.backward t)) (U.forward t)
-        at hi
-  have hf := U.derivative t
-  have hv : extendPath T hT U.forward t = U.forward t := by
+  have hv : U.forward t = extendPath T hT U.forward t := by
     simp only [extendPath, projIcc_of_mem hT t.property]
-  rw [← hv] at hi
-  have hc := hi.comp_hasDerivWithinAt (t : ℝ) hf
-  have hc' : HasDerivWithinAt (fun s => Ring.inverse (extendPath T hT U.forward s))
-      (-((U.backward t).comp (B t))) (Icc (0 : ℝ) T) t := by
-    convert hc using 1 <;> try rfl
-    simp only [neg_apply, mulLeftRight_apply, mul_def, comp_assoc,
-      U.forward_backward t, comp_id]
-  apply hc'.congr_of_mem _ t.property
-  intro s hs
-  simp only [extendPath, projIcc_of_mem hT hs]
-  exact U.backward_eq_inverse ⟨s,hs⟩
+  have hb : ((U.unit t)⁻¹ : (E →L[ℝ] E)ˣ).val = U.backward t := rfl
+  have hc := (hasFDerivAt_ringInverse (𝕜 := ℝ) (U.unit t)).comp_hasDerivWithinAt_of_eq
+    (t : ℝ) (U.derivative t) hv
+  refine (hc.congr_deriv ?_).congr_of_mem (fun s hs => ?_) t.property
+  · simp only [hb, neg_apply, mulLeftRight_apply, mul_def, comp_assoc, U.forward_backward t,
+      comp_id]
+  · simp only [extendPath, projIcc_of_mem hT hs, Function.comp_apply]
+    exact U.backward_eq_inverse ⟨s,hs⟩
 
 /-- The two-time homogeneous propagator. -/
 def propagator (t s : Icc (0 : ℝ) T) : E →L[ℝ] E :=

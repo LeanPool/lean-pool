@@ -608,9 +608,9 @@ theorem positiveSolution_real_system {R T : ℝ} (hR : 0 < R) (hRT : R < T)
     simp only [W, equationRHS, matrixAction, coefficient0, coefficient1, sourceField,
       matrixRHS, hreal.base ⟨sq_pos_of_ne_zero hr0, (square_mem_Ico hr).2⟩ heta,
       hreal.source ⟨sq_pos_of_ne_zero hr0, (square_mem_Ico hr).2⟩ heta,
-      Complex.real_smul, Complex.ofReal_div, Complex.ofReal_natCast, Pi.add_apply,
-      add_comm, add_left_comm] at he ⊢
-    exact he
+      Complex.real_smul, Complex.ofReal_div, Complex.ofReal_natCast, Pi.add_apply] at he ⊢
+    unfold parameterDeriv at he
+    linear_combination he
 
 /-- The first two rows recover the radial derivative coordinates without using the input jets. -/
 theorem matrixRHS_first_rows {K : Type*} [Field K] (h lam C r eta : K)
@@ -1364,9 +1364,12 @@ theorem Z_partials_eq_jet (h b : ℝ) {v : InnerProfile} {w : InnerPoint}
   simp only [hz.fderiv, add_apply, sub_apply, smul_apply, zero_apply,
     ContinuousLinearMap.coe_fst', ContinuousLinearMap.coe_snd', smul_eq_mul]
   constructor
-  · simp [jetZX, jetZNumeratorX, jetL, profileJet, partialX, partialEta]
+  · simp only [Pi.sub_apply, Pi.add_apply, Pi.mul_apply, Pi.pow_apply, partialEta, partialX,
+      mul_zero, add_zero, sub_self, mul_one, zero_add, jetZX, jetZNumeratorX, profileJet, jetL]
     field_simp [hL₁]; ring
-  · simp [jetZE, jetZNumeratorE, jetZNumerator, jetL, profileJet, partialX, partialEta]
+  · simp only [Pi.sub_apply, Pi.add_apply, Pi.mul_apply, Pi.pow_apply, partialEta, partialX,
+      mul_one, zero_sub, mul_neg, neg_mul, neg_neg, neg_add_rev, mul_zero, zero_add, jetZE,
+      jetZNumeratorE, profileJet, jetL, jetZNumerator]
     field_simp [hL₁]; ring
 
 theorem Z2_eq_jet (h b : ℝ) {v : InnerProfile} {w : InnerPoint}

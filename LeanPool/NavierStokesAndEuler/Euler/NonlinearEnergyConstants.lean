@@ -260,8 +260,7 @@ theorem weightedCorrectionForcing_bound {q : ℕ} (hq : 6 ≤ q + 1) (T : ℝ) (
     (reindexMaximalTime period q T U t) hv B0 B1 A0 A2 residual hA2 (hz τ) (hdz τ) (hC0 τ) (hC τ)
         (hr τ)
     (K τ) cM hcM (hKM τ)
-  rw [hmetric.1, hmetric.2] at h
-  exact hforce.le.trans h
+  exact hforce.le.trans (h.trans_eq (congrArg₂ _ hmetric.1 hmetric.2))
 
 end EulerCorrectionEnergyBound
 

@@ -384,7 +384,7 @@ theorem bandGeometry_argumentCost_le (B : Plane ≃L[ℝ] Plane) {h : ℝ} (hh :
       (1 + ChartScales.Tg) * ChartScales.S n := by
     rw [abs_of_pos (inv_pos.mpr (ChartScales.timeCoefficient_pos h n))]
     have hb := ChartScales.timeCoefficient_inv_upper h hh hn
-    nlinarith
+    linarith only [hb, hS]
   have hb : ‖(g.basis : Plane →L[ℝ] Plane)‖ ≤ ‖(B : Plane →L[ℝ] Plane)‖ :=
     norm_scaledBasis_le B _ hci
   have hbi : ‖(g.basis.symm : Plane →L[ℝ] Plane)‖ ≤
@@ -418,10 +418,10 @@ theorem bandGeometry_argumentCost_le (B : Plane ≃L[ℝ] Plane) {h : ℝ} (hh :
     _ ≤ 1 + geometryCost B D * ChartScales.S n +
         geometryCost B D * (1 + geometryCost B D * ChartScales.S n) := by
       exact add_le_add (add_le_add_right hcoord _) (mul_le_mul hpoint (add_le_add_right hcoord _)
-        (by positivity) hK0)
+        (add_nonneg zero_le_one (norm_nonneg _)) hK0)
     _ ≤ bandArgumentCost B D * ChartScales.S n := by
       unfold bandArgumentCost
-      nlinarith [mul_nonneg hK0 (sub_nonneg.mpr hS)]
+      linarith only [mul_nonneg hK0 (sub_nonneg.mpr hS), hS]
 
 end BandGeometry
 
@@ -845,8 +845,11 @@ theorem memClass_affine_transport
           (CL ^ m * t.growth n x ^ (l * m)) := by
         have hv0 := hv n x hx
         have htε : 0 ≤ t.epsilon n ^ α := (Real.rpow_pos_of_pos (t.epsilon_pos n) α).le
-        gcongr
-        exact heps n
+        have hB0 : 0 ≤ A * (Ce * t.epsilon n ^ α) := mul_nonneg hA (mul_nonneg hCe htε)
+        exact mul_le_mul (mul_le_mul_of_nonneg_right (mul_le_mul
+          (mul_le_mul_of_nonneg_left (heps n) hA) hgpow (pow_nonneg hsource p) hB0) hv0) hpow
+          (pow_nonneg (norm_nonneg _) _) (mul_nonneg (mul_nonneg hB0
+            (mul_nonneg (pow_nonneg hCg0 p) (pow_nonneg htarget _))) hv0)
       _ = WeightedClasses.majorant t v α (A * Ce * Cg ^ p * CL ^ m)
           (r * p + l * m) n x := by
         unfold WeightedClasses.majorant

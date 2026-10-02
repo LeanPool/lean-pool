@@ -68,13 +68,8 @@ theorem fullPath_hasDerivWithinAt (t : Icc (0 : ℝ) T) :
       (fullOperatorMap (E := E) (F := F) P) (extendPath T hT A t) :=
     (fullOperatorMap (E := E) (F := F) P).hasFDerivAt
   have hd := hlinear.comp_hasDerivWithinAt (t : ℝ) hfield
-  change HasDerivWithinAt
-    (fun s => fullOperatorMap (E := E) (F := F) P (A (projIcc 0 T hT s)))
-    (fullOperatorMap (E := E) (F := F) P (A₁ t)) (Icc (0 : ℝ) T) t
-  change HasDerivWithinAt
-    (fun s => fullOperatorMap (E := E) (F := F) P (A (projIcc 0 T hT s)))
-    (fullOperatorMap (E := E) (F := F) P (A₁ (projIcc 0 T hT t))) (Icc (0 : ℝ) T) t at hd
-  rwa [projIcc_of_mem hT t.property] at hd
+  exact hd.congr_deriv (congrArg (fun s => fullOperatorMap (E := E) (F := F) P (A₁ s))
+    (projIcc_of_mem hT t.property))
 
 theorem fullProduct_hasDerivWithinAt
     (u u₁ : C(Icc (0 : ℝ) T, CylinderL2 P E))
@@ -87,18 +82,7 @@ theorem fullProduct_hasDerivWithinAt
         fullMultiplierMap (K := Icc (0 : ℝ) T) (E := E) (F := F) P A u₁ t)
       (Icc (0 : ℝ) T) t := by
   have hd := (fullPath_hasDerivWithinAt P T hT A A₁ hA t).clm_apply (hu t)
-  change HasDerivWithinAt
-    (fun s => fullOperatorMap (E := E) (F := F) P (A (projIcc 0 T hT s))
-      (u (projIcc 0 T hT s)))
-    (fullOperatorMap (E := E) (F := F) P (A₁ t) (u t) +
-      fullOperatorMap (E := E) (F := F) P (A t) (u₁ t))
-    (Icc (0 : ℝ) T) t
-  change HasDerivWithinAt
-    (fun s => fullOperatorMap (E := E) (F := F) P (A (projIcc 0 T hT s))
-      (u (projIcc 0 T hT s)))
-    (fullOperatorMap (E := E) (F := F) P (A₁ t) (u (projIcc 0 T hT t)) +
-      fullOperatorMap (E := E) (F := F) P (A (projIcc 0 T hT t)) (u₁ t))
-    (Icc (0 : ℝ) T) t at hd
-  rwa [projIcc_of_mem hT t.property] at hd
+  exact hd.congr_deriv (congrArg (fun s => fullOperatorMap (E := E) (F := F) P (A₁ t) (u s) +
+    fullOperatorMap (E := E) (F := F) P (A s) (u₁ t)) (projIcc_of_mem hT t.property))
 
 end EulerLpCylinderRectangular

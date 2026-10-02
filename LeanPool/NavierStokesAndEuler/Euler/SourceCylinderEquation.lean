@@ -119,6 +119,16 @@ theorem velocity_hasDerivWithinAt
     (coordinateDerivative period S hS T hT Q Q₁ c hc hQ f a₀)
     (coordinates_hasDerivWithinAt period S hS T hT Q Q₁ c hc hQ f a₀) t
 
+/-- The pointwise algebra of the projected source equation: the Gram operator undoes the
+Gram inverse in the generator and in the projected forcing. -/
+theorem gram_generator_forcing_apply (A A₁ : U →L[ℝ] E) (r : ℝ) (hr : 0 < r)
+    (hA : ∀ v, r * ‖v‖ ^ 2 ≤ ‖A v‖ ^ 2) (w : U) (y : E) :
+    gram A ((-2 : ℝ) • gramInverse A r hr hA
+        (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := U) (F := E) A (A₁ w)) +
+      gramInverse A r hr hA (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := U) (F := E) A y)) =
+      ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := U) (F := E) A (y - (2 : ℝ) • A₁ w) := by
+  simp only [map_smul, map_sub, gram_inverse_apply, neg_smul, neg_add_eq_sub]
+
 /-- The genuine L² representatives satisfy the projected source equation (12). -/
 theorem coordinate_equation_ae (t : Icc (0 : ℝ) T) :
     ∀ᵐ x ∂liftMeasure period,
@@ -137,20 +147,9 @@ theorem coordinate_equation_ae (t : Icc (0 : ℝ) T) :
       (fieldLift (W := E →L[ℝ] U) period P) (f t : CylinderL2 period E),
     Lp.coeFn_add (fullOperatorMap (E := U) (F := U) period B (u : CylinderL2 period U))
       (fullOperatorMap (E := E) (F := U) period P (f t : CylinderL2 period E))] with x hB hP hs
-  change gram (Q.field t x.1)
-      ((fullOperatorMap (E := U) (F := U) period B (u : CylinderL2 period U) +
-        fullOperatorMap (E := E) (F := U) period P (f t : CylinderL2 period E)) x) = _
-  rw [hs]
-  simp only [Pi.add_apply,fullOperatorMap_apply]
-  rw [hB,hP]
-  change gram (Q.field t x.1) ((-2 : ℝ) • gramInverse (Q.field t x.1) c hc (hQ t x.1)
-      (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := U) (F := E) (Q.field t x.1)
-        (Q₁.field t x.1 ((u : CylinderL2 period U) x))) +
-    gramInverse (Q.field t x.1) c hc (hQ t x.1)
-      (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := U) (F := E) (Q.field t x.1)
-        ((f t : CylinderL2 period E) x))) = _
-  rw [map_add,map_smul,gram_inverse_apply,gram_inverse_apply,map_sub,map_smul]
-  module
+  have key := gram_generator_forcing_apply (Q.field t x.1) (Q₁.field t x.1) c hc (hQ t x.1)
+    ((u : CylinderL2 period U) x) ((f t : CylinderL2 period E) x)
+  apply (congrArg (gram (Q.field t x.1)) (hs.trans (congrArg₂ (· + ·) hB hP))).trans key
 
 /-- The physical velocity's representative is exactly Q times the solved coordinate. -/
 theorem velocity_ae (t : Icc (0 : ℝ) T) :

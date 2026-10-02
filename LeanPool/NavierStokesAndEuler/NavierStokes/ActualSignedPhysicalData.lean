@@ -1488,10 +1488,11 @@ theorem normalized_slow_norm {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2) {p : Plane
         (Real.one_le_rpow (le_of_not_ge h1) (by positivity))
   have hprod : 0 ≤ p.2 ^ 2 * SimilarityCoordinates.coordinateQ (2 * h) p ^ (2 * h) :=
     mul_nonneg (sq_nonneg _) (Real.rpow_nonneg hq.le _)
-  have hT : |p.1| ≤ 2 := by rw [abs_of_pos ht]; linarith [he.2]
+  have hT : |p.1| ≤ 2 := by rw [abs_of_pos ht]; linarith only [he.2, hhi, hprod]
   have hZ : |p.2| ≤ 2 := by
-    have hs : p.2 ^ 2 ≤ 4 := by nlinarith [he.2, sq_nonneg p.2]
-    nlinarith [sq_abs p.2, abs_nonneg p.2]
+    have hm := mul_le_mul_of_nonneg_left hp (sq_nonneg p.2)
+    have hs : p.2 ^ 2 ≤ 2 ^ 2 := by linarith only [hm, he.2, hhi, ht]
+    exact abs_le_of_sq_le_sq hs zero_le_two
   simpa only [Prod.norm_def, Real.norm_eq_abs] using max_le hT hZ
 
 variable {a b : ℝ} {s : StripData Native}

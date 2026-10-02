@@ -237,8 +237,8 @@ theorem directional_product {U : Set P} (hU : IsOpen U)
   have h := congrArg (fun M : P →L[ℝ] Curve a b E => M v)
     (hlin.clm_apply hdu.hasFDerivAt).fderiv
   simp only [_root_.add_apply, ContinuousLinearMap.comp_apply,
-    ContinuousLinearMap.flip_apply, add_comm] at h
-  convert! h using 1; apply add_comm
+    ContinuousLinearMap.flip_apply] at h
+  exact h.trans (add_comm _ _)
 
 theorem jet_product {U : Set P} (hU : IsOpen U)
     {A : P → Coefficient a b E} {u : P → Curve a b E}
@@ -401,7 +401,7 @@ theorem jet_solution_eq_solution (hab : a ≤ b) {U : Set P} (hU : IsOpen U)
       integrator (E := E) hab (jetSource A f u l p) =
     jet u l p - integrator (E := E) hab (applyCoefficient (A p) (jet u l p))
   rw [(integrator (E := E) hab).map_add] at hj
-  exact (eq_sub_iff_add_eq.mpr (by simpa only [add_assoc, add_comm, add_left_comm] using hj.symm))
+  exact eq_sub_iff_add_eq.mpr ((add_right_comm _ _ _).trans ((add_assoc _ _ _).trans hj.symm))
 
 /-- The time derivative of each actual parameter jet is its triangular
 variational equation on the original closed interval. -/
@@ -558,7 +558,8 @@ theorem norm_jet_solution_le (hab : a ≤ b) {U : Set P} (hU : IsOpen U)
                 (mul_le_mul_of_nonneg_right hpow hM)
                 (mul_nonneg (mul_nonneg hB (pow_nonneg hQ0 _)) (hW z).le)) _
             _ = (F₀ + K * B₀ * Q ^ n) * W z := by dsimp [K]; ring
-        have hforce0 : 0 ≤ F₀ + K * B₀ * Q ^ n := by positivity
+        have hforce0 : 0 ≤ F₀ + K * B₀ * Q ^ n :=
+          add_nonneg hF (mul_nonneg (mul_nonneg hK hB) (pow_nonneg hQ0 n))
         have hh := norm_solution_le_envelope hab (A p) (jet x₀ k p) (jetSource A f u k p)
           rate W hμ hW hdW henergy hC hX hforce0 (hxj k (by omega) hku) hforce s
         have hBpow : B₀ ≤ B₀ * Q ^ n := by

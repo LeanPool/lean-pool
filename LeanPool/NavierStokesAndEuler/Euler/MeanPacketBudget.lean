@@ -621,7 +621,7 @@ theorem forcingOperator_bound {P : Type*} [NormedAddCommGroup P] [NormedSpace �
       (T*(T*CF₁+CF))*majorant Rc 0 n := by
   have hD := contDiff_fixedMeanDerivative T hT F F₁ hF hF₁
   have hJ := contDiff_fixedMeanPrimitive T hT F F₁ hF hF₁
-  have hD0 : 0 ≤ T*CF₁+CF := by positivity
+  have hD0 : 0 ≤ T*CF₁+CF := add_nonneg (mul_nonneg hT hCF₁) hCF
   have hJb (k : ℕ) (y : P) :
       ‖iteratedFDeriv ℝ k (fun z => fixedMeanPrimitive T hT (F z) (F₁ z)) y‖ ≤
         (T*(T*CF₁+CF))*majorant Rc 0 k := by
@@ -635,7 +635,7 @@ theorem forcingOperator_bound {P : Type*} [NormedAddCommGroup P] [NormedSpace �
       (F := TimeLp T L2) (fixedMeanPrimitive T hT (F y) (F₁ y)))
     Rc (T*(T*CF₁+CF)) 0
     (adjoint_bound (fun y => fixedMeanPrimitive T hT (F y) (F₁ y)) hJ
-      Rc (T*(T*CF₁+CF)) hRc (by positivity) 0 hJb) n x
+      Rc (T*(T*CF₁+CF)) hRc (mul_nonneg hT hD0) 0 hJb) n x
 
 variable {ι : Type*} [Fintype ι]
   (directions : ι → Space) (hd : ∀ i, ‖directions i‖ ≤ 1) (q : ℕ)
@@ -712,16 +712,15 @@ theorem solution_translation_block_gevrey
   have hO0 := operatorAmplitude_nonneg T CF CF₁ CH CM CA L hT hCH hCM hCA
   have hOA0 : 0 ≤ operatorBlockAmplitude ι q T Rc CF CF₁ CH CM CA L :=
     sobolevCoefficientAmplitude_nonneg q Rc _ hRc hO0
+  have hT0 : 0 ≤ T*(T*CF₁+CF) := mul_nonneg hT (add_nonneg (mul_nonneg hT hCF₁) hCF)
   have hJA0 : 0 ≤ sobolevCoefficientAmplitude ι q Rc (T*(T*CF₁+CF)) :=
-    sobolevCoefficientAmplitude_nonneg q Rc _ hRc (by positivity)
-  have hD0 : 0 ≤ forcingBlockAmplitude ι q T Rc CF CF₁ Cf := by
-    unfold forcingBlockAmplitude
-    positivity
+    sobolevCoefficientAmplitude_nonneg q Rc _ hRc hT0
+  have hD0 : 0 ≤ forcingBlockAmplitude ι q T Rc CF CF₁ Cf :=
+    mul_nonneg (mul_nonneg (by norm_num) hJA0) hCf
   have hr₀ : 0 ≤ sobolevCoefficientRadius ι Rc := sobolevCoefficientRadius_nonneg Rc hRc
   have hrR : sobolevCoefficientRadius ι Rc ≤ R := (radius_bounds hr₀ hM hR).2
   have hbO (k a) := coefficientBlock_of_tensor_bound directions hd q O hO Rc _ hRc hO0 hOb k a
-  have hbJ (k a) := coefficientBlock_of_tensor_bound directions hd q J hJ Rc _ hRc
-    (show 0 ≤ T*(T*CF₁+CF) by positivity) hJb k a
+  have hbJ (k a) := coefficientBlock_of_tensor_bound directions hd q J hJ Rc _ hRc hT0 hJb k a
   have hgb (k a) : block directions q g k a ≤ forcingBlockAmplitude ι q T Rc CF CF₁ Cf*majorant R d
       k :=
     block_clm_apply_gevrey directions q J (fun a => timeTranslation T a f) hJ hf

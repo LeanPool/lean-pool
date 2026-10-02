@@ -343,6 +343,16 @@ noncomputable def linearEquiv (P : Patch) (b : ℝ) (hb : GoodExponent b) : Coef
   (matrixEquiv P.leftHalf (axialPowers b) (axialPowers_injective b hb)).prodCongr
     (matrixEquiv P.rightHalf (angularPowers b) (angularPowers_injective b hb))
 
+theorem sum_mul_smul_right {ι : Type*} [Fintype ι] (s c d : ι → ℝ) (r : ℝ) :
+    ∑ j, s j * c j * (r * d j) = r * ∑ j, s j * c j * d j := by
+  rw [Finset.mul_sum]
+  exact Finset.sum_congr rfl fun j _ => mul_left_comm _ _ _
+
+theorem sum_mul_smul_left {ι : Type*} [Fintype ι] (s c d : ι → ℝ) (r : ℝ) :
+    ∑ j, s j * (r * c j) * d j = r * ∑ j, s j * c j * d j := by
+  rw [Finset.mul_sum]
+  exact Finset.sum_congr rfl fun j _ => by rw [mul_left_comm, mul_assoc, mul_assoc]
+
 /-- Quadratic bilin, bundling `toFun`, `map_add`, `map_smul`, `map_add` and the required
 compatibility proofs. -/
 noncomputable def quadraticBilin (P : Patch) : Coeff →ₗ[ℝ] Coeff →ₗ[ℝ] Coeff where
@@ -353,27 +363,24 @@ noncomputable def quadraticBilin (P : Patch) : Coeff →ₗ[ℝ] Coeff →ₗ[�
             ∑ i, squareMoment P.leftHalf 0 i * c.1 i * d.1 i,
           (1 / 2) * ∑ j, squareMoment P.rightHalf (-1) j * c.2 j * d.2 j])
       map_add' := fun d f => by
-        apply Prod.ext
-        · ext i; simp
-        · ext i; fin_cases i <;> simp [Pi.add_apply, Fin.sum_univ_two, Fin.sum_univ_three] <;> ring
+        refine Prod.ext (add_zero (0 : Fin 2 → ℝ)).symm ?_
+        simp only [Prod.snd_add, Prod.fst_add, Pi.add_apply, Matrix.cons_add_cons,
+          Matrix.empty_add_empty, add_zero, mul_add, Finset.sum_add_distrib, add_sub_add_comm]
       map_smul' := fun r d => by
-        apply Prod.ext
-        · ext i; simp
-        · ext i; fin_cases i <;> simp [Pi.smul_apply, smul_eq_mul, Fin.sum_univ_two,
-            Fin.sum_univ_three] <;> ring }
+        refine Prod.ext (smul_zero r).symm ?_
+        simp only [Prod.smul_fst, Prod.smul_snd, Pi.smul_apply, smul_eq_mul, RingHom.id_apply,
+          Matrix.smul_cons, Matrix.smul_empty, mul_zero, sum_mul_smul_right, mul_sub,
+          mul_left_comm r (1 / 2 : ℝ)] }
   map_add' c d := by
-    apply LinearMap.ext
-    intro f
-    apply Prod.ext
-    · ext i; simp
-    · ext i; fin_cases i <;> simp [Pi.add_apply, Fin.sum_univ_two, Fin.sum_univ_three] <;> ring
+    refine LinearMap.ext fun f => Prod.ext (add_zero (0 : Fin 2 → ℝ)).symm ?_
+    simp only [LinearMap.add_apply, LinearMap.coe_mk, AddHom.coe_mk, Prod.snd_add, Prod.fst_add,
+      Pi.add_apply, Matrix.cons_add_cons, Matrix.empty_add_empty, add_zero, mul_add, add_mul,
+      Finset.sum_add_distrib, add_sub_add_comm]
   map_smul' r c := by
-    apply LinearMap.ext
-    intro f
-    apply Prod.ext
-    · ext i; simp
-    · ext i; fin_cases i <;> simp [Pi.smul_apply, smul_eq_mul, Fin.sum_univ_two,
-        Fin.sum_univ_three] <;> ring
+    refine LinearMap.ext fun f => Prod.ext (smul_zero r).symm ?_
+    simp only [LinearMap.smul_apply, LinearMap.coe_mk, AddHom.coe_mk, RingHom.id_apply,
+      Prod.smul_fst, Prod.smul_snd, Pi.smul_apply, smul_eq_mul, Matrix.smul_cons, Matrix.smul_empty,
+      mul_zero, sum_mul_smul_left, mul_sub, mul_left_comm r (1 / 2 : ℝ)]
 
 /-- Quadratic continuous linear map, constructed using `LinearMap.toContinuousLinearMap`. -/
 noncomputable def quadraticCLM (P : Patch) : Coeff →L[ℝ] Coeff →L[ℝ] Coeff :=
@@ -402,19 +409,25 @@ theorem linearEquiv_apply (P : Patch) (b : ℝ) (hb : GoodExponent b) (c : Coeff
     rw [matrixEquiv_apply]
     fin_cases i <;> simp [angularPowers, e]
 
+theorem quadraticCLM_apply (P : Patch) (c d : Coeff) :
+    quadraticCLM P c d = (0, ![0,
+      (1 / 2) * ∑ j, squareMoment P.rightHalf 0 j * c.2 j * d.2 j -
+        ∑ i, squareMoment P.leftHalf 0 i * c.1 i * d.1 i,
+      (1 / 2) * ∑ j, squareMoment P.rightHalf (-1) j * c.2 j * d.2 j]) := rfl
+
+theorem sum_mul_self_eq {ι : Type*} [Fintype ι] (s c : ι → ℝ) :
+    ∑ j, s j * c j * c j = ∑ j, c j ^ 2 * s j :=
+  Finset.sum_congr rfl fun j _ => by ring
+
 theorem normalizedMap_identity (P : Patch) (b : ℝ) (hb : GoodExponent b) (c : Coeff) :
     linearEquiv P b hb c + quadraticCLM P c c = normalizedMap P b c := by
   have hUS := correction_square_moment P.leftHalf 0 c.1
   have hES := correction_square_moment P.rightHalf 0 c.2
   have hEP := correction_square_moment P.rightHalf (-1) c.2
   simp only [Real.rpow_zero, one_mul] at hUS hES
-  rw [linearEquiv_apply]
-  apply Prod.ext
-  · ext i
-    fin_cases i <;> simp [quadraticCLM, quadraticBilin, normalizedMap]
-  · ext i
-    fin_cases i <;> simp [quadraticCLM, quadraticBilin, normalizedMap,
-      u, e, hUS, hES, hEP, Fin.sum_univ_two, Fin.sum_univ_three] <;> ring
+  rw [linearEquiv_apply, quadraticCLM_apply, normalizedMap]
+  simp only [u, e, hUS, hES, hEP, Prod.mk_add_mk, Matrix.cons_add_cons, Matrix.empty_add_empty,
+    add_zero, sum_mul_self_eq, add_sub_assoc]
 
 theorem spatial_jet_bound (P : Patch) (k : ℕ) :
     ∃ C : ℝ, 0 < C ∧ ∀ (c : Coeff) (x : ℝ),
@@ -468,14 +481,14 @@ theorem exists_normalized_repair (P : Patch) (b : ℝ) (hb : GoodExponent b) :
   let β : ℝ := ‖B.symm.toContinuousLinearMap‖ + 1
   let K : ℝ := ‖A‖ + 1
   let r : ℝ := 1 / (4 * β * K)
-  have hβ : 0 < β := by dsimp [β]; positivity
-  have hK : 0 < K := by dsimp [K]; positivity
-  have hr : 0 < r := by dsimp [r]; positivity
+  have hβ : 0 < β := add_pos_of_nonneg_of_pos (norm_nonneg _) one_pos
+  have hK : 0 < K := add_pos_of_nonneg_of_pos (norm_nonneg _) one_pos
+  have hr : 0 < r := one_div_pos.mpr (mul_pos (mul_pos four_pos hβ) hK)
   have hinv : ∀ v, ‖B.symm v‖ ≤ β * ‖v‖ := by
     intro v
     exact (B.symm.toContinuousLinearMap.le_opNorm v).trans
-      (mul_le_mul_of_nonneg_right (by dsimp [β]; linarith) (norm_nonneg v))
-  have hA : ‖A‖ ≤ K := by dsimp [K]; linarith
+      (mul_le_mul_of_nonneg_right (le_add_of_nonneg_right zero_le_one) (norm_nonneg v))
+  have hA : ‖A‖ ≤ K := le_add_of_nonneg_right zero_le_one
   have hsmall : 4 * β * K * r ≤ 1 := by dsimp [r]; field_simp ; rfl
   obtain ⟨g, hg, hgeq, hglip⟩ := UniformAngularReset.exists_smooth_solver_on_ball
     B A β K r hβ hK.le hr hinv hA hsmall
@@ -483,14 +496,16 @@ theorem exists_normalized_repair (P : Patch) (b : ℝ) (hb : GoodExponent b) :
   obtain ⟨m, hm, hmin⟩ := power_lower_bound P.rightHalf b
   let C : ℝ := (1 + D) * (2 * β)
   let ε : ℝ := min (r / (4 * β)) (m / (2 * C))
-  have hC : 0 < C := mul_pos (by linarith) (by positivity)
-  have hε : 0 < ε := lt_min (div_pos hr (by positivity)) (div_pos hm (by positivity))
+  have h2β : 0 < 2 * β := mul_pos two_pos hβ
+  have h4β : 0 < 4 * β := mul_pos four_pos hβ
+  have hC : 0 < C := mul_pos (by linarith only [hD]) h2β
+  have hε : 0 < ε := lt_min (div_pos hr h4β) (div_pos hm (mul_pos two_pos hC))
   have hsub : Metric.ball (0 : Coeff) ε ⊆ Metric.ball 0 (r / (4 * β)) :=
     Metric.ball_subset_ball (min_le_left _ _)
-  have hC₀ : 2 * β ≤ C := by dsimp [C]; nlinarith
-  have hC₁ : D * (2 * β) ≤ C := by dsimp [C]; linarith
+  have hC₀ : 2 * β ≤ C := le_mul_of_one_le_left h2β.le (le_add_of_nonneg_right hD.le)
+  have hC₁ : D * (2 * β) ≤ C := by dsimp [C]; linarith only [h2β]
   have hzero : g 0 = 0 := by
-    have hz := (hgeq 0 (Metric.mem_ball_self (div_pos hr (by positivity)))).2
+    have hz := (hgeq 0 (Metric.mem_ball_self (div_pos hr h4β))).2
     simpa only [norm_zero, mul_zero, norm_le_zero_iff] using hz
   refine ⟨g, ε, C, hε, hC, hg.mono hsub, hzero, ?_⟩
   intro d hd
@@ -503,7 +518,7 @@ theorem exists_normalized_repair (P : Patch) (b : ℝ) (hb : GoodExponent b) :
   rw [normalizedMap_identity] at heq
   refine ⟨heq, hnorm.trans (mul_le_mul_of_nonneg_right hC₀ (norm_nonneg d)), ?_, ?_⟩
   · apply le_trans _ hC₀
-    apply norm_fderiv_le_of_lip' ℝ (by positivity : 0 ≤ 2 * β)
+    apply norm_fderiv_le_of_lip' ℝ h2β.le
     filter_upwards [Metric.isOpen_ball.mem_nhds (hsub hd)] with f hf
     exact hglip f hf d (hsub hd)
   · intro x hx
@@ -517,7 +532,7 @@ theorem exists_normalized_repair (P : Patch) (b : ℝ) (hb : GoodExponent b) :
       have hcancel : C * (m / (2 * C)) = m / 2 := by field_simp
       rwa [hcancel] at ht
     have hlow := neg_abs_le (e P (g d) x)
-    linarith
+    linarith only [hm, hbase, hval, hsize, hlow]
 
 /-- Physical U, given by `G + A * u P c x`. -/
 noncomputable def physicalU (P : Patch) (A G : ℝ) (c : Coeff) (x : ℝ) : ℝ := G + A * u P c x
@@ -1110,7 +1125,9 @@ theorem physical_mixed_jets_small (P : Patch) {g : Coeff → Coeff} {r C : ℝ}
   obtain ⟨D, hD, hparam⟩ := smooth_solver_parameter_jets hr hC hg hvalue N
   let L : ℝ →L[ℝ] Coeff →L[ℝ] Coeff := ContinuousLinearMap.lsmul ℝ ℝ
   let K : ℝ := J * (‖L‖ + 1) * (2 : ℝ) ^ N * D
-  have hK : 0 < K := by dsimp [K]; positivity
+  have hK : 0 < K :=
+    mul_pos (mul_pos (mul_pos hJ (add_pos_of_nonneg_of_pos (norm_nonneg L) one_pos))
+      (pow_pos two_pos N)) hD
   refine ⟨K, hK, ?_⟩
   intro V hV f A hf hA B tau hB htau hmax hAb hfb eta heta k hk m hm x
   have hmap : MapsTo f V (Metric.ball (0 : Coeff) r) := by
@@ -1122,7 +1139,7 @@ theorem physical_mixed_jets_small (P : Patch) {g : Coeff → Coeff} {r C : ℝ}
     have hpow : tau ^ (N + 1) ≤ tau := by
       simpa only [pow_one] using pow_le_pow_of_le_one htau.le ht1 (show 1 ≤ N + 1 by omega)
     simpa only [Metric.mem_ball, dist_zero_right] using
-      (hz.trans hpow).trans_lt (lt_of_le_of_lt htr (by linarith : r / 2 < r))
+      (hz.trans hpow).trans_lt (lt_of_le_of_lt htr (half_lt_self hr))
   let c : ℝ → Coeff := g ∘ f
   have hc : ContDiffOn ℝ ∞ c V := hg.comp hf.contDiffOn hmap
   have hcb : JetBounds.FiniteJetBound N c V (D * tau) := by
@@ -1135,8 +1152,11 @@ theorem physical_mixed_jets_small (P : Patch) {g : Coeff → Coeff} {r C : ℝ}
       (hA.of_le (by exact_mod_cast (le_top : (N : ℕ∞) ≤ ⊤)))
       (hc.of_le (by exact_mod_cast (le_top : (N : ℕ∞) ≤ ⊤))) hAb hcb
   have hcost : J * (‖L‖ * (2 : ℝ) ^ N * B * (D * tau)) ≤ K * B * tau := by
-    dsimp [K]
-    linarith [show 0 ≤ J * (2 : ℝ) ^ N * B * D * tau by positivity]
+    have h0 : 0 ≤ J * (2 : ℝ) ^ N * B * D * tau :=
+      mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg hJ.le (pow_nonneg zero_le_two N)) hB) hD.le)
+        htau.le
+    dsimp only [K]
+    linarith only [h0]
   have huFun : (fun p => iteratedDeriv k (fun y => A p * u P (g (f p)) y) x) =
       fun p => iteratedDeriv k (u P (v p)) x := by
     funext p

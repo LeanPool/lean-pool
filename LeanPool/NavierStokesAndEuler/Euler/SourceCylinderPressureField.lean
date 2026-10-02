@@ -85,15 +85,12 @@ theorem unweighted_solution_contDiff
     exact one_smul ℝ (f t)
   have he : (constructedEvolution period S hS T hT B).weightedSolution g hg f a₀ =
       (constructedEvolution period S hS T hT B).solution f a₀ := by
-    change normalize (K := Icc (0 : ℝ) T) (E := Supported period V S hS) g hg
-      ((constructedEvolution period S hS T hT B).solution
-        (weight (K := Icc (0 : ℝ) T) (E := Supported period V S hS) g f) a₀) = _
-    rw [hw]
+    refine (congrArg (fun w => normalize (K := Icc (0 : ℝ) T) (E := Supported period V S hS) g hg
+      ((constructedEvolution period S hS T hT B).solution w a₀)) hw).trans ?_
     apply ContinuousMap.ext
     intro t
-    change (1 : ℝ)⁻¹ • ((constructedEvolution period S hS T hT B).solution f a₀ t) =
-      (constructedEvolution period S hS T hT B).solution f a₀ t
-    rw [inv_one,one_smul]
+    exact (congrArg (· • (constructedEvolution period S hS T hT B).solution f a₀ t)
+      (show (1 : ℝ)⁻¹ = 1 from inv_one)).trans (one_smul ℝ _)
   have h := source_solution_contDiff period T hT univ MeasurableSet.univ B hB
     S hS hSc isOpen_univ (subset_univ S) g hg f a₀ hf ha₀
   rwa [he] at h
@@ -597,9 +594,9 @@ theorem pressureSource_average_zero
     (normalFunctional m cm hcm hm t)
     ((f t : CylinderL2 P Space) - (2 : ℝ) • fullOperatorMap (E := Space) (F := Space) P (M.field t)
       (velocity P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P Space))) = 0
-  rw [average_fullOperator, map_sub, map_smul, average_fullOperator,
-    velocity_average_zero P S hS T hT Q Q₁ c hc hQ f a₀ hf₀ ha₀ t,
-    hf₀ t, map_zero, smul_zero, sub_self, map_zero]
+  simp only [average_fullOperator, ContinuousLinearMap.map_sub, ContinuousLinearMap.map_smul,
+    velocity_average_zero P S hS T hT Q Q₁ c hc hQ f a₀ hf₀ ha₀ t, hf₀ t,
+    ContinuousLinearMap.map_zero, smul_zero, sub_self]
 
 theorem pressureSource_slice_contDiff (hSc : IsCompact S)
     (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Space) P a

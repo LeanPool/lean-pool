@@ -2223,7 +2223,9 @@ theorem active_of_mem_tsupport
     Real.sq_sqrt (mul_nonneg (by norm_num) (LeadingStressWeights.activeRight_pos nominal).le)
   change (SlowBorelBase.cartesianChart h w).2.1 ∈
     Icc (NominalConeAssembly.activeLeft nominal) (NominalConeAssembly.activeRight nominal)
-  constructor <;> nlinarith
+  constructor
+  · linarith only [hlower, hsq, hasq]
+  · linarith only [hupper, hsq, hbsq]
 
 theorem not_mem_tsupport_of_exterior
     (D : CoherentFamily h degree N Δ standardRegion.carrier ℝ)

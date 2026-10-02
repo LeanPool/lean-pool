@@ -237,18 +237,13 @@ theorem fourier_pderivTest (ψ : ComplexTest) (d ξ : Space) :
       (LineDeriv.lineDerivOpCLM ℂ ComplexTest d ψ)) ξ =
       (2 * Real.pi * Complex.I) * (⟪ξ, d⟫ : ℂ) *
         (EulerSobolev.schwartzFourier ψ) ξ := by
-  change (FourierTransform.fourierCLE ℂ ComplexTest
-      (LineDeriv.lineDerivOpCLM ℂ ComplexTest d ψ)) ξ =
-      (2 * Real.pi * Complex.I) * (⟪ξ, d⟫ : ℂ) *
-        (FourierTransform.fourierCLE ℂ ComplexTest ψ) ξ
   have hD : Integrable (fderiv ℝ (fun y => ψ y)) :=
     (SchwartzMap.fderivCLM ℂ Space ℂ ψ).integrable
   change 𝓕 (fun x => fderiv ℝ (fun y => ψ y) x d) ξ = _
-  rw [← Real.fourier_continuousLinearMap_apply hD,
+  rw [EulerSobolev.schwartzFourier_apply, ← Real.fourier_continuousLinearMap_apply hD,
     Real.fourier_fderiv ψ.integrable ψ.differentiable hD]
   simp only [VectorFourier.fourierSMulRight_apply, _root_.neg_apply, Complex.real_smul,
-      smul_eq_mul, Complex.ofReal_neg,
-    FourierTransform.fourierCLE_apply, SchwartzMap.fourier_coe]
+      smul_eq_mul, Complex.ofReal_neg]
   erw [innerSL_apply_apply]
   ring
 
@@ -453,46 +448,25 @@ mixed derivative. The multiplier identity is valid also at frequency zero. -/
 theorem rieszTest_laplacianCLM (i j : Fin 3) (ψ : ComplexTest) (x : Space) :
     rieszTest i j (laplacianCLM ψ) x =
       -(partialCLM i (partialCLM j ψ)) x := by
-  have hpartial (i : Fin 3) (ψ : ComplexTest) (ξ : Space) :
-      FourierTransform.fourierCLE ℂ ComplexTest (partialCLM i ψ) ξ =
-        (2 * (Real.pi : ℂ) * Complex.I * (ξ i : ℂ)) *
-          FourierTransform.fourierCLE ℂ ComplexTest ψ ξ := fourier_partialCLM_apply i ψ ξ
-  have hlap (ψ : ComplexTest) (ξ : Space) :
-      FourierTransform.fourierCLE ℂ ComplexTest (laplacianCLM ψ) ξ =
-        (-(4 * (Real.pi : ℂ) ^ 2) * ((‖ξ‖ ^ 2 : ℝ) : ℂ)) *
-          FourierTransform.fourierCLE ℂ ComplexTest ψ ξ := fourier_laplacianCLM_apply ψ ξ
+  let e := FourierTransform.fourierCLE ℂ ComplexTest
   have hmult (ξ : Space) :
-      (rieszSymbol i j ξ : ℂ) *
-          (FourierTransform.fourierCLE ℂ ComplexTest (laplacianCLM ψ)) ξ =
-        (FourierTransform.fourierCLE ℂ ComplexTest (-(partialCLM i (partialCLM j ψ)))) ξ := by
-    rw [map_neg]
-    change (rieszSymbol i j ξ : ℂ) *
-        (FourierTransform.fourierCLE ℂ ComplexTest (laplacianCLM ψ)) ξ =
-      -((FourierTransform.fourierCLE ℂ ComplexTest (partialCLM i (partialCLM j ψ))) ξ)
-    rw [hlap, hpartial, hpartial]
+      (rieszSymbol i j ξ : ℂ) * EulerSobolev.schwartzFourier (laplacianCLM ψ) ξ =
+        EulerSobolev.schwartzFourier (-(partialCLM i (partialCLM j ψ))) ξ := by
+    have hneg : EulerSobolev.schwartzFourier (-(partialCLM i (partialCLM j ψ))) ξ =
+        -EulerSobolev.schwartzFourier (partialCLM i (partialCLM j ψ)) ξ :=
+      congrArg (fun φ : ComplexTest => φ ξ) (e.map_neg (partialCLM i (partialCLM j ψ)))
     have hsymbol : (rieszSymbol i j ξ : ℂ) * ((‖ξ‖ ^ 2 : ℝ) : ℂ) =
         -((ξ i : ℂ) * (ξ j : ℂ)) := by
       exact_mod_cast rieszSymbol_mul_norm_sq i j ξ
-    calc
-      _ = -(4 * (Real.pi : ℂ) ^ 2) *
-          ((rieszSymbol i j ξ : ℂ) * ((‖ξ‖ ^ 2 : ℝ) : ℂ)) *
-            (FourierTransform.fourierCLE ℂ ComplexTest ψ) ξ := by ring
-      _ = _ := by
-        rw [hsymbol]
-        ring_nf
-        simp [Complex.I_sq]
-  have hfun : (fun ξ : Space => (rieszSymbol i j ξ : ℂ) *
-      (FourierTransform.fourierCLE ℂ ComplexTest (laplacianCLM ψ)) ξ) =
-      (FourierTransform.fourierCLE ℂ ComplexTest (-(partialCLM i (partialCLM j ψ))) :
-        Space → ℂ) := funext hmult
+    rw [hneg, fourier_laplacianCLM_apply, fourier_partialCLM_apply, fourier_partialCLM_apply]
+    linear_combination (-(4 * (Real.pi : ℂ) ^ 2) * EulerSobolev.schwartzFourier ψ ξ) * hsymbol +
+      (4 * (Real.pi : ℂ) ^ 2 * (ξ i : ℂ) * (ξ j : ℂ) * EulerSobolev.schwartzFourier ψ ξ) *
+        Complex.I_sq
   unfold rieszTest
-  rw [show EulerSobolev.schwartzFourier (V := Space) (E := ℂ) =
-      (FourierTransform.fourierCLE ℂ ComplexTest : ComplexTest → ComplexTest) from rfl]
-  rw [hfun]
+  simp only [hmult]
   have hinv := congrArg (fun φ : ComplexTest => φ x)
-    ((FourierTransform.fourierCLE ℂ ComplexTest).symm_apply_apply
-      (-(partialCLM i (partialCLM j ψ))))
-  simpa only [FourierTransform.fourierCLE_symm_apply, SchwartzMap.fourierInv_coe] using! hinv
+    (e.symm_apply_apply (-(partialCLM i (partialCLM j ψ))))
+  simpa only [e, FourierTransform.fourierCLE_symm_apply, SchwartzMap.fourierInv_coe] using! hinv
 
 /-- The canonical pressure functional solves the test-function Poisson equation. -/
 theorem pressurePair_laplacianCLM (i j : Fin 3) (g : Space → ℝ) (ψ : ComplexTest) :

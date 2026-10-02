@@ -112,9 +112,9 @@ theorem sobolevNorm_two_le_pure_derivatives (d : ℕ) (f : 𝓢(Domain d, F)) :
         exact inv_mul_cancel₀ (by positivity)
       simp_rw [← mul_assoc, hp, one_mul]
       rw [add_mul, one_mul, Finset.sum_mul]
-    rw [hg]
-    nlinarith [mul_le_mul_of_nonneg_right (le_of_eq (show besselWeight d 2 ξ = 1 + ∑ i, ‖ξ i‖ ^ 2 by
-        norm_num [besselWeight, EuclideanSpace.norm_sq_eq])) (norm_nonneg (schwartzFourier f ξ))]
+    have hb : besselWeight d 2 ξ = 1 + ∑ i, ‖ξ i‖ ^ 2 := by
+      rw [besselWeight, div_self two_ne_zero, Real.rpow_one, EuclideanSpace.norm_sq_eq]
+    rw [hg, hb, one_mul]
   have h := normLp_le_sum d (weightedFourier d 2 f) g 1
     (by norm_num) hpoint
   have hnorm : ∑ i, ‖(g i).toLp 2 volume‖ = ‖f.toLp 2 volume‖ +

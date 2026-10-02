@@ -1680,7 +1680,10 @@ theorem compactPrimitive_q_finiteJets_global {coord a b c e d cL cR L : ℝ}
       (powerChart_contDiff hc d) m
   let Q := ((min 1 d) ^ p)⁻¹
   have hQ : 0 ≤ Q := (inv_pos.mpr (pow_pos (lt_min zero_lt_one hd) p)).le
-  refine ⟨KP * KT * (1 + B) * KN * Q, by positivity, ?_⟩
+  have hKB : 0 ≤ KT * (1 + B) := mul_nonneg hKT (add_nonneg zero_le_one hB)
+  refine ⟨KP * KT * (1 + B) * KN * Q,
+    mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg hKP hKT) (add_nonneg zero_le_one hB)) hKN) hQ,
+    ?_⟩
   intro M v f hf hs hsg A hA z hz hR hin j hj
   have hrleft : c < z.1 := (hleft _ hz).trans_lt (by linarith [(lt_div_iff₀ (hl _ hz)).mp hR.1])
   have hrright : z.1 < e := (show z.1 < qLength coord z.2.1 * b by
@@ -1719,7 +1722,7 @@ theorem compactPrimitive_q_finiteJets_global {coord a b c e d cL cR L : ℝ}
       (fun k hk => hbB k hk zU ⟨hz, hzU⟩) i hi
   have hn : 0 ≤ KT * (1 + B) * (KN * A) *
       logWeight (d ^ 2 * cL) (d ^ 2 * cR) (a ^ d) (b ^ d) p (zU.1 / qLength coord z.2.1 ^ d) :=
-    mul_nonneg (by positivity) (weight_pos _ _ p (logPosition_mem haU hR_U)).le
+    mul_nonneg (mul_nonneg hKB (mul_nonneg hKN hA)) (weight_pos _ _ p (logPosition_mem haU hR_U)).le
   have hp := hbP U.carrier U.isOpen _ hgp z hz ⟨hrleft.le, hrright.le⟩ _ hn hbound j hj
   have he := compactPrimitive_transportGauge_germ (M := M) hc ha hab hd (qLength coord) v U.isOpen
     hell hl hleft hf.contDiffOn hsg z hz hR
@@ -1735,7 +1738,7 @@ theorem compactPrimitive_q_finiteJets_global {coord a b c e d cL cR L : ℝ}
             ring
     _ ≤ (KP * (KT * (1 + B) * (KN * A))) *
         (Q * logWeight cL cR a b p (z.1 / qLength coord z.2.1)) :=
-      mul_le_mul_of_nonneg_left hw (by positivity)
+      mul_le_mul_of_nonneg_left hw (mul_nonneg hKP (mul_nonneg hKB (mul_nonneg hKN hA)))
     _ = _ := by ring
 
 end QWeighted

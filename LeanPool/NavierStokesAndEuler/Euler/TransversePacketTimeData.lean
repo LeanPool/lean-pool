@@ -199,7 +199,8 @@ theorem potentialCoefficient_translation_bound (Rc C Ri : ℝ) (hRc : 0 ≤ Rc) 
   rw [he]
   have h := (potentialPathMap (K := K)).norm_iteratedFDeriv_comp_left
     ((normalFunctional_translation_contDiff m c hc hm).contDiffAt (x := a)) (n := n) (by simp)
-  exact h.trans ((mul_le_mul_of_nonneg_right (potentialPathMap_norm (K := K)) (norm_nonneg _)).trans
+  exact h.trans ((mul_le_mul_of_nonneg_right (potentialPathMap_norm (K := K))
+    (ContinuousMultilinearMap.opNorm_nonneg _)).trans
     (by
         simpa only [one_mul] using normalFunctional_translation_bound m c hc hm Rc C Ri hRc hC hRi
             hbm n a))
@@ -413,6 +414,14 @@ theorem timeNormalPath_contDiff : ContDiff ℝ ∞ (fun a => timeNormalPath (N a
       (N x) (Q₁ x)) N hNQ hN
   exact hA.sub (hB.const_smul (2 : ℝ))
 
+theorem const_smul_majorant_bound {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (f : X → E) (hf : ContDiff ℝ ∞ f) (c R A : ℝ) (hc : 0 ≤ c) (d : ℕ)
+    (hb : ∀ n x, ‖iteratedFDeriv ℝ n f x‖ ≤ A * majorant R d n) (n : ℕ) (x : X) :
+    ‖iteratedFDeriv ℝ n (fun y => c • f y) x‖ ≤ (c * A) * majorant R d n := by
+  rw [iteratedFDeriv_const_smul_apply' (hf.contDiffAt.of_le (by simp)), norm_smul,
+    Real.norm_of_nonneg hc, mul_assoc]
+  exact mul_le_mul_of_nonneg_left (hb n x) hc
+
 include hN hQ₁ in
 theorem timeNormalPath_bound (R C D : ℝ) (hR : 0 ≤ R) (hC : 0 ≤ C) (hD : 0 ≤ D)
     (hbN : ∀ n a, ‖iteratedFDeriv ℝ n N a‖ ≤ C * majorant R 0 n)
@@ -447,14 +456,8 @@ theorem timeNormalPath_bound (R C D : ℝ) (hR : 0 ≤ R) (hC : 0 ≤ C) (hD : 0
     pathComposition_bound _ _ hNN hQa R (3*C*C) D hR (by positivity) hD 0 0 hbNN hbQa
   have hbB : ∀ j x, ‖iteratedFDeriv ℝ j B x‖ ≤ (3*(3*C*D)*C)*majorant R 0 j :=
     pathComposition_bound _ _ hNQ hN R (3*C*D) C hR (by positivity) hC 0 0 hbNQ hbN
-  have hb₂B (j : ℕ) (x : X) :
-      ‖iteratedFDeriv ℝ j (fun y => (2 : ℝ) • B y) x‖ ≤
-        (2*(3*(3*C*D)*C))*majorant R 0 j := by
-    rw [iteratedFDeriv_const_smul_apply' (a := (2 : ℝ))
-      (hB.contDiffAt.of_le (by simp)), norm_smul]
-    norm_num only [Real.norm_ofNat]
-    exact (mul_le_mul_of_nonneg_left (hbB j x) (by norm_num : (0 : ℝ) ≤ 2)).trans_eq (by ring)
-  have h := sub_bound A (fun y => (2 : ℝ) • B y) hA (hB.const_smul (2 : ℝ))
+  have hb₂B := const_smul_majorant_bound B hB 2 R (3*(3*C*D)*C) zero_le_two 0 hbB
+  have h := sub_bound A _ hA (hB.const_smul (2 : ℝ))
     R (3*(3*C*C)*D) (2*(3*(3*C*D)*C)) 0 hbA hb₂B n a
   exact h.trans_eq (by ring)
 

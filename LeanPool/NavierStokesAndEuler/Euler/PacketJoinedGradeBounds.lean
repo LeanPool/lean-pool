@@ -162,7 +162,6 @@ theorem future_velocity_bound (n : ℕ) :
     simpa only [one_mul] using (L.forward_forcing_bound G directions d hforce j).trans
       (majorant_mono_shift L.R L.radius_bounds.1 d (d+2) j (by omega))
   dsimp only [futureVelocity]
-  rw [show d+3=d+2+1 by omega]
   exact
     (G.tail τ hτ.le hτT).source_velocity_normalized_bound (forwardInitial τ hτ hτT B G)
       L.g L.positive directions hdir q L.neighborhood L.neighborhood_measurable L.neighborhood_open
@@ -187,7 +186,6 @@ theorem future_derivative_bound (n : ℕ) :
     simpa only [one_mul] using (L.forward_forcing_bound G directions d hforce j).trans
       (majorant_mono_shift L.R L.radius_bounds.1 d (d+2) j (by omega))
   dsimp only [futureDerivative]
-  rw [show d+3=d+2+1 by omega]
   exact
     (G.tail τ hτ.le hτT).source_derivative_normalized_bound (forwardInitial τ hτ hτT B G)
       L.g L.positive directions hdir q L.neighborhood L.neighborhood_measurable L.neighborhood_open
@@ -345,7 +343,7 @@ theorem correctorTimePath_normalized_bound (n : ℕ) :
     have hn := mul_nonneg
       (show 0 ≤ sobolevCoefficientAmplitude (Fin 4) q Rc C*(P*A) by positivity)
       (majorant_nonneg R hRn d j)
-    nlinarith
+    linarith only [hn]
   have h := EulerCylinderSlowCurl.normalized_derivative_block_bound P D.T g hg
     D.FInv.field D.inverseDerivative (potentialPath τ hτ hτT B G) (potentialTimePath τ hτ hτT B G)
     (potentialPath_orbit τ hτ hτT B G) (potentialTimePath_orbit τ hτ hτT B G)
@@ -419,13 +417,12 @@ theorem amplitude_bound
     rw [ht] at hf
     have hfull : HistoryData.forcingPath G = 0 := by
       have he := congrArg (weight (E := CylinderL2 P Space) g) hf
-      rw [weight_normalize,map_zero] at he
-      exact he
+      exact (weight_normalize g hg _).symm.trans (he.trans (map_zero _))
     have hp : G.path = 0 := by
       have he := congrArg (projectPath (K := Icc (0 : ℝ) D.T) (V := Space) P D.support
         D.support_measurable) hfull
-      rw [project_include,map_zero] at he
-      exact he
+      exact (project_include P D.support D.support_measurable _).symm.trans
+        (he.trans (map_zero _))
     have hS : S G = 0 := by
       have he := hm G G 0 (hp.trans (zero_smul ℝ G.path).symm)
       simpa only [zero_smul] using he

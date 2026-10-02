@@ -418,9 +418,10 @@ theorem copied_uniformLocalJets {E : Type*} [NormedAddCommGroup E] [NormedSpace 
           _ ≤ (copyCost * nativeStrip.slow n) ^ m :=
             (pow_le_pow_left₀ (norm_nonneg _) (copyLinear_bound hn) j).trans (pow_le_pow_right₀ hB
                 hj)
-          _ ≤ (copyCost * nativeStrip.growth n x) ^ m := by
-            gcongr
-            exact nativeStrip.slow_le_growth n x
+          _ ≤ (copyCost * nativeStrip.growth n x) ^ m :=
+            pow_le_pow_left₀ (mul_nonneg (zero_le_one.trans hcost) (zero_le_one.trans hS))
+              (mul_le_mul_of_nonneg_left (nativeStrip.slow_le_growth n x)
+                (zero_le_one.trans hcost)) m
           _ = _ := mul_pow _ _ _
       have hu : ‖iteratedFDeriv ℝ j (fun y => f l (copyPoint l n k y)) x‖ ≤
           ‖iteratedFDeriv ℝ j (f l) (copyPoint l n k x)‖ * ‖copyLinear l n‖ ^ j := by
@@ -477,7 +478,11 @@ theorem copied_uniformLocalJets {E : Type*} [NormedAddCommGroup E] [NormedSpace 
           ring
         _ ≤ (C * 25 ^ p * copyCost ^ m) * nativeStrip.growth n x ^ (p + m) *
             (A * nativeStrip.epsilon n ^ α) *
-            (Real.sqrt (nativeStrip.zeta x) * envelope l n x) := by gcongr
+            (Real.sqrt (nativeStrip.zeta x) * envelope l n x) :=
+          mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hscale
+            (mul_nonneg (mul_nonneg (mul_nonneg (zero_le_one.trans hC)
+              (pow_nonneg (by norm_num) p)) (pow_nonneg (zero_le_one.trans hcost) m))
+              (pow_nonneg (zero_le_one.trans hG) (p + m)))) hW
         _ = majorant nativeStrip (fun n x => Real.sqrt (nativeStrip.zeta x) * envelope l n x) α
             (C * 25 ^ p * copyCost ^ m * A) (p + m) n x := by unfold majorant; ring
     · rw [show copied a f l n k = fun _ => 0 from funext (fun _ => ite_eq_right hn),

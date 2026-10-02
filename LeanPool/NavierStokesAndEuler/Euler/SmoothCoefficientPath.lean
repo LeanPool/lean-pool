@@ -165,9 +165,7 @@ private theorem translation_contDiff_nat_aux (n : ℕ) :
     rw [Nat.cast_add, Nat.cast_one, contDiff_succ_iff_fderiv]
     refine ⟨fun a => (A.translation_hasFDerivAt a).differentiableAt, by simp, ?_⟩
     rw [A.translation_fderiv]
-    exact (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := (n : ℕ∞ω))
-      (E := C(K, Space →ᵇ (Space →L[ℝ] V))) (F := Space →L[ℝ] C(K, Space →ᵇ V))
-      (pathDerivativeBundling (K := K) (V := V))).comp
+    exact (pathDerivativeBundling (K := K) (V := V)).contDiff.comp
       (ih (Space →L[ℝ] V) A.derivative)
 
 /-- Smoothness in the spatial translation parameter holds in the uniform time-path topology. -/

@@ -383,9 +383,9 @@ theorem referenceSlope_bounds {lam u s : ℝ} (hlam : 0 < lam) (hu : 0 < u)
     (hs : s ∈ Icc (u / 2) (3 * u / 2)) :
     -referenceMaxSlope lam u ≤ referenceSlope lam u s ∧
       referenceSlope lam u s ≤ -referenceMinSlope lam u := by
-  have hspos : 0 < s := by linarith [hs.1]
+  have hspos : 0 < s := (half_pos hu).trans_le hs.1
   have hn : 0 ≤ lam * s := le_of_lt (mul_pos hlam hspos)
-  have hS : 1 ≤ 1 + s ^ 2 := by linarith [sq_nonneg s]
+  have hS : 1 ≤ 1 + s ^ 2 := le_add_of_nonneg_right (sq_nonneg s)
   have hroot : 1 ≤ Real.sqrt (1 + s ^ 2) := Real.one_le_sqrt.2 hS
   have hden : 1 ≤ (1 + s ^ 2) * Real.sqrt (1 + s ^ 2) := by
     calc
@@ -394,21 +394,24 @@ theorem referenceSlope_bounds {lam u s : ℝ} (hlam : 0 < lam) (hu : 0 < u)
         mul_le_mul hS hroot (by norm_num) (le_of_lt (PulseGrowth.one_add_sq_pos s))
   have hfirst : lam * s / ((1 + s ^ 2) * Real.sqrt (1 + s ^ 2)) ≤ lam * s := by
     apply (div_le_iff₀ (PulseGrowth.dampingDenominator_pos s)).2
-    linarith [mul_le_mul_of_nonneg_left hden hn]
+    exact (mul_one _).symm.trans_le (mul_le_mul_of_nonneg_left hden hn)
   have hfirst0 : 0 ≤ lam * s / ((1 + s ^ 2) * Real.sqrt (1 + s ^ 2)) :=
     div_nonneg hn (le_of_lt (PulseGrowth.dampingDenominator_pos s))
-  have hfirstUpper : lam * s ≤ 3 * lam * u / 2 := by nlinarith [hs.2]
+  have hfirstUpper : lam * s ≤ 3 * lam * u / 2 :=
+    (mul_le_mul_of_nonneg_left hs.2 hlam.le).trans_eq (by ring)
   have hsecondUpper : 2 * lam * s / ((1 + u ^ 2) * Real.sqrt (1 + u ^ 2)) ≤
       3 * lam * u / ((1 + u ^ 2) * Real.sqrt (1 + u ^ 2)) := by
     apply (div_le_div_iff_of_pos_right (PulseGrowth.dampingDenominator_pos u)).2
-    linarith [hs.2]
+    linarith only [hfirstUpper]
   have hsecondLower : lam * u / ((1 + u ^ 2) * Real.sqrt (1 + u ^ 2)) ≤
       2 * lam * s / ((1 + u ^ 2) * Real.sqrt (1 + u ^ 2)) := by
     apply (div_le_div_iff_of_pos_right (PulseGrowth.dampingDenominator_pos u)).2
-    nlinarith [hs.1]
+    exact (by ring : lam * u = 2 * lam * (u / 2)).trans_le
+      (mul_le_mul_of_nonneg_left hs.1 (mul_pos two_pos hlam).le)
   unfold referenceSlope referenceMaxSlope referenceMinSlope
   rw [neg_mul, neg_div]
-  constructor <;> linarith
+  exact ⟨by linarith only [hfirst, hfirstUpper, hsecondUpper],
+    by linarith only [hfirst0, hsecondLower]⟩
 
 /-- The reference rate expressed in slot time. -/
 noncomputable def referenceRate (lam u ell time : ℝ) : ℝ :=

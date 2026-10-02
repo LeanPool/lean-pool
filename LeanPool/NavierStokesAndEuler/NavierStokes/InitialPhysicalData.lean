@@ -2047,7 +2047,7 @@ theorem cut_pair_physicalX (l : SignedLabel B N0) (L : PhysicalWaveSum.BandLabel
   have hlo := mul_pos (sub_pos.mpr hd.1.1) (add_pos hrad ha)
   have hhi := mul_pos (sub_pos.mpr hd.1.2) (add_pos hb hrad)
   rw [he]
-  constructor <;> nlinarith
+  exact ⟨by linarith only [hlo, hla], by linarith only [hhi, hlb]⟩
 
 theorem potential_amplitude_zero_exterior (B N0 : ℕ) (i : Fin 3) (k : Frequency)
     (I : PhysicalWaveSum.WaveIndex 1) {w : ProblemStatement.SpaceTime}

@@ -118,8 +118,8 @@ theorem sobolevNorm_three_le_pure_derivatives (d : ℕ) (f : 𝓢(Domain d, ℂ)
       simp_rw [← mul_assoc, hp, one_mul]
       rw [add_mul, one_mul, Finset.sum_mul]
     rw [hg]
-    nlinarith [mul_le_mul_of_nonneg_right (besselWeight_three_le_pure_three d ξ)
-      (norm_nonneg (schwartzFourier f ξ))]
+    exact (mul_le_mul_of_nonneg_right (besselWeight_three_le_pure_three d ξ)
+      (norm_nonneg (schwartzFourier f ξ))).trans_eq (mul_assoc _ _ _)
   have h := normLp_le_sum d (weightedFourier d 3 f) g (((d : ℝ) + 1) ^ 2)
     (sq_nonneg _) hpoint
   have hnorm : ∑ i, ‖(g i).toLp 2 volume‖ = ‖f.toLp 2 volume‖ +

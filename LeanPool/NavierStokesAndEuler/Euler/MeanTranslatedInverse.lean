@@ -121,7 +121,10 @@ theorem solution_translation_contDiff (f : TimeLp T L2) {n : ℕ∞ω}
     ContDiff ℝ n (fun a : Space => timeSolenoidalTranslation T a
       (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hcoercive
         (-(adjoint (𝕜 := ℝ) (F := TimeLp T L2) (fixedMeanPrimitive T hT F F₁) f)))) := by
-  have hAdj := (realAdjoint (U := TimeLp T solenoidalSpace) (E := TimeLp T L2)).contDiff.comp hJ
+  have hAdj := (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := n)
+    (E := TimeLp T solenoidalSpace →L[ℝ] TimeLp T L2)
+    (F := TimeLp T L2 →L[ℝ] TimeLp T solenoidalSpace)
+    (realAdjoint (U := TimeLp T solenoidalSpace) (E := TimeLp T L2))).comp hJ
   have hsol := contDiff_coerciveSolution_variable
     (fun a : Space => translatedMeanOperator T hT a F F₁ H M0 A L) (fun _ => c) (fun _ => hc)
     (fun a => translatedMeanOperator_coercive T hT a F F₁ H M0 A L c hcoercive) _ hO
