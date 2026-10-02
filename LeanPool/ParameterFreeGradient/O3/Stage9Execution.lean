@@ -85,20 +85,24 @@ noncomputable def ogmgExecutionStep (cfg : OGMGExecutionConfig d) (i : ℕ)
 
 /-- Primitive-recursive actual execution, beginning from
 `u_0=U, v_(-1)=U`. -/
-noncomputable def ogmgState (cfg : OGMGExecutionConfig d) : ℕ → OGMGExecutionState d
+@[expose] noncomputable def ogmgState
+    (cfg : OGMGExecutionConfig d) : ℕ → OGMGExecutionState d
   | 0 => ⟨cfg.U, cfg.U⟩
   | i + 1 => ogmgExecutionStep cfg i (ogmgState cfg i)
 
 /-- The actual observation at `u_i`. -/
-noncomputable def ogmgObservation (cfg : OGMGExecutionConfig d) (i : ℕ) : Observation d :=
+@[expose] noncomputable def ogmgObservation
+    (cfg : OGMGExecutionConfig d) (i : ℕ) : Observation d :=
   cfg.oracle.observe (ogmgState cfg i).current
 
 /-- The actual queried gradient `g_i`. -/
-noncomputable def ogmgGradient (cfg : OGMGExecutionConfig d) (i : ℕ) : Vec d :=
+@[expose] noncomputable def ogmgGradient
+    (cfg : OGMGExecutionConfig d) (i : ℕ) : Vec d :=
   (ogmgObservation cfg i).gradient
 
 /-- The literal gradient point `v_i=u_i-g_i/M`. -/
-noncomputable def ogmgV (cfg : OGMGExecutionConfig d) (i : ℕ) : Vec d :=
+@[expose] noncomputable def ogmgV
+    (cfg : OGMGExecutionConfig d) (i : ℕ) : Vec d :=
   (ogmgState cfg i).current - cfg.M⁻¹ • ogmgGradient cfg i
 
 @[simp] theorem ogmgState_zero_current (cfg : OGMGExecutionConfig d) :
@@ -317,7 +321,7 @@ noncomputable def ogmgPairTerm (cfg : OGMGExecutionConfig d)
   simp [ogmgPairTerm, pairing]
 
 /-- The observable ordered interpolation check for `(i,j)`. -/
-noncomputable def ogmgInterpolationCheck (cfg : OGMGExecutionConfig d)
+@[expose] noncomputable def ogmgInterpolationCheck (cfg : OGMGExecutionConfig d)
     (i j : Fin (cfg.horizon + 1)) : GuardCheck :=
   let oi := ogmgDataObservation cfg i
   let oj := ogmgDataObservation cfg j
@@ -343,7 +347,7 @@ noncomputable def ogmgAllInterpolationChecks
     (ogmgInterpolationCheck cfg i j).kind = .interpolation := rfl
 
 /-- All ordered-pair finite-data interpolation guards pass. -/
-def OGMGAllInterpolationGuardsHold (cfg : OGMGExecutionConfig d) : Prop :=
+@[expose] def OGMGAllInterpolationGuardsHold (cfg : OGMGExecutionConfig d) : Prop :=
   allGuardsPass (ogmgAllInterpolationChecks cfg)
 
 theorem ogmgAllInterpolationGuardsHold_iff

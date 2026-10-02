@@ -41,7 +41,7 @@ namespace V7
       (2 : ℕ) / (2 * M)
 
 /-- The observed Euclidean Bregman gap dominates the squared gradient difference. -/
-noncomputable def EuclideanInterpolationGuard (M : ℝ) (oracle : PairOracle d)
+@[expose] noncomputable def EuclideanInterpolationGuard (M : ℝ) (oracle : PairOracle d)
     (xi xj : Point d) : Prop :=
   oracle.value xi - oracle.value xj - pairing (oracle.gradient xj) (xi - xj) -
     (lpNorm 2 (oracle.gradient xi - oracle.gradient xj)) ^ (2 : ℕ) / (2 * M) ≥ 0

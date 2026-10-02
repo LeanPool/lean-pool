@@ -84,7 +84,7 @@ lemma dualityMap_zero {p : ℝ} (hp : 0 < p) {d : ℕ} : dualityMap p (0 : Point
   simp [dualityMap, lpNorm_zero hp]
 
 /-- The scalar energy written directly in terms of the finite power sum. -/
-noncomputable def squaredLpEnergy (p : ℝ) {d : ℕ} (x : Point d) : ℝ :=
+@[expose] noncomputable def squaredLpEnergy (p : ℝ) {d : ℕ} (x : Point d) : ℝ :=
   (1 / 2 : ℝ) * (lpPower p x) ^ (2 / p)
 
 lemma squaredLpEnergy_eq_quadraticRegularizer {p : ℝ} (_hp : 0 < p)

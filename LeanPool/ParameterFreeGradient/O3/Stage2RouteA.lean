@@ -204,7 +204,7 @@ lemma hasDerivAt_scalarJ_above_two {q u : ℝ} (hq : 2 < q) :
   ∑ i : Fin d, |(x + t • h) i| ^ (p - 2) * (h i) ^ (2 : ℕ)
 
 /-- The unnormalised duality pairing along a line. -/
-noncomputable def linePowerPair (p : ℝ) {d : ℕ}
+@[expose] noncomputable def linePowerPair (p : ℝ) {d : ℕ}
     (x h : Point d) (t : ℝ) : ℝ :=
   pairing (powerDualityMap p (x + t • h)) h
 

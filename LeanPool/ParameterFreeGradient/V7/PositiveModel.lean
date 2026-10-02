@@ -24,7 +24,7 @@ public section
 namespace V7
 
 /-- The oracle's gradient is the coordinate gradient of its value function. -/
-def IsCoordinateGradient (oracle : PairOracle d) : Prop :=
+@[expose] def IsCoordinateGradient (oracle : PairOracle d) : Prop :=
   O3.IsCoordinateGradient oracle.value oracle.gradient
 
 /-- The set of global minimizers of the oracle's value function. -/
@@ -37,7 +37,7 @@ noncomputable def minimizerDistance (p : ℝ) (oracle : PairOracle d)
   O3.minimizerDistance p oracle.value x0
 
 /-- The oracle gradient is `L`-Lipschitz from the primal norm to its dual norm. -/
-def IsLpSmooth (p L : ℝ) (oracle : PairOracle d) : Prop :=
+@[expose] def IsLpSmooth (p L : ℝ) (oracle : PairOracle d) : Prop :=
   O3.IsLpSmooth p (conjugateExponent p) L oracle.gradient
 
 /-- Proof-side objective certificate.  It is never an algorithm input. -/

@@ -69,7 +69,7 @@ geometry. -/
   2 * (conjugateExponent p) ^ (1 + aboveBudgetExponent p) /
     aboveGrowthConstant p
 /-- The weight scale chosen from the error budget and iteration horizon. -/
-noncomputable def aboveGamma (p eta : ℝ) (n : ℕ) : ℝ :=
+@[expose] noncomputable def aboveGamma (p eta : ℝ) (n : ℕ) : ℝ :=
   (eta / (2 * aboveBudgetConstant p * n)) ^ (aboveBudgetExponent p)
 
 /-- The accumulated above-two residual error for a weight sequence and its increments. -/

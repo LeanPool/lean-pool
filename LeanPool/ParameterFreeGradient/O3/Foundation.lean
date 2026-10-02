@@ -126,7 +126,7 @@ norm used by Mathlib for differentiability is immaterial in finite dimension. -/
   ∀ x y, lpNorm q (grad x - grad y) ≤ L * lpNorm p (x - y)
 
 /-- Exact nondegenerate secant initialization and its observable scale. -/
-def SecantWitness {d : ℕ} (p q M0 : ℝ) (grad : Vec d → Vec d)
+@[expose] def SecantWitness {d : ℕ} (p q M0 : ℝ) (grad : Vec d → Vec d)
     (x0 z0 : Vec d) : Prop :=
   z0 ≠ x0 ∧ grad z0 ≠ grad x0 ∧
     M0 = lpNorm q (grad z0 - grad x0) / lpNorm p (z0 - x0) ∧ 0 < M0

@@ -21,7 +21,7 @@ public section
 namespace O3
 
 /-- The exact `ell_p → ell_q` Lipschitz-gradient hypothesis. -/
-def LipschitzGradient {d : ℕ} (p q L : ℝ) (grad : Point d → Point d) : Prop :=
+@[expose] def LipschitzGradient {d : ℕ} (p q L : ℝ) (grad : Point d → Point d) : Prop :=
   ∀ x y, lpNorm q (grad x - grad y) ≤ L * lpNorm p (x - y)
 
 /-- The supplied nondegenerate secant scale. -/
@@ -53,7 +53,7 @@ Euclidean norm silently replaces the frozen `ell_p` geometry. -/
   ∀ x y, f x + pairing (grad x) (y - x) ≤ f y
 
 /-- The observable anchor test at distance `D`. -/
-def AnchorTest {d : ℕ} (f : Point d → ℝ) (x₀ : Point d) (G D : ℝ)
+@[expose] def AnchorTest {d : ℕ} (f : Point d → ℝ) (x₀ : Point d) (G D : ℝ)
     (y : Point d) : Prop :=
   f y ≤ f x₀ - G * D / 2
 
@@ -99,7 +99,7 @@ noncomputable def anchorScale (M₀ : ℝ) (epoch : ℕ) : ℝ :=
   (2 : ℝ) ^ epoch * M₀
 
 /-- Exact radius tested at one dyadic scale. -/
-noncomputable def anchorRadius (G M₀ : ℝ) (epoch : ℕ) : ℝ :=
+@[expose] noncomputable def anchorRadius (G M₀ : ℝ) (epoch : ℕ) : ℝ :=
   G / anchorScale M₀ epoch
 
 /-- Exact gradient-ray point queried at one dyadic scale. -/
@@ -176,7 +176,7 @@ theorem exists_anchor_scale_ge {M₀ L : ℝ} (hM₀ : 0 < M₀) :
   exact hepoch.le
 
 /-- First dyadic scale which dominates `L`; this is proof-side, not method input. -/
-noncomputable def anchorScaleCap (M₀ L : ℝ) (hM₀ : 0 < M₀) : ℕ :=
+@[expose] noncomputable def anchorScaleCap (M₀ L : ℝ) (hM₀ : 0 < M₀) : ℕ :=
   Nat.find (exists_anchor_scale_ge (L := L) hM₀)
 
 theorem anchorScaleCap_dominates {M₀ L : ℝ} (hM₀ : 0 < M₀) :

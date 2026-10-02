@@ -87,7 +87,7 @@ def gradientGuard (gradDiff stepNorm M : ℝ) : GuardCheck :=
 Margin for the ordered Euclidean finite-data interpolation guard
 `f_i-f_j-pairing-(2M)^{-1} gradDiffSq ≥ 0`.
 -/
-noncomputable def interpolationGuard
+@[expose] noncomputable def interpolationGuard
     (fi fj pairing gradDiffSq M : ℝ) : GuardCheck :=
   { kind := .interpolation
     margin := fi - fj - pairing - gradDiffSq / (2 * M) }
@@ -108,7 +108,7 @@ theorem interpolationGuard_holds_iff (fi fj pairing gradDiffSq M : ℝ) :
   rfl
 
 /-- Every guard recorded in the list has a nonnegative margin. -/
-def allGuardsPass (guards : List GuardCheck) : Prop :=
+@[expose] def allGuardsPass (guards : List GuardCheck) : Prop :=
   ∀ check ∈ guards, check.Holds
 
 /-- The list contains a failed guard of the specified kind. -/
