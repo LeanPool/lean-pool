@@ -69,7 +69,7 @@ structure Hom
 
 /-- Super-objects form a category with componentwise identities
 and composition. -/
-@[expose] instance instCategory [Category.{v} A] : Category (Doubled A) where
+instance instCategory [Category.{v} A] : Category (Doubled A) where
   Hom := Hom
   id X := ⟨𝟙 X.even, 𝟙 X.odd⟩
   comp f g := ⟨f.even ≫ g.even, f.odd ≫ g.odd⟩
@@ -148,22 +148,22 @@ def isoMk [Category.{v} A]
 section Preadditive
 
 /-- The componentwise zero morphism. -/
-@[expose] instance homZero [Category.{v} A] [Preadditive A]
+instance homZero [Category.{v} A] [Preadditive A]
     (X Y : Doubled A) : Zero (X ⟶ Y) :=
   ⟨homMk 0 0⟩
 
 /-- Componentwise addition of morphisms. -/
-@[expose] instance homAdd [Category.{v} A] [Preadditive A]
+instance homAdd [Category.{v} A] [Preadditive A]
     (X Y : Doubled A) : Add (X ⟶ Y) :=
   ⟨fun f g => homMk (evenHom f + evenHom g) (oddHom f + oddHom g)⟩
 
 /-- Componentwise negation of morphisms. -/
-@[expose] instance homNeg [Category.{v} A] [Preadditive A]
+instance homNeg [Category.{v} A] [Preadditive A]
     (X Y : Doubled A) : Neg (X ⟶ Y) :=
   ⟨fun f => homMk (-evenHom f) (-oddHom f)⟩
 
 /-- The componentwise additive group of morphisms. -/
-@[expose] instance homAddCommGroup [Category.{v} A] [Preadditive A]
+instance homAddCommGroup [Category.{v} A] [Preadditive A]
     (X Y : Doubled A) : AddCommGroup (X ⟶ Y) where
   nsmul := nsmulRec
   zsmul := zsmulRec
@@ -257,7 +257,7 @@ end Preadditive
 section Linear
 
 /-- The componentwise ℂ-module of morphisms. -/
-@[expose] instance homModule [Category.{v} A] [Preadditive A] [CategoryTheory.Linear ℂ A]
+instance homModule [Category.{v} A] [Preadditive A] [CategoryTheory.Linear ℂ A]
     (X Y : Doubled A) : Module ℂ (X ⟶ Y) where
   smul c f := homMk (c • evenHom f) (c • oddHom f)
   one_smul _ := Hom.ext (one_smul _ _) (one_smul _ _)
@@ -743,7 +743,6 @@ def rightUnitorCompOdd [Category.{v} A] [MonoidalCategory A] [Preadditive A]
 
 /-- The monoidal skeleton of the doubling: graded tensor product,
 unit `(𝟙_ A, 0)`, blockwise structural isomorphisms. -/
-@[expose]
 instance instMonoidalCategoryStruct
     [Category.{v} A] [MonoidalCategory A] [Preadditive A]
     [MonoidalPreadditive A] [HasBinaryBiproducts A] [HasZeroObject A] :
@@ -1285,7 +1284,6 @@ theorem isZero_biprod [Category.{v} A] [Preadditive A] [HasBinaryBiproducts A]
       biprod.hom_ext _ _ (hM.eq_of_tgt _ _) (hN.eq_of_tgt _ _)⟩⟩
 
 /-- The even embedding `X ↦ (X, 0)`. -/
-@[expose]
 abbrev evenEmbed
     [Category.{v} A] [Preadditive A] [HasZeroObject A] : A ⥤ Doubled A where
   obj X := ⟨X, 0⟩
