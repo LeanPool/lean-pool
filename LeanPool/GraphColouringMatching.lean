@@ -11,7 +11,7 @@ public import LeanPool.GraphColouringMatching.Finite
 /-!
 # Line-graph colourings and matching decompositions
 
-Source: url:https://github.com/leanprover-community/mathlib4/blob/c55e6e786f49471c72fbddbec5415808896aec1e/Mathlib/Combinatorics/SimpleGraph/LineGraph.lean
+Source: url:https://github.com/jtraverso/lean-pool/tree/981b303a47a7cd3d8a8ce08c49cfe970330d21a0/LeanPool/GraphColouringMatching
 Authors: Juan Pablo Traverso Gianini
 Status: verified
 Main declarations: `SimpleGraph.lineGraphColoringEquivMatchingDecomposition`
