@@ -27,7 +27,7 @@ noncomputable def betheEntropyContribution
 for the transfer identity; exponentiating the row and column potentials gives
 the positive scalings in the paper. -/
 def HasLogKKT
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (τ : ℝ) (A X : Matrix ι ι ℝ) (r c : ι → ℝ) : Prop :=
   ∀ i j, Real.log (A i j) = r i + c j +
     (1 + τ) * Real.log (X i j) + Real.log (1 - X i j)

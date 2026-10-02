@@ -24,7 +24,7 @@ open MvPolynomial
 
 /-- Multiplicative form of the KKT equations (paper (35)). -/
 def HasMultiplicativeKKT
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (τ : ℝ) (A X : Matrix ι ι ℝ) (r c : ι → ℝ) : Prop :=
   ∀ i j, A i j = r i * c j * (X i j) ^ (1 + τ) * (1 - X i j)
 

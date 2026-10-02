@@ -34,7 +34,7 @@ noncomputable def nearbyKKTMatrix
 
 /-- Coordinatewise approximate logarithmic KKT equations. -/
 def HasApproximateLogKKT
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (ε τ : ℝ) (A X : Matrix ι ι ℝ) (r c : ι → ℝ) : Prop :=
   ∀ i j, abs (Real.log (A i j) -
     (r i + c j + (1 + τ) * Real.log (X i j) +
@@ -67,7 +67,7 @@ theorem log_nearbyKKTMatrix
     Real.log_exp, Real.log_rpow hx]
 
 theorem nearbyKKTMatrix_hasLogKKT
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     {τ : ℝ} {X : Matrix ι ι ℝ} {r c : ι → ℝ}
     (hXpos : ∀ i j, 0 < X i j)
     (hXlt : ∀ i j, X i j < 1) :
@@ -76,7 +76,7 @@ theorem nearbyKKTMatrix_hasLogKKT
   exact log_nearbyKKTMatrix hXpos hXlt i j
 
 theorem approximateLogKKT_nearby_log_bounds
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     {ε τ : ℝ} {A X : Matrix ι ι ℝ} {r c : ι → ℝ}
     (happrox : HasApproximateLogKKT ε τ A X r c)
     (hXpos : ∀ i j, 0 < X i j)
@@ -90,7 +90,7 @@ theorem approximateLogKKT_nearby_log_bounds
   constructor <;> linarith
 
 theorem approximateLogKKT_entrywise_comparison
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     {ε τ : ℝ} {A X : Matrix ι ι ℝ} {r c : ι → ℝ}
     (hApos : Matrix.Positive A)
     (happrox : HasApproximateLogKKT ε τ A X r c)
