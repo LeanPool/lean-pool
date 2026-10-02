@@ -324,7 +324,8 @@ theorem cubeBesovCircPartialNorm_projection_eq {d : ℕ}
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     cubeBesovCircPartialNorm Q 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) (N + 1) (cubeProjection Q (N + 1) u) =
       cubeBesovCircPartialNorm Q 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) (N + 1) u := by
-  simp [cubeBesovCircPartialNorm, cubeBesovCircPartialSeminorm]
+  simp only [cubeBesovCircPartialNorm, cubeBesovCircPartialSeminorm,
+    ENNReal.toReal_one, div_one, Real.rpow_one]
   refine Finset.sum_congr rfl ?_
   intro j hj
   have hj_le : j ≤ N + 1 := Nat.lt_succ_iff.mp (Finset.mem_range.mp hj)
