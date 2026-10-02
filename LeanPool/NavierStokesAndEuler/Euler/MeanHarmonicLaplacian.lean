@@ -15,6 +15,7 @@ public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 import LeanPool.NavierStokesAndEuler.Euler.MeanHarmonicEnergy
 import LeanPool.NavierStokesAndEuler.Euler.MeanSolenoidalSpace
 import Mathlib.Algebra.Order.Star.Real
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2NormedShortcuts
 
 /-! Canonical Laplacian and the quantitative local harmonic energy bound. -/
 

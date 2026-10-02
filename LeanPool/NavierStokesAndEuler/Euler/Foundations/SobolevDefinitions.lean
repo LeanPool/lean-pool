@@ -10,6 +10,8 @@ public import LeanPool.NavierStokesAndEuler.Euler.Foundations.SchwartzDerivative
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 import Mathlib.Analysis.SpecialFunctions.JapaneseBracket
+public import LeanPool.NavierStokesAndEuler.ForMathlib.EuclideanMeasureShortcuts
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2HilbertShortcuts
 
 /-!
 # Sobolev weights and directional derivatives

@@ -13,6 +13,7 @@ import LeanPool.NavierStokesAndEuler.Euler.OperatorGevreyCalculus
 import LeanPool.NavierStokesAndEuler.Euler.TimeLpCoefficientGevrey
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Calculus.ContDiff.Comp
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2HilbertShortcuts
 
 /-!
 # The actual Gram inverse on Bochner L²

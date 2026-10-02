@@ -8,6 +8,7 @@ module
 
 public import LeanPool.NavierStokesAndEuler.Euler.VolterraConvolution
 import Mathlib.Algebra.Order.Star.Real
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2NormedShortcuts
 
 /-! Actual Bochner L² time spaces and continuous-path embeddings used by maximal regularity. -/
 

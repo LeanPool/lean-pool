@@ -8,6 +8,7 @@ module
 
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
+public import LeanPool.NavierStokesAndEuler.ForMathlib.EuclideanSpaceShortcuts
 
 /-!
 # The candidate forced Navier–Stokes construction
@@ -42,6 +43,11 @@ abbrev Space := EuclideanSpace ℝ (Fin 3)
 
 /-- The first coordinate is time; the second is the lifted spatial coordinate. -/
 abbrev SpaceTime := ℝ × Space
+
+real_normed_space_shortcut_instances SpaceTime : SpaceTime
+
+/-- Shortcut for the finite dimensionality of space-time. -/
+instance SpaceTime.instFiniteDimensional : FiniteDimensional ℝ SpaceTime := inferInstance
 
 /-- Velocity field: an abbreviation for `SpaceTime → Space`. -/
 abbrev VelocityField := SpaceTime → Space

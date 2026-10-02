@@ -9,6 +9,7 @@ module
 public import LeanPool.NavierStokesAndEuler.Euler.TerminalTimePrimitive
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.MeasureTheory.Function.L2Space
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2HilbertShortcuts
 
 /-!
 # Spatial bounded maps on genuine Bochner time spaces

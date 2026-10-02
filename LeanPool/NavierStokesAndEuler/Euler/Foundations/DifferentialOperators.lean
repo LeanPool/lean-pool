@@ -8,6 +8,7 @@ module
 
 public import Mathlib.LinearAlgebra.Trace
 public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import LeanPool.NavierStokesAndEuler.ForMathlib.EuclideanSpaceShortcuts
 public import Mathlib.Analysis.Calculus.FDeriv.Basic
 
 /-! Coordinate trace and divergence on the physical three-dimensional Euclidean space. -/

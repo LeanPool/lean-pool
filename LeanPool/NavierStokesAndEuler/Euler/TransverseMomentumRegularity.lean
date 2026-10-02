@@ -10,6 +10,7 @@ public import LeanPool.NavierStokesAndEuler.Euler.TransverseVariationalInverse
 public import LeanPool.NavierStokesAndEuler.Euler.TimeH1OperatorProduct
 import LeanPool.NavierStokesAndEuler.Euler.TimeWeakDerivative
 import LeanPool.NavierStokesAndEuler.Euler.TransverseGramInverse
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2HilbertShortcuts
 
 /-!
 # Actual momentum regularity of the transverse variational inverse

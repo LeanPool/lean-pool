@@ -13,6 +13,7 @@ public import LeanPool.NavierStokesAndEuler.Euler.Foundations.VectorCalculus
 public import Mathlib.Analysis.Calculus.Gradient.Basic
 import Mathlib.MeasureTheory.Function.L2Space
 import Mathlib.MeasureTheory.Function.LpSeminorm.LpNorm
+import LeanPool.NavierStokesAndEuler.ForMathlib.L2HilbertShortcuts
 
 /-! A genuine ordinary-space cutoff-curl dual estimate. All spatial norms and
 integrals in this file use Lebesgue measure on Euclidean three-space. -/

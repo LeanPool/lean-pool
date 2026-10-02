@@ -9,6 +9,7 @@ module
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+public import LeanPool.NavierStokesAndEuler.ForMathlib.EuclideanSpaceShortcuts
 
 /-!
 # The actual slot phase and its material defect

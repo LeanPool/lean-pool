@@ -9,6 +9,7 @@ module
 public import Mathlib.MeasureTheory.Function.L2Space
 public import LeanPool.NavierStokesAndEuler.Euler.ClassicalBridge
 import Mathlib.MeasureTheory.Function.ContinuousMapDense
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2HilbertShortcuts
 
 /-!
 # Weak time continuity in `L²`

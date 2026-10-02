@@ -10,6 +10,7 @@ public import LeanPool.NavierStokesAndEuler.Euler.TerminalTimePrimitive
 public import Mathlib.MeasureTheory.Function.L2Space
 import Mathlib.Analysis.InnerProductSpace.Calculus
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.AbsolutelyContinuousFun
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2HilbertShortcuts
 
 /-!
 # Recovering actual time derivatives from the zero-endpoint weak identity

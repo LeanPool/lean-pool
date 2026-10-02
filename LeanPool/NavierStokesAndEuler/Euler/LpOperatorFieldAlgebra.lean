@@ -9,6 +9,7 @@ module
 public import LeanPool.NavierStokesAndEuler.Euler.BoundedFieldCalculus
 public import LeanPool.NavierStokesAndEuler.Euler.LpOperatorField
 import Mathlib.Algebra.Order.Star.Real
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2HilbertShortcuts
 
 /-!
 # Algebra and coercivity of actual full-space L² multipliers

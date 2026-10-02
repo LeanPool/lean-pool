@@ -9,6 +9,7 @@ module
 public import LeanPool.NavierStokesAndEuler.Euler.TimeLp
 public import Mathlib.MeasureTheory.Function.L2Space
 import LeanPool.NavierStokesAndEuler.Euler.TimeLpPairing
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2HilbertShortcuts
 
 /-! Strong Bochner energy passage on every genuine subinterval of the original time interval. -/
 

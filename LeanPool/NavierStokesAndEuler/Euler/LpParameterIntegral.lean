@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import LeanPool.NavierStokesAndEuler.Euler.LpBochnerRealization
 import Mathlib.MeasureTheory.Function.L2Space
 import Mathlib.MeasureTheory.Integral.Prod
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2NormedShortcuts
+import LeanPool.NavierStokesAndEuler.ForMathlib.L2HilbertShortcuts
 
 /-! Actual integration of uniformly L²-bounded parameter families.
 The result is proved directly on raw jointly measurable representatives,

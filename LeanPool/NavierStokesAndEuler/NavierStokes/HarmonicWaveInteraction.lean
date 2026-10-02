@@ -7,6 +7,7 @@ module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.HarmonicResidual
 public import LeanPool.NavierStokesAndEuler.NavierStokes.WaveInteractionBounds
+public import LeanPool.NavierStokesAndEuler.ForMathlib.EuclideanMeasureShortcuts
 
 /-!
 # Actual harmonic wave-update interactions

@@ -14,6 +14,7 @@ import LeanPool.NavierStokesAndEuler.NavierStokes.R3.CompactEnergy
 import Mathlib.Analysis.InnerProductSpace.Calculus
 import LeanPool.NavierStokesAndEuler.NavierStokes.R3.LpNormTools
 import Mathlib.MeasureTheory.Function.L2Space
+import LeanPool.NavierStokesAndEuler.ForMathlib.L2HilbertShortcuts
 
 /-! Related estimates used together by the same construction modules. -/
 

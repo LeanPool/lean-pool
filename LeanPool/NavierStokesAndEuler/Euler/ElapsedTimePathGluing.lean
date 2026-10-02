@@ -15,6 +15,7 @@ import LeanPool.NavierStokesAndEuler.Euler.ParameterSobolevCoefficient
 public import Mathlib.Topology.ContinuousMap.Compact
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Analysis.Normed.Order.Lattice
+public import LeanPool.NavierStokesAndEuler.ForMathlib.NormedSpaceShortcuts
 
 /-!
 # Joining an actual history with a forward elapsed-time path
@@ -174,6 +175,9 @@ def mismatch (S τ : ℝ) (hτ0 : 0 ≤ τ) (hτS : τ ≤ S) : Pair S τ E →L
 /-- Matching: an abbreviation for `(mismatch (E := E) S τ hτ0 hτS).ker`. -/
 abbrev Matching (S τ : ℝ) (hτ0 : 0 ≤ τ) (hτS : τ ≤ S) : Submodule ℝ (Pair S τ E) :=
   (mismatch (E := E) S τ hτ0 hτS).ker
+
+real_normed_space_shortcut_instances Matching (S τ : ℝ) (hτ0 : 0 ≤ τ) (hτS : τ ≤ S) :
+  Matching (E := E) S τ hτ0 hτS
 
 theorem matching_values (S τ : ℝ) (hτ0 : 0 ≤ τ) (hτS : τ ≤ S)
     (u : Matching (E := E) S τ hτ0 hτS) :

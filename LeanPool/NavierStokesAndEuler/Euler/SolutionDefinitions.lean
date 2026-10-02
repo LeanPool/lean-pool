@@ -31,6 +31,8 @@ public import Mathlib.LinearAlgebra.Trace
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 public import Mathlib.Order.CompletePartialOrder
+public import LeanPool.NavierStokesAndEuler.ForMathlib.EuclideanMeasureShortcuts
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2NormedShortcuts
 
 /-!
 # Solution-side definitions for the Euler Comparator challenge

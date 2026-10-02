@@ -9,6 +9,7 @@ module
 public import LeanPool.NavierStokesAndEuler.Euler.Foundations.SmoothLimit
 import LeanPool.NavierStokesAndEuler.Euler.IsometricActionCalculus
 import Mathlib.MeasureTheory.Function.LpSpace.ContinuousCompMeasurePreserving
+public import LeanPool.NavierStokesAndEuler.ForMathlib.EuclideanMeasureShortcuts
 
 /-! Genuine ordinary-space L² translations and closedness of their full derivative. -/
 

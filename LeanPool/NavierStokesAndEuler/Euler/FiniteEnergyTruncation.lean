@@ -17,6 +17,8 @@ import LeanPool.NavierStokesAndEuler.Euler.MeanCutoffCurlBound
 import LeanPool.NavierStokesAndEuler.Euler.RadialPotentialL2
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.MeasureTheory.Function.L2Space
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2NormedShortcuts
+import LeanPool.NavierStokesAndEuler.ForMathlib.L2HilbertShortcuts
 
 /-!
 # Divergence-free truncation by a radial vector potential

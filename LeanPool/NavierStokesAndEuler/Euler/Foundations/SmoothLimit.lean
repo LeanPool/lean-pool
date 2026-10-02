@@ -14,6 +14,7 @@ public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 import LeanPool.NavierStokesAndEuler.ForMathlib.SmoothnessOrder
 import Mathlib.Analysis.Calculus.SmoothSeries
 import Mathlib.MeasureTheory.Function.LpSpace.Indicator
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2NormedShortcuts
 
 /-!
 The smooth compactly supported limit step for the proposed Euler construction.

@@ -15,6 +15,7 @@ public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 import LeanPool.NavierStokesAndEuler.Euler.MeanHarmonicLaplacian
 import LeanPool.NavierStokesAndEuler.Euler.MeanSolenoidalSpace
 import Mathlib.Algebra.Order.Star.Real
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2NormedShortcuts
 
 /-! Quantitative cutoff energy estimates used in the three-dimensional interior bound. -/
 

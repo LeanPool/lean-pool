@@ -9,6 +9,7 @@ public import LeanPool.NavierStokesAndEuler.Euler.TimeLpMultiplier
 public import LeanPool.NavierStokesAndEuler.Euler.FiniteMetricEnergy
 public import LeanPool.NavierStokesAndEuler.Euler.TimeLp
 import Mathlib.MeasureTheory.Function.L2Space
+import LeanPool.NavierStokesAndEuler.ForMathlib.L2HilbertShortcuts
 
 /-! Actual finite weighted forcing norms in the Bochner time space. -/
 

@@ -10,6 +10,8 @@ public import LeanPool.NavierStokesAndEuler.ForMathlib.SmoothCutoff
 public import Mathlib.Analysis.FunctionalSpaces.SobolevInequality
 import Mathlib.MeasureTheory.Function.LpSpace.Complete
 import Mathlib.MeasureTheory.Function.LpSeminorm.LpNorm
+public import LeanPool.NavierStokesAndEuler.ForMathlib.EuclideanMeasureShortcuts
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2NormedShortcuts
 
 /-!
 # The homogeneous `H¹ → L⁶` inequality on `ℝ³`

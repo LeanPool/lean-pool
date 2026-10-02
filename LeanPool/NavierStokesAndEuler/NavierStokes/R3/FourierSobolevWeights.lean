@@ -9,6 +9,7 @@ module
 import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.R3.ComparisonFourierSetup
+public import LeanPool.NavierStokesAndEuler.ForMathlib.L2HilbertShortcuts
 
 /-!
 # A polynomially weighted Fourier embedding
