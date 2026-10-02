@@ -83,6 +83,7 @@ theorem relabel_mul
 end FoxNeuwirthTopCell
 
 /-- Barycentric coordinates on a top-dimensional Fox--Neuwirth cell. -/
+@[expose]
 def FoxNeuwirthWeights (p : ℕ) :=
   ↥(SphereOddDegree.finiteSimplex ℝ (Fin p))
 
@@ -156,6 +157,7 @@ theorem continuous_relabel (σ : Equiv.Perm (Fin p)) :
 end FoxNeuwirthWeights
 
 /-- Concrete finite polyhedron used as the prime configuration model. -/
+@[expose]
 def FoxNeuwirthTopCellModelPoint (p : ℕ) :=
   FoxNeuwirthTopCell p × FoxNeuwirthWeights p
 
@@ -262,6 +264,7 @@ theorem continuous_toConfig :
           ((c.1.rank i).1 : ℝ)).comp continuous_fst)
 
 /-- Equivariant reference map: first-coordinate vector with its diagonal part removed. -/
+@[expose]
 noncomputable def reference
     (hp : Nat.Prime p)
     (z : FoxNeuwirthTopCellModelPoint p) : ZeroSum p :=

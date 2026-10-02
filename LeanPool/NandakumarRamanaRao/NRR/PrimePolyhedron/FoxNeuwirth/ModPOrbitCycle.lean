@@ -32,6 +32,7 @@ variable {p : Nat}
 namespace FoxNeuwirth
 
 /-- A proper split of `p` labels into two nonempty consecutive blocks. -/
+@[expose]
 def ProperSplit (p : Nat) := {k : Nat // 0 < k ∧ k < p}
 
 namespace ProperSplit

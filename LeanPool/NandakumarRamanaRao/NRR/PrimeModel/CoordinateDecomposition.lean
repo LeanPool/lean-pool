@@ -31,6 +31,7 @@ variable {n : ℕ}
     coordinateMean n v = (∑ i, v i) / (n : ℝ) := rfl
 
 /-- Subtract the coordinate mean to obtain a vector in the zero-sum representation. -/
+@[expose]
 noncomputable def coordinateDeviation (hn : 0 < n) :
     (Fin n → ℝ) →ₗ[ℝ] ZeroSum n where
   toFun v := ⟨fun i => v i - coordinateMean n v, by
