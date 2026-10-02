@@ -110,6 +110,7 @@ theorem card_bag_le_width_succ (D : PartialDecomposition H U) (t : D.Node) :
   omega
 
 /-- A partial decomposition on all of `V` is a tree decomposition. -/
+@[expose]
 def toTreeDecomposition [Fintype V] (D : PartialDecomposition H Finset.univ) :
     TreeDecomposition H where
   Node := D.Node
@@ -133,6 +134,7 @@ theorem width_toTreeDecomposition [Fintype V] (D : PartialDecomposition H Finset
 
 /-- The **one-bag partial decomposition**: a single node carrying the bag `X`,
 a decomposition of `H` on `U = X`. -/
+@[expose]
 def single (H : SimpleGraph V) (X : Finset V) : PartialDecomposition H X where
   Node := Unit
   tree := ⊥
@@ -237,6 +239,7 @@ bag `X` at a designated node (`Sum.inl r₁`).
 
 `hcap` says the two ground sets meet only inside `X`, and `hsep` says `H` has no
 edge between `U₁ \ X` and `U₂ \ X`; for the components of `H − X` both hold. -/
+@[expose]
 def join (D₁ : PartialDecomposition H U₁) (r₁ : D₁.Node) (h₁ : D₁.bag r₁ = X)
     (D₂ : PartialDecomposition H U₂) (r₂ : D₂.Node) (h₂ : D₂.bag r₂ = X)
     (hcap : ∀ v, v ∈ U₁ → v ∈ U₂ → v ∈ X)
@@ -327,6 +330,7 @@ inside `X ∪ Y` has both ends in `X` or both ends in `Y`.
 
 This is the decomposition the paper uses in the branch where `𝔅 ∪ {C}` fails to
 be a bramble (`X` and `Y := V(C) ∪ N(C)`). -/
+@[expose]
 def pairDecomp (H : SimpleGraph V) (X Y : Finset V)
     (hedge : ∀ v ∈ X ∪ Y, ∀ w ∈ X ∪ Y, H.Adj v w →
       (v ∈ X ∧ w ∈ X) ∨ (v ∈ Y ∧ w ∈ Y)) :

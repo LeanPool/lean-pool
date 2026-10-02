@@ -1277,6 +1277,7 @@ left/right duality to dual slipfaces.
 /-- A small set on which witnesses to the value $s \star t (a,b)$ always occur.
 *Lemma 3.13 (`lem:setL`) of
 [An extended Demazure product](https://arxiv.org/abs/2206.14227), part 1/5.* -/
+@[expose]
 def bendSet (t : SlipFace) (b : ℤ) : Set ℤ :=
   {l : ℤ | t (l-1) b = t l b ∧ t l b ≠ t (l+1) b}
 
@@ -1828,11 +1829,13 @@ lemma sum_ab {a₁ a₂ b₁ b₂ : ℤ} (ha : a₁ ≤ a₂) (hb : b₁ ≤ b�
 /-- A slipface is submodular if $\Delta s(a,b) \ge 0$ for all `a, b`.
 *Definition 4.2 (`defn:submodular`) of
 [An extended Demazure product](https://arxiv.org/abs/2206.14227).* -/
+@[expose]
 def submodular : Prop := ∀ a b : ℤ, sf.Δ a b ≥ 0
 
 /-- The set of boxes where the mixed difference `Δ` is equal to `1`,
 as defined in the proof of *Proposition 4.3* (`prop:imageASP`) of
 [An extended Demazure product](https://arxiv.org/abs/2206.14227).* -/
+@[expose]
 def Γ : Set (ℤ × ℤ) := {(a, b) | sf.Δ a b = 1}
 
 lemma Γ_dual : ∀ (a b : ℤ), (a, b) ∈ sf.Γ ↔ (b, a) ∈ sf.dual.Γ := by
@@ -1950,6 +1953,7 @@ private lemma ess_seeker (s t : SlipFace) (nle : ¬ s ≤ t) (M : ℕ) :
 
 /-- *Definition 7.3 (`defn:cliffordSF`) of
 [An extended Demazure product](https://arxiv.org/abs/2206.14227).* -/
+@[expose]
 def isClifford : Prop := ∃ (M : ℕ),
   ∀ a b : ℤ, sf a b + sf.dual b a ≥ M → sf a b = 0 ∨ sf.dual b a = 0
 

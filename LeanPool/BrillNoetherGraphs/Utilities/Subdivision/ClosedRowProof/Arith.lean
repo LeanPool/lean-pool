@@ -48,6 +48,7 @@ namespace Utilities.Subdivision.ClosedRowProof
 abbrev Form := List ℤ
 
 /-- Dot product, truncating at the shorter list. -/
+@[expose]
 def dot : List ℤ → List ℤ → ℤ
   | [], _ => 0
   | _, [] => 0
@@ -55,6 +56,7 @@ def dot : List ℤ → List ℤ → ℤ
 
 /-- Evaluate a form at a point.  The constant term is the coefficient of the
 leading `1`, which makes `eval` a dot product and hence linear in the form. -/
+@[expose]
 def eval (g : Form) (x : List ℤ) : ℤ := dot g (1 :: x)
 
 @[simp] theorem dot_nil_left (y : List ℤ) : dot [] y = 0 := rfl

@@ -759,6 +759,7 @@ private lemma s_noninc_raw (a : ℤ) {b b' : ℤ} (b_le_b' : b ≤ b') :
 [An extended Demazure product](https://arxiv.org/abs/2206.14227) writes its values as
 $s_\tau(a,b)$; in Lean the corresponding value
 is `τ.sRaw a b`, and `τ.s` packages the same data as a `SlipFace`. -/
+@[expose]
 noncomputable def s : SlipFace := {
   func := τ.sRaw
   χ := τ.χ

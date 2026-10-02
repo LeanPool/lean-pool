@@ -278,6 +278,7 @@ $$
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 2.3;
 `prin G σ` is the *negative* of the divisor $\operatorname{div}(\sigma)$ defined there,
 since they implement a firing script as $D \mapsto D - \operatorname{div}(\sigma)$. -/
+@[expose]
 def prin (G : CFGraph) : firingScript G →+ CFDiv G :=
   {
     toFun := fun σ v => ∑ u : G.V, (σ u - σ v) * (numEdges G v u),
@@ -1042,6 +1043,7 @@ at active vertices — strictly decreases at each reduction step.
 
 /-- A set of vertices is legal for `D` if firing it leaves every vertex in the set
 nonnegative. -/
+@[expose]
 def legalSet (G : CFGraph) (D : CFDiv G) (S : Finset G.V) : Prop :=
   ∀ v ∈ S, outdegreeSet G S v ≤ D v
 
