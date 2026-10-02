@@ -70,6 +70,7 @@ theorem rank_one_chip_eq_zero_of_twoEdgeCutCondition
 
 /-- The rank-zero part of the degree-one Picard component, represented in
 the additive quotient model used throughout the formalization. -/
+@[expose]
 def RankZeroDegreeOneClass (G : CFGraph) :=
   {c : CFDiv G ⧸ principalDivisors G //
     ∃ D : CFDiv G,

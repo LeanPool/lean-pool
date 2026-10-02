@@ -52,6 +52,7 @@ def value (length position i : ℕ) : ℤ :=
   else (i : ℤ) - (length : ℤ)
 
 /-- The oriented slope after numerical path position `i`. -/
+@[expose]
 def slope (length position i : ℕ) : ℤ :=
   if i < min position (length - position) then -1
   else if max position (length - position) ≤ i then 1

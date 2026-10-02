@@ -50,6 +50,7 @@ abbrev Vertex (packed : PackedSpec) : Type := packed.spec.Vertex
 end PackedSpec
 
 /-- The target presentation produced by one canonical bivalent split. -/
+@[expose]
 def splitPacked (source : PackedSpec) (split : Fin source.p)
     (first second : ℕ) (hFirst : 0 < first) (hSecond : 0 < second) :
     PackedSpec where

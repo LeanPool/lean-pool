@@ -77,6 +77,7 @@ theorem transmissionExists_vertexWedge_opposite_star
 /-- A finite Demazure factorization whose two factors fit the two genus
 budgets.  This is the precise combinatorial input needed to glue full
 `TransmissionExistence` statements. -/
+@[expose]
 def BoundedDemazureFactorization (tau : AspPerm) (gG gH : ℤ) : Prop :=
   ∃ alpha beta : AspPerm,
     tau = alpha ⋆ beta ∧

@@ -87,6 +87,7 @@ def dProfile : WindowProfile.Data (Spec length hLength) where
 
 /-- Case-2 window profile which reaches the two zero-valued core vertices
 `e=2` and `f=3`. -/
+@[expose]
 def efProfile : WindowProfile.Data (Spec length hLength) where
   coreValue := ![B length + m length, B length, 0, 0,
     B length + m length, B length + m length]

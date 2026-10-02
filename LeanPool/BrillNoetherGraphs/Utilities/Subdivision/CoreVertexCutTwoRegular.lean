@@ -37,6 +37,7 @@ variable {n p : ℕ} {core : ExplicitPotential.Core n p}
 /-- Number of incidences of retained ordered slots at a named-side core
 vertex.  A parallel slot contributes separately; each endpoint contributes
 one incidence. -/
+@[expose]
 def leftIncidentDegree (c : CoreVertexCut.Data core) (vertex : Fin n) : ℕ :=
   ∑ edge ∈ c.leftSlots,
     ((if core.tail edge = vertex then 1 else 0) +
@@ -44,17 +45,20 @@ def leftIncidentDegree (c : CoreVertexCut.Data core) (vertex : Fin n) : ℕ :=
 
 /-- Number of incidences of retained ordered slots at a complementary-side
 core vertex. -/
+@[expose]
 def rightIncidentDegree (c : CoreVertexCut.Data core) (vertex : Fin n) : ℕ :=
   ∑ edge ∈ c.rightSlots,
     ((if core.tail edge = vertex then 1 else 0) +
       if core.head edge = vertex then 1 else 0)
 
 /-- Every core vertex retained by the named side has retained degree two. -/
+@[expose]
 def LeftTwoRegular (c : CoreVertexCut.Data core) : Prop :=
   ∀ vertex : Fin n, vertex ∈ c.left → c.leftIncidentDegree vertex = 2
 
 /-- Every core vertex retained by the complementary side has retained degree
 two. -/
+@[expose]
 def RightTwoRegular (c : CoreVertexCut.Data core) : Prop :=
   ∀ vertex : Fin n, vertex ∈ c.right → c.rightIncidentDegree vertex = 2
 
@@ -480,6 +484,7 @@ def LeftRigidConditions (c : CoreVertexCut.Data core) : Prop :=
 
 /-- Exact finite conditions which make the complementary factor a pointed
 rigid genus-one graph. -/
+@[expose]
 def RightRigidConditions (c : CoreVertexCut.Data core) : Prop :=
   c.Valid ∧ core.Connected ∧ c.RightTwoRegular ∧ c.rightGenus = 1
 

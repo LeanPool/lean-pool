@@ -112,6 +112,7 @@ noncomputable def leftVertices (c : Data spec.core) : Finset spec.Vertex := by
 
 /-- The complementary subdivision factor.  It is literally the complement of
 `leftVertices`, with the embedded articulation reinserted. -/
+@[expose]
 noncomputable def rightVertices (c : Data spec.core) : Finset spec.Vertex :=
   insert (spec.coreVertex c.glue) (Finset.univ \ leftVertices spec c)
 

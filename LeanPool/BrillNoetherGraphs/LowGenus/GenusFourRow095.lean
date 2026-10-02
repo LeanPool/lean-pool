@@ -94,6 +94,7 @@ theorem length_five_eq_A_add_X (hNorm : length 0 ≤ length 5) :
   omega
 
 /-- The moving chip `q`, at distance `X` from vertex 1 on slot 5. -/
+@[expose]
 def q (_hNorm : length 0 ≤ length 5) : (Spec length hLength).Vertex :=
   (Spec length hLength).pathVertex 5
     ⟨X length, by

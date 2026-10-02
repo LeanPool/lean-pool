@@ -54,10 +54,12 @@ instance rightSlotDecidable (c : CoreVertexCut.Data core) (edge : Fin p) :
   infer_instance
 
 /-- Ordered core slots wholly contained in the named side. -/
+@[expose]
 def leftSlots (c : CoreVertexCut.Data core) : Finset (Fin p) :=
   Finset.univ.filter c.LeftSlot
 
 /-- Ordered core slots wholly contained in the complementary side. -/
+@[expose]
 def rightSlots (c : CoreVertexCut.Data core) : Finset (Fin p) :=
   Finset.univ.filter c.RightSlot
 

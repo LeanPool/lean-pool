@@ -94,12 +94,14 @@ def stepOffsetEquiv (edge : Fin p) :
     (finCongr (relabeling.length_eq edge))
 
 /-- Vertex equivalence induced by a relabeling. -/
+@[expose]
 def vertexEquiv : source.Vertex ≃ target.Vertex :=
   Equiv.sumCongr relabeling.coreEquiv
     (Equiv.sigmaCongr relabeling.slotEquiv
       (fun edge => interiorEquiv source target relabeling edge))
 
 /-- Unit-step occurrence equivalence induced by a relabeling. -/
+@[expose]
 def stepEquiv : source.Step ≃ target.Step :=
   Equiv.sigmaCongr relabeling.slotEquiv
     (fun edge => stepOffsetEquiv source target relabeling edge)

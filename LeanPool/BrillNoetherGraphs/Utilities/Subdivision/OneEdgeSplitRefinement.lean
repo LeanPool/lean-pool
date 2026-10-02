@@ -49,6 +49,7 @@ open ExplicitPotential SubdivisionGraph
 induce a `LaplacianEquiv` when each step preserves its unordered endpoints.
 The step equivalence, rather than an endpoint-pair map, retains parallel-edge
 multiplicity. -/
+@[expose]
 def laplacianEquivOfUnorientedUnitSteps
     {n p n' p' : ℕ} (source : SubdivisionGraph.Spec n p)
     (target : SubdivisionGraph.Spec n' p')
@@ -139,11 +140,13 @@ def laplacianEquivTrans {G H K : CFGraph}
 variable {n p : ℕ}
 
 /-- Original vertices embed below the fresh last core vertex. -/
+@[expose]
 def oldVertex (_source : SubdivisionGraph.Spec n p) (vertex : Fin n) :
     Fin (n + 1) :=
   vertex.castSucc
 
 /-- The fresh bivalent vertex. -/
+@[expose]
 def splitVertex (_source : SubdivisionGraph.Spec n p) : Fin (n + 1) :=
   Fin.last n
 
@@ -161,6 +164,7 @@ variable (source : SubdivisionGraph.Spec n p) (split : Fin p)
 
 /-- Replace the named occurrence by a path through the fresh vertex.  All
 other occurrences retain their old slots, including parallel copies. -/
+@[expose]
 def splitCore : ExplicitPotential.Core (n + 1) (p + 1) where
   tail := Fin.lastCases (splitVertex source)
     (fun edge => oldVertex source (source.core.tail edge))

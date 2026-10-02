@@ -35,6 +35,7 @@ universe uTransmission
 
 /-- The inversion set of `tau` is finite.  Keeping this named avoids the
 incorrect convention that `Set.ncard` alone detects finite ASP length. -/
+@[expose]
 def FiniteTransmissionPerm (tau : AspPerm) : Prop :=
   (invSet tau).Finite
 
