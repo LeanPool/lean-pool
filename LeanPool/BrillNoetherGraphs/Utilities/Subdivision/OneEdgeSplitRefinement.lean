@@ -174,6 +174,7 @@ def splitCore : ExplicitPotential.Core (n + 1) (p + 1) where
 
 /-- The first half remains in the old slot and the second half occupies the
 new last slot. -/
+@[expose]
 def splitLength : Fin (p + 1) → ℕ :=
   Fin.lastCases second
     (fun edge => if edge = split then first else source.length edge)
@@ -209,6 +210,7 @@ def splitLength : Fin (p + 1) → ℕ :=
   simp [splitLength, secondSlot]
 
 /-- Positive-length subdivision specification on the canonical split core. -/
+@[expose]
 def splitSpec (hFirst : 0 < first) (hSecond : 0 < second) :
     SubdivisionGraph.Spec (n + 1) (p + 1) where
   core := splitCore source split

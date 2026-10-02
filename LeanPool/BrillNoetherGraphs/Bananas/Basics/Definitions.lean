@@ -198,6 +198,7 @@ The bounds are stated over `ℤ`.  The paper places no order relation on `i`
 and `j`, and with truncated `ℕ` subtraction the constraint `j - i ≤ q` would
 collapse to `0 ≤ q` whenever `j < i`; the `ℕ` reading therefore only agrees
 with the paper's set when `i ≤ j`. -/
+@[expose]
 def thetaExceptionalPositions {g : ℕ} (B : Banana g) (α : Fin (g + 1))
     (i j : B.PathPosition α) : Set (B.PathPosition α) :=
   { q | (q.val : ℤ) ≠ (B.length α : ℤ) - (i.val : ℤ) ∧

@@ -65,6 +65,7 @@ def bananaCoordinateDivisorHom {g : ℕ} (B : Banana g) :
 is the additive quotient by principal divisors, i.e. the graph-level Picard
 group model used here.  The preceding degree lemma shows that its image lies
 in the degree-zero (Jacobian) component. -/
+@[expose]
 def bananaCoordinateClassHom {g : ℕ} (B : Banana g) :
     (Fin (g + 1) → ℤ) →+
       (CFDiv B.graph ⧸ principalDivisors B.graph) :=
@@ -74,6 +75,7 @@ def bananaCoordinateClassHom {g : ℕ} (B : Banana g) :
 /-- The exact relation subgroup of the graph-level coordinate map.  Showing
 that this kernel equals the paper's displayed lattice is the injectivity half
 of Proposition 2.14. -/
+@[expose]
 def bananaCoordinateRelations {g : ℕ} (B : Banana g) :
     AddSubgroup (Fin (g + 1) → ℤ) :=
   (bananaCoordinateClassHom B).ker

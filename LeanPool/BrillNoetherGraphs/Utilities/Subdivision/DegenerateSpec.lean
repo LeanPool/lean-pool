@@ -122,6 +122,7 @@ def coreVertex (v : Fin n) : d.Vertex := Sum.inl ⟨d.rep v, d.rep_idem v⟩
 
 /-- The interior vertex at zero-based offset `o` on a slot, corresponding to path position `o +
 1`. -/
+@[expose]
 def interiorVertex (e : Fin p) (o : Fin (d.length e - 1)) : d.Vertex :=
   Sum.inr ⟨e, o⟩
 
@@ -460,6 +461,7 @@ theorem classMap_bijective : Function.Bijective c.classMap := by
     exact ⟨v', Subtype.ext (hv'.trans hv)⟩
 
 /-- Interior half of the vertex bijection. -/
+@[expose]
 def interiorMap : (Σ e' : Fin p', Fin (target.length e' - 1)) → d.Interior :=
   fun s => ⟨c.slot s.1, ⟨s.2.val, by
     have := s.2.isLt
@@ -484,6 +486,7 @@ theorem interiorMap_bijective : Function.Bijective c.interiorMap := by
     exact congrArg (Sigma.mk (c.slot e')) (Fin.ext rfl)
 
 /-- Unit-step bijection. -/
+@[expose]
 def stepMap : target.Step → d.Step :=
   fun s => ⟨c.slot s.1, ⟨s.2.val, by
     have := s.2.isLt
@@ -508,12 +511,14 @@ theorem stepMap_bijective : Function.Bijective c.stepMap := by
     exact congrArg (Sigma.mk (c.slot e')) (Fin.ext rfl)
 
 /-- Vertex bijection of the correspondence. -/
+@[expose]
 noncomputable def vertexEquiv : target.Vertex ≃ d.Vertex :=
   Equiv.sumCongr (Equiv.ofBijective _ c.classMap_bijective)
     (Equiv.ofBijective _ c.interiorMap_bijective)
 
 /-- The bijection from unit steps in the positive contracted presentation to surviving unit
 steps in the closed presentation, preserving offsets. -/
+@[expose]
 noncomputable def stepEquiv : target.Step ≃ d.Step :=
   Equiv.ofBijective _ c.stepMap_bijective
 

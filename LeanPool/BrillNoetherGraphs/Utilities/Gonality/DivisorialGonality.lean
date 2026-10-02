@@ -62,6 +62,7 @@ theorem one_le_deg_of_rank_ge_one {D : CFDiv G} (hD : rank G D ≥ 1) : 1 ≤ CF
 /-! ## The gonality set and `divisorialGonality` -/
 
 /-- The degrees of the effective divisors of rank at least one. -/
+@[expose]
 def gonalitySet (G : CFGraph) : Set ℕ :=
   {d : ℕ | ∃ D : CFDiv G, effective D ∧ CFDiv.degree D = (d : ℤ) ∧ rank G D ≥ 1}
 

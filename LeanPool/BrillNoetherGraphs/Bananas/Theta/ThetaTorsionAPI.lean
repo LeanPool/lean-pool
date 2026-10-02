@@ -69,6 +69,7 @@ firing-script lemma.  It is now *discharged* by
 `Statements.evenlyMarkedTheta_torsion` is unconditional.  The named `Prop` is
 kept only as the interface through which that discharge is routed.
 -/
+@[expose]
 def EvenlyMarkedThetaMultiplePrincipalContract : Prop :=
   ∀ (B : Banana 2) (α β : Fin 3)
     (i : B.PathPosition α) (j : B.PathPosition β),

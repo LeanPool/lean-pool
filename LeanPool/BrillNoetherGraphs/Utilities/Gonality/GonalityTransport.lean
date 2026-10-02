@@ -163,6 +163,7 @@ variable {n p : ℕ}
 /-! ## Regular subdivisions of a `Spec` -/
 
 /-- `σ_k` of a subdivision specification: multiply every slot length by `k`. -/
+@[expose]
 def scale {n p : ℕ}
     (spec : Spec n p) (k : ℕ) (hk : 0 < k) : Spec n p where
   core := spec.core

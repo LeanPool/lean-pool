@@ -79,6 +79,7 @@ def leftGenus (c : CoreVertexCut.Data core) : ℤ :=
   (c.leftSlotCount : ℤ) - (c.left.card : ℤ) + 1
 
 /-- Cyclomatic genus predicted from the complementary core side. -/
+@[expose]
 def rightGenus (c : CoreVertexCut.Data core) : ℤ :=
   (c.rightSlotCount : ℤ) - (c.right.card : ℤ) + 1
 

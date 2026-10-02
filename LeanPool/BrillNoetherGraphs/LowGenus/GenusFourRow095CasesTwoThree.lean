@@ -421,12 +421,14 @@ private theorem Y_lt_Delta (hYsmall : Y length < min (X length) (Delta length)) 
   lt_of_lt_of_le hYsmall (min_le_right _ _)
 
 /-- The moving third chip in Case 3. -/
+@[expose]
 def s : (Spec length hLength).Vertex :=
   (Spec length hLength).pathVertex 4
     ⟨Y length, by
       exact Nat.lt_succ_iff.mpr (Y_lt_Delta length hYsmall).le⟩
 
 /-- Case-3 window profile which reaches `d=1`. -/
+@[expose]
 def dProfile : WindowProfile.Data (Spec length hLength) where
   coreValue := ![Y length, 0, 0, 0, Y length, Y length]
   start := fun edge =>
@@ -472,6 +474,7 @@ def dProfile : WindowProfile.Data (Spec length hLength) where
     all_goals omega
 
 /-- Case-3 window profile which reaches `e=2` and `f=3`. -/
+@[expose]
 def efProfile : WindowProfile.Data (Spec length hLength) where
   coreValue := ![C length, B length, 0, 0, C length, C length]
   start := fun edge =>

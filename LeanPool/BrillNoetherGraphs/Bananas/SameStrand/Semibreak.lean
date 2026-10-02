@@ -36,6 +36,7 @@ open Utilities.Certificate.SubdivisionGraph.Spec
 
 /-- The divisor with the selected optional interior chip on each strand and no chips at the core
 vertices. -/
+@[expose]
 def semibreakDivisor {g : ℕ} (B : Banana g)
     (chips : ∀ γ : Fin (g + 1), Option (Fin (B.length γ - 1))) : CFDiv B.graph
   | Sum.inl _ => 0

@@ -70,6 +70,7 @@ namespace CoreSymmetry
 variable {core : ExplicitPotential.Core n p}
 
 /-- The identity symmetry. -/
+@[expose]
 def refl (core : ExplicitPotential.Core n p) : CoreSymmetry core where
   vertexPerm := Equiv.refl _
   slotPerm := Equiv.refl _
@@ -186,6 +187,7 @@ def ofInverses (core : ExplicitPotential.Core n p)
       hVL hVR hSL hSR hTail hHead).slotPerm.symm edge = slotInv edge := rfl
 
 /-- The composite of two core symmetries: apply `first`, then `second`. -/
+@[expose]
 def trans (first second : CoreSymmetry core) : CoreSymmetry core where
   vertexPerm := first.vertexPerm.trans second.vertexPerm
   slotPerm := first.slotPerm.trans second.slotPerm
@@ -208,6 +210,7 @@ def trans (first second : CoreSymmetry core) : CoreSymmetry core where
 /-! ### Reindexing a length vector -/
 
 /-- Transport a length vector along the slot permutation. -/
+@[expose]
 def reindexLength (symmetry : CoreSymmetry core) (length : Fin p → ℕ) :
     Fin p → ℕ :=
   fun edge => length (symmetry.slotPerm.symm edge)
@@ -274,6 +277,7 @@ Stating the two length vectors independently (rather than forcing
 `length' = reindexLength length`) is what lets the same lemma serve both the
 row packaging, which reindexes, and the catalog rows, which sort a chosen
 pair of parallel slots. -/
+@[expose]
 def relabeling (symmetry : CoreSymmetry core)
     (length length' : Fin p → ℕ)
     (hLength : ∀ edge, 0 < length edge) (hLength' : ∀ edge, 0 < length' edge)
@@ -310,6 +314,7 @@ def graphIso (symmetry : CoreSymmetry core)
       hLength hLength' hCompat)
 
 /-- The vertex bijection carried by a core symmetry. -/
+@[expose]
 def vertexEquiv (symmetry : CoreSymmetry core)
     (length length' : Fin p → ℕ)
     (hLength : ∀ edge, 0 < length edge) (hLength' : ∀ edge, 0 < length' edge)

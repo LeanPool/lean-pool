@@ -326,6 +326,7 @@ end Spec
 /-! ## Reindexing a specification along index equivalences -/
 
 /-- Rename the vertices and edge slots of an ordered core. -/
+@[expose]
 def coreReindex {n p n' p' : ℕ} (core : Core n p)
     (vertexEquiv : Fin n ≃ Fin n') (slotEquiv : Fin p ≃ Fin p') :
     Core n' p' where
@@ -333,6 +334,7 @@ def coreReindex {n p n' p' : ℕ} (core : Core n p)
   head := fun edge => vertexEquiv (core.head (slotEquiv.symm edge))
 
 /-- Rename the vertices and edge slots of a subdivision specification. -/
+@[expose]
 def specReindex {n p n' p' : ℕ} (spec : Spec n p)
     (vertexEquiv : Fin n ≃ Fin n') (slotEquiv : Fin p ≃ Fin p')
     (hn : 0 < n') : Spec n' p' where

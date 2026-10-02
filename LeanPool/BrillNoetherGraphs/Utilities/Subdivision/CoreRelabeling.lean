@@ -32,6 +32,7 @@ variable {n p m q : ℕ}
 /-! ## Relabeling one core by a vertex permutation -/
 
 /-- Relabel the vertices of a core while leaving slot occurrences fixed. -/
+@[expose]
 def relabel (core : Core n p) (vertexPerm : Equiv.Perm (Fin n)) : Core n p where
   tail := fun edge => vertexPerm (core.tail edge)
   head := fun edge => vertexPerm (core.head edge)
