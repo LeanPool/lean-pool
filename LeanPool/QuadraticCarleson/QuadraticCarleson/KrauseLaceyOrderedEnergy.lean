@@ -94,6 +94,49 @@ theorem signed_sum_sq_le_diagonal_add_crossRows
     _ = _ := one_mul _
 
 
+/-- Assemble residue-class energy from diagonal, separated-row and orthogonality bounds. -/
+theorem signed_sum_sq_le_mass_of_residue_bounds
+    {ι E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    (S : Finset ι) (v : ι → E) (rank : ι → ℤ) (mass : ι → ℝ)
+    (diagonalCoefficient rowCoefficient : ℝ)
+    (hmod : ∀ i ∈ S, ∀ j ∈ S, rank i % 3 = rank j % 3)
+    (heq : ∀ i ∈ S, ∀ j ∈ S, i ≠ j → rank i = rank j → inner ℝ (v i) (v j) = 0)
+    (hdiag : (∑ i ∈ S, ‖v i‖ ^ 2) ≤ diagonalCoefficient * ∑ i ∈ S, mass i)
+    (hrow : ∀ i ∈ S,
+      (∑ j ∈ S.filter (fun j ↦ rank j + 3 ≤ rank i), |inner ℝ (v i) (v j)|) ≤
+        rowCoefficient * mass i)
+    (c : ι → ℝ) (hc : ∀ i ∈ S, |c i| ≤ 1) :
+    ‖∑ i ∈ S, c i • v i‖ ^ 2 ≤
+      (diagonalCoefficient + 2 * rowCoefficient) * ∑ i ∈ S, mass i := by
+  classical
+  have hfilter (i : ι) (hi : i ∈ S) :
+      S.filter (fun j ↦ rank j < rank i) = S.filter (fun j ↦ rank j + 3 ≤ rank i) := by
+    ext j
+    simp only [Finset.mem_filter]
+    constructor
+    · intro hj
+      have hm := hmod i hi j hj.1
+      exact ⟨hj.1, by omega⟩
+    · intro hj
+      exact ⟨hj.1, by omega⟩
+  have hrows :
+      (∑ i ∈ S, ∑ j ∈ S.filter (fun j ↦ rank j < rank i), |inner ℝ (v i) (v j)|) ≤
+        rowCoefficient * ∑ i ∈ S, mass i := by
+    rw [Finset.mul_sum]
+    apply Finset.sum_le_sum
+    intro i hi
+    rw [hfilter i hi]
+    exact hrow i hi
+  calc
+    _ ≤ (∑ i ∈ S, ‖v i‖ ^ 2) +
+        2 * ∑ i ∈ S, ∑ j ∈ S.filter (fun j ↦ rank j < rank i),
+          |inner ℝ (v i) (v j)| := signed_sum_sq_le_diagonal_add_crossRows S v rank heq c hc
+    _ ≤ diagonalCoefficient * (∑ i ∈ S, mass i) +
+        2 * (rowCoefficient * ∑ i ∈ S, mass i) :=
+      add_le_add hdiag (mul_le_mul_of_nonneg_left hrows (by norm_num))
+    _ = _ := by ring
+
+
 /-- Combine finite colour-class energy bounds without repeating the analytic argument. -/
 theorem norm_sum_sq_le_of_finite_partition
     {ι E : Type*} [NormedAddCommGroup E]

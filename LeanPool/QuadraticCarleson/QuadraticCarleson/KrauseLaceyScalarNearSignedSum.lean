@@ -186,34 +186,17 @@ theorem norm_signed_badPieceLp_sq_le_of_residue
     simpa only [localizedEnergy, mul_assoc] using
       energyNonstandard_badPiece_diagonalEnergy_le hf I₀ k₀ (scale I) s hlam hparent hsub
         hn.1 (hk₀.trans hn.2.1) hn.2.2
-  have hrow (I : RealInterval) (hI : I ∈ N) :
-      (∑ J ∈ N.filter (fun J ↦ scale J < scale I), |inner ℝ (v I) (v J)|) ≤
-        (3840 * E) * m I := by
-    have hfilter : N.filter (fun J ↦ scale J < scale I) =
-        N.filter (fun J ↦ scale J + 3 ≤ scale I) := by
-      ext J
-      simp only [Finset.mem_filter]
-      constructor
-      · intro hJ
-        have hm := hmod I hI J hJ.1
-        exact ⟨hJ.1, by omega⟩
-      · intro hJ
-        exact ⟨hJ.1, by omega⟩
-    rw [hfilter]
-    simpa only [E, m, v, mul_assoc] using
-      sum_abs_inner_badPieceLp_le_decay hf I₀ k₀ s hk₀ scale hlam hsub N hN hsmall (hN hI)
-  have hrows := Finset.sum_le_sum hrow
-  rw [← Finset.mul_sum] at hrows
-  have h := signed_sum_sq_le_diagonal_add_crossRows N v scale
+  have h := signed_sum_sq_le_mass_of_residue_bounds N v scale m
+    (96000 * E) (3840 * E) hmod
     (fun I hI J hJ hne heq ↦ inner_badPieceLp_eq_zero_of_scale_eq f hf I₀ k₀ s scale
-      hlam (hN hI) (hN hJ) hne heq) c hc
+      hlam (hN hI) (hN hJ) hne heq) hdiag
+    (fun I hI ↦ by
+      simpa only [E, m, v, mul_assoc] using
+        sum_abs_inner_badPieceLp_le_decay hf I₀ k₀ s hk₀ scale hlam hsub N hN hsmall (hN hI))
+    c hc
   change ‖∑ I ∈ N, c I • v I‖ ^ 2 ≤ _
   calc
-    _ ≤ (∑ I ∈ N, ‖v I‖ ^ 2) +
-        2 * ∑ I ∈ N, ∑ J ∈ N.filter (fun J ↦ scale J < scale I),
-          |inner ℝ (v I) (v J)| := h
-    _ ≤ (96000 * E) * (∑ I ∈ N, m I) + 2 * ((3840 * E) * ∑ I ∈ N, m I) :=
-      add_le_add hdiag (mul_le_mul_of_nonneg_left hrows (by norm_num))
+    _ ≤ (96000 * E + 2 * (3840 * E)) * ∑ I ∈ N, m I := h
     _ = _ := by dsimp [E, m]; ring
 
 
