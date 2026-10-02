@@ -5,11 +5,10 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Algebra.Order.Star.Real
-public import Mathlib.Tactic
-public import Mathlib.Topology.OpenPartialHomeomorph.Constructions
 public import LeanPool.OneManifold.OneMfld.Charts
-
+public import Mathlib.Topology.OpenPartialHomeomorph.Constructions
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Tactic.Ext -- shake: keep
 
 /-! # Normalization of interval charts
 
