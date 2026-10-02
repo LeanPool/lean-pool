@@ -123,7 +123,7 @@ open IGame
 
 /-- The type of surreal numbers. These are the numeric games quotiented by the antisymmetrization
 relation `x ≈ y ↔ x ≤ y ∧ y ≤ x`. In the quotient, the order becomes a total order. -/
-def Surreal : Type (u + 1) :=
+@[expose] def Surreal : Type (u + 1) :=
   Antisymmetrization (Subtype Numeric) (· ≤ ·)
 
 namespace Surreal
