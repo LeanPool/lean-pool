@@ -280,6 +280,7 @@ noncomputable def inv (τ : AspPerm) : AspPerm where
     simp only [Set.preimage_ofPred_eq, Set.mem_ofPred_eq, this, mul_comm]
 
 /-- The identity almost sign-preserving permutation. -/
+@[expose]
 def id : AspPerm where
   func := _root_.id
   bijective := ⟨Function.injective_id, Function.surjective_id⟩
