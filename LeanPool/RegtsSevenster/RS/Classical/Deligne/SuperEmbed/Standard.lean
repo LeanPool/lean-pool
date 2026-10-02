@@ -34,7 +34,7 @@ as well — contradicting `not_schurKilled_stdSuper`.
   of `schurKilled_unit_odd`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

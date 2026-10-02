@@ -17,7 +17,7 @@ orthogonality-evaluated action table, idempotency, centrality,
 and the block rank.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

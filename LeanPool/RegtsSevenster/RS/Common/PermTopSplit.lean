@@ -23,7 +23,7 @@ induced permutation is not the one a tensor power's factors see.  The
 compression here is `finSuccAboveEquiv`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

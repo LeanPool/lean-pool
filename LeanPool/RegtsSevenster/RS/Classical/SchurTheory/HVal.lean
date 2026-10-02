@@ -25,7 +25,7 @@ unit of multiplicity.  Consequently `hVal x` satisfies the defining
 recursion of `newtonH (pVal x)`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

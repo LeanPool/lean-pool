@@ -16,7 +16,7 @@ per-flag value map over an explicit flag list: the incoming flags
 in the fixed order, each followed by its match.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

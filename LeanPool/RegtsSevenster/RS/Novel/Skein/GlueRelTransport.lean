@@ -30,7 +30,7 @@ of `GlueCircuitDelta.lean` reads), and prove that
 edge's flags do not participate.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

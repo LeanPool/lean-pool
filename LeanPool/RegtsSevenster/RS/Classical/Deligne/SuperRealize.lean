@@ -49,7 +49,7 @@ layers.
   values on `C`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

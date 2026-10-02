@@ -22,7 +22,7 @@ the multiplicity is.  This mirrors the induction kill of
 by the two external embeddings and the diagonal.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

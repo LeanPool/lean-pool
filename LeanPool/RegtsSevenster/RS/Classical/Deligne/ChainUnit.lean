@@ -22,7 +22,7 @@ indexed by a universe-lifted copy of `ℕ`, the shape at which the
 ind-category is known to have filtered colimits.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

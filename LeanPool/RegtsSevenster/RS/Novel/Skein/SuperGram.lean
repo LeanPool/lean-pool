@@ -25,7 +25,7 @@ attached to the two fragments bounds the edge-rank by `(k + 2ℓ)^t`,
 because that is how many boundary states there are.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

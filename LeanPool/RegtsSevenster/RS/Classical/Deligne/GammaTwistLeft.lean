@@ -36,7 +36,7 @@ line, which is `−1`.  The sign is absorbed once and for all into
 the odd component `RS.gammaTwistLeftOdd`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

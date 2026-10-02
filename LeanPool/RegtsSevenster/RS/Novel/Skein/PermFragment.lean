@@ -18,7 +18,7 @@ of `t` disjoint strands, strand `k` joining incoming boundary label
 gives the strand bundle.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -20,7 +20,7 @@ relative tensor this yields the projection formula: base change
 commutes with the tensor product of modules.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

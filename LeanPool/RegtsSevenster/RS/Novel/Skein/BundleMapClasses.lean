@@ -27,7 +27,7 @@ collapses through this law into an equality of label
 equivalences.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -31,7 +31,7 @@ target.
   forward map.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

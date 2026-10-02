@@ -37,7 +37,7 @@ The stage equivalence maps `Fin (s + u) ⊕ Fin (t' + t')` to
 The shuffle: `((D ⊕ C) ⊕ B) ⊕ (A ⊕ A') ≃ (D ⊕ C) ⊕ ((A ⊕ A') ⊕ B)`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

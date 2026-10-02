@@ -68,7 +68,7 @@ epimorphism out of a free mixed module splits
 of the local splitting statement without constructing it by hand.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

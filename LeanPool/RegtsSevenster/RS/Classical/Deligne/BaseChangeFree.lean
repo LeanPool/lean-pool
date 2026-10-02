@@ -22,7 +22,7 @@ the free module on an object to the free module over the new base:
   A V) ≅ freeMod B V` in the category of `B`-modules.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

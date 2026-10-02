@@ -26,7 +26,7 @@ the accompanying paper writes `ξ i` and `η i` for the same
 vectors, `f` being reserved there for the graph parameter.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

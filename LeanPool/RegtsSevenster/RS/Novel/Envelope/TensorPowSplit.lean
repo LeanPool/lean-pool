@@ -22,7 +22,7 @@ that let the trace of a permutation-and-endomorphism word be
 computed block by block.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

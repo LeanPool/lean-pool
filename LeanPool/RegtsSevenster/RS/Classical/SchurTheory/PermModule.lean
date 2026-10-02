@@ -17,7 +17,7 @@ with the inverse.  The resulting `ofMulAction` representation has
 character equal to `colourChar α`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

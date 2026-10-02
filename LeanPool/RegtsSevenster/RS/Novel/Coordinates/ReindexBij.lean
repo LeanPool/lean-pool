@@ -15,7 +15,7 @@ Closed-pattern fibres are pure; their sums reindex over the
 colouring data through the diagonal parametrization.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -17,7 +17,7 @@ by an assignment map.  This is the bridge between the explosion
 machinery and the vertex-star factorization.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

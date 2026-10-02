@@ -18,7 +18,7 @@ braid is needed at the fold level.  The zag composite inserts a
 copairing's image on the right and contracts the leading pair.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

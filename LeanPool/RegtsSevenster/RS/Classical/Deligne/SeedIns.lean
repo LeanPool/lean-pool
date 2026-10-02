@@ -19,7 +19,7 @@ of the `ofBase`, `ins` and `ins'` fields of the splitting data of
 the Key Lemma.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -23,7 +23,7 @@ file provides the construction: the gluing pair list, its
 well-formedness, the survivor identification, and congruence.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

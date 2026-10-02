@@ -24,7 +24,7 @@ edge at a time (`explodeAtGluePair`, next file), giving the star
 decomposition by induction.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

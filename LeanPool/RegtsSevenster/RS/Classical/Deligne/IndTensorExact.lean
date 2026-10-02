@@ -61,7 +61,7 @@ object fields must reduce at instance transparency for the
 `show`-retyped colimit proofs below to be stateable.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

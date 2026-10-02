@@ -19,7 +19,7 @@ word's Koszul sign, computed stepwise along the colouring's own
 trajectory.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

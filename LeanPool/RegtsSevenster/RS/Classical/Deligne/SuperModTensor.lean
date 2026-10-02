@@ -70,7 +70,7 @@ the construction needs a *commutative* base.
   packaged as `exists_unique_liftEven` and `exists_unique_liftOdd`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

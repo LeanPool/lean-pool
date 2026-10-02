@@ -57,7 +57,7 @@ companion) and to a sum of copies of two simple objects
 (`RS.exists_mixSum_iso_of_mono` and its companion) follow.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

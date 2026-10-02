@@ -18,7 +18,7 @@ power says exactly that the slide is invisible after the
 projection.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

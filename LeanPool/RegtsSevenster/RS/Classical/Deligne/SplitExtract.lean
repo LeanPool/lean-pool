@@ -19,7 +19,7 @@ against the dual insertion supplies a coevaluation; the section
 identity of the data makes the pair a retract.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

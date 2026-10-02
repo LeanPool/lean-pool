@@ -32,7 +32,7 @@ the insertion lemma.  The `ℂ`-bilinear extension to the group
 algebras then holds on basis permutations and extends linearly.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

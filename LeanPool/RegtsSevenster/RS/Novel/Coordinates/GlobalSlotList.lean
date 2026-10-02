@@ -16,7 +16,7 @@ The participating flags of an edge subset, enumerated in slot order,
 and the link between the pattern inversion count and list inversions.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

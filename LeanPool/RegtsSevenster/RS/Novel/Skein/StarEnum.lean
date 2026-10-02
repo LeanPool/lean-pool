@@ -20,7 +20,7 @@ the straight matching in the star union restores the fragment —
 the shape the trace calculus closes against the strand bundle.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -29,7 +29,7 @@ condition under which a glued edge is in the Eulerian subset or out
 of it, and it is what the boundary state pins.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

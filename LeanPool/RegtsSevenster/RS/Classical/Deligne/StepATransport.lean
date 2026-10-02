@@ -18,7 +18,7 @@ recombined with the splitting of the remainder: one further unit
 summand joins the mixed free part.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

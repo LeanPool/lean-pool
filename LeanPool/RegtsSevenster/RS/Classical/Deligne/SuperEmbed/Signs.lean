@@ -28,7 +28,7 @@ categorical side consumes it in [Letters.lean](Letters.lean).
   `parSign_swap` on an adjacent transposition.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

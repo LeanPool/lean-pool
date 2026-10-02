@@ -24,7 +24,7 @@ the shifted power-sum series; this is immediate from the Newton
 recursion that defines `newtonH`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

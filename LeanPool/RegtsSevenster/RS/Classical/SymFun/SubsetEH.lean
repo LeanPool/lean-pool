@@ -19,7 +19,7 @@ of the e–h convolution and the bialternant Jacobi–Trudi identity.
 The `hSub` recurrence is proven in `HInsert.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

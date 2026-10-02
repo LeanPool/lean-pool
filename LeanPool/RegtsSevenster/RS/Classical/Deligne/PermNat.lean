@@ -29,7 +29,7 @@ intertwines the two actions, so if the block idempotent kills
 `X ^ ⊗ n` it kills `Y ^ ⊗ n` as well.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

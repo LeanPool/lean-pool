@@ -29,7 +29,7 @@ structure then turns the action into the algebra map `permAlg` that
 a tower's representation field asks for.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

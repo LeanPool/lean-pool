@@ -19,7 +19,7 @@ checks that closing the strand onto itself yields one free circle
 and no flags.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

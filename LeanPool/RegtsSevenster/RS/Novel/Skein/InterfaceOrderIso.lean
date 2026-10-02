@@ -35,7 +35,7 @@ sum orders explicitly through the reducible aliases
 which are definitionally the projections of `sumLexLinearOrder`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

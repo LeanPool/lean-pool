@@ -47,7 +47,7 @@ in the doubling: the presentations produced here use mixed powers
 with no dual factors at all.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

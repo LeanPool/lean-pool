@@ -23,7 +23,7 @@ Lemma), splits a line factor (through the sign-twisted mirror),
 or exits with the remainder already zero.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

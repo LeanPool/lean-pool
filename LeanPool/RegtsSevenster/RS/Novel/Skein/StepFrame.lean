@@ -21,7 +21,7 @@ directions, a constraint on the old frame derived from the new
 system.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

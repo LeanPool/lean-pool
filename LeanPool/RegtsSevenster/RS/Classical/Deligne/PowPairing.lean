@@ -23,7 +23,7 @@ coequalizers reduce, by the same recursion, to the datum's
 linearity and the commutativity of the monoid.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

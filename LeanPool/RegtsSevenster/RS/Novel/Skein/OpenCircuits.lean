@@ -37,7 +37,7 @@ whose forward walk eventually returns to them.
   not periodic.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

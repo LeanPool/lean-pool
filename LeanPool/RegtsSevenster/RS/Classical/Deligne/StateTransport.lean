@@ -17,7 +17,7 @@ generates, so an isomorphism of objects carries a state to a
 state without disturbing any of the counts.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

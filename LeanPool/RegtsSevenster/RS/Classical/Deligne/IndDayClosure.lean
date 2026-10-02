@@ -36,7 +36,7 @@ two colimit steps are the same manoeuvre, factored out as
 `RS.isIndObject_obj_of_preservesColimits`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

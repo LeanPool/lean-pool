@@ -20,7 +20,7 @@ block is symmetric; the odd block is antisymmetric, and the Koszul
 sign of the braiding on the odd⊗odd summand exactly compensates.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

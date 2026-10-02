@@ -28,7 +28,7 @@ conjugation identity
 and lift the recursive word for `σ'` by mapping positions through `Fin.succ`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

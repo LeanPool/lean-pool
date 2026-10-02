@@ -17,7 +17,7 @@ bilinear composition of Hom spaces — the composition of the skein
 category.  On fragment classes it is composition of fragments.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

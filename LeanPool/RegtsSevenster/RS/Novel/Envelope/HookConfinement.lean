@@ -28,7 +28,7 @@ propagation no shape containing the square is alive; and a shape
 outside the hook contains the square.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -20,7 +20,7 @@ interchange `tensorμ`.  Transports of chain stages along equalities
 of arities are packaged as `chainStageCast`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

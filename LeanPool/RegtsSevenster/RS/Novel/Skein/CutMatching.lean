@@ -31,7 +31,7 @@ order.  That is the same orientation the mixed partition function's
 own through-edge product uses.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

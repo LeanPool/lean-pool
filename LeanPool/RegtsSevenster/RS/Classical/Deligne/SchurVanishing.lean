@@ -25,7 +25,7 @@ block, and `permAlg_compat` carries the vanishing of `e λ`'s
 action up the standard embedding.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

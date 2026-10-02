@@ -24,7 +24,7 @@ product, which the graph model instead carries inside the boundary
 vectors.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

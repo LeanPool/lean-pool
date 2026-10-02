@@ -17,7 +17,7 @@ The master summand, the flag pattern of a colouring, and the
 fibrewise partition of the master colour sum over flag patterns.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

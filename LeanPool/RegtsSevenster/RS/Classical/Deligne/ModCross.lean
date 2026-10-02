@@ -38,7 +38,7 @@ two-element multi-tensor.
   relation, with its defining equation `modMultiπ_swapPair`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

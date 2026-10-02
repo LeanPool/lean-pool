@@ -20,7 +20,7 @@ edge subsets, the Eulerian condition, transition systems and the
 circuit count all transport along fragment equivalences.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

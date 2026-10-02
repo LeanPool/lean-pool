@@ -20,7 +20,7 @@ tensoring, which produces the internal-hom extension that the
 pullback stage consumes.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

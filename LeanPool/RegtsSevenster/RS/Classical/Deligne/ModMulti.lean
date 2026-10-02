@@ -62,7 +62,7 @@ is outside this module's scope; its substrate (the head modules,
 the concatenation map, and the slot relations) is complete.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -19,7 +19,7 @@ definitionally scalar multiplication, so no transparency options
 and no equivalence transport are needed.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

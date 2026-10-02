@@ -20,7 +20,7 @@ the interleaving, and `tensorFragmentCongr` shows the tensor
 respects fragment equivalence in both slots.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

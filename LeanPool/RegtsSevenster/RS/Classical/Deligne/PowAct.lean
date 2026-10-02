@@ -35,7 +35,7 @@ symmetric power a module again.
 * `modPowMod`/`symPowMod`: the bundled modules.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

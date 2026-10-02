@@ -18,7 +18,7 @@ tower.  Together with the merge isomorphisms this descends the
 vanishing of a relative power to the module itself.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

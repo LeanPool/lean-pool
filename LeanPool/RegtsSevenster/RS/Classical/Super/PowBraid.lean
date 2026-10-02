@@ -19,7 +19,7 @@ defined here; the identification is the coordinate workhorse of
 the extraction.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

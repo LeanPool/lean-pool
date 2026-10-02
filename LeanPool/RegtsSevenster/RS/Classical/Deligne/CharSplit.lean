@@ -22,7 +22,7 @@ specialisation at a pointwise product of scalar sequences over
 pairs of shapes.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

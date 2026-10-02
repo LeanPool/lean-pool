@@ -21,7 +21,7 @@ Lemma 5.7 proves the change of basis and the invariance of the
 partition function under the isometry `Ψ`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

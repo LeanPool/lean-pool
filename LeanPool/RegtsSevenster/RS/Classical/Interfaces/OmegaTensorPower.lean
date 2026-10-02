@@ -38,7 +38,7 @@ This file builds the chain:
   by `omegaPow`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

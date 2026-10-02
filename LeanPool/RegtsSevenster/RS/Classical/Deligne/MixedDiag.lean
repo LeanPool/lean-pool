@@ -28,7 +28,7 @@ lemmas of `Deligne/PermNat.lean` do, and linearises to the group
 algebra, whose diagonal double action is packaged as `diagAlg`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

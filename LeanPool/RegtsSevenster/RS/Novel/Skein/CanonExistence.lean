@@ -42,7 +42,7 @@ flags lying on non-canonically oriented boundary-to-boundary chains.
    chain's canonicality status (`pathCanonical_canonOrientation`).
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

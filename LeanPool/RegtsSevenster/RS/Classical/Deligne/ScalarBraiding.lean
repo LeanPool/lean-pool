@@ -26,7 +26,7 @@ give the vanishing half of Deligne 1.9 for `𝟙^p ⊕ 1-bar^q` inside any
 ambient category — the engine of the trichotomy 2.9.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

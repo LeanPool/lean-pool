@@ -23,7 +23,7 @@ matching exist and that a glue preserves.
 This file names that data and the step that advances it.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

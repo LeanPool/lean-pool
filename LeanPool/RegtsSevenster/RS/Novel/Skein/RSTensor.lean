@@ -34,7 +34,7 @@ The tensor is zero at a coordinate whose parity pattern is not the
 subset's, which is the condition that `χ` be consistent with `S`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

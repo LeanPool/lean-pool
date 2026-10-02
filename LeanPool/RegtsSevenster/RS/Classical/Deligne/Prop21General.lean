@@ -37,7 +37,7 @@ functor — is supplied by the growth dichotomy
 `RS.forall_exists_schurKilled`, applied to the doubling.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

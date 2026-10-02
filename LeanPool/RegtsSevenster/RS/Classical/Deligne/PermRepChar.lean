@@ -28,7 +28,7 @@ Schur specialisation as the dimension of an equivariant Hom
 space.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

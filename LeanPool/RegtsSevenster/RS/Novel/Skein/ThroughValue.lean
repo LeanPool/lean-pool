@@ -27,7 +27,7 @@ Even colourings stay fully pairing-constant: the even gluing
 weight is diagonal, which pairing-constancy implements already.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

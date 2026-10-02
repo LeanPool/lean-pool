@@ -18,7 +18,7 @@ boundary label `k` to boundary label `t + k`.  Flags are pairs
 `b = true` at the outgoing end (label `t + k`).
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -34,7 +34,7 @@ to the unit, and is the line `End (𝟙_ A) = ℂ` when it is — the
 scalar-unit hypothesis read as a ℂ-linear equivalence.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

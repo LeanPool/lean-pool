@@ -21,7 +21,7 @@ that lands.  For subsets arising from a standard transition
 system, the relative data agrees with the original.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

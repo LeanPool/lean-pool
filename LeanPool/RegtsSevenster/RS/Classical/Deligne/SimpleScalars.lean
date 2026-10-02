@@ -32,7 +32,7 @@ under either alternative of simplicity the action vanishes
 (`RS.hom_oddLine_eq_zero_of_simple`).
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

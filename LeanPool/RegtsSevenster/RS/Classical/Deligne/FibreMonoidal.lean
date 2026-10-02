@@ -51,7 +51,7 @@ a separate matter and is not assumed here, so the strong notions
 `Functor.Monoidal` and `Functor.Braided` are not instantiated.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

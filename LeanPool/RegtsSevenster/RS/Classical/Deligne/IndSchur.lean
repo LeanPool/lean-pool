@@ -57,7 +57,7 @@ Yoneda lemma, by one element — its value on the canonical element
 comparisons are decided by evaluating both sides there.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

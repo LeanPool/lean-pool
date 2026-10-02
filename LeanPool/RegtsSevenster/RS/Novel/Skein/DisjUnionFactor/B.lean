@@ -15,7 +15,7 @@ The colouring sum and the through-summand of a union split into
 the two components.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

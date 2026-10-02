@@ -17,7 +17,7 @@ the normal form against which the skein trace of a permutation
 factors into cycle loops.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

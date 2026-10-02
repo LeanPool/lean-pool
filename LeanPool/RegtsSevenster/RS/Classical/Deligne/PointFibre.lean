@@ -80,7 +80,7 @@ algebra being a monomorphism — vanishes itself.
 * `RS.exists_deligneFibre_of_point`: the four properties packaged.
 -/
 
-@[expose] public section
+public section
 namespace RS
 
 open CategoryTheory Limits

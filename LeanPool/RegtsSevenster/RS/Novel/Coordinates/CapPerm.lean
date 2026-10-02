@@ -16,7 +16,7 @@ an arity cast; the permutation feeds the braiding-word transport
 and the cast transports as an equality of powers.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

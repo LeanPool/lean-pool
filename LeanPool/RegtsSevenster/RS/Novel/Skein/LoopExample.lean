@@ -29,7 +29,7 @@ odd colourings contribute through a common basis vector.  A sign
 error in any one of them changes the answer.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

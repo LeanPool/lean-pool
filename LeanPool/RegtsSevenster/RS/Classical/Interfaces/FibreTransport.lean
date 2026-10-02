@@ -24,7 +24,7 @@ monoidal functor) is Mathlib's
 `ExactPairing.ofFaithful`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

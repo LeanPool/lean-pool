@@ -18,7 +18,7 @@ crossed pairs.  The chain transitions and the stage products of
 the splitting algebra factor through it.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

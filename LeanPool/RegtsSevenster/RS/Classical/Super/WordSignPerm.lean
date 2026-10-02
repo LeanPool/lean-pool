@@ -16,7 +16,7 @@ by identifying it as `(-1) ^ oddInversions (wordPerm w) c`, where
 `oddInversions σ c` counts inversions of `σ` at odd-coloured positions.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -21,7 +21,7 @@ under any boundary relabelling.  These are the data that the
 Deligne fibre functor sends to the standard form and copairing.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

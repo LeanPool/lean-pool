@@ -32,7 +32,7 @@ coordinate identification follows unconditionally
 (`exists_coordinates_of_snake`).
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

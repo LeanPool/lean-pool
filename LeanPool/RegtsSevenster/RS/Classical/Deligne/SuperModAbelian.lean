@@ -44,7 +44,7 @@ identities, so each survives verbatim in a submodule and in a
 quotient.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

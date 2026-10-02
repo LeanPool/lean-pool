@@ -45,7 +45,7 @@ copairing, need the multi-tensor coherence layer and are outside
 this module's scope.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

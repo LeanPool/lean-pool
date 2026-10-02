@@ -18,7 +18,7 @@ morphisms, and the action on a biproduct is componentwise, so the
 realization of a biproduct is the biproduct of the realizations.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

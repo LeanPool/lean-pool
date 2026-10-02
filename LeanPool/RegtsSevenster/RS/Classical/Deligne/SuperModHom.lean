@@ -17,7 +17,7 @@ four action blocks.  Postcomposition with a morphism of module
 objects realizes one.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -15,7 +15,7 @@ Shared definitions for the cycle sums: the fibre counts of
 a function `Fin n → Fin N` and its content multiset.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

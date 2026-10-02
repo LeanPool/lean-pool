@@ -19,7 +19,7 @@ insertion is inserting after multiplying.  These are the
 compatibility squares consumed by the colimit algebra.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

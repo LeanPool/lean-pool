@@ -23,7 +23,7 @@ association, and the final meet in the middle via two-stage
 folding and reordering.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

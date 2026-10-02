@@ -19,7 +19,7 @@ modules: the bookkeeping of the mixed free part of the dévissage
 decomposition.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

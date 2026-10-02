@@ -46,7 +46,7 @@ The comparison is carried down to super vector spaces in
   generator computations consume.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

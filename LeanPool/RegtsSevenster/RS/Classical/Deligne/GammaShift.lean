@@ -33,7 +33,7 @@ compatibilities is that lemma conjugated by the very coherence
 isomorphisms that identify the sources in `RS.gammaAlgebra`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

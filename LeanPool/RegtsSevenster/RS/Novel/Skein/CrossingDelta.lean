@@ -21,7 +21,7 @@ mixed block (per-third-chord parity transfer, `third_chord_reparity`)
 and the four-end block (evaluated to the mutual-crossing indicator).
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -21,7 +21,7 @@ endomorphism algebra, and kernels are the splittings of the
 regular idempotents.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

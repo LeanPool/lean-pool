@@ -23,7 +23,7 @@ The mirror form, with the twist on the left, is obtained from this
 one by transporting along the braiding.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

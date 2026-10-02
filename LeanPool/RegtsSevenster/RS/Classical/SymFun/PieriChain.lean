@@ -17,7 +17,7 @@ coefficient of the target monomial in `p₁ʳ · a_{eVec λ}` when `μ`
 extends `λ` by `r` cells.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

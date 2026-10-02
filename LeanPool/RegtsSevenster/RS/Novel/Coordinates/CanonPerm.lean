@@ -25,7 +25,7 @@ functional sees only the multiset and the set, and the sign the
 reindexing costs is exactly the one the list carries.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

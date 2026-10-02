@@ -18,7 +18,7 @@ rank through the first isomorphism theorem: the quotient by the
 kernel is equivalent to the range of the pairing map.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

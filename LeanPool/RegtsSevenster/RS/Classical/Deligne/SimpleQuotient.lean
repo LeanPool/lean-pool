@@ -17,7 +17,7 @@ algebra which is simple as an algebra: its only ideals are `⊥` and
 `⊤`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

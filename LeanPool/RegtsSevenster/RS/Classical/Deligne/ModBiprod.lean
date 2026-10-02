@@ -19,7 +19,7 @@ and morphisms out of the biproduct module are determined by the
 two components.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

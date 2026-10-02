@@ -23,7 +23,7 @@ Flipping the colours on a set `S` negates the sign at the flags of
 analysis a product of independent local factors.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

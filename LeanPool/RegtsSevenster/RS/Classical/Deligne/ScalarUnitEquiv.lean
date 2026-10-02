@@ -17,7 +17,7 @@ ring homomorphism, so it is a ring isomorphism, which is the form
 in which the ℂ-linear structure of the Ind-completion consumes it.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

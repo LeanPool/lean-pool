@@ -32,7 +32,7 @@ tensor generator and its dual splits every embedded object, once
 subquotients of split objects are known to be split.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

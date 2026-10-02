@@ -25,7 +25,7 @@ nonvanishing engine of the Key Lemma's chain: a vanishing chain
 unit forces the unit of the base to vanish.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

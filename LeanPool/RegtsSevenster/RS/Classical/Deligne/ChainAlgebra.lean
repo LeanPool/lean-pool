@@ -30,7 +30,7 @@ the second slot.  All colimit-level laws are cast-free because the
 stage inclusions absorb the index transports.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

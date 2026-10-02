@@ -23,7 +23,7 @@ meshing directly with the mixed partition function's
 Definition-5 sum.
 -/
 
-@[expose] public section
+public section
 
 open scoped TensorProduct
 

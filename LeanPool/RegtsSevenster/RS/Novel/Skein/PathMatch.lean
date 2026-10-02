@@ -33,7 +33,7 @@ chain result and `σ` is the edge pairing), established by induction
 on `j` using `match_invol`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -44,7 +44,7 @@ with existing linear structures (and with itself, for two different
 `φ`), so callers install the structure with `letI` at use sites.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

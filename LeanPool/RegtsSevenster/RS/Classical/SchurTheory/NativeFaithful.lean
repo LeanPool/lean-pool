@@ -20,7 +20,7 @@ generates, so an algebra map vanishing on a block element but not
 on the projector is impossible.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

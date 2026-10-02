@@ -19,7 +19,7 @@ transpose, so the whole recursion lives in the bundle-map
 calculus.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

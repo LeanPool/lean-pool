@@ -18,7 +18,7 @@ components.  These four identifications are the base cases of the
 computation of `ρ` on the free modules of 2.11.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

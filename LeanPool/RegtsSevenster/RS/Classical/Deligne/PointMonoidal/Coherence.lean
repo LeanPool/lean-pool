@@ -41,7 +41,7 @@ strength of base change along an algebra map, in super form.
   are invertible.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

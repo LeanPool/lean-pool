@@ -32,7 +32,7 @@ summands are `−1` and `0`, so the canonical value depends on the
 boundary pairing and independence can only be asserted within one.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

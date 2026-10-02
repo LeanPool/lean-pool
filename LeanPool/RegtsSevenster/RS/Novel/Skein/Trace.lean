@@ -20,7 +20,7 @@ the pairing kernel by construction and so descends to the Hom
 spaces of the skein category.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

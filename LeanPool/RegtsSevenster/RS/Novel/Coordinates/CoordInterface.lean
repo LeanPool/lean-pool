@@ -20,7 +20,7 @@ the parameter value as a pairing in the fibre, ready for the
 standard-model coordinates.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

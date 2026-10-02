@@ -17,7 +17,7 @@ orbits by the orbit representative gives the directions.  Canonical
 data therefore exist exactly when a transition system does.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

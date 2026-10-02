@@ -19,7 +19,7 @@ which is consistent exactly because a point kills the products of
 two odd elements.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

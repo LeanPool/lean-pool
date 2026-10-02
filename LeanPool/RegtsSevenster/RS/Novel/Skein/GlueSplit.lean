@@ -22,7 +22,7 @@ the signed path-canonical value of `PathCanon.lean`, whose
 within-pairing independence is `PropThreeOpen.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

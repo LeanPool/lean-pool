@@ -20,7 +20,7 @@ congruences for the fragment operations: relabelling, disjoint
 union, and single-pair gluing.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

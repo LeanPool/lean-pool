@@ -49,7 +49,7 @@ degenerates to `TransitionSystem` and `internalCircuitCount` equals
 `circuitCount`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

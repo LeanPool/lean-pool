@@ -20,7 +20,7 @@ the coherence lemmas provable without the interchange law
 bundle-map calculus.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

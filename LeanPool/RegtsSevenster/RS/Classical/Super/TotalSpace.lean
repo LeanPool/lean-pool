@@ -16,7 +16,7 @@ components. Morphisms act componentwise, giving an algebra map on
 endomorphisms.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

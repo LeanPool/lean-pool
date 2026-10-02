@@ -19,7 +19,7 @@ composites defining the base-changed pairing and copairing are
 linear too.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

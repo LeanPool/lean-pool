@@ -23,7 +23,7 @@ braiding.
   a module is the twist of that module by the generating object.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

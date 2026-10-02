@@ -19,7 +19,7 @@ off as the power of the circle value.  This is the accompanying paper's
 class level.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

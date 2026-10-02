@@ -21,7 +21,7 @@ stage and at the base, and the dispatch on whether the stage's cut
 closes.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

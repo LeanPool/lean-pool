@@ -35,7 +35,7 @@ concatenation of ambient tensor powers.
   forward direction and `powSplit` as the inverse.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

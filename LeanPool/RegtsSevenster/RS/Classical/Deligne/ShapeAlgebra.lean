@@ -21,7 +21,7 @@ algebra map, so idempotence and products transport; an injective
 one, so nonvanishing transports too.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

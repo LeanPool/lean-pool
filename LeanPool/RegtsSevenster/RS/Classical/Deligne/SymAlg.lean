@@ -53,7 +53,7 @@ frame machinery below are the concatenation substrate they will
 consume.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

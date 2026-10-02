@@ -41,7 +41,7 @@ Main results: `chainStatusLedger` (the enriched chain induction),
 `pairedLedgerUnsigned`, and `pairedLedger`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

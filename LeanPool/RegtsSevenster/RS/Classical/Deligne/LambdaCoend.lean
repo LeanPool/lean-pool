@@ -20,7 +20,7 @@ stage maps and dinaturality, the mapping property, and
 functoriality in both arguments.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -21,7 +21,7 @@ general, and the sign phenomena of the odd line enter only at the
 symmetriser conjugation downstream.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

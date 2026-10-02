@@ -20,7 +20,7 @@ transferred datum are where retraction and self-adjointness
 enter, and they live with the pairing calculus.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

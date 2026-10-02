@@ -18,7 +18,7 @@ symmetric-group representation theory consumed by the development
 is a theorem of this tree.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

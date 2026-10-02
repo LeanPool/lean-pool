@@ -20,7 +20,7 @@ the summand is named here with the count as a parameter, extended by
 zero off the good subsets, exactly as `termAt` is.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

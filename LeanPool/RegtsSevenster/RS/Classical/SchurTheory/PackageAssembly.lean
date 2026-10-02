@@ -19,7 +19,7 @@ The branching field and the factorial bound enter as parameters,
 discharged in `PairingPos.lean` and `Common/FactorialBound.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

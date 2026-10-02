@@ -16,7 +16,7 @@ coefficient function is central — pure coefficient algebra, no
 representation theory.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

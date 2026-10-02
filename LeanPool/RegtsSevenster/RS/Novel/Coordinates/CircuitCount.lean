@@ -19,7 +19,7 @@ restrictions have the same orbit count, whence the circuit count
 out-restriction.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

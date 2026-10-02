@@ -19,7 +19,7 @@ the hexagon turns that cyclic rearrangement into a braiding past
 the trivialisation, which the unit coherences absorb.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

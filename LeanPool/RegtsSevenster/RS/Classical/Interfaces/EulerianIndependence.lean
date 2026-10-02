@@ -20,7 +20,7 @@ eliminates the choice in `EdgeSubset.mixedValue` against any
 concrete transition data.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -22,7 +22,7 @@ cycle sum.  The two cycle-type transport facts enter as explicit
 hypotheses, discharged in `ColourCycleSum.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

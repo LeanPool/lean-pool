@@ -47,7 +47,7 @@ The development is scoped to the structures above; associativity of
 `modTensor` is outside this module's scope.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

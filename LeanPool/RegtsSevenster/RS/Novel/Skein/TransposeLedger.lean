@@ -55,7 +55,7 @@ separated configuration.  The decomposition behind the constant:
   `ThroughIndCFalse.lean` compares against.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

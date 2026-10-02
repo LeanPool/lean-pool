@@ -38,7 +38,7 @@ pairings and the edge-rank hypothesis; Eulerian edge subsets; the mixed
 partition function; the named statements; super vector spaces; the vocabulary
 of Deligne's hypotheses; and Deligne's theorem. -/
 
-@[expose] public section
+public section
 
 namespace RS
 

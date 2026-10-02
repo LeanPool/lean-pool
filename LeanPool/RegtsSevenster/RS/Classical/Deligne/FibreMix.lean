@@ -19,7 +19,7 @@ contributes the algebra and the line contributes its parity shift,
 and the fibre functor is additive.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

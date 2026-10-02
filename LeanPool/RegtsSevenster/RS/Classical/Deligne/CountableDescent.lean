@@ -60,7 +60,7 @@ diagram is dominated by a single stage, whence
 `RS.exists_factor_of_mix_hom_colimit`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

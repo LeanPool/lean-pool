@@ -36,7 +36,7 @@ power of a rigid object, so the word-indexed power here is called
 `wordPow` instead.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

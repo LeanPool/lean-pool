@@ -36,7 +36,7 @@ language of `A ⊗ X` and a bare action morphism, and are transported
 into the category of module objects by definitional unfolding.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

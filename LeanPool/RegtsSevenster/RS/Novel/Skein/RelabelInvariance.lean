@@ -27,7 +27,7 @@ already pinned to a choice: the relabel carries one side's data to
 the other's, and the conversions are identity-shaped.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

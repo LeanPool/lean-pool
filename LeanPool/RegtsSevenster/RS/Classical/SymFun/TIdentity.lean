@@ -18,7 +18,7 @@ products equals `1`.  This is the polynomial form of the
 orthonormality `⟨χ_μ, χ_μ⟩ = 1`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

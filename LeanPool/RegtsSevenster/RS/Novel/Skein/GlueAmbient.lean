@@ -18,7 +18,7 @@ equivalence (with the label re-bracketing), and a single-pair glue
 commutes with extending the ambient fragment by a disjoint union.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

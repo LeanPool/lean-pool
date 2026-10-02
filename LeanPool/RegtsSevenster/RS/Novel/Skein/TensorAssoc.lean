@@ -20,7 +20,7 @@ interleave value lemmas; the associator equivalence follows by
 pure relabel algebra.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -18,7 +18,7 @@ copairing (`RS.zigCarrier`), with their naturality in the module
 and their evaluation on scalars.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

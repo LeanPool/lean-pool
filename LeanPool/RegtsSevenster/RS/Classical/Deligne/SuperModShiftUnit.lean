@@ -46,7 +46,7 @@ degree and `+1` in odd degree.
 * `RS.SuperCommAlgebra.Mod.shiftUnitTensor`: the isomorphism.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

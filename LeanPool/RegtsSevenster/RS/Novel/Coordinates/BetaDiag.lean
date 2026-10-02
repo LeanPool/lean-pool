@@ -18,7 +18,7 @@ the peeled colouring times the split factor — the smaller diagonal
 against the two-position form entry, vanishing on odd halves.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

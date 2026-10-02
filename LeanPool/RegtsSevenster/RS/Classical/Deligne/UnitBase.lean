@@ -26,7 +26,7 @@ collapses to the ambient category.
   whose carrier is zero collapses to the other summand.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -15,7 +15,7 @@ For `f : Fin n → Fin N`, the number of permutations `π` with `f ∘ π = f`
 equals `∏ j, (fibreCard f j)!`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

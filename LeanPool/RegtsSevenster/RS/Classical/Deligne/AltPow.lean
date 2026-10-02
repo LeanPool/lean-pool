@@ -34,7 +34,7 @@ module's scope, exactly as its symmetric counterpart lives in
 `PowAct.lean` rather than in `SymAlg.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

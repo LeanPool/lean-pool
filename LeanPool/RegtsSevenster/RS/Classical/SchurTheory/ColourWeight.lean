@@ -20,7 +20,7 @@ weighted permutation sum as a sum of stabilizer weights over the
 class.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -18,7 +18,7 @@ multiply; the copairing seeds the bottom stage, and the iterated
 seed multiplication is the copairing power of the duality datum.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

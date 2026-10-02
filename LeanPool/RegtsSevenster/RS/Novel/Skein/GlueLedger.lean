@@ -26,7 +26,7 @@ the same on both sides, the chord matching is unchanged, and so is
 the circuit count.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

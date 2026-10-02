@@ -23,7 +23,7 @@ inherits the structure through `Ind.equivalence` and the full
 monoidal subcategory of the ind-property.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

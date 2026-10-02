@@ -17,7 +17,7 @@ are duplicate-free lists of the participating flags at a vertex:
 the raw material for the canonical index permutation between them.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

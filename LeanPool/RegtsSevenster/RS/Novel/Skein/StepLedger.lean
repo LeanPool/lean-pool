@@ -65,7 +65,7 @@ repair does not carry the ledger on its own, which is why a pair
 is treated as one composite move.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

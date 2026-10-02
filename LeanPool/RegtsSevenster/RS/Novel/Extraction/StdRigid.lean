@@ -19,7 +19,7 @@ the contraction identities `L_C = id` distributed over the graded
 blocks.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

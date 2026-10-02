@@ -18,7 +18,7 @@ isomorphisms: the two transport devices consumed by the k-fold
 twisted power identification.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

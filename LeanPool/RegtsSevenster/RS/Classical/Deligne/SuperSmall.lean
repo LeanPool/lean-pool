@@ -60,7 +60,7 @@ all reachable through the funnel; `isBilimitOfTotal` lives in the
 root `CategoryTheory.Limits` namespace, not on `Bicone`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

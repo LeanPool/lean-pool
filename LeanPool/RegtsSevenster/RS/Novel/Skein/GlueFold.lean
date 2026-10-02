@@ -19,7 +19,7 @@ pair list, up to fragment equivalence composed with the canonical
 relabelling.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

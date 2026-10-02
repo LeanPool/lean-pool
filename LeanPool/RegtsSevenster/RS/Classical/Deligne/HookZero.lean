@@ -25,7 +25,7 @@ those rows live in a `p`-dimensional coordinate subspace, are
 linearly dependent, and the determinant is zero.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

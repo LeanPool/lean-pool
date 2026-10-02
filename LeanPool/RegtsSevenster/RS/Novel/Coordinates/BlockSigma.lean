@@ -15,7 +15,7 @@ The block enumeration pairs a block index with an offset within the
 block to enumerate the concatenated total.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

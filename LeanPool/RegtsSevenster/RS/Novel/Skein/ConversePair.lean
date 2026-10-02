@@ -21,7 +21,7 @@ composition's base and sums the results; `ConverseTrip.lean` carries
 the choice up and down the interface.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

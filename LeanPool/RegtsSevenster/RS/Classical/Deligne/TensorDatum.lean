@@ -19,7 +19,7 @@ descended interchange exists because the interchange is linear in
 both factors.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

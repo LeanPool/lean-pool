@@ -16,7 +16,7 @@ module objects over a fixed commutative monoid object: the
 realization of a module map is postcomposition.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

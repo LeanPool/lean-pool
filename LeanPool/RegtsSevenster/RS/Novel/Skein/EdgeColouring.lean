@@ -25,7 +25,7 @@ theorem about `EdgeOddColouring` rather than a definition in its
 own right.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

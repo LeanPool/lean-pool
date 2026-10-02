@@ -27,7 +27,7 @@ first generator past the second algebra factor.
   `RS.gpair`, as the shuffle.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

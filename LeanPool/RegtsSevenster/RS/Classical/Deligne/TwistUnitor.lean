@@ -30,7 +30,7 @@ actions.
   twist of the free module, through the carrying isomorphism.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -19,7 +19,7 @@ and applying `g` to each may be done in either order
 (`permMor_comp_powHom`).
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

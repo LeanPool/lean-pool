@@ -19,7 +19,7 @@ contraction descends through the coequalizer using the pairing's
 linearity.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

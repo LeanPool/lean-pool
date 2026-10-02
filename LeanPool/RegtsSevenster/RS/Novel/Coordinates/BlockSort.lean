@@ -18,7 +18,7 @@ fibre.  Relabelling along the sort turns the multi-star into the
 block-assigned form, ready for the block factorization.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

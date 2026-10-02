@@ -20,7 +20,7 @@ comparison of the ambient category, and realization carries the
 comparison of (2.11.1).
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

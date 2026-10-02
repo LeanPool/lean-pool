@@ -16,7 +16,7 @@ flags carry the odd edge colour on the representative slot and its
 partner on the partner slot; the rest carry the even colour.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

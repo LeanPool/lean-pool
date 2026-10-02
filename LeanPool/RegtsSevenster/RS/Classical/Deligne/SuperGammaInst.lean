@@ -48,7 +48,7 @@ generator `indOf.obj sOdd`, and the three hypotheses are proved.
   the scalar unit as in `RS.ScalarLinear`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -20,7 +20,7 @@ This file bundles the structure map as an isomorphism of modules
 over the new base and proves it natural in both slots.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

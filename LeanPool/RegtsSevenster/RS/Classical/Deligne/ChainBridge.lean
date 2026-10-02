@@ -22,7 +22,7 @@ wiring that connects the copairing powers of the duality datum
 to the stage units that the colimit detection speaks about.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

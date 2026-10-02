@@ -28,7 +28,7 @@ over the anti-canonical chains re-canonicalizes any orientation
 (`exists_recanonicalize`).
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -18,7 +18,7 @@ trace criterion once nilpotents are known to have vanishing trace,
 which the atom decomposition supplies.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

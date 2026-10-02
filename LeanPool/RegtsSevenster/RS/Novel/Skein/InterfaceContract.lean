@@ -26,7 +26,7 @@ at a closed cut, and at an open one the configuration's own kernel,
 which is the same form read in the basis the tensor twists into.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

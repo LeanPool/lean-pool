@@ -29,7 +29,7 @@ functions runs on: the product of two matchings' signs is `(-1)` to
 the number of components of their union.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

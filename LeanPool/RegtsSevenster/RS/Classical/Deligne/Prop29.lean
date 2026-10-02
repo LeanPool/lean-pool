@@ -20,7 +20,7 @@ unit with braiding `−1`; local means after base change to some
 nonzero commutative algebra.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

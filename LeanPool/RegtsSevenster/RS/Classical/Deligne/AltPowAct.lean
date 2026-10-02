@@ -31,7 +31,7 @@ every positive alternating power a module.
 * `altPowMod`: the bundled module.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

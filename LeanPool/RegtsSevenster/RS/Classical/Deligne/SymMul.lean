@@ -43,7 +43,7 @@ braided category the `tensorRight` mirror follows — together with
 intended consumers.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

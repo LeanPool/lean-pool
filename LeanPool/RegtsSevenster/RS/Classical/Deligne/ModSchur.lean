@@ -20,7 +20,7 @@ every block of one size acts as zero, the completeness of the
 blocks collapses the whole power.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

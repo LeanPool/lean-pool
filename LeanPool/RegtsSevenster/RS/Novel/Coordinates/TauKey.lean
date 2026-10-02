@@ -18,7 +18,7 @@ the canonical index permutation's sign is the key-sortSign of the
 pair enumeration alone.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -19,7 +19,7 @@ and evaluates the determinant as a manifestly positive Vandermonde
 product of staircase differences.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

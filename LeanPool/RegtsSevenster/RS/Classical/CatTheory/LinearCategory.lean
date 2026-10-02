@@ -18,7 +18,7 @@ scalar endomorphisms of the tensor unit (`HasScalarUnit`), is
 defined in `RS/Definitions.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

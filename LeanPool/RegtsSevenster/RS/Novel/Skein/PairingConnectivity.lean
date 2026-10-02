@@ -19,7 +19,7 @@ localized repairs qualify, and derives the same-pairing invariance
 of the signed summand from connectivity and the per-step ledger.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -18,7 +18,7 @@ normalized there), so every row is a scalar multiple of it, and
 evaluating at the empty graph identifies the scalar.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

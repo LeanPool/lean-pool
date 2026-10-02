@@ -57,7 +57,7 @@ self-duality of the odd line,
 `RS.OddLine.evaluation_coevaluation`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

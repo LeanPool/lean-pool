@@ -28,7 +28,7 @@ the binomial count, and the character expansion of each block
 factor.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

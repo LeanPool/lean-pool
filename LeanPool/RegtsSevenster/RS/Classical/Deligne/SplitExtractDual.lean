@@ -22,7 +22,7 @@ idempotent is the complement.  No braiding is needed anywhere:
 the copairing already presents the primal factor on the left.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

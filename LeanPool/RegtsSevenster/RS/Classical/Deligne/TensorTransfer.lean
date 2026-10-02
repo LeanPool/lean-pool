@@ -26,7 +26,7 @@ multiplicity pushes a bounding-box cell into `μ'` or `ν'`
 (Deligne 1.12).
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

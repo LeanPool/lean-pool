@@ -34,7 +34,7 @@ constructed from mathlib's linear algebra as `RS.schurPackage` in
 `RS/Classical/SchurTheory/Package.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

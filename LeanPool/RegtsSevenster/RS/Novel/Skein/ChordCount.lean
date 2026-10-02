@@ -21,7 +21,7 @@ This is what makes "the number of chords" a single notion: it is
 the diagram, and they agree.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

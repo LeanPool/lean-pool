@@ -29,7 +29,7 @@ the tower's colour kernel, which pairs the odd colours through
 `-oddThroughFactor`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

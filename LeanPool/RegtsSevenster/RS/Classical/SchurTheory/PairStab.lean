@@ -15,7 +15,7 @@ The stabilizer count for colourings by pairs, transported along
 `finProdFinEquiv` from the `Fin`-codomain machinery.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -28,7 +28,7 @@ nonvanishing argument is unaffected; the insertions live in
 degrees `±1`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

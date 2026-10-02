@@ -40,7 +40,7 @@ map `σ ↦ [permFragment σ]` is a genuine `MonoidHom` from
 `Perm (Fin n)` to `End (SkeinObj.mk n)` by `permFragmentCompose`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -50,7 +50,7 @@ of a countably presented ind-object is of at most countable dimension
 any of its quotients (`RS.rank_hom_unit_le_aleph0_of_epi`).
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

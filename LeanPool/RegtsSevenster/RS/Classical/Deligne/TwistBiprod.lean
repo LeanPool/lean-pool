@@ -24,7 +24,7 @@ projection is a module map and the twist of a module map is again
 a module map.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

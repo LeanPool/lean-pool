@@ -18,7 +18,7 @@ defined by recursion on its length, with the composition law
 proved once and the one-step computation exposed as a simp lemma.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

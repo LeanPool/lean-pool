@@ -23,7 +23,7 @@ its kernel and an ideal for its image, so simplicity makes it
 invertible, and the preimage of the unit is then an inverse for `g`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

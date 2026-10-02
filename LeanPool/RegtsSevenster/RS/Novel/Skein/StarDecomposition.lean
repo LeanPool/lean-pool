@@ -21,7 +21,7 @@ canonical ones gives `starDecomposition`, the accompanying paper's
 union glued along the edge matching.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

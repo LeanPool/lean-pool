@@ -21,7 +21,7 @@ algebra.  The balanced line recovers the degree-zero algebra
 carrier.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

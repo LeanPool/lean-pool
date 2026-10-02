@@ -27,7 +27,7 @@ isomorphism, so both components of the comparison upstairs are
 isomorphisms, and `Doubled.isIso_of_components` concludes.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

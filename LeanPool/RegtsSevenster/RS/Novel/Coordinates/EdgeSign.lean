@@ -17,7 +17,7 @@ per-edge signs into the Definition 5 orientation signs, up to the
 count of edges whose representative is incoming.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

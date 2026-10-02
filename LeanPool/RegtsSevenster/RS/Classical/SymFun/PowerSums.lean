@@ -25,7 +25,7 @@ symmetric-group characters is the `frobenius` field of
 `SchurPackage` in `Interfaces/SchurPackage.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

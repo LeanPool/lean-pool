@@ -21,7 +21,7 @@ trace fields ask for.
 Cyclicity carries across the identification unchanged.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

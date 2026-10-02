@@ -36,7 +36,7 @@ reused from `BiprodPow` unchanged: they depend only on the two
 source objects, never on the letter maps.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

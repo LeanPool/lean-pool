@@ -26,7 +26,7 @@ transition maps of a `Finset ι`-shaped diagram, and the big
 tensor product is its colimit.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

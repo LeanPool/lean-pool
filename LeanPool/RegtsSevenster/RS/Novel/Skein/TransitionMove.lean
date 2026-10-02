@@ -62,7 +62,7 @@ needs the orbit machinery; that construction is
 segment.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

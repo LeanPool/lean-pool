@@ -17,7 +17,7 @@ again commute with the four actions, because the actions on the
 source are determined by those on the target.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

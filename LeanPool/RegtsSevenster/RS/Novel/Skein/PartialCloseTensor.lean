@@ -27,7 +27,7 @@ This file: the three-summand shuffle, the ground computation
 inner-pair identification.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

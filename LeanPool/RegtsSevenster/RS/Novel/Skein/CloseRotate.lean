@@ -27,7 +27,7 @@ the ideal lemma and the trace calculus (accompanying paper,
 Lemma 3.3(a) and Lemma 3.5(a)).
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

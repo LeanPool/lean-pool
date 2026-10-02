@@ -20,7 +20,7 @@ the entire compose-calculus (identity laws, free-side relabels,
 permutation absorption) act on partial closures.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

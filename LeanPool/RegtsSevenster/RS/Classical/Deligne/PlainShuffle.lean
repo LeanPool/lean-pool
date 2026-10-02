@@ -30,7 +30,7 @@ equivariance statements in the form the plain tensor-power calculus
 consumes.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

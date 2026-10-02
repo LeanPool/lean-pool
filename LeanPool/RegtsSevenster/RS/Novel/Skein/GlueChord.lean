@@ -24,7 +24,7 @@ with the two glued labels removed, and the glued chord matching is
 the contraction of the lifted one at those two labels.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

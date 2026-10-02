@@ -50,7 +50,7 @@ moves by exactly `±2`, i.e. the circuit count by `±1`.
 * `separatedCountParity` — the discharged `SeparatedCountParity`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

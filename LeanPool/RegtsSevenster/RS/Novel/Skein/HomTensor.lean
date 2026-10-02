@@ -17,7 +17,7 @@ Hom spaces — the monoidal product of the skein category.  On
 fragment classes it is the tensor of fragments.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -37,7 +37,7 @@ monoidal structure transported along `CategoryTheory.equivSmallModel`
   `RS.DeligneFibreFunctor.precompose`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

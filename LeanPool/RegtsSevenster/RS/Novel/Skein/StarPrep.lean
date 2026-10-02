@@ -20,7 +20,7 @@ blocks; and the interface pairs of a full closure split into the
 high-block pairs followed by the low-block pairs.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -22,7 +22,7 @@ determinants and anchoring at `v = 0` gives the bialternant form:
 the polynomial Jacobi–Trudi identity `a_{v+δ} = s_v · a_δ`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -18,7 +18,7 @@ basis expansion: the vocabulary in which the final computation
 evaluates.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

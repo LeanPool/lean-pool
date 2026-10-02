@@ -15,7 +15,7 @@ The statement that base change preserves the zigzag laws, named
 so that the dévissage steps can refer to it directly.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

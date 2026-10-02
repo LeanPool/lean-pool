@@ -38,7 +38,7 @@ interface are plugged in elsewhere.
   the alternating power, definitionally.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

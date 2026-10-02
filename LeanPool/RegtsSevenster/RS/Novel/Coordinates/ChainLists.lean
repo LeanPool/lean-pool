@@ -16,7 +16,7 @@ edge-interleaved list, the oriented list, the matched list, and
 the global pair concatenation.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

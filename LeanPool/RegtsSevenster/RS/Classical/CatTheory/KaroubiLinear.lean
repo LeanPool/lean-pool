@@ -15,7 +15,7 @@ The underlying-morphism map transports the linear structure of the
 base category to its Karoubi completion.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -18,7 +18,7 @@ transition.  The stage units ride along the transitions by
 construction; their nonvanishing is the pairing side's business.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

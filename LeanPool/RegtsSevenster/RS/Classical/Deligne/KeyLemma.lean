@@ -43,7 +43,7 @@ constructible morphism connects them.  The degree-zero object
 `modTensor A M' M ⊗ B` is where the splitting genuinely lives.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

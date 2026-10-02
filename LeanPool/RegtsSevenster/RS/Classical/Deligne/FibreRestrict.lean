@@ -19,7 +19,7 @@ functor; the composite of that functor with the fibre functor is
 then strong monoidal.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

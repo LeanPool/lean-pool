@@ -17,7 +17,7 @@ correspondence with `Nat.Partition n` that reads off the row lengths.
 This is the tree's standard idiom for "sum over the partitions of `n`".
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

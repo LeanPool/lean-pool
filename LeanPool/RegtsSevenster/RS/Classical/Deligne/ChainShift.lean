@@ -22,7 +22,7 @@ family of legs absorbed by the transitions descends to the chain
 colimit, with the stage computation exposed as a simp lemma.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

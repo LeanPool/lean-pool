@@ -29,7 +29,7 @@ the fibre functor is applied.  The lemma is kept because it is a
 numbered lemma of the paper.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

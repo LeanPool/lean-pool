@@ -33,7 +33,7 @@ the former preserves colimits pointwise because tensoring in `Type v`
 does, and the latter is a left adjoint.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

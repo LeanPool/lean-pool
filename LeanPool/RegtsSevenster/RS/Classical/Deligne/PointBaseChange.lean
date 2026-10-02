@@ -61,7 +61,7 @@ finite-dimensional spaces is finite-dimensional.
   `RS.freeEvenEquivFin`, `freeOddEquivFin`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

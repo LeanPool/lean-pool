@@ -26,7 +26,7 @@ for the whole file; the statements of record are spelt at the
 carrier `A ⊗ V` with that instance.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

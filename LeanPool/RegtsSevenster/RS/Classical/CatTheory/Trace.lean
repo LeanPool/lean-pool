@@ -21,7 +21,7 @@ dimension; the trace is additive and ℂ-homogeneous; it is cyclic;
 and it is multiplicative over the tensor product.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -18,7 +18,7 @@ boundary word.  This is the recursion that computes the cap
 functional in coordinates.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

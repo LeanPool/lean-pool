@@ -20,7 +20,7 @@ unified by rewiring) and the closed case (they bound a common
 edge, which closes into a free circle parameterized by a Bool).
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

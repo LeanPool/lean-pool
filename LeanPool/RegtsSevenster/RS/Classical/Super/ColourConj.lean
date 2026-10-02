@@ -18,7 +18,7 @@ step is conjugation of the whisker through `colourPowerStep`.
 These are the carriers of the braiding-coordinate computation.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

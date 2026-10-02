@@ -16,7 +16,7 @@ the pattern: the sort-permutation's odd inversions count pairs of
 participating slots, a pure `(W, F)` quantity.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

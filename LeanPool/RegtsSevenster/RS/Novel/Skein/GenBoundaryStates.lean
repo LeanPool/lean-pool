@@ -19,7 +19,7 @@ states are indexed by the surviving labels of a `gluePair` rather
 than by an initial segment of ℕ.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

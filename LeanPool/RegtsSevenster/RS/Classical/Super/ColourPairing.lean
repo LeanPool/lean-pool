@@ -21,7 +21,7 @@ single-position form entries: `1` on matching even colours, the
 symplectic entry on odd colours, `0` on mixed positions.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

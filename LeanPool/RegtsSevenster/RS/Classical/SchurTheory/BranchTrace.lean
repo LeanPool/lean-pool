@@ -18,7 +18,7 @@ identity, and compute the trace of the cast idempotent as the
 pairing.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

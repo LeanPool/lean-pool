@@ -18,7 +18,7 @@ collapses of the relative tensor as module isomorphisms, the
 bundled copairing and pairing, and the associator.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

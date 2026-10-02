@@ -28,7 +28,7 @@ factor is minus the product of the two end colours' odd-partner
 signs.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -18,7 +18,7 @@ evaluates every chain unit to the unit of the base.  This is the
 nonvanishing engine of the Key Lemma's chain.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -35,7 +35,7 @@ a dimension count in the centre of the group algebra against the
 class sums, which are no more numerous than the shapes.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

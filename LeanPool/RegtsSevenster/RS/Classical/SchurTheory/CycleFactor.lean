@@ -17,7 +17,7 @@ each orbit is coloured uniformly, contributing a power sum in its
 size.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

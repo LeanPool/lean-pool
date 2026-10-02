@@ -22,7 +22,7 @@ inherits nilpotency — so each class block has vanishing complex
 trace, and the diagonal trace is the class-weighted sum of those.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

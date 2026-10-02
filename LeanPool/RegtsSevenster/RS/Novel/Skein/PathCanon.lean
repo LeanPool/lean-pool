@@ -23,7 +23,7 @@ summand well-defined; the corrected value chooses among canonical
 data, and the corrected independence interface quantifies over it.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

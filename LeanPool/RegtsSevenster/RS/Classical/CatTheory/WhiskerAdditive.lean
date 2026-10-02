@@ -27,7 +27,7 @@ instance for `tensorLeft`, so the distributors are built here
 directly.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

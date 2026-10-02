@@ -34,7 +34,7 @@ The route:
 * `exists_coordinates` assembles the graded statement.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

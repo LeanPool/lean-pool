@@ -27,7 +27,7 @@ and vanishes on a pairing-preserving one
 (`statusDiff_of_samePairing`).
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

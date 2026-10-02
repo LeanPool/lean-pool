@@ -23,7 +23,7 @@ the converse it gives is `regts_sevenster_converse` in
 `RS/TheoremConverse.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -20,7 +20,7 @@ established by `decide` over the two surviving flags, with the
 inverse flag map given canonically by the boundary-flag function.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

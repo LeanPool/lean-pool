@@ -28,7 +28,7 @@ back — become isomorphisms of modules.
   inverse, with roundtrips.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

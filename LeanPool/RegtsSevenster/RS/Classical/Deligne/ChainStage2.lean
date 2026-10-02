@@ -20,7 +20,7 @@ seed transitions all restate the balanced machinery at two free
 indices; the substrate for the graded splitting algebra.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

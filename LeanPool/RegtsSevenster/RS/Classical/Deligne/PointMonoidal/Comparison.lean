@@ -46,7 +46,7 @@ hypothesis is needed.
   tensor product of super vector spaces.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

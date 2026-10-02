@@ -19,7 +19,7 @@ add-one-variable recurrence enters as the hypothesis `HSubRec`,
 discharged in `HInsert.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

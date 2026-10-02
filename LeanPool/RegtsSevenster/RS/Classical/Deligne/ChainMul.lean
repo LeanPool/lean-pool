@@ -17,7 +17,7 @@ bundles; through the interchange, the tensor product of two chain
 stages multiplies into the chain stage of summed arity.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

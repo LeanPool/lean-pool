@@ -18,7 +18,7 @@ vertex functional of Definition 5 evaluates the symmetric star
 coordinates.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

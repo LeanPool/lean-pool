@@ -18,7 +18,7 @@ complement of the split unit factor, and carries the descended
 action.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

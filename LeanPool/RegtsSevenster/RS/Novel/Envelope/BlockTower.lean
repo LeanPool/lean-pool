@@ -22,7 +22,7 @@ so the recursive block constructions live at the same indices as
 the tensor structure.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

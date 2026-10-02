@@ -49,7 +49,7 @@ cancels, so each reduces to the corresponding law in `A`.  This is
 and, over a symmetric `C`, `IsCommMonObj` of the same.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

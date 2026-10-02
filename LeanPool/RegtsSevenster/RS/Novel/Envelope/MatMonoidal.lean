@@ -29,7 +29,7 @@ multiplication turns into iterated sums that factor via `tensor_sum` and
 identities reduce componentwise to the corresponding identities in `C`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

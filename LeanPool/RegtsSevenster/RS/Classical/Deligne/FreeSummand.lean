@@ -19,7 +19,7 @@ split off further mixed sums, and consequently a direct summand of
 a free mixed module is again a free mixed module.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

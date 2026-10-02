@@ -22,7 +22,7 @@ via `det_apply'`, use the per-term product identity for
 match termwise.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

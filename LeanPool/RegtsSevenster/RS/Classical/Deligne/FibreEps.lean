@@ -20,7 +20,7 @@ components it is composition with the inverse right unitor of the
 algebra.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

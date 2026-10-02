@@ -50,7 +50,7 @@ reduces the naturality square to exactly those four instances.
   the two module objects.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -18,7 +18,7 @@ power of the single strand, up to canonical isomorphism.  This is
 the spine of the Deligne generator and moderate-growth fields.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -23,7 +23,7 @@ the module objects, because the category of module objects carries
 no additive structure in this development.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

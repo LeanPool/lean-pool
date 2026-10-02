@@ -33,7 +33,7 @@ consume.  The variable block therefore names the symmetry of
 `Ind C` only, matching `RS.Classical.Deligne.UniversalAlgebra`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

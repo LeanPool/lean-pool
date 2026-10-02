@@ -18,7 +18,7 @@ image of a class-function element under a representation commutes
 with the action, so it acts as a scalar on every irreducible.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

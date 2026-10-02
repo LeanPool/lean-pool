@@ -18,7 +18,7 @@ corresponding vertex have even count.  Corollary: the master
 summand vanishes whenever any block is odd-parity.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

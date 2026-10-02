@@ -29,7 +29,7 @@ Frobenius formula then yields `dim λ · s_λ(superPS p q)`, positive by
 hook positivity — so the idempotent's action cannot vanish.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

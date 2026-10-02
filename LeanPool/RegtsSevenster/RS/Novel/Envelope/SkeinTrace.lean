@@ -20,7 +20,7 @@ it: closing a tensor product multiplies the two closures, proved
 by bilinear induction down to single fragments.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

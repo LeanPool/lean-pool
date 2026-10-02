@@ -61,7 +61,7 @@ hypothesis discharged from finite length by
 `RS.indImageEmbedded_of_lengthLE`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

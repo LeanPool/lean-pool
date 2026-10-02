@@ -34,7 +34,7 @@ the subject of [FirstSlot.lean](FirstSlot.lean) and
   symmetric multiplication, up to the arity transport.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

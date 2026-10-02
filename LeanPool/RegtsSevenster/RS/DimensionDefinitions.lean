@@ -18,7 +18,7 @@ colour dimension is the least total colour bound of a representing
 mixed model; it is zero when no representing model exists.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

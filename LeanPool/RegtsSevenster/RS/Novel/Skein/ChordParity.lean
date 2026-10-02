@@ -19,7 +19,7 @@ cut — a nested chord contributes both ends, a crossing chord
 exactly one.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

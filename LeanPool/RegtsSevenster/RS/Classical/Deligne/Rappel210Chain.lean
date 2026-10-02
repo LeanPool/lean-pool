@@ -21,7 +21,7 @@ laws assemble the colimit into a commutative algebra through the
 generic chain kit.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

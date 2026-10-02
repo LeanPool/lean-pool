@@ -29,7 +29,7 @@ interchange, and the folded unit word contributes only a left
 unitor.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

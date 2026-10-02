@@ -22,7 +22,7 @@ representation kills too.  That containment is what the sector
 trace needs.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

@@ -20,7 +20,7 @@ isomorphism.  This is the engine turning the atomic idempotent
 decomposition into a semisimple-category structure.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

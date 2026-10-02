@@ -18,7 +18,7 @@ sequence in which every label occurs evenly contributes exactly
 `(−1)^length`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

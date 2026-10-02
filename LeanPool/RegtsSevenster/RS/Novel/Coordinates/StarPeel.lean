@@ -17,7 +17,7 @@ block, `starTensor` is the iterated tensor, and the peel
 induction identifies them.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

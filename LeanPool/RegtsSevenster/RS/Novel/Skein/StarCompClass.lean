@@ -20,7 +20,7 @@ the parameter value times the empty class — the identity that the
 fibre functor transports into the standard model.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

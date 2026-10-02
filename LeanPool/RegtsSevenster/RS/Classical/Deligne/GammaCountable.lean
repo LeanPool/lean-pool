@@ -63,7 +63,7 @@ the countable Nullstellensatz, as a ℂ-point of the Γ-algebra
 (`RS.nonempty_superPoint_gammaAlgebra`).
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

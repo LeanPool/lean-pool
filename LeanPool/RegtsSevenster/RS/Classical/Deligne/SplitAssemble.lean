@@ -22,7 +22,7 @@ the base entry, in the exact shape of the splitting data of the
 Key Lemma.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -16,7 +16,7 @@ classes (transported along `finProdFinEquiv`), and the
 fibre-margin partition.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -27,7 +27,7 @@ the pure cases and, for `n > q`, a linear recurrence of order `p` —
 the input for hook-vanishing arguments.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

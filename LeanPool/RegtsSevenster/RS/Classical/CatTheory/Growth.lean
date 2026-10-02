@@ -24,7 +24,7 @@ hypothesis in; the endomorphism dimension is the measure the
 envelope's rank bound supplies directly.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

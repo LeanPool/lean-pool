@@ -43,7 +43,7 @@ morphisms out of a two-, three- and four-fold tensor product.
   `MonoidalCategory` and `SymmetricCategory` instances.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

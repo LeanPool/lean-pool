@@ -36,7 +36,7 @@ The Mathlib imports above are deliberate exceptions to the
 reachable from it.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

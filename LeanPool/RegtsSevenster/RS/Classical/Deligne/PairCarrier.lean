@@ -18,7 +18,7 @@ and the copair element multiplies to the unit of the carrier —
 the section identity of the splitting data of the Key Lemma.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

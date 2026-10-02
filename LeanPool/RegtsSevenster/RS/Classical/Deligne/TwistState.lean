@@ -21,7 +21,7 @@ into a line and each line summand into a unit, so the two counts
 change places.  Twisting twice returns to the original object.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

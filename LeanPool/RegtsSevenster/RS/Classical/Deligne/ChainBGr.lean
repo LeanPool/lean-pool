@@ -18,7 +18,7 @@ the `M`-arity and negative degrees the `M'`-arity.  The balanced
 degree is the algebra of the splitting chain, carrying the unit.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

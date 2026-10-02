@@ -18,7 +18,7 @@ right-slot half of the monoidal ideal follows from the left-slot
 machinery through the swap.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -24,7 +24,7 @@ leg is the coherence identity in the monoidal unit recorded by
 `freeModUnitBase_linear` and `freeModUnitBase_linear_inv`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

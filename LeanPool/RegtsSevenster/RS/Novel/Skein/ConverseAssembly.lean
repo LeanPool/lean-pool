@@ -21,7 +21,7 @@ as the base's summands, summed over its subsets and over the
 interface colours.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

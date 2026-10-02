@@ -19,7 +19,7 @@ cycle-sum identity: a permutation's completed cycle-type product
 expands as a sum over colourings of its orbits.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

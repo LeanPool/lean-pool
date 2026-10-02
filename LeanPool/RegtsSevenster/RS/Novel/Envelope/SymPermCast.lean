@@ -26,7 +26,7 @@ category is used: additivity of `▷` is `MonoidalPreadditive` and its
 ℂ-homogeneity is `MonoidalLinear`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

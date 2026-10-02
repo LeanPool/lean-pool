@@ -26,7 +26,7 @@ power datum detects the nonvanishing of the copairing powers
 from the nonvanishing of the power modules.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

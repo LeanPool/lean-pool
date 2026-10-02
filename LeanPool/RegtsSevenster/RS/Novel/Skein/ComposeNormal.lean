@@ -18,7 +18,7 @@ surviving labels with `Fin s ⊕ Fin u`.  The normalization of
 `glueInterface` as a `glueList` builds on these.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -28,7 +28,7 @@ RS21's sum is the flag model's, cut down to the agreeing states —
 which is what the pairing of two tensors computes.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -29,7 +29,7 @@ edge-pairing reversal is a fixed-point-free involution on walk
 orbits), and splits the through product and the colouring sums.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -57,7 +57,7 @@ the parity files:
   merges the circuit into `a`'s component, Δ = −1).
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -18,7 +18,7 @@ splitting is a section of the base-changed epimorphism as module
 maps over the algebra.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -53,7 +53,7 @@ an `RS.SuperCommAlgebra`, feeding the odd-nil quotient theory of
 `RS.SuperRealize`.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

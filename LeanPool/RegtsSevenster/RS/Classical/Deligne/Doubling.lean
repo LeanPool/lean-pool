@@ -34,7 +34,7 @@ componentwise matrix checks against the distributor calculus set
 up in the `Distributors` section.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

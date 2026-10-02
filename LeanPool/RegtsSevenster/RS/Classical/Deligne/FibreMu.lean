@@ -23,7 +23,7 @@ formula, which is what makes the coherence of `ω` a computation in
 the ambient category alone.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

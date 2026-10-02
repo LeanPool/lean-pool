@@ -26,7 +26,7 @@ its two halves `outPermEquiv_symm_low` and
 absorption run in either direction.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

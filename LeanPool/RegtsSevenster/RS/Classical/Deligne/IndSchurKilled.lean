@@ -47,7 +47,7 @@ as in the acceptance section of `RS.Classical.Deligne.ScalarLinear`:
 between `ψ` and an ambient linear structure is needed.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -19,7 +19,7 @@ satisfies, and the implication from it to Deligne's subquotient
 form.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -31,7 +31,7 @@ biproducts then follow formally from the zero object and the binary
 ones.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

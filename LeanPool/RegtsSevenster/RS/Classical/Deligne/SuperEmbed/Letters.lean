@@ -33,7 +33,7 @@ that transports; the two systems it is applied to are built in
   tensor power exactly when its colour sums vanish.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 

@@ -52,7 +52,7 @@ factor and the case analysis that controls it.
   `SeparatedParity.lean` and `NonSeparatedStep.lean` respectively.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
