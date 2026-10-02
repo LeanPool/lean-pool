@@ -40,13 +40,15 @@ variable {n : ℕ}
 
 /-- **Restricted power cell** as a set: the intersection of the body `K` with the power cell of
 site `i`. Kept at the set level (no bundling, no nondegeneracy hypothesis). -/
-@[expose] def bodyCellSet (K : Geometry.ConvexBody Plane) (s : Fin n → Plane) (w : Fin n → ℝ) (i : Fin n) :
+@[expose]
+def bodyCellSet (K : Geometry.ConvexBody Plane) (s : Fin n → Plane) (w : Fin n → ℝ) (i : Fin n) :
     Set Plane :=
   (K : Set Plane) ∩ cell s w i
 
 /-- **Area** of a restricted power cell: the real‑valued Lebesgue measure of `bodyCellSet`.
 Defined unconditionally (no nonempty‑interior hypothesis). -/
-@[expose] noncomputable def bodyCellArea (K : Geometry.ConvexBody Plane) (s : Fin n → Plane) (w : Fin n → ℝ)
+@[expose]
+noncomputable def bodyCellArea (K : Geometry.ConvexBody Plane) (s : Fin n → Plane) (w : Fin n → ℝ)
     (i : Fin n) : ℝ :=
   (volume (bodyCellSet K s w i)).toReal
 
