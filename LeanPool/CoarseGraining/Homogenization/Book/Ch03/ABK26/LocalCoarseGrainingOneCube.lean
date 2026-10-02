@@ -31,6 +31,10 @@ namespace Ch03
 namespace ABK26
 
 open MeasureTheory
+open _root_.Homogenization.ZeroTraceDirichletCorrectorData
+  (zeroTraceDirichletCorrectedWeakFluxApexConstant
+   zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg
+   zeroTraceDirichletCorrectedWeakFluxApexDisplayScale)
 open scoped BigOperators ENNReal
 
 noncomputable section
@@ -338,12 +342,12 @@ private theorem cubeBesovPositiveVectorSeminormTwo_neg_of_memLp
 `0 < s ≤ 1`; we record the endpoint form used by the source envelope. -/
 private theorem zeroTraceDirichletCorrectedWeakFluxApexConstant_le_one
     {d : ℕ} (s : ℝ) (_hs : 0 < s) (hs_one : s ≤ 1) :
-    _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s ≤
-      _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 := by
+    zeroTraceDirichletCorrectedWeakFluxApexConstant d s ≤
+      zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 := by
   have hdisplay :
-      _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexDisplayScale d s ≤
-        _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexDisplayScale d 1 := by
-    unfold _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexDisplayScale
+      zeroTraceDirichletCorrectedWeakFluxApexDisplayScale d s ≤
+        zeroTraceDirichletCorrectedWeakFluxApexDisplayScale d 1 := by
+    unfold zeroTraceDirichletCorrectedWeakFluxApexDisplayScale
     have hpow :
         (3 : ℝ) ^ ((d : ℝ) + s) ≤ (3 : ℝ) ^ ((d : ℝ) + 1) :=
       Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 3)
@@ -353,7 +357,7 @@ private theorem zeroTraceDirichletCorrectedWeakFluxApexConstant_le_one
           (3 : ℝ) ^ ((d : ℝ) + 1) * Real.sqrt 2 :=
       mul_le_mul_of_nonneg_right hpow (Real.sqrt_nonneg 2)
     exact mul_le_mul_of_nonneg_left hinner (by exact_mod_cast Nat.zero_le d)
-  unfold _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant
+  unfold zeroTraceDirichletCorrectedWeakFluxApexConstant
   nlinarith
 
 /-- Exact `ENNReal` expansion of the legacy one-cube RHS once its four real
@@ -581,24 +585,24 @@ The deterministic apex constant is evaluated at the fixed endpoint `1`, so
 this quantity is uniform in every local fractional order. -/
 noncomputable def localCoarseGrainingOneCubeConstant (d : ℕ) : ℝ :=
   64 * (d : ℝ) ^ 3 *
-    (_root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 + 1)
+    (zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 + 1)
 
 private theorem localCoarseGrainingOneCubeConstant_nonneg (d : ℕ) :
     0 ≤ localCoarseGrainingOneCubeConstant d := by
   unfold localCoarseGrainingOneCubeConstant
   exact mul_nonneg (mul_nonneg (by norm_num) (pow_nonneg (Nat.cast_nonneg d) _))
     (add_nonneg
-      (_root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d 1)
+      (zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d 1)
       zero_le_one)
 
 private theorem localCoarseGrainingOneCubeConstant_dominates_energy
     {d : ℕ} [NeZero d]
     (X : ℝ) (hX : 0 ≤ X) :
-    (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ)) * X ≤
+    (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ)) * X ≤
       localCoarseGrainingOneCubeConstant d * (X + 0) := by
   have hd : 1 ≤ (d : ℝ) := by
     norm_num [Nat.one_le_iff_ne_zero, NeZero.ne d]
-  have hM := _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d 1
+  have hM := zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d 1
   have hd0 : 0 ≤ (d : ℝ) := Nat.cast_nonneg d
   have hd3 : (d : ℝ) ≤ (d : ℝ) ^ 3 := by
     calc
@@ -606,27 +610,27 @@ private theorem localCoarseGrainingOneCubeConstant_dominates_energy
       _ ≤ (d : ℝ) * (d : ℝ) ^ 2 :=
         mul_le_mul_of_nonneg_left (one_le_pow₀ hd : 1 ≤ (d : ℝ) ^ 2) hd0
       _ = (d : ℝ) ^ 3 := by ring
-  have hcoef : 2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ≤ localCoarseGrainingOneCubeConstant d := by
+  have hcoef : 2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ≤ localCoarseGrainingOneCubeConstant d := by
     unfold localCoarseGrainingOneCubeConstant
     have hd30 : 0 ≤ (d : ℝ) ^ 3 := pow_nonneg hd0 _
     calc
-      2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ≤
-          2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ^ 3 := by
+      2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ≤
+          2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ^ 3 := by
         exact mul_le_mul_of_nonneg_left hd3 (mul_nonneg (by norm_num) hM)
       _ ≤ 64 * (d : ℝ) ^ 3 *
-          (_root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 + 1) := by
+          (zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 + 1) := by
         nlinarith
   simpa using mul_le_mul_of_nonneg_right hcoef hX
 
 private theorem localCoarseGrainingOneCubeConstant_dominates_forcing
     {d : ℕ} [NeZero d]
     (X Y : ℝ) (hX : 0 ≤ X) (hY : 0 ≤ Y) :
-    (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ)) * X +
-        (24 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ^ 3) * Y ≤
+    (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ)) * X +
+        (24 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ^ 3) * Y ≤
       localCoarseGrainingOneCubeConstant d * (X + Y) := by
   have hd : 1 ≤ (d : ℝ) := by
     norm_num [Nat.one_le_iff_ne_zero, NeZero.ne d]
-  have hM := _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d 1
+  have hM := zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d 1
   have hd0 : 0 ≤ (d : ℝ) := Nat.cast_nonneg d
   have hd3 : (d : ℝ) ≤ (d : ℝ) ^ 3 := by
     calc
@@ -634,24 +638,24 @@ private theorem localCoarseGrainingOneCubeConstant_dominates_forcing
       _ ≤ (d : ℝ) * (d : ℝ) ^ 2 :=
         mul_le_mul_of_nonneg_left (one_le_pow₀ hd : 1 ≤ (d : ℝ) ^ 2) hd0
       _ = (d : ℝ) ^ 3 := by ring
-  have henergy : 2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ≤ localCoarseGrainingOneCubeConstant d := by
+  have henergy : 2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ≤ localCoarseGrainingOneCubeConstant d := by
     unfold localCoarseGrainingOneCubeConstant
     have hd30 : 0 ≤ (d : ℝ) ^ 3 := pow_nonneg hd0 _
     calc
-      2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ≤
-          2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ^ 3 := by
+      2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ≤
+          2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ^ 3 := by
         exact mul_le_mul_of_nonneg_left hd3 (mul_nonneg (by norm_num) hM)
       _ ≤ 64 * (d : ℝ) ^ 3 *
-          (_root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 + 1) := by
+          (zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 + 1) := by
         nlinarith
-  have hforcing : 24 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ^ 3 ≤
+  have hforcing : 24 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ^ 3 ≤
       localCoarseGrainingOneCubeConstant d := by
     unfold localCoarseGrainingOneCubeConstant
     have hd30 : 0 ≤ (d : ℝ) ^ 3 := pow_nonneg hd0 _
     nlinarith
   calc
-    (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ)) * X +
-        (24 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ^ 3) * Y ≤
+    (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ)) * X +
+        (24 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ^ 3) * Y ≤
       localCoarseGrainingOneCubeConstant d * X +
         localCoarseGrainingOneCubeConstant d * Y :=
       add_le_add (mul_le_mul_of_nonneg_right henergy hX)
@@ -679,7 +683,7 @@ private theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_legacyApex_of_l
           scaleResponseAtScale R (R.scale - (n : ℤ)) .infinity aLegacy a0)) :
     cubeBesovNegativeVectorSeminormTwo R s
         (fluxDefect aLegacy a0 u.toCubeSet.grad) ≤
-      2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
+      2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
         coarseFluxResponseRHSBound R aLegacy a0 s u.toCubeSet.grad (fun x => -g x) :=
   _root_.Homogenization.ZeroTraceDirichletCorrectorData.cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_h1DirichletRhsWeakSolutionOn_correctedWeakFlux_averagedCorrectorEnergy
       (Q := R) (a := aLegacy) (a0 := a0) (s := s) (g := fun x => -g x)
@@ -697,7 +701,7 @@ private theorem cubeBesovNegativeVectorSeminormTwo_source_fluxDefect_le_legacyAp
     (hregularity : CubeVectorBesovHRegularity R s (fun x => -g x)) :
     cubeBesovNegativeVectorSeminormTwo R s
         (fluxDefect a.toCoeffField (scalarMatrix (d := d) sigma0) u.toCubeSet.grad) ≤
-      2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
+      2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
         coarseFluxResponseRHSBound R (publicCoeffField R (rootPointwiseCoeffFamily R a))
           (scalarMatrix (d := d) sigma0) s u.toCubeSet.grad (fun x => -g x) := by
   let aFam : CoeffFamily d := rootPointwiseCoeffFamily R a
@@ -779,7 +783,7 @@ private theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyAp
     ENNReal.ofReal ‖cubeAverageVec R
         (fluxDefect a.toCoeffField (scalarMatrix (d := d) sigma0) u.toCubeSet.grad)‖ ≤
       ENNReal.ofReal
-        (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
+        (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
           coarseFluxResponseRHSBound R
             (publicCoeffField R (rootPointwiseCoeffFamily R a))
             (scalarMatrix (d := d) sigma0) s u.toCubeSet.grad (fun x => -g x)) := by
@@ -806,7 +810,7 @@ private theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyAp
         (cubeBesovNegativeVectorSeminormTwo_nonneg_of_memLp R hs _ hmem)).mp
         (ENNReal_ofReal_norm_cubeAverageVec_le_cubeBesovNegativeVectorSeminormTwo
           R hs _ hmem)
-    _ ≤ 2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
+    _ ≤ 2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
           coarseFluxResponseRHSBound R
             (publicCoeffField R (rootPointwiseCoeffFamily R a))
             (scalarMatrix (d := d) sigma0) s u.toCubeSet.grad (fun x => -g x) :=
@@ -830,7 +834,7 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_of_me
     ENNReal.ofReal ‖cubeAverageVec R
         (fluxDefect a.toCoeffField (scalarMatrix (d := d) sigma0) u.toCubeSet.grad)‖ ≤
       ENNReal.ofReal
-        (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1 *
+        (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1 *
           coarseFluxResponseRHSBound R
             (publicCoeffField R (rootPointwiseCoeffFamily R a))
             (scalarMatrix (d := d) sigma0) s.1 u.toCubeSet.grad (fun x => -g x)) := by
@@ -854,7 +858,7 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_compo
     ENNReal.ofReal ‖cubeAverageVec R
         (fluxDefect a.toCoeffField (scalarMatrix (d := d) sigma0) u.toCubeSet.grad)‖ ≤
       ENNReal.ofReal
-        (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+        (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
         (ENNReal.ofReal (coarseFluxResponseRHSEnergyBound R
             (publicCoeffField R (rootPointwiseCoeffFamily R a))
             (scalarMatrix (d := d) sigma0) s.1 u.toCubeSet.grad) +
@@ -870,10 +874,10 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_compo
     hg.toCubeVectorBesovHRegularity_neg_of_lt hp hss2
   let A : CoeffField d := publicCoeffField R (rootPointwiseCoeffFamily R a)
   let a0 : Mat d := scalarMatrix (d := d) sigma0
-  let C : ℝ := 2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1
+  let C : ℝ := 2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1
   let B : ℝ := coarseFluxResponseRHSBound R A a0 s.1 u.toCubeSet.grad (fun x => -g x)
   have hC : 0 ≤ C := mul_nonneg (by norm_num)
-    (_root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d s.1)
+    (zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d s.1)
   have hB : 0 ≤ B := by
     dsimp [B, A, a0]
     exact coarseFluxResponseRHSBound_nonneg_of_bddAbove R
@@ -935,7 +939,7 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrain
     (rootPointwiseCoeffFamily R a) a0
   let E : ℝ := Real.sqrt (cubeAverage R (coefficientEnergyDensity A u.toCubeSet.grad))
   let B : ℝ := cubeBesovPositiveVectorSeminormTwo R s.1 g
-  let M : ℝ := _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1
+  let M : ℝ := zeroTraceDirichletCorrectedWeakFluxApexConstant d 1
   let X : ℝ := s.1⁻¹ * Real.sqrt sigma0 * H1 * E
   let Y : ℝ := Real.rpow s.1 (-(9 / 2 : ℝ)) * (H2 ^ 2 + 1) * B
   have hBdd : BddAbove (Set.range fun N : ℕ =>
@@ -983,8 +987,8 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrain
     exact mul_nonneg (mul_nonneg hrpow9_nonneg (by nlinarith [sq_nonneg H2])) hB_nonneg
   have hM_nonneg : 0 ≤ M := by
     dsimp [M]
-    exact _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d 1
-  have hC : 2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1 ≤
+    exact zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d 1
+  have hC : 2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1 ≤
       2 * M := by
     dsimp [M]
     exact mul_le_mul_of_nonneg_left
@@ -1148,24 +1152,24 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrain
         mul_le_mul_of_nonneg_left hpoincareEnvelope (sq_nonneg _)
       _ = 4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1) := by ring
   have henergy :
-      (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+      (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
         coarseFluxResponseRHSEnergyBound R A a0 s.1 u.toCubeSet.grad ≤
       (2 * M * (d : ℝ)) * X := by
     unfold coarseFluxResponseRHSEnergyBound
     rw [hH1eq]
     change
-      (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+      (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
           (s.1⁻¹ * Real.sqrt (matNorm a0) * H1 * E) ≤
         (2 * M * (d : ℝ)) * X
     calc
-      (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+      (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
           (s.1⁻¹ * Real.sqrt (matNorm a0) * H1 * E) ≤
           (2 * M) * (s.1⁻¹ * ((d : ℝ) * Real.sqrt sigma0) *
             H1 * E) := by
             gcongr
       _ = (2 * M * (d : ℝ)) * X := by ring
   have hresponse :
-      (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+      (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
         coarseFluxResponseRHSResponseCorrectionBound R A a0 s.1 (fun x => -g x) ≤
       (8 * M * (d : ℝ) ^ 3) * Y := by
     unfold coarseFluxResponseRHSResponseCorrectionBound
@@ -1175,10 +1179,10 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrain
         Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * H1 :=
       mul_nonneg (mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)) hH1_nonneg
     calc
-      (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+      (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
           (Real.rpow s.1 (-(5 / 2 : ℝ)) * Real.sqrt (matNorm a0) *
             Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * H1 * B) =
-          (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+          (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
             (Real.rpow s.1 (-(5 / 2 : ℝ)) *
               (Real.sqrt (matNorm a0) * Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * H1) * B) := by ring
       _ ≤
@@ -1209,7 +1213,7 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrain
                     (4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1)) * B) := by ring
       _ = (8 * M * (d : ℝ) ^ 3) * Y := by dsimp [Y]; ring
   have hweak :
-      (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+      (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
         coarseFluxResponseRHSWeakFluxCorrectionBound R A s.1 (fun x => -g x) ≤
       (8 * M * (d : ℝ) ^ 3) * Y := by
     unfold coarseFluxResponseRHSWeakFluxCorrectionBound
@@ -1218,11 +1222,11 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrain
         Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) :=
       mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)
     calc
-      (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+      (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
           (Real.rpow s.1 (-(5 / 2 : ℝ)) *
             Real.sqrt (LambdaSq R (s.1 / 2) (.finite 2) A) *
             Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * B) =
-          (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+          (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
             (Real.rpow s.1 (-(5 / 2 : ℝ)) *
               (Real.sqrt (LambdaSq R (s.1 / 2) (.finite 2) A) *
                 Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹)) * B) := by ring
@@ -1258,7 +1262,7 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrain
                     (4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1)) * B) := by ring
       _ = (8 * M * (d : ℝ) ^ 3) * Y := by dsimp [Y]; ring
   have hpoincare :
-      (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+      (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
         coarseFluxResponseRHSPoincareCorrectionBound R A a0 s.1 (fun x => -g x) ≤
       (8 * M * (d : ℝ) ^ 3) * Y := by
     unfold coarseFluxResponseRHSPoincareCorrectionBound
@@ -1268,10 +1272,10 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrain
         (multiscale_ellipticity_lambdaSq_finite_nonneg R (s.1 / 2) 2 A
           (by norm_num) (by linarith [s.2.1])))
     calc
-      (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+      (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
           (Real.rpow s.1 (-3 : ℝ) * matNorm a0 *
             (lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹ * B) =
-          (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+          (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
             (Real.rpow s.1 (-3 : ℝ) *
               (matNorm a0 * (lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * B) := by ring
       _ ≤
@@ -1302,23 +1306,23 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrain
                     (4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1)) * B) := by ring
       _ = (8 * M * (d : ℝ) ^ 3) * Y := by dsimp [Y]; ring
   have hreal :
-      (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+      (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
         coarseFluxResponseRHSBound R A a0 s.1 u.toCubeSet.grad (fun x => -g x) ≤
       localCoarseGrainingOneCubeConstant d * (X + Y) := by
     rw [coarseFluxResponseRHSBound_eq_component_sum]
     calc
-      (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+      (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
           (coarseFluxResponseRHSEnergyBound R A a0 s.1 u.toCubeSet.grad +
             coarseFluxResponseRHSResponseCorrectionBound R A a0 s.1 (fun x => -g x) +
             coarseFluxResponseRHSWeakFluxCorrectionBound R A s.1 (fun x => -g x) +
             coarseFluxResponseRHSPoincareCorrectionBound R A a0 s.1 (fun x => -g x)) =
-          (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+          (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
             coarseFluxResponseRHSEnergyBound R A a0 s.1 u.toCubeSet.grad +
-          (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+          (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
             coarseFluxResponseRHSResponseCorrectionBound R A a0 s.1 (fun x => -g x) +
-          (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+          (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
             coarseFluxResponseRHSWeakFluxCorrectionBound R A s.1 (fun x => -g x) +
-          (2 * _root_.Homogenization.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+          (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
             coarseFluxResponseRHSPoincareCorrectionBound R A a0 s.1 (fun x => -g x) := by ring
       _ ≤ (2 * M * (d : ℝ)) * X + (8 * M * (d : ℝ) ^ 3) * Y +
           (8 * M * (d : ℝ) ^ 3) * Y + (8 * M * (d : ℝ) ^ 3) * Y := by
