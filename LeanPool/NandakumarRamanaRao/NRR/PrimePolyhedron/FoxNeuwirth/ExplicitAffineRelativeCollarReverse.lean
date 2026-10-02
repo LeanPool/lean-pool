@@ -124,6 +124,7 @@ theorem reverse_facetSetoid_iff
     simpa [reverse_facetSignature] using congrArg reflectPoint (congrFun h i)
 
 /-- Canonical equivalence between reflected and original quotient facets. -/
+@[expose]
 noncomputable def facetEquiv
     (C : RelativeAffineCellSystem hp N₀ N₁ M L) :
     (reverseCells C).Facet ≃ C.Facet :=
@@ -180,6 +181,7 @@ theorem reverse_isUpper_iff_isLower
   · linarith [h i]
 
 /-- Reverse a pointwise relative affine collar. -/
+@[expose]
 noncomputable def reverseCollar
     (C : FoxNeuwirthRelativeAffineCollar hp N₀ N₁ M L) :
     FoxNeuwirthRelativeAffineCollar hp N₁ N₀ M L where

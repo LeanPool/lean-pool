@@ -146,6 +146,7 @@ open RefinedAffineMap
 variable {p : Nat}
 
 /-- Transport a label-indexed refinement word to the maximal-simplex vertex index type. -/
+@[expose]
 noncomputable def maximalRefinementWord
     (N : Nat) (rho : RefinementWord p N) :
     Fin N → Equiv.Perm (Fin (p - 1 + 1)) :=

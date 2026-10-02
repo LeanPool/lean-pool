@@ -117,6 +117,7 @@ theorem maximal_last_dualDimension
   · simpa using Simplex.index_le_dualDimension s (Fin.last (p - 1))
 
 /-- The terminal deletion index in the arithmetic presentation used by `deletionCoefficient`. -/
+@[expose]
 def terminalIndex (hp : Nat.Prime p) : Fin ((p - 2) + 2) :=
   ⟨p - 1, by
     have := hp.two_le

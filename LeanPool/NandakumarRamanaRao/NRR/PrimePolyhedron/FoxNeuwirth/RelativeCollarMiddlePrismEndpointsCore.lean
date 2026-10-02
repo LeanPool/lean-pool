@@ -41,6 +41,7 @@ open SubdivisionPrismCharts
 variable {p : Nat}
 
 /-- Final staircase simplex.  Its final facet is the lower horizontal copy. -/
+@[expose]
 def lowerStaircaseIndex (hp : Nat.Prime p) : Fin p :=
   ⟨p - 1, by
     have hp0 := hp.pos

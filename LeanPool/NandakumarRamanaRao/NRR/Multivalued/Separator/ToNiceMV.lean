@@ -73,6 +73,7 @@ variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
 
 /-- Pull back a top–bottom separator `S` on `X` along a continuous base map `f : Y → X` through the
 product map `(y, t) ↦ (f y, t)`. Carrier, lower, and upper regions are pulled back by preimage. -/
+@[expose]
 def pullback
     (S : TopBottomSeparator X) (f : C(Y, X)) :
     TopBottomSeparator Y where

@@ -145,6 +145,7 @@ theorem mapAt_vertexValue_eq_lifted_sub
 
 /-- The selected maximal flag over a top permutation: bottom and top ranks agree, and bars are
 removed in their natural order. -/
+@[expose]
 def selectedCode (sigma : Equiv.Perm (Fin p)) : Code p where
   bottom := sigma
   removal := 1

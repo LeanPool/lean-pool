@@ -62,6 +62,7 @@ noncomputable def coordinateDeviation (hn : 0 < n) :
       rfl
 
 /-- Reconstruct coordinates from a zero-sum vector and a constant. -/
+@[expose]
 def reconstructCoordinates (n : ℕ) :
     ZeroSum n × ℝ →ₗ[ℝ] (Fin n → ℝ) where
   toFun z i := z.1 i + z.2

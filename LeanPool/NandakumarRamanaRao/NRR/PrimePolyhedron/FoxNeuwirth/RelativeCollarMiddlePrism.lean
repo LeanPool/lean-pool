@@ -72,6 +72,7 @@ noncomputable def vertex
   CylinderPoint.ofProd (SubdivisionPrismCharts.vertex hp N L q i)
 
 /-- The geometric affine chart of one fully refined middle-prism cell. -/
+@[expose]
 noncomputable def chart
     (hp : Nat.Prime p) (N L : Nat)
     (q : PrismCell hp N L) (w : Delta p) : CylinderPoint p :=

@@ -39,6 +39,7 @@ variable {p : Nat}
 namespace FoxNeuwirthOrderComplex
 
 /-- Relabelling is an equivalence of the finite barred-permutation vertex set. -/
+@[expose]
 def relabelEquiv (sigma : Equiv.Perm (Fin p)) :
     BarredPermutation p ≃ BarredPermutation p where
   toFun c := c.relabel sigma
@@ -187,6 +188,7 @@ noncomputable instance instCompactSpace : CompactSpace (Realization p) :=
   isCompact_iff_compactSpace.mp isCompact_realizationCarrier
 
 /-- The coordinate permutation induced by relabelling. -/
+@[expose]
 def relabel (sigma : Equiv.Perm (Fin p)) (x : Realization p) : Realization p :=
   ⟨fun c => x (c.relabel sigma.symm), by
     refine ⟨?_, ?_, ?_⟩

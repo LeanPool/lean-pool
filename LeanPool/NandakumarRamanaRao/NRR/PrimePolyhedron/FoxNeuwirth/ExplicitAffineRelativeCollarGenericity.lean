@@ -471,6 +471,7 @@ assignment exactly. -/
   · simp [replaceMovable, movableRestriction, hq]
 
 /-- The full parameter represented by one local vertex coordinate. -/
+@[expose]
 noncomputable def localParameter
     (q : C.Cell) (i : Fin (p + 1)) (j : Fin p) : Parameter hp C :=
   Quotient.mk _ (sampleVertex hp C (q, i), j)

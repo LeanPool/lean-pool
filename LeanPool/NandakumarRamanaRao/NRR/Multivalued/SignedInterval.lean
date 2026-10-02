@@ -31,18 +31,22 @@ abbrev SignedInterval := Set.Icc (-1 : ℝ) 1
 namespace SignedInterval
 
 /-- The left endpoint `-1`, at which a nice multivalued observable is negative. -/
+@[expose]
 def left : SignedInterval :=
   ⟨-1, by constructor <;> norm_num⟩
 
 /-- The right endpoint `1`, at which a nice multivalued observable is positive. -/
+@[expose]
 def right : SignedInterval :=
   ⟨1, by constructor <;> norm_num⟩
 
 /-- The center point `0`. -/
+@[expose]
 def center : SignedInterval :=
   ⟨0, by constructor <;> norm_num⟩
 
 /-- The coordinate projection sending a signed-interval point to its underlying real number. -/
+@[expose]
 def coord : SignedInterval → ℝ := fun y => y.1
 
 instance : Nonempty SignedInterval := ⟨center⟩

@@ -52,6 +52,7 @@ noncomputable instance : MetricSpace (FoxNeuwirthTopCell p) :=
     inferInstance
 
 /-- Relabelling preserves the one-block condition. -/
+@[expose]
 def relabel (σ : Equiv.Perm (Fin p))
     (c : FoxNeuwirthTopCell p) : FoxNeuwirthTopCell p :=
   ⟨c.1.relabel σ, by simpa using c.2⟩
@@ -102,6 +103,7 @@ instance : CoeFun (FoxNeuwirthWeights p) (fun _ => Fin p → ℝ) :=
   w.2.2
 
 /-- Relabel barycentric coordinates by the established `σ.symm` convention. -/
+@[expose]
 def relabel (σ : Equiv.Perm (Fin p))
     (w : FoxNeuwirthWeights p) : FoxNeuwirthWeights p :=
   ⟨fun i => w (σ.symm i), by

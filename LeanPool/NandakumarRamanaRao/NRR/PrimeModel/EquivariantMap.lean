@@ -85,6 +85,7 @@ theorem IsPrimeEquivariant.zeroSet_invariant
   exact hzero g
 
 /-- Trivial action on a parameter and the existing action on the second factor. -/
+@[expose]
 def PrimeSymmetry.smulParamProd
     [MulAction (PrimeSymmetry p) X]
     (g : PrimeSymmetry p) (z : P × X) : P × X :=

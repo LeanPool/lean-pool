@@ -116,6 +116,7 @@ theorem affineCompMap_extendSpatialRefinementWord_lastFace
 
 /-- Lift a refinement permutation of one boundary face to an ambient permutation whose final
 facet is that boundary face. -/
+@[expose]
 noncomputable def liftFacePermutation
     (n : Nat) (j : Fin (n + 2)) (pi : Equiv.Perm (Fin (n + 1))) :
     Equiv.Perm (Fin (n + 2)) :=
@@ -204,6 +205,7 @@ theorem affineCompMap_liftFaceRefinementWord
 
 /-- Last-face lifting for a boundary face of `Fin (p + 1)`, without exposing predecessor casts in
 subsequent definitions. -/
+@[expose]
 noncomputable def liftBoundaryPermutation
     {p : Nat} (j : Fin (p + 1)) (pi : Equiv.Perm (Fin p)) : Equiv.Perm (Fin (p + 1)) :=
   match p with

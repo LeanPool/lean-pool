@@ -25,6 +25,7 @@ open scoped BigOperators
 variable {n : ℕ}
 
 /-- Sum of all coordinates, as a linear map. -/
+@[expose]
 def coordinateSum (n : ℕ) : (Fin n → ℝ) →ₗ[ℝ] ℝ where
   toFun v := ∑ i, v i
   map_add' u v := by simp [Finset.sum_add_distrib]
@@ -86,6 +87,7 @@ instance instContinuousSMul : ContinuousSMul ℝ (ZeroSum n) where
         ((continuous_apply i).comp (continuous_induced_dom.comp continuous_snd))
 
 /-- The inclusion of the zero-sum representation into the full coordinate space. -/
+@[expose]
 def coeLinearMap : ZeroSum n →ₗ[ℝ] (Fin n → ℝ) where
   toFun v := fun i => v i
   map_add' _ _ := rfl

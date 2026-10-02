@@ -221,6 +221,7 @@ def rightOccurrence (o : D.FacetOccurrence) : (combinedCells C D).FacetOccurrenc
       fun i => rightPoint (D.facetSignature o i) := rfl
 
 /-- Push a left quotient facet into the combined quotient. -/
+@[expose]
 noncomputable def leftFacet (s : C.Facet) : (combinedCells C D).Facet :=
   Quotient.map (leftOccurrence C D) (by
     intro a b hab
@@ -228,6 +229,7 @@ noncomputable def leftFacet (s : C.Facet) : (combinedCells C D).Facet :=
     exact ⟨g, by funext i; simpa using congrArg leftPoint (congrFun hg i)⟩) s
 
 /-- Push a right quotient facet into the combined quotient. -/
+@[expose]
 noncomputable def rightFacet (s : D.Facet) : (combinedCells C D).Facet :=
   Quotient.map (rightOccurrence C D) (by
     intro a b hab

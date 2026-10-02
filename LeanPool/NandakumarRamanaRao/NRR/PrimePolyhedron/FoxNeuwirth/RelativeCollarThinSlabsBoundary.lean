@@ -54,6 +54,7 @@ noncomputable abbrev StackCells (hp : Nat.Prime p) (N m : Nat) (hm : 0 < m) :=
   RelativeCollarThinSlabs.cellSystem hp N m hm
 
 /-- Apply the affine time rescaling of slab `r` to an arbitrary facet map. -/
+@[expose]
 noncomputable def slabFacetMap
     (m : Nat) (hm : 0 < m) (r : Fin m)
     (tau : Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) :

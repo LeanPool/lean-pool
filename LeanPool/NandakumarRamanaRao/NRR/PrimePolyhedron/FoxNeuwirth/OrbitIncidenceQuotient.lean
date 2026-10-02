@@ -127,6 +127,7 @@ theorem orbitBoundary_eq_coveringBoundary
             rfl
 
 /-- Orbit quotient of an equivariant finite incidence cycle. -/
+@[expose]
 noncomputable def orbitQuotient
     (E : EquivariantData (G := G) C) : FiniteIncidenceCycle R where
   TopCell := TopOrbit (G := G) C

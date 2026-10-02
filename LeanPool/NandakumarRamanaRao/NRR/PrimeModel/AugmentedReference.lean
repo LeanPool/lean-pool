@@ -83,6 +83,7 @@ theorem abs_reference_le_l1
     (Finset.mem_univ i)
 
 /-- The scaled reference vector. -/
+@[expose]
 noncomputable def scaledReference
     (M : PrimeConfigurationModel hp) : C(M.Point, ZeroSum p) where
   toFun x := ⟨fun i => M.referenceScale x * M.reference x i, by

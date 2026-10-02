@@ -35,6 +35,7 @@ def primeSymmetrySubgroup (p : ℕ) :
 abbrev PrimeSymmetry (p : ℕ) := primeSymmetrySubgroup p
 
 /-- Faithful inclusion of the selected subgroup into all label permutations. -/
+@[expose]
 def PrimeSymmetry.toPerm (p : ℕ) :
     PrimeSymmetry p →* Equiv.Perm (Fin p) :=
   (primeSymmetrySubgroup p).subtype

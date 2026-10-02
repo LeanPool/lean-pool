@@ -63,6 +63,7 @@ abbrev RemainingMovableParameter (κ : MixedFaceCase hp C) :=
   {q : MovableParameter hp C // ¬ κ.IsSelectedVectorParameter hp C q}
 
 /-- The coordinate map is an equivalence from `Fin p` onto the selected range. -/
+@[expose]
 noncomputable def vectorParameterEquiv
     (κ : MixedFaceCase hp C) :
     Fin p ≃ κ.SelectedVectorParameter hp C :=
@@ -75,6 +76,7 @@ noncomputable def vectorParameterEquiv
 
 /-- Canonical measurable coordinate split into the selected block and its
 complement. -/
+@[expose]
 noncomputable def parameterSplit
     (κ : MixedFaceCase hp C) :
     MovableParameterSpace hp C ≃ᵐ

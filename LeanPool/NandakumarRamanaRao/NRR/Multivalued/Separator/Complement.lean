@@ -51,6 +51,7 @@ variable {X : Type*} [TopologicalSpace X]
 variable {carrier : Set (X × SignedInterval)}
 
 /-- Add a closedness proof to complement data, obtaining a top--bottom separator. -/
+@[expose]
 def toSeparator
     (D : TopBottomComplement X carrier)
     (hcarrier : IsClosed carrier) :

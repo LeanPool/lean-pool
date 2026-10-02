@@ -31,6 +31,7 @@ structure ConvexFigure where
 namespace ConvexFigure
 
 /-- Convert a public figure to the solid convex-body type used by the proof. -/
+@[expose]
 def toBody (F : ConvexFigure) : NRR.Geometry.ConvexBody Plane where
   carrier := F.carrier
   convex' := F.isConvex
@@ -38,6 +39,7 @@ def toBody (F : ConvexFigure) : NRR.Geometry.ConvexBody Plane where
   interior_nonempty' := F.hasNonemptyInterior
 
 /-- Present an internal solid convex body as a public figure. -/
+@[expose]
 def ofBody (K : NRR.Geometry.ConvexBody Plane) : ConvexFigure where
   carrier := K
   isConvex := K.convex

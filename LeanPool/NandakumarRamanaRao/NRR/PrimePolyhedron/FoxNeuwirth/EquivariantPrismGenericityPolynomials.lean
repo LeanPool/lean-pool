@@ -88,6 +88,7 @@ noncomputable def localVertexMap
   value i := localVertexValue hp N L a q i
 
 /-- Evaluation at a parameter assignment, bundled as a ring homomorphism. -/
+@[expose]
 noncomputable def assignmentEvalHom
     (hp : Nat.Prime p) (N L : Nat) (a : Assignment hp N L) :
     PolynomialRing hp N L →+* Real :=

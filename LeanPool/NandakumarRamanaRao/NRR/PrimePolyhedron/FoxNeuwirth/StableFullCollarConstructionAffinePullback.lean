@@ -66,6 +66,7 @@ section LevelTransport
 variable {hp : Nat.Prime p}
 
 /-- Transport an endpoint-identified collar along equalities of its two endpoint levels. -/
+@[expose]
 noncomputable def castEndpointCollar
     {N₀ N₀' N₁ N₁' M T : Nat} (h₀ : N₀ = N₀') (h₁ : N₁ = N₁')
     (C : EndpointIdentifiedRelativeAffineCollar hp N₀ N₁ M T) :
@@ -721,6 +722,7 @@ theorem full_upperFixed
     (upper_upperFixed hp A0 A1 L)
 
 /-- Concrete full fine-collar data. -/
+@[expose]
 noncomputable def fineFullCollarData
     (hp : Nat.Prime p)
     (F0 F1 : ZeroFreeMap hp)

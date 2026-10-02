@@ -47,6 +47,7 @@ noncomputable def topExtensionMultiplicity (a : BarredPermutation p) : Nat :=
   (topExtensions a).card
 
 /-- The actual coefficient of `a` in the boundary of the oriented top-cell sum. -/
+@[expose]
 noncomputable def actualTopBoundaryCoefficient
     (a : BarredPermutation p) : ZMod p :=
   ∑ c : BarredPermutation.TopCell p,

@@ -111,6 +111,7 @@ theorem vertex_injective (s : Simplex p d) :
   · exact (s.properFace hgt).ne hij.symm
 
 /-- Every barred permutation gives a vertex of the order complex. -/
+@[expose]
 def ofCell (c : BarredPermutation p) : Simplex p 0 :=
   ⟨fun _ => c, by
     intro i j hij
@@ -121,6 +122,7 @@ def ofCell (c : BarredPermutation p) : Simplex p 0 :=
   rfl
 
 /-- Relabel every vertex in a simplex. -/
+@[expose]
 def relabel (sigma : Equiv.Perm (Fin p))
     (s : Simplex p d) : Simplex p d :=
   ⟨fun i => (s i).relabel sigma, by
@@ -233,11 +235,13 @@ def support (x : Realization p) : Finset (BarredPermutation p) :=
   simp [support]
 
 /-- Coordinate vector of a vertex. -/
+@[expose]
 def vertexWeight (c : BarredPermutation p) :
     BarredPermutation p → ℝ :=
   fun d => if d = c then 1 else 0
 
 /-- Every barred permutation is a vertex of the global realization. -/
+@[expose]
 def vertex (c : BarredPermutation p) : Realization p :=
   ⟨vertexWeight c, by
     refine ⟨?_, ?_, ?_⟩
@@ -292,6 +296,7 @@ instance : CoeFun (FaceMap m d) (fun _ => Fin (m + 1) → Fin (d + 1)) :=
   ⟨FaceMap.toFun⟩
 
 /-- Identity face map. -/
+@[expose]
 def id (d : Nat) : FaceMap d d where
   toFun := fun i => i
   strictMono := by
@@ -299,6 +304,7 @@ def id (d : Nat) : FaceMap d d where
     exact hij
 
 /-- Composition of face maps. -/
+@[expose]
 def comp (f : FaceMap m d) (g : FaceMap l m) : FaceMap l d where
   toFun := fun i => f (g i)
   strictMono := by
@@ -319,6 +325,7 @@ end FaceMap
 namespace Simplex
 
 /-- Restrict a simplex along an increasing vertex map.  This is the abstract face operation. -/
+@[expose]
 def restrict (s : Simplex p d) (f : FaceMap m d) : Simplex p m :=
   ⟨fun i => s (f i), by
     intro i j hij

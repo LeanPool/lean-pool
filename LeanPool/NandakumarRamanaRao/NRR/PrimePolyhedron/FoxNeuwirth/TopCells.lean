@@ -30,6 +30,7 @@ def TopCell (p : ℕ) := {c : BarredPermutation p // c.IsTop}
 namespace TopCell
 
 /-- A permutation determines the unique top symbol with that vertical order. -/
+@[expose]
 def ofPerm (σ : Equiv.Perm (Fin p)) : TopCell p :=
   ⟨⟨σ, ∅⟩, rfl⟩
 

@@ -869,6 +869,7 @@ theorem upperEndpoint_coordinate_eq_zero
   field_simp [hc]; ring
 
 /-- A feasible line parameter gives a barycentric point of the standard simplex. -/
+@[expose]
 noncomputable def lineSimplexPoint
     (hp : Nat.Prime p) (V : VertexMap p) (w : StandardSimplex p)
     (t : Real) (ht : LineFeasible hp V w t) : StandardSimplex p :=
@@ -1458,6 +1459,7 @@ def facetIndexEquiv (hp : Nat.Prime p) : Fin ((p - 1) + 1) ≃ Fin p :=
 
 /-- Restrict a simplex point whose `k`-th coordinate vanishes to barycentric coordinates on the
 facet omitting vertex `k`. -/
+@[expose]
 noncomputable def facetCoordinates
     (hp : Nat.Prime p) (w : StandardSimplex p)
     (k : Fin (p + 1)) (hk : w k = 0) : StandardSimplex (p - 1) :=
@@ -1698,6 +1700,7 @@ theorem fullSimplexOfFacet_positiveRayData
     fullSimplexOfFacet_mean_pos hp V k u hmean⟩
 
 /-- The simplex point at the lower feasible parameter. -/
+@[expose]
 noncomputable def lowerEndpointSimplexPoint
     (hp : Nat.Prime p) (V : VertexMap p)
     (hregular : FacetRegular hp V) (w : StandardSimplex p) : StandardSimplex p :=
@@ -1705,6 +1708,7 @@ noncomputable def lowerEndpointSimplexPoint
     (lowerParameter_feasible hp V hregular w)
 
 /-- The simplex point at the upper feasible parameter. -/
+@[expose]
 noncomputable def upperEndpointSimplexPoint
     (hp : Nat.Prime p) (V : VertexMap p)
     (hregular : FacetRegular hp V) (w : StandardSimplex p) : StandardSimplex p :=

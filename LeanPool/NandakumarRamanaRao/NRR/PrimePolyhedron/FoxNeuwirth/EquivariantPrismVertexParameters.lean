@@ -183,6 +183,7 @@ noncomputable instance globalVertexAction
     simp [mul_smul]
 
 /-- Actual cylinder point represented by a global sampled vertex. -/
+@[expose]
 noncomputable def globalPoint
     (hp : Nat.Prime p) (N L : Nat) : GlobalVertex hp N L → CylinderPoint p :=
   Quotient.lift (coverPoint hp N L) (by

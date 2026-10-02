@@ -194,6 +194,7 @@ theorem coefficient_bottomPartner
 
 /-- Pairing for a positive internal deleted position: swap the adjacent bar-removal steps on the
 left and right of that position. -/
+@[expose]
 def removalPartner
     (hp : Nat.Prime p) (i : Fin (p - 2)) (z : Code p) : Code p where
   bottom := z.bottom

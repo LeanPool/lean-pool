@@ -35,6 +35,7 @@ def cellInterior (c : FoxNeuwirthTopCell p) :
   {z | z.1 = c ∧ ∀ i, 0 < z.2 i}
 
 /-- Standard simplex chart for one component. -/
+@[expose]
 def cellParam (c : FoxNeuwirthTopCell p) :
     FoxNeuwirthWeights p → FoxNeuwirthTopCellModelPoint p :=
   fun w => (c, w)
@@ -95,6 +96,7 @@ theorem cellCarrier_cover :
   simp [cellCarrier]
 
 /-- The declared dimension of every maximal component. -/
+@[expose]
 def cellDimension (p : Nat)
     (_c : FoxNeuwirthTopCell p) : ℕ :=
   p - 1

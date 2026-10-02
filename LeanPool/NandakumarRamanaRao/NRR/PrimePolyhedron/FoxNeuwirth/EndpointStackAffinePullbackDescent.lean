@@ -154,6 +154,7 @@ theorem oneStepAffinePullbackCompatible
       (localSpatialWeight hp A.level b.2) hchart
 
 /-- Compatible affine-pullback values descend to global collar vertices. -/
+@[expose]
 noncomputable def globalPullbackVector
     (hp : Nat.Prime p)
     {F : ContinuousCoordinateMap p}

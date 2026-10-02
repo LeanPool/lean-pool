@@ -95,6 +95,7 @@ theorem ordinalRankNat_lt (key : Fin p → Nat ×ₗ Nat) (x : Fin p) :
   simpa [ordinalRankNat] using Finset.card_lt_card hssub
 
 /-- Fin-valued ordinal rank. -/
+@[expose]
 def ordinalRankFin (key : Fin p → Nat ×ₗ Nat) (x : Fin p) : Fin p :=
   ⟨ordinalRankNat key x, ordinalRankNat_lt key x⟩
 
@@ -133,6 +134,7 @@ theorem ordinalRankFin_injective
   · exact (Fin.ne_of_lt (ordinalRankFin_lt_of_lt hgt)) hxy.symm
 
 /-- The ordinal-rank permutation associated with a code stage. -/
+@[expose]
 noncomputable def stageRank (z : Code p) (j : Fin p) : Equiv.Perm (Fin p) :=
   Equiv.ofBijective (ordinalRankFin (stageKey z j)) (by
     rw [Fintype.bijective_iff_injective_and_card]
@@ -402,6 +404,7 @@ def stageIndex (hp : Nat.Prime p) (i : Fin (p - 1 + 1)) : Fin p :=
   FoxNeuwirthChain.maximalIndexCast hp i
 
 /-- Explicit strict flag associated with a maximal-flag code. -/
+@[expose]
 noncomputable def toSimplex (hp : Nat.Prime p) (z : Code p) : Simplex p (p - 1) :=
   ⟨fun i => stageCell z (stageIndex hp i), by
     intro i j hij

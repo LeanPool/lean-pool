@@ -61,6 +61,7 @@ section FiniteSupport
 variable {R : Type} [CommRing R] {X : TopCat.{0}} {n : Nat}
 
 /-- Value of a finite list of coefficient/simplex terms in the singular chain group. -/
+@[expose]
 noncomputable def expansionValue
     (terms : List (R × singularSimplices X n)) : singularChainGroup R X n :=
   terms.foldr
@@ -282,6 +283,7 @@ noncomputable instance globalVertexAction :
     simp [mul_smul]
 
 /-- Actual cylinder point represented by a global relative-collar vertex. -/
+@[expose]
 noncomputable def globalPoint : GlobalVertex p B → CylinderPoint p :=
   Quotient.lift (coverPoint p B) (by
     intro a b hab

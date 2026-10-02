@@ -28,6 +28,7 @@ namespace PrimeConfigurationModel
 
 /-- The model configuration map as the compact site family used by the variable-body partition
 construction. -/
+@[expose]
 def sites (M : PrimeConfigurationModel hp) :
     EMP.VariableBody.SiteFamily M.Point p := M.toConfig
 

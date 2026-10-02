@@ -42,6 +42,7 @@ variable {p N₀ Nmid N₁ M₀ M₁ L₀ L₁ : Nat}
 variable {hp : Nat.Prime p}
 
 /-- Construct a scalar quotient assignment from an equivariant vector value on global vertices. -/
+@[expose]
 noncomputable def assignmentOfEquivariantVector
     {A B M L : Nat}
     (C : RelativeAffineCellSystem hp A B M L)
@@ -105,6 +106,7 @@ def SeamCompatible
       VC (Quotient.mk _ a) = VD (Quotient.mk _ b)
 
 /-- Piecewise vector value on decorated local occurrences of the combined collar. -/
+@[expose]
 noncomputable def combinedCoverVector
     (VC : GlobalVertex hp C → Fin p → Real)
     (VD : GlobalVertex hp D → Fin p → Real) :
@@ -167,6 +169,7 @@ theorem combinedCoverVector_eq_of_coverPoint_eq
           exact hab
 
 /-- Global combined vector obtained by descent from the piecewise cover value. -/
+@[expose]
 noncomputable def combinedGlobalVector
     (VC : GlobalVertex hp C → Fin p → Real)
     (VD : GlobalVertex hp D → Fin p → Real)
@@ -234,6 +237,7 @@ theorem combinedGlobalVector_smul
       exact hD g (Quotient.mk _ (h, (q, i)))
 
 /-- Compose two assignments whose vector values agree on every combined seam vertex. -/
+@[expose]
 noncomputable def combinedAssignment
     (a : Assignment hp C)
     (b : Assignment hp D)

@@ -418,6 +418,7 @@ noncomputable instance globalVertexAction :
     simp [mul_smul]
 
 /-- Actual geometric point represented by a global vertex. -/
+@[expose]
 noncomputable def globalPoint : GlobalVertex hp C → CylinderPoint p :=
   Quotient.lift (coverPoint hp C) (by
     intro a b hab
@@ -435,6 +436,7 @@ noncomputable def globalPoint : GlobalVertex hp C → CylinderPoint p :=
   exact coverPoint_actCoverVertex hp C g s
 
 /-- Global vertex represented by an undecorated local slot. -/
+@[expose]
 noncomputable def sampleVertex (s : C.VertexSlot) : GlobalVertex hp C :=
   Quotient.mk _ ((1 : PrimeSymmetry p), s)
 
@@ -561,11 +563,13 @@ theorem eval_restrictPolynomial
   rw [hhom]
 
 /-- Scalar value reconstructed at a global vertex. -/
+@[expose]
 noncomputable def scalarValue
     (a : Assignment hp C) (x : GlobalVertex hp C) (j : Fin p) : Real :=
   a (Quotient.mk _ (x, j))
 
 /-- Vector value reconstructed at a global vertex. -/
+@[expose]
 noncomputable def vectorValue
     (a : Assignment hp C) (x : GlobalVertex hp C) : Fin p → Real :=
   fun j => scalarValue hp C a x j
@@ -756,6 +760,7 @@ noncomputable def deviationPolynomial
     y (ReferenceAffineOrbitCount.lastLabel hp)
 
 /-- Real local vertex map reconstructed from an assignment. -/
+@[expose]
 noncomputable def localVertexMap
     (a : Assignment hp C) (q : C.Cell) : VertexMap p where
   value i := vectorValue hp C a (sampleVertex hp C (q, i))

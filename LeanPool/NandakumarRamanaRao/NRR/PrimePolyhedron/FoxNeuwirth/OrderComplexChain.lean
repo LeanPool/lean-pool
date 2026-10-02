@@ -78,6 +78,7 @@ def faceSign (k : Fin (d + 2)) : R :=
 
 /-- Simplicial boundary, written as a finite double sum over source simplices and deleted
 vertices. -/
+@[expose]
 def boundary (chain : SimplicialChain R p (d + 1)) :
     SimplicialChain R p d :=
   fun target =>
@@ -143,6 +144,7 @@ def single (s : Simplex p d) : SimplicialChain R p d :=
   simp [single, h]
 
 /-- Relabel a simplicial chain by precomposition with the inverse vertex action. -/
+@[expose]
 def relabel (sigma : Equiv.Perm (Fin p))
     (chain : SimplicialChain R p d) : SimplicialChain R p d :=
   fun s => chain (s.relabel sigma.symm)
@@ -238,6 +240,7 @@ def affineBlockDeterminant
 /-- Fox--Neuwirth top chain on maximal flags.
 
 The coefficient orients each barycentric simplex by its affine block-coordinate determinant. -/
+@[expose]
 def topChain (hp : Nat.Prime p) :
     SimplicialChain (ZMod p) p (p - 1) :=
   fun s => (affineBlockDeterminant hp s : ZMod p)

@@ -45,6 +45,7 @@ omit [CompactSpace X]
 
 /-- The **canonical equal-area power partition** of the variable solid body `solidBody hA z.1`,
 computed with the site configuration `sites z.2`. A thin wrapper around `EMP.powerPartition`. -/
+@[expose]
 noncomputable def partition
     (z : BodySpace K A × X) :
     ConvexPartition (solidBody hA z.1) n :=

@@ -33,6 +33,7 @@ variable {p : Nat}
 namespace FoxNeuwirth
 
 /-- Uniform barycentric weights on the `p` labels. -/
+@[expose]
 noncomputable def uniformWeights (hp : Nat.Prime p) : FoxNeuwirthWeights p where
   val := fun _ => 1 / (p : Real)
   property := by

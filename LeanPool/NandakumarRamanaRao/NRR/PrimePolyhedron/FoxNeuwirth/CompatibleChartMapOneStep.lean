@@ -169,6 +169,7 @@ theorem decoratedVector_eq_of_coverPoint_eq
     EquivariantPrismVertexParameters.CylinderPoint.ofProd] using hspatial
 
 /-- Global vector obtained by quotient descent. -/
+@[expose]
 noncomputable def globalVector
     (hp : Nat.Prime p) {N : Nat} (K : ChartMap hp N) :
     GlobalVertex hp (Cells hp N) → Fin p → Real :=

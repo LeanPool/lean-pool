@@ -63,6 +63,7 @@ variable {p : Nat}
   SphereOddDegree.FiniteSimplex.map (S := Real) k.succAbove x
 
 /-- Transport a standard-simplex point across an equality of dimensions. -/
+@[expose]
 noncomputable def deltaCast {m n : Nat} (h : m = n) : Delta m → Delta n :=
   fun x => h ▸ x
 
