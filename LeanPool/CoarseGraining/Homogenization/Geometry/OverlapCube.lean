@@ -238,7 +238,7 @@ theorem middleChildCube_injective {d : ℕ} :
   | mk scaleQ indexQ =>
   cases R with
   | mk scaleR indexR =>
-  simp [middleChildCube] at hQR ⊢
+  simp only [middleChildCube, TriadicCube.mk.injEq] at hQR ⊢
   rcases hQR with ⟨hscale, hindex⟩
   constructor
   · omega

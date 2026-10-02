@@ -169,7 +169,7 @@ theorem disjoint_cubeSet_of_scale_eq_of_ne {d : ℕ} {R S : TriadicCube d}
     | mk scaleR indexR =>
         cases S with
         | mk scaleS indexS =>
-            simp at hscale ⊢
+            simp only [TriadicCube.mk.injEq] at hscale ⊢
             exact ⟨hscale, funext h⟩
   rcases hindex_ne with ⟨i, hi⟩
   have hfactor : cubeScaleFactor S = cubeScaleFactor R := by
@@ -232,7 +232,7 @@ theorem cubeScaleFactor_le_dist_of_ne_of_mem_descendantsAtScaleColorClass {d : �
     | mk scaleR indexR =>
         cases S with
         | mk scaleS indexS =>
-            simp at h ⊢
+            simp only [TriadicCube.mk.injEq] at h ⊢
             refine ⟨?_, funext h⟩
             have hscaleR : scaleR = k := by
               simpa using

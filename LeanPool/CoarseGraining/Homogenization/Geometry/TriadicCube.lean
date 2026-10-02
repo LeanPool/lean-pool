@@ -27,7 +27,7 @@ instance instCountableTriadicCube (d : ℕ) : Countable (TriadicCube d) := by
     intro Q R hQR
     cases Q
     cases R
-    simp at hQR ⊢
+    simp only [TriadicCube.mk.injEq, Prod.mk.injEq] at hQR ⊢
     exact hQR
   exact h.countable
 
