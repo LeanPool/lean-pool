@@ -762,7 +762,8 @@ private theorem finalStore_appended (gate : CircuitCode.RawGate) (wires : List B
     simpa [wireCountReg] using evaluated_wireCount gate wires
   have haddress : appendAddressed gate wires address1Reg =
       wireBase + wires.length := by
-    simp [appendAddressed, Basic.exec, address1Reg, baseReg, wireCountReg]
+    simp only [appendAddressed, Basic.exec, address1Reg, baseReg,
+      wireCountReg, Function.update_self]
     rw [hbase', hcount']
     simp [wireBase, Nat.add_comm]
   have hsource : appendAddressed gate wires outputReg =
@@ -783,7 +784,8 @@ private theorem finalStore_wire (gate : CircuitCode.RawGate) (wires : List Bool)
     simpa [wireCountReg] using evaluated_wireCount gate wires
   have haddress : appendAddressed gate wires address1Reg =
       wireBase + wires.length := by
-    simp [appendAddressed, Basic.exec, address1Reg, baseReg, wireCountReg]
+    simp only [appendAddressed, Basic.exec, address1Reg, baseReg,
+      wireCountReg, Function.update_self]
     rw [hbase', hcount']
     simp [wireBase, Nat.add_comm]
   have hne : wireBase + index ≠ wireBase + wires.length := by omega
@@ -1465,12 +1467,12 @@ theorem routine_measured_internal {bound base : ℕ}
       omega
     · change addressed0 address1Reg + addressed0 baseReg ≤ bound
       have haddress1 : addressed0 address1Reg = gate.input₁ := by
-        simp [addressed0, Basic.exec, Function.update_of_ne, address0Reg,
-          address1Reg]
+        simp only [Basic.exec, address0Reg, address1Reg, ne_eq,
+          Nat.succ_ne_self, not_false_eq_true, Function.update_of_ne, addressed0]
         exact hready.address1_eq
       have hbase : addressed0 baseReg = base := by
-        simp [addressed0, Basic.exec, Function.update_of_ne, address0Reg,
-          baseReg]
+        simp only [Basic.exec, address0Reg, baseReg, ne_eq, Nat.reduceEqDiff,
+          not_false_eq_true, Function.update_of_ne, addressed0]
         exact hready.base_eq
       rw [haddress1, hbase]
       omega

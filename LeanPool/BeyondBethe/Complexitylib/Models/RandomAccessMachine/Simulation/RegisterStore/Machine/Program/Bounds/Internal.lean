@@ -1805,7 +1805,8 @@ private theorem write_entries_le (store : Store) (address value bound : ℕ)
   | nil =>
       by_cases hvalueZero : value = 0
       · simp [RegisterStore.write, hvalueZero] at hentry
-      · simp [RegisterStore.write, hvalueZero] at hentry
+      · simp only [write, hvalueZero, ↓reduceIte, List.mem_cons,
+          List.not_mem_nil, or_false] at hentry
         subst entry
         exact ⟨haddress, hvalue⟩
   | cons head rest ih =>
@@ -1819,9 +1820,9 @@ private theorem write_entries_le (store : Store) (address value bound : ℕ)
       by_cases haddressEq : address = storedAddress
       · subst address
         by_cases hvalueZero : value = 0
-        · simp [RegisterStore.write, hvalueZero] at hentry
+        · simp only [write, ↓reduceIte, hvalueZero] at hentry
           exact hrest entry hentry
-        · simp [RegisterStore.write, hvalueZero] at hentry
+        · simp only [write, ↓reduceIte, hvalueZero, List.mem_cons] at hentry
           rcases hentry with rfl | hentry
           · exact ⟨haddress, hvalue⟩
           · exact hrest entry hentry

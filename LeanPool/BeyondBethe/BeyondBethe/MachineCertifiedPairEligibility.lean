@@ -453,12 +453,12 @@ def certifiedColumnPairTest {n : ℕ}
         (machineFixedAPack (binaryListCode finUnaryCode (b :: bs)) [found]
           (fixedAMachineInput X R C r s a)) =
       rawRatBinaryCode (rawDirectedFourCoreCostUpper X r s a b) := by
-  simp [machineFixedAFourCoreRawCode, machineFixedAFourCoreInput,
-    machineFixedASource, machineFixedARemaining,
-    machineFixedACurrentSecondColumn, machineFixedAFirstRowRuler,
-    machineFixedASecondRowRuler, machineFixedAFirstColumnRuler,
-    machineFixedAOptimizerWord, machineFixedARest₁, machineFixedARest₂,
-    machineFixedAPack, fixedAMachineInput]
+  simp only [machineFixedAFourCoreRawCode, machineFixedAFourCoreInput,
+    machineFixedAFirstRowRuler, machineFixedASource, machineFixedAPack,
+    fixedAMachineInput, machinePairSecond_pair, machinePairFirst_pair,
+    machineFixedASecondRowRuler, machineFixedARest₁, machineFixedAFirstColumnRuler,
+    machineFixedARest₂, machineFixedACurrentSecondColumn, machineFixedARemaining,
+    machineListHead_cons, machineFixedAOptimizerWord]
   change machineDirectedFourCoreCostUpperRawCode
       (fourCoreMachineInput X R C r s a b) = _
   exact machineDirectedFourCoreCostUpperRawCode_encode X R C r s a b
@@ -929,12 +929,11 @@ def certifiedRowPairEligibilityTest {n : ℕ}
           (binaryListCode finUnaryCode (a :: as)) [found]
           (certifiedRowPairMachineInput X R C r s)) =
       [certifiedFirstColumnTest X r s a] := by
-  simp [machineRowPairCandidateBit, machineRowPairFixedAInput,
-    machineRowPairScanSource, machineRowPairScanRemaining,
-    machineRowPairCurrentFirstColumn, machineRowPairFirstRowRuler,
-    machineRowPairSecondRowRuler, machineRowPairOptimizerWord,
-    machineRowPairRest, machineRowPairScanPack,
-    certifiedRowPairMachineInput,
+  simp only [machineRowPairCandidateBit, machineRowPairFixedAInput,
+    machineRowPairFirstRowRuler, machineRowPairScanSource, machineRowPairScanPack,
+    certifiedRowPairMachineInput, machinePairSecond_pair, machinePairFirst_pair,
+    machineRowPairSecondRowRuler, machineRowPairRest, machineRowPairCurrentFirstColumn,
+    machineRowPairScanRemaining, machineListHead_cons, machineRowPairOptimizerWord,
     certifiedFirstColumnTest]
   change machineFixedAEligibilityBit (fixedAMachineInput X R C r s a) = _
   exact machineFixedAEligibilityBit_encode X R C r s a

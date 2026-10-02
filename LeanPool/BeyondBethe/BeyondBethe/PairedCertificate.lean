@@ -84,7 +84,8 @@ theorem selectorExponent_eq_sum_single
       ∑ j, Finsupp.single (h j, j) 1 := by
   classical
   ext ⟨c, j⟩
-  simp [selectorExponent_apply, Finsupp.single_apply]
+  simp only [selectorExponent_apply, Finsupp.coe_finsetSum, Finset.sum_apply,
+    Finsupp.single_apply, Prod.mk.injEq, Finset.sum_boole, Nat.cast_id]
   by_cases hc : c = h j
   · subst c
     have hs : ({x : ι | h x = h j ∧ x = j} : Finset ι) = {j} := by
