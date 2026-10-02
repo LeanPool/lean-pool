@@ -260,8 +260,7 @@ theorem young_convolution_nonneg_integral_one
             rw [← ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) hp_pos.le]
           rw [h_top]
         simp [hnot_finite]
-    ·
-      rw [integral_undef hg_int_μ]
+    · rw [integral_undef hg_int_μ]
       simp only [abs_zero, ENNReal.ofReal_zero]
       rw [ENNReal.zero_rpow_of_pos hp_pos]
       exact zero_le

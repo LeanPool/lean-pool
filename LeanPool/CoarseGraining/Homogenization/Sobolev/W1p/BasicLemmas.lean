@@ -87,12 +87,10 @@ theorem HasWeakPartialDerivOn.of_contDiff {d : ℕ} {U : Set (Vec d)}
         ((hf_cont.mul hfderiv_φ_cont).integrable_of_hasCompactSupport hφ_fderiv_supp.mul_left)
         ((hf_cont.mul hφ_cont).integrable_of_hasCompactSupport hφ_supp.mul_left)
         (fun x _ => hf_diff.differentiableAt) (fun x _ => hφ_diff.differentiableAt)
-  ·
-    intro x hx
+  · intro x hx
     have hx_notin : x ∉ tsupport φ := fun hx' => hx (hφ_sub hx')
     simp [image_eq_zero_of_notMem_tsupport hx_notin]
-  ·
-    intro x hx
+  · intro x hx
     have hx_notin : x ∉ tsupport φ := fun hx' => hx (hφ_sub hx')
     have hφ_eq : φ =ᶠ[nhds x] 0 :=
       (isClosed_tsupport (f := φ)).isOpen_compl.eventually_mem hx_notin |>.mono
