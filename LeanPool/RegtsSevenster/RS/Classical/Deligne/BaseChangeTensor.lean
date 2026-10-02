@@ -32,6 +32,7 @@ universe v u
 variable {D : Type u}
 
 /-- Scalar restriction of a module along the base morphism. -/
+@[expose]
 noncomputable def restrictMod
     [Category.{v} D] [MonoidalCategory D] (A : D) [MonObj A] (B : D)
     [MonObj B] (φ : A ⟶ B) [IsMonHom φ] (P : Mod D B) :

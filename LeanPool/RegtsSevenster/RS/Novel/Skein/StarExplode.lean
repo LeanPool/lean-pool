@@ -43,6 +43,7 @@ theorem ClosedFragment.attach_eq_vertexOf (W : ClosedFragment)
   · exact Fin.elim0 ℓ
 
 /-- A pairing-closed cut set: with each flag, its partner. -/
+@[expose]
 def CutClosed (W : ClosedFragment) (C : Finset W.Flag) : Prop :=
   ∀ f ∈ C, W.pairing f ∈ C
 

@@ -322,6 +322,7 @@ theorem schurKilled_odd_row
 section Sums
 
 /-- `p + 1` biproduct copies of an object. -/
+@[expose]
 noncomputable def sumPow
     [Category.{v} A] [Preadditive A] [HasBinaryBiproducts A]
     (X : A) : ℕ → A

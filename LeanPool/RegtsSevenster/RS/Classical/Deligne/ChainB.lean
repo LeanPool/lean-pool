@@ -318,6 +318,7 @@ theorem chainB_isCommMonObj
 
 /-- **The unit of the splitting-chain algebra**: the seed at the
 bottom stage. -/
+@[expose]
 noncomputable def chainBUnit
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

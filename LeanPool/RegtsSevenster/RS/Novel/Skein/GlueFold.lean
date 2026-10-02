@@ -1799,6 +1799,7 @@ theorem swapPairs_wf (ps : List (α × α))
 /-- Surviving labels are invariant under swapping pair
 components: `x ≠ p.1 ∧ x ≠ p.2` iff
 `x ≠ p.2 ∧ x ≠ p.1`. -/
+@[expose]
 def swapFoldEquiv (ps : List (α × α)) :
     FoldSurviving α (ps.map Prod.swap) ≃
       FoldSurviving α ps where

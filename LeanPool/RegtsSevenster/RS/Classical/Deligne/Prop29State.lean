@@ -154,6 +154,7 @@ theorem devissageExit
 /-- **The trichotomy**: over any state, either every symmetric
 power of the remainder survives, or every alternating power
 survives, or the remainder has died. -/
+@[expose]
 def DevissageTrichotomy
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

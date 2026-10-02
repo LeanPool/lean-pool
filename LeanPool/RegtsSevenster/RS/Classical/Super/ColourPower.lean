@@ -253,6 +253,7 @@ noncomputable def refl (V : SuperVect) : SuperLinearEquiv V V :=
   ⟨LinearEquiv.refl ℂ _, LinearEquiv.refl ℂ _⟩
 
 /-- Composition of super linear equivalences. -/
+@[expose]
 noncomputable def trans {U V W : SuperVect}
     (e : SuperLinearEquiv U V) (e' : SuperLinearEquiv V W) :
     SuperLinearEquiv U W :=

@@ -162,6 +162,7 @@ noncomputable def toModPowModZero
 
 /-- One stage of the power chain: the module tensor product of
 matching module powers of the dual pair, in copairing order. -/
+@[expose]
 noncomputable def powStage
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
@@ -249,6 +250,7 @@ noncomputable def powDelta
 
 /-- **The copairing powers**: the iterated seed multiplication
 along the power chain. -/
+@[expose]
 noncomputable def powUnitStage
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

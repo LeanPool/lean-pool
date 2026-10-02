@@ -48,6 +48,7 @@ namespace SuperCommAlgebra.Mod
 variable {S : SuperCommAlgebra}
 
 /-- The identity morphism of super modules. -/
+@[expose]
 def Hom.id (M : S.Mod) : Hom M M where
   evenMap := LinearMap.id
   oddMap := LinearMap.id

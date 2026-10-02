@@ -53,6 +53,7 @@ variable {F : EdgeSubset W}
 
 /-- A flag on a closed circuit: it is internal, every intermediate
 pairing stays internal, and the walk returns to it. -/
+@[expose]
 def RelTransitionSystem.PeriodicFlag
     (κ : F.RelTransitionSystem) (f : W.Flag) : Prop :=
   f ∈ F.internalFlags ∧

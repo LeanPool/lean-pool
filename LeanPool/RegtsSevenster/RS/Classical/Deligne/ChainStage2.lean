@@ -36,6 +36,7 @@ variable {D : Type u}
 /-- A two-index stage of the splitting chain: the module tensor
 product of independently sized symmetric powers of the dual
 pair. -/
+@[expose]
 noncomputable def chainStage2
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
@@ -61,6 +62,7 @@ theorem chainStage2_diag
 section Stage2Cast
 
 /-- Transport of a two-index stage along equalities of arities. -/
+@[expose]
 noncomputable def chainStage2Cast
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

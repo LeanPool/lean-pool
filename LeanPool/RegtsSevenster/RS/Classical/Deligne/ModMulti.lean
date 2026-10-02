@@ -559,12 +559,14 @@ lemma pairResolveInv_resolve
 
 /-- The window seed of the pair: the right unitor of the single
 relation object, retyped at `modMultiMid`. -/
+@[expose]
 def pairSeed
     [Category.{v} D] [MonoidalCategory D] (A : D) [MonObj A] (X : Mod D A)
     (Y : Mod D A) : modMultiMid A [] X Y [] ⟶ (X.X ⊗ A) ⊗ Y.X :=
   (ρ_ ((X.X ⊗ A) ⊗ Y.X)).hom
 
 /-- The inverse window seed of the pair. -/
+@[expose]
 def pairSeedInv
     [Category.{v} D] [MonoidalCategory D] (A : D) [MonObj A] (X : Mod D A)
     (Y : Mod D A) : (X.X ⊗ A) ⊗ Y.X ⟶ modMultiMid A [] X Y [] :=

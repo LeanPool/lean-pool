@@ -176,6 +176,7 @@ private theorem unitTensorμ
 
 /-- **The free insertion**: carry the head into the top letter of
 the word and fill every other letter with the unit. -/
+@[expose]
 noncomputable def freeInsert
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     (A : D) [MonObj A] (V : D) (n : ℕ) :
