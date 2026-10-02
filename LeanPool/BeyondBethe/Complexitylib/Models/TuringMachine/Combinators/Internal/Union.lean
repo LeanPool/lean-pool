@@ -860,9 +860,11 @@ private theorem unionReject_rewindInput_head_bound
     cases hget : (x.map Γ.ofBool)[i - 1]? with
     | none => simp [hget, Option.getD] at heq
     | some v =>
-      simp [hget, Option.getD] at heq; subst heq
+      simp only [Option.getD, hget] at heq; subst heq
       have hmem := List.mem_of_getElem? hget
-      simp [List.mem_map] at hmem; rcases hmem with ⟨_, hb⟩ | ⟨_, hb⟩ <;> simp [Γ.ofBool] at hb
+      simp only [List.mem_map, Bool.exists_bool] at hmem
+      rcases hmem with ⟨_, hb⟩ | ⟨_, hb⟩ <;>
+        simp only [Γ.ofBool, reduceCtorEq] at hb
   -- c_rw.input.head ≤ c₁.input.head + 1
   -- From step_inl_qhalt_cfg, the input direction is idleDir(input.read)
   -- Use step_inl_qhalt_cfg to get the exact form of c_rw.input
@@ -1005,9 +1007,9 @@ theorem unionTM_transition_reject (tm₁ : TM n₁) (tm₂ : TM n₂) (x : List 
     cases hget : (x.map Γ.ofBool)[i - 1]? with
     | none => simp [hget, Option.getD] at this
     | some v =>
-      simp [hget, Option.getD] at this; subst this
+      simp only [Option.getD, hget] at this; subst this
       have hmem := List.mem_of_getElem? hget
-      simp [List.mem_map] at hmem
+      simp only [List.mem_map, Bool.exists_bool] at hmem
       rcases hmem with ⟨_, hb⟩ | ⟨_, hb⟩ <;> simp [Γ.ofBool] at hb
   -- Input cell 0 = Γ.start
   have hin_cell0_ri : c_ri.input.cells 0 = Γ.start := by
