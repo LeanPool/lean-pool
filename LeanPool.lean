@@ -244,6 +244,7 @@ public import LeanPool.Superorthogonality.Imports
 public import LeanPool.SyntheticEuclid4.Imports
 public import LeanPool.ThreeGap.Imports
 public import LeanPool.Turan3.Imports
+public import LeanPool.TuttePath.Imports
 public import LeanPool.TwoColoringOneRound.Imports
 public import LeanPool.UlmsTheorem.Imports
 public import LeanPool.UnconditionalSchauderBasis.Imports
