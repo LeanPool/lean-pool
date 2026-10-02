@@ -401,7 +401,8 @@ theorem deterministicCoarseBlockMatrix_eq_blockMatrixOfDeterministicData
   deterministicCoarseBlockMatrix_eq_blockMatrixOfDeterministicData_of_isSigmaCoarse
     hS hK hSigma hdet
 
-theorem deterministicStarredBlockMatrixInv_eq_starredBlockMatrixInvOfDeterministicData_of_isSigmaCoarse
+theorem
+  deterministicStarredBlockMatrixInv_eq_starredBlockMatrixInvOfDeterministicData_of_isSigmaCoarse
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     {sigma sigmaStar kappa : Mat d}
     (hS : IsSigmaStarCoarse U a sigmaStar)
@@ -638,7 +639,8 @@ theorem coarseStarredBlockMatrixInv_eq_deterministicStarredBlockMatrixInv
     coarseStarredBlockMatrixInv U a = deterministicStarredBlockMatrixInv U a :=
   coarseStarredBlockMatrixInv_eq_deterministicStarredBlockMatrixInv_of_isCoarseBlockMatrix hA
 
-theorem coarseStarredBlockMatrixInv_eq_starredBlockMatrixInvOfDeterministicData_of_isCoarseBlockMatrix
+theorem
+  coarseStarredBlockMatrixInv_eq_starredBlockMatrixInvOfDeterministicData_of_isCoarseBlockMatrix
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     {sigma sigmaStar kappa : Mat d}
     (hA : IsCoarseBlockMatrix U a (deterministicCoarseBlockMatrix U a))
@@ -688,7 +690,8 @@ theorem coarseBlockMatrix_lowerRight_eq_sigmaStarInvCoarse_of_mu_zero_right_eq_r
 /-- If the pure-flux slice of `\mu` matches the pure-flux slice of
 `\mathcal J`, then the upper-left block of `\mathbf A_*^{-1}(U; a)` is the
 canonical `\sigma_*^{-1}(U; a)`. -/
-theorem coarseStarredBlockMatrixInv_upperLeft_eq_sigmaStarInvCoarse_of_mu_zero_right_eq_responseJ_zero
+theorem
+  coarseStarredBlockMatrixInv_upperLeft_eq_sigmaStarInvCoarse_of_mu_zero_right_eq_responseJ_zero
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     (hex : ∃ Abar : BlockMat d, IsCoarseBlockMatrix U a Abar)
     (hMuResp : ∀ q : Vec d, Mu U (0, q) a = ResponseJ U 0 q a) :

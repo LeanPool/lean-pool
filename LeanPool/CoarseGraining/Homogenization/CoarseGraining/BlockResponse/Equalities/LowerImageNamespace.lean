@@ -94,7 +94,8 @@ theorem blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn
   Homogenization.blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
     (a := a) hU hEll hvol (HasHodgeConverse.hodgeConverseCriterion (U := U)) p q h
 
-theorem blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem
+  blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -109,7 +110,8 @@ theorem blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_h
   Homogenization.blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
     (a := a) hU hEll hvol hHodge p q h
 
-theorem blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem
+  blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -217,7 +219,8 @@ theorem blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn
   Homogenization.blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn
     (a := a) hU hEll hvol p q h
 
-theorem blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem
+  blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -232,7 +235,8 @@ theorem blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_h
   Homogenization.blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
     (a := a) hU hEll hvol hHodge p q h
 
-theorem blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem
+  blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -405,7 +409,8 @@ theorem exists_scalarCanonicalMaximizers_blockJ_eq_half_scalarResponse_sum
     blockJ_eq_half_scalarResponse_sum_of_isOpenBoundedConvexDomain
       hConv hEll hvol p pStar q qStar u v
 
-theorem blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn
+theorem
+  blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     [HasHodgeConverse U]
@@ -473,7 +478,8 @@ theorem blockJ_note_form_eq_half_scalarResponse_sum_of_isOpenBoundedConvexDomain
 /-- Witness-free convex-domain note-form scalar-response equality. The scalar
 canonical maximizers are obtained internally, so downstream arguments can
 consume the decomposition without packaging explicit maximizer witnesses. -/
-theorem blockJ_note_form_eq_half_scalarResponse_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem
+  blockJ_note_form_eq_half_scalarResponse_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)

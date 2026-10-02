@@ -95,7 +95,8 @@ theorem blockJ_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn
       (a := a) hU hEll hvol
       (HasHodgeConverse.hodgeConverseCriterion (U := U)) p pStar q qStar
 
-theorem blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem
+  blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -134,7 +135,8 @@ theorem blockJ_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBound
       q
       qStar
 
-theorem blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem
+  blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -274,7 +276,8 @@ theorem blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn
     blockJ_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn
       (a := a) hU hEll hvol (p := p) (pStar := 0) (q := h) (qStar := q)
 
-theorem blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem
+  blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -313,7 +316,8 @@ theorem blockJ_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBound
       q
       qStar
 
-theorem blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem
+  blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)

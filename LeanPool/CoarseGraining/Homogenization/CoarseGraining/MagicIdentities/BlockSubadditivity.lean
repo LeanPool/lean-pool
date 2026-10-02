@@ -245,7 +245,8 @@ theorem coarseBlockMatrix_lowerRight_subadditive_openCubeSet_descendantsAtDepth_
     coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_isSigmaCoarse
       j Q a hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc (0, q)
 
-theorem coarseBlockMatrix_subadditive_openCubeSet_originCube_descendantsAtDepth_pair_of_isSigmaCoarse
+theorem
+  coarseBlockMatrix_subadditive_openCubeSet_originCube_descendantsAtDepth_pair_of_isSigmaCoarse
     {d : ℕ} (j : ℕ) (n : ℤ) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -305,7 +306,8 @@ theorem coarseBlockMatrix_subadditive_openCubeSet_originCube_descendantsAtDepth_
     coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_isSigmaCoarse
       (j := j) (Q := originCube d n) (a := a) hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc X
 
-theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
+theorem
+  coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -371,7 +373,8 @@ theorem coarseBlockMatrix_subadditive_cubeSet_originCube_descendantsAtDepth_in_l
     (coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
       (j := j) (Q := originCube d n) (a := a) hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc X)
 
-theorem coarseBlockMatrix_upperLeft_subadditive_openCubeSet_originCube_descendantsAtDepth_of_isSigmaCoarse
+theorem
+  coarseBlockMatrix_upperLeft_subadditive_openCubeSet_originCube_descendantsAtDepth_of_isSigmaCoarse
     {d : ℕ} (j : ℕ) (n : ℤ) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -529,7 +532,8 @@ theorem coarseBlockMatrix_subadditive_cubeSet_originCube_descendantsAtDepth_bloc
             intro R hR
             rw [← coarseBlockMatrix_cubeSet_eq_openCubeSet_of_triadicCube (Q := R) a]
 
-theorem coarseBlockMatrix_upperLeft_subadditive_cubeSet_originCube_descendantsAtDepth_of_isSigmaCoarse
+theorem
+  coarseBlockMatrix_upperLeft_subadditive_cubeSet_originCube_descendantsAtDepth_of_isSigmaCoarse
     {d : ℕ} [NeZero d] (j : ℕ) (n : ℤ) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -559,7 +563,8 @@ theorem coarseBlockMatrix_upperLeft_subadditive_cubeSet_originCube_descendantsAt
     coarseBlockMatrix_subadditive_cubeSet_originCube_descendantsAtDepth_blockQuadratic_of_isSigmaCoarse
       j n a hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc (p, 0)
 
-theorem coarseBlockMatrix_lowerRight_subadditive_cubeSet_originCube_descendantsAtDepth_of_isSigmaCoarse
+theorem
+  coarseBlockMatrix_lowerRight_subadditive_cubeSet_originCube_descendantsAtDepth_of_isSigmaCoarse
     {d : ℕ} [NeZero d] (j : ℕ) (n : ℤ) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
