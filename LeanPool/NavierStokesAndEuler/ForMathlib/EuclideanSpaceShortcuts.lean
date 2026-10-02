@@ -6,6 +6,7 @@ Authors: Lean Pool contributors
 module
 
 public import LeanPool.NavierStokesAndEuler.ForMathlib.NormedSpaceShortcuts
+public import LeanPool.NavierStokesAndEuler.ForMathlib.LinearMapShortcuts
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 
 /-!
@@ -13,8 +14,9 @@ public import Mathlib.Analysis.InnerProductSpace.PiL2
 
 `EuclideanSpace ℝ (Fin n)` unfolds to `WithLp 2 (Fin n → ℝ)`, whose structures are transported
 one class at a time from the function space. The shortcuts below record the normed-space and
-inner-product instances; they apply to the three-dimensional physical space and to the planes
-used throughout this development.
+inner-product instances, and the normed-space instances of the continuous linear maps between two
+such spaces; they apply to the three-dimensional physical space and to the planes used throughout
+this development.
 -/
 
 public section
@@ -45,6 +47,11 @@ instance EuclideanSpaceShortcut.instCompleteSpace : CompleteSpace (EuclideanSpac
 /-- Shortcut for the properness of a real Euclidean space. -/
 instance EuclideanSpaceShortcut.instProperSpace : ProperSpace (EuclideanSpace ℝ (Fin n)) :=
   inferInstance
+
+variable {m : ℕ}
+
+real_normed_space_shortcut_instances EuclideanOperatorShortcut :
+  EuclideanSpace ℝ (Fin n) →L[ℝ] EuclideanSpace ℝ (Fin m)
 
 end NavierStokesAndEuler
 

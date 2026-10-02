@@ -209,6 +209,14 @@ variable {q : ℕ} {B : ℝ} {S : Scales (q : ℝ) B}
   | zero => exact P.forwardNext hq hB
   | succ n => exact P.joinedNext (Nat.succ_ne_zero n) hq hB
 
+theorem successor_zero (P : Stage S 0) (hq : requiredExponent ≤ q)
+    (hB : commonThreshold gradientConstant hessianConstant ≤ B) :
+    P.successor hq hB = P.forwardNext hq hB := rfl
+
+theorem successor_succ {n : ℕ} (P : Stage S (n + 1)) (hq : requiredExponent ≤ q)
+    (hB : commonThreshold gradientConstant hessianConstant ≤ B) :
+    P.successor hq hB = P.joinedNext (Nat.succ_ne_zero n) hq hB := rfl
+
 theorem successor_time {n : ℕ} (P : Stage S n) (hq : requiredExponent ≤ q)
     (hB : commonThreshold gradientConstant hessianConstant ≤ B) :
     (P.successor hq hB).time=P.nextTime := by
@@ -231,6 +239,8 @@ theorem stages_zero : stages S hq hB 0=S.firstStage := rfl
 
 theorem stages_succ (n : ℕ) :
     stages S hq hB (n+1)=(stages S hq hB n).successor hq hB := rfl
+
+theorem stages_one : stages S hq hB 1 = S.firstStage.forwardNext hq hB := rfl
 
 theorem stages_time (n : ℕ) :
     (stages S hq hB (n+1)).time=(stages S hq hB n).nextTime :=
@@ -263,6 +273,9 @@ def constructionScales : ConstructionScales :=
 /-- Packets, given by `stages constructionScales le_rfl le_rfl n`. -/
 @[expose] def packets (n : ℕ) : Stage constructionScales n :=
   stages constructionScales le_rfl le_rfl n
+
+theorem packets_one :
+    packets 1 = constructionScales.firstStage.forwardNext le_rfl le_rfl := rfl
 
 theorem packets_gradient_atTop :
     Tendsto (fun n => (packets n).activationGradient) atTop atTop := Stage.gradient_atTop packets

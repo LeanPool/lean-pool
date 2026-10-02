@@ -81,6 +81,15 @@ theorem sobolev_complete (q : ℕ) : CompleteSpace (SobolevSpace period q) := in
 instance SobolevSpace.instCompleteSpace (q : ℕ) : CompleteSpace (SobolevSpace period q) :=
   sobolev_complete period q
 
+real_normed_space_shortcut_instances SobolevSpace.Operator (q r : ℕ) :
+  SobolevSpace period q →L[ℝ] SobolevSpace period r
+
+real_normed_space_shortcut_instances SobolevSpace.ValueOperator (q : ℕ) :
+  SobolevSpace period q →L[ℝ] LiftL2 period
+
+real_normed_space_shortcut_instances SobolevSpace.LiftOperator (q : ℕ) :
+  LiftL2 period →L[ℝ] SobolevSpace period q
+
 /-- The underlying L² field of a Sobolev derivative array. -/
 def value {q : ℕ} (u : SobolevSpace period q) : LiftL2 period := u.val (emptyWord q)
 

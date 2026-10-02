@@ -30,6 +30,12 @@ the search. All of them are elaborated before any is registered, so the recorded
 exactly the ones that resolution selects without the shortcuts: terms elaborated with and without
 them agree up to unfolding the shortcut. A later query for one of these structures on `X` is
 answered by its shortcut, without a search.
+
+The one exception is `SeminormedAddCommGroup X`, which is recorded as the seminormed group
+underlying the recorded `NormedAddCommGroup X`. A hypothesis list
+`[NormedAddCommGroup E] [NormedSpace ℝ E]` states its second hypothesis over that seminormed
+group, so the recorded `NormedSpace ℝ X` then matches such a request without comparing two
+seminormed structures field by field.
 -/
 
 public section
@@ -43,7 +49,7 @@ macro "normed_group_shortcut_instances " p:ident bs:bracketedBinder* " : " X:ter
   `(@[expose, reducible] def $(nm "NormedAddCommGroup") $bs* : NormedAddCommGroup $X :=
       inferInstance
     @[expose, reducible] def $(nm "SeminormedAddCommGroup") $bs* : SeminormedAddCommGroup $X :=
-      inferInstance
+      @NormedAddCommGroup.toSeminormedAddCommGroup _ inferInstance
     @[expose, reducible] def $(nm "NormedAddGroup") $bs* : NormedAddGroup $X := inferInstance
     @[expose, reducible] def $(nm "SeminormedAddGroup") $bs* : SeminormedAddGroup $X :=
       inferInstance

@@ -1194,6 +1194,7 @@ public import LeanPool.NavierStokesAndEuler.ForMathlib.FiniteSum
 public import LeanPool.NavierStokesAndEuler.ForMathlib.Gronwall
 public import LeanPool.NavierStokesAndEuler.ForMathlib.L2HilbertShortcuts
 public import LeanPool.NavierStokesAndEuler.ForMathlib.L2NormedShortcuts
+public import LeanPool.NavierStokesAndEuler.ForMathlib.LinearMapShortcuts
 public import LeanPool.NavierStokesAndEuler.ForMathlib.NormedSpaceShortcuts
 public import LeanPool.NavierStokesAndEuler.ForMathlib.SmoothCutoff
 public import LeanPool.NavierStokesAndEuler.ForMathlib.SmoothnessOrder

@@ -6,7 +6,9 @@ Authors: Lean Pool contributors
 module
 
 public import LeanPool.NavierStokesAndEuler.ForMathlib.NormedSpaceShortcuts
+public import LeanPool.NavierStokesAndEuler.ForMathlib.LinearMapShortcuts
 public import Mathlib.MeasureTheory.Function.LpSpace.Basic
+public import Mathlib.Analysis.Normed.Operator.NormedSpace
 
 /-!
 # Shortcut instances for the normed structure of `L²` spaces
@@ -17,7 +19,7 @@ kind of subobject, each of which re-derives structures on `E`, before it succeed
 below record the instances found.
 
 They apply to every abbreviation of an `L²` space, in particular to the lifted, spatial and time
-`L²` spaces of this development.
+`L²` spaces of this development, and to the continuous linear maps between two such spaces.
 -/
 
 public section
@@ -35,6 +37,11 @@ normed_group_shortcut_instances L2Shortcut : Lp E 2 μ
 variable [NormedSpace ℝ E]
 
 normed_space_shortcut_instances L2Shortcut : Lp E 2 μ
+
+variable {β F : Type*} {mβ : MeasurableSpace β} {ν : Measure β} [NormedAddCommGroup F]
+  [NormedSpace ℝ F]
+
+real_normed_space_shortcut_instances L2OperatorShortcut : Lp E 2 μ →L[ℝ] Lp F 2 ν
 
 end NavierStokesAndEuler
 
