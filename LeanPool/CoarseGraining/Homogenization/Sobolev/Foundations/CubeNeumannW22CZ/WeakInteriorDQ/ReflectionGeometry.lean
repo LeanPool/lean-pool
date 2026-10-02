@@ -115,7 +115,6 @@ theorem cubeFaceReflectionBlockSet_originCube_ae_eq_openCubeSet_succ
     exact cubeFaceReflectionBlockSet_originCube_subset_openCubeSet_succ d m hxBlock
   · intro hxParent
     change x ∈ openCubeSet (originCube d (m + 1)) at hxParent
-    change x ∈ cubeFaceReflectionBlockSet (originCube d m)
     rw [mem_openCubeSet_originCube_iff] at hxParent
     intro i
     have hleft :

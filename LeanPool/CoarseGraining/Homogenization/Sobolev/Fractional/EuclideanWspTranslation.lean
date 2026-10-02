@@ -173,16 +173,13 @@ theorem memCubeEuclideanWsp_translate_iff {d : ℕ}
     constructor
     · rw [hker]
       exact (hMP.aestronglyMeasurable_comp_iff TP.measurableEmbedding).2 hmeas
-    · change cubeEuclideanWspESeminorm Q s p
-          (fun x => F (x + Gagliardo.cubeShiftVector shift Q)) < ∞
-      rwa [← cubeEuclideanWspESeminorm_translate shift Q s p F]
+    · rwa [← cubeEuclideanWspESeminorm_translate shift Q s p F]
   · rintro ⟨hmeas, hfinite⟩
     constructor
     · apply (hMP.aestronglyMeasurable_comp_iff TP.measurableEmbedding).1
       rw [← hker]
       exact hmeas
-    · change cubeEuclideanWspESeminorm (translateCube shift Q) s p F < ∞
-      rwa [cubeEuclideanWspESeminorm_translate shift Q s p F]
+    · rwa [cubeEuclideanWspESeminorm_translate shift Q s p F]
 
 /-- Exact covariance of the full normalized Euclidean fractional power norm
 under a triadic lattice translation. -/

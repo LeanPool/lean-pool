@@ -151,8 +151,6 @@ private theorem negativeLocalization_normalizedLp_smul {d : ℕ}
   unfold BoundedMeasurableDomain.normalizedLpENorm
   simp only [ite_eq_right (ne_of_gt (lt_trans zero_lt_one p.one_lt)),
     ite_eq_right p.lt_top.ne]
-  change eLpNorm' (fun x => euclideanNorm (c • f x)) p.exponent.toReal
-      (cubeBoundedMeasurableDomain Q).normalizedVolume = _
   simp_rw [euclideanNorm_smul]
   change eLpNorm' ((|c| : ℝ) • fun x => euclideanNorm (f x)) p.exponent.toReal
       (cubeBoundedMeasurableDomain Q).normalizedVolume = _
