@@ -107,8 +107,9 @@ private theorem binaryRippleSubCoreTM_step_trim_false_zero
           (((c.work resultIdx).write Γ.blank).move Dir3.left)
         output := c.output } := by
   rw [TM.step, ite_eq_right (binaryRippleSubCoreTM_ne_halt (by decide) hstate)]
-  simp only [binaryRippleSubCoreTM, hstate]
-  simp [hread]
+  simp only [binaryRippleSubCoreTM, hstate, hread, reduceCtorEq,
+    false_or, ↓reduceIte, Γw.toΓ, Option.some.injEq, Cfg.mk.injEq,
+    true_and]
   refine ⟨transitionInput_eq_self hinput, ?_, transitionTape_eq_self houtput⟩
   funext i
   by_cases hi : i = resultIdx
@@ -132,8 +133,9 @@ private theorem binaryRippleSubCoreTM_step_trim_false_one
           ((c.work resultIdx).move Dir3.left)
         output := c.output } := by
   rw [TM.step, ite_eq_right (binaryRippleSubCoreTM_ne_halt (by decide) hstate)]
-  simp only [binaryRippleSubCoreTM, hstate]
-  simp [hread]
+  simp only [binaryRippleSubCoreTM, hstate, hread, reduceCtorEq,
+    false_or, ↓reduceIte, Γw.toΓ, Option.some.injEq, Cfg.mk.injEq,
+    true_and]
   refine ⟨transitionInput_eq_self hinput, ?_, transitionTape_eq_self houtput⟩
   funext i
   by_cases hi : i = resultIdx
@@ -160,8 +162,9 @@ private theorem binaryRippleSubCoreTM_step_trim_true
           ((c.work resultIdx).move Dir3.left)
         output := c.output } := by
   rw [TM.step, ite_eq_right (binaryRippleSubCoreTM_ne_halt (by decide) hstate)]
-  simp only [binaryRippleSubCoreTM, hstate]
-  simp [hread]
+  simp only [binaryRippleSubCoreTM, hstate, hread,
+    true_or, ↓reduceIte, Γw.toΓ, Option.some.injEq, Cfg.mk.injEq,
+    true_and]
   refine ⟨transitionInput_eq_self hinput, ?_, transitionTape_eq_self houtput⟩
   funext i
   by_cases hi : i = resultIdx
