@@ -79,12 +79,15 @@ theorem integral_abs_symmetrizedFinsetSum_pow_le_rosenthal
         (μ := μ) (X := fun i : ↥s => X i) (s := Finset.univ) hs_univ h_meas_sub hmax_int_sub
   have hmax_intY :
       Integrable
-        (fun ω : Ω × Ω => (Finset.univ.sup' hs_univ fun i : ↥s => |Y i ω|) ^ (p : ℝ)) (μ.prod μ) := by
+        (fun ω : Ω × Ω => (Finset.univ.sup' hs_univ fun i : ↥s => |Y i ω|) ^ (p : ℝ))
+        (μ.prod μ) := by
     simpa [Real.rpow_natCast, Y] using hmax_intY_nat
   have hlin :=
     integral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
       (μ := μ.prod μ) (X := Y) (s := Finset.univ) hs_univ hp_real h_indepY
-      (fun i => by simpa [Y] using! ((h_meas i).comp measurable_fst).sub ((h_meas i).comp measurable_snd))
+      (fun i => by
+        simpa [Y] using!
+          ((h_meas i).comp measurable_fst).sub ((h_meas i).comp measurable_snd))
       h_sq_intY h_symmY hmax_intY
   have hmax_bound :
       ∫ ω : Ω × Ω, ((Finset.univ.sup' hs_univ fun i : ↥s => |Y i ω|) ^ p) ∂(μ.prod μ) ≤
@@ -155,7 +158,8 @@ theorem integral_abs_symmetrizedFinsetSum_pow_le_rosenthal
   have hpow_le :
       (rosenthalBennettIntegralConst *
           (Real.sqrt p *
-            Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p
+            Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s),
+              ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p
         ≤
       (2 * rosenthalBennettIntegralConst *
           (Real.sqrt p * Real.sqrt (∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ))) ^ p := by
@@ -183,19 +187,23 @@ theorem integral_abs_symmetrizedFinsetSum_pow_le_rosenthal
     have hbase_nonneg :
         0 ≤ rosenthalBennettIntegralConst *
           (Real.sqrt p *
-            Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ))) := by
+            Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s),
+              ProbabilityTheory.moment (Y i) 2 (μ.prod μ))) := by
       refine mul_nonneg hRB_nonneg ?_
       exact mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)
     exact pow_le_pow_left₀ hbase_nonneg hbase_le p
   have hmax_term_le :
-      (p : ℝ) ^ p * ∫ ω : Ω × Ω, ((Finset.univ.sup' hs_univ fun i : ↥s => |Y i ω|) ^ p) ∂(μ.prod μ) ≤
+      (p : ℝ) ^ p *
+        ∫ ω : Ω × Ω,
+          ((Finset.univ.sup' hs_univ fun i : ↥s => |Y i ω|) ^ p) ∂(μ.prod μ) ≤
         (p : ℝ) ^ p * ((2 : ℝ) ^ p * ∫ ω, (s.sup' hs (fun i => |X i ω|)) ^ p ∂μ) := by
     exact mul_le_mul_of_nonneg_left hmax_bound (by positivity)
   have htail_term_le :
       2 *
           (rosenthalBennettIntegralConst *
             (Real.sqrt p *
-              Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p
+              Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s),
+                ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p
         ≤
       2 *
           (2 * rosenthalBennettIntegralConst *
@@ -219,14 +227,16 @@ theorem integral_abs_symmetrizedFinsetSum_pow_le_rosenthal
               (rosenthalBennettIntegralConst *
                 (Real.sqrt p *
                   Real.sqrt
-                    (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p := by
+                    (∑ i ∈ (Finset.univ : Finset ↥s),
+                      ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p := by
             simpa [Real.rpow_natCast] using hlin
     _ ≤ (p : ℝ) ^ p * ((2 : ℝ) ^ p * ∫ ω, (s.sup' hs (fun i => |X i ω|)) ^ p ∂μ) +
             2 *
               (rosenthalBennettIntegralConst *
                 (Real.sqrt p *
                   Real.sqrt
-                    (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p := by
+                    (∑ i ∈ (Finset.univ : Finset ↥s),
+                      ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p := by
             exact add_le_add hmax_term_le le_rfl
     _ ≤ ((p : ℝ) ^ p * (2 : ℝ) ^ p) * ∫ ω, (s.sup' hs (fun i => |X i ω|)) ^ p ∂μ +
             2 *
@@ -288,12 +298,15 @@ theorem integrable_abs_symmetrizedFinsetSum_pow_of_rosenthal
         (μ := μ) (X := fun i : ↥s => X i) (s := Finset.univ) hs_univ h_meas_sub hmax_int_sub
   have hmax_intY :
       Integrable
-        (fun ω : Ω × Ω => (Finset.univ.sup' hs_univ fun i : ↥s => |Y i ω|) ^ (p : ℝ)) (μ.prod μ) := by
+        (fun ω : Ω × Ω => (Finset.univ.sup' hs_univ fun i : ↥s => |Y i ω|) ^ (p : ℝ))
+        (μ.prod μ) := by
     simpa [Real.rpow_natCast, Y] using hmax_intY_nat
   have hint :=
     integrable_abs_finsetSum_rpow_of_identDistrib_neg
       (μ := μ.prod μ) (X := Y) (s := Finset.univ) hs_univ hp_real h_indepY
-      (fun i => by simpa [Y] using! ((h_meas i).comp measurable_fst).sub ((h_meas i).comp measurable_snd))
+      (fun i => by
+        simpa [Y] using!
+          ((h_meas i).comp measurable_fst).sub ((h_meas i).comp measurable_snd))
       h_sq_intY h_symmY hmax_intY
   have hsum_eq :
       ∀ ω : Ω × Ω, ∑ i ∈ (Finset.univ : Finset ↥s), Y i ω = symmetrizedFinsetSum X s ω := by
@@ -495,7 +508,9 @@ theorem integral_abs_symmetrizedFinsetSum_rpow_le_rosenthal
   have hlin :=
     integral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
       (μ := μ.prod μ) (X := Y) (s := Finset.univ) hs_univ hp h_indepY
-      (fun i => by simpa [Y] using! ((h_meas i).comp measurable_fst).sub ((h_meas i).comp measurable_snd))
+      (fun i => by
+        simpa [Y] using!
+          ((h_meas i).comp measurable_fst).sub ((h_meas i).comp measurable_snd))
       h_sq_intY h_symmY hmax_intY
   have hmax_bound :
       ∫ ω : Ω × Ω, (Finset.univ.sup' hs_univ fun i : ↥s => |Y i ω|) ^ p ∂(μ.prod μ) ≤
@@ -561,13 +576,15 @@ theorem integral_abs_symmetrizedFinsetSum_rpow_le_rosenthal
   have hbase_le :
       rosenthalBennettIntegralConst *
           (Real.sqrt p *
-            Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ))) ≤
+            Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s),
+              ProbabilityTheory.moment (Y i) 2 (μ.prod μ))) ≤
         2 * rosenthalBennettIntegralConst *
           (Real.sqrt p * Real.sqrt (∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ)) := by
     calc
       rosenthalBennettIntegralConst *
           (Real.sqrt p *
-            Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))
+            Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s),
+              ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))
           ≤ rosenthalBennettIntegralConst *
               (Real.sqrt p * (2 * Real.sqrt (∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ))) := by
                 refine mul_le_mul_of_nonneg_left ?_ hRB_nonneg
@@ -577,12 +594,14 @@ theorem integral_abs_symmetrizedFinsetSum_rpow_le_rosenthal
   have hbase_nonneg :
       0 ≤ rosenthalBennettIntegralConst *
         (Real.sqrt p *
-          Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ))) := by
+          Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s),
+            ProbabilityTheory.moment (Y i) 2 (μ.prod μ))) := by
     positivity
   have hpow_le :
       (rosenthalBennettIntegralConst *
           (Real.sqrt p *
-            Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p ≤
+            Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s),
+              ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p ≤
         (2 * rosenthalBennettIntegralConst *
           (Real.sqrt p * Real.sqrt (∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ))) ^ p := by
     exact Real.rpow_le_rpow hbase_nonneg hbase_le hp_nonneg
@@ -594,7 +613,8 @@ theorem integral_abs_symmetrizedFinsetSum_rpow_le_rosenthal
       2 *
           (rosenthalBennettIntegralConst *
             (Real.sqrt p *
-              Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p ≤
+              Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s),
+                ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p ≤
         2 *
           (2 * rosenthalBennettIntegralConst *
             (Real.sqrt p * Real.sqrt (∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ))) ^ p := by
@@ -617,13 +637,15 @@ theorem integral_abs_symmetrizedFinsetSum_rpow_le_rosenthal
               (rosenthalBennettIntegralConst *
                 (Real.sqrt p *
                   Real.sqrt
-                    (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p := hlin
+                    (∑ i ∈ (Finset.univ : Finset ↥s),
+                      ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p := hlin
     _ ≤ p ^ p * ((2 : ℝ) ^ p * ∫ ω, (s.sup' hs (fun i => |X i ω|)) ^ p ∂μ) +
             2 *
               (rosenthalBennettIntegralConst *
                 (Real.sqrt p *
                   Real.sqrt
-                    (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p :=
+                    (∑ i ∈ (Finset.univ : Finset ↥s),
+                      ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))) ^ p :=
             add_le_add hmax_term_le le_rfl
     _ ≤ (p ^ p * (2 : ℝ) ^ p) * ∫ ω, (s.sup' hs (fun i => |X i ω|)) ^ p ∂μ +
             2 *
@@ -682,7 +704,9 @@ theorem integrable_abs_symmetrizedFinsetSum_rpow_of_rosenthal
   have hint :=
     integrable_abs_finsetSum_rpow_of_identDistrib_neg
       (μ := μ.prod μ) (X := Y) (s := Finset.univ) hs_univ hp h_indepY
-      (fun i => by simpa [Y] using! ((h_meas i).comp measurable_fst).sub ((h_meas i).comp measurable_snd))
+      (fun i => by
+        simpa [Y] using!
+          ((h_meas i).comp measurable_fst).sub ((h_meas i).comp measurable_snd))
       h_sq_intY h_symmY hmax_intY
   have hsum_eq :
       ∀ ω : Ω × Ω, ∑ i ∈ (Finset.univ : Finset ↥s), Y i ω = symmetrizedFinsetSum X s ω := by
@@ -799,7 +823,8 @@ theorem integral_abs_centeredFinsetSum_rpow_rpow_inv_le_rosenthal
             2 * (2 * rosenthalBennettIntegralConst * V) ^ p) ^ (1 / p) := hroot
     _ ≤ ((p ^ p * (2 : ℝ) ^ p) * M) ^ (1 / p) +
           (2 * (2 * rosenthalBennettIntegralConst * V) ^ p) ^ (1 / p) := by
-            exact Real.rpow_add_le_add_rpow (by positivity) (by positivity) hp_inv_nonneg hp_inv_le_one
+            exact Real.rpow_add_le_add_rpow (by positivity) (by positivity)
+              hp_inv_nonneg hp_inv_le_one
     _ ≤ 2 * p * M ^ (1 / p) + 4 * rosenthalBennettIntegralConst * V := by
           rw [hfirst_root]
           exact add_le_add le_rfl hsecond_root
