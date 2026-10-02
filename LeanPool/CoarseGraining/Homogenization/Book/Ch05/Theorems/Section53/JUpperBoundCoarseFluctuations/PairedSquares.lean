@@ -183,6 +183,42 @@ theorem paired_mismatchTermSquares_special_le_baseline_add_positiveExcess
         rw [hScalarWeight]
         ring
 
+/-- Normalize the baseline and positive-excess contributions with one common constant. -/
+private lemma normalize_paired_contributions
+    {β C Cpos scalar tau posCore defect positive : ℝ}
+    (hβ : 0 < β) (hβone : β ≤ 1) (hCfive : 5 ≤ C) (hCpos : 25 * Cpos ≤ C)
+    (hCposnn : 0 ≤ Cpos) (hscalar : 0 ≤ scalar) (htau : 0 ≤ tau)
+    (hcore : 0 ≤ posCore) (hdefect : defect ≤ 5 * β⁻¹ * tau)
+    (hpositive : positive ≤ Cpos * posCore) :
+    scalar * defect ≤ C * ((β ^ 2)⁻¹ * scalar * tau) ∧
+      (5 * β⁻¹) ^ 2 * positive ≤ C * ((β ^ 3)⁻¹ * posCore) := by
+  have hβ2 : β ^ 2 ≤ β := by nlinarith
+  have hinv2 : β⁻¹ ≤ (β ^ 2)⁻¹ :=
+    (inv_le_inv₀ hβ (sq_pos_of_pos hβ)).mpr hβ2
+  have hβ3 : β ^ 3 ≤ β ^ 2 := by
+    calc
+      β ^ 3 = β ^ 2 * β := by ring
+      _ ≤ β ^ 2 * 1 := mul_le_mul_of_nonneg_left hβone (sq_nonneg β)
+      _ = β ^ 2 := by ring
+  have hinv3 : (β ^ 2)⁻¹ ≤ (β ^ 3)⁻¹ :=
+    (inv_le_inv₀ (sq_pos_of_pos hβ) (pow_pos hβ 3)).mpr hβ3
+  have hcoeff : (5 * β⁻¹) ^ 2 = 25 * (β ^ 2)⁻¹ := by
+    field_simp [hβ.ne']
+    ring
+  constructor
+  · calc
+      scalar * defect ≤ scalar * (5 * β⁻¹ * tau) :=
+        mul_le_mul_of_nonneg_left hdefect hscalar
+      _ ≤ scalar * (5 * (β ^ 2)⁻¹ * tau) := by gcongr
+      _ = 5 * ((β ^ 2)⁻¹ * scalar * tau) := by ring
+      _ ≤ C * ((β ^ 2)⁻¹ * scalar * tau) := by gcongr
+  · calc
+      (5 * β⁻¹) ^ 2 * positive ≤ (5 * β⁻¹) ^ 2 * (Cpos * posCore) :=
+        mul_le_mul_of_nonneg_left hpositive (sq_nonneg _)
+      _ = (25 * Cpos) * ((β ^ 2)⁻¹ * posCore) := by rw [hcoeff]; ring
+      _ ≤ (25 * Cpos) * ((β ^ 3)⁻¹ * posCore) := by gcongr
+      _ ≤ C * ((β ^ 3)⁻¹ * posCore) := by gcongr
+
 /-- Expectation-level conversion for the paired response-defect mismatch
 squares in the weak-norm maximizer RHS. -/
 theorem integral_paired_mismatchTermSquares_special_le_coarseFluctuationTerms_uniform
@@ -451,58 +487,24 @@ theorem integral_paired_mismatchTermSquares_special_le_coarseFluctuationTerms_un
           Q (Int.toNat ((m : ℤ) - n)) p_e q_e).sub
           (hP.aemeasurable_restrictionResponseJObservableCubeSet Q p_e q_e)
     exact aemeasurable_const.mul hDefAE.sqrt
+  have hss' : s - s' = β := by dsimp [s, s']; ring
+  have htt' : t - t' = β := by dsimp [t, t']; ring
   have hGradMismatchAE :
       AEMeasurable
         (fun a : RegCoeffField d =>
           WeakNormsMaximizer.gradientMismatchTermAtScale
             (m : ℤ) (k : ℤ) s s' p_e q_e a) P := by
-    dsimp [WeakNormsMaximizer.gradientMismatchTermAtScale]
-    refine (hP.aemeasurable_lambdaSqCoeffField_finite_one_inv Q hs'_pos).sqrt.mul ?_
-    change AEMeasurable
-      (fun a : RegCoeffField d =>
-        ∑ n ∈ S,
-          Real.rpow (3 : ℝ) (-(s - s') * (Int.toNat ((m : ℤ) - n) : ℝ)) *
-            Real.sqrt
-              (WeakNormsMaximizer.responseDefectAverageAtScale
-                (m : ℤ) n p_e q_e a)) P
-    refine S.aemeasurable_fun_sum (μ := P) ?_
-    intro n _hn
-    have hDefAE :
-        AEMeasurable
-          (fun a : RegCoeffField d =>
-            WeakNormsMaximizer.responseDefectAverageAtScale
-              (m : ℤ) n p_e q_e a) P := by
-      simpa [WeakNormsMaximizer.responseDefectAverageAtScale, Q] using!
-        (hP.aemeasurable_descendantsAverage_restrictionResponseJObservableCubeSet
-          Q (Int.toNat ((m : ℤ) - n)) p_e q_e).sub
-          (hP.aemeasurable_restrictionResponseJObservableCubeSet Q p_e q_e)
-    exact aemeasurable_const.mul hDefAE.sqrt
+    simpa only [WeakNormsMaximizer.gradientMismatchTermAtScale, hss',
+      Q, defectSum, S, w, Pi.mul_def]
+      using (hP.aemeasurable_lambdaSqCoeffField_finite_one_inv Q hs'_pos).sqrt.mul hDefectAE
   have hFluxMismatchAE :
       AEMeasurable
         (fun a : RegCoeffField d =>
           WeakNormsMaximizer.fluxMismatchTermAtScale
             (m : ℤ) (k : ℤ) t t' p_e q_e a) P := by
-    dsimp [WeakNormsMaximizer.fluxMismatchTermAtScale]
-    refine (hP.aemeasurable_LambdaSqCoeffField_finite_one Q ht'_pos).sqrt.mul ?_
-    change AEMeasurable
-      (fun a : RegCoeffField d =>
-        ∑ n ∈ S,
-          Real.rpow (3 : ℝ) (-(t - t') * (Int.toNat ((m : ℤ) - n) : ℝ)) *
-            Real.sqrt
-              (WeakNormsMaximizer.responseDefectAverageAtScale
-                (m : ℤ) n p_e q_e a)) P
-    refine S.aemeasurable_fun_sum (μ := P) ?_
-    intro n _hn
-    have hDefAE :
-        AEMeasurable
-          (fun a : RegCoeffField d =>
-            WeakNormsMaximizer.responseDefectAverageAtScale
-              (m : ℤ) n p_e q_e a) P := by
-      simpa [WeakNormsMaximizer.responseDefectAverageAtScale, Q] using!
-        (hP.aemeasurable_descendantsAverage_restrictionResponseJObservableCubeSet
-          Q (Int.toNat ((m : ℤ) - n)) p_e q_e).sub
-          (hP.aemeasurable_restrictionResponseJObservableCubeSet Q p_e q_e)
-    exact aemeasurable_const.mul hDefAE.sqrt
+    simpa only [WeakNormsMaximizer.fluxMismatchTermAtScale, htt',
+      Q, defectSum, S, w, Pi.mul_def]
+      using (hP.aemeasurable_LambdaSqCoeffField_finite_one Q ht'_pos).sqrt.mul hDefectAE
   have hXAE : AEMeasurable X P := by
     simpa [X, pow_two] using!
       (aemeasurable_const.mul (hGradMismatchAE.mul hGradMismatchAE)).add
@@ -646,134 +648,14 @@ theorem integral_paired_mismatchTermSquares_special_le_coarseFluctuationTerms_un
           (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _))
         hUnit_nonneg)
       hResp_nonneg
-  have hβ2_inv_nonneg : 0 ≤ (β ^ 2)⁻¹ :=
-    inv_nonneg.mpr (sq_nonneg β)
-  have hβ3_inv_nonneg : 0 ≤ (β ^ 3)⁻¹ :=
-    inv_nonneg.mpr (pow_nonneg hβ_pos.le 3)
-  have hBaseline_le :
-      coarseFluctuationScalarWeightAtScale hP hStruct m *
-          ∫ a, (defectSum a) ^ 2 ∂P
-        ≤
-          C * ((β ^ 2)⁻¹ *
-            coarseFluctuationScalarWeightAtScale hP hStruct m *
-              coarseFluctuationTauSumAtScale hP hStruct hP4 k m e) := by
-    have hβinv_le_beta2 :
-        β⁻¹ ≤ (β ^ 2)⁻¹ := by
-      have hβ2_le : β ^ 2 ≤ β := by nlinarith [hβ_pos, hβ_le_one]
-      exact (inv_le_inv₀ hβ_pos (sq_pos_of_pos hβ_pos)).mpr hβ2_le
-    have hbase :
-        ∫ a, (defectSum a) ^ 2 ∂P
-          ≤ (5 * β⁻¹) *
-              coarseFluctuationTauSumAtScale hP hStruct hP4 k m e := by
-      simpa [defectSum, S, w, β, p_e, q_e] using htauBase
-    calc
-      coarseFluctuationScalarWeightAtScale hP hStruct m *
-          ∫ a, (defectSum a) ^ 2 ∂P
-          ≤
-        coarseFluctuationScalarWeightAtScale hP hStruct m *
-          ((5 * β⁻¹) *
-            coarseFluctuationTauSumAtScale hP hStruct hP4 k m e) :=
-          mul_le_mul_of_nonneg_left hbase hscalar_nonneg
-      _ =
-        5 * β⁻¹ *
-          (coarseFluctuationScalarWeightAtScale hP hStruct m *
-            coarseFluctuationTauSumAtScale hP hStruct hP4 k m e) := by ring
-      _ ≤
-        5 * (β ^ 2)⁻¹ *
-          (coarseFluctuationScalarWeightAtScale hP hStruct m *
-            coarseFluctuationTauSumAtScale hP hStruct hP4 k m e) := by
-          gcongr
-      _ ≤
-        C * ((β ^ 2)⁻¹ *
-          coarseFluctuationScalarWeightAtScale hP hStruct m *
-            coarseFluctuationTauSumAtScale hP hStruct hP4 k m e) := by
-          have htail_nonneg :
-              0 ≤ (β ^ 2)⁻¹ *
-                coarseFluctuationScalarWeightAtScale hP hStruct m *
-                  coarseFluctuationTauSumAtScale hP hStruct hP4 k m e := by
-            exact mul_nonneg (mul_nonneg hβ2_inv_nonneg hscalar_nonneg) hTau_nonneg
-          have hC_ge_five : 5 ≤ C := by linarith
-          nlinarith
-  have hCoeff_le_beta3 :
-      coeff ≤ 25 * (β ^ 3)⁻¹ := by
-    have hcoeff_eq : coeff = 25 * (β ^ 2)⁻¹ := by
-      dsimp [coeff]
-      field_simp [hβ_pos.ne']
-      ring
-    have hβ3_le_β2 : β ^ 3 ≤ β ^ 2 := by
-      calc
-        β ^ 3 = β ^ 2 * β := by ring
-        _ ≤ β ^ 2 * 1 :=
-          mul_le_mul_of_nonneg_left hβ_le_one (sq_nonneg β)
-        _ = β ^ 2 := by ring
-    have hinv_le : (β ^ 2)⁻¹ ≤ (β ^ 3)⁻¹ :=
-      (inv_le_inv₀ (sq_pos_of_pos hβ_pos) (by positivity : 0 < β ^ 3)).mpr
-        hβ3_le_β2
-    calc
-      coeff = 25 * (β ^ 2)⁻¹ := hcoeff_eq
-      _ ≤ 25 * (β ^ 3)⁻¹ :=
-        mul_le_mul_of_nonneg_left hinv_le (by norm_num)
-  have hPositive_le :
-      coeff *
-          (σ * (∫ a, lowerExcess a * childAvg a ∂P) +
-            σ⁻¹ * (∫ a, upperExcess a * childAvg a ∂P))
-        ≤
-          C * ((hP4.xi : ℝ) * (β ^ 3)⁻¹ *
-            Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
-            coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
-              coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e) := by
-    calc
-      coeff *
-          (σ * (∫ a, lowerExcess a * childAvg a ∂P) +
-            σ⁻¹ * (∫ a, upperExcess a * childAvg a ∂P))
-          ≤
-        coeff *
-          (Cpos * (hP4.xi : ℝ) *
-            Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
-              coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
-                coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e) :=
-          mul_le_mul_of_nonneg_left hpositiveChild
-            (by dsimp [coeff]; positivity)
-      _ =
-        (coeff * Cpos) *
-          ((hP4.xi : ℝ) *
-            Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
-              coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
-                coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e) := by ring
-      _ ≤
-        (25 * (β ^ 3)⁻¹ * Cpos) *
-          ((hP4.xi : ℝ) *
-            Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
-              coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
-                coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e) := by
-          exact mul_le_mul_of_nonneg_right
-            (mul_le_mul_of_nonneg_right hCoeff_le_beta3 hCpos_nonneg)
-            hPosCore_nonneg
-      _ =
-        (25 * Cpos) *
-          ((hP4.xi : ℝ) * (β ^ 3)⁻¹ *
-            Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
-              coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
-                coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e) := by ring
-      _ ≤
-        C * ((hP4.xi : ℝ) * (β ^ 3)⁻¹ *
-          Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
-          coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
-            coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e) := by
-          have htail_nonneg :
-              0 ≤ (hP4.xi : ℝ) * (β ^ 3)⁻¹ *
-                Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
-                coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
-                  coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e := by
-            exact mul_nonneg
-              (mul_nonneg
-                (mul_nonneg
-                  (mul_nonneg (by exact_mod_cast Nat.zero_le hP4.xi)
-                    hβ3_inv_nonneg)
-                  (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _))
-                hUnit_nonneg)
-              hResp_nonneg
-          exact mul_le_mul_of_nonneg_right hC_ge_pos htail_nonneg
+  have hbase : ∫ a, (defectSum a) ^ 2 ∂P ≤
+      5 * β⁻¹ * coarseFluctuationTauSumAtScale hP hStruct hP4 k m e := by
+    simpa [defectSum, S, w, β, p_e, q_e] using htauBase
+  obtain ⟨hBaseline_le, hPositive_le⟩ := normalize_paired_contributions
+    hβ_pos hβ_le_one (by linarith : 5 ≤ C) hC_ge_pos hCpos_nonneg
+    hscalar_nonneg hTau_nonneg hPosCore_nonneg hbase
+    (by simpa only [mul_assoc] using hpositiveChild)
+  change coeff * _ ≤ _ at hPositive_le
   have hmain :
       ∫ a, X a ∂P ≤
         C *
@@ -800,7 +682,7 @@ theorem integral_paired_mismatchTermSquares_special_le_coarseFluctuationTerms_un
             Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
             coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
               coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e) :=
-          add_le_add hBaseline_le hPositive_le
+          by convert add_le_add hBaseline_le hPositive_le using 1 <;> ring
       _ =
         C *
           ((β ^ 2)⁻¹ *
