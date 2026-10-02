@@ -36,16 +36,13 @@ lemma natDegree_mprod (M : Finset ℕ) : (mprod M).natDegree = M.card := by
   simp only [natDegree_X_add_C, Finset.sum_const, smul_eq_mul, mul_one]
 
 lemma dist_locPoly_add (s : ℚ) (P Q : ℚ[X]) : locPoly s (P + Q) = locPoly s P + locPoly s Q := by
-  unfold locPoly
-  exact Polynomial.sum_add_index _ _ _ (fun _ => by simp) (fun _ _ _ => by ring)
+  exact locPoly_add_linear s P Q
 
 lemma locPoly_C_mul (s c : ℚ) (P : ℚ[X]) : locPoly s (C c * P) = c * locPoly s P := by
-  unfold locPoly
-  rw [← smul_eq_C_mul, Polynomial.sum_smul_index _ _ _ (fun _ => by simp), Polynomial.sum,
-    Polynomial.sum, Finset.mul_sum]
-  exact Finset.sum_congr rfl fun n _ => by ring
+  exact locPoly_C_mul_linear s c P
 
-lemma dist_locPoly_zero (s : ℚ) : locPoly s 0 = 0 := by simp [locPoly]
+lemma dist_locPoly_zero (s : ℚ) : locPoly s 0 = 0 := by
+  exact locPoly_zero_linear s
 
 lemma locPoly_monomial (s : ℚ) (e : ℕ) (a : ℚ) : locPoly s (monomial e a) = a * locMoment s e := by
   unfold locPoly
@@ -61,28 +58,18 @@ lemma locPoly_eq (s : ℚ) (Q : ℚ[X]) : locPoly s Q = Lbp (derivative Q) + 2 *
 
 lemma dist_locValue_add (s : ℚ) (S T : ℚ[X]) (M : Finset ℕ) :
     locValue s (S + T) M = locValue s S M + locValue s T M := by
-  unfold locValue
-  rw [add_divByMonic, dist_locPoly_add]
-  simp only [eval_add, add_div, add_mul, Finset.sum_add_distrib]
-  ring
+  exact locValue_add_linear s S T M
 
 lemma dist_locValue_C_mul (s c : ℚ) (S : ℚ[X]) (M : Finset ℕ) :
     locValue s (C c * S) M = c * locValue s S M := by
-  unfold locValue
-  rw [← smul_eq_C_mul, smul_divByMonic, smul_eq_C_mul, locPoly_C_mul, mul_add, Finset.mul_sum]
-  congr 1
-  refine Finset.sum_congr rfl fun m _ => ?_
-  rw [eval_smul, smul_eq_mul]; ring
+  exact locValue_C_mul_linear s c S M
 
 lemma locValue_zero (s : ℚ) (M : Finset ℕ) : locValue s 0 M = 0 := by
-  simpa using dist_locValue_C_mul s 0 0 M
+  exact locValue_zero_linear s M
 
 lemma dist_locValue_sum {ι : Type*} (s : ℚ) (t : Finset ι) (S : ι → ℚ[X]) (M : Finset ℕ) :
     locValue s (∑ i ∈ t, S i) M = ∑ i ∈ t, locValue s (S i) M := by
-  classical
-  induction t using Finset.induction_on with
-  | empty => simp [locValue_zero]
-  | insert a t ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, dist_locValue_add, ih]
+  exact locValue_sum_linear s t S M
 
 /-- Residue of `S / mprod M` at `-m`. -/
 def resN (S : ℚ[X]) (M : Finset ℕ) (m : ℕ) : ℚ :=

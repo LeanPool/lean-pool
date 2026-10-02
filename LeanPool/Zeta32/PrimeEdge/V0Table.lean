@@ -24,11 +24,10 @@ namespace Zeta32.PrimeEdge.V0Aux
 /-! Helpers (namespace `V0Aux` to avoid clashes with sibling files). -/
 
 lemma locPoly_zero (s : ℚ) : locPoly s 0 = 0 := by
-  unfold locPoly; exact sum_zero_index _
+  exact Zeta32.PrimeEdge.locPoly_zero_linear s
 
 lemma locPoly_add (s : ℚ) (P Q : ℚ[X]) : locPoly s (P + Q) = locPoly s P + locPoly s Q := by
-  unfold locPoly
-  exact sum_add_index P Q _ (fun _ => zero_mul _) (fun _ _ _ => add_mul _ _ _)
+  exact Zeta32.PrimeEdge.locPoly_add_linear s P Q
 
 lemma locPoly_C_mul_X_pow (s a : ℚ) (k : ℕ) : locPoly s (C a * X ^ k) = a * locMoment s k := by
   unfold locPoly

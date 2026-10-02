@@ -67,6 +67,46 @@ def locValue (s : ℚ) (S : ℚ[X]) (M : Finset ℕ) : ℚ :=
   locPoly s (S /ₘ ∏ m ∈ M, (X + C (m : ℚ))) +
     ∑ m ∈ M, S.eval (-(m : ℚ)) / (∏ m' ∈ M.erase m, ((m' : ℚ) - m)) * locPole s m
 
+lemma locPoly_add_linear (s : ℚ) (P Q : ℚ[X]) :
+    locPoly s (P + Q) = locPoly s P + locPoly s Q := by
+  unfold locPoly
+  exact Polynomial.sum_add_index _ _ _ (fun _ => by simp) (fun _ _ _ => by ring)
+
+lemma locPoly_C_mul_linear (s c : ℚ) (P : ℚ[X]) : locPoly s (C c * P) = c * locPoly s P := by
+  unfold locPoly
+  rw [← smul_eq_C_mul, Polynomial.sum_smul_index _ _ _ (fun _ => by simp), Polynomial.sum,
+    Polynomial.sum, Finset.mul_sum]
+  exact Finset.sum_congr rfl fun n _ => by ring
+
+lemma locPoly_zero_linear (s : ℚ) : locPoly s 0 = 0 := by simp [locPoly]
+
+lemma locValue_add_linear (s : ℚ) (S T : ℚ[X]) (M : Finset ℕ) :
+    locValue s (S + T) M = locValue s S M + locValue s T M := by
+  unfold locValue
+  rw [add_divByMonic, locPoly_add_linear]
+  simp only [eval_add, add_div, add_mul, Finset.sum_add_distrib]
+  ring
+
+lemma locValue_C_mul_linear (s c : ℚ) (S : ℚ[X]) (M : Finset ℕ) :
+    locValue s (C c * S) M = c * locValue s S M := by
+  unfold locValue
+  rw [← smul_eq_C_mul, smul_divByMonic, smul_eq_C_mul, locPoly_C_mul_linear,
+    mul_add, Finset.mul_sum]
+  congr 1
+  refine Finset.sum_congr rfl fun m _ => ?_
+  rw [eval_smul, smul_eq_mul]; ring
+
+lemma locValue_zero_linear (s : ℚ) (M : Finset ℕ) : locValue s 0 M = 0 := by
+  simpa using locValue_C_mul_linear s 0 0 M
+
+lemma locValue_sum_linear {ι : Type*} (s : ℚ) (t : Finset ι) (S : ι → ℚ[X]) (M : Finset ℕ) :
+    locValue s (∑ i ∈ t, S i) M = ∑ i ∈ t, locValue s (S i) M := by
+  classical
+  induction t using Finset.induction_on with
+  | empty => simp [locValue_zero_linear]
+  | insert a t ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, locValue_add_linear, ih]
+
+
 /-- `V_Y(g_b)` without the `Y` part, with far poles truncated: `p^{-|near|} V(seriesPart /
 nearProd)`. -/
 def discLocal (r : ℚ) (n p b : ℕ) (A : ℚ[X]) : ℚ :=

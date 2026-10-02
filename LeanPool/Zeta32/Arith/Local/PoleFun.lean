@@ -67,18 +67,6 @@ lemma padicValRat_int_le_one {z : ℤ} (h2 : ¬ (p : ℤ) ^ 2 ∣ z) : padicValR
   have hz : z ≠ 0 := by rintro rfl; simp at hne
   exact h2 ((padicValInt_dvd_iff (p := p) 2 z).mpr (Or.inr this))
 
-omit hp in
-lemma padicValRat_finset_prod [Fact p.Prime] {ι : Type*} (s : Finset ι) (f : ι → ℚ)
-    (hf : ∀ i ∈ s, f i ≠ 0) :
-    padicValRat p (∏ i ∈ s, f i) = ∑ i ∈ s, padicValRat p (f i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert a s ha ih =>
-    rw [Finset.prod_insert ha, Finset.sum_insert ha, padicValRat.mul (hf a (mem_insert_self _ _))
-      (Finset.prod_ne_zero_iff.mpr fun i hi => hf i (mem_insert_of_mem hi)),
-      ih fun i hi => hf i (mem_insert_of_mem hi)]
-
 /-! ### The class-count predicate -/
 
 /-- `A(m + p x)` has Gauss valuation `≥ e (m mod p)` for every integer `m`. -/

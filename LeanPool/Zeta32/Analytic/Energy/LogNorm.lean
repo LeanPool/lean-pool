@@ -110,7 +110,7 @@ lemma integral_log_norm_real_add_imag_of_pos
 
 /-- The integral from GLOBAL-INTEGRAL-v1, Section 2, with both boundary cases. -/
 theorem integral_log_norm_real_add_imag
-    {x b : ℝ} (hx : 0 ≤ x) (_hb : 0 ≤ b) :
+    {x b : ℝ} (hx : 0 ≤ x) :
     (∫ t : ℝ in (0 : ℝ)..b,
       Real.log ‖(t : ℂ) + (x : ℂ) * Complex.I‖) =
       (b / 2) * Real.log (b ^ 2 + x ^ 2) - b +

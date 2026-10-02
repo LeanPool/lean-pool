@@ -7,6 +7,7 @@ module
 public import LeanPool.Zeta5Irrational.Arith.CoefficientMatrix
 public import LeanPool.Zeta32.Arith.Local.PoleFun
 public import LeanPool.Zeta32.Arith.Local.Binom
+public import LeanPool.Zeta32.Arith.Small.Gram
 
 /-!
 # The entry functional and its local bound
@@ -72,49 +73,30 @@ noncomputable def Lfun (r : ℚ) (n : ℕ) (A : ℚ[X]) : ℚ[X] :=
     C (polynomialMoment r (A /ₘ Zeta32.D (5 * n)) +
       ∑ j ∈ Finset.Icc 1 (5 * n), resP A (Pl5 n) (-(j : ℤ)) * beta r j)
 
+/-- The local residue formula is the same numerator functional used by the small-prime
+Gram calculation. -/
+lemma Lfun_eq_Ufun (r : ℚ) (n : ℕ) (A : ℚ[X]) :
+    Lfun r n A = Small.Ufun r n A := by
+  unfold Lfun Small.Ufun
+  simp only [resP_Pl5, mul_add, ← mul_assoc, ← C_mul]
+  rw [Finset.sum_add_distrib, ← Finset.sum_mul]
+  simp only [← map_sum, map_add]
+  ring
+
 lemma Lfun_numerator (r : ℚ) (n m : ℕ) :
     Lfun r n (numerator n m) = X * C (slope n m) + C (intercept r n m) := by
-  unfold Lfun slope intercept
-  rw [mul_comm X]
-  congr 3
-  · refine Finset.sum_congr rfl fun j _ => ?_
-    rw [resP_Pl5]; rfl
-  · refine Finset.sum_congr rfl fun j _ => ?_
-    rw [resP_Pl5]; rfl
+  rw [Lfun_eq_Ufun]
+  exact Small.Ufun_entry r n m
 
-lemma polynomialMoment_add (r : ℚ) (P Q : ℚ[X]) :
-    polynomialMoment r (P + Q) = polynomialMoment r P + polynomialMoment r Q := by
-  unfold polynomialMoment
-  exact Polynomial.sum_add_index _ _ _ (fun _ => by simp) (fun _ _ _ => by ring)
+lemma Lfun_add (r : ℚ) (n : ℕ) (A B : ℚ[X]) :
+    Lfun r n (A + B) = Lfun r n A + Lfun r n B := by
+  simp only [Lfun_eq_Ufun]
+  exact Small.Ufun_add r n A B
 
-lemma polynomialMoment_C_mul (r c : ℚ) (P : ℚ[X]) :
-    polynomialMoment r (C c * P) = c * polynomialMoment r P := by
-  unfold polynomialMoment
-  rw [← smul_eq_C_mul, Polynomial.sum_smul_index _ _ _ (fun _ => by simp), Polynomial.sum,
-    Polynomial.sum, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun n _ => by ring
-
-lemma resP_add (A B : ℚ[X]) (Pl : Finset ℤ) (r : ℤ) :
-    resP (A + B) Pl r = resP A Pl r + resP B Pl r := by
-  unfold resP; rw [eval_add, add_div]
-
-lemma resP_C_mul (c : ℚ) (A : ℚ[X]) (Pl : Finset ℤ) (r : ℤ) :
-    resP (C c * A) Pl r = c * resP A Pl r := by
-  unfold resP; rw [eval_mul, eval_C, mul_div_assoc]
-
-lemma Lfun_add (r : ℚ) (n : ℕ) (A B : ℚ[X]) : Lfun r n (A + B) = Lfun r n A + Lfun r n B := by
-  unfold Lfun
-  simp only [resP_add, add_mul, Finset.sum_add_distrib, add_divByMonic, polynomialMoment_add,
-    C_add]
-  ring
-
-lemma Lfun_C_mul (r : ℚ) (n : ℕ) (c : ℚ) (A : ℚ[X]) : Lfun r n (C c * A) = C c * Lfun r n A := by
-  have hdiv : (C c * A) /ₘ Zeta32.D (5 * n) = C c * (A /ₘ Zeta32.D (5 * n)) := by
-    rw [← smul_eq_C_mul, smul_divByMonic, smul_eq_C_mul]
-  unfold Lfun
-  rw [hdiv, polynomialMoment_C_mul]
-  simp only [resP_C_mul, mul_assoc, ← Finset.mul_sum, C_mul, C_add]
-  ring
+lemma Lfun_C_mul (r : ℚ) (n : ℕ) (c : ℚ) (A : ℚ[X]) :
+    Lfun r n (C c * A) = C c * Lfun r n A := by
+  simp only [Lfun_eq_Ufun]
+  exact Small.Ufun_C_mul r n c A
 
 /-! ### Change of basis -/
 

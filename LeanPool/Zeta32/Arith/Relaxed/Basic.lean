@@ -5,6 +5,7 @@ Authors: Qian Tang
 -/
 module
 public import LeanPool.Zeta32.Interfaces
+public import LeanPool.Zeta32.Arith.Local.Val
 
 /-! the proof notes, §8.1 (i), (ii-norm): the scale valuation with one Legendre level,
 the reduction `cost ≤ -(v_p(scale) + allocCost)`, and the real relaxation of the allocation cost
@@ -17,14 +18,7 @@ open Zeta32
 lemma padicValRat_finset_prod {p : ℕ} [Fact p.Prime] {ι : Type*}
     (s : Finset ι) (f : ι → ℚ) (hf : ∀ i ∈ s, f i ≠ 0) :
     padicValRat p (∏ i ∈ s, f i) = ∑ i ∈ s, padicValRat p (f i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | @insert a s ha ih =>
-      rw [Finset.prod_insert ha, Finset.sum_insert ha,
-        padicValRat.mul (hf a (Finset.mem_insert_self _ _))
-          (Finset.prod_ne_zero_iff.mpr fun i hi => hf i (Finset.mem_insert_of_mem hi)),
-        ih fun i hi => hf i (Finset.mem_insert_of_mem hi)]
+  exact Zeta32.Arith.Local.padicValRat_finset_prod s f hf
 
 lemma padicValRat_factorial_one_level {p m : ℕ} [Fact p.Prime]
     (hm : m < p ^ 2) :

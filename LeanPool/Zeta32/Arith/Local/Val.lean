@@ -32,6 +32,19 @@ namespace Zeta32.Arith.Local
 
 variable {p : ℕ}
 
+/-- Valuation is additive on a finite product of nonzero rational factors. -/
+lemma padicValRat_finset_prod {p : ℕ} [Fact p.Prime] {ι : Type*}
+    (s : Finset ι) (f : ι → ℚ) (hf : ∀ i ∈ s, f i ≠ 0) :
+    padicValRat p (∏ i ∈ s, f i) = ∑ i ∈ s, padicValRat p (f i) := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simp
+  | @insert a s ha ih =>
+      rw [Finset.prod_insert ha, Finset.sum_insert ha,
+        padicValRat.mul (hf a (Finset.mem_insert_self _ _))
+          (Finset.prod_ne_zero_iff.mpr fun i hi => hf i (Finset.mem_insert_of_mem hi)),
+        ih fun i hi => hf i (Finset.mem_insert_of_mem hi)]
+
 /-- `v_p(q) ≥ r` (vacuous for `q = 0`). -/
 def VG (p : ℕ) (q : ℚ) (r : ℚ) : Prop := q = 0 ∨ r ≤ (padicValRat p q : ℚ)
 

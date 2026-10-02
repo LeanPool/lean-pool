@@ -70,7 +70,7 @@ lemma scale_val_real {p n : ℕ} (hp : p.Prime) (hsq : 5 * n < p ^ 2) :
   rfl
 
 /-- `ψ(p/n)` through the residues `n mod p`, `5n mod p`, `3n mod p`. -/
-lemma psiL_eq (n p : ℕ) (_hn : 0 < n) (hp : 0 < p) :
+lemma psiL_eq (n p : ℕ) (hp : 0 < p) :
     ArithSum.psiL ((p:ℝ)/(n:ℝ)) =
       let a : ℝ := ((n % p : ℕ) : ℝ) / p
       let b : ℝ := (((5*n) % p : ℕ) : ℝ) / p
@@ -153,7 +153,7 @@ theorem relaxed_per_prime (r : ℚ) (n p : ℕ) (hp : p.Prime) (h7 : 7 ≤ p) (h
     exact_mod_cast this
   have hs : ((((5*n)%p : ℕ)) : ℝ) < p := by exact_mod_cast Nat.mod_lt _ hp0
   have hr : (0:ℝ) ≤ ((n%p : ℕ) : ℝ) := Nat.cast_nonneg _
-  rw [psiL_eq n p hn0 hp0]
+  rw [psiL_eq n p hp0]
   have hc3 : (((3*n : ℕ)) : ℝ) = 3 * (n : ℝ) := by push_cast; ring
   rw [hc3] at hrelax hval
   exact relaxed_algebra (n : ℝ) p _ _ _ _ _ _ _ _ _ _ hpR hnR eA eL eM hs hr hcost hval hrelax

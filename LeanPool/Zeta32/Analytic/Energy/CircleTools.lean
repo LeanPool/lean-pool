@@ -300,7 +300,7 @@ private theorem complex_signed_energy_clear_denominator
         (mul_le_mul_of_nonneg_left he (sq_nonneg d))
 
 theorem complex_signed_energy_log_bound {h : ℕ} (hh : 0 < h)
-    (T ε M : ℝ) (hT : 0 < T) (_hε : 0 < ε) (_hM : 0 ≤ M)
+    (T ε M : ℝ) (hT : 0 < T)
     (x : Fin h → ℂ) (L : Fin h → ℝ) (I : ℝ)
     (E : Option (Fin h) → Option (Fin h) → ℝ)
     (hEsym : ∀ k l, E k l = E l k)

@@ -50,7 +50,7 @@ theorem lt_aMinus_of_mass {a : ℝ} (ha : 0 < a) (hm : massA a = 1) (hlo : massA
   have := massA_mono ha.le h
   linarith
 
-theorem lt_aPlus_of_mass {a : ℝ} (_ha : 0 < a) (hm : massA a = 1) (hhi : 1 < massA aPlus) : a <
+theorem lt_aPlus_of_mass {a : ℝ} (hm : massA a = 1) (hhi : 1 < massA aPlus) : a <
   aPlus := by
   by_contra h
   push Not at h
@@ -150,7 +150,7 @@ theorem integral_lower {a : ℝ} (ha : aMinus < a)
 theorem fstarInput_of_points : FstarPoints → FstarInput := by
   rintro ⟨hm1, hm2, hell, hlog3, hpts⟩ a ha hma
   have hlo := lt_aMinus_of_mass ha hma hm1
-  have hhi := lt_aPlus_of_mass ha hma hm2
+  have hhi := lt_aPlus_of_mass hma hm2
   have hellA := hell a ⟨hlo.le, hhi.le⟩
   have hI := integral_lower hlo (fun k => (hpts k).1) (fun k => (hpts k).2)
   rw [lowerSum_eq] at hI

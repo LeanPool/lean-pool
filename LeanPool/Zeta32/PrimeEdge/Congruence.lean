@@ -72,7 +72,7 @@ theorem G_sub_Ref_GV (hp7 : 7 ≤ p) {r : ℚ} (hr : VG p r 0) (w : ℕ → ℚ)
     rw [hRef, G_apply]
     refine GV_Lfun_sub_C ?_ ((slope_VG hp5 r a c).mono (by linarith))
     set β := rho p a + rho p c
-    have hdist := distribution_trunc hp5 (n := p - 1) (by omega) (five_mul_lt_sq hp5) hr
+    have hdist := distribution_trunc (n := p - 1) (by omega) (five_mul_lt_sq hp5) hr
       (Adm_Aent hp5 a c) (Aent_natDegree hp5 a c) (β + 2)
       (entExp_hβ hp5 a c β (fun d _ => rho_add_le_discExp a c d))
     have hb : a.1.val ∈ Finset.range p := Finset.mem_range.mpr a.1.isLt

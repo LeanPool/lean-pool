@@ -562,7 +562,7 @@ def atom (ρ : ℝ → ℝ) (a : ℝ) {h : ℕ} (x : Fin h → ℝ) (ε : ℝ) :
 
 /-- the proof notes (13′): discretisation by circles of radius `ε`, zero-mass energy inequality. -/
 theorem discrete_energy {ρ : ℝ → ℝ} {a : ℝ} (hρ : GoodDensity ρ a) {h : ℕ} (hh : 0 < h)
-    (x : Fin h → ℝ) (hx : Function.Injective x) {ε : ℝ} (hε : 0 < ε) (_hε1 : ε ≤ 1) :
+    (x : Fin h → ℝ) (hx : Function.Injective x) {ε : ℝ} (hε : 0 < ε) :
     2 * ∑ i : Fin h, ∑ j ∈ Finset.Ioi i, Real.log |x j - x i| ≤
       2 * (h : ℝ) * ∑ i : Fin h, potD ρ a (x i) - (h : ℝ)^2 * ID ρ a - (h : ℝ) * Real.log ε +
         2 * (h : ℝ)^2 * (√ε * (32 + (∫ t in (-a)..a, ρ t ^ 2) / 2)) := by
@@ -693,8 +693,8 @@ theorem discrete_energy {ρ : ℝ → ℝ} {a : ℝ} (hρ : GoodDensity ρ a) {h
       apply mul_le_mul_of_nonneg_left _ hs.le
       rw [hK0]; linarith
     nlinarith
-  have hmain := complex_signed_energy_log_bound hh (2 * π) ε (K0 / (2 * √ε)) (by positivity) hε
-    (by positivity) (fun i => (x i : ℂ)) (fun i => potD ρ a (x i)) (ID ρ a) E hEsym hzm h00 hcross
+  have hmain := complex_signed_energy_log_bound hh (2 * π) ε (K0 / (2 * √ε)) (by positivity)
+    (fun i => (x i : ℂ)) (fun i => potD ρ a (x i)) (ID ρ a) E hEsym hzm h00 hcross
     hself hoff
   have e1 : ∀ i j : Fin h, Real.log ‖(fun i => (x i : ℂ)) j - (fun i => (x i : ℂ)) i‖ =
       Real.log |x j - x i| := fun i j => by simp only; rw [norm_ofReal_sub]

@@ -118,13 +118,11 @@ theorem config_bound {a : ℝ} (ha : 0 < a) (hm : massA a = 1) : ∃ B C : ℝ, 
   · rw [vandermonde_eq_zero x hinj, mul_zero]; exact hRHS.le
   set ε : ℝ := 1 / ((n:ℝ) + 1)^2 with hεdef
   have hε : 0 < ε := by positivity
-  have hε1 : ε ≤ 1 := by
-    rw [hεdef, div_le_one (by positivity)]; nlinarith
   have hsq : √ε = 1 / ((n:ℝ) + 1) := by
     rw [hεdef, Real.sqrt_div' _ (by positivity), Real.sqrt_one, Real.sqrt_sq (by positivity)]
   have hlogε : Real.log ε = -(2 * Real.log ((n:ℝ) + 1)) := by
     rw [hεdef, one_div, Real.log_inv, Real.log_pow]; push_cast; ring
-  have hD := discrete_energy hρ (h := 3*n) (by omega) x hinj hε hε1
+  have hD := discrete_energy hρ (h := 3*n) (by omega) x hinj hε
   change _ ≤ 2 * ((3*n : ℕ) : ℝ) * ∑ i, potA a (x i) - ((3*n : ℕ) : ℝ)^2 * IA a -
     ((3*n : ℕ) : ℝ) * Real.log ε + 2 * ((3*n : ℕ) : ℝ)^2 * (√ε * K0) at hD
   push_cast at hD

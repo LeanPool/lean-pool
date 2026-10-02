@@ -33,47 +33,29 @@ lemma natDegree_nearPoly (M : Finset ℕ) : (∏ m ∈ M, (X + C (m : ℚ))).nat
 /-! ### Linearity -/
 
 lemma locPoly_add (s : ℚ) (P Q : ℚ[X]) : locPoly s (P + Q) = locPoly s P + locPoly s Q := by
-  unfold locPoly
-  exact Polynomial.sum_add_index _ _ _ (fun _ => by simp) (fun _ _ _ => by ring)
+  exact locPoly_add_linear s P Q
 
 lemma locPoly_smul (s c : ℚ) (P : ℚ[X]) : locPoly s (c • P) = c * locPoly s P := by
-  unfold locPoly
-  rw [Polynomial.sum_smul_index _ _ _ (fun _ => by simp), Polynomial.sum, Polynomial.sum,
-    Finset.mul_sum]
-  exact Finset.sum_congr rfl fun n _ => by ring
+  simpa only [smul_eq_C_mul] using locPoly_C_mul_linear s c P
 
 lemma locValue_add (s : ℚ) (S S' : ℚ[X]) (M : Finset ℕ) :
     locValue s (S + S') M = locValue s S M + locValue s S' M := by
-  unfold locValue
-  rw [add_divByMonic, locPoly_add]
-  have h : ∀ m ∈ M, (S + S').eval (-(m : ℚ)) / (∏ m' ∈ M.erase m, ((m' : ℚ) - m)) * locPole s m =
-      S.eval (-(m : ℚ)) / (∏ m' ∈ M.erase m, ((m' : ℚ) - m)) * locPole s m +
-      S'.eval (-(m : ℚ)) / (∏ m' ∈ M.erase m, ((m' : ℚ) - m)) * locPole s m := fun m _ => by
-    rw [eval_add]; ring
-  rw [Finset.sum_congr rfl h, Finset.sum_add_distrib]
-  ring
+  exact locValue_add_linear s S S' M
 
 lemma locValue_smul (s c : ℚ) (S : ℚ[X]) (M : Finset ℕ) :
     locValue s (c • S) M = c * locValue s S M := by
-  unfold locValue
-  rw [smul_divByMonic, locPoly_smul, mul_add, Finset.mul_sum]
-  congr 1
-  refine Finset.sum_congr rfl fun m _ => ?_
-  rw [eval_smul, smul_eq_mul]; ring
+  simpa only [smul_eq_C_mul] using locValue_C_mul_linear s c S M
 
 lemma locValue_C_mul (s c : ℚ) (S : ℚ[X]) (M : Finset ℕ) :
     locValue s (C c * S) M = c * locValue s S M := by
   rw [← smul_eq_C_mul, locValue_smul]
 
 lemma locValue_zero_left (s : ℚ) (M : Finset ℕ) : locValue s 0 M = 0 := by
-  simp [locValue, locPoly]
+  exact locValue_zero_linear s M
 
 lemma locValue_sum (s : ℚ) (M : Finset ℕ) {ι : Type*} (t : Finset ι) (f : ι → ℚ[X]) :
     locValue s (∑ i ∈ t, f i) M = ∑ i ∈ t, locValue s (f i) M := by
-  classical
-  induction t using Finset.induction_on with
-  | empty => simp [locValue_zero_left]
-  | insert a t ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, locValue_add, ih]
+  exact locValue_sum_linear s t f M
 
 /-- `locValue` is the coefficientwise combination of its values on monomials. -/
 lemma locValue_eq_sum (s : ℚ) (S : ℚ[X]) (M : Finset ℕ) {N : ℕ} (hN : S.natDegree < N) :

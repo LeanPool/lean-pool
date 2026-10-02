@@ -106,7 +106,7 @@ theorem VG_Err_Ej [hp : Fact p.Prime] {n : ℕ} (hn : 5 * n < p ^ 2) {r : ℚ} (
   simpa using this
 
 /-- **S2b-1 (truncated distribution formula).** Hypotheses as in `Lfun_GV`. -/
-theorem distribution_trunc [Fact p.Prime] (_hp : 5 ≤ p) {n : ℕ} (hn1 : 1 ≤ n)
+theorem distribution_trunc [Fact p.Prime] {n : ℕ} (hn1 : 1 ≤ n)
     (hn : 5 * n < p ^ 2) {r : ℚ} (hr : VG p r 0) {A : ℚ[X]} {e : ZMod p → ℤ}
     (hA : Adm p A e) (hdeg : A.natDegree + 2 ≤ 10 * n) (β : ℚ)
     (hβ : ∀ γ : ZMod p,

@@ -8,6 +8,7 @@ public import LeanPool.Zeta32.Interfaces
 public import LeanPool.Zeta32.FstarDefs
 public import LeanPool.Zeta32.Analytic.Energy.LogNorm
 public import LeanPool.Zeta32.Analytic.Energy.Stirling
+public import LeanPool.Zeta32.Analytic.Contour.Kernel
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 
 /-! the proof notes (5′), layout (4,5,3): with `t = 1/2 + iy`, `y = nx`,
@@ -33,18 +34,7 @@ noncomputable section
 
 -- adapted from Zeta32/Analytic/Contour/Kernel.lean
 theorem inv_cosh_sq_le' (x : ℝ) : 1 / Real.cosh x ^ 2 ≤ 4 * Real.exp (-(2 * |x|)) := by
-  have h1 : Real.exp |x| ≤ 2 * Real.cosh x := by
-    rw [← Real.cosh_abs, Real.cosh_eq]
-    have := Real.exp_pos (-|x|)
-    linarith
-  have hc := Real.cosh_pos x
-  have he : Real.exp (-(2 * |x|)) = 1 / Real.exp |x| ^ 2 := by
-    rw [← Real.exp_nat_mul, Real.exp_neg, one_div]; push_cast; ring_nf
-  rw [he]
-  have hep := Real.exp_pos |x|
-  rw [div_le_iff₀ (by positivity)]
-  field_simp
-  nlinarith [mul_self_le_mul_self hep.le h1]
+  exact Zeta32.Analytic.Contour.inv_cosh_sq_le x
 
 theorem norm_wfun_le (r : ℚ) (y : ℝ) :
     ‖wfun r y‖ ≤ 4 * π * (|(r : ℝ)| + π) * Real.exp (-(2 * π) * |y|) := by
@@ -129,8 +119,8 @@ theorem external_field_eq (x : ℝ) :
       (∫ t : ℝ in (0:ℝ)..5, Real.log ‖(t : ℂ) + (x : ℂ) * Complex.I‖) - 2 * π * |x| =
       -(3 * Wt |x|) := by
   rw [integral_log_norm_abs 1 x, integral_log_norm_abs 5 x,
-    integral_log_norm_real_add_imag (abs_nonneg x) zero_le_one,
-    integral_log_norm_real_add_imag (abs_nonneg x) (by norm_num)]
+    integral_log_norm_real_add_imag (abs_nonneg x),
+    integral_log_norm_real_add_imag (abs_nonneg x)]
   have h25 : Real.log (5 ^ 2 + |x| ^ 2) = 2 * Real.log 5 + Real.log (1 + |x| ^ 2 / 25) := by
     rw [show (5:ℝ) ^ 2 + |x| ^ 2 = 5 ^ 2 * (1 + |x| ^ 2 / 25) by ring, Real.log_mul (by norm_num)
       (by positivity), Real.log_pow]
