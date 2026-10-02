@@ -30,7 +30,7 @@ noncomputable section
 private def normalizedPuncturedPointExactOrderComplement
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
-  normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)
+  normalizePuncturedPoint x
 
 /-- A point outside the base component produces an exact root-sum
 obstruction at the maximal rotation order in the complement. -/
@@ -130,16 +130,16 @@ theorem exists_exactOrderRootSum_obstruction_of_not_samePuncturedComponent
       mem_normalizedPuncturedMarkoffPointsWithSmallNonparabolicFirstTwoRotationOrders_iff
     ]
     refine ⟨?_, ?_, ?_, ?_⟩
-    · simpa only [normalizedPuncturedPointExactOrderComplement,
+    · simpa only [normalizedPuncturedPointExactOrderComplement, normalizePuncturedPoint,
         normalizedSurfaceOfPunctured,
         puncturedNormalizationEquiv_coe] using Nat.lt_succ_of_le hfirst
-    · simpa only [normalizedPuncturedPointExactOrderComplement,
+    · simpa only [normalizedPuncturedPointExactOrderComplement, normalizePuncturedPoint,
         normalizedSurfaceOfPunctured,
         puncturedNormalizationEquiv_coe] using Nat.lt_succ_of_le hsecond
-    · simpa only [normalizedPuncturedPointExactOrderComplement,
+    · simpa only [normalizedPuncturedPointExactOrderComplement, normalizePuncturedPoint,
         normalizedSurfaceOfPunctured,
         puncturedNormalizationEquiv_coe] using hnonparabolic.1
-    · simpa only [normalizedPuncturedPointExactOrderComplement,
+    · simpa only [normalizedPuncturedPointExactOrderComplement, normalizePuncturedPoint,
         normalizedSurfaceOfPunctured,
         puncturedNormalizationEquiv_coe] using hnonparabolic.2
   have hfourPLeBad : 4 * p ≤ bad.card := by

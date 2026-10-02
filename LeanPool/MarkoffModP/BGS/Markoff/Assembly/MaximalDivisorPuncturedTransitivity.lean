@@ -33,7 +33,7 @@ noncomputable section
 private def normalizedPuncturedPointMaximalDivisors
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
-  normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)
+  normalizePuncturedPoint x
 
 private theorem normalizedPuncturedPointMaximalDivisors_smul
     {R : Type*} [Field R] [Invertible (3 : R)]
@@ -41,16 +41,7 @@ private theorem normalizedPuncturedPointMaximalDivisors_smul
     normalizedPuncturedPointMaximalDivisors (g • z) =
       normalizedGammaPerm R g
         (normalizedPuncturedPointMaximalDivisors z) := by
-  have hzinv :
-      (normalizationSurfaceEquiv R).symm
-          (normalizedSurfaceOfPunctured
-            (puncturedNormalizationEquiv R z)) = z.1 := by
-    apply Subtype.ext
-    exact (normalizationEquiv R).symm_apply_apply z.1.1
-  unfold normalizedPuncturedPointMaximalDivisors
-  rw [normalizedGammaPerm_apply, hzinv]
-  apply Subtype.ext
-  rfl
+  exact normalizePuncturedPoint_smul g z
 
 /-- The finite maximal-orbit argument with maximal-divisor counts at both
 small-order and middle-game boundaries. -/
@@ -155,11 +146,11 @@ theorem puncturedMarkoffTransitiveAt_of_maximalDivisor_frontier
         mem_originalPuncturedFinsetOfNormalized_iff,
         mem_normalizedPuncturedMarkoffPointsWithSmallFirstTwoRotationOrders_iff]
       constructor
-      · simpa only [normalizedPuncturedPointMaximalDivisors,
+      · simpa only [normalizedPuncturedPointMaximalDivisors, normalizePuncturedPoint,
           normalizedSurfaceOfPunctured,
           puncturedNormalizationEquiv_coe] using
             Nat.lt_succ_of_le hfirst
-      · simpa only [normalizedPuncturedPointMaximalDivisors,
+      · simpa only [normalizedPuncturedPointMaximalDivisors, normalizePuncturedPoint,
           normalizedSurfaceOfPunctured,
           puncturedNormalizationEquiv_coe] using
             Nat.lt_succ_of_le hsecond

@@ -28,7 +28,7 @@ noncomputable section
 private def jointNormalizedPuncturedPoint
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
-  normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)
+  normalizePuncturedPoint x
 
 /-- A square envelope converts a root-free sixth-power comparison into the
 cube inequality required by the middle game. -/

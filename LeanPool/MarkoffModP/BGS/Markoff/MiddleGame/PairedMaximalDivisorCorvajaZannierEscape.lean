@@ -6,6 +6,7 @@ Authors: Yuma Mizuno
 module
 
 
+public import LeanPool.MarkoffModP.BGS.Markoff.MiddleGame.EulerSevenPairedMaximalDivisorCorvajaZannierEscape
 public import LeanPool.MarkoffModP.BGS.Markoff.MiddleGame.Diagonalization
 public import LeanPool.MarkoffModP.BGS.Markoff.MiddleGame.PairedMaximalDivisorOrderEscape
 public import LeanPool.MarkoffModP.BGS.Markoff.MiddleGame.TraceCurveWeights
@@ -45,21 +46,9 @@ theorem
     ∃ n : ℕ,
       rotationOrder x.u1 <
         rotationOrder ((normalizedRotate1^[n]) x).u2 := by
-  let : Fintype (quadraticFiniteField p) :=
-    Fintype.ofFinite (quadraticFiniteField p)
-  obtain ⟨w, s, hw, hpoint⟩ :=
-    exists_diagonalizedFiberPoint_of_nonzero_nonparabolic
-      p hpTwo x hx hnonzero hnonparabolic
-  have hadmissible :
-      WeightedTraceCurveIsCorvajaZannierAdmissible
-        (s : quadraticFiniteField p)
-        (splitFiberProduct w *
-          ((s⁻¹ : (quadraticFiniteField p)ˣ) : quadraticFiniteField p)) :=
-    diagonalizedFiber_weightedTraceCurve_isCorvajaZannierAdmissible
-      p hpTwo x hnonzero w s hw hpoint
-  exact
-    exists_iterate_with_larger_secondRotationOrder_of_diagonalizedFiber_pairedMaximalOrders
-      p hpTwo delta hdelta x w s hw hpoint hadmissible
-        hbelowEndgame hcube hlinear
+  apply
+    exists_iterate_larger_secondRotationOrder_of_nonzero_nonparabolic_eulerSevenPairedMaximalOrders
+    p hpTwo delta hdelta x hx hnonzero hnonparabolic hbelowEndgame _ hlinear
+  exact lt_of_le_of_lt (eulerSeven_bound_le_six_cube _) hcube
 
 end BGS.Markoff

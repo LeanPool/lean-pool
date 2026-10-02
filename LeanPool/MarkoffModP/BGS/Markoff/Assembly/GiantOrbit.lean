@@ -39,6 +39,29 @@ def normalizedSurfaceOfPunctured
     NormalizedMarkoffSurface R :=
   ⟨x.1, x.2.1⟩
 
+/-- The normalized surface point underlying an original punctured point. -/
+def normalizePuncturedPoint
+    {R : Type*} [Field R] [Invertible (3 : R)]
+    (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
+  normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)
+
+/-- Normalizing an original punctured point intertwines the two `Gamma`
+actions. -/
+theorem normalizePuncturedPoint_smul
+    {R : Type*} [Field R] [Invertible (3 : R)]
+    (g : Gamma R) (z : PuncturedMarkoffSurface R) :
+    normalizePuncturedPoint (g • z) =
+      normalizedGammaPerm R g (normalizePuncturedPoint z) := by
+  have hzinv :
+      (normalizationSurfaceEquiv R).symm
+          (normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R z)) = z.1 := by
+    apply Subtype.ext
+    exact (normalizationEquiv R).symm_apply_apply z.1.1
+  unfold normalizePuncturedPoint
+  rw [normalizedGammaPerm_apply, hzinv]
+  apply Subtype.ext
+  rfl
+
 /-- Normalization identifies the punctured component relation with the transported
 component relation on normalized surface points. -/
 theorem samePuncturedComponent_iff_sameNormalizedComponent

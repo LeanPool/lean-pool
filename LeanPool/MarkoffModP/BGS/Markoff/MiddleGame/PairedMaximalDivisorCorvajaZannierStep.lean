@@ -6,6 +6,7 @@ Authors: Yuma Mizuno
 module
 
 
+public import LeanPool.MarkoffModP.BGS.Markoff.MiddleGame.EulerSevenPairedMaximalDivisorCorvajaZannierStep
 public import LeanPool.MarkoffModP.BGS.Markoff.MiddleGame.MaximalDivisorNonparabolicOrderCover
 public import LeanPool.MarkoffModP.BGS.Markoff.MiddleGame.NonparabolicUnionBound
 public import LeanPool.MarkoffModP.BGS.Markoff.MiddleGame.PairedCorvajaZannierBound
@@ -187,6 +188,12 @@ theorem orderCount_mul_pairedCorvajaZannierEnvelope_lt_currentOrder
       congr 1 <;> ring
     _ < (currentOrder : ℝ) := max_lt hrootTerm hquotientTerm
 
+/-- The stronger six-cube hypothesis supplies the Euler-seven order budget. -/
+theorem eulerSeven_bound_le_six_cube (count : ℕ) :
+    189 * count ^ 3 ≤ (6 * count) ^ 3 := by
+  rw [mul_pow]
+  exact Nat.mul_le_mul_right (count ^ 3) (by norm_num : 189 ≤ 6 ^ 3)
+
 /-- The finite nonparabolic escape theorem over maximal candidate orders.
 The Corvaja--Zannier estimate is supplied by the in-repository general
 bidegree-`(2,2)` theorem and right-inversion pairing. -/
@@ -214,46 +221,9 @@ theorem exists_left_element_escaping_nonparabolic_maximalOrders
           ((hright : Eˣ) ^ 2) ≠ 1 →
             weightedSplitTorusTrace alpha beta hleft ≠
               splitTorusTrace hright := by
-  let : Fintype E := Fintype.ofFinite E
-  classical
-  let orders := middleGameMaximalOrders p (Nat.card Hleft)
-  let bound : ℕ → ℝ :=
-    fun d ↦ pairedCorvajaZannierTraceUpperBound p (Nat.card Hleft) d
-  have hbound :
-      ∀ d ∈ orders,
-        ((weightedTraceEquationNonparabolicLeftSupport
-          alpha beta Hleft (rightSubgroup d)).card : ℝ) ≤ bound d := by
-    intro d hd
-    have hd' : d ∈ middleGameMaximalOrders p (Nat.card Hleft) := by
-      simpa [orders] using hd
-    have h :=
-      weightedTraceEquationNonparabolicLeftSupport_card_cast_le_pairedCorvajaZannier
-        p E alpha beta Hleft (rightSubgroup d) hadmissible
-    rw [hrightOrder d hd'] at h
-    simpa [bound] using h
-  have hsmall : (∑ d ∈ orders, bound d) < (Nat.card Hleft : ℝ) := by
-    calc
-      (∑ d ∈ orders, bound d) =
-          ∑ d ∈ middleGameMaximalOrders p (Nat.card Hleft),
-            pairedCorvajaZannierTraceUpperBound
-              p (Nat.card Hleft) d := by
-        simp [orders, bound]
-      _ ≤ ((middleGameMaximalOrders p (Nat.card Hleft)).card : ℝ) *
-          pairedCorvajaZannierCurrentOrderEnvelope
-            p (Nat.card Hleft) :=
-        middleGameMaximalPairedCorvajaZannierSum_le_card_mul_envelope
-          p (Nat.card Hleft) hp
-      _ < (Nat.card Hleft : ℝ) :=
-        orderCount_mul_pairedCorvajaZannierEnvelope_lt_currentOrder
-          p (Nat.card Hleft)
-            (middleGameMaximalOrders p (Nat.card Hleft)).card
-          hcurrentOrder hcube hlinear
-  obtain ⟨hleft, hleftEscapes⟩ :=
-    exists_left_element_escaping_nonparabolic_orders_of_sum_bound
-      alpha beta Hleft orders rightSubgroup bound hbound hsmall
-  refine ⟨hleft, ?_⟩
-  intro d hd hright hrightSq
-  exact hleftEscapes d (by simpa [orders] using hd) hright hrightSq
+  apply exists_left_element_escaping_nonparabolic_maximalOrders_eulerSeven
+    p E alpha beta Hleft rightSubgroup hrightOrder hadmissible hcurrentOrder hp _ hlinear
+  exact lt_of_le_of_lt (eulerSeven_bound_le_six_cube _) hcube
 
 end
 

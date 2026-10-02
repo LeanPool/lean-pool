@@ -152,7 +152,7 @@ theorem four_mul_prime_le_puncturedComponentComplementFinset_card
 private def normalizedPuncturedPointNonparabolicComplement
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
-  normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)
+  normalizePuncturedPoint x
 
 private theorem normalizedPuncturedPointNonparabolicComplement_smul
     {R : Type*} [Field R] [Invertible (3 : R)]
@@ -160,16 +160,7 @@ private theorem normalizedPuncturedPointNonparabolicComplement_smul
     normalizedPuncturedPointNonparabolicComplement (g • z) =
       normalizedGammaPerm R g
         (normalizedPuncturedPointNonparabolicComplement z) := by
-  have hzinv :
-      (normalizationSurfaceEquiv R).symm
-          (normalizedSurfaceOfPunctured
-            (puncturedNormalizationEquiv R z)) = z.1 := by
-    apply Subtype.ext
-    exact (normalizationEquiv R).symm_apply_apply z.1.1
-  unfold normalizedPuncturedPointNonparabolicComplement
-  rw [normalizedGammaPerm_apply, hzinv]
-  apply Subtype.ext
-  rfl
+  exact normalizePuncturedPoint_smul g z
 
 /-- Complement-maximal paired frontier with the fixed-point-free low-order
 count.  The even-sign action is kept explicit: `hsign` records invariance of
@@ -285,16 +276,16 @@ theorem
         mem_normalizedPuncturedMarkoffPointsWithSmallNonparabolicFirstTwoRotationOrders_iff
       ]
       refine ⟨?_, ?_, ?_, ?_⟩
-      · simpa only [normalizedPuncturedPointNonparabolicComplement,
+      · simpa only [normalizedPuncturedPointNonparabolicComplement, normalizePuncturedPoint,
           normalizedSurfaceOfPunctured,
           puncturedNormalizationEquiv_coe] using Nat.lt_succ_of_le hfirst
-      · simpa only [normalizedPuncturedPointNonparabolicComplement,
+      · simpa only [normalizedPuncturedPointNonparabolicComplement, normalizePuncturedPoint,
           normalizedSurfaceOfPunctured,
           puncturedNormalizationEquiv_coe] using Nat.lt_succ_of_le hsecond
-      · simpa only [normalizedPuncturedPointNonparabolicComplement,
+      · simpa only [normalizedPuncturedPointNonparabolicComplement, normalizePuncturedPoint,
           normalizedSurfaceOfPunctured,
           puncturedNormalizationEquiv_coe] using hnonparabolic.1
-      · simpa only [normalizedPuncturedPointNonparabolicComplement,
+      · simpa only [normalizedPuncturedPointNonparabolicComplement, normalizePuncturedPoint,
           normalizedSurfaceOfPunctured,
           puncturedNormalizationEquiv_coe] using hnonparabolic.2
     have hfourPLeBad : 4 * p ≤ bad.card := by

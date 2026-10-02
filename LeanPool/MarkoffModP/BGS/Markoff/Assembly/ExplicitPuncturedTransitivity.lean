@@ -31,7 +31,7 @@ noncomputable section
 private def normalizedPuncturedPoint
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
-  normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)
+  normalizePuncturedPoint x
 
 /-- Normalizing an original punctured point intertwines the two `Gamma`
 actions. -/
@@ -40,15 +40,7 @@ private theorem normalizedPuncturedPoint_smul
     (g : Gamma R) (z : PuncturedMarkoffSurface R) :
     normalizedPuncturedPoint (g • z) =
       normalizedGammaPerm R g (normalizedPuncturedPoint z) := by
-  have hzinv :
-      (normalizationSurfaceEquiv R).symm
-          (normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R z)) = z.1 := by
-    apply Subtype.ext
-    exact (normalizationEquiv R).symm_apply_apply z.1.1
-  unfold normalizedPuncturedPoint
-  rw [normalizedGammaPerm_apply, hzinv]
-  apply Subtype.ext
-  rfl
+  exact normalizePuncturedPoint_smul g z
 
 /-- The finite maximal-orbit argument at a fixed prime.  The hypotheses expose
 exactly the three frontiers consumed by the argument: the divisor-sensitive
@@ -141,9 +133,9 @@ theorem puncturedMarkoffTransitiveAt_of_maximalOrbit_frontier
         mem_originalPuncturedFinsetOfNormalized_iff,
         mem_normalizedPuncturedMarkoffPointsWithSmallFirstTwoRotationOrders_iff]
       constructor
-      · simpa only [normalizedPuncturedPoint, normalizedSurfaceOfPunctured,
+      · simpa only [normalizedPuncturedPoint, normalizePuncturedPoint, normalizedSurfaceOfPunctured,
           puncturedNormalizationEquiv_coe] using Nat.lt_succ_of_le hfirst
-      · simpa only [normalizedPuncturedPoint, normalizedSurfaceOfPunctured,
+      · simpa only [normalizedPuncturedPoint, normalizePuncturedPoint, normalizedSurfaceOfPunctured,
           puncturedNormalizationEquiv_coe] using Nat.lt_succ_of_le hsecond
     have hpLeSmallOrderSet : p ≤ 2 * (2 + d *
         ((p - 1).divisors.card + (p + 1).divisors.card)) ^ 2 := by

@@ -26,7 +26,7 @@ noncomputable section
 private def normalizedPuncturedPointExactOrderEulerSeven
     {R : Type*} [Field R] [Invertible (3 : R)]
     (x : PuncturedMarkoffSurface R) : NormalizedMarkoffSurface R :=
-  normalizedSurfaceOfPunctured (puncturedNormalizationEquiv R x)
+  normalizePuncturedPoint x
 
 private theorem normalizedPuncturedPointExactOrderEulerSeven_smul
     {R : Type*} [Field R] [Invertible (3 : R)]
@@ -34,16 +34,7 @@ private theorem normalizedPuncturedPointExactOrderEulerSeven_smul
     normalizedPuncturedPointExactOrderEulerSeven (g • z) =
       normalizedGammaPerm R g
         (normalizedPuncturedPointExactOrderEulerSeven z) := by
-  have hzinv :
-      (normalizationSurfaceEquiv R).symm
-          (normalizedSurfaceOfPunctured
-            (puncturedNormalizationEquiv R z)) = z.1 := by
-    apply Subtype.ext
-    exact (normalizationEquiv R).symm_apply_apply z.1.1
-  unfold normalizedPuncturedPointExactOrderEulerSeven
-  rw [normalizedGammaPerm_apply, hzinv]
-  apply Subtype.ext
-  rfl
+  exact normalizePuncturedPoint_smul g z
 
 /-- A point outside the base component gives one order `d` which
 simultaneously satisfies the exact root-sum obstruction and the negation of
@@ -193,16 +184,16 @@ theorem
       mem_normalizedPuncturedMarkoffPointsWithSmallNonparabolicFirstTwoRotationOrders_iff
     ]
     refine ⟨?_, ?_, ?_, ?_⟩
-    · simpa only [normalizedPuncturedPointExactOrderEulerSeven,
+    · simpa only [normalizedPuncturedPointExactOrderEulerSeven, normalizePuncturedPoint,
         normalizedSurfaceOfPunctured,
         puncturedNormalizationEquiv_coe] using Nat.lt_succ_of_le hfirst
-    · simpa only [normalizedPuncturedPointExactOrderEulerSeven,
+    · simpa only [normalizedPuncturedPointExactOrderEulerSeven, normalizePuncturedPoint,
         normalizedSurfaceOfPunctured,
         puncturedNormalizationEquiv_coe] using Nat.lt_succ_of_le hsecond
-    · simpa only [normalizedPuncturedPointExactOrderEulerSeven,
+    · simpa only [normalizedPuncturedPointExactOrderEulerSeven, normalizePuncturedPoint,
         normalizedSurfaceOfPunctured,
         puncturedNormalizationEquiv_coe] using hnonparabolic.1
-    · simpa only [normalizedPuncturedPointExactOrderEulerSeven,
+    · simpa only [normalizedPuncturedPointExactOrderEulerSeven, normalizePuncturedPoint,
         normalizedSurfaceOfPunctured,
         puncturedNormalizationEquiv_coe] using hnonparabolic.2
   have hfourPLeBad : 4 * p ≤ bad.card := by
