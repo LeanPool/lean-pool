@@ -1091,9 +1091,33 @@ theorem sign_composition_pair {t : ℕ} {F G : Fragment (Fin t)}
   refine Eq.trans ?_ hmain
   exact congrArg₂ (· * ·)
     (congrArg (fun z : ℤˣ => ((z : ℤ) : ℂ)
-      * (-1 : ℂ) ^ κ₁.openCircuitCount) hsgn₁.symm)
+      * (-1 : ℂ) ^ κ₁.openCircuitCount) (by
+        have hDec :
+            (fun a b : UsedLab (EdgeSubset.mk s₁ hc₁) =>
+              Subtype.instDecidableEq a b) =
+            (fun a b : UsedLab (EdgeSubset.mk s₁ hc₁) =>
+              LinearOrder.toDecidableEq a b) := Subsingleton.elim _ _
+        have hDec' :
+            (fun a b : UsedLab (leftSub B) =>
+              Subtype.instDecidableEq a b) =
+            (fun a b : UsedLab (leftSub B) =>
+              LinearOrder.toDecidableEq a b) := Subsingleton.elim _ _
+        rw [hDec, hDec']
+        exact hsgn₁.symm))
     (congrArg (fun z : ℤˣ => ((z : ℤ) : ℂ)
-      * (-1 : ℂ) ^ κ₂.openCircuitCount) hsgn₂.symm)
+      * (-1 : ℂ) ^ κ₂.openCircuitCount) (by
+        have hDec :
+            (fun a b : UsedLab (EdgeSubset.mk s₂ hc₂) =>
+              Subtype.instDecidableEq a b) =
+            (fun a b : UsedLab (EdgeSubset.mk s₂ hc₂) =>
+              LinearOrder.toDecidableEq a b) := Subsingleton.elim _ _
+        have hDec' :
+            (fun a b : UsedLab (rightSub B) =>
+              Subtype.instDecidableEq a b) =
+            (fun a b : UsedLab (rightSub B) =>
+              LinearOrder.toDecidableEq a b) := Subsingleton.elim _ _
+        rw [hDec, hDec']
+        exact hsgn₂.symm))
 
 open Classical in
 /-- **The pair term, with its constant named.**  RS21's (13) read

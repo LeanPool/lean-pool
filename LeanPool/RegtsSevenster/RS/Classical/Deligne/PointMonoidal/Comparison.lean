@@ -106,7 +106,7 @@ theorem tmulEE_actEE_pointOne (b : S.even) (m : M.even) :
       P.chi b • tmulEE M (pointMod P) m (pointOne P) := by
   rw [tmulEE_balanced_eee]
   have h : (pointMod P : S.Mod.{u, u, u, u}).actEE b (pointOne P)
-      = P.chi b • pointOne P := ULift.ext _ _ (by
+      = P.chi b • pointOne P := ULift.ext (by
     change P.chi b * 1 = P.chi b * 1
     rfl)
   rw [h, map_smul]
@@ -118,7 +118,7 @@ theorem tmulOE_actEO_pointOne (b : S.even) (m : M.odd) :
       P.chi b • tmulOE M (pointMod P) m (pointOne P) := by
   rw [tmulOE_balanced_eoe]
   have h : (pointMod P : S.Mod.{u, u, u, u}).actEE b (pointOne P)
-      = P.chi b • pointOne P := ULift.ext _ _ (by
+      = P.chi b • pointOne P := ULift.ext (by
     change P.chi b * 1 = P.chi b * 1
     rfl)
   rw [h, map_smul]

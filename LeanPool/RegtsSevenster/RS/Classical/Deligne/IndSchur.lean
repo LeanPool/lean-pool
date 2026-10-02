@@ -805,7 +805,7 @@ lemma indOfTensorIso_swap_conj
     ← MonoidalCategory.whiskerLeft_comp_assoc,
     ← indOfTensorIso_hom_braiding z z,
     MonoidalCategory.whiskerLeft_comp_assoc,
-    reassoc_of% hArev, Iso.map_hom_inv_id, Category.comp_id]
+    reassoc_of% hArev, Iso.hom_inv_id_map, Category.comp_id]
 
 /-- **Transport of the top braiding**: `swapTop` on the powers of an
 embedded object is conjugate to the embedded `swapTop`. -/

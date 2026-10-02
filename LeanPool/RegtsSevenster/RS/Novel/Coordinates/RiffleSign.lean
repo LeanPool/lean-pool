@@ -589,7 +589,7 @@ theorem sign_listIndexPerm_edge_oriented (W : ClosedFragment)
           (Fin.castAdd (edgeCount W) i)))).length =
         (l.filter (fun i => decide (o.isOut ((starFlagEnum W).symm
           (Fin.castAdd (edgeCount W) i)) = true))).length := by
-      intro l; congr 1; congr 1; ext i; exact (Bool.decide_coe _).symm
+      intro l; congr 1
     rw [inversions_oriented_interleave _ _
       (List.sortedLT_iff_pairwise.mp (Finset.sortedLT_sort (edgeIndexSet W F))),
       hfilt_eq]
@@ -658,17 +658,7 @@ theorem card_out_add_card_in_edges (W : ClosedFragment)
     ((edgeIndexSet W F).filter (fun i =>
       ¬ (o.isOut ((starFlagEnum W).symm
         (Fin.castAdd (edgeCount W) i)) = true))).card := by
-    congr 1; ext i
-    simp only [Finset.mem_filter]
-    constructor
-    · rintro ⟨hi, hf⟩
-      exact ⟨hi, by rw [hf]; exact fun h => Bool.noConfusion h⟩
-    · rintro ⟨hi, hnt⟩
-      refine ⟨hi, ?_⟩
-      cases hb : o.isOut ((starFlagEnum W).symm
-        (Fin.castAdd (edgeCount W) i))
-      · rfl
-      · exact absurd hb hnt
+    congr 1
   rw [hconv]
   exact Finset.card_filter_add_card_filter_not
     (fun i => o.isOut ((starFlagEnum W).symm

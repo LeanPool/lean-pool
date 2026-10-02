@@ -94,8 +94,6 @@ private theorem head_filter_card {β : Type} [LinearOrder β]
   classical
   rw [filter_length_ofFn]
   congr 1
-  ext i
-  simp [decide_eq_true_eq]
 
 /-- Helper: partition of pair inversions by first component. -/
 private theorem pair_filter_succ_split {β : Type} [LinearOrder β]

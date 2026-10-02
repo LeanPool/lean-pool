@@ -245,10 +245,7 @@ theorem colourChar_extend_zero {n N k : ℕ} (hNk : N ≤ k)
       fibreCard (Fin.castLE hNk ∘ g) (Fin.castLE hNk j) = fibreCard g j := by
     intro g j
     simp only [fibreCard.eq_1]
-    congr 1; ext x
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Function.comp]
-    rw [Fin.ext_iff, Fin.ext_iff]
-    simp [Fin.val_castLE]
+    congr 1
   -- Key lemma: fibreCard of castLE ∘ g at a tail index
   have fwd_fib_tail : ∀ (g : Fin n → Fin N) (j : Fin k),
       ¬ (j : ℕ) < N → fibreCard (Fin.castLE hNk ∘ g) j = 0 := by
@@ -269,10 +266,7 @@ theorem colourChar_extend_zero {n N k : ℕ} (hNk : N ≤ k)
         fibreCard g (Fin.castLE hNk j) := by
     intro g hb j
     simp only [fibreCard.eq_1]
-    congr 1; ext x
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    rw [Fin.ext_iff, Fin.ext_iff]
-    simp [Fin.val_castLE]
+    congr 1
   -- Helper: extract backward map as a standalone function
   let bwd_map : ∀ (g : Fin n → Fin k),
       (∀ j, fibreCard g j = β j) →

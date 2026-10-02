@@ -534,7 +534,7 @@ variable {S : SuperCommAlgebra.{u, u}} (P : SuperPoint S)
 /-- A residue class is its own coordinate times the unit. -/
 theorem pointEven_eq_smul_one (a : (pointMod P : S.Mod.{u, u, u, u}).even) :
     a = a.down • pointOne P :=
-  ULift.ext _ _ (by
+  ULift.ext (by
     change a.down = a.down * 1
     rw [mul_one])
 
@@ -542,7 +542,7 @@ theorem pointEven_eq_smul_one (a : (pointMod P : S.Mod.{u, u, u, u}).even) :
 theorem pointOne_mul_self :
     (ULift.up ((pointOne P).down * (pointOne P).down) :
       (pointMod P : S.Mod.{u, u, u, u}).even) = pointOne P :=
-  ULift.ext _ _ (by
+  ULift.ext (by
     change (1 : ℂ) * 1 = 1
     rw [one_mul])
 
@@ -983,7 +983,7 @@ theorem unitTensorPoint_superVectEpsRaw (c : ℂ) :
   change (leftUnitorHom (pointMod P)).evenMap
     ((pointBaseEps P).evenMap (c • S.one)) = _
   rw [h1, leftUnitorHom_evenMap_tmulEE]
-  refine ULift.ext _ _ ?_
+  refine ULift.ext ?_
   change P.chi (c • S.one) * 1 = c
   rw [mul_one, map_smul]
   change c * P.chi 1 = c

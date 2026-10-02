@@ -711,11 +711,26 @@ theorem sign_composition (n : ℕ) {W₁ : Fragment (Fin (0 + n))}
               (stepIdent n)).mp hp)).symm) :=
     DirMatching.unionCount_congr hM₁
       (DirMatching.map_edge_congr _ hM₂)
+  have hsgn' :
+      ((DirMatching.sgnRel (DirMatching.stdMatching hc₁) M₁ : ℤ) : ℂ) *
+          ((DirMatching.sgnRel (DirMatching.stdMatching hc₂) M₂ : ℤ) : ℂ) =
+        (-1 : ℂ) ^ DirMatching.unionCount M₁
+          (M₂.map (interfaceSideDisjEquiv F (stepIdent n)
+            ((swapPaired_iff_interfacePaired F (stepIdent n)).mp hp)).symm) := by
+    have hDec₁ :
+        (fun a b : UsedLab (leftSub F) => Subtype.instDecidableEq a b) =
+          (fun a b : UsedLab (leftSub F) => LinearOrder.toDecidableEq a b) :=
+      Subsingleton.elim _ _
+    have hDec₂ :
+        (fun a b : UsedLab (rightSub F) => Subtype.instDecidableEq a b) =
+          (fun a b : UsedLab (rightSub F) => LinearOrder.toDecidableEq a b) :=
+      Subsingleton.elim _ _
+    convert hsgn using 1; repeat congr 1
   rw [openCircuitCount_glueData n (W₁.disjUnion W₂)
       ⟨F, hp, prodRel κ₁ κ₂⟩,
     stageLedger_disjUnion n F hp κ₁ κ₂ o₁ o₂, pow_add, pow_add,
-    ← hcnt, ← hsgn, mul_mul_mul_comm]
-  exact mul_comm _ _
+    ← hcnt, ← hsgn', mul_mul_mul_comm]
+  ring_nf
 
 end EdgeSubset
 

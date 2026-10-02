@@ -40,43 +40,43 @@ noncomputable def pointMod (P : SuperPoint S) :
   odd := ULift.{w} PUnit.{1}
   actEE := LinearMap.mk₂ ℂ
     (fun x c => ULift.up (P.chi x * c.down))
-    (fun x y c => ULift.ext _ _ (by
+    (fun x y c => ULift.ext (by
       simp only [map_add, ULift.add_down]
       ring))
-    (fun r x c => ULift.ext _ _ (by
+    (fun r x c => ULift.ext (by
       simp only [map_smul, smul_eq_mul, ULift.smul_down]
       ring))
-    (fun x c d => ULift.ext _ _ (by
+    (fun x c d => ULift.ext (by
       simp only [ULift.add_down]
       ring))
-    (fun r x c => ULift.ext _ _ (by
+    (fun r x c => ULift.ext (by
       simp only [ULift.smul_down, smul_eq_mul]
       ring))
   actEO := 0
   actOE := 0
   actOO := 0
   one_act_e m := by
-    refine ULift.ext _ _ ?_
+    refine ULift.ext ?_
     change P.chi 1 * m.down = m.down
     rw [map_one, one_mul]
   one_act_o m := Subsingleton.elim _ _
   assoc_eee x y m := by
-    refine ULift.ext _ _ ?_
+    refine ULift.ext ?_
     change P.chi (S.mulEE x y) * m.down = P.chi x * (P.chi y * m.down)
     rw [show S.mulEE x y = x * y from rfl, map_mul, mul_assoc]
   assoc_eeo _ _ _ := Subsingleton.elim _ _
   assoc_eoe _ _ _ := Subsingleton.elim _ _
   assoc_eoo x u m := by
-    refine ULift.ext _ _ ?_
+    refine ULift.ext ?_
     change (0 : ℂ) = P.chi x * (0 : ULift.{w} ℂ).down
     simp
   assoc_oee _ _ _ := Subsingleton.elim _ _
   assoc_oeo x u m := by
-    refine ULift.ext _ _ ?_
+    refine ULift.ext ?_
     change (0 : ℂ) = (0 : ULift.{w} ℂ).down
     rfl
   assoc_ooe u v m := by
-    refine ULift.ext _ _ ?_
+    refine ULift.ext ?_
     change P.chi (S.mulOO u v) * m.down = (0 : ULift.{w} ℂ).down
     rw [P.vanishing, zero_mul]; rfl
   assoc_ooo _ _ _ := Subsingleton.elim _ _

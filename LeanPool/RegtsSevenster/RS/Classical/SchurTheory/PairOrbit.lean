@@ -131,12 +131,6 @@ theorem fibreCard_fst_eq_sum (p : Fin n → Fin k × Fin k)
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [pairFibre, Finset.filter_filter]
   congr 1
-  refine Finset.filter_congr fun i _ => ?_
-  constructor
-  · intro hi
-    exact Prod.ext hi.1 hi.2
-  · intro hi
-    exact ⟨congrArg Prod.fst hi, congrArg Prod.snd hi⟩
 
 open scoped Classical in
 /-- The second-coordinate analogue. -/

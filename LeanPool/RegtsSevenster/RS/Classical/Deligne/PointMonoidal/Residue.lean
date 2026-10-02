@@ -98,16 +98,16 @@ noncomputable def pointMulLin :
       (pointMod P : S.Mod.{u, u, u, u}).even →ₗ[ℂ]
         (pointMod P : S.Mod.{u, u, u, u}).even :=
   LinearMap.mk₂ ℂ (fun a b => ULift.up (a.down * b.down))
-    (fun a b c => ULift.ext _ _ (by
+    (fun a b c => ULift.ext (by
       change (a.down + b.down) * c.down = _
       exact add_mul _ _ _))
-    (fun r a b => ULift.ext _ _ (by
+    (fun r a b => ULift.ext (by
       change (r * a.down) * b.down = r * (a.down * b.down)
       exact mul_assoc _ _ _))
-    (fun a b c => ULift.ext _ _ (by
+    (fun a b c => ULift.ext (by
       change a.down * (b.down + c.down) = _
       exact mul_add _ _ _))
-    (fun r a b => ULift.ext _ _ (by
+    (fun r a b => ULift.ext (by
       change a.down * (r * b.down) = r * (a.down * b.down)
       ring))
 
@@ -127,7 +127,7 @@ noncomputable def pointMulData :
   foo := 0
   feo := 0
   foe := 0
-  hee b m n := ULift.ext _ _ (by
+  hee b m n := ULift.ext (by
     change P.chi b * m.down * n.down = m.down * (P.chi b * n.down)
     ring)
   hoo _ _ _ := rfl
@@ -143,7 +143,7 @@ noncomputable def pointMulData :
   heoe _ _ _ := Subsingleton.elim _ _
   hoee _ _ _ := Subsingleton.elim _ _
   hooo _ _ _ := Subsingleton.elim _ _
-  aee a m n := ULift.ext _ _ (by
+  aee a m n := ULift.ext (by
     change P.chi a * m.down * n.down = P.chi a * (m.down * n.down)
     ring)
   aoo a m n := by
@@ -182,12 +182,12 @@ noncomputable def pointUnitHom :
   evenMap := (ULift.moduleEquiv (R := ℂ) (M := ℂ)).symm.toLinearMap ∘ₗ
     (P.chi.toLinearMap : S.even →ₗ[ℂ] ℂ)
   oddMap := 0
-  map_actEE x m := ULift.ext _ _ (by
+  map_actEE x m := ULift.ext (by
     change P.chi (S.mulEE x m) = P.chi x * P.chi m
     exact map_mul P.chi x m)
   map_actEO _ _ := Subsingleton.elim _ _
   map_actOE _ _ := Subsingleton.elim _ _
-  map_actOO u m := ULift.ext _ _ (by
+  map_actOO u m := ULift.ext (by
     change P.chi (S.mulOO u m) = (0 : ULift.{u} ℂ).down
     rw [P.vanishing]
     rfl)
@@ -426,7 +426,7 @@ private theorem point_triple_ee
             (tmulEE (pointMod P) (pointMod P) a b) c)))
   erw [e1, e2, e3, pointMulHom_evenMap_tmulEE,
     pointMulHom_evenMap_tmulEE]
-  refine ULift.ext _ _ ?_
+  refine ULift.ext ?_
   change a.down * b.down * c.down = a.down * (b.down * c.down)
   exact mul_assoc _ _ _
 
@@ -497,7 +497,7 @@ theorem pointMulHom_right_unit :
       erw [pointMulHom_evenMap_tmulEE]
     conv_rhs => rw [modRightUnitor_hom,
       rightUnitorHom_evenMap_tmulEE, pointMod_actEE]
-    exact ULift.ext _ _ (mul_comm _ _)
+    exact ULift.ext (mul_comm _ _)
   · rw [pointMod_odd_eq_zero P v, map_zero, LinearMap.zero_apply,
       map_zero, map_zero]
 
@@ -512,7 +512,7 @@ theorem pointMulHom_comm :
       LinearMap.comp_apply, braidingHom_evenMap_tmulEE,
       pointMulHom_evenMap_tmulEE]
     conv_rhs => rw [pointMulHom_evenMap_tmulEE]
-    exact ULift.ext _ _ (mul_comm _ _)
+    exact ULift.ext (mul_comm _ _)
   · rw [pointMod_odd_eq_zero P a, map_zero, LinearMap.zero_apply,
       map_zero, map_zero]
 
