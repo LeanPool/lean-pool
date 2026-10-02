@@ -591,13 +591,13 @@ theorem binarySuccTM_isTransducer_internal (idx : Fin n) :
   cases phase with
   | carry =>
       cases hread : wHeads idx <;>
-        simp [binarySuccTM, hread, idleDir] <;>
+        simp only [binarySuccTM, hread, idleDir, ne_eq] <;>
         split <;> decide
   | rewind =>
       simp only [binarySuccTM]
-      split <;> simp [idleDir] <;> split <;> decide
+      split <;> simp only [idleDir, ne_eq] <;> split <;> decide
   | done =>
-      simp [binarySuccTM, allIdle, idleDir]
+      simp only [binarySuccTM, allIdle, idleDir, ne_eq]
       split <;> decide
 
 end TM

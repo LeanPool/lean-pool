@@ -896,20 +896,20 @@ theorem binaryPredTM_isTransducer_internal (idx : Fin n) :
   cases phase with
   | borrow =>
       cases hread : wHeads idx <;>
-        simp [binaryPredTM, hread, idleDir] <;>
+        simp only [binaryPredTM, hread, idleDir, ne_eq] <;>
         split <;> decide
   | check =>
       cases hread : wHeads idx <;>
-        simp [binaryPredTM, hread, idleDir] <;>
+        simp only [binaryPredTM, hread, idleDir, ne_eq] <;>
         split <;> decide
   | erase =>
       simp only [binaryPredTM]
-      split <;> simp [idleDir] <;> split <;> decide
+      split <;> simp only [idleDir, ne_eq] <;> split <;> decide
   | rewind =>
       simp only [binaryPredTM]
-      split <;> simp [idleDir] <;> split <;> decide
+      split <;> simp only [idleDir, ne_eq] <;> split <;> decide
   | done =>
-      simp [binaryPredTM, allIdle, idleDir]
+      simp only [binaryPredTM, allIdle, idleDir, ne_eq]
       split <;> decide
 
 end TM

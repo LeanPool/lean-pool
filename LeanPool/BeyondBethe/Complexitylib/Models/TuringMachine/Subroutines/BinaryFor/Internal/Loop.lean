@@ -175,12 +175,12 @@ theorem IsTransducer.binaryForTM_internal {body : TM n}
       cases phase with
       | scan equalSoFar =>
           simp only [binaryForTM]
-          split <;> simp [idleDir] <;> split <;> decide
+          split <;> simp only [idleDir, ne_eq] <;> split <;> decide
       | rewind equalSoFar =>
           simp only [binaryForTM]
-          split <;> simp [idleDir] <;> split <;> decide
+          split <;> simp only [idleDir, ne_eq] <;> split <;> decide
       | done =>
-          simp [binaryForTM, allIdle, idleDir]
+          simp only [binaryForTM, allIdle, idleDir, ne_eq]
           split <;> decide
   | inr q =>
       by_cases hq : q = (binaryForIterationTM body counterIdx).qhalt

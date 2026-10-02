@@ -30,22 +30,22 @@ theorem binaryRippleSubCoreTM_isTransducer_internal {n : ℕ}
   cases phase with
   | scan borrow =>
       simp only [binaryRippleSubCoreTM]
-      split <;> simp [idleDir] <;> split <;> decide
+      split <;> simp only [idleDir, ne_eq] <;> split <;> decide
   | erase =>
       simp only [binaryRippleSubCoreTM]
-      split <;> simp [idleDir] <;> split <;> decide
+      split <;> simp only [idleDir, ne_eq] <;> split <;> decide
   | trim seenOne =>
       simp only [binaryRippleSubCoreTM]
       split
-      · simp [idleDir]
+      · simp only [idleDir, ne_eq]
         split <;> decide
       · split
-        · simp [idleDir]
+        · simp only [idleDir, ne_eq]
           split <;> decide
-        · simp [idleDir]
+        · simp only [idleDir, ne_eq]
           split <;> decide
   | done =>
-      simp [binaryRippleSubCoreTM, allIdle, idleDir]
+      simp only [binaryRippleSubCoreTM, allIdle, idleDir, ne_eq]
       split <;> decide
 
 /-- Backward canonicalization followed by both operand rewinds remains a

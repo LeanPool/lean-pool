@@ -391,7 +391,7 @@ theorem binaryAddConstTM_isTransducer_internal
       intro state iHead wHeads oHead
       cases state
       all_goals
-        simp [binaryAddConstTM, skipTM, idleDir]
+        simp only [binaryAddConstTM, skipTM, idleDir, ne_eq]
         split <;> decide
   | succ fixedValue ih =>
       simpa [binaryAddConstTM] using
