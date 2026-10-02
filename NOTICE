@@ -182,10 +182,12 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Odlyzko                   https://github.com/ImperialCollegeLondon/FLT
   LeanPool/OneManifold               https://github.com/sweeneyde/1mfld
   LeanPool/OperatorTheory            https://github.com/savarin/lean-operator-theory
+  LeanPool/OrderClosures             https://github.com/pedrotradacete/OrderClosures
   LeanPool/OrderPQ                   https://github.com/wupr/order-p-q
   LeanPool/PDL                       https://github.com/m4lvin/lean4-pdl
   LeanPool/PFR                       https://github.com/teorth/pfr
   LeanPool/ParallelPostulate         https://github.com/Richiesutie/ParallelPostulate
+  LeanPool/ParameterFreeGradient     https://github.com/yuningyang19/parameter_free_gradient_p
   LeanPool/PebblingLean              https://github.com/pachterlab/P_2026_2
   LeanPool/PentagonalNumberTheorem   https://github.com/wwylele/PentagonalNumberTheorem
   LeanPool/PentagonalNumberTheoremAnalytic
