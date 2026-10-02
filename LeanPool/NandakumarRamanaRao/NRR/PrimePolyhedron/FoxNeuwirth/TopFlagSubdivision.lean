@@ -121,6 +121,7 @@ def InternalCancellation (hp : Nat.Prime p) : Prop :=
     k.1 < p - 1 → deletionCoefficient hp target k = 0
 
 /-- The terminal deletion removes the final top-dimensional cell. -/
+@[expose]
 def TerminalCancellation (hp : Nat.Prime p) : Prop :=
   ∀ (target : Simplex p (p - 2)) (k : Fin ((p - 2) + 2)),
     k.1 = p - 1 → deletionCoefficient hp target k = 0
@@ -186,6 +187,7 @@ def RankTwoCancellationTheorem : Prop :=
 
 /-- The exact terminal reindexing statement.  The coefficient independence theorem above
 reduces this to the already proved facet--shuffle multiplicity. -/
+@[expose]
 def TerminalMultiplicityTheorem : Prop :=
   ∀ {p : Nat} (hp : Nat.Prime p), TerminalCancellation hp
 

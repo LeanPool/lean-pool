@@ -136,6 +136,7 @@ theorem terminalIndex_eq_last (hp : Nat.Prime p) :
   omega
 
 /-- Maximal flags whose terminal face is a fixed codimension-one flag. -/
+@[expose]
 def TerminalSource (hp : Nat.Prime p) (target : Simplex p (p - 2)) :=
   {source : Simplex p ((p - 2) + 1) //
     source.restrict (FaceMap.delete (terminalIndex hp)) = target}
