@@ -142,4 +142,3 @@ lemma exists_maximal_fan [Finite V] (c : PEC G C) {x y : V}
 end PEC
 
 end LeanPool.Vizing
-

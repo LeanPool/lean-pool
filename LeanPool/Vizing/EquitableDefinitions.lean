@@ -133,4 +133,3 @@ def boundedColouringOfEquitable [Nonempty Color]
   class_card_le := class_card_le_ceiling_of_equitable E colour hEq
 
 end LeanPool.Vizing.EquitableDefinitions
-

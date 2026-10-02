@@ -60,4 +60,3 @@ theorem properOn_vizingEdgeColour (G : SimpleGraph V) [DecidableRel G.Adj] :
   properOn_of_lineGraph_colouring (Classical.choice (LeanPool.Vizing.lineGraph_colorable G))
 
 end LeanPool.Vizing.LineGraphColouring
-

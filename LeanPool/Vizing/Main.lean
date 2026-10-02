@@ -140,4 +140,3 @@ theorem lineGraph_chromaticNumber_le_maxDegree_succ {V : Type*} [Fintype V]
   simpa only [Nat.cast_add, Nat.cast_one] using this
 
 end SimpleGraph
-

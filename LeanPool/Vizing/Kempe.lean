@@ -235,4 +235,3 @@ lemma kempe_degree_le_one_of_isFree (c : PEC G C) {a b : C} [DecidableRel (c.kem
 end PEC
 
 end LeanPool.Vizing
-

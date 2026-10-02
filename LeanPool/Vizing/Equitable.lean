@@ -795,4 +795,3 @@ noncomputable def equitableVizingBoundedColouring (G : SimpleGraph V)
     (boundedColouringOfEquitable _ balanced hbalanced.1 hbalanced.2)
 
 end LeanPool.Vizing.Equitable
-

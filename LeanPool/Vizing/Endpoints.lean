@@ -97,4 +97,3 @@ theorem no_three_endpoints {H : SimpleGraph V} [DecidableRel H.Adj]
   omega
 
 end LeanPool.Vizing
-

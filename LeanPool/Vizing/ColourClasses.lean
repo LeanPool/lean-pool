@@ -84,4 +84,3 @@ theorem colourClass_pairwiseDisjoint_toFinset
   exact heq.trans hfq.symm
 
 end LeanPool.Vizing.ColourClasses
-

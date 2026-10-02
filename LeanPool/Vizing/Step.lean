@@ -210,4 +210,3 @@ theorem vizing_step [DecidableRel G.Adj] (c : PEC G C) (hcard : G.maxDegree < Fi
 end PEC
 
 end LeanPool.Vizing
-
