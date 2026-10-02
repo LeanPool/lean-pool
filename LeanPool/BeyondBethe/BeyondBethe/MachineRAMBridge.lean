@@ -142,7 +142,7 @@ theorem prefixZeroRegisters_mem_FP (count : ℕ) :
 def paddedLanguage (count : ℕ) (L : Language) : Language :=
   {word | word.drop count ∈ L}
 
-instance paddedLanguage_decidable (count : ℕ) (L : Language)
+instance paddedLanguageDecidable (count : ℕ) (L : Language)
     [DecidablePred (fun word => word ∈ L)] :
     DecidablePred (fun word => word ∈ paddedLanguage count L) := by
   intro word

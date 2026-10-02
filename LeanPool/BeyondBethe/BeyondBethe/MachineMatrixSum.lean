@@ -493,6 +493,7 @@ theorem rawRatRowsCost_le_codeLength (rows : List (List ℚ)) :
       have hrow := rawRatListCost_le_codeLength row
       omega
 
+/-- The remaining rows and current raw sum in a semantic matrix scan. -/
 structure MatrixRawSumSemState where
   /-- The unprocessed rows of the semantic raw matrix-sum scan. -/
   rows : List (List ℚ)

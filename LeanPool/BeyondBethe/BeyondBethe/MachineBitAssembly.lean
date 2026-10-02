@@ -282,7 +282,7 @@ def outputBitLanguage (target : List Bool → List Bool) : Language :=
   {payload | (target (machinePairSecond payload))[
       Nat.fromBitsLE (machinePairFirst payload)]?.getD false = true}
 
-instance outputBitLanguage_decidable (target : List Bool → List Bool) :
+instance outputBitLanguageDecidable (target : List Bool → List Bool) :
     DecidablePred (fun word => word ∈ outputBitLanguage target) := by
   intro word
   change Decidable

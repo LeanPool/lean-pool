@@ -50,6 +50,7 @@ structure KuhnBuildFrame (n : ℕ) where
   /-- The mate table retained if the current root search fails. -/
   fallback : ColumnMate n
 
+/-- A saved search or build frame in the explicit-stack Kuhn matching evaluator. -/
 inductive KuhnFrame (n : ℕ)
   | search : KuhnSearchFrame n → KuhnFrame n
   | build : KuhnBuildFrame n → KuhnFrame n

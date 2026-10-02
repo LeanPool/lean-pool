@@ -356,6 +356,7 @@ def rawRowComplementUpperSum (p : ℕ) : RawRat → List ℚ → RawRat
       rawRowComplementUpperSum p
         (acc.add (rawScheduledLogUpper (1 - q) p)) qs
 
+/-- The remaining row entries and raw accumulator in a semantic upper-sum scan. -/
 structure RowUpperSemState where
   /-- The unprocessed rational row suffix of the semantic upper-sum scan. -/
   current : List ℚ

@@ -25,6 +25,7 @@ implements their scan and proves that every reported violation is a strict
 central cut for every point satisfying the inequality.
 -/
 
+/-- A rational halfspace whose normal vector is nonzero. -/
 structure RationalHalfspace (d : ℕ) where
   /-- The nonzero rational normal vector defining the halfspace. -/
   normal : Fin d → ℚ

@@ -1600,6 +1600,7 @@ theorem rawDirectedBetheObjectiveCoordinate_width_le_word_budget {m : ℕ}
     rawDirectedObjectiveCoordinateWordBudget, rawScheduledLogWordBudget,
     WX, WC, L, x] using! hfinal
 
+/-- The row, column, and accumulator of a semantic directed-objective scan. -/
 structure DirectedObjectiveSumSemanticState (m : ℕ) where
   /-- The current matrix row of the semantic objective scan. -/
   row : Fin (m + 1)

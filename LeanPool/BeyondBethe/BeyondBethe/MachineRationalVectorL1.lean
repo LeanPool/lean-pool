@@ -357,6 +357,7 @@ theorem rawRatWidth_listL1Sum_le (acc : RawRat) : ∀ xs : List ℚ,
       simp only [rawRatListCost, List.map_cons, List.sum_cons] at htail ⊢
       omega
 
+/-- The remaining vector entries and raw accumulator in a semantic L1 scan. -/
 structure RationalVectorL1SemState where
   /-- The unprocessed entries of the semantic L1 scan. -/
   current : List ℚ

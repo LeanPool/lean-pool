@@ -790,6 +790,7 @@ theorem machineUnaryGridGeneratorWork_le_guard
 
 /-! ## Typed row-major semantics -/
 
+/-- The current grid position and accumulated entries in a semantic row-major scan. -/
 structure UnaryGridSemanticState (m : ℕ) where
   /-- Current row index of the semantic square-grid scan. -/
   row : Fin m

@@ -665,6 +665,7 @@ def rawNearbyRowsSum (tau : RawRat) (p : ℕ) :
   | acc, row :: rows =>
       rawNearbyRowsSum tau p (rawNearbyListSum tau p acc row) rows
 
+/-- The remaining entries and raw sum in a semantic nearby-coordinate scan. -/
 structure NearbyMatrixSemState where
   /-- Rows not yet loaded by the semantic nearby-coordinate scan. -/
   rows : List (List ℚ)

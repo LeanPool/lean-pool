@@ -132,7 +132,7 @@ theorem explicitDelta_le_rowRatio :
 
 /-- The explicit rational completion parameters bundled with their row, cycle, transfer, and
 gain bounds. -/
-def explicit_completionScales :
+def explicitCompletionScales :
     RationalCompletionScales explicitKappa explicitXiSource explicitGamma := by
   have hlog0 : 0 < Real.log 2 := Real.log_pos (by norm_num)
   have hlog1 : Real.log 2 ≤ 1 := Real.log_two_lt_d9.le.trans (by norm_num)
@@ -285,7 +285,7 @@ matching retains half of the uniform gain. -/
 def explicitCertifiedCompletionScales :
     RationalCompletionScales explicitCertifiedStructuralKappa
       explicitXiSource explicitCertifiedGamma := by
-  refine { explicit_completionScales with
+  refine { explicitCompletionScales with
     transfer_small := ?_
     ξ_lt_gain := ?_ }
   · have hleft := explicitTransferExpression_le
@@ -364,7 +364,7 @@ def explicitStructuralScales : RationalStructuralScales where
   ξ₀_pos := by norm_num [explicitXiSource]
   γ₀_pos := by norm_num [explicitGamma]
   cleanGain := explicit_cleanPairGain_constants
-  completion := explicit_completionScales
+  completion := explicitCompletionScales
 
 theorem cleanPairGainGuarantee_mono_gamma
     {κ ξ γ γ' : ℝ} (h : CleanPairGainGuarantee κ ξ γ)
@@ -382,7 +382,7 @@ greedy completion. -/
 def explicitGreedyCompletionScales :
     RationalCompletionScales explicitKappa explicitXiSource
       explicitGreedyGamma :=
-  { explicit_completionScales with
+  { explicitCompletionScales with
     ξ_lt_gain := by
       have hδsmall : explicitDelta ≤ 1 / 200000 := by
         have h := explicitDelta_le_rowRatio

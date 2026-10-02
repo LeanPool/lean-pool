@@ -363,6 +363,7 @@ def matrixEntryLengthListCost (xs : List ℚ) : ℕ :=
 def matrixEntryLengthRowsCost (rows : List (List ℚ)) : ℕ :=
   (rows.map matrixEntryLengthListCost).sum
 
+/-- The remaining entries and accumulated bit length in a semantic matrix scan. -/
 structure MatrixEntryLengthSemState where
   /-- The unprocessed rows of the semantic matrix-entry-length scan. -/
   rows : List (List ℚ)

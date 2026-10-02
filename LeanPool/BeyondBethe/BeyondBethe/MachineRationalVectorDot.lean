@@ -400,6 +400,7 @@ theorem rawRatListDotCost_le_codeLength : ∀ xs ys : List ℚ,
           have htail := ih rs
           omega
 
+/-- The remaining vector entries and raw accumulator in a semantic dot-product scan. -/
 structure RationalVectorDotSemState where
   /-- The unprocessed left entries of the semantic dot-product scan. -/
   left : List ℚ
