@@ -12434,7 +12434,9 @@ projects:
       actual graph edges into Mathlib matching subgraphs. Both conversions
       are inverse, preserve each matching exactly, and allow empty colours
       without a default colour or a finiteness assumption. An edge equivalence
-      yields exact finite edge accounting. This is classical representation
+      yields exact edge accounting: natural-number counts require only finite
+      edges and a finite palette, while indexed cardinal counts allow arbitrary
+      vertices, edges, and palettes. This is classical representation
       interoperability, not a new colouring bound or a claim of priority.
     branch: graph theory
     entry_module: LeanPool.GraphColouringMatching
@@ -12442,9 +12444,9 @@ projects:
       - Juan Pablo Traverso Gianini
     source:
       title: Original Lean Pool graph-colouring and matching adapters
-      url: https://github.com/jtraverso/lean-pool/tree/981b303a47a7cd3d8a8ce08c49cfe970330d21a0/LeanPool/GraphColouringMatching
+      url: https://github.com/jtraverso/lean-pool/tree/4c1fddb73f9891afc2186f8f11066ea2a08fe4fc/LeanPool/GraphColouringMatching
       github_repo: jtraverso/lean-pool
-      commit: 981b303a47a7cd3d8a8ce08c49cfe970330d21a0
+      commit: 4c1fddb73f9891afc2186f8f11066ea2a08fe4fc
     license: Apache-2.0
     status: verified
     provenance: AI
@@ -12469,8 +12471,18 @@ projects:
           the edge types of the palette-indexed matching subgraphs.
       - declaration: SimpleGraph.MatchingDecomposition.card_edges_eq_sum
         informal: >-
-          For a finite graph and finite palette, the number of graph edges
-          equals the sum of the numbers of edges in its matching classes.
+          For a finite edge set and finite palette, the number of graph edges
+          equals the sum of the numbers of edges in its matching classes,
+          even when the vertex set is infinite.
+      - declaration: SimpleGraph.MatchingDecomposition.cardinal_edges_eq_sum
+        informal: >-
+          Without any finiteness assumption on vertices, edges, or colours,
+          the cardinality of the graph edge set equals the indexed cardinal
+          sum of the matching-class edge cardinalities, with a universe lift
+          on the graph edge cardinality when required.
+        source_ref: >-
+          Cardinal.lean applies Mathlib's indexed cardinal sum to the existing
+          edgeEquivSigma; no infinite graph-colouring theorem is assumed.
       - declaration: SimpleGraph.lineGraph_colorable_iff_matchingDecomposition
         informal: >-
           The line graph is k-colourable if and only if the graph edges
