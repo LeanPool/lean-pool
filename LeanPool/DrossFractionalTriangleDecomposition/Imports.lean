@@ -1,0 +1,39 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+module  -- shake: keep-all --deprecated_module: ignore
+
+-- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.DrossFractionalTriangleDecomposition
+public import LeanPool.DrossFractionalTriangleDecomposition.Basic
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.Cancellation
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.CancellationConfigs
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.CompleteCase
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.Coverage
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.CutBridges
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.CutCapacity
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.CutDensity
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.CutPartnerCount
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.DeficientCutExact
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.DenseBase
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.DoubleCount
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.DrossArith
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.DrossNetwork
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.EdgeCountBound
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.ExactCutBound
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.ExactFlow
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.ExactScalar
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.FlowSaturation
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.HighDegreeCount
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.K4Counting
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.K4PartnerCount
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.NoHeavyTriangle
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.PeelingDegree
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.PeelingGeometry
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.PeelingLift
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.SmallCase
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.TransferBound
+public import LeanPool.DrossFractionalTriangleDecomposition.Internal.TriangleWeight
+public import LeanPool.DrossFractionalTriangleDecomposition.Main
