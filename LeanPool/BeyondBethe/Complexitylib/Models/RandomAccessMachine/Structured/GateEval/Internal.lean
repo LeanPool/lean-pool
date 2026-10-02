@@ -647,7 +647,8 @@ private theorem eval_measured (gate : CircuitCode.RawGate) (wires : List Bool)
       change evalDelta gate wires opReg * evalDelta gate wires address0Reg ≤
         wires.length + wireBase + 1
       rw [hop]
-      cases gate.opBit <;> simp [Input.bitValue]
+      cases gate.opBit <;> simp only [Input.bitValue, Bool.false_eq_true,
+        ↓reduceIte, zero_mul, Nat.zero_le, one_mul]
       exact le_trans hdeltaValue (by simp [wireBase])
   have hfinal : StoreBound wires.length (evaluated gate wires) := by
     have heq : evaluated gate wires =
@@ -867,7 +868,7 @@ private theorem routineLoaded_value0 {base : ℕ} {gate : CircuitCode.RawGate}
     routineLoaded store value0Reg = Input.bitValue value := by
   have hindex := List.getElem?_eq_some_iff.mp hvalue |>.1
   have hread := hready.wire_eq gate.input₀ hindex
-  simp [hvalue] at hread
+  simp only [hvalue, Input.bitValue] at hread
   have haddress := routineAddressed_address0 hready
   have hbase : wireBase ≤ base := hready.base_ge
   have hphysical : routineAddressed store (gate.input₀ + base) =
@@ -891,7 +892,7 @@ private theorem routineLoaded_value1 {base : ℕ} {gate : CircuitCode.RawGate}
     routineLoaded store value1Reg = Input.bitValue value := by
   have hindex := List.getElem?_eq_some_iff.mp hvalue |>.1
   have hread := hready.wire_eq gate.input₁ hindex
-  simp [hvalue] at hread
+  simp only [hvalue, Input.bitValue] at hread
   have haddress := routineAddressed_address1 hready
   have hbase : wireBase ≤ base := hready.base_ge
   have hphysical : routineAddressed store (gate.input₁ + base) =
@@ -1389,7 +1390,8 @@ private theorem routine_evaluation_measured {bound base : ℕ}
         exact hopEq
       change delta opReg * delta address0Reg ≤ bound
       rw [hop]
-      cases gate.opBit <;> simp [Input.bitValue]
+      cases gate.opBit <;> simp only [Input.bitValue, Bool.false_eq_true,
+        ↓reduceIte, zero_mul, Nat.zero_le, one_mul]
       exact le_trans hdeltaValue htwo
   have hevaluated : StoreEnvelope bound bound (routineEvaluated store) := by
     change StoreEnvelope bound bound

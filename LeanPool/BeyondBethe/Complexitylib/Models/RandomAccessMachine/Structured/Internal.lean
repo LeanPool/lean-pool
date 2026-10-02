@@ -234,7 +234,10 @@ private theorem compileAt_ifNonzero_correct
   simp only [stepLogCost, hjmpInstr', Instr.logCost,
     zero_add, logTimeUpto_zero, add_zero, true_and]
   rw [spaceUpto]
-  simp [Halted, curInstr]
+  simp only [Halted, curInstr, List.length_append, List.length_cons,
+      lt_add_iff_pos_right, add_pos_iff, zero_lt_one, or_true, or_self,
+      getElem?_pos, Std.le_refl, List.getElem_append_right, tsub_self,
+      List.getElem_cons_zero, Option.getD_some, reduceCtorEq, ↓reduceIte]
   rw [step_jz_nonzero pre _ test _ store htest]
   rw [spaceUpto_add _ branchSteps 1, hbranchRun.2.2, hbranchRun.1]
   rw [show (1 : ℕ) = 0 + 1 from rfl, spaceUpto]
@@ -319,7 +322,10 @@ theorem compileAt_correct_internal
         List.getElem_cons_zero, Option.getD_some, reduceCtorEq, ↓reduceIte]
       rw [step_jz_zero pre _ test _ store htest]
       rw [spaceUpto]
-      simp [Halted, curInstr]
+      simp only [Halted, curInstr, List.length_append, List.length_cons,
+          lt_add_iff_pos_right, add_pos_iff, zero_lt_one, or_true, or_self,
+          getElem?_pos, Std.le_refl, List.getElem_append_right, tsub_self,
+          List.getElem_cons_zero, Option.getD_some, reduceCtorEq, ↓reduceIte]
       rw [step_jz_zero pre _ test _ store htest]
       rw [hbranchRun.1, hbranchRun.2.1, hbranchRun.2.2]
       simp [stepLogCost, curInstr_append_head, Instr.logCost, Store.space,
@@ -400,7 +406,10 @@ theorem compileAt_correct_internal
       rw [hjmp', hloopRun.2.1]
       simp only [stepLogCost, hjmpInstr', Instr.logCost, true_and]
       rw [spaceUpto]
-      simp [Halted, curInstr]
+      simp only [Halted, curInstr, List.length_append, List.length_cons,
+          lt_add_iff_pos_right, add_pos_iff, zero_lt_one, or_true, or_self,
+          getElem?_pos, Std.le_refl, List.getElem_append_right, tsub_self,
+          List.getElem_cons_zero, Option.getD_some, reduceCtorEq, ↓reduceIte]
       rw [step_jz_nonzero pre _ test _ store htest]
       rw [show bodySteps + loopSteps + 1 = bodySteps + (loopSteps + 1) by omega]
       rw [spaceUpto_add _ bodySteps (loopSteps + 1)]

@@ -998,8 +998,8 @@ private theorem capturedInput_entries_fit (n : ℕ) (x : List Bool)
   have hentry := capturedInput_entry n x hmem
   have hposition : entry.1 ≤ valueReg n := by
     have hreg := hentry.1
-    simp [captureRegs, zeroReg, oneReg, tapeCountReg, stateScratchReg,
-      addressReg, valueReg] at hreg
+    simp only [captureRegs, List.mem_cons, List.not_mem_nil, or_false,
+      zeroReg, oneReg, tapeCountReg, stateScratchReg, addressReg, valueReg] at hreg
     rcases hreg with h | h | h | h | h | h
     all_goals rw [h]
     all_goals simp [valueReg]
