@@ -10,6 +10,7 @@ public import Mathlib.Topology.ContinuousMap.Compact
 import Mathlib.Analysis.Calculus.MeanValue
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Algebra.Order.Star.Real
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-! A short-interval estimate for actual differentiable trajectories.
 The proof uses the supremum norm and the mean value inequality, so the

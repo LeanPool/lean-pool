@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-!
 # A factorial-square bound for the partitions in Faà di Bruno's formula

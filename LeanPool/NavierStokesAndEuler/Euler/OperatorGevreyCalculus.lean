@@ -13,6 +13,7 @@ import LeanPool.NavierStokesAndEuler.Euler.TransverseGramInverse
 import LeanPool.NavierStokesAndEuler.ForMathlib.SmoothnessOrder
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Calculus.ContDiff.Bounds
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-!
 # Factorial bounds for genuine operator-valued derivatives

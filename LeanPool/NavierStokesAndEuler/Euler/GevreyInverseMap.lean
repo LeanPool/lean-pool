@@ -10,6 +10,7 @@ import LeanPool.NavierStokesAndEuler.Euler.GevreyComposition
 import Mathlib.Analysis.Calculus.ContDiff.Comp
 public import Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno
 import LeanPool.NavierStokesAndEuler.Euler.GevreyCompositionPartitions
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-!
 # Gevrey bounds from the actual inverse-map differential identity

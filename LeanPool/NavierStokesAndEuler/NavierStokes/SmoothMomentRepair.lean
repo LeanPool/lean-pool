@@ -8,6 +8,7 @@ module
 
 public import Mathlib.Analysis.Calculus.InverseFunctionTheorem.ContDiff
 import LeanPool.NavierStokesAndEuler.NavierStokes.MomentRepair
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-!
 # Smooth dependence of quadratic moment repair

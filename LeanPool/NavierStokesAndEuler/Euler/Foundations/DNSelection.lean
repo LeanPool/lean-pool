@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import Mathlib.Analysis.InnerProductSpace.Positive
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-! Quantitative endpoint selection in the activation step, equations (26)–(27). -/
 

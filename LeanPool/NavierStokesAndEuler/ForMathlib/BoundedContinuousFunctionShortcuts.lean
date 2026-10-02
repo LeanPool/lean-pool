@@ -6,6 +6,7 @@ Authors: Lean Pool contributors
 module
 
 public import Mathlib.Topology.ContinuousMap.Bounded.Normed
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-!
 # Continuity of addition on bounded continuous functions

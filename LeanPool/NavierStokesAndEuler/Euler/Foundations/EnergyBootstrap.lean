@@ -12,6 +12,7 @@ public import Mathlib.Analysis.Complex.Exponential
 public import Mathlib.Topology.Algebra.Module.ModuleTopology
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.InnerProductSpace.Basic
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-!
 # Energy Bootstrap

@@ -9,6 +9,7 @@ module
 public import LeanPool.NavierStokesAndEuler.Euler.FiniteGradeAssembly
 public import LeanPool.NavierStokesAndEuler.Euler.PacketResidualGrades
 import LeanPool.NavierStokesAndEuler.Euler.PacketLowGrades
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-! The coefficient equations of the literal assembled packet give the force in (14). -/
 

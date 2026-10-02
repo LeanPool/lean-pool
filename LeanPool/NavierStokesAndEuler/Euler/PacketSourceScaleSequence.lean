@@ -13,6 +13,7 @@ import LeanPool.NavierStokesAndEuler.Euler.Foundations.PacketUniformScaleSums
 import LeanPool.NavierStokesAndEuler.Euler.Foundations.PacketScaleGeometry
 import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-!
 The literal sequences in (37), including the polynomial initial shear and

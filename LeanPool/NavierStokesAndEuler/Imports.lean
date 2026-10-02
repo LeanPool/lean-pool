@@ -1188,6 +1188,7 @@ public import LeanPool.NavierStokesAndEuler.Euler.WholeSpaceGaussianFields
 public import LeanPool.NavierStokesAndEuler.Euler.WholeSpaceGaussianIntegration
 public import LeanPool.NavierStokesAndEuler.Euler.WholeSpaceGaussianKernel
 public import LeanPool.NavierStokesAndEuler.ForMathlib.BoundedContinuousFunctionShortcuts
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 public import LeanPool.NavierStokesAndEuler.ForMathlib.EuclideanMeasureShortcuts
 public import LeanPool.NavierStokesAndEuler.ForMathlib.EuclideanSpaceShortcuts
 public import LeanPool.NavierStokesAndEuler.ForMathlib.FiniteDimensionalBumps

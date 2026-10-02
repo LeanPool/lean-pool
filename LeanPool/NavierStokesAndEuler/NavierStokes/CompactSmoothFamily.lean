@@ -10,6 +10,7 @@ public import Mathlib.Topology.ContinuousMap.Compact
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
 import Mathlib.Analysis.Calculus.ContDiff.Comp
 import Mathlib.Analysis.Calculus.MeanValue
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-!
 # Jointly smooth functions as smooth families on a compact set

@@ -10,6 +10,7 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Topology.Algebra.Module.ModuleTopology
 import LeanPool.NavierStokesAndEuler.Euler.ClosedIntervalDerivativeExtension
 import LeanPool.NavierStokesAndEuler.Euler.Foundations.PacketCoefficientControl
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-! Normalized coefficient motion from genuine one-sided time derivatives. -/
 

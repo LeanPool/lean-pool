@@ -6,6 +6,7 @@ Authors: Lean Pool contributors
 module
 
 public import Mathlib.Analysis.Normed.Module.Basic
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-!
 # Shortcut instances for concrete real normed spaces

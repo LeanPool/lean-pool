@@ -8,6 +8,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Algebra.Order.Star.Real
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-! Explicit scalar choices for the actual drift-aware correction budget.
 The error target is exp(-sqrt X), with X=k^ϑ in the source construction. -/

@@ -8,6 +8,7 @@ module
 
 import Mathlib.Tactic.NormNum.RealSqrt
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-! The source's exponential tail follows quantitatively from its polynomial grade base. -/
 

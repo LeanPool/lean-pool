@@ -11,6 +11,7 @@ import LeanPool.NavierStokesAndEuler.Euler.Foundations.PacketBaseScales
 import LeanPool.NavierStokesAndEuler.Euler.Foundations.Scale
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Order.Star.Real
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-!
 # Packet Uniform Scale Sums

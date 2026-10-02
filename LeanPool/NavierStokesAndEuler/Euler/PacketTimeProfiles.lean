@@ -10,6 +10,7 @@ public import Mathlib.Basic.Real.Basic
 import Mathlib.Algebra.Order.Star.Real
 meta import Lean.Meta.Tactic.NormCast
 import Mathlib.Tactic.Bound
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-! The actual continuous time weights for the high and mean packet grades. -/
 

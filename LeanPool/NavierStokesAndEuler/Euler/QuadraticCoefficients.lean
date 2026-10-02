@@ -9,6 +9,7 @@ public import Mathlib.Topology.ContinuousMap.Compact
 public import Mathlib.Analysis.Normed.Operator.Basic
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-! Continuous coefficient data for the correction source, with proved uniform ball bounds. -/
 

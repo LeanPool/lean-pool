@@ -13,6 +13,7 @@ import Mathlib.Analysis.Calculus.SmoothSeries
 import Mathlib.MeasureTheory.Integral.Prod
 public import Mathlib.Analysis.Real.Sqrt
 import Mathlib.NumberTheory.Real.Irrational
+public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-!
 # Fourier coefficients of actual smooth periodic functions
