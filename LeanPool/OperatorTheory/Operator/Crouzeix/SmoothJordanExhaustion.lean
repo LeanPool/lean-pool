@@ -231,7 +231,7 @@ theorem StrictNestedSmoothJordanExhaustion.diffContOnCl_canonicalScalarCompanion
 stage: every function continuous on the closure and complex differentiable in
 the carrier is a compact-uniform limit of complex polynomials.  This is the
 Mergelyan conclusion specialized to the represented domain. -/
-def SmoothJordanDomain.HasMergelyanPolynomialApproximation
+@[expose] def SmoothJordanDomain.HasMergelyanPolynomialApproximation
     (Omega : SmoothJordanDomain) : Prop :=
   ∀ f : ℂ → ℂ, DiffContOnCl ℂ f Omega.carrier →
     ∃ q : ℕ → Polynomial ℂ,

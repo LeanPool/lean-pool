@@ -40,7 +40,7 @@ theorem realContinuousLinearMap_apply_eq_re_im
 
 /-- The coefficient vector associated with a planar real continuous linear
 functional. -/
-noncomputable def realContinuousLinearMapCoefficient
+@[expose] noncomputable def realContinuousLinearMapCoefficient
     (f : ℂ →L[ℝ] ℝ) : ℂ :=
   ⟨f 1, f I⟩
 
