@@ -49,7 +49,7 @@ variable {D : Type v}
 /-- Evaluation at `d` of the underlying functor, as a `Type`-valued
 functor on `D ⊛⥤ Type v`.  Every corepresentability statement in this
 file corepresents a functor of this shape. -/
-def dayEvaluation [SmallCategory D] [MonoidalCategory D]
+@[expose] def dayEvaluation [SmallCategory D] [MonoidalCategory D]
     (d : D) : (D ⊛⥤ Type v) ⥤ Type v :=
   (equiv D (Type v)).functor ⋙ (evaluation D (Type v)).obj d
 
@@ -212,7 +212,7 @@ instance externalRightFunctor_preservesColimits [SmallCategory D]
 
 /-- The Day tensor, on underlying functors, is the left Kan extension
 of the external product along `tensor D`. -/
-@[simps]
+@[expose, simps]
 def tensorObjLanIso [SmallCategory D] [MonoidalCategory D]
     (F G : D ⊛⥤ Type v) :
     (F ⊗ G).functor ≅ (tensor D).lan.obj (F.functor ⊠ G.functor) where

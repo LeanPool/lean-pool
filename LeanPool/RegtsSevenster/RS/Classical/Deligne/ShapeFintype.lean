@@ -30,7 +30,7 @@ theorem rowLens_injective : Function.Injective YoungDiagram.rowLens :=
 /-! ### Shapes -/
 
 /-- The Young diagrams with `n` cells. -/
-def Shape (n : ℕ) : Type := {μ : YoungDiagram // μ.card = n}
+@[expose] def Shape (n : ℕ) : Type := {μ : YoungDiagram // μ.card = n}
 
 namespace Shape
 

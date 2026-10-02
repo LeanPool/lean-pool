@@ -69,18 +69,18 @@ structure Hom
 
 /-- Super-objects form a category with componentwise identities
 and composition. -/
-instance instCategory [Category.{v} A] : Category (Doubled A) where
+@[expose] instance instCategory [Category.{v} A] : Category (Doubled A) where
   Hom := Hom
   id X := ⟨𝟙 X.even, 𝟙 X.odd⟩
   comp f g := ⟨f.even ≫ g.even, f.odd ≫ g.odd⟩
 
 /-- The even component of a morphism of super-objects. -/
-def evenHom [Category.{v} A]
+@[expose] def evenHom [Category.{v} A]
     {X Y : Doubled A} (f : X ⟶ Y) : X.even ⟶ Y.even :=
   Hom.even f
 
 /-- The odd component of a morphism of super-objects. -/
-def oddHom [Category.{v} A]
+@[expose] def oddHom [Category.{v} A]
     {X Y : Doubled A} (f : X ⟶ Y) : X.odd ⟶ Y.odd :=
   Hom.odd f
 
@@ -95,7 +95,7 @@ theorem hom_ext [Category.{v} A]
 
 /-- A morphism of super-objects from a pair of component
 morphisms. -/
-def homMk [Category.{v} A]
+@[expose] def homMk [Category.{v} A]
     {X Y : Doubled A} (fe : X.even ⟶ Y.even)
     (fo : X.odd ⟶ Y.odd) : X ⟶ Y :=
   ⟨fe, fo⟩
@@ -136,7 +136,7 @@ theorem oddHom_comp [Category.{v} A]
 
 /-- An isomorphism of super-objects from a pair of component
 isomorphisms. -/
-@[simps]
+@[expose, simps]
 def isoMk [Category.{v} A]
     {X Y : Doubled A} (e : X.even ≅ Y.even)
     (o : X.odd ≅ Y.odd) : X ≅ Y where
@@ -148,22 +148,22 @@ def isoMk [Category.{v} A]
 section Preadditive
 
 /-- The componentwise zero morphism. -/
-instance homZero [Category.{v} A] [Preadditive A]
+@[expose] instance homZero [Category.{v} A] [Preadditive A]
     (X Y : Doubled A) : Zero (X ⟶ Y) :=
   ⟨homMk 0 0⟩
 
 /-- Componentwise addition of morphisms. -/
-instance homAdd [Category.{v} A] [Preadditive A]
+@[expose] instance homAdd [Category.{v} A] [Preadditive A]
     (X Y : Doubled A) : Add (X ⟶ Y) :=
   ⟨fun f g => homMk (evenHom f + evenHom g) (oddHom f + oddHom g)⟩
 
 /-- Componentwise negation of morphisms. -/
-instance homNeg [Category.{v} A] [Preadditive A]
+@[expose] instance homNeg [Category.{v} A] [Preadditive A]
     (X Y : Doubled A) : Neg (X ⟶ Y) :=
   ⟨fun f => homMk (-evenHom f) (-oddHom f)⟩
 
 /-- The componentwise additive group of morphisms. -/
-instance homAddCommGroup [Category.{v} A] [Preadditive A]
+@[expose] instance homAddCommGroup [Category.{v} A] [Preadditive A]
     (X Y : Doubled A) : AddCommGroup (X ⟶ Y) where
   nsmul := nsmulRec
   zsmul := zsmulRec
@@ -257,7 +257,7 @@ end Preadditive
 section Linear
 
 /-- The componentwise ℂ-module of morphisms. -/
-instance homModule [Category.{v} A] [Preadditive A] [CategoryTheory.Linear ℂ A]
+@[expose] instance homModule [Category.{v} A] [Preadditive A] [CategoryTheory.Linear ℂ A]
     (X Y : Doubled A) : Module ℂ (X ⟶ Y) where
   smul c f := homMk (c • evenHom f) (c • oddHom f)
   one_smul _ := Hom.ext (one_smul _ _) (one_smul _ _)

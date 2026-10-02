@@ -71,7 +71,7 @@ theorem chainMap_trans [Category.{v} D]
 
 /-- The functor out of `ℕ` assembled from objects and one-step
 transitions. -/
-noncomputable def chainFunctor [Category.{v} D]
+@[expose] noncomputable def chainFunctor [Category.{v} D]
     (B : ℕ → D)
     (δ : ∀ n, B n ⟶ B (n + 1)) : ℕ ⥤ D where
   obj := B
