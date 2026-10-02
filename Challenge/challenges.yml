@@ -96,7 +96,11 @@ challenges:
       url: https://arxiv.org/abs/2008.05391
     license: Apache-2.0
     provenance: mix
-    status: open
+    status: solved
+    solution:
+      module: Solution.BudgetedSubmodular
+      authors:
+        - deadczarvc
     estimated_lines: 600
     statements:
       - declaration: Challenge.BudgetedSubmodular.modifiedGreedy_approx
