@@ -67,7 +67,7 @@ abbrev FrameIdx (n : ℕ) := Fin n ⊕ {pq : Fin n × Fin n // pq.1 ≤ pq.2}
   | Sum.inr pq => pderiv pq.1.1 (pderiv pq.1.2 u)
 
 /-- A map is *free* if its frame is linearly independent at every point. -/
-def IsFree (u : (Fin n → ℝ) → (Fin N → ℝ)) : Prop := IsPointwiseLinIndep (frame u)
+@[expose] def IsFree (u : (Fin n → ℝ) → (Fin N → ℝ)) : Prop := IsPointwiseLinIndep (frame u)
 
 lemma frame_smoothPeriodic {u : (Fin n → ℝ) → (Fin N → ℝ)} (hu : SmoothPeriodic u) :
     ∀ k, SmoothPeriodic (frame u k)
