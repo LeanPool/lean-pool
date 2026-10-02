@@ -125,37 +125,7 @@ lemma lsum_close {a b η : ℝ} (ha : 0 < a) (hab : a ≤ b)
 
 /-! ### Window limits in the parametrisation `u = n/p` -/
 
-/-- adapted from mo271/Zeta5@f19a196:Apery/PrimeSum.lean (`wsum_tendsto`), using the Li₂
-`wsum_close`. -/
-theorem wsum_tendsto {c d : ℝ} (hc : 0 < c) (hcd : c < d) :
-    Tendsto (fun K : ℝ => wsum (K / d) (K / c) / K ^ 2) atTop
-      (𝓝 ((1 / c ^ 2 - 1 / d ^ 2) / 2)) := by
-  rw [Metric.tendsto_atTop]
-  intro ε hε
-  have hd : 0 < d := hc.trans hcd
-  set η := ε * c ^ 2 / 8 with hη_def
-  have hη : 0 < η := by positivity
-  obtain ⟨Y₀, hY₀⟩ := eventually_atTop.mp (theta_eventually_close hη)
-  refine ⟨max (d * Y₀) 1, fun K hK => ?_⟩
-  have hK1 : 1 ≤ K := le_trans (le_max_right _ _) hK
-  have hK0 : 0 < K := by linarith
-  have hKY : d * Y₀ ≤ K := le_trans (le_max_left _ _) hK
-  have ha : 0 ≤ K / d := by positivity
-  have hab : K / d ≤ K / c := div_le_div_of_nonneg_left hK0.le hc hcd.le
-  have hbound := wsum_close ha hab hη.le (fun y hy => hY₀ y (by
-    have : Y₀ ≤ K / d := by rw [le_div_iff₀ hd]; linarith
-    linarith [hy.1]))
-  rw [Real.dist_eq]
-  have e : wsum (K / d) (K / c) / K ^ 2 - (1 / c ^ 2 - 1 / d ^ 2) / 2 =
-      (wsum (K / d) (K / c) - ((K / c) ^ 2 - (K / d) ^ 2) / 2) / K ^ 2 := by
-    field_simp
-  rw [e, abs_div, abs_of_pos (by positivity : (0:ℝ) < K ^ 2), div_lt_iff₀ (by positivity)]
-  calc |wsum (K / d) (K / c) - ((K / c) ^ 2 - (K / d) ^ 2) / 2|
-      ≤ 2 * η * (K / c) ^ 2 := hbound
-    _ = ε * K ^ 2 / 4 := by rw [hη_def]; field_simp; ring
-    _ < ε * K ^ 2 := by
-      have : 0 < ε * K ^ 2 := by positivity
-      linarith
+export Zeta5Irrational (wsum_tendsto)
 
 theorem lsum_tendsto {c d : ℝ} (hc : 0 < c) (hcd : c ≤ d) :
     Tendsto (fun K : ℝ => lsum (K / d) (K / c)) atTop (𝓝 (Real.log (d / c))) := by

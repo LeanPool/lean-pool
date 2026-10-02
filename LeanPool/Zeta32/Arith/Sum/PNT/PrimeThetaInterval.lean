@@ -5,6 +5,7 @@ Authors: Qian Tang
 -/
 module
 public import LeanPool.Zeta32.Arith.Sum.PNT.DecayPNTInterface
+public import LeanPool.Zeta5Irrational.PrimeSum
 
 /-! Zeta32 — Arith — Sum — PNT — PrimeThetaInterval. -/
 
@@ -18,8 +19,7 @@ open Finset Filter Topology Asymptotics
 namespace Zeta32.ArithSum.PrimeSums
 noncomputable section
 
-/-- Logarithm of a prime index, and zero for nonprime indices. -/
-def cPrime (k : ℕ) : ℝ := if k.Prime then Real.log k else 0
+export Zeta5Irrational (cPrime)
 
 /-- Sum of prime logarithms over the integer indices in the interval `(a, b]`. -/
 def logSum (a b : ℝ) : ℝ := ∑ k ∈ Finset.Ioc ⌊a⌋₊ ⌊b⌋₊, cPrime k

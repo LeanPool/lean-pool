@@ -6,7 +6,7 @@ Authors: Qian Tang, Moritz Firsching
 module
 public import LeanPool.Zeta32.Family
 public import LeanPool.Zeta32.Arith.Local.Val
-public import LeanPool.Zeta5Irrational.Arith.BinomBasis
+public import LeanPool.Zeta5Irrational.Arith.TauBound
 public import Mathlib.Algebra.Group.ForwardDiff
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 
@@ -66,89 +66,13 @@ export Zeta5Irrational (descPochhammer_eval_neg_one bin_derivative_eval_zero Lb_
 
 variable {p : ℕ} [hp : Fact p.Prime]
 
-/-- `Q` is a combination of `bin 0, …, bin k` with coefficients of valuation `≥ r`. -/
-def BinRep (p : ℕ) (k : ℕ) (r : ℚ) (Q : ℚ[X]) : Prop :=
-  ∃ e : ℕ → ℚ, Q = ∑ m ∈ range (k + 1), C (e m) * bin m ∧ ∀ m ≤ k, VG p (e m) r
+export Zeta5Irrational (BinRep derivative_bin' VG_dcoef binRep_of_values)
 
-lemma derivative_bin' {k m : ℕ} (hm : m ≤ k) :
-    (bin m).derivative =
-      ∑ n ∈ range (k + 1), C (if n < m then dcoef (m - n) else 0) * bin n := by
-  rw [derivative_bin]
-  symm
-  rw [← Finset.sum_filter_add_sum_filter_not (range (k + 1)) (fun n => n < m)]
-  rw [Finset.sum_eq_zero (s := (range (k + 1)).filter fun n => ¬ n < m)
-    (fun n hn => by rw [Finset.mem_filter] at hn; rw [ite_eq_right hn.2, C_0, zero_mul]), add_zero]
-  apply Finset.sum_nbij' (fun n => m - n) (fun j => m - j)
-  · intro n hn
-    simp only [Finset.mem_filter, Finset.mem_range] at hn
-    simp only [Finset.mem_Icc]; omega
-  · intro j hj
-    simp only [Finset.mem_Icc] at hj
-    simp only [Finset.mem_filter, Finset.mem_range]; omega
-  · intro n hn
-    simp only [Finset.mem_filter, Finset.mem_range] at hn; omega
-  · intro j hj
-    simp only [Finset.mem_Icc] at hj; omega
-  · intro n hn
-    simp only [Finset.mem_filter, Finset.mem_range] at hn
-    rw [ite_eq_left hn.2, show m - (m - n) = n by omega]
+namespace BinRep
 
-lemma VG_dcoef {j k : ℕ} (hj : 1 ≤ j) (hjk : j ≤ k) : VG p (dcoef j) (-(Nat.log p k : ℚ)) := by
-  unfold dcoef
-  rw [div_eq_mul_inv]
-  have h1 : VG p ((-1 : ℚ) ^ (j - 1)) 0 := by
-    rcases neg_one_pow_eq_or ℚ (j - 1) with h | h <;> rw [h]
-    · exact VG.one
-    · exact VG.one.neg
-  simpa using h1.mul (VG.inv_nat hj hjk)
+export Zeta5Irrational.BinRep (derivative Lb mono)
 
-/-- Differentiation loses at most `⌊log_p k⌋` in the binomial basis. -/
-theorem BinRep.derivative {k : ℕ} {r : ℚ} {Q : ℚ[X]} (h : BinRep p k r Q) :
-    BinRep p k (r - Nat.log p k) Q.derivative := by
-  obtain ⟨e, rfl, he⟩ := h
-  refine ⟨fun n => ∑ m ∈ range (k + 1), e m * (if n < m then dcoef (m - n) else 0), ?_, ?_⟩
-  · rw [Polynomial.derivative_sum]
-    simp_rw [derivative_mul, derivative_C, zero_mul, zero_add]
-    rw [Finset.sum_congr rfl fun m hm => by
-      rw [derivative_bin' (Nat.lt_succ_iff.mp (Finset.mem_range.mp hm)), Finset.mul_sum]]
-    rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl fun n _ => ?_
-    rw [map_sum, Finset.sum_mul]
-    refine Finset.sum_congr rfl fun m _ => ?_
-    rw [C_mul]; ring
-  · intro n _
-    apply VG.sum
-    intro m hm
-    have hmk : m ≤ k := Nat.lt_succ_iff.mp (Finset.mem_range.mp hm)
-    split_ifs with hnm
-    · have := (he m hmk).mul (VG_dcoef (p := p) (j := m - n) (k := k) (by omega) (by omega))
-      simpa [sub_eq_add_neg] using this
-    · rw [mul_zero]; exact VG.zero _
-
-/-- The Bernoulli functional loses at most `⌊log_p (k+1)⌋`. -/
-theorem BinRep.Lb {k : ℕ} {r : ℚ} {Q : ℚ[X]} (h : BinRep p k r Q) :
-    VG p (Lb Q) (r - Nat.log p (k + 1)) := by
-  obtain ⟨e, rfl, he⟩ := h
-  rw [Lb_sum]
-  apply VG.sum
-  intro m hm
-  have hmk : m ≤ k := Nat.lt_succ_iff.mp (Finset.mem_range.mp hm)
-  rw [Lb_C_mul, Lb_bin, div_eq_mul_inv]
-  have h1 : VG p ((-1 : ℚ) ^ m) 0 := by
-    rcases neg_one_pow_eq_or ℚ m with h | h <;> rw [h]
-    · exact VG.one
-    · exact VG.one.neg
-  have h2 : VG p (((m : ℚ) + 1)⁻¹) (-(Nat.log p (k + 1) : ℚ)) := by
-    have := VG.inv_nat (p := p) (j := m + 1) (n := k + 1) (by omega) (by omega)
-    simpa using this
-  have := (he m hmk).mul (h1.mul h2)
-  simpa [sub_eq_add_neg] using this
-
-omit hp in
-lemma BinRep.mono {k : ℕ} {r s : ℚ} {Q : ℚ[X]} (h : BinRep p k r Q) (hs : s ≤ r) :
-    BinRep p k s Q := by
-  obtain ⟨e, he, hv⟩ := h
-  exact ⟨e, he, fun m hm => (hv m hm).mono hs⟩
+end BinRep
 
 /-- The value at `0` of a binomial representation is its `0`-th coefficient. -/
 lemma BinRep.eval_zero {k : ℕ} {r : ℚ} {Q : ℚ[X]} (h : BinRep p k r Q) : VG p (Q.eval 0) r := by
@@ -161,20 +85,6 @@ lemma BinRep.eval_zero {k : ℕ} {r : ℚ} {Q : ℚ[X]} (h : BinRep p k r Q) : V
   rcases Nat.eq_zero_or_pos m with h0 | h0
   · subst h0; rw [bin_zero, eval_one, mul_one]; exact he 0 hmk
   · rw [bin_eval_zero h0, mul_zero]; exact VG.zero _
-
-/-- Values at `0, …, d` give a binomial representation. -/
-theorem binRep_of_values {P : ℚ[X]} {d : ℕ} (hd : P.natDegree ≤ d) {β : ℚ}
-    (hv : ∀ m ≤ d, VG p (P.eval (m : ℚ)) β) : BinRep p d β P := by
-  refine ⟨fun k => (fwdDiff 1)^[k] P.eval 0, newton P hd, fun k hk => ?_⟩
-  change VG p ((fwdDiff 1)^[k] P.eval 0) β
-  rw [fwdDiff_iter_eq_sum_shift]
-  apply VG.sum
-  intro j hj
-  have hjd : j ≤ d := by have := Finset.mem_range.mp hj; omega
-  rw [zero_add, zsmul_eq_mul, nsmul_eq_mul, mul_one]
-  have h1 : VG p (((-1 : ℤ) ^ (k - j) * (k.choose j : ℤ) : ℤ) : ℚ) 0 := VG.intCast _
-  have := h1.mul (hv j hjd)
-  simpa using this
 
 /-! ### The polynomial part of `U_r` -/
 
@@ -217,13 +127,13 @@ theorem VG_polynomialMoment {r : ℚ} (hr : VG p r 0) {q : ℚ[X]} {d : ℕ}
   have hA : VG p (Lbp (derivative (X * q))) (β - 2) := by
     rw [Lbp_eq]
     refine VG.add (h1.Lb.mono (by linarith)) ?_
-    have := h2.eval_zero
+    have := BinRep.eval_zero h2
     rw [← coeff_zero_eq_eval_zero, coeff_derivative] at this
     simpa using this
   have hB : VG p (Lbp (X * q)) (β - 1) := by
     rw [Lbp_eq]
     refine VG.add (h0.Lb.mono (by linarith)) ?_
-    have := h1.eval_zero
+    have := BinRep.eval_zero h1
     rw [← coeff_zero_eq_eval_zero, coeff_derivative] at this
     simpa using this
   have h2r : VG p (2 * r) 0 := by
