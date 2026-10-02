@@ -811,7 +811,7 @@ theorem cubeBesovDualLocalMemLpGlobal_of_memLp_two {d : ℕ}
     MeasureTheory.memLp_const (cubeAverage R g)
   simpa [hpConj, cubeFluctuation] using! hgR.sub hconst
 
-theorem cubeBesovDualTestNorm_two_one_component_cubeFluctuationVec_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+theorem cubeBesovDualTestNorm_two_one_fluctuation_le_weightedPositivePartialSeminormTwo
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (i : Fin d) (N : ℕ)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     cubeBesovDualTestNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞) N
@@ -855,7 +855,7 @@ theorem cubeBesovDualTestNorm_two_one_component_cubeFluctuationVec_le_scaleWeigh
     _ = cubeBesovScaleWeight s Q * cubeBesovPositiveVectorPartialSeminormTwo Q s N u := by
           rw [hpartial_eq]
 
-theorem cubeBesovDualTestNorm_two_two_component_cubeFluctuationVec_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+theorem cubeBesovDualTestNorm_two_two_fluctuation_le_weightedPositivePartialSeminormTwo
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (i : Fin d) (N : ℕ)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     cubeBesovDualTestNorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) N
@@ -930,7 +930,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_note_terms_of_partialBounds
           (fun x => cubeFluctuationVec Q g x i)
           ≤ cubeBesovScaleWeight s Q * cubeBesovPositiveVectorPartialSeminormTwo Q s N g := by
               exact
-                cubeBesovDualTestNorm_two_one_component_cubeFluctuationVec_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+                cubeBesovDualTestNorm_two_one_fluctuation_le_weightedPositivePartialSeminormTwo
                   Q s g i N hg
       _ ≤ cubeBesovScaleWeight s Q * Bg := by
             exact mul_le_mul_of_nonneg_left (hpos N) (cubeBesovScaleWeight_nonneg s Q)
@@ -1003,7 +1003,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_sharp_note_terms_of_partial
           (fun x => cubeFluctuationVec Q g x i)
           ≤ cubeBesovScaleWeight s Q * cubeBesovPositiveVectorPartialSeminormTwo Q s N g := by
               exact
-                cubeBesovDualTestNorm_two_one_component_cubeFluctuationVec_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+                cubeBesovDualTestNorm_two_one_fluctuation_le_weightedPositivePartialSeminormTwo
                   Q s g i N hg
       _ ≤ cubeBesovScaleWeight s Q * Bg := by
             exact mul_le_mul_of_nonneg_left (hpos N) (cubeBesovScaleWeight_nonneg s Q)
@@ -1140,7 +1140,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_note_terms_of_partialBounds
           (fun x => cubeFluctuationVec Q g x i)
           ≤ cubeBesovScaleWeight s Q * cubeBesovPositiveVectorPartialSeminormTwo Q s N g := by
               exact
-                cubeBesovDualTestNorm_two_two_component_cubeFluctuationVec_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+                cubeBesovDualTestNorm_two_two_fluctuation_le_weightedPositivePartialSeminormTwo
                   Q s g i N hg
       _ ≤ cubeBesovScaleWeight s Q * Bg := by
             exact mul_le_mul_of_nonneg_left (hpos N) (cubeBesovScaleWeight_nonneg s Q)
@@ -1212,7 +1212,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_sharp_note_terms_of_partial
           (fun x => cubeFluctuationVec Q g x i)
           ≤ cubeBesovScaleWeight s Q * cubeBesovPositiveVectorPartialSeminormTwo Q s N g := by
               exact
-                cubeBesovDualTestNorm_two_two_component_cubeFluctuationVec_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+                cubeBesovDualTestNorm_two_two_fluctuation_le_weightedPositivePartialSeminormTwo
                   Q s g i N hg
       _ ≤ cubeBesovScaleWeight s Q * Bg := by
             exact mul_le_mul_of_nonneg_left (hpos N) (cubeBesovScaleWeight_nonneg s Q)
