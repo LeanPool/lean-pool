@@ -734,7 +734,7 @@ private theorem decoders_internal {gateStart base : ℕ} {gate : CircuitCode.Raw
   obtain ⟨first, firstCost, firstSpace, hfirst, _hfirstCost, _hfirstSpace,
       hfirstResult, hfirstActive, hfirstOne, hfirstFrame, hfirstBound⟩ :=
     UnaryDecode.mainLoop_measured_internal hfirstReady hheaderBound
-  have hdecode0 : CircuitCode.NatCode.decodePrefix?
+  have hdecode0 : CircuitCode.NatCode.decodePrefixOption
       (firstRemaining gate tail) =
       some (gate.input₀, secondRemaining gate tail) := by
     simp [firstRemaining, secondRemaining]
@@ -837,7 +837,7 @@ private theorem decoders_internal {gateStart base : ℕ} {gate : CircuitCode.Raw
       _hsecondSpace, hsecondResult, hsecondActive, _hsecondOne,
       hsecondFrame, hsecondBound⟩ :=
     UnaryDecode.mainLoop_measured_internal hsecondReady hsavedCursorBound
-  have hdecode1 : CircuitCode.NatCode.decodePrefix?
+  have hdecode1 : CircuitCode.NatCode.decodePrefixOption
       (secondRemaining gate tail) = some (gate.input₁, tail) := by
     simp [secondRemaining]
   rw [hdecode1] at hsecondResult

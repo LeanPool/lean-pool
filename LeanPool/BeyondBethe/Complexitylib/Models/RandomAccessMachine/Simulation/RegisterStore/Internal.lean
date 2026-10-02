@@ -671,50 +671,50 @@ theorem Snapshot.width_run_le_internal (program : Program) (fuel : ℕ)
         rw [Nat.add_mul]
         omega
 
-private theorem WordCode.decodeAux?_replicate_true
+private theorem WordCode.decodeAuxOption_replicate_true
     (remaining consumed : ℕ) (payload suffix : List Bool)
     (hlength : payload.length = consumed + remaining) :
-    WordCode.decodeAux?
+    WordCode.decodeAuxOption
         (List.replicate remaining true ++ false :: payload ++ suffix) consumed =
       some (Nat.fromBitsLE payload, suffix) := by
   induction remaining generalizing consumed with
   | zero =>
     have hconsumed : consumed = payload.length := by omega
     subst consumed
-    simp [WordCode.decodeAux?]
+    simp [WordCode.decodeAuxOption]
   | succ remaining ih =>
-    simp only [List.replicate_succ, List.cons_append, WordCode.decodeAux?]
+    simp only [List.replicate_succ, List.cons_append, WordCode.decodeAuxOption]
     apply ih (consumed + 1)
     omega
 
-theorem WordCode.decodePrefix?_encode_append_internal (value : ℕ)
+theorem WordCode.decodePrefixOption_encode_append_internal (value : ℕ)
     (suffix : List Bool) :
-    WordCode.decodePrefix? (WordCode.encode value ++ suffix) =
+    WordCode.decodePrefixOption (WordCode.encode value ++ suffix) =
       some (value, suffix) := by
-  have hdecode := WordCode.decodeAux?_replicate_true
+  have hdecode := WordCode.decodeAuxOption_replicate_true
     (bitlen value) 0 (Nat.toBitsLE (bitlen value) value) suffix
     (by simp [bitlen, Nat.length_toBitsLE])
   have hround : Nat.fromBitsLE (Nat.toBitsLE (bitlen value) value) = value := by
     apply Nat.fromBitsLE_toBitsLE
     simpa [bitlen] using Nat.lt_size_self value
   rw [hround] at hdecode
-  simpa [WordCode.decodePrefix?, WordCode.encode, List.append_assoc] using hdecode
+  simpa [WordCode.decodePrefixOption, WordCode.encode, List.append_assoc] using hdecode
 
-theorem WordCode.decodePrefix?_encode_internal (value : ℕ) :
-    WordCode.decodePrefix? (WordCode.encode value) = some (value, []) := by
-  simpa using WordCode.decodePrefix?_encode_append_internal value []
+theorem WordCode.decodePrefixOption_encode_internal (value : ℕ) :
+    WordCode.decodePrefixOption (WordCode.encode value) = some (value, []) := by
+  simpa using WordCode.decodePrefixOption_encode_append_internal value []
 
 theorem WordCode.encode_length_internal (value : ℕ) :
     (WordCode.encode value).length = 2 * bitlen value + 1 := by
   simp [WordCode.encode, Nat.length_toBitsLE]
   omega
 
-theorem Entry.decodePrefix?_encode_append_internal (entry : Entry)
+theorem Entry.decodePrefixOption_encode_append_internal (entry : Entry)
     (suffix : List Bool) :
-    Entry.decodePrefix? (Entry.encode entry ++ suffix) = some (entry, suffix) := by
+    Entry.decodePrefixOption (Entry.encode entry ++ suffix) = some (entry, suffix) := by
   rcases entry with ⟨address, value⟩
-  simp [Entry.encode, Entry.decodePrefix?, List.append_assoc,
-    WordCode.decodePrefix?_encode_append_internal]
+  simp [Entry.encode, Entry.decodePrefixOption, List.append_assoc,
+    WordCode.decodePrefixOption_encode_append_internal]
 
 theorem Entry.encode_length_internal (entry : Entry) :
     (Entry.encode entry).length =
@@ -922,30 +922,30 @@ private theorem entries_encode_length_le (store : Store) (width : ℕ)
     rw [Nat.succ_mul]
     omega
 
-theorem decodeEntries?_encode_append_internal (store : Store) (suffix : List Bool) :
-    decodeEntries? store.length (store.flatMap Entry.encode ++ suffix) =
+theorem decodeEntriesOption_encode_append_internal (store : Store) (suffix : List Bool) :
+    decodeEntriesOption store.length (store.flatMap Entry.encode ++ suffix) =
       some (store, suffix) := by
   induction store with
   | nil => rfl
   | cons entry rest ih =>
-    simp [List.flatMap_cons, decodeEntries?, List.append_assoc,
-      Entry.decodePrefix?_encode_append_internal, ih]
+    simp [List.flatMap_cons, decodeEntriesOption, List.append_assoc,
+      Entry.decodePrefixOption_encode_append_internal, ih]
 
-theorem Snapshot.decodePrefix?_encode_append_internal (snapshot : Snapshot)
+theorem Snapshot.decodePrefixOption_encode_append_internal (snapshot : Snapshot)
     (suffix : List Bool) :
-    Snapshot.decodePrefix? (snapshot.encode ++ suffix) = some (snapshot, suffix) := by
+    Snapshot.decodePrefixOption (snapshot.encode ++ suffix) = some (snapshot, suffix) := by
   rcases snapshot with ⟨pc, store⟩
-  simp [Snapshot.encode, Snapshot.decodePrefix?, List.append_assoc,
-    WordCode.decodePrefix?_encode_append_internal,
-    decodeEntries?_encode_append_internal]
+  simp [Snapshot.encode, Snapshot.decodePrefixOption, List.append_assoc,
+    WordCode.decodePrefixOption_encode_append_internal,
+    decodeEntriesOption_encode_append_internal]
 
-theorem Snapshot.decodePrefix?_encode_internal (snapshot : Snapshot) :
-    Snapshot.decodePrefix? snapshot.encode = some (snapshot, []) := by
-  simpa using Snapshot.decodePrefix?_encode_append_internal snapshot []
+theorem Snapshot.decodePrefixOption_encode_internal (snapshot : Snapshot) :
+    Snapshot.decodePrefixOption snapshot.encode = some (snapshot, []) := by
+  simpa using Snapshot.decodePrefixOption_encode_append_internal snapshot []
 
-theorem Snapshot.decode?_encode_internal (snapshot : Snapshot) :
-    Snapshot.decode? snapshot.encode = some snapshot := by
-  rw [Snapshot.decode?, Snapshot.decodePrefix?_encode_internal]
+theorem Snapshot.decodeOption_encode_internal (snapshot : Snapshot) :
+    Snapshot.decodeOption snapshot.encode = some snapshot := by
+  rw [Snapshot.decodeOption, Snapshot.decodePrefixOption_encode_internal]
   rfl
 
 theorem Snapshot.encode_length_le_internal (snapshot : Snapshot) (width : ℕ)

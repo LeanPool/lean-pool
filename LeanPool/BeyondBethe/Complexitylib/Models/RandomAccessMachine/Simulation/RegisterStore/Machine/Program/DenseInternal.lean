@@ -202,7 +202,7 @@ theorem denseProgramLoopTM_iteration_internal
       cbody.work := by
     simpa [next, DenseOverlay.Snapshot.step,
       DenseOverlay.Snapshot.curInstr, denseInstructionStore,
-      denseInstructionPC, selectedInstruction_eq_getElem?_getD] using!
+      denseInstructionPC, selectedInstruction_eq_getElemOption_getD] using!
       hnextReadyRaw
   have hbodyInputParked : TM.Parked cbody.input := by
     simpa [hbodyInput] using! hinput
@@ -234,7 +234,7 @@ theorem denseProgramLoopTM_iteration_internal
     htest inp₀ cbody.work blank ⟨rfl, rfl, rfl⟩
   have hselected :
       selectedInstruction program next.pc = next.curInstr program :=
-    selectedInstruction_eq_getElem?_getD program next.pc
+    selectedInstruction_eq_getElemOption_getD program next.pc
   have htestOutput' :
       ctest.output = instructionHaltOutput (next.curInstr program) := by
     simpa only [hselected] using! htestOutput

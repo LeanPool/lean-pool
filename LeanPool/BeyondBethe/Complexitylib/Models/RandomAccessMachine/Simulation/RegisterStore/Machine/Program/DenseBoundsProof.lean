@@ -1144,7 +1144,7 @@ private theorem denseProgramInstructionTime_le_product {m : ℕ}
   have hselectedCost : instruction.logCost (snapshot.decode input) =
       RAM.stepLogCost program (snapshot.decode input) := by
     unfold instruction RAM.stepLogCost RAM.curInstr
-    rw [selectedInstruction_eq_getElem?_getD]
+    rw [selectedInstruction_eq_getElemOption_getD]
     simp [DenseOverlay.Snapshot.decode]
   have hcost : instruction.logCost (snapshot.decode input) ≤ width := by
     rw [hselectedCost]
@@ -1442,7 +1442,7 @@ theorem denseProgramStepTime_le_envelope_internal {m : ℕ}
   have hselectedCost : instruction.logCost (snapshot.decode input) =
       RAM.stepLogCost program (snapshot.decode input) := by
     unfold instruction RAM.stepLogCost RAM.curInstr
-    rw [selectedInstruction_eq_getElem?_getD]
+    rw [selectedInstruction_eq_getElemOption_getD]
     simp [DenseOverlay.Snapshot.decode]
   have hcost : instruction.logCost (snapshot.decode input) ≤ width := by
     rw [hselectedCost]
@@ -1528,7 +1528,7 @@ private theorem denseSnapshot_step_pc_le_resourceMagnitude
       exact le_trans (by omega) (program_length_le_resourceMagnitude program)
     have hselected := selectedInstructionResourceMagnitude_le program snapshot.pc
     unfold DenseOverlay.Snapshot.step DenseOverlay.Snapshot.curInstr
-    rw [← selectedInstruction_eq_getElem?_getD]
+    rw [← selectedInstruction_eq_getElemOption_getD]
     generalize hinstruction : selectedInstruction program snapshot.pc = instruction
     rw [hinstruction] at hselected
     cases instruction <;>

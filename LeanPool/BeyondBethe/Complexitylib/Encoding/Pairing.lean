@@ -87,27 +87,27 @@ theorem pair_inj {x₁ x₂ : List Bool} {y₁ y₂ : List Bool}
       subst hb; subst hx
       exact ⟨rfl, hy⟩
 
-/-- `unpair?` is a left inverse of `pair`: decoding an encoded pair
+/-- `unpairOption` is a left inverse of `pair`: decoding an encoded pair
     recovers exactly its two components. -/
-@[simp] theorem unpair?_pair (x y : List Bool) :
-    unpair? (pair x y) = some (x, y) :=
-  unpair?_delimit_append x y
+@[simp] theorem unpairOption_pair (x y : List Bool) :
+    unpairOption (pair x y) = some (x, y) :=
+  unpairOption_delimit_append x y
 
-/-- Soundness of the decoder: if `unpair?` succeeds on `z`, producing `(x, y)`,
+/-- Soundness of the decoder: if `unpairOption` succeeds on `z`, producing `(x, y)`,
     then `z` was exactly the encoding `pair x y`. -/
-theorem eq_pair_of_unpair?_eq_some {z x y : List Bool} (h : unpair? z = some (x, y)) :
+theorem eq_pair_of_unpairOption_eq_some {z x y : List Bool} (h : unpairOption z = some (x, y)) :
     z = pair x y :=
-  eq_delimit_append_of_unpair?_eq_some h
+  eq_delimit_append_of_unpairOption_eq_some h
 
-/-- `unpair? z` returns `some (x, y)` if and only if `z = pair x y`,
+/-- `unpairOption z` returns `some (x, y)` if and only if `z = pair x y`,
     characterizing exactly which strings are valid pair encodings. -/
-theorem unpair?_eq_some_iff {z x y : List Bool} :
-    unpair? z = some (x, y) ↔ z = pair x y := by
+theorem unpairOption_eq_some_iff {z x y : List Bool} :
+    unpairOption z = some (x, y) ↔ z = pair x y := by
   constructor
-  · exact eq_pair_of_unpair?_eq_some
+  · exact eq_pair_of_unpairOption_eq_some
   · intro hz
     subst hz
-    exact unpair?_pair x y
+    exact unpairOption_pair x y
 
 /-- In `pair x y`, the first duplicated copy of `x[i]` sits at position `2*i`. -/
 theorem pair_getElem_left_first (x y : List Bool) (i : ℕ) (hi : i < x.length) :

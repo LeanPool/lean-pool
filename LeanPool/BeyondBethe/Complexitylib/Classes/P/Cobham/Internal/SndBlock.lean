@@ -14,7 +14,7 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.TuringMachine.Tape.Encod
 
 `Cobham.sndBlockTM` scans the doubled payload two bits at a time until the
 `[false, true]` separator, then copies the rest of the input to the output.
-Malformed input halts with empty output, matching `unpair? = none`.
+Malformed input halts with empty output, matching `unpairOption = none`.
 
 ## Main results
 
@@ -318,7 +318,7 @@ private theorem sndBlockTM_scan_loop :
             sndBlockTM_emit_loop y [] c2 rfl hsuf2 hpre2
           refine ⟨c', t + 1 + 1, by simp only [List.length_cons]; omega,
             .step hstepA (.step hstepB hreach), hhalt, ?_⟩
-          have : sndBlock (false :: true :: y) = y := by simp [sndBlock, unpair?]
+          have : sndBlock (false :: true :: y) = y := by simp [sndBlock, unpairOption]
           rw [this]
           simpa using! hcout.hasOutput
       | false :: false :: z =>
@@ -360,7 +360,7 @@ private theorem sndBlockTM_scan_loop :
           refine ⟨c', t + 1 + 1, by simp only [List.length_cons]; omega,
             .step hstepA (.step hstepB hreach), hhalt, ?_⟩
           have : sndBlock (false :: false :: z) = sndBlock z := by
-            cases h : unpair? z <;> simp [sndBlock, unpair?, h]
+            cases h : unpairOption z <;> simp [sndBlock, unpairOption, h]
           rw [this]; exact hcout
       | true :: true :: z =>
           have hreadA : c.input.read = Γ.ofBool true := hsuf.read_cons
@@ -401,7 +401,7 @@ private theorem sndBlockTM_scan_loop :
           refine ⟨c', t + 1 + 1, by simp only [List.length_cons]; omega,
             .step hstepA (.step hstepB hreach), hhalt, ?_⟩
           have : sndBlock (true :: true :: z) = sndBlock z := by
-            cases h : unpair? z <;> simp [sndBlock, unpair?, h]
+            cases h : unpairOption z <;> simp [sndBlock, unpairOption, h]
           rw [this]; exact hcout
       | true :: false :: rest =>
           -- malformed: scanA true → scanBtrue → reads false → done, empty output.
@@ -435,7 +435,7 @@ private theorem sndBlockTM_scan_loop :
               = c1.output from by
                 rw [writeAndMove_readBack c1.output houtne1, idleDir,
                   ite_eq_right houtne1, Tape.move]]
-          have : sndBlock (true :: false :: rest) = [] := by simp [sndBlock, unpair?]
+          have : sndBlock (true :: false :: rest) = [] := by simp [sndBlock, unpairOption]
           rw [this]; simpa using! hpre1.hasOutput
 
 /-- `sndBlock` is polynomial-time, via the `sndBlockTM` scanner. -/

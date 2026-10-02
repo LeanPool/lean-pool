@@ -275,14 +275,14 @@ theorem output_of_cellsCode {W : ℕ} (t : Tape) (y : List Bool)
       = bitOf (symCode (t.cells (i + 1))) 0 := by
     intro i hi
     rw [bitOf_eq_getElem (by rw [cellBits_length]; exact hi),
-      ← Option.some_inj, ← List.getElem?_eq_getElem, cellBits_getElem? 2 u W i hi,
+      ← Option.some_inj, ← List.getElem?_eq_getElem, cellBits_getElemOption 2 u W i hi,
       Option.some_inj]
     exact hcell i hi 0 (by omega)
   have hbit : ∀ i < W, bitOf (cellBits 3 u W) i
       = bitOf (symCode (t.cells (i + 1))) 1 := by
     intro i hi
     rw [bitOf_eq_getElem (by rw [cellBits_length]; exact hi),
-      ← Option.some_inj, ← List.getElem?_eq_getElem, cellBits_getElem? 3 u W i hi,
+      ← Option.some_inj, ← List.getElem?_eq_getElem, cellBits_getElemOption 3 u W i hi,
       Option.some_inj]
     have := hcell i hi 1 (by omega)
     rwa [show 2 * i + (2 + 1) = 2 * i + 3 from by omega] at this

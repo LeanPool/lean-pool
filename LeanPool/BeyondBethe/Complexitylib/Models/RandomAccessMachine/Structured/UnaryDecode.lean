@@ -43,7 +43,7 @@ theorem mainLoop_performance {remaining : List Bool}
     ∃ final cost space,
       Exec mainLoop store final (loopStepCount remaining) cost space ∧
       cost ≤ timeBound inputLength ∧ space ≤ spaceBound inputLength ∧
-      (match CircuitCode.NatCode.decodePrefix? remaining with
+      (match CircuitCode.NatCode.decodePrefixOption remaining with
       | none =>
           final verdictReg = 0 ∧ final valueReg = value + remaining.length ∧
           final pointerReg = inputBase + inputLength ∧ final remainingReg = 0
@@ -63,7 +63,7 @@ theorem program_performance (bits : List Bool) :
     ∃ final cost space,
       Exec program (inputStore bits) final (stepCount bits) cost space ∧
       cost ≤ timeBound bits.length ∧ space ≤ spaceBound bits.length ∧
-      match CircuitCode.NatCode.decodePrefix? bits with
+      match CircuitCode.NatCode.decodePrefixOption bits with
       | none =>
           final verdictReg = 0 ∧ final valueReg = bits.length ∧
           final pointerReg = inputBase + bits.length ∧ final remainingReg = 0
@@ -85,7 +85,7 @@ theorem compiled_performance (bits : List Bool) :
           { pc := 0, regs := inputStore bits } ≤ timeBound bits.length ∧
       spaceUpto compiled (stepCount bits)
           { pc := 0, regs := inputStore bits } ≤ spaceBound bits.length ∧
-      match CircuitCode.NatCode.decodePrefix? bits with
+      match CircuitCode.NatCode.decodePrefixOption bits with
       | none =>
           final verdictReg = 0 ∧ final valueReg = bits.length ∧
           final pointerReg = inputBase + bits.length ∧ final remainingReg = 0

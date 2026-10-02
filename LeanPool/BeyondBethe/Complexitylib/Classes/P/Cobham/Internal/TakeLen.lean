@@ -22,7 +22,7 @@ intermediate value can grow beyond it.
 The transducer `takeLenTM` has one work tape: *scan* parses the leading block two
 symbols at a time, writing one unary mark per payload bit; *rewind* returns the
 work head to cell one; *copy* emits one input symbol per remaining mark.
-Malformed input halts with empty output, matching `unpair? = none`.
+Malformed input halts with empty output, matching `unpairOption = none`.
 
 ## Main results
 
@@ -44,7 +44,7 @@ leading block have already been counted and `w` is the unread part of the input:
 the suffix truncated to the total ruler length, and nothing at all when the block
 framing is broken. -/
 def takeLenAux (k : ℕ) (w : List Bool) : List Bool :=
-  match unpair? w with
+  match unpairOption w with
   | some (x, y) => y.take (k + x.length)
   | none => []
 
@@ -59,14 +59,14 @@ def takeLen (p : List Bool) : List Bool := takeLenAux 0 p
 /-- Reaching the separator ends the ruler: the suffix is truncated to `k`. -/
 @[simp] theorem takeLenAux_sep (k : ℕ) (z : List Bool) :
     takeLenAux k (false :: true :: z) = z.take k := by
-  simp [takeLenAux, unpair?]
+  simp [takeLenAux, unpairOption]
 
 /-- A doubled payload bit lengthens the ruler by one. -/
 theorem takeLenAux_double (k : ℕ) (b : Bool) (z : List Bool) :
     takeLenAux k (b :: b :: z) = takeLenAux (k + 1) z := by
   cases b <;>
-    · simp only [takeLenAux, unpair?]
-      cases h : unpair? z with
+    · simp only [takeLenAux, unpairOption]
+      cases h : unpairOption z with
       | none => simp
       | some xy =>
           obtain ⟨x, y⟩ := xy

@@ -88,7 +88,7 @@ def cellBits (o : ℕ) (z : List Bool) : ℕ → List Bool
   | zero => rfl
   | succ m ih => rw [cellBits, List.length_append, ih]; rfl
 
-theorem cellBits_getElem? (o : ℕ) (z : List Bool) :
+theorem cellBits_getElemOption (o : ℕ) (z : List Bool) :
     ∀ (m i : ℕ), i < m → (cellBits o z m)[i]? = some (bitOf z (2 * i + o)) := by
   intro m
   induction m with

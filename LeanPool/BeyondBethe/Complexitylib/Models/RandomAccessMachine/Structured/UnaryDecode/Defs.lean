@@ -109,7 +109,7 @@ structure CursorReady (inputLength : ℕ) (remaining : List Bool)
 
 /-- Exact transition count for invoking `mainLoop` at a semantic suffix. -/
 def loopStepCount (remaining : List Bool) : ℕ :=
-  match CircuitCode.NatCode.decodePrefix? remaining with
+  match CircuitCode.NatCode.decodePrefixOption remaining with
   | none => 10 * remaining.length + 6
   | some (value, _) => 10 * value + 11
 
@@ -121,7 +121,7 @@ def compiled : Program := program.compile
 
 /-- Exact compiled transition count through the first terminator or exhaustion. -/
 def stepCount (bits : List Bool) : ℕ :=
-  match CircuitCode.NatCode.decodePrefix? bits with
+  match CircuitCode.NatCode.decodePrefixOption bits with
   | none => 10 * bits.length + 11
   | some (value, _) => 10 * value + 16
 

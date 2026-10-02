@@ -33,11 +33,11 @@ def fstBlock : List Bool → List Bool
   | true :: true :: z => true :: fstBlock z
   | _ => []
 
-/-- Take the suffix after the leading self-delimiting block (the second `unpair?`
+/-- Take the suffix after the leading self-delimiting block (the second `unpairOption`
 component), or `[]` if the input is not a valid block. On `encodeVec` of a
 nonempty vector this returns the head component `v 0`. -/
 def sndBlock (z : List Bool) : List Bool :=
-  match unpair? z with
+  match unpairOption z with
   | some (_, s) => s
   | none => []
 

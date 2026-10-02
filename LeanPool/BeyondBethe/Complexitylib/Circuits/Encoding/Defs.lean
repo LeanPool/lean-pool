@@ -108,21 +108,21 @@ def isWellFormed (N : ℕ) (c : RawCircuit) : Bool :=
 /-- Evaluate gates in order, appending each result to the memo array.
 
 Failure means that a gate contains a forward or out-of-range reference. -/
-def evalAux? : RawCircuit → Array Bool → Option (Array Bool)
+def evalAuxOption : RawCircuit → Array Bool → Option (Array Bool)
   | [], wires => some wires
   | gate :: gates, wires => do
       let value₀ ← wires[gate.input₀]?
       let value₁ ← wires[gate.input₁]?
-      evalAux? gates (wires.push (gate.eval value₀ value₁))
+      evalAuxOption gates (wires.push (gate.eval value₀ value₁))
 
 /-- Evaluate a raw circuit on a list of primary-input values.
 
 The empty gate list has no designated output and is rejected. -/
-def eval? (c : RawCircuit) (input : List Bool) : Option Bool := do
+def evalOption (c : RawCircuit) (input : List Bool) : Option Bool := do
   if c.isEmpty then
     none
   else
-    let wires ← evalAux? c input.toArray
+    let wires ← evalAuxOption c input.toArray
     wires[input.length + c.length - 1]?
 
 end RawCircuit
@@ -136,14 +136,14 @@ def encode (n : ℕ) : List Bool :=
   List.replicate n true ++ [false]
 
 /-- Parse one terminated-unary prefix, returning the unconsumed suffix. -/
-def decodeAux? : List Bool → ℕ → Option (ℕ × List Bool)
+def decodeAuxOption : List Bool → ℕ → Option (ℕ × List Bool)
   | [], _ => none
   | false :: rest, acc => some (acc, rest)
-  | true :: rest, acc => decodeAux? rest (acc + 1)
+  | true :: rest, acc => decodeAuxOption rest (acc + 1)
 
 /-- Parse one terminated-unary prefix. -/
-def decodePrefix? (bits : List Bool) : Option (ℕ × List Bool) :=
-  decodeAux? bits 0
+def decodePrefixOption (bits : List Bool) : Option (ℕ × List Bool) :=
+  decodeAuxOption bits 0
 
 end NatCode
 
@@ -168,12 +168,12 @@ def encode (g : RawGate) : List Bool :=
     NatCode.encode g.input₀ ++ NatCode.encode g.input₁
 
 /-- Parse one gate prefix, returning the unconsumed suffix. -/
-def decodePrefix? : List Bool → Option (RawGate × List Bool)
+def decodePrefixOption : List Bool → Option (RawGate × List Bool)
   | op :: negated₀ :: negated₁ :: rest =>
-      match NatCode.decodePrefix? rest with
+      match NatCode.decodePrefixOption rest with
       | none => none
       | some (input₀, rest) =>
-          match NatCode.decodePrefix? rest with
+          match NatCode.decodePrefixOption rest with
           | none => none
           | some (input₁, rest) =>
               some ({ op := opOfBit op, input₀, input₁, negated₀, negated₁ }, rest)
@@ -186,13 +186,13 @@ end RawGate
 namespace RawCircuit
 
 /-- Parse exactly `count` gate prefixes and return the remaining suffix. -/
-def decodeGates? : ℕ → List Bool → Option (RawCircuit × List Bool)
+def decodeGatesOption : ℕ → List Bool → Option (RawCircuit × List Bool)
   | 0, bits => some ([], bits)
   | count + 1, bits =>
-      match RawGate.decodePrefix? bits with
+      match RawGate.decodePrefixOption bits with
       | none => none
       | some (gate, rest) =>
-          match decodeGates? count rest with
+          match decodeGatesOption count rest with
           | none => none
           | some (gates, rest) => some (gate :: gates, rest)
 
@@ -201,14 +201,14 @@ def encode (c : RawCircuit) : List Bool :=
   NatCode.encode c.length ++ c.flatMap RawGate.encode
 
 /-- Decode one circuit prefix and return the unconsumed suffix. -/
-def decodePrefix? (bits : List Bool) : Option (RawCircuit × List Bool) :=
-  match NatCode.decodePrefix? bits with
+def decodePrefixOption (bits : List Bool) : Option (RawCircuit × List Bool) :=
+  match NatCode.decodePrefixOption bits with
   | none => none
-  | some (count, rest) => decodeGates? count rest
+  | some (count, rest) => decodeGatesOption count rest
 
 /-- Decode exactly one circuit.  Any trailing bits are rejected. -/
-def decode? (bits : List Bool) : Option RawCircuit :=
-  match decodePrefix? bits with
+def decodeOption (bits : List Bool) : Option RawCircuit :=
+  match decodePrefixOption bits with
   | some (c, []) => some c
   | _ => none
 
@@ -241,8 +241,8 @@ def encodeCircuit {N G : ℕ} [NeZero N]
 /-- Decode and evaluate a circuit code against an input of exactly `N` bits. -/
 def evalCode (N : ℕ) (code input : List Bool) : Option Bool := do
   if input.length = N then
-    let circuit ← RawCircuit.decode? code
-    circuit.eval? input
+    let circuit ← RawCircuit.decodeOption code
+    circuit.evalOption input
   else
     none
 

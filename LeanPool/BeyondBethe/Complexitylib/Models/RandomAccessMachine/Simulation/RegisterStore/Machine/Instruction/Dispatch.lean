@@ -53,7 +53,7 @@ private theorem copyWorkToWorkTM_isTransducer {n : ℕ}
 
 /-- Pure branch-tree selection agrees with list lookup and the RAM model's
 out-of-range `halt` convention. -/
-theorem selectedInstruction_eq_getElem?_getD (program : Program)
+theorem selectedInstruction_eq_getElemOption_getD (program : Program)
     (selector : ℕ) :
     selectedInstruction program selector =
       (program[selector]?).getD Instr.halt := by
@@ -253,7 +253,7 @@ theorem programStepTM_hoareTime_frame {n : ℕ}
   rintro inp work out ⟨hinp, hnext, hout⟩
   refine ⟨hinp, ?_, hout⟩
   simpa [instructionStore, instructionPC, Snapshot.step, Snapshot.curInstr,
-    selectedInstruction_eq_getElem?_getD] using hnext
+    selectedInstruction_eq_getElemOption_getD] using hnext
 
 /-- Control execution followed by unchanged-store copying is append-only on
 the real output tape. -/

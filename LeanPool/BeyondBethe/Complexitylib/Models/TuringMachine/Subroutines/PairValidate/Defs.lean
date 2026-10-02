@@ -13,7 +13,7 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.TuringMachine.Combinator
 
 This file defines a finite-state scanner for the image of the library's
 self-delimiting binary `pair` codec. Unlike `pairSplitCoreTM`, the validator
-has total semantics: it writes `1` exactly when `unpair?` succeeds and writes
+has total semantics: it writes `1` exactly when `unpairOption` succeeds and writes
 `0` on every malformed encoding.
 -/
 
@@ -24,7 +24,7 @@ namespace Complexity
 
 /-- The language of strings on which the canonical pair decoder succeeds. -/
 def validPairEncoding : Language :=
-  {z | (unpair? z).isSome = true}
+  {z | (unpairOption z).isSome = true}
 
 namespace TM
 

@@ -13,7 +13,7 @@ public import LeanPool.BeyondBethe.Complexitylib.Models.TuringMachine.Subroutine
 /-!
 # Pair-encoding validator — proof internals
 
-The finite-state fold is related to `unpair?`, then the generic scanner
+The finite-state fold is related to `unpairOption`, then the generic scanner
 correctness theorem supplies the executable machine proof and exact time bound.
 -/
 
@@ -28,9 +28,9 @@ namespace TM
 prefix states reconstruct the pending decoder input; the absorbing states have
 constant verdicts. -/
 private def pairValidateSuffix : PairValidateState → List Bool → Bool
-  | .next, bits => (unpair? bits).isSome
-  | .afterZero, bits => (unpair? (false :: bits)).isSome
-  | .afterOne, bits => (unpair? (true :: bits)).isSome
+  | .next, bits => (unpairOption bits).isSome
+  | .afterZero, bits => (unpairOption (false :: bits)).isSome
+  | .afterOne, bits => (unpairOption (true :: bits)).isSome
   | .suffix, _ => true
   | .invalid, _ => false
 
@@ -41,16 +41,16 @@ private theorem pairValidate_fold_correct (state : PairValidateState) (bits : Li
       pairValidateSuffix state bits := by
   induction bits generalizing state with
   | nil =>
-      cases state <;> simp [pairValidateAccept, pairValidateSuffix, unpair?]
+      cases state <;> simp [pairValidateAccept, pairValidateSuffix, unpairOption]
   | cons bit bits ih =>
       rw [List.foldl_cons, ih]
       cases state <;> cases bit <;>
-        simp [pairValidateStep, pairValidateSuffix, unpair?]
+        simp [pairValidateStep, pairValidateSuffix, unpairOption]
 
-/-- The pair-validator fold accepts exactly when `unpair?` succeeds. -/
+/-- The pair-validator fold accepts exactly when `unpairOption` succeeds. -/
 theorem pairValidateAccept_fold_eq_true_iff_internal (bits : List Bool) :
     pairValidateAccept (bits.foldl pairValidateStep .next) = true ↔
-      (unpair? bits).isSome = true := by
+      (unpairOption bits).isSome = true := by
   rw [pairValidate_fold_correct]
   rfl
 
@@ -60,7 +60,7 @@ theorem pairValidateTM_decidesInTime_internal :
     pairValidateTM.DecidesInTime validPairEncoding (fun n => n + 2) := by
   apply scannerTM_decidesInTime .next pairValidateStep pairValidateAccept
   intro bits
-  change (unpair? bits).isSome = true ↔
+  change (unpairOption bits).isSome = true ↔
     pairValidateAccept (bits.foldl pairValidateStep .next) = true
   exact (pairValidateAccept_fold_eq_true_iff_internal bits).symm
 

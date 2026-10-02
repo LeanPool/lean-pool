@@ -706,7 +706,7 @@ private theorem firstDecode_restart_measured
   obtain ⟨first, firstCost, firstSpace, hfirst, hfirstCost, hfirstSpace,
       hfirstResult, hfirstActive, hfirstOne, hfirstFrame, hfirstBound⟩ :=
     UnaryDecode.mainLoop_measured_internal hheaderReady hheaderBound
-  have hdecode0 : CircuitCode.NatCode.decodePrefix? firstRemaining =
+  have hdecode0 : CircuitCode.NatCode.decodePrefixOption firstRemaining =
       some (gate.input₀, secondRemaining) := by
     simp [firstRemaining, secondRemaining, List.append_assoc]
   rw [hdecode0] at hfirstResult
@@ -881,13 +881,13 @@ theorem program_measured_internal (gate : CircuitCode.RawGate) (wires : List Boo
       hfirstValue, hfirstActive, hfirstFrame, hfirstBound, hlarge,
       hsecondReady, hsecondBound⟩ := firstDecode_restart_measured gate wires
   let saved := saveRestartStore first
-  have hdecode0 : CircuitCode.NatCode.decodePrefix? firstRemaining =
+  have hdecode0 : CircuitCode.NatCode.decodePrefixOption firstRemaining =
       some (gate.input₀, secondRemaining) := by
     simp [firstRemaining, secondRemaining, List.append_assoc]
   obtain ⟨second, secondCost, secondSpace, hsecond, hsecondCost, hsecondSpace,
       hsecondResult, hsecondActive, _hsecondOne, hsecondFrame, hsecondFinalBound⟩ :=
     UnaryDecode.mainLoop_measured_internal hsecondReady hsecondBound
-  have hdecode1 : CircuitCode.NatCode.decodePrefix? secondRemaining =
+  have hdecode1 : CircuitCode.NatCode.decodePrefixOption secondRemaining =
       some (gate.input₁, wires) := by
     simp [secondRemaining]
   rw [hdecode1] at hsecondResult

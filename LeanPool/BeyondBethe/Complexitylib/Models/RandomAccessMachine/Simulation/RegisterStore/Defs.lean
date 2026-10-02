@@ -136,9 +136,9 @@ def encode (value : ℕ) : List Bool :=
     false :: Nat.toBitsLE (bitlen value) value
 
 /-- Parse the unary-width prefix, then consume exactly that many payload bits. -/
-def decodeAux? : List Bool → ℕ → Option (ℕ × List Bool)
+def decodeAuxOption : List Bool → ℕ → Option (ℕ × List Bool)
   | [], _ => none
-  | true :: rest, width => decodeAux? rest (width + 1)
+  | true :: rest, width => decodeAuxOption rest (width + 1)
   | false :: rest, width =>
       if width ≤ rest.length then
         some (Nat.fromBitsLE (rest.take width), rest.drop width)
@@ -146,8 +146,8 @@ def decodeAux? : List Bool → ℕ → Option (ℕ × List Bool)
         none
 
 /-- Parse one self-delimiting binary word and return the unconsumed suffix. -/
-def decodePrefix? (bits : List Bool) : Option (ℕ × List Bool) :=
-  decodeAux? bits 0
+def decodePrefixOption (bits : List Bool) : Option (ℕ × List Bool) :=
+  decodeAuxOption bits 0
 
 end WordCode
 
@@ -158,9 +158,9 @@ def encode (entry : Entry) : List Bool :=
   WordCode.encode entry.1 ++ WordCode.encode entry.2
 
 /-- Parse one address/value entry and return the unconsumed suffix. -/
-def decodePrefix? (bits : List Bool) : Option (Entry × List Bool) := do
-  let (address, rest) ← WordCode.decodePrefix? bits
-  let (value, rest) ← WordCode.decodePrefix? rest
+def decodePrefixOption (bits : List Bool) : Option (Entry × List Bool) := do
+  let (address, rest) ← WordCode.decodePrefixOption bits
+  let (value, rest) ← WordCode.decodePrefixOption rest
   pure ((address, value), rest)
 
 end Entry
@@ -173,11 +173,11 @@ def encodedStoreLength (store : Store) : ℕ :=
   (store.flatMap Entry.encode).length
 
 /-- Parse exactly `count` sparse entries and return the unconsumed suffix. -/
-def decodeEntries? : ℕ → List Bool → Option (Store × List Bool)
+def decodeEntriesOption : ℕ → List Bool → Option (Store × List Bool)
   | 0, bits => some ([], bits)
   | count + 1, bits => do
-      let (entry, rest) ← Entry.decodePrefix? bits
-      let (entries, rest) ← decodeEntries? count rest
+      let (entry, rest) ← Entry.decodePrefixOption bits
+      let (entries, rest) ← decodeEntriesOption count rest
       pure (entry :: entries, rest)
 
 /-- A finite RAM snapshot: program counter plus sparse register store. -/
@@ -202,15 +202,15 @@ def encode (snapshot : Snapshot) : List Bool :=
     snapshot.store.flatMap Entry.encode
 
 /-- Parse one snapshot prefix and return the unconsumed suffix. -/
-def decodePrefix? (bits : List Bool) : Option (Snapshot × List Bool) := do
-  let (pc, rest) ← WordCode.decodePrefix? bits
-  let (count, rest) ← WordCode.decodePrefix? rest
-  let (store, rest) ← decodeEntries? count rest
+def decodePrefixOption (bits : List Bool) : Option (Snapshot × List Bool) := do
+  let (pc, rest) ← WordCode.decodePrefixOption bits
+  let (count, rest) ← WordCode.decodePrefixOption rest
+  let (store, rest) ← decodeEntriesOption count rest
   pure ({ pc, store }, rest)
 
 /-- Decode an exact snapshot code, rejecting trailing bits. -/
-def decode? (bits : List Bool) : Option Snapshot := do
-  let (snapshot, rest) ← decodePrefix? bits
+def decodeOption (bits : List Bool) : Option Snapshot := do
+  let (snapshot, rest) ← decodePrefixOption bits
   if rest.isEmpty then pure snapshot else none
 
 /-- A canonical snapshot represents a RAM configuration exactly. -/

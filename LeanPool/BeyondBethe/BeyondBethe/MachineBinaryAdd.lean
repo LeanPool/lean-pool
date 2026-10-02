@@ -286,12 +286,12 @@ theorem machinePairFirst_length_le (word : List Bool) :
 theorem machinePairSecond_length_le (word : List Bool) :
     (machinePairSecond word).length ≤ word.length := by
   unfold machinePairSecond Cobham.sndBlock
-  cases hpair : unpair? word with
+  cases hpair : unpairOption word with
   | none => simp
   | some components =>
       obtain ⟨left, right⟩ := components
       have hword : word = pair left right :=
-        eq_pair_of_unpair?_eq_some hpair
+        eq_pair_of_unpairOption_eq_some hpair
       subst word
       simp
 

@@ -30,72 +30,72 @@ namespace NatCode
 @[simp] theorem length_encode (n : ℕ) : (encode n).length = n + 1 := by
   simp [encode]
 
-private theorem decodeAux?_replicate_true (n acc : ℕ) (suffix : List Bool) :
-    decodeAux? (List.replicate n true ++ false :: suffix) acc =
+private theorem decodeAuxOption_replicate_true (n acc : ℕ) (suffix : List Bool) :
+    decodeAuxOption (List.replicate n true ++ false :: suffix) acc =
       some (acc + n, suffix) := by
   induction n generalizing acc with
-  | zero => simp [decodeAux?]
+  | zero => simp [decodeAuxOption]
   | succ n ih =>
       rw [List.replicate_succ, List.cons_append]
-      simp only [decodeAux?]
+      simp only [decodeAuxOption]
       rw [ih]
       congr 2
       omega
 
 /-- A unary field can be decoded in front of an arbitrary suffix. -/
-@[simp] theorem decodePrefix?_encode_append (n : ℕ) (suffix : List Bool) :
-    decodePrefix? (encode n ++ suffix) = some (n, suffix) := by
-  rw [decodePrefix?, encode, List.append_assoc]
-  change decodeAux? (List.replicate n true ++ false :: suffix) 0 = _
-  simpa using decodeAux?_replicate_true n 0 suffix
+@[simp] theorem decodePrefixOption_encode_append (n : ℕ) (suffix : List Bool) :
+    decodePrefixOption (encode n ++ suffix) = some (n, suffix) := by
+  rw [decodePrefixOption, encode, List.append_assoc]
+  change decodeAuxOption (List.replicate n true ++ false :: suffix) 0 = _
+  simpa using decodeAuxOption_replicate_true n 0 suffix
 
-private theorem decodeAux?_sound {bits : List Bool} {acc n : ℕ}
-    {suffix : List Bool} (h : decodeAux? bits acc = some (n, suffix)) :
+private theorem decodeAuxOption_sound {bits : List Bool} {acc n : ℕ}
+    {suffix : List Bool} (h : decodeAuxOption bits acc = some (n, suffix)) :
     ∃ consumed : ℕ,
       n = acc + consumed ∧
         bits = List.replicate consumed true ++ false :: suffix := by
   induction bits generalizing acc with
-  | nil => simp [decodeAux?] at h
+  | nil => simp [decodeAuxOption] at h
   | cons bit bits ih =>
       cases bit with
       | false =>
-          simp only [decodeAux?] at h
+          simp only [decodeAuxOption] at h
           cases h
           exact ⟨0, by simp⟩
       | true =>
-          simp only [decodeAux?] at h
+          simp only [decodeAuxOption] at h
           obtain ⟨consumed, hn, hbits⟩ := ih h
           refine ⟨consumed + 1, by omega, ?_⟩
           rw [List.replicate_succ]
           simp [hbits]
 
-private theorem decodeAux?_eq_none_iff (bits : List Bool) (acc : ℕ) :
-    decodeAux? bits acc = none ↔
+private theorem decodeAuxOption_eq_none_iff (bits : List Bool) (acc : ℕ) :
+    decodeAuxOption bits acc = none ↔
       bits = List.replicate bits.length true := by
   induction bits generalizing acc with
-  | nil => simp [decodeAux?]
+  | nil => simp [decodeAuxOption]
   | cons bit bits ih =>
-      cases bit <;> simp [decodeAux?, ih, List.replicate_succ]
+      cases bit <;> simp [decodeAuxOption, ih, List.replicate_succ]
 
 /-- Unary prefix decoding fails exactly when every available bit is a one,
 so no zero terminator occurs. -/
-theorem decodePrefix?_eq_none_iff (bits : List Bool) :
-    decodePrefix? bits = none ↔
+theorem decodePrefixOption_eq_none_iff (bits : List Bool) :
+    decodePrefixOption bits = none ↔
       bits = List.replicate bits.length true := by
-  simpa [decodePrefix?] using decodeAux?_eq_none_iff bits 0
+  simpa [decodePrefixOption] using decodeAuxOption_eq_none_iff bits 0
 
 /-- Successful unary prefix decoding reconstructs the consumed input exactly. -/
-theorem decodePrefix?_eq_some_iff (bits : List Bool) (n : ℕ) (suffix : List Bool) :
-    decodePrefix? bits = some (n, suffix) ↔ bits = encode n ++ suffix := by
+theorem decodePrefixOption_eq_some_iff (bits : List Bool) (n : ℕ) (suffix : List Bool) :
+    decodePrefixOption bits = some (n, suffix) ↔ bits = encode n ++ suffix := by
   constructor
   · intro h
-    obtain ⟨consumed, hn, hbits⟩ := decodeAux?_sound h
-    simp only [decodePrefix?] at h
+    obtain ⟨consumed, hn, hbits⟩ := decodeAuxOption_sound h
+    simp only [decodePrefixOption] at h
     have : consumed = n := by omega
     subst consumed
     simpa [encode, List.append_assoc] using hbits
   · rintro rfl
-    exact decodePrefix?_encode_append n suffix
+    exact decodePrefixOption_encode_append n suffix
 
 end NatCode
 
@@ -119,47 +119,47 @@ namespace RawGate
   omega
 
 /-- A gate can be decoded in front of an arbitrary suffix. -/
-@[simp] theorem decodePrefix?_encode_append (g : RawGate) (suffix : List Bool) :
-    decodePrefix? (g.encode ++ suffix) = some (g, suffix) := by
+@[simp] theorem decodePrefixOption_encode_append (g : RawGate) (suffix : List Bool) :
+    decodePrefixOption (g.encode ++ suffix) = some (g, suffix) := by
   cases g with
   | mk op input₀ input₁ negated₀ negated₁ =>
       cases op <;>
-        simp [encode, decodePrefix?, opBit, opOfBit, List.append_assoc]
+        simp [encode, decodePrefixOption, opBit, opOfBit, List.append_assoc]
 
 /-- Successful gate-prefix decoding reconstructs the consumed input exactly. -/
-theorem decodePrefix?_eq_some_iff (bits : List Bool) (gate : RawGate)
+theorem decodePrefixOption_eq_some_iff (bits : List Bool) (gate : RawGate)
     (suffix : List Bool) :
-    decodePrefix? bits = some (gate, suffix) ↔ bits = gate.encode ++ suffix := by
+    decodePrefixOption bits = some (gate, suffix) ↔ bits = gate.encode ++ suffix := by
   constructor
   · intro h
     cases bits with
-    | nil => simp [decodePrefix?] at h
+    | nil => simp [decodePrefixOption] at h
     | cons op bits =>
         cases bits with
-        | nil => simp [decodePrefix?] at h
+        | nil => simp [decodePrefixOption] at h
         | cons negated₀ bits =>
             cases bits with
-            | nil => simp [decodePrefix?] at h
+            | nil => simp [decodePrefixOption] at h
             | cons negated₁ rest =>
-                cases h₀ : NatCode.decodePrefix? rest with
-                | none => simp [decodePrefix?, h₀] at h
+                cases h₀ : NatCode.decodePrefixOption rest with
+                | none => simp [decodePrefixOption, h₀] at h
                 | some parsed₀ =>
                     obtain ⟨input₀, rest₀⟩ := parsed₀
-                    cases h₁ : NatCode.decodePrefix? rest₀ with
-                    | none => simp [decodePrefix?, h₀, h₁] at h
+                    cases h₁ : NatCode.decodePrefixOption rest₀ with
+                    | none => simp [decodePrefixOption, h₀, h₁] at h
                     | some parsed₁ =>
                         obtain ⟨input₁, rest₁⟩ := parsed₁
-                        simp only [decodePrefix?, h₀, h₁] at h
+                        simp only [decodePrefixOption, h₀, h₁] at h
                         cases h
                         have hrest₀ :=
-                          (NatCode.decodePrefix?_eq_some_iff rest input₀ rest₀).mp h₀
+                          (NatCode.decodePrefixOption_eq_some_iff rest input₀ rest₀).mp h₀
                         have hrest₁ :=
-                          (NatCode.decodePrefix?_eq_some_iff rest₀ input₁ suffix).mp h₁
+                          (NatCode.decodePrefixOption_eq_some_iff rest₀ input₁ suffix).mp h₁
                         cases op <;>
                           simp [encode, opBit, opOfBit, hrest₀, hrest₁,
                             List.append_assoc]
   · rintro rfl
-    exact decodePrefix?_encode_append gate suffix
+    exact decodePrefixOption_encode_append gate suffix
 
 end RawGate
 
@@ -172,29 +172,29 @@ namespace RawCircuit
 
 /-- Parsing an encoded gate list consumes exactly that list and leaves the
     caller-supplied suffix untouched. -/
-@[simp] theorem decodeGates?_flatMap_encode_append
+@[simp] theorem decodeGatesOption_flatMap_encode_append
     (c : RawCircuit) (suffix : List Bool) :
-    decodeGates? c.length (c.flatMap RawGate.encode ++ suffix) = some (c, suffix) := by
+    decodeGatesOption c.length (c.flatMap RawGate.encode ++ suffix) = some (c, suffix) := by
   induction c with
-  | nil => simp [decodeGates?]
+  | nil => simp [decodeGatesOption]
   | cons gate gates ih =>
-      simp [decodeGates?, ih, List.append_assoc]
+      simp [decodeGatesOption, ih, List.append_assoc]
 
 /-- A circuit prefix can be decoded in front of an arbitrary suffix. -/
-@[simp] theorem decodePrefix?_encode_append (c : RawCircuit) (suffix : List Bool) :
-    decodePrefix? (c.encode ++ suffix) = some (c, suffix) := by
-  simp [decodePrefix?, encode, List.append_assoc]
+@[simp] theorem decodePrefixOption_encode_append (c : RawCircuit) (suffix : List Bool) :
+    decodePrefixOption (c.encode ++ suffix) = some (c, suffix) := by
+  simp [decodePrefixOption, encode, List.append_assoc]
 
 /-- Exact decoding is a left inverse of circuit serialization. -/
-@[simp] theorem decode?_encode (c : RawCircuit) : decode? c.encode = some c := by
+@[simp] theorem decodeOption_encode (c : RawCircuit) : decodeOption c.encode = some c := by
   rw [show c.encode = c.encode ++ [] by simp]
-  unfold decode?
-  rw [decodePrefix?_encode_append]
+  unfold decodeOption
+  rw [decodePrefixOption_encode_append]
 
 /-- Exact decoding rejects any nonempty suffix after a canonical encoding. -/
-theorem decode?_encode_append_eq_none (c : RawCircuit) {suffix : List Bool}
-    (h : suffix ≠ []) : decode? (c.encode ++ suffix) = none := by
-  simp [decode?, h]
+theorem decodeOption_encode_append_eq_none (c : RawCircuit) {suffix : List Bool}
+    (h : suffix ≠ []) : decodeOption (c.encode ++ suffix) = none := by
+  simp [decodeOption, h]
 
 /-- A circuit encoding consists of the unary gate count followed by the
     concatenated gate encodings. -/
@@ -224,87 +224,87 @@ theorem topologicallyWellFormed_cons (N : ℕ) (gate : RawGate) (gates : RawCirc
       omega
 
 /-- Successful fixed-count gate decoding reconstructs the consumed input. -/
-theorem decodeGates?_eq_some_iff (count : ℕ) (bits : List Bool)
+theorem decodeGatesOption_eq_some_iff (count : ℕ) (bits : List Bool)
     (circuit : RawCircuit) (suffix : List Bool) :
-    decodeGates? count bits = some (circuit, suffix) ↔
+    decodeGatesOption count bits = some (circuit, suffix) ↔
       circuit.length = count ∧ bits = circuit.flatMap RawGate.encode ++ suffix := by
   constructor
   · intro h
     induction count generalizing bits circuit with
     | zero =>
-        simp only [decodeGates?] at h
+        simp only [decodeGatesOption] at h
         cases h
         simp
     | succ count ih =>
-        cases hgate : RawGate.decodePrefix? bits with
-        | none => simp [decodeGates?, hgate] at h
+        cases hgate : RawGate.decodePrefixOption bits with
+        | none => simp [decodeGatesOption, hgate] at h
         | some parsedGate =>
             obtain ⟨gate, rest⟩ := parsedGate
-            cases hgates : decodeGates? count rest with
-            | none => simp [decodeGates?, hgate, hgates] at h
+            cases hgates : decodeGatesOption count rest with
+            | none => simp [decodeGatesOption, hgate, hgates] at h
             | some parsedGates =>
                 obtain ⟨gates, final⟩ := parsedGates
-                simp only [decodeGates?, hgate, hgates] at h
+                simp only [decodeGatesOption, hgate, hgates] at h
                 cases h
                 obtain ⟨hlen, hrest⟩ := ih rest gates hgates
                 have hbits :=
-                  (RawGate.decodePrefix?_eq_some_iff bits gate rest).mp hgate
+                  (RawGate.decodePrefixOption_eq_some_iff bits gate rest).mp hgate
                 constructor
                 · simp [hlen]
                 · rw [hbits, hrest]
                   simp [List.append_assoc]
   · rintro ⟨hlen, rfl⟩
     subst count
-    exact decodeGates?_flatMap_encode_append circuit suffix
+    exact decodeGatesOption_flatMap_encode_append circuit suffix
 
 /-- Successful circuit-prefix decoding reconstructs its canonical encoding. -/
-theorem decodePrefix?_eq_some_iff (bits : List Bool) (circuit : RawCircuit)
+theorem decodePrefixOption_eq_some_iff (bits : List Bool) (circuit : RawCircuit)
     (suffix : List Bool) :
-    decodePrefix? bits = some (circuit, suffix) ↔
+    decodePrefixOption bits = some (circuit, suffix) ↔
       bits = circuit.encode ++ suffix := by
   constructor
   · intro h
-    cases hcount : NatCode.decodePrefix? bits with
-    | none => simp [decodePrefix?, hcount] at h
+    cases hcount : NatCode.decodePrefixOption bits with
+    | none => simp [decodePrefixOption, hcount] at h
     | some parsedCount =>
         obtain ⟨count, rest⟩ := parsedCount
-        simp only [decodePrefix?, hcount] at h
+        simp only [decodePrefixOption, hcount] at h
         have hbits :=
-          (NatCode.decodePrefix?_eq_some_iff bits count rest).mp hcount
+          (NatCode.decodePrefixOption_eq_some_iff bits count rest).mp hcount
         obtain ⟨hlen, hrest⟩ :=
-          (decodeGates?_eq_some_iff count rest circuit suffix).mp h
+          (decodeGatesOption_eq_some_iff count rest circuit suffix).mp h
         rw [hbits, hrest]
         simp [encode, hlen, List.append_assoc]
   · rintro rfl
-    exact decodePrefix?_encode_append circuit suffix
+    exact decodePrefixOption_encode_append circuit suffix
 
 /-- Exact decoding succeeds precisely on canonical encodings. -/
-theorem decode?_eq_some_iff_internal (bits : List Bool) (circuit : RawCircuit) :
-    decode? bits = some circuit ↔ bits = circuit.encode := by
+theorem decodeOption_eq_some_iff_internal (bits : List Bool) (circuit : RawCircuit) :
+    decodeOption bits = some circuit ↔ bits = circuit.encode := by
   constructor
   · intro h
-    cases hprefix : decodePrefix? bits with
-    | none => simp [decode?, hprefix] at h
+    cases hprefix : decodePrefixOption bits with
+    | none => simp [decodeOption, hprefix] at h
     | some parsed =>
         obtain ⟨decoded, suffix⟩ := parsed
         cases suffix with
         | nil =>
-            simp only [decode?, hprefix] at h
+            simp only [decodeOption, hprefix] at h
             cases h
-            simpa using (decodePrefix?_eq_some_iff bits circuit []).mp hprefix
-        | cons bit suffix => simp [decode?, hprefix] at h
+            simpa using (decodePrefixOption_eq_some_iff bits circuit []).mp hprefix
+        | cons bit suffix => simp [decodeOption, hprefix] at h
   · rintro rfl
-    exact decode?_encode circuit
+    exact decodeOption_encode circuit
 
 /-- Running the iterative evaluator succeeds exactly for topological gate lists. -/
-theorem evalAux?_isSome_iff (circuit : RawCircuit) (wires : Array Bool) :
-    (evalAux? circuit wires).isSome ↔
+theorem evalAuxOption_isSome_iff (circuit : RawCircuit) (wires : Array Bool) :
+    (evalAuxOption circuit wires).isSome ↔
       circuit.TopologicallyWellFormed wires.size := by
   induction circuit generalizing wires with
-  | nil => simp [evalAux?, TopologicallyWellFormed]
+  | nil => simp [evalAuxOption, TopologicallyWellFormed]
   | cons gate gates ih =>
       rw [topologicallyWellFormed_cons]
-      simp only [evalAux?]
+      simp only [evalAuxOption]
       by_cases h₀ : gate.input₀ < wires.size
       · rw [Array.getElem?_eq_getElem h₀]
         by_cases h₁ : gate.input₁ < wires.size
@@ -316,40 +316,40 @@ theorem evalAux?_isSome_iff (circuit : RawCircuit) (wires : Array Bool) :
         simp [RawGate.WellFormedAt, h₀]
 
 /-- Successful iterative evaluation appends exactly one wire per gate. -/
-theorem evalAux?_size {circuit : RawCircuit} {wires result : Array Bool}
-    (h : evalAux? circuit wires = some result) :
+theorem evalAuxOption_size {circuit : RawCircuit} {wires result : Array Bool}
+    (h : evalAuxOption circuit wires = some result) :
     result.size = wires.size + circuit.length := by
   induction circuit generalizing wires result with
   | nil =>
-      simp only [evalAux?] at h
+      simp only [evalAuxOption] at h
       cases h
       simp
   | cons gate gates ih =>
       cases h₀ : wires[gate.input₀]? with
-      | none => simp [evalAux?, h₀] at h
+      | none => simp [evalAuxOption, h₀] at h
       | some value₀ =>
           cases h₁ : wires[gate.input₁]? with
-          | none => simp [evalAux?, h₀, h₁] at h
+          | none => simp [evalAuxOption, h₀, h₁] at h
           | some value₁ =>
-              simp only [evalAux?, h₀, h₁] at h
+              simp only [evalAuxOption, h₀, h₁] at h
               have hsize := ih h
               rw [Array.size_push] at hsize
               simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using hsize
 
 /-- Raw evaluation succeeds precisely for nonempty topologically ordered circuits. -/
-theorem eval?_isSome_iff_internal (circuit : RawCircuit) (input : List Bool) :
-    (circuit.eval? input).isSome ↔ circuit.WellFormed input.length := by
+theorem evalOption_isSome_iff_internal (circuit : RawCircuit) (input : List Bool) :
+    (circuit.evalOption input).isSome ↔ circuit.WellFormed input.length := by
   cases circuit with
-  | nil => simp [eval?, WellFormed]
+  | nil => simp [evalOption, WellFormed]
   | cons gate gates =>
       constructor
       · intro h
-        cases haux : evalAux? (gate :: gates) input.toArray with
-        | none => simp [eval?, haux] at h
+        cases haux : evalAuxOption (gate :: gates) input.toArray with
+        | none => simp [evalOption, haux] at h
         | some result =>
             have htop :
                 TopologicallyWellFormed input.toArray.size (gate :: gates) :=
-              (evalAux?_isSome_iff (gate :: gates) input.toArray).mp (by simp [haux])
+              (evalAuxOption_isSome_iff (gate :: gates) input.toArray).mp (by simp [haux])
             constructor
             · simp
             · simpa using htop
@@ -358,14 +358,14 @@ theorem eval?_isSome_iff_internal (circuit : RawCircuit) (input : List Bool) :
             TopologicallyWellFormed input.toArray.size (gate :: gates) := by
           simpa using htop
         have hsome :=
-          (evalAux?_isSome_iff (gate :: gates) input.toArray).mpr htop'
+          (evalAuxOption_isSome_iff (gate :: gates) input.toArray).mpr htop'
         obtain ⟨result, haux⟩ := Option.isSome_iff_exists.mp hsome
-        have hsize := evalAux?_size haux
+        have hsize := evalAuxOption_size haux
         have hlt :
             input.length + (gate :: gates).length - 1 < result.size := by
           rw [hsize, List.size_toArray]
           simp
-        rw [eval?]
+        rw [evalOption]
         simp only [List.isEmpty_cons, Bool.false_eq_true, ite_false, haux]
         change (result[input.length + (gate :: gates).length - 1]?).isSome
         rw [Array.getElem?_eq_getElem hlt]
@@ -383,21 +383,21 @@ theorem evalCode_isSome_iff (N : ℕ) (code input : List Bool) :
   constructor
   · intro h
     by_cases hlen : input.length = N
-    · cases hdecode : RawCircuit.decode? code with
+    · cases hdecode : RawCircuit.decodeOption code with
       | none => simp [evalCode, hlen, hdecode] at h
       | some circuit =>
-          have heval : (circuit.eval? input).isSome := by
+          have heval : (circuit.evalOption input).isSome := by
             simpa [evalCode, hlen, hdecode] using h
           have hwellInput :=
-            (RawCircuit.eval?_isSome_iff_internal circuit input).mp heval
+            (RawCircuit.evalOption_isSome_iff_internal circuit input).mp heval
           have hcode :=
-            (RawCircuit.decode?_eq_some_iff_internal code circuit).mp hdecode
+            (RawCircuit.decodeOption_eq_some_iff_internal code circuit).mp hdecode
           exact ⟨hlen, circuit, hcode, by simpa [hlen] using hwellInput⟩
     · simp [evalCode, hlen] at h
   · rintro ⟨hlen, circuit, hcode, hwell⟩
     subst code
-    have heval : (circuit.eval? input).isSome :=
-      (RawCircuit.eval?_isSome_iff_internal circuit input).mpr
+    have heval : (circuit.evalOption input).isSome :=
+      (RawCircuit.evalOption_isSome_iff_internal circuit input).mpr
         (by simpa [hlen] using hwell)
     simpa [evalCode, hlen] using heval
 

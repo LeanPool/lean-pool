@@ -118,7 +118,7 @@ theorem programHaltTM_hoareTime_frame {n : ℕ}
         inp = inp₀ ∧ work = initialWork ∧
         out = instructionHaltOutput (snapshot.curInstr program))
       (programHaltTime tapes program pcValue) := by
-  simpa [Snapshot.curInstr, selectedInstruction_eq_getElem?_getD] using
+  simpa [Snapshot.curInstr, selectedInstruction_eq_getElemOption_getD] using
     programHaltTM_hoareTime_frame_internal tapes program store pcValue
       initialWork inp₀ hready hinput
 

@@ -23,7 +23,7 @@ end. This file defines the library's single framing operation and its parsers:
 - `delimit` frames a payload: each payload bit is doubled (`false ↦ [false, false]`,
   `true ↦ [true, true]`) and the block is terminated by the separator `[false, true]`,
   which no run of doubled bits can produce.
-- `unpair?` parses one block off the front of the input, returning the payload and the
+- `unpairOption` parses one block off the front of the input, returning the payload and the
   remaining suffix (`none` on malformed input). It is named for its role in the pairing
   codec `Complexity.pair` (see `Complexitylib.Encoding.Pairing`), which is
   `pair x y = delimit x ++ y`.
@@ -60,49 +60,49 @@ def delimit (x : List Bool) : List Bool :=
 /-- Parse one self-delimiting block off the front of the input. It scans doubled bits until
     the first separator `[false, true]`, returning the decoded payload together with the
     remaining suffix. Invalid doubled prefixes return `none`. -/
-def unpair? : List Bool → Option (List Bool × List Bool)
+def unpairOption : List Bool → Option (List Bool × List Bool)
   | [] => none
   | false :: true :: y => some ([], y)
   | false :: false :: z =>
-      Option.map (fun (xy : List Bool × List Bool) => (false :: xy.1, xy.2)) (unpair? z)
+      Option.map (fun (xy : List Bool × List Bool) => (false :: xy.1, xy.2)) (unpairOption z)
   | true :: true :: z =>
-      Option.map (fun (xy : List Bool × List Bool) => (true :: xy.1, xy.2)) (unpair? z)
+      Option.map (fun (xy : List Bool × List Bool) => (true :: xy.1, xy.2)) (unpairOption z)
   | _ => none
 
-/-- `unpair?` reads back the framing written by `delimit`: parsing one block off the front
+/-- `unpairOption` reads back the framing written by `delimit`: parsing one block off the front
     of any input recovers the payload and the remaining suffix. -/
-@[simp] theorem unpair?_delimit_append (x y : List Bool) :
-    unpair? (delimit x ++ y) = some (x, y) := by
+@[simp] theorem unpairOption_delimit_append (x y : List Bool) :
+    unpairOption (delimit x ++ y) = some (x, y) := by
   induction x with
-  | nil => simp [unpair?]
-  | cons b x ih => cases b <;> simp [unpair?, ih]
+  | nil => simp [unpairOption]
+  | cons b x ih => cases b <;> simp [unpairOption, ih]
 
 /-- Soundness of the parser: a successful parse decomposes the input as the parsed payload's
     framing followed by the leftover suffix. -/
-theorem eq_delimit_append_of_unpair?_eq_some :
-    ∀ {z x y : List Bool}, unpair? z = some (x, y) → z = delimit x ++ y
-  | [], _, _, h => by simp [unpair?] at h
-  | [b], _, _, h => by cases b <;> simp [unpair?] at h
+theorem eq_delimit_append_of_unpairOption_eq_some :
+    ∀ {z x y : List Bool}, unpairOption z = some (x, y) → z = delimit x ++ y
+  | [], _, _, h => by simp [unpairOption] at h
+  | [b], _, _, h => by cases b <;> simp [unpairOption] at h
   | false :: true :: rest, x, y, h => by
-    simp only [unpair?, Option.some.injEq, Prod.mk.injEq] at h
+    simp only [unpairOption, Option.some.injEq, Prod.mk.injEq] at h
     obtain ⟨rfl, rfl⟩ := h
     rfl
   | false :: false :: rest, x, y, h => by
-    simp only [unpair?, Option.map_eq_some_iff] at h
+    simp only [unpairOption, Option.map_eq_some_iff] at h
     obtain ⟨⟨p₁, p₂⟩, hp, heq⟩ := h
     obtain ⟨rfl, rfl⟩ : false :: p₁ = x ∧ p₂ = y := by simpa [Prod.ext_iff] using heq
-    simp only [eq_delimit_append_of_unpair?_eq_some hp, delimit_cons, List.cons_append]
+    simp only [eq_delimit_append_of_unpairOption_eq_some hp, delimit_cons, List.cons_append]
   | true :: true :: rest, x, y, h => by
-    simp only [unpair?, Option.map_eq_some_iff] at h
+    simp only [unpairOption, Option.map_eq_some_iff] at h
     obtain ⟨⟨p₁, p₂⟩, hp, heq⟩ := h
     obtain ⟨rfl, rfl⟩ : true :: p₁ = x ∧ p₂ = y := by simpa [Prod.ext_iff] using heq
-    simp only [eq_delimit_append_of_unpair?_eq_some hp, delimit_cons, List.cons_append]
-  | true :: false :: rest, _, _, h => by simp [unpair?] at h
+    simp only [eq_delimit_append_of_unpairOption_eq_some hp, delimit_cons, List.cons_append]
+  | true :: false :: rest, _, _, h => by simp [unpairOption] at h
 
 /- ## Total block helpers -/
 
 /-- Strip the framing of a single self-delimiting block, returning its payload. On `delimit P`
-this returns `P`. Unlike `unpair?`, this is total: it ignores any data trailing the first block
+this returns `P`. Unlike `unpairOption`, this is total: it ignores any data trailing the first block
 and maps malformed input to `[]`. -/
 def undelimitBlock : List Bool → List Bool
   | false :: true :: _ => []
@@ -139,17 +139,17 @@ def hasBlock : List Bool → Bool
   | true :: true :: rest => hasBlock rest
   | _ => false
 
-theorem hasBlock_eq_isSome_unpair? :
-    ∀ l : List Bool, hasBlock l = (unpair? l).isSome
+theorem hasBlock_eq_isSome_unpairOption :
+    ∀ l : List Bool, hasBlock l = (unpairOption l).isSome
   | [] => rfl
   | [b] => by cases b <;> rfl
   | false :: true :: _ => rfl
   | false :: false :: rest => by
-    simp only [hasBlock, unpair?, hasBlock_eq_isSome_unpair? rest]
-    cases unpair? rest <;> rfl
+    simp only [hasBlock, unpairOption, hasBlock_eq_isSome_unpairOption rest]
+    cases unpairOption rest <;> rfl
   | true :: true :: rest => by
-    simp only [hasBlock, unpair?, hasBlock_eq_isSome_unpair? rest]
-    cases unpair? rest <;> rfl
+    simp only [hasBlock, unpairOption, hasBlock_eq_isSome_unpairOption rest]
+    cases unpairOption rest <;> rfl
   | true :: false :: _ => rfl
 
 /-- Tag a bitstring with a leading `true` if it begins with a well-formed self-delimiting
@@ -168,7 +168,7 @@ def undelimitBlocksAux : ℕ → List Bool → Option (List (List Bool))
   | _, [] => some []
   | 0, _ :: _ => none
   | fuel + 1, input => do
-    let (block, rest) ← unpair? input
+    let (block, rest) ← unpairOption input
     let blocks ← undelimitBlocksAux fuel rest
     return block :: blocks
 
@@ -199,7 +199,7 @@ private theorem undelimitBlocksAux_flatten_delimit (l : List (List Bool)) :
     obtain ⟨hd, tl, hcons⟩ : ∃ hd tl, delimit b ++ (t.map delimit).flatten = hd :: tl := by
       cases b <;> exact ⟨_, _, rfl⟩
     simp only [List.map_cons, List.flatten_cons, hcons, undelimitBlocksAux]
-    rw [← hcons, unpair?_delimit_append]
+    rw [← hcons, unpairOption_delimit_append]
     simp [ih fuel (by omega)]
 
 theorem undelimitBlocks_flatten_delimit (l : List (List Bool)) :

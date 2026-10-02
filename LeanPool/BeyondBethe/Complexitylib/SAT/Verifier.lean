@@ -13,7 +13,7 @@ public import Std.Tactic.BVDecide.Normalize.BitVec
 
 This file defines an executable verifier for `pairLang Witness`:
 
-1. split `pair(z, α)` back into `(z, α)` via `unpair?`,
+1. split `pair(z, α)` back into `(z, α)` via `unpairOption`,
 2. decode `z` as a CNF in SAT's concrete bit encoding,
 3. check the witness length bound `|α| ≤ |z| + 1`,
 4. evaluate the decoded formula under `α`.
@@ -60,13 +60,13 @@ def encodeTokens (toks : List EncToken) : List Bool :=
   toks.flatMap EncToken.encode
 
 /-- Split a bitstring into SAT encoding tokens. Odd-length strings are invalid. -/
-def tokenize? : List Bool → Option (List EncToken)
+def tokenizeOption : List Bool → Option (List EncToken)
   | [] => some []
   | [_] => none
-  | false :: false :: rest => Option.map (EncToken.bit false :: ·) (tokenize? rest)
-  | true :: true :: rest => Option.map (EncToken.bit true :: ·) (tokenize? rest)
-  | false :: true :: rest => Option.map (EncToken.litSep :: ·) (tokenize? rest)
-  | true :: false :: rest => Option.map (EncToken.clauseSep :: ·) (tokenize? rest)
+  | false :: false :: rest => Option.map (EncToken.bit false :: ·) (tokenizeOption rest)
+  | true :: true :: rest => Option.map (EncToken.bit true :: ·) (tokenizeOption rest)
+  | false :: true :: rest => Option.map (EncToken.litSep :: ·) (tokenizeOption rest)
+  | true :: false :: rest => Option.map (EncToken.clauseSep :: ·) (tokenizeOption rest)
 
 /-- The empty token stream encodes to the empty bitstring. -/
 @[simp] theorem encodeTokens_nil : encodeTokens [] = [] := rfl
@@ -85,57 +85,59 @@ def tokenize? : List Bool → Option (List EncToken)
       simp [List.append_assoc, ih]
 
 /-- Round trip: tokenizing an encoded token stream recovers the original tokens. -/
-@[simp] theorem tokenize?_encodeTokens (toks : List EncToken) :
-    tokenize? (encodeTokens toks) = some toks := by
+@[simp] theorem tokenizeOption_encodeTokens (toks : List EncToken) :
+    tokenizeOption (encodeTokens toks) = some toks := by
   induction toks with
-  | nil => simp [encodeTokens, tokenize?]
+  | nil => simp [encodeTokens, tokenizeOption]
   | cons tok toks ih =>
       cases tok with
       | bit b =>
           cases b with
           | false =>
-              change tokenize? (false :: false :: encodeTokens toks)
+              change tokenizeOption (false :: false :: encodeTokens toks)
                 = some (EncToken.bit false :: toks)
-              simp [tokenize?, ih]
+              simp [tokenizeOption, ih]
           | true =>
-              change tokenize? (true :: true :: encodeTokens toks)
+              change tokenizeOption (true :: true :: encodeTokens toks)
                 = some (EncToken.bit true :: toks)
-              simp [tokenize?, ih]
+              simp [tokenizeOption, ih]
       | litSep =>
-          change tokenize? (false :: true :: encodeTokens toks) = some (EncToken.litSep :: toks)
-          simp [tokenize?, ih]
+          change tokenizeOption (false :: true :: encodeTokens toks) =
+            some (EncToken.litSep :: toks)
+          simp [tokenizeOption, ih]
       | clauseSep =>
-          change tokenize? (true :: false :: encodeTokens toks) = some (EncToken.clauseSep :: toks)
-          simp [tokenize?, ih]
+          change tokenizeOption (true :: false :: encodeTokens toks) =
+            some (EncToken.clauseSep :: toks)
+          simp [tokenizeOption, ih]
 
-/-- Soundness of `tokenize?`: any successfully tokenized bitstring is the
+/-- Soundness of `tokenizeOption`: any successfully tokenized bitstring is the
 encoding of the resulting token stream. -/
-theorem tokenize?_sound {z : List Bool} {toks : List EncToken}
-    (h : tokenize? z = some toks) : z = encodeTokens toks := by
-  let rec hsound : ∀ z toks, tokenize? z = some toks → z = encodeTokens toks
+theorem tokenizeOption_sound {z : List Bool} {toks : List EncToken}
+    (h : tokenizeOption z = some toks) : z = encodeTokens toks := by
+  let rec hsound : ∀ z toks, tokenizeOption z = some toks → z = encodeTokens toks
     | [], toks, htok => by
-        simp only [tokenize?, Option.some.injEq, List.nil_eq] at htok
+        simp only [tokenizeOption, Option.some.injEq, List.nil_eq] at htok
         cases htok
         rfl
     | [_], _, htok => by
-        simp [tokenize?] at htok
+        simp [tokenizeOption] at htok
     | false :: false :: rest, toks, htok => by
-        simp only [tokenize?, Option.map_eq_some_iff] at htok
+        simp only [tokenizeOption, Option.map_eq_some_iff] at htok
         rcases htok with ⟨toks', hrest, rfl⟩
         have henc := hsound rest toks' hrest
         simp [encodeTokens, EncToken.encode, henc]
     | true :: true :: rest, toks, htok => by
-        simp only [tokenize?, Option.map_eq_some_iff] at htok
+        simp only [tokenizeOption, Option.map_eq_some_iff] at htok
         rcases htok with ⟨toks', hrest, rfl⟩
         have henc := hsound rest toks' hrest
         simp [encodeTokens, EncToken.encode, henc]
     | false :: true :: rest, toks, htok => by
-        simp only [tokenize?, Option.map_eq_some_iff] at htok
+        simp only [tokenizeOption, Option.map_eq_some_iff] at htok
         rcases htok with ⟨toks', hrest, rfl⟩
         have henc := hsound rest toks' hrest
         simp [encodeTokens, EncToken.encode, henc]
     | true :: false :: rest, toks, htok => by
-        simp only [tokenize?, Option.map_eq_some_iff] at htok
+        simp only [tokenizeOption, Option.map_eq_some_iff] at htok
         rcases htok with ⟨toks', hrest, rfl⟩
         have henc := hsound rest toks' hrest
         simp [encodeTokens, EncToken.encode, henc]
@@ -156,7 +158,7 @@ theorem tokenize?_sound {z : List Bool} {toks : List EncToken}
 namespace Lit
 
 /-- Decode a raw literal bitstring `[sign] ++ replicate var true`. -/
-def decodeRaw? : List Bool → Option Lit
+def decodeRawOption : List Bool → Option Lit
   | [] => none
   | sign :: rest =>
       if _h : ∀ b ∈ rest, b = true then
@@ -165,21 +167,21 @@ def decodeRaw? : List Bool → Option Lit
         none
 
 /-- Round trip: decoding a literal's raw encoding recovers the literal. -/
-@[simp] theorem decodeRaw?_encodeRaw (ℓ : Lit) :
-    decodeRaw? ℓ.encodeRaw = some ℓ := by
+@[simp] theorem decodeRawOption_encodeRaw (ℓ : Lit) :
+    decodeRawOption ℓ.encodeRaw = some ℓ := by
   cases ℓ with
   | mk sign var =>
-      simp [decodeRaw?, encodeRaw, Unary.encode]
+      simp [decodeRawOption, encodeRaw, Unary.encode]
 
-/-- Soundness of `decodeRaw?`: any successfully decoded bitstring is the raw
+/-- Soundness of `decodeRawOption`: any successfully decoded bitstring is the raw
 encoding of the resulting literal. -/
-theorem decodeRaw?_sound {bs : List Bool} {ℓ : Lit}
-    (h : decodeRaw? bs = some ℓ) : bs = ℓ.encodeRaw := by
+theorem decodeRawOption_sound {bs : List Bool} {ℓ : Lit}
+    (h : decodeRawOption bs = some ℓ) : bs = ℓ.encodeRaw := by
   cases bs with
   | nil =>
-      simp [decodeRaw?] at h
+      simp [decodeRawOption] at h
   | cons sign rest =>
-      simp only [decodeRaw?] at h
+      simp only [decodeRawOption] at h
       split at h
       · cases h
         have hrep : rest = List.replicate rest.length true := by
@@ -276,7 +278,7 @@ def parseTokensAux :
   | EncToken.bit b :: toks, rawRev, clauseRev, cnfRev =>
       parseTokensAux toks (b :: rawRev) clauseRev cnfRev
   | EncToken.litSep :: toks, rawRev, clauseRev, cnfRev =>
-      match Lit.decodeRaw? rawRev.reverse with
+      match Lit.decodeRawOption rawRev.reverse with
       | some ℓ => parseTokensAux toks [] (ℓ :: clauseRev) cnfRev
       | none => none
   | EncToken.clauseSep :: toks, rawRev, clauseRev, cnfRev =>
@@ -306,7 +308,7 @@ private theorem parseTokensAux_clause_tokens
       simp only [Clause.tokens, Lit.rawTokens, List.append_assoc,
         List.cons_append, List.nil_append]
       rw [parseTokensAux_map_bit ℓ.encodeRaw]
-      simp [parseTokensAux, Lit.decodeRaw?_encodeRaw, List.reverse_reverse, ih,
+      simp [parseTokensAux, Lit.decodeRawOption_encodeRaw, List.reverse_reverse, ih,
         List.reverse_cons, List.append_assoc]
 
 private theorem parseTokensAux_cnf_tokens
@@ -346,11 +348,11 @@ private theorem parseTokensAux_sound
           simpa [List.reverse_cons, List.append_assoc] using hrec
       | litSep =>
           simp only [parseTokensAux] at h
-          rcases hdecode : Lit.decodeRaw? rawRev.reverse with _ | ℓ
+          rcases hdecode : Lit.decodeRawOption rawRev.reverse with _ | ℓ
           · simp [hdecode] at h
           · simp only [hdecode] at h
             have hrec := ih h
-            have hraw : rawRev.reverse = ℓ.encodeRaw := Lit.decodeRaw?_sound hdecode
+            have hraw : rawRev.reverse = ℓ.encodeRaw := Lit.decodeRawOption_sound hdecode
             simpa [hraw, Clause.tokens, Clause.tokens_append, Lit.rawTokens,
               List.reverse_cons, List.append_assoc] using hrec
       | clauseSep =>
@@ -361,29 +363,29 @@ private theorem parseTokensAux_sound
             List.reverse_cons, List.append_assoc] using hrec
 
 /-- Decode a concrete SAT-encoded bitstring as a CNF. -/
-def CNF.decode? (z : List Bool) : Option CNF := do
-  let toks <- tokenize? z
+def CNF.decodeOption (z : List Bool) : Option CNF := do
+  let toks <- tokenizeOption z
   parseTokensAux toks [] [] []
 
 /-- Round trip: decoding an encoded CNF recovers the formula. -/
-@[simp] theorem CNF.decode?_encode (φ : CNF) :
-    CNF.decode? φ.encode = some φ := by
-  rw [CNF.decode?, ← CNF.encodeTokens_tokens φ, tokenize?_encodeTokens]
+@[simp] theorem CNF.decodeOption_encode (φ : CNF) :
+    CNF.decodeOption φ.encode = some φ := by
+  rw [CNF.decodeOption, ← CNF.encodeTokens_tokens φ, tokenizeOption_encodeTokens]
   simp
   have hparse := parseTokensAux_cnf_tokens φ [] []
   simpa [parseTokensAux] using hparse
 
-/-- Soundness of `CNF.decode?`: any successfully decoded bitstring is the
+/-- Soundness of `CNF.decodeOption`: any successfully decoded bitstring is the
 encoding of the resulting CNF. -/
-theorem CNF.decode?_sound {z : List Bool} {φ : CNF}
-    (h : CNF.decode? z = some φ) : z = φ.encode := by
-  unfold CNF.decode? at h
-  cases htok : tokenize? z with
+theorem CNF.decodeOption_sound {z : List Bool} {φ : CNF}
+    (h : CNF.decodeOption z = some φ) : z = φ.encode := by
+  unfold CNF.decodeOption at h
+  cases htok : tokenizeOption z with
   | none =>
       simp [htok] at h
   | some toks =>
       simp only [htok, Option.bind_eq_bind, Option.bind_some] at h
-      have hz : z = encodeTokens toks := tokenize?_sound htok
+      have hz : z = encodeTokens toks := tokenizeOption_sound htok
       have htoks : toks = CNF.tokens φ := by
         simpa using! (parseTokensAux_sound h)
       calc
@@ -397,10 +399,10 @@ theorem CNF.decode?_sound {z : List Bool} {φ : CNF}
 
 /-- Boolean verifier for SAT's witness relation on paired inputs. -/
 def verifyPair (w : List Bool) : Bool :=
-  match unpair? w with
+  match unpairOption w with
   | none => false
   | some (z, α) =>
-      match CNF.decode? z with
+      match CNF.decodeOption z with
       | none => false
       | some φ => decide (α.length ≤ z.length + 1) && CNF.eval α φ
 
@@ -408,7 +410,7 @@ def verifyPair (w : List Bool) : Bool :=
 witness length check conjoined with evaluating `φ` under `α`. -/
 @[simp] theorem verifyPair_pair_encode (φ : CNF) (α : Assignment) :
     verifyPair (pair φ.encode α) = (decide (α.length ≤ φ.encode.length + 1) && CNF.eval α φ) := by
-  simp [verifyPair, CNF.decode?_encode]
+  simp [verifyPair, CNF.decodeOption_encode]
 
 /-- Completeness: `verifyPair` accepts the pairing of any witnessed instance. -/
 theorem verifyPair_true_of_witness {z α : List Bool} (hR : Witness z α) :
@@ -424,19 +426,19 @@ theorem verifyPair_eq_true_iff_mem_pairLang (w : List Bool) :
   constructor
   · intro h
     unfold verifyPair at h
-    cases hunpair : unpair? w with
+    cases hunpair : unpairOption w with
     | none =>
         simp [hunpair] at h
     | some zw =>
         rcases zw with ⟨z, α⟩
         simp only [hunpair] at h
-        cases hdecode : CNF.decode? z with
+        cases hdecode : CNF.decodeOption z with
         | none =>
             simp [hdecode] at h
         | some φ =>
             simp only [hdecode, Bool.and_eq_true, decide_eq_true_eq] at h
-            have hz : z = φ.encode := CNF.decode?_sound hdecode
-            have hw : w = pair z α := eq_pair_of_unpair?_eq_some hunpair
+            have hz : z = φ.encode := CNF.decodeOption_sound hdecode
+            have hw : w = pair z α := eq_pair_of_unpairOption_eq_some hunpair
             have hlen : α.length ≤ z.length + 1 := by
               simpa [decide_eq_true_eq] using h.1
             refine ⟨z, α, hw, ?_⟩

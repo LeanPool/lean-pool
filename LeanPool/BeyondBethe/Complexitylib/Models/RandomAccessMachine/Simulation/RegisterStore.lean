@@ -68,9 +68,9 @@ theorem initialStore_length_le (input : List Bool) :
 namespace WordCode
 
 /-- A canonical word code parses to its value and leaves any suffix untouched. -/
-theorem decodePrefix?_encode_append (value : ℕ) (suffix : List Bool) :
-    decodePrefix? (encode value ++ suffix) = some (value, suffix) :=
-  decodePrefix?_encode_append_internal value suffix
+theorem decodePrefixOption_encode_append (value : ℕ) (suffix : List Bool) :
+    decodePrefixOption (encode value ++ suffix) = some (value, suffix) :=
+  decodePrefixOption_encode_append_internal value suffix
 
 /-- One self-delimiting word occupies twice its bit-width plus one cell. -/
 theorem encode_length (value : ℕ) :
@@ -82,9 +82,9 @@ end WordCode
 namespace Entry
 
 /-- A canonical address/value code parses exactly and leaves its suffix. -/
-theorem decodePrefix?_encode_append (entry : Entry) (suffix : List Bool) :
-    decodePrefix? (encode entry ++ suffix) = some (entry, suffix) :=
-  decodePrefix?_encode_append_internal entry suffix
+theorem decodePrefixOption_encode_append (entry : Entry) (suffix : List Bool) :
+    decodePrefixOption (encode entry ++ suffix) = some (entry, suffix) :=
+  decodePrefixOption_encode_append_internal entry suffix
 
 /-- An encoded entry charges twice the address width, twice the value width,
 and two separators. -/
@@ -206,9 +206,9 @@ theorem encodedStoreLength_run_le (program : Program) (fuel : ℕ)
   encodedStoreLength_run_le_internal program fuel snapshot hcanonical
 
 /-- Canonical snapshot serialization round-trips exactly. -/
-theorem decode?_encode (snapshot : Snapshot) :
-    decode? snapshot.encode = some snapshot :=
-  decode?_encode_internal snapshot
+theorem decodeOption_encode (snapshot : Snapshot) :
+    decodeOption snapshot.encode = some snapshot :=
+  decodeOption_encode_internal snapshot
 
 /-- A width-`w`, `m`-entry RAM snapshot occupies at most
 `(m + 1) * (4 * w + 2)` Turing-tape cells. -/

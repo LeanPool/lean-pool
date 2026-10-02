@@ -49,7 +49,7 @@ well-defined token stream for any valid encoding.
 - Distinguishes `[]` (true CNF) from `[[]]` (one unsatisfiable clause):
   the former encodes to `[]`, the latter to `[true, false]`.
 
-The matching executable decoder `CNF.decode?`, its round-trip theorem, and its
+The matching executable decoder `CNF.decodeOption`, its round-trip theorem, and its
 soundness theorem live with the token parser in `Complexitylib.SAT.Verifier`.
 -/
 

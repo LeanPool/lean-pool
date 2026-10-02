@@ -82,7 +82,7 @@ theorem blockAt_cfgCode_tape {k : ℕ} {Q : Type} [Fintype Q] [DecidableEq Q]
   have hj' : j < k + 2 := by rwa [cfgTapes_length] at hj
   have hblocks : (tapesBlocks W (cfgTapes c)).length = 2 * (k + 2) := by
     rw [tapesBlocks_length, cfgTapes_length]
-  obtain ⟨h1, h2⟩ := getElem?_tapesBlocks W (cfgTapes c) j
+  obtain ⟨h1, h2⟩ := getElemOption_tapesBlocks W (cfgTapes c) j
   rw [List.getElem?_eq_getElem (by omega), List.getElem?_eq_getElem hj] at h1 h2
   simp only [Option.map_some] at h1 h2
   replace h1 := Option.some_inj.mp h1

@@ -893,7 +893,7 @@ theorem stepActs_forall₂ {k : ℕ} (tm : TM k) (c : Cfg k tm.Q) {W : ℕ}
 with the state block at the front of `cfgBlocks`, tape `j` of a configuration
 occupies blocks `2j+1` and `2j+2` — which is how `Cobham.blockFn` addresses
 them. -/
-theorem getElem?_tapesBlocks (W : ℕ) :
+theorem getElemOption_tapesBlocks (W : ℕ) :
     ∀ (ts : List Tape) (j : ℕ),
       (tapesBlocks W ts)[2 * j]? =
         (ts[j]?).map (fun t => padTo (blockRuler W) (leftCode t)) ∧

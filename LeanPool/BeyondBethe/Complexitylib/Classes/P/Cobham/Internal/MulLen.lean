@@ -28,7 +28,7 @@ The machine `mulLenTM` is self-contained (one work tape, eight control states):
    *emit* pass, which walks the `|A|` marks writing one `false` per mark, and
    the *rewind* pass, which returns the work head to cell one.
 
-Malformed input halts with empty output, matching `unpair? = none`.
+Malformed input halts with empty output, matching `unpairOption = none`.
 
 ## Main results
 
@@ -51,7 +51,7 @@ bits of the leading block have already been counted and `w` is the unread part
 of the input: `|A| · |B|` copies of `false` for a well-formed remainder, and
 nothing at all when the block framing is broken. -/
 def mulAux (k : ℕ) (w : List Bool) : List Bool :=
-  match unpair? w with
+  match unpairOption w with
   | some (x, y) => List.replicate ((k + x.length) * y.length) false
   | none => []
 
@@ -67,14 +67,14 @@ def mulUnpair (p : List Bool) : List Bool := mulAux 0 p
 /-- Reaching the separator ends the block: only the suffix remains. -/
 @[simp] theorem mulAux_sep (k : ℕ) (z : List Bool) :
     mulAux k (false :: true :: z) = List.replicate (k * z.length) false := by
-  simp [mulAux, unpair?]
+  simp [mulAux, unpairOption]
 
 /-- A doubled payload bit increments the counted length. -/
 theorem mulAux_double (k : ℕ) (b : Bool) (z : List Bool) :
     mulAux k (b :: b :: z) = mulAux (k + 1) z := by
   cases b <;>
-    · simp only [mulAux, unpair?]
-      cases h : unpair? z with
+    · simp only [mulAux, unpairOption]
+      cases h : unpairOption z with
       | none => simp
       | some xy =>
           obtain ⟨x, y⟩ := xy

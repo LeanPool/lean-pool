@@ -436,36 +436,36 @@ private theorem true_body_measured {rest : List Bool}
       convert! hinput using 1
       all_goals simp [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
 
-private theorem decodeAux?_eq_map (bits : List Bool) (acc : ℕ) :
-    CircuitCode.NatCode.decodeAux? bits acc =
-      (CircuitCode.NatCode.decodePrefix? bits).map fun result =>
+private theorem decodeAuxOption_eq_map (bits : List Bool) (acc : ℕ) :
+    CircuitCode.NatCode.decodeAuxOption bits acc =
+      (CircuitCode.NatCode.decodePrefixOption bits).map fun result =>
         (acc + result.1, result.2) := by
   induction bits generalizing acc with
-  | nil => simp [CircuitCode.NatCode.decodeAux?, CircuitCode.NatCode.decodePrefix?]
+  | nil => simp [CircuitCode.NatCode.decodeAuxOption, CircuitCode.NatCode.decodePrefixOption]
   | cons bit rest ih =>
       cases bit with
       | false =>
-          simp [CircuitCode.NatCode.decodeAux?, CircuitCode.NatCode.decodePrefix?]
+          simp [CircuitCode.NatCode.decodeAuxOption, CircuitCode.NatCode.decodePrefixOption]
       | true =>
-          rw [CircuitCode.NatCode.decodeAux?]
+          rw [CircuitCode.NatCode.decodeAuxOption]
           rw [ih (acc + 1)]
-          have htrue : CircuitCode.NatCode.decodePrefix? (true :: rest) =
-              CircuitCode.NatCode.decodeAux? rest 1 := rfl
+          have htrue : CircuitCode.NatCode.decodePrefixOption (true :: rest) =
+              CircuitCode.NatCode.decodeAuxOption rest 1 := rfl
           rw [htrue]
           rw [ih 1]
-          cases hdecode : CircuitCode.NatCode.decodePrefix? rest with
+          cases hdecode : CircuitCode.NatCode.decodePrefixOption rest with
           | none => simp
           | some result =>
               rcases result with ⟨value, suffix⟩
               simp [Nat.add_assoc]
 
-private theorem decodePrefix?_true (rest : List Bool) :
-    CircuitCode.NatCode.decodePrefix? (true :: rest) =
-      (CircuitCode.NatCode.decodePrefix? rest).map fun result =>
+private theorem decodePrefixOption_true (rest : List Bool) :
+    CircuitCode.NatCode.decodePrefixOption (true :: rest) =
+      (CircuitCode.NatCode.decodePrefixOption rest).map fun result =>
         (result.1 + 1, result.2) := by
-  rw [CircuitCode.NatCode.decodePrefix?, CircuitCode.NatCode.decodeAux?]
-  rw [decodeAux?_eq_map]
-  cases hdecode : CircuitCode.NatCode.decodePrefix? rest with
+  rw [CircuitCode.NatCode.decodePrefixOption, CircuitCode.NatCode.decodeAuxOption]
+  rw [decodeAuxOption_eq_map]
+  cases hdecode : CircuitCode.NatCode.decodePrefixOption rest with
   | none => simp
   | some result =>
       rcases result with ⟨value, suffix⟩
@@ -476,12 +476,12 @@ private theorem loop_measured {remaining : List Bool}
     (hinv : LoopInv inputLength remaining offset value store) :
     ∃ final,
       MeasuredRuns mainLoop store final
-        (match CircuitCode.NatCode.decodePrefix? remaining with
+        (match CircuitCode.NatCode.decodePrefixOption remaining with
           | none => 10 * remaining.length + 6
           | some (value, _) => 10 * value + 11)
         (64 * (remaining.length + 1) * width inputLength)
         (resourceSpace inputLength) ∧
-      (match CircuitCode.NatCode.decodePrefix? remaining with
+      (match CircuitCode.NatCode.decodePrefixOption remaining with
       | none =>
           final verdictReg = 0 ∧ final valueReg = value + remaining.length ∧
           final pointerReg = inputBase + inputLength ∧ final remainingReg = 0
@@ -515,8 +515,8 @@ private theorem loop_measured {remaining : List Bool}
           64 * ([].length + 1) * width inputLength
         simp only [List.length_nil, zero_add]
         omega
-      · simp only [CircuitCode.NatCode.decodePrefix?,
-          CircuitCode.NatCode.decodeAux?]
+      · simp only [CircuitCode.NatCode.decodePrefixOption,
+          CircuitCode.NatCode.decodeAuxOption]
         have htotal := hinv.total_eq
         have hvalue := hinv.value_eq
         have hpointer := hinv.pointer_eq
@@ -557,8 +557,8 @@ private theorem loop_measured {remaining : List Bool}
               _ ≤ (64 * (rest.length + 2)) * width inputLength :=
                 Nat.mul_le_mul_right _ (by omega)
               _ = _ := by simp only [List.length_cons]
-          · simp only [CircuitCode.NatCode.decodePrefix?,
-              CircuitCode.NatCode.decodeAux?]
+          · simp only [CircuitCode.NatCode.decodePrefixOption,
+              CircuitCode.NatCode.decodeAuxOption]
             have hvalue := hinv.value_eq
             have hpointer := hinv.pointer_eq
             have hremaining : store remainingReg = rest.length + 1 := by
@@ -590,8 +590,8 @@ private theorem loop_measured {remaining : List Bool}
           have hrun := MeasuredRuns.whileNonzeroEnvelope hactive hinv.store_bound
             hbody hloop
           refine ⟨final, ?_, ?_, hactiveFinal, honeFinal, ?_, hfinalBound⟩
-          · rw [decodePrefix?_true]
-            cases hdecode : CircuitCode.NatCode.decodePrefix? rest with
+          · rw [decodePrefixOption_true]
+            cases hdecode : CircuitCode.NatCode.decodePrefixOption rest with
             | none =>
                 rw [hdecode] at hrun
                 simp only at hrun
@@ -627,8 +627,8 @@ private theorem loop_measured {remaining : List Bool}
                   _ ≤ (64 * (rest.length + 2)) * width inputLength :=
                     Nat.mul_le_mul_right _ (by omega)
                   _ = _ := by simp only [List.length_cons]
-          · rw [decodePrefix?_true]
-            cases hdecode : CircuitCode.NatCode.decodePrefix? rest with
+          · rw [decodePrefixOption_true]
+            cases hdecode : CircuitCode.NatCode.decodePrefixOption rest with
             | none =>
                 simpa [hdecode, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
                   using hfinal
@@ -649,7 +649,7 @@ theorem mainLoop_measured_internal {remaining : List Bool}
     ∃ final cost space,
       Exec mainLoop store final (loopStepCount remaining) cost space ∧
       cost ≤ timeBound inputLength ∧ space ≤ spaceBound inputLength ∧
-      (match CircuitCode.NatCode.decodePrefix? remaining with
+      (match CircuitCode.NatCode.decodePrefixOption remaining with
       | none =>
           final verdictReg = 0 ∧ final valueReg = value + remaining.length ∧
           final pointerReg = inputBase + inputLength ∧ final remainingReg = 0
@@ -688,7 +688,7 @@ theorem program_measured_internal (bits : List Bool) :
     ∃ final cost space,
       Exec program (inputStore bits) final (stepCount bits) cost space ∧
       cost ≤ timeBound bits.length ∧ space ≤ spaceBound bits.length ∧
-      match CircuitCode.NatCode.decodePrefix? bits with
+      match CircuitCode.NatCode.decodePrefixOption bits with
       | none =>
           final verdictReg = 0 ∧ final valueReg = bits.length ∧
           final pointerReg = inputBase + bits.length ∧ final remainingReg = 0
@@ -718,7 +718,7 @@ theorem program_measured_internal (bits : List Bool) :
   have hprogram' : MeasuredRuns program (inputStore bits) final
       (stepCount bits) (timeBound bits.length) (resourceSpace bits.length) := by
     rw [program]
-    cases hdecode : CircuitCode.NatCode.decodePrefix? bits with
+    cases hdecode : CircuitCode.NatCode.decodePrefixOption bits with
     | none =>
         rw [hdecode] at hprogram
         simp only at hprogram
@@ -737,7 +737,7 @@ theorem program_measured_internal (bits : List Bool) :
     rw [← envelopeSpace_eq_spaceBound]
     exact hspace
   refine ⟨final, cost, space, hexec, hcost, hspace', ?_⟩
-  cases hdecode : CircuitCode.NatCode.decodePrefix? bits with
+  cases hdecode : CircuitCode.NatCode.decodePrefixOption bits with
   | none =>
       rw [hdecode] at hfinal
       simpa [hdecode] using hfinal

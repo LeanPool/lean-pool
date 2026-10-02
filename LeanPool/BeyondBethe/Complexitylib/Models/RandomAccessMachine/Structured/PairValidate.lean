@@ -90,7 +90,7 @@ theorem compiled_performance (bits : List Bool) :
           TM.pairValidateAccept (bits.foldl TM.pairValidateStep .next) = true := by
             cases TM.pairValidateAccept (bits.foldl TM.pairValidateStep .next) <;>
               simp [Input.bitValue]
-      _ ↔ (unpair? bits).isSome = true :=
+      _ ↔ (unpairOption bits).isSome = true :=
         TM.pairValidateAccept_fold_eq_true_iff bits
       _ ↔ bits ∈ validPairEncoding := Iff.rfl
 

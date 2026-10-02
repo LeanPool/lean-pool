@@ -1166,7 +1166,7 @@ theorem programLoopTM_iteration_internal
     htest inp₀ cbody.work blank ⟨rfl, rfl, rfl⟩
   have hselected :
       selectedInstruction program next.pc = next.curInstr program :=
-    selectedInstruction_eq_getElem?_getD program next.pc
+    selectedInstruction_eq_getElemOption_getD program next.pc
   have htestOutput' :
       ctest.output = instructionHaltOutput (next.curInstr program) := by
     simpa only [hselected] using! htestOutput

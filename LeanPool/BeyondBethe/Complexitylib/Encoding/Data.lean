@@ -59,6 +59,9 @@ mutual
       | isFalse hxy, _ => isFalse fun h => hxy (List.cons.inj h).1
       | _, isFalse hxys => isFalse fun h => hxys (List.cons.inj h).2
 end
+end Complexity
+
+namespace Complexity
 
 instance : DecidableEq Data := Data.decEq
 instance : BEq Data := inferInstance

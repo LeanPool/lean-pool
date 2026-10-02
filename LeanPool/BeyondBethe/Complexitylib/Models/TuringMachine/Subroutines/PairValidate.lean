@@ -29,7 +29,7 @@ namespace Complexity
 
 /-- Decoder-facing characterization of membership in `validPairEncoding`. -/
 theorem mem_validPairEncoding_iff (bits : List Bool) :
-    bits ∈ validPairEncoding ↔ (unpair? bits).isSome = true :=
+    bits ∈ validPairEncoding ↔ (unpairOption bits).isSome = true :=
   Iff.rfl
 
 /-- Extensional characterization: valid encodings are exactly canonical
@@ -38,20 +38,20 @@ theorem mem_validPairEncoding_iff_exists_pair (bits : List Bool) :
     bits ∈ validPairEncoding ↔ ∃ x y, bits = pair x y := by
   constructor
   · intro hmem
-    change (unpair? bits).isSome = true at hmem
-    cases hdecode : unpair? bits with
+    change (unpairOption bits).isSome = true at hmem
+    cases hdecode : unpairOption bits with
     | none => simp [hdecode] at hmem
     | some decoded =>
         obtain ⟨x, y⟩ := decoded
-        exact ⟨x, y, eq_pair_of_unpair?_eq_some hdecode⟩
+        exact ⟨x, y, eq_pair_of_unpairOption_eq_some hdecode⟩
   · rintro ⟨x, y, rfl⟩
     simp [validPairEncoding]
 
 /-- Failure of the partial decoder is exactly nonmembership in the valid-pair
 language. -/
 theorem not_mem_validPairEncoding_iff (bits : List Bool) :
-    bits ∉ validPairEncoding ↔ unpair? bits = none := by
-  cases hdecode : unpair? bits <;> simp [validPairEncoding, hdecode]
+    bits ∉ validPairEncoding ↔ unpairOption bits = none := by
+  cases hdecode : unpairOption bits <;> simp [validPairEncoding, hdecode]
 
 /-- Every canonical `pair` is a valid pair encoding. -/
 @[simp] theorem pair_mem_validPairEncoding (x y : List Bool) :
@@ -63,7 +63,7 @@ namespace TM
 /-- The pair-validator fold accepts exactly when the canonical decoder succeeds. -/
 theorem pairValidateAccept_fold_eq_true_iff (bits : List Bool) :
     pairValidateAccept (bits.foldl pairValidateStep .next) = true ↔
-      (unpair? bits).isSome = true :=
+      (unpairOption bits).isSome = true :=
   pairValidateAccept_fold_eq_true_iff_internal bits
 
 /-- The finite-state pair validator decides `validPairEncoding` in linear time. -/
