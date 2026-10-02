@@ -347,15 +347,23 @@ theorem machineSignedMagnitudeAdd_pair
       congr 1
       omega
     · have hlt : leftAbs < rightAbs := Nat.lt_of_not_ge h
-      simp [machineSignedMagnitudeAdd, machineSignedSameSign,
-        machineSignedLeftSign, machineSignedRightSign,
-        machineSignedLeftAbs, machineSignedRightAbs,
-        machineSignedLeftAbsGe, machineSignedAbsLeftDiff,
-        machineSignedAbsRightDiff, machineSignedDifferentAbs,
-        machineSignedDifferentSign, machineBinaryNatLeBit_pair_natBits,
-        machineBinarySubBits_pair_natBits, signedMagnitudeValue, h]
-      congr 1
-      omega
+      simp only [machineSignedMagnitudeAdd, machineSignedSameSign,
+        machineSignedLeftSign, machinePairFirst_pair, machineSignedRightSign,
+        machinePairSecond_pair, machineXorBit_one, Bool.bne_false,
+        machineNotBit_one, Bool.not_true, machineSignedDifferentSign,
+        machineSignedLeftAbsGe, machineSignedRightAbs, machineSignedLeftAbs,
+        machineBinaryNatLeBit_pair_natBits, h, decide_false,
+        machineIfHead_false, machineSignedDifferentAbs,
+        machineSignedAbsLeftDiff, machineBinarySubBits_pair_natBits,
+        machineSignedAbsRightDiff, machineCanonicalIntegerFromSignedAbs_pair,
+        signedMagnitudeValue, Bool.false_eq_true, ↓reduceIte,
+        integerBinaryCode_ofNat]
+      have hcast : -(leftAbs : ℤ) + (rightAbs : ℤ) =
+          Int.ofNat (rightAbs - leftAbs) := by
+        rw [Int.ofNat_eq_natCast, Nat.cast_sub (Nat.le_of_lt hlt)]
+        omega
+      rw [hcast]
+      rfl
   · simp [machineSignedMagnitudeAdd, machineSignedSameSign,
       machineSignedLeftSign, machineSignedRightSign,
       machineSignedLeftAbs, machineSignedRightAbs,
@@ -371,8 +379,12 @@ theorem machineIntegerAddCode_encode (z w : ℤ) :
   | ofNat n =>
       cases w with
       | ofNat m =>
-          simp [machineIntegerAddCode, machineIntegerSignedMagnitude_encode,
-            machineSignedMagnitudeAdd_pair, signedMagnitudeValue]
+          rw [machineIntegerAddCode]
+          simpa only [machinePairFirst_pair, machinePairSecond_pair,
+            machineIntegerSignedMagnitude_encode, Int.ofNat_eq_natCast,
+            signedMagnitudeValue,
+            Bool.false_eq_true, ite_false] using
+              machineSignedMagnitudeAdd_pair false false n m
       | negSucc m =>
           rw [machineIntegerAddCode]
           simp only [machinePairFirst_pair, machinePairSecond_pair,
@@ -423,8 +435,12 @@ theorem machineIntegerNegCode_encode (z : ℤ) :
     machineIntegerNegCode (integerBinaryCode z) = integerBinaryCode (-z) := by
   cases z with
   | ofNat n =>
-      simp [machineIntegerNegCode, machineIntegerSignedMagnitude_encode,
-        signedMagnitudeValue]
+      rw [machineIntegerNegCode]
+      simpa only [machinePairFirst_pair, machinePairSecond_pair,
+        machineIntegerSignedMagnitude_encode, Int.ofNat_eq_natCast,
+        machineNotBit_one,
+        Bool.not_false, signedMagnitudeValue, ite_true] using
+          machineCanonicalIntegerFromSignedAbs_pair true n
   | negSucc n =>
       rw [Int.neg_negSucc]
       rw [machineIntegerNegCode, machineIntegerSignedMagnitude_encode]
