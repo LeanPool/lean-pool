@@ -49,7 +49,7 @@ structure SmoothingKernelData (p : ℝ) (d : ℕ) where
   smooth : ℝ → (Point d → ℝ) → PairOracle d
 
 /-- The infimal convolution of the objective with the rescaled smoothing potential. -/
-noncomputable def localSmoothingValue (kernel : SmoothingKernelData p d)
+@[expose] noncomputable def localSmoothingValue (kernel : SmoothingKernelData p d)
     (chi : ℝ) (ell : Point d → ℝ) (x : Point d) : ℝ :=
   sInf {r : ℝ | ∃ v : Point d,
     r = ell (x + v) + chi * kernel.phi ((1 / chi) • v)}
@@ -106,7 +106,7 @@ def SmoothingKernelAssumptions (kernel : SmoothingKernelData p d) : Prop :=
         (kernel.smooth chi ell).value (Q x)
 
 /-- The signed-coordinate-invariant power kernel used in the lower-bound construction. -/
-noncomputable def lowerKernelPhi (r0 theta : ℝ) (x : Point d) : ℝ :=
+@[expose] noncomputable def lowerKernelPhi (r0 theta : ℝ) (x : Point d) : ℝ :=
   2 * (∑ j, |x j| ^ r0) ^ (2 * theta / r0)
 
 /-- A smoothing kernel exists with the prescribed power formula and dimension-dependent bounds. -/

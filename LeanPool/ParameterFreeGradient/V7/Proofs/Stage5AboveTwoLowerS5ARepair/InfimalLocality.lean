@@ -57,7 +57,7 @@ lemma eventually_lpNorm_sub_lt {p eta : ℝ} (hp : 1 ≤ p)
   exact hc hmem
 
 /-- The objective value plus the rescaled kernel penalty at a displacement. -/
-noncomputable def smoothingCost (kernel : SmoothingKernelData p d)
+@[expose] noncomputable def smoothingCost (kernel : SmoothingKernelData p d)
     (chi : ℝ) (ell : Point d → ℝ) (x v : Point d) : ℝ :=
   ell (x + v) + chi * kernel.phi ((1 / chi) • v)
 

@@ -60,7 +60,7 @@ noncomputable def terminalCheck (on ov : Observation d) :
   ⟨.terminalDescent, on, ov⟩
 
 /-- The ordered list of interpolation checks for every pair through horizon `n`. -/
-noncomputable def allInterpolationChecks (n : ℕ)
+@[expose] noncomputable def allInterpolationChecks (n : ℕ)
     (obsAt : ℕ → Observation d) : List (ObservableGuardCheck d) :=
   (List.range (n + 1)).flatMap fun i =>
     (List.range (n + 1)).map fun j => interpolationCheck (obsAt i) (obsAt j)
@@ -147,7 +147,7 @@ noncomputable def nextEstimateState (M : ℝ) (x0 : Point d) (k : ℕ)
 
 /-- The estimate-sequence query formed from the current accelerated point and quadratic
 minimizer. -/
-noncomputable def estimateQuery (M : ℝ) (x0 : Point d) (k : ℕ)
+@[expose] noncomputable def estimateQuery (M : ℝ) (x0 : Point d) (k : ℕ)
     (state : O3.EuclideanEstimateState d) : Point d :=
   O3.euclideanBarycenter (O3.euclideanA k)
     (O3.euclideanWeight (O3.euclideanA k)) state.accelerated

@@ -25,7 +25,7 @@ public section
 namespace O3
 
 /-- The normalized weighted average of an accelerated point and an estimate minimizer. -/
-noncomputable def euclideanBarycenter {d : ℕ} (A a : ℝ)
+@[expose] noncomputable def euclideanBarycenter {d : ℕ} (A a : ℝ)
     (x z : Vec d) : Vec d :=
   (A + a)⁻¹ • (A • x + a • z)
 

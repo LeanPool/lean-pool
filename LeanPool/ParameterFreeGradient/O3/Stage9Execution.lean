@@ -297,7 +297,7 @@ noncomputable def ogmgDataObservation (cfg : OGMGExecutionConfig d)
 
 /-- Scalar/vector projections of the actual finite data, ready for the
 algebraic certificate.  These are definitions, not freely supplied arrays. -/
-noncomputable def ogmgFunctionValue (cfg : OGMGExecutionConfig d) (i : ℕ) : ℝ :=
+@[expose] noncomputable def ogmgFunctionValue (cfg : OGMGExecutionConfig d) (i : ℕ) : ℝ :=
   (ogmgObservation cfg i).value
 
 /-- The squared Euclidean norm of the gradient at an execution query. -/

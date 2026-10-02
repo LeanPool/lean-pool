@@ -28,7 +28,7 @@ def prependReport (history : List (Observation d))
   ⟨history ++ tail.trace, guards ++ tail.checkedGuards, tail.outcome⟩
 
 /-- The source terminal-query report, determined by the descent guard and gradient accuracy. -/
-noncomputable def sourceTerminalReport (inst : PositiveInstance 2 d x0)
+@[expose] noncomputable def sourceTerminalReport (inst : PositiveInstance 2 d x0)
     (eps M : ℝ) (n : ℕ) (U : Point d) : TrialReport d :=
   let cfg := O3.stage9ExecutionConfig n inst.oracle M U
   let on := inst.oracle.observe (O3.ogmgState cfg n).current
@@ -41,7 +41,7 @@ noncomputable def sourceTerminalReport (inst : PositiveInstance 2 d x0)
   else ⟨[ov], [terminal], .scale terminal⟩
 
 /-- The source phase-B suffix that checks interpolation before terminal descent. -/
-noncomputable def sourcePhaseBSuffix (inst : PositiveInstance 2 d x0)
+@[expose] noncomputable def sourcePhaseBSuffix (inst : PositiveInstance 2 d x0)
     (eps M : ℝ) (n : ℕ) (U : Point d) : TrialReport d :=
   let cfg := O3.stage9ExecutionConfig n inst.oracle M U
   let checks := allInterpolationChecks n fun i =>
@@ -51,7 +51,7 @@ noncomputable def sourcePhaseBSuffix (inst : PositiveInstance 2 d x0)
   | .ok passed => prependReport [] passed (sourceTerminalReport inst eps M n U)
 
 /-- The source OGM-G report with its new observations and concluding checks. -/
-noncomputable def sourcePhaseBReport (inst : PositiveInstance 2 d x0)
+@[expose] noncomputable def sourcePhaseBReport (inst : PositiveInstance 2 d x0)
     (eps M : ℝ) (n : ℕ) (U : Point d) : TrialReport d :=
   let cfg := O3.stage9ExecutionConfig n inst.oracle M U
   let newTrace := (List.range n).map fun j =>

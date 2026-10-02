@@ -23,7 +23,7 @@ open Stage5AboveTwoLower.S5AGlobalC2
 open Stage5AboveTwoLowerResume
 
 /-- The explicit curvature bound for the constructed smoothing kernel. -/
-noncomputable def repairMpd (p : ℝ) (d : ℕ) : ℝ :=
+@[expose] noncomputable def repairMpd (p : ℝ) (d : ℕ) : ℝ :=
   if p ≤ 3 * Real.log d then 5 * p
   else 15 * Real.exp (2 / 3) * Real.log d
 

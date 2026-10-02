@@ -22,7 +22,7 @@ noncomputable local instance shapesPropDecidable (q : Prop) : Decidable q :=
   Classical.propDecidable q
 
 /-- The alternating query and accelerated-point observations of an estimate-phase segment. -/
-noncomputable def phaseATraceFrom (inst : PositiveInstance 2 d x0)
+@[expose] noncomputable def phaseATraceFrom (inst : PositiveInstance 2 d x0)
     (M : ℝ) (k fuel : ℕ) : List (Observation d) :=
   (List.range fuel).flatMap fun j =>
     [inst.oracle.observe (estimateQuery M x0 (k + j)
@@ -31,7 +31,7 @@ noncomputable def phaseATraceFrom (inst : PositiveInstance 2 d x0)
       (sourceEstimateState inst.oracle M x0 (k + j + 1)).accelerated]
 
 /-- The upper-model guards corresponding to an estimate-phase segment. -/
-noncomputable def phaseAGuardsFrom (inst : PositiveInstance 2 d x0)
+@[expose] noncomputable def phaseAGuardsFrom (inst : PositiveInstance 2 d x0)
     (M : ℝ) (k fuel : ℕ) : List (ObservableGuardCheck d) :=
   (List.range fuel).map fun j =>
     upperCheck

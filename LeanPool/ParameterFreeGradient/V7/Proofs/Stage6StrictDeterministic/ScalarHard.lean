@@ -27,7 +27,7 @@ noncomputable def hardValue (eps H z : ℝ) : ℝ :=
   else g * z - 4 * g * H
 
 /-- The continuous piecewise affine slope of the hard objective. -/
-noncomputable def hardSlope (eps H z : ℝ) : ℝ :=
+@[expose] noncomputable def hardSlope (eps H z : ℝ) : ℝ :=
   let g := 2 * eps
   if z ≤ H then -g else if z ≤ 3 * H then g * (z / H - 2) else g
 

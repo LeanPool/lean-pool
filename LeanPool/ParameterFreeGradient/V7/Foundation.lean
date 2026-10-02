@@ -69,7 +69,7 @@ def QueriedAt (trace : List (Observation d)) (k : ℕ) (x : Point d) : Prop :=
   ∃ obs, (trace.drop k).head? = some obs ∧ obs.point = x
 
 /-- The returned point occurs in the run's query trace. -/
-def PairRunResult.returnedWasQueried (run : PairRunResult d) : Prop :=
+@[expose] def PairRunResult.returnedWasQueried (run : PairRunResult d) : Prop :=
   WasQueried run.trace run.returned
 
 /-- The numerical input viewed in the underlying causal machine interface. -/

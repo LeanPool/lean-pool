@@ -20,7 +20,7 @@ open scoped BigOperators
 namespace V7
 
 /-- The scaled squared norm mirror potential for exponents between one and two. -/
-noncomputable def belowH (p : ℝ) (x : Point d) : ℝ :=
+@[expose] noncomputable def belowH (p : ℝ) (x : Point d) : ℝ :=
   (1 / (2 * (p - 1))) * (lpNorm p x) ^ (2 : ℕ)
 
 /-- The conjugate scaled squared norm potential for the below-two geometry. -/
@@ -32,7 +32,7 @@ noncomputable def belowMirrorMap (p : ℝ) (s : Point d) : Point d :=
   (p - 1) • O3.dualityMap (conjugateExponent p) s
 
 /-- The Bregman difference of a function and its specified gradient, based at `y`. -/
-noncomputable def FunctionBregman (F : Point d → ℝ) (grad : Point d → Point d)
+@[expose] noncomputable def FunctionBregman (F : Point d → ℝ) (grad : Point d → Point d)
     (x y : Point d) : ℝ :=
   F x - F y - pairing (grad y) (x - y)
 
@@ -148,7 +148,7 @@ noncomputable def weightedSum (n : ℕ) (a : ScalarSeq) (X : VectorSeq d) : Poin
 
 /-- The primal energy residual combining gradient differences, mirror increments, and mixed
 pairings. -/
-noncomputable def BelowPrimalResidual (p : ℝ) (n : ℕ)
+@[expose] noncomputable def BelowPrimalResidual (p : ℝ) (n : ℕ)
     (u _dw : ScalarSeq) (alpha : ScalarMatrix) (A B X : VectorSeq d)
     (Omega : Point d → ℝ) : ℝ :=
   (∑ k ∈ Finset.range n,
@@ -160,7 +160,7 @@ noncomputable def BelowPrimalResidual (p : ℝ) (n : ℕ)
       u k * pairing (A k - A (k + 1)) (X k))
 
 /-- The reversed dual energy residual with reciprocal weights and mixed pairings. -/
-noncomputable def BelowDualResidual (p : ℝ) (n : ℕ)
+@[expose] noncomputable def BelowDualResidual (p : ℝ) (n : ℕ)
     (u : ScalarSeq) (alpha b : ScalarMatrix) (C D : VectorSeq d)
     (Omega : Point d → ℝ) : ℝ :=
   let w : ScalarSeq := fun i => 1 / u (n - i)

@@ -33,7 +33,7 @@ namespace Stage9Certificate
 `psi_i = f_i - f^* - ||g_i||^2/(2M)`.  The squared gradient is an explicit
 scalar input so that the coefficient algebra is independent of a particular
 vector representation. -/
-noncomputable def ogmgPsi (M fstar : ℝ) (fval gradSq : ℕ → ℝ) (i : ℕ) : ℝ :=
+@[expose] noncomputable def ogmgPsi (M fstar : ℝ) (fval gradSq : ℕ → ℝ) (i : ℕ) : ℝ :=
   fval i - fstar - gradSq i / (2 * M)
 
 /-- The source interpolation remainder
@@ -46,14 +46,14 @@ def ogmgDelta (kappa : ℕ → ℝ) (i : ℕ) : ℝ :=
   kappa (i + 1) - kappa i
 
 /-- The literal right side of the frozen OGM-G certificate. -/
-def ogmgCertificateRhs (n : ℕ) (kappa psi : ℕ → ℝ)
+@[expose] def ogmgCertificateRhs (n : ℕ) (kappa psi : ℕ → ℝ)
     (pairTerm : ℕ → ℕ → ℝ) : ℝ :=
   (∑ i ∈ Finset.range n, kappa (i + 1) * ogmgI psi pairTerm i (i + 1)) +
     (∑ i ∈ Finset.range n,
       ogmgDelta kappa i * ogmgI psi pairTerm n i) + psi n
 
 /-- The unsigned collection of pairing terms subtracted by the certificate. -/
-def ogmgPairingAggregate (n : ℕ) (kappa : ℕ → ℝ)
+@[expose] def ogmgPairingAggregate (n : ℕ) (kappa : ℕ → ℝ)
     (pairTerm : ℕ → ℕ → ℝ) : ℝ :=
   (∑ i ∈ Finset.range n, kappa (i + 1) * pairTerm i (i + 1)) +
     ∑ i ∈ Finset.range n, ogmgDelta kappa i * pairTerm n i

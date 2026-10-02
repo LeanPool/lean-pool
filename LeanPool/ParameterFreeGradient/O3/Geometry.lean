@@ -42,7 +42,7 @@ theorem one_lt_conjugateExponent {p : ℝ} (hp : 1 < p) :
   exact (holderConjugate_conjugateExponent hp).symm.lt
 
 /-- The `p`-th power sum underlying the finite-dimensional `ell_p` norm. -/
-noncomputable def lpPower (p : ℝ) {d : ℕ} (x : Point d) : ℝ := ∑ i, |x i| ^ p
+@[expose] noncomputable def lpPower (p : ℝ) {d : ℕ} (x : Point d) : ℝ := ∑ i, |x i| ^ p
 
 /-- The literal finite-dimensional `ell_p` norm for a real exponent. -/
 noncomputable def lpNorm (p : ℝ) {d : ℕ} (x : Point d) : ℝ := (lpPower p x) ^ (1 / p)
@@ -129,11 +129,11 @@ theorem abs_pairing_le_lpNorm_mul {p q : ℝ} (hpq : p.HolderConjugate q)
   · exact pairing_le_lpNorm_mul hpq x y
 
 /-- The power-duality map `J_p(u)_i = |u_i|^(p-2) u_i` from the TeX source. -/
-noncomputable def powerDualityMap (p : ℝ) {d : ℕ} (u : Point d) : Point d :=
+@[expose] noncomputable def powerDualityMap (p : ℝ) {d : ℕ} (u : Point d) : Point d :=
   fun i ↦ |u i| ^ (p - 2) * u i
 
 /-- `h_c(x) = (1/p) ||x-c||_p^p`, written using its literal power sum. -/
-noncomputable def uniformRegularizer (p : ℝ) {d : ℕ} (c x : Point d) : ℝ :=
+@[expose] noncomputable def uniformRegularizer (p : ℝ) {d : ℕ} (c x : Point d) : ℝ :=
   (1 / p) * lpPower p (x - c)
 
 /-- The normalized `ell_p` duality map used in the `1 < p ≤ 2` chain. -/
@@ -142,7 +142,7 @@ noncomputable def dualityMap (p : ℝ) {d : ℕ} (u : Point d) : Point d :=
   else fun i ↦ (lpNorm p u) ^ (2 - p) * (|u i| ^ (p - 2) * u i)
 
 /-- `ψ_c(x) = (1/2) ||x-c||_p^2`. -/
-noncomputable def quadraticRegularizer (p : ℝ) {d : ℕ} (c x : Point d) : ℝ :=
+@[expose] noncomputable def quadraticRegularizer (p : ℝ) {d : ℕ} (c x : Point d) : ℝ :=
   (1 / 2 : ℝ) * (lpNorm p (x - c)) ^ (2 : ℕ)
 
 /-- Exact unproved target of TeX Lemma `lem:puniform`.  Keeping this as a

@@ -22,7 +22,7 @@ noncomputable local instance correctnessPropDecidable (q : Prop) : Decidable q :
   Classical.propDecidable q
 
 /-- The accelerated endpoint passed from the estimate phase to OGM-G. -/
-noncomputable def sourceU (inst : PositiveInstance 2 d x0) (M : ℝ)
+@[expose] noncomputable def sourceU (inst : PositiveInstance 2 d x0) (M : ℝ)
     (n : ℕ) : Point d :=
   (sourceEstimateState inst.oracle M x0 n).accelerated
 

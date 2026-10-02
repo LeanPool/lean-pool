@@ -43,7 +43,7 @@ structure Observation (d : ℕ) where
   gradient : Vec d
 
 /-- Package a query point with its exact objective value and gradient. -/
-def PairOracle.observe {d : ℕ} (oracle : PairOracle d) (x : Vec d) : Observation d :=
+@[expose] def PairOracle.observe {d : ℕ} (oracle : PairOracle d) (x : Vec d) : Observation d :=
   ⟨x, oracle.value x, oracle.gradient x⟩
 
 /-- The only numerical/problem data supplied to the O3 state machine. -/
@@ -96,7 +96,7 @@ def FirstOrderMethod.runFuel {d : ℕ} (method : FirstOrderMethod d)
           method.runFuel oracle fuel (next obs) (history ++ [obs])
 
 /-- Run a first-order method from its initial state with an empty query history. -/
-def FirstOrderMethod.run {d : ℕ} (method : FirstOrderMethod d)
+@[expose] def FirstOrderMethod.run {d : ℕ} (method : FirstOrderMethod d)
     (oracle : PairOracle d) (input : MethodInput d) (fuel : ℕ) : Option (RunResult d) :=
   method.runFuel oracle fuel (method.initial input) []
 
@@ -105,7 +105,7 @@ def RunResult.callCount {d : ℕ} (result : RunResult d) : ℕ := result.queries
 
 /-- The returned point really was queried; a bare unobserved terminal point is
 not enough for the frozen theorem. -/
-def RunResult.returnedWasQueried {d : ℕ} (result : RunResult d) : Prop :=
+@[expose] def RunResult.returnedWasQueried {d : ℕ} (result : RunResult d) : Prop :=
   result.returned ∈ result.queries.map Observation.point
 
 /-- The coordinate gradient represents the Frechet derivative.  The ambient
@@ -132,7 +132,7 @@ def SecantWitness {d : ℕ} (p q M0 : ℝ) (grad : Vec d → Vec d)
     M0 = lpNorm q (grad z0 - grad x0) / lpNorm p (z0 - x0) ∧ 0 < M0
 
 /-- Exact convexity hypothesis from the frozen source. -/
-def IsConvexObjective {d : ℕ} (f : Vec d → ℝ) : Prop := ConvexOn ℝ Set.univ f
+@[expose] def IsConvexObjective {d : ℕ} (f : Vec d → ℝ) : Prop := ConvexOn ℝ Set.univ f
 
 /-- One complete admissible instance.  The algorithm never receives this
 structure; it is used only by the correctness theorem. -/
@@ -173,7 +173,7 @@ noncomputable def AdmissibleInstance.radius {d : ℕ} {p : ℝ} (P : AdmissibleI
   minimizerDistance p P.f P.x0
 
 /-- The dimensionless quantity `L R / ε` governing the complexity bounds. -/
-noncomputable def AdmissibleInstance.condition {d : ℕ} {p : ℝ}
+@[expose] noncomputable def AdmissibleInstance.condition {d : ℕ} {p : ℝ}
     (P : AdmissibleInstance d p) : ℝ := P.L * P.radius / P.eps
 
 /-- The condition quantity truncated below at one. -/

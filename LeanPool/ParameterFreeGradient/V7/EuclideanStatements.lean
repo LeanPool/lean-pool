@@ -171,7 +171,7 @@ noncomputable def FiniteDataOGMGStatement : Prop :=
     data.theta 0 ≥ ((n : ℝ) + 1) / Real.sqrt 2
 
 /-- The prescribed observation list for the Euclidean gap and OGM-G phases. -/
-def euclideanPlannedTrace (inst : PositiveInstance 2 d x0)
+@[expose] def euclideanPlannedTrace (inst : PositiveInstance 2 d x0)
     (phaseA : EuclideanGapData d m) (phaseB : OGMGData d n) :
     List (Observation d) :=
   ((List.range m).flatMap (fun k =>
@@ -187,7 +187,7 @@ def exactGuardCheck (kind : ObservableGuardKind) (oracle : PairOracle d)
   ⟨kind, oracle.observe x, oracle.observe y⟩
 
 /-- The upper-model, interpolation, and terminal-descent checks of a Euclidean trial. -/
-def euclideanGuardSchedule (inst : PositiveInstance 2 d x0)
+@[expose] def euclideanGuardSchedule (inst : PositiveInstance 2 d x0)
     (phaseA : EuclideanGapData d m) (phaseB : OGMGData d n) :
     List (ObservableGuardCheck d) :=
   ((List.range m).map (fun k =>

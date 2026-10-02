@@ -17,11 +17,11 @@ public section
 namespace V7.Stage5AboveTwoLowerS5F
 
 /-- The affine map from normalized coordinates to the requested physical radius and center. -/
-noncomputable def physicalForward (x0 : Point d) (R rT : ℝ) (z : Point d) : Point d :=
+@[expose] noncomputable def physicalForward (x0 : Point d) (R rT : ℝ) (z : Point d) : Point d :=
   x0 + (R / rT) • z
 
 /-- The affine map from physical coordinates back to the normalized construction. -/
-noncomputable def physicalBackward (x0 : Point d) (R rT : ℝ) (x : Point d) : Point d :=
+@[expose] noncomputable def physicalBackward (x0 : Point d) (R rT : ℝ) (x : Point d) : Point d :=
   (rT / R) • (x - x0)
 
 lemma physicalForward_backward (x0 : Point d) {R rT : ℝ}

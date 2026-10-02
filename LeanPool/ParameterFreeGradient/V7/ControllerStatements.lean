@@ -95,12 +95,12 @@ structure ControllerVisit where
   D : ℝ
 
 /-- The specified visit occupies index `i` in the chronological controller path. -/
-def VisitAt (visits : List ControllerVisit) (i : ℕ)
+@[expose] def VisitAt (visits : List ControllerVisit) (i : ℕ)
     (visit : ControllerVisit) : Prop :=
   (visits.drop i).head? = some visit
 
 /-- The specified trial report occupies index `i` in the report list. -/
-def ReportAt (reports : List (TrialReport d)) (i : ℕ)
+@[expose] def ReportAt (reports : List (TrialReport d)) (i : ℕ)
     (report : TrialReport d) : Prop :=
   (reports.drop i).head? = some report
 
@@ -175,7 +175,7 @@ noncomputable def TrialOutcomeCertificationStatement : Prop :=
       RealizedPathGeometricallyDominated eps G Ma R visits
 
 /-- The trial complexity exponent: one half below two, and `p / (p + 2)` above two. -/
-noncomputable def localCostExponent (p : ℝ) : ℝ :=
+@[expose] noncomputable def localCostExponent (p : ℝ) : ℝ :=
   if p ≤ 2 then 1 / 2 else p / (p + 2)
 
 /-- G01--G02: source carrier for `lem:amortization`.  Both geometric sums

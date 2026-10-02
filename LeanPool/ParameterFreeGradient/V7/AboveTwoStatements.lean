@@ -18,15 +18,15 @@ public section
 namespace V7
 
 /-- The power mirror potential `‖x‖ₚ^p / p` used for exponents above two. -/
-noncomputable def aboveH (p : ℝ) (x : Point d) : ℝ :=
+@[expose] noncomputable def aboveH (p : ℝ) (x : Point d) : ℝ :=
   (1 / p) * (lpNorm p x) ^ p
 
 /-- The conjugate power potential with the Hölder-conjugate exponent. -/
-noncomputable def aboveHstar (p : ℝ) (s : Point d) : ℝ :=
+@[expose] noncomputable def aboveHstar (p : ℝ) (s : Point d) : ℝ :=
   (1 / conjugateExponent p) * (lpNorm (conjugateExponent p) s) ^ (conjugateExponent p)
 
 /-- The power duality map at the Hölder-conjugate exponent. -/
-noncomputable def aboveMirrorMap (p : ℝ) (s : Point d) : Point d :=
+@[expose] noncomputable def aboveMirrorMap (p : ℝ) (s : Point d) : Point d :=
   O3.powerDualityMap (conjugateExponent p) s
 
 /-- The conjugacy, gradient, uniform convexity, and Bregman identities for the above-two
@@ -47,25 +47,25 @@ noncomputable def AboveGeometryStatement : Prop :=
           (aboveMirrorMap p t) (aboveMirrorMap p s)
 
 /-- The uniform convexity constant of the power mirror potential. -/
-noncomputable def aboveUniformConstant (p : ℝ) : ℝ := 2 ^ (2 - p) / p
+@[expose] noncomputable def aboveUniformConstant (p : ℝ) : ℝ := 2 ^ (2 - p) / p
 /-- The exponent in the accumulated above-two residual error. -/
-noncomputable def aboveErrorPower (p : ℝ) : ℝ := p / (p - 2)
+@[expose] noncomputable def aboveErrorPower (p : ℝ) : ℝ := p / (p - 2)
 /-- The coefficient of the error bound obtained from the above-two mixed residual. -/
-noncomputable def aboveErrorConstant (p : ℝ) : ℝ :=
+@[expose] noncomputable def aboveErrorConstant (p : ℝ) : ℝ :=
   (p - 2) / (2 * p) * (p * aboveUniformConstant p) ^ (-2 / (p - 2))
 /-- The error constant after bounding the squared weight increments by their growth rate. -/
-noncomputable def aboveBudgetConstant (p : ℝ) : ℝ :=
+@[expose] noncomputable def aboveBudgetConstant (p : ℝ) : ℝ :=
   4 ^ (aboveErrorPower p) * aboveErrorConstant p
 /-- The exponent relating an above-two error budget to the coefficient scale. -/
-noncomputable def aboveBudgetExponent (p : ℝ) : ℝ := (p - 2) / p
+@[expose] noncomputable def aboveBudgetExponent (p : ℝ) : ℝ := (p - 2) / p
 /-- The coefficient of the terminal weight in terms of the error budget and horizon. -/
-noncomputable def aboveGrowthConstant (p : ℝ) : ℝ :=
+@[expose] noncomputable def aboveGrowthConstant (p : ℝ) : ℝ :=
   (2 * aboveBudgetConstant p) ^ (-aboveBudgetExponent p)
 /-- The exponent-dependent constant used to choose the primal trial horizon. -/
-noncomputable def aboveHp (p : ℝ) : ℝ :=
+@[expose] noncomputable def aboveHp (p : ℝ) : ℝ :=
   3 * p ^ (aboveBudgetExponent p) / (2 * p * aboveGrowthConstant p)
 /-- The exponent-dependent constant used to choose the dual trial horizon. -/
-noncomputable def aboveJp (p : ℝ) : ℝ :=
+@[expose] noncomputable def aboveJp (p : ℝ) : ℝ :=
   2 * (conjugateExponent p) ^ (1 + aboveBudgetExponent p) /
     aboveGrowthConstant p
 /-- The weight scale chosen from the error budget and iteration horizon. -/
@@ -73,7 +73,7 @@ noncomputable def aboveGamma (p eta : ℝ) (n : ℕ) : ℝ :=
   (eta / (2 * aboveBudgetConstant p * n)) ^ (aboveBudgetExponent p)
 
 /-- The accumulated above-two residual error for a weight sequence and its increments. -/
-noncomputable def aboveErrorSum (p : ℝ) (n : ℕ)
+@[expose] noncomputable def aboveErrorSum (p : ℝ) (n : ℕ)
     (u dw : ScalarSeq) : ℝ :=
   aboveErrorConstant p *
     ∑ k ∈ Finset.range n, ((dw k) ^ (2 : ℕ) / u k) ^ (aboveErrorPower p)
@@ -91,13 +91,13 @@ noncomputable def AboveWeightErrorBalanceStatement : Prop :=
       (n : ℝ) ^ ((p + 2) / p)
 
 /-- The primal residual for above-two geometry, expressed through the common residual formula. -/
-noncomputable def AbovePrimalResidual (p : ℝ) (n : ℕ)
+@[expose] noncomputable def AbovePrimalResidual (p : ℝ) (n : ℕ)
     (u : ScalarSeq) (alpha : ScalarMatrix) (A B X : VectorSeq d)
     (Omega : Point d → ℝ) : ℝ :=
   BelowPrimalResidual p n u (fun _ => 0) alpha A B X Omega
 
 /-- The dual residual for above-two geometry, expressed through the common residual formula. -/
-noncomputable def AboveDualResidual (p : ℝ) (n : ℕ)
+@[expose] noncomputable def AboveDualResidual (p : ℝ) (n : ℕ)
     (u : ScalarSeq) (alpha b : ScalarMatrix) (C D : VectorSeq d)
     (Omega : Point d → ℝ) : ℝ :=
   BelowDualResidual p n u alpha b C D Omega

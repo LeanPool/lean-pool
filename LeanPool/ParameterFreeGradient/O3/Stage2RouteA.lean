@@ -199,7 +199,7 @@ lemma hasDerivAt_scalarJ_above_two {q u : ℝ} (hq : 2 < q) :
   · exact hasDerivAt_scalarJ_of_ne_zero hu
 
 /-- The weighted quadratic form that appears in the Hessian. -/
-noncomputable def weightedSquareSum (p : ℝ) {d : ℕ}
+@[expose] noncomputable def weightedSquareSum (p : ℝ) {d : ℕ}
     (x h : Point d) (t : ℝ) : ℝ :=
   ∑ i : Fin d, |(x + t • h) i| ^ (p - 2) * (h i) ^ (2 : ℕ)
 

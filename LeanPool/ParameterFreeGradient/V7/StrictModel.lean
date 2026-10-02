@@ -108,7 +108,7 @@ def UniqueMinimizer (f : StrictPoint → ℝ) (xstar : StrictPoint) : Prop :=
   (∀ x, f xstar ≤ f x) ∧ ∀ x, f x = f xstar → x = xstar
 
 /-- The affine--quadratic--affine family from `thm:impossibility`. -/
-noncomputable def strictHardFamily (eps : ℝ) (x0 : StrictPoint) (H : ℝ)
+@[expose] noncomputable def strictHardFamily (eps : ℝ) (x0 : StrictPoint) (H : ℝ)
     (x : StrictPoint) : ℝ :=
   let g := 2 * eps
   let z := x 0 - x0 0
@@ -154,7 +154,7 @@ def StrictNormalizedInstance (eps : ℝ) (x0 : StrictPoint) (L R : ℝ)
 
 /-- A source-level hitting-time carrier.  `top` means no queried or returned
 small-gradient point is reached. -/
-noncomputable def strictHittingTime (method : StrictLocalMethod)
+@[expose] noncomputable def strictHittingTime (method : StrictLocalMethod)
     (oracle : PairOracle 1) (traces : ℕ → StrictTranscript) : ENNReal :=
   sInf {t : ENNReal | ∃ N : ℕ, t = (N : ENNReal) ∧
     StrictSuccessThrough method oracle (traces N) N}

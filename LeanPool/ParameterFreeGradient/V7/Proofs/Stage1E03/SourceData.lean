@@ -39,7 +39,7 @@ noncomputable def sourcePhaseAWeight : ℕ → ℝ
   | k + 1 => O3.euclideanWeight (O3.euclideanA k)
 
 /-- The literal source estimate execution packaged as Euclidean gap-phase data. -/
-noncomputable def sourcePhaseAData (inst : PositiveInstance 2 d x0)
+@[expose] noncomputable def sourcePhaseAData (inst : PositiveInstance 2 d x0)
     (M D : ℝ) (m : ℕ) : EuclideanGapData d m where
   x0 := x0
   inst := inst
@@ -56,7 +56,7 @@ noncomputable def sourcePhaseAData (inst : PositiveInstance 2 d x0)
      inst.oracle.observe (sourceEstimateState inst.oracle M x0 (k + 1)).accelerated]
 
 /-- The literal source OGM-G execution packaged as finite phase data. -/
-noncomputable def sourcePhaseBData (inst : PositiveInstance 2 d x0)
+@[expose] noncomputable def sourcePhaseBData (inst : PositiveInstance 2 d x0)
     (M : ℝ) (n : ℕ) (U : Point d) : OGMGData d n :=
   let cfg := O3.stage9ExecutionConfig n inst.oracle M U
   { oracle := inst.oracle

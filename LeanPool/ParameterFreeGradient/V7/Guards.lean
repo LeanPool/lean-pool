@@ -17,7 +17,7 @@ public section
 namespace V7
 
 /-- The objective's linearization error at `x`, based at `y`. -/
-noncomputable def BregmanRemainder (oracle : PairOracle d)
+@[expose] noncomputable def BregmanRemainder (oracle : PairOracle d)
     (x y : Point d) : ℝ :=
   oracle.value x - oracle.value y - pairing (oracle.gradient y) (x - y)
 
@@ -34,7 +34,7 @@ noncomputable def GradientGuard (p M : ℝ) (oracle : PairOracle d)
     M * lpNorm p (y - x)
 
 /-- Exact current orientation: `D_f(x,y)` uses the gradient at `y`. -/
-noncomputable def CocoercivityGuard (p M : ℝ) (oracle : PairOracle d)
+@[expose] noncomputable def CocoercivityGuard (p M : ℝ) (oracle : PairOracle d)
     (x y : Point d) : Prop :=
   BregmanRemainder oracle x y ≥
     (lpNorm (conjugateExponent p) (oracle.gradient x - oracle.gradient y)) ^

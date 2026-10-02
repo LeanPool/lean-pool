@@ -94,7 +94,7 @@ noncomputable def euclideanWrapperWeight (x : ℝ) : ℝ := Real.sqrt x
 /-- The power-law cost weight used for exponents above two. -/
 noncomputable def aboveWrapperWeight (a x : ℝ) : ℝ := x ^ a
 /-- The square-root logarithmic cost weight used for exponents below two. -/
-noncomputable def belowWrapperWeight (x : ℝ) : ℝ :=
+@[expose] noncomputable def belowWrapperWeight (x : ℝ) : ℝ :=
   Real.sqrt x * Real.log (Real.exp 1 + x)
 
 end O3
