@@ -36,7 +36,7 @@ The output is a *topological contraction certificate*
 fibre is connected.  Nothing here is specific to genus four.
 -/
 
-@[expose] public section
+public section
 namespace Utilities.Subdivision.CoreExpansion
 open Utilities.Certificate
 

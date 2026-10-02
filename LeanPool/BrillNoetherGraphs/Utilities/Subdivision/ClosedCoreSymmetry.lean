@@ -13,7 +13,7 @@ public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.DegenerateSubdiv
 
 /-! # Core automorphisms on closed subdivision faces -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.ClosedCoreSymmetry
 open Utilities

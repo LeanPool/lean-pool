@@ -25,7 +25,7 @@ slots, increasing the outgoing endpoint contributions preserves effectivity.
 This isolates the graph bookkeeping from the integer rounding argument.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.DiscreteSpecialization
 

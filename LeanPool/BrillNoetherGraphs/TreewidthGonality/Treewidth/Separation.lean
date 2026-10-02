@@ -28,7 +28,7 @@ Three independent ingredients of the Seymour--Thomas induction:
   time.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Treewidth
 

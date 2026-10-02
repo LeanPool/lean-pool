@@ -23,7 +23,7 @@ equivalent to the tropical-dot-product inequality for the two factor
 profiles, indexed by the extra gluing shift `ell`.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

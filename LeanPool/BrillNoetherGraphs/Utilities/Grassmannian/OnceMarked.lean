@@ -27,7 +27,7 @@ The auxiliary second mark in transmission disappears because every one of
 these rows lies on the cut `b = 0`.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

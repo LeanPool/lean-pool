@@ -52,7 +52,7 @@ The descent of this predicate along an odd subdivision lives in
 `Utilities/Subdivision/SubdivisionChipDescent.lean` and is not imported here.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

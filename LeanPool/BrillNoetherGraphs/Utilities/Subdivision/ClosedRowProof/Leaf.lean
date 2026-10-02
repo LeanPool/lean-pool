@@ -60,7 +60,7 @@ slot.  The multi-block half of §4.3 is unexercised by every accepted proof in
 the catalog; see the note at the end of this file for what it would cost.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Subdivision.ClosedRowProof
 

@@ -20,7 +20,7 @@ maps for divisors and firing scripts.  Later vertex-gluing arguments can use
 these maps without choosing a quotient representative.
 -/
 
-@[expose] public section
+public section
 
 open Multiset Finset
 

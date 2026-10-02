@@ -30,7 +30,7 @@ We first normalize `length 0 <= length 5`.  The opposite chamber is carried
 to this one by the Core-095 involution and is treated separately below.
 -/
 
-@[expose] public section
+public section
 
 namespace LowGenus.GenusFourRow095
 open Utilities.Certificate

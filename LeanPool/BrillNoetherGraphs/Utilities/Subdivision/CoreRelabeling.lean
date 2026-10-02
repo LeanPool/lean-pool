@@ -19,7 +19,7 @@ provides that neutral bridge, independently of any genus, atlas, or marked
 graph application.
 -/
 
-@[expose] public section
+public section
 namespace Utilities.Certificate.ExplicitPotential.Core
 
 open Utilities

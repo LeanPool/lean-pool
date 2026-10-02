@@ -59,7 +59,7 @@ The two bridges are
   `DegSpec` *is* an ordinary `Spec`, with `rep = id`.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.DegenerateSpec
 open Utilities.Certificate

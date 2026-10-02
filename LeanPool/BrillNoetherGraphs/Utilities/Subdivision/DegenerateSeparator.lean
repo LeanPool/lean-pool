@@ -59,7 +59,7 @@ is the image `Finset` `degenerateCoreVertices d`, which is exactly the set of
 `coreVertices` of the contracted target without ever asserting injectivity.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.DegenerateSpec.DegSpec
 open Utilities.Certificate

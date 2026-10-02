@@ -19,7 +19,7 @@ rank-theoretic core needed to identify genus-one transmission permutations as
 an affine translation with at most one adjacent interchange.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

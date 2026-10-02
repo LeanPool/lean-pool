@@ -21,7 +21,7 @@ subdivision, and proves bridgelessness of positive subdivisions
 (`twoEdgeCutCondition_graph_of_coreTwoEdgeConnected`).
 -/
 
-@[expose] public section
+public section
 namespace Utilities.Certificate
 
 open Finset

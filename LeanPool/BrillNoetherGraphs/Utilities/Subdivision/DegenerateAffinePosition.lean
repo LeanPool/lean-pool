@@ -38,7 +38,7 @@ boundary-safe *as a statement*; what is not boundary-safe is concluding
 "interior" from `0 < coordinate`.
 -/
 
-@[expose] public section
+public section
 
 namespace MarkedGraphs.Certificate.AffinePosition
 open Utilities.Certificate

@@ -18,7 +18,7 @@ attained at an integer phase and equals the wedge rank.  This formulation is
 suited to recursive attachments and avoids any `min` or `sInf` interface.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

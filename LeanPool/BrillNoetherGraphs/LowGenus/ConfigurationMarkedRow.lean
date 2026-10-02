@@ -48,7 +48,7 @@ the height is constant across collapsed slots.  Those five facts give
 costs a chamber nothing beyond declaring its profile.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.ConfigurationMarkedRow
 

@@ -18,7 +18,7 @@ so extending it by zero away from the chosen subdivision slot creates no
 unwanted firing across the rest of the core.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

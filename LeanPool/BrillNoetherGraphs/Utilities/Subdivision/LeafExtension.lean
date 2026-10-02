@@ -22,7 +22,7 @@ The resulting rank-one interface shows that adjoining or pruning a leaf does
 not change divisorial gonality.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

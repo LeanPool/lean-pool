@@ -21,7 +21,7 @@ either factor remain fully visible while the separating edge has multiplicity
 exactly one.
 -/
 
-@[expose] public section
+public section
 
 namespace MarkedGraphs
 

@@ -15,7 +15,7 @@ This is a passive boundary for finite cut data emitted by an external search.
 Every condition of `OneVertexCut` is replayed by a transparent computation.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

@@ -26,7 +26,7 @@ count.  Keeping this boundary explicit avoids silently treating arbitrary
 quotients as rank-preserving contractions.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

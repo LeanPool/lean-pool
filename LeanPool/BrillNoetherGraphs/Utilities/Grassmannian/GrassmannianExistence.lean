@@ -18,7 +18,7 @@ imports this file and keeps the genus-bounded consequences) so that the
 genus-generic transmission layer does not depend on the low-genus census.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

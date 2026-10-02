@@ -31,7 +31,7 @@ not be replaced by the weaker `nonSubmodular_of_rank_pattern` API, whose rank
 pattern is itself a hypothesis.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

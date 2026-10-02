@@ -20,7 +20,7 @@ surface.  Consequently its southeast and northwest quadrant cardinalities
 are exactly the two Riemann--Roch rank terms (paper Lemma `lem:tauChars`).
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

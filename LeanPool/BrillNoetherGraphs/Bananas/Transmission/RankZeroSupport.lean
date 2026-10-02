@@ -18,7 +18,7 @@ criterion is Lemma 3.1(2) of the paper, stated without choosing an effective
 representative.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

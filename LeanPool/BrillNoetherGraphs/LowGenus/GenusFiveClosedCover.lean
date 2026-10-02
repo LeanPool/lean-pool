@@ -23,7 +23,7 @@ Generated row modules contain data only: certificates, cones, and one checked
 cover tree.  All graph and divisor semantics are proved here once.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.GenusFiveClosedCover
 

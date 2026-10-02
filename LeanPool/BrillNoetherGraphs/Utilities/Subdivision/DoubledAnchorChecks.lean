@@ -36,7 +36,7 @@ theorems that consume them — `effective_degenerateDivisor_sub_smul_one_chip`,
 only consumers are.
 -/
 
-@[expose] public section
+public section
 
 -- The established name of the certificate namespace repeats `Certificate`,
 -- which is what `ExplicitPotential.CertificateData` means.  Lean v4.33 added

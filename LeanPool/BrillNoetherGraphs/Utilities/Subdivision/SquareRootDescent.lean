@@ -61,7 +61,7 @@ for all of them.  Nothing in this file asserts that the square root exists; it
 only exploits one when it does.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.SubdivisionGraph.Spec
 

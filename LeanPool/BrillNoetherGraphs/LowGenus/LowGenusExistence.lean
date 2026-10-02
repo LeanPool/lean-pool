@@ -29,7 +29,7 @@ The library's `BNExists G r d` uses the equivalent convenient convention
 inequality exposed as an implication.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

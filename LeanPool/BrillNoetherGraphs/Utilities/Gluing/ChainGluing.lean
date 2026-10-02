@@ -42,7 +42,7 @@ generality would raise the level at every step.  Everything here therefore
 works with all factors in a single fixed universe, where the wedge is closed.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

@@ -17,7 +17,7 @@ It corresponds to Theorem 2.13 of
 [An extended Demazure product](https://arxiv.org/abs/2206.14227).
 -/
 
-@[expose] public section
+public section
 
 /-- The axioms characterizing inversion sets of ASP permutations: directedness,
 closure, coclosure, and finite in/out degree. *Definition 2.12 (`defn:aspSet`) of

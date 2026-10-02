@@ -18,7 +18,7 @@ needed to display successive wedge factors without making any assumptions on
 their origin.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

@@ -28,7 +28,7 @@ Our script convention agrees with `ChipFiringWithLean.prin`: the checked
 residual is `D - q + prin G sigma`, equivalently `D - q - L sigma`.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

@@ -25,7 +25,7 @@ The remaining graph-theoretic input is the uniform statement that the core
 vertices form a strong separator in a subdivision.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

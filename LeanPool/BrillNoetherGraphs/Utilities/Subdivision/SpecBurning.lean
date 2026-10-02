@@ -45,7 +45,7 @@ between are the slot interior.  Statements carry explicit
 change the meaning.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Gonality
 

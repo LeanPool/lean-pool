@@ -20,7 +20,7 @@ The indices deliberately agree with `rpfcheck.c`: a named point has index
 `s : ℕ`, is the end of block `s - 1`, and hence runs in W4 start at `1`.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Subdivision.ClosedRowProof
 

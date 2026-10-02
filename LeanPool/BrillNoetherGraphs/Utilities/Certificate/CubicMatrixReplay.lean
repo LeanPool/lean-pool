@@ -49,7 +49,7 @@ This is the generic checker side only.  Application-specific datasets, leaf
 decoders, and classifier handoff theorems belong in their application layer.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.CubicMatrixReplay
 

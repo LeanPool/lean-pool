@@ -25,7 +25,7 @@ least one.  The subdivision theorems specialize it to the transparent divisor
 which is zero on every edge-interior vertex.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Subdivision.SubdivisionCoreSupport
 open Utilities.Certificate

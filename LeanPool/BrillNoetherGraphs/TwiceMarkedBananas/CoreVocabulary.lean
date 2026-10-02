@@ -14,7 +14,7 @@ Basic graph, divisor, and banana path data used by the paper-facing statements.
 These declarations keep their independent `TMB` meanings and storage conventions.
 -/
 
-@[expose] public section
+public section
 
 /-!
 ## Standalone mathematical vocabulary

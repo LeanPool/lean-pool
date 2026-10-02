@@ -17,7 +17,7 @@ unchanged, so divisors and firing scripts on the old and new graphs are the
 same functions.
 -/
 
-@[expose] public section
+public section
 
 open Multiset Finset
 

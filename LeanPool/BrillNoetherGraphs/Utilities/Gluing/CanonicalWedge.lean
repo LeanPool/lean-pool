@@ -26,7 +26,7 @@ This file is deliberately independent of genus two and of two-pole joins.  It
 is the reusable one-pole calculation underlying the genus-two/genus-two seed.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

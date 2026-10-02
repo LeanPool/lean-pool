@@ -51,7 +51,7 @@ supports: `SimpleGraph.Connected.sum_sup_edge` gives connectivity and
 * `join` — the binary gluing along a common root bag.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Treewidth
 

@@ -41,7 +41,7 @@ together with `D' ≥ 0 off v` and `D' v ≤ 0`
 `BurningOrder` quantifies over `Fin π.length` and `G.V`, both finite.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Gonality
 

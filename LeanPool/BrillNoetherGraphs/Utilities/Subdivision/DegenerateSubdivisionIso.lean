@@ -28,7 +28,7 @@ Slot reversal is part of the datum, just as it is for the positive-length
 inside a surviving slot; the quotient-class boundary is unchanged.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.DegenerateSpec.DegSpec
 open Utilities.Certificate

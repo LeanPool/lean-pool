@@ -23,7 +23,7 @@ multiplicities alone do not prevent a certificate from identifying two
 disconnected pieces of the source graph.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

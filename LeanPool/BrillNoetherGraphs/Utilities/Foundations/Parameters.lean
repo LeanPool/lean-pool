@@ -20,7 +20,7 @@ duality and later arithmetic reductions insensitive to the particular divisor
 chosen as a witness.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

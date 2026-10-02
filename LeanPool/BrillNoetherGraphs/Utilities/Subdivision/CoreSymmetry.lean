@@ -27,7 +27,7 @@ The declarations use the established `Utilities.Certificate.CoreOrbitReduction`
 namespace for API compatibility.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.CoreOrbitReduction
 open Utilities.Certificate

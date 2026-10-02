@@ -16,7 +16,7 @@ Raw edge occurrences are filtered before their endpoints are bundled into the
 subtype, so parallel edges are retained without identification.
 -/
 
-@[expose] public section
+public section
 
 open Multiset Finset
 

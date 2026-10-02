@@ -23,7 +23,7 @@ permutations from the rank slipface.  The endpoint-specific rank calculation
 and inversion count are developed separately from this generic layer.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

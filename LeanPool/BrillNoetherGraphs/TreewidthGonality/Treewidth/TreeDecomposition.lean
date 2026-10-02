@@ -56,7 +56,7 @@ not change treewidth, so nothing is lost.
   achievable widths nonempty; `treewidth_le_card_sub_one`.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Treewidth
 

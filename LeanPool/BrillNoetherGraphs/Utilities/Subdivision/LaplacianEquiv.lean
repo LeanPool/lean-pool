@@ -19,7 +19,7 @@ Brill--Noether existence transport without requiring a general graph
 isomorphism API.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

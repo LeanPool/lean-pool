@@ -18,7 +18,7 @@ two core vertices and `g + 1` distinct edge slots.  Thus parallel strands are
 retained by construction, rather than identified as a simple graph.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

@@ -19,7 +19,7 @@ is passive finite data plus kernel-checked validity; exhaustiveness is proved
 separately by the public canonical classifier.
 -/
 
-@[expose] public section
+public section
 namespace AtanasovRanganathan.GenusFiveCubicAtlas
 
 open Utilities

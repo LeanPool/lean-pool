@@ -19,7 +19,7 @@ the right endpoint, and every nonzero coordinate contributes one unit of debt
 at the left endpoint.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

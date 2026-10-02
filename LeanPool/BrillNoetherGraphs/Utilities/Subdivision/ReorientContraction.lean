@@ -29,7 +29,7 @@ reorient the target spec, contract there, and transport back along the
 identity relabeling whose `reversed` field records the flips.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.ReorientContraction
 

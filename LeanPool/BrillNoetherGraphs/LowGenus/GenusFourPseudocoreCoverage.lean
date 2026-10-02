@@ -28,7 +28,7 @@ closed degree-three pencils on connected loopless cubic `6/9` cores.  No
 111-row pseudocore catalog is needed by this unmarked proof.
 -/
 
-@[expose] public section
+public section
 namespace AtanasovRanganathan.GenusFourPseudocoreCoverage
 
 open Utilities

@@ -16,7 +16,7 @@ window of each edge slot, then constant again.  This is the generic positive-
 length infrastructure behind the readable genus-four pencil proofs.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.SubdivisionRamp
 

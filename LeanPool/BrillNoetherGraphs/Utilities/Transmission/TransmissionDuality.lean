@@ -22,7 +22,7 @@ It has the degree prescribed by `τ⁻¹`, and its rows are exactly those requir
 for `τ⁻¹` at the swapped marks.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

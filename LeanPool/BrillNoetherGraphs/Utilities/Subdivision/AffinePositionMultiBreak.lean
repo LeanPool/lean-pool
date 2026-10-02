@@ -46,7 +46,7 @@ only Boolean checks are the fail-closed bound checks already introduced by
 `AffinePosition`.
 -/
 
-@[expose] public section
+public section
 
 namespace MarkedGraphs.Certificate
 open Utilities.Certificate

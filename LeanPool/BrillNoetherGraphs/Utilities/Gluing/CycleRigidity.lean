@@ -19,7 +19,7 @@ length.  This file proves that every such subdivision has no one-edge cut and
 therefore satisfies the pointed genus-one rigidity interface.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

@@ -46,7 +46,7 @@ definitionally, so the certificate's endpoint bounds apply verbatim.  Under
 (`coreRise_eq_zero_of_length_zero`).
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.DegenerateSpec
 open Utilities.Certificate

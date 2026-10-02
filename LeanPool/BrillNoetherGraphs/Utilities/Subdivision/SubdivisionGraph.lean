@@ -25,7 +25,7 @@ type of all unit steps, so every unit edge is emitted exactly once even when
 several emitted pairs coincide.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.SubdivisionGraph
 

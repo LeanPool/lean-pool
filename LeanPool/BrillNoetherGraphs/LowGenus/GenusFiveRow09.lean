@@ -61,7 +61,7 @@ identically-zero mark `noMark`, which recovers the ordinary one-ramp script
 definitionally; no slot of row 09 carries a chip in its interior.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.GenusFiveRow09
 

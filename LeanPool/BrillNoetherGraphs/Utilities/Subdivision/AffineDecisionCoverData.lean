@@ -22,7 +22,7 @@ The checker is deliberately small.  Generated search code is untrusted; only
 the Boolean replay and the theorem below enter the proof.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.AffineCover
 open Utilities.Certificate

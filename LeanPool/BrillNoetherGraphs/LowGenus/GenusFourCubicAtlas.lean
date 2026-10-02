@@ -20,7 +20,7 @@ kernel-checked validity.  Exhaustiveness is proved separately by
 `LowGenus.GenusFourCanonicalClassifier`.
 -/
 
-@[expose] public section
+public section
 namespace AtanasovRanganathan.GenusFourCubicAtlas
 
 open Utilities.Certificate

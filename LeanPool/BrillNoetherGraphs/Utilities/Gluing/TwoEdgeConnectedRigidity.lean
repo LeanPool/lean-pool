@@ -24,7 +24,7 @@ out-degree zero; at `y` it forces out-degree at most one.  Thus the whole cut
 has size at most one, contradicting the hypothesis.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

@@ -20,7 +20,7 @@ boundary cases.  We first work in the subdivision spec's stored path
 coordinates; normalized-coordinate wrappers are supplied below.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

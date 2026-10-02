@@ -18,7 +18,7 @@ Section 3, with some essential-set material from Section 7.1, of
 [An extended Demazure product](https://arxiv.org/abs/2206.14227).
 -/
 
-@[expose] public section
+public section
 
 /-- A slipface function of shift `χ`, i.e. a function $s : \mathbb{Z}^2 \to \mathbb{N}$
 satisfying conditions (S1) to (S3) from

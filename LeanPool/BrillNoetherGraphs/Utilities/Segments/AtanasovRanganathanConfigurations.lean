@@ -34,7 +34,7 @@ picture, or Core 095, has been encoded.  It gives the reusable checked moves
 to which such incidence data must eventually be connected.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.Configurations
 

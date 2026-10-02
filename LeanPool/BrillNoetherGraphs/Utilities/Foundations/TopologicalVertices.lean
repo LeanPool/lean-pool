@@ -17,7 +17,7 @@ minimum-valence-two hypothesis is essential for bounding their number in terms
 of the genus.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

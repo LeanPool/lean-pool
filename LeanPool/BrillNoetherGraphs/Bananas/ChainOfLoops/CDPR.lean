@@ -76,7 +76,7 @@ at `v_0` under the prefix budget reports immediate counterexamples at `g = 2`
 (`ℓ_1 = m_1`, torsion order two, so `2 v_0` has rank one).
 -/
 
-@[expose] public section
+public section
 
 namespace ChainOfLoops
 

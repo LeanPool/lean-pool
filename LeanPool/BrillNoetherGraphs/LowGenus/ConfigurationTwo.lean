@@ -37,7 +37,7 @@ currently lives in `ConfigurationThree.lean`; that is why this file imports
 it.  Neither structure mentions the other.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.ConfigurationTwo
 

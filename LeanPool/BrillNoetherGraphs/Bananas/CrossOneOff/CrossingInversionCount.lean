@@ -17,7 +17,7 @@ the same affine inversion class force at least `2 * k - 1` distinct affine
 inversion classes.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

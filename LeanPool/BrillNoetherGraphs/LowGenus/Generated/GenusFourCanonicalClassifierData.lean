@@ -18,7 +18,7 @@ pair-multiplicity tables and the twenty connected canonical leaf payloads.
 Generated classifier data, checked by the consuming Lean declarations.
 -/
 
-@[expose] public section
+public section
 namespace AtanasovRanganathan.Generated.GenusFourCanonicalClassifierData
 
 open Utilities.Certificate.CubicMatrixReplay

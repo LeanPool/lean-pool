@@ -14,7 +14,7 @@ Marked divisors, transmission permutations, exceptional configurations, and
 finite counting expressions used by the paper-facing theorem statements.
 -/
 
-@[expose] public section
+public section
 
 namespace TMB
 

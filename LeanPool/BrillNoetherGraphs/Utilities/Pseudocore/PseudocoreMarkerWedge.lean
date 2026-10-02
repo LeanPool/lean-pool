@@ -22,7 +22,7 @@ the genus-five loop-aware normal-form interface: the complementary graph is
 the left (base) factor and the marker cycle is the right factor.
 -/
 
-@[expose] public section
+public section
 namespace Utilities.Certificate.PseudocoreMarkerWedge
 
 open ExplicitPotential

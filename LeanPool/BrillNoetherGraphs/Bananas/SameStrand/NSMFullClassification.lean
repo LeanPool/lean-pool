@@ -19,7 +19,7 @@ for the two marked *vertices*.  The exceptional alternatives retain their
 coordinate descriptions only for genuinely interior marks.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

@@ -23,7 +23,7 @@ interior path vertex has degree two.  Together with core connectedness and a
 checked side genus of one, this constructs a `PointedGenusOneRigid` witness.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

@@ -27,7 +27,7 @@ finite-list decoder which supplies `PiecewiseData.covers`,
 two residual comparison lemmas documented at the end of this file.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Subdivision.ClosedRowProof
 

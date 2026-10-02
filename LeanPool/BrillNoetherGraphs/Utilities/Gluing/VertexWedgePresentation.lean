@@ -18,7 +18,7 @@ stated using edge multiplicities, so it can be used without choosing an
 orientation of the raw edge multisets.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

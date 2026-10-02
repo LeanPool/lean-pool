@@ -18,7 +18,7 @@ descent of the inverse permutation.  Simultaneously swapping that adjacent
 pair in every residue-period removes exactly one normalized inversion class.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

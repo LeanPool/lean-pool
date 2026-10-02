@@ -31,7 +31,7 @@ integers, the degree identity is one more, and `linarith` finishes.  No `Finset`
 union, no inclusion–exclusion.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Tricycle
 

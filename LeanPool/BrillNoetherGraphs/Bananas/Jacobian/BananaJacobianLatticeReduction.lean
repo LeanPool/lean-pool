@@ -24,7 +24,7 @@ length.  The lemmas here record the algebraic invariants needed by that
 iteration without hiding them in the full kernel of the class map.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

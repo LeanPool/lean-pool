@@ -18,7 +18,7 @@ finite-row injection precise and then specializes it to the corrected
 cross-one-off row function.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

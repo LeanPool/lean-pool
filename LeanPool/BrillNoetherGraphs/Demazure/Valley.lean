@@ -21,7 +21,7 @@ to keep track of the set where the minimum value is achieved, and some facts abo
 changes when the valley is modified in simple ways.
 -/
 
-@[expose] public section
+public section
 
 /-- A function on `ℤ` whose sublevel sets are finite. This is the abstraction
 used to talk about minima and rightmost minimizers.

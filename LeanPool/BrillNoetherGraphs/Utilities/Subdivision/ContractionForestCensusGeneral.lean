@@ -48,7 +48,7 @@ Two more facts are needed for that (`DegenerateSpecCensus.lean` consumes both):
   spanning-forest structure that already defines `rep` — no separate search.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.ContractionForestCensusGeneral
 open Utilities.Certificate

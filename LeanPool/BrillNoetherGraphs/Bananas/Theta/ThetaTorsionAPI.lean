@@ -18,7 +18,7 @@ multiples of two marks is recorded below as an explicit remaining interface;
 it is not assumed here.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

@@ -13,7 +13,7 @@ public import Mathlib.Data.Matrix.Mul
 
 /-! # Basic -/
 
-@[expose] public section
+public section
 
 
 

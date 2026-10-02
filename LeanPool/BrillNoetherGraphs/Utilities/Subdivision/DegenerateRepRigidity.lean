@@ -60,7 +60,7 @@ the accompanying analysis measures how many such
 faces a genus-five legged row has.
 -/
 
-@[expose] public section
+public section
 
 -- `Certificate` is a structure inside a namespace already ending in `Certificate`.
 namespace Utilities.Certificate.DegenerateSpec.DegSpec

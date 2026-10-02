@@ -19,7 +19,7 @@ preserving and fixes the two core vertices, so normalized strand coordinates
 and the ordered pair of marks are preserved.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

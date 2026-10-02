@@ -26,7 +26,7 @@ Three ingredients, all generic in the vertex count:
   the classifier to one generated tree per *sorted* degree sequence.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.GenusFourPseudocore
 

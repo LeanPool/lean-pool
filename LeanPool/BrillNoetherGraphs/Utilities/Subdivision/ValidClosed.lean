@@ -61,7 +61,7 @@ Laplacian, so the conservative bound is still conservative.  That inequality
 is `Valid`'s third conjunct, unchanged.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 open Utilities.Certificate

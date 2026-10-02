@@ -17,7 +17,7 @@ the orientation chosen for pairs in the raw edge multiset: `numEdges` is the
 mathematical graph structure used by chip firing.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

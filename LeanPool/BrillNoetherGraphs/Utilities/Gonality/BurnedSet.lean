@@ -42,7 +42,7 @@ No algorithm, no termination proof, no fuel.  `maximalLegal` is `noncomputable`
 and is only ever used propositionally; never `decide` it (blueprint risk R2).
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Gonality
 

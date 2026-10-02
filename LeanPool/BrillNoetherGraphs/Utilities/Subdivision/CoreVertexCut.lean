@@ -23,7 +23,7 @@ to the complementary side is assigned wholly to the complementary factor;
 there is no length-dependent case split and parallel slots are retained.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

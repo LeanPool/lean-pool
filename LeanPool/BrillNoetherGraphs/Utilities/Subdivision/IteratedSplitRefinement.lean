@@ -23,7 +23,7 @@ finite chain of positive bivalent refinements.  In particular, Brill--Noether
 existence is invariant along the whole chain.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.IteratedSplitRefinement
 

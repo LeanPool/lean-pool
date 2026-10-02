@@ -16,7 +16,7 @@ slots are counted separately, and a loop contributes twice.  Looplessness is
 an independent property.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.ExplicitPotential.Core
 

@@ -20,7 +20,7 @@ lies in its slot are required literally in its local cone.  Cone soundness
 then supplies the bounds needed to construct a typed path position.
 -/
 
-@[expose] public section
+public section
 
 namespace MarkedGraphs.Certificate.AffinePosition
 open Utilities.Certificate

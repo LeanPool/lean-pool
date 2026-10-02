@@ -32,7 +32,7 @@ the reflection move uniformly for two subdivided paths of arbitrary positive
 lengths.  Neither assertion is silently delegated to generated data here.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.GenusFourLoopLemma
 

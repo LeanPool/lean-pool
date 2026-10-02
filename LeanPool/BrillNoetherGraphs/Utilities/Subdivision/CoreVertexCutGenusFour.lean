@@ -19,7 +19,7 @@ side two-regular.  The checker and its soundness theorem are public and apply
 uniformly to every positive subdivision.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.CoreVertexCut.Data
 open MarkedGraphs.Certificate

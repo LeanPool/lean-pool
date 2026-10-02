@@ -21,7 +21,7 @@ vertex representatives, surviving slots, and slot reversals.  Every field is
 rechecked by the kernel through `decide`.
 -/
 
-@[expose] public section
+public section
 namespace AtanasovRanganathan.Generated.GenusFourRow095FaceData
 
 open Utilities.Certificate

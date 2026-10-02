@@ -53,7 +53,7 @@ the two centres merge, and the chip may have to be charged to the partner.  That
 is the `targetOwner` device every finished row already uses.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.ConfigurationMarkedThree
 

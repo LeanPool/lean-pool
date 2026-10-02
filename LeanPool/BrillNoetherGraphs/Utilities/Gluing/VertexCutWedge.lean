@@ -19,7 +19,7 @@ by their induced subgraphs.  This is the structural extraction lemma needed
 to turn articulation/block data into divisor and transmission theorems.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

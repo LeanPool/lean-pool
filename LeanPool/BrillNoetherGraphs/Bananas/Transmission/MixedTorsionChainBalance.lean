@@ -26,7 +26,7 @@ parenthesization avoids identifying the different nested `Sum` vertex types
 of left- and right-associated `MarkedGraph.chain` constructions.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

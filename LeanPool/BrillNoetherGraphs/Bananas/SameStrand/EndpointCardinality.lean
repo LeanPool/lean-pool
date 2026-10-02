@@ -20,7 +20,7 @@ assembles the resulting quadratic-versus-linear contradiction that rules out
 `k`-general transmission for the endpoint marking.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

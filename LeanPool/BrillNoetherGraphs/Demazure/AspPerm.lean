@@ -23,7 +23,7 @@ bounded-difference material from Section 7, of
 [An extended Demazure product](https://arxiv.org/abs/2206.14227).
 -/
 
-@[expose] public section
+public section
 
 /-- The inversion set $\operatorname{Inv} \tau = \{(u,v) \in \mathbb{Z}^2 : u < v \text{ and }
 \tau(u) > \tau(v)\}$.

@@ -11,7 +11,7 @@ public import LeanPool.BrillNoetherGraphs.Utilities.Gluing.BridgeContraction
 
 /-! # Bridge Chain Transport -/
 
-@[expose] public section
+public section
 
 open Utilities
 

@@ -24,7 +24,7 @@ same `k`-inversion.  The interval between those representatives then supplies
 at least `2k - 1` distinct `k`-inversions, contradicting the defining bound.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

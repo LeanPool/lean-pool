@@ -45,7 +45,7 @@ per-edge counts is the unit model of a *different* metric graph `Γ(G, ℓ)`, so
 
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Gonality
 

@@ -15,7 +15,7 @@ The two induced graphs associated with a one-vertex cut inherit connectivity
 from the ambient graph.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

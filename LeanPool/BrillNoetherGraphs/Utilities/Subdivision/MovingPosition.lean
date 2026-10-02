@@ -19,7 +19,7 @@ vertices of `SubdivisionGraph.Spec`, with the elementary endpoint and
 interiority facts kept independent of any particular configuration.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

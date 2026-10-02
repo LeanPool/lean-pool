@@ -16,7 +16,7 @@ by joining the factors with a bridge. A script which is one on the left factor
 and zero on the right records the elementary chip transfer across the bridge.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

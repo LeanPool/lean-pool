@@ -42,7 +42,7 @@ positive length vector; `σ_k(T_m)` is `length ≡ k`; and a *tricycle graph* is
 one with `IsTricycle length`, i.e. the three transition slots have length one.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Tricycle
 

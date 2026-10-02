@@ -20,7 +20,7 @@ representative to vanish.  The first isomorphism theorem then identifies the
 displayed quotient with the range of the graph-level divisor-class map.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

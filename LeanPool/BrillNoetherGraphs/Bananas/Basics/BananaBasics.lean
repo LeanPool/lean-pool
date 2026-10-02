@@ -17,7 +17,7 @@ arbitrary orientation.  These lemmas certify that `strandVertex` repairs that
 choice and agrees with the paper's common two-endpoint coordinates.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

@@ -24,7 +24,7 @@ endpoint pencil.  The marked graph therefore has exact torsion order two and
 has `2`-general transmission.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

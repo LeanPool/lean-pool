@@ -17,7 +17,7 @@ therefore gives a coarse edge slope between those same slopes. Consecutive
 coarse slopes remain nondecreasing.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.ConvexIntegerRounding
 

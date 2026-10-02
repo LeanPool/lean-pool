@@ -32,7 +32,7 @@ the formula to `D = w` for a vertex `w` and read the bound `inv_k ≤ g = 2`
 backwards.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

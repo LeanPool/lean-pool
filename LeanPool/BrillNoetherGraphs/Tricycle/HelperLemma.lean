@@ -30,7 +30,7 @@ is *not* burned — pays for all of them at once, giving `|I₀| ≤ D(v₀)`.  
 so the slot has a burned/unburned split and therefore a chip in its interior.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Tricycle
 

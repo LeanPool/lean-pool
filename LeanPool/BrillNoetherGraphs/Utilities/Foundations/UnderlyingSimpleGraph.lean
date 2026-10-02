@@ -18,7 +18,7 @@ connectivity and `SimpleGraph.Connected`.  This provides a general interface
 from chip-firing multigraphs to Mathlib's simple-graph connectivity theory.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

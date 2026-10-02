@@ -34,7 +34,7 @@ spelled out directly.  A row supplies its lookup tables and the five
 height equations; nothing else.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.ConfigurationFive
 

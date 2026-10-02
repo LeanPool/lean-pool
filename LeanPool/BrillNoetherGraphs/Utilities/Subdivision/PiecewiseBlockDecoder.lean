@@ -22,7 +22,7 @@ closed-face soundness proof.  The lowerer/checker bridge proves its three
 displayed facts from a concrete RPF block list.
 -/
 
-@[expose] public section
+public section
 
 namespace MarkedGraphs.Certificate
 open Utilities.Certificate

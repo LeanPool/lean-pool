@@ -25,7 +25,7 @@ It is therefore constant on the core by core connectedness, and then constant
 on every interior vertex as well.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

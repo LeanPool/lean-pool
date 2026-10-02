@@ -18,7 +18,7 @@ uses its presentation interface so that the dependent subtype of unmarked
 right vertices never has to be relabelled directly.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

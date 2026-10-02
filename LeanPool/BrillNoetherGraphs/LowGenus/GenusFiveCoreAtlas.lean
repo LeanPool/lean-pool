@@ -24,7 +24,7 @@ the twelfth and sixteenth scopes; both scopes are already cubic with twelve
 non-loop edges, so those commands are omitted, as the figure caption requires.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.GenusFiveCoreAtlas
 

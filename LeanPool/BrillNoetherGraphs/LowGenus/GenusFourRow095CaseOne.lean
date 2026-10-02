@@ -22,7 +22,7 @@ the rather complicated firing scripts on arbitrary subdivisions are never
 expanded vertex-by-vertex.
 -/
 
-@[expose] public section
+public section
 
 namespace LowGenus.GenusFourRow095.CaseOne
 open Utilities.Certificate

@@ -22,7 +22,7 @@ appears in `Utilities.Gonality.LegalFiring`; here it is a short consequence of
 maximum closure, without importing the gonality development.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

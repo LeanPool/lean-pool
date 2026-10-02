@@ -26,7 +26,7 @@ four pole chips.  In genus two plus genus two, Riemann--Roch therefore says
 that the two degree-four candidates have exactly the same rank.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

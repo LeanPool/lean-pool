@@ -16,7 +16,7 @@ The structures and finite rank-drop sum used by the formal statements of the
 marked-point symmetry section.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

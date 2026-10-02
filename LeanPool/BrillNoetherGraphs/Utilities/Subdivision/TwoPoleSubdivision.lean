@@ -17,7 +17,7 @@ hypotheses. The first connector is oriented from the left factor to the
 right; the second may be stored in either orientation.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.TwoPoleSubdivision
 

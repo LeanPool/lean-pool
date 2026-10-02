@@ -39,7 +39,7 @@ are stated for an arbitrary slot-value function.  What this file adds is
 The arithmetic lives in `SplitRampArithmetic.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.DegenerateSpec.DegSpec
 

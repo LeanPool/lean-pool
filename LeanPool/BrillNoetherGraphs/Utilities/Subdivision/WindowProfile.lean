@@ -23,7 +23,7 @@ allowed to be any integer; the `-1`, `0`, and `1` profiles used in genus four
 are special cases.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

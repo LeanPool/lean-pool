@@ -22,7 +22,7 @@ and consequently that `KGeneralTransmission` is independent of the ordering
 of the two marks.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

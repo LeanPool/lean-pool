@@ -25,7 +25,7 @@ Proposition 6.10.  It uses only the exact vertex-wedge rank formula and the
 all-row definition `OnceMarkedCensusContains`.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

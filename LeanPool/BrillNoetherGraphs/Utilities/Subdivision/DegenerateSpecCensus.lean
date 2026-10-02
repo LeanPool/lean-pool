@@ -54,7 +54,7 @@ below is the resulting one-call wrapper, shaped to exactly match
 conclusion.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 open Utilities.Certificate

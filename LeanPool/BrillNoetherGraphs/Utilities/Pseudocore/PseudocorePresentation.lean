@@ -39,7 +39,7 @@ vertex/unit-step bijection has to be built by hand: the split's own
 `canonicalSplitLaplacianEquiv` supplies it.
 -/
 
-@[expose] public section
+public section
 namespace Utilities.Certificate.PseudocorePresentation
 
 open Finset

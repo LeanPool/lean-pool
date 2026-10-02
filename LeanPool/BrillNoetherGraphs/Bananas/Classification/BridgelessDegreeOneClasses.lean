@@ -18,7 +18,7 @@ explicitly: for the one-vertex edgeless graph the cut condition is vacuous,
 but its unique degree-one class has rank one rather than rank zero.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

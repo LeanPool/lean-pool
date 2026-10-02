@@ -49,7 +49,7 @@ and takes it as a hypothesis, the same one
 `Guarding.GuardingSet.closedConstruction` carries.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.ConfigurationThree
 

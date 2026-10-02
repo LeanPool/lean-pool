@@ -23,7 +23,7 @@ converted to the already-proved `CoverTree` checker.  An emitter may use any
 easy upper bound on tree depth, such as the number of witness commands.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.AffineCover
 open Utilities.Certificate

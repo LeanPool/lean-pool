@@ -25,7 +25,7 @@ budgets.  The imported Demazure library supplies the min-plus product formula
 but currently no theorem producing this bounded finite factorization.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

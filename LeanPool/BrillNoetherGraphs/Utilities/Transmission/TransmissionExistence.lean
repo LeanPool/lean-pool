@@ -27,7 +27,7 @@ restriction to shifted Grassmannian permutations is exactly the once-marked
 Brill--Noether existence predicate.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

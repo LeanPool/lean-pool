@@ -25,7 +25,7 @@ involution as an occurrence-preserving subdivision relabeling, so a proof in
 the normalized chamber transports to all positive length assignments.
 -/
 
-@[expose] public section
+public section
 
 namespace LowGenus.GenusFourRow095
 open Utilities.Certificate

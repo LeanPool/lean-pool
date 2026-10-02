@@ -38,7 +38,7 @@ This layer deliberately gives no graph, subdivision, or divisor semantics to
 the cones.  Those belong in a separate local-certificate checker.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.AffineCover
 

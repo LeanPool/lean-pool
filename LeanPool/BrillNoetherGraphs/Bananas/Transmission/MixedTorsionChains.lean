@@ -26,7 +26,7 @@ then uses that enlarged genus.  This presentation follows the left-associated
 recursion in `MarkedGraph.chain` and avoids any indexing conventions.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

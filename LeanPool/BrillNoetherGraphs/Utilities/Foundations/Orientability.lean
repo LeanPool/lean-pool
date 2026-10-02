@@ -79,7 +79,7 @@ their identities) is stated for an *arbitrary* edge multiset, because step (1) r
 
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

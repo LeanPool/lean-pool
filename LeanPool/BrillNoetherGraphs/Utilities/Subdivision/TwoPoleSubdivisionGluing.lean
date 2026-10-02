@@ -18,7 +18,7 @@ by the outgoing slope of the first connector at its attachment pole. The
 second connector is constant, so its stored orientation has no effect.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.TwoPoleSubdivision.Data
 

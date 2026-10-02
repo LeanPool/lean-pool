@@ -40,7 +40,7 @@ inferred from the `DegSpec`, no genus-five call site had to change when this
 file stopped being genus-five specific.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.ConfigurationCommon
 

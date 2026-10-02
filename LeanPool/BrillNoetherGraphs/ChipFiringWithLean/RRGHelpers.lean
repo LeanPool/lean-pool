@@ -11,7 +11,7 @@ public import LeanPool.BrillNoetherGraphs.ChipFiringWithLean.Rank
 
 /-! # RRGHelpers -/
 
-@[expose] public section
+public section
 open Multiset Finset
 
 /-!

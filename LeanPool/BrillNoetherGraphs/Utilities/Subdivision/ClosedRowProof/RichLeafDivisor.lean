@@ -16,7 +16,7 @@ This module isolates the representation-independent divisor and degree
 calculation from the closed-face soundness assembly.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Subdivision.ClosedRowProof
 

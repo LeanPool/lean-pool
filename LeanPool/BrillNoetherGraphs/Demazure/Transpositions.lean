@@ -17,7 +17,7 @@ Theorem A and the theorem labeled `thm:resL`, which describe the special case of
 $S = \{n\}$ a singleton.
 -/
 
-@[expose] public section
+public section
 
 namespace Transpositions
 

@@ -34,7 +34,7 @@ actual firing script on a subdivision graph.  The graph-construction layer is
 kept separate so that this file remains a small arithmetic trust boundary.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

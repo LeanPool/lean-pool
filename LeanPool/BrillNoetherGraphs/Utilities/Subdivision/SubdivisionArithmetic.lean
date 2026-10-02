@@ -27,7 +27,7 @@ chip-firing application: at an interior path vertex, `prin` will be the next
 slope minus the previous slope.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.SubdivisionArithmetic
 

@@ -15,7 +15,7 @@ This file assembles the three residue-specific calculations of corrected
 Lemma 4.30 over the full interval guaranteed by `CrossOneOffLongEnough`.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

@@ -20,7 +20,7 @@ vertex, and the elementary path-cut property required by
 `StrongSeparator.ExpansionCell`.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

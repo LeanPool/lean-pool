@@ -19,7 +19,7 @@ conversions, so results from either layer can be used without rebuilding that
 data by hand.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

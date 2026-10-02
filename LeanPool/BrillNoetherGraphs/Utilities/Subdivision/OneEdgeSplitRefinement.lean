@@ -35,7 +35,7 @@ Matching such a presentation to its source remains an explicit data
 obligation rather than treating edge ordering as definitional equality.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.OneEdgeSplitRefinement
 

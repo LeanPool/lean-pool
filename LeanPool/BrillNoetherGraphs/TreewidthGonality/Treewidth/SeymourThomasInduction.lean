@@ -45,7 +45,7 @@ then falls out (`rerootBag_card_le`).  Mathlib has no Menger's theorem, no
 vertex separators, and no treewidth, so this is what makes the campaign finite.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Treewidth
 

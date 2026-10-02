@@ -33,7 +33,7 @@ actual topological contraction certificate from a positive subdivision of the
 expanded cubic core onto any positive subdivision of the given core.
 -/
 
-@[expose] public section
+public section
 namespace Utilities.Subdivision.TrivalentExpansion
 open Utilities.Certificate
 

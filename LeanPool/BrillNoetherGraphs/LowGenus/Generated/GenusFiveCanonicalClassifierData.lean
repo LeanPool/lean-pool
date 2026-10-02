@@ -40,7 +40,7 @@ Generated classifier data
 with `--n 8 --deg 3 --layout bucket`.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.Generated.GenusFiveCanonicalClassifierData
 

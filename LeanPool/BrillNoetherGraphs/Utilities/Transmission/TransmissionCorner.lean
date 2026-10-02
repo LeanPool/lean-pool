@@ -32,7 +32,7 @@ condition `BNExists G r d`; the length of `τ` is exactly `(r+1) * (g - d + r)`,
 so `ℓ(τ) ≤ g` is the Brill--Noether inequality `ρ ≥ 0`.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

@@ -21,7 +21,7 @@ an interior point, and no assumption that a bridge has length one, is hidden
 in a generated core row.
 -/
 
-@[expose] public section
+public section
 
 namespace MarkedGraphs.Certificate
 open Utilities.Certificate

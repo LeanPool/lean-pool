@@ -27,7 +27,7 @@ ramp and endpoint lemmas this file used to carry now live).  All this file
 does is name the row's lookup tables and check the incidence facts.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.GenusFiveRow11
 

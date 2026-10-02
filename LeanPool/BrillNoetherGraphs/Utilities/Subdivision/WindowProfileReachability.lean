@@ -17,7 +17,7 @@ a linear-equivalence witness.  These lemmas package that use for winnability
 and one-chip reachability without imposing restrictions on the profile slopes.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.WindowProfile.Data
 open Utilities.Certificate

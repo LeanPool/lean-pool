@@ -26,7 +26,7 @@ endpoint/semibreak normal form, extract that form from every left-reduced
 divisor, and hence construct one in every linear-equivalence class.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

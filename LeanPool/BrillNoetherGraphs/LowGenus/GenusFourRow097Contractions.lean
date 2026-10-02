@@ -19,7 +19,7 @@ below deliberately name the small target cores directly, so this public proof
 is self-contained.
 -/
 
-@[expose] public section
+public section
 
 namespace LowGenus.GenusFourRow097Contractions
 

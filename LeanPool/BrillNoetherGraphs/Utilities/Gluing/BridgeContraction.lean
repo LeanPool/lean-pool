@@ -24,7 +24,7 @@ The declarations remain in the established `MarkedGraphs` namespace for API
 compatibility.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

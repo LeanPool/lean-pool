@@ -31,7 +31,7 @@ cores, and connect the loop, bridge, and contraction reductions to those core
 statements.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan
 

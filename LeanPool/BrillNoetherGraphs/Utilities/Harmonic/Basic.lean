@@ -30,7 +30,7 @@ source vertex.  Equivalence of one-chip divisors on the target transports the
 corresponding fibres, so the fibre has rank at least one.
 -/
 
-@[expose] public section
+public section
 
 namespace MarkedGraphs
 

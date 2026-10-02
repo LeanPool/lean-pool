@@ -31,7 +31,7 @@ marker counts, looplessness, core connectivity, and every unordered edge
 multiplicity are all replayed by finite Boolean folds.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.GenusFourPseudocore
 

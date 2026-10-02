@@ -23,7 +23,7 @@ intentional: marked residuals such as `4a - 2u`, higher-rank tests, and future
 multi-stage gluings can all use the same interface.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

@@ -33,7 +33,7 @@ The payoff is that the tricycle gap can be stated for
 `regularSubdivisionGonality : CFGraph → ℕ`, with no `Spec` in the statement.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.SubdivisionGraph.Spec
 

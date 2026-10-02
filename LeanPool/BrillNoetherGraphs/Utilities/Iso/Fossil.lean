@@ -32,7 +32,7 @@ the fossil is canonical and can therefore serve as a common target for
 constructions which differ only by attached trees.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

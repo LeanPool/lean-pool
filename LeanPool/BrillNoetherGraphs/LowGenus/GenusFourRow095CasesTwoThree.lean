@@ -17,7 +17,7 @@ file records the two remaining pairs of signed windows and packages their
 endpoint computations as reachability statements.
 -/
 
-@[expose] public section
+public section
 
 namespace LowGenus.GenusFourRow095
 open Utilities.Certificate

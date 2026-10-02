@@ -23,7 +23,7 @@ prove that one finite set of lattice points is complete without changing the
 basic definition of transmission.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

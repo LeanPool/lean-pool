@@ -30,7 +30,7 @@ there is no separate nonemptiness field.
 hitting set) is what makes it meaningful rather than the `sInf ∅ = 0` default.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Treewidth
 

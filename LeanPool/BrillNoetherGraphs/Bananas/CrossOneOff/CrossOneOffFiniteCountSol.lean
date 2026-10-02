@@ -19,7 +19,7 @@ immediately preceding row.  This is the combinatorial skeleton behind the
 count `choose (g - 1) 2 + g / (n - 1)`.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

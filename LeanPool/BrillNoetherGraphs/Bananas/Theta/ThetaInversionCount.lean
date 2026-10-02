@@ -19,7 +19,7 @@ degree-one twist determines a unique inversion crossing the corresponding
 row and column of the transmission permutation.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

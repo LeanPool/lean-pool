@@ -30,7 +30,7 @@ unit step of slot `edge`.  Then
 Both statements are exact, and neither refers to the values of the script.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

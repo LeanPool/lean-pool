@@ -19,7 +19,7 @@ divisor and its degree calculation once, so the endpoint-specific decoder is
 the only remaining W5 geometry.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Subdivision.ClosedRowProof
 

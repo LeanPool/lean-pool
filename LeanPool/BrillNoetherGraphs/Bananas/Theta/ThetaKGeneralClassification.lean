@@ -19,7 +19,7 @@ terms for endpoint aliases while stating exactly the three non-endpoint
 families.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

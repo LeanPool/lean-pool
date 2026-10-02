@@ -33,7 +33,7 @@ is deliberately left as future graph-plumbing work; the soundness theorem
 below is complete and uses only the public `qReduced` API.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.StrongSeparator
 

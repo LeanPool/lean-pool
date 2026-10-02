@@ -54,7 +54,7 @@ and its northwest twin) plus a Riemann-Roch telescoping sum;
 and `thm:bngChain` (6.16) is the induction over the chain.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

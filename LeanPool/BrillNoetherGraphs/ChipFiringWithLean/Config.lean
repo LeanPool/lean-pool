@@ -10,7 +10,7 @@ public import LeanPool.BrillNoetherGraphs.ChipFiringWithLean.Basic
 
 /-! # ChipFiringConfiguration -/
 
-@[expose] public section
+public section
 open Multiset Finset
 
 /-!

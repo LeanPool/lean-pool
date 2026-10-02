@@ -66,7 +66,7 @@ by step from the fine script, and the budget hypothesis is exactly what fails
 for two chips at the midpoints of an even refinement.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.SubdivisionGraph.Spec
 

@@ -22,7 +22,7 @@ interval theorem.  Generic divisor-algebra wrappers keep its surjectivity
 proof away from the concrete `oneChip` elaboration blowup.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

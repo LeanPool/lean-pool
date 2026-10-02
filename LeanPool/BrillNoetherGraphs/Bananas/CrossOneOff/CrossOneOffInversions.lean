@@ -17,7 +17,7 @@ explicit hypothesis.  This is the period-separation condition missing from
 the printed proof of Corollary 4.31.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

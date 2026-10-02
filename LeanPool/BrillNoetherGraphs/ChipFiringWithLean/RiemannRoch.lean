@@ -10,7 +10,7 @@ public import LeanPool.BrillNoetherGraphs.ChipFiringWithLean.RRGHelpers
 
 /-! # Riemann Roch -/
 
-@[expose] public section
+public section
 universe u
 
 open Multiset Finset

@@ -23,7 +23,7 @@ belong to three different congruence classes; in particular, its second bound
 is not asserted for every integer below the cutoff.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

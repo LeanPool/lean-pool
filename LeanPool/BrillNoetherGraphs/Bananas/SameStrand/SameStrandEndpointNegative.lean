@@ -24,7 +24,7 @@ For the left endpoint and an interior mark `v_j` with `j < n-1`, take
 `D = v_(j-1) + v_n`.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

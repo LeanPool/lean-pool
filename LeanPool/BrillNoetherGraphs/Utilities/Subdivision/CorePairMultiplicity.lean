@@ -21,7 +21,7 @@ file) so that consumers of these three declarations do not pull in the
 occurrence-relabeling and replay machinery.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

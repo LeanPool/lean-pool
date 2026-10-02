@@ -22,7 +22,7 @@ first-neighbor form of firing the left endpoint; that finite Laplacian identity
 is kept separate from the pairwise path-prefix calculation below.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

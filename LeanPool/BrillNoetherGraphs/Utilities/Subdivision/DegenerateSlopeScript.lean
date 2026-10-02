@@ -46,7 +46,7 @@ whole economic argument for the closed-orthant layer, and it is a theorem
 here.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.DegenerateSpec
 open Utilities.Certificate

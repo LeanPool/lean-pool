@@ -51,7 +51,7 @@ names the face and the certificate does not.  `ZeroReach` and
 chain; that is the exact join with the contraction census.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 open Utilities.Certificate

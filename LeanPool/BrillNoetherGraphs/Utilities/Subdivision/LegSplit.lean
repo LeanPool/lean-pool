@@ -29,7 +29,7 @@ are exactly bivalent in the edge graph (their leg supplies the third
 incidence) and every other vertex is exactly trivalent.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.ExplicitPotential
 

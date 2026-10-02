@@ -21,7 +21,7 @@ vertex-wedge rank formula.  This is useful for arbitrary ASP transmission,
 whose required rank `tau.s (a + 1) b - 1` can equal `-1`.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

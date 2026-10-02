@@ -51,7 +51,7 @@ boundary vertex may deliver into `A` only the chips it already carries.
 `Utilities` only, so every `LowGenus` configuration file may use it.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Gluing
 

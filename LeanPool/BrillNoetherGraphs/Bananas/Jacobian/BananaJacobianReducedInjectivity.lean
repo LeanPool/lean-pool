@@ -23,7 +23,7 @@ concrete reducedness theorem: the paper's three conditions on the coordinates
 must be converted into the endpoint/semibreak normal form of `Semibreak.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

@@ -18,7 +18,7 @@ every Young diagram that occurs has size at most the genus.  The paper calls
 that property a once-marked Brill--Noether general graph.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

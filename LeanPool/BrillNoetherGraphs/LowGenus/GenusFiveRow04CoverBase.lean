@@ -16,7 +16,7 @@ Generated shared data for the chamber-restricted AR row-04 cover:
 the fixed divisor and the pooled anchor witnesses.  Imported by every
 cell chunk and by the assembling module. -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.GenusFiveRow04CoverBase
 

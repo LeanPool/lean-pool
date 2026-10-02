@@ -134,7 +134,7 @@ J. van Dobben de Bruyn and D. Gijswijt, *Treewidth is a lower bound on graph
 gonality*, Lemma 2.6, formalized in `Subdivision/StrongSeparator.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

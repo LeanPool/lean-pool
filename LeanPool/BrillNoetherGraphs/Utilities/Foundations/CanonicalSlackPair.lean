@@ -21,7 +21,7 @@ The declarations use the established `MarkedGraphs` namespace for API
 compatibility.
 -/
 
-@[expose] public section
+public section
 
 namespace MarkedGraphs
 

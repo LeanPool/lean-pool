@@ -15,7 +15,7 @@ public import LeanPool.BrillNoetherGraphs.Bananas.SameStrand.Semibreak
   midpoint, rank-difference, and dual-degree steps.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

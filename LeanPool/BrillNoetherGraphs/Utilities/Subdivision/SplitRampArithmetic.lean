@@ -40,7 +40,7 @@ arbitrary slot-value function, `interpolatedScript` being merely the instance
 whose value is one ramp.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.SubdivisionArithmetic
 

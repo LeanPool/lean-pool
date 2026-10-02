@@ -27,7 +27,7 @@ The exact slipface/corner-envelope theorem is completed in
 below.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities
 

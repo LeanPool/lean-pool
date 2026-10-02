@@ -23,7 +23,7 @@ verified length hypotheses for its endpoint, one-off, and cross-one-off
 families.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

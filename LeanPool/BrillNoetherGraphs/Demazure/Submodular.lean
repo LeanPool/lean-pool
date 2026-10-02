@@ -18,7 +18,7 @@ It corresponds roughly to Section 4 of
 [An extended Demazure product](https://arxiv.org/abs/2206.14227).
 -/
 
-@[expose] public section
+public section
 
 /-! ### Submodular slipfaces and recovery of ASP permutations
 

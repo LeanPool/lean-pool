@@ -56,7 +56,7 @@ open `RampData`.  Stating the closed analogue here, on an arbitrary
 copy.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.DegenerateSpec
 open Utilities.Certificate

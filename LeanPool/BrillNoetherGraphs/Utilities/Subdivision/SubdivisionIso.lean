@@ -26,7 +26,7 @@ presentations.  Thus it applies both to automorphisms of one presentation and
 to comparisons with another presentation having a different slot order.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.SubdivisionGraph
 

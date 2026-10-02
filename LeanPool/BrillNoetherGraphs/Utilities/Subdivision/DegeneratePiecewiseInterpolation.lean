@@ -25,7 +25,7 @@ slot has no selected step, and `balance` then forces its two endpoint values to
 coincide.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.DegenerateSpec
 open Utilities.Certificate

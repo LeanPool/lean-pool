@@ -18,7 +18,7 @@ Consequently, both bracketings of a three-factor wedge have the same three
 classes of vertices.  This file records the resulting graph isomorphism.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

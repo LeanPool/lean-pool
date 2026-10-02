@@ -25,7 +25,7 @@ of `G.edges`, hence two different slots.  No conversion through `toFinset` is
 used, so parallel edges are never collapsed.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.UnitSubdivisionPresentation
 

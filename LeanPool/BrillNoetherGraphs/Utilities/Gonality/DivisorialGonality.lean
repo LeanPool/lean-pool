@@ -34,7 +34,7 @@ the bridges in both directions.
   the coercion of this one).
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Gonality
 

@@ -28,7 +28,7 @@ is a minimum.  The parts are weakly decreasing and vanish from row `genus G`
 onward, hence define an honest finite `YoungDiagram`.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

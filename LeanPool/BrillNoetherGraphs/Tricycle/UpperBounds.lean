@@ -37,7 +37,7 @@ is a single explicit firing set, checked by `decide`.
 The firing sets and residual divisors are checked directly by the Lean kernel.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Tricycle
 

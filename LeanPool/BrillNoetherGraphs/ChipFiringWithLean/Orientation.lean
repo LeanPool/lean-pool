@@ -11,7 +11,7 @@ public import Mathlib.Data.DFinsupp.Multiset
 
 /-! # Orientation -/
 
-@[expose] public section
+public section
 open Multiset Finset
 
 /-!

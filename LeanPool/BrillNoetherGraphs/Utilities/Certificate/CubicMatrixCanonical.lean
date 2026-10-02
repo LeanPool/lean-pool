@@ -60,7 +60,7 @@ carry all six atlas indices; see
 the accompanying analysis.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.CubicMatrixReplay
 open Utilities.Certificate

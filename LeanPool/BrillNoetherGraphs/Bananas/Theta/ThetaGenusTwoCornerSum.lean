@@ -18,7 +18,7 @@ the latter comparison is where the endpoint and canonical correction terms
 enter.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

@@ -26,7 +26,7 @@ is the firing script and effective residual, which is both unambiguous and
 what the rank proof actually consumes.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.Configurations
 

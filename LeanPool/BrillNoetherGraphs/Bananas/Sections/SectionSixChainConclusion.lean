@@ -25,7 +25,7 @@ The generic commutativity isomorphism is recorded here; associativity is in
 `VertexWedgeAssociativity`.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 

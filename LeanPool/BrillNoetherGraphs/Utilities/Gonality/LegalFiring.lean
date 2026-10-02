@@ -38,7 +38,7 @@ A set `U` is **legal** for `D` when firing it keeps `D` effective, i.e.
 `D u ≥ outdegreeSet G U u` for all `u ∈ U`.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Gonality
 

@@ -39,7 +39,7 @@ multiplier contributes `0` to the equality part.  So the checker is
 fail-closed on malformed indices without spending a comparison on them.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Subdivision.ClosedRowProof
 

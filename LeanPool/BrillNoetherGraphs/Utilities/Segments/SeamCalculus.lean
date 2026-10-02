@@ -98,7 +98,7 @@ What the library **lacks**, and how it is handled here:
 below is proved outright from the library's API.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

@@ -22,7 +22,7 @@ cancel in Euler characteristic, leaving one edge-slot contribution.  Hence
 the answer is independent of every subdivision length.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 

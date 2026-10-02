@@ -23,7 +23,7 @@ source to the target.  It does **not** assert that arbitrary divisor rank is
 preserved by contraction.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate
 
