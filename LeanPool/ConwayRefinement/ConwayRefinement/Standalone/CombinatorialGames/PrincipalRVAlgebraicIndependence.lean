@@ -89,7 +89,7 @@ theorem supportIsWellOrder (x : HahnSeries ℝ K) :
   exact Subtype.ext (le_antisymm (le_of_not_gt hba) (le_of_not_gt hab))
 
 /-- The order type of the well-ordered support of `x` [LM24, §2.2]. -/
-def ot (x : HahnSeries ℝ K) : Ordinal.{0} :=
+@[expose] def ot (x : HahnSeries ℝ K) : Ordinal.{0} :=
   @Ordinal.type x.support (Subrel (· < ·) (· ∈ x.support)) (supportIsWellOrder x)
 
 /-! ### The ordinal value -/

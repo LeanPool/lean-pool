@@ -90,12 +90,12 @@ private theorem ofSets_cases (s t : Set ConwayGame.{u}) [Small.{u} s] [Small.{u}
 
 instance : Zero ConwayGame := ⟨mk 0⟩
 instance : One ConwayGame := ⟨mk 1⟩
-@[expose] instance : Add ConwayGame := ⟨Quotient.map₂ _ @add_congr⟩
-@[expose] instance : Neg ConwayGame := ⟨Quotient.map _ @neg_congr⟩
+instance : Add ConwayGame := ⟨Quotient.map₂ _ @add_congr⟩
+instance : Neg ConwayGame := ⟨Quotient.map _ @neg_congr⟩
 instance : PartialOrder ConwayGame := inferInstanceAs (PartialOrder (Antisymmetrization ..))
 instance : Inhabited ConwayGame := ⟨0⟩
 
-@[expose] instance : AddCommGroupWithOne ConwayGame where
+instance : AddCommGroupWithOne ConwayGame where
   zero_add := by rintro ⟨x⟩; exact congr(mk $(zero_add _))
   add_zero := by rintro ⟨x⟩; exact congr(mk $(add_zero _))
   add_comm := by rintro ⟨x⟩ ⟨y⟩; exact congr(mk $(add_comm _ _))

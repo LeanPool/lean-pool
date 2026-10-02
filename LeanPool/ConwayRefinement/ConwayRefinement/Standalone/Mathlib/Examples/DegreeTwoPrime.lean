@@ -35,7 +35,7 @@ universe u
     h ▸ show i + j ≤ 0 from add_nonpos (hx hi) (hy hj)
 
 /-- The exponent in row `m` and column `n` of the displayed support. -/
-def exponent (m n : ℕ) : ℝ :=
+@[expose] def exponent (m n : ℕ) : ℝ :=
   -(1 / (m + 1 : ℝ)) -
     1 / ((m + 1 : ℝ) * (m + 2 : ℝ) * (n + 1 : ℝ))
 
