@@ -12075,6 +12075,54 @@ projects:
     msc:
     - 05C50
     - 18M20
+  - slug: nashembedding
+    title: Nash's smooth isometric embedding theorem
+    summary: 'A Lean 4 / Mathlib formalization of Nash''s C^∞ isometric embedding theorem
+      for closed manifolds: every compact smooth manifold without boundary, equipped
+      with a smooth Riemannian metric, admits a smooth injective map into some Euclidean
+      space ℝ^q whose differential pulls the Euclidean inner product back to the given
+      metric. The proof formalized is Günther''s (1989), which replaces the Nash-Moser
+      iteration by an elliptic fixed-point argument, following the presentation in A.
+      J. Wassermann''s Cambridge Part III lecture notes as the primary source. The development
+      has two layers. The first proves the theorem for the flat torus: a self-contained
+      Sobolev toolkit on 𝕋ⁿ (weighted ℓ² Sobolev spaces on ℤⁿ, Rellich compactness,
+      the Sobolev sup bound, three multiplication theorems, mollifiers, periodization,
+      Fourier inversion and Parseval), the approximation of smooth metrics by realizable
+      ones, Günther''s perturbation theorem proved by a contraction in Hˢ, and their
+      assembly into the statement that every smooth 2π-periodic positive-definite matrix
+      field on ℝⁿ is the pullback metric of a smooth periodic immersion that is injective
+      modulo 2πℤⁿ. The second layer reduces the closed-manifold case to the torus: a
+      Whitney embedding from Mathlib is extended to the ambient space, the metric is
+      extended by a pseudo-inverse construction, cut off, symmetrized and periodized,
+      and the torus theorem is applied. No bound on the embedding dimension is claimed.
+      Concrete instances (round spheres of every dimension, products of spheres, the
+      flat torus 𝕊¹ × 𝕊¹) are derived, and the flat-torus instance is shown to reproduce
+      the torus theorem''s conclusion, tying the two layers together. Nothing here is
+      claimed to be new.'
+    branch: differential geometry
+    entry_module: LeanPool.NashEmbedding
+    authors:
+    - David Wiygul
+    source:
+      url: https://github.com/langlerangle/nashembedding
+      github_repo: langlerangle/nashembedding
+      commit: 515a8245c51c952db59d81ef840a146ed853e4ea
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - NashEmbeddingTheorem.nash_isometric_embedding
+    main_results:
+    - declaration: NashEmbeddingTheorem.nash_isometric_embedding
+      informal: Every compact smooth boundaryless manifold with a smooth Riemannian
+        metric admits a smooth isometric embedding in some finite-dimensional Euclidean
+        space.
+    tags:
+    - differential-geometry
+    - isometric-embedding
+    - sobolev-spaces
+    msc:
+    - 53C24
   - slug: tutte-path
     title: Tutte’s path theorem for matroids
     summary: Proves the modular-cut path theorem for finite matroids, with reusable rank-partition,
@@ -12117,3 +12165,52 @@ projects:
     - modular-cuts
     msc:
     - 05B35
+  - slug: parameter_free_gradient_p
+    title: Parameter-Free Gradient Minimization in l_p Geometry
+    summary: Exact value-gradient query-complexity results for convex differentiable objectives
+      on finite-dimensional real l_p spaces with attained minima and a positive global primal-to-dual
+      Lipschitz-gradient bound. For finite real p > 1, the development proves strict-local scale-identification
+      impossibility at LR/epsilon = 4 and a deterministic method family with three post-secant-initialization
+      query-rate regimes. For p > 2 it also proves deterministic known-parameter upper and lower
+      query exponents p/(p+2), with explicit horizon and dimension restrictions on the lower bound.
+    branch: optimization
+    entry_module: LeanPool.ParameterFreeGradient
+    authors:
+    - Yuning Yang
+    source:
+      url: https://github.com/yuningyang19/parameter_free_gradient_p
+      github_repo: yuningyang19/parameter_free_gradient_p
+      commit: f71215fa936fe01aff8a765c62b399e131df963b
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - V7.main
+    main_results:
+    - declaration: V7.scaleIdentificationImpossibility
+      informal: For finite real p > 1 and positive epsilon, measurable strict-local exact value-gradient
+        methods satisfy scale-identification lower bounds on convex smooth one-dimensional objectives
+        with unique minimizers, even at LR/epsilon = 4. The result includes deterministic and
+        randomized finite-horizon statements and infinite worst-case expected queried-or-returned
+        hitting time.
+    - declaration: V7.knownParameterAboveTwoOptimality
+      informal: For finite real p > 2 and convex differentiable objectives with attained minima
+        and a positive global primal-to-dual Lipschitz-gradient bound, deterministic known-parameter
+        exact value-gradient methods have upper query exponent p/(p+2). The matching lower exponent
+        concerns the first T queries, requires d >= 2 and 1 <= T <= d, and retains the explicit
+        min(p, log d) dependence.
+    - declaration: V7.main
+      informal: For convex differentiable objectives with attained minima and positive global
+        L-Lipschitz gradients from l_p to its dual, one deterministic family works for every finite
+        real p > 1 and positive epsilon after supplied nondegenerate secant initialization with
+        0 < M0 <= L. It returns a queried point with dual gradient norm at most epsilon. Writing
+        R for distance to the minimizer set, the post-initialization oracle-call bound has polynomial
+        dependence on max(1, LR/epsilon) with exponent 1/2 for 1 < p < 2 and p = 2, and p/(p+2)
+        for p > 2, plus additive log(e + L/M0) calibration cost. Constants depend only on p, with
+        a universal constant at p = 2; discovering the secant pair is outside the count.
+    tags:
+    - optimization
+    - oracle-complexity
+    - gradient-methods
+    msc:
+    - 90C25
