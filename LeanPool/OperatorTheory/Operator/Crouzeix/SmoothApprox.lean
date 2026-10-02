@@ -54,6 +54,7 @@ structure SmoothJordanDomain where
   boundaryParam_regular : ∀ t, deriv boundaryParam t ≠ 0
 
 /-- A positive-radius open disk, with `circleMap` as its smooth Jordan boundary. -/
+@[expose]
 noncomputable def SmoothJordanDomain.ball (c : ℂ) (R : ℝ) (hR : 0 < R) :
     SmoothJordanDomain where
   carrier := Metric.ball c R
@@ -82,9 +83,11 @@ theorem exists_smoothJordanDomain_superset_of_isCompact (K : Set ℂ) (hK : IsCo
 
 /-- The positive radii `1, 1/2, 1/3, ...` used for the explicit thickening
 approximation. -/
+@[expose]
 noncomputable def smoothApproxRadius (n : ℕ) : ℝ := 1 / (n + 1 : ℝ)
 
 /-- The `n`th open metric thickening of `K`, at radius `1 / (n + 1)`. -/
+@[expose]
 noncomputable def convexThickeningApprox (K : Set ℂ) (n : ℕ) : Set ℂ :=
   Metric.thickening (smoothApproxRadius n) K
 

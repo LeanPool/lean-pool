@@ -269,6 +269,7 @@ theorem SmoothJordanDomain.frontier_support_of_support_at_mem_carrier
 /-- Reverse the orientation of a smooth Jordan boundary by the affine
 reparametrization `t ↦ 2π - t`.  The carrier and all of its geometric
 properties are unchanged. -/
+@[expose]
 noncomputable def SmoothJordanDomain.reverseOrientation
     (Omega : SmoothJordanDomain) : SmoothJordanDomain where
   carrier := Omega.carrier

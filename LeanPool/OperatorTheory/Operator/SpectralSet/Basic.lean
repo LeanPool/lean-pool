@@ -24,6 +24,7 @@ open scoped Polynomial
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
 
 /-- The supremum of the norm of a polynomial over a complex set. -/
+@[expose]
 noncomputable def polynomialSupNorm (p : Polynomial ℂ) (X : Set ℂ) : ℝ :=
   ⨆ z ∈ X, ‖Polynomial.eval z p‖
 

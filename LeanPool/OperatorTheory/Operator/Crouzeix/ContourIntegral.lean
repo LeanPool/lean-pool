@@ -51,6 +51,7 @@ def ContourIntegrable (f : ℂ → F) (γ : ℝ → ℂ) : Prop :=
 
 /-- The contour integral `∫ t in 0..2π, γ'(t) • f (γ t)` of `f` along the parameterized curve
 `γ`. -/
+@[expose]
 noncomputable def contourIntegral (f : ℂ → F) (γ : ℝ → ℂ) : F :=
   ∫ t in (0 : ℝ)..(2 * π), deriv γ t • f (γ t)
 

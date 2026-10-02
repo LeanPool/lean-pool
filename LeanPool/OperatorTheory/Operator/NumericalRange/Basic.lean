@@ -36,6 +36,7 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
 
 /-- The numerical range of a continuous linear operator `A` on a complex inner
 product space: the set of `⟪x, A x⟫_ℂ` as `x` ranges over the unit sphere. -/
+@[expose]
 noncomputable def numericalRange (A : E →L[ℂ] E) : Set ℂ :=
   { z | ∃ x : E, ‖x‖ = 1 ∧ ⟪x, A x⟫_ℂ = z }
 
