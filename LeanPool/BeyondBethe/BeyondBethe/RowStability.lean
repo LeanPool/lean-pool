@@ -1108,7 +1108,6 @@ theorem halfHalfL1Distance_eq
 theorem halfHalfL1Distance_of_below_half
     {n : ℕ} {p : Fin n → ℝ} (hp : IsProbabilityVector p)
     {a b : Fin n} (hab : a ≠ b)
-    (_ : 0 ≤ p a) (_ : 0 ≤ p b)
     (haHalf : p a ≤ 1 / 2) (hbHalf : p b ≤ 1 / 2) :
     halfHalfL1Distance p a b = 2 * (1 - p a - p b) := by
   classical
@@ -1156,7 +1155,7 @@ theorem halfHalfL1Distance_of_below_half
 theorem halfHalfL1Distance_of_above_half
     {n : ℕ} {p : Fin n → ℝ} (hp : IsProbabilityVector p)
     {a b : Fin n} (hab : a ≠ b)
-    (haHalf : 1 / 2 ≤ p a) (_ : 0 ≤ p b) (hbHalf : p b ≤ 1 / 2) :
+    (haHalf : 1 / 2 ≤ p a) (hbHalf : p b ≤ 1 / 2) :
     halfHalfL1Distance p a b =
       2 * (p a - 1 / 2) + 2 * (1 - p a - p b) := by
   classical
@@ -1623,7 +1622,7 @@ theorem below_half_distance_le_rowDeficit
   have hcost := separableDefect_ge_two_coordinates hp hab hhalf
     haQuarter hbQuarter
   rw [halfHalfL1Distance_of_below_half hp.1 hab
-    (hp.1.nonnegative a) (hp.1.nonnegative b) haHalf (hhalf b)]
+    haHalf (hhalf b)]
   nlinarith
 
 theorem coordinate_le_complement
@@ -1816,7 +1815,7 @@ theorem above_half_distance_le_rowDeficit
     le_fourthRoot_of_pow_four_le (by linarith) hd0 hpowD
   have hbHalf : p b ≤ 1 / 2 := hpbq.trans (by linarith)
   rw [halfHalfL1Distance_of_above_half hp.1 hab haHalf
-    (hp.1.nonnegative b) hbHalf]
+    hbHalf]
   linarith
 
 /-- A fully explicit, strict-support version of paper Lemma 8.  The sharp

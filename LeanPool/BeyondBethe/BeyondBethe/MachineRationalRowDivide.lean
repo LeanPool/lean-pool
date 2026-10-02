@@ -102,11 +102,9 @@ def machineRationalRowDivideNextAccumulator (state : List Bool) : List Bool :=
 /-- Consumes the next row entry and stores the bounded updated accumulator, preserving divisor
 and bound. -/
 def machineRationalRowDivideAdvance (state : List Bool) : List Bool :=
-  machineRationalRowDividePack
-    (machineListTail (machineRationalRowDivideRemaining state))
-    (machineRationalRowDivideNextAccumulator state)
-    (machineRationalRowDivideScaleField state)
-    (machineRationalRowDivideBound state)
+  machineListMapScanAdvance machineRationalRowDivideEntry machineRationalRowDivideBound
+    (fun state ↦ pair (machineRationalRowDivideScaleField state) (machineRationalRowDivideBound
+      state)) state
 
 /-- Fixes an exhausted row-division state and otherwise processes one entry. -/
 def machineRationalRowDivideStep (state : List Bool) : List Bool :=
@@ -237,12 +235,9 @@ theorem machineRationalRowDivideNextAccumulator_mem_FP :
 
 theorem machineRationalRowDivideAdvance_mem_FP :
     machineRationalRowDivideAdvance ∈ Complexity.FP := by
-  have htail := machineCompose_mem_FP machineRationalRowDivideRemaining_mem_FP
-    machineListTail_mem_FP
-  exact machinePair_mem_FP htail
-    (machinePair_mem_FP machineRationalRowDivideNextAccumulator_mem_FP
-      (machinePair_mem_FP machineRationalRowDivideScaleField_mem_FP
-        machineRationalRowDivideBound_mem_FP))
+  exact machineListMapScanAdvance_mem_FP machineRationalRowDivideEntry_mem_FP
+    machineRationalRowDivideBound_mem_FP (machinePair_mem_FP
+      machineRationalRowDivideScaleField_mem_FP machineRationalRowDivideBound_mem_FP)
 
 theorem machineRationalRowDivideStep_mem_FP :
     machineRationalRowDivideStep ∈ Complexity.FP := by
@@ -326,7 +321,12 @@ theorem machineRationalRowDivideStep_bound {word state : List Bool}
     cases hremainingCode : machineRationalRowDivideRemaining state with
     | nil => exact False.elim (hnil hremainingCode)
     | cons bit tail =>
-        rw [machineIfEmpty_cons, machineRationalRowDivideAdvance]
+        rw [machineIfEmpty_cons]
+        change MachineRationalRowDivideStateBound word
+          (machineRationalRowDividePack (machineListTail (machineRationalRowDivideRemaining state))
+            (machineRationalRowDivideNextAccumulator state) (machineRationalRowDivideScaleField
+              state)
+            (machineRationalRowDivideBound state))
         simp only [MachineRationalRowDivideStateBound,
           machineRationalRowDivideRemaining_pack,
           machineRationalRowDivideAccumulator_pack,
@@ -509,58 +509,27 @@ theorem machineRationalRowDivideStep_semantics
         (machineRationalRowDivideSemanticState scale row k) =
       machineRationalRowDivideSemanticState scale row (k + 1) := by
   let output := rationalRowDivideValues scale row
-  let word := machineRationalRowDivideCanonicalInput scale row
-  have houtputLength : output.length = row.length := by
+  have hlen : output.length = row.length := by
     simp [output, rationalRowDivideValues]
-  have hkoutput : k < output.length := by omega
-  have houtputGet : output[k] =
-      binaryNormalizeRawRat ((rawRatOfRat row[k]).div scale) := by
-    simp [output, rationalRowDivideValues, List.getElem_map]
-  have hdrop := List.drop_eq_getElem_cons hk
-  have hfullBound :
-      (binaryListCode rationalEntryBinaryCode output).length ≤
-        (machineRationalRowDivideInputBound word).length := by
-    simpa only [word, output, machineRationalRowDivideCanonicalInput,
-      rationalRowDivideValues] using!
+  have hfullBound : (binaryListCode rationalEntryBinaryCode output).length ≤
+      (machineRationalRowDivideInputBound (machineRationalRowDivideCanonicalInput scale
+        row)).length := by
+    simpa only [output, machineRationalRowDivideCanonicalInput, rationalRowDivideValues] using!
       machineRationalRowDivide_output_length_le_bound scale row
-  have hnonempty :
-      binaryListCode rationalEntryBinaryCode (row.drop k) ≠ [] := by
-    rw [hdrop]
-    exact binaryListCode_cons_ne_nil _ _ _
-  rw [machineRationalRowDivideStep]
-  simp only [machineRationalRowDivideSemanticState,
-    machineRationalRowDivideRemaining_pack]
-  rw [machineIfEmpty_of_ne_nil _ _ _ hnonempty,
-    machineRationalRowDivideAdvance]
-  simp only [machineRationalRowDivideRemaining_pack,
-    machineRationalRowDivideAccumulator_pack,
-    machineRationalRowDivideScaleField_pack,
-    machineRationalRowDivideBound_pack,
-    machineRationalRowDivideNextAccumulator,
-    machineRationalRowDivideCandidate]
-  have hentry :
-      machineRationalRowDivideEntry
-          (machineRationalRowDividePack
-            (binaryListCode rationalEntryBinaryCode (row.drop k))
-            (binaryListCode rationalEntryBinaryCode
-              (output.take k).reverse)
-            (rawRatBinaryCode scale)
-            (machineRationalRowDivideInputBound word)) =
-        rationalEntryBinaryCode output[k] := by
-    rw [houtputGet]
-    simpa only [machineRationalRowDivideSemanticState, output, word] using!
-      machineRationalRowDivideEntry_semantics scale row k hk
-  rw [hentry]
-  rw [hdrop, machineListTail_cons]
-  change machineRationalRowDividePack
-      (binaryListCode rationalEntryBinaryCode (row.drop (k + 1)))
-      ((binaryListCode rationalEntryBinaryCode
-        (output[k] :: (output.take k).reverse)).take
-          (machineRationalRowDivideInputBound word).length)
-      (rawRatBinaryCode scale)
-      (machineRationalRowDivideInputBound word) = _
-  rw [binaryListCode_reverse_take_succ_clamped rationalEntryBinaryCode output
-    (machineRationalRowDivideInputBound word).length k hkoutput hfullBound]
+  apply machineListMapScanStep_semantics rationalEntryBinaryCode rationalEntryBinaryCode
+    row output (pair (rawRatBinaryCode scale) (machineRationalRowDivideInputBound
+      (machineRationalRowDivideCanonicalInput scale row))) (machineRationalRowDivideInputBound
+      (machineRationalRowDivideCanonicalInput scale row))
+    machineRationalRowDivideEntry machineRationalRowDivideBound (fun state ↦ pair
+      (machineRationalRowDivideScaleField state) (machineRationalRowDivideBound state)) k hk hlen
+      hfullBound
+  · have hget : output[k]'(by omega) = binaryNormalizeRawRat ((rawRatOfRat row[k]).div scale) := by
+      simp [output, rationalRowDivideValues, List.getElem_map]
+    rw [hget]
+    exact machineRationalRowDivideEntry_semantics scale row k hk
+  · simp [machineRationalRowDivideBound, machineListMapScanPack]
+  · simp [machineRationalRowDivideScaleField, machineRationalRowDivideBound, machineListMapScanPack]
+
 
 theorem machineRationalRowDivideIterate_semantics
     (scale : RawRat) (row : List ℚ) : ∀ k ≤ row.length,

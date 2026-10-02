@@ -102,11 +102,9 @@ def machineRationalRowAddNextAccumulator (state : List Bool) : List Bool :=
 /-- Consumes the next row entry and stores the bounded updated accumulator, preserving increment
 and bound. -/
 def machineRationalRowAddAdvance (state : List Bool) : List Bool :=
-  machineRationalRowAddPack
-    (machineListTail (machineRationalRowAddRemaining state))
-    (machineRationalRowAddNextAccumulator state)
-    (machineRationalRowAddDeltaField state)
-    (machineRationalRowAddBound state)
+  machineListMapScanAdvance machineRationalRowAddEntry machineRationalRowAddBound
+    (fun state ↦ pair (machineRationalRowAddDeltaField state) (machineRationalRowAddBound state))
+      state
 
 /-- Fixes an exhausted row-addition state and otherwise processes one entry. -/
 def machineRationalRowAddStep (state : List Bool) : List Bool :=
@@ -237,12 +235,9 @@ theorem machineRationalRowAddNextAccumulator_mem_FP :
 
 theorem machineRationalRowAddAdvance_mem_FP :
     machineRationalRowAddAdvance ∈ Complexity.FP := by
-  have htail := machineCompose_mem_FP machineRationalRowAddRemaining_mem_FP
-    machineListTail_mem_FP
-  exact machinePair_mem_FP htail
-    (machinePair_mem_FP machineRationalRowAddNextAccumulator_mem_FP
-      (machinePair_mem_FP machineRationalRowAddDeltaField_mem_FP
-        machineRationalRowAddBound_mem_FP))
+  exact machineListMapScanAdvance_mem_FP machineRationalRowAddEntry_mem_FP
+    machineRationalRowAddBound_mem_FP (machinePair_mem_FP machineRationalRowAddDeltaField_mem_FP
+      machineRationalRowAddBound_mem_FP)
 
 theorem machineRationalRowAddStep_mem_FP :
     machineRationalRowAddStep ∈ Complexity.FP := by
@@ -326,7 +321,11 @@ theorem machineRationalRowAddStep_bound {word state : List Bool}
     cases hremainingCode : machineRationalRowAddRemaining state with
     | nil => exact False.elim (hnil hremainingCode)
     | cons bit tail =>
-        rw [machineIfEmpty_cons, machineRationalRowAddAdvance]
+        rw [machineIfEmpty_cons]
+        change MachineRationalRowAddStateBound word
+          (machineRationalRowAddPack (machineListTail (machineRationalRowAddRemaining state))
+            (machineRationalRowAddNextAccumulator state) (machineRationalRowAddDeltaField state)
+            (machineRationalRowAddBound state))
         simp only [MachineRationalRowAddStateBound,
           machineRationalRowAddRemaining_pack,
           machineRationalRowAddAccumulator_pack,
@@ -510,58 +509,26 @@ theorem machineRationalRowAddStep_semantics
         (machineRationalRowAddSemanticState delta row k) =
       machineRationalRowAddSemanticState delta row (k + 1) := by
   let output := rationalRowAddValues delta row
-  let word := machineRationalRowAddCanonicalInput delta row
-  have houtputLength : output.length = row.length := by
+  have hlen : output.length = row.length := by
     simp [output, rationalRowAddValues]
-  have hkoutput : k < output.length := by omega
-  have houtputGet : output[k] =
-      binaryNormalizeRawRat ((rawRatOfRat row[k]).add delta) := by
-    simp [output, rationalRowAddValues, List.getElem_map]
-  have hdrop := List.drop_eq_getElem_cons hk
-  have hfullBound :
-      (binaryListCode rationalEntryBinaryCode output).length ≤
-        (machineRationalRowAddInputBound word).length := by
-    simpa only [word, output, machineRationalRowAddCanonicalInput,
-      rationalRowAddValues] using!
+  have hfullBound : (binaryListCode rationalEntryBinaryCode output).length ≤
+      (machineRationalRowAddInputBound (machineRationalRowAddCanonicalInput delta row)).length := by
+    simpa only [output, machineRationalRowAddCanonicalInput, rationalRowAddValues] using!
       machineRationalRowAdd_output_length_le_bound delta row
-  have hnonempty :
-      binaryListCode rationalEntryBinaryCode (row.drop k) ≠ [] := by
-    rw [hdrop]
-    exact binaryListCode_cons_ne_nil _ _ _
-  rw [machineRationalRowAddStep]
-  simp only [machineRationalRowAddSemanticState,
-    machineRationalRowAddRemaining_pack]
-  rw [machineIfEmpty_of_ne_nil _ _ _ hnonempty,
-    machineRationalRowAddAdvance]
-  simp only [machineRationalRowAddRemaining_pack,
-    machineRationalRowAddAccumulator_pack,
-    machineRationalRowAddDeltaField_pack,
-    machineRationalRowAddBound_pack,
-    machineRationalRowAddNextAccumulator,
-    machineRationalRowAddCandidate]
-  have hentry :
-      machineRationalRowAddEntry
-          (machineRationalRowAddPack
-            (binaryListCode rationalEntryBinaryCode (row.drop k))
-            (binaryListCode rationalEntryBinaryCode
-              (output.take k).reverse)
-            (rawRatBinaryCode delta)
-            (machineRationalRowAddInputBound word)) =
-        rationalEntryBinaryCode output[k] := by
-    rw [houtputGet]
-    simpa only [machineRationalRowAddSemanticState, output, word] using!
-      machineRationalRowAddEntry_semantics delta row k hk
-  rw [hentry]
-  rw [hdrop, machineListTail_cons]
-  change machineRationalRowAddPack
-      (binaryListCode rationalEntryBinaryCode (row.drop (k + 1)))
-      ((binaryListCode rationalEntryBinaryCode
-        (output[k] :: (output.take k).reverse)).take
-          (machineRationalRowAddInputBound word).length)
-      (rawRatBinaryCode delta)
-      (machineRationalRowAddInputBound word) = _
-  rw [binaryListCode_reverse_take_succ_clamped rationalEntryBinaryCode output
-    (machineRationalRowAddInputBound word).length k hkoutput hfullBound]
+  apply machineListMapScanStep_semantics rationalEntryBinaryCode rationalEntryBinaryCode
+    row output (pair (rawRatBinaryCode delta) (machineRationalRowAddInputBound
+      (machineRationalRowAddCanonicalInput delta row))) (machineRationalRowAddInputBound
+      (machineRationalRowAddCanonicalInput delta row))
+    machineRationalRowAddEntry machineRationalRowAddBound (fun state ↦ pair
+      (machineRationalRowAddDeltaField state) (machineRationalRowAddBound state)) k hk hlen
+      hfullBound
+  · have hget : output[k]'(by omega) = binaryNormalizeRawRat ((rawRatOfRat row[k]).add delta) := by
+      simp [output, rationalRowAddValues, List.getElem_map]
+    rw [hget]
+    exact machineRationalRowAddEntry_semantics delta row k hk
+  · simp [machineRationalRowAddBound, machineListMapScanPack]
+  · simp [machineRationalRowAddDeltaField, machineRationalRowAddBound, machineListMapScanPack]
+
 
 theorem machineRationalRowAddIterate_semantics
     (delta : RawRat) (row : List ℚ) : ∀ k ≤ row.length,

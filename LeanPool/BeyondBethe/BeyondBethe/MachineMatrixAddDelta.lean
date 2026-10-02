@@ -96,12 +96,9 @@ def machineMatrixAddDeltaNextAccumulator (state : List Bool) : List Bool :=
 /-- Consumes one row and stores its incremented output, preserving the increment, dimension, and
 bound. -/
 def machineMatrixAddDeltaAdvance (state : List Bool) : List Bool :=
-  machineMatrixAddDeltaPack
-    (machineListTail (machineMatrixAddDeltaRemaining state))
-    (machineMatrixAddDeltaNextAccumulator state)
-    (machineMatrixAddDeltaDelta state)
-    (machineMatrixAddDeltaDimension state)
-    (machineMatrixAddDeltaBound state)
+  machineListMapScanAdvance machineMatrixAddDeltaOutputRow machineMatrixAddDeltaBound
+    (fun state ↦ pair (machineMatrixAddDeltaDelta state) (pair (machineMatrixAddDeltaDimension
+      state) (machineMatrixAddDeltaBound state))) state
 
 /-- Processes the next matrix row, leaving exhausted matrix-addition states fixed. -/
 def machineMatrixAddDeltaStep (state : List Bool) : List Bool :=
@@ -230,13 +227,10 @@ theorem machineMatrixAddDeltaNextAccumulator_mem_FP :
 
 theorem machineMatrixAddDeltaAdvance_mem_FP :
     machineMatrixAddDeltaAdvance ∈ Complexity.FP := by
-  have htail := machineCompose_mem_FP machineMatrixAddDeltaRemaining_mem_FP
-    machineListTail_mem_FP
-  exact machinePair_mem_FP htail
-    (machinePair_mem_FP machineMatrixAddDeltaNextAccumulator_mem_FP
-      (machinePair_mem_FP machineMatrixAddDeltaDelta_mem_FP
-        (machinePair_mem_FP machineMatrixAddDeltaDimension_mem_FP
-          machineMatrixAddDeltaBound_mem_FP)))
+  exact machineListMapScanAdvance_mem_FP machineMatrixAddDeltaOutputRow_mem_FP
+    machineMatrixAddDeltaBound_mem_FP (machinePair_mem_FP machineMatrixAddDeltaDelta_mem_FP
+      (machinePair_mem_FP machineMatrixAddDeltaDimension_mem_FP
+      machineMatrixAddDeltaBound_mem_FP))
 
 theorem machineMatrixAddDeltaStep_mem_FP :
     machineMatrixAddDeltaStep ∈ Complexity.FP := by
@@ -329,7 +323,12 @@ theorem machineMatrixAddDeltaStep_bound {word state : List Bool}
     cases hremainingCode : machineMatrixAddDeltaRemaining state with
     | nil => exact False.elim (hnil hremainingCode)
     | cons bit tail =>
-        rw [machineIfEmpty_cons, machineMatrixAddDeltaAdvance]
+        rw [machineIfEmpty_cons]
+        change MachineMatrixAddDeltaStateBound word
+          (machineMatrixAddDeltaPack (machineListTail (machineMatrixAddDeltaRemaining state))
+            (machineMatrixAddDeltaNextAccumulator state) (machineMatrixAddDeltaDelta state)
+            (machineMatrixAddDeltaDimension state)
+            (machineMatrixAddDeltaBound state))
         simp only [MachineMatrixAddDeltaStateBound,
           machineMatrixAddDeltaRemaining_pack,
           machineMatrixAddDeltaAccumulator_pack,
@@ -604,56 +603,23 @@ theorem machineMatrixAddDeltaStep_semantics
         (machineMatrixAddDeltaSemanticState word dimension delta rows k) =
       machineMatrixAddDeltaSemanticState word dimension delta rows (k + 1) := by
   let output := rationalMatrixAddRows delta rows
-  have houtputLength : output.length = rows.length := by
+  have hlen : output.length = rows.length := by
     simp [output, rationalMatrixAddRows]
-  have hkoutput : k < output.length := by omega
-  have houtputGet : output[k] =
-      rationalRowAddValues delta rows[k] := by
-    simp [output, rationalMatrixAddRows, List.getElem_map]
-  have hdrop := List.drop_eq_getElem_cons hk
-  have hnonempty :
-      binaryListCode (binaryListCode rationalEntryBinaryCode)
-        (rows.drop k) ≠ [] := by
-    rw [hdrop]
-    exact binaryListCode_cons_ne_nil _ _ _
-  rw [machineMatrixAddDeltaStep]
-  simp only [machineMatrixAddDeltaSemanticState,
-    machineMatrixAddDeltaRemaining_pack]
-  rw [machineIfEmpty_of_ne_nil _ _ _ hnonempty,
-    machineMatrixAddDeltaAdvance]
-  simp only [machineMatrixAddDeltaRemaining_pack,
-    machineMatrixAddDeltaAccumulator_pack,
-    machineMatrixAddDeltaDelta_pack,
-    machineMatrixAddDeltaDimension_pack,
-    machineMatrixAddDeltaBound_pack,
-    machineMatrixAddDeltaNextAccumulator,
-    machineMatrixAddDeltaCandidate]
-  have hrow :
-      machineMatrixAddDeltaOutputRow
-          (machineMatrixAddDeltaPack
-            (binaryListCode (binaryListCode rationalEntryBinaryCode)
-              (rows.drop k))
-            (binaryListCode (binaryListCode rationalEntryBinaryCode)
-              (output.take k).reverse)
-            (rawRatBinaryCode delta) dimension
-            (machineMatrixAddDeltaInputBound word)) =
-        binaryListCode rationalEntryBinaryCode output[k] := by
-    rw [houtputGet]
-    simpa only [machineMatrixAddDeltaSemanticState, output] using!
-      machineMatrixAddDeltaOutputRow_semantics
-        word dimension delta rows k hk
-  rw [hrow, hdrop, machineListTail_cons]
-  change machineMatrixAddDeltaPack
-      (binaryListCode (binaryListCode rationalEntryBinaryCode)
-        (rows.drop (k + 1)))
-      ((binaryListCode (binaryListCode rationalEntryBinaryCode)
-        (output[k] :: (output.take k).reverse)).take
-          (machineMatrixAddDeltaInputBound word).length)
-      (rawRatBinaryCode delta) dimension
-      (machineMatrixAddDeltaInputBound word) = _
-  rw [binaryListCode_reverse_take_succ_clamped
-    (binaryListCode rationalEntryBinaryCode) output
-    (machineMatrixAddDeltaInputBound word).length k hkoutput hfullBound]
+  apply machineListMapScanStep_semantics (binaryListCode rationalEntryBinaryCode) (binaryListCode
+    rationalEntryBinaryCode)
+    rows output (pair (rawRatBinaryCode delta) (pair dimension (machineMatrixAddDeltaInputBound
+      word))) (machineMatrixAddDeltaInputBound word)
+    machineMatrixAddDeltaOutputRow machineMatrixAddDeltaBound (fun state ↦ pair
+      (machineMatrixAddDeltaDelta state) (pair (machineMatrixAddDeltaDimension state)
+      (machineMatrixAddDeltaBound state))) k hk hlen hfullBound
+  · have hget : output[k]'(by omega) = rationalRowAddValues delta rows[k] := by
+      simp [output, rationalMatrixAddRows, List.getElem_map]
+    rw [hget]
+    exact machineMatrixAddDeltaOutputRow_semantics word dimension delta rows k hk
+  · simp [machineMatrixAddDeltaBound, machineListMapScanPack]
+  · simp [machineMatrixAddDeltaDelta, machineMatrixAddDeltaBound, machineMatrixAddDeltaDimension,
+    machineListMapScanPack]
+
 
 theorem machineMatrixAddDeltaIterate_semantics
     (word dimension : List Bool) (delta : RawRat)

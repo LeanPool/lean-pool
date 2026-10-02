@@ -86,12 +86,9 @@ def machineMatrixNormalizeNextAccumulator (state : List Bool) : List Bool :=
 /-- Consumes one row and stores its normalized output while preserving scale, dimension, and
 bound. -/
 def machineMatrixNormalizeAdvance (state : List Bool) : List Bool :=
-  machineMatrixNormalizePack
-    (machineListTail (machineMatrixNormalizeRemaining state))
-    (machineMatrixNormalizeNextAccumulator state)
-    (machineMatrixNormalizeScale state)
-    (machineMatrixNormalizeDimension state)
-    (machineMatrixNormalizeBound state)
+  machineListMapScanAdvance machineMatrixNormalizeOutputRow machineMatrixNormalizeBound
+    (fun state ↦ pair (machineMatrixNormalizeScale state) (pair (machineMatrixNormalizeDimension
+      state) (machineMatrixNormalizeBound state))) state
 
 /-- Normalizes the next row, leaving exhausted normalization states fixed. -/
 def machineMatrixNormalizeStep (state : List Bool) : List Bool :=
@@ -200,13 +197,10 @@ theorem machineMatrixNormalizeNextAccumulator_mem_FP :
 
 theorem machineMatrixNormalizeAdvance_mem_FP :
     machineMatrixNormalizeAdvance ∈ Complexity.FP := by
-  have htail := machineCompose_mem_FP machineMatrixNormalizeRemaining_mem_FP
-    machineListTail_mem_FP
-  exact machinePair_mem_FP htail
-    (machinePair_mem_FP machineMatrixNormalizeNextAccumulator_mem_FP
-      (machinePair_mem_FP machineMatrixNormalizeScale_mem_FP
-        (machinePair_mem_FP machineMatrixNormalizeDimension_mem_FP
-          machineMatrixNormalizeBound_mem_FP)))
+  exact machineListMapScanAdvance_mem_FP machineMatrixNormalizeOutputRow_mem_FP
+    machineMatrixNormalizeBound_mem_FP (machinePair_mem_FP machineMatrixNormalizeScale_mem_FP
+      (machinePair_mem_FP machineMatrixNormalizeDimension_mem_FP
+      machineMatrixNormalizeBound_mem_FP))
 
 theorem machineMatrixNormalizeStep_mem_FP :
     machineMatrixNormalizeStep ∈ Complexity.FP := by
@@ -296,7 +290,12 @@ theorem machineMatrixNormalizeStep_bound {word state : List Bool}
     cases hremainingCode : machineMatrixNormalizeRemaining state with
     | nil => exact False.elim (hnil hremainingCode)
     | cons bit tail =>
-        rw [machineIfEmpty_cons, machineMatrixNormalizeAdvance]
+        rw [machineIfEmpty_cons]
+        change MachineMatrixNormalizeStateBound word
+          (machineMatrixNormalizePack (machineListTail (machineMatrixNormalizeRemaining state))
+            (machineMatrixNormalizeNextAccumulator state) (machineMatrixNormalizeScale state)
+            (machineMatrixNormalizeDimension state)
+            (machineMatrixNormalizeBound state))
         simp only [MachineMatrixNormalizeStateBound,
           machineMatrixNormalizeRemaining_pack,
           machineMatrixNormalizeAccumulator_pack,
@@ -572,56 +571,23 @@ theorem machineMatrixNormalizeStep_semantics
         (machineMatrixNormalizeSemanticState word dimension scale rows k) =
       machineMatrixNormalizeSemanticState word dimension scale rows (k + 1) := by
   let output := rationalMatrixDivideRows scale rows
-  have houtputLength : output.length = rows.length := by
+  have hlen : output.length = rows.length := by
     simp [output, rationalMatrixDivideRows]
-  have hkoutput : k < output.length := by omega
-  have houtputGet : output[k] =
-      rationalRowDivideValues scale rows[k] := by
-    simp [output, rationalMatrixDivideRows, List.getElem_map]
-  have hdrop := List.drop_eq_getElem_cons hk
-  have hnonempty :
-      binaryListCode (binaryListCode rationalEntryBinaryCode)
-        (rows.drop k) ≠ [] := by
-    rw [hdrop]
-    exact binaryListCode_cons_ne_nil _ _ _
-  rw [machineMatrixNormalizeStep]
-  simp only [machineMatrixNormalizeSemanticState,
-    machineMatrixNormalizeRemaining_pack]
-  rw [machineIfEmpty_of_ne_nil _ _ _ hnonempty,
-    machineMatrixNormalizeAdvance]
-  simp only [machineMatrixNormalizeRemaining_pack,
-    machineMatrixNormalizeAccumulator_pack,
-    machineMatrixNormalizeScale_pack,
-    machineMatrixNormalizeDimension_pack,
-    machineMatrixNormalizeBound_pack,
-    machineMatrixNormalizeNextAccumulator,
-    machineMatrixNormalizeCandidate]
-  have hrow :
-      machineMatrixNormalizeOutputRow
-          (machineMatrixNormalizePack
-            (binaryListCode (binaryListCode rationalEntryBinaryCode)
-              (rows.drop k))
-            (binaryListCode (binaryListCode rationalEntryBinaryCode)
-              (output.take k).reverse)
-            (rawRatBinaryCode scale) dimension
-            (machineMatrixNormalizeInputBound word)) =
-        binaryListCode rationalEntryBinaryCode output[k] := by
-    rw [houtputGet]
-    simpa only [machineMatrixNormalizeSemanticState, output] using!
-      machineMatrixNormalizeOutputRow_semantics
-        word dimension scale rows k hk
-  rw [hrow, hdrop, machineListTail_cons]
-  change machineMatrixNormalizePack
-      (binaryListCode (binaryListCode rationalEntryBinaryCode)
-        (rows.drop (k + 1)))
-      ((binaryListCode (binaryListCode rationalEntryBinaryCode)
-        (output[k] :: (output.take k).reverse)).take
-          (machineMatrixNormalizeInputBound word).length)
-      (rawRatBinaryCode scale) dimension
-      (machineMatrixNormalizeInputBound word) = _
-  rw [binaryListCode_reverse_take_succ_clamped
-    (binaryListCode rationalEntryBinaryCode) output
-    (machineMatrixNormalizeInputBound word).length k hkoutput hfullBound]
+  apply machineListMapScanStep_semantics (binaryListCode rationalEntryBinaryCode) (binaryListCode
+    rationalEntryBinaryCode)
+    rows output (pair (rawRatBinaryCode scale) (pair dimension (machineMatrixNormalizeInputBound
+      word))) (machineMatrixNormalizeInputBound word)
+    machineMatrixNormalizeOutputRow machineMatrixNormalizeBound (fun state ↦ pair
+      (machineMatrixNormalizeScale state) (pair (machineMatrixNormalizeDimension state)
+      (machineMatrixNormalizeBound state))) k hk hlen hfullBound
+  · have hget : output[k]'(by omega) = rationalRowDivideValues scale rows[k] := by
+      simp [output, rationalMatrixDivideRows, List.getElem_map]
+    rw [hget]
+    exact machineMatrixNormalizeOutputRow_semantics word dimension scale rows k hk
+  · simp [machineMatrixNormalizeBound, machineListMapScanPack]
+  · simp [machineMatrixNormalizeScale, machineMatrixNormalizeBound,
+    machineMatrixNormalizeDimension, machineListMapScanPack]
+
 
 theorem machineMatrixNormalizeIterate_semantics
     (word dimension : List Bool) (scale : RawRat)

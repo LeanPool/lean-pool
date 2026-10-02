@@ -58,6 +58,67 @@ theorem binaryListCode_reverse_take_succ_clamped
   exact List.take_of_length_le
     ((binaryListCode_take_reverse_length_le encode xs (k + 1)).trans hbound)
 
+/-- Shared packed layout for a bounded encoded-list scan with operation-specific context. -/
+abbrev machineListMapScanPack (remaining accumulator context : List Bool) : List Bool :=
+  pair remaining (pair accumulator context)
+
+/-- One bounded scan transition. The context assembler retains each machine's exact layout. -/
+abbrev machineListMapScanAdvance (entry bound context : List Bool → List Bool)
+    (state : List Bool) : List Bool :=
+  machineListMapScanPack (machineListTail (machinePairFirst state))
+    ((pair (entry state) (machinePairFirst (machinePairSecond state))).take (bound state).length)
+    (context state)
+
+/-- Empty scans are fixed; nonempty scans consume one encoded entry. -/
+abbrev machineListMapScanStep (entry bound context : List Bool → List Bool)
+    (state : List Bool) : List Bool :=
+  machineIfEmpty (machinePairFirst state) state
+    (machineListMapScanAdvance entry bound context state)
+
+/-- The common transition is polynomial-time whenever its operation and context are. -/
+theorem machineListMapScanAdvance_mem_FP {entry bound context : List Bool → List Bool}
+    (he : entry ∈ Complexity.FP) (hb : bound ∈ Complexity.FP)
+    (hc : context ∈ Complexity.FP) : machineListMapScanAdvance entry bound context ∈
+      Complexity.FP := by
+  have ht := machineCompose_mem_FP machinePairFirst_mem_FP machineListTail_mem_FP
+  have ha := machineCompose_mem_FP machinePairSecond_mem_FP machinePairFirst_mem_FP
+  exact machinePair_mem_FP ht (machinePair_mem_FP
+    (machineTake_mem_FP hb (machinePair_mem_FP he ha)) hc)
+
+/-- A semantic entry contract, matching context, and output bound prove the shared scan step. -/
+theorem machineListMapScanStep_semantics {α β : Type*}
+    (encodeInput : α → List Bool) (encodeOutput : β → List Bool)
+    (input : List α) (output : List β) (tail budget : List Bool)
+    (entry bound context : List Bool → List Bool) (k : ℕ) (hk : k < input.length)
+    (hlen : output.length = input.length)
+    (hfull : (binaryListCode encodeOutput output).length ≤ budget.length)
+    (hentry : entry (machineListMapScanPack (binaryListCode encodeInput (input.drop k))
+      (binaryListCode encodeOutput (output.take k).reverse) tail) =
+      encodeOutput (output[k]'(by omega)))
+    (hbound : bound (machineListMapScanPack (binaryListCode encodeInput (input.drop k))
+      (binaryListCode encodeOutput (output.take k).reverse) tail) = budget)
+    (hcontext : context (machineListMapScanPack (binaryListCode encodeInput (input.drop k))
+      (binaryListCode encodeOutput (output.take k).reverse) tail) = tail) :
+    machineListMapScanStep entry bound context
+      (machineListMapScanPack (binaryListCode encodeInput (input.drop k))
+        (binaryListCode encodeOutput (output.take k).reverse) tail) =
+      machineListMapScanPack (binaryListCode encodeInput (input.drop (k + 1)))
+        (binaryListCode encodeOutput (output.take (k + 1)).reverse) tail := by
+  have hdrop := List.drop_eq_getElem_cons hk
+  have hn : binaryListCode encodeInput (input.drop k) ≠ [] := by
+    rw [hdrop]
+    exact binaryListCode_cons_ne_nil _ _ _
+  simp only [machineListMapScanStep, machineListMapScanPack, machinePairFirst_pair]
+  rw [machineIfEmpty_of_ne_nil _ _ _ hn]
+  simp only [machineListMapScanAdvance, machineListMapScanPack, machinePairFirst_pair,
+    machinePairSecond_pair]
+  rw [hentry, hbound, hcontext, hdrop, machineListTail_cons]
+  change pair (binaryListCode encodeInput (input.drop (k + 1)))
+    (pair ((binaryListCode encodeOutput
+      (output[k]'(by omega) :: (output.take k).reverse)).take budget.length) tail) = _
+  rw [binaryListCode_reverse_take_succ_clamped encodeOutput output budget.length k
+    (by omega) hfull]
+
 /-- Packs the unprocessed list, reversed accumulator, and length-bound word for list reversal. -/
 def machineListReversePack
     (remaining accumulator bound : List Bool) : List Bool :=
