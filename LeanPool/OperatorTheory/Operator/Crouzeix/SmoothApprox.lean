@@ -168,6 +168,7 @@ structure SmoothConvexApproximation (K : Set ℂ) where
 /-- Closed disks admit a complete smooth convex approximation: enlarge the
 radius by `1 / (n + 1)` and use the standard circle parametrization at every
 stage.  This is the fully verified model case for the general L4.2b package. -/
+@[expose]
 noncomputable def smoothClosedBallApproximation (c : ℂ) (R : ℝ) (hR : 0 ≤ R) :
     SmoothConvexApproximation (Metric.closedBall c R) where
   domain n := SmoothJordanDomain.ball c (smoothApproxRadius n + R)
