@@ -26,6 +26,7 @@ section OrdinalConstruction
 
 /-- The relation `≺` from the proof of Theorem `thm:solid-iterations`, expressed
 directly using Mathlib's Cantor normal form at base `ω`. -/
+@[expose]
 def cnfExtensionLT (ζ ζ' : Ordinal.{u}) : Prop :=
   ∃ (pre tail : List (Ordinal.{u} × Ordinal.{u})) (β c γ d : Ordinal.{u}),
     Ordinal.CNF Ordinal.omega0 ζ = pre ++ (β, c) :: tail ∧

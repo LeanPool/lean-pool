@@ -42,6 +42,7 @@ noncomputable def sourceInterpolationSchedule
     inst.oracle.observe (O3.ogmgState cfg i).current
 
 /-- The oracle observation at the terminal OGM-G gradient-step point. -/
+@[expose]
 noncomputable def sourceTerminalObservation
     (inst : PositiveInstance 2 d x0) (M : ℝ) (n : ℕ) : Observation d :=
   let cfg := O3.stage9ExecutionConfig n inst.oracle M (sourceU inst M n)
@@ -137,6 +138,7 @@ theorem source_schedule_pairs (inst : PositiveInstance 2 d x0)
         sourcePlannedTrace, terminalCheck]
 
 /-- The possible early-failure and completed-report shapes of the Euclidean trial. -/
+@[expose]
 def FullReportShape (inst : PositiveInstance 2 d x0) (eps M : ℝ)
     (n : ℕ) (report : TrialReport d) : Prop :=
   (∃ r < n, ∃ failed,

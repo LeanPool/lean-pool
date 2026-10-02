@@ -72,10 +72,12 @@ noncomputable def leastCNFExponent (ζ : Ordinal.{u}) : Ordinal.{u} :=
   ((Ordinal.CNF Ordinal.omega0 ζ).getLast?.map Prod.fst).getD 0
 
 /-- The index set `Z_β` from Claim 3. -/
+@[expose]
 def GaoStageIndices (ξ β : Ordinal.{u}) : Set (GaoIndex ξ) :=
   {ζ | ζ.1 ≤ Ordinal.omega0 ^ ξ ∧ leastCNFExponent ζ.1 < β}
 
 /-- The solid set `S_β` from Claim 3. -/
+@[expose]
 def GaoStageSet (ξ β : Ordinal.{u}) : Set C(GaoCompactSpace ξ, ℝ) :=
   {f | ∃ ζ ∈ GaoStageIndices ξ β, |f| ≤ ordinalProjection ξ ζ}
 

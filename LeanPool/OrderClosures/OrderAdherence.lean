@@ -450,6 +450,7 @@ def HasWeakFatouProperty (p : X → ℝ) (K : ℝ) : Prop :=
       IsLUB (Set.range f) x → ∀ c, (∀ i, p (f i) ≤ c) → p x ≤ K * c
 
 /-- Equivalence of two norms through two positive comparison constants. -/
+@[expose]
 def EquivalentNorms (p q : X → ℝ) : Prop :=
   ∃ c C : ℝ, 0 < c ∧ 0 < C ∧ ∀ x, c * p x ≤ q x ∧ q x ≤ C * p x
 

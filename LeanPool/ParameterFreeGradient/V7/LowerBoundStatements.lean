@@ -160,6 +160,7 @@ structure LowerCompletionData (p : ℝ) (d T : ℕ) where
   xi : ℕ → ℝ
 
 /-- The partial objective is exactly the maximum of the affine pieces selected through `t`. -/
+@[expose]
 def ResistingMaximumAt (data : LowerCompletionData p d T) (t : ℕ) : Prop :=
   ∀ x,
     (∀ i ≤ t,
@@ -171,6 +172,7 @@ def ResistingMaximumAt (data : LowerCompletionData p d T) (t : ℕ) : Prop :=
 
 /-- The scales, fresh coordinates, oracle consistency, and adaptive queries of the resisting
 construction. -/
+@[expose]
 def LowerCompletionAssumptions (data : LowerCompletionData p d T) : Prop :=
   2 < p ∧ 2 ≤ d ∧ 1 ≤ T ∧ T ≤ d ∧
   data.x0 = 0 ∧
@@ -204,6 +206,7 @@ def LowerCompletionAssumptions (data : LowerCompletionData p d T) : Prop :=
 
 /-- Source carrier for `lem:above-lower-completion` (L01--L04): both value
 and gradient agree at every chronological query. -/
+@[expose]
 def AboveLowerExactPairCompletionStatement : Prop :=
   ∀ (p : ℝ), 2 < p → ∀ (d T : ℕ) (data : LowerCompletionData p d T),
     LowerCompletionAssumptions data →

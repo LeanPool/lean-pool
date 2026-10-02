@@ -87,6 +87,7 @@ structure LocalTrial (d : ℕ) where
 
 /-- A success report returns an exact queried point meeting the gradient target after accepted
 guards. -/
+@[expose]
 def SuccessCorrect (eps p M : ℝ) (oracle : PairOracle d)
     (report : TrialReport d) : Prop :=
   ∀ obs, report.outcome = .success obs →
@@ -97,6 +98,7 @@ def SuccessCorrect (eps p M : ℝ) (oracle : PairOracle d)
 
 /-- A scale report identifies the first failed guard and certifies that the smoothness estimate is
 too small. -/
+@[expose]
 def ScaleCorrect (p M L : ℝ) (oracle : PairOracle d)
     (report : TrialReport d) : Prop :=
   ∀ failed, report.outcome = .scale failed →
@@ -107,6 +109,7 @@ def ScaleCorrect (p M L : ℝ) (oracle : PairOracle d)
       GuardFails p M oracle failed.failure ∧ M < L
 
 /-- A radius report has accepted guards and certifies that its radius estimate is too small. -/
+@[expose]
 def RadiusCorrect (eps p M D R : ℝ) (oracle : PairOracle d)
     (report : TrialReport d) : Prop :=
   ∀ terminal, report.outcome = .radius terminal →
@@ -116,6 +119,7 @@ def RadiusCorrect (eps p M D R : ℝ) (oracle : PairOracle d)
     eps < lpNorm (conjugateExponent p) terminal.gradient ∧ D < R
 
 /-- The report belongs to one of the three possible terminal outcome cases. -/
+@[expose]
 def TrialOutcomeExhaustive (report : TrialReport d) : Prop :=
   (∃ x, report.outcome = .success x) ∨
   (∃ g, report.outcome = .scale g) ∨
@@ -175,6 +179,7 @@ the routine actually possesses: the cached pair or a chronological query. -/
     check.yPair = oracle.observe check.yPair.point
 
 /-- Correctness proposition kept separate from observable trial data. -/
+@[expose]
 def TrialCertificate (eps p M D L R : ℝ) (cached : CachedPair d)
     (oracle : PairOracle d)
     (report : TrialReport d) : Prop :=

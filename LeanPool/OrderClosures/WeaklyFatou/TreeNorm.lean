@@ -620,6 +620,7 @@ noncomputable def componentLatticeNorm (n : ℕ) : PaperLatticeNorm (TreeCompone
     exact (treeLatticeSeminorm n).monotone_abs' hxy
 
 /-- The constant function `1`, as an element of `X_n`. -/
+@[expose]
 noncomputable def componentRoot (n : ℕ) : TreeComponent n :=
   ⟨treeFunction n (TreeNode.root n), by
     change treeFunction n (TreeNode.root n) ∈
@@ -629,6 +630,7 @@ noncomputable def componentRoot (n : ℕ) : TreeComponent n :=
     exact VectorSublattice.subset_generated _ ⟨TreeNode.root n, rfl⟩⟩
 
 /-- Any tree function, viewed in the generated component. -/
+@[expose]
 noncomputable def componentTreeFunction (n : ℕ) (t : TreeNode n) : TreeComponent n :=
   ⟨treeFunction n t, by
     change treeFunction n t ∈
