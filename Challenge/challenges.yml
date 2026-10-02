@@ -157,7 +157,7 @@ challenges:
     status: open
     estimated_lines: 1500
     statements:
-      - declaration: Challenge.BudgetedSubmodular0405.modifiedGreedy_approx_0405
+      - declaration: Challenge.BudgetedSubmodular0405.approximation
         informal: >-
           For a monotone submodular set function F on finite sets with F of the
           empty set equal to 0, positive costs, a budget B and a finite ground

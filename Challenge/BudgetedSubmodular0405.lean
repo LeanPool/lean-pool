@@ -14,17 +14,17 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 Source: doi:10.1145/3447386, url:https://arxiv.org/abs/2008.05391
 Proposed by: Mikhail Nemerov
-Open declarations: `Challenge.BudgetedSubmodular0405.modifiedGreedy_approx_0405`
+Open declarations: `Challenge.BudgetedSubmodular0405.approximation`
 Tags: combinatorics, optimization, approximation-algorithms, submodular-functions
 MSC: 90C27, 68W25
 Estimated size: ~1500 lines of Lean
 
 Informal statement:
-* `Challenge.BudgetedSubmodular0405.modifiedGreedy_approx_0405` — For a monotone submodular set
-  function F on finite sets with F of the empty set equal to 0, positive costs, a budget B and a
-  finite ground set U, the better of the cost-benefit greedy set built from U and the best single
-  item of U that fits the budget has value at least 0.405 times the value of every subset of U whose
-  total cost is at most B.
+* `Challenge.BudgetedSubmodular0405.approximation` — For a monotone submodular set function F on
+  finite sets with F of the empty set equal to 0, positive costs, a budget B and a finite ground set
+  U, the better of the cost-benefit greedy set built from U and the best single item of U that fits
+  the budget has value at least 0.405 times the value of every subset of U whose total cost is at
+  most B.
 -/
 
 public section
@@ -72,7 +72,7 @@ noncomputable def bestSingle (F : Finset ι → ℝ) (c : ι → ℝ) (B : ℝ) 
 
 /-- The modified greedy guarantee `0.405` (Tang, Tang, Lim, Han, Li and Yuan 2021, Theorem 2.1: the
 exact factor is the root of `(1 - α) log (1 - α) + (2 - 1/e)(1 - 2α) = 0` near `0.4053`). -/
-theorem modifiedGreedy_approx_0405 (F : Finset ι → ℝ) (hF : MonoSubmodular F) (hF0 : F ∅ = 0)
+theorem approximation (F : Finset ι → ℝ) (hF : MonoSubmodular F) (hF0 : F ∅ = 0)
     (c : ι → ℝ) (hc : ∀ i, 0 < c i) (B : ℝ) (U O : Finset ι) (hOU : O ⊆ U)
     (hOB : ∑ y ∈ O, c y ≤ B) :
     (0.405 : ℝ) * F O ≤ max (F (greedy F c B U)) (bestSingle F c B U) := sorry
