@@ -375,6 +375,7 @@ theorem solidHull_eq_iUnion_Icc (A : Set X) :
     simpa using neg_le_neg hlow
 
 /-- The least cardinality of a set whose solid hull is `S`. -/
+@[expose]
 noncomputable def solidGeneratorNumber (S : Set X) : Cardinal :=
   sInf {κ : Cardinal | ∃ A : Set X, Cardinal.mk A = κ ∧ solidHull A = S}
 
@@ -428,6 +429,7 @@ all subsequent Fatou and norm-comparison statements. -/
 instance : CoeFun (PaperLatticeNorm X) (fun _ ↦ X → ℝ) := ⟨PaperLatticeNorm.toFun⟩
 
 /-- Sequential completeness for the metric induced by `p`. -/
+@[expose]
 def IsCompleteFor (p : X → ℝ) : Prop :=
   ∀ f : ℕ → X,
     (∀ ε > 0, ∃ N, ∀ m ≥ N, ∀ n ≥ N, p (f m - f n) < ε) →

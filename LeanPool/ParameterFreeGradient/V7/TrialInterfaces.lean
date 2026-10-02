@@ -143,11 +143,13 @@ def ConsecutiveAvailable (cached : CachedPair d) (report : TrialReport d)
       before ++ [check.xPair, check.yPair] ++ after
 
 /-- Every recorded guard has a kind in the allowed list. -/
+@[expose]
 def CheckedGuardsHaveKinds (report : TrialReport d)
     (allowed : List ObservableGuardKind) : Prop :=
   ∀ check ∈ report.checkedGuards, check.kind ∈ allowed
 
 /-- A guard of the specified kind and ordered pair of points occurs in the checked list. -/
+@[expose]
 def GuardRecorded (report : TrialReport d) (kind : ObservableGuardKind)
     (x y : Point d) : Prop :=
   ∃ check ∈ report.checkedGuards,

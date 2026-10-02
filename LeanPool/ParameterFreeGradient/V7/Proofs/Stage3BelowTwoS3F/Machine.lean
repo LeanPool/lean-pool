@@ -57,6 +57,7 @@ export V7.CausalProgram.Program (query finish action eval runFuel_eq_eval)
 end Program
 
 /-- The below-two dual query program with early accuracy or guard-failure termination. -/
+@[expose]
 noncomputable def dualProgram (p eps M D : ℝ) (n k : ℕ)
     (center : Point d) (q r : Point d) (G : VectorSeq d)
     (previous : Observation d) (guards : List (ObservableGuardCheck d)) :
@@ -80,11 +81,13 @@ noncomputable def dualProgram (p eps M D : ℝ) (n k : ℕ)
           else .finish guardsNext (.scale check)
 
 /-- The remaining primal query budget plus the complete dual query budget. -/
+@[expose]
 def phaseOneBudget (n : ℕ) : ℕ → ℕ
   | 0 => n
   | fuel + 1 => phaseOneBudget n fuel + 1
 
 /-- The below-two primal query program that passes its endpoint to the dual phase. -/
+@[expose]
 noncomputable def phaseOneProgram (p eps M D : ℝ) (x0 : Point d) (n k : ℕ)
     (state : PrimalState d) (previous : Observation d)
     (guards : List (ObservableGuardCheck d)) :

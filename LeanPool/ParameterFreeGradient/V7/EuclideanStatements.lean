@@ -208,6 +208,7 @@ def exactGuardCheck (kind : ObservableGuardKind) (oracle : PairOracle d)
 checkable.  Phase-A upper-model checks are made after each two-query step;
 the ordered interpolation ledger is checked after `u_n` and before the
 separate terminal-descent query at `v_n`. -/
+@[expose]
 def EuclideanScaleTraceStopsAtFailure (inst : PositiveInstance 2 d x0)
     (report : TrialReport d) (phaseA : EuclideanGapData d m)
     (phaseB : OGMGData d n) : Prop :=

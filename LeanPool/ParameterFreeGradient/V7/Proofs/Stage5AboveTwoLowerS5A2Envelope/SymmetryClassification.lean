@@ -200,6 +200,7 @@ lemma signedLpSymmetry_column_abs_at_index {p : ℝ} (hp : 2 < p)
     (by linarith : p ≠ 0)).mp (by simpa [honepow] using hsingle)
 
 /-- The primal symmetry bundled as a real linear map. -/
+@[expose]
 def signedLpLinearMap {p : ℝ}
     (Q Qdual : Point d → Point d) (hsym : SignedLpSymmetry p Q Qdual) :
     Point d →ₗ[ℝ] Point d where

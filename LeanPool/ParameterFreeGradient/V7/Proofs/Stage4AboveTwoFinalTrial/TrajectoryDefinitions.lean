@@ -65,6 +65,7 @@ structure PrimalState (d : ℕ) where
   x : Point d
 
 /-- The literal above-two primal trajectory starting at the zero normalized state. -/
+@[expose]
 noncomputable def primalState (p eta : ℝ) (n : ℕ) (oracle : PairOracle d) :
     ℕ → PrimalState d
   | 0 => ⟨0, 0, 0⟩
