@@ -21,6 +21,7 @@ public import LeanPool.BollobasNikiforov.Imports
 public import LeanPool.BooleanIsoperimetry.Imports
 public import LeanPool.BooleanMultiplication.Imports
 public import LeanPool.BrauerGroupNew.Imports
+public import LeanPool.BrillNoetherGraphs.Imports
 public import LeanPool.Brouwer.Imports
 public import LeanPool.BruhatTits.Imports
 public import LeanPool.Burkholder.Imports
@@ -212,6 +213,7 @@ public import LeanPool.RamanujanNagell.Imports
 public import LeanPool.RamanujanTauMissesPrimes.Imports
 public import LeanPool.RearrangementNumber.Imports
 public import LeanPool.Redhill.Imports
+public import LeanPool.RegtsSevenster.Imports
 public import LeanPool.RellichKondrachov.Imports
 public import LeanPool.RiemannMappingTheorem.Imports
 public import LeanPool.RiemannRochFunctionFields.Imports

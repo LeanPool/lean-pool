@@ -11956,3 +11956,87 @@ projects:
       commit: 9e57be63320f29cbb8d2da7c4a8ad6afdef681eb
     license: Apache-2.0
     status: verified
+  - slug: brill-noether-graphs
+    title: Brill–Noether theory and gonality of finite graphs
+    summary: Formalizes Brill–Noether existence through genus five, chains of marked banana graphs and
+      loops, the treewidth lower bound for gonality, and a tricycle example whose gonality drops under
+      regular subdivision. Includes divisor and transmission infrastructure and the Demazure-product
+      support used by vertex gluing.
+    branch: combinatorics and tropical geometry
+    main_declarations:
+    - Highlights.brill_noether_existence_through_five
+    main_results:
+    - declaration: Highlights.brill_noether_existence_through_five
+      informal: Every finite connected loopless multigraph of genus g at most five has,
+        for integers r and d, a divisor of degree d and rank at least r whenever
+        (r + 1) * (g - d + r) ≤ g.
+    - declaration: Highlights.treewidth_le_gonality
+      informal: On a finite connected loopless multigraph, for every natural number k,
+        any degree-k divisor of rank at least one bounds the treewidth by k; this is the
+        witness formulation of the treewidth lower bound for divisorial gonality.
+    - declaration: Highlights.gonality_drops_under_regular_subdivision
+      informal: There is a graph whose divisorial gonality strictly decreases under a regular subdivision.
+    tags:
+    - brill-noether-theory
+    - graph-theory
+    - chip-firing
+    - tropical-geometry
+    msc:
+    - 14T15
+    - 05C50
+    provenance: AI
+    entry_module: LeanPool.BrillNoetherGraphs
+    authors:
+    - Nathan Pflueger
+    source:
+      url: https://github.com/npflueger/brill-noether-graphs
+      github_repo: npflueger/brill-noether-graphs
+      commit: ce62dd82fd499fcec9b5a4110a5312befd6e96e2
+    license: Apache-2.0
+    status: verified
+  - slug: regts-sevenster
+    title: A proof of the Regts–Sevenster conjecture, formalized
+    summary: A Lean 4 proof of the Regts–Sevenster conjecture. A complex-valued graph
+      parameter, normalized at the empty graph and invariant under isomorphism, has
+      exponentially bounded edge-connection rank if and only if it is a mixed partition
+      function. For a natural rank base R, a representing model can be chosen with k
+      even and 2ℓ odd colours satisfying k + 2ℓ ≤ R. The development also proves the
+      even connection-rank growth limit, minimum total colour dimension, minimal parity
+      formulas and prescribed-dimension criterion. Schrijver's factorial argument supplies
+      nilpotent-trace vanishing; semisimplicity and Deligne's fibre-functor theorem
+      give the model; a polynomial commutant estimate gives the sharp colour budget.
+      Deligne's theorem and the required symmetric-group character theory are proved
+      within the development. The appendix's trace-zeta results give rationality and
+      degree bounds, with an independent proof of nilpotent-trace vanishing. The theorems
+      of record use only propext, Classical.choice and Quot.sound, checked by pinned
+      audits.
+    branch: algebraic graph theory
+    entry_module: LeanPool.RegtsSevenster
+    authors:
+    - William Whistler
+    source:
+      url: https://github.com/willwhistler/regts-sevenster
+      github_repo: willwhistler/regts-sevenster
+      commit: bb0a60543d48afac3f36938104b5c85c7c0396c7
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - RS.regts_sevenster_characterisation
+    main_results:
+    - declaration: RS.regts_sevenster_characterisation
+      informal: Normalized isomorphism-invariant complex graph parameters with exponentially
+        bounded edge-connection ranks are precisely mixed partition functions.
+    - declaration: RS.regts_sevenster_total
+      informal: A natural rank bound R admits a representing mixed model with total
+        color dimension at most R.
+    - declaration: RS.deligne_theorem
+      informal: The development proves its stated Deligne fiber-functor theorem for
+        the symmetric tensor categories used in the representation.
+    tags:
+    - graph-parameters
+    - tensor-categories
+    - partition-functions
+    msc:
+    - 05C50
+    - 18M20
