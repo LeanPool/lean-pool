@@ -672,7 +672,8 @@ theorem cubeAverageGradientEnergyControl_of_aHarmonicFunction {d : ℕ} [NeZero 
   rw [henergy_eq] at hlocal
   simpa [w] using! hlocal
 
-theorem cubeAverageGradientEnergyControl_of_aHarmonicFunction_of_openCubeDescendantEllipticRecoveryFamily
+theorem
+  cubeAverageGradientEnergyControl_of_aHarmonicFunction_of_openCubeDescendantEllipticRecoveryFamily
     {d : ℕ} [NeZero d]
     (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a)
@@ -686,7 +687,8 @@ theorem cubeAverageGradientEnergyControl_of_aHarmonicFunction_of_openCubeDescend
       (Q := Q) (a := a) hEll u
       (openCubeDescendantDeterministicCoarseData_of_recoveryFamily hRec)
 
-theorem cubeAverageGradientEnergyControl_of_aHarmonicFunction_of_openCubeOriginEllipticRecoveryExistence
+theorem
+  cubeAverageGradientEnergyControl_of_aHarmonicFunction_of_openCubeOriginEllipticRecoveryExistence
     {d : ℕ} [NeZero d]
     (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a)
@@ -748,7 +750,8 @@ theorem cubeAverageFluxEnergyControl_of_aHarmonicFunction
   rw [hflux_eq, henergy_eq] at hlocal
   simpa [scalarVariationEnergyIntegrand] using hlocal
 
-theorem cubeAverageFluxEnergyControl_of_aHarmonicFunction_of_openCubeDescendantEllipticRecoveryFamily
+theorem
+  cubeAverageFluxEnergyControl_of_aHarmonicFunction_of_openCubeDescendantEllipticRecoveryFamily
     {d : ℕ} [NeZero d]
     (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a)

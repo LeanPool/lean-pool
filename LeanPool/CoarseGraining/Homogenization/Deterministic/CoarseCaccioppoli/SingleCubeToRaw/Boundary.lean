@@ -46,7 +46,8 @@ theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs
 /-- Radius-indexed energy bridge inputs produce the note-shaped raw estimate
 from pure coefficient-localization data plus nonnegativity of the radius
 energy. -/
-theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_of_coefficientLocalization
+theorem
+  coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_of_coefficientLocalization
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k h : ℝ → ℝ → ℝ) {F : ℝ → ℝ}
     (flux : ℝ → ℝ → Vec d → Vec d) (u g : ℝ → ℝ → Vec d → ℝ)
@@ -69,7 +70,8 @@ theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_o
 
 /-- Raw boundary note estimate from the primitive scale and ellipticity
 localization inputs. -/
-theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_of_scale_of_ellipticity
+theorem
+  coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_of_scale_of_ellipticity
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k h : ℝ → ℝ → ℝ) {F : ℝ → ℝ}
     (flux : ℝ → ℝ → Vec d → Vec d) (u g : ℝ → ℝ → Vec d → ℝ)
@@ -340,7 +342,8 @@ theorem coarseCaccioppoli_boundary_preRecurrence_of_radiusEnergyBridgeInputs
 
 /-- Boundary pre-recurrence from radius-indexed energy bridge inputs and pure
 coefficient localization. -/
-theorem coarseCaccioppoli_boundary_preRecurrence_of_radiusEnergyBridgeInputs_of_coefficientLocalization
+theorem
+  coarseCaccioppoli_boundary_preRecurrence_of_radiusEnergyBridgeInputs_of_coefficientLocalization
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k h : ℝ → ℝ → ℝ) {F : ℝ → ℝ}
     (flux : ℝ → ℝ → Vec d → Vec d) (u g : ℝ → ℝ → Vec d → ℝ)

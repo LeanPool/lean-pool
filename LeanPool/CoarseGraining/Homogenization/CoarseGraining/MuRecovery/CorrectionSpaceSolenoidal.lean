@@ -199,7 +199,8 @@ theorem recoveredField_upperImage_memVectorL2_zero_right_of_isEllipticFieldOn
               rw [hsnd]
   simpa [hEq] using hUpper'
 
-theorem recoveredField_lowerImage_isPotential_zero_right_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem
+  recoveredField_lowerImage_isPotential_zero_right_of_isEllipticFieldOn_of_hodgeConverseCriterion
     (R : MuCorrectionSpaceRecoveryData U)
     (system : MuOperatorSystemData U a)
     {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam U a)
@@ -230,7 +231,8 @@ theorem recoveredField_lowerImage_isPotential_zero_right_of_isEllipticFieldOn_of
   simpa [blockPairingIntegrand, BlockState.eval, blockVecDot, vecDot_zero_left] using hzero
 
 /-- Convex-domain version of the zero-right lower-image potential recovery. -/
-theorem recoveredField_lowerImage_isPotential_zero_right_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem
+  recoveredField_lowerImage_isPotential_zero_right_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
     (R : MuCorrectionSpaceRecoveryData U)
     (system : MuOperatorSystemData U a)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -349,7 +351,8 @@ theorem recoveredField_mem_responseSpace_zero_right_of_isEllipticFieldOn
 /-- Convex-domain recovery wrapper for the zero-right response-space witness.
 This is the preferred Chapter-2-facing surface when the domain is known to be
 bounded open convex: no abstract `HasHodgeConverse` package is required. -/
-theorem recoveredField_mem_responseSpace_zero_right_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem
+  recoveredField_mem_responseSpace_zero_right_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
     (R : MuCorrectionSpaceRecoveryData U)
     (system : MuOperatorSystemData U a)
     (hConv : IsOpenBoundedConvexDomain U)

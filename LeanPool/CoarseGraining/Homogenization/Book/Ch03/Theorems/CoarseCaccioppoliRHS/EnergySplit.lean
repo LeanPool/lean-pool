@@ -287,7 +287,8 @@ theorem zeroDirichletEnergyWithRHSRHS_nonneg
 
 /-- Squared form of the zero-trace corrector energy estimate, tuned to the
 `t`-notation used by the boundary Caccioppoli RHS theorem. -/
-theorem zeroTraceDirichletCorrectorData_parentEnergy_le_zeroDirichletEnergyWithRHSRHS_sq_publicCoeffField
+theorem
+  zeroTraceDirichletCorrectorData_parentEnergy_le_zeroDirichletEnergyWithRHSRHS_sq_publicCoeffField
     {d : ℕ} [NeZero d] {C : ℝ}
     (hC_nonneg : 0 ≤ C)
     (hC_zero :
@@ -341,7 +342,8 @@ theorem zeroTraceDirichletCorrectorData_parentEnergy_le_zeroDirichletEnergyWithR
 
 /-- The localized corrector core is controlled directly by the square of the
 public zero-Dirichlet RHS, with only the geometric `18^d` loss. -/
-theorem boundaryForcedCaccioppoliCorrector_coreEnergy_le_eighteen_pow_mul_zeroDirichletEnergyWithRHSRHS_sq
+theorem
+  boundaryForcedCaccioppoliCorrector_coreEnergy_le_eighteen_pow_mul_zeroDirichletEnergyWithRHSRHS_sq
     {d : ℕ} [NeZero d] {C : ℝ}
     (hC_nonneg : 0 ≤ C)
     (hC_zero :

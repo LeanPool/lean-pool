@@ -94,7 +94,8 @@ theorem sigmaStarInvCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner
 
 /-- Subadditivity of the canonical `b`-matrix in Loewner order, packaged from
 deterministic coarse data on all descendants. -/
-theorem bCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_deterministicCoarseData
+theorem
+  bCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_deterministicCoarseData
     {d : ℕ} [NeZero d] (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hData : OpenCubeDescendantDeterministicCoarseData Q a) :
@@ -115,7 +116,8 @@ theorem bCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_d
 
 /-- Recovery-family wrapper for coarse-block-matrix subadditivity in Loewner
 order. -/
-theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_recoveryFamily
+theorem
+  coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_recoveryFamily
     {d : ℕ} [NeZero d] (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hRec : OpenCubeDescendantEllipticRecoveryFamily Q a (lam := lam) (Lam := Lam)) :
@@ -136,7 +138,8 @@ theorem coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_i
     j Q a hEll (openCubeDescendantDeterministicCoarseData_of_recoveryFamily hRec)
 
 /-- Recovery-family wrapper for `σ_*^{-1}` subadditivity in Loewner order. -/
-theorem sigmaStarInvCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_recoveryFamily
+theorem
+  sigmaStarInvCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_recoveryFamily
     {d : ℕ} [NeZero d] (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hRec : OpenCubeDescendantEllipticRecoveryFamily Q a (lam := lam) (Lam := Lam)) :
