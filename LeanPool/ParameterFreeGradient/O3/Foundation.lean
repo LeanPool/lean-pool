@@ -85,7 +85,7 @@ structure RunResult (d : ℕ) where
   queries : List (Observation d)
 
 /-- Execute at most the given number of machine steps while accumulating query responses. -/
-def FirstOrderMethod.runFuel {d : ℕ} (method : FirstOrderMethod d)
+@[expose] def FirstOrderMethod.runFuel {d : ℕ} (method : FirstOrderMethod d)
     (oracle : PairOracle d) : ℕ → method.State → List (Observation d) → Option (RunResult d)
   | 0, _, _ => none
   | fuel + 1, state, history =>
@@ -118,7 +118,7 @@ def MinimizerSet {d : ℕ} (f : Vec d → ℝ) : Set (Vec d) :=
   {x | ∀ y, f x ≤ f y}
 
 /-- The exact source-level `ℓ_p` distance to the nonempty minimizer set. -/
-noncomputable def minimizerDistance {d : ℕ} (p : ℝ) (f : Vec d → ℝ) (x0 : Vec d) : ℝ :=
+@[expose] noncomputable def minimizerDistance {d : ℕ} (p : ℝ) (f : Vec d → ℝ) (x0 : Vec d) : ℝ :=
   sInf ((fun x => lpNorm p (x - x0)) '' MinimizerSet f)
 
 /-- The gradient is Lipschitz from the primal `ℓ_p` norm to the specified dual norm. -/

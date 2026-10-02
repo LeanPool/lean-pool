@@ -26,10 +26,10 @@ namespace O3
 abbrev Point (d : ℕ) := Fin d → ℝ
 
 /-- The coordinate pairing used between `ell_p` and `ell_q`. -/
-def pairing {d : ℕ} (x y : Point d) : ℝ := ∑ i, x i * y i
+@[expose] def pairing {d : ℕ} (x y : Point d) : ℝ := ∑ i, x i * y i
 
 /-- The real conjugate exponent `q = p / (p - 1)`. -/
-noncomputable def conjugateExponent (p : ℝ) : ℝ := Real.conjExponent p
+@[expose] noncomputable def conjugateExponent (p : ℝ) : ℝ := Real.conjExponent p
 
 theorem conjugateExponent_eq (p : ℝ) : conjugateExponent p = p / (p - 1) := rfl
 
@@ -45,7 +45,7 @@ theorem one_lt_conjugateExponent {p : ℝ} (hp : 1 < p) :
 @[expose] noncomputable def lpPower (p : ℝ) {d : ℕ} (x : Point d) : ℝ := ∑ i, |x i| ^ p
 
 /-- The literal finite-dimensional `ell_p` norm for a real exponent. -/
-noncomputable def lpNorm (p : ℝ) {d : ℕ} (x : Point d) : ℝ := (lpPower p x) ^ (1 / p)
+@[expose] noncomputable def lpNorm (p : ℝ) {d : ℕ} (x : Point d) : ℝ := (lpPower p x) ^ (1 / p)
 
 theorem lpPower_nonneg (p : ℝ) {d : ℕ} (x : Point d) : 0 ≤ lpPower p x := by
   exact Finset.sum_nonneg fun i _ ↦ Real.rpow_nonneg (abs_nonneg (x i)) p
