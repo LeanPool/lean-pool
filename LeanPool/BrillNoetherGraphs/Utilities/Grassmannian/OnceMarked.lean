@@ -103,6 +103,7 @@ def OnceMarkedCensusContains (G : CFGraph) (u : G.V)
 
 /-- The normalized form of membership of `lambda` in the divisor census of
 the once-marked graph `(G,u)`. -/
+@[expose]
 def OnceMarkedBNExists (G : CFGraph) (u : G.V)
     (lambda : YoungDiagram) : Prop :=
   ∃ D : CFDiv G,
@@ -352,6 +353,7 @@ once-marked partition `lambda` at the cut `b = 0`.
 For the Grassmannian permutation attached to `lambda`, these facts follow
 from its essential-set formula.  Packaging them separately keeps the graph
 side independent of the particular construction of that permutation. -/
+@[expose]
 def GrassmannianPartitionProfile (tau : AspPerm)
     (lambda : YoungDiagram) : Prop :=
   tau.χ = 0 ∧

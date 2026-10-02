@@ -59,6 +59,7 @@ def allFin {k : ℕ} (test : Fin k → Bool) : Bool :=
 /-- Boolean universal quantification over an arbitrary finite set.  `Finset.fold`
 keeps kernel evaluation proof-free even when the element type itself is a
 finite combinatorial object such as `Finset (Fin n)`. -/
+@[expose]
 def allFinset {α : Type*}
     (elements : Finset α) (test : α → Bool) : Bool :=
   elements.fold (fun left right => left && right) true test

@@ -52,6 +52,7 @@ variable {K : CFGraph.{w}} {G : CFGraph.{u}} {H : CFGraph.{v}}
 /-- The concrete vertex wedge carries its tautological presentation.  Besides
 being useful in compositions, this witnesses that the presentation fields do
 not impose any unintended restrictions at the common vertex. -/
+@[expose]
 def canonical (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) :
     VertexWedgePresentation (vertexWedge G H x y) G H x y where
   leftMap := Sum.inl

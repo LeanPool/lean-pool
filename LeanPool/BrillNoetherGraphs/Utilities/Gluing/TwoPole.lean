@@ -68,6 +68,7 @@ theorem second_endpoints_ne (A : CFGraph.{u}) (B : CFGraph.{v})
 /-- Add divisors on the two factors by placing them on the two summands.  The
 same function is a divisor on both `bridge` and `join`, since `addEdge` keeps
 the vertex type unchanged. -/
+@[expose]
 def sumDivisor (A : CFGraph.{u}) (B : CFGraph.{v})
     (p : TwoPole A) (q : TwoPole B) (D : CFDiv A) (E : CFDiv B) :
     CFDiv (join A B p q) :=

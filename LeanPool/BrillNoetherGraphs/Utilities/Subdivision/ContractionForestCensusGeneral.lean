@@ -257,6 +257,7 @@ theorem reachInList_snoc (l : List (Fin p)) (e : Fin p) (x y : Fin n) :
 /-- Merge the `rep`-class of `u` into the `rep`-class of `v`. See
 `ContractionForestCensus.unionStep`'s docstring for the sharing discipline
 this `let`-binding shape enforces. -/
+@[expose]
 def unionStep (rep : Fin n → Fin n) (u v : Fin n) : Fin n → Fin n :=
   let ru := rep u
   let rv := rep v
@@ -415,6 +416,7 @@ theorem card_le_card_image_foldRep_add_length (l : List (Fin p)) :
 
 /-- The edge slots of the core belonging to a finite set `F`, listed in the
 fixed canonical order `0, 1, …, p - 1`. -/
+@[expose]
 def edgeList (F : Finset (Fin p)) : List (Fin p) :=
   (List.finRange p).filter (fun e => decide (e ∈ F))
 
@@ -436,6 +438,7 @@ theorem length_edgeList (F : Finset (Fin p)) : (edgeList (p := p) F).length = F.
 
 /-- The vertex partition induced by contracting the edge set `F`: each
 vertex's canonical representative under the union-find fold. -/
+@[expose]
 def compFold (F : Finset (Fin p)) : Fin n → Fin n := foldRep core (edgeList F)
 
 @[simp] theorem compFold_empty : compFold core ∅ = id := by

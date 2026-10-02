@@ -530,6 +530,7 @@ required to fire on connected tables.  `MatrixConnected` is the cut form of
 over `(Finset.range size).powerset` rather than over all of `Finset ℕ`, so the
 predicate is decidable and a generated leaf record may discharge it by
 evaluation. -/
+@[expose]
 def MatrixConnected (size : ℕ) (M : ℕ → ℕ → ℕ) : Prop :=
   ∀ S ∈ (Finset.range size).powerset,
     (∃ v ∈ S, ∃ w ∈ Finset.range size, w ∉ S) →

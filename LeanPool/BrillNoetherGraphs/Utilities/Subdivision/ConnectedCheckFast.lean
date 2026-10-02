@@ -84,6 +84,7 @@ theorem mem_iff_of_reachIn {core : ExplicitPotential.Core n p}
 
 /-- **The union--find connectivity checker.**  A core is connected exactly
 when contracting every slot leaves one class. -/
+@[expose]
 def connectedCheckFast (core : ExplicitPotential.Core n p) : Bool :=
   decide (∀ v w : Fin n,
     compFold core Finset.univ v = compFold core Finset.univ w)

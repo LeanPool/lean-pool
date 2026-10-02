@@ -31,6 +31,7 @@ def incidenceDegree {n p : ℕ} (core : ExplicitPotential.Core n p)
       (if core.head edge = vertex then 1 else 0))
 
 /-- Every vertex has exactly three incident slot endpoints. -/
+@[expose]
 def Cubic {n p : ℕ} (core : ExplicitPotential.Core n p) : Prop :=
   ∀ vertex : Fin n, core.incidenceDegree vertex = 3
 

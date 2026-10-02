@@ -228,6 +228,7 @@ private lemma post_Ico_swap_eq_empty_of_post_lt (asps : AspSet) {m n : ℤ} (hmn
 
 /-- Reconstruct a function `ℤ → ℤ` from an abstract ASP inversion set and a
 shift parameter `χ`. -/
+@[expose]
 noncomputable def recon (asps : AspSet) (χ : ℤ) : ℤ → ℤ :=
   fun n => n + (asps.outset n).card - (asps.inset n).card - χ
 

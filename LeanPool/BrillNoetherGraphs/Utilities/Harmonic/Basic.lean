@@ -538,6 +538,7 @@ theorem targetOneChipEquivalent_of_connected_genus_zero
 /-- Mathematical pullback compatibility, deliberately separate from the raw
 finite data.  The unit-indexed checker implies it below; non-unit metric
 dilations still need a future weighted-Laplacian development. -/
+@[expose]
 def PullbackPrincipalCompatible (f : IndexedHarmonicData G H) : Prop :=
   ∀ A B : CFDiv H, linearEquiv H A B →
     linearEquiv G (f.pullback A) (f.pullback B)

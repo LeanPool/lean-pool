@@ -154,6 +154,7 @@ private lemma card_directed_edges_eq_card_edges {G : CFGraph} (O : CFOrientation
   linarith
 
 /-- The number of edges directed into a vertex under an orientation. -/
+@[expose]
 def indeg (G : CFGraph) (O : CFOrientation G) (v : G.V) : ℕ :=
   Multiset.card (O.directedEdges.filter (fun e => e.snd = v))
 
@@ -207,6 +208,7 @@ def isSource (G : CFGraph) (O : CFOrientation G) (v : G.V) : Prop :=
 
 /-- The proposition `directedEdge G O u v` holds when there is a directed edge from $u$
 to $v$ in orientation $\mathcal{O}$. -/
+@[expose]
 def directedEdge (G : CFGraph) (O : CFOrientation G) (u v : G.V) : Prop :=
   (u, v) ∈ O.directedEdges
 
@@ -220,6 +222,7 @@ structure DirectedPath {G : CFGraph} (O : CFOrientation G) where
   valid_edges : List.IsChain (directedEdge G O) vertices
 
 /-- A directed path is *non-repeating* if its vertex list has no duplicates. -/
+@[expose]
 def nonRepeating {G : CFGraph} {O : CFOrientation G} (p : DirectedPath O) : Prop :=
   p.vertices.Nodup
 
@@ -230,6 +233,7 @@ private lemma path_length_bound {G : CFGraph} {O : CFOrientation G} (p : Directe
   exact List.Nodup.length_le_card h_distinct
 
 /-- An orientation is acyclic if every directed path has no repeated vertices. -/
+@[expose]
 def isAcyclic (G : CFGraph) (O : CFOrientation G) : Prop :=
   ∀ (p : DirectedPath O), nonRepeating p
 
@@ -411,6 +415,7 @@ See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 4.7.
 
 See: [Corry-Perkinson](https://pubs.ams.org/ebooks/mbk/114), Definition 4.7,
 part 1; written $D(\mathcal{O})$ there. -/
+@[expose]
 def ordiv (G : CFGraph) (O : CFOrientation G) : CFDiv G :=
   fun v => indeg G O v - 1
 
@@ -1001,6 +1006,7 @@ The key lemma `dp_dec` formalizes this as a strict chain of natural numbers, and
 
 /-- Create a multiset with a given count function. This is a thin wrapper around
 `DFinsupp.toMultiset` specialized to a finite type. -/
+@[expose]
 def multisetOfCount {T : Type*} [DecidableEq T] [Fintype T] (f : T → ℕ) : Multiset T :=
   DFinsupp.toMultiset (DFinsupp.equivFunOnFintype.symm f)
 
@@ -1017,6 +1023,7 @@ def multisetOfCount {T : Type*} [DecidableEq T] [Fintype T] (f : T → ℕ) : Mu
 
 /-- Constructs a `CFOrientation` from an explicit flow function, given proofs that it respects
 edge multiplicities and has no bidirectional edges. -/
+@[expose]
 def orientationFromFlow {G : CFGraph} (f : G.V × G.V → ℕ) (h_count_preserving : ∀ v w : G.V, f (v,w)
   + f (w,v) = numEdges G v w) : CFOrientation G :=
   {

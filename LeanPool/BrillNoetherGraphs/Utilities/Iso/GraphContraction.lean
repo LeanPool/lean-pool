@@ -163,6 +163,7 @@ theorem valid_postcomposeLaplacianEquiv {H' : CFGraph.{w}}
             rw [h]
             exact (equivalence.toEquiv.apply_symm_apply b).symm
         simp only [postcomposeLaplacianEquiv_vertexMap, hx, hy]
+        rfl
 
 /-- Boolean replay of the finite quotient conditions. -/
 def check (c : GraphContractionCertificate G H) : Bool :=

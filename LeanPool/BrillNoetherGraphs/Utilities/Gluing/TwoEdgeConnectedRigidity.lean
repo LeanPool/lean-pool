@@ -43,6 +43,7 @@ def cutMultiplicity (H : CFGraph) (S : Finset H.V) : ℤ :=
 /-- Every nonempty proper vertex set has at least two outgoing edges, counted
 with multiplicity.  For a connected loopless multigraph this is the usual
 absence of bridges. -/
+@[expose]
 def TwoEdgeCutCondition (H : CFGraph) : Prop :=
   ∀ S : Finset H.V, S.Nonempty → S ≠ Finset.univ →
     2 ≤ cutMultiplicity H S

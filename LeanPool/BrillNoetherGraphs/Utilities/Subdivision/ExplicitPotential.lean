@@ -187,6 +187,7 @@ def lowerEndpointContribution (certificate : CertificateData m n p)
         (certificate.witness anchor).beta edge else 0))
 
 /-- Point-independent exact validity of a passive local record. -/
+@[expose]
 def Valid (certificate : CertificateData m n p) (degree : ℤ) : Prop :=
   (∀ edge : Fin p, certificate.core.tail edge ≠ certificate.core.head edge) ∧
   (∑ vertex : Fin n, certificate.divisor vertex) = degree ∧
