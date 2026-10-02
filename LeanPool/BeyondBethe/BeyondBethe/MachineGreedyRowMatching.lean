@@ -511,7 +511,7 @@ def matchingInnerMachineInput {n : ℕ}
   simp [machineMatchingInnerSelectedInput, machineMatchingInnerRest,
     matchingInnerMachineInput]
 
-@[simp] theorem machineMatchingInnerFirstRow_canonical {n : ℕ}
+theorem machineMatchingInnerFirstRow_canonical {n : ℕ}
     (X : Matrix (Fin n) (Fin n) ℚ) (R C : Fin n → ℚ)
     (i : Fin n) (sourceSelected : List (Fin n × Fin n))
     (remaining stateSelected : List Bool) :
@@ -523,7 +523,7 @@ def matchingInnerMachineInput {n : ℕ}
   simp [machineMatchingInnerFirstRow, machineMatchingInnerSource,
     machineMatchingInnerPack, matchingInnerMachineInput]
 
-@[simp] theorem machineMatchingInnerOptimizer_canonical {n : ℕ}
+theorem machineMatchingInnerOptimizer_canonical {n : ℕ}
     (X : Matrix (Fin n) (Fin n) ℚ) (R C : Fin n → ℚ)
     (i : Fin n) (sourceSelected : List (Fin n × Fin n))
     (remaining stateSelected : List Bool) :
@@ -544,7 +544,7 @@ def matchingInnerMachineInput {n : ℕ}
   simp [machineMatchingInnerCurrentSecondRow,
     machineMatchingInnerRemaining, machineMatchingInnerPack]
 
-@[simp] theorem machineMatchingInnerSelected_canonical {n : ℕ}
+theorem machineMatchingInnerSelected_canonical {n : ℕ}
     (j : Fin n) (js : List (Fin n))
     (selected : List (Fin n × Fin n)) (source : List Bool) :
     machineMatchingInnerSelected
@@ -1899,7 +1899,7 @@ theorem certifiedGreedyTypedOuterScan_full_nodup {n : ℕ}
       (List.finRange n).reverse).Nodup :=
   certifiedGreedyTypedOuterScan_nodup X (by simp) _
 
-@[simp] theorem machineGreedyMatchingSelected_typed_encode {n : ℕ}
+theorem machineGreedyMatchingSelected_typed_encode {n : ℕ}
     (X : Matrix (Fin n) (Fin n) ℚ) (R C : Fin n → ℚ) :
     machineGreedyMatchingSelected (rationalOptimizerOutputCode ⟨X, R, C⟩) =
       binaryListCode orderedRowPairCode
