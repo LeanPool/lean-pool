@@ -810,6 +810,7 @@ theorem powDelta_pairing
         modPowPairing A M M' d (n + 1)) := by
     rw [powDelta]
     repeat' erw [Category.assoc]
+    rfl
   refine hflat.trans ?_
   refine ((congrArg (fun t =>
     (ρ_ (powStage A M M' n)).inv ≫

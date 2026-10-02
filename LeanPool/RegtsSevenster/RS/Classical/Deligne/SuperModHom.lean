@@ -219,6 +219,7 @@ theorem gact_naturality [Category.{v} D] [MonoidalCategory D] (R : D) [MonObj R]
     MonoidalCategory.tensorHom_comp_tensorHom, Category.comp_id]
 
 /-- **Postcomposition realizes a morphism of super modules.** -/
+@[expose]
 noncomputable def gammaModuleMap
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [CategoryTheory.Linear ℂ D]

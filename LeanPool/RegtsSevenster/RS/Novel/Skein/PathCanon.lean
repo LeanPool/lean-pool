@@ -37,6 +37,7 @@ namespace EdgeSubset
 boundary-to-boundary chain is directed from its lower-labelled end
 to its higher-labelled one — the entry edge at the lower end is
 incoming. -/
+@[expose]
 def PathCanonical [LinearOrder α] {W : Fragment α}
     {F : EdgeSubset W} {κ : F.RelTransitionSystem}
     (o : κ.Orientation) : Prop :=

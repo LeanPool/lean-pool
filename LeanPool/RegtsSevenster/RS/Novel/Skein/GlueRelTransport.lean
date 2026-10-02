@@ -394,6 +394,7 @@ theorem unglueOpen_glueOpen_match
 surviving flags, `false` junk at the two glued boundary flags
 (which are never internal, so the structure fields do not
 constrain them). -/
+@[expose]
 noncomputable def unglueOrientationOpen
     (κ' : (Fg).RelTransitionSystem) (o' : κ'.Orientation) :
     (RelTransitionSystem.unglueOpen hij hopen s' hc' hc

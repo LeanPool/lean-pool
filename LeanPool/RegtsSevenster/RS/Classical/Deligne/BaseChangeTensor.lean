@@ -689,6 +689,7 @@ section Datum
 
 /-- **The base change of the pairing**: collapse, apply the
 pairing under the base, and collapse the regular module. -/
+@[expose]
 noncomputable def baseChangePair
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]
@@ -704,6 +705,7 @@ noncomputable def baseChangePair
     (modTensorUnitRight A (restrictRegular φ)).hom
 
 /-- **The base change of the copairing.** -/
+@[expose]
 noncomputable def baseChangeCopair
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

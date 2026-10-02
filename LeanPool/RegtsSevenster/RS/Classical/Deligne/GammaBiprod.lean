@@ -30,6 +30,7 @@ variable {D : Type u}
 
 /-- The comparison of the realization of a biproduct with the
 biproduct of the realizations. -/
+@[expose]
 noncomputable def gammaBiprodMap
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [CategoryTheory.Linear ℂ D]

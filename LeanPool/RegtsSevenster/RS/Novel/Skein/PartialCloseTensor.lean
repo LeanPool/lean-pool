@@ -303,6 +303,7 @@ noncomputable def innerNormal {u v : ℕ}
 /-! ### The main chain -/
 
 /-- The clean label of the partial closure of a tensor. -/
+@[expose]
 noncomputable def pcTensorClose (s t : ℕ) :
     (Fin (s + t) ⊕ Fin (0 + 0)) ≃ Fin (s + t) :=
   (_root_.Equiv.sumCongr (_root_.Equiv.refl (Fin (s + t)))

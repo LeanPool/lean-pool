@@ -92,6 +92,7 @@ def mBlock (m n p : ℕ) :
 
 /-- The `p`-block: the high labels of `H` against the high labels
 of `K`, top pair first. -/
+@[expose]
 def pBlock (m n p : ℕ) :
     List (((Fin (m + n) ⊕ Fin (n + p)) ⊕ Fin (m + p)) ×
       ((Fin (m + n) ⊕ Fin (n + p)) ⊕ Fin (m + p))) :=

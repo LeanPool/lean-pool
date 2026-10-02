@@ -52,6 +52,7 @@ theorem card_genBoundaryState (k ℓ : ℕ) (α : Type) [Fintype α]
     Fintype.card_fin]
 
 /-- The boundary-membership constraint over a general label type. -/
+@[expose]
 def genBoundarySubsetMatches {k ℓ : ℕ} {α : Type}
     (W : Fragment α) (s : Finset W.Flag)
     (st : GenBoundaryState k ℓ α) : Prop :=

@@ -370,6 +370,7 @@ theorem repPairs_wf_of (C : Finset W.Flag) (hC : CutClosed W C) :
 
 /-- The canonical orbit representatives: flags enumerated below
 their partners. -/
+@[expose]
 noncomputable def canonicalReps : List W.Flag :=
   (Finset.univ.filter (fun f =>
     (Fintype.equivFin W.Flag f : ℕ) <

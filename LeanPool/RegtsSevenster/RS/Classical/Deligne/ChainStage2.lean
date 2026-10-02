@@ -131,6 +131,7 @@ end Stage2Cast
 
 /-- **The two-index chain multiplication**: two stages interchange
 and multiply into the stage of the slotwise summed arities. -/
+@[expose]
 noncomputable def chainMul2
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

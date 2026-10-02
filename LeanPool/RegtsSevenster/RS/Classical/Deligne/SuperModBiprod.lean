@@ -121,6 +121,7 @@ instance hasZeroObject :
 /-- **The biproduct of two super modules**: the product of the even
 components, the product of the odd components, and the four action
 blocks taken componentwise. -/
+@[expose]
 def biprod (M N : Mod.{u, u', w, w'} S) : Mod.{u, u', w, w'} S
     where
   even := M.even × N.even

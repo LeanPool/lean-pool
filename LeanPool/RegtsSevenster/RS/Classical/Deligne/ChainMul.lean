@@ -141,6 +141,7 @@ noncomputable def chainStage
 
 /-- **The chain multiplication**: two stages interchange and
 multiply into the stage of summed arity. -/
+@[expose]
 noncomputable def chainMul
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

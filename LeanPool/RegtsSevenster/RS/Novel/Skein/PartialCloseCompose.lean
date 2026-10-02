@@ -191,6 +191,7 @@ theorem pc_compose_ground (s t u v : ℕ) :
 /-! ### The label meet -/
 
 /-- The peeled composition pairs. -/
+@[expose]
 noncomputable def pcComposeQs (s t u v : ℕ) :=
   Fragment.mapPairs
     (_root_.Equiv.sumCongr

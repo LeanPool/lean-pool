@@ -91,6 +91,7 @@ section Bundles
 
 /-- The pairing of a duality datum, as a module map into the
 regular module. -/
+@[expose]
 noncomputable def ModDualityDatum.pairMod
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Limits.HasCoequalizers D]

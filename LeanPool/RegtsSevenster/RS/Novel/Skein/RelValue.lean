@@ -57,6 +57,7 @@ theorem EdgeSubset.mem_internal_of_mem_relInFlagsAt
 /-! ## Agreement with the standard data -/
 
 /-- Transport of an orientation to the relative system. -/
+@[expose]
 def EdgeSubset.TransitionSystem.Orientation.toRel
     {F : EdgeSubset W} {κ : F.TransitionSystem}
     (o : κ.Orientation) : κ.toRelTransitionSystem.Orientation where

@@ -762,7 +762,7 @@ associativity laws.
 
 It is `reducible` so that the identification of its components
 with those of `S` is transparent to unification and to `rw`. -/
-@[reducible]
+@[expose, reducible]
 def _root_.RS.SuperCommAlgebra.unitMod (S : SuperCommAlgebra.{u, u}) :
     S.Mod.{u, u, u, u} where
   even := S.even
@@ -908,6 +908,7 @@ theorem leftUnitorInv_oddMap (m : M.odd) :
 
 /-- **The left unitor**: tensoring with the unit on the left
 changes nothing. -/
+@[expose]
 noncomputable def leftUnitor : S.unitMod.tensor M ≅ M where
   hom := leftUnitorHom M
   inv := leftUnitorInv M
@@ -1044,6 +1045,7 @@ theorem rightUnitorInv_oddMap (m : M.odd) :
 
 /-- **The right unitor**: tensoring with the unit on the right
 changes nothing. -/
+@[expose]
 noncomputable def rightUnitor : M.tensor S.unitMod ≅ M where
   hom := rightUnitorHom M
   inv := rightUnitorInv M
@@ -1232,6 +1234,7 @@ theorem braidingHom_braidingHom :
       id_oddMap, LinearMap.id_coe, id_eq]
 
 /-- **The braiding**: the Koszul swap of the two factors. -/
+@[expose]
 noncomputable def braiding : M.tensor N ≅ N.tensor M where
   hom := braidingHom M N
   inv := braidingHom N M
@@ -2176,6 +2179,7 @@ theorem assocInv_assocHom :
 
 /-- **The associator**: reassociation of a threefold tensor
 product, with no sign. -/
+@[expose]
 noncomputable def associator :
     (M.tensor N).tensor P ≅ M.tensor (N.tensor P) where
   hom := assocHom M N P
