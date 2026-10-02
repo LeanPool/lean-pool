@@ -71,6 +71,7 @@ noncomputable def facetRepresentative (q : FacetOrbit (G := G) C) : C.Facet :=
   Quotient.out q
 
 /-- One coefficient per top-cell orbit. -/
+@[expose]
 noncomputable def orbitCoefficient (q : TopOrbit (G := G) C) : R :=
   C.coefficient (topRepresentative (G := G) C q)
 

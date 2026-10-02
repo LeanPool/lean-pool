@@ -133,6 +133,7 @@ theorem reference_zero_in_full_permutation_orbit
       uniformWeights_relabel hp sigma] using hw
 
 /-- Number of prime-symmetry orbits obtained by restricting a full permutation torsor. -/
+@[expose]
 noncomputable def referenceOrbitMultiplicity (p : Nat) : Nat :=
   (primeSymmetrySubgroup p).index
 
@@ -163,6 +164,7 @@ theorem referenceOrbitMultiplicity_eq_two
   exact alternatingGroup.index_eq_two
 
 /-- Signed reference orbit count with local coefficient `1` on each restricted orbit. -/
+@[expose]
 noncomputable def referenceSignedOrbitCount
     (p : Nat) : ZMod p :=
   (referenceOrbitMultiplicity p : ZMod p)

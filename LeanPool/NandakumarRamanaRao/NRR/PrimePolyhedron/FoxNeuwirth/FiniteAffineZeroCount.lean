@@ -231,17 +231,20 @@ def augmentedMatrix
   Matrix.det (f.augmentedMatrix s)
 
 /-- The affine restriction has a zero in the relative interior of the simplex. -/
+@[expose]
 def HasInteriorZero
     (f : AffineVertexMap p d) (s : Simplex p d) : Prop :=
   ∃ w : StandardSimplex d,
     StandardSimplex.IsInterior w ∧ ∀ r, f.value s w r = 0
 
 /-- The restriction is regular when its augmented affine matrix is nonsingular. -/
+@[expose]
 def IsRegularOn
     (f : AffineVertexMap p d) (s : Simplex p d) : Prop :=
   f.determinant s ≠ 0
 
 /-- Global finite regularity on all top-dimensional simplices. -/
+@[expose]
 def IsRegular (f : AffineVertexMap p d) : Prop :=
   ∀ s : Simplex p d, f.IsRegularOn s
 
