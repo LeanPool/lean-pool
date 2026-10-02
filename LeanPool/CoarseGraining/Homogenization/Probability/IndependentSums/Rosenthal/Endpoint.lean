@@ -129,7 +129,7 @@ theorem integral_abs_symmetrizedFinsetSum_pow_le_rosenthal
   have hSigma_nonneg : 0 ≤ ∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ := by
     refine Finset.sum_nonneg ?_
     intro i hi
-    simp [ProbabilityTheory.moment]
+    simp only [moment, Pi.pow_apply]
     positivity
   have hsqrt_le :
       Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ)) ≤
@@ -385,7 +385,7 @@ theorem integral_abs_centeredFinsetSum_pow_rpow_inv_le_rosenthal
     dsimp [σ]
     refine Finset.sum_nonneg ?_
     intro i hi
-    simp [ProbabilityTheory.moment]
+    simp only [moment, Pi.pow_apply]
     positivity
   have hV_nonneg : 0 ≤ V := by
     dsimp [V]
@@ -552,7 +552,7 @@ theorem integral_abs_symmetrizedFinsetSum_rpow_le_rosenthal
   have hSigma_nonneg : 0 ≤ ∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ := by
     refine Finset.sum_nonneg ?_
     intro i hi
-    simp [ProbabilityTheory.moment]
+    simp only [moment, Pi.pow_apply]
     positivity
   have hsqrt_le :
       Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ)) ≤
@@ -776,7 +776,7 @@ theorem integral_abs_centeredFinsetSum_rpow_rpow_inv_le_rosenthal
   have hσ_nonneg : 0 ≤ σ := by
     dsimp [σ]
     refine Finset.sum_nonneg fun i hi => ?_
-    simp [ProbabilityTheory.moment]
+    simp only [moment, Pi.pow_apply]
     positivity
   have hV_nonneg : 0 ≤ V := by
     dsimp [V]
