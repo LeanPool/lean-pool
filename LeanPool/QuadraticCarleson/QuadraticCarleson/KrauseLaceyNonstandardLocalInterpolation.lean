@@ -114,6 +114,39 @@ theorem eLpNorm_interpolationLow_le_rpow
       exact ENNReal.ofReal_le_ofReal (norm_interpolationLow_sq_le_rpow g ha hp hp2 x)
     _ = _ := lintegral_const_mul _ ((hg.norm.pow_const p).ennreal_ofReal)
 
+/-- Threshold interpolation separates an operator's L² and high-part estimates. -/
+theorem lintegral_pairing_le_threshold_of_L2
+    {F : ℝ → ℝ} {g : ℝ → ℂ} (hFm : AEMeasurable F volume) (hg : Measurable g)
+    (hgi : Integrable g) {p a : ℝ} (hp : 0 < p) (hp2 : p ≤ 2) (ha : 0 < a)
+    {B D : ℝ≥0∞} (hL2 : eLpNorm F 2 volume ≤ B)
+    (hhighpair : (∫⁻ x, ‖F x‖ₑ * ‖interpolationHigh g a x‖ₑ) ≤ D) :
+    (∫⁻ x, ‖F x‖ₑ * ‖g x‖ₑ) ≤
+      B * (ENNReal.ofReal (a ^ (2 - p)) *
+        ∫⁻ x, ENNReal.ofReal (‖g x‖ ^ p)) ^ (1 / 2 : ℝ) + D := by
+  have hF := hFm.enorm
+  have hlow := integrable_interpolationLow_local hg hgi a
+  have hnorm (x : ℝ) : ‖g x‖ₑ = ‖interpolationLow g a x‖ₑ + ‖interpolationHigh g a x‖ₑ := by
+    by_cases hx : ‖g x‖ ≤ a
+    · simp [interpolationLow, interpolationHigh, hx, not_lt.mpr hx]
+    · simp [interpolationLow, interpolationHigh, hx, lt_of_not_ge hx]
+  have hlowpair : (∫⁻ x, ‖F x‖ₑ * ‖interpolationLow g a x‖ₑ) ≤
+      eLpNorm F 2 volume * eLpNorm (interpolationLow g a) 2 volume := by
+    have h := ENNReal.lintegral_mul_le_Lp_mul_Lq volume Real.HolderConjugate.two_two
+      hF hlow.aestronglyMeasurable.enorm
+    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+        hFm.aestronglyMeasurable,
+      eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hlow.aestronglyMeasurable]
+    simpa only [Pi.mul_apply, ENNReal.toReal_ofNat] using h
+  calc
+    _ = (∫⁻ x, ‖F x‖ₑ * ‖interpolationLow g a x‖ₑ) +
+        ∫⁻ x, ‖F x‖ₑ * ‖interpolationHigh g a x‖ₑ := by
+      simp_rw [hnorm, mul_add]
+      exact lintegral_add_left' (hF.mul hlow.aestronglyMeasurable.enorm) _
+    _ ≤ (eLpNorm F 2 volume * eLpNorm (interpolationLow g a) 2 volume) + D :=
+      add_le_add hlowpair hhighpair
+    _ ≤ _ := add_le_add_left
+      (mul_le_mul' hL2 (eLpNorm_interpolationLow_le_rpow g ha hp hp2 hg)) _
+
 /-- Quantitative local interpolation for every positive splitting
 threshold. The only test-function condition is the actual local `p`-mass
 bound on the intervals, precisely the condition in the source argument. -/
@@ -134,36 +167,13 @@ theorem lintegral_nonstandard_pairing_le_threshold
         Real.sqrt (badRemovedEnergyBudget f I₀ s)) *
         (ENNReal.ofReal (a ^ (2 - p)) * ∫⁻ x, ENNReal.ofReal (‖g x‖ ^ p)) ^ (1 / 2 : ℝ) +
       ENNReal.ofReal (8 * positiveDyadicAmplitudeBound * (a ^ (1 - p) * G) * ∫ x, ‖f x‖) := by
-  let F := badLengthTailMaximal S f I₀ k₀ s scale N
-  have hF := (aemeasurable_badLengthTailMaximal S hf I₀ k₀ s scale N).enorm
-  have hlow := integrable_interpolationLow_local hg hgi a
-  have hhigh := integrable_interpolationHigh_local hg hgi a
-  have hnorm (x : ℝ) : ‖g x‖ₑ = ‖interpolationLow g a x‖ₑ + ‖interpolationHigh g a x‖ₑ := by
-    by_cases hx : ‖g x‖ ≤ a
-    · simp [interpolationLow, interpolationHigh, hx, not_lt.mpr hx]
-    · simp [interpolationLow, interpolationHigh, hx, lt_of_not_ge hx]
-  have hlowpair : (∫⁻ x, ‖F x‖ₑ * ‖interpolationLow g a x‖ₑ) ≤
-      eLpNorm F 2 volume * eLpNorm (interpolationLow g a) 2 volume := by
-    have h := ENNReal.lintegral_mul_le_Lp_mul_Lq volume Real.HolderConjugate.two_two
-      hF hlow.aestronglyMeasurable.enorm
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
-        (aemeasurable_badLengthTailMaximal S hf I₀ k₀ s scale N).aestronglyMeasurable,
-      eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hlow.aestronglyMeasurable]
-    simpa only [Pi.mul_apply, ENNReal.toReal_ofNat] using h
-  calc
-    _ = (∫⁻ x, ‖F x‖ₑ * ‖interpolationLow g a x‖ₑ) +
-        ∫⁻ x, ‖F x‖ₑ * ‖interpolationHigh g a x‖ₑ := by
-      simp_rw [hnorm, mul_add]
-      exact lintegral_add_left' (hF.mul hlow.aestronglyMeasurable.enorm) _
-    _ ≤ (eLpNorm F 2 volume * eLpNorm (interpolationLow g a) 2 volume) +
-        ENNReal.ofReal (8 * positiveDyadicAmplitudeBound * (a ^ (1 - p) * G) * ∫ x, ‖f x‖) := by
-      apply add_le_add hlowpair
-      exact lintegral_nonstandard_pairing_le_of_averages_le hf hhigh I₀ k₀ s scale hlam N hN
-        (mul_nonneg (Real.rpow_nonneg ha.le _) hG)
-        (fun I hI ↦ intervalL1Average_interpolationHigh_le hg hgi ha hp hgp I (hgavg I hI))
-    _ ≤ _ := add_le_add_left (mul_le_mul'
-      (eLpNorm_nonstandard_badLengthTailMaximal_le hf I₀ k₀ s hk₀ scale hlam hparent hsub N hN)
-      (eLpNorm_interpolationLow_le_rpow g ha (by linarith) hp2 hg)) _
+  apply lintegral_pairing_le_threshold_of_L2
+    (aemeasurable_badLengthTailMaximal S hf I₀ k₀ s scale N) hg hgi (by linarith) hp2 ha
+    (eLpNorm_nonstandard_badLengthTailMaximal_le hf I₀ k₀ s hk₀ scale hlam hparent hsub N hN)
+  exact lintegral_nonstandard_pairing_le_of_averages_le hf
+    (integrable_interpolationHigh_local hg hgi a) I₀ k₀ s scale hlam N hN
+    (mul_nonneg (Real.rpow_nonneg ha.le _) hG)
+    (fun I hI ↦ intervalL1Average_interpolationHigh_le hg hgi ha hp hgp I (hgavg I hI))
 
 
 end KrauseLaceyBadScale

@@ -24,11 +24,12 @@ We prove the actual near-plus-far energy inequality first. Comparing
 the actual energy with 100 times its positive near term then gives an
 exhaustive partition with both required energy consequences.
 
-Source distinction: arXiv:2609.04101 invokes Theorem 1.1 of the general
-paper https://arxiv.org/pdf/1701.05249v2. Its local lemma is Lemma 3.4,
-with displayed estimate (3.5). It cites the earlier monomial proof as
-reference [14]. The present degree-two modules implement that earlier
-specialized route; equation numbers (4.16)--(4.18) refer to it.
+Source distinction: arXiv:2609.04101 invokes the journal version's
+Theorem 1.1 of the general paper. In the arXiv version used here,
+https://arxiv.org/pdf/1701.05249v2, this is Theorem 1.3; the local bound
+is Lemma 3.6, estimate (3.8), and the monomial paper is reference [15].
+The present degree-two modules implement that earlier specialized route;
+equation numbers (4.16)--(4.18) refer to the monomial paper.
 -/
 
 @[expose] public section

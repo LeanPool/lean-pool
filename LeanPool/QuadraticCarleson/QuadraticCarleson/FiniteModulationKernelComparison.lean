@@ -22,7 +22,8 @@ the centered Hardy--Littlewood maximal function.
 
 The later sparse input in the paper is reference [7], Theorem 1.1 of
 Krause--Lacey's *Sparse bounds for maximally truncated oscillatory singular
-integrals* ([arXiv:1701.05249v2](https://arxiv.org/abs/1701.05249v2)),
+integrals* in its journal numbering (Theorem 1.3 in
+[arXiv:1701.05249v2](https://arxiv.org/abs/1701.05249v2)),
 specialized to the quadratic Hilbert transform. It gives a sparse `(1,p)`
 estimate for each fixed modulation, uniform in that modulation.
 `FiniteSparseMaximal` packages the abstract sparse premise; the separate

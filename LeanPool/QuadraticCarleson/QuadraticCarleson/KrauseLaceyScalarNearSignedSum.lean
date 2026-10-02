@@ -17,8 +17,8 @@ argument. The positive bad-scale inputs and the oscillatory pieces are
 unchanged. Only the classification hypothesis changes: the diagonal bound
 comes from the proved scalar comparison with the near energy.
 
-The cross-row proofs use geometry, local mass, and the actual correlation
-bound, and are reproved below for this family. No inclusion into the older
+The cross-row proofs specialize the shared geometry, local mass, and
+actual correlation bound to this family. No inclusion into the older
 pointwise nonstandard family is claimed.
 -/
 
@@ -102,59 +102,10 @@ theorem sum_nonstandard_crossPairing_le
           (badScaleInput S f I₀ k₀ (scale J + 2 - s)) x)‖) ≤
       (3840 * positiveDyadicAmplitudeBound ^ 2 * intervalL1Average f I₀ / I.length) *
         intervalBadMass S f I₀ k₀ s scale I := by
-  let T := N.filter fun J ↦ scale J + 3 ≤ scale I
-  let U := T.filter fun J ↦ J.carrier ⊆ I.carrier
-  have hNS := intervals_subset S f I₀ k₀ s scale
-  have hlenI := (Finset.mem_filter.mp hI).2.1
-  have hlenJ (J : RealInterval) (hJ : J ∈ N) := (Finset.mem_filter.mp (hN hJ)).2.1
-  let P (J : RealInterval) := ‖∫ x, krauseLaceyLocalizedPiece 1 (scale I) I
-      (badScaleInput S f I₀ k₀ (scale I + 2 - s)) x *
-    conj (krauseLaceyLocalizedPiece 1 (scale J) J
-      (badScaleInput S f I₀ k₀ (scale J + 2 - s)) x)‖
-  have hrestrict : (∑ J ∈ T, P J) = ∑ J ∈ U, P J := by
-    symm
-    apply Finset.sum_subset (Finset.filter_subset _ T)
-    intro J hJT hJU
-    have hJ := Finset.mem_filter.mp hJT
-    have hnot : ¬J.carrier ⊆ I.carrier := by
-      intro hs
-      exact hJU (Finset.mem_filter.mpr ⟨hJT, hs⟩)
-    have hd := (carrier_subset_or_disjoint_of_scale_lt scale hlam (hNS hI)
-      (hNS (hN hJ.1)) hlenI (hlenJ J hJ.1) (by omega)).resolve_left hnot
-    dsimp [P]
-    rw [integral_localizedPiece_cross_eq_zero_of_disjoint _ _ _ _ _ _ hlenI
-      (hlenJ J hJ.1) hd, norm_zero]
-  have hUS : U ⊆ S := (Finset.filter_subset _ T).trans
-    ((Finset.filter_subset _ N).trans (hN.trans hNS))
-  have hUN : U ⊆ N := (Finset.filter_subset _ T).trans (Finset.filter_subset _ N)
-  have hmass : (∑ J ∈ U, intervalBadMass S f I₀ k₀ s scale J) ≤
-      10 * intervalL1Average f I₀ * I.length := by
-    apply (sum_intervalBadInput_mass_le_local hf I₀ k₀ s scale hlam U hUS
-      (fun J hJ ↦ hlenJ J (hUN hJ)) I
-      (fun J hJ ↦ (Finset.mem_filter.mp hJ).2)).trans
-    rw [← intervalL1Average_mul_length]
-    exact mul_le_mul_of_nonneg_right
-      (goodCollection_averages_le hsub (Finset.mem_filter.mp hI).1).1 I.length_pos.le
-  have hm := intervalBadMass_nonneg S f I₀ k₀ s scale I
-  have hC : 0 ≤ 384 * positiveDyadicAmplitudeBound ^ 2 / I.length ^ 2 := by positivity
-  change (∑ J ∈ T, P J) ≤ _
-  rw [hrestrict]
-  calc
-    _ ≤ ∑ J ∈ U, (384 * positiveDyadicAmplitudeBound ^ 2 / I.length ^ 2) *
-        intervalBadMass S f I₀ k₀ s scale I * intervalBadMass S f I₀ k₀ s scale J := by
-      apply Finset.sum_le_sum
-      intro J hJ
-      exact krauseLaceyLocalizedPiece_crossPairing_le_length _ _ (hsmall J (hUN hJ))
-        (Finset.mem_filter.mp ((Finset.filter_subset _ T) hJ)).2 I J hlenI
-        (integrable_badScaleInput S hf I₀ k₀ _) (integrable_badScaleInput S hf I₀ k₀ _)
-    _ = (384 * positiveDyadicAmplitudeBound ^ 2 / I.length ^ 2) *
-        intervalBadMass S f I₀ k₀ s scale I *
-          ∑ J ∈ U, intervalBadMass S f I₀ k₀ s scale J := (Finset.mul_sum _ _ _).symm
-    _ ≤ (384 * positiveDyadicAmplitudeBound ^ 2 / I.length ^ 2) *
-        intervalBadMass S f I₀ k₀ s scale I *
-          (10 * intervalL1Average f I₀ * I.length) :=
-      mul_le_mul_of_nonneg_left hmass (mul_nonneg hC hm)
-    _ = _ := by field_simp; ring
+  exact sum_crossPairing_le_of_geometry hf I₀ k₀ s scale hlam hsub N
+    (fun J hJ ↦ (Finset.mem_filter.mp (hN hJ)).1)
+    (fun J hJ ↦ (Finset.mem_filter.mp (hN hJ)).2.1) hsmall
+    (Finset.mem_filter.mp hI).1 (Finset.mem_filter.mp hI).2.1
 
 theorem sum_nonstandard_crossPairing_le_decay
     {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)

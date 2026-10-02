@@ -283,41 +283,15 @@ theorem lintegral_energyNonstandard_pairing_le_threshold
         Real.sqrt (badRemovedEnergyBudget f I₀ s)) *
         (ENNReal.ofReal (a ^ (2 - p)) * ∫⁻ x, ENNReal.ofReal (‖g x‖ ^ p)) ^ (1 / 2 : ℝ) +
       ENNReal.ofReal (8 * positiveDyadicAmplitudeBound * (a ^ (1 - p) * G) * ∫ x, ‖f x‖) := by
-  let F := energyNonstandardSourceTailMaximal S f I₀ k₀ s scale N
-  have hFm : AEMeasurable F volume := by
-    dsimp only [F]
-    rw [energyNonstandardSourceTailMaximal_eq_badLengthTailMaximal
-      f I₀ k₀ s scale hlam N hN]
+  have hFm : AEMeasurable (energyNonstandardSourceTailMaximal S f I₀ k₀ s scale N) volume := by
+    rw [energyNonstandardSourceTailMaximal_eq_badLengthTailMaximal f I₀ k₀ s scale hlam N hN]
     exact aemeasurable_badLengthTailMaximal S hf I₀ k₀ s scale N
-  have hF := hFm.enorm
-  have hlow := integrable_interpolationLow_local hg hgi a
-  have hhigh := integrable_interpolationHigh_local hg hgi a
-  have hnorm (x : ℝ) : ‖g x‖ₑ = ‖interpolationLow g a x‖ₑ + ‖interpolationHigh g a x‖ₑ := by
-    by_cases hx : ‖g x‖ ≤ a
-    · simp [interpolationLow, interpolationHigh, hx, not_lt.mpr hx]
-    · simp [interpolationLow, interpolationHigh, hx, lt_of_not_ge hx]
-  have hlowpair : (∫⁻ x, ‖F x‖ₑ * ‖interpolationLow g a x‖ₑ) ≤
-      eLpNorm F 2 volume * eLpNorm (interpolationLow g a) 2 volume := by
-    have h := ENNReal.lintegral_mul_le_Lp_mul_Lq volume Real.HolderConjugate.two_two
-      hF hlow.aestronglyMeasurable.enorm
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
-        hFm.aestronglyMeasurable,
-      eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hlow.aestronglyMeasurable]
-    simpa only [Pi.mul_apply, ENNReal.toReal_ofNat] using h
-  calc
-    _ = (∫⁻ x, ‖F x‖ₑ * ‖interpolationLow g a x‖ₑ) +
-        ∫⁻ x, ‖F x‖ₑ * ‖interpolationHigh g a x‖ₑ := by
-      simp_rw [hnorm, mul_add]
-      exact lintegral_add_left' (hF.mul hlow.aestronglyMeasurable.enorm) _
-    _ ≤ (eLpNorm F 2 volume * eLpNorm (interpolationLow g a) 2 volume) +
-        ENNReal.ofReal (8 * positiveDyadicAmplitudeBound * (a ^ (1 - p) * G) * ∫ x, ‖f x‖) := by
-      apply add_le_add hlowpair
-      exact lintegral_energyNonstandard_pairing_le_of_averages_le hf hhigh I₀ k₀ s scale hlam N hN
-        (mul_nonneg (Real.rpow_nonneg ha.le _) hG)
-        (fun I hI ↦ intervalL1Average_interpolationHigh_le hg hgi ha hp hgp I (hgavg I hI))
-    _ ≤ _ := add_le_add_left (mul_le_mul'
-      (eLpNorm_energyNonstandardSourceTailMaximal_le hf I₀ k₀ s hk₀ scale hlam hparent hsub N hN)
-      (eLpNorm_interpolationLow_le_rpow g ha (by linarith) hp2 hg)) _
+  apply lintegral_pairing_le_threshold_of_L2 hFm hg hgi (by linarith) hp2 ha
+    (eLpNorm_energyNonstandardSourceTailMaximal_le hf I₀ k₀ s hk₀ scale hlam hparent hsub N hN)
+  exact lintegral_energyNonstandard_pairing_le_of_averages_le hf
+    (integrable_interpolationHigh_local hg hgi a) I₀ k₀ s scale hlam N hN
+    (mul_nonneg (Real.rpow_nonneg ha.le _) hG)
+    (fun I hI ↦ intervalL1Average_interpolationHigh_le hg hgi ha hp hgp I (hgavg I hI))
 
 
 

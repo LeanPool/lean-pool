@@ -105,17 +105,19 @@ theorem inner_badPieceLp_eq_zero_of_scale_eq
     · exact hd
   exact inner_localizedPieceLp_eq_zero_of_disjoint _ _ _ _ _ _ _ _ hlenI hlenJ hd
 
-/-- Sum of the absolute actual pairings over every separated smaller
-interval. The result is uniform in the size and depth of the collection. -/
-theorem sum_nonstandard_crossPairing_le
+/-- Separated cross rows depend on good-collection geometry and interval lengths,
+not on which energy classifier selected the intervals. -/
+theorem sum_crossPairing_le_of_geometry
     {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)
     (I₀ : RealInterval) (k₀ s : ℤ) (scale : RealInterval → ℤ)
     (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
       J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
     (hsub : ∀ K ∈ S, K.carrier ⊆ I₀.carrier)
-    (N : Finset RealInterval) (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale)
+    (N : Finset RealInterval) (hN : N ⊆ goodCollection S f 0 I₀)
+    (hlenJ : ∀ J ∈ N, J.length = (2 : ℝ) ^ (scale J + 2))
     (hsmall : ∀ J ∈ N, 1 ≤ scale J)
-    {I : RealInterval} (hI : I ∈ nonstandardIntervals S f I₀ k₀ s scale) :
+    {I : RealInterval} (hI : I ∈ goodCollection S f 0 I₀)
+    (hlenI : I.length = (2 : ℝ) ^ (scale I + 2)) :
     (∑ J ∈ N.filter (fun J ↦ scale J + 3 ≤ scale I),
       ‖∫ x, krauseLaceyLocalizedPiece 1 (scale I) I
           (badScaleInput S f I₀ k₀ (scale I + 2 - s)) x *
@@ -125,9 +127,7 @@ theorem sum_nonstandard_crossPairing_le
         intervalBadMass S f I₀ k₀ s scale I := by
   let T := N.filter fun J ↦ scale J + 3 ≤ scale I
   let U := T.filter fun J ↦ J.carrier ⊆ I.carrier
-  have hNS := nonstandardIntervals_subset S f I₀ k₀ s scale
-  have hlenI := (Finset.mem_filter.mp hI).2.1
-  have hlenJ (J : RealInterval) (hJ : J ∈ N) := (Finset.mem_filter.mp (hN hJ)).2.1
+  have hNS : goodCollection S f 0 I₀ ⊆ S := fun _ h ↦ (Finset.mem_filter.mp h).1
   let P (J : RealInterval) := ‖∫ x, krauseLaceyLocalizedPiece 1 (scale I) I
       (badScaleInput S f I₀ k₀ (scale I + 2 - s)) x *
     conj (krauseLaceyLocalizedPiece 1 (scale J) J
@@ -155,7 +155,7 @@ theorem sum_nonstandard_crossPairing_le
       (fun J hJ ↦ (Finset.mem_filter.mp hJ).2)).trans
     rw [← intervalL1Average_mul_length]
     exact mul_le_mul_of_nonneg_right
-      (goodCollection_averages_le hsub (Finset.mem_filter.mp hI).1).1 I.length_pos.le
+      (goodCollection_averages_le hsub hI).1 I.length_pos.le
   have hm := intervalBadMass_nonneg S f I₀ k₀ s scale I
   have hC : 0 ≤ 384 * positiveDyadicAmplitudeBound ^ 2 / I.length ^ 2 := by positivity
   change (∑ J ∈ T, P J) ≤ _
@@ -176,6 +176,27 @@ theorem sum_nonstandard_crossPairing_le
           (10 * intervalL1Average f I₀ * I.length) :=
       mul_le_mul_of_nonneg_left hmass (mul_nonneg hC hm)
     _ = _ := by field_simp; ring
+
+theorem sum_nonstandard_crossPairing_le
+    {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)
+    (I₀ : RealInterval) (k₀ s : ℤ) (scale : RealInterval → ℤ)
+    (hlam : Set.Pairwise (↑S : Set RealInterval) fun J K ↦
+      J.carrier ⊆ K.carrier ∨ K.carrier ⊆ J.carrier ∨ Disjoint J.carrier K.carrier)
+    (hsub : ∀ K ∈ S, K.carrier ⊆ I₀.carrier)
+    (N : Finset RealInterval) (hN : N ⊆ nonstandardIntervals S f I₀ k₀ s scale)
+    (hsmall : ∀ J ∈ N, 1 ≤ scale J)
+    {I : RealInterval} (hI : I ∈ nonstandardIntervals S f I₀ k₀ s scale) :
+    (∑ J ∈ N.filter (fun J ↦ scale J + 3 ≤ scale I),
+      ‖∫ x, krauseLaceyLocalizedPiece 1 (scale I) I
+          (badScaleInput S f I₀ k₀ (scale I + 2 - s)) x *
+        conj (krauseLaceyLocalizedPiece 1 (scale J) J
+          (badScaleInput S f I₀ k₀ (scale J + 2 - s)) x)‖) ≤
+      (3840 * positiveDyadicAmplitudeBound ^ 2 * intervalL1Average f I₀ / I.length) *
+        intervalBadMass S f I₀ k₀ s scale I := by
+  exact sum_crossPairing_le_of_geometry hf I₀ k₀ s scale hlam hsub N
+    (fun J hJ ↦ (Finset.mem_filter.mp (hN hJ)).1)
+    (fun J hJ ↦ (Finset.mem_filter.mp (hN hJ)).2.1) hsmall
+    (Finset.mem_filter.mp hI).1 (Finset.mem_filter.mp hI).2.1
 
 theorem sum_nonstandard_crossPairing_le_decay
     {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)

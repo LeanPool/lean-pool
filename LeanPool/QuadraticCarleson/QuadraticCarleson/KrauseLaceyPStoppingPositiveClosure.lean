@@ -403,31 +403,8 @@ theorem hasSparseOnePBound_localizedTailMaximalTestOperator_of_pStopping_tree
   obtain ⟨R, hRsparse, hRsub, hpair⟩ := exists_pStopping_recursive_sparse_bound
     hlocal hp hp2 ell₀ topScale shift maxDepth q₀ S f g hell hStree
   refine ⟨(↑R : Set RealInterval), hRsparse, ?_⟩
-  let T := localizedTailMaximalTestOperator ell₀
-    (finiteShiftGridScale topScale shift) S
-  by_cases hi : Integrable (fun x ↦ T f x * star (g x))
-  · have hnorm : ‖operatorPairing T f g‖ ≤
-        ∫ x, ‖T f x * star (g x)‖ := by
-      unfold operatorPairing
-      exact norm_integral_le_of_norm_le hi.norm
-        (Filter.Eventually.of_forall fun x ↦ le_rfl)
-    have hof : ENNReal.ofReal ‖operatorPairing T f g‖ ≤
-        ∫⁻ x, ‖T f x * star (g x)‖ₑ := by
-      exact (ENNReal.ofReal_le_ofReal hnorm).trans_eq
-        (ofReal_integral_norm_eq_lintegral_enorm hi)
-    refine hof.trans (le_trans ?_ hpair)
-    apply lintegral_mono
-    intro x
-    simp only [T, localizedTailMaximalTestOperator, norm_mul, norm_star,
-      ← ofReal_norm]
-    rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg ENNReal.toReal_nonneg]
-    rw [ENNReal.ofReal_mul ENNReal.toReal_nonneg]
-    exact mul_le_mul' ENNReal.ofReal_toReal_le le_rfl
-  · have hzero : operatorPairing T f g = 0 := by
-      unfold operatorPairing
-      exact integral_undef hi
-    rw [hzero, norm_zero, ENNReal.ofReal_zero]
-    exact bot_le
+  exact (operatorPairing_localizedTailMaximalTestOperator_le ell₀
+    (finiteShiftGridScale topScale shift) S f g).trans hpair
 
 /-- Operator-facing form of the finite-forest p-stopping closure. -/
 theorem hasSparseOnePBound_localizedTailMaximalTestOperator_of_pStopping_forest
@@ -444,31 +421,8 @@ theorem hasSparseOnePBound_localizedTailMaximalTestOperator_of_pStopping_forest
   obtain ⟨R, hRsparse, hpair⟩ := exists_pStopping_recursive_sparse_bound_forest
     hlocal hp hp2 ell₀ topScale shift maxDepth F S f g hell hSforest
   refine ⟨(↑R : Set RealInterval), hRsparse, ?_⟩
-  let T := localizedTailMaximalTestOperator ell₀
-    (finiteShiftGridScale topScale shift) S
-  by_cases hi : Integrable (fun x ↦ T f x * star (g x))
-  · have hnorm : ‖operatorPairing T f g‖ ≤
-        ∫ x, ‖T f x * star (g x)‖ := by
-      unfold operatorPairing
-      exact norm_integral_le_of_norm_le hi.norm
-        (Filter.Eventually.of_forall fun x ↦ le_rfl)
-    have hof : ENNReal.ofReal ‖operatorPairing T f g‖ ≤
-        ∫⁻ x, ‖T f x * star (g x)‖ₑ := by
-      exact (ENNReal.ofReal_le_ofReal hnorm).trans_eq
-        (ofReal_integral_norm_eq_lintegral_enorm hi)
-    refine hof.trans (le_trans ?_ hpair)
-    apply lintegral_mono
-    intro x
-    simp only [T, localizedTailMaximalTestOperator, norm_mul, norm_star,
-      ← ofReal_norm]
-    rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg ENNReal.toReal_nonneg]
-    rw [ENNReal.ofReal_mul ENNReal.toReal_nonneg]
-    exact mul_le_mul' ENNReal.ofReal_toReal_le le_rfl
-  · have hzero : operatorPairing T f g = 0 := by
-      unfold operatorPairing
-      exact integral_undef hi
-    rw [hzero, norm_zero, ENNReal.ofReal_zero]
-    exact bot_le
+  exact (operatorPairing_localizedTailMaximalTestOperator_le ell₀
+    (finiteShiftGridScale topScale shift) S f g).trans hpair
 
 
 end

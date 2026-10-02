@@ -18,7 +18,8 @@ public import LeanPool.QuadraticCarleson.QuadraticCarleson.Bohr
 The endpoint paper [arXiv:2609.04101v1](https://arxiv.org/abs/2609.04101v1),
 in the proof of Corollary 3, cites reference [7], Theorem 1.1 of Ben Krause
 and Michael T. Lacey, *Sparse bounds for maximally truncated oscillatory
-singular integrals*, [arXiv:1701.05249v2](https://arxiv.org/abs/1701.05249v2).
+singular integrals*, in its journal numbering. The same result is Theorem 1.3
+in [arXiv:1701.05249v2](https://arxiv.org/abs/1701.05249v2).
 That theorem bounds the sparse `(1,r)` norm of each fixed polynomial-phase
 maximal truncation uniformly over coefficients, for bounded degree and
 `1 < r < 2`.

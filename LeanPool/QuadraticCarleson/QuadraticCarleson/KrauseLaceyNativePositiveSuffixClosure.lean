@@ -463,6 +463,34 @@ noncomputable def localizedTailMaximalTestOperator
     (ell₀ : ℤ) (scale : RealInterval → ℤ) (S : Finset RealInterval) : TestOperator :=
   fun f x ↦ ((localizedTailMaximal ell₀ scale S f x).toReal : ℂ)
 
+/-- The operator pairing is dominated by the nonnegative maximal lintegral,
+even when its Bochner integral is undefined. -/
+theorem operatorPairing_localizedTailMaximalTestOperator_le
+    (ell₀ : ℤ) (scale : RealInterval → ℤ) (S : Finset RealInterval) (f g : L0Infinity) :
+    ENNReal.ofReal ‖operatorPairing (localizedTailMaximalTestOperator ell₀ scale S) f g‖ ≤
+      ∫⁻ x, localizedTailMaximal ell₀ scale S f x * ‖g x‖ₑ := by
+  let T := localizedTailMaximalTestOperator ell₀ scale S
+  by_cases hi : Integrable (fun x ↦ T f x * star (g x))
+  · have hnorm : ‖operatorPairing T f g‖ ≤ ∫ x, ‖T f x * star (g x)‖ := by
+      unfold operatorPairing
+      exact norm_integral_le_of_norm_le hi.norm
+        (Filter.Eventually.of_forall fun x ↦ le_rfl)
+    have hof : ENNReal.ofReal ‖operatorPairing T f g‖ ≤
+        ∫⁻ x, ‖T f x * star (g x)‖ₑ :=
+      (ENNReal.ofReal_le_ofReal hnorm).trans_eq (ofReal_integral_norm_eq_lintegral_enorm hi)
+    apply hof.trans
+    apply lintegral_mono
+    intro x
+    simp only [T, localizedTailMaximalTestOperator, norm_mul, norm_star, ← ofReal_norm]
+    rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg ENNReal.toReal_nonneg]
+    rw [ENNReal.ofReal_mul ENNReal.toReal_nonneg]
+    exact mul_le_mul' ENNReal.ofReal_toReal_le le_rfl
+  · have hzero : operatorPairing T f g = 0 := by
+      unfold operatorPairing
+      exact integral_undef hi
+    rw [hzero, norm_zero, ENNReal.ofReal_zero]
+    exact bot_le
+
 /-- The treewise good-part estimate implies a sparse one-p bound for the localized tail
 maximal operator. -/
 theorem hasSparseOnePBound_localizedTailMaximalTestOperator_of_tree
@@ -479,31 +507,8 @@ theorem hasSparseOnePBound_localizedTailMaximalTestOperator_of_tree
   obtain ⟨R, hRsparse, hRsub, hpair⟩ := exists_recursive_sparse_bound
     hlocal hp hp2 ell₀ topScale shift maxDepth q₀ S f g hell hStree
   refine ⟨(↑R : Set RealInterval), hRsparse, ?_⟩
-  let T := localizedTailMaximalTestOperator ell₀
-    (finiteShiftGridScale topScale shift) S
-  by_cases hi : Integrable (fun x ↦ T f x * star (g x))
-  · have hnorm : ‖operatorPairing T f g‖ ≤
-        ∫ x, ‖T f x * star (g x)‖ := by
-      unfold operatorPairing
-      exact norm_integral_le_of_norm_le hi.norm
-        (Filter.Eventually.of_forall fun x ↦ le_rfl)
-    have hof : ENNReal.ofReal ‖operatorPairing T f g‖ ≤
-        ∫⁻ x, ‖T f x * star (g x)‖ₑ := by
-      exact (ENNReal.ofReal_le_ofReal hnorm).trans_eq
-        (ofReal_integral_norm_eq_lintegral_enorm hi)
-    refine hof.trans (le_trans ?_ hpair)
-    apply lintegral_mono
-    intro x
-    simp only [T, localizedTailMaximalTestOperator, norm_mul, norm_star,
-      ← ofReal_norm]
-    rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg ENNReal.toReal_nonneg]
-    rw [ENNReal.ofReal_mul ENNReal.toReal_nonneg]
-    exact mul_le_mul' ENNReal.ofReal_toReal_le le_rfl
-  · have hzero : operatorPairing T f g = 0 := by
-      unfold operatorPairing
-      exact integral_undef hi
-    rw [hzero, norm_zero, ENNReal.ofReal_zero]
-    exact bot_le
+  exact (operatorPairing_localizedTailMaximalTestOperator_le ell₀
+    (finiteShiftGridScale topScale shift) S f g).trans hpair
 
 
 end
