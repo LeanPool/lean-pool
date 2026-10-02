@@ -49,7 +49,7 @@ theorem secantScale_le {d : ℕ} {p q L : ℝ}
 
 /-- A first-order convexity inequality, kept explicit so that no ambient
 Euclidean norm silently replaces the frozen `ell_p` geometry. -/
-def FirstOrderConvex {d : ℕ} (f : Point d → ℝ) (grad : Point d → Point d) : Prop :=
+@[expose] def FirstOrderConvex {d : ℕ} (f : Point d → ℝ) (grad : Point d → Point d) : Prop :=
   ∀ x y, f x + pairing (grad x) (y - x) ≤ f y
 
 /-- The observable anchor test at distance `D`. -/

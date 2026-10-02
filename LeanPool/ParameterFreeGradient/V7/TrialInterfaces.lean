@@ -80,7 +80,7 @@ structure LocalTrial (d : ℕ) where
           trial.runFuel oracle fuel (next obs) (history ++ [obs])
 
 /-- Some finite-fuel execution from the prescribed initial state returns this report. -/
-def LocalTrial.Executes (trial : LocalTrial d) (M D : ℝ) (cached : CachedPair d)
+@[expose] def LocalTrial.Executes (trial : LocalTrial d) (M D : ℝ) (cached : CachedPair d)
     (oracle : PairOracle d) (report : TrialReport d) : Prop :=
   ∃ fuel, trial.runFuel oracle fuel (trial.initial M D cached) [] = some report
 

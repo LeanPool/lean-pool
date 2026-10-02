@@ -122,7 +122,7 @@ norm used by Mathlib for differentiability is immaterial in finite dimension. -/
   sInf ((fun x => lpNorm p (x - x0)) '' MinimizerSet f)
 
 /-- The gradient is Lipschitz from the primal `ℓ_p` norm to the specified dual norm. -/
-def IsLpSmooth {d : ℕ} (p q L : ℝ) (grad : Vec d → Vec d) : Prop :=
+@[expose] def IsLpSmooth {d : ℕ} (p q L : ℝ) (grad : Vec d → Vec d) : Prop :=
   ∀ x y, lpNorm q (grad x - grad y) ≤ L * lpNorm p (x - y)
 
 /-- Exact nondegenerate secant initialization and its observable scale. -/

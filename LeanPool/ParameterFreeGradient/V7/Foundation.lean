@@ -57,7 +57,7 @@ structure PairRunResult (d : ℕ) where
   run.trace.length
 
 /-- Every trace entry equals the exact oracle observation at its recorded point. -/
-def TraceExact (oracle : PairOracle d) (trace : List (Observation d)) : Prop :=
+@[expose] def TraceExact (oracle : PairOracle d) (trace : List (Observation d)) : Prop :=
   ∀ obs ∈ trace, obs = oracle.observe obs.point
 
 /-- The point occurs among the recorded oracle queries. -/

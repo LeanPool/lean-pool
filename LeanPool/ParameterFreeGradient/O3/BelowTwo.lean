@@ -134,7 +134,7 @@ The accepted estimate-sequence weight `A_N`.  This recursive definition is
 exactly `A_0 = 0`, `A_1 = 1/M`, and
 `A_(k+1) = A_k/(1-tau)` for `k >= 1`.
 -/
-noncomputable def belowWeight (M tau : ℝ) : ℕ → ℝ
+@[expose] noncomputable def belowWeight (M tau : ℝ) : ℕ → ℝ
   | 0 => 0
   | n + 1 => if n = 0 then 1 / M else belowWeight M tau n / (1 - tau)
 

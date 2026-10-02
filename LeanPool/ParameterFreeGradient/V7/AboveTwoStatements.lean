@@ -31,7 +31,7 @@ namespace V7
 
 /-- The conjugacy, gradient, uniform convexity, and Bregman identities for the above-two
 geometry. -/
-noncomputable def AboveGeometryStatement : Prop :=
+@[expose] noncomputable def AboveGeometryStatement : Prop :=
   ∀ (p : ℝ), 2 < p → ∀ (d : ℕ),
     (∀ s : Point d, FenchelConjugate (aboveH p) s = aboveHstar p s) ∧
     O3.IsCoordinateGradient

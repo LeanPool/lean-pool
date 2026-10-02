@@ -22,7 +22,7 @@ public section
 namespace O3
 
 /-- The cumulative weights in the Euclidean estimate sequence. -/
-noncomputable def euclideanA : ℕ → ℝ
+@[expose] noncomputable def euclideanA : ℕ → ℝ
   | 0 => 0
   | k + 1 => euclideanA k + euclideanWeight (euclideanA k)
 

@@ -100,7 +100,7 @@ theorem ogmgThetaTail_ge (k : ℕ) :
       linarith
 
 /-- The special doubled first coefficient of the OGM-G certificate. -/
-noncomputable def ogmgThetaZero (n : ℕ) : ℝ :=
+@[expose] noncomputable def ogmgThetaZero (n : ℕ) : ℝ :=
   thetaZeroStep (ogmgThetaTail (n - 1))
 
 theorem thetaZeroStep_ge_sqrtTwo_mul {t : ℝ} (_ht : 0 ≤ t) :

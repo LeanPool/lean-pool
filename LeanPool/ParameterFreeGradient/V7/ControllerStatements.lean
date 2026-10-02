@@ -31,12 +31,12 @@ structure AnchorRunData (d : ℕ) where
   trace : List (Observation d)
 
 /-- The normalized signed power vector that attains the dual norm pairing. -/
-noncomputable def normingDirection (q : ℝ) (g : Point d) : Point d :=
+@[expose] noncomputable def normingDirection (q : ℝ) (g : Point d) : Point d :=
   fun i => ((SignType.sign (g i) : ℝ) * |g i| ^ (q - 1)) /
     (lpNorm q g) ^ (q - 1)
 
 /-- The norming direction has unit primal norm and attains the gradient's dual norm. -/
-noncomputable def NormingDirectionStatement : Prop :=
+@[expose] noncomputable def NormingDirectionStatement : Prop :=
   ∀ (p : ℝ), 1 < p → ∀ (d : ℕ) (g : Point d),
     0 < lpNorm (conjugateExponent p) g →
     lpNorm p (normingDirection (conjugateExponent p) g) = 1 ∧

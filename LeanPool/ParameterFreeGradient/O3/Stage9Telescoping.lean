@@ -109,7 +109,7 @@ theorem stage9_pairing_summation_by_parts {d : ℕ}
       ring
 
 /-- The auxiliary sequence from the frozen OGM-G certificate. -/
-noncomputable def stage9P {d : ℕ} (theta : ℕ → ℝ)
+@[expose] noncomputable def stage9P {d : ℕ} (theta : ℕ → ℝ)
     (g : ℕ → Vec d) : ℕ → Vec d
   | 0 => 0
   | k + 1 => (1 - 1 / theta k) • stage9P theta g k +

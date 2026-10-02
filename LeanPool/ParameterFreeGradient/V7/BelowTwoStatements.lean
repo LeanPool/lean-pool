@@ -37,7 +37,7 @@ noncomputable def belowMirrorMap (p : ℝ) (s : Point d) : Point d :=
   F x - F y - pairing (grad y) (x - y)
 
 /-- The real supremum of the affine dual pairings minus the objective. -/
-noncomputable def FenchelConjugate (F : Point d → ℝ) (s : Point d) : ℝ :=
+@[expose] noncomputable def FenchelConjugate (F : Point d → ℝ) (s : Point d) : ℝ :=
   sSup {r : ℝ | ∃ x : Point d, r = pairing s x - F x}
 
 /-- Source carrier for `lem:belowgeometry` (B02). -/
@@ -177,16 +177,17 @@ pairings. -/
         (weightedSum (k + 1) (fun i => alpha (n - i) (n - 1 - k)) D))
 
 /-- The increment potential is unchanged when its argument is negated. -/
-def EvenIncrement (Omega : Point d → ℝ) : Prop := ∀ x, Omega (-x) = Omega x
+@[expose] def EvenIncrement (Omega : Point d → ℝ) : Prop :=
+  ∀ x, Omega (-x) = Omega x
 
 /-- The reverse-indexed gradient and mirror correspondence used in the residual identity. -/
-def BelowResidualMap (n : ℕ) (u : ScalarSeq) (A B C D : VectorSeq d) : Prop :=
+@[expose] def BelowResidualMap (n : ℕ) (u : ScalarSeq) (A B C D : VectorSeq d) : Prop :=
   C 0 = u n • A n ∧
   (∀ i < n, C (n - i) - C (n - i - 1) = u i • (A i - A (i + 1))) ∧
   ∀ i ≤ n, D i = B (n - i)
 
 /-- The primal iterate recurrence driven by coefficient-row differences. -/
-def BelowXRecurrence (n : ℕ) (b : ScalarMatrix)
+@[expose] def BelowXRecurrence (n : ℕ) (b : ScalarMatrix)
     (B X : VectorSeq d) : Prop :=
   X 0 = B 0 ∧ ∀ k < n,
     X (k + 1) = X k - weightedSum (k + 2) (b (k + 1)) B
@@ -210,7 +211,7 @@ def BelowCoefficientAssumptions (n : ℕ) (u dw : ScalarSeq)
   ∀ k < n, (∑ i ∈ Finset.range (k + 2), b (k + 1) i) = 0
 
 /-- Two vector sequences agree through the inclusive horizon `n`. -/
-def SameOnHorizon (n : ℕ) (A B : VectorSeq d) : Prop :=
+@[expose] def SameOnHorizon (n : ℕ) (A B : VectorSeq d) : Prop :=
   ∀ k ≤ n, A k = B k
 
 /-- Source carrier for `lem:below-identity` (B06--B07). -/
