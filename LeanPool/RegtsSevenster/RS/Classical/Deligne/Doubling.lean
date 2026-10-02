@@ -537,6 +537,7 @@ theorem tensorObj_odd [Category.{v} A] [MonoidalCategory A] [Preadditive A]
   rfl
 
 /-- The graded tensor product of morphisms, blockwise. -/
+@[expose]
 def tensorHom [Category.{v} A] [MonoidalCategory A] [Preadditive A]
     [HasBinaryBiproducts A]
     {X₁ Y₁ X₂ Y₂ : Doubled A} (f : X₁ ⟶ Y₁)
@@ -546,6 +547,7 @@ def tensorHom [Category.{v} A] [MonoidalCategory A] [Preadditive A]
     (biprod.map (evenHom f ⊗ₘ oddHom g) (oddHom f ⊗ₘ evenHom g))
 
 /-- Left whiskering of super-objects, blockwise. -/
+@[expose]
 def whiskerLeft [Category.{v} A] [MonoidalCategory A] [Preadditive A]
     [HasBinaryBiproducts A]
     (X : Doubled A) {Y₁ Y₂ : Doubled A} (g : Y₁ ⟶ Y₂) :
@@ -555,6 +557,7 @@ def whiskerLeft [Category.{v} A] [MonoidalCategory A] [Preadditive A]
     (biprod.map (X.even ◁ oddHom g) (X.odd ◁ evenHom g))
 
 /-- Right whiskering of super-objects, blockwise. -/
+@[expose]
 def whiskerRight [Category.{v} A] [MonoidalCategory A] [Preadditive A]
     [HasBinaryBiproducts A]
     {X₁ X₂ : Doubled A} (f : X₁ ⟶ X₂) (Y : Doubled A) :
@@ -740,6 +743,7 @@ def rightUnitorCompOdd [Category.{v} A] [MonoidalCategory A] [Preadditive A]
 
 /-- The monoidal skeleton of the doubling: graded tensor product,
 unit `(𝟙_ A, 0)`, blockwise structural isomorphisms. -/
+@[expose]
 instance instMonoidalCategoryStruct
     [Category.{v} A] [MonoidalCategory A] [Preadditive A]
     [MonoidalPreadditive A] [HasBinaryBiproducts A] [HasZeroObject A] :
@@ -1281,6 +1285,7 @@ theorem isZero_biprod [Category.{v} A] [Preadditive A] [HasBinaryBiproducts A]
       biprod.hom_ext _ _ (hM.eq_of_tgt _ _) (hN.eq_of_tgt _ _)⟩⟩
 
 /-- The even embedding `X ↦ (X, 0)`. -/
+@[expose]
 abbrev evenEmbed
     [Category.{v} A] [Preadditive A] [HasZeroObject A] : A ⥤ Doubled A where
   obj X := ⟨X, 0⟩
@@ -1423,6 +1428,7 @@ end OddUnit
 section Biproducts
 
 /-- The componentwise binary bicone on a pair of super-objects. -/
+@[expose]
 def binaryBicone [Category.{v} A] [Preadditive A] [HasBinaryBiproducts A]
     (X Y : Doubled A) : BinaryBicone X Y where
   pt := ⟨X.even ⊞ Y.even, X.odd ⊞ Y.odd⟩

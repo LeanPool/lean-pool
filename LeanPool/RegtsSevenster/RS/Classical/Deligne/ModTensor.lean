@@ -138,8 +138,7 @@ lemma mul_act_tensorRight
 
 /-- A left module tensored with an object on the right: the action
 of `A` on `X ⊗ V` through the left factor. -/
-@[expose]
-@[implicit_reducible]
+@[expose, implicit_reducible]
 def tensorRightModObj [Category.{v} D] [MonoidalCategory D] (A : D) [MonObj A]
     (X : D) [ModObj A X] (V : D) :
     ModObj A (X ⊗ V) where
