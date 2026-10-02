@@ -189,6 +189,7 @@ public import LeanPool.PDL.Imports
 public import LeanPool.PFR.Imports
 public import LeanPool.PLAcceleratedNesterovLean.Imports
 public import LeanPool.ParallelPostulate.Imports
+public import LeanPool.ParameterFreeGradient.Imports
 public import LeanPool.PartialCombinatoryAlgebras.Imports
 public import LeanPool.PartialRegularity.Imports
 public import LeanPool.PebblingLean.Imports
