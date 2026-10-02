@@ -85,32 +85,50 @@ theorem exists_total [DecidableRel G.Adj] (hcard : G.maxDegree < Fintype.card C)
 
 /-! ### From total colourings to colourings of the line graph -/
 
-/-- The colour of an edge, as a function on `Sym2 V`. -/
-def edgeColor (c : PEC G C) [Inhabited C] (e : Sym2 V) : C :=
-  Sym2.lift ⟨fun u v => (c.col u v).getD default, fun u v => by simp only [c.col_symm u v]⟩ e
+/-- The optional colour on an unordered pair. -/
+def edgeOption (c : PEC G C) (e : Sym2 V) : Option C :=
+  Sym2.lift ⟨c.col, c.col_symm⟩ e
 
 omit [Fintype V] [DecidableEq V] [Fintype C] [DecidableEq C] in
-@[simp] lemma edgeColor_mk (c : PEC G C) [Inhabited C] (u v : V) :
-    c.edgeColor s(u, v) = (c.col u v).getD default := rfl
+@[simp] lemma edgeOption_mk (c : PEC G C) (u v : V) :
+    c.edgeOption s(u, v) = c.col u v := rfl
+
+omit [Fintype V] [DecidableEq V] [Fintype C] [DecidableEq C] in
+/-- Totality supplies a colour on every actual edge, even for an empty palette. -/
+lemma edgeOption_ne_none (c : PEC G C)
+    (htot : ∀ u v, G.Adj u v → c.col u v ≠ none) (e : G.edgeSet) :
+    c.edgeOption e.1 ≠ none := by
+  obtain ⟨e, he⟩ := e
+  induction e using Sym2.inductionOn with
+  | hf u v =>
+    rw [SimpleGraph.mem_edgeSet] at he
+    exact htot u v he
+
+/-- The colour of an actual edge, extracted from totality without a default colour. -/
+noncomputable def edgeColor (c : PEC G C)
+    (htot : ∀ u v, G.Adj u v → c.col u v ≠ none) (e : G.edgeSet) : C :=
+  Classical.choose (Option.ne_none_iff_exists'.mp (c.edgeOption_ne_none htot e))
+
+omit [Fintype V] [DecidableEq V] [Fintype C] [DecidableEq C] in
+lemma edgeOption_eq_some_edgeColor (c : PEC G C)
+    (htot : ∀ u v, G.Adj u v → c.col u v ≠ none) (e : G.edgeSet) :
+    c.edgeOption e.1 = some (c.edgeColor htot e) :=
+  Classical.choose_spec (Option.ne_none_iff_exists'.mp (c.edgeOption_ne_none htot e))
 
 /-- A total proper partial colouring gives a colouring of the line graph. -/
-noncomputable def lineGraphColoring [Inhabited C] (c : PEC G C)
+noncomputable def lineGraphColoring (c : PEC G C)
     (htot : ∀ u v, G.Adj u v → c.col u v ≠ none) : (G.lineGraph).Coloring C :=
-  Coloring.mk (fun e => c.edgeColor e.1) (by
+  Coloring.mk (c.edgeColor htot) (by
     rintro ⟨e₁, he₁⟩ ⟨e₂, he₂⟩ hadj
     rw [lineGraph_adj_iff_exists] at hadj
     obtain ⟨hne, v, hv₁, hv₂⟩ := hadj
     obtain ⟨u, rfl⟩ := Sym2.mem_iff_exists.1 hv₁
     obtain ⟨w, rfl⟩ := Sym2.mem_iff_exists.1 hv₂
-    have huv : G.Adj v u := by rw [SimpleGraph.mem_edgeSet] at he₁; exact he₁
-    have hvw : G.Adj v w := by rw [SimpleGraph.mem_edgeSet] at he₂; exact he₂
-    simp only [edgeColor_mk]
     intro hcol
-    obtain ⟨γ, hγ⟩ : ∃ γ, c.col v u = some γ := Option.ne_none_iff_exists'.1 (htot v u huv)
-    obtain ⟨δ, hδ⟩ : ∃ δ, c.col v w = some δ := Option.ne_none_iff_exists'.1 (htot v w hvw)
-    rw [hγ, hδ] at hcol
-    simp only [Option.getD_some] at hcol
-    subst hcol
+    have hγ := c.edgeOption_eq_some_edgeColor htot ⟨s(v, u), he₁⟩
+    have hδ := c.edgeOption_eq_some_edgeColor htot ⟨s(v, w), he₂⟩
+    simp only [edgeOption_mk] at hγ hδ
+    rw [← hcol] at hδ
     have huw : u = w := c.col_proper hγ hδ
     subst huw
     exact hne (Subtype.ext rfl))

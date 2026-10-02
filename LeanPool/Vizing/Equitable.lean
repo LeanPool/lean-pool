@@ -381,8 +381,46 @@ theorem anchor_liftComponentEdge_mem_support
   exact hval ▸ v.2
 
 omit [DecidableEq V] [Fintype Color] in
-/-- The local zero-class and the original `a`-class in the component have
-the same cardinality. -/
+/-- Restricting a component preserves the size of either selected colour class. -/
+theorem card_componentClass
+    (colour : Sym2 V → Color) {a b : Color} (hab : a ≠ b)
+    (c : (twoColourGraph (G := G) colour a b).ConnectedComponent)
+    [Fintype c] [DecidableRel c.toSimpleGraph.Adj]
+    (x : Color) (hx : x = a ∨ x = b) :
+    (componentClass (G := G) colour a b c x).card =
+      (colourClass (SimpleGraph.edgeFinset c.toSimpleGraph)
+        (componentColour (G := G) colour hab c) (twoColourCode a x)).card := by
+  classical
+  have selected (e : Sym2 V) (h : colour e = x) :
+      colour e = a ∨ colour e = b := hx.imp (h.trans ·) (h.trans ·)
+  apply Finset.card_bij
+    (fun e he =>
+      let h := (mem_componentClass colour a b c x e).mp he
+      restrictComponentEdge colour a b c e h.1 (selected e h.2.1) h.2.2)
+  · intro e he
+    have h := (mem_componentClass colour a b c x e).mp he
+    apply mem_colourClass.mpr
+    refine ⟨restrictComponentEdge_mem_graphEdges colour a b c e h.1
+      (selected e h.2.1) h.2.2, ?_⟩
+    simp [componentColour, h.2.1]
+  · intro e he f hf hef
+    simpa using congrArg (liftComponentEdge (G := G) colour a b c) hef
+  · intro f hf
+    have hfmem := mem_colourClass.mp hf
+    have hpair := liftComponentEdge_has_selected_colour colour a b c hfmem.1
+    have hfx : colour (liftComponentEdge (G := G) colour a b c f) = x :=
+      twoColourCode_injective_on_pair hab hpair hx hfmem.2
+    let e := liftComponentEdge (G := G) colour a b c f
+    have heG := liftComponentEdge_mem_graphEdges colour a b c hfmem.1
+    have heComp : (twoColourGraph (G := G) colour a b).connectedComponentMk
+        (edgeAnchor e) = c := anchor_liftComponentEdge_mem_support colour a b c f
+    refine ⟨e, (mem_componentClass colour a b c x e).mpr
+      ⟨heG, hfx, heComp⟩, ?_⟩
+    apply liftComponentEdge_injective colour a b c
+    simp [e]
+
+omit [DecidableEq V] [Fintype Color] in
+/-- The local zero-class and the original `a`-class have the same cardinality. -/
 theorem card_componentClass_left
     (colour : Sym2 V → Color) {a b : Color} (hab : a ≠ b)
     (c : (twoColourGraph (G := G) colour a b).ConnectedComponent)
@@ -390,39 +428,10 @@ theorem card_componentClass_left
     (componentClass (G := G) colour a b c a).card =
       (colourClass (SimpleGraph.edgeFinset c.toSimpleGraph)
         (componentColour (G := G) colour hab c) 0).card := by
-  classical
-  apply Finset.card_bij
-    (fun e he =>
-      let h := (mem_componentClass colour a b c a e).mp he
-      restrictComponentEdge colour a b c e h.1 (Or.inl h.2.1) h.2.2)
-  · intro e he
-    have h := (mem_componentClass colour a b c a e).mp he
-    apply mem_colourClass.mpr
-    refine ⟨restrictComponentEdge_mem_graphEdges colour a b c e h.1
-      (Or.inl h.2.1) h.2.2, ?_⟩
-    simp [componentColour, twoColourCode, h.2.1]
-  · intro e he f hf hef
-    simpa using congrArg (liftComponentEdge (G := G) colour a b c) hef
-  · intro f hf
-    have hfmem := (mem_colourClass.mp hf)
-    have hpair := liftComponentEdge_has_selected_colour colour a b c hfmem.1
-    have hfa : colour (liftComponentEdge (G := G) colour a b c f) = a := by
-      rcases hpair with ha | hb
-      · exact ha
-      · have hcode := hfmem.2
-        simp [componentColour, twoColourCode, hb, hab.symm] at hcode
-    let e := liftComponentEdge (G := G) colour a b c f
-    have heG := liftComponentEdge_mem_graphEdges colour a b c hfmem.1
-    have heComp : (twoColourGraph (G := G) colour a b).connectedComponentMk
-        (edgeAnchor e) = c := anchor_liftComponentEdge_mem_support colour a b c f
-    refine ⟨e, (mem_componentClass colour a b c a e).mpr
-      ⟨heG, hfa, heComp⟩, ?_⟩
-    apply liftComponentEdge_injective colour a b c
-    simp [e]
+  simpa [twoColourCode] using card_componentClass colour hab c a (Or.inl rfl)
 
 omit [DecidableEq V] [Fintype Color] in
-/-- The local one-class and the original `b`-class in the component have
-the same cardinality. -/
+/-- The local one-class and the original `b`-class have the same cardinality. -/
 theorem card_componentClass_right
     (colour : Sym2 V → Color) {a b : Color} (hab : a ≠ b)
     (c : (twoColourGraph (G := G) colour a b).ConnectedComponent)
@@ -430,35 +439,8 @@ theorem card_componentClass_right
     (componentClass (G := G) colour a b c b).card =
       (colourClass (SimpleGraph.edgeFinset c.toSimpleGraph)
         (componentColour (G := G) colour hab c) 1).card := by
-  classical
-  apply Finset.card_bij
-    (fun e he =>
-      let h := (mem_componentClass colour a b c b e).mp he
-      restrictComponentEdge colour a b c e h.1 (Or.inr h.2.1) h.2.2)
-  · intro e he
-    have h := (mem_componentClass colour a b c b e).mp he
-    apply mem_colourClass.mpr
-    refine ⟨restrictComponentEdge_mem_graphEdges colour a b c e h.1
-      (Or.inr h.2.1) h.2.2, ?_⟩
-    simp [componentColour, twoColourCode, h.2.1, hab.symm]
-  · intro e he f hf hef
-    simpa using congrArg (liftComponentEdge (G := G) colour a b c) hef
-  · intro f hf
-    have hfmem := (mem_colourClass.mp hf)
-    have hpair := liftComponentEdge_has_selected_colour colour a b c hfmem.1
-    have hfb : colour (liftComponentEdge (G := G) colour a b c f) = b := by
-      rcases hpair with ha | hb
-      · have hcode := hfmem.2
-        simp [componentColour, twoColourCode, ha] at hcode
-      · exact hb
-    let e := liftComponentEdge (G := G) colour a b c f
-    have heG := liftComponentEdge_mem_graphEdges colour a b c hfmem.1
-    have heComp : (twoColourGraph (G := G) colour a b).connectedComponentMk
-        (edgeAnchor e) = c := anchor_liftComponentEdge_mem_support colour a b c f
-    refine ⟨e, (mem_componentClass colour a b c b e).mpr
-      ⟨heG, hfb, heComp⟩, ?_⟩
-    apply liftComponentEdge_injective colour a b c
-    simp [e]
+  simpa [twoColourCode, hab.symm] using
+    card_componentClass colour hab c b (Or.inr rfl)
 
 omit [Fintype Color] in
 theorem componentClass_left_le_right_add_one
@@ -624,6 +606,34 @@ theorem componentClass_subset_colourClass
   intro e he
   exact (Finset.mem_filter.mp he).1
 
+omit [Fintype Color] in
+/-- Exchanging two disjoint colour classes gives the same cardinality accounting
+for either direction of a component swap. -/
+theorem card_colourClass_exchange_add
+    (colour : Sym2 V → Color) (a b : Color)
+    (c : (twoColourGraph (G := G) colour a b).ConnectedComponent)
+    {x y : Color} (hxy : x ≠ y) :
+    ((colourClass (SimpleGraph.edgeFinset G) colour x \
+        componentClass (G := G) colour a b c x) ∪
+      componentClass (G := G) colour a b c y).card +
+        (componentClass (G := G) colour a b c x).card =
+      (colourClass (SimpleGraph.edgeFinset G) colour x).card +
+        (componentClass (G := G) colour a b c y).card := by
+  classical
+  have hdisjoint : Disjoint
+      (colourClass (SimpleGraph.edgeFinset G) colour x \
+        componentClass (G := G) colour a b c x)
+      (componentClass (G := G) colour a b c y) := by
+    rw [Finset.disjoint_left]
+    intro e heX heY
+    have hex := (mem_colourClass.mp (Finset.mem_sdiff.mp heX).1).2
+    have hey := (mem_componentClass colour a b c y e).mp heY |>.2.1
+    exact hxy (hex.symm.trans hey)
+  rw [Finset.card_union_of_disjoint hdisjoint,
+    Finset.card_sdiff_of_subset (componentClass_subset_colourClass colour a b c x)]
+  have hcard := Finset.card_le_card (componentClass_subset_colourClass colour a b c x)
+  omega
+
 omit [DecidableEq V] [Fintype Color] in
 theorem card_swapComponent_left_add
     (colour : Sym2 V → Color) {a b : Color} (hab : a ≠ b)
@@ -635,21 +645,7 @@ theorem card_swapComponent_left_add
         (componentClass (G := G) colour a b c b).card := by
   classical
   rw [colourClass_swapComponent_left colour hab c]
-  have hdisjoint : Disjoint
-      (colourClass (SimpleGraph.edgeFinset G) colour a \
-        componentClass (G := G) colour a b c a)
-      (componentClass (G := G) colour a b c b) := by
-    rw [Finset.disjoint_left]
-    intro e heA heB
-    have hea := (mem_colourClass.mp (Finset.mem_sdiff.mp heA).1).2
-    have heb := (mem_componentClass colour a b c b e).mp heB |>.2.1
-    exact hab (hea.symm.trans heb)
-  rw [Finset.card_union_of_disjoint hdisjoint,
-    Finset.card_sdiff_of_subset
-      (componentClass_subset_colourClass colour a b c a)]
-  have hcard := Finset.card_le_card
-    (componentClass_subset_colourClass colour a b c a)
-  omega
+  exact card_colourClass_exchange_add colour a b c hab
 
 omit [DecidableEq V] [Fintype Color] in
 theorem card_swapComponent_right_add
@@ -662,21 +658,7 @@ theorem card_swapComponent_right_add
         (componentClass (G := G) colour a b c a).card := by
   classical
   rw [colourClass_swapComponent_right colour hab c]
-  have hdisjoint : Disjoint
-      (colourClass (SimpleGraph.edgeFinset G) colour b \
-        componentClass (G := G) colour a b c b)
-      (componentClass (G := G) colour a b c a) := by
-    rw [Finset.disjoint_left]
-    intro e heB heA
-    have heb := (mem_colourClass.mp (Finset.mem_sdiff.mp heB).1).2
-    have hea := (mem_componentClass colour a b c a e).mp heA |>.2.1
-    exact hab (hea.symm.trans heb)
-  rw [Finset.card_union_of_disjoint hdisjoint,
-    Finset.card_sdiff_of_subset
-      (componentClass_subset_colourClass colour a b c b)]
-  have hcard := Finset.card_le_card
-    (componentClass_subset_colourClass colour a b c b)
-  omega
+  exact card_colourClass_exchange_add colour a b c hab.symm
 
 omit [DecidableEq V] [Fintype Color] in
 theorem colourClass_swapComponent_of_ne
