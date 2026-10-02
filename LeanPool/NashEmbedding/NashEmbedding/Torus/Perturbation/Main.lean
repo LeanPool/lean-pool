@@ -109,7 +109,7 @@ attribute [irreducible] bLevel
 /-! ## The momentum-side data -/
 
 /-- The Günther data of `u₀` and `h`: coefficients of the dual frame and of `h`. -/
-def bData (n : ℕ) (u₀ : (Fin n → ℝ) → (Fin N → ℝ))
+@[expose] def bData (n : ℕ) (u₀ : (Fin n → ℝ) → (Fin N → ℝ))
     (h : (Fin n → ℝ) → Matrix (Fin n) (Fin n) ℝ) : GuntherData n N where
   a i := vcoeff n (dualA u₀ i)
   b p q := vcoeff n (dualB u₀ p q)
