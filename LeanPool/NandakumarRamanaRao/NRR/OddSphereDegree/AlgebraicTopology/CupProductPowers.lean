@@ -81,6 +81,7 @@ variable {A : ℕ → Type*}
 
 /-- The `n`-th cup power `xⁿ ∈ A n` of a degree-one element `x ∈ A 1`, by
 `x⁰ = one` and `xⁿ⁺¹ = xⁿ ⌣ x`. -/
+@[expose]
 def pow (G : GradedCupPullback A) (x : A 1) : (n : ℕ) → A n
   | 0 => G.one
   | (n + 1) => G.cup (G.pow x n) x

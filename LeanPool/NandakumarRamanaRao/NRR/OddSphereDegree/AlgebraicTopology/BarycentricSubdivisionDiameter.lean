@@ -193,6 +193,7 @@ theorem stepVertices_diam_le (n : ℕ) (V : Fin (n + 1) → E)
   exact dist_step_step_le n V π a b
 
 /-- Iterate barycentric subdivision of a vertex family along a permutation word. -/
+@[expose]
 noncomputable def iterVertices (n : ℕ) : (N : ℕ) → (Fin N → Equiv.Perm (Fin (n + 1))) →
     (Fin (n + 1) → E) → (Fin (n + 1) → E)
   | 0, _, V => V

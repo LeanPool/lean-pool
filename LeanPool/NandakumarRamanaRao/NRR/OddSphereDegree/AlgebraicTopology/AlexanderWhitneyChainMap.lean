@@ -61,6 +61,7 @@ namespace SphereOddDegree
 /-- The free `R`-module simplicial object whose alternating face map complex is
 the singular chain complex `C_•(Z; R)`. Its value in degree `n` is the coproduct
 `∐_{σ : n-simplex} R`. -/
+@[expose]
 noncomputable def singularChainSimplicialModule (R : Type) [CommRing R] (Z : TopCat.{0}) :
     SimplicialObject (ModuleCat.{0} R) :=
   ((Limits.sigmaConst ⋙ SimplicialObject.whiskering (Type 0) (ModuleCat.{0} R)).obj

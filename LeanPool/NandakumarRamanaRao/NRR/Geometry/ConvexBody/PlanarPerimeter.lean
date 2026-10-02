@@ -53,6 +53,7 @@ open Real MeasureTheory ConvexBody
 /-- The **planar perimeter** of a convex body `K`, defined by Cauchy's width formula as the
 normalized interval integral of the width function along the angle parameterization
 `circleVec` over `[0, 2π]`. -/
+@[expose]
 noncomputable def planarPerimeter (K : ConvexBody Plane) : ℝ :=
   (1 / 2 : ℝ) * ∫ θ in 0..(2 * Real.pi),
     widthFunction K (circleVec θ)

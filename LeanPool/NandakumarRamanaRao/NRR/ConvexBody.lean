@@ -59,6 +59,7 @@ namespace NRR.Geometry.ConvexBody
 /-- The **forgetful map** from a solid geometry convex body to Mathlib's root `ConvexBody`,
 dropping the solidity (nonempty-interior) witness and keeping only compactness, convexity, and
 nonemptiness. This names the map inducing the Hausdorff-metric topology below. -/
+@[expose]
 def toMathlib
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (K : NRR.Geometry.ConvexBody E) :
@@ -137,6 +138,7 @@ structure SolidConvexBody where
 namespace SolidConvexBody
 
 /-- Bundle any geometry convex body as a `SolidConvexBody`: geometry bodies are always solid. -/
+@[expose]
 def ofConvexBody (K : Geometry.ConvexBody Geometry.Plane) : SolidConvexBody :=
   ⟨K, K.isSolid⟩
 

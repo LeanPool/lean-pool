@@ -41,6 +41,7 @@ namespace SphereOddDegree
 /--
 The antipodal relation on the sphere: `x ~ y` iff `x = y` or `x = -y`.
 -/
+@[expose]
 def AntipodalRel {n : ℕ} (x y : Sphere n) : Prop :=
   x = y ∨ x = -y
 

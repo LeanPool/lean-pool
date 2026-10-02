@@ -106,6 +106,7 @@ theorem affineSubdivMapFun_sum_eq_one (n : ℕ) (π : Equiv.Perm (Fin (n + 1)))
 
 /-- The affine self-map of `Δ^n` associated to a permutation `π`; this is the
 geometric simplex appearing as one signed summand in barycentric subdivision. -/
+@[expose]
 noncomputable def affineSubdivMap (n : ℕ) (π : Equiv.Perm (Fin (n + 1))) :
     Delta n → Delta n :=
   fun x => ⟨affineSubdivMapFun n π x,
