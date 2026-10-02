@@ -70,13 +70,15 @@ abbrev Seq (n : ℕ) := (Fin n → ℤ) → ℂ
 @[expose] def vpartial (i : Fin n) (v : VecSeq n N) : VecSeq n N := fun α => partialCoeff i (v α)
 
 /-- Componentwise `L = ∑ₖ ∂ₖ² = -Δ`, i.e. the multiplier `-|m|²`. -/
-def vlap (v : VecSeq n N) : VecSeq n N := fun α m => -(laplacianCoeff (v α) m)
+@[expose] def vlap (v : VecSeq n N) : VecSeq n N :=
+  fun α m => -(laplacianCoeff (v α) m)
 
 /-- Componentwise `R = (I - L)⁻¹ = (I + Δ)⁻¹`. -/
 def vresolvent (v : VecSeq n N) : VecSeq n N := fun α => resolventCoeff (v α)
 
 /-- The dot product of two vector sequences: `∑ α, (v α) ⊛ (w α)`. -/
-def dotConv (v w : VecSeq n N) : Seq n := fun m => ∑ α, seqConv (v α) (w α) m
+@[expose] def dotConv (v w : VecSeq n N) : Seq n :=
+  fun m => ∑ α, seqConv (v α) (w α) m
 
 /-- Multiplication of a vector sequence by a scalar sequence: `(f ⊛ a α)_α`. -/
 @[expose] def smulSeq (f : Seq n) (a : VecSeq n N) : VecSeq n N := fun α => seqConv f (a α)

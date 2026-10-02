@@ -56,7 +56,7 @@ lemma pderiv_eq_partialDeriv {N : ℕ} (i : Fin n) (u : (Fin n → ℝ) → (Fin
     pderiv i u = partialDeriv i u := rfl
 
 /-- The sum-of-squares operator `L f = ∑ₖ ∂ₖ∂ₖ f` (so `Δ = -L`). -/
-def sumSqDeriv {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
+@[expose] def sumSqDeriv {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
     (f : (Fin n → ℝ) → V) : (Fin n → ℝ) → V :=
   fun x => ∑ k : Fin n, pderiv k (pderiv k f) x
 
