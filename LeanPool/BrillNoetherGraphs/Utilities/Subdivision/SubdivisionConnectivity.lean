@@ -46,6 +46,7 @@ def Connected (core : ExplicitPotential.Core n p) : Prop :=
         (core.head edge ∈ S ∧ core.tail edge ∉ S)
 
 /-- Exact finite Boolean checker for core connectedness. -/
+@[expose]
 def connectedCheck (core : ExplicitPotential.Core n p) : Bool :=
   AffineCover.allFinset Finset.univ fun S : Finset (Fin n) =>
     decide ((∃ v w : Fin n, v ∈ S ∧ w ∉ S) →

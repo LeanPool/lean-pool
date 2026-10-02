@@ -56,6 +56,7 @@ variable {n p : ℕ}
 
 /-- The divisor which places `weight vertex` chips at each embedded core
 vertex and no chips at subdivision-interior vertices. -/
+@[expose]
 def coreDivisor (spec : SubdivisionGraph.Spec n p) (weight : Fin n → ℤ) :
     CFDiv spec.graph
   | Sum.inl vertex => weight vertex

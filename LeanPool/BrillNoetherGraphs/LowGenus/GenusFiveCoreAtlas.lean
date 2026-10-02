@@ -46,6 +46,7 @@ def Trivalent (core : Core) : Prop :=
   ∀ vertex : Fin 8, incidenceDegree core vertex = 3
 
 /-- Every edge slot has two distinct endpoints. -/
+@[expose]
 def Loopless (core : Core) : Prop :=
   ∀ edge : Fin 12, core.tail edge ≠ core.head edge
 

@@ -79,6 +79,7 @@ theorem vertex_degree_vertexWedge_inr
   linarith
 
 /-- The sum of the two factor canonical divisors on their vertex wedge. -/
+@[expose]
 def wedgeCanonicalSum
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V) :
     CFDiv (vertexWedge G H x y) :=

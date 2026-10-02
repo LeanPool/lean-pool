@@ -112,6 +112,7 @@ def AllSubmodular (M : TwiceMarked) : Prop :=
 definition (Definition 1.10), *not* the torsion order of `def-TwMkGraph`.
 
 A positive `k` kills the degree-zero class of the marked-point difference. -/
+@[expose]
 def TorsionWitness (M : TwiceMarked) (k : ℕ) : Prop :=
   0 < k ∧ linearEquiv M.graph
     ((k : ℤ) • (oneChip M.u - oneChip M.v)) 0
@@ -119,6 +120,7 @@ def TorsionWitness (M : TwiceMarked) (k : ℕ) : Prop :=
 /-- Paper source: `def-TwMkGraph` (Definition 2.6), the torsion order.
 
 The torsion order is the least positive `k` killing the marked difference. -/
+@[expose]
 def IsTorsionOrder (M : TwiceMarked) (k : ℕ) : Prop :=
   TorsionWitness M k ∧ ∀ m : ℕ, TorsionWitness M m → k ≤ m
 
@@ -139,6 +141,7 @@ def IsTransmissionPermutation (M : TwiceMarked) (D : CFDiv M.graph)
 
 /-- Paper source: `def-EA` (Definition 2.10), membership in the extended
 affine symmetric group `\widetilde{Sigma}_k`. -/
+@[expose]
 def IsKAffine (k : ℕ) (τ : ℤ → ℤ) : Prop :=
   ∀ n : ℤ, τ (n + k) = τ n + k
 
@@ -206,6 +209,7 @@ def thetaExceptionalPositions {g : ℕ} (B : Banana g) (α : Fin (g + 1))
 
 Two interior marks on distinct theta strands divide their strands in the
 same rational ratio.  Cross multiplication avoids a division convention. -/
+@[expose]
 def EvenlyMarkedTheta (B : Banana 2) (α β : Fin 3)
     (i : B.PathPosition α) (j : B.PathPosition β) : Prop :=
   α ≠ β ∧ 0 < i.val ∧ i.val < B.length α ∧ 0 < j.val ∧ j.val < B.length β ∧

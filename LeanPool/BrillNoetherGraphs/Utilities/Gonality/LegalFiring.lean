@@ -110,6 +110,7 @@ theorem effective_add_prin_truncate {D : CFDiv G} {x : firingScript G}
 /-! ## Iterated firing -/
 
 /-- `fireChain G D U i` is the result of firing `U 0, U 1, …, U (i-1)` in turn. -/
+@[expose]
 def fireChain (G : CFGraph) (D : CFDiv G) (U : ℕ → Finset G.V) : ℕ → CFDiv G
   | 0 => D
   | (i + 1) => setFiring G (fireChain G D U i) (U i)

@@ -298,6 +298,7 @@ def displacement (x y : H.V) (f : firingScript H) : ℤ := f x - f y
 
 /-- `t` is a displacement of the `m`-twist: some script puts the `m`-twist into
 effective position with displacement `t`. -/
+@[expose]
 def IsDisplacement (C : CFDiv H) (x y : H.V) (m t : ℤ) : Prop :=
   ∃ f : firingScript H,
     effective (seamTwist C x y m + prin H f) ∧ displacement x y f = t

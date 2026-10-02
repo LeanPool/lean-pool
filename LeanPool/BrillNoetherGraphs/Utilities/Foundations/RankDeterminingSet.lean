@@ -478,6 +478,7 @@ variable {n p : ℕ}
 
 /-- The core vertices of a subdivision, as a finite set of subdivision
 vertices. -/
+@[expose]
 def Spec.coreVertices (spec : Spec n p) : Finset spec.graph.V :=
   (Finset.univ : Finset (Fin n)).image spec.coreVertex
 

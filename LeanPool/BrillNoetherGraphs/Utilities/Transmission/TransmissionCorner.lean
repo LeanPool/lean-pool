@@ -150,6 +150,7 @@ def cornerBound (c : Corner) (a b : ℤ) : ℤ :=
 /-- A corner list dominates `τ` when every transmission threshold is met by one
 of three things: the trivial bound `rank ≥ -1`, the Riemann line, or transport
 from one of the corners. -/
+@[expose]
 def CornersDominate (τ : AspPerm) (C : List Corner) : Prop :=
   ∀ a b : ℤ,
     τ.s (a + 1) b - 1 < 0 ∨

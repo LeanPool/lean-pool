@@ -77,6 +77,7 @@ def postcomposeLaplacianEquiv {H' : CFGraph.{w}}
 /-- The exact quotient condition.  It is imposed only for distinct target
 vertices: source edges internal to one fibre are precisely the edges which
 are contracted, so no equation is required on the diagonal. -/
+@[expose]
 def Valid (c : GraphContractionCertificate G H) : Prop :=
   Function.Surjective c.vertexMap ∧
   ∀ a b : H.V, a ≠ b →

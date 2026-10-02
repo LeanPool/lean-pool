@@ -53,18 +53,22 @@ theorem right_nonempty : cut.right.Nonempty :=
   ⟨cut.glue, cut.glue_mem_right⟩
 
 /-- The induced left factor. -/
+@[expose]
 noncomputable def leftGraph : CFGraph :=
   inducedSubgraph K cut.left cut.left_nonempty
 
 /-- The induced right factor. -/
+@[expose]
 noncomputable def rightGraph : CFGraph :=
   inducedSubgraph K cut.right cut.right_nonempty
 
 /-- The common vertex as a vertex of the left induced factor. -/
+@[expose]
 noncomputable def leftGlue : cut.leftGraph.V :=
   ⟨cut.glue, cut.glue_mem_left⟩
 
 /-- The common vertex as a vertex of the right induced factor. -/
+@[expose]
 noncomputable def rightGlue : cut.rightGraph.V :=
   ⟨cut.glue, cut.glue_mem_right⟩
 
