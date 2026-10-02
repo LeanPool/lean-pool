@@ -25,7 +25,7 @@ variable {α : Type*} {M : Matroid α}
 namespace TuttePath
 
 /-- PT-01: a one-vertex path has no edge conditions. -/
-def singleton (H : Set α) (hH : IsHyperplane M H) : TuttePath M where
+@[expose] def singleton (H : Set α) (hH : IsHyperplane M H) : TuttePath M where
   length := 0
   vertex := fun _ => H
   isHyperplane := fun _ => hH
