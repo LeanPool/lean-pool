@@ -99,6 +99,7 @@ noncomputable def primalTrace (p eta : ℝ) (n : ℕ) (oracle : PairOracle d) :
   (List.range (n + 1)).map fun k => oracle.observe (primalState p eta n oracle k).x
 
 /-- The concrete above-two primal trajectory packaged with its minimum objective value. -/
+@[expose]
 noncomputable def primalData (p eta : ℝ) (n : ℕ) (oracle : PairOracle d)
     (fstar : ℝ) : AbovePrimalPhaseData p d n where
   oracle := oracle

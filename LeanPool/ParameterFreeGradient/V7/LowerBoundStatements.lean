@@ -245,6 +245,7 @@ noncomputable def AboveLowerQueryGapStatement : Prop :=
         1 / (16 * data.kernel.Mpd * (T : ℝ) ^ (1 + 2 / p))
 
 /-- Source carrier for `lem:above-lower-outside` (L06). -/
+@[expose]
 noncomputable def AboveLowerOutsideGradientStatement : Prop :=
   ∀ (p : ℝ), 2 < p → ∀ (d T : ℕ) (data : LowerObjectiveData p d T),
     LowerObjectiveAssumptions data →

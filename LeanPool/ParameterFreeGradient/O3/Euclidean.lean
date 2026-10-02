@@ -140,6 +140,7 @@ theorem ogmgThetaZero_ge {n : ℕ} (hn : 1 ≤ n) :
 /-- Exact number of pair calls in the source's Euclidean trial: Phase A makes
 at most two calls per iteration, Phase B reuses `U`, makes `n` further iterate
 queries, and makes one terminal descent query. -/
+@[expose]
 def euclideanTrialCallBudget (m n : ℕ) : ℕ := 2 * m + n + 1
 
 theorem euclideanTrialCallBudget_diagonal (n : ℕ) :

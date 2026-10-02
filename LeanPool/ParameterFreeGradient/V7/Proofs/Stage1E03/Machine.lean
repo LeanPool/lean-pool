@@ -87,6 +87,7 @@ export V7.CausalProgram.Program (query finish action eval runFuel_eq_eval)
 end Program
 
 /-- The ceiling of the Euclidean trial's accuracy-dependent iteration horizon. -/
+@[expose]
 noncomputable def horizon (eps M D : ℝ) : ℕ :=
   Nat.ceil (2 * Real.sqrt (M * D / eps))
 
@@ -230,6 +231,7 @@ noncomputable def ogmgStep (n : ℕ) (M : ℝ) (i : ℕ)
           else .finish (guards ++ [check]) (.scale check)
 
 /-- The Euclidean local trial with a fixed planned horizon. -/
+@[expose]
 noncomputable def euclideanLocalTrial (eps : ℝ) (x0 : Point d) (n : ℕ) :
     LocalTrial d :=
   programTrial fun M _D _cached =>
