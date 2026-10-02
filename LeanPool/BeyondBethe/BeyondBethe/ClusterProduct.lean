@@ -502,7 +502,7 @@ identity are discharged internally.  The coefficient inequality remains an
 explicit argument here to keep this intermediate theorem modular; the final
 theorem supplies its internal reconstruction from `SourceStableReindex`. -/
 theorem rowClusterProduct_stableCoefficient_lower
-    {n : ℕ} [Nonempty (Fin n)]
+    {n : ℕ}
     (stableCoefficient : AnariOveisGharanStableCoefficient.{0})
     {A : Matrix (Fin n) (Fin n) ℝ} (C : RowClustering n)
     [Nonempty C.Cluster]
