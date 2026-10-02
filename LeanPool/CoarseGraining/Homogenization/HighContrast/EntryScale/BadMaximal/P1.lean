@@ -34,6 +34,15 @@ post-split bound used in the no-drop response estimate.
 
 namespace Homogenization.HighContrast.EntryScale
 
+open _root_.Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale
+  (fullBlockNormalizedFluctuationMatrix_isSymm_of_isSymmetricBlockMat
+   fullBlockNormalizedQuadraticObservable_sub_dotProduct_eq_fluctuationQuadratic
+   fullBlockQuadratic_diagonal_toFullBlockMat_eq_blockVecDot
+   fullBlockNormalizedFluctuationMatrix
+   fullBlockNormalizedQuadraticObservable)
+open _root_.Homogenization.Book.Ch04.RestrictionLawCarrier
+  (coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField)
+
 noncomputable section
 
 /-- Threshold a nonnegative maximal observable to the bad event `{1 < M}`. -/
@@ -534,7 +543,7 @@ noncomputable def terminalSpectralPositivePartAtScale
     (m : ℕ) (Q : Homogenization.TriadicCube d)
     (a : Homogenization.RegCoeffField d) : ℝ :=
   fullBlockOperatorNorm
-    ((Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix
+    ((fullBlockNormalizedFluctuationMatrix
         hP hStruct (m : ℤ)
           (Homogenization.cubeSet Q) a)⁺)
 
@@ -555,7 +564,7 @@ theorem aemeasurable_terminalFullBlockNormalizedFluctuationMatrixAtScale
     (m : ℕ) (Q : Homogenization.TriadicCube d) :
     AEMeasurable
       (fun a : Homogenization.RegCoeffField d =>
-        Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix
+        fullBlockNormalizedFluctuationMatrix
           hP hStruct (m : ℤ) (Homogenization.cubeSet Q) a) P :=
   Homogenization.Book.Ch05.Section56.aemeasurable_fullBlockNormalizedFluctuationMatrix_cubeSet
     hP hStruct (m : ℤ) Q
@@ -636,7 +645,7 @@ private theorem fullBlockQuadratic_le_posPart_of_isSymm
       M⁺ M x
   linarith only [hdiff_quad, hsub]
 
-theorem fullBlockNormalizedQuadraticObservable_sub_dotProduct_le_terminalSpectralPositivePartAtScale_mul_dotProduct
+theorem fullBlockNormalizedQuadratic_sub_dotProduct_le_terminalPositivePart_mul_dotProduct
     {d : ℕ} [NeZero d] {P : Homogenization.Book.Ch04.RestrictionCoeffLaw d}
     (hP : Homogenization.Book.Ch04.RestrictionLawCarrier P)
     (hStruct : Homogenization.Book.Ch04.RestrictionStructuralLaw P)
@@ -646,29 +655,29 @@ theorem fullBlockNormalizedQuadraticObservable_sub_dotProduct_le_terminalSpectra
     (hSymm : Homogenization.IsSymmetricBlockMat
       (Homogenization.coarseBlockMatrix (Homogenization.cubeSet Q) a))
     (q : Homogenization.FullBlockVec d) :
-    Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
+    fullBlockNormalizedQuadraticObservable
         hP hStruct (m : ℤ) q (Homogenization.cubeSet Q) a -
       dotProduct q q ≤
         terminalSpectralPositivePartAtScale hP hStruct m Q a * dotProduct q q := by
   let M :=
-    Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix
+    fullBlockNormalizedFluctuationMatrix
       hP hStruct (m : ℤ) (Homogenization.cubeSet Q) a
   have hM_symm : M.IsSymm := by
     dsimp [M]
     exact
-      Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix_isSymm_of_isSymmetricBlockMat
+      fullBlockNormalizedFluctuationMatrix_isSymm_of_isSymmetricBlockMat
           hP hStruct (m : ℤ) hSymm
   have hcenter :
-      Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
+      fullBlockNormalizedQuadraticObservable
           hP hStruct (m : ℤ) q (Homogenization.cubeSet Q) a -
         dotProduct q q =
           Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic M q := by
     dsimp [M]
     exact
-      Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable_sub_dotProduct_eq_fluctuationQuadratic
+      fullBlockNormalizedQuadraticObservable_sub_dotProduct_eq_fluctuationQuadratic
           hP hStruct hP4 m q (Homogenization.cubeSet Q) a
   calc
-    Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
+    fullBlockNormalizedQuadraticObservable
         hP hStruct (m : ℤ) q (Homogenization.cubeSet Q) a -
       dotProduct q q =
         Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic M q := hcenter
@@ -751,7 +760,7 @@ theorem coarseBlockMatrix_cubeSet_symm_of_aelocallyUniformlyEllipticField
         Homogenization.Book.Ch02.coarseBlockMatrix
           (Homogenization.Book.Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa only using
-      Homogenization.Book.Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
         ha Q
   rw [hEq]
   exact
@@ -771,7 +780,7 @@ theorem coarseBlockMatrix_cubeSet_blockPosDef_of_aelocallyUniformlyEllipticField
         Homogenization.Book.Ch02.coarseBlockMatrix
           (Homogenization.Book.Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa only using
-      Homogenization.Book.Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
         ha Q
   rw [hEq]
   exact
@@ -788,7 +797,7 @@ theorem fullBlockNormalizedQuadraticObservable_upperLift_eq
     let b := hP.barSigmaAtScale hStruct (m : ℤ)
     let xu : Homogenization.FullBlockVec d :=
       Homogenization.toFullBlockVec ((Real.sqrt b) • e, 0)
-    Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
+    fullBlockNormalizedQuadraticObservable
         hP hStruct (m : ℤ) xu (Homogenization.cubeSet Q) a =
       Homogenization.vecDot e
         (Homogenization.matVecMul
@@ -822,7 +831,7 @@ theorem fullBlockNormalizedQuadraticObservable_upperLift_eq
         simp only [Homogenization.Book.Ch04.scalarFullBlockInvSqrtDiag,
           Homogenization.toFullBlockVec, Pi.zero_apply, mul_zero, xu]
   calc
-    Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
+    fullBlockNormalizedQuadraticObservable
         hP hStruct (m : ℤ) xu (Homogenization.cubeSet Q) a =
         Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic
           (D * Homogenization.toFullBlockMat A * D) xu := by
@@ -833,7 +842,7 @@ theorem fullBlockNormalizedQuadraticObservable_upperLift_eq
           (Homogenization.blockMatVecMul A
             (Homogenization.ofFullBlockVec (Matrix.mulVec D xu))) := by
           exact
-            Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic_diagonal_toFullBlockMat_eq_blockVecDot
+            fullBlockQuadratic_diagonal_toFullBlockMat_eq_blockVecDot
                 (Homogenization.Book.Ch04.scalarFullBlockInvSqrtDiag b c) A xu
     _ =
         Homogenization.blockVecDot (e, 0)
@@ -857,7 +866,7 @@ theorem fullBlockNormalizedQuadraticObservable_lowerLift_eq
     let c := hP.barSigmaStarAtScale hStruct (m : ℤ)
     let xl : Homogenization.FullBlockVec d :=
       Homogenization.toFullBlockVec (0, (Real.sqrt c)⁻¹ • e)
-    Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
+    fullBlockNormalizedQuadraticObservable
         hP hStruct (m : ℤ) xl (Homogenization.cubeSet Q) a =
       Homogenization.vecDot e
         (Homogenization.matVecMul
@@ -891,7 +900,7 @@ theorem fullBlockNormalizedQuadraticObservable_lowerLift_eq
           Homogenization.toFullBlockVec, Pi.smul_apply, smul_eq_mul, c, xl]
         field_simp [ne_of_gt (Real.sqrt_pos.mpr (by simpa only [c] using hc))]
   calc
-    Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
+    fullBlockNormalizedQuadraticObservable
         hP hStruct (m : ℤ) xl (Homogenization.cubeSet Q) a =
         Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic
           (D * Homogenization.toFullBlockMat A * D) xl := by
@@ -902,7 +911,7 @@ theorem fullBlockNormalizedQuadraticObservable_lowerLift_eq
           (Homogenization.blockMatVecMul A
             (Homogenization.ofFullBlockVec (Matrix.mulVec D xl))) := by
           exact
-            Homogenization.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic_diagonal_toFullBlockMat_eq_blockVecDot
+            fullBlockQuadratic_diagonal_toFullBlockMat_eq_blockVecDot
                 (Homogenization.Book.Ch04.scalarFullBlockInvSqrtDiag b c) A xl
     _ =
         Homogenization.blockVecDot (0, e)
