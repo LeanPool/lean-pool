@@ -1102,7 +1102,6 @@ def Hom.comp {V W X : SuperVect} (g : Hom W X) (f : Hom V W) : Hom V X where
 
 /-- Super vector spaces and grading-preserving maps form a
 category. -/
-@[expose]
 instance instCategoryStruct : CategoryStruct SuperVect where
   Hom := Hom
   id := Hom.id
@@ -1152,7 +1151,7 @@ def tensorHom {V₁ V₂ W₁ W₂ : SuperVect}
 /-- The monoidal unit: ℂ in even degree, the zero module in odd
 degree.  Marked reducible so that `tensorUnit.odd` reduces to `PUnit`
 during type-class synthesis. -/
-@[reducible]
+@[expose, reducible]
 def tensorUnit : SuperVect where
   even := ℂ
   odd := PUnit
@@ -1979,7 +1978,6 @@ theorem koszulBraiding_oddMap (V W : SuperVect) :
 
 /-- The monoidal category structure on SuperVect: graded tensor
 product, ℂ unit, standard associator/unitors. -/
-@[expose]
 instance instMonoidalCategoryStruct : MonoidalCategoryStruct SuperVect where
   tensorObj := tensorObj
   whiskerLeft := fun (X : SuperVect) {Y₁ : SuperVect} {Y₂ : SuperVect}
