@@ -219,17 +219,20 @@ structure LowerObjectiveData (p : ℝ) (d T : ℕ)
     extends LowerCompletionData p d T
 
 /-- The objective eventually exceeds every real bound outside a sufficiently large `ℓp` ball. -/
+@[expose]
 def IsCoerciveLp (p : ℝ) (f : Point d → ℝ) : Prop :=
   ∀ B : ℝ, ∃ radius : ℝ, 0 ≤ radius ∧
     ∀ x, radius ≤ lpNorm p x → B ≤ f x
 
 /-- The completion conditions together with convexity and the exact coordinate gradient. -/
+@[expose]
 def LowerObjectiveAssumptions (data : LowerObjectiveData p d T) : Prop :=
   LowerCompletionAssumptions data.toLowerCompletionData ∧
   O3.IsConvexObjective data.completedOracle.value ∧
   O3.IsCoordinateGradient data.completedOracle.value data.completedOracle.gradient
 
 /-- Source carrier for `lem:above-lower-gap` (L05). -/
+@[expose]
 noncomputable def AboveLowerQueryGapStatement : Prop :=
   ∀ (p : ℝ), 2 < p → ∀ (d T : ℕ) (data : LowerObjectiveData p d T),
     LowerObjectiveAssumptions data →

@@ -93,6 +93,7 @@ structure OrderAdherenceTower (A : Set X) where
     stage ξ = ⋃ η : Set.Iio ξ, stage η.1
 
 /-- At least `ξ` stages are needed when every earlier adherence step is proper. -/
+@[expose]
 def NeedsOrderAdherenceIterations (A : Set X) (ξ : Ordinal.{u}) : Prop :=
   ∃ T : OrderAdherenceTower A,
     ∀ η < ξ, T.stage η ⊂ T.stage (Order.succ η)

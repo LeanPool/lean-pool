@@ -259,6 +259,7 @@ def EuclideanTrialOperationalContract (x0 : Point d) (M D : ℝ)
 
 /-- Source carrier for `prop:euclideantrial` (E03), retaining the exact
 `2m+n+1` accounting and the distinct terminal descent query. -/
+@[expose]
 noncomputable def EuclideanTrialStatement : Prop :=
   ∃ C : ℝ, 0 < C ∧ ∀ (d : ℕ) (eps M D : ℝ),
     0 < eps → 0 < M → 0 < D → ∀ (x0 : Point d)
