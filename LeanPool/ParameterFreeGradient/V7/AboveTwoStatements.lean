@@ -281,7 +281,7 @@ structure AboveTrialWitness (p : ℝ) (d : ℕ) where
   phaseTwoCenter : Point d
 
 /-- The horizon, normalization, phase execution, and report requirements of an above-two trial. -/
-def AboveTrialOperationalContract (p eps M D : ℝ) (x0 : Point d)
+@[expose] def AboveTrialOperationalContract (p eps M D : ℝ) (x0 : Point d)
     (cached : CachedPair d) (oracle : PairOracle d)
     (report : TrialReport d) (w : AboveTrialWitness p d) : Prop :=
   let delta := eps / (M * D)

@@ -42,7 +42,7 @@ def ogmgI (psi : ℕ → ℝ) (pairTerm : ℕ → ℕ → ℝ) (i j : ℕ) : ℝ
   psi i - psi j - pairTerm i j
 
 /-- `delta_i = kappa_(i+1) - kappa_i`. -/
-def ogmgDelta (kappa : ℕ → ℝ) (i : ℕ) : ℝ :=
+@[expose] def ogmgDelta (kappa : ℕ → ℝ) (i : ℕ) : ℝ :=
   kappa (i + 1) - kappa i
 
 /-- The literal right side of the frozen OGM-G certificate. -/

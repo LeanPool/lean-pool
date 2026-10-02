@@ -51,7 +51,7 @@ def AnchorTest (oracle : PairOracle d) (x0 : Point d) (G D : ℝ)
 /-- The explicit dyadic ray search, including every rejected test and the
 first accepted test.  These are algorithm-definition assumptions, not the
 named carrier's mathematical conclusions. -/
-def AnchorExecution (p : ℝ) (input : MethodInput d) (oracle : PairOracle d)
+@[expose] def AnchorExecution (p : ℝ) (input : MethodInput d) (oracle : PairOracle d)
     (cached : CachedPair d) (run : AnchorRunData d) : Prop :=
   let G := lpNorm (conjugateExponent p) cached.observation.gradient
   (∀ k, run.M k = (2 : ℝ) ^ k * input.M0) ∧
@@ -135,7 +135,7 @@ def RealizedPathGeometricallyDominated (eps G Ma R : ℝ)
         (Ms S * R / eps) ^ a / (1 - (2 : ℝ) ^ (-a)))
 
 /-- The observable guard kind is available in the selected exponent regime. -/
-def GuardAllowedInRegime (p : ℝ) (kind : ObservableGuardKind) : Prop :=
+@[expose] def GuardAllowedInRegime (p : ℝ) (kind : ObservableGuardKind) : Prop :=
   if p = 2 then
     kind = .upperModel ∨ kind = .interpolation ∨ kind = .terminalDescent
   else

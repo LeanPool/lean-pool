@@ -101,7 +101,7 @@ def FirstOrderMethod.runFuel {d : ℕ} (method : FirstOrderMethod d)
   method.runFuel oracle fuel (method.initial input) []
 
 /-- The number of oracle responses in a completed run. -/
-def RunResult.callCount {d : ℕ} (result : RunResult d) : ℕ := result.queries.length
+@[expose] def RunResult.callCount {d : ℕ} (result : RunResult d) : ℕ := result.queries.length
 
 /-- The returned point really was queried; a bare unobserved terminal point is
 not enough for the frozen theorem. -/
@@ -161,11 +161,11 @@ structure AdmissibleInstance (d : ℕ) (p : ℝ) where
   secant : SecantWitness p (conjugateExponent p) M0 grad x0 z0
 
 /-- The exact value-gradient oracle associated with an admissible instance. -/
-def AdmissibleInstance.oracle {d : ℕ} {p : ℝ} (P : AdmissibleInstance d p) : PairOracle d :=
+@[expose] def AdmissibleInstance.oracle {d : ℕ} {p : ℝ} (P : AdmissibleInstance d p) : PairOracle d :=
   ⟨P.f, P.grad⟩
 
 /-- Extract the observable numerical inputs supplied to the method. -/
-def AdmissibleInstance.methodInput {d : ℕ} {p : ℝ} (P : AdmissibleInstance d p) : MethodInput d :=
+@[expose] def AdmissibleInstance.methodInput {d : ℕ} {p : ℝ} (P : AdmissibleInstance d p) : MethodInput d :=
   ⟨p, P.eps, P.x0, P.z0, P.M0⟩
 
 /-- The primal-norm distance from the initial point to the minimizer set. -/

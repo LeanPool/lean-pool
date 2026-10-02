@@ -22,7 +22,7 @@ noncomputable local instance refinementPropDecidable (q : Prop) : Decidable q :=
   Classical.propDecidable q
 
 /-- A report with earlier observations and checked guards prepended. -/
-def prependReport (history : List (Observation d))
+@[expose] def prependReport (history : List (Observation d))
     (guards : List (ObservableGuardCheck d)) (tail : TrialReport d) :
     TrialReport d :=
   ⟨history ++ tail.trace, guards ++ tail.checkedGuards, tail.outcome⟩
@@ -59,7 +59,7 @@ def prependReport (history : List (Observation d))
   prependReport newTrace [] (sourcePhaseBSuffix inst eps M n U)
 
 /-- The recursively assembled source report for the remaining estimate phase and OGM-G. -/
-noncomputable def sourcePhaseAReport (inst : PositiveInstance 2 d x0)
+@[expose] noncomputable def sourcePhaseAReport (inst : PositiveInstance 2 d x0)
     (eps M : ℝ) (n : ℕ) : ℕ → ℕ → TrialReport d
   | _, 0 => sourcePhaseBReport inst eps M n
       (sourceEstimateState inst.oracle M x0 n).accelerated

@@ -27,7 +27,7 @@ noncomputable local instance correctnessPropDecidable (q : Prop) : Decidable q :
   (sourceEstimateState inst.oracle M x0 n).accelerated
 
 /-- The new OGM-G observations after its reused initial query. -/
-noncomputable def sourceNewTrace (inst : PositiveInstance 2 d x0)
+@[expose] noncomputable def sourceNewTrace (inst : PositiveInstance 2 d x0)
     (M : ℝ) (n : ℕ) : List (Observation d) :=
   let cfg := O3.stage9ExecutionConfig n inst.oracle M (sourceU inst M n)
   (List.range n).map fun j =>
@@ -48,7 +48,7 @@ noncomputable def sourceTerminalObservation
   inst.oracle.observe (O3.ogmgV cfg n)
 
 /-- The descent check between the final OGM-G query and its gradient step. -/
-noncomputable def sourceTerminalGuard
+@[expose] noncomputable def sourceTerminalGuard
     (inst : PositiveInstance 2 d x0) (M : ℝ) (n : ℕ) :
     ObservableGuardCheck d :=
   let cfg := O3.stage9ExecutionConfig n inst.oracle M (sourceU inst M n)
@@ -56,13 +56,13 @@ noncomputable def sourceTerminalGuard
     (inst.oracle.observe (O3.ogmgV cfg n))
 
 /-- The complete planned trace of both Euclidean phases and the terminal query. -/
-noncomputable def sourcePlannedTrace (inst : PositiveInstance 2 d x0)
+@[expose] noncomputable def sourcePlannedTrace (inst : PositiveInstance 2 d x0)
     (M : ℝ) (n : ℕ) : List (Observation d) :=
   phaseATraceFrom inst M 0 n ++ sourceNewTrace inst M n ++
     [sourceTerminalObservation inst M n]
 
 /-- The complete planned guard schedule of the Euclidean trial. -/
-noncomputable def sourceGuardSchedule (inst : PositiveInstance 2 d x0)
+@[expose] noncomputable def sourceGuardSchedule (inst : PositiveInstance 2 d x0)
     (M : ℝ) (n : ℕ) : List (ObservableGuardCheck d) :=
   phaseAGuardsFrom inst M 0 n ++ sourceInterpolationSchedule inst M n ++
     [sourceTerminalGuard inst M n]

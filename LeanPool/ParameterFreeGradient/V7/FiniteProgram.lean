@@ -31,7 +31,7 @@ noncomputable def Program.action : PackedProgram d →
   | ⟨fuel + 1, .query point next⟩ => .query point fun obs => ⟨fuel, next obs⟩
 
 /-- The report obtained by evaluating the finite program against an oracle. -/
-noncomputable def Program.eval (oracle : PairOracle d) :
+@[expose] noncomputable def Program.eval (oracle : PairOracle d) :
     (fuel : ℕ) → Program d fuel → List (Observation d) → TrialReport d
   | _, .finish guards outcome, history => ⟨history, guards, outcome⟩
   | fuel + 1, .query point next, history =>

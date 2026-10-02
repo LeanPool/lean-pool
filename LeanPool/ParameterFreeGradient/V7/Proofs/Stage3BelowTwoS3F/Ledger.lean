@@ -17,7 +17,7 @@ public section
 namespace V7.Stage3BelowTwoS3F
 
 /-- The cocoercivity checks between consecutive observations, starting from a cached observation. -/
-noncomputable def chainChecks (first : Observation d) : List (Observation d) →
+@[expose] noncomputable def chainChecks (first : Observation d) : List (Observation d) →
     List (ObservableGuardCheck d)
   | [] => []
   | obs :: rest => cocoCheck first obs :: chainChecks obs rest

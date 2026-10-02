@@ -63,7 +63,7 @@ noncomputable def stepQuery (P : PrefixParameters p d T) (t : ℕ)
   if t = 0 then 0 else P.algorithm.nextQuery 0 state.obsPrefix
 
 /-- An unused coordinate maximizing the current query magnitude, chosen before the horizon. -/
-noncomputable def stepSigma (P : PrefixParameters p d T) (t : ℕ)
+@[expose] noncomputable def stepSigma (P : PrefixParameters p d T) (t : ℕ)
     (state : ResistingPrefixState d) : Fin d :=
   if ht : t < T then
     Classical.choose
@@ -72,7 +72,7 @@ noncomputable def stepSigma (P : PrefixParameters p d T) (t : ℕ)
   else firstCoordinate P
 
 /-- The sign aligned with the current query at the newly selected coordinate. -/
-noncomputable def stepXi (P : PrefixParameters p d T) (t : ℕ)
+@[expose] noncomputable def stepXi (P : PrefixParameters p d T) (t : ℕ)
     (state : ResistingPrefixState d) : ℝ :=
   resistingSign ((stepQuery P t state) (stepSigma P t state))
 
@@ -117,15 +117,15 @@ noncomputable def prefixState (P : PrefixParameters p d T) :
   | t + 1 => advance P t (prefixState P t)
 
 /-- The query made at step `t` of the recursively generated resisting construction. -/
-noncomputable def query (P : PrefixParameters p d T) (t : ℕ) : Point d :=
+@[expose] noncomputable def query (P : PrefixParameters p d T) (t : ℕ) : Point d :=
   stepQuery P t (prefixState P t)
 
 /-- The coordinate selected at step `t` of the resisting construction. -/
-noncomputable def sigma (P : PrefixParameters p d T) (t : ℕ) : Fin d :=
+@[expose] noncomputable def sigma (P : PrefixParameters p d T) (t : ℕ) : Fin d :=
   stepSigma P t (prefixState P t)
 
 /-- The sign selected at step `t` of the resisting construction. -/
-noncomputable def xi (P : PrefixParameters p d T) (t : ℕ) : ℝ :=
+@[expose] noncomputable def xi (P : PrefixParameters p d T) (t : ℕ) : ℝ :=
   stepXi P t (prefixState P t)
 
 /-- The resisting affine maximum at prefix length `t + 1`. -/

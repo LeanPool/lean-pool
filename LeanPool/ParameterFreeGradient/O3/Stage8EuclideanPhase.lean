@@ -37,7 +37,7 @@ structure EuclideanEstimateState (d : ℕ) where
   cumulativeGradient : Vec d
 
 /-- The recursively updated Euclidean accelerated iterate and accumulated gradient. -/
-noncomputable def euclideanEstimateState {d : ℕ}
+@[expose] noncomputable def euclideanEstimateState {d : ℕ}
     (P : AdmissibleInstance d 2) (M : ℝ) : ℕ → EuclideanEstimateState d
   | 0 => ⟨P.x0, 0⟩
   | k + 1 =>
@@ -59,7 +59,7 @@ noncomputable def euclideanEstimateMinimizer {d : ℕ}
     (euclideanEstimateState P M k).cumulativeGradient
 
 /-- The Euclidean oracle query obtained by averaging the iterate and estimate minimizer. -/
-noncomputable def euclideanEstimateQuery {d : ℕ}
+@[expose] noncomputable def euclideanEstimateQuery {d : ℕ}
     (P : AdmissibleInstance d 2) (M : ℝ) (k : ℕ) : Vec d :=
   euclideanBarycenter (euclideanA k) (euclideanWeight (euclideanA k))
     (euclideanEstimateState P M k).accelerated
@@ -82,7 +82,7 @@ noncomputable def euclideanEstimateConstant {d : ℕ}
           pairing observation.gradient (P.x0 - observation.point))
 
 /-- The literal recursively accumulated source potential. -/
-noncomputable def euclideanEstimateFunction {d : ℕ}
+@[expose] noncomputable def euclideanEstimateFunction {d : ℕ}
     (P : AdmissibleInstance d 2) (M : ℝ) : ℕ → Vec d → ℝ
   | 0 => fun x => M / 2 * (lpNorm 2 (x - P.x0)) ^ (2 : ℕ)
   | k + 1 => fun x =>
@@ -93,7 +93,7 @@ noncomputable def euclideanEstimateFunction {d : ℕ}
           pairing observation.gradient (x - observation.point))
 
 /-- The Euclidean estimate potential evaluated at its minimizer. -/
-noncomputable def euclideanEstimateMinimum {d : ℕ}
+@[expose] noncomputable def euclideanEstimateMinimum {d : ℕ}
     (P : AdmissibleInstance d 2) (M : ℝ) (k : ℕ) : ℝ :=
   euclideanEstimateFunction P M k (euclideanEstimateMinimizer P M k)
 

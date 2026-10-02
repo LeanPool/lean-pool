@@ -47,7 +47,7 @@ structure OGMGExecutionConfig (d : ℕ) where
 
 /-- The source-exact configuration: no theta sequence is supplied by the
 caller; it is the frozen special-zero/backward-tail sequence for horizon `n`. -/
-noncomputable def stage9ExecutionConfig {d : ℕ} (n : ℕ)
+@[expose] noncomputable def stage9ExecutionConfig {d : ℕ} (n : ℕ)
     (oracle : PairOracle d) (M : ℝ) (U : Vec d) : OGMGExecutionConfig d :=
   { horizon := n
     oracle := oracle
@@ -301,7 +301,7 @@ algebraic certificate.  These are definitions, not freely supplied arrays. -/
   (ogmgObservation cfg i).value
 
 /-- The squared Euclidean norm of the gradient at an execution query. -/
-noncomputable def ogmgGradientSq (cfg : OGMGExecutionConfig d) (i : ℕ) : ℝ :=
+@[expose] noncomputable def ogmgGradientSq (cfg : OGMGExecutionConfig d) (i : ℕ) : ℝ :=
   (lpNorm 2 (ogmgGradient cfg i)) ^ (2 : ℕ)
 
 /-- The gradient at query `j` paired with the difference of gradient-step points `i` and `j`. -/

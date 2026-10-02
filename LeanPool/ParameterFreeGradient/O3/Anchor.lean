@@ -89,7 +89,7 @@ theorem anchorAccepted_radius {d : ℕ} {p : ℝ} (hp : 1 < p)
   nlinarith
 
 /-- The explicit coordinate norming direction used by the frozen anchor. -/
-noncomputable def anchorNormingVector {d : ℕ} (q : ℝ) (g : Vec d) : Vec d :=
+@[expose] noncomputable def anchorNormingVector {d : ℕ} (q : ℝ) (g : Vec d) : Vec d :=
   fun i =>
     ((SignType.sign (g i) : ℝ) * |g i| ^ (q - 1)) /
       (lpNorm q g) ^ (q - 1)
@@ -140,7 +140,7 @@ The actual fuel-bounded dyadic anchor loop.  Every iteration makes exactly one
 pair-oracle query, tests its returned value, and either stops or doubles the
 scale by incrementing `epoch`.
 -/
-noncomputable def runAnchor {d : ℕ} (oracle : PairOracle d) (cfg : AnchorConfig d) :
+@[expose] noncomputable def runAnchor {d : ℕ} (oracle : PairOracle d) (cfg : AnchorConfig d) :
     ℕ → ℕ → OracleTrace d → Option (AnchorResult d)
   | 0, _, _ => none
   | fuel + 1, epoch, history =>

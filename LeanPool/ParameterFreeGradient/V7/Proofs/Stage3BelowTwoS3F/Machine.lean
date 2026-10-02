@@ -26,7 +26,7 @@ noncomputable def normalizedGradient (M D : ℝ) (obs : Observation d) : Point d
   (1 / (M * D)) • obs.gradient
 
 /-- The cocoercivity guard formed from consecutive observations. -/
-noncomputable def cocoCheck (before after : Observation d) :
+@[expose] noncomputable def cocoCheck (before after : Observation d) :
     ObservableGuardCheck d := ⟨.cocoercivity, before, after⟩
 
 /-- The cocoercivity inequality reconstructed from a guard's two recorded observations. -/

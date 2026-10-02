@@ -25,7 +25,7 @@ namespace O3
 namespace Stage3Anchor
 
 /-- The objective restricted to the affine line from `x` to `y`. -/
-noncomputable def objectiveLine {d : ℕ} (f : Vec d → ℝ)
+@[expose] noncomputable def objectiveLine {d : ℕ} (f : Vec d → ℝ)
     (x y : Vec d) (t : ℝ) : ℝ :=
   f (AffineMap.lineMap x y t)
 

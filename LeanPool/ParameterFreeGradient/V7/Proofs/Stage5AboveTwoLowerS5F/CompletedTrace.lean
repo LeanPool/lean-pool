@@ -20,7 +20,7 @@ open Stage5AboveTwoLower
 open Stage5AboveTwoLowerS5A2Envelope
 
 /-- The finite exact trace of the normalized completed resisting oracle. -/
-noncomputable def unitTrace (p : ℝ) (d T : ℕ)
+@[expose] noncomputable def unitTrace (p : ℝ) (d T : ℕ)
     (algorithm : DeterministicExactPairAlgorithm d) (hT : 1 ≤ T) (hTd : T ≤ d) :
     List (Observation d) :=
   let data := unitCompletionData p d T algorithm hT hTd

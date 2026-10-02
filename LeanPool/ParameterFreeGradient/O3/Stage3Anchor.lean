@@ -25,7 +25,7 @@ open Stage3Anchor
 
 /-- The anchor loop configuration contains only data already observed at
 `x₀`; neither `L` nor a minimizer nor the solution radius is an input. -/
-noncomputable def AdmissibleInstance.anchorConfig {d : ℕ} {p : ℝ}
+@[expose] noncomputable def AdmissibleInstance.anchorConfig {d : ℕ} {p : ℝ}
     (P : AdmissibleInstance d p) : AnchorConfig d :=
   { q := conjugateExponent p
     x₀ := P.x0

@@ -44,7 +44,7 @@ lemma selectedDisplacement_spec (kernel : SmoothingKernelData p d)
   exact Classical.choose_spec hex
 
 /-- The envelope gradient obtained from a selected minimizing displacement. -/
-noncomputable def selectedEnvelopeGradient
+@[expose] noncomputable def selectedEnvelopeGradient
     (kernel : SmoothingKernelData p d) (chi : ℝ)
     (ell : Point d → ℝ) (x : Point d) : Point d :=
   -kernel.gradPhi ((1 / chi) • selectedDisplacement kernel chi ell x)

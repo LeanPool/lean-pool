@@ -18,7 +18,7 @@ public section
 namespace V7.Stage6StrictDeterministic
 
 /-- The one-dimensional hard objective paired with its exact derivative oracle. -/
-noncomputable def hardOracle (eps : ℝ) (x0 : StrictPoint) (H : ℝ) : PairOracle 1 :=
+@[expose] noncomputable def hardOracle (eps : ℝ) (x0 : StrictPoint) (H : ℝ) : PairOracle 1 :=
   { value := strictHardFamily eps x0 H
     gradient := strictHardDerivative eps x0 H }
 

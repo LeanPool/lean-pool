@@ -26,7 +26,7 @@ structure ObservableGuardCheck (d : ℕ) where
   yPair : Observation d
 
 /-- The point-based failure witness associated with an observation-based guard check. -/
-def ObservableGuardCheck.failure (check : ObservableGuardCheck d) : ObservableGuardFailure d :=
+@[expose] def ObservableGuardCheck.failure (check : ObservableGuardCheck d) : ObservableGuardFailure d :=
   ⟨check.kind, check.xPair.point, check.yPair.point⟩
 
 /-- A trial terminates with gradient success, a failed scale guard, or an insufficient radius. -/
@@ -68,7 +68,7 @@ structure LocalTrial (d : ℕ) where
   action : State → LocalTrialAction d State
 
 /-- The finite-fuel local execution, returning no report if its action budget is exhausted. -/
-def LocalTrial.runFuel (trial : LocalTrial d) (oracle : PairOracle d) :
+@[expose] def LocalTrial.runFuel (trial : LocalTrial d) (oracle : PairOracle d) :
     ℕ → trial.State → List (Observation d) → Option (TrialReport d)
   | 0, _, _ => none
   | fuel + 1, state, history =>
@@ -127,7 +127,7 @@ def TrialReport.consecutiveGuardAccounting (report : TrialReport d) : Prop :=
   | .radius _ => report.checkedGuards.length = report.calls
 
 /-- The observation is either cached or present in the trial's new query trace. -/
-def ObservationAvailable (cached : CachedPair d) (report : TrialReport d)
+@[expose] def ObservationAvailable (cached : CachedPair d) (report : TrialReport d)
     (obs : Observation d) : Prop :=
   obs = cached.observation ∨ obs ∈ report.trace
 
@@ -151,7 +151,7 @@ def GuardRecorded (report : TrialReport d) (kind : ObservableGuardKind)
     check.kind = kind ∧ check.xPair.point = x ∧ check.yPair.point = y
 
 /-- Each guard uses the corresponding consecutive pair in the cached observation and query trace. -/
-def ConsecutiveGuardLedger (cached : CachedPair d)
+@[expose] def ConsecutiveGuardLedger (cached : CachedPair d)
     (report : TrialReport d) : Prop :=
   ∀ i < report.checkedGuards.length, ∃ check,
     (report.checkedGuards.drop i).head? = some check ∧
@@ -160,7 +160,7 @@ def ConsecutiveGuardLedger (cached : CachedPair d)
 
 /-- Every predicate reported by the routine is evaluated on exact pairs that
 the routine actually possesses: the cached pair or a chronological query. -/
-def GuardDataExact (cached : CachedPair d) (oracle : PairOracle d)
+@[expose] def GuardDataExact (cached : CachedPair d) (oracle : PairOracle d)
     (report : TrialReport d) : Prop :=
   cached.observation = oracle.observe cached.observation.point ∧
   ∀ check ∈ report.checkedGuards,

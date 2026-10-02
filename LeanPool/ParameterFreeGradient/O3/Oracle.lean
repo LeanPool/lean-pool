@@ -138,7 +138,7 @@ def TrialReport.calls (report : TrialReport d) : ℕ :=
   oracleCallCount report.observations
 
 /-- Purely data-level consistency of the recorded outcome. -/
-def TrialReport.OutcomeRecorded (report : TrialReport d) : Prop :=
+@[expose] def TrialReport.OutcomeRecorded (report : TrialReport d) : Prop :=
   match report.outcome with
   | .success x => WasQueried report.observations x
   | .scale kind => HasFailedGuard report.guards kind
@@ -150,7 +150,7 @@ proposition, not a certificate field.  The scale and radius conclusions are
 exactly the directional implications used by the frozen outer-controller
 lemma.
 -/
-def TrialValid
+@[expose] def TrialValid
     (oracle : PairOracle d) (gradientSize : Vec d → ℝ)
     (eps L R M D : ℝ) (report : TrialReport d) : Prop :=
   TraceExact oracle report.observations ∧

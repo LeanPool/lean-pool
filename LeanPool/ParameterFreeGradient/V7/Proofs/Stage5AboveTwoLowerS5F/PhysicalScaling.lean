@@ -41,7 +41,7 @@ lemma physicalBackward_forward (x0 : Point d) {R rT : ℝ}
     smul_smul, hscale, one_smul]
 
 /-- The normalized oracle rescaled to the prescribed physical smoothness and radius. -/
-noncomputable def physicalOracle (x0 : Point d) (L R rT : ℝ)
+@[expose] noncomputable def physicalOracle (x0 : Point d) (L R rT : ℝ)
     (bar : PairOracle d) : PairOracle d :=
   { value := fun x => (L * R ^ (2 : ℕ) / rT ^ (2 : ℕ)) *
       bar.value (physicalBackward x0 R rT x)
@@ -75,7 +75,7 @@ noncomputable def normalizedAdversaryAlgorithm (x0 : Point d) (L R rT : ℝ)
         (algorithm.output x0 (trace.map (physicalObservation x0 L R rT))) }
 
 /-- The normalized observation trace transported to physical coordinates. -/
-noncomputable def physicalTrace (x0 : Point d) (L R rT : ℝ)
+@[expose] noncomputable def physicalTrace (x0 : Point d) (L R rT : ℝ)
     (trace : List (Observation d)) : List (Observation d) :=
   trace.map (physicalObservation x0 L R rT)
 

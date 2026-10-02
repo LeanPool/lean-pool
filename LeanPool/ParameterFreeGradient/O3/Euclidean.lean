@@ -79,7 +79,7 @@ noncomputable def ogmgTheta (n : ℕ) : Fin (n + 1) → ℝ := fun i =>
   else Nat.rec (motive := fun _ => ℝ) 1 (fun _ t => thetaStep t) (n - i.val)
 
 /-- The ordinary backward tail `theta_n=1`, iterated away from the endpoint. -/
-noncomputable def ogmgThetaTail : ℕ → ℝ
+@[expose] noncomputable def ogmgThetaTail : ℕ → ℝ
   | 0 => 1
   | k + 1 => thetaStep (ogmgThetaTail k)
 
@@ -148,7 +148,7 @@ theorem euclideanTrialCallBudget_diagonal (n : ℕ) :
   omega
 
 /-- The source horizon `ceil (2 sqrt (M D / eps))`. -/
-noncomputable def euclideanHorizon (kappa : ℝ) : ℕ :=
+@[expose] noncomputable def euclideanHorizon (kappa : ℝ) : ℕ :=
   Nat.ceil (2 * Real.sqrt kappa)
 
 theorem euclideanHorizon_real_le {kappa : ℝ} :
@@ -192,7 +192,7 @@ theorem euclideanPhaseTrace_exact {d m : ℕ} (oracle : PairOracle d)
 Phase B reuses `U`; this trace therefore contains only the `n` newly queried
 iterates `u_1,...,u_n` and the additional terminal query at `v_n`.
 -/
-def finiteDataOGMGTrace {d n : ℕ} (oracle : PairOracle d)
+@[expose] def finiteDataOGMGTrace {d n : ℕ} (oracle : PairOracle d)
     (newIterates : Fin n → Vec d) (terminalDescent : Vec d) : OracleTrace d :=
   (List.finRange n).map (fun i => oracle.observe (newIterates i)) ++
     [oracle.observe terminalDescent]

@@ -106,7 +106,7 @@ noncomputable def completedOracle (P : PrefixParameters p d T) : PairOracle d :=
       (P.kernel.smooth P.chi (partialH P (T - 1))).gradient x }
 
 /-- The recursively constructed prefixes packaged as completed lower-bound data. -/
-noncomputable def completionData (P : PrefixParameters p d T) (Delta : ℝ) :
+@[expose] noncomputable def completionData (P : PrefixParameters p d T) (Delta : ℝ) :
     LowerCompletionData p d T :=
   { algorithm := P.algorithm
     x0 := 0

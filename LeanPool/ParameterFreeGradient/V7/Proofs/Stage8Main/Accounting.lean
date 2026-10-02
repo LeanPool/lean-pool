@@ -33,7 +33,7 @@ theorem amortFor_pos (p : ℝ) (hp : 1 < p) : 0 < amortFor p hp :=
     ((Classical.choose_spec V7.geometricTrialAmortization).2 p hp)).1
 
 /-- The universal amortization constant at exponent two and the regime constant otherwise. -/
-noncomputable def selectedAmort (p : ℝ) (hp : 1 < p) : ℝ :=
+@[expose] noncomputable def selectedAmort (p : ℝ) (hp : 1 < p) : ℝ :=
   if p = 2 then amortUniversal else amortFor p hp
 
 theorem selectedAmort_pos (p : ℝ) (hp : 1 < p) :

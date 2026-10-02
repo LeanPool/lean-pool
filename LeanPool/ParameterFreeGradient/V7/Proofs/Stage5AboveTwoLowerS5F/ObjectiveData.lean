@@ -28,7 +28,7 @@ noncomputable def unitDeltaStep (p : ℝ) (T : ℕ) : ℝ := unitDelta p T / (2 
 noncomputable def unitChi (p : ℝ) (T : ℕ) : ℝ := unitDeltaStep p T / 2
 
 /-- The explicit kernel and scales initializing the normalized resisting construction. -/
-noncomputable def unitParameters (p : ℝ) (d T : ℕ)
+@[expose] noncomputable def unitParameters (p : ℝ) (d T : ℕ)
     (algorithm : DeterministicExactPairAlgorithm d) (hT : 1 ≤ T) (hTd : T ≤ d) :
     PrefixParameters p d T :=
   { algorithm := algorithm
@@ -58,7 +58,7 @@ lemma unitBeta_pos {p : ℝ} {d T : ℕ} (hp : 2 < p) (hd : 2 ≤ d) (hT : 1 ≤
   div_pos (unitChi_pos hT) (repairMpd_pos hp hd)
 
 /-- The complete normalized resisting data for a deterministic algorithm. -/
-noncomputable def unitCompletionData (p : ℝ) (d T : ℕ)
+@[expose] noncomputable def unitCompletionData (p : ℝ) (d T : ℕ)
     (algorithm : DeterministicExactPairAlgorithm d) (hT : 1 ≤ T) (hTd : T ≤ d) :
     LowerCompletionData p d T :=
   completionData (unitParameters p d T algorithm hT hTd) (unitDelta p T)

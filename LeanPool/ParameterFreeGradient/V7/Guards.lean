@@ -22,13 +22,13 @@ namespace V7
   oracle.value x - oracle.value y - pairing (oracle.gradient y) (x - y)
 
 /-- The quadratic upper model with estimate `M` bounds the objective at `y`. -/
-noncomputable def UpperModelGuard (p M : ℝ) (oracle : PairOracle d)
+@[expose] noncomputable def UpperModelGuard (p M : ℝ) (oracle : PairOracle d)
     (x y : Point d) : Prop :=
   oracle.value y ≤ oracle.value x + pairing (oracle.gradient x) (y - x) +
     (M / 2) * (lpNorm p (y - x)) ^ (2 : ℕ)
 
 /-- The two observed gradients satisfy the proposed Lipschitz bound in the dual norm. -/
-noncomputable def GradientGuard (p M : ℝ) (oracle : PairOracle d)
+@[expose] noncomputable def GradientGuard (p M : ℝ) (oracle : PairOracle d)
     (x y : Point d) : Prop :=
   lpNorm (conjugateExponent p) (oracle.gradient y - oracle.gradient x) ≤
     M * lpNorm p (y - x)
@@ -67,7 +67,7 @@ structure ObservableGuardFailure (d : ℕ) where
   y : Point d
 
 /-- The selected observable inequality fails for the supplied oracle and estimates. -/
-noncomputable def GuardFails (p M : ℝ) (oracle : PairOracle d)
+@[expose] noncomputable def GuardFails (p M : ℝ) (oracle : PairOracle d)
     (w : ObservableGuardFailure d) : Prop :=
   match w.kind with
   | .upperModel => ¬ UpperModelGuard p M oracle w.x w.y

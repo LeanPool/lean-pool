@@ -137,7 +137,7 @@ theorem abs_pairing_le_lpNorm_mul {p q : ℝ} (hpq : p.HolderConjugate q)
   (1 / p) * lpPower p (x - c)
 
 /-- The normalized `ell_p` duality map used in the `1 < p ≤ 2` chain. -/
-noncomputable def dualityMap (p : ℝ) {d : ℕ} (u : Point d) : Point d :=
+@[expose] noncomputable def dualityMap (p : ℝ) {d : ℕ} (u : Point d) : Point d :=
   if lpNorm p u = 0 then 0
   else fun i ↦ (lpNorm p u) ^ (2 - p) * (|u i| ^ (p - 2) * u i)
 

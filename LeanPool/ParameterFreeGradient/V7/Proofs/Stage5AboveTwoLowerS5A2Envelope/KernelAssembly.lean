@@ -42,14 +42,14 @@ noncomputable def repairKernelBase (p : ℝ) (d : ℕ) :
     smooth := fun _ _ ↦ dormantOracle d }
 
 /-- The infimal smoothing value paired with the selected envelope gradient. -/
-noncomputable def repairSelectedOracle (p : ℝ) (d : ℕ)
+@[expose] noncomputable def repairSelectedOracle (p : ℝ) (d : ℕ)
     (chi : ℝ) (ell : Point d → ℝ) : PairOracle d :=
   { value := localSmoothingValue (repairKernelBase p d) chi ell
     gradient := selectedEnvelopeGradient (repairKernelBase p d) chi ell }
 
 /-- Final kernel data: its smooth oracle is the literal infimal value paired
 with the selected primal-envelope gradient. -/
-noncomputable def repairKernel (p : ℝ) (d : ℕ) :
+@[expose] noncomputable def repairKernel (p : ℝ) (d : ℕ) :
     SmoothingKernelData p d :=
   { phi := lowerKernelPhi (kernelR0 p d) (repairTheta p d)
     gradPhi := kernelGradientVector (kernelR0 p d) (repairTheta p d)

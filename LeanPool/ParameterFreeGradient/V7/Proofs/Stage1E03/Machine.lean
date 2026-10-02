@@ -46,16 +46,16 @@ noncomputable def CheckHolds (p M : ℝ) (check : ObservableGuardCheck d) : Prop
         (lpNorm 2 check.xPair.gradient) ^ (2 : ℕ) / (2 * M)
 
 /-- An upper-model guard formed from the query and proposed next-point observations. -/
-noncomputable def upperCheck (oy ox : Observation d) : ObservableGuardCheck d :=
+@[expose] noncomputable def upperCheck (oy ox : Observation d) : ObservableGuardCheck d :=
   ⟨.upperModel, oy, ox⟩
 
 /-- A Euclidean interpolation guard formed from two observations. -/
-noncomputable def interpolationCheck (oi oj : Observation d) :
+@[expose] noncomputable def interpolationCheck (oi oj : Observation d) :
     ObservableGuardCheck d :=
   ⟨.interpolation, oi, oj⟩
 
 /-- A terminal-descent guard formed from the final query and gradient-step observations. -/
-noncomputable def terminalCheck (on ov : Observation d) :
+@[expose] noncomputable def terminalCheck (on ov : Observation d) :
     ObservableGuardCheck d :=
   ⟨.terminalDescent, on, ov⟩
 
@@ -67,7 +67,7 @@ noncomputable def terminalCheck (on ov : Observation d) :
 
 /-- Pure inspection: the error branch is exactly the prefix through the first
 failed current-V7 point-carrying guard. -/
-noncomputable def evaluateChecks (p M : ℝ) :
+@[expose] noncomputable def evaluateChecks (p M : ℝ) :
     List (ObservableGuardCheck d) →
       Except (List (ObservableGuardCheck d) × ObservableGuardCheck d)
         (List (ObservableGuardCheck d))
@@ -136,7 +136,7 @@ theorem horizon_gradient_budget {eps M D : ℝ}
     simpa only [kappa, n, s] using hnum)
 
 /-- The next accelerated estimate state after receiving a query observation. -/
-noncomputable def nextEstimateState (M : ℝ) (x0 : Point d) (k : ℕ)
+@[expose] noncomputable def nextEstimateState (M : ℝ) (x0 : Point d) (k : ℕ)
     (state : O3.EuclideanEstimateState d) (oy : Observation d) :
     O3.EuclideanEstimateState d :=
   let A := O3.euclideanA k
@@ -168,7 +168,7 @@ noncomputable def ogmgStep (n : ℕ) (M : ℝ) (i : ℕ)
   ⟨v + momentum • (v - state.previousV) + correction • (v - state.current), v⟩
 
 /-- The final one-query program checking descent and selecting the terminal outcome. -/
-noncomputable def terminalProgram (eps M : ℝ) (n : ℕ)
+@[expose] noncomputable def terminalProgram (eps M : ℝ) (n : ℕ)
     (obsAt : ℕ → Observation d) (exec : O3.OGMGExecutionState d)
     (guards : List (ObservableGuardCheck d)) : Program d 1 :=
   let on := obsAt n
@@ -183,7 +183,7 @@ noncomputable def terminalProgram (eps M : ℝ) (n : ℕ)
     else .finish allGuards (.scale terminal)
 
 /-- The finite OGM-G query program followed by interpolation and terminal-descent checks. -/
-noncomputable def phaseBProgram (eps M : ℝ) (n i : ℕ)
+@[expose] noncomputable def phaseBProgram (eps M : ℝ) (n i : ℕ)
     (exec : O3.OGMGExecutionState d) (obsAt : ℕ → Observation d)
     (guards : List (ObservableGuardCheck d)) :
     (fuel : ℕ) → Program d (fuel + 1)
@@ -199,12 +199,12 @@ noncomputable def phaseBProgram (eps M : ℝ) (n i : ℕ)
           (fun j => if j = i + 1 then oi else obsAt j) guards fuel
 
 /-- The query bound for the remaining estimate phase and the following OGM-G phase. -/
-def phaseABudget (n : ℕ) : ℕ → ℕ
+@[expose] def phaseABudget (n : ℕ) : ℕ → ℕ
   | 0 => n + 1
   | fuel + 1 => phaseABudget n fuel + 2
 
 /-- The estimate-phase query program, which checks each upper model before continuing. -/
-noncomputable def phaseAProgram (eps M : ℝ) (x0 : Point d) (n k : ℕ)
+@[expose] noncomputable def phaseAProgram (eps M : ℝ) (x0 : Point d) (n k : ℕ)
     (estimate : O3.EuclideanEstimateState d)
     (last : Option (Observation d))
     (guards : List (ObservableGuardCheck d)) :

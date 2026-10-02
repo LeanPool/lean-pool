@@ -22,7 +22,7 @@ open scoped BigOperators
 open Stage5AboveTwoLower.S5ARepair
 
 /-- The vector equal to one at coordinate `i` and zero elsewhere. -/
-def coordinateUnit (i : Fin d) : Point d := fun j ↦ if j = i then 1 else 0
+@[expose] def coordinateUnit (i : Fin d) : Point d := fun j ↦ if j = i then 1 else 0
 
 lemma pairing_coordinateUnit (x : Point d) (i : Fin d) :
     O3.pairing (coordinateUnit i) x = x i := by

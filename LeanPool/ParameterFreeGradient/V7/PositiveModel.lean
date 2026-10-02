@@ -53,7 +53,7 @@ structure PositiveInstance (p : ℝ) (d : ℕ) (x0 : Point d) where
   smooth : IsLpSmooth p L oracle
 
 /-- The initial distance to the minimizer set. -/
-noncomputable def PositiveInstance.R (inst : PositiveInstance p d x0) : ℝ :=
+@[expose] noncomputable def PositiveInstance.R (inst : PositiveInstance p d x0) : ℝ :=
   minimizerDistance p inst.oracle x0
 
 /-- The common minimum value, expressed as an infimum over minimizers. -/

@@ -87,7 +87,7 @@ def StrictFiniteOutputFails (method : StrictLocalMethod) (oracle : PairOracle 1)
   method.eps < |oracle.gradient (method.output N trace) 0|
 
 /-- Some query before budget `N`, or the corresponding output, meets the gradient accuracy. -/
-def StrictSuccessThrough (method : StrictLocalMethod) (oracle : PairOracle 1)
+@[expose] def StrictSuccessThrough (method : StrictLocalMethod) (oracle : PairOracle 1)
     (trace : StrictTranscript) (N : ℕ) : Prop :=
   (∃ obs ∈ trace.take N, |oracle.gradient obs.point 0| ≤ method.eps) ∨
   |oracle.gradient (method.output N trace) 0| ≤ method.eps
@@ -117,7 +117,7 @@ def UniqueMinimizer (f : StrictPoint → ℝ) (xstar : StrictPoint) : Prop :=
   else g * z - 4 * g * H
 
 /-- The exact piecewise derivative of the affine-quadratic-affine hard family. -/
-noncomputable def strictHardDerivative (eps : ℝ) (x0 : StrictPoint) (H : ℝ)
+@[expose] noncomputable def strictHardDerivative (eps : ℝ) (x0 : StrictPoint) (H : ℝ)
     (x : StrictPoint) : StrictPoint :=
   fun _ =>
     let g := 2 * eps
@@ -139,7 +139,7 @@ def StrictHardInstance (eps : ℝ) (x0 : StrictPoint) (H L R : ℝ)
   0 < L ∧ R = |xstar 0 - x0 0| ∧ L * R / eps = 4
 
 /-- The affine oracle matching the left tail of every hard-family instance. -/
-noncomputable def strictAffineOracle (eps : ℝ) (x0 : StrictPoint) : PairOracle 1 :=
+@[expose] noncomputable def strictAffineOracle (eps : ℝ) (x0 : StrictPoint) : PairOracle 1 :=
   { value := fun x => -(2 * eps) * (x 0 - x0 0)
     gradient := fun _ _ => -(2 * eps) }
 

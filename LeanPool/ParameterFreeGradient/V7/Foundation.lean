@@ -53,7 +53,7 @@ structure PairRunResult (d : ℕ) where
   trace : List (Observation d)
 
 /-- The number of oracle calls recorded after initialization. -/
-def PairRunResult.postInitializationCallCount (run : PairRunResult d) : ℕ :=
+@[expose] def PairRunResult.postInitializationCallCount (run : PairRunResult d) : ℕ :=
   run.trace.length
 
 /-- Every trace entry equals the exact oracle observation at its recorded point. -/
@@ -73,7 +73,7 @@ def QueriedAt (trace : List (Observation d)) (k : ℕ) (x : Point d) : Prop :=
   WasQueried run.trace run.returned
 
 /-- The numerical input viewed in the underlying causal machine interface. -/
-def MethodInput.toO3 (input : MethodInput d) : O3.MethodInput d :=
+@[expose] def MethodInput.toO3 (input : MethodInput d) : O3.MethodInput d :=
   ⟨input.p, input.eps, input.x0, input.z0, input.M0⟩
 
 /-- A single causal machine family selected before `p`, dimension, or

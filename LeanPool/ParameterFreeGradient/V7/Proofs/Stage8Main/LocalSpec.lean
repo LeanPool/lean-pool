@@ -17,7 +17,7 @@ public section
 namespace V7.Stage8Main
 
 /-- The local query-cost coefficient for the runtime's exponent regime. -/
-noncomputable def runtimeCoefficient (data : RuntimeData d) : ℝ :=
+@[expose] noncomputable def runtimeCoefficient (data : RuntimeData d) : ℝ :=
   if hp2 : data.input.p < 2 then
     4 / Real.sqrt (data.input.p - 1) + 2
   else if hpEq : data.input.p = 2 then

@@ -143,7 +143,7 @@ abbrev ScalarSeq := ℕ → ℝ
 abbrev ScalarMatrix := ℕ → ℕ → ℝ
 
 /-- The coordinatewise weighted sum of the first `n` vectors. -/
-noncomputable def weightedSum (n : ℕ) (a : ScalarSeq) (X : VectorSeq d) : Point d :=
+@[expose] noncomputable def weightedSum (n : ℕ) (a : ScalarSeq) (X : VectorSeq d) : Point d :=
   fun j => ∑ i ∈ Finset.range n, a i * X i j
 
 /-- The primal energy residual combining gradient differences, mirror increments, and mixed
@@ -318,7 +318,7 @@ noncomputable def BelowGuardScalingStatement : Prop :=
       CocoercivityGuard p M oracle X Y)
 
 /-- The oracle translated by `c` and rescaled by the distance and smoothness estimates. -/
-noncomputable def normalizedPairOracle (c : Point d) (M D : ℝ)
+@[expose] noncomputable def normalizedPairOracle (c : Point d) (M D : ℝ)
     (oracle : PairOracle d) : PairOracle d :=
   { value := fun y =>
       (oracle.value (c + D • y) - oracle.value c) / (M * D ^ (2 : ℕ))

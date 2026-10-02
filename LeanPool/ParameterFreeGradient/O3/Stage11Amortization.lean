@@ -90,9 +90,9 @@ theorem scale_geometric_sum_le_endpoint {a k0 : ℝ}
   radius_geometric_sum_le_endpoint ha hk0 S
 
 /-- The square-root cost weight used in the Euclidean controller analysis. -/
-noncomputable def euclideanWrapperWeight (x : ℝ) : ℝ := Real.sqrt x
+@[expose] noncomputable def euclideanWrapperWeight (x : ℝ) : ℝ := Real.sqrt x
 /-- The power-law cost weight used for exponents above two. -/
-noncomputable def aboveWrapperWeight (a x : ℝ) : ℝ := x ^ a
+@[expose] noncomputable def aboveWrapperWeight (a x : ℝ) : ℝ := x ^ a
 /-- The square-root logarithmic cost weight used for exponents below two. -/
 @[expose] noncomputable def belowWrapperWeight (x : ℝ) : ℝ :=
   Real.sqrt x * Real.log (Real.exp 1 + x)

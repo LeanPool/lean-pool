@@ -18,7 +18,7 @@ public section
 namespace V7.Stage5AboveTwoLower
 
 /-- The kernel coordinate exponent, capped by three times the logarithm of the dimension. -/
-noncomputable def kernelR0 (p : ℝ) (d : ℕ) : ℝ :=
+@[expose] noncomputable def kernelR0 (p : ℝ) (d : ℕ) : ℝ :=
   min p (3 * Real.log d)
 
 /-- The kernel power parameter chosen strictly between one and half the coordinate exponent. -/

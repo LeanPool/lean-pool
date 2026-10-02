@@ -17,7 +17,7 @@ public section
 namespace V7.Stage8Main
 
 /-- The chronological observation list obtained by concatenating the trial reports. -/
-def reportsTrace (reports : List (TrialReport d)) : List (Observation d) :=
+@[expose] def reportsTrace (reports : List (TrialReport d)) : List (Observation d) :=
   reports.flatMap TrialReport.trace
 
 @[simp] theorem reportsTrace_append_singleton
