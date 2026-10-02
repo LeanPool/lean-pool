@@ -221,7 +221,7 @@ noncomputable def tau3Star : ℝ :=
 
 /-- **AX1 statement** (PaperIII Layer X, verbatim): the fractional–integral triangle-packing gap is
 `o(n²)`, uniformly over graphs, read cover-side (`τ₃* − ν₃`). -/
-def AX1Statement : Prop :=
+@[expose] def AX1Statement : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ n₀ : ℕ,
     ∀ (V : Type) [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj],
       n₀ ≤ Fintype.card V →
@@ -237,7 +237,7 @@ def StrongDualityHyp : Prop :=
 near-regularity
 discharged
 for all large graphs): `ν₃* − ν₃ ≤ ε n²` uniformly. -/
-def NibbleGapHyp : Prop :=
+@[expose] def NibbleGapHyp : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ n₀ : ℕ,
     ∀ (V : Type) [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj],
       n₀ ≤ Fintype.card V →

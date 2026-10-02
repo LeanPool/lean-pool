@@ -900,7 +900,7 @@ namespace Slack
 variable {X : Type} [DecidableEq X]
 
 /-- The `w`-load of a vertex: the total weight of the edges through it. -/
-def wLoad (K : Finset (Finset X)) (w : Finset X → ℝ) (v : X) : ℝ :=
+@[expose] def wLoad (K : Finset (Finset X)) (w : Finset X → ℝ) (v : X) : ℝ :=
   ∑ T ∈ K.filter (fun T => v ∈ T), w T
 
 /-- The padded vertex type: the real vertices together with `2m` dummies, `m` on each side. -/

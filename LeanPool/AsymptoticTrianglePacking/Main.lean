@@ -612,6 +612,7 @@ theorem mem_placeFam {U : Finset (PlaceVtx ι κ P)} (hU : U ∈ placeFam P idx 
 
 
 /-- The contribution of one copy to the demand of the cluster pair `(S, T)`. -/
+@[expose]
 def boxDemandC (cl : κ → ZMod 3 → ι) (sz : κ → ZMod 3 → ℕ) (c : κ) (S T : ι) : ℝ :=
   ∑ a : ZMod 3, ∑ b : ZMod 3, if cl c a = S ∧ cl c b = T then (sz c a : ℝ) * (sz c b : ℝ) else 0
 
