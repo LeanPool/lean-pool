@@ -20,10 +20,10 @@ fraction-field extension is separable, this file proves
 `differentIdeal A B ≤ Module.annihilator B Ω[B⁄A]`.
 
 The proof clears denominators in the trace-dual separability element.  If
-`b₁, ..., bₙ` is an integral basis with trace-dual basis `b₁ˇ, ..., bₙˇ`
-and `d` lies in the different, then every `d bᵢˇ` is integral.  Thus
+`b₁, ..., bₙ` is an integral basis with trace-dual basis `b₁^dual, ..., bₙ^dual`
+and `d` lies in the different, then every `d bᵢ^dual` is integral.  Thus
 
-`e_d = ∑ i, bᵢ ⊗ d bᵢˇ`
+`e_d = ∑ i, bᵢ ⊗ d bᵢ^dual`
 
 lies in `B ⊗[A] B`, has product `d`, and is killed by the kernel of the
 multiplication map.  It follows that multiplication by `d` sends this kernel

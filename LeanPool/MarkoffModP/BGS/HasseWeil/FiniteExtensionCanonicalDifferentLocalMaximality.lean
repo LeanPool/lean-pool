@@ -475,17 +475,13 @@ theorem finiteExtensionFiberCotrace_detects_infinity_excess
     ∃ β : finiteExtensionFiberConstantAdeleSubmodule K L,
       β.1 ∈ MarkoffRiemannRoch.FunctionField.Chart.adeleFilt K L Btop ∧
       ω.toFun (finiteExtensionFiberTrace K L β) ≠ 0 := by
-  let : Algebra K L :=
-    RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
+  let : Algebra K L := RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
       (algebraMap K (RatFunc K)))
-  let : IsScalarTower K (RatFunc K) L :=
-    IsScalarTower.of_algebraMap_eq' rfl
-  let : IsScalarTower K K[X] L :=
-    IsScalarTower.of_algebraMap_eq' rfl
+  let : IsScalarTower K (RatFunc K) L := IsScalarTower.of_algebraMap_eq' rfl
+  let : IsScalarTower K K[X] L := IsScalarTower.of_algebraMap_eq' rfl
   classical
   let pInf := ratFuncInfinityPlace K
-  let e := HeightOneSpectrum.equivOfRingEquiv
-    (ratFuncInfinityBaseRingEquivChart K)
+  let e := HeightOneSpectrum.equivOfRingEquiv (ratFuncInfinityBaseRingEquivChart K)
   let pChart : HeightOneSpectrum
       (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K (RatFunc K)) := e pInf
   let p : MarkoffRiemannRoch.FunctionField.Chart.PlaceA K (RatFunc K) := .inr pChart
@@ -505,18 +501,15 @@ theorem finiteExtensionFiberCotrace_detects_infinity_excess
       WithZero.exp (-1 : ℤ) by
         simpa [x, hpCoeff] using haVal]
     exact WithZero.exp_ne_zero
-  have hxValChart : pChart.valuation (RatFunc K) x =
-      WithZero.exp (-1 : ℤ) := by
+  have hxValChart : pChart.valuation (RatFunc K) x = WithZero.exp (-1 : ℤ) := by
     simpa [x, p, MarkoffRiemannRoch.FunctionField.Chart.placeValuation,
       hpCoeff] using haVal
-  have hbaseEq : pInf.valuation (RatFunc K) =
-      pChart.valuation (RatFunc K) :=
+  have hbaseEq : pInf.valuation (RatFunc K) = pChart.valuation (RatFunc K) :=
     heightOneValuation_eq_of_ringEquiv
       (ratFuncInfinityBaseRingEquivChart K)
       (ratFuncInfinityBaseRingEquivChart_algebraMap K)
       pInf pChart rfl
-  have hxValInf : pInf.valuation (RatFunc K) x =
-      WithZero.exp (-1 : ℤ) := by
+  have hxValInf : pInf.valuation (RatFunc K) x = WithZero.exp (-1 : ℤ) := by
     rw [hbaseEq]
     exact hxValChart
   let s := ratFuncInfinityUniformizer K
@@ -529,23 +522,18 @@ theorem finiteExtensionFiberCotrace_detects_infinity_excess
     simpa only [t, map_zero] using
       (FaithfulSMul.algebraMap_injective
         (RatFuncInfinityIntegers K) (RatFunc K)).ne hs
-  have htVal : pInf.valuation (RatFunc K) t =
-      WithZero.exp (-1 : ℤ) := by
+  have htVal : pInf.valuation (RatFunc K) t = WithZero.exp (-1 : ℤ) := by
     change pInf.valuation (RatFunc K)
       (algebraMap (RatFuncInfinityIntegers K) (RatFunc K) s) = _
     rw [HeightOneSpectrum.valuation_of_algebraMap]
-    exact pInf.intValuation_singleton hs
-      (ratFuncInfinityPlace_span_uniformizer K)
+    exact pInf.intValuation_singleton hs (ratFuncInfinityPlace_span_uniformizer K)
   let w : RatFunc K := (t ^ 2)⁻¹ * x
-  have hw0 : w ≠ 0 :=
-    mul_ne_zero (inv_ne_zero (pow_ne_zero 2 ht0)) hx0
-  have hwVal : pInf.valuation (RatFunc K) w =
-      WithZero.exp (1 : ℤ) := by
+  have hw0 : w ≠ 0 := mul_ne_zero (inv_ne_zero (pow_ne_zero 2 ht0)) hx0
+  have hwVal : pInf.valuation (RatFunc K) w = WithZero.exp (1 : ℤ) := by
     change pInf.valuation (RatFunc K) ((t ^ 2)⁻¹ * x) = _
     rw [map_mul, map_inv₀, map_pow, htVal, hxValInf]
     norm_num [← WithZero.exp_neg, ← WithZero.exp_add]
-  let q₀ : HeightOneSpectrum (RatFuncInfinityIntegralClosure K L) :=
-    primeOverHeightOne pInf P₀
+  let q₀ : HeightOneSpectrum (RatFuncInfinityIntegralClosure K L) := primeOverHeightOne pInf P₀
   have hq₀Under : q₀.under (RatFuncInfinityIntegers K) = pInf := by
     apply HeightOneSpectrum.ext
     exact (Ideal.over_def P₀.1 pInf.asIdeal).symm
@@ -572,15 +560,13 @@ theorem finiteExtensionFiberCotrace_detects_infinity_excess
       simp [finiteExtensionDivisorEquivChart, Finsupp.domCongr_apply,
         finiteExtensionCanonicalDifferentDivisor_inr]
     rw [hcoeff] at hbad
-    have hsymm :
-        (finiteExtensionInfinityPrimesOverEquivHeightOne K L).symm q₀ = P₀ := by
+    have hsymm : (finiteExtensionInfinityPrimesOverEquivHeightOne K L).symm q₀ = P₀ := by
       exact (finiteExtensionInfinityPrimesOverEquivHeightOne K L).symm_apply_apply P₀
     have hqIdeal : q₀.asIdeal = P₀.1 := rfl
     dsimp only [n]
     rw [hsymm, hqIdeal]
     omega
-  obtain ⟨z₀, hz₀0, hz₀Trace, hz₀Count⟩ :=
-    exists_trace_eq_of_count_threshold_lt_neg_different
+  obtain ⟨z₀, hz₀0, hz₀Trace, hz₀Count⟩ := exists_trace_eq_of_count_threshold_lt_neg_different
       (A := RatFuncInfinityIntegers K) (K₀ := RatFunc K)
       (B := RatFuncInfinityIntegralClosure K L) (L := L)
       pInf n q₀ hq₀Under hbad' w hw0 hwVal
@@ -590,8 +576,7 @@ theorem finiteExtensionFiberCotrace_detects_infinity_excess
       (FaithfulSMul.algebraMap_injective
         (RatFuncInfinityIntegers K) L).ne hs
   have htTower : tL = algebraMap (RatFunc K) L t := by
-    exact (IsScalarTower.algebraMap_apply
-      (RatFuncInfinityIntegers K) (RatFunc K) L s).symm
+    exact (IsScalarTower.algebraMap_apply (RatFuncInfinityIntegers K) (RatFunc K) L s).symm
   let z : L := tL ^ 2 * z₀
   have hz0 : z ≠ 0 := mul_ne_zero (pow_ne_zero 2 htL0) hz₀0
   have hzTrace : Algebra.trace (RatFunc K) L z = x := by
@@ -632,8 +617,7 @@ theorem finiteExtensionFiberCotrace_detects_infinity_excess
         have hideal := congrArg HeightOneSpectrum.asIdeal hqHUnder
         exact hideal.symm⟩
       have hqCount := hz₀Count qH hqHUnder
-      have hsymm :
-          (finiteExtensionInfinityPrimesOverEquivHeightOne K L).symm qH = P := by
+      have hsymm : (finiteExtensionInfinityPrimesOverEquivHeightOne K L).symm qH = P := by
         exact (finiteExtensionInfinityPrimesOverEquivHeightOne K L).symm_apply_apply P
       have hqCount' :
           -2 * (P.1.ramificationIdx
@@ -651,11 +635,9 @@ theorem finiteExtensionFiberCotrace_detects_infinity_excess
             (R := RatFuncInfinityIntegers K)
             (A := RatFuncInfinityIntegralClosure K L) (F := L)
             pInf qH s hs (ratFuncInfinityPlace_span_uniformizer K)
-      have htSquareOrder :=
-        finitePlaceOrder_mul_eq_add qH tL tL htL0 htL0
+      have htSquareOrder := finitePlaceOrder_mul_eq_add qH tL tL htL0 htL0
       rw [← pow_two] at htSquareOrder
-      have hzOrder := finitePlaceOrder_mul_eq_add qH (tL ^ 2) z₀
-        (pow_ne_zero 2 htL0) hz₀0
+      have hzOrder := finitePlaceOrder_mul_eq_add qH (tL ^ 2) z₀ (pow_ne_zero 2 htL0) hz₀0
       have hideal : qH.asIdeal = P.1 := rfl
       have horderBound : -finitePlaceOrder qH z ≤
           Btop (finiteExtensionPlaceEquivChart K L (.inr P)) := by
