@@ -14,7 +14,7 @@ The recursive state construction of the resisting coordinates, signs, and partia
 oracles.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage5AboveTwoLowerS5F
 

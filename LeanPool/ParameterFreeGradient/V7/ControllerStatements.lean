@@ -13,7 +13,7 @@ public import LeanPool.ParameterFreeGradient.V7.AboveTwoStatements
 Observable trial certification and amortized query bounds along the realized controller path.
 -/
 
-@[expose] public section
+public section
 
 namespace V7
 

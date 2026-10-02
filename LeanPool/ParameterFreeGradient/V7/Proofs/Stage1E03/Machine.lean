@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.O3.Stage10EuclideanGuards
 
 /-! Dependency-pure causal machine for the frozen V7 Euclidean trial. -/
 
-@[expose] public section
+public section
 
 namespace V7
 namespace Stage1E03

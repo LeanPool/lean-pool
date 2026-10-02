@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage8Main.Controller
 The explicit causal state machine refines the certified finite controller execution.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage8Main
 

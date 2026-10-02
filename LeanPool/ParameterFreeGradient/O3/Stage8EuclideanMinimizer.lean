@@ -19,7 +19,7 @@ are derived from the project's explicit `lpNorm 2`; no ambient-norm shortcut
 or minimizer certificate is used.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 namespace Stage8EuclideanMinimizer

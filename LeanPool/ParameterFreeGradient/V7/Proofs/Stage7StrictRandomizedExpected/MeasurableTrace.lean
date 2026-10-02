@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage6StrictDeterministic
 Joint measurability and exactness of randomized causal queries, transcripts, and outputs.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 

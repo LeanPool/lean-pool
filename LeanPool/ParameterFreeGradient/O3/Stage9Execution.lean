@@ -23,7 +23,7 @@ The phase-B trace deliberately omits `u₀ = U`, which is reused from Phase A,
 and contains exactly the newly queried points `u₁, …, uₙ, vₙ`.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

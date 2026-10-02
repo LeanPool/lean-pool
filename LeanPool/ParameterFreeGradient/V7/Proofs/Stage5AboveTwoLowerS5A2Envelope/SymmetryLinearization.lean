@@ -14,7 +14,7 @@ public import Mathlib.LinearAlgebra.Basis.Basic
 Norm- and pairing-preserving transformations are linear, using the dual image basis.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage5AboveTwoLowerS5A2Envelope
 

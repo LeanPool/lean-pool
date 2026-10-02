@@ -13,7 +13,7 @@ public import Mathlib.Analysis.Complex.ExponentialBounds
 Explicit exponents and dimension-dependent Hessian constants for the smoothing kernel.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage5AboveTwoLower
 

@@ -19,7 +19,7 @@ starts after initialization. The strict-local and known-parameter lower bounds u
 the separate method models in `StrictModel` and `LowerBoundStatements`.
 -/
 
-@[expose] public section
+public section
 
 namespace V7
 

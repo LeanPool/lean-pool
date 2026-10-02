@@ -13,7 +13,7 @@ The one-dimensional hard family has a unique minimizer and exact smoothness and 
 constants.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage6StrictDeterministic
 

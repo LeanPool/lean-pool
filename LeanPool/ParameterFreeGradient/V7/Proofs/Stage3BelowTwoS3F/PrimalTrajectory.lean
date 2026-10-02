@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage3BelowTwoS3F.Coeffic
 The literal below-two primal trajectory has the required dynamics and exact observations.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage3BelowTwoS3F
 

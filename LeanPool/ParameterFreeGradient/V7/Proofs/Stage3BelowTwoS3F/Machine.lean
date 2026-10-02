@@ -13,7 +13,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage3BelowTwoS3F.DualTra
 Finite causal query programs implementing the below-two primal and dual phases.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage3BelowTwoS3F
 

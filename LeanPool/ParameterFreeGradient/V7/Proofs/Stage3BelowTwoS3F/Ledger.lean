@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage3BelowTwoS3F.Semanti
 Consecutive below-two guard checks match the cached observation and the two phase traces.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage3BelowTwoS3F
 

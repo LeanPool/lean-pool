@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage5AboveTwoLowerS5A2En
 Selection of minimizing displacements and differentiation of the resulting envelope.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage5AboveTwoLowerS5A2Envelope
 

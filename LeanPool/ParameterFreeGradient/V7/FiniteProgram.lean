@@ -10,7 +10,7 @@ public import LeanPool.ParameterFreeGradient.V7.TrialInterfaces
 
 /-! # Finite query programs shared by the geometry-specific trial machines -/
 
-@[expose] public section
+public section
 
 namespace V7.CausalProgram
 

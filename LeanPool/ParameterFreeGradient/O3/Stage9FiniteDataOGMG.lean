@@ -18,7 +18,7 @@ the native finite algebraic certificate.  In particular, the certificate is
 proved from the actual recursion; it is not an input field or hypothesis.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

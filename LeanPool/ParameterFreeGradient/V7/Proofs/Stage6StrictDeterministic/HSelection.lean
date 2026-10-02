@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage6StrictDeterministic
 Selection of a hard-family scale beyond every query and output in a finite transcript.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage6StrictDeterministic
 

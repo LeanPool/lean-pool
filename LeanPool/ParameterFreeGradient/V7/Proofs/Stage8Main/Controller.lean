@@ -14,7 +14,7 @@ public import LeanPool.ParameterFreeGradient.O3.Stage4AlgebraRadius
 Finite scale and radius caps give a decreasing rank and controller termination.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage8Main
 

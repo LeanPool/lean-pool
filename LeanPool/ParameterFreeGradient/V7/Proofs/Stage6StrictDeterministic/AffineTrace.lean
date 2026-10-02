@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.StrictStatements
 The deterministic strict method's exact transcript against the affine oracle.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage6StrictDeterministic
 

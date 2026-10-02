@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage4AboveTwoFinalTrial.
 The above-two dual trajectory satisfies its dynamics and exact observation requirements.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage4AboveTwoFinalTrial
 

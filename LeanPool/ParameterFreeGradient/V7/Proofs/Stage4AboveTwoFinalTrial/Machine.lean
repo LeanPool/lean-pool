@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage4AboveTwoFinalTrial.
 Finite causal query programs implementing the above-two primal and dual phases.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage4AboveTwoFinalTrial
 

@@ -15,7 +15,7 @@ Calculus, convexity, minimizers, and growth of the scalar affine-quadratic-affin
 objective.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage6StrictDeterministic
 

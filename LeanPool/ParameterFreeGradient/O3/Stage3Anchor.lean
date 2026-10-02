@@ -17,7 +17,7 @@ acceptance at the first dyadic scale dominating `L`, the actual infimum
 distance to the minimizer set, and the displayed base-two ceiling count.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 

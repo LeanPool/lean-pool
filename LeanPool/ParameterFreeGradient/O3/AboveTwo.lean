@@ -24,7 +24,7 @@ derive both the estimate-sequence ledger and the restart gap/distance
 implication.  This module does not replace it with a target-shaped assumption.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

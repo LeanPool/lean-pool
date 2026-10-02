@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Guards
 Causal local trial actions, observable reports, guard ledgers, and correctness certificates.
 -/
 
-@[expose] public section
+public section
 
 namespace V7
 

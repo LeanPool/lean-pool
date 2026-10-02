@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage5AboveTwoLowerS5A2En
 Conditional Lipschitz and uniqueness bounds for gradients at infimal-convolution minimizers.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage5AboveTwoLowerS5A2Envelope
 

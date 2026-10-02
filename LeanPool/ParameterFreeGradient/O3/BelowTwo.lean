@@ -23,7 +23,7 @@ result load-bearingly.  No conditional replacement taking the desired
 strong-convexity conclusion as an extra hypothesis is introduced.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 

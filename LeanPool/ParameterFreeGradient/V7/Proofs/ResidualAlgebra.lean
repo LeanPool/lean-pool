@@ -16,7 +16,7 @@ The weighted reversal, pairing and triangular-sum identities depend on the resid
 map and recurrence, independently of the coefficient regime.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

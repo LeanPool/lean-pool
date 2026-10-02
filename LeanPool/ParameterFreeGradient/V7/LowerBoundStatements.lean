@@ -14,7 +14,7 @@ public import LeanPool.ParameterFreeGradient.V7.StrictModel
 Smoothing kernels, resisting oracle completions, and known-parameter lower-bound statements.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

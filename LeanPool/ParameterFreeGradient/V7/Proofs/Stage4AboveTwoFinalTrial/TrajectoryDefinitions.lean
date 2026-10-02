@@ -13,7 +13,7 @@ The above-two trial parameters, explicit primal trajectory, and mutually recursi
 trajectory.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage4AboveTwoFinalTrial
 

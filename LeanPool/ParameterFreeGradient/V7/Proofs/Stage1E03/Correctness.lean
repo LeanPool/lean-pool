@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage1E03.Shapes
 The source Euclidean guard schedule and its operational report contract.
 -/
 
-@[expose] public section
+public section
 
 namespace V7
 namespace Stage1E03

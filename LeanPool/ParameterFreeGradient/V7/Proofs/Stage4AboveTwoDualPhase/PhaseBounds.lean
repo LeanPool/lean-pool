@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage4AboveTwoDualPhase.D
 The prescribed primal and dual horizons imply objective-gap and terminal-gradient bounds.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage4AboveTwoDualPhase
 

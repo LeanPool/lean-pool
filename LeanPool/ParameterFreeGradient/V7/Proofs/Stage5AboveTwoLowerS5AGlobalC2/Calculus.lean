@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage5AboveTwoLowerS5AGlo
 The power smoothing kernel is twice continuously Fréchet differentiable globally.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage5AboveTwoLower.S5AGlobalC2
 

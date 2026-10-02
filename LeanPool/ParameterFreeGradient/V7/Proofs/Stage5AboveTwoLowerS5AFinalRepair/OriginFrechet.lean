@@ -15,7 +15,7 @@ public import Mathlib.Analysis.InnerProductSpace.NormPow
 The kernel gradient is Fréchet differentiable at the origin with zero derivative.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 open Asymptotics

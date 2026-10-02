@@ -13,7 +13,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage3BelowTwoS3F.Machine
 The above-two trial coefficients satisfy recurrence, support, and row-sum assumptions.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

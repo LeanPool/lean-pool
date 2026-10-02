@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage8Main.RuntimeMachine
 Selection and certification of the local trial for each runtime exponent regime.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage8Main
 

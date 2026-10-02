@@ -18,7 +18,7 @@ scale.  In particular no estimate of the form "number of trials times the
 last trial" occurs.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 

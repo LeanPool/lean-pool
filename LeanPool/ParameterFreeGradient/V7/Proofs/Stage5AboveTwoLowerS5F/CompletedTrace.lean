@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage5AboveTwoLowerS5F.Ob
 The completed normalized resisting trace is exact, causal, and charges its initial query.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage5AboveTwoLowerS5F
 

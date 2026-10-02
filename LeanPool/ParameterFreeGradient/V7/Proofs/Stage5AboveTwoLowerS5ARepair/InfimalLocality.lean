@@ -13,7 +13,7 @@ public import LeanPool.ParameterFreeGradient.O3.Stage2RouteC
 Stable interior minimizing displacements imply locality of the infimal-convolution value.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage5AboveTwoLower.S5ARepair
 

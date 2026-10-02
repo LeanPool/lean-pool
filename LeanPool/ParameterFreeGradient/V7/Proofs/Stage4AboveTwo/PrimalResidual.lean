@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage4AboveTwo.Identity
 Lower bounds for the mixed gradient and mirror residual in above-two geometry.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage4AboveTwo
 

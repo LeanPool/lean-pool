@@ -17,7 +17,7 @@ identities.  It deliberately does not turn either load-bearing identity into
 a certificate field.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 

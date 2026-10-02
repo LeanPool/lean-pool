@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage5AboveTwoLowerS5F.Co
 The normalized completion is a convex objective with the stated coordinate gradient.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage5AboveTwoLowerS5F
 

@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage5AboveTwoLowerS5AGlo
 Continuity of the assembled kernel Hessian at all points.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

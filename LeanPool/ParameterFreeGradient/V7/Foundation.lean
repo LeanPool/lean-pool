@@ -15,7 +15,7 @@ This module contains transparent data carriers only.  It deliberately does
 not import any historical O3 result or concrete O3 dispatcher.
 -/
 
-@[expose] public section
+public section
 
 namespace V7
 

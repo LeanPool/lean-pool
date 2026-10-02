@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage4AboveTwoFinalTrial.
 The physical above-two phase observations, guard schedules, and terminal outcome shapes.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage4AboveTwoFinalTrial
 

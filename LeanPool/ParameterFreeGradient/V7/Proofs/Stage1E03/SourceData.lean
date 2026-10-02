@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage1E03.Ledger
 The literal Euclidean trajectories packaged with their dynamics and exact traces.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

@@ -15,7 +15,7 @@ public import LeanPool.ParameterFreeGradient.O3.Geometry
 Scalar and vector uniform convexity for the power mirror geometry.
 -/
 
-@[expose] public section
+public section
 
 namespace O3.Experimental
 

@@ -17,7 +17,7 @@ transition function contains no oracle or admissible instance; objective data
 enters only through the continuation of `Action.query`.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 

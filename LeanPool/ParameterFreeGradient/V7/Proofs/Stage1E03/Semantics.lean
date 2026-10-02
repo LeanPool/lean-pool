@@ -13,7 +13,7 @@ Compatibility of source Euclidean states and recorded checks with the original a
 execution.
 -/
 
-@[expose] public section
+public section
 
 namespace V7
 namespace Stage1E03

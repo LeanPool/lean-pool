@@ -16,7 +16,7 @@ finite-dimensional `ell_p/ell_q` Hölder geometry.  It deliberately does not
 postulate termination or an accepted trace as data.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 

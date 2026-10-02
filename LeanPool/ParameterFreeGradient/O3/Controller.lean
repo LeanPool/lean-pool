@@ -19,7 +19,7 @@ from the local-trial obligations and finite numerical search caps; it is not a
 field of the controller state or of a certificate.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 

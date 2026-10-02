@@ -19,7 +19,7 @@ model, its derivative is nonpositive on `[0,1]`; this yields the coefficient
 inequalities alone.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 namespace Stage3Anchor

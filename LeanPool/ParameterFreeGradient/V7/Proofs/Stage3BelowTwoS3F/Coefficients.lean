@@ -13,7 +13,7 @@ The explicit below-two coefficient matrices satisfy recurrence, support, and row
 conditions.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

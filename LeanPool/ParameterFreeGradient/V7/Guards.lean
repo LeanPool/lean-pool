@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.PositiveModel
 Observable upper-model, gradient, cocoercivity, interpolation, and descent inequalities.
 -/
 
-@[expose] public section
+public section
 
 namespace V7
 

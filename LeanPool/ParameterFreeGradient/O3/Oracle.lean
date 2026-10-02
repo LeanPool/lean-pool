@@ -19,7 +19,7 @@ Those properties live in the separate proposition `TrialValid` and must be
 proved by the regime-specific trial modules.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 

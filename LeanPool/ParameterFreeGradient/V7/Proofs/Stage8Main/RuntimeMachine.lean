@@ -18,7 +18,7 @@ the primitive `O3.FirstOrderMethod` execution interface from the historical
 namespace.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage8Main
 

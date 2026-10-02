@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.LowerBoundStatements
 Neighborhood equality of smooth objective values determines the complete exact oracle pair.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage5AboveTwoLower
 

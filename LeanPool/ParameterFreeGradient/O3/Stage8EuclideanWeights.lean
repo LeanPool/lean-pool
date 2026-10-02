@@ -17,7 +17,7 @@ This module records the source recurrence
 weight gives the exact alternative form `Aₖ₊₁ = aₖ₊₁²`.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 

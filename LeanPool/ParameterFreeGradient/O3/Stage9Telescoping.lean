@@ -18,7 +18,7 @@ recursively generated auxiliary `p` sequence and the exact polarization used
 by the finite-data identity.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

@@ -14,7 +14,7 @@ public import LeanPool.ParameterFreeGradient.V7.ControllerStatements
 The regime-dependent query rate and the main parameter-free convergence statement.
 -/
 
-@[expose] public section
+public section
 
 namespace V7
 

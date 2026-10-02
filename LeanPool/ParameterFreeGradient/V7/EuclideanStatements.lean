@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.TrialInterfaces
 Finite Euclidean phase data, guard schedules, and the two-phase local trial contract.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage5AboveTwoLowerS5A2En
 Assembly of the selected envelope oracle and its coordinate-gradient and smoothness proofs.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage5AboveTwoLowerS5A2Envelope
 

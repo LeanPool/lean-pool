@@ -16,7 +16,7 @@ number.  We use the literal finite-sum formula from the TeX source rather than
 the ambient Euclidean norm on `Fin d → ℝ`.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

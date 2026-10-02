@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage3BelowTwoS3F.DualRec
 The below-two dual trajectory has the required dynamics and exact chronological observations.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage3BelowTwoS3F
 

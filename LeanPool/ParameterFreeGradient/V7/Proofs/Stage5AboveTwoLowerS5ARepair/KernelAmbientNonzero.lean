@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage5AboveTwoLowerS5ARep
 The ambient Fréchet derivative and coordinate gradient of the power kernel away from zero.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

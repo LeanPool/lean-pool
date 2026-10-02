@@ -24,7 +24,7 @@ special equation `theta_0^2-theta_0=2 theta_1^2` is used exactly.  The actual
 vector recurrence supplies the pairing-balance premise in `Stage9Pairing`.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 namespace Stage9Certificate

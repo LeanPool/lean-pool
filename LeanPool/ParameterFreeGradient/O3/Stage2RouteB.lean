@@ -19,7 +19,7 @@ explicit finite-dimensional definitions.  In particular, it does not assume
 strong convexity or the frozen target.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

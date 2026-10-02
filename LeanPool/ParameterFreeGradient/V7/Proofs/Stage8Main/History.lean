@@ -14,7 +14,7 @@ The controller preserves valid reports, chronological paths, and terminal correc
 certificates.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage8Main
 

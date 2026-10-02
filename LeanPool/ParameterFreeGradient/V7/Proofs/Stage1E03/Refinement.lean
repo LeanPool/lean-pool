@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage1E03.SourceData
 The finite Euclidean query programs evaluate to the literal source reports.
 -/
 
-@[expose] public section
+public section
 
 namespace V7
 namespace Stage1E03

@@ -20,7 +20,7 @@ minimizer, query, two oracle observations, literal potential, and guard are
 deterministic definitions, while their correctness properties are theorems.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 

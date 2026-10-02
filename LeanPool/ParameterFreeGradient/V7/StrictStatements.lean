@@ -14,7 +14,7 @@ Finite-horizon, expected-time, and scale-identification impossibility statements
 methods.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 

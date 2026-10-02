@@ -13,7 +13,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Anchor
 Initialization and anchor search splice into the causal controller execution.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage8Main
 

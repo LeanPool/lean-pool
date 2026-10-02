@@ -13,7 +13,7 @@ The normalized completed resisting oracle is a certified positive smooth optimiz
 instance.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage5AboveTwoLowerS5F
 

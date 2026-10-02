@@ -18,7 +18,7 @@ certificate from the actual auxiliary recurrence.  The balance is a theorem,
 not a field of the final statement.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

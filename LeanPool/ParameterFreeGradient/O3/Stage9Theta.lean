@@ -17,7 +17,7 @@ The representation is Nat-indexed because the certificate sums over
 boundary hypothesis explicitly.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 

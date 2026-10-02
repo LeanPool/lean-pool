@@ -13,7 +13,7 @@ The squared-norm geometry, residual identities, and two-phase trial contracts fo
 below two.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

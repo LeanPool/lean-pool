@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage1E03.Refinement
 The early-failure and complete shapes of source Euclidean reports.
 -/
 
-@[expose] public section
+public section
 
 namespace V7
 namespace Stage1E03

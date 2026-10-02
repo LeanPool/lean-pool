@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage5AboveTwoLowerS5ARep
 The explicit ambient Hessian of the power kernel away from the origin.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage5AboveTwoLower.S5ARepair
 

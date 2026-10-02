@@ -17,7 +17,7 @@ recursive Phase-A execution and evaluates it at the internally constructed
 closest optimizer.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 

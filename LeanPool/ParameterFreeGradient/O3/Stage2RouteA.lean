@@ -18,7 +18,7 @@ It deliberately does not export the frozen theorem until the singular-line
 integration argument is complete.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 

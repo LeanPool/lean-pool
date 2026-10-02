@@ -14,7 +14,7 @@ Strict deterministic and randomized oracle models, exact transcripts, and normal
 instances.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 

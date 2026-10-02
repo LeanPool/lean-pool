@@ -19,7 +19,7 @@ machine.  In particular, a method can obtain objective information only by a
 and an optimizer are not fields of `MethodInput`.
 -/
 
-@[expose] public section
+public section
 
 namespace O3
 

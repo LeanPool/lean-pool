@@ -13,7 +13,7 @@ The geometry, residual identities, phase bounds, and operational contracts for e
 two.
 -/
 
-@[expose] public section
+public section
 
 namespace V7
 

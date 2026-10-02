@@ -13,7 +13,7 @@ The mutually recursive normalized query and gradient-accumulator trajectories of
 dual phase.
 -/
 
-@[expose] public section
+public section
 
 namespace V7.Stage3BelowTwoS3F
 

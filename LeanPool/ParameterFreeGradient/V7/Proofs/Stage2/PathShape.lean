@@ -12,7 +12,7 @@ public import LeanPool.ParameterFreeGradient.V7.Proofs.Stage2.Geometric
 The realized controller path has the prescribed geometric sequence of scales and radii.
 -/
 
-@[expose] public section
+public section
 
 namespace V7
 namespace Stage2
