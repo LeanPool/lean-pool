@@ -5,10 +5,10 @@ Authors: Jim Fowler, Dennis Sweeney
 -/
 module
 
-public import Mathlib.Tactic
 public import LeanPool.OneManifold.OneMfld.Outer
 public import LeanPool.OneManifold.OneMfld.TransitionMono
-
+public import Mathlib.Topology.OpenPartialHomeomorph.Defs
+public import Mathlib.Topology.UniformSpace.Real
 
 /-! # Core lemmas for gluing overlapping charts
 
