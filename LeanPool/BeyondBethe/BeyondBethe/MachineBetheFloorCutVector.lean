@@ -361,7 +361,7 @@ theorem ofFn_explicitBetheFloorCutNormal {m : ℕ}
     machineBinaryListSnoc_encode,
     rationalFiniteVectorCode, ofFn_explicitBetheFloorCutNormal]
 
-@[simp] theorem machineBetheFloorCutVectorCode_encode_oracleNormal {m : ℕ}
+theorem machineBetheFloorCutVectorCode_encode_oracleNormal {m : ℕ}
     (i j : Fin (m + 1)) :
     machineBetheFloorCutVectorCode
         (machineBetheFloorCutVectorCanonicalWord i j) =
