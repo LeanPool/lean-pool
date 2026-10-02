@@ -174,7 +174,6 @@ theorem fderivL2Norm_le_gradientCoordL2NormSum_ofContDiff
           (μ := MeasureTheory.volume)
           (s := Finset.univ)
           (f := di)
-
           (by norm_num : (1 : ℝ≥0∞) ≤ 2))
     calc
       ‖dCoordLp‖ = ENNReal.toReal (MeasureTheory.eLpNorm D 2 MeasureTheory.volume) := by

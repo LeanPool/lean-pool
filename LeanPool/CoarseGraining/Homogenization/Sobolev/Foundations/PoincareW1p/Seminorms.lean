@@ -252,7 +252,6 @@ theorem fderivLpNorm_le_gradientCoordLpSeminormSum_ofContDiffOnIsOpenBoundedConv
           (μ := μ)
           (s := Finset.univ)
           (f := di)
-
           hp1)
     calc
       ‖dCoordLp‖ = ENNReal.toReal (MeasureTheory.eLpNorm D p μ) := by

@@ -80,7 +80,6 @@ theorem annealedConvergence_homogenizationScale
     exact lt_min (by positivity) (by positivity)
   refine ⟨Centry, α, hCentry_pos, hα_pos, ?_⟩
   intro P hP hStruct hP4 hparams n
-
   -- Enter the small-contrast regime for the shifted exponents at `N`.
   let N : ℕ := annealedAlgebraicEntryScale P hP4 Centry
   let PN : Ch04.RestrictionCoeffLaw d := Ch04.restrictionScaleNormalizedLaw N P
@@ -123,7 +122,6 @@ theorem annealedConvergence_homogenizationScale
       hP4S.params = twoBetaShiftedParams hP4N.params := by
         simp [hP4S]
       _ = twoBetaShiftedParams params := by rw [hP4N_params]
-
   -- Apply the Section 5.6 small-contrast theorem to the dilated law.
   have htheta_sub_quarter :
       thetaAtScale hPN hStructN (n : ℤ) - 1 ≤ 1 / 4 := by
@@ -146,7 +144,6 @@ theorem annealedConvergence_homogenizationScale
         4 * K * Real.rpow (3 : ℝ) (-αsc * (n : ℝ)) := by
     dsimp only at hJ_upper hJ_lower
     nlinarith
-
   -- Shrink the exponent so the displayed estimate has unit prefactor.
   have htheta_sub_unit_decay :
       thetaAtScale hPN hStructN (n : ℤ) - 1 ≤
@@ -187,7 +184,6 @@ theorem annealedConvergence_homogenizationScale
       thetaAtScale hPN hStructN (n : ℤ) ≤
         1 + Real.rpow (3 : ℝ) (-α * (n : ℝ)) := by
     linarith
-
   -- Undo the scale normalization.
   have hscale :
       thetaAtScale hPN hStructN (n : ℤ) =

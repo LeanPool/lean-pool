@@ -467,7 +467,6 @@ theorem cubeEuclideanNegativeWspSmoothDualENorm_le_descendantsENNAverage {d : â„
     have hR' : R âˆˆ D := by simpa only using hR
     simp only [dite_eq_left (by simpa [D] using hR')]
     exact hlocal R hR'
-
   have hbeq : descendantsENNAverage Q j (fun R => b R ^
       p.conjugate.exponent.toReal) =
       descendantsENNAverage Q j (fun R =>

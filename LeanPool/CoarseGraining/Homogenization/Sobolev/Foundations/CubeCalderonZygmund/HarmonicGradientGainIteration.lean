@@ -782,7 +782,6 @@ noncomputable def HarmonicGradientGain.upgrade {d : ℕ} (hd : 0 < d)
                       MeasureTheory.eLpNorm (fun x => HP.hess i k x) 2
                       (normalizedCubeMeasure P) := mul_le_mul_left hscale _
                 _ ≤ _ := mul_le_mul_right hrow _
-
         _ ≤ (d : ℝ≥0∞) * G.fixedValue * (A * R) :=
           mul_le_mul_right henergy' _
         _ = _ := by ring

@@ -211,7 +211,6 @@ theorem fderivL2Norm_le_gradientCoordL2NormSum_ofContDiffOnIsOpenBoundedConvexDo
           (μ := μ)
           (s := Finset.univ)
           (f := di)
-
           (by norm_num : (1 : ℝ≥0∞) ≤ 2))
     calc
       ‖dCoordLp‖ = ENNReal.toReal (MeasureTheory.eLpNorm D 2 μ) := by
