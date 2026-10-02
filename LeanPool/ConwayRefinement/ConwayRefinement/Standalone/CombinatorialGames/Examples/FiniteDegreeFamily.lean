@@ -23,6 +23,7 @@ open Ordinal
 
 /-- Every finite power `ω ^ n + 1` occurs as the exact Conway length of a primal omnific
 integer. -/
+@[expose]
 def EveryFinitePowerOccurs : Prop :=
   ∀ n : ℕ, ∃ x : Oz.OmnificInteger.{0},
     x.1.length = (omega0 : Ordinal.{0}) ^ (n : Ordinal.{0}) + 1 ∧ IsPrimal x
