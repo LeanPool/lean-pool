@@ -278,7 +278,7 @@ termination_by x.den
 decreasing_by dyadic_wf
 
 /-- `Dyadic.toIGame` as an `OrderEmbedding`. -/
-@[simps!]
+@[expose, simps!]
 noncomputable def toIGameEmbedding : Dyadic ↪o IGame :=
   .ofStrictMono toIGame fun _ _ ↦ by exact toIGame_lt_toIGame_aux
 

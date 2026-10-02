@@ -28,7 +28,7 @@ termination_by o
 namespace NatOrdinal
 
 /-- Converts an ordinal into the corresponding surreal. -/
-def toSurreal : NatOrdinal ↪o Surreal :=
+@[expose] def toSurreal : NatOrdinal ↪o Surreal :=
   .ofStrictMono (fun o ↦ .mk o.toIGame) fun _ _ h ↦ toIGame.strictMono h
 
 instance : Coe NatOrdinal Surreal where
@@ -61,7 +61,7 @@ theorem toSurreal_mul (a b : NatOrdinal) : (a * b).toSurreal = a.toSurreal * b.t
   mk_eq (toIGame_mul a b)
 
 /-- `NatOrdinal.toGame` as an `OrderRingHom`. -/
-@[simps]
+@[expose, simps]
 def toSurrealRingHom : NatOrdinal →+*o Surreal where
   toFun := toSurreal
   map_zero' := toSurreal_zero

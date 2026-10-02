@@ -180,7 +180,7 @@ instance instSMulIntConway : SMul Int Dyadic where
 @[simp] theorem num_den : half.den = 2 := rfl
 
 /-- Constructor for the fraction `m / n`. -/
-protected def mkRat (m : ℤ) {n : ℕ} (h : n ∈ Submonoid.powers 2) : Dyadic :=
+@[expose] protected def mkRat (m : ℤ) {n : ℕ} (h : n ∈ Submonoid.powers 2) : Dyadic :=
   ofIntWithPrec m (Submonoid.log ⟨n, h⟩)
 
 @[simp, norm_cast]
