@@ -39,7 +39,7 @@ matrix `∫ ∂ᵢψ ∂ⱼψ` (diagonal, explicit).
   `∫ dil β · (dil β)' = 0`.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators ContDiff
 open MeasureTheory Real

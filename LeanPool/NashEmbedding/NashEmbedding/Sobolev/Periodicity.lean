@@ -24,7 +24,7 @@ position-space analytic toolkit (mollifier theory, Riemann-sum
 position form) and by the NashEmbedding smooth-metric structures.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 open Real
@@ -35,7 +35,7 @@ section
 namespace NashEmbedding.Sobolev
 
 /-- The periodic shift `2πk : ℝⁿ` for `k : Fin n → ℤ`. -/
-def periodicShift (n : ℕ) (k : Fin n → ℤ) : Fin n → ℝ :=
+@[expose] def periodicShift (n : ℕ) (k : Fin n → ℤ) : Fin n → ℝ :=
   fun i => 2 * Real.pi * (k i : ℝ)
 
 /-- A function `f : ℝⁿ → V` is `2πℤⁿ`-periodic if

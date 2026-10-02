@@ -26,7 +26,7 @@ Periodicity, smooth periodic functions, smooth metrics, realizable metrics,
 injective embeddings, flat torus embedding.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators ContDiff
 open Matrix NashEmbedding.Sobolev
@@ -80,12 +80,12 @@ lemma IsPosDefSmoothMetric.toIsSmoothMetric {n : ℕ}
 
 /-- The partial derivative of `u : ℝⁿ → ℝᴺ` with respect to the `i`-th coordinate,
   defined as the Fréchet derivative applied to the `i`-th standard basis vector. -/
-def partialDeriv {n N : ℕ} (i : Fin n) (u : (Fin n → ℝ) → (Fin N → ℝ))
+@[expose] def partialDeriv {n N : ℕ} (i : Fin n) (u : (Fin n → ℝ) → (Fin N → ℝ))
     (x : Fin n → ℝ) : Fin N → ℝ :=
   fderiv ℝ u x (Pi.single i 1)
 
 /-- `u` realizes `g` if `∂ᵢu(x) · ∂ⱼu(x) = g(x)ᵢⱼ` for all `x, i, j`. -/
-def Realizes {n N : ℕ} (u : (Fin n → ℝ) → (Fin N → ℝ))
+@[expose] def Realizes {n N : ℕ} (u : (Fin n → ℝ) → (Fin N → ℝ))
     (g : (Fin n → ℝ) → Matrix (Fin n) (Fin n) ℝ) : Prop :=
   ∀ (x : Fin n → ℝ) (i j : Fin n),
     dotProduct (partialDeriv i u x) (partialDeriv j u x) = g x i j
@@ -147,18 +147,18 @@ lemma IsInjRealizable.toIsRealizable {n : ℕ}
   `u_flat(x) = (cos x₁, sin x₁, cos x₂, sin x₂, …, cos xₙ, sin xₙ)`.
   For `k : Fin (2n)`, the component is `cos(x_{k/2})` if `k` is even,
   and `sin(x_{k/2})` if `k` is odd. -/
-def flatTorusEmb (n : ℕ) : (Fin n → ℝ) → (Fin (2 * n) → ℝ) :=
+@[expose] def flatTorusEmb (n : ℕ) : (Fin n → ℝ) → (Fin (2 * n) → ℝ) :=
   fun x k =>
     let i : Fin n := ⟨k.val / 2, by omega⟩
     if k.val % 2 = 0 then Real.cos (x i) else Real.sin (x i)
 
 /-- The flat metric `g_flat = Iₙ` (the identity matrix). -/
-def flatMetric (n : ℕ) : (Fin n → ℝ) → Matrix (Fin n) (Fin n) ℝ :=
+@[expose] def flatMetric (n : ℕ) : (Fin n → ℝ) → Matrix (Fin n) (Fin n) ℝ :=
   fun _ => 1
 
 /-- The operator norm of a matrix, defined as the norm of the associated
   continuous linear map on `ℝⁿ` (with the sup norm on `Fin n → ℝ`). -/
-def matOpNorm {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) : ℝ :=
+@[expose] def matOpNorm {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) : ℝ :=
   ‖A.toLin'.toContinuousLinearMap‖
 
 end NashEmbedding

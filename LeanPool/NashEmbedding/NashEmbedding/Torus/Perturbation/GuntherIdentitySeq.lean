@@ -35,7 +35,7 @@ ansatz of Theorem B. The dictionary between real maps `ℝⁿ → ℝᴺ` and ve
 (`vcoeff`, `vsynth`) is set up here as well.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators ContDiff
 open NashEmbedding.Sobolev Matrix

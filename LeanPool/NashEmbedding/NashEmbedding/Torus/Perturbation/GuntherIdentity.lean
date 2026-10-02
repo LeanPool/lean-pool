@@ -35,7 +35,7 @@ target so that scalar and vector-valued maps are handled uniformly;
 `NashEmbedding.partialDeriv` is its specialisation to `Fin N → ℝ`.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators ContDiff Matrix
 open Matrix
@@ -48,7 +48,7 @@ namespace NashEmbedding
 variable {n : ℕ}
 
 /-- Coordinate partial derivative `∂ᵢ f (x) = Df(x)(eᵢ)` for maps into any normed space. -/
-def pderiv {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
+@[expose] def pderiv {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
     (i : Fin n) (f : (Fin n → ℝ) → V) (x : Fin n → ℝ) : V :=
   fderiv ℝ f x (Pi.single i 1)
 

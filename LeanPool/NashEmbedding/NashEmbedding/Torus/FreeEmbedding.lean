@@ -31,7 +31,7 @@ vanish. The map is defined on a structured index type and transported to `Fin N`
 `Fintype.equivFin`.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators ContDiff
 open NashEmbedding.Sobolev Matrix

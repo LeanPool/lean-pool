@@ -42,7 +42,7 @@ Conventions: `fourierSynthesis n a θ = ∑' m, a m * fourierExp n m θ` with
 smoothness is `ContDiff ℝ ∞` (`open scoped ContDiff`), never `⊤`.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators ContDiff
 open NashEmbedding.Sobolev Complex

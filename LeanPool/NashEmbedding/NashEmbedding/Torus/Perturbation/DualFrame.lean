@@ -32,7 +32,7 @@ In Theorem B (Günther's perturbation theorem) this is applied to the frame
 is solved pointwise. Periodicity of the dual frame is inherited pointwise.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators ContDiff
 open NashEmbedding.Sobolev Matrix

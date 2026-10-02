@@ -33,7 +33,7 @@ positive-definite smooth metric is an `H^s`-limit of realizable ones.
 * `realizable_approx_all_s` — Theorem A for every `s` (the form used by `nashTorus`).
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators ContDiff
 open MeasureTheory Real Matrix

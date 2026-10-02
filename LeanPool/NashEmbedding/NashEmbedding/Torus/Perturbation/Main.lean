@@ -44,7 +44,7 @@ Proof shape:
 * `gunther_perturbation` — Günther's perturbation theorem (Wassermann's Theorem B).
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators ContDiff
 open Filter Topology NashEmbedding.Sobolev Matrix
@@ -62,7 +62,7 @@ variable {n N : ℕ}
 abbrev FrameIdx (n : ℕ) := Fin n ⊕ {pq : Fin n × Fin n // pq.1 ≤ pq.2}
 
 /-- The frame `{∂ᵢu} ∪ {∂ₚ∂_q u}_{p ≤ q}` of a map `u`. -/
-def frame (u : (Fin n → ℝ) → (Fin N → ℝ)) : FrameIdx n → (Fin n → ℝ) → (Fin N → ℝ)
+@[expose] def frame (u : (Fin n → ℝ) → (Fin N → ℝ)) : FrameIdx n → (Fin n → ℝ) → (Fin N → ℝ)
   | Sum.inl i => pderiv i u
   | Sum.inr pq => pderiv pq.1.1 (pderiv pq.1.2 u)
 
@@ -103,7 +103,7 @@ attribute [irreducible] bLevel
 
 /-- The `H^r` size of a matrix-valued perturbation: the sum over entries of the squared
 `H^r` norms of the coefficient sequences. -/
-def hSize (n : ℕ) (h : (Fin n → ℝ) → Matrix (Fin n) (Fin n) ℝ) : ℝ :=
+@[expose] def hSize (n : ℕ) (h : (Fin n → ℝ) → Matrix (Fin n) (Fin n) ℝ) : ℝ :=
   ∑ i, ∑ j, sobolevNormSq n (bLevel n) (stdFourierCoeff n (fun x => ((h x i j : ℝ) : ℂ)))
 
 /-! ## The momentum-side data -/

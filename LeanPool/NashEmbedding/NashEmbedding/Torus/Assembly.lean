@@ -32,7 +32,7 @@ Theorem B's smallness measure `hSize`, and the metric-splitting step of Wasserma
   `posDefSmoothMetric_stability`).
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators ContDiff
 open NashEmbedding.Sobolev Matrix

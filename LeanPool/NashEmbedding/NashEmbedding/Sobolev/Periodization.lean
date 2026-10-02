@@ -63,7 +63,7 @@ on ℝⁿ to the momentum-side Sobolev structures of `DistributionSobolev`.
   in every `MemSobolevDistrib n s`.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators ContDiff
 open Complex Real MeasureTheory
@@ -81,7 +81,7 @@ variable {n : ℕ}
     `φ^per(x) = ∑_{k ∈ ℤⁿ} φ(x + 2πk)`.
     For `φ` with `supp(φ) ⊂ (-π, π)ⁿ`, at most one term is nonzero
     at each `x`. -/
-def periodicExtension (n : ℕ) (φ : (Fin n → ℝ) → ℂ) (x : Fin n → ℝ) : ℂ :=
+@[expose] def periodicExtension (n : ℕ) (φ : (Fin n → ℝ) → ℂ) (x : Fin n → ℝ) : ℂ :=
   ∑' k : Fin n → ℤ, φ (x + periodicShift n k)
 
 /-! ## Smoothness and periodicity of the periodic extension -/
@@ -208,7 +208,7 @@ lemma periodicExtension_im_zero {φ : (Fin n → ℝ) → ℂ}
 /-! ## Partial derivatives of periodic functions -/
 
 /-- The partial derivative `∂ⱼ g (θ) = Dg(θ)[eⱼ]`. -/
-def partialDeriv (j : Fin n) (g : (Fin n → ℝ) → ℂ) (θ : Fin n → ℝ) : ℂ :=
+@[expose] def partialDeriv (j : Fin n) (g : (Fin n → ℝ) → ℂ) (θ : Fin n → ℝ) : ℂ :=
   fderiv ℝ g θ (Pi.single j 1)
 
 lemma partialDeriv_contDiff {g : (Fin n → ℝ) → ℂ} (hg : ContDiff ℝ ∞ g) (j : Fin n) :
@@ -388,7 +388,7 @@ theorem stdFourierCoeff_partialDeriv (hn : 0 < n) {g : (Fin n → ℝ) → ℂ}
 /-! ## The Laplacian and iterated Fourier multipliers -/
 
 /-- The (flat) Laplacian `Δg = ∑ⱼ ∂ⱼ∂ⱼ g`. -/
-def laplacian (g : (Fin n → ℝ) → ℂ) : (Fin n → ℝ) → ℂ :=
+@[expose] def laplacian (g : (Fin n → ℝ) → ℂ) : (Fin n → ℝ) → ℂ :=
   fun θ => ∑ j, partialDeriv j (partialDeriv j g) θ
 
 lemma laplacian_contDiff {g : (Fin n → ℝ) → ℂ} (hg : ContDiff ℝ ∞ g) :

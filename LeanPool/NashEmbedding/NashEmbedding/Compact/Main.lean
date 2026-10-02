@@ -48,7 +48,7 @@ proved by Aristotle (projects 564db993, 6f927eaf, bf61e09c, 7856eea9; 2026-08-30
   closed embedding and an immersion.
 -/
 
-@[expose] public section
+public section
 
 open scoped Manifold ContDiff Topology
 open Bundle Set Function Matrix
@@ -61,7 +61,7 @@ namespace NashEmbedding
 /-- Forget the base point of a tangent vector to Euclidean space: the tangent
   space `TangentSpace 𝓘(ℝ, ℝᵠ) y` is definitionally `ℝᵠ`, but does not carry the
   inner-product instance, so we transport explicitly. -/
-def toEuclid {q : ℕ} {y : EuclideanSpace ℝ (Fin q)}
+@[expose] def toEuclid {q : ℕ} {y : EuclideanSpace ℝ (Fin q)}
     (v : TangentSpace 𝓘(ℝ, EuclideanSpace ℝ (Fin q)) y) : EuclideanSpace ℝ (Fin q) :=
   v
 

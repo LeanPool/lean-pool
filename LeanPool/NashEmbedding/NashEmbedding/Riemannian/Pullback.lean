@@ -34,7 +34,7 @@ Applications: the flat torus `Circle × Circle` (so `nashCompact` can be compare
 carry metrics.
 -/
 
-@[expose] public section
+public section
 
 open scoped Manifold ContDiff Topology
 open Bundle Function ContinuousLinearMap Bornology Metric

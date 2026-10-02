@@ -28,7 +28,7 @@ Leaves L1–L4 (symmetry, positivity, von Neumann boundedness, section smoothnes
 proved by Aristotle (project c61ad094, 2026-08-30); `inducedMetric` packages them.
 -/
 
-@[expose] public section
+public section
 
 open scoped Manifold ContDiff Topology
 open Bundle Function ContinuousLinearMap Bornology Metric
