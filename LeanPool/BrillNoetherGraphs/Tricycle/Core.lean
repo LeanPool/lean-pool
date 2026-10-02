@@ -55,6 +55,7 @@ open Utilities.Certificate.SubdivisionGraph
 
 /-- The minimal tricycle `T_m` as an ordered core: six spokes, three bananas,
 three transition slots. -/
+@[expose]
 def tricycleCore : ExplicitPotential.Core 7 15 where
   tail := ![0, 0, 0, 0, 0, 0, 1, 1, 3, 3, 5, 5, 2, 4, 6]
   head := ![1, 2, 3, 4, 5, 6, 2, 2, 4, 4, 6, 6, 3, 5, 1]
@@ -69,6 +70,7 @@ theorem tricycleCore_connected : tricycleCore.Connected := by
 /-! ## Named vertices and slots -/
 
 /-- The central vertex `v₀`. -/
+@[expose]
 def centre : Fin 7 := 0
 
 /-- The transition vertices `vᵢ⁻`. -/

@@ -190,6 +190,7 @@ variable {n p : ℕ}
 /-- Two-edge connectedness for an ordered loopless core: every nonempty
 proper vertex set is crossed by at least two edge *slots*.  Parallel slots are
 counted separately, exactly as they are in the subdivision. -/
+@[expose]
 def TwoEdgeConnected (core : ExplicitPotential.Core n p) : Prop :=
   ∀ S : Finset (Fin n), S.Nonempty → S ≠ Finset.univ →
     2 ≤ ((Finset.univ : Finset (Fin p)).filter fun edge =>

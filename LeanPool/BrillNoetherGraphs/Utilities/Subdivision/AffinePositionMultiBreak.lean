@@ -151,6 +151,7 @@ variable {m n p : ℕ}
 /-- A certificate carrying only length geometry.  Its `divisor` and `witness`
 fields are placeholders: the real pencil is a `MultiCode` and the real firing
 scripts are multi-break scripts. -/
+@[expose]
 def certificate (core : ExplicitPotential.Core n p)
     (segment : Fin p → ExplicitPotential.AffineForm m)
     (cone : List (ExplicitPotential.AffineForm m)) :

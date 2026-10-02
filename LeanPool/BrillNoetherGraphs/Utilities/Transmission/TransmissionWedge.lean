@@ -191,6 +191,7 @@ theorem wedgeTransmissionRowProfile_of_transmissionInequality
 
 /-- The full factor-profile condition for a wedge divisor and an arbitrary
 ASP permutation. -/
+@[expose]
 def WedgeTransmissionProfile
     (G : CFGraph.{u}) (H : CFGraph.{v}) (x : G.V) (y : H.V)
     (D : CFDiv G) (E : CFDiv H) (u : G.V) (v : H.V) (tau : AspPerm) : Prop :=

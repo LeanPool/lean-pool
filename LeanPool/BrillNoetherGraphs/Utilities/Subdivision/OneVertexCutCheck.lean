@@ -38,6 +38,7 @@ structure Data (K : CFGraph.{u}) where
 namespace Data
 
 /-- The exact conditions required by `OneVertexCut`. -/
+@[expose]
 def Valid (c : Data K) : Prop :=
   c.glue ∈ c.left ∧
   c.glue ∈ c.right ∧

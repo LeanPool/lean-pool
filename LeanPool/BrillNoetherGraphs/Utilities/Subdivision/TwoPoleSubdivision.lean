@@ -135,6 +135,7 @@ def left : (d.leftSpec s).Vertex → s.Vertex
 
 /-- Embed the right factor's subdivision vertices into the full subdivision, preserving core
 vertices and interior slot coordinates. -/
+@[expose]
 def right : (d.rightSpec s).Vertex → s.Vertex
   | .inl b => s.coreVertex (d.vertices (.inr b))
   | .inr ⟨e, k⟩ => s.interiorVertex (d.slots (.inl (.inr e))) k

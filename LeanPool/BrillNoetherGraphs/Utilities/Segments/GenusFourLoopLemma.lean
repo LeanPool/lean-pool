@@ -44,6 +44,7 @@ variable {G : CFGraph}
 /-- The divisor class of `D` has an effective representative carrying two
 chips at `base`.  This is the exact pointed input needed to enter an attached
 topological loop. -/
+@[expose]
 def HasTwoChipsRepresentative (D : CFDiv G) (base : G.V) : Prop :=
   ∃ E : CFDiv G,
     effective E ∧ linearEquiv G D E ∧ 2 ≤ E base

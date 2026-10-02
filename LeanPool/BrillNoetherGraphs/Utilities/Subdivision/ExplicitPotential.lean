@@ -49,6 +49,7 @@ abbrev AffineForm (m : ℕ) := AffineCover.AffineForm m
 abbrev FormsHold {m : ℕ} := AffineCover.FormsHold (m := m)
 
 /-- Executable universal quantification over a finite index type. -/
+@[expose]
 def allFin {k : ℕ} (test : Fin k → Bool) : Bool :=
   AffineCover.allFin test
 
@@ -94,11 +95,13 @@ namespace AffineForm
 
 /-- Integral scalar multiplication, kept explicit to make the generated data
 grammar independent of typeclass inference. -/
+@[expose]
 def scale (scalar : ℤ) (form : AffineForm m) : AffineForm m where
   fixedValue := scalar * form.fixedValue
   coefficient := fun coordinate => scalar * form.coefficient coordinate
 
 /-- Difference of two integral affine forms. -/
+@[expose]
 def sub (left right : AffineForm m) : AffineForm m where
   fixedValue := left.fixedValue - right.fixedValue
   coefficient := fun coordinate =>
@@ -155,6 +158,7 @@ def rise (certificate : CertificateData m n p) (anchor : Fin n)
     ((certificate.witness anchor).potential (certificate.core.tail edge))
 
 /-- The displayed lower endpoint inequality `rise - alpha * length >= 0`. -/
+@[expose]
 def lowerForm (certificate : CertificateData m n p) (anchor : Fin n)
     (edge : Fin p) : AffineForm m :=
   AffineForm.sub (certificate.rise anchor edge)
@@ -163,6 +167,7 @@ def lowerForm (certificate : CertificateData m n p) (anchor : Fin n)
 
 /-- The displayed upper endpoint inequality
 `-beta * length - rise >= 0`. -/
+@[expose]
 def upperForm (certificate : CertificateData m n p) (anchor : Fin n)
     (edge : Fin p) : AffineForm m :=
   AffineForm.sub

@@ -31,6 +31,7 @@ variable {G : CFGraph.{u}} {H : CFGraph.{v}}
 
 /-- Regard a chip-firing graph isomorphism as a Laplacian-preserving vertex
 equivalence. -/
+@[expose]
 def toLaplacianEquiv (φ : CFGraphIso G H) : Certificate.LaplacianEquiv G H where
   toEquiv := φ.vertexEquiv
   num_edges_eq := φ.map_num_edges
@@ -50,6 +51,7 @@ variable {G : CFGraph.{u}} {H : CFGraph.{v}}
 
 /-- Regard a Laplacian-preserving vertex equivalence as a chip-firing graph
 isomorphism. -/
+@[expose]
 def toGraphIso (equivalence : LaplacianEquiv G H) : CFGraphIso G H where
   vertexEquiv := equivalence.toEquiv
   map_num_edges := equivalence.num_edges_eq

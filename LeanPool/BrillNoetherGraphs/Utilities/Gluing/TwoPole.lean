@@ -241,6 +241,7 @@ def boundaryDivisor (A : CFGraph.{u}) (B : CFGraph.{v})
     oneChip (Sum.inr q.first) + oneChip (Sum.inr q.second)
 
 /-- The sum of the two local canonical divisors, with no pole chips added. -/
+@[expose]
 def canonicalSum (A : CFGraph.{u}) (B : CFGraph.{v})
     (p : TwoPole A) (q : TwoPole B) : CFDiv (join A B p q) :=
   sumDivisor A B p q (canonicalDivisor A) (canonicalDivisor B)

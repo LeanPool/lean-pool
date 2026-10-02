@@ -23,6 +23,7 @@ public section
 namespace Utilities
 
 /-- The simple graph underlying a chip-firing multigraph. -/
+@[expose]
 def underlyingSimpleGraph (G : CFGraph) : SimpleGraph G.V where
   Adj v w := numEdges G v w > 0
   -- `SimpleGraph.symm` now asks for `Std.Symm Adj` (a one-field class), not the

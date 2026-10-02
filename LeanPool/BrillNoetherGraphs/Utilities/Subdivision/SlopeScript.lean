@@ -42,6 +42,7 @@ variable {n p : ℕ} (spec : SubdivisionGraph.Spec n p)
 
 /-- A slope datum for a firing script: the script rises by `slope edge k`
 across the `k`-th unit step of slot `edge`. -/
+@[expose]
 def IsStepSlope (script : firingScript spec.graph) (slope : Fin p → ℕ → ℤ) :
     Prop :=
   ∀ (edge : Fin p) (offset : Fin (spec.length edge)),
