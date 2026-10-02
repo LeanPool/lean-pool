@@ -18,7 +18,7 @@ public import LeanPool.BeyondBethe.BeyondBethe.FinalAssembly
 
 namespace BeyondBethe
 
-@[simp] theorem machineMatrixNonnegativeBit_finalDecision {n : ℕ}
+theorem machineMatrixNonnegativeBit_finalDecision {n : ℕ}
     (A : Matrix (Fin n) (Fin n) ℚ) :
     machineMatrixNonnegativeBit
         (rationalMatrixBinaryEncoding.encode ⟨n, A⟩) =
@@ -28,7 +28,7 @@ namespace BeyondBethe
   apply Bool.eq_iff_iff.mpr
   simp [rationalMatrixNonnegativeDecision]
 
-@[simp] theorem machineMatrixNormalizationScaleOutputCode_final {n : ℕ}
+theorem machineMatrixNormalizationScaleOutputCode_final {n : ℕ}
     (A : Matrix (Fin n) (Fin n) ℚ) :
     machineMatrixNormalizationScaleOutputCode
         (rationalMatrixBinaryEncoding.encode ⟨n, A⟩) =
@@ -36,7 +36,7 @@ namespace BeyondBethe
   simpa only [rationalNormalizationScale] using!
     machineMatrixNormalizationScaleOutputCode_encode A
 
-@[simp] theorem machineMatrixNormalizationScalePowerOutputCode_final {n : ℕ}
+theorem machineMatrixNormalizationScalePowerOutputCode_final {n : ℕ}
     (A : Matrix (Fin n) (Fin n) ℚ) :
     machineMatrixNormalizationScalePowerOutputCode
         (rationalMatrixBinaryEncoding.encode ⟨n, A⟩) =

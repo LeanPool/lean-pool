@@ -38,7 +38,7 @@ noncomputable def singletonRowClustering (n : ℕ) : RowClustering n where
     (i : (singletonRowClustering n).Cluster) :
     (singletonRowClustering n).size i = 1 := rfl
 
-@[simp] theorem singletonRowClustering_rows (n : ℕ)
+theorem singletonRowClustering_rows (n : ℕ)
     (s : Σ c : (singletonRowClustering n).Cluster,
       Fin ((singletonRowClustering n).size c)) :
     (singletonRowClustering n).rows s = s.1 := by

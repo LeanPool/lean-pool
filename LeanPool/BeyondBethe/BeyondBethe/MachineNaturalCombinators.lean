@@ -53,13 +53,13 @@ theorem machineBinaryMulOf_mem_FP {f g : List Bool → List Bool}
 theorem machineBinaryConst_mem_FP (k : ℕ) : machineBinaryConst k ∈ FP := by
   simpa only [machineBinaryConst] using! machineConst_mem_FP k.bits
 
-@[simp] theorem machineBinaryAddOf_natBits
+theorem machineBinaryAddOf_natBits
     (f g : List Bool → List Bool) (word : List Bool) (a b : ℕ)
     (hf : f word = a.bits) (hg : g word = b.bits) :
     machineBinaryAddOf f g word = (a + b).bits := by
   rw [machineBinaryAddOf, hf, hg, machineBinaryAddBits_pair_natBits]
 
-@[simp] theorem machineBinaryMulOf_natBits
+theorem machineBinaryMulOf_natBits
     (f g : List Bool → List Bool) (word : List Bool) (a b : ℕ)
     (hf : f word = a.bits) (hg : g word = b.bits) :
     machineBinaryMulOf f g word = (a * b).bits := by
