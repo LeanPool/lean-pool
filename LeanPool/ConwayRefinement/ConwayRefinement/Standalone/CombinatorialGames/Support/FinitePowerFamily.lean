@@ -541,6 +541,7 @@ theorem finitePowerOz_hasFiniteDegree (n : ℕ) :
   exact omega_opow_nat_add_one_lt_omega_opow_omega n
 
 /-- Every coefficient-one omnific integer `finitePowerOz n` is primal. -/
+@[expose]
 def PrimalFamily : Prop :=
   ∀ n : ℕ, IsPrimal (finitePowerOz n)
 
