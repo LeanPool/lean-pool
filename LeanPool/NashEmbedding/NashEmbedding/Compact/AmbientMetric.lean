@@ -175,10 +175,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimension
   {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
 
 /-- The differential `mfderiv u x`, read as a map `E →L E'` (definitional cast). -/
-def diff (u : M → E') (x : M) : E →L[ℝ] E' := mfderiv I 𝓘(ℝ, E') u x
+@[expose] def diff (u : M → E') (x : M) : E →L[ℝ] E' := mfderiv I 𝓘(ℝ, E') u x
 
 /-- The metric at `x`, read as a bilinear form on `E` (definitional cast). -/
-def metricAt (g : ContMDiffRiemannianMetric I ∞ E (TangentSpace I : M → Type _)) (x : M) :
+@[expose] def metricAt (g : ContMDiffRiemannianMetric I ∞ E (TangentSpace I : M → Type _)) (x : M) :
     E →L[ℝ] E →L[ℝ] ℝ := g.inner x
 
 /-- Coordinate change from the model fibre to `T_xM ≅ E`, in the trivialization at `x₀`
