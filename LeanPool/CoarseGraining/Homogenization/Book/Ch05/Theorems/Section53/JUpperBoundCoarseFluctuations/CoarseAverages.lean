@@ -774,9 +774,11 @@ theorem descendantsAverage_weighted_special_average_mismatch_le_fullBlockNormali
     descendantsAverage Q j
         (fun R =>
           sigmaHatAtScale hP hStruct (m : ℤ) *
-              vecNormSq (Ch04.canonicalScalarResponseGradientAverageCubeSet R R p_e q_e a.toFun - p0_e) +
+              vecNormSq (Ch04.canonicalScalarResponseGradientAverageCubeSet R R p_e q_e a.toFun -
+                p0_e) +
             (sigmaHatAtScale hP hStruct (m : ℤ))⁻¹ *
-              vecNormSq (Ch04.canonicalScalarResponseFluxAverageCubeSet R R p_e q_e a.toFun - q0_e)) ≤
+              vecNormSq (Ch04.canonicalScalarResponseFluxAverageCubeSet R R p_e q_e a.toFun -
+                q0_e)) ≤
       descendantsAverage Q j
         (fun R =>
           2 * thetaAtScale hP hStruct (m : ℤ) *
@@ -806,9 +808,11 @@ theorem descendantsAverage_weighted_special_average_mismatch_le_fullBlockNormali
     descendantsAverage Q j
         (fun R =>
           sigmaHatAtScale hP hStruct (m : ℤ) *
-              vecNormSq (Ch04.canonicalScalarResponseGradientAverageCubeSet R R p_e q_e a.toFun - p0_e) +
+              vecNormSq (Ch04.canonicalScalarResponseGradientAverageCubeSet R R p_e q_e a.toFun -
+                p0_e) +
             (sigmaHatAtScale hP hStruct (m : ℤ))⁻¹ *
-              vecNormSq (Ch04.canonicalScalarResponseFluxAverageCubeSet R R p_e q_e a.toFun - q0_e)) ≤
+              vecNormSq (Ch04.canonicalScalarResponseFluxAverageCubeSet R R p_e q_e a.toFun -
+                q0_e)) ≤
       descendantsAverage Q j
         (fun R =>
           2 * thetaAtScale hP hStruct (m : ℤ) *

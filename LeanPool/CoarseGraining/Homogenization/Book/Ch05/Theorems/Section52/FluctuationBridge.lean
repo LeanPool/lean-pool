@@ -545,7 +545,8 @@ theorem section52_upperCenter_entries
         (1 : Mat d)) i j =
       ∫ b, (coarseBlockMatrix (cubeSet (originCube d (0 : ℤ))) b).upperLeft i j ∂P := by
   let scalarization := Ch04.Internal.annealedScalarizationTheory_of_structuralLaw hP hStruct
-  let primitive0 := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ)
+  let primitive0 :=
+    Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ)
   have hb :
       Ch04.annealedBAtScale P (0 : ℤ) = primitive0.barB • (1 : Mat d) := by
     simpa [primitive0] using Ch04.Internal.AnnealedPrimitiveScalarizationData.b_eq primitive0
@@ -567,11 +568,13 @@ theorem section52_lowerCenter_entries
         (1 : Mat d)) i j =
       ∫ b, (coarseBlockMatrix (cubeSet (originCube d (0 : ℤ))) b).lowerRight i j ∂P := by
   let scalarization := Ch04.Internal.annealedScalarizationTheory_of_structuralLaw hP hStruct
-  let primitive0 := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ)
+  let primitive0 :=
+    Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ)
   have hsigma :
       Ch04.annealedSigmaStarInvAtScale P (0 : ℤ) =
         primitive0.barSigmaStarInv • (1 : Mat d) := by
-    simpa [primitive0] using Ch04.Internal.AnnealedPrimitiveScalarizationData.sigmaStarInv_eq primitive0
+    simpa [primitive0] using
+      Ch04.Internal.AnnealedPrimitiveScalarizationData.sigmaStarInv_eq primitive0
   have hstar :
       scalarization.barSigmaStar 0 =
         (primitive0.barSigmaStarInv)⁻¹ := by

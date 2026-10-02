@@ -299,7 +299,8 @@ theorem cubeAverageVec_canonicalMaximizerGradientDefectOnDependentFamily_eq_ch04
         cubeAverageVec R (fun x => canonicalMaximizerGradientOnCube Q aQ p q x - p0) := by
           rfl
     _ = cubeAverageVec R (canonicalMaximizerGradientOnCube Q aQ p q) - p0 := by
-          simpa using cubeAverageVec_sub_const R (canonicalMaximizerGradientOnCube Q aQ p q) p0 hgrad
+          simpa using
+            cubeAverageVec_sub_const R (canonicalMaximizerGradientOnCube Q aQ p q) p0 hgrad
     _ = Ch04.canonicalScalarResponseGradientAverageCubeSet Q R p q a.toFun - p0 := by
           rw [hch04]
 

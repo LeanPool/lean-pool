@@ -190,7 +190,8 @@ private theorem annealedResponseJAtScale_eq_expectedJScalarFormula_of_primitive
     _ = expectedJScalarFormula hP hStruct n p q := by
         rw [hLowerLeftZero, hStar, hB]
         simp [expectedJScalarFormula,
-          Ch04.RestrictionLawCarrier.barSigmaAtScale, Ch04.RestrictionLawCarrier.barSigmaStarAtScale,
+          Ch04.RestrictionLawCarrier.barSigmaAtScale,
+          Ch04.RestrictionLawCarrier.barSigmaStarAtScale,
           Ch04.Internal.AnnealedPrimitiveScalarizationData.barSigma_eq_barB scalarization primitive,
           Ch04.Internal.AnnealedPrimitiveScalarizationData.barSigmaStar_eq_inv_barSigmaStarInv
             scalarization primitive,

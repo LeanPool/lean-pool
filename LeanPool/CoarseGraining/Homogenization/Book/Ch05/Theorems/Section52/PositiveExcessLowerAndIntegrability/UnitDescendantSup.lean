@@ -405,7 +405,8 @@ theorem lowerFactorPowerIntegrableAtScale_from_P4
       hP4.sUpper_pos hP4.sLower_pos hξ_one
       hP4.upper_moment_integrable hP4.lower_inv_moment_integrable
   have hbase_nonneg : 0 ≤ base := by
-    let primitive0 := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ)
+    let primitive0 :=
+      Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ)
     have hBarSigmaStar0_inv_eq :
         base = Ch04.Internal.barSigmaStarInvAtScaleOfPrimitive primitive0 := by
       have hstar :

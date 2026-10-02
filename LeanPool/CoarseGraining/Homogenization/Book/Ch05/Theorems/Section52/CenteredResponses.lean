@@ -138,7 +138,8 @@ theorem integral_restrictionCenteredResponseJStarObservableCubeSet_eq_expectedRe
     _ =
       ∫ a, Ch04.restrictionResponseJObservableCubeSet Q p q a ∂P -
         scalarizedResponseCenteringTerm hP hStruct m p q := by
-          rw [hAdj.integral_comp_adjointReg (Ch04.restrictionResponseJObservableCubeSet Q p q) hJ.aestronglyMeasurable]
+          rw [hAdj.integral_comp_adjointReg
+            (Ch04.restrictionResponseJObservableCubeSet Q p q) hJ.aestronglyMeasurable]
           rw [integral_const]
           simp [Measure.real, IsProbabilityMeasure.measure_univ]
     _ =

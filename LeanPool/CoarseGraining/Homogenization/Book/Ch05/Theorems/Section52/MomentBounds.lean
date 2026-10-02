@@ -377,7 +377,8 @@ theorem upperPositiveExcessMomentAtScale_integrable_and_le_raw_twoExponentCoeff
   have hInitial_nonneg : 0 ≤ initial := by
     exact Ch04.LambdaMomentAtScale_nonneg P 0 ξ hs
   have hbase_nonneg : 0 ≤ scalarization.barSigma 0 := by
-    let primitive0 := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ)
+    let primitive0 :=
+      Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ)
     have hBarSigma0_eq :
         scalarization.barSigma 0 =
           Ch04.Internal.barBAtScaleOfPrimitive primitive0 := by
@@ -615,7 +616,8 @@ theorem lowerPositiveExcessMomentAtScale_integrable_and_le_raw_twoExponentCoeff
   have hInitial_nonneg : 0 ≤ initial := by
     exact Ch04.lambdaInvMomentAtScale_nonneg P 0 ξ hs
   have hbase_nonneg : 0 ≤ (scalarization.barSigmaStar 0)⁻¹ := by
-    let primitive0 := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ)
+    let primitive0 :=
+      Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ)
     have hBarSigmaStar0_inv_eq :
         (scalarization.barSigmaStar 0)⁻¹ =
           Ch04.Internal.barSigmaStarInvAtScaleOfPrimitive primitive0 := by

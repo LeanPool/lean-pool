@@ -517,7 +517,8 @@ theorem responseJPartitionDefectOnDependentFamilyAtScale_eq_responseJAdditivityD
       (originCube d m) (Int.toNat (m - k)) (by
         intro R _hR
         exact responseJOnDependentFamily_eq_restrictionResponseJObservableCubeSet a ha R p q)
-  · exact responseJOnDependentFamily_eq_restrictionResponseJObservableCubeSet a ha (originCube d m) p q
+  · exact
+      responseJOnDependentFamily_eq_restrictionResponseJObservableCubeSet a ha (originCube d m) p q
 
 /-- Centered raw Ch2 response for the Chapter 4 dependent family is the Ch4
 centered response observable. -/
@@ -563,7 +564,8 @@ theorem centeredResponseJOnDependentFamily_sub_cutoffWeightedChildResponseJ_eq_c
       Ch04.restrictionCenteredResponseJObservableCubeSet Q p q p0 q0 a -
         descendantsAverage Q j
           (fun R => cutoffChildWeight φ R * Ch04.restrictionResponseJObservableCubeSet R p q a) := by
-  rw [centeredResponseJOnDependentFamily_eq_restrictionCenteredResponseJObservableCubeSet a ha Q p q p0 q0,
+  rw [centeredResponseJOnDependentFamily_eq_restrictionCenteredResponseJObservableCubeSet
+    a ha Q p q p0 q0,
     cutoffWeightedChildResponseJOnDependentFamilyAtDepth_eq_ch04 a ha Q j φ p q]
 
 /-- Origin-scale version of the raw/Ch4 left-side bridge, matching the private

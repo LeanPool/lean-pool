@@ -100,8 +100,10 @@ noncomputable def jUpperWeakNormExpectedRHSAtScale {d : ℕ}
       centeredCutoffConstant : ℝ)
     (p q p0 q0 : Vec d) : ℝ :=
   let Q : TriadicCube d := originCube d m
-  let gradWeak : RegCoeffField d → ℝ := fun a => Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p q p0 a.toFun
-  let fluxWeak : RegCoeffField d → ℝ := fun a => Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p q q0 a.toFun
+  let gradWeak : RegCoeffField d → ℝ :=
+    fun a => Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p q p0 a.toFun
+  let fluxWeak : RegCoeffField d → ℝ :=
+    fun a => Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p q q0 a.toFun
   let gradCoeff := (3 : ℝ) ^ ((d : ℝ) + s) * cubeBesovScaleWeight (-s) Q * BφS
   let fluxCoeff := (3 : ℝ) ^ ((d : ℝ) + t) * cubeBesovScaleWeight (-t) Q * BφT
   (2 * C) *
@@ -131,8 +133,10 @@ noncomputable def jUpperWeakNormManuscriptExpectedRHSAtScale {d : ℕ}
     (C Cosc scaleSep BφS BφT Cprod : ℝ)
     (p q p0 q0 : Vec d) : ℝ :=
   let Q : TriadicCube d := originCube d m
-  let gradWeak : RegCoeffField d → ℝ := fun a => Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p q p0 a.toFun
-  let fluxWeak : RegCoeffField d → ℝ := fun a => Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p q q0 a.toFun
+  let gradWeak : RegCoeffField d → ℝ :=
+    fun a => Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p q p0 a.toFun
+  let fluxWeak : RegCoeffField d → ℝ :=
+    fun a => Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p q q0 a.toFun
   let gradCoeff := (3 : ℝ) ^ ((d : ℝ) + s) * cubeBesovScaleWeight (-s) Q * BφS
   let fluxCoeff := (3 : ℝ) ^ ((d : ℝ) + t) * cubeBesovScaleWeight (-t) Q * BφT
   let scaledGrad : RegCoeffField d → ℝ := gradWeak

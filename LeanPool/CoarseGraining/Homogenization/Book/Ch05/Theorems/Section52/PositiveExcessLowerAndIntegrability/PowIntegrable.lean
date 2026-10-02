@@ -230,7 +230,8 @@ theorem upperFactorPowerIntegrableAtScale_from_P4
       hP4.sUpper_pos hP4.sLower_pos hξ_one
       hP4.upper_moment_integrable hP4.lower_inv_moment_integrable
   have hbase_nonneg : 0 ≤ base := by
-    let primitive0 := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ)
+    let primitive0 :=
+      Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ)
     have hBarSigma0_eq :
         base = Ch04.Internal.barBAtScaleOfPrimitive primitive0 := by
       simpa [base, scalarization, primitive0] using
