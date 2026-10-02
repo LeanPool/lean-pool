@@ -11,7 +11,7 @@ public import LeanPool.DrossFractionalTriangleDecomposition.Main
 /-!
 # Dross's fractional triangle decomposition theorem
 
-Source: doi:10.1137/15M1014310
+Source: doi:10.1137/15M1014310, url:https://github.com/jtraverso/erdos-81-chordal-clique-partitions/tree/dec9f4750c2261681e376f2f67db9eda16a4eca0/preprints/PAPER_III/05_formalization/lean_v1.4_freeze/Ax2
 Authors: Juan Pablo Traverso Gianini, Aristotle
 Status: verified
 Main declarations: `LeanPool.DrossFractionalTriangleDecomposition.dross_fractional_flow_exact`

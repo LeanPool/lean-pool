@@ -38,7 +38,7 @@ private def orderedPairsIn (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset 
 
 omit [DecidableEq V] in
 /-- Claim A: `|S|·(|S| − d) ≤ #ordered adjacent pairs in S`. -/
-theorem claimA (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) (d : ℕ)
+private theorem claimA (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) (d : ℕ)
     (hd : ∀ w, Fintype.card V - G.degree w ≤ d) :
     S.card * (S.card - d) ≤ (orderedPairsIn G S).card := by
   classical
