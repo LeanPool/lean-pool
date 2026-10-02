@@ -40,6 +40,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/BollobasNikiforov         https://github.com/ShengtongZhang-alt/BN
   LeanPool/BooleanIsoperimetry       https://github.com/AlexeyMilovanov/BooleanIsoperimetry
   LeanPool/BrauerGroupNew            https://github.com/Whysoserioushah/BrauerGroup
+  LeanPool/BrillNoetherGraphs        https://github.com/npflueger/brill-noether-graphs
   LeanPool/BruhatTits                https://github.com/chrisflav/bruhat-tits
   LeanPool/Burkholder                https://github.com/SmaniaD/Burkholder
   LeanPool/CaffarelliKohnNirenberg   https://github.com/scottnarmstrong/CaffarelliKohnNirenberg
@@ -61,6 +62,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/ConcentrationInequalities https://github.com/jtraverso/erdos-81-chordal-clique-partitions
   LeanPool/ConnesKreimer             https://github.com/karlesmarin/connes-kreimer-lean
   LeanPool/ConnesRigidity            https://github.com/utensil/connes-rigidity
+  LeanPool/ConwayRefinement          https://github.com/gaearon/conway-refinement
   LeanPool/CramerWold                https://github.com/Lemmy00/lean-pool
   LeanPool/CriticalPortraits         https://github.com/no-way-labs/lean-critical-portraits
   LeanPool/DemazureOperatorsLean     https://github.com/bolito2/DemazureOperatorsLean
@@ -166,6 +168,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/MovingSofa                https://github.com/deancureton/MovingSofa
   LeanPool/MulticolorTriangleRamsey  https://github.com/openai/ten-proofs
   LeanPool/NagataFactoriality        https://github.com/arthur742ramos/nagatafactoriality
+  LeanPool/NandakumarRamanaRao       https://github.com/akopjan/nrr-aak
   LeanPool/NashWilliams              https://github.com/yannpequignot/TwoBQO
   LeanPool/NavierStokesAndEuler      https://github.com/openai/NavierStokesAndEuler
   LeanPool/NemytskiiLebesgue         https://github.com/madvorak/nemytskii-lebesgue
@@ -177,6 +180,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
                                      https://github.com/lyfar/gkp-carry-lean
   LeanPool/Odlyzko                   https://github.com/ImperialCollegeLondon/FLT
   LeanPool/OneManifold               https://github.com/sweeneyde/1mfld
+  LeanPool/OperatorTheory            https://github.com/savarin/lean-operator-theory
   LeanPool/OrderPQ                   https://github.com/wupr/order-p-q
   LeanPool/PDL                       https://github.com/m4lvin/lean4-pdl
   LeanPool/PFR                       https://github.com/teorth/pfr
@@ -204,6 +208,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Rado                      https://github.com/rkirov/jordan_pick
   LeanPool/RamanujanNagell           https://github.com/BarinderBanwait/ramanujan_nagell
   LeanPool/RearrangementNumber       https://github.com/vo-rodrigues/rr-equals-nonmeager-paper
+  LeanPool/RegtsSevenster            https://github.com/willwhistler/regts-sevenster
   LeanPool/RellichKondrachov         https://github.com/abenenson/rellich-kondrachov
   LeanPool/RiemannMappingTheorem     https://github.com/vbeffara/RMT4
   LeanPool/RiemannRochFunctionFields https://github.com/vaca22/riemann-roch-function-fields

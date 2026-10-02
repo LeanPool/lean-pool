@@ -58,6 +58,120 @@ challenges:
     msc:
       - "11R29"
       - "11R42"
+  - slug: budgeted-submodular-modified-greedy
+    title: Modified greedy for budgeted monotone submodular maximisation
+    summary: >-
+      Prove that for a monotone submodular set function with F(empty) = 0,
+      positive item costs and a budget, the better of two candidates - the
+      cost-benefit greedy set (repeatedly add, among the items that still fit,
+      one with the largest marginal gain per unit cost) and the best single item
+      that fits, both drawn from a finite ground set U - has value at least
+      (1 - 1/e)/2 times that of every subset of U within the budget. This is
+      the classical guarantee of Khuller, Moss and Naor (budgeted maximum
+      coverage, 1999), recalled for monotone submodular
+      functions by Tang et al. (2021), who also closed a gap in the often-quoted
+      1 - 1/sqrt(e) and proved 0.405 for the same algorithm. It is
+      the standard model for choosing what fits a size limit - sensor
+      placement, summarisation, context selection for language-model agents.
+      Mathlib proves submodularity of matroid rank but has no general
+      submodular set functions and no greedy approximation results.
+      The estimate covers the Khuller-Moss-Naor prefix lemma (each greedy pick
+      closes a cost-proportional share of the gap to the optimum), the case
+      split at the first optimal item the greedy rejects for budget, and the
+      maximum with the best single item.
+    branch: combinatorial optimization
+    entry_module: Challenge.BudgetedSubmodular
+    proposers:
+      - Mikhail Nemerov
+    source:
+      title: Revisiting Modified Greedy Algorithm for Monotone Submodular Maximization with a Knapsack Constraint
+      authors:
+        - Jing Tang
+        - Xueyan Tang
+        - Andrew Lim
+        - Kai Han
+        - Chongshou Li
+        - Junsong Yuan
+      doi: "10.1145/3447386"
+      url: https://arxiv.org/abs/2008.05391
+    license: Apache-2.0
+    provenance: mix
+    status: solved
+    solution:
+      module: Solution.BudgetedSubmodular
+      authors:
+        - deadczarvc
+    estimated_lines: 600
+    statements:
+      - declaration: Challenge.BudgetedSubmodular.modifiedGreedy_approx
+        informal: >-
+          For a monotone submodular set function F on finite sets with F of the
+          empty set equal to 0, positive costs, a budget B and a finite ground
+          set U, the better of the cost-benefit greedy set built from U and the
+          best single item of U that fits the budget has value at least
+          (1 - 1/e)/2 times the value of every subset of U whose total cost is
+          at most B.
+    tags:
+      - combinatorics
+      - optimization
+      - approximation-algorithms
+      - submodular-functions
+    msc:
+      - "90C27"
+      - "68W25"
+  - slug: budgeted-submodular-modified-greedy-0405
+    title: The 0.405 factor of modified greedy for budgeted submodular maximisation
+    summary: >-
+      Prove that for a monotone submodular set function with F(empty) = 0,
+      positive item costs and a budget, the better of the cost-benefit greedy
+      set (repeatedly add, among the items that still fit, one with the largest
+      marginal gain per unit cost) and the best single item that fits, both
+      drawn from a finite ground set U, has value at least 0.405 times that of
+      every subset of U within the budget. This is Theorem 2.1 of Tang et al.
+      (2021): the exact factor is the root near 0.4053 of
+      (1 - a) log(1 - a) + (2 - 1/e)(1 - 2a) = 0, above the classical
+      (1 - 1/e)/2 of Khuller, Moss and Naor (proved here as
+      budgeted-submodular-modified-greedy) and the often-quoted 1 - 1/sqrt(e),
+      whose original proof had a gap. The algorithm and definitions are the same
+      as in budgeted-submodular-modified-greedy. The estimate covers the
+      relations at the first and second optimal items the greedy rejects for
+      budget, the bound for the marginal function on the remaining optimum, and
+      the minimisation of the resulting two-variable bound.
+    branch: combinatorial optimization
+    entry_module: Challenge.BudgetedSubmodular0405
+    proposers:
+      - Mikhail Nemerov
+    source:
+      title: Revisiting Modified Greedy Algorithm for Monotone Submodular Maximization with a Knapsack Constraint
+      authors:
+        - Jing Tang
+        - Xueyan Tang
+        - Andrew Lim
+        - Kai Han
+        - Chongshou Li
+        - Junsong Yuan
+      doi: "10.1145/3447386"
+      url: https://arxiv.org/abs/2008.05391
+    license: Apache-2.0
+    provenance: mix
+    status: open
+    estimated_lines: 1500
+    statements:
+      - declaration: Challenge.BudgetedSubmodular0405.approximation
+        informal: >-
+          For a monotone submodular set function F on finite sets with F of the
+          empty set equal to 0, positive costs, a budget B and a finite ground
+          set U, the better of the cost-benefit greedy set built from U and the
+          best single item of U that fits the budget has value at least 0.405
+          times the value of every subset of U whose total cost is at most B.
+    tags:
+      - combinatorics
+      - optimization
+      - approximation-algorithms
+      - submodular-functions
+    msc:
+      - "90C27"
+      - "68W25"
   - slug: mazur-torsion-bound
     title: Mazur's bound on the torsion of an elliptic curve over the rationals
     summary: >-
@@ -157,3 +271,62 @@ challenges:
     msc:
       - "20C15"
       - "20D20"
+  - slug: ville-testing-by-betting
+    title: Ville's inequality for testing by betting
+    summary: >-
+      Prove the type-I error guarantee of testing by betting: if outcomes in
+      [-1, 1] have conditional mean at most 0 given the past, a bettor who
+      stakes a predictable fraction in [0, 1] of the current wealth reaches
+      wealth 1/alpha with probability at most alpha, at any time. The wealth
+      process is a nonnegative supermartingale started at 1, so this is
+      Ville's 1939 maximal inequality, the result behind e-processes,
+      confidence sequences and safe anytime-valid inference (Ramdas,
+      Grünwald, Vovk and Shafer, arXiv 2210.01948). Mathlib has Doob's maximal
+      inequality for nonnegative submartingales (MeasureTheory.maximal_ineq)
+      but no supermartingale (Ville) form and nothing on betting wealth
+      processes. A finite-horizon, finite-support special case — outcome laws
+      may depend on the past, stakes are predictable — is proved sorry-free
+      by first-step analysis in the proposer's notes; a measure-theoretic
+      Ville inequality exists in the third-party repository
+      Robby955/formal-martingales. The line estimate covers the supermartingale
+      property of the wealth process, optional stopping at the hitting time,
+      and the passage from finite to infinite horizon.
+    branch: probability
+    entry_module: Challenge.TestingByBetting
+    proposers:
+      - deadczarvc
+    source:
+      title: Game-theoretic statistics and safe anytime-valid inference
+      authors:
+        - Aaditya Ramdas
+        - Peter Grünwald
+        - Vladimir Vovk
+        - Glenn Shafer
+      arxiv: "2210.01948"
+    license: Apache-2.0
+    provenance: AI
+    status: solved
+    solution:
+      module: Solution.TestingByBetting
+      authors:
+        - deadczarvc
+    estimated_lines: 400
+    statements:
+      - declaration: Challenge.TestingByBetting.ville
+        informal: >-
+          Let X₁, X₂, … be real random variables adapted to a filtration (ℱₙ)
+          on a probability space, with values in [-1, 1], such that the
+          conditional expectation of Xₙ₊₁ given ℱₙ is at most 0 almost surely
+          for every n. Let λ₁, λ₂, … take values in [0, 1], with λₙ₊₁
+          measurable with respect to ℱₙ (predictable stakes), and let
+          Wₙ = ∏_{i < n} (1 + λᵢ₊₁ Xᵢ₊₁) be the wealth after n rounds
+          (W₀ = 1). Then for every α > 0 the probability that Wₙ ≥ 1/α for
+          some n is at most α.
+    tags:
+      - probability
+      - martingales
+      - sequential-testing
+      - e-values
+    msc:
+      - "60G42"
+      - "62L10"
