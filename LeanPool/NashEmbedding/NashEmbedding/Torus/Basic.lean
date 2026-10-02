@@ -104,19 +104,19 @@ def concat {n N₁ N₂ : ℕ} (u₁ : (Fin n → ℝ) → (Fin N₁ → ℝ))
   fun x => Fin.append (u₁ x) (u₂ x)
 
 /-- Translation of a function: `(τ_y f)(x) = f(x - y)`. -/
-def translate {n : ℕ} {V : Type*} (y : Fin n → ℝ) (f : (Fin n → ℝ) → V) :
+@[expose] def translate {n : ℕ} {V : Type*} (y : Fin n → ℝ) (f : (Fin n → ℝ) → V) :
     (Fin n → ℝ) → V :=
   fun x => f (x - y)
 
 /-! ## Injective embeddings -/
 
 /-- Injectivity modulo `2πℤⁿ`: `u(x) = u(y)` implies `x - y ∈ 2πℤⁿ`. -/
-def IsInjectiveMod2Pi {n N : ℕ} (u : (Fin n → ℝ) → (Fin N → ℝ)) : Prop :=
+@[expose] def IsInjectiveMod2Pi {n N : ℕ} (u : (Fin n → ℝ) → (Fin N → ℝ)) : Prop :=
   ∀ (x y : Fin n → ℝ), u x = u y → ∃ k : Fin n → ℤ, x - y = periodicShift n k
 
 /-- Full-rank derivative: the partial derivatives `{∂ᵢu(x)}` are linearly independent
   in `ℝᴺ` at every `x`. -/
-def HasFullRankDeriv {n N : ℕ} (u : (Fin n → ℝ) → (Fin N → ℝ)) : Prop :=
+@[expose] def HasFullRankDeriv {n N : ℕ} (u : (Fin n → ℝ) → (Fin N → ℝ)) : Prop :=
   ∀ (x : Fin n → ℝ), LinearIndependent ℝ (fun i : Fin n => partialDeriv i u x)
 
 /-- An injective embedding: smooth periodic, injective modulo `2πℤⁿ`,

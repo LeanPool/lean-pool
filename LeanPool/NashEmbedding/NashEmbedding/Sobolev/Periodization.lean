@@ -613,7 +613,8 @@ lemma mFourier_toUnitTorus (m : Fin n → ℤ) (θ : Fin n → ℝ) :
 
 /-- The descent of a `2πℤⁿ`-periodic function to the unit torus `(ℝ/ℤ)ⁿ`, via
 `Quotient.out` representatives and the rescaling `x ↦ 2πx`. -/
-def toUnitTorusFun (n : ℕ) (f : (Fin n → ℝ) → ℂ) (z : UnitAddTorus (Fin n)) : ℂ :=
+@[expose] def toUnitTorusFun (n : ℕ) (f : (Fin n → ℝ) → ℂ)
+    (z : UnitAddTorus (Fin n)) : ℂ :=
   f (fun i => 2 * π * Quotient.out (z i))
 
 lemma toUnitTorusFun_toUnitTorus {f : (Fin n → ℝ) → ℂ} (hper : IsPeriodic2Pi f)
@@ -638,7 +639,8 @@ lemma continuous_toUnitTorusFun {f : (Fin n → ℝ) → ℂ} (hf : Continuous f
   exact hf.comp (continuous_const_smul (2 * π))
 
 /-- The descent as a continuous map on the unit torus. -/
-def toUnitTorusCM (n : ℕ) (f : (Fin n → ℝ) → ℂ) (hf : Continuous f) (hper : IsPeriodic2Pi f) :
+@[expose] def toUnitTorusCM (n : ℕ) (f : (Fin n → ℝ) → ℂ)
+    (hf : Continuous f) (hper : IsPeriodic2Pi f) :
     C(UnitAddTorus (Fin n), ℂ) :=
   ⟨toUnitTorusFun n f, continuous_toUnitTorusFun hf hper⟩
 

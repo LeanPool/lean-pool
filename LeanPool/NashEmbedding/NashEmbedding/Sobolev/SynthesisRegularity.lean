@@ -57,7 +57,7 @@ variable {n : ℕ}
 /-- A coefficient sequence is *rapidly decaying* if it lies in every weighted
 `ℓ²_(s)`, `s ∈ ℝ`. This is the momentum-space image of `C^∞(𝕋ⁿ)`
 (cf. `smooth_periodic_memSobolevDistrib`). -/
-def IsRapidDecay (n : ℕ) (a : (Fin n → ℤ) → ℂ) : Prop :=
+@[expose] def IsRapidDecay (n : ℕ) (a : (Fin n → ℤ) → ℂ) : Prop :=
   ∀ s : ℝ, MemSobolev n s a
 
 /-! ## Elementary consequences of rapid decay -/

@@ -57,7 +57,7 @@ variable {n : ℕ}
   tsum (fun (j : Fin n → Int) => weight n (1 - r) j)
 
 /-- Polynomial and exponential factor in the higher-order multiplication estimate. -/
-noncomputable def mt3BStar (k : Nat) : Real :=
+@[expose] noncomputable def mt3BStar (k : Nat) : Real :=
   64 * (k : Real) ^ 2 * ((2 : Real) ^ (2 * (k : Real) - 1) - 2)
 
 /-- Squared leading constant in the third Sobolev multiplication theorem. -/

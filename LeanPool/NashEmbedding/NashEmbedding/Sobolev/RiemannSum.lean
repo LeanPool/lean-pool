@@ -93,7 +93,7 @@ lemma fourierCoeffDistrib_riemannSumDistrib (φ : (Fin n → ℝ) → ℂ)
 
 /-- The condition that `φ̂|_{ℤⁿ}` has rapid decay: lies in `ℓ²_{(s)}` for every `s`.
     This holds for `φ ∈ C_c^∞(ℝⁿ; ℂ)` by iterated integration by parts. -/
-def FTRapidDecay (n : ℕ) (φ : (Fin n → ℝ) → ℂ) : Prop :=
+@[expose] def FTRapidDecay (n : ℕ) (φ : (Fin n → ℝ) → ℂ) : Prop :=
   ∀ s : ℝ, Summable (fun m : Fin n → ℤ =>
     weight n s m * ‖ftRn n φ (fun j => (m j : ℝ))‖ ^ 2)
 
