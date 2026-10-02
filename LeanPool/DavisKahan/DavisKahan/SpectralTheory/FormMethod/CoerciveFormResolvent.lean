@@ -208,7 +208,7 @@ theorem resolvent_nonnegative
 noncomputable def associatedOperator
     (D : CoerciveFormData (𝕜 := 𝕜) (H := H) (V := V)) :
     H →ₗ.[𝕜] H :=
-  inversePartialMap D.resolvent D.resolvent_isSelfAdjoint
+  inversePartialMap D.resolvent
     D.resolvent_injective
 
 /-- The associated unbounded operator is self-adjoint. -/
@@ -226,7 +226,7 @@ theorem associatedOperator_resolvent
       ⟨D.resolvent f,
         LinearMap.mem_range_self D.resolvent.toLinearMap f⟩ = f := by
   exact inversePartialMap_apply_R
-    D.resolvent D.resolvent_isSelfAdjoint D.resolvent_injective f
+    D.resolvent D.resolvent_injective f
 
 end CoerciveFormData
 

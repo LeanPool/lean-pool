@@ -6,6 +6,7 @@ Authors: Jon Crall, OpenAI GPT-5.6 Thinking
 module
 
 public import LeanPool.DavisKahan.DavisKahan.SpectralTheory.PartialMap.UnitaryConjugation
+public import LeanPool.DavisKahan.DavisKahan.BoundedOperator.Reflection
 public import LeanPool.DavisKahan.DavisKahan.SinTheta.SpectralProjection
 public import LeanPool.DavisKahan.DavisKahan.Geometry.Angle.OperatorAngleComplex
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.Projection.Gap
@@ -247,7 +248,7 @@ variable {H : Type v}
 noncomputable def boundedReflectionDefect
     (V : Submodule ℂ H) [V.HasOrthogonalProjection]
     (A : H →L[ℂ] H) : H →L[ℂ] H :=
-  V.reflectionOperator ∘L A ∘L V.reflectionOperator - A
+  reflectionDefect V A
 
 omit [CompleteSpace H] in
 /-- The reflection defect is minus twice the sum of the two off-diagonal
@@ -258,15 +259,7 @@ theorem boundedReflectionDefect_eq_neg_two_smul_offdiag
     boundedReflectionDefect V A =
       (-2 : ℂ) • (Vᗮ.starProjection ∘L A ∘L V.starProjection +
         V.starProjection ∘L A ∘L Vᗮ.starProjection) := by
-  ext x
-  change V.reflectionOperator (A (V.reflectionOperator x)) - A x =
-    (-2 : ℂ) • (Vᗮ.starProjection (A (V.starProjection x)) +
-      V.starProjection (A (Vᗮ.starProjection x)))
-  rw [Submodule.reflectionOperator_apply,
-    Submodule.reflectionOperator_apply,
-    Submodule.starProjection_orthogonal' V]
-  simp only [map_sub, map_smul, sub_apply, one_apply_eq_self]
-  module
+  exact reflectionDefect_eq_neg_two_smul_offdiag V A
 
 /-- The two off-diagonal blocks are mutually adjoint for a self-adjoint
 operator. -/
@@ -275,16 +268,7 @@ theorem reflectedOffdiag_adjoint
     {A : H →L[ℂ] H} (hA : IsSelfAdjoint A) :
     (Vᗮ.starProjection ∘L A ∘L V.starProjection).adjoint =
       V.starProjection ∘L A ∘L Vᗮ.starProjection := by
-  -- Left as a `rw` chain on purpose: `simp only` with this same list leaves the goal unsolved: at
-  -- least one lemma here has to fire at one occurrence, in order, and simp's normal form loses the
-  -- intermediate shape.
-  rw [ContinuousLinearMap.adjoint_comp, ContinuousLinearMap.adjoint_comp,
-    ← ContinuousLinearMap.star_eq_adjoint,
-    ← ContinuousLinearMap.star_eq_adjoint,
-    ← ContinuousLinearMap.star_eq_adjoint,
-    (isSelfAdjoint_starProjection V).star_eq,
-    (isSelfAdjoint_starProjection Vᗮ).star_eq, hA.star_eq,
-    ContinuousLinearMap.comp_assoc]
+  exact offdiag_adjoint V hA
 
 /-- Sharp norm estimate for the reflection defect of a self-adjoint bounded
 operator. -/
@@ -293,90 +277,7 @@ theorem norm_boundedReflectionDefect_le_two_mul_norm_cross
     {A : H →L[ℂ] H} (hA : IsSelfAdjoint A) :
     ‖boundedReflectionDefect V A‖ ≤
       2 * ‖Vᗮ.starProjection ∘L A ∘L V.starProjection‖ := by
-  set T₁ : H →L[ℂ] H := Vᗮ.starProjection ∘L A ∘L V.starProjection
-    with hT₁
-  set T₂ : H →L[ℂ] H := V.starProjection ∘L A ∘L Vᗮ.starProjection
-    with hT₂
-  have hnormT₂ : ‖T₂‖ = ‖T₁‖ := by
-    rw [hT₂, ← reflectedOffdiag_adjoint V hA,
-      ← ContinuousLinearMap.star_eq_adjoint]
-    exact norm_star _
-  have hsum : ‖T₁ + T₂‖ ≤ ‖T₁‖ := by
-    refine ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg _) fun z => ?_
-    have h1out : T₁ z ∈ Vᗮ := by
-      rw [hT₁]
-      exact Vᗮ.starProjection_apply_mem _
-    have h2out : T₂ z ∈ V := by
-      rw [hT₂]
-      exact V.starProjection_apply_mem _
-    have horth : ⟪T₂ z, T₁ z⟫_ℂ = 0 :=
-      (Submodule.mem_orthogonal V _).mp h1out _ h2out
-    have hpyth : ‖(T₁ + T₂) z‖ ^ 2 = ‖T₂ z‖ ^ 2 + ‖T₁ z‖ ^ 2 := by
-      have h := norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero
-        (T₂ z) (T₁ z) horth
-      have hadd : (T₁ + T₂) z = T₂ z + T₁ z := by
-        rw [add_apply]
-        abel
-      rw [hadd, sq, sq, sq]
-      linarith
-    have hin1 : ‖T₁ z‖ ≤ ‖T₁‖ * ‖V.starProjection z‖ := by
-      have hfac : T₁ z = T₁ (V.starProjection z) := by
-        rw [hT₁]
-        change Vᗮ.starProjection (A (V.starProjection z)) =
-          Vᗮ.starProjection (A (V.starProjection (V.starProjection z)))
-        rw [show V.starProjection (V.starProjection z) =
-          V.starProjection z from
-            Submodule.starProjection_eq_self_iff.mpr
-              (V.starProjection_apply_mem z)]
-      rw [hfac]
-      exact T₁.le_opNorm _
-    have hin2 : ‖T₂ z‖ ≤ ‖T₁‖ * ‖Vᗮ.starProjection z‖ := by
-      have hfac : T₂ z = T₂ (Vᗮ.starProjection z) := by
-        rw [hT₂]
-        change V.starProjection (A (Vᗮ.starProjection z)) =
-          V.starProjection (A (Vᗮ.starProjection (Vᗮ.starProjection z)))
-        rw [show Vᗮ.starProjection (Vᗮ.starProjection z) =
-          Vᗮ.starProjection z from
-            Submodule.starProjection_eq_self_iff.mpr
-              (Vᗮ.starProjection_apply_mem z)]
-      rw [hfac]
-      calc
-        ‖T₂ (Vᗮ.starProjection z)‖ ≤
-            ‖T₂‖ * ‖Vᗮ.starProjection z‖ := T₂.le_opNorm _
-        _ = ‖T₁‖ * ‖Vᗮ.starProjection z‖ := by rw [hnormT₂]
-    have hzdecomp : ‖z‖ ^ 2 =
-        ‖V.starProjection z‖ ^ 2 + ‖Vᗮ.starProjection z‖ ^ 2 := by
-      have horth' : ⟪V.starProjection z, Vᗮ.starProjection z⟫_ℂ = 0 :=
-        (Submodule.mem_orthogonal V _).mp
-          (Vᗮ.starProjection_apply_mem z) _ (V.starProjection_apply_mem z)
-      have h := norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero
-        (V.starProjection z) (Vᗮ.starProjection z) horth'
-      rw [V.starProjection_add_starProjection_orthogonal z] at h
-      rw [sq, sq, sq]
-      linarith
-    have hsq : ‖(T₁ + T₂) z‖ ^ 2 ≤ (‖T₁‖ * ‖z‖) ^ 2 := by
-      rw [hpyth]
-      have h1 := mul_self_le_mul_self (norm_nonneg (T₁ z)) hin1
-      have h2 := mul_self_le_mul_self (norm_nonneg (T₂ z)) hin2
-      have hkey : ‖T₂ z‖ ^ 2 + ‖T₁ z‖ ^ 2 ≤
-          ‖T₁‖ ^ 2 * (‖V.starProjection z‖ ^ 2 +
-            ‖Vᗮ.starProjection z‖ ^ 2) := by
-        nlinarith [h1, h2]
-      calc
-        ‖T₂ z‖ ^ 2 + ‖T₁ z‖ ^ 2 ≤
-            ‖T₁‖ ^ 2 * (‖V.starProjection z‖ ^ 2 +
-              ‖Vᗮ.starProjection z‖ ^ 2) := hkey
-        _ = (‖T₁‖ * ‖z‖) ^ 2 := by rw [← hzdecomp]; ring
-    have hs := Real.sqrt_le_sqrt hsq
-    rwa [Real.sqrt_sq (norm_nonneg _),
-      Real.sqrt_sq (mul_nonneg (norm_nonneg _) (norm_nonneg z))] at hs
-  calc
-    ‖boundedReflectionDefect V A‖ = ‖(-2 : ℂ) • (T₁ + T₂)‖ := by
-      rw [boundedReflectionDefect_eq_neg_two_smul_offdiag]
-    _ = 2 * ‖T₁ + T₂‖ := by
-      rw [norm_smul]
-      norm_num
-    _ ≤ 2 * ‖T₁‖ := by linarith [hsum]
+  exact norm_reflectionDefect_le_two_mul_norm_cross V hA
 
 /-- The sum of the two off-diagonal blocks has exactly the norm of either
 block when the middle operator is self-adjoint. -/
@@ -565,7 +466,7 @@ theorem subspaceGap_map_reflection
       (U.map (V.reflection.toLinearEquiv : H →ₗ[ℂ] H)).starProjection =
       -(boundedReflectionDefect V U.starProjection) := by
     rw [starProjection_map_reflection, hreflection]
-    unfold boundedReflectionDefect
+    unfold boundedReflectionDefect reflectionDefect
     abel
   change ‖U.starProjection -
       (U.map (V.reflection.toLinearEquiv : H →ₗ[ℂ] H)).starProjection‖ = _

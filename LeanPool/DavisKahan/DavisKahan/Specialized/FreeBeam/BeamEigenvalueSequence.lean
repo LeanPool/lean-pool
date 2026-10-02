@@ -202,7 +202,7 @@ theorem beamResolvent_apply_of_beamOperator_eigen {lam : ℝ} (hlam : 0 < lam)
     have : (0 : ℝ) < 1 + lam := by linarith
     exact_mod_cast this.ne'
   have hz := Abstract.R_inversePartialMap_apply beamCoerciveFormData.resolvent
-    beamCoerciveFormData.resolvent_isSelfAdjoint beamCoerciveFormData.resolvent_injective x
+    beamCoerciveFormData.resolvent_injective x
   have hsplit : beamShiftedFormData.shiftedOperator x
       = beamOperator x + (x : BeamL2) := by
     have h : beamOperator x

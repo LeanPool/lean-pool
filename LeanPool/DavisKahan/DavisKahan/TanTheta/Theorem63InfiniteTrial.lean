@@ -5,8 +5,7 @@ Authors: Jon Crall, Claude Fable 5
 -/
 module
 
-
-public import LeanPool.DavisKahan.DavisKahan.TanTheta.Theorem63FiniteSource
+public import LeanPool.DavisKahan.DavisKahan.TanTheta.Theorem63InfiniteTrialData
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.BorelCalculus.AlmostInvariant
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.OperatorIdeal.ApproximationNumber.PrescribedSequence
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.SpecialFunctions.TanArcsin
@@ -104,65 +103,6 @@ theorem theorem63Residual_apply_eq
   simp only [ContinuousLinearMap.comp_apply] at h
   rw [h]
   exact Submodule.starProjection_orthogonal_apply _ _
-
-omit [CompleteSpace H] in
-/-- Distance to a subspace is bounded by the distance to any of its members. -/
-theorem norm_sub_starProjection_le_of_mem
-    {W : Submodule ℂ H} [W.HasOrthogonalProjection] (u : H) {w : H} (hw : w ∈ W) :
-    ‖u - W.starProjection u‖ ≤ ‖u - w‖ := by
-  rw [W.starProjection_minimal u]
-  exact ciInf_le ⟨0, by rintro r ⟨v, rfl⟩; exact norm_nonneg _⟩ (⟨w, hw⟩ : W)
-
-omit [CompleteSpace H] in
-/-- **Finite-dimensional localization inside a fixed subspace.**  Every strict lower bound
-for an approximation singular value of a restriction `K ∘L Z.subtypeL` is beaten by the
-restriction to some finite-dimensional subspace of `Z`. -/
-theorem exists_finiteDimensional_le_lt_approximationSingularValue
-    {H₂ : Type u} [NormedAddCommGroup H₂] [InnerProductSpace ℂ H₂] [CompleteSpace H₂]
-    (K : H →L[ℂ] H₂) (Z : Submodule ℂ H) [CompleteSpace Z] (n : ℕ)
-    {c : ℝ} (hc0 : 0 ≤ c)
-    (hlt : c < approximationSingularValue n (K ∘L Z.subtypeL)) :
-    ∃ F : Submodule ℂ H, FiniteDimensional ℂ F ∧ F ≤ Z ∧
-      c < approximationSingularValue n (K ∘L F.subtypeL) := by
-  classical
-  obtain ⟨s, hcs, v, hv, hmod⟩ :=
-    (ContinuousLinearMap.lt_approximationNumber_iff_exists_finiteDimensional_lowerBound
-      (K ∘L Z.subtypeL) n hc0).mp hlt
-  have hspanfin : FiniteDimensional ℂ (Submodule.span ℂ (Set.range v)) :=
-    FiniteDimensional.span_of_finite ℂ (Set.finite_range v)
-  refine ⟨(Submodule.span ℂ (Set.range v)).map Z.subtype, inferInstance,
-    Submodule.map_subtype_le Z _, ?_⟩
-  have hbound : s ≤ approximationSingularValue n
-      (K ∘L ((Submodule.span ℂ (Set.range v)).map Z.subtype).subtypeL) := by
-    set F : Submodule ℂ H := (Submodule.span ℂ (Set.range v)).map Z.subtype with hF_def
-    set v' : Fin (n + 1) → F := fun i =>
-      ⟨((v i : Z) : H),
-        Submodule.mem_map_of_mem (Submodule.subset_span (Set.mem_range_self i))⟩
-      with hv'_def
-    have hv' : LinearIndependent ℂ v' := by
-      have hmapped : LinearIndependent ℂ ((Z.subtype : Z →ₗ[ℂ] H) ∘ v) :=
-        hv.map' Z.subtype (Submodule.ker_subtype Z)
-      refine LinearIndependent.of_comp (F.subtype) ?_
-      have hcomp : (F.subtype : F →ₗ[ℂ] H) ∘ v' = (Z.subtype : Z →ₗ[ℂ] H) ∘ v := rfl
-      rw [hcomp]
-      exact hmapped
-    refine ContinuousLinearMap.le_approximationNumber_of_linearIndependent
-      (K ∘L F.subtypeL) n v' hv' ?_
-    intro x _ hxnorm
-    obtain ⟨ξ, hξ, hξx⟩ := (Submodule.mem_map).mp x.2
-    have hξx' : ((ξ : Z) : H) = ((x : F) : H) := hξx
-    have hnormξ : ‖ξ‖ = 1 := by
-      calc ‖ξ‖ = ‖((ξ : Z) : H)‖ := rfl
-        _ = ‖((x : F) : H)‖ := by rw [hξx']
-        _ = ‖x‖ := rfl
-        _ = 1 := hxnorm
-    have happ : (K ∘L Z.subtypeL) ξ = (K ∘L F.subtypeL) x := by
-      change K ((ξ : Z) : H) = K ((x : F) : H)
-      rw [hξx']
-    have h := hmod ξ hξ
-    rw [hnormξ, mul_one, happ] at h
-    exact h
-  exact lt_of_lt_of_le hcs hbound
 
 omit [CompleteSpace H] in
 /-- Under the source gap, **every** approximation singular value of the directed sine
@@ -326,59 +266,6 @@ section CoreAssembly
 variable (T : H →L[ℂ] H) (V Z : Submodule ℂ H)
   [V.HasOrthogonalProjection] [Z.HasOrthogonalProjection] [CompleteSpace Z]
 
-omit [CompleteSpace H] [CompleteSpace Z] in
-/-- Form bounds on the compression restrict to every subspace of the trial space. -/
-private theorem compression_upper_transfer {alpha : ℝ}
-    (hCompressionUpper : ∀ z : Z,
-      RCLike.re ⟪theorem63Compression T Z z, z⟫_ℂ ≤ alpha * ‖z‖ ^ 2)
-    (F : Submodule ℂ H) (hFZ : F ≤ Z) [F.HasOrthogonalProjection] :
-    ∀ z : F, RCLike.re ⟪theorem63Compression T F z, z⟫_ℂ ≤ alpha * ‖z‖ ^ 2 := by
-  intro z
-  rw [re_inner_theorem63Compression_eq]
-  have h := hCompressionUpper ⟨(z : H), hFZ z.2⟩
-  rw [re_inner_theorem63Compression_eq] at h
-  simpa using h
-
-omit [CompleteSpace ↥Z] in
-/-- The finite leakage step: an almost-invariant finite-dimensional subspace of the trial
-space obeys the target Ky Fan bound up to the leakage error. -/
-private theorem finite_leak_step (hT : T.IsSymmetric)
-    (hV : T.Reduces V) {alpha delta : ℝ} (hdelta : 0 < delta)
-    (hCompressionUpper : ∀ z : Z,
-      RCLike.re ⟪theorem63Compression T Z z, z⟫_ℂ ≤ alpha * ‖z‖ ^ 2)
-    (hUnwantedLower : ∀ y ∈ Vᗮ,
-      (alpha + delta) * ‖y‖ ^ 2 ≤ RCLike.re ⟪T y, y⟫_ℂ)
-    (k' : ℕ) (F : Submodule ℂ H) (hFZ : F ≤ Z)
-    [F.HasOrthogonalProjection] [FiniteDimensional ℂ F]
-    {ε : ℝ} (hε : 0 ≤ ε)
-    (hleak : ∀ f : F, ‖Z.starProjection (T (f : H)) -
-      F.starProjection (Z.starProjection (T (f : H)))‖ ≤ ε * ‖(f : H)‖) :
-    delta * ∑ n ∈ Finset.range k', Real.tan (Real.arcsin
-        (approximationSingularValue n (theorem63DirectedSineBlock F V))) ≤
-      kyFanApproximationGauge k' (theorem63Residual T Z) + (k' : ℝ) * ε := by
-  have hCU := compression_upper_transfer T Z hCompressionUpper F hFZ
-  have hcore := theorem6_3_all_kyFan_core_directedTangent F V T hT hV hdelta
-    hCU hUnwantedLower k'
-  have htanvals := hasTheorem63DirectedTangentApproximationNumbers_theorem63DirectedTangent
-    F V (fun i => theorem63_singularValues_sine_lt_one T hT V F hV hdelta
-      hCU hUnwantedLower i)
-  have hKyTan : kyFanApproximationGauge k' (theorem63DirectedTangent F V) =
-      ∑ n ∈ Finset.range k', Real.tan (Real.arcsin
-        (approximationSingularValue n (theorem63DirectedSineBlock F V))) := by
-    unfold kyFanApproximationGauge ContinuousLinearMap.kyFanGauge
-    refine Finset.sum_congr rfl fun n _ => ?_
-    have h := htanvals n
-    unfold approximationSingularValue at h
-    exact h
-  calc
-    delta * ∑ n ∈ Finset.range k', Real.tan (Real.arcsin
-        (approximationSingularValue n (theorem63DirectedSineBlock F V))) =
-        delta * kyFanApproximationGauge k' (theorem63DirectedTangent F V) := by
-      rw [hKyTan]
-    _ ≤ kyFanApproximationGauge k' (theorem63Residual T F) := hcore
-    _ ≤ kyFanApproximationGauge k' (theorem63Residual T Z) + (k' : ℝ) * ε :=
-      kyFanApproximationGauge_theorem63Residual_le_add T Z F hFZ hε hleak k'
-
 /-- Under the source gap the directed sine block of the **full** trial space has every
 approximation singular value strictly below one, so the paper's tangent list has no pole.
 This is not an extra hypothesis: it follows from the same finite inequalities that drive
@@ -391,81 +278,9 @@ theorem approximationSingularValue_sineBlock_lt_one_infiniteTrial (hT : T.IsSymm
     (hUnwantedLower : ∀ y ∈ Vᗮ,
       (alpha + delta) * ‖y‖ ^ 2 ≤ RCLike.re ⟪T y, y⟫_ℂ) (n : ℕ) :
     approximationSingularValue n (theorem63DirectedSineBlock Z V) < 1 := by
-  classical
-  by_contra hcon
-  have ha_le : approximationSingularValue n (theorem63DirectedSineBlock Z V) ≤ 1 := by
-    refine (approximationSingularValue_le_opNorm _ _).trans ?_
-    refine ContinuousLinearMap.opNorm_le_bound _ zero_le_one fun z => ?_
-    rw [one_mul]
-    exact theorem63DirectedSineBlock_apply_norm_le Z V z
-  have haeq : approximationSingularValue n (theorem63DirectedSineBlock Z V) = 1 :=
-    le_antisymm ha_le (le_of_not_gt fun h => hcon h)
-  set B' : ℝ := kyFanApproximationGauge (n + 1) (theorem63Residual T Z) with hB'_def
-  have hB'0 : 0 ≤ B' := kyFanApproximationGauge_nonneg _ _
-  set C : ℝ := B' / delta + 1 with hC_def
-  have hC0 : 0 ≤ C := by positivity
-  set c : ℝ := Real.sin (Real.arctan C) with hc_def
-  have hc0 : 0 ≤ c := Real.sin_arctan_nonneg.mpr hC0
-  have hclt : c < approximationSingularValue n (theorem63DirectedSineBlock Z V) := by
-    rw [haeq]
-    exact TanArcsin.sin_arctan_lt_one C
-  obtain ⟨F₁, hF₁fin, hF₁Z, hF₁⟩ :=
-    exists_finiteDimensional_le_lt_approximationSingularValue
-      (Vᗮ.starProjection) Z n hc0 hclt
-  have := hF₁fin
-  have hεp : (0 : ℝ) < delta / (2 * ((n : ℝ) + 1)) := by positivity
-  obtain ⟨F, hFfin, hF₁F, hFZ, hleak₀⟩ :=
-    exists_finiteDimensional_superset_leak T hT Z F₁ hF₁Z hεp
-  have := hFfin
-  have : F.HasOrthogonalProjection := inferInstance
-  have hleak : ∀ f : F, ‖Z.starProjection (T (f : H)) -
-      F.starProjection (Z.starProjection (T (f : H)))‖ ≤
-      delta / (2 * ((n : ℝ) + 1)) * ‖(f : H)‖ := by
-    intro f
-    obtain ⟨y, hyF, hy⟩ := hleak₀ f
-    exact (norm_sub_starProjection_le_of_mem _ hyF).trans hy
-  have hmono : approximationSingularValue n (theorem63DirectedSineBlock F₁ V) ≤
-      approximationSingularValue n (theorem63DirectedSineBlock F V) :=
-    approximationSingularValue_restrict_mono (Vᗮ.starProjection) n hF₁F
-  have hcF : c < approximationSingularValue n (theorem63DirectedSineBlock F V) :=
-    lt_of_lt_of_le hF₁ hmono
-  have hFlt1 : approximationSingularValue n (theorem63DirectedSineBlock F V) < 1 :=
-    approximationSingularValue_sineBlock_lt_one_of_finite T hT V F hV hdelta
-      (compression_upper_transfer T Z hCompressionUpper F hFZ) hUnwantedLower n
-  have hgc : Real.tan (Real.arcsin c) ≤ Real.tan (Real.arcsin
-      (approximationSingularValue n (theorem63DirectedSineBlock F V))) :=
-    TanArcsin.tanArcsin_le_tanArcsin hc0 hcF.le hFlt1
-  have hsum : Real.tan (Real.arcsin
-      (approximationSingularValue n (theorem63DirectedSineBlock F V))) ≤
-      ∑ m ∈ Finset.range (n + 1), Real.tan (Real.arcsin
-        (approximationSingularValue m (theorem63DirectedSineBlock F V))) := by
-    refine Finset.single_le_sum
-      (f := fun m => Real.tan (Real.arcsin
-        (approximationSingularValue m (theorem63DirectedSineBlock F V))))
-      (fun m _ => TanArcsin.tanArcsin_nonneg (approximationSingularValue_nonneg _ _))
-      (Finset.self_mem_range_succ n)
-  have hfinal := finite_leak_step T V Z hT hV hdelta hCompressionUpper hUnwantedLower
-    (n + 1) F hFZ hεp.le hleak
-  have hCval : Real.tan (Real.arcsin c) = C := TanArcsin.tanArcsin_sin_arctan C
-  have hchain : delta * C ≤ B' + delta / 2 := by
-    have h1 : delta * Real.tan (Real.arcsin c) ≤
-        delta * ∑ m ∈ Finset.range (n + 1), Real.tan (Real.arcsin
-          (approximationSingularValue m (theorem63DirectedSineBlock F V))) :=
-      mul_le_mul_of_nonneg_left (hgc.trans hsum) hdelta.le
-    have h2 : ((n : ℝ) + 1) * (delta / (2 * ((n : ℝ) + 1))) = delta / 2 := by
-      field_simp
-    rw [hCval] at h1
-    calc
-      delta * C ≤ delta * ∑ m ∈ Finset.range (n + 1), Real.tan (Real.arcsin
-          (approximationSingularValue m (theorem63DirectedSineBlock F V))) := h1
-      _ ≤ B' + ((n : ℝ) + 1) * (delta / (2 * ((n : ℝ) + 1))) := by
-        push_cast at hfinal ⊢
-        linarith
-      _ = B' + delta / 2 := by rw [h2]
-  have hCeq : delta * C = B' + delta := by
-    rw [hC_def]
-    field_simp
-  linarith
+  exact Theorem63TrialData.approximationSingularValue_sineBlock_lt_one_infiniteData
+    (Theorem63TrialData.ofBounded T hT Z V) hdelta hCompressionUpper
+      (Theorem63TrialData.ofBounded_crossed_lower T hT Z V hV hUnwantedLower) n
 
 /-- **The Ky Fan tangent inequalities for an arbitrary complete trial subspace** — the
 Davis--Kahan 1970 Appendix finite-projector limiting passage.
@@ -483,156 +298,11 @@ theorem theorem6_3_all_kyFan_core_infiniteTrial (hT : T.IsSymmetric)
     delta * ∑ n ∈ Finset.range k, Real.tan (Real.arcsin
         (approximationSingularValue n (theorem63DirectedSineBlock Z V))) ≤
       kyFanApproximationGauge k (theorem63Residual T Z) := by
-  classical
-  have ha_lt_one : ∀ n, approximationSingularValue n
-      (theorem63DirectedSineBlock Z V) < 1 := fun n =>
-    approximationSingularValue_sineBlock_lt_one_infiniteTrial T V Z hT hV hdelta
-      hCompressionUpper hUnwantedLower n
-  -- The main limit: for every positive slack the target bound holds.
-  rcases Nat.eq_zero_or_pos k with hk0 | hkpos
-  · subst hk0
-    simp only [Finset.range_zero, Finset.sum_empty, mul_zero]
-    exact kyFanApproximationGauge_nonneg _ _
-  refine le_of_forall_pos_le_add fun κ hκ => ?_
-  have hk0R : (0 : ℝ) < (k : ℝ) := Nat.cast_pos.mpr hkpos
-  set κ' : ℝ := κ / (2 * delta * (k : ℝ)) with hκ'_def
-  have hκ'0 : 0 < κ' := by positivity
-  -- Per-index nearly-attaining finite subspaces.
-  have hkey : ∀ n ∈ Finset.range k, ∃ Fn : Submodule ℂ H,
-      FiniteDimensional ℂ Fn ∧ Fn ≤ Z ∧
-      ∀ (F : Submodule ℂ H), Fn ≤ F → F ≤ Z →
-        ∀ [F.HasOrthogonalProjection] [FiniteDimensional ℂ F],
-        Real.tan (Real.arcsin
-          (approximationSingularValue n (theorem63DirectedSineBlock Z V))) ≤
-        Real.tan (Real.arcsin
-          (approximationSingularValue n (theorem63DirectedSineBlock F V))) + κ' := by
-    intro n _
-    set an : ℝ := approximationSingularValue n (theorem63DirectedSineBlock Z V)
-      with han_def
-    have han0 : 0 ≤ an := approximationSingularValue_nonneg _ _
-    rcases eq_or_lt_of_le han0 with hzero | hpos
-    · refine ⟨⊥, inferInstance, bot_le, ?_⟩
-      intro F _ hFZ _ _
-      have h0 : Real.tan (Real.arcsin an) = 0 := by
-        rw [← hzero, Real.arcsin_zero, Real.tan_zero]
-      rw [h0]
-      have := TanArcsin.tanArcsin_nonneg
-        (approximationSingularValue_nonneg n (theorem63DirectedSineBlock F V))
-      linarith
-    · have hcont := TanArcsin.continuousAt_tanArcsin han0 (ha_lt_one n)
-      obtain ⟨d, hd0, hd⟩ := Metric.continuousAt_iff.mp hcont κ' hκ'0
-      set cn : ℝ := max (an - d / 2) 0 with hcn_def
-      have hcn0 : 0 ≤ cn := le_max_right _ _
-      have hcnlt : cn < an := by
-        rcases le_or_gt (an - d / 2) 0 with hle | hgt
-        · rw [hcn_def, max_eq_right hle]
-          exact hpos
-        · rw [hcn_def, max_eq_left hgt.le]
-          linarith
-      have hcnnear : dist cn an < d := by
-        rw [Real.dist_eq, abs_lt]
-        constructor
-        · rcases le_or_gt (an - d / 2) 0 with hle | hgt
-          · rw [hcn_def, max_eq_right hle]
-            simp only [zero_sub, neg_lt_neg_iff]
-            linarith
-          · rw [hcn_def, max_eq_left hgt.le]
-            linarith
-        · linarith [hcnlt]
-      have hnear := hd hcnnear
-      rw [Real.dist_eq, abs_lt] at hnear
-      obtain ⟨Fn, hFnfin, hFnZ, hFn⟩ :=
-        exists_finiteDimensional_le_lt_approximationSingularValue
-          (Vᗮ.starProjection) Z n hcn0 hcnlt
-      refine ⟨Fn, hFnfin, hFnZ, ?_⟩
-      intro F hFnF hFZ _ _
-      have := hFnfin
-      have hmono : approximationSingularValue n (theorem63DirectedSineBlock Fn V) ≤
-          approximationSingularValue n (theorem63DirectedSineBlock F V) :=
-        approximationSingularValue_restrict_mono (Vᗮ.starProjection) n hFnF
-      have hcF : cn ≤ approximationSingularValue n (theorem63DirectedSineBlock F V) :=
-        (lt_of_lt_of_le hFn hmono).le
-      have hFlt1 : approximationSingularValue n (theorem63DirectedSineBlock F V) < 1 :=
-        approximationSingularValue_sineBlock_lt_one_of_finite T hT V F hV hdelta
-          (compression_upper_transfer T Z hCompressionUpper F hFZ) hUnwantedLower n
-      have hgmono : Real.tan (Real.arcsin cn) ≤ Real.tan (Real.arcsin
-          (approximationSingularValue n (theorem63DirectedSineBlock F V))) :=
-        TanArcsin.tanArcsin_le_tanArcsin hcn0 hcF hFlt1
-      linarith [hnear.1, hnear.2]
-  choose Fn hFnfin hFnZ hFnbound using hkey
-  -- One finite subspace containing all the per-index choices.
-  set F₀ : Submodule ℂ H :=
-    (Finset.range k).attach.sup (fun p => Fn p.1 p.2) with hF₀_def
-  have : ∀ p : { x // x ∈ Finset.range k }, FiniteDimensional ℂ (Fn p.1 p.2) :=
-    fun p => hFnfin p.1 p.2
-  have hF₀fin : FiniteDimensional ℂ F₀ :=
-    Submodule.finiteDimensional_finset_sup _ _
-  have hF₀Z : F₀ ≤ Z := Finset.sup_le fun p _ => hFnZ p.1 p.2
-  have hεp : (0 : ℝ) < κ / (2 * (k : ℝ)) := by positivity
-  obtain ⟨F, hFfin, hF₀F, hFZ, hleak₀⟩ :=
-    exists_finiteDimensional_superset_leak T hT Z F₀ hF₀Z hεp
-  have := hFfin
-  have : F.HasOrthogonalProjection := inferInstance
-  have hleak : ∀ f : F, ‖Z.starProjection (T (f : H)) -
-      F.starProjection (Z.starProjection (T (f : H)))‖ ≤
-      κ / (2 * (k : ℝ)) * ‖(f : H)‖ := by
-    intro f
-    obtain ⟨y, hyF, hy⟩ := hleak₀ f
-    exact (norm_sub_starProjection_le_of_mem _ hyF).trans hy
-  have hperterm : ∀ n ∈ Finset.range k,
-      Real.tan (Real.arcsin
-        (approximationSingularValue n (theorem63DirectedSineBlock Z V))) ≤
-      Real.tan (Real.arcsin
-        (approximationSingularValue n (theorem63DirectedSineBlock F V))) + κ' := by
-    intro n hn
-    have hFnF : Fn n hn ≤ F := by
-      refine le_trans ?_ hF₀F
-      exact Finset.le_sup (f := fun p : { x // x ∈ Finset.range k } => Fn p.1 p.2)
-        (Finset.mem_attach _ ⟨n, hn⟩)
-    exact hFnbound n hn F hFnF hFZ
-  have hsumbound : ∑ n ∈ Finset.range k, Real.tan (Real.arcsin
-        (approximationSingularValue n (theorem63DirectedSineBlock Z V))) ≤
-      (∑ n ∈ Finset.range k, Real.tan (Real.arcsin
-        (approximationSingularValue n (theorem63DirectedSineBlock F V)))) +
-        (k : ℝ) * κ' := by
-    calc
-      ∑ n ∈ Finset.range k, Real.tan (Real.arcsin
-          (approximationSingularValue n (theorem63DirectedSineBlock Z V))) ≤
-          ∑ n ∈ Finset.range k, (Real.tan (Real.arcsin
-            (approximationSingularValue n (theorem63DirectedSineBlock F V))) + κ') :=
-        Finset.sum_le_sum hperterm
-      _ = (∑ n ∈ Finset.range k, Real.tan (Real.arcsin
-            (approximationSingularValue n (theorem63DirectedSineBlock F V)))) +
-          (k : ℝ) * κ' := by
-        rw [Finset.sum_add_distrib, Finset.sum_const, Finset.card_range,
-          nsmul_eq_mul]
-  have hfinstep := finite_leak_step T V Z hT hV hdelta hCompressionUpper
-    hUnwantedLower k F hFZ hεp.le hleak
-  have hδκ' : delta * ((k : ℝ) * κ') = κ / 2 := by
-    rw [hκ'_def]
-    field_simp
-  have hkε : (k : ℝ) * (κ / (2 * (k : ℝ))) = κ / 2 := by
-    field_simp
-  calc
-    delta * ∑ n ∈ Finset.range k, Real.tan (Real.arcsin
-        (approximationSingularValue n (theorem63DirectedSineBlock Z V))) ≤
-        delta * ((∑ n ∈ Finset.range k, Real.tan (Real.arcsin
-          (approximationSingularValue n (theorem63DirectedSineBlock F V)))) +
-            (k : ℝ) * κ') :=
-      mul_le_mul_of_nonneg_left hsumbound hdelta.le
-    _ = delta * (∑ n ∈ Finset.range k, Real.tan (Real.arcsin
-          (approximationSingularValue n (theorem63DirectedSineBlock F V)))) +
-        delta * ((k : ℝ) * κ') := by ring
-    _ ≤ (kyFanApproximationGauge k (theorem63Residual T Z) +
-          (k : ℝ) * (κ / (2 * (k : ℝ)))) + delta * ((k : ℝ) * κ') := by
-      linarith [hfinstep]
-    _ = kyFanApproximationGauge k (theorem63Residual T Z) + κ := by
-      rw [hkε, hδκ']
-      ring
+  exact Theorem63TrialData.all_kyFan_core_of_formBounds_infinite
+    (Theorem63TrialData.ofBounded T hT Z V) hdelta hCompressionUpper
+      (Theorem63TrialData.ofBounded_crossed_lower T hT Z V hV hUnwantedLower) k
 
 end CoreAssembly
-
-/-! ### Fan-dominance endpoint for the infinite trial space -/
 
 /-- The paper's instruction that `tan Θ₀` have singular values `tan θ_j`, at arbitrary
 trial dimension: the tangent representative's approximation numbers are the tangents of

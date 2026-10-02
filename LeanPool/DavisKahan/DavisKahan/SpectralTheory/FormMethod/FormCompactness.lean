@@ -81,7 +81,7 @@ theorem CoerciveFormData.associatedOperator_graph_compact
     (hcompact : SequentiallyCompactEmbedding D.embed) :
     SequentiallyCompactGraphEmbedding D.associatedOperator := by
   exact inverse_graph_embedding_compact
-    D.resolvent D.resolvent_isSelfAdjoint D.resolvent_injective
+    D.resolvent D.resolvent_injective
     (D.resolvent_sequentiallyCompact hcompact)
 
 /-- For the form realization, compactness of the ambient resolvent and the
@@ -91,7 +91,7 @@ theorem CoerciveFormData.graph_compact_iff_resolvent_compact
     SequentiallyCompactGraphEmbedding D.associatedOperator ↔
       SequentiallyCompactOperator D.resolvent := by
   exact inverse_graph_compact_iff
-    D.resolvent D.resolvent_isSelfAdjoint D.resolvent_injective
+    D.resolvent D.resolvent_injective
 
 end
 

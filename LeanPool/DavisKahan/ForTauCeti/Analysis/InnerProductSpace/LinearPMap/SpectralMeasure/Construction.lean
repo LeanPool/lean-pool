@@ -702,12 +702,8 @@ theorem reducesSubspace_specRange : ReducesSubspace A (specRange hA B hB) := by
 
 /-- **The restriction of a self-adjoint operator to one of its spectral
 ranges.** -/
--- `@[expose]` is load-bearing here and is a clean carve-out rather than debt: the domain of
--- the restriction is `A.domain.comap _`, so `specRestrict_domain` and `specRestrict_apply`
--- cannot be *stated* — not merely proved — without `.domain` reducing, exactly as for
--- `addBounded` and `perturb`. Measured, not assumed: with the attribute removed the
--- elaborator rejects `specRestrict_apply`'s statement at `x.property`, reporting
--- `specRestrict` as the definition it could not unfold.
+-- The enclosing exposed public section lets the domain reduce across module boundaries,
+-- so `specRestrict_domain` and `specRestrict_apply` can state their dependent inputs.
 noncomputable def specRestrict : specRange hA B hB →ₗ.[ℂ] specRange hA B hB where
   domain := A.domain.comap (specRange hA B hB).subtype
   toFun :=

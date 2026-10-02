@@ -38,7 +38,6 @@ universe u
 
 variable {𝕜 : Type*} [RCLike 𝕜]
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H]
-  [CompleteSpace H]
 
 /-- Sequential compactness on bounded sequences for a bounded operator. -/
 def SequentiallyCompactOperator (R : H →L[𝕜] H) : Prop :=
@@ -58,7 +57,6 @@ def SequentiallyCompactGraphEmbedding
     ∃ phi : ℕ → ℕ, StrictMono phi ∧
       CauchySeq (fun n => ((x (phi n) : A.domain) : H))
 
-omit [CompleteSpace H] in
 /-- A sum-of-squares graph bound gives a uniform bound on operator values. -/
 theorem operator_values_bounded_of_graph_bound
     (A : H →ₗ.[𝕜] H)
@@ -74,7 +72,6 @@ theorem operator_values_bounded_of_graph_bound
     exact hle.trans (le_max_left _ _)
   exact Real.le_sqrt_of_sq_le hsquare
 
-omit [CompleteSpace H] in
 /-- A sum-of-squares graph bound gives a uniform bound on ambient values. -/
 theorem ambient_values_bounded_of_graph_bound
     (A : H →ₗ.[𝕜] H)
@@ -93,36 +90,34 @@ theorem ambient_values_bounded_of_graph_bound
 /-- Compactness of a bounded resolvent implies compactness of the ambient
  embedding of its inverse graph domain. -/
 theorem inverse_graph_embedding_compact
-    (R : H →L[𝕜] H) (hR : IsSelfAdjoint R)
-    (hinj : Function.Injective R)
+    (R : H →L[𝕜] H) (hinj : Function.Injective R)
     (hcompact : SequentiallyCompactOperator R) :
-    SequentiallyCompactGraphEmbedding (inversePartialMap R hR hinj) := by
+    SequentiallyCompactGraphEmbedding (inversePartialMap R hinj) := by
   intro x hx
   obtain ⟨C, hC⟩ := hx
   let y : ℕ → H := fun n =>
-    (inversePartialMap R hR hinj) (x n)
+    (inversePartialMap R hinj) (x n)
   have hybounded : ∃ D : ℝ, ∀ n, ‖y n‖ ≤ D := by
     refine ⟨Real.sqrt (max C 0), ?_⟩
     exact operator_values_bounded_of_graph_bound
-      (inversePartialMap R hR hinj) x hC
+      (inversePartialMap R hinj) x hC
   obtain ⟨phi, hphi, hcauchy⟩ := hcompact y hybounded
   refine ⟨phi, hphi, ?_⟩
   have heq : (fun n => R (y (phi n))) =
-      fun n => ((x (phi n) : (inversePartialMap R hR hinj).domain) : H) := by
+      fun n => ((x (phi n) : (inversePartialMap R hinj).domain) : H) := by
     funext n
-    exact R_inversePartialMap_apply R hR hinj (x (phi n))
+    exact R_inversePartialMap_apply R hinj (x (phi n))
   rwa [heq] at hcauchy
 
 /-- A uniform bound on `y` gives a graph bound for the inverse-domain sequence
  `R y`. -/
 theorem graph_bound_of_bounded_preimage
-    (R : H →L[𝕜] H) (hR : IsSelfAdjoint R)
-    (hinj : Function.Injective R)
+    (R : H →L[𝕜] H) (hinj : Function.Injective R)
     (y : ℕ → H) {C : ℝ} (hC : ∀ n, ‖y n‖ ≤ C) :
     ∀ n,
       ‖((⟨R (y n), LinearMap.mem_range_self R.toLinearMap (y n)⟩ :
-          (inversePartialMap R hR hinj).domain) : H)‖ ^ 2 +
-        ‖(inversePartialMap R hR hinj)
+          (inversePartialMap R hinj).domain) : H)‖ ^ 2 +
+        ‖(inversePartialMap R hinj)
           ⟨R (y n), LinearMap.mem_range_self R.toLinearMap (y n)⟩‖ ^ 2
       ≤ (‖R‖ ^ 2 + 1) * max C 0 ^ 2 := by
   intro n
@@ -149,20 +144,19 @@ theorem graph_bound_of_bounded_preimage
 /-- Compactness of the inverse graph embedding implies sequential compactness
  of the bounded resolvent. -/
 theorem compact_of_inverse_graph_embedding_compact
-    (R : H →L[𝕜] H) (hR : IsSelfAdjoint R)
-    (hinj : Function.Injective R)
+    (R : H →L[𝕜] H) (hinj : Function.Injective R)
     (hgraph : SequentiallyCompactGraphEmbedding
-      (inversePartialMap R hR hinj)) :
+      (inversePartialMap R hinj)) :
     SequentiallyCompactOperator R := by
   intro y hy
   obtain ⟨C, hC⟩ := hy
-  let x : ℕ → (inversePartialMap R hR hinj).domain := fun n =>
+  let x : ℕ → (inversePartialMap R hinj).domain := fun n =>
     ⟨R (y n), LinearMap.mem_range_self R.toLinearMap (y n)⟩
   have hxbound : ∃ D : ℝ, ∀ n,
       ‖(x n : H)‖ ^ 2 +
-        ‖(inversePartialMap R hR hinj) (x n)‖ ^ 2 ≤ D := by
+        ‖(inversePartialMap R hinj) (x n)‖ ^ 2 ≤ D := by
     refine ⟨(‖R‖ ^ 2 + 1) * max C 0 ^ 2, ?_⟩
-    exact graph_bound_of_bounded_preimage R hR hinj y hC
+    exact graph_bound_of_bounded_preimage R hinj y hC
   obtain ⟨phi, hphi, hcauchy⟩ := hgraph x hxbound
   refine ⟨phi, hphi, ?_⟩
   exact hcauchy
@@ -170,13 +164,12 @@ theorem compact_of_inverse_graph_embedding_compact
 /-- For inverse realizations, bounded-resolvent compactness and graph-embedding
  compactness are equivalent in the sequential formulation. -/
 theorem inverse_graph_compact_iff
-    (R : H →L[𝕜] H) (hR : IsSelfAdjoint R)
-    (hinj : Function.Injective R) :
-    SequentiallyCompactGraphEmbedding (inversePartialMap R hR hinj) ↔
+    (R : H →L[𝕜] H) (hinj : Function.Injective R) :
+    SequentiallyCompactGraphEmbedding (inversePartialMap R hinj) ↔
       SequentiallyCompactOperator R := by
   constructor
-  · exact compact_of_inverse_graph_embedding_compact R hR hinj
-  · exact inverse_graph_embedding_compact R hR hinj
+  · exact compact_of_inverse_graph_embedding_compact R hinj
+  · exact inverse_graph_embedding_compact R hinj
 
 end
 

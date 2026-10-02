@@ -151,13 +151,10 @@ theorem isClosed_ambientGraph_of_normalized_graphNorm
   apply D.isClosed_ambientGraph_of_graphNorm_bound (c := 1) one_pos
   simpa using hbound
 
-/-- Build the closed free-beam operator directly from dense range and a graph
-norm lower bound. -/
+/-- The free-beam partial map; analytic conditions enter its density and closedness theorems. -/
 noncomputable def toPartialMapOfGraphNorm
     (D : FourthOrderTraceModel (𝕜 := 𝕜) (H := H) (V := V))
-    (_hdense : DenseRange D.freeEmbed)
-    {c : ℝ} (_hc : 0 < c)
-    (_hbound : ∀ x : D.freeSubspace, c * ‖x‖ ≤ ‖D.freeGraphMap x‖) :
+    :
     H →ₗ.[𝕜] H :=
   D.toPartialMap
 
