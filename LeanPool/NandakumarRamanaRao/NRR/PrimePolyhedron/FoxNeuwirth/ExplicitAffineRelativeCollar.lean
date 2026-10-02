@@ -465,6 +465,7 @@ noncomputable instance parameterFintype : Fintype (Parameter hp C) := Fintype.of
 noncomputable instance parameterDecidableEq : DecidableEq (Parameter hp C) := Classical.decEq _
 
 /-- A global vertex is frozen precisely on one of the two horizontal boundaries. -/
+@[expose]
 def IsFrozenVertex (x : GlobalVertex hp C) : Prop :=
   IsHorizontalPoint (globalPoint hp C x)
 
@@ -500,6 +501,7 @@ noncomputable instance movableParameterFintype : Fintype (MovableParameter hp C)
 abbrev Assignment := Parameter hp C → Real
 
 /-- Replace only movable values, retaining the horizontal boundary assignment literally. -/
+@[expose]
 noncomputable def replaceMovable
     (base : Assignment hp C) (move : MovableParameter hp C → Real) : Assignment hp C := by
   classical
@@ -845,6 +847,7 @@ abbrev CodimTwoFace (p : Nat) :=
   EquivariantPrismGenericityPolynomials.CodimTwoFace p
 
 /-- Retained local vertex after the two ordered omissions. -/
+@[expose]
 def codimTwoVertex
     (f : CodimTwoFace p) (i : Fin (p - 1)) : Fin (p + 1) :=
   EquivariantPrismGenericityPolynomials.codimTwoVertex hp f i
@@ -862,6 +865,7 @@ noncomputable def codimTwoMinorPolynomial
   Matrix.det (codimTwoDeviationMatrixPolynomial hp C q f)
 
 /-- Corresponding real deviation matrix. -/
+@[expose]
 noncomputable def codimTwoDeviationMatrix
     (a : Assignment hp C) (q : C.Cell) (f : CodimTwoFace p) :
     Matrix (Fin (p - 1)) (Fin (p - 1)) Real :=

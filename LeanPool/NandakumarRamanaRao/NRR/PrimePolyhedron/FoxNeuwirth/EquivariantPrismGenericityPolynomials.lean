@@ -199,6 +199,7 @@ def secondOmissionIndex
   Fin.cast (by have := hp.pos; omega) f.2
 
 /-- The vertex retained in an ordered codimension-two face after the two omissions. -/
+@[expose]
 def codimTwoVertex
     (hp : Nat.Prime p) (f : CodimTwoFace p) (i : Fin (p - 1)) : Fin (p + 1) :=
   f.1.succAbove
@@ -226,6 +227,7 @@ noncomputable def codimTwoMinorPolynomial
   Matrix.det (codimTwoDeviationMatrixPolynomial hp N L q f)
 
 /-- The corresponding real deviation matrix reconstructed from an assignment. -/
+@[expose]
 noncomputable def codimTwoDeviationMatrix
     (hp : Nat.Prime p) (N L : Nat)
     (a : Assignment hp N L) (q : PrismCell hp N L) (f : CodimTwoFace p) :

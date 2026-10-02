@@ -109,6 +109,7 @@ noncomputable instance (hp : Nat.Prime p) (N L : Nat) : DecidableEq (VertexSlot 
   inferInstance
 
 /-- A local prism vertex occurrence as an actual point of the realization cylinder. -/
+@[expose]
 noncomputable def slotPoint
     (hp : Nat.Prime p) (N L : Nat) (s : VertexSlot hp N L) : CylinderPoint p :=
   CylinderPoint.ofProd (SubdivisionPrismCharts.vertex hp N L s.1 s.2)
@@ -124,6 +125,7 @@ noncomputable instance (hp : Nat.Prime p) (N L : Nat) : DecidableEq (CoverVertex
   inferInstance
 
 /-- Geometric point represented by one symmetry-decorated local vertex occurrence. -/
+@[expose]
 noncomputable def coverPoint
     (hp : Nat.Prime p) (N L : Nat) (s : CoverVertexSlot hp N L) : CylinderPoint p :=
   s.1 • slotPoint hp N L s.2
@@ -250,12 +252,14 @@ abbrev Assignment (hp : Nat.Prime p) (N L : Nat) :=
   Parameter hp N L → Real
 
 /-- Scalar value reconstructed at a sampled global vertex and coordinate label. -/
+@[expose]
 noncomputable def scalarValue
     (hp : Nat.Prime p) (N L : Nat)
     (a : Assignment hp N L) (x : GlobalVertex hp N L) (j : Fin p) : Real :=
   a (Quotient.mk _ (x, j))
 
 /-- Full coordinate vector reconstructed at a sampled global vertex. -/
+@[expose]
 noncomputable def vectorValue
     (hp : Nat.Prime p) (N L : Nat)
     (a : Assignment hp N L) (x : GlobalVertex hp N L) : Fin p → Real :=

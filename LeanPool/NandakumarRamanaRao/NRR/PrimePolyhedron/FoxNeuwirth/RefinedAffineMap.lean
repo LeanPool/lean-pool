@@ -139,6 +139,7 @@ noncomputable def coefficient
   ∑ q : TopCell hp N, coefficient hp N q * localIndex hp N F q
 
 /-- Straight-line combination of two continuous coordinate maps. -/
+@[expose]
 noncomputable def segment
     (F G : ContinuousCoordinateMap p) (t : Real) : ContinuousCoordinateMap p where
   toFun x := (1 - t) • F x + t • G x

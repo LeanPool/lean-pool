@@ -37,6 +37,7 @@ def coordinateSum (n : ℕ) : (Fin n → ℝ) →ₗ[ℝ] ℝ where
 namespace ZeroSum
 
 /-- Identify zero-sum coordinate vectors with the kernel of coordinate summation. -/
+@[expose]
 def equivKernel (n : ℕ) :
     ZeroSum n ≃ LinearMap.ker (coordinateSum n) where
   toFun v := ⟨fun i => v i, v.sum_coe⟩

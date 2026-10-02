@@ -482,12 +482,14 @@ theorem facetIncidence_eq_last_sub_first_mesh
   exact sum_fin_succ_sub m (meshEndpointPairing hp N m hm s)
 
 /-- External lower boundary coefficient of a thin stack. -/
+@[expose]
 noncomputable def lowerBoundaryCoefficient
     (hp : Nat.Prime p) (N m : Nat) (hm : 0 < m)
     (s : (StackCells hp N m hm).Facet) : ZMod p :=
   meshEndpointPairing hp N m hm s 0
 
 /-- External upper boundary coefficient of a thin stack. -/
+@[expose]
 noncomputable def upperBoundaryCoefficient
     (hp : Nat.Prime p) (N m : Nat) (hm : 0 < m)
     (s : (StackCells hp N m hm).Facet) : ZMod p :=

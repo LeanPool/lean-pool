@@ -94,6 +94,7 @@ noncomputable def ancestorTail
   (splitRefinementWord N k q.2).2
 
 /-- Pull a standard-simplex coordinate back to the ancestor chart. -/
+@[expose]
 noncomputable def ancestorWeight
     {hp : Nat.Prime p} (N k : Nat) (q : TopCell hp (N + k))
     (w : StandardSimplex (p - 1)) : StandardSimplex (p - 1) :=
