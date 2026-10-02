@@ -141,6 +141,7 @@ noncomputable def zigCarrier
     (β_ (modTensor A M' M) M.X).hom ≫ carrierContract A p
 
 /-- The singleton stage maps back onto the module. -/
+@[expose]
 noncomputable def fromModPowModZero
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

@@ -539,6 +539,7 @@ variable {M N Q : S.Mod.{u, u, u, u}} (d : TensorData M N Q)
 /-- **A morphism out of a tensor product**: the two lifts of the
 four blocks of a `TensorData`, assembled into a morphism of super
 modules out of `M ⊗ N`. -/
+@[expose]
 noncomputable def mkHom : M.tensor N ⟶ Q where
   evenMap := liftEven M N d.fee d.foo d.hee d.hoo d.hoeo d.hooe
   oddMap := liftOdd M N d.feo d.foe d.heeo d.heoe d.hoee d.hooo
@@ -624,6 +625,7 @@ section TensorHom
 variable {M M' M'' N N' N'' : S.Mod.{u, u, u, u}}
 
 /-- The data of the tensor product of two morphisms. -/
+@[expose]
 noncomputable def tensorHomData (f : M ⟶ M') (g : N ⟶ N') :
     TensorData M N (M'.tensor N') where
   fee := (tmulEE M' N').compl₁₂ f.evenMap g.evenMap
@@ -697,6 +699,7 @@ noncomputable def tensorHomData (f : M ⟶ M') (g : N ⟶ N') :
 
 /-- **The tensor product of two morphisms**: apply each morphism
 in its own factor, degreewise. -/
+@[expose]
 noncomputable def tensorHom (f : M ⟶ M') (g : N ⟶ N') :
     M.tensor N ⟶ M'.tensor N' :=
   mkHom (tensorHomData f g)

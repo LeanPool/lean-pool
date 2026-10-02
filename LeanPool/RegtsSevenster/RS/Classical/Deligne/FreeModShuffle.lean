@@ -43,6 +43,7 @@ theorem freeModUnit_linear
     B ◁ (ρ_ B).hom from by monoidal]
 
 /-- **The free module on the unit is the regular module.** -/
+@[expose]
 noncomputable def freeModUnitIso
     [Category.{v} D] [MonoidalCategory D] (B : D) [MonObj B] :
     freeMod B (𝟙_ D) ≅ regularMod B where
@@ -171,6 +172,7 @@ noncomputable def freeModBiprodIso
 end Biprod
 
 /-- The free module on an isomorphism. -/
+@[expose]
 noncomputable def freeModMapIso
     [Category.{v} D] [MonoidalCategory D] (B : D) [MonObj B]
     {V W : D} (e : V ≅ W) :

@@ -57,6 +57,7 @@ noncomputable def baseChangeMapMod
       modTensorMap A (𝟙 (restrictRegular φ)) g := rfl
 
 /-- **Base change is functorial on isomorphisms.** -/
+@[expose]
 noncomputable def baseChangeMapIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

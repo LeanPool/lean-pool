@@ -209,6 +209,7 @@ noncomputable def shiftUnitInv :
 
 /-- **The parity shift of the unit is invertible**: tensoring with
 the shifted unit module shifts the parity. -/
+@[expose]
 noncomputable def shiftUnitTensor :
     (shift S.unitMod).tensor M ≅ shift M where
   hom := shiftUnitHom M

@@ -140,6 +140,7 @@ theorem ι_chainColimitUntail
 
 /-- Dropping the bottom stage of a chain does not change the
 colimit. -/
+@[expose]
 noncomputable def chainColimitTailIso
     [Category.{v} E] (B : ℕ → E) (δ : ∀ n, B n ⟶ B (n + 1))
     [HasColimitsOfShape SmallNat.{v} E] :

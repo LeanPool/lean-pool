@@ -195,6 +195,7 @@ variable {D : Type u}
 parity swaps of `RS.RhoTwist` intertwine the four action blocks of
 the Γ-module of the free module on the odd line with the four
 relabelled blocks of the parity shift of the Γ-module of `R`. -/
+@[expose]
 noncomputable def gammaShiftHom
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [CategoryTheory.Linear ℂ D]
@@ -242,6 +243,7 @@ noncomputable def gammaShiftHom
 /-- **The realization of an odd twist is the parity shift of the
 realization**: the Γ-module of the free `R`-module on the odd line
 is the parity shift of the Γ-module of `R`. -/
+@[expose]
 noncomputable def gammaShiftIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [CategoryTheory.Linear ℂ D]

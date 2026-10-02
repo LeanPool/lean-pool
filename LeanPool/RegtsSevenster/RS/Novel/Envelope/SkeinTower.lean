@@ -52,6 +52,7 @@ variable {R : ℕ} (f : EdgeRankParameter R)
 
 /-- The endomorphism ℂ-algebra of the `n`-strand object of the skein
 category.  Definitionally `HomSpace f.val (n + n)`. -/
+@[expose]
 noncomputable def skeinEnd (n : ℕ) : Type 1 :=
   End (SkeinObj.mk (f := f) n)
 

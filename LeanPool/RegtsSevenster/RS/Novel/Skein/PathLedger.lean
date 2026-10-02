@@ -620,6 +620,7 @@ variable {F : EdgeSubset W}
 two re-paired edges lie on periodic components, or each of the four
 flags is periodic or on the chain of a single boundary flag.  The
 complement is the genuine two-path case (case 4). -/
+@[expose]
 def SquareLocalized (κ : F.RelTransitionSystem)
     (a b c d : W.Flag) : Prop :=
   (κ.PeriodicFlag a ∧ κ.PeriodicFlag c) ∨

@@ -37,6 +37,7 @@ variable {α : Type}
 
 /-- **RS21's odd colouring**: a colour on every edge of the subset,
 constant on the two flags of an edge. -/
+@[expose]
 def EdgeOddColouring {W : Fragment α}
     (F : EdgeSubset W) (ℓ : ℕ) : Type :=
   {φ : {f : W.Flag // f ∈ F.flags} → Fin (2 * ℓ) //

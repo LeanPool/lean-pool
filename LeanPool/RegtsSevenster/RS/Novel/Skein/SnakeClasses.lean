@@ -25,11 +25,13 @@ public section
 namespace RS
 
 /-- The left snake fragment `(coev ⊗ id) ∘ (id ⊗ ev)`. -/
+@[expose]
 noncomputable def snakeFragL : Fragment (Fin (1 + 1)) :=
   (tensorFragment coevFrag (strandBundle 1)).compose
     (tensorFragment (strandBundle 1) evFrag)
 
 /-- The right snake fragment `(id ⊗ coev) ∘ (ev ⊗ id)`. -/
+@[expose]
 noncomputable def snakeFragR : Fragment (Fin (1 + 1)) :=
   (tensorFragment (strandBundle 1) coevFrag).compose
     (tensorFragment evFrag (strandBundle 1))

@@ -928,6 +928,7 @@ variable {P : Type v}
 even-even and odd-odd blocks, balanced against the four
 even-degree relator families, factors through the even part of the
 tensor product. -/
+@[expose]
 noncomputable def liftEven [AddCommGroup P] [Module ℂ P]
     (fee : M.even →ₗ[ℂ] N.even →ₗ[ℂ] P)
     (foo : M.odd →ₗ[ℂ] N.odd →ₗ[ℂ] P)
@@ -964,6 +965,7 @@ noncomputable def liftEven [AddCommGroup P] [Module ℂ P]
 even-odd and odd-even blocks, balanced against the four odd-degree
 relator families, factors through the odd part of the tensor
 product. -/
+@[expose]
 noncomputable def liftOdd [AddCommGroup P] [Module ℂ P]
     (feo : M.even →ₗ[ℂ] N.odd →ₗ[ℂ] P)
     (foe : M.odd →ₗ[ℂ] N.even →ₗ[ℂ] P)

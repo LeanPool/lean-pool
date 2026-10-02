@@ -161,7 +161,7 @@ open EdgeSubset
 /-- One vertex, four pendant edges: flags `0–3` at the vertex,
 flags `4–7` at boundary labels `0–3`; edges `{0,4}`, `{1,5}`,
 `{3,6}`, `{2,7}`. -/
-@[reducible] def cFragment : Fragment (Fin 4) where
+@[expose, reducible] def cFragment : Fragment (Fin 4) where
   Flag := Fin 8
   Vertex := Unit
   attach := ![Sum.inl (), Sum.inl (), Sum.inl (), Sum.inl (),

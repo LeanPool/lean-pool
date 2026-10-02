@@ -31,6 +31,7 @@ variable {S : SuperCommAlgebra.{u, u'}}
 
 /-- **A degreewise bijective morphism of super modules is an
 isomorphism.** -/
+@[expose]
 noncomputable def isoOfComponents {M N : S.Mod} (f : M ⟶ N)
     (he : Function.Bijective f.evenMap)
     (ho : Function.Bijective f.oddMap) : M ≅ N where

@@ -32,6 +32,7 @@ variable {D : Type u}
 /-- **The graded component at an integer degree**: the line
 through `((−a)⁺, a⁺)` — nonnegative degrees raise the `M`-arity,
 negative degrees the `M'`-arity. -/
+@[expose]
 noncomputable def chainBGrComponent
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
@@ -59,6 +60,7 @@ noncomputable def chainBGrComponentZeroIso
 
 /-- The iterated line shift: raising both offsets `n` times is
 the identity on the colimit. -/
+@[expose]
 noncomputable def chainBdegShiftIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

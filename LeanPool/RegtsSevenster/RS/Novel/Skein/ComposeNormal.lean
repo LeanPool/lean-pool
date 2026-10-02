@@ -569,6 +569,7 @@ noncomputable def composeNormal {s t u : ℕ}
 /-! ### Boundary permutations across an interface -/
 
 /-- Permuting the last `t` labels of `Fin (s + t)`. -/
+@[expose]
 def outPermEquiv (s : ℕ) {t : ℕ} (σ : Equiv.Perm (Fin t)) :
     Fin (s + t) ≃ Fin (s + t) :=
   finSumFinEquiv.symm.trans

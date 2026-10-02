@@ -191,6 +191,7 @@ theorem chainBdegMulStage_delta_left
 section ZeroLine
 
 /-- The stage identification of the balanced line. -/
+@[expose]
 noncomputable def chainBdegZeroStageIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
@@ -238,6 +239,7 @@ private theorem chainBdegZeroStage_compatibility
 
 /-- **The balanced line is the degree-zero algebra carrier**: the
 zero-offset line's colimit is the splitting-chain algebra. -/
+@[expose]
 noncomputable def chainBdegZeroIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
@@ -259,6 +261,7 @@ end ZeroLine
 
 /-- The stages of the raised line are the shifted stages of the
 line. -/
+@[expose]
 noncomputable def chainBdegSuccStageIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
@@ -299,6 +302,7 @@ private theorem chainBdegSuccStage_compatibility
 /-- **The raised line is the line**: shifting both offsets by one
 is passing to the tail of the chain, which has the same
 colimit. -/
+@[expose]
 noncomputable def chainBdegSuccIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

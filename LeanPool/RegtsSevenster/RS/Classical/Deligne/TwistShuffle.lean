@@ -488,6 +488,7 @@ theorem twistShuffleInv_act
     MonoidalCategory.whiskerLeft_id, Category.id_comp]
 
 /-- The inverse twist shuffle as a module map. -/
+@[expose]
 noncomputable def twistShuffleModInv
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

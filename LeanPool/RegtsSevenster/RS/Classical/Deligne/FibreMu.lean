@@ -38,6 +38,7 @@ variable {D : Type u}
 open SuperCommAlgebra.Mod
 
 /-- **The monoidal comparison of the fibre functor.** -/
+@[expose]
 noncomputable def fibreMu
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [Linear ℂ D]

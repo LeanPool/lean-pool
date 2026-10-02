@@ -55,10 +55,12 @@ noncomputable def strandRelabelEquiv (e : Fin 2 ≃ Fin 2) :
   circles_eq := rfl
 
 /-- The evaluation fragment: the strand as a `(2,0)`-morphism. -/
+@[expose]
 noncomputable def evFrag : Fragment (Fin (2 + 0)) :=
   Fragment.strand.relabel (finCongr (by omega : 2 = 2 + 0))
 
 /-- The coevaluation fragment: the strand as a `(0,2)`-morphism. -/
+@[expose]
 noncomputable def coevFrag : Fragment (Fin (0 + 2)) :=
   Fragment.strand.relabel (finCongr (by omega : 2 = 0 + 2))
 

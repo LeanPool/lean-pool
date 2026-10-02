@@ -163,6 +163,7 @@ theorem joinCoreVal_inr {ℓ : ℕ}
 
 /-- The join of two component core odd colourings as a core odd
 colouring of the union subset. -/
+@[expose]
 noncomputable def joinCore {ℓ : ℕ}
     (φ₁ : (leftSub F).CoreOddColouring ℓ)
     (φ₂ : (rightSub F).CoreOddColouring ℓ) :

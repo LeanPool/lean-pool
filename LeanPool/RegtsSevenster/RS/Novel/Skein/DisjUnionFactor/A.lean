@@ -566,6 +566,7 @@ noncomputable def rightRel (κ : F.RelTransitionSystem) :
 
 /-- The product of two componentwise transition systems: a system on
 the union, inverse to the two restrictions. -/
+@[expose]
 noncomputable def prodRel (κ₁ : (leftSub F).RelTransitionSystem)
     (κ₂ : (rightSub F).RelTransitionSystem) :
     F.RelTransitionSystem where
@@ -608,6 +609,7 @@ noncomputable def prodRel (κ₁ : (leftSub F).RelTransitionSystem)
           (inr_mem_internal.mp hf) w (attach_inr_eq_inr.mp hv))
 
 /-- The product of two componentwise orientations. -/
+@[expose]
 noncomputable def prodOrient {κ₁ : (leftSub F).RelTransitionSystem}
     {κ₂ : (rightSub F).RelTransitionSystem}
     (o₁ : κ₁.Orientation) (o₂ : κ₂.Orientation) :

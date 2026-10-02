@@ -28,6 +28,7 @@ variable {D : Type u}
 
 /-- **Base change preserves the zigzag laws**: the statement of
 record for the dévissage steps. -/
+@[expose]
 def BaseChangeZigzagStatement
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

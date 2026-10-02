@@ -35,6 +35,7 @@ variable {D : Type u}
 open SuperCommAlgebra.Mod
 
 /-- **The unit comparison of the fibre functor.** -/
+@[expose]
 noncomputable def fibreEpsIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [Linear ℂ D]

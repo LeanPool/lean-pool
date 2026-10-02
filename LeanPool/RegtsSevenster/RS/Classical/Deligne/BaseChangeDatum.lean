@@ -126,6 +126,7 @@ theorem baseChangeCopair_linear
   exact Category.assoc _ _ _
 
 /-- **The base change of a duality datum.** -/
+@[expose]
 noncomputable def baseChangeDatum
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

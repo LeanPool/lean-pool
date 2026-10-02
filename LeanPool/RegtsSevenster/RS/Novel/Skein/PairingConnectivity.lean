@@ -96,6 +96,7 @@ systems with the same boundary pairing are connected by
 pairing-preserving moves, up to match-equality at the endpoints.
 (Single steps do not suffice: the double-crossing configuration
 disconnects the fibre.) -/
+@[expose]
 def PairingConnectivity : Prop :=
   ∀ {α : Type} [LinearOrder α] {W : Fragment α}
     {F : EdgeSubset W} (κ κ' : F.RelTransitionSystem),
