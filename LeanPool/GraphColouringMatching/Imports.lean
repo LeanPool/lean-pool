@@ -8,4 +8,5 @@ module  -- shake: keep-all --deprecated_module: ignore
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.GraphColouringMatching
 public import LeanPool.GraphColouringMatching.Basic
+public import LeanPool.GraphColouringMatching.Cardinal
 public import LeanPool.GraphColouringMatching.Finite

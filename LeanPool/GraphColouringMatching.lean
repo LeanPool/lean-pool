@@ -6,6 +6,7 @@ Authors: Juan Pablo Traverso Gianini
 module
 
 public import LeanPool.GraphColouringMatching.Basic
+public import LeanPool.GraphColouringMatching.Cardinal
 public import LeanPool.GraphColouringMatching.Finite
 
 /-!
