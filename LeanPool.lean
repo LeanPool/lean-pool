@@ -170,6 +170,7 @@ public import LeanPool.MovingSofa.Imports
 public import LeanPool.MulticolorTriangleRamsey.Imports
 public import LeanPool.NagataFactoriality.Imports
 public import LeanPool.NandakumarRamanaRao.Imports
+public import LeanPool.NashEmbedding.Imports
 public import LeanPool.NashWilliams.Imports
 public import LeanPool.NaslundCounterexample.Imports
 public import LeanPool.NavierStokesAndEuler.Imports
@@ -189,6 +190,7 @@ public import LeanPool.PDL.Imports
 public import LeanPool.PFR.Imports
 public import LeanPool.PLAcceleratedNesterovLean.Imports
 public import LeanPool.ParallelPostulate.Imports
+public import LeanPool.ParameterFreeGradient.Imports
 public import LeanPool.PartialCombinatoryAlgebras.Imports
 public import LeanPool.PartialRegularity.Imports
 public import LeanPool.PebblingLean.Imports
@@ -248,6 +250,7 @@ public import LeanPool.Superorthogonality.Imports
 public import LeanPool.SyntheticEuclid4.Imports
 public import LeanPool.ThreeGap.Imports
 public import LeanPool.Turan3.Imports
+public import LeanPool.TuttePath.Imports
 public import LeanPool.TwoColoringOneRound.Imports
 public import LeanPool.UlmsTheorem.Imports
 public import LeanPool.UnconditionalSchauderBasis.Imports
