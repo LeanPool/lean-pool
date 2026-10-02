@@ -60,6 +60,7 @@ public import LeanPool.Dilatations.Imports
 public import LeanPool.DirectedTopologyLean4.Imports
 public import LeanPool.DistanceGeometry.Imports
 public import LeanPool.DomainTheory.Imports
+public import LeanPool.DrossFractionalTriangleDecomposition.Imports
 public import LeanPool.Duality.Imports
 public import LeanPool.EcTateLean.Imports
 public import LeanPool.Egrs75.Imports
@@ -189,6 +190,7 @@ public import LeanPool.PCFTheory.Imports
 public import LeanPool.PDL.Imports
 public import LeanPool.PFR.Imports
 public import LeanPool.PLAcceleratedNesterovLean.Imports
+public import LeanPool.PaperIVCliqueTree.Imports
 public import LeanPool.ParallelPostulate.Imports
 public import LeanPool.ParameterFreeGradient.Imports
 public import LeanPool.PartialCombinatoryAlgebras.Imports
