@@ -371,7 +371,8 @@ theorem goodRows_disjoint_badRows
   classical
   rw [Finset.disjoint_left]
   intro i hgood hbad
-  simp [goodRows, badRows] at hgood hbad
+  simp only [goodRows, Finset.mem_filter, Finset.mem_univ,
+    true_and, badRows] at hgood hbad
   exact hbad hgood
 
 theorem goodRows_union_badRows
@@ -736,7 +737,8 @@ theorem alternating_cleanCycle_count
           intro hclean
           exact hg2 (by simpa [gc] using hclean.2)
         rw [cleanCycleIndicator, ite_eq_right hnotclean]
-        simp [longComponentGoodRows, hkEq]
+        simp only [mul_zero, zero_add, longComponentGoodRows, hkEq,
+          Nat.reduceLeDiff, ↓reduceIte, add_zero, ge_iff_le]
         exact hgb
   have hsum := Finset.sum_le_sum (s := Finset.univ)
     (fun c _ ↦ hpoint c)

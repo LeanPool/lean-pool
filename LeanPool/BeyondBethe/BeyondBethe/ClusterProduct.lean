@@ -123,7 +123,8 @@ theorem clusterChoiceExponent_apply
       ((Finset.univ : Finset (Fin (C.size c))).filter
         (fun k ↦ f c k = j)).card := by
   classical
-  simp [clusterChoiceExponent, Finsupp.single_apply]
+  simp only [clusterChoiceExponent, Finsupp.coe_finsetSum, Finset.sum_apply,
+    Finsupp.single_apply, Prod.mk.injEq, Finset.sum_boole, Nat.cast_id]
   rw [Finset.sum_eq_single c]
   · congr 1
     ext k

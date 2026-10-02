@@ -355,7 +355,9 @@ theorem startedCfg_input_eq (M : TM k) (z : List Bool)
     (M.δ_right_of_start M.qstart Γ.start (fun _ : Fin k => Γ.start) Γ.start).1 rfl
   change (M.6 M.qstart Γ.start (fun _ : Fin k => Γ.start) Γ.start).2.2.2.1 =
     Dir3.right at hinDir
-  simp [startedCfg, TM.step, hne, Tape.read, Tape.init]
+  simp only [startedCfg, step, hne, ↓reduceIte, Tape.read, Tape.init,
+    List.getElem?_map, List.length_nil, Nat.not_lt_zero, not_false_eq_true,
+    getElem?_neg, Option.getD_none, Γw.toΓ, Option.get_some]
   rw [hinDir]
 
 /-- Each verifier work tape immediately after the forced first move off `▷`
@@ -369,7 +371,10 @@ theorem startedCfg_work_eq_init_move_right (M : TM k) (z : List Bool)
     (M.δ_right_of_start M.qstart Γ.start (fun _ : Fin k => Γ.start) Γ.start).2.1 i rfl
   change (M.6 M.qstart Γ.start (fun _ : Fin k => Γ.start) Γ.start).2.2.2.2.1 i =
     Dir3.right at hworkDir
-  simp [startedCfg, TM.step, hne, Tape.read, Tape.init, Tape.writeAndMove, Tape.write]
+  simp only [startedCfg, step, hne, ↓reduceIte, Tape.read, Tape.init,
+    List.getElem?_map, List.length_nil, Nat.not_lt_zero, not_false_eq_true,
+    getElem?_neg, Option.getD_none, Tape.writeAndMove, Tape.write,
+    Option.get_some]
   rw [hworkDir]
 
 /-- The verifier output tape immediately after the forced first move off `▷`
@@ -383,7 +388,10 @@ theorem startedCfg_output_eq_init_move_right (M : TM k) (z : List Bool)
     (M.δ_right_of_start M.qstart Γ.start (fun _ : Fin k => Γ.start) Γ.start).2.2 rfl
   change (M.6 M.qstart Γ.start (fun _ : Fin k => Γ.start) Γ.start).2.2.2.2.2 =
     Dir3.right at houtDir
-  simp [startedCfg, TM.step, hne, Tape.read, Tape.init, Tape.writeAndMove, Tape.write]
+  simp only [startedCfg, step, hne, ↓reduceIte, Tape.read, Tape.init,
+    List.getElem?_map, List.length_nil, Nat.not_lt_zero, not_false_eq_true,
+    getElem?_neg, Option.getD_none, Tape.writeAndMove, Tape.write,
+    Option.get_some]
   rw [houtDir]
 
 /-- User-facing simulation from the post-start verifier configuration.

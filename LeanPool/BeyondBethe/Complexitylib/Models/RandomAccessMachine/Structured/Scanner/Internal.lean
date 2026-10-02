@@ -158,7 +158,7 @@ private theorem setupValue_le_inputBase (spec : Spec) (index : ℕ)
     (hindex : index ∈ setupIndices spec) :
     setupValue spec index ≤ inputBase spec := by
   rcases List.mem_append.mp hindex with hfixed | htable
-  · simp [fixedSetupIndices] at hfixed
+  · simp only [fixedSetupIndices, List.mem_cons, List.not_mem_nil, or_false] at hfixed
     rcases hfixed with rfl | rfl | rfl | rfl | rfl | rfl
     all_goals have hinitial := spec.initial_lt
     all_goals simp [setupValue, stateReg, pointerReg, oneReg, twoReg, transitionBaseReg,
@@ -589,18 +589,24 @@ private theorem iterated_inv {spec : Spec} {bit : Bool} {rest : List Bool}
   · have hlength : store 0 = (bit :: rest).length := by
       simpa [lengthReg] using hinv.length_eq
     have hone : store 3 = 1 := by simpa [oneReg] using hinv.one_eq
-    simp [iterated, advanced, transitioned, addressed, indexed, multiplied,
-      loaded, Basic.exec, lengthReg, pointerReg, stateReg, addressReg, bitReg,
-      oneReg]
+    simp only [iterated, Basic.exec, advanced, transitioned, addressed, indexed,
+      multiplied, loaded, bitReg, pointerReg, addressReg, stateReg, ne_eq,
+      OfNat.one_ne_ofNat, not_false_eq_true, Function.update_of_ne,
+      Function.update_self, Nat.reduceEqDiff, Function.update_idem,
+      OfNat.ofNat_ne_one, oneReg, lengthReg, OfNat.zero_ne_ofNat,
+      zero_ne_one, Nat.succ_ne_self]
     rw [hlength, hone]
     simp
   · exact iterated_state hinv
   · have hpointer : store 2 = inputBase spec + consumed := by
       simpa [pointerReg] using hinv.pointer_eq
     have hone : store 3 = 1 := by simpa [oneReg] using hinv.one_eq
-    simp [iterated, advanced, transitioned, addressed, indexed, multiplied,
-      loaded, Basic.exec, lengthReg, pointerReg, stateReg, addressReg, bitReg,
-      oneReg]
+    simp only [iterated, Basic.exec, advanced, transitioned, addressed, indexed,
+      multiplied, loaded, bitReg, pointerReg, addressReg, stateReg, ne_eq,
+      OfNat.one_ne_ofNat, not_false_eq_true, Function.update_of_ne,
+      Function.update_self, Nat.reduceEqDiff, Function.update_idem,
+      OfNat.ofNat_ne_one, oneReg, lengthReg, OfNat.zero_ne_ofNat,
+      zero_ne_one, Nat.succ_ne_self, OfNat.ofNat_ne_zero]
     rw [hpointer, hone]
     omega
   · simpa [iterated, advanced, transitioned, addressed, indexed, multiplied,
