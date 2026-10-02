@@ -84,7 +84,8 @@ theorem basic_cg_identities_responseJ_zero_formula_canonical_of_isEllipticFieldO
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hS hK hSigma p
 
-theorem basic_cg_identities_responseJ_formula_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem
+  basic_cg_identities_responseJ_formula_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)
@@ -109,7 +110,8 @@ theorem basic_cg_identities_responseJ_formula_canonical_of_isEllipticFieldOn_of_
     basic_cg_identities_responseJ_formula_canonical_of_isSigmaCoarse
       U a hS hK hSigma hdet p q
 
-theorem basic_cg_identities_responseJ_formula_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem
+  basic_cg_identities_responseJ_formula_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -131,7 +133,8 @@ theorem basic_cg_identities_responseJ_formula_canonical_of_isEllipticFieldOn_of_
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hS hK hSigma p q
 
-theorem magic_identity_responseJ_completed_square_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem
+  magic_identity_responseJ_completed_square_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)

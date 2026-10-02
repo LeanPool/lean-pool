@@ -334,7 +334,8 @@ theorem measurable_l2WeightedHilbertMatrixLipschitzIntegral
 /-- Slice-level version of the Lipschitz-extension bridge for a full-block
 coefficient entry.  The agreement hypothesis keeps the theorem independent of
 the later finite-dimensional extension construction. -/
-theorem QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegral_of_lipschitzExtension
+theorem
+  QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegral_of_lipschitzExtension
     {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hToL2 :
@@ -480,7 +481,8 @@ theorem QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegr
 
 /-- Open finite-measure wrapper for the fully internal `L²`-weighted
 full-block entry measurability theorem. -/
-theorem QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegral_of_isOpen_volume_ne_top
+theorem
+  QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegral_of_isOpen_volume_ne_top
     {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hUopen : IsOpen U) (hUfinite : MeasureTheory.volume U ≠ ⊤)
@@ -545,7 +547,8 @@ measurability, provided the weight is represented by an honest measurable
 function.  The proof approximates the weight by simple functions, uses the
 already-proved `L²` theorem for each approximant, and passes to the limit by
 the uniform quantitative ellipticity bound on the slice. -/
-theorem QuantitativeEllipticSlice.measurable_integrableWeightedFullBlockCoeffEntryIntegral_of_measurable
+theorem
+  QuantitativeEllipticSlice.measurable_integrableWeightedFullBlockCoeffEntryIntegral_of_measurable
     {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hToL2 :
@@ -1044,7 +1047,8 @@ theorem measurable_blockPairingAverage_comp_of_measurable_weightedFullBlockCoeff
     (Finset.measurable_sum Finset.univ fun α _ =>
       Finset.measurable_sum Finset.univ fun β _ => hMeas α β)
 
-theorem measurable_blockEnergyAverage_quantitativeSlice_of_measurable_weightedFullBlockCoeffEntryIntegrals
+theorem
+  measurable_blockEnergyAverage_quantitativeSlice_of_measurable_weightedFullBlockCoeffEntryIntegrals
     {d : ℕ} {U : Set (Vec d)} {k : ℕ} (X : BlockState d)
     (hX : MemBlockL2 U X.eval)
     (hMeas :

@@ -210,7 +210,8 @@ theorem cubeBesovDepthSeminorm_two_le_cubeBesovCircPartialNorm_of_local_circ_bou
             (shifted_cubeBesovCircDepthSum_le_cubeBesovCircPartialNorm_one
               Q (1 - s) (2 : ℝ≥0∞) j N g) hC
 
-theorem cubeBesovPartialSeminormTop_two_le_geometric_mul_cubeBesovCircPartialNorm_of_local_circ_bound
+theorem
+  cubeBesovPartialSeminormTop_two_le_geometric_mul_cubeBesovCircPartialNorm_of_local_circ_bound
     {d : ℕ} (Q : TriadicCube d) (s C : ℝ) (u g : Vec d → ℝ) (M : ℕ)
     (hs : 0 < s) (hC : 0 ≤ C)
     (hlocal : ∀ j ∈ Finset.range (M + 1), ∀ R ∈ descendantsAtDepth Q j,
@@ -320,7 +321,8 @@ theorem CubeLocalMultiscalePoincareEstimate.partialNormTop_two_le_cubeBesovCircP
       C * cubeBesovCircPartialNorm Q (1 - s) (2 : ℝ≥0∞) (1 : ℝ≥0∞) M g := by
   exact hlocal.to_input.partialNormTop_two_le_cubeBesovCircPartialNorm havg hs hC
 
-theorem CubeLocalMultiscalePoincareEstimate.partialNormTop_two_le_geometric_mul_cubeBesovCircPartialNorm
+theorem
+  CubeLocalMultiscalePoincareEstimate.partialNormTop_two_le_geometric_mul_cubeBesovCircPartialNorm
     {d : ℕ} {Q : TriadicCube d} {s C : ℝ} {u g : Vec d → ℝ} {M : ℕ}
     (hlocal : CubeLocalMultiscalePoincareEstimate Q C u g M)
     (havg : cubeAverage Q u = 0) (hs : 0 < s) (hC : 0 ≤ C) :
@@ -329,7 +331,8 @@ theorem CubeLocalMultiscalePoincareEstimate.partialNormTop_two_le_geometric_mul_
         cubeBesovCircPartialNorm Q (1 - s) (2 : ℝ≥0∞) (1 : ℝ≥0∞) M g := by
   exact hlocal.to_input.partialNormTop_two_le_geometric_mul_cubeBesovCircPartialNorm havg hs hC
 
-theorem CubeLocalMultiscalePoincareEstimate.fluctuation_partialNormTop_two_le_cubeBesovCircPartialNorm
+theorem
+  CubeLocalMultiscalePoincareEstimate.fluctuation_partialNormTop_two_le_cubeBesovCircPartialNorm
     {d : ℕ} {Q : TriadicCube d} {s C : ℝ} {u g : Vec d → ℝ} {M : ℕ}
     (hlocal : CubeLocalMultiscalePoincareEstimate Q C (cubeFluctuation Q u) g M)
     (hs : 0 ≤ s) (hC : 0 ≤ C) :
@@ -369,7 +372,8 @@ theorem CubeDescendantProjectedDualMeanZeroPoincareEstimate.partialSeminormTop_t
   exact (hproj.to_input hg hC).partialSeminormTop_two_le_geometric_mul_cubeBesovCircPartialNorm
     hs (by positivity)
 
-theorem CubeDescendantProjectedDualMeanZeroPoincareEstimate.partialNormTop_two_le_cubeBesovCircPartialNorm
+theorem
+  CubeDescendantProjectedDualMeanZeroPoincareEstimate.partialNormTop_two_le_cubeBesovCircPartialNorm
     {d : ℕ} {Q : TriadicCube d} {s C : ℝ} {u g : Vec d → ℝ} {M : ℕ}
     (hproj : CubeDescendantProjectedDualMeanZeroPoincareEstimate Q C u g M)
     (hg : MeasureTheory.MemLp g (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
@@ -423,7 +427,8 @@ theorem CubeDescendantProjectedDualMeanZeroPoincareEstimate.fluctuation_partialN
         cubeBesovCircPartialNorm Q (1 - s) (2 : ℝ≥0∞) (1 : ℝ≥0∞) M g := by
   exact hproj.fluctuation_partialNormTop_two_le_cubeBesovCircPartialNorm hg hs hC
 
-theorem CubeDescendantProjectedDualMeanZeroPoincareEstimate.fluctuation_partialNormTop_two_le_note_rhs
+theorem
+  CubeDescendantProjectedDualMeanZeroPoincareEstimate.fluctuation_partialNormTop_two_le_note_rhs
     {d : ℕ} {Q : TriadicCube d} {s C : ℝ} {u g : Vec d → ℝ} {M : ℕ}
     (hproj : CubeDescendantProjectedDualMeanZeroPoincareEstimate Q C (cubeFluctuation Q u) g M)
     (hg : MeasureTheory.MemLp g (2 : ℝ≥0∞) (normalizedCubeMeasure Q))

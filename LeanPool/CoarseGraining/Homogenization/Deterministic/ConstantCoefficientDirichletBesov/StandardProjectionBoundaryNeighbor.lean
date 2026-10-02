@@ -46,7 +46,8 @@ theorem overlapIntersectingParentEnergy_nonneg {d : ℕ}
 /-- Boundary-layer reduction with a gate back to admissible overlap centers.
 The gate is important because the raw ancestor boundary layer also contains
 fine descendants whose overlap cube may leave `Q`; crossing centers never do. -/
-theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_admissible_boundaryLayer_sum
+theorem
+  cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_admissible_boundaryLayer_sum
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → Vec d) {j m : ℕ}
     (hmj : m ≤ j) :
     cubeBesovOverlappingPositiveVectorDepthAverage Q
@@ -111,7 +112,8 @@ theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_admis
 boundary-layer reduction.  The remaining task after this theorem is purely
 geometric summation: control the admissible boundary-layer neighbor-energy
 sum by the ordinary standard positive depth budgets. -/
-theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_boundary_neighborEnergy_sum
+theorem
+  cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_boundary_neighborEnergy_sum
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → Vec d) {j m : ℕ}
     (hmj : m ≤ j)
     (hincLoc :
@@ -507,7 +509,8 @@ theorem admissible_boundary_neighborEnergy_sum_le_count_mul_parentEnergy_sum
 /-- One-increment boundary estimate after the local-neighbor budget and a
 supplied parent-hit counting bound.  The remaining geometric theorem should
 provide the count `M ≃ (3^(d-1))^(j-m)`. -/
-theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_neighbor_count_parentEnergy_sum
+theorem
+  cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_neighbor_count_parentEnergy_sum
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → Vec d) {j m : ℕ}
     (hmj : m ≤ j) {M : ℝ}
     (hM :
@@ -572,7 +575,8 @@ theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_neigh
 
 /-- One-increment boundary estimate after the parent-hit count, expressed in
 terms of the ordinary standard positive depth-`m` average. -/
-theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_neighbor_count_depthAverage
+theorem
+  cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_neighbor_count_depthAverage
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → Vec d) {j m : ℕ}
     (hmj : m ≤ j) {M : ℝ}
     (hM :
@@ -688,7 +692,8 @@ theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_pow_i
 neighbor-count estimates.  This is the downstream form of the remaining
 geometry: supply the hit count for every increment scale, and the projection
 jump is controlled by the corresponding weighted standard positive depths. -/
-theorem cubeBesovOverlappingPositiveVectorDepthSeminorm_gap_zero_le_sum_sqrt_neighbor_count_depthAverage
+theorem
+  cubeBesovOverlappingPositiveVectorDepthSeminorm_gap_zero_le_sum_sqrt_neighbor_count_depthAverage
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (j : ℕ)
     (M : ℕ → ℝ)
     (hincLoc :

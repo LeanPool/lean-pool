@@ -105,7 +105,8 @@ theorem abs_cubeBesovPairing_le_note_constant_mul_of_uniform_bound_two_two_of_no
     _ = A * B + A * δ := by ring
     _ ≤ A * B + ε := by linarith
 
-theorem abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_uniform_component_bounds_two_two_of_nonneg
+theorem
+  abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_uniform_component_bounds_two_two_of_nonneg
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u g : Vec d → Vec d) (B : Fin d → ℝ)
     (hs : 0 < s)
     (hu : ∀ i, MeasureTheory.MemLp (fun x => u x i) (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
@@ -303,7 +304,8 @@ theorem cubeBesovCircDepthSeminorm_two_component_le_scaleWeight_neg_mul_negative
           rw [hweight]
           simp [cubeBesovNegativeVectorDepthSeminorm, mul_assoc]
 
-theorem cubeBesovCircPartialNorm_two_one_component_le_scaleWeight_neg_mul_negativeVectorPartialSeminorm
+theorem
+  cubeBesovCircPartialNorm_two_one_component_le_scaleWeight_neg_mul_negativeVectorPartialSeminorm
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (i : Fin d) (N : ℕ) :
     cubeBesovCircPartialNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞) N (fun x => u x i) ≤
       cubeBesovScaleWeight (-s) Q * cubeBesovNegativeVectorPartialSeminorm Q s N u := by
@@ -324,7 +326,8 @@ theorem cubeBesovCircPartialNorm_two_one_component_le_scaleWeight_neg_mul_negati
     _ = cubeBesovScaleWeight (-s) Q * cubeBesovNegativeVectorPartialSeminorm Q s N u := by
           simp [cubeBesovNegativeVectorPartialSeminorm, Finset.mul_sum]
 
-theorem cubeBesovCircPartialNorm_two_two_component_le_scaleWeight_neg_mul_negativeVectorPartialSeminormTwo
+theorem
+  cubeBesovCircPartialNorm_two_two_component_le_scaleWeight_neg_mul_negativeVectorPartialSeminormTwo
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (i : Fin d) (N : ℕ) :
     cubeBesovCircPartialNorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) N (fun x => u x i) ≤
       cubeBesovScaleWeight (-s) Q * cubeBesovNegativeVectorPartialSeminormTwo Q s N u := by
@@ -532,7 +535,8 @@ theorem cubeBesovCircNorm_two_one_component_le_scaleWeight_neg_mul_gap_geometric
 
 /-- Componentwise `q = 1` circ control at a larger exponent from a scaled
 negative-vector partial bound at a smaller exponent. -/
-theorem cubeBesovCircNorm_two_one_component_le_scaleWeight_gap_mul_of_scaled_negativeVectorPartialBound
+theorem
+  cubeBesovCircNorm_two_one_component_le_scaleWeight_gap_mul_of_scaled_negativeVectorPartialBound
     {d : ℕ} (Q : TriadicCube d) {r t : ℝ} (ht : t ≤ r)
     (u : Vec d → Vec d) (i : Fin d) {B : ℝ}
     (hB : ∀ N : ℕ,
@@ -752,7 +756,8 @@ theorem cubeBesovPartialSeminorm_two_component_le_scaleWeight_mul_positiveVector
           unfold cubeBesovPositiveVectorPartialSeminormTwo
           rfl
 
-theorem cubeBesovPartialSeminormTop_two_component_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+theorem
+  cubeBesovPartialSeminormTop_two_component_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (i : Fin d) (N : ℕ)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     cubeBesovPartialSeminormTop Q s (2 : ℝ≥0∞) N (fun x => u x i) ≤

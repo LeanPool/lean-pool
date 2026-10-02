@@ -18,7 +18,8 @@ noncomputable section
 
 /-- Scaled bounded-tail weak-flux iteration with the explicit
 corrector-energy local error as the recurrence error. -/
-theorem weakFluxRHSScaledAveragedSeminormSq_le_correctorEnergyLocalError_base_mul_inv_one_sub_of_bddAbove
+theorem
+  weakFluxRHSScaledAveragedSeminormSq_le_correctorEnergyLocalError_base_mul_inv_one_sub_of_bddAbove
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
     (u : Vec d → Vec d) (z : TriadicCube d → Vec d → Vec d)
     (hs : 0 < s)
@@ -52,7 +53,8 @@ theorem weakFluxRHSScaledAveragedSeminormSq_le_correctorEnergyLocalError_base_mu
 
 /-- Scaled bounded-tail weak-flux iteration where the corrector-energy local
 error is controlled by separate averaged coefficient-energy bases. -/
-theorem weakFluxRHSScaledAveragedSeminormSq_le_correctorEnergyComponents_base_mul_inv_one_sub_of_bddAbove
+theorem
+  weakFluxRHSScaledAveragedSeminormSq_le_correctorEnergyComponents_base_mul_inv_one_sub_of_bddAbove
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
     (u : Vec d → Vec d) (z : TriadicCube d → Vec d → Vec d)
     (hs : 0 < s)
@@ -259,7 +261,8 @@ theorem weakFluxRHSScaledAveragedSeminormSq_le_absorbedComponents_base_mul_inv_o
 
 /-- Localized flux-defect form of the scaled bounded-tail weak-flux iteration
 with the explicit absorbed local-error envelope. -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_absorbedLocalError_bddAbove
+theorem
+  localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_absorbedLocalError_bddAbove
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s η : ℝ)
     (u g : Vec d → Vec d) (v : TriadicCube d → Vec d → Vec d)
     (hs : 0 < s)
@@ -295,7 +298,8 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_a
       hs hlocal m hBdd hB_nonneg hterm
 
 /-- Localized flux-defect form with separate absorbed component bases. -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_absorbedComponents_bddAbove
+theorem
+  localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_absorbedComponents_bddAbove
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s η : ℝ)
     (u g : Vec d → Vec d) (v : TriadicCube d → Vec d → Vec d)
     (hs : 0 < s)

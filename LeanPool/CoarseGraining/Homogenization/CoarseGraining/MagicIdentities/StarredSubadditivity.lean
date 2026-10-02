@@ -57,7 +57,8 @@ theorem coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_b
     exact magic_identity_responseJ_block_quadratic_coarseBlockMatrix_of_isSigmaCoarse
       (openCubeSet R) a hAR hSR hKR hSigmaR hdetR p q
 
-theorem coarseStarredBlockMatrixInv_upperLeft_subadditive_openCubeSet_descendantsAtDepth_of_isSigmaCoarse
+theorem
+  coarseStarredBlockMatrixInv_upperLeft_subadditive_openCubeSet_descendantsAtDepth_of_isSigmaCoarse
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -87,7 +88,8 @@ theorem coarseStarredBlockMatrixInv_upperLeft_subadditive_openCubeSet_descendant
     coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_isSigmaCoarse
       j Q a hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc (p, 0)
 
-theorem coarseStarredBlockMatrixInv_lowerRight_subadditive_openCubeSet_descendantsAtDepth_of_isSigmaCoarse
+theorem
+  coarseStarredBlockMatrixInv_lowerRight_subadditive_openCubeSet_descendantsAtDepth_of_isSigmaCoarse
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -526,7 +528,8 @@ theorem sigmaStarInvCoarse_subadditive_cubeSet_originCube_descendantsAtDepth_of_
             rw [← sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarCoarse
               (Q := R) (a := a) hSR]
 
-theorem sigmaStarInvCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
+theorem
+  sigmaStarInvCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
