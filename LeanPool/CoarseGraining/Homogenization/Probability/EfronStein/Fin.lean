@@ -111,7 +111,8 @@ theorem term_zero_eq (μ : ∀ i, Measure (α i)) [∀ i, IsProbabilityMeasure (
   -- integrability of the transported integrand for Fubini
   have hK : Measurable fun q : α 0 × (α 0 × (∀ j, α ((0 : Fin (n + 1)).succAbove j))) =>
       (F (e.symm (q.1, q.2.2)) - F (e.symm q.2)) ^ 2 :=
-    ((hF.comp (e.symm.measurable.comp (measurable_fst.prodMk (measurable_snd.comp measurable_snd)))).sub
+    ((hF.comp (e.symm.measurable.comp (measurable_fst.prodMk
+      (measurable_snd.comp measurable_snd)))).sub
       (hF.comp (e.symm.measurable.comp measurable_snd))).pow_const 2
   have hdb : ∀ (p : α 0 × (∀ j, α ((0 : Fin (n + 1)).succAbove j))) (y : α 0),
       |F (e.symm (y, p.2)) - F (e.symm p)| ≤ 2 * M := by
@@ -156,7 +157,8 @@ theorem term_zero_eq (μ : ∀ i, Measure (α i)) [∀ i, IsProbabilityMeasure (
 conditional mean `g'` is bounded by the full resampling energy of `F`. -/
 theorem term_succ_le (μ : ∀ i, Measure (α i)) [∀ i, IsProbabilityMeasure (μ i)]
     {F : (∀ i, α i) → ℝ} (hF : Measurable F) {M : ℝ} (hM : ∀ x, |F x| ≤ M) (j : Fin n) :
-    (∫ t, ∫ w, ((∫ a, F ((MeasurableEquiv.piFinSuccAbove α 0).symm (a, Function.update t j w)) ∂(μ 0))
+    (∫ t, ∫ w, ((∫ a, F ((MeasurableEquiv.piFinSuccAbove α 0).symm (a,
+      Function.update t j w)) ∂(μ 0))
           - ∫ a, F ((MeasurableEquiv.piFinSuccAbove α 0).symm (a, t)) ∂(μ 0)) ^ 2
         ∂(μ ((0 : Fin (n + 1)).succAbove j))
         ∂(Measure.pi fun k => μ ((0 : Fin (n + 1)).succAbove k)))
@@ -176,7 +178,8 @@ theorem term_succ_le (μ : ∀ i, Measure (α i)) [∀ i, IsProbabilityMeasure (
     have := h.trans (add_le_add (hM _) (hM _)); linarith
   have hDsq : ∀ u v, (F (e.symm u) - F (e.symm v)) ^ 2 ≤ (2 * M) ^ 2 := by
     intro u v
-    nlinarith [hdiff u v, abs_nonneg (F (e.symm u) - F (e.symm v)), sq_abs (F (e.symm u) - F (e.symm v))]
+    nlinarith [hdiff u v, abs_nonneg (F (e.symm u) - F (e.symm v)),
+      sq_abs (F (e.symm u) - F (e.symm v))]
   -- Jensen at fixed `(t, w)`
   have step1 : ∀ (t : ∀ k, α ((0 : Fin (n + 1)).succAbove k)) w,
       ((∫ a, F (e.symm (a, Function.update t j w)) ∂(μ 0)) - ∫ a, F (e.symm (a, t)) ∂(μ 0)) ^ 2
@@ -244,7 +247,8 @@ theorem term_succ_le (μ : ∀ i, Measure (α i)) [∀ i, IsProbabilityMeasure (
     rw [integral_prod_symm _ hIntTail]
   -- assemble
   rw [htgt]
-  refine integral_mono_of_nonneg (Eventually.of_forall fun t => integral_nonneg fun w => sq_nonneg _)
+  refine integral_mono_of_nonneg
+    (Eventually.of_forall fun t => integral_nonneg fun w => sq_nonneg _)
     hIntTail.integral_prod_right (Eventually.of_forall fun t => ?_)
   dsimp only
   rw [integral_integral_swap (hSwapInt t)]
@@ -287,8 +291,10 @@ theorem efronStein_fin : ∀ (m : ℕ) {β : Fin m → Type*} [∀ i, Measurable
             integral_mono (integrable_of_bound (μ 0) (by fun_prop) (fun a => hM _)).abs
               (integrable_const M) (fun a => hM _)
         _ = M := by simp
-    have hG : Measurable fun t => ∫ a, F ((MeasurableEquiv.piFinSuccAbove β 0).symm (a, t)) ∂(μ 0) :=
-      (hF.comp (MeasurableEquiv.piFinSuccAbove β 0).symm.measurable).stronglyMeasurable.integral_prod_left'.measurable
+    have hG : Measurable fun t =>
+        ∫ a, F ((MeasurableEquiv.piFinSuccAbove β 0).symm (a, t)) ∂(μ 0) := by
+      have hComp := hF.comp (MeasurableEquiv.piFinSuccAbove β 0).symm.measurable
+      exact hComp.stronglyMeasurable.integral_prod_left'.measurable
     have hFsymm : Measurable fun p => F ((MeasurableEquiv.piFinSuccAbove β 0).symm p) :=
       hF.comp (MeasurableEquiv.piFinSuccAbove β 0).symm.measurable
     have hvar : Var[F; Measure.pi μ]
