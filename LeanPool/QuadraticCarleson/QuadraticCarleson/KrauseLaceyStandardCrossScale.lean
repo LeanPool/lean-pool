@@ -62,7 +62,8 @@ theorem sum_energyStandard_crossPairing_le
   exact sum_crossPairing_le_of_geometry hf I₀ k₀ s scale hlam hsub N
     (fun J hJ ↦ (Finset.mem_filter.mp (Finset.mem_filter.mp (hN hJ)).1).1)
     (fun J hJ ↦ (Finset.mem_filter.mp (Finset.mem_filter.mp (hN hJ)).1).2.1) hsmall
-    (Finset.mem_filter.mp (Finset.mem_filter.mp hI).1).1 (Finset.mem_filter.mp (Finset.mem_filter.mp hI).1).2.1
+    (Finset.mem_filter.mp (Finset.mem_filter.mp hI).1).1
+    (Finset.mem_filter.mp (Finset.mem_filter.mp hI).1).2.1
 
 theorem sum_abs_inner_energyStandard_crossRow_le
     {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)
