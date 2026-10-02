@@ -7,6 +7,7 @@ Authors: Christopher Albert
 module
 
 public import LeanPool.Stafford38.Stafford38.Geometry.CompletedDVRPowerSeriesEquiv
+public import LeanPool.Stafford38.Stafford38.Geometry.RelativeFractionFieldTransport
 
 
 /-!

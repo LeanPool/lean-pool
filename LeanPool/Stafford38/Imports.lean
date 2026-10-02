@@ -298,6 +298,7 @@ public import LeanPool.Stafford38.Stafford38.Geometry.RelativeFractionFieldTrans
 public import LeanPool.Stafford38.Stafford38.Geometry.RelativeRetainedBoundaryPlace
 public import LeanPool.Stafford38.Stafford38.Geometry.ResidueMinorSelection
 public import LeanPool.Stafford38.Stafford38.Geometry.RetainedComponentEquationPackage
+public import LeanPool.Stafford38.Stafford38.Geometry.RetainedDVRCore
 public import LeanPool.Stafford38.Stafford38.Geometry.RetainedDVRPlace
 public import LeanPool.Stafford38.Stafford38.Geometry.RetainedGroundMapIdentification
 public import LeanPool.Stafford38.Stafford38.Geometry.RetainedPlaceConormalTransport

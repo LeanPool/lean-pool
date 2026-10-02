@@ -7,6 +7,7 @@ Authors: Christopher Albert
 module
 
 public import LeanPool.Stafford38.Stafford38.Geometry.AsymptoticDivisorExistence
+public import LeanPool.Stafford38.Stafford38.Geometry.RetainedDVRCore
 public import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 public import Mathlib.RingTheory.DedekindDomain.Dvr
 public import Mathlib.RingTheory.Ideal.Over
@@ -64,96 +65,11 @@ theorem exists_discreteValuationSubring_over_maximalIdeal
       ∃ aV : V.toSubring,
         (aV : L) = algebraMap A L a ∧
         aV ≠ 0 ∧ ¬IsUnit aV := by
-  let C : Type w := integralClosure A L
-  let : IsDedekindDomain C :=
-    integralClosure.isDedekindDomain A F L
-  let : IsFractionRing C L :=
-    IsIntegralClosure.isFractionRing_of_finite_extension A F L C
-  have hinjAL : Function.Injective (algebraMap A L) := by
-    rw [IsScalarTower.algebraMap_eq A F L]
-    exact (algebraMap F L).injective.comp (IsFractionRing.injective A F)
-  have hinjAC : Function.Injective (algebraMap A C) := by
-    intro x y hxy
-    apply hinjAL
-    calc
-      algebraMap A L x = algebraMap C L (algebraMap A C x) :=
-        (IsScalarTower.algebraMap_apply A C L x).symm
-      _ = algebraMap C L (algebraMap A C y) := congrArg (algebraMap C L) hxy
-      _ = algebraMap A L y := IsScalarTower.algebraMap_apply A C L y
-  have hm_ne : maximalIdeal A ≠ ⊥ :=
-    IsDiscreteValuationRing.not_a_field A
-  let : (maximalIdeal A).IsPrime := (maximalIdeal.isMaximal A).isPrime
-  have hker : RingHom.ker (algebraMap A C) ≤ maximalIdeal A := by
-    rw [(RingHom.injective_iff_ker_eq_bot _).mp
-      hinjAC]
-    exact bot_le
-  obtain ⟨Q, hQprime, hQcomap⟩ :=
-    Ideal.exists_ideal_over_prime_of_isIntegral_of_isDomain
-      (R := A) (S := C) (maximalIdeal A) hker
-  let : Q.IsPrime := hQprime
-  have hQ_ne : Q ≠ ⊥ := by
-    intro hQ
-    apply hm_ne
-    calc
-      maximalIdeal A = Q.comap (algebraMap A C) := hQcomap.symm
-      _ = (⊥ : Ideal C).comap (algebraMap A C) := by rw [hQ]
-      _ = RingHom.ker (algebraMap A C) :=
-        (RingHom.ker_eq_comap_bot (algebraMap A C)).symm
-      _ = ⊥ := (RingHom.injective_iff_ker_eq_bot _).mp
-        hinjAC
-  let RQ : Type w :=
-    Localization.subalgebra.ofField L Q.primeCompl
-      Q.primeCompl_le_nonZeroDivisors
-  let : IsDiscreteValuationRing RQ :=
-    IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain
-      C hQ_ne RQ
-  let Rsub : Subring L :=
-    (Localization.subalgebra.ofField L Q.primeCompl
-      Q.primeCompl_le_nonZeroDivisors).toSubring
-  have hmem : ∀ x : L, x ∈ Rsub ∨ x⁻¹ ∈ Rsub := by
-    intro x
-    have hfrac : IsFractionRing RQ L := inferInstance
-    obtain ⟨r, hr | hr⟩ :=
-      (ValuationRing.isFractionRing_iff.mp hfrac).1 x
-    · left
-      change x ∈ (Localization.subalgebra.ofField L Q.primeCompl
-        Q.primeCompl_le_nonZeroDivisors).toSubring
-      rw [hr]
-      exact r.property
-    · right
-      change x⁻¹ ∈ (Localization.subalgebra.ofField L Q.primeCompl
-        Q.primeCompl_le_nonZeroDivisors).toSubring
-      rw [hr]
-      exact r.property
-  let V : ValuationSubring L := ValuationSubring.ofSubring Rsub hmem
-  have hVdvr : IsDiscreteValuationRing V.toSubring := by
-    change IsDiscreteValuationRing RQ
-    infer_instance
-  let aC : C := algebraMap A C a
-  have haC_mem : aC ∈ Q := by
-    have ha : a ∈ Q.comap (algebraMap A C) := by
-      change a ∈ Q.under A
-      rw [hQcomap, mem_maximalIdeal]
-      exact ha_nonunit
-    simpa only [Ideal.mem_comap, aC] using ha
-  let aRQ : RQ := algebraMap C RQ aC
-  have haRQ_mem : aRQ ∈ maximalIdeal RQ := by
-    exact (IsLocalization.AtPrime.to_map_mem_maximal_iff RQ Q aC).2 haC_mem
-  have haRQ_nonunit : ¬IsUnit aRQ := by
-    exact mem_nonunits_iff.mp haRQ_mem
-  have haRQ_eq : (aRQ : L) = algebraMap A L a := by
-    change algebraMap C L (algebraMap A C a) = algebraMap A L a
-    exact IsScalarTower.algebraMap_apply A C L a
-  have haRQ_ne : aRQ ≠ 0 := by
-    intro ha0
-    apply ha_ne
-    apply hinjAL
-    calc
-      algebraMap A L a = (aRQ : L) := haRQ_eq.symm
-      _ = ((0 : RQ) : L) := congrArg ((↑) : RQ → L) ha0
-      _ = algebraMap A L 0 := by simp
-  refine ⟨V, hVdvr, aRQ, haRQ_eq, haRQ_ne, ?_⟩
-  exact haRQ_nonunit
+  obtain ⟨place⟩ :=
+    Stafford38.Geometry.RetainedDVR.exists_retainedDVRPlace
+      (A := A) (F := F) (L := L) a ha_ne ha_nonunit
+  exact ⟨place.valuation, place.isDiscrete, place.parameter,
+    place.parameter_eq, place.parameter_ne, place.parameter_nonunit⟩
 
 /-- Characteristic-zero form.  Finite extensions are automatically
 separable, so no separability hypothesis is exposed to the caller. -/
