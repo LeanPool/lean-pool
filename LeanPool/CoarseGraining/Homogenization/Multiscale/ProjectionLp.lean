@@ -57,8 +57,7 @@ theorem cubeLpNorm_cubeProjection_eq_abs_cubeAverage_of_mem_descendantsAtDepth {
     MeasureTheory.aestronglyMeasurable_const]
   rw [MeasureTheory.eLpNorm_const (cubeAverage R f) hp (normalizedCubeMeasure_ne_zero R),
     normalizedCubeMeasure_apply_univ]
-  simp [Gagliardo.integralLpSeminorm_eq_eLpNorm _ _ _
-    MeasureTheory.aestronglyMeasurable_const]
+  simp
 
 theorem cubeLpNorm_cubeProjection_eq_abs_cubeAverage_of_mem_descendantsAtScale {d : ℕ} {Q R : TriadicCube d}
     {k : ℤ} (p : ℝ≥0∞) (f : Vec d → ℝ) (hk : k ≤ Q.scale) (hR : R ∈ descendantsAtScale Q k)
@@ -70,8 +69,7 @@ theorem cubeLpNorm_cubeProjection_eq_abs_cubeAverage_of_mem_descendantsAtScale {
     MeasureTheory.aestronglyMeasurable_const]
   rw [MeasureTheory.eLpNorm_const (cubeAverage R f) hp (normalizedCubeMeasure_ne_zero R),
     normalizedCubeMeasure_apply_univ]
-  simp [Gagliardo.integralLpSeminorm_eq_eLpNorm _ _ _
-    MeasureTheory.aestronglyMeasurable_const]
+  simp
 
 theorem cubeProjection_ae_eq_const {d : ℕ} (Q : TriadicCube d) (j : ℕ) (c : ℝ) :
     cubeProjection Q j (fun _ => c) =ᵐ[normalizedCubeMeasure Q] (fun _ => c) := by
@@ -98,8 +96,7 @@ theorem cubeLpNorm_cubeProjection_const {d : ℕ} (Q : TriadicCube d) (p : ℝ�
     MeasureTheory.aestronglyMeasurable_const]
   rw [MeasureTheory.eLpNorm_const c hp (normalizedCubeMeasure_ne_zero Q),
     normalizedCubeMeasure_apply_univ]
-  simp [Gagliardo.integralLpSeminorm_eq_eLpNorm _ _ _
-    MeasureTheory.aestronglyMeasurable_const]
+  simp
 
 @[simp] theorem cubeLpNorm_cubeProjection_zero {d : ℕ} (Q : TriadicCube d) (p : ℝ≥0∞)
     (j : ℕ) : cubeLpNorm Q p (cubeProjection Q j (fun _ => (0 : ℝ))) = 0 := by

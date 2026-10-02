@@ -148,7 +148,7 @@ private theorem h1Function_norm_gradToVectorL2_le_gradientCoordL2NormSum
     intro j _hj
     rw [MeasureTheory.eLpNorm_norm _ (v.grad_memL2 j).aestronglyMeasurable]
     simp [H1Function.gradCoordToScalarL2, Homogenization.toScalarL2,
-      MeasureTheory.Lp.norm_toLp, μ]
+      MeasureTheory.Lp.norm_toLp]
   have hsumLp_le :
       ‖dCoordLp‖ ≤ v.gradientCoordL2NormSum := by
     calc

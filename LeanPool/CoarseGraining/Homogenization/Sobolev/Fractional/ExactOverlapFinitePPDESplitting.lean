@@ -168,8 +168,7 @@ theorem exists_exactOverlapFiniteP_pdeSplitting
                   cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure,
                   hilbertifyVecField] using hgradDiffTwo.aestronglyMeasurable)]
             simp only [centeredCubeDomain,
-              cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure,
-              hilbertifyVecField]
+              cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
             rfl
       _ ≤ Cstab * (ENNReal.ofReal (1 : ℝ))⁻¹ *
           (centeredCubeDomain d m).normalizedEuclideanLpENorm q.exponent
@@ -184,8 +183,7 @@ theorem exists_exactOverlapFiniteP_pdeSplitting
                   hilbertifyVecField] using hdataDiffQ.aestronglyMeasurable)]
             simp only [ENNReal.ofReal_one, inv_one, mul_one, hField, gField, hGq,
               centeredCubeDomain,
-              cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure,
-              hilbertifyVecField]
+              cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
             rfl
       _ ≤ (Cstab + Cgrad) * eLpNorm (fun x => HilbertVec.ofVec
           (h x - P.averagingField h x)) q.exponent

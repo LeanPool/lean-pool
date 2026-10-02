@@ -276,7 +276,7 @@ private theorem eLpNorm_hessianRowVectorField_eq_odd {d : ℕ}
     ext j
     simp only [cubeDirichletOddReflectionHessianRowVectorField_apply,
       cubeDirichletOddReflectionVectorField, cubeCoordinateFoldReflectedVectorField,
-      Pi.smul_apply, smul_eq_mul, HilbertVec.ofVec, PiLp.smul_apply, PiLp.toLp_apply]
+      Pi.smul_apply, smul_eq_mul, HilbertVec.ofVec, PiLp.smul_apply]
     ring
   rw [heq]
   exact eLpNorm_foldSign_smul Q i _ p μ

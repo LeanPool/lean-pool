@@ -216,7 +216,7 @@ theorem cubeEuclideanWspESeminorm_dilate {d : ℕ}
           (Gagliardo.gagliardoCubeMeasure Q)
   congr 1
   congr 1
-  simp only [one_div, ENNReal.toReal_inv]
+  simp only [one_div]
   dsimp only [a]
   ring
 

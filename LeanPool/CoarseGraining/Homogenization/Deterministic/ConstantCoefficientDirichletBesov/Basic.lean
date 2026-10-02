@@ -273,7 +273,7 @@ theorem H1Function.norm_gradToVectorL2_le_gradientCoordL2NormSum
     rw [MeasureTheory.eLpNorm_norm (fun x => v.grad x j)
       (v.gradMemL2 j).aestronglyMeasurable]
     simp [H1Function.gradCoordToScalarL2, Homogenization.toScalarL2,
-      MeasureTheory.Lp.norm_toLp, μ]
+      MeasureTheory.Lp.norm_toLp]
   calc
     ‖v.gradToVectorL2‖ ≤ ‖dCoordLp‖ := hrow_le_sumLp
     _ = ENNReal.toReal (MeasureTheory.eLpNorm D (2 : ℝ≥0∞) μ) := by
