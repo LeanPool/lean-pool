@@ -41,7 +41,7 @@ noncomputable def pairingCLMLinear {d : ℕ} :
     ring
 
 /-- The continuous linear map sending a vector to its pairing functional. -/
-noncomputable def pairingCLMCLM {d : ℕ} :
+@[expose] noncomputable def pairingCLMCLM {d : ℕ} :
     Point d →L[ℝ] (Point d →L[ℝ] ℝ) :=
   LinearMap.toContinuousLinearMap (pairingCLMLinear (d := d))
 
@@ -123,7 +123,7 @@ noncomputable def assemblePiLinear {d : ℕ} :
     simp
 
 /-- The continuous linear assembly of coordinate functionals into a vector-valued derivative. -/
-noncomputable def assemblePiCLM {d : ℕ} :
+@[expose] noncomputable def assemblePiCLM {d : ℕ} :
     ((i : Fin d) → Point d →L[ℝ] ℝ) →L[ℝ] (Point d →L[ℝ] Point d) :=
   LinearMap.toContinuousLinearMap (assemblePiLinear (d := d))
 

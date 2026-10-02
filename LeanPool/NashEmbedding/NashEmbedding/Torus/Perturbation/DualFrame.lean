@@ -82,7 +82,7 @@ def gramMatrix (e : ι → (Fin n → ℝ) → (Fin N → ℝ)) (x : Fin n → �
 
 /-- A family of vector fields is *pointwise linearly independent* if the vectors
 `e i x`, `i : ι`, are linearly independent for every `x`. -/
-def IsPointwiseLinIndep (e : ι → (Fin n → ℝ) → (Fin N → ℝ)) : Prop :=
+@[expose] def IsPointwiseLinIndep (e : ι → (Fin n → ℝ) → (Fin N → ℝ)) : Prop :=
   ∀ x, LinearIndependent ℝ (fun i => e i x)
 
 /-- The Gram determinant of a pointwise linearly independent family never vanishes. -/

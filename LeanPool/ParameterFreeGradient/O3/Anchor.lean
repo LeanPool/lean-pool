@@ -25,7 +25,7 @@ namespace O3
   ∀ x y, lpNorm q (grad x - grad y) ≤ L * lpNorm p (x - y)
 
 /-- The supplied nondegenerate secant scale. -/
-noncomputable def secantScale {d : ℕ} (p q : ℝ) (grad : Point d → Point d)
+@[expose] noncomputable def secantScale {d : ℕ} (p q : ℝ) (grad : Point d → Point d)
     (x₀ z₀ : Point d) : ℝ :=
   lpNorm q (grad z₀ - grad x₀) / lpNorm p (z₀ - x₀)
 
@@ -95,7 +95,7 @@ theorem anchorAccepted_radius {d : ℕ} {p : ℝ} (hp : 1 < p)
       (lpNorm q g) ^ (q - 1)
 
 /-- Dyadic curvature scale `2^epoch M₀`. -/
-noncomputable def anchorScale (M₀ : ℝ) (epoch : ℕ) : ℝ :=
+@[expose] noncomputable def anchorScale (M₀ : ℝ) (epoch : ℕ) : ℝ :=
   (2 : ℝ) ^ epoch * M₀
 
 /-- Exact radius tested at one dyadic scale. -/
@@ -103,7 +103,7 @@ noncomputable def anchorScale (M₀ : ℝ) (epoch : ℕ) : ℝ :=
   G / anchorScale M₀ epoch
 
 /-- Exact gradient-ray point queried at one dyadic scale. -/
-noncomputable def anchorProbePoint {d : ℕ} (q : ℝ) (x₀ g₀ : Vec d)
+@[expose] noncomputable def anchorProbePoint {d : ℕ} (q : ℝ) (x₀ g₀ : Vec d)
     (G M₀ : ℝ) (epoch : ℕ) : Vec d :=
   x₀ - anchorRadius G M₀ epoch • anchorNormingVector q g₀
 

@@ -54,7 +54,7 @@ def freeEmb₀ (n : ℕ) (x : Fin n → ℝ) : FreeIdx n → ℝ
   | Sum.inr (Sum.inr (Sum.inr p)) => Real.sin (x p.1.1 + x p.1.2)
 
 /-- The dimension `N = |FreeIdx n|`. -/
-def freeDim (n : ℕ) : ℕ := Fintype.card (FreeIdx n)
+@[expose] def freeDim (n : ℕ) : ℕ := Fintype.card (FreeIdx n)
 
 /-- The free embedding `ℝⁿ → ℝᴺ`, `2πℤⁿ`-periodic. -/
 def freeEmb (n : ℕ) : (Fin n → ℝ) → (Fin (freeDim n) → ℝ) :=

@@ -155,7 +155,7 @@ theorem runAnchor_some_add_fuel {d : ℕ} (oracle : PairOracle d)
 /-- Transparent source-level carrier for the frozen gradient-ray anchor.  The
 only quantified algorithmic object is the admissible instance; `L`, the
 minimizer set, and its distance are used only in the correctness conclusion. -/
-def AnchorStatement : Prop :=
+@[expose] def AnchorStatement : Prop :=
   ∀ (p : ℝ) (d : ℕ) (P : AdmissibleInstance d p),
     let cfg := P.anchorConfig
     let N := Nat.ceil (Real.logb 2 (P.L / P.M0))

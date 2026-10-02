@@ -71,7 +71,7 @@ noncomputable def anchorPrefixAction : AnchorPrefixState d →
 
 /-- The one dimension-indexed concrete first-order method for the causal
 prefix.  The real exponent is read only from runtime input. -/
-noncomputable def anchorPrefixMethod (d : ℕ) : FirstOrderMethod d where
+@[expose] noncomputable def anchorPrefixMethod (d : ℕ) : FirstOrderMethod d where
   State := AnchorPrefixState d
   initial := AnchorPrefixState.needX0
   action := anchorPrefixAction

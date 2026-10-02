@@ -79,7 +79,7 @@ geometry. -/
     ∑ k ∈ Finset.range n, ((dw k) ^ (2 : ℕ) / u k) ^ (aboveErrorPower p)
 
 /-- Quadratic trial weights meet the error budget and have the stated terminal growth. -/
-noncomputable def AboveWeightErrorBalanceStatement : Prop :=
+@[expose] noncomputable def AboveWeightErrorBalanceStatement : Prop :=
   ∀ (p : ℝ), 2 < p → ∀ (n : ℕ), 1 ≤ n → ∀ (eta : ℝ), 0 < eta →
     let gamma := aboveGamma p eta n
     let u : ScalarSeq := fun k =>
@@ -104,7 +104,7 @@ noncomputable def AboveWeightErrorBalanceStatement : Prop :=
 
 /-- The weight, increment, matrix recurrence, row-sum, and support conditions for an above-two
 phase. -/
-def AboveCoefficientAssumptions (n : ℕ) (u dw : ScalarSeq)
+@[expose] def AboveCoefficientAssumptions (n : ℕ) (u dw : ScalarSeq)
     (alpha c b : ScalarMatrix) : Prop :=
   0 < u 0 ∧ u n = u (n - 1) ∧ dw n = 0 ∧ c 0 0 = 1 ∧ b 0 0 = -1 ∧
   (∀ k < n, 0 < u k ∧ u k ≤ u (k + 1) ∧
@@ -121,7 +121,7 @@ def AboveCoefficientAssumptions (n : ℕ) (u dw : ScalarSeq)
   ∀ k < n, (∑ i ∈ Finset.range (k + 2), b (k + 1) i) = 0
 
 /-- Source carrier for `lem:above-pointwise` (A05). -/
-noncomputable def AbovePointwiseResidualIdentityStatement : Prop :=
+@[expose] noncomputable def AbovePointwiseResidualIdentityStatement : Prop :=
   ∀ (p : ℝ), 2 < p → ∀ (d n : ℕ), 1 ≤ n → ∀ (u dw : ScalarSeq)
     (alpha c b : ScalarMatrix) (Omega : Point d → ℝ),
     AboveCoefficientAssumptions n u dw alpha c b → EvenIncrement Omega →
@@ -164,6 +164,7 @@ structure AbovePrimalPhaseData (p : ℝ) (d n : ℕ) where
   trace : List (Observation d)
 
 /-- The above-two primal coefficient conditions, initial state, and step recurrences. -/
+@[expose]
 def AbovePrimalPhaseDynamics (data : AbovePrimalPhaseData p d n) : Prop :=
   1 ≤ n ∧ AboveCoefficientAssumptions n data.u data.dw data.alpha data.c data.b ∧
   data.s 0 = 0 ∧ data.v 0 = 0 ∧ data.x 0 = 0 ∧
@@ -176,7 +177,7 @@ def AbovePrimalPhaseDynamics (data : AbovePrimalPhaseData p d n) : Prop :=
       (data.dw k / data.u (k + 1)) • (data.v (k + 1) - data.v k)
 
 /-- The primal dynamics, convex gradient oracle, attained minimum, guards, and exact query trace. -/
-def AbovePrimalPhaseAssumptions (data : AbovePrimalPhaseData p d n) : Prop :=
+@[expose] def AbovePrimalPhaseAssumptions (data : AbovePrimalPhaseData p d n) : Prop :=
   AbovePrimalPhaseDynamics data ∧ O3.IsConvexObjective data.oracle.value ∧
   O3.IsCoordinateGradient data.oracle.value data.oracle.gradient ∧
   data.fstar = sInf (Set.range data.oracle.value) ∧

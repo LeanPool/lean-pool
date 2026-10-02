@@ -295,7 +295,7 @@ theorem ogmgExecutionTrace_final_iterate_queried (cfg : OGMGExecutionConfig d)
 
 /-- The reused point `u₀=U` and every subsequently queried `u_i`, including
 `u_n`, as an actual oracle observation. -/
-noncomputable def ogmgDataObservation (cfg : OGMGExecutionConfig d)
+@[expose] noncomputable def ogmgDataObservation (cfg : OGMGExecutionConfig d)
     (i : Fin (cfg.horizon + 1)) : Observation d :=
   ogmgObservation cfg i.val
 
@@ -309,7 +309,7 @@ algebraic certificate.  These are definitions, not freely supplied arrays. -/
   (lpNorm 2 (ogmgGradient cfg i)) ^ (2 : ℕ)
 
 /-- The gradient at query `j` paired with the difference of gradient-step points `i` and `j`. -/
-noncomputable def ogmgPairTerm (cfg : OGMGExecutionConfig d)
+@[expose] noncomputable def ogmgPairTerm (cfg : OGMGExecutionConfig d)
     (i j : ℕ) : ℝ :=
   pairing (ogmgGradient cfg j) (ogmgV cfg i - ogmgV cfg j)
 

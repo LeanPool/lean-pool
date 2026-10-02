@@ -53,7 +53,7 @@ structure EuclideanEstimateState (d : ℕ) where
       ⟨euclideanBarycenter A a state.accelerated zNext, sNext⟩
 
 /-- The minimizer of the quadratic estimate potential at iteration `k`. -/
-noncomputable def euclideanEstimateMinimizer {d : ℕ}
+@[expose] noncomputable def euclideanEstimateMinimizer {d : ℕ}
     (P : AdmissibleInstance d 2) (M : ℝ) (k : ℕ) : Vec d :=
   Stage8EuclideanMinimizer.euclideanPsiMinimizer M P.x0
     (euclideanEstimateState P M k).cumulativeGradient
@@ -66,7 +66,7 @@ noncomputable def euclideanEstimateMinimizer {d : ℕ}
     (euclideanEstimateMinimizer P M k)
 
 /-- The value-gradient observation at the Euclidean estimate query. -/
-noncomputable def euclideanEstimateObservation {d : ℕ}
+@[expose] noncomputable def euclideanEstimateObservation {d : ℕ}
     (P : AdmissibleInstance d 2) (M : ℝ) (k : ℕ) : Observation d :=
   P.oracle.observe (euclideanEstimateQuery P M k)
 
@@ -98,6 +98,7 @@ noncomputable def euclideanEstimateConstant {d : ℕ}
   euclideanEstimateFunction P M k (euclideanEstimateMinimizer P M k)
 
 /-- The upper-model guard between the estimate query and the next accelerated iterate. -/
+@[expose]
 noncomputable def euclideanEstimateGuard {d : ℕ}
     (P : AdmissibleInstance d 2) (M : ℝ) (k : ℕ) : GuardCheck :=
   let atY := euclideanEstimateObservation P M k
@@ -108,6 +109,7 @@ noncomputable def euclideanEstimateGuard {d : ℕ}
     ((lpNorm 2 (xNext - atY.point)) ^ (2 : ℕ)) M
 
 /-- Every Euclidean upper-model guard before the given horizon is accepted. -/
+@[expose]
 def EuclideanEstimateAccepted {d : ℕ}
     (P : AdmissibleInstance d 2) (M : ℝ) (m : ℕ) : Prop :=
   ∀ k, k < m → (euclideanEstimateGuard P M k).Holds

@@ -937,7 +937,8 @@ theorem scalarTame_resolvent_dotConv (hn : 0 < n) {r : ℕ} (hr : 1 + (n : ℝ) 
         w))) m
 
 /-- The index set of the second-derivative frame: pairs `p ≤ q`. -/
-def pairs (n : ℕ) : Finset (Fin n × Fin n) := Finset.univ.filter fun pq => pq.1 ≤ pq.2
+@[expose] def pairs (n : ℕ) : Finset (Fin n × Fin n) :=
+  Finset.univ.filter fun pq => pq.1 ≤ pq.2
 
 /-- The data of the Günther operator on the momentum side: the dual frame `a i`, `b p q`
 (only `p ≤ q` is used) and the metric perturbation `h p q`, all as coefficient sequences. -/
@@ -1024,12 +1025,12 @@ theorem scalarTame_Ub (hn : 0 < n) {r : ℕ} (hr : 1 + (n : ℝ) / 2 < (r : ℝ)
   exact h
 
 /-- Tame constants of `gB` (generous). -/
-def gBTop (n N r : ℕ) (d : GuntherData n N) : ℝ :=
+@[expose] def gBTop (n N r : ℕ) (d : GuntherData n N) : ℝ :=
   2 * (n * ∑ i, smulTopConst n N r (d.a i) (FbTop n N r)
     + (pairs n).card * ∑ pq ∈ pairs n, smulTopConst n N r (d.b pq.1 pq.2) ((1 / 2) ^ 2 * UbTop n
         N r))
 /-- Lower-order tame constant for the complete bilinear Günther operator. -/
-def gBLow (n N r : ℕ) (d : GuntherData n N) (k : ℕ) : ℝ :=
+@[expose] def gBLow (n N r : ℕ) (d : GuntherData n N) (k : ℕ) : ℝ :=
   2 * (n * ∑ i, smulLowConst n N r (d.a i) (FbTop n N r) (FbLow n N r) k
     + (pairs n).card * ∑ pq ∈ pairs n,
         smulLowConst n N r (d.b pq.1 pq.2) ((1 / 2) ^ 2 * UbTop n N r) (fun k => (1 / 2) ^ 2 *
@@ -1092,7 +1093,8 @@ lemma gC_mem (hn : 0 < n) {r : ℕ} (hr : 1 + (n : ℝ) / 2 < r) (d : GuntherDat
 
 /-- The `E1` constant derived from the tame estimate at level `r`:
 `‖B v w‖²_(r) ≤ (2 A' + 3 Bᵣ) ‖v‖²_(r) ‖w‖²_(r)`. -/
-def gA (n N r : ℕ) (d : GuntherData n N) : ℝ := 2 * gBTop n N r d + 3 * gBLow n N r d r
+@[expose] def gA (n N r : ℕ) (d : GuntherData n N) : ℝ :=
+  2 * gBTop n N r d + 3 * gBLow n N r d r
 
 /-- **The Günther operator satisfies the hypotheses of the abstract iteration.** -/
 theorem gunther_iterHyp (hn : 0 < n) {r : ℕ} (hr : 1 + (n : ℝ) / 2 < (r : ℝ) - 2)
