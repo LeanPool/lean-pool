@@ -114,6 +114,7 @@ def rev : List (List ℤ) → ℝ → ℝ → ℝ
   | p :: r, α, t => pev p α + t * rev r α t
 
 /-- Addition of rows. -/
+@[expose]
 def radd : List (List ℤ) → List (List ℤ) → List (List ℤ)
   | [], s => s
   | p :: r, [] => p :: r
@@ -178,6 +179,7 @@ lemma rev_qrow (g₀ g₁ g₂ : List ℤ) (k : ℕ) (α t : ℝ) :
 
 /-- `irow r i α = ∑ⱼ (coefficient j of r, at α) / (i + j + 4)`, the value of
 `∫ t in 0..1, t ^ (i+3) * rev r α t`. -/
+@[expose]
 noncomputable def irow : List (List ℤ) → ℕ → ℝ → ℝ
   | [], _, _ => 0
   | p :: r, i, α => pev p α / (i + 4) + irow r (i + 1) α
