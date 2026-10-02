@@ -166,7 +166,7 @@ theorem leadingCoeff_sub_eq_right {x y : Surreal} : y <ᵥ x →
 /-! ### Leading term -/
 
 /-- The leading term of a surreal's Hahn series. -/
-def leadingTerm (x : Surreal) : Surreal :=
+@[expose] def leadingTerm (x : Surreal) : Surreal :=
   x.leadingCoeff * ω^ x.wlog
 
 @[simp]

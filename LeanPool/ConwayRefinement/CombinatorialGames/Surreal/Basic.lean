@@ -43,7 +43,7 @@ namespace IGame
 The simplicity theorem states that if a game fits a numeric game, but none of its options do, then
 the games are equivalent. In particular, a numeric game is equivalent to the game of the least
 birthday that fits in it -/
-def Fits (x y : IGame) : Prop :=
+@[expose] def Fits (x y : IGame) : Prop :=
   (∀ z ∈ yᴸ, z ⧏ x) ∧ (∀ z ∈ yᴿ, x ⧏ z)
 
 theorem fits_of_equiv {x y : IGame} (h : x ≈ y) : Fits x y :=
