@@ -26,6 +26,7 @@ variable {k ℓ : ℕ}
 
 open Classical in
 /-- The participating edges in edge order. -/
+@[expose]
 noncomputable def partEdges (W : ClosedFragment)
     (F : EdgeSubset W) : List (Fin (edgeCount W)) :=
   (edgeIndexSet W F).sort (· ≤ ·)

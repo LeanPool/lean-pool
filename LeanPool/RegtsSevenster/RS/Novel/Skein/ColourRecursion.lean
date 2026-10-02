@@ -342,6 +342,7 @@ open Classical in
 /-- **The closing cuts a subset carries.**  This is the ledger's
 `glueCount`, read on the colouring side: the count the base's summand
 is taken at rises by one at each of them. -/
+@[expose]
 noncomputable def carried : (n : ℕ) →
     (V : Fragment (Fin (0 + n) ⊕ Fin (n + 0))) →
     Finset V.Flag → ℕ

@@ -31,6 +31,7 @@ variable (W : ClosedFragment)
 
 /-- The matching pairs of a representative list, as labels of the
 explosion at `C`. -/
+@[expose]
 def repPairs (C : Finset W.Flag) (hC : CutClosed W C) :
     (l : List W.Flag) → (∀ x ∈ l, x ∈ C) →
       List ({f : W.Flag // f ∈ C} × {f : W.Flag // f ∈ C})

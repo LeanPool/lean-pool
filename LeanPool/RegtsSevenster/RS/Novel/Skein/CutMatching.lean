@@ -260,6 +260,7 @@ noncomputable def dualWeightD {W : Fragment α}
 open Classical in
 /-- Undo the dual basis: partner the colour at each leg the trail
 leaves. -/
+@[expose]
 noncomputable def untwist [LinearOrder α] {W : Fragment α}
     {k ℓ : ℕ} (F : EdgeSubset W)
     (κ : F.RelTransitionSystem) (o : κ.Orientation)

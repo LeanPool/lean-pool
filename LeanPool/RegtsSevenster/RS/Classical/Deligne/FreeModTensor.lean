@@ -44,6 +44,7 @@ variable {D : Type u}
 
 /-- The braided coherence morphism carrying a generator past a
 scalar: `(R ⊗ V) ⊗ R ⟶ (R ⊗ R) ⊗ V`. -/
+@[expose]
 def freeModSlide
     [Category.{v} D] [MonoidalCategory D] [BraidedCategory D] (R : D)
     (V : D) : (R ⊗ V) ⊗ R ⟶ (R ⊗ R) ⊗ V :=

@@ -178,6 +178,7 @@ theorem walkPerm_isOut_iff (κ : F.TransitionSystem) (o : κ.Orientation)
   rw [κ.walkPerm_val, κ.walk_isOut o x.val x.prop]
 
 /-- The out-flag restriction of the walk permutation. -/
+@[expose]
 noncomputable def outPerm (κ : F.TransitionSystem) (o : κ.Orientation) :
     Perm {f : {g : W.Flag // g ∈ F.flags} // o.isOut f.val = true} :=
   κ.walkPerm.subtypePerm (fun x => κ.walkPerm_isOut_iff o x)

@@ -27,6 +27,7 @@ open CategoryTheory MonoidalCategory
 variable {k ℓ : ℕ}
 
 /-- Conjugating a power endomorphism into the colouring model. -/
+@[expose]
 noncomputable def toColour (n : ℕ)
     (g : superPow (stdSuperPair k ℓ) n ⟶ superPow (stdSuperPair k ℓ) n) :
     colourPower k ℓ n ⟶ colourPower k ℓ n where

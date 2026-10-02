@@ -66,6 +66,7 @@ variable {γ : Type*}
 
 /-- Two chords of a linear order, each recorded low-to-high,
 interleave (in either relative position). -/
+@[expose]
 def ChordPairCross [LinearOrder γ]
     (x y u w : γ) : Prop :=
   (x < u ∧ u < y ∧ y < w) ∨ (u < x ∧ x < w ∧ w < y)

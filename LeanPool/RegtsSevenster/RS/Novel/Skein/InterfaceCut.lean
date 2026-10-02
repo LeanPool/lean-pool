@@ -284,6 +284,7 @@ is the identity on indices.
 section InterfaceStep
 
 /-- The identification of the two halves at interface size `n`. -/
+@[expose]
 def stepIdent (n : ℕ) : Fin (0 + n) ≃ Fin (n + 0) :=
   finCongr (by omega)
 

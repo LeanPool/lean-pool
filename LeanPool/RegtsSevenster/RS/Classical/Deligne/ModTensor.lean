@@ -232,6 +232,7 @@ lemma actRight_natural_mod
 factors, having carried the first generator past the second
 algebra factor.  This is at once the head absorption that folds an
 incoming free letter into an accumulated head. -/
+@[expose]
 def freeModShuffle [Category.{v} D] [MonoidalCategory D] (A : D) [MonObj A]
     [BraidedCategory D]
     (V W : D) : (A ⊗ V) ⊗ (A ⊗ W) ⟶ A ⊗ (V ⊗ W) :=

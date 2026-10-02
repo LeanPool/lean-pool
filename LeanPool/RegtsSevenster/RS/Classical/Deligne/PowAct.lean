@@ -52,6 +52,7 @@ section BraidPast
 
 /-- Carry an object across a context: the isomorphism
 `A ⊗ (V ⊗ T) ≅ V ⊗ (A ⊗ T)` braiding `A` past `V`. -/
+@[expose]
 def braidPast [Category.{v} D] [MonoidalCategory D] [BraidedCategory D]
     (A V T : D) : A ⊗ (V ⊗ T) ≅ V ⊗ (A ⊗ T) :=
   (α_ A V T).symm ≪≫ whiskerRightIso (β_ A V) T ≪≫ α_ V A T

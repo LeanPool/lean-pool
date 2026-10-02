@@ -266,6 +266,7 @@ section ZagCore
 insert the copairing on the right, concatenate, and contract the
 leading pair.  The zagzig law of a duality datum states that this
 composite is the identity. -/
+@[expose]
 noncomputable def zagComposite
     [Category.{v} D] [MonoidalCategory D] [BraidedCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

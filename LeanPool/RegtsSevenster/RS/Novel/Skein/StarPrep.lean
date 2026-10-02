@@ -148,6 +148,7 @@ def highCross (m : ℕ) :
      Sum.inr ⟨m + k.val, by have := k.isLt; omega⟩))
 
 /-- The low-block interface pairs of a full `(m + m)`-closure. -/
+@[expose]
 def lowCross (m : ℕ) :
     List ((Fin (0 + (m + m)) ⊕ Fin ((m + m) + 0)) ×
       (Fin (0 + (m + m)) ⊕ Fin ((m + m) + 0))) :=
