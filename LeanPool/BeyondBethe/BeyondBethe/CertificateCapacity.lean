@@ -156,8 +156,7 @@ theorem realMonomial_eq_prod_columns
 
 theorem selectorCapacityValue_mul_realMonomial
     {κ ι : Type*} [Fintype κ] [Fintype ι]
-    {α : κ × ι → ℝ} {z : κ × ι → ℝ}
-    (_ : ∀ v, 0 < α v) (_ : ∀ v, 0 < z v) :
+    {α : κ × ι → ℝ} {z : κ × ι → ℝ} :
     selectorCapacityValue α * realMonomial z α =
       ∏ j, (linearCapacityValue (fun _ : κ ↦ 1)
           (fun c ↦ α (c, j)) *
@@ -175,7 +174,7 @@ theorem selectorCapacityValue_le_ratio
     selectorCapacityValue α ≤
       (columnSelector κ ι).eval z / realMonomial z α := by
   rw [le_div_iff₀ (realMonomial_pos hz α), columnSelector_eval,
-    selectorCapacityValue_mul_realMonomial hα hz]
+    selectorCapacityValue_mul_realMonomial]
   apply Finset.prod_le_prod₀
   · intro j _
     exact mul_nonneg

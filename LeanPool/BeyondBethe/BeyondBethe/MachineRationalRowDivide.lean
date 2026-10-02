@@ -378,23 +378,6 @@ theorem machineRationalRowDivide_mem_FP :
 
 /-! ## Ordinary output-size estimate -/
 
-private theorem natList_sum_le_length_mul {values : List ℕ} {bound : ℕ}
-    (h : ∀ value ∈ values, value ≤ bound) :
-    values.sum ≤ values.length * bound := by
-  induction values with
-  | nil => simp
-  | cons value values ih =>
-      simp only [List.sum_cons, List.length_cons]
-      have hvalue := h value (by simp)
-      have htail : ∀ x ∈ values, x ≤ bound := by
-        intro x hx
-        exact h x (by simp [hx])
-      have hi := ih htail
-      calc
-        value + values.sum ≤ bound + values.length * bound :=
-          Nat.add_le_add hvalue hi
-        _ = (values.length + 1) * bound := by ring
-
 theorem machineRationalRowDivide_output_length_le_bound
     (scale : RawRat) (row : List ℚ) :
     let word := pair (rawRatBinaryCode scale)
@@ -534,31 +517,12 @@ theorem machineRationalRowDivideStep_semantics
       binaryNormalizeRawRat ((rawRatOfRat row[k]).div scale) := by
     simp [output, rationalRowDivideValues, List.getElem_map]
   have hdrop := List.drop_eq_getElem_cons hk
-  have htake := List.take_concat_get hkoutput
-  have hprefix : (output.take (k + 1)).reverse =
-      output[k] :: (output.take k).reverse := by
-    rw [← htake]
-    simpa only [List.concat_eq_append] using!
-      (List.reverse_concat (l := output.take k) (a := output[k]))
   have hfullBound :
       (binaryListCode rationalEntryBinaryCode output).length ≤
         (machineRationalRowDivideInputBound word).length := by
     simpa only [word, output, machineRationalRowDivideCanonicalInput,
       rationalRowDivideValues] using!
       machineRationalRowDivide_output_length_le_bound scale row
-  have hprefixLength :
-      (binaryListCode rationalEntryBinaryCode
-        (output.take (k + 1)).reverse).length ≤
-          (machineRationalRowDivideInputBound word).length :=
-    (binaryListCode_take_reverse_length_le rationalEntryBinaryCode
-      output (k + 1)).trans hfullBound
-  have htakeBound :
-      (binaryListCode rationalEntryBinaryCode
-          (output.take (k + 1)).reverse).take
-            (machineRationalRowDivideInputBound word).length =
-        binaryListCode rationalEntryBinaryCode
-          (output.take (k + 1)).reverse :=
-    List.take_of_length_le hprefixLength
   have hnonempty :
       binaryListCode rationalEntryBinaryCode (row.drop k) ≠ [] := by
     rw [hdrop]
@@ -595,7 +559,8 @@ theorem machineRationalRowDivideStep_semantics
           (machineRationalRowDivideInputBound word).length)
       (rawRatBinaryCode scale)
       (machineRationalRowDivideInputBound word) = _
-  rw [← hprefix, htakeBound]
+  rw [binaryListCode_reverse_take_succ_clamped rationalEntryBinaryCode output
+    (machineRationalRowDivideInputBound word).length k hkoutput hfullBound]
 
 theorem machineRationalRowDivideIterate_semantics
     (scale : RawRat) (row : List ℚ) : ∀ k ≤ row.length,

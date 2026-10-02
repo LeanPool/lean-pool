@@ -386,35 +386,6 @@ theorem machineMatrixAddDeltaEntries_mem_FP :
 
 /-! ## Output-size bound on canonical matrices -/
 
-private theorem matrixAddDelta_natList_sum_le_length_mul
-    {values : List ℕ} {bound : ℕ}
-    (h : ∀ value ∈ values, value ≤ bound) :
-    values.sum ≤ values.length * bound := by
-  induction values with
-  | nil => simp
-  | cons value values ih =>
-      simp only [List.sum_cons, List.length_cons]
-      have hvalue := h value (by simp)
-      have htail : ∀ x ∈ values, x ≤ bound := by
-        intro x hx
-        exact h x (by simp [hx])
-      have hi := ih htail
-      calc
-        value + values.sum ≤ bound + values.length * bound :=
-          Nat.add_le_add hvalue hi
-        _ = (values.length + 1) * bound := by ring
-
-private theorem matrixNonnegativeRowsWork_eq_length_add_entries :
-    ∀ rows : List (List ℚ),
-      matrixNonnegativeRowsWork rows =
-        rows.length + (rows.map List.length).sum := by
-  intro rows
-  induction rows with
-  | nil => simp [matrixNonnegativeRowsWork]
-  | cons row rows ih =>
-      simp [matrixNonnegativeRowsWork, ih]
-      omega
-
 private theorem matrixAddDelta_outputCode_length_le
     (delta : RawRat) (budget : ℕ) : ∀ rows : List (List ℚ),
     (∀ row ∈ rows, ∀ q ∈ row,
@@ -457,7 +428,7 @@ private theorem matrixAddDelta_outputCode_length_le
           have hqBound := hrowEntry q hq
           simp only [Function.comp_apply]
           omega
-        have hsum := matrixAddDelta_natList_sum_le_length_mul hterm
+        have hsum := natList_sum_le_length_mul hterm
         simpa only [rationalRowAddValues, List.length_map] using! hsum
       have htail := ih htailEntry
       simp only [List.map_cons, binaryListCode, pair_length,
@@ -640,26 +611,6 @@ theorem machineMatrixAddDeltaStep_semantics
       rationalRowAddValues delta rows[k] := by
     simp [output, rationalMatrixAddRows, List.getElem_map]
   have hdrop := List.drop_eq_getElem_cons hk
-  have htake := List.take_concat_get hkoutput
-  have hprefix : (output.take (k + 1)).reverse =
-      output[k] :: (output.take k).reverse := by
-    rw [← htake]
-    simpa only [List.concat_eq_append] using!
-      (List.reverse_concat (l := output.take k) (a := output[k]))
-  have hprefixLength :
-      (binaryListCode (binaryListCode rationalEntryBinaryCode)
-        (output.take (k + 1)).reverse).length ≤
-          (machineMatrixAddDeltaInputBound word).length :=
-    (binaryListCode_take_reverse_length_le
-      (binaryListCode rationalEntryBinaryCode) output (k + 1)).trans
-        (by simpa only [output] using! hfullBound)
-  have htakeBound :
-      (binaryListCode (binaryListCode rationalEntryBinaryCode)
-          (output.take (k + 1)).reverse).take
-            (machineMatrixAddDeltaInputBound word).length =
-        binaryListCode (binaryListCode rationalEntryBinaryCode)
-          (output.take (k + 1)).reverse :=
-    List.take_of_length_le hprefixLength
   have hnonempty :
       binaryListCode (binaryListCode rationalEntryBinaryCode)
         (rows.drop k) ≠ [] := by
@@ -700,7 +651,9 @@ theorem machineMatrixAddDeltaStep_semantics
           (machineMatrixAddDeltaInputBound word).length)
       (rawRatBinaryCode delta) dimension
       (machineMatrixAddDeltaInputBound word) = _
-  rw [← hprefix, htakeBound]
+  rw [binaryListCode_reverse_take_succ_clamped
+    (binaryListCode rationalEntryBinaryCode) output
+    (machineMatrixAddDeltaInputBound word).length k hkoutput hfullBound]
 
 theorem machineMatrixAddDeltaIterate_semantics
     (word dimension : List Bool) (delta : RawRat)

@@ -482,13 +482,13 @@ def signedPair
 
 theorem sum_signedPair
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {a b : ι} (_ : a ≠ b) :
+    {a b : ι} :
     ∑ x, signedPair a b x = 0 := by
   simp [signedPair, Finset.sum_sub_distrib]
 
 theorem sum_signedPair_mul
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {a b : ι} (_ : a ≠ b) (q : ι → ℝ) :
+    {a b : ι} (q : ι → ℝ) :
     ∑ x, signedPair a b x * q x = q a - q b := by
   simp [signedPair, sub_mul, Finset.sum_sub_distrib]
 
@@ -501,28 +501,27 @@ def rectangleDirection
 
 theorem rectangleDirection_row_sum
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {i k j l : ι} (hjl : j ≠ l) :
+    {i k j l : ι} :
     ∀ a, ∑ b, rectangleDirection i k j l a b = 0 := by
   intro a
   rw [show (∑ b, rectangleDirection i k j l a b) =
       signedPair i k a * ∑ b, signedPair j l b by
     simp_rw [rectangleDirection, Finset.mul_sum]]
-  rw [sum_signedPair hjl, mul_zero]
+  rw [sum_signedPair, mul_zero]
 
 theorem rectangleDirection_col_sum
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {i k j l : ι} (hik : i ≠ k) :
+    {i k j l : ι} :
     ∀ b, ∑ a, rectangleDirection i k j l a b = 0 := by
   intro b
   rw [show (∑ a, rectangleDirection i k j l a b) =
       (∑ a, signedPair i k a) * signedPair j l b by
     simp_rw [rectangleDirection, Finset.sum_mul]]
-  rw [sum_signedPair hik, zero_mul]
+  rw [sum_signedPair, zero_mul]
 
 theorem sum_mul_rectangleDirection
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (G : Matrix ι ι ℝ) {i k j l : ι}
-    (hik : i ≠ k) (hjl : j ≠ l) :
+    (G : Matrix ι ι ℝ) {i k j l : ι} :
     (∑ a, ∑ b, G a b * rectangleDirection i k j l a b) =
       G i j - G i l - G k j + G k l := by
   have hinner : ∀ a,
@@ -539,9 +538,9 @@ theorem sum_mul_rectangleDirection
         intro b _
         ring
       _ = signedPair i k a * (G a j - G a l) := by
-        rw [sum_signedPair_mul hjl]
+        rw [sum_signedPair_mul]
   simp_rw [hinner]
-  rw [sum_signedPair_mul hik]
+  rw [sum_signedPair_mul]
   ring
 
 /-- The gradient at an interior maximizer has vanishing alternating sum on
@@ -554,7 +553,7 @@ theorem regularizedGradient_rectangle_identity
     (hmax : ∀ Y, IsDoublyStochastic Y →
       regularizedBetheObjective τ A Y ≤
         regularizedBetheObjective τ A X)
-    {i k j l : ι} (hik : i ≠ k) (hjl : j ≠ l) :
+    {i k j l : ι} :
     regularizedBetheGradient τ A X i j -
         regularizedBetheGradient τ A X i l -
     regularizedBetheGradient τ A X k j +
@@ -562,9 +561,9 @@ theorem regularizedGradient_rectangle_identity
   classical
   have htangent := regularizedBetheMaximizer_tangent_orthogonal
     hX hXint hmax
-    (rectangleDirection_row_sum hjl)
-    (rectangleDirection_col_sum hik)
-  rw [sum_mul_rectangleDirection (regularizedBetheGradient τ A X) hik hjl] at htangent
+    (rectangleDirection_row_sum (i := i) (k := k) (j := j) (l := l))
+    (rectangleDirection_col_sum (i := i) (k := k) (j := j) (l := l))
+  rw [sum_mul_rectangleDirection (regularizedBetheGradient τ A X)] at htangent
   exact htangent
 
 /-- Any matrix with zero alternating sum on every rectangle is a sum of a
@@ -603,8 +602,7 @@ theorem exists_logKKT_of_regularizedBetheMaximizer
     ∃ r c : ι → ℝ, HasLogKKT τ A X r c := by
   obtain ⟨R, C, hRC⟩ := exists_rowColumnPotentials_of_rectangle_identity
     (fun i j ↦ regularizedBetheGradient τ A X i j)
-    (fun hik hjl ↦ regularizedGradient_rectangle_identity
-      hX hXint hmax hik hjl)
+    (fun _ _ ↦ regularizedGradient_rectangle_identity hX hXint hmax)
   let r : ι → ℝ := fun i ↦ R i + (2 + τ)
   refine ⟨r, C, ?_⟩
   intro i j

@@ -206,8 +206,8 @@ theorem approximateLogKKT_of_objective_gap
   classical
   obtain ⟨R, C, hRC⟩ := exists_rowColumnPotentials_of_rectangle_identity
     (fun i j ↦ regularizedBetheGradient τ A X i j)
-    (fun hik hjl ↦ regularizedGradient_rectangle_identity
-      hX hXint hmax hik hjl)
+    (fun _ _ ↦ regularizedGradient_rectangle_identity
+      hX hXint hmax)
   have hstar : ∀ i j,
       -regularizedBetheGradient τ A X i j = -R i + -C j := by
     intro i j

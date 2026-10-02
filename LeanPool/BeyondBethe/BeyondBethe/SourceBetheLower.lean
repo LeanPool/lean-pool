@@ -55,10 +55,7 @@ theorem singletonRowClustering_singletonPairs (n : ℕ) :
   rfl
 
 theorem paperClusterFactor_singletonRowClustering
-    {n : ℕ} (_ : 2 ≤ n)
-    {A X : Matrix (Fin n) (Fin n) ℝ}
-    (_ : Matrix.Positive A) (_ : IsDoublyStochastic X)
-    (_ : ∀ i j, 0 < X i j) (i : Fin n) :
+    {n : ℕ} {A X : Matrix (Fin n) (Fin n) ℝ} (i : Fin n) :
     paperClusterFactor A X (singletonRowClustering n)
         (singletonRowClustering_singletonPairs n) i =
       singletonFactor A X i := by
@@ -85,7 +82,7 @@ theorem exp_betheObjective_le_permanent_of_stableCoefficient
           (singletonRowClustering_singletonPairs n) i := by
             apply Finset.prod_congr rfl
             intro i _
-            exact (paperClusterFactor_singletonRowClustering hn hA hX hXpos i).symm
+            exact (paperClusterFactor_singletonRowClustering i).symm
     _ ≤ Matrix.permanent A := hcert
 
 /-- The lower half of the Bethe sandwich for positive matrices. -/

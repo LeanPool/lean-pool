@@ -392,6 +392,17 @@ def matrixNonnegativeRowsWork : List (List ℚ) → ℕ
   | [] => 0
   | row :: rows => 1 + row.length + matrixNonnegativeRowsWork rows
 
+/-- The scan work is one loading step per row plus one test per matrix entry. -/
+theorem matrixNonnegativeRowsWork_eq_length_add_entries :
+    ∀ rows : List (List ℚ),
+      matrixNonnegativeRowsWork rows = rows.length + (rows.map List.length).sum := by
+  intro rows
+  induction rows with
+  | nil => simp [matrixNonnegativeRowsWork]
+  | cons row rows ih =>
+      simp [matrixNonnegativeRowsWork, ih]
+      omega
+
 theorem machineMatrixNonnegativeProcessRows_encode
     (rows : List (List ℚ)) (ok : Bool) :
     (machineMatrixNonnegativeStep)^[matrixNonnegativeRowsWork rows]

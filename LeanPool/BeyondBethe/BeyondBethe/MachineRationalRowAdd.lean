@@ -378,23 +378,6 @@ theorem machineRationalRowAdd_mem_FP :
 
 /-! ## Ordinary output-size estimate -/
 
-private theorem natList_sum_le_length_mul {values : List ℕ} {bound : ℕ}
-    (h : ∀ value ∈ values, value ≤ bound) :
-    values.sum ≤ values.length * bound := by
-  induction values with
-  | nil => simp
-  | cons value values ih =>
-      simp only [List.sum_cons, List.length_cons]
-      have hvalue := h value (by simp)
-      have htail : ∀ x ∈ values, x ≤ bound := by
-        intro x hx
-        exact h x (by simp [hx])
-      have hi := ih htail
-      calc
-        value + values.sum ≤ bound + values.length * bound :=
-          Nat.add_le_add hvalue hi
-        _ = (values.length + 1) * bound := by ring
-
 theorem machineRationalRowAdd_output_length_le_bound
     (delta : RawRat) (row : List ℚ) :
     let word := pair (rawRatBinaryCode delta)
@@ -535,31 +518,12 @@ theorem machineRationalRowAddStep_semantics
       binaryNormalizeRawRat ((rawRatOfRat row[k]).add delta) := by
     simp [output, rationalRowAddValues, List.getElem_map]
   have hdrop := List.drop_eq_getElem_cons hk
-  have htake := List.take_concat_get hkoutput
-  have hprefix : (output.take (k + 1)).reverse =
-      output[k] :: (output.take k).reverse := by
-    rw [← htake]
-    simpa only [List.concat_eq_append] using!
-      (List.reverse_concat (l := output.take k) (a := output[k]))
   have hfullBound :
       (binaryListCode rationalEntryBinaryCode output).length ≤
         (machineRationalRowAddInputBound word).length := by
     simpa only [word, output, machineRationalRowAddCanonicalInput,
       rationalRowAddValues] using!
       machineRationalRowAdd_output_length_le_bound delta row
-  have hprefixLength :
-      (binaryListCode rationalEntryBinaryCode
-        (output.take (k + 1)).reverse).length ≤
-          (machineRationalRowAddInputBound word).length :=
-    (binaryListCode_take_reverse_length_le rationalEntryBinaryCode
-      output (k + 1)).trans hfullBound
-  have htakeBound :
-      (binaryListCode rationalEntryBinaryCode
-          (output.take (k + 1)).reverse).take
-            (machineRationalRowAddInputBound word).length =
-        binaryListCode rationalEntryBinaryCode
-          (output.take (k + 1)).reverse :=
-    List.take_of_length_le hprefixLength
   have hnonempty :
       binaryListCode rationalEntryBinaryCode (row.drop k) ≠ [] := by
     rw [hdrop]
@@ -596,7 +560,8 @@ theorem machineRationalRowAddStep_semantics
           (machineRationalRowAddInputBound word).length)
       (rawRatBinaryCode delta)
       (machineRationalRowAddInputBound word) = _
-  rw [← hprefix, htakeBound]
+  rw [binaryListCode_reverse_take_succ_clamped rationalEntryBinaryCode output
+    (machineRationalRowAddInputBound word).length k hkoutput hfullBound]
 
 theorem machineRationalRowAddIterate_semantics
     (delta : RawRat) (row : List ℚ) : ∀ k ≤ row.length,

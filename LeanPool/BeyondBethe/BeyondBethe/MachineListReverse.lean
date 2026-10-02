@@ -25,6 +25,39 @@ namespace BeyondBethe
 
 open Complexity
 
+/-- A uniform entry-size bound controls the total work of a finite scan. -/
+theorem natList_sum_le_length_mul {values : List ℕ} {bound : ℕ}
+    (h : ∀ value ∈ values, value ≤ bound) :
+    values.sum ≤ values.length * bound := by
+  induction values with
+  | nil => simp
+  | cons value values ih =>
+      simp only [List.sum_cons, List.length_cons]
+      have hvalue := h value (by simp)
+      have htail : ∀ x ∈ values, x ≤ bound := by
+        intro x hx
+        exact h x (by simp [hx])
+      have hi := ih htail
+      calc
+        value + values.sum ≤ bound + values.length * bound :=
+          Nat.add_le_add hvalue hi
+        _ = (values.length + 1) * bound := by ring
+
+/-- A canonical scan can prepend its next output without activating the accumulator clamp.
+This invariant applies to entry codes and to nested row codes alike. -/
+theorem binaryListCode_reverse_take_succ_clamped
+    {α : Type*} (encode : α → List Bool) (xs : List α) (bound k : ℕ)
+    (hk : k < xs.length) (hbound : (binaryListCode encode xs).length ≤ bound) :
+    (binaryListCode encode (xs[k] :: (xs.take k).reverse)).take bound =
+      binaryListCode encode (xs.take (k + 1)).reverse := by
+  have hprefix : (xs.take (k + 1)).reverse = xs[k] :: (xs.take k).reverse := by
+    rw [← List.take_concat_get hk]
+    simpa only [List.concat_eq_append] using!
+      (List.reverse_concat (l := xs.take k) (a := xs[k]))
+  rw [← hprefix]
+  exact List.take_of_length_le
+    ((binaryListCode_take_reverse_length_le encode xs (k + 1)).trans hbound)
+
 /-- Packs the unprocessed list, reversed accumulator, and length-bound word for list reversal. -/
 def machineListReversePack
     (remaining accumulator bound : List Bool) : List Bool :=
@@ -239,21 +272,6 @@ theorem machineListReverseStep_semantics
         (machineListReverseSemanticState encode xs k) =
       machineListReverseSemanticState encode xs (k + 1) := by
   have hdrop := List.drop_eq_getElem_cons hk
-  have htake := List.take_concat_get hk
-  have hprefix : (xs.take (k + 1)).reverse =
-      xs[k] :: (xs.take k).reverse := by
-    rw [← htake]
-    simpa only [List.concat_eq_append] using!
-      (List.reverse_concat (l := xs.take k) (a := xs[k]))
-  have hprefixLength :
-      (binaryListCode encode (xs.take (k + 1)).reverse).length ≤
-        (binaryListCode encode xs).length :=
-    binaryListCode_take_reverse_length_le encode xs (k + 1)
-  have htakeBound :
-      (binaryListCode encode (xs.take (k + 1)).reverse).take
-          (binaryListCode encode xs).length =
-        binaryListCode encode (xs.take (k + 1)).reverse :=
-    List.take_of_length_le hprefixLength
   have hnonempty : binaryListCode encode (xs.drop k) ≠ [] := by
     rw [hdrop]
     intro hnil
@@ -273,7 +291,8 @@ theorem machineListReverseStep_semantics
         (xs[k] :: (xs.take k).reverse)).take
           (binaryListCode encode xs).length)
       (binaryListCode encode xs) = _
-  rw [← hprefix, htakeBound]
+  rw [binaryListCode_reverse_take_succ_clamped encode xs
+    (binaryListCode encode xs).length k hk le_rfl]
 
 theorem machineListReverseIterate_semantics
     {alpha : Type*} (encode : alpha → List Bool)
