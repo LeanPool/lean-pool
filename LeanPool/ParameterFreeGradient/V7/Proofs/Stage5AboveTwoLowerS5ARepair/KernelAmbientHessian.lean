@@ -27,7 +27,7 @@ noncomputable def kernelHessianCoord (r theta : ℝ) (x : Point d) (i : Fin d) :
         (ContinuousLinearMap.proj i : Point d →L[ℝ] ℝ)
 
 /-- The explicit kernel Hessian assembled from its coordinate functionals. -/
-noncomputable def kernelHessian (r theta : ℝ) (x : Point d) :
+@[expose] noncomputable def kernelHessian (r theta : ℝ) (x : Point d) :
     Point d →L[ℝ] Point d :=
   ContinuousLinearMap.pi (fun i ↦ kernelHessianCoord r theta x i)
 
