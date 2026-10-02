@@ -344,7 +344,7 @@ theorem two_potC_inside (ha : 0 < a) (hc : 0 < c) {x : ℝ} (hx : |x| ≤ a) :
   field_simp
   ring
 
-theorem key_alg_out (L Lq Lb κ : ℝ) (_hpi : 0 < π) :
+theorem key_alg_out (L Lq Lb κ : ℝ) :
     2 * ((1 / (8 * π)) * (2 * π * (L - Lq + 2 * (Lb / 2))) + (1 / (8 * π)) * (2 * π * (L - Lq + 2 *
       (Lb / 2))) - κ / (4 * π) * (2 * π * (L + Lq))) = L - Lq + Lb - κ * (L + Lq) := by
   field_simp; ring
@@ -472,7 +472,7 @@ theorem two_potC_outside_pos (ha : 0 < a) (hc : 0 < c) {x : ℝ} (hx : a < x) :
     push_cast; ring
   rw [hl2, hl3, hl4]
   have hpi : (0:ℝ) < π := Real.pi_pos
-  rw [key_alg_out (Real.log (a / 2)) (Real.log q) (Real.log (q^2 + β^2)) (c / u) hpi]
+  rw [key_alg_out (Real.log (a / 2)) (Real.log q) (Real.log (q^2 + β^2)) (c / u)]
   linarith
 
 theorem two_potC_le (ha : 0 < a) (hc : 0 < c) (x : ℝ) : 2 * potC a c x ≤ kC a c + wC c x := by

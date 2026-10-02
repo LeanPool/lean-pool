@@ -61,7 +61,7 @@ lemma VG_inv_sub [hp : Fact p.Prime] {j b : ℕ} (hb : b < p) (hjb : j % p ≠ b
   have hne : (j : ℚ) - b ≠ 0 := by
     intro h
     exact hnd (by rw [show (j : ℤ) - b = 0 by exact_mod_cast h]; exact dvd_zero _)
-  refine (VG.inv (r := 0) hne ?_).mono (by norm_num)
+  refine (VG.inv (r := 0)  ?_).mono (by norm_num)
   rw [show ((j : ℚ) - b) = (((j : ℤ) - b : ℤ) : ℚ) by push_cast; ring,
     padicValRat_int_eq_zero hnd]
   simp

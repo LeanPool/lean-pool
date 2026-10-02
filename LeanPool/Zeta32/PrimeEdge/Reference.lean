@@ -155,7 +155,7 @@ lemma VG_of_mul_int [hp : Fact p.Prime] (hp7 : 7 ≤ p) {q : ℚ} (z : ℤ) (hq 
   have hv : padicValRat p ((2 ^ 4 * 3 ^ 4 : ℕ) : ℚ) = 0 := by
     rw [padicValRat.of_nat, padicValNat.eq_zero_of_not_dvd (not_dvd_two_three_pow hp7 4 4)]
     simp
-  have hinv := VG.inv (p := p) (r := 0) h0 (by rw [hv]; simp)
+  have hinv := VG.inv (p := p) (r := 0)  (by rw [hv]; simp)
   have hmul := (VG.intCast (p := p) z).mul hinv
   have he : q = (z : ℚ) * ((2 ^ 4 * 3 ^ 4 : ℕ) : ℚ)⁻¹ := by
     rw [← hq]; push_cast; ring

@@ -28,7 +28,7 @@ lemma VG_one_div_prime [hp : Fact p.Prime] {q : ℕ} (hq : q.Prime) (hqp : q ≠
     rw [padicValRat.of_nat]
     have : ¬ p ∣ q := fun h => hqp ((Nat.prime_dvd_prime_iff_eq hp.out hq).mp h).symm
     simp [padicValNat.eq_zero_of_not_dvd this]
-  have := VG.inv (p := p) (q := (q : ℚ)) (by exact_mod_cast hq.ne_zero) (r := 0) (by rw [hv]; simp)
+  have := VG.inv (p := p) (q := (q : ℚ))  (r := 0) (by rw [hv]; simp)
   simpa using this
 
 lemma VG_one_div_self [hp : Fact p.Prime] : VG p ((1 : ℚ) / p) (-1) := by

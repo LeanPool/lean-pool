@@ -118,7 +118,7 @@ lemma natCast (n : ℕ) : VG p (n : ℚ) 0 := by exact_mod_cast intCast (p := p)
 
 lemma one : VG p 1 0 := by exact_mod_cast natCast (p := p) 1
 
-lemma inv [Fact p.Prime] {q r : ℚ} (_h : q ≠ 0) (hv : (padicValRat p q : ℚ) ≤ r) :
+lemma inv [Fact p.Prime] {q r : ℚ} (hv : (padicValRat p q : ℚ) ≤ r) :
     VG p q⁻¹ (-r) := by
   right
   rw [padicValRat.inv]
@@ -148,7 +148,7 @@ lemma pow [Fact p.Prime] {q r : ℚ} (h : VG p q r) (n : ℕ) : VG p (q ^ n) (n 
 /-- A lower bound on the valuation of `1 / j` for `1 ≤ j ≤ n`. -/
 lemma inv_nat [hp : Fact p.Prime] {j n : ℕ} (hj : 1 ≤ j) (hjn : j ≤ n) :
     VG p ((j : ℚ)⁻¹) (-(Nat.log p n : ℚ)) := by
-  apply inv (by exact_mod_cast (by omega : j ≠ 0))
+  apply inv
   rw [padicValRat.of_nat]
   have h1 : padicValNat p j ≤ Nat.log p j := by
     rcases Nat.eq_zero_or_pos (padicValNat p j) with h | h

@@ -53,7 +53,7 @@ lemma theta_eventually_close {ε : ℝ} (hε : 0 < ε) :
   simp only [Pi.sub_apply, id, Real.norm_eq_abs, abs_of_nonneg hy0] at hy
   exact hy
 
-lemma integral_theta_bounds {a b ε : ℝ} (_ha : 0 ≤ a) (hab : a ≤ b)
+lemma integral_theta_bounds {a b ε : ℝ} (hab : a ≤ b)
     (h : ∀ y ∈ Set.Icc a b, |Chebyshev.theta y - y| ≤ ε * y) :
     |(∫ t in Set.Ioc a b, Chebyshev.theta t)-(b^2-a^2)/2| ≤ ε*(b^2-a^2)/2 := by
   have hint : IntegrableOn Chebyshev.theta (Set.Ioc a b) :=
@@ -80,7 +80,7 @@ lemma wsum_close {a b η : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) (hη : 0 ≤ η)
   rw [wsum_eq ha hab]
   have h1 := h b ⟨hab, le_rfl⟩
   have h2 := h a ⟨le_rfl, hab⟩
-  have h3 := integral_theta_bounds ha hab h
+  have h3 := integral_theta_bounds hab h
   have hb : 0 ≤ b := ha.trans hab
   have e1 : |b*Chebyshev.theta b-b^2| ≤ η*b^2 := by
     rw [show b*Chebyshev.theta b-b^2 = b*(Chebyshev.theta b-b) by ring,

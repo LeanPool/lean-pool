@@ -28,7 +28,7 @@ noncomputable section
 variable {p : ℕ} [hp : Fact p.Prime]
 
 lemma VG_inv_prime {q : ℕ} (hq : q.Prime) : VG p ((q : ℚ)⁻¹) (-1) := by
-  apply VG.inv (by exact_mod_cast hq.ne_zero)
+  apply VG.inv
   have h : ¬ ((p : ℤ) ^ 2 ∣ (q : ℤ)) := by
     intro h
     have h' : p ^ 2 ∣ q := by exact_mod_cast h
@@ -147,7 +147,7 @@ lemma VG_denom_inv (M : Finset ℕ) (hM : ∀ m ∈ M, m < p) {m : ℕ} (hm : m 
     VG p (∏ m' ∈ M.erase m, ((m' : ℚ) - m))⁻¹ 0 := by
   have hne : ∀ m' ∈ M.erase m, ((m' : ℚ) - m) ≠ 0 := fun m' hm' =>
     sub_ne_zero.mpr (by exact_mod_cast (Finset.mem_erase.mp hm').1)
-  refine (VG.inv (r := 0) (Finset.prod_ne_zero_iff.mpr hne) ?_).mono (by norm_num)
+  refine (VG.inv (r := 0)  ?_).mono (by norm_num)
   rw [padicValRat_finset_prod _ _ hne]
   have : ∀ m' ∈ M.erase m, padicValRat p ((m' : ℚ) - m) = 0 := by
     intro m' hm'
@@ -160,7 +160,7 @@ lemma VG_denom_inv (M : Finset ℕ) (hM : ∀ m ∈ M, m < p) {m : ℕ} (hm : m 
 lemma VG_inv_pow_of_not_dvd {a : ℕ} (ha : ¬ p ∣ a) (e : ℕ) : VG p (1 / (a : ℚ) ^ e) 0 := by
   have ha0 : a ≠ 0 := fun h => ha (h ▸ dvd_zero p)
   rw [one_div]
-  refine (VG.inv (r := 0) (pow_ne_zero _ (by exact_mod_cast ha0)) ?_).mono (by norm_num)
+  refine (VG.inv (r := 0)  ?_).mono (by norm_num)
   have h : padicValRat p ((a : ℚ) ^ e) = 0 := by
     rw [padicValRat.pow, padicValRat.of_nat,
       padicValNat.eq_zero_of_not_dvd ha]

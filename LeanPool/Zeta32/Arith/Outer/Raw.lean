@@ -116,11 +116,11 @@ theorem scaled_Q_GV (hp2 : p ≠ 2) {r : ℚ} (hr : VG p r 0) (n : ℕ) (hK : 5 
       have := ((prime_VG_one (p := p)).mul (VG.natCast (p := p) (s-t))).neg
       simpa [sub_eq_add_neg, add_comm, add_left_comm] using! this
   · intro c t ht
-    exact gam_GV hr (by unfold jn; omega) (jn_le p (5*n) hp0 ht) hK
+    exact gam_GV hr (by unfold jn; omega) (jn_le p (5*n) ht) hK
   · intro c s t hst ht
     by_cases hjt : jn p (5*n) c t ≤ n
     · have := wv_le_big (p := p) (n := n)
-        (jn_le p (5*n) hp0 (lt_of_le_of_lt hst ht))
+        (jn_le p (5*n) (lt_of_le_of_lt hst ht))
       simp only [wv, ite_eq_left hjt]
       exact this
     · have e : jn p (5*n) c s = jn p (5*n) c t + p * (t-s) := by
@@ -130,7 +130,7 @@ theorem scaled_Q_GV (hp2 : p ≠ 2) {r : ℚ} (hr : VG p r 0) (n : ℕ) (hK : 5 
       change wv n p (jn p (5*n) c s) ≤ wv n p (jn p (5*n) c t)
       rw [e]
       exact wv_step hp0 (by omega : n < jn p (5*n) c t)
-        (e ▸ jn_le p (5*n) hp0 (lt_of_le_of_lt hst ht))
+        (e ▸ jn_le p (5*n) (lt_of_le_of_lt hst ht))
 
 end Val
 

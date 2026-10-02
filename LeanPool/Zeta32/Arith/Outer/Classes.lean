@@ -44,7 +44,7 @@ lemma Ccl_pos {c : ℕ} {t : ℕ} (ht : t < Ccl p K c) : c + 1 ≤ K := by
   · exact h
   · omega
 
-lemma jn_le {c t : ℕ} (_hp : 0 < p) (ht : t < Ccl p K c) : jn p K c t ≤ K := by
+lemma jn_le {c t : ℕ} (ht : t < Ccl p K c) : jn p K c t ≤ K := by
   have hc := Ccl_pos p K ht
   have hC : Ccl p K c = (K - (c+1))/p + 1 := by simp [Ccl, hc]
   unfold jn
@@ -73,7 +73,7 @@ lemma regroup_aux {j : ℕ} (hp : 0 < p) (hj1 : 1 ≤ j) (hj2 : j ≤ K) :
   rw [hC, show g + 1 - 1 - (g + 1 - 1 - q) = q by omega, hP]
   omega
 
-lemma regroup_inv {c t : ℕ} (hp : 0 < p) (hc : c < p) (_ht : t < Ccl p K c) :
+lemma regroup_inv {c t : ℕ} (hp : 0 < p) (hc : c < p) :
     (jn p K c t - 1) % p = c ∧ (jn p K c t - 1) / p = Ccl p K c - 1 - t := by
   have e : jn p K c t - 1 = c + p * (Ccl p K c - 1 - t) := by unfold jn; omega
   rw [e, Nat.add_mul_mod_self_left, Nat.mod_eq_of_lt hc, Nat.add_mul_div_left _ _ hp,
@@ -98,13 +98,13 @@ theorem regroup {R : Type*} [AddCommMonoid R] (hp : 0 < p) (F : ℕ → R) :
   · rintro ⟨c, t⟩ hx
     simp only [Finset.mem_sigma, Finset.mem_range] at hx
     simp only [Finset.mem_Icc]
-    exact ⟨by unfold jn; omega, jn_le p K hp hx.2⟩
+    exact ⟨by unfold jn; omega, jn_le p K hx.2⟩
   · intro j hj
     obtain ⟨hj1, hj2⟩ := Finset.mem_Icc.mp hj
     exact (regroup_aux p K hp hj1 hj2).2.2
   · rintro ⟨c, t⟩ hx
     simp only [Finset.mem_sigma, Finset.mem_range] at hx
-    obtain ⟨hmod, hdiv⟩ := regroup_inv p K hp hx.1 hx.2
+    obtain ⟨hmod, hdiv⟩ := regroup_inv p K (t := t) hp hx.1
     simp only [hmod, hdiv]
     congr 1
     omega
@@ -151,7 +151,7 @@ lemma wv_step {n p j d : ℕ} (hp : 0 < p) (hnj : n < j) (hK : j + p * d ≤ 5 *
   push_cast
   linarith
 
-lemma betaWt_class {p c m : ℕ} (_hp : 0 < p) (hc : c < p) :
+lemma betaWt_class {p c m : ℕ} (hc : c < p) :
     betaWt p (c + 1 + p*m) = if m = 0 ∧ c + 1 < p then 0 else if c + 1 = p then -2 else -3 := by
   unfold betaWt
   have hdv : (p ∣ c + 1 + p*m) ↔ c + 1 = p := by
@@ -225,7 +225,7 @@ lemma wv_jn {n p c C t : ℕ} (hp : 0 < p) (hnp : n < p) (hc : c < p) (hC : Ccl 
     (ht : t < C) (hj : n < c + 1 + p * (C - 1 - t)) :
     wv n p (jn p (5*n) c t) =
       ((if c < n then 5 else 1) : ℚ) - (C : ℚ) + betaWt p (c + 1 + p*(C-1-t)) := by
-  have hle := jn_le p (5*n) hp (t := t) (c := c) (by rw [hC]; exact ht)
+  have hle := jn_le p (5*n) (t := t) (c := c) (by rw [hC]; exact ht)
   rw [jn_eq p (5*n) hC] at hle ⊢
   rw [wv_class hp hnp hc hle hj, hC]
 
@@ -250,14 +250,14 @@ lemma Scl_zero (h73 : 7 * n < 3 * p) (hp5 : p ≤ 5 * n) (hc : c + 1 = p) : -4 �
   obtain rfl | rfl : q = 0 ∨ q = 1 := by omega
   · rw [hC]
     simp only [Finset.sum_range_succ, Finset.sum_range_zero, zero_add]
-    rw [wv_jn hp hnp hcp hC (t := 0) (by norm_num) (by omega), betaWt_class hp hcp]
+    rw [wv_jn hp hnp hcp hC (t := 0) (by norm_num) (by omega), betaWt_class hcp]
     simp only [ite_eq_right hcn, hc]
     norm_num
   · rw [hC]
     simp only [Finset.sum_range_succ, Finset.sum_range_zero, zero_add]
     rw [wv_jn hp hnp hcp hC (t := 0) (by norm_num) (by omega),
-      wv_jn hp hnp hcp hC (t := 1) (by norm_num) (by omega), betaWt_class hp hcp,
-      betaWt_class hp hcp]
+      wv_jn hp hnp hcp hC (t := 1) (by norm_num) (by omega), betaWt_class hcp,
+      betaWt_class hcp]
     simp only [ite_eq_right hcn, hc]
     norm_num
 
@@ -291,7 +291,7 @@ lemma Scl_low (h73 : 7 * n < 3 * p) (hc : c + 1 ≤ n) :
   · have hj1 : jn p (5*n) c 1 = c + 1 := by rw [jn_eq p (5*n) hC]; simp
     rw [hC]
     simp only [Finset.sum_range_succ, Finset.sum_range_zero, zero_add]
-    rw [wv_jn hp hnp hcp hC (t := 0) (by norm_num) (by omega), betaWt_class hp hcp, hj1,
+    rw [wv_jn hp hnp hcp hC (t := 0) (by norm_num) (by omega), betaWt_class hcp, hj1,
       wv_cancelled hc, hbig]
     simp only [ite_eq_left hcn, hcp', ite_false]
     norm_num
@@ -301,8 +301,8 @@ lemma Scl_low (h73 : 7 * n < 3 * p) (hc : c + 1 ≤ n) :
     rw [hC]
     simp only [Finset.sum_range_succ, Finset.sum_range_zero, zero_add]
     rw [wv_jn hp hnp hcp hC (t := 0) (by norm_num) (by omega),
-      wv_jn hp hnp hcp hC (t := 1) (by norm_num) (by omega), betaWt_class hp hcp,
-      betaWt_class hp hcp, hj2, wv_cancelled hc, hbig]
+      wv_jn hp hnp hcp hC (t := 1) (by norm_num) (by omega), betaWt_class hcp,
+      betaWt_class hcp, hj2, wv_cancelled hc, hbig]
     simp only [ite_eq_left hcn, hcp', ite_false, ite_eq_left hlt]
     norm_num
 
@@ -327,7 +327,7 @@ lemma Scl_high (h73 : 7 * n < 3 * p) (hp5 : p ≤ 5 * n) (hc1 : n < c + 1) (hc2 
   obtain rfl | rfl : q = 0 ∨ q = 1 := by omega
   · rw [hC]
     simp only [Finset.sum_range_succ, Finset.sum_range_zero, zero_add]
-    rw [wv_jn hp hnp hcp hC (t := 0) (by norm_num) (by omega), betaWt_class hp hcp]
+    rw [wv_jn hp hnp hcp hC (t := 0) (by norm_num) (by omega), betaWt_class hcp]
     simp only [ite_eq_right hcn, hc2, and_true, ite_eq_left]
     norm_num
     split_ifs <;> norm_num
@@ -335,8 +335,8 @@ lemma Scl_high (h73 : 7 * n < 3 * p) (hp5 : p ≤ 5 * n) (hc1 : n < c + 1) (hc2 
     rw [hC]
     simp only [Finset.sum_range_succ, Finset.sum_range_zero, zero_add]
     rw [wv_jn hp hnp hcp hC (t := 0) (by norm_num) (by omega),
-      wv_jn hp hnp hcp hC (t := 1) (by norm_num) (by omega), betaWt_class hp hcp,
-      betaWt_class hp hcp]
+      wv_jn hp hnp hcp hC (t := 1) (by norm_num) (by omega), betaWt_class hcp,
+      betaWt_class hcp]
     simp only [ite_eq_right hcn, ite_eq_left hlt, hcp', ite_false, hc2, and_true]
     norm_num
 

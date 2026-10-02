@@ -184,7 +184,7 @@ lemma VG_H {e j : ℕ} (hj : j < p ^ 2) : VG p (H e j) (-(e : ℚ)) := by
   refine VG.sum _ fun v hv => ?_
   rw [Finset.mem_Icc] at hv
   rw [one_div]
-  apply VG.inv (pow_ne_zero _ (by exact_mod_cast (by omega : v ≠ 0)))
+  apply VG.inv
   rw [show ((v : ℚ) ^ e) = ((v ^ e : ℕ) : ℚ) by push_cast; ring, padicValRat.of_nat,
     padicValNat.pow v e]
   have h1 : padicValNat p v ≤ 1 := by

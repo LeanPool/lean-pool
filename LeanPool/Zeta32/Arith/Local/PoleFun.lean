@@ -182,7 +182,7 @@ theorem VG_res {A : ℚ[X]} {e : ZMod p → ℤ} (hA : Adm p A e) (Pl : Finset �
     rw [Finset.mem_erase] at hs
     exact sub_ne_zero.mpr (by exact_mod_cast hs.1.symm)
   have h1 := hA.eval r
-  have h2 := VG.inv (p := p) hD (padicValRat_denom_le Pl hsep hr)
+  have h2 := VG.inv (p := p)  (padicValRat_denom_le Pl hsep hr)
   convert h1.mul h2 using 1
   ring
 
@@ -279,11 +279,11 @@ theorem VG_polyPart_eval {A : ℚ[X]} {e : ZMod p → ℤ} (hA : Adm p A e) (Pl 
   have hPiOne : PiO.eval (m : ℚ) ≠ 0 := by
     rw [hPiOm]; exact Finset.prod_ne_zero_iff.mpr hfac
   have hVGinv : ∀ r ∈ Plo, VG p ((m : ℚ) - r)⁻¹ 0 := fun r hr => by
-    refine (VG.inv (p := p) (r := 0) (hfac r hr) ?_).mono (by norm_num)
+    refine (VG.inv (p := p) (r := 0)  ?_).mono (by norm_num)
     rw [show ((m : ℚ) - r) = ((m - r : ℤ) : ℚ) by push_cast; ring,
       padicValRat_int_eq_zero (hndiv r hr)]; simp
   have hVGinvPiO : VG p (PiO.eval (m : ℚ))⁻¹ 0 := by
-    refine (VG.inv (p := p) (r := 0) hPiOne ?_).mono (by norm_num)
+    refine (VG.inv (p := p) (r := 0)  ?_).mono (by norm_num)
     rw [hPiOm, padicValRat_finset_prod _ _ hfac]
     push_cast
     rw [Finset.sum_eq_zero fun r hr => by

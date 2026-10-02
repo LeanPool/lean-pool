@@ -283,7 +283,7 @@ lemma shifted_binom_ratio {K k : ℕ} (hk : K ≤ k) :
 lemma inv_choose_VG (p : ℕ) [hp : Fact p.Prime] {k K N : ℕ} (hk : K ≤ k) (hkN : k ≤ N) :
     VG p (((k.choose K : ℚ))⁻¹) (-(Nat.log p N : ℚ)) := by
   have hc : k.choose K ≠ 0 := (Nat.choose_pos hk).ne'
-  apply VG.inv (by exact_mod_cast hc)
+  apply VG.inv
   rw [padicValRat.of_nat, ← Nat.factorization_def _ hp.out]
   exact_mod_cast (Nat.factorization_choose_le_log).trans (Nat.log_mono_right hkN)
 

@@ -197,7 +197,7 @@ theorem GoodDensity.intervalIntegrable_log_mul (hρ : GoodDensity ρ a) (x : ℝ
     nlinarith [sq_nonneg (abs (Real.log |x - t|) - abs (ρ t)), sq_abs (Real.log |x - t|), sq_abs
       (ρ t)]
 
-theorem GoodDensity.abs_log_mul_le (_hρ : GoodDensity ρ a) (x t : ℝ) :
+theorem GoodDensity.abs_log_mul_le (ρ : ℝ → ℝ) (x t : ℝ) :
     abs (Real.log |x - t|) * abs (ρ t) ≤ (Real.log |x - t| ^ 2 + ρ t ^ 2) / 2 := by
   nlinarith [sq_nonneg (abs (Real.log |x - t|) - abs (ρ t)), sq_abs (Real.log |x - t|), sq_abs
     (ρ t)]
@@ -312,7 +312,7 @@ theorem GoodDensity.integrable_nuB (hρ : GoodDensity ρ a) (g : ℝ → ℝ) :
   simp only [smul_eq_mul]
   rw [ENNReal.toReal_ofReal (hnn (Ioc_subset_Icc_self ht))]
 
-theorem GoodDensity.ae_nuB (_hρ : GoodDensity ρ a) : ∀ᵐ t ∂(nuB ρ a), t ∈ Ioc (-a) a := by
+theorem GoodDensity.ae_nuB : ∀ᵐ t ∂(nuB ρ a), t ∈ Ioc (-a) a := by
   unfold nuB
   exact (withDensity_absolutelyContinuous _ _).ae_le (ae_restrict_mem measurableSet_Ioc)
 
@@ -443,7 +443,7 @@ theorem GoodDensity.integrable_cn (hρ : GoodDensity ρ a) (c : ℂ) {ε : ℝ} 
       (circle_log_integrable c (t : ℂ) ε)
   · refine (integrable_const (4 * π * (‖c‖ + a + ε) - 2 * π * Real.log ε)).mono'
       ((measurable_cn c ε).norm.stronglyMeasurable.integral_prod_left').aestronglyMeasurable ?_
-    filter_upwards [hρ.ae_nuB] with t ht
+    filter_upwards [GoodDensity.ae_nuB (ρ := ρ) (a := a)] with t ht
     rw [Real.norm_eq_abs, abs_of_nonneg (integral_nonneg fun _ => norm_nonneg _)]
     exact circle_abs_log_le c hε t (abs_le.mpr ⟨ht.1.le, ht.2⟩)
 
@@ -458,7 +458,7 @@ theorem GoodDensity.integral_cn (hρ : GoodDensity ρ a) (c : ℂ) {ε : ℝ} (h
   simp_rw [e]
   exact hρ.integral_nuB _
 
-theorem ae_cn (ρ : ℝ → ℝ) (a : ℝ) (c : ℂ) {ε : ℝ} (_hε : 0 < ε) :
+theorem ae_cn (ρ : ℝ → ℝ) (a : ℝ) (c : ℂ) {ε : ℝ} :
     ∀ᵐ q ∂(circB.prod (nuB ρ a)), circleMap c ε q.1 ≠ (q.2 : ℂ) := by
   have h := pair_collision_null (circleMap c ε) (fun t : ℝ => (t : ℂ)) circB (nuB ρ a)
     (continuous_circleMap c ε) Complex.continuous_ofReal (nuB_fiber_null ρ a)
@@ -506,7 +506,7 @@ theorem GoodDensity.integrable_nn (hρ : GoodDensity ρ a) :
   set N := ∫ t in (-a)..a, ρ t ^ 2
   refine (integrable_const ((Mc + N) / 2)).mono'
     (measurable_nn.norm.stronglyMeasurable.integral_prod_right').aestronglyMeasurable ?_
-  filter_upwards [hρ.ae_nuB] with s hs
+  filter_upwards [GoodDensity.ae_nuB (ρ := ρ) (a := a)] with s hs
   rw [Real.norm_eq_abs, abs_of_nonneg (integral_nonneg fun _ => norm_nonneg _), hρ.integral_nuB]
   have hi1 : IntervalIntegrable (fun t => ρ t * ‖Real.log ‖(s : ℂ) - (t : ℂ)‖‖) volume (-a) a :=
     (hρ.integrable_nuB _).mp (hρ.integrable_nn_slice s).norm
@@ -516,7 +516,7 @@ theorem GoodDensity.integrable_nn (hρ : GoodDensity ρ a) :
       ∫ t in (-a)..a, (Real.log |s - t| ^ 2 + ρ t ^ 2) / 2 := by
     refine intervalIntegral.integral_mono_on ha hi1 hi2 (fun t _ => ?_)
     rw [norm_ofReal_sub, Real.norm_eq_abs]
-    have := hρ.abs_log_mul_le s t
+    have := GoodDensity.abs_log_mul_le ρ s t
     have : ρ t * abs (Real.log |s - t|) ≤ abs (ρ t) * abs (Real.log |s - t|) :=
       mul_le_mul_of_nonneg_right (le_abs_self _) (abs_nonneg _)
     nlinarith
@@ -610,7 +610,7 @@ theorem discrete_energy {ρ : ℝ → ℝ} {a : ℝ} (hρ : GoodDensity ρ a) {h
       | some j => exact (ae_ne_prod_map hmo (hmc j)).mpr (ae_nc ρ a (x j : ℂ) hε)
     | some i =>
       cases l with
-      | none => exact (ae_ne_prod_map (hmc i) hmo).mpr (ae_cn ρ a (x i : ℂ) hε)
+      | none => exact (ae_ne_prod_map (hmc i) hmo).mpr (ae_cn ρ a (x i : ℂ))
       | some j => exact (ae_ne_prod_map (hmc i) (hmc j)).mpr (ae_cc _ _ hε)
   -- symmetry
   have hEsym : ∀ k l, E k l = E l k := by

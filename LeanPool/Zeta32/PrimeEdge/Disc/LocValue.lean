@@ -109,7 +109,7 @@ lemma VG_H_small [hp : Fact p.Prime] {m : ℕ} (hm : m < p) (e : ℕ) : VG p (Ze
     rw [padicValRat.pow, padicValRat.of_nat,
       padicValNat.eq_zero_of_not_dvd (Nat.not_dvd_of_pos_of_lt (by omega) (by omega))]
     simp
-  have := VG.inv (p := p) (q := (a : ℚ) ^ e) (pow_ne_zero _ (by exact_mod_cast (by omega : a ≠ 0)))
+  have := VG.inv (p := p) (q := (a : ℚ) ^ e)
     (r := 0) (by rw [hv]; simp)
   simpa [one_div] using this
 
@@ -137,7 +137,7 @@ lemma VG_res_X_pow [Fact p.Prime] (hp : 5 ≤ p) {M : Finset ℕ} (hM : M ⊆ Fi
     have := ((VG.natCast (p := p) m).neg).pow e
     simpa using this
   have h2 : VG p (∏ m' ∈ M.erase m, ((m' : ℚ) - m))⁻¹ 0 := by
-    have := VG.inv (p := p) hne (r := 0) (by rw [hv]; simp)
+    have := VG.inv (p := p)  (r := 0) (by rw [hv]; simp)
     simpa using this
   simpa using h1.mul h2
 
