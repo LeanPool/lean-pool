@@ -224,6 +224,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Schoenflies               https://github.com/alonamaloh/schoenflies-lean
   LeanPool/SelbergSieve4             https://github.com/amellendijk/selberg-sieve4
   LeanPool/SemicircleCheck           https://github.com/Wondermonger-daydreaming/semicircle-catalan
+  LeanPool/Sendov                    https://github.com/teorth/sendov
   LeanPool/Sensitivity               https://github.com/SamuelSchlesinger/sensitivity-conjecture
   LeanPool/SetTheory                 https://github.com/znssong/SetTheory
   LeanPool/SeveralComplexVariables   https://github.com/bjbraams/lean-scv
