@@ -44,6 +44,7 @@ def ofPerm (σ : Equiv.Perm (Fin p)) : TopCell p :=
   rfl
 
 /-- Top symbols are canonically the permutation torsor. -/
+@[expose]
 def equivPerm : TopCell p ≃ Equiv.Perm (Fin p) where
   toFun c := c.1.rank
   invFun := ofPerm

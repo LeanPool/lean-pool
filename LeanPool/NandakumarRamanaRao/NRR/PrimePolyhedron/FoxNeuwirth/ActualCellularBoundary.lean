@@ -176,6 +176,7 @@ noncomputable instance (hp : Nat.Prime p) (a : BarredPermutation p)
   exact Fintype.ofFinite _
 
 /-- The first block has the expected finite cardinality. -/
+@[expose]
 noncomputable def firstBlockEquivFin
     (hp : Nat.Prime p) (a : BarredPermutation p)
     (ha : a.dualDimension = p - 2) :
@@ -241,6 +242,7 @@ noncomputable instance (a : BarredPermutation p) : DecidableEq (TopExtension a) 
     exact (c : BarredPermutation p).rank.injective hij
 
 /-- Canonical map sending a top-cell extension to the positions occupied by the first block. -/
+@[expose]
 noncomputable def topExtensionToShuffle
     (hp : Nat.Prime p) (a : BarredPermutation p)
     (ha : a.dualDimension = p - 2) :
@@ -257,6 +259,7 @@ def FacetShuffleCardinality (p : Nat) : Prop :=
         topExtensionMultiplicity a = p.choose k
 
 /-- Concrete bijectivity statement for the canonical extension-to-shuffle map. -/
+@[expose]
 def FacetShuffleBijection (hp : Nat.Prime p) : Prop :=
   ∀ (a : BarredPermutation p) (ha : a.dualDimension = p - 2),
     Function.Bijective (topExtensionToShuffle hp a ha)
