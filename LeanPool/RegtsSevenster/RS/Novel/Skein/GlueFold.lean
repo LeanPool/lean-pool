@@ -893,6 +893,7 @@ theorem liftPairs_mem (ps : List (α × α)) :
 
 /-- The two-stage surviving labels flatten to the concatenation's
 surviving labels. -/
+@[expose]
 def appendFlatten (ps qs : List (α × α)) (h : PairsSepAll ps qs) :
     FoldSurviving (FoldSurviving α ps) (liftPairs ps qs h) ≃
       FoldSurviving α (ps ++ qs) where

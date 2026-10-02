@@ -233,6 +233,7 @@ product of the two sources involved: the left unitor for
 even-even and even-odd, the right unitor for odd-even, and the
 square trivialisation `L.sq` of the odd line for odd-odd.  The
 Koszul sign of `comm_oo` is exactly `RS.OddLine.braid_neg`. -/
+@[expose]
 noncomputable def gammaAlgebra (D : Type u) [Category.{v} D]
     [MonoidalCategory D] [SymmetricCategory D] [Preadditive D]
     [MonoidalPreadditive D] [Linear ℂ D] [MonoidalLinear ℂ D]

@@ -831,6 +831,7 @@ noncomputable def assocNormalLeft {s t u v : ℕ}
 
 /-- The outer interface pairs of the right association, pulled
 back to the boundary of the inner composition. -/
+@[expose]
 noncomputable def rhsQs1 (s t u v : ℕ) :
     List ((Fin (s + t) ⊕
       Fragment.FoldSurviving (Fin (t + u) ⊕ Fin (u + v))

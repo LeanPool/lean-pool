@@ -343,6 +343,7 @@ noncomputable def modPowCutModObj
   mul_smul := modPowCutAct_mul A X n e he
 
 /-- The cut of a module, bundled as a module. -/
+@[expose]
 noncomputable def modPowCutMod
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] (A : D)
     [MonObj A] (X : D) [ModObj A X] [Preadditive D] [HasFiniteBiproducts D]

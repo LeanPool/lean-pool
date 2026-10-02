@@ -71,6 +71,7 @@ noncomputable def extProd {n : ℕ} (x y : SymGroupAlgebra n) :
 
 /-- **The diagonal embedding of group algebras**: extension of the
 diagonal along `mapDomain`, an algebra homomorphism. -/
+@[expose]
 noncomputable def diagEmbed {n : ℕ} :
     SymGroupAlgebra n →ₐ[ℂ]
       MonoidAlgebra ℂ (Equiv.Perm (Fin n) × Equiv.Perm (Fin n)) :=

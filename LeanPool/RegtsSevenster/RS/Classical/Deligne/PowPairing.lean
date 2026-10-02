@@ -128,6 +128,7 @@ recursion on the arity: at `n + 1`, peel the first factor of the
 `M`-power, pair it with the exposed last factor of the `M'`-power,
 braid the resulting scalar past the remaining `M`-power, and
 multiply it onto the pairing of the remaining powers. -/
+@[expose]
 noncomputable def rawPair
     [Category.{v} D] [MonoidalCategory D] [BraidedCategory D]
     [HasCoequalizers D]
@@ -1878,6 +1879,7 @@ section SymDescent
 
 /-- The section of the symmetric power, as a morphism of
 modules. -/
+@[expose]
 noncomputable def symPowσMod
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

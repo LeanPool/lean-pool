@@ -531,6 +531,7 @@ def pairResolve
   X.X ◁ (ρ_ Y.X).hom
 
 /-- The inverse resolution: reinstate the unit seed. -/
+@[expose]
 def pairResolveInv
     [Category.{v} D] [MonoidalCategory D] (A : D) [MonObj A] (X : Mod D A)
     (Y : Mod D A) : X.X ⊗ Y.X ⟶ modList A [X, Y] :=
@@ -668,6 +669,7 @@ lemma modTensorπ_pairInv
 /-- **The two-element multi-tensor is the binary module tensor
 product**: the one-slot wide presentation and the parallel-pair
 presentation coequalize the same relations. -/
+@[expose]
 noncomputable def modMultiPair
     [Category.{v} D] [MonoidalCategory D] (A : D) [MonObj A]
     [BraidedCategory D] [Preadditive D] [HasFiniteBiproducts D]

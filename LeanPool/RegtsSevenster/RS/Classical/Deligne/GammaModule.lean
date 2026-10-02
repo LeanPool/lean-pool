@@ -113,6 +113,7 @@ variable {D : Type u}
 /-- The *convolution action* of a morphism into a monoid object on
 a morphism into a module object, taken at arbitrary sources:
 tensor the two morphisms and act. -/
+@[expose]
 noncomputable def gact
     [Category.{v} D] [MonoidalCategory D] {R : D} [MonObj R] {M : D}
     [ModObj R M]
@@ -238,6 +239,7 @@ transported along a chosen morphism `s` from the intended source
 into the tensor product of the two given sources.  The four graded
 action blocks of `RS.gammaModule` are the four instances of this
 construction. -/
+@[expose]
 noncomputable def gactLin
     [Category.{v} D] [MonoidalCategory D] {R : D} [MonObj R] {M : D}
     [ModObj R M] [Preadditive D] [MonoidalPreadditive D] [Linear ℂ D]

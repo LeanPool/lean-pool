@@ -128,6 +128,7 @@ noncomputable def symMulMod
 
 /-- One stage of the splitting chain: the module tensor product
 of matching symmetric powers of the dual pair. -/
+@[expose]
 noncomputable def chainStage
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

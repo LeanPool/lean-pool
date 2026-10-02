@@ -34,6 +34,7 @@ variable {D : Type u}
 
 /-- The stages of the local splitting chain: the plain symmetric
 powers, one letter up. -/
+@[expose]
 noncomputable def splitStage
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [HasFiniteBiproducts D] [HasCoequalizers D] [Linear ℂ D]
@@ -66,6 +67,7 @@ noncomputable def splitDelta
     symMul (𝟙_ D) Y (n + 1) 1
 
 /-- The stage multiplication of the local splitting chain. -/
+@[expose]
 noncomputable def splitMu
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

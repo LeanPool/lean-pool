@@ -161,6 +161,7 @@ the module power, with section `altPowσ`; this presentation is
 chosen because consumers build morphisms out of the alternating
 power by descent along `altPowπ` and morphisms into it through the
 section. -/
+@[expose]
 noncomputable def altPow
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] (A : D)
     [MonObj A] (X : D) [ModObj A X] [Preadditive D] [HasFiniteBiproducts D]

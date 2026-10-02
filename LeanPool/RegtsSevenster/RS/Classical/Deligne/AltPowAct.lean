@@ -161,6 +161,7 @@ noncomputable def altPowModObj
   mul_smul := altPowAct_mul A X n
 
 /-- The alternating power of a module, bundled as a module. -/
+@[expose]
 noncomputable def altPowMod
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] (A : D)
     [MonObj A] (X : D) [ModObj A X] [Preadditive D] [HasFiniteBiproducts D]

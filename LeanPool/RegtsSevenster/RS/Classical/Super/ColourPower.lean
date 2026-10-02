@@ -167,6 +167,7 @@ theorem MixedColouring.isEven_split {k ℓ d : ℕ}
     exact c.isEven_succ_right b h
 
 /-- A subtype of a product by a condition on the first factor. -/
+@[expose]
 def subtypeProdFst {A X : Type} (Q : A → Prop) :
     {p : A × X // Q p.1} ≃ {a : A // Q a} × X where
   toFun p := (⟨p.val.1, p.prop⟩, p.val.2)

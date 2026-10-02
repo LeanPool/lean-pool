@@ -54,6 +54,7 @@ section Statement
 the consumed direction): a short exact sequence acquires a
 module-level section of its epimorphism after base change to
 some nonzero commutative algebra. -/
+@[expose]
 def Rappel210Statement
     [Category.{v} D] [MonoidalCategory D] [BraidedCategory D] [Abelian D]
     (S : ShortComplex D) (_ : S.ShortExact) :

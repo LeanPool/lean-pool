@@ -954,6 +954,7 @@ section SymMulDef
 
 /-- **The multiplication on symmetric powers**, through the
 sections and the raw multiplication. -/
+@[expose]
 noncomputable def symMul
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] (A : D)
     [MonObj A] (X : D) [ModObj A X] [Preadditive D] [HasFiniteBiproducts D]

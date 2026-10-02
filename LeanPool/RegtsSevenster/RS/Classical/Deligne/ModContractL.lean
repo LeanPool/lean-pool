@@ -54,6 +54,7 @@ section Contract3L
 /-- The fold-level three-window contraction of a leading pair: pair
 off the leading window, act on the head of the remainder with the
 resulting scalar from the left. -/
+@[expose]
 noncomputable def contract3LFold
     [Category.{v} D] [MonoidalCategory D] [BraidedCategory D]
     [Preadditive D] [HasFiniteBiproducts D] [HasCoequalizers D] (A : D)

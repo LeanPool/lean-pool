@@ -107,6 +107,7 @@ theorem internalFlags_subset_coreFlags (F : EdgeSubset W) :
 
 /-- Odd colourings of the core: pairing-constant colours on the
 participating flags of edges with an internal end. -/
+@[expose]
 def CoreOddColouring (F : EdgeSubset W) (ℓ : ℕ) : Type :=
   {φ : {f : W.Flag // f ∈ F.coreFlags} → Fin (2 * ℓ) //
     ∀ f : {f : W.Flag // f ∈ F.coreFlags},

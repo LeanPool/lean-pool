@@ -1896,6 +1896,7 @@ with section `symPowσ`; this presentation is chosen because the
 consumers of the Key Lemma build morphisms out of the symmetric
 power by descent along `symPowπ` and morphisms into it through the
 section. -/
+@[expose]
 noncomputable def symPow
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] (A : D)
     [MonObj A] (X : D) [ModObj A X] [Preadditive D] [HasFiniteBiproducts D]
