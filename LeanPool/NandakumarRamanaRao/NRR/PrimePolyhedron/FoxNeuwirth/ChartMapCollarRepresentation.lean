@@ -18,7 +18,7 @@ coordinate.  It therefore passes through collar composition and interval reversa
 assignments representing the same chart map agree automatically on a composition seam.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

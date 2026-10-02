@@ -23,7 +23,7 @@ the lower and upper subdivision stacks together with the controlled middle prism
 this file are theorem-level consequences of that data.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

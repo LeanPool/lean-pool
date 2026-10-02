@@ -26,7 +26,7 @@ the finite model. The oriented mod-`p` cycle obtained by gluing boundary faces i
 the chain modules.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

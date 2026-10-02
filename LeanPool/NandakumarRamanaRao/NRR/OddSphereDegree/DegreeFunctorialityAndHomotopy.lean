@@ -44,7 +44,7 @@ Every statement is conditional only on the explicit identification `e` (resp. a
 the honest set of hypotheses. None of them is a disguised unconditional theorem.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

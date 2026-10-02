@@ -24,7 +24,7 @@ cell.  Consequently any cellwise property stated only in terms of `localVertexMa
 origin avoidance, is transported without a new geometric proof.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

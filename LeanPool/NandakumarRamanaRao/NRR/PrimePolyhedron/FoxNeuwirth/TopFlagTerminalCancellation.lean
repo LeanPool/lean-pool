@@ -21,7 +21,7 @@ The proof is deliberately separated from the internal rank-two cancellation.  No
 of rank-two intervals is used here.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

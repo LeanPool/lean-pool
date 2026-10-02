@@ -25,7 +25,7 @@ that membership in a side excludes membership in the carrier, that a point outsi
 in exactly one side, and that the two boundaries never meet the carrier.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

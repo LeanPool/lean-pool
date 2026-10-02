@@ -53,7 +53,7 @@ These declarations provide the monodromy permutation action. The associated clas
 homomorphism and degree-one cohomology class are developed in the downstream modules.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

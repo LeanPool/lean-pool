@@ -36,7 +36,7 @@ cells.  The fixed horizontal boundaries require only the `PositiveRaySkeletonFre
 already carried by `StableRegularApproximation`.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

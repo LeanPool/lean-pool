@@ -22,7 +22,7 @@ construction to the algebraic simplicial-homotopy and chain-homotopy machinery
 used by the singular-homology homotopy-invariance proof.
 -/
 
-@[expose] public section
+public section
 open CategoryTheory Limits AlgebraicTopology Simplicial
 
 namespace SphereOddDegree

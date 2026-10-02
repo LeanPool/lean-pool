@@ -23,7 +23,7 @@ between two genuine endpoint stacks without assuming an unproved middle-prism ex
 lemma.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

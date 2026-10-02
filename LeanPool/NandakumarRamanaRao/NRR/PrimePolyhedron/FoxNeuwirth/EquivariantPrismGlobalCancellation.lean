@@ -26,7 +26,7 @@ and the nonhorizontal part. The endpoint module proves vanishing of the nonhoriz
 and identifies the horizontal sums with the endpoint refined counts.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

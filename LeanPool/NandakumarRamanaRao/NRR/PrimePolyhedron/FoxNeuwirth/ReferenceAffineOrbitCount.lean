@@ -32,7 +32,7 @@ regular affine reference map whose orbit zero count is the previously computed n
 `FoxNeuwirth.referenceSignedOrbitCount p`.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

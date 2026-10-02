@@ -23,7 +23,7 @@ belong to the topological-degree support layer, not the point-set foundation)
 live in `Degree.lean`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

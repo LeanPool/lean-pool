@@ -27,7 +27,7 @@ The perturbation direction is a single global continuous map.  Consequently valu
 shared refined face and prime-symmetry equivariance is preserved.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

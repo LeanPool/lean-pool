@@ -22,7 +22,7 @@ cell: the bottom rank fixes the block order and the final rank fixes the order i
 This yields the explicit inverse `simplexToCode` and proves that `toSimplex` is bijective.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

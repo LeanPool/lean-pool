@@ -17,7 +17,7 @@ count.  Keeping these definitions in a neutral module separates the stable obstr
 raw-count homotopy interface.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

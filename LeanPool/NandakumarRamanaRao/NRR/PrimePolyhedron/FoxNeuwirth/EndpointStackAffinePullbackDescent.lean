@@ -24,7 +24,7 @@ The upper values are the ordinary PL values at the next
 barycentric-subdivision vertices.  Hence this convention is seam-compatible under iteration.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

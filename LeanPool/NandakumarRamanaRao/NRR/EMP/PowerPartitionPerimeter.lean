@@ -33,7 +33,7 @@ The power-partition parameter profile is the one fixed in the project:
 No continuity, equivariance, or test-map material is introduced here.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody
 

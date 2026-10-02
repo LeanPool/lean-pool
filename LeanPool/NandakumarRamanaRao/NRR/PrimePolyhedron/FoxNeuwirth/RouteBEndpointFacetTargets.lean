@@ -20,7 +20,7 @@ remaining movable columns with the missing coarse-simplex values makes the selec
 permutation of the regular endpoint matrix.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 open FoxNeuwirthOrderComplex

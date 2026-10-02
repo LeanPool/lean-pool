@@ -52,7 +52,7 @@ transport to
 `H^*(RPⁿ; F₂)`.
 -/
 
-@[expose] public section
+public section
 
 open Polynomial
 

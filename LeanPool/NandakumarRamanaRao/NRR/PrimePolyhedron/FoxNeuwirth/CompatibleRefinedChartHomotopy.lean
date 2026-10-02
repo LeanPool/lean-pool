@@ -24,7 +24,7 @@ so no global quotient-map construction is required.  Decorated compatibility is 
 condition needed for those samples to descend to global collar vertices.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

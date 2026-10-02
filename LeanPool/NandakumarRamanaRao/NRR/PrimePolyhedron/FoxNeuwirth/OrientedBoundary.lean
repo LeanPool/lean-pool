@@ -20,7 +20,7 @@ This module records the oriented cell model and its boundary relation. The cycle
 cancellation results are proved in the chain modules.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

@@ -22,7 +22,7 @@ the genuine cells and prove all nondegeneracy and prime-orbit separation fields 
 `RelativeAffineCellSystem`.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

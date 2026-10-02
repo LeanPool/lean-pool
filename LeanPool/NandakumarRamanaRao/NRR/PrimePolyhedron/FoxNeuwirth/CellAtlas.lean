@@ -16,7 +16,7 @@ records the closed and open cell components, their compactness, and the explicit
 The later mod-`p` cycle construction replaces this disjoint atlas by the invariant glued chain.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

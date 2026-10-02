@@ -17,7 +17,7 @@ the carrier is obtained independently as the projection of a compact zero set: c
 closedness, while a cobordism or intersection-number argument supplies the complement data.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

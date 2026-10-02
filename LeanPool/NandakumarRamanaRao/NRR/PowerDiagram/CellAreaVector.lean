@@ -47,7 +47,7 @@ Sites are held fixed throughout; nothing here assumes cells are nonempty, and no
 statement is proved.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody MeasureTheory
 

@@ -19,7 +19,7 @@ This module defines standard simplex coordinates as nonnegative weights summing 
 with their induced topology and relative interior.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

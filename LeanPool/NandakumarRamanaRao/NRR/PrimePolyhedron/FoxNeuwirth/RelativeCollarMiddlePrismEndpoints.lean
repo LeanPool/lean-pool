@@ -18,7 +18,7 @@ under the split refinement word.  These are the endpoint maps needed by the chai
 interface; no choice of a unique quotient-facet representative is made.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

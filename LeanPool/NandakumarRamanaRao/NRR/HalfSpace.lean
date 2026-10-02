@@ -19,7 +19,7 @@ Provides the set-theoretic lower and upper halfspaces used throughout the cut an
 layers. Measure-theoretic and continuity results live in the dedicated halfspace-cut modules.
 -/
 
-@[expose] public section
+public section
 
 open NRR
 open scoped RealInnerProductSpace

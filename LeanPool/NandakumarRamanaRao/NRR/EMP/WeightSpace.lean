@@ -39,7 +39,7 @@ the vocabulary used to pin down the additive‑constant freedom in equal‑area 
 This file must not depend on optimal transport; it imports only `Mathlib`.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

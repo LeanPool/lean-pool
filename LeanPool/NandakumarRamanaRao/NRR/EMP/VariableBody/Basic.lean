@@ -24,7 +24,7 @@ normalized-weight APIs to the solid body `C.toGeometryConvexBody hA`. No new pow
 configuration space, weight selection, or convex-body topology is introduced.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody
 

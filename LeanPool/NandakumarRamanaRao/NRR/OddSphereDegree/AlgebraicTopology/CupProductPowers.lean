@@ -16,7 +16,7 @@ realization. The cohomology-level cup product and power naturality are implement
 `CohomologyCupProduct.lean`; `InducedOnRPCohomology.lean` specializes them to maps of `RP n`.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology
 

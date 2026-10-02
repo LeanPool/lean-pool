@@ -41,7 +41,7 @@ what finite measure additivity needs and what power/Voronoi partitions actually 
 Area additivity itself is intentionally *not* proved here.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 

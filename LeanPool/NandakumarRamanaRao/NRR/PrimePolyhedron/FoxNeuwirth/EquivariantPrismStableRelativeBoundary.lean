@@ -30,7 +30,7 @@ triangulation level.  The original generic prism assignment is then a relative p
 those two boundary maps fixed by construction; no second generic perturbation is required.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

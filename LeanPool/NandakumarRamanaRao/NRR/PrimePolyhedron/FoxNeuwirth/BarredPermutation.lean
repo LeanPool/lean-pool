@@ -21,7 +21,7 @@ The dual Fox--Neuwirth cell has dimension `p - blockCount`.  Thus one-block symb
 dual cells of dimension `p - 1`, while the all-singleton symbols index vertices.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

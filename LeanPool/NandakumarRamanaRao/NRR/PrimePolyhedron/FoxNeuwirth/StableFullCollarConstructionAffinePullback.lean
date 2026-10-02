@@ -30,7 +30,7 @@ stacks are transported with `castEndpointCollar`; `castEndpoint_property` moves 
 a collar together with its assignment across such a transport.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

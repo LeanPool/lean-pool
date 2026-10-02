@@ -15,7 +15,7 @@ The reference map is scaled pointwise by an invariant positive factor derived fr
 `(-1/2, 1/2)`. Adding the signed-interval coordinate then gives strict endpoint orthant signs.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

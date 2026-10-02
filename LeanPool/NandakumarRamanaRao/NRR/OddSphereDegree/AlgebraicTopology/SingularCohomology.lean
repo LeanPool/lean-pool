@@ -78,7 +78,7 @@ coefficient theorem, any cohomology computation, or the cup product; those remai
 downstream work.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology
 

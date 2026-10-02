@@ -22,7 +22,7 @@ No discontinuous endpoint-adjusted sampler and no unnecessary codimension-two de
 part of the certificate.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

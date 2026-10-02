@@ -34,7 +34,7 @@ area is at least `A`.
   with the continuous projection `BodySpace.body`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Metric Filter Topology
 

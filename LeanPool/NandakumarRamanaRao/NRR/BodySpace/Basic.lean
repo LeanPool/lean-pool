@@ -26,7 +26,7 @@ The area of a subbody is the real-valued Lebesgue measure of its carrier, matchi
 of `Geometry.ConvexBody.area`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 

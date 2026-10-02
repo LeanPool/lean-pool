@@ -23,7 +23,7 @@ It does not identify the disjoint simplex atlas with the glued Blagojevic--Ziegl
 regular-cell realization and the subsequent separator construction are separate topological steps.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

@@ -11,7 +11,7 @@ public import Mathlib.Tactic
 
 /-! # Coordinate Projection -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology Limits
 open SphereOddDegree.AffineBarycentricSubdivision

@@ -47,7 +47,7 @@ follow from the core reusable lemma applied to the continuous bridge
 `BodySpace.continuous_toGeometryConvexBody`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Metric Filter Topology
 

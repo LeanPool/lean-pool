@@ -32,7 +32,7 @@ Later genericity modules only need to define their determinant and codimension-t
 this finite type.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

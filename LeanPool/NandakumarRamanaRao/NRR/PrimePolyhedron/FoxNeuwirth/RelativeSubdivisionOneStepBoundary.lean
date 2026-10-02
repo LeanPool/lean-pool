@@ -24,7 +24,7 @@ and prime invariance of the quotient-facet characteristic weight lets
 `orbit_boundary_pairing_eq_zero` apply.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

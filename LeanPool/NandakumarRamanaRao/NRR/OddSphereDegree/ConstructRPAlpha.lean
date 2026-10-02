@@ -20,7 +20,7 @@ homology functional and its invariance property. The canonical instance used by
 the final proof is constructed later in `RPnMonodromyFunctional`.
 -/
 
-@[expose] public section
+public section
 open CategoryTheory AlgebraicTopology
 
 noncomputable section

@@ -21,7 +21,7 @@ provides the evaluation projection, its continuity, extensionality reducing equa
 equality, the endpoint sign lemmas, and a constructor from an unbundled continuous function.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

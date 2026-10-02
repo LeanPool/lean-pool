@@ -28,7 +28,7 @@ strict at the chosen cell.  If they are in the same block, their common block pe
 rank order persists strictly.  The barycentric average therefore cannot identify the labels.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

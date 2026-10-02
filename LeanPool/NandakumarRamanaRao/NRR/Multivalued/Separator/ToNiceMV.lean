@@ -26,7 +26,7 @@ multivalued function, even though the two signed distances are computed in diffe
 and need not agree pointwise.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

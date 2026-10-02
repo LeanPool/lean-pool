@@ -50,7 +50,7 @@ No structure internals or `sSup` are unfolded here.
 transitively via `Basic.lean`) already pull in `import Mathlib`, so no extra imports are required.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR.Geometry
 

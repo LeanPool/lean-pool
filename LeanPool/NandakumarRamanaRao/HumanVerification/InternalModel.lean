@@ -16,7 +16,7 @@ public import LeanPool.NandakumarRamanaRao.NRR.FairPartition.Predicates
 
 /-! # Internal Model -/
 
-@[expose] public section
+public section
 
 open Set MeasureTheory
 

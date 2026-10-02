@@ -21,7 +21,7 @@ These formulas are used by the concrete common-level middle-prism constructor fo
 relative collar.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

@@ -38,7 +38,7 @@ are exactly what is needed to assemble the small singular chains into a
 subcomplex of the singular chain complex.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology
 open SphereOddDegree.AffineBarycentricSubdivision

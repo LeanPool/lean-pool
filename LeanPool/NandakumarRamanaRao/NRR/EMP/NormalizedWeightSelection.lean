@@ -32,7 +32,7 @@ theorem.
 * `EMP.normalizedWeight_unique` — any equal‑area normalized weight equals the selected one.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody
 

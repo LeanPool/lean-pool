@@ -61,7 +61,7 @@ These are the functorial pullback / double-cover-compatibility / descended-map
 naturality facts independent of the cup-product ring computation.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

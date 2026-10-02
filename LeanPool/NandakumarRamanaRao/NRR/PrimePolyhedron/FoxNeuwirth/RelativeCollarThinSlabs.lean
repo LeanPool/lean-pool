@@ -24,7 +24,7 @@ collects quotient-facet incidences: side facets cancel inside each slab, adjacen
 cancel between consecutive slabs, and only the first lower and final upper boundary remain.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

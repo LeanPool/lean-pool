@@ -26,7 +26,7 @@ them to the outputs of two iterated affine-subdivision maps, the compatibility s
 barycentric subdivisions of one standard simplex.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

@@ -23,7 +23,7 @@ avoiding zero only in the deviation representation.  The projected simultaneous-
 exactly the locus where the full coordinate map meets the origin.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

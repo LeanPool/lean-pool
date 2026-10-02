@@ -21,7 +21,7 @@ The proof uses the `vertex_orbit_injective` field of
 without justification.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

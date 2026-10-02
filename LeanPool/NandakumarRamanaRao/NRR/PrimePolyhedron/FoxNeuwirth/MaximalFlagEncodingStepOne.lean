@@ -30,7 +30,7 @@ identities, and packages the requested equivalence with all maximal strict flags
 coefficient, or cancellation statement is included in that classification hypothesis.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

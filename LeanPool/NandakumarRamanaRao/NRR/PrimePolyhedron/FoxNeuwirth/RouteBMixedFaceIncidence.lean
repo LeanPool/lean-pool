@@ -16,7 +16,7 @@ coefficient is positive.  The next stages will prove that each resulting bad
 parameter set is null.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

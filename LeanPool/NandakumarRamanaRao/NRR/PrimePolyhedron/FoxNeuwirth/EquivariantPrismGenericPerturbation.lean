@@ -31,7 +31,7 @@ retains half of that margin, while polynomial nonvanishing gives facet regularit
 codimension-two avoidance on every refined prism simplex.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

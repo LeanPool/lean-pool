@@ -56,7 +56,7 @@ The geometric simplex is the convex hull of the vertex tuple, and
  subdivision of `Δⁿ` has diameter `< ε`.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 open Finset Metric

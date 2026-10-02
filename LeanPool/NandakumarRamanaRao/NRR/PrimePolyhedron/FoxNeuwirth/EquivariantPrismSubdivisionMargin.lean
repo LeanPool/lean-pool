@@ -30,7 +30,7 @@ refinement level `L` must subsequently be increased.  This permits later argumen
 common spatial subdivision for endpoint data first and then refine the entire homotopy prism.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

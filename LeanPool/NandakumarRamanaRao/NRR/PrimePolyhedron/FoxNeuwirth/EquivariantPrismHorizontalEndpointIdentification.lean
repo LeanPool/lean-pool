@@ -17,7 +17,7 @@ reindexes each horizontal contribution as the positive-ray count on the correspo
 triangulation.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

@@ -18,7 +18,7 @@ coordinate-replacement and reconstruction lemmas needed by the incidence
 argument.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

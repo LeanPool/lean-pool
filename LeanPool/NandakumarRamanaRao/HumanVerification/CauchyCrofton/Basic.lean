@@ -24,7 +24,7 @@ It records their behaviour under translations and positive dilations and an elem
 squeeze lemma in `ℝ≥0∞`.
 -/
 
-@[expose] public section
+public section
 
 open Set MeasureTheory
 open scoped ENNReal NNReal Pointwise

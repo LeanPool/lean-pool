@@ -32,7 +32,7 @@ Implemented here:
  they live here next to the quotient rather than in `Covering.lean`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

@@ -27,7 +27,7 @@ to be the characteristic function of one quotient-facet class gives the pointwis
 identity needed by the global Fox--Neuwirth collar.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

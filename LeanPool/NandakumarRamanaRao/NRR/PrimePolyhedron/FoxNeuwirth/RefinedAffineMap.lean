@@ -21,7 +21,7 @@ representative together with a word of barycentric-subdivision permutations.  A 
 coordinate map is sampled at the vertices of that refined simplex and extended affinely.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

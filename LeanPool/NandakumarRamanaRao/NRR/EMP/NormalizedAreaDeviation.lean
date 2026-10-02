@@ -23,7 +23,7 @@ This is the finite-dimensional map to which the eventual degree / outward-pointi
 for existence of equal-area power weights is applied.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody
 

@@ -35,7 +35,7 @@ then proves
 This module proves the permutation-sign identity used by the boundary-chain theorem.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 open Equiv Equiv.Perm

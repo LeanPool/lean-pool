@@ -32,7 +32,7 @@ and `subChainComplex R X (↑U ∩ ↑V)` are the singular chains supported in `
 `V` and `U ∩ V` respectively.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology
 open SphereOddDegree.AffineBarycentricSubdivision

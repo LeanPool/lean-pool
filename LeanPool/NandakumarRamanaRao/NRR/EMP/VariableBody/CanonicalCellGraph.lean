@@ -30,7 +30,7 @@ and the selected weight, through `continuous_normalizedWeight_compactFamily`) to
 closedness of `≤`. Hence `y` lies in the limiting cell.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody
 open scoped RealInnerProductSpace

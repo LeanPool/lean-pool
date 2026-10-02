@@ -22,7 +22,7 @@ The construction does not divide by the group order.  This is essential in chara
 where the prime symmetry group has order divisible by `p`.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

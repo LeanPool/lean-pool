@@ -28,7 +28,7 @@ No new metric, hyperspace topology, or convex-body type is introduced: everythin
 from the root Mathlib body and its Hausdorff metric.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Metric TopologicalSpace Filter Topology
 

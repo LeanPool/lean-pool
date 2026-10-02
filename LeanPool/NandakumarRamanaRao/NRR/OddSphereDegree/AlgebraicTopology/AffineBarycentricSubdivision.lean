@@ -34,7 +34,7 @@ This deliberately does **not** claim the chain-level boundary identity or the
 subdivision chain homotopy. Those are separate later files.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 open Finset

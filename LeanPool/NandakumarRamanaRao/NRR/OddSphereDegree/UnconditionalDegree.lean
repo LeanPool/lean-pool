@@ -18,7 +18,7 @@ invariance APIs from that setup. Unconditional instances of both fields are cons
 and re-exported through `SphereOddDegree.Final`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

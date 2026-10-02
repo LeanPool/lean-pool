@@ -27,7 +27,7 @@ that closeness there gives closeness of the reconstructed full assignment while 
 horizontal boundary literally.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

@@ -18,7 +18,7 @@ that target by one global movable-parameter assignment.  This is the algebraic a
 concrete endpoint-stack facet witnesses.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 open FoxNeuwirthOrderComplex

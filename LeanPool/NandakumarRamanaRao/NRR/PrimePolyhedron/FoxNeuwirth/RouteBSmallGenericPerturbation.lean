@@ -23,7 +23,7 @@ The incidence analysis is organized by positive support:
 Step 5 supplies the bad-set nullity certificates internally.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

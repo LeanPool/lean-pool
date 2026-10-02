@@ -20,7 +20,7 @@ results from that bundle. Later sphere-homology modules construct the
 unconditional orientation used by the public final theorem.
 -/
 
-@[expose] public section
+public section
 noncomputable section
 
 open CategoryTheory AlgebraicTopology

@@ -31,7 +31,7 @@ upper-end prism from the S5 reference map.  It does not contain a separator or a
 constancy as a field.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

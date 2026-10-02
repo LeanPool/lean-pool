@@ -15,7 +15,7 @@ public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology
 
 /-! # Mayer Vietoris SES -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology Limits TopologicalSpace
 open SphereOddDegree.AffineBarycentricSubdivision

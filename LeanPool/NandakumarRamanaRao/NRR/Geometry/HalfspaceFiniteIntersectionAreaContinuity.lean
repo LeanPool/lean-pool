@@ -56,7 +56,7 @@ Continuity for an arbitrary topological domain `α` is then obtained by composin
 continuous offset map `c : α → ι → ℝ`, so no first-countability hypothesis on `α` is needed.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 open scoped RealInnerProductSpace

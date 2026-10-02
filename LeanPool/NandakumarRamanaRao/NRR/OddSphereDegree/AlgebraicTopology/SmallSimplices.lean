@@ -42,7 +42,7 @@ This file deliberately does **not** prove smallness of barycentric subdivision;
 that belongs to downstream modules.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology
 open SphereOddDegree.AffineBarycentricSubdivision

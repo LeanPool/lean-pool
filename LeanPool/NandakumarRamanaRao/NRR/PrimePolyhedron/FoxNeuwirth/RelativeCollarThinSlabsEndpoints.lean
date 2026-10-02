@@ -18,7 +18,7 @@ pairing identities, exhaustiveness, and representative geometry required by
 `EndpointIdentifiedRelativeAffineCollar`.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

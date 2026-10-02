@@ -26,7 +26,7 @@ module identifies its horizontal facet quotient with `RefinedAffineMap.TopCell h
 packages the exact signed incidence formula.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

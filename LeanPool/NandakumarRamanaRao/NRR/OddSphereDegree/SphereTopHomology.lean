@@ -17,7 +17,7 @@ to a selected top-homology isomorphism. Positive-dimensional unconditional insta
 from the Mayer--Vietoris suspension computation and re-exported by the final API.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology
 

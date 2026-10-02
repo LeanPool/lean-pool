@@ -28,7 +28,7 @@ by the separator structure; these two facts drive the sign laws through the `Met
 wrappers.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

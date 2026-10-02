@@ -24,7 +24,7 @@ and is handled
 by the boundary-cancellation theorems.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

@@ -29,7 +29,7 @@ matching the (always true) inequality `powerDist s w i x ≤ powerDist s w i x`.
 This yields the exact intersection‑of‑half‑spaces representation of each power cell.
 -/
 
-@[expose] public section
+public section
 
 open NRR
 open scoped RealInnerProductSpace

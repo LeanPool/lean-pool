@@ -22,7 +22,7 @@ identifies the local affine interpolation with evaluation of the same chart map 
 image of the cell, so zero-freeness is inherited without a new estimate.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

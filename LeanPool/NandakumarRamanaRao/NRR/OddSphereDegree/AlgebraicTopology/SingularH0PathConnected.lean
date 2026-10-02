@@ -15,7 +15,7 @@ public import Mathlib.Tactic
 
 /-! # Singular H0Path Connected -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology Limits
 open SphereOddDegree

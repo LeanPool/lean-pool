@@ -34,7 +34,7 @@ The three partition obligations are discharged from the set‑level power‑diag
 * `EMP.powerPartition_nullOverlap` — distinct pieces overlap only on a null set.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry MeasureTheory
 

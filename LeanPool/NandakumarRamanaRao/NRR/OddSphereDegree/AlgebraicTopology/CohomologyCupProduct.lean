@@ -43,7 +43,7 @@ of the classes of two cocycles is the class of their cochain cup.
 The module exports the cohomology-level product and its functoriality laws.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory Limits AlgebraicTopology SphereOddDegree.AlexanderWhitney
 

@@ -18,7 +18,7 @@ chosen top-homology isomorphism or orientation; later modules supply the uncondi
 positive-dimensional orientation.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

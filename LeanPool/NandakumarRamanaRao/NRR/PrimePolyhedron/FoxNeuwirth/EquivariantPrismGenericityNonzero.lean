@@ -24,7 +24,7 @@ identity deviation matrix.  Evaluation at the corresponding assignments proves t
 polynomial families, and hence the combined family, are nonzero.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

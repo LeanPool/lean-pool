@@ -16,7 +16,7 @@ The pointwise boundary identity from `RelativeSubdivisionOneStepBoundary` is pac
 level-`N+1` refined Fox--Neuwirth chains.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

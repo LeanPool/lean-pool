@@ -26,7 +26,7 @@ and continuity lemmas. Each operation records its evaluation law and the corresp
 zero-set/zero relation identity.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

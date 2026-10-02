@@ -17,7 +17,7 @@ For a refined `(p-1)`-simplex, its product with the unit interval is triangulate
 barycentric refinement.  These charts are the finite domain on which the S6 PL homotopy is sampled.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

@@ -35,7 +35,7 @@ continuity core.
 * `continuous_areaVec_normalizedWeight_compactFamily` — continuity of the selected area vector.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody
 

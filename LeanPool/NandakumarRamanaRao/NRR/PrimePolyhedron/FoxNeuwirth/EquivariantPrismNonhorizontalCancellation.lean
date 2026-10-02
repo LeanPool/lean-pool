@@ -32,7 +32,7 @@ the result is a consequence of the explicit subdivision signs, staircase signs, 
 proved orbit-cycle boundary identity.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

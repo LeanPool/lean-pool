@@ -21,7 +21,7 @@ A continuous homogeneous gauge detects both components.  Its restriction to the
 Euclidean unit sphere has a positive minimum, giving a uniform outward radius.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

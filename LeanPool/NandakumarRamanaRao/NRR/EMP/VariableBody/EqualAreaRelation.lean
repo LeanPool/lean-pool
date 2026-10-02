@@ -23,7 +23,7 @@ site family yields the closed normalized-weight graph over any topological param
   site family.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody
 

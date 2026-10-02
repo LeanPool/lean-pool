@@ -59,7 +59,7 @@ Everything is stated for a general `CommRing R`, with coefficients in `R` itself
 abbreviations; over `ZMod 2` the Koszul sign in the Leibniz rule is trivial.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology Limits SphereOddDegree.AlexanderWhitney
 

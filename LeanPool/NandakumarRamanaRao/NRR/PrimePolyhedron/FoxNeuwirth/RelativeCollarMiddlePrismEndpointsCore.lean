@@ -17,7 +17,7 @@ independent of the stable endpoint interpolation and global Stokes modules, so b
 endpoint cells without an import cycle.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

@@ -74,7 +74,7 @@ of the diagonal.
  space (`awPair_naturality`).
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory MonoidalCategory AlgebraicTopology Simplicial SimplexCategory
 

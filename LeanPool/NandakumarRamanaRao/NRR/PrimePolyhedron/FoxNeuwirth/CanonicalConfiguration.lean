@@ -17,7 +17,7 @@ block number and the second coordinate is the permutation rank.  This realizes e
 Fox--Neuwirth symbol by an actual collision-free configuration and is equivariant for relabelling.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

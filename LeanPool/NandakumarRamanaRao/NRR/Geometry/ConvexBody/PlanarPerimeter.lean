@@ -44,7 +44,7 @@ Only `PlanarCircle.lean` is imported; it transitively provides all of Mathlib to
 `circleVec` and width-function APIs. No extra imports are required.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR.Geometry
 

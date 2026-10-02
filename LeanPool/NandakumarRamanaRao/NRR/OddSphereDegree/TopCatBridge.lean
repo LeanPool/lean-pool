@@ -19,7 +19,7 @@ homeomorphism and categorical isomorphism, and transports continuous maps
 between the models with identity and composition laws.
 -/
 
-@[expose] public section
+public section
 noncomputable section
 
 open CategoryTheory

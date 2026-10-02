@@ -30,7 +30,7 @@ The chain-map condition is exactly the boundary-commutation identity
  `barycentricSubdivisionGenerator R X n σ`.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 open CategoryTheory AlgebraicTopology Simplicial SimplexCategory Limits

@@ -67,7 +67,7 @@ therefore stops exactly at the last formalized object before `α`, plus the
  fundamental-group form of the eventual `fbar^*(α) = α`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

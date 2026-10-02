@@ -28,7 +28,7 @@ this finite Stokes theorem.  It requires the boundary assignment to equal the tw
 endpoint maps on all frozen horizontal vertices.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

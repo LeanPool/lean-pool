@@ -18,7 +18,7 @@ to reversed global vertices.  Local vertex maps are unchanged, so origin avoidan
 literally.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

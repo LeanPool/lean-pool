@@ -30,7 +30,7 @@ that an ordinary simplicial cycle produces a finite incidence cycle.  The later 
 instantiate the same interface with orbit representatives and quotient incidences.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

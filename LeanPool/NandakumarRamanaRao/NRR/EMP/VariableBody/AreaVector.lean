@@ -24,7 +24,7 @@ an equal-area weight assigns to every cell.
 * `continuous_targetArea` — continuity of the average area in the parent subbody.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody
 

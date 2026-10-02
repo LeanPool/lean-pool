@@ -29,7 +29,7 @@ The output is kept in `Fin n → ℝ`; no projection to a zero-sum representatio
 and no common zero, equivariance, or obstruction result is assumed.
 -/
 
-@[expose] public section
+public section
 
 open NRR.Geometry
 

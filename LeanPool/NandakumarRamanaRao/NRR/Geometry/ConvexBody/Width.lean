@@ -39,7 +39,7 @@ normals `u` and `-u`, scaled by `‖u‖`).
 are required here.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR.Geometry
 

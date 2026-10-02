@@ -21,7 +21,7 @@ This module provides the endpoint elements (`left`, `center`, `right`), the coor
 `vertical` used to build separator fibers.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

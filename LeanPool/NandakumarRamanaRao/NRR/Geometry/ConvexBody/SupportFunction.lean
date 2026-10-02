@@ -45,7 +45,7 @@ imports are required here. The decisive Mathlib results used are `IsCompact.exis
 `IsGreatest.csSup_eq`, `le_csSup`, `csSup_le`, and continuity of the inner product.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR.Geometry
 

@@ -61,7 +61,7 @@ Only `SupportFunctionBasic` is imported; it transitively provides the whole `Con
 support-function, `AffineOps` and `LinearImage` API (and, through `Basic`, `import Mathlib`).
 -/
 
-@[expose] public section
+public section
 
 namespace NRR.Geometry
 

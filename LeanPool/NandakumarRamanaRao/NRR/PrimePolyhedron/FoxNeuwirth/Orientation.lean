@@ -21,7 +21,7 @@ under an arbitrary change of chosen cell orientations; it is covariant by the pr
 transport signs.  This is the correct datum needed by the later cellular mod-`p` argument.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

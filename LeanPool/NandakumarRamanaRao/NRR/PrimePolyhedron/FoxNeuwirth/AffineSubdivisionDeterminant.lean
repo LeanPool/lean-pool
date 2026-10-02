@@ -13,7 +13,7 @@ public import Mathlib.LinearAlgebra.Matrix.Permutation
 
 /-! # Affine Subdivision Determinant -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 open SphereOddDegree

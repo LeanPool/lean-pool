@@ -15,7 +15,7 @@ The body and signed-interval coordinates are fixed; only the model point is move
 symmetry group. Named maps are used instead of global product-action instances.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

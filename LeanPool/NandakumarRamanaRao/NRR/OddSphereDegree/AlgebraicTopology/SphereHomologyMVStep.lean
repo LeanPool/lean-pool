@@ -25,7 +25,7 @@ positive homology vanishes, and the Mayer–Vietoris connecting isomorphism
 `Hₙ(Sⁿ)`.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology Limits Metric
 open SphereOddDegree.AffineBarycentricSubdivision

@@ -40,7 +40,7 @@ unit-sphere subtype), we parameterize directions by the interval `[0, 2π]` via 
 The width-function continuity API and interval-integrability lemmas are imported directly.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR.Geometry
 

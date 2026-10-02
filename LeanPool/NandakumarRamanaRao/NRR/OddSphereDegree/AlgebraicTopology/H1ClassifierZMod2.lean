@@ -62,7 +62,7 @@ producing a class `α ∈ H¹(RPⁿ; F₂)` from the monodromy character, togeth
 degree-one Hurewicz comparison `π₁(X)ᵃᵇ ≅ H₁(X; ℤ)`).
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology Limits
 

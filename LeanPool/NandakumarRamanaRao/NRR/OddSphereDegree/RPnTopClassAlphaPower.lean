@@ -19,7 +19,7 @@ descended odd sphere map. Later modules identify the actual projective
 cohomology generator and its powers with this model.
 -/
 
-@[expose] public section
+public section
 noncomputable section
 
 open CategoryTheory AlgebraicTopology

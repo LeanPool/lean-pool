@@ -39,7 +39,7 @@ degree-`n` universal coefficient theorem over `F₂` for the library's own singu
 * `kroneckerEquiv X n` — the universal coefficient isomorphism over `F₂`.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology Limits
 

@@ -22,7 +22,7 @@ all barycentric top simplices, and recursively triangulated side cylinders. Ever
 is then coned to the central point `(barycenter, 1 / 2)`.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

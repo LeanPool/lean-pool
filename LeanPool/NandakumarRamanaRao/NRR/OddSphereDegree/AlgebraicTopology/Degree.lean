@@ -22,7 +22,7 @@ chosen orientation isomorphism. Unconditional orientation data is supplied by
 later sphere-homology modules.
 -/
 
-@[expose] public section
+public section
 noncomputable section
 
 open CategoryTheory

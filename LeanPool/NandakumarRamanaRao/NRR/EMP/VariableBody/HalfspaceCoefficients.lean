@@ -31,7 +31,7 @@ intersected with the intersection of these halfspaces, both over all `j` and ove
 later indicator-convergence arguments apply the subbody membership-stability theorem directly.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody
 open scoped RealInnerProductSpace

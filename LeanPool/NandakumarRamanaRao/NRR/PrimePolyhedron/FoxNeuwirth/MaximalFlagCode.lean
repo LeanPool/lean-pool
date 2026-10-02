@@ -33,7 +33,7 @@ uses the explicit reindexing equivalence `eQ hp : Fin (p - 2 + 1) ≃ Fin (p - 1
 first-cut labels use `ePp hp : Fin (p - 1 + 1) ≃ Fin p`.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

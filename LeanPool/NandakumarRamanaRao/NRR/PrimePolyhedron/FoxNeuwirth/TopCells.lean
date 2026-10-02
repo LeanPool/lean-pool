@@ -16,7 +16,7 @@ canonically equivalent to the full permutation group.  The prime symmetry action
 restriction of relabelling on this permutation torsor.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

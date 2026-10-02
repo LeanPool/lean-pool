@@ -22,7 +22,7 @@ body/site bound.  Consequently the scalar pairing of the weight vector with its 
 vector is at least `(M - C) * K.area`.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry MeasureTheory
 

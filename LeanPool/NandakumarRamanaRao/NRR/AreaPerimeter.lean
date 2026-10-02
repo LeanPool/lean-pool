@@ -24,7 +24,7 @@ for explicitly parameterized convex-body families with jointly continuous angle-
 No topology on the type of all convex bodies is assumed.
 -/
 
-@[expose] public section
+public section
 
 open NRR
 open scoped RealInnerProductSpace

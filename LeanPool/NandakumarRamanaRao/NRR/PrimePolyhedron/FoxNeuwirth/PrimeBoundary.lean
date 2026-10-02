@@ -18,7 +18,7 @@ prime `p` and `0 < k < p`, this coefficient is divisible by `p`; this is the ari
 sum of the top dual cells is a cycle modulo `p`.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

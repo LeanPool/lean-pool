@@ -18,7 +18,7 @@ pairing of the first collar and lower boundary pairing of the second collar are 
 Fox--Neuwirth chain, hence cancel pointwise after regrouping by combined quotient facets.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

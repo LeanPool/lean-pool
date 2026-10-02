@@ -50,7 +50,7 @@ Following the library-wide policy, `Basic.lean` already pulls in `import Mathlib
 imports are required here.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR.Geometry
 

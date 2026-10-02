@@ -30,7 +30,7 @@ The local boundary theorem is rank-two internal cancellation.  It is isolated be
 explicit finite statement about the actual chain, rather than hidden in a geometric certificate.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

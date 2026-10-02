@@ -10,7 +10,7 @@ public import LeanPool.NandakumarRamanaRao.HumanVerification.InternalModel
 
 /-! # Cauchy Crofton Statement -/
 
-@[expose] public section
+public section
 
 open Set MeasureTheory
 

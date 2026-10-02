@@ -21,7 +21,7 @@ Fox--Neuwirth incidences.  The nontrivial statement is that the oriented top cha
 kernel of the genuine top-to-facet incidence map; this is supplied by the facet--shuffle theorem.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

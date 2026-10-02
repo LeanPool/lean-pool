@@ -27,7 +27,7 @@ vertices is immediate.  The inclusion `r⁻¹ • K ⊆ P` follows from two elem
   `L * cos (δ / 2)`, where `δ` is the angle subtended by the chord.
 -/
 
-@[expose] public section
+public section
 
 open Set MeasureTheory NRR.Geometry
 open scoped ENNReal NNReal Pointwise

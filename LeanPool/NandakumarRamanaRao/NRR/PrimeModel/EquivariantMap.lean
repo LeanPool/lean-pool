@@ -15,7 +15,7 @@ This file deliberately stays below the PL and obstruction-theory layers. It reco
 pointwise equations needed by the configuration-model construction.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

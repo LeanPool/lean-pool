@@ -26,7 +26,7 @@ normalizedPerimeter C`, following the fixed sign convention (negative at `-1`, p
 zero relation is exactly `(t : ℝ) = normalizedPerimeter C`.
 -/
 
-@[expose] public section
+public section
 
 open NRR.Geometry
 

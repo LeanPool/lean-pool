@@ -12,7 +12,7 @@ public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.PositiveArea
 # The full parent body as a hyperspace point
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

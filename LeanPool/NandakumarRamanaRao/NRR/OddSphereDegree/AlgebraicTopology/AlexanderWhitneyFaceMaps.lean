@@ -65,7 +65,7 @@ only at the cochain coboundary level. Over `ZMod 2` all signs are
 extra work.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory MonoidalCategory AlgebraicTopology Simplicial SimplexCategory
 

@@ -19,7 +19,7 @@ estimate.  Consequently, outside the projected full-zero set, nearby frozen chil
 by a zero-free straight-line homotopy.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

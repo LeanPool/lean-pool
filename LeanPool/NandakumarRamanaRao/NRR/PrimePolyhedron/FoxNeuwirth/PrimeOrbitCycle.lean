@@ -24,7 +24,7 @@ unconditional top-flag cycle.  The resulting finite incidence cycle has one top 
 per prime-symmetry orbit and is the correct input for orbit-level zero counts.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

@@ -17,7 +17,7 @@ The definitions here should eventually be aligned with whichever sphere API is
 most convenient for the full formalization, possibly `TopCat.sphere n`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

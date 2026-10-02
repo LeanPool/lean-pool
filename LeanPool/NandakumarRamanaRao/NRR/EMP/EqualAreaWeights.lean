@@ -64,7 +64,7 @@ theorem EMP.equalArea_weights_unique
 ```
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody
 

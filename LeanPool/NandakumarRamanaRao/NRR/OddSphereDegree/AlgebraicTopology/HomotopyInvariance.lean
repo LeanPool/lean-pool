@@ -18,7 +18,7 @@ invariance statements for integral singular homology from it. A concrete proof i
 reusable conditional API.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology
 

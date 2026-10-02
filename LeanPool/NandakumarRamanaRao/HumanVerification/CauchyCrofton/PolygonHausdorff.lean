@@ -17,7 +17,7 @@ segment is the distance between its endpoints.  Hence the Hausdorff perimeter of
 the sum of its edge lengths.
 -/
 
-@[expose] public section
+public section
 
 open Set MeasureTheory NRR.Geometry
 open scoped ENNReal NNReal Pointwise

@@ -34,7 +34,7 @@ The two internal pairings act transparently on this model:
 Consequently the paired maximal flags have literally equal deleted faces.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

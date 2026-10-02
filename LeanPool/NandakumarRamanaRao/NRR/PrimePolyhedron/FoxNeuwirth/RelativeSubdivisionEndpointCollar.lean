@@ -18,7 +18,7 @@ upper endpoint. Composing the lower stack with that reversed upper stack gives a
 endpoint-identified affine collar for any two subdivision levels.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

@@ -28,7 +28,7 @@ gives it positive area (indeed nonempty interior). The cell area equals the targ
 `z.1.body.area / n`.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody
 

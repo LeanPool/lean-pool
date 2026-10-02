@@ -20,7 +20,7 @@ lifts.  The positive lift has exactly the S5 orbit count; the negative lift has 
 intersections.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

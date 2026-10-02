@@ -26,7 +26,7 @@ We also record the planar cross product and the trigonometric identity expressin
 lying between two others as a nonnegative combination of them.
 -/
 
-@[expose] public section
+public section
 
 open Set MeasureTheory NRR.Geometry
 open scoped ENNReal NNReal Pointwise

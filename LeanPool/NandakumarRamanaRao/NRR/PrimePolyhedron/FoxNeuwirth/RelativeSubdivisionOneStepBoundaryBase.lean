@@ -23,7 +23,7 @@ The radial-facet cancellation and the recursive-side vanishing over the Fox--Neu
 are proved in the boundary-cancellation module.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

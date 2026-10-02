@@ -12,7 +12,7 @@ public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.BallBoundaryLES
 
 /-! # Sub Chain Subspace Bridge -/
 
-@[expose] public section
+public section
 open scoped BigOperators
 open CategoryTheory AlgebraicTopology Simplicial SimplexCategory Limits
 open SphereOddDegree.AffineBarycentricSubdivision

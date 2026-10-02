@@ -23,7 +23,7 @@ obstruction theory, or quotient spaces, and it does not make `AddCommGroup`/`Mod
 structure mandatory.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

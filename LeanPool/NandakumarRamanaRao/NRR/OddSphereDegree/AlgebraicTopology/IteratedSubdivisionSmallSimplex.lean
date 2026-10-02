@@ -47,7 +47,7 @@ and the whole chain to lie in the small-chain submodule.
   `sdᴺ([σ])` lies in `smallChainSubmodule`.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 open CategoryTheory AlgebraicTopology Finset

@@ -11,7 +11,7 @@ public import LeanPool.NandakumarRamanaRao.HumanVerification.EqualAreaEqualPerim
 
 /-! # Main -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

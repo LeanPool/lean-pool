@@ -19,7 +19,7 @@ Defines lower and upper halfspace-cut areas for a planar convex body and proves 
 monotonicity and endpoint properties. The compatibility name `cutArea` denotes the lower cut area.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 open scoped RealInnerProductSpace

@@ -23,7 +23,7 @@ interpolation of the samples remain within half that margin.  The resulting midd
 assignment is origin-free and its two horizontal boundaries are the exact endpoint chart maps.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

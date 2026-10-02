@@ -21,7 +21,7 @@ quotient-facet level, while the geometric theorems are stated for arbitrary repr
 canonical occurrences.  The signed boundary formula is supplied in the following module.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

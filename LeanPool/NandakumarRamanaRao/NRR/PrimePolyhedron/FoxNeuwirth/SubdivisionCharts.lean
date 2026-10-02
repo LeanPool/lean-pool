@@ -23,7 +23,7 @@ global barycentric carrier.  Precomposing this chart with an iterated affine sub
 the refined simplex charts used in the S6 approximation theorem.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

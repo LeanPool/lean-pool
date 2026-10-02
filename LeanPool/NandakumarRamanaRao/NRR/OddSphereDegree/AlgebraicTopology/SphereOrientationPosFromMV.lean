@@ -33,7 +33,7 @@ positive-dimensional `SphereOrientationPos`.
 The construction is assembled from the Mayer–Vietoris results.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

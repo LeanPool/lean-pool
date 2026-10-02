@@ -28,7 +28,7 @@ endpoints with the alternating facet determinants.  The full-origin avoidance hy
 coordinate mean have a constant sign along the interval.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

@@ -29,7 +29,7 @@ This compact box is the intended codomain for the equal-area weight selection, w
 together with uniqueness will yield continuity of the selection.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR.EMP.VariableBody
 

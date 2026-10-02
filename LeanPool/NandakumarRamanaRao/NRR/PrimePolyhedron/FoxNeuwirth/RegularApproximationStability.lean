@@ -19,7 +19,7 @@ This module introduces the transversality condition required by the endpoint-com
 Existence and comparison are established by the downstream collar modules.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

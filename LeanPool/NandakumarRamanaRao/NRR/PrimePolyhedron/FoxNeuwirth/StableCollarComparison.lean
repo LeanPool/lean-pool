@@ -22,7 +22,7 @@ collar for arbitrary endpoint triangulations is deliberately separated as
 leaves both endpoint triangulations unchanged.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

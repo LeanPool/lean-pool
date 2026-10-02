@@ -22,7 +22,7 @@ recovers the local cell values and cellwise origin avoidance.  No compatibility 
 hidden: the required compatibility theorem is `OneStepLastVertexCompatible`.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

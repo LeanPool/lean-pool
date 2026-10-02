@@ -36,7 +36,7 @@ specific Fox--Neuwirth orbit cycle and identify their horizontal chains with the
 approximations.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

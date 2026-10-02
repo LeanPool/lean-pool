@@ -22,7 +22,7 @@ and the signed interval is connected, so the continuous image contains `0`. No z
 introduced; only existence is proved. Zeros never occur at either endpoint, by the strict signs.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

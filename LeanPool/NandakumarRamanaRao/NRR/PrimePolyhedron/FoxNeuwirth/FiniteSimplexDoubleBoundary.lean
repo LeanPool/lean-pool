@@ -18,7 +18,7 @@ vertex in the remaining ordered set. Reindexing by the corresponding ordered pai
 original vertices makes the cancellation involution simply swap the two vertices.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

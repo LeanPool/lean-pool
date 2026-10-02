@@ -18,7 +18,7 @@ concrete suspension tower and the resulting unconditional orientation are constr
 Mayer--Vietoris sphere-homology modules.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology
 

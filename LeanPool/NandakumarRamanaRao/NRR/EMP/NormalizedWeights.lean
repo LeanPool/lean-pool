@@ -38,7 +38,7 @@ exist.
  existence theorem `EMP.exists_equalArea_weights` with the two facts above.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody
 

@@ -27,7 +27,7 @@ with chain support.  Compactness, simplex charts, the prime action on that carri
 collision-free map into configuration space are the associated geometric constructions.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

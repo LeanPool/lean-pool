@@ -29,7 +29,7 @@ No equal-area assumption, test map, or continuity statement is introduced here: 
 purely the definitional perimeter API.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

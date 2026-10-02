@@ -26,7 +26,7 @@ Given `n` sites `s : Fin n → E2` and weights `w : Fin n → ℝ`, the power ce
 `{x : ∀ j, ‖x - sᵢ‖² - wᵢ ≤ ‖x - sⱼ‖² - wⱼ}`.
 -/
 
-@[expose] public section
+public section
 
 open NRR MeasureTheory
 

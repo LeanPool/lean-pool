@@ -15,7 +15,7 @@ An arbitrary nice multivalued function is evaluated on all equal-area children. 
 coordinate vector is continuous and transforms by coordinate relabelling.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

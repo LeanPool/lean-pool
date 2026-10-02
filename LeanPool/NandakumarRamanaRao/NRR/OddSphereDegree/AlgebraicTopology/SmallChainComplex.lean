@@ -51,7 +51,7 @@ C_*^𝒰(X; R) ⟶ C_*(X; R).
 We do **not** prove here that `smallChainsInclusion` is a quasi-isomorphism.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology
 open SphereOddDegree.AffineBarycentricSubdivision

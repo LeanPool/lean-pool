@@ -62,7 +62,7 @@ Splitting the inner face index `i` into internal faces `i = castSucc i'`
  sum onto `sd (∂ σ)`.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 open CategoryTheory AlgebraicTopology Simplicial SimplexCategory Limits

@@ -22,7 +22,7 @@ This compatibility module re-exports the implemented convex-body support functio
 stable public names. All substantive proofs live under `NRR.Geometry.ConvexBody`.
 -/
 
-@[expose] public section
+public section
 
 open scoped RealInnerProductSpace
 

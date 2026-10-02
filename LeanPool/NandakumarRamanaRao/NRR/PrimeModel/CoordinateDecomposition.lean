@@ -9,7 +9,7 @@ module
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.ZeroSumAlgebra
 /-! # Mean/deviation decomposition -/
 
-@[expose] public section
+public section
 namespace NRR
 open scoped BigOperators
 variable {n : ℕ}

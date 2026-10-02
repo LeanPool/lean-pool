@@ -16,7 +16,7 @@ public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 map, and permutations act by precomposition with `σ.symm`. The action is continuous and free.
 -/
 
-@[expose] public section
+public section
 
 open NRR
 

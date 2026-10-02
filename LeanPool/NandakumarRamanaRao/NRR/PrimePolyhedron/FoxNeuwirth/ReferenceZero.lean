@@ -22,7 +22,7 @@ and two orbits for odd primes, because the chosen group is respectively `S_2` an
 each orbit local coefficient `1` produces the nonzero reference count used in the prime argument.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

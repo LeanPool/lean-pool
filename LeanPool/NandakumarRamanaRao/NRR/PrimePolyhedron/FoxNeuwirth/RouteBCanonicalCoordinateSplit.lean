@@ -22,7 +22,7 @@ This construction
 requires no additional coordinate-equivalence hypothesis.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

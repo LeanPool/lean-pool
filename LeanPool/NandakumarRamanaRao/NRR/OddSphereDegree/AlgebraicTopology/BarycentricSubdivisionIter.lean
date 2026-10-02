@@ -11,7 +11,7 @@ public import Mathlib.Tactic
 
 /-! # Barycentric Subdivision Iter -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 open CategoryTheory AlgebraicTopology Simplicial SimplexCategory Limits

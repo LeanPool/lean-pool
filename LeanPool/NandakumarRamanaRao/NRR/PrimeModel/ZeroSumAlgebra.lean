@@ -16,7 +16,7 @@ zero. This module equips it with the pointwise additive and real-linear structur
 coordinate-sum linear map.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

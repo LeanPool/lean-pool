@@ -46,7 +46,7 @@ No existence of equal‑area weights and no topological‑degree/obstruction arg
 proved here.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody
 

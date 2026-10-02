@@ -22,7 +22,7 @@ approximation.  Reversing an upper stack therefore supplies the exact upper hori
 the final collar.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

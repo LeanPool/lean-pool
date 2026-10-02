@@ -20,7 +20,7 @@ construction. The cobordism theorem establishes the required lower and upper reg
 complement.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

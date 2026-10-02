@@ -23,7 +23,7 @@ coefficient is nonzero, the bad fiber is contained in a singleton and therefore
 has Lebesgue measure zero.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

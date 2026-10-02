@@ -15,7 +15,7 @@ The strict endpoint signs of a nice multivalued function place the child test ma
 orthant at `-1` and the positive orthant at `1`.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

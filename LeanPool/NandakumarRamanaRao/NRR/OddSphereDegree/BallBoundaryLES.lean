@@ -21,7 +21,7 @@ route; the unconditional sphere top-homology theorem used by the public API is o
 the Mayer--Vietoris suspension construction.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory AlgebraicTopology Limits
 

@@ -15,7 +15,7 @@ it is the alternating group. The prime configuration model uses this constructio
 cardinality.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

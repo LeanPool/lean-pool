@@ -49,7 +49,7 @@ degree equality via the cochain degree cast `cochainCast`.
 * `aw_cochain_leibniz_zmod2` — the Leibniz / chain-map identity over `ZMod 2`.
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory MonoidalCategory AlgebraicTopology Simplicial SimplexCategory
 open SphereOddDegree.AlexanderWhitney

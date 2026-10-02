@@ -24,7 +24,7 @@ needed by downstream collar/Stokes constructions:
   origin avoidance, and full positive-ray general position.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

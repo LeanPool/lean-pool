@@ -18,7 +18,7 @@ permutations and proves the affine compatibility identity used by both the stabl
 interpolant and the explicit middle collar.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

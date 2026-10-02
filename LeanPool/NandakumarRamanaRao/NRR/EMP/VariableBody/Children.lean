@@ -25,7 +25,7 @@ as a genuine element of the lower-area hyperspace `BodySpace K (A / (n : ℝ))`.
   a direct composition through the solid bridge `BodySpace.toGeometryConvexBody`.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody
 open Filter Topology

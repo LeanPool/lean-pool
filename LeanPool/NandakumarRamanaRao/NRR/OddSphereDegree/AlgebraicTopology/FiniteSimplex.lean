@@ -18,7 +18,7 @@ space. The equivalence below identifies these coordinates with Mathlib's
 finitely supported simplex without changing their pointwise values.
 -/
 
-@[expose] public section
+public section
 
 open Set Convexity
 

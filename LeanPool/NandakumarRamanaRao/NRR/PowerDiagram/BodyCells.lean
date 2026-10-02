@@ -30,7 +30,7 @@ restricted cell can be empty or lower‑dimensional, so it need not be a solid c
 Partition properties of the family `i ↦ bodyCellSet K s w i` are out of scope here.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry MeasureTheory
 

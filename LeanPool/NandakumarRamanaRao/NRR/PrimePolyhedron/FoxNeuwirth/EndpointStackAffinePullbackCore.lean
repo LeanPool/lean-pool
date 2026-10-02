@@ -26,7 +26,7 @@ This file proves the complete simplex-local statement.  Global iteration only ne
 face-gluing theorem saying that the parent PL values agree on shared refined faces.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

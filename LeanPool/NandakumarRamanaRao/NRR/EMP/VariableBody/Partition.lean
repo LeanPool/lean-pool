@@ -31,7 +31,7 @@ dependent `partition` field is *not* asserted to be continuous, and no topology 
   as consumed by the prime-refinement layer.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry NRR.Geometry.ConvexBody MeasureTheory
 

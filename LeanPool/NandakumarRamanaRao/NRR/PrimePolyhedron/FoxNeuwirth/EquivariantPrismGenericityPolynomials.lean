@@ -30,7 +30,7 @@ assignment.  A final sum type packages the two finite families for direct use wi
 `FiniteMultivariateGenericPerturbation.exists_small_positive_generic`.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

@@ -16,7 +16,7 @@ This file instantiates the generic compactness theorem of
 `StableFullCollarConstructionAffinePullback`.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

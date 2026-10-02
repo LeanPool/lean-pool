@@ -27,7 +27,7 @@ The cyclic ordering of the vertices is therefore supplied by the construction; n
 combinatorial analysis of an arbitrary finite planar point set is needed.
 -/
 
-@[expose] public section
+public section
 
 open Set MeasureTheory NRR.Geometry
 open scoped ENNReal NNReal Pointwise

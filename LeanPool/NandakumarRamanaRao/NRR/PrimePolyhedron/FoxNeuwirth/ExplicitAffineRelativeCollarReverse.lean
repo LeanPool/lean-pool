@@ -17,7 +17,7 @@ performs that construction at the level of explicit affine cells, quotient facet
 incidence, and endpoint-chain identification.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 namespace FoxNeuwirthOrderComplex

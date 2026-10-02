@@ -34,7 +34,7 @@ codimension-two minors are governed by stable endpoint transversality rather tha
 genericity family.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

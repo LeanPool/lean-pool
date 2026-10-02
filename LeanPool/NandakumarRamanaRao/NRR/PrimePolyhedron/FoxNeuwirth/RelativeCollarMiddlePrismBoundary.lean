@@ -24,7 +24,7 @@ required pointwise incidence formula.  The resulting object is a genuine
 `FoxNeuwirthRelativeAffineCollar` at the common endpoint level `N + L`.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

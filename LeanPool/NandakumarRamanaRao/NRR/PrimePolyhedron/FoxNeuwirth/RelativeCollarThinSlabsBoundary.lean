@@ -19,7 +19,7 @@ prism.  The upper endpoint term of slab `r` is literally the lower endpoint term
 the finite sum telescopes.  Only time zero and time one remain.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

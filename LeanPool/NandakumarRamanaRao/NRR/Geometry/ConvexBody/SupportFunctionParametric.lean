@@ -62,7 +62,7 @@ We therefore take the two-pronged approach the design allows:
 * `supportFunction_continuous_family_on_unit_directions`
 -/
 
-@[expose] public section
+public section
 
 namespace NRR.Geometry
 

@@ -22,7 +22,7 @@ prime cycle theorem reduces to the concrete shuffle-cardinality statement for co
 cells.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 

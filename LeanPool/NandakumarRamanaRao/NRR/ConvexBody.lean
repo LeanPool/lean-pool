@@ -38,7 +38,7 @@ Every geometry `ConvexBody` is already solid, so `IsSolid`/`SolidConvexBody` are
 downstream compatibility rather than as genuine extra data.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 

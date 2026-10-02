@@ -33,7 +33,7 @@ equal‑area (`EMP.normalizedWeight_isEqualArea`).
 The full partition (disjointness / covering of `K`) is out of scope here.
 -/
 
-@[expose] public section
+public section
 
 open NRR NRR.Geometry MeasureTheory
 

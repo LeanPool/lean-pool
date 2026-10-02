@@ -45,7 +45,7 @@ boundary. The required boundary theorem is the face/sign calculation
 Only after that theorem is proved should one package `sd` as a genuine chain map.
 -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 open CategoryTheory AlgebraicTopology Simplicial SimplexCategory Limits
