@@ -123,6 +123,7 @@ def wedgeAddDivisor (G : CFGraph.{u}) (H : CFGraph.{v})
   Sum.elim (fun a => D a + if a = x then E y else 0) (fun b => E b.1)
 
 /-- Extend a left divisor by zero away from the common vertex. -/
+@[expose]
 def wedgeLiftLeftDivisor (G : CFGraph.{u}) (H : CFGraph.{v})
     (x : G.V) (y : H.V) (D : CFDiv G) : CFDiv (vertexWedge G H x y) :=
   wedgeAddDivisor G H x y D 0

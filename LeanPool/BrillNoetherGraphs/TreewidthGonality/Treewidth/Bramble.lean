@@ -101,6 +101,7 @@ theorem order_le_card_of_isHittingSet {S : Finset V} (hS : 𝔅.IsHittingSet S) 
   Nat.sInf_le ⟨S, hS, rfl⟩
 
 /-- Restricting a bramble to a subfamily of its members is again a bramble. -/
+@[expose]
 def restrict (M : Finset (Finset V)) (hM : M ⊆ 𝔅.members) : Bramble H where
   members := M
   connected_mem := fun B hB => 𝔅.connected_mem B (hM hB)

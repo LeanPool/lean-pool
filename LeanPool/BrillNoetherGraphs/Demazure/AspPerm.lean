@@ -214,6 +214,7 @@ lemma ext {σ τ : AspPerm} : σ = τ ↔ σ.func = τ.func := by
   · intro h; cases σ; cases τ; congr
 
 /-- Composition of almost sign-preserving permutations, applying the right factor first. -/
+@[expose]
 def mul (σ τ : AspPerm) : AspPerm where
   func := Function.comp σ.func τ.func
   bijective :=

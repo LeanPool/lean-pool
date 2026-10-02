@@ -104,6 +104,7 @@ private lemma sigmaFun_asp (S : Set ℤ) : isAsp (sigmaFun S) := by
 
 /-- The ASP permutation $\sigma_S$, exchanging each adjacent pair $n, n + 1$
 for $n \in S$. -/
+@[expose]
 noncomputable def sigma (S : Set ℤ) (hS : NoConsecutive S) : AspPerm where
   func := sigmaFun S
   bijective := by exact ⟨sigmaFun_injective hS, sigmaFun_surjective hS⟩

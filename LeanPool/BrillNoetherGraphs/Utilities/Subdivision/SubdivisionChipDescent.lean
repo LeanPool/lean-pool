@@ -281,6 +281,7 @@ def fineVertex (c : spec.Chip N) : (spec.scale N hN).Vertex :=
   (spec.scale N hN).pathVertex c.edge (c.finePosition hN)
 
 /-- The coarse step containing the chip. -/
+@[expose]
 def coarseStep (c : spec.Chip N) : spec.Step :=
   ⟨c.edge, ⟨c.step, c.step_lt⟩⟩
 

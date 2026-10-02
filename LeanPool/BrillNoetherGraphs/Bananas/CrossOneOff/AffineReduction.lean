@@ -50,6 +50,7 @@ theorem affineReflectionSupport_congr
   simpa only [sub_sub_sub_cancel_right] using (dvd_sub h₂ h₁)
 
 /-- The ASP permutation implementing one affine simple reflection. -/
+@[expose]
 noncomputable def affineReflection (k : ℕ) (i : ℤ) (hk : 2 ≤ k) : AspPerm :=
   Transpositions.sigma (affineReflectionSupport k i)
     (affineReflectionSupport_noConsecutive k hk i)

@@ -64,6 +64,7 @@ def bananaOfLengths (g : ℕ) (length : Fin (g + 1) → ℕ)
 /-- The vertex `v_{α,i}` at normalized position `i` along strand `α`,
 measured from multivalent vertex `0`; the stored orientation of the strand is
 reversed when necessary. -/
+@[expose]
 def strandVertex {g : ℕ} (B : Banana g) (α : Fin (g + 1))
     (i : B.PathPosition α) : B.graph.V :=
   B.pathVertex α
