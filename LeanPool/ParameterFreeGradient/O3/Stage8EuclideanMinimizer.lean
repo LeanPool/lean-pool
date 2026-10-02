@@ -32,7 +32,7 @@ contains the accumulated affine offsets. -/
   M / 2 * (lpNorm 2 (x - x₀)) ^ (2 : ℕ) + c + pairing s (x - x₀)
 
 /-- The explicit minimizer `x₀ - M⁻¹ s` of the canonical potential. -/
-noncomputable def euclideanPsiMinimizer (M : ℝ) {d : ℕ}
+@[expose] noncomputable def euclideanPsiMinimizer (M : ℝ) {d : ℕ}
     (x₀ s : Point d) : Point d :=
   x₀ - M⁻¹ • s
 

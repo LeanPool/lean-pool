@@ -53,7 +53,7 @@ structure EuclideanEstimateState (d : ℕ) where
       ⟨euclideanBarycenter A a state.accelerated zNext, sNext⟩
 
 /-- The minimizer of the quadratic estimate potential at iteration `k`. -/
-noncomputable def euclideanEstimateMinimizer {d : ℕ}
+@[expose] noncomputable def euclideanEstimateMinimizer {d : ℕ}
     (P : AdmissibleInstance d 2) (M : ℝ) (k : ℕ) : Vec d :=
   Stage8EuclideanMinimizer.euclideanPsiMinimizer M P.x0
     (euclideanEstimateState P M k).cumulativeGradient
@@ -66,7 +66,7 @@ noncomputable def euclideanEstimateMinimizer {d : ℕ}
     (euclideanEstimateMinimizer P M k)
 
 /-- The value-gradient observation at the Euclidean estimate query. -/
-noncomputable def euclideanEstimateObservation {d : ℕ}
+@[expose] noncomputable def euclideanEstimateObservation {d : ℕ}
     (P : AdmissibleInstance d 2) (M : ℝ) (k : ℕ) : Observation d :=
   P.oracle.observe (euclideanEstimateQuery P M k)
 

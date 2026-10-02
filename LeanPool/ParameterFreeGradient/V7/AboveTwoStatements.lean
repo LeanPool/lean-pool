@@ -176,7 +176,7 @@ def AbovePrimalPhaseDynamics (data : AbovePrimalPhaseData p d n) : Prop :=
       (data.dw k / data.u (k + 1)) • (data.v (k + 1) - data.v k)
 
 /-- The primal dynamics, convex gradient oracle, attained minimum, guards, and exact query trace. -/
-def AbovePrimalPhaseAssumptions (data : AbovePrimalPhaseData p d n) : Prop :=
+@[expose] def AbovePrimalPhaseAssumptions (data : AbovePrimalPhaseData p d n) : Prop :=
   AbovePrimalPhaseDynamics data ∧ O3.IsConvexObjective data.oracle.value ∧
   O3.IsCoordinateGradient data.oracle.value data.oracle.gradient ∧
   data.fstar = sInf (Set.range data.oracle.value) ∧

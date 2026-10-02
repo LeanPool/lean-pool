@@ -194,7 +194,7 @@ pairings. -/
 
 /-- The explicit quadratic weights and coefficient recurrences for the below-two residual
 identity. -/
-def BelowCoefficientAssumptions (n : ℕ) (u dw : ScalarSeq)
+@[expose] def BelowCoefficientAssumptions (n : ℕ) (u dw : ScalarSeq)
     (alpha c b : ScalarMatrix) : Prop :=
   u 0 = 1 / 4 ∧ u n = u (n - 1) ∧ dw n = 0 ∧ c 0 0 = 1 ∧ b 0 0 = -1 ∧
   (∀ k < n, u k = (((k : ℝ) + 1) ^ (2 : ℕ)) / 4 ∧
