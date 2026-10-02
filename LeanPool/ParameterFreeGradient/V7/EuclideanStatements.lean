@@ -42,6 +42,7 @@ structure EuclideanGapData (d m : ℕ) where
   trace : List (Observation d)
 
 /-- The initial state, coefficient equations, and accelerated Euclidean update recurrences. -/
+@[expose]
 def EuclideanGapDynamics (data : EuclideanGapData d m) : Prop :=
   0 < data.M ∧ data.A 0 = 0 ∧ data.x 0 = data.x0 ∧ data.w 0 = data.x0 ∧
   ∀ k < m,
@@ -84,6 +85,7 @@ def EuclideanGapAssumptions (data : EuclideanGapData d m) : Prop :=
   0 < data.A m
 
 /-- Source carrier for `lem:euclideangap` (E01). -/
+@[expose]
 noncomputable def EuclideanGapStatement : Prop :=
   ∀ (d m : ℕ) (data : EuclideanGapData d m),
     EuclideanGapAssumptions data →
@@ -114,6 +116,7 @@ structure OGMGData (d n : ℕ) where
   trace : List (Observation d)
 
 /-- The backward coefficient equations, initial state, and literal OGM-G update recurrences. -/
+@[expose]
 def OGMGDynamics (data : OGMGData d n) : Prop :=
   1 ≤ n ∧ 0 < data.M ∧ data.theta n = 1 ∧
   data.u 0 = data.U ∧ data.vMinusOne = data.U ∧
@@ -163,6 +166,7 @@ def OGMGAssumptions (data : OGMGData d n) : Prop :=
   TerminalDescentGuard data.M data.oracle (data.u n) (data.v n)
 
 /-- Source carrier for `lem:ogmg` (E02). -/
+@[expose]
 noncomputable def FiniteDataOGMGStatement : Prop :=
   ∀ (d n : ℕ) (data : OGMGData d n), OGMGAssumptions data →
     (lpNorm 2 (data.oracle.gradient (data.u n))) ^ (2 : ℕ) ≤

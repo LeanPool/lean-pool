@@ -236,6 +236,7 @@ def AboveDualPhaseDynamics (data : AboveDualPhaseData p d n) : Prop :=
       weightedSum (k + 2) (fun i => data.b (n - i) (n - 1 - k)) data.G
 
 /-- The dual dynamics, convex gradient oracle, lower bound, accepted guards, and exact trace. -/
+@[expose]
 def AboveDualPhaseAssumptions (data : AboveDualPhaseData p d n) : Prop :=
   AboveDualPhaseDynamics data ∧ O3.IsConvexObjective data.oracle.value ∧
   O3.IsCoordinateGradient data.oracle.value data.oracle.gradient ∧

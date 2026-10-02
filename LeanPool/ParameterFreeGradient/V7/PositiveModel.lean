@@ -58,6 +58,7 @@ structure PositiveInstance (p : ℝ) (d : ℕ) (x0 : Point d) where
   minimizerDistance p inst.oracle x0
 
 /-- The common minimum value, expressed as an infimum over minimizers. -/
+@[expose]
 noncomputable def PositiveInstance.fstar (inst : PositiveInstance p d x0) : ℝ :=
   sInf (inst.oracle.value '' MinimizerSet inst.oracle)
 

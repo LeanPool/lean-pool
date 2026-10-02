@@ -293,6 +293,7 @@ def BelowDualAssumptions (data : BelowDualData p d n) : Prop :=
           (data.oracle.gradient (data.q k) - data.oracle.gradient (data.q (k + 1)))) ^ (2 : ℕ)
 
 /-- Source carrier for `lem:below-dual` (B07--B08). -/
+@[expose]
 noncomputable def BelowTerminalGradientStatement : Prop :=
   ∀ (p : ℝ), 1 < p → p < 2 → ∀ (d n : ℕ) (data : BelowDualData p d n),
     BelowDualAssumptions data →

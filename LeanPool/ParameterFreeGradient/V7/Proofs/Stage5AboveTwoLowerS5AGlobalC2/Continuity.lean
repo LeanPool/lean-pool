@@ -21,6 +21,7 @@ namespace V7.Stage5AboveTwoLower.S5AGlobalC2
 open S5ARepair S5AFinalRepair S5AHessianContinuity
 
 /-- The linear map sending a vector to its continuous pairing functional. -/
+@[expose]
 noncomputable def pairingCLMLinear {d : ℕ} :
     Point d →ₗ[ℝ] (Point d →L[ℝ] ℝ) where
   toFun := pairingCLM
@@ -112,6 +113,7 @@ lemma continuousAt_kernelHessianCoord_of_ne_zero {r theta : ℝ}
   exact hfirst.add hsecond
 
 /-- The linear assembly of coordinate functionals into a vector-valued continuous linear map. -/
+@[expose]
 noncomputable def assemblePiLinear {d : ℕ} :
     ((i : Fin d) → Point d →L[ℝ] ℝ) →ₗ[ℝ] (Point d →L[ℝ] Point d) where
   toFun := ContinuousLinearMap.pi

@@ -39,6 +39,7 @@ and objective are existential only after the finite transcript/output map. -/
 
 /-- U08: a single deterministic `H` and hard instance is chosen after the
 whole seed-indexed method, never separately for each seed. -/
+@[expose]
 noncomputable def RandomizedFiniteHorizonImpossibilityStatement : Prop :=
   ∀ (p eps : ℝ), 1 < p → 0 < eps →
     ∀ (Ω : Type) [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
