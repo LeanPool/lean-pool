@@ -533,6 +533,7 @@ theorem reference_smul
 end Realization
 
 /-- The compact equivariant prime configuration model carried by the glued order complex. -/
+@[expose]
 noncomputable def orderComplexModel (hp : Nat.Prime p) :
     PrimeConfigurationModel hp := by
   letI : NeZero p := ⟨hp.ne_zero⟩
