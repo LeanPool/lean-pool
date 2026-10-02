@@ -188,6 +188,7 @@ theorem coveringEquivariantData
     exact simplicialIncidence_smul p g f s
 
 /-- Prime-symmetry orbit quotient of the unconditional top-flag cycle. -/
+@[expose]
 noncomputable def orbitCycle (hp : Nat.Prime p) : FiniteIncidenceCycle (ZMod p) :=
   FiniteIncidenceCycle.orbitQuotient
     (G := PrimeSymmetry p) (coveringCycle hp) (coveringEquivariantData hp)
