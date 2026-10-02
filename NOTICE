@@ -169,6 +169,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/MulticolorTriangleRamsey  https://github.com/openai/ten-proofs
   LeanPool/NagataFactoriality        https://github.com/arthur742ramos/nagatafactoriality
   LeanPool/NandakumarRamanaRao       https://github.com/akopjan/nrr-aak
+  LeanPool/NashEmbedding             https://github.com/langlerangle/nashembedding
   LeanPool/NashWilliams              https://github.com/yannpequignot/TwoBQO
   LeanPool/NavierStokesAndEuler      https://github.com/openai/NavierStokesAndEuler
   LeanPool/NemytskiiLebesgue         https://github.com/madvorak/nemytskii-lebesgue
@@ -208,6 +209,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Rado                      https://github.com/rkirov/jordan_pick
   LeanPool/RamanujanNagell           https://github.com/BarinderBanwait/ramanujan_nagell
   LeanPool/RearrangementNumber       https://github.com/vo-rodrigues/rr-equals-nonmeager-paper
+  LeanPool/RegtsSevenster            https://github.com/willwhistler/regts-sevenster
   LeanPool/RellichKondrachov         https://github.com/abenenson/rellich-kondrachov
   LeanPool/RiemannMappingTheorem     https://github.com/vbeffara/RMT4
   LeanPool/RiemannRochFunctionFields https://github.com/vaca22/riemann-roch-function-fields
@@ -235,6 +237,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/SyntheticEuclid4          https://github.com/ah1112/synthetic_euclid_4
   LeanPool/ThreeGap                  https://github.com/ElVec1o/five-distance-sharp
   LeanPool/Turan3                    https://github.com/ro-gut/turan3
+  LeanPool/TuttePath                 https://github.com/mbaker386/tutte-homotopy-lean
   LeanPool/UlmsTheorem               https://github.com/elanroth/UlmsTheorem
   LeanPool/UnconditionalSchauderBasis
                                      https://github.com/SmaniaD/UnconditionalSchauderBasis
