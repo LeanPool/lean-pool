@@ -43,7 +43,7 @@ theorem integral_vecDot_matVecMul_eq_entrywise_integral
     (hM : ∀ i j, Integrable (fun a => M a i j) P) (x y : Vec d) :
     ∫ a, vecDot x (matVecMul (M a) y) ∂P =
       vecDot x (matVecMul (fun i j => ∫ a, M a i j ∂P) y) := by
-  simp [vecDot, matVecMul]
+  simp only [vecDot, matVecMul]
   rw [MeasureTheory.integral_finsetSum Finset.univ]
   · congr 1
     ext i
@@ -155,19 +155,19 @@ private theorem integrable_responseJQuadratic_coarseBlockMatrix_of_integrable_co
     simpa [M, blockMatEntry] using hEntry (Sum.inl i) (Sum.inl j)
   have hTermLR :
       Integrable (fun a : RegCoeffField d => vecDot q (matVecMul (M a).lowerRight q)) P := by
-    simp [vecDot, matVecMul]
+    simp only [vecDot, matVecMul]
     exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
       (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
         (hLR i j).mul_const (q j)).const_mul (q i)
   have hTermLL :
       Integrable (fun a : RegCoeffField d => vecDot q (matVecMul (M a).lowerLeft p)) P := by
-    simp [vecDot, matVecMul]
+    simp only [vecDot, matVecMul]
     exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
       (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
         (hLL i j).mul_const (p j)).const_mul (q i)
   have hTermUL :
       Integrable (fun a : RegCoeffField d => vecDot p (matVecMul (M a).upperLeft p)) P := by
-    simp [vecDot, matVecMul]
+    simp only [vecDot, matVecMul]
     exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
       (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
         (hUL i j).mul_const (p j)).const_mul (p i)
@@ -243,17 +243,17 @@ theorem integral_restrictionResponseJObservableCubeSet_eq_quadratic_annealedBloc
         let g : RegCoeffField d → ℝ := fun a => vecDot q (matVecMul (M a).lowerLeft p)
         let h : RegCoeffField d → ℝ := fun a => vecDot p (matVecMul (M a).upperLeft p)
         have hf : Integrable f P := by
-          simp [f, vecDot, matVecMul]
+          simp only [f, vecDot, matVecMul]
           exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
             (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
               (hLR i j).mul_const (q j)).const_mul (q i)
         have hg : Integrable g P := by
-          simp [g, vecDot, matVecMul]
+          simp only [g, vecDot, matVecMul]
           exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
             (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
               (hLL i j).mul_const (p j)).const_mul (q i)
         have hh : Integrable h P := by
-          simp [h, vecDot, matVecMul]
+          simp only [h, vecDot, matVecMul]
           exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
             (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
               (hUL i j).mul_const (p j)).const_mul (p i)
@@ -326,19 +326,19 @@ theorem integral_restrictionResponseJObservableCubeSet_eq_quadratic_annealedBloc
     simpa [M, blockMatEntry] using hEntry (Sum.inl i) (Sum.inl j)
   have hTermLR :
       Integrable (fun a : RegCoeffField d => vecDot q (matVecMul (M a).lowerRight q)) P := by
-    simp [vecDot, matVecMul]
+    simp only [vecDot, matVecMul]
     exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
       (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
         (hLR i j).mul_const (q j)).const_mul (q i)
   have hTermLL :
       Integrable (fun a : RegCoeffField d => vecDot q (matVecMul (M a).lowerLeft p)) P := by
-    simp [vecDot, matVecMul]
+    simp only [vecDot, matVecMul]
     exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
       (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
         (hLL i j).mul_const (p j)).const_mul (q i)
   have hTermUL :
       Integrable (fun a : RegCoeffField d => vecDot p (matVecMul (M a).upperLeft p)) P := by
-    simp [vecDot, matVecMul]
+    simp only [vecDot, matVecMul]
     exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
       (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
         (hUL i j).mul_const (p j)).const_mul (p i)
