@@ -20,7 +20,7 @@ namespace BeyondBethe
 /-- Weight of a permutation in the permanent expansion.  Mathlib's permanent
 uses columns as the domain of the permutation and rows as its image. -/
 noncomputable def permutationWeight
-    {n : Type*} [Fintype n] [DecidableEq n]
+    {n : Type*} [Fintype n]
     (A : Matrix n n ℝ) (σ : Equiv.Perm n) : ℝ :=
   ∏ j, A (σ j) j
 
@@ -127,7 +127,7 @@ noncomputable def gibbsProbability
   permutationWeight A σ / Matrix.permanent A
 
 theorem permutationWeight_pos
-    {n : Type*} [Fintype n] [DecidableEq n]
+    {n : Type*} [Fintype n]
     (A : Matrix n n ℝ) (hA : ∀ i j, 0 < A i j)
     (σ : Equiv.Perm n) :
     0 < permutationWeight A σ := by
@@ -222,7 +222,7 @@ theorem assignmentMarginal_expectation_col
   · simp
 
 theorem log_permutationWeight
-    {n : Type*} [Fintype n] [DecidableEq n]
+    {n : Type*} [Fintype n]
     (A : Matrix n n ℝ) (hA : ∀ i j, 0 < A i j)
     (σ : Equiv.Perm n) :
     Real.log (permutationWeight A σ) =

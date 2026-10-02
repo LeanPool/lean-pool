@@ -24,7 +24,7 @@ def Nonnegative {m n : Type*} {R : Type*} [Zero R] [LE R]
 
 /-- The positive support of `A` has a perfect matching, in the orientation
 used by Mathlib's definition of the permanent. -/
-def HasPerfectMatching {n : Type*} [Fintype n] [DecidableEq n]
+def HasPerfectMatching {n : Type*}
     {R : Type*} [Zero R] (A : Matrix n n R) : Prop :=
   ∃ σ : Equiv.Perm n, ∀ i, A (σ i) i ≠ 0
 

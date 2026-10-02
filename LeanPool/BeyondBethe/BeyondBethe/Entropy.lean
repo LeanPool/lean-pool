@@ -310,7 +310,7 @@ theorem shannonEntropy_of_mass_le
 
 /-- Probability mass induced on the values of a deterministic map. -/
 noncomputable def pushforwardMass
-    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
+    {α β : Type*} [Fintype α] [DecidableEq β]
     (μ : α → ℝ) (f : α → β) (y : β) : ℝ :=
   ∑ x, if f x = y then μ x else 0
 
@@ -335,7 +335,7 @@ theorem pushforwardMass_isProbabilityVector
       _ = 1 := hμ.sum_eq_one
 
 theorem pushforwardMass_comp
-    {α β γ : Type*} [Fintype α] [Fintype β] [Fintype γ]
+    {α β γ : Type*} [Fintype α] [Fintype β]
     [DecidableEq β] [DecidableEq γ]
     (μ : α → ℝ) (f : α → β) (g : β → γ) (z : γ) :
     pushforwardMass (pushforwardMass μ f) g z =
@@ -372,7 +372,7 @@ theorem pushforwardMass_comp
         · simp [hy]
 
 theorem pushforwardMass_equiv_apply
-    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
+    {α β : Type*} [Fintype α] [DecidableEq β]
     (μ : α → ℝ) (e : α ≃ β) (y : β) :
     pushforwardMass μ e y = μ (e.symm y) := by
   classical
@@ -655,7 +655,7 @@ theorem entropy_on_finset_of_mass_le
 /-- Entropy within one fiber of a deterministic map is bounded by the fiber
 mass times the logarithm of the maximum fiber size. -/
 theorem fiber_entropy_bound
-    {α β : Type*} [Fintype α] [Fintype β]
+    {α β : Type*} [Fintype α]
     [DecidableEq β]
     {μ : α → ℝ} (hμ : IsProbabilityVector μ) (f : α → β)
     (K : ℕ) (hK : 1 ≤ K)
@@ -668,7 +668,13 @@ theorem fiber_entropy_bound
   classical
   let s := Finset.univ.filter fun x ↦ f x = y
   change (∑ x ∈ s, Real.negMulLog (μ x)) ≤ _
-  have hqnonneg := (pushforwardMass_isProbabilityVector μ hμ f).nonnegative y
+  have hqnonneg : 0 ≤ pushforwardMass μ f y := by
+    unfold pushforwardMass
+    apply Finset.sum_nonneg
+    intro x _
+    by_cases h : f x = y
+    · simpa only [ite_eq_left h] using hμ.nonnegative x
+    · simp only [ite_eq_right h, le_refl]
   by_cases hqzero : pushforwardMass μ f y = 0
   · have hsumzero : ∑ x ∈ s, μ x = 0 := by
       rw [Finset.sum_filter]
