@@ -17,6 +17,7 @@ public section
 namespace V7.Stage3BelowTwoS3F
 
 /-- The ceiling of the below-two iteration horizon determined by accuracy and trial estimates. -/
+@[expose]
 noncomputable def horizon (p eps M D : ℝ) : ℕ :=
   Nat.ceil (2 * Real.sqrt (M * D / ((p - 1) * eps)))
 

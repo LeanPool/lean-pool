@@ -60,6 +60,7 @@ noncomputable def primalTrace (p : ℝ) (n : ℕ) (oracle : PairOracle d) :
   (List.range (n + 1)).map fun k => oracle.observe (primalState p n oracle k).x
 
 /-- The concrete primal trajectory packaged with a comparison minimizer and minimum value. -/
+@[expose]
 noncomputable def primalData (p : ℝ) (n : ℕ) (oracle : PairOracle d)
     (z : Point d) (fstar : ℝ) : BelowPrimalData p d n where
   oracle := oracle

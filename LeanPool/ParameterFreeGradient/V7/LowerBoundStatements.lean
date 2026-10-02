@@ -68,6 +68,7 @@ def SignedLpSymmetry (p : ℝ) (Q Qdual : Point d → Point d) : Prop :=
   (∀ s x, pairing (Qdual s) (Q x) = pairing s x)
 
 /-- The regularity, curvature, normalization, and smoothing properties required of a kernel. -/
+@[expose]
 def SmoothingKernelAssumptions (kernel : SmoothingKernelData p d) : Prop :=
   0 < kernel.Mpd ∧
   O3.IsConvexObjective kernel.phi ∧
@@ -112,6 +113,7 @@ def SmoothingKernelAssumptions (kernel : SmoothingKernelData p d) : Prop :=
   2 * (∑ j, |x j| ^ r0) ^ (2 * theta / r0)
 
 /-- A smoothing kernel exists with the prescribed power formula and dimension-dependent bounds. -/
+@[expose]
 noncomputable def SmoothingKernelConstructionStatement : Prop :=
   ∃ C : ℝ, 0 < C ∧ ∀ (p : ℝ), 2 < p → ∀ (d : ℕ), 2 ≤ d →
     ∃ (r0 theta : ℝ) (kernel : SmoothingKernelData p d),

@@ -176,6 +176,7 @@ theorem fatou_iterated_unitBall
   exact fun m _ ↦ hall m
 
 /-- Weak sequential Nakano constant, Definition 3(a) in the paper. -/
+@[expose]
 def IsWeakSequentialNakanoConstant (p : X → ℝ) (K : ℝ) : Prop :=
   1 ≤ K ∧ ∀ (x : ℕ → X), Monotone x → (∀ m, 0 ≤ x m) →
     BddAbove (Set.range x) → (∀ m, p (x m) ≤ 1) →

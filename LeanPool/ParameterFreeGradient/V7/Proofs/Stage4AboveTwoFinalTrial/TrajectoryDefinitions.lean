@@ -153,6 +153,7 @@ theorem primal_queried_at (p eta : ℝ) (n : ℕ) (oracle : PairOracle d)
 
 mutual
   /-- The recursively generated normalized query points of the above-two dual phase. -/
+  @[expose]
   noncomputable def dualQ (p eta : ℝ) (n : ℕ) (oracle : PairOracle d) :
       ℕ → Point d
     | 0 => 0
@@ -161,6 +162,7 @@ mutual
     termination_by k => k
 
   /-- The recursively accumulated vectors of the above-two dual phase. -/
+  @[expose]
   noncomputable def dualR (p eta : ℝ) (n : ℕ) (oracle : PairOracle d) :
       ℕ → Point d
     | 0 => -(coeffB p eta n n n) • oracle.gradient 0

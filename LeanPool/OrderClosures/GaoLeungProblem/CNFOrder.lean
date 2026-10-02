@@ -48,6 +48,7 @@ def CNFStep (pre : List (Ordinal.{u} × Ordinal.{u}))
 
 /-- The transitive closure of one-step CNF extensions; used as a tractable list
 model of `cnfExtensionLT`. -/
+@[expose]
 def CNFListLT (l l' : List (Ordinal.{u} × Ordinal.{u})) : Prop :=
   ∃ (pre tail : List (Ordinal.{u} × Ordinal.{u}))
     (x y : Ordinal.{u} × Ordinal.{u}),

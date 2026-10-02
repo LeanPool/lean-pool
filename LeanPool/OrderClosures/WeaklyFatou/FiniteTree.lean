@@ -271,6 +271,7 @@ theorem treeCylinder_finite_cover
   exact (not_lt_of_ge (hαu j)) (hj.trans_le hle)
 
 /-- Parent-disjointness (`π`-disjointness in the source). -/
+@[expose]
 def ParentDisjoint {n : ℕ} (A B : Set (TreeNode n)) : Prop :=
   TreeNode.parent '' A ∩ TreeNode.parent '' B = ∅
 

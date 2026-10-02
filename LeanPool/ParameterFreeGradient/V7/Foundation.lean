@@ -61,6 +61,7 @@ structure PairRunResult (d : ℕ) where
   ∀ obs ∈ trace, obs = oracle.observe obs.point
 
 /-- The point occurs among the recorded oracle queries. -/
+@[expose]
 def WasQueried (trace : List (Observation d)) (x : Point d) : Prop :=
   ∃ obs ∈ trace, obs.point = x
 

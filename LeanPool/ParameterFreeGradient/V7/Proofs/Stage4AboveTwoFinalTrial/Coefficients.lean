@@ -28,6 +28,7 @@ noncomputable def increment (p eta : ℝ) (n : ℕ) : ScalarSeq :=
   Stage4AboveTwoDualPhase.plateauDw p eta n
 
 /-- The subdiagonal matrix selecting weighted gradient increments in an above-two phase. -/
+@[expose]
 noncomputable def alpha (p eta : ℝ) (n : ℕ) : ScalarMatrix := fun row i =>
   if 0 < row ∧ row ≤ n then
     if i = row - 1 then increment p eta n (row - 1) else 0

@@ -70,6 +70,7 @@ noncomputable def dualTrace (p : ℝ) (n : ℕ) (oracle : PairOracle d) :
   (List.range (n + 1)).map fun k => oracle.observe (dualQ p n oracle k)
 
 /-- The concrete dual trajectories and coefficients packaged as below-two phase data. -/
+@[expose]
 noncomputable def dualData (p : ℝ) (n : ℕ) (oracle : PairOracle d) :
     BelowDualData p d n where
   oracle := oracle
