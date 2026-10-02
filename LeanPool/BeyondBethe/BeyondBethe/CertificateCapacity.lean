@@ -27,9 +27,10 @@ noncomputable def linearCapacityValue
   ∏ i, (u i / α i) ^ (α i)
 
 theorem positiveLinearPolynomial_eval
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (u z : ι → ℝ) :
     (positiveLinearPolynomial u).eval z = ∑ i, u i * z i := by
+  classical
   rw [positiveLinearPolynomial, eval_sum]
   apply Finset.sum_congr rfl
   intro i _
@@ -52,12 +53,13 @@ theorem linearCapacityValue_mul_realMonomial
   field_simp
 
 theorem linearCapacityValue_le_ratio
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {u α z : ι → ℝ}
     (hu : ∀ i, 0 < u i) (hα : ∀ i, 0 < α i)
     (hαsum : ∑ i, α i = 1) (hz : ∀ i, 0 < z i) :
     linearCapacityValue u α ≤
       (positiveLinearPolynomial u).eval z / realMonomial z α := by
+  classical
   rw [le_div_iff₀ (realMonomial_pos hz α),
     linearCapacityValue_mul_realMonomial hu hα hz,
     positiveLinearPolynomial_eval]
@@ -74,24 +76,26 @@ theorem linearCapacityValue_le_ratio
           field_simp [ne_of_gt (hα i)]
 
 theorem linearCapacityValue_le_capacity
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {u α : ι → ℝ}
     (hu : ∀ i, 0 < u i) (hα : ∀ i, 0 < α i)
     (hαsum : ∑ i, α i = 1) :
     linearCapacityValue u α ≤
       polynomialCapacity α (positiveLinearPolynomial u) := by
+  classical
   apply le_polynomialCapacity_of_le_ratio
   intro z hz
   exact linearCapacityValue_le_ratio hu hα hαsum hz
 
 /-- Exact weighted AM--GM capacity of a positive linear form. -/
 theorem linearCapacityValue_eq_capacity
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {u α : ι → ℝ}
     (hu : ∀ i, 0 < u i) (hα : ∀ i, 0 < α i)
     (hαsum : ∑ i, α i = 1) :
     linearCapacityValue u α =
       polynomialCapacity α (positiveLinearPolynomial u) := by
+  classical
   apply le_antisymm
   · exact linearCapacityValue_le_capacity hu hα hαsum
   · let z : ι → ℝ := fun i ↦ α i / u i
