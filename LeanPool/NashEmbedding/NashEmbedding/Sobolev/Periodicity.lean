@@ -40,7 +40,7 @@ namespace NashEmbedding.Sobolev
 
 /-- A function `f : ℝⁿ → V` is `2πℤⁿ`-periodic if
     `f(x + 2πk) = f(x)` for all `x` and integer vectors `k`. -/
-def IsPeriodic2Pi {n : ℕ} {V : Type*} (f : (Fin n → ℝ) → V) : Prop :=
+@[expose] def IsPeriodic2Pi {n : ℕ} {V : Type*} (f : (Fin n → ℝ) → V) : Prop :=
   ∀ (x : Fin n → ℝ) (k : Fin n → ℤ), f (x + periodicShift n k) = f x
 
 end NashEmbedding.Sobolev

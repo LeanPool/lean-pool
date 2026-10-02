@@ -51,20 +51,20 @@ variable {n : ℕ}
 /-! ## Definitions -/
 
 /-- Convolution of two sequences on ℤⁿ. -/
-noncomputable @[expose] def seqConv
+@[expose] noncomputable def seqConv
     (a b : (Fin n → ℤ) → ℂ) (m : Fin n → ℤ) : ℂ :=
   ∑' i, a i * b (m - i)
 
 /-- Product of two distributions via Fourier coefficient convolution. -/
-noncomputable @[expose] def sobolevMulDistrib (u v : TrigPolyDual n) : TrigPolyDual n :=
+@[expose] noncomputable def sobolevMulDistrib (u v : TrigPolyDual n) : TrigPolyDual n :=
   seqToDual n (seqConv (fourierCoeffDistrib u) (fourierCoeffDistrib v))
 
 /-- The squared Sobolev embedding constant C²_{n,s} = ∑_j (1+|j|²)^{-s}. -/
-noncomputable @[expose] def sobolevEmbedConstSq (n : ℕ) (s : ℝ) : ℝ :=
+@[expose] noncomputable def sobolevEmbedConstSq (n : ℕ) (s : ℝ) : ℝ :=
   ∑' (j : Fin n → ℤ), weight n (-s) j
 
 /-- The constant K_tilde_{n,s} = 4 · 2^{2s} · C²_{n,s}. -/
-noncomputable @[expose] def mt2Const (n : ℕ) (s : ℝ) : ℝ :=
+@[expose] noncomputable def mt2Const (n : ℕ) (s : ℝ) : ℝ :=
   4 * (2 : ℝ) ^ (2 * s) * sobolevEmbedConstSq n s
 
 /-! ## Helper lemmas -/

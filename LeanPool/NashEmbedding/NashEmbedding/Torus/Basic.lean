@@ -92,7 +92,7 @@ lemma IsPosDefSmoothMetric.toIsSmoothMetric {n : ℕ}
 
 /-- A smooth metric `g` is realizable if there exist `N` and a smooth periodic
   `u : ℝⁿ → ℝᴺ` realizing it. -/
-def IsRealizable {n : ℕ} (g : (Fin n → ℝ) → Matrix (Fin n) (Fin n) ℝ) : Prop :=
+@[expose] def IsRealizable {n : ℕ} (g : (Fin n → ℝ) → Matrix (Fin n) (Fin n) ℝ) : Prop :=
   ∃ (N : ℕ) (u : (Fin n → ℝ) → (Fin N → ℝ)),
     SmoothPeriodic u ∧ Realizes u g
 
@@ -129,7 +129,7 @@ structure IsInjectiveEmbedding {n N : ℕ}
 
 /-- A smooth metric `g` is injectively realizable if there exist `N` and an
   injective embedding `u` realizing it. -/
-def IsInjRealizable {n : ℕ}
+@[expose] def IsInjRealizable {n : ℕ}
     (g : (Fin n → ℝ) → Matrix (Fin n) (Fin n) ℝ) : Prop :=
   ∃ (N : ℕ) (u : (Fin n → ℝ) → (Fin N → ℝ)),
     IsInjectiveEmbedding u ∧ Realizes u g
