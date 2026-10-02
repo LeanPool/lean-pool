@@ -225,6 +225,7 @@ structure AboveDualPhaseData (p : ℝ) (d n : ℕ) where
   trace : List (Observation d)
 
 /-- The above-two coefficient conditions and reversed dual query and gradient recurrences. -/
+@[expose]
 def AboveDualPhaseDynamics (data : AboveDualPhaseData p d n) : Prop :=
   1 ≤ n ∧ AboveCoefficientAssumptions n data.u data.dw data.alpha data.c data.b ∧
   data.r 0 = -(data.b n n) • data.G 0 ∧

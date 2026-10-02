@@ -55,6 +55,7 @@ structure SmoothingKernelData (p : ℝ) (d : ℕ) where
     r = ell (x + v) + chi * kernel.phi ((1 / chi) • v)}
 
 /-- The objective is one-Lipschitz with respect to the `ℓp` norm. -/
+@[expose]
 def IsOneLipschitz (p : ℝ) (f : Point d → ℝ) : Prop :=
   ∀ x y, |f x - f y| ≤ lpNorm p (x - y)
 

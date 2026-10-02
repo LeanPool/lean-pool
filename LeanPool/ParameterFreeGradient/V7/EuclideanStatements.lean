@@ -60,6 +60,7 @@ def EuclideanGapDynamics (data : EuclideanGapData d m) : Prop :=
       (data.a (k + 1) / data.A (k + 1)) • data.w (k + 1)
 
 /-- The Euclidean dynamics, radius bound, accepted models, and exact observation trace. -/
+@[expose]
 def EuclideanGapAssumptions (data : EuclideanGapData d m) : Prop :=
   EuclideanGapDynamics data ∧ data.inst.R ≤ data.D ∧
   data.x 0 = data.x0 ∧ data.w 0 = data.x0 ∧
@@ -136,6 +137,7 @@ def OGMGDynamics (data : OGMGData d n) : Prop :=
   data.v n = data.u n - (1 / data.M) • data.oracle.gradient (data.u n)
 
 /-- The OGM-G dynamics, convex gradient oracle, attained minimum, guards, and exact trace. -/
+@[expose]
 def OGMGAssumptions (data : OGMGData d n) : Prop :=
   OGMGDynamics data ∧ O3.IsConvexObjective data.oracle.value ∧
   O3.IsCoordinateGradient data.oracle.value data.oracle.gradient ∧

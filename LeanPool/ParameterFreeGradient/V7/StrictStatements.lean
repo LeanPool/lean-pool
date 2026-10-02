@@ -71,6 +71,7 @@ noncomputable def RandomizedFiniteHorizonImpossibilityStatement : Prop :=
 
 /-- U09: the supremum of the actual expected queried-or-returned hitting
 time over normalized strict instances is infinite. -/
+@[expose]
 noncomputable def InfiniteWorstCaseExpectedHittingTimeStatement : Prop :=
   ∀ (p eps : ℝ), 1 < p → 0 < eps →
     ∀ (Ω : Type) [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]

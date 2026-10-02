@@ -106,6 +106,7 @@ theorem smul_mem_infClosure_of_smulClosed {s : Set X}
   exact infClosure_min hsub h_ic hx
 
 /-- The sup-closure of a pointed cone is a pointed cone. -/
+@[expose]
 def supClosure (C : PointedCone ℝ X) : PointedCone ℝ X where
   carrier := _root_.supClosure (C : Set X)
   zero_mem' := subset_supClosure C.zero_mem
@@ -118,6 +119,7 @@ theorem coe_supClosure (C : PointedCone ℝ X) :
     (supClosure C : Set X) = _root_.supClosure (C : Set X) := rfl
 
 /-- The inf-closure of a pointed cone is a pointed cone. -/
+@[expose]
 def infClosure (C : PointedCone ℝ X) : PointedCone ℝ X where
   carrier := _root_.infClosure (C : Set X)
   zero_mem' := subset_infClosure C.zero_mem

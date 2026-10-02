@@ -258,6 +258,7 @@ structure BelowDualData (p : ℝ) (d n : ℕ) where
   trace : List (Observation d)
 
 /-- The below-two coefficient conditions and reversed dual query and gradient recurrences. -/
+@[expose]
 def BelowDualDynamics (data : BelowDualData p d n) : Prop :=
   1 ≤ n ∧
   BelowCoefficientAssumptions n data.u data.dw data.alpha data.c data.b ∧
@@ -270,6 +271,7 @@ def BelowDualDynamics (data : BelowDualData p d n) : Prop :=
       weightedSum (k + 2) (fun i => data.b (n - i) (n - 1 - k)) data.G
 
 /-- The below-two dual dynamics, convex gradient oracle, lower bound, guards, and exact trace. -/
+@[expose]
 def BelowDualAssumptions (data : BelowDualData p d n) : Prop :=
   BelowDualDynamics data ∧ O3.IsConvexObjective data.oracle.value ∧
   O3.IsCoordinateGradient data.oracle.value data.oracle.gradient ∧

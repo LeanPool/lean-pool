@@ -62,6 +62,7 @@ lemma eventually_lpNorm_sub_lt {p eta : ℝ} (hp : 1 ≤ p)
   ell (x + v) + chi * kernel.phi ((1 / chi) • v)
 
 /-- The displacement globally minimizes the infimal-convolution cost. -/
+@[expose]
 def IsInfimalMinimizer (kernel : SmoothingKernelData p d)
     (chi : ℝ) (ell : Point d → ℝ) (x v : Point d) : Prop :=
   ∀ w, smoothingCost kernel chi ell x v ≤ smoothingCost kernel chi ell x w

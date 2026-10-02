@@ -71,6 +71,7 @@ lemma exists_isLUB_of_pos_of_shift
 /-- Build a `ConditionallyCompleteLattice` structure from a blanket hypothesis
 that every non-empty bounded above set has a least upper bound. -/
 @[reducible]
+@[expose]
 noncomputable def conditionallyCompleteLatticeOfHasLUB
     {X : Type*} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
     (hLUB : ∀ {S : Set X}, S.Nonempty → BddAbove S → ∃ x, IsLUB S x) :
@@ -188,6 +189,7 @@ noncomputable def conditionallyCompleteLatticeOfPosNet
 `ConditionallyCompleteLattice` structure exists provided every non-empty
 bounded above set of positive elements has a least upper bound. -/
 @[reducible]
+@[expose]
 noncomputable def conditionallyCompleteLatticeOfPosSet
     (X : Type*) [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
     (H : ∀ {S : Set X}, S ⊆ {x | 0 ≤ x} → S.Nonempty → BddAbove S →

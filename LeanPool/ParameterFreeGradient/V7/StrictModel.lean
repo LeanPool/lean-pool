@@ -144,6 +144,7 @@ properties. -/
     gradient := fun _ _ => -(2 * eps) }
 
 /-- A convex coercive exact-gradient instance with unique minimizer and condition number four. -/
+@[expose]
 def StrictNormalizedInstance (eps : ℝ) (x0 : StrictPoint) (L R : ℝ)
     (oracle : PairOracle 1) (xstar : StrictPoint) : Prop :=
   O3.IsConvexObjective oracle.value ∧ IsCoerciveReal oracle.value ∧

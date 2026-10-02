@@ -127,6 +127,7 @@ variable {X : Type*} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
 
 /-- The set of lattice-linear combinations of a tuple `x : Fin n → X`, i.e. the
 image of `LLexpr n` under evaluation at `x`. -/
+@[expose]
 def combinations (x : Fin n → X) : Set X :=
   Set.range (eval x)
 
@@ -136,6 +137,7 @@ end Combinations
 
 /-- A formal lattice-linear expression *vanishes* on a vector lattice `X` if its
 evaluation is zero for every substitution by vectors of `X`. -/
+@[expose]
 def Vanishes (X : Type*) [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
     [VectorLattice X] (e : LLexpr n) : Prop :=
   ∀ x : Fin n → X, eval x e = 0
