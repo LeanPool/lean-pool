@@ -263,24 +263,30 @@ noncomputable def sizeComplexityWithTop
     (B : Basis) (f : BitString N → Bool) : WithTop Nat :=
   sInf ((fun s : Nat => (s : WithTop Nat)) '' realizationSizes B f)
 
-/-- The minimum circuit size over a complete basis `B` computing `f`.
-
-This natural-valued interface requires completeness so that the set of
-realizing circuits is nonempty. Use `sizeComplexityWithTop` when the basis may
-be incomplete. -/
--- Completeness is an intentional API precondition. The infimum expression
--- itself does not inspect the selected witness.
-noncomputable def sizeComplexity
-    (B : Basis) [CompleteBasis B] (f : BitString N → Bool) : Nat :=
-  sInf (realizationSizes B f)
-
-private theorem realizationSizes_nonempty [CompleteBasis B]
+/-- Completeness supplies a realization size for every Boolean function. -/
+theorem realizationSizesNonempty [CompleteBasis B]
     (f : BitString N → Bool) :
     (realizationSizes B f).Nonempty := by
   obtain ⟨G, c, hc⟩ := CompleteBasis.complete (B := B) (fun x => (fun _ : Fin 1 => f x))
   refine ⟨c.size, G, c, rfl, ?_⟩
   funext x
   exact congrFun (congrFun hc x) 0
+
+/-- The minimum circuit size over a complete basis `B` computing `f`.
+
+This natural-valued interface uses completeness to obtain a realizing circuit.
+Use `sizeComplexityWithTop` when the basis may be incomplete. -/
+noncomputable def sizeComplexity
+    (B : Basis) [CompleteBasis B] (f : BitString N → Bool) : Nat := by
+  classical
+  exact Nat.find (realizationSizesNonempty (B := B) f)
+
+private theorem sizeComplexity_eq_sInf [CompleteBasis B]
+    (f : BitString N → Bool) :
+    sizeComplexity B f = sInf (realizationSizes B f) := by
+  classical
+  simpa only [sizeComplexity] using
+    (Nat.sInf_def (realizationSizesNonempty (B := B) f)).symm
 
 /-- Any circuit computing `f` gives an upper bound on the generic extended
 size complexity. -/
@@ -336,10 +342,11 @@ natural-valued minimum. -/
 theorem sizeComplexityWithTop_eq_coe [CompleteBasis B]
     (f : BitString N → Bool) :
     sizeComplexityWithTop B f = (sizeComplexity B f : WithTop Nat) := by
+  rw [sizeComplexity_eq_sInf]
   apply le_antisymm
   · apply sInf_le
-    exact ⟨sizeComplexity B f,
-      Nat.sInf_mem (realizationSizes_nonempty (B := B) f), rfl⟩
+    exact ⟨sInf (realizationSizes B f),
+      Nat.sInf_mem (realizationSizesNonempty (B := B) f), rfl⟩
   · apply le_sInf
     rintro _ ⟨s, hs, rfl⟩
     exact WithTop.coe_le_coe.mpr (Nat.sInf_le hs)
@@ -348,8 +355,8 @@ theorem sizeComplexityWithTop_eq_coe [CompleteBasis B]
 theorem sizeComplexity_pos [CompleteBasis B]
     (f : BitString N → Bool) :
     0 < sizeComplexity B f := by
-  obtain ⟨_, _, hs, _⟩ := Nat.sInf_mem (realizationSizes_nonempty (B := B) f)
-  simp only [sizeComplexity]
+  rw [sizeComplexity_eq_sInf]
+  obtain ⟨_, _, hs, _⟩ := Nat.sInf_mem (realizationSizesNonempty (B := B) f)
   rw [← hs, size]
   omega
 
@@ -357,15 +364,17 @@ theorem sizeComplexity_pos [CompleteBasis B]
 theorem sizeComplexity_le [CompleteBasis B] {G : Nat}
     (c : Circuit B N 1 G) (f : BitString N → Bool)
     (hf : (fun x => (c.eval x) 0) = f) :
-    sizeComplexity B f ≤ c.size :=
-  Nat.sInf_le ⟨G, c, rfl, hf⟩
+    sizeComplexity B f ≤ c.size := by
+  rw [sizeComplexity_eq_sInf]
+  exact Nat.sInf_le ⟨G, c, rfl, hf⟩
 
 /-- For a complete basis, `sizeComplexity` is realized by some circuit. -/
 theorem sizeComplexity_witness [CompleteBasis B]
     (f : BitString N → Bool) :
     ∃ G, ∃ c : Circuit B N 1 G,
-      c.size = sizeComplexity B f ∧ (fun x => (c.eval x) 0) = f :=
-  Nat.sInf_mem (realizationSizes_nonempty (B := B) f)
+      c.size = sizeComplexity B f ∧ (fun x => (c.eval x) 0) = f := by
+  rw [sizeComplexity_eq_sInf]
+  exact Nat.sInf_mem (realizationSizesNonempty (B := B) f)
 
 end Circuit
 
