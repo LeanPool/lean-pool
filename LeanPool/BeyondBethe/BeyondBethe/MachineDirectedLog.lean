@@ -680,7 +680,7 @@ private theorem directedLogPowerTwoBits_value : ∀ k : ℕ,
   · rw [machineDirectedLogPowerTwoBits, directedLogPowerTwoBits_value,
       Nat.fromBitsLE_bits]
 
-@[simp] theorem machineDirectedLogNumeratorAbsBits_encode
+theorem machineDirectedLogNumeratorAbsBits_encode
     (ruler : List Bool) (q : ℚ) :
     machineDirectedLogNumeratorAbsBits
         (pair ruler (rawRatBinaryCode (rawRatOfRat q))) = q.num.natAbs.bits := by
@@ -689,7 +689,7 @@ private theorem directedLogPowerTwoBits_value : ∀ k : ℕ,
     rawRatBinaryCode, machinePairFirst_pair,
     machineIntegerNatAbsBits_encode, rawRatOfRat]
 
-@[simp] theorem machineDirectedLogDenominatorBits_encode
+theorem machineDirectedLogDenominatorBits_encode
     (ruler : List Bool) (q : ℚ) :
     machineDirectedLogDenominatorBits
         (pair ruler (rawRatBinaryCode (rawRatOfRat q))) = q.den.bits := by
@@ -714,7 +714,7 @@ theorem machineDirectedLogDenominatorLogRuler_length
     machineDirectedLogDenominatorBits_encode]
   simp [binaryNatLog2, Nat.size_eq_bits_len]
 
-@[simp] theorem machineDirectedLogNumeratorLogBits_encode
+theorem machineDirectedLogNumeratorLogBits_encode
     (ruler : List Bool) (q : ℚ) :
     machineDirectedLogNumeratorLogBits
         (pair ruler (rawRatBinaryCode (rawRatOfRat q))) =
@@ -722,7 +722,7 @@ theorem machineDirectedLogDenominatorLogRuler_length
   rw [machineDirectedLogNumeratorLogBits, machineLengthBits_encode,
     machineDirectedLogNumeratorLogRuler_length]
 
-@[simp] theorem machineDirectedLogDenominatorLogBits_encode
+theorem machineDirectedLogDenominatorLogBits_encode
     (ruler : List Bool) (q : ℚ) :
     machineDirectedLogDenominatorLogBits
         (pair ruler (rawRatBinaryCode (rawRatOfRat q))) =
@@ -730,7 +730,7 @@ theorem machineDirectedLogDenominatorLogRuler_length
   rw [machineDirectedLogDenominatorLogBits, machineLengthBits_encode,
     machineDirectedLogDenominatorLogRuler_length]
 
-@[simp] theorem machineDirectedLogExponentIntegerCode_encode
+theorem machineDirectedLogExponentIntegerCode_encode
     (ruler : List Bool) (q : ℚ) :
     machineDirectedLogExponentIntegerCode
         (pair ruler (rawRatBinaryCode (rawRatOfRat q))) =
@@ -785,7 +785,7 @@ def logUnit (q : ℚ) : RawRat :=
 
 end RawRat
 
-@[simp] theorem machineDirectedLogScaleCode_encode
+theorem machineDirectedLogScaleCode_encode
     (ruler : List Bool) (q : ℚ) :
     machineDirectedLogScaleCode
         (pair ruler (rawRatBinaryCode (rawRatOfRat q))) =
@@ -798,7 +798,7 @@ end RawRat
     machineNaturalIntegerCode_natBits]
   rfl
 
-@[simp] theorem machineDirectedLogResidualCode_encode
+theorem machineDirectedLogResidualCode_encode
     (ruler : List Bool) (q : ℚ) :
     machineDirectedLogResidualCode
         (pair ruler (rawRatBinaryCode (rawRatOfRat q))) =
@@ -808,7 +808,7 @@ end RawRat
     machineDirectedLogScaleCode_encode,
     machineRawRatDivCode_encode, RawRat.logResidual]
 
-@[simp] theorem machineDirectedLogResidualAtLeastOne_encode
+theorem machineDirectedLogResidualAtLeastOne_encode
     (ruler : List Bool) (q : ℚ) :
     machineDirectedLogResidualAtLeastOne
         (pair ruler (rawRatBinaryCode (rawRatOfRat q))) =
@@ -818,7 +818,7 @@ end RawRat
     machineRawRatLeBit_encode, RawRat.value_one,
     RawRat.value_logResidual]
 
-@[simp] theorem machineDirectedLogUnitCode_encode
+theorem machineDirectedLogUnitCode_encode
     (ruler : List Bool) (q : ℚ) :
     machineDirectedLogUnitCode
         (pair ruler (rawRatBinaryCode (rawRatOfRat q))) =
@@ -940,7 +940,7 @@ def logUpper (q : ℚ) (N : ℕ) : RawRat :=
 
 end RawRat
 
-@[simp] theorem machineDirectedLogExponentRawRatCode_encode
+theorem machineDirectedLogExponentRawRatCode_encode
     (ruler : List Bool) (q : ℚ) :
     machineDirectedLogExponentRawRatCode
         (pair ruler (rawRatBinaryCode (rawRatOfRat q))) =
@@ -950,19 +950,20 @@ end RawRat
     machineDirectedLogExponentIntegerCode_encode]
   simp [rawRatBinaryCode, RawRat.ofInt]
 
-@[simp] theorem machineDirectedLogTwoInput_encode (q : ℚ) (N : ℕ) :
+theorem machineDirectedLogTwoInput_encode (q : ℚ) (N : ℕ) :
     machineDirectedLogTwoInput
         (pair (List.replicate N true) (rawRatBinaryCode (rawRatOfRat q))) =
       pair (List.replicate N true) rawRatTwoCode := by
   simp [machineDirectedLogTwoInput, machineDirectedLogRuler]
 
-@[simp] theorem machineDirectedLogUnitInput_encode (q : ℚ) (N : ℕ) :
+theorem machineDirectedLogUnitInput_encode (q : ℚ) (N : ℕ) :
     machineDirectedLogUnitInput
         (pair (List.replicate N true) (rawRatBinaryCode (rawRatOfRat q))) =
       pair (List.replicate N true) (rawRatBinaryCode (RawRat.logUnit q)) := by
-  simp [machineDirectedLogUnitInput, machineDirectedLogRuler]
+  simp only [machineDirectedLogUnitInput, machineDirectedLogRuler,
+    machinePairFirst_pair, machineDirectedLogUnitCode_encode]
 
-@[simp] theorem machineDirectedLogIntegerLowerCode_encode (q : ℚ) (N : ℕ) :
+theorem machineDirectedLogIntegerLowerCode_encode (q : ℚ) (N : ℕ) :
     machineDirectedLogIntegerLowerCode
         (pair (List.replicate N true) (rawRatBinaryCode (rawRatOfRat q))) =
       rawRatBinaryCode (RawRat.logIntegerLower q N) := by
@@ -986,7 +987,7 @@ end RawRat
         machineRawRatMulCode_encode, RawRat.logIntegerLower, hk,
         integerBinaryCode]
 
-@[simp] theorem machineDirectedLogIntegerUpperCode_encode (q : ℚ) (N : ℕ) :
+theorem machineDirectedLogIntegerUpperCode_encode (q : ℚ) (N : ℕ) :
     machineDirectedLogIntegerUpperCode
         (pair (List.replicate N true) (rawRatBinaryCode (rawRatOfRat q))) =
       rawRatBinaryCode (RawRat.logIntegerUpper q N) := by
@@ -1010,7 +1011,7 @@ end RawRat
         machineRawRatMulCode_encode, RawRat.logIntegerUpper, hk,
         integerBinaryCode]
 
-@[simp] theorem machineDirectedLogResidualLowerCode_encode (q : ℚ) (N : ℕ) :
+theorem machineDirectedLogResidualLowerCode_encode (q : ℚ) (N : ℕ) :
     machineDirectedLogResidualLowerCode
         (pair (List.replicate N true) (rawRatBinaryCode (rawRatOfRat q))) =
       rawRatBinaryCode (RawRat.logResidualLower q N) := by
@@ -1025,7 +1026,7 @@ end RawRat
     simp only [machineIfHead_false, machineRawRatNegCode_encode]
     simp [RawRat.logResidualLower, h]
 
-@[simp] theorem machineDirectedLogResidualUpperCode_encode (q : ℚ) (N : ℕ) :
+theorem machineDirectedLogResidualUpperCode_encode (q : ℚ) (N : ℕ) :
     machineDirectedLogResidualUpperCode
         (pair (List.replicate N true) (rawRatBinaryCode (rawRatOfRat q))) =
       rawRatBinaryCode (RawRat.logResidualUpper q N) := by
@@ -1040,7 +1041,7 @@ end RawRat
     simp only [machineIfHead_false, machineRawRatNegCode_encode]
     simp [RawRat.logResidualUpper, h]
 
-@[simp] theorem machineDirectedLogLowerRawCode_encode (q : ℚ) (N : ℕ) :
+theorem machineDirectedLogLowerRawCode_encode (q : ℚ) (N : ℕ) :
     machineDirectedLogLowerRawCode
         (pair (List.replicate N true) (rawRatBinaryCode (rawRatOfRat q))) =
       rawRatBinaryCode (RawRat.logLower q N) := by
@@ -1049,7 +1050,7 @@ end RawRat
     machineDirectedLogResidualLowerCode_encode,
     machineRawRatAddCode_encode, RawRat.logLower]
 
-@[simp] theorem machineDirectedLogUpperRawCode_encode (q : ℚ) (N : ℕ) :
+theorem machineDirectedLogUpperRawCode_encode (q : ℚ) (N : ℕ) :
     machineDirectedLogUpperRawCode
         (pair (List.replicate N true) (rawRatBinaryCode (rawRatOfRat q))) =
       rawRatBinaryCode (RawRat.logUpper q N) := by
