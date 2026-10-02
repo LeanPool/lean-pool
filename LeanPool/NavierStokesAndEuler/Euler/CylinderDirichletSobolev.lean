@@ -89,7 +89,8 @@ local instance instLpCylinderPathBounds14 : NormedSpace ℝ C(K,CylinderL2 P E �
 
 /-- Mixed operator path, given by `fullPathMap P (translateCoefficientPath A a.1)`. -/
 def mixedOperatorPath (A : C(K, Space →ᵇ E →L[ℝ] F)) (a : LiftTangent) :
-    C(K,CylinderL2 P E →L[ℝ] CylinderL2 P F) := fullPathMap P (translateCoefficientPath A a.1)
+    C(K,CylinderL2 P E →L[ℝ] CylinderL2 P F) :=
+  fullPathMap (K := K) (E := E) (F := F) P (translateCoefficientPath A a.1)
 
 theorem mixedOperatorPath_contDiff (A : C(K, Space →ᵇ E →L[ℝ] F))
     (hA : ContDiff ℝ ∞ (translateCoefficientPath A)) :
@@ -258,8 +259,9 @@ theorem velocityLp_block_bound (f : TimeLp T (CylinderL2 P E))
 with no extra amplitude, and the same history estimate applies. -/
 theorem continuous_velocityLp_block_bound (hT1 : T ≤ 1)
     (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
-    (hf : ContDiff ℝ ∞ (fun a => pathTranslate P a f))
-    (d : ℕ) (hfb : ∀ n, block directions q (fun a => pathTranslate P a f) n 0 ≤ Cf * majorant R d n)
+    (hf : ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a f))
+    (d : ℕ) (hfb : ∀ n, block directions q
+      (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a f) n 0 ≤ Cf * majorant R d n)
     (n : ℕ) (a : LiftTangent) :
     block directions q (fun b => timeLift T (translate (V := U) P b).toContinuousLinearMap
       (D.velocityLp P (pathLp T D.time_pos.le f))) n a ≤ majorant R (d+1) n := by

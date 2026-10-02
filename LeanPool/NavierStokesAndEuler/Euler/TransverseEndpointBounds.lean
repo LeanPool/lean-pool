@@ -63,7 +63,7 @@ theorem constantFieldOperator_norm_le : ‖constantFieldOperator (E := U) T hT�
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem multiplier_sub_norm_le (A B : C(Icc (0 : ℝ) T, U →L[ℝ] E)) :
     ‖timeMultiplier T hT A - timeMultiplier T hT B‖ ≤ ‖A-B‖ := by
-  change ‖coefficientMap T hT A - coefficientMap T hT B‖ ≤ _
+  change ‖coefficientMap (E := U) (F := E) T hT A - coefficientMap (E := U) (F := E) T hT B‖ ≤ _
   rw [← map_sub]
   exact timeMultiplier_norm T hT (A-B)
 
@@ -121,7 +121,8 @@ theorem fixedFrameDerivative_sub_norm_le (A A₁ B B₁ : C(Icc (0 : ℝ) T, U �
 
 theorem potential_norm_le (J : TimeLp T E →L[ℝ] TimeLp T E) (hJ : ‖J‖ ≤ T)
     (H : C(Icc (0 : ℝ) T, E →L[ℝ] E)) :
-    ‖J.adjoint.comp ((timeMultiplier T hT H).comp J)‖ ≤ T ^ 2 * ‖H‖ := by
+    ‖(adjoint (𝕜 := ℝ) (E := TimeLp T E) (F := TimeLp T E) J).comp
+      ((timeMultiplier T hT H).comp J)‖ ≤ T ^ 2 * ‖H‖ := by
   have hi := (opNorm_comp_le (timeMultiplier T hT H) J).trans
     (mul_le_mul (timeMultiplier_norm T hT H) hJ (by positivity) (by positivity))
   apply ((opNorm_comp_le _ _).trans (mul_le_mul
@@ -139,10 +140,16 @@ theorem dirichlet_sub_norm_le (J : TimeLp T E →L[ℝ] TimeLp T E) (hJ : ‖J�
       dirichletOperator J (timeMultiplier T hT H')‖ ≤ T ^ 2 * ‖H-H'‖ := by
   have he : dirichletOperator J (timeMultiplier T hT H) -
       dirichletOperator J (timeMultiplier T hT H') =
-      -(J.adjoint.comp ((timeMultiplier T hT (H-H')).comp J)) := by
-    change (ContinuousLinearMap.id ℝ _ - J.adjoint.comp ((coefficientMap T hT H).comp J)) -
-      (ContinuousLinearMap.id ℝ _ - J.adjoint.comp ((coefficientMap T hT H').comp J)) = _
-    change _ = -(J.adjoint.comp ((coefficientMap T hT (H-H')).comp J))
+      -((adjoint (𝕜 := ℝ) (E := TimeLp T E) (F := TimeLp T E) J).comp
+        ((timeMultiplier T hT (H-H')).comp J)) := by
+    change (ContinuousLinearMap.id ℝ _ -
+        (adjoint (𝕜 := ℝ) (E := TimeLp T E) (F := TimeLp T E) J).comp
+          ((coefficientMap (E := E) (F := E) T hT H).comp J)) -
+      (ContinuousLinearMap.id ℝ _ -
+        (adjoint (𝕜 := ℝ) (E := TimeLp T E) (F := TimeLp T E) J).comp
+          ((coefficientMap (E := E) (F := E) T hT H').comp J)) = _
+    change _ = -((adjoint (𝕜 := ℝ) (E := TimeLp T E) (F := TimeLp T E) J).comp
+      ((coefficientMap (E := E) (F := E) T hT (H-H')).comp J))
     rw [map_sub, sub_comp, comp_sub]
     abel
   rw [he, norm_neg]

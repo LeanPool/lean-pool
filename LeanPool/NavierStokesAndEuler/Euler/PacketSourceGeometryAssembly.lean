@@ -351,7 +351,8 @@ variable [CompleteSpace U] {D : Data U} {τ : ℝ}
 /-- Source error, given by `sourceMatrix D x t-P.B t-primaryShear P.c P.m P.v t • rankOne ℝ
 (unit (P.v t)) (unit (P.m t))`. -/
 def ParentFrame.sourceError (x : Space) (t : ℝ) : Space →L[ℝ] Space :=
-  sourceMatrix D x t-P.B t-primaryShear P.c P.m P.v t • rankOne ℝ (unit (P.v t)) (unit (P.m t))
+  sourceMatrix D x t-P.B t-primaryShear P.c P.m P.v t •
+    rankOne (E := Space) (F := Space) ℝ (unit (P.v t)) (unit (P.m t))
 
 namespace Guards
 
@@ -363,12 +364,15 @@ def sourceVelocity (x : Space) (t : ℝ) : Space := uncutVelocity τ hτ hτT H 
 omit [CompleteSpace U] in
 include hτ in
 theorem sourceRay_equation (x : Space) (t : ℝ) (ht : t ∈ Icc τ D.T) :
-    HasDerivWithinAt (sourceRay D x) (-(sourceMatrix D x t).adjoint (sourceRay D x t))
+    HasDerivWithinAt (sourceRay D x)
+      (-ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (sourceMatrix D x t)
+        (sourceRay D x t))
       (Icc τ D.T) t := by
   have hsub : Icc τ D.T ⊆ Icc (0 : ℝ) D.T := fun _ hs => ⟨hτ.le.trans hs.1,hs.2⟩
   have hclamp : D.clamp t=⟨t,hsub ht⟩ := Data.clamp_coe D ⟨t,hsub ht⟩
   change HasDerivWithinAt (fun s => D.normal.field (D.clamp s) x)
-    (-(D.M.field (D.clamp t) x).adjoint (D.normal.field (D.clamp t) x)) (Icc τ D.T) t
+    (-ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (D.M.field (D.clamp t) x)
+      (D.normal.field (D.clamp t) x)) (Icc τ D.T) t
   rw [hclamp]
   exact (canonicalNormal_equation (D := D) ⟨t,hsub ht⟩ x).mono hsub
 

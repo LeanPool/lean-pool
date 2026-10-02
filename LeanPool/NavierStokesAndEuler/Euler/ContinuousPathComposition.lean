@@ -106,7 +106,7 @@ theorem compositionLift_norm : ‖compositionLift (K := K) (U := U) (E := E) (F 
 
 /-- Literal pointwise composition of two continuous coefficient paths. -/
 def compose (A : C(K, E →L[ℝ] F)) (B : C(K, U →L[ℝ] E)) : C(K,U →L[ℝ] F) :=
-  multiplier (compositionLift A) B
+  multiplier (compositionLift (K := K) (E := E) (F := F) A) B
 
 @[simp] theorem compose_apply (A : C(K, E →L[ℝ] F)) (B : C(K, U →L[ℝ] E)) (t : K) :
     compose A B t = (A t).comp (B t) := rfl
@@ -177,19 +177,20 @@ def adjointMap : C(K,U →L[ℝ] E) →L[ℝ] C(K,E →L[ℝ] U) :=
 
 omit [CompactSpace K] in
 @[simp] theorem adjointMap_apply (A : C(K, U →L[ℝ] E)) (t : K) :
-    adjointMap A t = (A t).adjoint := rfl
+    adjointMap (K := K) (U := U) (E := E) A t =
+      ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := U) (F := E) (A t) := rfl
 
 theorem adjointMap_norm : ‖adjointMap (K := K) (U := U) (E := E)‖ ≤ 1 := by
   apply (postcomposition_norm (K := K) (realAdjoint (U := U) (E := E))).trans
   apply opNorm_le_bound _ zero_le_one
   intro A
-  change ‖A.adjoint‖ ≤ (1 : ℝ)*‖A‖
+  change ‖ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := U) (F := E) A‖ ≤ (1 : ℝ)*‖A‖
   simp only [LinearIsometryEquiv.norm_map, one_mul, le_refl]
 
 variable {P : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]
 
 theorem contDiff_adjoint (A : P → C(K, U →L[ℝ] E)) {n : ℕ∞ω} (hA : ContDiff ℝ n A) :
-    ContDiff ℝ n (fun x => adjointMap (A x)) :=
+    ContDiff ℝ n (fun x => adjointMap (K := K) (U := U) (E := E) (A x)) :=
   ContDiff.comp (g := adjointMap (K := K) (U := U) (E := E)) (f := A)
     (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := n)
       (E := C(K,U →L[ℝ] E)) (F := C(K,E →L[ℝ] U))
@@ -198,7 +199,8 @@ theorem contDiff_adjoint (A : P → C(K, U →L[ℝ] E)) {n : ℕ∞ω} (hA : Co
 theorem adjoint_bound (A : P → C(K, U →L[ℝ] E)) (hA : ContDiff ℝ ∞ A)
     (R C : ℝ) (hR : 0 ≤ R) (hC : 0 ≤ C) (d : ℕ)
     (hb : ∀ n x, ‖iteratedFDeriv ℝ n A x‖ ≤ C * majorant R d n) (n : ℕ) (x : P) :
-    ‖iteratedFDeriv ℝ n (fun y => adjointMap (A y)) x‖ ≤ C*majorant R d n :=
+    ‖iteratedFDeriv ℝ n (fun y => adjointMap (K := K) (U := U) (E := E) (A y)) x‖ ≤
+      C*majorant R d n :=
   contraction_bound (adjointMap (K := K) (U := U) (E := E)) adjointMap_norm A hA R C hR hC d hb n x
 
 end Hilbert

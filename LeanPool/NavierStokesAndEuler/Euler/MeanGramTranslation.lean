@@ -75,9 +75,12 @@ theorem translatedFrame_lower (F : C(Icc (0 : ℝ) T, L2 →L[ℝ] L2)) (c : ℝ
 /-- The adjoint frame multiplier transforms by ordinary spatial translation. -/
 theorem frameMultiplier_adjoint_translate (a : Space)
     (F : C(Icc (0 : ℝ) T, L2 →L[ℝ] L2)) (f : TimeLp T L2) :
-    (timeMultiplier T hT (solenoidalFrame T (translatePath T a F))).adjoint
+    ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace) (F := TimeLp T L2)
+        (timeMultiplier T hT (solenoidalFrame T (translatePath T a F)))
         (timeTranslation T a f) =
-      timeSolenoidalTranslation T a ((timeMultiplier T hT (solenoidalFrame T F)).adjoint f) := by
+      timeSolenoidalTranslation T a
+        (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace) (F := TimeLp T L2)
+          (timeMultiplier T hT (solenoidalFrame T F)) f) := by
   apply eq_of_translated_pairing T a
   intro v
   exact (adjoint_inner_left (timeMultiplier T hT (solenoidalFrame T (translatePath T a F)))
@@ -87,7 +90,8 @@ theorem frameMultiplier_adjoint_translate (a : Space)
       (((timeTranslation T a).inner_map_map f (timeMultiplier T hT (solenoidalFrame T F) v)).trans
         ((adjoint_inner_left (timeMultiplier T hT (solenoidalFrame T F)) v f).symm.trans
           ((timeSolenoidalTranslation T a).inner_map_map
-            ((timeMultiplier T hT (solenoidalFrame T F)).adjoint f) v).symm)))
+            (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace) (F := TimeLp T L2)
+              (timeMultiplier T hT (solenoidalFrame T F)) f) v).symm)))
 
 /-- Spatial translation conjugates the actual time Gram operator. -/
 theorem gramOperator_translate (a : Space)
@@ -95,7 +99,8 @@ theorem gramOperator_translate (a : Space)
     gramOperator T hT (solenoidalFrame T (translatePath T a F))
         (timeSolenoidalTranslation T a u) =
       timeSolenoidalTranslation T a (gramOperator T hT (solenoidalFrame T F) u) :=
-  (congrArg (timeMultiplier T hT (solenoidalFrame T (translatePath T a F))).adjoint
+  (congrArg (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace) (F := TimeLp T L2)
+      (timeMultiplier T hT (solenoidalFrame T (translatePath T a F))))
     (frameMultiplier_translate T hT a F u)).trans
       (frameMultiplier_adjoint_translate T hT a F (timeMultiplier T hT (solenoidalFrame T F) u))
 
@@ -127,7 +132,8 @@ def meanAcceleration (F F₁ : C(Icc (0 : ℝ) T, L2 →L[ℝ] L2))
     (c : ℝ) (hc : 0 < c) (hF : ∀ t v, c * ‖v‖ ^ 2 ≤ ‖solenoidalFrame T F t v‖ ^ 2)
     (v : TimeLp T solenoidalSpace) (f : TimeLp T L2) : TimeLp T solenoidalSpace :=
   gramSolver T hT (solenoidalFrame T F) c hc hF
-    ((timeMultiplier T hT (solenoidalFrame T F)).adjoint
+    (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace) (F := TimeLp T L2)
+      (timeMultiplier T hT (solenoidalFrame T F))
       (f-(2 : ℝ) • timeMultiplier T hT (solenoidalFrame T F₁) v))
 
 /-- The translated acceleration is obtained by the actual translated coefficients. -/
@@ -146,14 +152,17 @@ theorem meanAcceleration_translate (a : Space)
         (timeSolenoidalTranslation T a v) =
       timeTranslation T a (f-(2 : ℝ) • timeMultiplier T hT (solenoidalFrame T F₁) v) :=
     hr.trans (by simp only [map_sub, map_smul])
-  have hg := (congrArg (timeMultiplier T hT (solenoidalFrame T (translatePath T a F))).adjoint
+  have hg := (congrArg
+      (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace) (F := TimeLp T L2)
+        (timeMultiplier T hT (solenoidalFrame T (translatePath T a F))))
       hr').trans
     (frameMultiplier_adjoint_translate T hT a F
       (f-(2 : ℝ) • timeMultiplier T hT (solenoidalFrame T F₁) v))
   exact (congrArg (gramSolver T hT (solenoidalFrame T (translatePath T a F)) c hc
       (translatedFrame_lower T F c hF a)) hg).trans
     (gramSolver_translate T hT a F c hc hF
-      ((timeMultiplier T hT (solenoidalFrame T F)).adjoint
+      (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace) (F := TimeLp T L2)
+        (timeMultiplier T hT (solenoidalFrame T F))
         (f-(2 : ℝ) • timeMultiplier T hT (solenoidalFrame T F₁) v)))
 
 end EulerMeanGramTranslation
@@ -176,18 +185,21 @@ theorem acceleration_eq_meanAcceleration (c : ℝ) (hc : 0 < c)
     s.acceleration = meanAcceleration T hT F F₁ c hc hF s.velocityLp f := by
   have heq : ∀ᵐ t ∂timeMeasure T,
       gram (extendPath T hT (solenoidalFrame T F) t) (s.acceleration t) =
-      (solenoidalFrame T F (projIcc 0 T hT t)).adjoint
+      ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2)
+        (solenoidalFrame T F (projIcc 0 T hT t))
         (f t-(2 : ℝ) • solenoidalFrame T F₁ (projIcc 0 T hT t) (s.velocityLp t)) := by
     filter_upwards [s.equation, s.velocity_ae] with t ht hv
     have hh := congrArg (fun v : solenoidalSpace =>
-      solenoidalProjection ((F (projIcc 0 T hT t)).adjoint
+      solenoidalProjection (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := L2) (F := L2)
+        (F (projIcc 0 T hT t))
         (f t-(2 : ℝ) • F₁ (projIcc 0 T hT t) (v : L2)))) hv
     exact gram_equation_of_ordinary (F (projIcc 0 T hT t)) (F₁ (projIcc 0 T hT t))
       (f t) (s.acceleration t) (s.velocityLp t) (ht.trans hh.symm)
   exact (EulerTransverseStrongEstimates.acceleration_eq_inverse T (solenoidalFrame T F)
     (solenoidalFrame T F₁) c hc hF hT s.velocityLp s.acceleration f heq).trans
       (congrArg (fun G : TimeLp T solenoidalSpace →L[ℝ] TimeLp T solenoidalSpace =>
-        G ((timeMultiplier T hT (solenoidalFrame T F)).adjoint
+        G (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace) (F := TimeLp T L2)
+          (timeMultiplier T hT (solenoidalFrame T F))
           (f-(2 : ℝ) • timeMultiplier T hT (solenoidalFrame T F₁) s.velocityLp)))
         (gramSolver_eq_multiplier T hT (solenoidalFrame T F) c hc hF)).symm
 

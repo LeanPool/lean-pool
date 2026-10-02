@@ -56,7 +56,7 @@ variable (P : ℝ) [Fact (0 < P)] {T : ℝ} {U E : Type*}
 theorem coordinate_equation_ae (t : Icc (0 : ℝ) T) :
     ∀ᵐ x ∂liftMeasure P,
       gram (D.Q t x.1) (D.accelerationPath P f t x) =
-        (D.Q t x.1).adjoint (f t x-(2 : ℝ) •
+        ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := U) (F := E) (D.Q t x.1) (f t x-(2 : ℝ) •
           D.Q₁ t x.1 (D.velocityPath P (pathLp T D.time_pos.le f) t x)) := by
   let v := D.velocityPath P (pathLp T D.time_pos.le f) t
   let a := D.accelerationPath P f t
@@ -65,7 +65,9 @@ theorem coordinate_equation_ae (t : Icc (0 : ℝ) T) :
   let Q₁ := fullOperatorMap (E := U) (F := E) P (D.Q₁ t)
   let Qa := fullOperatorMap (E := E) (F := U) P A
   let r := f t-(2 : ℝ) • Q₁ v
-  have he : Q.adjoint (Q a) = Q.adjoint r := D.projected_equation P f t
+  have he : ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := CylinderL2 P U) (F := CylinderL2 P E) Q
+      (Q a) = ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := CylinderL2 P U) (F := CylinderL2 P E) Q
+      r := D.projected_equation P f t
   rw [fullOperatorMap_adjoint] at he
   filter_upwards [
     EulerLpOperatorField.full_ae (liftMeasure P) (fieldLift (W := E →L[ℝ] U) P A) (Q a),
@@ -77,9 +79,10 @@ theorem coordinate_equation_ae (t : Icc (0 : ℝ) T) :
     with x hl hq hr hsub hsmul hq₁
   have hp := congrArg (fun w : CylinderL2 P U => w x) he
   change Qa (Q a) x = Qa r x at hp
-  change Qa (Q a) x = (D.Q t x.1).adjoint (Q a x) at hl
+  change Qa (Q a) x =
+    ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := U) (F := E) (D.Q t x.1) (Q a x) at hl
   change Q a x = D.Q t x.1 (a x) at hq
-  change Qa r x = (D.Q t x.1).adjoint (r x) at hr
+  change Qa r x = ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := U) (F := E) (D.Q t x.1) (r x) at hr
   change Q₁ v x = D.Q₁ t x.1 (v x) at hq₁
   rw [hl,hq,hr] at hp
   change r x = f t x-((2 : ℝ) • Q₁ v) x at hsub
@@ -90,7 +93,7 @@ theorem coordinate_equation_ae (t : Icc (0 : ℝ) T) :
 theorem physicalVelocity_ae (t : Icc (0 : ℝ) T) :
     D.physicalVelocity P f t =ᵐ[liftMeasure P] fun x =>
       D.Q t x.1 (D.velocityPath P (pathLp T D.time_pos.le f) t x) :=
-  EulerLpOperatorField.full_ae (liftMeasure P) (fieldLift P (D.Q t)) _
+  EulerLpOperatorField.full_ae (liftMeasure P) (fieldLift (W := U →L[ℝ] E) P (D.Q t)) _
 
 theorem physicalDerivative_ae (t : Icc (0 : ℝ) T) :
     D.physicalDerivative P f t =ᵐ[liftMeasure P] fun x =>
@@ -148,7 +151,8 @@ variable {P : ℝ} [Fact (0 < P)]
   {D : Data U} (B : HistoryData D) {raw : VectorField} (G : Forcing P D raw)
 
 /-- Forcing path: an abbreviation for `includePath P D.support D.support_measurable G.path`. -/
-abbrev forcingPath := includePath P D.support D.support_measurable G.path
+abbrev forcingPath :=
+  includePath (K := Icc (0 : ℝ) D.T) (V := Space) P D.support D.support_measurable G.path
 
 /-- Coordinate path, given by `B.coefficients.velocityPath P (pathLp D.T D.T_pos.le (forcingPath
 G))`. -/
@@ -173,28 +177,33 @@ def pressurePath : C(Icc (0 : ℝ) D.T,CylinderL2 P ℝ) :=
   sourcePressure P D.M D.normal D.normalLower D.normalLower_pos D.normal_lower
     (forcingPath G) (B.velocityPath G)
 
-theorem coordinatePath_orbit : ContDiff ℝ ∞ (fun a => pathTranslate P a (B.coordinatePath G)) := by
+theorem coordinatePath_orbit : ContDiff ℝ ∞ (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) D.T) (V := U) P a (B.coordinatePath G)) := by
   apply B.coefficients.velocityPath_orbit_contDiff P D.frame.translation_contDiff
     D.frameDerivative.translation_contDiff B.H.translation_contDiff
   exact G.path_orbit
 
 theorem coordinateDerivativePath_orbit :
-    ContDiff ℝ ∞ (fun a => pathTranslate P a (B.coordinateDerivativePath G)) := by
+    ContDiff ℝ ∞ (fun a =>
+      pathTranslate (K := Icc (0 : ℝ) D.T) (V := U) P a (B.coordinateDerivativePath G)) := by
   apply B.coefficients.accelerationPath_orbit_contDiff P D.frame.translation_contDiff
     D.frameDerivative.translation_contDiff B.H.translation_contDiff
   exact G.path_orbit
 
-theorem velocityPath_orbit : ContDiff ℝ ∞ (fun a => pathTranslate P a (B.velocityPath G)) := by
+theorem velocityPath_orbit : ContDiff ℝ ∞ (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a (B.velocityPath G)) := by
   apply B.coefficients.physicalVelocity_orbit_contDiff P D.frame.translation_contDiff
     D.frameDerivative.translation_contDiff B.H.translation_contDiff
   exact G.path_orbit
 
-theorem derivativePath_orbit : ContDiff ℝ ∞ (fun a => pathTranslate P a (B.derivativePath G)) := by
+theorem derivativePath_orbit : ContDiff ℝ ∞ (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a (B.derivativePath G)) := by
   apply B.coefficients.physicalDerivative_orbit_contDiff P D.frame.translation_contDiff
     D.frameDerivative.translation_contDiff B.H.translation_contDiff
   exact G.path_orbit
 
-theorem pressurePath_orbit : ContDiff ℝ ∞ (fun a => pathTranslate P a (B.pressurePath G)) :=
+theorem pressurePath_orbit : ContDiff ℝ ∞ (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) D.T) (V := ℝ) P a (B.pressurePath G)) :=
   sourcePressure_contDiff P D.M D.normal D.normalLower D.normalLower_pos D.normal_lower
     (forcingPath G) (B.velocityPath G) G.path_orbit (B.velocityPath_orbit G)
 

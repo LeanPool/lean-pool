@@ -39,7 +39,7 @@ def supportedPath (p : C(K, LiftL2 P)) (h : ∀ t, p t ∈ Supported P Space S h
 omit [CompactSpace K] in
 @[simp] theorem include_supportedPath (p : C(K, LiftL2 P))
     (h : ∀ t, p t ∈ Supported P Space S hS) :
-    includePath P S hS (supportedPath P S hS p h) = p := by
+    includePath (K := K) (V := Space) P S hS (supportedPath P S hS p h) = p := by
   apply ContinuousMap.ext
   intro t
   rfl

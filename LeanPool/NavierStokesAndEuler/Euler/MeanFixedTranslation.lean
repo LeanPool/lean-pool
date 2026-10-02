@@ -158,8 +158,10 @@ theorem translatedMeanOperator_coercive (c : ℝ)
 
 /-- The forcing adjoint transforms by the same actual spatial action. -/
 theorem fixedMeanPrimitive_adjoint_translate (f : TimeLp T L2) :
-    (translatedMeanPrimitive T hT a F F₁).adjoint (timeTranslation T a f) =
-      timeSolenoidalTranslation T a ((fixedMeanPrimitive T hT F F₁).adjoint f) := by
+    adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace) (F := TimeLp T L2)
+        (translatedMeanPrimitive T hT a F F₁) (timeTranslation T a f) =
+      timeSolenoidalTranslation T a
+        (adjoint (𝕜 := ℝ) (F := TimeLp T L2) (fixedMeanPrimitive T hT F F₁) f) := by
   apply eq_of_translated_pairing T a
   intro v
   exact (adjoint_inner_left (translatedMeanPrimitive T hT a F F₁)
@@ -168,7 +170,8 @@ theorem fixedMeanPrimitive_adjoint_translate (f : TimeLp T L2) :
         (fixedMeanPrimitive_translate T hT a F F₁ v)).trans
       (((timeTranslation T a).inner_map_map f (fixedMeanPrimitive T hT F F₁ v)).trans
         ((adjoint_inner_left (fixedMeanPrimitive T hT F F₁) v f).symm.trans
-          ((timeSolenoidalTranslation T a).inner_map_map ((fixedMeanPrimitive T hT F F₁).adjoint f)
-              v).symm)))
+          ((timeSolenoidalTranslation T a).inner_map_map
+            (adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace) (F := TimeLp T L2)
+              (fixedMeanPrimitive T hT F F₁) f) v).symm)))
 
 end EulerMeanFixedTranslation

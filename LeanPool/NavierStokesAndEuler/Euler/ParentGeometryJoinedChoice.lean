@@ -223,13 +223,15 @@ theorem initialized_uniform_flow_and_shear :
         ‖fderiv ℝ (initializedExactPhysicalVelocity M D hTime τ hτ hτT B δ hδ ξ hs α
           Cagree (truncation k) hn k hk Q t (Y t)) x -
           (α*deriv (profile δ) (k*⟪D.m₀,Y t x⟫_ℝ)) •
-            rankOne ℝ (canonicalVelocity τ hτ hτT B ξ hs t (Y t x)) (D.normal.field t (Y t x))‖ ≤
+            (rankOne ℝ : Space →L[ℝ] Space →L⋆[ℝ] Space →L[ℝ] Space)
+              (canonicalVelocity τ hτ hτT B ξ hs t (Y t x)) (D.normal.field t (Y t x))‖ ≤
           k^(-(1/4 : ℝ)) ∧
         ‖fderiv ℝ (gradient (initializedExactPhysicalPressure M D hTime τ hτ hτT B δ hδ ξ hs α
           Cagree (truncation k) hn k hk Q t (Y t))) x -
           (EulerPacketPrimaryPressure.coefficient τ hτ hτT B ξ hs α t (Y t x) *
             deriv (profile δ) (k*⟪D.m₀,Y t x⟫_ℝ)) •
-          rankOne ℝ (D.normal.field t (Y t x)) (D.normal.field t (Y t x))‖ ≤ k^(-(1/4 : ℝ))) ∧
+          (rankOne ℝ : Space →L[ℝ] Space →L⋆[ℝ] Space →L[ℝ] Space)
+            (D.normal.field t (Y t x)) (D.normal.field t (Y t x))‖ ≤ k^(-(1/4 : ℝ))) ∧
       (∀ (ell : ℝ) (hell : 0 < ell), ell ≤ 1 → ∀ t : Icc (0 : ℝ) D.T,
         (G.displacementField k D.m₀ ell hell t).HasJetBound
           (k^(-(1/4 : ℝ))) (ell⁻¹*k^(5/4 : ℝ)) ∧
@@ -476,13 +478,15 @@ theorem initialized_uniform_child_label_bounds (q : ℕ)
           ‖fderiv ℝ (initializedExactPhysicalVelocity M D hTime τ hτ hτT B δ hδ ξ hs α
             Cagree (truncation k) hn k hk Q t (Y t)) x -
             (α*deriv (profile δ) (k*⟪D.m₀,Y t x⟫_ℝ)) •
-              rankOne ℝ (canonicalVelocity τ hτ hτT B ξ hs t (Y t x)) (D.normal.field t (Y t x))‖ ≤
+              rankOne (E := Space) (F := Space) ℝ (canonicalVelocity τ hτ hτT B ξ hs t (Y t x))
+                (D.normal.field t (Y t x))‖ ≤
                   k^(-(1/4 : ℝ)) ∧
           ‖fderiv ℝ (gradient (initializedExactPhysicalPressure M D hTime τ hτ hτT B δ hδ ξ hs α
             Cagree (truncation k) hn k hk Q t (Y t))) x -
             (EulerPacketPrimaryPressure.coefficient τ hτ hτT B ξ hs α t (Y t x) *
               deriv (profile δ) (k*⟪D.m₀,Y t x⟫_ℝ)) •
-            rankOne ℝ (D.normal.field t (Y t x)) (D.normal.field t (Y t x))‖ ≤ k^(-(1/4 : ℝ))) ∧
+            rankOne (E := Space) (F := Space) ℝ (D.normal.field t (Y t x))
+              (D.normal.field t (Y t x))‖ ≤ k^(-(1/4 : ℝ))) ∧
         (∀ t, (E t).parentDisplacement=Dp t ∧ (E t).parentVelocity=Vp t ∧ (E
             t).parentAcceleration=Wp t ∧
           (E t).displacement=G.displacementField k D.m₀ ell hell t ∧
@@ -581,8 +585,9 @@ theorem joined_uniform_child :
           δ hδ ξ hs α (A.sourceAgreement m hm R S hS H)
           (truncation k) hn k hk.four Q t (I.normalized t)) x -
           (α*deriv (profile δ) (k*⟪m,I.normalized t x⟫_ℝ)) •
-            rankOne ℝ (canonicalVelocity τ hτ hτT (A.historyOn H m hm R S hS τ hτ hτT)
-              ξ hs t (I.normalized t x))
+            rankOne (E := Space) (F := Space) ℝ
+              (canonicalVelocity τ hτ hτT (A.historyOn H m hm R S hS τ hτ hτT)
+                ξ hs t (I.normalized t x))
               ((A.transverseData m hm R S hS).normal.field t (I.normalized t x))‖ ≤ k^(-(1/4 : ℝ)) ∧
         ‖fderiv ℝ (gradient (initializedExactPhysicalPressure (A.meanData H)
           (A.transverseData m hm R S hS) rfl τ hτ hτT (A.historyOn H m hm R S hS τ hτ hτT)
@@ -590,7 +595,8 @@ theorem joined_uniform_child :
           (truncation k) hn k hk.four Q t (I.normalized t))) x -
           (EulerPacketPrimaryPressure.coefficient τ hτ hτT (A.historyOn H m hm R S hS τ hτ hτT)
             ξ hs α t (I.normalized t x)*deriv (profile δ) (k*⟪m,I.normalized t x⟫_ℝ)) •
-              rankOne ℝ ((A.transverseData m hm R S hS).normal.field t (I.normalized t x))
+              rankOne (E := Space) (F := Space) ℝ
+                ((A.transverseData m hm R S hS).normal.field t (I.normalized t x))
                 ((A.transverseData m hm R S hS).normal.field t (I.normalized t x))‖ ≤ k^(-(1/4 :
                     ℝ))) ∧
       (∀ (t : Icc (0 : ℝ) A.T) (x : Space),

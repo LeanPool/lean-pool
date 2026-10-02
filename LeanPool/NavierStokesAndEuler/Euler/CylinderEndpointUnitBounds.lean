@@ -48,10 +48,11 @@ variable (P : ℝ) [Fact (0 < P)] {T : ℝ} {U E : Type*}
 include hY hYb in
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem constant_unit_bound (n : ℕ) :
-    block directions q (fun a : LiftTangent => pathTranslate P a
+    block directions q (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := U) P a
       (ContinuousMap.const (Icc (0 : ℝ) T) (T⁻¹ • Y))) n 0 ≤ T⁻¹*majorant L.R d n := by
   have hs := block_smul_le directions q T⁻¹
-    (fun a : LiftTangent => pathTranslate P a (ContinuousMap.const (Icc (0 : ℝ) T) Y))
+    (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := U) P a
+      (ContinuousMap.const (Icc (0 : ℝ) T) Y))
     (constantPath_orbit_contDiff P Y hY) n 0
   rw [abs_of_nonneg (inv_nonneg.mpr D.time_pos.le)] at hs
   have hb := (constantPath_block_le (K := Icc (0 : ℝ) T) P directions q Y hY n 0).trans (hYb n)
@@ -65,7 +66,8 @@ include hdir hY hYb
 
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem forcing_unit_bound (n : ℕ) :
-    block directions q (fun a : LiftTangent => pathTranslate P a (D.endpointForcing P Y)) n 0 ≤
+    block directions q (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a (D.endpointForcing P Y)) n 0 ≤
       endpointForcingCost ι q T L.Rc L.C₁*majorant L.R d n := by
   let Z := ContinuousMap.const (Icc (0 : ℝ) T) (T⁻¹ • Y)
   have hz : ContDiff ℝ ∞ (fun a : LiftTangent =>
@@ -88,7 +90,8 @@ theorem forcing_unit_bound (n : ℕ) :
   ring
 
 theorem coordinate_unit_bound (n : ℕ) :
-    block directions q (fun a : LiftTangent => pathTranslate P a (D.endpointCoordinate P Y)) n 0 ≤
+    block directions q (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := U) P a (D.endpointCoordinate P Y)) n 0 ≤
       L.coordinateCost*majorant L.R (d+2) n := by
   have hf := D.endpointForcing_orbit_contDiff P L.frameDerivative_smooth Y hY
   have hv := D.velocityPath_orbit_contDiff P L.frame_smooth L.frameDerivative_smooth
@@ -109,7 +112,8 @@ theorem coordinate_unit_bound (n : ℕ) :
     (by simpa only [coordinateCost,add_mul] using add_le_add hc hb)
 
 theorem acceleration_unit_bound (n : ℕ) :
-    block directions q (fun a : LiftTangent => pathTranslate P a (D.endpointAcceleration P Y)) n 0 ≤
+    block directions q (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := U) P a (D.endpointAcceleration P Y)) n 0 ≤
       majorant L.R (d+3) n := by
   have hf := D.endpointForcing_orbit_contDiff P L.frameDerivative_smooth Y hY
   have ha := D.accelerationPath_orbit_contDiff P L.frame_smooth L.frameDerivative_smooth
@@ -122,20 +126,22 @@ theorem acceleration_unit_bound (n : ℕ) :
     L.weak_radius L.strong_radius L.time_le_one L.uniform_radius (D.endpointForcing P Y) hf d
     (L.forcing_unit_bound P directions hdir Y hY d hYb) n 0
   have hs := block_smul_le directions q (-1 : ℝ)
-    (fun a : LiftTangent => pathTranslate P a (D.accelerationPath P (D.endpointForcing P Y))) ha n 0
+    (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := U) P a
+      (D.accelerationPath P (D.endpointForcing P Y))) ha n 0
   rw [D.endpointAcceleration_eq_forced P Y]
   simp only [map_neg]
   have hn : block directions q
-      (fun a : LiftTangent => -pathTranslate P a (D.accelerationPath P (D.endpointForcing P Y))) n
-          0 ≤
+      (fun a : LiftTangent => -pathTranslate (K := Icc (0 : ℝ) T) (V := U) P a
+        (D.accelerationPath P (D.endpointForcing P Y))) n 0 ≤
       block directions q
-        (fun a : LiftTangent => pathTranslate P a (D.accelerationPath P (D.endpointForcing P Y))) n
-            0 := by
+        (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := U) P a
+          (D.accelerationPath P (D.endpointForcing P Y))) n 0 := by
     simpa only [neg_one_smul,abs_neg,abs_one,one_mul] using hs
   exact hn.trans hb
 
 theorem velocity_unit_bound (n : ℕ) :
-    block directions q (fun a : LiftTangent => pathTranslate P a (D.endpointVelocity P Y)) n 0 ≤
+    block directions q (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a (D.endpointVelocity P Y)) n 0 ≤
       L.velocityCost*majorant L.R (d+2) n := by
   change block directions q (fun a : LiftTangent =>
     pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a
@@ -148,21 +154,22 @@ theorem velocity_unit_bound (n : ℕ) :
     L.radius_bounds.2 L.frame_bound (d+2) (L.coordinate_unit_bound P directions hdir Y hY d hYb) n
 
 theorem derivative_unit_bound (n : ℕ) :
-    block directions q (fun a : LiftTangent => pathTranslate P a (D.endpointDerivative P Y)) n 0 ≤
+    block directions q (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a (D.endpointDerivative P Y)) n 0 ≤
       L.derivativeCost*majorant L.R (d+3) n := by
   have hv := D.endpointCoordinate_orbit_contDiff P L.frame_smooth L.frameDerivative_smooth
       L.hessian_smooth Y hY
   have ha := D.endpointAcceleration_orbit_contDiff P L.frame_smooth L.frameDerivative_smooth
       L.hessian_smooth Y hY
-  have hbv (k) : block directions q (fun a : LiftTangent => pathTranslate P a (D.endpointCoordinate
-      P Y)) k 0 ≤
+  have hbv (k) : block directions q (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := U) P a (D.endpointCoordinate P Y)) k 0 ≤
       L.coordinateCost*majorant L.R (d+3) k :=
     (L.coordinate_unit_bound P directions hdir Y hY d hYb k).trans
       (mul_le_mul_of_nonneg_left (majorant_mono_shift L.R L.radius_bounds.1 (d+2) (d+3) k (by
           omega))
         L.coordinateCost_nonneg)
-  have hba (k) : block directions q (fun a : LiftTangent => pathTranslate P a
-      (D.endpointAcceleration P Y)) k 0 ≤
+  have hba (k) : block directions q (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := U) P a (D.endpointAcceleration P Y)) k 0 ≤
       1*majorant L.R (d+3) k := by
     simpa only [one_mul] using L.acceleration_unit_bound P directions hdir Y hY d hYb k
   have h₁ := product_orbit_block_bound P D.Q₁ L.frameDerivative_smooth directions hdir q

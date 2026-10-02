@@ -33,7 +33,7 @@ theorem jetLp_ae (A : SmoothL2Field V) (n : ℕ) :
 private theorem iteratedFDeriv_translation_ae_aux (n : ℕ) :
     ∀ (V : Type u) [NormedAddCommGroup V] [NormedSpace ℝ V] (A : SmoothL2Field V)
       (a : Space) (v : Fin n → Space),
-      iteratedFDeriv ℝ n (fun b : Space => translation b A.toLp) a v =ᵐ[volume]
+      iteratedFDeriv ℝ n (fun b : Space => translation (V := V) b A.toLp) a v =ᵐ[volume]
         fun x => iteratedFDeriv ℝ n A.field (x+a) v := by
   induction n with
   | zero =>
@@ -45,34 +45,37 @@ private theorem iteratedFDeriv_translation_ae_aux (n : ℕ) :
     exact ht.trans hf
   | succ n ih =>
     intro V _ _ A a v
-    have he : iteratedFDeriv ℝ (n+1) (fun b : Space => translation b A.toLp) a v =
+    have he : iteratedFDeriv ℝ (n+1) (fun b : Space => translation (V := V) b A.toLp) a v =
         derivativeMap volume
-          (iteratedFDeriv ℝ n (fun b : Space => translation b A.derivative.toLp) a (Fin.init v))
+          (iteratedFDeriv ℝ n (fun b : Space =>
+            translation (V := Space →L[ℝ] V) b A.derivative.toLp) a (Fin.init v))
           (v (Fin.last n)) := by
       rw [iteratedFDeriv_succ_apply_right, A.translation_fderiv]
       change (iteratedFDeriv ℝ n
         ((derivativeBundling (P := Space) (V := V) volume) ∘
-          fun b : Space => translation b A.derivative.toLp) a (Fin.init v)) (v (Fin.last n)) = _
+          fun b : Space => translation (V := Space →L[ℝ] V) b A.derivative.toLp) a
+            (Fin.init v)) (v (Fin.last n)) = _
       rw [(derivativeBundling (P := Space) (V := V) volume).iteratedFDeriv_comp_left
         (A.derivative.translation_contDiff.contDiffAt (x := a)) (by simp)]
       rfl
     rw [he]
     filter_upwards [derivativeMap_ae volume
-      (iteratedFDeriv ℝ n (fun b : Space => translation b A.derivative.toLp) a (Fin.init v))
+      (iteratedFDeriv ℝ n (fun b : Space =>
+        translation (V := Space →L[ℝ] V) b A.derivative.toLp) a (Fin.init v))
       (v (Fin.last n)), ih (Space →L[ℝ] V) A.derivative a (Fin.init v)] with x hm hi
     rw [hm, hi]
     exact (iteratedFDeriv_succ_apply_right (f := A.field) (x := x+a) v).symm
 
 theorem iteratedFDeriv_translation_ae (A : SmoothL2Field V) (n : ℕ)
     (a : Space) (v : Fin n → Space) :
-    iteratedFDeriv ℝ n (fun b : Space => translation b A.toLp) a v =ᵐ[volume]
+    iteratedFDeriv ℝ n (fun b : Space => translation (V := V) b A.toLp) a v =ᵐ[volume]
       fun x => iteratedFDeriv ℝ n A.field (x+a) v :=
   iteratedFDeriv_translation_ae_aux n V A a v
 
 /-- The entire parameter derivative tensor is a bounded linear image of the actual spatial L²
 tensor. -/
 theorem iteratedFDeriv_translation_eq (A : SmoothL2Field V) (n : ℕ) (a : Space) :
-    iteratedFDeriv ℝ n (fun b : Space => translation b A.toLp) a =
+    iteratedFDeriv ℝ n (fun b : Space => translation (V := V) b A.toLp) a =
       multilinearBundling (P := Space) (V := V) volume n (translation a (A.jetLp n)) := by
   apply ContinuousMultilinearMap.ext
   intro v

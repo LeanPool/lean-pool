@@ -66,10 +66,12 @@ def multiply (A : MatrixCoefficient T coef) (G : Field P T raw) :
 /-- Adjoint, bundling `path`, `orbit`, `translateCoefficientPath`, `exact` and the required
 compatibility proofs. -/
 def adjoint (A : MatrixCoefficient T coef) :
-    MatrixCoefficient T (fun z => (coef z).adjoint) where
-  path := pathAdjointMap A.path
+    MatrixCoefficient T
+      (fun z => ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (coef z)) where
+  path := pathAdjointMap (α := Space) (K := Icc (0 : ℝ) T) (U := Space) (E := Space) A.path
   orbit := by
-    have he : translateCoefficientPath (pathAdjointMap A.path) =
+    have he : translateCoefficientPath
+          (pathAdjointMap (α := Space) (K := Icc (0 : ℝ) T) (U := Space) (E := Space) A.path) =
         (pathAdjointMap (α := Space) (K := Icc (0 : ℝ) T) (U := Space) (E := Space)) ∘
           translateCoefficientPath A.path := by
       funext a

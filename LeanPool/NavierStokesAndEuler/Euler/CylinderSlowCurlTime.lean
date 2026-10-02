@@ -39,7 +39,8 @@ def derivative : C(Icc (0 : ℝ) T,LiftL2 P) := path P G₁ p + path P G f
 
 include hG hG₁ hp hf in
 theorem derivative_orbit :
-    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a (derivative P T G G₁ p f)) := by
+    ContDiff ℝ ∞ (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (derivative P T G G₁ p f)) := by
   simp only [derivative, map_add]
   exact (path_orbit P G₁ hG₁ p hp).add (path_orbit P G hG f hf)
 
@@ -69,12 +70,14 @@ theorem path_hasDerivWithinAt (t : Icc (0 : ℝ) T) :
     HasDerivWithinAt (extendPath T hT (path P G p))
       (derivative P T G G₁ p f t) (Icc (0 : ℝ) T) t := by
   have hcoeff (i : Fin 3) (r : ℝ) (hr : r ∈ Icc (0 : ℝ) T) (y : Space) :
-      HasDerivWithinAt (fun s => extendPath T hT (curlCoefficientPath i G) s y)
-        (extendPath T hT (curlCoefficientPath i G₁) r y) (Icc (0 : ℝ) T) r :=
+      HasDerivWithinAt
+        (fun s => extendPath T hT (curlCoefficientPath (K := Icc (0 : ℝ) T) i G) s y)
+        (extendPath T hT (curlCoefficientPath (K := Icc (0 : ℝ) T) i G₁) r y) (Icc (0 : ℝ) T) r :=
     (curlCoefficient i).hasFDerivAt.comp_hasDerivWithinAt r (hGt r hr y)
   have hterm (i : Fin 3) : HasDerivWithinAt (extendPath T hT (term P G p i))
       (term P G₁ p i t + term P G f i t) (Icc (0 : ℝ) T) t :=
-    fullProduct_hasDerivWithinAt P T hT (curlCoefficientPath i G) (curlCoefficientPath i G₁)
+    fullProduct_hasDerivWithinAt P T hT (curlCoefficientPath (K := Icc (0 : ℝ) T) i G)
+      (curlCoefficientPath (K := Icc (0 : ℝ) T) i G₁)
       (hcoeff i) (derivativePath P p i.succ) (derivativePath P f i.succ)
       (wordPath_hasDerivWithinAt P T hT p f hp hf hd (fun _ : Fin 1 => i.succ)) t
   have h := HasDerivWithinAt.fun_sum (u := Finset.univ) (fun i _ => hterm i)
@@ -101,22 +104,29 @@ theorem derivative_block_bound (q : ℕ) (Rc C R D : ℝ)
     (hbG : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath G) a‖ ≤ C * majorant Rc 0 n)
     (hbG₁ : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath G₁) a‖ ≤ C * majorant Rc 0 n)
     (d : ℕ)
-    (hbp : ∀ n, block standardDirection q (fun a : LiftTangent => pathTranslate P a p) n 0 ≤
+    (hbp : ∀ n, block standardDirection q
+      (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a p) n 0 ≤
       D*majorant R d n)
-    (hbf : ∀ n, block standardDirection q (fun a : LiftTangent => pathTranslate P a f) n 0 ≤
+    (hbf : ∀ n, block standardDirection q
+      (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a f) n 0 ≤
       D*majorant R d n) (n : ℕ) :
-    block standardDirection q (fun a : LiftTangent => pathTranslate P a (derivative P T G G₁ p f))
-        n 0 ≤
+    block standardDirection q (fun a : LiftTangent =>
+        pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (derivative P T G G₁ p f)) n 0 ≤
       (18*sobolevCoefficientAmplitude (Fin 4) q Rc C*D)*majorant R (d+1) n := by
-  have he : (fun a : LiftTangent => pathTranslate P a (derivative P T G G₁ p f)) =
-      (fun a : LiftTangent => pathTranslate P a (path P G₁ p)) +
-        (fun a : LiftTangent => pathTranslate P a (path P G f)) := by
+  have he : (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (derivative P T G G₁ p f)) =
+      (fun a : LiftTangent =>
+        pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (path P G₁ p)) +
+        (fun a : LiftTangent =>
+          pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (path P G f)) := by
     funext a
-    exact map_add (pathTranslate P a) _ _
+    exact map_add (pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a) _ _
   rw [he]
   calc
-    _ ≤ block standardDirection q (fun a : LiftTangent => pathTranslate P a (path P G₁ p)) n 0 +
-        block standardDirection q (fun a : LiftTangent => pathTranslate P a (path P G f)) n 0 :=
+    _ ≤ block standardDirection q (fun a : LiftTangent =>
+          pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (path P G₁ p)) n 0 +
+        block standardDirection q (fun a : LiftTangent =>
+          pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (path P G f)) n 0 :=
       block_add_le standardDirection q _ _ (path_orbit P G₁ hG₁ p hp) (path_orbit P G hG f hf) n 0
     _ ≤ (9*sobolevCoefficientAmplitude (Fin 4) q Rc C*D)*majorant R (d+1) n +
         (9*sobolevCoefficientAmplitude (Fin 4) q Rc C*D)*majorant R (d+1) n :=

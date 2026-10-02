@@ -36,11 +36,13 @@ theorem derivativeMap_translation (D : L2Space (Space →L[ℝ] V)) (a : Space) 
   apply ContinuousLinearMap.ext
   intro v
   apply Lp.ext
-  filter_upwards [derivativeMap_ae volume (translation a D) v, translation_ae a D,
+  filter_upwards [derivativeMap_ae volume (translation (V := Space →L[ℝ] V) a D) v,
+    translation_ae a D,
     translation_ae a (derivativeMap volume D v),
     (measurePreserving_add_right (volume : Measure Space) a).quasiMeasurePreserving.ae
       (derivativeMap_ae volume D v)] with x hm ht hv hd
-  change derivativeMap volume (translation a D) v x = translation a (derivativeMap volume D v) x
+  change derivativeMap volume (translation (V := Space →L[ℝ] V) a D) v x =
+    translation (V := V) a (derivativeMap volume D v) x
   rw [hm, ht, hv, hd]
 
 /-- The hypotheses are ordinary derivatives of a concrete smooth function, not translation-orbit
@@ -76,20 +78,21 @@ def derivative (A : SmoothL2Field V) : SmoothL2Field (Space →L[ℝ] V) where
     (Eventually.of_forall (fun x => norm_iteratedFDeriv_fderiv.symm))
 
 theorem translation_hasFDerivAt (A : SmoothL2Field V) (a : Space) :
-    HasFDerivAt (fun b : Space => translation b A.toLp)
+    HasFDerivAt (fun b : Space => translation (V := V) b A.toLp)
       (derivativeMap volume (translation a A.derivative.toLp)) a := by
   rw [derivativeMap_translation]
   exact translation_hasFDerivAt_all A.toLp (derivativeMap volume A.derivative.toLp)
     (smooth_hasFDerivAt A.field A.smooth A.memLp A.derivative.memLp) a
 
 theorem translation_fderiv (A : SmoothL2Field V) :
-    fderiv ℝ (fun a : Space => translation a A.toLp) =
-      fun a => derivativeBundling volume (translation a A.derivative.toLp) :=
+    fderiv ℝ (fun a : Space => translation (V := V) a A.toLp) =
+      fun a => derivativeBundling (X := Space) (P := Space) (V := V) volume
+        (translation a A.derivative.toLp) :=
   funext (fun a => (A.translation_hasFDerivAt a).fderiv)
 
 private theorem translation_contDiff_nat_aux (n : ℕ) :
     ∀ (V : Type u) [NormedAddCommGroup V] [NormedSpace ℝ V] (A : SmoothL2Field V),
-      ContDiff ℝ n (fun a : Space => translation a A.toLp) := by
+      ContDiff ℝ n (fun a : Space => translation (V := V) a A.toLp) := by
   induction n with
   | zero =>
     intro V _ _ A
@@ -106,7 +109,7 @@ private theorem translation_contDiff_nat_aux (n : ℕ) :
 /-- Genuine all-order smoothness of the translation orbit follows from the ordinary spatial L² jets.
 -/
 theorem translation_contDiff (A : SmoothL2Field V) :
-    ContDiff ℝ ∞ (fun a : Space => translation a A.toLp) :=
+    ContDiff ℝ ∞ (fun a : Space => translation (V := V) a A.toLp) :=
   contDiff_infty.mpr (fun n => translation_contDiff_nat_aux n V A)
 
 theorem norm_jetLp_zero (A : SmoothL2Field V) : ‖A.jetLp 0‖ = ‖A.toLp‖ := by
@@ -125,7 +128,7 @@ theorem norm_derivative_jetLp (A : SmoothL2Field V) (n : ℕ) :
 
 private theorem norm_iteratedFDeriv_translation_aux (n : ℕ) :
     ∀ (V : Type u) [NormedAddCommGroup V] [NormedSpace ℝ V] (A : SmoothL2Field V) (a : Space),
-      ‖iteratedFDeriv ℝ n (fun b : Space => translation b A.toLp) a‖ ≤ ‖A.jetLp n‖ := by
+      ‖iteratedFDeriv ℝ n (fun b : Space => translation (V := V) b A.toLp) a‖ ≤ ‖A.jetLp n‖ := by
   induction n with
   | zero =>
     intro V _ _ A a
@@ -143,7 +146,7 @@ private theorem norm_iteratedFDeriv_translation_aux (n : ℕ) :
 
 /-- Translation jets are controlled with constant one by the actual ordinary spatial L² jets. -/
 theorem norm_iteratedFDeriv_translation_le (A : SmoothL2Field V) (n : ℕ) (a : Space) :
-    ‖iteratedFDeriv ℝ n (fun b : Space => translation b A.toLp) a‖ ≤ ‖A.jetLp n‖ :=
+    ‖iteratedFDeriv ℝ n (fun b : Space => translation (V := V) b A.toLp) a‖ ≤ ‖A.jetLp n‖ :=
   norm_iteratedFDeriv_translation_aux n V A a
 
 end SmoothL2Field

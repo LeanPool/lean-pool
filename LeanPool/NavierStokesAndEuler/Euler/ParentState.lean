@@ -892,7 +892,8 @@ def pressureForceTower : FieldTower P D.T :=
 theorem pressureForceTower_pointField (t : Icc (0 : ℝ) D.T)
     (x : EulerLiftedGradientSpace.LiftDomain P) :
     (pressureForceTower D P κ Z).pointField t x =
-      κ • (D.FInv.field t x.1).adjoint (Z.pointField t x) := by
+      κ • ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space)
+        (D.FInv.field t x.1) (Z.pointField t x) := by
   rw [pressureForceTower, FieldTower.smul_pointField, FieldTower.multiply_pointField]
   rfl
 
@@ -944,8 +945,8 @@ def pressureForceSmoothField (t : Icc (0 : ℝ) D.T) : SmoothL2Field Space :=
 
 theorem pressureForceSmoothField_apply (t : Icc (0 : ℝ) D.T) (x : Space) :
     (pressureForceSmoothField D P κ Z k X Y hX hYX hXY hY R C hR hC hdet hF t).field x =
-      κ • (D.FInv.field t (Y t x)).adjoint
-        (Z.pointField t (cylinderGraph P k D.m₀ (Y t x))) :=
+      κ • ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space)
+        (D.FInv.field t (Y t x)) (Z.pointField t (cylinderGraph P k D.m₀ (Y t x))) :=
   pressureForceTower_pointField D P κ Z t (cylinderGraph P k D.m₀ (Y t x))
 
 theorem pressureForceSmoothField_jetLp_continuous (n : ℕ) :
@@ -963,8 +964,8 @@ def pressureForceCoefficientPath : SmoothCoefficientPath (Icc (0 : ℝ) D.T) Spa
 
 theorem pressureForceCoefficientPath_apply (t : Icc (0 : ℝ) D.T) (x : Space) :
     (pressureForceCoefficientPath D P κ Z k X Y hX hYX hXY hY R C hR hC hdet hF).field t x =
-      κ • (D.FInv.field t (Y t x)).adjoint
-        (Z.pointField t (cylinderGraph P k D.m₀ (Y t x))) := by
+      κ • ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space)
+        (D.FInv.field t (Y t x)) (Z.pointField t (cylinderGraph P k D.m₀ (Y t x))) := by
   rw [pressureForceCoefficientPath, EulerPacketSourceVolumeSobolev.smoothCoefficientPath_apply,
     pressureForceTower_pointField]
   rfl
@@ -1163,7 +1164,8 @@ theorem packetVelocityField_apply (t : Icc (0 : ℝ) A.T) (x : Space) :
 
 theorem packetForceField_apply (t : Icc (0 : ℝ) A.T) (x : Space) :
     (L.packetForceField I m hm J support hSupport P κ Z k t).field x =
-      A.ell • (κ • (A.inverse.field t (A.ell⁻¹ • I.field t x)).adjoint
+      A.ell • (κ • ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space)
+        (A.inverse.field t (A.ell⁻¹ • I.field t x))
         (Z.pointField t (cylinderGraph P k m (A.ell⁻¹ • I.field t x)))) := by
   rw [packetForceField,scaleField_apply]
   erw [pressureForceSmoothField_apply,I.normalized_scaled]

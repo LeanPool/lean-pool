@@ -484,7 +484,7 @@ local instance instMovingNormalProjection5 : TopologicalSpace (E →L[ℝ] E) :=
 
 /-- Normal projection, given by `ContinuousLinearMap.id ℝ E - (‖m‖ ^ 2)⁻¹ • rankOne ℝ m m`. -/
 def normalProjection (m : E) : E →L[ℝ] E :=
-  ContinuousLinearMap.id ℝ E - (‖m‖ ^ 2)⁻¹ • rankOne ℝ m m
+  ContinuousLinearMap.id ℝ E - (‖m‖ ^ 2)⁻¹ • rankOne ℝ (E := E) (F := E) m m
 
 theorem normalProjection_apply (m x : E) :
     normalProjection m x = x - (⟪m, x⟫_ℝ / ‖m‖ ^ 2) • m := by
@@ -523,16 +523,16 @@ theorem normalProjection_norm_le (m : E) (hm : m ≠ 0) : ‖normalProjection m�
 /-- Normal projection derivative, given by `-((- (2 * ⟪m, m₁⟫_ℝ) / (‖m‖ ^ 2) ^ 2) • rankOne ℝ m
 m + (‖m‖ ^ 2)⁻¹ • (rankOne ℝ m₁ m + rankOne ℝ m m₁))`. -/
 def normalProjectionDerivative (m m₁ : E) : E →L[ℝ] E :=
-  -((- (2 * ⟪m, m₁⟫_ℝ) / (‖m‖ ^ 2) ^ 2) • rankOne ℝ m m +
-    (‖m‖ ^ 2)⁻¹ • (rankOne ℝ m₁ m + rankOne ℝ m m₁))
+  -((- (2 * ⟪m, m₁⟫_ℝ) / (‖m‖ ^ 2) ^ 2) • rankOne ℝ (E := E) (F := E) m m +
+    (‖m‖ ^ 2)⁻¹ • (rankOne ℝ (E := E) (F := E) m₁ m + rankOne ℝ (E := E) (F := E) m m₁))
 
 /-- The projection derivative is derived from the actual ray derivative. -/
 theorem normalProjection_hasDerivAt {m : ℝ → E} {m₁ : E} {t : ℝ}
     (hd : HasDerivAt m m₁ t) (hm : m t ≠ 0) :
     HasDerivAt (fun s => normalProjection (m s))
       (normalProjectionDerivative (m t) m₁) t := by
-  have hr : HasDerivAt (fun s => rankOne ℝ (m s) (m s))
-      (rankOne ℝ m₁ (m t) + rankOne ℝ (m t) m₁) t := by
+  have hr : HasDerivAt (fun s => rankOne ℝ (E := E) (F := E) (m s) (m s))
+      (rankOne ℝ (E := E) (F := E) m₁ (m t) + rankOne ℝ (E := E) (F := E) (m t) m₁) t := by
     convert! ContinuousLinearMap.hasDerivAt_of_bilinear
       (B := (rankOne ℝ : E →L[ℝ] E →L[ℝ] E →L[ℝ] E)) (fun _ => hd) (fun _ => hd) using 1
     ext v
@@ -540,7 +540,8 @@ theorem normalProjection_hasDerivAt {m : ℝ → E} {m₁ : E} {t : ℝ}
       ⟪m₁, v⟫_ℝ • m t + ⟪m t, v⟫_ℝ • m₁
     exact add_comm _ _
   have hi := hd.norm_sq.inv (pow_ne_zero 2 (norm_ne_zero_iff.mpr hm))
-  change HasDerivAt (fun s => ContinuousLinearMap.id ℝ E - (‖m s‖ ^ 2)⁻¹ • rankOne ℝ (m s) (m s))
+  change HasDerivAt (fun s => ContinuousLinearMap.id ℝ E -
+      (‖m s‖ ^ 2)⁻¹ • rankOne ℝ (E := E) (F := E) (m s) (m s))
     (normalProjectionDerivative (m t) m₁) t
   convert! (hi.smul hr).const_sub (ContinuousLinearMap.id ℝ E) using 1
   simp only [normalProjectionDerivative, Pi.inv_apply, add_comm]
@@ -549,8 +550,8 @@ theorem normalProjection_hasDerivWithinAt {m : ℝ → E} {m₁ : E} {t : ℝ} {
     (hd : HasDerivWithinAt m m₁ S t) (hm : m t ≠ 0) :
     HasDerivWithinAt (fun s => normalProjection (m s))
       (normalProjectionDerivative (m t) m₁) S t := by
-  have hr : HasDerivWithinAt (fun s => rankOne ℝ (m s) (m s))
-      (rankOne ℝ m₁ (m t) + rankOne ℝ (m t) m₁) S t := by
+  have hr : HasDerivWithinAt (fun s => rankOne ℝ (E := E) (F := E) (m s) (m s))
+      (rankOne ℝ (E := E) (F := E) m₁ (m t) + rankOne ℝ (E := E) (F := E) (m t) m₁) S t := by
     convert! ContinuousLinearMap.hasDerivWithinAt_of_bilinear
       (B := (rankOne ℝ : E →L[ℝ] E →L[ℝ] E →L[ℝ] E)) hd hd using 1
     ext v
@@ -559,7 +560,8 @@ theorem normalProjection_hasDerivWithinAt {m : ℝ → E} {m₁ : E} {t : ℝ} {
     exact add_comm _ _
   have hi := hd.norm_sq.inv (pow_ne_zero 2 (norm_ne_zero_iff.mpr hm))
   change HasDerivWithinAt
-    (fun s => ContinuousLinearMap.id ℝ E - (‖m s‖ ^ 2)⁻¹ • rankOne ℝ (m s) (m s))
+    (fun s => ContinuousLinearMap.id ℝ E -
+      (‖m s‖ ^ 2)⁻¹ • rankOne ℝ (E := E) (F := E) (m s) (m s))
     (normalProjectionDerivative (m t) m₁) S t
   convert! (hi.smul hr).const_sub (ContinuousLinearMap.id ℝ E) using 1
   simp only [normalProjectionDerivative, Pi.inv_apply, add_comm]
@@ -568,7 +570,8 @@ theorem normalProjection_continuous {α : Type*} [TopologicalSpace α]
     {f : α → E} (hf : Continuous f) (hne : ∀ a, f a ≠ 0) :
     Continuous (fun a => normalProjection (f a)) := by
   let R : E →L[ℝ] E →L[ℝ] E →L[ℝ] E := rankOne ℝ
-  have hr : Continuous (fun a => rankOne ℝ (f a) (f a)) := R.continuous₂.comp₂ hf hf
+  have hr : Continuous (fun a => rankOne ℝ (E := E) (F := E) (f a) (f a)) :=
+    R.continuous₂.comp₂ hf hf
   exact continuous_const.sub
     (((hf.norm.pow 2).inv₀ (fun a => pow_ne_zero 2 (norm_ne_zero_iff.mpr (hne a)))).smul hr)
 
@@ -576,9 +579,12 @@ theorem normalProjectionDerivative_continuous {α : Type*} [TopologicalSpace α]
     {f g : α → E} (hf : Continuous f) (hg : Continuous g) (hne : ∀ a, f a ≠ 0) :
     Continuous (fun a => normalProjectionDerivative (f a) (g a)) := by
   let R : E →L[ℝ] E →L[ℝ] E →L[ℝ] E := rankOne ℝ
-  have h0 : Continuous (fun a => rankOne ℝ (f a) (f a)) := R.continuous₂.comp₂ hf hf
-  have h1 : Continuous (fun a => rankOne ℝ (g a) (f a)) := R.continuous₂.comp₂ hg hf
-  have h2 : Continuous (fun a => rankOne ℝ (f a) (g a)) := R.continuous₂.comp₂ hf hg
+  have h0 : Continuous (fun a => rankOne ℝ (E := E) (F := E) (f a) (f a)) :=
+    R.continuous₂.comp₂ hf hf
+  have h1 : Continuous (fun a => rankOne ℝ (E := E) (F := E) (g a) (f a)) :=
+    R.continuous₂.comp₂ hg hf
+  have h2 : Continuous (fun a => rankOne ℝ (E := E) (F := E) (f a) (g a)) :=
+    R.continuous₂.comp₂ hf hg
   have hn := fun a => pow_ne_zero 2 (norm_ne_zero_iff.mpr (hne a))
   have hi := (hf.norm.pow 2).inv₀ hn
   have hq := ((hf.inner hg).const_mul 2).neg.div ((hf.norm.pow 2).pow 2)
@@ -591,7 +597,7 @@ theorem normalProjectionDerivative_norm_le (m m₁ : E) (hm : m ≠ 0) :
   have hmpos : 0 < ‖m‖ := norm_pos_iff.mpr hm
   have hnorm : 0 ≤ ‖m‖ ^ 2 := sq_nonneg _
   have hr := abs_real_inner_le_norm m m₁
-  have hs := norm_add_le (rankOne ℝ m₁ m) (rankOne ℝ m m₁)
+  have hs := norm_add_le (rankOne ℝ (E := E) (F := E) m₁ m) (rankOne ℝ (E := E) (F := E) m m₁)
   simp only [norm_rankOne] at hs
   calc
     ‖normalProjectionDerivative m m₁‖ ≤
@@ -617,12 +623,16 @@ variable [CompleteSpace E]
 
 /-- For the actual ray equation `m'=-M* m`, only the parent gradient norm enters. -/
 theorem normalProjectionDerivative_ray_bound (m : E) (hm : m ≠ 0) (M : E →L[ℝ] E) :
-    ‖normalProjectionDerivative m (-(M.adjoint m))‖ ≤ 4 * ‖M‖ := by
-  have hb : ‖-(M.adjoint m)‖ ≤ ‖M‖ * ‖m‖ := by
-    simpa only [norm_neg, LinearIsometryEquiv.norm_map] using M.adjoint.le_opNorm m
+    ‖normalProjectionDerivative m
+      (-(ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := E) (F := E) M m))‖ ≤ 4 * ‖M‖ := by
+  have hb : ‖-(ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := E) (F := E) M m)‖ ≤ ‖M‖ * ‖m‖ := by
+    simpa only [norm_neg, LinearIsometryEquiv.norm_map] using
+      (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := E) (F := E) M).le_opNorm m
   calc
-    ‖normalProjectionDerivative m (-(M.adjoint m))‖ ≤
-        4 * ‖-(M.adjoint m)‖ / ‖m‖ := normalProjectionDerivative_norm_le m _ hm
+    ‖normalProjectionDerivative m
+        (-(ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := E) (F := E) M m))‖ ≤
+        4 * ‖-(ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := E) (F := E) M m)‖ / ‖m‖ :=
+      normalProjectionDerivative_norm_le m _ hm
     _ ≤ 4 * (‖M‖ * ‖m‖) / ‖m‖ := by gcongr
     _ = 4 * ‖M‖ := by field_simp
 
@@ -717,7 +727,7 @@ variable [CompleteSpace E]
 
 theorem projectionDerivativePath_norm_le (hR : ‖R‖ ≤ 1)
     (M : Icc (0 : ℝ) T → E →L[ℝ] E)
-    (hRay : ∀ t, m₁ t = -(M t).adjoint (m t))
+    (hRay : ∀ t, m₁ t = -ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := E) (F := E) (M t) (m t))
     (B : ℝ) (_hB : 0 ≤ B) (hM : ∀ t, ‖M t‖ ≤ B) (t : Icc (0 : ℝ) T) :
     ‖projectionDerivativePath T m m₁ hne R t‖ ≤ 4 * B := by
   calc
@@ -773,7 +783,8 @@ theorem activation_endpoint_norm
     (h : ℝ) (hh : 0 < h) (hLayer : 1 ≤ h * T)
     (hR : ‖R‖ ≤ 1) (CM CH : ℝ) (hCM : 0 ≤ CM) (hCH : 0 ≤ CH)
     (M : Icc (0 : ℝ) T → E →L[ℝ] E)
-    (hRay : ∀ t, m₁ t = -(M t).adjoint (m t)) (hM : ∀ t, ‖M t‖ ≤ CM * h)
+    (hRay : ∀ t, m₁ t = -ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := E) (F := E) (M t) (m t))
+    (hM : ∀ t, ‖M t‖ ≤ CM * h)
     (H : C(Icc (0 : ℝ) T, E →L[ℝ] E)) (hHs : ∀ t, (H t).IsSymmetric)
     (hHnorm : ‖H‖ ≤ CH * h ^ 2)
     (K : ℝ) (hK : 0 ≤ K) (hH : ∀ t x, ⟪H t x, x⟫_ℝ ≤ K * ‖x‖ ^ 2)
@@ -839,8 +850,8 @@ def activationConstant (CM CH : ℝ) : ℝ := 4 + 64 * CM ^ 2 + 2 * CH
 /-- The actual terminal matrix after subtracting the prescribed shear. -/
 def terminalPerturbation (T : ℝ) (hT : 0 ≤ T) (R : V →ₗᵢ[ℝ] E)
     (M : C(Icc (0 : ℝ) T, E →L[ℝ] E)) (p q : V) (h : ℝ) : V →L[ℝ] V :=
-  R.toContinuousLinearMap.adjoint.comp
-    ((M ⟨T, hT, le_rfl⟩).comp R.toContinuousLinearMap) - h • rankOne ℝ q p
+  (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := V) (F := E) R.toContinuousLinearMap).comp
+    ((M ⟨T, hT, le_rfl⟩).comp R.toContinuousLinearMap) - h • rankOne ℝ (E := V) (F := V) q p
 
 /-- Differentiating the actual moving tangency constraint makes η_t−Mη tangent. -/
 theorem corrected_velocity_tangent (T : ℝ) (hT : 0 < T)
@@ -848,7 +859,7 @@ theorem corrected_velocity_tangent (T : ℝ) (hT : 0 < T)
     (M : C(Icc (0 : ℝ) T, E →L[ℝ] E))
     (hdm : ∀ t : Icc (0 : ℝ) T,
       HasDerivWithinAt (extendPath T hT.le m) (m₁ t) (Icc (0 : ℝ) T) t)
-    (hRay : ∀ t, m₁ t = -(M t).adjoint (m t))
+    (hRay : ∀ t, m₁ t = -ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := E) (F := E) (M t) (m t))
     (η v : ℝ → E)
     (hdη : ∀ t : Icc (0 : ℝ) T, HasDerivWithinAt η (v t) (Icc (0 : ℝ) T) t)
     (htan : ∀ t : Icc (0 : ℝ) T, ⟪m t, η t⟫_ℝ = 0)
@@ -883,7 +894,7 @@ theorem select_actual_activation
     (K : ℝ) (hK : 0 ≤ K) (hH : ∀ t x, ⟪H t x, x⟫_ℝ ≤ K * ‖x‖ ^ 2)
     (hsmall : K * (T ^ 2 / 2) ≤ 1 / 2)
     (M : C(Icc (0 : ℝ) T, E →L[ℝ] E))
-    (hRay : ∀ t, m₁ t = -(M t).adjoint (m t))
+    (hRay : ∀ t, m₁ t = -ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := E) (F := E) (M t) (m t))
     (h CM CH ε : ℝ) (hh : 0 < h) (hLayer : 1 ≤ h * T)
     (hCM : 0 ≤ CM) (hCH : 0 ≤ CH) (hε : 0 ≤ ε)
     (hM : ∀ t, ‖M t‖ ≤ CM * h) (hHnorm : ‖H‖ ≤ CH * h ^ 2)
@@ -934,11 +945,12 @@ theorem select_actual_activation
       (fun t => m t) hm hRange K hK hH hsmall L hLt Y
   have hηtan : ∀ t : Icc (0 : ℝ) T, ⟪m t, η t⟫_ℝ = 0 :=
     endpointDisplacement_tangent T hT.le (fun t => m t) H K hK hH hsmall L hLt Y
-  have hvt : R.toContinuousLinearMap.adjoint (v T) = Λ Y :=
+  have hvt : ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := V) (F := E) R.toContinuousLinearMap
+      (v T) = Λ Y :=
     (dirichletToNeumann_eq_terminal_velocity T hT.le Q Q₁ c hc hQ H hdQ hT
       (fun t => m t) hm hRange K hK hH hsmall L R.toContinuousLinearMap hLt hLT Y).symm
-  have hwt : R.toContinuousLinearMap.adjoint (w T) =
-      Λ Y - B Y - (h * ⟪p, Y⟫_ℝ) • q := by
+  have hwt : ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := V) (F := E) R.toContinuousLinearMap
+      (w T) = Λ Y - B Y - (h * ⟪p, Y⟫_ℝ) • q := by
     dsimp only [w]
     rw [map_sub, hvt, hηT]
     simp only [B, terminalPerturbation, sub_apply, comp_apply, smul_apply, rankOne_apply,

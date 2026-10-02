@@ -67,12 +67,12 @@ theorem graph_residual_identity (κ k : ℝ) (hκ : k * κ = 1) (m : E)
     fderiv ℝ (graphVelocity κ k m F z) q (1,0) +
       DF (1,0) (A.symm (graphVelocity κ k m F z q)) +
       fderiv ℝ (graphVelocity κ k m F z) q (0,A.symm (graphVelocity κ k m F z q)) +
-      A.symm.toContinuousLinearMap.adjoint (κ • p) =
+      adjoint (𝕜 := ℝ) (E := E) (F := E) A.symm.toContinuousLinearMap (κ • p) =
     κ • A (Dz (1,(0,0)) +
       (2 : ℝ) • A.symm (DF (1,0) (z (spaceTimeGraph k m q))) +
       Dz (0,(κ • z (spaceTimeGraph k m q),⟪m,z (spaceTimeGraph k m q)⟫_ℝ)) +
       κ • A.symm (DF (0,z (spaceTimeGraph k m q)) (z (spaceTimeGraph k m q))) +
-      A.symm (A.symm.toContinuousLinearMap.adjoint p)) := by
+      A.symm (adjoint (𝕜 := ℝ) (E := E) (F := E) A.symm.toContinuousLinearMap p)) := by
   have hv : A.symm (graphVelocity κ k m F z q) = κ • z (spaceTimeGraph k m q) := by
     simp only [graphVelocity,hA,map_smul,ContinuousLinearEquiv.coe_coe,
       ContinuousLinearEquiv.symm_apply_apply]
@@ -106,7 +106,8 @@ theorem euler_residual_of_pullback
     (hparent : momentumResidual u p (t, X (t, x)) = 0) :
     momentumResidual (fun y => u y+w y) (fun y => p y+q y) (t,X (t,x)) =
       DG (1,0) + Du (0,G (t,x)) + DG (0,A.symm (G (t,x))) +
-        A.symm.toContinuousLinearMap.adjoint (gradient (fun y => Q (t,y)) x) := by
+        adjoint (𝕜 := ℝ) (E := E) (F := E) A.symm.toContinuousLinearMap
+          (gradient (fun y => Q (t,y)) x) := by
   have htime : HasDerivAt (fun s => w (s,X (s,x))) (DG (1,0)) t := by
     have he : (fun s => w (s,X (s,x))) = fun s => G (s,x) := funext (fun s => hwX s x)
     rw [he]
@@ -121,7 +122,8 @@ theorem euler_residual_of_pullback
     simpa only [comp_apply,prod_apply,zero_apply,ContinuousLinearEquiv.coe_coe,
       ContinuousLinearEquiv.apply_symm_apply,inr_apply] using h
   have hpress : gradient (fun y => q (t,y)) (X (t,x)) =
-      A.symm.toContinuousLinearMap.adjoint (gradient (fun y => Q (t,y)) x) := by
+      adjoint (𝕜 := ℝ) (E := E) (F := E) A.symm.toContinuousLinearMap
+        (gradient (fun y => Q (t,y)) x) := by
     have h := gradient_pullback_inverse (fun y => q (t,y)) (fun y => X (t,y)) A x hXspace hq
     have heq : (fun y => q (t,X (t,y))) = fun y => Q (t,y) := funext hqX
     simpa only [Function.comp_def,heq] using h
@@ -166,7 +168,7 @@ theorem physical_euler_momentum
       (2 : ℝ) • A.symm (DF (1, 0) (z (spaceTimeGraph k m (t, x)))) +
       Dz (0, (κ • z (spaceTimeGraph k m (t, x)), ⟪m, z (spaceTimeGraph k m (t, x))⟫_ℝ)) +
       κ • A.symm (DF (0, z (spaceTimeGraph k m (t, x))) (z (spaceTimeGraph k m (t, x)))) +
-      A.symm (A.symm.toContinuousLinearMap.adjoint P) = 0) :
+      A.symm (adjoint (𝕜 := ℝ) (E := E) (F := E) A.symm.toContinuousLinearMap P) = 0) :
     momentumResidual (fun q => u q+physicalVelocity κ k m F z Y q)
       (fun q => p q+physicalPressure Q Y q) (t,X (t,x)) = 0 := by
   let G := graphVelocity κ k m F z

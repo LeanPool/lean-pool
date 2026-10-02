@@ -65,7 +65,8 @@ theorem fromCoordinates_eq (D : LiftTangent →L[ℝ] Space) :
 variable (P : ℝ) [Fact (0 < P)]
 
 theorem pointField_fderiv_joint_continuous {K : Type*} [TopologicalSpace K] [CompactSpace K]
-    (p : C(K, LiftL2 P)) (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p)) :
+    (p : C(K, LiftL2 P))
+    (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p)) :
     Continuous (fun z : K × LiftDomain P => fieldFDeriv P (pointField P p hp z.1) z.2) := by
   have hc : Continuous (fun z : K × LiftDomain P =>
       fun i : Fin 4 => fieldFDeriv P (pointField P p hp z.1) z.2 (standardDirection i)) := by

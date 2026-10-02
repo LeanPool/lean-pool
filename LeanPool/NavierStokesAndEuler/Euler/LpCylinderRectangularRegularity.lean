@@ -154,7 +154,7 @@ variable (A : C(K, Space →ᵇ E →L[ℝ] F)) (hA : ContDiff ℝ ∞ (translat
 
 /-- The actual rectangular multiplier family under all four covering translations. -/
 def mixedMultiplier (a : LiftTangent) : C(K,CylinderL2 period E) →L[ℝ] C(K,CylinderL2 period F) :=
-  fullMultiplierMap period (translateCoefficientPath A a.1)
+  fullMultiplierMap (K := K) (E := E) (F := F) period (translateCoefficientPath A a.1)
 
 theorem mixedMultiplier_eq_comp : mixedMultiplier period A =
     ⇑(fullMultiplierMap (K := K) (E := E) (F := F) period) ∘
@@ -250,6 +250,6 @@ theorem supported_product_orbit_contDiff (S : Set Space) (hS : MeasurableSet S)
       (includePath (K := K) (V := F) period S hS
         (supportedMultiplierMap (K := K) (E := E) (F := F) period S hS A u))) := by
   rw [include_supportedMultiplier]
-  exact product_orbit_contDiff period A hA (includePath period S hS u) hu
+  exact product_orbit_contDiff period A hA (includePath (K := K) (V := E) period S hS u) hu
 
 end EulerLpCylinderRectangular

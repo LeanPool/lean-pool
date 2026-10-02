@@ -85,7 +85,7 @@ theorem endpointDerivative_unique (L : V →L[ℝ] TimeLp T E) (Y : V)
     (hterminal : initialRealPrimitive T u T = initialRealPrimitive T (L Y) T)
     (hweak : ∀ v : transverseDerivatives T hT m,
       ⟪u, (v : TimeLp T E)⟫_ℝ -
-        ⟪timeMultiplier T hT H (initialPrimitiveTimeLp T hT u),
+        ⟪timeMultiplier T hT H (initialPrimitiveTimeLp (E := E) T hT u),
           transversePrimitive T hT m v⟫_ℝ = 0) :
     u = endpointDerivative T hT m H K hK hH hsmall L Y := by
   let w := endpointDerivative T hT m H K hK hH hsmall L Y
@@ -188,7 +188,8 @@ def stationaryCorrectedVelocity (L : V →L[ℝ] TimeLp D.T Space) (Y : V)
       D.M.field t x (initialRealPrimitive D.T (stationaryDerivative B x L Y) t)
 
 theorem history_eq_stationary_of_terminal (L : V →L[ℝ] TimeLp D.T Space)
-    (hL : ∀ Y t, ⟪D.normal.field t x, initialPrimitive D.T D.T_pos.le (L Y) t⟫_ℝ = 0)
+    (hL : ∀ Y t,
+      ⟪D.normal.field t x, initialPrimitive (E := Space) D.T D.T_pos.le (L Y) t⟫_ℝ = 0)
     (Y : V) (ξ : U)
     (hterminal : initialRealPrimitive D.T (L Y) D.T =
       D.frame.field ⟨D.T, D.T_pos.le, le_rfl⟩ x ξ)
@@ -201,7 +202,7 @@ theorem history_eq_stationary_of_terminal (L : V →L[ℝ] TimeLp D.T Space)
   have hm : ∀ s η, ⟪m s,C.labelFrame x s η⟫_ℝ=0 := fun s η => D.frame_tangent s x η
   have hRange : ∀ s η, ⟪m s,η⟫_ℝ=0 → ∃ z : U, C.labelFrame x s z=η :=
     fun s η h => D.frame_range s x η h
-  have hA : ∀ Z s, ⟪m s,initialPrimitive D.T D.T_pos.le (A Z) s⟫_ℝ=0 :=
+  have hA : ∀ Z s, ⟪m s,initialPrimitive (E := Space) D.T D.T_pos.le (A Z) s⟫_ℝ=0 :=
     affineTrial_tangent D.T D.T_pos.le (C.labelFrame x) (C.labelFrameDerivative x)
       (C.labelFrame_derivative x) m hm
   have hu : u=endpointDerivative D.T D.T_pos.le m (C.labelHessian x)
@@ -306,7 +307,8 @@ theorem select_history_coordinate
     convert! hd using 1
     simp only [extendPath,projIcc_of_mem D.T_pos.le t.property]
     rfl
-  have hRay : ∀ t, m₁ t = -(M t).adjoint (m t) := fun t => D.normalDerivative_apply t 0
+  have hRay : ∀ t, m₁ t = -adjoint (𝕜 := ℝ) (E := Space) (F := Space) (M t) (m t) :=
+    fun t => D.normalDerivative_apply t 0
   have hm : ∀ t v, ⟪m t,C.labelFrame 0 t v⟫_ℝ=0 := fun t v => D.frame_tangent t 0 v
   have hRange : ∀ t η, ⟪m t,η⟫_ℝ=0 → ∃ v : U, C.labelFrame 0 t v=η :=
     fun t η ht => D.frame_range t 0 η ht
@@ -316,9 +318,11 @@ theorem select_history_coordinate
     B.potential B.potential_nonneg (C.labelHessian_upper 0) B.small M hRay
     h CM CH ε hh hLayer hCM hCH hε hM hHnorm p q hp hq hpq hεsmall hB hBpp
   extract_lets L u η v w at hY
-  have hL : ∀ Z t, ⟪D.normal.field t 0,initialPrimitive D.T D.T_pos.le (L Z) t⟫_ℝ=0 :=
+  have hL : ∀ Z t,
+      ⟪D.normal.field t 0,initialPrimitive (E := Space) D.T D.T_pos.le (L Z) t⟫_ℝ=0 :=
     activationTrial_tangent D.T D.T_pos.le m m₁ hne R.toContinuousLinearMap hdm h
-  have hLT : ∀ Z, initialPrimitive D.T D.T_pos.le (L Z) ⟨D.T,D.T_pos.le,le_rfl⟩=R Z :=
+  have hLT : ∀ Z,
+      initialPrimitive (E := Space) D.T D.T_pos.le (L Z) ⟨D.T,D.T_pos.le,le_rfl⟩=R Z :=
     activationTrial_terminal D.T D.T_pos.le m m₁ hne R.toContinuousLinearMap hdm h hLayer hR
   obtain ⟨ξ,hξ⟩ := D.frame_range ⟨D.T,D.T_pos.le,le_rfl⟩ 0 (R Y) (hR Y)
   have ht : initialRealPrimitive D.T (L Y) D.T =
@@ -386,8 +390,9 @@ variable {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [CompleteS
 theorem terminalPerturbation_compression (T : ℝ) (hT : 0 ≤ T)
     (R : V →ₗᵢ[ℝ] Space) (M : C(Icc (0 : ℝ) T, Space →L[ℝ] Space)) (p q : V) (h : ℝ) :
     terminalPerturbation T hT R M p q h =
-      R.toContinuousLinearMap.adjoint.comp
-        ((M ⟨T,hT,le_rfl⟩-h • rankOne ℝ (R q) (R p)).comp R.toContinuousLinearMap) := by
+      (adjoint (𝕜 := ℝ) (E := V) (F := Space) R.toContinuousLinearMap).comp
+        ((M ⟨T,hT,le_rfl⟩-h • rankOne ℝ (E := Space) (F := Space) (R q) (R p)).comp
+          R.toContinuousLinearMap) := by
   apply ContinuousLinearMap.ext
   intro v
   apply ext_inner_right ℝ
@@ -398,17 +403,21 @@ theorem terminalPerturbation_compression (T : ℝ) (hT : 0 ≤ T)
 
 theorem terminalPerturbation_norm_le (T : ℝ) (hT : 0 ≤ T)
     (R : V →ₗᵢ[ℝ] Space) (M : C(Icc (0 : ℝ) T, Space →L[ℝ] Space)) (p q : V) (h : ℝ) :
-    ‖terminalPerturbation T hT R M p q h‖ ≤ ‖M ⟨T,hT,le_rfl⟩-h • rankOne ℝ (R q) (R p)‖ := by
+    ‖terminalPerturbation T hT R M p q h‖ ≤
+      ‖M ⟨T,hT,le_rfl⟩-h • rankOne ℝ (E := Space) (F := Space) (R q) (R p)‖ := by
   rw [terminalPerturbation_compression]
   have hR := R.norm_toContinuousLinearMap_le
-  have hRa : ‖R.toContinuousLinearMap.adjoint‖ ≤ 1 := by rwa [LinearIsometryEquiv.norm_map]
+  have hRa : ‖adjoint (𝕜 := ℝ) (E := V) (F := Space) R.toContinuousLinearMap‖ ≤ 1 := by
+    rwa [LinearIsometryEquiv.norm_map]
   refine (opNorm_comp_le _ _).trans ?_
   calc
-    _ ≤ 1*‖(M ⟨T,hT,le_rfl⟩-h • rankOne ℝ (R q) (R p)).comp R.toContinuousLinearMap‖ :=
+    _ ≤ 1*‖(M ⟨T,hT,le_rfl⟩-h • rankOne ℝ (E := Space) (F := Space) (R q) (R p)).comp
+        R.toContinuousLinearMap‖ :=
       mul_le_mul_of_nonneg_right hRa (norm_nonneg _)
     _ = _ := one_mul _
-    _ ≤ ‖M ⟨T,hT,le_rfl⟩-h • rankOne ℝ (R q) (R p)‖*‖R.toContinuousLinearMap‖ := opNorm_comp_le _ _
-    _ ≤ ‖M ⟨T,hT,le_rfl⟩-h • rankOne ℝ (R q) (R p)‖*1 :=
+    _ ≤ ‖M ⟨T,hT,le_rfl⟩-h • rankOne ℝ (E := Space) (F := Space) (R q) (R p)‖*
+        ‖R.toContinuousLinearMap‖ := opNorm_comp_le _ _
+    _ ≤ ‖M ⟨T,hT,le_rfl⟩-h • rankOne ℝ (E := Space) (F := Space) (R q) (R p)‖*1 :=
       mul_le_mul_of_nonneg_left hR (norm_nonneg _)
     _ = _ := mul_one _
 
@@ -434,7 +443,8 @@ theorem select_physical_history_coordinate
     (hpm : ⟪D.normal.field ⟨D.T, D.T_pos.le, le_rfl⟩ 0, p⟫_ℝ = 0)
     (hqm : ⟪D.normal.field ⟨D.T, D.T_pos.le, le_rfl⟩ 0, q⟫_ℝ = 0)
     (hεsmall : 16 * (activationConstant CM CH + 1) * ε ≤ 1)
-    (hB : ‖D.M.field ⟨D.T, D.T_pos.le, le_rfl⟩ 0 - h • rankOne ℝ q p‖ ≤ ε * h)
+    (hB : ‖D.M.field ⟨D.T, D.T_pos.le, le_rfl⟩ 0 -
+      h • rankOne ℝ (E := Space) (F := Space) q p‖ ≤ ε * h)
     (hBpp : ⟪D.M.field ⟨D.T, D.T_pos.le, le_rfl⟩ 0 p, p⟫_ℝ < 0) :
     ∃ ξ : U, ξ ≠ 0 ∧
       ⟪B.coefficients.labelVelocity 0 ξ ⟨D.T,D.T_pos.le,le_rfl⟩,q⟫_ℝ=1 ∧
@@ -490,7 +500,7 @@ theorem exists_activated_primary
     (hHnorm : ‖B.coefficients.labelHessian 0‖ ≤ CH*h^2)
     (hζsmall : 16*(activationConstant CM CH+1)*ζ ≤ 1)
     (hB : ‖D.M.field ⟨τ,hτ.le,hτT.le⟩ 0 -
-      h • rankOne ℝ (unit (v τ)) (unit (m τ))‖ ≤ ζ*h)
+      h • rankOne ℝ (E := Space) (F := Space) (unit (v τ)) (unit (m τ))‖ ≤ ζ*h)
     (hBpp : ⟪D.M.field ⟨τ,hτ.le,hτT.le⟩ 0 (unit (m τ)),unit (m τ)⟫_ℝ < 0) :
     let s₀ := activationRayScale (D.deformationEquiv ⟨τ,hτ.le,hτT.le⟩ 0)
       (cross (unit (m τ)) (unit (v τ)))

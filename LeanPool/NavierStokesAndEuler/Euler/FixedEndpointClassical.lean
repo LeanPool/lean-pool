@@ -258,7 +258,8 @@ theorem zero_of_projected_equation (T : ℝ) (hT : 0 ≤ T) (hTpos : 0 < T)
     (hv : ∀ t : Icc (0 : ℝ) T,
       HasDerivWithinAt (extendPath T hT v) (a t) (Icc (0 : ℝ) T) t)
     (hzero : z ⟨0,le_rfl,hT⟩ = 0) (hterminal : z ⟨T,hT,le_rfl⟩ = 0)
-    (heq : ∀ t, gram (Q t) (a t) = (Q t).adjoint ((-2 : ℝ) • Q₁ t (v t))) :
+    (heq : ∀ t, gram (Q t) (a t) =
+      adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t) ((-2 : ℝ) • Q₁ t (v t))) :
     z = 0 ∧ v = 0 := by
   let p := applyPath Q z
   let u := applyPath Q₁ z+applyPath Q v
@@ -279,8 +280,8 @@ theorem zero_of_projected_equation (T : ℝ) (hT : 0 ≤ T) (hTpos : 0 < T)
     rw [hcancel]
     change ⟪(2 : ℝ) • Q₁ t (v t)+Q t (a t),Q t (z t)⟫_ℝ = 0
     rw [← adjoint_inner_left]
-    have ha : (Q t).adjoint (Q t (a t)) =
-        (Q t).adjoint ((-2 : ℝ) • Q₁ t (v t)) := heq t
+    have ha : adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t) (Q t (a t)) =
+        adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t) ((-2 : ℝ) • Q₁ t (v t)) := heq t
     rw [map_add,map_smul,ha,map_smul]
     simp only [← add_smul]
     norm_num
@@ -323,8 +324,10 @@ theorem unique_of_projected_equation (T : ℝ) (hT : 0 ≤ T) (hTpos : 0 < T)
       HasDerivWithinAt (extendPath T hT r) (b t) (Icc (0 : ℝ) T) t)
     (hzero : z ⟨0,le_rfl,hT⟩ = w ⟨0,le_rfl,hT⟩)
     (hterminal : z ⟨T,hT,le_rfl⟩ = w ⟨T,hT,le_rfl⟩)
-    (heq : ∀ t, gram (Q t) (a t) = (Q t).adjoint ((-2 : ℝ) • Q₁ t (v t)))
-    (heq' : ∀ t, gram (Q t) (b t) = (Q t).adjoint ((-2 : ℝ) • Q₁ t (r t))) :
+    (heq : ∀ t, gram (Q t) (a t) =
+      adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t) ((-2 : ℝ) • Q₁ t (v t)))
+    (heq' : ∀ t, gram (Q t) (b t) =
+      adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t) ((-2 : ℝ) • Q₁ t (r t))) :
     z = w ∧ v = r := by
   have h := zero_of_projected_equation T hT hTpos Q Q₁ Q₂ H c hc hQ hd hd₁ hframe
     K hK hH hsmall (z-w) (v-r) (a-b) (fun t => (hz t).sub (hw t))
@@ -438,9 +441,10 @@ theorem velocity_hasDerivWithinAt (Y : U) (t : Icc (0 : ℝ) T) :
 
 theorem projected_equation (Y : U) (t : Icc (0 : ℝ) T) :
     gram (Q t) (acceleration T hT Q Q₁ H c hc hQ hd K hK hH hsmall Y t) =
-      (Q t).adjoint ((-2 : ℝ) • Q₁ t
+      adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t) ((-2 : ℝ) • Q₁ t
         (continuousCoordinateVelocity T hT Q Q₁ H c hc hQ hd K hK hH hsmall Y t)) := by
-  change gram (Q t) ((-2 : ℝ) • gramInverse (Q t) c hc (hQ t) ((Q t).adjoint
+  change gram (Q t) ((-2 : ℝ) • gramInverse (Q t) c hc (hQ t)
+    (adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)
     (Q₁ t (continuousCoordinateVelocity T hT Q Q₁ H c hc hQ hd K hK hH hsmall Y t)))) = _
   rw [map_smul,gram_inverse_apply,map_smul]
 
@@ -451,7 +455,8 @@ theorem unique (Y : U) (z v a : C(Icc (0 : ℝ) T, U))
     (hv : ∀ t : Icc (0 : ℝ) T,
       HasDerivWithinAt (extendPath T hT v) (a t) (Icc (0 : ℝ) T) t)
     (hz0 : z ⟨0,le_rfl,hT⟩ = 0) (hzT : z ⟨T,hT,le_rfl⟩ = Y)
-    (heq : ∀ t, gram (Q t) (a t) = (Q t).adjoint ((-2 : ℝ) • Q₁ t (v t))) :
+    (heq : ∀ t, gram (Q t) (a t) =
+      adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t) ((-2 : ℝ) • Q₁ t (v t))) :
     z = displacement T hT Q Q₁ H c hc hQ hd K hK hH hsmall Y ∧
     v = continuousCoordinateVelocity T hT Q Q₁ H c hc hQ hd K hK hH hsmall Y := by
   apply EulerFrameEndpointUniqueness.unique_of_projected_equation T hT hTpos

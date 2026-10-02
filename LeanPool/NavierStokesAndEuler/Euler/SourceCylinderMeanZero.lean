@@ -38,8 +38,8 @@ variable {E F : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Complet
   (S : Set Space) (hS : MeasurableSet S)
 
 theorem supportedAverage_operator (A : Space →ᵇ E →L[ℝ] F) (u : Supported P E S hS) :
-    supportedAverage P S hS (supportedOperatorMap P S hS A u) =
-      supportedOperatorMap P S hS A (supportedAverage P S hS u) := by
+    supportedAverage P S hS (supportedOperatorMap (E := E) (F := F) P S hS A u) =
+      supportedOperatorMap (E := E) (F := F) P S hS A (supportedAverage P S hS u) := by
   apply Subtype.ext
   exact average_fullOperator P A (u : CylinderL2 P E)
 
@@ -84,11 +84,12 @@ def supportedPathAverage : C(K,Supported P V S hS) →L[ℝ] C(K,Supported P V S
 
 omit [CompactSpace K] in
 @[simp] theorem supportedPathAverage_apply (p : C(K, Supported P V S hS)) (t : K) :
-    supportedPathAverage P S hS p t = supportedAverage P S hS (p t) := rfl
+    supportedPathAverage (K := K) (V := V) P S hS p t = supportedAverage P S hS (p t) := rfl
 
 omit [CompactSpace K] in
 theorem include_supportedPathAverage (p : C(K, Supported P V S hS)) :
-    includePath P S hS (supportedPathAverage P S hS p) = pathAverage P (includePath P S hS p) := rfl
+    includePath (K := K) (V := V) P S hS (supportedPathAverage (K := K) (V := V) P S hS p) =
+      pathAverage (K := K) (V := V) P (includePath (K := K) (V := V) P S hS p) := rfl
 
 theorem supportedPathAverage_norm : ‖supportedPathAverage (K := K) (V := V) P S hS‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
@@ -109,8 +110,9 @@ variable {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [CompleteS
 
 /-- Averaging the genuine forced solution equals solving with averaged data. -/
 theorem solution_average (f : C(Icc (0 : ℝ) T, Supported P V S hS)) (a₀ : Supported P V S hS) :
-    supportedPathAverage P S hS (U.solution f a₀) =
-      U.solution (supportedPathAverage P S hS f) (supportedAverage P S hS a₀) := by
+    supportedPathAverage (K := Icc (0 : ℝ) T) (V := V) P S hS (U.solution f a₀) =
+      U.solution (supportedPathAverage (K := Icc (0 : ℝ) T) (V := V) P S hS f)
+        (supportedAverage P S hS a₀) := by
   apply (U.solution_map U (supportedAverage P S hS) _ f a₀).symm
   intro t u
   change liftedOperator P S hS (B t) (supportedAverage P S hS u) =
@@ -124,7 +126,7 @@ theorem solution_average_zero (f : C(Icc (0 : ℝ) T, Supported P V S hS))
     (hf : ∀ t, supportedAverage P S hS (f t) = 0)
     (ha₀ : supportedAverage P S hS a₀ = 0) (t : Icc (0 : ℝ) T) :
     supportedAverage P S hS (U.solution f a₀ t) = 0 := by
-  have hfp : supportedPathAverage P S hS f = 0 := by
+  have hfp : supportedPathAverage (K := Icc (0 : ℝ) T) (V := V) P S hS f = 0 := by
     apply ContinuousMap.ext
     exact hf
   have he := solution_average P S hS T hT B U f a₀
@@ -174,7 +176,8 @@ variable (P : ℝ) [Fact (0 < P)]
 theorem projectedForcing_average_zero
     (hf : ∀ t, average P (f t : CylinderL2 P E) = 0) (t : Icc (0 : ℝ) T) :
     average P (projectedForcing P S hS Q c hc hQ f t : CylinderL2 P U) = 0 := by
-  change average P (fullOperatorMap P (sourceForcing Q c hc hQ t) (f t : CylinderL2 P E)) = 0
+  change average P (fullOperatorMap (E := E) (F := U) P (sourceForcing Q c hc hQ t)
+    (f t : CylinderL2 P E)) = 0
   rw [average_fullOperator, hf t, map_zero]
 
 /-- The real Gram-projected Duhamel coordinate solution has zero angular mean. -/
@@ -192,7 +195,7 @@ theorem velocity_average_zero
     (hf : ∀ t, average P (f t : CylinderL2 P E) = 0)
     (ha₀ : average P (a₀ : CylinderL2 P U) = 0) (t : Icc (0 : ℝ) T) :
     average P (velocity P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P E) = 0 := by
-  change average P (fullOperatorMap P (Q.field t)
+  change average P (fullOperatorMap (E := U) (F := E) P (Q.field t)
     (coordinates P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P U)) = 0
   rw [average_fullOperator, coordinates_average_zero P S hS T hT Q Q₁ c hc hQ f a₀ hf ha₀ t,
     map_zero]
@@ -201,9 +204,9 @@ theorem coordinateDerivative_average_zero
     (hf : ∀ t, average P (f t : CylinderL2 P E) = 0)
     (ha₀ : average P (a₀ : CylinderL2 P U) = 0) (t : Icc (0 : ℝ) T) :
     average P (coordinateDerivative P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P U) = 0 := by
-  change average P (fullOperatorMap P (sourceGenerator Q Q₁ c hc hQ t)
+  change average P (fullOperatorMap (E := U) (F := U) P (sourceGenerator Q Q₁ c hc hQ t)
       (coordinates P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P U) +
-    fullOperatorMap P (sourceForcing Q c hc hQ t) (f t : CylinderL2 P E)) = 0
+    fullOperatorMap (E := E) (F := U) P (sourceForcing Q c hc hQ t) (f t : CylinderL2 P E)) = 0
   rw [map_add, average_fullOperator, average_fullOperator,
     coordinates_average_zero P S hS T hT Q Q₁ c hc hQ f a₀ hf ha₀ t, hf t,
     map_zero, map_zero, add_zero]
@@ -213,9 +216,9 @@ theorem velocityDerivative_average_zero
     (hf : ∀ t, average P (f t : CylinderL2 P E) = 0)
     (ha₀ : average P (a₀ : CylinderL2 P U) = 0) (t : Icc (0 : ℝ) T) :
     average P (velocityDerivative P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P E) = 0 := by
-  change average P (fullOperatorMap P (Q₁.field t)
+  change average P (fullOperatorMap (E := U) (F := E) P (Q₁.field t)
       (coordinates P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P U) +
-    fullOperatorMap P (Q.field t)
+    fullOperatorMap (E := U) (F := E) P (Q.field t)
       (coordinateDerivative P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P U)) = 0
   rw [map_add, average_fullOperator, average_fullOperator,
     coordinates_average_zero P S hS T hT Q Q₁ c hc hQ f a₀ hf ha₀ t,

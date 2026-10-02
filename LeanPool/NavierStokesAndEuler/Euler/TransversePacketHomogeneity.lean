@@ -56,7 +56,8 @@ theorem accelerationPath_smul : D.accelerationPath P (a • f) = a • D.acceler
       a • D.velocityPath P (pathLp T D.time_pos.le f) t := by
     rw [D.continuousVelocity_smul P a f, ContinuousMap.smul_apply]
   exact apply_sub_two_smul_of_eq_smul
-    (gramInverse (D.frame P t) D.lower D.lower_pos (D.frame_lower P t)) (D.frame P t).adjoint
+    (gramInverse (D.frame P t) D.lower D.lower_pos (D.frame_lower P t))
+    (adjoint (𝕜 := ℝ) (E := CylinderL2 P U) (F := CylinderL2 P E) (D.frame P t))
     (D.frameDerivative P t) a (f t) _ _ hv
 
 theorem physicalVelocity_smul : D.physicalVelocity P (a • f) = a • D.physicalVelocity P f := by
@@ -143,10 +144,11 @@ variable {P : ℝ} [Fact (0 < P)]
 def smul (G : Forcing P D raw) (a : ℝ) : Forcing P D (a • raw) where
   path := a • G.path
   path_orbit := by simpa only [map_smul] using G.path_orbit.const_smul a
-  raw_eq := (Field.smul (⟨includePath P D.support D.support_measurable G.path,
+  raw_eq := (Field.smul (⟨includePath (K := Icc (0 : ℝ) D.T)
+    (V := EulerLiftedGradientSpace.Vector3) P D.support D.support_measurable G.path,
     G.path_orbit,G.raw_eq⟩ : Field P D.T raw) a).raw_eq
   mean_zero t := by
-    change average P (a • (G.path t : CylinderL2 P Space)) = 0
+    change average (V := Space) P (a • (G.path t : CylinderL2 P Space)) = 0
     rw [map_smul,G.mean_zero t,smul_zero]
 
 theorem velocityPath_eq_smul (G : Forcing P D raw) (H : Forcing P D raw')

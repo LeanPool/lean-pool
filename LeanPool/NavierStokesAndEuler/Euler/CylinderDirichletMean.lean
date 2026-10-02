@@ -40,14 +40,17 @@ variable (P : ℝ) [Fact (0 < P)] {U E : Type*}
   [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
 
 theorem fullOperatorMap_adjoint (Q : Space →ᵇ U →L[ℝ] E) :
-    (fullOperatorMap (E := U) (F := E) P Q).adjoint =
+    adjoint (𝕜 := ℝ) (E := CylinderL2 P U) (F := CylinderL2 P E)
+        (fullOperatorMap (E := U) (F := E) P Q) =
       fullOperatorMap (E := E) (F := U) P (adjointMap (α := Space) (U := U) (E := E) Q) := by
   rw [fullOperatorMap_apply, EulerLpOperatorField.full_adjoint]
   rfl
 
 theorem average_fullOperator_back (Q : Space →ᵇ U →L[ℝ] E) (u : CylinderL2 P U) :
-    fullOperatorMap (E := U) (F := E) P Q ((average (V := U) P).adjoint u) =
-      (average (V := E) P).adjoint (fullOperatorMap (E := U) (F := E) P Q u) := by
+    fullOperatorMap (E := U) (F := E) P Q
+        (adjoint (𝕜 := ℝ) (E := CylinderL2 P U) (F := CylinderL2 P U) (average (V := U) P) u) =
+      adjoint (𝕜 := ℝ) (E := CylinderL2 P E) (F := CylinderL2 P E) (average (V := E) P)
+        (fullOperatorMap (E := U) (F := E) P Q u) := by
   apply ext_inner_right ℝ
   intro v
   have hc := average_fullOperator P (adjointMap (α := Space) (U := U) (E := E) Q) v
@@ -78,7 +81,8 @@ theorem velocityPath_average (f : TimeLp T (CylinderL2 P E)) (t : Icc (0 : ℝ) 
     (fun t u => (average_fullOperator P (D.H t) u).symm) f t
 
 theorem accelerationPath_average (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : Icc (0 : ℝ) T) :
-    D.accelerationPath P (pathAverage P f) t = average P (D.accelerationPath P f t) :=
+    D.accelerationPath P (pathAverage (K := Icc (0 : ℝ) T) (V := E) P f) t =
+      average (V := U) P (D.accelerationPath P f t) :=
   D.accelerationPath_intertwines P D (average P) (average P)
     (fun t u => (average_fullOperator P (D.Q t) u).symm)
     (fun t u => (average_fullOperator P (D.Q₁ t) u).symm)
@@ -87,7 +91,8 @@ theorem accelerationPath_average (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : I
     (fun t u => (average_fullOperator P (D.H t) u).symm) f t
 
 theorem physicalVelocity_average (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : Icc (0 : ℝ) T) :
-    D.physicalVelocity P (pathAverage P f) t = average P (D.physicalVelocity P f t) :=
+    D.physicalVelocity P (pathAverage (K := Icc (0 : ℝ) T) (V := E) P f) t =
+      average (V := E) P (D.physicalVelocity P f t) :=
   D.physicalVelocity_intertwines P D (average P) (average P)
     (fun t u => (average_fullOperator P (D.Q t) u).symm)
     (fun t u => (average_fullOperator P (D.Q₁ t) u).symm)
@@ -96,7 +101,8 @@ theorem physicalVelocity_average (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : I
     (fun t u => (average_fullOperator P (D.H t) u).symm) f t
 
 theorem physicalDerivative_average (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : Icc (0 : ℝ) T) :
-    D.physicalDerivative P (pathAverage P f) t = average P (D.physicalDerivative P f t) :=
+    D.physicalDerivative P (pathAverage (K := Icc (0 : ℝ) T) (V := E) P f) t =
+      average (V := E) P (D.physicalDerivative P f t) :=
   D.physicalDerivative_intertwines P D (average P) (average P)
     (fun t u => (average_fullOperator P (D.Q t) u).symm)
     (fun t u => (average_fullOperator P (D.Q₁ t) u).symm)
@@ -108,8 +114,8 @@ theorem accelerationPath_zero (t : Icc (0 : ℝ) T) : D.accelerationPath P 0 t =
   have hz : pathLp T D.time_pos.le (0 : C(Icc (0 : ℝ) T,CylinderL2 P E)) = 0 :=
     map_zero (pathLpOperator T D.time_pos.le)
   change gramInverse (D.frame P t) D.lower D.lower_pos (D.frame_lower P t)
-    ((D.frame P t).adjoint (0-(2 : ℝ) • D.frameDerivative P t
-      (D.velocityPath P (pathLp T D.time_pos.le 0) t))) = 0
+    (adjoint (𝕜 := ℝ) (E := CylinderL2 P U) (F := CylinderL2 P E) (D.frame P t)
+      (0-(2 : ℝ) • D.frameDerivative P t (D.velocityPath P (pathLp T D.time_pos.le 0) t))) = 0
   rw [hz]
   simp only [map_zero,ContinuousMap.zero_apply,smul_zero,sub_zero]
 
@@ -132,17 +138,17 @@ variable (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (hf : ∀ t, average P (f t) =
 
 omit [CompleteSpace E] in
 include hf in
-private theorem averagedPath_zero : pathAverage P f = 0 := by
+private theorem averagedPath_zero : pathAverage (K := Icc (0 : ℝ) T) (V := E) P f = 0 := by
   apply ContinuousMap.ext
   intro t
   exact hf t
 
 include hf in
 theorem velocityPath_mean_zero (t : Icc (0 : ℝ) T) :
-    average P (D.velocityPath P (pathLp T D.time_pos.le f) t) = 0 := by
+    average (V := U) P (D.velocityPath P (pathLp T D.time_pos.le f) t) = 0 := by
   have hz : timeLift T (average (V := E) P) (pathLp T D.time_pos.le f) = 0 := by
     rw [← pathLp_timeLift]
-    change pathLp T D.time_pos.le (pathAverage P f) = 0
+    change pathLp T D.time_pos.le (pathAverage (K := Icc (0 : ℝ) T) (V := E) P f) = 0
     rw [averagedPath_zero P f hf]
     exact map_zero (pathLpOperator T D.time_pos.le)
   have h := D.velocityPath_average P (pathLp T D.time_pos.le f) t
@@ -151,17 +157,17 @@ theorem velocityPath_mean_zero (t : Icc (0 : ℝ) T) :
 
 include hf in
 theorem accelerationPath_mean_zero (t : Icc (0 : ℝ) T) :
-    average P (D.accelerationPath P f t) = 0 := by
+    average (V := U) P (D.accelerationPath P f t) = 0 := by
   rw [← D.accelerationPath_average P f t,averagedPath_zero P f hf,D.accelerationPath_zero P t]
 
 include hf in
 theorem physicalVelocity_mean_zero (t : Icc (0 : ℝ) T) :
-    average P (D.physicalVelocity P f t) = 0 := by
+    average (V := E) P (D.physicalVelocity P f t) = 0 := by
   rw [← D.physicalVelocity_average P f t,averagedPath_zero P f hf,D.physicalVelocity_zero P t]
 
 include hf in
 theorem physicalDerivative_mean_zero (t : Icc (0 : ℝ) T) :
-    average P (D.physicalDerivative P f t) = 0 := by
+    average (V := E) P (D.physicalDerivative P f t) = 0 := by
   rw [← D.physicalDerivative_average P f t,averagedPath_zero P f hf,D.physicalDerivative_zero P t]
 
 end EulerCylinderDirichlet.Coefficients

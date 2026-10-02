@@ -49,25 +49,29 @@ def curlCoefficient (i : Fin 3) : (Space →L[ℝ] Space) →L[ℝ] (Space →L[
       : (Space →L[ℝ] Space) →L[ℝ] (Space →L[ℝ] Space)))
 
 @[simp] theorem curlCoefficient_apply (i : Fin 3) (G : Space →L[ℝ] Space) :
-    curlCoefficient i G = crossLeft (G.adjoint (EuclideanSpace.single i 1)) := rfl
+    curlCoefficient i G =
+      crossLeft (adjoint (𝕜 := ℝ) (E := Space) (F := Space) G (EuclideanSpace.single i 1)) := rfl
 
 theorem curlCoefficient_norm (i : Fin 3) : ‖curlCoefficient i‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
   intro G
   rw [curlCoefficient_apply, one_mul]
   calc
-    ‖crossLeft (G.adjoint (EuclideanSpace.single i 1))‖ ≤
-        ‖G.adjoint (EuclideanSpace.single i 1)‖ := crossLeft_norm_le _
-    _ ≤ ‖G.adjoint‖*‖EuclideanSpace.single i (1 : ℝ)‖ := G.adjoint.le_opNorm _
+    ‖crossLeft (adjoint (𝕜 := ℝ) (E := Space) (F := Space) G (EuclideanSpace.single i 1))‖ ≤
+        ‖adjoint (𝕜 := ℝ) (E := Space) (F := Space) G (EuclideanSpace.single i 1)‖ :=
+      crossLeft_norm_le _
+    _ ≤ ‖adjoint (𝕜 := ℝ) (E := Space) (F := Space) G‖*‖EuclideanSpace.single i (1 : ℝ)‖ :=
+      (adjoint (𝕜 := ℝ) (E := Space) (F := Space) G).le_opNorm _
     _ = ‖G‖ := by simp only [PiLp.norm_single, norm_one, mul_one, LinearIsometryEquiv.norm_map]
 
 theorem slowDerivative_coordinates (D : LiftTangent →L[ℝ] Space) (G : Space →L[ℝ] Space) :
     D.comp ((ContinuousLinearMap.inl ℝ Space ℝ).comp G) =
-      ∑ i : Fin 3, rankOne ℝ (D (standardDirection i.succ))
-        (G.adjoint (EuclideanSpace.single i 1)) := by
+      ∑ i : Fin 3, rankOne ℝ (E := Space) (F := Space) (D (standardDirection i.succ))
+        (adjoint (𝕜 := ℝ) (E := Space) (F := Space) G (EuclideanSpace.single i 1)) := by
   have he (v : Space) :
-      (∑ i : Fin 3, ⟪G.adjoint (EuclideanSpace.single i 1),v⟫_ℝ •
-        standardDirection i.succ) = (G v,0) := by
+      (∑ i : Fin 3,
+        ⟪adjoint (𝕜 := ℝ) (E := Space) (F := Space) G (EuclideanSpace.single i 1),v⟫_ℝ •
+          standardDirection i.succ) = (G v,0) := by
     simp_rw [G.adjoint_inner_left, standardDirection_succ]
     apply Prod.ext
     · change (∑ i : Fin 3, ⟪EuclideanSpace.single i 1,G v⟫_ℝ • EuclideanSpace.single i 1) = G v
@@ -76,8 +80,9 @@ theorem slowDerivative_coordinates (D : LiftTangent →L[ℝ] Space) (G : Space 
     · simp [Fin.sum_univ_succ]
   apply ContinuousLinearMap.ext
   intro v
-  change D (G v,0) = ∑ i : Fin 3, ⟪G.adjoint (EuclideanSpace.single i 1),v⟫_ℝ •
-    D (standardDirection i.succ)
+  change D (G v,0) = ∑ i : Fin 3,
+    ⟪adjoint (𝕜 := ℝ) (E := Space) (F := Space) G (EuclideanSpace.single i 1),v⟫_ℝ •
+      D (standardDirection i.succ)
   rw [← he v, map_sum]
   simp only [map_smul]
 
@@ -86,8 +91,9 @@ theorem curlMatrix_coordinates (D : LiftTangent →L[ℝ] Space) (G : Space →L
     curlMatrix (D.comp ((ContinuousLinearMap.inl ℝ Space ℝ).comp G)) =
       ∑ i : Fin 3, curlCoefficient i G (D (standardDirection i.succ)) := by
   rw [slowDerivative_coordinates]
-  change curlOperator (∑ i : Fin 3, rankOne ℝ (D (standardDirection i.succ))
-    (G.adjoint (EuclideanSpace.single i 1))) = _
+  change curlOperator (∑ i : Fin 3, rankOne ℝ (E := Space) (F := Space)
+    (D (standardDirection i.succ))
+    (adjoint (𝕜 := ℝ) (E := Space) (F := Space) G (EuclideanSpace.single i 1))) = _
   rw [map_sum]
   simp only [curlOperator_apply, curlMatrix_rankOne, curlCoefficient_apply, crossLeft_apply]
 
@@ -111,7 +117,7 @@ def curlCoefficientPath (i : Fin 3) :
 omit [CompactSpace K] in
 @[simp] theorem curlCoefficientPath_apply (i : Fin 3)
     (G : C(K, Space →ᵇ Space →L[ℝ] Space)) (t : K) (y : Space) :
-    curlCoefficientPath i G t y = curlCoefficient i (G t y) := rfl
+    curlCoefficientPath (K := K) i G t y = curlCoefficient i (G t y) := rfl
 
 theorem curlCoefficientPath_norm (i : Fin 3) : ‖curlCoefficientPath (K := K) i‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
@@ -128,8 +134,8 @@ theorem curlCoefficientPath_norm (i : Fin 3) : ‖curlCoefficientPath (K := K) i
 omit [CompactSpace K] in
 theorem curlCoefficientPath_translation (i : Fin 3)
     (G : C(K, Space →ᵇ Space →L[ℝ] Space)) (a : Space) :
-    translateCoefficientPath (curlCoefficientPath i G) a =
-      curlCoefficientPath i (translateCoefficientPath G a) := by
+    translateCoefficientPath (curlCoefficientPath (K := K) i G) a =
+      curlCoefficientPath (K := K) i (translateCoefficientPath G a) := by
   apply ContinuousMap.ext
   intro t
   apply BoundedContinuousFunction.ext
@@ -138,9 +144,9 @@ theorem curlCoefficientPath_translation (i : Fin 3)
 
 theorem curlCoefficientPath_orbit (i : Fin 3) (G : C(K, Space →ᵇ Space →L[ℝ] Space))
     (hG : ContDiff ℝ ∞ (translateCoefficientPath G)) :
-    ContDiff ℝ ∞ (translateCoefficientPath (curlCoefficientPath i G)) := by
-  have he : translateCoefficientPath (curlCoefficientPath i G) =
-      fun a => curlCoefficientPath i (translateCoefficientPath G a) :=
+    ContDiff ℝ ∞ (translateCoefficientPath (curlCoefficientPath (K := K) i G)) := by
+  have he : translateCoefficientPath (curlCoefficientPath (K := K) i G) =
+      fun a => curlCoefficientPath (K := K) i (translateCoefficientPath G a) :=
     funext (curlCoefficientPath_translation i G)
   rw [he]
   exact (curlCoefficientPath i).contDiff.comp hG
@@ -148,9 +154,9 @@ theorem curlCoefficientPath_orbit (i : Fin 3) (G : C(K, Space →ᵇ Space →L[
 theorem curlCoefficientPath_bound (i : Fin 3) (G : C(K, Space →ᵇ Space →L[ℝ] Space))
     (hG : ContDiff ℝ ∞ (translateCoefficientPath G)) (n : ℕ) (C : ℝ)
     (hb : ∀ a, ‖iteratedFDeriv ℝ n (translateCoefficientPath G) a‖ ≤ C) (a : Space) :
-    ‖iteratedFDeriv ℝ n (translateCoefficientPath (curlCoefficientPath i G)) a‖ ≤ C := by
-  have he : translateCoefficientPath (curlCoefficientPath i G) =
-      fun a => curlCoefficientPath i (translateCoefficientPath G a) :=
+    ‖iteratedFDeriv ℝ n (translateCoefficientPath (curlCoefficientPath (K := K) i G)) a‖ ≤ C := by
+  have he : translateCoefficientPath (curlCoefficientPath (K := K) i G) =
+      fun a => curlCoefficientPath (K := K) i (translateCoefficientPath G a) :=
     funext (curlCoefficientPath_translation i G)
   rw [he]
   have h := (curlCoefficientPath (K := K) i).norm_iteratedFDeriv_comp_left
@@ -224,12 +230,14 @@ variable
 
 /-- Term, given by `fullMultiplierMap P (curlCoefficientPath i G) (derivativePath P p i.succ)`. -/
 def term (i : Fin 3) : C(K,LiftL2 P) :=
-  fullMultiplierMap P (curlCoefficientPath i G) (derivativePath P p i.succ)
+  fullMultiplierMap (K := K) (E := Space) (F := Space) P (curlCoefficientPath (K := K) i G)
+    (derivativePath P p i.succ)
 
 include hG hp in
 theorem term_orbit (i : Fin 3) :
-    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a (term P G p i)) :=
-  product_orbit_contDiff P (curlCoefficientPath i G) (curlCoefficientPath_orbit i G hG)
+    ContDiff ℝ ∞ (fun a : LiftTangent =>
+      pathTranslate (K := K) (V := Vector3) P a (term P G p i)) :=
+  product_orbit_contDiff P (curlCoefficientPath (K := K) i G) (curlCoefficientPath_orbit i G hG)
     (derivativePath P p i.succ) (derivativePath_orbit P p hp i.succ)
 
 /-- Path, given by `∑ i : Fin 3, term P G p i`. -/
@@ -237,7 +245,8 @@ def path : C(K,LiftL2 P) := ∑ i : Fin 3, term P G p i
 
 include hG hp in
 theorem path_orbit :
-    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a (path P G p)) := by
+    ContDiff ℝ ∞ (fun a : LiftTangent =>
+      pathTranslate (K := K) (V := Vector3) P a (path P G p)) := by
   simp only [path, map_sum]
   exact ContDiff.sum (fun i _ => term_orbit P G hG p hp i)
 
@@ -246,7 +255,8 @@ theorem term_ae (i : Fin 3) (t : K) :
       fun x => curlCoefficient i (G t x.1)
         (fieldFDeriv P (pointField P p hp t) x (standardDirection i.succ)) := by
   filter_upwards [EulerLpOperatorField.full_ae (liftMeasure P)
-      (fieldLift P (curlCoefficientPath i G t)) (derivativePath P p i.succ t),
+      (fieldLift (W := Space →L[ℝ] Space) P (curlCoefficientPath (K := K) i G t))
+      (derivativePath P p i.succ t),
     pointField_ae P (derivativePath P p i.succ) (derivativePath_orbit P p hp i.succ) t]
     with x hc hd
   change term P G p i t x = curlCoefficient i (G t x.1) (derivativePath P p i.succ t x) at hc

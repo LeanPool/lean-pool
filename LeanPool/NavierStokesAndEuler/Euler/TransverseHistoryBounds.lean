@@ -50,7 +50,8 @@ variable {S E V F G W : Type*}
 
 /-- Taking adjoints preserves the norm of an operator difference. -/
 theorem norm_adjoint_sub (A B : S →L[ℝ] E) :
-    ‖A.adjoint - B.adjoint‖ = ‖A - B‖ := by
+    ‖adjoint (𝕜 := ℝ) (E := S) (F := E) A - adjoint (𝕜 := ℝ) (E := S) (F := E) B‖ =
+      ‖A - B‖ := by
   simpa only [dist_eq_norm] using
     (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := S) (F := E)).dist_map A B
 
@@ -65,7 +66,7 @@ theorem norm_comp_sub_le (A B : F →L[ℝ] G) (C D : W →L[ℝ] F) :
 
 /-- The actual algebraic stationary correction in a fixed coordinate space. -/
 def correctionOperator (D : S →L[ℝ] E) (R : S →L[ℝ] S) (A : E →L[ℝ] E) : E →L[ℝ] E :=
-  D.comp (R.comp (D.adjoint.comp A))
+  D.comp (R.comp ((adjoint (𝕜 := ℝ) (E := S) (F := E) D).comp A))
 
 /-- Endpoint operator, given by `L - (correctionOperator D R A).comp L`. -/
 def endpointOperator (D : S →L[ℝ] E) (R : S →L[ℝ] S) (A : E →L[ℝ] E)
@@ -77,11 +78,11 @@ theorem correctionOperator_norm_le (D : S →L[ℝ] E) (R : S →L[ℝ] S) (A : 
   have hd0 := (norm_nonneg D).trans hd
   have hr0 := (norm_nonneg R).trans hr
   have ha0 := (norm_nonneg A).trans ha
-  have hDA : ‖D.adjoint.comp A‖ ≤ d * a := by
+  have hDA : ‖(adjoint (𝕜 := ℝ) (E := S) (F := E) D).comp A‖ ≤ d * a := by
     apply (opNorm_comp_le _ _).trans
     simp only [LinearIsometryEquiv.norm_map]
     exact mul_le_mul hd ha (norm_nonneg _) hd0
-  have hRDA : ‖R.comp (D.adjoint.comp A)‖ ≤ r * (d * a) :=
+  have hRDA : ‖R.comp ((adjoint (𝕜 := ℝ) (E := S) (F := E) D).comp A)‖ ≤ r * (d * a) :=
     (opNorm_comp_le _ _).trans (mul_le_mul hr hDA (norm_nonneg _) hr0)
   exact ((opNorm_comp_le _ _).trans
     (mul_le_mul hd hRDA (norm_nonneg _) hd0)).trans_eq (by ring)
@@ -100,19 +101,22 @@ theorem correctionOperator_sub_norm_le
   have hδd0 := (norm_nonneg (D-D')).trans hδd
   have hδr0 := (norm_nonneg (R-R')).trans hδr
   have hδa0 := (norm_nonneg (A-A')).trans hδa
-  have hDA : ‖D.adjoint.comp A‖ ≤ d * a := by
+  have hDA : ‖(adjoint (𝕜 := ℝ) (E := S) (F := E) D).comp A‖ ≤ d * a := by
     apply (opNorm_comp_le _ _).trans
     simp only [LinearIsometryEquiv.norm_map]
     exact mul_le_mul hd ha (norm_nonneg _) hd0
-  have hDAδ : ‖D.adjoint.comp A - D'.adjoint.comp A'‖ ≤ δd * a + d * δa := by
+  have hDAδ : ‖(adjoint (𝕜 := ℝ) (E := S) (F := E) D).comp A -
+      (adjoint (𝕜 := ℝ) (E := S) (F := E) D').comp A'‖ ≤ δd * a + d * δa := by
     apply (norm_comp_sub_le _ _ _ _).trans
-    have hh : ‖D.adjoint - D'.adjoint‖ = ‖D-D'‖ := norm_adjoint_sub D D'
+    have hh : ‖adjoint (𝕜 := ℝ) (E := S) (F := E) D -
+        adjoint (𝕜 := ℝ) (E := S) (F := E) D'‖ = ‖D-D'‖ := norm_adjoint_sub D D'
     simp only [hh, LinearIsometryEquiv.norm_map]
     exact add_le_add (mul_le_mul hδd ha (norm_nonneg _) hδd0)
       (mul_le_mul hd' hδa (norm_nonneg _) hd0)
-  have hRDA : ‖R.comp (D.adjoint.comp A)‖ ≤ r * (d * a) :=
+  have hRDA : ‖R.comp ((adjoint (𝕜 := ℝ) (E := S) (F := E) D).comp A)‖ ≤ r * (d * a) :=
     (opNorm_comp_le _ _).trans (mul_le_mul hr hDA (norm_nonneg _) hr0)
-  have hRDAδ : ‖R.comp (D.adjoint.comp A) - R'.comp (D'.adjoint.comp A')‖ ≤
+  have hRDAδ : ‖R.comp ((adjoint (𝕜 := ℝ) (E := S) (F := E) D).comp A) -
+      R'.comp ((adjoint (𝕜 := ℝ) (E := S) (F := E) D').comp A')‖ ≤
       δr * (d * a) + r * (δd * a + d * δa) := by
     apply (norm_comp_sub_le _ _ _ _).trans
     exact add_le_add (mul_le_mul hδr hDA (norm_nonneg _) hδr0)
@@ -160,15 +164,17 @@ theorem endpointOperator_sub_norm_le
 
 /-- The transported quadratic form used by the fixed-coordinate inverse. -/
 def formOperator (D : S →L[ℝ] E) (A : E →L[ℝ] E) : S →L[ℝ] S :=
-  D.adjoint.comp (A.comp D)
+  (adjoint (𝕜 := ℝ) (E := S) (F := E) D).comp (A.comp D)
 
 theorem formOperator_sub_norm_le
     (D D' : S →L[ℝ] E) (A A' : E →L[ℝ] E) (d a δd δa : ℝ)
     (hd : ‖D‖ ≤ d) (hd' : ‖D'‖ ≤ d) (ha : ‖A‖ ≤ a) (ha' : ‖A'‖ ≤ a)
     (hδd : ‖D - D'‖ ≤ δd) (hδa : ‖A - A'‖ ≤ δa) :
     ‖formOperator D A - formOperator D' A'‖ ≤ 2 * d * a * δd + d ^ 2 * δa := by
-  have had : ‖D.adjoint-D'.adjoint‖ ≤ δd := (norm_adjoint_sub D D').trans_le hδd
-  have h := correctionOperator_sub_norm_le D.adjoint D'.adjoint A A'
+  have had : ‖adjoint (𝕜 := ℝ) (E := S) (F := E) D -
+      adjoint (𝕜 := ℝ) (E := S) (F := E) D'‖ ≤ δd := (norm_adjoint_sub D D').trans_le hδd
+  have h := correctionOperator_sub_norm_le (adjoint (𝕜 := ℝ) (E := S) (F := E) D)
+    (adjoint (𝕜 := ℝ) (E := S) (F := E) D') A A'
     (ContinuousLinearMap.id ℝ S) (ContinuousLinearMap.id ℝ S) d a 1 δd δa 0
     (by simpa only [LinearIsometryEquiv.norm_map] using hd)
     (by simpa only [LinearIsometryEquiv.norm_map] using hd') ha ha' norm_id_le norm_id_le
@@ -396,8 +402,10 @@ theorem gram_sub_norm_le (A B : U →L[ℝ] E) (q : ℝ)
     (hA : ‖A‖ ≤ q) (hB : ‖B‖ ≤ q) :
     ‖gram A - gram B‖ ≤ 2 * q * ‖A-B‖ := by
   have hq := (norm_nonneg A).trans hA
-  have had : ‖A.adjoint-B.adjoint‖ = ‖A-B‖ := norm_adjoint_sub A B
-  apply (norm_comp_sub_le A.adjoint B.adjoint A B).trans
+  have had : ‖adjoint (𝕜 := ℝ) (E := U) (F := E) A -
+      adjoint (𝕜 := ℝ) (E := U) (F := E) B‖ = ‖A-B‖ := norm_adjoint_sub A B
+  apply (norm_comp_sub_le (adjoint (𝕜 := ℝ) (E := U) (F := E) A)
+    (adjoint (𝕜 := ℝ) (E := U) (F := E) B) A B).trans
   simp only [had, LinearIsometryEquiv.norm_map]
   exact (add_le_add (mul_le_mul_of_nonneg_left hA (norm_nonneg _))
     (mul_le_mul_of_nonneg_right hB (norm_nonneg _))).trans_eq (by ring)
@@ -424,10 +432,11 @@ theorem generator_norm_le (q r : ℝ) (hQn : ‖Q‖ ≤ q) (hQ₁n : ‖Q₁‖
   have hr := (norm_nonneg Q₁).trans hQ₁n
   apply (ContinuousMap.norm_le _ (by positivity)).2
   intro t
-  change ‖(-2 : ℝ) • (gramInverse (Q t) c hc (hQ t)).comp ((Q t).adjoint.comp (Q₁ t))‖ ≤ _
+  change ‖(-2 : ℝ) • (gramInverse (Q t) c hc (hQ t)).comp
+    ((adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)).comp (Q₁ t))‖ ≤ _
   rw [norm_smul]
   norm_num only [Real.norm_eq_abs]
-  have hprod : ‖(Q t).adjoint.comp (Q₁ t)‖ ≤ q*r := by
+  have hprod : ‖(adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)).comp (Q₁ t)‖ ≤ q*r := by
     apply (opNorm_comp_le _ _).trans
     simp only [LinearIsometryEquiv.norm_map]
     exact mul_le_mul ((Q.norm_coe_le_norm t).trans hQn)
@@ -461,25 +470,30 @@ theorem generator_sub_norm_le (q r : ℝ)
       2*(c⁻¹)^2*q*‖Q-P‖ :=
     (gramInverse_sub_norm_le (Q t) (P t) c hc (hQ t) (hP t) q htQ htP).trans
       (mul_le_mul_of_nonneg_left hδQ (by positivity))
-  have hprod : ‖(Q t).adjoint.comp (Q₁ t)‖ ≤ q*r := by
+  have hprod : ‖(adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)).comp (Q₁ t)‖ ≤ q*r := by
     apply (opNorm_comp_le _ _).trans
     simp only [LinearIsometryEquiv.norm_map]
     exact mul_le_mul htQ htQ₁ (norm_nonneg _) hq
-  have hprodδ : ‖(Q t).adjoint.comp (Q₁ t) - (P t).adjoint.comp (P₁ t)‖ ≤
+  have hprodδ : ‖(adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)).comp (Q₁ t) -
+      (adjoint (𝕜 := ℝ) (E := U) (F := E) (P t)).comp (P₁ t)‖ ≤
       ‖Q-P‖*r + q*‖Q₁-P₁‖ := by
     apply (norm_comp_sub_le _ _ _ _).trans
-    have had : ‖(Q t).adjoint-(P t).adjoint‖ = ‖Q t-P t‖ := norm_adjoint_sub (Q t) (P t)
+    have had : ‖adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t) -
+        adjoint (𝕜 := ℝ) (E := U) (F := E) (P t)‖ = ‖Q t-P t‖ := norm_adjoint_sub (Q t) (P t)
     simp only [had, LinearIsometryEquiv.norm_map]
     exact add_le_add (mul_le_mul hδQ htQ₁ (by positivity) (by positivity))
       (mul_le_mul htP hδQ₁ (norm_nonneg _) hq)
   have htotal := (norm_comp_sub_le
     (gramInverse (Q t) c hc (hQ t)) (gramInverse (P t) c hc (hP t))
-    ((Q t).adjoint.comp (Q₁ t)) ((P t).adjoint.comp (P₁ t))).trans
+    ((adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)).comp (Q₁ t))
+    ((adjoint (𝕜 := ℝ) (E := U) (F := E) (P t)).comp (P₁ t))).trans
       (add_le_add (mul_le_mul hI hprod (norm_nonneg _) (by positivity))
         (mul_le_mul (gramInverse_norm (P t) c hc (hP t)) hprodδ
           (norm_nonneg _) (inv_nonneg.mpr hc.le)))
-  change ‖(-2 : ℝ) • (gramInverse (Q t) c hc (hQ t)).comp ((Q t).adjoint.comp (Q₁ t)) -
-    (-2 : ℝ) • (gramInverse (P t) c hc (hP t)).comp ((P t).adjoint.comp (P₁ t))‖ ≤ _
+  change ‖(-2 : ℝ) • (gramInverse (Q t) c hc (hQ t)).comp
+      ((adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)).comp (Q₁ t)) -
+    (-2 : ℝ) • (gramInverse (P t) c hc (hP t)).comp
+      ((adjoint (𝕜 := ℝ) (E := U) (F := E) (P t)).comp (P₁ t))‖ ≤ _
   rw [← smul_sub, norm_smul]
   norm_num only [Real.norm_eq_abs]
   exact (mul_le_mul_of_nonneg_left htotal (by norm_num)).trans_eq

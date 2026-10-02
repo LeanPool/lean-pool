@@ -140,20 +140,22 @@ include hp
 
 /-- The ordinary L² time path represents the actual angular integral at every time. -/
 theorem pathMean_pointField_ae (t : K) :
-    (pathMean P p t : Space → Space) =ᵐ[volume] rawMean P (pointField P p hp t) := by
+    (pathMean (K := K) (V := Vector3) P p t : Space → Space) =ᵐ[volume]
+      rawMean P (pointField P p hp t) := by
   have h := mean_ae_rawMean P (sobolevPath P 3 p hp t) (pointField P p hp t)
     (smoothField_continuous P _ (pointField_smooth P p hp t))
     (by simpa only [sobolevPath_value] using pointField_ae P p hp t)
   simpa only [pathMean_apply, sobolevPath_value] using h
 
 theorem mean_slice_orbit (t : K) :
-    EulerMeanSmoothRepresentative.SmoothOrbit (pathMean P p t) := by
+    EulerMeanSmoothRepresentative.SmoothOrbit (pathMean (K := K) (V := Vector3) P p t) := by
   have h := (ContinuousMap.evalCLM ℝ t).contDiff.comp (pathMean_orbit_contDiff P p hp)
   exact h
 
 /-- Uniqueness identifies the mean solver's ordinary representative with the literal integral. -/
 theorem mean_pointField_eq (t : K) :
-    EulerMeanSmoothRepresentative.representative (pathMean P p t) (mean_slice_orbit P p hp t) =
+    EulerMeanSmoothRepresentative.representative (pathMean (K := K) (V := Vector3) P p t)
+        (mean_slice_orbit P p hp t) =
       rawMean P (pointField P p hp t) := by
   apply EulerMeanSmoothRepresentative.representative_unique
   · exact rawMean_continuous P (sobolevPath P 3 p hp t) (pointField P p hp t)
@@ -195,13 +197,15 @@ def angularMeanRaw : VectorField := fun z =>
 
 include hp in
 theorem angularMean_orbit :
-    ContDiff ℝ ∞ (fun a : Space => pathTranslation D.T a (pathMean P p)) := by
+    ContDiff ℝ ∞ (fun a : Space => pathTranslation D.T a
+      (pathMean (K := Icc (0 : ℝ) D.T) (V := Space) P p)) := by
   simpa only [pathTranslation, spatialPathTranslation, EulerLpTranslation.translation,
     EulerMeanSolenoidal.translation] using pathMean_orbit_contDiff P p hp
 
 /-- A genuine forcing witness for the normalized angular mean. -/
 def angularMeanForcing : Forcing D (angularMeanRaw D P p hp) :=
-  Forcing.ofOrbitPath (pathMean P p) (angularMean_orbit D P p hp) (fun t x θ => by
+  Forcing.ofOrbitPath (pathMean (K := Icc (0 : ℝ) D.T) (V := Space) P p)
+    (angularMean_orbit D P p hp) (fun t x θ => by
     simp only [angularMeanRaw, Data.clamp_coe]
     exact congrFun (mean_pointField_eq P p hp t).symm x)
 
@@ -241,7 +245,8 @@ variable {P T : ℝ} [Fact (0 < P)] {raw : VectorField}
 
 /-- Its path is the genuine average operator, and its raw field is exactly the angular integral. -/
 def angleMean (G : Field P T raw) : Field P T (EulerPacketProfileRecursion.angleMean P raw) :=
-  ofLifted (pathAverage P G.path) (pathAverage_orbit_contDiff P G.path G.orbit)
+  ofLifted (pathAverage (K := Icc (0 : ℝ) T) (V := Vector3) P G.path)
+    (pathAverage_orbit_contDiff P G.path G.orbit)
     (fun t x => rawMean P (pointField P G.path G.orbit t) x.1)
     (fun t => (rawMean_continuous P (sobolevPath P 3 G.path G.orbit t)
       (pointField P G.path G.orbit t) (smoothField_continuous P _ (pointField_smooth P G.path
@@ -268,7 +273,7 @@ def highPart (G : Field P T raw) : Field P T (raw-EulerPacketProfileRecursion.an
   G.sub G.angleMean
 
 @[simp] theorem angleMean_path (G : Field P T raw) :
-    G.angleMean.path = pathAverage P G.path := rfl
+    G.angleMean.path = pathAverage (K := Icc (0 : ℝ) T) (V := Vector3) P G.path := rfl
 
 /-- The same actual angular integral is admissible for the constructed ordinary-space mean solver.
 -/

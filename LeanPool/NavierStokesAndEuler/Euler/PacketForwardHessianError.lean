@@ -77,10 +77,13 @@ variable (L : Budget D (Fin 4) 6)
 theorem scalar_grade_bound_pred (C : ℝ) (W : GradeGuards (P := P) L N C)
     (G : Forcing P D raw) (I : InitialData P D)
     (c : ℝ) (hc : 0 < c) (d e : ℕ) (hroom : d + 3 ≤ e)
-    (hforce : ∀ n, block standardDirection 6 (fun a => pathTranslate P a
-      (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤ (c * C) * majorant L.R d n)
+    (hforce : ∀ n, block standardDirection 6
+      (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
+        (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+          (c * C) * majorant L.R d n)
     (hinitial : ∀ n, block standardDirection 6
-      (fun a => translate P a (I.value : CylinderL2 P U)) n 0 ≤ (c * C) * majorant L.R d n) :
+      (fun a => translate (V := U) P a (I.value : CylinderL2 P U)) n 0 ≤
+        (c * C) * majorant L.R d n) :
     ((scalarField G I).normalized D.T_pos.le (c • L.g)
       (smul_profile_pos L.g L.positive c hc)).WordBound 6 L.R 1 (e-1) := by
   have hb : ((scalarField G I).normalized D.T_pos.le L.g L.positive).WordBound
@@ -98,10 +101,13 @@ theorem scalar_grade_bound_pred (C : ℝ) (W : GradeGuards (P := P) L N C)
 theorem angular_grade_bound (C : ℝ) (W : GradeGuards (P := P) L N C)
     (G : Forcing P D raw) (I : InitialData P D)
     (c : ℝ) (hc : 0 < c) (d e : ℕ) (hroom : d + 3 ≤ e)
-    (hforce : ∀ n, block standardDirection 6 (fun a => pathTranslate P a
-      (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤ (c * C) * majorant L.R d n)
+    (hforce : ∀ n, block standardDirection 6
+      (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
+        (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+          (c * C) * majorant L.R d n)
     (hinitial : ∀ n, block standardDirection 6
-      (fun a => translate P a (I.value : CylinderL2 P U)) n 0 ≤ (c * C) * majorant L.R d n) :
+      (fun a => translate (V := U) P a (I.value : CylinderL2 P U)) n 0 ≤
+        (c * C) * majorant L.R d n) :
     ((angularField G I).normalized D.T_pos.le (c • L.g)
       (smul_profile_pos L.g L.positive c hc)).WordBound 6 L.R 1 e := by
   have hh := angularGradientField_normalized_bound _ _ _ _ D.T_pos.le
@@ -114,10 +120,13 @@ theorem angular_grade_bound (C : ℝ) (W : GradeGuards (P := P) L N C)
 theorem scalar_grade_bound (C : ℝ) (W : GradeGuards (P := P) L N C)
     (G : Forcing P D raw) (I : InitialData P D)
     (c : ℝ) (hc : 0 < c) (d e : ℕ) (hroom : d + 3 ≤ e)
-    (hforce : ∀ n, block standardDirection 6 (fun a => pathTranslate P a
-      (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤ (c * C) * majorant L.R d n)
+    (hforce : ∀ n, block standardDirection 6
+      (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
+        (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+          (c * C) * majorant L.R d n)
     (hinitial : ∀ n, block standardDirection 6
-      (fun a => translate P a (I.value : CylinderL2 P U)) n 0 ≤ (c * C) * majorant L.R d n) :
+      (fun a => translate (V := U) P a (I.value : CylinderL2 P U)) n 0 ≤
+        (c * C) * majorant L.R d n) :
     ((scalarField G I).normalized D.T_pos.le (c • L.g)
       (smul_profile_pos L.g L.positive c hc)).WordBound 6 L.R 1 e :=
   (L.scalar_grade_bound_pred N C W G I c hc d e hroom hforce hinitial).mono_shift
@@ -137,7 +146,7 @@ theorem forced_scalar_and_angular_grade_bound
       6 L.R (c*1) (highForceShift p) :=
     (hforce.unscale_profile D.T_pos.le L.g L.positive c hc).transfer _
   have hi (n : ℕ) : block standardDirection 6
-      (fun a => translate P a ((InitialData.zero P D).value : CylinderL2 P U)) n 0 ≤
+      (fun a => translate (V := U) P a ((InitialData.zero P D).value : CylinderL2 P U)) n 0 ≤
         (c*1)*majorant L.R (highForceShift p) n := by
     simpa only [InitialData.zero,Submodule.coe_zero,map_zero,block_zero_function,mul_one] using
       mul_nonneg hc.le (majorant_nonneg L.R (zero_le_one.trans L.radius_one) (highForceShift p) n)
@@ -151,14 +160,17 @@ theorem primary_scalar_and_angular_grade_bound
     (C : ℝ) (W : GradeGuards (P := P) L N C) (Y : InitialData P D)
     (α : ℝ) (hα : 0 < α)
     (hYb : ∀ n, block standardDirection 6
-      (fun a => translate P a (Y.value : CylinderL2 P U)) n 0 ≤ (α * C) * majorant L.R 0 n) :
+      (fun a => translate (V := U) P a (Y.value : CylinderL2 P U)) n 0 ≤
+        (α * C) * majorant L.R 0 n) :
     ((scalarField (EulerPacketForwardPrimary.forcing D) Y).normalized D.T_pos.le (α • L.g)
       (smul_profile_pos L.g L.positive α hα)).WordBound 6 L.R 1 (highShift 1) ∧
     ((angularField (EulerPacketForwardPrimary.forcing D) Y).normalized D.T_pos.le (α • L.g)
       (smul_profile_pos L.g L.positive α hα)).WordBound 6 L.R 1 (highShift 1) := by
   let G := EulerPacketForwardPrimary.forcing (P := P) D
-  have hf (n : ℕ) : block standardDirection 6 (fun a => pathTranslate P a
-      (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤ (α*C)*majorant L.R 0 n := by
+  have hf (n : ℕ) : block standardDirection 6
+      (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
+        (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+          (α*C)*majorant L.R 0 n := by
     have hh : HistoryData.forcingPath G = 0 := by
       unfold HistoryData.forcingPath
       rw [EulerPacketForwardPrimary.forcing_path_zero,map_zero]
@@ -348,8 +360,8 @@ theorem forwardInitializedPressureBudget_exists (p : ℕ) :
     have ht : timeProfileChange (α • L.g) hTime.symm=S.high 1 := by
       rw [← hgrowth,timeProfileChange_roundtrip,hs1]
     have hYb : ∀ n, block standardDirection 6
-        (fun a => translate period a ((initialData D δ hδ (α • ξ) hs).value : CylinderL2 period U))
-            n 0 ≤
+        (fun a => translate (V := U) period a
+          ((initialData D δ hδ (α • ξ) hs).value : CylinderL2 period U)) n 0 ≤
           (α*(wordCost (Fin 4) 6 δ*‖ξ‖))*majorant L.R 0 n := by
       intro n
       have hh := initialData_common_radius D δ hδ (α • ξ) hs standardDirection
@@ -461,7 +473,7 @@ theorem forwardInitializedPressure_gradient_decomposition (N : ℕ) (k : ℝ) (h
       (t,(Y y,k*⟪D.m₀,Y y⟫_ℝ))) x =
       fastForce (fun z => forwardInitializedAngularPressure D δ hδ ξ hs α (t,z))
         k D.m₀ Y (fun y => D.FInv.field t (Y y)) x +
-      (D.FInv.field t (Y x)).adjoint
+      adjoint (𝕜 := ℝ) (E := Space) (F := Space) (D.FInv.field t (Y x))
         (forwardInitializedCovectorRemainder M D δ hδ ξ hs α N k⁻¹
           (t,(Y x,k*⟪D.m₀,Y x⟫_ℝ))) := by
   let tm : Icc (0 : ℝ) M.T := ⟨t.val,by simpa only [hTime] using t.property⟩
@@ -650,7 +662,8 @@ theorem forwardInitializedPressure_hessian_bound (N : ℕ) (hN : 1 ≤ N) (k : �
         (t,(Y t y,k*⟪D.m₀,Y t y⟫_ℝ)))) x -
       (EulerPacketForwardShear.pressureCoefficient D ξ α t (Y t x) *
         deriv (profile δ) (k*⟪D.m₀,Y t x⟫_ℝ)) •
-      rankOne ℝ (D.normal.field t (Y t x)) (D.normal.field t (Y t x))‖ ≤
+      rankOne (E := Space) (F := Space) ℝ (D.normal.field t (Y t x))
+        (D.normal.field t (Y t x))‖ ≤
         forwardInitializedPressureHessianCost NB L.R S.H0 L.Rc L.C₀/k := by
   have hk0 : 0 < k := by linarith
   have hr0 : 0 ≤ L.R := zero_le_one.trans L.radius_one

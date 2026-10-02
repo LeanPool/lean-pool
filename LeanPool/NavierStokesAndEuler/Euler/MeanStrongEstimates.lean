@@ -197,10 +197,13 @@ theorem solenoidalFrame_norm_le (T : ℝ) (F : C(Icc (0 : ℝ) T, L2 →L[ℝ] L
 
 /-- The ordinary projection equation is exactly the Gram equation on L²σ. -/
 theorem gram_equation_of_ordinary (F F₁ : L2 →L[ℝ] L2) (f : L2) (a v : solenoidalSpace)
-    (h : solenoidalProjection (F.adjoint (F (a : L2))) =
-      solenoidalProjection (F.adjoint (f - (2 : ℝ) • F₁ (v : L2)))) :
+    (h : solenoidalProjection
+        (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := L2) (F := L2) F (F (a : L2))) =
+      solenoidalProjection
+        (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := L2) (F := L2) F (f - (2 : ℝ) • F₁ (v : L2)))) :
     gram (F.comp solenoidalSpace.subtypeL) a =
-      (F.comp solenoidalSpace.subtypeL).adjoint (f-(2 : ℝ) • F₁ (v : L2)) := by
+      (F.comp solenoidalSpace.subtypeL).adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2)
+        (f-(2 : ℝ) • F₁ (v : L2)) := by
   apply Subtype.ext
   simpa only [gram, adjoint_comp, Submodule.adjoint_subtypeL, comp_apply,
     Submodule.subtypeL_apply, Submodule.coe_orthogonalProjectionOnto_apply,
@@ -262,12 +265,13 @@ theorem acceleration_norm
     ‖s.acceleration‖ ≤ (‖FInv‖+1)^2*‖F‖*(‖f‖+2*‖F₁‖*‖s.velocityLp‖) := by
   have heq : ∀ᵐ t ∂timeMeasure T,
       gram (extendPath T hT (solenoidalFrame T F) t) (s.acceleration t) =
-      (solenoidalFrame T F (projIcc 0 T hT t)).adjoint
+      ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2)
+        (solenoidalFrame T F (projIcc 0 T hT t))
         (f t-(2 : ℝ) • solenoidalFrame T F₁ (projIcc 0 T hT t) (s.velocityLp t)) := by
     filter_upwards [s.equation, s.velocity_ae] with t ht hv
     have hh := congrArg (fun v : solenoidalSpace =>
-      solenoidalProjection ((F (projIcc 0 T hT t)).adjoint
-        (f t-(2 : ℝ) • F₁ (projIcc 0 T hT t) (v : L2)))) hv
+      solenoidalProjection (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := L2) (F := L2)
+        (F (projIcc 0 T hT t)) (f t-(2 : ℝ) • F₁ (projIcc 0 T hT t) (v : L2)))) hv
     exact gram_equation_of_ordinary (F (projIcc 0 T hT t)) (F₁ (projIcc 0 T hT t))
       (f t) (s.acceleration t) (s.velocityLp t) (ht.trans hh.symm)
   have h := EulerTransverseStrongEstimates.acceleration_norm T (solenoidalFrame T F)

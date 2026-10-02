@@ -145,7 +145,8 @@ theorem translation_hasFDerivAt (A : SmoothCoefficientPath K V) (a : Space) :
 
 theorem translation_fderiv (A : SmoothCoefficientPath K V) :
     fderiv ℝ (translateCoefficientPath A.field) =
-      fun a => pathDerivativeBundling (translateCoefficientPath A.derivative.field a) :=
+      fun a => pathDerivativeBundling (K := K) (V := V)
+        (translateCoefficientPath A.derivative.field a) :=
   funext (fun a => (A.translation_hasFDerivAt a).fderiv)
 
 private theorem translation_contDiff_nat_aux (n : ℕ) :

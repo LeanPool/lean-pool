@@ -95,7 +95,7 @@ include hY
 theorem endpointForcing_mean_zero (t : Icc (0 : ℝ) T) : average P (D.endpointForcing P Y t) = 0 :=
     by
   rw [D.endpointForcing_apply P Y t,map_smul]
-  change (2 : ℝ) • average P (fullOperatorMap P (D.Q₁ t) (T⁻¹ • Y)) = 0
+  change (2 : ℝ) • average P (fullOperatorMap (E := U) (F := E) P (D.Q₁ t) (T⁻¹ • Y)) = 0
   rw [average_fullOperator,map_smul,hY,smul_zero,map_zero,smul_zero]
 
 theorem endpointCoordinate_mean_zero (t : Icc (0 : ℝ) T) :
@@ -112,13 +112,13 @@ theorem endpointAcceleration_mean_zero (t : Icc (0 : ℝ) T) :
 
 theorem endpointVelocity_mean_zero (t : Icc (0 : ℝ) T) :
     average P (D.endpointVelocity P Y t) = 0 := by
-  change average P (fullOperatorMap P (D.Q t) (D.endpointCoordinate P Y t)) = 0
+  change average P (fullOperatorMap (E := U) (F := E) P (D.Q t) (D.endpointCoordinate P Y t)) = 0
   rw [average_fullOperator,D.endpointCoordinate_mean_zero P Y hY t,map_zero]
 
 theorem endpointDerivative_mean_zero (t : Icc (0 : ℝ) T) :
     average P (D.endpointDerivative P Y t) = 0 := by
-  change average P (fullOperatorMap P (D.Q₁ t) (D.endpointCoordinate P Y t) +
-    fullOperatorMap P (D.Q t) (D.endpointAcceleration P Y t)) = 0
+  change average P (fullOperatorMap (E := U) (F := E) P (D.Q₁ t) (D.endpointCoordinate P Y t) +
+    fullOperatorMap (E := U) (F := E) P (D.Q t) (D.endpointAcceleration P Y t)) = 0
   rw [map_add,average_fullOperator,average_fullOperator,
     D.endpointCoordinate_mean_zero P Y hY t,D.endpointAcceleration_mean_zero P Y hY t,
     map_zero,map_zero,add_zero]

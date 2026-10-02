@@ -36,7 +36,7 @@ variable {V W : Type*}
 
 /-- The operator representing the kinetic form minus the actual potential form. -/
 def dirichletOperator (J : V →L[ℝ] W) (H : W →L[ℝ] W) : V →L[ℝ] V :=
-  ContinuousLinearMap.id ℝ V - J.adjoint.comp (H.comp J)
+  ContinuousLinearMap.id ℝ V - (adjoint (𝕜 := ℝ) (E := V) (F := W) J).comp (H.comp J)
 
 /-- This is precisely the displacement variational form. -/
 theorem dirichletOperator_inner (J : V →L[ℝ] W) (H : W →L[ℝ] W) (u v : V) :
@@ -63,7 +63,8 @@ def dirichletSolver (J : V →L[ℝ] W) (H : W →L[ℝ] W)
     (hH : ∀ w, ⟪H w, w⟫_ℝ ≤ K * ‖w‖ ^ 2)
     (hsmall : K * L ≤ 1 / 2) : W →L[ℝ] V :=
   (coerciveInverse (dirichletOperator J H) (1 / 2) (by norm_num)
-    (dirichletOperator_coercive J H L K hK hJ hH hsmall)).comp (-J.adjoint)
+    (dirichletOperator_coercive J H L K hK hJ hH hsmall)).comp
+      (-adjoint (𝕜 := ℝ) (E := V) (F := W) J)
 
 /-- The constructed solution obeys the actual weak displacement equation. -/
 theorem dirichletSolver_weak (J : V →L[ℝ] W) (H : W →L[ℝ] W)
@@ -77,7 +78,8 @@ theorem dirichletSolver_weak (J : V →L[ℝ] W) (H : W →L[ℝ] W)
   rw [← dirichletOperator_inner]
   change ⟪dirichletOperator J H
     (coerciveInverse (dirichletOperator J H) (1 / 2) (by norm_num)
-      (dirichletOperator_coercive J H L K hK hJ hH hsmall) (-J.adjoint f)), v⟫_ℝ = _
+      (dirichletOperator_coercive J H L K hK hJ hH hsmall)
+      (-adjoint (𝕜 := ℝ) (E := V) (F := W) J f)), v⟫_ℝ = _
   rw [operator_inverse_apply, inner_neg_left, adjoint_inner_left]
 
 /-- No other derivative in the same Hilbert displacement space solves this form. -/
@@ -105,12 +107,13 @@ theorem dirichletSolver_norm (J : V →L[ℝ] W) (H : W →L[ℝ] W)
     ‖dirichletSolver J H L K hK hJ hH hsmall f‖ ≤ 2 * ‖J‖ * ‖f‖ := by
   have hi := coerciveInverse_apply_norm_le (dirichletOperator J H) (1 / 2)
     (by norm_num) (dirichletOperator_coercive J H L K hK hJ hH hsmall)
-    (-J.adjoint f)
+    (-adjoint (𝕜 := ℝ) (E := V) (F := W) J f)
   change ‖dirichletSolver J H L K hK hJ hH hsmall f‖ ≤ _ at hi
-  have ha := J.adjoint.le_opNorm f
+  have ha := (adjoint (𝕜 := ℝ) (E := V) (F := W) J).le_opNorm f
   simp only [norm_neg, inv_div, div_one, LinearIsometryEquiv.norm_map] at hi ha
   calc
-    ‖dirichletSolver J H L K hK hJ hH hsmall f‖ ≤ 2 * ‖J.adjoint f‖ := hi
+    ‖dirichletSolver J H L K hK hJ hH hsmall f‖ ≤
+        2 * ‖adjoint (𝕜 := ℝ) (E := V) (F := W) J f‖ := hi
     _ ≤ 2 * (‖J‖ * ‖f‖) := mul_le_mul_of_nonneg_left ha (by norm_num)
     _ = 2 * ‖J‖ * ‖f‖ := by ring
 

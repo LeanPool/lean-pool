@@ -73,18 +73,23 @@ namespace Coefficients
 variable (P : ℝ) [Fact (0 < P)] {T : ℝ} (D : Coefficients T U E)
 
 /-- Frame, given by `fullPathMap P D.Q`. -/
-def frame : C(Icc (0 : ℝ) T,CylinderL2 P U →L[ℝ] CylinderL2 P E) := fullPathMap P D.Q
+def frame : C(Icc (0 : ℝ) T,CylinderL2 P U →L[ℝ] CylinderL2 P E) :=
+  fullPathMap (K := Icc (0 : ℝ) T) (E := U) (F := E) P D.Q
 /-- Frame derivative, given by `fullPathMap P D.Q₁`. -/
-def frameDerivative : C(Icc (0 : ℝ) T,CylinderL2 P U →L[ℝ] CylinderL2 P E) := fullPathMap P D.Q₁
+def frameDerivative : C(Icc (0 : ℝ) T,CylinderL2 P U →L[ℝ] CylinderL2 P E) :=
+  fullPathMap (K := Icc (0 : ℝ) T) (E := U) (F := E) P D.Q₁
 /-- Frame second, given by `fullPathMap P D.Q₂`. -/
-def frameSecond : C(Icc (0 : ℝ) T,CylinderL2 P U →L[ℝ] CylinderL2 P E) := fullPathMap P D.Q₂
+def frameSecond : C(Icc (0 : ℝ) T,CylinderL2 P U →L[ℝ] CylinderL2 P E) :=
+  fullPathMap (K := Icc (0 : ℝ) T) (E := U) (F := E) P D.Q₂
 /-- Hessian, given by `fullPathMap P D.H`. -/
-def hessian : C(Icc (0 : ℝ) T,CylinderL2 P E →L[ℝ] CylinderL2 P E) := fullPathMap P D.H
+def hessian : C(Icc (0 : ℝ) T,CylinderL2 P E →L[ℝ] CylinderL2 P E) :=
+  fullPathMap (K := Icc (0 : ℝ) T) (E := E) (F := E) P D.H
 
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem frame_lower (t : Icc (0 : ℝ) T) (u : CylinderL2 P U) :
     D.lower*‖u‖^2 ≤ ‖D.frame P t u‖^2 :=
-  EulerLpOperatorField.full_norm_sq_lower (liftMeasure P) (fieldLift P (D.Q t))
+  EulerLpOperatorField.full_norm_sq_lower (liftMeasure P)
+    (fieldLift (W := U →L[ℝ] E) P (D.Q t))
     D.lower D.lower_pos.le (fun x v => D.lower_bound t x.1 v) u
 
 omit [CompleteSpace U] in
@@ -102,13 +107,16 @@ theorem frame_second_derivative (t : Icc (0 : ℝ) T) :
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem frame_equation (t : Icc (0 : ℝ) T) :
     D.frameSecond P t = -((D.hessian P t).comp (D.frame P t)) :=
-  EulerLpOperatorField.full_eq_neg_comp (liftMeasure P) (fieldLift P (D.Q₂ t))
-    (fieldLift P (D.H t)) (fieldLift P (D.Q t)) (fun x v => D.jacobi t x.1 v)
+  EulerLpOperatorField.full_eq_neg_comp (liftMeasure P)
+    (fieldLift (W := U →L[ℝ] E) P (D.Q₂ t))
+    (fieldLift (W := E →L[ℝ] E) P (D.H t)) (fieldLift (W := U →L[ℝ] E) P (D.Q t))
+    (fun x v => D.jacobi t x.1 v)
 
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem hessian_upper (t : Icc (0 : ℝ) T) (u : CylinderL2 P E) :
     ⟪D.hessian P t u,u⟫_ℝ ≤ D.potential*‖u‖^2 :=
-  EulerLpOperatorField.full_quadratic_upper (liftMeasure P) (fieldLift P (D.H t))
+  EulerLpOperatorField.full_quadratic_upper (liftMeasure P)
+    (fieldLift (W := E →L[ℝ] E) P (D.H t))
     D.potential (fun x v => D.potential_bound t x.1 v) u
 
 /-- The fixed-space coercive construction, with every L² hypothesis derived
@@ -225,8 +233,9 @@ theorem physicalVelocity_hasDerivWithinAt (f : C(Icc (0 : ℝ) T, CylinderL2 P E
 angular L² fields at every time. -/
 theorem projected_equation (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : Icc (0 : ℝ) T) :
     gram (D.frame P t) (D.accelerationPath P f t) =
-      (D.frame P t).adjoint (f t-(2 : ℝ) • D.frameDerivative P t
-        (D.velocityPath P (pathLp T D.time_pos.le f) t)) := by
+      ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := CylinderL2 P U) (F := CylinderL2 P E)
+        (D.frame P t) (f t-(2 : ℝ) • D.frameDerivative P t
+          (D.velocityPath P (pathLp T D.time_pos.le f) t)) := by
   unfold accelerationPath velocityPath
   with_reducible
     exact EulerTransverseFixedEvolution.classicalAcceleration_equation T D.time_pos.le

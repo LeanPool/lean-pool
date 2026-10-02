@@ -78,28 +78,33 @@ theorem meanOperator_bound (hH : ContDiff ℝ ∞ H) (hC : ContDiff ℝ ∞ C)
       baseAmplitude J R CH CC * majorant r 0 n := by
   have hHJ := clm_comp_const_right_bound H J hH r CH hr hCH 0 hHb
   have hJHJ : ∀ k y,
-      ‖iteratedFDeriv ℝ k (fun p => J.adjoint.comp ((H p).comp J)) y‖ ≤
+      ‖iteratedFDeriv ℝ k
+          (fun p => (adjoint (𝕜 := ℝ) (E := W) (F := W) J).comp ((H p).comp J)) y‖ ≤
         (‖J‖^2*CH) * majorant r 0 k := by
     intro k y
-    have h := clm_comp_const_left_bound J.adjoint (fun p => (H p).comp J)
+    have h := clm_comp_const_left_bound (adjoint (𝕜 := ℝ) (E := W) (F := W) J)
+      (fun p => (H p).comp J)
       (hH.clm_comp contDiff_const) r (‖J‖*CH) hr (mul_nonneg (norm_nonneg _) hCH) 0 hHJ k y
     simpa only [LinearIsometryEquiv.norm_map, pow_two, mul_assoc] using h
   have hCR := clm_comp_const_right_bound C R hC r CC hr hCC 0 hCb
   have hRCR : ∀ k y,
-      ‖iteratedFDeriv ℝ k (fun p => R.adjoint.comp ((C p).comp R)) y‖ ≤
+      ‖iteratedFDeriv ℝ k
+          (fun p => (adjoint (𝕜 := ℝ) (E := W) (F := X) R).comp ((C p).comp R)) y‖ ≤
         (‖R‖^2*CC) * majorant r 0 k := by
     intro k y
-    have h := clm_comp_const_left_bound R.adjoint (fun p => (C p).comp R)
+    have h := clm_comp_const_left_bound (adjoint (𝕜 := ℝ) (E := W) (F := X) R)
+      (fun p => (C p).comp R)
       (hC.clm_comp contDiff_const) r (‖R‖*CC) hr (mul_nonneg (norm_nonneg _) hCC) 0 hCR k y
     simpa only [LinearIsometryEquiv.norm_map, pow_two, mul_assoc] using h
   have hId := const_bound (P := P) (ContinuousLinearMap.id ℝ W) r 1 hr (norm_id_le :
       ‖ContinuousLinearMap.id ℝ W‖ ≤ 1)
   have hsub := sub_bound (fun _ : P => ContinuousLinearMap.id ℝ W)
-    (fun p => J.adjoint.comp ((H p).comp J)) contDiff_const
+    (fun p => (adjoint (𝕜 := ℝ) (E := W) (F := W) J).comp ((H p).comp J)) contDiff_const
     (contDiff_const.clm_comp (hH.clm_comp contDiff_const)) r 1 (‖J‖^2*CH) 0 hId hJHJ
   exact add_bound
-    (fun p => ContinuousLinearMap.id ℝ W-J.adjoint.comp ((H p).comp J))
-    (fun p => R.adjoint.comp ((C p).comp R))
+    (fun p => ContinuousLinearMap.id ℝ W-
+      (adjoint (𝕜 := ℝ) (E := W) (F := W) J).comp ((H p).comp J))
+    (fun p => (adjoint (𝕜 := ℝ) (E := W) (F := X) R).comp ((C p).comp R))
     (contDiff_const.sub (contDiff_const.clm_comp (hH.clm_comp contDiff_const)))
     (contDiff_const.clm_comp (hC.clm_comp contDiff_const))
     r (1+‖J‖^2*CH) (‖R‖^2*CC) 0 hsub hRCR n x
@@ -135,7 +140,7 @@ theorem pullbackMeanOperator_bound
       hr hB0 hCD 0 0 hBb hDb k y
   have hDa := (realAdjoint (U := V) (E := W)).contDiff.comp hD
   have hDab := adjoint_bound D hD r CD hr hCD 0 hDb
-  have h := clm_comp_bound (fun p => (D p).adjoint)
+  have h := clm_comp_bound (fun p => adjoint (𝕜 := ℝ) (E := V) (F := W) (D p))
     (fun p => (meanOperator J R (H p) (C p)).comp (D p)) hDa (hB.clm_comp hD)
     r CD (3*baseAmplitude J R CH CC*CD) hr hCD (by positivity) 0 0 hDab hBD n x
   calc
@@ -158,13 +163,15 @@ theorem pullbackMeanForcing_bound (f : P → W) (hD : ContDiff ℝ ∞ D) (hf : 
   have hKab := adjoint_bound (fun p => J.comp (D p)) hK r (‖J‖*CD) hr
     (mul_nonneg (norm_nonneg _) hCD) 0 hKb
   have happ : ∀ k y,
-      ‖iteratedFDeriv ℝ k (fun p => (J.comp (D p)).adjoint (f p)) y‖ ≤
+      ‖iteratedFDeriv ℝ k
+          (fun p => adjoint (𝕜 := ℝ) (E := V) (F := W) (J.comp (D p)) (f p)) y‖ ≤
         (3*(‖J‖*CD)*CF) * majorant r d k := by
     intro k y
     simpa only [Nat.zero_add] using clm_apply_bound
-      (fun p => (J.comp (D p)).adjoint) f hKa hf r (‖J‖*CD) CF hr
+      (fun p => adjoint (𝕜 := ℝ) (E := V) (F := W) (J.comp (D p))) f hKa hf r (‖J‖*CD) CF hr
       (mul_nonneg (norm_nonneg _) hCD) hCF 0 d hKab hfb k y
-  exact neg_bound (fun p => (J.comp (D p)).adjoint (f p)) r (3*(‖J‖*CD)*CF) d happ n x
+  exact neg_bound (fun p => adjoint (𝕜 := ℝ) (E := V) (F := W) (J.comp (D p)) (f p))
+    r (3*(‖J‖*CD)*CF) d happ n x
 
 end EulerMeanFormGevrey
 
@@ -319,7 +326,8 @@ theorem fixedMeanForcing_bound (f : P → TimeLp T L2)
     (hF₁b : ∀ n x, ‖iteratedFDeriv ℝ n F₁ x‖ ≤ CF₁ * majorant r 0 n)
     (hfb : ∀ n x, ‖iteratedFDeriv ℝ n f x‖ ≤ Cf * majorant r d n)
     (n : ℕ) (x : P) :
-    ‖iteratedFDeriv ℝ n (fun p => -(fixedMeanPrimitive T hT (F p) (F₁ p)).adjoint (f p)) x‖ ≤
+    ‖iteratedFDeriv ℝ n (fun p => -adjoint (𝕜 := ℝ) (F := TimeLp T L2)
+        (fixedMeanPrimitive T hT (F p) (F₁ p)) (f p)) x‖ ≤
       (3*(T*(T*CF₁+CF))*Cf)*majorant r d n := by
   have hD0 : 0 ≤ T*CF₁+CF := add_nonneg (mul_nonneg hT hCF₁) hCF
   have hb := pullbackMeanForcing_bound (primitiveTimeLp (E := L2) T hT)

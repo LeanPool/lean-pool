@@ -108,7 +108,7 @@ def bilinearMap (B : E →L[ℝ] F →L[ℝ] G) : (α →ᵇ E) →L[ℝ] (α �
   (bilinearLinear B).mkContinuous₂ ‖B‖ (bilinearValue_norm B)
 
 @[simp] theorem bilinearMap_apply (B : E →L[ℝ] F →L[ℝ] G) (f : α →ᵇ E) (g : α →ᵇ F) (x : α) :
-    bilinearMap B f g x = B (f x) (g x) := rfl
+    bilinearMap (α := α) B f g x = B (f x) (g x) := rfl
 
 theorem bilinearMap_norm (B : E →L[ℝ] F →L[ℝ] G) : ‖bilinearMap (α := α) B‖ ≤ ‖B‖ :=
   (bilinearLinear B).mkContinuous₂_norm_le (norm_nonneg B) (bilinearValue_norm B)
@@ -311,8 +311,8 @@ local instance instBoundedFieldCalculus44 : NormedSpace ℝ ((α →ᵇ U →L[�
 def adjointMap : (α →ᵇ U →L[ℝ] E) →L[ℝ] (α →ᵇ E →L[ℝ] U) :=
   (realAdjoint (U := U) (E := E)).compLeftContinuousBounded α
 
-@[simp] theorem adjointMap_apply (A : α →ᵇ U →L[ℝ] E) (x : α) : adjointMap A x = (A x).adjoint :=
-    rfl
+@[simp] theorem adjointMap_apply (A : α →ᵇ U →L[ℝ] E) (x : α) :
+    adjointMap (α := α) (U := U) (E := E) A x = adjoint (𝕜 := ℝ) (E := U) (F := E) (A x) := rfl
 
 theorem adjointMap_norm : ‖adjointMap (α := α) (U := U) (E := E)‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
@@ -320,7 +320,7 @@ theorem adjointMap_norm : ‖adjointMap (α := α) (U := U) (E := E)‖ ≤ 1 :=
   rw [one_mul]
   apply (BoundedContinuousFunction.norm_le (norm_nonneg A)).2
   intro x
-  change ‖(A x).adjoint‖ ≤ ‖A‖
+  change ‖adjoint (𝕜 := ℝ) (E := U) (F := E) (A x)‖ ≤ ‖A‖
   rw [LinearIsometryEquiv.norm_map]
   exact A.norm_coe_le_norm x
 
@@ -357,7 +357,8 @@ def pathAdjointMap : C(K,α →ᵇ U →L[ℝ] E) →L[ℝ] C(K,α →ᵇ E →L
 
 omit [CompactSpace K] in
 @[simp] theorem pathAdjointMap_apply (A : C(K, α →ᵇ U →L[ℝ] E)) (t : K) (x : α) :
-    pathAdjointMap (α := α) (K := K) (U := U) (E := E) A t x = (A t x).adjoint := rfl
+    pathAdjointMap (α := α) (K := K) (U := U) (E := E) A t x =
+      adjoint (𝕜 := ℝ) (E := U) (F := E) (A t x) := rfl
 
 theorem pathAdjointMap_norm : ‖pathAdjointMap (α := α) (K := K) (U := U) (E := E)‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
@@ -367,7 +368,7 @@ theorem pathAdjointMap_norm : ‖pathAdjointMap (α := α) (K := K) (U := U) (E 
   intro t
   apply (BoundedContinuousFunction.norm_le (norm_nonneg A)).2
   intro x
-  change ‖(A t x).adjoint‖ ≤ ‖A‖
+  change ‖adjoint (𝕜 := ℝ) (E := U) (F := E) (A t x)‖ ≤ ‖A‖
   rw [LinearIsometryEquiv.norm_map]
   exact ((A t).norm_coe_le_norm x).trans (A.norm_coe_le_norm t)
 

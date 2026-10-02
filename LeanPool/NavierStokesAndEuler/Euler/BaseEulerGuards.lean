@@ -81,7 +81,7 @@ theorem uncut_numerator_variation (t : Icc (0 : ℝ) D.T) :
   let m : ℝ → Space := fun r => extendPath D.T D.T_pos.le D.normal.field r x
   let v : ℝ → Space := fun r => uncutVelocity D ξ r x
   let A : ℝ → (Space →L[ℝ] Space) := fun r => extendPath D.T D.T_pos.le D.M.field r x
-  let m₁ : ℝ → Space := fun r => -(A r).adjoint (m r)
+  let m₁ : ℝ → Space := fun r => -adjoint (𝕜 := ℝ) (E := Space) (F := Space) (A r) (m r)
   let v₁ : ℝ → Space := fun r => -(A r) (v r)+(2*⟪m r,A r (v r)⟫_ℝ/‖m r‖^2) • m r
   let A₁ : ℝ → (Space →L[ℝ] Space) :=
     fun r => -(A r).comp (A r)-H (projIcc 0 D.T D.T_pos.le r)
@@ -100,9 +100,9 @@ theorem uncut_numerator_variation (t : Icc (0 : ℝ) D.T) :
   have hAb (r : ℝ) (hr : r ∈ Icc (0 : ℝ) D.T) : ‖A r‖ ≤ CM := by
     simpa only [A,extendPath,projIcc_of_mem D.T_pos.le hr] using hM ⟨r,hr⟩
   have hm₁b (r : ℝ) (hr : r ∈ Icc (0 : ℝ) D.T) : ‖m₁ r‖ ≤ CM*‖m r‖ := by
-    change ‖-(A r).adjoint (m r)‖ ≤ _
+    change ‖-adjoint (𝕜 := ℝ) (E := Space) (F := Space) (A r) (m r)‖ ≤ _
     rw [norm_neg]
-    apply ((A r).adjoint.le_opNorm _).trans
+    apply ((adjoint (𝕜 := ℝ) (E := Space) (F := Space) (A r)).le_opNorm _).trans
     rw [LinearIsometryEquiv.norm_map]
     exact mul_le_mul_of_nonneg_right (hAb r hr) (norm_nonneg _)
   have hv₁b (r : ℝ) (hr : r ∈ Icc (0 : ℝ) D.T) : ‖v₁ r‖ ≤ CM*‖v r‖ := by

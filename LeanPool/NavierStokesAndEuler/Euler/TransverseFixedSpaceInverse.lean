@@ -48,7 +48,8 @@ def fixedFramePrimitive : zeroTraceDerivatives (U := U) T hT →L[ℝ] TimeLp T 
 /-- The transported Dirichlet operator on the fixed coordinate Hilbert space. -/
 def fixedFrameOperator :
     zeroTraceDerivatives (U := U) T hT →L[ℝ] zeroTraceDerivatives (U := U) T hT :=
-  (fixedFrameDerivative T hT Q Q₁).adjoint.comp
+  (adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
+      (fixedFrameDerivative T hT Q Q₁)).comp
     ((dirichletOperator (primitiveTimeLp T hT) (timeMultiplier T hT H)).comp
       (fixedFrameDerivative T hT Q Q₁))
 
@@ -58,7 +59,8 @@ theorem fixedFrameOperator_inner (u v : zeroTraceDerivatives (U := U) T hT) :
       ⟪fixedFrameDerivative T hT Q Q₁ u, fixedFrameDerivative T hT Q Q₁ v⟫_ℝ -
       ⟪timeMultiplier T hT H (fixedFramePrimitive T hT Q Q₁ u),
         fixedFramePrimitive T hT Q Q₁ v⟫_ℝ := by
-  change ⟪(fixedFrameDerivative T hT Q Q₁).adjoint
+  change ⟪adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
+    (fixedFrameDerivative T hT Q Q₁)
     (dirichletOperator (primitiveTimeLp T hT) (timeMultiplier T hT H)
       (fixedFrameDerivative T hT Q Q₁ u)), v⟫_ℝ = _
   rw [adjoint_inner_left, dirichletOperator_inner]
@@ -96,7 +98,8 @@ theorem fixedFrameOperator_coercive (v : zeroTraceDerivatives (U := U) T hT) :
     _ ≤ (1/2 : ℝ) * ‖fixedFrameDerivative T hT Q Q₁ v‖^2 :=
       mul_le_mul_of_nonneg_left hlow (by norm_num)
     _ ≤ ⟪fixedFrameOperator T hT Q Q₁ H v, v⟫_ℝ := by
-      change _ ≤ ⟪(fixedFrameDerivative T hT Q Q₁).adjoint
+      change _ ≤ ⟪adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
+        (fixedFrameDerivative T hT Q Q₁)
         (dirichletOperator (primitiveTimeLp T hT) (timeMultiplier T hT H)
           (fixedFrameDerivative T hT Q Q₁ v)), v⟫_ℝ
       rw [adjoint_inner_left]
@@ -107,7 +110,8 @@ def fixedFrameSolver : TimeLp T E →L[ℝ] zeroTraceDerivatives (U := U) T hT :
   (coerciveInverse (fixedFrameOperator T hT Q Q₁ H) (fixedCoercivity T Q Q₁ c)
     (fixedCoercivity_pos T hT Q Q₁ c hc)
     (fixedFrameOperator_coercive T hT Q Q₁ H c hc hQ hd K hK hH hsmall)).comp
-      (-(fixedFramePrimitive T hT Q Q₁).adjoint)
+      (-(adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
+        (fixedFramePrimitive T hT Q Q₁)))
 
 /-- The actual fixed-space solution obeys the entire source variational form. -/
 theorem fixedFrameSolver_weak (f : TimeLp T E) (v : zeroTraceDerivatives (U := U) T hT) :
@@ -121,7 +125,8 @@ theorem fixedFrameSolver_weak (f : TimeLp T E) (v : zeroTraceDerivatives (U := U
     (coerciveInverse (fixedFrameOperator T hT Q Q₁ H) (fixedCoercivity T Q Q₁ c)
       (fixedCoercivity_pos T hT Q Q₁ c hc)
       (fixedFrameOperator_coercive T hT Q Q₁ H c hc hQ hd K hK hH hsmall)
-      (-(fixedFramePrimitive T hT Q Q₁).adjoint f)), v⟫_ℝ = _
+      (-(adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
+        (fixedFramePrimitive T hT Q Q₁) f))), v⟫_ℝ = _
   rw [operator_inverse_apply, inner_neg_left, adjoint_inner_left]
 
 /-- The fixed-space variational inverse is unique. -/

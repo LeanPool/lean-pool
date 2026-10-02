@@ -40,27 +40,31 @@ local instance instCylinderPotentialWeight4 : NormedSpace ℝ C(K,LiftL2 P) := i
 
 variable (g : C(K, ℝ)) (p : C(K, LiftL2 P))
 
-theorem weighted_orbit (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p)) :
+theorem weighted_orbit
+    (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p)) :
     ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a (weight g p)) := by
   have he : (fun a : LiftTangent => pathTranslate P a (weight g p)) =
-      fun a => weight g (pathTranslate P a p) := funext (fun a => translate_weight P g a p)
+      fun a => weight g (pathTranslate (K := K) (V := Vector3) P a p) :=
+    funext (fun a => translate_weight P g a p)
   rw [he]
   exact (weight g).contDiff.comp hp
 
 /-- The entire spatial/angular word commutes with a time-only scalar factor. -/
-theorem wordPath_weight (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+theorem wordPath_weight
+    (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
     {n : ℕ} (w : Fin n → Fin 4) :
     wordPath P (weight g p) w = weight g (wordPath P p w) := by
-  have he : (fun a : LiftTangent => pathTranslate P a (weight g p)) =
-      weight g ∘ (fun a : LiftTangent => pathTranslate P a p) :=
+  have he : (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a (weight g p)) =
+      weight g ∘ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p) :=
     funext (fun a => translate_weight P g a p)
   unfold wordPath
   rw [he]
   exact wordDerivative_comp_clm (E := C(K, LiftL2 P)) (F := C(K, LiftL2 P))
     EulerCylinderSobolev.standardDirection (weight g)
-    (fun a : LiftTangent => pathTranslate P a p) hp w 0
+    (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p) hp w 0
 
-theorem derivativePath_weight (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+theorem derivativePath_weight
+    (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
     (i : Fin 4) : derivativePath P (weight g p) i = weight g (derivativePath P p i) :=
   wordPath_weight P g p hp (fun _ : Fin 1 => i)
 
@@ -71,11 +75,12 @@ theorem pathPrimitive_weight : pathPrimitive P (weight g p) = weight g (pathPrim
 
 variable (B : C(K, Space →ᵇ Space →L[ℝ] Space))
 
-theorem fullMultiplier_weight : fullMultiplierMap P B (weight g p) =
-    weight g (fullMultiplierMap P B p) := by
+theorem fullMultiplier_weight :
+    fullMultiplierMap (K := K) (E := Space) (F := Space) P B (weight g p) =
+      weight g (fullMultiplierMap (K := K) (E := Space) (F := Space) P B p) := by
   apply ContinuousMap.ext
   intro t
-  exact (fullOperatorMap P (B t)).map_smul (g t) (p t)
+  exact (fullOperatorMap (E := Space) (F := Space) P (B t)).map_smul (g t) (p t)
 
 theorem potentialPath_weight : potentialPath P B (weight g p) = weight g (potentialPath P B p) := by
   unfold potentialPath

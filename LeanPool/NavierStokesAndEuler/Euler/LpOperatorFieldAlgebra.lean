@@ -122,7 +122,8 @@ variable [CompleteSpace E] [CompleteSpace F]
 
 /-- The L² adjoint is multiplication by the pointwise adjoint field. -/
 theorem full_adjoint (A : α →ᵇ E →L[ℝ] F) :
-    (full μ A).adjoint = full μ (adjointMap (α := α) (U := E) (E := F) A) := by
+    adjoint (𝕜 := ℝ) (E := Lp E 2 μ) (F := Lp F 2 μ) (full μ A) =
+      full μ (adjointMap (α := α) (U := E) (E := F) A) := by
   apply ContinuousLinearMap.ext
   intro u
   apply ext_inner_right ℝ
@@ -147,7 +148,8 @@ variable {α E : Type*} [MeasurableSpace α] (μ : Measure α)
 
 /-- The genuine measurable spatial cutoff is an orthogonal projection. -/
 theorem cutoffOperator_adjoint :
-    (cutoffOperator (V := E) μ S hS).adjoint = cutoffOperator μ S hS := by
+    adjoint (𝕜 := ℝ) (E := Lp E 2 μ) (F := Lp E 2 μ) (cutoffOperator (V := E) μ S hS) =
+      cutoffOperator μ S hS := by
   apply ContinuousLinearMap.ext
   intro u
   apply ext_inner_right ℝ

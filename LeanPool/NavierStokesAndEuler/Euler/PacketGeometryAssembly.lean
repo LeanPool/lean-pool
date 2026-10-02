@@ -55,7 +55,8 @@ open Set EulerSmoothLimit InnerProductSpace ContinuousLinearMap
 
 theorem tangentPairing_hasDerivWithinAt (M : Space →L[ℝ] Space)
     {r w : ℝ → Space} {t : ℝ} {S : Set ℝ}
-    (hr : HasDerivWithinAt r (-M.adjoint (r t)) S t)
+    (hr : HasDerivWithinAt r
+      (-ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) M (r t)) S t)
     (hw : HasDerivWithinAt w (-M (w t) + (2 * ⟪r t, M (w t)⟫_ℝ / ‖r t‖ ^ 2) • r t) S t)
     (hr0 : r t ≠ 0) : HasDerivWithinAt (fun s => ⟪r s,w s⟫_ℝ) 0 S t := by
   apply (hr.inner ℝ hw).congr_deriv
@@ -68,7 +69,8 @@ theorem tangentPairing_hasDerivWithinAt (M : Space →L[ℝ] Space)
 theorem rescaled_tangentPairing_zero (M : ℝ → Space →L[ℝ] Space)
     {r w : ℝ → Space} {t₀ a ε T : ℝ} {S : Set ℝ}
     (hmap : MapsTo (physicalTime t₀ a ε) (Icc 0 T) S)
-    (hr : ∀ t ∈ S, HasDerivWithinAt r (-(M t).adjoint (r t)) S t)
+    (hr : ∀ t ∈ S, HasDerivWithinAt r
+      (-ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (M t) (r t)) S t)
     (hw : ∀ t ∈ S, HasDerivWithinAt w (-(M t) (w t) +
       (2 * ⟪r t, (M t) (w t)⟫_ℝ / ‖r t‖ ^ 2) • r t) S t)
     (hr0 : ∀ τ ∈ Icc 0 T, r (physicalTime t₀ a ε τ) ≠ 0)
@@ -112,7 +114,8 @@ theorem rescaledFrame_continuousOn (B D : ℝ → Space →L[ℝ] Space)
     {m v : ℝ → Space} {S U : Set ℝ} {t₀ a ε : ℝ}
     (hmap : MapsTo (physicalTime t₀ a ε) U S)
     (hDc : ContinuousOn D S)
-    (hm : ∀ t ∈ S, HasDerivWithinAt m (-(B t).adjoint (m t)) S t)
+    (hm : ∀ t ∈ S, HasDerivWithinAt m
+      (-ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (B t) (m t)) S t)
     (hv : ∀ t ∈ S, HasDerivWithinAt v (-(B t) (v t) +
       (2 * ⟪m t, (B t) (v t)⟫_ℝ / ‖m t‖ ^ 2) • m t) S t)
     (hm0 : ∀ t ∈ S, m t ≠ 0) (hv0 : ∀ t ∈ S, v t ≠ 0)
@@ -191,10 +194,12 @@ theorem physical_neighbor_stage_references
     (hmap : MapsTo (physicalTime t₀ a ε) (Icc 0 Θ) S)
     (hMc : ContinuousOn M S)
     (hBd : ∀ t ∈ S, HasDerivWithinAt B (B₁ t) S t)
-    (hmd : ∀ t ∈ S, HasDerivWithinAt m (-(B t).adjoint (m t)) S t)
+    (hmd : ∀ t ∈ S, HasDerivWithinAt m
+      (-ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (B t) (m t)) S t)
     (hvd : ∀ t ∈ S, HasDerivWithinAt v (-(B t) (v t) +
       (2 * ⟪m t, (B t) (v t)⟫_ℝ / ‖m t‖ ^ 2) • m t) S t)
-    (hrd : ∀ t ∈ S, HasDerivWithinAt r (-(M t).adjoint (r t)) S t)
+    (hrd : ∀ t ∈ S, HasDerivWithinAt r
+      (-ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (M t) (r t)) S t)
     (hwd : ∀ t ∈ S, HasDerivWithinAt w (-(M t) (w t) +
       (2 * ⟪r t, (M t) (w t)⟫_ℝ / ‖r t‖ ^ 2) • r t) S t)
     (hm0 : ∀ t ∈ S, m t ≠ 0) (hv0 : ∀ t ∈ S, v t ≠ 0)
@@ -202,7 +207,7 @@ theorem physical_neighbor_stage_references
     (hB : ∀ t ∈ S, ‖B t‖ ≤ G) (hB₁ : ∀ t ∈ S, ‖B₁ t‖ ≤ G ^ 2)
     (hE : ∀ t ∈ S, ‖E t‖ ≤ d)
     (hparent : ∀ t ∈ S, M t = B t +
-      primaryShear c m v t • rankOne ℝ (unit (v t)) (unit (m t)) + E t)
+      primaryShear c m v t • rankOne ℝ (E := Space) (F := Space) (unit (v t)) (unit (m t)) + E t)
     (hb0 : rescaledFrame B m v t₀ a ε 0 0 1 = a)
     (hk0 : rescaledFrame B m v t₀ a ε 0 2 1 = a * σ ^ 2)
     (hh0 : rescaledShear c m v t₀ a ε 0 = a / ε ^ 2)
@@ -408,10 +413,12 @@ theorem physical_family_amplification_and_size {α : Type*} (center : α)
     (hmap : MapsTo (physicalTime t₀ a ε) (Icc 0 Θ) S)
     (hMc : ∀ ξ, ContinuousOn (M ξ) S)
     (hBd : ∀ t ∈ S, HasDerivWithinAt B (B₁ t) S t)
-    (hmd : ∀ t ∈ S, HasDerivWithinAt m (-(B t).adjoint (m t)) S t)
+    (hmd : ∀ t ∈ S, HasDerivWithinAt m
+      (-ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (B t) (m t)) S t)
     (hvd : ∀ t ∈ S, HasDerivWithinAt v (-(B t) (v t) +
       (2 * ⟪m t, (B t) (v t)⟫_ℝ / ‖m t‖ ^ 2) • m t) S t)
-    (hrd : ∀ ξ t, t ∈ S → HasDerivWithinAt (r ξ) (-(M ξ t).adjoint (r ξ t)) S t)
+    (hrd : ∀ ξ t, t ∈ S → HasDerivWithinAt (r ξ)
+      (-ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (M ξ t) (r ξ t)) S t)
     (hwd : ∀ ξ t, t ∈ S → HasDerivWithinAt (w ξ) (-(M ξ t) (w ξ t) +
       (2 * ⟪r ξ t, (M ξ t) (w ξ t)⟫_ℝ / ‖r ξ t‖ ^ 2) • r ξ t) S t)
     (hm0 : ∀ t ∈ S, m t ≠ 0) (hv0 : ∀ t ∈ S, v t ≠ 0)
@@ -419,7 +426,7 @@ theorem physical_family_amplification_and_size {α : Type*} (center : α)
     (hB : ∀ t ∈ S, ‖B t‖ ≤ G) (hB₁ : ∀ t ∈ S, ‖B₁ t‖ ≤ G ^ 2)
     (hE : ∀ ξ t, t ∈ S → ‖E ξ t‖ ≤ d)
     (hparent : ∀ ξ t, t ∈ S → M ξ t = B t +
-      primaryShear c m v t • rankOne ℝ (unit (v t)) (unit (m t)) + E ξ t)
+      primaryShear c m v t • rankOne ℝ (E := Space) (F := Space) (unit (v t)) (unit (m t)) + E ξ t)
     (hb0 : rescaledFrame B m v t₀ a ε 0 0 1 = a)
     (hk0 : rescaledFrame B m v t₀ a ε 0 2 1 = a * σ ^ 2)
     (hh0 : rescaledShear c m v t₀ a ε 0 = a / ε ^ 2)
@@ -877,10 +884,12 @@ theorem physical_tangent_propagator
     (hmap : MapsTo (physicalTime t₀ a ε) (Icc 0 Θ) S)
     (hMc : ContinuousOn M S)
     (hBd : ∀ t ∈ S, HasDerivWithinAt B (B₁ t) S t)
-    (hmd : ∀ t ∈ S, HasDerivWithinAt m (-(B t).adjoint (m t)) S t)
+    (hmd : ∀ t ∈ S, HasDerivWithinAt m
+      (-ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (B t) (m t)) S t)
     (hvd : ∀ t ∈ S, HasDerivWithinAt v (-(B t) (v t) +
       (2 * ⟪m t, (B t) (v t)⟫_ℝ / ‖m t‖ ^ 2) • m t) S t)
-    (hrd : ∀ t ∈ S, HasDerivWithinAt r (-(M t).adjoint (r t)) S t)
+    (hrd : ∀ t ∈ S, HasDerivWithinAt r
+      (-ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (M t) (r t)) S t)
     (hwd : ∀ t ∈ S, HasDerivWithinAt w (-(M t) (w t) +
       (2 * ⟪r t, (M t) (w t)⟫_ℝ / ‖r t‖ ^ 2) • r t) S t)
     (hm0 : ∀ t ∈ S, m t ≠ 0) (hv0 : ∀ t ∈ S, v t ≠ 0)
@@ -888,7 +897,7 @@ theorem physical_tangent_propagator
     (hB : ∀ t ∈ S, ‖B t‖ ≤ G) (hB₁ : ∀ t ∈ S, ‖B₁ t‖ ≤ G ^ 2)
     (hE : ∀ t ∈ S, ‖E t‖ ≤ d)
     (hparent : ∀ t ∈ S, M t = B t +
-      primaryShear c m v t • rankOne ℝ (unit (v t)) (unit (m t)) + E t)
+      primaryShear c m v t • rankOne ℝ (E := Space) (F := Space) (unit (v t)) (unit (m t)) + E t)
     (hb0 : rescaledFrame B m v t₀ a ε 0 0 1 = a)
     (hk0 : rescaledFrame B m v t₀ a ε 0 2 1 = a * σ ^ 2)
     (hh0 : rescaledShear c m v t₀ a ε 0 = a / ε ^ 2)

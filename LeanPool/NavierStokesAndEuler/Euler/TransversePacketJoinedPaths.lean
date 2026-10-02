@@ -59,22 +59,22 @@ def pressurePath : C(Icc (0 : ℝ) D.T,CylinderL2 P ℝ) :=
 -- In the lemmas below the joined path is unfolded first and the gluing lemma is matched at
 -- reducible transparency: the two sides then differ only by proof terms, which would otherwise be
 -- compared by unfolding the past and future paths themselves.
-theorem velocityPath_orbit : ContDiff ℝ ∞ (fun a => pathTranslate P a (velocityPath τ hτ hτT B G))
-    := by
+theorem velocityPath_orbit : ContDiff ℝ ∞ (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a (velocityPath τ hτ hτT B G)) := by
   unfold velocityPath
   with_reducible
     exact join_orbit_contDiff P D.T τ hτ.le hτT.le _ _ (velocity_match τ hτ hτT B G)
       (pastVelocity_orbit τ hτ hτT B G) (futureVelocity_orbit τ hτ hτT B G)
 
-theorem derivativePath_orbit : ContDiff ℝ ∞ (fun a => pathTranslate P a (derivativePath τ hτ hτT B
-    G)) := by
+theorem derivativePath_orbit : ContDiff ℝ ∞ (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a (derivativePath τ hτ hτT B G)) := by
   unfold derivativePath
   with_reducible
     exact join_orbit_contDiff P D.T τ hτ.le hτT.le _ _ (derivative_match τ hτ hτT B G)
       (pastDerivative_orbit τ hτ hτT B G) (futureDerivative_orbit τ hτ hτT B G)
 
-theorem pressurePath_orbit : ContDiff ℝ ∞ (fun a => pathTranslate P a (pressurePath τ hτ hτT B G))
-    := by
+theorem pressurePath_orbit : ContDiff ℝ ∞ (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) D.T) (V := ℝ) P a (pressurePath τ hτ hτT B G)) := by
   unfold pressurePath
   with_reducible
     exact join_orbit_contDiff P D.T τ hτ.le hτT.le _ _ (pressure_match τ hτ hτT B G)
@@ -145,9 +145,12 @@ theorem velocityPath_time (t : Icc (0 : ℝ) D.T) :
 /-- The gluing step itself has no external radius cost. -/
 theorem velocityPath_block_le {ι : Type*} [Fintype ι] (directions : ι → LiftTangent) (q n : ℕ) (a :
     LiftTangent) :
-    block directions q (fun b => pathTranslate P b (velocityPath τ hτ hτT B G)) n a ≤
-      block directions q (fun b => pathTranslate P b (pastVelocity τ hτ hτT B G)) n a +
-        block directions q (fun b => pathTranslate P b (futureVelocity τ hτ hτT B G)) n a := by
+    block directions q (fun b => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P b
+        (velocityPath τ hτ hτT B G)) n a ≤
+      block directions q (fun b => pathTranslate (K := Icc (0 : ℝ) τ) (V := Vector3) P b
+        (pastVelocity τ hτ hτT B G)) n a +
+        block directions q (fun b => pathTranslate (K := Icc (0 : ℝ) (D.T - τ)) (V := Vector3) P b
+          (futureVelocity τ hτ hτT B G)) n a := by
   unfold velocityPath
   with_reducible
     exact join_orbit_block P D.T τ hτ.le hτT.le _ _ (velocity_match τ hτ hτT B G)
@@ -155,9 +158,12 @@ theorem velocityPath_block_le {ι : Type*} [Fintype ι] (directions : ι → Lif
 
 theorem derivativePath_block_le {ι : Type*} [Fintype ι] (directions : ι → LiftTangent) (q n : ℕ) (a
     : LiftTangent) :
-    block directions q (fun b => pathTranslate P b (derivativePath τ hτ hτT B G)) n a ≤
-      block directions q (fun b => pathTranslate P b (pastDerivative τ hτ hτT B G)) n a +
-        block directions q (fun b => pathTranslate P b (futureDerivative τ hτ hτT B G)) n a := by
+    block directions q (fun b => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P b
+        (derivativePath τ hτ hτT B G)) n a ≤
+      block directions q (fun b => pathTranslate (K := Icc (0 : ℝ) τ) (V := Vector3) P b
+        (pastDerivative τ hτ hτT B G)) n a +
+        block directions q (fun b => pathTranslate (K := Icc (0 : ℝ) (D.T - τ)) (V := Vector3) P b
+          (futureDerivative τ hτ hτT B G)) n a := by
   unfold derivativePath
   with_reducible
     exact join_orbit_block P D.T τ hτ.le hτT.le _ _ (derivative_match τ hτ hτT B G)
@@ -165,9 +171,12 @@ theorem derivativePath_block_le {ι : Type*} [Fintype ι] (directions : ι → L
 
 theorem pressurePath_block_le {ι : Type*} [Fintype ι] (directions : ι → LiftTangent) (q n : ℕ) (a :
     LiftTangent) :
-    block directions q (fun b => pathTranslate P b (pressurePath τ hτ hτT B G)) n a ≤
-      block directions q (fun b => pathTranslate P b (pastPressure τ hτ hτT B G)) n a +
-        block directions q (fun b => pathTranslate P b (futurePressure τ hτ hτT B G)) n a := by
+    block directions q (fun b => pathTranslate (K := Icc (0 : ℝ) D.T) (V := ℝ) P b
+        (pressurePath τ hτ hτT B G)) n a ≤
+      block directions q (fun b => pathTranslate (K := Icc (0 : ℝ) τ) (V := ℝ) P b
+        (pastPressure τ hτ hτT B G)) n a +
+        block directions q (fun b => pathTranslate (K := Icc (0 : ℝ) (D.T - τ)) (V := ℝ) P b
+          (futurePressure τ hτ hτT B G)) n a := by
   unfold pressurePath
   with_reducible
     exact join_orbit_block P D.T τ hτ.le hτT.le _ _ (pressure_match τ hτ hτT B G)

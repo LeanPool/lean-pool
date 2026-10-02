@@ -69,20 +69,25 @@ include hSc hB in
 /-- The constructed unnormalized path is genuinely smooth in all covering parameters.
 This qualitative statement needs no propagator bound or smoothness of a time profile. -/
 theorem unweighted_solution_contDiff
-    (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a (includePath period S hS f)))
-    (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate period a (a₀ : CylinderL2 period V))) :
-    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a (includePath period S hS
-      ((constructedEvolution period S hS T hT B).solution f a₀))) := by
+    (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := V) period a
+      (includePath (K := Icc (0 : ℝ) T) (V := V) period S hS f)))
+    (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent =>
+      translate (V := V) period a (a₀ : CylinderL2 period V))) :
+    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := V) period a
+      (includePath (K := Icc (0 : ℝ) T) (V := V) period S hS
+        ((constructedEvolution period S hS T hT B).solution f a₀))) := by
   let g : C(Icc (0 : ℝ) T,ℝ) := 1
   have hg : ∀ t, 0 < g t := fun _ => zero_lt_one
-  have hw : weight g f = f := by
+  have hw : weight (K := Icc (0 : ℝ) T) (E := Supported period V S hS) g f = f := by
     apply ContinuousMap.ext
     intro t
     change (1 : ℝ) • f t = f t
     exact one_smul ℝ (f t)
   have he : (constructedEvolution period S hS T hT B).weightedSolution g hg f a₀ =
       (constructedEvolution period S hS T hT B).solution f a₀ := by
-    change normalize g hg ((constructedEvolution period S hS T hT B).solution (weight g f) a₀) = _
+    change normalize (K := Icc (0 : ℝ) T) (E := Supported period V S hS) g hg
+      ((constructedEvolution period S hS T hT B).solution
+        (weight (K := Icc (0 : ℝ) T) (E := Supported period V S hS) g f) a₀) = _
     rw [hw]
     apply ContinuousMap.ext
     intro t
@@ -124,16 +129,18 @@ variable (period : ℝ) [Fact (0 < period)]
 include hSc hf ha₀
 
 theorem coordinates_contDiff :
-    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a (includePath period S hS
-      (coordinates period S hS T hT Q Q₁ c hc hQ f a₀))) :=
+    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := U) period a
+      (includePath (K := Icc (0 : ℝ) T) (V := U) period S hS
+        (coordinates period S hS T hT Q Q₁ c hc hQ f a₀))) :=
   EulerLpCylinderRegularForward.unweighted_solution_contDiff period T hT S hS hSc
     (sourceGenerator Q Q₁ c hc hQ) (sourceGenerator_translation_contDiff Q Q₁ c hc hQ)
     (projectedForcing period S hS Q c hc hQ f) a₀
     (projectedForcing_contDiff period S hS Q c hc hQ f hf) ha₀
 
 theorem coordinateDerivative_contDiff :
-    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a (includePath period S hS
-      (coordinateDerivative period S hS T hT Q Q₁ c hc hQ f a₀))) := by
+    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := U) period a
+      (includePath (K := Icc (0 : ℝ) T) (V := U) period S hS
+        (coordinateDerivative period S hS T hT Q Q₁ c hc hQ f a₀))) := by
   have hu := coordinates_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀
   have hp := supported_product_orbit_contDiff period (sourceGenerator Q Q₁ c hc hQ)
     (sourceGenerator_translation_contDiff Q Q₁ c hc hQ) S hS
@@ -142,14 +149,16 @@ theorem coordinateDerivative_contDiff :
   simpa only [coordinateDerivative,map_add] using hp.add hpf
 
 theorem velocity_contDiff :
-    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a (includePath period S hS
-      (velocity period S hS T hT Q Q₁ c hc hQ f a₀))) :=
+    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := E) period a
+      (includePath (K := Icc (0 : ℝ) T) (V := E) period S hS
+        (velocity period S hS T hT Q Q₁ c hc hQ f a₀))) :=
   physicalVelocity_contDiff period S hS Q (coordinates period S hS T hT Q Q₁ c hc hQ f a₀)
     (coordinates_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀)
 
 theorem velocityDerivative_contDiff :
-    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a (includePath period S hS
-      (velocityDerivative period S hS T hT Q Q₁ c hc hQ f a₀))) := by
+    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := E) period a
+      (includePath (K := Icc (0 : ℝ) T) (V := E) period S hS
+        (velocityDerivative period S hS T hT Q Q₁ c hc hQ f a₀))) := by
   have hu := coordinates_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀
   have ha := coordinateDerivative_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀
   have h₁ := supported_product_orbit_contDiff period Q₁.field Q₁.translation_contDiff S hS
@@ -207,13 +216,14 @@ variable (period : ℝ) [Fact (0 < period)]
 
 /-- The actual physical field, reconstructed from the solved L² class. -/
 def field (t : Icc (0 : ℝ) T) (x : LiftDomain period) : Space :=
-  pointField period (includePath period S hS (velocity period S hS T hT Q Q₁ c hc hQ f a₀))
+  pointField period (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS
+      (velocity period S hS T hT Q Q₁ c hc hQ f a₀))
     (velocity_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀) t x
 
 /-- The reconstructed actual product-rule time derivative. -/
 def derivativeField (t : Icc (0 : ℝ) T) (x : LiftDomain period) : Space :=
-  pointField period (includePath period S hS (velocityDerivative period S hS T hT Q Q₁ c hc hQ f
-      a₀))
+  pointField period (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS
+      (velocityDerivative period S hS T hT Q Q₁ c hc hQ f a₀))
     (velocityDerivative_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀) t x
 
 theorem field_joint_continuous :
@@ -234,15 +244,16 @@ theorem derivativeField_smooth (t : Icc (0 : ℝ) T) (x : LiftDomain period) :
 theorem field_ae (t : Icc (0 : ℝ) T) :
     (velocity period S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 period Space) =ᵐ[liftMeasure period]
       field period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t :=
-  pointField_ae period (includePath period S hS (velocity period S hS T hT Q Q₁ c hc hQ f a₀))
+  pointField_ae period (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS
+      (velocity period S hS T hT Q Q₁ c hc hQ f a₀))
     (velocity_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀) t
 
 theorem derivativeField_ae (t : Icc (0 : ℝ) T) :
     (velocityDerivative period S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 period Space)
         =ᵐ[liftMeasure period]
       derivativeField period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t :=
-  pointField_ae period (includePath period S hS (velocityDerivative period S hS T hT Q Q₁ c hc hQ f
-      a₀))
+  pointField_ae period (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS
+      (velocityDerivative period S hS T hT Q Q₁ c hc hQ f a₀))
     (velocityDerivative_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀) t
 
 theorem field_tsupport_subset (t : Icc (0 : ℝ) T) :
@@ -265,9 +276,10 @@ theorem fullVelocity_hasDerivWithinAt
       HasDerivWithinAt (fun s => extendPath T hT Q.field s x)
         (extendPath T hT Q₁.field t x) (Icc (0 : ℝ) T) t)
     (t : Icc (0 : ℝ) T) :
-    HasDerivWithinAt (extendPath T hT (includePath period S hS
+    HasDerivWithinAt (extendPath T hT (includePath (K := Icc (0 : ℝ) T) (V := Space) period S hS
       (velocity period S hS T hT Q Q₁ c hc hQ f a₀)))
-      (includePath period S hS (velocityDerivative period S hS T hT Q Q₁ c hc hQ f a₀) t)
+      (includePath (K := Icc (0 : ℝ) T) (V := Space) period S hS
+        (velocityDerivative period S hS T hT Q Q₁ c hc hQ f a₀) t)
       (Icc (0 : ℝ) T) t := by
   let L : Supported period Space S hS →L[ℝ] LiftL2 period := (Supported period Space S hS).subtypeL
   exact L.hasFDerivAt.comp_hasDerivWithinAt (t : ℝ)
@@ -284,8 +296,10 @@ theorem field_hasDerivWithinAt
         s) x)
       (derivativeField period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t x) (Icc (0 : ℝ) T) t :=
   pointField_hasDerivWithinAt period T hT
-    (includePath period S hS (velocity period S hS T hT Q Q₁ c hc hQ f a₀))
-    (includePath period S hS (velocityDerivative period S hS T hT Q Q₁ c hc hQ f a₀))
+    (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS
+      (velocity period S hS T hT Q Q₁ c hc hQ f a₀))
+    (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS
+      (velocityDerivative period S hS T hT Q Q₁ c hc hQ f a₀))
     (velocity_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀)
     (velocityDerivative_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀)
     (fullVelocity_hasDerivWithinAt period S hS T hT Q Q₁ c hc hQ f a₀ hQt) t x
@@ -322,7 +336,8 @@ variable (period : ℝ) [Fact (0 < period)]
 
 /-- The source's literal scalar normal pressure residual. -/
 def normalResidual (t : Icc (0 : ℝ) T) (x : LiftDomain period) : ℝ :=
-  (⟪m.field t x.1,pointField period (includePath period S hS f) hf t x⟫_ℝ -
+  (⟪m.field t x.1,
+      pointField period (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS f) hf t x⟫_ℝ -
     2*⟪m.field t x.1,M.field t x.1 (field period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t x)⟫_ℝ) /
       ‖m.field t x.1‖^2
 
@@ -330,8 +345,8 @@ theorem normalResidual_continuous (hm : ∀ t x, m.field t x ≠ 0) (t : Icc (0 
     Continuous (normalResidual period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ M m t) := by
   have hA := smoothField_continuous period _ (field_smooth period S hS hSc T hT Q Q₁ c hc hQ f a₀
       hf ha₀ t)
-  have hF := smoothField_continuous period _ (pointField_smooth period (includePath period S hS f)
-      hf t)
+  have hF := smoothField_continuous period _ (pointField_smooth period
+      (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS f) hf t)
   have hM : Continuous (fun x : LiftDomain period => M.field t x.1) := (M.field t).continuous.comp
       continuous_fst
   have hm' : Continuous (fun x : LiftDomain period => m.field t x.1) := (m.field t).continuous.comp
@@ -348,7 +363,8 @@ theorem normalResidual_smooth (hm : ∀ t x, m.field t x ≠ 0)
   have hm' : ContDiff ℝ ∞ (fun h : LiftTangent => m.field t (x.1+h.1)) := (m.smooth t).comp hp
   have hM : ContDiff ℝ ∞ (fun h : LiftTangent => M.field t (x.1+h.1)) := (M.smooth t).comp hp
   have hA := field_smooth period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t x
-  have hF := pointField_smooth period (includePath period S hS f) hf t x
+  have hF := pointField_smooth period
+    (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS f) hf t x
   have hd : ∀ h : LiftTangent, ⟪m.field t (x.1+h.1),m.field t (x.1+h.1)⟫_ℝ ≠ 0 := by
     intro h
     rw [real_inner_self_eq_norm_sq]
@@ -385,19 +401,22 @@ theorem field_balance (hm : ∀ t x, m.field t x ≠ 0)
     derivativeField period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t x +
       M.field t x.1 (field period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t x) +
       normalResidual period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ M m t x • m.field t x.1 =
-        pointField period (includePath period S hS f) hf t x := by
+        pointField period (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS f) hf t
+          x := by
   have hae : (fun y : LiftDomain period =>
       derivativeField period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t y +
       M.field t y.1 (field period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t y) +
       normalResidual period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ M m t y • m.field t y.1)
           =ᵐ[liftMeasure period]
-        pointField period (includePath period S hS f) hf t := by
+        pointField period (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS f) hf t := by
     filter_upwards [velocity_balance_ae period S hS T hT Q Q₁ c hc hQ f a₀
         (fun s y => M.field s y) (fun s y => m.field s y) hm hTangent hRange hFlow t,
       field_ae period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t,
       derivativeField_ae period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t,
-      pointField_ae period (includePath period S hS f) hf t] with y he ha hd hforce
-    change (f t : CylinderL2 period Space) y = pointField period (includePath period S hS f) hf t y
+      pointField_ae period (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS f) hf t]
+      with y he ha hd hforce
+    change (f t : CylinderL2 period Space) y =
+      pointField period (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS f) hf t y
         at hforce
     rw [ha,hd,hforce] at he
     exact he
@@ -405,8 +424,8 @@ theorem field_balance (hm : ∀ t x, m.field t x ≠ 0)
       hf ha₀ t)
   have hD := smoothField_continuous period _ (derivativeField_smooth period S hS hSc T hT Q Q₁ c hc
       hQ f a₀ hf ha₀ t)
-  have hF := smoothField_continuous period _ (pointField_smooth period (includePath period S hS f)
-      hf t)
+  have hF := smoothField_continuous period _ (pointField_smooth period
+      (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS f) hf t)
   have hM : Continuous (fun y : LiftDomain period => M.field t y.1) := (M.field t).continuous.comp
       continuous_fst
   have hm' : Continuous (fun y : LiftDomain period => m.field t y.1) := (m.field t).continuous.comp
@@ -480,17 +499,17 @@ theorem pressureSource_ae (t : Icc (0 : ℝ) T) :
           ((velocity period S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 period Space) x)⟫_ℝ) /
               ‖m.field t x.1‖^2 := by
   let v := velocity period S hS T hT Q Q₁ c hc hQ f a₀ t
-  let w := supportedOperatorMap period S hS (M.field t) v
+  let w := supportedOperatorMap (E := Space) (F := Space) period S hS (M.field t) v
   let r : Supported period Space S hS := f t - (2 : ℝ) • w
   let N := normalFunctional m cm hcm hm t
-  filter_upwards [EulerLpOperatorField.full_ae (liftMeasure period) (fieldLift period N) (r :
-      CylinderL2 period Space),
-    EulerLpOperatorField.full_ae (liftMeasure period) (fieldLift period (M.field t)) (v :
-        CylinderL2 period Space),
+  filter_upwards [EulerLpOperatorField.full_ae (liftMeasure period)
+      (fieldLift (W := Space →L[ℝ] ℝ) period N) (r : CylinderL2 period Space),
+    EulerLpOperatorField.full_ae (liftMeasure period)
+      (fieldLift (W := Space →L[ℝ] Space) period (M.field t)) (v : CylinderL2 period Space),
     Lp.coeFn_sub (f t : CylinderL2 period Space) ((2 : ℝ) • (w : CylinderL2 period Space)),
     Lp.coeFn_smul (2 : ℝ) (w : CylinderL2 period Space)] with x hn hM hr hs
-  change (EulerLpOperatorField.full (liftMeasure period) (fieldLift period N) (r : CylinderL2
-      period Space)) x = _
+  change (EulerLpOperatorField.full (liftMeasure period)
+    (fieldLift (W := Space →L[ℝ] ℝ) period N) (r : CylinderL2 period Space)) x = _
   rw [hn]
   change normalFunctional m cm hcm hm t x.1 ((r : CylinderL2 period Space) x) = _
   rw [normalFunctional_apply]
@@ -501,17 +520,22 @@ theorem pressureSource_ae (t : Icc (0 : ℝ) T) :
   rw [hs]
   simp only [Pi.smul_apply]
   change (⟪m.field t x.1,(f t : CylinderL2 period Space) x - (2 : ℝ) •
-    (EulerLpOperatorField.full (liftMeasure period) (fieldLift period (M.field t)) (v : CylinderL2
-        period Space)) x⟫_ℝ) / _ = _
+    (EulerLpOperatorField.full (liftMeasure period)
+      (fieldLift (W := Space →L[ℝ] Space) period (M.field t))
+      (v : CylinderL2 period Space)) x⟫_ℝ) / _ = _
   rw [hM,inner_sub_right,inner_smul_right]
   rfl
 
 /-- The actual scalar pressure source inherits genuine mixed regularity from the solve. -/
 theorem pressureSource_contDiff (hSc : IsCompact S)
-    (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a (includePath period S hS f)))
-    (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate period a (a₀ : CylinderL2 period U))) :
-    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a (includePath period S hS
-      (pressureSource period S hS T hT Q Q₁ c hc hQ f a₀ M m cm hcm hm))) := by
+    (hf : ContDiff ℝ ∞ (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := Space) period a
+        (includePath (K := Icc (0 : ℝ) T) (V := Space) period S hS f)))
+    (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent =>
+      translate (V := U) period a (a₀ : CylinderL2 period U))) :
+    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := ℝ) period a
+      (includePath (K := Icc (0 : ℝ) T) (V := ℝ) period S hS
+        (pressureSource period S hS T hT Q Q₁ c hc hQ f a₀ M m cm hcm hm))) := by
   let v : C(Icc (0 : ℝ) T,Supported period Space S hS) :=
     velocity period S hS T hT Q Q₁ c hc hQ f a₀
   let w : C(Icc (0 : ℝ) T,Supported period Space S hS) :=
@@ -519,8 +543,9 @@ theorem pressureSource_contDiff (hSc : IsCompact S)
   have hv := velocity_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀
   have hw := supported_product_orbit_contDiff period M.field M.translation_contDiff S hS v hv
   let r : C(Icc (0 : ℝ) T,Supported period Space S hS) := f - (2 : ℝ) • w
-  have hr : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a
-      (includePath period S hS r)) := by
+  have hr : ContDiff ℝ ∞ (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := Space) period a
+        (includePath (K := Icc (0 : ℝ) T) (V := Space) period S hS r)) := by
     simpa only [r, ContinuousLinearMap.map_sub, ContinuousLinearMap.map_smul] using
       hf.sub (hw.const_smul (2 : ℝ))
   exact supported_product_orbit_contDiff period (normalFunctional m cm hcm hm)
@@ -555,22 +580,24 @@ variable (P : ℝ) [Fact (0 < P)]
   (cm : ℝ) (hcm : 0 < cm) (hm : ∀ t x, cm ≤ ‖m.field t x‖ ^ 2)
 
 theorem pressureSource_average_zero
-    (hf₀ : ∀ t, average P (f t : CylinderL2 P Space) = 0)
-    (ha₀ : average P (a₀ : CylinderL2 P U) = 0) (t : Icc (0 : ℝ) T) :
-    average P (pressureSource P S hS T hT Q Q₁ c hc hQ f a₀ M m cm hcm hm t :
+    (hf₀ : ∀ t, average (V := Space) P (f t : CylinderL2 P Space) = 0)
+    (ha₀ : average (V := U) P (a₀ : CylinderL2 P U) = 0) (t : Icc (0 : ℝ) T) :
+    average (V := ℝ) P (pressureSource P S hS T hT Q Q₁ c hc hQ f a₀ M m cm hcm hm t :
       CylinderL2 P ℝ) = 0 := by
-  change average P (fullOperatorMap P (normalFunctional m cm hcm hm t)
-    ((f t : CylinderL2 P Space) - (2 : ℝ) • fullOperatorMap P (M.field t)
+  change average (V := ℝ) P (fullOperatorMap (E := Space) (F := ℝ) P
+    (normalFunctional m cm hcm hm t)
+    ((f t : CylinderL2 P Space) - (2 : ℝ) • fullOperatorMap (E := Space) (F := Space) P (M.field t)
       (velocity P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P Space))) = 0
   rw [average_fullOperator, map_sub, map_smul, average_fullOperator,
     velocity_average_zero P S hS T hT Q Q₁ c hc hQ f a₀ hf₀ ha₀ t,
     hf₀ t, map_zero, smul_zero, sub_self, map_zero]
 
 theorem pressureSource_slice_contDiff (hSc : IsCompact S)
-    (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a (includePath P S hS f)))
-    (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate P a (a₀ : CylinderL2 P U)))
+    (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Space) P a
+      (includePath (K := Icc (0 : ℝ) T) (V := Space) P S hS f)))
+    (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate (V := U) P a (a₀ : CylinderL2 P U)))
     (t : Icc (0 : ℝ) T) :
-    ContDiff ℝ ∞ (fun a : LiftTangent => translate P a
+    ContDiff ℝ ∞ (fun a : LiftTangent => translate (V := ℝ) P a
       (pressureSource P S hS T hT Q Q₁ c hc hQ f a₀ M m cm hcm hm t : CylinderL2 P ℝ)) := by
   exact (ContinuousMap.evalCLM ℝ t : C(Icc (0 : ℝ) T,CylinderL2 P ℝ) →L[ℝ]
     CylinderL2 P ℝ).contDiff.comp
@@ -613,8 +640,10 @@ theorem pressureSource_ae_normalResidual (t : Icc (0 : ℝ) T) :
       normalResidual P S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ M m t := by
   filter_upwards [pressureSource_ae P S hS T hT Q Q₁ c hc hQ f a₀ M m cm hcm hm t,
     field_ae P S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t,
-    pointField_ae P (includePath P S hS f) hf t] with x hs hv hforce
-  change (f t : CylinderL2 P Space) x = pointField P (includePath P S hS f) hf t x at hforce
+    pointField_ae P (includePath (K := Icc (0 : ℝ) T) (V := Vector3) P S hS f) hf t]
+    with x hs hv hforce
+  change (f t : CylinderL2 P Space) x =
+    pointField P (includePath (K := Icc (0 : ℝ) T) (V := Vector3) P S hS f) hf t x at hforce
   rw [hs, hv, hforce]
   rfl
 
@@ -622,8 +651,8 @@ include hcm hm in
 /-- Zero mean of the forcing and initial coordinate implies zero mean of the
 literal pressure source of the constructed solution. -/
 theorem normalResidual_mean_zero
-    (hf₀ : ∀ t, average P (f t : CylinderL2 P Space) = 0)
-    (ha₀zero : average P (a₀ : CylinderL2 P U) = 0)
+    (hf₀ : ∀ t, average (V := Space) P (f t : CylinderL2 P Space) = 0)
+    (ha₀zero : average (V := U) P (a₀ : CylinderL2 P U) = 0)
     (t : Icc (0 : ℝ) T) (y : Space) :
     (∫ s in (0 : ℝ)..P,
       normalResidual P S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ M m t (y,(s : AddCircle P))) = 0 := by
@@ -666,13 +695,14 @@ variable (P : ℝ) [Fact (0 < P)]
 
 /-- The actual bounded angular inverse applied to the solved scalar source. -/
 def pressurePath : C(Icc (0 : ℝ) T,CylinderL2 P ℝ) :=
-  pathPrimitive P (includePath P S hS
+  pathPrimitive (K := Icc (0 : ℝ) T) P (includePath (K := Icc (0 : ℝ) T) (V := ℝ) P S hS
     (pressureSource P S hS T hT Q Q₁ c hc hQ f a₀ M m cm hcm hm))
 
 theorem pressurePath_contDiff (hSc : IsCompact S)
-    (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a (includePath P S hS f)))
-    (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate P a (a₀ : CylinderL2 P U))) :
-    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a
+    (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Space) P a
+      (includePath (K := Icc (0 : ℝ) T) (V := Space) P S hS f)))
+    (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate (V := U) P a (a₀ : CylinderL2 P U))) :
+    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := ℝ) P a
       (pressurePath P S hS T hT Q Q₁ c hc hQ f a₀ M m cm hcm hm)) :=
   pathPrimitive_orbit_contDiff P _
     (pressureSource_contDiff P S hS T hT Q Q₁ c hc hQ f a₀ M m cm hcm hm hSc hf ha₀)
@@ -750,7 +780,8 @@ theorem pressureField_continuous (t : Icc (0 : ℝ) T) :
 theorem normalResidual_zero_outside (t : Icc (0 : ℝ) T) (y : Space) (hy : y ∉ S)
     (θ : AddCircle P) :
     normalResidual P S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ M m t (y,θ) = 0 := by
-  have hforce : pointField P (includePath P S hS f) hf t (y,θ) = 0 := by
+  have hforce : pointField P (includePath (K := Icc (0 : ℝ) T) (V := Vector3) P S hS f) hf t
+      (y,θ) = 0 := by
     rw [pointField_eq_representative]
     exact representative_zero_outside P S hS hSc.isClosed _ _ (f t).property (y,θ) hy
   have hv : field P S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t (y,θ) = 0 := by
@@ -796,7 +827,8 @@ theorem field_pressure_equation
       M.field t y (field P S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t (y,(θ : AddCircle P))) +
       deriv (fun s : ℝ => pressureField P S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ M m cm hcm hm
         hf₀ ha₀zero t (y,(s : AddCircle P))) θ • m.field t y =
-      pointField P (includePath P S hS f) hf t (y,(θ : AddCircle P)) := by
+      pointField P (includePath (K := Icc (0 : ℝ) T) (V := Vector3) P S hS f) hf t
+        (y,(θ : AddCircle P)) := by
   rw [(pressureField_angle P S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ M m cm hcm hm hf₀ ha₀zero t y
       θ).deriv]
   exact field_balance P S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ M m

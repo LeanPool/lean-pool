@@ -52,14 +52,15 @@ variable (T : ℝ) (hT : 0 ≤ T)
 
 /-- The literal derivative of Q*η_t for the homogeneous stationary equation. -/
 def initialMomentumForcing : TimeLp T E →L[ℝ] TimeLp T U :=
-  (timeMultiplier T hT Q₁).adjoint -
-    (timeMultiplier T hT Q).adjoint.comp
+  adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT Q₁) -
+    (adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT Q)).comp
       ((timeMultiplier T hT H).comp (initialPrimitiveTimeLp T hT))
 
 theorem initialMomentumForcing_ae (u : TimeLp T E) :
     (initialMomentumForcing T hT Q Q₁ H u : ℝ → U) =ᵐ[timeMeasure T]
-      fun t => (extendPath T hT Q₁ t).adjoint (u t) -
-        (extendPath T hT Q t).adjoint (extendPath T hT H t (initialRealPrimitive T u t)) := by
+      fun t => adjoint (𝕜 := ℝ) (E := U) (F := E) (extendPath (Y := U →L[ℝ] E) T hT Q₁ t) (u t) -
+        adjoint (𝕜 := ℝ) (E := U) (F := E) (extendPath (Y := U →L[ℝ] E) T hT Q t)
+          (extendPath T hT H t (initialRealPrimitive T u t)) := by
   change (momentum T hT Q₁ u -
     momentum T hT Q (timeMultiplier T hT H (initialPrimitiveTimeLp T hT u)) : TimeLp T U)
       =ᵐ[timeMeasure T] _
@@ -99,7 +100,7 @@ theorem initialMomentum_weak
 /-- A bounded linear map giving the terminal value of the actual momentum. -/
 def terminalMomentum : TimeLp T E →L[ℝ] U :=
   (-T)⁻¹ • (initialTrace T hT).comp
-    ((timeMultiplier T hT Q).adjoint -
+    (adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT Q) -
       (primitiveTimeLp T hT).comp (initialMomentumForcing T hT Q Q₁ H))
 
 /-- The canonical momentum representative, including both time endpoints. -/
@@ -247,7 +248,8 @@ theorem initial_coordinate_green (hTpos : 0 < T)
       initialPrimitiveTimeLp_ae T hT u, initialPrimitiveTimeLp_ae T hT v,
       timeMultiplier_ae T hT H (initialPrimitiveTimeLp T hT u)]
       with t ht hp hpu hpd hξd hv hf hηu hηv hHu
-    have hp' : momentumPath T hT Q Q₁ H u t = (extendPath T hT Q t).adjoint (u t) :=
+    have hp' : momentumPath T hT Q Q₁ H u t =
+        adjoint (𝕜 := ℝ) (E := U) (F := E) (extendPath T hT Q t) (u t) :=
       hp.symm.trans hpu
     have hη : extendPath T hT Q t (initialCoordinates T hT Q c hc hQ v t) =
         initialRealPrimitive T v t := by
@@ -293,7 +295,7 @@ theorem dirichletToNeumann_eq_terminalMomentum (hTpos : 0 < T)
     (hL : ∀ Y t, ⟪m t, initialPrimitive T hT (L Y) t⟫_ℝ = 0)
     (hLT : ∀ Y, initialPrimitive T hT (L Y) ⟨T, hT, le_rfl⟩ = R Y) (Y : V) :
     dirichletToNeumann T hT m H K hK hH hsmall L Y =
-      (terminalCoordinates T hT Q c hc hQ R).adjoint
+      adjoint (𝕜 := ℝ) (E := V) (F := U) (terminalCoordinates T hT Q c hc hQ R)
         (terminalMomentum T hT Q Q₁ H (endpointDerivative T hT m H K hK hH hsmall L Y)) := by
   apply ext_inner_right ℝ
   intro Z
@@ -376,14 +378,15 @@ theorem physicalVelocityPath_continuous (u : TimeLp T E) :
 
 /-- The continuous velocity has the exact prescribed momentum at every time. -/
 theorem physicalVelocityPath_momentum (u : TimeLp T E) (t : ℝ) :
-    (extendPath T hT Q t).adjoint (physicalVelocityPath T hT Q Q₁ c hc hQ H u t) =
+    adjoint (𝕜 := ℝ) (E := U) (F := E) (extendPath (Y := U →L[ℝ] E) T hT Q t)
+        (physicalVelocityPath T hT Q Q₁ c hc hQ H u t) =
       momentumPath T hT Q Q₁ H u t := by
-  change (Q (projIcc 0 T hT t)).adjoint
+  change adjoint (𝕜 := ℝ) (E := U) (F := E) (Q (projIcc 0 T hT t))
     (Q₁ (projIcc 0 T hT t) (initialCoordinates T hT Q c hc hQ u t) +
       Q (projIcc 0 T hT t)
         (gramInverse (Q (projIcc 0 T hT t)) c hc (hQ (projIcc 0 T hT t))
           (momentumPath T hT Q Q₁ H u t -
-            (Q (projIcc 0 T hT t)).adjoint
+            adjoint (𝕜 := ℝ) (E := U) (F := E) (Q (projIcc 0 T hT t))
               (Q₁ (projIcc 0 T hT t) (initialCoordinates T hT Q c hc hQ u t))))) = _
   rw [map_add]
   change _ + gram (Q (projIcc 0 T hT t))
@@ -405,7 +408,8 @@ theorem coordinateVelocityPath_ae (hTpos : 0 < T) (u : TimeLp T E)
     momentum_ae T hT Q u,
     initialCoordinateDerivative_reconstruct_ae T hT Q Q₁ c hc hQ hd u huRange]
     with t hp hpm hu
-  have hp' : momentumPath T hT Q Q₁ H u t = (extendPath T hT Q t).adjoint (u t) :=
+  have hp' : momentumPath T hT Q Q₁ H u t =
+      adjoint (𝕜 := ℝ) (E := U) (F := E) (extendPath T hT Q t) (u t) :=
     hp.symm.trans hpm
   unfold coordinateVelocityPath
   rw [hp']
@@ -475,7 +479,7 @@ theorem dirichletToNeumann_eq_terminal_velocity (hTpos : 0 < T)
     (hL : ∀ Y t, ⟪m t, initialPrimitive T hT (L Y) t⟫_ℝ = 0)
     (hLT : ∀ Y, initialPrimitive T hT (L Y) ⟨T, hT, le_rfl⟩ = R Y) (Y : V) :
     dirichletToNeumann T hT m H K hK hH hsmall L Y =
-      R.adjoint (physicalVelocityPath T hT Q Q₁ c hc hQ H
+      adjoint (𝕜 := ℝ) (E := V) (F := E) R (physicalVelocityPath T hT Q Q₁ c hc hQ H
         (endpointDerivative T hT m H K hK hH hsmall L Y) T) := by
   rw [dirichletToNeumann_eq_terminalMomentum T hT Q Q₁ c hc hQ H hTpos hd
     m hm hRange K hK hH hsmall L R hL hLT]

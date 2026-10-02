@@ -104,8 +104,9 @@ theorem multiplier_inverse (A B : Field) (hAB : ∀ x v, A x (B x v) = v) (u : L
   filter_upwards [multiplier_ae A (multiplier B u), multiplier_ae B u] with x ha hb
   rw [ha, hb, hAB]
 
-theorem multiplier_adjoint (A B : Field) (hB : ∀ x, B x = (A x).adjoint) :
-    multiplier B = (multiplier A).adjoint := by
+theorem multiplier_adjoint (A B : Field)
+    (hB : ∀ x, B x = ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (A x)) :
+    multiplier B = ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := L2) (F := L2) (multiplier A) := by
   apply ContinuousLinearMap.ext
   intro u
   apply ext_inner_right ℝ

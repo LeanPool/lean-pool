@@ -29,7 +29,7 @@ variable (P : ℝ) [Fact (0 < P)]
   {K : Type*} [TopologicalSpace K] [CompactSpace K]
 
 theorem pointField_word_eq_evaluation (p : C(K, LiftL2 P))
-    (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+    (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
     (n : ℕ) (w : Fin n → Fin 4) (t : K) (x : LiftDomain P) :
     iteratedFieldDerivative P w (pointField P p hp t) x =
       EulerSobolevPointEvaluation.pointEvaluation P x
@@ -46,7 +46,7 @@ theorem pointField_word_eq_evaluation (p : C(K, LiftL2 P))
     exact strongWord_ae P (p t) (path_evaluation_smooth P p hp t) w
 
 theorem pointField_word_joint_continuous (p : C(K, LiftL2 P))
-    (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+    (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
     (n : ℕ) (w : Fin n → Fin 4) :
     Continuous (fun z : K × LiftDomain P => iteratedFieldDerivative P w (pointField P p hp z.1)
         z.2) := by

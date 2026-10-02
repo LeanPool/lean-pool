@@ -43,7 +43,7 @@ local instance instCylinderLocalSupport4 : NormedSpace ℝ (Supported P Space S 
 /-- Pure angular integration does not move the spatial support. -/
 theorem primitive_supported (u : LiftL2 P) (hu : u ∈ Supported P Space S hS) :
     primitive P u ∈ Supported P Space S hS := by
-  have hs (s : ℝ) : translate P (0,s) u ∈ Supported P Space S hS := by
+  have hs (s : ℝ) : translate (V := Vector3) P (0,s) u ∈ Supported P Space S hS := by
     apply translate_mem P (0,s) S S hS hS _ ⟨u,hu⟩
     intro x hx
     change x+(0 : Space) ∈ S at hx
@@ -102,7 +102,8 @@ theorem potentialPath_supported (B : C(K, Space →ᵇ Space →L[ℝ] Space))
     (hs : ∀ t, p t ∈ Supported P Space S hS) (t : K) :
     potentialPath P B p t ∈ Supported P Space S hS :=
   EulerLpOperatorField.full_mem (liftMeasure P) (spatialSet P S) (spatialSet_measurable P S hS)
-    (fieldLift P (B t)) ⟨primitive P (p t), primitive_supported P S hS (p t) (hs t)⟩
+    (fieldLift (W := Space →L[ℝ] Space) P (B t))
+    ⟨primitive P (p t), primitive_supported P S hS (p t) (hs t)⟩
 
 include hp in
 theorem slowCurlPath_supported (G : C(K, Space →ᵇ Space →L[ℝ] Space)) (hSc : IsClosed S)
@@ -114,7 +115,7 @@ theorem slowCurlPath_supported (G : C(K, Space →ᵇ Space →L[ℝ] Space)) (h
   intro i _
   exact EulerLpOperatorField.full_mem (liftMeasure P) (spatialSet P S) (spatialSet_measurable P S
       hS)
-    (fieldLift P (EulerPacketPiola.curlCoefficientPath i G t))
+    (fieldLift (W := Space →L[ℝ] Space) P (EulerPacketPiola.curlCoefficientPath (K := K) i G t))
     ⟨derivativePath P p i.succ t, derivativePath_supported P S hS p hp hSc hs i.succ t⟩
 
 end EulerCylinderLocalSupport

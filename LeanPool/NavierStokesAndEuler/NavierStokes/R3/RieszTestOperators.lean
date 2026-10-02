@@ -269,7 +269,8 @@ theorem fderiv_fourierInv_apply {f : Space → ℂ} (hf : Integrable f)
         (2 * Real.pi * Complex.I) * (⟪ξ, d⟫ : ℂ) * f ξ) x := by
   let L : Space →L[ℝ] Space →L[ℝ] ℝ :=
     -(innerSL ℝ : Space →L[ℝ] Space →L[ℝ] ℝ)
-  have hL : L.toLinearMap₁₂ = -innerₗ Space := rfl
+  have hL : ContinuousLinearMap.toLinearMap₁₂ (R := ℝ) (𝕜₂ := ℝ) (𝕜₃ := ℝ) (E := Space)
+      (F := Space) (G := ℝ) (σ₁₃ := RingHom.id ℝ) (σ₂₃ := RingHom.id ℝ) L = -innerₗ Space := rfl
   have hR : Integrable (VectorFourier.fourierSMulRight L f) := by
     refine (hf1.const_mul (2 * Real.pi * ‖L‖)).mono'
       hf.aestronglyMeasurable.fourierSMulRight ?_

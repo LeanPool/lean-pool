@@ -48,13 +48,13 @@ def mapField (L : V →L[ℝ] W) (A : SmoothL2Field V) : SmoothL2Field W where
     (mapField L A).field x = L (A.field x) := rfl
 
 theorem toLp_mapField (L : V →L[ℝ] W) (A : SmoothL2Field V) :
-    (mapField L A).toLp = L.compLpL 2 volume A.toLp := by
+    (mapField L A).toLp = L.compLpL (α := Space) 2 volume A.toLp := by
   apply Lp.ext
   filter_upwards [(mapField L A).toLp_ae, L.coeFn_compLpL A.toLp, A.toLp_ae] with x h₁ h₂ h₃
   exact h₁.trans ((congrArg L h₃).symm.trans h₂.symm)
 
 theorem jetLp_mapField (L : V →L[ℝ] W) (A : SmoothL2Field V) (n : ℕ) :
-    (mapField L A).jetLp n = (jetPostcompose L n).compLpL 2 volume (A.jetLp n) := by
+    (mapField L A).jetLp n = (jetPostcompose L n).compLpL (α := Space) 2 volume (A.jetLp n) := by
   apply Lp.ext
   filter_upwards [(mapField L A).jetLp_ae n, (jetPostcompose L n).coeFn_compLpL (A.jetLp n),
     A.jetLp_ae n] with x h₁ h₂ h₃
@@ -100,7 +100,7 @@ theorem jetLp_derivative (A : SmoothL2Field V) (n : ℕ) :
     A.derivative.jetLp n =
       (continuousMultilinearCurryRightEquiv' ℝ n Space
           V).toContinuousLinearEquiv.toContinuousLinearMap.compLpL
-        2 volume (A.jetLp (n+1)) := by
+        (α := Space) 2 volume (A.jetLp (n+1)) := by
   let L : (Space [×(n+1)]→L[ℝ] V) →L[ℝ] (Space [×n]→L[ℝ] (Space →L[ℝ] V)) :=
     (continuousMultilinearCurryRightEquiv' ℝ n Space
         V).toContinuousLinearEquiv.toContinuousLinearMap
@@ -123,7 +123,7 @@ def directionalField (A : SmoothL2Field V) (v : Space) : SmoothL2Field V :=
 theorem toLp_eq_jet_zero (A : SmoothL2Field V) :
     A.toLp = (continuousMultilinearCurryFin0 ℝ Space
         V).toContinuousLinearEquiv.toContinuousLinearMap.compLpL
-      2 volume (A.jetLp 0) := by
+      (α := Space) 2 volume (A.jetLp 0) := by
   let L := (continuousMultilinearCurryFin0 ℝ Space V).toContinuousLinearEquiv.toContinuousLinearMap
   apply Lp.ext
   filter_upwards [A.toLp_ae, L.coeFn_compLpL (A.jetLp 0), A.jetLp_ae 0] with x h₁ h₂ h₃
@@ -137,7 +137,7 @@ theorem continuous_toLp (A : K → SmoothL2Field V)
   have he : (fun t => (A t).toLp) =
       fun t => (continuousMultilinearCurryFin0 ℝ Space
           V).toContinuousLinearEquiv.toContinuousLinearMap.compLpL
-        2 volume ((A t).jetLp 0) := funext (fun t => toLp_eq_jet_zero (A t))
+        (α := Space) 2 volume ((A t).jetLp 0) := funext (fun t => toLp_eq_jet_zero (A t))
   rw [he]
   exact ContinuousLinearMap.continuous _ |>.comp hA
 
@@ -145,7 +145,7 @@ theorem continuous_jetLp_mapField (L : V →L[ℝ] W) (A : K → SmoothL2Field V
     (hA : ∀ n, Continuous (fun t => (A t).jetLp n)) (n : ℕ) :
     Continuous (fun t => (mapField L (A t)).jetLp n) := by
   have he : (fun t => (mapField L (A t)).jetLp n) =
-      fun t => (jetPostcompose L n).compLpL 2 volume ((A t).jetLp n) :=
+      fun t => (jetPostcompose L n).compLpL (α := Space) 2 volume ((A t).jetLp n) :=
     funext (fun t => jetLp_mapField L (A t) n)
   rw [he]
   exact ContinuousLinearMap.continuous _ |>.comp (hA n)
@@ -166,7 +166,7 @@ theorem continuous_jetLp_derivative (A : K → SmoothL2Field V)
   have he : (fun t => (A t).derivative.jetLp n) =
       fun t => (continuousMultilinearCurryRightEquiv' ℝ n Space
           V).toContinuousLinearEquiv.toContinuousLinearMap.compLpL
-        2 volume ((A t).jetLp (n+1)) := funext (fun t => jetLp_derivative (A t) n)
+        (α := Space) 2 volume ((A t).jetLp (n+1)) := funext (fun t => jetLp_derivative (A t) n)
   rw [he]
   exact ContinuousLinearMap.continuous _ |>.comp (hA (n+1))
 

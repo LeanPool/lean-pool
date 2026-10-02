@@ -50,16 +50,18 @@ theorem scalarEmbeddingField_normalized_bound (hT : 0 ≤ T)
     (g : C(Icc (0 : ℝ) T, ℝ)) (hg : ∀ t, 0 < g t)
     (q : ℕ) (R A : ℝ) (d : ℕ)
     (hb : ∀ n, block standardDirection q
-      (fun a => pathTranslate P a (normalize g hg p)) n 0 ≤ A * majorant R d n) :
+      (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := ℝ) P a (normalize g hg p)) n 0 ≤
+        A * majorant R d n) :
     ((scalarEmbeddingField raw p hp he).normalized hT g hg).WordBound q R A d := by
-  have hc : normalize g hg (pathMap P scalarEmbed p) =
-      pathMap P scalarEmbed (normalize g hg p) := by
+  have hc : normalize g hg (pathMap (K := Icc (0 : ℝ) T) P scalarEmbed p) =
+      pathMap (K := Icc (0 : ℝ) T) P scalarEmbed (normalize g hg p) := by
     apply ContinuousMap.ext
     intro t
     exact ((map P scalarEmbed).map_smul _ _).symm
   intro n
   change block standardDirection q
-    (fun a => pathTranslate P a (normalize g hg (pathMap P scalarEmbed p))) n 0 ≤ _
+    (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := Space) P a
+      (normalize g hg (pathMap (K := Icc (0 : ℝ) T) P scalarEmbed p))) n 0 ≤ _
   rw [hc]
   have hh := pathMap_block_bound P standardDirection q scalarEmbed (normalize g hg p)
     (scalarWeightedOrbit p hp (reciprocal g hg)) n 0
@@ -200,7 +202,8 @@ theorem Budget.scalar_grade_bound_pred
     (W : Budget.GradeGuards (P := P) H N C)
     (Y : InitialData P D) (α : ℝ) (hα : 0 < α)
     (hYb : ∀ n, block standardDirection 6
-      (fun a => translate P a (Y.value : CylinderL2 P U)) n 0 ≤ (α * C) * majorant L.R 0 n) :
+      (fun a => translate (V := U) P a (Y.value : CylinderL2 P U)) n 0 ≤
+        (α * C) * majorant L.R 0 n) :
     ((scalarField τ hτ hτT B Y).normalized D.T_pos.le (α • L.fullProfile)
       (smul_profile_pos L.fullProfile L.fullProfile_pos α hα)).WordBound 6 L.R 1 (highShift 1-1) :=
           by
@@ -230,7 +233,8 @@ theorem Budget.angular_grade_bound
     (W : Budget.GradeGuards (P := P) H N C)
     (Y : InitialData P D) (α : ℝ) (hα : 0 < α)
     (hYb : ∀ n, block standardDirection 6
-      (fun a => translate P a (Y.value : CylinderL2 P U)) n 0 ≤ (α * C) * majorant L.R 0 n) :
+      (fun a => translate (V := U) P a (Y.value : CylinderL2 P U)) n 0 ≤
+        (α * C) * majorant L.R 0 n) :
     ((angularField τ hτ hτT B Y).normalized D.T_pos.le (α • L.fullProfile)
       (smul_profile_pos L.fullProfile L.fullProfile_pos α hα)).WordBound 6 L.R 1 (highShift 1) := by
   have hh := angularGradientField_normalized_bound _ _ _ _ D.T_pos.le
@@ -245,7 +249,8 @@ theorem Budget.scalar_grade_bound
     (W : Budget.GradeGuards (P := P) H N C)
     (Y : InitialData P D) (α : ℝ) (hα : 0 < α)
     (hYb : ∀ n, block standardDirection 6
-      (fun a => translate P a (Y.value : CylinderL2 P U)) n 0 ≤ (α * C) * majorant L.R 0 n) :
+      (fun a => translate (V := U) P a (Y.value : CylinderL2 P U)) n 0 ≤
+        (α * C) * majorant L.R 0 n) :
     ((scalarField τ hτ hτT B Y).normalized D.T_pos.le (α • L.fullProfile)
       (smul_profile_pos L.fullProfile L.fullProfile_pos α hα)).WordBound 6 L.R 1 (highShift 1) :=
   (H.scalar_grade_bound_pred N C W Y α hα hYb).mono_shift

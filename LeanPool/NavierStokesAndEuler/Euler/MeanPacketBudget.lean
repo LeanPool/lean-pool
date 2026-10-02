@@ -499,7 +499,7 @@ theorem solution_translation_gevrey
     (n : ℕ) (x : Space) :
     ‖iteratedFDeriv ℝ n (fun a : Space => timeSolenoidalTranslation T a
       (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hcoercive
-        (-(fixedMeanPrimitive T hT F F₁).adjoint f))) x‖ ≤ majorant R (d+1) n := by
+        (-adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT F F₁) f))) x‖ ≤ majorant R (d+1) n := by
   have hRcR : Rc ≤ R := (radius_bounds hRc hM hR).2
   have hR0 : 0 ≤ R := hRc.trans hRcR
   have hFbr (k a) : ‖iteratedFDeriv ℝ k (fun b : Space => translatePath T b F) a‖ ≤ CF*majorant R 0
@@ -615,7 +615,7 @@ theorem forcingOperator_bound {P : Type*} [NormedAddCommGroup P] [NormedSpace �
     (hFb : ∀ n x, ‖iteratedFDeriv ℝ n F x‖ ≤ CF * majorant Rc 0 n)
     (hF₁b : ∀ n x, ‖iteratedFDeriv ℝ n F₁ x‖ ≤ CF₁ * majorant Rc 0 n)
     (n : ℕ) (x : P) :
-    ‖iteratedFDeriv ℝ n (fun y => -(fixedMeanPrimitive T hT (F y) (F₁ y)).adjoint) x‖ ≤
+    ‖iteratedFDeriv ℝ n (fun y => -adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT (F y) (F₁ y))) x‖ ≤
       (T*(T*CF₁+CF))*majorant Rc 0 n := by
   have hD := contDiff_fixedMeanDerivative T hT F F₁ hF hF₁
   have hJ := contDiff_fixedMeanPrimitive T hT F F₁ hF hF₁
@@ -629,7 +629,8 @@ theorem forcingOperator_bound {P : Type*} [NormedAddCommGroup P] [NormedSpace �
     exact hb.trans (mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_right (primitive_norm_le_time (E := L2) T hT) hD0)
       (majorant_nonneg Rc hRc 0 k))
-  exact neg_bound (fun y => (fixedMeanPrimitive T hT (F y) (F₁ y)).adjoint)
+  exact neg_bound (fun y => adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace)
+      (F := TimeLp T L2) (fixedMeanPrimitive T hT (F y) (F₁ y)))
     Rc (T*(T*CF₁+CF)) 0
     (adjoint_bound (fun y => fixedMeanPrimitive T hT (F y) (F₁ y)) hJ
       Rc (T*(T*CF₁+CF)) hRc (by positivity) 0 hJb) n x
@@ -676,9 +677,10 @@ theorem solution_translation_block_gevrey
     (n : ℕ) (x : Space) :
     block directions q (fun a : Space => timeSolenoidalTranslation T a
       (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hcoercive
-        (-(fixedMeanPrimitive T hT F F₁).adjoint f))) n x ≤ majorant R (d+1) n := by
+        (-adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT F F₁) f))) n x ≤ majorant R (d+1) n := by
   let O := fun a : Space => translatedMeanOperator T hT a F F₁ H M0 A L
-  let J := fun a : Space => -(translatedMeanPrimitive T hT a F F₁).adjoint
+  let J := fun a : Space => -adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace)
+    (F := TimeLp T L2) (translatedMeanPrimitive T hT a F F₁)
   let g := fun a : Space => J a (timeTranslation T a f)
   have hO : ContDiff ℝ ∞ O :=
     contDiff_fixedMeanOperator T hT (fun a => translatePath T a F) (fun a => translatePath T a F₁)
@@ -2690,7 +2692,8 @@ def pressureGradientCylinderField : EulerPacketCylinderField.Field P D.T (pressu
   (D.frameCoefficient.adjoint.multiply (G.pressureForceCylinderField P)).congr (by
     intro t x θ
     change pressureGradient G.scalar (t,(x,θ)) =
-      (D.F.field (D.clamp t) x).adjoint (G.pressureForce (t,(x,θ)))
+      ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (D.F.field (D.clamp t) x)
+        (G.pressureForce (t,(x,θ)))
     rw [Data.clamp_coe]
     change (toDual ℝ Space).symm ((pressureJet G.scalar (t,(x,θ))).2.comp spatialInjection) = _
     rw [pressureJet_spatial_derivative G.scalar t x θ

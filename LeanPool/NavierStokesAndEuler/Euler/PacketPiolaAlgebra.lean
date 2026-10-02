@@ -68,7 +68,8 @@ theorem operatorMatrix_id : operatorMatrix (ContinuousLinearMap.id ℝ Space) = 
   simp [operatorMatrix, Matrix.one_apply]
 
 theorem operatorMatrix_adjoint (A : Space →L[ℝ] Space) :
-    operatorMatrix A.adjoint = (operatorMatrix A).transpose := by
+    operatorMatrix (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) A) =
+      (operatorMatrix A).transpose := by
   ext i j
   have hi := A.adjoint_inner_right (EuclideanSpace.single i 1) (EuclideanSpace.single j 1)
   simpa only [operatorMatrix, Matrix.transpose_apply, EuclideanSpace.inner_single_left,
@@ -106,12 +107,14 @@ theorem adjugate_operatorMatrix (F : Space ≃L[ℝ] Space)
 theorem curlMatrix_congruence (F : Space ≃L[ℝ] Space)
     (hdet : (operatorMatrix F.toContinuousLinearMap).det = 1)
     (A : Space →L[ℝ] Space) :
-    curlMatrix (F.toContinuousLinearMap.adjoint.comp (A.comp F.toContinuousLinearMap)) =
+    curlMatrix ((ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space)
+        F.toContinuousLinearMap).comp (A.comp F.toContinuousLinearMap)) =
       F.symm (curlMatrix A) := by
   have hm := matrixAntisym_congruence (operatorMatrix F.toContinuousLinearMap) (operatorMatrix A)
   rw [adjugate_operatorMatrix F hdet] at hm
   ext i
-  change (curlMatrix (F.toContinuousLinearMap.adjoint.comp (A.comp F.toContinuousLinearMap))) i =
+  change (curlMatrix ((ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space)
+      F.toContinuousLinearMap).comp (A.comp F.toContinuousLinearMap))) i =
     (F.symm.toContinuousLinearMap (curlMatrix A)) i
   rw [operatorMatrix_apply F.symm.toContinuousLinearMap (curlMatrix A) i]
   have he := congrFun hm i
@@ -123,7 +126,8 @@ theorem curlMatrix_congruence (F : Space ≃L[ℝ] Space)
 theorem curlMatrix_piola (F : Space ≃L[ℝ] Space)
     (hdet : (operatorMatrix F.toContinuousLinearMap).det = 1)
     (B : Space →L[ℝ] Space) :
-    curlMatrix (F.toContinuousLinearMap.adjoint.comp B) =
+    curlMatrix ((ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space)
+        F.toContinuousLinearMap).comp B) =
       F.symm (curlMatrix (B.comp F.symm.toContinuousLinearMap)) := by
   have h := curlMatrix_congruence F hdet (B.comp F.symm.toContinuousLinearMap)
   have he : (B.comp F.symm.toContinuousLinearMap).comp F.toContinuousLinearMap = B := by

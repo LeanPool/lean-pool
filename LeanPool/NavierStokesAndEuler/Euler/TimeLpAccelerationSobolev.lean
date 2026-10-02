@@ -57,7 +57,7 @@ theorem forcing_block_bound (directions : ι → P) (hd : ∀ i, ‖directions i
     block directions q (forcing T hT Q Q₁ f v) n x ≤
       accelerationBlockAmplitude ι q Rc C₀ C₁ Cf Cv*majorant R d n :=
   block_acceleration_forcing_of_tensor directions hd q
-    (fun y => (timeMultiplier T hT (Q y)).adjoint)
+    (fun y => adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT (Q y)))
     (fun y => timeMultiplier T hT (Q₁ y)) f v
     ((realAdjoint (U := TimeLp T U) (E := TimeLp T E)).contDiff.comp
       (contDiff_timeMultiplier T hT Q hQ))
@@ -142,10 +142,12 @@ theorem forcing_block_bound (directions : ι → P) (hd : ∀ i, ‖directions i
       accelerationBlockAmplitude ι q Rc C₀ C₁ Cf Cv*majorant R d n := by
   have hAdj := contDiff_adjoint Q hQ
   exact block_acceleration_forcing_of_tensor directions hd q
-    (fun y => multiplier (adjointMap (Q y))) (fun y => multiplier (Q₁ y)) f v
-    (contDiff_multiplier (fun y => adjointMap (Q y)) hAdj)
+    (fun y => multiplier (adjointMap (K := Icc (0 : ℝ) T) (U := U) (E := E) (Q y)))
+    (fun y => multiplier (Q₁ y)) f v
+    (contDiff_multiplier (fun y => adjointMap (K := Icc (0 : ℝ) T) (U := U) (E := E) (Q y)) hAdj)
     (contDiff_multiplier Q₁ hQ₁) hf hv Rc R C₀ C₁ Cf Cv hRc hRcR hC₀ hC₁ hCf hCv
-    (multiplier_bound (fun y => adjointMap (Q y)) hAdj Rc C₀ hRc hC₀ 0
+    (multiplier_bound (fun y => adjointMap (K := Icc (0 : ℝ) T) (U := U) (E := E) (Q y)) hAdj
+      Rc C₀ hRc hC₀ 0
       (EulerContinuousPathComposition.adjoint_bound Q hQ Rc C₀ hRc hC₀ 0 hbQ))
     (multiplier_bound Q₁ hQ₁ Rc C₁ hRc hC₁ 0 hbQ₁) d hbf hbv n x
 

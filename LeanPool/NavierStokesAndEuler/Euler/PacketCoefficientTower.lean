@@ -260,7 +260,8 @@ theorem toCoefficientTower_raw (A : MatrixCoefficient T raw)
 
 theorem toCoefficientTower_operator (A : MatrixCoefficient T raw)
     (t : Icc (0 : ℝ) T) :
-    ((A.toCoefficientTower P).coefficient t).operator = fullOperatorMap P (A.path t) :=
+    ((A.toCoefficientTower P).coefficient t).operator =
+      fullOperatorMap (E := Space) (F := Space) P (A.path t) :=
   smoothCoefficient_operator P A.path A.orbit t
 
 theorem toCoefficientTower_operator_continuous (A : MatrixCoefficient T raw) :
@@ -270,7 +271,7 @@ theorem toCoefficientTower_operator_continuous (A : MatrixCoefficient T raw) :
 theorem toCoefficientTower_sobolev_value (A : MatrixCoefficient T raw)
     (q : ℕ) (t : Icc (0 : ℝ) T) (u : SobolevSpace P q) :
     value P (coefficientSobolevOperator P ((A.toCoefficientTower P).jet q t) u) =
-      fullOperatorMap P (A.path t) (value P u) := by
+      fullOperatorMap (E := Space) (F := Space) P (A.path t) (value P u) := by
   rw [coefficientSobolevOperator_value]
   exact congrArg (fun L => L (value P u)) (toCoefficientTower_operator P A t)
 

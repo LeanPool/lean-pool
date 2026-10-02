@@ -60,7 +60,8 @@ private theorem coercive_forcing_inner {V W : Type*}
     [NormedAddCommGroup W] [InnerProductSpace ℝ W] [CompleteSpace W]
     (O : V →L[ℝ] V) (J : V →L[ℝ] W) (c : ℝ) (hc : 0 < c)
     (hO : ∀ v, c * ‖v‖ ^ 2 ≤ ⟪O v, v⟫_ℝ) (f : W) (v : V) :
-    ⟪O (coerciveInverse O c hc hO (-J.adjoint f)), v⟫_ℝ = -⟪f,J v⟫_ℝ := by
+    ⟪O (coerciveInverse O c hc hO (-adjoint (𝕜 := ℝ) (E := V) (F := W) J f)), v⟫_ℝ =
+      -⟪f,J v⟫_ℝ := by
   rw [operator_inverse_apply, inner_neg_left, adjoint_inner_left]
 
 private theorem coercive_forcing_unique {V W : Type*}
@@ -69,7 +70,7 @@ private theorem coercive_forcing_unique {V W : Type*}
     (O : V →L[ℝ] V) (J : V →L[ℝ] W) (c : ℝ) (hc : 0 < c)
     (hO : ∀ v, c * ‖v‖ ^ 2 ≤ ⟪O v, v⟫_ℝ) (f : W) (u : V)
     (hu : ∀ v, ⟪O u, v⟫_ℝ = -⟪f, J v⟫_ℝ) :
-    u = coerciveInverse O c hc hO (-J.adjoint f) := by
+    u = coerciveInverse O c hc hO (-adjoint (𝕜 := ℝ) (E := V) (F := W) J f) := by
   apply (coerciveEquiv O c hc hO).injective
   simp only [coerciveEquiv_apply]
   apply ext_inner_right ℝ
@@ -168,7 +169,8 @@ def fixedMeanInverse : TimeLp T solenoidalSpace →L[ℝ] TimeLp T solenoidalSpa
 /-- The actual forcing-to-coordinate-derivative map on the fixed space. -/
 def fixedMeanSolver : TimeLp T L2 →L[ℝ] TimeLp T solenoidalSpace :=
   (fixedMeanInverse T hT F F₁ H M0 A L FInv hInv hF K B hK hB hFInv₀ hH hboundary hsmall).comp
-    (-(fixedMeanPrimitive T hT F F₁).adjoint)
+    (-(adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace) (F := TimeLp T L2)
+      (fixedMeanPrimitive T hT F F₁)))
 
 /-- The fixed inverse has its actual quantitative coercive norm bound. -/
 theorem fixedMeanInverse_norm :

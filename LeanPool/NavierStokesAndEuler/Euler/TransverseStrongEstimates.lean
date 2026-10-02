@@ -49,10 +49,13 @@ theorem gramDerivativePath_norm :
     ‖gramDerivativePath T Q Q₁‖ ≤ 2 * ‖Q‖ * ‖Q₁‖ := by
   apply (ContinuousMap.norm_le _ (by positivity)).2
   intro t
-  change ‖(Q₁ t).adjoint.comp (Q t) + (Q t).adjoint.comp (Q₁ t)‖ ≤ _
+  change ‖(adjoint (𝕜 := ℝ) (E := U) (F := E) (Q₁ t)).comp (Q t) +
+    (adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)).comp (Q₁ t)‖ ≤ _
   calc
-    _ ≤ ‖(Q₁ t).adjoint.comp (Q t)‖ + ‖(Q t).adjoint.comp (Q₁ t)‖ := norm_add_le _ _
-    _ ≤ ‖(Q₁ t).adjoint‖ * ‖Q t‖ + ‖(Q t).adjoint‖ * ‖Q₁ t‖ :=
+    _ ≤ ‖(adjoint (𝕜 := ℝ) (E := U) (F := E) (Q₁ t)).comp (Q t)‖ +
+        ‖(adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)).comp (Q₁ t)‖ := norm_add_le _ _
+    _ ≤ ‖adjoint (𝕜 := ℝ) (E := U) (F := E) (Q₁ t)‖ * ‖Q t‖ +
+        ‖adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)‖ * ‖Q₁ t‖ :=
       add_le_add (opNorm_comp_le _ _) (opNorm_comp_le _ _)
     _ = ‖Q₁ t‖ * ‖Q t‖ + ‖Q t‖ * ‖Q₁ t‖ := by
       simp only [LinearIsometryEquiv.norm_map]
@@ -91,9 +94,10 @@ theorem frameLeftInversePath_norm :
   apply (ContinuousMap.norm_le (frameLeftInversePath T Q c hc hQ)
     (mul_nonneg (inv_nonneg.mpr hc.le) (norm_nonneg Q))).2
   intro t
-  change ‖(gramInversePath T Q c hc hQ t).comp (Q t).adjoint‖ ≤ _
+  change ‖(gramInversePath T Q c hc hQ t).comp (adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t))‖ ≤ _
   calc
-    _ ≤ ‖gramInversePath T Q c hc hQ t‖ * ‖(Q t).adjoint‖ := opNorm_comp_le _ _
+    _ ≤ ‖gramInversePath T Q c hc hQ t‖ * ‖adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)‖ :=
+      opNorm_comp_le _ _
     _ = ‖gramInversePath T Q c hc hQ t‖ * ‖Q t‖ := by rw [LinearIsometryEquiv.norm_map]
     _ ≤ c⁻¹ * ‖Q‖ := mul_le_mul (gramInverse_norm (Q t) c hc (hQ t))
       (Q.norm_coe_le_norm t) (norm_nonneg _) (inv_nonneg.mpr hc.le)
@@ -104,13 +108,17 @@ theorem frameLeftInverseDerivativePath_norm :
       2 * (c⁻¹)^2 * ‖Q‖^2 * ‖Q₁‖ + c⁻¹ * ‖Q₁‖ := by
   apply (ContinuousMap.norm_le _ (by positivity)).2
   intro t
-  change ‖(gramInverseDerivativePath T Q Q₁ c hc hQ t).comp (Q t).adjoint +
-    (gramInversePath T Q c hc hQ t).comp (Q₁ t).adjoint‖ ≤ _
+  change ‖(gramInverseDerivativePath T Q Q₁ c hc hQ t).comp
+      (adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)) +
+    (gramInversePath T Q c hc hQ t).comp (adjoint (𝕜 := ℝ) (E := U) (F := E) (Q₁ t))‖ ≤ _
   calc
-    _ ≤ ‖(gramInverseDerivativePath T Q Q₁ c hc hQ t).comp (Q t).adjoint‖ +
-        ‖(gramInversePath T Q c hc hQ t).comp (Q₁ t).adjoint‖ := norm_add_le _ _
-    _ ≤ ‖gramInverseDerivativePath T Q Q₁ c hc hQ t‖ * ‖(Q t).adjoint‖ +
-        ‖gramInversePath T Q c hc hQ t‖ * ‖(Q₁ t).adjoint‖ :=
+    _ ≤ ‖(gramInverseDerivativePath T Q Q₁ c hc hQ t).comp
+          (adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t))‖ +
+        ‖(gramInversePath T Q c hc hQ t).comp
+          (adjoint (𝕜 := ℝ) (E := U) (F := E) (Q₁ t))‖ := norm_add_le _ _
+    _ ≤ ‖gramInverseDerivativePath T Q Q₁ c hc hQ t‖ *
+          ‖adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)‖ +
+        ‖gramInversePath T Q c hc hQ t‖ * ‖adjoint (𝕜 := ℝ) (E := U) (F := E) (Q₁ t)‖ :=
       add_le_add (opNorm_comp_le _ _) (opNorm_comp_le _ _)
     _ = ‖gramInverseDerivativePath T Q Q₁ c hc hQ t‖ * ‖Q t‖ +
         ‖gramInversePath T Q c hc hQ t‖ * ‖Q₁ t‖ := by
@@ -154,9 +162,11 @@ theorem transverseCoordinateDerivative_norm (hT : 0 ≤ T)
 /-- Inverting the projected strong equation is an exact equality of actual L² fields. -/
 theorem acceleration_eq_inverse (hT : 0 ≤ T) (v a : TimeLp T U) (f : TimeLp T E)
     (heq : ∀ᵐ t ∂timeMeasure T, gram (extendPath T hT Q t) (a t) =
-      (extendPath T hT Q t).adjoint (f t - (2 : ℝ) • extendPath T hT Q₁ t (v t))) :
+      adjoint (𝕜 := ℝ) (E := U) (F := E) (extendPath (Y := U →L[ℝ] E) T hT Q t)
+        (f t - (2 : ℝ) • extendPath T hT Q₁ t (v t))) :
     a = timeMultiplier T hT (gramInversePath T Q c hc hQ)
-      ((timeMultiplier T hT Q).adjoint (f - (2 : ℝ) • timeMultiplier T hT Q₁ v)) := by
+      (adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT Q)
+        (f - (2 : ℝ) • timeMultiplier T hT Q₁ v)) := by
   let r := f - (2 : ℝ) • timeMultiplier T hT Q₁ v
   apply Lp.ext
   filter_upwards [heq,
@@ -179,14 +189,17 @@ include hc hQ in
 of the Hessian or extra undifferentiated time-growth factor. -/
 theorem acceleration_norm (hT : 0 ≤ T) (v a : TimeLp T U) (f : TimeLp T E)
     (heq : ∀ᵐ t ∂timeMeasure T, gram (extendPath T hT Q t) (a t) =
-      (extendPath T hT Q t).adjoint (f t - (2 : ℝ) • extendPath T hT Q₁ t (v t))) :
+      adjoint (𝕜 := ℝ) (E := U) (F := E) (extendPath (Y := U →L[ℝ] E) T hT Q t)
+        (f t - (2 : ℝ) • extendPath T hT Q₁ t (v t))) :
     ‖a‖ ≤ c⁻¹ * ‖Q‖ * (‖f‖ + 2 * ‖Q₁‖ * ‖v‖) := by
   rw [acceleration_eq_inverse T Q Q₁ c hc hQ hT v a f heq]
   let r := f - (2 : ℝ) • timeMultiplier T hT Q₁ v
   have hM : ‖timeMultiplier T hT Q‖ ≤ ‖Q‖ :=
     ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg Q) (timeApply_bound T hT Q)
-  have hp : ‖(timeMultiplier T hT Q).adjoint r‖ ≤ ‖Q‖ * ‖r‖ := by
-    apply ((timeMultiplier T hT Q).adjoint.le_opNorm r).trans
+  have hp : ‖adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT Q) r‖ ≤
+      ‖Q‖ * ‖r‖ := by
+    apply ((adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E)
+      (timeMultiplier T hT Q)).le_opNorm r).trans
     rw [LinearIsometryEquiv.norm_map]
     exact mul_le_mul_of_nonneg_right hM (norm_nonneg r)
   have hr : ‖r‖ ≤ ‖f‖ + 2 * ‖Q₁‖ * ‖v‖ := by
@@ -195,7 +208,8 @@ theorem acceleration_norm (hT : 0 ≤ T) (v a : TimeLp T U) (f : TimeLp T E)
     have hq : ‖timeMultiplier T hT Q₁ v‖ ≤ ‖Q₁‖ * ‖v‖ := timeApply_bound T hT Q₁ v
     nlinarith only [hq]
   calc
-    _ ≤ ‖gramInversePath T Q c hc hQ‖ * ‖(timeMultiplier T hT Q).adjoint r‖ :=
+    _ ≤ ‖gramInversePath T Q c hc hQ‖ *
+        ‖adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT Q) r‖ :=
       timeApply_bound T hT (gramInversePath T Q c hc hQ) _
     _ ≤ c⁻¹ * (‖Q‖ * ‖r‖) := mul_le_mul (gramInversePath_norm T Q c hc hQ) hp
       (norm_nonneg _) (inv_nonneg.mpr hc.le)

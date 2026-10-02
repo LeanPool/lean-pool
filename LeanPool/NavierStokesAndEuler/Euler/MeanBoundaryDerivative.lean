@@ -100,7 +100,8 @@ theorem weakPotential_differenceError (χ : Cutoff) (a : Space) (h : ℝ) :
       (weakPotential_sub (χ.translate (h • a)) χ)
 
 theorem weakPotential_operatorNorm_le (χ : Cutoff) : ‖weakPotential χ‖ ≤ cutoffBound χ := by
-  change ‖(cutoffCurl χ).adjoint‖ ≤ _
+  change ‖ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := homogeneousSpace) (F := L2)
+    (cutoffCurl χ)‖ ≤ _
   rw [LinearIsometryEquiv.norm_map]
   exact cutoffCurl_norm_le χ
 

@@ -140,9 +140,12 @@ theorem dirichletOperator_bound (T : ℝ) (hT : 0 ≤ T)
       R CH hR hCH 0 (timeMultiplier_bound T hT H hH R CH hR hCH 0 hbH) k y).trans
       (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hJ hCH) (majorant_nonneg R hR 0 k))
   have hpotential (k : ℕ) (y : P) :
-      ‖iteratedFDeriv ℝ k (fun z => J.adjoint.comp ((timeMultiplier T hT (H z)).comp J)) y‖ ≤
+      ‖iteratedFDeriv ℝ k (fun z =>
+        (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := TimeLp T E) (F := TimeLp T E) J).comp
+          ((timeMultiplier T hT (H z)).comp J)) y‖ ≤
       (T^2*CH) * majorant R 0 k := by
-    have hp := clm_comp_const_left_bound J.adjoint _
+    have hp := clm_comp_const_left_bound
+      (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := TimeLp T E) (F := TimeLp T E) J) _
       ((contDiff_timeMultiplier T hT H hH).clm_comp contDiff_const)
       R (T*CH) hR (mul_nonneg hT hCH) 0 hright k y
     rw [LinearIsometryEquiv.norm_map] at hp
@@ -151,7 +154,8 @@ theorem dirichletOperator_bound (T : ℝ) (hT : 0 ≤ T)
     convert mul_le_mul_of_nonneg_right h (majorant_nonneg R hR 0 k) using 1
     ring
   exact sub_bound (fun _ : P => ContinuousLinearMap.id ℝ (TimeLp T E))
-    (fun y => J.adjoint.comp ((timeMultiplier T hT (H y)).comp J))
+    (fun y => (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := TimeLp T E) (F := TimeLp T E) J).comp
+      ((timeMultiplier T hT (H y)).comp J))
     contDiff_const (contDiff_const.clm_comp ((contDiff_timeMultiplier T hT H hH).clm_comp
         contDiff_const))
     R 1 (T^2*CH) 0 (const_bound _ R 1 hR norm_id_le) hpotential n x
@@ -179,7 +183,9 @@ theorem fixedFrameOperator_bound (T : ℝ) (hT : 0 ≤ T)
   have hbA := dirichletOperator_bound T hT H hH R CH hR hCH hbH
   have hAD := clm_comp_bound A D hA hD R (1+T^2*CH) (derivativeCost T C₀ C₁)
     hR ha0 hd0 0 0 hbA hbD
-  have h := clm_comp_bound (fun y => (D y).adjoint) (fun y => (A y).comp (D y))
+  have h := clm_comp_bound (fun y => ContinuousLinearMap.adjoint (𝕜 := ℝ)
+      (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E) (D y))
+    (fun y => (A y).comp (D y))
     (contDiff_adjoint hD)
     (hA.clm_comp hD) R (derivativeCost T C₀ C₁) (3*(1+T^2*CH)*derivativeCost T C₀ C₁)
     hR hd0 (by positivity) 0 0 (adjoint_bound D hD R _ hR hd0 0 hbD) hAD n x
@@ -200,18 +206,23 @@ theorem fixedForcing_bound (T : ℝ) (hT : 0 ≤ T)
     (hbf : ∀ n x, ‖iteratedFDeriv ℝ n f x‖ ≤ majorant R d n)
     (n : ℕ) (x : P) :
     ‖iteratedFDeriv ℝ n
-      (fun y => (-(fixedFramePrimitive T hT (Q y) (Q₁ y)).adjoint) (f y)) x‖ ≤
+      (fun y => (-(ContinuousLinearMap.adjoint (𝕜 := ℝ)
+        (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
+        (fixedFramePrimitive T hT (Q y) (Q₁ y)))) (f y)) x‖ ≤
       forcingCost T C₀ C₁ * majorant R d n := by
   let Z := fun y => fixedFramePrimitive T hT (Q y) (Q₁ y)
   have hZ : ContDiff ℝ ∞ Z := contDiff_fixedFramePrimitive T hT Q Q₁ hQ hQ₁
-  have hZT : ContDiff ℝ ∞ (fun y => (Z y).adjoint) :=
+  have hZT : ContDiff ℝ ∞ (fun y => ContinuousLinearMap.adjoint (𝕜 := ℝ)
+      (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E) (Z y)) :=
     contDiff_adjoint hZ
   have hC : 0 ≤ T * derivativeCost T C₀ C₁ := by unfold derivativeCost; positivity
   have hbound := adjoint_bound Z hZ R (T * derivativeCost T C₀ C₁) hR hC 0
     (fixedFramePrimitive_bound T hT Q Q₁ hQ hQ₁ R C₀ C₁ hR hC₀ hC₁ hbQ hbQ₁)
-  have hp (k : ℕ) (y : P) := clm_apply_bound (fun z => -(Z z).adjoint) f
+  have hp (k : ℕ) (y : P) := clm_apply_bound (fun z => -(ContinuousLinearMap.adjoint (𝕜 := ℝ)
+      (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E) (Z z))) f
     hZT.neg hf R (T * derivativeCost T C₀ C₁) 1 hR hC zero_le_one 0 d
-    (neg_bound (fun z => (Z z).adjoint) R _ 0 hbound)
+    (neg_bound (fun z => ContinuousLinearMap.adjoint (𝕜 := ℝ)
+      (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E) (Z z)) R _ 0 hbound)
     (by simpa only [one_mul] using hbf) k y
   simpa only [forcingCost, mul_one, Nat.zero_add] using hp n x
 
@@ -310,7 +321,9 @@ theorem fixedFrameSolution_gevrey
         K hK (hPotential y) hsmall (f y)) x‖ ≤ majorant R (d+1) n := by
   let A := fun y => fixedFrameOperator T hT (Q y) (Q₁ y) (H y)
   let δ := fun y => fixedCoercivity T (Q y) (Q₁ y) c
-  let rhs := fun y => (-(fixedFramePrimitive T hT (Q y) (Q₁ y)).adjoint) (f y)
+  let rhs := fun y => (-(ContinuousLinearMap.adjoint (𝕜 := ℝ)
+    (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
+    (fixedFramePrimitive T hT (Q y) (Q₁ y)))) (f y)
   have hδ : ∀ y, 0 < δ y := fun y => fixedCoercivity_pos T hT (Q y) (Q₁ y) c hc
   have hAco : ∀ y v, δ y * ‖v‖^2 ≤ ⟪A y v, v⟫_ℝ := fun y =>
     fixedFrameOperator_coercive T hT (Q y) (Q₁ y) (H y) c hc (hLower y) (hd y)
@@ -483,9 +496,13 @@ theorem forcingOperator_bound (T : ℝ) (hT : 0 ≤ T)
     (hbQ : ∀ n x, ‖iteratedFDeriv ℝ n Q x‖ ≤ C₀ * majorant Rc 0 n)
     (hbQ₁ : ∀ n x, ‖iteratedFDeriv ℝ n Q₁ x‖ ≤ C₁ * majorant Rc 0 n)
     (n : ℕ) (x : X) :
-    ‖iteratedFDeriv ℝ n (fun y => -(fixedFramePrimitive T hT (Q y) (Q₁ y)).adjoint) x‖ ≤
+    ‖iteratedFDeriv ℝ n (fun y => -(ContinuousLinearMap.adjoint (𝕜 := ℝ)
+      (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
+      (fixedFramePrimitive T hT (Q y) (Q₁ y)))) x‖ ≤
       (T*derivativeCost T C₀ C₁)*majorant Rc 0 n :=
-  neg_bound (fun y => (fixedFramePrimitive T hT (Q y) (Q₁ y)).adjoint)
+  neg_bound (fun y => ContinuousLinearMap.adjoint (𝕜 := ℝ)
+      (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
+      (fixedFramePrimitive T hT (Q y) (Q₁ y)))
     Rc (T*derivativeCost T C₀ C₁) 0
     (adjoint_bound (fun y => fixedFramePrimitive T hT (Q y) (Q₁ y))
       (contDiff_fixedFramePrimitive T hT Q Q₁ hQ hQ₁)
@@ -519,7 +536,9 @@ theorem solver_block_gevrey (f : X → TimeLp T E) (hf : ContDiff ℝ ∞ f) (d 
       c hc (hLower y) (hd y) K hK (hPotential y) hsmall (f y)) n x ≤ majorant R (d+1) n := by
   let A := fun y => fixedFrameOperator T hT (Q y) (Q₁ y) (H y)
   let δ := fun y => fixedCoercivity T (Q y) (Q₁ y) c
-  let J := fun y => -(fixedFramePrimitive T hT (Q y) (Q₁ y)).adjoint
+  let J := fun y => -(ContinuousLinearMap.adjoint (𝕜 := ℝ)
+    (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
+    (fixedFramePrimitive T hT (Q y) (Q₁ y)))
   let v := fun y => fixedFrameSolver T hT (Q y) (Q₁ y) (H y)
     c hc (hLower y) (hd y) K hK (hPotential y) hsmall (f y)
   let rhs := fun y => J y (f y)

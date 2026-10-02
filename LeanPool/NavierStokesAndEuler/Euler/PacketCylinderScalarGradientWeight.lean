@@ -35,7 +35,7 @@ private theorem pathMap_timeWeight
     {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [NormedAddCommGroup F] [NormedSpace ℝ F]
     (L : E →L[ℝ] F) (g : C(K, ℝ)) (p : C(K, CylinderL2 P E)) :
-    pathMap P L (weight g p) = weight g (pathMap P L p) := by
+    pathMap (K := K) P L (weight g p) = weight g (pathMap (K := K) P L p) := by
   apply ContinuousMap.ext
   intro t
   exact (map P L).map_smul (g t) (p t)
@@ -45,9 +45,10 @@ variable (p : C(K, CylinderL2 P ℝ))
 
 include hp in
 theorem scalarWeightedOrbit (g : C(K, ℝ)) :
-    ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a (weight g p)) := by
-  have he : (fun a : LiftTangent => pathTranslate P a (weight g p)) =
-      weight g ∘ (fun a : LiftTangent => pathTranslate P a p) :=
+    ContDiff ℝ ∞ (fun a : LiftTangent =>
+      pathTranslate (K := K) (V := ℝ) P a (weight g p)) := by
+  have he : (fun a : LiftTangent => pathTranslate (K := K) (V := ℝ) P a (weight g p)) =
+      weight g ∘ (fun a : LiftTangent => pathTranslate (K := K) (V := ℝ) P a p) :=
     funext (fun a => translate_weight P g a p)
   rw [he]
   exact (weight g).contDiff.comp hp
@@ -59,7 +60,7 @@ theorem scalarGradientPath_weight (g : C(K, ℝ)) :
   rw [map_sum]
   apply sum_congr rfl
   intro i _
-  rw [pathMap_timeWeight,derivativePath_weight P g (pathMap P scalarEmbed p)
+  rw [pathMap_timeWeight,derivativePath_weight P g (pathMap (K := K) P scalarEmbed p)
     (pathMap_orbit_contDiff P scalarEmbed p hp) i.succ,pathMap_timeWeight]
 
 include hp in
@@ -71,10 +72,12 @@ include hp in
 theorem scalarGradientPath_normalized_majorant (g : C(K, ℝ)) (hg : ∀ t, 0 < g t)
     (q : ℕ) (R A : ℝ) (d : ℕ)
     (hb : ∀ n, block standardDirection q
-      (fun a : LiftTangent => pathTranslate P a (normalize g hg p)) n 0 ≤ A*majorant R d n)
+      (fun a : LiftTangent => pathTranslate (K := K) (V := ℝ) P a (normalize g hg p)) n 0 ≤
+        A*majorant R d n)
     (n : ℕ) :
     block standardDirection q
-      (fun a : LiftTangent => pathTranslate P a (normalize g hg (scalarGradientPath p))) n 0 ≤
+      (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a
+        (normalize g hg (scalarGradientPath p))) n 0 ≤
         (3*A)*majorant R (d+1) n := by
   rw [← scalarGradientPath_normalize p hp g hg]
   exact scalarGradientPath_majorant (normalize g hg p)

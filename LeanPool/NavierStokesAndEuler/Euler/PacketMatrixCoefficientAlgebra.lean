@@ -45,11 +45,14 @@ variable {T : ℝ} {a b : Domain → Space →L[ℝ] Space}
 /-- Comp, bundling `path`, `orbit`, `fun`, `B` and the required compatibility proofs. -/
 def comp (A : MatrixCoefficient T a) (B : MatrixCoefficient T b) :
     MatrixCoefficient T (fun z => (a z).comp (b z)) where
-  path := pathCompositionMap A.path B.path
+  path := pathCompositionMap (α := Space) (K := Icc (0 : ℝ) T) (U := Space) (E := Space)
+    (F := Space) A.path B.path
   orbit := by
-    have he : translateCoefficientPath (pathCompositionMap A.path B.path) =
-        fun v => pathCompositionMap (translateCoefficientPath A.path v) (translateCoefficientPath
-            B.path v) := by
+    have he : translateCoefficientPath (pathCompositionMap (α := Space) (K := Icc (0 : ℝ) T)
+        (U := Space) (E := Space) (F := Space) A.path B.path) =
+        fun v => pathCompositionMap (α := Space) (K := Icc (0 : ℝ) T) (U := Space) (E := Space)
+          (F := Space) (translateCoefficientPath A.path v)
+          (translateCoefficientPath B.path v) := by
       funext v
       apply ContinuousMap.ext
       intro t

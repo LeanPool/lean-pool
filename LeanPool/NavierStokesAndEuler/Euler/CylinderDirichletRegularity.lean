@@ -108,7 +108,7 @@ theorem accelerationLp_translation (a : LiftTangent) (f : TimeLp T (CylinderL2 P
         (timeLift T (translate (V := E) P a).toContinuousLinearMap f) =
       timeLift T (translate (V := U) P a).toContinuousLinearMap (D.accelerationLp P f) :=
   D.accelerationLp_intertwines P (D.shifted a.1)
-    (translate P a).toContinuousLinearMap (translate P a).toContinuousLinearMap
+    (translate (V := U) P a).toContinuousLinearMap (translate (V := E) P a).toContinuousLinearMap
     (D.shifted_frame P a) (D.shifted_frameDerivative P a)
     (D.shifted_frame_back P a) (D.shifted_frameDerivative_back P a) (D.shifted_hessian P a) f
 
@@ -161,8 +161,9 @@ theorem accelerationLp_orbit_contDiff (f : TimeLp T (CylinderL2 P E))
   rfl
 
 theorem velocityPath_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
-    (hf : ContDiff ℝ ∞ (fun a => pathTranslate P a f)) :
-    ContDiff ℝ ∞ (fun a => pathTranslate P a (D.velocityPath P (pathLp T D.time_pos.le f))) := by
+    (hf : ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a f)) :
+    ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := U) P a
+      (D.velocityPath P (pathLp T D.time_pos.le f))) := by
   have hs := EulerTransverseFixedEvolution.continuousVelocity_contDiff T D.time_pos.le
     (fun a : LiftTangent => (D.shifted a.1).frame P)
     (fun a : LiftTangent => (D.shifted a.1).frameDerivative P)
@@ -172,7 +173,7 @@ theorem velocityPath_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
     D.potential D.potential_nonneg (fun a => (D.shifted a.1).hessian_upper P) D.small
     (D.frameOrbit_contDiff P hQ) (D.frameDerivativeOrbit_contDiff P hQ₁) (D.hessianOrbit_contDiff P
         hH)
-    (fun a => pathTranslate P a f) hf
+    (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a f) hf
   convert hs using 1
   funext a
   apply ContinuousMap.ext
@@ -182,8 +183,9 @@ theorem velocityPath_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
   rfl
 
 theorem accelerationPath_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
-    (hf : ContDiff ℝ ∞ (fun a => pathTranslate P a f)) :
-    ContDiff ℝ ∞ (fun a => pathTranslate P a (D.accelerationPath P f)) := by
+    (hf : ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a f)) :
+    ContDiff ℝ ∞ (fun a =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := U) P a (D.accelerationPath P f)) := by
   have hs := EulerTransverseFixedEvolution.classicalAcceleration_contDiff T D.time_pos.le
     (fun a : LiftTangent => (D.shifted a.1).frame P)
     (fun a : LiftTangent => (D.shifted a.1).frameDerivative P)
@@ -193,7 +195,7 @@ theorem accelerationPath_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
     D.potential D.potential_nonneg (fun a => (D.shifted a.1).hessian_upper P) D.small
     (D.frameOrbit_contDiff P hQ) (D.frameDerivativeOrbit_contDiff P hQ₁) (D.hessianOrbit_contDiff P
         hH)
-    (fun a => pathTranslate P a f) hf
+    (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a f) hf
   convert hs using 1
   funext a
   apply ContinuousMap.ext
@@ -202,8 +204,9 @@ theorem accelerationPath_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
   rfl
 
 theorem physicalVelocity_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
-    (hf : ContDiff ℝ ∞ (fun a => pathTranslate P a f)) :
-    ContDiff ℝ ∞ (fun a => pathTranslate P a (D.physicalVelocity P f)) := by
+    (hf : ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a f)) :
+    ContDiff ℝ ∞ (fun a =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a (D.physicalVelocity P f)) := by
   have hs := EulerTransverseFixedEvolution.physicalVelocity_contDiff T D.time_pos.le
     (fun a : LiftTangent => (D.shifted a.1).frame P)
     (fun a : LiftTangent => (D.shifted a.1).frameDerivative P)
@@ -213,7 +216,7 @@ theorem physicalVelocity_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
     D.potential D.potential_nonneg (fun a => (D.shifted a.1).hessian_upper P) D.small
     (D.frameOrbit_contDiff P hQ) (D.frameDerivativeOrbit_contDiff P hQ₁) (D.hessianOrbit_contDiff P
         hH)
-    (fun a => pathTranslate P a f) hf
+    (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a f) hf
   convert hs using 1
   funext a
   apply ContinuousMap.ext
@@ -222,8 +225,9 @@ theorem physicalVelocity_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
   rfl
 
 theorem physicalDerivative_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
-    (hf : ContDiff ℝ ∞ (fun a => pathTranslate P a f)) :
-    ContDiff ℝ ∞ (fun a => pathTranslate P a (D.physicalDerivative P f)) := by
+    (hf : ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a f)) :
+    ContDiff ℝ ∞ (fun a =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a (D.physicalDerivative P f)) := by
   have hs := EulerTransverseFixedEvolution.physicalDerivative_contDiff T D.time_pos.le
     (fun a : LiftTangent => (D.shifted a.1).frame P)
     (fun a : LiftTangent => (D.shifted a.1).frameDerivative P)
@@ -233,7 +237,7 @@ theorem physicalDerivative_orbit_contDiff (f : C(Icc (0 : ℝ) T, CylinderL2 P E
     D.potential D.potential_nonneg (fun a => (D.shifted a.1).hessian_upper P) D.small
     (D.frameOrbit_contDiff P hQ) (D.frameDerivativeOrbit_contDiff P hQ₁) (D.hessianOrbit_contDiff P
         hH)
-    (fun a => pathTranslate P a f) hf
+    (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a f) hf
   convert hs using 1
   funext a
   apply ContinuousMap.ext

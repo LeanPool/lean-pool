@@ -85,7 +85,7 @@ def pastVelocity : C(Icc (0 : ℝ) τ,LiftL2 P) :=
 /-- Future velocity, given by `includePath P D.support D.support_measurable ((G.tail τ hτ.le
 hτT).velocityPath (forwardInitial τ hτ hτT B G))`. -/
 def futureVelocity : C(Icc (0 : ℝ) (D.T-τ),LiftL2 P) :=
-  includePath P D.support D.support_measurable
+  includePath (K := Icc (0 : ℝ) (D.T-τ)) (V := Vector3) P D.support D.support_measurable
     ((G.tail τ hτ.le hτT).velocityPath (forwardInitial τ hτ hτT B G))
 
 /-- Past derivative, given by `B.derivativePath (G.initial τ hτ hτT.le)`. -/
@@ -95,7 +95,7 @@ def pastDerivative : C(Icc (0 : ℝ) τ,LiftL2 P) :=
 /-- Future derivative, given by `includePath P D.support D.support_measurable ((G.tail τ hτ.le
 hτT).derivativePath (forwardInitial τ hτ hτT B G))`. -/
 def futureDerivative : C(Icc (0 : ℝ) (D.T-τ),LiftL2 P) :=
-  includePath P D.support D.support_measurable
+  includePath (K := Icc (0 : ℝ) (D.T-τ)) (V := Vector3) P D.support D.support_measurable
     ((G.tail τ hτ.le hτT).derivativePath (forwardInitial τ hτ hτT B G))
 
 /-- Past pressure, given by `B.pressurePath (G.initial τ hτ hτT.le)`. -/
@@ -107,37 +107,45 @@ def futurePressure : C(Icc (0 : ℝ) (D.T-τ),CylinderL2 P ℝ) :=
   (G.tail τ hτ.le hτT).pressurePath (forwardInitial τ hτ hτT B G)
 
 theorem pastVelocity_orbit :
-    ContDiff ℝ ∞ (fun a => pathTranslate P a (pastVelocity τ hτ hτT B G)) :=
+    ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) τ) (V := Vector3) P a
+      (pastVelocity τ hτ hτT B G)) :=
   B.velocityPath_orbit (G.initial τ hτ hτT.le)
 
 theorem futureVelocity_orbit :
-    ContDiff ℝ ∞ (fun a => pathTranslate P a (futureVelocity τ hτ hτT B G)) :=
+    ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) (D.T-τ)) (V := Vector3) P a
+      (futureVelocity τ hτ hτT B G)) :=
   (G.tail τ hτ.le hτT).velocityPath_orbit (forwardInitial τ hτ hτT B G)
 
 theorem pastDerivative_orbit :
-    ContDiff ℝ ∞ (fun a => pathTranslate P a (pastDerivative τ hτ hτT B G)) :=
+    ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) τ) (V := Vector3) P a
+      (pastDerivative τ hτ hτT B G)) :=
   B.derivativePath_orbit (G.initial τ hτ hτT.le)
 
 theorem futureDerivative_orbit :
-    ContDiff ℝ ∞ (fun a => pathTranslate P a (futureDerivative τ hτ hτT B G)) :=
+    ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) (D.T-τ)) (V := Vector3) P a
+      (futureDerivative τ hτ hτT B G)) :=
   (G.tail τ hτ.le hτT).derivativePath_orbit (forwardInitial τ hτ hτT B G)
 
 theorem pastPressure_orbit :
-    ContDiff ℝ ∞ (fun a => pathTranslate P a (pastPressure τ hτ hτT B G)) :=
+    ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) τ) (V := ℝ) P a
+      (pastPressure τ hτ hτT B G)) :=
   B.pressurePath_orbit (G.initial τ hτ hτT.le)
 
 theorem futurePressure_orbit :
-    ContDiff ℝ ∞ (fun a => pathTranslate P a (futurePressure τ hτ hτT B G)) :=
+    ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) (D.T-τ)) (V := ℝ) P a
+      (futurePressure τ hτ hτT B G)) :=
   (G.tail τ hτ.le hτT).pressurePath_orbit (forwardInitial τ hτ hτT B G)
 
 theorem history_velocityPath_apply {D' : Data U} (B' : HistoryData D') {raw' : VectorField}
     (G' : Forcing P D' raw') (t : Icc (0 : ℝ) D'.T) :
-    B'.velocityPath G' t = fullOperatorMap P (D'.frame.field t) (B'.coordinatePath G' t) := rfl
+    B'.velocityPath G' t =
+      fullOperatorMap (E := U) (F := Space) P (D'.frame.field t) (B'.coordinatePath G' t) := rfl
 
 theorem forward_velocityPath_apply {D' : Data U} {raw' : VectorField} (G' : Forcing P D' raw')
     (I : InitialData P D') (t : Icc (0 : ℝ) D'.T) :
     (G'.velocityPath I t : CylinderL2 P Space) =
-      fullOperatorMap P (D'.frame.field t) (G'.coordinatePath I t : CylinderL2 P U) := rfl
+      fullOperatorMap (E := U) (F := Space) P (D'.frame.field t)
+        (G'.coordinatePath I t : CylinderL2 P U) := rfl
 
 /-- The actual forward velocity starts from the actual history velocity. -/
 theorem velocity_match : pastVelocity τ hτ hτT B G ⟨τ,hτ.le,le_rfl⟩ =
@@ -282,14 +290,16 @@ theorem pressure_match : pastPressure τ hτ hτT B G ⟨τ,hτ.le,le_rfl⟩ =
       th x v).trans ((congrArg (fun m : Space →ᵇ Space => ⟪m x,v⟫_ℝ / ‖m x‖^2) hm).trans
         (normalFunctional_apply Df.normal Df.normalLower Df.normalLower_pos Df.normal_lower
           tf x v).symm)
-  change primitive P (fullOperatorMap P
+  change primitive P (fullOperatorMap (E := Space) (F := ℝ) P
       (normalFunctional Dh.normal Dh.normalLower Dh.normalLower_pos Dh.normal_lower th)
       (((G.initial τ hτ hτT.le).path th : CylinderL2 P Space)-(2 : ℝ) •
-        fullOperatorMap P (Dh.M.field th) (pastVelocity τ hτ hτT B G th))) =
-    primitive P (fullOperatorMap P
+        fullOperatorMap (E := Space) (F := Space) P (Dh.M.field th)
+          (pastVelocity τ hτ hτT B G th))) =
+    primitive P (fullOperatorMap (E := Space) (F := ℝ) P
       (normalFunctional Df.normal Df.normalLower Df.normalLower_pos Df.normal_lower tf)
       (((G.tail τ hτ.le hτT).path tf : CylinderL2 P Space)-(2 : ℝ) •
-        fullOperatorMap P (Df.M.field tf) (futureVelocity τ hτ hτT B G tf)))
+        fullOperatorMap (E := Space) (F := Space) P (Df.M.field tf)
+          (futureVelocity τ hτ hτT B G tf)))
   have hforce : ((G.initial τ hτ hτT.le).path th : CylinderL2 P Space) =
       ((G.tail τ hτ.le hτT).path tf : CylinderL2 P Space) := forcing_match τ hτ hτT G
   have hv : pastVelocity τ hτ hτT B G th = futureVelocity τ hτ hτT B G tf :=

@@ -118,13 +118,13 @@ def supportedLinear : (α →ᵇ E →L[ℝ] F) →ₗ[ℝ]
 def supportedMap : (α →ᵇ E →L[ℝ] F) →L[ℝ]
     (supportedSpace (V := E) μ S hS →L[ℝ] supportedSpace (V := F) μ S hS) where
   toLinearMap := supportedLinear μ S hS
-  cont := AddMonoidHomClass.continuous_of_bound (supportedLinear μ S hS) 1 (fun A => by
+  cont := AddMonoidHomClass.continuous_of_bound (supportedLinear (F := F) μ S hS) 1 (fun A => by
     change ‖supported μ S hS A‖ ≤ 1*‖A‖
     simpa only [one_mul] using
       supported_norm μ S hS A ‖A‖ (norm_nonneg _) (fun x _ => A.norm_coe_le_norm x))
 
-@[simp] theorem supportedMap_apply (A : α →ᵇ E →L[ℝ] F) : supportedMap μ S hS A = supported μ S hS
-    A := rfl
+@[simp] theorem supportedMap_apply (A : α →ᵇ E →L[ℝ] F) :
+    supportedMap (E := E) (F := F) μ S hS A = supported μ S hS A := rfl
 
 theorem supportedMap_norm : ‖supportedMap (E := E) (F := F) μ S hS‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
@@ -486,7 +486,7 @@ theorem supportedOperatorMap_norm : ‖supportedOperatorMap (E := E) (F := F) pe
   intro A
   rw [one_mul]
   exact (EulerLpOperatorField.supported_norm (liftMeasure period) (spatialSet period S)
-    (spatialSet_measurable period S hS) (fieldLift period A) ‖A‖ (norm_nonneg A)
+    (spatialSet_measurable period S hS) (fieldLift (W := E →L[ℝ] F) period A) ‖A‖ (norm_nonneg A)
     (fun x _ => A.norm_coe_le_norm x.1))
 
 /-- Supported path map, given by `(supportedOperatorMap (E := E) (F := F) period S

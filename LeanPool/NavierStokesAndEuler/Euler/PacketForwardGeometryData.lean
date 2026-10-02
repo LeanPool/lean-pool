@@ -109,7 +109,7 @@ theorem initial_inverse (x : Space) :
 
 include G in
 theorem initial_normal (x : Space) : sourceRay D x 0=cross (unit (P.m 0)) (unit (P.v 0)) := by
-  change (D.FInv.field (D.clamp 0) x).adjoint D.m₀=_
+  change adjoint (𝕜 := ℝ) (E := Space) (F := Space) (D.FInv.field (D.clamp 0) x) D.m₀=_
   rw [show D.clamp 0=⟨0,le_rfl,D.T_pos.le⟩ from Data.clamp_coe D ⟨0,le_rfl,D.T_pos.le⟩,
     G.initial_inverse,adjoint_id,ContinuousLinearMap.id_apply,G.normal_choice]
 
@@ -139,7 +139,8 @@ theorem sourceVelocity_equation (x : Space) (t : ℝ) (ht : t ∈ Icc (0 : ℝ) 
 
 omit [CompleteSpace U] in
 theorem sourceRay_equation (x : Space) (t : ℝ) (ht : t ∈ Icc (0 : ℝ) D.T) :
-    HasDerivWithinAt (sourceRay D x) (-(sourceMatrix D x t).adjoint (sourceRay D x t))
+    HasDerivWithinAt (sourceRay D x)
+      (-adjoint (𝕜 := ℝ) (E := Space) (F := Space) (sourceMatrix D x t) (sourceRay D x t))
       (Icc (0 : ℝ) D.T) t := by
   have h := EulerPacketPrimaryFactorization.canonicalNormal_equation (D := D) ⟨t,ht⟩ x
   have hc : D.clamp t=⟨t,ht⟩ := Data.clamp_coe D ⟨t,ht⟩

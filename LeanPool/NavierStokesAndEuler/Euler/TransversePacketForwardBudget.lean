@@ -146,7 +146,7 @@ variable {P : ℝ} [Fact (0 < P)] {raw : VectorField} (G : Forcing P D raw) (I :
 include hdir hforce hinitial
 
 theorem velocity_unit_bound (n : ℕ) :
-    block directions q (fun a => pathTranslate P a
+    block directions q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
       (normalize L.g L.positive (G.fullVelocityPath I))) n 0 ≤ L.velocityCost*majorant L.R (d+1) n
           :=
   G.source_velocity_normalized_bound I L.g L.positive directions hdir q
@@ -159,7 +159,7 @@ theorem velocity_unit_bound (n : ℕ) :
     (fun j => by simpa only [one_mul] using hinitial j) L.frame_radius n
 
 theorem derivative_unit_bound (n : ℕ) :
-    block directions q (fun a => pathTranslate P a
+    block directions q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
       (normalize L.g L.positive (G.fullDerivativePath I))) n 0 ≤ L.derivativeCost*majorant L.R
           (d+1) n :=
   G.source_derivative_normalized_bound I L.g L.positive directions hdir q

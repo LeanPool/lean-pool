@@ -331,8 +331,8 @@ theorem fixedMeanOperator_reflection (u : TimeLp T solenoidalSpace) :
 
 include hF hF₁ in
 theorem fixedMeanPrimitive_adjoint_reflection (f : TimeLp T L2) :
-    (fixedMeanPrimitive T hT F F₁).adjoint (timeReflection T f) =
-      timeSolenoidalReflection T ((fixedMeanPrimitive T hT F F₁).adjoint f) := by
+    adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT F F₁) (timeReflection T f) =
+      timeSolenoidalReflection T (adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT F F₁) f) := by
   apply eq_of_reflected_pairing T
   intro v
   exact (adjoint_inner_left (fixedMeanPrimitive T hT F F₁)
@@ -341,8 +341,8 @@ theorem fixedMeanPrimitive_adjoint_reflection (f : TimeLp T L2) :
       (fixedMeanPrimitive_reflection T hT F F₁ hF hF₁ v)).trans
       (((timeReflection T).inner_map_map f (fixedMeanPrimitive T hT F F₁ v)).trans
         ((adjoint_inner_left (fixedMeanPrimitive T hT F F₁) v f).symm.trans
-          ((timeSolenoidalReflection T).inner_map_map ((fixedMeanPrimitive T hT F F₁).adjoint f)
-              v).symm)))
+          ((timeSolenoidalReflection T).inner_map_map
+            (adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT F F₁) f) v).symm)))
 
 include hF hF₁ hH hM0 hA in
 /-- Uniqueness of the actual coercive solve forces reflection covariance. -/
@@ -351,17 +351,17 @@ theorem coerciveSolution_reflection (c : ℝ) (hc : 0 < c)
     (f : TimeLp T L2) :
     timeSolenoidalReflection T
       (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hO
-        (-(fixedMeanPrimitive T hT F F₁).adjoint f)) =
+        (-adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT F F₁) f)) =
     coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hO
-      (-(fixedMeanPrimitive T hT F F₁).adjoint (timeReflection T f)) := by
+      (-adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT F F₁) (timeReflection T f)) := by
   apply (coerciveEquiv (fixedMeanOperator T hT F F₁ H M0 A L) c hc hO).injective
   simp only [coerciveEquiv_apply]
   change fixedMeanOperator T hT F F₁ H M0 A L (timeSolenoidalReflection T
     (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hO
-      (-(fixedMeanPrimitive T hT F F₁).adjoint f))) =
+      (-adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT F F₁) f))) =
     fixedMeanOperator T hT F F₁ H M0 A L
       (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hO
-        (-(fixedMeanPrimitive T hT F F₁).adjoint (timeReflection T f)))
+        (-adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT F F₁) (timeReflection T f)))
   exact (fixedMeanOperator_reflection T hT F F₁ H M0 A L hF hF₁ hH hM0 hA _).trans
     ((congrArg (timeSolenoidalReflection T)
       (operator_inverse_apply (fixedMeanOperator T hT F F₁ H M0 A L) c hc hO _)).trans

@@ -84,29 +84,31 @@ def pastDerivative : C(Icc (0 : ℝ) τ,LiftL2 P) :=
 /-- Future velocity, given by `includePath P D.support D.support_measurable ((zeroForcing
 (D.tail τ hτ.le hτT)).velocityPath (forwardInitial τ hτ hτT B Y))`. -/
 def futureVelocity : C(Icc (0 : ℝ) (D.T-τ),LiftL2 P) :=
-  includePath P D.support D.support_measurable
+  includePath (K := Icc (0 : ℝ) (D.T-τ)) (V := Vector3) P D.support D.support_measurable
     ((zeroForcing (D.tail τ hτ.le hτT)).velocityPath (forwardInitial τ hτ hτT B Y))
 
 /-- Future derivative, given by `includePath P D.support D.support_measurable ((zeroForcing
 (D.tail τ hτ.le hτT)).derivativePath (forwardInitial τ hτ hτT B Y))`. -/
 def futureDerivative : C(Icc (0 : ℝ) (D.T-τ),LiftL2 P) :=
-  includePath P D.support D.support_measurable
+  includePath (K := Icc (0 : ℝ) (D.T-τ)) (V := Vector3) P D.support D.support_measurable
     ((zeroForcing (D.tail τ hτ.le hτT)).derivativePath (forwardInitial τ hτ hτT B Y))
 
-theorem pastVelocity_orbit : ContDiff ℝ ∞ (fun a => pathTranslate P a (pastVelocity τ hτ hτT B Y))
-    :=
+theorem pastVelocity_orbit : ContDiff ℝ ∞ (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) τ) (V := Vector3) P a (pastVelocity τ hτ hτT B Y)) :=
   EulerTransversePacketEndpoint.velocityPath_orbit B (endpointData τ hτ hτT Y)
 
-theorem pastDerivative_orbit : ContDiff ℝ ∞ (fun a => pathTranslate P a (pastDerivative τ hτ hτT B
-    Y)) :=
+theorem pastDerivative_orbit : ContDiff ℝ ∞ (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) τ) (V := Vector3) P a (pastDerivative τ hτ hτT B Y)) :=
   EulerTransversePacketEndpoint.derivativePath_orbit B (endpointData τ hτ hτT Y)
 
-theorem futureVelocity_orbit : ContDiff ℝ ∞ (fun a => pathTranslate P a (futureVelocity τ hτ hτT B
-    Y)) :=
+theorem futureVelocity_orbit : ContDiff ℝ ∞ (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) (D.T-τ)) (V := Vector3) P a
+      (futureVelocity τ hτ hτT B Y)) :=
   (zeroForcing (D.tail τ hτ.le hτT)).velocityPath_orbit (forwardInitial τ hτ hτT B Y)
 
-theorem futureDerivative_orbit : ContDiff ℝ ∞ (fun a => pathTranslate P a (futureDerivative τ hτ
-    hτT B Y)) :=
+theorem futureDerivative_orbit : ContDiff ℝ ∞ (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) (D.T-τ)) (V := Vector3) P a
+      (futureDerivative τ hτ hτT B Y)) :=
   (zeroForcing (D.tail τ hτ.le hτT)).derivativePath_orbit (forwardInitial τ hτ hτT B Y)
 
 theorem velocity_match : pastVelocity τ hτ hτT B Y ⟨τ,hτ.le,le_rfl⟩ =
@@ -121,9 +123,9 @@ theorem velocity_match : pastVelocity τ hτ hτT B Y ⟨τ,hτ.le,le_rfl⟩ =
     change D.F.field ⟨τ,hτ.le,hτT.le⟩ x (D.R v : Space) =
       D.F.field ⟨τ+0,by linarith,by linarith⟩ x (D.R v : Space)
     simp only [add_zero]
-  change fullOperatorMap P ((D.initial τ hτ hτT.le).frame.field th)
+  change fullOperatorMap (E := U) (F := Space) P ((D.initial τ hτ hτT.le).frame.field th)
     (EulerTransversePacketEndpoint.coordinatePath B (endpointData τ hτ hτT Y) th) =
-      fullOperatorMap P ((D.tail τ hτ.le hτT).frame.field tf)
+      fullOperatorMap (E := U) (F := Space) P ((D.tail τ hτ.le hτT).frame.field tf)
         (((zeroForcing (D.tail τ hτ.le hτT)).coordinatePath (forwardInitial τ hτ hτT B Y) tf) :
           CylinderL2 P U)
   dsimp only [tf]
@@ -283,21 +285,25 @@ theorem derivativePath_eq_join : derivativePath τ hτ hτT B Y =
     join D.T τ hτ.le hτT.le _ _ (derivative_match' τ hτ hτT B Y) := rfl
 
 theorem velocityPath_orbit :
-    ContDiff ℝ ∞ (fun a => pathTranslate P a (velocityPath τ hτ hτT B Y)) := by
+    ContDiff ℝ ∞ (fun a =>
+      pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a (velocityPath τ hτ hτT B Y)) := by
   have h := join_orbit_contDiff P D.T τ hτ.le hτT.le _ _ (velocity_match' τ hτ hτT B Y)
     (pastVelocity_orbit τ hτ hτT B Y) (futureVelocity_orbit τ hτ hτT B Y)
   rw [velocityPath_eq_join]
   exact h
 
 theorem derivativePath_orbit :
-    ContDiff ℝ ∞ (fun a => pathTranslate P a (derivativePath τ hτ hτT B Y)) := by
+    ContDiff ℝ ∞ (fun a =>
+      pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+        (derivativePath τ hτ hτT B Y)) := by
   have h := join_orbit_contDiff P D.T τ hτ.le hτT.le _ _ (derivative_match' τ hτ hτT B Y)
     (pastDerivative_orbit τ hτ hτT B Y) (futureDerivative_orbit τ hτ hτT B Y)
   rw [derivativePath_eq_join]
   exact h
 
 theorem pressurePath_orbit :
-    ContDiff ℝ ∞ (fun a => pathTranslate P a (pressurePath τ hτ hτT B Y)) :=
+    ContDiff ℝ ∞ (fun a =>
+      pathTranslate (K := Icc (0 : ℝ) D.T) (V := ℝ) P a (pressurePath τ hτ hτT B Y)) :=
   sourcePressure_contDiff P D.M D.normal D.normalLower D.normalLower_pos D.normal_lower
     0 (velocityPath τ hτ hτT B Y) (by simpa only [map_zero] using (contDiff_const :
       ContDiff ℝ ∞ (fun _ : LiftTangent => (0 : C(Icc (0 : ℝ) D.T,LiftL2 P)))))

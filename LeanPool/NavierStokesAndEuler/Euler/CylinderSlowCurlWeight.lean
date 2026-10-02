@@ -110,13 +110,16 @@ theorem normalized_derivative_block_bound
     (hbG : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath G) a‖ ≤ C * majorant Rc 0 n)
     (hbG₁ : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath G₁) a‖ ≤ C * majorant Rc 0 n)
     (d : ℕ)
-    (hbp : ∀ n, block standardDirection q
-      (fun a : LiftTangent => pathTranslate P a (normalize g hg p)) n 0 ≤ D*majorant R d n)
-    (hbf : ∀ n, block standardDirection q
-      (fun a : LiftTangent => pathTranslate P a (normalize g hg f)) n 0 ≤ D*majorant R d n)
+    (hbp : ∀ n, block standardDirection q (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (normalize g hg p)) n 0 ≤
+        D*majorant R d n)
+    (hbf : ∀ n, block standardDirection q (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (normalize g hg f)) n 0 ≤
+        D*majorant R d n)
     (n : ℕ) :
-    block standardDirection q
-      (fun a : LiftTangent => pathTranslate P a (normalize g hg (derivative P T G G₁ p f))) n 0 ≤
+    block standardDirection q (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a
+        (normalize g hg (derivative P T G G₁ p f))) n 0 ≤
       (18*sobolevCoefficientAmplitude (Fin 4) q Rc C*D)*majorant R (d+1) n := by
   rw [derivative_normalize P T g hg G G₁ p f hp hf]
   exact derivative_block_bound P T G G₁ hG hG₁ (normalize g hg p) (normalize g hg f)
@@ -177,19 +180,23 @@ theorem potentialDerivative_block_bound {ι : Type*} [Fintype ι]
     (hbB : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath B) a‖ ≤ C * majorant Rc 0 n)
     (hbB₁ : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath B₁) a‖ ≤ C * majorant Rc 0 n)
     (d : ℕ)
-    (hbp : ∀ n, block directions q (fun a : LiftTangent => pathTranslate P a p) n 0 ≤ D*majorant R
-        d n)
-    (hbf : ∀ n, block directions q (fun a : LiftTangent => pathTranslate P a f) n 0 ≤ D*majorant R
-        d n)
+    (hbp : ∀ n, block directions q (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a p) n 0 ≤ D*majorant R d n)
+    (hbf : ∀ n, block directions q (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a f) n 0 ≤ D*majorant R d n)
     (n : ℕ) :
     block directions q (fun a : LiftTangent =>
-      pathTranslate P a (potentialDerivative P T B B₁ p f)) n 0 ≤
+      pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a
+        (potentialDerivative P T B B₁ p f)) n 0 ≤
       (6*sobolevCoefficientAmplitude ι q Rc C*(P*D))*majorant R d n := by
-  have he : (fun a : LiftTangent => pathTranslate P a (potentialDerivative P T B B₁ p f)) =
-      (fun a : LiftTangent => pathTranslate P a (potentialPath P B₁ p)) +
-        (fun a : LiftTangent => pathTranslate P a (potentialPath P B f)) := by
+  have he : (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a
+        (potentialDerivative P T B B₁ p f)) =
+      (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a
+        (potentialPath P B₁ p)) +
+        (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a
+          (potentialPath P B f)) := by
     funext a
-    exact map_add (pathTranslate P a) _ _
+    exact map_add (pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a) _ _
   rw [he]
   have hs := block_add_le directions q _ _
     (potentialPath_orbit P B₁ hB₁ p hp) (potentialPath_orbit P B hB f hf) n (0 : LiftTangent)

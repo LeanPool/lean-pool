@@ -128,10 +128,10 @@ variable (P : ℝ) [Fact (0 < P)] {V : Type*}
 
 theorem normalize_orbit_contDiff {K : Type*} [TopologicalSpace K] [CompactSpace K]
     (g : C(K, ℝ)) (hg : ∀ t, 0 < g t) (p : C(K, CylinderL2 P V))
-    (hp : ContDiff ℝ ∞ (fun a => pathTranslate P a p)) :
-    ContDiff ℝ ∞ (fun a => pathTranslate P a (normalize g hg p)) := by
-  have he : (fun a => pathTranslate P a (normalize g hg p)) =
-      fun a => normalize g hg (pathTranslate P a p) :=
+    (hp : ContDiff ℝ ∞ (fun a => pathTranslate (K := K) (V := V) P a p)) :
+    ContDiff ℝ ∞ (fun a => pathTranslate (K := K) (V := V) P a (normalize g hg p)) := by
+  have he : (fun a => pathTranslate (K := K) (V := V) P a (normalize g hg p)) =
+      fun a => normalize g hg (pathTranslate (K := K) (V := V) P a p) :=
     funext (fun a => translate_normalize P g hg a p)
   rw [he]
   exact (normalize g hg).contDiff.comp hp
@@ -142,14 +142,15 @@ theorem normalized_join_block (S τ : ℝ) (hτ0 : 0 ≤ τ) (hτS : τ ≤ S)
     (hg0 : g ⟨0, le_rfl, sub_nonneg.mpr hτS⟩ = 1)
     (u : C(Icc (0 : ℝ) τ, CylinderL2 P V)) (v : C(Icc (0 : ℝ) (S - τ), CylinderL2 P V))
     (hm : u ⟨τ, hτ0, le_rfl⟩ = v ⟨0, le_rfl, sub_nonneg.mpr hτS⟩)
-    (hu : ContDiff ℝ ∞ (fun a => pathTranslate P a u))
-    (hv : ContDiff ℝ ∞ (fun a => pathTranslate P a v))
+    (hu : ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) τ) (V := V) P a u))
+    (hv : ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) (S - τ)) (V := V) P a v))
     {ι : Type*} [Fintype ι] (directions : ι → LiftTangent) (q n : ℕ) (a : LiftTangent) :
-    block directions q (fun b => pathTranslate P b
+    block directions q (fun b => pathTranslate (K := Icc (0 : ℝ) S) (V := V) P b
       (normalize (profile S τ hτ0 hτS g hg0) (profile_pos S τ hτ0 hτS g hg0 hg)
         (join S τ hτ0 hτS u v hm))) n a ≤
-      block directions q (fun b => pathTranslate P b u) n a +
-        block directions q (fun b => pathTranslate P b (normalize g hg v)) n a := by
+      block directions q (fun b => pathTranslate (K := Icc (0 : ℝ) τ) (V := V) P b u) n a +
+        block directions q (fun b => pathTranslate (K := Icc (0 : ℝ) (S - τ)) (V := V) P b
+          (normalize g hg v)) n a := by
   rw [normalize_join]
   exact join_orbit_block P S τ hτ0 hτS u (normalize g hg v)
     (normalize_match S τ hτ0 hτS g hg0 hg u v hm) hu

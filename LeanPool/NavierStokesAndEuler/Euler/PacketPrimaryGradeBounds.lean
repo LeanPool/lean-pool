@@ -70,7 +70,7 @@ variable {P : ℝ} [Fact (0 < P)]
 include H hdir hYb
 
 theorem terminal_bound (n : ℕ) :
-    block directions q (fun a => translate P a
+    block directions q (fun a => translate (V := U) P a
       ((forwardInitial τ hτ hτT B Y).value : CylinderL2 P U)) n 0 ≤
         H.endpointBudget.coordinateCost*majorant L.R (d+2) n :=
   (trace_block_le P directions q
@@ -80,22 +80,25 @@ theorem terminal_bound (n : ℕ) :
       (H.endpointBudget.coordinate_unit_bound P directions hdir Y.value Y.orbit d hYb n)
 
 theorem past_velocity_bound (n : ℕ) :
-    block directions q (fun a => pathTranslate P a (pastVelocity τ hτ hτT B Y)) n 0 ≤
+    block directions q (fun a => pathTranslate (K := Icc (0 : ℝ) τ) (V := Vector3) P a
+      (pastVelocity τ hτ hτT B Y)) n 0 ≤
       H.endpointBudget.velocityCost*majorant L.R (d+2) n :=
   H.endpointBudget.velocity_unit_bound P directions hdir Y.value Y.orbit d hYb n
 
 theorem past_derivative_bound (n : ℕ) :
-    block directions q (fun a => pathTranslate P a (pastDerivative τ hτ hτT B Y)) n 0 ≤
+    block directions q (fun a => pathTranslate (K := Icc (0 : ℝ) τ) (V := Vector3) P a
+      (pastDerivative τ hτ hτT B Y)) n 0 ≤
       H.endpointBudget.derivativeCost*majorant L.R (d+3) n :=
   H.endpointBudget.derivative_unit_bound P directions hdir Y.value Y.orbit d hYb n
 
 theorem future_velocity_bound (n : ℕ) :
-    block directions q (fun a => pathTranslate P a
-      (normalize L.g L.positive (futureVelocity τ hτ hτT B Y))) n 0 ≤
+    block directions q (fun a => pathTranslate (K := Icc (0 : ℝ) (D.T - τ)) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) L.g L.positive (futureVelocity τ hτ hτT B Y))) n 0 ≤
         (3*sobolevCoefficientAmplitude ι q L.Rc L.C₀)*majorant L.R (d+3) n := by
-  have hf (j : ℕ) : block directions q (fun a => pathTranslate P a
-      (normalize L.g L.positive (HistoryData.forcingPath (zeroForcing (P := P) (D.tail τ hτ.le
-          hτT)))))
+  have hf (j : ℕ) : block directions q (fun a =>
+      pathTranslate (K := Icc (0 : ℝ) (D.T - τ)) (V := Space) P a
+      (normalize (E := CylinderL2 P Space) L.g L.positive
+        (HistoryData.forcingPath (zeroForcing (P := P) (D.tail τ hτ.le hτT)))))
         j 0 ≤ 0*majorant L.R (d+2) j := by
     simp only [HistoryData.forcingPath,zeroForcing,ContinuousLinearMap.map_zero,zero_mul]
     erw [ContinuousLinearMap.map_zero]
@@ -116,12 +119,13 @@ theorem future_velocity_bound (n : ℕ) :
       (H.terminal_bound Y directions hdir d hYb) L.radius_bounds.2 n
 
 theorem future_derivative_bound (n : ℕ) :
-    block directions q (fun a => pathTranslate P a
-      (normalize L.g L.positive (futureDerivative τ hτ hτT B Y))) n 0 ≤
+    block directions q (fun a => pathTranslate (K := Icc (0 : ℝ) (D.T - τ)) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) L.g L.positive (futureDerivative τ hτ hτT B Y))) n 0 ≤
         EulerSourceCylinderTimeBounds.physicalCost ι q L.Ri L.C₀ L.C₁ 0 1*majorant L.R (d+3) n := by
-  have hf (j : ℕ) : block directions q (fun a => pathTranslate P a
-      (normalize L.g L.positive (HistoryData.forcingPath (zeroForcing (P := P) (D.tail τ hτ.le
-          hτT)))))
+  have hf (j : ℕ) : block directions q (fun a =>
+      pathTranslate (K := Icc (0 : ℝ) (D.T - τ)) (V := Space) P a
+      (normalize (E := CylinderL2 P Space) L.g L.positive
+        (HistoryData.forcingPath (zeroForcing (P := P) (D.tail τ hτ.le hτT)))))
         j 0 ≤ 0*majorant L.R (d+2) j := by
     simp only [HistoryData.forcingPath,zeroForcing,ContinuousLinearMap.map_zero,zero_mul]
     erw [ContinuousLinearMap.map_zero]
@@ -142,8 +146,9 @@ theorem future_derivative_bound (n : ℕ) :
       (H.terminal_bound Y directions hdir d hYb) L.radius_bounds.1 n
 
 theorem velocity_unit_bound (n : ℕ) :
-    block directions q (fun a => pathTranslate P a
-      (normalize L.fullProfile L.fullProfile_pos (velocityPath τ hτ hτT B Y))) n 0 ≤
+    block directions q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) L.fullProfile L.fullProfile_pos
+        (velocityPath τ hτ hτT B Y))) n 0 ≤
         H.velocityCost*majorant L.R (d+3) n := by
   have hb := normalized_join_block P D.T τ hτ.le hτT.le L.g L.positive L.initial_one
     (pastVelocity τ hτ hτT B Y) (futureVelocity τ hτ hτT B Y) (velocity_match τ hτ hτT B Y)
@@ -160,8 +165,9 @@ theorem velocity_unit_bound (n : ℕ) :
       add_le_add hp (H.future_velocity_bound Y directions hdir d hYb n))
 
 theorem derivative_unit_bound (n : ℕ) :
-    block directions q (fun a => pathTranslate P a
-      (normalize L.fullProfile L.fullProfile_pos (derivativePath τ hτ hτT B Y))) n 0 ≤
+    block directions q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) L.fullProfile L.fullProfile_pos
+        (derivativePath τ hτ hτT B Y))) n 0 ≤
         H.derivativeCost*majorant L.R (d+3) n := by
   have hb := normalized_join_block P D.T τ hτ.le hτT.le L.g L.positive L.initial_one
     (pastDerivative τ hτ hτT B Y) (futureDerivative τ hτ hτT B Y) (derivative_match τ hτ hτT B Y)
@@ -199,24 +205,25 @@ variable {P : ℝ} [Fact (0 < P)]
 
 theorem initial_amplitude_bound
     (S : InitialData P D → C(Icc (0 : ℝ) D.T, CylinderL2 P V))
-    (hs : ∀ Y, ContDiff ℝ ∞ (fun a => pathTranslate P a (S Y)))
+    (hs : ∀ Y, ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := V) P a (S Y)))
     (hm : ∀ Y Z (a : ℝ), Z.value = a • Y.value → S Z = a • S Y)
     (g : C(Icc (0 : ℝ) D.T, ℝ)) (hg : ∀ t, 0 < g t)
     (directions : ι → LiftTangent) (q : ℕ) (R C : ℝ) (d e : ℕ)
     (hunit : ∀ Y : InitialData P D,
-      (∀ n, block directions q (fun a => translate P a (Y.value : CylinderL2 P U)) n 0 ≤ majorant R
-          d n) →
-      ∀ n, block directions q (fun a => pathTranslate P a (normalize g hg (S Y))) n 0 ≤ C*majorant
-          R e n)
+      (∀ n, block directions q (fun a => translate (V := U) P a (Y.value : CylinderL2 P U)) n 0 ≤
+          majorant R d n) →
+      ∀ n, block directions q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := V) P a
+          (normalize (E := CylinderL2 P V) g hg (S Y))) n 0 ≤ C*majorant R e n)
     (Y : InitialData P D) (A : ℝ) (hA : 0 ≤ A)
-    (hb : ∀ n, block directions q (fun a => translate P a (Y.value : CylinderL2 P U)) n 0 ≤
-        A*majorant R d n)
+    (hb : ∀ n, block directions q (fun a => translate (V := U) P a (Y.value : CylinderL2 P U))
+        n 0 ≤ A*majorant R d n)
     (n : ℕ) :
-    block directions q (fun a => pathTranslate P a (normalize g hg (S Y))) n 0 ≤
+    block directions q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := V) P a
+      (normalize (E := CylinderL2 P V) g hg (S Y))) n 0 ≤
       (C*A)*majorant R e n := by
   by_cases hz : A = 0
   · have hv := value_zero_of_block_zero_bound directions q
-      (fun a => translate P a (Y.value : CylinderL2 P U)) 0
+      (fun a => translate (V := U) P a (Y.value : CylinderL2 P U)) 0
       (by simpa only [hz,zero_mul] using hb 0)
     rw [translate_zero] at hv
     have hy : Y.value = 0 := Subtype.ext hv
@@ -227,20 +234,24 @@ theorem initial_amplitude_bound
   · have hApos : 0 < A := lt_of_le_of_ne hA (Ne.symm hz)
     let Z := Y.smul A⁻¹
     have hZ (j : ℕ) : block directions q
-        (fun a => translate P a (Z.value : CylinderL2 P U)) j 0 ≤ majorant R d j := by
-      have he : (fun a => translate P a (Z.value : CylinderL2 P U)) =
-          fun a => A⁻¹ • translate P a (Y.value : CylinderL2 P U) := by
+        (fun a => translate (V := U) P a (Z.value : CylinderL2 P U)) j 0 ≤ majorant R d j := by
+      have he : (fun a => translate (V := U) P a (Z.value : CylinderL2 P U)) =
+          fun a => A⁻¹ • translate (V := U) P a (Y.value : CylinderL2 P U) := by
         funext a
         exact (translate P a).map_smul A⁻¹ (Y.value : CylinderL2 P U)
       rw [he]
       simpa only [one_mul] using block_normalize_bound directions q
-        (fun a => translate P a (Y.value : CylinderL2 P U)) Y.orbit
+        (fun a => translate (V := U) P a (Y.value : CylinderL2 P U)) Y.orbit
         A hApos R 1 d j 0 (by simpa only [one_mul] using hb j)
     have hrestore : S Y = A • S Z := by
       rw [hm Y Z A⁻¹ rfl,smul_smul,mul_inv_cancel₀ hz,one_smul]
-    have hsZ : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a (normalize g hg (S Z))) := by
-      have he : (fun a : LiftTangent => pathTranslate P a (normalize g hg (S Z))) =
-          fun a => normalize g hg (pathTranslate P a (S Z)) := by
+    have hsZ : ContDiff ℝ ∞ (fun a : LiftTangent =>
+        pathTranslate (K := Icc (0 : ℝ) D.T) (V := V) P a
+          (normalize (E := CylinderL2 P V) g hg (S Z))) := by
+      have he : (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) D.T) (V := V) P a
+            (normalize (E := CylinderL2 P V) g hg (S Z))) =
+          fun a => normalize (E := CylinderL2 P V) g hg
+            (pathTranslate (K := Icc (0 : ℝ) D.T) (V := V) P a (S Z)) := by
         funext a
         apply ContinuousMap.ext
         intro t
@@ -248,8 +259,10 @@ theorem initial_amplitude_bound
       rw [he]
       exact (normalize (E := CylinderL2 P V) g hg).contDiff.comp (hs Z)
     have hr := block_restore_bound directions q
-      (fun a => pathTranslate P a (normalize g hg (S Z)))
-      (fun a => pathTranslate P a (normalize g hg (S Y)))
+      (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := V) P a
+        (normalize (E := CylinderL2 P V) g hg (S Z)))
+      (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := V) P a
+        (normalize (E := CylinderL2 P V) g hg (S Y)))
       hsZ A hA
       (fun a => by
         rw [hrestore]
@@ -297,8 +310,9 @@ variable {P : ℝ} [Fact (0 < P)]
 include hdir hA hYb
 
 theorem velocity_bound (n : ℕ) :
-    block directions q (fun a => pathTranslate P a
-      (normalize L.fullProfile L.fullProfile_pos (velocityPath τ hτ hτT B Y))) n 0 ≤
+    block directions q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) L.fullProfile L.fullProfile_pos
+        (velocityPath τ hτ hτT B Y))) n 0 ≤
         (H.velocityCost*A)*majorant L.R (d+3) n :=
   initial_amplitude_bound (fun Z => velocityPath τ hτ hτT B Z)
     (velocityPath_orbit τ hτ hτT B) (velocityPath_eq_smul τ hτ hτT B)
@@ -306,8 +320,9 @@ theorem velocity_bound (n : ℕ) :
     (fun Z hb => H.velocity_unit_bound Z directions hdir d hb) Y A hA hYb n
 
 theorem derivative_bound (n : ℕ) :
-    block directions q (fun a => pathTranslate P a
-      (normalize L.fullProfile L.fullProfile_pos (derivativePath τ hτ hτT B Y))) n 0 ≤
+    block directions q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) L.fullProfile L.fullProfile_pos
+        (derivativePath τ hτ hτT B Y))) n 0 ≤
         (H.derivativeCost*A)*majorant L.R (d+3) n :=
   initial_amplitude_bound (fun Z => derivativePath τ hτ hτT B Z)
     (derivativePath_orbit τ hτ hτT B) (derivativePath_eq_smul τ hτ hτT B)
@@ -365,7 +380,8 @@ variable {P : ℝ} [Fact (0 < P)]
 include hRc hC hA hR hbA hbK in
 theorem potentialPath_normalized_bound (n : ℕ) :
     block standardDirection q
-      (fun a : LiftTangent => pathTranslate P a (normalize g hg (potentialPath τ hτ hτT B Y))) n 0 ≤
+      (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+        (normalize (E := CylinderL2 P Vector3) g hg (potentialPath τ hτ hτT B Y))) n 0 ≤
       (3*sobolevCoefficientAmplitude (Fin 4) q Rc C*(P*A))*majorant R d n :=
   EulerCylinderPotential.normalized_potentialPath_block_bound P g (velocityPath τ hτ hτT B Y)
     D.potentialCoefficientPath hg D.potentialCoefficientPath_orbit
@@ -376,7 +392,8 @@ theorem potentialPath_normalized_bound (n : ℕ) :
 include hRc hC hA hR hbA hbAt hbK hbKt in
 theorem potentialTimePath_normalized_bound (n : ℕ) :
     block standardDirection q
-      (fun a : LiftTangent => pathTranslate P a (normalize g hg (potentialTimePath τ hτ hτT B Y)))
+      (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+        (normalize (E := CylinderL2 P Vector3) g hg (potentialTimePath τ hτ hτT B Y)))
           n 0 ≤
       (6*sobolevCoefficientAmplitude (Fin 4) q Rc C*(P*A))*majorant R d n :=
   EulerCylinderPotential.normalized_potentialDerivative_block_bound P D.T
@@ -389,7 +406,8 @@ theorem potentialTimePath_normalized_bound (n : ℕ) :
 include hRc hC hA hR hbA hbK hbI in
 theorem correctorPath_normalized_bound (n : ℕ) :
     block standardDirection q
-      (fun a : LiftTangent => pathTranslate P a (normalize g hg (correctorPath τ hτ hτT B Y))) n 0 ≤
+      (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+        (normalize (E := CylinderL2 P Vector3) g hg (correctorPath τ hτ hτT B Y))) n 0 ≤
       (27*(sobolevCoefficientAmplitude (Fin 4) q Rc C)^2*(P*A))*majorant R (d+1) n := by
   have hp : 0 ≤ P := (Fact.out : 0 < P).le
   have ha := sobolevCoefficientAmplitude_nonneg (ι := Fin 4) q Rc C hRc hC
@@ -402,14 +420,16 @@ theorem correctorPath_normalized_bound (n : ℕ) :
 include hRc hC hA hR hbA hbAt hbK hbKt hbI hbIt in
 theorem correctorTimePath_normalized_bound (n : ℕ) :
     block standardDirection q
-      (fun a : LiftTangent => pathTranslate P a (normalize g hg (correctorTimePath τ hτ hτT B Y)))
+      (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+        (normalize (E := CylinderL2 P Vector3) g hg (correctorTimePath τ hτ hτT B Y)))
           n 0 ≤
       (108*(sobolevCoefficientAmplitude (Fin 4) q Rc C)^2*(P*A))*majorant R (d+1) n := by
   have hp : 0 ≤ P := (Fact.out : 0 < P).le
   have ha := sobolevCoefficientAmplitude_nonneg (ι := Fin 4) q Rc C hRc hC
   have hRn : 0 ≤ R := (sobolevCoefficientRadius_nonneg (ι := Fin 4) Rc hRc).trans hR
   have hQ (j : ℕ) : block standardDirection q
-      (fun a : LiftTangent => pathTranslate P a (normalize g hg (potentialPath τ hτ hτT B Y))) j 0 ≤
+      (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+        (normalize (E := CylinderL2 P Vector3) g hg (potentialPath τ hτ hτT B Y))) j 0 ≤
         (6*sobolevCoefficientAmplitude (Fin 4) q Rc C*(P*A))*majorant R d j := by
     apply (potentialPath_normalized_bound τ hτ hτT B Y g hg q Rc C R A hRc hC hA hR d hbA hbK
         j).trans
@@ -523,39 +543,46 @@ variable (Y : InitialData P D) (A : ℝ) (hA : 0 ≤ A) (d : ℕ)
 include hA hYb
 
 theorem velocity_common_bound (n : ℕ) :
-    block standardDirection q (fun a => pathTranslate P a
-      (normalize L.fullProfile L.fullProfile_pos (velocityPath τ hτ hτT B Y))) n 0 ≤
+    block standardDirection q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) L.fullProfile L.fullProfile_pos
+        (velocityPath τ hτ hτT B Y))) n 0 ≤
         (H.commonCost*A)*majorant L.R (d+3) n :=
   (H.velocity_bound Y standardDirection standard_norm A hA d hYb n).trans
     (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right H.velocityCost_le_common hA)
       (majorant_nonneg L.R (zero_le_one.trans L.radius_bounds.1) (d+3) n))
 
 theorem derivative_common_bound (n : ℕ) :
-    block standardDirection q (fun a => pathTranslate P a
-      (normalize L.fullProfile L.fullProfile_pos (derivativePath τ hτ hτT B Y))) n 0 ≤
+    block standardDirection q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) L.fullProfile L.fullProfile_pos
+        (derivativePath τ hτ hτT B Y))) n 0 ≤
         (H.commonCost*A)*majorant L.R (d+3) n :=
   (H.derivative_bound Y standardDirection standard_norm A hA d hYb n).trans
     (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right H.derivativeCost_le_common hA)
       (majorant_nonneg L.R (zero_le_one.trans L.radius_bounds.1) (d+3) n))
 
 theorem pressure_bound (n : ℕ) :
-    block standardDirection q (fun a => pathTranslate P a
-      (normalize L.fullProfile L.fullProfile_pos (pressurePath τ hτ hτT B Y))) n 0 ≤
+    block standardDirection q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := ℝ) P a
+      (normalize (E := CylinderL2 P ℝ) L.fullProfile L.fullProfile_pos
+        (pressurePath τ hτ hτT B Y))) n 0 ≤
         (H.pressureAmplitude (P := P) N*A)*majorant L.R (d+3) n := by
-  have he : normalize L.fullProfile L.fullProfile_pos (pressurePath τ hτ hτT B Y) =
+  have he : normalize (E := CylinderL2 P ℝ) L.fullProfile L.fullProfile_pos
+        (pressurePath τ hτ hτT B Y) =
       sourcePressure P D.M D.normal D.normalLower D.normalLower_pos D.normal_lower 0
-        (normalize L.fullProfile L.fullProfile_pos (velocityPath τ hτ hτT B Y)) := by
+        (normalize (E := CylinderL2 P Space) L.fullProfile L.fullProfile_pos
+          (velocityPath τ hτ hτT B Y)) := by
     simpa only [EulerTransversePacketPrimary.pressurePath, EulerContinuousTimeWeight.normalize,
         map_zero] using
       (sourcePressure_weight P D.M D.normal D.normalLower D.normalLower_pos D.normal_lower
         (reciprocal L.fullProfile L.fullProfile_pos) 0 (velocityPath τ hτ hτT B Y)).symm
   rw [he]
   have hzero : ContDiff ℝ ∞ (fun a : LiftTangent =>
-      pathTranslate P a (0 : C(Icc (0 : ℝ) D.T,LiftL2 P))) := by
+      pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+        (0 : C(Icc (0 : ℝ) D.T,LiftL2 P))) := by
     simpa only [map_zero] using (contDiff_const : ContDiff ℝ ∞
       (fun _ : LiftTangent => (0 : C(Icc (0 : ℝ) D.T,LiftL2 P))))
   have h := sourcePressure_block_bound P D.M D.normal D.normalLower D.normalLower_pos D.normal_lower
-    0 (normalize L.fullProfile L.fullProfile_pos (velocityPath τ hτ hτT B Y))
+    0 (normalize (E := CylinderL2 P Space) L.fullProfile L.fullProfile_pos
+      (velocityPath τ hτ hτT B Y))
     standardDirection standard_norm q hzero
     (normalize_orbit_contDiff P L.fullProfile L.fullProfile_pos _ (velocityPath_orbit τ hτ hτT B Y))
     N.Rc N.C N.C N.Ri L.R 0 (H.commonCost*A) N.Rc_nonneg N.C_nonneg N.C_nonneg le_rfl
@@ -566,11 +593,13 @@ theorem pressure_bound (n : ℕ) :
   exact h.trans_eq (by unfold pressureAmplitude pressureCost; ring)
 
 theorem pressure_gradient_bound (n : ℕ) :
-    block standardDirection q (fun a => pathTranslate P a
-      (normalize L.fullProfile L.fullProfile_pos (scalarGradientField τ hτ hτT B Y).path)) n 0 ≤
+    block standardDirection q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) L.fullProfile L.fullProfile_pos
+        (scalarGradientField τ hτ hτT B Y).path)) n 0 ≤
         (3*H.pressureAmplitude (P := P) N*A)*majorant L.R (d+4) n := by
-  change block standardDirection q (fun a => pathTranslate P a
-    (normalize L.fullProfile L.fullProfile_pos
+  change block standardDirection q (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+    (normalize (E := CylinderL2 P Vector3) L.fullProfile L.fullProfile_pos
       (EulerPacketCylinderField.scalarGradientPath (pressurePath τ hτ hτT B Y)))) n 0 ≤ _
   have h := EulerPacketCylinderField.scalarGradientPath_normalized_majorant
     (pressurePath τ hτ hτT B Y) (pressurePath_orbit τ hτ hτT B Y)
@@ -579,8 +608,9 @@ theorem pressure_gradient_bound (n : ℕ) :
   simpa only [show d+3+1=d+4 by omega,mul_assoc] using h
 
 theorem potential_bound (n : ℕ) :
-    block standardDirection q (fun a => pathTranslate P a
-      (normalize L.fullProfile L.fullProfile_pos (potentialPath τ hτ hτT B Y))) n 0 ≤
+    block standardDirection q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) L.fullProfile L.fullProfile_pos
+        (potentialPath τ hτ hτT B Y))) n 0 ≤
         (H.potentialAmplitude (P := P) N*A)*majorant L.R (d+3) n := by
   have hc := N.coefficient_bounds
   have h := potentialPath_normalized_bound τ hτ hτT B Y L.fullProfile L.fullProfile_pos
@@ -591,8 +621,9 @@ theorem potential_bound (n : ℕ) :
       unfold potentialAmplitude EulerTransversePacketJoin.NormalBudget.blockAmplitude; ring)
 
 theorem potential_time_bound (n : ℕ) :
-    block standardDirection q (fun a => pathTranslate P a
-      (normalize L.fullProfile L.fullProfile_pos (potentialTimePath τ hτ hτT B Y))) n 0 ≤
+    block standardDirection q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) L.fullProfile L.fullProfile_pos
+        (potentialTimePath τ hτ hτT B Y))) n 0 ≤
         (H.potentialTimeAmplitude (P := P) N*A)*majorant L.R (d+3) n := by
   have hc := N.coefficient_bounds
   have h := potentialTimePath_normalized_bound τ hτ hτT B Y L.fullProfile L.fullProfile_pos
@@ -604,8 +635,9 @@ theorem potential_time_bound (n : ℕ) :
       unfold potentialTimeAmplitude EulerTransversePacketJoin.NormalBudget.blockAmplitude; ring)
 
 theorem corrector_bound (n : ℕ) :
-    block standardDirection q (fun a => pathTranslate P a
-      (normalize L.fullProfile L.fullProfile_pos (correctorPath τ hτ hτT B Y))) n 0 ≤
+    block standardDirection q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) L.fullProfile L.fullProfile_pos
+        (correctorPath τ hτ hτT B Y))) n 0 ≤
         (H.correctorAmplitude (P := P) N*A)*majorant L.R (d+4) n := by
   have hc := N.coefficient_bounds
   have h := correctorPath_normalized_bound τ hτ hτT B Y L.fullProfile L.fullProfile_pos
@@ -618,8 +650,9 @@ theorem corrector_bound (n : ℕ) :
       unfold correctorAmplitude EulerTransversePacketJoin.NormalBudget.blockAmplitude; ring)
 
 theorem corrector_time_bound (n : ℕ) :
-    block standardDirection q (fun a => pathTranslate P a
-      (normalize L.fullProfile L.fullProfile_pos (correctorTimePath τ hτ hτT B Y))) n 0 ≤
+    block standardDirection q (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) L.fullProfile L.fullProfile_pos
+        (correctorTimePath τ hτ hτT B Y))) n 0 ≤
         (H.correctorTimeAmplitude (P := P) N*A)*majorant L.R (d+4) n := by
   have hc := N.coefficient_bounds
   have h := correctorTimePath_normalized_bound τ hτ hτT B Y L.fullProfile L.fullProfile_pos
@@ -780,7 +813,7 @@ variable {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U] [CompleteS
 include hδ1 hR hα
 
 theorem scaled_initialData_bound (n : ℕ) :
-    block standardDirection 6 (fun a => translate period a
+    block standardDirection 6 (fun a => translate (V := U) period a
       ((initialData D δ hδ (α • ξ) hs).value : CylinderL2 period U)) n 0 ≤
       (α*(wordCost (Fin 4) 6 δ*‖ξ‖))*majorant L.R 0 n := by
   have hh := initialData_common_radius D δ hδ (α • ξ) hs standardDirection

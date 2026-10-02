@@ -178,7 +178,8 @@ def evaluateFamily (N : ℕ) (r : ℝ) (p : ℕ → ScalarField)
 
 /-- Compact, bundling `smooth`, `field`, `gradient_mem`. -/
 def compact (p : ScalarField) (q : C(Icc (0 : ℝ) T, CylinderL2 P ℝ))
-    (hq : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a q))
+    (hq : ContDiff ℝ ∞ (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := ℝ) P a q))
     (he : ∀ (t : Icc (0 : ℝ) T) x θ,
       p (t,(x,θ)) = scalarPointField P q hq t (x,(θ : AddCircle P)))
     (S : Set Space) (hS : IsCompact S)
@@ -339,9 +340,12 @@ theorem path_ae_raw_zeroAngle (t : Icc (0 : ℝ) D.T) :
 /-- The classical gradient constructed from the radial potential is the same
 ordinary L² element as the projected pressure residual. -/
 theorem scalarGradient_path_eq (t : Icc (0 : ℝ) D.T) :
-    G.scalarGradientForcing.path t = (D.opF t).adjoint (G.pressureForcePath t) := by
+    G.scalarGradientForcing.path t =
+      ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := L2) (F := L2) (D.opF t)
+        (G.pressureForcePath t) := by
   change G.scalarGradientForcing.path t =
-    (EulerMeanCoefficients.multiplier (D.F.field t)).adjoint (G.pressureForcePath t)
+    ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := L2) (F := L2)
+      (EulerMeanCoefficients.multiplier (D.F.field t)) (G.pressureForcePath t)
   rw [← multiplier_adjointField]
   apply Lp.ext
   filter_upwards [G.scalarGradientForcing.path_ae_raw_zeroAngle t,
@@ -350,7 +354,9 @@ theorem scalarGradient_path_eq (t : Icc (0 : ℝ) D.T) :
   change G.scalarGradientForcing.path t x =
     (EulerMeanCoefficients.multiplier (adjointField (D.F.field t)) (G.pressureForcePath t)) x
   rw [hg,hm,adjointField_apply]
-  change G.scalarGradient (t,(x,0)) = (D.F.field t x).adjoint (G.pressureForceForcing.path t x)
+  change G.scalarGradient (t,(x,0)) =
+    ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (D.F.field t x)
+      (G.pressureForceForcing.path t x)
   rw [hp,G.scalarGradient_eq]
 
 theorem scalarGradient_path_mem (t : Icc (0 : ℝ) D.T) :

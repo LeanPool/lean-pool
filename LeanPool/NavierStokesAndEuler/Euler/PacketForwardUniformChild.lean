@@ -214,13 +214,15 @@ theorem forward_uniform_flow_and_shear :
         ‖fderiv ℝ (forwardInitializedExactPhysicalVelocity M D hTime δ hδ ξ hs α
           Cagree (truncation k) hn k hk Q t (Y t)) x -
           (α*deriv (profile δ) (k*⟪D.m₀,Y t x⟫_ℝ)) •
-            rankOne ℝ (canonicalVelocity D ξ t (Y t x)) (D.normal.field t (Y t x))‖ ≤
+            (rankOne ℝ : Space →L[ℝ] Space →L⋆[ℝ] Space →L[ℝ] Space)
+              (canonicalVelocity D ξ t (Y t x)) (D.normal.field t (Y t x))‖ ≤
           k^(-(1/4 : ℝ)) ∧
         ‖fderiv ℝ (gradient (forwardInitializedExactPhysicalPressure M D hTime δ hδ ξ hs α
           Cagree (truncation k) hn k hk Q t (Y t))) x -
           (EulerPacketForwardShear.pressureCoefficient D ξ α t (Y t x) *
             deriv (profile δ) (k*⟪D.m₀,Y t x⟫_ℝ)) •
-          rankOne ℝ (D.normal.field t (Y t x)) (D.normal.field t (Y t x))‖ ≤ k^(-(1/4 : ℝ))) ∧
+          (rankOne ℝ : Space →L[ℝ] Space →L⋆[ℝ] Space →L[ℝ] Space)
+            (D.normal.field t (Y t x)) (D.normal.field t (Y t x))‖ ≤ k^(-(1/4 : ℝ))) ∧
       (∀ (ell : ℝ) (hell : 0 < ell), ell ≤ 1 → ∀ t : Icc (0 : ℝ) D.T,
         (G.displacementField k D.m₀ ell hell t).HasJetBound
           (k^(-(1/4 : ℝ))) (ell⁻¹*k^(5/4 : ℝ)) ∧
@@ -465,13 +467,14 @@ theorem forward_uniform_child_label_bounds (q : ℕ)
           ‖fderiv ℝ (forwardInitializedExactPhysicalVelocity M D hTime δ hδ ξ hs α
             Cagree (truncation k) hn k hk Q t (Y t)) x -
             (α*deriv (profile δ) (k*⟪D.m₀,Y t x⟫_ℝ)) •
-              rankOne ℝ (canonicalVelocity D ξ t (Y t x)) (D.normal.field t (Y t x))‖ ≤ k^(-(1/4 :
-                  ℝ)) ∧
+              rankOne (E := Space) (F := Space) ℝ (canonicalVelocity D ξ t (Y t x))
+                (D.normal.field t (Y t x))‖ ≤ k^(-(1/4 : ℝ)) ∧
           ‖fderiv ℝ (gradient (forwardInitializedExactPhysicalPressure M D hTime δ hδ ξ hs α
             Cagree (truncation k) hn k hk Q t (Y t))) x -
             (EulerPacketForwardShear.pressureCoefficient D ξ α t (Y t x) *
               deriv (profile δ) (k*⟪D.m₀,Y t x⟫_ℝ)) •
-            rankOne ℝ (D.normal.field t (Y t x)) (D.normal.field t (Y t x))‖ ≤ k^(-(1/4 : ℝ))) ∧
+            rankOne (E := Space) (F := Space) ℝ (D.normal.field t (Y t x))
+              (D.normal.field t (Y t x))‖ ≤ k^(-(1/4 : ℝ))) ∧
         (∀ t, (E t).parentDisplacement=Dp t ∧ (E t).parentVelocity=Vp t ∧ (E
             t).parentAcceleration=Wp t ∧
           (E t).displacement=G.displacementField k D.m₀ ell hell t ∧

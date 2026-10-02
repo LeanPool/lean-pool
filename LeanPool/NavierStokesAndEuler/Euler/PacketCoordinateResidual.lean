@@ -78,7 +78,7 @@ theorem reconstruct (k : ℝ) (hk : k ≠ 0) (W : VectorField) (z : Domain) :
 theorem normal_coordinate (k : ℝ) (W : VectorField) (z : Domain) :
     ⟪D.m₀,coordinate D k W z⟫_ℝ = k*⟪D.normalField z,W z⟫_ℝ := by
   change ⟪D.m₀,k • rawInverse D z (W z)⟫_ℝ =
-    k*⟪(rawInverse D z).adjoint D.m₀,W z⟫_ℝ
+    k*⟪adjoint (𝕜 := ℝ) (E := Space) (F := Space) (rawInverse D z) D.m₀,W z⟫_ℝ
   rw [inner_smul_right,adjoint_inner_left]
 
 theorem coordinate_hasDerivWithinAt (k : ℝ) (W Wt : VectorField)
@@ -236,9 +236,10 @@ theorem normalized_pressure (k : ℝ) (p : ScalarField) (z : Domain) :
         k • fastPressure (D.normalField z) (pressureJet p z)) =
       rawMetric D z (coordinatePressure D k p z) := by
   change k • rawInverse D z
-      ((rawInverse D z).adjoint (pressureGradient p z) +
-        k • ((pressureJet p z).2 angleDirection • (rawInverse D z).adjoint D.m₀)) =
-    rawInverse D z ((rawInverse D z).adjoint
+      (adjoint (𝕜 := ℝ) (E := Space) (F := Space) (rawInverse D z) (pressureGradient p z) +
+        k • ((pressureJet p z).2 angleDirection •
+          adjoint (𝕜 := ℝ) (E := Space) (F := Space) (rawInverse D z) D.m₀)) =
+    rawInverse D z (adjoint (𝕜 := ℝ) (E := Space) (F := Space) (rawInverse D z)
       (k • pressureGradient p z + k^2 • ((pressureJet p z).2 angleDirection • D.m₀)))
   simp only [map_add,map_smul,smul_add,smul_smul,pow_two]
   module

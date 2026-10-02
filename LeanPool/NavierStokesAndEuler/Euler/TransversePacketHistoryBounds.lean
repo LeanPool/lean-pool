@@ -122,10 +122,12 @@ include hdir hQ hQ₁ hH hRc hC₀ hC₁ hCH hCf hbQ hbQ₁ hbH hRweak hRstrong
 /-- The physical history velocity A=Q ξ_t, as a true cylinder path. -/
 theorem physicalVelocity_block_bound (hT1 : T ≤ 1)
     (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
-    (hf : ContDiff ℝ ∞ (fun a => pathTranslate P a f))
-    (d : ℕ) (hfb : ∀ n, block directions q (fun a => pathTranslate P a f) n 0 ≤ Cf * majorant R d n)
+    (hf : ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a f))
+    (d : ℕ) (hfb : ∀ n, block directions q
+      (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a f) n 0 ≤ Cf * majorant R d n)
     (n : ℕ) :
-    block directions q (fun a => pathTranslate P a (D.physicalVelocity P f)) n 0 ≤
+    block directions q (fun a =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a (D.physicalVelocity P f)) n 0 ≤
       (3*sobolevCoefficientAmplitude ι q Rc C₀*traceCost T)*majorant R (d+2) n := by
   have hRcR := (weak_radius_bounds ι q T Rc C₀ C₁ CH D.lower Cf R
     D.time_pos.le hRc hC₀ hC₁ hCH hCf hRweak).2
@@ -133,7 +135,8 @@ theorem physicalVelocity_block_bound (hT1 : T ≤ 1)
   have hb (k) := D.continuousVelocity_block_bound P directions hdir q hQ hQ₁ hH
     Rc C₀ C₁ CH Cf R hRc hC₀ hC₁ hCH hCf hbQ hbQ₁ hbH hRweak hRstrong hT1 f hf d hfb k 0
   have he : D.physicalVelocity P f =
-      fullMultiplierMap P D.Q (D.velocityPath P (pathLp T D.time_pos.le f)) := by
+      fullMultiplierMap (K := Icc (0 : ℝ) T) (E := U) (F := E) P D.Q
+        (D.velocityPath P (pathLp T D.time_pos.le f)) := by
     apply ContinuousMap.ext
     intro t
     rfl
@@ -149,10 +152,12 @@ theorem physicalDerivative_block_bound (hT1 : T ≤ 1)
  (sobolevCoefficientRadius ι Rc + 1)
           ≤ R)
     (f : C(Icc (0 : ℝ) T, CylinderL2 P E))
-    (hf : ContDiff ℝ ∞ (fun a => pathTranslate P a f))
-    (d : ℕ) (hfb : ∀ n, block directions q (fun a => pathTranslate P a f) n 0 ≤ Cf * majorant R d n)
+    (hf : ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a f))
+    (d : ℕ) (hfb : ∀ n, block directions q
+      (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a f) n 0 ≤ Cf * majorant R d n)
     (n : ℕ) :
-    block directions q (fun a => pathTranslate P a (D.physicalDerivative P f)) n 0 ≤
+    block directions q (fun a =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a (D.physicalDerivative P f)) n 0 ≤
       (3*sobolevCoefficientAmplitude ι q Rc C₁*traceCost T +
         3*sobolevCoefficientAmplitude ι q Rc C₀)*majorant R (d+3) n := by
   obtain ⟨hR1,hRcR⟩ := weak_radius_bounds ι q T Rc C₀ C₁ CH D.lower Cf R
@@ -226,9 +231,10 @@ theorem trace_block_le (P : ℝ) [Fact (0 < P)]
     {K V ι : Type*} [TopologicalSpace K] [CompactSpace K]
     [NormedAddCommGroup V] [NormedSpace ℝ V] [Fintype ι]
     (directions : ι → LiftTangent) (q : ℕ) (p : C(K, CylinderL2 P V))
-    (hp : ContDiff ℝ ∞ (fun a => pathTranslate P a p)) (t : K) (n : ℕ) (a : LiftTangent) :
-    block directions q (fun b => translate P b (p t)) n a ≤
-      block directions q (fun b => pathTranslate P b p) n a := by
+    (hp : ContDiff ℝ ∞ (fun a => pathTranslate (K := K) (V := V) P a p))
+    (t : K) (n : ℕ) (a : LiftTangent) :
+    block directions q (fun b => translate (V := V) P b (p t)) n a ≤
+      block directions q (fun b => pathTranslate (K := K) (V := V) P b p) n a := by
   let L : C(K,CylinderL2 P V) →L[ℝ] CylinderL2 P V := ContinuousMap.evalCLM ℝ t
   have hL : ‖L‖ ≤ 1 := by
     apply opNorm_le_bound _ zero_le_one
@@ -276,7 +282,8 @@ include hdir hRc hC₀ hC₁ hCH hCf hbF hbF₁ hbH hRweak hRstrong hT1 hforce
 
 /-- True continuous coordinate velocity of the actual zero-endpoint solve. -/
 theorem source_coordinate_bound (n : ℕ) :
-    block directions q (fun a => pathTranslate P a (B.coordinatePath G)) n 0 ≤
+    block directions q (fun a =>
+      pathTranslate (K := Icc (0 : ℝ) D.T) (V := U) P a (B.coordinatePath G)) n 0 ≤
       traceCost D.T*majorant R (d+2) n := by
   exact B.coefficients.continuousVelocity_block_bound P directions hdir q
     D.frame.translation_contDiff D.frameDerivative.translation_contDiff B.H.translation_contDiff
@@ -292,7 +299,8 @@ theorem source_coordinate_bound (n : ℕ) :
 
 /-- The actual terminal trace used by the forward solve has the same bound. -/
 theorem source_terminal_bound (n : ℕ) :
-    block directions q (fun a => translate P a ((B.terminalInitial G).value : CylinderL2 P U)) n 0 ≤
+    block directions q (fun a =>
+      translate (V := U) P a ((B.terminalInitial G).value : CylinderL2 P U)) n 0 ≤
       traceCost D.T*majorant R (d+2) n :=
   (trace_block_le P directions q (B.coordinatePath G) (B.coordinatePath_orbit G)
     ⟨D.T,D.T_pos.le,le_rfl⟩ n 0).trans
@@ -301,7 +309,8 @@ theorem source_terminal_bound (n : ℕ) :
 
 /-- Literal history velocity, with the fixed reference-plane contraction already discharged. -/
 theorem source_velocity_bound (n : ℕ) :
-    block directions q (fun a => pathTranslate P a (B.velocityPath G)) n 0 ≤
+    block directions q (fun a =>
+      pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a (B.velocityPath G)) n 0 ≤
       (3*sobolevCoefficientAmplitude ι q Rc C₀*traceCost D.T)*majorant R (d+2) n := by
   exact B.coefficients.physicalVelocity_block_bound P directions hdir q
     D.frame.translation_contDiff D.frameDerivative.translation_contDiff B.H.translation_contDiff
@@ -322,7 +331,8 @@ theorem source_derivative_bound
  (sobolevCoefficientRadius ι
           Rc + 1) ≤ R)
     (n : ℕ) :
-    block directions q (fun a => pathTranslate P a (B.derivativePath G)) n 0 ≤
+    block directions q (fun a =>
+      pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a (B.derivativePath G)) n 0 ≤
       (3*sobolevCoefficientAmplitude ι q Rc C₁*traceCost D.T +
         3*sobolevCoefficientAmplitude ι q Rc C₀)*majorant R (d+3) n := by
   exact B.coefficients.physicalDerivative_block_bound P directions hdir q

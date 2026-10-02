@@ -78,7 +78,8 @@ theorem source_equation (t : ℝ) (ht : t ∈ Ioo 0 D.T) (z : LiftTangent) :
         (fderiv ℝ (D.F.field ⟨t,ht.1.le,ht.2.le⟩ : Space → Space →L[ℝ] Space)
           z.1 (S.rawVelocity (t,z)) (S.rawVelocity (t,z))) +
       D.FInv.field ⟨t,ht.1.le,ht.2.le⟩ z.1
-        ((D.FInv.field ⟨t,ht.1.le,ht.2.le⟩ z.1).adjoint (S.rawPressure (t,z))) = 0 := by
+        (adjoint (𝕜 := ℝ) (E := Space) (F := Space) (D.FInv.field ⟨t,ht.1.le,ht.2.le⟩ z.1)
+          (S.rawPressure (t,z))) = 0 := by
   have h := S.raw_normalized_equation t ht z
   simp only [correctionData_linear,correctionData_quadratic,correctionData_metric,
     coveringMap,smul_apply,comp_apply] at h
@@ -100,7 +101,8 @@ theorem source_equation_of_frame (F : ℝ × Space → Space →L[ℝ] Space)
       κ • (D.deformationEquiv ⟨t,ht.1.le,ht.2.le⟩ z.1).symm
         (DF (0,S.rawVelocity (t,z)) (S.rawVelocity (t,z))) +
       (D.deformationEquiv ⟨t,ht.1.le,ht.2.le⟩ z.1).symm
-        ((D.deformationEquiv ⟨t,ht.1.le,ht.2.le⟩ z.1).symm.toContinuousLinearMap.adjoint
+        (adjoint (𝕜 := ℝ) (E := Space) (F := Space)
+          (D.deformationEquiv ⟨t,ht.1.le,ht.2.le⟩ z.1).symm.toContinuousLinearMap
           (S.rawPressure (t,z))) = 0 := by
   rw [EulerPacketPhysicalTransform.source_frame_time D F hmatch t ht z.1 DF hF,
     EulerPacketPhysicalTransform.source_frame_spatial D F hmatch

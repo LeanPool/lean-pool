@@ -75,7 +75,7 @@ theorem initializedPressure_gradient_decomposition (N : ℕ) (k : ℝ) (hk : k �
       (t,(Y y,k*⟪D.m₀,Y y⟫_ℝ))) x =
       fastForce (fun z => initializedAngularPressure D τ hτ hτT B δ hδ ξ hs α (t,z))
         k D.m₀ Y (fun y => D.FInv.field t (Y y)) x +
-      (D.FInv.field t (Y x)).adjoint
+      ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (D.FInv.field t (Y x))
         (initializedCovectorRemainder M D τ hτ hτT B δ hδ ξ hs α N k⁻¹
           (t,(Y x,k*⟪D.m₀,Y x⟫_ℝ))) := by
   let tm : Icc (0 : ℝ) M.T := ⟨t.val,by simpa only [hTime] using t.property⟩
@@ -288,7 +288,7 @@ theorem physicalPressure_hessian (a k : ℝ) (hk : k ≠ 0) (t : Icc (0 : ℝ) D
     (Y : Space → Space) (hY : ∀ x, HasFDerivAt Y (D.FInv.field t (Y x)) x) (x : Space) :
     fderiv ℝ (gradient (physicalPressure τ hτ hτT B δ hδ ξ hs a k t Y)) x =
       (coefficient τ hτ hτT B ξ hs a t (Y x) * deriv (profile δ) (k*⟪D.m₀,Y x⟫_ℝ)) •
-        rankOne ℝ (D.normal.field t (Y x)) (D.normal.field t (Y x)) +
+        rankOne (E := Space) (F := Space) ℝ (D.normal.field t (Y x)) (D.normal.field t (Y x)) +
       hessianRemainder τ hτ hτT B δ hδ ξ hs a k t Y x := by
   let q : LiftTangent → ℝ := fun z => scalar τ hτ hτT B (initialData D δ hδ (a • ξ) hs) (t,z)
   have hq : ContDiff ℝ ∞ q := scalar_smooth τ hτ hτT B _ t
@@ -309,7 +309,7 @@ theorem physicalPressure_hessian_of_inverse (a k : ℝ) (hk : k ≠ 0)
     (t : Icc (0 : ℝ) D.T) (x : Space) :
     fderiv ℝ (gradient (physicalPressure τ hτ hτT B δ hδ ξ hs a k t (Y t))) x =
       (coefficient τ hτ hτT B ξ hs a t (Y t x) * deriv (profile δ) (k*⟪D.m₀,Y t x⟫_ℝ)) •
-        rankOne ℝ (D.normal.field t (Y t x)) (D.normal.field t (Y t x)) +
+        rankOne (E := Space) (F := Space) ℝ (D.normal.field t (Y t x)) (D.normal.field t (Y t x)) +
       hessianRemainder τ hτ hτT B δ hδ ξ hs a k t (Y t) x :=
   physicalPressure_hessian τ hτ hτT B δ hδ ξ hs a k hk t (Y t)
     (continuousInverse_hasFDerivAt D X Y hX hXY hY t) x
@@ -395,7 +395,7 @@ theorem initializedPressure_hessian_bound (N : ℕ) (hN : 1 ≤ N) (k : ℝ) (hk
         (t,(Y t y,k*⟪D.m₀,Y t y⟫_ℝ)))) x -
       (EulerPacketPrimaryPressure.coefficient τ hτ hτT B ξ hs α t (Y t x) *
         deriv (profile δ) (k*⟪D.m₀,Y t x⟫_ℝ)) •
-      rankOne ℝ (D.normal.field t (Y t x)) (D.normal.field t (Y t x))‖ ≤
+      rankOne (E := Space) (F := Space) ℝ (D.normal.field t (Y t x)) (D.normal.field t (Y t x))‖ ≤
         initializedPressureHessianCost NB L.R S.H0 L.Rc L.C₀/k := by
   have hk0 : 0 < k := by linarith
   have hr0 : 0 ≤ L.R := zero_le_one.trans L.radius_bounds.1

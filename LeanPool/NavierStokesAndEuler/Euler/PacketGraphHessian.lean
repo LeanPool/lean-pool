@@ -85,8 +85,10 @@ theorem gradient_physical {q : LiftTangent → ℝ} (k : ℝ) (m : Space)
     (Y : Space → Space) (J : Space →L[ℝ] Space) (x : Space)
     (hY : HasFDerivAt Y J x) (hq : DifferentiableAt ℝ q (graphMap k m (Y x))) :
     gradient (fun y => k⁻¹^2 * q (graphMap k m (Y y))) x =
-      k⁻¹^2 • J.adjoint (spatialGradient q (graphMap k m (Y x))) +
-        (k⁻¹^2*k*angularDerivative q (graphMap k m (Y x))) • J.adjoint m := by
+      k⁻¹^2 • adjoint (𝕜 := ℝ) (E := Space) (F := Space) J
+          (spatialGradient q (graphMap k m (Y x))) +
+        (k⁻¹^2*k*angularDerivative q (graphMap k m (Y x))) •
+          adjoint (𝕜 := ℝ) (E := Space) (F := Space) J m := by
   have hg := hq.hasFDerivAt.comp (Y x) (graphMap k m).hasFDerivAt
   have hc := (hg.comp x hY).const_smul (k⁻¹^2)
   have hd : fderiv ℝ (fun y => k⁻¹^2 * q (graphMap k m (Y y))) x =
@@ -101,12 +103,12 @@ theorem gradient_physical {q : LiftTangent → ℝ} (k : ℝ) (m : Space)
 
 /-- Transported normal, given by `(J x).adjoint m`. -/
 def transportedNormal (m : Space) (J : Space → Space →L[ℝ] Space) (x : Space) : Space :=
-  (J x).adjoint m
+  adjoint (𝕜 := ℝ) (E := Space) (F := Space) (J x) m
 
 /-- Slow force, given by `(J x).adjoint (spatialGradient q (graphMap k m (Y x)))`. -/
 def slowForce (q : LiftTangent → ℝ) (k : ℝ) (m : Space)
     (Y : Space → Space) (J : Space → Space →L[ℝ] Space) (x : Space) : Space :=
-  (J x).adjoint (spatialGradient q (graphMap k m (Y x)))
+  adjoint (𝕜 := ℝ) (E := Space) (F := Space) (J x) (spatialGradient q (graphMap k m (Y x)))
 
 /-- Lower hessian as an element of `Space →L[ℝ] Space`. -/
 def lowerHessian (q : LiftTangent → ℝ) (k : ℝ) (m : Space)
@@ -122,7 +124,7 @@ theorem hessian_physical {q : LiftTangent → ℝ} (hq : ContDiff ℝ ∞ q)
     (x : Space) (hJ : DifferentiableAt ℝ J x) :
     fderiv ℝ (gradient (fun y => k⁻¹^2 * q (graphMap k m (Y y)))) x =
       angularDerivative (angularDerivative q) (graphMap k m (Y x)) •
-        rankOne ℝ (transportedNormal m J x) (transportedNormal m J x) +
+        rankOne (E := Space) (F := Space) ℝ (transportedNormal m J x) (transportedNormal m J x) +
       lowerHessian q k m Y J x := by
   let z := graphMap k m (Y x)
   let n := transportedNormal m J
