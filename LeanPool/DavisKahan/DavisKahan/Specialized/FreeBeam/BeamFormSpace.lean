@@ -26,26 +26,31 @@ namespace Model
 
 noncomputable section
 
+/-- Complex `L²` functions on the unit interval, the ambient beam Hilbert space. -/
 abbrev BeamL2 : Type :=
   Scalar.BeamL2 (𝕜 := ℂ)
 
+/-- Pairs of complex `L²` functions representing a beam and its second derivative. -/
 abbrev BeamPairSpace : Type :=
   Scalar.BeamPairSpace (𝕜 := ℂ)
 
+/-- The continuous linear projection onto the beam function coordinate. -/
 abbrev pairFst : BeamPairSpace →L[ℂ] BeamL2 :=
   Scalar.pairFst (𝕜 := ℂ)
 
+/-- The continuous linear projection onto the second derivative coordinate. -/
 abbrev pairSnd : BeamPairSpace →L[ℂ] BeamL2 :=
   Scalar.pairSnd (𝕜 := ℂ)
 
-@[simp] theorem pairFst_apply (p : BeamPairSpace) :
+theorem pairFst_apply (p : BeamPairSpace) :
     pairFst p = (WithLp.prodContinuousLinearEquiv 2 ℂ BeamL2 BeamL2 p).1 := by
   exact Scalar.pairFst_apply (𝕜 := ℂ) p
 
-@[simp] theorem pairSnd_apply (p : BeamPairSpace) :
+theorem pairSnd_apply (p : BeamPairSpace) :
     pairSnd p = (WithLp.prodContinuousLinearEquiv 2 ℂ BeamL2 BeamL2 p).2 := by
   exact Scalar.pairSnd_apply (𝕜 := ℂ) p
 
+/-- A uniform norm bound for a continuous complex weight on the unit interval. -/
 abbrev pairingBound (g : ℝ → ℂ) (hg : Continuous g) : ℝ :=
   Scalar.pairingBound (𝕜 := ℂ) g hg
 
@@ -56,6 +61,7 @@ theorem pairingBound_spec (g : ℝ → ℂ) (hg : Continuous g) :
 theorem pairingBound_nonneg (g : ℝ → ℂ) (hg : Continuous g) : 0 ≤ pairingBound g hg := by
   exact Scalar.pairingBound_nonneg (𝕜 := ℂ) g hg
 
+/-- Integration against a continuous complex weight as a functional on beam `L²`. -/
 abbrev pairingCLM (g : ℝ → ℂ) (hg : Continuous g) : BeamL2 →L[ℂ] ℂ :=
   Scalar.pairingCLM (𝕜 := ℂ) g hg
 
@@ -63,9 +69,11 @@ abbrev pairingCLM (g : ℝ → ℂ) (hg : Continuous g) : BeamL2 →L[ℂ] ℂ :
     pairingCLM g hg W = ∫ t, (W : ℝ → ℂ) t * g t ∂unitIocMeasure := by
   exact Scalar.pairingCLM_apply (𝕜 := ℂ) g hg W
 
+/-- The complex lift of the second derivative of the `k`-th interval bump. -/
 abbrev bumpD2C (k : ℕ) (t : ℝ) : ℂ :=
   Scalar.bumpD2Scalar (𝕜 := ℂ) k t
 
+/-- The complex lift of the `k`-th interval bump. -/
 abbrev bumpC (k : ℕ) (t : ℝ) : ℂ :=
   Scalar.bumpScalar (𝕜 := ℂ) k t
 
@@ -75,9 +83,11 @@ theorem continuous_bumpD2C (k : ℕ) : Continuous (bumpD2C k) := by
 theorem continuous_bumpC (k : ℕ) : Continuous (bumpC k) := by
   exact Scalar.continuous_bumpScalar (𝕜 := ℂ) k
 
+/-- The weak second derivative constraint tested against the `k`-th interval bump. -/
 abbrev constraintCLM (k : ℕ) : BeamPairSpace →L[ℂ] ℂ :=
   Scalar.constraintCLM (𝕜 := ℂ) k
 
+/-- Complex beam pairs satisfying every bump test for the weak second derivative. -/
 abbrev beamFormSubmodule : Submodule ℂ BeamPairSpace :=
   Scalar.beamFormSubmodule (𝕜 := ℂ)
 
@@ -91,19 +101,22 @@ theorem isClosed_beamFormSubmodule :
     IsClosed (beamFormSubmodule : Set BeamPairSpace) := by
   exact Scalar.isClosed_beamFormSubmodule (𝕜 := ℂ)
 
+/-- The complex free-beam form domain, viewed as the constrained pair subspace. -/
 abbrev BeamV : Type :=
   Scalar.BeamV (𝕜 := ℂ)
 
+/-- The continuous inclusion of the complex form domain into its ambient `L²` space. -/
 abbrev beamEmbed : BeamV →L[ℂ] BeamL2 :=
   Scalar.beamEmbed (𝕜 := ℂ)
 
+/-- The continuous map assigning the weak second derivative to a complex beam. -/
 abbrev beamSnd : BeamV →L[ℂ] BeamL2 :=
   Scalar.beamSnd (𝕜 := ℂ)
 
-@[simp] theorem beamEmbed_apply (p : BeamV) : beamEmbed p = pairFst (p : BeamPairSpace) := by
+theorem beamEmbed_apply (p : BeamV) : beamEmbed p = pairFst (p : BeamPairSpace) := by
   exact Scalar.beamEmbed_apply (𝕜 := ℂ) p
 
-@[simp] theorem beamSnd_apply (p : BeamV) : beamSnd p = pairSnd (p : BeamPairSpace) := by
+theorem beamSnd_apply (p : BeamV) : beamSnd p = pairSnd (p : BeamPairSpace) := by
   exact Scalar.beamSnd_apply (𝕜 := ℂ) p
 
 theorem beamV_weak (p : BeamV) (k : ℕ) :
@@ -119,6 +132,7 @@ theorem beamV_repr (p : BeamV) :
 theorem beamEmbed_injective : Function.Injective beamEmbed := by
   exact Scalar.beamEmbed_injective (𝕜 := ℂ)
 
+/-- A continuous complex function represented in `L²` of the unit interval. -/
 abbrev contToLp (g : ℝ → ℂ) (hg : Continuous g) : BeamL2 :=
   Scalar.contToLp (𝕜 := ℂ) g hg
 
@@ -154,6 +168,7 @@ theorem beamEmbed_adjoint_injective :
     Function.Injective (ContinuousLinearMap.adjoint beamEmbed) := by
   exact Scalar.beamEmbed_adjoint_injective (𝕜 := ℂ)
 
+/-- Coercive form data for the complex beam, using the shifted bending inner product. -/
 abbrev beamCoerciveFormData : Abstract.CoerciveFormData (𝕜 := ℂ) (H := BeamL2) (V := BeamV) :=
   Scalar.beamCoerciveFormData (𝕜 := ℂ)
 
@@ -161,10 +176,12 @@ theorem beamV_re_inner_self (u : BeamV) :
     RCLike.re ⟪u, u⟫_ℂ = ‖beamEmbed u‖ ^ 2 + ‖beamSnd u‖ ^ 2 := by
   exact Scalar.beamV_re_inner_self (𝕜 := ℂ) u
 
+/-- The complex shifted beam form, with bending energy given by the second derivative norm. -/
 abbrev beamShiftedFormData :
     Analytic.ShiftedBeamFormData (𝕜 := ℂ) (H := BeamL2) (V := BeamV) :=
   Scalar.beamShiftedFormData (𝕜 := ℂ)
 
+/-- The nonnegative self-adjoint complex free-beam operator defined by the shifted form. -/
 abbrev beamOperator : BeamL2 →ₗ.[ℂ] BeamL2 :=
   Scalar.beamOperator (𝕜 := ℂ)
 
@@ -175,9 +192,11 @@ theorem beamOperator_nonneg (x : beamOperator.domain) :
     0 ≤ RCLike.re ⟪beamOperator x, (x : BeamL2)⟫_ℂ := by
   exact Scalar.beamOperator_nonneg (𝕜 := ℂ) x
 
+/-- The constant-one complex function in the beam `L²` space. -/
 abbrev beamOneLp : BeamL2 :=
   Scalar.beamOneLp (𝕜 := ℂ)
 
+/-- The complex coordinate function `t ↦ t` in the beam `L²` space. -/
 abbrev beamIdLp : BeamL2 :=
   Scalar.beamIdLp (𝕜 := ℂ)
 
