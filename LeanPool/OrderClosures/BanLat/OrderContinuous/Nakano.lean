@@ -23,7 +23,7 @@ order continuity, σ-conditional completeness, σ-order continuity, and monotone
 norm convergence of bounded sequences.
 -/
 
-@[expose] public section
+public section
 
 namespace BanachLattice
 

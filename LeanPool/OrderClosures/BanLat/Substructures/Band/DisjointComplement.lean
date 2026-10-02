@@ -21,7 +21,7 @@ In a normed vector lattice, every disjoint complement is norm closed: it is
 an intersection of zero-sets of the continuous maps `x ↦ |x| ⊓ |a|`.
 -/
 
-@[expose] public section
+public section
 
 variable {X : Type*} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
   [VectorLattice X]

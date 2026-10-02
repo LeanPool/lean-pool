@@ -19,7 +19,7 @@ every other element up to a positive scalar multiple. Every strong order unit
 is a weak order unit.
 -/
 
-@[expose] public section
+public section
 
 variable {X : Type*} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
   [VectorLattice X]

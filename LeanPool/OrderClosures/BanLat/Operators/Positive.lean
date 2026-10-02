@@ -25,7 +25,7 @@ to a positive linear operator when the codomain is Archimedean. Finally, every p
 operator from a Banach lattice to a normed vector lattice is automatically continuous.
 -/
 
-@[expose] public section
+public section
 
 /-! ## Definition and basic properties -/
 

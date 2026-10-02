@@ -22,7 +22,7 @@ and vector sublattices, proves the basic closure properties, and records that
 order completeness passes from the ambient vector lattice to a band.
 -/
 
-@[expose] public section
+public section
 
 section MainVariables
 variable {X : Type*} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]

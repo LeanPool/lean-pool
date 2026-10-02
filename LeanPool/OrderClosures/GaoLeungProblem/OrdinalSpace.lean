@@ -13,7 +13,7 @@ public import LeanPool.OrderClosures.GaoLeungProblem.CNFOrder
 # The compact ordinal space and coordinate projections
 -/
 
-@[expose] public section
+public section
 
 namespace OrderClosures
 
@@ -33,6 +33,7 @@ def GaoCompactSpace (ξ : Ordinal.{u}) :=
     ∀ a b : GaoIndex ξ, cnfExtensionLT a.1 b.1 → x a ≤ x b}
 
 /-- Coordinate projection `π_ζ` on the Gao compact space. -/
+@[expose]
 noncomputable def ordinalProjection (ξ : Ordinal.{u}) (ζ : GaoIndex ξ) :
     C(GaoCompactSpace ξ, ℝ) where
   toFun := fun x ↦ if x.1 ζ then 1 else 0
@@ -66,6 +67,7 @@ theorem continuousMap_exists_finite_coordinates
 
 /-- The least exponent in the Cantor normal form of an ordinal (zero at the
 empty normal form). -/
+@[expose]
 noncomputable def leastCNFExponent (ζ : Ordinal.{u}) : Ordinal.{u} :=
   ((Ordinal.CNF Ordinal.omega0 ζ).getLast?.map Prod.fst).getD 0
 

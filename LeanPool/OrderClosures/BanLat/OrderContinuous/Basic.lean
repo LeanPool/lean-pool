@@ -25,7 +25,7 @@ equivalent sequential characterisations of σ-order continuity, and shows that
 an order continuous Banach lattice is order complete.
 -/
 
-@[expose] public section
+public section
 
 universe u
 

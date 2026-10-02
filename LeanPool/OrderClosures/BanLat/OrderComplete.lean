@@ -22,7 +22,7 @@ completeness, introduces the sequential analogue
 the Archimedean property.
 -/
 
-@[expose] public section
+public section
 
 open Set
 

@@ -21,7 +21,7 @@ subspace. This file defines the bundled `OrderIdeal` structure extending
 `VectorSublattice` and establishes the basic characterisations and properties.
 -/
 
-@[expose] public section
+public section
 
 variable {X : Type*} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
   [VectorLattice X]

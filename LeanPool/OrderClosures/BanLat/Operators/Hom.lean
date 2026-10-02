@@ -29,7 +29,7 @@ The final section introduces `BanachLatEquiv`, the type of Banach lattice isomet
 real linear isometric equivalences that also preserve `⊔` and `⊓`.
 -/
 
-@[expose] public section
+public section
 
 /-! ## Vector lattice homomorphisms -/
 

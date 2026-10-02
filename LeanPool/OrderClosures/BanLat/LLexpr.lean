@@ -25,7 +25,7 @@ The main application is the Yudin theorem: a lattice-linear identity between
 formal expressions holds in every vector lattice as soon as it holds on `ℝ`.
 -/
 
-@[expose] public section
+public section
 
 /-- A formal lattice-linear expression in `n` variables, built from the
 variables by addition, real scalar multiplication, and the binary lattice

@@ -17,7 +17,7 @@ separate directed regulator net decreasing to zero, so the regulator need not ha
 index set as the net being controlled.
 -/
 
-@[expose] public section
+public section
 
 universe u v
 

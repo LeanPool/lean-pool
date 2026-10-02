@@ -27,7 +27,7 @@ them in terms of sup- and inf-closures, and records the induced normed vector
 lattice structure on closed sublattices.
 -/
 
-@[expose] public section
+public section
 
 variable {X : Type*} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
   [VectorLattice X]
@@ -729,6 +729,7 @@ instance instNormedVectorLatticeSubtype :
 
 /-- The closure of a vector sublattice in a normed vector lattice is again a
 vector sublattice. -/
+@[expose]
 noncomputable def topologicalClosure (Y : VectorSublattice X) : VectorSublattice X where
   toSubmodule := Y.toSubmodule.topologicalClosure
   sup_mem' := fun {x y} hx hy => by

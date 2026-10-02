@@ -16,7 +16,7 @@ Formalization of the paper's construction of a weakly Fatou Banach lattice norm 
 not equivalent to any lattice norm with the Fatou property.
 -/
 
-@[expose] public section
+public section
 
 namespace OrderClosures
 

@@ -13,7 +13,7 @@ public import LeanPool.OrderClosures.WeaklyFatou.TreeNorm
 # Bands, upshift, trimming, and the weak Fatou estimate
 -/
 
-@[expose] public section
+public section
 
 namespace OrderClosures
 
@@ -48,6 +48,7 @@ noncomputable def finiteBandProjection (n : ℕ) (Λ : Finset (TreeBandIndex n))
 
 /-- Assigns a node to the root band or the sibling band indexed by its parent;
 used to define the finite band partition pointwise. -/
+@[expose]
 noncomputable def treeBandOfNode (n : ℕ) (t : TreeNode n) : TreeBandIndex n :=
   by
     classical

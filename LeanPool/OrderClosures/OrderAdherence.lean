@@ -25,7 +25,7 @@ Shared definitions and results about order convergence, unbounded-order converge
 solid hulls, and iterated order adherence used throughout the formalization.
 -/
 
-@[expose] public section
+public section
 
 open Set
 
@@ -72,6 +72,7 @@ def solidOrderAdherence (A : Set X) : Set X :=
   LatticeOrderedAddCommGroup.solidClosure (directedPositiveAdherence A)
 
 /-- Finite iteration of order adherence. -/
+@[expose]
 def iteratedOrderAdherence (A : Set X) : ℕ → Set X
   | 0 => A
   | n + 1 => orderAdherence (iteratedOrderAdherence A n)
@@ -395,6 +396,7 @@ noncomputable def conditionallyCompleteLatticeOfIsOrderComplete
   conditionallyCompleteLatticeOfPosSet X fun _ hne hbdd => hX _ hne hbdd
 
 /-- Density character: the least cardinality of a dense subset. -/
+@[expose]
 noncomputable def densityCharacter (X : Type u) [TopologicalSpace X] : Cardinal :=
   sInf {κ : Cardinal | ∃ D : Set X, Dense D ∧ Cardinal.mk D = κ}
 

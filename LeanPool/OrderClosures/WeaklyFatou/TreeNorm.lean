@@ -13,7 +13,7 @@ public import LeanPool.OrderClosures.WeaklyFatou.FiniteTree
 # The induced tree seminorm and component lattice
 -/
 
-@[expose] public section
+public section
 
 namespace OrderClosures
 
@@ -28,14 +28,17 @@ universe u
 abbrev TreeCoefficients (n : ℕ) := TreeNode n →₀ ℝ
 
 /-- The basis vector `e_t`. -/
+@[expose]
 noncomputable def treeBasis {n : ℕ} (t : TreeNode n) : TreeCoefficients n :=
   Finsupp.single t 1
 
 /-- The weighted `ℓ¹` functional `ρ_n`. -/
+@[expose]
 noncomputable def treeRho (n : ℕ) (w : TreeCoefficients n) : ℝ :=
   w.sum fun t a ↦ (2 : ℝ) ^ (-(TreeNode.level t : ℤ)) * |a|
 
 /-- The positive operator `T_n`. -/
+@[expose]
 noncomputable def treeOperator (n : ℕ) (w : TreeCoefficients n) :
     BoundedContinuousFunction (TreeProduct n) ℝ :=
   w.sum fun t a ↦ a • treeFunction n t

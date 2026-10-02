@@ -24,7 +24,7 @@ algebra as the clopen algebra of its Stone space and develops the analytic
 facts needed for the Gao--Leung counterexample.
 -/
 
-@[expose] public section
+public section
 
 open Set
 
