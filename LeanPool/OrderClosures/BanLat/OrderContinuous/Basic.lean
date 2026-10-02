@@ -225,8 +225,7 @@ lemma le_zero_of_lb_upperBounds_sub [IsVLArchimedean X]
     (fun n => key n w₀ hw₀ a₀ ha₀)
 
 /-- An order continuous Banach lattice is order complete. -/
-@[reducible]
-@[expose]
+@[expose, reducible]
 noncomputable def conditionallyCompleteLatticeOfIsOrderContinuousNorm
     [IsOrderContinuousNorm X] :
     ConditionallyCompleteLattice X := by
