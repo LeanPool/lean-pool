@@ -68,21 +68,23 @@ noncomputable def betheLogValue
 /-- Bethe permanent.  If the positive support has no perfect matching, both
 the permanent and the variational lower bound are zero. -/
 noncomputable def bethePermanent
-    {n : Type*} [Fintype n] [DecidableEq n]
+    {n : Type*} [Fintype n]
     (A : Matrix n n ℝ) : ℝ := by
   classical
   exact if Matrix.HasPerfectMatching A then Real.exp (betheLogValue A) else 0
 
 theorem bethePermanent_eq_zero_of_noPerfectMatching
-    {n : Type*} [Fintype n] [DecidableEq n]
+    {n : Type*} [Fintype n]
     (A : Matrix n n ℝ) (hA : ¬Matrix.HasPerfectMatching A) :
     bethePermanent A = 0 := by
+  classical
   simp [bethePermanent, hA]
 
 theorem bethePermanent_pos_of_hasPerfectMatching
-    {n : Type*} [Fintype n] [DecidableEq n]
+    {n : Type*} [Fintype n]
     (A : Matrix n n ℝ) (hA : Matrix.HasPerfectMatching A) :
     0 < bethePermanent A := by
+  classical
   simp [bethePermanent, hA, Real.exp_pos]
 
 /-- Exact interface for the Gurvits and Anari--Rezaei Bethe sandwich. -/
