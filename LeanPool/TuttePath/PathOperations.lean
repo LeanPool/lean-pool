@@ -16,7 +16,7 @@ The protected finite-sequence representation is unchanged. Appending one vertex
 is enough for the source proof; no injectivity of the sequence is imposed.
 -/
 
-@[expose] public section
+public section
 
 namespace TutteFormalization
 
