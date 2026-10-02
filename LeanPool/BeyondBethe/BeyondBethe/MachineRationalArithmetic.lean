@@ -201,15 +201,23 @@ theorem machineRawAddLeftScaledNumerator_encode (q r : RawRat) :
     machineRawAddLeftScaledNumerator
         (pair (rawRatBinaryCode q) (rawRatBinaryCode r)) =
       integerBinaryCode (q.num * (r.den : ℤ)) := by
-  simp [machineRawAddLeftScaledNumerator,
-    machineIntegerMulCode_encode]
+  rw [machineRawAddLeftScaledNumerator,
+    machineRawLeftNumeratorCode_encode,
+    machineRawRightDenominatorBits_encode,
+    machineNaturalIntegerCode_natBits,
+    machineIntegerMulCode_encode,
+    Int.ofNat_eq_natCast]
 
 theorem machineRawAddRightScaledNumerator_encode (q r : RawRat) :
     machineRawAddRightScaledNumerator
         (pair (rawRatBinaryCode q) (rawRatBinaryCode r)) =
       integerBinaryCode (r.num * (q.den : ℤ)) := by
-  simp [machineRawAddRightScaledNumerator,
-    machineIntegerMulCode_encode]
+  rw [machineRawAddRightScaledNumerator,
+    machineRawRightNumeratorCode_encode,
+    machineRawLeftDenominatorBits_encode,
+    machineNaturalIntegerCode_natBits,
+    machineIntegerMulCode_encode,
+    Int.ofNat_eq_natCast]
 
 theorem machineRawAddNumeratorCode_encode (q r : RawRat) :
     machineRawAddNumeratorCode
