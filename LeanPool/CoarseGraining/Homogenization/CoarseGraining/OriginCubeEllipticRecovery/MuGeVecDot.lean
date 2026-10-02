@@ -46,7 +46,7 @@ This exposes the existing deterministic pair-half reconstruction directly from
 identity `Mu(U; (0,q), a) = ResponseJ(U; 0, q, a)`.
 -/
 theorem
-    exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_isEllipticFieldOn
+    exists_pairHalfState_ae_eq_recoveredField_originCube_of_isEllipticFieldOn
     {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -60,8 +60,10 @@ theorem
           AHarmonicFunction (Homogenization.adjointCoeffField a)
             (openCubeSet (originCube d n)),
         (fun x =>
-          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube d n))]
-            fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q0)).eval x := by
+          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn
+            (openCubeSet (originCube d n))]
+            fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField
+              system (0, q0)).eval x := by
   let U : Set (Vec d) := openCubeSet (originCube d n)
   let hCube : IsOpenBoundedConvexDomain U := by
     simpa [U] using isOpenBoundedConvexDomain_openCubeSet (originCube d n)
@@ -77,7 +79,7 @@ theorem
       (a := a) system hCube hEll hvol q0
 
 theorem
-    exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_isEllipticFieldOn_of_blockVec
+    exists_pairHalfState_ae_eq_recoveredField_originCube_of_isEllipticFieldOn_blockVec
     {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -91,7 +93,8 @@ theorem
           AHarmonicFunction (Homogenization.adjointCoeffField a)
             (openCubeSet (originCube d n)),
         (fun x =>
-          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube d n))]
+          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn
+            (openCubeSet (originCube d n))]
             fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField system P).eval x := by
   let U : Set (Vec d) := openCubeSet (originCube d n)
   let hCube : IsOpenBoundedConvexDomain U := by
@@ -108,7 +111,7 @@ theorem
       (a := a) system hCube hEll hvol P
 
 theorem
-    exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
+    exists_pairHalfState_ae_eq_recoveredField_originCube_of_recoveryData
     {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -123,15 +126,17 @@ theorem
           AHarmonicFunction (Homogenization.adjointCoeffField a)
             (openCubeSet (originCube d n)),
         (fun x =>
-          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube d n))]
-            fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q0)).eval x := by
+          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn
+            (openCubeSet (originCube d n))]
+            fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField
+              system (0, q0)).eval x := by
   rcases hData with ⟨hEll, _hCompat⟩
   simpa using
-    exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_isEllipticFieldOn
+    exists_pairHalfState_ae_eq_recoveredField_originCube_of_isEllipticFieldOn
       (R := R) (a := a) hEll q0
 
 theorem
-    exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData_of_blockVec
+    exists_pairHalfState_ae_eq_recoveredField_originCube_of_recoveryData_blockVec
     {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -146,11 +151,12 @@ theorem
           AHarmonicFunction (Homogenization.adjointCoeffField a)
             (openCubeSet (originCube d n)),
         (fun x =>
-          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube d n))]
+          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn
+            (openCubeSet (originCube d n))]
             fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField system P).eval x := by
   rcases hData with ⟨hEll, _hCompat⟩
   simpa using
-    exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_isEllipticFieldOn_of_blockVec
+    exists_pairHalfState_ae_eq_recoveredField_originCube_of_isEllipticFieldOn_blockVec
       (R := R) (a := a) hEll P
 
 theorem
@@ -169,7 +175,8 @@ theorem
           AHarmonicFunction (Homogenization.adjointCoeffField a)
             (openCubeSet (originCube d n)),
         ((fun x =>
-          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube d n))]
+          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn
+            (openCubeSet (originCube d n))]
             fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q0)).eval x) ∧
         ∀ p pStar q qStar : Vec d,
           volumeAverage (openCubeSet (originCube d n))
@@ -194,7 +201,7 @@ theorem
     R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll
       (volume_openCubeSet_originCube_toReal_pos (d := d) n)
   rcases
-      exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_isEllipticFieldOn
+      exists_pairHalfState_ae_eq_recoveredField_originCube_of_isEllipticFieldOn
         (R := R) (a := a) hEll q0 with
     ⟨u, v, hEq⟩
   have hSplit :
@@ -223,7 +230,8 @@ theorem
             (blockResponseIntegrand a (p, q) (qStar, pStar)
               ((R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q0))) =
           volumeAverage U
-            (blockResponseIntegrand a (p, q) (qStar, pStar) (blockResponsePairHalfState a u v)) := by
+            (blockResponseIntegrand a (p, q) (qStar, pStar)
+              (blockResponsePairHalfState a u v)) := by
       unfold volumeAverage
       congr 1
       exact MeasureTheory.integral_congr_ae hIntegrandEq.symm
@@ -232,7 +240,8 @@ theorem
           (blockResponseIntegrand a (p, q) (qStar, pStar)
             ((R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q0))) =
         volumeAverage U
-          (blockResponseIntegrand a (p, q) (qStar, pStar) (blockResponsePairHalfState a u v)) := hAvgEq
+          (blockResponseIntegrand a (p, q) (qStar, pStar)
+            (blockResponsePairHalfState a u v)) := hAvgEq
       _ = (1 / 2 : ℝ) * volumeAverage U (scalarResponseIntegrand U a (p - pStar) (qStar - q) u) +
             (1 / 2 : ℝ) *
               volumeAverage U
@@ -269,7 +278,8 @@ theorem
             AHarmonicFunction (Homogenization.adjointCoeffField a)
               (openCubeSet (originCube d n)),
           ((fun x =>
-            (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube d n))]
+            (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn
+              (openCubeSet (originCube d n))]
               fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q0)).eval x) ∧
           ∀ w : AHarmonicFunction a (openCubeSet (originCube d n)),
             volumeAverage (openCubeSet (originCube d n))
@@ -371,7 +381,7 @@ theorem
     R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll
       (volume_openCubeSet_originCube_toReal_pos (d := d) n)
   rcases
-      exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
+      exists_pairHalfState_ae_eq_recoveredField_originCube_of_recoveryData
         (R := R) (a := a) hData q0 with
     ⟨u, v, hEq⟩
   let Xrec : BlockState d :=
@@ -418,7 +428,7 @@ theorem
     R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll
       (volume_openCubeSet_originCube_toReal_pos (d := d) n)
   rcases
-      exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData_of_blockVec
+      exists_pairHalfState_ae_eq_recoveredField_originCube_of_recoveryData_blockVec
         (R := R) (a := a) hData (p0, 0) with
     ⟨u, v, hEq⟩
   let Xrec : BlockState d :=
@@ -515,7 +525,7 @@ theorem
     R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll
       (volume_openCubeSet_originCube_toReal_pos (d := d) n)
   rcases
-      exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData_of_blockVec
+      exists_pairHalfState_ae_eq_recoveredField_originCube_of_recoveryData_blockVec
         (R := R) (a := a) hData (-p0, q0) with
     ⟨u, v, hEq⟩
   let Xrec : BlockState d :=
