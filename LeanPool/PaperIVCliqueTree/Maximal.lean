@@ -425,17 +425,7 @@ theorem exists_maxCliqueForest (hG : G.IsChordal) :
   | succ n ih =>
       intro S hS
       have hSne : S.Nonempty := Finset.card_pos.1 (by omega)
-      obtain ⟨w, hw⟩ := hSne
-      let _ : Nonempty ((S : Set V)) := ⟨⟨w, by simpa using hw⟩⟩
-      obtain ⟨z, hz⟩ := (hG.induce (S : Set V)).exists_isSimplicial
-      have hvS : (z : V) ∈ S := by simp
-      have hsimp : ∀ a ∈ S, ∀ b ∈ S, G.Adj z a → G.Adj z b → a ≠ b → G.Adj a b := by
-        intro a ha b hb hva hvb hab
-        have ha' : (⟨a, by simpa using ha⟩ : (S : Set V)) ∈ (G.induce (S : Set V)).neighborSet z :=
-          hva
-        have hb' : (⟨b, by simpa using hb⟩ : (S : Set V)) ∈ (G.induce (S : Set V)).neighborSet z :=
-          hvb
-        exact hz ha' hb' (by simp [Subtype.ext_iff, hab])
+      obtain ⟨z, hvS, hsimp⟩ := hG.exists_simplicial_in_finset S hSne
       obtain ⟨F⟩ := ih (S.erase (z : V))
         (by rw [Finset.card_erase_of_mem hvS, hS]; omega)
       have hC : ∀ u, u ∈ (S.erase (z : V)).filter (fun u => G.Adj (z : V) u) ↔

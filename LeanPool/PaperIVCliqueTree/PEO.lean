@@ -50,6 +50,23 @@ structure IsPEO (G : SimpleGraph V) (ord : V → ℕ) : Prop where
 
 /-! ### Existence of a perfect elimination order -/
 
+/-- Every nonempty finite vertex set in a chordal graph contains a vertex whose neighbours
+within that set form a clique. -/
+theorem IsChordal.exists_simplicial_in_finset (hG : G.IsChordal) (S : Finset V)
+    (hSne : S.Nonempty) :
+    ∃ z ∈ S, ∀ a ∈ S, ∀ b ∈ S, G.Adj z a → G.Adj z b → a ≠ b → G.Adj a b := by
+  classical
+  obtain ⟨w, hw⟩ := hSne
+  let _ : Nonempty ((S : Set V)) := ⟨⟨w, by simpa using hw⟩⟩
+  obtain ⟨z, hz⟩ := (hG.induce (S : Set V)).exists_isSimplicial
+  refine ⟨z, by simp, ?_⟩
+  intro a ha b hb hva hvb hab
+  have ha' : (⟨a, by simpa using ha⟩ : (S : Set V)) ∈
+      (G.induce (S : Set V)).neighborSet z := hva
+  have hb' : (⟨b, by simpa using hb⟩ : (S : Set V)) ∈
+      (G.induce (S : Set V)).neighborSet z := hvb
+  exact hz ha' hb' (by simp [Subtype.ext_iff, hab])
+
 private theorem exists_peo_aux [Finite V] (hG : G.IsChordal) :
     ∀ (n : ℕ) (S : Finset V), S.card = n → ∃ f : V → ℕ, Set.InjOn f S ∧
       ∀ v ∈ S, G.IsClique {u | u ∈ S ∧ f v < f u ∧ G.Adj v u} := by
@@ -64,17 +81,7 @@ private theorem exists_peo_aux [Finite V] (hG : G.IsChordal) :
   | succ n ih =>
       intro S hS
       have hSne : S.Nonempty := Finset.card_pos.1 (by omega)
-      obtain ⟨w, hw⟩ := hSne
-      let _ : Nonempty ((S : Set V)) := ⟨⟨w, by simpa using hw⟩⟩
-      obtain ⟨z, hz⟩ := (hG.induce (S : Set V)).exists_isSimplicial
-      have hvS : (z : V) ∈ S := by simp
-      have hsimp : ∀ a ∈ S, ∀ b ∈ S, G.Adj z a → G.Adj z b → a ≠ b → G.Adj a b := by
-        intro a ha b hb hva hvb hab
-        have ha' : (⟨a, by simpa using ha⟩ : (S : Set V)) ∈ (G.induce (S : Set V)).neighborSet z :=
-          hva
-        have hb' : (⟨b, by simpa using hb⟩ : (S : Set V)) ∈ (G.induce (S : Set V)).neighborSet z :=
-          hvb
-        exact hz ha' hb' (by simp [Subtype.ext_iff, hab])
+      obtain ⟨z, hvS, hsimp⟩ := hG.exists_simplicial_in_finset S hSne
       obtain ⟨f', hinj', hcl'⟩ := ih (S.erase (z : V))
         (by rw [Finset.card_erase_of_mem hvS, hS]; omega)
       refine ⟨fun u => if u = (z : V) then 0 else f' u + 1, ?_, ?_⟩
