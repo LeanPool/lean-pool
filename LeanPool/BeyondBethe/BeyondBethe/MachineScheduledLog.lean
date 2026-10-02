@@ -147,7 +147,7 @@ theorem machineScheduledLogUpperRawCode_mem_FP :
   simpa only [machineScheduledLogUpperRawCode] using!
     machineCompose_mem_FP hpair machineDirectedLogUpperRawCode_mem_FP
 
-@[simp] theorem machineScheduledLogPrecisionBits_encode
+theorem machineScheduledLogPrecisionBits_encode
     (q : ℚ) (p : ℕ) :
     machineScheduledLogPrecisionBits
         (pair (List.replicate p true)
@@ -155,7 +155,7 @@ theorem machineScheduledLogUpperRawCode_mem_FP :
   simp [machineScheduledLogPrecisionBits,
     machineScheduledLogPrecisionRuler]
 
-@[simp] theorem machineScheduledLogExponentIntegerCode_encode
+theorem machineScheduledLogExponentIntegerCode_encode
     (q : ℚ) (p : ℕ) :
     machineScheduledLogExponentIntegerCode
         (pair (List.replicate p true)
@@ -165,7 +165,7 @@ theorem machineScheduledLogUpperRawCode_mem_FP :
     machineDirectedLogExponentIntegerCode_encode,
     binaryRationalBinaryExponent_eq]
 
-@[simp] theorem machineScheduledLogExponentAbsBits_encode
+theorem machineScheduledLogExponentAbsBits_encode
     (q : ℚ) (p : ℕ) :
     machineScheduledLogExponentAbsBits
         (pair (List.replicate p true)
@@ -175,7 +175,7 @@ theorem machineScheduledLogUpperRawCode_mem_FP :
     machineScheduledLogExponentIntegerCode_encode,
     machineIntegerNatAbsBits_encode]
 
-@[simp] theorem machineScheduledLogTermsBits_encode
+theorem machineScheduledLogTermsBits_encode
     (q : ℚ) (p : ℕ) :
     machineScheduledLogTermsBits
         (pair (List.replicate p true)
@@ -228,7 +228,7 @@ theorem directedLogTerms_le_scheduledLogGuard (q : ℚ) (p : ℕ) :
     List.length_cons, List.length_nil, Nat.zero_add, word, Nat.add_comm] using!
       hterms.trans hquad
 
-@[simp] theorem machineScheduledLogTermsRuler_encode
+theorem machineScheduledLogTermsRuler_encode
     (q : ℚ) (p : ℕ) :
     machineScheduledLogTermsRuler
         (pair (List.replicate p true)
@@ -249,7 +249,7 @@ precision `p`. -/
 def rawScheduledLogUpper (q : ℚ) (p : ℕ) : RawRat :=
   RawRat.logUpper q (directedLogTerms q p)
 
-@[simp] theorem machineScheduledLogLowerRawCode_encode
+theorem machineScheduledLogLowerRawCode_encode
     (q : ℚ) (p : ℕ) :
     machineScheduledLogLowerRawCode
         (pair (List.replicate p true)
@@ -260,7 +260,7 @@ def rawScheduledLogUpper (q : ℚ) (p : ℕ) : RawRat :=
   simp only [machineScheduledLogArgumentRawCode, machinePairSecond_pair,
     machineDirectedLogLowerRawCode_encode, rawScheduledLogLower]
 
-@[simp] theorem machineScheduledLogUpperRawCode_encode
+theorem machineScheduledLogUpperRawCode_encode
     (q : ℚ) (p : ℕ) :
     machineScheduledLogUpperRawCode
         (pair (List.replicate p true)
