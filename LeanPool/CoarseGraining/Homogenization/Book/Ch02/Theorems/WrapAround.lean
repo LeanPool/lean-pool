@@ -189,10 +189,13 @@ theorem sum_doubledResponseJ_coordinateScales_eq_specialCoordinateBlockJTraceBud
   intro i _hi
   rw [(blockCoarseMatrixTheory U a).doubled_response_splitting]
   rw [(blockCoarseMatrixTheory U a).starred_inverse_formula]
-  simp [blockVecDot, blockMatVecMul, blockReflect, matVecMul_smul,
-    vecDot_smul_left, vecDot_smul_right, matVecMul_single,
-    vecDot_single_left, vecDot_single_right, matVecMul_zero,
-    vecDot_zero_left, vecDot_zero_right]
+  simp only [one_div, blockVecDot, blockMatVecMul, coarseBlockMatrix_upperLeft,
+    matVecMul_smul, matVecMul_single, coarseBlockMatrix_upperRight, matVecMul_zero,
+    add_zero, coarseBlockMatrix_lowerLeft, Matrix.neg_apply,
+    coarseBlockMatrix_lowerRight, vecDot_smul_right, vecDot_smul_left,
+    vecDot_single_left, vecDot_zero_left, mul_zero, blockReflect,
+    vecDot_single_right, Pi.smul_apply, Pi.single_eq_same, smul_eq_mul,
+    mul_one, vecDot_zero_right]
   have hcpq' : cq * cp = 1 := by nlinarith
   have hcp2' : cp ^ (2 : ℕ) = σ⁻¹ := by nlinarith
   have hcq2' : cq ^ (2 : ℕ) = σ := by nlinarith
@@ -295,42 +298,38 @@ theorem isSymmetricBlockMat_weightedBlockAverage
   | inl i =>
       cases β with
       | inl j =>
-          simp [DomainPartition.weightedBlockAverage,
-            DomainPartition.weightedMatAverage, DomainPartition.weightedAverage,
-            blockMatEntry]
+          simp only [blockMatEntry, DomainPartition.weightedBlockAverage,
+            DomainPartition.weightedMatAverage, DomainPartition.weightedAverage]
           refine Finset.sum_congr rfl ?_
           intro c _hc
           have h := hF c (Sum.inl j) (Sum.inl i)
-          simp [blockMatEntry] at h
+          simp only [blockMatEntry] at h
           rw [h]
       | inr j =>
-          simp [DomainPartition.weightedBlockAverage,
-            DomainPartition.weightedMatAverage, DomainPartition.weightedAverage,
-            blockMatEntry]
+          simp only [blockMatEntry, DomainPartition.weightedBlockAverage,
+            DomainPartition.weightedMatAverage, DomainPartition.weightedAverage]
           refine Finset.sum_congr rfl ?_
           intro c _hc
           have h := hF c (Sum.inr j) (Sum.inl i)
-          simp [blockMatEntry] at h
+          simp only [blockMatEntry] at h
           rw [h]
   | inr i =>
       cases β with
       | inl j =>
-          simp [DomainPartition.weightedBlockAverage,
-            DomainPartition.weightedMatAverage, DomainPartition.weightedAverage,
-            blockMatEntry]
+          simp only [blockMatEntry, DomainPartition.weightedBlockAverage,
+            DomainPartition.weightedMatAverage, DomainPartition.weightedAverage]
           refine Finset.sum_congr rfl ?_
           intro c _hc
           have h := hF c (Sum.inl j) (Sum.inr i)
-          simp [blockMatEntry] at h
+          simp only [blockMatEntry] at h
           rw [h]
       | inr j =>
-          simp [DomainPartition.weightedBlockAverage,
-            DomainPartition.weightedMatAverage, DomainPartition.weightedAverage,
-            blockMatEntry]
+          simp only [blockMatEntry, DomainPartition.weightedBlockAverage,
+            DomainPartition.weightedMatAverage, DomainPartition.weightedAverage]
           refine Finset.sum_congr rfl ?_
           intro c _hc
           have h := hF c (Sum.inr j) (Sum.inr i)
-          simp [blockMatEntry] at h
+          simp only [blockMatEntry] at h
           rw [h]
 
 /-- Main deterministic wrap-around engine: the normalized trace defect between
