@@ -29,7 +29,8 @@ theorem abs_cubeBesovPairing_projection_le_max_mul_cubeBesovPartialNorm_cubeBeso
     |cubeBesovPairing Q f (cubeProjection Q (N + 1) g)| ≤
       max 1 ((3 : ℝ) ^ s) *
         cubeBesovPartialNorm Q s p q N f *
-        cubeBesovCircPartialNorm Q s (cubeBesovConjExponent p) (cubeBesovConjExponent q) (N + 1) g := by
+        cubeBesovCircPartialNorm Q s (cubeBesovConjExponent p) (cubeBesovConjExponent q)
+          (N + 1) g := by
   let pConj : ℝ≥0∞ := cubeBesovConjExponent p
   let qConj : ℝ≥0∞ := cubeBesovConjExponent q
   let T : ℕ → ℝ := fun j =>
@@ -56,7 +57,8 @@ theorem abs_cubeBesovPairing_projection_le_max_mul_cubeBesovPartialNorm_cubeBeso
         (Q := Q) (s := s) (p := cubeBesovConjExponent p) (u := g) hpConj0 hpConjTop
   have hC_nonneg : 0 ≤ C := by
     simpa [C, pConj, qConj] using
-      cubeBesovCircPartialNorm_nonneg Q s (cubeBesovConjExponent p) (cubeBesovConjExponent q) (N + 1) g
+      cubeBesovCircPartialNorm_nonneg Q s (cubeBesovConjExponent p) (cubeBesovConjExponent q)
+        (N + 1) g
   have hM_nonneg : 0 ≤ M := by
     exact mul_nonneg (cubeBesovScaleWeight_nonneg s Q) (norm_nonneg _)
   have hS_nonneg : 0 ≤ S := by
@@ -97,7 +99,8 @@ theorem abs_cubeBesovPairing_projection_le_max_mul_cubeBesovPartialNorm_cubeBeso
         (by simpa [B, pConj] using cubeBesovCircDepthSeminorm_nonneg Q s pConj g (j + 1))
     calc
       |T j|
-          = |cubeAverage Q (fun x => cubeProjection Q (j + 1) g x * cubeProjectionResidual Q j f x)| := by
+          = |cubeAverage Q (fun x => cubeProjection Q (j + 1) g x *
+            cubeProjectionResidual Q j f x)| := by
               simp [T]
       _ ≤ (3 : ℝ) ^ s * A j * B j := by
             simpa [A, B, pConj] using
@@ -145,7 +148,8 @@ theorem abs_cubeBesovPairing_projection_le_max_mul_cubeBesovPartialNorm_cubeBeso
       (fun j _ => by simpa [A] using cubeBesovDepthSeminorm_nonneg Q s p f j)
       (fun j _ => by simpa [B, pConj] using cubeBesovCircDepthSeminorm_nonneg Q s pConj g (j + 1))
   have hshift_circ :
-      (Finset.sum (Finset.range (N + 1)) (fun j => (B j) ^ qConj.toReal)) ^ (1 / qConj.toReal) ≤ C := by
+      (Finset.sum (Finset.range (N + 1))
+        (fun j => (B j) ^ qConj.toReal)) ^ (1 / qConj.toReal) ≤ C := by
     simpa [B, C, pConj, qConj] using
       shifted_cubeBesovCircPartialSeminorm_le_cubeBesovCircPartialNorm
         (Q := Q) (s := s) (p := pConj) (q := qConj) (N := N) (u := g) hqConj0 hqConjTop
@@ -211,7 +215,8 @@ theorem abs_cubeBesovPairing_projection_le_max_mul_cubeBesovPartialNorm_cubeBeso
           ring
     _ = max 1 ((3 : ℝ) ^ s) *
           cubeBesovPartialNorm Q s p q N f *
-          cubeBesovCircPartialNorm Q s (cubeBesovConjExponent p) (cubeBesovConjExponent q) (N + 1) g := by
+          cubeBesovCircPartialNorm Q s (cubeBesovConjExponent p) (cubeBesovConjExponent q)
+            (N + 1) g := by
             rfl
 
 theorem abs_cubeBesovPairing_projection_le_max_mul_cubeBesovPartialNormTop_cubeBesovCircPartialNormOne
@@ -290,7 +295,8 @@ theorem abs_cubeBesovPairing_projection_le_max_mul_cubeBesovPartialNormTop_cubeB
         (by simpa [B, pConj] using cubeBesovCircDepthSeminorm_nonneg Q s pConj g (j + 1))
     calc
       |T j|
-          = |cubeAverage Q (fun x => cubeProjection Q (j + 1) g x * cubeProjectionResidual Q j f x)| := by
+          = |cubeAverage Q (fun x => cubeProjection Q (j + 1) g x *
+            cubeProjectionResidual Q j f x)| := by
               simp [T]
       _ ≤ (3 : ℝ) ^ s * A j * B j := by
             simpa [A, B, pConj] using
@@ -470,7 +476,8 @@ theorem abs_cubeBesovPairing_projection_le_max_mul_cubeBesovPartialNormOne_cubeB
         (by simpa [B, pConj] using cubeBesovCircDepthSeminorm_nonneg Q s pConj g (j + 1))
     calc
       |T j|
-          = |cubeAverage Q (fun x => cubeProjection Q (j + 1) g x * cubeProjectionResidual Q j f x)| := by
+          = |cubeAverage Q (fun x => cubeProjection Q (j + 1) g x *
+            cubeProjectionResidual Q j f x)| := by
               simp [T]
       _ ≤ (3 : ℝ) ^ s * A j * B j := by
             simpa [A, B, pConj] using

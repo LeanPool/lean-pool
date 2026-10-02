@@ -336,18 +336,22 @@ theorem cubeAverage_mul_projection_succ_eq_add_cubeAverage_mul_projection_add_pr
                 rw [MeasureTheory.integral_add hfirst_int hsecond_int]
     _ =
           cubeAverage R (fun x => cubeProjection Q j f x * cubeProjection Q (j + 1) g x) +
-            cubeAverage R (fun x => cubeProjectionResidual Q j f x * cubeProjection Q (j + 1) g x) := by
+            cubeAverage R (fun x => cubeProjectionResidual Q j f x *
+              cubeProjection Q (j + 1) g x) := by
                 congr 2 <;> rw [← cubeAverage_eq_integral_normalizedCubeMeasure]
     _ =
           cubeAverage R (fun x => f x * cubeProjection Q j g x) +
-            cubeAverage R (fun x => cubeProjection Q (j + 1) g x * cubeProjectionResidual Q j f x) := by
+            cubeAverage R (fun x => cubeProjection Q (j + 1) g x *
+              cubeProjectionResidual Q j f x) := by
               rw [cubeAverage_mul_projection_projection_succ_eq_mul_projection_projection
                 (Q := Q) (R := R) (j := j) (f := f) (g := g) hR hgInt,
                 ← cubeAverage_mul_projection_eq_mul_projection_projection_of_mem_descendantsAtDepth
                   (Q := Q) (R := R) (j := j) (p := p) (f := f) (g := g) hR hf hp,
                 show
-                  cubeAverage R (fun x => cubeProjectionResidual Q j f x * cubeProjection Q (j + 1) g x) =
-                    cubeAverage R (fun x => cubeProjection Q (j + 1) g x * cubeProjectionResidual Q j f x) by
+                  cubeAverage R (fun x => cubeProjectionResidual Q j f x *
+                    cubeProjection Q (j + 1) g x) =
+                    cubeAverage R (fun x => cubeProjection Q (j + 1) g x *
+                      cubeProjectionResidual Q j f x) by
                       congr 1
                       funext x
                       rw [mul_comm]]
@@ -469,7 +473,8 @@ theorem cubeBesovPairing_projection_eq_cubeAverage_mul_cubeAverage_add_sum
     cubeBesovPairing Q f (cubeProjection Q N g) =
       cubeAverage Q f * cubeAverage Q g +
         Finset.sum (Finset.range N) (fun j =>
-          cubeAverage Q (fun x => cubeProjection Q (j + 1) g x * cubeProjectionResidual Q j f x)) := by
+          cubeAverage Q (fun x => cubeProjection Q (j + 1) g x *
+            cubeProjectionResidual Q j f x)) := by
   let T : ℕ → ℝ := fun j =>
     cubeAverage Q (fun x => cubeProjection Q (j + 1) g x * cubeProjectionResidual Q j f x)
   induction N with
@@ -606,7 +611,8 @@ theorem shifted_cubeBesovCircPartialSeminorm_le_cubeBesovCircPartialNorm {d : �
                   (f := fun j => (cubeBesovCircDepthSeminorm Q s p u j) ^ q.toReal)
                   (n := N + 1))
   exact (Real.rpow_le_rpow
-    (Finset.sum_nonneg fun j _ => Real.rpow_nonneg (cubeBesovCircDepthSeminorm_nonneg Q s p u (j + 1)) _)
+    (Finset.sum_nonneg
+      fun j _ => Real.rpow_nonneg (cubeBesovCircDepthSeminorm_nonneg Q s p u (j + 1)) _)
     hshift
     (show 0 ≤ 1 / q.toReal by positivity)).trans_eq (by rfl)
 

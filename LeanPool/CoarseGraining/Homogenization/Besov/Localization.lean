@@ -82,7 +82,8 @@ theorem cubeProjection_memLp_of_mem_descendantsAtDepth {d : ℕ}
   have hproj_meas :
       MeasureTheory.AEStronglyMeasurable (cubeProjection Q j f) (normalizedCubeMeasure R) :=
     hconst.aestronglyMeasurable.congr
-      (cubeProjection_ae_eq_cubeAverage_of_mem_descendantsAtDepth (Q := Q) (R := R) (j := j) f hR).symm
+      (cubeProjection_ae_eq_cubeAverage_of_mem_descendantsAtDepth (Q := Q) (R := R)
+        (j := j) f hR).symm
   refine hconst.congr_norm hproj_meas ?_
   filter_upwards
     [cubeProjection_ae_eq_cubeAverage_of_mem_descendantsAtDepth (Q := Q) (R := R) (j := j) f hR]
@@ -150,7 +151,8 @@ theorem abs_cubeAverage_mul_cubeProjectionResidual_le_mul_cubeLpNorm_cubeBesovOs
     simpa using congrArg abs hx
   calc
     |cubeAverage R (fun x => f x * cubeProjectionResidual Q j u x)| ≤
-        cubeLpNorm R p f * cubeLpNorm R (ENNReal.conjExponent p) (cubeProjectionResidual Q j u) := by
+        cubeLpNorm R p f
+          * cubeLpNorm R (ENNReal.conjExponent p) (cubeProjectionResidual Q j u) := by
           exact abs_cubeAverage_mul_le_mul_cubeLpNorm_conjExponent
             R p f (cubeProjectionResidual Q j u) hf hu_res hp
     _ = cubeLpNorm R p f * cubeBesovOscillation R (ENNReal.conjExponent p) u := by
@@ -170,7 +172,8 @@ theorem abs_cubeAverage_mul_cubeProjection_cubeProjectionResidual_le_abs_cubeAve
     cubeProjection_memLp_of_mem_descendantsAtDepth (Q := Q) (R := R) (j := j) p f hR
   calc
     |cubeAverage R (fun x => cubeProjection Q j f x * cubeProjectionResidual Q j u x)| ≤
-        cubeLpNorm R p (cubeProjection Q j f) * cubeBesovOscillation R (ENNReal.conjExponent p) u := by
+        cubeLpNorm R p (cubeProjection Q j f)
+          * cubeBesovOscillation R (ENNReal.conjExponent p) u := by
           exact
             abs_cubeAverage_mul_cubeProjectionResidual_le_mul_cubeLpNorm_cubeBesovOscillation
               (Q := Q) (R := R) (j := j) (p := p) (f := cubeProjection Q j f) (u := u)
